@@ -1,0 +1,167 @@
+/* ================================= */
+/* CSS for control sap.m/Select      */
+/* Quartz High Contrast Black theme  */
+/* ================================= */
+
+/* ------------------------------ */
+/* field                          */
+/* ------------------------------ */
+
+.sapMSlt.sapMSltIconOnly {
+	border-radius: 0.365rem;
+}
+
+/* hover and focus */
+
+.sapMSlt.sapMSltDefault.sapMSltFocused:not(.sapMSltIconOnly):not(.sapMSltPressed) {
+	outline: 0.125rem dotted @sapUiContentFocusColor;
+	outline-offset: -0.25rem;
+}
+
+html.sap-desktop .sapMSlt.sapMSltFocused:not(.sapMSltIconOnly):not(.sapMSltDisabled):not(.sapMSltInformation),
+.sapMSltHoverable:not(.sapMSltIconOnly):not(.sapMSltInformation):hover {
+	border-color: @sapUiFieldHoverBorderColor;
+}
+
+/* FIX: In FF bottom outline-offset is not working as expected when Select is in sap.m.Bar and is left-aligned */
+
+html[data-sap-ui-browser^="ff"] .sapMBar .sapMSlt.sapMSltFocused {
+	line-height: 0;
+}
+
+/* icon only hover and focus */
+
+.sapMSlt.sapMSltIconOnly.sapMSltHoverable:hover {
+	background: @sapUiButtonLiteHoverBackground;
+
+	&.sapMSltFocused:not(.sapMSltPressed) {
+		border-color: transparent;
+	}
+}
+
+/* pressed and hover */
+.sapMSltIconOnly.sapMSltPressed.sapMSltHoverable:hover {
+	background: @sapUiToggleButtonPressedHoverBackground;
+}
+
+/* value state */
+
+.sapMSltWarning,
+.sapMSltError,
+.sapMSltInformation {
+	border-style: dashed;
+}
+
+.sapMSltInformation {
+	border-color: @sapUiFieldWarningColor;
+}
+
+/* disabled */
+
+.sapMSltDisabled {
+	background: @sapUiHcReducedBackground;
+	border-color: @sapUiHcReducedForeground;
+	color: @sapUiContentDisabledTextColor;
+}
+
+/* ------------------------------ */
+/* picker                         */
+/* ------------------------------ */
+@_sap_m_SltPicker_SubHeader_BoxShadow_Bottom: 0.125rem;
+div.sapMSltPicker {
+	border-radius: 0.125rem;
+
+	.sapMBar {
+		box-shadow: inset 0 -@_sap_m_SltPicker_SubHeader_BoxShadow_Bottom @sapUiPageHeaderBorderColor;
+	}
+
+	.sapMSltPickerValueState {
+		padding-left: 1.5rem;
+		box-shadow:inset 0 -0.125rem @sapUiPageHeaderBorderColor;
+		line-height: 1rem;
+		padding-right: 0.5rem;
+		padding-left: 2rem;
+
+		&::before {
+			font-family: "SAP-icons";
+			vertical-align: middle;
+			font-size: 1rem;
+			position: absolute;
+			left: 0.5rem;
+			top: 0.625rem;;
+		}
+
+		&.sapMSltPickerErrorState::before {
+			content: '\e0b1';
+		}
+
+		&.sapMSltPickerWarningState::before {
+			content: '\e201';
+		}
+
+		&.sapMSltPickerSuccessState::before {
+			content: '\e203';
+		}
+
+		&.sapMSltPickerInformationState::before {
+			content: '\e202';
+		}
+	}
+}
+
+/* ------------------------------ */
+/* label                          */
+/* ------------------------------ */
+
+/* value state */
+
+.sapMSltLabelWarning,
+.sapMSltLabelError {
+	font-style: italic;
+}
+
+.sapMSltLabelError {
+	font-weight: bold;
+}
+
+/* ------------------------------ */
+/* arrow                          */
+/* ------------------------------ */
+
+/* hover */
+
+.sapMSltHoverable:not(.sapMSltPressed):hover > .sapMSltArrow {
+	border-left: 0.0625rem solid @sapUiListSelectionBorderColor;
+}
+
+/* pressed */
+
+.sapMSltPressed > .sapMSltArrow {
+	border-left: 0.0625rem solid @sapUiListSelectionBorderColor;
+
+	&:hover {
+		background: @sapUiButtonLiteHoverBackground;
+	}
+}
+
+/* ====================================================== */
+/* Select inside a Bar: all contexts                      */
+/* ====================================================== */
+
+/* focus: Select IconOnly in all contexts get dotted outline */
+
+html.sap-desktop .sapMSltIconOnly.sapMSltFocused:not(.sapMSltExpanded) {
+	outline: 0.125rem dotted @sapUiContentFocusColor;
+	outline-offset: -0.125rem;
+	border-color: transparent;
+}
+
+/* hover: Select IconOnly in all contexts */
+
+html.sap-desktop .sapMHeader-CTX .sapMSltIconOnly:hover:not(.sapMSltPressed):not(.sapMTSSlt),
+html.sap-desktop .sapMSubHeader-CTX .sapMSltIconOnly:hover:not(.sapMSltPressed):not(.sapMTSSlt),
+html.sap-desktop .sapMFooter-CTX .sapMSltIconOnly:hover:not(.sapMSltPressed):not(.sapMTSSlt),
+html.sap-desktop .sapMSltIconOnly:hover:not(.sapMSltPressed):not(.sapMTSSlt) {
+	color: @sapUiContentIconColor;
+	background-color: @sapUiButtonLiteHoverBackground;
+}

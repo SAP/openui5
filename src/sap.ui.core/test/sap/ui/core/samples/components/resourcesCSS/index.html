@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<link rel="stylesheet" href="./main.css" />
+	<script src="../../../../../../../resources/sap-ui-core.js"
+			data-sap-ui-theme='sap_horizon'
+			data-sap-ui-libs="sap.ui.core"
+			data-sap-ui-compatVersion="edge"
+			data-sap-ui-async="true"
+			data-sap-ui-resourceroots='{
+				"sample": ".",
+				"test1/Component": "./Component1",
+				"test1":  "./",
+				"test2/Component": "./Component2",
+				"test2": "./",
+				"test3/Component": "./Component3",
+				"test3": "./"
+			}'
+			data-sap-ui-oninit="module:sample/main"></script>
+</head>
+<body>
+	<div id="test"></div>
+	<div>
+		Test for including stylesheets via Component manifest (including variants).
+		<br/>
+		Should switch color every 3 seconds, from red to green to yellow to blue.
+	</div>
+	<div id="target"></div>
+</body>
+</html>

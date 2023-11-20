@@ -1,13 +1,18 @@
 sap.ui.define([
 	"sap/ui/core/UIComponent",
-	"sap/ui/demo/toolpageapp/model/models",
+	"./model/models",
+	"sap/ui/core/routing/History",
+	"sap/ui/Device",
 	"sap/ui/model/resource/ResourceModel"
-], function (UIComponent, models) {
+], function(UIComponent, models, History, Device) {
 	"use strict";
+
 	return UIComponent.extend("sap.ui.demo.toolpageapp.Component", {
 		metadata: {
-			manifest: "json"
+			manifest: "json",
+			interfaces: ["sap.ui.core.IAsyncContentCreation"]
 		},
+
 		init: function () {
 			// call the init function of the parent
 			UIComponent.prototype.init.apply(this, arguments);
@@ -20,7 +25,7 @@ sap.ui.define([
 		},
 
 		myNavBack: function () {
-			var oHistory = sap.ui.core.routing.History.getInstance();
+			var oHistory = History.getInstance();
 			var oPrevHash = oHistory.getPreviousHash();
 			if (oPrevHash !== undefined) {
 				window.history.go(-1);
@@ -31,7 +36,7 @@ sap.ui.define([
 
 		getContentDensityClass: function () {
 			if (!this._sContentDensityClass) {
-				if (!sap.ui.Device.support.touch){
+				if (!Device.support.touch){
 					this._sContentDensityClass = "sapUiSizeCompact";
 				} else {
 					this._sContentDensityClass = "sapUiSizeCozy";

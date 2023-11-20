@@ -1,0 +1,275 @@
+<mvc:View xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.uxap"
+	xmlns:m="sap.m"
+	xmlns:core="sap.ui.core"
+	xmlns:forms="sap.ui.layout.form"
+	height="100%">
+
+	<ObjectPageLayout id="ObjectPageLayout" upperCaseAnchorBar="false">
+		<headerTitle>
+			<ObjectPageDynamicHeaderTitle>
+				<expandedHeading>
+					<m:Title text="Robot Arm Series 9" />
+				</expandedHeading>
+
+				<snappedHeading>
+					<m:HBox>
+						<m:Avatar src="./test-resources/sap/uxap/images/robot.png"
+							class="sapUiMediumMarginEnd"
+							displayShape="Square" />
+						<m:VBox>
+							<m:Title text="Robot Arm Series 9" />
+							<m:Label text="PO-48865" />
+						</m:VBox>
+					</m:HBox>
+				</snappedHeading>
+
+				<expandedContent>
+					<m:Label text="PO-48865"/>
+				</expandedContent>
+
+				<snappedTitleOnMobile>
+					<m:Title text="Robot Arm Series 9" />
+				</snappedTitleOnMobile>
+
+				<actions>
+					<m:Button text="Edit" type="Emphasized" />
+					<m:Button text="Delete" />
+					<m:Button text="Simulate Assembly" />
+				</actions>
+			</ObjectPageDynamicHeaderTitle>
+		</headerTitle>
+
+		<headerContent>
+			<m:FlexBox wrap="Wrap" fitContainer="true">
+				<m:Avatar src="./test-resources/sap/uxap/images/robot.png"
+					class="sapUiMediumMarginEnd sapUiSmallMarginBottom"
+					displayShape="Square"
+					displaySize="L" />
+
+				<m:VBox class="sapUiLargeMarginEnd sapUiSmallMarginBottom">
+					<m:HBox class="sapUiTinyMarginBottom" renderType="Bare">
+						<m:Label text="Manufacturer:" class="sapUiTinyMarginEnd" />
+						<m:Text text=" Robotech" />
+					</m:HBox>
+
+					<m:HBox class="sapUiTinyMarginBottom" renderType="Bare">
+						<m:Label text="Factory:" class="sapUiTinyMarginEnd" />
+						<m:Text text=" Orlando, Florida" />
+					</m:HBox>
+
+					<m:HBox>
+						<m:Label text="Supplier:" class="sapUiTinyMarginEnd" />
+						<m:Link text="Robotech (234242343)" />
+					</m:HBox>
+				</m:VBox>
+
+				<m:VBox class="sapUiLargeMarginEnd sapUiSmallMarginBottom">
+					<m:Title text="Status" class="sapUiTinyMarginBottom" />
+					<m:ObjectStatus text="Delivery"
+						state="Success"
+						class="sapMObjectStatusLarge" />
+				</m:VBox>
+
+				<m:VBox class="sapUiLargeMarginEnd sapUiSmallMarginBottom">
+					<m:Title text="Delivery Time" class="sapUiTinyMarginBottom" />
+					<m:ObjectStatus text="12 Days"
+						icon="sap-icon://shipping-status"
+						class="sapMObjectStatusLarge" />
+				</m:VBox>
+
+				<m:VBox class="sapUiLargeMarginEnd sapUiSmallMarginBottom">
+					<m:Title text="Assembly Option" class="sapUiTinyMarginBottom" />
+					<m:ObjectStatus text="To Be Selected"
+						state="Error"
+						class="sapMObjectStatusLarge" />
+				</m:VBox>
+
+				<m:VBox class="sapUiLargeMarginEnd">
+					<m:Title text="Monthly Leasing Instalment" class="sapUiTinyMarginBottom" />
+					<m:ObjectNumber number="379.99"
+						unit="USD"
+						emphasized="false"
+						class="sapMObjectNumberLarge" />
+				</m:VBox>
+			</m:FlexBox>
+		</headerContent>
+
+		<sections>
+			<ObjectPageSection titleUppercase="false" title="General Information">
+				<subSections>
+					<ObjectPageSubSection title="Order Details" showTitle="false">
+						<blocks>
+							<forms:SimpleForm class="sapUxAPObjectPageSubSectionAlignContent"
+								layout="ColumnLayout"
+								columnsM="2"
+								columnsL="3"
+								columnsXL="4">
+								<core:Title text="Order Details" />
+
+								<m:Label text="Order ID" />
+								<m:Text text="589946637" />
+
+								<m:Label text="Cotract" />
+								<m:Link text="10045876" />
+
+								<m:Label text="Transaction Date:" />
+								<m:Text text="May 6, 2018" />
+
+								<m:Label text="Expected Delivery Date" />
+								<m:Text text="June 23, 2018" />
+
+								<m:Label text="Factory" />
+								<m:Text text="Orlando, FL" />
+
+								<m:Label text="Supplier" />
+								<m:Text text="Robotech" />
+
+								<core:Title text="Configuration Accounts" />
+
+								<m:Label text="Model" />
+								<m:Text text="Robot Arm Series 9" />
+
+								<m:Label text="Color" />
+								<m:Text text="White (default)" />
+
+								<m:Label text="Socket" />
+								<m:Text text="Default Socket 10" />
+
+								<m:Label text="Leasing Instalment" />
+								<m:Text text="379.99 USD per month" />
+
+								<m:Label text="Axis" />
+								<m:Text text="6 Axis" />
+							</forms:SimpleForm>
+						</blocks>
+					</ObjectPageSubSection>
+					<ObjectPageSubSection title="Products" showTitle="false">
+						<blocks>
+							<m:Table class="sapUxAPObjectPageSubSectionAlignContent" width="auto">
+								<m:headerToolbar>
+									<m:OverflowToolbar>
+										<m:Title text="Products" level="H2" />
+										<m:ToolbarSpacer />
+										<m:SearchField width="17.5rem" />
+										<m:OverflowToolbarButton tooltip="Sort"
+											text="Sort"
+											icon="sap-icon://sort" />
+										<m:OverflowToolbarButton tooltip="Filter"
+											text="Filter"
+											icon="sap-icon://filter" />
+										<m:OverflowToolbarButton tooltip="Group"
+											text="Group"
+											icon="sap-icon://group-2" />
+										<m:OverflowToolbarButton tooltip="Settings"
+											text="Settings"
+											icon="sap-icon://action-settings" />
+									</m:OverflowToolbar>
+								</m:headerToolbar>
+
+								<m:columns>
+									<m:Column>
+										<m:Text text="Document Number" />
+									</m:Column>
+									<m:Column minScreenWidth="Tablet" demandPopin="true">
+										<m:Text text="Company" />
+									</m:Column>
+									<m:Column minScreenWidth="Tablet" demandPopin="true">
+										<m:Text text="Contact Person" />
+									</m:Column>
+									<m:Column  minScreenWidth="Tablet" demandPopin="true">
+										<m:Text text="Posting Date" />
+									</m:Column>
+									<m:Column hAlign="End">
+										<m:Text text="Amount (Local Currency)" />
+									</m:Column>
+								</m:columns>
+
+								<m:items>
+									<m:ColumnListItem>
+										<m:Link text="10223882001820" />
+										<m:Text text="Jologa" />
+										<m:Text text="Denise Smith" />
+										<m:Text text="11/15/19" />
+										<m:Text text="12,897.00 EUR" />
+									</m:ColumnListItem>
+									<m:ColumnListItem>
+										<m:Link text="10223882001820" />
+										<m:Text text="Jologa" />
+										<m:Text text="Denise Smith" />
+										<m:Text text="11/15/19" />
+										<m:Text text="12,897.00 EUR" />
+									</m:ColumnListItem>
+									<m:ColumnListItem>
+										<m:Link text="10223882001820" />
+										<m:Text text="Jologa" />
+										<m:Text text="Denise Smith" />
+										<m:Text text="11/15/19" />
+										<m:Text text="12,897.00 EUR" />
+									</m:ColumnListItem>
+									<m:ColumnListItem>
+										<m:Link text="10223882001820" />
+										<m:Text text="Jologa" />
+										<m:Text text="Denise Smith" />
+										<m:Text text="11/15/19" />
+										<m:Text text="12,897.00 EUR" />
+									</m:ColumnListItem>
+									<m:ColumnListItem>
+										<m:Link text="10223882001820" />
+										<m:Text text="Jologa" />
+										<m:Text text="Denise Smith" />
+										<m:Text text="11/15/19" />
+										<m:Text text="12,897.00 EUR" />
+									</m:ColumnListItem>
+								</m:items>
+							</m:Table>
+						</blocks>
+					</ObjectPageSubSection>
+				</subSections>
+			</ObjectPageSection>
+
+			<ObjectPageSection titleUppercase="false" title="Contact Information">
+				<subSections>
+					<ObjectPageSubSection title="Contact Information">
+						<blocks>
+							<forms:SimpleForm class="sapUxAPObjectPageSubSectionAlignContent"
+								layout="ColumnLayout"
+								columnsM="2"
+								columnsL="3"
+								columnsXL="4">
+								<core:Title text="Phone Numbers" />
+
+								<m:Label text="Home"/>
+								<m:Text text="+ 1 415-321-1234" />
+
+								<m:Label text="Office phone" />
+								<m:Text text="+ 1 415-321-5555" />
+
+								<core:Title text="Social Accounts" />
+
+								<m:Label text="LinkedIn" />
+								<m:Text text="/DeniseSmith" />
+
+								<m:Label text="Twitter"/>
+								<m:Text text="@DeniseSmith" />
+
+								<core:Title text="Addresses" />
+
+								<m:Label text="Home Address" />
+								<m:Text text="2096 Mission Street" />
+
+								<m:Label text="Mailing Address" />
+								<m:Text text="PO Box 32114" />
+
+								<core:Title text="Mailing Address" />
+
+								<m:Label text="Work" />
+								<m:Text text="DeniseSmith@sap.com" />
+							</forms:SimpleForm>
+						</blocks>
+					</ObjectPageSubSection>
+				</subSections>
+			</ObjectPageSection>
+		</sections>
+	</ObjectPageLayout>
+</mvc:View>

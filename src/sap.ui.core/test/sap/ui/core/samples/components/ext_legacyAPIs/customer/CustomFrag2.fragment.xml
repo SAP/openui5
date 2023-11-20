@@ -1,0 +1,5 @@
+<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core">
+	<Panel headerText="Customer Fragment 2">
+		<Button text="This Button is in an Extension Fragment in a Fragment" />
+	</Panel>
+</core:FragmentDefinition>

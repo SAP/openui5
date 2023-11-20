@@ -1,202 +1,150 @@
 /*!
  * ${copyright}
  */
-
 sap.ui.define([
-	"jquery.sap.global",
-	"sap/ui/fl/changeHandler/ChangeHandlerMediator"
-], function(
-	jQuery,
-	ChangeHandlerMediator
+	"sap/ui/fl/changeHandler/BaseAddViaDelegate",
+	"sap/base/util/ObjectPath"
+], function (
+	BaseAddViaDelegate,
+	ObjectPath
 ) {
 	"use strict";
-
-	/**
-	 * Change handler for adding a AddTableColumn to sap.m.Table
-	 *
-	 * @constructor
-	 *
-	 * @alias sap.m.changeHandler.AddTableColumn
-	 *
-	 * @author SAP SE
-	 *
-	 * @version ${version}
-	 *
-	 * @experimental Since 1.51.0 This class is experimental and provides only limited functionality.
-	 * Also the API might be changed in future.
-	 */
-	var AddTableColumn = {};
 
 	var COLUMNS_AGGREGATION_NAME = "columns";
 	var CELLS_AGGREGATION_NAME = "cells";
 	var ITEMS_AGGREGATION_NAME = "items";
 
+	function getLabel(oChangeContent, mInnerControls, oModifier, oView, oAppComponent, oChangeODataInformation){
+		var sEntityType = oChangeODataInformation && oChangeODataInformation.entityType;
+		if (sEntityType) {
+			return Promise.resolve()
+				.then(oModifier.createControl.bind(
+					oModifier,
+					'sap.m.Text',
+					oAppComponent,
+					oView,
+					oChangeContent.newFieldSelector.id + '--column',
+					{
+						text: "{/#" + sEntityType + "/" + oChangeContent.bindingPath + "/@sap:label}"
+					}
+				));
+		}
+		return Promise.resolve(mInnerControls.label);
+	}
+
 	/**
-	 * Adds a column using SmartField
+	 * Change handler for adding a AddTableColumn to sap.m.Table
 	 *
-	 * @param {sap.ui.fl.Change} oChange change wrapper object with instructions to be applied on the control map
-	 * @param {sap.m.Table} oTable - Table that matches the change selector for applying the change
-	 * @param {object} mPropertyBag - Property bag containing the modifier and the view
-	 * @param {object} mPropertyBag.modifier - modifier for the controls
-	 * @param {object} mPropertyBag.view - application view
-	 * @return {boolean} True if successful
-	 * @public
+	 * @constructor
+	 * @alias sap.m.changeHandler.AddTableColumn
+	 * @author SAP SE
+	 * @version ${version}
+	 * @private
+	 * @since 1.51.0
 	 */
-	AddTableColumn.applyChange = function(oChange, oTable, mPropertyBag) {
-		var oModifier = mPropertyBag.modifier;
-		var oView = mPropertyBag.view;
-		var oAppComponent = mPropertyBag.appComponent;
-		var oChangeDefinition = oChange.getDefinition();
-		var mContent = oChange.getContent();
-		var mChangeHandlerSettings = ChangeHandlerMediator.getChangeHandlerSettings({
-			"scenario": "addODataField",
-			"oDataServiceVersion": mContent.oDataServiceVersion
-		});
-		var fnChangeHandlerCreateFunction = mChangeHandlerSettings
-			&& mChangeHandlerSettings.content
-			&& mChangeHandlerSettings.content.createFunction;
 
-		var fnCheckChangeDefinition = function(mContent) {
-			var bMandatoryContentPresent = false;
+	var AddTableColumn = BaseAddViaDelegate.createAddViaDelegateChangeHandler({
 
-			bMandatoryContentPresent = mContent.newFieldSelector
-				&& (mContent.newFieldIndex !== undefined)
-				&& mContent.bindingPath
-				&& mContent.oDataServiceVersion
-				&& fnChangeHandlerCreateFunction;
+		aggregationName: COLUMNS_AGGREGATION_NAME,
+		parentAlias: "targetTable",
+		fieldSuffix: "--field",
+		skipCreateLabel: function(oChangeODataInformation) {
+			//if entity type is given we create label ourselves
+			return !!(oChangeODataInformation && oChangeODataInformation.entityType);
+		},
+		skipCreateLayout: true,
+		supportsDefault: true,
 
-			return  bMandatoryContentPresent;
-		};
-
-
-		if (mContent && fnCheckChangeDefinition(mContent)) {
-			var oTemplate = oModifier.getBindingTemplate(oTable, ITEMS_AGGREGATION_NAME, oView);
-			var oText = oModifier.createControl(
-				'sap.m.Text',
-				oAppComponent,
-				oView,
-				mContent.newFieldSelector.id + '--column',
-				{
-					text: "{/#" + mContent.entityType + "/" + mContent.bindingPath + "/@sap:label}"
-				}
-			);
-
-			if (oTemplate) {
-				var mCreateProperties = {
-					"appComponent" : mPropertyBag.appComponent,
-					"view" : mPropertyBag.view,
-					"fieldSelector" : mContent.newFieldSelector.id + '--field',
-					"bindingPath" : mContent.bindingPath
-				};
-
-				var oSmartField = fnChangeHandlerCreateFunction(oModifier, mCreateProperties);
-
-				oModifier.insertAggregation(oTemplate, CELLS_AGGREGATION_NAME, oSmartField, mContent.newFieldIndex, oView);
-				oModifier.updateAggregation(oTable, ITEMS_AGGREGATION_NAME);//only needed in JS case
-				oChange.setRevertData(mContent.newFieldSelector.id + '--field');
+		/**
+		 * Add a new column
+		 * @param {*} mPropertyBag - Parameters
+		 * @returns {Promise} Promise resolving when the column is added
+		 */
+		addProperty : function(mPropertyBag) {
+			var mInnerControls = mPropertyBag.innerControls;
+			if (mInnerControls.valueHelp) {
+				//TODO clarify if value help needs to be supported and where to add them
+				//for V2 addODataProperty compatibility it is not necessary to support value helps
+				return Promise.reject(new Error("Adding properties with value helps is not yet supported by addTableColumn change handler"));
 			}
 
-			var oControl = oModifier.createControl('sap.m.Column', oAppComponent, oView, mContent.newFieldSelector);
-			oModifier.insertAggregation(oControl, 'header', oText, 0, oView);
-			oModifier.insertAggregation(oTable, COLUMNS_AGGREGATION_NAME, oControl, mContent.newFieldIndex, oView);
+			var oTable = mPropertyBag.control;
+			var oModifier = mPropertyBag.modifier;
+			var oView = mPropertyBag.view;
+			var oAppComponent = mPropertyBag.appComponent;
 
-			return true;
-		} else {
-			jQuery.sap.log.error("Change does not contain sufficient information to be applied or ChangeHandlerMediator could not be retrieved: [" + oChangeDefinition.layer + "]"
-				+ oChangeDefinition.namespace + "/"
-				+ oChangeDefinition.fileName + "."
-				+ oChangeDefinition.fileType);
-			//however subsequent changes should be applied
-		}
-	};
+			var oChange = mPropertyBag.change;
+			var oRevertData = oChange.getRevertData();
+			var oChangeContent = oChange.getContent();
+			var oChangeODataInformation = oChange.getSupportInformation().oDataInformation;
+			var iIndex = oChangeContent.newFieldIndex;
+			var mFieldSelector = oChangeContent.newFieldSelector;
 
-	/**
-	 * Reverts applied change
-	 *
-	 * @param {sap.ui.fl.Change} oChange change wrapper object with instructions to be applied on the control map
-	 * @param {sap.m.Table} oTable - Table that matches the change selector for applying the change
-	 * @param {object} mPropertyBag - Property bag containing the modifier and the view
-	 * @param {object} mPropertyBag.modifier - modifier for the controls
-	 * @param {object} mPropertyBag.view - application view
-	 * @return {boolean} True if successful
-	 * @public
-	 */
-	AddTableColumn.revertChange = function(oChange, oTable, mPropertyBag) {
-		var oModifier = mPropertyBag.modifier;
-		var oView = mPropertyBag.view;
-		var oAppComponent = mPropertyBag.appComponent;
-		var mContent = oChange.getContent();
+			return Promise.resolve()
+				.then(oModifier.getBindingTemplate.bind(oModifier,oTable, ITEMS_AGGREGATION_NAME, oView))
+				.then(function (oTemplate) {
+					if (oTemplate) {
+						var oSmartField = mInnerControls.control;
 
-		// Column Content
-		var oTemplate = oModifier.getBindingTemplate(oTable, ITEMS_AGGREGATION_NAME);
+						return Promise.resolve()
+							.then(oModifier.insertAggregation.bind(oModifier, oTemplate, CELLS_AGGREGATION_NAME, oSmartField, iIndex, oView))
+							.then(oModifier.updateAggregation.bind(oModifier, oTable, ITEMS_AGGREGATION_NAME)) //only needed in JS case
+							.then(function() {
+								// getSelector() helps to decide whether idIsLocal is true/false
+								oRevertData.newCellSelector = oModifier.getSelector(oSmartField, oAppComponent);
+								oChange.setRevertData(oRevertData);
+							});
+					}
+					return undefined;
+				})
+				.then(oModifier.createControl.bind(oModifier, 'sap.m.Column', oAppComponent, oView, mFieldSelector))
+				.then(function(oCreatedControl) {
+					return getLabel(oChangeContent, mInnerControls, oModifier, oView, oAppComponent, oChangeODataInformation)
+						.then(function(oLabel) {
+							return Promise.resolve()
+								.then(oModifier.insertAggregation.bind(oModifier, oCreatedControl, 'header', oLabel, 0, oView))
+								.then(oModifier.insertAggregation.bind(oModifier, oTable, COLUMNS_AGGREGATION_NAME, oCreatedControl, iIndex, oView));
+						});
+				});
+		},
 
-		if (oTemplate) {
-			oModifier.removeAggregation(oTemplate, CELLS_AGGREGATION_NAME, oModifier.bySelector(oChange.getRevertData(), oAppComponent, oView));
-			oModifier.updateAggregation(oTable, ITEMS_AGGREGATION_NAME);
+		/**
+		 * Revert the controls for the cell that are added in addition to the new column
+		 * @param {*} mPropertyBag - Parameters
+		 * @returns {Promise} Promise resolving when the controls are reverted
+		 */
+		revertAdditionalControls : function(mPropertyBag) {
+			var oTable = mPropertyBag.control;
+			var oChange = mPropertyBag.change;
+			var oChangeRevertData = oChange.getRevertData();
+
+			var oModifier = mPropertyBag.modifier;
+			var oAppComponent = mPropertyBag.appComponent;
+
+			var oTemplate, oNewCell;
+
+			// Column Content
+			return Promise.resolve()
+				.then(oModifier.getBindingTemplate.bind(oModifier, oTable, ITEMS_AGGREGATION_NAME))
+				.then(function(oRetrievedTemplate){
+					oTemplate = oRetrievedTemplate;
+					if (oTemplate) {
+						return Promise.resolve()
+							.then(oModifier.bySelector.bind(oModifier, oChangeRevertData.newCellSelector, oAppComponent))
+							.then(function(oCreatedCell) {
+								oNewCell = oCreatedCell;
+								return oModifier.removeAggregation(oTemplate, CELLS_AGGREGATION_NAME, oNewCell);
+							})
+							.then(function() {
+								return oModifier.destroy(oNewCell);
+							})
+							.then(oModifier.updateAggregation.bind(oModifier, oTable, ITEMS_AGGREGATION_NAME));
+					}
+					return undefined;
+				});
 		}
 
-		// Column Header
-		oModifier.removeAggregation(oTable, COLUMNS_AGGREGATION_NAME, oModifier.bySelector(mContent.newFieldSelector, oAppComponent, oView));
-
-		oChange.resetRevertData();
-
-		return true;
-	};
-
-	/**
-	 * Completes the change by adding change handler specific content
-	 *
-	 * @param {sap.ui.fl.Change} oChange change wrapper object to be completed
-	 * @param {Object} oSpecificChangeInfo - information specific to this change
-	 * @param {string} oSpecificChangeInfo.newControlId - the control ID for the control to be added,
-	 * @param {string} oSpecificChangeInfo.bindingPath - the binding path for the new control,
-	 * @param {string} oSpecificChangeInfo.parentId - Table where the new control will be added,
-	 * @param {number} oSpecificChangeInfo.index - the index where the field will be added,
-	 * @param {string} oSpecificChangeInfo.oDataServiceVersion - the OData service version.
-	 * @param {Object} mPropertyBag The property bag containing the App Component
-	 * @param {object} mPropertyBag.modifier - modifier for the controls
-	 * @param {object} mPropertyBag.appComponent - application component
-	 * @param {object} mPropertyBag.view - application view
-	 * @public
-	 */
-	AddTableColumn.completeChangeContent = function(oChange, oSpecificChangeInfo, mPropertyBag) {
-		var oAppComponent = mPropertyBag.appComponent;
-		var oChangeDefinition = oChange.getDefinition();
-
-		if (!oChangeDefinition.content) {
-			oChangeDefinition.content = {};
-		}
-		if (oSpecificChangeInfo.parentId) {
-			oChange.addDependentControl(oSpecificChangeInfo.parentId, "targetTable", mPropertyBag);
-		} else {
-			throw new Error("oSpecificChangeInfo.parentId attribute required");
-		}
-		if (oSpecificChangeInfo.bindingPath) {
-			oChangeDefinition.content.bindingPath = oSpecificChangeInfo.bindingPath;
-		} else {
-			throw new Error("oSpecificChangeInfo.bindingPath attribute required");
-		}
-		if (oSpecificChangeInfo.entityType) {
-			oChangeDefinition.content.entityType = oSpecificChangeInfo.entityType;
-		} else {
-			throw new Error("oSpecificChangeInfo.entityType attribute required");
-		}
-		if (oSpecificChangeInfo.newControlId) {
-			oChangeDefinition.content.newFieldSelector = mPropertyBag.modifier.getSelector(oSpecificChangeInfo.newControlId, oAppComponent);
-		} else {
-			throw new Error("oSpecificChangeInfo.newControlId attribute required");
-		}
-		if (oSpecificChangeInfo.index === undefined) {
-			throw new Error("oSpecificChangeInfo.targetIndex attribute required");
-		} else {
-			oChangeDefinition.content.newFieldIndex = oSpecificChangeInfo.index;
-		}
-		if (oSpecificChangeInfo.oDataServiceVersion === undefined) {
-			throw new Error("oSpecificChangeInfo.oDataServiceVersion attribute required");
-		} else {
-			oChangeDefinition.content.oDataServiceVersion = oSpecificChangeInfo.oDataServiceVersion;
-		}
-	};
+	});
 
 	return AddTableColumn;
 },

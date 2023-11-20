@@ -14,6 +14,7 @@
 				<Title
 					id="title"
 					text="{view>/DebugModulesTitle}"
+					level="H1"
 					class="sapUiTinyMarginLeft"/>
 				<ToolbarSpacer/>
 			</Toolbar>

@@ -1,0 +1,29 @@
+{
+  "1.109.0": {
+    "date": "November 2022",
+    "notes": [
+      {
+        "id": "c7790d4945257c07ce6e40919282510bf4761bed",
+        "type": "FIX",
+        "text": " Demo Kit: Sample download missing file fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270136458"
+          }
+        ]
+      },
+      {
+        "id": "1a90f028a466627ca98764cecbc20bcaab775bb0",
+        "type": "FIX",
+        "text": " Demo Kit: View subclasses link is fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280170250"
+          }
+        ]
+      }
+    ]
+  }
+}

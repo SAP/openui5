@@ -1,0 +1,40 @@
+/******************************************************************
+	Style of the DT Overlays - Horizon High Contrast White theme
+*******************************************************************/
+@_sap_ui_dt_Overlay_FocusColor: fade(@sapUiNeutralBorder, 80%); //rgba(0, 0, 0, 0.8)
+@_sap_ui_dt_Overlay_CuttedColor: @sapUiFieldReadOnlyBackground; //#b3b3b3
+@_sap_ui_dt_Overlay_HighlightColor: @sapUiListHighlightColor; // #ec8b46
+@_sap_ui_dt_Overlay_BorderRadius: @sapUiButtonBorderCornerRadius; // 0.375rem
+
+.sapUiDtOverlayFocusable {
+	&:focus {
+		&:before {
+			border-radius: @_sap_ui_dt_Overlay_BorderRadius;
+			outline: 0.0625rem dotted @_sap_ui_dt_Overlay_FocusColor;
+			border: none;
+			outline-offset: -0.125rem;
+		}
+	}
+}
+
+.sapUiDtOverlaySelected {
+	box-shadow: none !important;
+
+	&:after {
+		border-radius: @_sap_ui_dt_Overlay_BorderRadius;
+	}
+}
+
+.sapUiDtOverlayTargetZone {
+	&:after {
+		border-radius: @_sap_ui_dt_Overlay_BorderRadius;
+	}
+}
+
+.sapUiDtOverlayCutted {
+	opacity: 0.7;
+
+	&:after {
+		border-radius: @_sap_ui_dt_Overlay_BorderRadius;
+	}
+}

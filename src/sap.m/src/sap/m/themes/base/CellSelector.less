@@ -1,0 +1,70 @@
+.sapMPluginsCellSelectorRsz {
+	position: absolute;
+	z-index: 7;
+	box-sizing: border-box;
+
+	&.sapMPluginsVerticalBorder {
+		width: 7px;
+		margin-left: -3.5px;
+		cursor: col-resize;
+	}
+
+	&.sapMPluginsHorizontalBorder {
+		height: 7px;
+		margin-top: -3.5px;
+		cursor: row-resize;
+	}
+
+	&.sapMPluginsEdge {
+		height: 10px !important;
+		width: 10px !important;
+		margin-top: -5px;
+		margin-left: -5px;
+
+		&.sapMPluginsNESW {
+			cursor: nesw-resize;
+		}
+
+		&.sapMPluginsNWSE {
+			cursor: nwse-resize;
+		}
+
+		// Needed, because (for some reason) RTL converts nwse-resize to the opposite nesw-resize (alhtough we do not want this to happen)
+		html[dir=rtl] &.sapMPluginsNESW {
+			cursor: nwse-resize;
+		}
+
+		html[dir=rtl] &.sapMPluginsNWSE {
+			cursor: nesw-resize;
+		}
+	}
+}
+
+.sapMPluginsCellSelectorRsz:hover {
+	background-color: @sapList_HighlightColor;
+	opacity: 0.5;
+}
+
+.sapMPluginsCellSelectorRszActive {
+	opacity: 1 !important;
+}
+
+.sapMPluginsCellSelectorSelected {
+	background-color: @sapList_SelectionBackgroundColor;
+}
+
+.sapMPluginsCellSelectorTop {
+	border-top: 0.0625rem @sapList_SelectionBorderColor solid !important;
+}
+
+.sapMPluginsCellSelectorRight {
+	border-right: 0.0625rem @sapList_SelectionBorderColor solid !important;
+}
+
+.sapMPluginsCellSelectorBottom {
+	border-bottom: 0.0625rem @sapList_SelectionBorderColor solid !important;
+}
+
+.sapMPluginsCellSelectorLeft {
+	border-left: 0.0625rem @sapList_SelectionBorderColor solid !important;
+}

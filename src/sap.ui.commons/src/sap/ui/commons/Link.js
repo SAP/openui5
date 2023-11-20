@@ -4,14 +4,13 @@
 
 // Provides control sap.ui.commons.Link.
 sap.ui.define([
-	'jquery.sap.global',
 	'./library',
 	'sap/ui/core/Control',
 	'sap/ui/core/EnabledPropagator',
 	'sap/ui/core/LabelEnablement',
-	"./LinkRenderer"
+	'./LinkRenderer'
 ],
-	function(jQuery, library, Control, EnabledPropagator, LabelEnablement, LinkRenderer) {
+	function(library, Control, EnabledPropagator, LabelEnablement, LinkRenderer) {
 	"use strict";
 
 
@@ -36,7 +35,6 @@ sap.ui.define([
 	 * @public
 	 * @deprecated Since version 1.38. Instead, use the <code>sap.m.Link</code> control.
 	 * @alias sap.ui.commons.Link
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var Link = Control.extend("sap.ui.commons.Link", /** @lends sap.ui.commons.Link.prototype */ { metadata : {
 
@@ -46,6 +44,7 @@ sap.ui.define([
 			"sap.ui.core.IFormContent"
 		],
 		library : "sap.ui.commons",
+		deprecated: true,
 		properties : {
 
 			/**
@@ -112,7 +111,6 @@ sap.ui.define([
 	 * @function
 	 * @type void
 	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 
 
@@ -168,6 +166,8 @@ sap.ui.define([
 
 	/**
 	 * @see sap.ui.core.Control#getAccessibilityInfo
+	 * @returns {sap.ui.core.AccessibilityInfo}
+	 * The object contains the accessibility information of <code>sap.ui.commons.Link</code>
 	 * @protected
 	 */
 	Link.prototype.getAccessibilityInfo = function() {
@@ -182,4 +182,4 @@ sap.ui.define([
 
 	return Link;
 
-}, /* bExport= */ true);
+});

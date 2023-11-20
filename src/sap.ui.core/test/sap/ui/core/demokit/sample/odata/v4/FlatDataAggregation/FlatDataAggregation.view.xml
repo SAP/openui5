@@ -1,0 +1,122 @@
+<mvc:View
+	class="sapUiSizeCompact"
+	controllerName="sap.ui.core.sample.odata.v4.FlatDataAggregation.FlatDataAggregation"
+	xmlns="sap.m"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:table="sap.ui.table"
+	xmlns:tablerm="sap.ui.table.rowmodes">
+
+	<Title text="Responsive Table" titleStyle="H1"/>
+
+	<!-- Note: for $$aggregation, see controller's onInit! -->
+	<Table growing="true" growingThreshold="5" id="mTable" items="{path : '/BusinessPartners',
+			parameters : {
+				$count : true,
+				$orderby : 'Region desc'
+			}, suspended : true}">
+		<headerToolbar>
+			<Toolbar>
+				<Title id="title" text="Sales Number by Region ({headerContext>$count})"
+					titleStyle="H2"/>
+				<Button icon="sap-icon://refresh" press="onRefreshResponsive" tooltip="Refresh"/>
+				<Button enabled="{ui>/bRealOData}" icon="sap-icon://sort-ascending"
+					press="onSortResponsive" tooltip="Sort Ascending"/>
+				<Button icon="sap-icon://download" press="onDownloadResponsive" tooltip="Download"/>
+				<SearchField placeholder="Filter by sales number greater than..."
+					value="{path : 'ui>/sFilterResponsive'}"
+					visible="{ui>/bRealOData}" width="50%" search="onFilterResponsive"/>
+			</Toolbar>
+		</headerToolbar>
+		<columns>
+			<Column>
+				<Text text="Region"/>
+			</Column>
+			<Column>
+				<Text text="Sales Amount"/>
+			</Column>
+			<Column>
+				<Text text="Currency"/>
+			</Column>
+			<Column>
+				<Text text="Sales Number"/>
+			</Column>
+		</columns>
+		<ColumnListItem>
+			<Text text="{Region}"/>
+			<Text text="{SalesAmount}"/>
+			<Text text="{Currency}"/>
+			<Text text="{SalesNumber}"/>
+		</ColumnListItem>
+	</Table>
+
+	<Title text="Grid Table" titleStyle="H1"/>
+
+	<!-- Note: for $$aggregation, see controller's onInit! -->
+	<table:Table id="tTable" rows="{path : '/BusinessPartners', suspended : true}"
+			selectionMode="None" threshold="0">
+		<table:extension>
+			<Toolbar class="sapMTBHeader-CTX">
+				<Title text="Sales Number by Region ({headerContext>$count})" titleStyle="H2"/>
+				<Button icon="sap-icon://refresh" press="onRefreshGrid" tooltip="Refresh"/>
+				<Button enabled="{ui>/bRealOData}" icon="sap-icon://sort-ascending"
+					press="onSortGrid" tooltip="Sort Ascending"/>
+				<Button icon="sap-icon://download" press="onDownloadGrid" tooltip="Download"/>
+				<SearchField placeholder="Filter by sales number greater than..."
+					value="{path : 'ui>/sFilterGrid'}"
+					visible="{ui>/bRealOData}" width="50%" search="onFilterGrid"/>
+			</Toolbar>
+		</table:extension>
+		<table:rowMode>
+			<tablerm:Fixed rowCount="5"/>
+		</table:rowMode>
+		<table:Column>
+			<Label text="Region"/>
+			<table:template>
+				<Text text="{Region}"/>
+			</table:template>
+		</table:Column>
+		<table:Column hAlign="End">
+			<Label text="Amount Per Sale"/>
+			<table:template>
+				<Text text="{AmountPerSale}"/>
+			</table:template>
+		</table:Column>
+		<table:Column>
+			<Label text="Currency"/>
+			<table:template>
+				<Text text="{Currency}"/>
+			</table:template>
+		</table:Column>
+		<table:Column hAlign="End">
+			<Label text="Sales Amount"/>
+			<table:template>
+				<Text text="{SalesAmount}"/>
+			</table:template>
+		</table:Column>
+		<table:Column>
+			<Label text="Currency"/>
+			<table:template>
+				<Text text="{Currency}"/>
+			</table:template>
+		</table:Column>
+		<table:Column hAlign="End">
+			<Label text="Local Sales Amount"/>
+			<table:template>
+				<Text text="{SalesAmountLocalCurrency}"/>
+			</table:template>
+		</table:Column>
+		<table:Column>
+			<Label text="Local Currency"/>
+			<table:template>
+				<Text text="{LocalCurrency}"/>
+			</table:template>
+		</table:Column>
+		<table:Column hAlign="End">
+			<Label text="Sales Number"/>
+			<table:template>
+				<!-- TODO derive type from "SalesNumberSum@odata.type" : "#Decimal" -->
+				<Text text="{path : 'SalesNumberSum', type : 'sap.ui.model.odata.type.Decimal'}"/>
+			</table:template>
+		</table:Column>
+	</table:Table>
+</mvc:View>

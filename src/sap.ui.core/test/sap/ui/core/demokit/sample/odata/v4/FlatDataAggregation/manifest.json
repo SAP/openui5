@@ -1,0 +1,73 @@
+{
+	"_version" : "1.8.0",
+	"sap.app" : {
+		"ach" : "CA-UI5-COR",
+		"applicationVersion" : {
+			"version" : "${version}"
+		},
+		"dataSources" : {
+			"default" : {
+				"uri" : "/serviceroot.svc/",
+				"type" : "OData",
+				"settings" : {
+					"odataVersion" : "4.0"
+				}
+			}
+		},
+		"description" : "Example for OData V4 Data Aggregation w/o visual grouping",
+		"id" : "sap.ui.core.sample.odata.v4.FlatDataAggregation",
+		"title" : "OData V4 Flat Data Aggregation",
+		"type" : "application"
+	},
+	"sap.ui" : {
+		"deviceTypes" : {
+			"desktop" : true,
+			"phone" : true,
+			"tablet" : true
+		},
+		"technology" : "UI5"
+	},
+	"sap.ui5" : {
+		"config" : {
+			"sample" : {
+				"files" : [
+					"Component.js",
+					"FlatDataAggregation.controller.js",
+					"FlatDataAggregation.view.xml",
+					"manifest.json",
+					"SandboxModel.js",
+					"../../../common/SandboxModelHelper.js"
+				]
+			}
+		},
+		"contentDensities" : {
+			"compact" : true,
+			"cozy" : true
+		},
+		"dependencies" : {
+			"libs" : {
+				"sap.m" : {}
+			},
+			"minUI5Version" : "1.59"
+		},
+		"handleValidation" : true,
+		"models" : {
+			"" : {
+				"dataSource" : "default",
+				"preload" : true,
+				"settings" : {
+					"autoExpandSelect" : false,
+					"earlyRequests" : true,
+					"operationMode" : "Server"
+				},
+				"type" : "sap.ui.core.sample.odata.v4.FlatDataAggregation.SandboxModel",
+				"uriSettingName" : "serviceUrl"
+			}
+		},
+		"rootView" : {
+			"async" : true,
+			"type" : "XML",
+			"viewName" : "sap.ui.core.sample.odata.v4.FlatDataAggregation.FlatDataAggregation"
+		}
+	}
+}

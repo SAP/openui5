@@ -1,13 +1,11 @@
 sap.ui.require([
 	"sap/m/Button",
 	"sap/ui/layout/VerticalLayout",
-	"sap/ui/dt/ElementOverlay",
 	"sap/ui/dt/DesignTime"
 ],
 function(
 	Button,
 	VerticalLayout,
-	ElementOverlay,
 	DesignTime
 ) {
 	"use strict";
@@ -27,20 +25,18 @@ function(
 	// ====================================================================================
 	// Case #2 - composition
 	var oButton1 = new Button({
-		text: 'my button 1'
+		text: "my button 1"
 	});
 	var oButton2 = new Button({
-		text: 'my button 2'
+		text: "my button 2"
 	});
 	var oLayout = new VerticalLayout({
 		content: [oButton1, oButton2]
 	});
 
-	oLayout.placeAt('content');
+	oLayout.placeAt("content");
 
 	new DesignTime({
 		rootElements: [oLayout]
 	});
-
-	sap.ui.getCore().applyChanges();
 });

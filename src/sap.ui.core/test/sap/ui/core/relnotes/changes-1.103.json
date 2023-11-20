@@ -1,0 +1,151 @@
+{
+  "1.103.0": {
+    "date": "June 2022",
+    "notes": [
+      {
+        "id": "d321e7d025c53726a2367cf11b9f32105acb19f9",
+        "type": "FIX",
+        "text": " routing.History: clarify return type of getPreviousHash"
+      },
+      {
+        "id": "41d16da59a3ea2db619ce83e9e763f0cfc246189",
+        "type": "FIX",
+        "text": " sap/ui/util/Mobile.js: Add check for parameters",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270099497"
+          }
+        ]
+      },
+      {
+        "id": "6a0c295e8be945605ef5cb5c86c3cb7cbe7b5332",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.type.UnitMixin#validateValue: Ignore trailing zeroes in decimal places",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270090634"
+          }
+        ]
+      },
+      {
+        "id": "8f74c6e007c5907a0a2306216eeaef27b236ed15",
+        "type": "FIX",
+        "text": " core.Component: Correctly handle empty activeTerminologies array"
+      },
+      {
+        "id": "b2d8c63d31684342cb38c998193720d6b0b6e7c9",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v2.Context#delete: Use default change group and change set id for entity type",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270088174"
+          }
+        ]
+      },
+      {
+        "id": "3029192d63002a0e913d6138643cb12a2cf703ac",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v4.Context#doSetProperty: avoid TypeError...",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270087626"
+          }
+        ]
+      },
+      {
+        "id": "c3dcbfd39ae69d06815b3f44328f784d8b9cb0da",
+        "type": "FIX",
+        "text": " sap.ui.core: attach/detach event handler correctly"
+      },
+      {
+        "id": "88646ac4e5a2f4b0585e6ab10fa020e7410cb136",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v4.ODataListBinding#create: avoid \"Failed to drill-down into ($uid=id-...)\"",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270085667"
+          }
+        ]
+      },
+      {
+        "id": "c7244b9de84aadef10d12e21b40889dbdeede640",
+        "type": "FIX",
+        "text": " DragAndDrop: Android browser support",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270084085"
+          }
+        ]
+      },
+      {
+        "id": "7967e2a59923a3a40cbd1f9b6a7572513174f817",
+        "type": "FEATURE",
+        "text": " sap.ui.core.format.DateFormat: IANA timezone translation"
+      },
+      {
+        "id": "2da0dcf402da031c8670148a7d8ddfdffa1044cf",
+        "type": "FEATURE",
+        "text": " mvc.XMLView: make \"content\" aggregation of XMLView bindable"
+      },
+      {
+        "id": "6a909df8efdc9eef3eec755aa415cf54e5fd5ed0",
+        "type": "FEATURE",
+        "text": " mvc.XMLView: declarative usage of aggregation, association and event handler"
+      },
+      {
+        "id": "775eaf765f9a3bdde8896c3e8152f452760b8924",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v4.ODLB#getAllCurrentContexts: mPreviousContextsByPath & kept-alive contexts",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270081950"
+          }
+        ]
+      },
+      {
+        "id": "7f91501309efc848858c0611599b6b59747ddeb1",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v4.lib._Helper.updateSelected: handle instance annotations",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270023075"
+          }
+        ]
+      },
+      {
+        "id": "ba8d0d0aaf9074d31ce2bcc4d8a788c715f7fbf0",
+        "type": "FEATURE",
+        "text": " sap.ui.core.CacheManager: Support last usage time per key"
+      },
+      {
+        "id": "f002cc56adadc25b135773ad0a32a4489f131577",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v2.ODataListBinding#createEntry: proper handling of property changes while POST is running",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270069046"
+          }
+        ]
+      },
+      {
+        "id": "6f5698834bd151f45554547ad66ca8399d3e438f",
+        "type": "FIX",
+        "text": " sap.ui.test.actions.Action: Allow scroll to top"
+      },
+      {
+        "id": "0df85379fee13c67d3c7ffa759c592cd3f0323b9",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.OperationMode.Auto: deprecation"
+      }
+    ]
+  }
+}

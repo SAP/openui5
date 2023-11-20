@@ -1,0 +1,83 @@
+<core:FragmentDefinition
+	xmlns:form="sap.ui.layout.form"
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core">
+	<Dialog id="selectContextsDialog"
+		resizable="true"
+		draggable="true"
+		title="{dialogModel>/title}">
+		<Panel id="saveAdaptation-information-panel">
+			<headerToolbar>
+				<Toolbar id="toolbar">
+					<Label id="label"
+						text="Information"
+						design="Bold">
+					</Label>
+				</Toolbar>
+			</headerToolbar>
+			<form:Form id="saveAdaptation-form"
+				editable="true">
+				<form:layout>
+					<form:ResponsiveGridLayout labelSpanXL="3"
+						labelSpanL="3"
+						labelSpanM="3"
+						labelSpanS="12"
+						adjustLabelSpan="false"
+						emptySpanXL="4"
+						emptySpanL="4"
+						emptySpanM="4"
+						emptySpanS="0"
+						columnsXL="1"
+						columnsL="1"
+						columnsM="1"
+						singleContainerFullSize="false"/>
+				</form:layout>
+				<form:FormContainer>
+					<form:formElements>
+						<form:FormElement >
+							<form:label>
+								<Label id="saveAdaptation-title-label"
+									text="{i18n>APP_DIALOG_TITLE_TEXT}"
+									required="true">
+								</Label>
+							</form:label>
+							<Input id="saveAdaptation-title-input"
+								value="{/title}"
+								valueLiveUpdate="true"
+								liveChange=".onAdaptationTitleChange"
+								placeholder="{i18n>SAVE_AS_DIALOG_PLACEHOLDER_TITLE_TEXT}">
+							</Input>
+						</form:FormElement>
+						<form:FormElement >
+							<form:label>
+								<Label id="saveAdaptation-rank-label"
+									text="{i18n>CLM_HEADER_PRIORITY}"
+									required="true">
+								</Label>
+							</form:label>
+								<Select
+									id="saveAdaptation-rank-select"
+									forceSelection="true"
+									selectedKey="{dialogModel>/selected}"
+									items="{dialogModel>/priority}"
+									change=".onPriorityChange">
+									<core:Item key="{dialogModel>key}" text="{dialogModel>title}" />
+								</Select>
+						</form:FormElement>
+					</form:formElements>
+				</form:FormContainer>
+			</form:Form>
+		</Panel>
+		<beginButton>
+			<Button id="saveAdaptation-saveButton"
+				type="Emphasized"
+				text="{i18n>APP_CTX_DIALOG_SAVE}"
+				press=".onSaveAsAdaptation"/>
+		</beginButton>
+		<endButton>
+			<Button id="saveAdaptation-cancelButton"
+				text="{i18n>APP_CTX_DIALOG_CANCEL}"
+				press=".onCancelAdaptationDialog"/>
+		</endButton>
+	</Dialog>
+</core:FragmentDefinition>

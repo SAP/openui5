@@ -1,0 +1,111 @@
+/* =================================== */
+/* CSS for control sap.f/GridListItem  */
+/* Base theme                          */
+/* =================================== */
+
+@_sap_f_GridListItem_HeaderBoxShadow: inset 0 -0.0625rem @sapUiPageHeaderBorderColor;
+@_sap_f_GridListItem_Overflow: unset;
+@_sap_f_GridListItem_HeaderHeight: 3rem;
+@_sap_f_GridListItem_Compact_HeaderHeight: 2rem;
+@_sap_f_GridListItem_FocusedHighlightOffset: 0.125rem;
+@_sap_f_GridListItem_HighlightBorderRadius: 0.25rem;
+@_sap_f_GridListItem_FocusedHighlightBorderRadius: 0px;
+
+.sapFGLI {
+	padding: 0;
+	border-radius: @sapUiTileBorderCornerRadius;
+	border: none;
+	box-shadow: @sapUiContentShadow0;
+	overflow: @_sap_f_GridListItem_Overflow;
+
+	// Highlighted items
+	> .sapMLIBHighlight {
+		z-index: 1;
+		border-top-left-radius: @_sap_f_GridListItem_HighlightBorderRadius;
+		border-bottom-left-radius: @_sap_f_GridListItem_HighlightBorderRadius;
+	}
+
+	&.sapMLIBFocusable:focus > .sapMLIBHighlight {
+		top: @_sap_f_GridListItem_FocusedHighlightOffset;
+		bottom: @_sap_f_GridListItem_FocusedHighlightOffset;
+		border-top-left-radius: @_sap_f_GridListItem_FocusedHighlightBorderRadius;
+		border-bottom-left-radius: @_sap_f_GridListItem_FocusedHighlightBorderRadius;
+	}
+
+	.sapFGLIWrapper {
+		width: 100%;
+		height: 100%;
+
+		// Header Toolbar
+		.sapFGLIToolbar {
+			height: @_sap_f_GridListItem_HeaderHeight;
+			box-shadow: @_sap_f_GridListItem_HeaderBoxShadow;
+			padding: 0 0.5rem;
+			display: flex;
+			align-items: center;
+
+			.sapFGLIToolbarSpacer {
+				flex: 1;
+			}
+
+			.sapMLIBCounter {
+				padding: 0;
+			}
+
+			// add spacing between the items, except for the first item
+			>:not(:first-child) {
+				margin: 0 0 0 0.5rem;
+			}
+		}
+
+		// Content
+		.sapMLIBContent {
+			height: 100%;;
+		}
+
+		.sapFGLIToolbar + .sapMLIBContent {
+			height: calc(100% ~"-" @_sap_f_GridListItem_HeaderHeight);
+		}
+	}
+}
+
+/* GridList with highlighted GridListItems */
+.sapFGridList .sapMListHighlight .sapFGLI .sapFGLIWrapper {
+
+	.sapMLIBContent:first-child {
+		margin-left: 0;
+	}
+}
+
+.sapFGLI.sapMLIBActionable .sapFGLIWrapper .sapMLIBImgNav {
+	cursor: pointer;
+}
+
+/* Interaction states */
+.sapFGLI {
+	&.sapMLIBHoverable:hover {
+		box-shadow: 0 0 0 0.0625rem @sapUiTileInteractiveBorderColor;
+	}
+
+	&.sapMLIB.sapMLIBSelected {
+		border-bottom: none;
+		box-shadow: 0 0 0 0.125rem @sapUiListSelectionBorderColor;
+	}
+}
+
+/* Compact size */
+.sapUiSizeCompact .sapFGLI .sapFGLIWrapper {
+
+	.sapFGLIToolbar {
+		height: @_sap_f_GridListItem_Compact_HeaderHeight;
+	}
+
+	// Content
+	.sapMLIBContent {
+		height: 100%;;
+	}
+
+	.sapFGLIToolbar + .sapMLIBContent {
+		height: calc(100% ~"-" @_sap_f_GridListItem_Compact_HeaderHeight);
+	}
+}

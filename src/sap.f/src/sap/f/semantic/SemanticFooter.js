@@ -23,7 +23,6 @@ sap.ui.define([
 	* @private
 	* @since 1.46.0
 	* @alias sap.f.semantic.SemanticFooter
-	* @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	*/
 	var SemanticFooter = SemanticContainer.extend("sap.f.semantic.SemanticFooter", {
 		constructor : function(oContainer, oParent) {
@@ -67,7 +66,7 @@ sap.ui.define([
 	};
 
 	SemanticFooter.prototype.getCustomActions = function() {
-		return this._aCustomContent;
+		return this._aCustomContent.slice();
 	};
 
 	SemanticFooter.prototype.indexOfCustomAction = function(oCustomControl) {
@@ -111,8 +110,8 @@ sap.ui.define([
 	* Adds <code>sap.f.semantic.SemanticControl</code> to the container.
 	*
 	* @param {sap.f.semantic.SemanticControl} oSemanticControl
-	* @param {String} sPlacement
-	* @returns {sap.f.semantic.SemanticFooter}
+	* @param {string} sPlacement
+	* @returns {this}
 	*/
 	SemanticFooter.prototype.addContent = function(oSemanticControl, sPlacement) {
 		this["_insertSemantic" + SemanticFooter.mPlacementMethodMap[sPlacement]].call(this, oSemanticControl);
@@ -123,8 +122,8 @@ sap.ui.define([
 	* Removes the <code>sap.f.semantic.SemanticControl</code> from the container.
 	*
 	* @param {sap.f.semantic.SemanticControl} oSemanticControl
-	* @param {String} sPlacement
-	* @returns {sap.f.semantic.SemanticFooter}
+	* @param {string} sPlacement
+	* @returns {this}
 	*/
 	SemanticFooter.prototype.removeContent = function(oSemanticControl, sPlacement) {
 		this["_removeSemantic" + SemanticFooter.mPlacementMethodMap[sPlacement]].call(this, oSemanticControl);
@@ -135,7 +134,7 @@ sap.ui.define([
 	* Destroys all the actions - custom and semantic
 	* and cleans all the references in use.
 	*
-	* @returns {sap.f.semantic.SemanticFooter}
+	* @returns {this}
 	*/
 	SemanticFooter.prototype.destroy = function() {
 		this._aCustomContent = null;
@@ -150,7 +149,7 @@ sap.ui.define([
 	* Inserts the <code>sap.f.semantic.SemanticControl</code> in the <code>footerLeft</code> area.
 	*
 	* @param {sap.f.semantic.SemanticControl} oSemanticControl
-	* @returns {sap.f.semantic.SemanticFooter}
+	* @returns {this}
 	*/
 	SemanticFooter.prototype._insertSemanticLeftContent = function(oSemanticControl) {
 		var oControl = this._getControl(oSemanticControl),
@@ -158,7 +157,7 @@ sap.ui.define([
 			iIndexToInsert = this._getSemanticLeftContentInsertIndex(iControlOrder);
 
 		this._callContainerAggregationMethod("insertContent", oControl, iIndexToInsert);
-		this._iSemanticLeftContentCount ++;
+		this._iSemanticLeftContentCount++;
 		this._aSemanticLeftContent.push(oSemanticControl);
 
 		return this;
@@ -168,7 +167,7 @@ sap.ui.define([
 	* Inserts the <code>sap.f.semantic.SemanticControl</code> in the <code>footerRight</code> area.
 	*
 	* @param {sap.f.semantic.SemanticControl} oSemanticControl
-	* @returns {sap.f.semantic.SemanticFooter}
+	* @returns {this}
 	*/
 	SemanticFooter.prototype._insertSemanticRightContent = function(oSemanticControl) {
 		var oControl = this._getControl(oSemanticControl);
@@ -192,7 +191,7 @@ sap.ui.define([
 		var oControl = this._getControl(oSemanticControl);
 
 		this._callContainerAggregationMethod("removeContent", oControl);
-		this._iSemanticLeftContentCount --;
+		this._iSemanticLeftContentCount--;
 		this._aSemanticLeftContent.splice(this._aSemanticLeftContent.indexOf(oControl), 1);
 		return oSemanticControl;
 	};
@@ -217,7 +216,7 @@ sap.ui.define([
 	* Determines the insert index of the content that is about to be added
 	* in the <code>footerLeft</code> area.
 	*
-	* @returns {Number}
+	* @returns {int}
 	*/
 	SemanticFooter.prototype._getSemanticLeftContentInsertIndex = function(iControlOrder) {
 		return this._iSemanticLeftContentCount > 1 ? iControlOrder : 0;
@@ -227,7 +226,7 @@ sap.ui.define([
 	* Determines the insert index of the content that is about to be added
 	* in the <code>footerRight</code> area.
 	*
-	* @returns {Number}
+	* @returns {int}
 	*/
 	SemanticFooter.prototype._getSemanticRightContentInsertIndex = function(oSemanticControl) {
 		this._aSemanticRightContent.sort(this._sortControlByOrder.bind(this));
@@ -238,7 +237,7 @@ sap.ui.define([
 	* Determines the insert index of the content that is about to be added
 	* in the <code>customContent</code> area.
 	*
-	* @returns {Number}
+	* @returns {int}
 	*/
 	SemanticFooter.prototype._getCustomContentInsertIndex = function(iIndex) {
 		return iIndex + this._iSemanticLeftContentCount + this._aSemanticRightContent.length;
@@ -248,7 +247,7 @@ sap.ui.define([
 	* Inserts a <code>sap.m.ToolbarSpacer</code>
 	* between the <code>footerLeft</code> and <code>footerRight</code> areas.
 	*
-	* @returns {sap.f.semantic.SemanticFooter}
+	* @returns {this}
 	*/
 	SemanticFooter.prototype._insertSpacer = function() {
 		this._callContainerAggregationMethod("addContent", this._getSpacer());
@@ -273,7 +272,7 @@ sap.ui.define([
 	* which is the result after forwarding the control to the <code>SemanticPage</code> internally aggregated controls.
 	* This is achieved by overriding the control <code>getParent</code> method.
 	*
-	* @param oControl
+	* @param {sap.ui.core.Control} oControl
 	* @private
 	*/
 	SemanticFooter.prototype._preProcessControl = function (oControl) {
@@ -288,7 +287,7 @@ sap.ui.define([
 	* so it returns its real parent by restoring the core <code>getParent</code> method,
 	* allowing proper processing by the framework.
 	*
-	* @param {sap}oControl
+	* @param {sap.ui.core.Control} oControl
 	* @private
 	*/
 	SemanticFooter.prototype._postProcessControl = function (oControl) {

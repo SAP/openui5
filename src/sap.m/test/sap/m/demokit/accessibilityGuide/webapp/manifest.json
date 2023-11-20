@@ -1,0 +1,133 @@
+{
+	"_version": "1.12.0",
+	"sap.app": {
+		"id": "sap.ui.demo.accessibilityGuide",
+		"type": "application",
+		"i18n": {
+			"bundleUrl": "i18n/i18n.properties",
+			"supportedLocales": [
+				""
+			],
+			"fallbackLocale": ""
+		},
+		"title": "{{appTitle}}",
+		"description": "{{appDescription}}",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"icons": {
+			"icon": "sap-icon://image-viewer",
+			"favIcon": "",
+			"phone": "",
+			"phone@2": "",
+			"tablet": "",
+			"tablet@2": ""
+		},
+		"deviceTypes": {
+			"desktop": true,
+			"tablet": true,
+			"phone": true
+		}
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "sap.ui.demo.accessibilityGuide.view.App",
+			"type": "XML",
+			"async": true,
+			"id": "app"
+		},
+		"dependencies": {
+			"minUI5Version": "1.98.0",
+			"libs": {
+				"sap.f": {},
+				"sap.m": {},
+				"sap.tnt": {},
+				"sap.ui.core": {},
+				"sap.ui.layout": {}
+			}
+		},
+		"resources": {
+			"css": [
+				{
+					"uri": "css/style.css"
+				},
+				{
+					"uri": "css/FileEditor.css"
+				}
+			]
+		},
+		"contentDensities": {
+			"compact": true,
+			"cozy": true
+		},
+		"models": {
+			"i18n": {
+				"type": "sap.ui.model.resource.ResourceModel",
+				"settings": {
+					"bundleName": "sap.ui.demo.accessibilityGuide.i18n.i18n",
+					"supportedLocales": [
+						""
+					],
+					"fallbackLocale": ""
+				}
+			}
+		},
+		"routing": {
+			"config": {
+				"routerClass": "sap.m.routing.Router",
+				"type": "View",
+				"viewType": "XML",
+				"path": "sap.ui.demo.accessibilityGuide.view",
+				"controlId": "navContainer",
+				"controlAggregation": "pages",
+				"async": true
+			},
+			"routes": [
+				{
+					"pattern": "",
+					"name": "default",
+					"target": "overview"
+				},
+				{
+					"pattern": "overview/{topic}/:subTopic:/:id:",
+					"name": "overview",
+					"target": "overview"
+				},
+				{
+					"pattern": "explore/{sample}/:subSample:",
+					"name": "exploreSamples",
+					"target": "exploreSamples"
+				},
+				{
+					"pattern": "exploreOverview/{topic}/:id:",
+					"name": "exploreOverview",
+					"target": "exploreOverview"
+				}
+			],
+			"targets": {
+				"overview": {
+					"name": "Overview",
+					"id": "overview",
+					"level": 2
+				},
+				"exploreSamples": {
+					"name": "ExploreSamples",
+					"id": "exploreSamples",
+					"level": 2
+				},
+				"exploreOverview": {
+					"name": "ExploreOverview",
+					"id": "exploreOverview",
+					"level": 2
+				},
+				"notFound": {
+					"name": "NotFound",
+					"id": "notFound"
+				}
+			}
+		}
+	}
+}

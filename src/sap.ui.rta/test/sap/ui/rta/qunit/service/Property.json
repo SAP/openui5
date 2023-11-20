@@ -1,0 +1,200 @@
+{
+	"properties": {
+		"dtMetadataProperty1": {
+			"value": {
+				"mockKey1": "dtMetadataProperty1"
+			},
+			"virtual": false,
+			"ignore": true
+		},
+		"dtMetadataProperty2": {
+			"value": {
+				"mockKey2": "dtMetadataProperty2"
+			},
+			"virtual": false,
+			"ignore": false
+		},
+		"dtMetadataProperty3": {
+			"ignore": false,
+			"value": "[NOT SERIALIZABLE]",
+			"virtual": false
+		},
+		"virtualProperty1": {
+			"value": "Virtual property value 1",
+			"virtual": true,
+			"type": "Virtual property type",
+			"name": "Virtual Property Name 1",
+			"group": "Virtual Property Group 1",
+			"ignore": false,
+			"nullable": true,
+			"possibleValues": [
+				{
+					"possibleKey1": {
+						"displayName": "Possible Value 1"
+					}
+				},
+				{
+					"possibleKey2": {
+						"displayName": "Possible Value 2"
+					}
+				}
+			]
+		},
+		"virtualProperty2": {
+			"value": "Virtual property value 2",
+			"virtual": true,
+			"type": "Virtual property type",
+			"name": "Virtual Property Name 2",
+			"group": "Virtual Property Group 2",
+			"ignore": true,
+			"possibleValues": [
+				{
+					"possibleKey3": {
+						"displayName": "Possible Value 3"
+					}
+				}
+			]
+		},
+		"virtualProperty3": {
+			"value": null,
+			"virtual": true,
+			"type": "Virtual property type",
+			"name": "Virtual Property Name 3",
+			"group": "Virtual Property Group 3",
+			"ignore": false,
+			"nullable": false,
+			"possibleValues": [
+				{
+					"possibleKey4": {
+						"displayName": "Possible Value 4"
+					}
+				},
+				{
+					"possibleKey5": {
+						"displayName": "Possible Value 5"
+					}
+				}
+			]
+		},
+		"virtualProperty4": {
+			"group": "Virtual Property Group 4",
+			"ignore": false,
+			"name": "Virtual Property Name 4",
+			"nullable": false,
+			"possibleValues": "[NOT SERIALIZABLE]",
+			"type": "Virtual property type",
+			"value": "[NOT SERIALIZABLE]",
+			"virtual": true
+		},
+		"metadataProperty1": {
+			"value": "metadataPropertyValue1",
+			"virtual": false,
+			"type": "metadataPropertyType1",
+			"name": "metadataPropertyName1",
+			"ignore": false,
+			"defaultValue": "metadataPropertyDefaultValue1",
+			"deprecated": true,
+			"group": "metadataPropertyGroup1",
+			"visibility": "public",
+			"binding": {
+				"parts": [
+					{
+						"path": "path1",
+						"model": "model1"
+					},
+					{
+						"path": "path2",
+						"model": "model2"
+					}
+				],
+				"bindingValues": {
+					"values": "Binding Value",
+					"originalValues": "Original Binding Value"
+				},
+				"bindingString": "bindingString"
+			}
+		},
+		"metadataProperty2": {
+			"value": "metadataPropertyValue2",
+			"virtual": false,
+			"type": "metadataPropertyType2",
+			"name": "metadataPropertyName2",
+			"ignore": true,
+			"group": "metadataPropertyGroup2",
+			"deprecated": true,
+			"defaultValue": "metadataPropertyDefaultValue2",
+			"visibility": "public"
+		},
+		"metadataProperty3": {
+			"value": "[NOT SERIALIZABLE]",
+			"virtual": false,
+			"type": "metadataPropertyType3",
+			"name": "metadataPropertyName3",
+			"ignore": false,
+			"defaultValue": "metadataPropertyDefaultValue2",
+			"deprecated": false,
+			"group": "metadataPropertyGroup3",
+			"visibility": "private",
+			"binding": {
+				"parts": [
+					{
+						"path": "path3",
+						"model": "model3"
+					}
+				],
+				"bindingValues": {
+					"values": "Binding Value"
+				}
+			}
+		}
+	},
+	"annotations": {
+		"annotation1": {
+			"namespace": "com.sap.mock.vocabularies",
+			"annotation": "annotation1",
+			"ignore": false,
+			"appliesTo": [
+				"Page/Button"
+			],
+			"links": {
+				"developer": [
+					{
+						"href": "annotation1.html",
+						"text": "Annotation 1 Text 1"
+					},
+					{
+						"href": "annotation2.html",
+						"text": "Annotation 1 Text 2"
+					},
+					{
+						"href": "notSerializable.html",
+						"text": "[NOT SERIALIZABLE]"
+					}
+				]
+			}
+		}
+	},
+	"label": "Vertical Layout Label",
+	"name": {
+		"singular": "Singular Control Name",
+		"plural": "Plural Control Name"
+	},
+	"links": {
+		"developer": [
+			{
+				"href": "links1.html",
+				"text": "Links 1 Text"
+			},
+			{
+				"href": "notSerializable.html",
+				"text": "[NOT SERIALIZABLE]"
+			}
+		],
+		"guidelines": [
+			{
+				"href": "links2.html",
+				"text": "Links 2 Text"
+			}
+		]
+	}
+}

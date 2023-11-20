@@ -1,7 +1,8 @@
 sap.ui.define([
 	"sap/ui/core/mvc/Controller",
+	"sap/m/ColumnListItem",
 	"./Utils"
-], function(Controller, Utils) {
+], function(Controller, ColumnListItem, Utils) {
 	"use strict";
 
 	return Controller.extend("sap.m.sample.TableDnD.SelectedProducts", {
@@ -33,7 +34,7 @@ sap.ui.define([
 			var iNewRank = oRanking.Default;
 			var oDroppedItem = oEvent.getParameter("droppedControl");
 
-			if (oDroppedItem instanceof sap.m.ColumnListItem) {
+			if (oDroppedItem instanceof ColumnListItem) {
 				// get the dropped row data
 				var sDropPosition = oEvent.getParameter("dropPosition");
 				var oDroppedItemContext = oDroppedItem.getBindingContext();
@@ -79,16 +80,18 @@ sap.ui.define([
 				oProductsModel.setProperty("Rank", iSelectedItemRank, oSiblingItemContext);
 
 				// after move select the sibling
-				oSelectedProductsTable.getItems()[iSiblingItemIndex].setSelected(true);
+				oSelectedProductsTable.getItems()[iSiblingItemIndex].setSelected(true).focus();
 			});
 		},
 
-		moveUp: function() {
+		moveUp: function(oEvent) {
 			this.moveSelectedItem("Up");
+			oEvent.getSource().focus();
 		},
 
-		moveDown: function() {
+		moveDown: function(oEvent) {
 			this.moveSelectedItem("Down");
+			oEvent.getSource().focus();
 		},
 
 		onBeforeOpenContextMenu: function(oEvent) {

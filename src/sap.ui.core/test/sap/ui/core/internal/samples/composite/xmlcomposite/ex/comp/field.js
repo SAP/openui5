@@ -2,7 +2,7 @@
  * ${copyright}
  */
 sap.ui.define([
-	'jquery.sap.global', 'sap/ui/core/XMLComposite'], function(jQuery, XMLComposite) {
+	'sap/ui/core/XMLComposite'], function(XMLComposite) {
 	"use strict";
 	var Field = XMLComposite.extend("sap.ui.core.internal.samples.composite.xmlcomposite.ex.comp.field", {
 		metadata: {
@@ -13,11 +13,11 @@ sap.ui.define([
 				},
 				value: {
 					type: "string",
-					defaultValue: "Default Value Input",
+					defaultValue: "Default Value Input"
 				}
 			}
 		},
 		fragment: "sap.ui.core.internal.samples.composite.xmlcomposite.ex.comp.field"
 	});
 	return Field;
-}, /* bExport= */ true);
+});

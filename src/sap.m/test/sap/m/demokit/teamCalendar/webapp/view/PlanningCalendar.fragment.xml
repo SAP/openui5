@@ -1,0 +1,92 @@
+<core:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:unified="sap.ui.unified"
+	xmlns:core="sap.ui.core">
+	<VBox>
+		<PlanningCalendar
+			id="PlanningCalendar"
+			startDate="{path: 'calendar>/startDate', formatter: '.myformatter.utcToLocalDateTime'}"
+			viewKey="Day"
+			rows="{calendar>/team}"
+			appointmentsVisualization="Filled"
+			showEmptyIntervalHeaders="false"
+			showWeekNumbers="true"
+			rowSelectionChange=".rowSelectionHandler"
+			startDateChange=".startDateChangeHandler"
+			viewChange=".viewChangeHandler">
+			<toolbarContent>
+				<Select id="PlanningCalendarTeamSelector"
+					change=".selectChangeHandler">
+					<core:Item
+						key="Team"
+						text="Team"/>
+				</Select>
+				<Button
+					id="PlanningCalendarCreateAppointmentButton"
+					text="Create"
+					press=".appointmentCreate"
+					tooltip="Create new appointment"/>
+				<Button
+					id="PlanningCalendarLegendButton"
+					icon="sap-icon://legend"
+					press=".openLegend"
+					tooltip="Open Planning Calendar legend"
+					ariaHasPopup="Dialog"/>
+			</toolbarContent>
+			<views>
+				<PlanningCalendarView
+					key="Day"
+					intervalType="Hour"
+					description="Day"
+					intervalsS="3"
+					intervalsM="6"
+					intervalsL="12"
+					showSubIntervals="true">
+				</PlanningCalendarView>
+				<PlanningCalendarView
+					key="Week"
+					intervalType="Week"
+					description="Week"
+					intervalsS="1"
+					intervalsM="2"
+					intervalsL="7"
+					showSubIntervals="true">
+				</PlanningCalendarView>
+				<PlanningCalendarView
+					key="OneMonth"
+					intervalType="OneMonth"
+					description="Month">
+				</PlanningCalendarView>
+			</views>
+			<rows>
+				<PlanningCalendarRow
+					icon="{ path: 'calendar>pic', formatter: '.myformatter.fixImagePath' }"
+					title="{calendar>name}"
+					text="{calendar>role}"
+					appointments="{path : 'calendar>appointments', templateShareable: true}"
+					intervalHeaders="{path: 'calendar>headers', templateShareable: true}">
+					<appointments>
+						<unified:CalendarAppointment
+							startDate="{ path: 'calendar>start', formatter: '.myformatter.utcToLocalDateTime' }"
+							endDate="{ path: 'calendar>end', formatter: '.myformatter.utcToLocalDateTime' }"
+							icon="{ path: 'calendar>pic', formatter: '.myformatter.fixImagePath' }"
+							title="{calendar>title}"
+							text="{calendar>info}"
+							type="{calendar>type}"
+							tentative="{calendar>tentative}">
+						</unified:CalendarAppointment>
+					</appointments>
+					<intervalHeaders>
+						<unified:CalendarAppointment
+							startDate="{ path: 'calendar>start', formatter: '.myformatter.utcToLocalDateTime' }"
+							endDate="{ path: 'calendar>end', formatter: '.myformatter.utcToLocalDateTime' }"
+							icon="{ path: 'calendar>pic', formatter: '.myformatter.fixImagePath' }"
+							title="{calendar>title}"
+							type="{calendar>type}">
+						</unified:CalendarAppointment>
+					</intervalHeaders>
+				</PlanningCalendarRow>
+			</rows>
+		</PlanningCalendar>
+	</VBox>
+</core:FragmentDefinition>

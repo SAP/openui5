@@ -1,0 +1,63 @@
+<mvc:View
+	class="sapUiSizeCompact"
+	controllerName="sap.ui.core.sample.odata.v4.Ancestry.Main"
+	xmlns="sap.ui.table"
+	xmlns:m="sap.m"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:rm="sap.ui.table.rowmodes">
+
+	<TreeTable id="table" ariaLabelledBy="title"
+		rows="{path : '/SADL_V_RS_Ancestry_4_Hier', parameters : {$count : true}, suspended : true}"
+		selectionMode="None" threshold="0">
+		<extension>
+			<m:Toolbar design="Transparent" class="sapMTBHeader-CTX">
+				<m:Title id="title" level="H1" text="{header>$count} Ancestors"/>
+				<m:Button icon="sap-icon://excel-attachment" press="onExport"
+					tooltip="Export To Spreadsheet"/>
+				<m:ToolbarSpacer/>
+				<m:SearchField placeholder="Hobby contains..." search="onFilter"
+					value="{ui>/sFilter}" width="40%"/>
+			</m:Toolbar>
+		</extension>
+		<rowMode>
+			<rm:Interactive rowCount="5" minRowCount="2"/>
+		</rowMode>
+		<Column>
+			<m:Label text="ID"/>
+			<template>
+				<m:Text text="{id}" wrapping="false"/>
+			</template>
+		</Column>
+		<Column>
+			<m:Label text="Parent's ID"/>
+			<template>
+				<m:Text text="{my_parent_id}" wrapping="false"/>
+			</template>
+		</Column>
+		<Column>
+			<m:Label text="First Name"/>
+			<template>
+				<m:Text text="{first_name}" wrapping="false"/>
+			</template>
+		</Column>
+		<Column>
+			<m:Label text="Last Name"/>
+			<template>
+				<m:Text text="{last_name}" wrapping="false"/>
+			</template>
+		</Column>
+		<Column>
+			<m:Button icon="{ui>/sIcon}" iconFirst="false" press="onSort" text="Date Of Birth"/>
+			<template>
+				<m:Text text="{date_of_birth}" wrapping="false"/>
+			</template>
+		</Column>
+		<Column>
+			<m:Label text="Hobby"/>
+			<template>
+				<m:Text text="{hobby}" wrapping="false"/>
+			</template>
+		</Column>
+	</TreeTable>
+
+</mvc:View>

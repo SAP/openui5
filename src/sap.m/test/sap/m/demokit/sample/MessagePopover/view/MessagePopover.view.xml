@@ -1,0 +1,23 @@
+<mvc:View
+		controllerName="sap.m.sample.MessagePopover.controller.MessagePopover"
+		height="100%"
+		xmlns:mvc="sap.ui.core.mvc"
+		xmlns="sap.m">
+	<Page
+			showHeader="false">
+		<content>
+
+		</content>
+		<footer>
+			<OverflowToolbar>
+				<Button id="messagePopoverBtn"
+					icon="{ path: '/', formatter: '.buttonIconFormatter' }"
+					type="{ path: '/', formatter: '.buttonTypeFormatter' }"
+					text= "{path: '/', formatter: '.highestSeverityMessages' }"
+					press=".handleMessagePopoverPress"
+					ariaHasPopup="Dialog"/>
+				<ToolbarSpacer/>
+			</OverflowToolbar>
+		</footer>
+	</Page>
+</mvc:View>

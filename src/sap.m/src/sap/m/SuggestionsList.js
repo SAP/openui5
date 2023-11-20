@@ -3,15 +3,19 @@
  */
 
 // Provides control sap.m.SuggestionsList.
-sap.ui.define(['./library', 'sap/ui/core/Control'],
-	function(library, Control) {
+sap.ui.define([
+	'./library',
+	'./SuggestionsListRenderer',
+	'sap/ui/core/Control',
+	"sap/ui/core/RenderManager",
+	"sap/ui/core/Element"
+], function(library, SuggestionsListRenderer, Control, RenderManager, Element) {
 		"use strict";
 
 		//
 		// SuggestionsList has to be used exclusively by Suggest.js
 		//
 		var SuggestionsList = Control.extend("sap.m.SuggestionsList", {
-
 			metadata: {
 
 				library: "sap.m",
@@ -24,41 +28,7 @@ sap.ui.define(['./library', 'sap/ui/core/Control'],
 					ariaLabelledBy: { type: "sap.ui.core.Control", multiple: true, singularName: "ariaLabelledBy" }
 				}
 			},
-
-			renderer: {
-				render: function(oRm, oList) {
-					oRm.write("<ul");
-					oRm.writeControlData(oList);
-					oRm.addClass("sapMSuL");
-					oRm.addClass("sapMSelectList");
-					oRm.writeClasses();
-					oRm.writeAccessibilityState({
-						role: "listbox",
-						"multiselectable": "false"
-					});
-					oRm.addStyle("width", oList.getWidth());
-					oRm.addStyle("max-width", oList.getMaxWidth());
-					oRm.writeStyles();
-					oRm.write(">");
-
-					this.renderItems(oRm, oList);
-
-					oRm.write("</ul>");
-				},
-
-				renderItems: function(oRm, oList) {
-					var searchValue;
-					var selectedIndex = oList.getSelectedItemIndex();
-					try {
-						searchValue = sap.ui.getCore().byId(oList.getParentInput()).getValue();
-					} catch (e) {
-						searchValue = "";
-					}
-					oList.getItems().forEach(function(item, index) {
-						item.render(oRm, item, searchValue, index === selectedIndex);
-					});
-				}
-			}
+			renderer: SuggestionsListRenderer
 		});
 
 		SuggestionsList.prototype.init = function() {
@@ -78,7 +48,7 @@ sap.ui.define(['./library', 'sap/ui/core/Control'],
 
 		SuggestionsList.prototype.getItems = function(){
 			try {
-				return sap.ui.getCore().byId(this.getParentInput()).getSuggestionItems();
+				return Element.getElementById(this.getParentInput()).getSuggestionItems();
 			} catch (e) {
 				return [];
 			}
@@ -89,7 +59,7 @@ sap.ui.define(['./library', 'sap/ui/core/Control'],
 			var rm;
 			var domRef = this.getDomRef();
 			if (domRef) {
-				rm = sap.ui.getCore().createRenderManager();
+				rm = new RenderManager().getInterface();
 				this.getRenderer().renderItems(rm, this);
 				rm.flush(domRef);
 				rm.destroy();
@@ -104,11 +74,11 @@ sap.ui.define(['./library', 'sap/ui/core/Control'],
 			var index;
 			var item;
 			var itemId;
-			var parentInput = sap.ui.getCore().byId(this.getParentInput());
-			var descendantAttr = "aria-activedecendant";
+			var parentInput = Element.getElementById(this.getParentInput());
+			var descendantAttr = "aria-activedescendant";
 
 			// selectByIndex(null || undefined || -1) -> remove selection
-			if (isNaN(parseInt(iIndex, 10))) {
+			if (isNaN(parseInt(iIndex))) {
 				iIndex = -1;
 				bRelative = false;
 			}
@@ -142,16 +112,51 @@ sap.ui.define(['./library', 'sap/ui/core/Control'],
 			if (parentInput) {
 				if (index >= 0) {
 					item = parentInput.getSuggestionItems()[index];
-					itemId = item && item.getId();
+
+					if (item) {
+						itemId = item.getId();
+						this._scrollToItem(item);
+					}
 				}
 				if (itemId) {
 					parentInput.$("I").attr(descendantAttr, itemId);
 				} else {
 					parentInput.$("I").removeAttr(descendantAttr);
+					parentInput.$("SuggDescr").text("");
 				}
 			}
 
 			return this._iSelectedItem;
+		};
+
+		/**
+		 * Scroll to the item if it is not visible on the popover.
+		 *
+		 * @private
+		 * @param {object} oItem The item to scroll to.
+		 */
+		SuggestionsList.prototype._scrollToItem = function(oItem) {
+			var oPopoverDomRef = this.getParent().$().find(".sapMPopoverCont")[0],
+				oPopoverRect,
+				oItemRect,
+				iTop,
+				iBottom;
+
+			if (!oItem || !oItem.getDomRef() || !oPopoverDomRef) {
+				return;
+			}
+
+			oItemRect = oItem.getDomRef().getBoundingClientRect();
+			oPopoverRect = oPopoverDomRef.getBoundingClientRect();
+
+			// If the item is outside of the popover scroll to it.
+			iTop = oPopoverRect.top - oItemRect.top;
+			iBottom = oItemRect.bottom - oPopoverRect.bottom;
+			if (iTop > 0) {
+				oPopoverDomRef.scrollTop = Math.max(oPopoverDomRef.scrollTop - iTop, 0);
+			} else if (iBottom > 0) {
+				oPopoverDomRef.scrollTop = oPopoverDomRef.scrollTop + iBottom;
+			}
 		};
 
 		SuggestionsList.prototype.getSelectedItemIndex = function(){

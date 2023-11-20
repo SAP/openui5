@@ -1,0 +1,92 @@
+{
+  "1.108.0": {
+    "date": "October 2022",
+    "notes": [
+      {
+        "id": "502291a06af85b377fd074797e1544775993fd5b",
+        "type": "FIX",
+        "text": " sap.f.GridContainer: Padding no longer breaks keyboard navigation",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280125231"
+          }
+        ]
+      },
+      {
+        "id": "880344966b2e09f14666df812ca359efe6233afa",
+        "type": "FEATURE",
+        "text": " Integration card: Analytical card now has loading placeholder"
+      },
+      {
+        "id": "88ad5dd1a75cc9fecda28df683a9cbe0450f9872",
+        "type": "FIX",
+        "text": " sap.f.SidePanel: alignment with Visual Specification",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270142105"
+          }
+        ]
+      },
+      {
+        "id": "a186d09625fd2bc689bd83bba8aaad801f0cf990",
+        "type": "FEATURE",
+        "text": " Integration Cards: Footer can be hidden"
+      },
+      {
+        "id": "a8fdc078a00234f70695d56787ef9dd81ac4b252",
+        "type": "FIX",
+        "text": " sap.f.SidePanel: bugfixes",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      },
+      {
+        "id": "b108d6b6b530eec11146786be4d8092c341526bd",
+        "type": "FEATURE",
+        "text": " sap.f.SidePanel: new control (initial implementation)"
+      },
+      {
+        "id": "af275cdef3b59b580c3b005da15308a3c65754ba",
+        "type": "FIX",
+        "text": " Integration Cards: Align bar charts in list card"
+      },
+      {
+        "id": "a086896d58ec9dc2d16b24076931370f978159a1",
+        "type": "FIX",
+        "text": " Integration Cards: Page number is reset after data refresh or filtering"
+      },
+      {
+        "id": "73828b320352e3c909546a8e798cf9e733a9c20a",
+        "type": "FIX",
+        "text": " Integration cards: Footer in Object card is now correctly aligned",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280170159"
+          }
+        ]
+      },
+      {
+        "id": "932010d607bfcf2106d2316e0057a42a5c14087e",
+        "type": "FIX",
+        "text": " sap.ui.integration.widgets.Card: Added new \"visible\" property to the card header icon",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280138542"
+          }
+        ]
+      },
+      {
+        "id": "4b60057653c83229bb3af18437947025d44bba83",
+        "type": "FEATURE",
+        "text": " Integration Cards: Header can be hidden"
+      }
+    ]
+  }
+}

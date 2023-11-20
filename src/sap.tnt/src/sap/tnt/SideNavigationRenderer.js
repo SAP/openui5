@@ -2,119 +2,130 @@
  * ${copyright}
  */
 
-sap.ui.define([],
-    function () {
-        'use strict';
+sap.ui.define([
+	"sap/ui/core/Lib"
+], function (Lib) {
+	"use strict";
 
-        /**
-         * SideNavigation renderer.
-         * @namespace
-         */
-        var SideNavigationRenderer = {};
+	/**
+	 * SideNavigation renderer.
+	 * @namespace
+	 */
+	const SideNavigationRenderer = {
+		apiVersion: 2
+	};
 
-        /**
-         * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
-         *
-         * @param {sap.ui.core.RenderManager}
-         *          rm the RenderManager that can be used for writing to the render output buffer
-         * @param {sap.ui.core.Control}
-         *          control an object representation of the control that should be rendered
-         */
-        SideNavigationRenderer.render = function (rm, control) {
-            this.startSideNavigation(rm, control);
+	// load resource bundle
+	const oRB = Lib.getResourceBundleFor("sap.tnt");
 
-            this.renderArrowUp(rm, control);
+	/**
+	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
+	 *
+	 * @param {sap.ui.core.RenderManager} oRM the RenderManager that can be used for writing to the render output buffer
+	 * @param {sap.tnt.SideNavigation} oControl an object representation of the control that should be rendered
+	 */
+	SideNavigationRenderer.render = function (oRM, oControl) {
+		this.startSideNavigation(oRM, oControl);
 
-            this.renderItem(rm, control);
+		this.renderFlexibleList(oRM, oControl);
+		this.renderFixedList(oRM, oControl);
 
-            this.renderArrowDown(rm, control);
+		this.renderFooter(oRM, oControl);
 
-            this.renderFixedItem(rm, control);
+		this.endSideNavigation(oRM);
+	};
 
-            this.renderFooter(rm, control);
+	SideNavigationRenderer.startSideNavigation = function (oRM, oControl) {
+		const bExpanded = oControl.getExpanded(),
+			sAriaLabel = oControl.getAriaLabel();
 
-            this.endSideNavigation(rm, control);
-        };
+		oRM.openStart("nav", oControl)
+			.class("sapTntSideNavigation")
+			.class("sapContrast")
+			.class("sapContrastPlus")
+			.accessibilityState(oControl, {
+				roledescription: oRB.getText("SIDENAVIGATION_ROLE_DESCRIPTION")
+			})
+			.attr("data-sap-ui-fastnavgroup", "true"); // Define group for F6 handling
 
-        SideNavigationRenderer.startSideNavigation = function (rm, control) {
-            var itemAggregation = control.getAggregation('item');
-            var fixedItemAggregation = control.getAggregation('fixedItem');
-            var isExpanded = control.getExpanded();
+		if (sAriaLabel) {
+			oRM.accessibilityState(oControl, {
+				label: sAriaLabel
+			});
+		}
 
-            rm.write('<div');
-            rm.writeControlData(control);
+		if (!bExpanded) {
+			oRM.class("sapTntSideNavigationNotExpanded")
+				.class("sapTntSideNavigationNotExpandedWidth");
+		}
 
-            rm.writeAttribute("role", 'navigation');
+		const sWidth = oControl.getWidth();
+		if (sWidth && bExpanded) {
+			oRM.style("width", sWidth);
+		}
 
-            rm.addClass('sapTntSideNavigation');
-            rm.addClass("sapContrast sapContrastPlus");
+		oRM.openEnd();
+	};
 
-            if (!isExpanded) {
-                rm.addClass('sapTntSideNavigationNotExpanded');
-                rm.addClass('sapTntSideNavigationNotExpandedWidth');
-            }
+	SideNavigationRenderer.endSideNavigation = function (oRM) {
+		oRM.close("nav");
+	};
 
-            if (!isExpanded && itemAggregation) {
-                itemAggregation.setExpanded(false);
-            }
+	SideNavigationRenderer.renderFlexibleList = function (oRM, oControl) {
+		var oFlexibleList = oControl.getItem();
 
-            if (!isExpanded && fixedItemAggregation) {
-                fixedItemAggregation.setExpanded(false);
-            }
+		oRM.openStart("div", `${oControl.getId()}-Flexible`)
+			.class("sapTntSideNavigationFlexible")
+			.openEnd();
 
-            rm.writeClasses();
-            rm.write('>');
-        };
+		oRM.openStart("div", `${oControl.getId()}-Flexible-Content`)
+			.class("sapTntSideNavigationFlexibleContent")
+			.openEnd();
 
-        SideNavigationRenderer.endSideNavigation = function (rm, control) {
-            rm.write('</div>');
-        };
+		oRM.renderControl(oFlexibleList);
 
-        SideNavigationRenderer.renderArrowUp = function (rm, control){
+		oRM.close("div")
+			.close("div");
+	};
 
-                rm.renderControl(control._getTopArrowControl());
-        };
+	SideNavigationRenderer.renderFixedList = function (oRM, oControl) {
+		var oFixedList = oControl.getFixedItem();
 
-        SideNavigationRenderer.renderArrowDown = function (rm, control){
+		if (!oFixedList) {
+			return;
+		}
 
-                rm.renderControl(control._getBottomArrowControl());
-        };
+		oRM.openStart("div")
+			.class("sapTntSideNavigationSeparator")
+			.accessibilityState({
+				role: "separator",
+				roledescription: oRB.getText("SIDENAVIGATION_ROLE_DESCRIPTION_SEPARATOR"),
+				orientation: "horizontal"
+			})
+			.openEnd()
+			.close("div");
 
-        SideNavigationRenderer.renderItem = function (rm, control) {
-            var itemAggregation = control.getAggregation('item');
+		oRM.openStart("div")
+			.class("sapTntSideNavigationFixed")
+			.openEnd();
 
-            rm.write('<div id="' + control.getId() + '-Flexible" tabindex="-1" class="sapTntSideNavigationFlexible sapTntSideNavigationVerticalScrolling">');
-            rm.write('<div id="' + control.getId() + '-Flexible-Content" class="sapTntSideNavigationFlexibleContent">');
-            rm.renderControl(itemAggregation);
-            rm.write('</div></div>');
-        };
+		oRM.renderControl(oFixedList);
 
-        SideNavigationRenderer.renderFixedItem = function (rm, control) {
-            var fixedItemAggregation = control.getAggregation('fixedItem');
+		oRM.close("div");
+	};
 
-            if (fixedItemAggregation === null) {
-                return;
-            }
+	SideNavigationRenderer.renderFooter = function (oRM, oControl) {
+		const oFooter = oControl.getAggregation("footer");
+		if (!oFooter) {
+			return;
+		}
 
-            if (fixedItemAggregation.getExpanded() === false) {
-                fixedItemAggregation.setExpanded(false);
-            }
+		oRM.openStart("footer")
+			.class("sapTntSideNavigationFooter")
+			.openEnd()
+			.renderControl(oFooter)
+			.close("footer");
+	};
 
-            rm.write('<div class="sapTntSideNavigationSeparator" role="separator" aria-orientation="horizontal"></div>');
-
-            rm.write('<div class="sapTntSideNavigationFixed">');
-            rm.renderControl(fixedItemAggregation);
-            rm.write('</div>');
-        };
-
-        SideNavigationRenderer.renderFooter = function (rm, control) {
-            if (control.getAggregation('footer')) {
-                rm.write('<footer class="sapTntSideNavigationFooter">');
-                rm.renderControl(control.getAggregation('footer'));
-                rm.write('</footer>');
-            }
-        };
-
-        return SideNavigationRenderer;
-
-    }, /* bExport= */ true);
+	return SideNavigationRenderer;
+}, /* bExport= */ true);

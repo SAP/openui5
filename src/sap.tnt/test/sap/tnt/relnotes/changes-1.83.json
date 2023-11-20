@@ -1,0 +1,18 @@
+{
+  "1.83.0": {
+    "date": "September 2020",
+    "notes": [
+      {
+        "id": "792a6c0024a0b9d510586bc91a4691907cd33af2",
+        "type": "FIX",
+        "text": " sap.tnt.NavigationList: Item count is read only once",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080337425"
+          }
+        ]
+      }
+    ]
+  }
+}

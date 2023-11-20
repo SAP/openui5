@@ -1,0 +1,82 @@
+{
+	"d" : {
+		"__metadata" : {
+			"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='106',ItemPosition='030')",
+			"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='106',ItemPosition='030')",
+			"type" : "GWSAMPLE_BASIC.SalesOrderLineItem"
+		},
+		"ToHeader" : {
+			"__metadata" : {
+				"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SalesOrderSet('106')",
+				"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SalesOrderSet('106')",
+				"type" : "GWSAMPLE_BASIC.SalesOrder"
+			},
+			"SalesOrderID" : "106",
+			"Note" : "Test Case VI",
+			"NoteLanguage" : "EN",
+			"CustomerID" : "0100000009",
+			"CustomerName" : "Telecomunicaciones Star",
+			"CurrencyCode" : "EUR",
+			"GrossAmount" : "6825.84",
+			"NetAmount" : "1105.70",
+			"TaxAmount" : "210.08",
+			"LifecycleStatus" : "N",
+			"LifecycleStatusDescription" : "New",
+			"BillingStatus" : "",
+			"BillingStatusDescription" : "Initial",
+			"DeliveryStatus" : "",
+			"DeliveryStatusDescription" : "Initial",
+			"CreatedAt" : "\/Date(1593640800000)\/",
+			"ChangedAt" : "\/Date(1594018453014)\/",
+			"ToBusinessPartner" : {
+				"__deferred" : {
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SalesOrderSet('106')/ToBusinessPartner"
+				}
+			},
+			"ToLineItems" : {
+				"__deferred" : {
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SalesOrderSet('106')/ToLineItems"
+				}
+			}
+		},
+		"ToProduct" : {
+			"__metadata" : {
+				"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/ProductSet('HT-1000')",
+				"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/ProductSet('HT-1000')",
+				"type" : "GWSAMPLE_BASIC.Product",
+				"etag" : "W/\"datetime'2020-07-02T15%3A44%3A09.0000000'\""
+			},
+			"ProductID" : "HT-1000",
+			"TypeCode" : "PR",
+			"Category" : "Notebooks",
+			"Name" : "Notebook Basic 15",
+			"NameLanguage" : "EN",
+			"Description" : "Notebook Basic 15 with 2,80 GHz quad core, 15\" LCD, 4 GB DDR3 RAM, 500 GB Hard Disc, Windows 8 Pro",
+			"DescriptionLanguage" : "EN",
+			"SupplierID" : "0100000046",
+			"SupplierName" : "SAP",
+			"TaxTarifCode" : 1,
+			"MeasureUnit" : "EA",
+			"WeightMeasure" : "4.200",
+			"WeightUnit" : "KG",
+			"CurrencyCode" : "EUR",
+			"Price" : "956.00",
+			"Width" : "30.000",
+			"Depth" : "18.000",
+			"Height" : "3.000",
+			"DimUnit" : "CM",
+			"CreatedAt" : "\/Date(1593704649000)\/",
+			"ChangedAt" : "\/Date(1593704649000)\/",
+			"ToSupplier" : {
+				"__deferred" : {
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/ProductSet('HT-1000')/ToSupplier"
+				}
+			},
+			"ToSalesOrderLineItems" : {
+				"__deferred" : {
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/ProductSet('HT-1000')/ToSalesOrderLineItems"
+				}
+			}
+		}
+	}
+}

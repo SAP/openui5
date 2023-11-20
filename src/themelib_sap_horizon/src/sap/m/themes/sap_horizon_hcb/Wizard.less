@@ -1,0 +1,45 @@
+/* ================================== */
+/* CSS for control sap.m/Wizard       */
+/* Horizon High Contrast Black theme  */
+/* ================================== */
+
+.sapMWizard {
+	.sapMWizardStepContainer {
+		margin-top: @_sap_m_Wizard_NavHeight;
+	}
+
+	&.sapMWizardBgSolid .sapMWizardStepContainer {
+		background-color: @sapUiBaseBG;
+	}
+
+	&.sapMWizardBgList .sapMWizardStepContainer {
+		background-color: @sapUiBaseBG;
+	}
+
+	&.sapMWizardBgTransparent .sapMWizardStepContainer {
+		background-color: @sapUiBaseBG;
+	}
+}
+
+.sapMWizard .sapMWizardProgressNav {
+	box-shadow: @sapUiShadowHeader;
+}
+
+.sapMWizard {
+	overflow: hidden;
+}
+
+.sapMWizard .sapMWizardStep {
+	padding-bottom: 1rem;
+}
+
+.sapMWizard:not(.sapMWizardModePage) .sapMWizardLastActivatedStep {
+	min-height: ~"calc(100% - 3rem)";
+}
+
+html.sap-phone .sapMWizard .sapMWizardNextButtonVisible {
+	left: 2rem;
+	bottom: 3.5rem;
+	-webkit-transform: none;
+	transform: none;
+}

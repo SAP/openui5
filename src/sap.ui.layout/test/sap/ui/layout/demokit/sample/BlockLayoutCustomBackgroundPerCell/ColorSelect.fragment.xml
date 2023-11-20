@@ -1,0 +1,27 @@
+<core:FragmentDefinition xmlns="sap.m" xmlns:f="sap.ui.layout.form" xmlns:core="sap.ui.core">
+	<VBox>
+		<Label text="Cell Color Set" />
+		<Select selectedKey="{colorSet}">
+			<core:Item key="ColorSet1" text="ColorSet1" />
+			<core:Item key="ColorSet2" text="ColorSet2" />
+			<core:Item key="ColorSet3" text="ColorSet3" />
+			<core:Item key="ColorSet4" text="ColorSet4" />
+			<core:Item key="ColorSet5" text="ColorSet5" />
+			<core:Item key="ColorSet6" text="ColorSet6" />
+			<core:Item key="ColorSet7" text="ColorSet7" />
+			<core:Item key="ColorSet8" text="ColorSet8" />
+			<core:Item key="ColorSet9" text="ColorSet9" />
+			<core:Item key="ColorSet10" text="ColorSet10" />
+			<core:Item key="ColorSet11" text="ColorSet11 (transparent in SAP Horizon theme)" />
+		</Select>
+		<Label text="Cell Color Shade" />
+		<Select selectedKey="{colorShade}">
+			<core:Item key="ShadeA" text="ShadeA" />
+			<core:Item key="ShadeB" text="ShadeB" />
+			<core:Item key="ShadeC" text="ShadeC" />
+			<core:Item key="ShadeD" text="ShadeD" />
+			<core:Item key="ShadeE" text="ShadeE (only available for SAP Quartz and Horizon themes)" />
+			<core:Item key="ShadeF" text="ShadeF (only available for SAP Quartz and Horizon themes)" />
+		</Select>
+	</VBox>
+</core:FragmentDefinition>

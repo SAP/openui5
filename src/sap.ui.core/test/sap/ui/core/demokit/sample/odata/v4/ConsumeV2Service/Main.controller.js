@@ -3,9 +3,9 @@
  */
 
 sap.ui.define([
-	'sap/ui/core/mvc/Controller',
-	'sap/m/MessageBox'
-], function(Controller, MessageBox) {
+	"sap/m/MessageBox",
+	"sap/ui/core/mvc/Controller"
+], function (MessageBox, Controller) {
 	"use strict";
 
 	return Controller.extend("sap.ui.core.sample.odata.v4.ConsumeV2Service.Main", {

@@ -7,6 +7,7 @@
 	<VBox class="sapUiSmallMargin">
 		<PlanningCalendar
 			id="PC1"
+			stickyHeader="true"
 			showIntervalHeaders="true"
 			showEmptyIntervalHeaders="false"
 			appointmentsReducedHeight="true"
@@ -17,7 +18,18 @@
 			intervalSelect="handleIntervalSelect">
 			<toolbarContent>
 				<Title text="Title" titleStyle="H4"/>
-				<ToolbarSpacer/>
+				<ToggleButton
+					id="MultiSelect"
+					icon="sap-icon://select-appointments"
+					tooltip="Enable multiple appointments selection"
+					press=".onPress">
+					<layoutData>
+						<OverflowToolbarLayoutData priority="NeverOverflow"/>
+					</layoutData>
+					<customData>
+						<BadgeCustomData key="badge"/>
+					</customData>
+				</ToggleButton>
 				<Select
 						change="handleSortChange"
 						width="230px">
@@ -32,8 +44,8 @@
 					icon="{pic}"
 					title="{name}"
 					text="{role}"
-					appointments="{path : 'appointments', templateShareable: 'true'}"
-					intervalHeaders="{path: 'headers', templateShareable: 'true'}">
+					appointments="{path : 'appointments', templateShareable: false}"
+					intervalHeaders="{path: 'headers', templateShareable: false}">
 					<appointments>
 						<unified:CalendarAppointment
 							startDate="{start}"

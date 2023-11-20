@@ -1,23 +1,42 @@
-/*
- * ! ${copyright}
+/*!
+ * ${copyright}
  */
 
 // Provides the Design Time Metadata for the sap.ui.fl.variants.VariantManagement control.
-sap.ui.define([], function() {
+sap.ui.define([
+	"sap/ui/core/Lib",
+	"sap/ui/fl/apply/api/ControlVariantApplyAPI",
+	"sap/ui/fl/Utils"
+], function(
+	Lib,
+	ControlVariantApplyAPI,
+	flUtils
+) {
 	"use strict";
+	var fnSetControlAttributes = function(oVariantManagement, bDesignTimeMode) {
+		var oAppComponent = flUtils.getAppComponentForControl(oVariantManagement);
+		var sControlId = oVariantManagement.getId();
+		var oModel = oAppComponent.getModel(ControlVariantApplyAPI.getVariantModelName());
+		var sVariantManagementReference = oAppComponent.getLocalId(sControlId) || sControlId;
+
+		if (!oModel) {
+			return;
+		}
+
+		if (bDesignTimeMode) {
+			oModel.waitForVMControlInit(sVariantManagementReference).then(function() {
+			    oModel.setModelPropertiesForControl(sVariantManagementReference, bDesignTimeMode, oVariantManagement);
+			    oModel.checkUpdate(true);
+		    });
+		} else {
+			oModel.setModelPropertiesForControl(sVariantManagementReference, bDesignTimeMode, oVariantManagement);
+			oModel.checkUpdate(true);
+		}
+	};
 	return {
-		domRef: function(oControl) {
-			return oControl.getTitle().getDomRef("inner");
-		},
 		annotations: {},
 		properties: {
-			showExecuteOnSelection: {
-				ignore: false
-			},
 			showSetAsDefault: {
-				ignore: false
-			},
-			manualVariantKey: {
 				ignore: false
 			},
 			inErrorState: {
@@ -30,9 +49,57 @@ sap.ui.define([], function() {
 				ignore: false
 			},
 			updateVariantInURL: {
+				ignore: true
+			},
+			resetOnContextChange: {
+				ignore: true
+			},
+			executeOnSelectionForStandardDefault: {
+				ignore: false
+			},
+			displayTextForExecuteOnSelectionForStandardVariant: {
+				ignore: false
+			},
+			headerLevel: {
 				ignore: false
 			}
 		},
-		customData: {}
+		variantRenameDomRef(oVariantManagement) {
+			return oVariantManagement.getTitle().getDomRef("inner");
+		},
+		customData: {},
+		tool: {
+			start(oVariantManagement) {
+				// In personalization mode the variant management overlay cannot be selected
+				var bDesignTimeMode = true;
+				fnSetControlAttributes(oVariantManagement, bDesignTimeMode);
+				oVariantManagement.enteringDesignMode();
+			},
+			stop(oVariantManagement) {
+				var bDesignTimeMode = false;
+				fnSetControlAttributes(oVariantManagement, bDesignTimeMode);
+				oVariantManagement.leavingDesignMode();
+			}
+		},
+		actions: {
+			controlVariant(oVariantManagement) {
+				var oAppComponent = flUtils.getAppComponentForControl(oVariantManagement);
+				var sControlId = oVariantManagement.getId();
+				var oModel = oAppComponent.getModel(ControlVariantApplyAPI.getVariantModelName());
+				var sVariantManagementReference = oAppComponent.getLocalId(sControlId) || sControlId;
+				return {
+					validators: [
+						"noEmptyText",
+						{
+							validatorFunction(sNewText) {
+								var iDuplicateCount = oModel._getVariantTitleCount(sNewText, sVariantManagementReference) || 0;
+								return iDuplicateCount === 0;
+							},
+							errorMessage: Lib.getResourceBundleFor("sap.m").getText("VARIANT_MANAGEMENT_ERROR_DUPLICATE")
+						}
+					]
+				};
+			}
+		}
 	};
-}, /* bExport= */false);
+});

@@ -1,0 +1,23 @@
+{
+	"sap.app": {
+		"id": "cards.performance",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "cards.performance.view.Main",
+			"type": "XML",
+			"async": true
+		},
+		"dependencies": {
+			"libs": {
+				"sap.f": {},
+				"sap.m": {},
+				"sap.ui.core": {},
+				"sap.ui.integration": {}
+			}
+		}
+	}
+}

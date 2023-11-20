@@ -1,23 +1,24 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(["sap/ui/core/library"],
-	function(coreLibrary) {
+sap.ui.define(["sap/base/i18n/Localization", "sap/ui/core/library", "sap/ui/core/Locale"],
+	function(Localization, coreLibrary, Locale) {
 	"use strict";
 
 
 	// shortcut for sap.ui.core.TextDirection
 	var TextDirection = coreLibrary.TextDirection;
 
-
+	// shortcut for sap.ui.core.aria.HasPopup
+	var AriaHasPopup = coreLibrary.aria.HasPopup;
 	/**
 	 * ObjectAttribute renderer.
 	 * @namespace
 	 */
 	var ObjectAttributeRenderer = {
+		apiVersion: 2,
 		MAX_LINES: {
-			SINGLE_LINE: 1,
-			MULTI_LINE: 2
+			SINGLE_LINE: 1
 		}
 	};
 
@@ -25,89 +26,136 @@ sap.ui.define(["sap/ui/core/library"],
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
 	 *
 	 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer
-	 * @param {sap.ui.core.Control} oOA An object representation of the control that should be rendered
+	 * @param {sap.m.ObjectAttribute} oOA An object representation of the control that should be rendered
 	 */
 	ObjectAttributeRenderer.render = function(oRm, oOA) {
 		var oParent = oOA.getParent(),
-			sTooltip = oOA.getTooltip_AsString();
+			sTooltip = oOA.getTooltip_AsString(),
+			sTextDir = oOA.getTextDirection();
 
+		oRm.openStart("div", oOA);
 		if (oOA._isEmpty()) {
+			oRm.class("sapMObjectAttributeDiv");
+			oRm.class("sapUiHidden");
+			oRm.openEnd();
+			oRm.close("div");
 			return;
 		}
 
-		oRm.write("<div");
-		oRm.writeControlData(oOA);
-		oRm.addClass("sapMObjectAttributeDiv");
-		// add tabindex, "active" class and ARIA only on a simulated link
-		if (oOA._isSimulatedLink()) {
-			oRm.addClass("sapMObjectAttributeActive");
-			oRm.writeAttribute("tabindex", "0");
-			oRm.writeAccessibilityState(oOA, {
-				role: "link"
-			});
+		oRm.class("sapMObjectAttributeDiv");
+
+		if (sTextDir !== TextDirection.Inherit) {
+			oRm.attr("dir", sTextDir.toLowerCase());
 		}
-		oRm.writeClasses();
+
+		// add tabindex, "active" class and ARIA only when the ObjectAttribute is clickable
+		// e.g. when is active or the CustomContent is sap.m.Link
+		if (oOA._isClickable()) {
+			oRm.class("sapMObjectAttributeActive");
+			if (!oOA.getTitle() && oOA.getText()) {
+			// in case of title only or text only, allow 100% of width to be taken
+				oRm.class("sapMObjectAttributeTextOnly");
+			}
+		}
+
 
 		if (sTooltip) {
-			oRm.writeAttributeEscaped("title", sTooltip);
+			oRm.attr("title", sTooltip);
 		}
 
-		oRm.write(">");
+		oRm.openEnd();
 
-		// If the attribute is active and there is no CustomContent only the "text" should be clickable, so render title, colon and text in different spans
-		// For the ObjectHeader the rendering of the parts of the ObjectAttribute is always in separate spans
-		if (oOA.getActive() && !oOA.getCustomContent() || (oParent instanceof sap.m.ObjectHeader)) {
+		// If the attribute is link (active or customContent is Link) only the "text" should be clickable,
+		// so render title, colon and text in different spans.
+		// For the ObjectHeader the rendering of the parts of the ObjectAttribute is always in separate spans, even when it is not active.
+		if (oOA._isClickable() || (oParent && oParent.isA("sap.m.ObjectHeader"))) {
 			this.renderActiveTitle(oRm, oOA);
 			this.renderActiveText(oRm, oOA, oParent);
 		} else {
 			oRm.renderControl(oOA._getUpdatedTextControl());
+			if (oOA._bEmptyIndicatorMode) {
+				oRm.renderControl(oOA.getAggregation("_textControl"));
+			}
 		}
-		oRm.write("</div>");
+		oRm.close("div");
 	};
 
-	ObjectAttributeRenderer.renderActiveTitle = function (oRm, oOA) {
+	ObjectAttributeRenderer.renderActiveTitle = function(oRm, oOA) {
+		var sColon,
+			bRenderBDI = oOA.getTextDirection() === TextDirection.Inherit;
+
 		if (!oOA.getProperty("title")) {
 			return;
 		}
-		oRm.write("<span id=\"" + oOA.getId() + "-title\"");
-		oRm.addClass("sapMObjectAttributeTitle");
-		oRm.writeClasses();
-		oRm.write(">");
-		oRm.writeEscaped(oOA.getProperty("title"));
-		oRm.write("</span>");
-		oRm.write("<span id=\"" + oOA.getId() + "-colon\"");
-		oRm.addClass("sapMObjectAttributeColon");
-		oRm.writeClasses();
-		oRm.write(">");
-		oRm.write(":&nbsp;");
-		oRm.write("</span>");
+
+		sColon = ": ";
+
+		oRm.openStart("span", oOA.getId() + "-title");
+		oRm.class("sapMObjectAttributeTitle");
+		oRm.openEnd();
+
+		if (bRenderBDI) {
+			oRm.openStart("bdi");
+			oRm.openEnd();
+		}
+
+		oRm.text(oOA.getProperty("title"));
+
+		if (bRenderBDI) {
+			oRm.close("bdi");
+		}
+
+		oRm.close("span");
+
+		oRm.openStart("span", oOA.getId() + "-colon");
+		oRm.class("sapMObjectAttributeColon");
+		oRm.openEnd();
+		if (new Locale(Localization.getLanguageTag()).getLanguage().toLowerCase() === "fr") {
+			sColon = " " + sColon;
+		}
+		oRm.text(sColon);
+		oRm.close("span");
 	};
 
 	ObjectAttributeRenderer.renderActiveText = function (oRm, oOA, oParent) {
-		var sTextDir = oOA.getTextDirection(),
-			oAttrAggregation = oOA.getAggregation("customContent");
+		var oAttrAggregation = oOA.getAggregation("customContent"),
+			bRenderBDI = oOA.getTextDirection() === TextDirection.Inherit,
+			sAriaHasPopup = (oOA.getAriaHasPopup() === AriaHasPopup.None) ? "" : oOA.getAriaHasPopup().toLowerCase(),
+			sAriaLabel = [oOA.getTitle(), oOA.getText()].join(" ").trim();
 
-		oRm.write("<span id=\"" + oOA.getId() + "-text\"");
-		oRm.addClass("sapMObjectAttributeText");
+		oRm.openStart("span", oOA.getId() + "-text");
+		oRm.class("sapMObjectAttributeText");
 
-		if (sTextDir && sTextDir !== TextDirection.Inherit) {
-			oRm.writeAttribute("dir", sTextDir.toLowerCase());
+		if (oOA._isSimulatedLink()) {
+			oRm.attr("tabindex", "0");
+			oRm.attr("role", "link");
+			oRm.attr("aria-label", sAriaLabel);
+			if (sAriaHasPopup) {
+				oRm.attr("aria-haspopup", sAriaHasPopup);
+			}
 		}
-
-		oRm.writeClasses();
-		oRm.write(">");
+		oRm.openEnd();
 
 		if (oAttrAggregation && oParent) {
-			if ((oParent instanceof sap.m.ObjectHeader) && !oOA.getParent().getResponsive()) {
-				oOA._setControlWrapping(oAttrAggregation, true, ObjectAttributeRenderer.MAX_LINES.MULTI_LINE);
+			if (oParent.isA("sap.m.ObjectHeader") && !oOA.getParent().getResponsive()) {
+				oOA._setControlWrapping(oAttrAggregation, true);
 			} else {
 				oOA._setControlWrapping(oAttrAggregation, false, ObjectAttributeRenderer.MAX_LINES.SINGLE_LINE);
 			}
 			oRm.renderControl(oAttrAggregation);
 		} else {
-			oRm.writeEscaped(oOA.getProperty("text"));
+			if (bRenderBDI) {
+				oRm.openStart("bdi");
+				oRm.openEnd();
+			}
+
+			oRm.text(oOA.getProperty("text"));
+
+			if (bRenderBDI) {
+				oRm.close("bdi");
+			}
 		}
-		oRm.write("</span>");
+		oRm.close("span");
 	};
 
 	return ObjectAttributeRenderer;

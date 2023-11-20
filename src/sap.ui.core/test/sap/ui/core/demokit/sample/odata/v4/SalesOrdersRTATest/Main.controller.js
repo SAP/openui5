@@ -2,58 +2,58 @@
  * ${copyright}
  */
 sap.ui.define([
-		'sap/m/Button',
-		'sap/m/Column',
-		'sap/m/Label',
-		'sap/m/Text',
-		"sap/ui/test/TestUtils"
-], function (Button, Column, Label, Text, TestUtils) {
+	"sap/base/util/extend",
+	"sap/m/Button",
+	"sap/m/Column",
+	"sap/m/Label",
+	"sap/m/Text",
+	"sap/ui/core/sample/odata/v4/SalesOrders/Main.controller"
+], function (extend, Button, Column, Label, Text, Controller) {
 	"use strict";
 
-	return sap.ui.controller("sap.ui.core.sample.odata.v4.SalesOrdersRTATest.Main", {
-
+	return Controller.extend("sap.ui.core.sample.odata.v4.SalesOrdersRTATest.Main", {
 		onInit : function () {
-			var bRealOData = TestUtils.isRealOData(),
-				oAdaptSalesOrdersButton = new Button({
-					enabled : bRealOData,
+			var oView,
+				that = this;
+
+			Controller.prototype.onInit.apply(this, arguments);
+
+			oView = this.getView();
+			this.iIdCounter = 0;
+			this.loadFragment({
+				name : "sap.ui.core.sample.odata.v4.SalesOrdersRTATest.AdaptDialog"
+			}).then(function () {
+				that.byId("salesOrderListToolbar").addContent(new Button({
 					icon : "sap-icon://settings",
-					id : "AdaptUISalesOrdersTable",
-					press : this.onAdaptSalesOrders.bind(this),
+					id : oView.createId("AdaptUISalesOrdersTable"),
+					press : that.onAdaptSalesOrders.bind(that),
 					tooltip : "Adapt Sales Orders Table"
-				});
-
-			oAdaptSalesOrdersButton.addDependent(sap.ui.xmlfragment(
-				"sap.ui.core.sample.odata.v4.SalesOrdersRTATest.AdaptDialog", this));
-			this.byId("SalesOrdersToolbar").addContent(oAdaptSalesOrdersButton);
-
-			this.byId("SalesOrderDetailsToolbar").addContent(new Button({
-				enabled : bRealOData,
-				icon : "sap-icon://settings",
-				id : "AdaptUISalesOrdersDetails",
-				press : this.onAdaptSODetails.bind(this),
-				tooltip : "Adapt Sales Order Details"
-			}));
-			this.byId("BusinessPartner").addContent(new Button({
-				enabled : bRealOData,
-				icon : "sap-icon://settings",
-				id : "AdaptUIBusinessPartner",
-				press : this.onAdaptBusinessPartner.bind(this),
-				tooltip : "Adapt Business Partner Table"
-			}));
-			this.byId("SalesOrderLineItemsTitleToolbar").addContent(new Button({
-				enabled : bRealOData,
-				icon : "sap-icon://settings",
-				id : "AdaptUISalesOrderLineItems",
-				press : this.onAdaptSalesOrderItems.bind(this),
-				tooltip : "Adapt Sales Order Line Items Table"
-			}));
+				}));
+				that.byId("salesOrderDetailsToolbar").addContent(new Button({
+					icon : "sap-icon://settings",
+					id : oView.createId("AdaptUISalesOrdersDetails"),
+					press : that.onAdaptSODetails.bind(that),
+					tooltip : "Adapt Sales Order Details"
+				}));
+				that.byId("SO_2_BP::detail").addContent(new Button({
+					icon : "sap-icon://settings",
+					id : oView.createId("AdaptUIBusinessPartner"),
+					press : that.onAdaptBusinessPartner.bind(that),
+					tooltip : "Adapt Business Partner Details"
+				}));
+				that.byId("lineItemsToolbar").addContent(new Button({
+					icon : "sap-icon://settings",
+					id : oView.createId("AdaptUISalesOrderLineItems"),
+					press : that.onAdaptSalesOrderItems.bind(that),
+					tooltip : "Adapt Sales Order Line Items Table"
+				}));
+			});
 		},
-
 
 		/**
 		 * Adapt the given container control like table or form
 		 *
-		 * @param {oControl} [oContainerControl]
+		 * @param {sap.m.Table|sap.ui.layout.form.SimpleForm} [oControl]
 		 *   The Container control
 		 * @param {number} [iStart]
 		 *   Index in the "items" or "content" aggregation of the container control: controls can be
@@ -113,7 +113,7 @@ sap.ui.define([
 						} else {
 							aNames.push(oBindingInfo.parts[0].path);
 						}
-					} else if (!oCell instanceof sap.m.Label){
+					} else if (!(oCell instanceof Label)) {
 						aNames.push("<Not a Text or Input control or composite binding>");
 					}
 					return aNames;
@@ -130,11 +130,11 @@ sap.ui.define([
 			for (sPropertyName in oEntityType) {
 				if (oEntityType[sPropertyName].$kind === "Property"
 						&& oEntityType[sPropertyName].$Type.startsWith("Edm.")) {
-					if (this.aDisplayedProperties.indexOf(sPropertyName) < 0) {
+					if (!this.aDisplayedProperties.includes(sPropertyName)) {
 						aProperties.push({
-							name: sPropertyName,
-							displayed: false,
-							enabled: true
+							name : sPropertyName,
+							displayed : false,
+							enabled : true
 						});
 					}
 				}
@@ -149,12 +149,12 @@ sap.ui.define([
 			if ((!oItemsBinding || oItemsBinding !== oRootBinding) && !oRootBinding.isSuspended()) {
 				oRootBinding.suspend();
 			}
-			sap.ui.getCore().byId("AdaptDialog").open();
+			oView.byId("AdaptDialog").open();
 		},
 
 		onAdaptBusinessPartner : function () {
-			var oControl = this.byId("SalesOrderDetails"),
-				iStart = oControl.getContent().indexOf(this.byId("BusinessPartner")) + 1;
+			var oControl = this.byId("SalesOrderList::detail"),
+				iStart = oControl.getContent().indexOf(this.byId("SO_2_BP::detail")) + 1;
 
 			this.adaptControl(oControl, iStart, undefined, "/BusinessPartnerList");
 		},
@@ -174,15 +174,15 @@ sap.ui.define([
 
 				// ensure template is not shared between old and new binding
 				delete oBindingInfo.template;
-				oControl.bindItems(jQuery.extend({}, oBindingInfo, {
+				oControl.bindItems(extend({}, oBindingInfo, {
 					// a root binding needs to be suspended initially
 					suspended : oItemsBinding === oItemsBinding.getRootBinding(),
 					template : oTemplate
 				}));
 				// Note: after re-creation of the binding, one has to set the new header context
 				//   for the $count binding in the title
-				if (oControl === that.byId("SalesOrders")) {
-					that.byId("SalesOrdersTitle").setBindingContext(
+				if (oControl === that.byId("SalesOrderList")) {
+					that.byId("salesOrderListTitle").setBindingContext(
 						oControl.getBinding("items").getHeaderContext());
 				}
 			}
@@ -192,11 +192,13 @@ sap.ui.define([
 						? that.sNavigationProperty + "/" + sPropertyPath
 						: sPropertyPath,
 					iIndex,
+					sTextId = "RTA_" + sPropertyPath + that.iIdCounter,
 					oText = new Text({
+						id : sTextId,
 						text : "{" + sBindingPath + "}"
 					});
 
-
+				that.iIdCounter += 1;
 				if (oItemsBinding) {
 					//TODO clarify: How to access template in change handler, there is no API?
 					oControl.getBindingInfo("items").template.addCell(oText);
@@ -205,7 +207,8 @@ sap.ui.define([
 				} else {
 					iIndex = that.iStart + that.aDisplayedProperties.length * 2;
 					oControl.insertContent(oText, iIndex);
-					oControl.insertContent(new Label({text : sPropertyPath}), iIndex);
+					oControl.insertContent(new Label({labelFor : sTextId, text : sPropertyPath}),
+						iIndex);
 				}
 				that.aDisplayedProperties.push(sPropertyPath);
 			}
@@ -236,17 +239,17 @@ sap.ui.define([
 		},
 
 		onAdaptSalesOrders : function () {
-			this.adaptControl(this.byId("SalesOrders"));
+			this.adaptControl(this.byId("SalesOrderList"));
 			this.getView().getModel("ui").setProperty("/bSalesOrderSelected", false);
 		},
 
 		onAdaptSalesOrderItems : function () {
-			this.adaptControl(this.byId("SalesOrderLineItems"));
+			this.adaptControl(this.byId("SO_2_SOITEM"));
 		},
 
 		onAdaptSODetails : function () {
-			var oControl = this.byId("SalesOrderDetails"),
-				iEnd = oControl.getContent().indexOf(this.byId("BusinessPartner"));
+			var oControl = this.byId("SalesOrderList::detail"),
+				iEnd = oControl.getContent().indexOf(this.byId("SO_2_BP::detail"));
 
 			this.adaptControl(oControl, 1, iEnd);
 		},
@@ -256,12 +259,13 @@ sap.ui.define([
 				oBinding = oControl.getBinding("items") // list binding
 					|| oControl.getObjectBinding() // context binding
 					|| oControl.getBindingContext().getBinding(), // parent binding
-				oRootBinding = oBinding.getRootBinding();
+				oRootBinding = oBinding.getRootBinding(),
+				oView = this.getView();
 
 			if (oRootBinding.isSuspended()) {
 				oRootBinding.resume();
 			}
-			sap.ui.getCore().byId("AdaptDialog").close();
+			oView.byId("AdaptDialog").close();
 		}
 	});
 });

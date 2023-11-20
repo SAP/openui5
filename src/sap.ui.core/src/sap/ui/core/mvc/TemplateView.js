@@ -4,20 +4,20 @@
 
 // Provides control sap.ui.core.mvc.TemplateView.
 sap.ui.define([
-	'jquery.sap.global',
-	'sap/ui/core/library',
-	'./View',
-	"./TemplateViewRenderer"
+	"./View",
+	"./TemplateViewRenderer",
+	"./ViewType",
+	"sap/base/Log"
 ],
-function(jQuery, library, View, TemplateViewRenderer) {
+function(View, TemplateViewRenderer, ViewType, Log) {
 "use strict";
-
-
-	// shortcut for enum(s)
-	var ViewType = library.mvc.ViewType;
 
 	/**
 	 * Constructor for a new mvc/TemplateView.
+	 *
+	 * <strong>Note:</strong> Application code shouldn't call the constructor directly, but rather use the
+	 * factory {@link sap.ui.templateview} or {@link sap.ui.core.mvc.View.create View.create} with type
+	 * {@link sap.ui.core.mvc.ViewType.Template Template}.
 	 *
 	 * @param {string} [sId] id for the new control, generated automatically if no id is given
 	 * @param {object} [mSettings] initial settings for the new control
@@ -30,14 +30,16 @@ function(jQuery, library, View, TemplateViewRenderer) {
 	 * @version ${version}
 	 *
 	 * @public
-	 * @deprecated Since version 1.56.0, use XMLView or JSView instead.
+	 * @deprecated Since version 1.56.0, use {@link sap.ui.core.mvc.XMLView} in combination with
+	 *             {@link topic:5ee619fc1370463ea674ee04b65ed83b XML Templating} instead.
 	 * @alias sap.ui.core.mvc.TemplateView
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
-	var TemplateView = View.extend("sap.ui.core.mvc.TemplateView", /** @lends sap.ui.core.mvc.TemplateView.prototype */ { metadata : {
-
-		library : "sap.ui.core"
-	}});
+	var TemplateView = View.extend("sap.ui.core.mvc.TemplateView", /** @lends sap.ui.core.mvc.TemplateView.prototype */ {
+		metadata : {
+			library : "sap.ui.core"
+		},
+		renderer: TemplateViewRenderer
+	});
 
 	(function(){
 
@@ -61,10 +63,12 @@ function(jQuery, library, View, TemplateViewRenderer) {
 		 * @public
 		 * @static
 		 * @return {sap.ui.core.mvc.TemplateView | undefined} the created TemplateView instance in the creation case, otherwise undefined
+		 * @deprecated since 1.56 use {@link sap.ui.core.mvc.XMLView} in combination with {@link topic:5ee619fc1370463ea674ee04b65ed83b XML Templating} instead
+		 * @ui5-global-only
 		 */
 		sap.ui.templateview = function(sId, vView) {
-			jQuery.sap.log.warning("sap.ui.core.mvc.TemplateView is deprecated. Use XMLView or JSView instead.");
-			return sap.ui.view(sId, vView, ViewType.Template);
+			Log.warning("sap.ui.core.mvc.TemplateView is deprecated. Use XMLView or JSView instead.");
+			return sap.ui.view(sId, vView, ViewType.Template); // legacy-relevant
 		};
 
 		/**
@@ -100,6 +104,10 @@ function(jQuery, library, View, TemplateViewRenderer) {
 		/**
 		 * Abstract method implementation.
 		 *
+		 * @param {object} mSettings settings for the view
+		 * @param {object.string} mSettings.viewData view data
+		 * @param {object.string} mSettings.viewName view name
+		 * @param {object.boolean} [mSettings.async] set the view to load a view resource asynchronously
 		 * @see sap.ui.core.mvc.View#initViewSettings
 		 *
 		 * @private

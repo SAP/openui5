@@ -3,10 +3,18 @@
  */
 
 // Provides control sap.ui.layout.form.ColumnLayout.
-sap.ui.define(['jquery.sap.global', 'sap/ui/layout/library', './FormLayout',
-               'sap/ui/Device', 'sap/ui/core/ResizeHandler', './ColumnLayoutRenderer'],
-	function(jQuery, library, FormLayout, Device, ResizeHandler, ColumnLayoutRenderer) {
+sap.ui.define([
+	'sap/ui/Device',
+	'sap/ui/core/ResizeHandler',
+	'sap/ui/layout/library',
+	'./FormLayout',
+	'./ColumnLayoutRenderer',
+	"sap/ui/thirdparty/jquery"
+],
+	function(Device, ResizeHandler, library, FormLayout, ColumnLayoutRenderer, jQuery) {
 	"use strict";
+
+	/* global ResizeObserver */
 
 	/**
 	 * Constructor for a new <code>sap.ui.layout.form.ColumnLayout</code>.
@@ -15,40 +23,40 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/library', './FormLayout',
 	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
-	 * The <code>ColumnLayout</code> control renders a <code>Form</code> control in a column-based responsive way.
-	 * Depending on its size, the <code>Form</code> control is divided into one or more columns.
+	 * The <code>ColumnLayout</code> control renders a {@link sap.ui.layout.form.Form Form} control in a column-based responsive way.
+	 * Depending on its size, the {@link sap.ui.layout.form.Form Form} control is divided into one or more columns.
 	 * (XL - max. 4 columns, L - max. 3 columns, M -  max. 2 columns and S - 1 column.)
 	 *
-	 * The <code>FormContainer</code> elements are spread out to the columns depending on the number of <code>FormContainer</code>
-	 * elements and their size. For example, if there are 4 columns and 2 <code>FormContainer</code> elements,
-	 * each <code>FormContainer</code> element will use 2 columns. If there are 3 columns and 2 <code>FormContainer</code> elements,
-	 * the larger one will use 2 columns, the smaller one 1 column. The size of a <code>FormContainer</code> element will be determined
-	 * based on the number of visible <code>FormElement</code> elements assigned to it.
-	 * If there are more <code>FormContainer</code> elements than columns, every <code>FormContainer</code> element uses only
-	 * one column. So the last row of the <code>Form</code> control will not be fully used.
+	 * The {@link sap.ui.layout.form.FormContainer FormContainer} elements are spread out to the columns depending on the number of {@link sap.ui.layout.form.FormContainer FormContainer}
+	 * elements and their size. For example, if there are 4 columns and 2 {@link sap.ui.layout.form.FormContainer FormContainer} elements,
+	 * each {@link sap.ui.layout.form.FormContainer FormContainer} element will use 2 columns. If there are 3 columns and 2 {@link sap.ui.layout.form.FormContainer FormContainer} elements,
+	 * the larger one will use 2 columns, the smaller one 1 column. The size of a {@link sap.ui.layout.form.FormContainer FormContainer} element will be determined
+	 * based on the number of visible {@link sap.ui.layout.form.FormElement FormElement} elements assigned to it.
+	 * If there are more {@link sap.ui.layout.form.FormContainer FormContainer} elements than columns, every {@link sap.ui.layout.form.FormContainer FormContainer} element uses only
+	 * one column. So the last row of the {@link sap.ui.layout.form.Form Form} control will not be fully used.
 	 *
-	 * The default size of the <code>FormContainer</code> element can be overwritten by using <code>ColumnContainerData</code>
-	 * as <code>LayoutData</code>. If one <code>FormContainer</code> element has <code>ColumnContainerData</code> set,
-	 * the size calculation of the other <code>FormContainer</code> elements might not lead to the expected result.
-	 * In this case, use <code>ColumnContainerData</code> also for the other <code>FormContainer</code> elements.
+	 * The default size of the {@link sap.ui.layout.form.FormContainer FormContainer} element can be overwritten by using {@link sap.ui.layout.form.ColumnContainerData ColumnContainerData}
+	 * as <code>LayoutData</code>. If one {@link sap.ui.layout.form.FormContainer FormContainer} element has {@link sap.ui.layout.form.ColumnContainerData ColumnContainerData} set,
+	 * the size calculation of the other {@link sap.ui.layout.form.FormContainer FormContainer} elements might not lead to the expected result.
+	 * In this case, use {@link sap.ui.layout.form.ColumnContainerData ColumnContainerData} also for the other {@link sap.ui.layout.form.FormContainer FormContainer} elements.
 	 *
-	 * The <code>FormElement</code> elements are spread out to the columns of a <code>FormContainer</code> element
+	 * The {@link sap.ui.layout.form.FormElement FormElement} elements are spread out to the columns of a {@link sap.ui.layout.form.FormContainer FormContainer} element
 	 * arranged in a newspaper-like order. The position of the labels and fields depends on the size of the used column.
 	 * If there is enough space, the labels are beside the fields, otherwise above the fields.
 	 *
-	 * The default size of a content control of a <code>FormElement</code> element can be overwritten
-	 * using <code>ColumnElementData</code> as <code>LayoutData</code>.
-	 * If one control assigned to a <code>FormElement</code> element has <code>ColumnElementData</code> set,
-	 * the size calculation of the other controls assigned to the <code>FormElement</code> element
+	 * The default size of a content control of a {@link sap.ui.layout.form.FormElement FormElement} element can be overwritten
+	 * using {@link sap.ui.layout.form.ColumnElementData ColumnElementData} as <code>LayoutData</code>.
+	 * If one control assigned to a {@link sap.ui.layout.form.FormElement FormElement} element has {@link sap.ui.layout.form.ColumnElementData ColumnElementData} set,
+	 * the size calculation of the other controls assigned to the {@link sap.ui.layout.form.FormElement FormElement} element
 	 * might not lead to the expected result.
-	 * In this case, use <code>ColumnElementData</code> for the other controls, assigned to the <code>FormElement</code> element, too.
+	 * In this case, use {@link sap.ui.layout.form.ColumnElementData ColumnElementData} for the other controls, assigned to the {@link sap.ui.layout.form.FormElement FormElement} element, too.
 	 *
-	 * The placement of the <code>FormElement</code> elements is made by the browser <code>column-count</code> logic.
+	 * The placement of the {@link sap.ui.layout.form.FormElement FormElement} elements is made by the browser <code>column-count</code> logic.
 	 * So this can be different in different browsers and lead in some cases to other results than might be expected.
 	 *
 	 * <b>Note:</b>
-	 * This control cannot be used stand-alone, it just renders a <code>Form</code> control,
-	 * so it must be assigned to a <code>Form</code> control using the <code>layout</code> aggregation.
+	 * This control cannot be used stand-alone, it just renders a {@link sap.ui.layout.form.Form Form} control,
+	 * so it must be assigned to a {@link sap.ui.layout.form.Form Form} control using the <code>layout</code> aggregation.
 	 * @extends sap.ui.layout.form.FormLayout
 	 * @version ${version}
 	 *
@@ -56,48 +64,53 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/library', './FormLayout',
 	 * @public
 	 * @since 1.56.0
 	 * @alias sap.ui.layout.form.ColumnLayout
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
-	var ColumnLayout = FormLayout.extend("sap.ui.layout.form.ColumnLayout", /** @lends sap.ui.layout.form.ColumnLayout.prototype */ { metadata : {
+	var ColumnLayout = FormLayout.extend("sap.ui.layout.form.ColumnLayout", /** @lends sap.ui.layout.form.ColumnLayout.prototype */ {
+		metadata : {
 
-		library : "sap.ui.layout",
-		properties : {
+			library : "sap.ui.layout",
+			properties : {
 
-			/**
-			 * Number of columns for extra-large size.
-			 *
-			 * The number of columns for extra-large size must not be smaller than the number of columns for large size.
-			 */
-			columnsXL : {type : "sap.ui.layout.form.ColumnsXL", group : "Appearance", defaultValue : 2},
+				/**
+				 * Number of columns for extra-large size.
+				 *
+				 * The number of columns for extra-large size must not be smaller than the number of columns for large size.
+				 */
+				columnsXL : {type : "sap.ui.layout.form.ColumnsXL", group : "Appearance", defaultValue : 2},
 
-			/**
-			 * Number of columns for large size.
-			 *
-			 * The number of columns for large size must not be smaller than the number of columns for medium size.
-			 */
-			columnsL : {type : "sap.ui.layout.form.ColumnsL", group : "Appearance", defaultValue : 2},
+				/**
+				 * Number of columns for large size.
+				 *
+				 * The number of columns for large size must not be smaller than the number of columns for medium size.
+				 */
+				columnsL : {type : "sap.ui.layout.form.ColumnsL", group : "Appearance", defaultValue : 2},
 
-			/**
-			 * Number of columns for medium size.
-			 */
-			columnsM : {type : "sap.ui.layout.form.ColumnsM", group : "Appearance", defaultValue : 1},
+				/**
+				 * Number of columns for medium size.
+				 */
+				columnsM : {type : "sap.ui.layout.form.ColumnsM", group : "Appearance", defaultValue : 1},
 
-			/**
-			 * Defines how many cells a label uses if the column is large.
-			 */
-			labelCellsLarge : {type : "sap.ui.layout.form.ColumnCells", group : "Appearance", defaultValue : 4},
+				/**
+				 * Defines how many cells a label uses if the column is large.
+				 */
+				labelCellsLarge : {type : "sap.ui.layout.form.ColumnCells", group : "Appearance", defaultValue : 4},
 
-			/**
-			 * Defines how many cells are empty at the end of a row.
-			 * This could be used to keep the fields small on large screens.
-			 */
-			emptyCellsLarge : {type : "sap.ui.layout.form.EmptyCells", group : "Appearance", defaultValue : 0}
-		}
-	}});
+				/**
+				 * Defines how many cells are empty at the end of a row.
+				 * This could be used to keep the fields small on large screens.
+				 */
+				emptyCellsLarge : {type : "sap.ui.layout.form.EmptyCells", group : "Appearance", defaultValue : 0}
+			}
+		},
+
+		renderer: ColumnLayoutRenderer
+	});
 
 	/* eslint-disable no-lonely-if */
 
 	ColumnLayout.prototype.init = function(){
+
+		FormLayout.prototype.init.apply(this, arguments);
 
 		this._iBreakPointTablet = Device.media._predefinedRangeSets[Device.media.RANGESETS.SAP_STANDARD_EXTENDED].points[0];
 		this._iBreakPointDesktop = Device.media._predefinedRangeSets[Device.media.RANGESETS.SAP_STANDARD_EXTENDED].points[1];
@@ -105,15 +118,22 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/library', './FormLayout',
 
 		this._resizeProxy = jQuery.proxy(_handleResize, this);
 
+		if (typeof ResizeObserver === "function") {
+			this._oResizeObserver = new ResizeObserver(this._resizeProxy);
+		}
+
 	};
 
 	ColumnLayout.prototype.exit = function(){
 
 		_cleanup.call(this);
+		this._oResizeObserver = undefined;
 
 	};
 
 	ColumnLayout.prototype.onBeforeRendering = function( oEvent ){
+
+		FormLayout.prototype.onBeforeRendering.apply(this, arguments);
 
 		if (this.getColumnsM() > this.getColumnsL() || this.getColumnsL() > this.getColumnsXL() ) {
 			throw new Error("Column size not correct defined for " + this);
@@ -125,8 +145,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/library', './FormLayout',
 
 	ColumnLayout.prototype.onAfterRendering = function( oEvent ){
 
-		this._sResizeListener = ResizeHandler.register(this, this._resizeProxy);
-		_handleResize.call(this);
+		if (this._oResizeObserver) {
+			var oDomRef = this.getDomRef();
+			this._oResizeObserver.observe(oDomRef);
+		} else {
+			// resize handler fallback for old browsers (e.g. IE 11)
+			this._sResizeListener = ResizeHandler.register(this, this._resizeProxy);
+		}
+
+		_reflow.call(this);
 
 	};
 
@@ -380,20 +407,22 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/library', './FormLayout',
 		var iLabelSizeL = this.getLabelCellsLarge();
 
 		if (oLD) {
-			oOptions.S.Size = oLD.getCellsSmall();
-			oOptions.L.Size = oLD.getCellsLarge();
+			oOptions.S.Size = oLD.getCellsSmall() === -1 ? iColumns : oLD.getCellsSmall();
+			oOptions.L.Size = oLD.getCellsLarge() === -1 ? iColumns : oLD.getCellsLarge();
 		}
 
 		var oElement = oField.getParent();
 		var oLabel = oElement.getLabelControl();
 
 		if (oLabel === oField) {
-			if (!oLD) {
+			if (!oLD || oLD.getCellsSmall() === -1) {
 				oOptions.S.Size = iLabelSizeS;
+			}
+			if (!oLD || oLD.getCellsLarge() === -1) {
 				oOptions.L.Size = iLabelSizeL;
 			}
 		} else {
-			var aFields = oElement.getFields();
+			var aFields = oElement.getFieldsForRendering();
 			var iFields = aFields.length;
 			var iColumnsS = iColumns;
 			var iColumnsL = iColumns - this.getEmptyCellsLarge();
@@ -401,8 +430,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/library', './FormLayout',
 			if (oLabel) {
 				var oLabelLD = this.getLayoutDataForElement(oLabel, "sap.ui.layout.form.ColumnElementData");
 				if (oLabelLD) {
-					iLabelSizeS = oLabelLD.getCellsSmall();
-					iLabelSizeL = oLabelLD.getCellsLarge();
+					iLabelSizeS = oLabelLD.getCellsSmall() === -1 ? iLabelSizeS : oLabelLD.getCellsSmall();
+					iLabelSizeL = oLabelLD.getCellsLarge() === -1 ? iLabelSizeL : oLabelLD.getCellsLarge();
 				}
 				if (iLabelSizeS < iColumns) {
 					iColumnsS = iColumnsS - iLabelSizeS;
@@ -417,13 +446,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/library', './FormLayout',
 
 			if (iFields === 1) {
 				// keep standard case simple
-				if (!oLD) {
+				if (!oLD || oLD.getCellsSmall() === -1) {
 					oOptions.S.Size = iColumnsS;
-					oOptions.L.Size = iColumnsL;
 				} else if (oLabel) {
 					if (oOptions.S.Size > iColumnsS) {
 						oOptions.S.Break = true;
 					}
+				}
+				if (!oLD || oLD.getCellsLarge() === -1) {
+					oOptions.L.Size = iColumnsL;
+				} else if (oLabel) {
 					if (oOptions.L.Size > iColumnsL) {
 						oOptions.L.Break = true;
 					}
@@ -487,17 +519,20 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/library', './FormLayout',
 						iField = i;
 					}
 
-					if (oOtherLD) {
+					if (oOtherLD && oOtherLD.getCellsSmall() > 0) {
 						iRowS = checkLD(aRowsS, iRowS, oOtherLD.getCellsSmall(), iColumnsS, i);
-						iRowL = checkLD(aRowsL, iRowL, oOtherLD.getCellsLarge(), iColumnsL, i);
 					} else {
 						iRowS = checkDefault(aRowsS, iRowS, iColumnsS, i);
+					}
+					if (oOtherLD && oOtherLD.getCellsLarge() > 0) {
+						iRowL = checkLD(aRowsL, iRowL, oOtherLD.getCellsLarge(), iColumnsL, i);
+					} else {
 						iRowL = checkDefault(aRowsL, iRowL, iColumnsL, i);
 					}
 				}
 
 				// determine size of Field
-				var determineSize = function(aRows, iField, oLD, oOptions, iLabelSize) {
+				var determineSize = function(aRows, iField, iLDCells, oOptions, iLabelSize) {
 					var iRemain = 0;
 					var oRow;
 
@@ -508,7 +543,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/library', './FormLayout',
 						}
 					}
 
-					if (!oLD) {
+					if (iLDCells <= 0) {
 						oOptions.Size = Math.floor(oRow.availableCells / oRow.defaultFields);
 					}
 					if (iField === oRow.first && iField > 0) {
@@ -526,8 +561,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/library', './FormLayout',
 					}
 				};
 
-				determineSize(aRowsS, iField, oLD, oOptions.S, iLabelSizeS);
-				determineSize(aRowsL, iField, oLD, oOptions.L, iLabelSizeL);
+				determineSize(aRowsS, iField, oLD ? oLD.getCellsSmall() : -1, oOptions.S, iLabelSizeS);
+				determineSize(aRowsL, iField, oLD ? oLD.getCellsLarge() : -1, oOptions.L, iLabelSizeL);
 			}
 
 		}
@@ -538,6 +573,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/library', './FormLayout',
 
 	function _cleanup(){
 
+		if (this._oResizeObserver) {
+			this._oResizeObserver.disconnect();
+		}
 		if (this._sResizeListener) {
 			ResizeHandler.deregister(this._sResizeListener);
 			this._sResizeListener = undefined;
@@ -545,9 +583,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/library', './FormLayout',
 
 	}
 
-	function _handleResize(oEvent, bNoRowResize){
+	function _handleResize(oEvent, bNoRowResize) {
+		window.requestAnimationFrame(function() {
+			_reflow.call(this, oEvent, bNoRowResize);
+		}.bind(this));
+	}
 
+	function _reflow(oEvent, bNoRowResize) {
 		var oDomRef = this.getDomRef();
+
 		// Prove if DOM reference exist, and if not - clean up the references.
 		if (!oDomRef) {
 			_cleanup.call(this);
@@ -555,12 +599,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/library', './FormLayout',
 		}
 
 		var $DomRef = this.$();
+
 		if (!$DomRef.is(":visible")) {
+			return;
+		}
+
+		if (ResizeHandler.isSuspended(oDomRef, this._resizeProxy)) {
 			return;
 		}
 
 		var iWidth = oDomRef.clientWidth;
 		var iColumns = 1;
+
 		if (iWidth <= this._iBreakPointTablet) {
 			$DomRef.toggleClass("sapUiFormCLMedia-Std-Phone", true);
 			$DomRef.toggleClass("sapUiFormCLMedia-Std-Desktop", false).toggleClass("sapUiFormCLMedia-Std-Tablet", false).toggleClass("sapUiFormCLMedia-Std-LargeDesktop", false);
@@ -581,8 +631,59 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/library', './FormLayout',
 		var bWideColumns = this.getLabelCellsLarge() < 12 && iWidth / iColumns > this._iBreakPointTablet;
 		$DomRef.toggleClass("sapUiFormCLWideColumns", bWideColumns);
 		$DomRef.toggleClass("sapUiFormCLSmallColumns", !bWideColumns);
-
 	}
+
+	ColumnLayout.prototype.getLayoutDataForDelimiter = function() {
+
+		var ColumnElementData = sap.ui.require("sap/ui/layout/form/ColumnElementData");
+		if (!ColumnElementData) {
+			var fnResolve;
+			sap.ui.require(["sap/ui/layout/form/ColumnElementData"], function(ColumnElementData) {
+				fnResolve(new ColumnElementData({cellsLarge: 1, cellsSmall: 1}));
+			});
+
+			return new Promise(function(fResolve) {
+				fnResolve = fResolve;
+			});
+		} else {
+			return new ColumnElementData({cellsLarge: 1, cellsSmall: 1});
+		}
+
+	};
+
+	ColumnLayout.prototype.getLayoutDataForSemanticField = function(iFields, iIndex, oLayoutData) {
+
+		if (oLayoutData) {
+			if (oLayoutData.isA("sap.ui.layout.form.ColumnElementData")) {
+				oLayoutData.setCellsLarge(-1).setCellsSmall(11);
+				return oLayoutData;
+			} else {
+				// LayoutData from other Layout -> destroy and create new one
+				oLayoutData.destroy();
+			}
+		}
+
+		var ColumnElementData = sap.ui.require("sap/ui/layout/form/ColumnElementData");
+		if (!ColumnElementData) {
+			var fnResolve;
+			sap.ui.require(["sap/ui/layout/form/ColumnElementData"], function(ColumnElementData) {
+				fnResolve(new ColumnElementData({cellsLarge: -1, cellsSmall: 11}));
+			});
+
+			return new Promise(function(fResolve) {
+				fnResolve = fResolve;
+			});
+		} else {
+			return new ColumnElementData({cellsLarge: -1, cellsSmall: 11});
+		}
+
+	};
+
+	ColumnLayout.prototype.renderControlsForSemanticElement = function() {
+
+		return true;
+
+	};
 
 	return ColumnLayout;
 

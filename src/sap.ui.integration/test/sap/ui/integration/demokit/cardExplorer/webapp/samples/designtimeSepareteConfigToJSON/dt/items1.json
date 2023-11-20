@@ -1,0 +1,100 @@
+{
+	"Customers1": {
+		"manifestpath": "/sap.card/configuration/parameters/Customers1/value",
+		"type": "string[]",
+		"required": true,
+		"values": {
+			"data": {
+				"request": {
+					"url": "{{destinations.northwind}}/Customers",
+					"parameters": {
+						"$select": "CustomerID, CompanyName, Country, City, Address"
+					}
+				},
+				"path": "/value"
+			},
+			"item": {
+				"text": "{CompanyName}",
+				"key": "{CustomerID}",
+				"additionalText": "{= ${CustomerID} !== undefined ? ${Country} + ', ' +  ${City} + ', ' + ${Address} : ''}"
+			}
+		},
+		"validation": {
+			"type": "error",
+			"validate": "fnValidate"
+		}
+	},
+	"CustomersWithMultiKeys": {
+		"manifestpath": "/sap.card/configuration/parameters/CustomersWithMultiKeys/value",
+		"type": "string[]",
+		"values": {
+			"data": {
+				"request": {
+					"url": "{{destinations.northwind}}/Customers",
+					"parameters": {
+						"$select": "CustomerID, CompanyName, Country, City, Address",
+						"$filter": "startswith(CompanyName,'{currentSettings>suggestValue}')"
+					}
+				},
+				"path": "/value"
+			},
+			"item": {
+				"text": "{CompanyName}",
+				"key": "{CustomerID}/{CompanyName}",
+				"additionalText": "{= ${CustomerID} !== undefined ? ${Country} + ', ' +  ${City} + ', ' + ${Address} : ''}"
+			},
+			"keySeparator": "/"
+		},
+		"validations": [{
+			"type": "error",
+			"validate": "checkValueCount",
+			"message": "value count error"
+		}, {
+			"type": "error",
+			"minLength": 2,
+			"maxLength": 4
+		}]
+	},
+	"generalGroup": {
+		"type": "group",
+		"label": "All Data Type",
+		"expanded": false,
+		"hint": "Please refer to the <a href='https://www.sap.com'>documentation</a> lets see how this will behave if the text is wrapping to the next line and has <a href='https://www.sap.com'>two links</a>. good?"
+	},
+	"cardTitle": {
+		"manifestpath": "/sap.card/configuration/parameters/cardTitle/value",
+		"type": "string",
+		"translatable": true,
+		"required": true,
+		"label": "cardTitle",
+		"allowDynamicValues": true,
+		"editableToUser": false,
+		"visibleToUser": true,
+		"description": "Card Title",
+		"cols": 1,
+		"hint": "Please refer to the <a href='https://www.sap.com'>documentation</a> lets see how this will behave if the text is wrapping to the next line and has <a href='https://www.sap.com'>two links</a>. good?"
+	},
+	"stringWithTextArea": {
+		"manifestpath": "/sap.card/configuration/parameters/stringWithTextArea/value",
+		"type": "string",
+		"label": "Use TextArea for a string field",
+		"visualization": {
+			"type": "TextArea",
+			"settings": {
+				"value": "{currentSettings>value}",
+				"width": "100%",
+				"editable": "{config/editable}",
+				"placeholder": "{currentSettings>placeholder}",
+				"rows": 7
+			}
+		}
+	},
+	"stringLabelTrans": {
+		"manifestpath": "/sap.card/configuration/parameters/stringLabelTrans/value",
+		"type": "string",
+		"label": "{i18n>TRANSLATED_STRING_LABEL}",
+		"cols": 2,
+		"translatable": true,
+		"allowDynamicValues": false
+	}
+}

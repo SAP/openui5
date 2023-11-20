@@ -1,0 +1,157 @@
+[
+	{
+		"fileName": "id_00_addSort",
+		"changeType": "addSort",
+		"reference": "test",
+		"content": {
+			"index": 0,
+			"descending": false,
+			"name": "sorter0"
+		},
+		"selector": {
+			"id": "view--mdcTable",
+			"idIsLocal": false
+		},
+		"layer": "USER",
+		"creation": "2020-01-30T06:33:51.192Z"
+	},{
+		"fileName": "id_00_addGroup",
+		"changeType": "addGroup",
+		"reference": "test",
+		"content": {
+			"index": 0,
+			"name": "group0"
+		},
+		"selector": {
+			"id": "view--mdcTable",
+			"idIsLocal": false
+		},
+		"layer": "USER",
+		"creation": "2020-01-30T06:33:51.193Z"
+	},
+	{
+		"fileName": "id_01_addSort",
+		"changeType": "addSort",
+		"reference": "test",
+		"content": {
+			"index": 1,
+			"descending": false,
+			"name": "sorter1"
+		},
+		"selector": {
+			"id": "view--mdcTable",
+			"idIsLocal": false
+		},
+		"layer": "USER",
+		"creation": "2020-01-31T06:33:51.193Z"
+	},
+	{
+		"fileName": "id_02_removeSort",
+		"changeType": "removeSort",
+		"reference": "test",
+		"content": {
+			"index": 1,
+			"descending": false,
+			"name": "sorter1"
+		},
+		"selector": {
+			"id": "view--mdcTable",
+			"idIsLocal": false
+		},
+		"layer": "USER",
+		"creation": "2020-01-31T06:33:51.193Z"
+	},
+	{
+		"fileName": "id_03_addSort",
+		"changeType": "addSort",
+		"reference": "test",
+		"content": {
+			"index": 1,
+			"descending": true,
+			"name": "sorter1"
+		},
+		"selector": {
+			"id": "view--mdcTable",
+			"idIsLocal": false
+		},
+		"layer": "USER",
+		"creation": "2020-01-31T06:33:51.193Z"
+	},
+	{
+		"fileName": "id_04_moveSort",
+		"changeType": "moveSort",
+		"reference": "test",
+		"content": {
+			"index": 0,
+			"name": "sorter1"
+		},
+		"selector": {
+			"id": "view--mdcTable",
+			"idIsLocal": false
+		},
+		"layer": "USER",
+		"creation": "2020-01-31T06:33:51.193Z"
+	},
+	{
+		"fileName": "id_05_moveSort",
+		"changeType": "moveSort",
+		"reference": "test",
+		"content": {
+			"index": 0,
+			"name": "sorter0"
+		},
+		"selector": {
+			"id": "view--mdcTable",
+			"idIsLocal": false
+		},
+		"layer": "USER",
+		"creation": "2020-01-31T06:33:51.193Z"
+	},
+	{
+		"fileName": "id_06_removeSort",
+		"changeType": "removeSort",
+		"reference": "test",
+		"content": {
+			"index": 0,
+			"descending": false,
+			"name": "sorter0"
+		},
+		"selector": {
+			"id": "view--mdcTable",
+			"idIsLocal": false
+		},
+		"layer": "USER",
+		"creation": "2020-01-31T06:33:51.193Z"
+	},
+	{
+		"fileName": "id_07_addSort",
+		"changeType": "addSort",
+		"reference": "test",
+		"content": {
+			"index": 1,
+			"descending": false,
+			"name": "sorter2"
+		},
+		"selector": {
+			"id": "view--mdcTable",
+			"idIsLocal": false
+		},
+		"layer": "USER",
+		"creation": "2020-01-31T06:33:51.193Z"
+	},
+	{
+		"fileName": "id_08_moveSort",
+		"changeType": "moveSort",
+		"reference": "test",
+		"content": {
+			"index": 0,
+			"name": "sorter2"
+		},
+		"selector": {
+			"id": "view--mdcTable",
+			"idIsLocal": false
+		},
+		"layer": "USER",
+		"creation": "2020-01-31T06:33:51.193Z"
+	}
+]

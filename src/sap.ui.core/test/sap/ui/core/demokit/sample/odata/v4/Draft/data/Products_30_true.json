@@ -1,0 +1,10 @@
+{
+	"DraftAdministrativeData" : null,
+	"HasActiveEntity" : false,
+	"HasDraftEntity" : false,
+	"_Category" : {
+		"ID" : 3000,
+		"IsActiveEntity" : true,
+		"name" : "Third category"
+	}
+}

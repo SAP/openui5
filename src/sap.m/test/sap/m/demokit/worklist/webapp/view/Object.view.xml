@@ -12,7 +12,9 @@
 		busyIndicatorDelay="{objectView>/delay}">
 
 		<semantic:titleHeading>
-			<Title text="{Name}" />
+			<Title
+				text="{Name}"
+				level="H2"/>
 		</semantic:titleHeading>
 
 		<semantic:headerContent>
@@ -21,12 +23,12 @@
 					path: 'UnitNumber',
 					formatter: '.formatter.numberUnit'
 				}"
-				numberUnit="{UnitOfMeasure}"
+				unit="{UnitOfMeasure}"
 			/>
 		</semantic:headerContent>
 
 		<semantic:sendEmailAction>
-			<semantic:SendEmailAction id="shareEmail" press="onShareEmailPress"/>
+			<semantic:SendEmailAction id="shareEmail" press=".onShareEmailPress"/>
 		</semantic:sendEmailAction>
 
 

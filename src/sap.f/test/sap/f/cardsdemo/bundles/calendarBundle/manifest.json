@@ -1,0 +1,62 @@
+
+{
+	"sap.app": {
+		"id": "card.bundle.list",
+		"type": "card"
+	},
+	"sap.card": {
+		"type": "Calendar",
+		"data": {
+			"request": {
+				"url": "./mockdata/appointments.json"
+			}
+		},
+		"header": {
+			"title": "Calendar"
+		},
+		"content": {
+			"date": "2020-09-18",
+			"maxItems": 5,
+			"maxLegendItems": 5,
+			"noItemsText": "You have nothing planned for this day",
+			"item": {
+				"template": {
+					"startDate": "{start}",
+					"endDate": "{end}",
+					"title": "{title}",
+					"text": "{text}",
+					"icon": {
+						"src": "{icon}",
+						"visible": true
+					},
+					"actions": [
+						{
+						  "type": "Navigation",
+						  "enabled": "{= ${url}}",
+						  "parameters": {
+							"url": "{url}"
+							}
+						}
+					]
+				},
+				"path": "/item"
+			},
+			"specialDate": {
+				"template": {
+				  "startDate": "{start}",
+				  "endDate": "{end}",
+				  "type": "{type}"
+				},
+				"path": "/specialDate"
+			  },
+			  "legendItem": {
+				"template": {
+				  "category": "{category}",
+				  "text": "{text}",
+				  "type": "{type}"
+				},
+				"path": "/legendItem"
+			  }
+		}
+	}
+}

@@ -1,0 +1,12 @@
+<mvc:View
+	xmlns:w="sap.ui.integration.widgets"
+	xmlns:f="sap.f"
+	xmlns:mvc="sap.ui.core.mvc">
+	<f:GridContainer class="sapUiLargeMargin">
+		<w:Card id="card1" manifest="./cardBundle/cardManifest.json">
+			<w:layoutData>
+				<f:GridContainerItemLayoutData columns="5" />
+			</w:layoutData>
+		</w:Card>
+	</f:GridContainer>
+</mvc:View>

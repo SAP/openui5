@@ -2,28 +2,17 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/NumberFormat',
-		'sap/ui/model/FormatException', 'sap/ui/model/odata/type/ODataType',
-		'sap/ui/model/ParseException', 'sap/ui/model/ValidateException'],
-	function(jQuery, NumberFormat, FormatException, ODataType, ParseException, ValidateException) {
+sap.ui.define([
+	"sap/base/Log",
+	"sap/base/util/extend",
+	"sap/ui/core/Lib",
+	"sap/ui/core/format/NumberFormat",
+	"sap/ui/model/FormatException",
+	"sap/ui/model/ParseException",
+	"sap/ui/model/ValidateException",
+	"sap/ui/model/odata/type/ODataType"
+], function(Log, extend, Library, NumberFormat, FormatException, ParseException, ValidateException, ODataType) {
 	"use strict";
-
-	/**
-	 * Returns the formatter. Creates it lazily.
-	 * @param {sap.ui.model.odata.type.Int} oType
-	 *   the type instance
-	 * @returns {sap.ui.core.format.NumberFormat}
-	 *   the formatter
-	 */
-	function getFormatter(oType) {
-		var oFormatOptions;
-
-		if (!oType.oFormat) {
-			oFormatOptions = jQuery.extend({groupingEnabled : true}, oType.oFormatOptions);
-			oType.oFormat = NumberFormat.getIntegerInstance(oFormatOptions);
-		}
-		return oType.oFormat;
-	}
 
 	/**
 	 * Fetches a text from the message bundle and formats it using the parameters.
@@ -36,7 +25,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/NumberFormat',
 	 *   the message
 	 */
 	function getText(sKey, aParams) {
-		return sap.ui.getCore().getLibraryResourceBundle().getText(sKey, aParams);
+		return Library.getResourceBundleFor("sap.ui.core").getText(sKey, aParams);
 	}
 
 	/**
@@ -56,7 +45,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/NumberFormat',
 			if (vNullable === false || vNullable === "false") {
 				oType.oConstraints = {nullable : false};
 			} else if (vNullable !== undefined && vNullable !== true && vNullable !== "true") {
-				jQuery.sap.log.warning("Illegal nullable: " + vNullable, null, oType.getName());
+				Log.warning("Illegal nullable: " + vNullable, null, oType.getName());
 			}
 		}
 		oType._handleLocalizationChange();
@@ -78,6 +67,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/NumberFormat',
 	 * @alias sap.ui.model.odata.type.Int
 	 * @param {object} [oFormatOptions]
 	 *   type-specific format options; see subtypes
+	 * @param {boolean} [oFormatOptions.parseEmptyValueToZero=false]
+	 *   Whether the empty string and <code>null</code> are parsed to <code>0</code> if the <code>nullable</code>
+	 *   constraint is set to <code>false</code>; see {@link #parseValue parseValue}; since 1.115.0
 	 * @param {object} [oConstraints]
 	 *   constraints; {@link #validateValue validateValue} throws an error if any constraint is
 	 *   violated
@@ -91,6 +83,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/NumberFormat',
 					ODataType.apply(this, arguments);
 					this.oFormatOptions = oFormatOptions;
 					setConstraints(this, oConstraints);
+					this.checkParseEmptyValueToZero();
 				},
 				metadata : {
 					"abstract" : true
@@ -124,7 +117,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/NumberFormat',
 	 *   for this type.
 	 * @public
 	 */
-	Int.prototype.formatValue = function(iValue, sTargetType) {
+	Int.prototype.formatValue = function (iValue, sTargetType) {
 		if (iValue === undefined || iValue === null) {
 			return null;
 		}
@@ -133,7 +126,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/NumberFormat',
 		}
 		switch (this.getPrimitiveType(sTargetType)) {
 			case "string":
-				return getFormatter(this).format(iValue);
+				return this.getFormat().format(iValue);
 			case "int":
 				return Math.floor(iValue);
 			case "float":
@@ -146,32 +139,51 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/NumberFormat',
 	};
 
 	/**
+	 * @override
+	 */
+	Int.prototype.getFormat = function () {
+		if (!this.oFormat) {
+			var oFormatOptions = extend({groupingEnabled : true}, this.oFormatOptions);
+			delete oFormatOptions.parseEmptyValueToZero;
+			this.oFormat = NumberFormat.getIntegerInstance(oFormatOptions);
+		}
+
+		return this.oFormat;
+	};
+
+	/**
 	 * Parses the given value, which is expected to be of the given source type, to an Int in
 	 * number representation.
-	 * @param {number|string} vValue
-	 *   the value to be parsed. The empty string and <code>null</code> are parsed to
-	 *   <code>null</code>.
+	 *
+	 * @param {number|string|null} vValue
+	 *   The value to be parsed
 	 * @param {string} sSourceType
-	 *   the source type (the expected type of <code>vValue</code>); may be "float", "int",
+	 *   The source type (the expected type of <code>vValue</code>); may be "float", "int",
 	 *   "string", or a type with one of these types as its
 	 *   {@link sap.ui.base.DataType#getPrimitiveType primitive type}.
 	 *   See {@link sap.ui.model.odata.type} for more information.
 	 * @throws {sap.ui.model.ParseException}
-	 *   if <code>sSourceType</code> is unsupported or if the given string cannot be parsed to an
+	 *   If <code>sSourceType</code> is unsupported or if the given string cannot be parsed to an
 	 *   integer type
-	 * @returns {number}
-	 *   the parsed value
+	 * @returns {number|null}
+	 *   The parsed value. The empty string and <code>null</code> are parsed to:
+	 *   <ul>
+	 *     <li><code>0</code> if the <code>parseEmptyValueToZero</code> format option
+	 *       is set to <code>true</code> and the <code>nullable</code> constraint is set to <code>false</code>,</li>
+	 *     <li><code>null</code> otherwise.</li>
+	 *   </ul>
+	 *
 	 * @public
 	 */
-	Int.prototype.parseValue = function(vValue, sSourceType) {
-		var iResult;
-
-		if (vValue === null || vValue === "") {
-			return null;
+	Int.prototype.parseValue = function (vValue, sSourceType) {
+		var vEmptyValue = this.getEmptyValue(vValue, true);
+		if (vEmptyValue !== undefined) {
+			return vEmptyValue;
 		}
+
 		switch (this.getPrimitiveType(sSourceType)) {
 			case "string":
-				iResult = getFormatter(this).parse(vValue);
+				var iResult = this.getFormat().parse(vValue);
 				if (isNaN(iResult)) {
 					throw new ParseException(getText("EnterInt"));
 				}
@@ -191,12 +203,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/NumberFormat',
 	 * defined constraints.
 	 * @param {number} iValue
 	 *   the value to be validated
-	 * @returns {void}
 	 * @throws {sap.ui.model.ValidateException}
 	 *   if the value is not in the allowed range of Int or if it is of invalid type.
 	 * @public
 	 */
-	Int.prototype.validateValue = function(iValue) {
+	Int.prototype.validateValue = function (iValue) {
 		var oRange = this.getRange();
 
 		if (iValue === null) {

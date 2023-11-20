@@ -8,17 +8,21 @@
  * @version @version@
  */
 sap.ui.define([
-		'jquery.sap.global',
-		'sap/ui/core/mvc/View', // sap.ui.view()
-		'sap/ui/core/mvc/ViewType',
-		'sap/ui/core/sample/common/Component',
-		'sap/ui/core/util/MockServer',
-		'sap/ui/model/json/JSONModel',
-		'sap/ui/model/odata/v2/ODataModel'
-	], function(jQuery, View, ViewType, BaseComponent, MockServer, JSONModel, ODataModel) {
+	"sap/base/Log",
+	"sap/ui/core/mvc/View", // sap.ui.view()
+	"sap/ui/core/mvc/XMLView", // type : ViewType.XML
+	"sap/ui/core/sample/common/Component",
+	"sap/ui/core/util/MockServer",
+	"sap/ui/model/json/JSONModel",
+	"sap/ui/model/odata/v2/ODataModel",
+	"sap/ui/test/TestUtils"
+], function (Log, _View, _XMLView, BaseComponent, MockServer, JSONModel,
+		ODataModel, TestUtils) {
 	"use strict";
 
-	var Component = BaseComponent.extend("sap.ui.core.sample.ViewTemplate.valuelist.Component", {
+	// shortcut for sap.ui.core.mvc.ViewType
+
+	return BaseComponent.extend("sap.ui.core.sample.ViewTemplate.valuelist.Component", {
 		metadata : "json",
 
 		createContent : function () {
@@ -26,15 +30,14 @@ sap.ui.define([
 					= "test-resources/sap/ui/core/demokit/sample/ViewTemplate/valuelist/data/",
 				oModel,
 				sServiceUri = "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/",
-				oUriParameters = jQuery.sap.getUriParameters(),
+				oUriParameters = new URLSearchParams(window.location.search),
 				sClient = oUriParameters.get("sap-client"),
 				sValueList = oUriParameters.get("sap-value-list");
 
-			if (oUriParameters.get("realOData") === "true") {
+			if (TestUtils.isRealOData()) {
 				if (sClient) {
 					sServiceUri += "?sap-client=" + sClient;
 				}
-				sServiceUri = this.proxy(sServiceUri);
 			} else {
 				this.aMockServers.push(new MockServer({rootUri : sServiceUri}));
 				this.aMockServers[0].simulate(sMockServerBaseUri + (sValueList === "none" ?
@@ -44,7 +47,7 @@ sap.ui.define([
 				});
 				// mock server only simulates $metadata request without query parameters
 				this.aMockServers[0].getRequests().some(function (oRequest) {
-					if (jQuery.sap.startsWith(oRequest.path.source, "\\$metadata")) {
+					if (oRequest.path.source.startsWith("\\$metadata")) {
 						oRequest.path = /\$metadata$/;
 						return true;
 					}
@@ -74,7 +77,7 @@ sap.ui.define([
 								._escapeStringForRegExp(sServiceUri + "$metadata?sap-value-list="
 									+ oMockData.valueList)),
 							response : function (oXHR) {
-								jQuery.sap.log.debug("Mocked response sent:" + oXHR.url, null,
+								Log.debug("Mocked response sent:" + oXHR.url, null,
 									"sap.ui.core.sample.ViewTemplate.valuelist.Component");
 								oXHR.respondFile(200, {}, sMockServerBaseUri + oMockData.response);
 							}
@@ -116,7 +119,7 @@ sap.ui.define([
 								path : new RegExp(MockServer.prototype
 									._escapeStringForRegExp(sServiceUri + oMockData.param)),
 								response : function (oXHR) {
-									jQuery.sap.log.debug("Mocked response sent:" + oXHR.url, null,
+									Log.debug("Mocked response sent:" + oXHR.url, null,
 										"sap.ui.core.sample.ViewTemplate.valuelist.Component");
 									if  (oMockData.response){
 										oXHR.respondFile(200, {}, sMockServerBaseUri +
@@ -135,17 +138,13 @@ sap.ui.define([
 				metadataUrlParams : sValueList ? {"sap-value-list" : sValueList} : undefined,
 				useBatch : false // make network trace easier to read
 			});
-			return sap.ui.view({
-				async : true,
+			return _XMLView.create({
 				models : {
 					undefined : oModel,
 					ui : new JSONModel({valueHelpDetails : false})
 				},
-				type : ViewType.XML,
 				viewName : "sap.ui.core.sample.ViewTemplate.valuelist.Main"
 			});
 		}
 	});
-
-	return Component;
 });

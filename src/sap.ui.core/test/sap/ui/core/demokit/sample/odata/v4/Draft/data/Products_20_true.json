@@ -1,0 +1,15 @@
+{
+	"DraftAdministrativeData" : null,
+	"HasActiveEntity" : false,
+	"HasDraftEntity" : false,
+	"ID" : 20,
+	"IsActiveEntity" : true,
+	"amount" : "200",
+	"categoryID" : 2000,
+	"name" : "Product 2",
+	"_Category" : {
+		"ID" : 2000,
+		"IsActiveEntity" : true,
+		"name" : "Second category"
+	}
+}

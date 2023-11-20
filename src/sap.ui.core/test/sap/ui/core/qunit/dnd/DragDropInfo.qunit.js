@@ -1,16 +1,15 @@
+/*global QUnit,sinon*/
 sap.ui.define([
-	"jquery.sap.global",
-	"test/TestControl",
+	"./TestControl",
 	"sap/ui/core/dnd/DragInfo",
 	"sap/ui/core/dnd/DropInfo",
-	"sap/ui/core/dnd/DragDropInfo"
-], function(jQuery, TestControl, DragInfo, DropInfo, DragDropInfo) {
+	"sap/ui/core/dnd/DragDropInfo",
+	"./DragInfo.qunit",
+	"./DropInfo.qunit"
+], function(TestControl, DragInfo, DropInfo, DragDropInfo) {
 	"use strict";
 
-	/*global QUnit,sinon*/
-
 	QUnit.test("Basics", function(assert) {
-		var oDragInfo = new DragInfo();
 		var oDragDropInfo = new DragDropInfo();
 
 		assert.strictEqual(oDragDropInfo.getSourceAggregation(), "", "Default value of sourceAggregation is correct");
@@ -76,7 +75,7 @@ sap.ui.define([
 		var oDragDropInfo = new DragDropInfo({
 			targetElement: "doesNotExist"
 		});
-		var oParent = new TestControl({
+		/*var oParent =*/ new TestControl({
 			children: oControl,
 			dragDropConfig: oDragDropInfo
 		});

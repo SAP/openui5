@@ -10,4 +10,4 @@ sap.ui.define([
 		header: o4aFakeService.headers.JSON,
 		content: "{ \"d\": { \"EntitySets\": [\"ActualPlannedCostsResults\", \"ActualPlannedCosts\", \"ControllingAreas\", \"CostCenterResults\", \"CostCentersTemporalView\", \"CostCenters\", \"CostElements\"] } }"
 	});
-}, /* bExport= */ false);
+});

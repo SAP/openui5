@@ -1,0 +1,314 @@
+/* ========================================== */
+/* CSS for control sap.ui.layout/BlockLayout  */
+/* Horizon theme                              */
+/* ========================================== */
+
+@_sap_ui_layout_BlockLayout_FontSizeLandXL: @sapMFontHeader2Size;
+
+@_sap_ui_layout_BlockLayout_BackgroundDashboardMargin: 0.75rem;
+@_sap_ui_layout_BlockLayout_BackgroundDashboardEdgeChildMargin: 1rem;
+@_sap_ui_layout_BlockLayout_BackgroundDashboardAfterScrollbarMargin: 0.75rem;
+@_sap_ui_layout_BlockLayout_BackgroundDashboardColor: @sapUiTileBackground;
+@_sap_ui_layout_BlockLayout_BackgroundDashboardBorderRadius: 0.5rem;
+@_sap_ui_layout_BlockLayout_BackgroundDashboardCellShadow: 0px 0px 0.125rem rgba(91, 115, 139, 0.16), 0px 1rem 2rem rgba(91, 115, 139, 0.16);
+@_sap_ui_layout_BlockLayout_BackgroundDashboardCellShadowOffset: 1.5rem;
+
+@_sap_ui_layout_BlockLayout_LinkTextShadow: none;
+@_sap_ui_layout_BlockLayout_CellTextColor: @sapUiBaseText;
+
+// Horizon specific colors
+@_sap_ui_layout_BlockLayout_BtpGrey1: #F5F6F7;
+@_sap_ui_layout_BlockLayout_BtpGrey2: #EAECEE;
+@_sap_ui_layout_BlockLayout_BtpGrey3: #D5DADD;
+@_sap_ui_layout_BlockLayout_BtpGrey4: #A9B4BE;
+@_sap_ui_layout_BlockLayout_BtpGrey7: #475E75;
+@_sap_ui_layout_BlockLayout_BtpGrey9: #223548;
+
+@_sap_ui_layout_BlockLayout_BtpTeal7: #07838F;
+@_sap_ui_layout_BlockLayout_BtpTeal9: #035663;
+
+@_sap_ui_layout_BlockLayout_BtpBlue7: #0070F2;
+@_sap_ui_layout_BlockLayout_BtpBlue9: #0040B0;
+
+@_sap_ui_layout_BlockLayout_BtpIndigo7: #5D36FF;
+@_sap_ui_layout_BlockLayout_BtpIndigo9: #2C13AD;
+
+/* ============ Custom Cell Background Color ============== */
+@_sap_ui_layout_BlockLayout_BlockColorAccentType1A: #FFF8D6; // Mango 1
+@_sap_ui_layout_BlockLayout_BlockColorAccentType1B: #FFF3B8; // Mango 2
+@_sap_ui_layout_BlockLayout_BlockColorAccentType1C: #FFDF72; // Mango 3
+@_sap_ui_layout_BlockLayout_BlockColorAccentType1D: #FFC933; // Mango 4
+@_sap_ui_layout_BlockLayout_BlockColorAccentType1E: #C35500; // Mango 7
+@_sap_ui_layout_BlockLayout_BlockColorAccentType1F: #8D2A00; // Mango 9
+
+@_sap_ui_layout_BlockLayout_BlockColorAccentType2A: #FFEAF4; // Red 1
+@_sap_ui_layout_BlockLayout_BlockColorAccentType2B: #FFD5EA; // Red 2
+@_sap_ui_layout_BlockLayout_BlockColorAccentType2C: #FFB2D2; // Red 3
+@_sap_ui_layout_BlockLayout_BlockColorAccentType2D: #FF8CB2; // Red 4
+@_sap_ui_layout_BlockLayout_BlockColorAccentType2E: #D20A0A; // Red 7
+@_sap_ui_layout_BlockLayout_BlockColorAccentType2F: #840606; // Red 9
+
+@_sap_ui_layout_BlockLayout_BlockColorAccentType3A: #FFF0F5; // Raspberry 1
+@_sap_ui_layout_BlockLayout_BlockColorAccentType3B: #FFDCE8; // Raspberry 2
+@_sap_ui_layout_BlockLayout_BlockColorAccentType3C: #FECBDA; // Raspberry 3
+@_sap_ui_layout_BlockLayout_BlockColorAccentType3D: #FEADC8; // Raspberry 4
+@_sap_ui_layout_BlockLayout_BlockColorAccentType3E: #DF1278; // Raspberry 7
+@_sap_ui_layout_BlockLayout_BlockColorAccentType3F: #9B015D; // Raspberry 9
+
+@_sap_ui_layout_BlockLayout_BlockColorAccentType4A: #FFF0FA; // Pink 1
+@_sap_ui_layout_BlockLayout_BlockColorAccentType4B: #FFDCF3; // Pink 2
+@_sap_ui_layout_BlockLayout_BlockColorAccentType4C: #FFAFED; // Pink 3
+@_sap_ui_layout_BlockLayout_BlockColorAccentType4D: #FF8AF0; // Pink 4
+@_sap_ui_layout_BlockLayout_BlockColorAccentType4E: #CC00DC; // Pink 7
+@_sap_ui_layout_BlockLayout_BlockColorAccentType4F: #7800A4; // Pink 9
+
+@_sap_ui_layout_BlockLayout_BlockColorAccentType5A: #F1ECFF; // Indigo 1
+@_sap_ui_layout_BlockLayout_BlockColorAccentType5B: #E2D8FF; // Indigo 2
+@_sap_ui_layout_BlockLayout_BlockColorAccentType5C: #D3B6FF; // Indigo 3
+@_sap_ui_layout_BlockLayout_BlockColorAccentType5D: #B894FF; // Indigo 4
+@_sap_ui_layout_BlockLayout_BlockColorAccentType5E: @_sap_ui_layout_BlockLayout_BtpIndigo7; // Indigo 7
+@_sap_ui_layout_BlockLayout_BlockColorAccentType5F: @_sap_ui_layout_BlockLayout_BtpIndigo9; // Indigo 9
+
+@_sap_ui_layout_BlockLayout_BlockColorAccentType6A: #EBF8FF; // Blue 1
+@_sap_ui_layout_BlockLayout_BlockColorAccentType6B: #D1EFFF; // Blue 2
+@_sap_ui_layout_BlockLayout_BlockColorAccentType6C: #A6E0FF; // Blue 3
+@_sap_ui_layout_BlockLayout_BlockColorAccentType6D: #89D1FF; // Blue 4
+@_sap_ui_layout_BlockLayout_BlockColorAccentType6E: @_sap_ui_layout_BlockLayout_BtpBlue7; // Blue 7
+@_sap_ui_layout_BlockLayout_BlockColorAccentType6F: @_sap_ui_layout_BlockLayout_BtpBlue9; // Blue 9
+
+@_sap_ui_layout_BlockLayout_BlockColorAccentType7A: #DAFDF5; // Teal 1
+@_sap_ui_layout_BlockLayout_BlockColorAccentType7B: #C2FCEE; // Teal 2
+@_sap_ui_layout_BlockLayout_BlockColorAccentType7C: #85F1DC; // Teal 3
+@_sap_ui_layout_BlockLayout_BlockColorAccentType7D: #2CE0BF; // Teal 4
+@_sap_ui_layout_BlockLayout_BlockColorAccentType7E: @_sap_ui_layout_BlockLayout_BtpTeal7; // Teal 7
+@_sap_ui_layout_BlockLayout_BlockColorAccentType7F: @_sap_ui_layout_BlockLayout_BtpTeal9; // Teal 9
+
+@_sap_ui_layout_BlockLayout_BlockColorAccentType8A: #F5FAE5; // Green 1
+@_sap_ui_layout_BlockLayout_BlockColorAccentType8B: #E5F2BD; // Green 2
+@_sap_ui_layout_BlockLayout_BlockColorAccentType8C: #BAE881; // Green 3
+@_sap_ui_layout_BlockLayout_BlockColorAccentType8D: #97DD40; // Green 4
+@_sap_ui_layout_BlockLayout_BlockColorAccentType8E: #188918; // Green 7
+@_sap_ui_layout_BlockLayout_BlockColorAccentType8F: #1E592F; // Green 9
+
+@_sap_ui_layout_BlockLayout_BlockColorAccentType9A: #DBF9FF; // Cyan 1
+@_sap_ui_layout_BlockLayout_BlockColorAccentType9B: #B8F3FF; // Cyan 2
+@_sap_ui_layout_BlockLayout_BlockColorAccentType9C: #7AEAF8; // Cyan 3
+@_sap_ui_layout_BlockLayout_BlockColorAccentType9D: #2DD6EF; // Cyan 4
+@_sap_ui_layout_BlockLayout_BlockColorAccentType9E: #007FA9; // Cyan 7
+@_sap_ui_layout_BlockLayout_BlockColorAccentType9F: #025484; // Cyan 9
+
+@_sap_ui_layout_BlockLayout_BlockColorAccentType10A: @_sap_ui_layout_BlockLayout_BtpGrey1; // Grey 1
+@_sap_ui_layout_BlockLayout_BlockColorAccentType10B: @_sap_ui_layout_BlockLayout_BtpGrey2; // Grey 2
+@_sap_ui_layout_BlockLayout_BlockColorAccentType10C: @_sap_ui_layout_BlockLayout_BtpGrey3; // Grey 3
+@_sap_ui_layout_BlockLayout_BlockColorAccentType10D: @_sap_ui_layout_BlockLayout_BtpGrey4; // Grey 4
+@_sap_ui_layout_BlockLayout_BlockColorAccentType10E: @_sap_ui_layout_BlockLayout_BtpGrey7; // Grey 7
+@_sap_ui_layout_BlockLayout_BlockColorAccentType10F: @_sap_ui_layout_BlockLayout_BtpGrey9; // Grey 9
+
+@_sap_ui_layout_BlockLayout_BlockColorAccentType11A: transparent;
+@_sap_ui_layout_BlockLayout_BlockColorAccentType11B: transparent;
+@_sap_ui_layout_BlockLayout_BlockColorAccentType11C: transparent;
+@_sap_ui_layout_BlockLayout_BlockColorAccentType11D: transparent;
+@_sap_ui_layout_BlockLayout_BlockColorAccentType11E: transparent;
+@_sap_ui_layout_BlockLayout_BlockColorAccentType11F: transparent;
+
+// Create classes which would just set background color of the BlockLayout cells
+.generateCellColorSets (@backgroundColorSet, @backgroundColorShade, @textColor) {
+	@css-param: "@{backgroundColorSet}@{backgroundColorShade}"; // Concat the params
+	@css-selector: ~"sapUiBlockLayoutCellColor@{css-param}"; // Create the css selector string
+	@color-param: "_sap_ui_layout_BlockLayout_BlockColorAccentType@{css-param}"; // Build the color param name
+
+	// Build the real CSS selector.
+	// The output would be something like this: .sapUiBlockLayoutCellColor1A { background-color: "#996b00"; }
+	.@{css-selector} {
+		background-color: @@color-param;
+
+		.sapUiBlockCellContent {
+			color: @textColor;
+
+			.sapMText,
+			.sapMLabel,
+			.sapUiBlockCellTitle {
+				color: inherit;
+			}
+		}
+	}
+}
+
+// Define a loop and go through 10 of 11 color sets and for each set apply 6 shades. Also provide contrast text color
+.loop-cell-colors(@i: 1) when (@i =< 10) {
+	.generateCellColorSets(@i, "A", @sapUiBaseText);
+	.generateCellColorSets(@i, "B", @sapUiBaseText);
+	.generateCellColorSets(@i, "C", @sapUiBaseText);
+	.generateCellColorSets(@i, "D", @sapUiBaseText);
+	.generateCellColorSets(@i, "E", @sapUiContentContrastTextColor);
+	.generateCellColorSets(@i, "F", @sapUiContentContrastTextColor);
+
+	.loop-cell-colors(@i + 1); // Execute next loop iteration
+}
+
+// Execute Loop through color sets
+.loop-cell-colors();
+
+// iterate 11th background separately, because it uses different contrast text color
+.generateCellColorSets(11, "A", @sapUiBaseText);
+.generateCellColorSets(11, "B", @sapUiBaseText);
+.generateCellColorSets(11, "C", @sapUiBaseText);
+.generateCellColorSets(11, "D", @sapUiBaseText);
+.generateCellColorSets(11, "E", @sapUiBaseText);
+.generateCellColorSets(11, "F", @sapUiBaseText);
+
+/* ============ Background type: Light ============== */
+.sapUiBlockLayoutBackgroundLight .sapUiBlockLayoutRow {
+	&.sapUiBlockLayoutBackgroundColorSet1 {
+		.setCellsColorDoubles(@_sap_ui_layout_BlockLayout_BtpGrey1, @sapUiGroupContentBackground); // B, A
+	}
+
+	&.sapUiBlockLayoutBackgroundColorSet1Inverted {
+		.setCellsColorDoubles(@sapUiGroupContentBackground, @_sap_ui_layout_BlockLayout_BtpGrey1);
+	}
+
+	&.sapUiBlockLayoutBackgroundColorSet2 {
+		.setCellsColorDoubles(@_sap_ui_layout_BlockLayout_BtpGrey3, @_sap_ui_layout_BlockLayout_BtpGrey2); // D, C
+	}
+
+	&.sapUiBlockLayoutBackgroundColorSet2Inverted {
+		.setCellsColorDoubles(@_sap_ui_layout_BlockLayout_BtpGrey2, @_sap_ui_layout_BlockLayout_BtpGrey3);
+	}
+
+	&.sapUiBlockLayoutBackgroundColorSet3 {
+		.setCellsColorDoubles(@_sap_ui_layout_BlockLayout_BtpGrey7, @_sap_ui_layout_BlockLayout_BtpGrey4); // F, E
+
+		// texts on dark background
+		.sapUiBlockLayoutEvenCell .sapUiBlockCellContent {
+			color: @sapUiContentContrastTextColor;
+
+			.sapMText,
+			.sapMLabel,
+			.sapUiBlockCellTitle {
+				color: inherit;
+			}
+		}
+	}
+
+	&.sapUiBlockLayoutBackgroundColorSet3Inverted {
+		.setCellsColorDoubles(@_sap_ui_layout_BlockLayout_BtpGrey4, @_sap_ui_layout_BlockLayout_BtpGrey7);
+
+		// texts on dark background
+		.sapUiBlockLayoutOddCell .sapUiBlockCellContent {
+			color: @sapUiContentContrastTextColor;
+
+			.sapMText,
+			.sapMLabel,
+			.sapUiBlockCellTitle {
+				color: inherit;
+			}
+		}
+	}
+
+	&.sapUiBlockLayoutBackgroundColorSet4 {
+		.setCellsColorDoubles(@sapUiPageFooterBackground, @_sap_ui_layout_BlockLayout_BtpGrey9); // H, G
+
+		// texts on dark background
+		.sapUiBlockLayoutOddCell .sapUiBlockCellContent {
+			color: @sapUiContentContrastTextColor;
+
+			.sapMText,
+			.sapMLabel,
+			.sapUiBlockCellTitle {
+				color: inherit;
+			}
+		}
+	}
+
+	&.sapUiBlockLayoutBackgroundColorSet4Inverted {
+		.setCellsColorDoubles(@_sap_ui_layout_BlockLayout_BtpGrey9, @sapUiPageFooterBackground);
+
+		// texts on dark background
+		.sapUiBlockLayoutEvenCell .sapUiBlockCellContent {
+			color: @sapUiContentContrastTextColor;
+
+			.sapMText,
+			.sapMLabel,
+			.sapUiBlockCellTitle {
+				color: inherit;
+			}
+		}
+	}
+}
+
+/* ============ Background type: Accent ============== */
+.sapUiBlockLayoutBackgroundAccent .sapUiBlockLayoutRow {
+	&.sapUiBlockLayoutBackgroundColorSet1 {
+		.setCellsColorDoubles(@_sap_ui_layout_BlockLayout_BtpTeal9, @_sap_ui_layout_BlockLayout_BtpTeal7); // Colors B, A
+	}
+
+	&.sapUiBlockLayoutBackgroundColorSet1Inverted {
+		.setCellsColorDoubles(@_sap_ui_layout_BlockLayout_BtpTeal7, @_sap_ui_layout_BlockLayout_BtpTeal9);
+	}
+
+	&.sapUiBlockLayoutBackgroundColorSet2 {
+		.setCellsColorDoubles(@_sap_ui_layout_BlockLayout_BtpBlue9, @_sap_ui_layout_BlockLayout_BtpBlue7); // Colors D, C
+	}
+
+	&.sapUiBlockLayoutBackgroundColorSet2Inverted {
+		.setCellsColorDoubles(@_sap_ui_layout_BlockLayout_BtpBlue7, @_sap_ui_layout_BlockLayout_BtpBlue9);
+	}
+
+	&.sapUiBlockLayoutBackgroundColorSet3 {
+		.setCellsColorDoubles(@_sap_ui_layout_BlockLayout_BtpIndigo9, @_sap_ui_layout_BlockLayout_BtpIndigo7); // Colors F, E
+	}
+
+	&.sapUiBlockLayoutBackgroundColorSet3Inverted {
+		.setCellsColorDoubles(@_sap_ui_layout_BlockLayout_BtpIndigo7, @_sap_ui_layout_BlockLayout_BtpIndigo9); // Colors F & E
+	}
+
+	&.sapUiBlockLayoutBackgroundColorSet4 {
+		.setCellsColorDoubles(@_sap_ui_layout_BlockLayout_BtpGrey2, @_sap_ui_layout_BlockLayout_BtpGrey1); // Colors H, G
+	}
+
+	&.sapUiBlockLayoutBackgroundColorSet4Inverted {
+		.setCellsColorDoubles(@_sap_ui_layout_BlockLayout_BtpGrey1, @_sap_ui_layout_BlockLayout_BtpGrey2);
+	}
+
+	&.sapUiBlockLayoutBackgroundColorSet1,
+	&.sapUiBlockLayoutBackgroundColorSet2,
+	&.sapUiBlockLayoutBackgroundColorSet3,
+	&.sapUiBlockLayoutBackgroundColorSet4 {
+		.sapUiBlockLayoutCell.sapUiBlockLayoutBackgroundColorSetGray1 {
+			background-color: @_sap_ui_layout_BlockLayout_BtpGrey1; //color: G
+		}
+
+		.sapUiBlockLayoutCell.sapUiBlockLayoutBackgroundColorSetGray2 {
+			background-color: @_sap_ui_layout_BlockLayout_BtpGrey2; //color: H
+		}
+	}
+
+	// texts on dark accent background
+	.sapUiBlockCellContent {
+		color: @sapUiContentContrastTextColor;
+
+		.sapMText,
+		.sapMLabel,
+		.sapUiBlockCellTitle {
+			color: inherit;
+
+		}
+		.sapMLnk {
+			color: @sapUiLinkInvertedColor;
+		}
+	}
+
+	// texts on light accent background
+	&.sapUiBlockLayoutBackgroundColorSet4,
+	&.sapUiBlockLayoutBackgroundColorSet4Inverted,
+	.sapUiBlockLayoutBackgroundColorSetGray1,
+	.sapUiBlockLayoutBackgroundColorSetGray2 {
+		.sapUiBlockCellContent {
+			color: @sapUiGroupTitleTextColor;
+		}
+
+		.sapMLnk {
+			color: @sapUiLink;
+		}
+	}
+}

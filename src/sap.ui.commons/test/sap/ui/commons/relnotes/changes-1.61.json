@@ -1,0 +1,18 @@
+{
+  "1.61.0": {
+    "date": "November 2018",
+    "notes": [
+      {
+        "id": "19f40d3bf7900f28c7b3a465438f81040a3f3563",
+        "type": "FIX",
+        "text": "Form: use stable IDs for labels created by FormElement",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880706126"
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -2,10 +2,12 @@
  * ${copyright}
  */
 sap.ui.define([
-	'sap/ui/rta/command/BaseCommand',
-	'sap/ui/fl/Utils'
+	"sap/ui/rta/command/BaseCommand",
+	"sap/ui/rta/command/FlexCommand",
+	"sap/ui/fl/Utils"
 ], function(
 	BaseCommand,
+	FlexCommand,
 	FlUtils
 ) {
 	"use strict";
@@ -23,20 +25,18 @@ sap.ui.define([
 	 * @private
 	 * @since 1.34
 	 * @alias sap.ui.rta.command.CompositeCommand
-	 * @experimental Since 1.34. This class is experimental and provides only limited functionality. Also the API might be
-	 *               changed in future.
 	 */
 	var CompositeCommand = BaseCommand.extend("sap.ui.rta.command.CompositeCommand", {
-		metadata : {
-			library : "sap.ui.rta",
-			properties : {},
-			aggregations : {
-				commands : {
-					type : "sap.ui.rta.command.BaseCommand",
-					multiple : true
+		metadata: {
+			library: "sap.ui.rta",
+			properties: {},
+			aggregations: {
+				commands: {
+					type: "sap.ui.rta.command.BaseCommand",
+					multiple: true
 				}
 			},
-			events : {}
+			events: {}
 		}
 	});
 
@@ -47,7 +47,7 @@ sap.ui.define([
 	 */
 	CompositeCommand.prototype.execute = function() {
 		var aPromises = [];
-		this._forEachCommand(function(oCommand){
+		this._forEachCommand(function(oCommand) {
 			aPromises.push(oCommand.execute.bind(oCommand));
 		});
 		return FlUtils.execPromiseQueueSequentially(aPromises, true)
@@ -55,10 +55,8 @@ sap.ui.define([
 		.catch(function(e) {
 			var aCommands = this.getCommands();
 			aCommands.forEach(function(oCommand) {
-				if (oCommand instanceof sap.ui.rta.command.FlexCommand) {
-					if (!oCommand._aRecordedUndo) {
-						this.removeCommand(oCommand);
-					}
+				if (oCommand instanceof FlexCommand) {
+					this.removeCommand(oCommand);
 				}
 			}.bind(this));
 
@@ -72,7 +70,7 @@ sap.ui.define([
 
 	CompositeCommand.prototype.undo = function() {
 		var aPromises = [];
-		this._forEachCommandInReverseOrder(function(oCommand){
+		this._forEachCommandInReverseOrder(function(oCommand) {
 			aPromises.push(oCommand.undo.bind(oCommand));
 		});
 		return FlUtils.execPromiseQueueSequentially(aPromises);
@@ -91,14 +89,17 @@ sap.ui.define([
 	};
 
 	CompositeCommand.prototype._addCompositeIdToChange = function(oCommand) {
-		if (oCommand.getPreparedChange && oCommand.getPreparedChange()) {
-			var oChangeDefinition = oCommand.getPreparedChange().getDefinition();
-			if (!oChangeDefinition.support.compositeCommand) {
-				if (!this._sCompositeId) {
-					this._sCompositeId = FlUtils.createDefaultFileName("composite");
-				}
-				oChangeDefinition.support.compositeCommand = this._sCompositeId;
+		this._sCompositeId ||= FlUtils.createDefaultFileName("composite");
+		var oPreparedChange = oCommand.getPreparedChange && oCommand.getPreparedChange();
+		if (oPreparedChange) {
+			var oChangeSupportInformation = oPreparedChange.getSupportInformation();
+			if (!oChangeSupportInformation.compositeCommand) {
+				oChangeSupportInformation.compositeCommand = this._sCompositeId;
+				oPreparedChange.setSupportInformation(oChangeSupportInformation);
 			}
+		} else if (oCommand.setCompositeId) {
+			// relevant for app descriptor commands
+			oCommand.setCompositeId(this._sCompositeId);
 		}
 	};
 
@@ -126,5 +127,4 @@ sap.ui.define([
 	};
 
 	return CompositeCommand;
-
-}, /* bExport= */true);
+});

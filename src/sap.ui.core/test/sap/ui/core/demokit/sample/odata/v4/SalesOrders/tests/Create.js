@@ -2,37 +2,57 @@
  * ${copyright}
  */
 sap.ui.define([
+	"sap/base/Log",
+	"sap/ui/test/Opa",
 	"sap/ui/test/TestUtils"
-], function (TestUtils) {
+], function (Log, Opa, TestUtils) {
 	"use strict";
 
 	return {
 		create : function (Given, When, Then, sUIComponent) {
 			var oExpectedLog = {
-					component : "sap.ui.model.odata.v4.ODataParentBinding",
-					level : jQuery.sap.log.Level.ERROR,
+					component : "sap.ui.model.odata.v4.ODataListBinding",
+					level : Log.Level.ERROR,
 					message : "POST on 'SalesOrderList' failed; will be repeated automatically"
 				},
 				sModifiedNote = "Modified by OPA",
 				bRealOData = TestUtils.isRealOData();
 
 			Given.iStartMyUIComponent({
+				autoWait : true,
 				componentConfig : {
 					name : sUIComponent || "sap.ui.core.sample.odata.v4.SalesOrders"
 				}
 			});
+			Then.onAnyPage.iTeardownMyUIComponentInTheEnd();
 
-			sap.ui.test.Opa.getContext().sViewName = "sap.ui.core.sample.odata.v4.SalesOrders.Main";
+			Opa.getContext().sViewName = "sap.ui.core.sample.odata.v4.SalesOrders.Main";
+
+			When.onTheMainPage.firstSalesOrderIsVisible();
+
+			// Modify Company Name in Business Partner Details and check that Buyer Name
+			// in Sales Order List is updated accordingly after saving
+			When.onTheMainPage.pressMoreButton();
+			When.onTheMainPage.selectFirstSalesOrder(true);
+			When.onTheMainPage.rememberCompanyName();
+			When.onTheMainPage.modifyCompanyName();
+			When.onTheMainPage.pressSaveSalesOrderButton();
+			Then.onTheMainPage.checkCompanyNameModified();
+			When.onTheMainPage.restoreCompanyName();
+			When.onTheMainPage.pressSaveSalesOrderButton();
 
 			// Create, modify and delete of an unsaved sales order
-			When.onTheMainPage.firstSalesOrderIsVisible();
-			if (!bRealOData) {
-				Then.onTheMainPage.checkSalesOrdersCount(10);
-			}
+			Then.onTheMainPage.checkSalesOrdersCount(10, 23);
 
 			// check value helps within sales order line items
 			When.onTheMainPage.selectFirstSalesOrder();
 			When.onTheMainPage.pressValueHelpOnProductCategory();
+			Then.onTheValueHelpPopover.checkTitle("Value Help: Category (Modified Mapping)");
+			When.onTheValueHelpPopover.close();
+			When.onTheMainPage.setValueHelpQualifier("additional");
+			When.onTheMainPage.pressValueHelpOnProductCategory();
+			Then.onTheValueHelpPopover.checkTitle("Value Help: Category (Additional Mapping)");
+			When.onTheValueHelpPopover.close();
 			When.onTheMainPage.pressValueHelpOnProductTypeCode();
 
 			When.onTheMainPage.pressCreateSalesOrdersButton();
@@ -46,22 +66,15 @@ sap.ui.define([
 			Then.onTheCreateNewSalesOrderDialog.checkNewNote(sModifiedNote);
 			Then.onTheMainPage.checkNote(0, sModifiedNote);
 			When.onTheCreateNewSalesOrderDialog.confirmDialog();
-			if (!bRealOData) {
-				Then.onTheMainPage.checkSalesOrdersCount(10);
-			}
+			Then.onTheMainPage.checkSalesOrdersCount(11);
 			Then.onTheMainPage.checkID(0, "");
 			Then.onTheMainPage.checkSalesOrderSelected(0);
-			When.onTheMainPage.changeNote(0, sModifiedNote + "_2");
+			When.onTheMainPage.changeNoteInSalesOrders(0, sModifiedNote + "_2");
 			Then.onTheMainPage.checkNote(0, sModifiedNote + "_2");
 			When.onTheMainPage.deleteSelectedSalesOrder();
-			When.onTheSalesOrderDeletionConfirmation.cancel();
-			Then.onTheMainPage.checkID(0, "");
-			When.onTheMainPage.deleteSelectedSalesOrder();
-			When.onTheSalesOrderDeletionConfirmation.confirm();
-			When.onTheSuccessInfo.confirm();
-			if (!bRealOData) {
-				Then.onTheMainPage.checkSalesOrdersCount(10);
-			}
+			Then.onTheMainPage.checkSalesOrdersCount(10);
+			Then.onTheMainPage.checkID(0);
+			When.onTheMainPage.pressSaveSalesOrdersButton();
 			Then.onTheMainPage.checkID(0);
 
 			// Create a sales order, save, modify again, save and delete
@@ -74,15 +87,12 @@ sap.ui.define([
 			When.onTheSuccessInfo.confirm();
 			if (bRealOData) {
 				Then.onTheMainPage.checkButtonEnabled("confirmSalesOrder");
-				// TODO: TestUtils may support to provide JSON response/or generated keys...
 				Then.onTheMainPage.checkDifferentID(0, "");
-				// TODO: TestUtils does not support PATCH at all
-				When.onTheMainPage.changeNote(0, sModifiedNote + "_3");
+				When.onTheMainPage.changeNoteInSalesOrders(0, sModifiedNote + "_3");
 				When.onTheMainPage.pressSaveSalesOrdersButton();
 			}
 			When.onTheMainPage.deleteSelectedSalesOrder();
-			When.onTheSalesOrderDeletionConfirmation.confirm();
-			When.onTheSuccessInfo.confirm();
+			When.onTheMainPage.pressSaveSalesOrdersButton();
 			Then.onTheMainPage.checkID(0);
 
 			// Create a sales order, save and refresh the sales orders
@@ -91,35 +101,30 @@ sap.ui.define([
 			When.onTheCreateNewSalesOrderDialog.confirmDialog();
 			Then.onTheMainPage.checkID(0, "");
 			When.onTheMainPage.pressSaveSalesOrdersButton();
-			Then.onTheSuccessInfo.checkMessage(/SalesOrder created: \d*, SAP/);
+			Then.onTheSuccessInfo.checkMessage(/SalesOrder created: \w+, SAP/);
 			When.onTheSuccessInfo.confirm();
-			if (!bRealOData) {
-				Then.onTheMainPage.checkSalesOrdersCount(11);
-			}
-			When.onTheMainPage.rememberCreatedSalesOrder();
+			Then.onTheMainPage.checkSalesOrdersCount(11);
 			When.onTheMainPage.pressRefreshSalesOrdersButton();
 			Then.onTheMainPage.checkID(0);
 
 			When.onTheMainPage.doubleRefresh();
 			Then.onTheMainPage.checkID(0);
 
-			// Create a sales order, refresh/filter w/o saving -> expected "pending changes" message
+			// Create a sales order, refresh w/o saving
 			When.onTheMainPage.pressCreateSalesOrdersButton();
 			When.onTheCreateNewSalesOrderDialog.confirmDialog();
-			// Cancel refresh
-			When.onTheMainPage.pressRefreshSalesOrdersButton();
-			When.onTheRefreshConfirmation.cancel();
 			Then.onTheMainPage.checkID(0, "");
 			When.onTheMainPage.pressRefreshAllButton();
 			When.onTheRefreshConfirmation.cancel();
 			Then.onTheMainPage.checkID(0, "");
-			if (bRealOData) {
+			if (bRealOData) { // allow filter and keep transient entity
 				When.onTheMainPage.filterGrossAmount("1000");
-				When.onTheErrorInfo.confirm();
 				Then.onTheMainPage.checkID(0, "");
 			}
-			// Confirm refresh
 			When.onTheMainPage.pressRefreshSalesOrdersButton();
+			Then.onTheMainPage.checkID(0, "");
+			// Confirm refresh
+			When.onTheMainPage.pressRefreshAllButton();
 			When.onTheRefreshConfirmation.confirm();
 			When.onTheMainPage.firstSalesOrderIsAtPos0();
 			Then.onTheMainPage.checkID(0);
@@ -129,9 +134,7 @@ sap.ui.define([
 			When.onTheCreateNewSalesOrderDialog.confirmDialog();
 			When.onTheMainPage.pressCancelSalesOrderListChangesButton();
 			When.onTheMainPage.firstSalesOrderIsAtPos0();
-			if (!bRealOData) {
-				Then.onTheMainPage.checkSalesOrdersCount(10);
-			}
+			Then.onTheMainPage.checkSalesOrdersCount(10);
 			Then.onTheMainPage.checkID(0);
 
 			if (bRealOData) {
@@ -139,31 +142,37 @@ sap.ui.define([
 				// Create a sales order with invalid note, save, cancel
 				When.onTheMainPage.pressCreateSalesOrdersButton();
 				When.onTheCreateNewSalesOrderDialog.confirmDialog();
-				When.onTheMainPage.changeNote(0, "RAISE_ERROR");
+				When.onTheMainPage.changeNoteInSalesOrders(0, "RAISE_ERROR");
 				When.onTheMainPage.pressSaveSalesOrdersButton();
-				When.onTheErrorInfo.confirm();
+				When.onTheMessagePopover.close();
 				When.onTheMainPage.pressRefreshSalesOrdersButton();
-				When.onTheRefreshConfirmation.cancel();
 				Then.onTheMainPage.checkID(0, "");
 				When.onTheMainPage.pressCancelSalesOrderListChangesButton();
 				When.onTheMainPage.firstSalesOrderIsAtPos0();
 				// Create a sales order with invalid note, save, update note, save -> success
 				When.onTheMainPage.pressCreateSalesOrdersButton();
 				When.onTheCreateNewSalesOrderDialog.confirmDialog();
-				When.onTheMainPage.changeNote(0, "RAISE_ERROR");
+				When.onTheMainPage.changeNoteInSalesOrders(0, "RAISE_ERROR");
 				When.onTheMainPage.pressSaveSalesOrdersButton();
-				When.onTheErrorInfo.confirm();
+				When.onTheMessagePopover.close();
 				// Do it again to ensure that it is retried without update
 				When.onTheMainPage.pressSaveSalesOrdersButton();
-				When.onTheErrorInfo.confirm();
-				When.onTheMainPage.changeNote(0, "Valid Note");
+				When.onTheMessagePopover.close();
+				When.onTheMainPage.changeNoteInSalesOrders(0, "Valid Note");
 				When.onTheMainPage.pressSaveSalesOrdersButton();
 				When.onTheSuccessInfo.confirm();
 				Then.onTheMainPage.checkDifferentID(0, "");
+				// Delete and cancel, see that the object page disappears and reappears
+				When.onTheMainPage.deleteSelectedSalesOrder();
+				Then.onTheMainPage.checkObjectPageInvisible();
+				When.onTheMainPage.pressCancelSalesOrderListChangesButton();
+				Then.onTheMainPage.checkNote(0, "Valid Note");
+				Then.onTheMainPage.checkSalesOrderSelected(0);
+				Then.onTheMainPage.checkNoteInDetails("Valid Note");
+				Then.onTheMainPage.checkSalesOrderItemsCount(0); // -> items table is visible
 				// cleanup
 				When.onTheMainPage.deleteSelectedSalesOrder();
-				When.onTheSalesOrderDeletionConfirmation.confirm();
-				When.onTheSuccessInfo.confirm();
+				When.onTheMainPage.pressSaveSalesOrdersButton();
 				Then.onTheMainPage.checkID(0);
 			}
 
@@ -195,7 +204,6 @@ sap.ui.define([
 				Then.onTheMainPage.checkSalesOrderItemInRow(0);
 				// reset filter again (Note: resets also filter ItemPosition gt '0000000000')
 				When.onTheMainPage.filterSOItemsByProductIdWithChangeParameters(undefined);
-
 
 				// Sort
 				When.onTheMainPage.sortBySalesOrderIDviaController(); // sort by sales order ID asc.
@@ -234,16 +242,21 @@ sap.ui.define([
 
 			if (bRealOData) {
 				// primitive sorter and filter tasks,
-				// -> probably not dependent on current sales orders in back end
+				// -> probably not dependent on current sales orders in the back end
+				When.onTheMainPage.firstSalesOrderIsVisible(); // remember ID of first sales order
 				When.onTheMainPage.sortBySalesOrderID(); // sort via ID ascending (initial order)
-				When.onTheMainPage.firstSalesOrderIsVisible(); //-> we expect first order on POS 0
+				When.onTheMainPage.firstSalesOrderIsAtPos0(); // ID does NOT change
 				When.onTheMainPage.sortBySalesOrderID(); // sort via ID descending
-				Then.onTheMainPage.checkSalesOrderIdInDetails(true); //selection lost
-				When.onTheMainPage.sortBySalesOrderID(); // no sort
+				Then.onTheMainPage.checkFirstSalesOrderChanged(); // ID changed
+				When.onTheMainPage.firstSalesOrderIsVisible(); // remembers ID of first sales order
+				When.onTheMainPage.sortBySalesOrderID(); // sort
+				Then.onTheMainPage.checkFirstSalesOrderChanged(); // ID changed
+				When.onTheMainPage.firstSalesOrderIsVisible();
 				When.onTheMainPage.sortByGrossAmount(); // sort by GrossAmount ascending
-				Then.onTheMainPage.checkSalesOrderIdInDetails(true);
+				Then.onTheMainPage.checkFirstSalesOrderChanged();
+				When.onTheMainPage.firstSalesOrderIsVisible(); // remember ID of first sales order
 				When.onTheMainPage.sortByGrossAmount(); // sort by GrossAmount descending
-				Then.onTheMainPage.checkSalesOrderIdInDetails(true);
+				Then.onTheMainPage.checkFirstSalesOrderChanged();
 				// remember GrossAmount of first item
 				When.onTheMainPage.selectFirstSalesOrder(true);
 				When.onTheMainPage.filterGrossAmount(undefined); // filter by remembered GrossAmount
@@ -251,12 +264,11 @@ sap.ui.define([
 				Then.onTheMainPage.checkSalesOrdersCount(0);
 			}
 
-			// delete the last created SalesOrder again
-			When.onAnyPage.cleanUp("SalesOrders");
+			// delete created sales orders
+			When.onAnyPage.cleanUp("SalesOrderList");
 			Then.onAnyPage.checkLog(bRealOData
 				? [oExpectedLog, oExpectedLog, oExpectedLog]
 				: undefined);
-			Then.iTeardownMyUIComponent();
 		}
 	};
 });

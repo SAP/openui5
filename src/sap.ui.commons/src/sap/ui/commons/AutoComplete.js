@@ -4,13 +4,15 @@
 
 // Provides control sap.ui.commons.AutoComplete.
 sap.ui.define([
-    'jquery.sap.global',
+    'sap/ui/thirdparty/jquery',
     './ComboBox',
     './library',
-    "./AutoCompleteRenderer",
-    'jquery.sap.strings'
+    './AutoCompleteRenderer',
+    './TextField',
+    'sap/ui/events/KeyCodes',
+    'jquery.sap.strings' // provides jQuery.sap.startsWithIgnoreCase
 ],
-	function(jQuery, ComboBox, library, AutoCompleteRenderer /*, jQuerySap */) {
+	function(jQuery, ComboBox, library, AutoCompleteRenderer, TextField, KeyCodes) {
 	"use strict";
 
 
@@ -35,7 +37,6 @@ sap.ui.define([
 	 * @since 1.10.0
 	 * @deprecated Since version 1.38.
 	 * @alias sap.ui.commons.AutoComplete
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var AutoComplete = ComboBox.extend("sap.ui.commons.AutoComplete", /** @lends sap.ui.commons.AutoComplete.prototype */ { metadata : {
 
@@ -43,6 +44,7 @@ sap.ui.define([
 			"sap.ui.commons.ToolbarItem"
 		],
 		library : "sap.ui.commons",
+		deprecated: true,
 		properties : {
 
 			/**
@@ -101,7 +103,6 @@ sap.ui.define([
 	 *
 	 * @param {function} [fFilter] The filter function. If not set the default filter function will be used.
 	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	AutoComplete.prototype.setFilterFunction = function(fFilter) {
 		if (typeof (fFilter) == "function") {
@@ -114,8 +115,8 @@ sap.ui.define([
 
 	AutoComplete.prototype.onkeypress = function(oEvent) {
 		var iKC = oEvent.which || oEvent.keyCode;
-		if (iKC === jQuery.sap.KeyCodes.ESCAPE) {
-			sap.ui.commons.TextField.prototype.onkeypress.apply(this, arguments);
+		if (iKC === KeyCodes.ESCAPE) {
+			TextField.prototype.onkeypress.apply(this, arguments);
 			jQuery(this.getInputDomRef()).removeAttr("aria-posinset");
 		}
 	};
@@ -217,7 +218,7 @@ sap.ui.define([
 				case "keypress":
 					// in Firefox escape is handled on keypress
 					iKC = oEvent.which || oEvent.keyCode;
-					if (iKC === jQuery.sap.KeyCodes.ESCAPE) {
+					if (iKC === KeyCodes.ESCAPE) {
 						this._close();
 						break;
 					}
@@ -405,12 +406,15 @@ sap.ui.define([
 	 * @public
 	 * @name sap.ui.commons.AutoComplete#getListBox
 	 * @function
+	 * @returns {string}
 	 */
 
 
 	/**
 	 * @deprecated As of version 1.10.0, NOT SUPPORTED
 	 * @public
+	 * @param {string | sap.ui.commons.ListBox} oListBox
+	 * @returns {this}
 	 */
 	AutoComplete.prototype.setListBox = function(){
 		return this;
@@ -422,12 +426,15 @@ sap.ui.define([
 	 * @public
 	 * @name sap.ui.commons.AutoComplete#getSelectedKey
 	 * @function
+	 * @returns {string}
 	 */
 
 
 	/**
 	 * @deprecated As of version 1.10.0, NOT SUPPORTED
 	 * @public
+	 * @param {string} sSelectedKey
+	 * @returns {this}
 	 */
 	AutoComplete.prototype.setSelectedKey = function(){
 		return this;
@@ -439,12 +446,15 @@ sap.ui.define([
 	 * @public
 	 * @name sap.ui.commons.AutoComplete#getSelectedItemId
 	 * @function
+	 * @returns {string}
 	 */
 
 
 	/**
 	 * @deprecated As of version 1.10.0, NOT SUPPORTED
 	 * @public
+	 * @param {string} sSelectedItemId
+	 * @returns {this}
 	 */
 	AutoComplete.prototype.setSelectedItemId = function(){
 		return this;
@@ -452,4 +462,4 @@ sap.ui.define([
 
 	return AutoComplete;
 
-}, /* bExport= */ true);
+});

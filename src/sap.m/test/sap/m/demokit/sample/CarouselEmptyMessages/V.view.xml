@@ -1,0 +1,17 @@
+<mvc:View
+	xmlns="sap.m"
+	xmlns:l="sap.ui.layout"
+	xmlns:mvc="sap.ui.core.mvc"
+	controllerName="sap.m.sample.CarouselEmptyMessages.C"
+	height="100%">
+	<HBox justifyContent="Center" renderType="Bare" height="100%">
+		<Panel width="75%" height="100%">
+			<Slider
+					value="100"
+					liveChange=".onResizeCarouselContainer" />
+			<Carousel class="sapUiContentPadding" id="carouselEmpty" height="50%">
+			</Carousel>
+		</Panel>
+	</HBox>
+
+</mvc:View>

@@ -2,22 +2,27 @@
  * @${copyright}
  */
 
-sap.ui.define([ "sap/ui/core/UIComponent"], function(UIComponent) {
+sap.ui.define([
+	"sap/ui/core/UIComponent",
+	"sap/ui/core/mvc/XMLView"
+], function(
+	UIComponent,
+	XMLView
+) {
 	"use strict";
 	return UIComponent.extend("testComponentAsync.Component", {
-		init : function() {
-			sap.ui.core.UIComponent.prototype.init.apply(this, arguments);
+		init(...aArgs) {
+			UIComponent.prototype.init.apply(this, aArgs);
 		},
-
-		createContent: function() {
-			var view = sap.ui.view({
-				id: this.createId("myView"),
-				viewName: "testComponentAsync.View",
-				type: sap.ui.core.mvc.ViewType.XML,
-				async: true // test timing
+		metadata: {
+			interfaces: ["sap.ui.core.IAsyncContentCreation"],
+			manifest: "json"
+		},
+		createContent() {
+			return XMLView.create({
+				id: "myView",
+				viewName: "testComponentAsync.View"
 			});
-
-			return view;
 		}
 	});
 });

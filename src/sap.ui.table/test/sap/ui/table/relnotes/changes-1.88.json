@@ -1,0 +1,18 @@
+{
+  "1.88.0": {
+    "date": "March 2021",
+    "notes": [
+      {
+        "id": "65b4edd6c114db8e19de7554476ac54daa69878b",
+        "type": "FIX",
+        "text": " TreeTable: Busy indicator if binding param \"numberOfExpandedLevels\" > 0",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500000956932021"
+          }
+        ]
+      }
+    ]
+  }
+}

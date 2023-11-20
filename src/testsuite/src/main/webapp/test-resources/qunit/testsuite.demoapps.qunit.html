@@ -1,0 +1,30 @@
+<html>
+	<head>
+		<title>TestSuite for demoapp scenarios</title>
+
+		<script type="text/javascript" src="../../resources/sap/ui/qunit/qunit-redirect.js"></script>
+
+		<script>
+
+		/**
+		 * Add test pages to this test suite function.
+		 * Please order alphabetically
+		 */
+		function suite() {
+			var suite = new top.jsUnitTestSuite();
+			var contextPath = "/" + window.location.pathname.split("/")[1];
+
+			suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/testsuite.demoapps.qunit.html");
+			suite.addTestPage(contextPath + "/test-resources/sap/tnt/qunit/testsuite.demoapps.qunit.html");
+			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/testsuites/testsuite.demoapps.qunit.html");
+			suite.addTestPage(contextPath + "/test-resources/sap/ui/documentation/sdk/qunit/testsuite.demoapps.qunit.html");
+			suite.addTestPage(contextPath + "/test-resources/sap/ui/integration/qunit/testsuite.demoapps.qunit.html");
+
+			return suite;
+		}
+
+		</script>
+	</head>
+	<body>
+	</body>
+</html>

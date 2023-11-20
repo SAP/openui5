@@ -2,10 +2,16 @@
  * ${copyright}
  */
 sap.ui.define([
-	'sap/ui/rta/command/BaseCommand',
-	'sap/ui/fl/changeHandler/BaseTreeModifier',
-	'sap/ui/fl/Utils'
-], function(BaseCommand, BaseTreeModifier, flUtils) {
+	"sap/ui/core/util/reflection/JsControlTreeModifier",
+	"sap/ui/fl/apply/api/ControlVariantApplyAPI",
+	"sap/ui/fl/Utils",
+	"sap/ui/rta/command/BaseCommand"
+], function(
+	JsControlTreeModifier,
+	ControlVariantApplyAPI,
+	flUtils,
+	BaseCommand
+) {
 	"use strict";
 
 	/**
@@ -21,64 +27,98 @@ sap.ui.define([
 	 * @alias sap.ui.rta.command.ControlVariantSwitch
 	 */
 	var ControlVariantSwitch = BaseCommand.extend("sap.ui.rta.command.ControlVariantSwitch", {
-		metadata : {
-			library : "sap.ui.rta",
-			properties : {
-				targetVariantReference : {
-					type : "string"
+		metadata: {
+			library: "sap.ui.rta",
+			properties: {
+				targetVariantReference: {
+					type: "string"
 				},
-				sourceVariantReference : {
-					type : "string"
+				sourceVariantReference: {
+					type: "string"
+				},
+				discardVariantContent: {
+					type: "boolean"
 				}
 			},
-			associations : {},
-			events : {}
+			associations: {},
+			events: {}
+		},
+		// eslint-disable-next-line object-shorthand
+		constructor: function(...aArgs) {
+			BaseCommand.apply(this, aArgs);
+			this.setRelevantForSave(false);
 		}
 	});
 
-	ControlVariantSwitch.prototype.MODEL_NAME = "$FlexVariants";
+	function discardVariantContent(sVReference) {
+		return this.oModel.eraseDirtyChangesOnVariant(this.sVariantManagementReference, sVReference)
+		.then(function(aDirtyChanges) {
+			this._aSourceVariantDirtyChanges = aDirtyChanges;
+		}.bind(this));
+	}
 
-	ControlVariantSwitch.prototype._getAppComponent = function(oElement) {
-		if (!this._oControlAppComponent) {
-			this._oControlAppComponent = oElement ? flUtils.getAppComponentForControl(oElement) : this.getSelector().appComponent;
-		}
-		return this._oControlAppComponent;
+	ControlVariantSwitch.prototype._getAppComponent = function() {
+		var oElement = this.getElement();
+		return oElement ? flUtils.getAppComponentForControl(oElement) : this.getSelector().appComponent;
 	};
 
 	/**
-	 * @public Template Method to implement execute logic, with ensure precondition Element is available
+	 * Template Method to implement execute logic, with ensure precondition Element is available.
+	 *
+	 * @public
 	 * @returns {Promise} Returns resolve after execution
 	 */
 	ControlVariantSwitch.prototype.execute = function() {
-		var oElement = this.getElement(),
-			oAppComponent = this._getAppComponent(oElement),
-			sNewVariantReference = this.getTargetVariantReference();
+		var oElement = this.getElement();
+		var oAppComponent = this._getAppComponent();
+		var sNewVariantReference = this.getTargetVariantReference();
 
-		this.oModel = oAppComponent.getModel(this.MODEL_NAME);
-		this.sVariantManagementReference = BaseTreeModifier.getSelector(oElement, oAppComponent).id;
-		return this._updateModelVariant(sNewVariantReference);
+		this.oModel = oAppComponent.getModel(ControlVariantApplyAPI.getVariantModelName());
+		this.sVariantManagementReference = JsControlTreeModifier.getSelector(oElement, oAppComponent).id;
+
+		return Promise.resolve()
+		.then(function() {
+			if (this.getDiscardVariantContent()) {
+				return discardVariantContent.call(this, this.getSourceVariantReference());
+			}
+			return undefined;
+		}.bind(this))
+		.then(this._updateModelVariant.bind(this, sNewVariantReference, oAppComponent));
 	};
 
 	/**
-	 * @public Template Method to implement undo logic
+	 * Template Method to implement undo logic.
+	 * @public
 	 * @returns {Promise} Returns resolve after undo
 	 */
 	ControlVariantSwitch.prototype.undo = function() {
-		var sOldVariantReference = this.getSourceVariantReference();
-		return this._updateModelVariant(sOldVariantReference);
+		var sSourceVariantReference = this.getSourceVariantReference();
+		var oAppComponent = this._getAppComponent();
+
+		return this._updateModelVariant(sSourceVariantReference, oAppComponent)
+		.then(function() {
+			// When discarding, dirty changes on source variant need to be applied AFTER the switch
+			if (this.getDiscardVariantContent()) {
+				return this.oModel.addAndApplyChangesOnVariant(this._aSourceVariantDirtyChanges)
+				.then(function() {
+					this._aSourceVariantDirtyChanges = null;
+					this.oModel.checkUpdate(true);
+				}.bind(this));
+			}
+			return undefined;
+		}.bind(this));
 	};
 
-	/**
-	 * @private Update variant for the underlying model
-	 * @returns {Promise} Returns promise resolve
-	 */
-	ControlVariantSwitch.prototype._updateModelVariant = function (sVariantReference) {
+	ControlVariantSwitch.prototype._updateModelVariant = function(sVariantReference, oAppComponent) {
 		if (this.getTargetVariantReference() !== this.getSourceVariantReference()) {
-			return Promise.resolve(this.oModel.updateCurrentVariant(this.sVariantManagementReference, sVariantReference));
+			return this.oModel.updateCurrentVariant({
+				variantManagementReference: this.sVariantManagementReference,
+				newVariantReference: sVariantReference,
+				appComponent: oAppComponent
+			});
 		}
 		return Promise.resolve();
 	};
 
 	return ControlVariantSwitch;
-
-}, /* bExport= */true);
+});

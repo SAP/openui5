@@ -1,0 +1,178 @@
+<mvc:View
+    height="100%"
+    controllerName="sap.m.uploadSetTableDemo.Page"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns:m="sap.m"
+    xmlns:core="sap.ui.core"
+    xmlns="sap.m.upload"
+    xmlns:vm="sap.ui.fl.variants"
+    xmlns:sap.ui.fl="sap.ui.fl"
+    xmlns:sap.ui.dt="sap.ui.dt"
+>
+<m:App id="app">
+    <m:Page showHeader="false">
+        <UploadSetwithTable
+            id="UploadSetWithTable"
+            maxFileNameLength="60"
+            uploadUrl="/uploadFiles"
+            enableVariantManagement="true"
+            multiple="true"
+            sticky="ColumnHeaders,HeaderToolbar"
+            growing="true"
+            width="auto"
+            items="{path: '/items', templateShareable: false}"
+            mode="MultiSelect"
+            fixedLayout="false"
+            selectionChange="onSelectionChange"
+            uploadCompleted="onUploadCompleted"
+            inset="true"
+            beforeInitiatingItemUpload="onBeforeInitiatingItemUpload"
+            beforeUploadStarts="onBeforeUploadStarts"
+            itemValidationHandler=".itemValidationCallback"
+            itemRenamed="onDocumentRenamedSuccess"
+        >
+            <!-- ToolBar for Table -->
+            <headerToolbar>
+                <m:OverflowToolbar>
+                    <ActionsPlaceholder placeholderFor="VariantManagementPlaceholder" />
+                    <m:Title
+                        text="{/documentTableTitle} ({= ${/items}.length})"
+                        level="H2"
+                    />
+                    <m:ToolbarSpacer />
+                    <m:SearchField width="15%" liveChange=".onSearch">
+                        <m:layoutData>
+                            <m:OverflowToolbarLayoutData
+                                priority="NeverOverflow"
+                            />
+                        </m:layoutData>
+                    </m:SearchField>
+                    <m:ToolbarSeparator />
+                    <ActionsPlaceholder placeholderFor="UploadButtonPlaceholder" />
+                    <m:Button
+                        id="downloadSelectedButton"
+                        text="Download"
+                        enabled="false"
+                        press="onDownloadFiles"
+                    />
+                    <m:Button
+                        id="changeStatusButton"
+                        text="Change Status"
+                        enabled="false"
+                        press="onChangeStatus"
+                    />
+
+                     <m:Button
+                        id="createRevisionButton"
+                        text="Create Revision"
+                        enabled="false"
+                        press="onCreateRevision"
+                    />
+                    <m:ToggleButton icon="sap-icon://overflow" press="onOverflowPress"/>
+                    <m:ToolbarSeparator />
+                    <ActionsPlaceholder placeholderFor="PersonalizationSettingsPlaceholder" />
+                </m:OverflowToolbar>
+            </headerToolbar>
+
+            <columns>
+                <Column id="fileName" columnPersonalizationText="File Name" path="fileName">
+                    <header>
+                        <m:Label text="File Name" />
+                    </header>
+                </Column>
+                <Column id="id" columnPersonalizationText="ID">
+                    <header>
+                        <m:Label text="ID" />
+                    </header>
+                </Column>
+                <Column id="revision" columnPersonalizationText="Revision" path="revision">
+                    <header>
+                        <m:Label text="Revision" />
+                    </header>
+                </Column>
+                <Column id="status" columnPersonalizationText="Status" path="status">
+                    <header>
+                        <m:Label text="Status" />
+                    </header>
+                </Column>
+                <Column id="fileSize" columnPersonalizationText="File Size" path="fileSize">
+                    <header>
+                        <m:Label text="File Size" />
+                    </header>
+                </Column>
+                <Column id="lastModified" columnPersonalizationText="Last Modified" path="lastModifiedBy">
+                    <header>
+                        <m:Label text="Last Modified" />
+                    </header>
+                </Column>
+                <Column id="actionButton" columnPersonalizationText="Action Button"/>
+            </columns>
+
+            <items>
+                <UploadSetwithTableItem
+                    fileName="{fileName}"
+                    mediaType="{mediaType}"
+                    url="{url}"
+                    type="Navigation"
+                    highlight="{=${uploadState} === 'Complete' ? 'Indication05' : null }"
+                    previewable="{previewable}"
+                    fileSize="{fileSize}"
+                >
+                <cells>
+                
+                    <m:HBox>
+                        <m:Image
+                            src="{imageUrl}"
+                            class="sapMUSTItemImage sapMUSTItemIcon"
+                            visible="{= ${imageUrl} !== undefined}"
+                        />
+                        <core:Icon
+                            src="{parts: ['mediaType', 'fileName'], formatter: '.getIconSrc' }"
+                            color="white"
+                            visible="{= ${imageUrl} === undefined || ${imageUrl} === '' }"
+                            class="sapMUSTItemImage sapMUSTItemIcon"
+                        />
+                        <m:VBox class="sapUiTinyMargin sapUiSmallMarginBegin">
+                            <m:Link text="{fileName}" press="openPreview" />
+                            <m:Text text="{documentType}" />
+                        </m:VBox>
+                    </m:HBox>
+                    <m:Text text="{id}" />
+                    <m:HBox>
+                        <m:Link text="{revision}"                             
+                                press="getFileVersion"/>
+
+                        <m:ObjectStatus
+                            class="sapUiTinyMarginBegin"
+						    text="New Available"
+                            inverted="true"
+			                active="false"
+			                state="Information"
+                            visible="{= ${isLatestVersion} === true ? false : true}"
+                        />                   
+                    </m:HBox>
+                    <m:Text text="{status}" />
+                    <m:Text text="{parts: ['fileSize'], formatter: '.getFileSizeWithUnits'}" />
+                    <m:VBox>
+                        <m:Text text="{lastModifiedBy}" />
+                        <m:Text
+                            class="sapUiTinyMarginTop"
+                            text="{lastmodified}"
+                        />
+                    </m:VBox>
+                    <m:HBox>
+                        <m:Button text="View Details" press=".onViewDetails"/>
+                        <m:Button
+                            class="sapUiTinyMarginBegin"
+                            type="Transparent"
+                            icon="sap-icon://decline"
+                            press="onRemoveHandler"
+                        />
+                    </m:HBox>
+                </cells>
+                </UploadSetwithTableItem>
+            </items>
+        </UploadSetwithTable>
+    </m:Page>
+</m:App>
+</mvc:View>

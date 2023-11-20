@@ -1,17 +1,23 @@
-(function () {
+sap.ui.define([
+	"sap/ui/layout/BlockLayout",
+	"sap/ui/layout/BlockLayoutRow",
+	"sap/ui/layout/BlockLayoutCell",
+	"sap/m/Text",
+	"sap/ui/dt/enablement/elementDesigntimeTest",
+	"sap/ui/rta/enablement/elementActionTest"
+], function (
+	BlockLayout,
+	BlockLayoutRow,
+	BlockLayoutCell,
+	Text,
+	elementDesigntimeTest,
+	elementActionTest
+) {
 	"use strict";
 
-	sap.ui.require([
-		"sap/ui/dt/test/report/QUnit",
-		"sap/ui/dt/test/ElementEnablementTest",
-		"sap/ui/layout/BlockLayout",
-		"sap/ui/layout/BlockLayoutRow",
-		"sap/ui/layout/BlockLayoutCell",
-		"sap/m/Text",
-		"sap/ui/rta/test/controlEnablingCheck"
-	], function (QUnitReport, ElementEnablementTest, BlockLayout, BlockLayoutRow, BlockLayoutCell, Text, rtaControlEnablingCheck) {
-
-		var oElementEnablementTest = new ElementEnablementTest({
+	return Promise.resolve()
+	.then(function () {
+		return elementDesigntimeTest({
 			type: "sap.ui.layout.BlockLayoutRow",
 			create: function () {
 				return new BlockLayout({
@@ -29,14 +35,8 @@
 				});
 			}
 		});
-
-
-		oElementEnablementTest.run().then(function (oData) {
-			new QUnitReport({
-				data: oData
-			});
-		});
-
+	})
+	.then(function() {
 		// Move action
 		var fnConfirmElement1IsOn2rdPosition = function (oUiComponent, oViewAfterAction, assert) {
 			assert.strictEqual(oViewAfterAction.byId("cell1").getId(),
@@ -49,7 +49,7 @@
 				"then the control has been moved to the previous position");
 		};
 
-		rtaControlEnablingCheck("Checking the move action for BlockLayoutRow control", {
+		elementActionTest("Checking the move action for BlockLayoutRow control", {
 			xmlView: '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:m="sap.m" xmlns:l="sap.ui.layout">' +
 			'<l:BlockLayout id="blockLayout">' +
 				'<l:content>' +
@@ -106,7 +106,7 @@
 			assert.strictEqual(oViewAfterAction.byId("row1").getVisible(), true, "then the BlockLayoutRow element is visible");
 		};
 
-		rtaControlEnablingCheck("Checking the remove action for BlockLayoutRow", {
+		elementActionTest("Checking the remove action for BlockLayoutRow", {
 			xmlView: '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:m="sap.m" xmlns:l="sap.ui.layout">' +
 			'<l:BlockLayout id="blockLayout">' +
 				'<l:content>' +
@@ -145,7 +145,7 @@
 			afterRedo: fnConfirmRowInvisible
 		});
 
-		rtaControlEnablingCheck("Checking the reveal action for a BlockLayoutRow", {
+		elementActionTest("Checking the reveal action for a BlockLayoutRow", {
 			xmlView: '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:m="sap.m" xmlns:l="sap.ui.layout">' +
 			'<l:BlockLayout id="blockLayout">' +
 				'<l:content>' +
@@ -182,7 +182,6 @@
 			afterUndo: fnConfirmRowInvisible,
 			afterRedo: fnConfirmRowIsVisible
 		});
-
-
 	});
-})();
+});
+

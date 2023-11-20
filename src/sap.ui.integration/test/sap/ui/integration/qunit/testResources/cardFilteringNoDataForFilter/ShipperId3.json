@@ -1,0 +1,28 @@
+{
+	"value": [
+		{
+			"ShipName": "Vins et alcools Chevalier",
+			"ShipAddress": "59 rue de l'Abbaye"
+		},
+		{
+			"ShipName": "Richter Supermarkt",
+			"ShipAddress": "Starenweg 5"
+		},
+		{
+			"ShipName": "HILARION-Abastos",
+			"ShipAddress": "Carrera 22 con Ave. Carlos Soublette #8-35"
+		},
+		{
+			"ShipName": "Centro comercial Moctezuma",
+			"ShipAddress": "Sierras de Granada 9993"
+		},
+		{
+			"ShipName": "Rattlesnake Canyon Grocery",
+			"ShipAddress": "2817 Milton Dr."
+		},
+		{
+			"ShipName": "Ernst Handel",
+			"ShipAddress": "Kirchgasse 6"
+		}
+	]
+}

@@ -1,0 +1,42 @@
+{
+	"sap.app": {
+		"id": "sap.m.sample.TableBreadcrumb",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "sap.m.sample.TableBreadcrumb.Page",
+			"type": "XML",
+			"async": true
+		},
+		"dependencies": {
+			"libs": {
+				"sap.m": {},
+				"sap.ui.core": {}
+			}
+		},
+		"resources": {
+			"css": [
+				{
+					"uri": "style.css"
+				}
+			]
+		},
+		"config": {
+			"sample": {
+				"stretch": true,
+				"files": [
+					"style.css",
+					"Page.view.xml",
+					"Page.controller.js",
+					"Formatter.js",
+					"Row.fragment.xml",
+					"productHierarchy.json",
+					"manifest.json"
+				]
+			}
+		}
+	}
+}

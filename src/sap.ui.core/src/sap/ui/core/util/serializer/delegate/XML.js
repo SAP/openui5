@@ -2,10 +2,13 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', './Delegate'],
-	function(jQuery, Delegate) {
+sap.ui.define([
+	'./Delegate',
+	"sap/base/util/deepEqual",
+	"sap/base/security/encodeXML"
+],
+	function(Delegate, deepEqual, encodeXML) {
 	"use strict";
-
 
 
 	/**
@@ -22,7 +25,7 @@ sap.ui.define(['jquery.sap.global', './Delegate'],
 	 * @version ${version}
 	 * @alias sap.ui.core.util.serializer.delegate.XML
 	 * @private
-	 * @sap-restricted sap.watt com.sap.webide
+	 * @ui5-restricted sap.watt, com.sap.webide
 	 */
 	var XML = Delegate.extend("sap.ui.core.util.serializer.delegate.XML", /** @lends sap.ui.core.util.serializer.delegate.XML.prototype */
 	{
@@ -110,7 +113,7 @@ sap.ui.define(['jquery.sap.global', './Delegate'],
 			var aCssClasses = [];
 			for (var i = 0; i < aCustomClasses.length; i++) {
 				var sCssClass = aCustomClasses[i];
-				if (!jQuery.sap.startsWith(sCssClass, "sapM") && !jQuery.sap.startsWith(sCssClass, "sapUi")) {
+				if (!sCssClass.startsWith("sapM") && !sCssClass.startsWith("sapUi")) {
 					aCssClasses.push(sCssClass);
 				}
 			}
@@ -144,7 +147,7 @@ sap.ui.define(['jquery.sap.global', './Delegate'],
 			}
 			return oValue;
 		}, function (sName, oValue) {
-			return (oValue !== null && typeof oValue !== undefined && oValue !== "");
+			return (oValue !== null && oValue !== "");
 		});
 
 		// write properties
@@ -152,7 +155,7 @@ sap.ui.define(['jquery.sap.global', './Delegate'],
 		var oDefaults = oControl.getMetadata().getPropertyDefaults();
 		this._createAttributes(aXml, oControl, oProperties, null, function (sName, oValue) {
 			// write property only if it has a value different from the default value
-			return !jQuery.sap.equal(oValue, oDefaults[sName]);
+			return !deepEqual(oValue, oDefaults[sName]);
 		});
 
 		// write aggregations
@@ -251,7 +254,7 @@ sap.ui.define(['jquery.sap.global', './Delegate'],
 	 * @private
 	 */
 	XML.prototype._createAttribute = function (sAttribute, oValue) {
-		var oEncoded = jQuery.type(oValue) === "string" ? jQuery.sap.encodeHTML(oValue) : oValue;
+		var oEncoded = (typeof oValue === "string" || oValue instanceof String) ? encodeXML(oValue) : oValue;
 		return ' ' + sAttribute + '="' + oEncoded + '"';
 	};
 

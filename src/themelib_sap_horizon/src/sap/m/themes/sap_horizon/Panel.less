@@ -1,0 +1,123 @@
+/* ================================== */
+/* Theme CSS for control sap.m/Panel  */
+/* Horizon theme                      */
+/* ================================== */
+
+.sapMPanel {
+	min-height: 2.75rem;
+	border-radius: @sapElement_BorderCornerRadius;
+
+	.sapMPanelWrappingDiv:not(.sapMPanelWrappingDivExpanded),
+	.sapMPanelWrappingDivTb:not(.sapMPanelWrappingDivTbExpanded) {
+		border-radius: @sapElement_BorderCornerRadius;
+		overflow: hidden;
+	}
+}
+
+.sapMPanelStickyHeadingDiv {
+	border-top-left-radius: inherit;
+	border-top-right-radius: inherit;
+	overflow: hidden;
+}
+
+.sapMPanelBGSolid {
+	background-color: @sapUiGroupContentBackground;
+}
+
+.sapMPanelBGTranslucent {
+	background-color: @sapUiGroupContentBackground;
+}
+
+.sapMPanelBGTransparent {
+	background-color: transparent;
+}
+
+/* if Panel is not expandable, we do wish header to come with own border */
+.sapMPanel .sapMPanelHeadingDiv > .sapMPanelHdr,
+/* notice: sapMPanelWrappingDiv is available if Panel is expandable */
+.sapMPanelWrappingDiv,
+/* do not want border if expanded and if only header text */
+.sapMPanelWrappingDivTb {
+	border-bottom: 0.0625rem solid @sapUiGroupTitleBorderColor;
+	background: @sapGroup_ContentBackground;
+}
+
+.sapMPanelWrappingDiv.sapMPanelWrappingDivExpanded,
+.sapMPanelWrappingDivTb.sapMPanelWrappingDivTbExpanded {
+	border-bottom: 0.0625rem solid @sapUiGroupTitleBorderColor;
+}
+
+.sapMPanelWrappingDivTb .sapMTB.sapMTBStandard {
+	border: none;
+}
+
+.sapMPanelExpandable .sapMPanelWrappingDiv {
+	&.sapMPanelWrappingDivExpanded:focus {
+		border-top-left-radius: @sapElement_BorderCornerRadius;
+		border-top-right-radius: @sapElement_BorderCornerRadius;
+		outline-offset: -0.125rem;
+	}
+
+	&:not(.sapMPanelWrappingDivExpanded):focus {
+		border-radius: @sapElement_BorderCornerRadius;
+		outline-offset: -0.125rem;
+	}
+}
+
+.sapMPanelContent:not(.sapMPanelBGTransparent) {
+	border-bottom: none;
+}
+
+.sapMPanelContent {
+	padding: 0.625rem 1rem;
+	border-bottom-left-radius: inherit;
+	border-bottom-right-radius: inherit;
+}
+
+.sapMPanel.sapMPanelExpanded.sapMPanelAnimating {
+	background: transparent;
+}
+
+.sapMPanelContent::-webkit-scrollbar {
+	border-bottom-right-radius: .75rem;
+}
+
+.sapMPanel .sapMPanelHdr {
+	line-height: 2.75rem;
+	height: 2.75rem;
+}
+
+.sapMPanelWrappingDiv .sapUiIcon {
+	width: 2.25rem;
+}
+
+.sapUiSizeCompact {
+	.sapMPanel {
+		min-height: 2.5rem;
+	}
+	.sapMPanelWrappingDiv .sapUiIcon {
+		width: 2rem;
+	}
+}
+
+.sapMPanel.sapMPanelExpandable .sapMPanelWrappingDivTb {
+	& .sapMPanelHeaderTB {
+		border-top-left-radius: 0;
+		margin-left: 2.75rem;
+		padding-left: 0.25rem;
+	}
+
+	&:not(.sapMPanelWrappingDivTbExpanded) .sapMPanelHeaderTB {
+		border-bottom-right-radius: @sapElement_BorderCornerRadius;
+		border-top-right-radius: @sapElement_BorderCornerRadius;
+	}
+
+	&.sapMPanelWrappingDivTbExpanded .sapMPanelHeaderTB {
+		border-top-right-radius: @sapElement_BorderCornerRadius;
+	}
+
+}
+
+.sapMPanelWrappingDiv .sapUiIcon {
+	color: @sapButton_Lite_TextColor;
+}

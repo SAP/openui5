@@ -1,0 +1,17 @@
+[
+	{
+		"Title": "Elena Petrova",
+		"Position": "Sales Consultant",
+		"Icon": "./icons/Elena_Petrova.png"
+	},
+	{
+		"Title": "John Miller",
+		"Position": "Sales Consultant",
+		"Icon": "./icons/John_Miller.png"
+	},
+	{
+		"Title": "Julie Armstrong",
+		"Position": "Manager",
+		"Icon": "./icons/Julie_Armstrong.png"
+	}
+]

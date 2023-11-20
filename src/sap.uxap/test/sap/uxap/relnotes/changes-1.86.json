@@ -1,0 +1,29 @@
+{
+  "1.86.0": {
+    "date": "January 2021",
+    "notes": [
+      {
+        "id": "0d75f3b1a3b59a10f57f9837ee50106776bcd9dd",
+        "type": "FIX",
+        "text": " sap.uxap.HierarchicalSelect: Fixed button's focus on all themes",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070468666"
+          }
+        ]
+      },
+      {
+        "id": "eb993f49e0d2a62df614f5d7dc7f40f308628bc2",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Prevent console error",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070494606"
+          }
+        ]
+      }
+    ]
+  }
+}

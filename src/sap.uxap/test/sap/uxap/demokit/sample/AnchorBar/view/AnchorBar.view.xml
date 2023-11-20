@@ -1,0 +1,174 @@
+<mvc:View xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.uxap"
+	xmlns:m="sap.m"
+	xmlns:sample="sap.uxap.sample.AnchorBar.controller.blocks"
+	height="100%">
+	<ObjectPageLayout id="ObjectPageLayout" upperCaseAnchorBar="false">
+		<headerTitle>
+			<ObjectPageDynamicHeaderTitle>
+				<heading>
+					<m:Title text="AnchorBar sample" wrapping="true"/>
+				</heading>
+
+				<snappedTitleOnMobile>
+					<m:Title text="AnchorBar sample"/>
+				</snappedTitleOnMobile>
+			</ObjectPageDynamicHeaderTitle>
+		</headerTitle>
+
+	<headerContent>
+		<m:Title text="This example explains how the Anchor Bar is built based on page content" titleStyle="H6"/>
+	</headerContent>
+
+		<sections>
+			<ObjectPageSection titleUppercase="false" id="section1" title="Section 1">
+				<subSections>
+					<ObjectPageSubSection id="section1_SS1" title="Subsection 1.1 " titleUppercase="false">
+						<blocks>
+							<sample:mySimpleBlock id="bbt1"/>
+						</blocks>
+					</ObjectPageSubSection>
+					<ObjectPageSubSection id="section1_SS2" title="Subsection 1.2 ">
+						<blocks>
+							<sample:mySimpleBlock id="bbt2"/>
+						</blocks>
+					</ObjectPageSubSection>
+				</subSections>
+			</ObjectPageSection>
+
+			<ObjectPageSection titleUppercase="false" id="section2" title="Section 2">
+			</ObjectPageSection>
+
+			<ObjectPageSection titleUppercase="false" id="section3" title="Section 3">
+				<subSections>
+					<ObjectPageSubSection id="section3_SS1" title=" " titleUppercase="false">
+						<blocks>
+							<sample:mySimpleBlock id="bbt3"/>
+						</blocks>
+					</ObjectPageSubSection>
+				</subSections>
+			</ObjectPageSection>
+
+			<ObjectPageSection titleUppercase="false" id="section4" title="Section 4">
+				<subSections>
+					<ObjectPageSubSection id="section4_SS1" title="Subsection 4.1 " titleUppercase="false">
+						<blocks>
+							<sample:mySimpleBlock id="bbt4"/>
+						</blocks>
+					</ObjectPageSubSection>
+				</subSections>
+			</ObjectPageSection>
+
+			<ObjectPageSection titleUppercase="false" id="section5" title="Section 5">
+				<subSections>
+					<ObjectPageSubSection id="section5_SS1" title=" " titleUppercase="false">
+						<blocks>
+							<sample:mySimpleBlock id="bbt5"/>
+						</blocks>
+					</ObjectPageSubSection>
+				</subSections>
+			</ObjectPageSection>
+
+			<ObjectPageSection titleUppercase="false" id="section6" title="Section 6">
+				<subSections>
+					<ObjectPageSubSection id="section6_SS1" title=" " titleUppercase="false">
+						<blocks>
+							<sample:mySimpleBlock id="b1"/>
+						</blocks>
+					</ObjectPageSubSection>
+				</subSections>
+			</ObjectPageSection>
+
+			<ObjectPageSection titleUppercase="false" id="section7" title="Section 7">
+				<subSections>
+					<ObjectPageSubSection id="section7_SS1" title=" " titleUppercase="false">
+						<blocks>
+							<sample:mySimpleBlock id="b2"/>
+						</blocks>
+					</ObjectPageSubSection>
+				</subSections>
+			</ObjectPageSection>
+
+			<ObjectPageSection titleUppercase="false" title="Section 8">
+				<subSections>
+					<ObjectPageSubSection title=" " titleUppercase="false">
+						<blocks>
+							<sample:mySimpleBlock id="b3"/>
+						</blocks>
+					</ObjectPageSubSection>
+				</subSections>
+			</ObjectPageSection>
+
+			<ObjectPageSection titleUppercase="false" title="Section 9">
+				<subSections>
+					<ObjectPageSubSection title=" " titleUppercase="false">
+						<blocks>
+							<sample:mySimpleBlock id="b4"/>
+						</blocks>
+					</ObjectPageSubSection>
+				</subSections>
+			</ObjectPageSection>
+
+			<ObjectPageSection titleUppercase="false" title="Section 10">
+				<subSections>
+					<ObjectPageSubSection title=" " titleUppercase="false">
+						<blocks>
+							<sample:mySimpleBlock id="b5"/>
+						</blocks>
+					</ObjectPageSubSection>
+				</subSections>
+			</ObjectPageSection>
+
+			<ObjectPageSection titleUppercase="false" title="Section 11">
+				<subSections>
+					<ObjectPageSubSection title=" " titleUppercase="false">
+						<blocks>
+							<sample:mySimpleBlock id="b6"/>
+						</blocks>
+					</ObjectPageSubSection>
+				</subSections>
+			</ObjectPageSection>
+
+			<ObjectPageSection titleUppercase="false" title="Section 12">
+				<subSections>
+					<ObjectPageSubSection title=" " titleUppercase="false">
+						<blocks>
+							<sample:mySimpleBlock id="b7"/>
+						</blocks>
+					</ObjectPageSubSection>
+				</subSections>
+			</ObjectPageSection>
+
+			<ObjectPageSection titleUppercase="false" title="Section 13">
+				<subSections>
+					<ObjectPageSubSection title=" " titleUppercase="false">
+						<blocks>
+							<sample:mySimpleBlock id="b8"/>
+						</blocks>
+					</ObjectPageSubSection>
+				</subSections>
+			</ObjectPageSection>
+
+			<ObjectPageSection titleUppercase="false" title="Section 14">
+				<subSections>
+					<ObjectPageSubSection title=" " titleUppercase="false">
+						<blocks>
+							<sample:mySimpleBlock id="b9"/>
+						</blocks>
+					</ObjectPageSubSection>
+				</subSections>
+			</ObjectPageSection>
+
+			<ObjectPageSection titleUppercase="false" title="Section 15">
+				<subSections>
+					<ObjectPageSubSection title=" " titleUppercase="false">
+						<blocks>
+							<sample:mySimpleBlock id="b10"/>
+						</blocks>
+					</ObjectPageSubSection>
+				</subSections>
+			</ObjectPageSection>
+		</sections>
+
+	</ObjectPageLayout>
+</mvc:View>

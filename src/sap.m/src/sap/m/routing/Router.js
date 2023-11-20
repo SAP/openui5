@@ -6,10 +6,15 @@ sap.ui.define(['sap/ui/core/routing/Router', './TargetHandler', './Targets'],
 		"use strict";
 
 		/**
-		 * Instantiates a SAPUI5 mobile Router see {@link sap.ui.core.routing.Router} for the constructor arguments
-		 * The difference to the {@link sap.ui.core.routing.Router} are the properties viewLevel, transition and transitionParameters you can specify in every Route or Target created by this router.
+		 * Constructor for a new <code>sap.m.routing.Router</code>. See <code>{@link sap.ui.core.routing.Router}</code>
+		 * for the constructor arguments.
 		 *
 		 * @class
+		 * SAPUI5 mobile <code>Router</code>.
+		 * The difference to the {@link sap.ui.core.routing.Router} are the <code>level</code>,
+		 * <code>transition</code>, and <code>transitionParameters</code> properties that you can
+		 * specify in every Route or Target created by this router.
+		 *
 		 * @extends sap.ui.core.routing.Router
 		 * @param {object|object[]} [oRoutes] may contain many Route configurations as {@link sap.ui.core.routing.Route#constructor}.<br/>
 		 * Each of the routes contained in the array/object will be added to the router.<br/>
@@ -26,6 +31,17 @@ sap.ui.define(['sap/ui/core/routing/Router', './TargetHandler', './Targets'],
 		 *     {
 		 *         name: "anotherRoute"
 		 *         pattern : "anotherPattern"
+		 *     },
+		 *     //Will create a route for a nested component with the prefix 'componentPrefix'
+		 *     {
+		 *         pattern: "componentPattern",
+		 *         name: "componentRoute",
+		 *         target: [
+		 *              {
+		 *                  name: "subComponent",
+		 *                  prefix: "componentPrefix"
+		 *              }
+		 *         ]
 		 *     }
 		 * ]
 		 * </pre>
@@ -41,6 +57,16 @@ sap.ui.define(['sap/ui/core/routing/Router', './TargetHandler', './Targets'],
 		 *     //Will create a route called 'anotherRoute'
 		 *     anotherRoute : {
 		 *         pattern : "anotherPattern"
+		 *     },
+		 *     //Will create a route for a nested component with the prefix 'componentPrefix'
+		 *     componentRoute{
+		 *         pattern: "componentPattern",
+		 *         target: [
+		 *              {
+		 *                  name: "subComponent",
+		 *                  prefix: "componentPrefix"
+		 *              }
+		 *         ]
 		 *     }
 		 * }
 		 * </pre>
@@ -63,6 +89,18 @@ sap.ui.define(['sap/ui/core/routing/Router', './TargetHandler', './Targets'],
 		 *     jsTarget : {
 		 *         viewType : "JS"
 		 *         ...
+		 *     },
+		 *     componentTarget: {
+		 *         type: "Component",
+		 *         name: "subComponent",
+		 *         id: "mySubComponent",
+		 *         options: {
+		 *             // the Component configuration:
+		 *             manifest: true
+		 *             ...
+		 *         },
+		 *         controlId: "myRootView",
+		 *         controlAggregation: "content"
 		 *     }
 		 * }
 		 * </pre>
@@ -76,6 +114,18 @@ sap.ui.define(['sap/ui/core/routing/Router', './TargetHandler', './Targets'],
 		 *     jsTarget : {
 		 *         viewType : "JS"
 		 *         ...
+		 *     },
+		 * 	   componentTarget: {
+		 *         type: "Component",
+		 *         name: "subComponent",
+		 *         id: "mySubComponent",
+		 *         options: {
+		 *             // the Component configuration:
+		 *             manifest: true
+		 *             ...
+		 *         },
+		 *         controlId: "myRootView",
+		 *         controlAggregation: "content"
 		 *     }
 		 * }
 		 * </pre>
@@ -104,14 +154,15 @@ sap.ui.define(['sap/ui/core/routing/Router', './TargetHandler', './Targets'],
 		 *     {
 		 *          //same name as in the config.bypassed.target
 		 *          notFound: {
-		 *              viewName: "notFound",
+		 *              type: "View"
+		 *              name: "notFound",
 		 *              ...
 		 *              // more properties to place the view in the correct container
 		 *          }
 		 *     });
 		 * </code>
 		 * </pre>
-		 * @param {boolean} [oConfig.async=false] @since 1.34. Whether the views which are loaded within this router instance asyncly. The default value is set to false.
+		 * @param {boolean} [oConfig.async=false] @since 1.34. Whether the views which are loaded within this router instance asyncly.
 		 * @param {sap.ui.core.UIComponent} [oOwner] the Component of all the views that will be created by this Router,<br/>
 		 * will get forwarded to the {@link sap.ui.core.routing.Views#constructor}.<br/>
 		 * If you are using the componentMetadata to define your routes you should skip this parameter.<br/>
@@ -135,7 +186,7 @@ sap.ui.define(['sap/ui/core/routing/Router', './TargetHandler', './Targets'],
 		 *     ],
 		 *     // Default values shared by routes and Targets
 		 *     {
-		 *         viewNamespace: "my.application.namespace",
+		 *         path: "my.application.namespace",
 		 *         viewType: "XML"
 		 *     },
 		 *     // You should only use this constructor when you are not using a router with a component.
@@ -147,7 +198,8 @@ sap.ui.define(['sap/ui/core/routing/Router', './TargetHandler', './Targets'],
 		 *          //same name as in the route called 'startRoute'
 		 *          welcome: {
 		 *              // All properties for creating and placing a view go here or in the config
-		 *              viewName: "Welcome",
+		 *              type: "View",
+		 *              name: "Welcome",
 		 *              controlId: "app",
 		 *              controlAggregation: "pages"
 		 *          }
@@ -207,6 +259,7 @@ sap.ui.define(['sap/ui/core/routing/Router', './TargetHandler', './Targets'],
 						transitionParameters: oTargetConfig.transitionParameters,
 						eventData: mArguments.arguments,
 						targetControl: mArguments.targetControl,
+						aggregationName: oTargetConfig.controlAggregation,
 						view: mArguments.view,
 						preservePageInSplitContainer: oTargetConfig.preservePageInSplitContainer
 					});
@@ -217,17 +270,21 @@ sap.ui.define(['sap/ui/core/routing/Router', './TargetHandler', './Targets'],
 
 			fireRoutePatternMatched : function (mArguments) {
 				var sRouteName = mArguments.name,
-					iViewLevel;
+					oRoute = this.getRoute(sRouteName),
+					iLevel;
 
-				if (this._oTargets && this._oTargets._oLastDisplayedTarget) {
-					iViewLevel = this._oTargets._getViewLevel(this._oTargets._oLastDisplayedTarget);
+				// only if a route has a private target and does not use the targets instance of the router we need to inform the targethandler
+				if (oRoute._oTarget) {
+					if (this._oTargets && this._oTargets._oLastDisplayedTarget) {
+						iLevel = this._oTargets._getLevel(this._oTargets._oLastDisplayedTarget);
+					}
+
+					this._oTargetHandler.navigate({
+						navigationIdentifier: sRouteName,
+						level: iLevel,
+						askHistory: true
+					});
 				}
-
-				this._oTargetHandler.navigate({
-					navigationIdentifier: sRouteName,
-					viewLevel: iViewLevel,
-					askHistory: true
-				});
 
 				return Router.prototype.fireRoutePatternMatched.apply(this, arguments);
 			}

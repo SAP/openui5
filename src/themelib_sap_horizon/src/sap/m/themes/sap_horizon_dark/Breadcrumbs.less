@@ -1,0 +1,59 @@
+/* ================================= */
+/* CSS for control sap./Breadcrumbs  */
+/* Evening Horizon theme             */
+/* ================================= */
+
+.sapMBreadcrumbs {
+	.sapMBreadcrumbsCurrentLocation {
+		&:focus {
+			outline: none;
+			box-shadow: 0px 0px 0px 0.125rem @sapUiContentFocusColor;
+			border-radius: 0.25rem;
+		}
+	}
+	.sapMSltPressed:not(.sapMSltDisabled):not(.sapMSltState), .sapMSlt.sapMSltFocused:not(.sapMSltDisabled):not(.sapMSltState) {
+		outline-offset: 0;
+	}
+
+	.sapMSltIcon:before,
+	.sapMSltIcon:after {
+		font-size: @sapMFontMediumSize;
+		color: @sapUiLink;
+		padding-bottom: 0.0625rem;
+		speak: none;
+	}
+
+	.sapMSltIcon:before {
+		font-family: @sapUiFontLightFamily;
+		content: "••• ";
+		vertical-align: bottom;
+	}
+
+	.sapMSltIcon:after {
+		font-family: @sapUiContentIconFontFamily;
+		content: "\e1ef";
+	}
+
+	.sapMBreadcrumbsItem.sapMBreadcrumbsSelectItem >
+	.sapMSlt.sapMSltIconOnly.sapMSltWithIcon.sapMSltHoverable.sapMSltWithArrow {
+		background: transparent;
+		border: none;
+
+		&.sapMSltFocused,
+		&:hover {
+			.sapMSltIcon {
+				background-color: @sapUiContentFocusColor;
+				border-bottom: @sapUiContentFocusColor 0.0625rem solid;
+			}
+
+			.sapMSltIcon:before {
+				border-bottom: none;
+			}
+
+			.sapMSltIcon:before,
+			.sapMSltIcon:after {
+				color: @sapUiButtonHoverBackground;
+			}
+		}
+	}
+}

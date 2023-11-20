@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<title>Data Handling</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<script src="../../../scripts/boot.js"></script>
+</head>
+
+<body class="sapUiBody topicBody">
+
+	<div class="topic">
+		<div class="content">
+
+			<h1 id="overview">
+				Data Handling
+			</h1>
+
+			<p>
+				The data sections of the card can be defined on different levels (card level, header level,
+				filter-definition level or content
+				level).
+				Inner level data sections will take precedence. Defining a data section configures how the card will
+				handle
+				its data.
+				A data section will result in a JSON model creation which can be used in binding syntaxes later on.
+				There are a few possible configurations for a data section:
+			</p>
+			<ol>
+				<li>Using static data by providing the "json" property.</li>
+				<li>Requesting data by providing the "request" property.</li>
+				<li>Use the <a href="../../../index.html#/learn/features/extension" target="_parent">Extension</a> to
+					get data by providing the "extension" property.</li>
+				<li>Provide "path" only to specify the context path of the current level.</li>
+			</ol>
+
+			<h2 id="dataProperties">Data Properties</h2>
+
+			<div class="tableWrapper">
+				<table>
+					<tr>
+						<th>Property</th>
+						<th>Type</th>
+						<th>Required</th>
+						<th>Description</th>
+						<th>Schema Version</th>
+						<th>Since</th>
+					</tr>
+					<tr>
+						<td>request</td>
+						<td><a href="#requestProperties">Request</a></td>
+						<td>No</td>
+						<td>An object defining a request.</td>
+						<td>1.14.0</td>
+						<td>1.65</td>
+					</tr>
+					<tr>
+						<td>json</td>
+						<td>Object</td>
+						<td>No</td>
+						<td>A data object.</td>
+						<td>1.14.0</td>
+						<td>1.65</td>
+					</tr>
+					<tr>
+						<td>extension</td>
+						<td><a href="#extensionProperties">Extension</a></td>
+						<td>No</td>
+						<td>An object defining which method of an Extension to be called for fetching the data.
+						</td>
+						<td></td>
+						<td>1.79</td>
+					</tr>
+					<tr>
+						<td>name</td>
+						<td>string</td>
+						<td>No</td>
+						<td>
+							Name for the data section.
+							<br>
+							If this name is given, a model with the same name is assigned to the card and can be used inside the manifest and inside
+							an <a href="../../../index.html#/learn/features/extension" target="_parent">extension</a> or a <a href="../../../index.html#/learn/typesOther/component" target="_parent">Component card</a>.
+							<br>
+							A unique name must be used for each individual data section. The names "parameters", "filters", "context" and "i18n" are reserved for cards and must not be used.
+							<br>
+							See this <a href="../../../index.html#/explore/extension/namedDataSection" target="_parent">sample</a>.
+							<br>
+							<b>Note:</b> This property is experimental.
+						</td>
+						<td>1.30</td>
+						<td>1.86</td>
+					</tr>
+					<tr>
+						<td>path</td>
+						<td>string</td>
+						<td>No</td>
+						<td>The context path. Default value is "/".</td>
+						<td>1.14.0</td>
+						<td>1.65</td>
+					</tr>
+					<tr>
+						<td>updateInterval</td>
+						<td>number</td>
+						<td>No</td>
+						<td>The interval in seconds on which the data will be updated.
+						</td>
+						<td>1.15.0</td>
+						<td>1.65</td>
+					</tr>
+					<tr>
+						<td>mockData</td>
+						<td><a href="#mockDataProperties">MockData</a></td>
+						<td>No</td>
+						<td>
+							Mock data configuration. It is used when the card preview mode is set to "MockData" by the hosting environment.
+							For more information see <a data-demokit-href="#/api/sap.ui.integration.widgets.Card/controlProperties" target="_blank">Card's previewMode property</a>.<br>
+							<b>Note:</b> This property is experimental.
+						</td>
+						<td>1.52.0</td>
+						<td>1.112</td>
+					</tr>
+				</table>
+			</div>
+
+			<div id="requestProperties" class="boldBlock">Request Properties</div>
+			<div class="tableWrapper">
+				<table>
+					<tr>
+						<th>Property</th>
+						<th>Type</th>
+						<th>Required</th>
+						<th>Description</th>
+						<th>Schema Version</th>
+						<th>Since</th>
+					</tr>
+					<tr>
+						<td>mode</td>
+						<td>string</td>
+						<td>No</td>
+						<td>The mode of the request. Possible values are "cors", "no-cors", "same-origin". Default value
+							is "cors".
+						</td>
+						<td>1.14.0</td>
+						<td>1.65</td>
+					</tr>
+					<tr>
+						<td>url</td>
+						<td>string</td>
+						<td>Yes</td>
+						<td>The URL of the request. Relative paths like
+							"data.json", "./data.json" and "../data.json"
+							are going to be resolved relatively to the manifest base path.
+						</td>
+						<td>1.14.0</td>
+						<td>1.65</td>
+					</tr>
+					<tr>
+						<td>method</td>
+						<td>string</td>
+						<td>No</td>
+						<td>The HTTP method. Possible values are "GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS", and "HEAD". Default value is "GET".</td>
+						<td>1.14.0</td>
+						<td>1.65</td>
+					</tr>
+					<tr>
+						<td>parameters</td>
+						<td>Object</td>
+						<td>No</td>
+						<td>
+							The request parameters to be sent to the server.
+							If the HTTP method is "POST", "PUT", "PATCH", or "DELETE" the parameters will be put as key/value pairs into the body of
+							the request.
+							If the method doesn't have an entity body, such as the "GET" or "HEAD" methods, the data is appended to
+							the URL.<br><br>
+							Default encoding is <code>application/x-www-form-urlencoded</code>.
+							Also JSON is supported for the body encoding (see <a target="_parent"
+								href="../../../index.html#/explore/data/graphql">sample with GraphQL</a>). If you need
+							it add a header <code>Content-Type: application/json</code>"
+						</td>
+						<td>1.14.0</td>
+						<td>1.65</td>
+					</tr>
+					<tr>
+						<td>headers</td>
+						<td>Object</td>
+						<td>No</td>
+						<td>The HTTP headers of the request.</td>
+						<td>1.14.0</td>
+						<td>1.65</td>
+					</tr>
+					<tr>
+						<td>retryAfter</td>
+						<td>integer</td>
+						<td>No</td>
+						<td>
+							Number of seconds before the request is retried if it failed the previous time.<br>
+							Request will be retried only if it failed with status code 429 or 503.<br>
+							If the server response contains "Retry-After" header - it will be used instead of this property.<br>
+							Only number of seconds is supported for both this property and the "Retry-After" header. Other values will be ignored.
+						</td>
+						<td>1.34.0</td>
+						<td>1.92</td>
+					</tr>
+					<tr>
+						<td>timeout</td>
+						<td>integer</td>
+						<td>No</td>
+						<td>
+							A timeout (in milliseconds) for the request.
+							A value of 0 means there will be no timeout.
+							<b>Note</b> This property is deprecated. The default browser timeout which is normally more than 90s will be used.
+						</td>
+						<td>1.51.0</td>
+						<td>1.111</td>
+					</tr>
+					<tr>
+						<td>withCredentials</td>
+						<td>boolean</td>
+						<td>No</td>
+						<td>Indicates whether cross-site requests should be made using credentials.</td>
+						<td>1.17.0</td>
+						<td>1.71</td>
+					</tr>
+					<tr>
+						<td>batch</td>
+						<td>Object&lt;string,<a href="#batchProperties">Batch</a>&gt;</td>
+						<td>No</td>
+						<td>
+							A map of requests, which should be batched together.<br>
+							If used the main request will be sent with content type multipart/mixed and its body will contain all requests specified in the map.<br>
+							Can be used for OData V2 and V4 batch requests.<br>
+							In the binding the result from each request can be accessed by the key of the corresponding request (see <a target="_parent"
+							href="../../../index.html#/explore/data/batchRequest">sample with OData batch request</a>).<br>
+							<b>Note:</b> This property is experimental.<br>
+						</td>
+						<td>1.33.0</td>
+						<td>1.90</td>
+					</tr>
+					<tr>
+						<td>cache</td>
+						<td><a href="#cacheProperties">Cache</a></td>
+						<td>No</td>
+						<td>
+							An object defining the cache behaviour for the requested data.
+							<br>
+							<b>Note:</b> This property is experimental.<br>
+						</td>
+						<td>1.35.0</td>
+						<td>1.94</td>
+					</tr>
+				</table>
+			</div>
+
+			<div id="timelineItemProperties" class="boldBlock">Batch  Properties (Experimental)</div>
+			<div class="tableWrapper">
+				<table>
+					<tr>
+						<th>Property</th>
+						<th>Type</th>
+						<th>Required</th>
+						<th>Description</th>
+						<th>Schema Version</th>
+						<th>Since</th>
+					</tr>
+					<tr>
+						<td>url</td>
+						<td>string</td>
+						<td>Yes</td>
+						<td>Absolute or relative URL. If the URL contains Content-ID reference then the reference has to be specified as zero-based index of the referred request inside the change set.</td>
+						<td>1.33.0</td>
+						<td>1.90</td>
+					</tr>
+					<tr>
+						<td>method</td>
+						<td>string</td>
+						<td>Yes</td>
+						<td>The HTTP method. Only "GET", "POST", "PUT", "PATCH", and "DELETE" are allowed. Use capital letters only.</td>
+						<td>1.33.0</td>
+						<td>1.90</td>
+					</tr>
+					<tr>
+						<td>headers</td>
+						<td>Object</td>
+						<td>No</td>
+						<td>Map of request headers. RFC-2047 encoding rules are not supported. Nevertheless, non US-ASCII values can be used.</td>
+						<td>1.33.0</td>
+						<td>1.90</td>
+					</tr>
+					<tr>
+						<td>body</td>
+						<td>Object</td>
+						<td>No</td>
+						<td>Request body. If specified, oRequest.headers map must contain "Content-Type" header either without "charset" parameter or with "charset" parameter having value "UTF-8".</td>
+						<td>1.33.0</td>
+						<td>1.90</td>
+					</tr>
+				</table>
+			</div>
+
+			<div id="cacheProperties" class="boldBlock">Cache Properties (Experimental)</div>
+			<p>
+				<b>Note:</b> This feature is dependent on the host environment and if it’s not prepared, the card data requests will work without caching. If you are developing a host environment - see the instructions in the Integrate section.
+			</p>
+
+			<p>
+				Caching reflects how data requests are performed. In the card’s configuration it is enabled by default and would work, given that there is caching enablement in the host environment.
+			</p>
+
+			<p>
+				With the “cache” property you can specify how your card will behave about caching. You can control how long does the cached data is considered fresh and therefore shown to the user. You can also set whether a stale cache (one which is not fresh) can be shown to the user while fresh data is fetched.
+			</p>
+
+			<p>
+				For example, if maxAge is 3600 and staleWhileRevalidate is true, each time when the users open the page in up to one hour, they will see the cached data from their first visit. When the page is opened again after one hour, the user will briefly see the old, cached data, while the fresh data is being fetched. Then the fresh data will be shown and saved in the cache to be used in next one hour.
+			</p>
+
+			<p>
+				The default behavior for the card is maxAge: 0 and staleWhileRevalidate: true.
+			</p>
+
+			<p>
+				See the <a target="_parent" href="../../../index.html#/explore/cache">samples in the Explore section</a>.
+			</p>
+
+			<div class="tableWrapper">
+				<table>
+					<tr>
+						<th>Property</th>
+						<th>Type</th>
+						<th>Required</th>
+						<th>Default Value</th>
+						<th>Description</th>
+						<th>Schema Version</th>
+						<th>Since</th>
+					</tr>
+					<tr>
+						<td>enabled</td>
+						<td>boolean</td>
+						<td>No</td>
+						<td>true</td>
+						<td>If set to false the cache is disabled and it will not be stored in the browser's cache.</td>
+						<td>1.35.0</td>
+						<td>1.94</td>
+					</tr>
+					<tr>
+						<td>maxAge</td>
+						<td>integer</td>
+						<td>No</td>
+						<td>0</td>
+						<td>The maximum number of seconds for which the cached data is considered fresh and can be shown to the user.</td>
+						<td>1.35.0</td>
+						<td>1.94</td>
+					</tr>
+					<tr>
+						<td>staleWhileRevalidate</td>
+						<td>boolean</td>
+						<td>No</td>
+						<td>true</td>
+						<td>A stale cache can be shown to the user until the fresh data is fetched.</td>
+						<td>1.35.0</td>
+						<td>1.94</td>
+					</tr>
+				</table>
+			</div>
+
+			<div id="extensionProperties" class="boldBlock">Extension Properties</div>
+			<div class="tableWrapper">
+				<table>
+					<tr>
+						<th>Property</th>
+						<th>Type</th>
+						<th>Required</th>
+						<th>Description</th>
+						<th>Schema Version</th>
+						<th>Since</th>
+					</tr>
+					<tr>
+						<td>method</td>
+						<td>string</td>
+						<td>Yes</td>
+						<td>The name of the Extension method, which returns a promise and resolves with JSON.
+						</td>
+						<td></td>
+						<td>1.79</td>
+					</tr>
+					<tr>
+						<td>args</td>
+						<td>array</td>
+						<td>No</td>
+						<td>The arguments with which the method will be called.</td>
+						<td></td>
+						<td>1.79</td>
+					</tr>
+				</table>
+			</div>
+
+			<div id="mockDataProperties" class="boldBlock">MockData Properties (Experimental)</div>
+
+			<div class="tableWrapper">
+				<table>
+					<tr>
+						<th>Property</th>
+						<th>Type</th>
+						<th>Required</th>
+						<th>Description</th>
+						<th>Schema Version</th>
+						<th>Since</th>
+					</tr>
+					<tr>
+						<td>request</td>
+						<td><a href="#requestProperties">Request</a></td>
+						<td>No</td>
+						<td>An object defining a request.</td>
+						<td>1.52.0</td>
+						<td>1.112</td>
+					</tr>
+					<tr>
+						<td>json</td>
+						<td>Object</td>
+						<td>No</td>
+						<td>A data object.</td>
+						<td>1.52.0</td>
+						<td>1.112</td>
+					</tr>
+					<tr>
+						<td>extension</td>
+						<td><a href="#extensionProperties">Extension</a></td>
+						<td>No</td>
+						<td>An object defining which method of an Extension to be called for fetching the data.
+						</td>
+						<td>1.52.0</td>
+						<td>1.112</td>
+					</tr>
+				</table>
+			</div>
+
+			<h2 id="examples">
+				Examples
+			</h2>
+
+			<p>Card level data section with static JSON where the header and content sets their own context path:</p>
+			<pre class="lang-json">{
+	"sap.card": {
+		"type": "List",
+		"data": {
+			"json": {
+				"info": {
+					"header": "Some title"
+				},
+				"items": [
+					{
+						"name": "Item 1",
+						"description": "Item 1 description"
+					},
+					{
+						"name": "Item 2",
+						"description": "Item 2 description"
+					},
+					{
+						"name": "Item 3",
+						"description": "Item 3 description"
+					}
+				]
+			}
+		},
+		"header": {
+			"data": {
+				"path": "/info"
+			},
+			"title": "{header}"
+		},
+		"content": {
+			"data": {
+				"path": "/items"
+			},
+			"item": {
+				"title": "{name}",
+				"description": "{description}"
+			}
+		}
+	}
+}</pre>
+
+			<p>Content level data section with request and update interval:</p>
+
+			<p>The structure of the /api/items API response:</p>
+			<pre class="lang-json">{
+	"items": [
+		{
+			"name": "Item 1",
+			"description": "Item 1 description"
+		},
+		{
+			"name": "Item 2",
+			"description": "Item 2 description"
+		},
+		{
+			"name": "Item 3",
+			"description": "Item 3 description"
+		}
+	]
+}</pre>
+
+			<p>The manifest:</p>
+			<pre class="lang-json">{
+	"sap.card": {
+		"type": "List",
+		"header": {
+			"title": "Some title"
+		},
+		"content": {
+			"data": {
+				"request": {
+					"url": "../api/items"
+				},
+				"updateInterval": 300,
+				"path": "/items"
+			},
+			"item": {
+				"title": "{name}",
+				"description": "{description}"
+			}
+		}
+	}
+}</pre>
+			<a class="try-button" href="../../../index.html#/explore/data" target="_parent">Try it Out</a>
+		</div>
+	</div>
+</body>
+
+</html>

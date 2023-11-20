@@ -3,21 +3,25 @@
 */
 
 sap.ui.define([
-	'jquery.sap.global',
 	'./library',
 	'./SliderUtilities',
+	"sap/base/i18n/Localization",
 	'sap/ui/core/Control',
+	"sap/ui/core/Element",
 	'sap/ui/core/Popup',
-	'./SliderTooltipContainerRenderer'
+	'./SliderTooltipContainerRenderer',
+	"sap/ui/thirdparty/jquery"
 ],
 function(
-	jQuery,
 	Library,
 	SliderUtilities,
+	Localization,
 	Control,
+	Element,
 	Popup,
-	SliderTooltipContainerRenderer
-	) {
+	SliderTooltipContainerRenderer,
+	jQuery
+) {
 		"use strict";
 
 		/**
@@ -62,7 +66,9 @@ function(
 					 */
 					associatedTooltips: { type: "sap.m.SliderTooltipBase", multiple: true }
 				}
-			}
+			},
+
+			renderer: SliderTooltipContainerRenderer
 		});
 
 		SliderTooltipContainer.prototype.init = function () {
@@ -77,11 +83,11 @@ function(
 			this._bClosedFromOverflow = false;
 
 			// indicates whether RTL is switched on
-			this._bRtl = sap.ui.getCore().getConfiguration().getRTL();
+			this._bRtl = Localization.getRTL();
 		};
 
 		SliderTooltipContainer.prototype._handleTabNavigation = function (oEvent) {
-			var bParentRangeSlider = this._oParentSlider instanceof sap.m.RangeSlider;
+			var bParentRangeSlider = this._oParentSlider && this._oParentSlider.isA("sap.m.RangeSlider");
 
 			oEvent.preventDefault();
 			this[bParentRangeSlider ? "_handleRangeSliderF2" : "_handleSliderF2"].apply(this, arguments);
@@ -94,7 +100,7 @@ function(
 		SliderTooltipContainer.prototype._handleRangeSliderF2 = function (oEvent) {
 			var oHandle = this._oParentSlider._getHandleForTooltip(oEvent.srcControl);
 
-			jQuery(oHandle).focus();
+			jQuery(oHandle).trigger("focus");
 		};
 
 		SliderTooltipContainer.prototype.onsaptabnext = SliderTooltipContainer.prototype._handleTabNavigation;
@@ -128,8 +134,8 @@ function(
 		 */
 		SliderTooltipContainer.prototype._getScrollListener = function () {
 			return function () {
-				jQuery.sap.clearDelayedCall(this._scrollDebounce);
-				this._scrollDebounce = jQuery.sap.delayedCall(0, this, this.repositionTooltips);
+				clearTimeout(this._scrollDebounce);
+				this._scrollDebounce = setTimeout(this.repositionTooltips.bind(this), 0);
 			}.bind(this);
 		};
 
@@ -147,7 +153,11 @@ function(
 		 * @public
 		 */
 		SliderTooltipContainer.prototype.repositionTooltips = function () {
-			var bParentRangeSlider = this._oParentSlider instanceof sap.m.RangeSlider,
+			if (!this._oParentSlider) {
+				return;
+			}
+
+			var bParentRangeSlider = this._oParentSlider.isA("sap.m.RangeSlider"),
 				aTooltips = this._oParentSlider.getUsedTooltips(),
 				// we are considering that both tooltips have the same rendering
 				fTooltipHeight = this.getAssociatedTooltipsAsControls()[0].$().outerHeight(true);
@@ -271,11 +281,11 @@ function(
 		/**
 		 * Gets Slider's tooltip position.
 		 *
-		 * @param {float} fValue
+		 * @param {float} fTooltipValue
 		 * @param {float} fMin Min property of the Slider/RangeSlider.
 		 * @param {float} fMax Max property of the Slider/RangeSlider.
 		 * @private
-		 * @return {String}
+		 * @return {string}
 		 */
 		SliderTooltipContainer.prototype._getTooltipPosition = function (fTooltipValue, fMin, fMax) {
 			var fPerValue = SliderUtilities.getPercentOfValue(+(fTooltipValue), fMin, fMax),
@@ -299,7 +309,7 @@ function(
 		/**
 		 * Sets the width of the SliderTooltipContainer.
 		 * @param {sap.ui.core.CSSSize} sWidth The width of the SliderTooltipContainer as CSS size.
-		 * @returns {sap.m.SliderTooltipContainer} Pointer to the control instance to allow method chaining.
+		 * @returns {this} Pointer to the control instance to allow method chaining.
 		 * @public
 		 */
 		SliderTooltipContainer.prototype.setWidth = function (sWidth) {
@@ -314,7 +324,7 @@ function(
 			var aAssociatedTooltips = this.getAssociation("associatedTooltips") || [];
 
 			return aAssociatedTooltips.map(function(sTooltipId) {
-				return sap.ui.getCore().byId(sTooltipId);
+				return Element.getElementById(sTooltipId);
 			});
 		};
 
@@ -345,7 +355,7 @@ function(
 		};
 
 		SliderTooltipContainer.prototype.onBeforeRendering = function () {
-			this._bRtl = sap.ui.getCore().getConfiguration().getRTL();
+			this._bRtl = Localization.getRTL();
 		};
 
 		SliderTooltipContainer.prototype.exit = function () {

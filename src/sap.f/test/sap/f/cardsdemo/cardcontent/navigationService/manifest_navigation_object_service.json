@@ -1,0 +1,102 @@
+{
+	"sap.app": {
+		"id": "cardsdemo.navigationService.object1",
+		"type": "card",
+		"i18n": "i18n/i18n.properties"
+	},
+	"sap.ui5": {
+		"services": {
+			"Navigation2": {
+				"factoryName": "cardsdemo.service.SampleNavigationFactory"
+			}
+		}
+	},
+	"sap.card": {
+		"type": "Object",
+		"data": {
+			"request": {
+				"url": "../objectcontent/datahandling_employee.json"
+			}
+		},
+		"header": {
+			"data": {
+				"path": "/nested_level_1/nested_level_2"
+			},
+			"icon": {
+				"src": "{photo}"
+			},
+			"title": "{firstName} {lastName}",
+			"subTitle": "{position}"
+		},
+		"content": {
+			"data": {
+				"path": "/nested_level_1/nested_level_2"
+			},
+			"groups": [
+				{
+					"title": "{{contactDetails}}",
+					"items": [
+						{
+							"label": "{{firstName}}",
+							"value": "{firstName}"
+						},
+						{
+							"label": "{{lastName}}",
+							"value": "{lastName}"
+						},
+						{
+							"label": "{{phone}}",
+							"value": "{phone}"
+						}
+					]
+				},
+				{
+					"title": "{{organizationalDetails}}",
+					"items": [
+						{
+							"label": "{{directManager}}",
+							"value": "{manager/firstName} {manager/lastName}",
+							"icon": {
+								"src": "{manager/photo}"
+							}
+						}
+					]
+				},
+				{
+					"title": "{{companyDetails}}",
+					"items": [
+						{
+							"label": "{{companyName}}",
+							"value": "{company/name}"
+						},
+						{
+							"label": "{{address}}",
+							"value": "{company/address}"
+						},
+						{
+							"label": "{{website}}",
+							"value": "{company/website}",
+							"actions": [
+								{
+									"type": "Navigation",
+									"parameters": {
+										"url": "{company/website}"
+									}
+								}
+							]
+						}
+					]
+				}
+			],
+			"actions": [
+				{
+					"type": "Navigation",
+					"service": "Navigation2",
+					"parameters": {
+						"url": "{url}"
+					}
+				}
+			]
+		}
+	}
+}

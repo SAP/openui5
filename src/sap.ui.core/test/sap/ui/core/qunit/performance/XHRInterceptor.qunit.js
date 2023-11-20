@@ -89,7 +89,7 @@ sap.ui.define(['sap/ui/performance/XHRInterceptor'], function(XHRInterceptor) {
 	});
 
 	QUnit.test("unregister an unknown function", function(assert) {
-		assert.notOk(XHRInterceptor.unregister("test", "open"), "Unregister failed");
+		assert.ok(XHRInterceptor.unregister("test", "open"), "Unregistered function not present anymore");
 
 	});
 

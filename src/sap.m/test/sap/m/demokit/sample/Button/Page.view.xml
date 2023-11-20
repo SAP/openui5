@@ -14,7 +14,7 @@
 				<ToolbarSpacer/>
 				<Title text="Title" level="H2"/>
 				<ToolbarSpacer/>
-				<Button icon="sap-icon://edit" press="onPress" ariaLabelledBy="editButtonLabel"/>
+				<Button icon="sap-icon://edit" type="Transparent" press="onPress" ariaLabelledBy="editButtonLabel"/>
 			</Toolbar>
 
 		</customHeader>
@@ -23,7 +23,7 @@
 				<ToolbarSpacer/>
 				<Button text="Default" press="onPress" />
 				<Button type="Reject" text="Reject" press="onPress" />
-				<Button icon="sap-icon://action" press="onPress" ariaLabelledBy="actionButtonLabel"/>
+				<Button icon="sap-icon://action" type="Transparent" press="onPress" ariaLabelledBy="actionButtonLabel"/>
 				<ToolbarSpacer/>
 			</Toolbar>
 
@@ -52,7 +52,7 @@
 					<layoutData>
 						<FlexItemData growFactor="1" />
 					</layoutData>
-			    </Button>
+				</Button>
 				<Button text="Coming Soon"
 						press="onPress"
 						ariaDescribedBy="comingSoonButtonDescription genericButtonDescription"
@@ -71,7 +71,6 @@
 			<core:InvisibleText id="acceptButtonDescription" text="Description of accept button goes here."/>
 			<core:InvisibleText id="rejectButtonDescription" text="Description of reject button goes here."/>
 			<core:InvisibleText id="comingSoonButtonDescription" text="This feature is not active just now."/>
-
 			<!-- These labels exist only to provide targets for the ARIA label on the Edit and Action buttons -->
 			<core:InvisibleText id="editButtonLabel" text="Edit Button Label"/>
 			<core:InvisibleText id="actionButtonLabel" text="Action Button Label"/>
@@ -81,7 +80,7 @@
 				<ToolbarSpacer/>
 				<Button type="Emphasized" text="Emphasized" press="onPress" />
 				<Button text="Default" press="onPress" />
-				<Button icon="sap-icon://action" press="onPress" />
+				<Button icon="sap-icon://action" type="Transparent" press="onPress" />
 			</Toolbar>
 		</footer>
 	</Page>

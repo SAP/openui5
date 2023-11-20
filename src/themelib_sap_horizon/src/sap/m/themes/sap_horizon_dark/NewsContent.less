@@ -1,0 +1,59 @@
+/* ================================== */
+/* CSS for control sap.m/NewsContent  */
+/* Evening Horizon theme              */
+/* ================================== */
+
+@_sap_m_NewsContent_HeaderTextColor: contrast(@sapTile_Background,@sapContent_LabelColor,@sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
+@_sap_m_NewsContent_SubHeaderTextColor: contrast(@sapTile_Background,@sapContent_LabelColor,@sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
+
+.sapMNwC {
+	background-color: fade(@sapUiTileBackground, 60);
+	height: 3.625rem;
+}
+
+.sapMTileCnt.News {
+	.sapMNwC {
+		.sapMNwCSbh {
+			color: @sapTile_OverlayForegroundColor;
+			line-height: normal;
+			font-size: @sapFontSize;
+		}
+		.sapMNwCCTxt .sapMText, .sapMNwCCTxt .sapMFT {
+			font-size: @sapFontSize;
+			line-height: normal;
+			font-weight: bold;
+			color: @sapTile_OverlayForegroundColor;
+		}
+	}
+}
+
+.Stretch{
+	.sapMTileCnt.News .sapMNwC{
+		.sapMNwCCTxt .sapMText {
+			font-size: @sapMFontLargeSize;
+			color: @sapUiText;
+		}
+		.sapMNwCCTxt .sapMFT {
+			font-size: 0.938rem;
+			color: @sapUiText;
+		}
+		.sapMNwCSbh{
+			color: @sapUiText;
+		}
+	}
+}
+
+.sapMTileSmallPhone{
+	.sapMTileCnt.News{
+		.sapMTileCntContent{
+			height: 3.25rem;
+			.sapMFT{
+				font-size: 0.75rem;
+			}
+		}
+	}
+}
+
+.sapMNwC:focus {
+	outline: 1px dotted @sapUiContentFocusColor;
+}

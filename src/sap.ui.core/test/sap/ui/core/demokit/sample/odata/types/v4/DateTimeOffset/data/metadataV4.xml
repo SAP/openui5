@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="4.0" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
+	<edmx:DataServices>
+		<Schema Namespace="com.sap.demo.zui5_edm_types_v4"
+			Alias="SAP__self" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+			<EntityType Name="EdmTypes">
+				<Key>
+					<PropertyRef Name="ID" />
+				</Key>
+				<Property Name="ID" Type="Edm.String" Nullable="false" MaxLength="1" />
+				<Property Name="Timestamp" Type="Edm.DateTimeOffset" />
+			</EntityType>
+			<EntityContainer Name="Container">
+				<EntitySet Name="EdmTypesCollection"
+					EntityType="com.sap.demo.zui5_edm_types_v4.EdmTypes" />
+			</EntityContainer>
+		</Schema>
+	</edmx:DataServices>
+</edmx:Edmx>

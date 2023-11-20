@@ -17,7 +17,7 @@
 	text-overflow: ellipsis;
 	min-width: 3rem;
 	display: block;
-	font-size: 1.125rem;
+	font-size: @sapFontLargeSize;
 	-webkit-box-align: center;
 	align-items: center;
 	color: @sapUiListTextColor;
@@ -34,7 +34,7 @@
 	overflow: hidden;
 	text-overflow: ellipsis;
 	min-width: 3rem;
-	font-size: 0.875rem;
+	font-size: @sapMFontMediumSize;
 	margin-left: 1rem;
 	text-align: right;
 	color: @sapUiContentLabelColor;
@@ -44,7 +44,6 @@
 	display: -webkit-box;
 	display: flex;
 	white-space: nowrap;
-	overflow: hidden;
 	text-overflow: ellipsis;
 	line-height: 3rem;
 }
@@ -71,5 +70,5 @@ html[dir=rtl] .sapMDLIValue {
 }
 
 .sapUiSizeCompact .sapMDLILabel {
-	font-size: @sapMFontMediumSize;
+	font-size: @sapFontSize;
 }

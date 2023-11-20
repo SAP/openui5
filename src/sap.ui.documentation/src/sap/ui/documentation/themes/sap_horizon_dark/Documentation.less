@@ -1,0 +1,22 @@
+@tag-color: #00abff;
+@background-color: #1d2d3e;
+@code-highlight-color: #24435e;
+
+#d4h5-main-container,
+.faqContent {
+
+	.note,
+	pre.codeblock,
+	blockquote,
+	div.syntax {
+		background-color: @background-color;
+	}
+
+	.hljs-tag {
+		color: @tag-color;
+	}
+
+	pre.codeblock .emphasis {
+		background-color: darken(@code-highlight-color, 15);
+	}
+}

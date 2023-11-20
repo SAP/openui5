@@ -1,0 +1,22 @@
+{
+	"forwardDeclarations": {
+		"sap.m": [
+			{
+				"kind": "interface",
+				"name": "sap.f.IDynamicPageStickyContent",
+				"module": "sap/f/library",
+				"export": "IDynamicPageStickyContent"
+			},
+			{
+				"kind": "interface",
+				"name": "sap.f.IShellBar",
+				"module": "sap/f/library",
+				"export": "IShellBar"
+			}
+		]
+	},
+	"namespacesToInterfaces": {
+		"InstanceManager": true,
+		"URLHelper": true
+	}
+}

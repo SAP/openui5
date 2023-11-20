@@ -30,4 +30,4 @@ sap.ui.define(['sap/ui/core/XMLComposite'], function (XMLComposite) {
 		}
 	});
 	return oTable;
-}, /* bExport= */ true);
+});

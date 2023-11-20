@@ -1,9 +1,8 @@
 sap.ui.define([
-	'jquery.sap.global',
 	'sap/ui/core/mvc/Controller',
 	'sap/m/MessageToast',
 	"sap/ui/model/json/JSONModel"
-], function (jQuery, Controller, MessageToast, JSONModel) {
+], function (Controller, MessageToast, JSONModel) {
 	"use strict";
 
 	var PageController = Controller.extend("sap.m.sample.GenericTileLineMode.Page", {
@@ -26,6 +25,10 @@ sap.ui.define([
 			} else {
 				MessageToast.show("The GenericTile \"" + sTileName + "\" has been pressed.");
 			}
+		},
+
+		onLinkPress: function() {
+			MessageToast.show("Pressed on Link");
 		},
 
 		pressSlideTile: function (evt) {

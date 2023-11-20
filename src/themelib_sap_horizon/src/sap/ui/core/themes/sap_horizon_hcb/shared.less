@@ -1,0 +1,211 @@
+/* ============================================= */
+/* Shared CSS Horizon High Contrast Black theme  */
+/* ============================================= */
+
+.sapUiBody {
+	width: 100%;
+	height: 100%;
+	margin: 0;
+}
+
+.sapUiBLy {
+	background-color: @sapUiBlockLayerBackground;
+	opacity: 0.3;
+}
+
+/**
+ * Class used to hide the line-sliding busy indicator at the top (as used in goldreflection)
+ */
+.sapUiBusy {
+	display: none;
+}
+
+/* Typography */
+.sapMH1FontSize,
+.sapMH1Style {
+	font-size: @sapMFontHeader1Size !important;
+}
+
+.sapMH2FontSize,
+.sapMH2Style {
+	font-size: @sapMFontHeader2Size !important;
+}
+
+.sapMH3FontSize,
+.sapMH3Style {
+	font-size: @sapMFontHeader3Size !important;
+}
+
+.sapMH4FontSize,
+.sapMH4Style {
+	font-size: @sapMFontHeader4Size !important;
+}
+
+.sapMH5FontSize,
+.sapMH5Style {
+	font-size: @sapMFontHeader5Size !important;
+}
+
+.sapMH6FontSize,
+.sapMH6Style {
+	font-size: @sapMFontHeader6Size !important;
+}
+
+.sapMH1Style,
+.sapMH2Style,
+.sapMH3Style,
+.sapMH4Style,
+.sapMH5Style,
+.sapMH6Style {
+	font-family: @sapUiFontHeaderFamily !important;
+	font-weight: @sapUiFontHeaderWeight !important;
+	color: @sapUiGroupTitleTextColor !important;
+	text-shadow: @sapUiShadowText !important;
+}
+
+// =====================================
+// Font "72"
+// =====================================
+
+@font-face {
+	font-family: '72';
+	font-style: normal;
+	font-weight: 400;
+	src: url('fonts/72-Regular.woff2') format('woff2'),
+		 local('72');
+	unicode-range: U+00, U+0D, U+20-7E, U+A0-FF, U+131, U+152-153, U+161, U+178, U+17D-17E, U+192, U+237, U+2C6, U+2DC, U+3BC, U+1E9E, U+2013-2014, U+2018-201A, U+201C-201E, U+2020-2022, U+2026, U+2030, U+2039-203A, U+2044, U+20AC, U+2122;
+}
+
+@font-face {
+	font-family: '72full';
+	font-style: normal;
+	font-weight: 400;
+	src: url('fonts/72-Regular-full.woff2') format('woff2');
+}
+
+@font-face {
+	font-family: '72';
+	font-style: normal;
+	font-weight: 700;
+	src: url('fonts/72-Bold.woff2') format('woff2'),
+		 local('72-Bold');
+	unicode-range: U+00, U+0D, U+20-7E, U+A0-FF, U+131, U+152-153, U+161, U+178, U+17D-17E, U+192, U+237, U+2C6, U+2DC, U+3BC, U+1E9E, U+2013-2014, U+2018-201A, U+201C-201E, U+2020-2022, U+2026, U+2030, U+2039-203A, U+2044, U+20AC, U+2122;
+}
+
+@font-face {
+	font-family: '72full';
+	font-style: normal;
+	font-weight: 700;
+	src: url('fonts/72-Bold-full.woff2') format('woff2');
+}
+
+@font-face {
+	font-family: '72';
+	font-style: normal;
+	font-weight: 300;
+	src: url('fonts/72-Light.woff2') format('woff2'),
+		 local('72-Light');
+	unicode-range: U+00, U+0D, U+20-7E, U+A0-FF, U+131, U+152-153, U+161, U+178, U+17D-17E, U+192, U+237, U+2C6, U+2DC, U+3BC, U+1E9E, U+2013-2014, U+2018-201A, U+201C-201E, U+2020-2022, U+2026, U+2030, U+2039-203A, U+2044, U+20AC, U+2122;
+}
+
+@font-face {
+	font-family: '72full';
+	font-style: normal;
+	font-weight: 300;
+	src: url('fonts/72-Light-full.woff2') format('woff2');
+}
+
+@font-face {
+	font-family: '72-Bold';
+	font-style: normal;
+	src: url('fonts/72-Bold.woff2') format('woff2'),
+		 local('72-Bold');
+	unicode-range: U+00, U+0D, U+20-7E, U+A0-FF, U+131, U+152-153, U+161, U+178, U+17D-17E, U+192, U+237, U+2C6, U+2DC, U+3BC, U+1E9E, U+2013-2014, U+2018-201A, U+201C-201E, U+2020-2022, U+2026, U+2030, U+2039-203A, U+2044, U+20AC, U+2122;
+}
+
+@font-face {
+	font-family: '72-Boldfull';
+	font-style: normal;
+	src: url('fonts/72-Bold-full.woff2') format('woff2');
+}
+
+@font-face {
+	font-family: '72-Light';
+	font-style: normal;
+	src: url('fonts/72-Light.woff2') format('woff2'),
+		 local('72-Light');
+	unicode-range: U+00, U+0D, U+20-7E, U+A0-FF, U+131, U+152-153, U+161, U+178, U+17D-17E, U+192, U+237, U+2C6, U+2DC, U+3BC, U+1E9E, U+2013-2014, U+2018-201A, U+201C-201E, U+2020-2022, U+2026, U+2030, U+2039-203A, U+2044, U+20AC, U+2122;
+}
+
+@font-face {
+	font-family: '72-Lightfull';
+	font-style: normal;
+	src: url('fonts/72-Light-full.woff2') format('woff2');
+}
+
+@font-face {
+	font-family: '72Mono';
+	src: url('fonts/72Mono-Regular.woff2') format('woff2'),
+		 local('72Mono');
+	unicode-range: U+00, U+0D, U+20-7E, U+A0-FF, U+131, U+152-153, U+161, U+178, U+17D-17E, U+192, U+237, U+2C6, U+2DC, U+3BC, U+1E9E, U+2013-2014, U+2018-201A, U+201C-201E, U+2020-2022, U+2026, U+2030, U+2039-203A, U+2044, U+20AC, U+2122;
+}
+
+@font-face {
+	font-family: '72Monofull';
+	src: url('fonts/72Mono-Regular-full.woff2') format('woff2');
+}
+
+@font-face {
+	font-family: '72Mono-Bold';
+	src: url('fonts/72Mono-Bold.woff2') format('woff2'),
+		 local('72Mono-Bold');
+	unicode-range: U+00, U+0D, U+20-7E, U+A0-FF, U+131, U+152-153, U+161, U+178, U+17D-17E, U+192, U+237, U+2C6, U+2DC, U+3BC, U+1E9E, U+2013-2014, U+2018-201A, U+201C-201E, U+2020-2022, U+2026, U+2030, U+2039-203A, U+2044, U+20AC, U+2122;
+}
+
+@font-face {
+	font-family: '72Mono-Boldfull';
+	src: url('fonts/72Mono-Bold-full.woff2') format('woff2');
+}
+
+@font-face {
+	font-family: '72Black';
+	src: url('fonts/72-Black.woff2') format('woff2');
+	unicode-range: U+00, U+0D, U+20-7E, U+A0-FF, U+131, U+152-153, U+161, U+178, U+17D-17E, U+192, U+237, U+2C6, U+2DC, U+3BC, U+1E9E, U+2013-2014, U+2018-201A, U+201C-201E, U+2020-2022, U+2026, U+2030, U+2039-203A, U+2044, U+20AC, U+2122;
+}
+
+@font-face {
+	font-family: '72Blackfull';
+	src: url('fonts/72-Black-full.woff2') format('woff2');
+}
+
+@font-face {
+	font-family: '72-SemiboldDuplex';
+	src: url('fonts/72-SemiboldDuplex.woff2') format('woff2');
+	unicode-range: U+00, U+0D, U+20-7E, U+A0-FF, U+131, U+152-153, U+161, U+178, U+17D-17E, U+192, U+237, U+2C6, U+2DC, U+3BC, U+1E9E, U+2013-2014, U+2018-201A, U+201C-201E, U+2020-2022, U+2026, U+2030, U+2039-203A, U+2044, U+20AC, U+2122;
+}
+
+@font-face {
+	font-family: '72-SemiboldDuplexfull';
+	src: url('fonts/72-SemiboldDuplex-full.woff2') format('woff2');
+}
+
+// Responsive paddings
+.sapUi-Std-PaddingS {
+	padding-left: 1rem !important;
+	padding-right: 1rem !important;
+}
+
+.sapUi-Std-PaddingM {
+	padding-left: 2rem !important;
+	padding-right: 2rem !important;
+}
+
+.sapUi-Std-PaddingL {
+	padding-left: 2rem !important;
+	padding-right: 2rem !important;
+}
+
+.sapUi-Std-PaddingXL {
+	padding-left: 3rem !important;
+	padding-right: 3rem !important;
+}

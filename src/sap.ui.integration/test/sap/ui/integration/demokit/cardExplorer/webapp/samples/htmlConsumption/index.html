@@ -1,0 +1,28 @@
+<!-- This file will be actually loaded and shown in the iframe. "indexTemplate.html" is used just for the code editor -->
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<title>Card As Custom Element</title>
+	<script src="./editorOutput.js"></script>
+	<script src="../../../../../../../../../resources/sap-ui-integration.js"
+		id="sap-ui-bootstrap"
+		data-sap-ui-compatVersion="edge"
+		data-sap-ui-theme="sap_horizon">
+	</script>
+	<style>
+		.myCard {
+			margin: 1rem;
+			width: 25rem;
+		}
+	</style>
+</head>
+
+<body>
+	<ui-integration-card badge="New" id="cardCustomElement" manifest="./manifest.json" data-mode="Active" base-url="./"
+		class="myCard">
+	</ui-integration-card>
+</body>
+
+</html>

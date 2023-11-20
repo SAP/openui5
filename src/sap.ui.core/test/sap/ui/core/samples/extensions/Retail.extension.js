@@ -1,5 +1,11 @@
-sap.ui.define(['sap/ui/core/mvc/Controller', 'sap/ui/core/mvc/ControllerExtension', 'sap/m/Button'],
-    function (Controller, ControllerExtension, Button) {
+sap.ui.define([
+	'sap/ui/core/mvc/Controller',
+	'sap/ui/core/mvc/ControllerExtension',
+	'sap/m/Button',
+	'sap/m/MessageToast'
+], function (Controller, ControllerExtension, Button, MessageToast) {
+	"use strict";
+
 	return ControllerExtension.extend('com.sap.industry.retail.RetailExtension', {
 		//adding a life cycle method
 		onInit: function() {
@@ -16,17 +22,17 @@ sap.ui.define(['sap/ui/core/mvc/Controller', 'sap/ui/core/mvc/ControllerExtensio
 		//add a method
 		sayHello : function() {
 			this._sayHello();
-			alert("RETAIL tries to access oil");
+			MessageToast.show("RETAIL tries to access oil");
 			try {
 				this.base.ext.com.sap.industry.oil._sayHello();
 			} catch (ex) {
-				alert("OIL denied access to a private method");
+				MessageToast.show("OIL denied access to a private method");
 				this.base.ext.com.sap.industry.oil.sayHello();
 			}
 
 		},
 		_sayHello : function() {
-			alert("RETAIL says Hello" + this._formatButtonText("sdfsdf"));
+			MessageToast.show("RETAIL says Hello" + this._formatButtonText("sdfsdf"));
 		},
 		//add a formatter
 		_formatButtonText : function(sTxt) {
@@ -35,7 +41,7 @@ sap.ui.define(['sap/ui/core/mvc/Controller', 'sap/ui/core/mvc/ControllerExtensio
 		//override an existing method of the Main.controller
 		override: {
 			provideText : function() {
-				return "com.sap.industry.retail provides text to say Hello"
+				return "com.sap.industry.retail provides text to say Hello";
 			}
 		}
 	});

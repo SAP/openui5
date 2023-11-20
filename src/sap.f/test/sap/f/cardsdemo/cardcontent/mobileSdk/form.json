@@ -1,0 +1,153 @@
+{
+	"sap.app": {
+		"id": "cardsdemo.mobileSdk.form",
+		"type": "card",
+		"title": "Sample of a Card with Form"
+	},
+	"sap.card": {
+		"type": "Object",
+		"configuration": {
+			"actionHandlers": {
+				"submit": {
+					"url": "./MOCK.json",
+					"method": "GET"
+				}
+			}
+		},
+		"header": {
+			"title": "Record activity",
+			"subTitle": "Summarize today's work",
+			"icon": {
+				"src": "sap-icon://calendar"
+			}
+		},
+		"data": {
+			"json": {
+				"activityTypes": [
+					{
+						"id": "activity1",
+						"title": "Processing"
+					},
+					{
+						"id": "activity2",
+						"title": "Monitoring"
+					},
+					{
+						"id": "activity3",
+						"title": "Reporting"
+					}
+				],
+				"activityTypeSelectedKey": "activity1",
+				"notes": "Summary:\n1.\n2."
+			}
+		},
+		"content": {
+			"groups": [
+				{
+					"alignment": "Stretch",
+					"items": [
+						{
+							"id": "activity",
+							"label": "Activity",
+							"type": "ComboBox",
+							"selectedKey": "{/activityTypeSelectedKey}",
+							"required": true,
+							"item": {
+								"path": "/activityTypes",
+								"template": {
+									"key": "{id}",
+									"title": "{title}"
+								}
+							},
+							"validations": [
+								{
+									"required": true,
+									"message": "Value is required"
+								},
+								{
+									"restrictToPredefinedOptions": true
+								}
+							]
+						},
+						{
+							"id": "activitySubtype",
+							"label": "Activity sub-type (optional)",
+							"type": "Input"
+						},
+						{
+							"id": "notes",
+							"label": "Comment",
+							"type": "TextArea",
+							"rows": 4,
+							"value": "{/notes}",
+							"required": false,
+							"validations": [
+								{
+									"required": true,
+									"message": "Value is required"
+								},
+								{
+									"minLength": 10,
+									"maxLength": 20,
+									"message": "Your comment should be between 10 and 20 characters.",
+									"type": "Warning"
+								}
+							]
+						},
+						{
+							"id": "email",
+							"label": "Email",
+							"type": "Input",
+							"placeholder": "email",
+							"required": true,
+							"validations": [
+								{
+									"required": true,
+									"message": "Email is required"
+								},
+								{
+									"pattern": "^\\w+[\\w-+\\.]*\\@\\w+([-\\.]\\w+)*\\.[a-zA-Z]{2,}+$",
+									"message": "Enter a valid email"
+								}
+							]
+						},
+						{
+							"id": "duration",
+							"label": "Duration",
+							"type": "Duration",
+							"validations": [
+								{
+									"required": true
+								}
+							]
+						},
+						{
+							"id": "dateRange",
+							"label": "Date",
+							"type": "DateRange",
+							"validations": [
+								{
+									"required": true
+								}
+							]
+						}
+					]
+				}
+			]
+		},
+		"footer": {
+			"actionsStrip": [
+				{
+					"text": "Submit",
+					"buttonType": "Accept",
+					"actions": [
+						{
+							"enabled": "{= !${messages>/hasErrors}}",
+							"type": "Submit"
+						}
+					]
+				}
+			]
+		}
+	}
+}

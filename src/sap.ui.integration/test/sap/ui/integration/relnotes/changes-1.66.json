@@ -1,0 +1,19 @@
+{
+  "1.66.0": {
+    "date": "April 2019",
+    "notes": [
+      {
+        "id": "cc0d811051d27f39f590a723ce6bf907250c53d2",
+        "type": "FIX",
+        "text": "JSDoc: incorporate feedback from SDK feedback channel (2019/3)",
+        "references": []
+      },
+      {
+        "id": "502970b4707e05e034d6f7e3018fa4b37d2d92e8",
+        "type": "FIX",
+        "text": "sap.ui.integration.Card: Improved component card sample",
+        "references": []
+      }
+    ]
+  }
+}

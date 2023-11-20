@@ -1,12 +1,11 @@
 /*global QUnit,sinon*/
-
-(function () {
-	"use strict";
-
-	jQuery.sap.require("sap/ui/support/supportRules/RuleSet");
-	jQuery.sap.require("sap/ui/support/supportRules/Storage");
-	jQuery.sap.require("sap/ui/thirdparty/sinon");
-	jQuery.sap.require("sap/ui/thirdparty/sinon-qunit");
+sap.ui.define([
+		"sap/base/Log",
+		"sap/ui/support/Bootstrap",
+		"sap/ui/support/supportRules/RuleSet",
+		"sap/ui/support/supportRules/Storage"],
+	function (Log, Bootstrap, RuleSet, Storage) {
+		"use strict";
 
 	var createValidRule = function (id) {
 		return {
@@ -21,89 +20,93 @@
 		};
 	};
 
-	window.saptest = {
-		createValidRule: createValidRule
-	};
-
 	QUnit.module("RuleSet API test", {
-		setup: function () {
-			sinon.spy(jQuery.sap.log, "error");
-			this.ruleSet = new sap.ui.support.supportRules.RuleSet({
+		beforeEach: function (assert) {
+			var done = assert.async();
+
+			sinon.spy(Log, "error");
+			this.ruleSet = new RuleSet({
 				name: "sap.ui.testName"
 			});
+
+			Bootstrap.initSupportRules(["true", "silent"], {
+				onReady: function() {
+					done();
+				}
+			});
 		},
-		teardown: function () {
-			sap.ui.support.supportRules.RuleSet.clearAllRuleSets();
-			jQuery.sap.log.error.restore();
+		afterEach: function () {
+			RuleSet.clearAllRuleSets();
+			Log.error.restore();
 		}
 	});
 
 	QUnit.test("Creating rule set with no name", function (assert) {
-		var ruleSet = new sap.ui.support.supportRules.RuleSet();
+		var ruleSet = new RuleSet();
 		assert.strictEqual(ruleSet._oSettings.name, undefined, "There is no set name in the RuleSet !");
-		assert.equal(jQuery.sap.log.error.calledOnce, true, "should throw an error.");
+		assert.equal(Log.error.calledOnce, true, "should throw an error.");
 	});
 
 	QUnit.test("Adding a rule", function (assert) {
 		this.ruleSet.addRule(createValidRule("id1"));
-		assert.equal(jQuery.sap.log.error.callCount, 0, "should not throw an error");
+		assert.equal(Log.error.callCount, 0, "should not throw an error");
 	});
 
 	QUnit.test("Adding a rule withoutId", function (assert) {
 		this.ruleSet.addRule({ id: undefined });
-		assert.equal(jQuery.sap.log.error.calledOnce, true, "should throw an error");
+		assert.equal(Log.error.calledOnce, true, "should throw an error");
 	});
 
 	QUnit.test("Adding a rule with duplicated ID", function (assert) {
 		this.ruleSet.addRule(createValidRule("id1"));
 		this.ruleSet.addRule({ id: 'id1' });
-		assert.equal(jQuery.sap.log.error.calledOnce, true, "should throw an error");
+		assert.equal(Log.error.calledOnce, true, "should throw an error");
 	});
 
 	QUnit.test("Adding a rule without check function", function (assert) {
 		var settingsObj = createValidRule("id1");
 		delete settingsObj.check;
 		this.ruleSet.addRule(settingsObj);
-		assert.equal(jQuery.sap.log.error.calledOnce, true, "should throw an error");
+		assert.equal(Log.error.calledOnce, true, "should throw an error");
 	});
 
 	QUnit.test("Adding a rule without title", function (assert) {
 		var settingsObj = createValidRule("id1");
 		delete settingsObj.title;
 		this.ruleSet.addRule(settingsObj);
-		assert.equal(jQuery.sap.log.error.calledOnce, true, "should throw an error");
+		assert.equal(Log.error.calledOnce, true, "should throw an error");
 	});
 
 	QUnit.test("Adding a rule without description", function (assert) {
 		var settingsObj = createValidRule("id1");
 		delete settingsObj.description;
 		this.ruleSet.addRule(settingsObj);
-		assert.equal(jQuery.sap.log.error.calledOnce, true, "should throw an error");
+		assert.equal(Log.error.calledOnce, true, "should throw an error");
 	});
 
 	QUnit.test("Adding a rule without resolution", function (assert) {
 		var settingsObj = createValidRule("id1");
 		delete settingsObj.resolution;
 		this.ruleSet.addRule(settingsObj);
-		assert.equal(jQuery.sap.log.error.calledOnce, true, "should throw an error");
+		assert.equal(Log.error.calledOnce, true, "should throw an error");
 	});
 
 	QUnit.test("Adding a rule with wrong audience", function (assert) {
 		var settingsObj = createValidRule("id1");
 		settingsObj.audiences.push("Non existing audience");
 		this.ruleSet.addRule(settingsObj);
-		assert.equal(jQuery.sap.log.error.calledOnce, true, "should throw an error");
+		assert.equal(Log.error.calledOnce, true, "should throw an error");
 	});
 
 	QUnit.test("Adding a rule with wrong category", function (assert) {
 		var settingsObj = createValidRule("id1");
 		settingsObj.categories.push("Non existing category");
 		this.ruleSet.addRule(settingsObj);
-		assert.equal(jQuery.sap.log.error.calledOnce, true, "should throw an error");
+		assert.equal(Log.error.calledOnce, true, "should throw an error");
 	});
 
 	QUnit.test("Rule minversion check", function (assert) {
-		sap.ui.support.supportRules.RuleSet.versionInfo = {
+		RuleSet.versionInfo = {
 			version: '1.44'
 		};
 
@@ -148,28 +151,36 @@
 		var settingsObj = createValidRule("id1");
 		settingsObj.categories.push("Non existing category");
 		this.ruleSet.addRule(settingsObj);
-		assert.equal(jQuery.sap.log.error.calledOnce, true, "should throw an error");
+		assert.equal(Log.error.calledOnce, true, "should throw an error");
 	});
 
 	QUnit.module("RuleSet static functions test", {
-		setup: function () {
-			this.ruleSet = new sap.ui.support.supportRules.RuleSet({
+		beforeEach: function (assert) {
+			var done = assert.async();
+
+			this.ruleSet = new RuleSet({
 				name: "sap.ui.testName"
 			});
 			this.libraries = [
 				{title: "test", type: "library", rules: [createValidRule("id1"), createValidRule("id2")]},
 				{title: "tested", type: "library", rules: [createValidRule("id3"), createValidRule("id4")]}
 			];
+
+			Bootstrap.initSupportRules(["true", "silent"], {
+				onReady: function() {
+					done();
+				}
+			});
 		},
 		teardown: function () {
 			// Restores original function
-			sap.ui.support.supportRules.RuleSet.clearAllRuleSets();
+			RuleSet.clearAllRuleSets();
 			this.libraries = null;
 		}
 	});
 
 	QUnit.test("Extract rules settings to object", function (assert) {
-		var rulesSettings = sap.ui.support.supportRules.RuleSet._extractRulesSettingsToSave(this.libraries);
+		var rulesSettings = RuleSet._extractRulesSettingsToSave(this.libraries);
 
 		assert.strictEqual(typeof rulesSettings, 'object', "should return object");
 		assert.equal(Object.keys(rulesSettings).length, 2, "should contain 2 objects");
@@ -188,29 +199,28 @@
 		this.libraries[1].rules[1].selected = false;
 
 		// Mock storage function
-		sinon.stub(sap.ui.support.supportRules.Storage, "getSelectedRules", function () {
+		sinon.stub(Storage, "getSelectedRules", function () {
 			return JSON.parse('{"test":{"id1":{"id":"id1","selected":true},"id2":{"id":"id2","selected":true}},' +
 				'"tested":{"id3":{"id":"id3","selected":true},"id4":{"id":"id4","selected":true}}}');
 		});
 
-		sap.ui.support.supportRules.RuleSet.loadSelectionOfRules(this.libraries);
+		RuleSet.loadSelectionOfRules(this.libraries);
 		this.libraries.forEach(function (lib) {
 			assert.ok(lib.rules[0].selected === true, "first rule should be selected");
 			assert.ok(lib.rules[1].selected === true, "second rule should be selected");
 		});
-		sap.ui.support.supportRules.Storage.getSelectedRules.restore();
+		Storage.getSelectedRules.restore();
 	});
 
 	QUnit.test("Should not update libraries if storage is empty", function (assert) {
 		var originalLibrary = this.libraries.slice();
 		// Mock storage function
-		sinon.stub(sap.ui.support.supportRules.Storage, "getSelectedRules", function () {
+		sinon.stub(Storage, "getSelectedRules", function () {
 			return null;
 		});
-		sap.ui.support.supportRules.RuleSet.loadSelectionOfRules(this.libraries);
+		RuleSet.loadSelectionOfRules(this.libraries);
 
 		assert.ok(JSON.stringify(originalLibrary) === JSON.stringify(this.libraries), "library should not be changed");
-		sap.ui.support.supportRules.Storage.getSelectedRules.restore();
+		Storage.getSelectedRules.restore();
 	});
-
-}());
+});

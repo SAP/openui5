@@ -1,8 +1,11 @@
 /*global QUnit*/
 
 sap.ui.define([
-	"sap/ui/test/opaQunit"
-], function (opaTest) {
+	"sap/ui/test/opaQunit",
+	"sap/ui/Device",
+	"./pages/Worklist",
+	"./pages/App"
+], function (opaTest, Device) {
 	"use strict";
 
 	QUnit.module("Worklist");
@@ -33,28 +36,7 @@ sap.ui.define([
 		Then.onTheWorklistPage.theTableHasEntries();
 
 		// Cleanup
-		Then.iTeardownMyAppFrame();
-	});
-
-	opaTest("Should see the busy indicator on app view while worklist view metadata is loaded", function (Given, When, Then) {
-		// Arrangements
-		Given.iStartMyApp({
-			delay: 5000
-		});
-
-		// Assertions
-		Then.onTheAppPage.iShouldSeeTheBusyIndicatorForTheWholeApp();
-	});
-
-	opaTest("Should see the busy indicator on worklist table after metadata is loaded", function (Given, When, Then) {
-		//Actions
-		When.onTheAppPage.iWaitUntilTheAppBusyIndicatorIsGone();
-
-		// Assertions
-		Then.onTheWorklistPage.iShouldSeeTheWorklistTableBusyIndicator();
-
-		// Cleanup
-		Then.iTeardownMyAppFrame();
+		Then.iTeardownMyApp();
 	});
 
 });

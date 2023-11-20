@@ -1,0 +1,71 @@
+{
+	"sap.app": {
+		"id": "sap.ui.layout.sample.card.users",
+		"type": "card",
+		"applicationVersion": {
+			"version": "1.0.0"
+		},
+		"shortTitle": "A short title for this Card",
+		"info": "Additional information about this Card",
+		"description": "A long description for this Card",
+		"tags": {
+			"keywords": [
+				"List",
+				"Chart",
+				"Card",
+				"Sample"
+			]
+		}
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"icons": {
+			"icon": "sap-icon://list"
+		}
+	},
+	"sap.card": {
+		"type": "List",
+		"header": {
+			"title": "Users"
+		},
+		"content": {
+			"data": {
+				"json": [
+					{
+						"src": "images/Alain_Chevalier.png",
+						"name": "Alain Chavalier",
+						"id": "P000012"
+					},
+					{
+						"src": "images/Donna_Moore.png",
+						"name": "Donna Moore",
+						"id": "P000013"
+					},
+					{
+						"src": "images/Elena_Petrova.png",
+						"name": "Elena Petrova",
+						"id": "P000014"
+					},
+					{
+						"src": "images/John_Miller.png",
+						"name": "John Miller",
+						"id": "P000015"
+					},
+					{
+						"src": "images/Julie_Armstrong.png",
+						"name": "Julie Armstrong",
+						"id": "P000016"
+					}
+				]
+			},
+			"maxItems": 5,
+			"item": {
+				"title": "{name}",
+				"description": "{id}",
+				"icon": {
+					"src": "{src}"
+				}
+			}
+		}
+	}
+}

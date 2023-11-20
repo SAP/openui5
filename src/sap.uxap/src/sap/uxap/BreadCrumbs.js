@@ -4,21 +4,27 @@
 
 // Provides control sap.uxap.BreadCrumbs.
 sap.ui.define([
-    "sap/m/Link",
-    "sap/m/Select",
-    "sap/ui/core/Control",
-    "sap/ui/core/ResizeHandler",
-    "sap/ui/core/delegate/ItemNavigation",
-    "sap/ui/core/Item",
-    "sap/ui/core/Icon",
-    "sap/ui/Device",
-    "./library",
-    "sap/ui/core/InvisibleText",
-    "./BreadCrumbsRenderer"
+	"sap/m/Link",
+	"sap/m/Select",
+	"sap/ui/core/Control",
+	"sap/ui/core/Element",
+	"sap/ui/core/Lib",
+	"sap/ui/core/ResizeHandler",
+	"sap/ui/core/delegate/ItemNavigation",
+	"sap/ui/core/Item",
+	"sap/ui/core/Icon",
+	"sap/ui/Device",
+	"./library",
+	"sap/ui/core/InvisibleText",
+	"sap/ui/util/openWindow",
+	"./BreadCrumbsRenderer",
+	"sap/ui/thirdparty/jquery"
 ], function(
-    Link,
+	Link,
 	Select,
 	Control,
+	Element,
+	Library,
 	ResizeHandler,
 	ItemNavigation,
 	Item,
@@ -26,7 +32,9 @@ sap.ui.define([
 	Device,
 	library,
 	InvisibleText,
-	BreadCrumbsRenderer
+	openWindow,
+	BreadCrumbsRenderer,
+	jQuery
 ) {
 	"use strict";
 
@@ -58,7 +66,6 @@ sap.ui.define([
 	 * @public
 	 * @since 1.30
 	 * @alias sap.uxap.BreadCrumbs
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var BreadCrumbs = Control.extend("sap.uxap.BreadCrumbs", /** @lends sap.uxap.BreadCrumbs.prototype */ {
 		metadata: {
@@ -96,13 +103,15 @@ sap.ui.define([
 				 */
 				_overflowSelect: {type: "sap.m.Select", multiple: false, visibility: "hidden"}
 			}
-		}
+		},
+
+		renderer: BreadCrumbsRenderer
 	});
 
 	BreadCrumbs.PAGEUP_AND_PAGEDOWN_JUMP_SIZE = 5;
 
 	BreadCrumbs.prototype.init = function () {
-		this._iREMSize = parseInt(jQuery("body").css("font-size"), 10);
+		this._iREMSize = parseInt(jQuery("body").css("font-size"));
 		this._iContainerMaxHeight = this._iREMSize * 2;
 	};
 
@@ -119,7 +128,7 @@ sap.ui.define([
 	 * Handles the initial mode selection between overflowSelect and normal mode
 	 *
 	 * @private
-	 * @returns {object} this
+	 * @returns {this} this
 	 */
 	BreadCrumbs.prototype._handleInitialModeSelection = function () {
 		if (this._bOnPhone) {
@@ -229,7 +238,7 @@ sap.ui.define([
 	 */
 	BreadCrumbs.prototype._overflowSelectChangeHandler = function (oEvent) {
 		var oSelectedKey = oEvent.getParameter("selectedItem").getKey(),
-			oControl = sap.ui.getCore().byId(oSelectedKey),
+			oControl = Element.getElementById(oSelectedKey),
 			sLinkHref,
 			sLinkTarget;
 
@@ -239,7 +248,7 @@ sap.ui.define([
 			if (sLinkHref) {
 				sLinkTarget = oControl.getTarget();
 				if (sLinkTarget) {
-					window.open(sLinkHref, sLinkTarget);
+					openWindow(sLinkHref, sLinkTarget);
 				} else {
 					window.location.href = sLinkHref;
 				}
@@ -298,7 +307,7 @@ sap.ui.define([
 	/**
 	 * Retrieves the Breadcrumbs jQuery object
 	 *
-	 * @returns {jQuery.Object} breadcrumbs jQuery instance
+	 * @returns {jQuery} breadcrumbs jQuery instance
 	 * @private
 	 */
 	BreadCrumbs.prototype._getBreadcrumbsAsJQueryObject = function () {
@@ -312,7 +321,7 @@ sap.ui.define([
 	/**
 	 * Retrieves the overflowSelect jQuery object
 	 *
-	 * @returns {jQuery.Object} jQuery select object
+	 * @returns {jQuery} jQuery select object
 	 * @private
 	 */
 	BreadCrumbs.prototype._getOverflowSelectAsJQueryObject = function () {
@@ -327,7 +336,7 @@ sap.ui.define([
 	 * Sets the visibility of the Breadcrumbs
 	 *
 	 * @param {boolean} bVisible visibility of breadcrumbs
-	 * @returns {jQuery.Object} $this
+	 * @returns {jQuery} $this
 	 * @private
 	 */
 	BreadCrumbs.prototype._setBreadcrumbsVisible = function (bVisible) {
@@ -351,7 +360,7 @@ sap.ui.define([
 	 * Sets the visibility of the overflowSelect
 	 *
 	 * @param {boolean} bVisible select visibility state
-	 * @returns {*} this
+	 * @returns {this} this
 	 * @private
 	 */
 	BreadCrumbs.prototype._setSelectVisible = function (bVisible) {
@@ -370,7 +379,7 @@ sap.ui.define([
 	/**
 	 * Resets all of the internally cached values used by the control
 	 *
-	 * @returns {object} this
+	 * @returns {this} this
 	 * @private
 	 */
 	BreadCrumbs.prototype._resetControl = function () {
@@ -395,7 +404,7 @@ sap.ui.define([
 	BreadCrumbs.prototype._getAriaLabelledBy = function () {
 		if (!this._oAriaLabelledBy) {
 			BreadCrumbs.prototype._oAriaLabelledBy = new InvisibleText({
-				text: library.i18nModel.getResourceBundle().getText("BREADCRUMB_TRAIL_LABEL")
+				text: Library.getResourceBundleFor("sap.uxap").getText("BREADCRUMB_TRAIL_LABEL")
 			}).toStatic();
 		}
 
@@ -438,7 +447,7 @@ sap.ui.define([
 	 * Configures the Keyboard handling for the control
 	 *
 	 * @private
-	 * @returns {object} this
+	 * @returns {this} this
 	 */
 	BreadCrumbs.prototype._configureKeyboardHandling = function () {
 		var oItemNavigation = this._getItemNavigation(),
@@ -448,7 +457,7 @@ sap.ui.define([
 			aNavigationDomRefs = [];
 
 		aItemsToNavigate.forEach(function (oItem) {
-			oItem.$().attr("tabIndex", "-1");
+			oItem.$().attr("tabindex", "-1");
 			aNavigationDomRefs.push(oItem.getDomRef());
 		});
 

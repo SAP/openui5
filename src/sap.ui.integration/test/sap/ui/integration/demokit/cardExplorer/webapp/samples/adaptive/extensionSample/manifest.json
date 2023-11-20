@@ -1,0 +1,101 @@
+{
+	"sap.app": {
+		"type": "card",
+		"id": "card.explorer.adaptive.extensionSample",
+		"i18n": "i18n/i18n.properties",
+		"title":"Extension, Adaptive Card",
+		"subTitle": "Extension, Adaptive Card, Submit and Error handling",
+		"applicationVersion": {
+			"version": "1.0.0"
+		},
+		"shortTitle": "A short title for this Card",
+		"info": "Additional information about this Card",
+		"description": "A long description for this Card",
+		"tags": {
+			"keywords": [
+				"Adaptive",
+				"Card",
+				"Extension",
+				"Sample"
+			]
+		}
+	},
+	"sap.card": {
+		"extension": "./SampleExtension",
+		"configuration": {
+			"parameters": {
+				"productId": {
+					"value": 20,
+					"type": "integer",
+					"label": "Northwind ProductID",
+					"description": "Which product to edit."
+				}
+			},
+			"actionHandlers": {
+				"submit": {
+					"url": "./samples/adaptive/action-submit.json",
+					"method": "GET"
+				}
+			},
+			"destinations": {
+				"Northwind_V3": {
+					"name": "Northwind_V3",
+					"label": "Northwind V3 Service URL",
+					"defaultUrl": "https://services.odata.org/V3/Northwind/Northwind.svc"
+				}
+			}
+		},
+		"data": {
+			"extension": {
+				"method": "getData"
+			}
+		},
+		"type": "AdaptiveCard",
+		"header": {
+			"title": "Edit product from Northwind",
+			"subTitle": "ProductID: {parameters>/productId/value}"
+		},
+		"content": {
+			"$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+			"type": "AdaptiveCard",
+			"version": "1.0",
+			"body": [
+				{
+					"type": "Input.Text",
+					"label": "Product Name",
+					"value": "${product.ProductName}",
+					"style": "text",
+					"id": "ProductName"
+				},
+				{
+					"type": "Input.ChoiceSet",
+					"label": "Product Category",
+					"id": "CategoryID",
+					"style": "compact",
+					"isMultiSelect": false,
+					"value": "${product.CategoryID}",
+					"choices": [
+					  {
+						"$data": "${categories}",
+						"title": "${CategoryName}",
+						"value": "${CategoryID}"
+					  }
+					]
+				},
+				{
+					"type": "Input.Text",
+					"label": "Supplier Name",
+					"value": "${product.supplier.CompanyName}",
+					"style": "text",
+					"id": "CompanyName"
+				}
+			],
+			"actions": [
+				{
+					"type": "Action.Submit",
+					"title": "Submit"
+				}
+			]
+		}
+	}
+}

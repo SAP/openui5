@@ -1,0 +1,22 @@
+/* =================================== */
+/* CSS for control sap.m/ListItemBase  */
+/* Evening Horizon theme               */
+/* =================================== */
+
+@_sap_m_ListItemBase_ListTextShadowColor: none;
+@_sap_m_ListItemBase_DeleteIcon: decline;
+@_sap_m_ListItemBase_ButtonMarginTop: 0;
+
+.sapMLIBCounter {
+	text-shadow: @_sap_m_ListItemBase_ListTextShadowColor;
+}
+
+.sapMLIB.sapMLIBSelected {
+	border-bottom: 0.0625rem solid @sapUiListSelectionBorderColor;
+}
+
+/* Fix for IE/Edge visual appearance of buttons */
+.sapMLIB .sapMBtn:hover .sapMBtnHoverable.sapMBtnTransparent {
+	background-clip: border-box;
+	border-color: transparent;
+}

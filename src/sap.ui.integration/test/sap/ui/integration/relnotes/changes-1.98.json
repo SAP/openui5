@@ -1,0 +1,136 @@
+{
+  "1.98.0": {
+    "date": "January 2022",
+    "notes": [
+      {
+        "id": "b37ac43429042584abdfb34a56e663d0a4418d68",
+        "type": "FIX",
+        "text": " Integration Cards: High CPU utilization is now fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180389313"
+          }
+        ]
+      },
+      {
+        "id": "d37f4c6a8ab756b8b96a9d43b01ae2d396a8c162",
+        "type": "FEATURE",
+        "text": " sap.ui.integration.widgets.Card: Markdown support for Adaptive type updated"
+      },
+      {
+        "id": "4edde839aa1224483e45a3cc3ae827acceaeb3d0",
+        "type": "FIX",
+        "text": " sap.ui.integration.cards.CalendarContent: Now works with no initial date",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500008345612021"
+          }
+        ]
+      },
+      {
+        "id": "2b644d002b7b76e0a663c34205d722b7b6f13beb",
+        "type": "FEATURE",
+        "text": " sap.ui.integration.widgets.Card: Templating support for Adaptive type updated"
+      },
+      {
+        "id": "c3563cab634aefe1e878700e24315f85236213f0",
+        "type": "FEATURE",
+        "text": " sap.ui.integration.widgets.Card: Payload of submit action handler now supports bindings"
+      },
+      {
+        "id": "a5c602d2ffad403cbd70bc1b5779da9f481bb7e3",
+        "type": "FEATURE",
+        "text": " sap.ui.integration.widgets.Card: Object card is enhanced with new experimental item types"
+      },
+      {
+        "id": "0756b277e5670dffe0699b87e728c1e3177997c1",
+        "type": "FIX",
+        "text": " CalendarCard: Appointments times and card display match",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170296340"
+          }
+        ]
+      },
+      {
+        "id": "cadaf70552284a174aa163eaa21d52b99399d815",
+        "type": "FIX",
+        "text": " Integration cards: refreshData method now works correctly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170320731"
+          }
+        ]
+      },
+      {
+        "id": "fef0810a2037f4e45e55ff294adef19e86f299b1",
+        "type": "FEATURE",
+        "text": " Integration cards: Implemented support for requesting CSRF tokens"
+      },
+      {
+        "id": "735fc463cffc152ea73f3ec8457829e2b00f4a70",
+        "type": "FIX",
+        "text": " sap.ui.integration.widgets.Card: Links in Object card are now labeled",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170303742"
+          }
+        ]
+      },
+      {
+        "id": "9743b03290c7dfb7adb8117526971b36206992df",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: Appoinment icons are read",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170266547"
+          }
+        ]
+      },
+      {
+        "id": "9f667f20e006e3ac2c40e43253b90cfbdf8dcdc0",
+        "type": "FIX",
+        "text": " sap.f.CalendarInCard: control adjusted on small screen widths or higher zoom factor",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170266515"
+          }
+        ]
+      },
+      {
+        "id": "7aaf1bafc36af210c06c9dfb825ee3bf4f0e2d88",
+        "type": "FIX",
+        "text": " sap.f.CalendarInCard: control adjusted on small screen widths (phone)",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170266514"
+          }
+        ]
+      },
+      {
+        "id": "8c44530921e80fca87e3de6f59770f50552a39a3",
+        "type": "FIX",
+        "text": " sap.ui.integration.widgets.Card: Component card sample in demokit is now loading",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170261789"
+          }
+        ]
+      },
+      {
+        "id": "0bc06af21375cea1e2c87740a32282886b7d9cc0",
+        "type": "FEATURE",
+        "text": " Controls adjusted to new theme SAP Horizon"
+      }
+    ]
+  }
+}

@@ -3,7 +3,7 @@
  */
 
 // Provides control sap.ui.commons.Area.
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element'],
+sap.ui.define(['sap/ui/thirdparty/jquery', './library', 'sap/ui/core/Element', 'sap/ui/dom/jquery/control'  /* jQuery Plugin "control" */],
 	function(jQuery, library, Element) {
 	"use strict";
 
@@ -26,11 +26,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element'],
 	 * @public
 	 * @deprecated Since version 1.38.
 	 * @alias sap.ui.commons.Area
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var Area = Element.extend("sap.ui.commons.Area", /** @lends sap.ui.commons.Area.prototype */ { metadata : {
 
 		library : "sap.ui.commons",
+		deprecated: true,
 		properties : {
 
 			/**
@@ -55,13 +55,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element'],
 		}
 	}});
 
-	///**
-	// * This file defines behavior for the control,
-	// */
-	//sap.ui.dev.Area.prototype.init = function(){
-	//   // do something for initialization...
-	//};
-
 	/**
 	 * Function is called when Link is clicked.
 	 *
@@ -71,6 +64,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element'],
 	Area.prototype.onclick = function(oEvent) {
 
 		// The Element or Control that initiated the event. For example the id of the area if image map is defined for the current image.
+		// jQuery Plugin "control"
 		var oEventSource = jQuery(oEvent.target).control(0);
 
 	    // Fire event on Image Map
@@ -79,4 +73,4 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element'],
 
 	return Area;
 
-}, /* bExport= */ true);
+});

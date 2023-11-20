@@ -1,0 +1,151 @@
+<core:FragmentDefinition
+	xmlns:core="sap.ui.core"
+	xmlns:dnd="sap.ui.core.dnd"
+	xmlns="sap.m">
+	<Dialog
+		resizable="true"
+		draggable="true"
+		contentWidth="830px"
+		contentHeight="450px"
+		setHorizontalScrolling="false"
+		title="{i18n>MANAGE_ADAPTATIONS_DIALOG_HEADER}">
+		<Table id="manageAdaptationsTable"
+			showNoData="false"
+			inset="false"
+			sticky="HeaderToolbar"
+			mode="SingleSelectMaster"
+			items="{
+			path: 'contextBased>/adaptations',
+			sorter: {path: 'rank', descending: false}
+		}">
+			<headerToolbar>
+				<OverflowToolbar>
+					<SearchField id="searchField" liveChange=".onLiveSearch" width="80%" />
+					<ToolbarSpacer/>
+					<Button id="moveUpButton"
+						icon="sap-icon://navigation-up-arrow"
+						tooltip="{i18n>BTN_TOOLTIP_MOVE_UP}"
+						press=".moveUp"
+						enabled="false"/>
+					<Button id="moveDownButton"
+						icon="sap-icon://navigation-down-arrow"
+						tooltip="{i18n>BTN_TOOLTIP_MOVE_DOWN}"
+						press=".moveDown"
+						enabled="false"/>
+				</OverflowToolbar>
+			</headerToolbar>
+			<columns>
+				<Column width="5rem"
+					minScreenWidth="tablet"
+					demandPopin="true"
+					popinDisplay="Inline"
+					hAlign="Left">
+					<Text text="{i18n>CLM_HEADER_PRIORITY}" />
+				</Column>
+				<Column minScreenWidth="tablet"
+					demandPopin="true"
+					popinDisplay="Inline"
+					hAlign="Left">
+					<Text text="{i18n>CLM_HEADER_ADAPTATIONS_TITLE}" />
+				</Column>
+				<Column width="6rem"
+					minScreenWidth="tablet"
+					demandPopin="true"
+					popinDisplay="Inline"
+					hAlign="Left">
+					<Text text="{i18n>CLM_HEADER_CONTEXT}" />
+				</Column>
+				<Column minScreenWidth="tablet"
+					demandPopin="true"
+					popinDisplay="Inline"
+					hAlign="Left">
+					<Text text="{i18n>CLM_HEADER_ADAPTATIONS_CREATED_ON}" />
+				</Column>
+				<Column minScreenWidth="tablet"
+					demandPopin="true"
+					popinDisplay="Inline"
+					hAlign="Left">
+					<Text text="{i18n>CLM_HEADER_ADAPTATIONS_CHANGED_ON}" />
+				</Column>
+				<!--
+				<Column width="7rem"
+					minScreenWidth="tablet"
+					demandPopin="true"
+					popinDisplay="Inline"
+					hAlign="Left">
+					<Text text="{i18n>CLM_HEADER_ADAPTATIONS_ACTIONS}" />
+				</Column>
+				-->
+			</columns>
+			<dragDropConfig>
+				<dnd:DragDropInfo sourceAggregation="items"
+					targetAggregation="items"
+					dropPosition="Between"
+					drop=".onDropSelectedAdaptation"/>
+			</dragDropConfig>
+			<items>
+				<ColumnListItem>
+					<cells>
+						<Text text="{contextBased>rank}"/>
+									<Text wrapping="false" maxLines="1" text="{contextBased>title}"
+									tooltip="{contextBased>title}"/>
+						<Text text="{ parts: ['contextBased>contexts/role'], formatter: '.formatContextColumnCell'}"
+							tooltip="{ parts: ['contextBased>contexts/role'], formatter: '.formatContextColumnTooltip'}" />
+						<Text text="{ parts: ['contextBased>createdBy', 'contextBased>createdAt'], formatter: '.formatCreatedChangedOnColumnCell'}"/>
+						<Text text="{ parts: ['contextBased>changedBy', 'contextBased>changedAt'], formatter: '.formatCreatedChangedOnColumnCell'}"/>
+					</cells>
+				</ColumnListItem>
+			</items>
+		</Table>
+		<Table id="defaultContext">
+			<columns>
+				<Column width="4.195rem"
+					minScreenWidth="tablet"
+					demandPopin="true"
+					popinDisplay="Inline"
+					hAlign="Left">
+				</Column>
+				<Column minScreenWidth="tablet"
+					demandPopin="true"
+					popinDisplay="Inline"
+					hAlign="Left">
+				</Column>
+				<Column width="8rem"
+					minScreenWidth="tablet"
+					demandPopin="true"
+					popinDisplay="Inline"
+					hAlign="Left">
+				</Column>
+			</columns>
+			<items>
+				<ColumnListItem highlight="Information">
+					<cells>
+						<Text text=""/>
+						<CustomListItem>
+							<HBox>
+								<VBox class="sapUiSmallMarginTopBottom">
+									<Text id="defaultApplicationTitle" text="{i18n>TXT_DEFAULT_APP}"/>
+									<FormattedText htmlText=""/>
+								</VBox>
+							</HBox>
+						</CustomListItem>
+						<Text text="" />
+					</cells>
+				</ColumnListItem>
+			</items>
+		</Table>
+		<beginButton>
+			<Button id="manageAdaptations-saveButton"
+				enabled="false"
+				type="Emphasized"
+				text="{i18n>APP_CTX_DIALOG_SAVE}"
+				tooltip="{i18n>TOOLTIP_APP_CTX_DIALOG_SAVE}"
+				press=".onSaveReorderedAdaptations"/>
+		</beginButton>
+		<endButton>
+			<Button id="manageAdaptations-closeButton"
+				text="{i18n>APP_CTX_DIALOG_CANCEL}"
+				press=".onCancel"/>
+		</endButton>
+	</Dialog>
+</core:FragmentDefinition>

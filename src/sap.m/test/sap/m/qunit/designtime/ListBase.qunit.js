@@ -1,17 +1,23 @@
-(function () {
-	'use strict';
+sap.ui.define([
+	"sap/m/ListBase",
+	"sap/m/StandardListItem",
+	"sap/m/Button",
+	"sap/m/Toolbar",
+	"sap/ui/dt/enablement/elementDesigntimeTest",
+	"sap/ui/rta/enablement/elementActionTest"
+], function(
+	ListBase,
+	ListItem,
+	Button,
+	Toolbar,
+	elementDesigntimeTest,
+	elementActionTest
+) {
+	"use strict";
 
-	sap.ui.require([
-		"sap/ui/dt/test/report/QUnit",
-		"sap/ui/dt/test/ElementEnablementTest",
-		"sap/m/ListBase",
-		"sap/m/StandardListItem",
-		"sap/m/Button",
-		"sap/m/Toolbar",
-		"sap/ui/rta/test/controlEnablingCheck"
-	], function (QUnitReport, ElementEnablementTest, ListBase, ListItem, Button, Toolbar, rtaControlEnablingCheck) {
-
-		var oElementEnablementTest = new ElementEnablementTest({
+	return Promise.resolve()
+	.then(function () {
+		return elementDesigntimeTest({
 			type: "sap.m.ListBase",
 			create: function () {
 				return new ListBase({
@@ -22,12 +28,8 @@
 				});
 			}
 		});
-		oElementEnablementTest.run().then(function (oData) {
-			new QUnitReport({
-				data: oData
-			});
-		});
-
+	})
+	.then(function() {
 		//Move action
 		var fnConfirmListItem1IsOn3rdPosition = function (oUiComponent, oViewAfterAction, assert) {
 			assert.strictEqual(oViewAfterAction.byId("listItem1").getId(),
@@ -40,7 +42,7 @@
 				"then the control has been moved to the previous position");
 		};
 
-		rtaControlEnablingCheck("Checking the move action for a ListBase", {
+		elementActionTest("Checking the move action for a ListBase", {
 			xmlView: '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:m="sap.m">' +
 				'<m:ListBase id="list">' +
 					'<m:StandardListItem id="listItem1" title="1st Item"/>' +
@@ -88,7 +90,7 @@
 			assert.strictEqual(oViewAfterAction.byId("list").getVisible(), true, "then the List control is visible");
 		};
 
-		rtaControlEnablingCheck("Checking the remove action for ListBase", {
+		elementActionTest("Checking the remove action for ListBase", {
 			xmlView: '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:m="sap.m">' +
 				'<m:ListBase id="list">' +
 					'<m:StandardListItem id="listItem1" title="1st Item"/>' +
@@ -106,7 +108,7 @@
 			afterRedo: fnConfirmListIsInvisible
 		});
 
-		rtaControlEnablingCheck("Checking the reveal action for a ListBase", {
+		elementActionTest("Checking the reveal action for a ListBase", {
 			xmlView: '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:m="sap.m">' +
 				'<m:ListBase id="list" visible="false">' +
 					'<m:StandardListItem id="listItem1" title="1st Item"/>' +
@@ -124,4 +126,5 @@
 			afterRedo: fnConfirmListIsVisible
 		});
 	});
-})();
+
+});

@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<title>Text Badge</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<script src="../../scripts/boot.js"></script>
+</head>
+
+<body class="sapUiBody topicBody">
+	<div class="topic">
+		<div class="content">
+			<h1 id="badge">Text Badge</h1>
+			<h2 id="overview">Overview</h2>
+			<p>
+				Badges can be used to display very short and important
+				information, that attracts the user attention.
+			</p>
+			<p>
+				Typical usages in the case of cards are:
+			</p>
+			<ul>
+				<li>The card is new in the user's home page.</li>
+				<li>The card is added to the home page by the user.</li>
+				<li>The card is added to the user's home page by an admin or key user.</li>
+			</ul>
+			<img src="../images/Badge.PNG" height="329" width="380" alt="Badge" />
+			<h2 id="usage">When to Use</h2>
+			<p>Use the badge when:</p>
+			<ul>
+				<li>The card is new in the user's home page.</li>
+				<li>The card is added to the user's home page by an admin, key user or the user himself.</li>
+			</ul>
+			<p>Do not use the badge if:</p>
+			<ul>
+				<li>You want to display the message text 'temporarily unavailable'. Use the disabled state of the card
+					instead.</li>
+				<li>The card should not be visible or used by the user. Don’t display the card in the home page in this
+					case.</li>
+				<li>To display a message to the user.</li>
+				<li>You want to display a counter. Use the numeric header of the card instead.</li>
+			</ul>
+			<h2 id="behavior">Behavior and Interaction</h2>
+			<p>
+				The badge automatically disappears when the
+				user activates (e.g. clicks, taps) the card,
+				or when the focus is on the card (or the card's content)
+				for more than 3 seconds.
+			</p>
+			<h2 id="example">Example</h2>
+			<h3 id="useInUi5">Use the Badge in UI5</h3>
+			To display a Badge in a Card, you need to create a BadgeCustomData
+			with a specific text and add it to the "customData" aggregation of the Card.
+			<br />
+			<br />
+			For more information, see <a data-demokit-href="#/api/sap.m.BadgeCustomData"
+				target="_blank"><code>BadgeCustomData</code></a>
+			<p>An example with a Card with a Badge would look like:</p>
+			<pre class="lang-xml">
+&lt;mvc:View xmlns="sap.m" xmlns:w="sap.ui.integration.widgets"&gt;
+	&lt;w:Card id="card1" manifest="./manifest.json"&gt;
+		&lt;w:customData&gt;
+			&lt;BadgeCustomData value="New Card" /&gt;
+		&lt;/w:customData&gt;
+	&lt;/w:Card&gt;
+&lt;/mvc:View&gt;</pre>
+			<br />
+			A typical usage using data binding would look like:
+			<br />
+			<br />
+			Controller:
+			<pre class="lang-js">
+var model = new sap.ui.model.json.JSONModel();
+model.setData({
+	badgeText: "New"
+});
+this.getView().setModel(model);
+</pre>
+			<p>XML View:</p>
+			<pre class="lang-xml">
+&lt;mvc:View xmlns="sap.m" xmlns:w="sap.ui.integration.widgets"&gt;
+	&lt;w:Card id="card1" manifest="./manifest.json"&gt;
+		&lt;w:customData&gt;
+			&lt;BadgeCustomData value="{/badgeText}" /&gt;
+		&lt;/w:customData&gt;
+	&lt;/w:Card&gt;
+&lt;/mvc:View&gt;</pre>
+			<a class="try-button" href="../../index.html#/explore/badge" target="_parent">Try it Out</a>
+
+			<h3 id="useInHtmlPage">Use the Badge in an HTML Page</h3>
+			To display a Badge when the Card is consumed as an HTML custom element, write its text to the "badge"
+			attribute of the element.
+			<pre class="lang-html">
+&lt;html&gt;
+	&lt;head&gt;
+		&lt;script
+			id="sap-ui-bootstrap"
+			src="https://ui5.sap.com/resources/sap-ui-integration.js"
+			data-sap-ui-compatVersion="edge"&gt;
+		&lt;/script&gt;
+	&lt;/head&gt;
+	&lt;body&gt;
+		&lt;ui-integration-card manifest="./manifest.json" badge="New"&gt;&lt;/ui-integration-card&gt;
+	&lt;/body&gt;
+&lt;/html&gt;
+</pre>
+			<a class="try-button" href="../../index.html#/explore/htmlConsumption" target="_parent">Try it Out</a>
+			<br>
+		</div>
+	</div>
+
+</body>
+
+</html>

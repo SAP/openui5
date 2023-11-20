@@ -8,7 +8,7 @@ sap.ui.define(["./MainAction"], function(MainAction) {
 	/**
 	* Constructor for a new <code>FooterMainAction</code>.
 	* @param {string} [sId] ID for the new control, generated automatically if no ID is given
-	* @param {object} [mSettings] Custom initial settings for the new control
+	* @param {object} [mSettings] Optional initial settings for the new control:  a map/JSON-object with initial property values, event listeners etc. for the new object
 	*
 	* @class
 	* A semantic-specific button, eligible for the <code>footerMainAction</code> aggregation of the
@@ -23,7 +23,6 @@ sap.ui.define(["./MainAction"], function(MainAction) {
 	* @public
 	* @since 1.46.0
 	* @alias sap.f.semantic.FooterMainAction
-	* @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	*/
 	var FooterMainAction =  MainAction.extend("sap.f.semantic.FooterMainAction", /** @lends sap.f.semantic.FooterMainAction.prototype */ {
 		metadata: {

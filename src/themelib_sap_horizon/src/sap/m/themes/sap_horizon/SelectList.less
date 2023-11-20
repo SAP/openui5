@@ -1,0 +1,70 @@
+/* ================================= */
+/* CSS for control sap.m/SelectList  */
+/* Horizon theme                     */
+/* ================================= */
+
+@_sap_m_SelectListItem_Height: 2.5rem;
+@_sap_m_SelectListItem_CompactHeight: 2rem;
+@_sap_m_SelectListItemBelizeFocus_Height: 0.25rem; // 2 borders * 0.0625rem + 2 offsets (top and bottom) * 0.0625rem
+
+/* selected */
+.sapMSelectListItemBase.sapMSelectListItemBaseSelected {
+	background: @sapUiListSelectionBackgroundColor;
+	color: @sapUiListTextColor;
+	border-bottom: 0.0625rem solid @sapUiListSelectionBorderColor;
+
+	&:hover {
+		background: @sapUiListHoverSelectionBackground;
+	}
+}
+
+
+/* pressed */
+html.sap-desktop .sapMSelectListItemBase.sapMSelectListItemBasePressed:focus {
+	outline: 0.0625rem dotted @sapUiContentContrastFocusColor;
+}
+
+.sapMSelectListItemBase.sapMSelectListItemBasePressed,
+.sapMSelectListItemBase.sapMSelectListItemBaseSelected.sapMSelectListItemBasePressed {
+	background-color: @sapUiListActiveBackground;
+	color: @sapUiListActiveTextColor;
+}
+
+.sapMSelectListItemBase.sapMSelectListItemBasePressed .sapMSelectListItemIcon {
+	color: @sapUiContentContrastIconColor;
+}
+
+
+/* disabled */
+.sapMSelectListItemBaseDisabled {
+	opacity: 0.5;
+}
+
+/* focus */
+html.sap-desktop .sapMSelectListItemBase:focus::after,
+.sapMSltPicker-CTX .sapMSelectListItemBaseSelected::after,
+.sapMComboBoxBasePicker-CTX .sapMSelectListItemBaseSelected::after {
+	pointer-events: none;
+	content: "";
+	outline: @sapUiContentFocusWidth @sapUiContentFocusStyle @sapUiContentFocusColor;
+	outline-offset: -0.1875rem;
+	position: absolute;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	left: 0;
+}
+
+.sapMSltPicker-CTX .sapMSelectListItemBaseSelected,
+.sapMComboBoxBasePicker-CTX .sapMSelectListItemBaseSelected,
+html.sap-desktop .sapMSelectListItemBase:focus {
+	outline: none;
+}
+
+.sapMSelectListItemBase {
+	background-color: @sapUiListBackground;
+	border-color: @sapUiListBorderColor;
+	position: relative;
+	font-size: @sapFontSize;
+	color: @sapUiListTextColor;
+}

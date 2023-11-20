@@ -4,13 +4,12 @@
 
 // Provides control sap.ui.commons.Menu.
 sap.ui.define([
-	'jquery.sap.global',
 	'./MenuItemBase',
 	'./library',
 	'sap/ui/unified/Menu',
-	"./MenuRenderer"
+	'./MenuRenderer'
 ],
-	function(jQuery, MenuItemBase, library, Menu1, MenuRenderer) {
+	function(MenuItemBase, library, UnifiedMenu, MenuRenderer) {
 	"use strict";
 
 
@@ -34,9 +33,8 @@ sap.ui.define([
 	 * @public
 	 * @deprecated as of version 1.21.0, replaced by {@link sap.ui.unified.Menu}
 	 * @alias sap.ui.commons.Menu
-	 * @ui5-metamodel This control/element will also be described in the UI5 (legacy) design time meta model
 	 */
-	var Menu = Menu1.extend("sap.ui.commons.Menu", /** @lends sap.ui.commons.Menu.prototype */ { metadata : {
+	var Menu = UnifiedMenu.extend("sap.ui.commons.Menu", /** @lends sap.ui.commons.Menu.prototype */ { metadata : {
 
 		deprecated : true,
 		library : "sap.ui.commons"
@@ -48,4 +46,4 @@ sap.ui.define([
 
 	return Menu;
 
-}, /* bExport= */ true);
+});

@@ -10,7 +10,8 @@
 			<Button
 				text="Show Dialog with Search"
 				press="onOpenDialog"
-				class="sapUiSmallMarginBottom" />
+				class="sapUiSmallMarginBottom"
+				ariaHasPopup="Dialog" />
 		</l:content>
 	</l:VerticalLayout>
 </mvc:View>

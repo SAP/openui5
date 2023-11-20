@@ -1,0 +1,4 @@
+<mvc:View xmlns:m="sap.m" xmlns:mvc="sap.ui.core.mvc" xmlns:core="sap.ui.core">
+	<m:Button id="buttonExtPoint1_1" text="Nothing" />
+	<m:Button id="buttonExtPoint1_2" text="Nothing" />
+</mvc:View>

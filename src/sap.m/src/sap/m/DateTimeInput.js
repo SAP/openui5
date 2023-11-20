@@ -4,29 +4,41 @@
 
 // Provides control sap.m.DateTimeInput.
 sap.ui.define([
-	'jquery.sap.global',
+	"sap/base/i18n/Formatting",
+	"sap/ui/core/Locale",
+	"sap/ui/thirdparty/jquery",
 	'sap/ui/core/Control',
 	'./library',
+	'./DatePicker',
+	'./DateTimePicker',
+	'./TimePicker',
 	'sap/ui/model/type/Date',
 	'sap/ui/model/type/Time',
 	'sap/ui/model/type/DateTime',
 	'sap/ui/model/odata/type/ODataType',
 	'sap/ui/core/library',
 	'sap/ui/Device',
-	'./DateTimeInputRenderer'
+	"./DateTimeInputRenderer",
+	"sap/ui/core/date/UI5Date"
 ],
 function(
+	Formatting,
+	Locale,
 	jQuery,
 	Control,
 	library,
+	DatePicker,
+	DateTimePicker,
+	TimePicker,
 	Date1,
 	Time,
 	DateTime,
 	ODataType,
 	coreLibrary,
 	Device,
-	DateTimeInputRenderer
-	) {
+	DateTimeInputRenderer,
+	UI5Date
+) {
 	"use strict";
 
 	// shortcut for sap.m.DateTimeInputType
@@ -48,7 +60,7 @@ function(
 	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
-	 * Allows end users to interact with date and/or time and select from a date and/or time pad.
+	 * Allows end users to interact with date (between 0001-01-01 and 9999-12-31) and/or time and select from a date and/or time pad.
 	 *
 	 * <b>Note:</b> This control should not be used any longer, instead please use the dedicated <code>sap.m.DatePicker</code>, <code>sap.m.TimePicker</code> or <code>sap.m.DateTimePicker</code> control.
 	 * @extends sap.ui.core.Control
@@ -61,153 +73,159 @@ function(
 	 * @since 1.9.1
 	 * @deprecated as of version 1.32.8, replaced by {@link sap.m.DatePicker}, {@link sap.m.TimePicker} or {@link sap.m.DateTimePicker}
 	 * @alias sap.m.DateTimeInput
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
-	var DateTimeInput = Control.extend("sap.m.DateTimeInput", /** @lends sap.m.DateTimeInput.prototype */ { metadata : {
+	var DateTimeInput = Control.extend("sap.m.DateTimeInput", /** @lends sap.m.DateTimeInput.prototype */ {
+		metadata : {
+			interfaces : [
+				"sap.m.IToolbarInteractiveControl"
+			],
+			library : "sap.m",
+			deprecated: true,
+			designtime: "sap/m/designtime/DateTimeInput.designtime",
+			properties : {
 
-		library : "sap.m",
-		designtime: "sap/m/designtime/DateTimeInput.designtime",
-		properties : {
+				/**
+				 * Defines the value of the control.
+				 *
+				 * The new value must be in the format set by <code>valueFormat</code>.
+				 *
+				 * The "Now" literal can also be assigned as a parameter to show the current date and/or time.
+				 */
+				value: { type: "string", group: "Data", defaultValue: null, bindable: "bindable" },
 
-			/**
-			 * Defines the value of the control.
-			 *
-			 * The new value must be in the format set by <code>valueFormat</code>.
-			 *
-			 * The "Now" literal can also be assigned as a parameter to show the current date and/or time.
-			 */
-			value: { type: "string", group: "Data", defaultValue: null, bindable: "bindable" },
+				/**
+				 * Defines the width of the control.
+				 */
+				width: { type: "sap.ui.core.CSSSize", group: "Dimension", defaultValue: "100%" },
 
-			/**
-			 * Defines the width of the control.
-			 */
-			width: { type: "sap.ui.core.CSSSize", group: "Dimension", defaultValue: "100%" },
+				/**
+				 * Indicates whether the user can interact with the control or not.
+				 * <b>Note:</b> Disabled controls cannot be focused and they are out of the tab-chain.
+				 */
+				enabled: { type: "boolean", group: "Behavior", defaultValue: true },
 
-			/**
-			 * Indicates whether the user can interact with the control or not.
-			 * <b>Note:</b> Disabled controls cannot be focused and they are out of the tab-chain.
-			 */
-			enabled: { type: "boolean", group: "Behavior", defaultValue: true },
+				/**
+				 * Defines whether the control can be modified by the user or not.
+				 * <b>Note:</b> A user can tab to non-editable control, highlight it, and copy the text from it.
+				 * @since 1.12.0
+				 */
+				editable: { type: "boolean", group: "Behavior", defaultValue: true },
 
-			/**
-			 * Defines whether the control can be modified by the user or not.
-			 * <b>Note:</b> A user can tab to non-editable control, highlight it, and copy the text from it.
-			 * @since 1.12.0
-			 */
-			editable: { type: "boolean", group: "Behavior", defaultValue: true },
+				/**
+				 * Visualizes the validation state of the control, e.g. <code>Error</code>, <code>Warning</code>, <code>Success</code>.
+				 */
+				valueState: { type: "sap.ui.core.ValueState", group: "Appearance", defaultValue: ValueState.None },
 
-			/**
-			 * Visualizes the validation state of the control, e.g. <code>Error</code>, <code>Warning</code>, <code>Success</code>.
-			 */
-			valueState: { type: "sap.ui.core.ValueState", group: "Appearance", defaultValue: ValueState.None },
+				/**
+				 * Defines the text that appears in the value state message pop-up. If this is not specified, a default text is shown from the resource bundle.
+				 * @since 1.26.0
+				 */
+				valueStateText: { type: "string", group: "Misc", defaultValue: null },
 
-			/**
-			 * Defines the text that appears in the value state message pop-up. If this is not specified, a default text is shown from the resource bundle.
-			 * @since 1.26.0
-			 */
-			valueStateText: { type: "string", group: "Misc", defaultValue: null },
+				/**
+				 * Indicates whether the value state message should be shown or not.
+				 * @since 1.26.0
+				 */
+				showValueStateMessage: { type: "boolean", group: "Misc", defaultValue: true },
 
-			/**
-			 * Indicates whether the value state message should be shown or not.
-			 * @since 1.26.0
-			 */
-			showValueStateMessage: { type: "boolean", group: "Misc", defaultValue: true },
+				/**
+				 * Defines the name of the control for the purposes of form submission.
+				 */
+				name: { type: "string", group: "Misc", defaultValue: null },
 
-			/**
-			 * Defines the name of the control for the purposes of form submission.
-			 */
-			name: { type: "string", group: "Misc", defaultValue: null },
+				/**
+				 * Defines a short hint intended to aid the user with data entry when the control has no value.
+				 */
+				placeholder: { type: "string", group: "Misc", defaultValue: null },
 
-			/**
-			 * Defines a short hint intended to aid the user with data entry when the control has no value.
-			 */
-			placeholder: { type: "string", group: "Misc", defaultValue: null },
+				/**
+				 * Defines the horizontal alignment of the text that is shown inside the input field.
+				 * @since 1.26.0
+				 */
+				textAlign: { type: "sap.ui.core.TextAlign", group: "Appearance", defaultValue: TextAlign.Initial },
 
-			/**
-			 * Defines the horizontal alignment of the text that is shown inside the input field.
-			 * @since 1.26.0
-			 */
-			textAlign: { type: "sap.ui.core.TextAlign", group: "Appearance", defaultValue: TextAlign.Initial },
+				/**
+				 * Defines the text directionality of the input field, e.g. <code>RTL</code>, <code>LTR</code>
+				 * @since 1.28.0
+				 */
+				textDirection: { type: "sap.ui.core.TextDirection", group: "Appearance", defaultValue: TextDirection.Inherit },
 
-			/**
-			 * Defines the text directionality of the input field, e.g. <code>RTL</code>, <code>LTR</code>
-			 * @since 1.28.0
-			 */
-			textDirection: { type: "sap.ui.core.TextDirection", group: "Appearance", defaultValue: TextDirection.Inherit },
+				/**
+				 * Type of DateTimeInput (e.g. Date, Time, DateTime)
+				 */
+				type : {type : "sap.m.DateTimeInputType", group : "Data", defaultValue : DateTimeInputType.Date},
 
-			/**
-			 * Type of DateTimeInput (e.g. Date, Time, DateTime)
-			 */
-			type : {type : "sap.m.DateTimeInputType", group : "Data", defaultValue : DateTimeInputType.Date},
+				/**
+				 * Displays date value in this given format in text field. Default value is taken from locale settings.
+				 * If you use data-binding on value property with type sap.ui.model.type.Date then you can ignore this property or the latter wins.
+				 * If the user's browser supports native picker then this property is overwritten by browser with locale settings.
+				 */
+				displayFormat : {type : "string", group : "Appearance", defaultValue : null},
 
-			/**
-			 * Displays date value in this given format in text field. Default value is taken from locale settings.
-			 * If you use data-binding on value property with type sap.ui.model.type.Date then you can ignore this property or the latter wins.
-			 * If the user's browser supports native picker then this property is overwritten by browser with locale settings.
-			 */
-			displayFormat : {type : "string", group : "Appearance", defaultValue : null},
+				/**
+				 * Given value property should match with valueFormat to parse date. Default value is taken from locale settings.
+				 * You can only set and get value in this format.
+				 * If you use data-binding on value property with type sap.ui.model.type.Date you can ignore this property or the latter wins.
+				 */
+				valueFormat : {type : "string", group : "Data", defaultValue : null},
 
-			/**
-			 * Given value property should match with valueFormat to parse date. Default value is taken from locale settings.
-			 * You can only set and get value in this format.
-			 * If you use data-binding on value property with type sap.ui.model.type.Date you can ignore this property or the latter wins.
-			 */
-			valueFormat : {type : "string", group : "Data", defaultValue : null},
+				/**
+				 * This property as JavaScript Date Object can be used to assign a new value which is independent from valueFormat.
+				 */
+				dateValue : {type : "object", group : "Data", defaultValue : null}
+			},
+			aggregations: {
 
-			/**
-			 * This property as JavaScript Date Object can be used to assign a new value which is independent from valueFormat.
-			 */
-			dateValue : {type : "object", group : "Data", defaultValue : null}
-		},
-		aggregations: {
+				_picker: {type: "sap.ui.core.Control", multiple: false, visibility: "hidden"}
 
-			_picker: {type: "sap.ui.core.Control", multiple: false, visibility: "hidden"}
+			},
+			associations: {
 
-		},
-		associations: {
+				/**
+				 * Association to controls / IDs that label this control (see WAI-ARIA attribute aria-labelledby).
+				 * @since 1.27.0
+				 */
+				ariaLabelledBy: { type: "sap.ui.core.Control", multiple: true, singularName: "ariaLabelledBy" }
+			},
+			events : {
 
-			/**
-			 * Association to controls / IDs that label this control (see WAI-ARIA attribute aria-labelledby).
-			 * @since 1.27.0
-			 */
-			ariaLabelledBy: { type: "sap.ui.core.Control", multiple: true, singularName: "ariaLabelledBy" }
-		},
-		events : {
+				/**
+				 * This event gets fired when the selection has finished and the value has changed.
+				 */
+				change : {
+					parameters : {
 
-			/**
-			 * This event gets fired when the selection has finished and the value has changed.
-			 */
-			change : {
-				parameters : {
+						/**
+						 * The string value of the control in given valueFormat (or locale format).
+						 */
+						value : {type : "string"},
 
-					/**
-					 * The string value of the control in given valueFormat (or locale format).
-					 */
-					value : {type : "string"},
+						/**
+						 * The value of control as JavaScript Date Object or null if value is empty.
+						 */
+						dateValue : {type : "object"},
 
-					/**
-					 * The value of control as JavaScript Date Object or null if value is empty.
-					 */
-					dateValue : {type : "object"},
+						/**
+						 * if set, the entered value is a valid date.
+						 * If not set the entered value cannot be converted to a date.
+						 * @since 1.38.0
+						 */
+						valid : {type : "boolean"}
 
-					/**
-					 * if set, the entered value is a valid date.
-					 * If not set the entered value cannot be converted to a date.
-					 * @since 1.38.0
-					 */
-					valid : {type : "boolean"}
-
+					}
 				}
 			}
-		}
-	}});
+		},
+
+		renderer: DateTimeInputRenderer
+	});
 
 
 	!(function(oPrototype, $, oDevice) {
 
 		var oi18n = library.getLocaleData();
 
-		$.extend(oPrototype, {
+		jQuery.extend(oPrototype, {
 			_types : {
 				Date : {
 					valueFormat : oi18n.getDatePattern("short"),
@@ -272,19 +290,16 @@ function(
 
 		switch (type) {
 			case DateTimeInputType.DateTime:
-				jQuery.sap.require("sap.m.DateTimePicker");
-				oPicker = new sap.m.DateTimePicker(this.getId() + "-Picker");
+				oPicker = new DateTimePicker(this.getId() + "-Picker");
 				break;
 
 			case DateTimeInputType.Time:
-				jQuery.sap.require("sap.m.TimePicker");
-				oPicker = new sap.m.TimePicker(this.getId() + "-Picker",
-					{localeId: sap.ui.getCore().getConfiguration().getFormatSettings().getFormatLocale().toString()});
+				oPicker = new TimePicker(this.getId() + "-Picker",
+					{localeId: new Locale(Formatting.getLanguageTag()).toString()});
 				break;
 
 			default: // default is date
-				jQuery.sap.require("sap.m.DatePicker");
-				oPicker = new sap.m.DatePicker(this.getId() + "-Picker");
+				oPicker = new DatePicker(this.getId() + "-Picker");
 				break;
 		}
 
@@ -348,7 +363,7 @@ function(
 
 		sValue = this.validateProperty("value", sValue);
 		if (sValue.toLowerCase() == "now") {
-			return this.setDateValue(new Date());
+			return this.setDateValue(UI5Date.getInstance());
 		}
 
 		if (sValue === this.getValue()) {
@@ -367,9 +382,16 @@ function(
 
 	};
 
+	/**
+	 * Setter for property <code>dateValue</code>.
+	 *
+	 * @param {Date} oDate A JavaScript Date
+	 * @returns {this} Reference to <code>this</code> for method chaining
+	 * @public
+	 */
 	DateTimeInput.prototype.setDateValue = function(oDate) {
 
-		if (this._isValidDate(oDate)) {
+		if (!this._isValidDate(oDate)) {
 			throw new Error("Date must be a JavaScript date object; " + this);
 		}
 
@@ -543,7 +565,7 @@ function(
 
 	/**
 	 * @see sap.ui.core.Control#getAccessibilityInfo
-	 * @returns {Object} Current accessibility state of the control
+	 * @returns {sap.ui.core.AccessibilityInfo} Current accessibility state of the control
 	 * @protected
 	 */
 	DateTimeInput.prototype.getAccessibilityInfo = function() {
@@ -601,7 +623,7 @@ function(
 
 	/**
 	 * Returns the binding type pattern of 'value' property if such.
-	 * @return {*}
+	 * @returns {*}
 	 * @private
 	 **/
 	DateTimeInput.prototype._getBoundValueTypePattern = function() {
@@ -619,6 +641,20 @@ function(
 		return undefined;
 	};
 
+	/**
+	 * Required by the {@link sap.m.IToolbarInteractiveControl} interface.
+	 * Determines if the Control is interactive.
+	 *
+	 * @returns {boolean} If it is an interactive Control
+	 *
+	 * @private
+	 * @ui5-restricted sap.m.OverflowToolBar, sap.m.Toolbar
+	 */
+	DateTimeInput.prototype._getToolbarInteractive = function () {
+		return true;
+	};
+
+
 	function _getPicker(){
 
 		return this.getAggregation("_picker");
@@ -627,12 +663,8 @@ function(
 
 	// Cross frame check for a date should be performed here otherwise setDateValue would fail in OPA tests
 	// because Date object in the test is different than the Date object in the application (due to the iframe).
-	// We can use jQuery.type or this method:
-	// function isValidDate (date) {
-	//	return date && Object.prototype.toString.call(date) === "[object Date]" && !isNaN(date);
-	//}
 	DateTimeInput.prototype._isValidDate = function (oDate) {
-		return oDate && jQuery.type(oDate) !== "date";
+		return !oDate || Object.prototype.toString.call(oDate) === "[object Date]";
 	};
 
 	function _updateFormatFromBinding(){

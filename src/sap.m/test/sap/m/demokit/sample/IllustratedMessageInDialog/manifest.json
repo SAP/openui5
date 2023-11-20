@@ -1,0 +1,33 @@
+{
+	"sap.app": {
+		"id": "sap.m.sample.IllustratedMessageInDialog",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "sap.m.sample.IllustratedMessageInDialog.view.Main",
+			"type": "XML",
+			"async": true
+		},
+		"dependencies": {
+			"libs": {
+				"sap.m": {},
+				"sap.ui.core": {}
+			}
+		},
+		"config": {
+			"sample": {
+				"stretch": true,
+				"files": [
+					"controller/Main.controller.js",
+					"view/Main.view.xml",
+					"view/fragments/Dialog.fragment.xml",
+					"Component.js",
+					"manifest.json"
+				]
+			}
+		}
+	}
+}

@@ -1,12 +1,15 @@
-sap.ui.define(['sap/ui/core/Core', 'sap/ui/core/library'], function(Core, coreLib) {
-	sap.ui.getCore().initLibrary({
-		name: 'testlibs.scenario1.lib2',
+sap.ui.define([
+	"sap/ui/core/Lib",
+	"sap/ui/core/library"
+], function(Library) {
+	"use strict";
+	return Library.init({
+		name: "testlibs.scenario1.lib2",
 		dependencies: [
-			'testlibs.scenario1.lib4',
-			'testlibs.scenario1.lib1',
-			'testlibs.scenario1.lib7'
+			"testlibs.scenario1.lib4",
+			"testlibs.scenario1.lib1",
+			"testlibs.scenario1.lib7"
 		],
 		noLibraryCSS: true
 	});
-	return testlibs.scenario1.lib2;
 });

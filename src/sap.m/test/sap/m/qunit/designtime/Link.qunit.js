@@ -1,23 +1,55 @@
-(function () {
+sap.ui.define([
+	"sap/m/Link",
+	"sap/ui/dt/enablement/elementDesigntimeTest",
+	"sap/ui/rta/enablement/elementActionTest"
+], function (
+	Link,
+	elementDesigntimeTest,
+	elementActionTest
+) {
 	"use strict";
 
-	sap.ui.require([
-		"sap/ui/dt/test/report/QUnit",
-		"sap/ui/dt/test/ElementEnablementTest",
-		"sap/m/Link",
-		"sap/ui/rta/test/controlEnablingCheck"
-	], function (QUnitReport, ElementEnablementTest, Link, rtaControlEnablingCheck) {
-
-		var oElementEnablementTest = new ElementEnablementTest({
+	return Promise.resolve()
+	.then(function () {
+		return elementDesigntimeTest({
 			type: "sap.m.Link",
 			create: function () {
 				return new Link();
 			}
 		});
-		oElementEnablementTest.run().then(function (oData) {
-			new QUnitReport({
-				data: oData
-			});
+	})
+	.then(function() {
+		// Rename action
+		var fnConfirmLinkIsRenamedWithNewValue = function (oLink, oViewAfterAction, assert) {
+			assert.strictEqual(oViewAfterAction.byId("myLink").getText(),
+				"New Value",
+				"then the control has been renamed to the new value (New Value)");
+		};
+
+		var fnConfirmLinkIsRenamedWithOldValue = function (oUiComponent, oViewAfterAction, assert) {
+			assert.strictEqual(oViewAfterAction.byId("myLink").getText(),
+				"Link 1",
+				"then the control has been renamed to the old value (Link 1)");
+		};
+
+		elementActionTest("Checking the rename action for a Link", {
+			xmlView: '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:m="sap.m">"' +
+			'<m:Link text="Link 1" id="myLink" />' +
+			'</mvc:View>'
+			,
+			action: {
+				name: "rename",
+				controlId: "myLink",
+				parameter: function (oView) {
+					return {
+						newValue: 'New Value',
+						renamedElement: oView.byId("myLink")
+					};
+				}
+			},
+			afterAction: fnConfirmLinkIsRenamedWithNewValue,
+			afterUndo: fnConfirmLinkIsRenamedWithOldValue,
+			afterRedo: fnConfirmLinkIsRenamedWithNewValue
 		});
 
 		// Remove and reveal actions
@@ -29,7 +61,7 @@
 			assert.strictEqual(oViewAfterAction.byId("myLink").getVisible(), true, "then the Link element is visible");
 		};
 
-		rtaControlEnablingCheck("Checking the remove action for Link", {
+		elementActionTest("Checking the remove action for Link", {
 			xmlView: '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m">"' +
 			'<Link id="myLink" text="Open SAP Homepage" target="_blank" href="http://www.sap.com"/>' +
 			'</mvc:View>'
@@ -43,7 +75,7 @@
 			afterRedo: fnConfirmLinkIsInvisible
 		});
 
-		rtaControlEnablingCheck("Checking the reveal action for a Link", {
+		elementActionTest("Checking the reveal action for a Link", {
 			xmlView: '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m">"' +
 			'<Link id="myLink" text="Open SAP Homepage" target="_blank" href="http://www.sap.com" visible="false"/>' +
 			'</mvc:View>'
@@ -56,5 +88,34 @@
 			afterUndo: fnConfirmLinkIsInvisible,
 			afterRedo: fnConfirmLinkIsVisible
 		});
+
+		// ChangeLinkTarget (settings action)
+		function confirmLinkTarget1(oUiComponent, oViewAfterAction, assert) {
+			assert.deepEqual(oViewAfterAction.byId("myLink").getTarget(), "_top", "the target was changed");
+		}
+
+		function confirmLinkTarget2(oUiComponent, oViewAfterAction, assert) {
+			assert.deepEqual(oViewAfterAction.byId("myLink").getTarget(), "_blank", "the target was changed back");
+		}
+
+		elementActionTest("Checking the changeLinkTarget settings action for a Link", {
+			xmlView:
+				'<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m">"' +
+					'<Link id="myLink" text="Open SAP Homepage" target="_blank" href="http://www.sap.com" visible="false"/>' +
+				'</mvc:View>'
+			,
+			action: {
+				name: "settings",
+				controlId: "myLink",
+				parameter: {
+					changeType: "changeLinkTarget",
+					content: "_top"
+				}
+			},
+			layer: "VENDOR",
+			afterAction: confirmLinkTarget1,
+			afterUndo: confirmLinkTarget2,
+			afterRedo: confirmLinkTarget1
+		});
 	});
-})();
+});

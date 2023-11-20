@@ -1,0 +1,112 @@
+[
+	{
+		"fileName": "id_1576499657864_42_hideControl",
+		"changeType": "hideControl",
+		"reference": "sap.ui.rta.test",
+		"selector": {
+			"id": "idMain1--GeneralLedgerDocument.Name",
+			"idIsLocal": true
+		},
+		"creation": "2019-12-16T12:37:17.294Z"
+	},
+	{
+		"fileName": "id_1576499660689_44_hideControl",
+		"changeType": "hideControl",
+		"reference": "sap.ui.rta.test",
+		"selector": {
+			"id": "idMain1--Victim",
+			"idIsLocal": true
+		},
+		"creation": "2019-12-16T12:37:17.295Z"
+	},
+	{
+		"fileName": "id_1576499675228_47_unhideControl",
+		"changeType": "unhideControl",
+		"reference": "sap.ui.rta.test",
+		"selector": {
+			"id": "idMain1--Victim",
+			"idIsLocal": true
+		},
+		"creation": "2019-12-16T12:37:17.296Z"
+	},
+	{
+		"fileName": "id_1576499688032_50_unhideControl",
+		"changeType": "unhideControl",
+		"reference": "sap.ui.rta.test",
+		"selector": {
+			"id": "idMain1--GeneralLedgerDocument.Name",
+			"idIsLocal": true
+		},
+		"creation": "2019-12-16T12:37:17.298Z"
+	},
+	{
+		"fileName": "id_1576499693095_56_hideControl",
+		"changeType": "hideControl",
+		"reference": "sap.ui.rta.test",
+		"selector": {
+			"id": "idMain1--GeneralLedgerDocument.CompanyCode",
+			"idIsLocal": true
+		},
+		"creation": "2019-12-16T12:37:17.300Z"
+	},
+	{
+		"fileName": "id_1576499695675_58_hideControl",
+		"changeType": "hideControl",
+		"reference": "sap.ui.rta.test",
+		"selector": {
+			"id": "idMain1--Victim",
+			"idIsLocal": true
+		},
+		"creation": "2019-12-16T12:37:17.301Z"
+	},
+	{
+		"fileName": "id_1576499706216_60_unhideControl",
+		"changeType": "unhideControl",
+		"reference": "sap.ui.rta.test",
+		"selector": {
+			"id": "idMain1--GeneralLedgerDocument.CompanyCode",
+			"idIsLocal": true
+		},
+		"creation": "2019-12-16T12:37:17.302Z"
+	},
+	{
+		"fileName": "id_1576499733800_66_hideControl",
+		"changeType": "hideControl",
+		"reference": "sap.ui.rta.test",
+		"selector": {
+			"id": "idMain1--GeneralLedgerDocument.Name",
+			"idIsLocal": true
+		},
+		"creation": "2019-12-16T12:37:17.304Z"
+	},
+	{
+		"fileName": "id_1576499768370_68_unhideControl",
+		"changeType": "unhideControl",
+		"reference": "sap.ui.rta.test",
+		"selector": {
+			"id": "idMain1--GeneralLedgerDocument.Name",
+			"idIsLocal": true
+		},
+		"creation": "2019-12-16T12:37:17.305Z"
+	},
+	{
+		"fileName": "id_1576499822704_74_hideControl",
+		"changeType": "hideControl",
+		"reference": "sap.ui.rta.test",
+		"selector": {
+			"id": "idMain1--GeneralLedgerDocument.CompanyCode",
+			"idIsLocal": true
+		},
+		"creation": "2019-12-16T12:37:17.307Z"
+	},
+	{
+		"fileName": "id_1576499832239_76_unhideControl",
+		"changeType": "unhideControl",
+		"reference": "sap.ui.rta.test",
+		"selector": {
+			"id": "idMain1--GeneralLedgerDocument.CompanyCode",
+			"idIsLocal": true
+		},
+		"creation": "2019-12-16T12:37:17.308Z"
+	}
+]

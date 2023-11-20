@@ -1,0 +1,587 @@
+<?xml
+version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="4.0" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+    <edmx:Reference Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_COMMUNICATION',Version='0001',SAP__Origin='LOCAL')/$value">
+        <edmx:Include Namespace="com.sap.vocabularies.Communication.v1" Alias="Communication"/>
+    </edmx:Reference>
+    <edmx:Reference Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_PERSONALDATA',Version='0001',SAP__Origin='LOCAL')/$value">
+        <edmx:Include Namespace="com.sap.vocabularies.PersonalData.v1" Alias="PersonalData"/>
+    </edmx:Reference>
+    <edmx:Reference Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_ANALYTICS',Version='0001',SAP__Origin='LOCAL')/$value">
+        <edmx:Include Namespace="com.sap.vocabularies.Analytics.v1" Alias="Analytics"/>
+    </edmx:Reference>
+    <edmx:Reference Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_COMMON',Version='0001',SAP__Origin='LOCAL')/$value">
+        <edmx:Include Namespace="com.sap.vocabularies.Common.v1" Alias="SAP__common"/>
+    </edmx:Reference>
+    <edmx:Reference Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_MEASURES',Version='0001',SAP__Origin='LOCAL')/$value">
+        <edmx:Include Namespace="Org.OData.Measures.V1" Alias="SAP__measures"/>
+    </edmx:Reference>
+    <edmx:Reference Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_CORE',Version='0001',SAP__Origin='LOCAL')/$value">
+        <edmx:Include Namespace="Org.OData.Core.V1" Alias="SAP__core"/>
+    </edmx:Reference>
+    <edmx:Reference Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_CAPABILITIES',Version='0001',SAP__Origin='LOCAL')/$value">
+        <edmx:Include Namespace="Org.OData.Capabilities.V1" Alias="SAP__capabilities"/>
+    </edmx:Reference>
+    <edmx:Reference Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_AGGREGATION',Version='0001',SAP__Origin='LOCAL')/$value">
+        <edmx:Include Namespace="Org.OData.Aggregation.V1" Alias="SAP__aggregation"/>
+    </edmx:Reference>
+    <edmx:Reference Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_VALIDATION',Version='0001',SAP__Origin='LOCAL')/$value">
+        <edmx:Include Namespace="Org.OData.Validation.V1" Alias="SAP__validation"/>
+    </edmx:Reference>
+    <edmx:Reference Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_CODELIST',Version='0001',SAP__Origin='LOCAL')/$value">
+        <edmx:Include Namespace="com.sap.vocabularies.CodeList.v1" Alias="SAP__CodeList"/>
+    </edmx:Reference>
+    <edmx:Reference Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_UI',Version='0001',SAP__Origin='LOCAL')/$value">
+        <edmx:Include Namespace="com.sap.vocabularies.UI.v1" Alias="SAP__UI"/>
+    </edmx:Reference>
+    <edmx:Reference Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_HTML5',Version='0001',SAP__Origin='LOCAL')/$value">
+        <edmx:Include Namespace="com.sap.vocabularies.HTML5.v1" Alias="SAP__HTML5"/>
+    </edmx:Reference>
+    <edmx:Reference Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_PDF',Version='0001',SAP__Origin='LOCAL')/$value">
+        <edmx:Include Namespace="com.sap.vocabularies.PDF.v1" Alias="SAP__PDF"/>
+    </edmx:Reference>
+    <edmx:Reference Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_SESSION',Version='0001',SAP__Origin='LOCAL')/$value">
+        <edmx:Include Namespace="com.sap.vocabularies.Session.v1" Alias="SAP__session"/>
+    </edmx:Reference>
+    <edmx:Reference Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_HIERARCHY',Version='0001',SAP__Origin='LOCAL')/$value">
+        <edmx:Include Namespace="com.sap.vocabularies.Hierarchy.v1" Alias="SAP__hierarchy"/>
+    </edmx:Reference>
+    <edmx:DataServices>
+        <Schema Namespace="com.sap.gateway.srvd.zjb_sadl_rs_hier_dir_sd.v0001" Alias="SAP__self">
+            <Annotation Term="SAP__core.SchemaVersion" String="1.0.0"/>
+            <EntityType Name="I_SADL_BHV_HIER_BIND_DIRECTORYType">
+                <Key>
+                    <PropertyRef Name="Hierarchy"/>
+                </Key>
+                <Property Name="Hierarchy" Type="Edm.String" Nullable="false" MaxLength="20"/>
+                <Property Name="Description" Type="Edm.String" Nullable="false" MaxLength="40"/>
+                <Property Name="__CreateByAssociationControl" Type="com.sap.gateway.srvd.zjb_sadl_rs_hier_dir_sd.v0001.I_SADL_BHV_HIER_BIND_DIRECTORYCbAControl"/>
+                <Property Name="__EntityControl" Type="com.sap.gateway.srvd.zjb_sadl_rs_hier_dir_sd.v0001.EntityControl"/>
+                <Property Name="SAP__Messages" Type="Collection(com.sap.gateway.srvd.zjb_sadl_rs_hier_dir_sd.v0001.SAP__Message)" Nullable="false"/>
+                <NavigationProperty Name="_Hierarchy" Type="Collection(com.sap.gateway.srvd.zjb_sadl_rs_hier_dir_sd.v0001.I_SADL_BHV_HIER_BIND_DIR_SRCType)" Partner="_HierarchyDirectory">
+                    <OnDelete Action="Cascade"/>
+                </NavigationProperty>
+            </EntityType>
+            <EntityType Name="I_SADL_BHV_HIER_BIND_DIR_SRCType">
+                <Key>
+                    <PropertyRef Name="Hierarchy"/>
+                    <PropertyRef Name="Id"/>
+                </Key>
+                <Property Name="Hierarchy" Type="Edm.String" Nullable="false" MaxLength="20"/>
+                <Property Name="Id" Type="Edm.String" Nullable="false" MaxLength="20"/>
+                <Property Name="ParentId" Type="Edm.String" Nullable="false" MaxLength="20"/>
+                <Property Name="SiblingOrder" Type="Edm.String" Nullable="false" MaxLength="20"/>
+                <Property Name="Description" Type="Edm.String" Nullable="false" MaxLength="40"/>
+                <Property Name="__HierarchyPropertiesForI_SADL_BHV_BIND_DIR_HIERVIEW" Type="com.sap.gateway.srvd.zjb_sadl_rs_hier_dir_sd.v0001.HierarchyPropertiesForI_SADL_BHV_BIND_DIR_HIERVIEW"/>
+                <Property Name="__EntityControl" Type="com.sap.gateway.srvd.zjb_sadl_rs_hier_dir_sd.v0001.EntityControl"/>
+                <Property Name="__OperationControl" Type="com.sap.gateway.srvd.zjb_sadl_rs_hier_dir_sd.v0001.I_SADL_BHV_HIER_BIND_DIR_SRCOperationControl"/>
+                <Property Name="SAP__Messages" Type="Collection(com.sap.gateway.srvd.zjb_sadl_rs_hier_dir_sd.v0001.SAP__Message)" Nullable="false"/>
+                <NavigationProperty Name="_HierarchyDirectory" Type="com.sap.gateway.srvd.zjb_sadl_rs_hier_dir_sd.v0001.I_SADL_BHV_HIER_BIND_DIRECTORYType" Nullable="false" Partner="_Hierarchy">
+                    <ReferentialConstraint Property="Hierarchy" ReferencedProperty="Hierarchy"/>
+                </NavigationProperty>
+                <NavigationProperty Name="_HierarchyParent" Type="com.sap.gateway.srvd.zjb_sadl_rs_hier_dir_sd.v0001.I_SADL_BHV_HIER_BIND_DIR_SRCType"/>
+            </EntityType>
+            <ComplexType Name="HierarchyPropertiesForI_SADL_BHV_BIND_DIR_HIERVIEW">
+                <Property Name="NodeId" Type="Edm.String" Nullable="false"/>
+                <Property Name="DescendantCount" Type="Edm.Int64" Nullable="false"/>
+                <Property Name="LimitedDescendantCount" Type="Edm.Int64" Nullable="false"/>
+                <Property Name="DrillState" Type="Edm.String" Nullable="false"/>
+                <Property Name="DistanceFromRoot" Type="Edm.Int64" Nullable="false"/>
+            </ComplexType>
+            <ComplexType Name="I_SADL_BHV_HIER_BIND_DIRECTORYCbAControl">
+                <Property Name="_Hierarchy" Type="Edm.Boolean" Nullable="false"/>
+            </ComplexType>
+            <ComplexType Name="I_SADL_BHV_HIER_BIND_DIR_SRCOperationControl">
+                <Property Name="changeNextSibling" Type="Edm.Boolean" Nullable="false"/>
+                <Property Name="copy" Type="Edm.Boolean" Nullable="false"/>
+            </ComplexType>
+            <ComplexType Name="EntityControl">
+                <Property Name="Deletable" Type="Edm.Boolean" Nullable="false"/>
+                <Property Name="Updatable" Type="Edm.Boolean" Nullable="false"/>
+            </ComplexType>
+            <ComplexType Name="SAP__Message">
+                <Property Name="code" Type="Edm.String" Nullable="false"/>
+                <Property Name="message" Type="Edm.String" Nullable="false"/>
+                <Property Name="target" Type="Edm.String"/>
+                <Property Name="additionalTargets" Type="Collection(Edm.String)" Nullable="false"/>
+                <Property Name="transition" Type="Edm.Boolean" Nullable="false"/>
+                <Property Name="numericSeverity" Type="Edm.Byte" Nullable="false"/>
+                <Property Name="longtextUrl" Type="Edm.String"/>
+            </ComplexType>
+            <Action Name="changeNextSibling" IsBound="true">
+                <Parameter Name="_it" Type="com.sap.gateway.srvd.zjb_sadl_rs_hier_dir_sd.v0001.I_SADL_BHV_HIER_BIND_DIR_SRCType" Nullable="false"/>
+                <Parameter Name="Hierarchy" Type="Edm.String" Nullable="false" MaxLength="20"/>
+                <Parameter Name="Id" Type="Edm.String" Nullable="false" MaxLength="20"/>
+                <Parameter Name="ParentId" Type="Edm.String" Nullable="false" MaxLength="20"/>
+                <Parameter Name="SiblingOrder" Type="Edm.String" Nullable="false" MaxLength="20"/>
+                <Parameter Name="Description" Type="Edm.String" Nullable="false" MaxLength="40"/>
+            </Action>
+            <Action Name="copy" EntitySetPath="_it" IsBound="true">
+                <Parameter Name="_it" Type="com.sap.gateway.srvd.zjb_sadl_rs_hier_dir_sd.v0001.I_SADL_BHV_HIER_BIND_DIR_SRCType" Nullable="false"/>
+                <ReturnType Type="com.sap.gateway.srvd.zjb_sadl_rs_hier_dir_sd.v0001.I_SADL_BHV_HIER_BIND_DIR_SRCType" Nullable="false"/>
+            </Action>
+            <EntityContainer Name="Container">
+                <EntitySet Name="I_SADL_BHV_HIER_BIND_DIRECTORY" EntityType="com.sap.gateway.srvd.zjb_sadl_rs_hier_dir_sd.v0001.I_SADL_BHV_HIER_BIND_DIRECTORYType">
+                    <NavigationPropertyBinding Path="_Hierarchy" Target="I_SADL_BHV_HIER_BIND_DIR_SRC"/>
+                </EntitySet>
+                <EntitySet Name="I_SADL_BHV_HIER_BIND_DIR_SRC" EntityType="com.sap.gateway.srvd.zjb_sadl_rs_hier_dir_sd.v0001.I_SADL_BHV_HIER_BIND_DIR_SRCType">
+                    <NavigationPropertyBinding Path="_HierarchyDirectory" Target="I_SADL_BHV_HIER_BIND_DIRECTORY"/>
+                    <NavigationPropertyBinding Path="_HierarchyParent" Target="I_SADL_BHV_HIER_BIND_DIR_SRC"/>
+                </EntitySet>
+            </EntityContainer>
+            <Annotations Target="SAP__self.I_SADL_BHV_HIER_BIND_DIRECTORYType/Hierarchy">
+                <Annotation Term="SAP__core.Computed"/>
+                <Annotation Term="SAP__common.Label" String="Identifier"/>
+                <Annotation Term="SAP__common.Heading" String="SADL Reference Scenario Identifier"/>
+                <Annotation Term="SAP__common.QuickInfo" String="SADL Reference Scenario Identifier"/>
+            </Annotations>
+            <Annotations Target="SAP__self.I_SADL_BHV_HIER_BIND_DIRECTORYType/__CreateByAssociationControl">
+                <Annotation Term="SAP__core.Computed"/>
+                <Annotation Term="SAP__UI.HiddenFilter"/>
+                <Annotation Term="SAP__UI.Hidden"/>
+            </Annotations>
+            <Annotations Target="SAP__self.I_SADL_BHV_HIER_BIND_DIRECTORYType/__EntityControl">
+                <Annotation Term="SAP__core.Computed"/>
+                <Annotation Term="SAP__UI.HiddenFilter"/>
+                <Annotation Term="SAP__UI.Hidden"/>
+            </Annotations>
+            <Annotations Target="SAP__self.I_SADL_BHV_HIER_BIND_DIRECTORYType/_Hierarchy">
+                <Annotation Term="SAP__common.Composition"/>
+            </Annotations>
+            <Annotations Target="SAP__self.Container/I_SADL_BHV_HIER_BIND_DIRECTORY">
+                <Annotation Term="SAP__capabilities.NavigationRestrictions">
+                    <Record>
+                        <PropertyValue Property="RestrictedProperties">
+                            <Collection>
+                                <Record>
+                                    <PropertyValue Property="NavigationProperty" NavigationPropertyPath="_Hierarchy"/>
+                                    <PropertyValue Property="InsertRestrictions">
+                                        <Record>
+                                            <PropertyValue Property="Insertable" Path="__CreateByAssociationControl/_Hierarchy"/>
+                                        </Record>
+                                    </PropertyValue>
+                                </Record>
+                            </Collection>
+                        </PropertyValue>
+                    </Record>
+                </Annotation>
+                <Annotation Term="SAP__capabilities.SearchRestrictions">
+                    <Record>
+                        <PropertyValue Property="Searchable" Bool="false"/>
+                    </Record>
+                </Annotation>
+                <Annotation Term="SAP__capabilities.FilterRestrictions">
+                    <Record>
+                        <PropertyValue Property="NonFilterableProperties">
+                            <Collection>
+                                <PropertyPath>__CreateByAssociationControl</PropertyPath>
+                                <PropertyPath>__EntityControl</PropertyPath>
+                            </Collection>
+                        </PropertyValue>
+                    </Record>
+                </Annotation>
+                <Annotation Term="SAP__capabilities.SortRestrictions">
+                    <Record>
+                        <PropertyValue Property="NonSortableProperties">
+                            <Collection>
+                                <PropertyPath>__CreateByAssociationControl</PropertyPath>
+                                <PropertyPath>__EntityControl</PropertyPath>
+                            </Collection>
+                        </PropertyValue>
+                    </Record>
+                </Annotation>
+                <Annotation Term="SAP__capabilities.DeleteRestrictions">
+                    <Record>
+                        <PropertyValue Property="Deletable" Path="__EntityControl/Deletable"/>
+                    </Record>
+                </Annotation>
+                <Annotation Term="SAP__capabilities.UpdateRestrictions">
+                    <Record>
+                        <PropertyValue Property="Updatable" Bool="false"/>
+                        <PropertyValue Property="NonUpdatableNavigationProperties">
+                            <Collection>
+                                <PropertyPath>_Hierarchy</PropertyPath>
+                            </Collection>
+                        </PropertyValue>
+                        <PropertyValue Property="QueryOptions">
+                            <Record>
+                                <PropertyValue Property="SelectSupported" Bool="true"/>
+                            </Record>
+                        </PropertyValue>
+                    </Record>
+                </Annotation>
+                <Annotation Term="SAP__core.OptimisticConcurrency">
+                    <Collection/>
+                </Annotation>
+            </Annotations>
+            <Annotations Target="SAP__self.I_SADL_BHV_HIER_BIND_DIRECTORYType">
+                <Annotation Term="SAP__common.Label" String="SADL: Generic CDS Hierarchy Directory"/>
+                <Annotation Term="SAP__UI.LineItem">
+                    <Collection>
+                        <Record Type="SAP__UI.DataField">
+                            <PropertyValue Property="Value" Path="Hierarchy"/>
+                        </Record>
+                        <Record Type="SAP__UI.DataField">
+                            <PropertyValue Property="Value" Path="Description"/>
+                        </Record>
+                    </Collection>
+                </Annotation>
+                <Annotation Term="SAP__common.Messages" Path="SAP__Messages"/>
+            </Annotations>
+            <Annotations Target="SAP__self.I_SADL_BHV_HIER_BIND_DIR_SRCType/Hierarchy">
+                <Annotation Term="SAP__core.Computed"/>
+                <Annotation Term="SAP__common.Label" String="Identifier"/>
+                <Annotation Term="SAP__common.Heading" String="SADL Reference Scenario Identifier"/>
+                <Annotation Term="SAP__common.QuickInfo" String="SADL Reference Scenario Identifier"/>
+            </Annotations>
+            <Annotations Target="SAP__self.I_SADL_BHV_HIER_BIND_DIR_SRCType/Id">
+                <Annotation Term="SAP__core.Computed"/>
+                <Annotation Term="SAP__common.Label" String="Identifier"/>
+                <Annotation Term="SAP__common.Heading" String="SADL Reference Scenario Identifier"/>
+                <Annotation Term="SAP__common.QuickInfo" String="SADL Reference Scenario Identifier"/>
+            </Annotations>
+            <Annotations Target="SAP__self.I_SADL_BHV_HIER_BIND_DIR_SRCType/ParentId">
+                <Annotation Term="SAP__core.Computed"/>
+                <Annotation Term="SAP__common.Label" String="Identifier"/>
+                <Annotation Term="SAP__common.Heading" String="SADL Reference Scenario Identifier"/>
+                <Annotation Term="SAP__common.QuickInfo" String="SADL Reference Scenario Identifier"/>
+            </Annotations>
+            <Annotations Target="SAP__self.I_SADL_BHV_HIER_BIND_DIR_SRCType/SiblingOrder">
+                <Annotation Term="SAP__core.Immutable"/>
+                <Annotation Term="SAP__common.Label" String="Identifier"/>
+                <Annotation Term="SAP__common.Heading" String="SADL Reference Scenario Identifier"/>
+                <Annotation Term="SAP__common.QuickInfo" String="SADL Reference Scenario Identifier"/>
+            </Annotations>
+            <Annotations Target="SAP__self.I_SADL_BHV_HIER_BIND_DIR_SRCType/__HierarchyPropertiesForI_SADL_BHV_BIND_DIR_HIERVIEW">
+                <Annotation Term="SAP__core.Computed"/>
+                <Annotation Term="SAP__UI.HiddenFilter"/>
+                <Annotation Term="SAP__UI.Hidden"/>
+            </Annotations>
+            <Annotations Target="SAP__self.I_SADL_BHV_HIER_BIND_DIR_SRCType/__EntityControl">
+                <Annotation Term="SAP__core.Computed"/>
+                <Annotation Term="SAP__UI.HiddenFilter"/>
+                <Annotation Term="SAP__UI.Hidden"/>
+            </Annotations>
+            <Annotations Target="SAP__self.I_SADL_BHV_HIER_BIND_DIR_SRCType/__OperationControl">
+                <Annotation Term="SAP__core.Computed"/>
+                <Annotation Term="SAP__UI.HiddenFilter"/>
+                <Annotation Term="SAP__UI.Hidden"/>
+            </Annotations>
+            <Annotations Target="SAP__self.Container/I_SADL_BHV_HIER_BIND_DIR_SRC">
+                <Annotation Term="SAP__capabilities.NavigationRestrictions">
+                    <Record>
+                        <PropertyValue Property="RestrictedProperties">
+                            <Collection>
+                                <Record>
+                                    <PropertyValue Property="NavigationProperty" NavigationPropertyPath="_HierarchyDirectory"/>
+                                    <PropertyValue Property="InsertRestrictions">
+                                        <Record>
+                                            <PropertyValue Property="Insertable" Bool="false"/>
+                                        </Record>
+                                    </PropertyValue>
+                                </Record>
+                                <Record>
+                                    <PropertyValue Property="NavigationProperty" NavigationPropertyPath="_HierarchyParent"/>
+                                    <PropertyValue Property="InsertRestrictions">
+                                        <Record>
+                                            <PropertyValue Property="Insertable" Bool="false"/>
+                                        </Record>
+                                    </PropertyValue>
+                                </Record>
+                            </Collection>
+                        </PropertyValue>
+                    </Record>
+                </Annotation>
+                <Annotation Term="SAP__capabilities.SearchRestrictions">
+                    <Record>
+                        <PropertyValue Property="Searchable" Bool="false"/>
+                    </Record>
+                </Annotation>
+                <Annotation Term="SAP__capabilities.FilterRestrictions">
+                    <Record>
+                        <PropertyValue Property="NonFilterableProperties">
+                            <Collection>
+                                <PropertyPath>__HierarchyPropertiesForI_SADL_BHV_BIND_DIR_HIERVIEW</PropertyPath>
+                                <PropertyPath>__EntityControl</PropertyPath>
+                                <PropertyPath>__OperationControl</PropertyPath>
+                            </Collection>
+                        </PropertyValue>
+                    </Record>
+                </Annotation>
+                <Annotation Term="SAP__capabilities.SortRestrictions">
+                    <Record>
+                        <PropertyValue Property="NonSortableProperties">
+                            <Collection>
+                                <PropertyPath>__HierarchyPropertiesForI_SADL_BHV_BIND_DIR_HIERVIEW</PropertyPath>
+                                <PropertyPath>__EntityControl</PropertyPath>
+                                <PropertyPath>__OperationControl</PropertyPath>
+                            </Collection>
+                        </PropertyValue>
+                    </Record>
+                </Annotation>
+                <Annotation Term="SAP__capabilities.InsertRestrictions">
+                    <Record>
+                        <PropertyValue Property="Insertable" Bool="false"/>
+                    </Record>
+                </Annotation>
+                <Annotation Term="SAP__capabilities.DeleteRestrictions">
+                    <Record>
+                        <PropertyValue Property="Deletable" Path="__EntityControl/Deletable"/>
+                    </Record>
+                </Annotation>
+                <Annotation Term="SAP__capabilities.UpdateRestrictions">
+                    <Record>
+                        <PropertyValue Property="Updatable" Path="__EntityControl/Updatable"/>
+                        <PropertyValue Property="NonUpdatableNavigationProperties">
+                            <Collection>
+                                <PropertyPath>_HierarchyDirectory</PropertyPath>
+                            </Collection>
+                        </PropertyValue>
+                        <PropertyValue Property="QueryOptions">
+                            <Record>
+                                <PropertyValue Property="SelectSupported" Bool="true"/>
+                            </Record>
+                        </PropertyValue>
+                    </Record>
+                </Annotation>
+                <Annotation Term="SAP__core.OptimisticConcurrency">
+                    <Collection/>
+                </Annotation>
+            </Annotations>
+            <Annotations Target="SAP__self.changeNextSibling(SAP__self.I_SADL_BHV_HIER_BIND_DIR_SRCType)">
+                <Annotation Term="SAP__core.OperationAvailable" Path="_it/__OperationControl/changeNextSibling"/>
+                <Annotation Term="SAP__UI.LineItem">
+                    <Collection>
+                        <Record Type="SAP__UI.DataField">
+                            <PropertyValue Property="Value" Path="Hierarchy"/>
+                        </Record>
+                        <Record Type="SAP__UI.DataField">
+                            <PropertyValue Property="Value" Path="Id"/>
+                        </Record>
+                        <Record Type="SAP__UI.DataField">
+                            <PropertyValue Property="Value" Path="ParentId"/>
+                        </Record>
+                        <Record Type="SAP__UI.DataField">
+                            <PropertyValue Property="Value" Path="SiblingOrder"/>
+                        </Record>
+                        <Record Type="SAP__UI.DataField">
+                            <PropertyValue Property="Value" Path="Description"/>
+                        </Record>
+                    </Collection>
+                </Annotation>
+            </Annotations>
+            <Annotations Target="SAP__self.copy(SAP__self.I_SADL_BHV_HIER_BIND_DIR_SRCType)">
+                <Annotation Term="SAP__core.OperationAvailable" Path="_it/__OperationControl/copy"/>
+            </Annotations>
+            <Annotations Target="SAP__self.I_SADL_BHV_HIER_BIND_DIR_SRCType">
+                <Annotation Term="SAP__common.Label" String="SADL: Hierarchy Source with Directory"/>
+                <Annotation Term="SAP__hierarchy.RecursiveHierarchyActions">
+                    <Record>
+                        <PropertyValue Property="ChangeNextSiblingAction" String="com.sap.gateway.srvd.zjb_sadl_rs_hier_dir_sd.v0001.changeNextSibling(com.sap.gateway.srvd.zjb_sadl_rs_hier_dir_sd.v0001.I_SADL_BHV_HIER_BIND_DIR_SRCType)"/>
+                        <PropertyValue Property="CopyAction" String="com.sap.gateway.srvd.zjb_sadl_rs_hier_dir_sd.v0001.copy(com.sap.gateway.srvd.zjb_sadl_rs_hier_dir_sd.v0001.I_SADL_BHV_HIER_BIND_DIR_SRCType)"/>
+                    </Record>
+                </Annotation>
+                <Annotation Term="SAP__UI.LineItem">
+                    <Collection>
+                        <Record Type="SAP__UI.DataField">
+                            <PropertyValue Property="Value" Path="Hierarchy"/>
+                        </Record>
+                        <Record Type="SAP__UI.DataField">
+                            <PropertyValue Property="Value" Path="Id"/>
+                        </Record>
+                        <Record Type="SAP__UI.DataField">
+                            <PropertyValue Property="Value" Path="ParentId"/>
+                        </Record>
+                        <Record Type="SAP__UI.DataField">
+                            <PropertyValue Property="Value" Path="SiblingOrder"/>
+                        </Record>
+                        <Record Type="SAP__UI.DataField">
+                            <PropertyValue Property="Value" Path="Description"/>
+                        </Record>
+                    </Collection>
+                </Annotation>
+                <Annotation Term="SAP__common.Messages" Path="SAP__Messages"/>
+                <Annotation Term="SAP__aggregation.RecursiveHierarchy" Qualifier="I_SADL_BHV_BIND_DIR_HIERVIEW">
+                    <Record>
+                        <PropertyValue Property="NodeProperty" PropertyPath="__HierarchyPropertiesForI_SADL_BHV_BIND_DIR_HIERVIEW/NodeId"/>
+                        <PropertyValue Property="ParentNavigationProperty" NavigationPropertyPath="_HierarchyParent"/>
+                    </Record>
+                </Annotation>
+                <Annotation Term="SAP__hierarchy.RecursiveHierarchy" Qualifier="I_SADL_BHV_BIND_DIR_HIERVIEW">
+                    <Record>
+                        <PropertyValue Property="ChildCountProperty">
+                            <Null/>
+                        </PropertyValue>
+                        <PropertyValue Property="DescendantCountProperty" PropertyPath="__HierarchyPropertiesForI_SADL_BHV_BIND_DIR_HIERVIEW/DescendantCount"/>
+                        <PropertyValue Property="ExternalKeyProperty">
+                            <Null/>
+                        </PropertyValue>
+                        <PropertyValue Property="LimitedDescendantCountProperty" PropertyPath="__HierarchyPropertiesForI_SADL_BHV_BIND_DIR_HIERVIEW/LimitedDescendantCount"/>
+                        <PropertyValue Property="DistanceFromRootProperty" PropertyPath="__HierarchyPropertiesForI_SADL_BHV_BIND_DIR_HIERVIEW/DistanceFromRoot"/>
+                        <PropertyValue Property="DrillStateProperty" PropertyPath="__HierarchyPropertiesForI_SADL_BHV_BIND_DIR_HIERVIEW/DrillState"/>
+                        <PropertyValue Property="MatchedDescendantCountProperty">
+                            <Null/>
+                        </PropertyValue>
+                        <PropertyValue Property="MatchedProperty">
+                            <Null/>
+                        </PropertyValue>
+                        <PropertyValue Property="NodeTypeProperty">
+                            <Null/>
+                        </PropertyValue>
+                        <PropertyValue Property="SiblingRankProperty">
+                            <Null/>
+                        </PropertyValue>
+                    </Record>
+                </Annotation>
+            </Annotations>
+            <Annotations Target="SAP__self.Container">
+                <Annotation Term="SAP__aggregation.ApplySupported">
+                    <Record>
+                        <PropertyValue Property="Transformations">
+                            <Collection>
+                                <String>aggregate</String>
+                                <String>groupby</String>
+                                <String>filter</String>
+                            </Collection>
+                        </PropertyValue>
+                        <PropertyValue Property="Rollup" EnumMember="SAP__aggregation.RollupType/None"/>
+                    </Record>
+                </Annotation>
+                <Annotation Term="SAP__common.ApplyMultiUnitBehaviorForSortingAndFiltering" Bool="true"/>
+                <Annotation Term="SAP__capabilities.FilterFunctions">
+                    <Collection>
+                        <String>eq</String>
+                        <String>ne</String>
+                        <String>gt</String>
+                        <String>ge</String>
+                        <String>lt</String>
+                        <String>le</String>
+                        <String>and</String>
+                        <String>or</String>
+                        <String>contains</String>
+                        <String>startswith</String>
+                        <String>endswith</String>
+                        <String>any</String>
+                        <String>all</String>
+                    </Collection>
+                </Annotation>
+                <Annotation Term="SAP__capabilities.SupportedFormats">
+                    <Collection>
+                        <String>application/json</String>
+                        <String>application/pdf</String>
+                    </Collection>
+                </Annotation>
+                <Annotation Term="SAP__PDF.Features">
+                    <Record>
+                        <PropertyValue Property="DocumentDescriptionReference" String="../../../../default/iwbep/common/0001/$metadata"/>
+                        <PropertyValue Property="DocumentDescriptionCollection" String="MyDocumentDescriptions"/>
+                        <PropertyValue Property="ArchiveFormat" Bool="true"/>
+                        <PropertyValue Property="Border" Bool="true"/>
+                        <PropertyValue Property="CoverPage" Bool="true"/>
+                        <PropertyValue Property="FitToPage" Bool="true"/>
+                        <PropertyValue Property="FontName" Bool="true"/>
+                        <PropertyValue Property="FontSize" Bool="true"/>
+                        <PropertyValue Property="Margin" Bool="true"/>
+                        <PropertyValue Property="Padding" Bool="true"/>
+                        <PropertyValue Property="Signature" Bool="true"/>
+                        <PropertyValue Property="HeaderFooter" Bool="true"/>
+                        <PropertyValue Property="ResultSizeDefault" Int="20000"/>
+                        <PropertyValue Property="ResultSizeMaximum" Int="20000"/>
+                        <PropertyValue Property="IANATimezoneFormat" Bool="true"/>
+                    </Record>
+                </Annotation>
+                <Annotation Term="SAP__capabilities.KeyAsSegmentSupported"/>
+                <Annotation Term="SAP__capabilities.AsynchronousRequestsSupported"/>
+            </Annotations>
+            <Annotations Target="SAP__self.I_SADL_BHV_HIER_BIND_DIRECTORYType/Description">
+                <Annotation Term="SAP__common.Label" String="Long Text"/>
+            </Annotations>
+            <Annotations Target="SAP__self.I_SADL_BHV_HIER_BIND_DIRECTORYType/__CreateByAssociationControl/_Hierarchy">
+                <Annotation Term="SAP__common.Label" String="Dynamic CbA-Control"/>
+                <Annotation Term="SAP__common.Heading" String="Dynamic Create by Association Control"/>
+                <Annotation Term="SAP__common.QuickInfo" String="Dynamic Create via Association Control Property"/>
+            </Annotations>
+            <Annotations Target="SAP__self.I_SADL_BHV_HIER_BIND_DIRECTORYType/__EntityControl/Deletable">
+                <Annotation Term="SAP__common.Label" String="Dyn. Method Control"/>
+                <Annotation Term="SAP__common.Heading" String="Dynamic Method Control"/>
+                <Annotation Term="SAP__common.QuickInfo" String="Dynamic Method Property"/>
+            </Annotations>
+            <Annotations Target="SAP__self.I_SADL_BHV_HIER_BIND_DIRECTORYType/__EntityControl/Updatable">
+                <Annotation Term="SAP__common.Label" String="Dyn. Method Control"/>
+                <Annotation Term="SAP__common.Heading" String="Dynamic Method Control"/>
+                <Annotation Term="SAP__common.QuickInfo" String="Dynamic Method Property"/>
+            </Annotations>
+            <Annotations Target="SAP__self.I_SADL_BHV_HIER_BIND_DIR_SRCType/Description">
+                <Annotation Term="SAP__common.Label" String="Long Text"/>
+            </Annotations>
+            <Annotations Target="SAP__self.I_SADL_BHV_HIER_BIND_DIR_SRCType/__EntityControl/Deletable">
+                <Annotation Term="SAP__common.Label" String="Dyn. Method Control"/>
+                <Annotation Term="SAP__common.Heading" String="Dynamic Method Control"/>
+                <Annotation Term="SAP__common.QuickInfo" String="Dynamic Method Property"/>
+            </Annotations>
+            <Annotations Target="SAP__self.I_SADL_BHV_HIER_BIND_DIR_SRCType/__EntityControl/Updatable">
+                <Annotation Term="SAP__common.Label" String="Dyn. Method Control"/>
+                <Annotation Term="SAP__common.Heading" String="Dynamic Method Control"/>
+                <Annotation Term="SAP__common.QuickInfo" String="Dynamic Method Property"/>
+            </Annotations>
+            <Annotations Target="SAP__self.I_SADL_BHV_HIER_BIND_DIR_SRCType/__OperationControl/changeNextSibling">
+                <Annotation Term="SAP__common.Label" String="Dyn. Action Control"/>
+                <Annotation Term="SAP__common.Heading" String="Dynamic Action Control"/>
+                <Annotation Term="SAP__common.QuickInfo" String="Dynamic Action Property"/>
+            </Annotations>
+            <Annotations Target="SAP__self.I_SADL_BHV_HIER_BIND_DIR_SRCType/__OperationControl/copy">
+                <Annotation Term="SAP__common.Label" String="Dyn. Action Control"/>
+                <Annotation Term="SAP__common.Heading" String="Dynamic Action Control"/>
+                <Annotation Term="SAP__common.QuickInfo" String="Dynamic Action Property"/>
+            </Annotations>
+            <Annotations Target="SAP__self.I_SADL_BHV_HIER_BIND_DIRECTORYCbAControl/_Hierarchy">
+                <Annotation Term="SAP__common.Label" String="Dynamic CbA-Control"/>
+                <Annotation Term="SAP__common.Heading" String="Dynamic Create by Association Control"/>
+                <Annotation Term="SAP__common.QuickInfo" String="Dynamic Create via Association Control Property"/>
+            </Annotations>
+            <Annotations Target="SAP__self.I_SADL_BHV_HIER_BIND_DIR_SRCOperationControl/changeNextSibling">
+                <Annotation Term="SAP__common.Label" String="Dyn. Action Control"/>
+                <Annotation Term="SAP__common.Heading" String="Dynamic Action Control"/>
+                <Annotation Term="SAP__common.QuickInfo" String="Dynamic Action Property"/>
+            </Annotations>
+            <Annotations Target="SAP__self.I_SADL_BHV_HIER_BIND_DIR_SRCOperationControl/copy">
+                <Annotation Term="SAP__common.Label" String="Dyn. Action Control"/>
+                <Annotation Term="SAP__common.Heading" String="Dynamic Action Control"/>
+                <Annotation Term="SAP__common.QuickInfo" String="Dynamic Action Property"/>
+            </Annotations>
+            <Annotations Target="SAP__self.EntityControl/Deletable">
+                <Annotation Term="SAP__common.Label" String="Dyn. Method Control"/>
+                <Annotation Term="SAP__common.Heading" String="Dynamic Method Control"/>
+                <Annotation Term="SAP__common.QuickInfo" String="Dynamic Method Property"/>
+            </Annotations>
+            <Annotations Target="SAP__self.EntityControl/Updatable">
+                <Annotation Term="SAP__common.Label" String="Dyn. Method Control"/>
+                <Annotation Term="SAP__common.Heading" String="Dynamic Method Control"/>
+                <Annotation Term="SAP__common.QuickInfo" String="Dynamic Method Property"/>
+            </Annotations>
+            <Annotations Target="SAP__self.changeNextSibling(SAP__self.I_SADL_BHV_HIER_BIND_DIR_SRCType)/Hierarchy">
+                <Annotation Term="SAP__common.Label" String="Identifier"/>
+                <Annotation Term="SAP__common.Heading" String="SADL Reference Scenario Identifier"/>
+                <Annotation Term="SAP__common.QuickInfo" String="SADL Reference Scenario Identifier"/>
+            </Annotations>
+            <Annotations Target="SAP__self.changeNextSibling(SAP__self.I_SADL_BHV_HIER_BIND_DIR_SRCType)/Id">
+                <Annotation Term="SAP__common.Label" String="Identifier"/>
+                <Annotation Term="SAP__common.Heading" String="SADL Reference Scenario Identifier"/>
+                <Annotation Term="SAP__common.QuickInfo" String="SADL Reference Scenario Identifier"/>
+            </Annotations>
+            <Annotations Target="SAP__self.changeNextSibling(SAP__self.I_SADL_BHV_HIER_BIND_DIR_SRCType)/ParentId">
+                <Annotation Term="SAP__common.Label" String="Identifier"/>
+                <Annotation Term="SAP__common.Heading" String="SADL Reference Scenario Identifier"/>
+                <Annotation Term="SAP__common.QuickInfo" String="SADL Reference Scenario Identifier"/>
+            </Annotations>
+            <Annotations Target="SAP__self.changeNextSibling(SAP__self.I_SADL_BHV_HIER_BIND_DIR_SRCType)/SiblingOrder">
+                <Annotation Term="SAP__common.Label" String="Identifier"/>
+                <Annotation Term="SAP__common.Heading" String="SADL Reference Scenario Identifier"/>
+                <Annotation Term="SAP__common.QuickInfo" String="SADL Reference Scenario Identifier"/>
+            </Annotations>
+            <Annotations Target="SAP__self.changeNextSibling(SAP__self.I_SADL_BHV_HIER_BIND_DIR_SRCType)/Description">
+                <Annotation Term="SAP__common.Label" String="Long Text"/>
+            </Annotations>
+        </Schema>
+    </edmx:DataServices>
+</edmx:Edmx>

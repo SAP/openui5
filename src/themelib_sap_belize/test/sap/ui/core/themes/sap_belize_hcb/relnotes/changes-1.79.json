@@ -1,0 +1,35 @@
+{
+  "1.79.0": {
+    "date": "May 2020",
+    "notes": [
+      {
+        "id": "bd8708e584089bf6dd0e35f9908ecc2224a6fe8a",
+        "type": "FIX",
+        "text": " sap.m.MessageStrip: Belize High Contrast themes adjusted",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070193270"
+          }
+        ]
+      },
+      {
+        "id": "d87dc659c5d40747df5cf504970f8b83b97745e5",
+        "type": "FIX",
+        "text": " sap.m.Toolbar: Fix misalignment in FormContainer",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070127243"
+          }
+        ]
+      },
+      {
+        "id": "d8741f3bebd87d24a08b93e37f9eaae9c0a54455",
+        "type": "FEATURE",
+        "text": " sap.m.Panel: Active area for expand/collapse enlarged",
+        "references": []
+      }
+    ]
+  }
+}

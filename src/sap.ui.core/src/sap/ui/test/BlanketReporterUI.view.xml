@@ -2,14 +2,12 @@
 		controllerName="sap.ui.test.BlanketReporterUI"
 		xmlns="sap.m"
 		xmlns:table="sap.ui.table"
+		xmlns:tablerm="sap.ui.table.rowmodes"
 		xmlns:core="sap.ui.core"
 		xmlns:mvc="sap.ui.core.mvc"
 		xmlns:form="sap.ui.layout.form">
 	<form:SimpleForm editable="false" layout="ResponsiveGridLayout" title="Blanket Code Coverage"
-			columnsXL="2" columnsL="1" columnsM="1"
-			emptySpanXL="0" emptySpanL="4" emptySpanM="0" emptySpanS="0"
-			labelSpanXL="4" labelSpanL="3" labelSpanM="4" labelSpanS="12" adjustLabelSpan="false"
-			singleContainerFullSize="false" >
+			columnsM="2">
 		<core:Title text="Line Coverage"/>
 		<Label text="Lines"/>
 		<Text text="{path : '/lines/total', type : 'sap.ui.model.odata.type.Int32'}"/>
@@ -18,7 +16,8 @@
 		<Label/>
 		<ProgressIndicator width="10em" percentValue="{/lines/coverage}"
 			displayValue="{path : '/lines/coverage', type : 'sap.ui.model.odata.type.Double',
-				formatOptions : {minFractionDigits : 1, maxFractionDigits : 1}} %"
+				formatOptions : {minFractionDigits : 1, maxFractionDigits : 1,
+					preserveDecimals : false}} %"
 			state="{= %{/lines/coverage} &lt; %{/threshold} ? 'Error' : 'Success'}"/>
 		<core:Title text="{= %{/branchTracking} ? 'Branch Coverage' : ''}"/>
 		<Label text="Branches" visible="{= %{/branchTracking}}"/>
@@ -30,13 +29,13 @@
 		<Label visible="{= %{/branchTracking}}"/>
 		<ProgressIndicator width="10em" percentValue="{/branches/coverage}"
 			displayValue="{path : '/branches/coverage', type : 'sap.ui.model.odata.type.Double',
-				formatOptions : {minFractionDigits : 1, maxFractionDigits : 1}} %"
+				formatOptions : {minFractionDigits : 1, maxFractionDigits : 1,
+					preserveDecimals : false}} %"
 			state="{= %{/branches/coverage} &lt; %{/threshold} ? 'Error' : 'Success'}"
 			visible="{= %{/branchTracking}}"/>
 	</form:SimpleForm>
 	<table:Table id="Files" selectionMode="Single" selectionBehavior="RowOnly" rows="{/files}"
-			rowSelectionChange="onRowSelection" visibleRowCountMode="Interactive"
-			minAutoRowCount="1" visibleRowCount="{/visible}">
+			rowSelectionChange="onRowSelection">
 		<table:extension>
 			<HBox>
 				<CheckBox selected="{/filterThreshold}" text="Below Threshold ({/threshold} %)"
@@ -44,6 +43,9 @@
 				<CheckBox select="onRowSelection" selected="{/showHits}" text="Show Hits"/>
 			</HBox>
 		</table:extension>
+		<table:rowMode>
+			<tablerm:Interactive rowCount="{/visible}" minRowCount="1"/>
+		</table:rowMode>
 		<table:columns>
 			<table:Column width="5em" hAlign="Right">
 				<table:label>
@@ -58,7 +60,7 @@
 					<Text text="Missed"/>
 				</table:label>
 				<table:template>
-					<Text text="{path : 'lines/missed', type : 'sap.ui.model.data.type.Int32'}"/>
+					<Text text="{path : 'lines/missed', type : 'sap.ui.model.odata.type.Int32'}"/>
 				</table:template>
 			</table:Column>
 			<table:Column width="5em" hAlign="Right" sortProperty="lines/coverage">
@@ -67,7 +69,8 @@
 				</table:label>
 				<table:template>
 					<Text text="{path : 'lines/coverage', type : 'sap.ui.model.odata.type.Double',
-						formatOptions : {minFractionDigits : 1, maxFractionDigits : 1}}"/>
+						formatOptions : {minFractionDigits : 1, maxFractionDigits : 1,
+							preserveDecimals : false}}"/>
 				</table:template>
 			</table:Column>
 			<table:Column width="5em" hAlign="Right" visible="{= %{/branchTracking}}">
@@ -97,10 +100,11 @@
 				<table:template>
 					<Text text="{path : 'branches/coverage',
 						type : 'sap.ui.model.odata.type.Double',
-						formatOptions : {minFractionDigits : 1, maxFractionDigits : 1}}"/>
+						formatOptions : {minFractionDigits : 1, maxFractionDigits : 1,
+							preserveDecimals : false}}"/>
 				</table:template>
 			</table:Column>
-			<table:Column filterProperty="name" sortProperty="name" sorted="true">
+			<table:Column filterProperty="name" sortProperty="name" sorted="true" sortOrder="Ascending">
 				<table:label>
 					<Text text="File"/>
 				</table:label>

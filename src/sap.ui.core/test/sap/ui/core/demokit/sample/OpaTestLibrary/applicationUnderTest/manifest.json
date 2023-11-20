@@ -1,0 +1,26 @@
+{
+	"_version": "1.12.0",
+
+	"sap.app": {
+		"id": "appUnderTest",
+		"type": "application",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "view.Main",
+			"type": "XML",
+			"async": true
+		},
+		"dependencies": {
+			"minUI5Version": "1.60.0",
+			"libs": {
+				"sap.m": {},
+				"sap.ui.core": {}
+			}
+		}
+	}
+}

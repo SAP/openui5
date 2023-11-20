@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<library xmlns="http://www.sap.com/sap.ui.library.xsd" >
+
+  <name>sap.ui.integration</name>
+  <vendor>SAP SE</vendor>
+  <copyright>${copyright}</copyright>
+  <version>${version}</version>
+
+  <documentation>SAPUI5 library with integration-related controls.</documentation>
+
+  <dependencies>
+    <dependency>
+      <libraryName>sap.ui.core</libraryName>
+    </dependency>
+    <dependency>
+      <libraryName>sap.f</libraryName>
+    </dependency>
+    <dependency>
+      <libraryName>sap.m</libraryName>
+    </dependency>
+    <dependency>
+      <libraryName>sap.ui.unified</libraryName>
+    </dependency>
+    <dependency>
+      <libraryName>sap.ui.layout</libraryName>
+    </dependency>
+  </dependencies>
+
+  <appData>
+    <!-- excludes for the JSDoc -->
+    <jsdoc xmlns="http://www.sap.com/ui5/buildext/jsdoc" >
+        <exclude name="sap.ui.integration.js." />
+        <exclude name="sap.ui.integration.thirdparty." />
+    </jsdoc>
+    <!-- excludes for the JSCoverage -->
+    <jscoverage xmlns="http://www.sap.com/ui5/buildext/jscoverage" >
+        <exclude name="sap.ui.integration.js." />
+        <exclude name="sap.ui.integration.thirdparty." />
+    </jscoverage>
+
+    <packaging xmlns="http://www.sap.com/ui5/buildext/packaging" version="2.0" >
+      <module-infos>
+        <raw-module name="sap/ui/integration/sap-ui-integration-config.js" />
+        <raw-module name="sap/ui/integration/sap-ui-integration-define-nojQuery.js" depends="ui5loader-autoconfig.js" />
+      </module-infos>
+      <all-in-one>
+        <exclude name="sap/ui/integration/thirdparty/" />
+        <exclude name="sap/ui/integration/designtime/thirdparty/" />
+      </all-in-one>
+    </packaging>
+
+    <!-- Thirdparty references -->
+    <thirdparty xmlns="http://www.sap.com/ui5/buildext/thirdparty">
+        <lib name="ui5-web-components" displayName="UI5 Web Components" npmName="@ui5/webcomponents" version="1.7.0" homepage="https://sap.github.io/ui5-webcomponents/" id="73554900106100099957">
+            <license url="https://github.com/SAP/ui5-webcomponents/blob/master/LICENSE.txt" type="Apache-2.0"></license>
+            <copyright>SAP</copyright>
+            <pattern>sap/ui/integration/thirdparty/webcomponents/*</pattern>
+        </lib>
+        <lib name="adaptive-cards" displayName="Adaptive Cards" npmName="adaptivecards" version="2.9.0" hash="25bec245bd5ff88c614d0fe126601390" homepage="https://adaptivecards.io/" id="73555000106100067533">
+            <license url="https://github.com/microsoft/AdaptiveCards/blob/master/LICENSE" type="MIT"></license>
+            <copyright>2017 Microsoft</copyright>
+            <pattern>sap/ui/integration/thirdparty/adaptivecards.js</pattern>
+            <pattern>sap/ui/integration/schemas/adaptive-card.json</pattern>
+        </lib>
+        <lib name="adaptive-cards-templating" displayName="Adaptive Cards Templating" npmName="adaptivecards-templating" version="2.2.0" hash="23fb00565ec69ca56765b40eeca53660" homepage="https://adaptivecards.io/" id="73555000106100081288">
+            <license url="https://github.com/microsoft/AdaptiveCards/blob/master/LICENSE" type="MIT"></license>
+            <copyright>2017 Microsoft</copyright>
+            <pattern>sap/ui/integration/thirdparty/adaptivecards-templating.js</pattern>
+        </lib>
+        <lib name="adaptive-expressions" displayName="Adaptive Expressions" npmName="adaptive-expressions" version="4.15.0" hash="14e13beb5ad4dc74b89c666fe1edd0a6" homepage="https://www.npmjs.com/package/adaptive-expressions" id="73555000106100082268">
+            <license url="https://github.com/microsoft/botbuilder-js/blob/main/LICENSE" type="MIT"></license>
+            <copyright>Microsoft</copyright>
+            <pattern>sap/ui/integration/thirdparty/adaptive-expressions.js</pattern>
+        </lib>
+        <lib name="markdown-it" displayName="Markdown-it" npmName="markdown-it" version="12.3.2" hash="fb4306ba1f8f41a66d39cc7545d879fb" homepage="https://github.com/markdown-it/markdown-it" id="73554900106100093551">
+            <license url="https://github.com/markdown-it/markdown-it/blob/master/LICENSE" type="MIT"></license>
+            <copyright>2014 Vitaly Puzrin, Alex Kocharin</copyright>
+            <pattern>sap/ui/integration/thirdparty/markdown-it.js</pattern>
+        </lib>
+        <lib name="@cfworker/json-schema" displayName="@cfworker/json-schema" npmName="@cfworker/json-schema" version="1.6.8" hash="327587ad1ab713d99103e67b8b2bc3e9" homepage="https://cfworker.dev/" id="73554900106100067462">
+            <license url="https://github.com/cfworker/cfworker/blob/main/LICENSE.md" type="MIT"></license>
+            <copyright>2020 Jeremy Danyow</copyright>
+            <pattern>../test/sap/ui/integration/demokit/cardExplorer/webapp/thirdparty/CfWorkerJsonSchemaValidator.js</pattern>
+        </lib>
+    </thirdparty>
+
+    <documentation xmlns="http://www.sap.com/ui5/buildext/documentation"
+        indexUrl="../../../../test-resources/sap/ui/integration/demokit/docuindex.json"
+        resolve="lib" />
+    <releasenotes xmlns="http://www.sap.com/ui5/buildext/releasenotes"
+        url="../../../../test-resources/sap/ui/integration/relnotes/changes-{major}.{minor}.json"
+        resolve="lib" />
+
+    <ownership xmlns="http://www.sap.com/ui5/buildext/ownership">
+        <component>CA-UI5-CTR</component><!-- default component for library, embedded text as a shortcut for <name>text</name> -->
+    </ownership>
+
+  </appData>
+
+</library>

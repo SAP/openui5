@@ -1,0 +1,986 @@
+{
+    "appDescriptorChanges": [],
+    "changes": [],
+    "ui2personalization": {},
+    "comp": {
+        "variants": [],
+        "changes": [],
+        "defaultVariants": [],
+        "standardVariants": []
+    },
+    "variants": [
+        {
+            "reference": "sap.ui.rta.test.variantManagement",
+            "namespace": "apps/sap.ui.rta.test.variantManagement/variants/",
+            "projectId": "sap.ui.rta.test.variantManagement",
+            "support": {
+                "generator": "sap.ui.rta.command",
+                "sapui5Version": "1.112.0-SNAPSHOT",
+                "user": "TEST"
+            },
+            "originalLanguage": "EN",
+            "layer": "VENDOR",
+            "fileType": "ctrl_variant",
+            "fileName": "id_1676895342319_007_flVariant",
+            "content": {},
+            "texts": {
+                "variantName": {
+                    "value": "Standard VENDOR",
+                    "type": "XFLD"
+                }
+            },
+            "favorite": true,
+            "executeOnSelection": false,
+            "standardVariant": false,
+            "variantReference": "app--variantManagementOrdersTable",
+            "variantManagementReference": "app--variantManagementOrdersTable",
+            "creation": "2022-02-20T12:16:07.4726980Z",
+            "self": "id_1676895342319_007_flVariant"
+        },
+        {
+            "reference": "sap.ui.rta.test.variantManagement",
+            "namespace": "apps/sap.ui.rta.test.variantManagement/variants/",
+            "projectId": "sap.ui.rta.test.variantManagement",
+            "support": {
+                "generator": "sap.ui.rta.command",
+                "sapui5Version": "1.112.0-SNAPSHOT",
+                "user": "TESTUSER1"
+            },
+            "originalLanguage": "EN",
+            "layer": "CUSTOMER",
+            "fileType": "ctrl_variant",
+            "fileName": "id_1676895342319_200_flVariant",
+            "content": {},
+            "texts": {
+                "variantName": {
+                    "value": "Standard xx XX",
+                    "type": "XFLD"
+                }
+            },
+            "favorite": true,
+            "executeOnSelection": false,
+            "standardVariant": false,
+            "contexts": {
+                "role": []
+            },
+            "variantReference": "app--variantManagementOrdersTable",
+            "variantManagementReference": "app--variantManagementOrdersTable",
+            "versionId": "42010AEECAD31EEDACA30B4EC2363C94",
+            "creation": "2023-02-20T12:16:07.4726980Z",
+            "self": "id_1676895342319_200_flVariant"
+        },
+        {
+            "reference": "sap.ui.rta.test.variantManagement",
+            "namespace": "apps/sap.ui.rta.test.variantManagement/variants/",
+            "projectId": "sap.ui.rta.test.variantManagement",
+            "support": {
+                "generator": "sap.ui.rta.command",
+                "sapui5Version": "1.112.0-SNAPSHOT",
+                "user": "TESTUSER1"
+            },
+            "originalLanguage": "EN",
+            "layer": "CUSTOMER",
+            "fileType": "ctrl_variant",
+            "fileName": "id_1676895355326_232_flVariant",
+            "content": {},
+            "texts": {
+                "variantName": {
+                    "value": "Standard io",
+                    "type": "XFLD"
+                }
+            },
+            "favorite": true,
+            "executeOnSelection": false,
+            "standardVariant": false,
+            "contexts": {},
+            "variantReference": "app--variantManagementContained",
+            "variantManagementReference": "app--variantManagementContained",
+            "versionId": "42010AEECAD31EEDACA30B4EC2363C94",
+            "creation": "2023-02-20T12:16:07.4755880Z",
+            "self": "id_1676895355326_232_flVariant"
+        },
+        {
+            "reference": "sap.ui.rta.test.variantManagement",
+            "namespace": "apps/sap.ui.rta.test.variantManagement/variants/",
+            "projectId": "sap.ui.rta.test.variantManagement",
+            "support": {
+                "generator": "FlexObjectFactory.createFlVariant",
+                "sapui5Version": "1.112.0-SNAPSHOT",
+                "user": "TESTUSER2"
+            },
+            "originalLanguage": "EN",
+            "layer": "PUBLIC",
+            "fileType": "ctrl_variant",
+            "fileName": "id_1676895972854_88_flVariant",
+            "content": {},
+            "texts": {
+                "variantName": {
+                    "value": "SH Test",
+                    "type": "XFLD"
+                }
+            },
+            "favorite": true,
+            "executeOnSelection": false,
+            "standardVariant": false,
+            "contexts": {},
+            "variantReference": "app--variantManagementOrdersTable",
+            "variantManagementReference": "app--variantManagementOrdersTable",
+            "creation": "2023-02-20T12:26:11.5730500Z",
+            "self": "id_1676895972854_88_flVariant"
+        },
+        {
+            "reference": "sap.ui.rta.test.variantManagement",
+            "namespace": "apps/sap.ui.rta.test.variantManagement/variants/",
+            "projectId": "sap.ui.rta.test.variantManagement",
+            "support": {
+                "generator": "FlexObjectFactory.createFlVariant",
+                "sapui5Version": "1.112.0-SNAPSHOT",
+                "user": "TESTUSER2"
+            },
+            "originalLanguage": "EN",
+            "layer": "PUBLIC",
+            "fileType": "ctrl_variant",
+            "fileName": "id_1676980733420_90_flVariant",
+            "content": {},
+            "texts": {
+                "variantName": {
+                    "value": "SH Test",
+                    "type": "XFLD"
+                }
+            },
+            "favorite": true,
+            "executeOnSelection": false,
+            "standardVariant": false,
+            "contexts": {},
+            "variantReference": "app--variantManagementOrdersTable",
+            "variantManagementReference": "app--variantManagementOrdersTable",
+            "creation": "2023-02-21T11:58:51.7021120Z",
+            "self": "id_1676980733420_90_flVariant"
+        },
+        {
+            "reference": "sap.ui.rta.test.variantManagement",
+            "namespace": "apps/sap.ui.rta.test.variantManagement/variants/",
+            "projectId": "sap.ui.rta.test.variantManagement",
+            "support": {
+                "generator": "FlexObjectFactory.createFlVariant",
+                "sapui5Version": "1.112.0-SNAPSHOT",
+                "user": "TESTUSER2"
+            },
+            "originalLanguage": "EN",
+            "layer": "PUBLIC",
+            "fileType": "ctrl_variant",
+            "fileName": "id_1676980831426_116_flVariant",
+            "content": {},
+            "texts": {
+                "variantName": {
+                    "value": "SH Test",
+                    "type": "XFLD"
+                }
+            },
+            "favorite": true,
+            "executeOnSelection": false,
+            "standardVariant": false,
+            "contexts": {},
+            "variantReference": "app--variantManagementOrdersTable",
+            "variantManagementReference": "app--variantManagementOrdersTable",
+            "creation": "2023-02-21T12:00:29.6763210Z",
+            "self": "id_1676980831426_116_flVariant"
+        },
+        {
+            "reference": "sap.ui.rta.test.variantManagement",
+            "namespace": "apps/sap.ui.rta.test.variantManagement/variants/",
+            "projectId": "sap.ui.rta.test.variantManagement",
+            "support": {
+                "generator": "FlexObjectFactory.createFlVariant",
+                "sapui5Version": "1.112.0-SNAPSHOT",
+                "user": "TESTUSER2"
+            },
+            "originalLanguage": "EN",
+            "layer": "CUSTOMER",
+            "fileType": "ctrl_variant",
+            "fileName": "id_1676990254948_88_flVariant",
+            "content": {},
+            "texts": {
+                "variantName": {
+                    "value": "SH Test",
+                    "type": "XFLD"
+                }
+            },
+            "favorite": true,
+            "executeOnSelection": false,
+            "standardVariant": false,
+            "contexts": {},
+            "variantReference": "app--variantManagementOrdersTable",
+            "variantManagementReference": "app--variantManagementOrdersTable",
+            "creation": "2023-02-21T14:37:33.3188650Z",
+            "self": "id_1676990254948_88_flVariant"
+        },
+        {
+            "reference": "sap.ui.rta.test.variantManagement",
+            "namespace": "apps/sap.ui.rta.test.variantManagement/variants/",
+            "projectId": "sap.ui.rta.test.variantManagement",
+            "support": {
+                "generator": "FlexObjectFactory.createFlVariant",
+                "sapui5Version": "1.112.0-SNAPSHOT",
+                "user": "TESTUSER2"
+            },
+            "originalLanguage": "EN",
+            "layer": "PUBLIC",
+            "fileType": "ctrl_variant",
+            "fileName": "id_1676990438915_97_flVariant",
+            "content": {},
+            "texts": {
+                "variantName": {
+                    "value": "SH Public Test",
+                    "type": "XFLD"
+                }
+            },
+            "favorite": true,
+            "executeOnSelection": false,
+            "standardVariant": false,
+            "contexts": {},
+            "variantReference": "app--variantManagementOrdersTable",
+            "variantManagementReference": "app--variantManagementOrdersTable",
+            "creation": "2023-02-21T14:40:37.2785210Z",
+            "self": "id_1676990438915_97_flVariant"
+        },
+        {
+            "reference": "sap.ui.rta.test.variantManagement",
+            "namespace": "apps/sap.ui.rta.test.variantManagement/variants/",
+            "projectId": "sap.ui.rta.test.variantManagement",
+            "support": {
+                "generator": "FlexObjectFactory.createFlVariant",
+                "sapui5Version": "1.112.0-SNAPSHOT",
+                "user": "TESTUSER2"
+            },
+            "originalLanguage": "EN",
+            "layer": "PUBLIC",
+            "fileType": "ctrl_variant",
+            "fileName": "id_1677237909062_103_flVariant",
+            "content": {},
+            "texts": {
+                "variantName": {
+                    "value": "SH Public View Test",
+                    "type": "XFLD"
+                }
+            },
+            "favorite": true,
+            "executeOnSelection": false,
+            "standardVariant": false,
+            "contexts": {},
+            "variantReference": "app--variantManagementOrdersTable",
+            "variantManagementReference": "app--variantManagementOrdersTable",
+            "creation": "2023-02-24T11:25:06.4005370Z",
+            "self": "id_1677237909062_103_flVariant"
+        },
+        {
+            "reference": "sap.ui.rta.test.variantManagement",
+            "namespace": "apps/sap.ui.rta.test.variantManagement/variants/",
+            "projectId": "sap.ui.rta.test.variantManagement",
+            "support": {
+                "generator": "FlexObjectFactory.createFlVariant",
+                "sapui5Version": "1.112.0-SNAPSHOT",
+                "user": "TESTUSER2"
+            },
+            "originalLanguage": "EN",
+            "layer": "PUBLIC",
+            "fileType": "ctrl_variant",
+            "fileName": "id_1677245904375_101_flVariant",
+            "content": {},
+            "texts": {
+                "variantName": {
+                    "value": "SH Public View Test 2",
+                    "type": "XFLD"
+                }
+            },
+            "favorite": true,
+            "executeOnSelection": false,
+            "standardVariant": false,
+            "contexts": {},
+            "variantReference": "app--variantManagementOrdersTable",
+            "variantManagementReference": "app--variantManagementOrdersTable",
+            "creation": "2023-02-24T13:38:21.7724210Z",
+            "self": "id_1677245904375_101_flVariant"
+        }
+    ],
+    "variantChanges": [
+        {
+            "changeType": "setTitle",
+            "reference": "sap.ui.rta.test.variantManagement",
+            "namespace": "apps/sap.ui.rta.test.variantManagement/changes/",
+            "projectId": "sap.ui.rta.test.variantManagement",
+            "packageName": "",
+            "support": {
+                "generator": "sap.ui.rta.command",
+                "sapui5Version": "1.112.0-SNAPSHOT",
+                "user": "TESTUSER1"
+            },
+            "originalLanguage": "EN",
+            "layer": "CUSTOMER",
+            "fileType": "ctrl_variant_change",
+            "fileName": "id_1676895329360_166_setTitle",
+            "content": {
+                "title": "Standard xx"
+            },
+            "texts": {
+                "title": {
+                    "value": "Standard xx",
+                    "type": "XFLD"
+                }
+            },
+            "selector": {
+                "id": "app--variantManagementOrdersTable",
+                "idIsLocal": false
+            },
+            "dependentSelector": {},
+            "versionId": "42010AEECAD31EEDACA30B4EC2363C94",
+            "creation": "2023-02-20T12:16:07.4678670Z"
+        },
+        {
+            "changeType": "setVisible",
+            "reference": "sap.ui.rta.test.variantManagement",
+            "namespace": "apps/sap.ui.rta.test.variantManagement/changes/",
+            "projectId": "sap.ui.rta.test.variantManagement",
+            "packageName": "",
+            "support": {
+                "sapui5Version": "1.112.0-SNAPSHOT",
+                "user": "TESTUSER2"
+            },
+            "originalLanguage": "EN",
+            "layer": "PUBLIC",
+            "fileType": "ctrl_variant_change",
+            "fileName": "id_1676980788775_100_setVisible",
+            "content": {
+                "visible": false,
+                "createdByReset": false
+            },
+            "texts": {},
+            "selector": {
+                "id": "id_1676980733420_90_flVariant",
+                "idIsLocal": false
+            },
+            "dependentSelector": {},
+            "creation": "2023-02-21T11:59:47.0271350Z"
+        },
+        {
+            "changeType": "setVisible",
+            "reference": "sap.ui.rta.test.variantManagement",
+            "namespace": "apps/sap.ui.rta.test.variantManagement/changes/",
+            "projectId": "sap.ui.rta.test.variantManagement",
+            "packageName": "",
+            "support": {
+                "sapui5Version": "1.112.0-SNAPSHOT",
+                "user": "TESTUSER2"
+            },
+            "originalLanguage": "EN",
+            "layer": "PUBLIC",
+            "fileType": "ctrl_variant_change",
+            "fileName": "id_1676980854318_125_setVisible",
+            "content": {
+                "visible": false,
+                "createdByReset": false
+            },
+            "texts": {},
+            "selector": {
+                "id": "id_1676980831426_116_flVariant",
+                "idIsLocal": false
+            },
+            "dependentSelector": {},
+            "creation": "2023-02-21T12:00:52.5721990Z"
+        },
+        {
+            "changeType": "setVisible",
+            "reference": "sap.ui.rta.test.variantManagement",
+            "namespace": "apps/sap.ui.rta.test.variantManagement/changes/",
+            "projectId": "sap.ui.rta.test.variantManagement",
+            "packageName": "",
+            "support": {
+                "sapui5Version": "1.112.0-SNAPSHOT",
+                "user": "TESTUSER2"
+            },
+            "originalLanguage": "EN",
+            "layer": "PUBLIC",
+            "fileType": "ctrl_variant_change",
+            "fileName": "id_1676990480126_79_setVisible",
+            "content": {
+                "visible": false,
+                "createdByReset": false
+            },
+            "texts": {},
+            "selector": {
+                "id": "id_1676990438915_97_flVariant",
+                "idIsLocal": false
+            },
+            "dependentSelector": {},
+            "creation": "2023-02-21T14:41:18.4866580Z"
+        },
+        {
+            "changeType": "setTitle",
+            "reference": "sap.ui.rta.test.variantManagement",
+            "namespace": "apps/sap.ui.rta.test.variantManagement/changes/",
+            "projectId": "sap.ui.rta.test.variantManagement",
+            "packageName": "",
+            "support": {
+                "sapui5Version": "1.112.0-SNAPSHOT",
+                "user": "TESTUSER2"
+            },
+            "originalLanguage": "EN",
+            "layer": "PUBLIC",
+            "fileType": "ctrl_variant_change",
+            "fileName": "id_1677245933783_125_setTitle",
+            "content": {
+                "title": "SH Public View Test 2 Updated"
+            },
+            "texts": {
+                "title": {
+                    "value": "SH Public View Test 2 Updated",
+                    "type": "XFLD"
+                }
+            },
+            "selector": {
+                "id": "id_1677245904375_101_flVariant",
+                "idIsLocal": false
+            },
+            "dependentSelector": {},
+            "creation": "2023-02-24T13:38:51.1491500Z"
+        },
+        {
+            "fileName": "id_1676895342319_200_flVariant_contextFiltering_setVisible",
+            "fileType": "ctrl_variant_change",
+            "changeType": "setVisible",
+            "layer": "USER",
+            "namespace": "apps/sap.ui.rta.test.variantManagement/variants/",
+            "content": {
+                "visible": false,
+                "createdByReset": false
+            },
+            "selector": {
+                "id": "id_1676895342319_200_flVariant",
+                "idIsLocal": false
+            },
+            "support": {
+                "generator": "ABAP - context filtering"
+            }
+        },
+        {
+            "fileName": "id_1676895355326_232_flVariant_contextFiltering_setVisible",
+            "fileType": "ctrl_variant_change",
+            "changeType": "setVisible",
+            "layer": "USER",
+            "namespace": "apps/sap.ui.rta.test.variantManagement/variants/",
+            "content": {
+                "visible": false,
+                "createdByReset": false
+            },
+            "selector": {
+                "id": "id_1676895355326_232_flVariant",
+                "idIsLocal": false
+            },
+            "support": {
+                "generator": "ABAP - context filtering"
+            }
+        }
+    ],
+    "variantDependentControlChanges": [
+        {
+            "changeType": "renameTitle",
+            "reference": "sap.ui.rta.test.variantManagement",
+            "namespace": "apps/sap.ui.rta.test.variantManagement/changes/",
+            "projectId": "sap.ui.rta.test.variantManagement",
+            "packageName": "",
+            "support": {
+                "generator": "sap.ui.rta.command",
+                "sapui5Version": "1.112.0-SNAPSHOT",
+                "command": "rename",
+                "user": "TEST"
+            },
+            "originalLanguage": "EN",
+            "layer": "VENDOR",
+            "fileType": "change",
+            "fileName": "id_1676895412759_007_renameTitle",
+            "content": {
+                "elementSelector": {
+                    "id": "app--EntityType02.Title2",
+                    "idIsLocal": true
+                }
+            },
+            "texts": {
+                "formText": {
+                    "value": "hllo world",
+                    "type": "XFLD"
+                }
+            },
+            "selector": {
+                "id": "app--MainForm",
+                "idIsLocal": true
+            },
+            "dependentSelector": {
+                "elementSelector": {
+                    "id": "app--EntityType02.Title2",
+                    "idIsLocal": true
+                }
+            },
+            "jsOnly": false,
+            "variantReference": "id_1676895342319_007_flVariant",
+            "creation": "2022-02-20T12:17:14.9625510Z"
+        },
+        {
+            "changeType": "renameTitle",
+            "reference": "sap.ui.rta.test.variantManagement",
+            "namespace": "apps/sap.ui.rta.test.variantManagement/changes/",
+            "projectId": "sap.ui.rta.test.variantManagement",
+            "packageName": "",
+            "support": {
+                "generator": "sap.ui.rta.command",
+                "sapui5Version": "1.112.0-SNAPSHOT",
+                "command": "rename",
+                "user": "TESTUSER1"
+            },
+            "originalLanguage": "EN",
+            "layer": "CUSTOMER",
+            "fileType": "change",
+            "fileName": "id_1676895401690_242_renameTitle",
+            "content": {
+                "elementSelector": {
+                    "id": "app--EntityType02.Title2",
+                    "idIsLocal": true
+                }
+            },
+            "texts": {
+                "formText": {
+                    "value": "klkl",
+                    "type": "XFLD"
+                }
+            },
+            "selector": {
+                "id": "app--MainForm",
+                "idIsLocal": true
+            },
+            "dependentSelector": {
+                "elementSelector": {
+                    "id": "app--EntityType02.Title2",
+                    "idIsLocal": true
+                }
+            },
+            "jsOnly": false,
+            "variantReference": "id_1676895342319_200_flVariant",
+            "versionId": "42010AEECAD31EEDACA30B4EC2363C94",
+            "creation": "2023-02-20T12:17:14.9372790Z"
+        },
+        {
+            "changeType": "renameTitle",
+            "reference": "sap.ui.rta.test.variantManagement",
+            "namespace": "apps/sap.ui.rta.test.variantManagement/changes/",
+            "projectId": "sap.ui.rta.test.variantManagement",
+            "packageName": "",
+            "support": {
+                "generator": "sap.ui.rta.command",
+                "sapui5Version": "1.112.0-SNAPSHOT",
+                "command": "rename",
+                "user": "TESTUSER1"
+            },
+            "originalLanguage": "EN",
+            "layer": "CUSTOMER",
+            "fileType": "change",
+            "fileName": "id_1676895412759_252_renameTitle",
+            "content": {
+                "elementSelector": {
+                    "id": "app--EntityType02.Title2",
+                    "idIsLocal": true
+                }
+            },
+            "texts": {
+                "formText": {
+                    "value": "hllo world",
+                    "type": "XFLD"
+                }
+            },
+            "selector": {
+                "id": "app--MainForm",
+                "idIsLocal": true
+            },
+            "dependentSelector": {
+                "elementSelector": {
+                    "id": "app--EntityType02.Title2",
+                    "idIsLocal": true
+                }
+            },
+            "jsOnly": false,
+            "variantReference": "id_1676895342319_200_flVariant",
+            "versionId": "42010AEECAD31EEDACA30B4EC2363C94",
+            "creation": "2023-02-20T12:17:14.9625510Z"
+        },
+        {
+            "changeType": "rename",
+            "reference": "sap.ui.rta.test.variantManagement",
+            "namespace": "apps/sap.ui.rta.test.variantManagement/changes/",
+            "projectId": "sap.ui.rta.test.variantManagement",
+            "packageName": "",
+            "support": {
+                "generator": "sap.ui.rta.command",
+                "sapui5Version": "1.112.0-SNAPSHOT",
+                "command": "rename",
+                "user": "TESTUSER1"
+            },
+            "originalLanguage": "EN",
+            "layer": "CUSTOMER",
+            "fileType": "change",
+            "fileName": "id_1676895422719_258_rename",
+            "content": {
+                "originalControlType": "sap.uxap.ObjectPageSubSection"
+            },
+            "texts": {
+                "newText": {
+                    "value": "SubSection 1öäöä",
+                    "type": "XGRP"
+                }
+            },
+            "selector": {
+                "id": "app--ObjectPageSectionForNavigationSubSection1",
+                "idIsLocal": true
+            },
+            "dependentSelector": {},
+            "jsOnly": false,
+            "variantReference": "id_1676895342319_200_flVariant",
+            "versionId": "42010AEECAD31EEDACA30B4EC2363C94",
+            "creation": "2023-02-20T12:17:14.9787470Z"
+        },
+        {
+            "changeType": "renameTitle",
+            "reference": "sap.ui.rta.test.variantManagement",
+            "namespace": "apps/sap.ui.rta.test.variantManagement/changes/",
+            "projectId": "sap.ui.rta.test.variantManagement",
+            "packageName": "",
+            "support": {
+                "generator": "sap.ui.rta.command",
+                "sapui5Version": "1.112.0-SNAPSHOT",
+                "command": "rename",
+                "user": "TESTUSER3"
+            },
+            "originalLanguage": "EN",
+            "layer": "CUSTOMER",
+            "fileType": "change",
+            "fileName": "id_1677249156281_84_renameTitle",
+            "content": {
+                "elementSelector": {
+                    "id": "app--NavTitle2",
+                    "idIsLocal": true
+                }
+            },
+            "texts": {
+                "formText": {
+                    "value": "324",
+                    "type": "XFLD"
+                }
+            },
+            "selector": {
+                "id": "app--NavPropertyForm",
+                "idIsLocal": true
+            },
+            "dependentSelector": {
+                "elementSelector": {
+                    "id": "app--NavTitle2",
+                    "idIsLocal": true
+                }
+            },
+            "jsOnly": false,
+            "variantReference": "app--variantManagementOrdersTable",
+            "versionId": "42010AEECAD31EEDACA30B4EC2363C94",
+            "creation": "2023-02-24T14:33:40.7364190Z"
+        },
+        {
+            "changeType": "addIFrame",
+            "reference": "sap.ui.rta.test.variantManagement",
+            "namespace": "apps/sap.ui.rta.test.variantManagement/changes/",
+            "projectId": "sap.ui.rta.test.variantManagement",
+            "packageName": "",
+            "support": {
+                "generator": "sap.ui.rta.command",
+                "sapui5Version": "1.112.0-SNAPSHOT",
+                "command": "addIFrame",
+                "user": "TESTUSER4"
+            },
+            "originalLanguage": "EN",
+            "layer": "CUSTOMER",
+            "fileType": "change",
+            "fileName": "id_1677749624957_179_addIFrame",
+            "content": {
+                "baseId": "application-VariantManagement-display-component---app--id-1677749624952-178",
+                "targetAggregation": "headerContent",
+                "index": 0,
+                "url": "https://bing.com",
+                "width": "100%",
+                "height": "100%",
+                "selector": {
+                    "id": "app--id-1677749624952-178",
+                    "idIsLocal": true
+                }
+            },
+            "texts": {},
+            "selector": {
+                "id": "app--ObjectPageLayout",
+                "idIsLocal": true
+            },
+            "dependentSelector": {},
+            "jsOnly": false,
+            "variantReference": "app--variantManagementOrdersTable",
+            "versionId": "42010AEECAD31EEDACA30B4EC2363C94",
+            "creation": "2023-03-02T09:34:38.3787630Z"
+        },
+        {
+            "changeType": "updateIFrame",
+            "reference": "sap.ui.rta.test.variantManagement",
+            "namespace": "apps/sap.ui.rta.test.variantManagement/changes/",
+            "projectId": "sap.ui.rta.test.variantManagement",
+            "packageName": "",
+            "support": {
+                "generator": "sap.ui.rta.command",
+                "sapui5Version": "1.112.0-SNAPSHOT",
+                "compositeCommand": "id_1677750794101_722_composite",
+                "command": "settings",
+                "user": "TESTUSER4"
+            },
+            "originalLanguage": "EN",
+            "layer": "CUSTOMER",
+            "fileType": "change",
+            "fileName": "id_1677750794101_721_updateIFrame",
+            "content": {
+                "url": "https://bing.com/search?q=香蕉皮",
+                "width": "100%",
+                "height": "100%"
+            },
+            "texts": {},
+            "selector": {
+                "id": "app--id-1677749624952-178",
+                "idIsLocal": true
+            },
+            "dependentSelector": {},
+            "jsOnly": false,
+            "variantReference": "app--variantManagementOrdersTable",
+            "versionId": "42010AEECAD31EDDAE9C0265172196D2",
+            "creation": "2023-03-02T09:53:27.1848780Z"
+        },
+        {
+            "changeType": "renameLabel",
+            "reference": "sap.ui.rta.test.variantManagement",
+            "namespace": "apps/sap.ui.rta.test.variantManagement/changes/",
+            "projectId": "sap.ui.rta.test.variantManagement",
+            "packageName": "",
+            "support": {
+                "generator": "sap.ui.rta.command",
+                "sapui5Version": "1.113.0-SNAPSHOT",
+                "command": "rename",
+                "user": "TESTUSER5"
+            },
+            "originalLanguage": "EN",
+            "layer": "CUSTOMER",
+            "fileType": "change",
+            "fileName": "id_1680260528917_488_renameLabel",
+            "content": {
+                "elementSelector": {
+                    "id": "app--EntityType02.Label1",
+                    "idIsLocal": true
+                }
+            },
+            "texts": {
+                "formText": {
+                    "value": "j",
+                    "type": "XFLD"
+                }
+            },
+            "selector": {
+                "id": "app--MainForm",
+                "idIsLocal": true
+            },
+            "dependentSelector": {
+                "elementSelector": {
+                    "id": "app--EntityType02.Label1",
+                    "idIsLocal": true
+                }
+            },
+            "jsOnly": false,
+            "variantReference": "app--variantManagementOrdersTable",
+            "versionId": "42010AEECAD31EEDB3F66FDD5D3CADF2",
+            "creation": "2023-03-31T11:02:15.5483690Z"
+        },
+        {
+            "changeType": "hideControl",
+            "reference": "sap.ui.rta.test.variantManagement",
+            "namespace": "apps/sap.ui.rta.test.variantManagement/changes/",
+            "projectId": "sap.ui.rta.test.variantManagement",
+            "packageName": "",
+            "support": {
+                "generator": "sap.ui.rta.command",
+                "sapui5Version": "1.113.0-SNAPSHOT",
+                "compositeCommand": "id_1680260532721_494_composite",
+                "command": "remove",
+                "user": "TESTUSER5"
+            },
+            "originalLanguage": "EN",
+            "layer": "CUSTOMER",
+            "fileType": "change",
+            "fileName": "id_1680260532720_493_hideControl",
+            "content": {},
+            "texts": {},
+            "selector": {
+                "id": "app--ObjectPageSectionForNavigationSubSection1",
+                "idIsLocal": true
+            },
+            "dependentSelector": {},
+            "jsOnly": false,
+            "variantReference": "app--variantManagementOrdersTable",
+            "versionId": "42010AEECAD31EEDB3F66FDD5D3CADF2",
+            "creation": "2023-03-31T11:02:15.5676380Z"
+        },
+        {
+            "changeType": "renameLabel",
+            "reference": "sap.ui.rta.test.variantManagement",
+            "namespace": "apps/sap.ui.rta.test.variantManagement/changes/",
+            "projectId": "sap.ui.rta.test.variantManagement",
+            "packageName": "",
+            "support": {
+                "generator": "sap.ui.rta.command",
+                "sapui5Version": "1.113.0-SNAPSHOT",
+                "command": "rename",
+                "user": "TESTUSER5"
+            },
+            "originalLanguage": "EN",
+            "layer": "CUSTOMER",
+            "fileType": "change",
+            "fileName": "id_1680260663181_579_renameLabel",
+            "content": {
+                "elementSelector": {
+                    "id": "app--NavProperty.Label1",
+                    "idIsLocal": true
+                }
+            },
+            "texts": {
+                "formText": {
+                    "value": "qwe",
+                    "type": "XFLD"
+                }
+            },
+            "selector": {
+                "id": "app--NavPropertyForm",
+                "idIsLocal": true
+            },
+            "dependentSelector": {
+                "elementSelector": {
+                    "id": "app--NavProperty.Label1",
+                    "idIsLocal": true
+                }
+            },
+            "jsOnly": false,
+            "variantReference": "app--variantManagementOrdersTable",
+            "versionId": "42010AEECAD31EEDB3F66FDD5D3CADF2",
+            "creation": "2023-03-31T11:04:29.6854720Z"
+        },
+        {
+            "changeType": "hideControl",
+            "reference": "sap.ui.rta.test.variantManagement",
+            "namespace": "apps/sap.ui.rta.test.variantManagement/changes/",
+            "projectId": "sap.ui.rta.test.variantManagement",
+            "packageName": "",
+            "support": {
+                "generator": "sap.ui.rta.command",
+                "sapui5Version": "1.113.0-SNAPSHOT",
+                "compositeCommand": "id_1680260667469_590_composite",
+                "command": "remove",
+                "user": "TESTUSER5"
+            },
+            "originalLanguage": "EN",
+            "layer": "CUSTOMER",
+            "fileType": "change",
+            "fileName": "id_1680260667467_589_hideControl",
+            "content": {},
+            "texts": {},
+            "selector": {
+                "id": "app--ObjectPageSectionForNavigationSubSection2",
+                "idIsLocal": true
+            },
+            "dependentSelector": {},
+            "jsOnly": false,
+            "variantReference": "app--variantManagementOrdersTable",
+            "versionId": "42010AEECAD31EEDB3F66FDD5D3CADF2",
+            "creation": "2023-03-31T11:04:29.7103920Z"
+        },
+        {
+            "changeType": "stashControl",
+            "reference": "sap.ui.rta.test.variantManagement",
+            "namespace": "apps/sap.ui.rta.test.variantManagement/changes/",
+            "projectId": "sap.ui.rta.test.variantManagement",
+            "packageName": "",
+            "support": {
+                "generator": "sap.ui.rta.command",
+                "sapui5Version": "1.113.0-SNAPSHOT",
+                "compositeCommand": "id_1680260873147_602_composite",
+                "command": "remove",
+                "user": "TESTUSER5"
+            },
+            "originalLanguage": "EN",
+            "layer": "CUSTOMER",
+            "fileType": "change",
+            "fileName": "id_1680260873146_601_stashControl",
+            "content": {},
+            "texts": {},
+            "selector": {
+                "id": "app--ObjectPageSectionForNavigation",
+                "idIsLocal": true
+            },
+            "dependentSelector": {},
+            "jsOnly": false,
+            "variantReference": "app--variantManagementOrdersTable",
+            "versionId": "42010AEECAD31EEDB3F66FDD5D3CADF2",
+            "creation": "2023-03-31T11:07:57.1836490Z"
+        }
+    ],
+    "variantManagementChanges": [
+        {
+            "fileName": "id_1663318296036_768_setDefault",
+            "fileType": "ctrl_variant_management_change",
+            "changeType": "setDefault",
+            "reference": "sap.ui.rta.test.variantManagement",
+            "content": {
+                "defaultVariant": "id_1676895355326_232_flVariant"
+            },
+            "selector": {
+                "id": "app--variantManagementContained",
+                "idIsLocal": false
+            },
+            "support": {
+                "generator": "sap.ui.rta.command",
+                "sapui5Version": "1.112.0-SNAPSHOT",
+                "user": "TEST"
+            },
+            "layer": "CUSTOMER",
+            "texts": {},
+            "namespace": "apps/sap.ui.rta.test.variantManagement/changes/",
+            "creation": "2023-05-20T12:16:07.4755880Z",
+            "variantReference": ""
+        },
+        {
+            "fileName": "id_1663318271142_727_setDefault",
+            "fileType": "ctrl_variant_management_change",
+            "changeType": "setDefault",
+            "reference": "sap.ui.rta.test.variantManagement",
+            "content": {
+                "defaultVariant": "id_1676895342319_007_flVariant"
+            },
+            "selector": {
+                "id": "app--variantManagementOrdersTable",
+                "idIsLocal": false
+            },
+            "support": {
+                "generator": "sap.ui.rta.command",
+                "sapui5Version": "1.112.0-SNAPSHOT",
+                "user": "TEST"
+            },
+            "layer": "CUSTOMER",
+            "texts": {},
+            "namespace": "apps/sap.ui.rta.test.variantManagement/changes/",
+            "creation": "2023-05-21T12:16:07.4755880Z",
+            "variantReference": ""
+        }
+    ],
+    "cacheKey": "\"WEeURqO2TLG0uIHM4X2F0/rd5B8=\""
+}

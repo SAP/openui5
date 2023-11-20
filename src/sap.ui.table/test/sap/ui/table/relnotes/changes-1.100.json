@@ -1,0 +1,29 @@
+{
+  "1.100.0": {
+    "date": "March 2022",
+    "notes": [
+      {
+        "id": "323c2d94e5fa31c4ddcff5988ff7ad973d95ed23",
+        "type": "FIX",
+        "text": " Table: Flickering of horizontal scrollbar when in a dialog",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400001311102022"
+          }
+        ]
+      },
+      {
+        "id": "677e54f19cef72bd6b58249e0c7f19c0951115ee",
+        "type": "FIX",
+        "text": " sap.ui.core.format.NumberFormat: Stricter parsing for grouping separators",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180381028"
+          }
+        ]
+      }
+    ]
+  }
+}

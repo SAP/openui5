@@ -1,0 +1,42 @@
+{
+	"sap.app": {
+		"type": "card",
+		"id": "card.explorer.extension.sharedFetchExtension"
+	},
+	"sap.ui5": {
+		"dependencies": {
+			"libs": {
+				"shared.lib": {}
+			}
+		}
+	},
+	"sap.card": {
+		"extension": "module:shared/lib/SharedFetchExtension",
+		"type": "List",
+		"header": {
+			"title": "Products",
+			"subTitle": "In Stock Information",
+			"icon": {
+				"src": "sap-icon://product"
+			}
+		},
+		"content": {
+			"data": {
+				"request": {
+					"url": "https://services.odata.org/V4/Northwind/Northwind.svc/Products",
+					"method": "GET",
+					"parameters": {
+						"$format": "json"
+					}
+				},
+				"path": "/value"
+			},
+			"item": {
+				"title": "{ProductName}",
+				"description": "{UnitsInStock} units in stock",
+				"highlight": "{= ${Discontinued} ? 'Error' : 'Success'}"
+			},
+			"maxItems": 3
+		}
+	}
+}

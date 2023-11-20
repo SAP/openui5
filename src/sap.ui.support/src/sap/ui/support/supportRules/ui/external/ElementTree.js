@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(["jquery.sap.global"],
-	function (jQuery) {
+sap.ui.define(["sap/base/Log", "sap/ui/thirdparty/jquery"],
+	function (Log, jQuery) {
 		"use strict";
 
 		function _isObject(data) {
@@ -58,7 +58,7 @@ sap.ui.define(["jquery.sap.global"],
 		 * @private
 		 */
 		function _getElementTreeLeftColumnOfListItem(controls, paddingLeft) {
-			var html = "<offset style=\"padding-left:" + paddingLeft + "px\" >";
+			var html = "<offset data-indent=\"" + paddingLeft + "\" >";
 
 			if (controls.content.length > 0) {
 				html += "<arrow down=\"true\"></arrow>";
@@ -145,6 +145,12 @@ sap.ui.define(["jquery.sap.global"],
 			this.onSelectionChanged = options.onSelectionChanged ? options.onSelectionChanged : function (selectedElementId) {};
 
 			/**
+			 * Method fired when an element in the ElementTree is right-clicked.
+			 * @param {string} selectedElementId - The selected element id
+			 */
+			this.onContextMenu = options.onContextMenu ? options.onContextMenu : function (selectedElementId) {};
+
+			/**
 			 * Method fired when the hovered element in the ElementTree is changed.
 			 * @param {string} hoveredElementId - The hovered element id
 			 */
@@ -159,6 +165,13 @@ sap.ui.define(["jquery.sap.global"],
 			 * Method fired when the initial ElementTree rendering is done.
 			 */
 			this.onInitialRendering = options.onInitialRendering ? options.onInitialRendering : function () {};
+
+			this.filterOptions = jQuery.extend({
+				issues: true,
+				namespaces: true,
+				attributes: true,
+				search: false
+			}, options.filter);
 
 			// Object with the tree model that will be visualized
 			this.setData(options.data);
@@ -197,7 +210,7 @@ sap.ui.define(["jquery.sap.global"],
 			var isDataAnObject = _isObject(data);
 
 			if (isDataAnObject === false) {
-				jQuery.sap.log.warning("The parameter should be an Object");
+				Log.warning("The parameter should be an Object");
 				return;
 			}
 
@@ -242,14 +255,14 @@ sap.ui.define(["jquery.sap.global"],
 			var selectedElement;
 
 			if (typeof elementID !== "string") {
-				jQuery.sap.log.warning("Please use a valid string parameter");
+				Log.warning("Please use a valid string parameter");
 				return;
 			}
 
 			selectedElement = this._ElementTreeContainer.querySelector("[data-id='" + elementID + "']");
 
 			if (selectedElement === null) {
-				jQuery.sap.log.warning("The selected element is not a child of the ElementTree");
+				Log.warning("The selected element is not a child of the ElementTree");
 				return;
 			}
 
@@ -278,7 +291,7 @@ sap.ui.define(["jquery.sap.global"],
 			html += this._createTreeContainer();
 
 			this._ElementTreeContainer.innerHTML = html;
-			// Save reverences for future use
+			// Save references for future use
 			this._setReferences();
 
 			if (this.getData() !== undefined) {
@@ -294,9 +307,11 @@ sap.ui.define(["jquery.sap.global"],
 		ElementTree.prototype._createFilter = function () {
 			return "<filter>" +
 				"<end>" +
-				"<label><input type=\"checkbox\" issues checked/>Issues</label>" +
-				"<label><input type=\"checkbox\" namespaces checked/>Namespaces</label>" +
-				"<label><input type=\"checkbox\" attributes/>Attributes</label>" +
+				(this.filterOptions.search ? "<input type=\"text\" search placeholder=\"Search by ID or type\">" : "") +
+				(this.filterOptions.search ? "<label><input type=\"checkbox\" filter>Filter results <results>(0)</results></label>" : "") +
+				(this.filterOptions.issues ? "<label><input type=\"checkbox\" issues checked>Issues</label>" : "") +
+				(this.filterOptions.namespaces ? "<label><input type=\"checkbox\" namespaces checked>Namespaces</label>" : "") +
+				(this.filterOptions.attributes ? "<label><input type=\"checkbox\" attributes>Attributes</label>" : "") +
 				"</end>" +
 				"</filter>";
 		};
@@ -317,6 +332,25 @@ sap.ui.define(["jquery.sap.global"],
 			var controls = this.getData().controls;
 
 			this._treeContainer.innerHTML = this._createTreeHTML(controls);
+
+			this._provideIndentation();
+		};
+
+		/**
+		 * Sets the padding for each row in the element tree.
+		 * @private
+		 */
+		ElementTree.prototype._provideIndentation = function () {
+			var aOffsets = this._treeContainer.getElementsByTagName("offset"),
+				oOffset,
+				iIndex;
+
+			for (iIndex = 0; iIndex < aOffsets.length; iIndex++) {
+				oOffset = aOffsets[iIndex];
+				if (oOffset.dataset && oOffset.dataset.indent) {
+					oOffset.style.paddingLeft = oOffset.dataset.indent + "px";
+				}
+			}
 		};
 
 		/**
@@ -342,10 +376,9 @@ sap.ui.define(["jquery.sap.global"],
 					attributes: ["expanded=\"true\""]
 				});
 
-				var hasIssue = issuesIds[control.id] !== undefined ? true : false;
-				var numberOfIssues = 0;
+				var hasIssue = issuesIds && issuesIds[control.id] !== undefined ? true : false;
 				var numberOfIssues = hasIssue ? issuesIds[control.id].length : 0;
-					html += _startElementTreeListItem({
+				html += _startElementTreeListItem({
 					id: control.id
 				}, hasIssue);
 
@@ -409,13 +442,13 @@ sap.ui.define(["jquery.sap.global"],
 				this.onSelectionChanged(id);
 			}
 
-				this.clearSelection();
+			this.clearSelection();
 
-				target.setAttribute("selected", "true");
+			target.setAttribute("selected", "true");
 
-				if (bNotify) {
-					this.onIssueCountClicked(id);
-				}
+			if (bNotify) {
+				this.onIssueCountClicked(id);
+			}
 		};
 
 		/**
@@ -478,12 +511,40 @@ sap.ui.define(["jquery.sap.global"],
 		 * @private
 		 */
 		ElementTree.prototype._onArrowClick = function (event) {
-			var target = event.target;
+			var $target = jQuery(event.target);
+			var nodeName = $target.prop("nodeName");
 
-			if (target.nodeName === "ARROW") {
-				this._toggleCollapse(target);
-			} else if (jQuery(event.srcElement).hasClass("showNumbOfIssues")){
-				this._selectTreeElement(target, true);
+			if (nodeName === "ARROW") {
+				this._toggleCollapse(event.target);
+			} else {
+				this._selectTreeElement(event.target, true);
+			}
+		};
+
+		/**
+		 * Event handler for mouse right-click on a tree element.
+		 * @param {Object} event - contextmenu event
+		 * @private
+		 */
+		ElementTree.prototype._onContextMenu = function (event) {
+			event.preventDefault();
+			var nodeName = jQuery(event.target).prop("nodeName");
+
+			if (nodeName !== "ARROW") {
+				var target = _findNearestDOMParent(event.target, "LI");
+				var dataId = target.attributes["data-id"];
+
+				if (dataId) {
+					this.clearSelection();
+					target.setAttribute("selected", "true");
+					this.onContextMenu({
+						domElementId: dataId.value,
+						location: {
+							x: event.pageX,
+							y: event.pageY
+						}
+					});
+				}
 			}
 		};
 
@@ -539,6 +600,10 @@ sap.ui.define(["jquery.sap.global"],
 					this._treeContainer.setAttribute("show-filtered-elements", true);
 				} else {
 					this._treeContainer.removeAttribute("show-filtered-elements");
+					var selectedElement = this._ElementTreeContainer.querySelector("[selected]");
+					if (selectedElement) {
+						this._scrollToElement(selectedElement, window);
+					}
 				}
 			}
 
@@ -603,6 +668,7 @@ sap.ui.define(["jquery.sap.global"],
 		 */
 		ElementTree.prototype._createHandlers = function () {
 			this._treeContainer.onclick = this._onArrowClick.bind(this);
+			this._treeContainer.oncontextmenu = this._onContextMenu.bind(this);
 			this._filterContainer.onkeyup = this._onSearchInput.bind(this);
 			this._filterContainer.onsearch = this._onSearchEvent.bind(this);
 			this._filterContainer.onchange = this._onOptionsChange.bind(this);

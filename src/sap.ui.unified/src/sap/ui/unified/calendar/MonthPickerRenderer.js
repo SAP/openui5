@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define([],
-	function() {
+sap.ui.define(["sap/ui/core/Lib", "sap/ui/unified/calendar/CalendarDate", 'sap/ui/core/format/DateFormat', 'sap/ui/core/InvisibleText', 'sap/ui/core/date/UI5Date'],
+	function(Library, CalendarDate, DateFormat, InvisibleText, UI5Date) {
 	"use strict";
 
 
@@ -12,6 +12,7 @@ sap.ui.define([],
 	 * @namespace
 	 */
 	var MonthPickerRenderer = {
+		apiVersion: 2
 	};
 
 	/**
@@ -22,18 +23,25 @@ sap.ui.define([],
 	 */
 	MonthPickerRenderer.render = function(oRm, oMP){
 
-		var iMonth = oMP.getMonth();
-		var iMonths = oMP.getMonths();
-		var iStartMonth = 0;
-		var iColumns = oMP.getColumns();
-		var sTooltip = oMP.getTooltip_AsString();
-		var oLocaleData = oMP._getLocaleData();
-		var sId = oMP.getId();
-		var sWidth = "";
+		var iMonth = (oMP.getProperty("_firstMonth") !== undefined) ? oMP.getProperty("_firstMonth") : oMP.getMonth(),
+			iMonths = oMP.getMonths(),
+			iStartMonth = 0,
+			iColumns = oMP.getColumns(),
+			sTooltip = oMP.getTooltip_AsString(),
+			oLocaleData = oMP._getLocaleData(),
+			sId = oMP.getId(),
+			sWidth = "",
+			aMonthNames = [],
+			aMonthNamesWide = [],
+			sCalendarType = oMP.getPrimaryCalendarType(),
+			sSecondaryType = oMP._getSecondaryCalendarType(),
+			oPrimaryYearFormat = DateFormat.getDateInstance({format: "y", calendarType: oMP.getPrimaryCalendarType()}),
+			iYear = oMP._iYear ? oMP._iYear : UI5Date.getInstance().getFullYear(),
+			sPrimaryCalTypeFormattedYear = oPrimaryYearFormat.format(UI5Date.getInstance(Date.UTC(iYear, 0, 1)), true),
+			i,
+			bApplySelection,
+			bApplySelectionBetween;
 
-		var aMonthNames = [];
-		var aMonthNamesWide = [];
-		var sCalendarType = oMP.getPrimaryCalendarType();
 		if (oMP._bLongMonth || !oMP._bNamesLengthChecked) {
 			aMonthNames = oLocaleData.getMonthsStandAlone("wide", sCalendarType);
 		} else {
@@ -41,33 +49,33 @@ sap.ui.define([],
 			aMonthNamesWide = oLocaleData.getMonthsStandAlone("wide", sCalendarType);
 		}
 
-		oRm.write("<div");
-		oRm.writeControlData(oMP);
-		oRm.addClass("sapUiCalMonthPicker");
-		oRm.writeClasses();
+		oRm.openStart("div",oMP);
+		oRm.class("sapUiCalMonthPicker");
 
-		if (sTooltip) {
-			oRm.writeAttributeEscaped('title', sTooltip);
+		if (sSecondaryType) {
+			oRm.class("sapUiCalMonthSecType");
 		}
 
-		oRm.writeAccessibilityState(oMP, {
+		if (sTooltip) {
+			oRm.attr("tooltip", sTooltip);
+		}
+
+		oRm.accessibilityState(oMP, {
 			role: "grid",
 			readonly: "true",
-			multiselectable: "false"
+			multiselectable: oMP.getIntervalSelection(),
+			roledescription: Library.getResourceBundleFor("sap.ui.unified").getText("MONTH_PICKER"),
+			describedby: oMP._bCalendar ? InvisibleText.getStaticId("sap.ui.unified", "CALENDAR_YEAR_PICKER_OPEN_HINT") : ""
 		});
 
-		oRm.write(">"); // div element
-
+		oRm.openEnd(); // div element
 		var mAccProps;
 
 		if (iMonths > 12) {
 			iMonths = 12;
-		}else	if (iMonths < 12) {
+		} else if (iMonths < 12) {
 			// Month blocks should start with multiple of number of displayed months
-			iStartMonth = Math.floor( iMonth / iMonths) * iMonths;
-			if (iStartMonth + iMonths > 12) {
-				iStartMonth = 12 - iMonths;
-			}
+			iStartMonth = iMonth;
 		}
 
 		if (iColumns > 0) {
@@ -76,8 +84,12 @@ sap.ui.define([],
 			sWidth = ( 100 / iMonths ) + "%";
 		}
 
-		for ( var i = 0; i < iMonths; i++) {
-			var iCurrentMonth = i + iStartMonth;
+		for (i = 0; i < iMonths; i++) {
+			var iCurrentMonth = i + iStartMonth,
+				oCurrentDate = CalendarDate.fromLocalJSDate(UI5Date.getInstance(), oMP.getPrimaryCalendarType());
+
+			oCurrentDate.setMonth(iCurrentMonth, 1);
+			oMP._iYear && oCurrentDate.setYear(oMP._iYear);
 
 			mAccProps = {
 					role: "gridcell"
@@ -86,45 +98,82 @@ sap.ui.define([],
 				mAccProps["label"] = aMonthNamesWide[iCurrentMonth];
 			}
 
-			if (iColumns > 0 && i % iColumns == 0) {
+			if (iColumns > 0 && i % iColumns === 0) {
 				// begin of row
-				oRm.write("<div");
-				oRm.writeAccessibilityState(null, {role: "row"});
-				oRm.write(">"); // div element
+				oRm.openStart("div");
+				oRm.accessibilityState(null, {role: "row"});
+				oRm.openEnd();
 			}
 
-			oRm.write("<div");
-			oRm.writeAttribute("id", sId + "-m" + (iCurrentMonth));
-			oRm.addClass("sapUiCalItem");
-			if (iCurrentMonth == iMonth) {
-				oRm.addClass("sapUiCalItemSel");
+			oRm.openStart("div", sId + "-m" + (iCurrentMonth));
+			oRm.class("sapUiCalItem");
+
+			bApplySelection = oMP._fnShouldApplySelection(oCurrentDate);
+			bApplySelectionBetween = oMP._fnShouldApplySelectionBetween(oCurrentDate);
+
+			if (bApplySelection) {
+				oRm.class("sapUiCalItemSel");
 				mAccProps["selected"] = true;
-			} else {
+			}
+
+			if (bApplySelectionBetween) {
+				oRm.class("sapUiCalItemSelBetween");
+				mAccProps["selected"] = true;
+			}
+
+			if (!bApplySelection && !bApplySelectionBetween) {
 				mAccProps["selected"] = false;
 			}
 
 			if (iCurrentMonth < oMP._iMinMonth || iCurrentMonth > oMP._iMaxMonth) {
-				oRm.addClass("sapUiCalItemDsbl"); // month disabled
+				oRm.class("sapUiCalItemDsbl"); // month disabled
 				mAccProps["disabled"] = true;
 			}
 
-			oRm.writeAttribute("tabindex", "-1");
-			oRm.addStyle("width", sWidth);
-			oRm.writeClasses();
-			oRm.writeStyles();
-			oRm.writeAccessibilityState(null, mAccProps);
-			oRm.write(">"); // div element
-			oRm.write(aMonthNames[iCurrentMonth]);
-			oRm.write("</div>");
+			mAccProps["label"] = aMonthNames[iCurrentMonth] + " " + sPrimaryCalTypeFormattedYear;
+			if (sSecondaryType) {
+				var sSecondaryCalendarType = oMP.getSecondaryCalendarType(),
+					// always use wide month names for the screen reader
+					aMonthNamesSecondary = oLocaleData.getMonthsStandAlone("abbreviated", sSecondaryCalendarType),
+					oSecondaryYearFormat = DateFormat.getDateInstance({format: "y", calendarType: sSecondaryCalendarType}),
+					oSecondaryMonths = oMP._getDisplayedSecondaryDates(iCurrentMonth),
+					sSecondaryMonthInfo, sSecondaryYearInfo,  sPattern;
 
-			if (iColumns > 0 && ((i + 1) % iColumns == 0)) {
+				if (oSecondaryMonths.start.getMonth() === oSecondaryMonths.end.getMonth()) {
+					sSecondaryMonthInfo = aMonthNamesSecondary[oSecondaryMonths.start.getMonth()];
+					sSecondaryYearInfo = oSecondaryYearFormat.format(oSecondaryMonths.start.toUTCJSDate(), true);
+				} else {
+					sPattern = oLocaleData.getIntervalPattern();
+					sSecondaryMonthInfo = sPattern.replace(/\{0\}/, aMonthNamesSecondary[oSecondaryMonths.start.getMonth()]).replace(/\{1\}/, aMonthNamesSecondary[oSecondaryMonths.end.getMonth()]);
+					sSecondaryYearInfo = sPattern.replace(/\{0\}/, oSecondaryYearFormat.format(oSecondaryMonths.start.toUTCJSDate(), true))
+						.replace(/\{1\}/, oSecondaryYearFormat.format(oSecondaryMonths.end.toUTCJSDate(), true));
+				}
+				mAccProps["label"] = mAccProps["label"] + " " + sSecondaryMonthInfo + " " + sSecondaryYearInfo;
+			}
+
+			oRm.attr("tabindex", "-1");
+			oRm.style("width", sWidth);
+			oRm.accessibilityState(null, mAccProps);
+			oRm.openEnd();
+			oRm.text(aMonthNames[iCurrentMonth]);
+
+			if (sSecondaryType) {
+				oRm.openStart("div", sId + "-m" + iCurrentMonth + "-secondary");
+				oRm.class("sapUiCalItemSecText");
+				oRm.openEnd();
+				oRm.text(sSecondaryMonthInfo);
+				oRm.close("div");
+			}
+
+			oRm.close("div");
+
+			if (iColumns > 0 && ((i + 1) % iColumns === 0)) {
 				// end of row
-				oRm.write("</div>");
+				oRm.close("div");
 			}
 		}
 
-		oRm.write("</div>");
-
+		oRm.close("div");
 	};
 
 	return MonthPickerRenderer;

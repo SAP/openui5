@@ -1,15 +1,19 @@
-(function () {
-	'use strict';
+sap.ui.define([
+	"sap/m/InputListItem",
+	"sap/m/InputBase",
+	"sap/ui/dt/enablement/elementDesigntimeTest",
+	"sap/ui/rta/enablement/elementActionTest"
+], function(
+	InputListItem,
+	InputBase,
+	elementDesigntimeTest,
+	elementActionTest
+) {
+	"use strict";
 
-	sap.ui.require([
-		"sap/ui/dt/test/report/QUnit",
-		"sap/ui/dt/test/ElementEnablementTest",
-		"sap/m/InputListItem",
-		"sap/m/InputBase",
-		"sap/ui/rta/test/controlEnablingCheck"
-	], function (QUnitReport, ElementEnablementTest, InputListItem, InputBase, rtaControlEnablingCheck) {
-
-		var oElementEnablementTest = new ElementEnablementTest({
+	return Promise.resolve()
+	.then(function () {
+		return elementDesigntimeTest({
 			type: "sap.m.InputListItem",
 			create: function () {
 				return new InputListItem({
@@ -20,12 +24,8 @@
 				});
 			}
 		});
-		oElementEnablementTest.run().then(function (oData) {
-			new QUnitReport({
-				data: oData
-			});
-		});
-
+	})
+	.then(function() {
 		// Move content
 		var fnConfirmInput1IsOn3rdPosition = function (oUiComponent, oViewAfterAction, assert) {
 			assert.strictEqual(oViewAfterAction.byId("input1").getId(),
@@ -39,7 +39,7 @@
 				"then the control has been moved to the previous position");
 		};
 
-		rtaControlEnablingCheck("Checking the move action for InputListItem content", {
+		elementActionTest("Checking the move action for InputListItem content", {
 			xmlView: '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:m="sap.m">"' +
 			'<m:List id="list">' +
 			'<m:InputListItem id="inputListItem" label="Checkbox">' +
@@ -80,4 +80,4 @@
 			afterRedo: fnConfirmInput1IsOn3rdPosition
 		});
 	});
-})();
+});

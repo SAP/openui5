@@ -1,0 +1,17 @@
+<mvc:View
+		xmlns:core="sap.ui.core"
+		xmlns:mvc="sap.ui.core.mvc"
+		xmlns="sap.m">
+	<Panel id="Panel">
+		<VBox>
+			<HBox>
+				<Button text="Cache:"/>
+				<Button text="no"/>
+			</HBox>
+			<mvc:View id="detailPageView"
+						viewName="module:sap/ui/core/qunit/mvc/viewprocessing/ViewProcessingRec"></mvc:View>
+
+			<core:Icon src="sap-icon://lateness" size="7em"/>
+		</VBox>
+	</Panel>
+</mvc:View>

@@ -1,0 +1,70 @@
+/* ======================================================== */
+/* CSS for control sap.f.cards.loading/CalendarPlaceholder	*/
+/* Base theme																							 */
+/* ======================================================== */
+
+.sapFCard .sapFCardContentCalendarPlaceholder .sapFCardLoadingShimmer {
+	background-size: unset;
+}
+
+.sapFCardCalendarContent.sapMPCInCardTwoColumns .sapFCardContentCalendarPlaceholder {
+	display: flex;
+}
+
+.sapFCardContentCalendarPlaceholder {
+	.sapFCardContentCalendarPartPlaceholder {
+		height: 13rem;
+		min-width: 18rem;
+		margin: 1rem;
+	}
+	.sapFCardContentLegendItemsListPlaceholder {
+		column-width: 9rem;
+	}
+	.sapFCardContentItemsListPlaceholder {
+		margin: 1rem;
+	}
+	.sapFCardListPlaceholderItem {
+		height: 4.75rem;
+		display: block;
+		&.sapFCardListPlaceholderLegendItem {
+			width: 15rem;
+			height: 1.75rem;
+			.sapFCardListPlaceholderImg,
+			.sapFCardListPlaceholderRows {
+				display: inline-block;
+			}
+			.sapFCardListPlaceholderImg {
+				margin: 0.5rem 0.5rem 0.5rem 0;
+				height: 1rem;
+				width: 1rem;
+			}
+			.sapFCardListPlaceholderRows {
+				.sapFCardListPlaceholderRow {
+					width: 6rem;
+					margin-left: 0;
+				}
+				width: 8rem;
+			}
+		}
+		.sapFCardListPlaceholderFromTo {
+			height: 1rem;
+			width: 5rem;
+			display: inline-block;
+		}
+		.sapFCardListPlaceholderRows {
+			.sapFCardListPlaceholderRow {
+				height: 1rem;
+				width: 8rem;
+				margin-left: 2rem;
+				&.sapFCardListPlaceholderTextRow {
+					height: 0.75rem;
+					width: 6rem;
+				}
+			}
+		}
+	}
+}
+
+.sapUiSizeCompact .sapFCardContentCalendarPlaceholder .sapFCardContentItemsListPlaceholder .sapFCardListPlaceholderItem {
+	height: 4.75rem;
+}

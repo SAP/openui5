@@ -108,37 +108,67 @@
 				"id": "8c4f0f2be7b8a9276202c8f6894484beaeb67c58",
 				"type": "FIX",
 				"text": "Respect \"themeroots\" when resolving img URLs in Controls",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "012002523100003930322015"
+					}
+				]
 			},
 			{
 				"id": "c3b3460a4463f6c92840dc5b37c088714d8bcc6a",
 				"type": "FIX",
 				"text": "layout.Splitter: Don't Attempt Resize on Preserved DOM",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1580131174"
+					}
+				]
 			},
 			{
 				"id": "d87bd654bd8791b515329937f3268ddd104675c4",
 				"type": "FIX",
 				"text": "sap.m.BlockLayout: add flex prefixes for IE 10",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1570850712"
+					}
+				]
 			},
 			{
 				"id": "662ff98ab20ea1b7713a0f061e6e72b5c70fafb8",
 				"type": "FIX",
 				"text": "sap.m.ScrollContainer, sap.ui.layout.FixFlex: A tweak, causing issues in Internet Explorer is now removed",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1570902084"
+					}
+				]
 			},
 			{
 				"id": "47fa1a3ec30bfb46b35a594cbb9a6d673e592724",
 				"type": "FIX",
 				"text": "sap.ui.Layout.DynamicSideContent - Height is properly",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1580200257"
+					}
+				]
 			},
 			{
 				"id": "ae0ca3d3ae8d5cbbc0e1fbe120e36e9cbdd6fe2a",
 				"type": "FIX",
 				"text": "sap.ui.core.layout.VerticalLayout: fix vertical-align in IE",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1580197076"
+					}
+				]
 			},
 			{
 				"id": "99202f68d4af4f4c1d7f0735871dc500b2d3544b",
@@ -156,7 +186,12 @@
 				"id": "690963771ea5f3a12e2e7c59d3382a8c7bd6b83c",
 				"type": "FIX",
 				"text": "sap.ui.layout.DynamicSideContent: Side content visibility on invalidation solved",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1570868474"
+					}
+				]
 			},
 			{
 				"id": "bbbc6db0bd74f293154ccb36e15dd3b0e256e2e9",
@@ -174,25 +209,49 @@
 				"id": "c2eb95ad5d5335196817a5f771466c885f486c5a",
 				"type": "FIX",
 				"text": "sap.ui.layout.ResponsiveFlowLayout - Cyclic re-rendering when the width is small solved",
-				"references": []
+				"references": [
+					{
+						"type": "GitHub",
+						"reference": "492"
+					},
+					{
+						"type": "BCP",
+						"reference": "1570801167"
+					}
+				]
 			},
 			{
 				"id": "38e8d9b215ba490e34a7809a537f802977c55495",
 				"type": "FIX",
 				"text": "sap.ui.layout.ResponsiveFlowLayout - On Internet Explorer the layout container does not occupy the whole width anymore",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1570798440"
+					}
+				]
 			},
 			{
 				"id": "63c139d48199328d2801c3311f747d435259a8f0",
 				"type": "FIX",
 				"text": "sap.ui.layout.ResponsiveFlowLayout: when used in SimpleForm items' height is calculated consistent for all browsers.",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "002075129500001241092016"
+					}
+				]
 			},
 			{
 				"id": "eeea61f756bd6d3869aae9d1ae4adbe5c4ecef0f",
 				"type": "FIX",
 				"text": "sap.ui.layout.Splitter Fix for IE11 when oData.domNode is an SVG element.",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1680050402"
+					}
+				]
 			},
 			{
 				"id": "c0bee4cebb852c829c2881e7f92ae639f8d0d8cc",
@@ -210,13 +269,27 @@
 				"id": "52e76864f9feb2cb1bb634f8a12611684581ef59",
 				"type": "FIX",
 				"text": "sap.ui.layout.form.Form: No padding between FormContainer if no Title",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1670021664"
+					}
+				]
 			},
 			{
 				"id": "83b505a8191ff828ea30ecf158bde2564289d8c6",
 				"type": "FIX",
 				"text": "sap.ui.layout.form.Form: double role \"form\" if only one container",
-				"references": []
+				"references": [
+					{
+						"type": "GitHub",
+						"reference": "908"
+					},
+					{
+						"type": "BCP",
+						"reference": "1670177663"
+					}
+				]
 			},
 			{
 				"id": "22a6d56c45f1ff0012b07221e0931d9cc8e4fbe1",
@@ -228,13 +301,23 @@
 				"id": "2bae7babba64ba2fd4f68ce32177ce937bf7ca9d",
 				"type": "FIX",
 				"text": "sap.ui.layout.form.Form: use Label style only for direct labels",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1580178200"
+					}
+				]
 			},
 			{
 				"id": "47123cd5e9f74c2be76122de39a839d7af67939f",
 				"type": "FIX",
 				"text": "sap.ui.layout.form.GridLayout: labels not aligned in Firefox",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1670208916"
+					}
+				]
 			},
 			{
 				"id": "c2cae5cda5378743eda344d0d2b1f7794b59d756",
@@ -252,31 +335,60 @@
 				"id": "92bdf170af91089ed3553815587ece66f38d3377",
 				"type": "FIX",
 				"text": "sap.ui.layout.form.GridLayout: wrong tab sequence in RTL",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "002007974700006423272015"
+					}
+				]
 			},
 			{
 				"id": "b050b347e4628f938060af72aa35f8ee17e18364",
 				"type": "FIX",
 				"text": "sap.ui.layout.form.ResponsiveGridLayout: 1st container invisible",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1670108114"
+					}
+				]
 			},
 			{
 				"id": "77175b448808ef45ef31704c22fad751558b71bb",
 				"type": "FIX",
 				"text": "sap.ui.layout.form.ResponsiveLayout: Labels wrong aligned in Edge",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1670153084"
+					}
+				]
 			},
 			{
 				"id": "33e0be96b148f514c2ebaed4ecaf9b0729f48e5e",
 				"type": "FIX",
 				"text": "sap.ui.layout.form.ResponsiveLayout: change order of FormElement",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1670301032"
+					}
+				]
 			},
 			{
 				"id": "a608106e829bb8a4e9be646977b6ad60481a8c57",
 				"type": "FIX",
 				"text": "sap.ui.layout.form.SimpleForm: errors by changing content",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1670231450"
+					},
+					{
+						"type": "BCP",
+						"reference": "1670244684"
+					}
+				]
 			},
 			{
 				"id": "8a84899cd550472d3a7431e5c7d51e9b95848afc",
@@ -310,7 +422,16 @@
 				"id": "23b8a0de4501bd91847962d0477aef6a2a42b02c",
 				"type": "FIX",
 				"text": "AssociativeSplitter: Overriding calculation functions to make the Splitter responsive",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1670226583"
+					},
+					{
+						"type": "BCP",
+						"reference": "1680043748"
+					}
+				]
 			},
 			{
 				"id": "6eaf8e407b59036f4cb3c2ccebf0ff27c092a70b",
@@ -322,13 +443,23 @@
 				"id": "30a6080d6d51c00623f39120d6770d9ce66f7132",
 				"type": "FIX",
 				"text": "sap.ui.layout.FixFlex: Fix content size issue in IE9",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1670162233"
+					}
+				]
 			},
 			{
 				"id": "cd14842e26dd8baccc661e2b4039646b6257e6b7",
 				"type": "FIX",
 				"text": "sap.ui.layout.FixFlex: The fixed and the flexible part are no longer overlapping in Chrome",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1680105979"
+					}
+				]
 			}
 		]
 	},
@@ -339,7 +470,12 @@
 				"id": "284db015db5964107c6d7c7dfb4a16d3db5952e8",
 				"type": "FIX",
 				"text": "sap.ui.layout.ResponsiveSplitter: Adding class to root element improved",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1680133684"
+					}
+				]
 			}
 		]
 	}

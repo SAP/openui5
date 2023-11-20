@@ -1,0 +1,19 @@
+{
+	"totalCount": 15,
+	"content": [
+	{ "initials": "JD", "name": "John Doe", "tooltip": "1", "jobPosition": "Marketing Manager", "mobile": "+89181818181", "phone": "+2828282828", "email": "blabla@blabla" },
+	{ "initials": "SP", "name": "Sarah Parker", "tooltip": "2", "jobPosition": "Visual Designer", "mobile": "+89181818181", "phone": "+2828282828", "email": "blabla@blabla" },
+	{ "initials": "JG", "name": "Jason Goldwell", "tooltip": "3", "jobPosition": "Software Developer", "mobile": "+89181818181", "phone": "+2828282828", "email": "blabla@blabla" },
+	{ "name": "Christian Bow", "jobPosition": "Marketing Manager", "tooltip": "4", "mobile": "+89181818181", "phone": "+2828282828", "email": "blabla@blabla" },
+	{ "src": "./test-resources/sap/f/images/Woman_avatar_01.png", "tooltip": "5", "name": "Jessica Parker", "jobPosition": "Visual Designer", "mobile": "+89181818181", "phone": "+2828282828", "email": "blabla@blabla" },
+	{ "initials": "JB", "name": "Jonathan Bale", "jobPosition": "Software Developer", "tooltip": "6", "mobile": "+89181818181", "phone": "+2828282828", "email": "blabla@blabla" },
+	{ "initials": "GS", "name": "Gordon Smith", "jobPosition": "Marketing Manager", "tooltip": "7", "mobile": "+89181818181", "phone": "+2828282828", "email": "blabla@blabla" },
+	{ "fallbackIcon": "sap-icon://person-placeholder", "name": "Simon Jason", "tooltip": "8", "jobPosition": "Visual Designer", "mobile": "+89181818181", "phone": "+2828282828", "email": "blabla@blabla" },
+	{ "initials": "JS", "name": "Jason Swan", "jobPosition": "Software Developer", "tooltip": "9", "mobile": "+89181818181", "phone": "+2828282828", "email": "blabla@blabla" },
+	{ "initials": "JC", "name": "John Carter", "jobPosition": "Marketing Manager", "tooltip": "10", "mobile": "+89181818181", "phone": "+2828282828", "email": "blabla@blabla" },
+	{ "src": "./test-resources/sap/f/images/Woman_avatar_02.png", "name": "Whitney Parker", "tooltip": "11", "jobPosition": "Visual Designer", "mobile": "+89181818181", "phone": "+2828282828", "email": "blabla@blabla" },
+	{ "fallbackIcon": "sap-icon://person-placeholder", "name": "Jason Goldwell", "tooltip": "12", "jobPosition": "Software Developer", "mobile": "+89181818181", "phone": "+2828282828", "email": "blabla@blabla" },
+	{ "initials": "CD", "name": "Chris Doe", "jobPosition": "Marketing Manager", "tooltip": "13", "mobile": "+89181818181", "phone": "+2828282828", "email": "blabla@blabla" },
+	{ "initials": "SS", "name": "Sarah Smith", "jobPosition": "Visual Designer", "tooltip": "14", "mobile": "+89181818181", "phone": "+2828282828", "email": "blabla@blabla" },
+	{ "initials": "DC", "name": "David Copper", "jobPosition": "Software Developer", "tooltip": "15", "mobile": "+89181818181", "phone": "+2828282828", "email": "blabla@blabla" }]
+}

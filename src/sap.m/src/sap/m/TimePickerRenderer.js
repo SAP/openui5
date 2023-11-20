@@ -3,12 +3,9 @@
  */
 
 // Provides default renderer for control sap.m.TimePicker
-sap.ui.define(['sap/ui/core/Renderer', './InputBaseRenderer', 'sap/ui/core/library'],
-	function(Renderer, InputBaseRenderer, coreLibrary) {
+sap.ui.define(['sap/ui/core/Renderer', './DateTimeFieldRenderer', 'sap/ui/core/library'],
+	function(Renderer, DateTimeFieldRenderer, coreLibrary) {
 		"use strict";
-
-		// shortcut for sap.ui.core.ValueState
-		var ValueState = coreLibrary.ValueState;
 
 		/**
 		 * TimePicker renderer.
@@ -16,147 +13,91 @@ sap.ui.define(['sap/ui/core/Renderer', './InputBaseRenderer', 'sap/ui/core/libra
 		 * @author SAP SE
 		 * @namespace
 		 */
-		var TimePickerRenderer = Renderer.extend(InputBaseRenderer);
+		var TimePickerRenderer = Renderer.extend(DateTimeFieldRenderer);
+		TimePickerRenderer.apiVersion = 2;
 
 		TimePickerRenderer.CSS_CLASS = "sapMTimePicker";
-
-		var INPUT_WITH_VALUE_HELP_CLASS = "sapMInputVH",
-			VALUE_HELP_ICON_INNER_CLASS = "sapMInputValHelpInner",
-			VALUE_HELP_ICON_CLASS = "sapMInputValHelp";
 
 		/**
 		 * Adds <code>sap.m.TimePicker</code> control specific classes to the input.
 		 *
-		 * See {@link sap.m.InputBaseRenderer#addOuterClasses}.
+		 * See {@link sap.m.DateTimeFieldRenderer#addOuterClasses}.
 		 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer
 		 * @param {sap.m.TimePicker} oControl The control that should be rendered
 		 */
 		TimePickerRenderer.addOuterClasses = function(oRm, oControl) {
-			oRm.addClass(TimePickerRenderer.CSS_CLASS);
-			if (oControl.getEnabled() && oControl.getEditable()) {
-				oRm.addClass(INPUT_WITH_VALUE_HELP_CLASS); // just reuse styling of value help icon
+			oRm.class(TimePickerRenderer.CSS_CLASS);
+			if (oControl.getHideInput()) {
+				oRm.class("sapMTimePickerHiddenInput");
 			}
-		};
-
-		/**
-		 * Adds extra content to the input.
-		 *
-		 * See {@link sap.m.InputBaseRenderer#writeDecorations}.
-		 * @override
-		 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer
-		 * @param {sap.m.TimePicker} oControl The control that should be rendered
-		 */
-		TimePickerRenderer.writeDecorations = function(oRm, oControl) {
-			var aClasses,
-				mAttributes,
-				oRb = oControl._oResourceBundle,
-				sText = oRb.getText("TIMEPICKER_SCREENREADER_TAG");
-
-			if (oControl.getEnabled() && oControl.getEditable()) {
-				aClasses = [VALUE_HELP_ICON_INNER_CLASS];
-				mAttributes = {};
-				mAttributes.id = oControl.getId() + "-icon";
-				mAttributes.tabindex = "-1"; // to get focus events on it, needed for popup autoclose handling
-				mAttributes.title = null;
-
-				oRm.write('<div class="' + VALUE_HELP_ICON_CLASS + '">');
-				oRm.writeIcon("sap-icon://time-entry-request", aClasses, mAttributes);
-				oRm.write("</div>");
-			}
-
-			// invisible span with custom role
-			oRm.write('<span id="' + oControl.getId() + '-descr" style="visibility: hidden; display: none;">');
-			oRm.writeEscaped(sText);
-			oRm.write('</span>');
+			DateTimeFieldRenderer.addOuterClasses.apply(this, arguments);
 		};
 
 		/**
 		 * Writes the value of the input.
 		 *
-		 * See {@link sap.m.InputBaseRenderer#writeInnerValue}.
+		 * See {@link sap.m.DateTimeFieldRenderer#writeInnerValue}.
 		 * @override
 		 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer
 		 * @param {sap.m.TimePicker} oControl An object representation of the control that should be rendered
 		 */
 		TimePickerRenderer.writeInnerValue = function(oRm, oControl) {
-			oRm.writeAttributeEscaped("value", oControl._formatValue(oControl.getDateValue()));
+			if (oControl._inPreferredUserInteraction()) {
+				oRm.attr("value", oControl._$input.val());
+			} else {
+				oRm.attr("value", oControl._formatValue(oControl.getDateValue()));
+			}
 		};
 
 		/**
-		 * Write the id of the inner input
+		 * Returns the inner aria labelledby announcement texts for the accessibility.
 		 *
-		 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer.
-		 * @param {sap.ui.core.Control} oControl An object representation of the control that should be rendered.
+		 * @overrides sap.m.DateTimeFieldRenderer.getLabelledByAnnouncement
+		 * @param {sap.m.TimePicker} oControl an object representation of the control.
+		 * @returns {string}
 		 */
-		TimePickerRenderer.writeInnerId = function(oRm, oControl) {
-			oRm.writeAttribute("id", oControl.getId() + "-" + this.getInnerSuffix());
+		TimePickerRenderer.getLabelledByAnnouncement = function(oControl) {
+			// In the TimePicker we need to render the placeholder should be placed as
+			// hidden aria labelledby node for the accessibility
+			return oControl._getPlaceholder() || "";
 		};
 
 		/**
-		 * Define own inner ID suffix.
-		 * @returns {string} The own inner ID suffix
-		 */
-		TimePickerRenderer.getInnerSuffix = function() {
-			return "inner";
-		};
-
-		/**
-		 * Returns aria accessibility role for the control.
-		 *
-		 * @override
-		 * @returns {String}
-		 */
-		TimePickerRenderer.getAriaRole = function () {
-			return "combobox";
-		};
-
-		/**
-		 * Writes the accessibility properties for the control.
+		 * Collects the accessibility properties for the control.
 		 *
 		 * See {@link sap.m.InputBase#getAccessibilityState}.
 		 * @override
-		 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer
-		 * @param {sap.m.TimePicker} oControl An object representation of the control that should be rendered
+		 * @param {sap.m.TimePicker} oControl THe time picker control
 		 */
 		TimePickerRenderer.getAccessibilityState = function (oControl) {
-			var sAriaLabelledBy = this.getAriaLabelledBy(oControl),
-				sAriaDescribedBy = this.getAriaDescribedBy(oControl),
-				mAccessibilityState = oControl.getAccessibilityInfo();
+			var mAccessibilityState = DateTimeFieldRenderer.getAccessibilityState.apply(this, arguments);
 
-			if (oControl.getValueState() === ValueState.Error) {
-				mAccessibilityState.invalid = true;
+			mAccessibilityState["roledescription"] = oControl._oResourceBundle.getText("ACC_CTR_TYPE_TIMEINPUT");
+			if (oControl.getEditable() && oControl.getEnabled()) {
+				mAccessibilityState["haspopup"] = coreLibrary.aria.HasPopup.Dialog.toLowerCase();
 			}
-
-			if (sAriaLabelledBy) {
-				mAccessibilityState.labelledby = {
-					value: sAriaLabelledBy.trim(),
-					append: true
-				};
-			}
-
-			if (sAriaDescribedBy) {
-				mAccessibilityState.describedby = {
-					value: sAriaDescribedBy.trim(),
-					append: true
-				};
+			mAccessibilityState["disabled"] = null; // aria-disabled not needed if there's already a native 'disabled' attribute
+			if (oControl._isMobileDevice()) {
+				mAccessibilityState["describedby"] = oControl._oResourceBundle.getText("ACC_CTR_TYPE_TIMEINPUT_MOBILE_DESCRIBEDBY");
 			}
 
 			return mAccessibilityState;
 		};
 
 		/**
-		 * Returns the inner aria describedby ids for the accessibility.
+		 * add extra attributes to TimePicker's Input
 		 *
-		 * @override
-		 * @param {sap.ui.core.Control} oControl an object representation of the control.
-		 * @returns {String}
+		 * @overrides sap.m.DateTimeFieldRenderer.writeInnerAttributes
+		 * @param {sap.ui.core.RenderManager} oRm the RenderManager that can be used for writing to the render output buffer
+		 * @param {sap.m.TimePicker} oControl an object representation of the control that should be rendered
 		 */
-		TimePickerRenderer.getAriaDescribedBy = function (oControl) {
-			var oCustomRoleHiddenTextId = oControl.getId() + "-descr ";
-			if (this.getDescribedByAnnouncement(oControl)) {
-				oCustomRoleHiddenTextId += oControl.getId() + "-describedby";
+		TimePickerRenderer.writeInnerAttributes = function (oRm, oControl) {
+			if (oControl._isMobileDevice()) {
+				oRm.attr("readonly", "readonly"); // readonly for mobile devices
 			}
-			return oCustomRoleHiddenTextId;
+			if (oControl.getShowValueStateMessage()) {
+				oRm.attr("autocomplete", "off"); // autocomplete="off" needed so the native browser autocomplete is not shown?
+			}
 		};
 
 		return TimePickerRenderer;

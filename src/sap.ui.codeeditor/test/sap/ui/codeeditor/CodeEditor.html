@@ -1,24 +1,25 @@
 <!DOCTYPE HTML>
 <html>
 <head>
-<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 <meta charset="UTF-8">
-
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Testpage - sap.ui.codeeditor.Example</title>
 
-<base href="../../../../">
-
 <script id="sap-ui-bootstrap"
+	src="../../../../resources/sap-ui-core.js"
 	data-sap-ui-libs="sap.m, sap.ui.codeeditor"
-	data-sap-ui-theme="sap_bluecrystal"
-	src="resources/sap-ui-core.js">
+	data-sap-ui-theme="sap_horizon"
+	data-sap-ui-async="true"
+	data-sap-ui-oninit="module:test/codeeditor/index"
+	data-sap-ui-resourceroots='{
+		"test.codeeditor": "./"
+	}'>
 </script>
 
-<script id="code" type="text/plain" >
+<script id="htmlSample" type="text/plain" >
 <!DOCTYPE html>
 <html>
 	<head>
-		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 		<meta charset="utf-8">
 		<title>Hello World App</title>
 		<script
@@ -69,85 +70,47 @@
 	</body>
 </html>
 </script>
-
-<script>
-	var codeEditor;
-	sap.ui.getCore().attachInit(function() {
-		codeEditor = new sap.ui.codeeditor.CodeEditor({
-			type: "html",
-			value: jQuery("#code").html().trim().replace(/&sol;/g, "/"), // Handling escaped closing script tag sol
-			height: "auto",
-			maxLines: 70
-		});
-
-		new sap.m.App({
-			pages: [
-				new sap.m.Page({
-					title: "Code Editor",
-					content: [
-						new sap.m.Label({text: "Hello World App"}),
-						codeEditor,
-						new sap.m.Button({text: "Save"})
-					]
-				})
-			]
-		}).placeAt("content");
-
-		codeEditor.addCustomCompleter({
-			getCompletions: function (callback, context) {
-				// callback is provided to us by ACE so we can execute it in a way like
-				// below in order to display suggestions to the user
-
-				// ideally, the array argument, provided to the following method call,
-				// will be dynamically generated based on the content of the context
-				// object
-
-				// let's assume the context contained an sPrefix equal to 'read', which
-				// means the cursor in ACE is at the end of a 'read' word
-
-				// by executing the following call, we can show a list of suggestions
-				// like that: readFile, readStream, readResponse 
-				callback(null, [
-					{
-						// name is not displayed on the screen
-						name: "readFile",
-						// value is displayed on the screen
-						value: "readFile()",
-						// score determines which suggestion goes first
-						score: "1",
-						// meta is short info displayed on the right of value
-						meta: "function"
-					},
-					{
-						// name is not displayed on the screen
-						name: "readStream",
-						// value is displayed on the screen
-						value: "readStream(input)",
-						// score determines which suggestion goes first
-						score: "3",
-						// meta is short info displayed on the right of value
-						meta: "params: input"
-					},
-					{
-						// name is not displayed on the screen
-						name: "readStream",
-						// value is displayed on the screen
-						value: "readStream(input, encoding)",
-						// score determines which suggestion goes first
-						score: "2",
-						// meta is short info displayed on the right of value
-						meta: "params: input, encoding"
-					}
-				])
-
-			}
-		});
-
-	});
-
+<script id="javascriptSample" type="text/plain">
+function myFunction () {
+	var myVar = 5;
+	var myVarNoSemicolon = 6
+}
 </script>
+<script id="cssSample" type="text/plain">
+.someClass {
+	box-sizing: border-box;
+	border: "invalid";
+}
+</script>
+<script id="xquerySample" type="text/plain">
+for $x in doc("books.xml")/bookstore/book
+where $x/price>30
+order by $x/title
+return $x/title
+</script>
+
+<script id="coffeeSample" type="text/plain">
+# Conditions:
+number = -42 if opposite
+
+# Functions:
+square = (x) -> x * x
+
+# Arrays:
+list = [1, 2, 3, 4, 5]
+
+# Objects:
+math =
+	root:   Math.sqrt
+	square: square
+	cube:   (x) -> x * square x
+</script>
+
+<script id="plainText" type="text/plain">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis elementum purus vel pretium mattis. Donec accumsan nisi at quam accumsan, ut porta tortor faucibus. Etiam rutrum odio luctus, feugiat elit vel, sagittis sem. Pellentesque viverra semper justo a lacinia. Fusce eu lacus est. Sed et bibendum magna. Maecenas id convallis magna. Nulla cursus quam eros, eget egestas ligula laoreet vitae. Aenean interdum enim tellus, bibendum porttitor odio auctor a. Fusce nec tristique turpis. Nullam quis sagittis justo. Nam elementum nunc nisi, sed tempor lorem hendrerit non. Phasellus placerat viverra felis, sit amet dictum neque sodales at. Proin ut risus ut magna auctor sollicitudin. Nullam tempus massa diam, in scelerisque justo aliquam ut.
+
+Aliquam finibus vestibulum orci. In egestas aliquam sodales. Nulla convallis imperdiet pharetra. Cras convallis convallis sem. Phasellus ex orci, lacinia sed turpis et, porta consectetur urna. Suspendisse id purus massa. Nullam gravida, neque vel condimentum mollis, est purus interdum augue, at placerat augue erat ac magna. Nam mattis diam lectus, a aliquam sem eleifend quis. Morbi eu tincidunt tellus. Praesent fermentum est sit amet consequat tempus.</script>
+
 </head>
 <body id="body" class="sapUiBody">
-	<div id="content"></div>
 </body>
 </html>

@@ -1,0 +1,114 @@
+{
+  "1.64.0": {
+    "date": "March 2019",
+    "notes": [
+      {
+        "id": "16bbab7451d4b2ecf98ed94f4b8cf1cd1eb2e6c8",
+        "type": "FIX",
+        "text": "sap.f.Avatar: Displaying transparent image is now correct",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970178419"
+          }
+        ]
+      },
+      {
+        "id": "f318f01c37b47ce83d9eab2cd86325f86ca58331",
+        "type": "FIX",
+        "text": "sap.f.Avatar: Failing QUnit on IE is fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980015035"
+          }
+        ]
+      },
+      {
+        "id": "edc86fd5eea34e1be28730610ed1015a358f9be8",
+        "type": "FIX",
+        "text": "sap.f.DynamicPage: Corrected expand visibility on resize",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970175646"
+          }
+        ]
+      },
+      {
+        "id": "7af07ad3a50d3c158143dec948756d9ad57371f5",
+        "type": "FIX",
+        "text": "sap.f.FlexibleColumnLayout: Fixed column resizing on layout change",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970178100"
+          }
+        ]
+      },
+      {
+        "id": "5e84afc81a451c0390c84b28324a75a6052fbdff",
+        "type": "FEATURE",
+        "text": "sap.uxap.ObjectPageDynamicHeaderTitle: Single-line title on phone",
+        "references": []
+      },
+      {
+        "id": "ca579aa058712ec98ff970aa0099948b02e91279",
+        "type": "FEATURE",
+        "text": "sap.f.DynamicPageTitle: snapped/expanded content redesign",
+        "references": []
+      },
+      {
+        "id": "3588421dec14c9d97eec0cea4931e6df8ca43912",
+        "type": "FEATURE",
+        "text": "sap.f.ShellBar: Accessibility enablement",
+        "references": []
+      },
+      {
+        "id": "47fbc9bc4c59ccafd21c46e11bad7b6235f96f17",
+        "type": "FEATURE",
+        "text": "sap.f.ShellBar: Created notifications badge element",
+        "references": []
+      },
+      {
+        "id": "c41c4affdd52c29076e6830ffd7f2773a88af4cd",
+        "type": "FEATURE",
+        "text": "sap.ui.layout.cssgrid.CSSGrid: Enable CSSGrid for drop configuration",
+        "references": []
+      },
+      {
+        "id": "b08c8d120c8c88b7a656e00f0c8f1c529a19da9a",
+        "type": "FIX",
+        "text": "sap.f.DynamicPageTitle: Improved keyboard handling",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980029214"
+          }
+        ]
+      },
+      {
+        "id": "0ff71e8acc208f8ffe1d4f666c5115539e2a062f",
+        "type": "FIX",
+        "text": "sap.f.FlexibleColumnLayout: Fixed focus in hidden columns",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980006195"
+          }
+        ]
+      },
+      {
+        "id": "3caba82c6a289fc546de57b382aa5e60da5438a0",
+        "type": "FIX",
+        "text": "sap.f.FlexibleColumnLayout: Fixed fullscreen button in end column",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980052686"
+          }
+        ]
+      }
+    ]
+  }
+}

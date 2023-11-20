@@ -1,0 +1,49 @@
+<mvc:View
+		controllerName="sap.f.cardsdemo.controller.TimelineContent"
+		xmlns="sap.m"
+		xmlns:mvc="sap.ui.core.mvc"
+		xmlns:w="sap.ui.integration.widgets"
+		displayBlock="true">
+
+	<Page title="{i18n>appTitle}">
+
+		<subHeader>
+			<Toolbar>
+				<ToolbarSpacer/>
+				<Title text="Timeline Content Card "/>
+				<ToolbarSpacer/>
+			</Toolbar>
+		</subHeader>
+
+		<content>
+			<mvc:View viewName="sap.f.cardsdemo.view.common.CommonCardSettings" type="XML" async="true"></mvc:View>
+			<Panel>
+				<VBox>
+					<HBox>
+						<w:Card id="timeline"
+								class="sapUiMediumMargin"
+								manifest="{manifests>/timelineContent/card0}"
+								baseUrl="{cardsPlayground>/playgroundBaseUrl}"
+								width="300px"
+								height="auto"
+								action=".onAction" />
+						<w:Card id="timeline1"
+								class="sapUiMediumMargin"
+								manifest="{manifests>/timelineContent/card1}"
+								baseUrl="{cardsPlayground>/playgroundBaseUrl}"
+								width="300px"
+								height="auto"
+								action=".onAction" />
+						<w:Card id="timeline2"
+								class="sapUiMediumMargin"
+								manifest="{manifests>/timelineContent/card2}"
+								baseUrl="{cardsPlayground>/playgroundBaseUrl}"
+								width="300px"
+								height="auto"
+								action=".onAction" />
+					</HBox>
+				</VBox>
+			</Panel>
+		</content>
+	</Page>
+</mvc:View>

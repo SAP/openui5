@@ -1,0 +1,58 @@
+<core:FragmentDefinition
+	xmlns:cards="sap.f.cards"
+	xmlns:core="sap.ui.core"
+	xmlns="sap.m"
+	xmlns:cssgrid="sap.ui.layout.cssgrid"
+	xmlns:f="sap.f"
+	xmlns:widgets="sap.ui.integration.widgets">
+	<VBox renderType="Bare">
+		<layoutData>
+			<cssgrid:ResponsiveColumnItemLayoutData columns="{home>/layout/group1/columns/current}" />
+		</layoutData>
+		<Title text="Recently Used" titleStyle="H4" class="sapUiSmallMarginBottom sapUiLargeMarginTop" />
+		<f:GridContainer id="group1" columnsChange=".onColumnsChange">
+			<f:layout>
+				<f:GridContainerSettings rowSize="4rem" columnSize="4rem" />
+			</f:layout>
+			<f:Card id="applicationsCard" height="100%">
+				<f:layoutData>
+					<f:GridContainerItemLayoutData columns="4" minRows="6"/>
+				</f:layoutData>
+				<f:header>
+					<cards:Header title="Applications"/>
+				</f:header>
+				<f:content>
+					<List showSeparators="None">
+						<StandardListItem title="RUUM" description="2 Issues Detected" highlight="Warning"/>
+						<StandardListItem title="My Inbox" description="Has 3 new Messages"/>
+						<StandardListItem title="Guided Buying" description="Last used: Yesterday"/>
+						<StandardListItem title="Extension App" description="Sample Cloud Platform Application"/>
+						<StandardListItem title="Demo Kit" description="Demo Instance"/>
+					</List>
+				</f:content>
+			</f:Card>
+			<widgets:Card id="usersCard" height="100%">
+				<widgets:layoutData>
+					<f:GridContainerItemLayoutData columns="4" minRows="6"/>
+				</widgets:layoutData>
+			</widgets:Card>
+			<f:Card id="upfCard" height="100%">
+				<f:layoutData>
+					<f:GridContainerItemLayoutData columns="4" minRows="6"/>
+				</f:layoutData>
+				<f:header>
+					<cards:Header title="User Provisioning Flows"/>
+				</f:header>
+				<f:content>
+					<List showSeparators="None">
+						<StandardListItem title="Employee Onboarding" description="SAP Success Factors"/>
+						<StandardListItem title="Cloud Storе Access" description="SAP Success Factors"/>
+						<StandardListItem title="External JAM Users" description="SAP Audit Log"/>
+						<StandardListItem title="Active Directory into IAS" description="My Inbox"/>
+						<StandardListItem title="Flow Name" description="SAP Success Factors" highlight="Error"/>
+					</List>
+				</f:content>
+			</f:Card>
+		</f:GridContainer>
+	</VBox>
+</core:FragmentDefinition>

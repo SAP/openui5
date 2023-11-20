@@ -1,0 +1,29 @@
+{
+  "1.78.0": {
+    "date": "April 2020",
+    "notes": [
+      {
+        "id": "26d59b54863cac9efbdc3e9d78fe20bc1f885605",
+        "type": "FIX",
+        "text": " TreeBindingAdapter: Fix getSelectedIndex return value if node can\u0027t be found",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070052448"
+          }
+        ]
+      },
+      {
+        "id": "b9a3be936001639523924ad535684df2fee52736",
+        "type": "FIX",
+        "text": " TreeTable: Fix single selection if collapseRecursive is false",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070052448"
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,74 @@
+{
+  "1.67.0": {
+    "date": "May 2019",
+    "notes": [
+      {
+        "id": "1876f5de62f1727724a49dc6c04b1c1ffb88ca38",
+        "type": "FIX",
+        "text": "Field fragment refers incorrectly to itself.",
+        "references": []
+      },
+      {
+        "id": "faa5fbb78e35efdad7a1d9fe89e7d0a064e12e64",
+        "type": "FIX",
+        "text": "FieldValueHelp: In-Parameters not used",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980246173"
+          }
+        ]
+      },
+      {
+        "id": "53ea802cfa5bd055593ae011622ef0a002ed1792",
+        "type": "FIX",
+        "text": "MDC Link: Cross app navigation not working",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970177679"
+          }
+        ]
+      },
+      {
+        "id": "adc80f2408eccdebaa3adf6923dbe82e6a01ed53",
+        "type": "FIX",
+        "text": "ODataV4Field: Flexibility shall not prove for local Id",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980232382"
+          }
+        ]
+      },
+      {
+        "id": "ae17ada3c4358e488fff0e21f0c2dd8aaf2a7a1b",
+        "type": "FIX",
+        "text": "Field: allow linebreaks in multiline field",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980282068"
+          }
+        ]
+      },
+      {
+        "id": "7e3f3a0c2741563ae48131af860a990b6ae57130",
+        "type": "FIX",
+        "text": "MDCLink: Wrong cross-app navigation call",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970177679"
+          }
+        ]
+      },
+      {
+        "id": "bd79ca6517c018435da72ee1c083f8e85dfec75e",
+        "type": "FEATURE",
+        "text": "Text alternative to Rating and Progress Indicator",
+        "references": []
+      }
+    ]
+  }
+}

@@ -1,0 +1,27 @@
+/* ===================================== */
+/* CSS for control sap.uxap/BreadCrumbs  */
+/* Horizon High Contrast Black theme     */
+/* ===================================== */
+
+.sapMBreadcrumbs {
+
+	.sapMBreadcrumbsCurrentLocation:focus {
+		outline: 0.125rem dotted @sapUiHcStandardForeground;
+		outline-offset: -0.125rem;
+	}
+
+	.sapMBreadcrumbsItem.sapMBreadcrumbsSelectItem > 
+	.sapMSlt.sapMSltIconOnly.sapMSltWithIcon.sapMSltHoverable.sapMSltWithArrow {
+
+		.sapMSltIcon:before {
+			border-bottom: 0.0625rem solid @sapUiLink;
+		}
+
+		&:focus,
+		&:hover {
+			.sapMSltIcon:before {
+				border-bottom: none;
+			}
+		}
+	}
+}

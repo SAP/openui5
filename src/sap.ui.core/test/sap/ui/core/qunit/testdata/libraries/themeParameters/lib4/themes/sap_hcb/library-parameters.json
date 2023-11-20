@@ -1,0 +1,15 @@
+{
+	"default": {
+		"sapUiThemeParamUrl1": "url(../../img1.jpg)",
+		"sapUiThemeParamUrl2": "url('../../foo/img2.jpg')",
+		"sapUiThemeParamUrl3": "url(\"../../foo/bar/img3.jpg\")",
+		"sapUiThemeParamUrl4": "url()",
+		"sapUiThemeParamUrl5": "url('')",
+		"sapUiThemeParamUrl6": "url(\"\")",
+		"sapUiThemeParamUrl7": "url('blob:http://example.com/6e88648c-00e1-4512-9695-5b702d8455b4')",
+		"sapUiThemeParamUrl8": "url('data:text/plain;utf-8,foo')",
+		"sapUiThemeParamUrl9": "none"
+	},
+	"scopes": {
+	}
+}

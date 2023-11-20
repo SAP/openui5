@@ -1,0 +1,44 @@
+/******************************************************************
+	Style of the DT Overlays - Horizon Theme
+*******************************************************************/
+@_sap_ui_dt_Overlay_SelectionColor: @sapUiSelected; //	#0070f2
+@_sap_ui_dt_Overlay_BorderRadius: @sapUiButtonBorderCornerRadius; // 0.5rem
+@_sap_ui_dt_Overlay_BoxShadow: @sapUiUx3ToolPopupShadow; // 0 6px 12px 0 rgba(85,107,130,0.3)
+@_sap_ui_dt_Overlay_ActiveBG: fade(@sapUiNeutralElement, 10%); // rgba(120, 143, 166, 0.1)
+@_sap_ui_dt_Overlay_CuttedBorder: @sapUiNeutralBorder; //#788fa6
+@_sap_ui_dt_Overlay_CuttedColor: @sapUiListSelectionBackgroundColor; //#ebf8ff
+
+.sapUiDtOverlayFocusable {
+	&:focus {
+		&:before {
+			border-radius: @_sap_ui_dt_Overlay_BorderRadius;
+			outline: 0.0625rem dotted @_sap_ui_dt_Overlay_FocusColor;
+			border: none;
+			outline-offset: -0.125rem;
+		}
+	}
+}
+
+.sapUiDtOverlaySelected {
+	box-shadow: none !important;
+
+	&:after {
+		border-radius: @_sap_ui_dt_Overlay_BorderRadius;
+		transition: box-shadow 0.25s;
+		box-shadow: @_sap_ui_dt_Overlay_BoxShadow;
+	}
+}
+
+.sapUiDtOverlayTargetZone {
+	&:after {
+		border-radius: @_sap_ui_dt_Overlay_BorderRadius;
+	}
+}
+
+.sapUiDtOverlayCutted {
+	opacity: 0.7;
+
+	&:after {
+		border-radius: @_sap_ui_dt_Overlay_BorderRadius;
+	}
+}

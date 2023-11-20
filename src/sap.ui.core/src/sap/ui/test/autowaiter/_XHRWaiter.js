@@ -5,14 +5,23 @@
 /*global XMLHttpRequest */
 sap.ui.define([
 	"sap/ui/thirdparty/sinon",
-	"sap/ui/test/_OpaLogger",
-	"sap/ui/test/autowaiter/_utils"
-], function (sinon, _OpaLogger, _utils) {
+	"sap/ui/test/autowaiter/_utils",
+	"./WaiterBase"
+], function (sinon, _utils, WaiterBase) {
 	"use strict";
 
-	var oLogger = _OpaLogger.getLogger("sap.ui.test.autowaiter._XHRWaiter");
-	var oHasPendingLogger = _OpaLogger.getLogger("sap.ui.test.autowaiter._XHRWaiter#hasPending");
 	var aXHRs = [];
+
+	var XHRWaiter = WaiterBase.extend("sap.ui.test.autowaiter._XHRWaiter", {
+		hasPending: function () {
+			var bHasPendingRequests = aXHRs.length > 0;
+			if (bHasPendingRequests) {
+				logPendingRequests();
+			}
+			return bHasPendingRequests;
+		}
+	});
+	var oXHRWaiter = new XHRWaiter();
 
 	// restore seems to be a new function everytime you call useFakeXmlHttpRequest so hook it everytime
 	var fnUseFakeOriginal = sinon.useFakeXMLHttpRequest;
@@ -38,6 +47,18 @@ sap.ui.define([
 	// Check if sinon is already faking the Xhr
 	hookIntoSinonRestore();
 
+	// Hook into XHR open for sinon XHRs
+	var fnOriginalFakeOpen = sinon.FakeXMLHttpRequest.prototype.open;
+	sinon.FakeXMLHttpRequest.prototype.open = function () {
+		return fnOriginalFakeOpen.apply(this, hookIntoXHROpen.apply(this, arguments));
+	};
+
+	// Hook into XHR open for regular XHRs
+	var fnOriginalOpen = XMLHttpRequest.prototype.open;
+	XMLHttpRequest.prototype.open = function () {
+		return fnOriginalOpen.apply(this, hookIntoXHROpen.apply(this, arguments));
+	};
+
 	// Hook into Xhr send for sinon Xhrs
 	var fnOriginalFakeSend = sinon.FakeXMLHttpRequest.prototype.send;
 	sinon.FakeXMLHttpRequest.prototype.send = function () {
@@ -52,33 +73,57 @@ sap.ui.define([
 		return fnOriginalSend.apply(this, arguments);
 	};
 
-	function hookIntoXHRSend(bIsFake) {
-		var sXHRType = bIsFake ? "FakeXHR" : "XHR";
-		var oNewPendingXHRInfo = {url: this.url, method: this.method, fake: bIsFake, trace: _utils.resolveStackTrace()};
-		var oNewPendingXHRLog = createLogForSingleRequest(oNewPendingXHRInfo);
+	function hookIntoXHROpen(sMethod, sUrl, bAsync) {
+		var sIgnoreTag = "XHR_WAITER_IGNORE:";
 
-		aXHRs.push(oNewPendingXHRInfo);
-		oLogger.trace("New pending " + sXHRType + ":" + oNewPendingXHRLog);
+		// attach arguments to XHR object
+		this.url = sUrl;
+		this.method = sMethod;
+		this.async = bAsync;
 
-		this.addEventListener("readystatechange", function() {
-			if (this.readyState === 4) {
-				aXHRs.splice(aXHRs.indexOf(oNewPendingXHRInfo), 1);
-				oLogger.trace(sXHRType + " finished:" + oNewPendingXHRLog);
-			}
-		});
+		// mark OPA XHRs 'ignored'
+		if (sMethod.startsWith(sIgnoreTag)) {
+			var sMethodWithoutTag = sMethod.substring(sIgnoreTag.length);
+			arguments[0] = sMethodWithoutTag;
+			this.method = sMethodWithoutTag;
+			this.ignored = true;
+		}
+
+		return arguments;
 	}
 
-	// Hook into Xhr open to get the url and method
-	var fnOriginalOpen = XMLHttpRequest.prototype.open;
-	XMLHttpRequest.prototype.open = function (sMethod, sUrl) {
-		this.method = sMethod;
-		this.url = sUrl;
-		return fnOriginalOpen.apply(this, arguments);
-	};
+	function hookIntoXHRSend(bIsFake) {
+		if (this.ignored) {
+			return;
+		}
+
+		var oNewPendingXHRInfo = {
+			url: this.url,
+			method: this.method,
+			async: this.async,
+			fake: bIsFake,
+			trace: _utils.resolveStackTrace()
+		};
+		var oNewPendingXHRLog = createLogForSingleRequest(oNewPendingXHRInfo);
+
+		if (this.async) {
+			aXHRs.push(oNewPendingXHRInfo);
+			oXHRWaiter._oLogger.trace("New pending:" + oNewPendingXHRLog);
+
+			this.addEventListener("readystatechange", function() {
+				if (this.readyState === 4) {
+					aXHRs.splice(aXHRs.indexOf(oNewPendingXHRInfo), 1);
+					oXHRWaiter._oLogger.trace("Finished:" + oNewPendingXHRLog);
+				}
+			});
+		} else {
+			oXHRWaiter._oLogger.trace("Finished:" + oNewPendingXHRLog);
+		}
+	}
 
 	function createLogForSingleRequest (oXHR) {
 		var sMessage = oXHR.fake ? "\nFakeXHR: " : "\nXHR: ";
-		sMessage += "URL: '" + oXHR.url + "' Method: '" + oXHR.method + "'\nStack: " + oXHR.trace;
+		sMessage += "URL: '" + oXHR.url + "' Method: '" + oXHR.method + "' Async: '" + oXHR.async + "'\nStack: " + oXHR.trace;
 		return sMessage;
 	}
 
@@ -89,7 +134,7 @@ sap.ui.define([
 			sLogMessage += createLogForSingleRequest(oXHR);
 		});
 
-		oHasPendingLogger.debug(sLogMessage);
+		oXHRWaiter._oHasPendingLogger.debug(sLogMessage);
 	}
 
 	function filterFakeXHRs(bIsFake) {
@@ -98,13 +143,5 @@ sap.ui.define([
 		});
 	}
 
-	return {
-		hasPending: function () {
-			var bHasPendingRequests = aXHRs.length > 0;
-			if (bHasPendingRequests) {
-				logPendingRequests();
-			}
-			return bHasPendingRequests;
-		}
-	};
+	return oXHRWaiter;
 }, true);

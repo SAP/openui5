@@ -1,0 +1,76 @@
+/* ====================================== */
+/* CSS for control sap.m/RatingIndicator  */
+/* Evening Horizon theme                  */
+/* ====================================== */
+
+.sapMRI {
+	& {
+		margin: 0.75rem 0;
+	}
+
+	&:not(.sapMRIDisabled):not(.sapMRIDisplayOnly):not(.sapMRIReadOnly):hover {
+		opacity: 0.9;
+	}
+
+	.sapMRIUnsel {
+		color: @sapContent_UnratedColor;
+	}
+
+	.sapMRISel {
+		color: @sapContent_RatedColor;
+	}
+}
+
+.sapMRI.sapMRIDisplayOnly,
+.sapMRI.sapMRIReadOnly {
+	.sapMRIIconSel {
+		color: @sapContent_RatedColor;
+	}
+	.sapMRIUnsel {
+		color: @sapContent_UnratedColor;
+	}
+}
+
+.sapMRIDisabled {
+	opacity: 0.4;
+}
+
+/* Custom focus outline */
+html.sap-desktop .sapMRI:focus:not(.sapMRIDisabled):not(.sapMRIDisplayOnly){
+	border-radius: 0.25rem;
+	outline: @sapContent_FocusWidth @sapContent_FocusStyle @sapContent_FocusColor;
+	outline-offset: 0.125rem;
+}
+
+.sapMRIIconSel, .sapMRIIconUnsel, .sapMRIIconHov, .sapMRIIconReadOnly {
+	font-size: 1.5rem;
+}
+
+.sapMRIIconSel, .sapMRIIconUnsel {
+	text-shadow: @sapContent_TextShadow;
+}
+
+/* As font-size is set as an inline style, we need to override it for horizon only using important */
+.sapMRIReadOnly .sapMRIUnsel .sapMRIunratedIcon,
+.sapMRIDisplayOnly .sapMRIUnsel .sapMRIunratedIcon,
+.sapMRIDisabled .sapMRIUnsel .sapMRIunratedIcon {
+	font-size: 75% !important;
+	vertical-align: baseline;
+}
+
+.sapUiSizeCompact {
+	&.sapMRIReadOnly .sapMRIUnsel .sapMRIunratedIcon,
+	&.sapMRIReadOnly .sapMRIIconSel .sapMRIunratedIcon,
+	&.sapMRIDisplayOnly .sapMRIUnsel .sapMRIunratedIcon,
+	&.sapMRIDisplayOnly .sapMRIIconSel .sapMRIunratedIcon,
+	&.sapMRIDisabled .sapMRIUnsel .sapMRIunratedIcon,
+	&.sapMRIDisabled .sapMRIIconSel .sapMRIunratedIcon {
+		font-size: 75% !important;
+		vertical-align: baseline;
+	}
+
+	& .sapMRISel,
+	& .sapMRIUnselWrapper {
+		height: 100%;
+	}
+}

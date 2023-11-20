@@ -1,0 +1,27 @@
+{
+	"@odata.etag" : "W/\"20160619220000.0000000\"",
+	"ChangedAt" : "2016-06-26T22:00:00.000000Z",
+	"CreatedAt" : "2016-06-26T22:00:00.000000Z",
+	"LifecycleStatus" : "N",
+	"LifecycleStatusDesc" : "New",
+	"Note" : "new 3",
+	"SalesOrderID" : "NEW3",
+	"SO_2_BP" : {
+		"@odata.etag" : "W/\"20160613143341.1548870\"",
+		"BusinessPartnerID" : "0100000000",
+		"CompanyName" : "SAP",
+		"PhoneNumber" : "0622734567",
+		"Address" : {
+			"City" : "St. Ingbert",
+			"PostalCode" : "66386",
+			"Street" : "Dietmar-Hopp-Allee",
+			"Building" : "16",
+			"Country" : "DE",
+			"AddressType" : "02",
+			"GeoLocation" : {
+				"Longitude" : "8.641701933686",
+				"Latitude" : "49.293673600000"
+			}
+		}
+	}
+}

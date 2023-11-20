@@ -1,0 +1,55 @@
+/* =========================================== */
+/* CSS for control sap.f/FlexibleColumnLayout  */
+/* Quartz High Contrast White theme            */
+/* =========================================== */
+
+// Cozy mode
+.sapFFCL > {
+	& > .sapFFCLColumnMid.sapFFCLColumnActive {
+		border-left: 1px solid @sapUiGroupContentBorderColor;
+		border-right: 1px solid @sapUiGroupContentBorderColor;
+	}
+
+	& > .sapFFCLColumnActive.sapFFCLColumnLastActive {
+		border-right: none;
+		border-left: 1px solid @sapUiGroupContentBorderColor;
+	}
+
+	& > .sapFFCLColumnActive.sapFFCLColumnFirstActive {
+		border-right: 1px solid @sapUiGroupContentBorderColor;
+		border-left: none;
+	}
+
+	& > .sapFFCLColumnActive.sapFFCLColumnOnlyActive {
+		border-right: none;
+		border-left: none;
+	}
+
+	&.sapFFCLBackgroundDesign {
+		background: @sapUiBaseBG;
+	}
+}
+
+.sapFFCL {
+	.sapFFCLNavigationButton {
+		.sapMBtnInner {
+			border: 1px solid @sapUiButtonBorderColor;
+
+			.sapMBtnIcon {
+				width: auto;
+			}
+		}
+		&:before,
+		&:after {
+			background-size: 0.125rem 100%;
+			background-position-x: calc(50% - 0.0625rem);
+		}
+		&:before {
+			background-image: linear-gradient(to top, @sapUiObjectHeaderBorderColor, fade(@sapUiObjectHeaderBorderColor, 0));
+		}
+
+		&:after {
+			background-image: linear-gradient(to bottom, @sapUiObjectHeaderBorderColor, fade(@sapUiObjectHeaderBorderColor, 0));
+		}
+	}
+}

@@ -3,10 +3,10 @@
 	xmlns:core="sap.ui.core"
 	xmlns:template="http://schemas.sap.com/sapui5/extension/sap.ui.core.template/1">
 
-	<template:with path="facet>Target" helper="sap.ui.model.odata.AnnotationHelper.resolvePath" var="target">
+	<template:with path="facet>Target" helper="AH.resolvePath" var="target">
 		<Table class="sapUiSmallMarginBottom"
-			headerText="{path: 'facet>Label', formatter: 'sap.ui.model.odata.AnnotationHelper.format'}"
-			items="{path: 'facet>Target', formatter: 'sap.ui.model.odata.AnnotationHelper.getNavigationPath'}">
+			headerText="{path: 'facet>Label', formatter: 'AH.format'}"
+			items="{path: 'facet>Target', formatter: 'AH.getNavigationPath'}">
 			<core:Fragment fragmentName="sap.ui.core.sample.ViewTemplate.scenario.Table" type="XML"/>
 		</Table>
 	</template:with>

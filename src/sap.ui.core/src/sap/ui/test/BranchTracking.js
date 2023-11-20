@@ -2,13 +2,20 @@
  * ${copyright}
  */
 
+/**
+ * @fileOverview Helper code for branch tracking with Blanket.js and QUnit
+ * @deprecated since 1.120.2, use sap.ui.test.ModuleTracking instead.
+ */
 (function () {
 	"use strict";
-	/*global _$blanket, blanket, falafel, QUnit */
-	/*eslint no-warning-comments: 0 */
+	/*global _$blanket, blanket, falafel, Map, QUnit */
+	/*eslint no-alert: 0, no-warning-comments: 0 */
 
 	var aFileNames = [], // maps a file's index to its name
+		rParentheses = /[()]/g,
+		oScript = getScriptTag(),
 		aStatistics = [], // maps a file's index to its "hits" array (and statistics record)
+		iThreshold,
 		rWordChar = /\w/; // a "word" (= identifier) character
 
 	/**
@@ -28,9 +35,9 @@
 	function branchTracking(iFileIndex, iBranchIndex, vCondition, iLine) {
 		if (iBranchIndex >= 0) {
 			if (vCondition) {
-				aStatistics[iFileIndex].branchTracking[iBranchIndex].truthy = true;
+				aStatistics[iFileIndex].branchTracking[iBranchIndex].truthy += 1;
 			} else {
-				aStatistics[iFileIndex].branchTracking[iBranchIndex].falsy = true;
+				aStatistics[iFileIndex].branchTracking[iBranchIndex].falsy += 1;
 			}
 		}
 
@@ -39,6 +46,22 @@
 		}
 
 		return vCondition;
+	}
+
+	/**
+	 * Returns the element's attribute as an integer.
+	 *
+	 * @param {Element} oElement The element
+	 * @param {string} sAttributeName The attribute name
+	 * @param {number} iDefault The default value
+	 * @returns {number} The attribute value or the default value if the attribute value is not a
+	 *   positive number
+	 */
+	function getAttributeAsInteger(oElement, sAttributeName, iDefault) {
+		var iValue = parseInt(oElement.getAttribute(sAttributeName));
+
+		// Note: if the value is not a number, the result is NaN which is not greater than 0
+		return iValue > 0 ? iValue : iDefault;
 	}
 
 	/**
@@ -75,100 +98,38 @@
 	 */
 	function instrument(oConfiguration, fnSuccess){
 		var bBranchTracking = blanket.options("branchTracking"),
-			bComment = false, // interested in meta comments?
-			Device,
 			iFileIndex = aFileNames.length,
 			sFileName = oConfiguration.inputFileName,
 			iNoOfOutputLines,
 			sScriptInput = oConfiguration.inputFile,
 			sScriptOutput;
 
-		if (sScriptInput.indexOf("// sap-ui-cover-browser msie") >= 0) {
-			bComment = true; // needed by isDeviceSpecificBlock(), no matter which device
-			Device = sap.ui.require("sap/ui/Device");
-			if (Device && Device.browser.msie) {
-				// no need to call isChildOfIgnoredNode()
-				Device = undefined;
-			}
-		}
 		aFileNames.push(sFileName);
 		aStatistics[iFileIndex] = _$blanket[sFileName] = []; // hits
 		if (bBranchTracking) {
 			_$blanket[sFileName].branchTracking = [];
 		}
 		_$blanket[sFileName].source = sScriptInput.split("\n");
+		_$blanket[sFileName].source.unshift(""); // line 0 does not exist!
+		_$blanket[sFileName].warnings = [];
 
 		sScriptOutput = "" + falafel(sScriptInput, {
-				attachComment : bComment,
-				comment : bComment,
+//				attachComment : true, // interesting for meta comments!
+//				comment : true,
 				loc : true,
 				range : true,
 				source : sScriptInput // is simply attached to each Location
 //				tokens : false,
 //				tolerant : false
-			}, visit.bind(null, bBranchTracking, iFileIndex, Device));
+			}, visit.bind(null, bBranchTracking, iFileIndex));
 
-		iNoOfOutputLines = sScriptOutput.split("\n").length;
+		iNoOfOutputLines = sScriptOutput.split("\n").length + 1; // account for line 0 here as well
 		if (iNoOfOutputLines !== _$blanket[sFileName].source.length) {
-			jQuery.sap.log.warning("Line length mismatch! " + _$blanket[sFileName].source.length
-				+ " vs. " + iNoOfOutputLines, sFileName, "sap.ui.test.BranchTracking");
+			warn(sFileName, "Line length mismatch! " + _$blanket[sFileName].source.length + " vs. "
+				+ iNoOfOutputLines);
 		}
 
 		fnSuccess(sScriptOutput);
-	}
-
-	/**
-	 * Returns whether the given node or one of its ancestors is device-specific for a device
-	 * other than what the given <code>Device</code> indicates.
-	 *
-	 * @param {sap.ui.Device} Device
-	 *   Device
-	 * @param {object} oNode
-	 *   AST node
-	 * @returns {boolean}
-	 *   Whether the given node or one of its ancestors is device-specific for another device
-	 */
-	function isChildOfIgnoredNode(Device, oNode) {
-		if (!("$ignored" in oNode)) {
-			if (oNode.parent && isChildOfIgnoredNode(Device, oNode.parent)) {
-				oNode.$ignored = true;
-			} else { // ignore device-specific code on other devices
-				oNode.$ignored = oNode.type === "BlockStatement"
-					&& isDeviceSpecificBlock(Device, oNode);
-			}
-		}
-		return oNode.$ignored;
-	}
-
-	/**
-	 * Returns whether the given block statement node is device-specific (in general, or for a
-	 * device other than what the given <code>Device</code> indicates).
-	 *
-	 * @param {sap.ui.Device} [Device]
-	 *   Optional device API; without it, the meta comment alone counts
-	 * @param {object} oNode
-	 *   AST node
-	 * @returns {boolean}
-	 *   Whether the given block statement node is device-specific for another device
-	 */
-	function isDeviceSpecificBlock(Device, oNode) {
-		/*
-		 * Tells whether the given comment is a meta comment for device-specific code (in general,
-		 * if no <code>Device</code> is available, or for a device other than what the available
-		 * <code>Device</code> indicates).
-		 *
-		 * @param {string} oComment
-		 *   A single block or end-of-line comment
-		 * @returns {boolean}
-		 *   Whether the given comment is a meta comment for device-specific code (see above)
-		 */
-		function isNotForDevice(oComment) {
-			return oComment.type === "Line" && oComment.value === " sap-ui-cover-browser msie"
-				&& !(Device && Device.browser.msie);
-		}
-
-		return oNode.body[0].leadingComments
-			&& oNode.body[0].leadingComments.some(isNotForDevice);
 	}
 
 	/**
@@ -197,8 +158,6 @@
 	 *   Whether branch tracking is on
 	 * @param {number} iFileIndex
 	 *   The current file's index
-	 * @param {sap.ui.Device} [Device]
-	 *   Device
 	 * @param {object} oNode
 	 *   AST node
 	 * @returns {boolean}
@@ -206,7 +165,7 @@
 	 *   meant to keep track for future internal usage and is actually ignored by Falafel's
 	 *   <code>walk</code>.
 	 */
-	function visit(bBranchTracking, iFileIndex, Device, oNode) {
+	function visit(bBranchTracking, iFileIndex, oNode) {
 		var aHits = aStatistics[iFileIndex],
 			aBranchTracking = aHits.branchTracking,
 			iLine = oNode.loc.start.line,
@@ -229,35 +188,37 @@
 		 */
 		function initHits() {
 			if (iLine in aHits) {
-				jQuery.sap.log.warning("Duplicate line " + iLine, aFileNames[iFileIndex],
-					"sap.ui.test.BranchTracking");
+				warn(iFileIndex, "Multiple statements on same line detected"
+					+ " – minified code not supported! Line number " + iLine);
 			}
 			aHits[iLine] = 0;
 		}
 
 		/*
-		 * Preserve operator's source code incl. comments and line breaks, but avoid leading closing
-		 * or trailing opening parentheses.
+		 * Try to preserve operator's source code incl. comments and line breaks, but avoid leading
+		 * closing or trailing opening parentheses. Note: this also removes parentheses inside a
+		 * comment, but who cares ;-)
 		 *
 		 * Note: outer parentheses are absorbed by operators and do not appear in operand's source!
 		 *
 		 * @returns {string}
 		 */
 		function operator() {
-			var sSource = oNode.loc.source.slice(oNode.left.range[1], oNode.right.range[0]);
-
-			if (sSource[0] === ")") {
-				sSource = sSource.slice(1);
-			}
-			if (sSource.slice(-1) === "(") {
-				sSource = sSource.slice(0, -1);
-			}
-
-			return sSource;
+			return oNode.loc.source.slice(oNode.left.range[1], oNode.right.range[0])
+				.replace(rParentheses, "");
 		}
 
-		if (Device && isChildOfIgnoredNode(Device, oNode)) {
-			return false;
+		switch (oNode.type) {
+			case "FunctionDeclaration":
+			case "FunctionExpression":
+				if (oNode.body.body[0] && iLine === oNode.body.body[0].loc.start.line) {
+					warn(iFileIndex, "Function body must not start on same line! Line number "
+						+ iLine);
+//					aHits[iLine] = NaN; //TODO find an easy way to mark this line as "missed"
+				}
+				break;
+
+			default:
 		}
 
 		switch (oNode.type) {
@@ -296,7 +257,9 @@
 				);
 				aBranchTracking.push({
 					alternate : oNode.alternate.loc,
-					consequent : oNode.consequent.loc
+					consequent : oNode.consequent.loc,
+					falsy : 0,
+					truthy : 0
 				});
 				return true;
 
@@ -311,7 +274,7 @@
 			case "ForStatement":
 			case "WhileStatement":
 			case "WithStatement":
-				// Note: we assume block statements only (@see blanket._blockifyIf)
+				// fall through; Note: we assume block statements only (@see blanket._blockifyIf)
 			case "BreakStatement":
 			case "ContinueStatement":
 			case "FunctionDeclaration":
@@ -322,10 +285,6 @@
 				return addLineTracking(oNode);
 
 			case "IfStatement":
-				if (isDeviceSpecificBlock(undefined, oNode.consequent)) {
-					// Note: if "then" is device-specific, we cannot expect branch coverage of "if"
-					bBranchTracking = false;
-				}
 				// Note: we assume block statements only (@see blanket._blockifyIf)
 				oNode.test.update("blanket.$b(" + iFileIndex + ", "
 					+ (bBranchTracking ? aBranchTracking.length : -1) + ", "
@@ -336,7 +295,9 @@
 					aBranchTracking.push({
 						// Note: in case of missing "else" we blame it on the condition
 						alternate : (oNode.alternate || oNode.test).loc,
-						consequent : oNode.consequent.loc
+						consequent : oNode.consequent.loc,
+						falsy : 0,
+						truthy : 0
 					});
 				} // else would like to fall through to line tracking, but that does not work for
 				// "else if" unless s.th. like blanket._blockifyIf is used!
@@ -362,7 +323,9 @@
 							: oNode.right.loc,
 						consequent : oNode.operator === "&&"
 							? oNode.right.loc
-							: oNode.left.loc
+							: oNode.left.loc,
+						falsy : 0,
+						truthy : 0
 					});
 				}
 				return true;
@@ -378,6 +341,22 @@
 			default:
 				throw new Error(oNode.source());
 		}
+	}
+
+	/**
+	 * Logs the given message related to the given file both as a warning on console and as a
+	 * warning to be reported inside QUnit.module's "before" hook.
+	 *
+	 * @param {number|string} vFile - the affected file's index or name
+	 * @param {string} sMessage - a message
+	 */
+	function warn(vFile, sMessage) {
+		var sFileName = typeof vFile === "string"
+				? vFile
+				: aFileNames[vFile];
+
+		jQuery.sap.log.warning(sMessage, sFileName, "sap.ui.test.BranchTracking");
+		_$blanket[sFileName].warnings.push(sMessage);
 	}
 
 	/**
@@ -418,23 +397,63 @@
 		blanket.$l = lineTracking;
 		blanket.instrument = instrument; // self-made "plug-in" ;-)
 
-		var fnGetTestedModules = listenOnQUnit();
+		var fnGetTestedModules = listenOnQUnit(),
+			iLinesOfContext = getAttributeAsInteger(oScript, "data-lines-of-context", 3);
+
+		iThreshold = Math.min(getAttributeAsInteger(oScript, "data-threshold", 0), 100);
 
 		// Note: instrument() MUST have been replaced before!
 		sap.ui.require(["sap/ui/test/BlanketReporter"], function (BlanketReporter) {
 			blanket.options("reporter",
-				BlanketReporter.bind(null, getScriptTag(), fnGetTestedModules));
+				BlanketReporter.bind(null, iLinesOfContext, iThreshold, fnGetTestedModules));
 		});
 	}
 
 	//**********************************************************************************************
 	// Code for tracking "Uncaught (in promise)" for sap.ui.base.SyncPromise inside QUnit tests
+	// and for checking isolated code coverage (that is, each "class" by its corresponding test)
 	//**********************************************************************************************
 	var bInfo,
 		sClassName = "sap.ui.base.SyncPromise",
+		mFileName2InitialHits = {},
+		sFilter,
 		fnModule,
 		iNo = 0,
-		mUncaughtById = {};
+		sTestId,
+		mUncaughtById = {},
+		mUncaughtPromise2Reason = new Map();
+
+	/**
+	 * Check isolated line/branch coverage for the given test.
+	 *
+	 * @param {object} oTest - QUnit's test environment
+	 * @param {object} assert - QUnit's object with the assertion methods
+	 */
+	function checkIsolatedCoverage(oTest, assert) {
+		var aBranchesWithUnchangedHits,
+			aHits = _$blanket[oTest.$currentFileName],
+			aInitialHits = mFileName2InitialHits[oTest.$currentFileName],
+			aLinesWithUnchangedHits;
+
+		if (oTest.$oldHits) {
+			aLinesWithUnchangedHits = Object.keys(aHits).filter(function (iLine) {
+				return !(aInitialHits && aInitialHits[iLine])
+					&& aHits[iLine] === oTest.$oldHits[iLine];
+			});
+			assert.notOk(aLinesWithUnchangedHits.length,
+				"Some lines have not been covered by this module in isolation: "
+					+ aLinesWithUnchangedHits);
+		}
+		if (oTest.$oldBranchTracking) {
+			aBranchesWithUnchangedHits = Object.keys(aHits.branchTracking).filter(function (i) {
+				return aHits.branchTracking[i].falsy === oTest.$oldBranchTracking[i].falsy
+					|| aHits.branchTracking[i].truthy === oTest.$oldBranchTracking[i].truthy;
+			});
+			assert.notOk(aBranchesWithUnchangedHits.length,
+				"Some branches have not been fully covered by this module in isolation: "
+					+ aBranchesWithUnchangedHits);
+		}
+	}
 
 	/**
 	 * Check for uncaught errors in sync promises and provide an appropriate report to the given
@@ -445,9 +464,13 @@
 	 */
 	function checkUncaught(fnReporter) {
 		var sId,
-			iLength = Object.keys(mUncaughtById).length,
+			iLength = Object.keys(mUncaughtById).length
+				+ (mUncaughtPromise2Reason ? mUncaughtPromise2Reason.size : 0),
 			sMessage = "Uncaught (in promise): " + iLength + " times\n",
-			oPromise;
+			oPromise,
+			vReason,
+			oResult,
+			itValues;
 
 		if (iLength) {
 			for (sId in mUncaughtById) {
@@ -464,6 +487,21 @@
 				sMessage += "\n\n";
 			}
 			mUncaughtById = {};
+
+			//TODO for (let vReason of mUncaughtPromise2Reason.values()) {...}
+			if (mUncaughtPromise2Reason && mUncaughtPromise2Reason.size) {
+				itValues = mUncaughtPromise2Reason.values();
+				for (;;) {
+					oResult = itValues.next();
+					if (oResult.done) {
+						break;
+					}
+					vReason = oResult.value;
+					sMessage += (vReason && vReason.stack || vReason) + "\n\n";
+				}
+				mUncaughtPromise2Reason.clear();
+			}
+
 			if (fnReporter) {
 				fnReporter(sMessage);
 			} else if (bInfo) {
@@ -471,6 +509,33 @@
 					sClassName);
 			}
 		}
+	}
+
+	if (oScript.getAttribute("data-uncaught-in-promise") !== "true") {
+		/*
+		 * Listener for "unhandledrejection" events to keep track of "Uncaught (in promise)".
+		 */
+		window.addEventListener("unhandledrejection", function (oEvent) {
+			if (oEvent.reason && oEvent.reason.$uncaughtInPromise) { // ignore exceptional cases
+				return;
+			}
+
+			if (mUncaughtPromise2Reason) {
+				mUncaughtPromise2Reason.set(oEvent.promise, oEvent.reason);
+				oEvent.preventDefault(); // do not report on console
+			} else { // QUnit already done
+				alert("Uncaught (in promise) " + oEvent.reason);
+			}
+		});
+
+		/*
+		 * Listener for "rejectionhandled" events to keep track of "Uncaught (in promise)".
+		 */
+		window.addEventListener("rejectionhandled", function (oEvent) {
+			if (mUncaughtPromise2Reason) {
+				mUncaughtPromise2Reason.delete(oEvent.promise);
+			}
+		});
 	}
 
 	/**
@@ -501,7 +566,8 @@
 	}
 
 	/**
-	 * Wrapper for <code>QUnit.module</code> to check for uncaught errors in sync promises.
+	 * Wrapper for <code>QUnit.module</code> to check for uncaught errors in sync promises and
+	 * for 100% isolated test coverage.
 	 *
 	 * @param {string} sTitle
 	 *   The module's title
@@ -509,11 +575,22 @@
 	 *   Optional map of hooks, e.g. "beforeEach"
 	 */
 	function module(sTitle, mHooks) {
-		var fnAfterEach, fnBeforeEach;
+		var fnAfter, fnAfterEach, fnBefore, fnBeforeEach;
 
 		mHooks = mHooks || {};
+		fnAfter = mHooks.after || function () {};
 		fnAfterEach = mHooks.afterEach || function () {};
+		fnBefore = mHooks.before || function () {};
 		fnBeforeEach = mHooks.beforeEach || function () {};
+
+		mHooks.after = function (assert) {
+			if (window.blanket && !sFilter && !sTestId && !this.__ignoreIsolatedCoverage__
+					&& iThreshold >= 100 && !assert.test.module.stats.bad) {
+				checkIsolatedCoverage(this, assert);
+			}
+
+			return fnAfter.apply(this, arguments);
+		};
 
 		mHooks.afterEach = function (assert) {
 			var fnCheckUncaught = checkUncaught.bind(null, assert.ok.bind(assert, false));
@@ -538,7 +615,26 @@
 			}
 		};
 
-		mHooks.beforeEach = function () {
+		mHooks.before = function (assert) {
+			var aHits;
+
+			this.$currentFileName = jQuery.sap.getResourceName(assert.test.module.name);
+			aHits = window.blanket && _$blanket[this.$currentFileName];
+			if (aHits) {
+				this.$oldHits = aHits.slice();
+				if (aHits.branchTracking) {
+					this.$oldBranchTracking = JSON.parse(
+						JSON.stringify(aHits.branchTracking, ["falsy", "truthy"]));
+				}
+				aHits.warnings.forEach(function (sMessage) {
+					assert.ok(false, sMessage);
+				});
+			}
+
+			return fnBefore.apply(this, arguments);
+		};
+
+		mHooks.beforeEach = function (assert) {
 			checkUncaught(); // cleans up what happened before
 			return fnBeforeEach.apply(this, arguments);
 		};
@@ -546,48 +642,49 @@
 		fnModule(sTitle, mHooks);
 	}
 
-	if (QUnit && QUnit.module !== module) {
+	if (QUnit.module !== module) {
 		fnModule = QUnit.module.bind(QUnit);
 		QUnit.module = module;
-		sap.ui.require(["sap/ui/base/SyncPromise", "jquery.sap.global"], function (SyncPromise) {
-			bInfo = jQuery.sap.log.isLoggable(jQuery.sap.log.Level.INFO, sClassName);
+		sap.ui.require([
+			"sap/base/Log",
+			"sap/ui/base/SyncPromise"
+		], function (Log, SyncPromise) {
+			var oUriParameters = new URLSearchParams(window.location.search);
+
+			bInfo = Log.isLoggable(Log.Level.INFO, sClassName);
+			sFilter = oUriParameters.get("filter");
+			sTestId = oUriParameters.get("testId");
 			SyncPromise.listener = listener;
-		});
-
-		QUnit.config.autostart = false;
-		sap.ui.require(["sap/ui/core/Core"], function (Core) {
-			var oCore = sap.ui.getCore();
-
-			oCore.attachInit(function () {
-				function start() {
-					try {
-						oCore.detachThemeChanged(start);
-						QUnit.start();
-					} catch (ex) {
-						// no way to tell if QUnit.start() has already been called :-(
-					}
-				}
-
-				if (oCore.isThemeApplied()) {
-					start();
-				} else {
-					oCore.attachThemeChanged(start);
-				}
-			});
 		});
 
 		// allow easier module selection: larger list, one click selection
 		QUnit.begin(function () {
+			var sFileName, aHits;
+
+			jQuery("body").css("overflow", "scroll"); // always show scrollbar, avoid flickering
 			jQuery("#qunit-modulefilter-dropdown-list").css("max-height", "none");
 
-			jQuery("#qunit-modulefilter-dropdown").click(function (oMouseEvent) {
+			jQuery("#qunit-modulefilter-dropdown").on("click", function (oMouseEvent) {
 				if (oMouseEvent.target.tagName === "LABEL") {
 					setTimeout(function () {
 						// click on label instead of checkbox triggers "Apply" automatically
-						jQuery("#qunit-modulefilter-actions").children().first().click();
+						jQuery("#qunit-modulefilter-actions").children().first().trigger("click");
 					});
 				}
 			});
+
+			if (window.blanket) {
+				// remember which lines have been covered initially, at load time
+				for (sFileName in _$blanket) {
+					aHits = _$blanket[sFileName];
+					mFileName2InitialHits[sFileName] = aHits.slice();
+				}
+				// Note: for SyncPromise, a lot of lines are already covered!
+			}
+		});
+
+		QUnit.done(function () {
+			mUncaughtPromise2Reason = null; // no use to keep track anymore
 		});
 	}
 }());

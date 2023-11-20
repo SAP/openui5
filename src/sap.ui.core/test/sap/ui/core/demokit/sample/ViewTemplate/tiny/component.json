@@ -2,7 +2,9 @@
 	"config": {
 		"sample": {
 			"files": [
+				"annotations.xml",
 				"Component.js",
+				"component.json",
 				"Field.fragment.xml",
 				"Template.view.xml"
 			]

@@ -1,0 +1,399 @@
+{
+  "1.82.0": {
+    "date": "August 2020",
+    "notes": [
+      {
+        "id": "c81085bf982a3fc71df0337cfd9bb1bf05b85ea9",
+        "type": "FIX",
+        "text": " sap.m.Button: Icon-only buttons now have proper padding in case of overflow",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080298219"
+          }
+        ]
+      },
+      {
+        "id": "78415195426a430905385989bf4c3c1ffe09fd94",
+        "type": "FIX",
+        "text": " sap.m.Carousel: Invalidating empty carousel is now correct",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080236976"
+          }
+        ]
+      },
+      {
+        "id": "116d8eddeb7fe34decbd00569a36a3d5bb0c9e91",
+        "type": "FIX",
+        "text": " sap.m.ComboBox: \u0027setAttribute\u0027 of null error is now fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080270388"
+          }
+        ]
+      },
+      {
+        "id": "a82d7b72641d948fb20853b3d972266dcfda722d",
+        "type": "FIX",
+        "text": " sap.m.InputBase: IE \u0026 Safari no longer fire change event on value selection in IME popover",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500004949912020"
+          }
+        ]
+      },
+      {
+        "id": "95a17f14a73be5f236cceb57aab65c0abff3cb65",
+        "type": "FIX",
+        "text": " sap.m.MessageStrip: Text is no longer read twice in virtual mode",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070193263"
+          }
+        ]
+      },
+      {
+        "id": "7a7e2b160af6d82163c3dcb170bbc0010b92c418",
+        "type": "FIX",
+        "text": " sap.m.OverflowToolbar: jQuery incorrect width measurement fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080205481"
+          }
+        ]
+      },
+      {
+        "id": "10349c15bcec266c2530198f45d6ab88b577ca24",
+        "type": "FIX",
+        "text": " sap.m.Popover, sap.m.MessagePopover: Runtime exceptions cleared",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080193375"
+          }
+        ]
+      },
+      {
+        "id": "0aefc64651e93691a74ceb5677db56b06b473ec0",
+        "type": "FIX",
+        "text": " sap.m.SematicPage: getCustomFooterContent return copy of array",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "0020751295 0000471395 2020"
+          }
+        ]
+      },
+      {
+        "id": "4eddeb973b8e57d74282b39d5d205076aa3ea2d3",
+        "type": "FIX",
+        "text": " core.IconFont: update icon name \"S/4HANA\" to \"s4hana\"",
+        "references": [
+          {
+            "type": "BCP"
+          }
+        ]
+      },
+      {
+        "id": "5769bdcf0ba668289ab141efdd5da8e569f6e5a0",
+        "type": "FIX",
+        "text": " sap.m.IconTabBar: More button is read out once now",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080166121"
+          }
+        ]
+      },
+      {
+        "id": "650f42fece21e3bdf10c89263b8d1cb9cf712125",
+        "type": "FIX",
+        "text": " sap.m.RadioButton: Removed custom setter for selected property",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080296975"
+          }
+        ]
+      },
+      {
+        "id": "e19dfd4b44754c29c4b25742fb20b7386adf939b",
+        "type": "FIX",
+        "text": " sap.m.TimePickerSliders: Sample formats fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080332835"
+          }
+        ]
+      },
+      {
+        "id": "008a3b3ad0481e580e2459fd7fe103b0f99869dd",
+        "type": "FIX",
+        "text": " sap.m.UploadCollection : Accessibility NoDataText does not match with aria-label.",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070021282"
+          }
+        ]
+      },
+      {
+        "id": "a999c3f5e637b1f6fcda68b2ef891aa37aa3fcc0",
+        "type": "FIX",
+        "text": " sap.m.upload.UploadSet : UploadSet control issue while renaming file delete button does not remove selected filename.",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500004799612020"
+          }
+        ]
+      },
+      {
+        "id": "5f5b9a8b12f2c6e272b63b114c716eabbec940f9",
+        "type": "FIX",
+        "text": " ShortcutHint: correct the font size and positioning",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080281837"
+          }
+        ]
+      },
+      {
+        "id": "48a6ccfc8d532df8c3a0ec5709aa440675f61695",
+        "type": "FIX",
+        "text": " sap.m.ColorPalette: keyboard interactions are now compliant with the specification",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080231474"
+          }
+        ]
+      },
+      {
+        "id": "b25eacef6f543ac889dfd4c40107491f24f02ae2",
+        "type": "FIX",
+        "text": " sap.m.MenuButton: keyboard interaction now works properly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080263565"
+          }
+        ]
+      },
+      {
+        "id": "6998cd723ae050a81f17d7e73717d4007d728c65",
+        "type": "FIX",
+        "text": " sap.m.P13nCoditionPanel: format condition text handle nullable values",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080329899"
+          }
+        ]
+      },
+      {
+        "id": "a78a441e30b0e3d6f0fc370947b0e5afb318b695",
+        "type": "FIX",
+        "text": " sap.m.SemanticControl: messagebundle for Send Email is fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080320551"
+          }
+        ]
+      },
+      {
+        "id": "0bf8b3c8a6262d94270a5f914b0cd5094406e57c",
+        "type": "FIX",
+        "text": " sap.m.SinglePlanningCalendar: Month view now starts with the first day of the month",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080324231"
+          }
+        ]
+      },
+      {
+        "id": "c89d0c897676eb4cc5d6e73041e3ee80152d62fb",
+        "type": "FIX",
+        "text": " sap.m.TimePicker: disabled state now works properly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080353393"
+          }
+        ]
+      },
+      {
+        "id": "ea04df3eb42b8f01a5d5aec51015a7b42d4a5fdf",
+        "type": "FIX",
+        "text": " sap.m.upload.UploadSet : Drag and Drop functionality is not affected based on property UploadEnabled is true or false.",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400004886732020"
+          }
+        ]
+      },
+      {
+        "id": "056fc53e693bf9725dd93b47bbb331b416e73627",
+        "type": "FEATURE",
+        "text": " sap.m.Button: Badge implemented",
+        "references": []
+      },
+      {
+        "id": "badcc86de673e3545f604b75ac518d268c498b59",
+        "type": "FEATURE",
+        "text": " sap.m.DatePicker/DateTimePicker/DateRangeSelection/TimePicker/StepInput: 5th semantic color",
+        "references": []
+      },
+      {
+        "id": "51b1ec17174aef255bf3b0cc1c46f084a5cd8696",
+        "type": "FEATURE",
+        "text": " sap.m.GenericTile: additionalTooltip Property added",
+        "references": []
+      },
+      {
+        "id": "b4c77db8b4ad716b208c4d2a148cf12e970b0b84",
+        "type": "FIX",
+        "text": " StepInput: Add a note on decimal formatting",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080334190"
+          }
+        ]
+      },
+      {
+        "id": "84665b4a7d089883ea9365e3e6a82c3de086637f",
+        "type": "FIX",
+        "text": " sap.m.Badge: Animations restricted to data-sap-ui-animation\u003d\u0027on\u0027",
+        "references": []
+      },
+      {
+        "id": "b0714e9072e3e49d2ebd979be7e58620e9dc2ceb",
+        "type": "FIX",
+        "text": " sap.m.FacetFilterList: data request on listOpen event can be prevented",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400005112822020"
+          }
+        ]
+      },
+      {
+        "id": "7243a997b736b7612fb323ee5984966564fdddd1",
+        "type": "FIX",
+        "text": " sap.m.Label: Fixed incorrect truncation in Mobile Safari",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080330032"
+          }
+        ]
+      },
+      {
+        "id": "7f25fc55ca109603d506e9d92dcc2e9ee74953fe",
+        "type": "FIX",
+        "text": " sap.m.MenuButton - proper Menu Button icon paddings in Compact mode",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080330443"
+          }
+        ]
+      },
+      {
+        "id": "2a0954a6fedff6482674e9f83ef0fd4eced7c1fb",
+        "type": "FIX",
+        "text": " sap.m.MessageBox: Added \"since version\" for closeOnNavigation property",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080360088"
+          }
+        ]
+      },
+      {
+        "id": "166b2c6e9384252381a9279bef1ce2caa0b9a849",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: DOM is now updated after tokens are destroyed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080358002"
+          }
+        ]
+      },
+      {
+        "id": "b45ce5401914c1c4c570c4e8694a6bd20a89c5e0",
+        "type": "FIX",
+        "text": " sap.m.NavContainer: Renderer fix",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080357881"
+          }
+        ]
+      },
+      {
+        "id": "cd5f94712194d6d7978b502c223665b27c26d416",
+        "type": "FIX",
+        "text": " sap.m.ObjectHeader: sap.m.IconTabBar alignment",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070043278"
+          }
+        ]
+      },
+      {
+        "id": "793a18422a060e7014896bcced30860856ec254d",
+        "type": "FIX",
+        "text": " sap.m.ObjectIdentifier: Should not create an internal Text control and internal ACC role",
+        "references": []
+      },
+      {
+        "id": "2ff23e6f9ecb317b6e877d12032406891a39ad65",
+        "type": "FIX",
+        "text": " sap.m.Panel: Content is now always the same height as the Panel",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080360221"
+          }
+        ]
+      },
+      {
+        "id": "f5ec7a4452c122776126c2e889b83311940818af",
+        "type": "FIX",
+        "text": " sap.m.Popover: Check for classList added in onmousedown",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080128761"
+          }
+        ]
+      },
+      {
+        "id": "1eb4cf5ac1356360589a5013b4f84e5ab735e85c",
+        "type": "FIX",
+        "text": " sap.m.SinglePlanningCalendar: Create with drag and drop improvement",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2030478492"
+          }
+        ]
+      }
+    ]
+  }
+}

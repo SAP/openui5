@@ -1,0 +1,160 @@
+{
+  "1.111.0": {
+    "date": "February 2023",
+    "notes": [
+      {
+        "id": "e25c3dbb21fa473e6548c411fa0d44a3ac6de90d",
+        "type": "FEATURE",
+        "text": " sap.ui.model.odata.type.Date#getModelValue"
+      },
+      {
+        "id": "57ae61d97d3017a61586c97772eac7e71437e5c2",
+        "type": "FEATURE",
+        "text": " sap.ui.model.odata.type.TimeOfDay#getModelValue"
+      },
+      {
+        "id": "a6c717dd8e84e4df189d308b6f2a8110f012a919",
+        "type": "FEATURE",
+        "text": " sap.ui.model.odata.type.Time#getModelValue"
+      },
+      {
+        "id": "9e79fcd2ba73209cdd0edea518efbd44af608f9f",
+        "type": "FEATURE",
+        "text": " sap.m.DynamicDateRange: add more date range options"
+      },
+      {
+        "id": "e1e74a350e41dfa11d4cd9a1881a5fab093b0bc3",
+        "type": "FEATURE",
+        "text": " sap.ui.model.odata.type.DateTime|DateTimeOffset#getModelValue"
+      },
+      {
+        "id": "75c80d08fb02708163eb2241874d695dfbd7c862",
+        "type": "FIX",
+        "text": " core/Icon: use pseudo keyboard event to fire \"press\" event",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380023188"
+          }
+        ]
+      },
+      {
+        "id": "9c6d943314b353d58341a23c29ad2d27df3afd2a",
+        "type": "FIX",
+        "text": " core.Control: Don't remove afterRendering delegates when busy/blocked state is toggled",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270180106"
+          }
+        ]
+      },
+      {
+        "id": "989a5c0a86db2e6b7355986535e0105fcc623eb1",
+        "type": "FIX",
+        "text": " jquery: cleanup handler of swipe/taphold event after dragstart",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380000404"
+          },
+          {
+            "type": "BCP",
+            "reference": "2380011392"
+          }
+        ]
+      },
+      {
+        "id": "6dd294f5cbf58b424aeb784bc09b422a22efb26c",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v2.ODataListBinding#refresh: Remove created, persisted contexts after request",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380015211"
+          }
+        ]
+      },
+      {
+        "id": "3de6a423e023f1cd6f25501b534c8e52a3b0094d",
+        "type": "FIX",
+        "text": " sap.ui.model.analytics.AnalyticalBinding: clear pending request queue when resetting the binding",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380008491"
+          }
+        ]
+      },
+      {
+        "id": "3c753313767d22c9a4ed5305f355b97a81ea6955",
+        "type": "FEATURE",
+        "text": " core.Component: pass 'ignoreAnnotationsFromMetadata' parameter from manifest to models"
+      },
+      {
+        "id": "b742d1ef6a5e70052a10a375b207c151ca1c9220",
+        "type": "FEATURE",
+        "text": " sap.m.DynamicDateRange: add support for calendarWeekNumbering"
+      },
+      {
+        "id": "893ec505079e37eef70e03bd2892abdcdfeb0253",
+        "type": "FIX",
+        "text": " sap.ui.core.format.NumberFormat: fix Indian currency grouping",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380011000"
+          }
+        ]
+      },
+      {
+        "id": "f2e9bbc79e4363b63a475032183571cae3104ebc",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v4.ODataListBinding#requestSideEffects: runs after delete in the same $batch",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380019004"
+          }
+        ]
+      },
+      {
+        "id": "3dc87cfdc004558802b2887fc5f65476bd94cb52",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v4.ODataListBinding#requestSideEffects: keep old data when refreshing a complete row fails",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380011682"
+          }
+        ]
+      },
+      {
+        "id": "13d507d654d9c6eea20d1b6a89d143c68ffc5dc3",
+        "type": "FEATURE",
+        "text": " sap.ui.core.date.UI5Date: Introduce UI5Date class which considers the configured time zone"
+      },
+      {
+        "id": "3c321f14921becd9446d5016d71a06d6dca8dd40",
+        "type": "FEATURE",
+        "text": " sap.m.DynamicDate: Improve JS Docs for Typescript Definition Files"
+      },
+      {
+        "id": "60851c17e9e84332760d329106448414135dcdbd",
+        "type": "FIX",
+        "text": " sap.ui.core.format.DateFormat: fix JSDoc"
+      },
+      {
+        "id": "390b5ab1c95db867f39e67e0468d82caabb37cd1",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v2.ODataModel: Normalize entity key from location header for function imports",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270118627"
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,97 @@
+{
+	"_version": "1.17.0",
+	"sap.app": {
+		"id": "card.explorer.features.dateRange",
+		"type": "card",
+		"title": "Sample of date range usage",
+		"subTitle": "Sample of date range usage",
+		"applicationVersion": {
+			"version": "1.0.0"
+		},
+		"shortTitle": "A short title for this Card",
+		"info": "Additional information about this Card",
+		"description": "A long description for this Card",
+		"tags": {
+			"keywords": [
+				"DateRange",
+				"Card",
+				"Sample"
+			]
+		}
+	},
+	"sap.card": {
+		"type": "Table",
+		"configuration": {
+			"parameters": {
+				"northwindServiceUrl": {
+					"value": "https://services.odata.org/V3/Northwind/Northwind.svc",
+					"type": "string",
+					"label": "Northwind Service URL",
+					"description": "The URL of the web service."
+				},
+				"periodInterval": {
+					"value": "lastYears",
+					"type": "string",
+					"label": "Time interval measurement unit",
+					"description": "A predefined string, defining the time interval."
+				},
+				"periodAge": {
+					"value": 30,
+					"type": "integer",
+					"label": "Time interval quantity",
+					"description": "A quantity value, for the time period that should be taken."
+				},
+				"maxItems": {
+					"value": 7,
+					"type": "integer",
+					"label": "Maximum Items",
+					"description": "Defines how many items will be displayed at most."
+				}
+			}
+		},
+		"header": {
+			"title": "Top orders for last {parameters>/periodAge/value} years",
+			"subTitle": "Since: {= format.dateTime(dateRange.start(${parameters>/periodInterval/value}, ${parameters>/periodAge/value}), {pattern: 'MMMM d, y'})}",
+			"icon": {
+				"src": "sap-icon://compare-2"
+			},
+			"status": {
+				"text": "top {parameters>/maxItems/value}"
+			}
+		},
+		"content": {
+			"data": {
+				"request": {
+					"url": "{parameters>/northwindServiceUrl/value}/Orders",
+					"parameters": {
+						"$format": "json",
+						"$top": "{parameters>/maxItems/value}",
+						"$orderby": "Freight desc",
+						"$filter": "OrderDate ge datetime'{= format.dateTime(dateRange.start(${parameters>/periodInterval/value}, ${parameters>/periodAge/value}), {pattern: 'yyyy-MM-ddTHH:mm:ss'})}' and OrderDate le datetime'{= format.dateTime(dateRange.end(${parameters>/periodInterval/value}, ${parameters>/periodAge/value}), {pattern: 'yyyy-MM-ddTHH:mm:ss'})}'"
+					}
+				},
+				"path": "/value/"
+			},
+			"maxItems": "{parameters>/maxItems/value}",
+			"row": {
+				"columns": [{
+						"title": "Customer",
+						"value": "{ShipName}"
+					},
+					{
+						"title": "Country",
+						"value": "{ShipCountry}"
+					},
+					{
+						"title": "Freight",
+						"value": "{Freight}"
+					},
+					{
+						"title": "Date",
+						"value": "{= format.dateTime(${OrderDate}, {pattern: 'MMMM, y'})}"
+					}
+				]
+			}
+		}
+	}
+}

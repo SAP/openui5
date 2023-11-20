@@ -1,0 +1,15 @@
+/******************************************************************
+	Style of the RTA Contextmenu - Horizon Theme
+*******************************************************************/
+@_sap_ui_rta_ContextMenu_Border_DarkColor: @sapUiButtonEmphasizedBorderColor; // #0070f2
+@_sap_ui_rta_ContextMenu_Border_Radius: @sapUiGroupBorderCornerRadius; // 0.5rem
+
+.sapUiRtaMode {
+	.sapUiDtContextMenu {
+		&.sapMMenu {
+			border: 0.188rem dashed @_sap_ui_rta_ContextMenu_Border_DarkColor; //2px
+			border-image: none;
+			border-radius: @_sap_ui_rta_ContextMenu_Border_Radius;
+		}
+	}
+}

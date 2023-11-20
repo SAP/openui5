@@ -16,15 +16,12 @@
 	margin: 0;
 }
 
-.sapMListSwipable {
-	/* IE Windows 8 */
-	/* This elements receives events when not panning in vertial direction */
-	touch-action: pan-y;
-	-ms-touch-action: pan-y;
-}
-
 .sapMListUl:focus {
 	outline: none;
+}
+
+.sapMListPreventFocus .sapMListDummyArea {
+	display: none;
 }
 
 .sapMListSwp {
@@ -43,6 +40,12 @@
 
 .sapMListDummyArea {
 	position: fixed; /* keep it in the visible viewport, so that IE does not scroll on focus */
+}
+
+.sapMListDummyAreaSticky {
+	position: sticky; /* keep it in the scrollable area, so that browser does not scroll on focus */
+	height: 0.1px; /* webkit needs height for the sticky elements */
+	bottom: 0px;
 }
 
 /* swipe animations */
@@ -101,14 +104,20 @@
 	color: @sapUiListTextColor;
 	background-color: @sapUiListBackground;
 	border-bottom: 1px solid @sapUiListBorderColor;
-	padding: 0 1rem !important;
-	height:3rem;
+	padding: 0.5rem 1rem !important;
+	min-height: 3rem;
+	line-height: 1.4;
 }
 
 .sapMListNoDataText {
 	overflow: hidden;
-	text-overflow: ellipsis;
-	white-space: nowrap;
+    overflow: clip;
+	white-space: pre-wrap;
+	text-align: center;
+}
+
+.sapMListNoDataContent {
+	flex: 1 1 auto;
 }
 
 .sapMListShowSeparatorsAll {
@@ -124,6 +133,11 @@
 }
 
 /* Growing feature */
+
+.sapMGrowingList {
+	border-bottom: 1px solid @sapUiButtonActionSelectBorderColor;
+}
+
 .sapMGrowingListTrigger {
 	display: block;
 	text-align: center;
@@ -131,10 +145,24 @@
 	border-top: 1px solid @sapUiListHeaderBorderColor;
 }
 
-.sapMGrowingListDescription {
+.sapMGrowingListDummyColumn {
+	border-right: 1px solid @sapList_TableFooterBorder;
+}
+
+/* .sapMSLIDescription also has padding defined, hence making the style rule stronger */
+.sapMGrowingListDescription.sapMSLIDescription {
 	display: none;
 	padding: 0.375rem 2rem 0.875rem 2rem;
 	text-align: center;
+}
+
+.sapMGrowingList > .sapMCLI.sapMLIB:not(.sapMLIBActive) {
+	background: @sapUiButtonActionSelectBackground;
+	border-bottom: none;
+}
+
+.sapMGrowingList > .sapMCLI.sapMLIBHoverable:hover {
+	background: @sapUiButtonLiteActionSelectHoverBackground;
 }
 
 .sapMGrowingListBusyIndicatorVisible .sapMGrowingListTriggerText,
@@ -231,7 +259,7 @@ html.sap-phone .sapMListInsetBG > .sapMListSwp {
 }
 
 .sapMGrowingListTriggerText {
-	padding: 0 2rem;
+	padding: 0 1rem;
 }
 
 .sapMGrowingListTriggerText > .sapMSLITitle {
@@ -245,9 +273,47 @@ html.sap-phone .sapMListInsetBG > .sapMListSwp {
 	color: @sapUiButtonTextColor;
 }
 
+/* sticky headers */
+.sapMSticky > .sapMListHdr,
+.sapMSticky > .sapMListInfoTBarContainer {
+	position: sticky;
+	position: -webkit-sticky;
+}
+
+/* sticky headerToolbar/headerText background when transparent */
+.sapMSticky > .sapMListHdrText,
+.sapMSticky > .sapMListHdrTBar.sapMTB-Transparent-CTX {
+	background: @sapUiListHeaderBackground;
+}
+
+.sapMSticky > .sapMListHdr,
+.sapMSticky > .sapMTableOverlay,
+.sapMSticky > .sapUiLocalBusyIndicator {
+	z-index: 3;
+}
+
+.sapMSticky > .sapMListInfoTBarContainer {
+	z-index: 2;
+}
+
+/* .sapMSticky3 denotes that the headerToolbar/headerText and the infoToolbar are sticky */
+/* .sapMSticky2 denotes that only the infoToolbar is sticky */
+/* .sapMSticky1 denotes that only the headerToolbar/headerText is sticky */
+/* top: 0 sticky conditions : 1st sticky elements */
+.sapMSticky1 > .sapMListHdr,
+.sapMSticky2 > .sapMListInfoTBarContainer,
+.sapMSticky3 > .sapMListHdr {
+	top: 0;
+}
+
+/* top: 3rem sticky conditions : 2nd sticky elements*/
+.sapMSticky3 > .sapMListInfoTBarContainer {
+	top: @sapUiElementLineHeight;
+}
+
 /* Compact size */
 .sapUiSizeCompact .sapMListNoData {
-	height: 2rem;
+	min-height: 2rem;
 	font-size: @sapMFontMediumSize;
 }
 

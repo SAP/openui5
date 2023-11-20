@@ -3,12 +3,13 @@
  */
 
 sap.ui.define([
-	"jquery.sap.global",
 	"sap/uxap/library",
 	"sap/ui/core/UIComponent",
 	"sap/ui/core/library",
+	"sap/base/Log",
+	"sap/ui/core/mvc/View",
 	"sap/ui/core/Component"
-], function (jQuery, library, UIComponent, coreLibrary) {
+], function (library, UIComponent, coreLibrary, Log, View) {
 	"use strict";
 
 	// shortcut for sap.ui.core.mvc.ViewType
@@ -19,6 +20,7 @@ sap.ui.define([
 
 	var Component = UIComponent.extend("sap.uxap.component.Component", {
 		metadata: {
+			"interfaces": ["sap.ui.core.IAsyncContentCreation"]
 			/* nothing new compared to a standard UIComponent */
 		},
 
@@ -50,7 +52,7 @@ sap.ui.define([
 					this._oViewConfig.type = ViewType.XML;
 					break;
 				default:
-					jQuery.sap.log.error("UxAPComponent :: missing bootstrap information. Expecting one of the following: JsonURL, JsonModel and FacetsAnnotation");
+					Log.error("UxAPComponent :: missing bootstrap information. Expecting one of the following: JsonURL, JsonModel and FacetsAnnotation");
 			}
 			//create the UIComponent
 			UIComponent.prototype.init.call(this);
@@ -64,22 +66,24 @@ sap.ui.define([
 			var oController;
 
 			//step3: create view
-			this._oView = sap.ui.view(this._oViewConfig);
+			var oPromise = View.create(this._oViewConfig);
+			oPromise.then(function (oView) {
+				this._oView = oView;
+				//step4: bind the view with the model
+				if (this._oModel) {
+					oController = this._oView.getController();
 
-			//step4: bind the view with the model
-			if (this._oModel) {
-				oController = this._oView.getController();
+					//some factory requires pre-processing once the view and model are created
+					if (oController && oController.connectToComponent) {
+						oController.connectToComponent(this._oModel);
+					}
 
-				//some factory requires pre-processing once the view and model are created
-				if (oController && oController.connectToComponent) {
-					oController.connectToComponent(this._oModel);
+					//can now apply the model and rely on the underlying factory logic
+					this._oView.setModel(this._oModel, "objectPageLayoutMetadata");
 				}
+			}.bind(this));
 
-				//can now apply the model and rely on the underlying factory logic
-				this._oView.setModel(this._oModel, "objectPageLayoutMetadata");
-			}
-
-			return this._oView;
+			return oPromise;
 		},
 
 		/**

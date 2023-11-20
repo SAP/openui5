@@ -1,0 +1,28 @@
+/* ======================================== */
+/* CSS for control sap.f/DynamicPageHeader  */
+/* Evening Horizon theme                    */
+/* ======================================== */
+
+// Specific icon for the pin button for the horizon theme
+@_sap_f_DynamicPageHeader_PinButton_Icon: pushpin-on;
+
+.sapFDynamicPageHeader.sapFDynamicPageHeaderSolid,
+.sapFDynamicPageHeader.sapFDynamicPageHeaderTranslucent {
+	background: @sapUiObjectHeaderBackground;
+}
+
+.sapFDynamicPageHeader.sapFDynamicPageHeaderTransparent {
+	background: transparent;
+}
+
+.sapFDynamicPageToggleHeaderIndicator:not(.sapUiHidden) + .sapFDynamicPageHeaderPinButton:before {
+	display: none;
+}
+
+.sapFDynamicPageNavigation .sapFDynamicPageHeader.sapFDynamicPageHeaderWithContent {
+	box-shadow: none;
+}
+
+.sapFDynamicPage-Std-Desktop .sapFDynamicPageHeader.sapFDynamicPageHeaderWithContent {
+	padding: 1rem 2rem;
+}

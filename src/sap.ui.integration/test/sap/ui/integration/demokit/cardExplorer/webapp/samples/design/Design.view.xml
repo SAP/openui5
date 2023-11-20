@@ -1,0 +1,21 @@
+<mvc:View
+	controllerName="sap.ui.integration.sample.Design.Design"
+	xmlns:w="sap.ui.integration.widgets"
+	xmlns:f="sap.f"
+	xmlns="sap.m"
+	xmlns:mvc="sap.ui.core.mvc"
+	class="design">
+	<CheckBox id="design" text="Transparent" select=".onDesignChange" selected="true"></CheckBox>
+	<f:GridContainer>
+		<w:Card id="listCardId1" design="Transparent" manifest="./listCardManifest.json">
+			<w:layoutData>
+				<f:GridContainerItemLayoutData columns="3" />
+			</w:layoutData>
+		</w:Card>
+		<w:Card id="objectCardId1" design="Transparent" manifest="./objectCardManifest.json">
+			<w:layoutData>
+				<f:GridContainerItemLayoutData columns="3" />
+			</w:layoutData>
+		</w:Card>
+	</f:GridContainer>
+</mvc:View>

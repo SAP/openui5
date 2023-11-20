@@ -1,0 +1,24 @@
+{
+  "1.62.0": {
+    "date": "December 2018",
+    "notes": [
+      {
+        "id": "399d97690ba66b56b1cc0e1c80119d54537b5fa4",
+        "type": "FEATURE",
+        "text": "sap_fiori_3: initial commit of Fiori 3 Default",
+        "references": []
+      },
+      {
+        "id": "08ed8fcdf8d2496b2eb77606eec824bb1cf24999",
+        "type": "FIX",
+        "text": "Font 72 loading issue",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400003419012018"
+          }
+        ]
+      }
+    ]
+  }
+}

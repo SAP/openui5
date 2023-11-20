@@ -1,0 +1,41 @@
+{
+	"homeIconSrc": "images/SAP_Logo.png",
+	"currentBreakpoint": null,
+	"user": {
+		"iconSrc": "images/Donna_Moore.png"
+	},
+	"layout": {
+		"group1": {
+			"columns": {
+				"default": 10,
+				"S": 4,
+				"ML": 12,
+				"L": 12,
+				"XL": 12,
+				"XXL": 14,
+				"XXXL": 11,
+				"current": null
+			}
+		},
+		"group2": {
+			"columns": {
+				"default": 4,
+				"current": null
+			}
+		},
+		"group3": {
+			"columns": {
+				"default": 7,
+				"S": 4,
+				"XXXL": 4,
+				"current": null
+			}
+		},
+		"group4": {
+			"columns": {
+				"default": 4,
+				"current": null
+			}
+		}
+	}
+}

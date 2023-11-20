@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.ui.ux3.Collection.
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/model/SelectionModel', './library'],
-	function(jQuery, Element, SelectionModel, library) {
+sap.ui.define(['sap/ui/core/Element', 'sap/ui/model/SelectionModel', './library'],
+	function(Element, SelectionModel, library) {
 	"use strict";
 
 
@@ -25,10 +25,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/model/Selecti
 	 * @since 1.9.0
 	 * @deprecated Since version 1.38.
 	 * @alias sap.ui.ux3.Collection
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var Collection = Element.extend("sap.ui.ux3.Collection", /** @lends sap.ui.ux3.Collection.prototype */ { metadata : {
 
+		deprecated: true,
 		library : "sap.ui.ux3",
 		properties : {
 
@@ -106,6 +106,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/model/Selecti
 	Collection.prototype.setEditable = function(bEditable) {
 		this.setProperty("editable",bEditable,true);
 		this.firePropertyChanged();
+		return this;
 	};
 
 	/*
@@ -117,6 +118,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/model/Selecti
 	Collection.prototype.setTitle = function(sTitle) {
 		this.setProperty("title",sTitle);
 		this.fireEvent('_titleChanged', { newTitle: this.getProperty("title") });
+		return this;
 	};
 
 
@@ -125,7 +127,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/model/Selecti
 	 * @param {string | sap.ui.core.Item} vSelectedItem
 	 *    Id of a selectedItem which becomes an additional target of this <code>selectedItems</code> association.
 	 *    Alternatively, a selectedItem instance may be given.
-	 * @return {sap.ui.ux3.Collection} <code>this</code> to allow method chaining
+	 * @return {this} <code>this</code> to allow method chaining
 	 * @public
 	 */
 	Collection.prototype.addSelectedItem = function(vSelectedItem) {
@@ -135,7 +137,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/model/Selecti
 		} else {
 			oSelectedItem = sap.ui.getCore().byId(vSelectedItem);
 		}
-		if (jQuery.inArray(oSelectedItem.getId(),this.getSelectedItems()) >= 0) {
+		if (this.getSelectedItems().indexOf(oSelectedItem.getId()) >= 0) {
 			return this;
 		}
 		var iIndex = this.indexOfItem(oSelectedItem);
@@ -152,8 +154,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/model/Selecti
 	};
 
 	/**
-	 * @param {int | string | sap.ui.core.Item} vSelectedItem the selectedItem to remove or its index or id
-	 * @return {string} the id of the removed selectedItem or null
+	 * @param {int | string | sap.ui.core.Item} vSelectedItem the selected item to remove or its index or ID
+	 * @returns {string|null|undefined} the ID of the removed selected item or <code>null</code>
 	 * @public
 	 */
 	Collection.prototype.removeSelectedItem = function(vSelectedItem) {
@@ -192,4 +194,4 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/model/Selecti
 
 	return Collection;
 
-}, /* bExport= */ true);
+});

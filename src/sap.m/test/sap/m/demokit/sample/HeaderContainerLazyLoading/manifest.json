@@ -1,0 +1,30 @@
+{
+	"sap.app": {
+		"id": "sap.m.sample.HeaderContainerLazyLoading",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "sap.m.sample.HeaderContainerLazyLoading.Page",
+			"type": "XML",
+			"async": true
+		},
+		"dependencies": {
+			"libs": {
+				"sap.ui.core": {}
+			}
+		},
+		"config": {
+			"sample": {
+				"files": [
+					"Page.view.xml",
+					"Page.controller.js",
+					"manifest.json",
+					"data.json"
+				]
+			}
+		}
+	}
+}

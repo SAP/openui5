@@ -1,0 +1,43 @@
+/* ============================ */
+/* CSS for control sap.m/Table  */
+/* Evening Horizon theme        */
+/* ============================ */
+
+@_sap_m_Table_SelNavColWidth: 2.75rem;
+@_sap_m_Table_CustomFocusMargin: 0px;
+
+.sapMListBGTransparent .sapMListTblHeader,
+.sapMListBGTransparent .sapMListTblFooter {
+	background-color: fade(@sapUiListBackground, 0%);
+}
+
+.sapMListBGTranslucent .sapMListTblHeader,
+.sapMListBGTranslucent .sapMListTblFooter {
+	background-color: @sapUiListBackground;
+}
+
+.sapMListBGSolid .sapMListTblHeader,
+.sapMListBGSolid .sapMListTblFooter {
+	background-color: @sapUiListBackground;
+}
+
+/* make the focus visible on all sides */
+.sapMSticky .sapMLIBShowSeparator:first-child > td {
+	border-top-color: transparent;
+}
+
+.sapMTableRowCustomFocus:focus > :not(.sapMListTblDummyCell:last-child)::before {
+	margin-right: 0; // Avoid gaps in the focus viszualization between the cells
+}
+
+.sapMListShowSeparatorsAll .sapMLIBShowSeparator:last-child > td:not(.sapMListTblDummyCell),
+.sapMListShowSeparatorsAll .sapMListTblSubRow:last-child > td:not(.sapMListTblDummyCell),
+.sapMListShowSeparatorsAll .sapMLIBShowSeparator:last-child > td.sapMListTblDummyCell,
+.sapMListShowSeparatorsAll .sapMListTblSubRow:last-child > td.sapMListTblDummyCell,
+:not(.sapMListHasGrowing):not(.sapMListShowSeparatorsInner):not(.sapMListShowSeparatorsNone) > .sapMTableTBody .sapMListTblRow:last-child > .sapMListTblDummyCell:last-child {
+	border-bottom: none;
+}
+
+.sapMListTblDummyCell:last-child {
+	background-color: @sapUiListBackground;
+}

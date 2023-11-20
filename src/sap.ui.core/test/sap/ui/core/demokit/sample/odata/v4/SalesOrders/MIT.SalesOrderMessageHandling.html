@@ -1,0 +1,336 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<style type="text/css">
+			body {font-family: Arial, "Helvetica Neue", Helvetica, sans-serif;}
+		</style>
+		<title>Manual Integration Test: Message Handling</title>
+	</head>
+	<body>
+		<h1>Manual Integration Test: Message Handling</h1>
+		<h2>DESCRIPTION</h2>
+		Test message handling with the Sales Orders application.
+		<h2>PREPARATION</h2>
+		To check console errors open the developer tools before starting the application and check
+		with each step, that there are no errors and warnings.
+
+		<h3>Testing with mock data</h3>
+		Start the Sales Orders application with following URL (adjust host and port if necessary):
+		<ul>
+			<li> local: <a href="http://localhost:8080/test-resources/sap/ui/core/demokit/sample/common/index.html?component=odata.v4.SalesOrders">http://localhost:8080/test-resources/sap/ui/core/demokit/sample/common/index.html?component=odata.v4.SalesOrders</a></li>
+		</ul>
+
+		<h2>REALIZE and CHECK</h2>
+		<h3>Bound messages in Sales Orders application</h3>
+		<ol>
+			<li><b>Check:</b> On the <code>Show messages</code> button the number of messages is
+				<code>2</code>.</li>
+			<li><b>Check:</b> The <code>Note</code> field of the sales order with the ID
+				<code>0500000001</code> has a colored border indicating a warning.</li>
+			<li><b>Check:</b> The row of the sales order with the ID <code>0500000001</code> is
+				highlighted as a warning.</li>
+			<li><b>Check:</b> When clicking into the <code>Note</code> field of the sales order with
+				the ID <code>0500000001</code> the warning "Enter customer reference if available"
+				is displayed.</li>
+			<li>Enter the value "HEADER_MESSAGE" in the <code>Note</code> input field for the
+				sales order with the ID <code>0500000000</code>.</li>
+			<li>Press the <code>Save sales orders</code> button in the <code>New Sales Orders</code>
+				table.
+			</li>
+			<li><b>Check:</b> The <code>Note</code> field is highlighted as a success.</li>
+			<li>Click on the <code>Show Messages</code> button.</li>
+			<li><b>Check:</b> A popover is displayed containing 4 messages: an information message
+				with the text "Example for an unbound message", a warning message with the text
+				"Enter customer reference if available", an error message with the text
+				"Minimum order quantity is 2", and a success message with the text
+				"This is your requested bound header message".</li>
+			<li><b>Check:</b>A message strip is displayed above the table indicating that there are
+				warnings for the table.</li>
+			<li>Click on the message "Example for an unbound message" to get to the message details.
+			</li>
+			<li><b>Check:</b> There is a link with text "Technical Details".</li>
+			<li>Click the link.</li>
+			<li><b>Check:</b> A popover opens with the technical details as JSON.</li>
+			<li>Close the technical details popover.</li>
+			<li><b>Check:</b> The content of the message details is "Details for "Enter customer
+				reference if available" (relative longtext URL).".</li>
+			<li>Go back to the messages overview.</li>
+			<li>Click on the message "Enter customer reference if available" to get to the message
+				details.</li>
+			<li><b>Check:</b> The content of the message details is: <code>Details for "Enter
+				customer reference if available" (relative longtext URL).</code></li>
+			<li><b>Check:</b> There is a link with text "Technical Details".</li>
+			<li>Click the link.</li>
+			<li><b>Check:</b> A popover opens with the technical details as JSON.</li>
+			<li>Close the technical details popover.</li>
+			<li>Go back to the messages overview.</li>
+			<li>Click on the message title "Enter customer reference if available"</li>
+			<li><b>Check:</b> The <code>Note</code> field of the sales order with the ID
+				<code>0500000001</code> gets focused and the same message is highlighted
+				below/beside the input field.</li>
+			<li>Close the message popover.</li>
+			<li><b>Check:</b> On the <code>Show messages</code> button, the number of messages is
+				now <code>1</code>. When clicking into the <code>Note</code> field of the sales
+				order with the ID <code>0500000001</code>, the "Enter customer reference if
+				available" warning is still displayed.</li>
+			<li><b>Check:</b> The <code>Note</code> field of the sales order with the ID
+				<code>0500000001</code> still has a colored border.</li>
+			<li>Click on the <code>Show Messages</code> button.</li>
+			<li><b>Check:</b> A popover is displayed containing 1 message.</li>
+			<li>Close the message popover.</li>
+			<li>In the <code>New Sales Orders</code> table select the sales order with the ID
+				<code>0500000001</code>.</li>
+			<li><b>Check:</b> On the <code>Show messages</code> button the number of messages is
+				<code>2</code>.</li>
+			<li><b>Check:</b> The <code>Note</code> field of the sales order with the ID
+				<code>0500000001</code> has a colored border indicating a warning.</li>
+			<li><b>Check:</b> When clicking into the <code>Note</code> field of the sales order with
+				the ID <code>0500000001</code> the warning "Enter customer reference if available"
+				is displayed.</li>
+			<li><b>Check:</b> The <code>Note</code> field in the <code>Sales Order Details</code>
+				section has a colored border indicating a warning.</li>
+			<li><b>Check:</b> When clicking into the <code>Note</code> field in the
+				<code>Sales Order Details</code> section the warning "Enter customer reference if
+				available" is displayed.</li>
+			<li><b>Check:</b> The <code>Quantity</code> field of the sales order line item with the
+				item position <code>0000000020</code> has a colored border indicating an error.</li>
+			<li><b>Check:</b> When clicking into the <code>Quantity</code> field of the sales order
+				line item with the item position <code>0000000020</code> the error "Minimum order
+				quantity is 2" is displayed.</li>
+			<li>Click on the <code>Show Messages</code> button.</li>
+			<li><b>Check:</b> A popover is displayed containing 2 messages: a warning message with
+				the text "Enter customer reference if available" and an error message with the text
+				"Minimum order quantity is 2".</li>
+			<li><b>Check:</b>A message strip is displayed above the table indicating that there are
+				issues for the table.</li>
+			<li><b>Check:</b> The row of the sales order with the ID <code>0500000001</code> is
+				highlighted as an error.</li>
+			<li>Click on the message "Minimum order quantity is 2" to get to the message details.
+			</li>
+			<li><b>Check:</b> The content of the message details is: <code>Details for "Minimum
+				order quantity is 2" (absolute longtext URL).</code></li>
+			<li>Go back to the messages overview.</li>
+			<li>Close the message popover.</li>
+			<li><b>Check:</b> On the <code>Show messages</code> button the number of messages is
+				<code>2</code>.</li>
+			<li><b>Check:</b> The <code>Note</code> field of the sales order with the ID
+				<code>0500000001</code> still has a colored border.</li>
+			<li><b>Check:</b> The <code>Note</code> field in the <code>Sales Order Details</code>
+				section still has a colored border.</li>
+			<li><b>Check:</b> The <code>Quantity</code> field of the sales order line item with the
+				item position <code>0000000020</code> still has a colored border indicating an
+				error.</li>
+			<li>In the <code>New Sales Orders</code> table select the sales order with the ID
+				<code>0500000000</code>.</li>
+			<li><b>Check:</b> There is no input field with a colored border in the <code>Sales Order
+				Line Items</code> table.</li>
+			<li><b>Check:</b> On the <code>Show messages</code> button the number of messages is
+				still <code>2</code>.</li>
+			<li>In the <code>New Sales Orders</code> table select again the sales order with the ID
+				<code>0500000001</code>.</li>
+			<li><b>Check:</b> The <code>Quantity</code> field of the sales order line item with the
+				item position <code>0000000020</code> again has a colored border indicating an
+				error.</li>
+			<li><b>Check:</b> On the <code>Show messages</code> button the number of messages is
+				<code>2</code>.</li>
+			<li>Click on the <code>Show Messages</code> button.</li>
+			<li><b>Check:</b> A popover is displayed containing 2 messages: a warning message with
+				the text "Enter customer reference if available" and an error message with the text
+				"Minimum order quantity is 2".</li>
+			<li>Close the message popover.</li>
+		</ol>
+		<h3>Error messages in Sales Orders application</h3>
+		<h4>PATCH scenario</h4>
+		<ol>
+			<li>In the <code>New Sales Orders</code> table, in the row for sales order ID <code>
+				0500000003</code>, enter the value <code>modified Note</code> in the
+				<code>Note</code> input field.</li>
+			<li>In the row for sales order ID <code>0500000004</code>, enter the value
+				<code>RAISE_ERROR</code> in the <code>Note</code> input field.</li>
+			<li>Press the <code>Save sales orders</code> button in the <code>New Sales Orders
+				</code> table</li>
+			<li><b>Check:</b> The message popover is opened and you got an error regarding the
+				invalid <code>Note</code> value.</li>
+			<li>Click on the message "Property `Note` value `RAISE_ERROR` not allowed!" to get to
+				the message details.</li>
+			<li><b>Check:</b> There is a link with text "Technical Details".</li>
+			<li>Click the link.</li>
+			<li><b>Check:</b> A popover opens with the technical details as JSON.</li>
+			<li>Close the technical details popover.</li>
+			<li><b>Check:</b> The <code>Note</code> field of the sales order with the ID
+				<code>0500000004</code> has a colored border indicating the error.</li>
+			<li><b>Check:</b> When clicking into the <code>Note</code> field of the sales order with
+				the ID <code>0500000004</code> the same error is highlighted below/beside the input
+				field.</li>
+			<li>Close the message popover.</li>
+			<li><b>Check:</b> The <code>Note</code> error state indicator is gone.</li>
+			<li>Enter a different value in the <code>Note</code> input field for sales order ID
+				<code>0500000004</code>.</li>
+			<li>Press the <code>Save sales orders</code> button in the <code>New Sales Orders</code>
+				table.</li>
+			<li><b>Check:</b> The error is no longer raised.</li>
+		</ol>
+		<h4>POST scenario</h4>
+		<ol>
+			<li>Select sales order with number "0500000004".</li>
+			<li>Press the <code>Create sales order line item</code> button in the
+				<code>Sales Order Line Items</code> table.</li>
+			<li><b>Check:</b> The new sales order line item is at the end of the list.</li>
+			<li>In the <code>Quantity</code> input field for the newly created sales order line
+				item enter value <code>0.000</code>.</li>
+			<li>Press the <code>Save sales order</code> button in the
+				<code>Sales Order Details</code> section.</li>
+			<li><b>Check:</b> The message popover is opened and you get an error regarding
+				invalid <code>Quantity</code> value.</li>
+			<li><b>Check:</b> The <code>Quantity</code> field of the new sales order line item
+				has a colored border indicating an error.</li>
+			<li><b>Check:</b> When clicking into the <code>Quantity</code> the same error is
+				highlighted below/beside the input field.</li>
+			<li>Close the message popover.</li>
+			<li><b>Check:</b> The <code>Note</code> error state indicator is gone.</li>
+			<li>Enter a value greater than 0 in the <code>Quantity</code> input field.</li>
+			<li>Press the <code>Save sales order</code> button in the
+				<code>Sales Order Details</code> section.</li>
+			<li>Confirm the success popup.</li>
+			<li><b>Check:</b> No error is shown (and the items gets again it's initial values,
+				because of the refreshSingle() triggered by the <code>Save sales order</code> in the
+				<code>Sales Order Details</code> section).</li>
+		</ol>
+		<h4>Function scenario</h4>
+		<ol>
+			<li>Select sales order with number "0500000002".</li>
+			<li>Press the <code>Simulate discount for selected sales order</code> button in the
+				<code>New Sales Orders</code> table.</li>
+			<li><b>Check:</b> A <code>Simulate Discount</code> dialog is opened.</li>
+			<li><b>Check:</b> The content for the <code>Sales Order:</code> text field is
+				"0500000002".</li>
+			<li><b>Check:</b> The content for the <code>Gross Amount:</code> text field is "250.73".
+				</li>
+			<li><b>Check:</b> The <code>Calculated Gross Amount:</code> text field is empty.</li>
+			<li>Enter a discount of "25" into the <code>Reduction in %:</code> step input control.
+				</li>
+			<li>Press the <code>Execute discount simulation</code> button in the dialog.</li>
+			<li><b>Check:</b> The <code>Calculated Gross Amount:</code> text field is "188.05".
+				</li>
+			<li>Enter a discount of "75" into the <code>Reduction in %:</code> step input control.
+				</li>
+			<li>Press the <code>Execute discount simulation</code> button in the dialog.</li>
+			<li><b>Check:</b> The error messages popover has opened and you got an error
+				"User John Doe is not authorized to approve more than 50% discount w/o approver".
+			</li>
+			<li><b>Check:</b> The step input control has a red border. If you click into the step
+				input control you see the same error "User John Doe is not authorized to approve
+				more than 50% discount w/o approver" beside the step input control.
+			</li>
+			<li><b>Check:</b> The approver input control has a red border. If you click into the
+				approver input control you see the same error "User John Doe is not authorized to
+				approve more than 50% discount w/o approver" beside the input control.
+			</li>
+			<li>Close the message popover.</li>
+		</ol>
+
+		<h4>MessageStrip, highlight and filter entities by messages scenario</h4>
+		<ul>
+			<li><b>Check:</b> On the <code>Show messages</code> button the number of messages is
+				<code>2</code>.</li>
+			<li><b>Check:</b> A message strip is displayed above the <code>New Sales Orders</code>
+				table indicating that there are issues for the table.</li>
+			<li><b>Check:</b> The row of the sales order with the ID <code>0500000001</code> is
+				highlighted as an error.</li>
+			<li>Press the 'More' button of the <code>New Sales Orders</code> table.</li>
+			<li><b>Check:</b> On the <code>Show messages</code> button the number of messages now is
+				<code>4</code>.</li>
+			<li><b>Check:</b> The row of the sales order with the ID <code>0500000006</code> is
+				highlighted as an error.</li>
+			<li>Click on the <code>Show Messages</code> button.</li>
+			<li><b>Check:</b> A popover is displayed containing 4 messages:
+				<ul>
+					<li>a warning message with the text "Enter customer reference if available"</li>
+					<li>an error message with the text "Minimum order quantity is 2"</li>
+					<li>a warning "Enter a Note" and</li>
+					<li>another error message with the text "Minimum order quantity is 2".</li>
+				</ul>
+			</li>
+			<li>Close the message popover.</li>
+			<li>In the <code>New Sales Orders</code> table select the sales order with the ID
+				<code>0500000006</code>.</li>
+			<li><b>Check:</b> On the <code>Show messages</code> button the number of messages is
+				still <code>4</code>.</li>
+			<li>In the <code>New Sales Orders</code> table select the sales order with the ID
+				<code>0500000006</code>.</li>
+			<li><b>Check:</b> A message strip is displayed above the
+				<code>Sales Order Line Items</code> table indicating that there are issues.</li>
+			<li>In the <code>New Sales Orders</code> table select the sales order with the ID
+				<code>0500000005</code> which has no issues.</li>
+			<li><b>Check:</b> The <code>Sales Order Line Items</code> table shows no issues: There
+				is no message strip above the table.</li>
+			<li>In the <code>New Sales Orders</code> table select the sales order with the ID
+				<code>0500000006</code> again.</li>
+			<li><b>Check:</b> A message strip is displayed above the
+				<code>Sales Order Line Items</code> table indicating that there are issues.</li>
+			<li><b>Check:</b> There are 8 line items, one is highlighted as an error and has a
+				quantity field with value state error "Enter a minimum value of 2"</li>
+			<li>Press the <code>Create sales order line item</code> button in the
+				<code>Sales Order Line Items</code> table.</li>
+			<li><b>Check:</b> The new sales order line item is at the end of the list.</li>
+			<li>Change the <code>Filter</code> value in the <code>Sales Order Line Items</code>
+				table from <code>Show All</code> to <code>With Error Messages</code>.<br />
+				<b>Check:</b> Only the item with the error and the new item at the end are
+				displayed.<br />
+			</li>
+			<li><b>Check:</b> On the <code>Show messages</code> button the number of messages is
+				still <code>4</code>.</li>
+			<li>Change the <code>Filter</code> value in the <code>Sales Order Line Items</code>
+				table from <code>With Error Messages</code> to <code>Show All</code>.<br />
+				<b>Check:</b> All 9 line items are displayed and the new sales order line item is
+				still at the end of the list.<br />
+			</li>
+			<li><b>Check:</b> On the <code>Show messages</code> button the number of messages is
+				still <code>4</code>.</li>
+			<li>Click on <code>Cancel sales order changes</code> button in the
+				<code>Sales Orders Details</code>.</li>
+			<li><b>Check:</b> The new sales order item is gone.</li>
+			<li>Click on the <code>Delete</code> button in the <code>Sales Orders</code> table.</li>
+			<li><b>Check:</b> On the <code>Show messages</code> button the number of messages is
+				<code>2</code>.</li>
+			<li>Click on the <code>Cancel sales order list changes</code> button in the
+				<code>Sales Orders</code> table.</li>
+			<li><b>Check:</b> On the <code>Show messages</code> button the number of messages is
+				<code>4</code>.</li>
+			<li>In the <code>New Sales Orders</code> table select the sales order with the ID
+				<code>0500000006</code> again.</li>
+			<li>Enter any text in the note input field of the first sales order item.</li>
+			<li>Enter a quantity higher than 1 in the quantity input field of the second sales order
+				item.</li>
+			<li>Press the <code>Save sales order</code> button in the
+				<code>Sales Order Details</code> section.</li>
+			<li><b>Check:</b> The row of the sales order with the ID <code>0500000006</code> is
+				no longer highlighted.</li>
+			<li><b>Check:</b> On the <code>Show messages</code> button the number of messages is
+				<code>2</code>.</li>
+			<li>Click on the <code>Show Messages</code> button.</li>
+			<li><b>Check:</b> The warning "Enter a Note" and one error "Minimum order quantity is 2"
+				now are gone.</li>
+			<li>Close the message popover.</li>
+		</ul>
+		<h4>Strict handling scenario</h4>
+		<ul>
+			<li>In the <code>New Sales Orders</code> table select the sales order with the ID
+				<code>0500000000</code>.</li>
+			<li>Click on <code>Confirm selected sales order</code> in the <code>New Sales Orders
+				</code> table.</li>
+			<li><b>Check:</b> That you got a dialog showing a warning and an error and asking
+				you whether to continue or not.</li>
+			<li>Click on <code>No</code>/li>
+			<li><b>Check:</b> The dialog was closed and the Sales Order is not yet confirmed.
+				</li>
+			<li>Click again on <code>Confirm selected sales order</code> in the <code>New Sales
+				Orders</code> table.</li>
+			<li><b>Check:</b> That you got again a dialog showing a warning and an error and asking
+				you whether to continue or not.</li>
+			<li>Click on <code>Yes</code></li>
+			<li><b>Check:</b> The sales order is confirmed and is filtered out from the <code>
+				New Sales Orders</code> table.</li>
+		</ul>
+	</body>
+</html>

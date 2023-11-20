@@ -1,0 +1,59 @@
+{
+	"_version": "1.15.0",
+	"sap.app": {
+		"id": "sap.ui.requests.Card1",
+		"type": "card",
+		"title": "Cards with data request",
+		"subTitle": "",
+		"applicationVersion": {
+			"version": "1.0.0"
+		},
+		"shortTitle": "A short title for this Card",
+		"info": "Additional information about this Card",
+		"description": "A long description for this Card",
+		"tags": {
+			"keywords": [
+				"Card",
+				"Sample"
+			]
+		}
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"icons": {
+			"icon": "sap-icon://action"
+		}
+	},
+	"sap.card": {
+		"type": "List",
+		"configuration" : {
+			"destinations": {
+				"ActivitiesMockServer": {
+					"name": "ActivitiesMockServer",
+					"label": "Activities Mock",
+					"defaultUrl": "/getData/"
+				}
+			}
+		},
+		"header": {
+			"title": "Timeout"
+		},
+		"content": {
+			"data": {
+				"request": {
+					"url": "{{destinations.ActivitiesMockServer}}/Activities",
+					"timeout": 400,
+					"method": "GET"
+				},
+				"path": "/data"
+			},
+			"maxItems": 6,
+			"item": {
+				"icon": {
+					"src": "{icon}"
+				},
+				"title": "{Name}"
+			}
+		}
+	}
+}

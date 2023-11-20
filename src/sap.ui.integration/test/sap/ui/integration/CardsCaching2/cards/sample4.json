@@ -1,0 +1,78 @@
+{
+	"_version": "1.14.0",
+	"sap.app": {
+		"id": "card.explorer.numeric.list.card",
+		"type": "card",
+		"title": "Sample of a List with Numeric Header",
+		"subTitle": "Sample of a List with Numeric Header",
+		"applicationVersion": {
+			"version": "1.0.0"
+		},
+		"shortTitle": "A short title for this Card",
+		"info": "Additional information about this Card",
+		"description": "A long description for this Card",
+		"tags": {
+			"keywords": [
+				"List",
+				"Numeric",
+				"Card",
+				"Sample"
+			]
+		}
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"icons": {
+			"icon": "sap-icon://list"
+		}
+	},
+	"sap.card": {
+		"type": "List",
+		"designtime": "dt/Configuration",
+		"header": {
+			"type": "Numeric",
+			"data": {
+				"json": {
+					"kpiInfos": {
+						"kpi": {
+							"number": "42",
+							"unit": "K",
+							"trend": "Up",
+							"details": "Q1, 2019"
+						}
+					}
+				},
+				"path": "/kpiInfos/kpi"
+			},
+			"title": "Stale while revalidate with update interval of 30s",
+			"subTitle": "Data is changed each time",
+			"mainIndicator": {
+				"number": "{number}",
+				"unit": "{unit}",
+				"trend": "{trend}"
+			},
+			"details": "{details}"
+		},
+		"content": {
+			"data": {
+				"request": {
+					"url": "../mock/data4.json",
+					"cache": {
+						"maxAge": 0,
+						"staleWhileRevalidate": true
+					}
+				},
+				"updateInterval": 30
+			},
+			"maxItems": 5,
+			"item": {
+				"title": "{Name}",
+				"description": "{Description}",
+				"info": {
+					"value": "{Sales} K",
+					"state": "{State}"
+				}
+			}
+		}
+	}
+}

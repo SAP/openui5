@@ -3,16 +3,16 @@
 /* Belize High Contrast White theme    */
 /* =================================== */
 
-html[data-sap-ui-browser='ie11'] .sapMLIBFocusable:focus {
-	outline-width: 3px;
-}
+@_sap_m_ListItemBase_Highlight_InformationColor: @sapUiAccent6;
 
 .sapMLIBFocusable:focus {
-	outline: 2px dotted @sapUiContentFocusColor;
-	outline-offset: -2px;
+	outline-width: 0.125rem;
 }
 
-/* IE ignores outline-offset. Use an overlay: */
-.sapMLIBLegacyOutline:focus::before {
-	border: 0.125rem dotted @sapUiContentFocusColor;
+.sapMLIBImgNav {
+	font-size: 1rem;
+}
+
+.sapMTableRowCustomFocus:focus > :not(.sapMListTblDummyCell:last-child)::before {
+	border-width: 2px;
 }

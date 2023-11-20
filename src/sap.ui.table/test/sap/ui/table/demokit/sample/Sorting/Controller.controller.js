@@ -1,16 +1,21 @@
 sap.ui.define([
+	"sap/base/Log",
 	"sap/ui/core/mvc/Controller",
-	"sap/ui/table/SortOrder",
 	"sap/ui/model/Sorter",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/core/format/DateFormat",
-	"sap/ui/table/sample/TableExampleUtils"
-], function(Controller, SortOrder, Sorter, JSONModel, DateFormat, TableExampleUtils) {
+	"sap/m/ToolbarSpacer",
+	"sap/ui/core/library",
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/core/date/UI5Date"
+], function(Log, Controller, Sorter, JSONModel, DateFormat, ToolbarSpacer, CoreLibrary, jQuery, UI5Date) {
 	"use strict";
+
+	var SortOrder = CoreLibrary.SortOrder;
 
 	return Controller.extend("sap.ui.table.sample.Sorting.Controller", {
 
-		onInit : function () {
+		onInit: function() {
 			// set explored app's demo model on this sample
 			var oJSONModel = this.initSampleDataModel();
 			var oView = this.getView();
@@ -19,32 +24,38 @@ sap.ui.define([
 			//Initial sorting
 			var oProductNameColumn = oView.byId("name");
 			oView.byId("table").sort(oProductNameColumn, SortOrder.Ascending);
+
+			sap.ui.require(["sap/ui/table/sample/TableExampleUtils"], function(TableExampleUtils) {
+				var oTb = oView.byId("infobar");
+				oTb.addContent(new ToolbarSpacer());
+				oTb.addContent(TableExampleUtils.createInfoButton("sap/ui/table/sample/Sorting"));
+			}, function(oError) { /*ignore*/ });
 		},
 
-		initSampleDataModel : function() {
+		initSampleDataModel: function() {
 			var oModel = new JSONModel();
 
 			var oDateFormat = DateFormat.getDateInstance({source: {pattern: "timestamp"}, pattern: "dd/MM/yyyy"});
 
-			jQuery.ajax(sap.ui.require.toUrl("sap/ui/demo/mock") + "/products.json", {
+			jQuery.ajax(sap.ui.require.toUrl("sap/ui/demo/mock/products.json"), {
 				dataType: "json",
-				success: function (oData) {
+				success: function(oData) {
 					var aTemp1 = [];
 					var aTemp2 = [];
 					var aSuppliersData = [];
 					var aCategoryData = [];
 					for (var i = 0; i < oData.ProductCollection.length; i++) {
 						var oProduct = oData.ProductCollection[i];
-						if (oProduct.SupplierName && jQuery.inArray(oProduct.SupplierName, aTemp1) < 0) {
+						if (oProduct.SupplierName && aTemp1.indexOf(oProduct.SupplierName) < 0) {
 							aTemp1.push(oProduct.SupplierName);
 							aSuppliersData.push({Name: oProduct.SupplierName});
 						}
-						if (oProduct.Category && jQuery.inArray(oProduct.Category, aTemp2) < 0) {
+						if (oProduct.Category && aTemp2.indexOf(oProduct.Category) < 0) {
 							aTemp2.push(oProduct.Category);
 							aCategoryData.push({Name: oProduct.Category});
 						}
-						oProduct.DeliveryDate = (new Date()).getTime() - (i % 10 * 4 * 24 * 60 * 60 * 1000);
-						oProduct.DeliveryDateStr = oDateFormat.format(new Date(oProduct.DeliveryDate));
+						oProduct.DeliveryDate = Date.now() - (i % 10 * 4 * 24 * 60 * 60 * 1000);
+						oProduct.DeliveryDateStr = oDateFormat.format(UI5Date.getInstance(oProduct.DeliveryDate));
 						oProduct.Heavy = oProduct.WeightMeasure > 1000 ? "true" : "false";
 						oProduct.Available = oProduct.Status == "Available" ? true : false;
 					}
@@ -54,21 +65,21 @@ sap.ui.define([
 
 					oModel.setData(oData);
 				},
-				error: function () {
-					jQuery.sap.log.error("failed to load json");
+				error: function() {
+					Log.error("failed to load json");
 				}
 			});
 
 			return oModel;
 		},
 
-		clearAllSortings : function(oEvent) {
+		clearAllSortings: function(oEvent) {
 			var oTable = this.byId("table");
-			oTable.getBinding("rows").sort(null);
+			oTable.getBinding().sort(null);
 			this._resetSortingState();
 		},
 
-		sortCategories : function(oEvent) {
+		sortCategories: function(oEvent) {
 			var oView = this.getView();
 			var oTable = oView.byId("table");
 			var oCategoriesColumn = oView.byId("categories");
@@ -77,18 +88,18 @@ sap.ui.define([
 			this._bSortColumnDescending = !this._bSortColumnDescending;
 		},
 
-		sortCategoriesAndName : function(oEvent) {
+		sortCategoriesAndName: function(oEvent) {
 			var oView = this.getView();
 			var oTable = oView.byId("table");
 			oTable.sort(oView.byId("categories"), SortOrder.Ascending, false);
 			oTable.sort(oView.byId("name"), SortOrder.Ascending, true);
 		},
 
-		sortDeliveryDate : function(oEvent) {
+		sortDeliveryDate: function(oEvent) {
 			var oCurrentColumn = oEvent.getParameter("column");
 			var oDeliveryDateColumn = this.byId("deliverydate");
 			if (oCurrentColumn != oDeliveryDateColumn) {
-				oDeliveryDateColumn.setSorted(false); //No multi-column sorting
+				oDeliveryDateColumn.setSortOrder(SortOrder.None); //No multi-column sorting
 				return;
 			}
 
@@ -98,7 +109,6 @@ sap.ui.define([
 			var oDateFormat = DateFormat.getDateInstance({pattern: "dd/MM/yyyy"});
 
 			this._resetSortingState(); //No multi-column sorting
-			oDeliveryDateColumn.setSorted(true);
 			oDeliveryDateColumn.setSortOrder(sOrder);
 
 			var oSorter = new Sorter(oDeliveryDateColumn.getSortProperty(), sOrder === SortOrder.Descending);
@@ -123,19 +133,15 @@ sap.ui.define([
 				return 0;
 			};
 
-			this.byId("table").getBinding("rows").sort(oSorter);
+			this.byId("table").getBinding().sort(oSorter);
 		},
 
-		_resetSortingState : function() {
+		_resetSortingState: function() {
 			var oTable = this.byId("table");
 			var aColumns = oTable.getColumns();
 			for (var i = 0; i < aColumns.length; i++) {
-				aColumns[i].setSorted(false);
+				aColumns[i].setSortOrder(SortOrder.None);
 			}
-		},
-
-		showInfo : function(oEvent) {
-			TableExampleUtils.showInfo(sap.ui.require.toUrl("sap/ui/table/sample/Sorting") + "/info.json", oEvent.getSource());
 		}
 
 	});

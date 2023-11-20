@@ -1,0 +1,74 @@
+{
+	"@odata.count" : 10,
+	"value" : [{
+		"@odata.etag" : "W/\"20160619220000.0000000\"",
+		"ChangedAt" : "2016-06-13T06:53:13.000000Z",
+		"CurrencyCode" : "EUR",
+		"GrossAmount" : "10311.35",
+		"LifecycleStatus" : "N",
+		"LifecycleStatusDesc" : "New",
+		"Note" : "EPM DG: SO ID 0500000008 Deliver as fast as possible",
+		"SalesOrderID" : "0500000008",
+		"SO_2_BP" : {
+			"@odata.etag" : "W/\"20160613065313.0000000\"",
+			"BusinessPartnerID" : "0100000004",
+			"BusinessPartnerRole" : "01",
+			"CompanyName" : "Panorama Studios",
+			"WebAddress" : "http://www.panorama-studios.biz",
+			"EmailAddress" : "bob.buyer@panorama-studios.biz",
+			"PhoneNumber" : "2244668800",
+			"FaxNumber" : "2244668004",
+			"LegalForm" : "Inc.",
+			"CurrencyCode" : "USD",
+			"CreatedAt" : "2016-06-13T06:53:13.000000Z",
+			"ChangedAt" : "2016-06-13T06:53:13.000000Z",
+			"Address" : {
+				"City" : "Hollywood, California",
+				"PostalCode" : "91602",
+				"Street" : "Morning Drive",
+				"Building" : "178",
+				"Country" : "US",
+				"AddressType" : "02",
+				"GeoLocation" : {
+					"Longitude" : "-118.352803603805",
+					"Latitude" : "34.136429050000"
+				}
+			}
+		}
+	}, {
+		"@odata.etag" : "W/\"20160619220000.0000000\"",
+		"ChangedAt" : "2016-06-13T06:53:13.000000Z",
+		"CurrencyCode" : "EUR",
+		"GrossAmount" : "195.16",
+		"LifecycleStatus" : "N",
+		"LifecycleStatusDesc" : "New",
+		"Note" : "EPM DG: SO ID 0500000009 Deliver as fast as possible",
+		"SalesOrderID" : "0500000009",
+		"SO_2_BP" : {
+			"@odata.etag" : "W/\"20160613065313.0000000\"",
+			"BusinessPartnerID" : "0100000009",
+			"BusinessPartnerRole" : "01",
+			"CompanyName" : "Telecomunicaciones Star",
+			"WebAddress" : "http://www.telecomunicacionesstar.com",
+			"EmailAddress" : "jorge.velez@telecomunicacionesstar.com",
+			"PhoneNumber" : "1133557799",
+			"FaxNumber" : "1133557004",
+			"LegalForm" : "S.A.",
+			"CurrencyCode" : "ARS",
+			"CreatedAt" : "2016-06-13T06:53:13.000000Z",
+			"ChangedAt" : "2016-06-13T06:53:13.000000Z",
+			"Address" : {
+				"City" : "Buenos Aires",
+				"PostalCode" : "1511",
+				"Street" : "Av. Libertador",
+				"Building" : "12221",
+				"Country" : "AR",
+				"AddressType" : "02",
+				"GeoLocation" : {
+					"Longitude" : "-58.573947800000",
+					"Latitude" : "-34.864871900000"
+				}
+			}
+		}
+	}]
+}

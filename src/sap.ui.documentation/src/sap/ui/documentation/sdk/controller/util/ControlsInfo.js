@@ -3,8 +3,8 @@
  */
 
 // Provides information about 'explored' samples.
-sap.ui.define(['jquery.sap.global', 'sap/ui/documentation/library'],
-	function(jQuery, library) {
+sap.ui.define(["sap/ui/thirdparty/jquery", 'sap/ui/documentation/library', "sap/base/Log", "sap/ui/documentation/sdk/util/Resources"],
+	function(jQuery, library, Log, ResourcesUtil) {
 		"use strict";
 
 		var oPromise;
@@ -29,8 +29,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/documentation/library'],
 			},
 
 			_getIndices: function (aLibs, oDocIndicies, fnComponentLoadCallback) {
+				var aInternalCategoryAllowList = [
+					"_PRIVATE_"
+				];
 
-				var aCategoryWhiteList = [
+				var aCategoryAllowList = [
 					"Action",
 					"Application",
 					"Container",
@@ -39,16 +42,22 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/documentation/library'],
 					"Mini Chart",
 					"Layout",
 					"List",
+					"Floorplans & Patterns",
 					"Popup",
 					"Tile",
 					"User Input",
+					"Showcase",
 					"Testing",
 					"Theming",
 					"Tutorial",
 					"Routing",
 					"Data Binding",
 					"Data Visualization",
-					"Map"
+					"Map",
+					"Utility",
+					"Web Components",
+					"Smart Controls",
+					"Personalization"
 				];
 				var afilterProps = ["namespace", "since", "category"]; // content density are set manually
 				var oFilterSets = {
@@ -88,45 +97,54 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/documentation/library'],
 					if (!oDoc.explored) {
 						return;
 					} else if (!oDoc.explored.samplesRef) {
-						jQuery.sap.log.error("explored: cannot register lib '" + oDoc.library + "'. missing 'explored.samplesRef'");
+						Log.error("explored: cannot register lib '" + oDoc.library + "'. missing 'explored.samplesRef'");
 						return;
 					} else if (Array.isArray(oDoc.explored.samplesRef) && oDoc.explored.samplesRef.length !== oDoc.explored.samplesRef.filter(function (oItem) {
 							return oItem.namespace && oItem.ref;
 						}).length) {
-						jQuery.sap.log.error("explored: cannot register lib '" + oDoc.library + "'. missing 'explored.samplesRef.namespace' or 'explored.samplesRef.ref' in one or more of the configured namespaces");
+						Log.error("explored: cannot register lib '" + oDoc.library + "'. missing 'explored.samplesRef.namespace' or 'explored.samplesRef.ref' in one or more of the configured namespaces");
 						return;
 					} else if (!Array.isArray(oDoc.explored.samplesRef) && !oDoc.explored.samplesRef.namespace) {
-						jQuery.sap.log.error("explored: cannot register lib '" + oDoc.library + "'. missing 'explored.samplesRef.namespace'");
+						Log.error("explored: cannot register lib '" + oDoc.library + "'. missing 'explored.samplesRef.namespace'");
 						return;
 					} else if (!Array.isArray(oDoc.explored.samplesRef) && !oDoc.explored.samplesRef.ref) {
-						jQuery.sap.log.error("explored: cannot register lib '" + oDoc.library + "'. missing 'explored.samplesRef.ref'");
+						Log.error("explored: cannot register lib '" + oDoc.library + "'. missing 'explored.samplesRef.ref'");
 						return;
 					} else if (!oDoc.explored.entities) {
-						jQuery.sap.log.error("explored: cannot register lib '" + oDoc.library + "'. missing 'explored.entities'");
+						Log.error("explored: cannot register lib '" + oDoc.library + "'. missing 'explored.entities'");
 						return;
 					} else {
-						jQuery.sap.log.info("explored: now reading lib '" + oDoc.library + "'");
+						Log.info("explored: now reading lib '" + oDoc.library + "'");
 					}
 
 					// register sample resources
 					if (Array.isArray(oDoc.explored.samplesRef)) {
 						// register an array of namespaces
 						oDoc.explored.samplesRef.forEach(function (oItem) {
-							jQuery.sap.registerModulePath(oItem.namespace, "" + oItem.ref);
+							(function() {
+								var paths = {};
+								paths[oItem.namespace.replace(/\./g, "/")] = "" + ResourcesUtil.getResourceOriginPath(oItem.ref || ".");
+								sap.ui.loader.config({paths: paths});
+							}());
 						});
 					} else {
 						// register a single namespace
-						jQuery.sap.registerModulePath(oDoc.explored.samplesRef.namespace, "" + oDoc.explored.samplesRef.ref);
+						(function() {
+							var paths = {};
+							paths[oDoc.explored.samplesRef.namespace.replace(/\./g, "/")] = "" + ResourcesUtil.getResourceOriginPath(oDoc.explored.samplesRef.ref || ".");
+							sap.ui.loader.config({paths: paths});
+						}());
 					}
 
 					// build sample map
 					jQuery.each(oDoc.explored.samples, function (i, oSample) {
 						if (!oSample.id) {
-							jQuery.sap.log.error("explored: cannot register sample '?'. missing 'id'");
+							Log.error("explored: cannot register sample '?'. missing 'id'");
 						} else if (!oSample.name) {
-							jQuery.sap.log.error("explored: cannot register sample '" + oSample.id + "'. missing 'name'");
+							Log.error("explored: cannot register sample '" + oSample.id + "'. missing 'name'");
 						} else {
 							data.samples[oSample.id] = oSample;
+							oSample.library = oDoc.library;
 						}
 					});
 
@@ -135,7 +153,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/documentation/library'],
 
 						// check id property
 						if (!oEnt.id) {
-							jQuery.sap.log.error("explored: cannot register entity '?'. missing 'id'");
+							Log.error("explored: cannot register entity '?'. missing 'id'");
 							return;
 						}
 
@@ -155,23 +173,23 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/documentation/library'],
 
 						// check name property
 						if (!oEnt.name) {
-							jQuery.sap.log.error("explored: cannot register entity '" + oEnt.id + "'. missing 'name'");
+							Log.error("explored: cannot register entity '" + oEnt.id + "'. missing 'name'");
 							return;
 						}
 
-						// check category white list
-						if (aCategoryWhiteList.indexOf(oEnt.category) === -1) {
-							jQuery.sap.log.error("explored: cannot register entity '" + oEnt.id + "'. category '" + oEnt.category + "' is not allowed");
+						// check category allowlist
+						if (aCategoryAllowList.indexOf(oEnt.category) === -1 && aInternalCategoryAllowList.indexOf(oEnt.category) === -1) {
+							Log.error("explored: cannot register entity '" + oEnt.id + "'. category '" + oEnt.category + "' is not allowed");
 							return;
 						}
 
 						// convert content density
 						if (!oEnt.formFactors) {
-							jQuery.sap.log.error("explored: cannot register entity '" + oEnt.id + "'. missing 'formFactors'");
+							Log.error("explored: cannot register entity '" + oEnt.id + "'. missing 'formFactors'");
 							return;
 						}
 						if (!mFormFactorsMap[oEnt.formFactors]) {
-							jQuery.sap.log.error("explored: cannot register entity '" + oEnt.id + "'. formFactors '" + oEnt.formFactors + "' is not allowed");
+							Log.error("explored: cannot register entity '" + oEnt.id + "'. formFactors '" + oEnt.formFactors + "' is not allowed");
 							return;
 						}
 						oEnt.formFactors = mFormFactorsMap[oEnt.formFactors];
@@ -180,7 +198,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/documentation/library'],
 						var bAbortEntity = false;
 						jQuery.each(afilterProps, function (i, sProp) {
 							if (!oEnt[sProp]) {
-								jQuery.sap.log.error("explored: cannot register entity '" + oEnt.id + "'. missing '" + sProp + "'");
+								Log.error("explored: cannot register entity '" + oEnt.id + "'. missing '" + sProp + "'");
 								bAbortEntity = true;
 								return false;
 							}
@@ -197,7 +215,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/documentation/library'],
 						oEnt.library = oDoc.library;
 
 						// add entity
-						data.entities.push(oEnt);
+						if (aCategoryAllowList.indexOf(oEnt.category) > -1) {
+							data.entities.push(oEnt);
+						}
 					});
 				});
 
@@ -211,10 +231,21 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/documentation/library'],
 					// define search tags
 					oEnt.searchTags = oEnt.name + " " + oEnt.name.replace(/\s/g, "") + " " + oEnt.category;
 
+					// add sample name and descriptions to search tags
+					if (oEnt.samples) {
+						oEnt.samples.forEach(function (sSample) {
+							var oSample = data.samples[sSample];
+							if (oSample) {
+								oEnt.searchTags += " " + oSample.name;
+								oEnt.searchTags += " " + oSample.description;
+							}
+						});
+					}
+
 					// check samples property
 					if (oEnt.samples && !(oEnt.samples instanceof Array)) {
 						oEnt.samples = [];
-						jQuery.sap.log.error("explored: cannot register samples for entity '" + oEnt.id + "'. 'samples' is not an array");
+						Log.error("explored: cannot register samples for entity '" + oEnt.id + "'. 'samples' is not an array");
 						return;
 					}
 					if (!oEnt.samples) {
@@ -225,7 +256,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/documentation/library'],
 					if (oEnt.samplesAsSteps) {
 						// step-based entities: generate a sample based on the name of the step and the position in the array
 						if (!(oEnt.samplesAsSteps instanceof Array)) {
-							jQuery.sap.log.error("explored: cannot register samples for entity '" + oEnt.id + "'. 'samplesAsSteps' is not an array");
+							Log.error("explored: cannot register samples for entity '" + oEnt.id + "'. 'samplesAsSteps' is not an array");
 							return;
 						}
 
@@ -255,6 +286,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/documentation/library'],
 
 							// add generated sample to this entity and to the samples array
 							oEnt.samples.push(oStep);
+							//Added library property, used to load sample resources
+							oStep.library = oEnt.library;
 							data.samples[oStep.id] = oStep;
 							oEnt.searchTags += " " + oStep.name;
 						}
@@ -267,16 +300,27 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/documentation/library'],
 							var oSample = data.samples[sId];
 
 							if (!oSample) {
-								jQuery.sap.log.warning("explored: cannot register sample '" + sId + "' for '" + oEnt.id + "'. not found in the available docu indizes");
+								Log.warning("explored: cannot register sample '" + sId + "' for '" + oEnt.id + "'. not found in the available docu indizes");
 							} else {
-								// dynamically add a prev / next pointer to be able to cross-navigate between the samples of the same type
-								oSample.previousSampleId = (oPreviousSample ? oPreviousSample.id : undefined);
-								if (oPreviousSample) {
-									oPreviousSample.nextSampleId = oSample.id;
-								}
-								oPreviousSample = oSample;
 
 								oSample.entityId = oEnt.id;
+
+								// Record specifics based on sample contexts
+								if (!oSample.contexts) {
+									oSample.contexts = {};
+								}
+
+								if (!oSample.contexts[oSample.entityId]) {
+									oSample.contexts[oSample.entityId] = {};
+								}
+
+								// dynamically add a prev / next pointer to be able to cross-navigate between the samples of the same type
+								oSample.contexts[oSample.entityId].previousSampleId = (oPreviousSample ? oPreviousSample.id : undefined);
+
+								if (oPreviousSample) {
+									oPreviousSample.contexts[oSample.entityId].nextSampleId = oSample.id;
+								}
+								oPreviousSample = oSample;
 
 								// add the sample to the local store
 								aSamples.push(oSample);

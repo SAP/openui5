@@ -1,0 +1,47 @@
+<core:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:f="sap.f">
+
+	<f:GridList headerText="Item with sap.m.List and sap.m.Table inside">
+
+		<f:GridListItem id="item1">
+			<Table headerText="sap.m.Table">
+				<columns>
+					<Column>
+						<Text text="Name"/>
+					</Column>
+					<Column>
+						<Text text="Type"/>
+					</Column>
+				</columns>
+				<items>
+					<ColumnListItem id="tableItem1" vAlign="Middle" type="Navigation" class="sapUiSmallMarginTopBottom">
+						<cells>
+							<ObjectIdentifier class="sapUiSmallMarginTopBottom" title="Digital Twin" titleActive="false"/>
+							<Text text="Building"/>
+							<Text text="Markdorf"/>
+						</cells>
+					</ColumnListItem>
+					<ColumnListItem vAlign="Middle" type="Navigation" class="sapUiSmallMarginTopBottom">
+						<cells>
+							<ObjectIdentifier class="sapUiSmallMarginTopBottom" title="Street" titleActive="false"/>
+							<Text text="Street Section"/>
+							<Text text="Markdorf"/>
+						</cells>
+					</ColumnListItem>
+				</items>
+			</Table>
+		</f:GridListItem>
+		<f:GridListItem id="item2">
+			<List headerText="sap.m.List">
+				<items>
+					<StandardListItem id="listItem1" title="Building" description="Markdorf" type="Navigation" />
+					<StandardListItem title="Street Section" description="Markdorf" type="Navigation" highlight="Information"/>
+				</items>
+			</List>
+		</f:GridListItem>
+	</f:GridList>
+
+</core:FragmentDefinition>

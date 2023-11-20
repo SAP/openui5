@@ -1,0 +1,103 @@
+{
+	"items1": [
+		{
+			"title": "Item 1",
+			"subtitle": "Subtitle 1",
+			"counter": 5,
+			"type": "Active"
+		},
+		{
+			"title": "Item 2",
+			"subtitle": "Subtitle 2",
+			"counter": 15,
+			"type": "Active"
+		},
+		{
+			"title": "Item 3",
+			"subtitle": "Subtitle 3",
+			"counter": 15734
+		},
+		{
+			"title": "Item 4",
+			"subtitle": "Subtitle 4",
+			"counter": 2
+		}
+	],
+	"items2": [
+		{
+			"title": "Item 1",
+			"subtitle": "Subtitle 5",
+			"counter": 1
+		},
+		{
+			"title": "Item 2",
+			"subtitle": "Subtitle 6",
+			"counter": 5,
+			"type": "Active"
+		},
+		{
+			"title": "Item 3",
+			"subtitle": "This is a long subtitle 7",
+			"counter": 5,
+			"type": "DetailAndActive"
+		},
+		{
+			"title": "Item 4",
+			"subtitle": "Subtitle 8",
+			"counter": 0,
+			"type": "Navigation"
+		}
+	],
+	"items3": [
+		{
+			"title": "Item 1",
+			"subtitle": "Subtitle 9"
+		},
+		{
+			"title": "Item 2",
+			"subtitle": "Subtitle 10",
+			"type": "Active"
+		},
+		{
+			"title": "Item 3",
+			"subtitle": "Subtitle 11",
+			"type": "Active"
+		},
+		{
+			"title": "Item 4",
+			"subtitle": "Subtitle 12"
+		},
+		{
+			"title": "Item 5",
+			"subtitle": "Subtitle 13",
+			"counter": 5,
+			"type": "Navigation"
+		}
+	],
+	"items4": [
+		{
+			"title": "Item 1",
+			"subtitle": "Subtitle 18"
+		},
+		{
+			"title": "Item 2",
+			"subtitle": "This is a long subtitle 19"
+		},
+		{
+			"title": "Item 3",
+			"subtitle": "Subtitle 20",
+			"counter": 1,
+			"type": "Inactive"
+		},
+		{
+			"title": "Item 4",
+			"subtitle": "Subtitle 21",
+			"type": "Navigation"
+		},
+		{
+			"title": "Item 5",
+			"subtitle": "Subtitle 22",
+			"counter": 5
+		}
+	]
+}

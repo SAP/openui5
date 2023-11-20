@@ -1,0 +1,71 @@
+{
+	"_version": "1.15.0",
+	"sap.app": {
+		"id": "card.explorer.object.card",
+		"type": "card",
+		"title": "Sample of an Object Card",
+		"subTitle": "Sample of an Object Card",
+		"applicationVersion": {
+			"version": "1.0.0"
+		},
+		"shortTitle": "A short title for this Card",
+		"info": "Additional information about this Card",
+		"description": "A long description for this Card",
+		"tags": {
+			"keywords": [
+				"Object",
+				"Card",
+				"Sample"
+			]
+		}
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"icons": {
+			"icon": "sap-icon://switch-classes"
+		}
+	},
+	"sap.card": {
+		"type": "Object",
+		"data": {
+			"json": {
+				"firstName": "Donna",
+				"lastName": "Moore",
+				"position": "Sales Executive",
+				"photo": "./DonnaMoore.png",
+				"visible": false,
+				"manager": {
+					"firstName": "Alain",
+					"lastName": "Chevalier",
+					"photo": "./AlainChevalier.png",
+					"visible": true
+				}
+			}
+		},
+		"header": {
+			"icon": {
+				"src": "{photo}",
+				"visible": "{visible}"
+			},
+			"title": "{firstName} {lastName}",
+			"subTitle": "{position}"
+		},
+		"content": {
+			"groups": [
+				{
+					"title": "Manager Details",
+					"items": [
+						{
+							"label": "Direct Manager",
+							"value": "{manager/firstName} {manager/lastName}",
+							"icon": {
+								"src": "{manager/photo}",
+								"visible": "{manager/visible}"
+							}
+						}
+					]
+				}
+			]
+		}
+	}
+}

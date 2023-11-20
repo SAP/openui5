@@ -6,26 +6,49 @@
  * Initialization Code and shared classes of library sap.ui.unified.
  */
 sap.ui.define([
-	'jquery.sap.global',
-	'sap/ui/core/Core',
-	'sap/ui/base/Object',
-	'jquery.sap.dom',
-	'jquery.sap.script'
-], function(jQuery, Core, BaseObject/* jQuerySapDom,jQuerySapScript*/) {
+ 'sap/ui/core/Core',
+ 'sap/ui/base/Object',
+ "./ColorPickerDisplayMode",
+ "./FileUploaderHttpRequestMethod",
+ "sap/ui/core/RenderManager",
+ 'sap/ui/core/library'
+], function(
+ Core,
+ BaseObject,
+ ColorPickerDisplayMode,
+ FileUploaderHttpRequestMethod,
+ RenderManager
+) {
 
 	"use strict";
 
-	// delegate further initialization of this library to the Core
-	sap.ui.getCore().initLibrary({
+	/**
+	 * Unified controls intended for both, mobile and desktop scenarios
+	 *
+	 * @namespace
+	 * @alias sap.ui.unified
+	 * @author SAP SE
+	 * @version ${version}
+	 * @since 1.28
+	 * @public
+	 */
+	var thisLib = sap.ui.getCore().initLibrary({
 		name : "sap.ui.unified",
 		version: "${version}",
 		dependencies : ["sap.ui.core"],
 		designtime: "sap/ui/unified/designtime/library.designtime",
 		types: [
+			"sap.ui.unified.CalendarAppointmentVisualization",
 			"sap.ui.unified.CalendarDayType",
-			"sap.ui.unified.GroupAppointmentsMode",
+			"sap.ui.unified.CalendarIntervalType",
+			"sap.ui.unifief.CalendarAppointmentHeight",
+			"sap.ui.unifief.CalendarAppointmentRoundWidth",
+			"sap.ui.unified.ColorPickerDisplayMode",
+			"sap.ui.unified.ColorPickerMode",
 			"sap.ui.unified.ContentSwitcherAnimation",
-			"sap.ui.unified.ColorPickerMode"
+			"sap.ui.unified.GroupAppointmentsMode",
+			"sap.ui.unified.FileUploaderHttpRequestMethod",
+			"sap.ui.unified.StandardCalendarLegendItem"
 		],
 		interfaces: [
 			"sap.ui.unified.IProcessableBlobs"
@@ -38,6 +61,7 @@ sap.ui.define([
 			"sap.ui.unified.calendar.MonthsRow",
 			"sap.ui.unified.calendar.TimesRow",
 			"sap.ui.unified.calendar.YearPicker",
+			"sap.ui.unified.calendar.YearRangePicker",
 			"sap.ui.unified.Calendar",
 			"sap.ui.unified.CalendarDateInterval",
 			"sap.ui.unified.CalendarWeekInterval",
@@ -47,6 +71,7 @@ sap.ui.define([
 			"sap.ui.unified.CalendarRow",
 			"sap.ui.unified.ContentSwitcher",
 			"sap.ui.unified.ColorPicker",
+			"sap.ui.unified.ColorPickerPopover",
 			"sap.ui.unified.Currency",
 			"sap.ui.unified.FileUploader",
 			"sap.ui.unified.Menu",
@@ -77,23 +102,11 @@ sap.ui.define([
 	});
 
 	/**
-	 * Unified controls intended for both, mobile and desktop scenarios
-	 *
-	 * @namespace
-	 * @alias sap.ui.unified
-	 * @author SAP SE
-	 * @version ${version}
-	 * @public
-	 */
-	var thisLib = sap.ui.unified;
-
-	/**
 	 * Types of a calendar day used for visualization.
 	 *
 	 * @enum {string}
 	 * @public
-	 * @since 1.24.0
-	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
+	 * @since 1.13
 	 */
 	thisLib.CalendarDayType = {
 
@@ -246,30 +259,29 @@ sap.ui.define([
 	 * @enum {string}
 	 * @public
 	 * @since 1.50
-	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	thisLib.StandardCalendarLegendItem = {
 		/**
 		 * Type used for visualization of the current date.
-         * @public
+		 * @public
 		 */
 		Today: "Today",
 
 		/**
 		 * Type used for visualization of the regular work days.
-         * @public
+		 * @public
 		 */
 		WorkingDay: "WorkingDay",
 
 		/**
 		 * Type used for visualization of the non-working days.
-         * @public
+		 * @public
 		 */
 		NonWorkingDay: "NonWorkingDay",
 
 		/**
 		 * Type used for visualization of the currently selected day.
-         * @public
+		 * @public
 		 */
 		Selected: "Selected"
 	};
@@ -280,7 +292,6 @@ sap.ui.define([
 	 * @enum {string}
 	 * @public
 	 * @since 1.34.0
-	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	thisLib.CalendarIntervalType = {
 
@@ -323,12 +334,72 @@ sap.ui.define([
 	};
 
 	/**
+	 * Types of a calendar appointment display mode
+	 *
+	 * @enum {string}
+	 * @alias sap.ui.unified.CalendarAppointmentHeight
+	 * @public
+	 * @since 1.80.0
+	 */
+	thisLib.CalendarAppointmentHeight = {
+
+		/**
+		 * HalfSize display mode.
+		 * @public
+		 */
+		HalfSize : "HalfSize",
+
+		/**
+		 * Regular display mode.
+		 * @public
+		 */
+		Regular : "Regular",
+
+		/**
+		 * Large display mode.
+		 * @public
+		 */
+		Large : "Large",
+
+		/**
+		 * Automatic display mode.
+		 * @public
+		 */
+		Automatic : "Automatic"
+
+	};
+
+	/**
+	 * Types of a calendar appointment display mode
+	 *
+	 * @enum {string}
+	 * @alias sap.ui.unified.CalendarAppointmentRoundWidth
+	 * @public
+	 * @experimental Since 1.81.0
+	 * @since 1.81.0
+	 */
+	thisLib.CalendarAppointmentRoundWidth = {
+
+		/**
+		 * Visually rounds the appointment to half a column.
+		 * @public
+		 */
+		HalfColumn : "HalfColumn",
+
+		/**
+		 * No rounding is used.
+		 * @public
+		 */
+		None : "None"
+
+	};
+
+	/**
 	 * Types of display mode for overlapping appointments.
 	 *
 	 * @enum {string}
 	 * @public
 	 * @since 1.48.0
-	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	thisLib.GroupAppointmentsMode = {
 
@@ -346,13 +417,15 @@ sap.ui.define([
 
 	};
 
+	// expose imported enum as property of library namespace, for documentation see FileUploaderHttpRequestMethod.js
+	thisLib.FileUploaderHttpRequestMethod = FileUploaderHttpRequestMethod;
+
 	/**
 	 * Visualization types for {@link sap.ui.unified.CalendarAppointment}.
 	 *
 	 * @enum {string}
 	 * @public
 	 * @since 1.40.0
-	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	thisLib.CalendarAppointmentVisualization = {
 
@@ -378,7 +451,6 @@ sap.ui.define([
 	 * @since 1.16.0
 	 * @experimental Since version 1.16.0.
 	 * API is not yet finished and might change completely
-	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	thisLib.ContentSwitcherAnimation = {
 
@@ -431,7 +503,6 @@ sap.ui.define([
 	 *
 	 * @enum {string}
 	 * @public
-	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	thisLib.ColorPickerMode = {
 
@@ -449,6 +520,9 @@ sap.ui.define([
 
 	};
 
+	// expose imported enum as property of library namespace, for documentation see ColorPickerDisplayMode.js
+	thisLib.ColorPickerDisplayMode = ColorPickerDisplayMode;
+
 	/**
 	 * Marker interface for controls that process instances of <code>window.Blob</code>, such as <code>window.File</code>.
 	 * The implementation of this Interface should implement the following Interface methods:
@@ -459,7 +533,6 @@ sap.ui.define([
 	 * @name sap.ui.unified.IProcessableBlobs
 	 * @interface
 	 * @public
-	 * @ui5-metamodel This interface also will be described in the UI5 (legacy) designtime metamodel
 	 */
 
 	/**
@@ -468,9 +541,9 @@ sap.ui.define([
 	 * One use case could be to create and upload zip archives based on the passed Blobs.
 	 * The default implementation of this API should simply resolve with the received Blobs (parameter <code>aBlobs</code>).
 	 * @public
-         * @since 1.52
-         * @param {Blob[]} aBlobs The initial Blobs which can be used to determine a new array of Blobs for further processing.
-	 * @return {Promise} A Promise that resolves with an array of Blobs which is used for the final uploading.
+	 * @since 1.52
+	 * @param {Blob[]} aBlobs The initial Blobs which can be used to determine a new array of Blobs for further processing.
+	 * @returns {Promise<Blob[]>} A Promise that resolves with an array of Blobs which is used for the final uploading.
 	 * @function
 	 * @name sap.ui.unified.IProcessableBlobs.getProcessedBlobsFromArray
 	 */
@@ -481,7 +554,7 @@ sap.ui.define([
 			this._id = sContentContainerId;
 			this._cntnt = oContent;
 			this._ctrl = oControl;
-			this._rm = sap.ui.getCore().createRenderManager();
+			this._rm = new RenderManager().getInterface();
 			this._cb = fAfterRenderCallback || function(){};
 		},
 
@@ -493,7 +566,7 @@ sap.ui.define([
 			delete this._cb;
 			delete this._ctrl;
 			if (this._rerenderTimer) {
-				jQuery.sap.clearDelayedCall(this._rerenderTimer);
+				clearTimeout(this._rerenderTimer);
 				delete this._rerenderTimer;
 			}
 			BaseObject.prototype.destroy.apply(this, arguments);
@@ -505,14 +578,13 @@ sap.ui.define([
 			}
 
 			if (this._rerenderTimer) {
-				jQuery.sap.clearDelayedCall(this._rerenderTimer);
+				clearTimeout(this._rerenderTimer);
 			}
 
-			this._rerenderTimer = jQuery.sap.delayedCall(0, this, function(){
-				var $content = jQuery.sap.byId(this._id);
-				var doRender = $content.length > 0;
+			this._rerenderTimer = setTimeout(function(){
+				var oContent = document.getElementById(this._id);
 
-				if (doRender) {
+				if (oContent) {
 					if (typeof (this._cntnt) === "string") {
 						var aContent = this._ctrl.getAggregation(this._cntnt, []);
 						for (var i = 0; i < aContent.length; i++) {
@@ -521,42 +593,16 @@ sap.ui.define([
 					} else {
 						this._cntnt(this._rm);
 					}
-					this._rm.flush($content[0]);
+					this._rm.flush(oContent);
 				}
 
-				this._cb(doRender);
-			});
+				this._cb(!!oContent);
+			}.bind(this), 0);
 		}
 	});
 
 
 	thisLib._iNumberOfOpenedShellOverlays = 0;
-
-	// Default implementation of ColorPickerHelper - to be overwritten by commons or mobile library
-	if (!thisLib.ColorPickerHelper) {
-		thisLib.ColorPickerHelper = {
-			isResponsive: function () { return false; },
-			factory: {
-				createLabel:  function () { throw new Error("no Label control available"); },
-				createInput:  function () { throw new Error("no Input control available"); },
-				createSlider: function () { throw new Error("no Slider control available"); },
-				createRadioButtonGroup: function () { throw new Error("no RadioButtonGroup control available"); },
-				createRadioButtonItem: function () { throw new Error("no RadioButtonItem control available"); }
-			},
-			bFinal: false
-		};
-	}
-
-	//factory for the FileUploader to create TextField and Button to be overwritten by commons and mobile library
-	if (!thisLib.FileUploaderHelper) {
-		thisLib.FileUploaderHelper = {
-			createTextField: function(sId){ throw new Error("no TextField control available!"); }, /* must return a TextField control */
-			setTextFieldContent: function(oTextField, sWidth){ throw new Error("no TextField control available!"); },
-			createButton: function(){ throw new Error("no Button control available!"); }, /* must return a Button control */
-			addFormClass: function(){ return null; },
-			bFinal: false /* if true, the helper must not be overwritten by an other library */
-		};
-	}
 
 	thisLib.calendar = thisLib.calendar || {};
 

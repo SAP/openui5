@@ -1,0 +1,32 @@
+{
+	"sap.app": {
+		"id": "sap.m.sample.SegmentedButtonVSD",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "sap.m.sample.SegmentedButtonVSD.V",
+			"type": "XML",
+			"async": true
+		},
+		"dependencies": {
+			"libs": {
+				"sap.ui.layout": {},
+				"sap.ui.core": {},
+				"sap.m": {}
+			}
+		},
+		"config": {
+			"sample": {
+				"files": [
+					"V.view.xml",
+					"C.controller.js",
+					"Dialog.fragment.xml",
+					"manifest.json"
+				]
+			}
+		}
+	}
+}

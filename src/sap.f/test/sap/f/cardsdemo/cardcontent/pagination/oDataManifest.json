@@ -1,0 +1,114 @@
+{
+	"_version": "1.14.0",
+	"sap.app": {
+		"id": "card.explorer.data.list.card",
+		"type": "card",
+		"title": "Cards with Server-Side Pagination",
+		"subTitle": "",
+		"applicationVersion": {
+			"version": "1.0.0"
+		},
+		"shortTitle": "A short title for this Card",
+		"info": "Additional information about this Card",
+		"description": "A long description for this Card",
+		"tags": {
+			"keywords": [
+				"Data",
+				"Pagination",
+				"Card",
+				"Sample"
+			]
+		}
+	},
+	"sap.card": {
+		"type": "List",
+		"configuration": {
+			"parameters": {
+				"top": {
+					"value": 5,
+					"type": "integer"
+				},
+				"actionEnabled": {
+					"value": true
+				},
+				"actionDisabled": {
+					"value": false
+				}
+			}
+		},
+		"header": {
+			"title": "Content Data",
+			"subTitle": "In Stock Information",
+			"icon": {
+				"src": "sap-icon://product"
+			}
+		},
+		"content": {
+			"data": {
+				"request": {
+					"url": "https://services.odata.org/V4/Northwind/Northwind.svc/Products",
+					"parameters": {
+						"$format": "json",
+						"$count": true,
+						"$skip": "{paginator>/skip}",
+						"$top": "{parameters>/top/value}"
+					}
+				},
+				"path": "/value"
+			},
+			"item": {
+				"title": "{ProductName}",
+				"description": "{UnitsInStock} units in stock",
+				"highlight": "{= ${Discontinued} ? 'Error' : 'Success'}"
+			}
+		},
+		"footer": {
+			"paginator": {
+				"totalCount": "{/@odata.count}",
+				"pageSize": "{parameters>/top/value}"
+			},
+			"actionsStrip": [
+				{
+					"text": "Bound False",
+					"actions": [
+						{
+							"enabled": "{parameters>/actionDisabled/value}",
+							"type": "Custom",
+							"parameters": { }
+						}
+					]
+				},
+				{
+					"text": "Bound True",
+					"actions": [
+						{
+							"enabled": "{parameters>/actionEnabled/value}",
+							"type": "Custom",
+							"parameters": { }
+						}
+					]
+				},
+				{
+					"text": "True",
+					"actions": [
+						{
+							"enabled": true,
+							"type": "Custom",
+							"parameters": { }
+						}
+					]
+				},
+				{
+					"text": "False",
+					"actions": [
+						{
+							"enabled": false,
+							"type": "Custom",
+							"parameters": { }
+						}
+					]
+				}
+			]
+		}
+	}
+}

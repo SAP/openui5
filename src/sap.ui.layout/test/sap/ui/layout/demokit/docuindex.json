@@ -38,7 +38,8 @@
 					"sap.ui.layout.sample.Form_Column_oneGroup",
 					"sap.ui.layout.sample.Form_Column_oneGroup234",
 					"sap.ui.layout.sample.Form_Column_twoGroups234",
-					"sap.ui.layout.sample.Form_Column_threeGroups234"
+					"sap.ui.layout.sample.Form_Column_threeGroups234",
+					"sap.ui.layout.sample.Form_Column_threeGroups236"
 				]
 			},
 			{
@@ -59,7 +60,8 @@
 					"sap.ui.layout.sample.SimpleForm_Column_oneGroup",
 					"sap.ui.layout.sample.SimpleForm_Column_oneGroup234",
 					"sap.ui.layout.sample.SimpleForm_Column_twoGroups234",
-					"sap.ui.layout.sample.SimpleForm_Column_threeGroups234"
+					"sap.ui.layout.sample.SimpleForm_Column_threeGroups234",
+					"sap.ui.layout.sample.SimpleForm_Column_threeGroups236"
 				]
 			},
 			{
@@ -82,8 +84,8 @@
 				"since" : "1.12",
 				"formFactors" : "-",
 				"samples" : [
-				  	"sap.ui.layout.sample.GridProperties",
-				  	"sap.ui.layout.sample.GridData",
+					"sap.ui.layout.sample.GridProperties",
+					"sap.ui.layout.sample.GridData",
 					"sap.ui.layout.sample.GridInfo",
 					"sap.ui.layout.sample.GridXL"
 				]
@@ -127,6 +129,7 @@
 				"samples" : [
 					"sap.ui.layout.sample.BlockLayoutDefault",
 					"sap.ui.layout.sample.BlockLayoutCustomBackground",
+					"sap.ui.layout.sample.BlockLayoutCustomBackgroundPerCell",
 					"sap.ui.layout.sample.BlockLayoutLinkTitle"
 				]
 			},
@@ -138,6 +141,24 @@
 				"formFactors" : "-",
 				"samples" : [
 					"sap.ui.layout.sample.ResponsiveSplitter"
+				]
+			},
+			{
+				"id" : "sap.ui.layout.cssgrid.CSSGrid",
+				"name" : "CSSGrid",
+				"category" : "Layout",
+				"since" : "1.60",
+				"formFactors" : "-",
+				"samples" : [
+					"sap.ui.layout.sample.CSSGrid",
+					"sap.ui.layout.sample.NestedGrids",
+					"sap.ui.layout.sample.GridAutoFlow",
+					"sap.ui.layout.sample.GridGap",
+					"sap.ui.layout.sample.GridTemplateRows",
+					"sap.ui.layout.sample.GridAutoRows",
+					"sap.ui.layout.sample.GridResponsiveness",
+					"sap.ui.layout.sample.GridResponsiveColumnLayout",
+					"sap.ui.layout.sample.ProductHomeLayout"
 				]
 			}
 		],
@@ -210,17 +231,22 @@
 			{
 				"id": "sap.ui.layout.sample.Form_Column_oneGroup234",
 				"name": "Fullscreen – one group using ColumnLayout with up to 4 columns",
-				"description": "Form with one large single group in a fullscreen app using the <code>ColumnLayout</code> control as layout. 2 columns in medium size, 3 columns in large size and 4 columns in extra-large size are used respectively."
+				"description": "Form with one large single group in a fullscreen app (with 2 columns in M, 3 columns in L, and 4 columns in XL size)."
 			},
 			{
 				"id": "sap.ui.layout.sample.Form_Column_twoGroups234",
 				"name": "Fullscreen – two groups using ColumnLayout with up to 4 columns",
-				"description": "Form with two groups in a fullscreen app using the <code>ColumnLayout</code> control as layout. 2 columns in medium size, 3 columns in large size and 4 columns in extra-large size are used respectively."
+				"description": "Form with two groups in a fullscreen app (with 2 columns in M, 3 columns in L, and 4 columns in XL size)."
 			},
 			{
 				"id": "sap.ui.layout.sample.Form_Column_threeGroups234",
 				"name": "Fullscreen – three groups using ColumnLayout with up to 4 columns",
-				"description": "Form with three groups in a fullscreen app using the <code>ColumnLayout</code> control as layout. 2 columns in medium size, 3 columns in large size and 4 columns in extra-large size are used respectively."
+				"description": "Form with three groups in a fullscreen app (with 2 columns in M, 3 columns in L, and 4 columns in XL size)."
+			},
+			{
+				"id": "sap.ui.layout.sample.Form_Column_threeGroups236",
+				"name": "Fullscreen – six groups using ColumnLayout with up to 6 columns",
+				"description": "Form with three groups in a fullscreen app (with 2 columns in M, 3 columns in L, and 6 columns in XL size)."
 			},
 			{
 				"id": "sap.ui.layout.sample.HorizontalLayout",
@@ -280,17 +306,22 @@
 			{
 				"id": "sap.ui.layout.sample.SimpleForm_Column_oneGroup234",
 				"name": "Fullscreen – one group using ColumnLayout with up to 4 columns",
-				"description": "Form with one large single group in a fullscreen app using the <code>ColumnLayout</code> control as layout. 2 columns in medium size, 3 columns in large size and 4 columns in extra-large size are used respectively."
+				"description": "Form with one large single group in a fullscreen app (with 2 columns in M, 3 columns in L, and 4 columns in XL size)."
 			},
 			{
 				"id": "sap.ui.layout.sample.SimpleForm_Column_twoGroups234",
 				"name": "Fullscreen – two groups using ColumnLayout with up to 4 columns",
-				"description": "Form with two groups in a fullscreen app using the <code>ColumnLayout</code> control as layout. 2 columns in medium size, 3 columns in large size and 4 columns in extra-large size are used respectively."
+				"description": "Form with two groups in a fullscreen app (with 2 columns in M, 3 columns in L, and 4 columns in XL size)."
 			},
 			{
 				"id": "sap.ui.layout.sample.SimpleForm_Column_threeGroups234",
 				"name": "Fullscreen – three groups using ColumnLayout with up to 4 columns",
-				"description": "Form with three groups in a fullscreen app using the <code>ColumnLayout</code> control as layout. 2 columns in medium size, 3 columns in large size and 4 columns in extra-large size are used respectively."
+				"description": "Form with three groups in a fullscreen app (with 2 columns in M, 3 columns in L, and 4 columns in XL size)."
+			},
+			{
+				"id": "sap.ui.layout.sample.SimpleForm_Column_threeGroups236",
+				"name": "Fullscreen – three groups using ColumnLayout with up to 6 columns",
+				"description": "Form with three groups in a fullscreen app (with 2 columns in M, 3 columns in L, and 6 columns in XL size)."
 			},
 			{
 				"id": "sap.ui.layout.sample.FixFlexVertical",
@@ -312,7 +343,7 @@
 			  "name": "Fix Flex - Vertical Direction with minFlexSize",
 			  "description": "Shows a FixFlex control where the minFlexSize is set to 400px."
 			},
-		  	{
+			{
 			  "id": "sap.ui.layout.sample.GridProperties",
 			  "name": "Grid - Own properties",
 			  "description": "You can see how the different properties of the sap.ui.layout.Grid affect it's final appearance."
@@ -364,8 +395,13 @@
 			},
 			{
 				"id": "sap.ui.layout.sample.BlockLayoutCustomBackground",
-				"name": "Block Layout with custom background for the cells",
-				"description": "The BlockLayout could be used with different backgrounds for its cells."
+				"name": "Block Layout with custom background color set for the cells",
+				"description": "Block Layout in which all cells use the same background color set and different color shade."
+			},
+			{
+				"id": "sap.ui.layout.sample.BlockLayoutCustomBackgroundPerCell",
+				"name": "Block Layout with custom background color set per cell",
+				"description": "Block Layout in which all cells use different background color set and different shade."
 			},
 			{
 				"id": "sap.ui.layout.sample.BlockLayoutLinkTitle",
@@ -376,6 +412,51 @@
 				"id": "sap.ui.layout.sample.ResponsiveSplitter",
 				"name": "Responsive Splitter",
 				"description": "ResponsiveSplitter is used to visually divide the content of its parent. It consists of PaneContainers that further  agregate other PaneContainers and SplitPanes. SplitPanes can be moved to the pagination when a minimum width of their parent is reached."
+			},
+			{
+				"id": "sap.ui.layout.sample.CSSGrid",
+				"name": "CSSGrid",
+				"description": "CSSGrid example for page layout."
+			},
+			{
+				"id": "sap.ui.layout.sample.NestedGrids",
+				"name": "Nested Example",
+				"description": "CSSGrid example nested grids."
+			},
+			{
+				"id": "sap.ui.layout.sample.GridAutoFlow",
+				"name": "Controlling Empty Spaces Within the Grid",
+				"description": "Example of setting the gridAutoFlow property."
+			},
+			{
+				"id": "sap.ui.layout.sample.GridGap",
+				"name": "Grid Gap and Layout Data",
+				"description": "Example of setting the gridGap property and using of Layout Data."
+			},
+			{
+				"id": "sap.ui.layout.sample.GridTemplateRows",
+				"name": "Configuring Rows and Columns",
+				"description": "Example of setting gridTemplateRows and gridTemplateColumns properties."
+			},
+			{
+				"id": "sap.ui.layout.sample.GridAutoRows",
+				"name": "Automatic Sizing for Additional Rows and Columns",
+				"description": "Example of setting gridAutoRows and gridAutoColumns properties."
+			},
+			{
+				"id": "sap.ui.layout.sample.GridResponsiveness",
+				"name": "Responsiveness",
+				"description": "Example of setting customLayout for different layout (screen) sizes."
+			},
+			{
+				"id": "sap.ui.layout.sample.GridResponsiveColumnLayout",
+				"name": "Responsive Column Layout",
+				"description": "Example of using ResponsiveColumnLayout."
+			},
+			{
+				"id": "sap.ui.layout.sample.ProductHomeLayout",
+				"name": "Product Home Layout",
+				"description": "Example of using several grids nested in one main grid with ResponsiveColumnLayout, in order to achieve responsive home page design."
 			}
 		]
 	}

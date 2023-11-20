@@ -1,0 +1,158 @@
+{
+  "1.68.0": {
+    "date": "June 2019",
+    "notes": [
+      {
+        "id": "38faf63713a594cf922008de45b129ef2d86b0d9",
+        "type": "FIX",
+        "text": "sap.m.ViewSettingDialog: select all checkbox now alligned in fiori 3",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980240595"
+          }
+        ]
+      },
+      {
+        "id": "0b92ae279dedd349c558d538f76a07c04e7c7733",
+        "type": "FIX",
+        "text": "sap.uxap.AnchorBar: Quartz visualization of buttons with icon is fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970204010"
+          }
+        ]
+      },
+      {
+        "id": "54e15af529603723c74a7e052ddaccc12a95d22e",
+        "type": "FIX",
+        "text": "sap.m.Shell: has correct background color now",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970246755"
+          }
+        ]
+      },
+      {
+        "id": "014fc9b246b0eb491d96b1d5a865ed4fbcbf4f6d",
+        "type": "FIX",
+        "text": "sap.m.PlanningCalendar: appointment parameter colors in fiori 3 alligned",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970263800"
+          }
+        ]
+      },
+      {
+        "id": "0590b526b47c03b4e7f0f2530615ad68245e8eb4",
+        "type": "FIX",
+        "text": "sap.m.RadioButton: Styles adjustments",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970235794"
+          }
+        ]
+      },
+      {
+        "id": "1dbac1c01a4a26cdc74132e52b1bee796ccc0d91",
+        "type": "FIX",
+        "text": "sap.m.RadioButton: Success value state border corrected",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970245295"
+          }
+        ]
+      },
+      {
+        "id": "16a32024bbf57fa92aa225f463b090d0f9aa438b",
+        "type": "FIX",
+        "text": "sap.tnt.ToolPage: Fiori 3 theme unnecessary spacing is now removed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970259302"
+          }
+        ]
+      },
+      {
+        "id": "921258e92299ab614dc3ce2735765096d284b854",
+        "type": "FEATURE",
+        "text": "sap.f.DynamicPage: Added new backgroundDesign property",
+        "references": []
+      },
+      {
+        "id": "ba89a088437a86b582944243ef433f8370c463f1",
+        "type": "FEATURE",
+        "text": "sap.ui.core: new sap_fiori_3_hcb theme",
+        "references": []
+      },
+      {
+        "id": "b494910fadf584c0b7942468478b0146a7564d53",
+        "type": "FEATURE",
+        "text": "sap.ui.core: new sap_fiori_3_hcw theme",
+        "references": []
+      },
+      {
+        "id": "7abdd76f273fa7dd34aa431bd3ac35f91c9b4982",
+        "type": "FIX",
+        "text": "sap.m.IconTabBar: Quartz light theme visual improvements",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970225320"
+          }
+        ]
+      },
+      {
+        "id": "d7b7f94339a9d0e50e075424995baf77ca51fbe5",
+        "type": "FIX",
+        "text": "sap.m.SinglePlanningCalendar: focus outline color adjusted",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970268417"
+          }
+        ]
+      },
+      {
+        "id": "7d9d80e6e675bc6bee8416d9a31c1d8ff76c77eb",
+        "type": "FIX",
+        "text": "sap.m.TimePicker: slider parameter colors adjusted in fiori 3",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970276528"
+          }
+        ]
+      },
+      {
+        "id": "2559b7b59fc479b0d00d264be054bd00d0c63132",
+        "type": "FEATURE",
+        "text": "sap_fiori_3_hcb for sap.m controls",
+        "references": []
+      },
+      {
+        "id": "5a26eae4b449fdbf02ca0ed9a81563f8b7cc8919",
+        "type": "FEATURE",
+        "text": "sap_fiori_3_hcw for sap.m controls",
+        "references": []
+      },
+      {
+        "id": "b259d44d3ff0e570e66119a17bf737ed850499d1",
+        "type": "FIX",
+        "text": "sap.m.RadioButton: Styles adjustments",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970235794"
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -2,16 +2,26 @@
  global QUnit
  */
 sap.ui.define([
-	'sap/ui/test/opaQunit',
-	'./pages/Home',
-	'./pages/Welcome',
-	'./pages/Product',
-	'./pages/Category',
-	'./pages/Cart'
-], function (opaTest) {
+	"sap/base/i18n/Localization",
+	"sap/ui/test/opaQunit",
+	"./pages/Home",
+	"./pages/Welcome",
+	"./pages/Product",
+	"./pages/Category",
+	"./pages/Cart"
+], function (Localization, opaTest) {
 	"use strict";
 
-	QUnit.module("Welcome Journey");
+	var sDefaultLanguage = Localization.getLanguage();
+
+	QUnit.module("Welcome Journey", {
+		before : function () {
+			Localization.setLanguage("en-US");
+		},
+		after : function () {
+			Localization.setLanguage(sDefaultLanguage);
+		}
+	});
 
 	opaTest("Should start the app and see the right number of featured products and an avatar button", function (Given, When, Then) {
 		// Arrangements
@@ -45,7 +55,7 @@ sap.ui.define([
 
 	opaTest("Should press back button and navigate to welcome view", function (Given, When, Then) {
 		// Actions
-		When.onTheCategory.iPressTheBackButtonInProduct();
+		When.onTheCategory.iPressTheBackButtonInCategory();
 		// Assertions
 		Then.onTheWelcomePage.iShouldSeeTheWelcomePage();
 	});
@@ -54,7 +64,7 @@ sap.ui.define([
 		// Actions
 		When.onHome.iPressOnTheFlatScreensCategory();
 		When.onTheWelcomePage.iPressOnTheCartButton();
-		When.onTheCategory.iGoToTheCartPage();
+		When.onTheWelcomePage.iToggleTheCart();
 		// Assertions
 		Then.onTheCart.iShouldSeeTheProductInMyCart();
 		// Cleanup

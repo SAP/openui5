@@ -1,0 +1,147 @@
+/* ================================== */
+/* CSS for control sap.f/DynamicPage  */
+/* Quartz High Contrast Black theme   */
+/* ================================== */
+
+.sapFDynamicPageContent,
+.sapFDynamicPageContentFitContainer {
+	padding: 1rem 2rem 0 2rem;
+}
+
+.sapFDynamicPage-Std-Desktop-XL {
+	.sapFDynamicPageContent,
+	.sapFDynamicPageContentFitContainer {
+		padding: 1rem 3rem 0 3rem;
+	}
+}
+
+.sapFDynamicPage.sapUiResponsiveContentPadding {
+	&.sapFDynamicPage-Std-Phone {
+		.sapFDynamicPageContent,
+		.sapFDynamicPageContentFitContainer {
+			padding-left: 1rem;
+			padding-right: 1rem;
+		}
+	}
+
+	&.sapFDynamicPage-Std-Tablet {
+		.sapFDynamicPageContent,
+		.sapFDynamicPageContentFitContainer {
+			padding-left: 2rem;
+			padding-right: 2rem;
+		}
+	}
+
+	&.sapFDynamicPage-Std-Desktop-XL {
+		.sapFDynamicPageContent,
+		.sapFDynamicPageContentFitContainer {
+			padding-left: 3rem;
+			padding-right: 3rem;
+		}
+	}
+}
+
+/* Tablet and Desktop */
+.sapFDynamicPageToggleHeaderIndicator,
+.sapFDynamicPageHeaderPinButton {
+	width: 2.5rem;
+	height: 2.5rem;
+	font-size: 1.375rem;
+
+	// Reflection: styles overwritten
+	.sapMBtnInner {
+		height: 2rem;
+		bottom: 0.5rem;
+
+		.sapMBtnIcon {
+			line-height: 2rem;
+		}
+	}
+}
+
+/* Compact */
+.sapUiSizeCompact {
+	.sapFDynamicPageToggleHeaderIndicator,
+	.sapFDynamicPageHeaderPinButton {
+		width: 1.5rem;
+		height: 2rem;
+		font-size: 1rem;
+
+		// Reflection: styles overwritten
+		.sapMBtnInner {
+			min-width: 1.5rem;
+			width: 1.5rem;
+			height: 1.5rem;
+			bottom: 0.25rem;
+
+			.sapMBtnIcon {
+				width: 100%;
+				padding: 0;
+				line-height: 1.375rem;
+			}
+		}
+	}
+	.sapFDynamicPageToggleHeaderIndicator {
+		margin-left: -1rem;
+	}
+	.sapFDynamicPageHeaderPinnable .sapFDynamicPageToggleHeaderIndicator {
+		margin-left: -2rem;
+	}
+}
+
+.sapFDynamicPageHeaderPinButton > .sapMBtnInner {
+	border: 0.0625rem solid;
+	&:not(.sapMToggleBtnPressed) {
+		background-color: @sapUiButtonBackground;
+	}
+}
+
+.sapFDynamicPage {
+
+	.sapFDynamicPageContentWrapperList,
+	.sapFDynamicPageContentWrapperTransparent {
+		&>.sapFDynamicPageContent {
+			background: @sapUiBaseBG;
+		}
+	}
+}
+
+.sapFDynamicPageHeaderPinButton:hover > .sapMBtnInner.sapMBtnHoverable {
+	background-color: @sapUiButtonHoverBackground;
+
+	&.sapMToggleBtnPressed {
+		background-color: @sapUiToggleButtonPressedHoverBackground;
+	}
+}
+
+.sapFDynamicPageHeaderPinButton > .sapMBtnInner.sapMBtnActive,
+.sapFDynamicPageHeaderPinButton > .sapMBtnInner.sapMBtnActive.sapMBtnHoverable {
+	background-color: @sapUiButtonActiveBackground;
+}
+
+.sapFDynamicPage {
+	/* DynamicPageTitle and Toggle Header Visual Indicator hover state */
+	&.sapFDynamicPageTitleClickEnabled {
+		&.sapFDynamicPageTitleForceHovered .sapFDynamicPageTitle {
+			background: @sapUiObjectHeaderHoverBackground;
+			box-shadow: @sapUiShadowHeader;
+		}
+		&.sapFDynamicPageTitleForceHovered {
+			.sapFDynamicPageToggleHeaderIndicator {
+				.sapMBtnInner {
+					background-color: @sapUiHighlight;
+				}
+			}
+		}
+	}
+
+	// Footer
+	.sapFDynamicPageFooter {
+		opacity: 1;
+
+		.sapFDynamicPageActualFooterControl.sapMTB {
+			box-shadow: @sapUiShadowLevel2;
+			border-bottom: 0 none;
+		}
+	}
+}

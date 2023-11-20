@@ -1,0 +1,123 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>UI Adaptation at Runtime</title>
+		<!-- Bootstrap the unified shell in sandbox mode for standalone usage.
+
+			 The renderer is specified in the global Unified Shell configuration object "sap-ushell-config".
+
+			 The fiori2 renderer will render the shell header allowing, for instance,
+			 testing of additional application setting buttons.
+
+			 The navigation target resolution service is configured in a way that the empty URL hash is
+			 resolved to our own application.
+
+			 This example uses relative path references for the SAPUI5 resources and test-resources;
+			 it might be necessary to adapt them depending on the target runtime platform.
+			 The sandbox platform is restricted to development or demo use cases and must NOT be used
+			 for productive scenarios.
+		-->
+		<script type="text/javascript">
+			window["sap-ushell-config"] = {
+
+				defaultRenderer : "fiori2",
+
+				bootstrapPlugins: {
+					"RuntimeAuthoringPlugin" : {
+						"component": "sap.ushell.plugins.rta"
+					},
+					"PersonalizePlugin": {
+						"component": "sap.ushell.plugins.rta-personalize"
+					}
+				},
+				renderers: {
+					fiori2: {
+						componentData: {
+							config: {
+								enableMergeAppAndShellHeaders: true,
+								search: "hidden"
+							}
+						}
+					}
+				},
+				applications: {
+					"masterDetail-display": {
+						"additionalInformation": "SAPUI5.Component=sap.ui.rta.test.additionalElements",
+						"applicationType": "URL",
+						"url": "./",
+						"description": "Additional Elements Test App",
+						"title": "UI Flexibility",
+						"applicationDependencies": {
+							"self": { name: "sap.ui.rta.test.additionalElements" },
+							"manifest": true,
+							"asyncHints": {
+								"libs": [
+									{ "name": "sap.ui.core" },
+									{ "name": "sap.m" },
+									{ "name": "sap.ui.dt" },
+									{ "name": "sap.ui.rta" },
+									{ "name": "sap.ui.layout" },
+									{ "name": "sap.ui.comp" },
+									{ "name": "sap.uxap" }
+								]
+							}
+						}
+					}
+				},
+				services: {
+					NavTargetResolution: {
+						config: {
+							"allowTestUrlComponentConfig" : true,
+							"enableClientSideTargetResolution": true
+						}
+					},
+					EndUserFeedback: {
+						adapter: {
+							config: {
+								enabled: true
+							}
+						}
+					}
+				}
+			};
+
+			var __sPathPrefix = document.location.pathname.match(/(.*)\/test-resources\//)[1];
+
+			document.write('<script src="' + __sPathPrefix + '/test-resources/sap/ushell/bootstrap/sandbox.js" id="sap-ushell-bootstrap"><' + '/script>');
+		</script>
+
+		<script>
+			document.write('\
+				<script \
+					id="sap-ui-bootstrap" \
+					data-sap-ui-theme="sap_horizon" \
+					data-sap-ui-language="en" \
+					data-sap-ui-noConflict="true" \
+					data-sap-ui-async="true" \
+					data-sap-ui-libs="sap.m, sap.ushell, sap.ui.rta" \
+					data-sap-ui-xx-bindingSyntax="complex" \
+					data-sap-ui-flexibilityServices=\'[{"connector": "LocalStorageConnector"}]\' \
+					src="' +
+				document.location.pathname.match(/(.*)\/test-resources\//)[1] + '/resources/sap-ui-core.js" \
+				><' + '/script>'
+			);
+		</script>
+
+		<script type="text/javascript">
+			sap.ui.require(["sap/ui/core/Core"], (Core) => {
+				Core.ready().then(() => {
+					sap.ui.require("sap/ushell/Container").createRenderer(true).then(function(oRenderer){
+						oRenderer.placeAt("content");
+					});
+				})
+			});
+		</script>
+	</head>
+
+	<!-- UI Content -->
+	<body class="sapUiBody">
+		<div id="content"></div>
+	</body>
+</html>

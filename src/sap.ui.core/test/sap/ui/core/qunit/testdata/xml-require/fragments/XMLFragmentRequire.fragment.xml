@@ -1,0 +1,16 @@
+<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core"
+	xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"
+	core:require="{Box:'sap/m/MessageBox',
+		Toast:'sap/m/MessageToast',
+		OwnHelper:'testdata/xml-require/helper/Formatter'}">
+	<Dialog id="xmlDialog" title="XML Fragment Dialog">
+		<Text id="xmlDialogTxt" text="test" />
+		<buttons>
+			<Button core:require="{OutputText:'testdata/xml-require/helper/OutputText'}"
+				app:data1="{=OwnHelper.groupA.keep('abc')}"
+				app:data2="{=OutputText.foo()}"
+				id="button1" text="Close" press="Box.show('Do you really want to close?')" />
+			<Button id="button2" text="Toast" press="Toast.show('This is a toast')" />
+		</buttons>
+	</Dialog>
+</core:FragmentDefinition>

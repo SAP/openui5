@@ -1,48 +1,30 @@
 /*global QUnit*/
-
-(function () {
+sap.ui.define([
+	"sap/ui/dt/enablement/elementDesigntimeTest",
+	"sap/ui/rta/enablement/elementActionTest",
+	"sap/ui/layout/designtime/form/FormElement.designtime",
+	"sap/ui/layout/form/FormElement",
+	"sap/ui/layout/form/ResponsiveGridLayout",
+	"sap/ui/layout/form/FormContainer",
+	"sap/ui/layout/form/Form",
+	"sap/ui/core/Title",
+	"sap/m/Input"
+], function (
+	elementDesigntimeTest,
+	elementActionTest,
+	FormElementDesignTime,
+	FormElement,
+	ResponsiveLayout,
+	FormContainer,
+	Form,
+	Title,
+	Input
+) {
 	"use strict";
 
-	sap.ui.require([
-		"sap/ui/dt/test/report/QUnit",
-		"sap/ui/rta/test/controlEnablingCheck",
-		"sap/ui/layout/designtime/form/FormElement.designtime",
-		"sap/ui/dt/test/ElementEnablementTest",
-		"sap/ui/layout/form/FormElement",
-		"sap/ui/layout/form/ResponsiveGridLayout",
-		"sap/ui/layout/form/FormContainer",
-		"sap/ui/layout/form/Form",
-		"sap/ui/core/Title",
-		"sap/m/Input"
-	], function (QUnitReport, rtaControlEnablingCheck, FormElementDesignTime,  ElementEnablementTest, FormElement, ResponsiveLayout, FormContainer, Form, Title, Input) {
-
-		var oElement = new FormElement("E1", {
-			label: "Label1"
-		});
-
-		var oElement2 = new FormElement("E2");
-
-		var oLayout = new ResponsiveLayout("Layout");
-
-		var oForm = new Form("F1",{
-			title: new Title("F1T",{text: "Form Title"}),
-			layout: oLayout,
-			formContainers: [
-				new FormContainer("C1",{
-					title: "Container1",
-					formElements: [ oElement, oElement2 ]
-				})
-			]
-		});
-
-		QUnit.test("Retrieve domRef of Form Element with label inside Responsive Grid Layout", function(assert) {
-			assert.ok(oForm, "Form was created");
-			assert.ok(FormElementDesignTime.domRef(oElement), "domRef is retrieved when label is present");
-			assert.ok(FormElementDesignTime.domRef(oElement2), "domRef is retrieved when label is not present");
-		});
-
-		// Element enablement test
-		var oElementEnablementTest = new ElementEnablementTest({
+	return Promise.resolve()
+	.then(function () {
+		return elementDesigntimeTest({
 			type: "sap.ui.layout.form.FormElement",
 			create: function () {
 				return new FormElement({
@@ -52,11 +34,43 @@
 				});
 			}
 		});
-		oElementEnablementTest.run().then(function(oData) {
-			new QUnitReport({
-				data: oData
+	})
+	.then(function() {
+		QUnit.module("Form with responsive layout", {
+			beforeEach: function () {
+				this.oElement = new FormElement("E1", {
+					label: "Label1"
+				});
+				this.oElement2 = new FormElement("E2");
+				this.oLayout = new ResponsiveLayout("Layout");
+				this.oForm = new Form("F1",{
+					title: new Title("F1T",{text: "Form Title"}),
+					layout: this.oLayout,
+					formContainers: [
+						new FormContainer("C1",{
+							title: "Container1",
+							formElements: [
+								this.oElement,
+								this.oElement2
+							]
+						})
+					]
+				});
+			},
+			afterEach: function () {
+				this.oForm.destroy();
+			}
+		}, function () {
+			QUnit.test("Retrieve domRef of Form Element with label inside Responsive Grid Layout", function (assert) {
+				assert.ok(FormElementDesignTime.domRef(this.oElement), "domRef is retrieved when label is present");
+				assert.ok(FormElementDesignTime.domRef(this.oElement2), "domRef is retrieved when label is not present");
+			});
+
+			QUnit.test("Check rename action of Form Element without label inside Responsive Grid Layout", function (assert) {
+				assert.notOk(FormElementDesignTime.actions.rename(this.oElement2), "rename is disabled");
 			});
 		});
+
 
 		// Rename action
 		var fnConfirmFormElementRenamedWithNewValue = function (oUiComponent, oViewAfterAction, assert) {
@@ -71,7 +85,7 @@
 				"then the control has been renamed to the old value (Option 1)");
 		};
 
-		rtaControlEnablingCheck("Checking the rename action for a FormElement", {
+		elementActionTest("Checking the rename action for a FormElement", {
 			xmlView: '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:f="sap.ui.layout.form" xmlns:m="sap.m">' +
 				'<f:Form id="idForm">' +
 					'<f:layout>' +
@@ -115,7 +129,7 @@
 			assert.strictEqual(oViewAfterAction.byId("formElement").getVisible(), true, "then the FormElement is visible");
 		};
 
-		rtaControlEnablingCheck("Checking the remove action for FormElement", {
+		elementActionTest("Checking the remove action for FormElement", {
 			xmlView: '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:f="sap.ui.layout.form" xmlns:m="sap.m">' +
 				'<f:Form id="idForm">' +
 					'<f:layout>' +
@@ -144,7 +158,7 @@
 			afterRedo: fnConfirmFormElementIsInvisible
 		});
 
-		rtaControlEnablingCheck("Checking the reveal action for a FormElement", {
+		elementActionTest("Checking the reveal action for a FormElement", {
 			xmlView: '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:f="sap.ui.layout.form" xmlns:m="sap.m">' +
 				'<f:Form id="idForm">' +
 					'<f:layout>' +
@@ -173,4 +187,4 @@
 			afterRedo: fnConfirmFormElementIsVisible
 		});
 	});
-})();
+});

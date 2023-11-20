@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.ui.commons.FileUploaderParameter.
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/unified/FileUploaderParameter'],
-	function(jQuery, library, UnifiedFileUploaderParameter) {
+sap.ui.define(['sap/base/Log', './library', 'sap/ui/unified/FileUploaderParameter'],
+	function(Log, library, UnifiedFileUploaderParameter) {
 	"use strict";
 
 	/**
@@ -25,7 +25,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/unified/FileUploaderPar
 	 * @deprecated Since version 1.21.0.
 	 * Please use the element sap.ui.unified.FileUploaderParameter of the library sap.ui.unified instead.
 	 * @alias sap.ui.commons.FileUploaderParameter
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var FileUploaderParameter = UnifiedFileUploaderParameter.extend("sap.ui.commons.FileUploaderParameter", /** @lends sap.ui.commons.FileUploaderParameter.prototype */ { metadata : {
 
@@ -36,10 +35,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/unified/FileUploaderPar
 	try {
 		sap.ui.getCore().loadLibrary("sap.ui.unified");
 	} catch (e) {
-		jQuery.sap.log.error("The element 'sap.ui.commons.FileUploaderParameter' needs library 'sap.ui.unified'.");
+		Log.error("The element 'sap.ui.commons.FileUploaderParameter' needs library 'sap.ui.unified'.");
 		throw (e);
 	}
 
 	return FileUploaderParameter;
 
-}, /* bExport= */ true);
+});

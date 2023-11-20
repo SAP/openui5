@@ -1,0 +1,89 @@
+<mvc:View xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.uxap"
+	xmlns:layout="sap.ui.layout"
+	xmlns:m="sap.m"
+	xmlns:goals="sap.uxap.sample.SharedBlocks.goals"
+	xmlns:personal="sap.uxap.sample.SharedBlocks.personal"
+	controllerName="sap.uxap.sample.ProfileObjectPageHeader.controller.ProfileObjectPageHeader"
+	height="100%">
+	<ObjectPageLayout id="ObjectPageLayout" showTitleInHeaderContent="true" upperCaseAnchorBar="false">
+		<headerTitle>
+			<ObjectPageHeader id="headerForTest"
+							  objectTitle="Rowan Atkinson"
+							  objectImageShape="Circle"
+							  objectSubtitle="Manager, HCM"
+							  isObjectTitleAlwaysVisible="false"
+							  isObjectSubtitleAlwaysVisible="false"
+							  isActionAreaAlwaysVisible="true"
+							  showPlaceholder="true">
+				<navigationBar>
+					<m:Bar>
+						<m:contentLeft>
+							<m:Button icon="sap-icon://nav-back" tooltip="nav-back"/>
+						</m:contentLeft>
+						<m:contentMiddle>
+							<m:Text text="Employee Profile"/>
+						</m:contentMiddle>
+					</m:Bar>
+				</navigationBar>
+				<actions>
+					<ObjectPageHeaderActionButton icon="sap-icon://tree" text="tree" tooltip="tree"/>
+					<ObjectPageHeaderActionButton icon="sap-icon://action" text="action" tooltip="action"/>
+				</actions>
+			</ObjectPageHeader>
+		</headerTitle>
+		<headerContent>
+			<layout:VerticalLayout>
+				<m:ObjectStatus title="Address" text="BLR.01, B2.023"/>
+				<m:ObjectStatus title="Office phone" text="+91-90100-98100"/>
+				<m:ObjectStatus title="Email" text="rowan@pic.com"/>
+			</layout:VerticalLayout>
+			<layout:HorizontalLayout>
+				<m:Image width="21px" height="21px"
+						 src="./test-resources/sap/uxap/images/linkedInIcon.png"/>
+				<m:Image width="20px" height="20px"
+						 src="./test-resources/sap/uxap/images/facebookIcon.png"/>
+				<m:Image width="21px" height="21px"
+						 src="./test-resources/sap/uxap/images/twitterIcon.png"/>
+			</layout:HorizontalLayout>
+			<m:ObjectStatus state="Success" icon="sap-icon://employee-approvals" text="Available"/>
+			<layout:VerticalLayout>
+				<m:Label text="Bangalore, India"/>
+				<m:Label text="3:00 PM, Friday"/>
+			</layout:VerticalLayout>
+		</headerContent>
+		<sections>
+			<ObjectPageSection titleUppercase="false" title="2014 Goals Plan">
+				<subSections>
+					<ObjectPageSubSection titleUppercase="false">
+						<blocks>
+							<goals:GoalsBlock id="goalsblock"/>
+						</blocks>
+					</ObjectPageSubSection>
+				</subSections>
+			</ObjectPageSection>
+
+			<ObjectPageSection titleUppercase="false" title="Personal">
+				<subSections>
+					<ObjectPageSubSection title="Connect" titleUppercase="false">
+						<blocks>
+							<personal:BlockPhoneNumber id="phone"/>
+							<personal:BlockSocial id="social"/>
+							<personal:BlockAdresses id="adresses"/>
+							<personal:BlockMailing id="mailing" columnLayout="1"/>
+						</blocks>
+					</ObjectPageSubSection>
+
+					<ObjectPageSubSection id="paymentSubSection" title="Payment information" titleUppercase="false">
+						<blocks>
+							<personal:PersonalBlockPart1 id="part1" columnLayout="1"/>
+						</blocks>
+						<moreBlocks>
+							<personal:PersonalBlockPart2 id="part2" columnLayout="1"/>
+						</moreBlocks>
+					</ObjectPageSubSection>
+				</subSections>
+			</ObjectPageSection>
+		</sections>
+	</ObjectPageLayout>
+</mvc:View>

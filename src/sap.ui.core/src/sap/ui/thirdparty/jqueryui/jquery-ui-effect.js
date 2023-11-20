@@ -995,7 +995,10 @@ $.extend( $.effects, {
 
 		// Fixes #7595 - Elements lose focus when wrapped.
 		if ( element[ 0 ] === active || $.contains( element[ 0 ], active ) ) {
-			$( active ).focus();
+			// ##### BEGIN: MODIFIED BY SAP
+			// $( active ).focus();
+			$( active ).trigger("focus");
+			// ##### END: MODIFIED BY SAP
 		}
 
 		wrapper = element.parent(); //Hotfix for jQuery 1.4 since some change in wrap() seems to actually lose the reference to the wrapped element
@@ -1036,7 +1039,10 @@ $.extend( $.effects, {
 
 			// Fixes #7595 - Elements lose focus when wrapped.
 			if ( element[ 0 ] === active || $.contains( element[ 0 ], active ) ) {
-				$( active ).focus();
+				// ##### BEGIN: MODIFIED BY SAP
+				// $( active ).focus();
+				$( active ).trigger("focus");
+				// ##### END: MODIFIED BY SAP
 			}
 		}
 
@@ -1074,7 +1080,10 @@ function _normalizeArguments( effect, options, speed, callback ) {
 	}
 
 	// catch (effect, callback)
-	if ( $.isFunction( options ) ) {
+	// ##### BEGIN: MODIFIED BY SAP
+	// if ( $.isFunction( options ) ) {
+	if ( typeof options === "function" ) {
+	// ##### END: MODIFIED BY SAP
 		callback = options;
 		speed = null;
 		options = {};
@@ -1088,7 +1097,10 @@ function _normalizeArguments( effect, options, speed, callback ) {
 	}
 
 	// catch (effect, options, callback)
-	if ( $.isFunction( speed ) ) {
+	// ##### BEGIN: MODIFIED BY SAP
+	// if ( $.isFunction( speed ) ) {
+	if ( typeof speed === "function" ) {
+	// ##### END: MODIFIED BY SAP
 		callback = speed;
 		speed = null;
 	}
@@ -1121,7 +1133,10 @@ function standardAnimationOption( option ) {
 	}
 
 	// Complete callback
-	if ( $.isFunction( option ) ) {
+	// ##### BEGIN: MODIFIED BY SAP
+	// if ( $.isFunction( option ) ) {
+	if ( typeof option === "function" ) {
+	// ##### END: MODIFIED BY SAP
 		return true;
 	}
 
@@ -1160,10 +1175,16 @@ $.fn.extend({
 				mode = args.mode;
 
 			function done() {
-				if ( $.isFunction( complete ) ) {
+				// ##### BEGIN: MODIFIED BY SAP
+				// if ( $.isFunction( complete ) ) {
+				if ( typeof complete === "function" ) {
+				// ##### END: MODIFIED BY SAP
 					complete.call( elem[0] );
 				}
-				if ( $.isFunction( next ) ) {
+				// ##### BEGIN: MODIFIED BY SAP
+				// if ( $.isFunction( next ) ) {
+				if ( typeof next === "function" ) {
+				// ##### END: MODIFIED BY SAP
 					next();
 				}
 			}

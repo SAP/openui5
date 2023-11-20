@@ -1,22 +1,24 @@
 <!DOCTYPE HTML>
 <html>
 <head>
-<meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 
 <title>sap.m.TimePicker Test</title>
 
 <script src="shared-config.js"></script>
 <script src="../../../resources/sap-ui-core.js"
 		id="sap-ui-bootstrap"
-		data-sap-ui-libs="sap.m">
+		data-sap-ui-libs="sap.m"
+		data-sap-ui-theme="sap_horizon">
 </script>
 
 </head>
-<body id="body" class="sapUiBody" role="application">
+<body id="body" class="sapUiBody">
 	<script>
 		jQuery.sap.require("sap.ui.core.HTML");
 		jQuery.sap.require("sap.ui.core.IconPool");
+		var UI5Date = sap.ui.require("sap/ui/core/date/UI5Date");
 
 		var app = new sap.m.App("myApp", {
 			initialPage:"page1"
@@ -32,11 +34,13 @@
 				value: "13:15",
 				displayFormat: "mm:ss",
 				minutesStep: 15,
-				secondsStep: 15
+				secondsStep: 15,
+				showCurrentTimeButton: true
 			},
 			{
 				id: "TP2",
-				displayFormat: "hh:mm a"
+				displayFormat: "hh:mm a",
+				enabled: false
 			},
 			{
 				id: "TP3",
@@ -50,6 +54,7 @@
 			{
 				id: "TP5",
 				value: "09:15:16 PM",
+				localeId: "en_US",
 				title: "Departure time"
 			},
 			{
@@ -73,11 +78,13 @@
 			{
 				id: "TP10",
 				value: "21 March 2013 5:21 PM",
+				localeId: "en_US",
 				valueFormat: "dd MMMM yyyy h:mm a"
 			},
 			{
 				id: "TP11",
 				value: "04:33 PM 17 May",
+				localeId: "en_US",
 				valueFormat: "hh:mm a dd MMMM"
 			},
 			{
@@ -88,6 +95,7 @@
 			{
 				id: "TP13",
 				value: "09:17:16 PM",
+				localeId: "en_US",
 				displayFormat: "mm",
 				minutesStep: 20
 			}
@@ -95,6 +103,7 @@
 			{
 				id: "TP14",
 				value: "09:15:16 PM",
+				localeId: "en_US",
 				displayFormat: "HH:mm"
 			},
 			{
@@ -118,11 +127,11 @@
 			{
 				id: "TP18",
 				value: "22:33",
-				initialFocusedDateValue: new Date(2017, 8, 9, 10, 11, 12)
+				initialFocusedDateValue: UI5Date.getInstance(2017, 8, 9, 10, 11, 12)
 			},
 			{
 				id: "TP19",
-				initialFocusedDateValue: new Date(2017, 8, 9, 10, 11, 12)
+				initialFocusedDateValue: UI5Date.getInstance(2017, 8, 9, 10, 11, 12)
 			},
 			{
 				id: "TP20",
@@ -130,6 +139,22 @@
 				displayFormat: "HH:mm:ss",
 				support2400: true,
 				value: "24:00:00"
+			},
+			{
+				id: "TP21",
+				displayFormat: "HHmmss",
+			},
+			{
+				id: "TP22",
+				displayFormat: "h 'hr' mm 'min' ss 'sec'",
+			},
+			{
+				id: "TP23",
+				displayFormat: "'time' h 'hr' mm 'min' ss 'sec'",
+			},
+			{
+				id: "TP24",
+				displayFormat: "'time' hmmss 'now'",
 			}
 		];
 
@@ -138,12 +163,12 @@
 				aControls = [],
 				sInfo,
 				oBar,
-			    oTp;
+				oTp;
 
 			for (i = 0; i < options.length; i++) {
 				options[i].change = handleChange;
 				if (options[i].value && options[i].value.path) { //data binding
-					oBar = new sap.m.Toolbar({
+					oBar = new sap.m.Toolbar(options[i].id + "-toolbar", {
 						content: [
 							new sap.m.TimePicker(options[i]),
 							new sap.m.Text({
@@ -155,9 +180,9 @@
 						]
 					});
 				} else {
-                	oTp = new sap.m.TimePicker(options[i]);
+					oTp = new sap.m.TimePicker(options[i]);
 					sInfo =  JSON.stringify(options[i]).split("\"").join("").replace("{", "").replace(",", " ").replace("}", "") + ", id: " + oTp.getId();
-					oBar = new sap.m.Toolbar({
+					oBar = new sap.m.Toolbar(options[i].id + "-toolbar", {
 						content: [
 							oTp,
 							new sap.m.Text({ text: sInfo })
@@ -174,7 +199,7 @@
 
 		var oModel = new sap.ui.model.json.JSONModel();
 		oModel.setData({
-			timeValue: new Date()
+			timeValue: UI5Date.getInstance()
 		});
 		sap.ui.getCore().setModel(oModel);
 
@@ -197,10 +222,32 @@
 								}
 
 							}
+						}),
+						new sap.m.Text({ text: "Mobile simulation is:" }),
+						new sap.m.Switch("toggleMobile", {
+							state: false,
+							change: function(oEvent) {
+								var bState = oEvent.getParameter("state");
+								sap.ui.Device.system.desktop = !bState;
+								sap.ui.Device.system.phone = bState;
+							}
 						})
 					]
 				}),
 				generateTimePickers(),
+				new sap.m.TimePicker("TPTZ"),
+				new sap.m.Button("btnEtcGMT-12", {
+					text: "Etc/GMT-12",
+					press: handleTimezoneButtonPress
+				}),
+				new sap.m.Button("btnUTC", {
+					text: "UTC",
+					press: handleTimezoneButtonPress
+				}),
+				new sap.m.Button("btnEtcGMT12", {
+					text: "Etc/GMT+12",
+					press: handleTimezoneButtonPress
+				}),
 				new sap.ui.core.HTML({
 					content: "<div id='eventsDiv' style='float:right;'>Some Events:</div>"
 				})
@@ -216,6 +263,11 @@
 			var bValid = oEvent.getParameter("valid");
 			iEvent++;
 			oInput.html("Change - Event " + iEvent + "<br>TimePicker " + oTP.getId() + ":<br>" + sValue + "<br>valid: " + bValid);
+		}
+
+		function handleTimezoneButtonPress(e) {
+			sap.ui.getCore().getConfiguration().setTimezone(e.getSource().getText());
+			sap.ui.getCore().byId("TPTZ").setValue("");
 		}
 
 		app.addPage(page);

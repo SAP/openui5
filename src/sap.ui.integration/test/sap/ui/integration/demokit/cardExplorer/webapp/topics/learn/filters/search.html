@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<title>Search Filter</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<script src="../../../scripts/boot.js"></script>
+</head>
+
+<body class="sapUiBody topicBody">
+
+	<div class="topic">
+		<div class="content">
+			<h1 id="overview">Search Filter</h1>
+
+			<p>
+				The Search filter allows users to enter text to search or filter for specific data.
+			</p>
+
+			<h2 id="properties">Properties</h2>
+			<div class="tableWrapper">
+				<table>
+					<tr>
+						<th>Property</th>
+						<th>Type</th>
+						<th>Default Value</th>
+						<th>Required</th>
+						<th>Description</th>
+						<th>Schema Version</th>
+						<th>Since</th>
+					</tr>
+					<tr>
+						<td>value</td>
+						<td>string</td>
+						<td></td>
+						<td>No</td>
+						<td>The initial value of the filter.</td>
+						<td>1.38.0</td>
+						<td>1.98</td>
+					</tr>
+					<tr>
+						<td>placeholder</td>
+						<td>string</td>
+						<td>The word "Search" in the current local language (if supported) or in English</td>
+						<td>No</td>
+						<td>Text shown when the filter value is empty.</td>
+						<td>1.38.0</td>
+						<td>1.98</td>
+					</tr>
+				</table>
+			</div>
+
+			<h2 id="filtersModel">Filters Model</h2>
+			<p>The following values are available for filter of type "Search":</p>
+			<table>
+				<tr>
+					<th>Path</th>
+					<th>Description</th>
+				</tr>
+				<tr>
+					<td>{filters>/keyOfTheFilter/value}</td>
+					<td>The current value of the filter.</td>
+				</tr>
+			</table>
+
+			<h2 id="examples">Examples</h2>
+			<p>A filter for product category is defined and later used inside a data request.</p>
+			<pre class="lang-json">{
+	"sap.card": {
+		"configuration": {
+			"filters": {
+				<mark>"searchQuery": {
+					"type": "Search",
+					"label": "City",
+					"placeholder": "Enter a city"
+				}</mark>
+			},
+			"destinations": {
+				"Northwind_V4": {
+					"name": "Northwind_V4",
+					"label": "Northwind V4 Service URL",
+					"defaultUrl": "https://services.odata.org/V4/Northwind/Northwind.svc"
+				}
+			}
+		},
+		"data": {
+			"request": {
+				"url": "{{destinations.Northwind_V4}}/Customer_and_Suppliers_by_Cities",
+				"parameters": {
+					<mark>"$filter": "contains(City, '{filters>/searchQuery/value}')",</mark>
+					"$count": true
+				}
+			}
+		},
+		"type": "List",
+		"header": {
+			"title": "Customers and Suppliers",
+			...
+		},
+		"content": {
+			...
+		}
+	}
+}</pre>
+
+			<a class="try-button" href="../../../index.html#/explore/searchFilter" target="_parent">Try it Out</a>
+		</div>
+	</div>
+</body>
+
+</html>

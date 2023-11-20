@@ -1,0 +1,43 @@
+<mvc:View
+	controllerName="sap.m.sample.TextEmptyIndicator.C"
+	xmlns="sap.m"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:f="sap.ui.layout.form"
+
+	displayBlock="true">
+	<Panel
+		id="containerLayout"
+		headerText="emptyIndicatorMode:'On"
+		width="100%">
+		<f:SimpleForm
+				layout="ResponsiveGridLayout"
+				editable="true"
+				adjustLabelSpan="false"
+				labelSpanXL="2"
+				labelSpanL="2"
+				labelSpanM="3"
+				labelSpanS="5">
+			<Label text="Products" />
+			<Text id="text0" emptyIndicatorMode="On" text=""></Text>
+		</f:SimpleForm>
+	</Panel>
+	<Panel
+			id="containerAuto"
+			headerText="emptyIndicatorMode:'Auto'"
+			width="100%">
+		<f:SimpleForm
+				layout="ResponsiveGridLayout"
+				editable="true"
+				adjustLabelSpan="false"
+				labelSpanXL="2"
+				labelSpanL="2"
+				labelSpanM="3"
+				labelSpanS="5">
+			<Text text="Toggle switch to add 'sapMShowEmpty-CTX' css class to the Panel"></Text>
+			<Switch id="CssClassSwitch" state="false" change=".onCssClassChange" />
+			<Label text="Products"></Label>
+			<Text emptyIndicatorMode="Auto" text=""></Text>
+		</f:SimpleForm>
+
+	</Panel>
+</mvc:View>

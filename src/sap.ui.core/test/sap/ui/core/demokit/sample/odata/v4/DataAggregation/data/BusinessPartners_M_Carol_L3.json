@@ -1,0 +1,9 @@
+{
+	"@odata.count": "1",
+	"value": [{
+		"AccountResponsible": "Carol Johnson",
+		"LocalCurrency": "GBP",
+		"SalesNumber": "1257",
+		"SalesAmountLocalCurrency": "716262"
+	}]
+}

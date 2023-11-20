@@ -21,7 +21,6 @@
 						enabled="false" />
 				</u:Menu>
 			</u:MenuItem>
-
 			<u:MenuItem
 				text="My 4th Item"
 				startsSection="true" />

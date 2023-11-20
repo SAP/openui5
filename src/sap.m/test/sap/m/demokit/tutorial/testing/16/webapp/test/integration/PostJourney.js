@@ -1,8 +1,11 @@
 /*global QUnit*/
 
-sap.ui.require(
-	["sap/ui/test/opaQunit"],
-	function (opaTest) {
+sap.ui.define([
+	"sap/ui/test/opaQunit",
+	"./pages/Worklist",
+	"./pages/Browser",
+	"./pages/Post"
+], function (opaTest) {
 		"use strict";
 
 		QUnit.module("Post");
@@ -26,7 +29,7 @@ sap.ui.require(
 			Then.onTheWorklistPage.iShouldSeeTheTable();
 		});
 
-		opaTest("Should be on the post page again when browser forwards is pressed", function (Given, When, Then) {
+		opaTest("Should be on the post page again when the browser's forward button is pressed", function (Given, When, Then) {
 			// Actions
 			When.onTheBrowser.iPressOnTheForwardButton();
 
@@ -39,8 +42,10 @@ sap.ui.require(
 			When.onThePostPage.iPressOnTheTabWithTheKey("statistics");
 
 			// Assertions
-			Then.onThePostPage.iShouldSeeTheViewCounter()
-				.and.iTeardownMyAppFrame();
+			Then.onThePostPage.iShouldSeeTheViewCounter();
+
+			// Cleanup
+			Then.iTeardownMyApp();
 		});
 	}
 );

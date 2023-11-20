@@ -5,10 +5,11 @@
 		xmlns:m="sap.m"
 		xmlns:l="sap.ui.layout"
 		xmlns:mvc="sap.ui.core.mvc"
-		xmlns:t="sap.ui.table">
+		xmlns:t="sap.ui.table"
+		xmlns:layout="sap.ui.layout">
 	<m:NavContainer
-		id="rulesNavContainer"
-		afterNavigate="onAfterNavigate">
+			id="rulesNavContainer"
+			autoFocus="{= ${/tempRulesDisabled} === ${/tempRulesDisabledWarned} }">
 		<l:Splitter id="rulesDisplayPage">
 			<l:contentAreas>
 				<m:Page
@@ -16,89 +17,135 @@
 						showSubHeader="{= ${/selectedSetPreviewKey} === 'availableRules' }">
 					<m:headerContent>
 						<m:Bar>
-							<m:contentLeft>
-								<m:IconTabHeader
-										id="ruleSetsView"
-										select="onSelectedRuleSets"
-										selectedKey="{/selectedSetPreviewKey}"
-										class="customIconTabHeader">
+							<m:contentMiddle>
+								<m:HBox fitContainer="true" renderType="Bare" class="customHBox">
 									<m:items>
-										<m:IconTabFilter key="availableRules" text="Available Rulesets" />
-										<m:IconTabFilter key="additionalRulesets" text="Additional Rulesets" />
+										<m:IconTabHeader
+												id="ruleSetsView"
+												select="onSelectedRuleSets"
+												selectedKey="{/selectedSetPreviewKey}"
+												class="customIconTabHeader">
+											<m:layoutData>
+												<m:FlexItemData growFactor="1" minWidth="0">
+												</m:FlexItemData>
+											</m:layoutData>
+											<m:items>
+												<m:IconTabFilter id="availableRulesId" key="availableRules" text="Available Rulesets" />
+												<m:IconTabFilter key="additionalRulesets" text="Additional Rulesets" />
+											</m:items>
+										</m:IconTabHeader>
+										<m:Button class="supportAnalyzeButton" text="Analyze" press="onAnalyze" type="Emphasized"/>
+										<m:Button class="supportSettingsButton" icon="sap-icon://settings" press="onAnalyzeSettings" type="Emphasized"/>
 									</m:items>
-								</m:IconTabHeader>
-							</m:contentLeft>
-							<m:contentRight >
-								<m:Button class="supportAnalyzeButton" text="Analyze" press="onAnalyze" type="Emphasized"/>
-								<m:Button class="supportSettingsButton" icon="sap-icon://settings" press="onAnalyzeSettings" type="Emphasized"/>
-							</m:contentRight>
+								</m:HBox>
+							</m:contentMiddle>
 						</m:Bar>
 					</m:headerContent>
-						<m:subHeader>
+					<m:subHeader>
 							<m:Bar>
 								<m:contentLeft>
-									<m:Label text="Rule Selections:" />
-									<m:Button text="Export" press="exportSelectedRules"/>
-									<m:Button text="Import" press="importSelectedRules"/>
+									<m:HBox renderType="Bare" width="100%">
+										<m:Label text="Rule Preset:" labelFor="presetVariant" class="presetVariantLabel">
+											<m:layoutData>
+												<m:FlexItemData shrinkFactor="0" />
+											</m:layoutData>
+										</m:Label>
+										<m:HBox id="presetVariant" class="sapUiSupportToolVariantCont" renderType="Bare">
+											<m:layoutData>
+												<m:FlexItemData growFactor="1" minWidth="0"/>
+											</m:layoutData>
+											<m:FormattedText
+												id="presetVariantTxt"
+												class="sapUiSupportToolVariantTxt"
+												htmlText="{= ${/selectionPresetsCurrent/isModified} ?
+																'&lt;em&gt;' + ${/selectionPresetsCurrent/title} + '&lt;/em&gt;' :
+																${/selectionPresetsCurrent/title} }"
+												tooltip="Select a Rule Preset">
+											</m:FormattedText>
+											<m:Button
+												id="presetVariantBtn"
+												icon="sap-icon://slim-arrow-down"
+												class="sapUiSupportToolVariantBtn"
+												tooltip="Select a Rule Preset">
+												<m:layoutData>
+													<m:FlexItemData shrinkFactor="0" />
+												</m:layoutData>
+											</m:Button>
+										</m:HBox>
+									</m:HBox>
 								</m:contentLeft>
 								<m:contentRight>
-									<m:Button text="Create Rule" icon="sap-icon://add" press="createNewRulePress"/>
+									<m:Button
+										id="createRuleBtn"
+										text="Create Rule"
+										icon="sap-icon://add"
+										visible="{= !${/tempRulesDisabled}}"
+										press="createNewRulePress"/>
 								</m:contentRight>
 							</m:Bar>
 						</m:subHeader>
 						<t:TreeTable
 								id="ruleList"
-								collapseRecursive="false"
 								selectionMode="MultiToggle"
+								rows="{
+									path: 'ruleSets>/',
+									parameters: {numberOfExpandedLevels: 1}
+								}"
 								enableColumnReordering="false"
-								expandFirstLevel="true"
-								rows="{path: '/treeViewModel'}"
-								cellClick="onCellClick"
 								class="sapUiSizeCondensed"
-								visible="{= ${/selectedSetPreviewKey} === 'availableRules' }"
-								visibleRowCountMode="Auto"
+								rowMode="Auto"
 								selectionBehavior="RowSelector"
 								rowActionCount="1"
-								toggleOpenState="onToggleOpenState"
+								visible="{= ${/selectedSetPreviewKey} === 'availableRules' }"
+								cellClick="onCellClick"
 								rowSelectionChange="onRowSelectionChange"
-								showColumnVisibilityMenu="true"
-								columnVisibility="onColumnVisibilityChange">
+								>
 							<t:columns>
 								<t:Column id="rulesColumn"
-										label="Rules ({/selectedRulesCount} selected)">
+										  sortProperty="name"
+										  filterProperty="name"
+										  visible="{tableSettings>/columns/rules/visible}">
+									<m:Label text="Rules ({/selectedRulesCount} selected)"/>
 									<t:template>
-										<m:Text text="{name}" wrapping="false"/>
+										<m:Text text="{ruleSets>name}" wrapping="false"/>
 									</t:template>
 								</t:Column>
 								<t:Column id="categoriesColumn"
-										label="Categories"
-										  width="10rem">
+										  width="10rem"
+										  sortProperty="categories"
+										  filterProperty="categories"
+										  visible="{tableSettings>/columns/categories/visible}">
+									<m:Label text="{tableSettings>/columns/categories/title}"/>
 									<t:template>
-										<m:Text text="{categories}" wrapping="false"/>
+										<m:Text text="{ruleSets>categories}" wrapping="false"/>
 									</t:template>
 								</t:Column>
 								<t:Column id="audienceColumn"
-										label="Audience"
-										visible="false">
+										  sortProperty="audiences"
+										  filterProperty="audiences"
+										  visible="{tableSettings>/columns/audience/visible}">
+									<m:Label text="{tableSettings>/columns/audience/title}"/>
 									<t:template>
-										<m:Text text="{audiences}" wrapping="false"/>
+										<m:Text text="{ruleSets>audiences}" wrapping="false"/>
 									</t:template>
 								</t:Column>
-								<t:Column id="idsColumn"
-										label="RuleID"
+								<t:Column id="ruleIdColumn"
 										  width="10rem"
-										  visible="false">
+										  sortProperty="id"
+										  filterProperty="id"
+										  visible="{tableSettings>/columns/ruleId/visible}">
+									<m:Label text="{tableSettings>/columns/ruleId/title}"/>
 									<t:template>
-										<m:Text text="{id}" wrapping="false"/>
+										<m:Text text="{ruleSets>id}" wrapping="false"/>
 									</t:template>
 								</t:Column>
 							</t:columns>
 							<t:rowActionTemplate>
-									<t:RowAction>
+									<t:RowAction id="rowActionTemplate">
 										<t:items>
-											<t:RowActionItem icon="sap-icon://edit" text="Edit" press="editRule"  visible="{= ${libName} === 'temporary'}" />
-											<t:RowActionItem icon="sap-icon://delete" text="Delete" press="deleteTemporaryRule" visible="{= ${libName} === 'temporary'}" />
-											<t:RowActionItem icon="sap-icon://copy" text="Copy" press="duplicateRule" visible="{= ${libName} !== 'temporary' &amp;&amp; ${type} !== 'lib'}" />
+											<t:RowActionItem icon="sap-icon://edit" text="Edit" press="editRule"  visible="{= ${ruleSets>libName} === 'temporary'}" />
+											<t:RowActionItem icon="sap-icon://delete" text="Delete" press="deleteTemporaryRule" visible="{= ${ruleSets>libName} === 'temporary'}" />
+											<t:RowActionItem icon="sap-icon://copy" text="Copy" press="duplicateRule" visible="{= !${/tempRulesDisabled} &amp;&amp; ${ruleSets>libName} !== 'temporary' &amp;&amp; ${ruleSets>type} !== 'lib'}" />
 										</t:items>
 									</t:RowAction>
 							</t:rowActionTemplate>

@@ -1,0 +1,43 @@
+{
+  "1.62.0": {
+    "date": "January 2019",
+    "notes": [
+      {
+        "id": "a339c6fb2f16202fa866a362b2bced9d1d30e62a",
+        "type": "FIX",
+        "text": "FieldBase: Boolean help don't work",
+        "references": []
+      },
+      {
+        "id": "e470f8edc29ce4cf37f4e84e727784e3653f56bc",
+        "type": "FIX",
+        "text": "MDCChart: Runtime error selection details",
+        "references": []
+      },
+      {
+        "id": "2121e348435646932d2980a78f07947ed071fd24",
+        "type": "FIX",
+        "text": "MDCChart: UnitBinding only used in case of aggregation method",
+        "references": []
+      },
+      {
+        "id": "a0957e0445a497ed246ee5e97f74b4c11bc32677",
+        "type": "FIX",
+        "text": "P13nDialogChart: formatter",
+        "references": []
+      },
+      {
+        "id": "3e458025066d69dabf1ce93b7a038c40632abea1",
+        "type": "FIX",
+        "text": "base.FilterBar: fix showAdaptFiltersButton property handling",
+        "references": []
+      },
+      {
+        "id": "6080a744e77bec344eff7db14bdb7eca4b619ec8",
+        "type": "FIX",
+        "text": "mdc.base.FilterBar: fix when basicSearch is null",
+        "references": []
+      }
+    ]
+  }
+}

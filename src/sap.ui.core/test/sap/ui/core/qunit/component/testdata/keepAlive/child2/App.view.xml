@@ -1,0 +1,8 @@
+<mvc:XMLView xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m">
+	<App id="app">
+		<Page>
+			<Text text="I am child 2"/>
+		</Page>
+	</App>
+</mvc:XMLView>

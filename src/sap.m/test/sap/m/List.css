@@ -1,0 +1,14 @@
+.hboxBG {
+	background-color: silver;
+	border-radius: 12px;
+	padding: 3px 6px;
+}
+
+.sapMCLI.SmallPaddingBegin {
+	padding-left: 1rem;
+}
+
+html[dir=rtl] .sapMCLI.SmallPaddingBegin {
+	padding-right: 1rem;
+	padding-left: 0;
+}

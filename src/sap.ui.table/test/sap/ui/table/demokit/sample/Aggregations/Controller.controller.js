@@ -1,16 +1,19 @@
 sap.ui.define([
+	"sap/base/Log",
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator",
 	"sap/ui/core/format/DateFormat",
-	"sap/ui/table/sample/TableExampleUtils"
-], function(Controller, JSONModel, Filter, FilterOperator, DateFormat, TableExampleUtils) {
+	"sap/m/ToolbarSpacer",
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/core/date/UI5Date"
+], function(Log, Controller, JSONModel, Filter, FilterOperator, DateFormat, ToolbarSpacer, jQuery, UI5Date) {
 	"use strict";
 
 	return Controller.extend("sap.ui.table.sample.Aggregations.Controller", {
 
-		onInit : function () {
+		onInit: function() {
 			var oView = this.getView();
 
 			// set explored app's demo model on this sample
@@ -23,32 +26,38 @@ sap.ui.define([
 
 			this._oTxtFilter = null;
 			this._oFacetFilter = null;
+
+			sap.ui.require(["sap/ui/table/sample/TableExampleUtils"], function(TableExampleUtils) {
+				var oTb = oView.byId("infobar");
+				oTb.addContent(new ToolbarSpacer());
+				oTb.addContent(TableExampleUtils.createInfoButton("sap/ui/table/sample/Aggregations"));
+			}, function(oError) { /*ignore*/ });
 		},
 
-		initSampleDataModel : function() {
+		initSampleDataModel: function() {
 			var oModel = new JSONModel();
 
 			var oDateFormat = DateFormat.getDateInstance({source: {pattern: "timestamp"}, pattern: "dd/MM/yyyy"});
 
-			jQuery.ajax(sap.ui.require.toUrl("sap/ui/demo/mock") + "/products.json", {
+			jQuery.ajax(sap.ui.require.toUrl("sap/ui/demo/mock/products.json"), {
 				dataType: "json",
-				success: function (oData) {
+				success: function(oData) {
 					var aTemp1 = [];
 					var aTemp2 = [];
 					var aSuppliersData = [];
 					var aCategoryData = [];
 					for (var i = 0; i < oData.ProductCollection.length; i++) {
 						var oProduct = oData.ProductCollection[i];
-						if (oProduct.SupplierName && jQuery.inArray(oProduct.SupplierName, aTemp1) < 0) {
+						if (oProduct.SupplierName && aTemp1.indexOf(oProduct.SupplierName) < 0) {
 							aTemp1.push(oProduct.SupplierName);
 							aSuppliersData.push({Name: oProduct.SupplierName});
 						}
-						if (oProduct.Category && jQuery.inArray(oProduct.Category, aTemp2) < 0) {
+						if (oProduct.Category && aTemp2.indexOf(oProduct.Category) < 0) {
 							aTemp2.push(oProduct.Category);
 							aCategoryData.push({Name: oProduct.Category});
 						}
-						oProduct.DeliveryDate = (new Date()).getTime() - (i % 10 * 4 * 24 * 60 * 60 * 1000);
-						oProduct.DeliveryDateStr = oDateFormat.format(new Date(oProduct.DeliveryDate));
+						oProduct.DeliveryDate = Date.now() - (i % 10 * 4 * 24 * 60 * 60 * 1000);
+						oProduct.DeliveryDateStr = oDateFormat.format(UI5Date.getInstance(oProduct.DeliveryDate));
 						oProduct.Heavy = oProduct.WeightMeasure > 1000 ? "true" : "false";
 						oProduct.Available = oProduct.Status == "Available" ? true : false;
 					}
@@ -58,29 +67,29 @@ sap.ui.define([
 
 					oModel.setData(oData);
 				},
-				error: function () {
-					jQuery.sap.log.error("failed to load json");
+				error: function() {
+					Log.error("failed to load json");
 				}
 			});
 
 			return oModel;
 		},
 
-		_filter : function () {
+		_filter: function() {
 			var oFilter = null;
 
 			if (this._oTxtFilter && this._oFacetFilter) {
-				oFilter = new sap.ui.model.Filter([this._oTxtFilter, this._oFacetFilter], true);
+				oFilter = new Filter([this._oTxtFilter, this._oFacetFilter], true);
 			} else if (this._oTxtFilter) {
 				oFilter = this._oTxtFilter;
 			} else if (this._oFacetFilter) {
 				oFilter = this._oFacetFilter;
 			}
 
-			this.byId("table").getBinding("rows").filter(oFilter, "Application");
+			this.byId("table").getBinding().filter(oFilter, "Application");
 		},
 
-		handleTxtFilter : function(oEvent) {
+		handleTxtFilter: function(oEvent) {
 			var sQuery = oEvent ? oEvent.getParameter("query") : null;
 			this._oTxtFilter = null;
 
@@ -98,18 +107,18 @@ sap.ui.define([
 			}
 		},
 
-		clearAllFilters : function() {
+		clearAllFilters: function() {
 			this.handleTxtFilter();
 			this.handleFacetFilterReset();
 			this._filter();
 		},
 
-		_getFacetFilterLists : function() {
+		_getFacetFilterLists: function() {
 			var oFacetFilter = this.byId("facetFilter");
 			return oFacetFilter.getLists();
 		},
 
-		handleFacetFilterReset : function(oEvent) {
+		handleFacetFilterReset: function(oEvent) {
 			var aFacetFilterLists = this._getFacetFilterLists();
 
 			for (var i = 0; i < aFacetFilterLists.length; i++) {
@@ -122,7 +131,7 @@ sap.ui.define([
 			}
 		},
 
-		handleListClose : function(oEvent) {
+		handleListClose: function(oEvent) {
 			var aFacetFilterLists = this._getFacetFilterLists().filter(function(oList) {
 				return oList.getActive() && oList.getSelectedItems().length;
 			});
@@ -136,12 +145,8 @@ sap.ui.define([
 			this._filter();
 		},
 
-		formatAvailableToObjectState : function (bAvailable) {
+		formatAvailableToObjectState: function(bAvailable) {
 			return bAvailable ? "Success" : "Error";
-		},
-
-		showInfo : function(oEvent) {
-			TableExampleUtils.showInfo(sap.ui.require.toUrl("sap/ui/table/sample/Aggregations") + "/info.json", oEvent.getSource());
 		}
 
 	});

@@ -1,0 +1,29 @@
+{
+  "1.87.0": {
+    "date": "February 2021",
+    "notes": [
+      {
+        "id": "91b71eead2cd4df2f89005c43605972fdb837e2b",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Enforced test condition",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180046524"
+          }
+        ]
+      },
+      {
+        "id": "ce5eab59e020c897757174e65669c4dbf9d795bf",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageHeader: Fix double header when \"isActionAreaAlwaysVisible\" is true",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180016592"
+          }
+        ]
+      }
+    ]
+  }
+}

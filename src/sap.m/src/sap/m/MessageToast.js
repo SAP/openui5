@@ -2,8 +2,19 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', './InstanceManager', 'sap/ui/core/Popup', 'sap/ui/core/library', 'sap/ui/core/Control', 'sap/ui/Device'],
-	function(jQuery, InstanceManager, Popup, coreLibrary, Control, Device) {
+sap.ui.define([
+	'./InstanceManager',
+	"sap/ui/core/ControlBehavior",
+	'sap/ui/core/Popup',
+	'sap/ui/core/library',
+	'sap/ui/core/Control',
+	'sap/ui/core/Element',
+	'sap/ui/Device',
+	"sap/base/Log",
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/core/Configuration"
+],
+	function(InstanceManager, ControlBehavior, Popup, coreLibrary, Control, Element, Device, Log, jQuery, Configuration) {
 		"use strict";
 
 		// shortcut for sap.ui.core.Dock
@@ -96,10 +107,10 @@ sap.ui.define(['jquery.sap.global', './InstanceManager', 'sap/ui/core/Popup', 's
 		};
 
 		MessageToast._aPopups = [];
-
 		MessageToast._iOpenedPopups = 0;
-
 		MessageToast._bBoundedEvents = false;
+		MessageToast._mOptions = {};
+		MessageToast._sMessage = "";
 
 		MessageToast._validateSettings = function(mSettings) {
 
@@ -139,19 +150,19 @@ sap.ui.define(['jquery.sap.global', './InstanceManager', 'sap/ui/core/Popup', 's
 
 		MessageToast._isFiniteInteger = function(iNumber) {
 			if (typeof iNumber !== "number" || !isFinite(iNumber) || !(Math.floor(iNumber) === iNumber) || iNumber <= 0) {
-				jQuery.sap.log.error('"iNumber" needs to be a finite positive nonzero integer on ' + MessageToast + "._isFiniteInteger");
+				Log.error('"iNumber" needs to be a finite positive nonzero integer on ' + MessageToast + "._isFiniteInteger");
 			}
 		};
 
 		MessageToast._validateWidth = function(sWidth) {
 			if (!CSSSize.isValid(sWidth)) {
-				jQuery.sap.log.error(sWidth + ' is not of type ' + '"sap.ui.core.CSSSize" for property "width" on ' + MessageToast + "._validateWidth");
+				Log.error(sWidth + ' is not of type ' + '"sap.ui.core.CSSSize" for property "width" on ' + MessageToast + "._validateWidth");
 			}
 		};
 
 		MessageToast._validateDockPosition = function(sDock) {
 			if (!Dock.isValid(sDock)) {
-				jQuery.sap.log.error('"' + sDock + '"' + ' is not of type ' + '"sap.ui.core.Popup.Dock" on ' + MessageToast + "._validateDockPosition");
+				Log.error('"' + sDock + '"' + ' is not of type ' + '"sap.ui.core.Popup.Dock" on ' + MessageToast + "._validateDockPosition");
 			}
 		};
 
@@ -161,13 +172,13 @@ sap.ui.define(['jquery.sap.global', './InstanceManager', 'sap/ui/core/Popup', 's
 				!(vElement instanceof Control) &&
 				vElement !== window) {
 
-				jQuery.sap.log.error('"of" needs to be an instance of sap.ui.core.Control or an Element or a jQuery object or the window on ' + MessageToast + "._validateOf");
+				Log.error('"of" needs to be an instance of sap.ui.core.Control or an Element or a jQuery object or the window on ' + MessageToast + "._validateOf");
 			}
 		};
 
 		MessageToast._validateOffset = function(sOffset) {
 			if (typeof sOffset !== "string") {
-				jQuery.sap.log.error(sOffset + ' is of type ' + typeof sOffset + ', expected "string" for property "offset" on ' + MessageToast + "._validateOffset");
+				Log.error(sOffset + ' is of type ' + typeof sOffset + ', expected "string" for property "offset" on ' + MessageToast + "._validateOffset");
 			}
 		};
 
@@ -175,19 +186,19 @@ sap.ui.define(['jquery.sap.global', './InstanceManager', 'sap/ui/core/Popup', 's
 			var rValidCollisions = /^(fit|flip|none|flipfit|flipflip|flip flip|flip fit|fitflip|fitfit|fit fit|fit flip)$/i;
 
 			if (!rValidCollisions.test(sCollision)) {
-				jQuery.sap.log.error('"collision" needs to be a single value “fit”, “flip”, or “none”, or a pair for horizontal and vertical e.g. "fit flip”, "fit none", "flipfit" on ' + MessageToast + "._validateOffset");
+				Log.error('"collision" needs to be a single value “fit”, “flip”, or “none”, or a pair for horizontal and vertical e.g. "fit flip”, "fit none", "flipfit" on ' + MessageToast + "._validateOffset");
 			}
 		};
 
 		MessageToast._validateOnClose = function(fn) {
 			if (typeof fn !== "function" && fn !== null) {
-				jQuery.sap.log.error('"onClose" should be a function or null on ' + MessageToast + "._validateOnClose");
+				Log.error('"onClose" should be a function or null on ' + MessageToast + "._validateOnClose");
 			}
 		};
 
 		MessageToast._validateAutoClose = function(b) {
 			if (typeof b !== "boolean") {
-				jQuery.sap.log.error('"autoClose" should be a boolean on ' + MessageToast + "._validateAutoClose");
+				Log.error('"autoClose" should be a boolean on ' + MessageToast + "._validateAutoClose");
 			}
 		};
 
@@ -195,7 +206,7 @@ sap.ui.define(['jquery.sap.global', './InstanceManager', 'sap/ui/core/Popup', 's
 			var rValidTimingFn = /^(ease|linear|ease-in|ease-out|ease-in-out)$/i;
 
 			if (!rValidTimingFn.test(sTimingFunction)) {
-				jQuery.sap.log.error('"animationTimingFunction" should be a string, expected values: ' + "ease, linear, ease-in, ease-out, ease-in-out on " + MessageToast + "._validateAnimationTimingFunction");
+				Log.error('"animationTimingFunction" should be a string, expected values: ' + "ease, linear, ease-in, ease-out, ease-in-out on " + MessageToast + "._validateAnimationTimingFunction");
 			}
 		};
 
@@ -214,11 +225,8 @@ sap.ui.define(['jquery.sap.global', './InstanceManager', 'sap/ui/core/Popup', 's
 
 			oMessageToastDomRef.className = CSSCLASS + " " + ENABLESELECTIONCLASS + " " + BELIZECONTRAST + " " + BELIZECONTRASTPLUS;
 
-			if (sap.ui.getCore().getConfiguration().getAccessibility()) {
+			if (ControlBehavior.isAccessibilityEnabled()) {
 				oMessageToastDomRef.setAttribute("role", "alert");
-
-				// prevents JAWS from reading the text of the MessageToast twice
-				oMessageToastDomRef.setAttribute("aria-label", " ");
 			}
 
 			oMessageToastDomRef.style.width = mSettings.width;
@@ -264,7 +272,7 @@ sap.ui.define(['jquery.sap.global', './InstanceManager', 'sap/ui/core/Popup', 's
 				MessageToast._resetPosition(MessageToast._aPopups);
 			}
 
-			jQuery.sap.delayedCall(0, MessageToast, "_applyPositions", [MessageToast._aPopups]);
+			setTimeout(MessageToast["_applyPositions"].bind(MessageToast, MessageToast._aPopups), 0);
 		};
 
 		MessageToast._handleMouseDownEvent = function(oEvent) {
@@ -298,7 +306,7 @@ sap.ui.define(['jquery.sap.global', './InstanceManager', 'sap/ui/core/Popup', 's
 					mPosition = oPopup._oPosition;	// TODO _oPosition is a private property
 
 					if (Device.system.phone || Device.system.tablet) {
-						jQuery.sap.delayedCall(0, MessageToast, "_applyPosition", [oPopup, mPosition]);
+						setTimeout(MessageToast["_applyPosition"].bind(MessageToast, oPopup, mPosition), 0);
 					} else {
 						oPopup.setPosition(mPosition.my, mPosition.at, mPosition.of, mPosition.offset);
 					}
@@ -315,9 +323,11 @@ sap.ui.define(['jquery.sap.global', './InstanceManager', 'sap/ui/core/Popup', 's
 
 		MessageToast._setCloseAnimation = function($MessageToastDomRef, iDuration, fnClose, mSettings) {
 			var sCssTransition = "opacity " + mSettings.animationTimingFunction + " " + mSettings.animationDuration + "ms",
-				sTransitionEnd = "webkitTransitionEnd." + CSSCLASS + " transitionend." + CSSCLASS;
+				sTransitionEnd = "webkitTransitionEnd." + CSSCLASS + " transitionend." + CSSCLASS,
+				sAnimationMode = ControlBehavior.getAnimationMode(),
+				bHasAnimations = sAnimationMode !== Configuration.AnimationMode.none && sAnimationMode !== Configuration.AnimationMode.minimal;
 
-			if (sap.ui.getCore().getConfiguration().getAnimation() && mSettings.animationDuration > 0) {
+			if (bHasAnimations && mSettings.animationDuration > 0) {
 				$MessageToastDomRef[0].style.webkitTransition = sCssTransition;
 				$MessageToastDomRef[0].style.transition = sCssTransition;
 				$MessageToastDomRef[0].style.opacity = 0;
@@ -335,6 +345,39 @@ sap.ui.define(['jquery.sap.global', './InstanceManager', 'sap/ui/core/Popup', 's
 			}
 		};
 
+		// Display the message permanently if the desired key combination is pressed
+		MessageToast._fnKeyDown = function(oEvent) {
+			var oFocusableElement;
+			var oPopup = this._aPopups[0];
+			var bShift = oEvent.shiftKey;
+			var bMetaKey = Device.os.macintosh ? oEvent.metaKey : oEvent.ctrlKey;
+
+			if (oPopup && oPopup.isOpen() && bShift && bMetaKey && oEvent.code === "KeyM") {
+				oEvent.preventDefault();
+
+				oFocusableElement = document.querySelector(".sapMMessageToastHiddenFocusable");
+				oPopup.getContent().classList.add("sapMFocus");
+				oFocusableElement.focus();
+				clearTimeout(this._iCloseTimeoutId);
+			}
+		};
+
+		// Close the message when in permanent display mode
+		function handleKbdClose(oEvent) {
+			var bShift = oEvent.shiftKey;
+			var bMetaKey = Device.os.macintosh ? oEvent.metaKey : oEvent.ctrlKey;
+			var oPopup = this._aPopups[0];
+
+			if (oEvent.code === "Escape" || (bShift && bMetaKey && oEvent.code === "KeyM")) {
+				oEvent.preventDefault();
+
+				setTimeout(function() {
+					this._mSettings.opener && this._mSettings.opener.focus();
+				}.bind(this), 0);
+				oPopup.close();
+			}
+		}
+
 		/* =========================================================== */
 		/* API methods                                                 */
 		/* =========================================================== */
@@ -348,28 +391,30 @@ sap.ui.define(['jquery.sap.global', './InstanceManager', 'sap/ui/core/Popup', 's
 		 * @param {object} [mOptions] Object which can contain all other options. Not all entries in this object are required. This property is optional.
 		 * @param {int} [mOptions.duration=3000] Time in milliseconds before the close animation starts. Needs to be a finite positive nonzero integer.
 		 * @param {sap.ui.core.CSSSize} [mOptions.width='15em'] The width of the message toast, this value can be provided in %, em, px and all possible CSS measures.
-		 * @param {sap.ui.core.Popup.Dock} [mOptions.my='center bottom'] Specifies which point of the message toast should be aligned.
-		 * @param {sap.ui.core.Popup.Dock} [mOptions.at='center bottom'] Specifies the point of the reference element to which the message toast should be aligned.
-		 * @param {sap.ui.core.Control|Element|jQuery|Window|undefined} [mOptions.of=window] Specifies the reference element to which the message toast should be aligned, by default it is aligned to the browser visual viewport.
-		 * @param {string} [mOptions.offset='0 0'] The offset relative to the docking point, specified as a string with space-separated pixel values (e.g. "0 10" to move the message toast 10 pixels to the right).
+		 * @param {sap.ui.core.Popup.Dock} [mOptions.my='center bottom'] Specifies which point of the message toast should be aligned (e.g. <code>Dock.LeftTop</code> To use as align point the left top corner of the message toast).
+		 * @param {sap.ui.core.Popup.Dock} [mOptions.at='center bottom'] Specifies the point of the reference element to which the message toast should be aligned (e.g. <code>Dock.RightBottom</code> To position the message toast according to the bottom right corner of the reference element).
+		 * @param {sap.ui.core.Control|Element|jQuery|Window} [mOptions.of=window] Specifies the reference element to which the message toast should be aligned, by default it is aligned to the browser visual viewport.
+		 * @param {string} [mOptions.offset='0 0'] The offset relative to the docking point, specified as a string with space-separated pixel values (e.g. "10 5" to move the message toast 10 pixels to the right and 5 pixels to the bottom).
 		 * @param {string} [mOptions.collision='fit fit'] Specifies how the position of the message toast should be adjusted in case it overflows the screen in some direction. Possible values “fit”, “flip”, “none”, or a pair for horizontal and vertical e.g. "fit flip”, "fit none".
 		 * @param {function} [mOptions.onClose=null] Function to be called when the message toast closes.
 		 * @param {boolean} [mOptions.autoClose=true] Specify whether the message toast should close as soon as the end user touches the screen.
-		 * @param {string} [mOptions.animationTimingFunction='ease'] Describes how the close animation will progress. Possible values "ease", "linear", "ease-in", "ease-out", "ease-in-out". This feature is not supported in android and ie9 browsers.
-		 * @param {int} [mOptions.animationDuration=1000] Time in milliseconds that the close animation takes to complete. Needs to be a finite positive integer. For not animation set to 0. This feature is not supported in android and ie9 browsers.
+		 * @param {string} [mOptions.animationTimingFunction='ease'] Describes how the close animation will progress. Possible values "ease", "linear", "ease-in", "ease-out", "ease-in-out".
+		 * @param {int} [mOptions.animationDuration=1000] Time in milliseconds that the close animation takes to complete. Needs to be a finite positive integer. For not animation set to 0.
 		 * @param {boolean} [mOptions.closeOnBrowserNavigation=true] Specifies if the message toast closes on browser navigation.
-		 *
 		 * @public
 		 */
 		MessageToast.show = function(sMessage, mOptions) {
+			var oOpener = Element.closestTo(document.activeElement);
+			var oAccSpan;
 			var that = MessageToast,
 				mSettings = jQuery.extend({}, MessageToast._mSettings, { message: sMessage }),
 				oPopup = new Popup(),
 				iPos,
 				oMessageToastDomRef,
 				sPointerEvents = "mousedown." + CSSCLASS + " touchstart." + CSSCLASS,
-				iCloseTimeoutId,
 				iMouseLeaveTimeoutId;
+
+			MessageToast._mSettings.opener = oOpener;
 
 			mOptions = normalizeOptions(mOptions);
 
@@ -392,15 +437,12 @@ sap.ui.define(['jquery.sap.global', './InstanceManager', 'sap/ui/core/Popup', 's
 			// sets the position of the pop-up
 			oPopup.setPosition(mSettings.my, mSettings.at, mSettings.of, mSettings.offset, mSettings.collision);
 
-			if (jQuery.support.cssTransitions) {
-
-				// sets the animation functions to use for opening and closing the message toast
-				oPopup.setAnimations(function fnMessageToastOpen($MessageToast, iDuration, fnOpened) {
-					fnOpened();
-				}, function fnMessageToastClose($MessageToastDomRef, iDuration, fnClose) {
-					that._setCloseAnimation($MessageToastDomRef, iDuration, fnClose, mSettings);
-				});
-			}
+			// sets the animation functions to use for opening and closing the message toast
+			oPopup.setAnimations(function fnMessageToastOpen($MessageToast, iDuration, fnOpened) {
+				fnOpened();
+			}, function fnMessageToastClose($MessageToastDomRef, iDuration, fnClose) {
+				that._setCloseAnimation($MessageToastDomRef, iDuration, fnClose, mSettings);
+			});
 
 			oPopup.setShadow(false);
 			oPopup.__bAutoClose = mSettings.autoClose;
@@ -419,6 +461,14 @@ sap.ui.define(['jquery.sap.global', './InstanceManager', 'sap/ui/core/Popup', 's
 				jQuery(document).on(sPointerEvents, MessageToast._handleMouseDownEvent.bind(MessageToast));
 				MessageToast._bBoundedEvents = true;
 			}
+
+			// Focus invisible span to avoid double announcement in NVDA
+			oAccSpan = document.createElement("span");
+			oAccSpan.setAttribute("tabIndex", 0);
+			oAccSpan.setAttribute("class", "sapMMessageToastHiddenFocusable");
+
+			oPopup.getContent().prepend(oAccSpan);
+			oAccSpan.addEventListener("keydown", handleKbdClose.bind(this));
 
 			// opens the popup's content at the position specified via #setPosition
 			oPopup.open();
@@ -449,18 +499,19 @@ sap.ui.define(['jquery.sap.global', './InstanceManager', 'sap/ui/core/Popup', 's
 			oPopup.attachClosed(handleMTClosed);
 
 			// close the message toast
-			iCloseTimeoutId = jQuery.sap.delayedCall(mSettings.duration, oPopup, "close");
+			this._iCloseTimeoutId = setTimeout(oPopup["close"].bind(oPopup), mSettings.duration);
+
 			function fnClearTimeout() {
-				jQuery.sap.clearDelayedCall(iCloseTimeoutId);
-				iCloseTimeoutId = null;
+				clearTimeout(that._iCloseTimeoutId);
+				that._iCloseTimeoutId = null;
 
 				function fnMouseLeave() {
-					iMouseLeaveTimeoutId = jQuery.sap.delayedCall(mSettings.duration, oPopup, "close");
+					iMouseLeaveTimeoutId = setTimeout(oPopup["close"].bind(oPopup), mSettings.duration);
 					oPopup.getContent().removeEventListener("mouseleave", fnMouseLeave);
 				}
 
 				oPopup.getContent().addEventListener("mouseleave", fnMouseLeave);
-				jQuery.sap.clearDelayedCall(iMouseLeaveTimeoutId);
+				clearTimeout(iMouseLeaveTimeoutId);
 				iMouseLeaveTimeoutId = null;
 			}
 
@@ -470,7 +521,9 @@ sap.ui.define(['jquery.sap.global', './InstanceManager', 'sap/ui/core/Popup', 's
 			// WP 8.1 fires mouseleave event on tap
 			if (Device.system.desktop) {
 				oPopup.getContent().addEventListener("mouseleave", function () {
-					iCloseTimeoutId = jQuery.sap.delayedCall(mSettings.duration,  oPopup, "close");
+					if (document.activeElement !== oPopup.getContent()) {
+						this._iCloseTimeoutId = setTimeout(oPopup["close"].bind(oPopup), mSettings.duration);
+					}
 				});
 			}
 		};

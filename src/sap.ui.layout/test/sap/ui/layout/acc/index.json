@@ -3,7 +3,7 @@
 	  {
 		"control": "sap.ui.layout.BlockLayout",
 		"url": "BlockLayout.html",
-		"appComponent": "CA-UI5-CTR-RIL"
+		"appComponent": "CA-UI5-CTR-ROD"
 	  },
 	  {
 		"control": "sap.ui.layout.form.ResponsiveGridLayout",
@@ -19,7 +19,7 @@
 	  },
 	  {
 		"control": "sap.ui.layout.FixFlex",
-		"url": "../FixFlex.html",
+		"url": "FixFlex.html",
 		"appComponent": "CA-UI5-CTR-ROD"
 	  },
 	  {
@@ -29,14 +29,18 @@
 	  },
 	  {
 		"control": "sap.ui.layout.ResponsiveSplitter",
-		"url": "../ResponsiveSplitter.html",
-		"desc": "To see the paginator in the bottom, please reduce the size of the browser window.",
-		"appComponent": "CA-UI5-CTR-RIL"
+		"url": "ResponsiveSplitter.html",
+		"appComponent": "CA-UI5-CTR-ROD",
+		  "accTest": {
+			  "name": "sap.ui.layout.ResponsiveSplitter",
+			  "title": "ACC test for sap.ui.layout.ResponsiveSplitter",
+			  "module": "./responsivesplitter.qunit"
+		  }
 	  },
 	  {
 		"control": "sap.ui.layout.Splitter",
 		"url": "Splitter.html",
-		"appComponent": "CA-UI5-CTR-RIL"
+		"appComponent": "CA-UI5-CTR-ROD"
 	  },
 	  {
 		"control": "sap.ui.layout.DynamicSideContent",

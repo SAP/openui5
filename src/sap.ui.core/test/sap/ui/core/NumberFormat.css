@@ -1,0 +1,16 @@
+.large {
+	font-size: 2rem !important
+}
+
+.largeinput {
+	height: 3rem !important
+}
+
+.large .sapMInputBaseInner {
+	font-size: 2rem !important;
+	height: 2.5rem
+}
+
+.large .sapMInputBaseInner.sapMTextAreaInner {
+	height: 100%
+}

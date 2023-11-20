@@ -1,0 +1,25 @@
+/* ==================================== */
+/* CSS for control sap.m/ComboBoxBase   */
+/* Fiori 3 Dark theme                   */
+/* ==================================== */
+
+.sapMInputBaseIconPressed .sapMComboBoxBaseClearIcon {
+	color: @sapUiContentIconColor;
+	background: transparent;
+
+	&:hover {
+		background: @sapUiButtonLiteHoverBackground;
+	}
+
+	&:active {
+		background-color: @sapUiButtonLiteActiveBackground;
+		color: @sapUiButtonActiveTextColor;
+		&::before {
+			color: @sapUiButtonActiveTextColor;
+		}
+	}
+}
+
+.sapMInputBaseIconPressed .sapMComboBoxBaseClearIcon::before {
+	color: @sapUiContentIconColor;
+}

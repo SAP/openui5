@@ -1,9 +1,8 @@
-/* global document */
 sap.ui.define([
 	"sap/ui/core/UIComponent",
 	"sap/ui/Device",
-	"mycompany/myapp/MyWorklistApp/model/models",
-	"mycompany/myapp/MyWorklistApp/controller/ErrorHandler"
+	"./model/models",
+	"./controller/ErrorHandler"
 ], function (UIComponent, Device, models, ErrorHandler) {
 	"use strict";
 
@@ -54,7 +53,7 @@ sap.ui.define([
 		getContentDensityClass : function() {
 			if (this._sContentDensityClass === undefined) {
 				// check whether FLP has already set the content density class; do nothing in this case
-				if (jQuery(document.body).hasClass("sapUiSizeCozy") || jQuery(document.body).hasClass("sapUiSizeCompact")) {
+				if (document.body.classList.contains("sapUiSizeCozy") || document.body.classList.contains("sapUiSizeCompact")) {
 					this._sContentDensityClass = "";
 				} else if (!Device.support.touch) { // apply "compact" mode if touch is not supported
 					this._sContentDensityClass = "sapUiSizeCompact";
@@ -67,4 +66,5 @@ sap.ui.define([
 		}
 
 	});
+
 });

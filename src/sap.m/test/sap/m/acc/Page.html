@@ -1,38 +1,24 @@
-<!DOCTYPE HTML>
+<!DOCTYPE html>
 <html>
-<head>
-	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>sap.m.Page - Accessibility</title>
+	<head>
+		<meta charset="utf-8">
+		<title>sap.m.Page - Accessibility</title>
 
-	<script src="../shared-config.js"></script>
-	<script src="../../../../resources/sap-ui-core.js"
-	       
-	        id="sap-ui-bootstrap"
-	        data-sap-ui-libs="sap.m">
-	</script>
-
-	<script>
-		var oApp = new sap.m.App("myApp", {
-			initialPage: "page"
-		});
-
-		var oPage = new sap.m.Page("page", {
-			landmarkInfo: new sap.m.PageAccessibleLandmarkInfo(),
-			title: "Page Control",
-			content: [
-				new sap.m.Text({
-					text: "This is a sample page which demonstrates the sap.m.Page control. The sap.m.Page control is just a container for other controls used in the application."
-				})
-			],
-			footer: new sap.m.Bar({
-				contentLeft: new sap.m.Button({ text: "A simple button", tooltip: "A simple tooltip" })
-			})
-		});
-
-		oApp.addPage(oPage).placeAt("content");
-	</script>
-</head>
-<body class="sapUiBody" role="application">
-	<div id="content"></div>
-</body>
+		<link href="Page.css" rel="stylesheet">
+		<script src="../shared-config.js"></script>
+		<script id="sap-ui-bootstrap"
+				src="../../../../resources/sap-ui-core.js"
+				data-sap-ui-async="true"
+				data-sap-ui-compatVersion="edge"
+				data-sap-ui-libs="sap.m"
+				data-sap-ui-onInit="module:local/Page"
+				data-sap-ui-resourceRoots='{
+					"local": "./",
+					"qunit.internal.acc": "../../../../test-resources/sap/ui/core/qunit/internal/acc"
+				}'>
+		</script>
+	</head>
+	<body class="sapUiBody">
+		<div id="content"></div>
+	</body>
 </html>

@@ -1,0 +1,24 @@
+{
+  "1.74.0": {
+    "date": "January 2020",
+    "notes": [
+      {
+        "id": "7d26875da5626eab685e836dd2db897bea4ba7e4",
+        "type": "FEATURE",
+        "text": " sap.uxap.ObjectPageLayout: RTA move of sections via anchorbar",
+        "references": []
+      },
+      {
+        "id": "a965545049d652b48620882c8952a0ebda497809",
+        "type": "FIX",
+        "text": " sap.ui.dt - objectPage test fix",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980531146"
+          }
+        ]
+      }
+    ]
+  }
+}

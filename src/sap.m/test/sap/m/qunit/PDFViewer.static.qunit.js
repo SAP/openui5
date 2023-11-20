@@ -1,10 +1,9 @@
 /*global QUnit*/
 
-sap.ui.define("sap.m.qunit.PDFViewerStatic", [
-	"test/sap/m/qunit/PDFViewerTestUtils",
-	"sap/m/PDFViewer",
+sap.ui.define([
+	"./PDFViewerTestUtils",
 	"sap/m/PDFViewerRenderer"
-], function (TestUtils, PDFViewer, PDFViewerRenderer) {
+], function (TestUtils, PDFViewerRenderer) {
 	"use strict";
 
 	var oPdfViewer = null;
@@ -16,7 +15,7 @@ sap.ui.define("sap.m.qunit.PDFViewerStatic", [
 	});
 
 	// if the environment does not have pdf plugin, then it is not possible to run standard test suite
-	if (!PDFViewerRenderer._isPdfPluginEnabled()) {
+	if (!PDFViewerRenderer._isPdfPluginEnabled() || /HeadlessChrome/.test(window.navigator.userAgent)) {
 		return;
 	}
 
@@ -25,7 +24,7 @@ sap.ui.define("sap.m.qunit.PDFViewerStatic", [
 		var loadDone = assert.async();
 
 		var oOptions = {
-			"source": "./pdfviewer/sample-file.pdf",
+			"source": "test-resources/sap/m/qunit/pdfviewer/sample-file.pdf",
 			"loaded": function () {
 				assert.ok(true, "'Load' event fired");
 				loadDone();
@@ -62,8 +61,8 @@ sap.ui.define("sap.m.qunit.PDFViewerStatic", [
 			loadAsyncAssert4();
 		};
 
-		var sourcePath1 = "./pdfviewer/sample-file.pdf";
-		var sourcePath2 = "./pdfviewer/sample-file2.pdf";
+		var sourcePath1 = "test-resources/sap/m/qunit/pdfviewer/sample-file.pdf";
+		var sourcePath2 = "test-resources/sap/m/qunit/pdfviewer/sample-file2.pdf";
 
 		var oOptions = {
 			"source": sourcePath1,
@@ -77,7 +76,7 @@ sap.ui.define("sap.m.qunit.PDFViewerStatic", [
 			oPdfViewer.detachLoaded(fnLoadDone1Handler);
 			oPdfViewer.attachLoaded(fnLoadDone2Handler);
 			oPdfViewer.setSource(sourcePath2);
-			TestUtils.rerender();
+			TestUtils.triggerRerender();
 			return Promise.resolve();
 		};
 
@@ -85,7 +84,7 @@ sap.ui.define("sap.m.qunit.PDFViewerStatic", [
 			oPdfViewer.detachLoaded(fnLoadDone2Handler);
 			oPdfViewer.attachLoaded(fnLoadDone3Handler);
 			oPdfViewer.setSource(sourcePath1);
-			TestUtils.rerender();
+			TestUtils.triggerRerender();
 			return Promise.resolve();
 		};
 
@@ -93,7 +92,7 @@ sap.ui.define("sap.m.qunit.PDFViewerStatic", [
 			oPdfViewer.detachLoaded(fnLoadDone3Handler);
 			oPdfViewer.attachLoaded(fnLoadDone4Handler);
 			oPdfViewer.setSource(sourcePath2);
-			TestUtils.rerender();
+			TestUtils.triggerRerender();
 			return Promise.resolve();
 		};
 

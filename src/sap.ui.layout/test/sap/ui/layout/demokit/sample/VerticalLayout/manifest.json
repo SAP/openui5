@@ -1,0 +1,31 @@
+{
+	"sap.app": {
+		"id": "sap.ui.layout.sample.VerticalLayout",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "sap.ui.layout.sample.VerticalLayout.view.VerticalLayout",
+			"type": "XML",
+			"async": true
+		},
+		"dependencies": {
+			"libs": {
+				"sap.m": {},
+				"sap.ui.core": {},
+				"sap.ui.layout": {}
+			}
+		},
+		"config": {
+			"sample": {
+				"files": [
+					"view/VerticalLayout.view.xml",
+					"controller/VerticalLayout.controller.js",
+					"manifest.json"
+				]
+			}
+		}
+	}
+}

@@ -1,0 +1,104 @@
+{
+  "1.114.0": {
+    "date": "May 2023",
+    "notes": [
+      {
+        "id": "44cc67524300719d0f6c3d75250186098128874c",
+        "type": "FEATURE",
+        "text": " XMLTemplateProcessor: Load simple and composite types asynchronously"
+      },
+      {
+        "id": "fcb34abcc578b9f905aeec3df560d91c2815a71b",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v4.ODataListBinding#create: improve error message for missing bSkipRefresh",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370022413"
+          }
+        ]
+      },
+      {
+        "id": "c2912072fb30b293cb5da6917202475942530ca8",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v4.ODataListBinding#resumeInternal: improve performance",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270183841"
+          }
+        ]
+      },
+      {
+        "id": "e71ae04ca8a91642b0ff27db65559f416f5fdef5",
+        "type": "FIX",
+        "text": " core/Configuration: JSDoc for Enum 'AnimationMode'",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370048748"
+          }
+        ]
+      },
+      {
+        "id": "6b727655b72472e615c72c719172655b72d7e985",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v4.lib._AggregationCache#read: tolerate server-driven paging",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370039138"
+          }
+        ]
+      },
+      {
+        "id": "b5590532952e4c3582426bcdcabac94a47a75d75",
+        "type": "FIX",
+        "text": " theming.Parameters: Stabilize qunnit tests",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370044251"
+          }
+        ]
+      },
+      {
+        "id": "821f0fce2741eae1e5880b9e8e9a3aa29415dc9a",
+        "type": "FIX",
+        "text": " sap.ui.core.date.UniversalDate: Consider CalendarWeekNumbering of Configuration",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370033686"
+          }
+        ]
+      },
+      {
+        "id": "d4400cef959cb84f2e49e92daa39c69ff33021cb",
+        "type": "FEATURE",
+        "text": " sap.ui.core.Configuration: Enable timezone settings"
+      },
+      {
+        "id": "9e3a250e02700c0cf3b3350fa6f85385f511c1d5",
+        "type": "FIX",
+        "text": " core/Rendering: Fix async step detection"
+      },
+      {
+        "id": "db6394d77f2d45f641e1cfa4f40cd3b97da3504d",
+        "type": "FEATURE",
+        "text": " Opa: Introduce fecthWaiter"
+      },
+      {
+        "id": "41f08aff18a463f223711a1092b6550332d410c4",
+        "type": "FIX",
+        "text": " sap.ui.Device: Add type documentation for RANGESETS enum",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370027105"
+          }
+        ]
+      }
+    ]
+  }
+}

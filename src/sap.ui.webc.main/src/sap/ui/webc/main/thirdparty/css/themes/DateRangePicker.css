@@ -1,0 +1,1 @@
+:host(:not([hidden])){display:inline-block}:host{background-color:var(--sapField_Background);color:var(--sapField_TextColor);min-width:15rem}:host .ui5-date-picker-input{background-color:inherit;color:inherit;min-width:inherit;width:100%}

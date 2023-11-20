@@ -1,0 +1,91 @@
+{
+	"libraries": [
+		{
+			"name": "testlibs.scenario15.lib1",
+			"manifestHints": {
+				"dependencies": {
+					"libs": {
+						"testlibs.scenario15.lib3": {},
+						"testlibs.scenario15.lib4": {},
+						"testlibs.scenario15.lib5": {
+							"lazy": true
+						}
+					}
+				}
+			}
+		},
+		{
+			"name": "testlibs.scenario15.lib2",
+			"manifestHints": {
+				"dependencies": {
+					"libs": {
+						"testlibs.scenario15.lib4": {},
+						"testlibs.scenario15.lib1": {},
+						"testlibs.scenario15.lib3": {},
+						"testlibs.scenario15.lib5": {
+							"lazy": true
+						},
+						"testlibs.scenario15.lib6": {
+							"lazy": true
+						},
+						"testlibs.scenario15.lib7": {}
+					}
+				}
+			}
+		},
+		{
+			"name": "testlibs.scenario15.lib3",
+			"manifestHints": {
+				"dependencies": {
+					"libs": {
+						"testlibs.scenario15.lib4": {}
+					}
+				}
+			}
+		},
+		{
+			"name": "testlibs.scenario15.lib4"
+		},
+		{
+			"name": "testlibs.scenario15.lib5"
+		},
+		{
+			"name": "testlibs.scenario15.lib6"
+		},
+		{
+			"name": "testlibs.scenario15.lib7"
+		},
+		{
+			"name": "testlibs.scenario15.lib8",
+			"manifestHints": {
+				"dependencies": {
+					"libs": {
+						"testlibs.scenario15.lib6": {}
+					}
+				}
+			}
+		},
+		{
+			"name": "testlibs.scenario15.lib10"
+		}
+	],
+	"components": {
+		"testlibs.scenario15.lib1.comp": {
+			"library": "testlibs.scenario15.lib1",
+			"manifestHints": {
+				"dependencies": {
+					"libs": {
+						"testlibs.scenario15.lib3": {},
+						"testlibs.scenario15.lib4": {},
+						"testlibs.scenario15.lib5": {
+							"lazy": true
+						},
+						"testlibs.scenario15.lib6": {},
+						"testlibs.scenario15.lib8": {},
+						"testlibs.scenario15.lib9": {}
+					}
+				}
+			}
+		}
+	}
+}

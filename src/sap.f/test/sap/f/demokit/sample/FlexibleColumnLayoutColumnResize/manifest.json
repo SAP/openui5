@@ -1,0 +1,29 @@
+{
+	"sap.app": {
+		"id": "sap.f.sample.FlexibleColumnLayoutColumnResize",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"config": {
+			"sample": {
+				"iframe": "webapp/index.html",
+				"stretch": true,
+				"files": [
+					"webapp/view/Detail.view.xml",
+					"webapp/view/FlexibleColumnLayout.view.xml",
+					"webapp/view/List.view.xml",
+					"webapp/controller/Detail.controller.js",
+					"webapp/controller/FlexibleColumnLayout.controller.js",
+					"webapp/controller/List.controller.js",
+					"webapp/Component.js",
+					"webapp/index.html",
+					"webapp/manifest.json",
+					"ui5.yaml",
+					"package.json"
+				]
+			}
+		}
+	}
+}

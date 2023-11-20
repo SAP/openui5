@@ -1,0 +1,73 @@
+{
+  "1.89.0": {
+    "date": "April 2021",
+    "notes": [
+      {
+        "id": "49580c917f8d5e6cbb430b39eb76c623b66c3e83",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Stablized qunit",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180046524"
+          }
+        ]
+      },
+      {
+        "id": "290c9a844595956c686b8b41266ba3169a747cea",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Correcter RTA headerContent domRef",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170026896"
+          }
+        ]
+      },
+      {
+        "id": "15c3e767f8c5a435bcb9d091c70a0826a1725880",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageSection: Expand option for all hidden sections",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170061627"
+          }
+        ]
+      },
+      {
+        "id": "4548ffd9be995974bacbc939bde785fbf72cf539",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Correct scrollToSection issue",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170051076"
+          }
+        ]
+      },
+      {
+        "id": "d05950d63ac8946c31bd37f929cb6f2d68dfeed5",
+        "type": "FIX",
+        "text": " sap.uxap.BlockBase: Clean up obsolete promise",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170045500"
+          }
+        ]
+      },
+      {
+        "id": "6af8817abd28a264ee4f32630dd805e8cf1f4bfd",
+        "type": "FIX",
+        "text": " sap.uxap.HierarchicalSelect: Truncation on phone size fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180035341"
+          }
+        ]
+      }
+    ]
+  }
+}

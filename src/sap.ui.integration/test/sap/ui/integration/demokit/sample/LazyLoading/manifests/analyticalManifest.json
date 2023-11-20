@@ -1,0 +1,87 @@
+{
+	"sap.app": {
+		"type": "card"
+	},
+	"sap.card": {
+		"type": "Analytical",
+		"header": {
+			"type": "Numeric",
+			"data": {
+				"request": {
+					"url": "sap/ui/integration/sample/LazyLoading/manifests/analyticalData.json"
+				},
+				"path": "/header"
+			},
+			"title": "{details}",
+			"subTitle": "Analytical Card",
+			"unitOfMeasurement": "EUR",
+			"mainIndicator": {
+				"number": "{number}",
+				"unit": "{unit}",
+				"trend": "{trend}",
+				"state": "{state}"
+			},
+			"details": "{details}",
+			"sideIndicators": [
+				{
+					"title": "Target",
+					"number": "{target/number}",
+					"unit": "{target/unit}"
+				},
+				{
+					"title": "Deviation",
+					"number": "{deviation/number}",
+					"unit": "%"
+				}
+			]
+		},
+		"content": {
+			"chartType": "Line",
+			"legend": {
+				"visible": "{legend/visible}",
+				"position": "{legend/position}",
+				"alignment": "{legend/alignment}"
+			},
+			"plotArea": {
+				"dataLabel": {
+					"visible": true
+				},
+				"categoryAxisText": {
+					"visible": false
+				},
+				"valueAxisText": {
+					"visible": false
+				}
+			},
+			"title": {
+				"text": "Line Chart",
+				"visible": true,
+				"alignment": "Left"
+			},
+			"measureAxis": "valueAxis",
+			"dimensionAxis": "categoryAxis",
+			"data": {
+				"request": {
+					"url": "sap/ui/integration/sample/LazyLoading/manifests/analyticalData.json"
+				},
+				"path": "/list"
+			},
+			"dimensions": [
+				{
+					"label": "{dimensions/weekLabel}",
+					"value": "{Week}"
+				}
+			],
+			"measures": [
+				{
+					"label": "{measures/revenueLabel}",
+					"value": "{Revenue}"
+				},
+				{
+					"label": "{measures/costLabel}",
+					"value": "{Cost}"
+				}
+			]
+		}
+	}
+}

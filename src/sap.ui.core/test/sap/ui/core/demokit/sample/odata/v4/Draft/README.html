@@ -1,0 +1,137 @@
+<!DOCTYPE HTML>
+<html lang="en">
+	<head>
+		<style>
+			body {font-family: Arial, Helvetica, sans-serif;}
+		</style>
+		<title>Demo Application: Data Reuse and Synchronisation</title>
+	</head>
+	<body>
+		<h1>Demo Application: Data Reuse and Synchronisation</h1>
+		<h2>DESCRIPTION</h2>
+		This demo application demonstrates how to synchronize data between a list report
+		(first column) and an object page (second column) by using the
+		<a href="https://sdk.openui5.org/api/sap.ui.model.odata.v4.ODataModel/methods/getKeepAliveContext">
+			V4 ODataModel#getKeepAliveContext</a> API. It also demonstrates how to replace an active
+		version with a draft and vice versa.
+		<p><b>Note:</b> The application uses the responsive Flexible Column Layout control, which
+			might hide columns if there is not enough space within the browser window. So use the
+			app in fullscreen mode to prevent automatically hiding of columns which would result in
+			a different behavior than described here.</p>
+
+		<h2>Scenario: Start with list report, navigate to object page, edit</h2>
+		<h3>Start Up</h3>
+		<ol>
+			<li>Start the Draft application with URL:
+				<a href="/test-resources/sap/ui/core/demokit/sample/common/index.html?component=odata.v4.Draft">
+					/test-resources/sap/ui/core/demokit/sample/common/index.html?component=odata.v4.Draft
+				</a></li>
+			<li>Select the first product in the list report.</li>
+			<li><b>Note:</b> An object page for the product appears, no input field is editable,
+				only the <code>Edit</code> button is enabled.</li>
+		</ol>
+		<h3>Edit & Cancel</h3>
+		<ol>
+			<li>Press the <code>Edit</code> button.</li>
+			<li><b>Note:</b> Some input fields are now editable, all buttons but <code>Edit</code>
+				are enabled, and the list report shows that the first product is not an active
+				entity.</li>
+			<li>Enter 'Test' into the input field <code>Name</code> of the object page.</li>
+			<li><b>Note:</b> The list report shows the new name of the first product.</li>
+			<li>Press the <code>Cancel</code> button.</li>
+			<li><b>Note:</b> No input field is editable, only the <code>Edit</code> button is
+				enabled, and the list report shows that the first product is an active entity with
+				its original name.</li>
+		</ol>
+		<h3>Edit & Activate</h3>
+		<ol>
+			<li>Press the <code>Edit</code> button.</li>
+			<li><b>Note:</b> Some input fields are now editable, all buttons but <code>Edit</code>
+				are enabled, and the list report shows that the first product is not an active
+				entity.</li>
+			<li>Enter 'Test' into the input field <code>Name</code> of the object page.</li>
+			<li><b>Note:</b> The list report shows the new name of the first product.</li>
+			<li>Enter a new quantity like '123' into the <code>Quantity</code> input field of the
+				first part in the Parts table of the object page.</li>
+			<li>Press the <code>Save</code> button.</li>
+			<li><b>Note:</b> No input field is editable, only the <code>Edit</code> button is
+				enabled, the list report shows that the first product is an active entity with a new
+				name, and the Parts table of the object page shows the new quantity of the first
+				part.</li>
+		</ol>
+		<h3>Cancel Without Edit</h3>
+		<ol>
+			<li>Select the second product in the list report.</li>
+			<li><b>Note:</b> An object page for the product appears, some input fields are
+				editable, all buttons but <code>Edit</code> are enabled, and the list report shows
+				that the second product is not an active entity.</li>
+			<li>Enter 'Test' into the input field <code>Name</code> of the object page.</li>
+			<li><b>Note:</b> The list report shows the new name of the second product.</li>
+			<li>Press the <code>Cancel</code> button.</li>
+			<li><b>Note:</b> No input field is editable, only the <code>Edit</code> button is
+				enabled, and the list report shows that the second product is an active entity with
+				its original name.</li>
+		</ol>
+
+		<h2>Scenario: Start with list report and object page, edit</h2>
+		<ol>
+			<li>Start with URL:
+				<a href="/test-resources/sap/ui/core/demokit/sample/common/index.html?component=odata.v4.Draft#/Products(ID=10,IsActiveEntity=true)">
+				/test-resources/sap/ui/core/demokit/sample/common/index.html?component=odata.v4.Draft#/Products(ID=10,IsActiveEntity=true)
+			</a></li>
+			<li><b>Note:</b> The list report and an object page for the product with ID 10 appears,
+				no input field is editable, only the <code>Edit</code> button is enabled in the
+				object page.</li>
+			<li>Repeat the tests "Edit & Cancel" and "Edit & Activate" from above.</li>
+		</ol>
+
+		<h2>Scenario: Start with object page without list report, first show list then edit</h2>
+		<ol>
+			<li>Start with URL:
+				<a href="/test-resources/sap/ui/core/demokit/sample/common/index.html?component=odata.v4.Draft#/Products(ID=10,IsActiveEntity=true)?noList">
+					/test-resources/sap/ui/core/demokit/sample/common/index.html?component=odata.v4.Draft#/Products(ID=10,IsActiveEntity=true)?noList
+				</a></li>
+			<li><b>Note:</b> An object page for the product with ID 10 appears, no input field is
+				editable, only the <code>Edit</code> button is enabled.</li>
+			<li>Press the "Show List" button.</li>
+			<li><b>Note:</b> The list report appears.</li>
+			<li>Repeat the tests "Edit & Cancel" and "Edit & Activate" from above.</li>
+		</ol>
+
+		<h2>Scenario: Start with object page without list report, first edit then show list</h2>
+		<ol>
+			<li>Start with URL:
+				<a href="/test-resources/sap/ui/core/demokit/sample/common/index.html?component=odata.v4.Draft#/Products(ID=10,IsActiveEntity=true)?noList">
+					/test-resources/sap/ui/core/demokit/sample/common/index.html?component=odata.v4.Draft#/Products(ID=10,IsActiveEntity=true)?noList
+				</a></li>
+			<li><b>Note:</b> An object page for the product with ID 10 appears, no input field is
+				editable, only the <code>Edit</code> button is enabled.</li>
+			<li>Repeat the tests "Edit & Cancel" and "Edit & Activate" from above.</li>
+			<li>Press the "Show List" button.</li>
+			<li><b>Note:</b> The list report appears.</li>
+		</ol>
+
+		<h2>Scenario: Start with list report, navigate to defective product</h2>
+		<h3>Start Up</h3>
+		<ol>
+			<li>Start the Draft application with URL:
+				<a href="/test-resources/sap/ui/core/demokit/sample/common/index.html?component=odata.v4.Draft">
+					/test-resources/sap/ui/core/demokit/sample/common/index.html?component=odata.v4.Draft
+				</a></li>
+			<li>Select the last product in the list report.</li>
+			<li><b>Note:</b> An error page is shown telling that there was a "Communication error"
+				with status code 500.
+		</ol>
+
+		<h2>Scenario: Start with defective product in object page</h2>
+		<h3>Start Up</h3>
+		<ol>
+			<li>Start the Draft application with URL:
+				<a href="/test-resources/sap/ui/core/demokit/sample/common/index.html?component=odata.v4.Draft#/Products(ID=40,IsActiveEntity=true)">
+					/test-resources/sap/ui/core/demokit/sample/common/index.html?component=odata.v4.Draft#/Products(ID=40,IsActiveEntity=true)
+				</a></li>
+			<li><b>Note:</b> An error page is shown telling that there was a "Communication error"
+				with status code 500.
+		</ol>
+	</body>
+</html>

@@ -1,0 +1,29 @@
+{
+  "1.93.0": {
+    "date": "July 2021",
+    "notes": [
+      {
+        "id": "56ecb2ac631e236b55db4751f8c870f5c9128cac",
+        "type": "FIX",
+        "text": " sap.uxap.HierarchicalSelect: Fixed button's focus on XL desktop sreen",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180251671"
+          }
+        ]
+      },
+      {
+        "id": "b4acda2ae1aa8f69e035a440a712f224f11a92b0",
+        "type": "FIX",
+        "text": " sap.ui.unified.FileUploader: Height corrected",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180268549"
+          }
+        ]
+      }
+    ]
+  }
+}

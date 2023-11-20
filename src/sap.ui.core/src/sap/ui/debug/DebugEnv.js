@@ -3,8 +3,29 @@
  */
 
 // A core plugin that bundles debug features and connects with an embedding testsuite
-sap.ui.define('sap/ui/debug/DebugEnv', ['jquery.sap.global', 'sap/ui/base/Interface', './ControlTree', './LogViewer', './PropertyList'],
-	function(jQuery, Interface, ControlTree, LogViewer, PropertyList) {
+sap.ui.define('sap/ui/debug/DebugEnv', [
+	"sap/base/config",
+	"sap/base/i18n/Localization",
+	"sap/ui/base/Interface",
+	"./ControlTree",
+	"./LogViewer",
+	"./PropertyList",
+	"sap/base/Log",
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/core/Supportability",
+	"sap/ui/core/Rendering"
+], function(
+	BaseConfig,
+	Localization,
+	Interface,
+	ControlTree,
+	LogViewer,
+	PropertyList,
+	Log,
+	jQuery,
+	Supportability,
+	Rendering
+) {
 	"use strict";
 
 
@@ -17,6 +38,7 @@ sap.ui.define('sap/ui/debug/DebugEnv', ['jquery.sap.global', 'sap/ui/base/Interf
 	 * @version ${version}
 	 * @private
 	 * @alias sap.ui.debug.DebugEnv
+	 * @deprecated As of Version 1.120
 	 */
 	var DebugEnv = function() {
 	};
@@ -38,19 +60,19 @@ sap.ui.define('sap/ui/debug/DebugEnv', ['jquery.sap.global', 'sap/ui/base/Interf
 		 * @private
 		 */
 		try {
-			this.bRunsEmbedded = typeof window.top.testfwk == "undefined"; // window || !top.frames["sap-ui-TraceWindow"]; // check only with ==, not === as the test otherwise fails on IE8
+			this.bRunsEmbedded = typeof window.top.testfwk === "undefined"; // window || !top.frames["sap-ui-TraceWindow"];
 
-			jQuery.sap.log.info("Starting DebugEnv plugin (" + (this.bRunsEmbedded ? "embedded" : "testsuite") + ")");
+			Log.info("Starting DebugEnv plugin (" + (this.bRunsEmbedded ? "embedded" : "testsuite") + ")");
 
 			// initialize only if running in testsuite or when debug views are not disabled via URL parameter
-			if (!this.bRunsEmbedded || oCore.getConfiguration().getInspect()) {
+			if (!this.bRunsEmbedded || Supportability.isControlInspectorEnabled()) {
 				this.init(bOnInit);
 			}
-			if (!this.bRunsEmbedded || oCore.getConfiguration().getTrace()) {
-				this.initLogger(jQuery.sap.log, bOnInit);
+			if (!this.bRunsEmbedded || BaseConfig.get({ name: "sapUiTrace", type: BaseConfig.Type.Boolean })) {
+				this.initLogger(Log, bOnInit);
 			}
 		} catch (oException) {
-			jQuery.sap.log.warning("DebugEnv plugin can not be started outside the Testsuite.");
+			Log.warning("DebugEnv plugin can not be started outside the Testsuite.");
 		}
 	};
 
@@ -59,7 +81,7 @@ sap.ui.define('sap/ui/debug/DebugEnv', ['jquery.sap.global', 'sap/ui/base/Interf
 	 * @public
 	 */
 	DebugEnv.prototype.stopPlugin = function() {
-		jQuery.sap.log.info("Stopping DebugEnv plugin.");
+		Log.info("Stopping DebugEnv plugin.");
 		this.oCore = null;
 	};
 
@@ -68,10 +90,10 @@ sap.ui.define('sap/ui/debug/DebugEnv', ['jquery.sap.global', 'sap/ui/base/Interf
 	 * @private
 	 */
 	DebugEnv.prototype.init = function(bOnInit) {
-		this.oControlTreeWindow = this.bRunsEmbedded ? this.oWindow : (top.frames["sap-ui-ControlTreeWindow"] || top);
-		this.oPropertyListWindow = this.bRunsEmbedded ? this.oWindow : (top.frames["sap-ui-PropertyListWindow"] || top);
+		this.oControlTreeWindow = this.bRunsEmbedded ? this.oWindow : (top.document.getElementById("sap-ui-ControlTreeWindow") || top.frames["sap-ui-ControlTreeWindow"] || top);
+		this.oPropertyListWindow = this.bRunsEmbedded ? this.oWindow : (top.document.getElementById("sap-ui-PropertyListWindow") || top.frames["sap-ui-PropertyListWindow"] || top);
 
-		var bRtl = sap.ui.getCore().getConfiguration().getRTL();
+		var bRtl = Localization.getRTL();
 
 		/* TODO enable switch to testsuite
 		if ( this.bRunsEmbedded ) {
@@ -86,23 +108,22 @@ sap.ui.define('sap/ui/debug/DebugEnv', ['jquery.sap.global', 'sap/ui/base/Interf
 			div.style.backgroundImage = "url(" + sap.ui.global.resourceRoot + "testsuite/images/full.png)";
 			div.style.zIndex = 5;
 			div.style.opacity = '0.2';
-			div.style.filter = 'progid:DXImageTransform.Microsoft.Alpha(opacity=20)';
-			jQuery(div).bind("click",function(evt) {
+			jQuery(div).on("click",function(evt) {
 				alert("click!");
 			});
 			/ *
-			jQuery(div).bind("mouseover",function(evt) {
+			jQuery(div).on("mouseover",function(evt) {
 				alert("click!");
 			});
-			jQuery(div).bind("mouseout",function(evt) {
+			jQuery(div).on("mouseout",function(evt) {
 				alert("click!");
 			}); * /
 			this.oWindow.document.body.appendChild(div);
 		}
 		*/
 
-		var oControlTreeRoot = this.oControlTreeWindow.document.getElementById("sap-ui-ControlTreeRoot"),
-			oPropertyWindowRoot = this.oPropertyListWindow.document.getElementById("sap-ui-PropertyWindowRoot");
+		var oControlTreeRoot = (this.oControlTreeWindow.document || this.oControlTreeWindow).querySelector("#sap-ui-ControlTreeRoot"),
+			oPropertyWindowRoot = (this.oPropertyListWindow.document || this.oPropertyListWindow).querySelector("#sap-ui-PropertyWindowRoot");
 
 		if ( !oControlTreeRoot ) {
 			oControlTreeRoot = this.oControlTreeWindow.document.createElement("DIV");
@@ -164,11 +185,20 @@ sap.ui.define('sap/ui/debug/DebugEnv', ['jquery.sap.global', 'sap/ui/base/Interf
 			this.oControlTree.renderDelayed();
 		}
 
-		jQuery(window).unload(jQuery.proxy(function(oEvent) {
-			this.oControlTree.exit();
-			this.oPropertyList.exit();
-		}, this));
-
+		/**
+		 * The block below is not needed because it only did a cleanup
+		 * before the page was closed. This should not be necessary.
+		 * Nevertheless we leave the coding here and only deprecate it,
+		 * in order to keep the BFCache behavior stable.
+		 * Removing the 'unload' handler could potentially activate
+		 * the BFCache and cause a different behavior in browser versions
+		 * where the 'unload' handler is still supported.
+		 * Therefore we only removed the not needed cleanup coding
+		 * but still attach a noop to ensure this handler would still
+		 * invalidate the BFCache.
+		 * @deprecated as of 1.119
+		 */
+		window.addEventListener("unload", () => {});
 	};
 
 	/**
@@ -177,10 +207,16 @@ sap.ui.define('sap/ui/debug/DebugEnv', ['jquery.sap.global', 'sap/ui/base/Interf
 	 */
 	DebugEnv.prototype.initLogger = function(oLogger, bOnInit) {
 		this.oLogger = oLogger;
+		this.oLogger.setLogEntriesLimit(Infinity);
 		if ( !this.bRunsEmbedded ) {
-			// attach test suite log viewer to our jQuery.sap.log
-			this.oTraceWindow = top.frames["sap-ui-TraceWindow"];
-			this.oTraceViewer = this.oTraceWindow.oLogViewer = new LogViewer(this.oTraceWindow, 'sap-ui-TraceWindowRoot');
+			// attach test suite log viewer to our Log
+			this.oTraceWindow = top.document.getElementById("sap-ui-TraceWindow");
+			if ( this.oTraceWindow ) {
+				this.oTraceViewer = top.oLogViewer = new LogViewer(this.oTraceWindow, 'sap-ui-TraceWindowRoot');
+			} else {
+				this.oTraceWindow = top.frames["sap-ui-TraceWindow"];
+				this.oTraceViewer = this.oTraceWindow.oLogViewer = new LogViewer(this.oTraceWindow, 'sap-ui-TraceWindowRoot');
+			}
 			this.oTraceViewer.sLogEntryClassPrefix = "lvl"; // enforce use of CSS instead of DOM styles
 			this.oTraceViewer.lock();
 		} else {
@@ -191,12 +227,11 @@ sap.ui.define('sap/ui/debug/DebugEnv', ['jquery.sap.global', 'sap/ui/base/Interf
 		this.oLogger.addLogListener(this.oTraceViewer);
 
 		// When debug.js is injected (testsuite), it is not initialized during Core.init() but later.
-		// In IE the startPlugin happens before rendering, in Chrome and others after rendering
-		// Therefore the first 'UIUpdated' is missed in browsers other than IE.
+		// In Chrome the startPlugin happens after rendering, therefore the first 'UIUpdated' is missed.
 		// To compensate this, we register for both, the UIUpdated and for a timer (if we are not called during Core.init)
 		// Whatever happens first.
 		// TODO should be part of core
-		this.oCore.attachUIUpdated(this.enableLogViewer, this);
+		Rendering.attachUIUpdated(this.enableLogViewer, this);
 		if ( !bOnInit ) {
 			var that = this;
 			this.oTimer = setTimeout(function() {
@@ -212,7 +247,7 @@ sap.ui.define('sap/ui/debug/DebugEnv', ['jquery.sap.global', 'sap/ui/base/Interf
 			this.oTimer = undefined;
 		}
 		// clear listener (necessary to avoid multiple calls and in case we are called via timer)
-		this.oCore.detachUIUpdated(this.enableLogViewer, this);
+		Rendering.detachUIUpdated(this.enableLogViewer, this);
 
 		// real action: enable the LogViewer
 		if ( this.oTraceViewer) {
@@ -263,8 +298,8 @@ sap.ui.define('sap/ui/debug/DebugEnv', ['jquery.sap.global', 'sap/ui/base/Interf
 	 * Will be called to show the TraceWindow
 	 */
 	DebugEnv.prototype.showTraceWindow = function() {
-		if ( !this.oTraceWindow && jQuery && jQuery.sap && jQuery.sap.log ) {
-			this.initLogger(jQuery.sap.log, false);
+		if ( !this.oTraceWindow ) {
+			this.initLogger(Log, false);
 		}
 		var oLogViewer = this.oTraceWindow && this.oTraceWindow.document.getElementById('sap-ui-TraceWindowRoot');
 		if ( oLogViewer ) {
@@ -313,7 +348,10 @@ sap.ui.define('sap/ui/debug/DebugEnv', ['jquery.sap.global', 'sap/ui/base/Interf
 	(function(){
 		var oThis = new DebugEnv();
 		sap.ui.getCore().registerPlugin(oThis);
-		DebugEnv.getInstance = jQuery.sap.getter(new Interface(oThis, ["isRunningEmbedded", "isControlTreeShown", "showControlTree", "hideControlTree", "isTraceWindowShown", "showTraceWindow", "hideTraceWindow", "isPropertyListShown", "showPropertyList", "hidePropertyList"]));
+		var oInterface = new Interface(oThis, ["isRunningEmbedded", "isControlTreeShown", "showControlTree", "hideControlTree", "isTraceWindowShown", "showTraceWindow", "hideTraceWindow", "isPropertyListShown", "showPropertyList", "hidePropertyList"]);
+		DebugEnv.getInstance = function() {
+			return oInterface;
+		};
 	}());
 
 	return DebugEnv;

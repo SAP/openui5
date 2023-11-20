@@ -1,0 +1,99 @@
+{
+	"sap.app": {
+		"id": "cardsdemo.navigationService.card6",
+		"type": "card"
+	},
+	"sap.card": {
+		"type": "Table",
+		"header": {
+			"title": "Table Card with Top 5 Products",
+			"subTitle": "These are the top sellers this month",
+			"icon": {
+				"src": "sap-icon://sales-order"
+			},
+			"status": {
+				"text": "5 of 100"
+			}
+		},
+		"content": {
+			"data": {
+				"json": [
+					{
+						"Name": "Comfort Easy",
+						"Category": "PDA & Organizers",
+						"NameUrl": "https://www.sap.com",
+						"ActionUrl": "https://www.sap.com/corporate/en/company/innovation.html",
+						"Number": "356865544"
+					},
+					{
+						"Name": "ITelO Vault",
+						"Category": "PDA & Organizers",
+						"NameUrl": "https://www.sap.com",
+						"ActionUrl": "https://www.sap.com/corporate/en/company/innovation.html",
+						"Number": "356865544"
+					},
+					{
+						"Name": "Notebook Professional 15",
+						"Category": "Notebooks",
+						"NameUrl": "https://www.sap.com",
+						"ActionUrl": "https://www.sap.com/corporate/en/company/innovation.html",
+						"Number": "356865544"
+					},
+					{
+						"Name": "Ergo Screen E-I",
+						"Category": "Monitors",
+						"NameUrl": "https://www.sap.com",
+						"Number": "356865544"
+					},
+					{
+						"Name": "Laser Professional Eco",
+						"Category": "Printers",
+						"NameUrl": "https://www.sap.com",
+						"ActionUrl": "https://www.sap.com/corporate/en/company/innovation.html",
+						"Number": "356865544"
+					}
+				]
+			},
+			"row": {
+				"columns": [
+					{
+						"title": "Name",
+						"value": "{Name}"
+					},
+					{
+						"title": "Link",
+						"value": "{Name}",
+						"url": "{NameUrl}"
+					},
+					{
+						"title": "Category",
+						"value": "{Category}"
+					},
+					{
+						"title": "Number",
+						"value": "{Number}",
+						"identifier": true,
+						"actions": [
+							{
+								"type": "Navigation",
+								"enabled": "{= ${ActionUrl}}",
+								"parameters": {
+									"url": "{ActionUrl}"
+								}
+							}
+						]
+					}
+				],
+				"actions": [
+					{
+						"type": "Navigation",
+						"enabled": "{= ${NameUrl}}",
+						"parameters": {
+							"url": "{NameUrl}"
+						}
+					}
+				]
+			}
+		}
+	}
+}

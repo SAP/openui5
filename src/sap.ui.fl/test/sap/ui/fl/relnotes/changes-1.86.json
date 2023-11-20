@@ -1,0 +1,28 @@
+{
+  "1.86.0": {
+    "date": "January 2021",
+    "notes": [
+      {
+        "id": "8298319dc75395a76b5a9c9a7b72f2570b9ae33e",
+        "type": "FEATURE",
+        "text": " fl.VariantManagement: replace remove icon"
+      },
+      {
+        "id": "1f2ef933dfe6225d00fa86fb9429457c8f0a250e",
+        "type": "FIX",
+        "text": " fl.VariantManagement: correct rebind once model change occurs"
+      },
+      {
+        "id": "1eb9c884cc378595ff640a74b1b634db4b486834",
+        "type": "FIX",
+        "text": " fl.VariantManagement: correction for manage views",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070497103"
+          }
+        ]
+      }
+    ]
+  }
+}

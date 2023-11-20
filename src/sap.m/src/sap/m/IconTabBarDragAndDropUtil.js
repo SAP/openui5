@@ -5,49 +5,106 @@
 /**
  * Contains functionality that is used in sap.m.IconTabBar Drag&Drop
  */
-sap.ui.define([],
-	function() {
+sap.ui.define([
+	"sap/base/i18n/Localization",
+	'sap/ui/core/dnd/DragInfo',
+	'sap/ui/core/dnd/DropInfo',
+	"sap/ui/events/KeyCodes",
+	'sap/ui/core/library'
+],
+	function(Localization, DragInfo, DropInfo, KeyCodes, coreLibrary) {
 		"use strict";
+
+		// shortcut for sap.ui.core.dnd.DropPosition
+		var DropPosition = coreLibrary.dnd.DropPosition;
 
 		var INSERT_POSITION_BEFORE = "Before",
 			INSERT_BEFORE = "insertBefore",
 			INSERT_AFTER = "insertAfter",
 			sInsertAfterBeforePosition,
-		    DRAG_DROP_GROUP_NAME = "IconTabReorder";
+			DRAG_DROP_GROUP_NAME = "IconTabReorder",
+			DRAG_DIRECTION_FORWARD = "Forward",
+			DRAG_DIRECTION_BACKWARD = "Backward";
 
 		var IconTabBarDragAndDropUtil = {
 
 
 			/**
 			 * Inserts control at correct place in the DOM.
-			 * @param {String} sInsertAfterBeforePosition comes from drop event, it can be "Before" or "After"
-			 * @param {object} $DraggedControl control that is being dragged
-			 * @param {object} $DroppedControl control that the dragged control will be dropped on
+			 * @param {string} sInsertAfterBeforePosition comes from drop event, it can be "Before" or "After"
+			 * @param {object} oDraggedControl control that is being dragged
+			 * @param {object} oDroppedControl control that the dragged control will be dropped on
+			 * @param {boolean} bIsOverflow
 			 */
-			_insertControl: function(sInsertAfterBeforePosition, $DraggedControl, $DroppedControl)  {
+			_insertControl: function(sInsertAfterBeforePosition, oDraggedControl, oDroppedControl, bIsOverflow) {
+				var $DraggedControl = oDraggedControl.$(),
+					$DroppedControl = oDroppedControl.$(),
+					aDraggedControlSubItems = [],
+					aDroppedControlSubItems = [];
+
+				if (oDraggedControl._getNestedLevel() > 1 && oDroppedControl._getNestedLevel() > 1) {
+
+					aDraggedControlSubItems = oDraggedControl._getRootTab()._getSelectList().getItems().filter(function (oItem) {
+						return oDraggedControl._getRealTab()._isParentOf(oItem._getRealTab());
+					});
+
+					aDroppedControlSubItems = oDroppedControl._getRootTab()._getSelectList().getItems().filter(function (oItem) {
+						return oDroppedControl._getRealTab()._isParentOf(oItem._getRealTab());
+					});
+				}
+
+				if (bIsOverflow) {
+					var aOverflowSelectListItems = oDraggedControl._getRootTab().getParent()._getOverflow()._getSelectList().getItems();
+
+					aDraggedControlSubItems = aOverflowSelectListItems.filter(function (oItem) {
+						return oDraggedControl._getRealTab()._isParentOf(oItem._getRealTab());
+					});
+
+					aDroppedControlSubItems = aOverflowSelectListItems.filter(function (oItem) {
+						return oDroppedControl._getRealTab()._isParentOf(oItem._getRealTab());
+					});
+				}
+
 				if (sInsertAfterBeforePosition === INSERT_AFTER) {
 					$DraggedControl.insertAfter($DroppedControl);
 				} else {
 					$DraggedControl.insertBefore($DroppedControl);
 				}
+
+				aDraggedControlSubItems.reverse().forEach(function (oChildItem) {
+					oChildItem.$().insertAfter($DraggedControl);
+				});
+				aDroppedControlSubItems.reverse().forEach(function (oChildItem) {
+					oChildItem.$().insertAfter($DroppedControl);
+				});
 			},
 
 			/**
 			 * Handles drop event.
-			 * @param {object} context from which context function is called (sap.m.IconTabHeader or sap.m.IconTabSelectList)
-			 * @param {String} sDropPosition comes from drop event, it can be "Before" or "After"
+			 * @param {object} oContext from which context function is called (sap.m.IconTabHeader or sap.m.IconTabSelectList)
+			 * @param {string} sDropPosition comes from drop event, it can be "Before", "After", or "On"
 			 * @param {object} oDraggedControl control that is being dragged
 			 * @param {object} oDroppedControl control that the dragged control will be dropped on
 			 * @param {boolean} bIgnoreRTL should RTL configuration be ignored for drag and drop logic
+			 * @param {number} allowedNestingLevels allowed number of nesting tabs via drag and drop
 			 */
-			handleDrop: function (context, sDropPosition, oDraggedControl, oDroppedControl, bIgnoreRTL) {
-				var iBeginDragIndex = context.indexOfItem(oDraggedControl),
-					iDropIndex = context.indexOfItem(oDroppedControl),
-					$DraggedControl = oDraggedControl.$(),
-					$DroppedControl = oDroppedControl.$(),
+			handleDrop: function (oContext, sDropPosition, oDraggedControl, oDroppedControl, bIgnoreRTL, allowedNestingLevels) {
+				var iBeginDragIndex = oContext.indexOfItem(oDraggedControl),
+					iDropIndex = oContext.indexOfItem(oDroppedControl),
 					iAggregationDropIndex = 0,
-					bRtl = sap.ui.getCore().getConfiguration().getRTL(),
-					bIsDropPositionBefore = sDropPosition === INSERT_POSITION_BEFORE;
+					bRtl = Localization.getRTL(),
+					bIsDropPositionBefore = sDropPosition === INSERT_POSITION_BEFORE,
+					//_getNestedLevel returns 1 there is no nesting
+					currentNestedLevel = oDroppedControl._getNestedLevel() - 1;
+
+				// Prevent cycle
+				if (oDraggedControl._isParentOf(oDroppedControl)) {
+					return;
+				}
+
+				if (currentNestedLevel === allowedNestingLevels && sDropPosition === DropPosition.On) {
+					return;
+				}
 
 				if (bRtl && !bIgnoreRTL) {
 					if (bIsDropPositionBefore) {
@@ -67,8 +124,24 @@ sap.ui.define([],
 					}
 				}
 
-				IconTabBarDragAndDropUtil._insertControl(sInsertAfterBeforePosition, $DraggedControl, $DroppedControl);
-				IconTabBarDragAndDropUtil._handleConfigurationAfterDragAndDrop.call(context, oDraggedControl, iAggregationDropIndex);
+				if (oContext.isA("sap.m.IconTabFilter") || !oDraggedControl.getParent().isA("sap.m.IconTabHeader")){
+					if (bIsDropPositionBefore) {
+						iAggregationDropIndex = iDropIndex;
+					} else {
+						iAggregationDropIndex = iDropIndex + 1;
+					}
+				}
+
+				IconTabBarDragAndDropUtil._insertControl(sInsertAfterBeforePosition, oDraggedControl, oDroppedControl);
+
+				if (sDropPosition === DropPosition.On) {
+					if (oDroppedControl === oDraggedControl) {
+						return;
+					}
+					iAggregationDropIndex = oContext.getAggregation("items").length;
+				}
+
+				IconTabBarDragAndDropUtil._handleConfigurationAfterDragAndDrop.call(oContext, oDraggedControl, iAggregationDropIndex);
 			},
 
 			/**
@@ -95,38 +168,87 @@ sap.ui.define([],
 			 * @private
 			 */
 			_handleConfigurationAfterDragAndDrop: function (oDraggedControl, iDropIndex) {
+
+				var aDraggedControlSubItems = [],
+					oIconTabHeader = this.isA("sap.m.IconTabHeader") ? this : this._getIconTabHeader();
+
+				if (this.isA("sap.m.IconTabBarSelectList")) {
+					aDraggedControlSubItems = this.getItems().filter(function (oItem) {
+						return oDraggedControl._getRealTab()._isParentOf(oItem._getRealTab());
+					});
+				}
+
+				oIconTabHeader._setPreserveSelection(true);
+
 				this.removeAggregation('items', oDraggedControl, true);
 				this.insertAggregation('items', oDraggedControl, iDropIndex, true);
+
+				aDraggedControlSubItems.forEach(function (oItem) {
+					this.removeAggregation('items', oItem, true);
+				}.bind(this));
+
+				var iNewDragIndex = 1 + this.indexOfAggregation('items', oDraggedControl);
+
+				aDraggedControlSubItems.reverse().forEach(function (oItem) {
+					this.insertAggregation('items', oItem, iNewDragIndex, true);
+				}.bind(this));
+
+				oIconTabHeader._setPreserveSelection(false);
+
 				IconTabBarDragAndDropUtil._updateAccessibilityInfo.call(this);
 			},
 
 			/**
 			 * Decreases the drop index.
-			 * @param iBeginDragIndex Index of dragged control
+			 * @param {int} iBeginDragIndex Index of dragged control
+			 * @param {sap.m.IconTabFilter[]} aItems All items in the header/select list
+			 * @returns {int} The new index of the item
 			 * @private
 			 */
-			_decreaseDropIndex: function (iBeginDragIndex) {
-				if (iBeginDragIndex === 0) {
+			_decreaseDropIndex: function (iBeginDragIndex, aItems) {
+				var iPrevIndex = iBeginDragIndex - 1;
+
+				// Jump over invisible items and sub items
+				while (iPrevIndex >= 0 &&
+					(aItems[iBeginDragIndex]._getRealTab()._getNestedLevel() !== aItems[iPrevIndex]._getRealTab()._getNestedLevel() ||
+						!aItems[iPrevIndex].getVisible() || (!aItems[iBeginDragIndex].$().hasClass("sapMITBFilterHidden") && aItems[iPrevIndex].$().hasClass("sapMITBFilterHidden")))) {
+
+					iPrevIndex--;
+				}
+
+				if (iPrevIndex < 0) {
 					sInsertAfterBeforePosition = INSERT_AFTER;
 					return iBeginDragIndex;
 				}
+
 				sInsertAfterBeforePosition = INSERT_BEFORE;
-				return iBeginDragIndex - 1;
+				return iPrevIndex;
 			},
 
 			/**
 			 * Increases the drop index.
-			 * @param {number} iBeginDragIndex Index of dragged control
-			 * @param {number} iControlCount Number of controls
+			 * @param {int} iBeginDragIndex Index of dragged control
+			 * @param {array} aItems All items in the header
+			 * @param {int} iMaxIndex Maximum allowed index. For the header this is the end of the tab strip.
+			 * @returns {int} The new index of the item
 			 * @private
 			 */
-			_increaseDropIndex: function (iBeginDragIndex, iControlCount) {
-				if (iBeginDragIndex === iControlCount - 1) {
+			_increaseDropIndex: function (iBeginDragIndex, aItems, iMaxIndex) {
+				var iNextIndex = iBeginDragIndex + 1;
+				// Jump over invisible items and sub items
+				while (iNextIndex < aItems.length &&
+					(aItems[iBeginDragIndex]._getRealTab()._getNestedLevel() !== aItems[iNextIndex]._getRealTab()._getNestedLevel() || !aItems[iNextIndex].getVisible())) {
+
+					iNextIndex++;
+				}
+
+				if (iNextIndex > iMaxIndex) {
 					sInsertAfterBeforePosition = INSERT_BEFORE;
 					return iBeginDragIndex;
 				}
+
 				sInsertAfterBeforePosition = INSERT_AFTER;
-				return iBeginDragIndex + 1;
+				return iNextIndex;
 			},
 
 			/**
@@ -134,108 +256,88 @@ sap.ui.define([],
 			 *
 			 * @param {object} oDraggedControl Control that is going to be moved
 			 * @param {number} iKeyCode Key code
+			 * @param {int} iMaxIndex Maximum allowed index. For the header this is the end of the tab strip.
 			 * @returns {boolean} returns true is scrolling will be needed
 			 */
-			moveItem: function (oDraggedControl, iKeyCode) {
-				var $DraggedControl = oDraggedControl.$(),
-					aItems = this.getItems(),
+			moveItem: function (oDraggedControl, iKeyCode, iMaxIndex) {
+				var aItems = this.getItems(),
 					iBeginDragIndex = this.indexOfItem(oDraggedControl),
-					bRtl = sap.ui.getCore().getConfiguration().getRTL(),
+					bRtl = Localization.getRTL(),
 					iNewDropIndex,
-					$DroppedControl,
-					oKeyCodes = jQuery.sap.KeyCodes;
+					bPrevent;
+
+				if (this.isA("sap.m.IconTabFilter")){
+					aItems = this._getRealTab().getItems();
+				}
 
 				switch (iKeyCode) {
 					//Handles Ctrl + Home
-					case oKeyCodes.HOME:
+					case KeyCodes.HOME:
 						iNewDropIndex = 0;
 						sInsertAfterBeforePosition = INSERT_BEFORE;
 						break;
 					//Handles Ctrl + End
-					case  oKeyCodes.END:
+					case KeyCodes.END:
 						iNewDropIndex = aItems.length - 1;
 						sInsertAfterBeforePosition = INSERT_AFTER;
 						break;
 					// Handles Ctrl + Left Arrow
-					case oKeyCodes.ARROW_LEFT:
+					case KeyCodes.ARROW_LEFT:
 						if (bRtl) {
-							iNewDropIndex = IconTabBarDragAndDropUtil._increaseDropIndex(iBeginDragIndex, aItems.length);
+							bPrevent = IconTabBarDragAndDropUtil.preventDragBetweenSubItems(oDraggedControl, DRAG_DIRECTION_FORWARD, this);
+							iNewDropIndex = IconTabBarDragAndDropUtil._increaseDropIndex(iBeginDragIndex, aItems, iMaxIndex);
 						} else {
-							iNewDropIndex = IconTabBarDragAndDropUtil._decreaseDropIndex(iBeginDragIndex);
+							bPrevent = IconTabBarDragAndDropUtil.preventDragBetweenSubItems(oDraggedControl, DRAG_DIRECTION_BACKWARD, this);
+							iNewDropIndex = IconTabBarDragAndDropUtil._decreaseDropIndex(iBeginDragIndex, aItems);
 						}
 						break;
 					// Handles Ctrl + Right Arrow
-					case oKeyCodes.ARROW_RIGHT:
+					case KeyCodes.ARROW_RIGHT:
 						if (bRtl) {
-							iNewDropIndex = IconTabBarDragAndDropUtil._decreaseDropIndex(iBeginDragIndex);
+							bPrevent = IconTabBarDragAndDropUtil.preventDragBetweenSubItems(oDraggedControl, DRAG_DIRECTION_BACKWARD, this);
+							iNewDropIndex = IconTabBarDragAndDropUtil._decreaseDropIndex(iBeginDragIndex, aItems);
 						} else {
-							iNewDropIndex = IconTabBarDragAndDropUtil._increaseDropIndex(iBeginDragIndex, aItems.length);
+							bPrevent = IconTabBarDragAndDropUtil.preventDragBetweenSubItems(oDraggedControl, DRAG_DIRECTION_FORWARD, this);
+							iNewDropIndex = IconTabBarDragAndDropUtil._increaseDropIndex(iBeginDragIndex, aItems, iMaxIndex);
 						}
 						break;
 					// Handles	Ctrl + Arrow Down
-					case oKeyCodes.ARROW_DOWN:
-						iNewDropIndex = IconTabBarDragAndDropUtil._increaseDropIndex(iBeginDragIndex, aItems.length);
+					case KeyCodes.ARROW_DOWN:
+						bPrevent = IconTabBarDragAndDropUtil.preventDragBetweenSubItems(oDraggedControl, DRAG_DIRECTION_FORWARD, this);
+						iNewDropIndex = IconTabBarDragAndDropUtil._increaseDropIndex(iBeginDragIndex, aItems, iMaxIndex);
 						break;
 					// Handles Ctrl + Arrow Up
-					case oKeyCodes.ARROW_UP:
-						iNewDropIndex = IconTabBarDragAndDropUtil._decreaseDropIndex(iBeginDragIndex);
+					case KeyCodes.ARROW_UP:
+						bPrevent = IconTabBarDragAndDropUtil.preventDragBetweenSubItems(oDraggedControl, DRAG_DIRECTION_BACKWARD, this);
+						iNewDropIndex = IconTabBarDragAndDropUtil._decreaseDropIndex(iBeginDragIndex, aItems);
 						break;
 					default:
-						return;
+						return false;
 				}
 
-				$DroppedControl = aItems[iNewDropIndex].$();
-				IconTabBarDragAndDropUtil._insertControl(sInsertAfterBeforePosition, $DraggedControl, $DroppedControl);
+				if (bPrevent) {
+					return false;
+				}
+
+				if (!this.isA("sap.m.IconTabFilter")) {
+					var oDroppedControl = aItems[iNewDropIndex];
+					IconTabBarDragAndDropUtil._insertControl(sInsertAfterBeforePosition, oDraggedControl, oDroppedControl, this._oTabFilter && this._oTabFilter._bIsOverflow);
+				}
+
 				IconTabBarDragAndDropUtil._handleConfigurationAfterDragAndDrop.call(this, oDraggedControl, iNewDropIndex);
 
 				return true;
 			},
 
 			/**
-			 * Retrieves drag and drop controls from sap.m.IconTabBarSelectList context.
-			 * @param {array} aItems items of sap.m.IconTabBarSelectList
-			 * @param {object} oDraggedControl item that is dragged
-			 * @param {object} oDroppedControl item that the dragged control will be dropped on
-			 */
-			getDraggedDroppedItemsFromList: function (aItems, oDraggedControl, oDroppedControl) {
-				var oDroppedListControl,
-					oDraggedListControl,
-					sItemId,
-					sDroppedControlId,
-					sDraggedControlId;
-
-				sDraggedControlId = oDraggedControl._tabFilter ? oDraggedControl._tabFilter.getId() : oDraggedControl.getId();
-				sDroppedControlId = oDroppedControl._tabFilter ? oDroppedControl._tabFilter.getId() : oDroppedControl.getId();
-
-
-				if (!aItems && !oDraggedControl && !oDroppedControl) {
-					return;
-				}
-				aItems.forEach(function (oItem) {
-					sItemId = oItem._tabFilter.getId();
-					if (!sItemId) {
-						return;
-					}
-					if (sItemId === sDroppedControlId) {
-						oDroppedListControl = oItem;
-					}
-					if (sItemId === sDraggedControlId) {
-						oDraggedListControl = oItem;
-					}
-				});
-
-				return {oDraggedControlFromList: oDraggedListControl, oDroppedControlFromList: oDroppedListControl};
-			},
-
-			/**
-			 * Adding aggregations for  drag and drop.
+			 * Adding aggregations for drag and drop.
 			 * @param {object} context from which context function is called (sap.m.IconTabHeader or sap.m.IconTabSelectList)
-			 * @param {object} DragInfo
-			 * @param {object} DropInfo
 			 * @param {string} sDropLayout Depending on the control we are dragging in, it could be Vertical or Horizontal
+			 * @param {object} oDropPosition Depending on maxNestingLevel, value could be 'On' or 'Between'
 			 */
-			setDragDropAggregations: function (context, DragInfo, DropInfo, sDropLayout) {
-				var sIconTabHeaderId = context._iconTabHeader ? context._iconTabHeader.getId() : context.getId();
+			setDragDropAggregations: function (context, sDropLayout, oDropPosition) {
+				var oIconTabHeader = context._oIconTabHeader ? context._oIconTabHeader : context;
+				var sIconTabHeaderId = oIconTabHeader.getId();
 				//Adding Drag&Drop configuration to the dragDropConfig aggregation if needed
 				context.addDragDropConfig(new DragInfo({
 					sourceAggregation: "items",
@@ -243,11 +345,35 @@ sap.ui.define([],
 				}));
 				context.addDragDropConfig(new DropInfo({
 					targetAggregation: "items",
-					dropPosition: "Between",
+					dropPosition: oDropPosition,
 					dropLayout: sDropLayout,
 					drop: context._handleDragAndDrop.bind(context),
 					groupName: DRAG_DROP_GROUP_NAME + sIconTabHeaderId
 				}));
+			},
+
+			/**
+			 * Prevents drag and drop to be executed between different level sub items in sap.m.IconTabBarSelectList.
+			 * @param {object} oDraggedControl Control that is going to be moved
+			 * @param {string} sDirection Depending on the direction of we are dragging in, it could be Forward or Backward
+			 * @param {object} oContext from which context function is called (sap.m.IconTabHeader or sap.m.IconTabSelectList)
+			 *
+			 * @returns {boolean} returns true is scrolling will be needed
+			 */
+			preventDragBetweenSubItems: function (oDraggedControl, sDirection, oContext) {
+				var bPrevent = false;
+				if (oContext.isA("sap.m.IconTabBarSelectList")) {
+					var oRealTab = oDraggedControl._getRealTab(),
+						oParent = oRealTab.getParent(),
+						aChildren = oParent.getItems();
+
+					if ((aChildren.indexOf(oRealTab)  === 0 && sDirection === DRAG_DIRECTION_BACKWARD)
+						|| (aChildren.indexOf(oRealTab) + 1 === aChildren.length && sDirection === DRAG_DIRECTION_FORWARD)
+						|| aChildren.length === 1) {
+						bPrevent = true;
+					}
+				}
+				return bPrevent;
 			}
 		};
 

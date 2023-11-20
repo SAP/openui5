@@ -1,0 +1,181 @@
+{
+  "1.84.0": {
+    "date": "October 2020",
+    "notes": [
+      {
+        "id": "daf2b874b3534eb755f83cdc2edf17e2752a5c0c",
+        "type": "FIX",
+        "text": " P13nBuilder: New parameter for button id",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070408675"
+          }
+        ]
+      },
+      {
+        "id": "8b6ea420d05a385780a1c0593f9c1cb23273717a",
+        "type": "FIX",
+        "text": " Field: align text inside Table and AlignedFlowLayout",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080322135"
+          }
+        ]
+      },
+      {
+        "id": "8f1757d698e47a7d647908ca642d10fccabae058",
+        "type": "FEATURE",
+        "text": " sap.m.Input: valueHelpIconSrc property added"
+      },
+      {
+        "id": "679f6c71dc877ad2c9e123844dd7476eb57f4bd5",
+        "type": "FIX",
+        "text": " Field: support String with digsequence and not nullable",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080362761"
+          }
+        ]
+      },
+      {
+        "id": "ba7851d0c7f152ff973134058f5d310e07153674",
+        "type": "FIX",
+        "text": " mdc.AdaptationFilterBar: check for existence",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070336983"
+          }
+        ]
+      },
+      {
+        "id": "bba1b5a3213018a40a78873a14a2a0c6a9da0f54",
+        "type": "FIX",
+        "text": " FilterField: wrong role description for multi-help",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070313054"
+          }
+        ]
+      },
+      {
+        "id": "35e8bfb5abc288592336e5e57ee3ca14cd309589",
+        "type": "FIX",
+        "text": " DefineConditionPanel: new row added after add-button",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070275881"
+          }
+        ]
+      },
+      {
+        "id": "7fde86071dc5d6724c6db8f75aa1284672947fe4",
+        "type": "FIX",
+        "text": " FieldValueHelp: OutParameter cannot be updated",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080376089"
+          }
+        ]
+      },
+      {
+        "id": "0731b33c61df56ea00082d688bccd004bd77fc36",
+        "type": "FIX",
+        "text": " FieldValueHelp: no request if BindingContext destroyed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070284113"
+          }
+        ]
+      },
+      {
+        "id": "876f918211d33339f29ec27cb9623057ef2cddac",
+        "type": "FIX",
+        "text": " Field Help: add top padding only or DefineConditionPanel",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070287016"
+          }
+        ]
+      },
+      {
+        "id": "e34d5b2d96d0bbb92549b5200f87cb8b2fe0eec3",
+        "type": "FIX",
+        "text": " Field: clear input leads to runtime error",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080362761"
+          }
+        ]
+      },
+      {
+        "id": "270955652b0cd146b9fc035ebef462eb37c0b1e7",
+        "type": "FIX",
+        "text": " Revert: mdc.FieldValueHelp: Value not displayed in edit mode fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070284113"
+          }
+        ]
+      },
+      {
+        "id": "45dc257b4226e00c8682cf2ca7236d797eea121b",
+        "type": "FIX",
+        "text": " mdc.Chart: Breadcrumbs are not displayed on back navigation fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080374199"
+          }
+        ]
+      },
+      {
+        "id": "8cf0b1897910b20769f9c1452cc517cad12e5cdd",
+        "type": "FIX",
+        "text": " mdc.odata.v4.FieldValueHelpDelegate: Handle ListBinding errors"
+      },
+      {
+        "id": "5a2bcebbb05fb7ad83c14d41674e8df5caf22680",
+        "type": "FIX",
+        "text": " mdc.FieldValueHelp: Value not displayed in edit mode fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070284113"
+          }
+        ]
+      },
+      {
+        "id": "1a91bad63b542ba81c0dfb08eb4b38a0ce322dd5",
+        "type": "FIX",
+        "text": " mdc.Field: Validate exception raised when the value is not found (reverted)"
+      },
+      {
+        "id": "e326194ebc711c751982bdb9d5944ff1e1bf4663",
+        "type": "FIX",
+        "text": " mdc.Field: Validate exception raised when the value is not found",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080375489"
+          }
+        ]
+      },
+      {
+        "id": "b41f2d1934fdd1e02d20cc0fc060aeed4975fa6e",
+        "type": "FIX",
+        "text": " mdc.Chart: Create inner Chart after flex changes are applied"
+      }
+    ]
+  }
+}

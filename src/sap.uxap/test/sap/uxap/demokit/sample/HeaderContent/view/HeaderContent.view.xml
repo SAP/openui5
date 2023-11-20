@@ -1,0 +1,62 @@
+<mvc:View
+		xmlns:mvc="sap.ui.core.mvc"
+		xmlns="sap.uxap"
+		xmlns:layout="sap.ui.layout"
+		xmlns:m="sap.m"
+		controllerName="sap.uxap.sample.HeaderContent.controller.HeaderContent"
+		height="100%">
+
+	<ObjectPageHeaderContent>
+		<content>
+			<layout:VerticalLayout>
+				<m:ObjectStatus title="User ID" text="12345678"/>
+				<m:ObjectStatus title="Functional Area" text="Developement"/>
+				<m:ObjectStatus title="Cost Center" text="PI DFA GD Programs and Product"/>
+				<m:ObjectStatus title="Email" text="email@address.com"/>
+			</layout:VerticalLayout>
+			<m:Text width="200px"
+					text="Hi, I'm Denise. I am passionate about what I do and I'll go the extra mile to make the customer win."/>
+
+			<m:ObjectStatus text="In Stock" state="Error"/>
+			<m:ObjectStatus title="Label" text="In Stock" state="Warning"/>
+			<m:ObjectNumber number="1000" unit="SOOK" emphasized="false" state="Success"/>
+			<m:ProgressIndicator
+					percentValue="30"
+					displayValue="30%"
+					showValue="true"
+					state="None"/>
+			<layout:VerticalLayout>
+				<m:Label text="PC, Unrestricted-Use Stock"/>
+				<m:ObjectNumber class="sapMObjectNumberLarge" number="219" unit="K"/>
+			</layout:VerticalLayout>
+			<layout:VerticalLayout>
+				<layout:layoutData>
+					<ObjectPageHeaderLayoutData visibleS="false"/>
+				</layout:layoutData>
+				<m:Label text="PC, Not in Small Size"/>
+				<m:ObjectNumber class="sapMObjectNumberLarge" number="220" unit="K"/>
+			</layout:VerticalLayout>
+			<layout:VerticalLayout>
+				<layout:layoutData>
+					<ObjectPageHeaderLayoutData visibleM="false"/>
+				</layout:layoutData>
+				<m:Label text="PC, Not in Medium Size"/>
+				<m:ObjectNumber class="sapMObjectNumberLarge" number="221" unit="K"/>
+			</layout:VerticalLayout>
+			<layout:VerticalLayout>
+				<layout:layoutData>
+					<ObjectPageHeaderLayoutData visibleL="false" showSeparatorAfter="true"/>
+				</layout:layoutData>
+				<m:Label text="PC, Not in Large Size"/>
+				<m:ObjectNumber class="sapMObjectNumberLarge" number="219" unit="K"/>
+			</layout:VerticalLayout>
+			<m:ObjectAttribute title="Label" text="In Stock"/>
+			<m:Button icon="sap-icon://nurse" tooltip="nurse"/>
+			<m:Tokenizer>
+				<m:Token text="Wayne Enterprises"/>
+				<m:Token text="Big's Caramels"/>
+			</m:Tokenizer>
+		</content>
+	</ObjectPageHeaderContent>
+
+</mvc:View>

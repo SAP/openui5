@@ -19,6 +19,53 @@ span.sapMBtnInner.sapMBtnEmphasized {
 	border-width: 0.125rem;
 }
 
+.sapMBtn:not(.sapMBtnDisabled):hover .sapMBtnCritical,
+.sapMBtn:not(.sapMBtnDisabled):hover .sapMBtnNegative,
+.sapMBtn:not(.sapMBtnDisabled):hover .sapMBtnSuccess,
+.sapMBtn:not(.sapMBtnDisabled):hover .sapMBtnNeutral{
+	background: @sapUiButtonHoverBackground;
+	border: 1px solid @sapUiButtonHoverBorderColor;
+}
+
+.sapMBtn:not(.sapMBtnDisabled) .sapMBtnCritical:not(.sapMToggleBtnPressed),
+.sapMBtn:not(.sapMBtnDisabled) .sapMBtnNegative:not(.sapMToggleBtnPressed),
+.sapMBtn:not(.sapMBtnDisabled) .sapMBtnSuccess:not(.sapMToggleBtnPressed),
+.sapMBtn:not(.sapMBtnDisabled) .sapMBtnNeutral:not(.sapMToggleBtnPressed){
+	background: @sapUiButtonBackground;
+	border-color: @sapUiButtonBorderColor;
+	border-width: @sapUiButtonBorderWidth;
+}
+
+.sapMBtn:not(.sapMBtnDisabled) .sapMBtnCritical.sapMBtnActive,
+.sapMBtn:not(.sapMBtnDisabled) .sapMBtnNegative.sapMBtnActive,
+.sapMBtn:not(.sapMBtnDisabled) .sapMBtnSuccess.sapMBtnActive,
+.sapMBtn:not(.sapMBtnDisabled) .sapMBtnNeutral.sapMBtnActive{
+	background: @sapUiButtonActiveBackground;
+	border-color: @sapUiButtonActiveBorderColor;
+	border-width: @sapUiButtonBorderWidth;
+}
+
+.sapMBtn:not(.sapMBtnDisabled):hover .sapMBtnCritical.sapMBtnActive,
+.sapMBtn:not(.sapMBtnDisabled):hover .sapMBtnNegative.sapMBtnActive,
+.sapMBtn:not(.sapMBtnDisabled):hover .sapMBtnSuccess.sapMBtnActive,
+.sapMBtn:not(.sapMBtnDisabled):hover .sapMBtnNeutral.sapMBtnActive{
+	background: @sapUiButtonHoverBackground;
+	border: 1px solid @sapUiButtonHoverBorderColor;
+}
+
+.sapMBtn:not(.sapMBtnDisabled):hover .sapMBtnCritical,
+.sapMBtn:not(.sapMBtnDisabled):hover .sapMBtnNegative,
+.sapMBtn:not(.sapMBtnDisabled):hover .sapMBtnSuccess,
+.sapMBtn:not(.sapMBtnDisabled):hover .sapMBtnNeutral,
+.sapMBtn:not(.sapMBtnDisabled) .sapMBtnCritical,
+.sapMBtn:not(.sapMBtnDisabled) .sapMBtnNegative,
+.sapMBtn:not(.sapMBtnDisabled) .sapMBtnSuccess,
+.sapMBtn:not(.sapMBtnDisabled) .sapMBtnNeutral{
+	.sapMBtnContent{
+		color: @sapUiButtonTextColor;
+	}
+}
+
 /* --------------------------------------------------------------------- */
 /* Custom focus outline:                                                 */
 /* --------------------------------------------------------------------- */
@@ -32,29 +79,6 @@ html.sap-desktop .sapMBtn:focus > .sapMFocusable {
 
 html.sap-desktop .sapMBtn:focus > .sapMFocusable:not(.sapMBtnActive) {
 	border-radius: 0;
-}
-
-/* ---------------------------------------------------------------------*/
-/* Custom focus outline for IE and Edge:                                */
-/* ---------------------------------------------------------------------*/
-.sapMBtn:focus > .sapMBtnInner.sapMFocusable.sapMIE {
-	outline: none;
-	position: relative;
-}
-
-.sapMBtnFocusDiv {
-	box-sizing: border-box;
-	width: 100%;
-	height: 100%;
-	position: absolute;
-	left: 0;
-	top: 0;
-	border-radius: 0;
-}
-
-/* dotted line appears blurry in IE and EDGE browsers. In these cases use dashed */
-.sapMBtn:focus .sapMBtnFocusDiv {
-	border: 2px dashed @sapUiContentFocusColor;
 }
 
 /* ---------------------------------------------------------------------*/
@@ -73,6 +97,7 @@ html.sap-desktop .sapMBtn:focus > .sapMFocusable:not(.sapMBtnActive) {
 
 .sapMBtnDisabled > span.sapMBtnInner.sapMBtnAccept,
 .sapMBtnDisabled > span.sapMBtnInner.sapMBtnReject,
+.sapMBtnDisabled > span.sapMBtnInner.sapMBtnAttention,
 .sapMBtnDisabled > span.sapMBtnInner.sapMBtnEmphasized {
 	border-color: @sapUiHcReducedForeground;
 	color: @sapUiContentDisabledTextColor;
@@ -85,4 +110,20 @@ html.sap-desktop .sapMBtn:focus > .sapMFocusable:not(.sapMBtnActive) {
 
 .sapMBtnDisabled .sapMBtnActive {
 	background-color: @sapUiButtonBackground;
+}
+
+.sapMBtnDisabled .sapMBtnCritical,
+.sapMBtnDisabled .sapMBtnNegative,
+.sapMBtnDisabled .sapMBtnSuccess,
+.sapMBtnDisabled .sapMBtnNeutral{
+	background-color: @sapUiButtonBackground;
+	border-color: @sapUiHcReducedForeground;
+}
+.sapMBtnDisabled .sapMBtnCritical,
+.sapMBtnDisabled .sapMBtnNegative,
+.sapMBtnDisabled .sapMBtnSuccess,
+.sapMBtnDisabled .sapMBtnNeutral{
+	.sapMBtnContent{
+		color: @sapUiContentDisabledTextColor;
+	}
 }

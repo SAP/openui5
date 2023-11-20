@@ -1,9 +1,144 @@
 ---
-specVersion: "0.1"
+specVersion: "3.0"
 type: library
 metadata:
   name: sap.ui.fl
   copyright: |-
-   UI development toolkit for HTML5 (OpenUI5)
+   OpenUI5
     * (c) Copyright 2009-${currentYear} SAP SE or an SAP affiliate company.
     * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
+resources:
+  configuration:
+    propertiesFileSourceEncoding: ISO-8859-1
+builder:
+  bundles:
+    - bundleDefinition:
+        name: sap/ui/fl/library-preload.js
+        sections:
+          - mode: provided
+            filters:
+              - ui5loader-autoconfig.js
+              - sap/base/
+              - sap/m/
+              - sap/ui/Device.js
+              - sap/ui/base/
+              - sap/ui/core/
+              - sap/ui/dom/
+              - sap/ui/events/
+              - sap/ui/layout/
+              - sap/ui/model/
+              - sap/ui/performance/
+              - sap/ui/thirdparty/
+              - sap/ui/unified/
+              - sap/ui/util/
+          - mode: preload
+            name: sap/ui/fl/library-preload
+            filters:
+              - sap/ui/fl/initial/
+              - sap/ui/fl/changeHandler/
+              - sap/ui/fl/library.js
+              - sap/ui/fl/manifest.json
+              - sap/ui/fl/variants/VariantManagement.js
+              - sap/ui/fl/util/ManagedObjectModel.js
+              - sap/ui/fl/apply/_internal/DelegateMediator.js
+              - sap/ui/fl/apply/api/DelegateMediatorAPI.js
+              - sap/ui/fl/apply/api/FlexRuntimeInfoAPI.js
+              - sap/ui/fl/library-dbg.support.js
+              - sap/ui/fl/registry/SimpleChanges.js
+              - sap/ui/fl/interfaces/Delegate.js
+              - sap/ui/fl/interfaces/BaseLoadConnector.js
+            resolve: true
+          - mode: bundleInfo
+            name: sap/ui/fl/library-preload-apply.js
+            filters:
+              - sap/ui/fl/apply/
+              - sap/ui/fl/transport/TransportDialog.js
+              - sap/ui/fl/transport/TransportSelection.js
+              - sap/ui/fl/util/IFrame.flexibility.js
+            resolve: true
+          - mode: bundleInfo
+            name: sap/ui/fl/library-preload-write.js
+            filters:
+              - sap/ui/fl/write/
+              - sap/ui/fl/descriptorRelated/api/DescriptorVariantFactory.js
+              - sap/ui/fl/descriptorRelated/api/DescriptorInlineChangeFactory.js
+              - sap/ui/fl/FakeLrepConnectorLocalStorage.js
+              - sap/ui/fl/FakeLrepConnectorSessionStorage.js
+              - sap/ui/fl/FakeLrepLocalStorage.js
+              - sap/ui/fl/FakeLrepConnector.js
+              - sap/ui/fl/util/resolveBinding.js
+            resolve: true
+      bundleOptions:
+        optimize: true
+        usePredefineCalls: true
+    - bundleDefinition:
+        name: sap/ui/fl/library-preload-apply.js
+        sections:
+          - mode: provided
+            filters:
+              - sap/ui/fl/library.js
+              - sap/ui/fl/changeHandler/
+              - ui5loader-autoconfig.js
+              - sap/base/
+              - sap/m/
+              - sap/ui/Device.js
+              - sap/ui/base/
+              - sap/ui/core/
+              - sap/ui/dom/
+              - sap/ui/events/
+              - sap/ui/layout/
+              - sap/ui/model/
+              - sap/ui/performance/
+              - sap/ui/thirdparty/
+              - sap/ui/unified/
+              - sap/ui/util/
+            resolve: true
+          - mode: preload
+            name: sap/ui/fl/library-preload-apply
+            filters:
+              - sap/ui/fl/apply/
+              - sap/ui/fl/transport/TransportDialog.js
+              - sap/ui/fl/transport/TransportSelection.js
+              - sap/ui/fl/util/IFrame.flexibility.js
+            resolve: true
+      bundleOptions:
+        optimize: true
+        usePredefineCalls: true
+    - bundleDefinition:
+        name: sap/ui/fl/library-preload-write.js
+        sections:
+          - mode: provided
+            filters:
+              - sap/ui/fl/library.js
+              - sap/ui/fl/apply/
+              - sap/ui/fl/changeHandler/
+              - ui5loader-autoconfig.js
+              - sap/base/
+              - sap/m/
+              - sap/ui/Device.js
+              - sap/ui/base/
+              - sap/ui/core/
+              - sap/ui/dom/
+              - sap/ui/events/
+              - sap/ui/layout/
+              - sap/ui/model/
+              - sap/ui/performance/
+              - sap/ui/thirdparty/
+              - sap/ui/unified/
+              - sap/ui/util/
+            resolve: true
+          - mode: preload
+            name: sap/ui/fl/library-preload-write
+            filters:
+              - sap/ui/fl/write/
+              - sap/ui/fl/descriptorRelated/api/DescriptorVariantFactory.js
+              - sap/ui/fl/descriptorRelated/api/DescriptorInlineChangeFactory.js
+              - sap/ui/fl/FakeLrepConnectorLocalStorage.js
+              - sap/ui/fl/FakeLrepConnectorSessionStorage.js
+              - sap/ui/fl/FakeLrepLocalStorage.js
+              - sap/ui/fl/FakeLrepConnector.js
+              - sap/ui/fl/util/resolveBinding.js
+            resolve: true
+      bundleOptions:
+        optimize: true
+        usePredefineCalls: true

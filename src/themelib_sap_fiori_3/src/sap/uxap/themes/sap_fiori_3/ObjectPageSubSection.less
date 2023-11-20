@@ -1,0 +1,46 @@
+/* ============================================== */
+/* CSS for control sap.uxap/ObjectPageSubSection  */
+/* Fiori 3 theme                                  */
+/* ============================================== */
+
+.sapUxAPObjectPageSubSectionHeaderTitle {
+	font-size: @sapMFontHeader5Size;
+	color: @sapUiGroupTitleTextColor;
+	padding-bottom: 0.5rem;
+	line-height: normal;
+}
+
+.sapUxAPObjectPageSubSectionHeaderTitleUppercase {
+	text-transform: uppercase;
+}
+
+.sapUxAPObjectPageSubSection:focus {
+	outline: 1px dotted @sapUiContentFocusColor;
+	outline-offset: -1px;
+}
+
+.sapUxAPObjectPageLayout-Std-Desktop .sapUxAPBlockContainer {
+	padding: 0 1rem;
+}
+/* responsive paddings */
+.sapUxAPObjectPageLayout.sapUiResponsiveContentPadding {
+	&.sapUxAPObjectPageLayout-Std-Tablet .sapUxAPBlockContainer,
+	&.sapUxAPObjectPageLayout-Std-Desktop .sapUxAPBlockContainer {
+		padding-left: 2rem;
+		padding-right: 2rem;
+	}
+	&.sapUxAPObjectPageLayout-Std-Desktop-XL .sapUxAPBlockContainer {
+		padding-left: 3rem;
+		padding-right: 3rem;
+	}
+}
+
+/* compact size */
+.sapUiSizeCompact {
+	.sapUxAPObjectPageSubSectionHeaderTitle {
+		height: 1.125rem;
+		line-height: normal;
+	}
+}
+
+

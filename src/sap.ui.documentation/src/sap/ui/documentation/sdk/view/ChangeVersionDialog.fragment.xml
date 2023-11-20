@@ -2,15 +2,25 @@
 		xmlns="sap.m"
 		xmlns:core="sap.ui.core">
 	<Dialog
-			title="Change version"
+			title="{i18n>CHANGE_VERSION_DIALOG_TITLE}"
 			contentHeight="400px"
 			stretch="{appView>/bPhoneSize}">
-		<endButton>
+		<buttons>
 			<Button
-				text="Close"
-				press="onCloseVersionDialog">
+				text="{i18n>CHANGE_VERSION_DIALOG_APPLY_BTN}"
+				type="Emphasized"
+				press="onVersionItemPress">
 			</Button>
-		</endButton>
+			<Button
+					text="{i18n>CHANGE_VERSION_DIALOG_LATEST_BTN}"
+					type="Ghost"
+					press="onLatestVersionItemPress">
+			</Button>
+			<Button
+					text="{i18n>CHANGE_VERSION_DIALOG_CLOSE_BTN}"
+					press="onCloseVersionDialog">
+			</Button>
+		</buttons>
 		<subHeader>
 			<Bar>
 				<contentMiddle>
@@ -21,9 +31,9 @@
 				</contentMiddle>
 			</Bar>
 		</subHeader>
-		<List
+		<Tree
 				id="versionList"
-				itemPress="onVersionItemPress"
+				mode="SingleSelectMaster"
 				items="{
 					path: '/',
 					sorter: [{
@@ -36,10 +46,12 @@
 						descending: true
 					}]
 				}">
-			<StandardListItem
-					title="{version}"
-					type="Active">
-			</StandardListItem>
-		</List>
+			<StandardTreeItem
+					title="{path: 'version'}{= ${path: 'version'} === ${versionData>/latestVersion} ? ' (Latest)' : ''}">
+				<customData>
+					<core:CustomData key="path" value="{path: 'path'}" />
+				</customData>
+			</StandardTreeItem>
+		</Tree>
 	</Dialog>
 </core:FragmentDefinition>

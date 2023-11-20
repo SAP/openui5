@@ -1,0 +1,969 @@
+{
+  "1.98.0": {
+    "date": "January 2022",
+    "notes": [
+      {
+        "id": "0ebc878b9f6faa4a6aa9e1c676fadd927ba7f2f5",
+        "type": "FIX",
+        "text": " sap.m.MessagePopover: Item bindings are now cloned correctly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180409546"
+          }
+        ]
+      },
+      {
+        "id": "0ae3992a09d3f2b03c1df5ae5730fe5c8d765d97",
+        "type": "FEATURE",
+        "text": " Upload Set - uploadCompleted event passes the backend response when upload is failed"
+      },
+      {
+        "id": "dd500964644506ed36656297a8f5f98c837e798f",
+        "type": "FIX",
+        "text": " sap.m.SegmentedButton: Now buttons it is possible to rename in UI Adaptation mode",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180430233"
+          }
+        ]
+      },
+      {
+        "id": "3875177afff6d71b9b0d757991771d67207ad831",
+        "type": "FEATURE",
+        "text": " sap.m.Label: Added \"showColon\" property"
+      },
+      {
+        "id": "2427ec301f8a55abdc0be966349fc8dc9f440ddb",
+        "type": "FIX",
+        "text": " sap.m.DynamicDateRange: The names of options are now correct",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      },
+      {
+        "id": "40b1a30a36c3e0c61d123ebe49e2ac3d8fa605ff",
+        "type": "FIX",
+        "text": " sap.m.Label: aria-label attribute is now set correctly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180430748"
+          }
+        ]
+      },
+      {
+        "id": "57d6fdd6a159da5138c0f11da725110ce4c3d839",
+        "type": "FIX",
+        "text": " sap.m.StepInput: string values are parsed correctly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180419994"
+          }
+        ]
+      },
+      {
+        "id": "a6ca091853a490edef4ba1a2eebd00583b26d701",
+        "type": "FIX",
+        "text": " sap.m.StepInput: prevented adding of description label twice",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170313387"
+          }
+        ]
+      },
+      {
+        "id": "3284c1440034c3204827919a302058710ef36b5e",
+        "type": "FIX",
+        "text": " sap.m.P13nFilterPanel: Text property of P13nItem is now correctly set",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170191653"
+          }
+        ]
+      },
+      {
+        "id": "f6f670f2c121416544e3fac2edea6b2d69291534",
+        "type": "FIX",
+        "text": " sap.m.Label: color edited to have contrast when used inside Toolbar and Overflowtoolbar",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170321978"
+          }
+        ]
+      },
+      {
+        "id": "7eed0a8f08e4273be20872279203522257676918",
+        "type": "FEATURE",
+        "text": " sap.m.SinglePlanningCalendar: new firstDayOfWeek property implemented"
+      },
+      {
+        "id": "43327deae901d8cb0df88d1eef2450938f0e2e2a",
+        "type": "FIX",
+        "text": " sap.m.SegmentedButton: container width changed event properly fired",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080431926"
+          }
+        ]
+      },
+      {
+        "id": "5d46c17aed1e861fc477da2349ff625969885ca6",
+        "type": "FEATURE",
+        "text": " StandardListItem: new Avatar aggregation added"
+      },
+      {
+        "id": "399a71d43d78a8e5ca30294ea378ccc485b0a632",
+        "type": "FIX",
+        "text": " sap.m.DynamicDateRange: options list items have dedicated IDs",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180423337"
+          }
+        ]
+      },
+      {
+        "id": "7d228bde14002fe2a88b7a4d6e04944ac1ae06ed",
+        "type": "FIX",
+        "text": " sap.m.ComboBoxBase: Layouting fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180412331"
+          },
+          {
+            "type": "BCP",
+            "reference": "2180389675"
+          }
+        ]
+      },
+      {
+        "id": "cd846524e3ce82d2cfd0cc3ac1f8757a2992a6de",
+        "type": "FIX",
+        "text": " sap.m.DateTimePicker: popover doesn't close on date selection",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180411065"
+          }
+        ]
+      },
+      {
+        "id": "30bbfae22a05ee02af682d6e190d32b518b6aedc",
+        "type": "FIX",
+        "text": " sap.m.MenuButton: Increase visual tests coverage"
+      },
+      {
+        "id": "eaf1f80eea06f918854585e5e4ade57df270f91c",
+        "type": "FIX",
+        "text": " sap.m.Input: valueHelpOnly and showItems will result in no picker opened",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180409632"
+          },
+          {
+            "type": "BCP",
+            "reference": "2180409482"
+          }
+        ]
+      },
+      {
+        "id": "c987552ac6e19ee8d9adbef0bbe812618d71a46e",
+        "type": "FIX",
+        "text": " sap.m.WizardProgressNavigator:  Visual enhacements according to the specification",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070370098"
+          }
+        ]
+      },
+      {
+        "id": "5c8f5713152fd2d3b0ea7b7d1b9bd47412dcc8be",
+        "type": "FIX",
+        "text": " sap.m.SuggestionsPopover: Compact mode density respected",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180395055"
+          }
+        ]
+      },
+      {
+        "id": "91c6d7c3869e9ec61b3a55eebd0379edb36b3202",
+        "type": "FIX",
+        "text": " sap.m.MessageView: Navigation with grouped item fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170270256"
+          }
+        ]
+      },
+      {
+        "id": "6cd5db10ec4aa166e99fbbbfdfc839259595e41e",
+        "type": "FIX",
+        "text": " sap.m.StepInput: Apply the correct number formatting",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400006327302021"
+          }
+        ]
+      },
+      {
+        "id": "f54ac484faa9d9fa1437fd964bfd76167b1f8ecc",
+        "type": "FIX",
+        "text": " sap.m.IconTabBar: Overflow issues are now fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180406329"
+          }
+        ]
+      },
+      {
+        "id": "14360af7a27554ad4aaf12513fae6ba4f455811b",
+        "type": "FIX",
+        "text": "sap.m.DynamicDateRange: Suggestions popover not opened on Icon click",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170318108"
+          }
+        ]
+      },
+      {
+        "id": "6f1c1ff995cb294068ae5c81e0590ee271436737",
+        "type": "FIX",
+        "text": " sap.m.MenuButton: Now opens when enter pressed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170321416"
+          }
+        ]
+      },
+      {
+        "id": "4c15c80dbd58dd41bb41ad7c9375a61b8711a2be",
+        "type": "FEATURE",
+        "text": " sap.m.DynamicDateRange: grouping is available for suggestion items"
+      },
+      {
+        "id": "4d5450c3e1b26109ba7d21a62839c5e1e2f19533",
+        "type": "FIX",
+        "text": " sap.m.IconTabBar: visual adjustments in SelectList"
+      },
+      {
+        "id": "5d94234c5a8fbed41c081646406e3fec8be20d5e",
+        "type": "FEATURE",
+        "text": " sap.m.MultiInput: Navigation between elements is announced"
+      },
+      {
+        "id": "7d5937065ca58e8454ae8cd429366077c9b936f3",
+        "type": "FIX",
+        "text": " sap.uxap.HierarchicalSelect: Fixed lost of hierarchy",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170316918"
+          }
+        ]
+      },
+      {
+        "id": "068da119ccfd0de65abcd188209b193f78086a06",
+        "type": "FIX",
+        "text": " sap.m.ObjectStatus: focus aligned to visual; specifications",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170330176"
+          }
+        ]
+      },
+      {
+        "id": "ae4d9a40de92abe80c7358e2b5ef3bdd18756bad",
+        "type": "FIX",
+        "text": " sap.m.Label: Asterisk for property required is now announced in List",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170305444"
+          }
+        ]
+      },
+      {
+        "id": "1550662d00c00c475c8e0d45141f6c783fef305f",
+        "type": "FIX",
+        "text": " sap.m.Menu: No exception on close without open",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180387537"
+          }
+        ]
+      },
+      {
+        "id": "b2217e35438c6fee0d989b087221e2b0aac64a70",
+        "type": "FIX",
+        "text": " sap.m.DynamicDateRange: Translations corrected",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170330795"
+          }
+        ]
+      },
+      {
+        "id": "4c01c1353a3dba8f2b1569bcad9b968e08635f1b",
+        "type": "FEATURE",
+        "text": " sap.m.TimePicker: can fast-forward to current time"
+      },
+      {
+        "id": "0a829bfdb911df9babc62df3c6cf9b0085833b95",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: Prevent focus bubling when there's user input",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170213855"
+          }
+        ]
+      },
+      {
+        "id": "f017bc1ab25f3aa8c252f2140639ca623f0376c5",
+        "type": "FIX",
+        "text": " sap.m.FacetFilter: scroll arrows work",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170308086"
+          }
+        ]
+      },
+      {
+        "id": "66dbd6a164458177f812a352e37436300abe10de",
+        "type": "FIX",
+        "text": " sap.m.IconTabBar: Icons are now correctly centered in macOS",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170317303"
+          }
+        ]
+      },
+      {
+        "id": "883bcc009c430df63e40b2962c4716194f5fd6b0",
+        "type": "FIX",
+        "text": " sap.m.ObjectAttribute: 'ariaHasPopup' property now added",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170275459"
+          }
+        ]
+      },
+      {
+        "id": "6b162af6f4f0bb11a0e1fc216300acf5c2a8ba0d",
+        "type": "FIX",
+        "text": " sap.m.DynamicDateRange: updating title of options based on feedback",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170315837"
+          }
+        ]
+      },
+      {
+        "id": "48f6cd83911ceebec25ec73911217cd9d0b0c80b",
+        "type": "FIX",
+        "text": " sap.m.TimePicker,sap.m.DateTimePicker: The UI uses displayFormat",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170322236"
+          }
+        ]
+      },
+      {
+        "id": "0fa2c5e035189ef977d87b8be9d7862854e4c913",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Corrected alignment in header content",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170322525"
+          }
+        ]
+      },
+      {
+        "id": "780290afe94e4287fd43fdf53670b1a2ebe63ab7",
+        "type": "FIX",
+        "text": " sap.m.TimePicker: Correctly detect when we tap the icon",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170326343"
+          }
+        ]
+      },
+      {
+        "id": "4bc46f96b55a6166dcd9af78333114608a70118e",
+        "type": "FEATURE",
+        "text": " Association of sap.m.table.ColumnMenu to columns added"
+      },
+      {
+        "id": "cca70d5d428409671c93e12d98c4132428a2b1ed",
+        "type": "FEATURE",
+        "text": " sap.m.DynamicDateRange: Adds new standard options"
+      },
+      {
+        "id": "d3dbebb68e522d7f9e47865f08ade4af522e8189",
+        "type": "FEATURE",
+        "text": " sap.m.GenericTag: Introduce new association ariaLabelledBy",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180318069"
+          }
+        ]
+      },
+      {
+        "id": "539f65a31ca4f526b5e6e713edecd7c5f4ed2e2a",
+        "type": "FEATURE",
+        "text": " Demo Kit: News section implemented"
+      },
+      {
+        "id": "6e950fc8117d580ea91ec84b4574baceda82ec42",
+        "type": "FEATURE",
+        "text": " sap.m.TimePicker: Open TimePicker from another control (no visible input field)"
+      },
+      {
+        "id": "385fc73da952479c03d8f3374b4d85a88386ec9a",
+        "type": "FEATURE",
+        "text": " sap.m.DatePicker, sap.m.DateTimePicker, sap.m.DateRangeSelection: Controls can be opened by another control (no visible input field)"
+      },
+      {
+        "id": "f2a7cee990d60b8a49f9c0baad1dcd7a7695f569",
+        "type": "FEATURE",
+        "text": " sap.m.DateTimePicker: implements the new TimePicker look"
+      },
+      {
+        "id": "f4e0a5fb6472a92c849d11156d92d514e4f07401",
+        "type": "FEATURE",
+        "text": " sap.m.DynamicDateRange: Add new option for Date to Year"
+      },
+      {
+        "id": "e79b517202f33f661983d693c36a8dbea92af13e",
+        "type": "FIX",
+        "text": " P13nConditionPanel: Correct invisible text",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170305447"
+          }
+        ]
+      },
+      {
+        "id": "86b2f7cdf4d98d08852bdf8ab5c08cc8d046e17d",
+        "type": "FIX",
+        "text": " P13nDialog: IconTabBar items border fix - update",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180308710"
+          }
+        ]
+      },
+      {
+        "id": "f5ac771c6781c446d34f562207dcc513353d8bf8",
+        "type": "FIX",
+        "text": " sap.m.DateTimePicker: Calendar part is hidden after selecting a date on mobile or small screen width",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170313072"
+          }
+        ]
+      },
+      {
+        "id": "d25719e5ae48f2067f9b389a2ce924ab13cc97eb",
+        "type": "FIX",
+        "text": " sap.m.Input: Description when input is empty",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170256848"
+          }
+        ]
+      },
+      {
+        "id": "d1683b321ba8f1948de41acfe41657a8e6549579",
+        "type": "FIX",
+        "text": " sap.m.Input: setValue is not called on backspace",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500008020832021"
+          }
+        ]
+      },
+      {
+        "id": "5076d9df4670e236222862e9333ab288ad9d4d20",
+        "type": "FEATURE",
+        "text": " sap.m.Avatar: Introduce new decorative property"
+      },
+      {
+        "id": "786c24d04fdf01e1f9253302639c1f11cd9704bd",
+        "type": "FEATURE",
+        "text": " sap.m.PlanningCalendar: selection of multiple appointments is possible across all devices"
+      },
+      {
+        "id": "fe87df25e190126e24fb35d2cca145e9e0b71d65",
+        "type": "FIX",
+        "text": " sap.m.MessagePopover: prevent endless rerendering",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170263676"
+          }
+        ]
+      },
+      {
+        "id": "ef1555c36476ab6c70cd1c3aaa0a3e9cc383f21c",
+        "type": "FIX",
+        "text": " sap.m.ObjectMarker: icon has aria-label only when there is text too",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170266543"
+          }
+        ]
+      },
+      {
+        "id": "98c9637d2a349d1f8cfa896bdb9c8ac0a08dba19",
+        "type": "FIX",
+        "text": " sap.m.ProgressIndicator: Wrong visualization is fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170289336"
+          }
+        ]
+      },
+      {
+        "id": "0b3abd7f6595b00ac1e5f76c0eb782ede342436d",
+        "type": "FIX",
+        "text": " sap.ui.unified.CalendarAppointment: has correct acc description",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170266549"
+          }
+        ]
+      },
+      {
+        "id": "47ea815da7cbb9604a80126e140b3e8fea17cc6e",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: acc description added to custom row header content",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170266544"
+          }
+        ]
+      },
+      {
+        "id": "9743b03290c7dfb7adb8117526971b36206992df",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: Appoinment icons are read",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170266547"
+          }
+        ]
+      },
+      {
+        "id": "d5a0fd6830c04dccc90d48876d4fbfba0371c75f",
+        "type": "FIX",
+        "text": " sap.m.SegmentedButton: accessibility info is now available",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180198390"
+          }
+        ]
+      },
+      {
+        "id": "1f05b1acfb6ca670c3e60ced9e422e9bd6002828",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendarLegend: Default values are translatable",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170282858"
+          }
+        ]
+      },
+      {
+        "id": "1432aa9162a20f6029d41670d595ba13e5efc449",
+        "type": "FIX",
+        "text": " sap.m.DatePicker: Focus inside the picker when it is open",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170299136"
+          }
+        ]
+      },
+      {
+        "id": "a78e21ede1e166a94c580ae49576a8be5e758aa7",
+        "type": "FIX",
+        "text": " sap.m.TabContainer: when there is no text or additional text, the icon gets non-decorative",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180274945"
+          }
+        ]
+      },
+      {
+        "id": "c07044dce21a6bf801cb22eecc61278d199e7dfb",
+        "type": "FIX",
+        "text": " sap.m.Popover: Correct positioning to the window element",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180283652"
+          },
+          {
+            "type": "BCP",
+            "reference": "002075129500007641772021"
+          }
+        ]
+      },
+      {
+        "id": "8462e116f275b8ffca5ffe32e3e1efcea7f52f79",
+        "type": "FIX",
+        "text": " sap.m.StepInput: Stop infinite spin on Android",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400007623142021"
+          }
+        ]
+      },
+      {
+        "id": "786f1829f10794cb4a20f74423cf3f002196787f",
+        "type": "FIX",
+        "text": " sap.m.ProgressIndicator: Tooltip popover scroll bar removed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170296542"
+          }
+        ]
+      },
+      {
+        "id": "0408072b3507d63afcf50960c96cdf0aa1f49b23",
+        "type": "FIX",
+        "text": " sap.m.DateTimeInput: sample adapted to be visible on 320px width",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170266527"
+          }
+        ]
+      },
+      {
+        "id": "89974ffe7666172eb5915e72e632e1bfa25a81ff",
+        "type": "FIX",
+        "text": " sap.m.ObjectAttribute: corret link color is used on high contrast themes",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170266520"
+          }
+        ]
+      },
+      {
+        "id": "6e32d83d537aac26110230378ca84bbddc989b26",
+        "type": "FIX",
+        "text": " sap.m.ObjectAttribute: no extra output when letter-spacing is applied",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170266521"
+          }
+        ]
+      },
+      {
+        "id": "4102c39592034dac8bc867b45934c75fd54ce23f",
+        "type": "FIX",
+        "text": " sap.m.DateTimePicker: scrollbar does not appear on 200% zoom",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170266513"
+          }
+        ]
+      },
+      {
+        "id": "ffe0442a890618fb64b27d87fa83036ebdd31a8c",
+        "type": "FIX",
+        "text": " sap.m.Wizard: Steps taller than viewport displayed correctly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180339806"
+          }
+        ]
+      },
+      {
+        "id": "4d38dd2789768ccd7f597c3ce22e174881ff9f52",
+        "type": "FIX",
+        "text": " sap.m.ObjectNumber: emphasized isn't announced on an empty number property",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170266541"
+          }
+        ]
+      },
+      {
+        "id": "007e283e5c5f36ecd5e545459dc3df10cb27121c",
+        "type": "FIX",
+        "text": " sap.m.SinglePlanningCalendar: sample is now improved",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170266530"
+          }
+        ]
+      },
+      {
+        "id": "7ff1ca9d175b7ac3c18d11ae571131c21254e2c9",
+        "type": "FIX",
+        "text": " sap.m.SinglePlanningCalendar: appointments render propelry with all font sizes",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170227747"
+          }
+        ]
+      },
+      {
+        "id": "5060cade30d62fb517a349f87c91f658780d661a",
+        "type": "FIX",
+        "text": " sap.m.DynamicDateRange: Loading resources from library is now synced",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170288191"
+          }
+        ]
+      },
+      {
+        "id": "73de1fc5345aaebec651a480acc675556ae4652c",
+        "type": "FIX",
+        "text": " sap.m.Select: Option with value state text is now announced",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170191779"
+          }
+        ]
+      },
+      {
+        "id": "f7406a9d6add7559c7bdb068263a775de47712e9",
+        "type": "FIX",
+        "text": " sap.m.StepInput: No infinite spin on long press",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400007623142021"
+          }
+        ]
+      },
+      {
+        "id": "c6b7138d18981af3369545654eb0d44ff693bcf8",
+        "type": "FIX",
+        "text": " sap.m.SinglePlanningCalendar: appointments are properly visualized",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170264575"
+          }
+        ]
+      },
+      {
+        "id": "3734e2945c302b58477aa9adec317a3b0b1ed05e",
+        "type": "FIX",
+        "text": " sap.m.ObjectHeader: 'titleSelectorPress' event is now fired",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170273849"
+          }
+        ]
+      },
+      {
+        "id": "1168db1bdad885a6697bc162a26c90e716dabe3d",
+        "type": "FIX",
+        "text": " sap.m.DynamicDateRange: Dependency loading updated",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170278446"
+          }
+        ]
+      },
+      {
+        "id": "35889d1d9effbd46ae095983da7ea7c7e494083f",
+        "type": "FIX",
+        "text": " sap.m.IconTabBar: \"All\" filter now works in samples",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170281557"
+          }
+        ]
+      },
+      {
+        "id": "7f729a20a9b5858727692de471832b99f32b3992",
+        "type": "FEATURE",
+        "text": " sap.m.Input: separateSuggestions property implemented"
+      },
+      {
+        "id": "f659890211d410374b562777913fc3bd52f83ab8",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar, date-related pickers: Today button included in tab loop",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170266511"
+          }
+        ]
+      },
+      {
+        "id": "5b3788ceb0a2600fef661b2122c6fedb0117c44e",
+        "type": "FIX",
+        "text": " sap.m.ViewSettingsDialog: aria-labelledby added on Filter By list",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170208845"
+          }
+        ]
+      },
+      {
+        "id": "6d0cc4276a7f2fa0ddf9775257e9e601ae8e43ef",
+        "type": "FIX",
+        "text": " sap.m.ViewSettingsDialog: fixed segmented button unwanted resizing on phone",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170273868"
+          }
+        ]
+      },
+      {
+        "id": "039b107c145e1bdafe3d0214f375784cdd1ca033",
+        "type": "FIX",
+        "text": " sap.m.Input: fireChange event on empty input (edge case)",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170274834"
+          }
+        ]
+      },
+      {
+        "id": "1647be891cb7088101ec75fb993a339e58a8faea",
+        "type": "FIX",
+        "text": " sap.m.MultiComboBox: hasSelection now toggled correctly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170254123"
+          },
+          {
+            "type": "BCP",
+            "reference": "2170254118"
+          }
+        ]
+      },
+      {
+        "id": "fcc852e88474d7444137fbe6ffbeee091878bb2f",
+        "type": "FIX",
+        "text": " sap.m.IconTabBar: \"select\" event is now fired in UI Adaptation mode",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170253510"
+          }
+        ]
+      },
+      {
+        "id": "82a402b694811471cf5852ba5b7358944edb5e70",
+        "type": "FIX",
+        "text": " sap.m.Switch: fixed handle misplacement on drag in Quartz themes",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170252080"
+          }
+        ]
+      },
+      {
+        "id": "d17545e4ea2979d072aa43c87f3d5a9eb0370eca",
+        "type": "FIX",
+        "text": " sap.m.MenuButton: ACC sample fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170266529"
+          }
+        ]
+      },
+      {
+        "id": "96208e83d00fc4230baf47c8766a5c0d562cd66e",
+        "type": "FIX",
+        "text": " sap.m.DateTimeInput: ACC sample fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170266524"
+          }
+        ]
+      },
+      {
+        "id": "0bc06af21375cea1e2c87740a32282886b7d9cc0",
+        "type": "FEATURE",
+        "text": " Controls adjusted to new theme SAP Horizon"
+      },
+      {
+        "id": "99eb09a805622ff9a3167343df9d2331c65e5ef8",
+        "type": "FEATURE",
+        "text": " sap.m.ComboBox: Clear icon implementation"
+      },
+      {
+        "id": "193ab3e9102dada586394668692ae4b85f21fd98",
+        "type": "FEATURE",
+        "text": " sap.m.MessagePage: Introduced new titleLevel property"
+      }
+    ]
+  }
+}

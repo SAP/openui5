@@ -1,0 +1,12 @@
+{
+  "1.94.0": {
+    "date": "August 2021",
+    "notes": [
+      {
+        "id": "69ebf9e4184c7bfd21e1c24bd7a565620aaeef78",
+        "type": "FIX",
+        "text": " webc.fiori.FCL: fix default value for property accessibilityTexts"
+      }
+    ]
+  }
+}

@@ -1,0 +1,84 @@
+{
+	"_version": "1.17.0",
+	"sap.app": {
+	"id": "adaptivecard.embedded",
+	"type": "card",
+	"title": "Sample of an Adaptive Card with Customized Actions and Extension",
+	"subTitle": "Sample of an Adaptive Card with Customized Actions and Extension",
+	"applicationVersion": {
+			"version": "1.0.0"
+	},
+	"shortTitle": "A short title for this Card",
+	"info": "Additional information about this Card",
+	"description": "A long description for this Card",
+	"tags": {
+			"keywords": [
+				"Adaptive",
+				"Card",
+				"Form",
+				"Sample",
+				"OpenURL",
+				"Customized",
+				"Modiefied",
+				"Actions"
+			]
+		}
+	},
+	"sap.card": {
+		"extension": "./CustomizedActionsExtension",
+		"configuration": {
+			"actionHandlers": {
+				"submit": {
+					"url": "../adaptive/action-submit.json",
+					"method": "GET"
+				}
+			}
+		},
+	"type": "AdaptiveCard",
+	"header": {
+		"title": "Adaptive Card with Customized Actions and Extension",
+		"subTitle": "Actions are modified via the app's controller or the extension module",
+		"icon": {
+			"src": "sap-icon://business-card"
+		}
+	},
+	"content": {
+	"$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+	"type": "AdaptiveCard",
+	"version": "1.0",
+		"body": [
+			{
+				"type": "TextBlock",
+				"text": "Lorem ipsum dolor st amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.",
+				"isSubtle": true,
+				"wrap": true
+			},
+			{
+				"type": "TextBlock",
+				"text": "You can modify the default behaviour of the Open URL and Submit actions in an extension module - see the Submit action below, or in the application controller - see the Open URL action.",
+				"weight": "Bolder",
+				"size": "Small",
+				"isSubtle": true,
+				"wrap": true
+			},
+			{
+				"type": "Input.Text",
+				"value": "Enter your name",
+				"style": "text",
+				"id": "Name"
+			}
+		],
+	"actions": [
+			{
+				"type": "Action.OpenUrl",
+				"title": "Go to details page",
+				"url": "example.html"
+			},
+			{
+				"type": "Action.Submit",
+				"title": "Submit to backend"
+			}
+		]
+	  }
+	}
+  }

@@ -3,70 +3,72 @@
  */
 
 // Provides the default renderer for control sap.tnt.NavigationList
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer'],
-	function(jQuery, Renderer) {
-		"use strict";
+sap.ui.define([
+	"sap/ui/core/Lib"
+], function (Lib) {
+	"use strict";
 
-		/**
-		 * NavigationListRenderer renderer.
-		 *
-		 * @author SAP SE
-		 * @namespace
-		 */
-		var NavigationListRenderer = {};
+	/**
+	 * NavigationListRenderer renderer.
+	 *
+	 * @author SAP SE
+	 * @namespace
+	 */
+	const NavigationListRenderer = {
+		apiVersion: 2
+	};
 
-		/**
-		 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
-		 *
-		 * @param {sap.ui.core.RenderManager} rm The RenderManager that can be used for writing to the renderer output buffer
-		 * @param {sap.ui.core.Control} control An object representation of the control that should be rendered
-		 */
-		NavigationListRenderer.render = function (rm, control) {
-			var role,
-				visibleGroupsCount,
-				groups = control.getItems(),
-				expanded = control.getExpanded(),
-				visibleGroups = [];
+	/**
+	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
+	 *
+	 * @param {sap.ui.core.RenderManager} oRM The RenderManager that can be used for writing to the renderer output buffer
+	 * @param {sap.tnt.NavigationList} oControl An object representation of the control that should be rendered
+	 */
+	NavigationListRenderer.render = function (oRM, oControl) {
+		const bExpanded = oControl.getExpanded(),
+			bHasItemWithIcon = oControl._containsIcon(),
+			aVisibleItems = oControl.getItems().filter((oItem) => oItem.getVisible());
 
-			rm.write("<ul");
-			rm.writeControlData(control);
+		oRM.openStart("ul", oControl)
+			.class("sapTntNL");
 
-			var width = control.getWidth();
-			if (width && expanded) {
-				rm.addStyle("width", width);
-			}
-			rm.writeStyles();
+		if (!bExpanded) {
+			oRM.class("sapTntNLCollapsed");
+		}
 
-			rm.addClass("sapTntNavLI");
+		if (!bHasItemWithIcon) {
+			oRM.class("sapTntNLNoIcons");
+		}
 
-			if (!expanded) {
-				rm.addClass("sapTntNavLICollapsed");
-			}
+		var sWidth = oControl.getWidth();
+		if (sWidth && bExpanded) {
+			oRM.style("width", sWidth);
+		}
 
-			rm.writeClasses();
+		// ARIA
+		const sRole = !bExpanded && !oControl.hasStyleClass("sapTntNLPopup") ? "menubar" : "tree";
+		oRM.accessibilityState(oControl, {
+			role: sRole,
+			orientation: sRole === "menubar" ? "vertical" : undefined,
+			roledescription: Lib.getResourceBundleFor("sap.tnt").getText(
+				sRole === "menubar" ?
+					"NAVIGATION_LIST_ITEM_ROLE_DESCRIPTION_MENUBAR" :
+					"NAVIGATION_LIST_ITEM_ROLE_DESCRIPTION_TREE")
+		});
 
-			// ARIA
-			role = expanded ? 'tree' : 'toolbar';
+		oRM.openEnd();
 
-			rm.writeAttribute("role", role);
+		const oFirstGroup = aVisibleItems.find((oItem) => oItem.isA("sap.tnt.NavigationListGroup"));
+		aVisibleItems.forEach((oItem) => {
+			oItem.render(oRM, oControl, oItem === oFirstGroup);
+		});
 
-			rm.write(">");
+		if (!bExpanded) {
+			oControl._getOverflowItem().render(oRM, oControl);
+		}
 
-			//Checking which groups should render
-			groups.forEach(function(group) {
-				if (group.getVisible()) {
-					visibleGroups.push(group);
-				}
-			});
+		oRM.close("ul");
+	};
 
-			// Rendering the visible groups
-			visibleGroups.forEach(function(group, index) {
-				group.render(rm, control, index, visibleGroupsCount);
-			});
-
-			rm.write("</ul>");
-		};
-
-		return NavigationListRenderer;
-
-	}, /* bExport= */ true);
+	return NavigationListRenderer;
+}, /* bExport= */ true);

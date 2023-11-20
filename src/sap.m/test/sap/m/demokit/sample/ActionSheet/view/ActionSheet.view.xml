@@ -1,0 +1,17 @@
+<mvc:View
+	controllerName="sap.m.sample.ActionSheet.controller.ActionSheet"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:core="sap.ui.core"
+	xmlns="sap.m">
+	<Button
+		text="Open Action Sheet"
+		class="sapUiSmallMargin"
+		press=".onButtonPress"
+		ariaHasPopup="Menu" >
+		<dependents>
+			<core:Fragment
+				fragmentName="sap.m.sample.ActionSheet.view.ActionSheet"
+				type="XML" />
+		</dependents>
+	</Button>
+</mvc:View>

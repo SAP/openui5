@@ -1,0 +1,4 @@
+<mvc:View xmlns="sap.f" xmlns:mvc="sap.ui.core.mvc" xmlns:m="sap.m" displayBlock="true" controllerName="flexiblecolumnlayoutHighlighting.flexiblecolumnlayout" height="100%">
+<!--	<m:SearchField search="onSearchFieldSearch"/>-->
+	<FlexibleColumnLayout id="fcl" stateChange="onStateChanged"	layout="{/layout}" />
+</mvc:View>

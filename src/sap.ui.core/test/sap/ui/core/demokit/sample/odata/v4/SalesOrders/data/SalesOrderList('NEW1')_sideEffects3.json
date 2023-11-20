@@ -1,0 +1,11 @@
+{
+	"@odata.metadataEtag" : "W/\"20190827145402\"",
+	"@odata.etag" : "W/\"20160619220000.0000000\"",
+	"SalesOrderID" : "NEW1",
+	"Note" : "new 1",
+	"ChangedAt" : "2016-06-26T22:00:00.000000Z",
+	"SO_2_SCHDL" : [{
+		"ScheduleKey" : "005056A71E3D1ED68DDA8CB5CA1C8B46",
+		"DeliveryDate" : "2016-06-26T22:00:00Z"
+	}]
+}

@@ -8,10 +8,10 @@ sap.ui.define(['sap/m/semantic/SemanticSelect'], function(SemanticSelect) {
 	/**
 	 * Constructor for a new FilterSelect.
 	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
-	 * @param {object} [mSettings] Custom initial settings for the new control
+	 * @param {object} [mSettings] Optional initial settings for the new control:  a map/JSON-object with initial property values, event listeners etc. for the new object
 	 *
 	 * @class
-	 * A FilterSelect is a {@link sap.m.Select} control enhanced with styling according to the semantics of a common "Filter" acton.
+	 * A FilterSelect is a {@link sap.m.Select} control enhanced with styling according to the semantics of a common "Filter" action.
 	 *
 	 * A FilterSelect cannot be used independently but only as aggregation content of a {@link sap.m.semantic.SemanticPage}.
 	 *
@@ -28,7 +28,6 @@ sap.ui.define(['sap/m/semantic/SemanticSelect'], function(SemanticSelect) {
 	 * @public
 	 * @since 1.30.0
 	 * @alias sap.m.semantic.FilterSelect
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 
 	var FilterSelect = SemanticSelect.extend("sap.m.semantic.FilterSelect", /** @lends sap.m.semantic.FilterSelect.prototype */ {

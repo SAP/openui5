@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx xmlns:edmx="http://schemas.microsoft.com/ado/2007/06/edmx"
+	xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata"
+	xmlns:sap="http://www.sap.com/Protocols/SAPData" Version="1.0">
+	<edmx:DataServices m:DataServiceVersion="2.0">
+		<Schema xmlns="http://schemas.microsoft.com/ado/2008/09/edm" Namespace="special.cases">
+			<EntityType Name="C_RSHMaintSchedSmltdOrdAndOpType">
+				<Key>
+					<PropertyRef Name="OrderOperationRowID"/>
+				</Key>
+				<Property Name="HierarchyDescendantCount" Type="Edm.Byte"/>
+				<Property Name="MaintenanceOrder" Type="Edm.String"/>
+				<Property Name="OrderOperationIsExpanded" Type="Edm.String"/>
+				<Property Name="OrderOperationParentRowID" Type="Edm.String"/>
+				<Property Name="OrderOperationRowID" Type="Edm.String"/>
+				<Property Name="OrderOperationRowLevel" Type="Edm.Byte"/>
+			</EntityType>
+			<EntityType Name="C_SubscrpnProductChargeTPType">
+				<Key>
+					<PropertyRef Name="SubscrpnProdChrgAndDiscID"/>
+				</Key>
+				<Property Name="SubscrpnProdChrgAndDiscID" Type="Edm.String"/>
+				<NavigationProperty Name="to_CreatedByUserContactCard"
+					Relationship="special.cases.assoc_59A3FD8F5CF7BAECDA3BCCCD9C24D7BE"
+					FromRole="FromRole_assoc_59A3FD8F5CF7BAECDA3BCCCD9C24D7BE"
+					ToRole="ToRole_assoc_59A3FD8F5CF7BAECDA3BCCCD9C24D7BE"/>
+				<NavigationProperty Name="to_AllUserContactCards"
+					Relationship="special.cases.assoc_AllUserContactCards"
+					FromRole="FromRole_assoc_AllUserContactCards"
+					ToRole="ToRole_assoc_AllUserContactCards"/>
+			</EntityType>
+			<EntityType Name="I_UserContactCardType">
+				<Key>
+					<PropertyRef Name="ContactCardID"/>
+				</Key>
+				<Property Name="ContactCardID" Type="Edm.String" Nullable="false" MaxLength="12"/>
+				<Property Name="Person" Type="Edm.String" MaxLength="10"
+					sap:display-format="UpperCase" sap:label="Person Number"/>
+			</EntityType>
+			<EntityType Name="UserAssignment">
+				<Key>
+					<PropertyRef Name="UserId"/>
+				</Key>
+				<Property Name="UserId" Type="Edm.String" Nullable="false" MaxLength="255"/>
+			</EntityType>
+			<EntityType Name="DummyType">
+				<Key>
+					<PropertyRef Name="DummyID"/>
+				</Key>
+				<Property Name="DummyID" Type="Edm.String"/>
+				<NavigationProperty Name="to_C_RSHMaintSchedSmltdOrdAndOp"
+					Relationship="special.cases.assoc_C_RSHMaintSchedSmltdOrdAndOps"
+					FromRole="FromRole_assoc_C_RSHMaintSchedSmltdOrdAndOps"
+					ToRole="ToRole_assoc_C_RSHMaintSchedSmltdOrdAndOps"/>
+			</EntityType>
+			<EntityType Name="DateTimeWithTimezone" sap:content-version="1">
+				<Key>
+					<PropertyRef Name="ID" />
+				</Key>
+				<Property Name="ID" Type="Edm.String" Nullable="false" MaxLength="1" />
+				<Property Name="DateTime" Type="Edm.DateTime" Precision="0" />
+				<Property Name="TimezoneID" Type="Edm.String" MaxLength="120"/>
+			</EntityType>
+			<ComplexType Name="DummyFunctionImportResult">
+				<Property Name="IsInvalid" Type="Edm.Boolean" sap:label="TRUE"/>
+			</ComplexType>
+			<EntityType Name="C_BankConditionTPType" sap:content-version="1">
+				<Key>
+					<PropertyRef Name="BankFeeConditionID"/>
+					<PropertyRef Name="ValidityStartDate"/>
+				</Key>
+				<Property Name="BankFeeConditionID" Type="Edm.String" Nullable="false"
+					MaxLength="10"/>
+				<Property Name="ValidityStartDate" Type="Edm.DateTime" Nullable="false"
+					Precision="0" sap:display-format="Date"/>
+				<Property Name="BankFeeSrvcChrgMeth" Type="Edm.String" Nullable="false"
+					MaxLength="6"/>
+			</EntityType>
+			<EntityType Name="Employee" sap:content-version="1">
+				<Key>
+					<PropertyRef Name="ID" />
+				</Key>
+				<Property Name="ID" Type="Edm.String" Nullable="false" MaxLength="12" />
+				<Property Name="Time" Type="Edm.Time" Precision="0" />
+			</EntityType>
+			<EntityType Name="Product" sap:content-version="1">
+				<Key>
+					<PropertyRef Name="ProductID" />
+				</Key>
+				<Property Name="ProductID" Type="Edm.String" Nullable="false"
+					MaxLength="10" sap:unicode="false" sap:label="Product ID" sap:updatable="false" />
+				<Property Name="WeightMeasure" Type="Edm.Decimal" Precision="13"
+					Scale="3" sap:unicode="false" sap:unit="WeightUnit" sap:label="Wt. Measure" />
+				<Property Name="WeightUnit" Type="Edm.String" MaxLength="3"
+					sap:unicode="false" sap:label="Qty. Unit" sap:semantics="unit-of-measure" />
+				<Property Name="CurrencyCode" Type="Edm.String" Nullable="false"
+					MaxLength="5" sap:unicode="false" sap:label="Currency"
+					sap:semantics="currency-code" />
+				<Property Name="Price" Type="Edm.Decimal" Precision="16" Scale="3"
+					sap:unicode="false" sap:unit="CurrencyCode" sap:label="Unit Price" />
+			</EntityType>
+			<EntityType Name="C_BPAdditionalCustomerType" sap:label="BP Additional Customers"
+				sap:content-version="1">
+				<Key>
+					<PropertyRef Name="BusinessPartner" />
+					<PropertyRef Name="Customer" />
+					<PropertyRef Name="IsActiveEntity" />
+				</Key>
+				<Property Name="BusinessPartner" Type="Edm.String" Nullable="false" MaxLength="10" />
+				<Property Name="Customer" Type="Edm.String" Nullable="false" MaxLength="10"/>
+				<Property Name="IsActiveEntity" Type="Edm.Boolean" Nullable="false" />
+				<NavigationProperty Name="to_BusinessPartnerCustomer"
+					Relationship="special.cases.assoc_1"
+					FromRole="ToRole_assoc_1"
+					ToRole="FromRole_assoc_1"/>
+			</EntityType>
+			<EntityType Name="C_BusinessPartnerCustomerType" sap:label="Business Partner"
+				sap:content-version="1">
+				<Key>
+					<PropertyRef Name="BusinessPartner" />
+					<PropertyRef Name="IsActiveEntity" />
+				</Key>
+				<Property Name="BusinessPartner" Type="Edm.String" Nullable="false" MaxLength="10" />
+				<Property Name="Name" Type="Edm.String" MaxLength="40" />
+				<Property Name="IsActiveEntity" Type="Edm.Boolean" Nullable="false" />
+				<NavigationProperty Name="to_BPAdditionalCustomer"
+					Relationship="special.cases.assoc_1"
+					FromRole="FromRole_assoc_1"
+					ToRole="ToRole_assoc_1"/>
+			</EntityType>
+			<Association Name="assoc_C_RSHMaintSchedSmltdOrdAndOps">
+				<End Type="special.cases.DummyType" Multiplicity="1"
+					Role="FromRole_assoc_C_RSHMaintSchedSmltdOrdAndOps"/>
+				<End Type="special.cases.C_RSHMaintSchedSmltdOrdAndOpType" Multiplicity="*"
+					Role="ToRole_assoc_C_RSHMaintSchedSmltdOrdAndOps"/>
+			</Association>
+			<Association Name="assoc_59A3FD8F5CF7BAECDA3BCCCD9C24D7BE">
+				<End Type="special.cases.C_SubscrpnProductChargeTPType" Multiplicity="1"
+					Role="FromRole_assoc_59A3FD8F5CF7BAECDA3BCCCD9C24D7BE"/>
+				<End Type="special.cases.I_UserContactCardType" Multiplicity="0..1"
+					Role="ToRole_assoc_59A3FD8F5CF7BAECDA3BCCCD9C24D7BE"/>
+			</Association>
+			<Association Name="assoc_AllUserContactCards">
+				<End Type="special.cases.C_SubscrpnProductChargeTPType" Multiplicity="1"
+					Role="FromRole_assoc_AllUserContactCards"/>
+				<End Type="special.cases.I_UserContactCardType" Multiplicity="*"
+					Role="ToRole_assoc_AllUserContactCards"/>
+			</Association>
+			<Association Name="assoc_1" sap:content-version="1">
+				<End Type="special.cases.C_BusinessPartnerCustomerType" Multiplicity="1"
+					Role="FromRole_assoc_1">
+					<OnDelete Action="Cascade" />
+				</End>
+				<End Type="special.cases.C_BPAdditionalCustomerType" Multiplicity="*"
+					Role="ToRole_assoc_1" />
+				<ReferentialConstraint>
+					<Principal Role="FromRole_assoc_1">
+						<PropertyRef Name="BusinessPartner" />
+					</Principal>
+					<Dependent Role="ToRole_assoc_1">
+						<PropertyRef Name="BusinessPartner" />
+					</Dependent>
+				</ReferentialConstraint>
+			</Association>
+			<EntityContainer Name="Container" m:IsDefaultEntityContainer="true"
+				sap:message-scope-supported="true">
+				<EntitySet Name="C_RSHMaintSchedSmltdOrdAndOp"
+					EntityType="special.cases.C_RSHMaintSchedSmltdOrdAndOpType"/>
+				<EntitySet Name="C_SubscrpnProductChargeTP"
+					EntityType="special.cases.C_SubscrpnProductChargeTPType"/>
+				<EntitySet Name="I_UserContactCard"
+					EntityType="special.cases.I_UserContactCardType"
+					sap:addressable="false"/>
+				<EntitySet Name="UserAssignments" EntityType="special.cases.UserAssignment"/>
+				<EntitySet Name="DummySet" EntityType="special.cases.DummyType"/>
+				<EntitySet Name="DateTimeWithTimezoneSet"
+					EntityType="special.cases.DateTimeWithTimezone"/>
+				<EntitySet Name="C_BankConditionTP"
+					EntityType="special.cases.C_BankConditionTPType"/>
+				<EntitySet Name="Employees" EntityType="special.cases.Employee" />
+				<EntitySet Name="ProductSet" EntityType="special.cases.Product"/>
+				<EntitySet Name="C_BPAdditionalCustomer"
+					EntityType="special.cases.C_BPAdditionalCustomerType" sap:content-version="1"/>
+				<EntitySet Name="C_BusinessPartnerCustomer"
+					EntityType="special.cases.C_BusinessPartnerCustomerType" sap:content-version="1"/>
+				<AssociationSet Name="assoc_C_RSHMaintSchedSmltdOrdAndOps"
+					Association="special.cases.assoc_C_RSHMaintSchedSmltdOrdAndOps">
+					<End EntitySet="DummySet"
+						Role="FromRole_assoc_C_RSHMaintSchedSmltdOrdAndOps"/>
+					<End EntitySet="C_RSHMaintSchedSmltdOrdAndOp"
+						Role="ToRole_assoc_C_RSHMaintSchedSmltdOrdAndOps"/>
+				</AssociationSet>
+				<AssociationSet Name="assoc_59A3FD8F5CF7BAECDA3BCCCD9C24D7BE"
+					Association="special.cases.assoc_59A3FD8F5CF7BAECDA3BCCCD9C24D7BE">
+					<End EntitySet="C_SubscrpnProductChargeTP"
+						Role="FromRole_assoc_59A3FD8F5CF7BAECDA3BCCCD9C24D7BE"/>
+					<End EntitySet="I_UserContactCard"
+						Role="ToRole_assoc_59A3FD8F5CF7BAECDA3BCCCD9C24D7BE"/>
+				</AssociationSet>
+				<AssociationSet Name="assoc_AllUserContactCards"
+					Association="special.cases.assoc_AllUserContactCards">
+					<End EntitySet="C_SubscrpnProductChargeTP"
+						Role="FromRole_assoc_AllUserContactCards"/>
+					<End EntitySet="I_UserContactCard" Role="ToRole_assoc_AllUserContactCards"/>
+				</AssociationSet>
+				<AssociationSet Name="assoc_1" Association="special.cases.assoc_1" sap:content-version="1">
+					<End EntitySet="C_BusinessPartnerCustomer" Role="FromRole_assoc_1" />
+					<End EntitySet="C_BPAdditionalCustomer" Role="ToRole_assoc_1" />
+				</AssociationSet>
+				<!-- BCP: 2170085431: function import returning a collection; result is bound to a
+					table -->
+				<FunctionImport Name="allUserAssignmentsGET"
+					ReturnType="Collection(special.cases.UserAssignment)"
+					EntitySet="UserAssignments" m:HttpMethod="GET"/>
+				<FunctionImport Name="allUserAssignmentsPOST"
+					ReturnType="Collection(special.cases.UserAssignment)"
+					EntitySet="UserAssignments" m:HttpMethod="POST"/>
+				<!-- BCP: 2270075487: function import parameters need to be encoded for function
+					import target -->
+				<FunctionImport Name="C_BankConditionTPPrepare"
+					ReturnType="special.cases.DummyFunctionImportResult" m:HttpMethod="POST"
+					sap:action-for="special.cases.C_BankConditionTPType">
+					<Parameter Name="BankFeeConditionID" Type="Edm.String" MaxLength="10"/>
+					<Parameter Name="ValidityStartDate" Type="Edm.DateTime" Precision="0"
+						sap:display-format="Date"/>
+				</FunctionImport>
+			</EntityContainer>
+		</Schema>
+	</edmx:DataServices>
+</edmx:Edmx>

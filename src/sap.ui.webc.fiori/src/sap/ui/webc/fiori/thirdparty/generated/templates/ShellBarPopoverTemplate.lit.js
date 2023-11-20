@@ -1,0 +1,21 @@
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/renderer/LitRenderer"], function (_exports, _LitRenderer) {
+  "use strict";
+
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  _exports.default = void 0;
+  /* eslint no-unused-vars: 0 */
+
+  function block0(context, tags, suffix) {
+    return suffix ? (0, _LitRenderer.html)`<${(0, _LitRenderer.scopeTag)("ui5-popover", tags, suffix)} class="ui5-shellbar-menu-popover" hide-arrow placement-type="Bottom" @ui5-before-open=${(0, _LitRenderer.ifDefined)(this._menuPopoverBeforeOpen)} @ui5-after-close=${(0, _LitRenderer.ifDefined)(this._menuPopoverAfterClose)}><${(0, _LitRenderer.scopeTag)("ui5-list", tags, suffix)} separators="None" mode="SingleSelect" @ui5-selection-change=${(0, _LitRenderer.ifDefined)(this._menuItemPress)}>${(0, _LitRenderer.repeat)(this._menuPopoverItems, (item, index) => item._id || index, (item, index) => block1.call(this, context, tags, suffix, item, index))}</${(0, _LitRenderer.scopeTag)("ui5-list", tags, suffix)}></${(0, _LitRenderer.scopeTag)("ui5-popover", tags, suffix)}><${(0, _LitRenderer.scopeTag)("ui5-popover", tags, suffix)} class="ui5-shellbar-overflow-popover" placement-type="Bottom" horizontal-align="${(0, _LitRenderer.ifDefined)(this.popoverHorizontalAlign)}" hide-arrow @ui5-before-open=${(0, _LitRenderer.ifDefined)(this._overflowPopoverBeforeOpen)} @ui5-after-close=${(0, _LitRenderer.ifDefined)(this._overflowPopoverAfterClose)}><${(0, _LitRenderer.scopeTag)("ui5-list", tags, suffix)} separators="None" @ui5-item-click="${(0, _LitRenderer.ifDefined)(this._handleActionListClick)}">${(0, _LitRenderer.repeat)(this._hiddenIcons, (item, index) => item._id || index, (item, index) => block2.call(this, context, tags, suffix, item, index))}</${(0, _LitRenderer.scopeTag)("ui5-list", tags, suffix)}></${(0, _LitRenderer.scopeTag)("ui5-popover", tags, suffix)}>` : (0, _LitRenderer.html)`<ui5-popover class="ui5-shellbar-menu-popover" hide-arrow placement-type="Bottom" @ui5-before-open=${(0, _LitRenderer.ifDefined)(this._menuPopoverBeforeOpen)} @ui5-after-close=${(0, _LitRenderer.ifDefined)(this._menuPopoverAfterClose)}><ui5-list separators="None" mode="SingleSelect" @ui5-selection-change=${(0, _LitRenderer.ifDefined)(this._menuItemPress)}>${(0, _LitRenderer.repeat)(this._menuPopoverItems, (item, index) => item._id || index, (item, index) => block1.call(this, context, tags, suffix, item, index))}</ui5-list></ui5-popover><ui5-popover class="ui5-shellbar-overflow-popover" placement-type="Bottom" horizontal-align="${(0, _LitRenderer.ifDefined)(this.popoverHorizontalAlign)}" hide-arrow @ui5-before-open=${(0, _LitRenderer.ifDefined)(this._overflowPopoverBeforeOpen)} @ui5-after-close=${(0, _LitRenderer.ifDefined)(this._overflowPopoverAfterClose)}><ui5-list separators="None" @ui5-item-click="${(0, _LitRenderer.ifDefined)(this._handleActionListClick)}">${(0, _LitRenderer.repeat)(this._hiddenIcons, (item, index) => item._id || index, (item, index) => block2.call(this, context, tags, suffix, item, index))}</ui5-list></ui5-popover>`;
+  }
+  function block1(context, tags, suffix, item, index) {
+    return (0, _LitRenderer.html)`${(0, _LitRenderer.ifDefined)(item)}`;
+  }
+  function block2(context, tags, suffix, item, index) {
+    return suffix ? (0, _LitRenderer.html)`<${(0, _LitRenderer.scopeTag)("ui5-li", tags, suffix)} data-ui5-external-action-item-id="${(0, _LitRenderer.ifDefined)(item.refItemid)}" icon="${(0, _LitRenderer.ifDefined)(item.icon)}" type="Active" @ui5-_press="${(0, _LitRenderer.ifDefined)(item.press)}">${(0, _LitRenderer.ifDefined)(item.text)}</${(0, _LitRenderer.scopeTag)("ui5-li", tags, suffix)}>` : (0, _LitRenderer.html)`<ui5-li data-ui5-external-action-item-id="${(0, _LitRenderer.ifDefined)(item.refItemid)}" icon="${(0, _LitRenderer.ifDefined)(item.icon)}" type="Active" @ui5-_press="${(0, _LitRenderer.ifDefined)(item.press)}">${(0, _LitRenderer.ifDefined)(item.text)}</ui5-li>`;
+  }
+  var _default = block0;
+  _exports.default = _default;
+});

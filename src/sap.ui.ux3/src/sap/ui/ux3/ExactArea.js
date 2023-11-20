@@ -4,13 +4,13 @@
 
 // Provides control sap.ui.ux3.ExactArea.
 sap.ui.define([
- 'jquery.sap.global',
  'sap/ui/commons/Toolbar',
  'sap/ui/core/Control',
  './library',
- "./ExactAreaRenderer"
+ './ExactAreaRenderer',
+ 'sap/ui/core/Element'
 ],
-	function(jQuery, Toolbar, Control, library, ExactAreaRenderer) {
+	function(Toolbar, Control, library, ExactAreaRenderer, Element) {
 	"use strict";
 
 
@@ -35,10 +35,10 @@ sap.ui.define([
 	 * API is not yet finished and might change completely
 	 * @deprecated Since version 1.38.
 	 * @alias sap.ui.ux3.ExactArea
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var ExactArea = Control.extend("sap.ui.ux3.ExactArea", /** @lends sap.ui.ux3.ExactArea.prototype */ { metadata : {
 
+		deprecated: true,
 		library : "sap.ui.ux3",
 		properties : {
 
@@ -63,18 +63,17 @@ sap.ui.define([
 	}});
 
 
-	(function() {
 
 	//*************************************************************
-	//Define a private element to enable titles tin the toolbar
+	//Define a private element to enable titles in the toolbar
 	//*************************************************************
 
-	sap.ui.core.Element.extend("sap.ui.ux3.ExactAreaToolbarTitle", {
+	Element.extend("sap.ui.ux3.ExactAreaToolbarTitle", {
 
 	  metadata: {
 	    interfaces : ["sap.ui.commons.ToolbarItem"],
 	    properties : {
-	      text : {name : "text", type : "string", group : "Appearance", defaultValue : ''}
+	      text : {type : "string", group : "Appearance", defaultValue : ''}
 	    }
 	  }
 
@@ -82,8 +81,7 @@ sap.ui.define([
 
 	//*************************************************************
 
-	}());
 
 	return ExactArea;
 
-}, /* bExport= */ true);
+});

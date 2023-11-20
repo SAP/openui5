@@ -1,0 +1,1 @@
+.ui5-tc__separator{border-bottom:.0625rem solid var(--sapGroup_TitleBorderColor);margin-inline-end:.5rem;margin-inline-start:calc(var(--_ui5-v1-18-0-tab-indentation-level)*.5rem);min-height:.25rem}[ui5-list]>.ui5-tc__separator:first-child{min-height:.5rem}

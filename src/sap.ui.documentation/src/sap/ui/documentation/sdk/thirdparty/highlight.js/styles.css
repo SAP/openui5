@@ -1,0 +1,155 @@
+/*
+ * Styles used with hilghlight.js.
+ */
+
+ .hljs {
+    display: block;
+    overflow-x: auto;
+    padding: .5em;
+    background: #fff;
+    color: #000;
+}
+.hljs-comment, .hljs-quote, .hljs-variable {
+    color: green;
+}
+.hljs-built_in, .hljs-keyword, .hljs-name, .hljs-selector-tag, .hljs-tag {
+    color: #00f;
+}
+.hljs-addition, .hljs-attribute, .hljs-literal, .hljs-section, .hljs-string, .hljs-template-tag, .hljs-template-variable, .hljs-title, .hljs-type {
+    color: #a31515;
+}
+.hljs-deletion, .hljs-meta, .hljs-selector-attr, .hljs-selector-pseudo {
+    color: #2b91af;
+}
+.hljs-doctag {
+    color: grey;
+}
+.hljs-attr {
+    color: red;
+}
+.hljs-bullet, .hljs-link, .hljs-symbol {
+    color: #00b0e8;
+}
+.hljs-emphasis {
+    font-style: italic;
+}
+.hljs-strong {
+    font-weight: 700;
+}
+
+.sapUiTheme-sap_horizon .hljs {
+    background: #f5f5f5;
+}
+
+/*
+ * Different theme for Horizon and Fiori 3 Dark for better visibility
+ */
+
+.sapUiTheme-sap_horizon_dark .hljs,
+.sapUiTheme-sap_fiori_3_dark .hljs {
+    display: block;
+    overflow-x: auto;
+    padding: .5em;
+    color: #abb2bf;
+    background: #282c34;
+}
+
+.sapUiTheme-sap_horizon_dark .hljs-comment,
+.sapUiTheme-sap_horizon_dark .hljs-quote,
+.sapUiTheme-sap_fiori_3_dark .hljs-comment,
+.sapUiTheme-sap_fiori_3_dark .hljs-quote {
+    color: #5c6370;
+    font-style: italic;
+}
+
+.sapUiTheme-sap_horizon_dark .hljs-doctag,
+.sapUiTheme-sap_horizon_dark .hljs-formula,
+.sapUiTheme-sap_horizon_dark .hljs-keyword,
+.sapUiTheme-sap_fiori_3_dark .hljs-doctag,
+.sapUiTheme-sap_fiori_3_dark .hljs-formula,
+.sapUiTheme-sap_fiori_3_dark .hljs-keyword {
+    color: #c678dd;
+}
+
+.sapUiTheme-sap_horizon_dark .hljs-deletion,
+.sapUiTheme-sap_horizon_dark .hljs-name,
+.sapUiTheme-sap_horizon_dark .hljs-section,
+.sapUiTheme-sap_horizon_dark .hljs-selector-tag,
+.sapUiTheme-sap_horizon_dark .hljs-subst,
+.sapUiTheme-sap_fiori_3_dark .hljs-deletion,
+.sapUiTheme-sap_fiori_3_dark .hljs-name,
+.sapUiTheme-sap_fiori_3_dark .hljs-section,
+.sapUiTheme-sap_fiori_3_dark .hljs-selector-tag,
+.sapUiTheme-sap_fiori_3_dark .hljs-subst {
+    color: #e06c75;
+}
+
+.sapUiTheme-sap_horizon_dark .hljs-literal,
+.sapUiTheme-sap_fiori_3_dark .hljs-literal {
+    color: #56b6c2;
+}
+
+.sapUiTheme-sap_horizon_dark .hljs-addition,
+.sapUiTheme-sap_horizon_dark .hljs-attribute,
+.sapUiTheme-sap_horizon_dark .hljs-meta-string,
+.sapUiTheme-sap_horizon_dark .hljs-regexp,
+.sapUiTheme-sap_horizon_dark .hljs-string,
+.sapUiTheme-sap_fiori_3_dark .hljs-addition,
+.sapUiTheme-sap_fiori_3_dark .hljs-attribute,
+.sapUiTheme-sap_fiori_3_dark .hljs-meta-string,
+.sapUiTheme-sap_fiori_3_dark .hljs-regexp,
+.sapUiTheme-sap_fiori_3_dark .hljs-string {
+    color: #98c379;
+}
+
+.sapUiTheme-sap_horizon_dark .hljs-built_in,
+.sapUiTheme-sap_horizon_dark .hljs-class .hljs-title,
+.sapUiTheme-sap_fiori_3_dark .hljs-built_in,
+.sapUiTheme-sap_fiori_3_dark .hljs-class .hljs-title {
+    color: #e6c07b;
+}
+
+.sapUiTheme-sap_horizon_dark .hljs-attr,
+.sapUiTheme-sap_horizon_dark .hljs-number,
+.sapUiTheme-sap_horizon_dark .hljs-selector-attr,
+.sapUiTheme-sap_horizon_dark .hljs-selector-class,
+.sapUiTheme-sap_horizon_dark .hljs-selector-pseudo,
+.sapUiTheme-sap_horizon_dark .hljs-template-variable,
+.sapUiTheme-sap_horizon_dark .hljs-type,
+.sapUiTheme-sap_horizon_dark .hljs-variable,
+.sapUiTheme-sap_fiori_3_dark .hljs-attr,
+.sapUiTheme-sap_fiori_3_dark .hljs-number,
+.sapUiTheme-sap_fiori_3_dark .hljs-selector-attr,
+.sapUiTheme-sap_fiori_3_dark .hljs-selector-class,
+.sapUiTheme-sap_fiori_3_dark .hljs-selector-pseudo,
+.sapUiTheme-sap_fiori_3_dark .hljs-template-variable,
+.sapUiTheme-sap_fiori_3_dark .hljs-type,
+.sapUiTheme-sap_fiori_3_dark .hljs-variable {
+    color: #d19a66;
+}
+.sapUiTheme-sap_horizon_dark .hljs-bullet,
+.sapUiTheme-sap_horizon_dark .hljs-link,
+.sapUiTheme-sap_horizon_dark .hljs-meta,
+.sapUiTheme-sap_horizon_dark .hljs-selector-id,
+.sapUiTheme-sap_horizon_dark .hljs-symbol,
+.sapUiTheme-sap_horizon_dark .hljs-title,
+.sapUiTheme-sap_fiori_3_dark .hljs-bullet,
+.sapUiTheme-sap_fiori_3_dark .hljs-link,
+.sapUiTheme-sap_fiori_3_dark .hljs-meta,
+.sapUiTheme-sap_fiori_3_dark .hljs-selector-id,
+.sapUiTheme-sap_fiori_3_dark .hljs-symbol,
+.sapUiTheme-sap_fiori_3_dark .hljs-title {
+    color: #61aeee;
+}
+.sapUiTheme-sap_horizon_dark .hljs-emphasis,
+.sapUiTheme-sap_fiori_3_dark .hljs-emphasis {
+    font-style: italic;
+}
+.sapUiTheme-sap_horizon_dark .hljs-strong,
+.sapUiTheme-sap_fiori_3_dark .hljs-strong {
+    font-weight: 700;
+}
+.sapUiTheme-sap_horizon_dark .hljs-link,
+.sapUiTheme-sap_fiori_3_dark .hljs-link {
+    text-decoration: underline;
+}

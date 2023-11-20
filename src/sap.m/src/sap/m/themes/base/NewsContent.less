@@ -6,7 +6,7 @@
 .sapMNwC {
 	display: inline-block;
 	outline: none;
-	width: 20.5rem;
+	width: 100%;
 	height: 3.5625rem;
 	color: @sapUiTileTextColor;
 	background-color: @sapUiTileBackground;
@@ -18,7 +18,7 @@
 	white-space: nowrap;
 	font-family: @sapUiFontFamily;
 	font-weight: normal;
-	padding: 0.25rem 0 0 0;
+	padding: 0.1875rem 0 0 0;
 	max-width: 20.5rem;
 
 	.sapMText {
@@ -31,6 +31,40 @@
 	}
 }
 
+.Stretch .sapMNwCCTxt {
+	max-width: none;
+	display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    font-weight: bold;
+}
+
+.TwoByOne .sapMNwCCTxt {
+	display: -webkit-box;
+	-webkit-line-clamp: 2;
+	-webkit-box-orient: vertical;
+}
+
+.Stretch{
+	.sapMTileCnt.News .sapMNwC{
+		.sapMNwCSbh{
+			max-width: none;
+			padding-top: 0.25rem;
+
+			.sapMFT{
+				word-wrap: break-word;
+				white-space: normal;
+				height: 2rem;
+				overflow: hidden;
+				max-width: 60ch;
+				text-overflow: ellipsis;
+				white-space: nowrap;
+			}
+		}
+	}
+}
+
 .sapMNwCSbh {
 	overflow: hidden;
 	text-overflow: ellipsis;
@@ -38,15 +72,18 @@
 	font-family: @sapUiFontFamily;
 	font-weight: normal;
 	max-width: 20.5rem;
+	width: 100%;
 	display: inline-block;
 	line-height: 1.1875rem;
 	color: @sapUiTileTextColor;
 	font-size: @sapMFontMediumSize;
 }
 
-.sapMNwCCTxt .sapMText {
+.sapMNwCCTxt .sapMText, .sapMNwCCTxt .sapMFT {
 	font-size: @sapMFontMediumSize;
 	color: @sapUiContentContrastTextColor;
+	overflow-wrap: break-word;
+	white-space: pre-line;
 }
 
 .sapMNwC:focus:not([tabindex]) {
@@ -55,7 +92,6 @@
 
 .sapMTileSmallPhone {
 	.sapMNwC {
-		width: 17.75rem;
 		height: 3.188rem;
 	}
 
@@ -67,6 +103,12 @@
 		}
 	}
 
+	&.sapMGTStretch{
+		.sapMNwCCTxt{
+			max-width: none;
+		}
+	}
+
 	.sapMNwCSbh {
 		max-width: 17.75rem;
 		line-height: 1.063rem;
@@ -74,5 +116,20 @@
 
 	.sapMNwCCTxt .sapMText, .sapMNwCSbh {
 		font-size: @sapMFontSmallSize;
+	}
+
+	.sapMTileSmallPhone.Stretch {
+		.sapMNwCSbh {
+			padding-top: 0.5rem;
+		}
+		.sapMNwCSbh > .sapMFT {
+			white-space: nowrap;
+			width: 11.063rem;
+			overflow: hidden;
+			max-width: 60ch;
+			text-overflow: ellipsis;
+			white-space: nowrap;
+			text-overflow: ellipsis;
+		}
 	}
 }

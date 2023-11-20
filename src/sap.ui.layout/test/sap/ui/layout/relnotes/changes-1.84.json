@@ -1,0 +1,51 @@
+{
+  "1.84.0": {
+    "date": "October 2020",
+    "notes": [
+      {
+        "id": "1bd8048d3bf9438ec280693b796203b0d2b0ec6a",
+        "type": "FIX",
+        "text": " sap.ui.layout.Splitter: Fixed error when using classList in IE",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070332747"
+          }
+        ]
+      },
+      {
+        "id": "ed028e4a866c0d8fdeebd9fc7ddb85d88bc8dfa1",
+        "type": "FIX",
+        "text": " sap.ui.layout.DynamicSideContent: now don't disappear when resized to S breakpoint",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070266395"
+          }
+        ]
+      },
+      {
+        "id": "fc795a4804fafd8f71147283109e2a0b6e64bf59",
+        "type": "FIX",
+        "text": " AlignedFlowLayout: Null pointer exception fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070317759"
+          }
+        ]
+      },
+      {
+        "id": "540c439709ed28ecac65f6b2c22df518c2d9c697",
+        "type": "FIX",
+        "text": " layout.form:FormLayout: always use canonical tag name for title",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070296551"
+          }
+        ]
+      }
+    ]
+  }
+}

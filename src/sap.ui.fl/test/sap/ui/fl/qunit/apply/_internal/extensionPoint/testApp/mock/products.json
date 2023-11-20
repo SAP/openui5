@@ -1,0 +1,12 @@
+{
+	"ProductCollection": [
+		{
+			"ProductId": "HT-1000",
+			"Name": "Notebook Basic 15"
+		},
+		{
+			"ProductId": "HT-1001",
+			"Name": "Notebook Basic 17"
+		}
+	]
+}

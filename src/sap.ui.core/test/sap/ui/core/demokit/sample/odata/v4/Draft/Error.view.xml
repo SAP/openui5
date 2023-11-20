@@ -1,0 +1,11 @@
+<mvc:View
+		class="sapUiSizeCompact"
+		xmlns="sap.m"
+		xmlns:mvc="sap.ui.core.mvc">
+	<Page showHeader="false">
+		<VBox>
+			<Label design="bold" text="Data could not be loaded"/>
+			<Text id="error" renderWhitespace="true" text="{ui>/sError}"/>
+		</VBox>
+	</Page>
+</mvc:View>

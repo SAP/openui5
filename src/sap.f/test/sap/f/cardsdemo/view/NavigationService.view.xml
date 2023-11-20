@@ -1,0 +1,125 @@
+<mvc:View
+	xmlns="sap.m"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:f="sap.f"
+	xmlns:w="sap.ui.integration.widgets"
+	controllerName="sap.f.cardsdemo.controller.NavigationService"
+	displayBlock="true">
+	<Page title="{i18n>appTitle}">
+		<subHeader>
+			<Toolbar>
+				<ToolbarSpacer />
+				<Title text="Navigation scenarios" />
+				<ToolbarSpacer />
+			</Toolbar>
+		</subHeader>
+
+		<Panel>
+			<VBox>
+				<VBox class="sapUiMediumMarginLeft">
+					<Text text="Cards using navigation service. - List and Table Content" />
+				</VBox>
+				<HBox wrap="Wrap">
+					<w:Card
+						id="listNavService"
+						action=".onActionLog"
+						manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/navigationService/manifest_navigationService.json"
+						width="400px"
+						class="sapUiSmallMargin" />
+					<w:Card
+						action=".onActionLog"
+						manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/navigationService/manifest_navigationService2.json"
+						width="400px"
+						class="sapUiSmallMargin" />
+					<w:Card
+						action=".onActionLog"
+						manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/navigationService/manifest_navigationService3.json"
+						width="400px"
+						class="sapUiSmallMargin" />
+					<w:Card
+						id="tableNavService"
+						action=".onActionLog"
+						manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/navigationService/manifest_navigationService4.json"
+						width="400px"
+						class="sapUiSmallMargin" />
+				</HBox>
+				<VBox class="sapUiMediumMarginLeft">
+					<Text text="Cards using navigation service with hidden items. - List, Table and TimeLine Content" />
+				</VBox>
+				<HBox wrap="Wrap">
+					<w:Card
+						width="400px"
+						action=".onActionLog"
+						manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/navigationService/hiddenItems/manifest_navigation_hidden_list.json"
+						class="sapUiSmallMargin" />
+					<w:Card
+						width="400px"
+						action=".onActionLog"
+						manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/navigationService/hiddenItems/manifest_navigation_hidden_table.json"
+						class="sapUiSmallMargin" />
+					<w:Card
+						width="400px"
+						action=".onActionLog"
+						manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/navigationService/hiddenItems/manifest_navigation_hidden_timeline.json"
+						class="sapUiSmallMargin" />
+				</HBox>
+				<VBox class="sapUiMediumMarginLeft">
+					<Text text="Cards using navigation service. - Analytical Content" />
+				</VBox>
+				<HBox wrap="Wrap">
+					<w:Card
+						class="sapUiSmallMargin"
+						manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/navigationService/manifest_navigationAction_url_analyticalContent.json"
+						height="500px"
+						width="500px" />
+					<w:Card
+						class="sapUiSmallMargin"
+						manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/navigationService/manifest_navigationAction_service_analyticalContent.json"
+						height="500px"
+						width="500px" />
+				</HBox>
+				<VBox class="sapUiMediumMarginLeft">
+					<Text text="Cards using navigation service. - Object Content" />
+				</VBox>
+				<HBox wrap="Wrap">
+					<w:Card
+						manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/navigationService/manifest_navigation_objectContent.json"
+						height="500px"
+						width="500px"
+						class="sapUiSmallMargin" />
+					<w:Card
+						class="sapUiMediumMargin"
+						manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/navigationService/manifest_navigation_object_service.json"
+						width="auto"
+						height="500px" />
+				</HBox>
+				<VBox class="sapUiMediumMarginLeft">
+					<Text text="Cards using navigation action event." />
+				</VBox>
+				<HBox wrap="Wrap">
+					<w:Card
+						action=".onAction"
+						width="400px"
+						manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/navigationService/manifest_navigationAction.json"
+						class="sapUiSmallMargin" />
+					<w:Card
+						action=".onAction"
+						width="400px"
+						manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/navigationService/manifest_navigationActionTable.json"
+						class="sapUiSmallMargin" />
+				</HBox>
+				<VBox class="sapUiMediumMarginLeft">
+					<Text text="Cards using navigation service. - Timeline Content" />
+				</VBox>
+				<HBox wrap="Wrap">
+					<w:Card
+						id="timeline"
+						class="sapUiSmallMargin"
+						manifest="{manifests>/timelineContent/card0}"
+						baseUrl="{cardsPlayground>/playgroundBaseUrl}"
+						width="300px" />
+				</HBox>
+			</VBox>
+		</Panel>
+	</Page>
+</mvc:View>

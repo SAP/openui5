@@ -1,0 +1,32 @@
+{
+	"sap.app": {
+		"id": "sap.m.sample.MultiComboBoxCustomFiltering",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "sap.m.sample.MultiComboBoxCustomFiltering.view.MultiComboBoxCustomFiltering",
+			"type": "XML",
+			"async": true
+		},
+		"dependencies": {
+			"libs": {
+				"sap.m": {},
+				"sap.ui.core": {},
+				"sap.ui.layout": {}
+			}
+		},
+		"config": {
+			"sample": {
+				"stretch": true,
+				"files": [
+					"view/MultiComboBoxCustomFiltering.view.xml",
+					"controller/MultiComboBoxCustomFiltering.controller.js",
+					"manifest.json"
+				]
+			}
+		}
+	}
+}

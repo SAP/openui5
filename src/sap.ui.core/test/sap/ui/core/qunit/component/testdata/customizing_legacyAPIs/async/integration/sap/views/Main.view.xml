@@ -1,0 +1,6 @@
+<mvc:View controllerName="testdata.customizing.async.integration.sap.controller.Main"
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core"
+	xmlns:mvc="sap.ui.core.mvc">
+		<mvc:View id="myTypedView" viewName="module:testdata/customizing/async/integration/sap/views/JSView1.view" />
+</mvc:View>

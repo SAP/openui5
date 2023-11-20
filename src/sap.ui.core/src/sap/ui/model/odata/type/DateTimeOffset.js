@@ -3,11 +3,13 @@
  */
 
 sap.ui.define([
-	"jquery.sap.global",
+	"sap/base/Log",
+	"sap/ui/core/CalendarType",
+	"sap/ui/core/date/UI5Date",
 	"sap/ui/core/format/DateFormat",
 	"sap/ui/model/FormatException",
 	"sap/ui/model/odata/type/DateTimeBase"
-], function (jQuery, DateFormat, FormatException, DateTimeBase) {
+], function (Log, CalendarType, UI5Date, DateFormat, FormatException, DateTimeBase) {
 	"use strict";
 
 	/**
@@ -19,7 +21,7 @@ sap.ui.define([
 	 *
 	 *   In {@link sap.ui.model.odata.v2.ODataModel} this type is represented as a
 	 *   <code>Date</code> instance in local time. In {@link sap.ui.model.odata.v4.ODataModel} this
-	 *   type is represented as a <code>string</code> like "2014-11-27T13:47:26Z". See parameter
+	 *   type is represented as a <code>string</code> like "1970-12-31T23:59:58Z". See parameter
 	 *   <code>oConstraints.V4</code> for more information.
 	 *
 	 * @extends sap.ui.model.odata.type.DateTimeBase
@@ -29,7 +31,7 @@ sap.ui.define([
 	 *
 	 * @alias sap.ui.model.odata.type.DateTimeOffset
 	 * @param {object} [oFormatOptions]
-	 *   Format options as defined in {@link sap.ui.core.format.DateFormat}
+	 *   Format options as defined in {@link sap.ui.core.format.DateFormat.getDateTimeInstance}
 	 * @param {object} [oConstraints]
 	 *   Constraints; {@link sap.ui.model.odata.type.DateTimeBase#validateValue validateValue}
 	 *   throws an error if any constraint is violated
@@ -40,7 +42,7 @@ sap.ui.define([
 	 *   (OData V4 only); only integer values between 0 and 12 are valid (since 1.37.0)
 	 * @param {boolean} [oConstraints.V4=false]
 	 *   Whether OData V4 semantics apply and the model representation is expected to be a
-	 *   <code>string</code> like "2014-11-27T13:47:26Z" (see {@link #parseValue} and
+	 *   <code>string</code> like "1970-12-31T23:59:58Z" (see {@link #parseValue} and
 	 *   {@link #validateValue}); this type automatically adapts itself whenever it is used within
 	 *   an OData V4 model via {@link sap.ui.model.odata.v4.ODataPropertyBinding#setType}.
 	 * @public
@@ -55,13 +57,14 @@ sap.ui.define([
 					precision : oConstraints ? oConstraints.precision : undefined
 				});
 				this.rDateTimeOffset = undefined; // @see #validateValue
+				this.oModelFormat = undefined;
 				this.bV4 = false; // @see #setV4
 				if (oConstraints) {
 					bV4 = oConstraints.V4;
 					if (bV4 === true) {
 						this.bV4 = true;
 					} else if (bV4 !== undefined && bV4 !== false) {
-						jQuery.sap.log.warning("Illegal V4: " + bV4, null, this.getName());
+						Log.warning("Illegal V4: " + bV4, null, this.getName());
 					}
 				}
 			}
@@ -83,10 +86,11 @@ sap.ui.define([
 		if (!oType.oModelFormat) {
 			iPrecision = oType.oConstraints && oType.oConstraints.precision;
 			if (iPrecision) {
-				sPattern += "." + jQuery.sap.padRight("", "S", iPrecision);
+				sPattern += "." + "".padEnd(iPrecision, "S");
 			}
 			oType.oModelFormat = DateFormat.getDateInstance({
-				pattern : sPattern + "X",
+				calendarType : CalendarType.Gregorian,
+				pattern : sPattern + "XXX",
 				strictParsing : true,
 				UTC : oType.oFormatOptions && oType.oFormatOptions.UTC
 			});
@@ -95,17 +99,27 @@ sap.ui.define([
 	}
 
 	/**
+	 * Resets the model formatter instance which is recreated on demand, for example via
+	 * {@link #getModelFormat}, and cached.
+	 *
+	 * @private
+	 */
+	DateTimeOffset.prototype._resetModelFormatter = function () {
+		this.oModelFormat = undefined;
+	};
+
+	/**
 	 * Formats the given value to the given target type.
 	 *
-	 * @param {Date|string} vValue
+	 * @param {Date|string} [vValue]
 	 *   The value to be formatted, which is represented in the model as a <code>Date</code>
-	 *   instance (OData V2) or as a string like "2014-11-27T13:47:26Z" (OData V4); both
+	 *   instance (OData V2) or as a string like "1970-12-31T23:59:58Z" (OData V4); both
 	 *   representations are accepted independent of the model's OData version
 	 * @param {string} sTargetType
-	 *   The target type, may be "any", "string", or a type with one of these types as its
-	 *   {@link sap.ui.base.DataType#getPrimitiveType primitive type}.
+	 *   The target type, may be "any", "object" (since 1.69.0), "string", or a type with one of
+	 *   these types as its {@link sap.ui.base.DataType#getPrimitiveType primitive type}.
 	 *   See {@link sap.ui.model.odata.type} for more information.
-	 * @returns {Date|string}
+	 * @returns {Date|module:sap/ui/core/date/UI5Date|string}
 	 *   The formatted output value in the target type; <code>undefined</code> or <code>null</code>
 	 *   are formatted to <code>null</code>
 	 * @throws {sap.ui.model.FormatException}
@@ -117,6 +131,16 @@ sap.ui.define([
 	DateTimeOffset.prototype.formatValue = function (vValue, sTargetType) {
 		var oDateValue;
 
+		if (vValue === undefined || vValue === null) {
+			return null;
+		}
+		if (this.getPrimitiveType(sTargetType) === "object") {
+			if (vValue instanceof Date) {
+				return UI5Date.getInstance(vValue.getUTCFullYear(), vValue.getUTCMonth(), vValue.getUTCDate(),
+					vValue.getUTCHours(), vValue.getUTCMinutes(), vValue.getUTCSeconds());
+			}
+			return getModelFormat(this).parse(vValue);
+		}
 		if (typeof vValue === "string" && this.getPrimitiveType(sTargetType) === "string") {
 			oDateValue = getModelFormat(this).parse(vValue);
 			if (!oDateValue) {
@@ -125,6 +149,38 @@ sap.ui.define([
 			vValue = oDateValue;
 		}
 		return DateTimeBase.prototype.formatValue.call(this, vValue, sTargetType);
+	};
+
+	// @override
+	// @see sap.ui.model.SimpleType#getConstraints
+	DateTimeOffset.prototype.getConstraints = function () {
+		var oConstraints = DateTimeBase.prototype.getConstraints.call(this);
+
+		if (this.bV4) {
+			oConstraints.V4 = true;
+		}
+
+		return oConstraints;
+	};
+
+	/**
+	 * Returns the ISO string for the given model value.
+	 *
+	 * @param {string|Date|module:sap/ui/core/date/UI5Date|null} vModelValue
+	 *   The model value, as returned by {@link #getModelValue}
+	 * @returns {string|null}
+	 *   A timestamp according to ISO 8601, or <code>null</code> if the given model value is falsy
+	 *
+	 * @since 1.114.0
+	 * @private
+	 * @ui5-restricted sap.fe, sap.suite.ui.generic.template, sap.ui.comp, sap.ui.generic
+	 */
+	DateTimeOffset.prototype.getISOStringFromModelValue = function (vModelValue) {
+		if (!vModelValue) {
+			return null;
+		}
+
+		return this.bV4 ? vModelValue : vModelValue.toISOString();
 	};
 
 	/**
@@ -142,11 +198,66 @@ sap.ui.define([
 	 * @override
 	 * @protected
 	 */
-	DateTimeOffset.prototype.getModelFormat = function() {
+	DateTimeOffset.prototype.getModelFormat = function () {
 		if (this.bV4) {
 			return getModelFormat(this);
 		}
 		return DateTimeBase.prototype.getModelFormat.call(this);
+	};
+
+	/**
+	 * Gets the model value according to this type's constraints and format options for the given
+	 * date object which represents a timestamp in the configured time zone. Validates the resulting
+	 * value against the constraints of this type instance.
+	 *
+	 * @param {Date|module:sap/ui/core/date/UI5Date|null} oDate
+	 *   The date object considering the configured time zone. Must be created via
+	 *   {@link module:sap/ui/core/date/UI5Date.getInstance}
+	 * @returns {Date|module:sap/ui/core/date/UI5Date|string|null}
+	 *   The model representation for the given Date
+	 * @throws {Error}
+	 *   If the given date object is not valid or does not consider the configured time zone
+	 * @throws {sap.ui.model.ValidateException}
+	 *   If the constraints of this type instance are violated
+	 *
+	 * @public
+	 * @since 1.111.0
+	 */
+	DateTimeOffset.prototype.getModelValue = function (oDate) {
+		var oResult = this._getModelValue(oDate);
+
+		if (this.bV4 && oResult !== null) {
+			oResult = this.getModelFormat().format(oResult);
+		}
+		this.validateValue(oResult);
+
+		return oResult;
+	};
+
+	/**
+	 * Returns the model value for the given ISO string.
+	 *
+	 * In case the <code>V4</code> constraint is set to <code>true</code>, the milliseconds part of the string is
+	 * either truncated or padded with <code>0</code>, so that its length fits the types precision constraint.
+	 *
+	 * @param {string|null} sISOString
+	 *   A string according to ISO 8601, as returned by {@link #getISOStringFromModelValue}
+	 * @returns {string|Date|module:sap/ui/core/date/UI5Date|null}
+	 *   The model representation for the given ISO string for this type,
+	 *   or <code>null</code> if the given ISO string is falsy
+	 *
+	 * @since 1.114.0
+	 * @private
+	 * @ui5-restricted sap.fe, sap.suite.ui.generic.template, sap.ui.comp, sap.ui.generic
+	 */
+	DateTimeOffset.prototype.getModelValueFromISOString = function (sISOString) {
+		if (!sISOString) {
+			return null;
+		}
+
+		return this.bV4
+			? this.getModelFormat().format(UI5Date.getInstance(sISOString), true)
+			: UI5Date.getInstance(sISOString);
 	};
 
 	/**
@@ -162,16 +273,18 @@ sap.ui.define([
 
 	/**
 	 * Parses the given value to a <code>Date</code> instance (OData V2) or a string like
-	 * "2014-11-27T13:47:26Z" (OData V4), depending on the model's OData version.
+	 * "1970-12-31T23:59:58Z" (OData V4), depending on the model's OData version.
 	 *
-	 * @param {string} sValue
+	 * @param {Date|string} vValue
 	 *   The value to be parsed; the empty string and <code>null</code> are parsed to
-	 *   <code>null</code>
+	 *   <code>null</code>; <code>Date</code> objects are expected to represent local time and are
+	 *   supported if and only if source type is "object".
 	 * @param {string} sSourceType
-	 *   The source type (the expected type of <code>sValue</code>), must be "string", or a type
-	 *   with "string" as its {@link sap.ui.base.DataType#getPrimitiveType primitive type}.
+	 *   The source type (the expected type of <code>vValue</code>), must be "string",
+	 *   "object" (since 1.69.0), or a type with one of these types as its
+	 *   {@link sap.ui.base.DataType#getPrimitiveType primitive type}.
 	 *   See {@link sap.ui.model.odata.type} for more information.
-	 * @returns {Date|string}
+	 * @returns {Date|module:sap/ui/core/date/UI5Date|string}
 	 *   The parsed value
 	 * @throws {sap.ui.model.ParseException}
 	 *   If <code>sSourceType</code> is not supported or if the given string cannot be parsed to a
@@ -180,8 +293,8 @@ sap.ui.define([
 	 * @public
 	 * @since 1.27.0
 	 */
-	DateTimeOffset.prototype.parseValue = function (sValue, sSourceType) {
-		var oResult = DateTimeBase.prototype.parseValue.call(this, sValue, sSourceType);
+	DateTimeOffset.prototype.parseValue = function (vValue, sSourceType) {
+		var oResult = DateTimeBase.prototype.parseValue.call(this, vValue, sSourceType);
 
 		return this.bV4 && oResult !== null
 			? getModelFormat(this).format(oResult)
@@ -191,7 +304,7 @@ sap.ui.define([
 	/**
 	 * Sets OData V4 semantics for this type instance.
 	 *
-	 * @returns {sap.ui.model.odata.type.DateTimeOffset}
+	 * @returns {this}
 	 *   <code>this</code> to allow method chaining
 	 *
 	 * @private
@@ -207,7 +320,6 @@ sap.ui.define([
 	 *
 	 * @param {any} vValue
 	 *   The value to be validated
-	 * @returns {void}
 	 * @throws {sap.ui.model.ValidateException}
 	 *   If the value is not valid
 	 *

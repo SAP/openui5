@@ -1,0 +1,99 @@
+{
+  "1.86.0": {
+    "date": "January 2021",
+    "notes": [
+      {
+        "id": "647bf0478adc453d9c962c9f9dd5872414358a15",
+        "type": "FIX",
+        "text": " sap.ui.integration.widgets.Card: Hidden items do not cause recursion anymore",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080464599"
+          }
+        ]
+      },
+      {
+        "id": "0ffce80db1b52e39c247a36f2e6e507ae0a27032",
+        "type": "FEATURE",
+        "text": " Integration cards: Provide API that shows/hides the loading placeholders"
+      },
+      {
+        "id": "c1ec257b3d0f1e3705810ba7ed8aea6f0a93e2a1",
+        "type": "FIX",
+        "text": " sap.f.DynamicPage: Improved sample",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070413091"
+          }
+        ]
+      },
+      {
+        "id": "054725505315b9a1259789ca8544b1892d971ad1",
+        "type": "FIX",
+        "text": " sap.f.CalendarInCard: Tab navigation is now correct"
+      },
+      {
+        "id": "7f6568d03429d6ffb6fe52c719c2f636554f6be3",
+        "type": "FIX",
+        "text": " sap.f.GridList: Headers are now correct when grouping is added",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080458832"
+          }
+        ]
+      },
+      {
+        "id": "c36fb4ca32b85c6995e2c029bb8f64923a373071",
+        "type": "FIX",
+        "text": " sap.f.Card: Toolbar margins are now correct",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070502595"
+          }
+        ]
+      },
+      {
+        "id": "24248b127561b7645abedb6e8ba132129505d306",
+        "type": "FIX",
+        "text": " sap.f.GridContainer: Items no longer grow on browser zoom",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070463240"
+          }
+        ]
+      },
+      {
+        "id": "79024bfb6d936f8e49c84f916b6533a77e82db30",
+        "type": "FIX",
+        "text": " sap.f.AvatarGroup: Fixed border-radius of group more button",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080426370"
+          }
+        ]
+      },
+      {
+        "id": "79f4174df51e7a597acde23f75a1f470d1300700",
+        "type": "FIX",
+        "text": " sap.f.DynamicPage: HeaderExpanded redundant space fixed"
+      },
+      {
+        "id": "ed033d28de1a2878fd788066e8b8961a5e310ebd",
+        "type": "FIX",
+        "text": " sap.f.DynamicPage: Prevent snap when empty header",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400002536912020"
+          }
+        ]
+      }
+    ]
+  }
+}

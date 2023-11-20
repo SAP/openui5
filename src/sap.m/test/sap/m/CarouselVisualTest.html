@@ -1,7 +1,6 @@
 <!DOCTYPE HTML>
 <html>
 <head>
-	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 
 	<title>sap.m.Carousel Test</title>
 	<script src="shared-config.js"></script>
@@ -52,6 +51,29 @@
 			],
 			change : function (oEvent) {
 				carousel.setArrowsPlacement(oEvent.getParameter('selectedItem').getKey());
+			}
+		});
+
+		var backgroundDesignLabel = new sap.m.Label({
+			text : "Carousel background design"
+		});
+		var backgroundDesignSelect = new sap.m.Select('backgroundDesignSelect', {
+			items : [
+				new sap.ui.core.Item("backgroundDesignTranslucent", {
+					text : sap.m.BackgroundDesign.Translucent,
+					key : sap.m.BackgroundDesign.Translucent
+				}),
+				new sap.ui.core.Item("backgroundDesignSolid", {
+					text : sap.m.BackgroundDesign.Solid,
+					key : sap.m.BackgroundDesign.Solid
+				}),
+				new sap.ui.core.Item("backgroundDesignTransparent", {
+					text : sap.m.BackgroundDesign.Transparent,
+					key : sap.m.BackgroundDesign.Transparent
+				})
+			],
+			change : function (oEvent) {
+				carousel.setBackgroundDesign(oEvent.getParameter('selectedItem').getKey());
 			}
 		});
 
@@ -114,6 +136,8 @@
 				}),
 				arrowsPlacementLabel,
 				arrowsPlacementSelect,
+				backgroundDesignLabel,
+				backgroundDesignSelect,
 				pageIndicatorPlacementLabel,
 				pageIndicatorPlacementSelect,
 				showPageIndicatorLabel,
@@ -181,7 +205,7 @@
 	</script>
 
 </head>
-<body id="body" class="sapUiBody" role="application">
+<body id="body" class="sapUiBody">
 
 <div id="carouselConatiner" style="height:800px; width:100%"></div>
 <div id="buttonsConatiner" style="height:10%"></div>

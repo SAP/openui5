@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<title>Use Integration Cards In Apps</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<script src="../../scripts/boot.js"></script>
+</head>
+
+<body class="sapUiBody topicBody">
+	<div class="topic">
+		<div class="content">
+
+			<h1 id="overview">Use Integration Cards In Apps</h1>
+
+			<p>There are two ways to consume a card:</p>
+			<ul>
+				<li>Pass a URL from where to load the manifest.</li>
+				<li>Pass a manifest object and a base URL. The base URL is needed to resolve relative URLs of card
+					static resources like translations and icons.</li>
+			</ul>
+
+			<h1 id="FirstConsumptionUI5">Consumption in UI5</h1>
+
+			<h2 id="manifestUrl">Using manifest URL</h2>
+			<p>
+				<b>Consumption in an XML View</b>
+			</p>
+			<pre class="lang-xml">
+&lt;mvc:View xmlns:w="sap.ui.integration.widgets"&gt;
+	&lt;w:Card manifest="./mycardbundle/manifest.json" width="400px" height="auto"/&gt;
+&lt;/mvc:View&gt;
+</pre>
+			<p>
+				<b>Consumption in JS</b>
+			</p>
+			<pre class="lang-js">
+var oCard = new sap.ui.integration.widgets.Card();
+oCard.setManifest("./mycardbundle/manifest.json");
+someContainer.addContent(oCard);
+</pre>
+
+			<h2 id="baseUrl">Using manifest object and base URL</h2>
+			<p>
+				<b>Consumption in an XML View</b>
+			</p>
+			<p>
+				For the example below the manifest object is saved inside a model with name "myModel", which is then used with
+				the standard UI5 binding syntax.
+				<br>
+				<b>Note:</b> Unnamed models can not be used for this scenario. Same applies for model names which are internally created by the card as "parameters", "filters", "i18n", etc.
+			</p>
+			<pre class="lang-xml">
+&lt;mvc:View xmlns:w="sap.ui.integration.widgets"&gt;
+	&lt;w:Card manifest="{myModel>/manifestObject}" baseUrl="./mycardbundle/" width="400px" height="auto"/&gt;
+&lt;/mvc:View&gt;
+</pre>
+			<p>
+				<b>Consumption in JS</b>
+			</p>
+			<pre class="lang-js">
+var oManifest = {
+	"sap.app": {
+		"i18n": "i18n/i18n.properties",
+		"type": "card",
+		"id": "my.card"
+	},
+	"sap.card": {
+		"type": "List",
+		"header": {
+			...
+		},
+		"content": {
+			...
+		}
+	}
+};
+var oCard = new sap.ui.integration.widgets.Card();
+oCard.setManifest(oManifest);
+oCard.setBaseUrl("./mycardbundle/");
+someContainer.addContent(oCard);
+</pre>
+
+			<h1 id="FirstConsumptionHTML">Consumption in HTML</h1>
+			<p>
+				Cards can also be consumed in HTML. To do that you should load the integration card bundle which
+				includes a minimalistic UI5 Core and all
+				other components which are needed to render a card. There are two resource bundles depending if your
+				application has jQuery or not:
+			</p>
+			<ul>
+				<li>With jQuery https://{YourUI5Location}/resources/<b>sap-ui-integration.js</b></li>
+				<li>Without jQuery https://{YourUI5Location}/resources/<b>sap-ui-integration-nojQuery.js</b></li>
+			</ul>
+
+			<p>After the bundle is loaded "ui-integration-card" custom element is created.</p>
+
+			<h2 id="loadingIntegrationBundle">Loading the integration bundle</h2>
+			<ul>
+				<li>Set the URL to the integration bundle</li>
+				<li>Set the ID to be "sap-ui-bootstrap"</li>
+				<li>Set the compatibility version to "edge"</li>
+				<li>Set a theme. The recommended one is "sap_horizon"</li>
+			</ul>
+			<pre class="lang-xml">
+&lt;script src="https://ui5.sap.com/resources/sap-ui-integration.js"
+	id="sap-ui-bootstrap"
+	data-sap-ui-compatVersion="edge"
+	data-sap-ui-theme="sap_horizon"&gt;
+&lt;/script&gt;
+</pre>
+
+			<h2 id="usingManifestUrl">Using manifest URL</h2>
+			<pre class="lang-xml">
+&lt;body&gt;
+	&lt;ui-integration-card manifest="./some/location/my/card/manifest.json"&gt;&lt;/ui-integration-card&gt;
+&lt;/body&gt;
+</pre>
+
+			<h2 id="objectBaseUrl">Using manifest object and base URL</h2>
+			<pre class="lang-xml">
+&lt;body&gt;
+	&lt;ui-integration-card
+		base-url='./some/location/my/card/'
+		manifest='{
+			"sap.app": {
+				"type": "card",
+				"id": "tableCardAsAttribute"
+			},
+			"sap.card": {
+				"type": "Table",
+				"header": {
+					...
+				},
+				"content": {
+					...
+				}
+			}
+		}'&gt;
+	&lt;/ui-integration-card&gt;
+&lt;/body&gt;
+</pre>
+
+		</div>
+	</div>
+</body>
+
+</html>

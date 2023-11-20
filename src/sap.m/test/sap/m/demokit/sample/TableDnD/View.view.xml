@@ -11,7 +11,7 @@
 		class="sapUiContentPadding">
 		<content>
 			<HBox renderType="Bare">
-				<mvc:XMLView id="availableProducts" viewName="sap.m.sample.TableDnD.AvailableProducts" />
+				<mvc:XMLView id="availableProducts" viewName="sap.m.sample.TableDnD.AvailableProducts" async="true"/>
 				<VBox justifyContent="Center" class="sapUiTinyMarginBeginEnd">
 					<Button
 						class="sapUiTinyMarginBottom"
@@ -23,7 +23,7 @@
 						tooltip="Move to available"
 						press="moveToAvailableProductsTable"/>
 				</VBox>
-				<mvc:XMLView id="selectedProducts" viewName="sap.m.sample.TableDnD.SelectedProducts" />
+				<mvc:XMLView id="selectedProducts" viewName="sap.m.sample.TableDnD.SelectedProducts" async="true"/>
 			</HBox>
 		</content>
 	</Page>

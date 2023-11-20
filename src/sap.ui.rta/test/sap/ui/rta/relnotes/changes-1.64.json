@@ -1,0 +1,59 @@
+{
+  "1.64.0": {
+    "date": "February 2019",
+    "notes": [
+      {
+        "id": "14004c9d8082d560ea4e17fa84e469c5f751e003",
+        "type": "FIX",
+        "text": "Correct namespace for manageApps",
+        "references": []
+      },
+      {
+        "id": "8c220c4cf04d019e022b1bf2b0b0fbe06062e948",
+        "type": "FIX",
+        "text": "sap.ui.rta - get rid of unnecessary paste in contextmenu",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970094099"
+          }
+        ]
+      },
+      {
+        "id": "cefb518c6f133f2dd75e489c5e951643babcb457",
+        "type": "FIX",
+        "text": "Stopping deletion of app variants functionality in S4 Cloud",
+        "references": []
+      },
+      {
+        "id": "d8b7c592c92c22f3bd61c28d638f3ff80cd99d86",
+        "type": "FIX",
+        "text": "sap.ui.rta - Check for movable without AggregationOverlays available",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970154891"
+          }
+        ]
+      },
+      {
+        "id": "8ace94b6a65792706859e2c9eebaa3ba7fb46788",
+        "type": "FIX",
+        "text": "Fixing the trimming of application variant ID",
+        "references": []
+      },
+      {
+        "id": "ee1cf3f411aa7ed1b2c6284af893e04ef248570f",
+        "type": "FIX",
+        "text": ": RTA Renaming Cursor",
+        "references": []
+      },
+      {
+        "id": "148312a03542ab816f2ec24e246e999ea59a06a0",
+        "type": "FIX",
+        "text": ": RTA Theme UX Consistency",
+        "references": []
+      }
+    ]
+  }
+}

@@ -1,0 +1,11 @@
+{
+	"@odata.metadataEtag" : "W/\"20190924145600\"",
+	"@odata.count" : "50",
+	"value" : [
+		{
+			"@odata.etag" : "W/\"20190321111935.0000000 \"",
+			"BusinessPartnerID" : "0100000020",
+			"CompanyName" : "Russian Electronic Trading Company"
+		}
+	]
+}

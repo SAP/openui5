@@ -3,7 +3,7 @@
  */
 
 // Provides access to Java-like properties files
-sap.ui.define(['jquery.sap.global', 'sap/ui/Properties'],
+sap.ui.define(['jquery.sap.global', 'sap/base/util/Properties'],
 	function(jQuery, Properties) {
 	"use strict";
 
@@ -49,11 +49,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Properties'],
 	 * @throws {Error} When the file has syntax issues (e.g. incomplete unicode escapes);
 	 *    in async mode, the error is not thrown but the returned Promise will be rejected
 	 * @SecSink {0|PATH} Parameter is used for future HTTP requests
+	 * @deprecated since 1.58 use {@link module:sap/base/util/Properties.create} instead
 	 * @public
 	 */
-	jQuery.sap.properties = Properties;
+	jQuery.sap.properties = Properties.create;
 
-	// Javadoc for private inner class "Properties" - this list of comments is intentional!
+	/**
+	 * @namespace jQuery.sap.util
+	 * @public
+	 * @deprecated as of version 1.120
+	 */
+
 	/**
 	 * @interface Represents a collection of string properties (key/value pairs).
 	 *
@@ -69,6 +75,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Properties'],
 	 * @since 0.9.0
 	 * @name jQuery.sap.util.Properties
 	 * @public
+	 * @deprecated since 1.58 use {@link module:sap/base/util/Properties} instead
 	 */
 
 	/**
@@ -80,7 +87,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Properties'],
 	 * @param {string} sKey Key to return the value for
 	 * @param {string} [sDefaultValue=null] Optional, a default value that will be returned
 	 *    if the requested key is not in the collection
-	 * @returns {string} Value for the given key or the default value or <code>null</code>
+	 * @returns {string|null} Value for the given key or the default value or <code>null</code>
 	 *    if no default value or a falsy default value was given
 	 * @public
 	 *

@@ -1,0 +1,31 @@
+{
+	"sap.app": {
+		"id": "sap.m.sample.RangeSlider",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "sap.m.sample.RangeSlider.view.RangeSlider",
+			"type": "XML",
+			"async": true
+		},
+		"dependencies": {
+			"libs": {
+				"sap.m": {},
+				"sap.ui.core": {},
+				"sap.ui.layout": {}
+			}
+		},
+		"config": {
+			"sample": {
+				"files": [
+					"view/RangeSlider.view.xml",
+					"controller/RangeSlider.controller.js",
+					"manifest.json"
+				]
+			}
+		}
+	}
+}

@@ -1,0 +1,73 @@
+{
+  "1.66.0": {
+    "date": "April 2019",
+    "notes": [
+      {
+        "id": "d0a66ce88f28d062ef1b1bebf1570c4111440286",
+        "type": "FIX",
+        "text": "sap.uxap.ObjectPageSubSection: Fixed misalignment of sections",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980140957"
+          }
+        ]
+      },
+      {
+        "id": "ac412af86ca3fe60597c68ecff47517da27e6ba0",
+        "type": "FIX",
+        "text": "sap.uxap.ObjectPageLayout: Removed redundant invalidation",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980066983"
+          }
+        ]
+      },
+      {
+        "id": "46a64e542c5b907fb09a441176eaaabc714b87ce",
+        "type": "FIX",
+        "text": "sap.uxap.ObjectPageSectionBase: No more redundant invalidation",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980066983"
+          }
+        ]
+      },
+      {
+        "id": "22a0f5b40acc0b13b6751b98d438217e9e4a3612",
+        "type": "FIX",
+        "text": "sap.uxap.ObjectPageSubSection: Fixed misalignment of sections",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980140957"
+          }
+        ]
+      },
+      {
+        "id": "0342414441bee03e1fc843ea941258d9577ab162",
+        "type": "FIX",
+        "text": "sap.uxap.ObjectPageLayout: Fixed error on section destroy",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980214073"
+          }
+        ]
+      },
+      {
+        "id": "c5a66000a7feb59703affd87e95b16be74fc0e65",
+        "type": "FIX",
+        "text": "sap.uxap.ObjectPageSubSection: Corrected sizing in Fiori3",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980202708"
+          }
+        ]
+      }
+    ]
+  }
+}

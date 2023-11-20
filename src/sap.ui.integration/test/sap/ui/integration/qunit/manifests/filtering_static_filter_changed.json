@@ -1,0 +1,84 @@
+{
+	"sap.app": {
+		"id": "card.explorer.dataSources.topProducts",
+		"type": "card"
+	},
+	"sap.card": {
+		"configuration": {
+			"parameters": {
+				"numberOfProducts": {
+					"value": 2,
+					"type": "integer"
+				}
+			},
+			"filters": {
+				"category2": {
+					"value": "flat_screens",
+					"type": "string",
+					"label": "Category",
+					"description": "Filter the products by category.",
+					"items":  [
+						{
+							"title": "Flat Screen Monitors",
+							"key": "flat_screens"
+						},
+						{
+							"title": "Notebooks",
+							"key": "notebooks"
+						}
+					]
+				},
+				"city": {
+					"value": "vienna",
+					"type": "string",
+					"label": "City",
+					"description": "Filter the products by city.",
+					"items":  [
+						{
+							"title": "Vienna",
+							"key": "vienna"
+						},
+						{
+							"title": "Rome",
+							"key": "rome"
+						}
+					]
+				}
+			}
+		},
+		"data": {
+			"json": {
+				"items": []
+			}
+		},
+		"type": "List",
+		"header": {
+			"title": "Products by category",
+			"subTitle": "Category {filters>/category/value}",
+			"icon": {
+				"src": "sap-icon://product"
+			},
+			"status": {
+				"text": {
+					"format": {
+						"translationKey": "i18n>CARD.COUNT_X_OF_Y",
+						"parts": [
+							"parameters>/visibleItems",
+							"/count"
+						]
+					}
+				}
+			}
+		},
+		"content": {
+			"data": {
+				"path": "/items"
+			},
+			"item": {
+				"title": "{Name}",
+				"description": "{ProductCategory}"
+			},
+			"maxItems": "{{parameters.numberOfProducts}}"
+		}
+	}
+}

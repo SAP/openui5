@@ -23,7 +23,7 @@
             {
                 "id": "sap.ui.codeeditor.sample.CodeEditor",
                 "name": "Code Editor",
-                "description": "Display or edit  source code with syntax highlighting for various source types."
+                "description": "Display or edit source code with syntax highlighting for various source types."
             },
             {
                 "id": "sap.ui.codeeditor.sample.CodeEditorIconTabHeader",

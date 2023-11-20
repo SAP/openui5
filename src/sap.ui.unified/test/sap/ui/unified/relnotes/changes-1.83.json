@@ -1,0 +1,61 @@
+{
+  "1.83.0": {
+    "date": "September 2020",
+    "notes": [
+      {
+        "id": "3756bbc6d233e79d4029530b78260fae2403a994",
+        "type": "FEATURE",
+        "text": " Calendar Card: Experimental tag removed"
+      },
+      {
+        "id": "09cebc0160aad8bd0ef2f5a56450e09680fb9104",
+        "type": "FIX",
+        "text": " sap.ui.unified.FileUploader: setters now work properly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880070218"
+          }
+        ]
+      },
+      {
+        "id": "c35c9f0e07b9974305dfcad7880dcc9c4bdf4476",
+        "type": "FIX",
+        "text": " FileUploader: Logs an error when the file has been changed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070313680"
+          }
+        ]
+      },
+      {
+        "id": "99ecc1625078acda9e7563d6bb4e77d5fe0fc3a7",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: fix of failed QUnit tests"
+      },
+      {
+        "id": "8175a2ab1dbf68a2f92e952d0b84f6b0979309ee",
+        "type": "FIX",
+        "text": " sap.ui.unified.CalendarDate: setMonth date parameter now works with 0",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070273401"
+          }
+        ]
+      },
+      {
+        "id": "4260bb4beb8b03807b114183c3d73433560fd460",
+        "type": "FIX",
+        "text": " FileUploader: Log a warning when name is not set",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070263435"
+          }
+        ]
+      }
+    ]
+  }
+}

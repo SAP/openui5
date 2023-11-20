@@ -1,0 +1,49 @@
+/* Needed for Windows Phone !? */
+@-ms-viewport {
+	width: device-width;
+}
+
+h3 {
+	padding-bottom: 0.333rem;
+	border-bottom: 1px solid grey;
+}
+
+.label {
+	font-weight: bold;
+	padding-left: 1rem;
+	margin-right: 5px;
+	width: 200px;
+	display: inline-block;
+}
+
+#media {
+	border: 1px solid black;
+	display: block;
+	white-space: nowrap;
+	margin-left: -8px;
+	margin-right: -8px;
+	box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	overflow: hidden;
+}
+
+#media>div {
+	display: inline-block;
+	text-align: right;
+	border-right: 1px solid black;
+	padding: 5px;
+	box-sizing: border-box;
+	-moz-box-sizing: border-box;
+}
+
+.sapUiMedia-Std-Phone .StandardMedia {
+	color: red;
+}
+
+.sapUiMedia-Std-Tablet .StandardMedia {
+	color: green;
+}
+
+.sapUiMedia-Std-Desktop .StandardMedia {
+	color: blue;
+}

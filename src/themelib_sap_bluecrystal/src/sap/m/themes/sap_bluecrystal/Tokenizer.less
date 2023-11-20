@@ -3,11 +3,24 @@
 /* BlueCrystal theme                */
 /* ================================ */
 
-html[data-sap-ui-browser^="ie"].sap-desktop,
-html[data-sap-ui-browser^="ed"].sap-desktop {
-	.sapMTokenizer:focus {
-		&:before {
-			border: 1px dotted @sapUiContentFocusColor;
-		}
-	}
+/* ------------------------------ */
+/* Disabled                       */
+/* ------------------------------ */
+
+.sapMTokenizer.sapMTokenizerDisabled .sapMToken  {
+  &.sapMToken:hover,
+  &.sapMToken:focus,
+  &.sapMTokenSelected,
+  &.sapMToken.sapMTokenSelected:hover,
+  &.sapMToken .sapMTokenIcon {
+    background: @sapUiButtonBackground;
+    cursor: default;
+    color: @sapUiButtonTextColor;
+    outline: none;
+    border-color: darken(@sapUiButtonBackground, 10);
+  }
+
+  &.sapMTokenText {
+    color: @sapUiButtonTextColor;
+  }
 }

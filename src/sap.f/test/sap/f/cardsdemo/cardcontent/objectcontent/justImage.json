@@ -1,0 +1,39 @@
+{
+	"sap.app": {
+		"id": "cardsdemo.object.justImage",
+		"type": "card"
+	},
+	"sap.card": {
+		"type": "Object",
+		"header": {
+			"icon": {
+				"src": "sap-icon://business-objects-experience"
+			},
+			"title": "Object Card",
+			"subTitle": "With Image Only and Action on the Content",
+			"visible": false
+		},
+		"content": {
+			"groups": [
+				{
+					"alignment": "Stretch",
+					"items": [
+						{
+							"type": "Image",
+							"src": "../../images/grass.jpg",
+							"fullWidth" : true
+						}
+					]
+				}
+			],
+			"actions": [
+				{
+					"type": "Navigation",
+					"parameters": {
+						"url": "https://www.sap.com"
+					}
+				}
+			]
+		}
+	}
+}

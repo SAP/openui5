@@ -1,0 +1,142 @@
+<mvc:View
+	controllerName="sap.m.sample.ButtonWithBadge.Page"
+	height="100%"
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:layout="sap.ui.layout">
+	<Page title="Button with Badge">
+		<content>
+			<layout:VerticalLayout class="sapUiContentPadding" width="100%">
+				<Toolbar>
+					<content>
+						<Title text="Button"/>
+					</content>
+				</Toolbar>
+				<Button
+					id="BadgedButton"
+					class="sapUiTinyMarginBeginEnd"
+					icon="{= ${/buttonWithIcon} ? ${/buttonIcon} : '' }"
+					type="{/buttonType}"
+					text="{= ${/buttonWithText} ? ${/buttonText} : '' }">
+					<customData>
+						<BadgeCustomData
+							key="badge"
+							value=""
+							visible=""/>
+					</customData>
+				</Button>
+				<Toolbar class="sapUiSmallMarginTop">
+					<content>
+						<Title text="Badge min, max and current values"/>
+					</content>
+				</Toolbar>
+				<FlexBox
+					class="sapUiTinyMarginBeginEnd"
+					alignItems="Center"
+					justifyContent="Start">
+					<Text
+						renderWhitespace="true"
+						width="150px"
+						text="Current badge value is "/>
+					<StepInput
+						id="CurrentValue"
+						value="{/badgeCurrent}"
+						width="130px"
+						change="currentChangeHandler"/>
+				</FlexBox>
+				<FlexBox
+					class="sapUiTinyMarginBeginEnd"
+					alignItems="Center"
+					justifyContent="Start">
+					<Text
+						renderWhitespace="true"
+						width="150px"
+						text="Limit badge value from "/>
+					<Input
+						id="MinInput"
+						value="{/badgeMin}"
+						width="55px"
+						type="Number"
+						change="minChangeHandler"/>
+					<Text
+						renderWhitespace="true"
+						text=" to "/>
+					<Input
+						id="MaxInput"
+						value="{/badgeMax}"
+						width="55px"
+						type="Number"
+						change="maxChangeHandler"/>
+				</FlexBox>
+				<Text
+					class="sapUiTinyMarginBeginEnd"
+					renderWhitespace="true"
+					text="(fill something in 'from' and/or 'to' fields to test)"/>
+				<Toolbar class="sapUiSmallMarginTop">
+					<content>
+						<Title text="Button properties"/>
+					</content>
+				</Toolbar>
+				<FlexBox
+					class="sapUiTinyMarginBeginEnd"
+					alignItems="Center"
+					justifyContent="Start">
+					<Text
+						renderWhitespace="true"
+						width="39px"
+						text="Type  "/>
+					<Select
+						id="ButtonType"
+						selectedKey="{/buttonType}">
+						<core:Item
+								key="Default"
+								text="Default"/>
+						<core:Item
+								key="Ghost"
+								text="Ghost"/>
+						<core:Item
+								key="Transparent"
+								text="Transparent"/>
+						<core:Item
+								key="Emphasized"
+								text="Emphasized"/>
+					</Select>
+				</FlexBox>
+				<FlexBox
+					class="sapUiTinyMarginBeginEnd"
+					alignItems="Center"
+					justifyContent="Start">
+					<Text
+						renderWhitespace="true"
+						text="With "/>
+					<CheckBox
+						id="IconCheckBox"
+						text="Icon"
+						selected="{/buttonWithIcon}"/>
+					<CheckBox
+						id="TextCheckBox"
+						text="Text"
+						selected="{/buttonWithText}"/>
+				</FlexBox>
+				<Toolbar class="sapUiSmallMarginTop">
+					<content>
+						<Title text="Notes"/>
+					</content>
+				</Toolbar>
+				<Text
+					class="sapUiTinyMargin"
+					wrapping="true"
+					text="1. The value displayed in the Badge is controlled by the Button - if the value is below 1, the badge is hidden; if value is above the 9999, it is displayed as 999+"/>
+				<Text
+					class="sapUiTinyMargin"
+					wrapping="true"
+					text="2. If an application developer wants to control more precisely the value and appearance of the Badge, that can be done as it is presented in this sample, but the constraints mentioned in (1) cannot be exceeded!"/>
+				<Text
+					class="sapUiTinyMargin"
+					wrapping="true"
+					text="3. Badge can be used with all Button types, but it is recommended to use it only with the following Button types: Default, Ghost, Transparent and Emphasized."/>
+			</layout:VerticalLayout>
+		</content>
+	</Page>
+</mvc:View>

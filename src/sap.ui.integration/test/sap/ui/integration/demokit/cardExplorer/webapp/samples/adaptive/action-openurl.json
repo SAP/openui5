@@ -1,0 +1,55 @@
+{
+	"_version": "1.17.0",
+	"sap.app": {
+		"id": "adaptivecard.embedded",
+		"type": "card",
+		"title": "Sample of an Adaptive Card with Customized Actions",
+		"subTitle": "Sample of an Adaptive Card with Customized Actions",
+		"applicationVersion": {
+				"version": "1.0.0"
+		},
+		"shortTitle": "A short title for this Card",
+		"info": "Additional information about this Card",
+		"description": "A long description for this Card",
+		"tags": {
+			"keywords": [
+				"Adaptive",
+				"Card",
+				"Form",
+				"Sample",
+				"OpenURL",
+				"Actions"
+			]
+		}
+	},
+	"sap.card": {
+		"type": "AdaptiveCard",
+		"header": {
+			"title": "Short Summary",
+			"subTitle": "With a link to more details",
+			"icon": {
+				"src": "sap-icon://business-card"
+			}
+		},
+		"content": {
+			"$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+			"type": "AdaptiveCard",
+			"version": "1.0",
+			"body": [
+				{
+					"type": "TextBlock",
+					"text": "Lorem ipsum dolor st amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.",
+					"isSubtle": true,
+					"wrap": true
+				}
+			],
+			"actions": [
+				{
+					"type": "Action.OpenUrl",
+					"title": "Go to details page",
+					"url": "example.html"
+				}
+			]
+		}
+	}
+}

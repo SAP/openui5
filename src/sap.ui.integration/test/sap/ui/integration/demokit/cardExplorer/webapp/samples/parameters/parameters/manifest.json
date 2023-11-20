@@ -1,0 +1,126 @@
+{
+	"_version": "1.15.0",
+	"sap.app": {
+		"id": "card.explorer.parameters.table.card",
+		"type": "card",
+		"title": "Sample of a Card with Parameters",
+		"subTitle": "Sample of a Card with Parameters",
+		"applicationVersion": {
+			"version": "1.0.0"
+		},
+		"shortTitle": "A short title for this Card",
+		"info": "Additional information about this Card",
+		"description": "A long description for this Card",
+		"tags": {
+			"keywords": [
+				"Parameter",
+				"Card",
+				"Sample"
+			]
+		}
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"icons": {
+			"icon": "sap-icon://switch-classes"
+		}
+	},
+	"sap.card": {
+		"type": "Table",
+		"configuration": {
+			"parameters": {
+				"country": {
+					"value": "Germany",
+					"type": "string",
+					"label": "Ship Country",
+					"description": "The country in which the order will be shipped."
+				},
+				"northwindServiceUrl": {
+					"value": "https://services.odata.org/V4/Northwind/Northwind.svc",
+					"type": "string",
+					"label": "Northwind Service URL",
+					"description": "The URL of the web service."
+				},
+				"freightLimit": {
+					"value": 40.45,
+					"type": "number",
+					"label": "Freight Limit",
+					"description": "Defines the freight limit of the order."
+				},
+				"clickable": {
+					"value": true,
+					"type": "boolean",
+					"label": "Are the table rows clickable",
+					"description": "View order details."
+				},
+				"maxNumberOfOrders": {
+					"value": 7,
+					"type": "integer",
+					"label": "Maximum number of orders",
+					"description": "Defines how many orders will be displayed at most."
+				},
+				"fromDate": {
+					"value": "1995-09-01T00:00:00Z",
+					"type": "datetime",
+					"label": "From",
+					"description": "Start date for the searched period."
+				},
+				"to": {
+					"value": "{{parameters.TODAY_ISO}}",
+					"type": "date",
+					"label": "To",
+					"description": "End date for the searched period."
+				}
+			}
+		},
+		"header": {
+			"title": "Orders update until {parameters>/to/value}",
+			"subTitle": "Situated in {parameters>/country/value} with freight limit {parameters>/freightLimit/value}",
+			"icon": {
+				"src": "sap-icon://choropleth-chart"
+			}
+		},
+		"content": {
+			"data": {
+				"request": {
+					"url": "{parameters>/northwindServiceUrl/value}/Orders",
+					"parameters": {
+						"$format": "json",
+						"$filter": "OrderDate gt {parameters>/fromDate/value} and OrderDate lt {parameters>/to/value} and ShipCountry eq '{parameters>/country/value}'",
+						"$orderby": "CustomerID"
+					}
+				},
+				"path": "/value/"
+			},
+			"maxItems": "{parameters>/maxNumberOfOrders/value}",
+
+			"row": {
+				"columns": [{
+						"title": "City",
+						"value": "{ShipCity}",
+						"identifier": true
+					},
+					{
+						"title": "Company",
+						"value": "{CustomerID}"
+					},
+					{
+						"title": "Freight",
+						"value": "{Freight}",
+						"hAlign": "End",
+						"state": "{= ${Freight} < ${parameters>/freightLimit/value} ? 'Success' : 'Error'}"
+					}
+				],
+				"actions": [
+					{
+						"type": "Navigation",
+						"enabled": "{parameters>/clickable/value}",
+						"parameters": {
+							"url": "https://sap.com"
+						}
+					}
+				]
+			}
+		}
+	}
+}

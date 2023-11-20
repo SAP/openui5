@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
-sap.ui.define(["sap/m/semantic/SemanticPage", "sap/m/semantic/SemanticPageRenderer", "sap/m/library"], function(SemanticPage, SemanticPageRenderer, library) {
+sap.ui.define(["sap/m/semantic/SemanticPage", "sap/m/semantic/SemanticPageRenderer", "sap/m/library", "sap/ui/core/Lib"], function(SemanticPage, SemanticPageRenderer, library, Library) {
 	"use strict";
 
 
@@ -49,7 +49,6 @@ sap.ui.define(["sap/m/semantic/SemanticPage", "sap/m/semantic/SemanticPageRender
 	 * @public
 	 * @since 1.30.0
 	 * @alias sap.m.semantic.MasterPage
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var MasterPage = SemanticPage.extend("sap.m.semantic.MasterPage", /** @lends sap.m.semantic.MasterPage.prototype */ {
 		metadata: {
@@ -155,13 +154,13 @@ sap.ui.define(["sap/m/semantic/SemanticPage", "sap/m/semantic/SemanticPageRender
 				}
 			}
 		},
-		renderer: SemanticPageRenderer.render
+		renderer: SemanticPageRenderer
 	});
 
 	MasterPage.prototype.init = function () {
 
 		SemanticPage.prototype.init.call(this);
-		this._getPage().getLandmarkInfo().setRootLabel(sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("SEMANTIC_MASTER_PAGE_TITLE"));
+		this._getPage().getLandmarkInfo().setRootLabel(Library.getResourceBundleFor("sap.m").getText("SEMANTIC_MASTER_PAGE_TITLE"));
 	};
 
 	MasterPage.prototype.getSemanticRuleSet = function() {

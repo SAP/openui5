@@ -1,0 +1,70 @@
+{
+	"sap.app": {
+		"id": "card.explorer.filters.search",
+		"type": "card",
+		"title": "Sample of a Card with Search Filter"
+	},
+	"sap.card": {
+		"configuration": {
+			"filters": {
+				"searchQuery": {
+					"type": "Search",
+					"label": "City",
+					"placeholder": "Enter a city"
+				}
+			},
+			"parameters": {
+				"numberOfProducts": {
+					"value": 4,
+					"type": "integer",
+					"label": "Number of products",
+					"description": "How many products to show in the list."
+				}
+			},
+			"destinations": {
+				"Northwind_V4": {
+					"name": "Northwind_V4",
+					"label": "Northwind V4 Service URL",
+					"defaultUrl": "https://services.odata.org/V4/Northwind/Northwind.svc"
+				}
+			}
+		},
+		"data": {
+			"request": {
+				"url": "{{destinations.Northwind_V4}}/Customer_and_Suppliers_by_Cities",
+				"parameters": {
+					"$filter": "contains(City, '{filters>/searchQuery/value}')",
+					"$count": true
+				}
+			}
+		},
+		"type": "List",
+		"header": {
+			"title": "Customers and Suppliers",
+			"icon": {
+				"src": "sap-icon://customer-and-supplier"
+			},
+			"status": {
+				"text": {
+					"format": {
+						"translationKey": "i18n>CARD.COUNT_X_OF_Y",
+						"parts": [
+							"parameters>/visibleItems",
+							"/@odata.count"
+						]
+					}
+				}
+			}
+		},
+		"content": {
+			"data": {
+				"path": "/value"
+			},
+			"item": {
+				"title": "{CompanyName}",
+				"description": "{Relationship}, {City}"
+			},
+			"maxItems": "{parameters>/numberOfProducts/value}"
+		}
+	}
+}

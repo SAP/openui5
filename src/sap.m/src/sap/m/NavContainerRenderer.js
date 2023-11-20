@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define([],
-	function() {
+sap.ui.define(["sap/ui/core/InvisibleRenderer"],
+	function(InvisibleRenderer) {
 	"use strict";
 
 
@@ -12,6 +12,7 @@ sap.ui.define([],
 	 * @namespace
 	 */
 	var NavContainerRenderer = {
+		apiVersion: 2
 	};
 
 
@@ -19,53 +20,57 @@ sap.ui.define([],
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
 	 *
 	 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the Render-Output-Buffer
-	 * @param {sap.ui.core.Control} oControl The control that should be rendered
+	 * @param {sap.m.NavContainer} oControl The control that should be rendered
 	 */
 	NavContainerRenderer.render = function(oRm, oControl) {
 
 		oControl._bRenderingInProgress = true;
 
-		// return immediately if control is invisible
+		// render invisible placeholder
 		if (!oControl.getVisible()) {
-			return;
+			InvisibleRenderer.render(oRm, oControl, "div");
+			return false;
 		}
 
-		oRm.write("<div");
-		oRm.writeControlData(oControl);
+		var sHeight = oControl.getHeight(),
+			sTooltip = oControl.getTooltip_AsString(),
+			oContent = oControl.getCurrentPage();
 
-		oRm.addClass("sapMNav");
-		if (oControl.getWidth()) {
-			oRm.addStyle("width", oControl.getWidth());
-		}
-		var sHeight = oControl.getHeight();
+
+		oRm.openStart("div", oControl);
+
+		oRm.class("sapMNav");
+
+		oRm.style("width", oControl.getWidth());
+
 		if (sHeight && sHeight != "100%") {
-			oRm.addStyle("height", sHeight);
+			oRm.style("height", sHeight);
 		}
 
 		if (this.renderAttributes) {
 			this.renderAttributes(oRm, oControl); // may be used by inheriting renderers, but DO NOT write class or style attributes! Instead, call addClass/addStyle.
 		}
 
-		oRm.writeClasses();
-		oRm.writeStyles();
-
-		var sTooltip = oControl.getTooltip_AsString();
 		if (sTooltip) {
-			oRm.writeAttributeEscaped("title", sTooltip);
+			oRm.attr("title", sTooltip);
 		}
-		oRm.write(">"); // div element
+
+		oRm.openEnd(); // div element
 
 		if (this.renderBeforeContent) {
 			this.renderBeforeContent(oRm, oControl); // may be used by inheriting renderers
 		}
 
-		var oContent = oControl.getCurrentPage();
-		if (oContent) {
-			oContent.removeStyleClass("sapMNavItemHidden"); // In case the current page was hidden (the previous current page got removed)
-			oRm.renderControl(oContent);
-		}
+		oControl.getPages().forEach(function(oPage) {
+			if (oPage === oContent) {
+				oContent.removeStyleClass("sapMNavItemHidden"); // In case the current page was hidden (the previous current page got removed)
+				oRm.renderControl(oContent);
+			} else {
+				oRm.cleanupControlWithoutRendering(oPage);
+			}
+		});
 
-		oRm.write("</div>");
+		oRm.close("div");
 
 		oControl._bRenderingInProgress = false;
 	};

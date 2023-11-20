@@ -1,0 +1,5 @@
+<mvc:XMLView xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m">
+	<Page>
+		<Button text="Other Page Button"></Button>
+	</Page>
+</mvc:XMLView>

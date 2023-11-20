@@ -20,7 +20,7 @@
 						}
 					}"
 					busyIndicatorDelay="{worklistView>/tableBusyDelay}"
-					updateFinished="onUpdateFinished">
+					updateFinished=".onUpdateFinished">
 				<headerToolbar>
 					<Toolbar>
 						<Label id="tableHeader" text="{worklistView>/worklistTableTitle}"/>
@@ -39,7 +39,10 @@
 					<Column width="80px" id="flaggedColumn" demandPopin="true" vAlign="Middle"/>
 				</columns>
 				<items>
-					<ColumnListItem vAlign="Middle">
+					<ColumnListItem
+							vAlign="Middle"
+							type="Navigation"
+							press=".onPress">
 						<cells>
 							<ObjectIdentifier
 									title="{Title}"/>
@@ -70,7 +73,7 @@
 			</Table>
 		</semantic:content>
 		<semantic:sendEmailAction>
-			<semantic:SendEmailAction id="shareEmail" press="onShareEmailPress"/>
+			<semantic:SendEmailAction id="shareEmail" press=".onShareEmailPress"/>
 		</semantic:sendEmailAction>
 	</semantic:FullscreenPage>
 </mvc:View>

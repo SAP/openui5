@@ -1,0 +1,129 @@
+<mvc:View
+	controllerName="sap.m.sample.messageHandlingConcept.Controller"
+	xmlns:f="sap.ui.layout.form"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:core="sap.ui.core"
+	xmlns="sap.m"
+	height="100%">
+		<App>
+			<Page id="messageHandlingPage" showHeader="false">
+				<content>
+					<VBox class="sapUiSmallMargin" id="formContainer" items="{
+							path: '/forms'
+						}">
+						<f:SimpleForm id="SimpleFormChangeColumn_twoGroups234"
+									editable="true"
+									layout="ColumnLayout"
+									title="Personal"
+									columnsM="2"
+									columnsL="2"
+									columnsXL="2">
+							<f:content>
+								<core:Title text="Information" />
+								<Label text="Name" />
+								<Input required="true" change="onChange" value="{
+									path : 'name',
+									type : 'sap.ui.model.type.String'
+								}"/>
+								<Label text="Street/No." />
+								<Input value="{street/name}">
+								</Input>
+								<Input value="{street/number}">
+									<layoutData>
+										<f:ColumnElementData cellsSmall="2" cellsLarge="2" />
+									</layoutData>
+								</Input>
+								<Label text="ZIP Code/City" />
+								<Input value="{
+									path : 'zip/code',
+									type : 'sap.ui.model.type.Integer'}">
+									<layoutData>
+										<f:ColumnElementData cellsSmall="3" cellsLarge="2" />
+									</layoutData>
+								</Input>
+								<Input value="{zip/city}" />
+								<Label text="Country" />
+								<Select id="country" selectedKey="{country}">
+									<items>
+										<core:Item text="England" key="England"/>
+										<core:Item text="Germany" key="Germany"/>
+										<core:Item text="USA" key="USA"/>
+									</items>
+								</Select>
+								<core:Title text="Contact" />
+								<Label text="Email" />
+								<Input value="{
+									path : 'email',
+									type : 'sap.ui.model.type.String',
+									constraints: {
+										search: '^\\w+[\\w-+\\.]*\\@[a-zA-Z]+.[a-zA-Z]+'
+										}
+									}"/>
+								<Label text="Phone Number" />
+								<Input value="{phone/number}">
+								</Input>
+								<Input value="{phone/time}">
+									<layoutData>
+										<f:ColumnElementData cellsSmall="2" cellsLarge="2" />
+									</layoutData>
+								</Input>
+								<Label text="Personal website" />
+								<Input value="{website}"/>
+							</f:content>
+						</f:SimpleForm>
+					</VBox>
+					<VBox class="sapUiSmallMargin" id="formContainerEmployment" items="{
+							path: '/employment'
+						}">
+						<f:SimpleForm editable="true"
+									layout="ColumnLayout"
+									title="Personal"
+									columnsM="2"
+									columnsL="2"
+									columnsXL="2">
+							<f:content>
+								<core:Title text="Information" />
+								<Label text="Job Classification" />
+								<Input value="{jobTitle}"/>
+								<Label text="Pay Grade" />
+								<Input value="{payGrade}">
+								</Input>
+								<Label text="Unit" />
+								<Input value="{unit}">
+								</Input>
+								<core:Title text="Rating" />
+								<Label text="Employee Class" />
+								<Input value="{class}"/>
+								<Label text="FTE" />
+								<Input value="{fte}">
+								</Input>
+								<Label text="Standard Weekly Hours" />
+								<Input change="onChange" value="{
+									path: 'weeklyHours',
+									type: 'sap.ui.model.type.Integer',
+									constraints: {
+										maximum: 40
+									}
+								}">
+								</Input>
+							</f:content>
+						</f:SimpleForm>
+					</VBox>
+				</content>
+				<footer>
+					<OverflowToolbar>
+						<Button id="messagePopoverBtn"
+							visible="{=!!${message>/}.length}"
+							icon="{ path: '/', formatter: '.buttonIconFormatter' }"
+							type="{ path: '/', formatter: '.buttonTypeFormatter' }"
+							text= "{path: '/', formatter: '.highestSeverityMessages' }"
+							press=".handleMessagePopoverPress"
+							ariaHasPopup="Dialog"/>
+						<ToolbarSpacer/>
+						<Button type="Emphasized" text="Save" press="_generateInvalidUserInput" />
+						<Button text="Cancel" />
+					</OverflowToolbar>
+				</footer>
+			</Page>
+		</App>
+</mvc:View>

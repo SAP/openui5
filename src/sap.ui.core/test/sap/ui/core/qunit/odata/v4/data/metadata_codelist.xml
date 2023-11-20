@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="4.0" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx"
+		xmlns="http://docs.oasis-open.org/odata/ns/edm">
+	<edmx:Reference
+			Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_COMMON',Version='0001',SAP__Origin='LOCAL')/$value">
+		<edmx:Include Namespace="com.sap.vocabularies.Common.v1" Alias="SAP__common"/>
+	</edmx:Reference>
+	<edmx:Reference
+			Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_MEASURES',Version='0001',SAP__Origin='LOCAL')/$value">
+		<edmx:Include Namespace="Org.OData.Measures.V1" Alias="SAP__measures"/>
+	</edmx:Reference>
+	<edmx:Reference
+			Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_CORE',Version='0001',SAP__Origin='LOCAL')/$value">
+		<edmx:Include Namespace="Org.OData.Core.V1" Alias="SAP__core"/>
+	</edmx:Reference>
+	<edmx:Reference
+			Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_CAPABILITIES',Version='0001',SAP__Origin='LOCAL')/$value">
+		<edmx:Include Namespace="com.sap.vocabularies.Capabilities.v1" Alias="SAP__capabilities"/>
+	</edmx:Reference>
+	<edmx:Reference
+			Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_AGGREGATION',Version='0001',SAP__Origin='LOCAL')/$value">
+		<edmx:Include Namespace="Org.OData.Aggregation.V1" Alias="SAP__aggregation"/>
+	</edmx:Reference>
+	<edmx:Reference
+			Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_VALIDATION',Version='0001',SAP__Origin='LOCAL')/$value">
+		<edmx:Include Namespace="Org.OData.Validation.V1" Alias="SAP__validation"/>
+	</edmx:Reference>
+	<edmx:Reference
+			Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_CODELIST',Version='0001',SAP__Origin='LOCAL')/$value">
+		<edmx:Include Namespace="com.sap.vocabularies.CodeList.v1" Alias="SAP__CodeList"/>
+	</edmx:Reference>
+	<edmx:DataServices>
+		<Schema Namespace="com.sap.gateway.default.iwbep.common.v0001" Alias="SAP__self">
+			<EntityType Name="Currency">
+				<Key>
+					<PropertyRef Name="CurrencyCode"/>
+				</Key>
+				<Property Name="CurrencyCode" Type="Edm.String" Nullable="false" MaxLength="5"/>
+				<Property Name="ISOCode" Type="Edm.String" Nullable="false" MaxLength="3"/>
+				<Property Name="Text" Type="Edm.String" Nullable="false" MaxLength="15"/>
+				<Property Name="DecimalPlaces" Type="Edm.Byte" Nullable="false"/>
+			</EntityType>
+			<EntityType Name="T100Longtext">
+				<Key>
+					<PropertyRef Name="MessageClass"/>
+					<PropertyRef Name="MessageNumber"/>
+					<PropertyRef Name="Variable1"/>
+					<PropertyRef Name="Variable2"/>
+					<PropertyRef Name="Variable3"/>
+					<PropertyRef Name="Variable4"/>
+				</Key>
+				<Property Name="MessageClass" Type="Edm.String" Nullable="false" MaxLength="20"/>
+				<Property Name="MessageNumber" Type="Edm.String" Nullable="false" MaxLength="3"/>
+				<Property Name="Variable1" Type="Edm.String" Nullable="false" MaxLength="50"/>
+				<Property Name="Variable2" Type="Edm.String" Nullable="false" MaxLength="50"/>
+				<Property Name="Variable3" Type="Edm.String" Nullable="false" MaxLength="50"/>
+				<Property Name="Variable4" Type="Edm.String" Nullable="false" MaxLength="50"/>
+			</EntityType>
+			<EntityType Name="UnitOfMeasure">
+				<Key>
+					<PropertyRef Name="UnitCode"/>
+				</Key>
+				<Property Name="UnitCode" Type="Edm.String" Nullable="false" MaxLength="3"/>
+				<Property Name="ISOCode" Type="Edm.String" Nullable="false" MaxLength="3"/>
+				<Property Name="ExternalCode" Type="Edm.String" Nullable="false" MaxLength="3"/>
+				<Property Name="Text" Type="Edm.String" Nullable="false" MaxLength="30"/>
+				<Property Name="DecimalPlaces" Type="Edm.Int16"/>
+			</EntityType>
+			<EntityContainer Name="Container">
+				<EntitySet Name="Currencies"
+						EntityType="com.sap.gateway.default.iwbep.common.v0001.Currency"/>
+				<EntitySet Name="T100Longtexts"
+						EntityType="com.sap.gateway.default.iwbep.common.v0001.T100Longtext"/>
+				<EntitySet Name="UnitsOfMeasure"
+						EntityType="com.sap.gateway.default.iwbep.common.v0001.UnitOfMeasure"/>
+			</EntityContainer>
+			<Annotations Target="SAP__self.UnitOfMeasure/UnitCode">
+				<Annotation Term="SAP__common.Text" Path="Text"/>
+				<Annotation Term="SAP__common.UnitSpecificScale" Path="DecimalPlaces"/>
+				<Annotation Term="SAP__CodeList.StandardCode" Path="ISOCode"/>
+				<Annotation Term="SAP__CodeList.ExternalCode" Path="ExternalCode"/>
+			</Annotations>
+			<Annotations Target="SAP__self.UnitOfMeasure">
+				<Annotation Term="SAP__core.AlternateKeys">
+					<Collection>
+						<Record>
+							<PropertyValue Property="Key">
+								<Collection>
+									<Record>
+										<PropertyValue Property="Name" PropertyPath="ExternalCode"/>
+										<PropertyValue Property="Alias" String="ExternalCode"/>
+									</Record>
+								</Collection>
+							</PropertyValue>
+						</Record>
+					</Collection>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="SAP__self.Currency/CurrencyCode">
+				<Annotation Term="SAP__common.Text" Path="Text"/>
+				<Annotation Term="SAP__common.UnitSpecificScale" Path="DecimalPlaces"/>
+				<Annotation Term="SAP__CodeList.StandardCode" Path="ISOCode"/>
+			</Annotations>
+			<Annotations Target="SAP__self.Container/Currencies">
+				<Annotation Term="SAP__capabilities.UpdateRestrictions">
+					<Record>
+						<PropertyValue Property="QueryOptions">
+							<Record>
+								<PropertyValue Property="SelectSupported" Bool="true"/>
+							</Record>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="SAP__self.Container/T100Longtexts">
+				<Annotation Term="SAP__capabilities.UpdateRestrictions">
+					<Record>
+						<PropertyValue Property="QueryOptions">
+							<Record>
+								<PropertyValue Property="SelectSupported" Bool="true"/>
+							</Record>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="SAP__self.Container/UnitsOfMeasure">
+				<Annotation Term="SAP__capabilities.UpdateRestrictions">
+					<Record>
+						<PropertyValue Property="QueryOptions">
+							<Record>
+								<PropertyValue Property="SelectSupported" Bool="true"/>
+							</Record>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+			</Annotations>
+		</Schema>
+	</edmx:DataServices>
+</edmx:Edmx>

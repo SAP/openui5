@@ -1,78 +1,147 @@
 sap.ui.define([
-		'jquery.sap.global',
-		'sap/m/MessageToast',
-		'sap/ui/core/Fragment',
-		'sap/ui/core/mvc/Controller',
-		'sap/ui/model/Filter',
-		'sap/ui/model/json/JSONModel'
-	], function(jQuery, MessageToast, Fragment, Controller, Filter, JSONModel) {
+	"sap/ui/core/mvc/Controller",
+	"sap/ui/core/Fragment",
+	"sap/ui/core/syncStyleClass",
+	"sap/ui/model/json/JSONModel",
+	"sap/ui/model/Filter",
+	"sap/ui/model/FilterOperator",
+	"sap/m/MessageToast"
+], function (Controller, Fragment, syncStyleClass, JSONModel, Filter, FilterOperator, MessageToast) {
 	"use strict";
 
-	var CController = Controller.extend("sap.m.sample.SelectDialog.C", {
+	return Controller.extend("sap.m.sample.SelectDialog.C", {
 
-		onInit : function () {
-			// set explored app's demo model on this sample
-			var oModel = new JSONModel(sap.ui.require.toUrl("sap/ui/demo/mock") + "/products.json");
+		onInit: function () {
+			var oModel = new JSONModel(sap.ui.require.toUrl("sap/ui/demo/mock/products.json"));
 			this.getView().setModel(oModel);
 		},
 
-		onExit : function () {
-			if (this._oDialog) {
-				this._oDialog.destroy();
+		onSelectDialogPress: function (oEvent) {
+			var oButton = oEvent.getSource(),
+				oView = this.getView();
+
+			if (!this._pDialog) {
+				this._pDialog = Fragment.load({
+					id: oView.getId(),
+					name: "sap.m.sample.SelectDialog.Dialog",
+					controller: this
+				}).then(function (oDialog){
+					oDialog.setModel(oView.getModel());
+					return oDialog;
+				});
 			}
+
+			this._pDialog.then(function(oDialog){
+				this._configDialog(oButton, oDialog);
+				oDialog.open();
+			}.bind(this));
+
 		},
 
-		handleSelectDialogPress: function (oEvent) {
-			if (!this._oDialog) {
-				this._oDialog = sap.ui.xmlfragment("sap.m.sample.SelectDialog.Dialog", this);
-				this._oDialog.setModel(this.getView().getModel());
-			}
-
+		_configDialog: function (oButton, oDialog) {
 			// Multi-select if required
-			var bMultiSelect = !!oEvent.getSource().data("multi");
-			this._oDialog.setMultiSelect(bMultiSelect);
+			var bMultiSelect = !!oButton.data("multi");
+			oDialog.setMultiSelect(bMultiSelect);
+
+			var sCustomConfirmButtonText = oButton.data("confirmButtonText");
+			oDialog.setConfirmButtonText(sCustomConfirmButtonText);
 
 			// Remember selections if required
-			var bRemember = !!oEvent.getSource().data("remember");
-			this._oDialog.setRememberSelections(bRemember);
+			var bRemember = !!oButton.data("remember");
+			oDialog.setRememberSelections(bRemember);
+
+			//add Clear button if needed
+			var bShowClearButton = !!oButton.data("showClearButton");
+			oDialog.setShowClearButton(bShowClearButton);
 
 			// Set growing property
-			var bGrowing = oEvent.getSource().data("growing");
-			this._oDialog.setGrowing(bGrowing == "true");
+			var bGrowing = oButton.data("growing");
+			oDialog.setGrowing(bGrowing == "true");
 
 			// Set growing threshold
-			var sGrowingThreshold = oEvent.getSource().data("threshold");
+			var sGrowingThreshold = oButton.data("threshold");
 			if (sGrowingThreshold) {
-				this._oDialog.setGrowingThreshold(parseInt(sGrowingThreshold, 10));
+				oDialog.setGrowingThreshold(parseInt(sGrowingThreshold));
 			}
 
+			// Set draggable property
+			var bDraggable = !!oButton.data("draggable");
+			oDialog.setDraggable(bDraggable);
+
+			// Set draggable property
+			var bResizable = !!oButton.data("resizable");
+			oDialog.setResizable(bResizable);
+
+			// Set style classes
+			var sResponsiveStyleClasses = "sapUiResponsivePadding--header sapUiResponsivePadding--subHeader sapUiResponsivePadding--content sapUiResponsivePadding--footer";
+			var bResponsivePadding = !!oButton.data("responsivePadding");
+			oDialog.toggleStyleClass(sResponsiveStyleClasses, bResponsivePadding);
+
 			// clear the old search filter
-			this._oDialog.getBinding("items").filter([]);
+			oDialog.getBinding("items").filter([]);
 
 			// toggle compact style
-			jQuery.sap.syncStyleClass("sapUiSizeCompact", this.getView(), this._oDialog);
-			this._oDialog.open();
+			syncStyleClass("sapUiSizeCompact", this.getView(), oDialog);
 		},
 
-		handleSearch: function(oEvent) {
+		onSearch: function (oEvent) {
 			var sValue = oEvent.getParameter("value");
-			var oFilter = new Filter("Name", sap.ui.model.FilterOperator.Contains, sValue);
-			var oBinding = oEvent.getSource().getBinding("items");
+			var oFilter = new Filter("Name", FilterOperator.Contains, sValue);
+			var oBinding = oEvent.getParameter("itemsBinding");
 			oBinding.filter([oFilter]);
 		},
 
-		handleClose: function(oEvent) {
+		onDialogClose: function (oEvent) {
 			var aContexts = oEvent.getParameter("selectedContexts");
 			if (aContexts && aContexts.length) {
-				MessageToast.show("You have chosen " + aContexts.map(function(oContext) { return oContext.getObject().Name; }).join(", "));
+				MessageToast.show("You have chosen " + aContexts.map(function (oContext) { return oContext.getObject().Name; }).join(", "));
 			} else {
 				MessageToast.show("No new item was selected.");
 			}
 			oEvent.getSource().getBinding("items").filter([]);
+		},
+
+		onValueHelpRequest: function () {
+			var oView = this.getView();
+
+			if (!this._pValueHelpDialog) {
+				this._pValueHelpDialog = Fragment.load({
+					id: oView.getId(),
+					name: "sap.m.sample.SelectDialog.ValueHelpDialog",
+					controller: this
+				}).then(function (oValueHelpDialog){
+					oView.addDependent(oValueHelpDialog);
+					return oValueHelpDialog;
+				});
+			}
+			this._pValueHelpDialog.then(function(oValueHelpDialog){
+				this._configValueHelpDialog();
+				oValueHelpDialog.open();
+			}.bind(this));
+		},
+
+		_configValueHelpDialog: function () {
+			var sInputValue = this.byId("productInput").getValue(),
+				oModel = this.getView().getModel(),
+				aProducts = oModel.getProperty("/ProductCollection");
+
+			aProducts.forEach(function (oProduct) {
+				oProduct.selected = (oProduct.Name === sInputValue);
+			});
+			oModel.setProperty("/ProductCollection", aProducts);
+		},
+
+		onValueHelpDialogClose: function (oEvent) {
+			var oSelectedItem = oEvent.getParameter("selectedItem"),
+				oInput = this.byId("productInput");
+
+			if (!oSelectedItem) {
+				oInput.resetProperty("value");
+				return;
+			}
+
+			oInput.setValue(oSelectedItem.getTitle());
 		}
+
 	});
-
-
-	return CController;
-
 });

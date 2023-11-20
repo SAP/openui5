@@ -1,0 +1,101 @@
+/* ===================================== */
+/* CSS for control sap.f/AvatarGroup	 */
+/* Horizon theme            	 		 */
+/* ===================================== */
+
+.applyBorderColorAccent(@counter) when (@counter > 0) {
+	.sapFAvatar.sapFAvatarColorAccent@{counter} {
+		border: 0.0625rem solid~"@{sapUiAccent@{counter}}";
+	}
+
+	.applyBorderColorAccent(@counter - 1);
+}
+
+.sapFAvatarGroup {
+	padding: 0.125rem;
+
+	.sapFAvatar {
+		border: none;
+	}
+
+	&:focus {
+		box-shadow: 0px 0px 0px 0.125rem @sapUiContentFocusColor;
+		outline: none;
+		border-radius: 0.35rem;
+	}
+
+	&.sapFAvatarGroupIndividual {
+		.sapFAvatarGroupItem {
+
+			&:hover:not(:active):not(:focus) {
+				.applyBorderColorAccent(10)
+			}
+
+			&:active {
+				.sapFAvatar {
+					background-color: @sapUiButtonActiveBackground;
+
+					.sapFAvatarInitialsHolder,
+					&.sapFAvatarIcon {
+						color: @sapUiButtonActiveTextColor;
+					}
+				}
+			}
+
+			&:focus {
+				outline: none;
+
+				.sapFAvatar {
+					outline: none;
+					box-shadow: 0px 0px 0px 0.125rem @sapUiContentFocusColor;
+				}
+			}
+
+		}
+	}
+
+	&.sapFAvatarGroupGroup {
+		&:hover:not(:active) {
+			.sapFAvatarGroupItem {
+				.applyBorderColorAccent(10);
+			}
+		}
+
+		&:active {
+			.sapFAvatarGroupItem {
+				.sapFAvatar {
+					border: 0.0625rem solid @sapUiButtonActiveBorderColor;
+					background-color: @sapUiButtonActiveBackground;
+
+					.sapFAvatarInitialsHolder,
+					&.sapFAvatarIcon {
+						color: @sapUiButtonActiveTextColor;
+					}
+				}
+			}
+
+			.sapFAvatarGroupMoreButton {
+				.sapMBtnInner {
+					background-color: @sapUiButtonActiveBackground;
+					border: 0.0625rem solid @sapUiButtonActiveBorderColor;
+
+					.sapMBtnContent {
+						color: @sapUiButtonActiveTextColor;
+					}
+				}
+			}
+		}
+	}
+}
+
+.sapFAvatarGroupPopover .sapFCard {
+	border-radius: 0;
+}
+
+html.sap-desktop .sapFAvatarGroupMoreButton.sapMBtn:focus>.sapMFocusable:not(.sapMBadgeIndicator):before {
+	border-radius: 50%;
+	left: 0;
+	right: 0;
+	top: 0;
+	bottom: 0;
+}

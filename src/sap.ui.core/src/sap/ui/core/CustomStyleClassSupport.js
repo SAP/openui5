@@ -3,9 +3,13 @@
  */
 
 // Provides helper sap.ui.core.CustomStyleClassSupport
-sap.ui.define(['jquery.sap.global', './Element'],
-	function(jQuery, Element) {
+sap.ui.define(['./Element', "sap/ui/core/Theming", "sap/base/assert", "sap/base/Log"],
+	function(Element, Theming, assert, Log) {
 	"use strict";
+
+
+	var rAnyWhiteSpace = /\s/;
+	var rNonWhiteSpace = /\S+/g;
 
 	/**
 	 * Applies the support for custom style classes on the prototype of a <code>sap.ui.core.Element</code>.
@@ -34,8 +38,11 @@ sap.ui.define(['jquery.sap.global', './Element'],
 	 * }, true);
 	 * </pre>
 	 *
-	 * Furthermore, the function <code>oRenderManager.writeClasses(oElement);</code> ({@link sap.ui.core.RenderManager#writeClasses}) must be called within
-	 * the renderer of the control to which the element belongs, when writing the root tag of the element. This ensures the classes are written to the HTML.
+	 * The classes are written to the HTML automatically when using the {@link sap.ui.core.RenderManager
+	 * Semantic Rendering API}. To ensure that the classes are written to the HTML with the traditional
+	 * string-based rendering, when writing the root tag of the element you must call the function
+	 * <code>oRenderManager.writeClasses(oElement);</code> ({@link sap.ui.core.RenderManager#writeClasses})
+	 * within the renderer of the control to which the element belongs.
 	 *
 	 * This function adds the following functions to the elements prototype:
 	 * <ul>
@@ -61,10 +68,10 @@ sap.ui.define(['jquery.sap.global', './Element'],
 		}
 
 		// enrich original clone function
-		var fOriginalClone = this.clone;
+		var fnOriginalClone = this.clone;
 		this.clone = function() {
 			// call original clone function
-			var oClone = fOriginalClone.apply(this, arguments);
+			var oClone = fnOriginalClone.apply(this, arguments);
 
 			// add the style classes of "this" to the clone
 			if (this.aCustomStyleClasses) {
@@ -72,104 +79,122 @@ sap.ui.define(['jquery.sap.global', './Element'],
 			}
 			//add the style class map of "this" to the clone
 			if (this.mCustomStyleClassMap) {
-				oClone.mCustomStyleClassMap = jQuery.extend({}, this.mCustomStyleClassMap);
+				oClone.mCustomStyleClassMap = Object.assign(Object.create(null), this.mCustomStyleClassMap);
 			}
 
 			return oClone;
 		};
 
-		var rNonWhiteSpace = /\S+/g;
-
 		this.addStyleClass = function(sStyleClass, bSuppressRerendering) { // bSuppressRerendering is experimental and hence undocumented
-			jQuery.sap.assert(typeof sStyleClass === "string", "sStyleClass must be a string");
+			assert(typeof sStyleClass === "string", "sStyleClass must be a string");
 
-			var aClasses,
-				bModified = false;
-
-			var aChangedScopes = [], aScopes = getScopes();
-
-			if (!this.aCustomStyleClasses) {
-				this.aCustomStyleClasses = [];
+			// ensure that sStyleClass is a non-empty string with no quotes in it (quotes would break string rendering)
+			if (!sStyleClass
+				|| typeof sStyleClass !== "string"
+				|| sStyleClass.indexOf("\"") > -1
+				|| sStyleClass.indexOf("'") > -1) {
+				return this;
 			}
 
-			if (!this.mCustomStyleClassMap) {
-				this.mCustomStyleClassMap = {};
-			}
+			var aCustomStyleClasses = this.aCustomStyleClasses || (this.aCustomStyleClasses = []),
+				mCustomStyleClassMap = this.mCustomStyleClassMap || (this.mCustomStyleClassMap = Object.create(null)),
+				aClasses,
+				bModified = false,
+				aChangedScopes = [],
+				aScopes = getScopes();
 
-			if (sStyleClass && typeof sStyleClass === "string") {
-				// ensure the "class" attribute is not closed
-				if (sStyleClass.indexOf("\"") > -1) {
-					return this;
-				}
-				if (sStyleClass.indexOf("'") > -1) {
-					return this;
-				} // TODO: maybe check for quotes in different charsets or encodings
+			function check(sClass) {
+				if (!mCustomStyleClassMap[sClass]) {
+					mCustomStyleClassMap[sClass] = true;
+					aCustomStyleClasses.push(sClass);
 
-				aClasses = sStyleClass.match(rNonWhiteSpace) || [];
-				aClasses.forEach(function(sClass) {
-					if (!this.mCustomStyleClassMap[sClass]) {
-						this.mCustomStyleClassMap[sClass] = true;
-						this.aCustomStyleClasses.push(sClass);
-
-						if (aScopes && aScopes.indexOf(sClass) > -1){
-							aChangedScopes.push(sClass);
-						}
-
-						bModified = true;
+					if (aScopes && aScopes.indexOf(sClass) > -1){
+						aChangedScopes.push(sClass);
 					}
-				}.bind(this));
 
-				// if all classes exist already, it's not needed to change the DOM or trigger invalidate
-				if (!bModified) {
-					return this;
-				}
-
-				var oRoot = this.getDomRef();
-				if (oRoot) { // non-rerendering shortcut
-					jQuery(oRoot).addClass(sStyleClass);
-				} else if (bSuppressRerendering === false) {
-					this.invalidate();
-				}
-				if (aChangedScopes.length > 0) {
-					// scope has been added
-					fireThemeScopingChangedEvent(this, aChangedScopes, true);
+					bModified = true;
 				}
 			}
+
+			if ( rAnyWhiteSpace.test(sStyleClass) ) {
+				aClasses = sStyleClass.match(rNonWhiteSpace);
+				aClasses && aClasses.forEach(check);
+			} else {
+				check(sStyleClass);
+			}
+
+			// if all classes exist already, it's not needed to change the DOM or trigger invalidate
+			if (!bModified) {
+				return this;
+			}
+
+			var oRoot = this.getDomRef();
+			if (oRoot) { // non-rerendering shortcut
+				if ( aClasses ) {
+					oRoot.classList.add.apply(oRoot.classList, aClasses);
+				} else {
+					oRoot.classList.add(sStyleClass);
+				}
+			} else if (bSuppressRerendering === false) {
+				this.invalidate();
+			}
+			if (aChangedScopes.length > 0) {
+				// scope has been added
+				fireThemeScopingChangedEvent(this, aChangedScopes, true);
+			}
+
 			return this;
 		};
 
 
 		this.removeStyleClass = function(sStyleClass, bSuppressRerendering) { // bSuppressRerendering is experimental and hence undocumented
-			jQuery.sap.assert(typeof sStyleClass === "string", "sStyleClass must be a string");
+			assert(typeof sStyleClass === "string", "sStyleClass must be a string");
 
-			var aClasses,
+			if (!sStyleClass
+				|| typeof sStyleClass !== "string"
+				|| !this.aCustomStyleClasses
+				|| !this.mCustomStyleClassMap) {
+				return this;
+			}
+
+			var aCustomStyleClasses = this.aCustomStyleClasses,
+				mCustomStyleClassMap = this.mCustomStyleClassMap,
+				aClasses,
 				bExist = false,
+				aChangedScopes = [],
+				aScopes = getScopes(),
 				nIndex;
 
-			var aChangedScopes = [], aScopes = getScopes();
+			function check(sClass) {
+				if (mCustomStyleClassMap[sClass]) {
+					bExist = true;
+					nIndex = aCustomStyleClasses.indexOf(sClass);
+					if (nIndex !== -1) {
+						aCustomStyleClasses.splice(nIndex, 1);
+						delete mCustomStyleClassMap[sClass];
 
-			if (sStyleClass && typeof sStyleClass === "string" && this.aCustomStyleClasses && this.mCustomStyleClassMap) {
-				aClasses = sStyleClass.match(rNonWhiteSpace) || [];
-				aClasses.forEach(function(sClass) {
-					if (this.mCustomStyleClassMap[sClass]) {
-						bExist = true;
-						nIndex = this.aCustomStyleClasses.indexOf(sClass);
-						if (nIndex !== -1) {
-							this.aCustomStyleClasses.splice(nIndex, 1);
-							delete this.mCustomStyleClassMap[sClass];
-
-							if (aScopes && aScopes.indexOf(sClass) > -1) {
-								aChangedScopes.push(sClass);
-							}
+						if (aScopes && aScopes.indexOf(sClass) > -1) {
+							aChangedScopes.push(sClass);
 						}
 					}
-				}.bind(this));
+				}
+			}
+
+			if ( rAnyWhiteSpace.test(sStyleClass) ) {
+				aClasses = sStyleClass.match(rNonWhiteSpace);
+				aClasses && aClasses.forEach(check);
+			} else {
+				check(sStyleClass);
 			}
 
 			if (bExist) {
 				var oRoot = this.getDomRef();
 				if (oRoot) { // non-rerendering shortcut
-					jQuery(oRoot).removeClass(sStyleClass);
+					if ( aClasses ) {
+						oRoot.classList.remove.apply(oRoot.classList, aClasses);
+					} else {
+						oRoot.classList.remove(sStyleClass);
+					}
 				} else if (bSuppressRerendering === false) {
 					this.invalidate();
 				}
@@ -184,7 +209,7 @@ sap.ui.define(['jquery.sap.global', './Element'],
 
 
 		this.toggleStyleClass = function(sStyleClass, bAdd) {
-			jQuery.sap.assert(typeof sStyleClass === "string", "sStyleClass must be a string");
+			assert(typeof sStyleClass === "string", "sStyleClass must be a string");
 
 			if (sStyleClass && typeof sStyleClass === "string") {
 				if (bAdd === true) {
@@ -194,7 +219,7 @@ sap.ui.define(['jquery.sap.global', './Element'],
 				} else if (bAdd === undefined) {
 					this.hasStyleClass(sStyleClass) ? this.removeStyleClass(sStyleClass) : this.addStyleClass(sStyleClass);
 				} else {
-					jQuery.sap.log.warning(this.toString() + "- toggleStyleClass(): bAdd should be a boolean or undefined, but is '" + bAdd + "'");
+					Log.warning(this.toString() + "- toggleStyleClass(): bAdd should be a boolean or undefined, but is '" + bAdd + "'");
 				}
 			}
 
@@ -202,14 +227,17 @@ sap.ui.define(['jquery.sap.global', './Element'],
 		};
 
 		this.hasStyleClass = function(sStyleClass) {
-			jQuery.sap.assert(typeof sStyleClass === "string", "sStyleClass must be a string");
+			assert(typeof sStyleClass === "string", "sStyleClass must be a string");
 
-			var aClasses;
-			if (sStyleClass && typeof sStyleClass === "string" && this.mCustomStyleClassMap) {
-				aClasses = sStyleClass.match(rNonWhiteSpace) || [];
-				return aClasses.length !== 0 && aClasses.every(function(sClass) {
-					return this.mCustomStyleClassMap[sClass];
-				}.bind(this));
+			if (sStyleClass &&	 typeof sStyleClass === "string" && this.mCustomStyleClassMap) {
+				if ( rAnyWhiteSpace.test(sStyleClass) ) {
+					var aClasses = sStyleClass.match(rNonWhiteSpace);
+					return aClasses != null && aClasses.every(function(sClass) {
+						return this.mCustomStyleClassMap[sClass];
+					}, this);
+				} else {
+					return !!this.mCustomStyleClassMap[sStyleClass];
+				}
 			}
 			return false;
 		};
@@ -231,7 +259,7 @@ sap.ui.define(['jquery.sap.global', './Element'],
 	}
 
 	function fireThemeScopingChangedEvent(oElement, aScopeClasses, bIsAdded) {
-		sap.ui.getCore().fireThemeScopingChanged({
+		Theming.fireThemeScopingChanged({
 			scopes: aScopeClasses,
 			added: bIsAdded,
 			element: oElement

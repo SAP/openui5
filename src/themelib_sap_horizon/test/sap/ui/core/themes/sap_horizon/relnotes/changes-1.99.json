@@ -1,0 +1,100 @@
+{
+  "1.99.0": {
+    "date": "February 2022",
+    "notes": [
+      {
+        "id": "ca70fae089df930e22d33e12c74b94612c469bc9",
+        "type": "FEATURE",
+        "text": " sap.ui.core.IconPool: Update icon font v5.01 and v4.13"
+      },
+      {
+        "id": "10b6691d561121d5825c8841561447edbfa8ef2b",
+        "type": "FIX",
+        "text": " sap.m.Page: Section top position adapted when InfoBar used",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180434227"
+          }
+        ]
+      },
+      {
+        "id": "3eb7398249ead50cb088322cf13a93df94b3f552",
+        "type": "FIX",
+        "text": " sap.m.MenuButton: Now has correct styling when disabled in horizon",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280016349"
+          }
+        ]
+      },
+      {
+        "id": "9c15312da478b247b6bffc8067639e00adecd216",
+        "type": "FIX",
+        "text": " \"72\" font: use the bold font for fallback with font-weight 700",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180400449"
+          }
+        ]
+      },
+      {
+        "id": "b36eecde1e14f6a386f456b7dc5c5065ec727c17",
+        "type": "FIX",
+        "text": " sap.m.MenuButton: left border is correct color",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180429506"
+          }
+        ]
+      },
+      {
+        "id": "ac7b839f0e912ebd65423044a4b3790cc312e45c",
+        "type": "FIX",
+        "text": " sap.m.ComboBox/MultiComboBox: Visualization is aligned with the visual specification",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180422889"
+          }
+        ]
+      },
+      {
+        "id": "c987552ac6e19ee8d9adbef0bbe812618d71a46e",
+        "type": "FIX",
+        "text": " sap.m.WizardProgressNavigator:  Visual enhacements according to the specification",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070370098"
+          }
+        ]
+      },
+      {
+        "id": "66dbd6a164458177f812a352e37436300abe10de",
+        "type": "FIX",
+        "text": " sap.m.IconTabBar: Icons are now correctly centered in macOS",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170317303"
+          }
+        ]
+      },
+      {
+        "id": "883bcc009c430df63e40b2962c4716194f5fd6b0",
+        "type": "FIX",
+        "text": " sap.m.ObjectAttribute: 'ariaHasPopup' property now added",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170275459"
+          }
+        ]
+      }
+    ]
+  }
+}

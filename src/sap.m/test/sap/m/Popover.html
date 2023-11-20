@@ -1,7 +1,6 @@
 <!DOCTYPE HTML>
 <html>
 <head>
-	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 
 	<title>Popover - sap.m</title>
 
@@ -10,148 +9,29 @@
 			overflow: hidden;
 		}
 
-		/*			bottom */
-		.positioned {
-			position: absolute !important;
-			top: 10px;
-			right: 0;
-		}
-
-		html[dir="rtl"] .positioned {
-			left: 0;
-			right: auto;
-		}
-
-		/* 			right */
-		.positioned1 {
-			position: absolute !important;
-			top: 25px;
-			left: 25px;
-		}
-
-		html[dir="rtl"] .positioned1 {
-			left: auto;
-			right: 25px;
-		}
-
-		/*			left */
-		.positioned2 {
-			position: absolute !important;
-			top: 80px;
-			right: 10px;
-		}
-
-		html[dir="rtl"] .positioned2 {
-			left: 10px;
-			right: auto;
-		}
-
-		/*			top */
-		.positioned3 {
-			position: absolute !important;
-			bottom: 10px;
-			left: 100px;
-		}
-
-		html[dir="rtl"] .positioned3 {
-			left: auto;
-			right: 100px;
-		}
-
-		/* 			vertical bottom */
-		.positioned4 {
-			position: absolute !important;
-			top: 150px;
-			right: 10px;
-		}
-
-		html[dir="rtl"] .positioned4 {
-			left: 10px;
-			right: auto;
-		}
-
-		/* 			vertical top */
-		.positioned5 {
-			position: absolute !important;
-			bottom: 100px;
-			left: 100px;
-		}
-
-		html[dir="rtl"] .positioned5 {
-			left: auto;
-			right: 100px;
-		}
-
-		/* 			horizontal left */
-		.positioned6 {
-			position: absolute !important;
-			top: 200px;
-			right: 10px;
-		}
-
-		html[dir="rtl"] .positioned6 {
-			left: 10px;
-			right: auto;
-		}
-
 		.positioned11 {
 			position: absolute !important;
+			top: 250px;
+		}
+
+		.positioned14 {
+			position: absolute !important;
 			top: 300px;
-			right: 10px;
 		}
 
-		html[dir="rtl"] .positioned11 {
-			left: 10px;
-			right: auto;
-		}
-
-		/* 			horizontal right */
-		.positioned7 {
+		.positioned15 {
 			position: absolute !important;
 			top: 350px;
-			left: 100px;
 		}
 
-		html[dir="rtl"] .positioned7 {
-			left: auto;
-			right: 100px;
-		}
-
-		/* 			auto 1 */
-		.positioned8 {
+		.positioned16 {
 			position: absolute !important;
-			top: 200px;
-			right: 200px;
+			top: 400px;
 		}
 
-		html[dir="rtl"] .positioned8 {
-			left: 200px;
-			right: auto;
+		.customClassForVisualTests {
+			caret-color: transparent;
 		}
-
-		/* 			auto 2 */
-		.positioned9 {
-			position: absolute !important;
-			bottom: 200px;
-			left: 200px;
-		}
-
-		html[dir="rtl"] .positioned9 {
-			left: auto;
-			right: 200px;
-		}
-
-		.vbox {
-			position: absolute !important;
-			top: 100px;
-			left: 10px;
-		}
-
-		html[dir="rtl"] .vbox {
-			left: auto;
-			right: 10px;
-		}
-
 	</style>
 
 	<script src="shared-config.js"></script>
@@ -264,41 +144,29 @@
 		bindListData(data, oItemTemplate1, oList2);
 		//end of the list creation
 
-		//create the scrollContainer
-		// 			var oScrollContainer = new sap.m.ScrollContainer({
-		//  				height: "100%",
-		// 				horizontal: false,
-		// 				vertical: true,
-		// 				content: oList2
-		// 			});
-
-
 		var oBeginButton = new sap.m.Button({
 			text: "Modal",
 			type: sap.m.ButtonType.Reject,
 			press: function () {
 				oPopover.setModal(!oPopover.getModal());
-// 					oPopover.setLeftButton(null);
 			}
 		});
-
 
 		var oEndButton = new sap.m.Button({
 			text: "Close",
 			type: sap.m.ButtonType.Accept,
 			press: function () {
 				oPopover.close();
-// 					oPopover.setRightButton(null);
 			}
 		});
 
 		var footer = new sap.m.Bar({
-			contentMiddle: [new sap.m.Button({icon: "sap-icon://inspection", text: "short"}),
-				new sap.m.Button({icon: "sap-icon://home", text: "loooooong text"})]
+			contentLeft: [new sap.m.Button({icon: "sap-icon://inspection", text: "short"})],
+			contentRight: [new sap.m.Button({icon: "sap-icon://home", text: "loooooong text"})]
 		});
 
 		var oPopover = new sap.m.Popover("pop1", {
-			placement: sap.m.PlacementType.Bottom,
+			placement: sap.m.PlacementType.Auto,
 			title: "Popover",
 			showHeader: true,
 			beginButton: oBeginButton,
@@ -322,14 +190,24 @@
 			initialFocus: "focusInput"
 		});
 
-		//uncomment this line when padding is needed in content area
-		//oPopover.addStyleClass("sapUiPopupWithPadding");
-
 		oPopover.setTitle("New Popover with long title");
 
-		var oPopover2 = new sap.m.Popover("pop2", {
-			placement: sap.m.PlacementType.Horizontal,
-			title: "Popover2",
+		var oButton10 = new sap.m.Button("btn10", {
+			text: "Popover with dangers",
+			press: function () {
+				oPopoverSelect.openBy(this);
+			}
+		});
+
+		var oList3 = new sap.m.List({
+			inset: true,
+		})
+
+		bindListData(data, oItemTemplate1, oList3);
+
+		var oPopover11 = new sap.m.Popover("popover11", {
+			placement: sap.m.PlacementType.Auto,
+			title: "Popover11",
 			showHeader: true,
 			subHeader: new sap.m.Bar({
 				contentMiddle: [
@@ -339,124 +217,57 @@
 					})
 				]
 			}),
-			//modal : true,
-			verticalScrolling: true,
-			horizontalScrolling: false,
 			content: [
-				oList2.clone()
+				oList3
+			],
+			footer:
+			new sap.m.Bar({
+				contentLeft: [new sap.m.Button("btn-set-width-700", {
+					text: "Set width to 700px",
+					press: function () {
+						oList3.setWidth("700px");
+					}
+				})],
+				contentRight: [new sap.m.Button("btn-set-width-1024", {
+					text: "Set width to 1024px",
+					press: function () {
+						oList3.setWidth("1024px");
+					}
+				})]
+			})
+		});
+
+		oPopover11.addStyleClass("sapUiResponsivePadding--header");
+		oPopover11.addStyleClass("sapUiResponsivePadding--subHeader");
+		oPopover11.addStyleClass("sapUiResponsivePadding--content");
+		oPopover11.addStyleClass("sapUiResponsivePadding--footer");
+
+		var oPopover12 = new sap.m.Popover("popover12", {
+			placement: sap.m.PlacementType.Auto,
+			showHeader: false,
+			content: [
+				new sap.m.CheckBox("popover12CheckBox1",{text:"test1"}),
+				new sap.m.CheckBox("popover12CheckBox2",{text:"test2"}),
+				new sap.m.CheckBox("popover12CheckBox3",{text:"test3"})
 			]
 		});
 
-		var oPopover3 = new sap.m.Popover("pop3", {
-			placement: sap.m.PlacementType.Horizontal,
-			title: "Popover3",
-			showHeader: true,
-			//modal : true,
-			verticalScrolling: false,
-			horizontalScrolling: true,
-			content: [
-				oList2.clone()
-			]
-		});
-
-
-		var oButton = new sap.m.Button("btn0", {
-			text: "Popover Bottom",
+		var oButton14 = new sap.m.Button("btn11", {
+			text: "Popover with Responsive paddings",
 			press: function () {
-				oPopover.setPlacement(sap.m.PlacementType.Bottom);
-				oPopover.openBy(this);
+				oPopover11.openBy(this);
 			}
 		});
 
-		oButton.addStyleClass("positioned");
-		var oButton1 = new sap.m.Button("btn1", {
-			text: "Popover Preferred Right or Flip",
+		oButton14.addStyleClass("positioned14");
+
+		var oButton15 = new sap.m.Button("btn15", {
+			text: "Popover with checkboxes",
 			press: function () {
-				oPopover.setPlacement(sap.m.PlacementType.PreferredRightOrFlip);
-				oPopover.openBy(this);
+				oPopover12.openBy(this);
 			}
 		});
-
-		oButton1.addStyleClass("positioned1");
-		var oButton2 = new sap.m.Button("btn2", {
-			text: "Popover Left",
-			press: function () {
-				oPopover.setPlacement(sap.m.PlacementType.Left);
-				oPopover.openBy(this);
-			}
-		});
-
-		oButton2.addStyleClass("positioned2");
-
-		var oButton3 = new sap.m.Button("btn3", {
-			text: "Popover Top",
-			press: function () {
-				oPopover.setPlacement(sap.m.PlacementType.Top);
-				oPopover.openBy(this);
-			}
-		});
-		oButton3.addStyleClass("positioned3");
-
-		var oButton4 = new sap.m.Button("btn4", {
-			text: "Popover Vertical",
-			press: function () {
-				oPopover.setPlacement(sap.m.PlacementType.Vertical);
-				oPopover.openBy(this);
-			}
-		});
-		oButton4.addStyleClass("positioned4");
-
-		var oButton5 = new sap.m.Button("btn5", {
-			text: "Popover Vertical",
-			press: function () {
-				oPopover.setPlacement(sap.m.PlacementType.Vertical);
-				oPopover.openBy(this);
-			}
-		});
-		oButton5.addStyleClass("positioned5");
-
-		var oButton6 = new sap.m.Button("btn6", {
-			text: "Popover Horizontal",
-			press: function () {
-				//oPopover.setPlacement(sap.m.PlacementType.Horizontal);
-				oPopover3.openBy(this);
-			}
-		});
-		oButton6.addStyleClass("positioned6");
-
-		var oButton7 = new sap.m.Button("btn7", {
-			text: "Popover Horizontal",
-			press: function () {
-				//oPopover.setPlacement(sap.m.PlacementType.Horizontal);
-				oPopover2.openBy(this);
-			}
-		});
-		oButton7.addStyleClass("positioned7");
-
-		var oButton8 = new sap.m.Button("btn8", {
-			text: "Popover Auto",
-			press: function () {
-				oPopover.setPlacement(sap.m.PlacementType.Auto);
-				oPopover.openBy(this);
-			}
-		});
-		oButton8.addStyleClass("positioned8");
-
-		var oButton9 = new sap.m.Button("btn9", {
-			text: "Popover Auto",
-			press: function () {
-				oPopover.setPlacement(sap.m.PlacementType.Auto);
-				oPopover.openBy(this);
-			}
-		});
-		oButton9.addStyleClass("positioned9");
-
-		var oButton10 = new sap.m.Button("btn10", {
-			text: "Popover with dangers",
-			press: function () {
-				oPopoverSelect.openBy(this);
-			}
-		});
+		oButton15.addStyleClass("positioned15");
 
 		var oSearchProvider = new sap.ui.core.search.OpenSearchProvider({
 			suggestUrl: "../../../proxy/http/en.wikipedia.org/w/api.php?action=opensearch&namespace=0&search={searchTerms}",
@@ -464,8 +275,9 @@
 		});
 
 		var oPopoverSelect = new sap.m.Popover("popSelect", {
+			placement: sap.m.PlacementType.Auto,
 			content: [
-				new sap.m.Select({
+				new sap.m.Select("selectInPopover", {
 					items: [
 						new sap.ui.core.Item({
 							key: "0",
@@ -505,6 +317,44 @@
 			contentHeight: "50%"
 		});
 
+		var oButton16 = new sap.m.Button("btn16", {
+			text: "Nested Popovers",
+			press: function () {
+				oPopoverNested.openBy(this);
+			}
+		});
+		oButton16.addStyleClass("positioned16");
+
+		var oPopoverNested = new sap.m.Popover("popNested", {
+			title: "Nested Popovers",
+			placement: sap.m.PlacementType.Auto,
+			content: [
+				new sap.m.HBox({
+					items: [
+						new sap.m.Button("nestedBtn", {
+							text: "Open Nested Popover",
+							press: function () {
+								var oPopover = new sap.m.Popover({
+									title: "Description",
+									placement: sap.m.PlacementType.Bottom
+								});
+
+								oPopover.addStyleClass("sapUiContentPadding");
+								oPopover.addContent(new sap.m.Text({ text: "Further Descripton" }));
+								oPopover.openBy(this);
+							}
+						}),
+						new sap.m.Link("defocus", { text: "Close" })
+					],
+					justifyContent: sap.m.FlexJustifyContent.SpaceAround,
+					alignItems: sap.m.FlexAlignItems.Center
+				})
+			],
+			contentWidth: "20em",
+			contentHeight: "20em"
+		});
+		oPopoverNested.addStyleClass("sapUiContentPadding");
+
 		var oVBox = new sap.m.VBox({
 			items: [
 				new sap.m.Button("with-h-with-f", {
@@ -512,7 +362,7 @@
 					press: function () {
 						oPopover.setShowHeader(true);
 						oPopover.setFooter(footer);
-						oPopover.setPlacement(sap.m.PlacementType.Right);
+						oPopover.setPlacement(sap.m.PlacementType.Auto);
 						oPopover.openBy(this);
 					}
 				}),
@@ -521,7 +371,7 @@
 					press: function () {
 						oPopover.setShowHeader(false);
 						oPopover.setFooter(footer);
-						oPopover.setPlacement(sap.m.PlacementType.Right);
+						oPopover.setPlacement(sap.m.PlacementType.Auto);
 						oPopover.openBy(this);
 					}
 				}),
@@ -530,7 +380,7 @@
 					press: function () {
 						oPopover.setShowHeader(true);
 						oPopover.setFooter(null);
-						oPopover.setPlacement(sap.m.PlacementType.Right);
+						oPopover.setPlacement(sap.m.PlacementType.Auto);
 						oPopover.openBy(this);
 					}
 				}),
@@ -539,15 +389,13 @@
 					press: function () {
 						oPopover.setShowHeader(false);
 						oPopover.setFooter(null);
-						oPopover.setPlacement(sap.m.PlacementType.Right);
+						oPopover.setPlacement(sap.m.PlacementType.Auto);
 						oPopover.openBy(this);
 					}
 				}),
 				oButton10
 			]
 		});
-
-		oVBox.addStyleClass("vbox");
 
 		var i,
 			aPopoverContent = [new sap.ui.core.Item({text: "UTC - (UTC+00:00) Burkina Faso, Bouvet Islands, Cote d'Ivoire, West Sahara, Ghana, Greenland, Gambia, Guinea, Guinea-Bissau, Heard/McDon.Isl, Brit.Ind.Oc.Ter, Iceland"})];
@@ -560,17 +408,34 @@
 		});
 		oOverflowingPopover.addStyleClass("positioned11");
 
-		var page1 = new sap.m.Page("page1", {
-			title: "Page 1",
-			content: [
-				oButton, oButton1, oButton2, oButton3, oButton4, oButton5, oButton6, oOverflowingPopover, oButton7, oButton8, oButton9, oVBox
-			]
+		// Add a css class to the body HTML element, in order to be used for caret stylization in visual tests run.
+		var oCustomCssButton = new sap.m.Button ("customCssButton",{
+			text: "Toggle custom CSS for visual test",
+			press: function() {
+				var $body = jQuery("body");
+
+				$body.toggleClass("customClassForVisualTests");
+			}
 		});
+		var page1 = new sap.m.Page("page1", {
+			headerContent: [
+				new sap.m.Title({
+					text: "sap.m.Popover"
+				}),
+				new sap.m.ToolbarSpacer({
+					width: "600px"
+				}),
+				oCustomCssButton,
+			],
+			content: [
+				oOverflowingPopover, oVBox, oButton14, oButton15, oButton16
+			]
+		}).addStyleClass("sapUiContentPadding");
 
 		app.addPage(page1);
 		app.placeAt("body");
 	</script>
 </head>
-<body id="body" class="sapUiBody" role="application">
+<body id="body" class="sapUiBody">
 </body>
 </html>

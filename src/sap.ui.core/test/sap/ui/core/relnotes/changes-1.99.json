@@ -1,0 +1,243 @@
+{
+  "1.99.0": {
+    "date": "February 2022",
+    "notes": [
+      {
+        "id": "4223f5cd97847100f79f1d5deaf008d5b6f9f58a",
+        "type": "FIX",
+        "text": " sap.ui.core.format.NumberFormat: less strict checks for parsing grouping separators",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180381028"
+          }
+        ]
+      },
+      {
+        "id": "ca70fae089df930e22d33e12c74b94612c469bc9",
+        "type": "FEATURE",
+        "text": " sap.ui.core.IconPool: Update icon font v5.01 and v4.13"
+      },
+      {
+        "id": "fdc3ae8d31438c6ce364f07b5ef41f6a44f54be7",
+        "type": "FIX",
+        "text": " ExtensionPoint: Activate probing for Fragment class",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180353921"
+          }
+        ]
+      },
+      {
+        "id": "677e54f19cef72bd6b58249e0c7f19c0951115ee",
+        "type": "FIX",
+        "text": " sap.ui.core.format.NumberFormat: Stricter parsing for grouping separators",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180381028"
+          }
+        ]
+      },
+      {
+        "id": "196e4a3312bbf22d87211cedce025e8284258c64",
+        "type": "FIX",
+        "text": " sap.m.Carousel: In nested carousels the inner carousel's active page content stays visible",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400000276432022"
+          }
+        ]
+      },
+      {
+        "id": "60bf347349529229aa6e002010a98819df32419e",
+        "type": "FIX",
+        "text": " sap.m.Carousel: In nested carousels the inner carousel's active page content stays visible",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400000276432022"
+          }
+        ]
+      },
+      {
+        "id": "5da45c5640461cfe101b67f359dafcac7411dd50",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v4.ODataMetaModel#requestValueListInfo: ValueListWithFixedValues takes precedence over SearchSupported",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280012068"
+          }
+        ]
+      },
+      {
+        "id": "e3fb8f1347a3636beafb0fe8b130847db9b4904f",
+        "type": "FEATURE",
+        "text": " sap.ui.model.odata.type.DateTimeWithTimezone: introduced new type"
+      },
+      {
+        "id": "d6a2fd81910e8cad1c7a4771d319ee8be4099547",
+        "type": "FEATURE",
+        "text": " DateFormat: Show date with IANA timezone names"
+      },
+      {
+        "id": "22dc281ccadee2264dce3e65f925daf663ccd280",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v4.ODataListBinding#getCurrentContexts: do not fill up array with undefined in case of Infinity",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280015704"
+          }
+        ]
+      },
+      {
+        "id": "c18309c28bffd88ee8a407ab1f0395387b4dbedd",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v4.ODataListBinding: oHeaderContext.getObject() returns header data"
+      },
+      {
+        "id": "675c00558e741b5a74f0158a68d2def88599fd76",
+        "type": "FIX",
+        "text": " sap.ui.model.*: JSDoc for parameter bForceUpdate fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280005117"
+          }
+        ]
+      },
+      {
+        "id": "4073e969edf022ed0f571caa54093f78d368400d",
+        "type": "FEATURE",
+        "text": " sap.ui.model.odata.v2.ODataListBinding#create: Support creation of a new entry in the binding"
+      },
+      {
+        "id": "8b734933544e837c66f8042d89447cd696c0997b",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v2.ODataModel#callFunction: JSDoc for type of mParameters.urlParameters fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280003987"
+          }
+        ]
+      },
+      {
+        "id": "88d8e02109072fcdbd968dd1f9e9c39701746ce5",
+        "type": "FIX",
+        "text": " sap.ui.core.format.DateFormat: parse symbol \"w\" (weekInYear)"
+      },
+      {
+        "id": "da186b12eec539be829d7bf6136375df901718ad",
+        "type": "FIX",
+        "text": " sap.ui.core.message.MessageMixin#destroy: cleanup control IDs",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180415452"
+          }
+        ]
+      },
+      {
+        "id": "e473521b360191620828467c72264aa6109fc807",
+        "type": "FIX",
+        "text": " strengthen CSS Classes for Theme Parameters with !important",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170198976"
+          }
+        ]
+      },
+      {
+        "id": "be71b0750686d9779a03eec7281f36b957a6ea6f",
+        "type": "FIX",
+        "text": " theming.Parameters: Fix async usage after theme change",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180393575"
+          }
+        ]
+      },
+      {
+        "id": "ec6a4bd4a6e59c00246036715931a5c3c62cc776",
+        "type": "FIX",
+        "text": " sap.ui.model.analytics.AnalyticalBinding: no need to include automatically added columns to select",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400007616402021"
+          }
+        ]
+      },
+      {
+        "id": "93a336518d97b712360bd934974fc0aaf19d7a3e",
+        "type": "FIX",
+        "text": " sap.ui.core.util.reflection - performance improvement",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180376343"
+          }
+        ]
+      },
+      {
+        "id": "4b038dbed049e5b035474bf8ce4c61237e18685c",
+        "type": "FEATURE",
+        "text": " PressAction: support for click coordinates"
+      },
+      {
+        "id": "494b714998db178a54e327f6acc0a385c21289c2",
+        "type": "FIX",
+        "text": " sap/ui/util/XMLHelper: fix JSDoc and improve implementation",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180388370"
+          }
+        ]
+      },
+      {
+        "id": "673ea04afd8a6ff14824d7e2e2dbc9027d2c668b",
+        "type": "FIX",
+        "text": " MockServer: improve documentation for the 'requests' property"
+      },
+      {
+        "id": "60e10eb6b0cd6078d82b98562a5a374eb7b71b74",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v2.ODataModel#createEntry: consider refreshAfterChange also when retrying the creation"
+      },
+      {
+        "id": "ce230f4f40a0e105fac4dfd03ee4e736e4ac5550",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v4.ODataListBinding#requestFilterForMessages and message target w/o predicate"
+      },
+      {
+        "id": "611099b37ce0fc42999268c1026ef3577fc37c71",
+        "type": "FIX",
+        "text": " ManagedObject: Properties of type object must not be interpreted as bindingInfo",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170256745"
+          }
+        ]
+      },
+      {
+        "id": "4bc46f96b55a6166dcd9af78333114608a70118e",
+        "type": "FEATURE",
+        "text": " Association of sap.m.table.ColumnMenu to columns added"
+      },
+      {
+        "id": "cca70d5d428409671c93e12d98c4132428a2b1ed",
+        "type": "FEATURE",
+        "text": " sap.m.DynamicDateRange: Adds new standard options"
+      }
+    ]
+  }
+}

@@ -1,0 +1,104 @@
+{
+	"pages": [
+		{
+			"title": "SAP SE",
+			"icon": "sap-logo.png",
+			"fallbackIcon": "sap-icon://building",
+			"displayShape": "Square",
+			"description": "Founded in 1972",
+			"pageId": "companyPageId",
+			"header": "Company Info",
+			"titleUrl": "http://sap.com",
+			"groups": [
+				{
+					"heading": "Office",
+					"elements": [
+						{
+							"label": "Headquarters",
+							"value": "Walldorf, Germany",
+							"elementType": "text"
+						},
+						{
+							"label": "Phone",
+							"value": "+001 6101 34869-0",
+							"elementType": "phone"
+						}
+					]
+				},
+				{
+					"heading": "Main Contact",
+					"elements": [
+						{
+							"label": "Name",
+							"value": "John Doe",
+							"elementType": "pageLink",
+							"pageLinkId": "companyEmployeePageId"
+						},
+						{
+							"label": "Mobile",
+							"value": "+001 6101 34869-0",
+							"elementType": "mobile"
+						},
+						{
+							"label": "Phone",
+							"value": "+001 6101 34869-0",
+							"elementType": "phone"
+						},
+						{
+							"label": "Email",
+							"value": "main.contact@company.com",
+							"emailSubject": "Subject",
+							"elementType": "email"
+						}
+					]
+				}
+			]
+		},
+		{
+			"pageId": "companyEmployeePageId",
+			"header": "Employee Info",
+			"title": "John Doe",
+			"initials": "JD",
+			"displayShape": "Circle",
+			"backgroundColor": "Accent8",
+			"description": "Department Manager",
+			"groups": [
+				{
+					"heading": "Company",
+					"elements": [
+						{
+							"label": "Name",
+							"value": "Adventure Company",
+							"url": "http://sap.com",
+							"elementType": "link"
+						},
+						{
+							"label": "Address",
+							"value": "Sofia, Boris III, 136A"
+						},
+						{
+							"label": "Slogan",
+							"value": "Innovation through technology"
+						}
+					]
+				},
+				{
+					"heading": "Other",
+					"elements": [
+						{
+							"label": "Email",
+							"value": "john.doe@sap.com",
+							"emailSubject": "Subject",
+							"elementType": "email"
+						},
+						{
+							"label": "Phone",
+							"value": "+359 888 888 888",
+							"elementType": "phone"
+						}
+					]
+				}
+			]
+		}
+	]
+}

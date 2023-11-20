@@ -1,0 +1,171 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+
+	<meta charset="utf-8">
+
+	<title>Template - sap.ui.core.tmpl</title>
+
+	<script src="../shared-config.js"></script>
+	<script id="sap-ui-bootstrap"
+			src="../../../../../resources/sap-ui-core.js"
+			data-sap-ui-libs="sap.ui.commons"
+			data-sap-ui-theme="sap_bluecrystal"
+			data-sap-ui-xx-bindingSyntax="complex"
+			>
+	</script>
+
+	<script src="res/tmpl.js"></script>
+	<link type="text/css" rel="stylesheet" href="res/tmpl.css">
+
+	<script>
+
+		// sample code
+		jQuery(function() {
+
+			// define the model
+			var oModel = new sap.ui.model.json.JSONModel({
+				title: "Persons",
+				persons: [{
+					firstName: "Peter",
+					lastName: "Muessig",
+					checked: true
+				}, {
+					firstName: "Tim",
+					lastName: "Back",
+					checked: true
+				}, {
+					firstName: "Christoph",
+					lastName: "Kraemer",
+					checked: false
+				}]
+			});
+			sap.ui.getCore().setModel(oModel);
+
+			// add the button to add a new entry to the model
+			var oButton = new sap.ui.commons.Button({
+				text: "Add Entry",
+				press: function(oEvent) {
+					var oData = oModel.getData(),
+					    iLength = oData.persons.length;
+					oData.persons[iLength] = {
+							firstName: "FirstName" + iLength,
+							lastName: "LastName" + iLength,
+							checked: false,
+							locations: [
+								"Location" + iLength
+							]
+					}
+					oModel.checkUpdate();
+				}
+			});
+			oButton.placeAt("buttons");
+			oButton = new sap.ui.commons.Button({
+				text: "Remove Entry",
+				press: function(oEvent) {
+					var oData = oModel.getData(),
+					    iLength = oData.persons.length;
+					oData.persons = oData.persons.slice(0, oData.persons.length - 1);
+					oModel.checkUpdate();
+				}
+			});
+			oButton.placeAt("buttons");
+
+			// register all available templates in the document
+			sap.ui.template();
+
+		});
+
+	</script>
+
+</head>
+<body class="sapUiBody">
+
+	<h1><code>sap.ui.core.tmpl.Template</code> - Test Page</h1>
+
+	<div id="buttons"></div>
+
+	<div id="mySimpleTemplate" data-type="text/x-handlebars-template">
+
+		<h3>Text Template (using "text" expression)</h3>
+		<b>{{text path="/title"}}:</b>
+		<ul>
+		{{#each path="/persons"}}
+			<li>{{text path="firstName"}} {{text path="lastName"}}</li>
+		{{/each}}
+		</ul>
+
+	</div>
+
+	<div id="myAdvancedTemplate" data-type="text/x-handlebars-template">
+
+		<h3>Advanced Text Template (using "element" expression)</h3>
+		{{element tag="b" text="{/title}"}}:
+		<ul>
+		{{#each path="/persons"}}
+			{{element tag="li" text="{firstName} {lastName}"}}
+		{{/each}}
+		</ul>
+
+	</div>
+
+	<div id="myAdvancedEditTemplate" data-type="text/x-handlebars-template">
+
+		<h3>Advanced Text Template (using editable "element" expression)</h3>
+		{{element tag="textarea" text="{/title}" rows="2" cols="40"}}
+		<ul>
+		{{#each path="/persons"}}
+			<li>{{element tag="input" value="{firstName}"}} {{element tag="input" value="{lastName}"}}</li>
+		{{/each}}
+		</ul>
+
+	</div>
+
+	<div id="myControlTemplate" data-type="text/x-handlebars-template">
+
+		<h3>Control Template (using "control" expression)</h3>
+		{{control sap-ui-type="sap.ui.commons.Label" design="Bold" text="{/title}"}}
+		<ul>
+		{{#each path="/persons"}}
+			<li>{{control sap-ui-type="sap.ui.commons.TextView" text="{lastName}, {firstName}"}}</li>
+		{{/each}}
+		</ul>
+
+	</div>
+
+	<div id="myControlEditTemplate" data-type="text/x-handlebars-template">
+
+		<h3>Advanced Control Template (using editable "control" expression)</h3>
+		{{control sap-ui-type="sap.ui.commons.TextArea" value="{/title}" rows="2" cols="40"}}
+		<ul>
+		{{#each path="/persons"}}
+			<li>{{control sap-ui-type="sap.ui.commons.TextField" value="{lastName}"}}, {{control sap-ui-type="sap.ui.commons.TextField" value="{firstName}"}}</li>
+		{{/each}}
+		</ul>
+
+	</div>
+
+	<div id="myHelpersTemplate" data-type="text/x-handlebars-template">
+
+		<h3>Helpers Template (example for if/unless helper support)</h3>
+		{{text path="/title"}} (checked):
+		<ul>
+		{{#each path="/persons"}}
+			{{#if path="checked"}}
+			<li>{{text path="firstName"}} {{text path="lastName"}}</li>
+			{{/if}}
+		{{/each}}
+		</ul>
+		{{text path="/title"}} (unchecked):
+		<ul>
+		{{#each path="/persons"}}
+			{{#unless path="checked"}}
+			<li>{{text path="firstName"}} {{text path="lastName"}}</li>
+			{{/unless}}
+		{{/each}}
+		</ul>
+
+	</div>
+
+</body>
+</html>

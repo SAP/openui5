@@ -1,0 +1,599 @@
+/* ============================================= */
+/* CSS for support View Info                     */
+/* ============================================= */
+
+#sapUiSupportViewInfo .sapUISupportLabel {
+	padding: 5px;
+}
+
+.sapUiSupportViewInfoElementHidden {
+	display: none;
+}
+
+.sapUiSupportObjectViewerMarginLeft {
+	margin-left: 16px;
+}
+
+
+.viewxmlinfo {
+	width: 620px;
+	height: 300px;
+	position: absolute;
+	margin-top: -310px;
+	margin-left: 810px;
+	box-sizing: border-box;
+}
+
+.viewxmlinfo .content {
+	overflow: auto;
+	box-sizing: border-box;
+}
+
+.viewxmlinfo .toolbar {
+	padding: 4px 10px;
+	box-sizing: border-box;
+	height: 25px;
+}
+
+.viewxmlinfo .title {
+	padding: 4px 10px;
+	box-sizing: border-box;
+	height: 25px;
+	font-size: 17px;
+}
+
+.viewxmlinfo .title a {
+	color: #007dc0;
+	text-decoration: none;
+}
+
+.viewxmlinfo .title a:hover {
+	color: #007dc0;
+	text-decoration: underline;
+}
+
+.viewxmlheader {
+	cursor: default;
+	font-family: arial;
+	font-size: 14px;
+}
+
+.viewxmlheader .info {
+	margin-left: 3px;
+	display: inline-block
+}
+
+.viewxmlheader[collapsed='true'] .settingscontainer {
+	display: none;
+	margin-left: 8px;
+}
+
+.viewxmlheader[collapsed='false'] .settingscontainer {
+	margin-top: 3px;
+	display: block;
+	margin-left: 12px;
+}
+
+.viewxmlmain .settingscontainer {
+	margin-left: 12px;
+}
+
+.viewxmlmain .settings {
+	font-size: 14px;
+	margin: 0 6px;
+	padding: 2px 6px;
+	color: #007dc0;
+	cursor: pointer;
+	display: inline-block;
+	width: 180px;
+	white-space: nowrap;
+}
+
+.viewxmlmain .settings [selected='true'] {
+	background-color: #007dc0;
+}
+
+.viewxmlmain .settings [selected] {
+	border: 1px solid #007dc0;
+	height: 11px;
+	display: inline-block;
+	width: 11px;
+	box-sizing: border-box;
+	margin-right: 4px;
+	margin-bottom: -1px;
+}
+
+.viewxmlheader .settings {
+	margin: 0 6px;
+	padding: 2px 6px;
+	color: #007dc0;
+	cursor: pointer;
+	display: inline-block;
+	width: 180px;
+	white-space: nowrap;
+}
+
+.viewxmlheader .settings [selected='true'] {
+	background-color: #007dc0;
+}
+
+.viewxmlheader .settings [selected] {
+	border: 1px solid #007dc0;
+	height: 11px;
+	display: inline-block;
+	width: 11px;
+	box-sizing: border-box;
+	margin-right: 4px;
+	margin-bottom: -1px;
+}
+
+.viewxmlheader[collapsed='true'] .toggle {
+	border-color: transparent transparent transparent #333;
+	border-radius: 0;
+	border-style: solid;
+	border-width: 4px 3px 4px 8px;
+	height: 0;
+	width: 0;
+	position: relative;
+	margin-top: 0;
+	margin-left: 10px;
+	display: inline-block;
+}
+
+.viewxmlheader[collapsed='false'] .toggle {
+	border-color: #333 transparent transparent transparent;
+	border-radius: 0;
+	border-style: solid;
+	border-width: 8px 4px 0px 4px;
+	height: 0;
+	width: 0;
+	position: relative;
+	margin-top: 0px;
+	margin-left: 8px;
+	margin-right: 5px;
+	display: inline-block;
+}
+
+.viewxmlsplitter {
+	font-family: consolas, monospace;
+	width: 5px;
+	overflow: auto;
+	height: 300px;
+	position: absolute;
+	margin-top: -310px;
+	margin-left: 810px;
+	padding-left: 10px;
+}
+
+.treeviewer {
+	padding-top: 10px;
+	margin-left: 15px;
+	font-family: consolas, monospace;
+	width: 100%;
+	overflow: auto;
+	height: 100%;
+	position: relative;
+	cursor: default;
+}
+
+.treeviewer .node {
+	border: 1px solid transparent;
+}
+
+.treeviewer .node.start {
+	white-space: nowrap;
+}
+
+.treeviewer .node.inactive {
+	color: gray!important;
+	opacity: 0.6
+}
+
+.treeviewer .node.inactive SPAN {
+	color: gray!important;
+	background-color: transparent!important;
+}
+
+.treeviewer .node.replace .nstag {
+	text-decoration: line-through
+}
+
+.treeviewer .node.start.select {
+	background-color: #fff8ad;
+}
+
+.treeviewer .node.start.highlight {
+	background-color: #fff;
+}
+
+.treeviewer .node.end {
+	white-space: nowrap;
+}
+
+.treeviewer .node .info {
+	margin: 0 2px;
+}
+
+.treeviewer .node .info.orange {
+	border: 1px solid orange;
+}
+
+.treeviewer .node .info.orange[selected='true'] {
+	background-color: orange;
+}
+
+.treeviewer .node .info.blue {
+	border: 1px solid #007dc0;
+}
+
+.treeviewer .node .info.blue[selected='true'] {
+	background-color: #007dc0;
+}
+
+.treeviewer .node .info.green {
+	border: 1px solid green;
+}
+
+.treeviewer .node .info.green[selected='true'] {
+	background-color: green;
+}
+
+.treeviewer .node .info.red {
+	border: 1px solid #b93232
+}
+
+.treeviewer .node .info.red[selected='true'] {
+	background-color: #b93232;
+}
+
+.treeviewer .node .info {
+	opacity: 0.6;
+	display: inline-block;
+	border-radius: 10px;
+	height: 6px;
+	width: 6px;
+}
+
+.treeviewer .node .info[selected='true'] {
+	opacity: 1;
+	display: inline-block;
+	border-radius: 10px;
+	height: 6px;
+	width: 6px;
+}
+
+.treeviewer .node .info:hover {
+	opacity: 1;
+}
+
+.treeviewer .node .attrname {
+	color: #b93232;
+	border: 1px solid transparent;
+	display: inline-block;
+}
+
+.treeviewer .node .attrname:hover {
+	border: 1px solid #b93232;
+	background-color: #fde3d5
+}
+
+.treeviewer .node .attrvalue {
+	color: #007dc0;
+	border: 1px solid transparent;
+	display: inline-block;
+}
+
+.treeviewer .node .attr[modified='true'] .attrvalue {
+	color: #d210f3;
+	border: 1px solid transparent;
+	display: inline-block;
+}
+
+.treeviewer .node .attr[modified='true'] {
+	background-color: #ffe7fc;
+}
+
+.treeviewer .node .attr[oldvalue='null'] .attrname {
+	color: #d210f3;
+	border: 1px solid transparent;
+	display: inline-block;
+}
+
+.treeviewer.id1 .node .attrvalue2 {
+	display: none;
+}
+
+.treeviewer.id2 .node .attrvalue1 {
+	display: none;
+}
+
+.treeviewer .node .attrvalue:hover {
+	border: 1px solid #007dc0;
+	background-color: #e1e1ff;
+}
+
+.treeviewer .node .ns {
+	color: green;
+}
+
+.treeviewer.hideNS .node .ns {
+	display: none;
+}
+
+.treeviewer.hideInactive .node.inactive {
+	display: none!important
+}
+
+.treeviewer .node .tag {
+	color: green
+}
+
+.treeviewer .node .nstag {
+	color: green;
+	border: 1px solid transparent;
+	display: inline-block;
+}
+
+.treeviewer .node.start .nstag:hover {
+	border: 1px solid green;
+	background-color: #d5e6d5
+}
+
+.treeviewer .node.start .nstagend .nstag:hover {
+	border: 1px solid transparent;
+	background-color: transparent
+}
+
+.treeviewer .node.end[visible='true'] {
+	display: inline-block;
+}
+
+.treeviewer .node:focus {
+	border: 1px dotted #e1e1ff;
+	outline: none;
+}
+
+.treeviewer .node.end[visible='true'][haschildnodes='true'] {
+	display: block;
+}
+
+.treeviewer .node[visible='false'] {
+	display: none;
+}
+
+.treeviewer .node[collapsed='true'][haschildnodes='true'] .expand {
+	border-color: transparent transparent transparent #cecece;
+	border-radius: 0;
+	border-style: solid;
+	border-width: 4px 3px 4px 8px;
+	height: 0;
+	width: 0;
+	position: relative;
+	margin-top: 0;
+	margin-left: -10px;
+	display: inline-block;
+}
+
+.treeviewer .node[collapsed='false'][haschildnodes='true'] .expand {
+	border-color: #cecece transparent transparent transparent;
+	border-radius: 0;
+	border-style: solid;
+	border-width: 8px 4px 0 4px;
+	height: 0;
+	width: 0;
+	position: relative;
+	margin-top: 0;
+	margin-left: -12px;
+	margin-right: 5px;
+	display: inline-block;
+}
+
+.treeviewer .node[collapsed='true'][haschildnodes='true']:hover .expand {
+	border-color: transparent transparent transparent #aaa;
+}
+
+.treeviewer .node[collapsed='false'][haschildnodes='true']:hover .expand {
+	border-color: #aaa transparent transparent transparent;
+}
+
+.treeviewer .node[collapsed='true'][haschildnodes='true'] .expand:hover {
+	border-color: transparent transparent transparent #999;
+}
+
+.treeviewer .node[collapsed='false'][haschildnodes='true'] .expand:hover {
+	border-color: #999 transparent transparent transparent;
+}
+
+.objectviewer {
+	white-space: nowrap;
+	font-family: consolas;
+	display: block;
+	cursor: default;
+	width: 100%;
+	overflow: auto;
+	height: 100%;
+	padding: 10px;
+	box-sizing: border-box;
+}
+
+.objectviewer .key {
+	white-space: nowrap;
+	color: #b93232;
+	width: 40%;
+	overflow: hidden;
+	display: inline-block;
+	text-overflow: ellipsis;
+}
+
+.objectviewer .hiddenkey .keyinfo {
+	visibility: hidden;
+}
+
+.objectviewer .hiddenkey .colon {
+	visibility: hidden;
+}
+
+.objectviewer .hiddenkey .key {
+	visibility: hidden;
+}
+
+.objectviewer .value {
+	white-space: nowrap;
+	color: #007dc0;
+	width: 50%;
+	overflow: hidden;
+	display: inline-block;
+	text-overflow: ellipsis;
+}
+
+.objectviewer .value .valueInput {
+	font-family: consolas;
+	border: none;
+	padding: 0;
+	background-color: transparent;
+	white-space: nowrap;
+	color: #007dc0;
+	width: 100%;
+	overflow: hidden;
+	display: inline-block;
+	text-overflow: ellipsis;
+}
+
+.objectviewer .value .valueInput:not([readonly])[error='true'] {
+	color: #d80000;
+	solid 2px rgba(255, 0, 0, 0.26)
+}
+
+.objectviewer .value .valueInput:not([readonly]):hover {
+	background-color: #f5f5f5
+}
+
+.objectviewer .value .valueInput:not([readonly]):focus {
+	background-color: #fff;
+	border: none;
+	outline: none;
+}
+
+.objectviewer .colon {
+	padding: 0 6px;
+	display: inline-block;
+	overflow: hidden;
+	width: 2%
+}
+
+.objectviewer .header {
+	color: #666;
+	font-size: 14px;
+	font-family: arial;
+	margin: 3px 0 2px;
+}
+
+.objectviewer .control .key {
+	font-weight: bold;
+	color: #333;
+}
+
+.objectviewer .control .value {
+	font-weight: bold;
+	color: #333;
+}
+
+.objectviewer .keyinfo.orange {
+	border: 1px solid orange;
+}
+
+.objectviewer .keyinfo.blue {
+	border: 1px solid #007dc0;
+}
+
+.objectviewer .keyinfo.green {
+	border: 1px solid green;
+}
+
+.objectviewer .keyinfo.red {
+	border: 1px solid #cc1919;
+}
+
+.objectviewer .keyinfo.orange[selected='true'] {
+	background-color: orange;
+}
+
+.objectviewer .keyinfo.blue[selected='true'] {
+	background-color: #007dc0;
+}
+
+.objectviewer .keyinfo.green[selected='true'] {
+	background-color: green;
+}
+
+.objectviewer .keyinfo.red[selected='true'] {
+	background-color: #cc1919;
+}
+
+.objectviewer .keyinfo {
+	display: inline-block;
+	border-radius: 10px;
+	height: 10px;
+	width: 10px;
+	overflow: hidden;
+	margin-right: 3px;
+	position: relative;
+	vertical-align: top;
+	margin-top: 1px;
+}
+
+.objectviewer .header[collapsed='true'] .expand {
+	border-color: transparent transparent transparent #cecece;
+	border-radius: 0;
+	border-style: solid;
+	border-width: 4px 3px 4px 8px;
+	height: 0;
+	width: 0;
+	position: relative;
+	margin-top: 0px;
+	margin-left: 2px;
+	display: inline-block;
+}
+
+.objectviewer [collapsed='false'] .expand {
+	border-color: #cecece transparent transparent transparent;
+	border-radius: 0;
+	border-style: solid;
+	border-width: 8px 4px 0px 4px;
+	height: 0;
+	width: 0;
+	position: relative;
+	margin-top: 0px;
+	margin-left: 0px;
+	margin-right: 5px;
+	display: inline-block;
+}
+
+.objectviewer [collapsed='true'] .expand:hover {
+	border-color: transparent transparent transparent #aaa;
+}
+
+.objectviewer [collapsed='false'] .expand:hover {
+	border-color: #aaa transparent transparent transparent;
+}
+
+.objectviewer [visible='false'] {
+	display: none;
+}
+
+.objectviewer .internal {
+	opacity: 0.7;
+}
+
+.objectviewer .private {
+	opacity: 0.7;
+}
+
+.objectviewer .default {
+	opacity: 0.7;
+}
+
+.objectviewer .end {
+	border-top: 1px solid #e0e0e0;
+	height: 1px;
+}

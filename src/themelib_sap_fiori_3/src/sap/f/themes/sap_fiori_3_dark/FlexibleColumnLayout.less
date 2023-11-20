@@ -1,0 +1,20 @@
+/* =========================================== */
+/* CSS for control sap.f/FlexibleColumnLayout  */
+/* Quartz Dark theme                           */
+/* =========================================== */
+
+.sapFFCL {
+	&.sapFFCLBackgroundDesignSolid {
+		background: @sapUiShellBackground;
+	}
+	&.sapFFCLBackgroundDesignTranslucent {
+		background: @sapUiGroupContentBackground;
+	}
+}
+.sapFFCLNavigationButton,
+.sapUiSizeCompact .sapFFCLNavigationButton {
+	// Reflection: styles overwritten
+	.sapMBtnInner {
+		height: 1.625rem;
+	}
+}

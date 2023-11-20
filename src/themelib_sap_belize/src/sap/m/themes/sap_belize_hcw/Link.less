@@ -21,14 +21,6 @@ html.sap-desktop .sapMLnk:focus:not(.sapMLnkDsbl) {
 	outline: 0.125rem dotted @sapUiContentFocusColor;
 }
 
-/* IE and Edge ignores outline-offset. Use an overlay: */
-html[data-sap-ui-browser^="ie"].sap-desktop,
-html[data-sap-ui-browser^="ed"].sap-desktop {
-	.sapMLnk:focus:not(.sapMLnkDsbl):before {
-		border: 0.125rem dashed @sapUiContentFocusColor;
-	}
-}
-
 html.sap-desktop .sapMLnk:hover:not(.sapMLnkDsbl) {
 	text-decoration: none;
 }

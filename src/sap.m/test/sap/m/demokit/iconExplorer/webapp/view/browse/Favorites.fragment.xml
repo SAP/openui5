@@ -1,13 +1,12 @@
 <core:FragmentDefinition
 	xmlns="sap.m"
-	xmlns:core="sap.ui.core"
-	xmlns:l="sap.ui.layout">
+	xmlns:core="sap.ui.core">
 	<Table
 		id="results"
 		width="auto"
 		class="sapUiSmallMargin"
 		mode="SingleSelectMaster"
-		selectionChange="onSelectionChange"
+		selectionChange=".onSelectionChange"
 		items="{
 			path: 'fav>/icons',
 			sorter: {
@@ -16,14 +15,13 @@
 			},
 			templateShareable: true
 		}"
-		noDataText="{view>/overviewNoDataText}"
 		growing="true"
 		growingThreshold="{view>/growingThreshold}"
-		updateFinished="onUpdateFinished">
+		updateFinished=".onUpdateFinished">
 		<columns>
 			<Column
 				id="iconColumn"
-				width="2rem"
+				width="3rem"
 				vAlign="Middle">
 				<Text
 					id="iconColumnTitle"
@@ -31,15 +29,21 @@
 			</Column>
 			<Column
 				id="nameColumn"
-				width="20%"
+				width="15%"
 				vAlign="Middle">
 				<Text
 					id="nameColumnTitle"
 					text="{i18n>tableNameColumnTitle}"/>
 			</Column>
+			<Column width="4rem">
+				<Text text="{i18n>previewCopyTitle}"/>
+			</Column>
+			<Column width="7rem">
+				<Text text="{i18n>tableNameLibrary}"/>
+			</Column>
 			<Column
 				id="codeColumn"
-				width="20%"
+				width="25%"
 				minScreenWidth="Desktop"
 				demandPopin="true"
 				vAlign="Middle">
@@ -49,9 +53,9 @@
 			</Column>
 			<Column
 				id="tagsColumn"
-				width="35%"
 				minScreenWidth="Desktop"
 				demandPopin="true"
+				hAlign="End"
 				vAlign="Middle">
 				<Text
 					id="tagsColumnTitle"
@@ -74,21 +78,31 @@
 					<Label
 						design="Bold"
 						text="{fav>name}"/>
+					<Button
+						icon="sap-icon://copy"
+						type="Transparent"
+						tooltip="{i18n>previewCopyIconToClipboard}"
+						press=".handleCopyToClipboardClick"
+						ariaLabelledBy="labelCopyButton"/>
+					<Text text="{
+							path: 'view>/fontName',
+							formatter: '.formatter.fontName'
+						}"/>
 					<Text
 						text="sap-icon://{fav>iconPath}{fav>name}"/>
-					<l:HorizontalLayout
-							class="tagsArea"
-							content="{
+					<Tokenizer
+						renderMode="Narrow"
+						editable="false"
+						width="100%"
+							tokens="{
 								path: 'fav>tags',
 								templateShareable: true
-							}"
-							allowWrapping="true">
+							}">
 						<Token
 							text="{fav>name}"
-							select="onTagSelect"
-							editable="false"
-							class="tagsToken"/>
-					</l:HorizontalLayout>
+							press=".onTagSelect"
+							editable="false"/>
+					</Tokenizer>
 					<RatingIndicator
 						iconUnselected="sap-icon://unfavorite"
 						value="{
@@ -96,7 +110,7 @@
 							formatter: '.formatter.favoriteRating'
 						}"
 						maxValue="1"
-						change="onToggleFavorite"/>
+						change=".onToggleFavorite"/>
 				</cells>
 			</ColumnListItem>
 		</items>

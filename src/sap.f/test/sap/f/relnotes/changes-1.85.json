@@ -1,0 +1,95 @@
+{
+  "1.85.0": {
+    "date": "November 2020",
+    "notes": [
+      {
+        "id": "1f5c6cad61606e81a12d6177e21bbe58ebe97198",
+        "type": "FIX",
+        "text": " sap.f.AvatarGroup: Fix IE infinite rerendering",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070469517"
+          }
+        ]
+      },
+      {
+        "id": "91832821fe86d173f918acd040aca39758185e50",
+        "type": "FIX",
+        "text": " sap.f.DynamicPage: Prevent hiding the header on size chage",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070400160"
+          }
+        ]
+      },
+      {
+        "id": "aa3d211df814220db2ad5d4fb5f5ac69dac7aac6",
+        "type": "FEATURE",
+        "text": " sap.ui.integration.widgets.Card: Introduced new actionDefinitions aggregation",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070393761"
+          }
+        ]
+      },
+      {
+        "id": "22fd4e99867d7af2dda07439922cf3a2b3ec30cd",
+        "type": "FIX",
+        "text": " CalendarContent: Manifest dates parsed as in ISO 8601 format",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070466809"
+          }
+        ]
+      },
+      {
+        "id": "83ba0aafcb74e906ba1dc533076b9756a1d19e75",
+        "type": "FIX",
+        "text": " sap.f.GridContainer: Navigation with arrow keys no longer scrolls",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070382146"
+          }
+        ]
+      },
+      {
+        "id": "4ac6e5f5f90bf4bd7e65453361f61ad0009440d8",
+        "type": "FIX",
+        "text": " sap.f.DynamicPage: Fixed the overlapping of buttons",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070286921"
+          }
+        ]
+      },
+      {
+        "id": "582f008757071314ab339866bcca9fbd494ca1e0",
+        "type": "FIX",
+        "text": " sap.f.GridContainer: DnD between list and grid is improved",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070429946"
+          }
+        ]
+      },
+      {
+        "id": "155d00436c74acc5750db665fcb6821b6a2a7dae",
+        "type": "FIX",
+        "text": " sap.ui.integration.widgets.Card: Content now shrinks when needed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002028376500004032812020"
+          }
+        ]
+      }
+    ]
+  }
+}

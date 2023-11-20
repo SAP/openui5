@@ -1,7 +1,6 @@
 <!DOCTYPE HTML>
 <html>
 <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <title>sap.m.MenuButton Test</title>
@@ -38,7 +37,7 @@
                             items: [
                                 new sap.m.MenuItem({
                                     icon: "sap-icon://factory",
-                                    text: "factory"
+                                    text: "factory",
                                 }),
                                 new sap.m.MenuItem({
                                     icon: "sap-icon://flag",
@@ -284,15 +283,18 @@ var oMenu22 = new sap.m.Menu({
             items: [
                 new sap.m.MenuItem({
                     text: "Send the response now",
-                    icon: "sap-icon://accept"
+                    icon: "sap-icon://accept",
+                                    enabled: false
                 }),
                 new sap.m.MenuItem({
                     text: "Edit the response before sending",
-                    icon: "sap-icon://accept"
+                    icon: "sap-icon://accept",
+                                    enabled: false
                 }),
                 new sap.m.MenuItem({
                     text: "Do not send a response",
-                    icon: "sap-icon://accept"
+                    icon: "sap-icon://accept",
+                                    enabled: false
                 })
             ]
         });
@@ -309,6 +311,11 @@ var oMenu22 = new sap.m.Menu({
 			defaultAction: function() {
 				sap.m.MessageToast.show("Accepted");
 			}
+        });
+
+        var oMenuButton3Disabled = new sap.m.MenuButton('mb3-disabled', {
+            text: "Disabled menu button",
+            enabled: false
 		});
 
 		var oMenuButton4 = new sap.m.MenuButton('mb4', {
@@ -448,7 +455,7 @@ var oMenu22 = new sap.m.Menu({
         var oLabel8 = new sap.m.Label({
             text: "width: 250px"
         });
-        var oMenuButton8 = new sap.m.MenuButton({
+        var oMenuButton8 = new sap.m.MenuButton("mb-toolbar",{
             width: "250px",
             text: "Accept",
             buttonMode: sap.m.MenuButtonMode.Regular,
@@ -526,6 +533,19 @@ var oMenu22 = new sap.m.Menu({
                 }
             }
         });
+
+		var oDensitySelect = new sap.m.Select("density_select", {
+			items: [
+				new sap.ui.core.Item("item_cozy", {text: "Cozy"}),
+				new sap.ui.core.Item("item_compact", {text: "Compact"})
+			],
+			change: function (oEvent) {
+				var bCompactMode = oEvent.getParameter("selectedItem").getText() === "Compact";
+
+				oPage.toggleStyleClass("sapUiSizeCompact", bCompactMode);
+				oPage.rerender();
+			}
+		});
 
         function getControls() {
             var keys = [
@@ -636,7 +656,8 @@ var oMenu22 = new sap.m.Menu({
                 oMenuButton15,
 
                 oButton,
-                oButtonShowTruncation
+				oButtonShowTruncation,
+				oDensitySelect
             ]
         });
 
@@ -699,6 +720,11 @@ var oMenu22 = new sap.m.Menu({
                                     icon: "sap-icon://thumb-up",
                                     text: "Button",
                                     type: "Transparent"
+                                }),
+                                new sap.m.MenuButton({
+                                    icon: "sap-icon://thumb-up",
+                                    text: "MenuButton but the text is too long",
+                                    type: "Transparent"
                                 })
                             ]
                         })
@@ -760,9 +786,32 @@ var oMenu22 = new sap.m.Menu({
                                     icon: "sap-icon://thumb-up",
                                     text: "Button",
                                     type: "Transparent"
+                                }),
+                                new sap.m.MenuButton({
+                                    icon: "sap-icon://thumb-up",
+                                    text: "MenuButton but the text is too long",
+                                    type: "Transparent"
                                 })
                             ]
                         }).addStyleClass("sapContrast")
+                    ]
+                }), 
+                new sap.m.CustomListItem({
+                    id: "customListItem3",
+                    content: [
+                        new sap.m.Text({id:"textInListItem3", text:"MenuButtons in Overflowed List"}),
+                        new sap.m.OverflowToolbar({
+                            id: "overflowToolbarInListItem3",
+                            width: "50px",
+                            content: [
+                                new sap.m.MenuButton({
+                                    id: "menuButtonInOverflow",
+                                    icon: "sap-icon://thumb-up",
+                                    text: "MenuButton but the text is too long",
+                                    type: "Transparent"
+                                })
+                            ]
+                        })
                     ]
                 })
             ]
@@ -772,7 +821,8 @@ var oMenu22 = new sap.m.Menu({
             customHeader: new sap.m.Toolbar({
                 content: [
                     oLabel8,
-                    oMenuButton8
+                    oMenuButton8,
+                    oMenuButton3Disabled
                 ]
             }),
             subHeader: new sap.m.Toolbar({
@@ -783,12 +833,15 @@ var oMenu22 = new sap.m.Menu({
             }),
             content: [
                 oVBox,
-                oList
+                oList, 
             ],
-            footer: new sap.m.Toolbar({
-                content: [
+            footer: new sap.m.Bar({
+                contentMiddle: [
                     oLabel2,
-                    oMenuButton2
+                    oMenuButton2,
+                    new sap.m.MenuButton({
+                        text: "Test"
+                    })
                 ]
             })
         });
@@ -803,6 +856,6 @@ var oMenu22 = new sap.m.Menu({
         oApp.placeAt("body");
     </script>
 </head>
-<body id="body" class="sapUiBody" role="application">
+<body id="body" class="sapUiBody">
 </body>
 </html>

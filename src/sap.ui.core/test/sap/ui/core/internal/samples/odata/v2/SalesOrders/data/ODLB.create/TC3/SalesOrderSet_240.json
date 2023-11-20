@@ -1,0 +1,14 @@
+{
+	"d": {
+		"__metadata" : {
+			"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SalesOrderSet('240')",
+			"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SalesOrderSet('240')",
+			"type" : "GWSAMPLE_BASIC.SalesOrder"
+		},
+		"SalesOrderID" : "240",
+		"CustomerName" : "SAP",
+		"Note" : "C",
+		"CurrencyCode" : "EUR",
+		"GrossAmount" : "0.0"
+	}
+}

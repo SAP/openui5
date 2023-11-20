@@ -1,7 +1,6 @@
 <!DOCTYPE HTML>
 <html>
 	<head>
-		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 
 		<title>sap.m.Carousel Test</title>
 		<script src="shared-config.js"></script>
@@ -44,6 +43,15 @@
 
 		<script>
 
+		var oOldActivePage = new sap.m.Text();
+		var oNewActivePage = new sap.m.Text();
+		var oAllActivePages = new sap.m.Text();
+
+		function updateActivePages(sOldPageId, sNewPageId, aActivePages) {
+			oOldActivePage.setText(sOldPageId);
+			oNewActivePage.setText(sNewPageId);
+			oAllActivePages.setText("[" + aActivePages + "]");
+		}
 
 		//Create demo page for mobile controls
 		function createAList(inset, id) {
@@ -453,7 +461,10 @@
 			//showPageIndicator: false,
 			loop: true,
 			//showBusyIndicator: false,
-			pages: [carouselImages[0], carouselImages[1], carouselImages[2], carouselImages[3], carouselImages[4]]
+			pages: [carouselImages[0], carouselImages[1], carouselImages[2], carouselImages[3], carouselImages[4]],
+			pageChanged: function (e) {
+				updateActivePages(e.getParameter("oldActivePageId"), e.getParameter("newActivePageId"), e.getParameter("activePages"));
+			}
 		});
 
 		// Radio button group arrowsPlacement
@@ -506,6 +517,41 @@
 			}
 		});
 
+		// Radio button group backgroundDesign
+		var oRBGroupBackgroundDesign =  new sap.m.RadioButtonGroup("RBBackgroundDesign");
+		oRBGroupBackgroundDesign.setColumns(3);
+
+		var oButtonSolid = new sap.m.RadioButton("RB-Solid");
+		oButtonSolid.setText("Solid");
+		oButtonSolid.setTooltip("Sets the carousel's background to Solid")
+		oRBGroupBackgroundDesign.addButton(oButtonSolid);
+
+		var oButtonTranslucent = new sap.m.RadioButton("RB-Translucent");
+		oButtonTranslucent.setText("Translucent");
+		oButtonTranslucent.setSelected(true);
+		oButtonTranslucent.setTooltip("Sets the carousel's background to Translucent (Default)")
+		oRBGroupBackgroundDesign.addButton(oButtonTranslucent);
+
+		var oButtonTransparent = new sap.m.RadioButton("RB-Transparent");
+		oButtonTransparent.setText("Transparent");
+		oButtonTransparent.setTooltip("Sets the carousel's background to Transparent")
+		oRBGroupBackgroundDesign.addButton(oButtonTransparent);
+
+		var oRBGroupBackgroundDesignLabel = new sap.m.Label({
+			text: "Background Design",
+			labelFor: oRBGroupBackgroundDesign
+		});
+		oRBGroupBackgroundDesign.attachSelect(function () {
+			var sSelectedValue = oRBGroupBackgroundDesign.getSelectedButton().getText();
+			if (sSelectedValue === "Solid") {
+				carousel.setBackgroundDesign(sap.m.BackgroundDesign.Solid);
+			} else if (sSelectedValue === "Translucent") {
+				carousel.setBackgroundDesign(sap.m.BackgroundDesign.Translucent);
+			} else if (sSelectedValue === "Transparent") {
+				carousel.setBackgroundDesign(sap.m.BackgroundDesign.Transparent);
+			}
+		});
+
 		// Radio button group showPageIndicator
 
 		var oRBGroupShowPageIndicator = new sap.m.RadioButtonGroup("RBShowPageIndicator");
@@ -531,6 +577,67 @@
 			}
 		});
 
+		// Radio button group pageIndicatorBackgroundDesign
+		var oRBGroupPageIndicatorBackgroundDesign = new sap.m.RadioButtonGroup();
+		oRBGroupPageIndicatorBackgroundDesign.setColumns(3);
+
+		var oPIBButtonSolid = new sap.m.RadioButton("RB-PI-Solid");
+		oPIBButtonSolid.setText("Solid");
+		oPIBButtonSolid.setTooltip("Sets the page indicator background to Solid (Default)")
+		oRBGroupPageIndicatorBackgroundDesign.addButton(oPIBButtonSolid);
+
+		var oPIBButtonTranslucent = new sap.m.RadioButton("RB-PI-Translucent");
+		oPIBButtonTranslucent.setText("Translucent");
+		oPIBButtonTranslucent.setTooltip("Sets the page indicator background to Translucent")
+		oRBGroupPageIndicatorBackgroundDesign.addButton(oPIBButtonTranslucent);
+
+		var oPIBButtonTransparent = new sap.m.RadioButton("RB-PI-Transparent");
+		oPIBButtonTransparent.setText("Transparent");
+		oPIBButtonTransparent.setTooltip("Sets the page indicator background to Transparent")
+		oRBGroupPageIndicatorBackgroundDesign.addButton(oPIBButtonTransparent);
+
+		var oRBGroupPageIndicatorBackgroundDesignLabel = new sap.m.Label({
+			text: "Page Indicator Background Design",
+			labelFor: oRBGroupPageIndicatorBackgroundDesign
+		});
+		oRBGroupPageIndicatorBackgroundDesign.attachSelect(function () {
+			var sSelectedValue = oRBGroupPageIndicatorBackgroundDesign.getSelectedButton().getText();
+			if (sSelectedValue === "Solid") {
+				carousel.setPageIndicatorBackgroundDesign(sap.m.BackgroundDesign.Solid);
+			} else if (sSelectedValue === "Translucent") {
+				carousel.setPageIndicatorBackgroundDesign(sap.m.BackgroundDesign.Translucent);
+			} else if (sSelectedValue === "Transparent") {
+				carousel.setPageIndicatorBackgroundDesign(sap.m.BackgroundDesign.Transparent);
+			}
+		});
+
+		// Radio button group pageIndicatorBorderDesign
+		var oRBGroupPageIndicatorBorderDesign = new sap.m.RadioButtonGroup();
+		oRBGroupPageIndicatorBorderDesign.setColumns(2);
+
+		var oPIBorderButtonSolid = new sap.m.RadioButton("RB-PI-B-Solid");
+		oPIBorderButtonSolid.setText("Solid");
+		oPIBorderButtonSolid.setTooltip("Sets the page indicator border to Solid (Default)")
+		oRBGroupPageIndicatorBorderDesign.addButton(oPIBorderButtonSolid);
+
+		var oPIBorderButtonNone = new sap.m.RadioButton("RB-PI-B-None");
+		oPIBorderButtonNone.setText("None");
+		oPIBorderButtonNone.setTooltip("Sets the page indicator border to None")
+		oRBGroupPageIndicatorBorderDesign.addButton(oPIBorderButtonNone);
+
+		var oRBGroupPageIndicatorBorderDesignLabel = new sap.m.Label({
+			text: "Page Indicator Border Design",
+			labelFor: oRBGroupPageIndicatorBorderDesign
+		});
+		oRBGroupPageIndicatorBorderDesign.attachSelect(function () {
+			var sSelectedValue = oRBGroupPageIndicatorBorderDesign.getSelectedButton().getText();
+			if (sSelectedValue === "Solid") {
+				carousel.setPageIndicatorBorderDesign(sap.m.BorderDesign.Solid);
+			} else if (sSelectedValue === "None") {
+				carousel.setPageIndicatorBorderDesign(sap.m.BorderDesign.None);
+			}
+		});
+
 		// Input for setting the number of images to show in the carousel
 
 		var oNumberOfImagesInput = new sap.m.Input("input-slides-number", {
@@ -539,7 +646,7 @@
 			width: "320px",
 			liveChange: function (oEvent) {
 				var numberOfImages = Number(oEvent.getSource().getValue());
-				if (!numberOfImages || numberOfImages < 1 || numberOfImages > 9){
+				if (!Number.isInteger(numberOfImages) || numberOfImages < 0 || numberOfImages > carouselImages.length){
 					return;
 				}
 
@@ -555,8 +662,45 @@
 			}
 		});
 		var oNumberOfImagesInputLabel = new sap.m.Label({
-			text: "Number of images to display (Can be a number between 1 and 9)",
+			text: "Number of images to display (Can be a number between 0 and " + carouselImages.length + ")",
 			labelFor: oNumberOfImagesInput
+		});
+
+		var oNumberOfPagesToBeShownInput = new sap.m.Input("input-pages-number", {
+			type: "Number",
+			value: "1",
+			width: "320px",
+			liveChange: function (oEvent) {
+				var iNumberOfPages = Number(oEvent.getSource().getValue());
+				if (!iNumberOfPages || iNumberOfPages < 1 || iNumberOfPages > 4){
+					return;
+				}
+
+				var oCarousel = sap.ui.getCore().byId("myCarousel");
+				oCarousel.setCustomLayout(new sap.m.CarouselLayout({
+					visiblePagesCount: iNumberOfPages
+				}));
+			}
+		});
+
+		var oNumberOfIPagesToBeShownLabel = new sap.m.Label({
+			text: "Number of pages to be shown in Carousel's visible area (Can be a number between 1 and 4)",
+			labelFor: oNumberOfPagesToBeShownInput
+		});
+
+		var oScrollModeLabel = new sap.m.Label({
+			text: "Scroll mode - visible pages:",
+			labelFor: oScrollModeSwitch
+		});
+		
+		var oScrollModeSwitch = new sap.m.Switch("scrollMode",{
+			state: false,
+			tooltip: "Toggles the scrollMode property of the carousel",
+			change: (oEvent) => {
+				const bScrollMode = oEvent.getParameter("state"),
+				 sScrollMode = bScrollMode ? "VisiblePages" : "SinglePage";
+				 sap.ui.getCore().byId("myCarousel").getCustomLayout()?.setScrollMode(sScrollMode);
+			}
 		});
 
 		// Slider with 5 values, used to shrink the container of the carousel
@@ -610,14 +754,40 @@
 			editable : true,
 			layout : "ResponsiveGridLayout",
 			content : [
+				new sap.ui.core.Title({ text: "Active pages"}),
+				new sap.m.Label({ text: "Old active page", labelFor: oOldActivePage }),
+				oOldActivePage,
+				new sap.m.Label({ text: "New active page", labelFor: oNewActivePage }),
+				oNewActivePage,
+				new sap.m.Label({ text: "All active pages", labelFor: oNewActivePage }),
+				oAllActivePages,
+				new sap.ui.core.Title({ text: "Settings"}),
 				oRBGroupArrowsPlacementLabel,
 				oRBGroupArrowsPlacement,
 				oRBGroupPageIndicatorPlacementLabel,
 				oRBGroupPageIndicatorPlacement,
+				oRBGroupBackgroundDesignLabel,
+				oRBGroupBackgroundDesign,
 				oRBGroupShowPageIndicatorLabel,
 				oRBGroupShowPageIndicator,
+				new sap.m.Label({ text: "Loop", labelFor: "RBLoop" }),
+				new sap.m.RadioButtonGroup("RBLoop", {
+					columns: 2,
+					buttons: [
+						new sap.m.RadioButton({ text: "true", select: function () { carousel.setLoop(true); } }),
+						new sap.m.RadioButton({ id: "RB-No-Loop", text: "false", select: function () { carousel.setLoop(false); } }),
+					]
+				}),
+				oRBGroupPageIndicatorBackgroundDesignLabel,
+				oRBGroupPageIndicatorBackgroundDesign,
+				oRBGroupPageIndicatorBorderDesignLabel,
+				oRBGroupPageIndicatorBorderDesign,
 				oNumberOfImagesInputLabel,
-				oNumberOfImagesInput
+				oNumberOfImagesInput,
+				oNumberOfIPagesToBeShownLabel,
+				oNumberOfPagesToBeShownInput,
+				oScrollModeLabel,
+				oScrollModeSwitch
 			]
 		});
 
@@ -627,16 +797,12 @@
 
 		carouselContainer.addContent(carousel);
 
-		var toolbar = new sap.m.Toolbar({
-			height: "auto"
+		var carouselFlexBox = new sap.m.FlexBox({
+			justifyContent: "Center",
+			renderType: "Bare"
 		});
 
-		var toolbarSpacer1 = new sap.m.ToolbarSpacer();
-		var toolbarSpacer2 = new sap.m.ToolbarSpacer();
-
-		toolbar.addContent(toolbarSpacer1);
-		toolbar.addContent(carouselContainer);
-		toolbar.addContent(toolbarSpacer2);
+		carouselFlexBox.addItem(carouselContainer);
 
 		//Listen to 'pageChanged' events
 		carousel.attachPageChanged(function(oControlEvent) {
@@ -677,11 +843,11 @@
 
 		var appCarousel = new sap.m.App("myApp", {initialPage:"carouselPage"});
 
-		var carouselPage = new sap.m.Page("carouselPage",
-			{title: "Carousel Test Page",
-			enableScrolling: true }
-		);
-
+		var carouselPage = new sap.m.Page("carouselPage", {
+			title: "Carousel Test Page",
+			headerContent: new sap.m.Button({text: "focus trap"}),
+			enableScrolling: true
+		});
 
 		var buttonChangeHeightTo50Percents = new sap.m.Button("btnHeight50", {
 			text: "change height to 50%",
@@ -723,7 +889,7 @@
 		});
 
 		carouselPage.addContent(appearanceForm1);
-		carouselPage.addContent(toolbar);
+		carouselPage.addContent(carouselFlexBox);
 		carouselPage.addContent(appearanceForm2);
 		carouselPage.addContent(buttonChangeHeightTo50Percents);
 		carouselPage.addContent(buttonChangeHeightTo600px);
@@ -740,6 +906,6 @@
 		</script>
 
 	</head>
-	<body id="body" class="sapUiBody" role="application">
+	<body id="body" class="sapUiBody">
 	</body>
 </html>

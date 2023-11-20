@@ -1,0 +1,89 @@
+@mdctoken-large-line-height: 1.375rem;
+@mdctoken-small-line-height: 1rem;
+
+// hide Token border and background
+.sapUiMdcTokenizerDisplay .sapMToken {
+	border: 0px; // hide the border of a token
+	background-color: transparent; // remove background of Token
+	padding-left: 0px; // remove the left padding
+}
+
+.sapUiMdcTokenizerDisplay.sapMTokenizer.sapMTokenizerReadonly .sapMToken {
+	padding-left: 0px; // remove left padding of a token. The right padding will be used to show the delimiters
+
+	// right margin and padding of the token (space for the delimiter)
+	padding-right: 0.375rem;
+	margin-right: 0.375rem;
+	margin-top: 0px;
+	margin-bottom: 0px;
+
+	color: @sapUiBaseText;
+	height: @mdctoken-small-line-height;
+}
+
+.sapUiFormEdit .sapUiMdcTokenizerDisplay.sapMTokenizer.sapMTokenizerReadonly .sapMToken {
+	height: @mdctoken-large-line-height;
+}
+
+.sapUiSizeCozy .sapUiMdcTokenizerDisplay.sapMTokenizer.sapMTokenizerReadonly .sapMToken {
+	// right margin and padding of the token (space for the delimiter)
+	padding-right: 0.5rem;
+	margin-right: 0.5rem;
+}
+
+// delimiters between tokens
+.sapUiMdcTokenizerDisplay .sapMToken::after {
+	content: attr(delimiter);
+	color: @sapUiBaseText;
+	font-family: @sapUiFontFamily;
+	font-size: @sapMFontMediumSize;
+	font-weight: normal;
+	vertical-align: middle;
+	margin-left: 0.25rem; // space between tokens. the left margin of the delimiter and the right side of the token
+	position: absolute;
+	line-height: @mdctoken-small-line-height;
+}
+
+.sapUiSizeCozy .sapUiMdcTokenizerDisplay .sapMToken::after {
+	margin-left: 0.4rem; // space between tokens. the left side margin of the token
+}
+
+.sapUiFormEdit .sapUiMdcTokenizerDisplay .sapMToken::after {
+	line-height: @mdctoken-large-line-height;
+}
+
+// no delimiter after the last token
+.sapUiMdcTokenizerDisplay .sapMToken:last-child:after {
+	content: none;
+}
+
+
+
+// make the token focus invisible
+html.sap-desktop .sapUiMdcTokenizerDisplay .sapMToken:focus {
+	outline: 0px;
+}
+
+// make the token hover invisible
+html.sap-desktop .sapUiMdcTokenizerDisplay .sapMToken:hover {
+	background: transparent;
+	border: 0px;
+}
+
+.sapUiSizeCompact .sapUiMdcTokenizerDisplay.sapMTokenizer .sapMToken {
+	font-size: @sapMFontMediumSize;
+}
+
+
+
+.sapUiMdcTokenizerDisplay .sapMTokenText {
+	// enable selection of scrollcontainer
+	-webkit-user-select: text;
+    user-select: text;
+
+	line-height: @mdctoken-small-line-height;
+}
+
+.sapUiFormEdit .sapUiMdcTokenizerDisplay .sapMTokenText {
+	line-height: @mdctoken-large-line-height;
+}

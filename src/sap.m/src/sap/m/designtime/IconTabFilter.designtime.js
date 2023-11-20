@@ -15,7 +15,7 @@ sap.ui.define([],
 				}
 			},
 			actions: {
-				rename: function (oPage) {
+				rename: function () {
 					return {
 						changeType: "rename",
 						domRef: function (oControl) {
@@ -26,20 +26,20 @@ sap.ui.define([],
 			},
 			aggregations: {
 				content: {
-					domRef: function(oControl) {
-						var oIconTabHeader = oControl.getParent(),
-							oIconTabBar = oIconTabHeader && oIconTabHeader.getParent(),
-							aContent = oControl.getContent() || [];
-
-						if (oIconTabHeader.oSelectedItem === oControl && aContent.length > 0 && oIconTabBar) {
-							return oIconTabBar.getDomRef("content");
+					propagateMetadata: function (oControl) {
+						if (oControl.getParent()?.isA("sap.m.IconTabFilter")) {
+							return {
+								actions: {
+									remove: null,
+									reveal: null
+								}
+							};
 						}
-					},
-					actions: {
-						move: "moveControls"
+
+						return undefined;
 					}
 				}
 			}
 		};
 
-	}, /* bExport= */ false);
+	});

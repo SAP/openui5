@@ -1,0 +1,35 @@
+<mvc:View
+	controllerName="sap.m.sample.ExpandableText.C"
+	xmlns="sap.m"
+	xmlns:mvc="sap.ui.core.mvc">
+
+	<Table mode="MultiSelect"
+			items="{/products}"
+			autoPopinMode="true">
+		<columns>
+			<Column>
+				<Text text="Product" />
+			</Column>
+			<Column>
+				<Text text="Attribute 1"  />
+			</Column>
+			<Column>
+				<Text text="Attribute 2" />
+			</Column>
+			<Column>
+				<Text text="Status" />
+			</Column>
+		</columns>
+		<items>
+			<ColumnListItem>
+				<cells>
+					<Text text="{name}" />
+					<ExpandableText class="sapUiTinyMarginBottom sapUiTinyMarginTop" text="{attribute1}" overflowMode="{overflowMode}" />
+					<Text text="{attribute2}" />
+					<Text text="{status}" />
+				</cells>
+			</ColumnListItem>
+		</items>
+	</Table>
+
+</mvc:View>

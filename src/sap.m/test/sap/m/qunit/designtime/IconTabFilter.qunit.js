@@ -1,15 +1,19 @@
-(function () {
+sap.ui.define([
+	"sap/m/IconTabFilter",
+	"sap/m/Button",
+	"sap/ui/dt/enablement/elementDesigntimeTest",
+	"sap/ui/rta/enablement/elementActionTest"
+], function (
+	IconTabFilter,
+	Button,
+	elementDesigntimeTest,
+	elementActionTest
+) {
 	"use strict";
 
-	sap.ui.require([
-		"sap/ui/dt/test/report/QUnit",
-		"sap/ui/dt/test/ElementEnablementTest",
-		"sap/m/IconTabFilter",
-		"sap/m/Button",
-		"sap/ui/rta/test/controlEnablingCheck"
-	], function (QUnitReport, ElementEnablementTest, IconTabFilter, Button, rtaControlEnablingCheck) {
-
-		var oElementEnablementTest = new ElementEnablementTest({
+	return Promise.resolve()
+	.then(function () {
+		return elementDesigntimeTest({
 			type: "sap.m.IconTabFilter",
 			create: function () {
 				return new IconTabFilter({
@@ -17,12 +21,8 @@
 				});
 			}
 		});
-		oElementEnablementTest.run().then(function (oData) {
-			new QUnitReport({
-				data: oData
-			});
-		});
-
+	})
+	.then(function() {
 		// Rename title action module
 		var fnConfirmFilterTextRenamedWithNewValue = function (oRadioButton, oViewAfterAction, assert) {
 			assert.strictEqual(oViewAfterAction.byId("filter").getText(),
@@ -36,7 +36,7 @@
 				"then the filter title has been renamed to the old value (Old Text)");
 		};
 
-		rtaControlEnablingCheck("Checking the rename action for a IconTabFilter title", {
+		elementActionTest("Checking the rename action for a IconTabFilter title", {
 			xmlView:
 				'<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m">' +
 					'<IconTabBar id="bar">' +
@@ -60,4 +60,5 @@
 			afterRedo: fnConfirmFilterTextRenamedWithNewValue
 		});
 	});
-})();
+
+});

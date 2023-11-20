@@ -1,0 +1,11 @@
+<mvc:View xmlns="sap.m" xmlns:l="sap.ui.layout"
+	xmlns:html="http://www.w3.org/1999/xhtml" xmlns:mvc="sap.ui.core.mvc"
+	xmlns:core="sap.ui.core" controllerName="testdata.customizing.sync_legacyAPIs.jsview.sap.Main">
+	<l:VerticalLayout>
+		<Text text="SAP Component"></Text>
+
+		<html:h2>JSView Extension Tests:</html:h2>
+		<mvc:JSView viewName="testdata.customizing.sync_legacyAPIs.jsview.sap.Sub" />
+
+	</l:VerticalLayout>
+</mvc:View>

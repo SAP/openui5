@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.ui.ux3.NavigationItem.
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Item', './library'],
-	function(jQuery, Item, library) {
+sap.ui.define(['sap/ui/core/Item', './library'],
+	function(Item, library) {
 	"use strict";
 
 
@@ -26,10 +26,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Item', './library'],
 	 * @public
 	 * @deprecated Since version 1.38. Instead, use the <code>sap.m.IconTabBar</code>, <code>sap.m.TabContainer</code> or <code>sap.uxap.ObjectPageLayout</code> control.
 	 * @alias sap.ui.ux3.NavigationItem
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var NavigationItem = Item.extend("sap.ui.ux3.NavigationItem", /** @lends sap.ui.ux3.NavigationItem.prototype */ { metadata : {
 
+		deprecated: true,
 		library : "sap.ui.ux3",
 		properties : {
 
@@ -59,4 +59,4 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Item', './library'],
 
 	return NavigationItem;
 
-}, /* bExport= */ true);
+});

@@ -1,0 +1,18 @@
+{
+  "1.64.0": {
+    "date": "March 2019",
+    "notes": [
+      {
+        "id": "5a91ebc76da14b9f2ae2ec782e6abfe44081cd7a",
+        "type": "FIX",
+        "text": "Enums: fix visibility of enum values where inconsistent",
+        "references": [
+          {
+            "type": "GitHub",
+            "reference": "1984"
+          }
+        ]
+      }
+    ]
+  }
+}

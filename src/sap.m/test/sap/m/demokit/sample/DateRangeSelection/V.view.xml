@@ -1,27 +1,110 @@
 <mvc:View
 	controllerName="sap.m.sample.DateRangeSelection.C"
-	xmlns:l="sap.ui.layout"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.m" >
 	<VBox class="sapUiSmallMargin">
-		<Label text="DateRangeSelection with delimiter '@' and displayFormat 'yyyy/MM/dd', set via binding:" labelFor="DRS1"/>
+		<Label text="DateRangeSelection displayFormat 'yyyy/MM/dd', set via binding:" labelFor="DRS1"/>
 		<DateRangeSelection
 			id="DRS1"
-			delimiter="{path:'/delimiterDRS1'}"
-			dateValue="{path:'/dateValueDRS1'}"
-			secondDateValue="{path:'/secondDateValueDRS1'}"
-			displayFormat="{path:'/dateFormatDRS1'}"
-			change="handleChange"
-		/>
+			class="DRS1"
+			value= "{
+				'type': 'sap.ui.model.type.DateInterval',
+				'formatOptions': {
+					'pattern': 'yyyy/MM/dd'
+				},
+				'parts': [
+					{
+						'type': 'sap.ui.model.type.Date',
+						'path': '/start'
+					},
+					{
+						'type': 'sap.ui.model.type.Date',
+						'path': '/end'
+					}
+				]
+			}"
+			change="handleChange"/>
+
 		<Label text="DateRangeSelection with minDate=2016-01-01 and maxDate=2016-12-31:" labelFor="DRS2"/>
 		<DateRangeSelection
 			id="DRS2"
-			dateValue="{path:'/dateValueDRS2'}"
-			secondDateValue="{path:'/secondDateValueDRS2'}"
-			minDate="{path:'/dateMinDRS2'}"
-			maxDate="{path:'/dateMaxDRS2'}"
 			change="handleChange"
-		/>
+			value= "{
+				'type': 'sap.ui.model.type.DateInterval',
+				'parts': [
+					{
+						'type': 'sap.ui.model.type.Date',
+						'path': '/oDRS2Start'
+					},
+					{
+						'type': 'sap.ui.model.type.Date',
+						'path': '/oDRS2End'
+					}
+				]
+			}"/>
+
+		<Label text="DateRangeSelection with OK button in the footer and with shortcut for today:" labelFor="DRS3"/>
+		<DateRangeSelection
+			id="DRS3"
+			showCurrentDateButton="true"
+			showFooter="true"
+			change="handleChange"
+			value= "{
+				'type': 'sap.ui.model.type.DateInterval',
+				'parts': [
+					{
+						'type': 'sap.ui.model.type.Date',
+						'path': '/oDRS3Start'
+					},
+					{
+						'type': 'sap.ui.model.type.Date',
+						'path': '/oDRS3End'
+					}
+				]
+			}"/>
+
+		<Label text="DateRangeSelection with displayFormat 'MM/yyyy':" labelFor="DRS4"/>
+		<DateRangeSelection
+			id="DRS4"
+			change="handleChange"
+			value= "{
+				'type': 'sap.ui.model.type.DateInterval',
+				'formatOptions': {
+					'pattern': 'MM/yyyy'
+				},
+				'parts': [
+					{
+						'type': 'sap.ui.model.type.Date',
+						'path': '/oDRS4Start'
+					},
+					{
+						'type': 'sap.ui.model.type.Date',
+						'path': '/oDRS4End'
+					}
+				]
+			}"/>
+
+		<Label text="DateRangeSelection with displayFormat 'yyyy':" labelFor="DRS5"/>
+		<DateRangeSelection
+			id="DRS5"
+			displayFormat="yyyy"
+			change="handleChange"
+			value= "{
+				'type': 'sap.ui.model.type.DateInterval',
+				'formatOptions': {
+					'pattern': 'yyyy'
+				},
+				'parts': [
+					{
+						'type': 'sap.ui.model.type.Date',
+						'path': '/oDRS5Start'
+					},
+					{
+						'type': 'sap.ui.model.type.Date',
+						'path': '/oDRS5End'
+					}
+				]
+			}"/>
 
 		<Label text="Change event" labelFor="TextEvent" />
 		<Text

@@ -1,0 +1,37 @@
+<?xml version="1.0" ?>
+<edmx:Edmx xmlns:edmx="http://schemas.microsoft.com/ado/2007/06/edmx"
+           Version="1.0">
+    <edmx:DataServices m:DataServiceVersion="1.0"
+                       xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata">
+        <Schema Alias="idm" Namespace="IdMRestModel"
+                xmlns="http://schemas.microsoft.com/ado/2008/09/edm">
+            <EntityType Name="BASIC_TYPE">
+                <Key>
+                    <PropertyRef Name="ID"></PropertyRef>
+                    <PropertyRef Name="TASK_GUID"></PropertyRef>
+                </Key>
+                <Property Name="ID" Type="Edm.Int32"
+                          Nullable="false"></Property>
+                <Property Name="TASK_GUID" Type="Edm.Guid"
+                          Nullable="false"></Property>
+            </EntityType>
+            <EntityType Name="ET_MX_PERSON" BaseType="IdMRestModel.BASIC_TYPE">
+                <Key>
+                    <PropertyRef Name="ID"></PropertyRef>
+                    <PropertyRef Name="TASK_GUID"></PropertyRef>
+                </Key>
+                <Property Name="SV_MSKEYVALUE" Type="Edm.String"
+                          Nullable="true"></Property>
+                <Property Name="ID" Type="Edm.Int32"
+                          Nullable="false"></Property>
+                <Property Name="TASK_GUID" Type="Edm.Guid"
+                          Nullable="false"></Property>
+            </EntityType>
+            <EntityContainer Name="IdMRestModelEntities"
+                             m:IsDefaultEntityContainer="true">
+                <EntitySet Name="ET_MX_PERSON"
+                           EntityType="IdMRestModel.ET_MX_PERSON"></EntitySet>
+            </EntityContainer>
+        </Schema>
+    </edmx:DataServices>
+</edmx:Edmx>

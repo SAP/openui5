@@ -1,0 +1,50 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+
+		<title>JSView - sap.ui.core.mvc</title>
+
+		<script id="sap-ui-bootstrap"
+				src="../../../../../../resources/sap-ui-core.js"
+				data-sap-ui-theme="sap_bluecrystal">
+		</script>
+
+
+		<script>
+			try{
+				sap.ui.getCore().loadLibrary("sap.ui.commons");
+			}catch(e){
+				alert("This test page requires the library 'sap.ui.commons' which is not available.");
+				throw(e);
+			}
+
+	    	// set application namespace. Views and controller are loaded relative to this page
+			sap.ui.loader.config({paths:{"sap/ui/core/mvctest": "./"}});
+
+			new sap.ui.commons.Button({text:"Destroy View",press:function(){
+				view.destroy();
+			}}).placeAt("functions");
+
+			new sap.ui.commons.Button({text:"Create View",press:function(){
+				view = sap.ui.view({id:"myView",viewName:"sap.ui.core.mvctest.Test", type:sap.ui.core.mvc.ViewType.JS});
+				view.placeAt("content");
+			}}).placeAt("functions");
+
+			new sap.ui.commons.Button({text:"Re-render View",press:function(){
+				view.invalidate();
+			}}).placeAt("functions");
+
+			// define View and place it onto the page
+			var view = sap.ui.view({id:"myView",viewName:"sap.ui.core.mvctest.Test", type:sap.ui.core.mvc.ViewType.JS});
+			view.placeAt("content");
+		</script>
+	</head>
+
+	<body class="sapUiBody">
+		<h1>Test Page for sap.ui.core.JSView</h1>
+		<hr/>
+		<div id="functions"></div>
+		<hr/>
+		<div id="content"></div>
+	</body>
+</html>

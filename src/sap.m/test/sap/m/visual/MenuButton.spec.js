@@ -5,10 +5,53 @@ describe("sap.m.MenuButton", function() {
 
 	browser.testrunner.currentSuite.meta.controlName = 'sap.m.MenuButton';
 
-	it('has adequate initial width', function() {
-		var oMenuButton3 = element(by.id("mb3")),
-			oMenuButton4 = element(by.id("mb4"));
-		oMenuButton4.click();
-		expect(takeScreenshot(oMenuButton3)).toLookAs('menubutton_initial_width');
+	function openOverflow(){
+		var oOverflowList1 = element(by.id("overflowToolbarInListItem3-overflowButton"));
+
+		oOverflowList1.click();
+		return element(by.id("overflowToolbarInListItem3-popover"));
+	}
+
+	it('All MenuButtons look correct in Cozy', function() {
+		var oPage = element(by.id("page0"));
+
+		expect(takeScreenshot(oPage)).toLookAs('menubutton_demo_page_cozy');
 	});
+
+	it('MenuButton has adequate initial width', function() {
+		var oPage = element(by.id("page0")),
+			oMenuButton4 = element(by.id("mb4"));
+
+		oMenuButton4.click();
+
+		expect(takeScreenshot(oPage)).toLookAs('menubutton_initial_width_disabled_items');
+	});
+
+	it('MenuButton correctly opens and focus a menu with enabled items', function() {
+		var oPage = element(by.id("page0")),
+			oMenuButton = element(by.id("mb-toolbar"));
+
+		oMenuButton.click();
+
+		expect(takeScreenshot(oPage)).toLookAs('menubutton_menu_items_enabled');
+	});
+
+	it('ManuButton correctly truncates long text in OverflowToolbar (Cozy)', function() {
+		expect(takeScreenshot(openOverflow())).toLookAs('menubutton_toolbar_truncated_cozy');
+	});
+
+	it('Change to Compact Mode', function() {
+		var oPage = element(by.id("page0")),
+			oSelect = element(by.id("density_select")),
+			oCompactItem = element(by.id("item_compact"));
+
+		oSelect.click();
+		oCompactItem.click();
+		expect(takeScreenshot(oPage)).toLookAs('menubutton_compact_initial_width');
+	});
+
+	it('ManuButton correctly truncates long text in OverflowToolbar (Compact)', function() {
+		expect(takeScreenshot(openOverflow())).toLookAs('menubutton_toolbar_truncated_compact');
+	});
+
 });

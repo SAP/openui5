@@ -1,0 +1,13 @@
+{
+  "1.77.0": {
+    "date": "March 2020",
+    "notes": [
+      {
+        "id": "d03985c6811ee2c07d19595d474fe25092667879",
+        "type": "FIX",
+        "text": ": RTA Variant Management App Border Fix",
+        "references": []
+      }
+    ]
+  }
+}

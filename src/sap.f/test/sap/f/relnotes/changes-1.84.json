@@ -1,0 +1,168 @@
+{
+  "1.84.0": {
+    "date": "October 2020",
+    "notes": [
+      {
+        "id": "f843e0efd36ab4edd23c385afb3f10858262e08f",
+        "type": "FIX",
+        "text": " sap.ui.integration.widgets.Card, sap.f.Card:Landmark regions have uniqe names now",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070367202"
+          }
+        ]
+      },
+      {
+        "id": "87aa40cf8c8168bd93e888f008b20c243c109741",
+        "type": "FIX",
+        "text": " sap.f.GridList: Navigation with left/right arrow is now correct",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070376459"
+          }
+        ]
+      },
+      {
+        "id": "99e6f1d861208719996ab8a2cef2857af0423f05",
+        "type": "FIX",
+        "text": " sap.f.GridList: Items with table inside are now correctly focused",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070358305"
+          }
+        ]
+      },
+      {
+        "id": "9a86f037670cc2177c8f06d406c735391309352d",
+        "type": "FIX",
+        "text": " sap.f.AvatarGroup: Error in console is fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500006140172020"
+          }
+        ]
+      },
+      {
+        "id": "cb662b9b55328c28bb328a52d33a25f82dfe35ad",
+        "type": "FIX",
+        "text": " sap.f.GridContainer: Focus is now correct via Drag and Drop",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070340624"
+          },
+          {
+            "type": "BCP",
+            "reference": "2070340054"
+          }
+        ]
+      },
+      {
+        "id": "ed353c1d213a876ddeaf4b170b5827ffa1221ddf",
+        "type": "FIX",
+        "text": " sap.f.FlexibleColumnLayout: Contextual settings is passed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070331833"
+          }
+        ]
+      },
+      {
+        "id": "3756bbc6d233e79d4029530b78260fae2403a994",
+        "type": "FEATURE",
+        "text": " Calendar Card: Experimental tag removed"
+      },
+      {
+        "id": "86d535a844fbb128ff38a566585242b7a9ec244e",
+        "type": "FIX",
+        "text": " sap.ui.integration.widgets.Card: Badge colors are now correct",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070287830"
+          }
+        ]
+      },
+      {
+        "id": "d1d52dc4ed8f58a1513e09a968a6c80b5ea3c208",
+        "type": "FIX",
+        "text": " sap.f.DynamicPage: Endless snapping/unsnapping is fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070328159"
+          }
+        ]
+      },
+      {
+        "id": "507614a989cdc8aaa207212c02474931a6744322",
+        "type": "FIX",
+        "text": " sap.f.DynamicPage: Fixed incorrect display of pin button",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080370980"
+          }
+        ]
+      },
+      {
+        "id": "e6c65bbf37b3378b611b2046676a3df1361ca724",
+        "type": "FIX",
+        "text": " sap.f.GridContainer: Moving items out of bounds with the keyboard no longer throws errors",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070318106"
+          },
+          {
+            "type": "BCP",
+            "reference": "2070274502"
+          }
+        ]
+      },
+      {
+        "id": "bb13d7f77a6287d383439b3cd76351ea7bb6e86c",
+        "type": "FIX",
+        "text": " sap.f.GridContainer: Drag and drop now works correctly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070306255"
+          }
+        ]
+      },
+      {
+        "id": "908bef4d117d89e6b8ff9c640cde2c97e5cc3909",
+        "type": "FIX",
+        "text": " sap.f.DynamicPage: Pin button is positioned correctly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070287146"
+          }
+        ]
+      },
+      {
+        "id": "14f1014a903b4de1306fe4108bbf44e108329660",
+        "type": "FIX",
+        "text": " sap.f.DynamicPage: Issue with wrong scroll position is fixed"
+      },
+      {
+        "id": "c77423f3c82604df0cf5a7c20d28d90a9ff6259e",
+        "type": "FIX",
+        "text": " sap.f.GridContainer: Focus navigation is now correct",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070276311"
+          }
+        ]
+      }
+    ]
+  }
+}

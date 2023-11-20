@@ -1,7 +1,7 @@
 {
 	"explored": {
 		"entitiesDefaults": {
-			"formFactors": "ML"
+			"formFactors": "SML"
 		},
 		"samplesRef": {
 			"namespace": "sap.ui.table.sample",
@@ -16,32 +16,36 @@
 				"samples": [
 					"sap.ui.table.sample.Basic",
 					"sap.ui.table.sample.Selection",
+					"sap.ui.table.sample.MultiSelectionPlugin",
 					"sap.ui.table.sample.Sorting",
 					"sap.ui.table.sample.Filtering",
 					"sap.ui.table.sample.Aggregations",
 					"sap.ui.table.sample.Menus",
 					"sap.ui.table.sample.TableFreeze",
-					"sap.ui.table.sample.Resizing",
+					"sap.ui.table.sample.ColumnResizing",
+					"sap.ui.table.sample.RowModes",
 					"sap.ui.table.sample.MultiHeader",
 					"sap.ui.table.sample.OData",
 					"sap.ui.table.sample.OData2",
 					"sap.ui.table.sample.RowAction",
 					"sap.ui.table.sample.RowHighlights",
-					"sap.ui.table.sample.DnD"
+					"sap.ui.table.sample.DnD",
+					"sap.m.sample.p13n.EngineGridTable",
+					"sap.ui.table.sample.SelectCopyPaste"
 				]
 			},
-		  	{
+			{
 				"id": "sap.ui.table.TreeTable",
 				"name": "Tree Table",
 				"category": "List",
 				"since": "1.36",
 				"samples": [
-			  	    "sap.ui.table.sample.TreeTable.JSONTreeBinding",
+					"sap.ui.table.sample.TreeTable.JSONTreeBinding",
 					"sap.ui.table.sample.TreeTable.BasicODataTreeBinding",
 					"sap.ui.table.sample.TreeTable.ODataAnnotationsTreeBinding",
-                    "sap.ui.table.sample.TreeTable.HierarchyMaintenanceJSONTreeBinding"
+					"sap.ui.table.sample.TreeTable.HierarchyMaintenanceJSONTreeBinding"
 				]
-		  	}
+			}
 		],
 		"samples": [
 			{
@@ -52,6 +56,10 @@
 				"id": "sap.ui.table.sample.Selection",
 				"name": "Selection",
 				"description": "Selection example showing selection modes and selection behaviors of table."
+			},{
+				"id": "sap.ui.table.sample.MultiSelectionPlugin",
+				"name": "MultiSelectionPlugin",
+				"description": "Example showing the behavior of MultiSelectionPlugin"
 			},{
 				"id": "sap.ui.table.sample.Sorting",
 				"name": "Sorting",
@@ -73,9 +81,13 @@
 				"name": "Table Freeze",
 				"description": "Example which shows table freeze with fixed columns"
 			},{
-				"id": "sap.ui.table.sample.Resizing",
-				"name": "Resizing",
-				"description": "Example for column resizing and the different row count modes"
+				"id": "sap.ui.table.sample.ColumnResizing",
+				"name": "Column Resizing",
+				"description": "Example for column resizing"
+			},{
+				"id": "sap.ui.table.sample.RowModes",
+				"name": "Row Modes",
+				"description": "Example for the different row modes"
 			},{
 				"id": "sap.ui.table.sample.MultiHeader",
 				"name": "Multi Header",
@@ -93,10 +105,10 @@
 				"name": "Row Actions",
 				"description": "Shows how row actions can be used."
 			},{
-			  "id": "sap.ui.table.sample.TreeTable.JSONTreeBinding",
-			  "name": "JSONTreeBinding",
-			  "description": "Basic example showing how a TreeTable can be build by using a JSONModel"
-		  	},{
+				"id": "sap.ui.table.sample.TreeTable.JSONTreeBinding",
+				"name": "JSONTreeBinding",
+				"description": "Basic example showing how a TreeTable can be built using a JSONModel"
+			},{
 				"id": "sap.ui.table.sample.TreeTable.BasicODataTreeBinding",
 				"name": "Basic OData TreeBinding",
 				"description": "Illustrates how to bind to data from an OData model without using $metadata annotations or navigation properties. Instead, treeAnnotationProperties is filled for the TreeBinding."
@@ -116,6 +128,10 @@
 				"id": "sap.ui.table.sample.DnD",
 				"name": "Drag and Drop",
 				"description": "Shows the different kinds of drag-and-drop capabilities."
+			}, {
+				"id": "sap.ui.table.sample.SelectCopyPaste",
+				"name": "Cell Selection, Copy & Paste",
+				"description": "Shows cell selection, copy and paste interaction in the table."
 			}
 		]
 	}

@@ -1,0 +1,20 @@
+/******************************************************************
+	Style of the RTA Change Visualization - Horizon hcw theme
+*******************************************************************/
+@_sap_ui_rta_ChangeVisualization_ChangeIndicatorColorLight: @sapUiPositiveText; //#006362
+@_sap_ui_rta_ChangeVisualization_ChangeIndicatorColorMedium: @sapUiActive; //#e97624
+@_sap_ui_rta_ChangeVisualization_ChangeIndicatorColorDark: lighten(@sapUiChart8, 20%); //#e52faa
+@_sap_ui_rta_ChangeVisualization_OverlayOutline: @sapUiIndication5; //#004ccb
+@_sap_ui_rta_ChangeVisualization_BorderRadius: @sapUiButtonBorderCornerRadius;
+
+.sapUiDtOverlay {
+	.sapUiRtaChangeIndicatorHovered {
+		&:after {
+			box-shadow: none;
+		}
+	}
+
+	&.sapUiRtaChangeIndicatorDependent {
+		border-radius: @_sap_ui_rta_ChangeVisualization_BorderRadius;
+	}
+}

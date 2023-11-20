@@ -1,0 +1,7 @@
+.sap-desktop ::-webkit-scrollbar {
+	width: 16px !important;
+}
+
+html {
+	overflow: auto !important;
+}

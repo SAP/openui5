@@ -1,0 +1,4 @@
+<core:FragmentDefinition xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m" xmlns:layout="sap.ui.layout">
+	<mvc:XMLView id="xmlViewInsideFragment" viewName="testdata/fragments_legacyAPIs/ownerPropagation/XMLView">
+	</mvc:XMLView>
+</core:FragmentDefinition>

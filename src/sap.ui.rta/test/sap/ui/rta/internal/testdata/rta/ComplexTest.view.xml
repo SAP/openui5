@@ -1,22 +1,21 @@
-<core:View xmlns:core="sap.ui.core" xmlns="sap.m"
-		   xmlns:smartField="sap.ui.comp.smartfield" xmlns:smartForm="sap.ui.comp.smartform" xmlns:smartFilterBar="sap.ui.comp.smartfilterbar"
-		   xmlns:customData="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"
-		   xmlns:form="sap.ui.layout.form" xmlns:smartTable="sap.ui.comp.smarttable"
-		   xmlns:smartLink="sap.ui.comp.navpopover"
-		   xmlns:html="http://www.w3.org/1999/xhtml"
-		   xmlns:sap.ui.layout="sap.ui.layout"
-		   xmlns:sap.ui.rta="sap.ui.rta"
-		   xmlns:sap.ui.dt="sap.ui.dt"
-		   xmlns:sap.ui.fl="sap.ui.fl"
-		   xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"
-		   controllerName="sap.ui.rta.test.ComplexTest">
+<mvc:View xmlns:core="sap.ui.core" xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc"
+		  xmlns:smartField="sap.ui.comp.smartfield" xmlns:smartForm="sap.ui.comp.smartform" xmlns:smartFilterBar="sap.ui.comp.smartfilterbar"
+		  xmlns:customData="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"
+		  xmlns:form="sap.ui.layout.form" xmlns:smartTable="sap.ui.comp.smarttable"
+		  xmlns:smartLink="sap.ui.comp.navpopover"
+		  xmlns:html="http://www.w3.org/1999/xhtml"
+		  xmlns:sap.ui.layout="sap.ui.layout"
+		  xmlns:sap.ui.dt="sap.ui.dt"
+		  xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"
+		  xmlns:webc="sap.ui.webc.main"
+		  controllerName="sap.ui.rta.test.ComplexTest">
 
 	<Page title="{i18n>appTitle}" id="mainPage">
 		<headerContent>
 			<Button text="{i18n>btnAdapt}" visible="{view>/showAdaptButton}" press=".switchToAdaptionMode" />
 		</headerContent>
 		<content>
-			<sap.ui.layout:VerticalLayout id="layout0" width="100%">
+			<Panel id="layout0" expandable="true" headerText="Not Adaptable Panel" width="auto" class="sapUiResponsiveMargin" expanded="true" sap.ui.dt:designtime="not-adaptable-tree">
 				<ObjectHeader id="obheader0" title="{CompanyCodeName}" number="{Summary}" numberUnit="{CoCodeCurrency}">
 					<attributes>
 						<ObjectAttribute id="attribute1" title="{AccountingDocumentTypeName}" text="{AccountingDocument}" active="false"/>
@@ -31,17 +30,71 @@
 						<ObjectStatus id="status2" text="{ExpirationState}" state="Error"/>
 					</statuses>
 				</ObjectHeader>
-			</sap.ui.layout:VerticalLayout>
-			<sap.ui.layout:VerticalLayout id="layout1" width="100%">
+				<Text id="headerText1" text="This Layout and Text should not be adaptable" />
+				<sap.ui.layout:VerticalLayout id="layout01" width="100%">
+					<Text id="headerText11" text="This nested Layout and Text should also not be adaptable" />
+				</sap.ui.layout:VerticalLayout>
+			</Panel>
+
+			<Panel id="layout1" expandable="true" headerText="Panel with QUnit Test Area and SimpleForm" width="auto" class="sapUiResponsiveMargin" expanded="true">
 				<Button id="smartFormPopoverButton" text="Open Popover" press=".openSmartFormPopover" />
 				<Button id="smartFormDialogButton" text="Open Smart Form Dialog" press=".openSmartFormDialog" />
 				<Button id="createDeleteButton" text="Create/Delete SmartForm" press=".createOrDeleteContent" />
-				<core:Fragment fragmentName="sap.ui.rta.test.fragment.QUnitTestArea" type="XML"></core:Fragment>
-			</sap.ui.layout:VerticalLayout>
+				<Text id="headerTextWithFormatter" text="{path: 'i18n>appTitle', formatter: '.sampleFormatter'}" />
 
-			<sap.ui.layout:VerticalLayout width="100%">
+				<core:Fragment fragmentName="sap.ui.rta.test.fragment.QUnitTestArea" type="XML"></core:Fragment>
+
+				<form:SimpleForm title="Another SimpleForm with titles"
+						id="SimpleForm1"
+						maxContainerCols="3"
+						editable="true"
+						layout="ResponsiveGridLayout"
+						labelSpanXL="4"
+						labelSpanL="4"
+						labelSpanM="4"
+						emptySpanXL="0"
+						emptySpanL="0"
+						emptySpanM="0"
+						columnsXL="3"
+						columnsL="2"
+						columnsM="2"
+						class="editableForm">
+					<form:content>
+						<Label id="Label2" text="ZIP Code/City" />
+						<Input id="Input3" value="2345">
+							<layoutData>
+								<sap.ui.layout:GridData span="L3 M3 S4" />
+							</layoutData>
+						</Input>
+						<Input id="Input4" value="Walldorf" />
+						<Label id="Label3" text="State/Country" />
+						<Input id="Input31" value="BW" />
+						<ComboBox id="ComboBox0"
+							items="{
+								path: '/CountriesCollection',
+								sorter: { path: 'text' }
+							}">
+							<core:Item key="{key}" text="{text}" />
+						</ComboBox>
+						<core:Title id="Title1" text="Online" />
+						<Label id="Label4" text="Web" />
+						<Input id="Input5" value="www.sap.com" />
+						<Label id="Label5" text="Twitter" />
+						<Input id="Input6" value="@me" />
+						<core:Title id="Title2" text="Contact data" />
+						<Label id="Label6" text="Email" />
+						<Input id="Input7" value="foo@bar.com" type="Email" />
+						<Label id="Label7" text="Tel." />
+						<Input id="Input8" value="234123423" type="Tel" />
+						<Label id="Label8" text="SMS" />
+						<Input id="Input9" value="234424333" type="Tel" />
+					</form:content>
+				</form:SimpleForm>
+			</Panel>
+
+			<Panel expandable="true" headerText="Panel with expandable SmartForm" width="auto" class="sapUiResponsiveMargin">
 				<smartForm:SmartForm id="MainFormExpandable" title="Expandable SmartForm" editable="true" entityType="Header" ignoredFields="TransactionCode" expandable="true" expanded="true">
-					<smartForm:Group id="MainFormExpandable.GeneralLedgerDocument" label="General Ledger Document" expandable="true">
+					<smartForm:Group id="MainFormExpandable.GeneralLedgerDocument" title="General Ledger Document" expandable="true">
 						<smartForm:GroupElement id="MainFormExpandable.GeneralLedgerDocument.Name" >
 							<smartField:SmartField editable="true" contextEditable="true" value="{AccountingDocument}"/>
 						</smartForm:GroupElement>
@@ -61,6 +114,9 @@
 						<smartForm:GroupElement label="Hello" id="MainFormExpandable.GeneralLedgerDocument.I18NTest" >
 							<smartField:SmartField value="{i18n>groupElementLabelText}">
 							</smartField:SmartField>
+						</smartForm:GroupElement>
+						<smartForm:GroupElement label="SmartLink" id="MainFormExpandable.GeneralLedgerDocument.SmartLink">
+							<smartLink:SmartLink id="Smartlink" text="Supplier" fieldName="SupplierId" semanticObject="semanticObjectSupplierId" contactAnnotationPath="to_Supplier" />
 						</smartForm:GroupElement>
 						<smartForm:GroupElement label="One-Bound-Field" id="MainFormExpandable.GeneralLedgerDocument.BoundButton" >
 							<Button text="{i18n>buttonText}"></Button>
@@ -86,19 +142,80 @@
 							<smartField:SmartField value="{RequestedDeliveryDate}" />
 						</smartForm:GroupElement>
 					</smartForm:Group>
-					<smartForm:Group label="Dates" id="MainFormExpandable.Dates" expandable="true">
-						<smartForm:GroupElement label="Belegdatum" id="MainFormExpandable.Dates.DocumentDate" >
-							<smartField:SmartField value="{DocumentDate}" />
+					<smartForm:Group title="Dates" id="MainFormExpandable.Dates" expandable="true">
+						<smartForm:GroupElement label="Not Adaptable" id="Dates.NotAdaptable" sap.ui.dt:designtime="not-adaptable">
+							<Text text="My field can't be adapted" id="NotAdaptable" />
+						</smartForm:GroupElement>
+						<smartForm:GroupElement label="Not Removable" id="Dates.NotRemovable" sap.ui.dt:designtime="not-removable">
+							<Text text="My field can't be added or removed" id="NotRemovable" />
+						</smartForm:GroupElement>
+						<smartForm:GroupElement label="No visibility changes (visible)" id="Dates.NoVisibilityChanges1" sap.ui.dt:designtime="not-adaptable-visibility">
+							<Text text="My field can't be added or removed" id="NoVisibilityChanges1" />
+						</smartForm:GroupElement>
+						<smartForm:GroupElement label="No visibility changes (invisible)" visible="false" id="Dates.NoVisibilityChanges2" sap.ui.dt:designtime="not-adaptable-visibility">
+							<Text text="My field can't be added or removed" id="NoVisibilityChanges2" />
 						</smartForm:GroupElement>
 						<smartForm:GroupElement label="Two-Bound-Fields" id="MainFormExpandable.GeneralLedgerDocument.BoundButton35" >
 							<Button text="{PostingDate}"></Button>
 							<TextArea value="{CreationDate}"></TextArea>
 						</smartForm:GroupElement>
+						<smartForm:GroupElement label="With/without stable ID" id="Dates.StableIDField">
+							<Input value="I have an ID" id="InputFieldWithID" />
+							<Input value="I have no ID" />
+						</smartForm:GroupElement>
+						<smartForm:GroupElement label="With horizontal SmartLink inside" id="Dates.SmartLink">
+							<smartLink:SmartLink id="SmartlinkInHorizontalLayout" text="Supplier" fieldName="SupplierId" semanticObject="semanticObjectSupplierId" contactAnnotationPath="to_Supplier" />
+							<Input value="I am near the smartlink" id="FieldInGroupWithHorizontalLayout" />
+						</smartForm:GroupElement>
+						<smartForm:GroupElement label="With custom settings action" id="Dates.customSetting" sap.ui.dt:designtime="sap/ui/rta/test/SubDialogSetting.designtime">
+							<Text text="settings action dialog includes another dialog can be opened by selection control. Both dialogs shouldn't be adaptable" id="customSetting.Test" />
+						</smartForm:GroupElement>
+					</smartForm:Group>
+					<smartForm:Group title="Reversal" id="MainFormExpandable.Reversal">
+						<smartForm:GroupElement label="Storniert mit" id="Reversal.ReversalDocument">
+							<smartField:SmartField value="{ReverseDocument}" />
+						</smartForm:GroupElement>
+						<smartForm:GroupElement label="Text" id="Reversal.ReversalReasonName">
+							<smartField:SmartField value="{ReversalReasonName}" />
+						</smartForm:GroupElement>
 					</smartForm:Group>
 				</smartForm:SmartForm>
-			</sap.ui.layout:VerticalLayout>
+			</Panel>
 
-			<sap.ui.layout:VerticalLayout width="100%">
+			<Panel expandable="true" headerText="Panel with Form" width="auto" class="sapUiResponsiveMargin">
+				<form:Form id="LayoutFormGeneralResponsiveGridLayout" width="100%" title="ResponsiveGridLayout Form">
+					<form:layout>
+						<form:ResponsiveGridLayout/>
+					</form:layout>
+
+					<form:formContainers>
+						<form:FormContainer id="LayoutFormGeneralFormContainer" title="General">
+							<form:formElements>
+								<form:FormElement id="LayoutFormGeneralLedgerDocumentLabel" label="Accounting Document">
+									<form:fields>
+										<Text id="LayoutFormGeneralLedgerDocumentText" text="{AccountingDocument}"/>
+									</form:fields>
+								</form:FormElement>
+
+								<form:FormElement id="LayoutFormGeneralLedgerCompanyCodeLabel" label="Company Code">
+									<form:fields>
+										<Text id="LayoutFormGeneralLedgerCompanyCodeText" text="{CompanyCode}"/>
+									</form:fields>
+								</form:FormElement>
+
+								<form:FormElement id="LayoutFormGeneralLedgerCreatedByLabel" label="Created by">
+									<form:fields>
+										<Text id="LayoutFormGeneralLedgerCreatedByText" text="{CreatedByUserName}"/>
+									</form:fields>
+								</form:FormElement>
+							</form:formElements>
+						</form:FormContainer>
+					</form:formContainers>
+
+				</form:Form>
+			</Panel>
+
+			<Panel expandable="true" headerText="Panel with SimpleForm with Toolbars" width="auto" class="sapUiResponsiveMargin">
 				<form:SimpleForm title="SimpleForm with toolbars" id="SimpleFormWithToolbars"
 								 maxContainerCols="3"
 								 editable="true"
@@ -176,10 +293,10 @@
 						<Input id="Tinput11" value="More text"  />
 					</form:content>
 				</form:SimpleForm>
-			</sap.ui.layout:VerticalLayout>
+			</Panel>
 
-			<sap.ui.layout:VerticalLayout>
-				<VBox class="sapUiSmallMargin">
+			<Panel id="verticalLayoutSameSize" expandable="true" headerText="Panel with SimpleForm" width="auto" class="sapUiResponsiveMargin">
+				<VBox>
 					<form:SimpleForm id="SimpleFormChangeColumn_twoGroups234"
 						editable="true"
 						layout="ColumnLayout"
@@ -234,19 +351,16 @@
 						</form:content>
 					</form:SimpleForm>
 				</VBox>
-			</sap.ui.layout:VerticalLayout>
+			</Panel>
 
-			<sap.ui.layout:VerticalLayout width="100%">
+			<Panel expandable="true" headerText="Panel with SmartForm without stable IDs" width="auto" class="sapUiResponsiveMargin">
 				<smartForm:SmartForm title="SmartForm without stable ids" entityType="Header, Tax">
-					<smartForm:layout>
-						<smartForm:Layout columnsL="2" breakpointL="900" />
-					</smartForm:layout>
-					<smartForm:Group label="General Ledger Document" >
+					<smartForm:Group title="General Ledger Document" >
 						<smartForm:GroupElement label="Ship-to-Party">
 							<smartField:SmartField value="{CompanyCode}"/>
 						</smartForm:GroupElement>
 					</smartForm:Group>
-					<smartForm:Group label="Dates" >
+					<smartForm:Group title="Dates" >
 						<smartForm:GroupElement label="BLA42" >
 							<smartField:SmartField value="{DocumentDate}" />
 						</smartForm:GroupElement>
@@ -255,12 +369,21 @@
 						</smartForm:GroupElement>
 					</smartForm:Group>
 				</smartForm:SmartForm>
-			</sap.ui.layout:VerticalLayout>
+				<form:SimpleForm
+					editable="true"
+					layout="ColumnLayout"
+					title="SimpleForm without stable id">
+					<form:content>
+						<core:Title id="SFWithoutStableIdTitle0" text="Address" />
+						<Label id="SFWithoutStableIdLabel0" text="Name" />
+						<Input id="SFWithoutStableIdInput0" value="" />
+					</form:content>
+				</form:SimpleForm>
+			</Panel>
 
-			<sap.ui.layout:VerticalLayout id = "smartFilterLayout" width="100%">
+			<Panel id="smartFilterLayout" expandable="true" headerText="Panel with SmartFilterBar / SmartTable" width="auto" class="sapUiResponsiveMargin">
 				<Button id="toggleUpdateMode" text="Change to 'LiveMode'" press="toggleUpdateMode"></Button>
-				<smartFilterBar:SmartFilterBar id="smartFilterBar"
-											   entityType="LineItems">
+				<smartFilterBar:SmartFilterBar id="smartFilterBar" entitySet="LineItems">
 					<smartFilterBar:controlConfiguration>
 						<smartFilterBar:ControlConfiguration
 								key="MyOwnFilterField" index="1" label="Custom Filter Field"
@@ -280,24 +403,25 @@
 						<FlexItemData shrinkFactor="0"/>
 					</smartFilterBar:layoutData>
 				</smartFilterBar:SmartFilterBar>
-				<smartTable:SmartTable id="smartTable" entitySet="LineItemsSet"
-									   smartFilterId="smartFilterBar" tableType="Table" useExportToExcel="true"
-									   useVariantManagement="false" useTablePersonalisation="true" header="Line Items"
-									   showRowCount="true">
+				<smartTable:SmartTable
+						id="smartTable" entitySet="LineItemsSet"
+						smartFilterId="smartFilterBar" tableType="Table" enableExport="true"
+						useVariantManagement="false" useTablePersonalisation="true" header="Line Items"
+						showRowCount="true">
 					<smartTable:layoutData>
 						<FlexItemData growFactor="1" baseSize="0%" />
 					</smartTable:layoutData>
 				</smartTable:SmartTable>
-			</sap.ui.layout:VerticalLayout>
+			</Panel>
 
-			<sap.ui.layout:VerticalLayout width="100%"  class="sapUiLargeMarginTop">
+			<Panel expandable="true" headerText="Panel with SmartForm" width="auto" class="sapUiResponsiveMargin">
 				<smartForm:SmartForm id="SmartForm01" title="Smart Form with standard layout" editable="true" entityType="Header" ignoredFields="TransactionCode">
-					<smartForm:Group id="SmartFormGroup01" label="SmartForm Group 01">
+					<smartForm:Group id="SmartFormGroup01" title="SmartForm Group 01">
 						<smartForm:GroupElement id="SmartFormGroup01.CompanyCodeName" >
 							<smartField:SmartField editable="true" contextEditable="true" value="{CompanyCodeName}"/>
 						</smartForm:GroupElement>
 					</smartForm:Group>
-					<smartForm:Group id="SmartFormGroup02" label="SmartForm Group 02" >
+					<smartForm:Group id="SmartFormGroup02" title="SmartForm Group 02" >
 						<smartForm:GroupElement id="SmartFormGroup01.CreationTime" >
 							<smartField:SmartField editable="true" contextEditable="true" value="{CreationTime}"/>
 						</smartForm:GroupElement>
@@ -309,25 +433,20 @@
 							<Button text="No Binding"></Button>
 						</smartForm:GroupElement>
 					</smartForm:Group>
-					<smartForm:Group id="SmartFormGroup03" label="SmartForm Group 03 with GridData ('L6 M6 S6')">
-						<smartForm:layout>
-							<sap.ui.layout:GridData span="L6 M6 S6" />
-						</smartForm:layout>
-						<smartForm:GroupElement id="SmartFormGroup01.ReferenceDocumentTypeName" >
-							<smartField:SmartField editable="true" contextEditable="true" value="{ReferenceDocumentTypeName}"/>
-						</smartForm:GroupElement>
-					</smartForm:Group>
 				</smartForm:SmartForm>
-			</sap.ui.layout:VerticalLayout>
+			</Panel>
 
-			<sap.ui.layout:VerticalLayout width="100%">
-				<smartForm:SmartForm id="SmartForm02" title="Smart Form with horizontal layout" editable="true" entityType="Header" ignoredFields="TransactionCode" useHorizontalLayout="true">
-					<smartForm:Group id="SmartForm02Group01" label="SmartForm Group 01" >
+			<Panel expandable="true" headerText="Panel with SmartForm with horizontal layout" width="auto" class="sapUiResponsiveMargin">
+				<smartForm:SmartForm id="SmartForm02" title="Smart Form with horizontal layout" editable="true" entityType="Header" ignoredFields="TransactionCode">
+					<smartForm:layout>
+						<smartForm:ColumnLayout columnsM="2" columnsL="3" columnsXL="4"/>
+					</smartForm:layout>
+					<smartForm:Group id="SmartForm02Group01" title="SmartForm Group 01" >
 						<smartForm:GroupElement id="SmartForm02Group01.AccountingDocumentType" >
 							<smartField:SmartField editable="true" contextEditable="true" value="{AccountingDocumentType}"/>
 						</smartForm:GroupElement>
 					</smartForm:Group>
-					<smartForm:Group id="SmartForm02Group02" label="SmartForm Group 02">
+					<smartForm:Group id="SmartForm02Group02" title="SmartForm Group 02">
 						<smartForm:GroupElement id="SmartForm02Group01.AccountingDocumentStatus" >
 							<smartField:SmartField editable="true" contextEditable="true" value="{AccountingDocumentStatus}"/>
 						</smartForm:GroupElement>
@@ -337,27 +456,132 @@
 						</smartForm:GroupElement>
 					</smartForm:Group>
 				</smartForm:SmartForm>
-			</sap.ui.layout:VerticalLayout>
+			</Panel>
 
-			<sap.ui.layout:VerticalLayout width="100%">
-				<smartForm:SmartForm id="SmartForm03" title="Smart Form with smartForm:Layout aggregation (gridDataSpan='L1 M1 S1')" editable="true" entityType="Header" ignoredFields="TransactionCode" useHorizontalLayout="true">
+			<Panel expandable="true" headerText="Smart Form with smartForm:Layout aggregation (gridDataSpan='L1 M1 S1')" width="auto" class="sapUiResponsiveMargin">
+				<smartForm:SmartForm id="SmartForm03" title="Smart Form with smartForm:Layout aggregation (gridDataSpan='L1 M1 S1')" editable="true" entityType="Header" ignoredFields="TransactionCode">
 					<smartForm:layout>
-						<smartForm:Layout gridDataSpan="L1 M1 S1" />
+						<smartForm:ColumnLayout columnsM="2" columnsL="3" columnsXL="4"/>
 					</smartForm:layout>
-					<smartForm:Group id="SmartForm03Group01" label="SmartForm Group 01" >
+					<smartForm:Group id="SmartForm03Group01" title="SmartForm Group 01" >
 						<smartForm:GroupElement id="SmartForm03Group01.AlternativeReferenceDocument" >
 							<smartField:SmartField editable="true" contextEditable="true" value="{AlternativeReferenceDocument}"/>
 						</smartForm:GroupElement>
 					</smartForm:Group>
-					<smartForm:Group id="SmartForm03Group02" label="SmartForm Group 02">
+					<smartForm:Group id="SmartForm03Group02" title="SmartForm Group 02">
 						<smartForm:GroupElement id="SmartForm03Group01.CoCodeCurrency" >
 							<smartField:SmartField editable="true" contextEditable="true" value="{CoCodeCurrency}"/>
 							<smartField:SmartField editable="true" contextEditable="true" value="{TransactionCurrency}"/>
 						</smartForm:GroupElement>
 					</smartForm:Group>
 				</smartForm:SmartForm>
-			</sap.ui.layout:VerticalLayout>
+			</Panel>
 
+			<Panel
+					id="tableLayout"
+					expandable="true"
+					headerText="Panel with Table"
+					width="auto"
+					class="sapUiResponsiveMargin">
+				<Table
+						id="idProductsTable"
+						items="{ProductCollection>/}"
+						inset="false">
+					<columns>
+						<Column
+								id="idProductsTable-productColumn"
+								width="12em">
+							<Text
+									id="idProductsTable-productText"
+									text="Product" />
+						</Column>
+						<Column id="idProductsTable-supportColumn">
+							<Text
+									id="idProductsTable-supportText"
+									text="Supplier" />
+						</Column>
+						<Column	id="idProductsTable-categoryColumn">
+							<Text
+									id="idProductsTable-categoryText"
+									text="Category" />
+						</Column>
+						<Column	id="idProductsTable-activationColumn">
+							<Text
+									id="idProductsTable-activationText"
+									text="Activation" />
+						</Column>
+					</columns>
+					<items>
+						<ColumnListItem id="idProductsTable-tableItem">
+							<cells>
+								<ObjectIdentifier
+										id="idProductsTable-tableItemProductId"
+										title="{ProductCollection>Name}"
+										text="{ProductCollection>ProductId}"/>
+								<Text
+										id="idProductsTable-tableText"
+										text="{ProductCollection>SupplierName}" />
+								<sap.ui.layout:VerticalLayout id="idProductsTable-columnLayout">
+									<Text
+											id="LayoutText01"
+											text="{ProductCollection>MainCategory}" />
+									<sap.ui.layout:VerticalLayout id="idProductsTable-columnLayout02">
+										<Text
+												id="idProductsTable-layoutText02"
+												text="{ProductCollection>Category}" />
+										<Text
+												id="idProductsTable-layoutText03"
+												text="{ProductCollection>Status}" />
+									</sap.ui.layout:VerticalLayout>
+								</sap.ui.layout:VerticalLayout>
+								<Select
+										id="idProductsTable-tableSelect"
+										items= "{ path: 'ProductCollection>Active', templateShareable: false}" >
+									<core:Item
+											id="idProductsTable-tableSelectItem"
+											key="{ProductCollection>key}"
+											text="{ProductCollection>text}" />
+								</Select>
+							</cells>
+						</ColumnListItem>
+					</items>
+				</Table>
+			</Panel>
+			<Panel id="webComponents" expandable="true" headerText="Panel with Web Components" width="auto" class="sapUiResponsiveMargin">
+				<webc:Panel id="webComponentsPanel" headerText="WebC Panel">
+					<webc:Button id="webComponentButton" text="WebC Button" />
+					<webc:CheckBox id="webComponentCheckBox" text="WebC Checkbox" />
+					<webc:Title text="Web Components Table" level="H3" />
+					<webc:Table id="webComponentsTable" rows="{ProductCollection>/}">
+						<webc:columns>
+							<webc:TableColumn id="webComponentsTableColumn1">
+								<webc:Label text="Product"/>
+							</webc:TableColumn>
+							<webc:TableColumn id="webComponentsTableColumn2">
+								<webc:Label text="Supplier"/>
+							</webc:TableColumn>
+							<webc:TableColumn id="webComponentsTableColumn3">
+								<webc:Label text="Price"/>
+							</webc:TableColumn>
+						</webc:columns>
+						<webc:rows>
+							<webc:TableRow type="Active">
+								<webc:cells>
+									<webc:TableCell>
+										<webc:Label text="{ProductCollection>Name} ({ProductCollection>ProductId})"/>
+									</webc:TableCell>
+									<webc:TableCell>
+										<webc:Label text="{ProductCollection>SupplierName}" />
+									</webc:TableCell>
+									<webc:TableCell>
+										<webc:Label text="{ProductCollection>Price} {ProductCollection>CurrencyCode}" />
+									</webc:TableCell>
+								</webc:cells>
+							</webc:TableRow>
+						</webc:rows>
+					</webc:Table>
+				</webc:Panel>
+			</Panel>
 		</content>
 	</Page>
-</core:View>
+</mvc:View>

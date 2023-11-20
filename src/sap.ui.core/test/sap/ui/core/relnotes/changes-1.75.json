@@ -1,0 +1,98 @@
+{
+  "1.75.0": {
+    "date": "January 2020",
+    "notes": [
+      {
+        "id": "9d64571400af3706b038de0b2c4c1302de5d463b",
+        "type": "FIX",
+        "text": " Component: Only call flex preprocessing hook for valid manifests",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080019684"
+          }
+        ]
+      },
+      {
+        "id": "123c2f335c164b442fdf5200b84d46919ca74968",
+        "type": "FIX",
+        "text": " commands: fix destruction of CommandExecutions",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980539933"
+          }
+        ]
+      },
+      {
+        "id": "c2f98a4b369f005356ca76d89c80398b48ed827f",
+        "type": "FEATURE",
+        "text": " sap.m.ObjectStatus: Enhancing the indication color palette",
+        "references": []
+      },
+      {
+        "id": "1b095a37f8a2843c334c5139147b27e7043fb36d",
+        "type": "FEATURE",
+        "text": " test recorder: add settings dialog with viewId option",
+        "references": []
+      },
+      {
+        "id": "c923d5b35a3cc496650b1148512da190c1f3bd98",
+        "type": "FEATURE",
+        "text": " test recorder: add setting for formatting as po method",
+        "references": []
+      },
+      {
+        "id": "b3b9330d5a093bdfaccb675cbb57fbef91b0a8a6",
+        "type": "FIX",
+        "text": " ManagedObject.js: cloning single aggregation with alt type string",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1680241716"
+          }
+        ]
+      },
+      {
+        "id": "c72ed04339905804fa9214c2f800a5e1fae52e52",
+        "type": "FIX",
+        "text": " core: Failing test for XmlTreeModifier",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080080863"
+          }
+        ]
+      },
+      {
+        "id": "01d8536568c096a87af3f3ad909dec99533d420a",
+        "type": "FEATURE",
+        "text": " Theming: experimental CSS variables and skeleton build/usage",
+        "references": []
+      },
+      {
+        "id": "29969f4a09bfc889cb1e7eab198231a3ec1f4aa8",
+        "type": "FEATURE",
+        "text": " core.Popup: provide possibilities to add external popup content",
+        "references": []
+      },
+      {
+        "id": "429100145b67ec17e6f6cf871df686b126998a43",
+        "type": "FIX",
+        "text": " NumberFormat: Currency Format Trailing",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970551159"
+          }
+        ]
+      },
+      {
+        "id": "a62aef9026f4b2d1489c184c958f46c95067efa4",
+        "type": "FIX",
+        "text": " chain titlechange event in case of binding information in a title",
+        "references": []
+      }
+    ]
+  }
+}

@@ -1,0 +1,33 @@
+<mvc:View controllerName="example.mvc_legacyAPIs.test" xmlns:m="sap.m"
+	xmlns:mvc="sap.ui.core.mvc" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:svg="http://www.w3.org/2000/svg"
+	displayBlock="true">
+	<table id="localTableId" title="encoding is the A&amp;O of XML parsing &lt;and&gt; &quot;writing" border="5">
+		<tr><td>Hello</td><td>Hello</td><td>Hello</td></tr>
+		<tr><td>Hello</td><td>Hello A&amp;O, what about a &lt;div&gt; in here?</td><td><m:Button id="Button1" text="HEY!" press="doIt"></m:Button></td></tr>
+	</table>
+	plain text node as direct child of view
+	<m:Panel id="myPanel">
+		<!-- this comment should be ignored -->
+		<m:Button id="Button3" text="HEY default aggregation!" tooltip="hello tooltip" press="doIt"></m:Button>
+		<m:Button id="ButtonX" text="Another Hello" press=".sap.doIt"></m:Button>
+		<div style="border:1px solid red;background-color:yellow;width:200px;height:10px;">text node in nested HTML in default aggregation</div>
+		<m:content>
+			<!-- this comment should be ignored -->
+			<div style="border:1px solid red;background-color:blue;width:200px;height:10px;">text node in HTML in named aggregation &amp; </div>
+			<div>
+				<svg:svg width="4cm" height="8cm" version="1.1">
+					<svg:ellipse cx="2cm" cy="4cm" rx="2cm" ry="1cm" />
+				</svg:svg>
+			</div>
+			<m:Button id="Button2" text="HEY named aggregation!" press="doIt">
+				<!-- this comment should be ignored -->
+			</m:Button>
+			<m:CheckBox text="HEY named aggregation!" />
+			<mvc:JSONView id="MyJSONView" viewName="example.mvc_legacyAPIs.test2"></mvc:JSONView>
+			<mvc:JSView id="MyJSView" viewName="example.mvc_legacyAPIs.test2"></mvc:JSView>
+			<mvc:XMLView id="MyXMLView" viewName="example.mvc_legacyAPIs.test2"></mvc:XMLView>
+			<mvc:XMLView id="MyHTMLView" viewName="example.mvc_legacyAPIs.test2" controllerName="example.mvc_legacyAPIs.test"></mvc:XMLView>
+		</m:content>
+	</m:Panel>
+</mvc:View>

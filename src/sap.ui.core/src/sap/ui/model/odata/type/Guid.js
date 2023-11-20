@@ -2,10 +2,14 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', 'sap/ui/model/FormatException',
-		'sap/ui/model/odata/type/ODataType', 'sap/ui/model/ParseException',
-		'sap/ui/model/ValidateException'],
-	function(jQuery, FormatException, ODataType, ParseException, ValidateException) {
+sap.ui.define([
+	"sap/base/Log",
+	"sap/ui/core/Lib",
+	"sap/ui/model/FormatException",
+	"sap/ui/model/ParseException",
+	"sap/ui/model/ValidateException",
+	"sap/ui/model/odata/type/ODataType"
+], function(Log, Library, FormatException, ParseException, ValidateException, ODataType) {
 	"use strict";
 
 	var rAllWhitespaceAndSeparators = /[-\s]/g, // whitespace and "-" separator, globally
@@ -19,7 +23,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/FormatException',
 	 * @private
 	 */
 	function getErrorMessage() {
-		return sap.ui.getCore().getLibraryResourceBundle().getText("EnterGuid");
+		return Library.getResourceBundleFor("sap.ui.core").getText("EnterGuid");
 	}
 
 	/**
@@ -39,7 +43,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/FormatException',
 			if (vNullable === false || vNullable === "false") {
 				oType.oConstraints = {nullable : false};
 			} else if (vNullable !== undefined && vNullable !== true && vNullable !== "true") {
-				jQuery.sap.log.warning("Illegal nullable: " + vNullable, null, oType.getName());
+				Log.warning("Illegal nullable: " + vNullable, null, oType.getName());
 			}
 		}
 	}
@@ -95,17 +99,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/FormatException',
 	 *   if <code>sTargetType</code> is unsupported
 	 * @public
 	 */
-	EdmGuid.prototype.formatValue = function(sValue, sTargetType) {
+	EdmGuid.prototype.formatValue = function (sValue, sTargetType) {
 		if (sValue === undefined || sValue === null) {
 			return null;
 		}
 		switch (this.getPrimitiveType(sTargetType)) {
-		case "any":
-		case "string":
-			return sValue;
-		default:
-			throw new FormatException("Don't know how to format " + this.getName() + " to "
-				+ sTargetType);
+			case "any":
+			case "string":
+				return sValue;
+			default:
+				throw new FormatException("Don't know how to format " + this.getName() + " to "
+					+ sTargetType);
 		}
 	};
 
@@ -150,9 +154,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/FormatException',
 			// don't try to add separators to invalid value
 			return sValue;
 		}
-		sResult = sResult.slice(0, 8) + '-' + sResult.slice(8, 12) + '-' + sResult.slice(12, 16)
+		return sResult.slice(0, 8) + '-' + sResult.slice(8, 12) + '-' + sResult.slice(12, 16)
 			+ '-' + sResult.slice(16, 20) + '-' + sResult.slice(20);
-		return sResult.toUpperCase();
 	};
 
 	/**
@@ -161,7 +164,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/FormatException',
 	 *
 	 * @param {string} sValue
 	 *   the value to be validated
-	 * @returns {void}
 	 * @throws {sap.ui.model.ValidateException}
 	 *   if the value is not valid
 	 * @public

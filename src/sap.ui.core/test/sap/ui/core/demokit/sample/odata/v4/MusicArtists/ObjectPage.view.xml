@@ -1,0 +1,130 @@
+<mvc:View
+	controllerName="sap.ui.core.sample.odata.v4.MusicArtists.ObjectPage"
+	height="100%"
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core"
+	xmlns:f="sap.ui.layout.form"
+	xmlns:mvc="sap.ui.core.mvc">
+	<Page navButtonPress="onBack" showHeader="true" showNavButton="true">
+		<content>
+			<VBox class="sapUiSmallMargin">
+				<f:Form editable="true" id="objectPageForm"
+					validateFieldGroup="onValidateFieldGroup">
+					<f:title>
+						<core:Title text="Artist Details"/>
+					</f:title>
+					<f:layout>
+						<f:ResponsiveGridLayout
+							adjustLabelSpan="false"
+							columnsXL="1"
+							columnsL="1"
+							columnsM="1"
+							emptySpanXL="4"
+							emptySpanL="4"
+							emptySpanM="4"
+							emptySpanS="0"
+							labelSpanXL="3"
+							labelSpanL="3"
+							labelSpanM="3"
+							labelSpanS="12"
+							singleContainerFullSize="false"/>
+					</f:layout>
+					<f:formContainers>
+						<f:FormContainer>
+							<f:formElements>
+								<f:FormElement label="Name">
+									<f:fields>
+										<Input editable="{ui-op>/bEditMode}" value="{Name}"/>
+									</f:fields>
+								</f:FormElement>
+								<f:FormElement label="Country of Origin">
+									<f:fields>
+										<Input change="onChange" editable="{ui-op>/bEditMode}"
+											fieldGroupIds="countryGroup"
+											value="{CountryOfOrigin}"/>
+										<Input editable="false" fieldGroupIds="countryGroup"
+											value="{CountryOfOrigin_Text}"/>
+									</f:fields>
+								</f:FormElement>
+								<f:FormElement label="Region of Origin">
+									<f:fields>
+										<Input editable="{ui-op>/bEditMode}"
+											value="{RegionOfOrigin}"/>
+									</f:fields>
+								</f:FormElement>
+								<f:FormElement label="Founding Year">
+									<f:fields>
+										<Input editable="{ui-op>/bEditMode}"
+											value="{FoundingYear}"/>
+									</f:fields>
+								</f:FormElement>
+								<f:FormElement label="Breakup Year">
+									<f:fields>
+										<Input editable="{ui-op>/bEditMode}"
+											value="{BreakupYear}"/>
+									</f:fields>
+								</f:FormElement>
+								<f:FormElement label="Sibling" binding="{path : 'SiblingEntity',
+									parameters : {$$ownRequest : true}}">
+									<f:fields>
+										<Text text="{Name}"/>
+									</f:fields>
+								</f:FormElement>
+<!-- TODO: enable this as soon as FIORITECHP1-9095 is done
+								<f:FormElement label="Last Changed">
+									<f:fields>
+										<Text text="{DraftAdministrativeData/LastChangeDateTime}"/>
+									</f:fields>
+								</f:FormElement>
+-->
+							</f:formElements>
+						</f:FormContainer>
+					</f:formContainers>
+				</f:Form>
+				<List class="sapUiResponsiveMargin" growing="true" growingThreshold="10"
+					id="_Publication"
+					items="{
+						parameters : {$$ownRequest : true},
+						path : '_Publication',
+						sorter : {path : 'ReleaseDate'}
+					}"
+					width="auto">
+					<headerToolbar>
+						<Toolbar>
+						<Title text="Publications"/>
+							<ToolbarSpacer/>
+							<Button enabled="{ui-op>/bEditMode}" press="onCreate" text="Create"/>
+							<ToolbarSeparator/>
+							<!--Button press="onRefresh" text="Refresh" /-->
+						</Toolbar>
+					</headerToolbar>
+					<items>
+						<ObjectListItem number="{ReleaseDate}" press="onSelect" title="{Name}"
+							type="Active">
+							<firstStatus>
+								<ObjectStatus state="None"
+									text="{Price}"/>
+							</firstStatus>
+							<attributes>
+								<ObjectAttribute text="{CurrencyCode}"/>
+							</attributes>
+						</ObjectListItem>
+					</items>
+				</List>
+			</VBox>
+		</content>
+		<footer>
+			<Bar>
+				<contentLeft>
+					<DraftIndicator id="draftIndicator"/>
+				</contentLeft>
+				<contentRight>
+					<!--Button press="onRefresh" text="Refresh"/-->
+					<Button enabled="{= !${ui-op>/bEditMode}}" press="onEdit" text="Edit"/>
+					<Button enabled="{ui-op>/bEditMode}" press="onDiscard" text="Discard"/>
+					<Button enabled="{ui-op>/bEditMode}" press="onSave" text="Save"/>
+				</contentRight>
+			</Bar>
+		</footer>
+	</Page>
+</mvc:View>

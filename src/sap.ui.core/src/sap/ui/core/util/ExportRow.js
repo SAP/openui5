@@ -3,8 +3,11 @@
  */
 
 // Provides class sap.ui.core.util.ExportRow
-sap.ui.define(['sap/ui/base/ManagedObject', './ExportCell'],
-	function(ManagedObject, ExportCell) {
+sap.ui.define([
+	'sap/ui/base/ManagedObject',
+	'./ExportCell' // convenience dependency for legacy code that uses global names
+],
+	function(ManagedObject) {
 	'use strict';
 
 	/**
@@ -22,6 +25,7 @@ sap.ui.define(['sap/ui/base/ManagedObject', './ExportCell'],
 	 * @since 1.22.0
 	 *
 	 * @public
+	 * @deprecated Since version 1.73
 	 * @alias sap.ui.core.util.ExportRow
 	 */
 	var ExportRow = ManagedObject.extend("sap.ui.core.util.ExportRow", {

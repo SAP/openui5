@@ -1,0 +1,46 @@
+<core:FragmentDefinition
+		xmlns="sap.m"
+		xmlns:f="sap.ui.layout.form"
+		xmlns:core="sap.ui.core">
+	<ResponsivePopover
+			id="detailsPopover"
+			title="{title}"
+			class="sapUiResponsivePadding--header"
+			placement="Auto">
+		<beginButton>
+			<Button text="Edit" type="Emphasized" press="handleEditButton"/>
+		</beginButton>
+		<endButton>
+			<Button text="Delete" press="handlePopoverDeleteButton"/>
+		</endButton>
+		<f:SimpleForm
+				id="appointmentEditForm"
+				editable="false"
+				layout="ResponsiveGridLayout"
+				singleContainerFullSize="false">
+			<Label
+					text="Additional information"
+					labelFor="moreInfoText"/>
+			<Text id="moreInfoText" text="{text}"/>
+			<Label text="From" labelFor="startDateText"/>
+			<Text id="startDateText"
+					text="{
+						path: 'startDate',
+						formatter:'.formatDate'
+					}"/>
+			<Label text="To" labelFor="endDateText"/>
+			<Text id="endDateText"
+					text="{
+						path: 'endDate',
+						formatter:'.formatDate'
+					}"/>
+			<CheckBox
+					id="allDayCheckBox"
+					text="All-day"
+					selected="{allDay>/allDay}"
+					editable="false"/>
+			<Label text="Type" labelFor="appType"/>
+			<Text id="appTypeText" text="{type}"/>
+		</f:SimpleForm>
+	</ResponsivePopover>
+</core:FragmentDefinition>

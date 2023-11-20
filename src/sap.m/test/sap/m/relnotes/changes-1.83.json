@@ -1,0 +1,283 @@
+{
+  "1.83.0": {
+    "date": "September 2020",
+    "notes": [
+      {
+        "id": "ad0aea88acaa6610ab4d38204ad5a444d331cd7c",
+        "type": "FEATURE",
+        "text": " ARIA 1.1: Use new roles and attributes - GenericTile NumericContent FeedInput SelectionDetails FeedListItem"
+      },
+      {
+        "id": "7563e8a6a5d41b21de9b241b16d6c3982169a5b2",
+        "type": "FIX",
+        "text": " sap.m.TimePicker: now returns 24:00:00 when support2400 is on and 24:00:00 is entered",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2040645554"
+          }
+        ]
+      },
+      {
+        "id": "1d4d35b3e4ce2263772a9a235dad0c66685c0131",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: has correct row height",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070305770"
+          }
+        ]
+      },
+      {
+        "id": "e914b9c2e5b69669d0b265b9923add2d3b08f70d",
+        "type": "FEATURE",
+        "text": " UploadSet control events afterItemEdited and afterItemRemoved"
+      },
+      {
+        "id": "a8e2892a3e77c7031a292816f9623501b01ef3a8",
+        "type": "FIX",
+        "text": " sap.m.ObjectHeader: Redundant attribute removed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070290825"
+          }
+        ]
+      },
+      {
+        "id": "23cbce4e2297b50b2dd6a9ac147809344e712c58",
+        "type": "FIX",
+        "text": " sap.m.Button: proper parameter is set for hover color",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070300677"
+          }
+        ]
+      },
+      {
+        "id": "adaadfae45eaaf49e21e5052351f10d9c1d8e25a",
+        "type": "FIX",
+        "text": " P13nConditionPanel: Tooltip shouldn't exists",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080274790"
+          }
+        ]
+      },
+      {
+        "id": "e92d506d89a3c1cf452981dd696f4176ede49e3c",
+        "type": "FIX",
+        "text": " sap.m.OverflowToolbar: Unnecessary caching of width is prevented",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070295397"
+          }
+        ]
+      },
+      {
+        "id": "5660dfb6068497bfd850de22b8f8592f2dffa4ed",
+        "type": "FEATURE",
+        "text": " sap.m.Button: new API exposed to set aria-haspopup according to ARIA 1.1"
+      },
+      {
+        "id": "3b9763e8dc02dfb6e9c2ce5185d5a1001770a4cf",
+        "type": "FEATURE",
+        "text": " Semantic rendering of generic tile and related controls"
+      },
+      {
+        "id": "4efd6905ecf3129b33003e040ec81c8fb2682a55",
+        "type": "FIX",
+        "text": " sap.m.Select: Problem with changing selection is fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070308334"
+          }
+        ]
+      },
+      {
+        "id": "d6d5b96c6cd870d48452155dfabaf138e064335d",
+        "type": "FIX",
+        "text": " sap.m.TimePickerSliders: Fixed sample on mobile",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070321393"
+          }
+        ]
+      },
+      {
+        "id": "a6972ec378c7930b43f424dfa389663e4e1fc27b",
+        "type": "FIX",
+        "text": " sap.m.DateTimeInput: change version of sinon",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070295035"
+          }
+        ]
+      },
+      {
+        "id": "051f8eb59c24ddeaee01d717f9407abf049859f3",
+        "type": "FIX",
+        "text": " sap.m.Select: Fixed missing focus on open"
+      },
+      {
+        "id": "eeea7210dc7f47142831182e8c239e0137762856",
+        "type": "FIX",
+        "text": " sap.m.ObjectAttribute: Renders correctly when only text is set",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070280113"
+          }
+        ]
+      },
+      {
+        "id": "9926e7e879d281e6a60b37676e547be0dd0d9ce2",
+        "type": "FIX",
+        "text": " sap.m.SplitContainer: Master page is no longer opened on scroll",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080013168"
+          }
+        ]
+      },
+      {
+        "id": "2cad8f6c1018d2c1f1adc8010c0642e65b52d2e0",
+        "type": "FIX",
+        "text": " sap.m.FacetFilter: aria descriptions for button position is now correct",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070289336"
+          }
+        ]
+      },
+      {
+        "id": "497d10aa00724599f936b4d736dfe5252b6d5f51",
+        "type": "FIX",
+        "text": " sap.m.table: Fixed failing assertion for the renderer",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080371005"
+          }
+        ]
+      },
+      {
+        "id": "d39058b42755f0511d66f8f1b9b783be03c0667f",
+        "type": "FIX",
+        "text": " sap.m.Dialog: Dialog no longer goes outside the view window",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070269964"
+          }
+        ]
+      },
+      {
+        "id": "0ebb85a08280fdf1f9be2304ba48d7ab71540957",
+        "type": "FIX",
+        "text": " sap.m.ObjectMarker: Aria attributes are successfully added through model",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070284655"
+          }
+        ]
+      },
+      {
+        "id": "bac7c5286186f4530468423dfedb7437b293746f",
+        "type": "FIX",
+        "text": " sap.m.Button: In condensed size remove the surrounding click area",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070284597"
+          }
+        ]
+      },
+      {
+        "id": "2f95acfa0cdeff7d064819545cf30d71c7cf5b37",
+        "type": "FIX",
+        "text": " sap.m.TabContainer: Fixed footer button state in sample",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070291427"
+          }
+        ]
+      },
+      {
+        "id": "29fb6b100163c1bf6429d6334523c5f1e269e7fc",
+        "type": "FEATURE",
+        "text": " UI5 Controls for new tile sizes"
+      },
+      {
+        "id": "da68af174fe167721dbb64cc3b4a75e28aab92aa",
+        "type": "FIX",
+        "text": " sap.m.ObjectNumber: getAccessibilityInfo method implemented",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080323622"
+          }
+        ]
+      },
+      {
+        "id": "e90036dbc141fc93190e7416fd1e3f501d6e012c",
+        "type": "FIX",
+        "text": " sap.m.IconTabBar: Expand button no longer stretches in Compact density",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070273410"
+          }
+        ]
+      },
+      {
+        "id": "f9535ee1bd8fd2c8ff9b842aa2a19c09560d4127",
+        "type": "FIX",
+        "text": " sap.m.Button: Renderer doesn't throw an error when there's no badge",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070271247"
+          },
+          {
+            "type": "BCP",
+            "reference": "2070273098"
+          }
+        ]
+      },
+      {
+        "id": "8b757c5a6619018a2355e78583a389045e56de6b",
+        "type": "FIX",
+        "text": " sap.m.ObjectAttribute: in french language there is space before each colon",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080372352"
+          }
+        ]
+      },
+      {
+        "id": "bab113c1a667437b9e4f59b002e4212b20d6b2b9",
+        "type": "FIX",
+        "text": " sap.m.Input: Show Popover on late binding for suggestions",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070267825"
+          }
+        ]
+      }
+    ]
+  }
+}

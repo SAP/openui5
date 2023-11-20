@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html>
 	<head>
-		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 		<meta charset="utf-8">
 		<title>SAPUI5 Messages</title>
 		<script
@@ -18,23 +17,23 @@
 		</script>
 
 		<script>
-
-			sap.ui.getCore().attachInit(function () {
-				sap.ui.require([
-					"sap/ui/core/sample/MessageManager/ODataBackendMessagesComp/localService/mockserver",
-					"sap/m/Shell",
-					"sap/ui/core/ComponentContainer"
-				], function (mockserver, Shell, ComponentContainer) {
+			sap.ui.require([
+				"sap/ui/core/Core",
+				"sap/ui/core/sample/MessageManager/ODataBackendMessagesComp/localService/mockserver",
+				"sap/m/Shell",
+				"sap/ui/core/ComponentContainer"
+			], function (Core, mockserver, Shell, ComponentContainer) {
+				Core.ready().then(function () {
 					mockserver.init();
 					new Shell({
 						app: new ComponentContainer({
 							name: "sap.ui.core.sample.MessageManager.ODataBackendMessagesComp",
-							height: "100%"
+							height: "100%",
+							manifest: true
 						})
 					}).placeAt("content");
 				});
 			});
-
 		</script>
 
 	</head>

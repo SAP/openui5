@@ -748,7 +748,7 @@
                 return;
             }
 
-            // SAP modification: save active element with API calls too
+            // MODIFIED BY SAP: save active element with API calls too
             activeElm = elm;
 
             if (s.display == 'top') {

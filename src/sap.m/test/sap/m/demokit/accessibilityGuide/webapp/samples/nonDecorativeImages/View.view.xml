@@ -1,0 +1,26 @@
+<mvc:View
+	controllerName="sap.m.sample.image.Controller"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m">
+	<VBox class="sapUiSmallMarginTopBottom sapUiLargeMarginBeginEnd">
+		<HBox justifyContent="SpaceBetween">
+			<VBox>
+				<Text id="detailsActiveImage" text="Has ariaDetails:" class="sapUiSmallMarginBottom" />
+				<Image ariaDetails="detailsActiveImage" src="{img>/products/pic1}"
+					alt="Product photo of speakers"
+					width="{/imageWidth}"
+					decorative="false"
+					press="handleImagePress"/>
+			</VBox>
+			<VBox>
+				<Text id="labelActiveImage" text="Using ariaLabelledBy:" class="sapUiSmallMarginBottom" />
+				<Image src="{img>/products/pic2}"
+					alt="Product photo of UBS Flash drive"
+					ariaLabelledBy="labelActiveImage"
+					width="{/imageWidth}"
+					decorative="false"
+					press="handleImagePress"/>
+			</VBox>
+		</HBox>
+	</VBox>
+</mvc:View>

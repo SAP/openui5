@@ -3,16 +3,25 @@
  */
 
 // Provides class sap.ui.core.support.plugins.Debugging
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin', 'jquery.sap.keycodes'],
-	function(jQuery, Plugin) {
+sap.ui.define([
+	"sap/ui/core/RenderManager",
+	'sap/ui/core/support/Plugin',
+	"sap/base/security/encodeXML",
+	"sap/base/util/each",
+	"sap/ui/events/KeyCodes",
+	"sap/ui/thirdparty/jquery",
+	// provides jQuery.fn.cursorPos
+	"sap/ui/dom/jquery/cursorPos",
+	// provides jQuery.fn.selectText
+	"sap/ui/dom/jquery/selectText"
+],
+	function(RenderManager, Plugin, encodeXML, each, KeyCodes, jQuery) {
 		"use strict";
 
 
-		var $ = jQuery;
 		var Debugging = Plugin.extend("sap.ui.core.support.plugins.Debugging", {
 			constructor: function(oSupportStub) {
 				Plugin.apply(this, ["sapUiSupportDebugging", "Debugging", oSupportStub]);
-				this._oStub = oSupportStub;
 				this._aEventIds = [
 					this.getId() + "ReceiveClasses",
 					this.getId() + "ReceiveClassMethods",
@@ -28,7 +37,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin', 'jquery.sap.ke
 				this._mAddedClasses = {};
 				this._sSelectedClass = "";
 				this._mRebootUrls = {};
-
 			}
 		});
 
@@ -42,23 +50,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin', 'jquery.sap.ke
 
 		Debugging.prototype.init = function(oSupportStub) {
 			Plugin.prototype.init.apply(this, arguments);
-			var _$ = this.$();
-			_$.on("click", '#sapUiSupportDebuggingReboot', $.proxy(this._onUseOtherUI5Version, this));
-			_$.on("change", '#sapUiSupportDebuggingRebootSelect', this._onUI5VersionDropdownChanged);
-			_$.on("keyup", '#sapUiSupportDebuggingClassInput', $.proxy(this._autoComplete, this));
-			_$.on("blur", '#sapUiSupportDebuggingClassInput', $.proxy(this._updateSelectOptions, this));
-			_$.on("change", '#sapUiSupportDebuggingClassSelect', $.proxy(this._selectOptionsChanged, this));
-			_$.on("click", '#sapUiSupportDebuggingAddClass', $.proxy(this._onAddClassClicked, this));
-			_$.on("click", '#sapUiSupportDebuggingClassList li div', $.proxy(this._onSelectClass, this));
-			_$.on("click", '#sapUiSupportDebuggingClassList li img.remove-class', $.proxy(this._onRemoveClass, this));
-			_$.on("keyup", '#sapUiSupportDebuggingMethodInput', $.proxy(this._autoComplete, this));
-			_$.on("blur", '#sapUiSupportDebuggingMethodInput', $.proxy(this._updateSelectOptions, this));
-			_$.on("change", '#sapUiSupportDebuggingMethodSelect', $.proxy(this._selectOptionsChanged, this));
-			_$.on("click", '#sapUiSupportDebuggingAddBreakpoint', $.proxy(this._onAddBreakpointClicked, this));
-			_$.on("click", '#sapUiSupportDebuggingBreakpointList li img.remove-breakpoint', $.proxy(this._onRemoveBreakpoint, this));
 
 			this.renderContainer();
-
 			this._populateRebootUrls();
 
 			this._oStub.sendEvent(this._breakpointId + "RequestClasses", {
@@ -68,39 +61,37 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin', 'jquery.sap.ke
 
 		Debugging.prototype.exit = function(oSupportStub) {
 			Plugin.prototype.exit.apply(this, arguments);
-			var _$ = this.$();
-			_$.off("keyup", '#sapUiSupportDebuggingClassInput');
-			_$.off("blur", '#sapUiSupportDebuggingClassInput');
-			_$.off("change", '#sapUiSupportDebuggingClassSelect');
-			_$.off("click", '#sapUiSupportDebuggingAddClass');
-			_$.off("click", '#sapUiSupportDebuggingClassList li div');
-			_$.off("click", '#sapUiSupportDebuggingClassList li img.remove-class');
-			_$.off("keyup", '#sapUiSupportDebuggingMethodInput');
-			_$.off("blur", '#sapUiSupportDebuggingMethodInput');
-			_$.off("change", '#sapUiSupportDebuggingMethodSelect');
-			_$.off("click", '#sapUiSupportDebuggingAddBreakpoint');
-			_$.off("click", '#sapUiSupportDebuggingBreakpointList li img.remove-breakpoint');
 		};
 
 		Debugging.prototype.renderContainer = function() {
 
-			var rm = sap.ui.getCore().createRenderManager();
+			var rm = new RenderManager().getInterface();
 
-			rm.write('<div id="sapUiSupportDebuggingRebootContainer" class="sapUiSupportContainer">');
-			rm.write('<div class="sapUISupportLabel">Boot application with different UI5 version on next reload:</div>');
-			rm.write('<select id="sapUiSupportDebuggingRebootSelect" class="sapUiSupportSelect">');
-			rm.write('<option value="none">Disabled (no custom reboot URL)</option>');
-			rm.write('<option value="other" id="sapUiSupportDebuggingRebootOther">Other (enter URL to sap-ui-core.js below)...:</option>');
-			rm.write('</select>');
-			rm.write('<input type="text" id="sapUiSupportDebuggingRebootInput" disabled="disabled"/>');
-			rm.write('<button id="sapUiSupportDebuggingReboot" class="sapUiSupportRoundedButton" style="margin-right:0;">Activate Reboot URL</button>');
-			rm.write('</div>');
+			rm.openStart("div", this.getId() + "-RebootContainer").class("sapUiSupportContainer").openEnd();
+				rm.openStart("div").class("sapUISupportLabel").class("sapUISupportLabelBold").openEnd().text("Note: Designed to work with apps loaded with the standard UI5 loading bootstrap script tag:").close("div");
+				rm.openStart("div").class("sapUISupportLabel").class("sapUISupportLabelBold").openEnd().text("<" + "script id=\"sap-ui-bootstrap\" src=\"somepath/resources/sap-ui-core.js\" ...");
+				rm.voidStart("br").voidEnd();
+				rm.voidStart("br").voidEnd();
+				rm.close("div");
 
-			rm.write('<div id="sapUiSupportDebuggingClassContainer" class="sapUiSupportContainer"></div>');
-			rm.write('<div id="sapUiSupportDebuggingMethodContainer" class="sapUiSupportContainer"></div>');
+				rm.openStart("div").class("sapUISupportLabel").openEnd().text("Boot application with different UI5 version on next reload:").close("div");
+				rm.openStart("select", this.getId() + "-RebootSelect").class("sapUiSupportSelect").openEnd();
+				rm.openStart("option").attr("value", "none").openEnd().text("Disabled (no custom reboot URL)").close("option");
+				rm.openStart("option", this.getId() + "-RebootOther").attr("value", "other").openEnd().text("Other (enter URL to sap-ui-core.js below)...:").close("option");
+				rm.close("select");
+				rm.voidStart("input", this.getId() + "-RebootInput").attr("type", "text").attr("disabled", "disabled").voidEnd();
+				rm.openStart("button", this.getId() + "-Reboot").class("sapUiSupportRoundedButton").openEnd().text("Activate Reboot URL").close("button");
+			rm.close("div");
 
-			rm.flush(this.$().get(0));
+			rm.openStart("div", this.getId() + "-ClassContainer").class("sapUiSupportContainer").openEnd().close("div");
+			rm.openStart("div", this.getId() + "-MethodContainer").class("sapUiSupportContainer").openEnd().close("div");
+
+			rm.flush(this.dom());
 			rm.destroy();
+
+			// register listeners
+			this.dom("Reboot").addEventListener("click", this._onUseOtherUI5Version.bind(this));
+			this.dom("RebootSelect").addEventListener("change", this._onUI5VersionDropdownChanged.bind(this));
 		};
 
 		Debugging.prototype.renderClasses = function() {
@@ -108,28 +99,30 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin', 'jquery.sap.ke
 			var that = this;
 
 			var aClasses = this._aClasses;
-			var rm = sap.ui.getCore().createRenderManager();
+			var rm = new RenderManager().getInterface();
 
-			rm.write('<div class="sapUISupportLabel" style="margin-right:5px">Select Class:</div>');
+			rm.openStart("div").class("sapUISupportLabel").openEnd().text("Select Class:").close("div");
 
-			rm.write('<select id="sapUiSupportDebuggingClassSelect" class="sapUiSupportAutocomplete  sapUiSupportSelect"><option></option>');
+			rm.openStart("select", this.getId() + "-ClassSelect").class("sapUiSupportAutocomplete").class("sapUiSupportSelect").openEnd();
+			rm.openStart("option").openEnd().close("option");
 
-			$.each(aClasses, function(iIndex, oValue) {
+			each(aClasses, function(iIndex, oValue) {
 				if (typeof (that._mAddedClasses[oValue]) === 'undefined') {
-					rm.write('<option>');
-					rm.writeEscaped("" + oValue);
-					rm.write('</option>');
+					rm.openStart("option").openEnd();
+					rm.text(oValue);
+					rm.close("option");
 				}
 			});
 
-			rm.write('</select>');
+			rm.close("select");
 
-			rm.write('<input id="sapUiSupportDebuggingClassInput" class="sapUiSupportAutocomplete" type="text"/>');
-			rm.write('<button id="sapUiSupportDebuggingAddClass" class="sapUiSupportRoundedButton">Add class</button>');
+			rm.voidStart("input", this.getId() + "-ClassInput").class("sapUiSupportAutocomplete").attr("type", "text").voidEnd();
+			rm.openStart("button", this.getId() + "-AddClass").class("sapUiSupportRoundedButton").openEnd().text("Add class").close("button");
 
-			rm.write('<hr class="no-border"/><ul id="sapUiSupportDebuggingClassList" class="sapUiSupportList">');
+			rm.voidStart("hr").class("no-border").voidEnd();
+			rm.openStart("ul", this.getId() + "-ClassList").class("sapUiSupportList").openEnd();
 
-			$.each(aClasses, function(iIndex, oValue) {
+			each(aClasses, function(iIndex, oValue) {
 				if (typeof (that._mAddedClasses[oValue]) === 'undefined') {
 					return;
 				}
@@ -141,72 +134,92 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin', 'jquery.sap.ke
 					bpCountText = bpCount.active + " / " + bpCount.all;
 				}
 
-				rm.write('<li data-class-name="');
-				rm.writeEscaped("" + oValue);
-				rm.write('"');
-
+				rm.openStart("li").attr("data-class-name", oValue);
 				if (that._sSelectedClass === oValue) {
-					rm.write(' class="selected"');
+					rm.class("selected");
 				}
+				rm.openEnd();
 
-				rm.write('><div><span class="className">' + jQuery.sap.escapeHTML(oValue + "") + '</span>' +
-						 '<span class="breakpoints">' + jQuery.sap.escapeHTML(bpCountText + "") + '</span></div>' +
-						 '<img class="remove-class" style="cursor:pointer;margin-left:5px" ' +
-						 'src="../../debug/images/delete.gif" alt="X"></li>');
+				rm.openStart("div").openEnd()
+					.openStart("span").class("className").openEnd()
+					.text(oValue)
+					.close("span")
+					.openStart("span").class("breakpoints").openEnd()
+					.text(bpCountText)
+					.close("span")
+				.close("div")
+				.voidStart("img").class("remove-class").attr("src", "../../debug/images/delete.gif").attr("alt", "X").voidEnd();
+
+				rm.close("li");
 			});
 
-			rm.write('</ul>');
+			rm.close("ul");
 
-			rm.flush($("#sapUiSupportDebuggingClassContainer").get(0));
+			rm.flush(this.dom("ClassContainer"));
 			rm.destroy();
+
+			// register listeners
+			this.dom("ClassInput").addEventListener("keyup", this._autoComplete.bind(this));
+			this.dom("ClassInput").addEventListener("blur", this._updateSelectOptions.bind(this));
+			this.dom("ClassSelect").addEventListener("change", this._selectOptionsChanged.bind(this));
+			this.dom("AddClass").addEventListener("click", this._onAddClassClicked.bind(this));
+			this.dom("ClassList").addEventListener("click", this._onSelectOrRemoveClass.bind(this));
 		};
 
 		Debugging.prototype.renderMethods = function(mMethods) {
 
-			var rm = sap.ui.getCore().createRenderManager();
+			var rm = new RenderManager().getInterface();
 
 			if (typeof (mMethods) === 'undefined') {
-				rm.write('<p style="text-align:center;font-weight: bold">Select a class in the list on the left side to add breakpoint.</p>');
-				rm.flush($("#sapUiSupportDebuggingMethodContainer").get(0));
+				rm.openStart("p").openEnd().text("Select a class in the list on the left side to add breakpoint.").close("p");
+				rm.flush(this.dom("MethodContainer"));
 				rm.destroy();
 				return;
 			}
 
-			rm.write('<div class="sapUISupportLabel" style="margin-right:5px">Select Method:</div>');
+			rm.openStart("div").class("sapUISupportLabel").openEnd().text("Select Method").close("div");
 
-			rm.write('<select id="sapUiSupportDebuggingMethodSelect" class="sapUiSupportAutocomplete sapUiSupportSelect"><option></option>');
+			rm.openStart("select", this.getId() + "-MethodSelect").class("sapUiSupportAutocomplete").class("sapUiSupportSelect").openEnd()
+				.openStart("option").openEnd().close("option");
 
-			$.each(mMethods, function(iIndex, oValue) {
+			each(mMethods, function(iIndex, oValue) {
 				if (!oValue.active) {
-					rm.write('<option data-method-type="');
-					rm.writeEscaped("" + oValue.type);
-					rm.write('">');
-					rm.writeEscaped("" + oValue.name);
-					rm.write('</option>');
+					rm.openStart("option").attr("data-method-type", oValue.type).openEnd();
+					rm.text(oValue.name);
+					rm.close("option");
 				}
 			});
 
-			rm.write('</select>');
+			rm.close("select");
 
-			rm.write('<input id="sapUiSupportDebuggingMethodInput" class="sapUiSupportAutocomplete" type="text"/>');
-			rm.write('<button id="sapUiSupportDebuggingAddBreakpoint" class="sapUiSupportRoundedButton">Add breakpoint</button>');
+			rm.voidStart("input", this.getId() + "-MethodInput").class("sapUiSupportAutocomplete").attr("type", "text").voidEnd();
+			rm.openStart("button", this.getId() + "-AddBreakpoint").class("sapUiSupportRoundedButton").openEnd().text("Add breakpoint").close("button");
 
-			rm.write('<hr class="no-border"/><ul id="sapUiSupportDebuggingBreakpointList" class="sapUiSupportList sapUiSupportBreakpointList">');
+			rm.voidStart("hr").class("no-border").voidEnd();
+			rm.openStart("ul", this.getId() + "-BreakpointList").class("sapUiSupportList").class("sapUiSupportBreakpointList").openEnd();
 
-			$.each(mMethods, function(iIndex, oValue) {
+			each(mMethods, function(iIndex, oValue) {
 				if (!oValue.active) {
 					return;
 				}
 
-				rm.write('<li data-method-type="' + jQuery.sap.escapeHTML(oValue.type + "") + '"><span>' + jQuery.sap.escapeHTML(oValue.name + "") + '</span>' +
-						 '<img class="remove-breakpoint" style="cursor:pointer;margin-left:5px" ' +
-						 'src="../../debug/images/delete.gif" alt="Remove"></li>');
+				rm.openStart("li").attr("data-method-name", oValue.name).attr("data-method-type", oValue.type).openEnd()
+					.openStart("span").openEnd().text(oValue.name).close("span")
+					.voidStart("img").class("remove-breakpoint").attr("src", "../../debug/images/delete.gif").attr("alt", "Remove").voidEnd()
+					.close("li");
 			});
 
-			rm.write('</ul>');
+			rm.close('ul');
 
-			rm.flush($("#sapUiSupportDebuggingMethodContainer").get(0));
+			rm.flush(this.dom("MethodContainer"));
 			rm.destroy();
+
+			this.dom("MethodInput").addEventListener("keyup", this._autoComplete.bind(this));
+			this.dom("MethodInput").addEventListener("blur", this._updateSelectOptions.bind(this));
+			this.dom("MethodSelect").addEventListener("change", this._selectOptionsChanged.bind(this));
+			this.dom("AddBreakpoint").addEventListener("click", this._onAddBreakpointClicked.bind(this));
+			this.dom("BreakpointList").addEventListener("click", this._onRemoveBreakpoint.bind(this));
+
 		};
 
 		Debugging.prototype.onsapUiSupportDebuggingReceiveClasses = function(oEvent) {
@@ -214,7 +227,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin', 'jquery.sap.ke
 			this.renderClasses();
 			this.renderMethods();
 
-			$('#sapUiSupportDebuggingClassInput').focus();
+			this.dom("ClassInput").focus();
 		};
 
 		Debugging.prototype.onsapUiSupportDebuggingReceiveClassMethods = function(oEvent) {
@@ -229,41 +242,41 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin', 'jquery.sap.ke
 			};
 
 			// Update breakpoint-count
-			var $breakpoints = $('li[data-class-name="' + sClassName + '"] span.breakpoints');
-			$breakpoints.text(mBreakpointCount.active + " / " + mBreakpointCount.all).show();
+			var oBreakpoints = this.dom('li[data-class-name="' + sClassName + '"] span.breakpoints');
+			oBreakpoints.textContent = mBreakpointCount.active + " / " + mBreakpointCount.all;
 
-			$('#sapUiSupportDebuggingMethodInput').focus();
+			this.dom("MethodInput").focus();
 		};
 
 		Debugging.prototype._autoComplete = function(oEvent) {
 
-			var $input = $(oEvent.target);
+			var oInput = oEvent.target;
 
-			if (oEvent.keyCode == jQuery.sap.KeyCodes.ENTER) {
+			if (oEvent.keyCode == KeyCodes.ENTER) {
 				this._updateSelectOptions(oEvent);
 
-				if ($input.attr('id') === "sapUiSupportDebuggingClassInput") {
+				if (oInput.id === this.getId() + "-ClassInput") {
 					this._onAddClassClicked();
 				} else {
 					this._onAddBreakpointClicked();
 				}
-
-			}
-
-			if (oEvent.keyCode >= jQuery.sap.KeyCodes.ARROW_LEFT && oEvent.keyCode <= jQuery.sap.KeyCodes.ARROW_DOWN) {
 				return;
 			}
 
-			var $select = $input.prev("select"),
-				sInputVal = $input.val();
+			if (oEvent.keyCode >= KeyCodes.ARROW_LEFT && oEvent.keyCode <= KeyCodes.ARROW_DOWN) {
+				return;
+			}
+
+			var sInputVal = oInput.value,
+				oSelect = oInput.previousElementSibling;
 
 			if (sInputVal == "") {
 				return;
 			}
 
-			var aOptions = $select.find("option").map(function() {
-				return $(this).val();
-			}).get();
+			var aOptions = Array.from(oSelect.querySelectorAll("option")).map(function(oOption) {
+				return oOption.value;
+			});
 
 			var sOption;
 
@@ -272,13 +285,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin', 'jquery.sap.ke
 
 				if (sOption.toUpperCase().indexOf(sInputVal.toUpperCase()) == 0) {
 
-					var iCurrentStart = $input.cursorPos();
+					var $input = jQuery(oInput),
+						iCurrentStart = $input.cursorPos();
 
-					if (oEvent.keyCode == jQuery.sap.KeyCodes.BACKSPACE) {
+					if (oEvent.keyCode == KeyCodes.BACKSPACE) {
 						iCurrentStart--;
 					}
 
-					$input.val(sOption);
+					oInput.value = sOption;
 					$input.selectText(iCurrentStart, sOption.length);
 
 					break;
@@ -290,17 +304,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin', 'jquery.sap.ke
 
 		Debugging.prototype._onAddClassClicked = function() {
 
-			var sClassName = $("#sapUiSupportDebuggingClassInput").val();
+			var sClassName = this.dom("ClassInput").value;
 
 			this._mAddedClasses[sClassName] = {};
 
 			this.renderClasses();
-			$('#sapUiSupportDebuggingClassInput').focus();
+			this.dom("ClassInput").focus();
 		};
 
 		Debugging.prototype._onRemoveClass = function(oEvent) {
 
-			var sClassName = $(oEvent.target).prev().find('span.className').text();
+			var oLi = oEvent.target.closest("li[data-class-name]");
+			var sClassName = oLi.dataset.className;
 
 			delete this._mAddedClasses[sClassName];
 
@@ -322,19 +337,24 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin', 'jquery.sap.ke
 				this.renderMethods();
 			}
 
-			$('#sapUiSupportDebuggingClassInput').focus();
+			this.dom("ClassInput").focus();
 		};
 
 		Debugging.prototype._onAddBreakpointClicked = function() {
-			this.changeBreakpoint($("#sapUiSupportDebuggingClassList li.selected span.className").text(),
-					$("#sapUiSupportDebuggingMethodInput").val(),
-					$("#sapUiSupportDebuggingMethodSelect option:selected").attr("data-method-type"), true);
+			this.changeBreakpoint(
+				this.dom("ClassList").querySelector("li.selected").dataset.className,
+				this.dom("MethodInput").value,
+				this.dom("MethodSelect").querySelector("option:checked").dataset.methodType, true);
 		};
 
 		Debugging.prototype._onRemoveBreakpoint = function(oEvent) {
-			this.changeBreakpoint($("#sapUiSupportDebuggingClassList li.selected span.className").text(),
-					$(oEvent.target).prev().text(),
-					$(oEvent.target).parent("li").attr("data-method-type"), false);
+			if (oEvent.target.nodeName === "IMG" && oEvent.target.classList.contains("remove-breakpoint")) {
+				var oLi = oEvent.target.closest("li");
+				this.changeBreakpoint(
+					this.dom("ClassList").querySelector("li.selected").dataset.className,
+					oLi.dataset.methodName,
+					oLi.dataset.methodType, false);
+			}
 		};
 
 		Debugging.prototype._updateSelectOptions = function(oEvent) {
@@ -372,18 +392,29 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin', 'jquery.sap.ke
 			oInput.value = oSelect.options[oSelect.selectedIndex].value;
 		};
 
+		Debugging.prototype._onSelectOrRemoveClass = function(oEvent) {
+			if (oEvent.target.nodeName === "IMG" && oEvent.target.classList.contains("remove-class")) {
+				this._onRemoveClass(oEvent);
+			} else {
+				this._onSelectClass(oEvent);
+			}
+		};
+
 		Debugging.prototype._onSelectClass = function(oEvent) {
 
-			var $li = $(oEvent.target).parents("li");
+			var oLi = oEvent.target.closest("li[data-class-name]");
 
-			if ($li.hasClass("selected")) {
+			if (oLi == null || oLi.classList.contains("selected")) {
 				return;
 			}
 
-			var className = $li.find('span.className').text();
+			// single selecT: deselect all others, select the current one
+			oLi.parentElement.querySelectorAll("li.selected").forEach(function(node) {
+				node.classList.remove("selected");
+			});
+			oLi.classList.add("selected");
 
-			$li.addClass("selected").siblings("li").removeClass("selected");
-			this._sSelectedClass = className;
+			var className = this._sSelectedClass = oLi.dataset.className;
 
 			this._oStub.sendEvent(this._breakpointId + "RequestClassMethods", {
 				className: className,
@@ -393,7 +424,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin', 'jquery.sap.ke
 
 		Debugging.prototype._isClassSelected = function() {
 			var selected = false;
-			$.each(this._mClasses, function(iIndex, oValue) {
+			each(this._mClasses, function(iIndex, oValue) {
 				if (oValue.selected === true) {
 					selected = true;
 				}
@@ -406,7 +437,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin', 'jquery.sap.ke
 				className: className,
 				methodName: methodName,
 				active: active,
-				type: parseInt(type, 10),
+				type: parseInt(type),
 				callback: this.getId() + "ReceiveClassMethods"
 			});
 		};
@@ -418,11 +449,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin', 'jquery.sap.ke
 			// these are the known standard URLs; add them to the dropdown if reachable
 			this._mRebootUrls = {
 				// unfortunately we are not allowed to add the known internal URLs here
-				"https://openui5.hana.ondemand.com/resources/sap-ui-core.js": "Public OpenUI5 server",
-				"https://openui5beta.hana.ondemand.com/resources/sap-ui-core.js": "Public OpenUI5 PREVIEW server",
-				"https://sapui5.hana.ondemand.com/resources/sap-ui-core.js": "Public SAPUI5 server",
-				"http://localhost:8080/testsuite/resources/sap-ui-core.js": "Localhost (port 8080), /testsuite ('grunt serve' URL)",
-				"http://localhost:8080/sapui5/resources/sap-ui-core.js": "Localhost (port 8080), /sapui5 (maven URL)"
+				"https://sdk.openui5.org/resources/sap-ui-core.js": "Public OpenUI5 server",
+				"https://sdk.openui5.org/nightly/resources/sap-ui-core.js": "Public OpenUI5 PREVIEW server",
+				"https://ui5.sap.com/resources/sap-ui-core.js": "Public SAPUI5 server",
+				"http://localhost:8080/resources/sap-ui-core.js": "Localhost (port 8080)"
 			};
 
 			this._testAndAddUrls(this._mRebootUrls);
@@ -440,12 +470,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin', 'jquery.sap.ke
 		};
 
 		Debugging.prototype._testAndAddUrls = function(mUrls) {
-			var $Other = jQuery("#sapUiSupportDebuggingRebootOther");
+			var oOther = this.dom("RebootOther");
 			function createAppendFunction(sUrl) {
 				return function() {
 					// append URL and description to select box
-					var sHtml = "<option value='" + sUrl + "'>" + mUrls[sUrl] + "</option>";
-					$Other.before(sHtml);
+					var sHtml = "<option value='" + encodeXML(sUrl) + "'>" + mUrls[sUrl] + "</option>";
+					oOther.insertAdjacentHTML("beforebegin", sHtml);
 				};
 			}
 
@@ -467,7 +497,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin', 'jquery.sap.ke
 			for (var i = 0; i < aUserUrls.length; i++) {
 				var sUrl = aUserUrls[i];
 				if (sUrl && !this._mRebootUrls[sUrl]) {
-					mUrls[sUrl] = jQuery.sap.encodeHTML(sUrl) + " (user-defined URL)";
+					mUrls[sUrl] = encodeXML(sUrl) + " (user-defined URL)";
 				}
 			}
 
@@ -475,29 +505,30 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin', 'jquery.sap.ke
 		};
 
 		Debugging.prototype._onUI5VersionDropdownChanged = function() {
-			var sRebootUrl = jQuery("#sapUiSupportDebuggingRebootSelect").val(),
-				$Input = jQuery("#sapUiSupportDebuggingRebootInput");
+			var sRebootUrl = this.dom("RebootSelect").value,
+				oInput = this.dom("RebootInput");
 
 			if (sRebootUrl === "other") {
 				// enable input field for custom URL
-				$Input.removeAttr("disabled");
+				oInput.disabled = false;
 
 			} else {
 				// disable input field and fill the selected URL (if any)
-				$Input.attr("disabled", "disabled");
+				oInput.disabled = true;
 				if (sRebootUrl === "none") {
-					$Input.val("");
+					oInput.value = "";
 				} else {
-					$Input.val(sRebootUrl);
+					oInput.value = sRebootUrl;
 				}
 			}
 		};
 
 		Debugging.prototype._onUseOtherUI5Version = function() {
-			var sRebootUrl = jQuery("#sapUiSupportDebuggingRebootSelect").val();
+			var sRebootUrl = this.dom("RebootSelect").value;
+
 			if (sRebootUrl === "other") {
 				// use content of input field
-				sRebootUrl = jQuery("#sapUiSupportDebuggingRebootInput").val();
+				sRebootUrl = this.dom("RebootInput").value;
 			}
 
 			if (!sRebootUrl || sRebootUrl === "none") {
@@ -509,11 +540,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin', 'jquery.sap.ke
 				alert("Reboot URL cleared. App will start normally.");
 				/*eslint-enable no-alert */
 			} else {
-				// configure a reboot in the original window
-				this._oStub.sendEvent(this._techInfoId + "SetReboot", {
-					rebootUrl: sRebootUrl
-				});
-
 				// remember this URL in case it is a custom one
 				if (!this._mRebootUrls[sRebootUrl]) {
 					// need to get them from the domain of the app window
@@ -523,6 +549,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin', 'jquery.sap.ke
 						callback: this.getId() + "SaveUrlIfNew"
 					});
 				}
+
+				// configure a reboot in the original window
+				this.confirmReload(function () {
+					this._oStub.sendEvent(this._techInfoId + "SetReboot", {
+						rebootUrl: sRebootUrl
+					});
+					this._oStub.sendEvent(this._oStub.getMetadata().getClass().EventType.RELOAD);
+				}.bind(this));
 			}
 		};
 

@@ -4,9 +4,9 @@
 	xmlns:mvc="sap.ui.core.mvc">
 	<Page title="{i18n>homePageTitle}" class="sapUiResponsiveContentPadding">
 		<content>
-			<Button id="displayNotFoundBtn" text="{i18n>DisplayNotFound}" press="onDisplayNotFound" class="sapUiTinyMarginEnd"/>
-			<Button id="employeeListBtn" text="{i18n>ShowEmployeeList}" press="onNavToEmployees" class="sapUiTinyMarginEnd"/>
-			<Button id="employeeOverviewBtn" text="{i18n>ShowEmployeeOverview}" press="onNavToEmployeeOverview" class="sapUiTinyMarginEnd"/>
+			<Button id="displayNotFoundBtn" text="{i18n>DisplayNotFound}" press=".onDisplayNotFound" class="sapUiTinyMarginEnd"/>
+			<Button id="employeeListBtn" text="{i18n>ShowEmployeeList}" press=".onNavToEmployees" class="sapUiTinyMarginEnd"/>
+			<Button id="employeeOverviewBtn" text="{i18n>ShowEmployeeOverview}" press=".onNavToEmployeeOverview"/>
 		</content>
 	</Page>
 </mvc:View>

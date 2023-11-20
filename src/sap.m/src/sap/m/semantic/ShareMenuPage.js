@@ -26,7 +26,6 @@ sap.ui.define(["sap/m/semantic/SemanticPage", "sap/m/semantic/SemanticConfigurat
 	 * @public
 	 * @since 1.30.0
 	 * @alias sap.m.semantic.ShareMenuPage
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 
 	var ShareMenuPage = SemanticPage.extend("sap.m.semantic.ShareMenuPage", /** @lends sap.m.semantic.ShareMenuPage.prototype */ {
@@ -57,7 +56,7 @@ sap.ui.define(["sap/m/semantic/SemanticPage", "sap/m/semantic/SemanticConfigurat
 			},
 			designtime: "sap/m/designtime/semantic/ShareMenuPage.designtime"
 		},
-		renderer: SemanticPageRenderer.render
+		renderer: SemanticPageRenderer
 	});
 
 	ShareMenuPage.prototype._getSemanticPositionsMap = function (oControl, oConfig) {

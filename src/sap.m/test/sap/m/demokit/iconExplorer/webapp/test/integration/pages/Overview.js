@@ -1,5 +1,6 @@
 sap.ui.define([
 	"sap/ui/test/Opa5",
+	"./Common",
 	"sap/ui/test/actions/Press",
 	"sap/ui/test/actions/EnterText",
 	"sap/ui/test/matchers/Ancestor",
@@ -8,14 +9,14 @@ sap.ui.define([
 	"sap/ui/test/matchers/Properties",
 	"sap/ui/test/matchers/PropertyStrictEquals"
 ], function(Opa5,
+			Common,
 			Press,
 			EnterText,
 			Ancestor,
 			AggregationLengthEquals,
 			AggregationFilled,
 			Properties,
-			PropertyStrictEquals
-			) {
+			PropertyStrictEquals) {
 	"use strict";
 
 	var sViewName = "Overview",
@@ -50,8 +51,8 @@ sap.ui.define([
 			var sText;
 			if (oItem.getCells) {
 				sText = oItem.getCells()[1].getText();
-			}else {
-				sText = oItem.getContent()[0].getContent()[1].getText();
+			} else  {
+				sText = oItem.getContent()[0].getItems()[1].getText();
 			}
 			return sText.indexOf(sName) !== -1;
 		});
@@ -140,6 +141,7 @@ sap.ui.define([
 	Opa5.createPageObjects({
 
 		onTheOverviewPage: {
+			baseClass: Common,
 			actions: {
 				iPressTheNavigationBackButton: function(){
 					return this.waitFor({
@@ -198,7 +200,7 @@ sap.ui.define([
 					return this.waitFor({
 						id: sResultsId,
 						viewName: sViewName,
-						matchers: [ new AggregationFilled({name: "items"}) ],
+						matchers: new AggregationFilled({name: "items"}),
 						errorMessage: "The Table has not been loaded"
 					});
 				},
@@ -209,9 +211,7 @@ sap.ui.define([
 					return this.waitFor({
 						id: sResultsId,
 						viewName: sViewName,
-						matchers: new AggregationFilled({
-							name: "items"
-						}),
+						matchers: new AggregationFilled({name: "items"}),
 						success: function(oResults) {
 							sFirstObjectTitle = oResults.getItems()[0].getCells()[1].getText();
 
@@ -265,9 +265,7 @@ sap.ui.define([
 					return this.waitFor({
 						controlType: "sap.m.IconTabFilter",
 						viewName: sViewName,
-						matchers: new Properties({
-							key: sKey
-						}),
+						matchers: new Properties({key: sKey}),
 						actions: new Press(),
 						errorMessage: "Cannot find the icon tab filter"
 					});
@@ -315,11 +313,11 @@ sap.ui.define([
 						success: function(oComboBox) {
 							// press on the item with the key specified by the parameter
 							return this.waitFor({
-								controlType: "sap.ui.core.Item",
+								controlType: "sap.m.StandardListItem",
 								matchers: new Ancestor(oComboBox),
 								success: function(aItems) {
 									aItems.some(function (oItem) {
-										if (oItem.getText() === sName) {
+										if (oItem.getTitle() === sName) {
 											new Press().executeOn(oItem);
 											return true;
 										}
@@ -362,10 +360,9 @@ sap.ui.define([
 					return this.waitFor({
 						id: "fontSelector",
 						viewName: sViewName,
-						matchers : new PropertyStrictEquals({
-							name : "text",
-							value : "SAP Fiori Tools"
-						}),
+						matchers: function(oControl){
+							return this.I18NTextExtended(oControl, "fontName_SAPIconsTNT", "text");
+						}.bind(this),
 						success: function () {
 							Opa5.assert.ok(true, "Showing the TNT font page");
 						},
@@ -531,7 +528,7 @@ sap.ui.define([
 								}),
 								success: function (aTabFilters) {
 									var oTabFilter = aTabFilters[0];
-									Opa5.assert.strictEqual(parseInt(oTabFilter.getCount(), 10), iObjectCount, "The icon tab fillter \"all\" shows the total number of icons " + iObjectCount);
+									Opa5.assert.strictEqual(parseInt(oTabFilter.getCount()), iObjectCount, "The icon tab fillter \"all\" shows the total number of icons " + iObjectCount);
 								},
 								errorMessage: "The icon tab fillter \"all\" does not contain the number of items " + iObjectCount
 							});
@@ -555,20 +552,6 @@ sap.ui.define([
 							Opa5.assert.ok(true, "The growing Table had the double amount: " + iExpectedNumberOfItems + " of entries");
 						},
 						errorMessage: "Table does not have the double amount of entries"
-					});
-				},
-
-				iShouldSeeTheResultsTableBusyIndicatorOrItemsLoaded: function () {
-					return this.waitFor({
-						id: sResultsId,
-						viewName: sViewName,
-						matchers: function (oResults) {
-							return new AggregationFilled({name: "items"}).isMatching(oResults) || new PropertyStrictEquals({name: "busy", value: true}).isMatching(oResults);
-						},
-						success: function () {
-							Opa5.assert.ok(true, "The results table is busy or the data is already loaded");
-						},
-						errorMessage: "The results table is not busy"
 					});
 				},
 

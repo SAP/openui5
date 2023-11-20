@@ -1,0 +1,87 @@
+<core:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core"
+	xmlns:f="sap.ui.layout.form"
+	xmlns:l="sap.ui.layout"
+	xmlns:unified="sap.ui.unified">
+	<Dialog
+		id="importDialog"
+		title="Import a Rule Preset"
+		beforeClose="onImportDialogClose"
+		resizable="true"
+		contentWidth="650px"
+		contentHeight="400px">
+		<f:SimpleForm
+			editable="false"
+			binding="{/currentImportData}"
+			layout="ResponsiveGridLayout"
+			labelSpanXL="4"
+			labelSpanL="4"
+			labelSpanM="4"
+			labelSpanS="4">
+			<f:content>
+				<Label text="Choose file" labelFor="fileUpload" class="sapUiTinyMarginTopBottom" />
+				<unified:FileUploader
+					id="fileUpload"
+					buttonOnly="true"
+					buttonText="Browse ..."
+					change="onImportFileChange"
+					typeMissmatch="onImportFileMismatch"
+					fileType="json"
+					mimeType="application/json"
+					class="sapUiTinyMarginBottom">
+				</unified:FileUploader>
+				<Label text="File" labelFor="fileName" class="sapUiTinyMarginBottom" />
+				<VBox class="sapUiTinyMarginBottom">
+					<HBox>
+						<Text id="fileName" text="{fileName}" />
+						<Text
+							id="rulesCount"
+							text=" ({= ${selections} ? ${selections}.length : 0} rules selected)"
+							visible="{= ${selections} ? true : false}"
+							renderWhitespace="true"/>
+					</HBox>
+					<MessageStrip
+						id="fileError"
+						showIcon="true"
+						type="Error"
+						visible="false"
+						class="sapUiTinyMarginTop" />
+				</VBox>
+				<Label text="Title" labelFor="title" class="sapUiTinyMarginBottom" />
+				<Text id="title" text="{title}" class="sapUiTinyMarginBottom" />
+				<Label text="ID" labelFor="presetId" class="sapUiTinyMarginBottom" />
+				<VBox class="sapUiTinyMarginBottom">
+					<Text id="presetId" text="{id}" />
+					<MessageStrip
+						id="duplicateIdError"
+						showIcon="true"
+						type="Error"
+						visible="false"
+						class="sapUiTinyMarginTop" />
+				</VBox>
+				<Label text="Date" labelFor="dateExported" class="sapUiTinyMarginBottom" />
+				<Text
+					id="dateExported"
+					text="{
+						path: 'dateExported',
+						type: 'sap.ui.model.type.DateTime',
+						formatOptions: {
+							style: 'medium'
+						}
+					}"
+					class="sapUiTinyMarginBottom" />
+				<Label text="Description" labelFor="description" class="sapUiTinyMarginBottom" />
+				<ScrollContainer horizontal="false" vertical="true" class="sapUiSupportToolImportDescr sapUiTinyMarginBottom">
+					<Text id="description" renderWhitespace="true" text="{description}" />
+				</ScrollContainer>
+			</f:content>
+		</f:SimpleForm>
+		<beginButton>
+			<Button id="cancel" text="Cancel" press="onImportCancelPress" />
+		</beginButton>
+		<endButton>
+			<Button id="importBtn" type="Emphasized" text="Import" enabled="false" press="onImportFinalizePress" class="sapUiTinyMarginEnd" />
+		</endButton>
+	</Dialog>
+</core:FragmentDefinition>

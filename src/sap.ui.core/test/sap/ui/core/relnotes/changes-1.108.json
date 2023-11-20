@@ -1,0 +1,228 @@
+{
+  "1.108.0": {
+    "date": "October 2022",
+    "notes": [
+      {
+        "id": "d75745de6a5fd3d44977a0692b7a0bde5d1bbdf1",
+        "type": "FEATURE",
+        "text": " sap.ui.model.odata.v2.ODataModel#createEntry: Support deep create request"
+      },
+      {
+        "id": "0d984186d4ea876b6e90e008ed46fb40b1c68c16",
+        "type": "FIX",
+        "text": " sap.ui.model.ClientListBinding#getContexts: store start and length as given by the control",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270146962"
+          }
+        ]
+      },
+      {
+        "id": "ef397849ae0423ad758ca25ac45a16aa18afc789",
+        "type": "FEATURE",
+        "text": " sap.ui.core: deprecate HTMLView and HTMLFragment"
+      },
+      {
+        "id": "ed3ff6eee9058a6929b5c82cc3552af7da0ccb43",
+        "type": "FEATURE",
+        "text": " sap.ui.core.format.NumberFormat#parseNumberAndCurrencyCode: Add support for case insensitivity for currency codes"
+      },
+      {
+        "id": "380e1819462ba9181c0c8be5a523b1281343907a",
+        "type": "FEATURE",
+        "text": " sap.ui.core.format.DateFormat: introduce calendarWeekNumbering format option"
+      },
+      {
+        "id": "8fef82b05d4cfe30a62604d81da099f37d443cb2",
+        "type": "FIX",
+        "text": " sap.ui.core.format.DateFormat: relative documentation"
+      },
+      {
+        "id": "963795e0e999d7f562a1f93cf3b98b54fb321b50",
+        "type": "FIX",
+        "text": " sap.ui.model.analytics.AnalyticalTreeBindingAdapter: avoid loading data if not needed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270125832"
+          }
+        ]
+      },
+      {
+        "id": "e3f9181804cefa564b860725134704c7bb55dd76",
+        "type": "FEATURE",
+        "text": " sap.m.Carousel: Improve keyboard navigation"
+      },
+      {
+        "id": "b6b3972e10f1e15d7031afc8965855888880ae47",
+        "type": "FIX",
+        "text": " Add information since when classes/methods are deprecated",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270138504"
+          }
+        ]
+      },
+      {
+        "id": "1d2539f34ced97a80c0cbdb41514321a9afba065",
+        "type": "FEATURE",
+        "text": " sap.ui.model.ClientTreeBinding#getCount"
+      },
+      {
+        "id": "166f2dc05599e4dd94097e76dad3738832bbd780",
+        "type": "FIX",
+        "text": " sap/ui/core/format/DateFormat: wide and narrow dayperiods",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280139024"
+          }
+        ]
+      },
+      {
+        "id": "776e551f590c02d6499a294a3921b31a899d3e89",
+        "type": "FIX",
+        "text": " sap.ui.model.(Filter|Sorter).defaultComparator: Use configured locale for comparison"
+      },
+      {
+        "id": "3f3b2dc1ef17cbdb7189cdda76949656a53ed8ab",
+        "type": "FIX",
+        "text": " sap.ui.model.analytics.AnalyticalBinding: avoid emtpy rows",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280169612"
+          }
+        ]
+      },
+      {
+        "id": "9d133f3906a4fdb4ded7ba287779b1d700a0a4ab",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v4.ODataModel: transport sap-language to value help and customizing",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270119565"
+          }
+        ]
+      },
+      {
+        "id": "056cee0d449f3f1c5eeca409f11b0d040d60b256",
+        "type": "FIX",
+        "text": " UIArea: must not trigger fieldGroupChange when popup parks the focus",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270116320"
+          }
+        ]
+      },
+      {
+        "id": "2f1d3bf69d33bc843ea5e531750ce490c5c1e2e0",
+        "type": "FIX",
+        "text": " LoaderExtension: loadResource must notify Interaction correctly"
+      },
+      {
+        "id": "e17b1b70596587cc2a3312a872e8405faf9bddf1",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.ODataMetaModel#fetchCodeList: use sap-client and sap-language for code list requests",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280131765"
+          },
+          {
+            "type": "BCP",
+            "reference": "002075129500006108912022"
+          }
+        ]
+      },
+      {
+        "id": "c2bebfe38a7110d648499c19610d77feabb4415e",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.ODateMetaModel#fetchCodeList: don't reuse codelist promise over models if it is not yet resolved",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280171731"
+          }
+        ]
+      },
+      {
+        "id": "5d83f60be3ad6dd75e4b7b104c9625eb61ad75e4",
+        "type": "FIX",
+        "text": " sap.ui.core.demokit.tutorial.odatav4 mockserver is complete in step 1"
+      },
+      {
+        "id": "20722d287421d474a1d57bf189a4af6057031628",
+        "type": "FIX",
+        "text": " LoaderExtension: loadResource must notify Interaction correctly"
+      },
+      {
+        "id": "aa7b57984dd090419a5b36e3fbab25a7914e3769",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v2.ODataModel#getRefreshAfterChange: improved JSDoc"
+      },
+      {
+        "id": "d6aac69572d75cc664054784d2e57585cfc1b3a3",
+        "type": "FIX",
+        "text": " core.FocusHandler/Popup: preventScroll during focus with block layer",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270033712"
+          },
+          {
+            "type": "BCP",
+            "reference": "2280107289"
+          }
+        ]
+      },
+      {
+        "id": "a986510ef3be8a142c96d0301400bbd49e98181f",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v4.ODataListBinding#refresh: $$sharedRequest",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500004766202022"
+          }
+        ]
+      },
+      {
+        "id": "6183f3be53535b59c2f0eb0f8c36fac073c8ac64",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v2.ODataModel#setDeferredGroups overwrites \"changes\""
+      },
+      {
+        "id": "a1a0027f9e81019489ae28b043d27c26cc112052",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v4.ODataMetaModel: pass metadataUrlParams on to created models",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280162910"
+          }
+        ]
+      },
+      {
+        "id": "91d650185f13c1713c37bc64451d4907085e4ce6",
+        "type": "FIX",
+        "text": " mvc.Controller: Cleanup dangling fragment content before exit"
+      },
+      {
+        "id": "6f127629389fef406459c94ed6fe507909f0dd9d",
+        "type": "FIX",
+        "text": " sap.ui.text: Correct error message",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270085466"
+          }
+        ]
+      }
+    ]
+  }
+}

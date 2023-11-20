@@ -1,0 +1,64 @@
+<m:VBox
+	xmlns:core="sap.ui.core.mvc"
+	xmlns:mdc="sap.ui.mdc"
+	xmlns:p13n="sap.ui.mdc.p13n"
+
+	xmlns="sap.ui.mdc.table"
+	xmlns:fl="sap.ui.fl.variants"
+	xmlns:m="sap.m"
+	class="sapUiSizeCompact">
+
+	<m:OverflowToolbar id="idToolbar" class="sapUiSmallMargin">
+		<p13n:PersistenceProvider id="IDPersistenceProviderOfInternalSampleApp_01" for="IDContainerForVariantManagement" mode="Global"/>
+		<m:ToolbarSpacer id="idTbs"/>
+		<m:Button id="rtaBtn" text="Start RTA" press="onPressRTA"/>
+	</m:OverflowToolbar>
+
+	<m:VBox class="sapUiSmallMargin" id="IDContainerForVariantManagement">
+		<mdc:FilterBar id="IDFilterBar"
+			delegate='\{ "name" : "AppUnderTestTable/view/TestFilterBarDelegate", "payload" : \{ "modelName" : null, "collectionName" : "Artists" \} \}'
+			liveMode="false"
+			p13nMode="Item,Value">
+			<mdc:filterItems>
+				<mdc:FilterField
+					conditions="{$filters>/conditions/name}"
+					propertyKey="name"					
+					label="Name"/>
+					<mdc:FilterField
+					conditions="{$filters>/conditions/foundingYear}"
+					propertyKey="foundingYear"					
+					label="Founding Year"/>
+					<mdc:FilterField
+					conditions="{$filters>/conditions/artistUUID}"
+					propertyKey="artistUUID"					
+					label="artistUUID"/>
+					<mdc:FilterField
+					conditions="{$filters>/conditions/breakupYear}"
+					propertyKey="breakupYear"					
+					label="Breakout Year"/>
+			</mdc:filterItems>
+		</mdc:FilterBar>
+
+		<mdc:Table id="IDTableOfInternalSampleApp_01"
+					delegate='\{ "name": "AppUnderTestTable/view/TestTableDelegate", "payload": \{ "collectionName": "Artists" \} \}'
+					selectionMode="Multi"
+					filter="IDFilterBar"
+					type="Table"
+					p13nMode="Column,Sort,Filter,Group">
+			<mdc:columns>
+				<Column id="IDTableName_01" header="Name" propertyKey="name">
+					<m:Text text="{name}"/>
+				</Column>
+				<Column id="IDTableYear" header="Founding Year" propertyKey="foundingYear">
+					<m:Text text="{foundingYear}"/>
+				</Column>
+				<Column id="IDTablemodified" header="Changed By" propertyKey="modifiedBy">
+					<m:Text text="{modifiedBy}"/>
+				</Column>
+				<Column id="IDTableCreated" header="Created On" propertyKey="createdAt">
+					<m:Text text="{createdAt}"/>
+				</Column>
+			</mdc:columns>
+		</mdc:Table>
+	</m:VBox>
+</m:VBox>

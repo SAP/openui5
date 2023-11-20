@@ -1,0 +1,34 @@
+/* ====================================== */
+/* CSS for control sap.m/HeaderContainer  */
+/* Horizon theme                          */
+/* ====================================== */
+
+@_sap_m_HeaderContainer_TranslucentBackground: fade(@sapUiObjectHeaderBackground, 100);
+
+.sapMHdrCntrBtn > .sapMBtnInner {
+	border: none;
+}
+
+.sapMHdrCntrBGTransparent {
+	background-color: transparent;
+}
+
+.sapMHdrCntrBGTranslucent {
+	background-color: @_sap_m_HeaderContainer_TranslucentBackground;
+}
+
+.sapMHdrCntrBtnIcon{
+	color: @sapContent_NonInteractiveIconColor;
+}
+
+.sapMHrdrCntrDvdrs.Horizontal .sapMHrdrCntrInner::after {
+	border-left: 1px solid @sapList_BorderColor;
+}
+
+.sapMHrdrCntrDvdrs.Vertical .sapMHrdrCntrInner::after {
+	border-top: 1px solid @sapList_BorderColor;
+}
+
+.sapMHdrCntrBGTransparent {
+	background-color: transparent;
+}

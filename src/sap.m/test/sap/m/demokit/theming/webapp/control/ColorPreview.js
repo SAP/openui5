@@ -1,41 +1,33 @@
 sap.ui.define([
-	"sap/ui/core/Control",
-	"jquery.sap.global"
-], function(Control, $) {
+	"sap/ui/core/Control"
+], function(Control) {
 	"use strict";
-	var ColorPreview = Control.extend("sap.ui.demo.theming.control.ColorPreview", {
+
+	return Control.extend("sap.ui.demo.theming.control.ColorPreview", {
 		metadata: {
 			properties: {
 				"color": "string"
 			}
 		},
 
-		init : function(){
-			this._controlId = this.getId();
-		},
+		renderer: {
+			apiVersion: 2,
+			render: function(oRm, oControl) {
+				oRm.openStart("div", oControl);
+				oRm.class("myColorPreview");
+				if (oControl.getColor() !== undefined){
+					oRm.class("sapThemeForegroundBorderColor-asBorderColor");
+					oRm.class("myColorPreviewBorder");
 
-		renderer: function(oRm, oControl) {
-			oRm.write("<div");
-			oRm.writeControlData(oControl);
-			oRm.addClass("myColorPreview");
-			if (oControl.getColor() != undefined){
-				oRm.addClass("sapThemeForegroundBorderColor-asBorderColor");
-				oRm.addClass("myColorPreviewBorder");
-				oRm.addStyle("background-color", oControl.getColor());
-			}
-			oRm.writeClasses();
-			oRm.writeStyles();
-			oRm.write(">");
-			oRm.write("</div>");
-		},
-
-		onAfterRendering : function(oControl){
-			if (this.getColor() == "transparent"){
-
-				$('#' + oControl.srcControl.sId).css('background', 'none');
-				$('#' + oControl.srcControl.sId).css('background-image', 'url("control/Transparenz.jpg")');
+					if (oControl.getColor() === "transparent") {
+						oRm.class("myTransparentPreview");
+					} else {
+						oRm.style("background-color", oControl.getColor());
+					}
+				}
+				oRm.openEnd();
+				oRm.close("div");
 			}
 		}
 	});
-	return ColorPreview;
 });

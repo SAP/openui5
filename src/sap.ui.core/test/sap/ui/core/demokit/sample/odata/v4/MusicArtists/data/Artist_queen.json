@@ -1,0 +1,12 @@
+{
+    "@odata.metadataEtag" : "W/\"20180726141226\"",
+    "ArtistUUID" : "005056ab-6fd8-1ee8-9ff2-ae6f1e740206",
+    "Name" : "The Queen",
+    "CountryOfOrigin" : "US",
+    "CountryOfOrigin_Text" : "USA",
+    "RegionOfOrigin" : "NY",
+    "RegionOfOrigin_Text" : "New York",
+    "FoundingYear" : "1974",
+    "BreakupYear" : "2018",
+    "IsActiveEntity" : true
+}

@@ -55,13 +55,19 @@ sap.ui.define([
 		When.onTheAppPage.iPressTheToolsTabButton();
 		// Assertions
 		Then.onTheToolsPage.iShouldSeeTheToolsPage();
+		Then.onTheToolsPage.iShouldSeeTheHeadline();
 	});
 
 	opaTest("Should navigate to Welcome Page", function (Given, When, Then) {
 		// Action
 		When.onTheAppPage.iPressTheWelcomeTabButton();
 		// Assertions
-		Then.onTheWelcomePage.iShouldSeeTheWelcomePage().and.iTeardownMyApp();
+		Then.onTheWelcomePage.iShouldSeeTheWelcomePage();
+	});
+
+	opaTest("Should teardown my app", function(Given, When, Then) {
+		expect(0); // eslint-disable-line no-undef
+		Then.iTeardownMyApp();
 	});
 
 });

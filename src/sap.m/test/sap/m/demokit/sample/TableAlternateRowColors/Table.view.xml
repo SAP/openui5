@@ -12,9 +12,9 @@
 			}
 		}">
 		<headerToolbar>
-			<Toolbar>
+			<OverflowToolbar>
 				<Title text="Products" level="H2"/>
-			</Toolbar>
+			</OverflowToolbar>
 		</headerToolbar>
 		<columns>
 			<Column
@@ -34,7 +34,7 @@
 			</Column>
 		</columns>
 		<items>
-			<ColumnListItem>
+			<ColumnListItem vAlign="Middle">
 				<cells>
 					<ObjectIdentifier
 						title="{Name}"

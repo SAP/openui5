@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="utf-8" />
+	<title>Editor Test Page with designtime files</title>
+	<script src="../sharedTest.js" localstoragekey="designtime-"></script>
+	<script src="../../../../../../resources/sap-ui-integration.js"
+		id="sap-ui-bootstrap"
+		data-sap-ui-theme="sap_horizon"
+		data-sap-ui-oninit="init"
+		data-sap-ui-resourceroots='{"testjs":"../","sap.ui.integration.editor.test":"../"}'>
+	</script>
+	<link rel="stylesheet" href="../sharedTest.css" />
+</head>
+
+<body class="sapUiBody sapUiSizeCompact">
+	<div id="global">
+		<h2>Settings</h2>
+		<label>Page Language:</label>
+		<select id="languageSelect" onchange="switchLanguage(this)">
+		</select>
+		<label>Theme:</label>
+		<select onchange="switchTheme(this)">
+			<option value="sap_horizon">Morning Horizon</option>
+			<option value="sap_horizon_dark">Evening Horizon</option>
+			<option value="sap_horizon_hcb">High Contrast Black</option>
+			<option value="sap_horizon_hcw">High Contrast White</option>
+		</select>
+	</div>
+	<div id="editor">
+	<h2>Admin Mode (only)</h2>
+	<ui-integration-editor id="editorAdmin" mode="admin" allow-dynamic-values="true" allow-settings="true">
+	</ui-integration-editor>
+	<div class="buttons">
+		<button onclick="showCurrentValues('editorAdmin')">
+			Show Current Values (Admin Mode)
+		</button>
+		<button onclick="saveCurrentValues('editorAdmin')">
+			Save Current Values (Admin Mode)
+		</button>
+		<button onclick="loadCurrentValues('editorAdmin')">
+			Load Values (Admin Mode)
+		</button>
+		<button onclick="deleteCurrentValues('editorAdmin')">
+			Delete Values (Admin Mode)
+		</button>
+	</div>
+</body>
+
+</html>

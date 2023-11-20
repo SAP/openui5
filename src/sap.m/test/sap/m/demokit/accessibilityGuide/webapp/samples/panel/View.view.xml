@@ -1,0 +1,36 @@
+<mvc:View xmlns:mvc="sap.ui.core.mvc"
+		  xmlns="sap.m"
+		  height="100%">
+		<App>
+			<Page
+				showHeader="false"
+				id="page"
+				backgroundDesign="Solid">
+				<content>
+					<Panel headerText="This is an expandable Panel with landmark role region" expanded="true" expandable="true" accessibleRole="Region">
+						<content>
+							<Text text="Represents the ARIA role Region. A section of a page, that is important enough to be included in a page summary or table of contents."/>
+						</content>
+					</Panel>
+					<Panel headerText="This is an expandable Panel with landmark role form" expanded="true" expandable="true" accessibleRole="Form">
+						<content>
+							<Text text="Represents the ARIA role Form. A landmark region that contains a collection of items and objects that, as a whole, create a form." />
+							<HBox alignItems="Center" class="sapUiTinyMarginTop">
+								<Label class="sapUiTinyMarginEnd" labelFor="firstName" text="First Name:"/>
+								<Input id="firstName" />
+							</HBox>
+							<HBox alignItems="Center" class="sapUiTinyMarginTop">
+								<Label class="sapUiTinyMarginEnd" labelFor="lastName" text="Last Name:"/>
+								<Input id="lastName" />
+							</HBox>
+						</content>
+					</Panel>
+					<Panel headerText="This is an expandable Panel with landmark role complementary" expanded="true" expandable="true" accessibleRole="Complementary">
+						<content>
+							<Text text="Represents the ARIA role complementary. A section of the page, designed to be complementary to the main content at a similar level in the DOM hierarchy."/>
+						</content>
+					</Panel>
+				</content>
+			</Page>
+		</App>
+</mvc:View>

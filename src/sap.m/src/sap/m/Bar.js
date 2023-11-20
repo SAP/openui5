@@ -4,23 +4,16 @@
 
 // Provides control sap.m.Bar.
 sap.ui.define([
-	'jquery.sap.global',
 	'./BarInPageEnabler',
 	'./library',
+	"sap/base/i18n/Localization",
 	'sap/ui/core/Control',
 	'sap/ui/core/ResizeHandler',
 	'sap/ui/Device',
-	'./BarRenderer'
+	'./BarRenderer',
+	"sap/ui/thirdparty/jquery"
 ],
-	function(
-	jQuery,
-	BarInPageEnabler,
-	library,
-	Control,
-	ResizeHandler,
-	Device,
-	BarRenderer
-	) {
+	function(BarInPageEnabler, library, Localization, Control, ResizeHandler, Device, BarRenderer, jQuery) {
 	"use strict";
 
 
@@ -28,7 +21,8 @@ sap.ui.define([
 	// shortcut for sap.m.BarDesign
 	var BarDesign = library.BarDesign;
 
-
+	// shortcut for sap.m.TitleAlignment
+	var TitleAlignment = library.TitleAlignment;
 
 	/**
 	 * Constructor for a new <code>Bar</code>.
@@ -66,67 +60,94 @@ sap.ui.define([
 	 * @constructor
 	 * @public
 	 * @alias sap.m.Bar
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
-	var Bar = Control.extend("sap.m.Bar", /** @lends sap.m.Bar.prototype */ { metadata : {
+	var Bar = Control.extend("sap.m.Bar", /** @lends sap.m.Bar.prototype */ {
+		metadata : {
 
-		interfaces : [
-			"sap.m.IBar"
-		],
-		library : "sap.m",
-		properties : {
+			interfaces : [
+				"sap.m.IBar"
+			],
+			library : "sap.m",
+			properties : {
 
-			/**
-			 * If this flag is set to true, contentMiddle will be rendered as a HBox and layoutData can be used to allocate available space.
-			 * @deprecated since version 1.16, replaced by <code>contentMiddle</code> aggregation.
-			 * <code>contentMiddle</code> will always occupy of the 100% width when no <code>contentLeft</code> and <code>contentRight</code> are being set.
-			 */
-			enableFlexBox : {type : "boolean", group : "Misc", defaultValue : false, deprecated: true},
+				/**
+				 * If this flag is set to true, contentMiddle will be rendered as a HBox and layoutData can be used to allocate available space.
+				 * @deprecated since version 1.16, replaced by <code>contentMiddle</code> aggregation.
+				 * <code>contentMiddle</code> will always occupy of the 100% width when no <code>contentLeft</code> and <code>contentRight</code> are being set.
+				 */
+				enableFlexBox : {type : "boolean", group : "Misc", defaultValue : false, deprecated: true},
 
-			/**
-			 * Indicates whether the Bar is partially translucent.
-			 * It is only applied for touch devices.
-			 * @since 1.12
-			 * @deprecated since version 1.18.6.
-			 * This property has no effect since release 1.18.6 and should not be used. Translucent bar may overlay an input and make it difficult to edit.
-			 */
-			translucent : {type : "boolean", group : "Appearance", defaultValue : false, deprecated: true},
+				/**
+				 * Indicates whether the Bar is partially translucent.
+				 * It is only applied for touch devices.
+				 * @since 1.12
+				 * @deprecated since version 1.18.6.
+				 * This property has no effect since release 1.18.6 and should not be used. Translucent bar may overlay an input and make it difficult to edit.
+				 */
+				translucent : {type : "boolean", group : "Appearance", defaultValue : false, deprecated: true},
 
-			/**
-			 * Determines the design of the bar. If set to auto, it becomes dependent on the place where the bar is placed.
-			 * @since 1.22
-			 */
-			design : {type : "sap.m.BarDesign", group : "Appearance", defaultValue : BarDesign.Auto}
+				/**
+				 * Determines the design of the bar. If set to auto, it becomes dependent on the place where the bar is placed.
+				 * @since 1.22
+				 */
+				design : {type : "sap.m.BarDesign", group : "Appearance", defaultValue : BarDesign.Auto},
+
+				/**
+				 * Specifies the Title alignment (theme specific).
+				 * If set to <code>TitleAlignment.None</code>, the automatic title alignment depending on the theme settings will be disabled.
+				 * If set to <code>TitleAlignment.Auto</code>, the Title will be aligned as it is set in the theme (if not set, the default value is <code>center</code>);
+				 * Other possible values are <code>TitleAlignment.Start</code> (left or right depending on LTR/RTL), and <code>TitleAlignment.Center</code> (centered)
+				 * @since 1.85
+				 * @public
+				 */
+				titleAlignment : {type : "sap.m.TitleAlignment", group : "Misc", defaultValue : TitleAlignment.None}
+
+			},
+			aggregations : {
+
+				/**
+				 * Represents the left content area, usually containing a button or an app icon. If it is overlapped by the right content, its content will disappear and the text will show an ellipsis.
+				 */
+				contentLeft : {type : "sap.ui.core.Control", multiple : true, singularName : "contentLeft"},
+
+				/**
+				 * Represents the middle content area. Controls such as label, segmented buttons or select can be placed here. The content is centrally positioned if there is enough space. If the right or left content overlaps the middle content, the middle content will be centered in the space between the left and the right content.
+				 */
+				contentMiddle : {type : "sap.ui.core.Control", multiple : true, singularName : "contentMiddle"},
+
+				/**
+				 *  Represents the right content area. Controls such as action buttons or search field can be placed here.
+				 */
+				contentRight : {type : "sap.ui.core.Control", multiple : true, singularName : "contentRight"}
+			},
+			associations : {
+
+				/**
+				 * Association to controls / ids which label this control (see WAI-ARIA attribute aria-labelledby).
+				 */
+				ariaLabelledBy : {type : "sap.ui.core.Control", multiple : true, singularName : "ariaLabelledBy"}
+			},
+			designtime: "sap/m/designtime/Bar.designtime",
+			dnd: { draggable: false, droppable: true }
 		},
-		aggregations : {
 
-			/**
-			 * Represents the left content area, usually containing a button or an app icon. If it is overlapped by the right content, its content will disappear and the text will show an ellipsis.
-			 */
-			contentLeft : {type : "sap.ui.core.Control", multiple : true, singularName : "contentLeft"},
-
-			/**
-			 * Represents the middle content area. Controls such as label, segmented buttons or select can be placed here. The content is centrally positioned if there is enough space. If the right or left content overlaps the middle content, the middle content will be centered in the space between the left and the right content.
-			 */
-			contentMiddle : {type : "sap.ui.core.Control", multiple : true, singularName : "contentMiddle"},
-
-			/**
-			 *  Represents the right content area. Controls such as action buttons or search field can be placed here.
-			 */
-			contentRight : {type : "sap.ui.core.Control", multiple : true, singularName : "contentRight"}
-		},
-		associations : {
-
-			/**
-			 * Association to controls / ids which label this control (see WAI-ARIA attribute aria-labelledby).
-			 */
-			ariaLabelledBy : {type : "sap.ui.core.Control", multiple : true, singularName : "ariaLabelledBy"}
-		},
-		designtime: "sap/m/designtime/Bar.designtime"
-	}});
+		renderer: BarRenderer
+	});
 
 	Bar.prototype.onBeforeRendering = function() {
+		var sCurrentAlignment = this.getTitleAlignment(),
+			sAlignment;
+
 		this._removeAllListeners();
+
+		// title alignment
+		for (sAlignment in TitleAlignment) {
+			if (sAlignment !== sCurrentAlignment) {
+				this.removeStyleClass("sapMBarTitleAlign" + sAlignment);
+			} else {
+				this.addStyleClass("sapMBarTitleAlign" + sAlignment);
+			}
+		}
 	};
 
 	Bar.prototype.onAfterRendering = function() {
@@ -138,6 +159,7 @@ sap.ui.define([
 	 */
 	Bar.prototype.init = function() {
 		this.data("sap-ui-fastnavgroup", "true", true); // Define group for F6 handling
+		this._sPrevTitleAlignmentClass = "";
 	};
 
 	/**
@@ -146,6 +168,9 @@ sap.ui.define([
 	Bar.prototype.exit = function() {
 		this._removeAllListeners();
 
+		/**
+		 * @deprecated As of version 1.16
+		 */
 		if (this._oflexBox) {
 
 			this._oflexBox.destroy();
@@ -204,6 +229,13 @@ sap.ui.define([
 			bContentMiddle = !!this.getContentMiddle().length,
 			bContentRight = !!this.getContentRight().length;
 
+		/**
+		 * @deprecated As of version 1.16
+		 */
+		 if (!bContentMiddle){
+			bContentMiddle = (this._oflexBox && !!this._oflexBox.getItems().length);
+		}
+
 		//Invisible bars also do not need resize listeners
 		if (!this.getVisible()) {
 			return;
@@ -218,25 +250,36 @@ sap.ui.define([
 		this._$RightBar = this.$("BarRight");
 		this._$MidBarPlaceHolder = this.$("BarPH");
 
-		this._updatePosition(bContentLeft, bContentMiddle, bContentRight);
 
 		this._sResizeListenerId = ResizeHandler.register(this.getDomRef(), jQuery.proxy(this._handleResize, this));
 
-		if (this.getEnableFlexBox()) {
+		/**
+		 * @deprecated As of version 1.16
+		 */
+		if (this.getEnableFlexBox()){
+			this._updatePosition(bContentLeft, bContentMiddle, bContentRight);
 			return;
 		}
 
 		if (bContentLeft) {
 			this._sResizeListenerIdLeft = ResizeHandler.register(this._$LeftBar[0], jQuery.proxy(this._handleResize, this));
+		} else {
+			this._$LeftBar.addClass("sapMBarEmpty");
 		}
 
 		if (bContentMiddle) {
 			this._sResizeListenerIdMid = ResizeHandler.register(this._$MidBarPlaceHolder[0], jQuery.proxy(this._handleResize, this));
+		} else {
+			this._$MidBarPlaceHolder.addClass("sapMBarEmpty");
 		}
-
 		if (bContentRight) {
 			this._sResizeListenerIdRight = ResizeHandler.register(this._$RightBar[0], jQuery.proxy(this._handleResize, this));
+		} else {
+			this._$RightBar.addClass("sapMBarEmpty");
 		}
+
+		this._updatePosition(bContentLeft, bContentMiddle, bContentRight);
+
 	};
 
 	/**
@@ -248,9 +291,10 @@ sap.ui.define([
 	 * @private
 	 */
 	Bar.prototype._updatePosition = function(bContentLeft, bContentMiddle, bContentRight) {
-		if (!bContentLeft && !bContentRight && bContentMiddle) {
+		if (!bContentLeft && bContentMiddle && !bContentRight) {
 			return;
 		}
+
 		if (bContentLeft && !bContentMiddle && !bContentRight) {
 			return;
 		}
@@ -260,14 +304,12 @@ sap.ui.define([
 		}
 
 		var iBarWidth = this.$().outerWidth(true);
-
 		// reset to default
 		this._$RightBar.css({ width : "" });
 		this._$LeftBar.css({ width : "" });
-		this._$MidBarPlaceHolder.css({ position : "", width : "", visibility : 'hidden' });
+		this._$MidBarPlaceHolder.css({ position : "", width : "", visibility: "hidden"});
 
 		var iRightBarWidth = this._$RightBar.outerWidth(true);
-
 		//right bar is bigger than the bar - only show the right bar
 		if (iRightBarWidth > iBarWidth) {
 
@@ -283,7 +325,6 @@ sap.ui.define([
 			return;
 
 		}
-
 		var iLeftBarWidth = this._getBarContainerWidth(this._$LeftBar);
 
 		// handle the case when left and right content are wider than the bar itself
@@ -305,7 +346,6 @@ sap.ui.define([
 
 		//middle bar will be shown
 		this._$MidBarPlaceHolder.css(this._getMidBarCss(iRightBarWidth, iBarWidth, iLeftBarWidth));
-
 	};
 
 	/**
@@ -320,13 +360,16 @@ sap.ui.define([
 	 */
 	Bar.prototype._getMidBarCss = function(iRightBarWidth, iBarWidth, iLeftBarWidth) {
 		var iMidBarPlaceholderWidth = this._$MidBarPlaceHolder.outerWidth(true),
-			bRtl = sap.ui.getCore().getConfiguration().getRTL(),
-			sLeftOrRight = bRtl ? "right" : "left",
+			bRtl = Localization.getRTL(),
 			oMidBarCss = { visibility : "" };
 
+		/**
+		 * @deprecated As of version 1.16
+		 */
 		if (this.getEnableFlexBox()) {
+			var sLeftOrRight = bRtl ? "right" : "left";
 
-			iMidBarPlaceholderWidth = iBarWidth - iLeftBarWidth - iRightBarWidth - parseInt(this._$MidBarPlaceHolder.css('margin-left'), 10) - parseInt(this._$MidBarPlaceHolder.css('margin-right'), 10);
+			iMidBarPlaceholderWidth = iBarWidth - iLeftBarWidth - iRightBarWidth - parseInt(this._$MidBarPlaceHolder.css('margin-left')) - parseInt(this._$MidBarPlaceHolder.css('margin-right'));
 
 			oMidBarCss.position = "absolute";
 			oMidBarCss.width = iMidBarPlaceholderWidth + "px";
@@ -334,20 +377,18 @@ sap.ui.define([
 
 			//calculation for flex is done
 			return oMidBarCss;
-
 		}
 
 		var iSpaceBetweenLeftAndRight = iBarWidth - iLeftBarWidth - iRightBarWidth,
-
 			iMidBarStartingPoint = (iBarWidth / 2) - (iMidBarPlaceholderWidth / 2),
 			bLeftContentIsOverlapping = iLeftBarWidth > iMidBarStartingPoint,
-
 			iMidBarEndPoint = (iBarWidth / 2) + (iMidBarPlaceholderWidth / 2),
-			bRightContentIsOverlapping = (iBarWidth - iRightBarWidth) < iMidBarEndPoint;
+			bRightContentIsOverlapping = (iBarWidth - iRightBarWidth) < iMidBarEndPoint,
+			sTitleAlignment = this.getTitleAlignment();
 
-		if (iSpaceBetweenLeftAndRight > 0 && (bLeftContentIsOverlapping || bRightContentIsOverlapping)) {
-
-			//Left or Right content is overlapping the Middle content
+		if ((sTitleAlignment !== TitleAlignment.None && sTitleAlignment !== TitleAlignment.Center) ||
+			(iSpaceBetweenLeftAndRight > 0 && (bLeftContentIsOverlapping || bRightContentIsOverlapping))) {
+			//Left or Right content is overlapping the Middle content or there is Title alignment "Center" or "None" set
 
 			// place the middle positioned element directly next to the end of left content area
 			oMidBarCss.position = "absolute";
@@ -359,7 +400,6 @@ sap.ui.define([
 		}
 
 		return oMidBarCss;
-
 	};
 
 	/**
@@ -378,7 +418,7 @@ sap.ui.define([
 		// Chrome browser has a problem in providing the correct div size when image inside does not have width explicitly set
 		//since ff version 24 the calculation is correct, since we don't support older versions we won't check it
 		// Edge also works correctly with this calculation unlike IE
-		if (Device.browser.webkit || Device.browser.firefox || Device.browser.edge) {
+		if (Device.browser.webkit || Device.browser.firefox) {
 
 			for (i = 0; i < aContainerChildren.length; i++) {
 
@@ -456,7 +496,7 @@ sap.ui.define([
 	/**
 	 * Gets the available Bar contexts from the BarInPageEnabler and adds the additional contexts from BarInAnyContentEnabler.
 	 *
-	 * @returns {Object} with all available contexts
+	 * @returns {sap.m.BarContexts} with all available contexts
 	 */
 	BarInAnyContentEnabler.prototype.getContext = function() {
 		var oParentContexts = BarInPageEnabler.prototype.getContext.call();
@@ -471,8 +511,9 @@ sap.ui.define([
 	/**
 	 * Gets the available Bar contexts.
 	 *
-	 * @returns {Object} with all available contexts
+	 * @returns {sap.m.BarContexts} with all available contexts
 	 * @protected
+	 * @function
 	 */
 	Bar.prototype.getContext = BarInAnyContentEnabler.prototype.getContext;
 
@@ -482,6 +523,7 @@ sap.ui.define([
 	 * Implementation of the IBar interface.
 	 * @returns {boolean} isContextSensitive
 	 * @protected
+	 * @function
 	 */
 	Bar.prototype.isContextSensitive = BarInAnyContentEnabler.prototype.isContextSensitive;
 
@@ -490,12 +532,15 @@ sap.ui.define([
 	 * @param {sap.m.IBarHTMLTag} sTag The HTML tag of the root element
 	 * @returns {sap.m.IBar} this for chaining
 	 * @protected
+	 * @function
 	 */
 	Bar.prototype.setHTMLTag = BarInAnyContentEnabler.prototype.setHTMLTag;
+
 	/**
 	 * Gets the HTML tag of the root element.
 	 * @returns {sap.m.IBarHTMLTag} The HTML-tag
 	 * @protected
+	 * @function
 	 */
 	Bar.prototype.getHTMLTag  = BarInAnyContentEnabler.prototype.getHTMLTag;
 
@@ -503,6 +548,7 @@ sap.ui.define([
 	 * Sets classes and HTML tag according to the context of the page. Possible contexts are header, footer and subheader.
 	 * @returns {sap.m.IBar} <code>this</code> for chaining
 	 * @protected
+	 * @function
 	 */
 	Bar.prototype.applyTagAndContextClassFor  = BarInAnyContentEnabler.prototype.applyTagAndContextClassFor;
 
@@ -510,6 +556,7 @@ sap.ui.define([
 	 * Sets classes according to the context of the page. Possible contexts are header, footer and subheader.
 	 * @returns {sap.m.IBar} <code>this</code> for chaining
 	 * @protected
+	 * @function
 	 */
 	Bar.prototype._applyContextClassFor  = BarInAnyContentEnabler.prototype._applyContextClassFor;
 
@@ -517,6 +564,7 @@ sap.ui.define([
 	 * Sets HTML tag according to the context of the page. Possible contexts are header, footer and subheader.
 	 * @returns {sap.m.IBar} <code>this</code> for chaining
 	 * @protected
+	 * @function
 	 */
 	Bar.prototype._applyTag  = BarInAnyContentEnabler.prototype._applyTag;
 
@@ -527,6 +575,7 @@ sap.ui.define([
 	 * @param {string} sContext allowed values are header, footer, subheader.
 	 * @returns {object|null}
 	 * @private
+	 * @function
 	 */
 	Bar.prototype._getContextOptions  = BarInAnyContentEnabler.prototype._getContextOptions;
 
@@ -536,6 +585,7 @@ sap.ui.define([
 	 * @param {string} sRole AccessibilityRole of the root Element
 	 * @returns {sap.m.IBar} <code>this</code> to allow method chaining
 	 * @private
+	 * @function
 	 */
 	Bar.prototype._setRootAccessibilityRole = BarInAnyContentEnabler.prototype._setRootAccessibilityRole;
 
@@ -544,9 +594,30 @@ sap.ui.define([
 	 *
 	 * @returns {string} Accessibility role
 	 * @private
+	 * @function
 	 */
 	Bar.prototype._getRootAccessibilityRole = BarInAnyContentEnabler.prototype._getRootAccessibilityRole;
 
+	/**
+	 * Sets accessibility aria-level attribute of the Root HTML element.
+	 *
+	 * This is only needed if <code>sap.m.Bar</code> has role="heading"
+	 * @param {string} sLevel aria-level attribute of the root Element
+	 * @returns {sap.m.IBar} <code>this</code> to allow method chaining
+	 * @private
+	 * @function
+	 */
+	Bar.prototype._setRootAriaLevel = BarInAnyContentEnabler.prototype._setRootAriaLevel;
+
+	/**
+	 * Gets accessibility aria-level attribute of the Root HTML element.
+	 *
+	 * This is only needed if <code>sap.m.Bar</code> has role="heading"
+	 * @returns {string} aria-level
+	 * @private
+	 * @function
+	 */
+	Bar.prototype._getRootAriaLevel = BarInAnyContentEnabler.prototype._getRootAriaLevel;
 
 	return Bar;
 

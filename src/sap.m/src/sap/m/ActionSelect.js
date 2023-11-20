@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.m.ActionSelect.
-sap.ui.define(['./Select', 'sap/ui/core/InvisibleText', './library', './ActionSelectRenderer'],
-	function(Select, InvisibleText, library, ActionSelectRenderer) {
+sap.ui.define(['./Select', "sap/ui/core/Element", 'sap/ui/core/InvisibleText', 'sap/ui/Device', "sap/ui/core/Lib", './ActionSelectRenderer'],
+	function(Select, Element, InvisibleText, Device, Library, ActionSelectRenderer) {
 		"use strict";
 
 		/**
@@ -23,20 +23,24 @@ sap.ui.define(['./Select', 'sap/ui/core/InvisibleText', './library', './ActionSe
 		 * @constructor
 		 * @public
 		 * @since 1.16
+		 * @deprecated as of version 1.111.
 		 * @alias sap.m.ActionSelect
-		 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 		 */
-		var ActionSelect = Select.extend("sap.m.ActionSelect", /** @lends sap.m.ActionSelect.prototype */ { metadata : {
+		var ActionSelect = Select.extend("sap.m.ActionSelect", /** @lends sap.m.ActionSelect.prototype */ {
+			metadata : {
 
-			library : "sap.m",
-			associations : {
+				library : "sap.m",
+				associations : {
 
-				/**
-				 * Buttons to be added to the ActionSelect content.
-				 */
-				buttons : {type : "sap.m.Button", multiple : true, singularName : "button"}
-			}
-		}});
+					/**
+					 * Buttons to be added to the ActionSelect content.
+					 */
+					buttons : {type : "sap.m.Button", multiple : true, singularName : "button"}
+				}
+			},
+
+			renderer: ActionSelectRenderer
+		});
 
 		ActionSelect.prototype.init = function() {
 			Select.prototype.init.call(this);
@@ -64,17 +68,16 @@ sap.ui.define(['./Select', 'sap/ui/core/InvisibleText', './library', './ActionSe
 		};
 
 		/**
-		 * Add additional content.
+		 * Add additional content to Select's SimpleFixFlex flexContent aggregation.
 		 *
 		 * @override
 		 * @private
 		 */
-		ActionSelect.prototype.addContent = function() {
-			var oCore = sap.ui.getCore(),
-				oPicker = this.getPicker();
+		ActionSelect.prototype.addContentToFlex = function() {
+			var oSimpleFixFlex = this.getSimpleFixFlex();
 
 			this.getButtons().forEach(function(sButtonId) {
-				oPicker.addContent(oCore.byId(sButtonId));
+				oSimpleFixFlex.addFlexContent(Element.getElementById(sButtonId));
 			});
 		};
 
@@ -84,6 +87,9 @@ sap.ui.define(['./Select', 'sap/ui/core/InvisibleText', './library', './ActionSe
 
 		ActionSelect.prototype._onBeforeRenderingPopover = function () {
 			Select.prototype._onBeforeRenderingPopover.call(this);
+			var oPicker = this.getPicker();
+			oPicker && oPicker._setAriaRoleApplication(true);
+
 			this._updateTutorMessage();
 		};
 
@@ -108,22 +114,22 @@ sap.ui.define(['./Select', 'sap/ui/core/InvisibleText', './library', './ActionSe
 		/* ----------------------------------------------------------- */
 
 		/**
-		 * Button to be removed from the ActionSelect content.
+		 * Removes the given button from the <code>ActionSelect</code> content.
 		 *
-		 * @param {int | string | sap.m.Button} vButton The button to remove or its index or id.
-		 * @returns {string} The id of the removed button or null.
+		 * @param {int | string | sap.m.Button} vButton The button to remove or its index or ID.
+		 * @returns {string|null} The ID of the removed button or <code>null</code>.
 		 * @public
 		 */
 		ActionSelect.prototype.removeButton = function(vButton) {
-			var oPicker = this.getPicker();
+			var oSimpleFixFlex = this.getSimpleFixFlex();
 
-			if (oPicker) {
+			if (oSimpleFixFlex) {
 
 				if (typeof vButton === "number") {
 					vButton = this.getButtons()[vButton];
 				}
 
-				oPicker.removeContent(vButton);
+				oSimpleFixFlex.removeFlexContent(vButton);
 			}
 
 			return this.removeAssociation("buttons", vButton);
@@ -136,11 +142,11 @@ sap.ui.define(['./Select', 'sap/ui/core/InvisibleText', './library', './ActionSe
 		 * @public
 		 */
 		ActionSelect.prototype.removeAllButtons = function() {
-			var oPicker = this.getPicker();
+			var oSimpleFixFlex = this.getSimpleFixFlex();
 
-			if (oPicker) {
+			if (oSimpleFixFlex) {
 				this.getButtons().forEach(function(sButtonId) {
-					oPicker.removeContent(sButtonId);
+					oSimpleFixFlex.removeFlexContent(Element.getElementById(sButtonId));
 				});
 			}
 
@@ -161,6 +167,8 @@ sap.ui.define(['./Select', 'sap/ui/core/InvisibleText', './library', './ActionSe
 				oPicker = this.getPicker(),
 				i;
 
+			this._bProcessChange = false;
+
 			// check whether event is marked or not
 			if ( oEvent.isMarked() || !this.getEnabled()) {
 				return;
@@ -171,8 +179,8 @@ sap.ui.define(['./Select', 'sap/ui/core/InvisibleText', './library', './ActionSe
 
 			if (oPicker && oPicker.isOpen() && aButtons.length > 0) {
 				for (i = aButtons.length - 1; i >= 0; i--) {
-					if (sap.ui.getCore().byId(aButtons[i]).getEnabled()) {
-						sap.ui.getCore().byId(aButtons[i]).focus();
+					if (Element.getElementById(aButtons[i]).getEnabled()) {
+						Element.getElementById(aButtons[i]).focus();
 						oEvent.preventDefault();
 						break;
 					}
@@ -191,6 +199,7 @@ sap.ui.define(['./Select', 'sap/ui/core/InvisibleText', './library', './ActionSe
 			var aButtons = this.getButtons(),
 				oPicker = this.getPicker(),
 				i;
+				this._bProcessChange = false;
 
 			// check whether event is marked or not
 			if ( oEvent.isMarked() || !this.getEnabled()) {
@@ -202,8 +211,8 @@ sap.ui.define(['./Select', 'sap/ui/core/InvisibleText', './library', './ActionSe
 
 			if (oPicker && oPicker.isOpen() && aButtons.length > 0) {
 				for (i = 0; i < aButtons.length; i++) {
-					if (sap.ui.getCore().byId(aButtons[i]).getEnabled()) {
-						sap.ui.getCore().byId(aButtons[i]).focus();
+					if (Element.getElementById(aButtons[i]).getEnabled()) {
+						Element.getElementById(aButtons[i]).focus();
 						oEvent.preventDefault();
 						break;
 					}
@@ -222,7 +231,7 @@ sap.ui.define(['./Select', 'sap/ui/core/InvisibleText', './library', './ActionSe
 			// Keep focus on Action Select's input field if does not go to
 			// the buttons in Action sheet part of the ActionSelect
 			var aButtons = this.getButtons();
-			var bKeepFocus = (aButtons.indexOf(oEvent.relatedControlId) == -1);
+			var bKeepFocus = (aButtons.indexOf(oEvent.relatedControlId) === -1);
 
 			if (bKeepFocus) {
 				Select.prototype.onsapfocusleave.apply(this, arguments);
@@ -238,7 +247,7 @@ sap.ui.define(['./Select', 'sap/ui/core/InvisibleText', './library', './ActionSe
 		 * @private
 		 */
 		ActionSelect.prototype.onfocusinList = function(oEvent) {
-			if (document.activeElement !== this.getList().getDomRef()) {
+			if (document.activeElement !== this.getList().getDomRef() && !Device.system.phone) {
 				this.focus();
 			}
 		};
@@ -275,9 +284,9 @@ sap.ui.define(['./Select', 'sap/ui/core/InvisibleText', './library', './ActionSe
 				bTutorMessageNotReferenced;
 
 			if (!this._sTutorMessageId) {
-				this._sTutorMessageId = this.getId() + "-tutorMessage";
+				this._sTutorMessageId = this._getTutorMessageId();
 				this._oTutorMessageText = new InvisibleText(this._sTutorMessageId, {
-					text: sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("ACTION_SELECT_TUTOR_MESSAGE")
+					text: Library.getResourceBundleFor("sap.m").getText("ACTION_SELECT_TUTOR_MESSAGE")
 				}).toStatic();
 			}
 
@@ -293,11 +302,23 @@ sap.ui.define(['./Select', 'sap/ui/core/InvisibleText', './library', './ActionSe
 		};
 
 		/**
+		 * Gets the tutor message id.
+		 *
+		 * @returns {string} The id of the tutor message.
+		 * @private
+		 */
+		ActionSelect.prototype._getTutorMessageId = function() {
+			return this.getId() + "-tutorMessage";
+		};
+
+		/**
 		 * Called when the control is destroyed
 		 *
 		 * @private
 		 */
 		ActionSelect.prototype.exit = function () {
+			Select.prototype.exit.call(this);
+
 			if (this._oTutorMessageText) {
 				this._oTutorMessageText.destroy();
 				this._oTutorMessageText = null;

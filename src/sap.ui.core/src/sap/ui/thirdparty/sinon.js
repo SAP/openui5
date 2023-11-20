@@ -2363,13 +2363,40 @@ var sinon = (function () {
             this.lastCall = this.getCall(this.callCount - 1);
         }
 
-        var vars = "a,b,c,d,e,f,g,h,i,j,k,l";
+        // ##### BEGIN OF MODIFICATION BY SAP
+        // var vars = "a,b,c,d,e,f,g,h,i,j,k,l";
+        // ##### END OF MODIFICATION BY SAP
         function createProxy(func, proxyLength) {
             // Retain the function length:
             var p;
             if (proxyLength) {
-                eval("p = (function proxy(" + vars.substring(0, proxyLength * 2 - 1) +
-                    ") { return p.invoke(func, this, slice.call(arguments)); });");
+                // ##### BEGIN OF MODIFICATION BY SAP
+                // The following lines have been downported from Sinon 4.4.6 to avoid the use of eval() (for better CSP compliance)
+
+                // Do not change this to use an eval. Projects that depend on sinon block the use of eval.
+                // ref: https://github.com/sinonjs/sinon/issues/710
+                switch (proxyLength) {
+                    /*eslint-disable no-unused-vars, max-len*/
+                    case 1: p = function proxy(a) { return p.invoke(func, this, slice.call(arguments)); }; break;
+                    case 2: p = function proxy(a, b) { return p.invoke(func, this, slice.call(arguments)); }; break;
+                    case 3: p = function proxy(a, b, c) { return p.invoke(func, this, slice.call(arguments)); }; break;
+                    case 4: p = function proxy(a, b, c, d) { return p.invoke(func, this, slice.call(arguments)); }; break;
+                    case 5: p = function proxy(a, b, c, d, e) { return p.invoke(func, this, slice.call(arguments)); }; break;
+                    case 6: p = function proxy(a, b, c, d, e, f) { return p.invoke(func, this, slice.call(arguments)); }; break;
+                    case 7: p = function proxy(a, b, c, d, e, f, g) { return p.invoke(func, this, slice.call(arguments)); }; break;
+                    case 8: p = function proxy(a, b, c, d, e, f, g, h) { return p.invoke(func, this, slice.call(arguments)); }; break;
+                    case 9: p = function proxy(a, b, c, d, e, f, g, h, i) { return p.invoke(func, this, slice.call(arguments)); }; break;
+                    case 10: p = function proxy(a, b, c, d, e, f, g, h, i, j) { return p.invoke(func, this, slice.call(arguments)); }; break;
+                    case 11: p = function proxy(a, b, c, d, e, f, g, h, i, j, k) { return p.invoke(func, this, slice.call(arguments)); }; break;
+                    case 12: p = function proxy(a, b, c, d, e, f, g, h, i, j, k, l) { return p.invoke(func, this, slice.call(arguments)); }; break;
+                    default: p = function proxy() { return p.invoke(func, this, slice.call(arguments)); }; break;
+                    /*eslint-enable*/
+                }
+                //
+                // eval("p = (function proxy(" + vars.substring(0, proxyLength * 2 - 1) +
+                //     ") { return p.invoke(func, this, slice.call(arguments)); });");
+                //
+                // ##### END OF MODIFICATION BY SAP
             } else {
                 p = function proxy() {
                     return p.invoke(func, this, slice.call(arguments));

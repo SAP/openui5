@@ -1,0 +1,36 @@
+{
+	"sap.app": {
+		"id": "cardsdemo.tilesVariants.sample4",
+		"type": "card"
+	},
+	"sap.card": {
+		"type": "List",
+		"header": {
+			"title": "Image with large size",
+			"subTitle": "Image fits with imageFitType 'Contain'",
+			"icon": {
+				"src": "./images/sap-logo.svg",
+				"shape": "Square"
+			},
+			"actions": [
+				{
+					"type": "Navigation",
+					"parameters": {
+						"url": "http://sap.com"
+					}
+				}
+			]
+		},
+		"content": {
+			"data": {
+				"json": [{
+						"Name": "Comfort Easy"
+					}
+				]
+			},
+			"item": {
+				"title": "{Name}"
+			}
+		}
+	}
+}

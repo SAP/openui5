@@ -1,0 +1,61 @@
+<mvc:View
+	controllerName="sap.m.sample.SinglePlanningCalendar.Page"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:core="sap.ui.core"
+	xmlns:unified="sap.ui.unified"
+	xmlns="sap.m">
+	<VBox class="sapUiSmallMargin">
+			<OverflowToolbar height="100%" width="100%">
+				<Label text="Select sticky mode" labelFor="stickyModeSelect" />
+				<Select id="stickyModeSelect" selectedKey="{settings>/stickyMode}">
+					<core:ListItem text="None" key="None" />
+					<core:ListItem text="All" key="All" />
+					<core:ListItem text="NavBarAndColHeaders" key="NavBarAndColHeaders" />
+				</Select>
+				<ToolbarSeparator/>
+				<Label text="Appointment Actions : "/>
+				<ToggleButton text="Drag and Drop" id="enableAppointmentsDragAndDrop" pressed="{settings>/enableAppointmentsDragAndDrop}"/>
+				<ToggleButton text="Drag and Create" id="enableAppointmentsCreate" pressed="{settings>/enableAppointmentsCreate}"/>
+				<ToggleButton text="Resize" id="enableAppointmentsResize" pressed="{settings>/enableAppointmentsResize}"/>
+			</OverflowToolbar>
+		<SinglePlanningCalendar
+			id="SPC1"
+			class="sapUiSmallMarginTop"
+			title= "My Calendar"
+			viewChange="handleViewChange"
+			appointmentSelect="handleAppointmentSelect"
+			headerDateSelect="handleHeaderDateSelect"
+			startDateChange="handleStartDateChange"
+			appointmentDrop="handleAppointmentDrop"
+			appointmentResize="handleAppointmentResize"
+			appointmentCreate="handleAppointmentCreateDnD"
+			moreLinkPress="handleMoreLinkPress"
+			startDate="{path: '/startDate'}"
+			enableAppointmentsDragAndDrop="{settings>/enableAppointmentsDragAndDrop}"
+			enableAppointmentsResize="{settings>/enableAppointmentsResize}"
+			enableAppointmentsCreate="{settings>/enableAppointmentsCreate}"
+			stickyMode="{settings>/stickyMode}"
+			appointments="{path: '/appointments'}">
+			<actions>
+				<Button id="addNewAppointment" text="Create" press="handleAppointmentCreate" tooltip="Add new appointment" />
+				<Button id="legendButton" icon="sap-icon://legend" press="handleOpenLegend" tooltip="Open SinglePlanningCalendar legend" ariaHasPopup="Dialog" />
+			</actions>
+			<views>
+				<SinglePlanningCalendarDayView key="DayView" title="Day" />
+				<SinglePlanningCalendarWorkWeekView key="WorkWeekView" title="Work Week" />
+				<SinglePlanningCalendarWeekView key="WeekView" title="Week" />
+				<SinglePlanningCalendarMonthView key="MonthView" title="Month" />
+			</views>
+			<appointments>
+				<unified:CalendarAppointment
+					title= "{title}"
+					text= "{text}"
+					type= "{type}"
+					icon= "{icon}"
+					startDate= "{startDate}"
+					endDate= "{endDate}">
+				</unified:CalendarAppointment>
+			</appointments>
+		</SinglePlanningCalendar>
+	</VBox>
+</mvc:View>

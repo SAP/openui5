@@ -1,0 +1,18 @@
+{
+	"count": 3,
+	"uniqueCategories": 2,
+	"items": [
+		{
+			"Title": "Laptop",
+			"Category": "Notebooks"
+		},
+		{
+			"Title": "Ok Laptop",
+			"Category": "Notebooks"
+		},
+		{
+			"Title": "A phone",
+			"Category": "Mobile devices"
+		}
+	]
+}

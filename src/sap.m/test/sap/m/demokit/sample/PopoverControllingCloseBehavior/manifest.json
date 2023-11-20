@@ -1,0 +1,31 @@
+{
+	"sap.app": {
+		"id": "sap.m.sample.PopoverControllingCloseBehavior",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "sap.m.sample.PopoverControllingCloseBehavior.view.PopoverControllingCloseBehavior",
+			"type": "XML",
+			"async": true
+		},
+		"dependencies": {
+			"libs": {
+				"sap.m": {},
+				"sap.ui.core": {}
+			}
+		},
+		"config": {
+			"sample": {
+				"files": [
+					"view/PopoverControllingCloseBehavior.view.xml",
+					"view/Popover.fragment.xml",
+					"controller/PopoverControllingCloseBehavior.controller.js",
+					"manifest.json"
+				]
+			}
+		}
+	}
+}

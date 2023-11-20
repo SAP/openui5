@@ -1,0 +1,23 @@
+<mvc:View
+	controllerName="serializer.view.TestXml"
+	xmlns="sap.m"
+	xmlns:layout="sap.ui.layout"
+	xmlns:mvc="sap.ui.core.mvc" >
+	<layout:VerticalLayout
+		id="thaPage">
+		<Image
+			src="some/image/url.png"
+			alt="alternative text for image">
+		</Image>
+		<mvc:HTMLView
+			viewName="serializer.view.NestedHtmlView" />
+		<Label
+			id="label"
+			text="Label">
+		</Label>
+		<Button
+			id="button"
+			text="Save">
+		</Button>
+	</layout:VerticalLayout>
+</mvc:View>

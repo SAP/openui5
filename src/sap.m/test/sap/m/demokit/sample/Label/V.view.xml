@@ -1,0 +1,18 @@
+<mvc:View
+	xmlns="sap.m"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:l="sap.ui.layout">
+	<l:VerticalLayout class="sapUiContentPadding" width="100%">
+		<Label text="Label A (required)" labelFor="input-a" />
+		<Input id="input-a" required="true" />
+
+		<Label
+			text="Label B (bold)"
+			labelFor="input-b"
+			design="Bold" />
+		<Input id="input-b" />
+
+		<Label text="Label C (normal)" labelFor="input-c" />
+		<Input id="input-c" />
+	</l:VerticalLayout>
+</mvc:View>

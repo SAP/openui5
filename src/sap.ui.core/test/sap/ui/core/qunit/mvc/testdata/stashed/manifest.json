@@ -1,0 +1,33 @@
+{
+	"sap.app": {
+		"id": "mvc.testdata.stashed",
+		"applicationVersion": {
+			"version": "1.0.0"
+        },
+        "dataSources" : {
+			"OData" : {
+                "uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC",
+				"type" : "OData",
+				"settings" : {
+					"odataVersion" : "2.0"
+				}
+			}
+		}
+	},
+	"sap.ui5": {
+		"dependencies": {
+			"libs": {
+				"sap.m": {},
+				"sap.ui.core": {}
+			}
+        },
+        "models" : {
+			"" : {
+                "dataSource" : "OData",
+                "settings" : {
+                    "warmupUrl" : "metadata.xml"
+                }
+			}
+		}
+	}
+}

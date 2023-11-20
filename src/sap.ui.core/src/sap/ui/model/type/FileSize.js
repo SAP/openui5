@@ -1,12 +1,18 @@
 /*!
  * ${copyright}
  */
-
+/*eslint-disable max-len */
 // Provides class sap.ui.model.type.FileSize
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/FileSizeFormat', 'sap/ui/model/SimpleType', 'sap/ui/model/FormatException', 'sap/ui/model/ParseException', 'sap/ui/model/ValidateException'],
-	function(jQuery, FileSizeFormat, SimpleType, FormatException, ParseException, ValidateException) {
+sap.ui.define([
+	"sap/base/util/each",
+	"sap/ui/core/Lib",
+	"sap/ui/core/format/FileSizeFormat",
+	"sap/ui/model/FormatException",
+	"sap/ui/model/ParseException",
+	"sap/ui/model/SimpleType",
+	"sap/ui/model/ValidateException"
+], function(each, Library, FileSizeFormat, FormatException, ParseException, SimpleType, ValidateException) {
 	"use strict";
-
 
 	/**
 	 * Constructor for a FileSize type.
@@ -20,7 +26,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/FileSizeFormat', 'sap/ui
 	 * @version ${version}
 	 *
 	 * @public
-	 * @param {object} [oFormatOptions] formatting options. Supports the same options as {@link sap.ui.core.format.FileSizeFormat.getInstance FileSizeFormat.getInstance}
+	 * @param {object} [oFormatOptions]
+	 *   Format options as defined in {@link sap.ui.core.format.FileSizeFormat.getInstance}
 	 * @param {object} [oFormatOptions.source] additional set of options used to create a second FileSizeFormat object for conversions between
 	 *           string values in the data source (e.g. model) and a numeric byte representation. This second format object is used to convert from a model string to numeric bytes before
 	 *           converting to string with the primary format object. Vice versa, this 'source' format is also used to format an already parsed
@@ -88,7 +95,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/FileSizeFormat', 'sap/ui
 			case "string":
 				vResult = this.oOutputFormat.parse(vValue);
 				if (isNaN(vResult)) {
-					oBundle = sap.ui.getCore().getLibraryResourceBundle();
+					oBundle = Library.getResourceBundleFor("sap.ui.core");
 					throw new ParseException(oBundle.getText("FileSize.Invalid"));
 				}
 				break;
@@ -109,7 +116,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/FileSizeFormat', 'sap/ui
 
 	FileSize.prototype.validateValue = function(vValue) {
 		if (this.oConstraints) {
-			var oBundle = sap.ui.getCore().getLibraryResourceBundle(),
+			var oBundle = Library.getResourceBundleFor("sap.ui.core"),
 				aViolatedConstraints = [],
 				aMessages = [],
 				oInputFormat = this.oInputFormat;
@@ -120,7 +127,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/FileSizeFormat', 'sap/ui
 				throw new Error("No Validation possible: '" + vValue + "' is of type string but not input/source format specified.");
 			}
 
-			jQuery.each(this.oConstraints, function(sName, oContent) {
+			each(this.oConstraints, function(sName, oContent) {
 				if (oInputFormat && typeof oContent === "string") {
 					oContent = oInputFormat.parse(oContent);
 				} else if (!oInputFormat && typeof oContent === "string") {
@@ -138,6 +145,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/FileSizeFormat', 'sap/ui
 							aViolatedConstraints.push("maximum");
 							aMessages.push(oBundle.getText("FileSize.Maximum", [oContent]));
 						}
+						break;
+					default: break;
 				}
 			});
 			if (aViolatedConstraints.length > 0) {

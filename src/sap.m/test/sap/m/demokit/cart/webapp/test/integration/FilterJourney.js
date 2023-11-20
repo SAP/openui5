@@ -1,11 +1,23 @@
 /* global QUnit */
 
 sap.ui.define([
-	'sap/ui/test/opaQunit'
-], function (opaTest) {
+	"sap/base/i18n/Localization",
+	"sap/ui/test/opaQunit",
+	"./pages/Home",
+	"./pages/Category"
+], function (Localization, opaTest) {
 	"use strict";
 
-	QUnit.module("Filter Journey");
+	var sDefaultLanguage = Localization.getLanguage();
+
+	QUnit.module("Filter Journey", {
+		before : function () {
+			Localization.setLanguage("en-US");
+		},
+		after : function () {
+			Localization.setLanguage(sDefaultLanguage);
+		}
+	});
 
 	opaTest("Should start the app and go to the category view I should see a filter button", function (Given, When, Then) {
 		// Arrangements
@@ -68,23 +80,21 @@ sap.ui.define([
 		When.onTheCategory.iPressOkButton();
 		//Assertions
 		Then.onTheCategory.iShouldSeeAllProductsAndNoInfoToolbar();
-
-		opaTest("Should filter the products on supplier", function (Given, When, Then) {
-			// Actions
-			When.onTheCategory.iFilterOnSupplier();
-			//Assertions
-			Then.onTheCategory.iShouldOnlySeeTechnoComProductsAndAnInfoToolbar();
-		});
-
-		opaTest("Should remove the supplier filter", function (Given, When, Then) {
-			// Actions
-			When.onTheCategory.iRemoveTheSupplierFilter();
-			//Assertions
-			Then.onTheCategory.iShouldSeeAllProductsAndNoInfoToolbar();
-			// Cleanup
-			Then.onTheCategory.iTeardownMyApp();
-		});
-
 	});
 
+	opaTest("Should filter the products on supplier", function (Given, When, Then) {
+		// Actions
+		When.onTheCategory.iFilterOnSupplier();
+		//Assertions
+		Then.onTheCategory.iShouldOnlySeeTechnoComProductsAndAnInfoToolbar();
+	});
+
+	opaTest("Should remove the supplier filter", function (Given, When, Then) {
+		// Actions
+		When.onTheCategory.iRemoveTheSupplierFilter();
+		//Assertions
+		Then.onTheCategory.iShouldSeeAllProductsAndNoInfoToolbar();
+		// Cleanup
+		Then.onTheCategory.iTeardownMyApp();
+	});
 });

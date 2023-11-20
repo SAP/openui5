@@ -1,0 +1,34 @@
+/* =============================================== */
+/* CSS for control sap.ui.layout/ResponsiveLayout  */
+/* Evening Horizon theme                           */
+/* =============================================== */
+
+.sapUiFormResLayout.sapUiFormBackgrSolid,
+.sapUiFormResLayout.sapUiFormBackgrTranslucent {
+	background-color: @sapUiGroupContentBackground;
+	border-radius: @sapUiElementBorderCornerRadius;
+}
+
+.sapUiRLContainer > .sapUiFormTitle > .sapUiBtn {
+	bottom: 0.3125rem;
+}
+
+/* Toolbar */
+.sapUiFormResLayout.sapUiFormToolbar > div:first-child {
+	background-color: transparent;
+	height: 2.75rem;
+	line-height: 2.75rem;
+}
+
+.sapUiRLContainer.sapUiFormContainerToolbar > .sapMTB-Transparent-CTX.sapMTB.sapMIBar {
+	padding: 0;
+}
+
+/* alignment of Label */
+.sapUiFormEdit.sapUiFormM .sapUiRLElementWithLabel > .sapUiRFLRow:not(.sapUiRFLCompleteRow) > .sapUiRFLContainer:first-child > .sapUiRFLContainerContent{
+	padding-top: 0.875rem;
+}
+
+html[data-sap-ui-browser^="ff"] .sapUiFormEdit.sapUiFormM .sapUiRLElementWithLabel > .sapUiRFLRow:not(.sapUiRFLCompleteRow) > .sapUiRFLContainer:first-child > .sapUiRFLContainerContent{
+	padding-top: 0.8125rem;
+}

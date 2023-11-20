@@ -1,0 +1,38 @@
+<mvc:View
+		controllerName="sap.m.sample.simpleForm.Controller"
+		xmlns="sap.m"
+		xmlns:mvc="sap.ui.core.mvc"
+		xmlns:form="sap.ui.layout.form"
+		xmlns:core="sap.ui.core">
+		<form:SimpleForm
+				maxContainerCols="2"
+				editable="true">
+
+			<!-- Person section -->
+			<core:Title text="Person" />
+
+			<Label text="Name" />
+			<Input id="name" value="Max" />
+
+			<Label text="Date of birth" />
+			<DatePicker id="dp"/>
+
+			<Label text="Gender" />
+			<RadioButtonGroup id="rbg" columns="2">
+				<RadioButton text="male" />
+				<RadioButton text="female" />
+			</RadioButtonGroup>
+
+			<!-- Address section -->
+			<core:Title text="Address" />
+
+			<Label text="Street" />
+			<Input id="addr" value="Dietmar-Hopp-Allee" />
+
+			<Label text="City" />
+			<Input id="city" value="Sofia" />
+
+			<Label text="Country" />
+			<Input id="country" value="Bulgaria" />
+		</form:SimpleForm>
+</mvc:View>

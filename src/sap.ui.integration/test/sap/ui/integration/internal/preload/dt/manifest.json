@@ -1,0 +1,62 @@
+{
+	"_version": "1.18.0",
+	"sap.app": {
+		"id": "sap.ui5.test.editor.listcard.admin",
+		"type": "card",
+		"i18n": "i18n/i18n.properties",
+		"title": "Test Card for Parameters",
+		"subTitle": "Test Card for Parameters",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"icons": {
+			"icon": "sap-icon://accept"
+		}
+	},
+	"sap.card": {
+		"designtime": "./dt/designtime",
+		"type": "List",
+		"configuration": {
+			"parameters": {},
+			"destinations": {
+				"dest": {
+					"name": "Northwind"
+				},
+				"destLabel": {
+					"name": "Products",
+					"label": "Direct Destination Label"
+				},
+				"destLabelTrans": {
+					"name": "Orders",
+					"label": "{{TRANSLATED_DESTINATION_LABEL}}"
+				}
+			}
+		},
+		"header": {
+			"title": "Card Title",
+			"subTitle": "Card Sub Title",
+			"icon": {
+				"src": "sap-icon://accept"
+			}
+		},
+		"content": {
+			"data": {
+				"json": [
+					{
+						"title": "Edit the Title, Subtitle and Icon of the Card",
+						"description": "The admin can also edit destinations"
+					}
+				],
+				"path": "/"
+			},
+			"item": {
+				"title": "{title}",
+				"description": "{description}"
+			},
+			"maxItems": 3
+		}
+	}
+}

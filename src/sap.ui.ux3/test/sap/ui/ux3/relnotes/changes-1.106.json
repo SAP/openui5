@@ -1,0 +1,12 @@
+{
+  "1.106.0": {
+    "date": "August 2022",
+    "notes": [
+      {
+        "id": "f066ae92beed86211d1f547ab5fb08f1eae1aec6",
+        "type": "FIX",
+        "text": " adapt return types to textual description"
+      }
+    ]
+  }
+}

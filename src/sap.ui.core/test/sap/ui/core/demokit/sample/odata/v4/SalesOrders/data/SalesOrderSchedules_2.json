@@ -1,0 +1,13 @@
+{
+	"@odata.metadataEtag" : "W/\"20191008145915\"",
+	"value" : [{
+		"ScheduleKey" : "005056A71E3D1ED68DDA8CB5CA1B2B46",
+		"DeliveryDate" : "2016-06-26T22:00:00Z"
+	}, {
+		"ScheduleKey" : "005056A71E3D1ED68DDA8CB5CA1B4B46",
+		"DeliveryDate" : "2016-06-26T22:00:00Z"
+	}, {
+		"ScheduleKey" : "005056A71E3D1ED68DDA8CB5CA1B6B46",
+		"DeliveryDate" : "2016-06-26T22:00:00Z"
+	}]
+}

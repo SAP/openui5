@@ -1,0 +1,11 @@
+<core:FragmentDefinition
+		xmlns="sap.m"
+		xmlns:tnt="sap.tnt"
+		xmlns:core="sap.ui.core">
+	<tnt:NavigationList itemSelect="handleFooterMasterItemPress">
+		<tnt:NavigationListItem icon="sap-icon://compare" key="legal" text="{i18n>APP_INFORMATION_BTN_LEGAL}" />
+		<tnt:NavigationListItem icon="sap-icon://locked" key="privacy" text="{i18n>APP_INFORMATION_BTN_PRIVACY}" />
+		<tnt:NavigationListItem icon="sap-icon://permission" text="{i18n>APP_INFORMATION_BTN_LICENSE}" key="license" visible="{versionData>/isOpenUI5}" />
+		<tnt:NavigationListItem icon="sap-icon://document-text" key="terms_of_use" text="{i18n>APP_INFORMATION_BTN_TERMS_OF_USE}" visible="{=!${versionData>/isOpenUI5}}" />
+	</tnt:NavigationList>
+</core:FragmentDefinition>

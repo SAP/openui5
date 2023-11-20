@@ -1,0 +1,92 @@
+/**
+ * Rendered Texts
+ */
+.maxappvar1 {
+    padding: 3px;
+    border: 1px solid red;
+    background-color: lightcoral;
+}
+
+.appvartext {
+    padding: 3px;
+    border: 1px solid green;
+    background-color: lightgreen;
+}
+
+.terminologytext {
+    padding: 3px;
+    border: 1px solid blue;
+    background-color: lightblue;
+}
+
+/**
+ * svg graphic
+ */
+.appVarBox {
+    fill: #4672c4;
+    stroke: #c7c8c8;
+    stroke-width: 0.25
+}
+
+.appVarBoxText {
+    fill: #feffff;
+    font-size: 0.833336em;
+    font-weight: bold
+}
+
+.enhanceWithPath {
+    marker-start: url(#marker1);
+    stroke: #4672c4;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-width: 1
+}
+
+.arrowMarker {
+    fill: #4672c4;
+    fill-opacity: 1;
+    stroke: #4672c4;
+    stroke-opacity: 1;
+    stroke-width: 0.28409090909091
+}
+
+.arrowHighlight {
+    fill: #ffffff;
+    stroke: none;
+    stroke-linecap: butt;
+    stroke-width: 7.2
+}
+
+.arrowText {
+    fill: #3c63ac;
+    font-size: 0.666664em
+}
+
+.terminologyBox {
+    fill: #70ad47;
+    stroke: #c7c8c8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-width: 0.25
+}
+
+.terminologyArrowPath {
+    marker-end: url(#marker2);
+    stroke: #4672c4;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-width: 1
+}
+
+.outer {
+    fill: none;
+    fill-rule: evenodd;
+    font-size: 12px;
+    overflow: visible;
+    stroke-linecap: square;
+    stroke-miterlimit: 3
+}
+
+.Inactive {
+    fill: #A9A9A9;
+}

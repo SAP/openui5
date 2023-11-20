@@ -3,8 +3,14 @@
  */
 
 // Provides class sap.ui.core.util.LibraryInfo
-sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'jquery.sap.script'],
-	function(jQuery, BaseObject/* , jQuerySap */) {
+sap.ui.define([
+	'sap/ui/base/Object',
+	"sap/base/Log",
+	"sap/base/util/fetch",
+	"sap/base/util/Version",
+	"sap/ui/thirdparty/jquery"
+],
+	function(BaseObject, Log, fetch, Version, jQuery) {
 	"use strict";
 
 	/**
@@ -38,14 +44,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'jquery.sap.script'],
 		sLibraryName = sLibraryName.replace(/\//g, ".");
 
 		if (this._oLibInfos[sLibraryName]) {
-			jQuery.sap.delayedCall(0, window, fnCallback, [this._oLibInfos[sLibraryName]]);
+			setTimeout(fnCallback.bind(window, this._oLibInfos[sLibraryName]), 0);
 			return;
 		}
 
 		var that = this,
 		    sUrl,
 		    sLibraryType,
-		    aParts = /themelib_(.*)/i.exec(sLibraryName);
+		    aParts = /themelib_(.*)/i.exec(sLibraryName),
+		    sRequestUrl;
+
 		if (!aParts) {
 			// UI library
 			sLibraryType = ".library";
@@ -56,19 +64,30 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'jquery.sap.script'],
 			sUrl = sap.ui.require.toUrl("sap/ui/core/themes/" + aParts[1] + "/");
 		}
 
-		jQuery.ajax({
-			url : sUrl + sLibraryType,
-			dataType : "xml",
-			error : function(xhr, status, e) {
-				jQuery.sap.log.error("failed to load library details from '" + sUrl + sLibraryType + ": " + status + ", " + e);
-				that._oLibInfos[sLibraryName] = {name: sLibraryName, data: null, url: sUrl};
-				fnCallback(that._oLibInfos[sLibraryName]);
-			},
-			success : function(oData, sStatus, oXHR) {
-				that._oLibInfos[sLibraryName] = {name: sLibraryName, data: oData, url: sUrl};
-				fnCallback(that._oLibInfos[sLibraryName]);
+		sRequestUrl = typeof that.getResourceUrl === "function" ? that.getResourceUrl(sUrl) : sUrl;
+
+		function fnErrorCallback(error) {
+			Log.error("failed to load library details from '" + sUrl + sLibraryType + ": " + error.message + ", " + error);
+			that._oLibInfos[sLibraryName] = {name: sLibraryName, data: null, url: sUrl};
+			fnCallback(that._oLibInfos[sLibraryName]);
+		}
+
+		fetch(sRequestUrl + sLibraryType, {
+			headers: {
+				Accept: fetch.ContentTypes.XML
 			}
-		});
+		}).then(function(response) {
+			if (response.ok) {
+				return response.text().then(function(responseText) {
+					var parser = new DOMParser();
+					var oData = parser.parseFromString(responseText, "text/xml");
+					that._oLibInfos[sLibraryName] = {name: sLibraryName, data: oData, url: sUrl};
+					fnCallback(that._oLibInfos[sLibraryName]);
+				});
+			} else {
+				throw new Error(response.statusText || response.status);
+			}
+		}).catch(fnErrorCallback);
 	};
 
 
@@ -120,6 +139,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'jquery.sap.script'],
 
 
 	LibraryInfo.prototype._getDocuIndex = function(sLibraryName, fnCallback) {
+		var that = this;
 		this._loadLibraryMetadata(sLibraryName, function(oData){
 			var lib = oData.name,
 				libUrl = oData.url,
@@ -142,23 +162,33 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'jquery.sap.script'],
 				sUrl = oData.url + sUrl;
 			}
 
-			jQuery.ajax({
-				url : sUrl,
-				dataType : "json",
-				error : function(xhr, status, e) {
-					jQuery.sap.log.error("failed to load library docu from '" + sUrl + "': " + status + ", " + e);
-					fnCallback(result);
-				},
-				success : function(oData, sStatus, oXHR) {
-					oData.library = lib;
-					oData.libraryUrl = libUrl;
-					fnCallback(oData);
+			if (typeof that.getResourceUrl === "function") {
+				sUrl = that.getResourceUrl(sUrl);
+			}
+
+			fetch(sUrl, {
+				headers: {
+					Accept: fetch.ContentTypes.JSON
 				}
+			}).then(function(response) {
+				if (response.ok) {
+					response.json().then(function(oData) {
+						oData.library = lib;
+						oData.libraryUrl = libUrl;
+						fnCallback(oData);
+					});
+				} else {
+					throw new Error(response.statusText || response.status);
+				}
+			}).catch(function(error) {
+				Log.error("failed to load library docu from '" + sUrl + "': " + error.message + ", " + error);
+				fnCallback(result);
 			});
 		});
 	};
 
 	LibraryInfo.prototype._getReleaseNotes = function(sLibraryName, sVersion, fnCallback) {
+		var that = this;
 		this._loadLibraryMetadata(sLibraryName, function(oData){
 
 			if (!oData.data) {
@@ -168,7 +198,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'jquery.sap.script'],
 
 			var bIsNeoAppJsonPresent = (sVersion.split(".").length === 3) && !(/-SNAPSHOT/.test(sVersion));
 
-			var oVersion = jQuery.sap.Version(sVersion);
+			var oVersion = Version(sVersion);
 
 			var iMajor = oVersion.getMajor();
 			var iMinor = oVersion.getMinor();
@@ -177,8 +207,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'jquery.sap.script'],
 			var $Doc = jQuery(oData.data).find("appData").find("releasenotes");
 			var sUrl = $Doc.attr("url");
 
+			var bResourceUrlAvailable = typeof that.getResourceUrl === "function";
+
 			if (!sUrl) {
-				jQuery.sap.log.warning("failed to load release notes for library " + sLibraryName );
+				Log.warning("failed to load release notes for library " + sLibraryName );
 				fnCallback({});
 				return;
 			}
@@ -196,7 +228,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'jquery.sap.script'],
 			// if the URL should be resolved against the library the URL
 			// is relative to the library root path
 
-			var sBaseUrl = window.location.href,
+			var sBaseUrl = bResourceUrlAvailable ? that.getResourceUrl("") : window.location.href,
 				regexBaseUrl = /\/\d.\d{1,2}.\d{1,2}\//;
 
 			if ($Doc.attr("resolve") == "lib") {
@@ -212,25 +244,34 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'jquery.sap.script'],
 			sUrl = sUrl.replace(/\{minor\}/g, iMinor);
 			sUrl = sUrl.replace(/\{patch\}/g, iPatch);
 
-			// load the changelog/releasenotes
-			jQuery.ajax({
-				url : sUrl,
-				dataType : "json",
-				error : function(xhr, status, e) {
-					if (status === "parsererror") {
-						jQuery.sap.log.error("failed to parse release notes for library '" + sLibraryName + ", " + e);
-					} else {
-						jQuery.sap.log.warning("failed to load release notes for library '" + sLibraryName + ", " + e);
-					}
-					fnCallback({});
-				},
-				success : function(oData, sStatus, oXHR) {
-					// in case of a version is specified we return only the content
-					// of the specific version instead of the full data of the release notes file.
-					fnCallback(oData, sVersion);
-				}
-			});
 
+			if (bResourceUrlAvailable) {
+				sUrl = that.getResourceUrl(sUrl);
+			}
+
+			// load the changelog
+			fetch(sUrl, {
+				headers: {
+					Accept: fetch.ContentTypes.JSON
+				}
+			}).then(function(response) {
+				if (response.ok) {
+					return response.json().then(function(oData) {
+						// in case of a version is specified we return only the content
+						// of the specific version instead of the full data of the release notes file.
+						fnCallback(oData, sVersion);
+					});
+				} else {
+					throw new Error(response.statusText || response.status);
+				}
+			}).catch(function(error) {
+				if (error.name === "SyntaxError") {
+					Log.error("failed to parse release notes for library '" + sLibraryName + ", " + error);
+				} else {
+					Log.warning("failed to load release notes for library '" + sLibraryName + ", " + error);
+				}
+				fnCallback({});
+			});
 		});
 	};
 
@@ -306,7 +347,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'jquery.sap.script'],
 				if (!oComponentInfos[key]) {
 					// check whether no data was found for the current component.
 					// This might be the case if the corresponding library info isn't deployed on the current server.
-					jQuery.sap.log.error("No library information deployed for " + key);
+					Log.error("No library information deployed for " + key);
 					continue;
 				}
 

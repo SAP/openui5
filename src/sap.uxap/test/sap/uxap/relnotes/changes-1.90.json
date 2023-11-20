@@ -1,0 +1,18 @@
+{
+  "1.90.0": {
+    "date": "May 2021",
+    "notes": [
+      {
+        "id": "1c5929eef74e209cea121d7ae5a4f4dea8e004f1",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Corrected unstable qunit",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180046524"
+          }
+        ]
+      }
+    ]
+  }
+}

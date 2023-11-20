@@ -1,0 +1,286 @@
+{
+  "1.119.0": {
+    "date": "September 2023",
+    "notes": [
+      {
+        "id": "ad6a5b7536355a5bfadcdb4caed470b9c0570a76",
+        "type": "FEATURE",
+        "text": " ui5.walkthrough: Refactor tutorial to align on latest best practices"
+      },
+      {
+        "id": "2bca1d7d56b1683d0e6fe583f32ab209b72f3593",
+        "type": "FIX",
+        "text": " sap.m.Button: remove hover shadows",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      },
+      {
+        "id": "16189b16a109c9ef4de8ef0c2c485f223d1e132b",
+        "type": "FEATURE",
+        "text": " CellSelector: Publicize CellSelector & enable in MDCTable"
+      },
+      {
+        "id": "ec3eb91a14f7b6a89535d56dc6e397d162f6d173",
+        "type": "FEATURE",
+        "text": " CopyProvider: Setting for full or cell selection copy added"
+      },
+      {
+        "id": "50166688bb4d7d23432903cef46ab8b85e1dc5d2",
+        "type": "FIX",
+        "text": " sap.m.ObjectStatus: apply horizon theme updates",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      },
+      {
+        "id": "0b3c1a4f04d943443bf64a120e60a50805ce29d6",
+        "type": "FEATURE",
+        "text": " sap.ui.core.IconPool: Update icon font v5.06 and v4.18"
+      },
+      {
+        "id": "7eba188f2a5d55df17c2f8bf3788ca7a93ff7d09",
+        "type": "FEATURE",
+        "text": " sap.m.PlanningCalendar: event rowHeaderClick can now be triggered via keyboard"
+      },
+      {
+        "id": "587c92509faa6373d744e01ec778fb75293585d7",
+        "type": "FEATURE",
+        "text": " sap.m.MenuButton: Fire beforeMenuOpen on the regular button too"
+      },
+      {
+        "id": "04c398341c43e31b4d6b30e0c7f1ace4b3601497",
+        "type": "FIX",
+        "text": " - sap.m.NumericContent",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500007160152023"
+          }
+        ]
+      },
+      {
+        "id": "3a9b8d0f9245bb24ef8b43633fe81459218eb364",
+        "type": "FEATURE",
+        "text": " Table: Add rowMode aggregation"
+      },
+      {
+        "id": "1e01bd9005f45c5718ba763e39dbd418ea384f20",
+        "type": "FIX",
+        "text": " sap.m.Avatar: Delete active state for now",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380118028"
+          }
+        ]
+      },
+      {
+        "id": "e5eb7c5d143d6ec36285f59ec9fe677bbc2d746d",
+        "type": "FIX",
+        "text": " sap.m.Table: Update select-all checkbox after binding operations",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370079718"
+          }
+        ]
+      },
+      {
+        "id": "1b8958e6e35ca2bf8ccd152753ec709a8d480c55",
+        "type": "FIX",
+        "text": " sap.m.InputBase: Value state box-shadow adjusted"
+      },
+      {
+        "id": "38c6438ddaebfb08a7c4f1d28eef33ee6c0fb79f",
+        "type": "FIX",
+        "text": " sap.m.TimePickerSliders: Expand column on dialog open",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370039853"
+          }
+        ]
+      },
+      {
+        "id": "0614ee321ff7a8d874f00f6fde411af1d38b9877",
+        "type": "FIX",
+        "text": " sap.m.IconTabBar: selecting a sub tab via space key now works correctly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380127193"
+          }
+        ]
+      },
+      {
+        "id": "af1dde4c2d491feb07b9d56ff058ca101ae2f508",
+        "type": "FIX",
+        "text": " sap.m.ComboBox/MultiComboBox: Correct max-width applied",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370089974"
+          }
+        ]
+      },
+      {
+        "id": "123bd5563e5dcfad73c1f2f7e52467a411eb5beb",
+        "type": "FIX",
+        "text": " sap.m.SinglePlanningCalendarMonthGrid: fixed week selection in Month view",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380110605"
+          }
+        ]
+      },
+      {
+        "id": "12258e98af7e6807a1ed2dbdc7d4cfcbb6d6434a",
+        "type": "FIX",
+        "text": " sap.m.Wizard: enable insert/remove step for designMode",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400006646292023"
+          }
+        ]
+      },
+      {
+        "id": "d9aab17bb7a774b319ee142a72dd9639b063de49",
+        "type": "FIX",
+        "text": " List: Use array for resource bundle texts",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370079378"
+          }
+        ]
+      },
+      {
+        "id": "aee7dfd2788acdae4288bdfeb159a1c5a8ed10e8",
+        "type": "FIX",
+        "text": " sap.m.InputBase: Readonly styles adjustments",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380127573"
+          }
+        ]
+      },
+      {
+        "id": "b613098c4e6c41166221802d977a7f6a39115156",
+        "type": "FIX",
+        "text": " sap.m.SuggestionPopover:  Correct margins are now applied",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380085093"
+          },
+          {
+            "type": "BCP",
+            "reference": "2380025108"
+          }
+        ]
+      },
+      {
+        "id": "1b49d53fbe0ed3bda5af63e2a0fbc19a1cff8d76",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: Value is validated on focus out on mobile",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370080708"
+          }
+        ]
+      },
+      {
+        "id": "08abd03769d5e08c35a20b38be6c3985e497549e",
+        "type": "FIX",
+        "text": " sap.m.Breadcrumbs: Fix behaviour in OverflowToolbar",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      },
+      {
+        "id": "22e1f501511b8d5b2470a6aa0737f3e2843dd2ae",
+        "type": "FIX",
+        "text": " sap.m.DateTimePicker: focus out of bound dates correctly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380131020"
+          }
+        ]
+      },
+      {
+        "id": "5cb67cad4115bea63960824a56f5f1066780c637",
+        "type": "FIX",
+        "text": " sap.m.Menu: adjust add event delegate",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380122563"
+          }
+        ]
+      },
+      {
+        "id": "187f732ee5631f625b74edc7b7c3f594a3fd0d6d",
+        "type": "FIX",
+        "text": " sap.m.FeedListItem: fixed icon appearance",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370079966"
+          }
+        ]
+      },
+      {
+        "id": "128bfe644d923d4023ecb539e9567c0ad2f96f80",
+        "type": "FIX",
+        "text": " sap.m.ResponsivePopover: addDependent method is now forwarded correctly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380102197"
+          }
+        ]
+      },
+      {
+        "id": "754138a63aac12a8bd84d56f6d3fa2c2d9493a6c",
+        "type": "FIX",
+        "text": " sap.m.MenuItem: add event delegate",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380122563"
+          }
+        ]
+      },
+      {
+        "id": "0478c8ec2bae9e36f07c1002da7ffcfbb37ae14a",
+        "type": "FIX",
+        "text": " sap.m.StepInput: Align decrement icon"
+      },
+      {
+        "id": "aabe3489f27aeb059c98104985cb2c85e8b1ba0d",
+        "type": "FEATURE",
+        "text": " Table: Add rowMode aggregation"
+      },
+      {
+        "id": "9658ade2bf1c727f0527190dadf0ba095e9aed71",
+        "type": "FEATURE",
+        "text": " Table: Add rowMode aggregation"
+      }
+    ]
+  }
+}

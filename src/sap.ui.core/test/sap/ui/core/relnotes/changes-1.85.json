@@ -1,0 +1,91 @@
+{
+  "1.85.0": {
+    "date": "November 2020",
+    "notes": [
+      {
+        "id": "7156cd210c3c07e801a275bce702a2df48df9280",
+        "type": "FIX",
+        "text": " ManagedObject: Add model name to the correct objectBindings object"
+      },
+      {
+        "id": "7b71a7749889d169b4c1080db77b299e95916945",
+        "type": "FIX",
+        "text": " CustomizingConfiguration: respect owner component for configuration",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400005374432020"
+          },
+          {
+            "type": "BCP",
+            "reference": "2070417704"
+          }
+        ]
+      },
+      {
+        "id": "7b6f6a19c75d185a27dae871e4eb8bb95ee2da70",
+        "type": "FIX",
+        "text": " NumberFormat: make NumberFormat.RoundingMode guideline compliant",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870335948"
+          }
+        ]
+      },
+      {
+        "id": "c4b47983d6396bf7384f4d5c0a383e30412c51d3",
+        "type": "FIX",
+        "text": " sap/ui/util/isCrossOriginURL: only make relative URLs absolute",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070458190"
+          }
+        ]
+      },
+      {
+        "id": "5d05f44701b9974f27b6ee70d5263f9bb137e15d",
+        "type": "FEATURE",
+        "text": " URLWhitelist: change to inclusive term \"URLListValidator\""
+      },
+      {
+        "id": "b30b4076f2cb4c4acd160b95429c86a07e33458b",
+        "type": "FEATURE",
+        "text": " sap.ui.core.EventBus: add suspend and resume functionality"
+      },
+      {
+        "id": "da72b4f05d252b849721d4b9a42a132e00a35dea",
+        "type": "FEATURE",
+        "text": " Configuration/FrameOptions: Replace insensitive terms with inclusive language"
+      },
+      {
+        "id": "511d7ac041a7afe50eeaf76e01a3ecd2b6505cf6",
+        "type": "FIX",
+        "text": " sap.m.Carousel: pageChanged event is not fired on re-rendering",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070394561"
+          }
+        ]
+      },
+      {
+        "id": "5954e9cad770edc71ba8227c4b837d66617fa913",
+        "type": "FIX",
+        "text": " Opa: improve extension loading"
+      },
+      {
+        "id": "f43269295e875fee1165a94ad6da8934a1a87992",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v2.ODataModel#increaseLaundering: skip laundering if oChangedEntity is not an object",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500006738672020"
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,201 @@
+{
+  "1.74.0": {
+    "date": "November 2019",
+    "notes": [
+      {
+        "id": "881285e1be0bea9b005e3d1c0950d8008aa3836f",
+        "type": "FIX",
+        "text": " sap.f.FlexibleColumnLayout: ObjectPage\u0027s header flickering is fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980354228"
+          }
+        ]
+      },
+      {
+        "id": "4ec5e49b906db04e142734d83cc59613257a84f3",
+        "type": "FIX",
+        "text": " sap.m.Toolbar/OverflowToolbar: Fixed items adjustments",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970591185"
+          }
+        ]
+      },
+      {
+        "id": "965595bf92be41f1933c580746dfa0d98885dd90",
+        "type": "FIX",
+        "text": " sap.ui.integration.widgets.Card: Header styles are now correct",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980441320"
+          }
+        ]
+      },
+      {
+        "id": "2da703563af35d0b7c3e53efb6157317969ed1f0",
+        "type": "FIX",
+        "text": " sap.f.DynamicPage: Scrolling with large header on Desktop is fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970554221"
+          }
+        ]
+      },
+      {
+        "id": "22a9a849ca0a86c0569d2cc633221d4e8911a0ee",
+        "type": "FEATURE",
+        "text": " sap.ui.integration.widgets.Card: Added number formatters",
+        "references": []
+      },
+      {
+        "id": "306033ebdd566addcb35c9ffa675fa4424cc47da",
+        "type": "FIX",
+        "text": " Cards: Side Indicators in Numeric header are with proper spaces now",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980479320"
+          }
+        ]
+      },
+      {
+        "id": "e1d8bbaf839398f945cbc72463bd908cced422d1",
+        "type": "FIX",
+        "text": " sap.f.FlexibleColumnLayout: Measuring width when FCL is visible",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980497298"
+          }
+        ]
+      },
+      {
+        "id": "1aa6d0d44c31b6ea50adeb9ef4f6b0415a1be7ac",
+        "type": "FIX",
+        "text": " sap.ui.integration.widget.Card: Base url now works for header icon with binding",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980494167"
+          }
+        ]
+      },
+      {
+        "id": "43f6aefe028b2d8578902b26d9c2525ae9f75e03",
+        "type": "FEATURE",
+        "text": " sap.ui.integration.widgets.Card: Calendar content added",
+        "references": []
+      },
+      {
+        "id": "e9b77599d7721bec738b0a9b2005b7d21692a461",
+        "type": "FIX",
+        "text": " All: fix AMD dependencies to types that are embedded in library.js",
+        "references": []
+      },
+      {
+        "id": "5dc6abd7cfceeee5f14e9978de9baa860c403f5b",
+        "type": "FIX",
+        "text": " sap.f.DynamicPage: Deregister resizeListener before rendering",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980469448"
+          }
+        ]
+      },
+      {
+        "id": "6defe457520ebc1ba5687fa211a16b90934db84b",
+        "type": "FIX",
+        "text": " sap.f.DynamicPage: ExpandHeader button is now hidden when no content",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "0020751295 0000567110 2019"
+          }
+        ]
+      },
+      {
+        "id": "b87b7861cadf047edc11d187eaf913244846873b",
+        "type": "FIX",
+        "text": " sap.f.DynamicPage: No more error when hidden title",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500007433342019"
+          }
+        ]
+      },
+      {
+        "id": "446367b1e0a4b537e219392e90a98c26aac0e11c",
+        "type": "FIX",
+        "text": " sap.f.DynamicPage: Updated media styles at correct cases",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080015483"
+          }
+        ]
+      },
+      {
+        "id": "6fea1f13aeb4ac186c32ef2559d15ab161d0c008",
+        "type": "FIX",
+        "text": " sap.f.GridContainer: Fixed grid shrinking in IE11 when containerQuery is true",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980517215"
+          }
+        ]
+      },
+      {
+        "id": "b1a2b68fcad2c8549b74d70eb3051c4c78851398",
+        "type": "FIX",
+        "text": " sap.f.GridList \u0026 sap.f.GridContainer: Fixed library imports",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980512812"
+          }
+        ]
+      },
+      {
+        "id": "728ac4dfea0b583048601714329558f57a4dfa7a",
+        "type": "FIX",
+        "text": " sap.f.cards.CardActions: \"Enabled\" state is now resolved correctly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980543559"
+          }
+        ]
+      },
+      {
+        "id": "35cf06caddcf6bf513195a72218ad400526d5b9c",
+        "type": "FIX",
+        "text": " sap.f.shellBar.ControlSpacer: Width is set immediately on DomRef",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970461036"
+          }
+        ]
+      },
+      {
+        "id": "400b86979c78a32261a536e8b2bea4a54050f012",
+        "type": "FIX",
+        "text": " sap.ui.layout.cssgrid.ResponsiveColumnLayout: Preserve grid gap",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980516714"
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -1,5 +1,5 @@
-/*
- * ! ${copyright}
+/*!
+ * ${copyright}
  */
 
 // Provides control sap.m.P13nPanel.
@@ -21,13 +21,15 @@ sap.ui.define([
 	 * @abstract
 	 * @since 1.26.0
 	 * @alias sap.m.P13nPanel
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var P13nPanel = Control.extend("sap.m.P13nPanel", /** @lends sap.m.P13nPanel.prototype */
 	{
 		metadata: {
 			"abstract": true,
 			library: "sap.m",
+			interfaces: [
+				"sap.m.p13n.IContent"
+			],
 			properties: {
 				/**
 				 * Title text appears in the panel.
@@ -114,14 +116,14 @@ sap.ui.define([
 				beforeNavigationTo: {}
 			}
 		},
-		renderer: function(oRm, oControl) {
-			// write the HTML into the render manager
-			oRm.write("<span");
-			oRm.writeControlData(oControl);
-			oRm.addClass("sapMP13nPanel");
-			oRm.writeClasses();
-			oRm.write(">"); // span element
-			oRm.write("</span>");
+		renderer: {
+			apiVersion: 2,
+			render:function(oRm, oControl) {
+				oRm.openStart("span", oControl);
+				oRm.class("sapMP13nPanel");
+				oRm.openEnd();
+				oRm.close("span");
+			}
 		}
 	});
 
@@ -130,7 +132,7 @@ sap.ui.define([
 	 *
 	 * @returns {object} Object which describes the state after Ok has been pressed
 	 * @deprecated As of version 1.50, replaced by the event of the respective inherited
-	 * control, for example {@link sap.m.P13nColumnsPanel.html#changeColumnsItems} of
+	 * control, for example {@link sap.m.P13nColumnsPanel#event:changeColumnsItems} of
 	 * <code>P13nColumnsPanel</code> control.
 	 * @public
 	 * @since 1.26.7

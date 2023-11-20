@@ -1,13 +1,14 @@
-sap.ui.define(['jquery.sap.global', 'testdata/customizing/sap/Component'],
-	function(jQuery, Component1) {
+sap.ui.define([
+	"testdata/customizing/sap/Component"
+], function(SapComponent) {
 	"use strict";
 
 
-	var Component = Component1.extend("testdata.customizing.customer.Component", {
+	var Component = SapComponent.extend("testdata.customizing.customer.Component", {
 
 		metadata : {
 			version : "1.0",
-
+			interfaces: ["sap.ui.core.IAsyncContentCreation"],
 			customizing: {
 
 				"sap.ui.viewReplacements": {
@@ -67,7 +68,23 @@ sap.ui.define(['jquery.sap.global', 'testdata/customizing/sap/Component'],
 						},
 						"extension45": {
 							className: "sap.ui.core.Fragment",
-							fragmentName: "testdata.customizing.customer.CustomTextViewFrag",
+							fragmentName: "testdata.customizing.customer.CustomTextFrag",
+							type: "JS"
+						}
+					},
+					"testdata.customizing.sap.Sub4Typed": {
+						"extension42": {
+							className: "sap.ui.core.Fragment",
+							fragmentName: "testdata.customizing.customer.JSCustomFragWithCustomAction",
+							type: "JS"
+						},
+						"extension43": {
+							className: "sap.ui.core.mvc.View",
+							viewName: "module:testdata/customizing/customer/TypedCustomSubSubView"
+						},
+						"extension45": {
+							className: "sap.ui.core.Fragment",
+							fragmentName: "testdata.customizing.customer.CustomTextFrag",
 							type: "JS"
 						}
 					},
@@ -104,11 +121,16 @@ sap.ui.define(['jquery.sap.global', 'testdata/customizing/sap/Component'],
 					"testdata.customizing.sap.Sub3": {
 						"customizableText": {
 							"visible": false,
-							"enabled": false // this should NOT work!! Only visible.
+							"wrapping": false // this should NOT work!! Only visible.
 						}
 					},
 					"testdata.customizing.sap.Sub4": {
 						"customizableText1": {
+							"visible": false
+						}
+					},
+					"testdata.customizing.sap.Sub4Typed": {
+						"typedCustomizableText1": {
 							"visible": false
 						}
 					},
@@ -128,10 +150,20 @@ sap.ui.define(['jquery.sap.global', 'testdata/customizing/sap/Component'],
 							"testdata.customizing.customer.Sub4ControllerExtension"
 						]
 					},
+					"testdata.customizing.sap.Sub4Typed": {
+						"controllerNames": [
+							"testdata.customizing.customer.Sub4ControllerExtension"
+						]
+					},
 					"testdata.customizing.sap.Sub6": {
 						"controllerName": "testdata.customizing.customer.Sub6ControllerExtension",
 						"controllerNames": [
 							"testdata.customizing.customer.Sub6AnotherControllerExtension"
+						]
+					},
+					"testdata.customizing.sap.Sub6#mainView--sub6View": {
+						"controllerNames": [
+							"testdata.customizing.customer.Sub6InstanceSpecificControllerExtension"
 						]
 					}
 				}

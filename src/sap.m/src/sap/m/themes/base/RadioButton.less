@@ -3,47 +3,66 @@
 /* Base theme                         */
 /* ================================== */
 
+@_sap_m_Radio_Button_Read_Only_fill: @sapUiContentNonInteractiveIconColor;
+
 .sapMRb {
+	height: 3rem;
 	float: left;
 	clear: left;
 	outline: none;
+	overflow: hidden;
 	text-overflow: ellipsis;
 	position: relative;
 	white-space: nowrap;
 	max-width: 100%;
+	display: flex;
 
-	> .sapMLabel {
-		max-width: calc(~"100% - 3rem");
-		// some browsers [ie] calcs rems different than the others 0.0625 is caled as 1.04 px in IE
-		padding-right: 1px;
+	> .sapMRbBLabel:not(.sapMLabelNoText) {
+		padding-right: 0.125rem;
 	}
 }
 
 .sapMILI-CTX .sapMRb {
 	float: right;
 }
+.sapMListTblCell > .sapMRb {
+	float: inherit;
+	display: inline-block;
+	vertical-align: top;
+}
 
-.sapMRbHasLabel .sapMRbB {
+.sapMRb .sapMRbB {
+	height: 3rem;
 	width: 3rem;
-}
-
-.sapMRbB {
-	display: inline-block; /* for ie*/
+	display: inline-block;
 	font-size: 1rem; /* override font size of the message dialog */
+
+	&:focus {
+		outline: none
+	}
+
+	.sapMRbBOut {
+		height: 100%;
+		width: 100%;
+		transform: translate(0.675rem, 0.675rem);
+		margin: 0.825rem;
+		padding: 1px; /* using padding here so that margin won't collide */
+		stroke: @sapUiFieldBorderColor;
+		fill: @sapUiFieldBackground;
+	}
+}
+.sapUiSizeCompact {
+	.sapMRb .sapMRbB {
+	.sapMRbBOut {
+		transform: translate(0.5rem, 0.5rem);
+	}}
 }
 
-.sapMRbB .sapMRbBOut {
-	height: 1rem;
-	width: 1rem;
-	border: 0.125rem solid @sapUiFieldBorderColor;
-	border-radius: 1rem;
-	background-color: @sapUiFieldBackground;
+.sapMRbSvg {
+	height: 1.375rem;
+	width: 1.375rem;
 	margin: 0.825rem;
-	padding: 1px; /* using padding here so that margin won't collide */
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	justify-content: center;
+	overflow: visible;
 }
 
 .sapMRbBLabel {
@@ -53,14 +72,22 @@
 	cursor: default;
 }
 
+.sapMRb:not(.sapMRbDis) {
+	&:hover {
+		cursor: pointer;
+	}
+
+	.sapMRbBLabel {
+		&:hover {
+			cursor: pointer;
+		}
+	}
+}
+
 .sapMRbB input {
 	margin: 0; /* FF puts margin */
 	-webkit-appearance: none;
 	visibility: hidden;
-}
-
-.sapMRbB:focus {
-	outline: none;
 }
 
 .sapMRb:focus:before {
@@ -70,19 +97,23 @@
 	top: .625rem;
 	bottom: .625rem;
 	left: .625rem;
-	right: .625rem;
+	right: .6875rem;
 	pointer-events: none;
 }
 
-.sapMRbBInn {
-	background-color: transparent;
+.sapMRbB .sapMRbBInn {
+	transform: translate(0.675rem, 0.675rem);
+	stroke: transparent;
+	fill: none;
 	-webkit-user-select: none;
+	align-self: center;
+	r: 22%;
 }
 
-.sapMRbB .sapMRbBInn {
-	height: 0.625rem;
-	width: 0.625rem;
-	border-radius: 1rem;
+.sapUiSizeCompact {
+	.sapMRbBInn {
+		transform: translate(0.5rem, 0.5rem);
+	}
 }
 
 .sapMRbHasLabel.sapMRb:focus:before {
@@ -93,62 +124,76 @@
 	display: none;
 }
 
-.sapUiSizeCompact {
-	.sapMRb:focus:before {
-		top: .375rem;
-		bottom: .375rem;
-		left: .375rem;
-		right: .325rem;
-	}
-
-	.sapMRbHasLabel .sapMRbB {
-		width: 2rem;
-	}
-
-	.sapMRb > .sapMLabel {
-		max-width: calc(~"100% - 2rem + 1px");
-	}
-}
-
-.sapMRbHoverable:hover {
-	border-color: @sapUiFieldHoverBorderColor;
-	background-color: @sapUiFieldHoverBackground;
-}
-
 .sapMRbSel .sapMRbBInn {
-	background-color: @sapUiSelected;
+	fill: @sapUiSelected;
+	stroke: none;
 }
 
 .sapMLIBActive .sapMRbSel .sapMRbBInn {
-	background-color: @sapUiListActiveTextColor;
+	fill: @sapUiListActiveTextColor;
 }
 
 /* Read only */
-.sapMRbRo .sapMRbBOut {
-	background-color: @sapUiFieldReadOnlyBackground;
-	border-color: @sapUiFieldReadOnlyBorderColor;
+.sapMRb.sapMRbRo {
+	.sapMRbBOut {
+		stroke: @sapUiFieldReadOnlyBorderColor;
+		fill: @sapUiFieldReadOnlyBackground;
+	}
+
+	&.sapMRbSel .sapMRbBInn {
+		fill: @_sap_m_Radio_Button_Read_Only_fill;
+		stroke: none;
+	}
 }
 
-.sapMRbRo.sapMRbSel .sapMRbBInn {
-	background-color: @sapUiContentNonInteractiveIconColor;
+/* Align RadioButton in Form with other controls */
+.sapUiForm.sapUiFormEdit-CTX{
+	.sapMRb > .sapMRbB {
+		width: 2.3rem;
+	}
+
+	.sapMRbSvg {
+		margin-left: 0.125rem;
+	}
+
+	.sapMRb:focus:before {
+		left: 0;
+	}
 }
 
 /* Compact size */
 .sapUiSizeCompact{
 	.sapMRb {
-		height : 2rem;
+		height: 2rem;
+	}
+
+	.sapMRbSvg {
+		height: 1rem;
+		width: 1rem;
+		display: inline-block;
+		overflow: visible;
+		margin: 0.5rem;
+	}
+
+	.sapMRb:focus:before {
+		top: .325rem;
+		bottom: .325rem;
+		left: .325rem;
+		right: .3875rem;
 	}
 
 	.sapMRbB {
+		height : 2rem;
+		width: 2rem;
 		font-size: 1rem; /* override font size of the message dialog */
-	}
 
-	.sapMRbB .sapMRbBOut {
-		height: 1rem;
-		width: 1rem;
-		border-width: 0.125rem;
-		margin: 0.5rem;
-		box-sizing: border-box;
+		.sapMRbBOut {
+			height: 100%;
+			width: 100%;
+			border-width: 0.125rem;
+			margin: 0.5rem;
+			box-sizing: border-box;
+		}
 	}
 
 	.sapMRbB .sapMRbBInn {
@@ -164,6 +209,33 @@
 	.sapMRbHasLabel.sapMRb:focus:before {
 		right: 0;
 	}
+
+	.sapUiForm.sapUiFormEdit-CTX{
+		.sapMRb > .sapMRbB {
+			width: 1.625rem;
+		}
+
+		.sapMRbSvg {
+			margin-left: 0.125rem;
+		}
+
+		.sapMRb:focus:before {
+			left: 0;
+		}
+	}
+}
+
+html[dir="rtl"] {
+	.sapMRbB .sapMRbBInn,
+	.sapMRb .sapMRbB .sapMRbBOut {
+		transform: translate(-0.675rem, 0.675rem);
+	}
+	.sapUiSizeCompact {
+		.sapMRbB .sapMRbBInn,
+		.sapMRb .sapMRbB .sapMRbBOut {
+			transform: translate(-0.5rem, 0.5rem);
+		}
+	}
 }
 
 /* Condensed size */
@@ -178,23 +250,23 @@
 		font-size: 1rem; /* override font size of the message dialog */
 		height: 1.375rem;
 		width: 1.375rem;
+
+		.sapMRbBOut {
+			height: 0.75rem;
+			width: 0.75rem;
+			border-width: 1px;
+			margin: 0.375rem;
+		}
+
+		.sapMRbBInn {
+			height: 0.25rem;
+			width: 0.25rem;
+			margin: 0.0625rem;
+		}
 	}
 
-	.sapUiTableCell>.sapMRb>.sapMRbB{
+	.sapUiTableDataCell > .sapUiTableCellInner > .sapMRb>.sapMRbB{
 			margin: 0 0.25rem; /* extra space in the condensed ULV */
-	}
-
-	.sapMRbB .sapMRbBOut {
-		height: 0.75rem;
-		width: 0.75rem;
-		border-width: 1px;
-		margin: 0.375rem;
-	}
-
-	.sapMRbB .sapMRbBInn {
-		height: 0.25rem;
-		width: 0.25rem;
-		margin: 0.0625rem;
 	}
 
 	.sapMRbBLabel {

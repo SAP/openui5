@@ -1,17 +1,18 @@
 /*
  * ${copyright}
  */
-sap.ui.require([
-	"jquery.sap.global",
+sap.ui.define([
+	"sap/base/Log",
+	"sap/ui/model/odata/v4/lib/_Helper",
 	"sap/ui/model/odata/v4/lib/_V2MetadataConverter",
 	"sap/ui/test/TestUtils",
-	"jquery.sap.xml" // needed to have jQuery.sap.parseXML
-], function (jQuery, _V2MetadataConverter, TestUtils/*, jQuerySapXml*/) {
-	/*global QUnit, sinon */
-	/*eslint max-nested-callbacks: 0, no-multi-str: 0, no-warning-comments: 0 */
+	"sap/ui/util/XMLHelper",
+	"sap/ui/thirdparty/jquery"
+], function (Log, _Helper, _V2MetadataConverter, TestUtils, XMLHelper, jQuery) {
 	"use strict";
 
 	var sClassName = "sap.ui.model.odata.v4.lib._V2MetadataConverter",
+		sContactInformationType = "com.sap.vocabularies.Communication.v1.ContactInformationType",
 		sEdmx = '<edmx:Edmx Version="1.0" xmlns="http://schemas.microsoft.com/ado/2008/09/edm"'
 			+ ' xmlns:edmx="http://schemas.microsoft.com/ado/2007/06/edmx"'
 			+ ' xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata"'
@@ -36,10 +37,15 @@ sap.ui.require([
 	function testAnnotationConversion(assert, sXmlSnippet, oExpected) {
 		var oXML = xml(assert, sEdmx + '<edmx:DataServices m:DataServiceVersion="2.0">'
 				+ '<Schema Namespace="GWSAMPLE_BASIC">' + sXmlSnippet
-				+ '</Schema></edmx:DataServices></edmx:Edmx>'),
+				+ "</Schema></edmx:DataServices></edmx:Edmx>"),
 			oResult = new _V2MetadataConverter().convertXMLMetadata(oXML, "/foo/bar/$metadata");
 
 		assert.deepEqual(oResult["GWSAMPLE_BASIC."].$Annotations, oExpected);
+
+		// code under test ("ignoreAnnotationsFromMetadata")
+		oResult = new _V2MetadataConverter().convertXMLMetadata(oXML, "/foo/bar/$metadata", true);
+
+		assert.deepEqual(oResult["GWSAMPLE_BASIC."].$Annotations, {});
 	}
 
 	/**
@@ -50,13 +56,13 @@ sap.ui.require([
 	 *   the XML snippet; it will be inserted below an <Edmx> element
 	 * @param {object} oExpected
 	 *   the expected JSON object
-	 * @param {boolean} [bSubset=false]
+	 * @param {boolean} [bSubset]
 	 *   whether the given JSON is just a subset of the real expectation, i.e. every top-level
 	 *   property that is given must exist with the exact value (deepEqual), but there may be others
 	 */
 	function testConversion(assert, sXmlSnippet, oExpected, bSubset) {
 		testConversionForInclude(assert, '<edmx:DataServices m:DataServiceVersion="2.0">'
-			+ sXmlSnippet + '</edmx:DataServices>', oExpected, bSubset);
+			+ sXmlSnippet + "</edmx:DataServices>", oExpected, bSubset);
 	}
 
 	/**
@@ -67,13 +73,15 @@ sap.ui.require([
 	 *   the XML snippet; it will be inserted below an <Edmx> element
 	 * @param {object} oExpected
 	 *   the expected JSON object
-	 * @param {boolean} [bSubset=false]
+	 * @param {boolean} [bSubset]
 	 *   whether the given JSON is just a subset of the real expectation, i.e. every top-level
 	 *   property that is given must exist with the exact value (deepEqual), but there may be others
 	 */
 	function testConversionForInclude(assert, sXmlSnippet, oExpected, bSubset) {
-		var sProperty,
-			oXML = xml(assert, sEdmx + sXmlSnippet + '</edmx:Edmx>'),
+		var bIgnoreAnnotations,
+			aKeysWithAnnotations = [],
+			sProperty,
+			oXML = xml(assert, sEdmx + sXmlSnippet + "</edmx:Edmx>"),
 			oResult = new _V2MetadataConverter().convertXMLMetadata(oXML, "/foo/bar/$metadata");
 
 		if (bSubset) {
@@ -88,6 +96,26 @@ sap.ui.require([
 			oExpected.$Version = "4.0";
 			assert.deepEqual(oResult, oExpected);
 		}
+
+		Object.keys(oExpected).forEach(function (sKey) {
+			if (oExpected[sKey].$Annotations) {
+				oExpected[sKey].$Annotations = {};
+				aKeysWithAnnotations.push(sKey);
+				bIgnoreAnnotations = true;
+			}
+		});
+		if (bIgnoreAnnotations) { // ignoreAnnotationsFromMetadata
+			oResult = new _V2MetadataConverter()
+				.convertXMLMetadata(oXML, "/foo/bar/$metadata", true);
+
+			if (bSubset) {
+				aKeysWithAnnotations.forEach(function (sKey) {
+					assert.deepEqual(oResult[sKey].$Annotations, {});
+				});
+			} else {
+				assert.deepEqual(oResult, oExpected);
+			}
+		}
 	}
 
 	/**
@@ -97,7 +125,8 @@ sap.ui.require([
 	 * @returns {Document} the DOM document
 	 */
 	function xml(assert, sXml) {
-		var oDocument = jQuery.sap.parseXML(sXml);
+		var oDocument = XMLHelper.parse(sXml);
+
 		assert.strictEqual(oDocument.parseError.errorCode, 0, "XML parsed correctly");
 		return oDocument;
 	}
@@ -106,7 +135,7 @@ sap.ui.require([
 	QUnit.module("sap.ui.model.odata.v4.lib._V2MetadataConverter", {
 		beforeEach : function () {
 			TestUtils.useFakeServer(this._oSandbox, "sap/ui/core/qunit/model", mFixture);
-			this.oLogMock = this.mock(jQuery.sap.log);
+			this.oLogMock = this.mock(Log);
 			this.oLogMock.expects("warning").never();
 			this.oLogMock.expects("error").never();
 		}
@@ -126,19 +155,19 @@ sap.ui.require([
 					<edmx:Include Namespace="bla"/>\
 				</edmx:Reference>',
 			{
-				"$Reference" : {
+				$Reference : {
 					"/qux/$metadata" : {
-						"$Include" : ["qux.foo.", "qux.bar."],
-						"$IncludeAnnotations" : [{
-							"$TermNamespace" : "qux.foo."
+						$Include : ["qux.foo.", "qux.bar."],
+						$IncludeAnnotations : [{
+							$TermNamespace : "qux.foo."
 						}, {
-							"$TermNamespace" : "qux.bar.",
-							"$TargetNamespace" : "qux.bar.",
-							"$Qualifier" : "Tablet"
+							$TermNamespace : "qux.bar.",
+							$TargetNamespace : "qux.bar.",
+							$Qualifier : "Tablet"
 						}]
 					},
 					"/bla/$metadata" : {
-						"$Include" : ["bla."]
+						$Include : ["bla."]
 					}
 				}
 			});
@@ -156,17 +185,17 @@ sap.ui.require([
 				<Schema Namespace="foo" Alias="f"/>',
 			{
 				"bar." : {
-					"$kind" : "Schema"
+					$kind : "Schema"
 				},
 				"bar.Worker" : {
-					"$kind" : "ComplexType",
-					"Something" : {
-						"$kind" : "Property",
-						"$Type" : "bar.Something"
+					$kind : "ComplexType",
+					Something : {
+						$kind : "Property",
+						$Type : "bar.Something"
 					}
 				},
 				"foo." : {
-					"$kind" : "Schema"
+					$kind : "Schema"
 				}
 			});
 	});
@@ -187,28 +216,28 @@ sap.ui.require([
 				<Schema Namespace="foo" Alias="f"/>\
 			</edmx:DataServices>',
 			{
-				"$Reference" : {
+				$Reference : {
 					"/qux/$metadata" : {
-						"$Include" : ["qux."]
+						$Include : ["qux."]
 					}
 				},
 				"bar." : {
-					"$kind" : "Schema"
+					$kind : "Schema"
 				},
 				"bar.Worker" : {
-					"$kind" : "ComplexType",
-					"Something" : {
-						"$kind" : "Property",
-						"$Type" : "bar.Something"
+					$kind : "ComplexType",
+					Something : {
+						$kind : "Property",
+						$Type : "bar.Something"
 					},
-					"ManyThings" : {
-						"$kind" : "Property",
-						"$isCollection" : true,
-						"$Type" : "qux.Something"
+					ManyThings : {
+						$kind : "Property",
+						$isCollection : true,
+						$Type : "qux.Something"
 					}
 				},
 				"foo." : {
-					"$kind" : "Schema"
+					$kind : "Schema"
 				}
 			});
 	});
@@ -227,19 +256,19 @@ sap.ui.require([
 				</Schema>',
 			{
 				"foo." : {
-					"$kind" : "Schema"
+					$kind : "Schema"
 				},
 				"foo.Worker" : {
-					"$kind" : "EntityType",
-					"$Key" : ["Bar"]
+					$kind : "EntityType",
+					$Key : ["Bar"]
 				},
 				"foo.Base" : {
-					"$kind" : "EntityType",
-					"$Abstract" : true
+					$kind : "EntityType",
+					$Abstract : true
 				},
 				"foo.Derived" : {
-					"$kind" : "EntityType",
-					"$BaseType" : "foo.Base"
+					$kind : "EntityType",
+					$BaseType : "foo.Base"
 				}
 			});
 	});
@@ -252,10 +281,10 @@ sap.ui.require([
 				</Schema>',
 			{
 				"foo." : {
-					"$kind" : "Schema"
+					$kind : "Schema"
 				},
 				"foo.Worker" : {
-					"$kind" : "ComplexType"
+					$kind : "ComplexType"
 				}
 			});
 	});
@@ -265,7 +294,7 @@ sap.ui.require([
 		function localTest(sProperty, sValue, vExpectedValue) {
 			var oExpectedResult = {},
 				oResult = {},
-				oXml = xml(assert, '<Foo ' + sProperty + '="' + sValue + '"/>');
+				oXml = xml(assert, "<Foo " + sProperty + '="' + sValue + '"/>');
 
 			if (typeof vExpectedValue === "object") {
 				oExpectedResult = vExpectedValue;
@@ -293,6 +322,7 @@ sap.ui.require([
 	["ComplexType", "EntityType"].forEach(function (sType) {
 		["", "Edm."].forEach(function (sNamespace) {
 			var sTitle = "convertXMLMetadata: " + sType + ": Property, Namespace=" + sNamespace;
+
 			QUnit.test(sTitle, function (assert) {
 				testConversion(assert, '\
 						<Schema Namespace="foo">\
@@ -310,53 +340,53 @@ sap.ui.require([
 								<Property Name="p6" Type="' + sNamespace + 'DateTime"\
 									Precision="0" sap:display-format="Date"/>\
 								<Property Name="p7" Type="' + sNamespace + 'Float"/>\
-							</' + sType + '>\
-						</Schema>',
+							</' + sType + ">\
+						</Schema>",
 					{
 						"foo." : {
-							"$kind" : "Schema"
+							$kind : "Schema"
 						},
 						"foo.Worker" : {
-							"$kind" : sType,
-							"Salary" : {
-								"$kind" : "Property",
-								"$Type" : "Edm.Decimal",
-								"$Precision" : 8,
-								"$Scale" : 2
+							$kind : sType,
+							Salary : {
+								$kind : "Property",
+								$Type : "Edm.Decimal",
+								$Precision : 8,
+								$Scale : 2
 							},
-							"p1" : {
-								"$kind" : "Property",
-								"$Type" : "Edm.String",
-								"$Unicode" : false
+							p1 : {
+								$kind : "Property",
+								$Type : "Edm.String",
+								$Unicode : false
 							},
-							"p2" : {
-								"$kind" : "Property",
-								"$Type" : "Edm.String"
+							p2 : {
+								$kind : "Property",
+								$Type : "Edm.String"
 							},
-							"p3" : {
-								"$kind" : "Property",
-								"$Type" : "Edm.Int32",
-								"$DefaultValue" : "42"
+							p3 : {
+								$kind : "Property",
+								$Type : "Edm.Int32",
+								$DefaultValue : "42"
 							},
-							"p4" : {
-								"$kind" : "Property",
-								"$Type" : "Edm.TimeOfDay",
-								"$v2Type" : "Edm.Time"
+							p4 : {
+								$kind : "Property",
+								$Type : "Edm.TimeOfDay",
+								$v2Type : "Edm.Time"
 							},
-							"p5" : {
-								"$kind" : "Property",
-								"$Type" : "Edm.DateTimeOffset",
-								"$v2Type" : "Edm.DateTime"
+							p5 : {
+								$kind : "Property",
+								$Type : "Edm.DateTimeOffset",
+								$v2Type : "Edm.DateTime"
 							},
-							"p6" : {
-								"$kind" : "Property",
-								"$Type" : "Edm.Date",
-								"$v2Type" : "Edm.DateTime"
+							p6 : {
+								$kind : "Property",
+								$Type : "Edm.Date",
+								$v2Type : "Edm.DateTime"
 							},
-							"p7" : {
-								"$kind" : "Property",
-								"$Type" : "Edm.Single",
-								"$v2Type" : "Edm.Float"
+							p7 : {
+								$kind : "Property",
+								$Type : "Edm.Single",
+								$v2Type : "Edm.Float"
 							}
 						}
 					});
@@ -397,25 +427,25 @@ sap.ui.require([
 				</Schema>',
 			oExpectedResult = {
 				"GWSAMPLE_BASIC.0001." : {
-					"$kind" : "Schema"
+					$kind : "Schema"
 				},
 				"GWSAMPLE_BASIC.0001.BusinessPartner" : {
-					"$kind" : "EntityType",
-					"ToSalesOrders" : {
-						"$Type" : "GWSAMPLE_BASIC.0001.SalesOrder",
-						"$isCollection" : true,
-						"$kind" : "NavigationProperty"
+					$kind : "EntityType",
+					ToSalesOrders : {
+						$Type : "GWSAMPLE_BASIC.0001.SalesOrder",
+						$isCollection : true,
+						$kind : "NavigationProperty"
 					}
 				},
 				"GWSAMPLE_BASIC.0001.SalesOrder" : {
-					"$kind" : "EntityType",
-					"ToBusinessPartner" : {
-						"$Nullable" : false,
-						"$ReferentialConstraint" : {
-							"CustomerID" : "BusinessPartnerID"
+					$kind : "EntityType",
+					ToBusinessPartner : {
+						$Nullable : false,
+						$ReferentialConstraint : {
+							CustomerID : "BusinessPartnerID"
 						},
-						"$Type" : "GWSAMPLE_BASIC.0001.BusinessPartner",
-						"$kind" : "NavigationProperty"
+						$Type : "GWSAMPLE_BASIC.0001.BusinessPartner",
+						$kind : "NavigationProperty"
 					}
 				}
 			};
@@ -433,18 +463,18 @@ sap.ui.require([
 					<EntityContainer Name="Container"/>\
 				</Schema>',
 			{
-				"$EntityContainer" : "Schema1.Container",
+				$EntityContainer : "Schema1.Container",
 				"Schema1." : {
-					"$kind" : "Schema"
+					$kind : "Schema"
 				},
 				"Schema1.Container" : {
-					"$kind" : "EntityContainer"
+					$kind : "EntityContainer"
 				},
 				"Schema2." : {
-					"$kind" : "Schema"
+					$kind : "Schema"
 				},
 				"Schema2.Container" : {
-					"$kind" : "EntityContainer"
+					$kind : "EntityContainer"
 				}
 			});
 	});
@@ -493,57 +523,57 @@ sap.ui.require([
 					<EntityContainer Name="Container"/>\
 				</Schema>',
 			{
-				"$EntityContainer" : "GWSAMPLE_BASIC.0001.Container",
+				$EntityContainer : "GWSAMPLE_BASIC.0001.Container",
 				"GWSAMPLE_BASIC.0001." : {
-					"$Annotations" : {
+					$Annotations : {
 						"GWSAMPLE_BASIC.0001.Container/BusinessPartnerSet" : {
 							"@Org.OData.Capabilities.V1.SearchRestrictions" : {
-								"Searchable" : false
+								Searchable : false
 							}
 						},
 						"GWSAMPLE_BASIC.0001.Container/ProductSet" : {
 							"@Org.OData.Capabilities.V1.SearchRestrictions" : {
-								"Searchable" : false
+								Searchable : false
 							}
 						}
 					},
-					"$kind" : "Schema"
+					$kind : "Schema"
 				},
 				"GWSAMPLE_BASIC.0001.BusinessPartner" : {
-					"$kind" : "EntityType",
-					"Foo" : {
-						"$kind" : "NavigationProperty",
-						"$isCollection" : true,
-						"$Type" : "GWSAMPLE_BASIC.0001.Product"
+					$kind : "EntityType",
+					Foo : {
+						$kind : "NavigationProperty",
+						$isCollection : true,
+						$Type : "GWSAMPLE_BASIC.0001.Product"
 					},
-					"ToProducts" : {
-						"$kind" : "NavigationProperty",
-						"$isCollection" : true,
-						"$Type" : "GWSAMPLE_BASIC.0001.Product"
+					ToProducts : {
+						$kind : "NavigationProperty",
+						$isCollection : true,
+						$Type : "GWSAMPLE_BASIC.0001.Product"
 					}
 				},
 				"GWSAMPLE_BASIC.0001.Product" : {
-					"$kind" : "EntityType"
+					$kind : "EntityType"
 				},
 				"GWSAMPLE_BASIC.0001.Container" : {
-					"$kind" : "EntityContainer",
-					"BusinessPartnerSet" : {
-						"$kind" : "EntitySet",
-						"$Type" : "GWSAMPLE_BASIC.0001.BusinessPartner",
-						"$NavigationPropertyBinding" : {
-							"ToProducts" : "ProductSet"
+					$kind : "EntityContainer",
+					BusinessPartnerSet : {
+						$kind : "EntitySet",
+						$Type : "GWSAMPLE_BASIC.0001.BusinessPartner",
+						$NavigationPropertyBinding : {
+							ToProducts : "ProductSet"
 						}
 					},
-					"ProductSet" : {
-						"$kind" : "EntitySet",
-						"$Type" : "GWSAMPLE_BASIC.0001.Product"
+					ProductSet : {
+						$kind : "EntitySet",
+						$Type : "GWSAMPLE_BASIC.0001.Product"
 					}
 				},
 				"AnotherSchema." : {
-					"$kind" : "Schema"
+					$kind : "Schema"
 				},
 				"AnotherSchema.Container" : {
-					"$kind" : "EntityContainer"
+					$kind : "EntityContainer"
 				}
 			});
 	});
@@ -554,12 +584,11 @@ sap.ui.require([
 	["DELETE", "GET", "MERGE", "PATCH", "POST", "PUT"].forEach(function (sHttpMethod) {
 		QUnit.test("convert: FunctionImport, Method=" + sHttpMethod, function (assert) {
 			var sWhat = sHttpMethod !== "GET" ? "Action" : "Function",
-				sMethodAttribute = sHttpMethod ? ' m:HttpMethod="' + sHttpMethod + '"' : "",
 				sXml = '\
 					<Schema Namespace="foo" Alias="f">\
 						<EntityContainer Name="Container">\
 							<FunctionImport Name="Baz" ReturnType="Collection(Edm.String)"'
-									+ sMethodAttribute + '>\
+									+ ' m:HttpMethod="' + sHttpMethod + '">\
 								<Parameter Name="p1" Type="f.Bar" Nullable="false"/>\
 								<Parameter Name="p2" Type="Collection(f.Bar)" MaxLength="10"\
 									Precision="2" FixedLength="false"/>\
@@ -567,33 +596,33 @@ sap.ui.require([
 						</EntityContainer>\
 					</Schema>',
 				oExpected = {
-					"$EntityContainer" : "foo.Container",
+					$EntityContainer : "foo.Container",
 					"foo." : {
-						"$kind" : "Schema"
+						$kind : "Schema"
 					},
 					"foo.Container" : {
-						"$kind" : "EntityContainer",
-						"Baz" : {
-							"$kind" : sWhat + "Import"
+						$kind : "EntityContainer",
+						Baz : {
+							$kind : sWhat + "Import"
 						}
 					},
 					"foo.Baz" : [{
-						"$kind" : sWhat,
-						"$Parameter" : [{
-							"$Name" : "p1",
-							"$Type" : "foo.Bar",
-							"$Nullable" : false
+						$kind : sWhat,
+						$Parameter : [{
+							$Name : "p1",
+							$Type : "foo.Bar",
+							$Nullable : false
 						}, {
-							"$Name" : "p2",
-							"$isCollection" : true,
-							"$Type" : "foo.Bar",
-							"$MaxLength" : 10,
-							"$Precision" : 2,
-							"$Scale" : "variable"
+							$Name : "p2",
+							$isCollection : true,
+							$Type : "foo.Bar",
+							$MaxLength : 10,
+							$Precision : 2,
+							$Scale : "variable"
 						}],
-						"$ReturnType" : {
-							"$isCollection" : true,
-							"$Type" : "Edm.String"
+						$ReturnType : {
+							$isCollection : true,
+							$Type : "Edm.String"
 						}
 					}]
 				};
@@ -617,22 +646,22 @@ sap.ui.require([
 					</EntityContainer>\
 				</Schema>',
 			{
-				"$EntityContainer" : "foo.Container",
+				$EntityContainer : "foo.Container",
 				"foo." : {
-					"$kind" : "Schema"
+					$kind : "Schema"
 				},
 				"foo.Container" : {
-					"$kind" : "EntityContainer",
-					"Baz" : {
-						"$EntitySet" : "Bar",
-						"$Function" : "foo.Baz",
-						"$kind" : "FunctionImport"
+					$kind : "EntityContainer",
+					Baz : {
+						$EntitySet : "Bar",
+						$Function : "foo.Baz",
+						$kind : "FunctionImport"
 					}
 				},
 				"foo.Baz" : [{
-					"$kind" : "Function",
-					"$ReturnType" : {
-						"$Type" : "Edm.String"
+					$kind : "Function",
+					$ReturnType : {
+						$Type : "Edm.String"
 					}
 				}]
 			});
@@ -674,67 +703,67 @@ sap.ui.require([
 					</EntityType>\
 				</Schema>',
 			{
-				"$EntityContainer": "foo.Container",
-				"foo.": {
+				$EntityContainer : "foo.Container",
+				"foo." : {
 					// Note: no "$Annotations"!
-					"$kind": "Schema"
+					$kind : "Schema"
 				},
 				"foo.Bar" : [{
-					"$kind" : "Function"
+					$kind : "Function"
 				}],
-				"foo.SalesOrderLineItem": {
-					"$Key": [
+				"foo.SalesOrderLineItem" : {
+					$Key : [
 						"SalesOrderID",
 						"ItemPosition"
 					],
-					"$kind": "EntityType",
-					"ItemPosition": {
-						"$Nullable": false,
-						"$Type": "Edm.String",
-						"$kind": "Property"
+					$kind : "EntityType",
+					ItemPosition : {
+						$Nullable : false,
+						$Type : "Edm.String",
+						$kind : "Property"
 					},
-					"SalesOrderID": {
-						"$Nullable": false,
-						"$Type": "Edm.String",
-						"$kind": "Property"
+					SalesOrderID : {
+						$Nullable : false,
+						$Type : "Edm.String",
+						$kind : "Property"
 					}
 				},
 				"foo.SalesOrderLineItemAction" : [{
-					"$kind" : "Action",
-					"$IsBound" : true,
-					"$Parameter" : [{
-						"$Name" : null,
-						"$Nullable" : false,
-						"$Type" : "foo.SalesOrderLineItem"
+					$kind : "Action",
+					$IsBound : true,
+					$Parameter : [{
+						$Name : null,
+						$Nullable : false,
+						$Type : "foo.SalesOrderLineItem"
 					}, {
-						"$Name" : "NoteLanguage",
-						"$Nullable" : false,
-						"$Type" : "Edm.String",
+						$Name : "NoteLanguage",
+						$Nullable : false,
+						$Type : "Edm.String",
 						"@com.sap.vocabularies.Common.v1.Label" : "Note Language"
 					}],
-					"$ReturnType" : {
-						"$Type" : "Edm.String"
+					$ReturnType : {
+						$Type : "Edm.String"
 					},
 					"@com.sap.vocabularies.Common.v1.Label" : "S.O.L.I.A."
 				}],
 				"foo.SalesOrderLineItemFunction" : [{
-					"$kind" : "Function",
-					"$IsBound" : true,
-					"$Parameter" : [{
-						"$Name" : null,
-						"$Nullable" : false,
-						"$Type" : "foo.SalesOrderLineItem"
+					$kind : "Function",
+					$IsBound : true,
+					$Parameter : [{
+						$Name : null,
+						$Nullable : false,
+						$Type : "foo.SalesOrderLineItem"
 					}],
-					"$ReturnType" : {
-						"$Type" : "Edm.String"
+					$ReturnType : {
+						$Type : "Edm.String"
 					},
 					"@com.sap.vocabularies.Common.v1.Label" : "S.O.L.I.F."
 				}],
 				"foo.Container" : {
-					"$kind" : "EntityContainer",
-					"Bar" : {
-						"$kind" : "FunctionImport",
-						"$Function" : "foo.Bar"
+					$kind : "EntityContainer",
+					Bar : {
+						$kind : "FunctionImport",
+						$Function : "foo.Bar"
 					}
 				}
 			});
@@ -757,12 +786,12 @@ sap.ui.require([
 						</EntityContainer>\
 					</Schema>',
 				{
-					"$EntityContainer" : "foo.Container",
+					$EntityContainer : "foo.Container",
 					"foo." : {
-						"$kind" : "Schema"
+						$kind : "Schema"
 					},
 					"foo.Container" : {
-						"$kind" : "EntityContainer"
+						$kind : "EntityContainer"
 					}
 				});
 		});
@@ -831,12 +860,12 @@ sap.ui.require([
 	[{ // annotations with boolean primitive values
 		annotationsV2 : 'sap:aggregation-role="dimension"',
 		expectedAnnotationsV4 : {
-			'@com.sap.vocabularies.Analytics.v1.Dimension' : true
+			"@com.sap.vocabularies.Analytics.v1.Dimension" : true
 		}
 	}, {
 		annotationsV2 : 'sap:aggregation-role="measure"',
 		expectedAnnotationsV4 : {
-			'@com.sap.vocabularies.Analytics.v1.Measure' : true
+			"@com.sap.vocabularies.Analytics.v1.Measure" : true
 		}
 	}, {
 		annotationsV2 : 'sap:aggregation-role="foo"',
@@ -844,46 +873,46 @@ sap.ui.require([
 	}, {
 		annotationsV2 : 'sap:display-format="NonNegative"',
 		expectedAnnotationsV4 : {
-			'@com.sap.vocabularies.Common.v1.IsDigitSequence' : true
+			"@com.sap.vocabularies.Common.v1.IsDigitSequence" : true
 		}
 	}, {
 		annotationsV2 : 'sap:display-format="UpperCase"',
 		expectedAnnotationsV4 : {
-			'@com.sap.vocabularies.Common.v1.IsUpperCase' : true
+			"@com.sap.vocabularies.Common.v1.IsUpperCase" : true
 		}
 	}, { // annotations with string values
 		annotationsV2 : 'sap:heading="Value"',
 		expectedAnnotationsV4 : {
-			'@com.sap.vocabularies.Common.v1.Heading' : 'Value'
+			"@com.sap.vocabularies.Common.v1.Heading" : "Value"
 		}
 	}, {
 		annotationsV2 : 'sap:label="Value"',
 		expectedAnnotationsV4 : {
-			'@com.sap.vocabularies.Common.v1.Label' : 'Value'
+			"@com.sap.vocabularies.Common.v1.Label" : "Value"
 		}
 	}, {
 		annotationsV2 : 'sap:quickinfo="Value"',
 		expectedAnnotationsV4 : {
-			'@com.sap.vocabularies.Common.v1.QuickInfo' : 'Value'
+			"@com.sap.vocabularies.Common.v1.QuickInfo" : "Value"
 		}
 	}, { // annotations with path expression as value
 		annotationsV2 : 'sap:field-control="PathExpression"',
 		expectedAnnotationsV4 : {
-			'@com.sap.vocabularies.Common.v1.FieldControl' : {
+			"@com.sap.vocabularies.Common.v1.FieldControl" : {
 				$Path : "PathExpression"
 			}
 		}
 	}, {
 		annotationsV2 : 'sap:precision="PathExpression"',
 		expectedAnnotationsV4 : {
-			'@Org.OData.Measures.V1.Scale' : {
+			"@Org.OData.Measures.V1.Scale" : {
 				$Path : "PathExpression"
 			}
 		}
 	}, {
 		annotationsV2 : 'sap:text="PathExpression"',
 		expectedAnnotationsV4 : {
-			'@com.sap.vocabularies.Common.v1.Text' : {
+			"@com.sap.vocabularies.Common.v1.Text" : {
 				$Path : "PathExpression"
 			}
 		}
@@ -893,16 +922,16 @@ sap.ui.require([
 	}, { // multiple V4 annotations for one V2 annotation
 		annotationsV2 : 'sap:visible="false"',
 		expectedAnnotationsV4 : {
-			'@com.sap.vocabularies.Common.v1.FieldControl' : {
+			"@com.sap.vocabularies.Common.v1.FieldControl" : {
 				$EnumMember : "com.sap.vocabularies.Common.v1.FieldControlType/Hidden"
 			},
-			'@com.sap.vocabularies.UI.v1.Hidden' : true
+			"@com.sap.vocabularies.UI.v1.Hidden" : true
 		}
 	}, { // combination of V2 annotations
 		annotationsV2 : 'sap:text="PathExpression" sap:label="Value"',
 		expectedAnnotationsV4 : {
-			'@com.sap.vocabularies.Common.v1.Label' : 'Value',
-			'@com.sap.vocabularies.Common.v1.Text' : {
+			"@com.sap.vocabularies.Common.v1.Label" : "Value",
+			"@com.sap.vocabularies.Common.v1.Text" : {
 				$Path : "PathExpression"
 			}
 		}
@@ -912,16 +941,16 @@ sap.ui.require([
 		QUnit.test(sTitle, function (assert) {
 			var oExpectedResult = {
 					"GWSAMPLE_BASIC.0001." : {
-						"$Annotations" : {
+						$Annotations : {
 							"GWSAMPLE_BASIC.0001.Foo/Bar" : oFixture.expectedAnnotationsV4
 						},
-						"$kind" : "Schema"
+						$kind : "Schema"
 					},
 					"GWSAMPLE_BASIC.0001.Foo" : {
-						"$kind" : "EntityType",
-						"Bar" : {
-							"$kind" : "Property",
-							"$Type" : "Edm.String"
+						$kind : "EntityType",
+						Bar : {
+							$kind : "Property",
+							$Type : "Edm.String"
 						}
 					}
 				},
@@ -929,16 +958,16 @@ sap.ui.require([
 					<Schema Namespace="GWSAMPLE_BASIC.0001">\
 						<EntityType Name="Foo">\
 							<Property Name="Bar" Type="Edm.String" \
-								' + oFixture.annotationsV2 + ' />\
+								' + oFixture.annotationsV2 + " />\
 						</EntityType>\
-					</Schema>';
+					</Schema>";
 
-			// there are no $annotations yet at the schema so mergeAnnotations is not called
+			// there are no $Annotations yet at the schema so mergeAnnotations is not called
 			this.mock(_V2MetadataConverter.prototype).expects("mergeAnnotations").never();
 
-			// no expectedAnnotationsV4 so there is no need for $annotations at the schema
+			// no expectedAnnotationsV4 so there is no need for $Annotations at the schema
 			if (!oFixture.expectedAnnotationsV4) {
-				delete oExpectedResult["GWSAMPLE_BASIC.0001."]["$Annotations"];
+				delete oExpectedResult["GWSAMPLE_BASIC.0001."].$Annotations;
 			}
 			testConversion(assert, sXML, oExpectedResult);
 		});
@@ -948,24 +977,24 @@ sap.ui.require([
 	[{
 		v2Semantics : 'sap:semantics="name"',
 		expectedSemanticsV4 : {
-			'@com.sap.vocabularies.Communication.v1.Contact' : {
-				"fn" : { "$Path" : "Bar" }
+			"@com.sap.vocabularies.Communication.v1.Contact" : {
+				fn : {$Path : "Bar"}
 			}
 		}
 	}, {
 		v2Semantics : 'sap:semantics="note"',
 		expectedSemanticsV4 : {
-			'@com.sap.vocabularies.Communication.v1.Contact' : {
-				"note" : { "$Path" : "Bar" }
+			"@com.sap.vocabularies.Communication.v1.Contact" : {
+				note : {$Path : "Bar"}
 			}
 		}
 	}, {
 		v2Semantics : 'sap:semantics="givenname"',
 		expectedSemanticsV4 : {
-			'@com.sap.vocabularies.Communication.v1.Contact' : {
-				"n" : {
-					"given" : {
-						"$Path" : "Bar"
+			"@com.sap.vocabularies.Communication.v1.Contact" : {
+				n : {
+					given : {
+						$Path : "Bar"
 					}
 				}
 			}
@@ -973,10 +1002,10 @@ sap.ui.require([
 	}, {
 		v2Semantics : 'sap:semantics="middlename"',
 		expectedSemanticsV4 : {
-			'@com.sap.vocabularies.Communication.v1.Contact' : {
-				"n" : {
-					"additional" : {
-						"$Path" : "Bar"
+			"@com.sap.vocabularies.Communication.v1.Contact" : {
+				n : {
+					additional : {
+						$Path : "Bar"
 					}
 				}
 			}
@@ -984,10 +1013,10 @@ sap.ui.require([
 	}, {
 		v2Semantics : 'sap:semantics="familyname"',
 		expectedSemanticsV4 : {
-			'@com.sap.vocabularies.Communication.v1.Contact' : {
-				"n" : {
-					"surname" : {
-						"$Path" : "Bar"
+			"@com.sap.vocabularies.Communication.v1.Contact" : {
+				n : {
+					surname : {
+						$Path : "Bar"
 					}
 				}
 			}
@@ -995,19 +1024,19 @@ sap.ui.require([
 	}, {
 		v2Semantics : 'sap:semantics="nickname"',
 		expectedSemanticsV4 : {
-			'@com.sap.vocabularies.Communication.v1.Contact' : {
-				"nickname" : {
-					"$Path" : "Bar"
+			"@com.sap.vocabularies.Communication.v1.Contact" : {
+				nickname : {
+					$Path : "Bar"
 				}
 			}
 		}
 	}, {
 		v2Semantics : 'sap:semantics="honorific"',
 		expectedSemanticsV4 : {
-			'@com.sap.vocabularies.Communication.v1.Contact' : {
-				"n" : {
-					"prefix" : {
-						"$Path" : "Bar"
+			"@com.sap.vocabularies.Communication.v1.Contact" : {
+				n : {
+					prefix : {
+						$Path : "Bar"
 					}
 				}
 			}
@@ -1015,24 +1044,25 @@ sap.ui.require([
 	}, {
 		v2Semantics : 'sap:semantics="suffix"',
 		expectedSemanticsV4 : {
-			'@com.sap.vocabularies.Communication.v1.Contact' : {
-				"n" : {
-					"suffix" : {
-						"$Path" : "Bar"
+			"@com.sap.vocabularies.Communication.v1.Contact" : {
+				n : {
+					suffix : {
+						$Path : "Bar"
 					}
 				}
 			}
 		}
 	}].forEach(function (oFixture) {
 		var sTitle = "convert: V2 annotation at Property: " + oFixture.v2Semantics;
+
 		QUnit.test("convert sap:semantics=" + sTitle, function (assert) {
-			// there are no $annotations yet at the schema so mergeAnnotations is not called
+			// there are no $Annotations yet at the schema so mergeAnnotations is not called
 			this.mock(_V2MetadataConverter.prototype).expects("mergeAnnotations").never();
 
 			testAnnotationConversion(assert, '\
 						<EntityType Name="Foo">\
-							<Property Name="Bar" Type="Edm.String" ' + oFixture.v2Semantics + ' />\
-						</EntityType>',
+							<Property Name="Bar" Type="Edm.String" ' + oFixture.v2Semantics + " />\
+						</EntityType>",
 				{
 					"GWSAMPLE_BASIC.Foo" : oFixture.expectedSemanticsV4
 				});
@@ -1041,7 +1071,7 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("convert sap:semantics=* to contact", function (assert) {
-		// there are no $annotations yet at the schema so mergeAnnotations is not called
+		// there are no $Annotations yet at the schema so mergeAnnotations is not called
 		this.mock(_V2MetadataConverter.prototype).expects("mergeAnnotations").never();
 
 		testAnnotationConversion(assert, '\
@@ -1070,30 +1100,30 @@ sap.ui.require([
 			{
 				"GWSAMPLE_BASIC.Foo" : {
 					"@com.sap.vocabularies.Communication.v1.Contact" : {
-						"adr" : {
-							"code" : { "$Path" : "P19" },
-							"country" : { "$Path" : "P17" },
-							"locality" : { "$Path" : "P15" },
-							"pobox" : { "$Path" : "P20" },
-							"region" : { "$Path" : "P18" },
-							"street" : { "$Path" : "P16" }
+						adr : {
+							code : {$Path : "P19"},
+							country : {$Path : "P17"},
+							locality : {$Path : "P15"},
+							pobox : {$Path : "P20"},
+							region : {$Path : "P18"},
+							street : {$Path : "P16"}
 						},
-						"bday" : { "$Path" : "P14" },
-						"fn" : { "$Path" : "P01" },
-						"n" : {
-							"given" : { "$Path" : "P02" },
-							"additional" : { "$Path" : "P03" },
-							"surname" : { "$Path" : "P04" },
-							"prefix" : { "$Path" : "P06" },
-							"suffix" : { "$Path" : "P07" }
+						bday : {$Path : "P14"},
+						fn : {$Path : "P01"},
+						n : {
+							given : {$Path : "P02"},
+							additional : {$Path : "P03"},
+							surname : {$Path : "P04"},
+							prefix : {$Path : "P06"},
+							suffix : {$Path : "P07"}
 						},
-						"nickname" : { "$Path" : "P05" },
-						"note" : { "$Path" : "P08" },
-						"photo" : { "$Path" : "P09" },
-						"org" : { "$Path" : "P10" },
-						"orgunit" : { "$Path" : "P11" },
-						"role" : { "$Path" : "P12" },
-						"title" : { "$Path" : "P13" }
+						nickname : {$Path : "P05"},
+						note : {$Path : "P08"},
+						photo : {$Path : "P09"},
+						org : {$Path : "P10"},
+						orgunit : {$Path : "P11"},
+						role : {$Path : "P12"},
+						title : {$Path : "P13"}
 					}
 				}
 			});
@@ -1101,7 +1131,7 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("convert sap:semantics=tel, email to Contact", function (assert) {
-		// there are no $annotations yet at the schema so mergeAnnotations is not called
+		// there are no $Annotations yet at the schema so mergeAnnotations is not called
 		this.mock(_V2MetadataConverter.prototype).expects("mergeAnnotations").never();
 
 		testAnnotationConversion(assert, '\
@@ -1112,11 +1142,11 @@ sap.ui.require([
 			{
 				"GWSAMPLE_BASIC.Foo" : {
 					"@com.sap.vocabularies.Communication.v1.Contact" : {
-						"tel" : [{
-							uri : {"$Path" : "P01"}
+						tel : [{
+							uri : {$Path : "P01"}
 						}],
-						"address" : [{
-							uri : { "$Path" : "P02" }
+						address : [{
+							uri : {$Path : "P02"}
 						}]
 					}
 				},
@@ -1131,7 +1161,7 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("convert sap:semantics=tel with type to Contact", function (assert) {
-		// there are no $annotations yet at the schema so mergeAnnotations is not called
+		// there are no $Annotations yet at the schema so mergeAnnotations is not called
 		this.mock(_V2MetadataConverter.prototype).expects("mergeAnnotations").never();
 
 		testAnnotationConversion(assert, '\
@@ -1141,13 +1171,13 @@ sap.ui.require([
 			{
 				"GWSAMPLE_BASIC.Foo" : {
 					"@com.sap.vocabularies.Communication.v1.Contact" : {
-						"tel" : [{
-							"type" : {
-								"EnumMember" :
+						tel : [{
+							type : {
+								EnumMember :
 									"com.sap.vocabularies.Communication.v1.PhoneType/cell "
 									+ "com.sap.vocabularies.Communication.v1.PhoneType/work"
 							},
-							uri : {"$Path" : "P01"}
+							uri : {$Path : "P01"}
 						}]
 					}
 				},
@@ -1159,24 +1189,25 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("convert sap:semantics=email with type to Contact", function (assert) {
-		// there are no $annotations yet at the schema so mergeAnnotations is not called
+		// there are no $Annotations yet at the schema so mergeAnnotations is not called
 		this.mock(_V2MetadataConverter.prototype).expects("mergeAnnotations").never();
 
 		testAnnotationConversion(assert, '\
 				<EntityType Name="Foo">\
-					<Property Name="P01" Type="Edm.String" sap:semantics="email;type=work,pref,home"/>\
+					<Property Name="P01" Type="Edm.String"\
+						sap:semantics="email;type=work,pref,home"/>\
 				</EntityType>',
 			{
 				"GWSAMPLE_BASIC.Foo" : {
 					"@com.sap.vocabularies.Communication.v1.Contact" : {
-						"address" : [{
-							"type" : {
-								"EnumMember" :
-									"com.sap.vocabularies.Communication.v1.ContactInformationType/work "
-									+ "com.sap.vocabularies.Communication.v1.ContactInformationType/preferred "
-									+ "com.sap.vocabularies.Communication.v1.ContactInformationType/home"
+						address : [{
+							type : {
+								EnumMember :
+									sContactInformationType + "/work "
+									+ sContactInformationType + "/preferred "
+									+ sContactInformationType + "/home"
 							},
-							uri : {"$Path" : "P01"}
+							uri : {$Path : "P01"}
 						}]
 					}
 				},
@@ -1188,10 +1219,10 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("convert sap:semantics=email with unsupported type", function (assert) {
-		// there are no $annotations yet at the schema so mergeAnnotations is not called
+		// there are no $Annotations yet at the schema so mergeAnnotations is not called
 		this.mock(_V2MetadataConverter.prototype).expects("mergeAnnotations").never();
 
-		this.oLogMock.expects("warning")
+		this.oLogMock.expects("warning").twice()
 			.withExactArgs("Unsupported semantic type: foo", undefined, sClassName);
 
 		testAnnotationConversion(assert, '\
@@ -1201,8 +1232,8 @@ sap.ui.require([
 			{
 				"GWSAMPLE_BASIC.Foo" : {
 					"@com.sap.vocabularies.Communication.v1.Contact" : {
-						"address" : [{
-							uri : {"$Path" : "P01"}
+						address : [{
+							uri : {$Path : "P01"}
 						}]
 					}
 				},
@@ -1214,10 +1245,10 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("convert sap:semantics=email with un/supported type", function (assert) {
-		// there are no $annotations yet at the schema so mergeAnnotations is not called
+		// there are no $Annotations yet at the schema so mergeAnnotations is not called
 		this.mock(_V2MetadataConverter.prototype).expects("mergeAnnotations").never();
 
-		this.oLogMock.expects("warning")
+		this.oLogMock.expects("warning").twice()
 			.withExactArgs("Unsupported semantic type: foo", undefined, sClassName);
 
 		testAnnotationConversion(assert, '\
@@ -1227,10 +1258,10 @@ sap.ui.require([
 			{
 				"GWSAMPLE_BASIC.Foo" : {
 					"@com.sap.vocabularies.Communication.v1.Contact" : {
-						"address" : [{
-							uri : {"$Path" : "P01"},
-							"type" : {
-								"EnumMember" : "com.sap.vocabularies.Communication.v1.ContactInformationType/work"
+						address : [{
+							uri : {$Path : "P01"},
+							type : {
+								EnumMember : sContactInformationType + "/work"
 							}
 						}]
 					}
@@ -1243,7 +1274,7 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("convert sap:semantics=* to Event", function (assert) {
-		// there are no $annotations yet at the schema so mergeAnnotations is not called
+		// there are no $Annotations yet at the schema so mergeAnnotations is not called
 		this.mock(_V2MetadataConverter.prototype).expects("mergeAnnotations").never();
 
 		testAnnotationConversion(assert, '\
@@ -1261,15 +1292,15 @@ sap.ui.require([
 			{
 				"GWSAMPLE_BASIC.Foo" : {
 					"@com.sap.vocabularies.Communication.v1.Event" : {
-						"dtstart" : {"$Path" : "P01"},
-						"dtend" : { "$Path" : "P02" },
-						"duration" : { "$Path" : "P03" },
-						"class" : { "$Path" : "P04" },
-						"status" : { "$Path" : "P05" },
-						"transp" : { "$Path" : "P06" },
-						"fbtype" : { "$Path" : "P07" },
-						"wholeday" : { "$Path" : "P08" },
-						"location" : { "$Path" : "P09" }
+						dtstart : {$Path : "P01"},
+						dtend : {$Path : "P02"},
+						duration : {$Path : "P03"},
+						class : {$Path : "P04"},
+						status : {$Path : "P05"},
+						transp : {$Path : "P06"},
+						fbtype : {$Path : "P07"},
+						wholeday : {$Path : "P08"},
+						location : {$Path : "P09"}
 					}
 				}
 			});
@@ -1277,7 +1308,7 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("convert sap:semantics=* to Task", function (assert) {
-		// there are no $annotations yet at the schema so mergeAnnotations is not called
+		// there are no $Annotations yet at the schema so mergeAnnotations is not called
 		this.mock(_V2MetadataConverter.prototype).expects("mergeAnnotations").never();
 
 		testAnnotationConversion(assert, '\
@@ -1290,10 +1321,10 @@ sap.ui.require([
 			{
 				"GWSAMPLE_BASIC.Foo" : {
 					"@com.sap.vocabularies.Communication.v1.Task" : {
-						"due" : {"$Path" : "P01"},
-						"completed" : { "$Path" : "P02" },
-						"percentcomplete" : { "$Path" : "P03" },
-						"priority" : { "$Path" : "P04" }
+						due : {$Path : "P01"},
+						completed : {$Path : "P02"},
+						percentcomplete : {$Path : "P03"},
+						priority : {$Path : "P04"}
 					}
 				}
 			});
@@ -1301,7 +1332,7 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("convert sap:semantics=* to Message", function (assert) {
-		// there are no $annotations yet at the schema so mergeAnnotations is not called
+		// there are no $Annotations yet at the schema so mergeAnnotations is not called
 		this.mock(_V2MetadataConverter.prototype).expects("mergeAnnotations").never();
 
 		testAnnotationConversion(assert, '\
@@ -1315,11 +1346,11 @@ sap.ui.require([
 			{
 				"GWSAMPLE_BASIC.Foo" : {
 					"@com.sap.vocabularies.Communication.v1.Message" : {
-						"from" : {"$Path" : "P01"},
-						"sender" : { "$Path" : "P02" },
-						"subject" : { "$Path" : "P03" },
-						"body" : { "$Path" : "P04" },
-						"received" : { "$Path" : "P05" }
+						from : {$Path : "P01"},
+						sender : {$Path : "P02"},
+						subject : {$Path : "P03"},
+						body : {$Path : "P04"},
+						received : {$Path : "P05"}
 					}
 				}
 			});
@@ -1327,7 +1358,7 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("convert sap:semantics=* to Contact, Event, Task, Message", function (assert) {
-		// there are no $annotations yet at the schema so mergeAnnotations is not called
+		// there are no $Annotations yet at the schema so mergeAnnotations is not called
 		this.mock(_V2MetadataConverter.prototype).expects("mergeAnnotations").never();
 
 		testAnnotationConversion(assert, '\
@@ -1340,42 +1371,41 @@ sap.ui.require([
 			{
 				"GWSAMPLE_BASIC.Foo" : {
 					"@com.sap.vocabularies.Communication.v1.Contact" : {
-						"fn" : { "$Path" : "P01" }
+						fn : {$Path : "P01"}
 					},
 					"@com.sap.vocabularies.Communication.v1.Event" : {
-						"dtend" : { "$Path" : "P02" }
+						dtend : {$Path : "P02"}
 					},
 					"@com.sap.vocabularies.Communication.v1.Task" : {
-						"percentcomplete" : { "$Path" : "P03" }
+						percentcomplete : {$Path : "P03"}
 					},
 					"@com.sap.vocabularies.Communication.v1.Message" : {
-						"body" : { "$Path" : "P04" }
+						body : {$Path : "P04"}
 					}
 				}
 			});
 	});
 
-
 	//*********************************************************************************************
 	[{ // sap:creatable
 		annotationsV2 : 'sap:creatable="false"',
 		expectedAnnotationsV4 : {
-			'@Org.OData.Capabilities.V1.InsertRestrictions' : {
-				"Insertable" : false
+			"@Org.OData.Capabilities.V1.InsertRestrictions" : {
+				Insertable : false
 			}
 		}
 	}, { // sap:deletable and sap:deletable-path
 		annotationsV2 : 'sap:deletable="false"',
 		expectedAnnotationsV4 : {
-			'@Org.OData.Capabilities.V1.DeleteRestrictions' : {
-				"Deletable" : false
+			"@Org.OData.Capabilities.V1.DeleteRestrictions" : {
+				Deletable : false
 			}
 		}
 	}, {
 		annotationsV2 : 'sap:deletable-path="PathExpression"',
 		expectedAnnotationsV4 : {
-			'@Org.OData.Capabilities.V1.DeleteRestrictions' : {
-				"Deletable" : {
+			"@Org.OData.Capabilities.V1.DeleteRestrictions" : {
+				Deletable : {
 					$Path : "PathExpression"
 				}
 			}
@@ -1383,31 +1413,31 @@ sap.ui.require([
 	}, { // if both V2 annotations are set there is an inconsistency -> use false
 		annotationsV2 : 'sap:deletable="foo-bar" sap:deletable-path="PathExpression"',
 		expectedAnnotationsV4 : {
-			'@Org.OData.Capabilities.V1.DeleteRestrictions' : {
-				"Deletable" : false
+			"@Org.OData.Capabilities.V1.DeleteRestrictions" : {
+				Deletable : false
 			}
 		},
-		message : "Use either 'sap:deletable' or 'sap:deletable-path' at entity set" +
-			" 'GWSAMPLE_BASIC.Container/FooSet'"
+		message : "Use either 'sap:deletable' or 'sap:deletable-path' at entity set"
+			+ " 'GWSAMPLE_BASIC.Container/FooSet'"
 	}, {
 		annotationsV2 : 'sap:deletable-path="PathExpression" sap:deletable="foo-bar"',
 		expectedAnnotationsV4 : {
-			'@Org.OData.Capabilities.V1.DeleteRestrictions' : {
-				"Deletable" : false
+			"@Org.OData.Capabilities.V1.DeleteRestrictions" : {
+				Deletable : false
 			}
 		},
-		message : "Use either 'sap:deletable' or 'sap:deletable-path' at entity set" +
-			" 'GWSAMPLE_BASIC.Container/FooSet'"
+		message : "Use either 'sap:deletable' or 'sap:deletable-path' at entity set"
+			+ " 'GWSAMPLE_BASIC.Container/FooSet'"
 	}, { // sap:label
 		annotationsV2 : 'sap:label="Value"',
 		expectedAnnotationsV4 : {
-			'@com.sap.vocabularies.Common.v1.Label' : 'Value'
+			"@com.sap.vocabularies.Common.v1.Label" : "Value"
 		}
 	}, { // sap:pageable
 		annotationsV2 : 'sap:pageable="false"',
 		expectedAnnotationsV4 : {
-			'@Org.OData.Capabilities.V1.SkipSupported' : false,
-			'@Org.OData.Capabilities.V1.TopSupported' : false
+			"@Org.OData.Capabilities.V1.SkipSupported" : false,
+			"@Org.OData.Capabilities.V1.TopSupported" : false
 		}
 	}, { // sap:pageable
 		annotationsV2 : 'sap:pageable="true"',
@@ -1415,25 +1445,25 @@ sap.ui.require([
 	}, { // sap:requires-filter
 		annotationsV2 : 'sap:requires-filter="true"',
 		expectedAnnotationsV4 : {
-			'@Org.OData.Capabilities.V1.FilterRestrictions' : {
-				"RequiresFilter" : true
+			"@Org.OData.Capabilities.V1.FilterRestrictions" : {
+				RequiresFilter : true
 			}
 		}
 	}, { // sap:requires-filter
 		annotationsV2 : 'sap:requires-filter="false"',
 		expectedAnnotationsV4 : {}
 	}, { // sap:searchable - different default values in V2 and V4
-		annotationsV2 : '',
+		annotationsV2 : "",
 		expectedAnnotationsV4 : {
-			'@Org.OData.Capabilities.V1.SearchRestrictions' : {
-				"Searchable" : false
+			"@Org.OData.Capabilities.V1.SearchRestrictions" : {
+				Searchable : false
 			}
 		}
 	}, {
 		annotationsV2 : 'sap:searchable="false"',
 		expectedAnnotationsV4 : {
-			'@Org.OData.Capabilities.V1.SearchRestrictions' : {
-				"Searchable" : false
+			"@Org.OData.Capabilities.V1.SearchRestrictions" : {
+				Searchable : false
 			}
 		}
 	}, {
@@ -1442,7 +1472,7 @@ sap.ui.require([
 	}, { // sap:topable
 		annotationsV2 : 'sap:topable="false"',
 		expectedAnnotationsV4 : {
-			'@Org.OData.Capabilities.V1.TopSupported' : false
+			"@Org.OData.Capabilities.V1.TopSupported" : false
 		}
 	}, { // sap:topable
 		annotationsV2 : 'sap:topable="true"',
@@ -1450,15 +1480,15 @@ sap.ui.require([
 	}, { // sap:updatable and sap:updatable-path
 		annotationsV2 : 'sap:updatable="false"',
 		expectedAnnotationsV4 : {
-			'@Org.OData.Capabilities.V1.UpdateRestrictions' : {
-				"Updatable" : false
+			"@Org.OData.Capabilities.V1.UpdateRestrictions" : {
+				Updatable : false
 			}
 		}
 	}, {
 		annotationsV2 : 'sap:updatable-path="PathExpression"',
 		expectedAnnotationsV4 : {
-			'@Org.OData.Capabilities.V1.UpdateRestrictions' : {
-				"Updatable" : {
+			"@Org.OData.Capabilities.V1.UpdateRestrictions" : {
+				Updatable : {
 					$Path : "PathExpression"
 				}
 			}
@@ -1466,28 +1496,28 @@ sap.ui.require([
 	}, { // if both V2 annotations are set there is an inconsistency -> use false
 		annotationsV2 : 'sap:updatable-path="PathExpression" sap:updatable="foo-bar"',
 		expectedAnnotationsV4 : {
-			'@Org.OData.Capabilities.V1.UpdateRestrictions' : {
-				"Updatable" : false
+			"@Org.OData.Capabilities.V1.UpdateRestrictions" : {
+				Updatable : false
 			}
 		},
-		message : "Use either 'sap:updatable' or 'sap:updatable-path' at entity set" +
-			" 'GWSAMPLE_BASIC.Container/FooSet'"
+		message : "Use either 'sap:updatable' or 'sap:updatable-path' at entity set"
+			+ " 'GWSAMPLE_BASIC.Container/FooSet'"
 	}, {
 		annotationsV2 : 'sap:updatable="foo-bar" sap:updatable-path="PathExpression"',
 		expectedAnnotationsV4 : {
-			'@Org.OData.Capabilities.V1.UpdateRestrictions' : {
-				"Updatable" : false
+			"@Org.OData.Capabilities.V1.UpdateRestrictions" : {
+				Updatable : false
 			}
 		},
-		message : "Use either 'sap:updatable' or 'sap:updatable-path' at entity set" +
-			" 'GWSAMPLE_BASIC.Container/FooSet'"
+		message : "Use either 'sap:updatable' or 'sap:updatable-path' at entity set"
+			+ " 'GWSAMPLE_BASIC.Container/FooSet'"
 	}].forEach(function (oFixture) {
 		var sTitle = "convert: V2 annotation at EntitySet: " + oFixture.annotationsV2;
 
 		QUnit.test(sTitle, function (assert) {
-			var mAnnotations = jQuery.extend({
-					'@Org.OData.Capabilities.V1.SearchRestrictions' : {
-						"Searchable" : false
+			var mAnnotations = Object.assign({
+					"@Org.OData.Capabilities.V1.SearchRestrictions" : {
+						Searchable : false
 					}
 				}, oFixture.expectedAnnotationsV4),
 				sXML = '\
@@ -1495,35 +1525,35 @@ sap.ui.require([
 						<EntityType Name="Foo"/>\
 						<EntityContainer Name="Container">\
 							<EntitySet Name="FooSet" EntityType="GWSAMPLE_BASIC.Foo" '
-								+ oFixture.annotationsV2 + '/>\
+								+ oFixture.annotationsV2 + "/>\
 							</EntityContainer>\
-					</Schema>',
+					</Schema>",
 				oExpectedResult = {
-					"$EntityContainer" : "GWSAMPLE_BASIC.Container",
+					$EntityContainer : "GWSAMPLE_BASIC.Container",
 					"GWSAMPLE_BASIC." : {
-						"$Annotations" : {
+						$Annotations : {
 							"GWSAMPLE_BASIC.Container/FooSet" : mAnnotations
 						},
-						"$kind" : "Schema"
+						$kind : "Schema"
 					},
 					"GWSAMPLE_BASIC.Foo" : {
-						"$kind" : "EntityType"
+						$kind : "EntityType"
 					},
 					"GWSAMPLE_BASIC.Container" : {
-						"$kind" : "EntityContainer",
-						"FooSet" : {
-							"$kind" : "EntitySet",
-							"$Type" : "GWSAMPLE_BASIC.Foo"
+						$kind : "EntityContainer",
+						FooSet : {
+							$kind : "EntitySet",
+							$Type : "GWSAMPLE_BASIC.Foo"
 						}
 					}
 				};
 
-			// no expectedAnnotationsV4 so there is no need for $annotations at the schema
+			// no expectedAnnotationsV4 so there is no need for $Annotations at the schema
 			if (!oFixture.expectedAnnotationsV4) {
-				delete oExpectedResult["GWSAMPLE_BASIC."]["$Annotations"];
+				delete oExpectedResult["GWSAMPLE_BASIC."].$Annotations;
 			}
 			if (oFixture.message) {
-				this.oLogMock.expects("warning")
+				this.oLogMock.expects("warning").twice()
 					.withExactArgs("Inconsistent metadata in '/foo/bar/$metadata'",
 						oFixture.message, sClassName);
 			}
@@ -1535,110 +1565,110 @@ sap.ui.require([
 	[{
 		convertedV2Annotations : {
 			"GWSAMPLE_BASIC.0001.Foo/Bar" : {
-				'@com.sap.vocabularies.Common.v1.Label' : 'Value'
+				"@com.sap.vocabularies.Common.v1.Label" : "Value"
 			}
 		},
 		v4Annotations : {},
 		result : {
 			"GWSAMPLE_BASIC.0001.Foo/Bar" : {
-				'@com.sap.vocabularies.Common.v1.Label' : 'Value'
+				"@com.sap.vocabularies.Common.v1.Label" : "Value"
 			}
 		}
 	}, {
 		convertedV2Annotations : {
 			"GWSAMPLE_BASIC.0001.Foo/Bar" : {
-				'@com.sap.vocabularies.Common.v1.Label' : 'Value'
+				"@com.sap.vocabularies.Common.v1.Label" : "Value"
 			}
 		},
 		v4Annotations : {
 			"GWSAMPLE_BASIC.0001.Foo/tango" : {
-				'@com.sap.vocabularies.Common.v1.Label' : 'Value'
+				"@com.sap.vocabularies.Common.v1.Label" : "Value"
 			}
 		},
 		result : {
 			"GWSAMPLE_BASIC.0001.Foo/Bar" : {
-				'@com.sap.vocabularies.Common.v1.Label' : 'Value'
+				"@com.sap.vocabularies.Common.v1.Label" : "Value"
 			},
 			"GWSAMPLE_BASIC.0001.Foo/tango" : {
-				'@com.sap.vocabularies.Common.v1.Label' : 'Value'
+				"@com.sap.vocabularies.Common.v1.Label" : "Value"
 			}
 		}
 	}, {
 		convertedV2Annotations : {
 			"GWSAMPLE_BASIC.0001.Foo/Bar" : {
-				'@com.sap.vocabularies.Common.v1.Label' : 'ValueV2'
+				"@com.sap.vocabularies.Common.v1.Label" : "ValueV2"
 			}
 		},
 		v4Annotations : {
 			"GWSAMPLE_BASIC.0001.Foo/Bar" : {
-				'@com.sap.vocabularies.Common.v1.Label' : 'ValueV4'
+				"@com.sap.vocabularies.Common.v1.Label" : "ValueV4"
 			}
 		},
 		result : {
 			"GWSAMPLE_BASIC.0001.Foo/Bar" : {
-				'@com.sap.vocabularies.Common.v1.Label' : 'ValueV4'
+				"@com.sap.vocabularies.Common.v1.Label" : "ValueV4"
 			}
 		}
 	}, {
 		convertedV2Annotations : {
 			"GWSAMPLE_BASIC.0001.Foo/Bar" : {
-				'@com.sap.vocabularies.Common.v1.Label' : 'Label'
+				"@com.sap.vocabularies.Common.v1.Label" : "Label"
 			}
 		},
 		v4Annotations : {
 			"GWSAMPLE_BASIC.0001.Foo/Bar" : {
-				'@com.sap.vocabularies.Common.v1.IsDigitSequence' : true
+				"@com.sap.vocabularies.Common.v1.IsDigitSequence" : true
 			}
 		},
 		result : {
 			"GWSAMPLE_BASIC.0001.Foo/Bar" : {
-				'@com.sap.vocabularies.Common.v1.IsDigitSequence' : true,
-				'@com.sap.vocabularies.Common.v1.Label' : 'Label'
+				"@com.sap.vocabularies.Common.v1.IsDigitSequence" : true,
+				"@com.sap.vocabularies.Common.v1.Label" : "Label"
 			}
 		}
 	}, {
 		convertedV2Annotations : {
 			"GWSAMPLE_BASIC.0001.Foo/Bar" : {
-				'@Org.OData.Capabilities.V1.DeleteRestrictions' : {
-					"Deletable" : false
+				"@Org.OData.Capabilities.V1.DeleteRestrictions" : {
+					Deletable : false
 				},
-				'@com.sap.vocabularies.Common.v1.Label' : 'Label',
-				'@com.sap.vocabularies.Common.v1.QuickInfo' : 'Value'
+				"@com.sap.vocabularies.Common.v1.Label" : "Label",
+				"@com.sap.vocabularies.Common.v1.QuickInfo" : "Value"
 			},
 			"GWSAMPLE_BASIC.0001.Foo/ChaChaCha" : {
-				'@com.sap.vocabularies.Common.v1.Heading' : 'ValueV2',
-				'@com.sap.vocabularies.Common.v1.Label' : 'LabelV2'
+				"@com.sap.vocabularies.Common.v1.Heading" : "ValueV2",
+				"@com.sap.vocabularies.Common.v1.Label" : "LabelV2"
 			}
 		},
 		v4Annotations : {
 			"GWSAMPLE_BASIC.0001.Foo/Bar" : {
-				'@Org.OData.Capabilities.V1.DeleteRestrictions' : {
-					"NonDeletableNavigationProperties" : []
+				"@Org.OData.Capabilities.V1.DeleteRestrictions" : {
+					NonDeletableNavigationProperties : []
 				},
-				'@com.sap.vocabularies.Common.v1.IsDigitSequence' : true,
-				'@com.sap.vocabularies.Common.v1.Label' : 'LabelV4'
+				"@com.sap.vocabularies.Common.v1.IsDigitSequence" : true,
+				"@com.sap.vocabularies.Common.v1.Label" : "LabelV4"
 			},
 			"GWSAMPLE_BASIC.0001.Foo/Jive" : {
-				'@com.sap.vocabularies.Common.v1.IsDigitSequence' : true,
-				'@com.sap.vocabularies.Common.v1.QuickInfo' : 'ValueV4'
+				"@com.sap.vocabularies.Common.v1.IsDigitSequence" : true,
+				"@com.sap.vocabularies.Common.v1.QuickInfo" : "ValueV4"
 			}
 		},
 		result : {
 			"GWSAMPLE_BASIC.0001.Foo/Bar" : {
-				'@Org.OData.Capabilities.V1.DeleteRestrictions' : {
-					"NonDeletableNavigationProperties" : []
+				"@Org.OData.Capabilities.V1.DeleteRestrictions" : {
+					NonDeletableNavigationProperties : []
 				},
-				'@com.sap.vocabularies.Common.v1.IsDigitSequence' : true,
-				'@com.sap.vocabularies.Common.v1.Label' : 'LabelV4',
-				'@com.sap.vocabularies.Common.v1.QuickInfo' : 'Value'
+				"@com.sap.vocabularies.Common.v1.IsDigitSequence" : true,
+				"@com.sap.vocabularies.Common.v1.Label" : "LabelV4",
+				"@com.sap.vocabularies.Common.v1.QuickInfo" : "Value"
 			},
 			"GWSAMPLE_BASIC.0001.Foo/ChaChaCha" : {
-				'@com.sap.vocabularies.Common.v1.Heading' : 'ValueV2',
-				'@com.sap.vocabularies.Common.v1.Label' : 'LabelV2'
+				"@com.sap.vocabularies.Common.v1.Heading" : "ValueV2",
+				"@com.sap.vocabularies.Common.v1.Label" : "LabelV2"
 			},
 			"GWSAMPLE_BASIC.0001.Foo/Jive" : {
-				'@com.sap.vocabularies.Common.v1.IsDigitSequence' : true,
-				'@com.sap.vocabularies.Common.v1.QuickInfo' : 'ValueV4'
+				"@com.sap.vocabularies.Common.v1.IsDigitSequence" : true,
+				"@com.sap.vocabularies.Common.v1.QuickInfo" : "ValueV4"
 			}
 		}
 	}].forEach(function (oFixture, i) {
@@ -1686,46 +1716,46 @@ sap.ui.require([
 						<Annotation Term="f.Invalid" Invalid="foo" />\
 						<Annotation Term="f.Baz" Qualifier="Employee"/>\
 					</Annotations>\
-					<Annotations xmlns="' + sXmlnsEdm4 + '"  Target="f.Bar/Abc" \
+					<Annotations xmlns="' + sXmlnsEdm4 + '" Target="f.Bar/Abc" \
 							Qualifier="Employee">\
 						<Annotation Term="f.Baz"/>\
 					</Annotations>\
 				</Schema>',
 			{
 				"foo." : {
-					"$kind" : "Schema",
-					"$Annotations" : {
+					$kind : "Schema",
+					$Annotations : {
 						"foo.Bar/foo.Baz" : {
-							"@foo.Binary" : {"$Binary" : "T0RhdGE"},
+							"@foo.Binary" : {$Binary : "T0RhdGE"},
 							"@foo.Bool" : false,
-							"@foo.Date" : {"$Date" : "2015-01-01"},
+							"@foo.Date" : {$Date : "2015-01-01"},
 							"@foo.DateTimeOffset" : {
-								"$DateTimeOffset" : "2000-01-01T16:00:00.000-09:00"
+								$DateTimeOffset : "2000-01-01T16:00:00.000-09:00"
 							},
-							"@foo.Decimal" : {"$Decimal" : "3.14"},
-							"@foo.Duration" : {"$Duration" : "P11D23H59M59S"},
+							"@foo.Decimal" : {$Decimal : "3.14"},
+							"@foo.Duration" : {$Duration : "P11D23H59M59S"},
 							"@foo.EnumMember" : {
-								"$EnumMember" : "foo.Enum/Member1 foo.Enum/Member2"
+								$EnumMember : "foo.Enum/Member1 foo.Enum/Member2"
 							},
 							"@foo.Float1" : 2.718,
-							"@foo.Float2" : {"$Float" : "NaN"},
-							"@foo.Float3" : {"$Float" : "INF"},
-							"@foo.Float4" : {"$Float" : "-INF"},
-							"@foo.Guid" : {"$Guid" : "21EC2020-3AEA-1069-A2DD-08002B30309D"},
+							"@foo.Float2" : {$Float : "NaN"},
+							"@foo.Float3" : {$Float : "INF"},
+							"@foo.Float4" : {$Float : "-INF"},
+							"@foo.Guid" : {$Guid : "21EC2020-3AEA-1069-A2DD-08002B30309D"},
 							"@foo.Int1" : 42,
 							"@foo.Int2" : 9007199254740991,
-							"@foo.Int3" : {"$Int" : "9007199254740992"},
+							"@foo.Int3" : {$Int : "9007199254740992"},
 							"@foo.String" : "foobar",
-							"@foo.TimeOfDay" : {"$TimeOfDay" : "21:45:00"},
+							"@foo.TimeOfDay" : {$TimeOfDay : "21:45:00"},
 							"@foo.AnnotationPath" : {
-								"$AnnotationPath" : "Path/foo.Bar/foo.Baz@foo.Term"
+								$AnnotationPath : "Path/foo.Bar/foo.Baz@foo.Term"
 							},
 							"@foo.NavigationPropertyPath" : {
-								"$NavigationPropertyPath" : "Path/foo.Bar/foo.Baz"
+								$NavigationPropertyPath : "Path/foo.Bar/foo.Baz"
 							},
-							"@foo.Path" : {"$Path" : "Path/foo.Bar/foo.Baz"},
-							"@foo.PropertyPath" : {"$PropertyPath" : "Path/foo.Bar/foo.Baz"},
-							"@foo.UrlRef" : {"$UrlRef" : "http://foo.bar"},
+							"@foo.Path" : {$Path : "Path/foo.Bar/foo.Baz"},
+							"@foo.PropertyPath" : {$PropertyPath : "Path/foo.Bar/foo.Baz"},
+							"@foo.UrlRef" : {$UrlRef : "http://foo.bar"},
 							"@foo.Invalid" : true,
 							"@foo.Baz#Employee" : true
 						},
@@ -1742,7 +1772,7 @@ sap.ui.require([
 					<Annotation xmlns="' + sXmlnsEdm4 + '" Term="foo.Term" String="Reference"/>\
 				</edmx:Reference>',
 			{
-				"$Reference" : {
+				$Reference : {
 					"qux/$metadata" : {
 						"@foo.Term" : "Reference"
 					}
@@ -1758,15 +1788,15 @@ sap.ui.require([
 				</Schema>',
 				{
 					"foo." : {
-						"$Annotations" : {
+						$Annotations : {
 							"foo.Bar" : {
-								'@com.sap.vocabularies.Common.v1.Label' : 'LabelEntityType'
+								"@com.sap.vocabularies.Common.v1.Label" : "LabelEntityType"
 							}
 						},
-						"$kind" : "Schema"
+						$kind : "Schema"
 					},
 					"foo.Bar" : {
-						"$kind" : "EntityType"
+						$kind : "EntityType"
 					}
 				});
 	});
@@ -1785,27 +1815,27 @@ sap.ui.require([
 					</EntityContainer>\
 				</Schema>',
 			{
-				"$EntityContainer" : "foo.Container",
+				$EntityContainer : "foo.Container",
 				"foo." : {
-					"$kind" : "Schema",
-					"$Annotations" : {
+					$kind : "Schema",
+					$Annotations : {
 						"foo.Container/FunctionImport" : {
 							"@com.sap.vocabularies.Common.v1.Label" : "LabelFunctionImport"
 						}
 					}
 				},
 				"foo.Container" : {
-					"$kind" : "EntityContainer",
-					"FunctionImport" : {
-						"$kind" : "FunctionImport",
-						"$Function" : "foo.FunctionImport"
+					$kind : "EntityContainer",
+					FunctionImport : {
+						$kind : "FunctionImport",
+						$Function : "foo.FunctionImport"
 					}
 				},
 				"foo.FunctionImport" : [{
-					"$kind" : "Function",
-					"$Parameter" : [{
-						"$Name" : "Parameter",
-						"$Type" : "Edm.String",
+					$kind : "Function",
+					$Parameter : [{
+						$Name : "Parameter",
+						$Type : "Edm.String",
 						"@com.sap.vocabularies.Common.v1.Label" : "LabelParameter"
 					}]
 				}]
@@ -1818,7 +1848,7 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("convert sap:semantics=* from mV2toV4SimpleSemantics", function (assert) {
-		// there are no $annotations yet at the schema so mergeAnnotations is not called
+		// there are no $Annotations yet at the schema so mergeAnnotations is not called
 		this.mock(_V2MetadataConverter.prototype).expects("mergeAnnotations").never();
 
 		testAnnotationConversion(assert, '\
@@ -1863,8 +1893,8 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("mergeAnnotations called", function (assert) {
 		this.mock(_V2MetadataConverter.prototype).expects("mergeAnnotations")
-			.withExactArgs({ "GWSAMPLE_BASIC.Foo/P01" : { "@Org.OData.Core.V1.IsURL" : true } },
-				{ "GWSAMPLE_BASIC.Foo/P01" : { "@Org.OData.Core.V1.IsURL" : false } }
+			.withExactArgs({"GWSAMPLE_BASIC.Foo/P01" : {"@Org.OData.Core.V1.IsURL" : true}},
+				{"GWSAMPLE_BASIC.Foo/P01" : {"@Org.OData.Core.V1.IsURL" : false}}
 			);
 
 		testAnnotationConversion(assert, '\
@@ -1965,129 +1995,129 @@ sap.ui.require([
 				</Schema>',
 			mAnnotations = {
 				"@com.sap.vocabularies.Common.v1.FilterExpressionRestrictions" : [{
-					"AllowedExpressions" : {
-						"EnumMember"
+					AllowedExpressions : {
+						EnumMember
 							: "com.sap.vocabularies.Common.v1.FilterExpressionType/SingleInterval"
 					},
-					"Property" : {"$PropertyPath" : "FilterRestrictionInterval"}
+					Property : {$PropertyPath : "FilterRestrictionInterval"}
 				}, {
-					"AllowedExpressions" : {
-						"EnumMember"
+					AllowedExpressions : {
+						EnumMember
 							: "com.sap.vocabularies.Common.v1.FilterExpressionType/MultiValue"
 					},
-					"Property" : {"$PropertyPath" : "FilterRestrictionMulti"}
+					Property : {$PropertyPath : "FilterRestrictionMulti"}
 				}, {
-					"AllowedExpressions" : {
-						"EnumMember"
+					AllowedExpressions : {
+						EnumMember
 							: "com.sap.vocabularies.Common.v1.FilterExpressionType/SingleValue"
 					},
-					"Property" : {"$PropertyPath" : "FilterRestrictionSingle"}
+					Property : {$PropertyPath : "FilterRestrictionSingle"}
 				}],
 				"@Org.OData.Capabilities.V1.FilterRestrictions" : {
-					"NonFilterableProperties" : [{
-						"$PropertyPath" : "FilterableA"
+					NonFilterableProperties : [{
+						$PropertyPath : "FilterableA"
 					}, {
-						"$PropertyPath" : "FilterableSortable"
+						$PropertyPath : "FilterableSortable"
 					}],
-					"RequiredProperties" : [{
-						"$PropertyPath" : "RequiredInFilterA"
+					RequiredProperties : [{
+						$PropertyPath : "RequiredInFilterA"
 					}, {
-						"$PropertyPath" : "RequiredInFilterC"
+						$PropertyPath : "RequiredInFilterC"
 					}]
 				},
 				"@Org.OData.Capabilities.V1.InsertRestrictions" : {
-					"NonInsertableNavigationProperties" : [{
-						"$NavigationPropertyPath" : "CreatableA"
+					NonInsertableNavigationProperties : [{
+						$NavigationPropertyPath : "CreatableA"
 					}, {
-						"$If" : [{
-							"$Not" : {
-								"$Path" : "IsCreatable"
+						$If : [{
+							$Not : {
+								$Path : "IsCreatable"
 							}
 						}, {
-							"$NavigationPropertyPath" : "CreatablePathA"
+							$NavigationPropertyPath : "CreatablePathA"
 						}]
 					}, {
-						"$NavigationPropertyPath" : "ConflictA"
+						$NavigationPropertyPath : "ConflictA"
 					}, {
-						"$NavigationPropertyPath" : "CreatableB"
+						$NavigationPropertyPath : "CreatableB"
 					}, {
-						"$If" : [{
-							"$Not" : {
-								"$Path" : "IsCreatable"
+						$If : [{
+							$Not : {
+								$Path : "IsCreatable"
 							}
 						}, {
-							"$NavigationPropertyPath" : "CreatablePathB"
+							$NavigationPropertyPath : "CreatablePathB"
 						}]
 					}, {
-						"$NavigationPropertyPath" : "ConflictB"
+						$NavigationPropertyPath : "ConflictB"
 					}]
 				},
 				"@Org.OData.Capabilities.V1.NavigationRestrictions" : {
-					"RestrictedProperties" : [{
-						"NavigationProperty" : {
-							"$NavigationPropertyPath" : "FilterableFalse"
+					RestrictedProperties : [{
+						NavigationProperty : {
+							$NavigationPropertyPath : "FilterableFalse"
 						},
-						"FilterRestrictions" : {
-							"Filterable" : false
+						FilterRestrictions : {
+							Filterable : false
 						}
 					}]
 				},
 				"@Org.OData.Capabilities.V1.SortRestrictions" : {
-					"NonSortableProperties" : [{
-						"$PropertyPath" : "FilterableSortable"
+					NonSortableProperties : [{
+						$PropertyPath : "FilterableSortable"
 					}, {
-						"$PropertyPath" : "SortableA"
+						$PropertyPath : "SortableA"
 					}]
 				}
 			},
 			oExpectedResult = {
 				"GWSAMPLE_BASIC.0001." : {
-					"$Annotations" : {
-						"GWSAMPLE_BASIC.0001.Container/Customers" : jQuery.extend(true, {
+					$Annotations : {
+						"GWSAMPLE_BASIC.0001.Container/Customers" : _Helper.merge({
 							// converted from V2 annotations at EntitySet itself
 							"@Org.OData.Capabilities.V1.InsertRestrictions" : {
-								"Insertable" : false
+								Insertable : false
 							},
 							"@Org.OData.Capabilities.V1.SearchRestrictions" : {
-								"Searchable" : false
+								Searchable : false
 							}
 						}, mAnnotations),
 						"GWSAMPLE_BASIC.0001.Container/Suppliers" : mAnnotations,
 						"GWSAMPLE_BASIC.0001.YetAnotherContainer/Suppliers" : mAnnotations
 					},
-					"$kind" : "Schema"
+					$kind : "Schema"
 				},
 				"GWSAMPLE_BASIC.0002." : {
-					"$Annotations" : {
+					$Annotations : {
 						"GWSAMPLE_BASIC.0002.Container/Suppliers" : mAnnotations
 					},
-					"$kind" : "Schema"
+					$kind : "Schema"
 				}
 			};
 
-		this.oLogMock.expects("warning")
+		this.oLogMock.expects("warning").twice()
 			.withExactArgs("Unsupported SAP annotation at a complex type in '/foo/bar/$metadata'",
 				"sap:filterable at property 'GWSAMPLE_BASIC.0001.Address/Street'", sClassName);
-		this.oLogMock.expects("warning")
+		this.oLogMock.expects("warning").twice()
 			.withExactArgs("Unsupported SAP annotation at a complex type in '/foo/bar/$metadata'",
 				"sap:filter-restriction at property 'GWSAMPLE_BASIC.0001.Address/Street'",
 				sClassName);
-		this.oLogMock.expects("warning")
+		this.oLogMock.expects("warning").twice()
 			.withExactArgs("Unsupported SAP annotation at a complex type in '/foo/bar/$metadata'",
 				"sap:required-in-filter at property 'GWSAMPLE_BASIC.0001.Address/Street'",
 				sClassName);
-		this.oLogMock.expects("warning")
+		this.oLogMock.expects("warning").twice()
 			.withExactArgs("Unsupported SAP annotation at a complex type in '/foo/bar/$metadata'",
 				"sap:sortable at property 'GWSAMPLE_BASIC.0001.Address/Street'", sClassName);
-		this.oLogMock.expects("warning")
+		this.oLogMock.expects("warning").twice()
 			.withExactArgs("Inconsistent metadata in '/foo/bar/$metadata'",
 				"Use either 'sap:creatable' or 'sap:creatable-path' at navigation property"
 				+ " 'GWSAMPLE_BASIC.0001.BusinessPartner/ConflictA'", sClassName);
-		this.oLogMock.expects("warning")
+		this.oLogMock.expects("warning").twice()
 			.withExactArgs("Inconsistent metadata in '/foo/bar/$metadata'",
 				"Use either 'sap:creatable' or 'sap:creatable-path' at navigation property"
 				+ " 'GWSAMPLE_BASIC.0001.BusinessPartner/ConflictB'", sClassName);
-		this.oLogMock.expects("warning")
+		this.oLogMock.expects("warning").twice()
 			.withExactArgs("Inconsistent metadata in '/foo/bar/$metadata'",
 				'Unsupported sap:filter-restriction="unsupported" at property'
 				+ " 'GWSAMPLE_BASIC.0001.BusinessPartner/FilterRestrictionUnsupported'",
@@ -2110,7 +2140,7 @@ sap.ui.require([
 				</Schema>',
 			oExpectedResult = {
 				"GWSAMPLE_BASIC.0001." : {
-					"$Annotations" : {
+					$Annotations : {
 						"GWSAMPLE_BASIC.0001.BusinessPartner/Computed" : {
 							"@com.sap.vocabularies.Common.v1.Label" : "Computed",
 							"@Org.OData.Core.V1.Computed" : true
@@ -2120,9 +2150,10 @@ sap.ui.require([
 							"@Org.OData.Core.V1.Immutable" : true
 						}
 					},
-					"$kind" : "Schema"
+					$kind : "Schema"
 				}
 			};
+
 		testConversion(assert, sXML, oExpectedResult, /*bSubset*/true);
 	});
 
@@ -2191,37 +2222,37 @@ sap.ui.require([
 				</Schema>',
 			oExpectedResult = {
 				"GWSAMPLE_BASIC.0001." : {
-					"$Annotations" : {
+					$Annotations : {
 						"GWSAMPLE_BASIC.0001.Product/Depth" : {
 							"@Org.OData.Measures.V1.Unit" : {
-								"$Path" : "DepthUnit"
+								$Path : "DepthUnit"
 							},
 							"@com.sap.vocabularies.Common.v1.Label" : "Depth"
 						},
 						"GWSAMPLE_BASIC.0001.Product/GrossWeight" : {
 							"@Org.OData.Measures.V1.Unit" : {
-								"$Path" : "Parts/WeightUnit"
+								$Path : "Parts/WeightUnit"
 							}
 						},
 						"GWSAMPLE_BASIC.0001.Product/PackagingWeight" : {
 							"@Org.OData.Measures.V1.Unit" : {
-								"$Path" : "toMeasure/Parts/WeightUnit"
+								$Path : "toMeasure/Parts/WeightUnit"
 							},
 							"@com.sap.vocabularies.Common.v1.Label" : "Packaging Weight"
 						},
 						"GWSAMPLE_BASIC.0001.Product/Price" : {
 							"@Org.OData.Measures.V1.ISOCurrency" : {
-								"$Path" : "PriceCurrency"
+								$Path : "PriceCurrency"
 							}
 						},
 						"GWSAMPLE_BASIC.0001.Product/NetPrice" : {
 							"@Org.OData.Measures.V1.ISOCurrency" : {
-								"$Path" : "Foo/Bar"
+								$Path : "Foo/Bar"
 							}
 						},
 						"GWSAMPLE_BASIC.0001.CT_Parts/Weight" : {
 							"@Org.OData.Measures.V1.Unit" : {
-								"$Path" : "WeightUnit"
+								$Path : "WeightUnit"
 							}
 						},
 						"GWSAMPLE_BASIC.0001.Product/WeightMissingUnit1" : {
@@ -2229,36 +2260,36 @@ sap.ui.require([
 						},
 						"GWSAMPLE_BASIC.0001.Product/NetWeight" : {
 							"@Org.OData.Measures.V1.Unit" : {
-								"$Path" : "toMeasure/WeightUnit"
+								$Path : "toMeasure/WeightUnit"
 							},
 							"@com.sap.vocabularies.Common.v1.Label" : "Net Weight"
 						}
 					},
-					"$kind" : "Schema"
+					$kind : "Schema"
 				},
 				"GWSAMPLE_BASIC.0002." : {
-					"$Annotations" : {
+					$Annotations : {
 						"GWSAMPLE_BASIC.0002.Product/Depth" : {
 							"@Org.OData.Measures.V1.Unit" : {
-								"$Path" : "DepthUnit"
+								$Path : "DepthUnit"
 							}
 						}
 					},
-					"$kind" : "Schema"
+					$kind : "Schema"
 				}
 			};
 
-		this.oLogMock.expects("warning").withExactArgs(
+		this.oLogMock.expects("warning").twice().withExactArgs(
 			"Unsupported sap:semantics at sap:unit='InvalidUnit';"
 			+ " expected 'currency-code' or 'unit-of-measure'",
 			"GWSAMPLE_BASIC.0001.Product/Width", sClassName);
-		this.oLogMock.expects("warning").withExactArgs(
+		this.oLogMock.expects("warning").twice().withExactArgs(
 			"Path 'MissingUnit/Foo' for sap:unit cannot be resolved",
-			"GWSAMPLE_BASIC.0001.Product/WeightMissingUnit1" , sClassName);
-		this.oLogMock.expects("warning").withExactArgs(
+			"GWSAMPLE_BASIC.0001.Product/WeightMissingUnit1", sClassName);
+		this.oLogMock.expects("warning").twice().withExactArgs(
 			"Path 'Parts/MissingUnit/Foo' for sap:unit cannot be resolved",
-			"GWSAMPLE_BASIC.0001.Product/WeightMissingUnit0" , sClassName);
-		this.oLogMock.expects("warning").withExactArgs(
+			"GWSAMPLE_BASIC.0001.Product/WeightMissingUnit0", sClassName);
+		this.oLogMock.expects("warning").twice().withExactArgs(
 			"Unsupported annotation 'sap:semantics'",
 			sinon.match(/<Property.*sap:semantics="invalid".*\/>/),
 			sClassName);
@@ -2270,7 +2301,7 @@ sap.ui.require([
 	QUnit.test("collectSapAnnotations/warnUnusedSapAnnotations", function (assert) {
 		var oLogMock = this.oLogMock;
 
-		function warn(rElement, sName, sValue) {
+		function warn(rElement, sName) {
 			oLogMock.expects("warning").withExactArgs("Unsupported annotation 'sap:" + sName + "'",
 				sinon.match(rElement), sClassName);
 		}
@@ -2328,6 +2359,107 @@ sap.ui.require([
 				$kind : "Schema",
 				"@Org.Odata.Core.V1.SchemaVersion" : "1"
 			}
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("duplicate schema children; last one wins", function (assert) {
+		var that = this;
+
+		[
+			"Duplicate qualified name duplicates.",
+			"Duplicate qualified name duplicates.ArtistsType",
+			"Duplicate qualified name duplicates.Address",
+			"Duplicate qualified name duplicates.GetDefaults",
+			"Duplicate qualified name duplicates.Container"
+		].forEach(function (sWarning) {
+			that.oLogMock.expects("warning").twice()
+				.withExactArgs(sWarning, undefined, "sap.ui.model.odata.v4.lib._MetadataConverter");
+		});
+
+		testConversion(assert, '\
+<Schema Namespace="duplicates"/>\
+<Schema Namespace="duplicates">\
+	<ComplexType Name="ArtistsType"/>\
+	<EntityType Name="ArtistsType">\
+		<Key>\
+			<PropertyRef Name="ArtistID"/>\
+			<PropertyRef Name="IsActiveEntity"/>\
+		</Key>\
+		<Property Name="ArtistID" Type="Edm.String" Nullable="false"/>\
+		<Property Name="IsActiveEntity" Type="Edm.Boolean" Nullable="false"/>\
+	</EntityType>\
+	<EntityType Name="Address"/>\
+	<ComplexType Name="Address">\
+		<Property Name="City" Type="Edm.String"/>\
+	</ComplexType>\
+	<ComplexType Name="GetDefaults"/>\
+	<ComplexType Name="Container"/>\
+	<EntityContainer Name="Container">\
+		<EntitySet Name="Artists" EntityType="duplicates.ArtistsType"/>\
+		<FunctionImport Name="GetDefaults" ReturnType="duplicates.ArtistsType" m:HttpMethod="GET">\
+			<Parameter Name="_it" Type="Collection(duplicates.ArtistsType)" Nullable="false"/>\
+		</FunctionImport>\
+	</EntityContainer>\
+</Schema>', {
+			$EntityContainer : "duplicates.Container",
+			"duplicates." : {
+				$Annotations : {
+					"duplicates.Container/Artists" : {
+						"@Org.OData.Capabilities.V1.SearchRestrictions" : {
+							Searchable : false
+						}
+					}
+				},
+				$kind : "Schema"
+			},
+			"duplicates.Address" : {
+				$kind : "ComplexType",
+				City : {
+					$Type : "Edm.String",
+					$kind : "Property"
+				}
+			},
+			"duplicates.ArtistsType" : {
+				$Key : [
+					"ArtistID",
+					"IsActiveEntity"
+				],
+				$kind : "EntityType",
+				ArtistID : {
+					$Nullable : false,
+					$Type : "Edm.String",
+					$kind : "Property"
+				},
+				IsActiveEntity : {
+					$Nullable : false,
+					$Type : "Edm.Boolean",
+					$kind : "Property"
+				}
+			},
+			"duplicates.Container" : {
+				$kind : "EntityContainer",
+				Artists : {
+					$Type : "duplicates.ArtistsType",
+					$kind : "EntitySet"
+				},
+				GetDefaults : {
+					$Function : "duplicates.GetDefaults",
+					$kind : "FunctionImport"
+				}
+			},
+			"duplicates.GetDefaults" : [{
+				$Parameter : [{
+					$Name : "_it",
+					$Nullable : false,
+					$Type : "duplicates.ArtistsType",
+					$isCollection : true
+				}],
+				$ReturnType : {
+					$Type : "duplicates.ArtistsType"
+				},
+				$kind : "Function"
+			}]
 		});
 	});
 });

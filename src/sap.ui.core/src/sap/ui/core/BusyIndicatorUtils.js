@@ -3,8 +3,8 @@
  */
 
 // Provides utility class sap.ui.core.BusyIndicatorUtils
-sap.ui.define(['jquery.sap.global', './BlockLayerUtils'], //require of sap/ui/core/library not possible due to cyclic dependencies
-	function(jQuery, BlockLayerUtils) {
+sap.ui.define(['./BlockLayerUtils', 'sap/ui/core/library'],
+	function(BlockLayerUtils, coreLibrary) {
 	"use strict";
 
 	// Static class
@@ -12,23 +12,39 @@ sap.ui.define(['jquery.sap.global', './BlockLayerUtils'], //require of sap/ui/co
 	/**
 	 * @alias sap.ui.core.BusyIndicatorUtils
 	 * @namespace
-	 * @public
+	 * @private
+	 * @ui5-restricted sap.ui.core, sap.chart
 	 */
 	var BusyIndicatorUtils = function() {};
+
+	var BusyIndicatorSize = coreLibrary.BusyIndicatorSize;
 
 	/**
 	 * Returns the HTML content for the busy indicator
 	 * styling + animation: LocalBusyIndicator.less
 	 *
-	 * @param {string} sSize either "Large" or "Medium". Other sizes will be mapped to "Medium"
-	 * @returns {DOM.element} the element for the busy indicator
+	 * @param {string} sSize either "Large", "Medium" or "Section". Other sizes will be mapped to "Medium"
+	 * @returns {Element} the element for the busy indicator
+	 * @private
+	 * @ui5-restricted sap.ui.core, sap.chart
 	 */
 	BusyIndicatorUtils.getElement = function(sSize) {
-		//default size is medium
-		var sSizeClass = "sapUiLocalBusyIndicatorSizeMedium";
+		var sSizeClass;
 
-		if (sSize === "Large") {
-			sSizeClass = "sapUiLocalBusyIndicatorSizeBig";
+		switch (sSize) {
+			case BusyIndicatorSize.Large:
+				sSizeClass = "sapUiLocalBusyIndicatorSizeBig sapUiLocalBusyIndicatorShowContainer";
+				break;
+			case BusyIndicatorSize.Medium:
+				sSizeClass = "sapUiLocalBusyIndicatorSizeMedium";
+				break;
+			case BusyIndicatorSize.Section:
+				sSizeClass = "sapUiLocalBusyIndicatorSizeSection sapUiLocalBusyIndicatorShowContainer";
+				break;
+			default:
+				//default size is medium
+				sSizeClass = "sapUiLocalBusyIndicatorSizeMedium";
+				break;
 		}
 
 		var oContainer = document.createElement("div");
@@ -42,14 +58,7 @@ sap.ui.define(['jquery.sap.global', './BlockLayerUtils'], //require of sap/ui/co
 	};
 
 	function addAnimation(oContainer, sSizeClass) {
-
 		sSizeClass  = sSizeClass || "sapUiLocalBusyIndicatorAnimStandard";
-
-		// set title for screen reader
-		var oResBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.core"),
-			sTitle = oResBundle.getText("BUSY_TEXT");
-
-		oContainer.setAttribute("title", sTitle);
 
 		// determine automation size class
 		var oAnimation = document.createElement("div");
@@ -86,19 +95,22 @@ sap.ui.define(['jquery.sap.global', './BlockLayerUtils'], //require of sap/ui/co
 	 * @see sap.ui.core.BusyIndicatorSize
 	 */
 	BusyIndicatorUtils.addHTML = function (oBusyBlockState, sSize) {
-		var sSizeClass = "sapUiLocalBusyIndicatorSizeMedium",
-			sAnimationSizeClass;
+		var sSizeClass, sAnimationSizeClass;
 
 		switch (sSize) {
-			case sap.ui.core.BusyIndicatorSize.Small:
+			case BusyIndicatorSize.Small:
 				sSizeClass = "sapUiLocalBusyIndicatorSizeMedium";
 				sAnimationSizeClass = "sapUiLocalBusyIndicatorAnimSmall";
 				break;
-			case sap.ui.core.BusyIndicatorSize.Large:
-				sSizeClass = "sapUiLocalBusyIndicatorSizeBig";
+			case BusyIndicatorSize.Section:
+				sSizeClass = "sapUiLocalBusyIndicatorSizeSection sapUiLocalBusyIndicatorShowContainer";
+				sAnimationSizeClass = "sapUiLocalBusyIndicatorAnimStandard ";
+				break;
+			case BusyIndicatorSize.Large:
+				sSizeClass = "sapUiLocalBusyIndicatorSizeBig sapUiLocalBusyIndicatorShowContainer";
 				sAnimationSizeClass = "sapUiLocalBusyIndicatorAnimStandard";
 				break;
-			case sap.ui.core.BusyIndicatorSize.Auto:
+			case BusyIndicatorSize.Auto:
 				sSizeClass = "sapUiLocalBusyIndicatorSizeMedium";
 				sAnimationSizeClass = "sapUiLocalBusyIndicatorAnimStandard";
 				break;
@@ -108,6 +120,11 @@ sap.ui.define(['jquery.sap.global', './BlockLayerUtils'], //require of sap/ui/co
 				sAnimationSizeClass = "sapUiLocalBusyIndicatorAnimStandard";
 				break;
 		}
+
+		if (!oBusyBlockState) {
+			return;
+		}
+
 		var oParentDOM = oBusyBlockState.$parent.get(0),
 			oBlockLayerDOM = oBusyBlockState.$blockLayer.get(0);
 
@@ -115,20 +132,9 @@ sap.ui.define(['jquery.sap.global', './BlockLayerUtils'], //require of sap/ui/co
 		oBlockLayerDOM.className += " sapUiLocalBusyIndicator " + sSizeClass + " sapUiLocalBusyIndicatorFade";
 		addAnimation(oBlockLayerDOM, sAnimationSizeClass);
 
-		if (sSize === sap.ui.core.BusyIndicatorSize.Auto) {
+		if (sSize === BusyIndicatorSize.Auto) {
 			handleAutoAnimationSize(oBusyBlockState);
 		}
-		//Set the actual DOM Element to 'aria-busy'
-		jQuery(oParentDOM).attr('aria-busy', true);
-	};
-
-	/**
-	 * Obsolete IE9 support, kept for some more time to avoid issues with custom controls,
-	 * start/stop now are 'noop's.
-	 */
-	BusyIndicatorUtils.animateIE9 = {
-		start: function () {},
-		stop: function () {}
 	};
 
 	return BusyIndicatorUtils;

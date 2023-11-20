@@ -13,6 +13,7 @@
 		"controller/NotFound.controller.js",
 		"i18n/i18n.properties",
 		"index.html",
+		"initMockServer.js",
 		"localService/metadata.xml",
 		"localService/mockdata/Employees.json",
 		"localService/mockdata/Resumes.json",

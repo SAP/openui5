@@ -1,0 +1,20 @@
+<mvc:View
+	controllerName="sap.m.sample.toolbarActive.Controller"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:core="sap.ui.core"
+	xmlns="sap.m">
+
+	<HBox class="sapUiContentPadding">
+		<VBox class="sapUiContentPadding">
+			<CheckBox text="Active" selected="true" select="onCheckBoxSelect"/>
+
+			<Text id="myText" text="While it is active, the toolbar is focusable and interactive, If you trigger it an event will be fired. There should be no interactive elements in the toolbar."/>
+		</VBox>
+	</HBox>
+
+	<Toolbar id="toolbar" active="true" design="Info" height="2rem" press="onToolbarPress" ariaLabelledBy="myText">
+		<Title id="toolbarTitle" text="Toolbar with active property set to true"></Title>
+		<ToolbarSpacer/>
+		<core:Icon src="sap-icon://undo" width="2rem" />
+	</Toolbar>
+</mvc:View>

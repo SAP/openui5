@@ -2,21 +2,23 @@
  * ${copyright}
  */
 
-sap.ui.define(["./MessageStripUtilities"],
-	function (MSUtils) {
+sap.ui.define(["./MessageStripUtilities", "sap/ui/core/IconPool"],
+	function (MSUtils, IconPool) {
 	"use strict";
 
 	/**
 	 * MessageStrip renderer.
 	 * @namespace
 	 */
-	var MessageStripRenderer = {};
+	var MessageStripRenderer = {
+		apiVersion: 2
+	};
 
 	/**
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
 	 *
 	 * @param {sap.ui.core.RenderManager} oRm the RenderManager that can be used for writing to the render output buffer
-	 * @param {sap.ui.core.Control} oControl an object representation of the control that should be rendered
+	 * @param {sap.m.MessageStrip} oControl an object representation of the control that should be rendered
 	 */
 	MessageStripRenderer.render = function(oRm, oControl) {
 		this.startMessageStrip(oRm, oControl);
@@ -29,42 +31,47 @@ sap.ui.define(["./MessageStripUtilities"],
 		this.renderTextAndLink(oRm, oControl);
 
 		if (oControl.getShowCloseButton()) {
-			this.renderCloseButton(oRm);
+			this.renderCloseButton(oRm, oControl);
 		}
 
 		this.endMessageStrip(oRm);
 	};
 
 	MessageStripRenderer.startMessageStrip = function (oRm, oControl) {
-		oRm.write("<div");
-		oRm.addClass(MSUtils.CLASSES.ROOT);
-		oRm.addClass(MSUtils.CLASSES.ROOT + oControl.getType());
+		oRm.openStart("div", oControl);
+		oRm.class(MSUtils.CLASSES.ROOT);
+		oRm.class(MSUtils.CLASSES.ROOT + oControl.getType());
 
-		oRm.writeControlData(oControl);
-		oRm.writeClasses();
-		oRm.writeAttribute(MSUtils.ATTRIBUTES.CLOSABLE, oControl.getShowCloseButton());
-		oRm.writeAccessibilityState(oControl, MSUtils.getAccessibilityState.call(oControl));
-		oRm.write(">");
+		oRm.attr(MSUtils.ATTRIBUTES.CLOSABLE, oControl.getShowCloseButton());
+		oRm.accessibilityState(oControl, this.getAccessibilityState.call(oControl));
+		oRm.openEnd();
 	};
 
 	MessageStripRenderer.renderAriaTypeText = function (oRm, oControl) {
-		oRm.write("<span class='sapUiPseudoInvisibleText'>");
-		oRm.write(MSUtils.getAriaTypeText.call(oControl));
-		oRm.write("</span>");
+		oRm.openStart("span", oControl.getId() + "-info");
+		oRm.class("sapUiPseudoInvisibleText");
+		oRm.openEnd();
+		oRm.text(MSUtils.getAriaTypeText.call(oControl));
+		oRm.close("span");
 	};
 
 	MessageStripRenderer.renderIcon = function (oRm, oControl) {
-		oRm.write("<div class='" + MSUtils.CLASSES.ICON + "'>");
-		oRm.writeIcon(MSUtils.getIconURI.call(oControl), null, {
-			"title": null // prevent the icon title (icon is only decorative)
+		oRm.openStart("div");
+		oRm.class(MSUtils.CLASSES.ICON);
+		oRm.openEnd();
+		oRm.icon(MSUtils.getIconURI.call(oControl), null, {
+			"title": null, // prevent the icon title (icon is only decorative)
+			"aria-hidden": true
 		});
-		oRm.write("</div>");
+		oRm.close("div");
 	};
 
 	MessageStripRenderer.renderTextAndLink = function (oRm, oControl) {
 		var oFormattedText = oControl.getAggregation("_formattedText");
 
-		oRm.write("<div class='" + MSUtils.CLASSES.MESSAGE + "'>");
+		oRm.openStart("div", oControl.getId() + "-content");
+		oRm.class(MSUtils.CLASSES.MESSAGE);
+		oRm.openEnd();
 
 		// Determine if Formatted text control should be rendered or plain text control on "enableFormattedText" property
 		if (oControl.getEnableFormattedText() && oFormattedText) {
@@ -74,19 +81,15 @@ sap.ui.define(["./MessageStripUtilities"],
 		}
 
 		oRm.renderControl(oControl.getLink());
-		oRm.write("</div>");
+		oRm.close("div");
 	};
 
-	MessageStripRenderer.renderCloseButton = function (oRm) {
-		oRm.write("<button");
-		oRm.writeAttribute("class", MSUtils.CLASSES.CLOSE_BUTTON);
-		oRm.writeAttribute("title",
-			sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("MESSAGE_STRIP_CLOSE_BUTTON"));
-		oRm.write("></button>");
+	MessageStripRenderer.renderCloseButton = function (oRm, oControl) {
+		oRm.renderControl(oControl.getAggregation("_closeButton"));
 	};
 
 	MessageStripRenderer.endMessageStrip = function (oRm) {
-		oRm.write("</div>");
+		oRm.close("div");
 	};
 
 	return MessageStripRenderer;

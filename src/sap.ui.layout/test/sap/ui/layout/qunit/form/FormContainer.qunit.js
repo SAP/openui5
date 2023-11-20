@@ -1,22 +1,31 @@
-/* global QUnit, sinon */
+/* global QUnit */
 
-QUnit.config.autostart = false;
-
-sap.ui.require([
+sap.ui.define([
+	"sap/ui/core/Element",
 	"sap/ui/layout/form/FormContainer",
 	"sap/ui/layout/form/FormElement",
 	"sap/ui/core/Title",
-	"sap/m/Toolbar"
+	"sap/m/library",
+	"sap/m/Toolbar",
+	"sap/m/Label", // to make FormHelper could load all modules
+	"sap/m/Text", // to make FormHelper could load all modules
+	// to make FormHelper could load all modules
+	"sap/m/Button",
+	"sap/ui/core/theming/Parameters"
 	],
 	function(
+			Element,
 			FormContainer,
 			FormElement,
 			Title,
-			Toolbar
+			mLibrary,
+			Toolbar,
+			Label,
+			Text,
+			Button,
+			Parameters
 	) {
 	"use strict";
-
-	QUnit.start();
 
 	var oFormContainer;
 
@@ -60,22 +69,10 @@ sap.ui.require([
 		afterEach: afterTest
 	});
 
-	function asyncExpanderTest(assert, fnTest) {
-		if (sap.ui.require("sap/m/Button") && oFormContainer.getAggregation("_expandButton")) {
-			fnTest(assert);
-		} else {
-			var fnDone = assert.async();
-			sap.ui.require(["sap/m/Button"], function() {
-				fnTest(assert);
-				fnDone();
-			});
-		}
-	}
-
 	function expanderCreated(assert) {
 		var oButton = oFormContainer.getAggregation("_expandButton");
 		assert.ok(oButton, "expander created");
-		assert.equal(oButton.getType(), sap.m.ButtonType.Transparent, "Button type");
+		assert.equal(oButton.getType(), mLibrary.ButtonType.Transparent, "Button type");
 		oFormContainer.setExpandable(false);
 		var oButton2 = oButton = oFormContainer.getAggregation("_expandButton");
 		assert.ok(oButton, "Expand button still exist");
@@ -87,7 +84,27 @@ sap.ui.require([
 	QUnit.test("Expander created", function(assert) {
 		oFormContainer.setExpandable(true);
 
-		asyncExpanderTest(assert, expanderCreated);
+		expanderCreated(assert);
+	});
+
+	QUnit.test("Expander created async", function(assert) {
+		var fnResolve;
+		oFormContainer._oInitPromise = new Promise(function(fResolve, fReject) { // fake async loading
+			fnResolve = fResolve;
+		});
+
+		oFormContainer.setExpandable(true);
+		var oButton = oFormContainer.getAggregation("_expandButton");
+		assert.notOk(oButton, "expander not created");
+
+		var fnDone = assert.async();
+		fnResolve();
+
+		setTimeout(function() {
+			expanderCreated(assert);
+
+			fnDone();
+		}, 0);
 	});
 
 	QUnit.test("Expander default", function(assert) {
@@ -102,31 +119,31 @@ sap.ui.require([
 
 		oFormContainer.destroy();
 		oFormContainer = undefined;
-		assert.notOk(sap.ui.getCore().byId(sButtonId), "Button destroyed");
+		assert.notOk(Element.getElementById(sButtonId), "Button destroyed");
 
 		initTest();
 	}
 
 	QUnit.test("destroy button", function(assert) {
 		oFormContainer.setExpandable(true);
-		asyncExpanderTest(assert, expanderDestroyButton);
+		expanderDestroyButton(assert);
 	});
 
 	function expanderIcon(assert) {
 		var oButton = oFormContainer.getAggregation("_expandButton");
 
-		assert.equal(oButton.getIcon(), "sap-icon://expand-group", "Expander Icon");
+		assert.equal(oButton.getIcon(), Parameters._getThemeImage('_sap_ui_layout_Form_FormContainerExpImageURL'), "Expander Icon");
 		assert.equal(oButton.getTooltip(), "Expand", "Expander Tooltip");
 
 		oFormContainer.setExpanded(true);
-		assert.equal(oButton.getIcon(), "sap-icon://collapse-group", "Expander Icon");
+		assert.equal(oButton.getIcon(), Parameters._getThemeImage('_sap_ui_layout_Form_FormContainerColImageURL'), "Expander Icon");
 		assert.equal(oButton.getTooltip(), "Collapse", "Expander Tooltip");
 	}
 
 	QUnit.test("Expander icon", function(assert) {
 		oFormContainer.setExpanded(false);
 		oFormContainer.setExpandable(true);
-		asyncExpanderTest(assert, expanderIcon);
+		expanderIcon(assert);
 	});
 
 	function expanderPress(assert) {
@@ -139,7 +156,7 @@ sap.ui.require([
 		};
 
 		// simulate Form
-		sinon.stub(oFormContainer, "getParent").callsFake(function() {return oForm;});
+		this.stub(oFormContainer, "getParent").callsFake(function() {return oForm;});
 
 		// simulate button click
 		oButton.firePress();
@@ -150,7 +167,7 @@ sap.ui.require([
 	QUnit.test("Expander press", function(assert) {
 		oFormContainer.setExpandable(true);
 
-		asyncExpanderTest(assert, expanderPress);
+		expanderPress.call(this, assert);
 	});
 
 	QUnit.module("Title", {
@@ -184,8 +201,8 @@ sap.ui.require([
 		var oToolbar = new Toolbar("TB1");
 		oFormContainer.setToolbar(oToolbar);
 		assert.equal(oFormContainer.getToolbar(), oToolbar, "Toolbar set");
-		assert.equal(oToolbar.getActiveDesign(), sap.m.ToolbarDesign.Transparent, "Toolbar Auto-design set");
-		assert.equal(oToolbar.getDesign(), sap.m.ToolbarDesign.Auto, "Toolbar design not changed");
+		assert.equal(oToolbar.getActiveDesign(), mLibrary.ToolbarDesign.Transparent, "Toolbar Auto-design set");
+		assert.equal(oToolbar.getDesign(), mLibrary.ToolbarDesign.Auto, "Toolbar design not changed");
 	});
 
 	QUnit.module("FormElements", {
@@ -255,8 +272,8 @@ sap.ui.require([
 		var aFormElements = oFormContainer.getFormElements();
 
 		assert.equal(aFormElements.length, 0, "0 FormElement assigned");
-		assert.notOk(sap.ui.getCore().byId("FE1"), "FormElement1 destroyed");
-		assert.notOk(sap.ui.getCore().byId("FE2"), "FormElement2 destroyed");
+		assert.notOk(Element.getElementById("FE1"), "FormElement1 destroyed");
+		assert.notOk(Element.getElementById("FE2"), "FormElement2 destroyed");
 	});
 
 	QUnit.test("getVisibleFormElements", function(assert) {
@@ -301,7 +318,7 @@ sap.ui.require([
 		};
 
 		// simulate Form
-		sinon.stub(oFormContainer, "getParent").callsFake(function() {return oForm;});
+		this.stub(oFormContainer, "getParent").callsFake(function() {return oForm;});
 
 		oFormContainer.onLayoutDataChange();
 		assert.ok(bCalled, "onLayoutDataChange called on Form");
@@ -320,7 +337,7 @@ sap.ui.require([
 		};
 
 		// simulate Form
-		sinon.stub(oFormContainer, "getParent").callsFake(function() {return oForm;});
+		this.stub(oFormContainer, "getParent").callsFake(function() {return oForm;});
 
 		oFormContainer.contentOnAfterRendering("1", "2");
 		assert.ok(bCalled, "contentOnAfterRendering called on Form");
@@ -338,7 +355,7 @@ sap.ui.require([
 		};
 
 		// simulate Form
-		sinon.stub(oFormContainer, "getParent").callsFake(function() {return oForm;});
+		this.stub(oFormContainer, "getParent").callsFake(function() {return oForm;});
 
 		assert.equal(oFormContainer.getRenderedDomRef(), "X", "Value returned from Form");
 	});
@@ -353,23 +370,27 @@ sap.ui.require([
 		};
 
 		// simulate Form
-		sinon.stub(oFormContainer, "getParent").callsFake(function() {return oForm;});
+		this.stub(oFormContainer, "getParent").callsFake(function() {return oForm;});
 
 		assert.equal(oFormContainer.getElementRenderedDomRef(), "X", "Value returned from Form");
 	});
 
-	QUnit.test("invalidateLabels", function(assert) {
+	QUnit.test("_setEditable", function(assert) {
+		assert.notOk(oFormContainer.getProperty("_editable"), "Default: not editable");
+
 		var oFormElement1 = new FormElement("FE1");
 		var oFormElement2 = new FormElement("FE2");
+		this.spy(oFormElement1, "_setEditable");
+		this.spy(oFormElement2, "_setEditable");
+
 		oFormContainer.addFormElement(oFormElement1);
+
+		oFormContainer._setEditable(true);
+		assert.ok(oFormContainer.getProperty("_editable"), "Default: editable set");
+		assert.ok(oFormElement1._setEditable.calledWith(true), "_setEditable on FormElement1");
+
 		oFormContainer.addFormElement(oFormElement2);
-
-		sinon.spy(oFormElement1, "invalidateLabel");
-		sinon.spy(oFormElement2, "invalidateLabel");
-
-		oFormContainer.invalidateLabels();
-		assert.ok(oFormElement1.invalidateLabel.called, "invalidateLabel on FormElement1");
-		assert.ok(oFormElement2.invalidateLabel.called, "invalidateLabel on FormElement2");
+		assert.ok(oFormElement2._setEditable.calledWith(true), "_setEditable on FormElement2");
 	});
 
 });

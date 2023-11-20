@@ -1,0 +1,54 @@
+{
+	"_version": "1.15.0",
+	"sap.app": {
+		"id": "card.explorer.sample.hostAndExtensionActions.list.card",
+		"type": "card",
+		"title": "Sample of Host and Extension actions in Cards",
+		"subTitle": "Sample of Host and Extension actions in Cards",
+		"applicationVersion": {
+			"version": "1.0.0"
+		},
+		"shortTitle": "A short title for this Card",
+		"info": "Additional information about this Card",
+		"description": "A long description for this Card",
+		"tags": {
+			"keywords": [
+				"Action",
+				"Host",
+				"Extension",
+				"Card",
+				"Sample"
+			]
+		}
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"icons": {
+			"icon": "sap-icon://action"
+		}
+	},
+	"sap.card": {
+		"extension": "./ActionsExtension",
+		"type": "List",
+		"header": {
+			"title": "Available Trainings",
+			"icon": {
+				"src": "sap-icon://activities"
+			}
+		},
+		"content": {
+			"data": {
+				"json": [
+					{ "training": "Scrum", "location": "Online" },
+					{ "training": "Quality Management", "location": "Classroom Attendance" },
+					{ "training": "Test Driven Development", "location": "Classroom Attendance" },
+					{ "training": "Integration Cards Training", "location": "Online" }
+				]
+			},
+			"item": {
+				"title": "{training}",
+				"description": "{location}"
+			}
+		}
+	}
+}

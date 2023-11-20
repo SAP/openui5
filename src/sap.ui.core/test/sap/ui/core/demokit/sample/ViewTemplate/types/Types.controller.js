@@ -3,39 +3,42 @@
  */
 
 sap.ui.define([
-		'jquery.sap.global',
-		'sap/ui/core/mvc/Controller',
-		'sap/ui/core/ValueState',
-		'sap/m/MessageBox',
-		'sap/m/MessagePopover',
-		'sap/m/MessagePopoverItem',
-		'sap/m/MessageToast',
-		'jquery.sap.encoder',
-		'jquery.sap.xml'
-	], function(jQuery, Controller, ValueState, MessageBox, MessagePopover, MessagePopoverItem,
-		MessageToast) {
+	"sap/m/MessageToast",
+	"sap/ui/core/library",
+	"sap/ui/core/sample/common/Controller",
+	"sap/ui/model/odata/type/DateTimeOffset",
+	"sap/ui/util/XMLHelper"
+], function (MessageToast, library, Controller, DateTimeOffset, XMLHelper) {
 	"use strict";
+
+	// shortcut for sap.ui.core.ValueState
+	var ValueState = library.ValueState;
 
 	function showSuccessMessage(sContext) {
 		MessageToast.show("Data successfully " + sContext);
 	}
 
 	return Controller.extend("sap.ui.core.sample.ViewTemplate.types.Types", {
-		showErrorPopover : function (sButtonID) {
-			this.messagePopover.openBy(this.byId(sButtonID));
+		/**
+		 * Function is called by <code>onSourceCode</code> before the source code is pretty printed.
+		 * It replaces <code>identificationBox</code> control by the corresponding XML.
+		 *
+		 * @param {string} sSourceCode The source code
+		 * @returns {string} The modified source code
+		 */
+		beforePrettyPrinting : function (sSourceCode) {
+			var oView = this.getView(),
+				bV4 = oView.getModel("ui").getProperty("/v4"),
+				sIdentification = XMLHelper.serialize(oView.getViewData()[bV4]._xContent);
+
+			// adjust indentation
+			sIdentification = sIdentification.replace(/\n/g, "\n\t\t");
+
+			return sSourceCode.replace("<HBox id=\"identificationBox\"/>", sIdentification);
 		},
 
 		onInit : function () {
-
-			this.messagePopover = new MessagePopover({
-				items : {
-					path :"message>/",
-					template : new MessagePopoverItem({description : "{message>description}",
-						type : "{message>type}", title :"{message>message}"})
-				}
-			});
-			this.messagePopover.setModel(sap.ui.getCore().getMessageManager().getMessageModel(),
-				"message");
+			this.initMessagePopover("messagesButton");
 			this.getView().bindObject("/EdmTypesCollection(ID='1')");
 			this.getView().bindObject("v2>/EdmTypesCollection(ID='1')");
 			this.getView().bindObject("v4>/EdmTypesCollection(ID='1')");
@@ -44,8 +47,7 @@ sap.ui.define([
 		onReset : function () {
 			var i,
 				oModel = this.getView().getModel(),
-				aObjects = this.getView().findAggregatedObjects(true),
-				that = this;
+				aObjects = this.getView().findAggregatedObjects(true);
 
 			if (this.getView().getModel("ui").getProperty("/v2")) {
 				for (i = 0; i < aObjects.length; i += 1) {
@@ -55,13 +57,10 @@ sap.ui.define([
 				}
 				oModel.resetChanges();
 				oModel.callFunction("/ResetEdmTypes", {
-					urlParameters : {ID : '1'},
+					urlParameters : {ID : "1"},
 					method : "POST",
 					success : function () {
 						showSuccessMessage("reset");
-					},
-					error : function (oError) {
-						that.showErrorPopover("resetButton");
 					}
 				});
 			} else {
@@ -70,68 +69,37 @@ sap.ui.define([
 						//TODO: refresh needed as long there is no synchronisation
 						oModel.refresh();
 						showSuccessMessage("reset");
-					}, function () {
-						that.showErrorPopover("resetButton");
 					});
 			}
 		},
 
-		onResetContextBinding: function (oEvent) {
+		onResetContextBinding : function () {
 			this.getView().getElementBinding().resetChanges();
 			this.getView().getElementBinding("v4").resetChanges();
 		},
 
-		onResetModel: function (oEvent) {
+		onResetModel : function () {
 			this.getView().getModel().resetChanges();
 		},
 
 		onSave : function () {
-			var oModel = this.getView().getModel(),
-				that = this;
+			var oModel = this.getView().getModel();
 
 			if (this.getView().getModel("ui").getProperty("/v2")) {
-				oModel.attachEventOnce("requestCompleted", this, function(oEvent) {
+				oModel.attachEventOnce("requestCompleted", this, function (oEvent) {
 					if (oEvent.getParameter("success")) {
 						showSuccessMessage("saved");
-					} else {
-						that.showErrorPopover("saveButton");
 					}
 				});
 				oModel.submitChanges();
 			} else {
 				oModel.submitBatch("EDMTypes").then(function () {
 					showSuccessMessage("saved");
-				},
-				function () {
-					that.showErrorPopover("saveButton");
 				});
 			}
 		},
 
-		onSourceCode : function (oEvent) {
-			var oView = this.getView(),
-				bVisible = this.byId("toggleSourceCodeButton").getPressed(),
-				sSource;
-
-			oView.getModel("ui").setProperty("/codeVisible", bVisible);
-			if (bVisible) {
-				sSource = jQuery.sap.serializeXML(oView._xContent)
-					.replace(/<!--.*-->/g, "") // remove comments
-					.replace(/\t/g, "  ") // indent by just 2 spaces
-					.replace(/\n\s*\n/g, "\n") // remove empty lines
-					.replace("<HBox id=\"identificationBox\"/>",
-						jQuery.sap.serializeXML(
-							oView.getViewData()[oView.getModel("ui").getProperty("/v4")]._xContent)
-						)
-					.replace("</mvc:View>", "      </mvc:View>") // indent by just 6 spaces
-					.replace(/\t/g, "    ") // indent by just 4 spaces
-					.replace(/\n\s*\n/g, "\n");
-
-				oView.getModel("ui").setProperty("/code", sSource);
-			}
-		},
-
-		onV4 : function (oEvent) {
+		onV4 : function () {
 			var oView = this.getView(),
 				oIdentificationBox = this.byId("identificationBox"),
 				bV4 = oView.getModel("ui").getProperty("/v4");
@@ -142,6 +110,23 @@ sap.ui.define([
 			oView.setModel(oView.getModel(bV4 ? "v4" : "v2"));
 			oView.bindObject("/EdmTypesCollection(ID='1')"); // switch implementation v2 <--> v4
 			oIdentificationBox.addItem(oView.getViewData()[bV4]);
+			if (!bV4) {
+				// After V4 has been displayed the type is marked as bV4; type is reused when
+				// switching back to V2 but in this case the internal value is null -> reset the
+				// type when switching back to V2
+				oView.byId("I67").getBinding("value").getBindings()[0]
+					.setType(new DateTimeOffset());
+				oView.byId("I69").getBinding("value").getBindings()[0]
+					.setType(new DateTimeOffset());
+				oView.byId("I74").getBinding("value").getBindings()[0]
+					.setType(new DateTimeOffset());
+				oView.byId("I75").getBinding("dateValue").getBindings()[0]
+					.setType(new DateTimeOffset());
+				oView.byId("I79").getBinding("value").getBindings()[0]
+					.setType(new DateTimeOffset());
+				oView.byId("I80").getBinding("value").getBindings()[0]
+					.setType(new DateTimeOffset());
+			}
 		}
 	});
 });

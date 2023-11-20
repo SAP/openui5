@@ -1,0 +1,13 @@
+<core:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core"
+>
+	<Input
+		value="{displayValue}"
+		liveChange="_onLiveChange"
+		showSuggestion="true"
+		showValueHelp="true"
+		valueHelpOnly="{= ${config/codeType} === 'javascript'}"
+		valueHelpRequest="_openCodeEditor"
+	/>
+</core:FragmentDefinition>

@@ -4,22 +4,20 @@
 
 // Provides control sap.m.PullToRefresh.
 sap.ui.define([
-	'jquery.sap.global',
+	"sap/ui/core/Lib",
+	"sap/ui/thirdparty/jquery",
 	'./library',
 	'sap/ui/core/Control',
 	'sap/ui/Device',
 	'./PullToRefreshRenderer',
-	'jquery.sap.keycodes'
+	"sap/ui/events/KeyCodes",
+	"sap/base/security/encodeXML",
+	"sap/ui/core/InvisibleText",
+	"sap/m/BusyIndicator",
+	"sap/m/ImageHelper"
 ],
-	function(jQuery, library, Control, Device, PullToRefreshRenderer) {
+	function(Library, jQuery, library, Control, Device, PullToRefreshRenderer, KeyCodes, encodeXML, InvisibleText, BusyIndicator, ImageHelper) {
 	"use strict";
-
-
-
-	// shortcut for sap.m.ImageHelper
-	var ImageHelper = library.ImageHelper;
-
-
 
 	/**
 	 * Constructor for a new PullToRefresh.
@@ -43,58 +41,75 @@ sap.ui.define([
 	 * @public
 	 * @since 1.9.2
 	 * @alias sap.m.PullToRefresh
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
-	var PullToRefresh = Control.extend("sap.m.PullToRefresh", /** @lends sap.m.PullToRefresh.prototype */ { metadata : {
+	var PullToRefresh = Control.extend("sap.m.PullToRefresh", /** @lends sap.m.PullToRefresh.prototype */ {
+		metadata : {
 
-		library : "sap.m",
-		properties : {
-			/**
-			 * Optional description. May be used to inform a user, for example, when the list has been updated last time.
-			 */
-			description : {type : "string", group : "Misc", defaultValue : null},
+			library : "sap.m",
+			properties : {
+				/**
+				 * Optional description. May be used to inform a user, for example, when the list has been updated last time.
+				 */
+				description : {type : "string", group : "Misc", defaultValue : null},
 
-			/**
-			 * Set to true to display an icon/logo. Icon must be set either in the customIcon property or in the CSS theme for the PullToRefresh control.
-			 */
-			showIcon : {type : "boolean", group : "Appearance", defaultValue : false},
+				/**
+				 * Set to true to display an icon/logo. Icon must be set either in the customIcon property or in the CSS theme for the PullToRefresh control.
+				 */
+				showIcon : {type : "boolean", group : "Appearance", defaultValue : false},
 
-			/**
-			 * Provide a URI to a custom icon image to replace the SAP logo. Large images are scaled down to max 50px height.
-			 */
-			customIcon : {type : "sap.ui.core.URI", group : "Appearance", defaultValue : null},
+				/**
+				 * Provide a URI to a custom icon image to replace the SAP logo. Large images are scaled down to max 50px height.
+				 */
+				customIcon : {type : "sap.ui.core.URI", group : "Appearance", defaultValue : null},
 
-			/**
-			 * By default, this is set to true but then one or more requests are sent trying to get the density perfect version of image if this version of image doesn't exist on the server.
-			 *
-			 * If bandwidth is the key for the application, set this value to false.
-			 */
-			iconDensityAware : {type : "boolean", group : "Appearance", defaultValue : true}
+				/**
+				 * By default, this is set to true but then one or more requests are sent trying to get the density perfect version of image if this version of image doesn't exist on the server.
+				 *
+				 * If bandwidth is the key for the application, set this value to false.
+				 */
+				iconDensityAware : {type : "boolean", group : "Appearance", defaultValue : true}
+			},
+			events : {
+
+				/**
+				 * Event indicates that the user has requested new data
+				 */
+				refresh : {}
+			}
 		},
-		events : {
 
-			/**
-			 * Event indicates that the user has requested new data
-			 */
-			refresh : {}
-		}
-	}});
+		renderer: PullToRefreshRenderer
+	});
+
+	PullToRefresh.ARIA_F5_REFRESH = "PULL_TO_REFRESH_ARIA_F5";
 
 	PullToRefresh.prototype.init = function(){
-		this._bTouchMode = Device.support.touch && !Device.system.combi || jQuery.sap.simulateMobileOnDesktop;
+		this._bTouchMode = Device.support.touch && !Device.system.combi;
 		this._iState = 0; // 0 - normal; 1 - release to refresh; 2 - loading
+		this._sAriaF5Text = InvisibleText.getStaticId("sap.m", PullToRefresh.ARIA_F5_REFRESH);
 	};
 
 	PullToRefresh.prototype._loadBI = function(){
 		// lazy create a Busy indicator to avoid overhead when invisible at start
 		if (this.getVisible() && !this._oBusyIndicator) {
-			jQuery.sap.require("sap.m.BusyIndicator");
-			this._oBusyIndicator = new sap.m.BusyIndicator({
-				size: "1.7rem",
-				design: "auto"
+			this._oBusyIndicator = new BusyIndicator({
+				size: "1.7rem"
 			});
 			this._oBusyIndicator.setParent(this);
 		}
+	};
+
+	PullToRefresh.prototype._getAriaDescribedByReferences = function(){
+		var sTooltipText = this.getTooltip_AsString(),
+			sDescribedBy = this._sAriaF5Text,
+			sTooltipId;
+
+		if (sTooltipText) {
+			sTooltipId = InvisibleText.getStaticId("sap.m", sTooltipText);
+			sDescribedBy += ' ' + sTooltipId;
+		}
+
+		return sDescribedBy;
 	};
 
 	PullToRefresh.prototype.onBeforeRendering = function(){
@@ -169,7 +184,7 @@ sap.ui.define([
 		if (_scroller.y > -this._iTopTrigger && this._iState < 1 ) {
 			this.setState(1);
 			_scroller.minScrollY = 0;
-		} else if (_scroller.y < -this._iTopTrigger && this._iState == 1) {
+		} else if (_scroller.y < -this._iTopTrigger && this._iState === 1) {
 			this.setState(0);
 			_scroller.minScrollY = -domRef.offsetHeight;
 		}
@@ -188,7 +203,7 @@ sap.ui.define([
 	};
 
 	PullToRefresh.prototype.doScrollEnd = function(){
-		if (this._iState == 1) { // if released when ready - load
+		if (this._iState === 1) { // if released when ready - load
 			this.setState(2);
 			this.fireRefresh();
 		}
@@ -200,7 +215,7 @@ sap.ui.define([
 	*/
 	PullToRefresh.prototype.setState = function(iState){
 
-		if (this._iState == iState) {
+		if (this._iState === iState) {
 			return;
 		}
 
@@ -219,7 +234,7 @@ sap.ui.define([
 				$this.toggleClass("sapMFlip", false).toggleClass("sapMLoading", false);
 				$text.html(oResourceBundle.getText(this._bTouchMode ? "PULL2REFRESH_PULLDOWN" : "PULL2REFRESH_REFRESH"));
 				$this.removeAttr("aria-live");
-				$this.find(".sapMPullDownInfo").html(jQuery.sap.encodeHTML(this.getDescription()));
+				$this.find(".sapMPullDownInfo").html(encodeXML(this.getDescription()));
 				break;
 			case 1:
 				$this.toggleClass("sapMFlip", true);
@@ -234,17 +249,6 @@ sap.ui.define([
 				$this.find(".sapMPullDownInfo").html(this._bTouchMode ? oResourceBundle.getText("PULL2REFRESH_LOADING_LONG") : "");
 				break;
 		}
-	};
-
-	/*
-	* Override re-rendering for description
-	* @private
-	*/
-	PullToRefresh.prototype.setDescription = function(sDescription){
-		if (this._oDomRef) {
-			this.$().find(".sapMPullDownInfo").html(jQuery.sap.encodeHTML(sDescription));
-		}
-		return this.setProperty("description", sDescription, true);
 	};
 
 	/*
@@ -279,12 +283,29 @@ sap.ui.define([
 	 * @param {jQuery.Event} event - the keyboard event.
 	 * @private
 	 */
+	 PullToRefresh.prototype.onkeyup = function(event) {
+		if (event.which === KeyCodes.SPACE && this._iState === 1) {
+			this.setState(2);
+			this.fireRefresh();
+		}
+	};
+	/**
+	 * Handle the key down event for F5, if focused.
+	 *
+	 * @param {jQuery.Event} event - the keyboard event.
+	 * @private
+	 */
 	PullToRefresh.prototype.onkeydown = function(event) {
-		if ( event.which == jQuery.sap.KeyCodes.F5) {
+		if (event.which === KeyCodes.F5) {
 			this.onclick();
 			// do not refresh browser window
 			event.stopPropagation();
 			event.preventDefault();
+		} else if (event.which === KeyCodes.SHIFT) {
+			if (this._iState === 1) {
+				this.setState(0);
+				return;
+			}
 		}
 	};
 
@@ -311,8 +332,7 @@ sap.ui.define([
 		oEvent.preventDefault();
 
 		if (this._iState < 1) {
-			this.setState(2);
-			this.fireRefresh();
+			this.setState(1);
 		}
 	};
 
@@ -322,7 +342,6 @@ sap.ui.define([
 	 * Hides the control and resets it to the normal state. In non-touch environments the control is not hidden.
 	 *
 	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	PullToRefresh.prototype.hide = function(){
 		this.setState(0);
@@ -332,7 +351,7 @@ sap.ui.define([
 	};
 
 	PullToRefresh.prototype.setVisible = function(bVisible){
-		if (this.getVisible() == bVisible) {
+		if (this.getVisible() === bVisible) {
 			return this;
 		}
 
@@ -343,7 +362,7 @@ sap.ui.define([
 	};
 
 	PullToRefresh.prototype._getRB = function(){
-		return sap.ui.getCore().getLibraryResourceBundle("sap.m");
+		return Library.getResourceBundleFor("sap.m");
 	};
 
 	return PullToRefresh;

@@ -1,0 +1,19 @@
+{
+	"sap.app": {
+		"id": "test.sample"
+	},
+	"sap.card": {
+		"designtime": "designtime/groupsWithErrorMessageStrip",
+		"type": "List",
+		"configuration": {
+			"parameters": {
+				"string1": {
+					"value": ""
+				},
+				"string2": {
+					"value": ""
+				}
+			}
+		}
+	}
+}

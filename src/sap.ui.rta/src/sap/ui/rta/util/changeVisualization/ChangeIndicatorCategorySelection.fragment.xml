@@ -1,0 +1,47 @@
+<core:FragmentDefinition
+	xmlns:core="sap.ui.core"
+	xmlns="sap.m"
+	xmlns:l="sap.ui.layout">
+	<Popover
+		showHeader="false"
+		placement="Bottom"
+		id="popover">
+		<SegmentedButton selectedKey="{visualizationModel>/changeState}" width="420px" selectionChange=".onVersioningCategoryChange">
+			<items>
+				<SegmentedButtonItem
+					text="{i18n>BUT_CHANGEVISUALIZATION_VERSIONING_ALL}"
+					key="all"/>
+				<SegmentedButtonItem
+					text="{i18n>BUT_CHANGEVISUALIZATION_VERSIONING_DRAFT}"
+					key="draft"
+					visible="{visualizationModel>/versioningAvailable}"
+					enabled="{= ${visualizationModel>/hasDraftChanges} ||  ${visualizationModel>/hasDirtyChanges}}"/>
+				<SegmentedButtonItem
+					text="{i18n>BUT_CHANGEVISUALIZATION_VERSIONING_DIRTY}"
+					key="dirty"
+					enabled="{visualizationModel>/hasDirtyChanges}"/>
+			</items>
+		</SegmentedButton>
+		<MessageStrip
+			text="{visualizationModel>/popupInfoMessage}"
+			type="Information"
+			showIcon="true"
+			visible="{= ${visualizationModel>/sortedChanges/relevantHiddenChanges}.length > 0 }">
+			<link>
+				<Link text="{i18n>BUT_CHANGEVISUALIZATION_LEARNMORE}"
+					target="_blank"
+					href="https://ui5.sap.com/#/topic/35274280504f42cd87cc4fd3d403ca91.html#loio35274280504f42cd87cc4fd3d403ca91/visualization"/>
+			</link>
+		</MessageStrip>
+		<List
+			class="sapUiRtaChangesList"
+			items="{visualizationModel>/changeCategories/}">
+			<StandardListItem
+				title="{visualizationModel>title}"
+				counter="{visualizationModel>count}"
+				type="{= ${visualizationModel>count} > 0 ? 'Active' : 'Inactive'}"
+				icon="{visualizationModel>icon}"
+				press=".onChangeCategorySelection"/>
+		</List>
+	</Popover>
+</core:FragmentDefinition>

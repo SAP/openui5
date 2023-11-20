@@ -3,41 +3,43 @@
 // Test only the things relevant for ResponsiveGridLayout. The basic Form functionality
 // is tested in Form, FormContainer and FormElement qUnit tests.
 
-QUnit.config.autostart = false;
-
-sap.ui.require([
-	"jquery.sap.global",
+sap.ui.define([
+	"sap/ui/core/Element",
+	"sap/ui/thirdparty/jquery",
+	"sap/base/util/each",
 	"sap/ui/layout/form/Form",
 	"sap/ui/layout/form/ResponsiveGridLayout",
 	"sap/ui/layout/form/FormContainer",
 	"sap/ui/layout/form/FormElement",
-	"sap/ui/core/VariantLayoutData",
 	"sap/ui/layout/GridData",
+	"sap/ui/core/VariantLayoutData",
 	"sap/ui/core/Title",
 	"sap/m/Toolbar",
 	"sap/m/Label",
 	"sap/m/Input",
 	"sap/m/Text",
-	"sap/m/Link"
-	],
+	"sap/m/Link",
+	"sap/ui/core/Core"
+],
 	function(
+		Element,
 		jQuery,
+		each,
 		Form,
 		ResponsiveGridLayout,
 		FormContainer,
 		FormElement,
-		VariantLayoutData,
 		GridData,
+		VariantLayoutData,
 		Title,
 		Toolbar,
 		Label,
 		Input,
 		Text,
-		Link
+		Link,
+		oCore
 	) {
 	"use strict";
-
-	QUnit.start();
 
 	var oForm;
 	var oResponsiveGridLayout;
@@ -110,8 +112,8 @@ sap.ui.require([
 			layout: oResponsiveGridLayout,
 			editable: true,
 			formContainers: aFormContainers
-		}).placeAt("content");
-		sap.ui.getCore().applyChanges();
+		}).placeAt("qunit-fixture");
+		oCore.applyChanges();
 	}
 
 	function initTestOneContainer() {
@@ -157,7 +159,11 @@ sap.ui.require([
 	});
 
 	QUnit.test("one container specific things", function(assert) {
-		assert.notOk(sap.ui.getCore().byId("F1--Grid"), "no Main Grid");
+		assert.notOk(Element.getElementById("F1--Grid"), "no Main Grid");
+	});
+
+	QUnit.test("renderControlsForSemanticElement", function(assert) {
+		assert.notOk(oResponsiveGridLayout.renderControlsForSemanticElement(), "no control rendering supported");
 	});
 
 	QUnit.module("inner Grid", {
@@ -166,7 +172,7 @@ sap.ui.require([
 	});
 
 	QUnit.test("content of Grid", function(assert) {
-		var oGrid = sap.ui.getCore().byId("FC1--Grid");
+		var oGrid = Element.getElementById("FC1--Grid");
 		var aContent = oGrid.getContent();
 		assert.equal(aContent.length, 4, "Grid has 4 Elements");
 		assert.equal(aContent[0].getId(), "L1", "Label1 is 1. element");
@@ -180,15 +186,15 @@ sap.ui.require([
 	});
 
 	QUnit.test("Panel", function(assert) {
-		var oPanel = sap.ui.getCore().byId("FC1---Panel");
+		var oPanel = Element.getElementById("FC1---Panel");
 		assert.notOk(oPanel, "no panel created for first container");
 
-		oPanel = sap.ui.getCore().byId("FC2---Panel");
+		oPanel = Element.getElementById("FC2---Panel");
 		assert.ok(oPanel, "panel created for second container");
 		assert.equal(oTitle.getParent().getId(), "FC2", "FormContainer is still parent of Title");
 		assert.equal(oPanel.getContent().getId(), "FC2--Grid", "Grid is inside Panel");
-		assert.ok(jQuery.sap.domById("T2"), "Title rendered");
-		assert.ok(jQuery.sap.domById("FC2--Exp"), "Expander rendered");
+		assert.ok(window.document.getElementById("T2"), "Title rendered");
+		assert.ok(window.document.getElementById("FC2--Exp"), "Expander rendered");
 		assert.equal(jQuery("#FC2---Panel").attr("title"), "Test", "tooltip set on panel");
 	});
 
@@ -200,7 +206,7 @@ sap.ui.require([
 
 		oFormContainer1.addAriaLabelledBy("XXX");
 		oFormContainer2.addAriaLabelledBy("YYY");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.equal(jQuery("#FC1--Grid").attr("role"), "form", "role \"form\" set on grid");
 		assert.equal(jQuery("#FC1--Grid").attr("aria-labelledby"), "XXX", "aria-labelledby set on grid");
@@ -210,16 +216,16 @@ sap.ui.require([
 	QUnit.test("Toolbar", function(assert) {
 		var oToolbar = new Toolbar("TB1");
 		oFormContainer2.setToolbar(oToolbar);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
-		assert.notOk(jQuery.sap.domById("T2"), "Title not rendered");
-		assert.notOk(jQuery.sap.domById("FC2--Exp"), "Expander not rendered");
-		assert.ok(jQuery.sap.domById("TB1"), "Toolbar rendered");
+		assert.notOk(window.document.getElementById("T2"), "Title not rendered");
+		assert.notOk(window.document.getElementById("FC2--Exp"), "Expander not rendered");
+		assert.ok(window.document.getElementById("TB1"), "Toolbar rendered");
 		assert.ok(jQuery("#FC2---Panel").attr("aria-labelledby"), "TB1", "aria-labelledby set on panel");
 	});
 
 	QUnit.test("main Grid", function(assert) {
-		var oGrid = sap.ui.getCore().byId("F1--Grid");
+		var oGrid = Element.getElementById("F1--Grid");
 		var aContent = oGrid.getContent();
 
 		assert.equal(aContent.length, 2, "Grid has 2 Elements");
@@ -228,7 +234,7 @@ sap.ui.require([
 	});
 
 	QUnit.test("add/remove fields", function(assert) {
-		var oGrid = sap.ui.getCore().byId("FC2--Grid");
+		var oGrid = Element.getElementById("FC2--Grid");
 		var oNewField = new Input("I5");
 		oFormElement4.insertField(oNewField, 0);
 		var aContent = oGrid.getContent();
@@ -244,7 +250,7 @@ sap.ui.require([
 	});
 
 	QUnit.test("add/remove FormElement", function(assert) {
-		var oGrid = sap.ui.getCore().byId("FC2--Grid");
+		var oGrid = Element.getElementById("FC2--Grid");
 		var oNewLabel = new Label("L5", {text: "Label 5"});
 		var oNewField = new Input("I5");
 		var oNewFormElement = new FormElement("FE5",{
@@ -266,7 +272,7 @@ sap.ui.require([
 	});
 
 	QUnit.test("visibility of FormElement", function(assert) {
-		var oGrid = sap.ui.getCore().byId("FC2--Grid");
+		var oGrid = Element.getElementById("FC2--Grid");
 		var oNewLabel = new Label("L5", {text: "Label 5"});
 		var oNewField = new Input("I5");
 		var oNewFormElement = new FormElement("FE5",{
@@ -286,28 +292,28 @@ sap.ui.require([
 	});
 
 	QUnit.test("add/remove FormContainer", function(assert) {
-		var oGrid = sap.ui.getCore().byId("F1--Grid");
+		var oGrid = Element.getElementById("F1--Grid");
 		var oNewFormContainer = new FormContainer("FC3",{ title: "Test"});
 		oForm.insertFormContainer(oNewFormContainer, 1);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		var aContent = oGrid.getContent();
 
 		assert.equal(aContent.length, 3, "Grid has 3 Elements");
 		assert.equal(aContent[1].getId(), "FC3---Panel", "new Panel is 2. element");
 
 		oForm.removeFormContainer(oNewFormContainer);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		aContent = oGrid.getContent();
 
 		assert.equal(aContent.length, 2, "Grid has 2 Elements");
 		assert.equal(aContent[1].getId(), "FC2---Panel", "Panel is 2. element");
 
 		oForm.removeFormContainer(oFormContainer1);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		aContent = oGrid.getContent();
 
-		assert.notOk(jQuery.sap.domById("F1--Grid"), "Main grid not rendered");
-		assert.ok(jQuery.sap.domById("FC2---Panel"), "container panel rendered");
+		assert.notOk(window.document.getElementById("F1--Grid"), "Main grid not rendered");
+		assert.ok(window.document.getElementById("FC2---Panel"), "container panel rendered");
 
 		oNewFormContainer.destroy();
 		oFormContainer1.destroy();
@@ -316,35 +322,35 @@ sap.ui.require([
 	QUnit.test("remove Panel", function(assert) {
 		oFormContainer2.destroyTitle();
 		oFormContainer2.setExpandable(false);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
-		var oGrid = sap.ui.getCore().byId("F1--Grid");
+		var oGrid = Element.getElementById("F1--Grid");
 		var aContent = oGrid.getContent();
-		var oPanel = sap.ui.getCore().byId("FC2---Panel");
+		var oPanel = Element.getElementById("FC2---Panel");
 		assert.notOk(oPanel, "no panel created for container");
 		assert.equal(aContent.length, 2, "Grid has 2 Elements");
 		assert.equal(aContent[1].getId(), "FC2--Grid", "Grid is 2. element");
 
 		oFormContainer2.setTitle("Test");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		aContent = oGrid.getContent();
-		oPanel = sap.ui.getCore().byId("FC2---Panel");
+		oPanel = Element.getElementById("FC2---Panel");
 		assert.ok(oPanel, "panel created for container");
 		assert.equal(aContent.length, 2, "Grid has 2 Elements");
 		assert.equal(aContent[1].getId(), "FC2---Panel", "Panel is 2. element");
 	});
 
 	QUnit.test("visibility of FormContainer", function(assert) {
-		var oGrid = sap.ui.getCore().byId("F1--Grid");
+		var oGrid = Element.getElementById("F1--Grid");
 		var oNewFormContainer = new FormContainer("FC3",{ title: "Test", visible: false});
 		oForm.insertFormContainer(oNewFormContainer, 1);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		var aContent = oGrid.getContent();
 
 		assert.equal(aContent.length, 2, "Grid has 2 Elements, as invisible FormContainer is not rendered");
 
 		oNewFormContainer.setVisible(true);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		aContent = oGrid.getContent();
 		assert.equal(aContent.length, 3, "Grid has 3 Elements");
 		assert.equal(aContent[1].getId(), "FC3---Panel", "new Panel is 2. element");
@@ -356,10 +362,10 @@ sap.ui.require([
 	});
 
 	QUnit.test("default on FormContainer", function(assert) {
-		var oGrid = sap.ui.getCore().byId("F1--Grid");
+		var oGrid = Element.getElementById("F1--Grid");
 		assert.equal(oGrid.getDefaultSpan(), "L6 M12 S12", "Main Grid default span");
 
-		oGrid = sap.ui.getCore().byId("FC1--Grid");
+		oGrid = Element.getElementById("FC1--Grid");
 		var oLayoutData = oGrid.getLayoutData();
 		assert.equal(oLayoutData.getId(), "FC1--Grid--LD", "Grid has calculated LayoutData");
 		assert.ok(oLayoutData.getLinebreakL(), "calculated LayoutData linebreakL set");
@@ -376,7 +382,7 @@ sap.ui.require([
 		assert.ok(oParent.hasClass("sapUiFormResGridLastRowL"), "class sapUiFormResGridLastRowL set");
 		assert.notOk(oParent.hasClass("sapUiFormResGridLastRowM"), "class sapUiFormResGridLastRowM not set");
 
-		var oPanel = sap.ui.getCore().byId("FC2---Panel");
+		var oPanel = Element.getElementById("FC2---Panel");
 		oLayoutData = oPanel.getLayoutData();
 		assert.equal(oLayoutData.getId(), "FC2---Panel--LD", "Panel has calculated LayoutData");
 		assert.notOk(oLayoutData.getLinebreakL(), "calculated LayoutData linebreakL not set");
@@ -397,8 +403,8 @@ sap.ui.require([
 	QUnit.test("custom LayoutData on FormContainer", function(assert) {
 		var oLayoutData = new GridData("GD1", {linebreak: true});
 		oFormContainer2.setLayoutData(oLayoutData);
-		sap.ui.getCore().applyChanges();
-		var oPanel = sap.ui.getCore().byId("FC2---Panel");
+		oCore.applyChanges();
+		var oPanel = Element.getElementById("FC2---Panel");
 
 		assert.equal(oPanel.getLayoutData().getId(), "GD1", "Original LayoutData returned");
 		assert.equal(oLayoutData.getParent().getId(), "FC2", "Parent of LayoutData is still FormContainer");
@@ -433,12 +439,12 @@ sap.ui.require([
 		oResponsiveGridLayout.setColumnsXL(4);
 		oResponsiveGridLayout.setColumnsL(3);
 		oResponsiveGridLayout.setColumnsM(2);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
-		var oGrid = sap.ui.getCore().byId("F1--Grid");
+		var oGrid = Element.getElementById("F1--Grid");
 		assert.equal(oGrid.getDefaultSpan(), "XL3 L4 M6 S12", "Main Grid default span");
 
-		oGrid = sap.ui.getCore().byId("FC1--Grid");
+		oGrid = Element.getElementById("FC1--Grid");
 		var oLayoutData = oGrid.getLayoutData();
 		var oParent = jQuery("#FC1--Grid").parent();
 		assert.ok(oLayoutData.getLinebreakXL(), "calculated LayoutData linebreakXL set");
@@ -454,7 +460,7 @@ sap.ui.require([
 		assert.notOk(oParent.hasClass("sapUiFormResGridLastRowL"), "class sapUiFormResGridLastRowL not set");
 		assert.notOk(oParent.hasClass("sapUiFormResGridLastRowM"), "class sapUiFormResGridLastRowM not set");
 
-		var oPanel = sap.ui.getCore().byId("FC2---Panel");
+		var oPanel = Element.getElementById("FC2---Panel");
 		oLayoutData = oPanel.getLayoutData();
 		oParent = jQuery("#FC2---Panel").parent();
 		assert.notOk(oLayoutData.getLinebreakXL(), "calculated LayoutData linebreakXL not set");
@@ -470,7 +476,7 @@ sap.ui.require([
 		assert.notOk(oParent.hasClass("sapUiFormResGridLastRowL"), "class sapUiFormResGridLastRowL not set");
 		assert.notOk(oParent.hasClass("sapUiFormResGridLastRowM"), "class sapUiFormResGridLastRowM not set");
 
-		oGrid = sap.ui.getCore().byId("FC3--Grid");
+		oGrid = Element.getElementById("FC3--Grid");
 		oLayoutData = oGrid.getLayoutData();
 		oParent = jQuery("#FC3--Grid").parent();
 		assert.notOk(oLayoutData.getLinebreakXL(), "calculated LayoutData linebreakXL not set");
@@ -486,7 +492,7 @@ sap.ui.require([
 		assert.notOk(oParent.hasClass("sapUiFormResGridLastRowL"), "class sapUiFormResGridLastRowL not set");
 		assert.notOk(oParent.hasClass("sapUiFormResGridLastRowM"), "class sapUiFormResGridLastRowM not set");
 
-		oGrid = sap.ui.getCore().byId("FC4--Grid");
+		oGrid = Element.getElementById("FC4--Grid");
 		oLayoutData = oGrid.getLayoutData();
 		oParent = jQuery("#FC4--Grid").parent();
 		assert.notOk(oLayoutData.getLinebreakXL(), "calculated LayoutData linebreakXL not set");
@@ -502,7 +508,7 @@ sap.ui.require([
 		assert.notOk(oParent.hasClass("sapUiFormResGridLastRowL"), "class sapUiFormResGridLastRowL not set");
 		assert.notOk(oParent.hasClass("sapUiFormResGridLastRowM"), "class sapUiFormResGridLastRowM not set");
 
-		oGrid = sap.ui.getCore().byId("FC5--Grid");
+		oGrid = Element.getElementById("FC5--Grid");
 		oLayoutData = oGrid.getLayoutData();
 		oParent = jQuery("#FC5--Grid").parent();
 		assert.ok(oLayoutData.getLinebreakXL(), "calculated LayoutData linebreakXL set");
@@ -518,7 +524,7 @@ sap.ui.require([
 		assert.notOk(oParent.hasClass("sapUiFormResGridLastRowL"), "class sapUiFormResGridLastRowL not set");
 		assert.notOk(oParent.hasClass("sapUiFormResGridLastRowM"), "class sapUiFormResGridLastRowM not set");
 
-		oGrid = sap.ui.getCore().byId("FC6--Grid");
+		oGrid = Element.getElementById("FC6--Grid");
 		oLayoutData = oGrid.getLayoutData();
 		oParent = jQuery("#FC6--Grid").parent();
 		assert.notOk(oLayoutData.getLinebreakXL(), "calculated LayoutData linebreakXL not set");
@@ -534,7 +540,7 @@ sap.ui.require([
 		assert.notOk(oParent.hasClass("sapUiFormResGridLastRowL"), "class sapUiFormResGridLastRowL not set");
 		assert.notOk(oParent.hasClass("sapUiFormResGridLastRowM"), "class sapUiFormResGridLastRowM not set");
 
-		oGrid = sap.ui.getCore().byId("FC7--Grid");
+		oGrid = Element.getElementById("FC7--Grid");
 		oLayoutData = oGrid.getLayoutData();
 		oParent = jQuery("#FC7--Grid").parent();
 		assert.notOk(oLayoutData.getLinebreakXL(), "calculated LayoutData linebreakXL not set");
@@ -550,7 +556,7 @@ sap.ui.require([
 		assert.ok(oParent.hasClass("sapUiFormResGridLastRowL"), "class sapUiFormResGridLastRowL set");
 		assert.notOk(oParent.hasClass("sapUiFormResGridLastRowM"), "class sapUiFormResGridLastRowM not set");
 
-		oGrid = sap.ui.getCore().byId("FC8--Grid");
+		oGrid = Element.getElementById("FC8--Grid");
 		oLayoutData = oGrid.getLayoutData();
 		oParent = jQuery("#FC8--Grid").parent();
 		assert.notOk(oLayoutData.getLinebreakXL(), "calculated LayoutData linebreakXL not set");
@@ -566,7 +572,7 @@ sap.ui.require([
 		assert.ok(oParent.hasClass("sapUiFormResGridLastRowL"), "class sapUiFormResGridLastRowL set");
 		assert.notOk(oParent.hasClass("sapUiFormResGridLastRowM"), "class sapUiFormResGridLastRowM not set");
 
-		oGrid = sap.ui.getCore().byId("FC9--Grid");
+		oGrid = Element.getElementById("FC9--Grid");
 		oLayoutData = oGrid.getLayoutData();
 		oParent = jQuery("#FC9--Grid").parent();
 		assert.ok(oLayoutData.getLinebreakXL(), "calculated LayoutData linebreakXL set");
@@ -586,9 +592,9 @@ sap.ui.require([
 	QUnit.test("default on Labels and Fields", function(assert) {
 		var oNewField = new Input("I5");
 		oFormElement2.addField(oNewField);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
-		var oGrid = sap.ui.getCore().byId("FC1--Grid");
+		var oGrid = Element.getElementById("FC1--Grid");
 		var oLayoutData = oGrid._getLayoutDataForControl(oLabel1);
 		var oParent = jQuery("#L1").parent();
 		assert.equal(oLayoutData.getId(), "RGL1--Dummy", "calculated LayoutData used");
@@ -667,9 +673,9 @@ sap.ui.require([
 		oFormElement4.addField(oNewField9);
 		var oNewField10 = new Input("I14");
 		oFormElement4.addField(oNewField10);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
-		var oGrid = sap.ui.getCore().byId("FC2--Grid");
+		var oGrid = Element.getElementById("FC2--Grid");
 		var oLayoutData = oGrid._getLayoutDataForControl(oField4);
 		var oParent = jQuery("#I4").parent();
 		assert.equal(oLayoutData.getId(), "RGL1--Dummy", "calculated LayoutData used");
@@ -743,9 +749,9 @@ sap.ui.require([
 
 	QUnit.test("default on Fields without Label", function(assert) {
 		oFormElement2.destroyLabel();
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
-		var oGrid = sap.ui.getCore().byId("FC1--Grid");
+		var oGrid = Element.getElementById("FC1--Grid");
 		var oLayoutData = oGrid._getLayoutDataForControl(oField2);
 		var oParent = jQuery("#I2").parent();
 		assert.equal(oLayoutData.getId(), "RGL1--Dummy", "calculated LayoutData used");
@@ -765,9 +771,9 @@ sap.ui.require([
 		var oLayoutData = new GridData("GD1", {span: "XL3 L3 M3 S3"});
 		var oVariantlayoutData = new VariantLayoutData("VD1", {multipleLayoutData: [oLayoutData]});
 		oLabel2.setLayoutData(oVariantlayoutData);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
-		var oGrid = sap.ui.getCore().byId("FC1--Grid");
+		var oGrid = Element.getElementById("FC1--Grid");
 		oLayoutData = oGrid._getLayoutDataForControl(oLabel2);
 		var oParent = jQuery("#L2").parent();
 		assert.equal(oLayoutData.getId(), "GD1", "custom LayoutData used");
@@ -801,9 +807,9 @@ sap.ui.require([
 		var oLayoutData = new GridData("GD1", {span: "XL3 L3 M3 S3"});
 		var oNewField = new Input("I5", {layoutData: oLayoutData});
 		oFormElement2.addField(oNewField);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
-		var oGrid = sap.ui.getCore().byId("FC1--Grid");
+		var oGrid = Element.getElementById("FC1--Grid");
 		oLayoutData = oGrid._getLayoutDataForControl(oField2);
 		var oParent = jQuery("#I2").parent();
 		assert.equal(oLayoutData.getId(), "RGL1--Dummy", "calculated LayoutData used");
@@ -841,9 +847,9 @@ sap.ui.require([
 		oFormElement4.addField(oNewField2);
 		var oNewField3 = new Input("I7");
 		oFormElement4.addField(oNewField3);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
-		var oGrid = sap.ui.getCore().byId("FC2--Grid");
+		var oGrid = Element.getElementById("FC2--Grid");
 		oLayoutData = oGrid._getLayoutDataForControl(oField4);
 		var oParent = jQuery("#I4").parent();
 		assert.equal(oLayoutData.getId(), "RGL1--Dummy", "calculated LayoutData used");
@@ -902,10 +908,10 @@ sap.ui.require([
 		var oLayoutData = new GridData("GD1", {span: "XL3 L3 M3 S3"});
 		var oNewField = new Input("I5", {layoutData: oLayoutData});
 		oFormElement2.addField(oNewField);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		oLayoutData.setSpan("L2 M2 S2");
-		var oGrid = sap.ui.getCore().byId("FC1--Grid");
+		var oGrid = Element.getElementById("FC1--Grid");
 		oLayoutData = oGrid._getLayoutDataForControl(oField2);
 		assert.equal(oLayoutData.getId(), "RGL1--Dummy", "calculated LayoutData used");
 		assert.equal(oLayoutData.getSpan(), "XL6 L6 M8 S12", "Span on Field");
@@ -919,16 +925,16 @@ sap.ui.require([
 		oResponsiveGridLayout.setLabelSpanL(5);
 		oResponsiveGridLayout.setLabelSpanM(4);
 		oResponsiveGridLayout.setLabelSpanS(3);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
-		var oGrid = sap.ui.getCore().byId("FC1--Grid");
+		var oGrid = Element.getElementById("FC1--Grid");
 		var oLayoutData = oGrid._getLayoutDataForControl(oLabel1);
 		assert.equal(oLayoutData.getSpan(), "XL5 L5 M4 S3", "Span on Label");
 		oLayoutData = oGrid._getLayoutDataForControl(oField1);
 		assert.equal(oLayoutData.getSpan(), "XL7 L7 M8 S9", "Span on Field");
 
 		oResponsiveGridLayout.setLabelSpanXL(6);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		oLayoutData = oGrid._getLayoutDataForControl(oLabel1);
 		assert.equal(oLayoutData.getSpan(), "XL6 L5 M4 S3", "Span on Label");
@@ -938,16 +944,16 @@ sap.ui.require([
 
 	QUnit.test("adjustLabelSpan", function(assert) {
 		oResponsiveGridLayout.setColumnsM(2);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
-		var oGrid = sap.ui.getCore().byId("FC1--Grid");
+		var oGrid = Element.getElementById("FC1--Grid");
 		var oLayoutData = oGrid._getLayoutDataForControl(oLabel1);
 		assert.equal(oLayoutData.getSpan(), "XL4 L4 M4 S12", "Span on Label");
 		oLayoutData = oGrid._getLayoutDataForControl(oField1);
 		assert.equal(oLayoutData.getSpan(), "XL8 L8 M8 S12", "Span on Field");
 
 		oResponsiveGridLayout.setAdjustLabelSpan(false);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		oLayoutData = oGrid._getLayoutDataForControl(oLabel1);
 		assert.equal(oLayoutData.getSpan(), "XL4 L4 M2 S12", "Span on Label");
@@ -957,7 +963,7 @@ sap.ui.require([
 		oResponsiveGridLayout.setColumnsM(1);
 		oResponsiveGridLayout.setColumnsL(1);
 		oResponsiveGridLayout.setAdjustLabelSpan(true);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		oLayoutData = oGrid._getLayoutDataForControl(oLabel1);
 		assert.equal(oLayoutData.getSpan(), "XL2 L2 M2 S12", "Span on Label");
@@ -967,7 +973,7 @@ sap.ui.require([
 		oResponsiveGridLayout.setColumnsL(2);
 		oLayoutData = new GridData("GD1", {spanL: 12});
 		oFormContainer1.setLayoutData(oLayoutData);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		oLayoutData = oGrid._getLayoutDataForControl(oLabel1);
 		assert.equal(oLayoutData.getSpan(), "XL2 L2 M2 S12", "Span on Label");
@@ -980,14 +986,14 @@ sap.ui.require([
 		oResponsiveGridLayout.setEmptySpanM(3);
 		oResponsiveGridLayout.setEmptySpanS(4);
 		oResponsiveGridLayout.setLabelSpanS(3); // emptySpan only works in S for labelspan > 12
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
-		var oGrid = sap.ui.getCore().byId("FC1--Grid");
+		var oGrid = Element.getElementById("FC1--Grid");
 		var oLayoutData = oGrid._getLayoutDataForControl(oField1);
 		assert.equal(oLayoutData.getSpan(), "XL6 L6 M7 S5", "Span on Field");
 
 		oResponsiveGridLayout.setEmptySpanXL(1);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		oLayoutData = oGrid._getLayoutDataForControl(oField1);
 		assert.equal(oLayoutData.getSpan(), "XL7 L6 M7 S5", "Span on Field");
@@ -997,12 +1003,44 @@ sap.ui.require([
 		oResponsiveGridLayout.setBreakpointXL(1500);
 		oResponsiveGridLayout.setBreakpointL(1000);
 		oResponsiveGridLayout.setBreakpointM(500);
-		sap.ui.getCore().applyChanges();
-		var oGrid = sap.ui.getCore().byId("F1--Grid");
+		oCore.applyChanges();
+		var oGrid = Element.getElementById("F1--Grid");
 
 		assert.equal(oGrid._iBreakPointLargeDesktop, "1500", "BreapointXL on Main Grid");
 		assert.equal(oGrid._iBreakPointDesktop, "1000", "BreapointL on Main Grid");
 		assert.equal(oGrid._iBreakPointTablet, "500", "BreapointM on Main Grid");
+	});
+
+	QUnit.test("getLayoutDataForDelimiter", function(assert) {
+		var oLayoutData = oResponsiveGridLayout.getLayoutDataForDelimiter();
+		assert.ok(oLayoutData, "LayoutData returned");
+		assert.ok(oLayoutData && oLayoutData.isA("sap.ui.layout.GridData"), "GridData returned");
+		assert.equal(oLayoutData.getSpanS(), 1, "spanS");
+		assert.equal(oLayoutData.getSpanM(), 1, "spanM");
+		assert.equal(oLayoutData.getSpanL(), 1, "spanL");
+		assert.equal(oLayoutData.getSpanXL(), 1, "spanXL");
+	});
+
+	QUnit.test("getLayoutDataForSemanticField", function(assert) {
+		var oLayoutData = oResponsiveGridLayout.getLayoutDataForSemanticField(2, 1);
+		assert.ok(oLayoutData, "LayoutData returned");
+		assert.ok(oLayoutData && oLayoutData.isA("sap.ui.layout.GridData"), "GridData returned");
+		assert.equal(oLayoutData.getSpanS(), 11, "spanS");
+		assert.equal(oLayoutData.getSpanM(), 3, "spanM");
+		assert.equal(oLayoutData.getSpanL(), 3, "spanL");
+		assert.equal(oLayoutData.getSpanXL(), 3, "spanXL");
+
+		var oLayoutData2 = oResponsiveGridLayout.getLayoutDataForSemanticField(2, 2);
+		assert.ok(oLayoutData2, "LayoutData returned");
+		assert.ok(oLayoutData2 && oLayoutData.isA("sap.ui.layout.GridData"), "GridData returned");
+		assert.equal(oLayoutData2.getSpanS(), 11, "spanS");
+		assert.equal(oLayoutData2.getSpanM(), 4, "spanM");
+		assert.equal(oLayoutData2.getSpanL(), 4, "spanL");
+		assert.equal(oLayoutData2.getSpanXL(), 4, "spanXL");
+		assert.equal(oLayoutData2, oLayoutData2, "LayoutData just updated, no new instance");
+
+		oLayoutData.destroy();
+		oLayoutData2.destroy();
 	});
 
 	QUnit.module("LayoutData one Container", {
@@ -1012,9 +1050,9 @@ sap.ui.require([
 
 	QUnit.test("singleContainerFullSize", function(assert) {
 		oResponsiveGridLayout.setSingleContainerFullSize(false);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
-		var oGrid = sap.ui.getCore().byId("F1--Grid");
+		var oGrid = Element.getElementById("F1--Grid");
 
 		assert.ok(oGrid, "Main grid used");
 		var aContent = oGrid.getContent();
@@ -1025,9 +1063,9 @@ sap.ui.require([
 
 	QUnit.test("default on Fields and Label", function(assert) {
 		oFormElement2.destroyLabel();
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
-		var oGrid = sap.ui.getCore().byId("FC1--Grid");
+		var oGrid = Element.getElementById("FC1--Grid");
 		var oLayoutData = oGrid._getLayoutDataForControl(oLabel1);
 		var oParent = jQuery("#L1").parent();
 		assert.equal(oLayoutData.getId(), "RGL1--Dummy", "calculated LayoutData used");
@@ -1058,16 +1096,16 @@ sap.ui.require([
 	});
 
 	QUnit.test("adjustLabelSpan", function(assert) {
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
-		var oGrid = sap.ui.getCore().byId("FC1--Grid");
+		var oGrid = Element.getElementById("FC1--Grid");
 		var oLayoutData = oGrid._getLayoutDataForControl(oLabel1);
 		assert.equal(oLayoutData.getSpan(), "XL2 L2 M2 S12", "Span on Label");
 		oLayoutData = oGrid._getLayoutDataForControl(oField1);
 		assert.equal(oLayoutData.getSpan(), "XL10 L10 M10 S12", "Span on Field");
 
 		oResponsiveGridLayout.setAdjustLabelSpan(false);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		oLayoutData = oGrid._getLayoutDataForControl(oLabel1);
 		assert.equal(oLayoutData.getSpan(), "XL4 L4 M2 S12", "Span on Label");
@@ -1079,8 +1117,8 @@ sap.ui.require([
 		oResponsiveGridLayout.setBreakpointXL(1500);
 		oResponsiveGridLayout.setBreakpointL(1000);
 		oResponsiveGridLayout.setBreakpointM(500);
-		sap.ui.getCore().applyChanges();
-		var oGrid = sap.ui.getCore().byId("FC1--Grid");
+		oCore.applyChanges();
+		var oGrid = Element.getElementById("FC1--Grid");
 
 		assert.equal(oGrid._iBreakPointLargeDesktop, "1500", "BreapointXL on Main Grid");
 		assert.equal(oGrid._iBreakPointDesktop, "1000", "BreapointL on Main Grid");
@@ -1097,7 +1135,7 @@ sap.ui.require([
 		oFormElement2.addField(oText);
 		var oLink = new Link("Li1", {text: "Test", href: "http://www.sap.com"});
 		oFormElement2.addField(oLink);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.ok(jQuery("#T1").attr("style").indexOf("100%") > 0, "Text width set to 100%");
 		assert.ok(!jQuery("#Li1").attr("style") || jQuery("#Li1").attr("style").indexOf("100%") < 0, "Link width not set to 100%");
@@ -1110,7 +1148,7 @@ sap.ui.require([
 		assert.ok(jQuery("#FC2---Panel").hasClass("sapUiRGLContainerColl"), "Panel is collapsed");
 
 		oForm.invalidate(); // to test in Renderer
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		assert.ok(jQuery("#FC2---Panel").hasClass("sapUiRGLContainerColl"), "Panel is collapsed");
 
 		oFormContainer2.setExpanded(true);
@@ -1120,7 +1158,7 @@ sap.ui.require([
 	QUnit.test("destroy layout", function(assert) {
 		var iLength = 0;
 		if (!Object.keys) {
-			jQuery.each(oResponsiveGridLayout.mContainers, function(){iLength++;});
+			each(oResponsiveGridLayout.mContainers, function(){iLength++;});
 		} else {
 			iLength = Object.keys(oResponsiveGridLayout.mContainers).length;
 		}
@@ -1132,13 +1170,13 @@ sap.ui.require([
 		iLength = 0;
 
 		if (!Object.keys) {
-			jQuery.each(oResponsiveGridLayout.mContainers, function(){iLength++;});
+			each(oResponsiveGridLayout.mContainers, function(){iLength++;});
 		} else {
 			iLength = Object.keys(oResponsiveGridLayout.mContainers).length;
 		}
 		assert.equal(iLength, 0, "Layout control data cleared");
-		assert.notOk(sap.ui.getCore().byId("FC1--Grid"), "Container Grid destroyed");
-		assert.notOk(sap.ui.getCore().byId("FC2---Panel"), "Panel destroyed");
+		assert.notOk(Element.getElementById("FC1--Grid"), "Container Grid destroyed");
+		assert.notOk(Element.getElementById("FC2---Panel"), "Panel destroyed");
 	});
 
 	QUnit.test("getContainerRenderedDomRef", function(assert) {
@@ -1151,7 +1189,7 @@ sap.ui.require([
 		assert.equal(oDom.id, "FC2---Panel", "Panel is representation of container2");
 
 		oForm.setVisible(false);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oDom = oResponsiveGridLayout.getContainerRenderedDomRef(oFormContainer2);
 		assert.notOk(oDom, "no Dom for container2 returned if invisible Form");
 	});

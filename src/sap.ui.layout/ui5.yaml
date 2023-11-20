@@ -1,9 +1,30 @@
 ---
-specVersion: "0.1"
+specVersion: "3.0"
 type: library
 metadata:
   name: sap.ui.layout
   copyright: |-
-   UI development toolkit for HTML5 (OpenUI5)
+   OpenUI5
     * (c) Copyright 2009-${currentYear} SAP SE or an SAP affiliate company.
     * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
+resources:
+  configuration:
+    propertiesFileSourceEncoding: ISO-8859-1
+builder:
+  bundles:
+    - bundleDefinition:
+        name: sap/ui/layout/library-preload-lazy.js
+        sections:
+          - mode: bundleInfo
+            name: sap/ui/layout/library-preload.js
+            filters:
+              - sap/ui/layout/
+              - sap/ui/layout/manifest.json
+              - "!sap/ui/layout/*-preload.js"
+              - "!sap/ui/layout/**/*.designtime.js"
+              - "!sap/ui/layout/**/designtime/"
+              - "!sap/ui/layout/**/*.support.js"
+            resolve: false
+      bundleOptions:
+        optimize: true
+        usePredefineCalls: true

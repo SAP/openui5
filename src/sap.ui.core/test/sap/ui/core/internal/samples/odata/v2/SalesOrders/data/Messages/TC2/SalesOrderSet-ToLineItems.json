@@ -1,0 +1,65 @@
+{
+	"d" : {
+		"__count" : "2",
+		"results" : [
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='102',ItemPosition='010')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='102',ItemPosition='010')",
+					"type" : "GWSAMPLE_BASIC.SalesOrderLineItem"
+				},
+				"SalesOrderID" : "102",
+				"ItemPosition" : "010",
+				"ProductID" : "HT-1000",
+				"Note" : "",
+				"NoteLanguage" : "",
+				"CurrencyCode" : "EUR",
+				"GrossAmount" : "2275.28",
+				"NetAmount" : "1912.00",
+				"TaxAmount" : "363.28",
+				"DeliveryDate" : "\/Date(1603004248000)\/",
+				"Quantity" : "2",
+				"QuantityUnit" : "EA",
+				"ToHeader" : {
+					"__deferred" : {
+						"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='102',ItemPosition='010')/ToHeader"
+					}
+				},
+				"ToProduct" : {
+					"__deferred" : {
+						"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='102',ItemPosition='010')/ToProduct"
+					}
+				}
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='102',ItemPosition='020')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='102',ItemPosition='020')",
+					"type" : "GWSAMPLE_BASIC.SalesOrderLineItem"
+				},
+				"SalesOrderID" : "102",
+				"ItemPosition" : "020",
+				"ProductID" : "HT-1000",
+				"Note" : "",
+				"NoteLanguage" : "",
+				"CurrencyCode" : "EUR",
+				"GrossAmount" : "3412.92",
+				"NetAmount" : "2868.00",
+				"TaxAmount" : "544.92",
+				"DeliveryDate" : "\/Date(1611472691000)\/",
+				"Quantity" : "3",
+				"QuantityUnit" : "EA",
+				"ToHeader" : {
+					"__deferred" : {
+						"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='102',ItemPosition='020')/ToHeader"
+					}
+				},
+				"ToProduct" : {
+					"__deferred" : {
+						"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='102',ItemPosition='020')/ToProduct"
+					}
+				}
+			}
+		]
+	}
+}

@@ -16,32 +16,23 @@
       <module-syntax>ui5</module-syntax>
     </generation>
     <selenium xmlns="http://www.sap.com/ui5/buildext/selenium" package="com.sap.ui5.selenium.core" />
-    <!-- excludes for the all-in-one file -->
     <packaging xmlns="http://www.sap.com/ui5/buildext/packaging" version="2.0" >
       <module-infos>
-        <!--
-        <raw-module name="jquery.sap.global.js" depends="sap/ui/Device.js,sap/ui/thirdparty/jquery.js,sap/ui/thirdparty/jqueryui/jquery-ui-position.js,sap/ui/thirdparty/URI.js,sap/ui/thirdparty/es6-promise.js,sap/ui/thirdparty/baseuri.js,sap/ui/thirdparty/es6-object-assign.js" />
-        -->
         <raw-module name="sap/ui/core/support/trace/EppLib.js" />
         <raw-module name="sap/ui/core/support/trace/E2eTraceLib.js" depends="sap/ui/core/support/trace/EppLib.js" />
         <raw-module name="sap/ui/Device.js" />
-        <raw-module name="sap/ui/thirdparty/baseuri.js" />
-        <raw-module name="sap/ui/thirdparty/blanket.js" />
+        <raw-module name="sap/ui/thirdparty/blanket.js" requiresTopLevelScope="false" />
         <raw-module name="sap/ui/thirdparty/bignumber.js" />
         <raw-module name="sap/ui/thirdparty/caja-html-sanitizer.js" />
         <raw-module name="sap/ui/thirdparty/crossroads.js" depends="sap/ui/thirdparty/signals.js" />
         <raw-module name="sap/ui/thirdparty/d3.js" />
         <raw-module name="sap/ui/thirdparty/datajs.js" />
-        <raw-module name="sap/ui/thirdparty/es6-promise.js" />
-        <raw-module name="sap/ui/thirdparty/es6-string-methods.js" />
-        <raw-module name="sap/ui/thirdparty/es6-object-assign.js" />
-        <raw-module name="sap/ui/thirdparty/flexie.js" />
         <raw-module name="sap/ui/thirdparty/handlebars.js" />
         <raw-module name="sap/ui/thirdparty/hasher.js" depends="sap/ui/thirdparty/signals.js" />
         <raw-module name="sap/ui/thirdparty/IPv6.js" />
         <raw-module name="sap/ui/thirdparty/iscroll-lite.js" />
         <raw-module name="sap/ui/thirdparty/iscroll.js" />
-        <raw-module name="sap/ui/thirdparty/jquery.js" />
+        <raw-module name="sap/ui/thirdparty/jquery.js" depends="sap/ui/thirdparty/jquery-compat.js" />
         <raw-module name="sap/ui/thirdparty/jquery-mobile-custom.js" depends="sap/ui/thirdparty/jquery.js" />
         <raw-module name="sap/ui/thirdparty/jqueryui/jquery-effects-blind.js" depends="sap/ui/thirdparty/jqueryui/jquery-effects-core.js" />
         <raw-module name="sap/ui/thirdparty/jqueryui/jquery-effects-bounce.js" depends="sap/ui/thirdparty/jqueryui/jquery-effects-core.js" />
@@ -84,8 +75,6 @@
         <raw-module name="sap/ui/thirdparty/jszip.js" />
         <raw-module name="sap/ui/thirdparty/klay.js" />
         <raw-module name="sap/ui/thirdparty/less.js" />
-        <raw-module name="sap/ui/thirdparty/es6-object-assign.js" />
-        <raw-module name="sap/ui/thirdparty/mobify-carousel.js" />
         <raw-module name="sap/ui/thirdparty/mobiscroll/js/mobiscroll-core.js" depends="sap/ui/thirdparty/jquery.js" />
         <raw-module name="sap/ui/thirdparty/mobiscroll/js/mobiscroll-datetime.js" depends="sap/ui/thirdparty/jquery.js,sap/ui/thirdparty/mobiscroll/js/mobiscroll-core.js,sap/ui/thirdparty/mobiscroll/js/mobiscroll-scroller.js" />
         <raw-module name="sap/ui/thirdparty/mobiscroll/js/mobiscroll-scroller.js" depends="sap/ui/thirdparty/jquery.js,sap/ui/thirdparty/mobiscroll/js/mobiscroll-core.js" />
@@ -95,121 +84,35 @@
         <raw-module name="sap/ui/thirdparty/qunit-reporter-junit.js" depends="sap/ui/thirdparty/qunit.js" />
         <raw-module name="sap/ui/thirdparty/qunit.js" />
         <raw-module name="sap/ui/thirdparty/RequestRecorder.js" depends="sap/ui/thirdparty/URI.js,sap/ui/thirdparty/sinon.js"/>
-        <raw-module name="sap/ui/thirdparty/require.js" />
+        <raw-module name="sap/ui/thirdparty/require.js" requiresTopLevelScope="false" />
         <raw-module name="sap/ui/thirdparty/SecondLevelDomains.js" />
         <raw-module name="sap/ui/thirdparty/signals.js" />
         <raw-module name="sap/ui/thirdparty/sinon-ie.js" depends="sap/ui/thirdparty/sinon.js" />
         <raw-module name="sap/ui/thirdparty/sinon-qunit.js" depends="sap/ui/thirdparty/qunit.js,sap/ui/thirdparty/sinon.js,sap/ui/thirdparty/sinon-ie.js" />
-        <raw-module name="sap/ui/thirdparty/sinon-server.js" depends="sap/ui/thirdparty/sinon.js" />
+        <raw-module name="sap/ui/thirdparty/sinon-server.js" depends="sap/ui/thirdparty/sinon.js" requiresTopLevelScope="false" />
         <raw-module name="sap/ui/thirdparty/sinon.js" />
         <raw-module name="sap/ui/thirdparty/sinon-4.js" />
-        <raw-module name="sap/ui/thirdparty/swipe-view.js" />
-        <raw-module name="sap/ui/thirdparty/unorm.js" />
-        <raw-module name="sap/ui/thirdparty/unormdata.js" depends="sap/ui/thirdparty/unorm.js" />
+        <raw-module name="sap/ui/thirdparty/swipe-view.js" requiresTopLevelScope="false" />
         <raw-module name="sap/ui/thirdparty/URI.js" />
         <raw-module name="sap/ui/thirdparty/URITemplate.js" depends="sap/ui/thirdparty/URI.js"/>
         <raw-module name="sap/ui/thirdparty/vkbeautify.js" />
-        <raw-module name="sap/ui/thirdparty/zyngascroll.js" />
-        <raw-module name="ui5loader.js" depends="sap/ui/thirdparty/baseuri.js,sap/ui/thirdparty/es6-promise.js,sap/ui/thirdparty/es6-string-methods.js,sap/ui/thirdparty/es6-object-assign.js" />
+        <raw-module name="sap/ui/thirdparty/zyngascroll.js" requiresTopLevelScope="false" />
+        <raw-module name="sap/ui/thirdparty/hyphenopoly/Hyphenopoly.js" depends="sap/ui/thirdparty/hyphenopoly/hyphenEngine.asm.js" />
+        <raw-module name="sap/ui/thirdparty/hyphenopoly/hyphenEngine.asm.js" requiresTopLevelScope="false" />
+        <raw-module name="ui5loader.js" />
         <raw-module name="ui5loader-autoconfig.js" depends="ui5loader.js" />
+        <raw-module name="sap/ui/test/starter/_configureLoader.js" depends="ui5loader.js" />
         <module-cycle modules="sap/ui/core/Core.js,sap/ui/core/Component.js" />
       </module-infos>
-      <all-in-one>
-        <!-- exclude all merged files as well as the top level jQuery copy (not visible in OpenUI5) -->
-        <exclude name="jquery-*.js" />
-        <exclude name="sap-*" />
-        <!-- CorePlugin, shouldn't be installed by default -->
-        <exclude name="sap/ui/core/plugin/DeclarativeSupport.js" />
-        <exclude name="sap/ui/core/plugin/LessSupport.js" />
-        <!-- exclude non-productive code -->
-        <exclude name="sap/ui/debug/**" />
-        <exclude name="sap/ui/core/support/" />
-        <exclude name="sap/ui/qunit/**" />
-        <exclude name="sap/ui/test/**" />
-        <exclude name="testsuite/**" />
-        <!-- Ignore substitutes for moved third party libs -->
-        <exclude name="jquery-ui-core.js" />
-        <exclude name="jquery-ui-datepicker.js" />
-        <exclude name="jquery-ui-position.js" />
-        <exclude name="sap/ui/model/odata/datajs.js" />
-        <!-- Third party libs which should NOT be part of the all-in-one file -->
-        <exclude name="sap/ui/thirdparty/bignumber.js" />
-        <exclude name="sap/ui/thirdparty/blanket.js" />
-        <!-- <exclude name="sap/ui/thirdparty/crossroads.js" /> -->
-        <!-- <exclude name="sap/ui/thirdparty/caja-htmlsanitizer.js" /> -->
-        <exclude name="sap/ui/thirdparty/d3.js" />
-        <exclude name="sap/ui/thirdparty/datajs.js" />
-        <exclude name="sap/ui/thirdparty/flexie.js" />
-        <exclude name="sap/ui/thirdparty/handlebars.js" />
-        <!-- <exclude name="sap/ui/thirdparty/hasher.js" /> -->
-        <exclude name="sap/ui/thirdparty/IPv6.js" />
-        <exclude name="sap/ui/thirdparty/iscroll.js" />
-        <exclude name="sap/ui/thirdparty/iscroll-lite.js" />
-        <exclude name="sap/ui/thirdparty/jqueryui/jquery-ui-widget.js" />
-        <exclude name="sap/ui/thirdparty/jqueryui/jquery-effect*.js" />
-        <exclude name="sap/ui/thirdparty/jqueryui/jquery-ui-effect.js" />
-        <exclude name="sap/ui/thirdparty/jqueryui/jquery-ui-effect-blind.js" />
-        <exclude name="sap/ui/thirdparty/jqueryui/jquery-ui-effect-bounce.js" />
-        <exclude name="sap/ui/thirdparty/jqueryui/jquery-ui-effect-clip.js" />
-        <exclude name="sap/ui/thirdparty/jqueryui/jquery-ui-effect-drop.js" />
-        <exclude name="sap/ui/thirdparty/jqueryui/jquery-ui-effect-explode.js" />
-        <exclude name="sap/ui/thirdparty/jqueryui/jquery-ui-effect-fade.js" />
-        <exclude name="sap/ui/thirdparty/jqueryui/jquery-ui-effect-fold.js" />
-        <exclude name="sap/ui/thirdparty/jqueryui/jquery-ui-effect-highlight.js" />
-        <exclude name="sap/ui/thirdparty/jqueryui/jquery-ui-effect-pulsate.js" />
-        <exclude name="sap/ui/thirdparty/jqueryui/jquery-ui-effect-scale.js" />
-        <exclude name="sap/ui/thirdparty/jqueryui/jquery-ui-effect-shake.js" />
-        <exclude name="sap/ui/thirdparty/jqueryui/jquery-ui-effect-slide.js" />
-        <exclude name="sap/ui/thirdparty/jqueryui/jquery-ui-effect-transfer.js" />
-        <exclude name="sap/ui/thirdparty/jqueryui/jquery-ui-mouse.js" />
-        <exclude name="sap/ui/thirdparty/jqueryui/jquery-ui-draggable.js" />
-        <exclude name="sap/ui/thirdparty/jqueryui/jquery-ui-resizable.js" />
-        <exclude name="sap/ui/thirdparty/jqueryui/jquery-ui-selectable.js" />
-        <exclude name="sap/ui/thirdparty/jqueryui/jquery-ui-sortable.js" />
-        <exclude name="sap/ui/thirdparty/jqueryui/jquery-ui-droppable.js" />
-        <exclude name="sap/ui/thirdparty/jszip.js" />
-        <exclude name="sap/ui/thirdparty/klay.js" />
-        <exclude name="sap/ui/thirdparty/less.js" />
-        <exclude name="sap/ui/thirdparty/mobify-carousel.js" />
-        <exclude name="sap/ui/thirdparty/mobiscroll/js/mobiscroll-core.js" />
-        <exclude name="sap/ui/thirdparty/mobiscroll/js/mobiscroll-scroller.js" />
-        <exclude name="sap/ui/thirdparty/mobiscroll/js/mobiscroll-datetime.js" />
-        <exclude name="sap/ui/thirdparty/punycode.js" />
-        <exclude name="sap/ui/thirdparty/qunit-2.js" />
-        <exclude name="sap/ui/thirdparty/qunit-composite.js" />
-        <exclude name="sap/ui/thirdparty/qunit-reporter-junit.js" />
-        <exclude name="sap/ui/thirdparty/qunit.js" />
-        <exclude name="sap/ui/thirdparty/RequestRecorder.js"/>
-        <exclude name="sap/ui/thirdparty/require.js" />
-        <exclude name="sap/ui/thirdparty/SecondLevelDomains.js" />
-        <!-- <exclude name="sap/ui/thirdparty/signals.js" /> -->
-        <exclude name="sap/ui/thirdparty/sinon-4.js" />
-        <exclude name="sap/ui/thirdparty/sinon-ie.js" />
-        <exclude name="sap/ui/thirdparty/sinon-qunit.js" />
-        <exclude name="sap/ui/thirdparty/sinon-server.js" />
-        <exclude name="sap/ui/thirdparty/sinon.js" />
-        <exclude name="sap/ui/thirdparty/swipe-view.js" />
-        <exclude name="sap/ui/thirdparty/unorm.js" />
-        <exclude name="sap/ui/thirdparty/unormdata.js" />
-        <!-- URI is no longer excluded because it's needed in jquery.sap.global and others -->
-        <!-- <exclude name="sap/ui/thirdparty/URI.js" /> -->
-        <exclude name="sap/ui/thirdparty/URITemplate.js" />
-        <exclude name="sap/ui/thirdparty/vkbeautify.js" />
-        <exclude name="sap/ui/thirdparty/zyngascroll.js" />
-        <!-- INCLUDED (because not mentioned in the list above) are the following libs: -->
-        <!-- jquery.sap.global.js -->
-        <!-- sap/ui/thirdparty/jquery-mobile-custom.js -->
-        <!-- sap/ui/thirdparty/jqueryui/jquery-ui-core.js -->
-        <!-- sap/ui/thirdparty/jqueryui/jquery-ui-position.js -->
-        <!-- sap/ui/thirdparty/jqueryui/jquery-ui-datepicker.js -->
-      </all-in-one>
     </packaging>
     <!-- excludes for the JSDoc -->
     <jsdoc xmlns="http://www.sap.com/ui5/buildext/jsdoc" >
         <exclude name=".library-all" />
         <exclude name=".library-all-dbg" />
-        <exclude name=".library-preload" />
-        <exclude name=".library-preload-dbg" />
+        <exclude name=".library-preload*" />
+        <exclude name=".library-h2-preload*" />
+        <exclude name=".Component-preload*" />
+        <exclude name=".Component-h2-preload*" />
         <exclude name=".*[legacy]" />
         <exclude name=".*[legacy]-dbg" />
         <exclude name="jquery-*" />
@@ -218,13 +121,18 @@
         <exclude name="sap.ui.debug." />
         <exclude name="sap.ui.test.ControlTree" />
         <exclude name="sap.ui.test.TestEnv" />
+        <exclude name="sap.ui.test.starter.runTest" />
         <exclude name="sap.ui.qunit." />
         <exclude name="sap.ui.thirdparty." />
+        <exclude name="sap.ui.model.odata.datajs" /> <!-- legacy redirect, only part of internal core overlay -->
+        <exclude name="sap.ui.core.designtime.mvc.ControllerExtensionTemplate" /> <!-- template file with partially unexpected content -->
     </jsdoc>
     <!-- excludes for the JSCoverage -->
     <jscoverage xmlns="http://www.sap.com/ui5/buildext/jscoverage" >
         <exclude name=".library-all" />
         <exclude name=".library-preload" />
+        <exclude name=".library-preload*" /><!-- library-preload.designtime.js, library-preload.support.js -->
+        <exclude name=".library-h2-preload" />
         <exclude name="jquery-*" />
         <exclude name="sap-ui-*" />
         <exclude name="testsuite." />
@@ -235,121 +143,276 @@
         <exclude name="sap.ui.test.ControlTree" />
         <exclude name="sap.ui.test.TestEnv" />
         <exclude name="sap.ui.test.TestUtils" />
+        <exclude name="sap.ui.test.starter.runTest" />
         <exclude name="sap.ui.thirdparty." />
     </jscoverage>
     <!-- Thirdparty references -->
     <thirdparty xmlns="http://www.sap.com/ui5/buildext/thirdparty" >
-        <lib name="jquery" displayName="jQuery, QUnit, jQueryUI" homepage="http://jquery.org">
-        	<license url="http://jQuery.org/license" type="MIT License" file="../thirdparty/licenses/jQuery-MIT-LICENSE.txt" />
+        <lib name="jquery-3" displayName="jQuery 3" npmName="jquery" version="3.6.0" hash="df1ce1846e11e773d850061aa04da88a" homepage="https://jquery.com" id="73554900106100068050">
+            <license url="http://jQuery.org/license" type="MIT"/>
+            <copyright>OpenJS Foundation and other contributors</copyright>
+            <pattern>sap/ui/thirdparty/jquery.js</pattern>
+            <pattern partial="true" otherContent="SAP" explanation="isPlainObject.js is overall written by SAP, but contains a modified implementation of jQuery.isPlainObject taken from jQuery">sap/base/util/isPlainObject.js</pattern>
+            <pattern partial="true" otherContent="SAP" explanation="_merge.js is overall written by SAP, but contains a modified implementation of jQuery.extend taken from jQuery">sap/base/util/_merge.js</pattern>
+            <pattern partial="true" otherContent="SAP" explanation="jquery.sap.script.js is overall written by SAP, but contains a modified implementation of jQuery.extend taken from jQuery">jquery.sap.script.js</pattern>
         </lib>
-        <lib name="jquery_mobile" displayName="jQuery Mobile" homepage="http://jquerymobile.com">
-        	<license url="http://jQuery.org/license" type="MIT License" file="../thirdparty/licenses/jQuery-MIT-LICENSE.txt" />
+        <lib name="jquery-1" displayName="jQuery 1" npmName="n/a" version="1.7.1" homepage="https://jquery.com" id="73554900106100019232">
+            <license url="http://jQuery.org/license" type="MIT"/>
+            <copyright>2011, John Resig</copyright>
+            <pattern partial="true" otherContent="SAP" explanation="Device.js is overall written by SAP, but contains code taken from jQuery 1.7.1 (see the respective comment)">sap/ui/Device.js</pattern>
         </lib>
-        <lib name="qunit-composite" displayName="Qunit Composite" homepage="https://github.com/jquery/qunit-composite">
-        	<license url="http://jquery.org/license" type="MIT License" file="../thirdparty/licenses/qunit-composite-MIT-LICENSE.txt" />
+        <lib name="jquery_UI_1-8-17" displayName="jQuery UI 1.8" npmName="n/a" version="1.8.17" homepage="https://jqueryui.com">
+            <license url="http://jQuery.org/license" type="MIT" />
+            <copyright>2014 jQuery Foundation and other contributors</copyright>
+            <pattern partial="true" otherContent="SAP" explanation="Selectors.js is overall written by SAP, but contains code taken from jQuery UI (see the respective comments)">sap/ui/dom/jquery/Selectors.js</pattern>
         </lib>
-        <lib name="qunit-reporter-junit" displayName="JUnit Reporter for QUnit" homepage="https://github.com/JamesMGreene/qunit-reporter-junit">
-        	<license url="https://raw.githubusercontent.com/JamesMGreene/qunit-reporter-junit/master/LICENSE.txt" type="MIT License" file="../thirdparty/licenses/qunit-reporter-junit-MIT-LICENSE.txt" />
+        <lib name="jquery_UI-1-10-4" displayName="jQuery UI 1.10" npmName="jquery-ui" version="1.10.4" hash="3d3f58e254f8c6848fb56dbfebfbcd13" homepage="https://jqueryui.com" id="73554900106100000044">
+            <license url="http://jQuery.org/license" type="MIT" />
+            <copyright>2014 jQuery Foundation and other contributors</copyright>
+            <pattern>sap/ui/thirdparty/jqueryui/*</pattern>
+            <pattern partial="true" otherContent="SAP" explanation="jquery.sap.dom.js is overall written by SAP, but contains code taken from jQuery UI Core (see the respective comment)">jquery.sap.dom.js</pattern>
         </lib>
-        <lib name="iscroll" displayName="cubiq.org - iscroll" homepage="http://cubiq.org/iscroll-4">
-        	<license url="http://cubiq.org/license" type="MIT License" file="../thirdparty/licenses/iscroll-MIT-LICENSE.txt" />
+        <lib name="jquery_UI_1-11-1" displayName="jQuery UI 1.11" npmName="n/a" version="1.11.1" homepage="https://jqueryui.com">
+            <license url="http://jQuery.org/license" type="MIT" />
+            <copyright>2014 jQuery Foundation and other contributors</copyright>
+            <pattern partial="true" otherContent="SAP" explanation="zIndex.js is overall written by SAP, but contains an implementation of the function 'fnzIndex' which is taken from jQuery UI Datepicker 1.11.1">sap/ui/dom/jquery/zIndex.js</pattern>
         </lib>
-        <lib name="swipeview" displayName="cubiq.org - swipeview" homepage="http://cubiq.org/swipeview">
-        	<license url="http://cubiq.org/license" type="MIT License" file="../thirdparty/licenses/swipeview-MIT-LICENSE.txt" />
+        <lib name="qunit" displayName="QUnit" npmName="n/a" version="1.18.0" hash="2172c9592fe6e9d5ef3bdf665cf88ba9" homepage="https://qunitjs.com" id="73554900106100002636">
+            <license url="http://jQuery.org/license" type="MIT" />
+            <copyright>jQuery Foundation and other contributors</copyright>
+            <pattern>sap/ui/thirdparty/qunit.css</pattern>
+            <pattern>sap/ui/thirdparty/qunit.js</pattern>
         </lib>
-        <lib name="mobify" displayName="Mobify.js" homepage="http://www.mobify.com/mobifyjs/">
-        	<license url="http://www.mobify.com/mobifyjs/license/" type="MIT License" file="../thirdparty/licenses/mobify-MIT-LICENSE.txt" />
+        <lib name="qunit-2" displayName="QUnit 2" npmName="n/a" version="2.3.2" hash="38899a9d9321402ff815cff5682e8e5b" homepage="https://qunitjs.com" id="73555000106100006951">
+            <license url="http://jQuery.org/license" type="MIT" />
+            <copyright>jQuery Foundation and other contributors</copyright>
+            <pattern>sap/ui/thirdparty/qunit-2.css</pattern>
+            <pattern>sap/ui/thirdparty/qunit-2.js</pattern>
         </lib>
-        <lib name="zynga" displayName="Zynga Scroller" homepage="http://zynga.github.com/scroller/">
-        	<license url="https://github.com/pbakaus/scroller/blob/master/LICENSE.txt" type="MIT License" file="../thirdparty/licenses/zyngascroll-LICENSE.txt" />
+        <lib name="qunit-2.18" displayName="QUnit 2.18" npmName="qunit" version="2.18.0" hash="1b26c6342052e716bf0aec6574dae1a4" homepage="https://qunitjs.com" id="73554900106100134323">
+            <license url="http://jQuery.org/license" type="MIT" />
+            <copyright>jQuery Foundation and other contributors</copyright>
+            <pattern>../test/sap/ui/core/qunit/thirdparty/qunit-2.18.css</pattern>
+            <pattern>../test/sap/ui/core/qunit/thirdparty/qunit-2.18.js</pattern>
         </lib>
-        <lib name="less" displayName="LESS" homepage="http://lesscss.org/">
-        	<license url="https://raw.github.com/cloudhead/less.js/master/LICENSE" type="Apache License Version 2.0" file="../thirdparty/licenses/LESS-Apache-LICENSE.txt" />
+        <lib name="jquery-migrate" displayName="jQuery-Migrate" npmName="jquery-migrate" version="3.3.1" hash="5421254af7837b366e32343522b87ef2" homepage="https://github.com/jquery/jquery-migrate/" id="73555000106100043843">
+            <license url="https://github.com/jquery/jquery-migrate/blob/3.3.1/LICENSE.txt" type="MIT" />
+            <copyright>OpenJS Foundation and other contributors</copyright>
+            <pattern>sap/ui/thirdparty/jquery-compat.js</pattern>
         </lib>
-        <lib name="datajs" displayName="DataJS" homepage="http://datajs.codeplex.com/">
-        	<license url="http://datajs.codeplex.com/license" type="MIT License" file="../thirdparty/licenses/DataJS-MIT-LICENSE.txt" />
+        <lib name="jquery_mobile" displayName="jQuery Mobile" npmName="n/a" version="1.3.1" hash="353b22bfd4f4c0fabb02c05a36b93efb" homepage="http://jquerymobile.com" id="73554900106100002438">
+            <license url="http://jQuery.org/license" type="MIT" />
+            <copyright>2010, 2013 jQuery Foundation, Inc. and other contributors</copyright>
+            <pattern>sap/ui/thirdparty/jquery-mobile-custom.js</pattern>
         </lib>
-        <lib name="d3" displayName="D3" homepage="http://d3js.org/">
-        	<license url="https://raw.github.com/mbostock/d3/master/LICENSE" type="BSD License" file="../thirdparty/licenses/D3-BSD-LICENSE.txt" />
+        <lib name="jquery.rtl-scroll-type" displayName="jQuery.rtl-scroll-type" npmName="jquery.rtl-scroll-type" version="2.0.0" homepage="https://github.com/othree/jquery.rtl-scroll-type" id="73554900106100058148">
+            <license url="https://github.com/othree/jquery.rtl-scroll-type/blob/master/LICENSE" type="MIT" />
+            <copyright>2012 Wei-Ko Kao</copyright>
+            <pattern partial="true" otherContent="SAP" explanation="_FeatureDetection.js is overall written by SAP, but contains code which is inspired by jQuery.rtl-scroll-type">sap/ui/util/_FeatureDetection.js</pattern>
         </lib>
-        <lib name="jszip" displayName="JSZip" homepage="http://stuartk.com/jszip/">
-        	<license url="https://github.com/Stuk/jszip/blob/master/LICENSE.markdown" type="MIT License" file="../thirdparty/licenses/JSZip-LICENSE.txt" />
+        <lib name="qunit-composite" displayName="QUnit Composite" npmName="n/a" version="1.0.2-pre" hash="f2d36d5a279d0c6b48e7eb1fb36ea9d9" homepage="https://github.com/jquery/qunit-composite" id="73555000106100004191">
+            <!-- version is "1.0.2-pre", in PPMS as "1.0.2" -->
+            <license url="http://jquery.org/license" type="MIT" />
+            <copyright>jQuery Foundation and other contributors</copyright>
+            <pattern>sap/ui/thirdparty/qunit-composite.css</pattern>
+            <pattern>sap/ui/thirdparty/qunit-composite.js</pattern>
         </lib>
-        <lib name="caja" displayName="Google-Caja JS HTML Sanitizer" homepage="http://code.google.com/p/google-caja/wiki/JsHtmlSanitizer">
-        	<license url="http://www.apache.org/licenses/LICENSE-2.0" type="Apache License Version 2.0" file="../thirdparty/licenses/Caja-Apache-LICENSE.txt" />
+        <lib name="qunit-reporter-junit" displayName="JUnit Reporter for QUnit" npmName="qunit-reporter-junit" version="1.1.1" hash="494d573d58adc6a5fbfc539210bd9656" homepage="https://github.com/JamesMGreene/qunit-reporter-junit" id="73554900106100005540">
+            <license url="https://raw.githubusercontent.com/JamesMGreene/qunit-reporter-junit/master/LICENSE.txt" type="MIT" />
+            <copyright>jQuery Foundation and other contributors</copyright>
+            <pattern>sap/ui/thirdparty/qunit-reporter-junit.js</pattern>
         </lib>
-        <lib name="cldr" displayName="Unicode Common Locale Data Repository" homepage="http://cldr.unicode.org/">
-        	<license url="http://www.unicode.org/copyright.html" type="Unicode, Inc. License Agreement - Data Files And Software" file="../core/cldr/Unicode-Data-Files-LICENSE.txt" />
+        <lib name="iscroll" displayName="cubiq.org - iScroll" npmName="n/a" version="4.2.5" hash="d65adf04b7325742c53082ee3e87d034" homepage="https://github.com/cubiq/iscroll" id="73554900106100001862">
+            <license url="https://github.com/cubiq/iscroll/blob/master/LICENSE" type="MIT" />
+            <copyright>2012 Matteo Spinelli</copyright>
+            <pattern>sap/ui/thirdparty/iscroll.js</pattern>
         </lib>
-        <lib name="mobiscroll" displayName="MobiScroll" homepage="http://mobiscroll.com">
-        	<license url="http://opensource.org/licenses/mit-license.php" type="MIT License" file="../thirdparty/licenses/MobiScroll-MIT-LICENSE.txt" />
+        <lib name="iscroll-lite" displayName="cubiq.org - iScroll Lite" npmName="n/a" version="4.1.6" hash="c430198bf1e445e8717b911756f92dcd" homepage="https://github.com/cubiq/iscroll">
+            <license url="https://github.com/cubiq/iscroll/blob/master/LICENSE" type="MIT" />
+            <copyright>2011 Matteo Spinelli</copyright>
+            <pattern>sap/ui/thirdparty/iscroll-lite.js</pattern>
+            <!-- not in PPMS because it is a sub-module of iScroll -->
         </lib>
-        <lib name="sinonjs" displayName="SinonJS" homepage="http://sinonjs.org">
-        	<license url="https://raw.github.com/cjohansen/Sinon.JS/master/LICENSE" type="BSD License" file="../thirdparty/licenses/SinonJS-BSD-LICENSE.txt" />
+        <lib name="swipeview" displayName="cubiq.org - swipeview" npmName="n/a" version="1.0" hash="1fd389111f3853ad478b8c8d8b733ee5" homepage="https://github.com/cubiq/SwipeView/" id="73554900106100001918">
+            <license url="https://github.com/cubiq/SwipeView/blob/master/license.txt" type="MIT" />
+            <copyright>2012 Matteo Spinelli</copyright>
+            <pattern>sap/ui/thirdparty/swipe-view.js</pattern>
         </lib>
-        <lib name="urijs" displayName="URI.js" homepage="http://medialize.github.com/URI.js/">
-        	<license url="http://opensource.org/licenses/mit-license" type="MIT License" file="../thirdparty/licenses/URI-MIT-LICENSE.txt" />
+        <lib name="zynga" displayName="Zynga Scroller" npmName="n/a" version="1.2.1-0-g5d43806" hash="ed56a75783e6f24f8eefc6e625bc496f" homepage="http://zynga.github.com/scroller/" id="73554900106100001940">
+            <license url="https://github.com/pbakaus/scroller/blob/master/LICENSE.txt" type="MIT" />
+            <copyright>2011 Zynga Inc.</copyright>
+            <pattern>sap/ui/thirdparty/zyngascroll.js</pattern>
         </lib>
-        <lib name="punycodejs" displayName="punycode.js" homepage="https://github.com/bestiejs/punycode.js/">
-        	<license url="https://github.com/bestiejs/punycode.js/blob/master/LICENSE-MIT.txt" type="MIT License" file="../thirdparty/licenses/punycode-MIT-LICENSE.txt" />
+        <lib name="less" displayName="LESS" npmName="less" version="1.6.3" hash="fb7893fd45c3d4c4b43242f7b7879977" homepage="http://lesscss.org/" id="73555000106100001897">
+            <!-- there is also a copy of LESS outside the libraries, listed in the .repo file -->
+            <license url="https://raw.github.com/cloudhead/less.js/master/LICENSE" type="Apache-2.0" />
+            <copyright>2009-2014, Alexis Sellier</copyright>
+            <pattern>sap/ui/thirdparty/less.js</pattern>
         </lib>
-        <lib name="flexie.js" displayName="Flexie.js" homepage="https://github.com/doctyper/flexie/">
-        	<license url="https://github.com/doctyper/flexie/blob/master/README.md" type="MIT License" file="../thirdparty/licenses/Flexie-MIT-LICENSE.txt" />
+        <lib name="datajs" displayName="DataJS" npmName="n/a" version="unknown" hash="0df06fd64d1ebdeb81cdd00d1cf04494" homepage="http://datajs.codeplex.com/" id="73554900106100001652">
+            <!-- hints in the source code suggest this is version 1.1.0 with fixes from 1.1.1.beta2,
+                 but it could also be version 1.1.2 as modeled in PPMS -->
+            <license url="http://datajs.codeplex.com/license" type="MIT" />
+            <copyright>2011 Microsoft</copyright>
+            <pattern>sap/ui/thirdparty/datajs.js</pattern>
         </lib>
-        <lib name="handlebars" displayName="handlebars" homepage="http://handlebarsjs.com/">
-        	<license url="https://github.com/wycats/handlebars.js/" type="MIT License" file="../thirdparty/licenses/handlebars-MIT-LICENSE.txt" />
+        <lib name="d3" displayName="D3" npmName="d3" version="3.4.12" hash="67f31efab40ccd934c9475b323f84260" homepage="http://d3js.org/" id="73554900106100001165">
+            <license url="https://raw.github.com/mbostock/d3/master/LICENSE" type="BSD-3-Clause" />
+            <copyright>2010-2014 Michael Bostock</copyright>
+            <pattern>sap/ui/thirdparty/d3.js</pattern>
         </lib>
-        <lib name="requirejs" displayName="requireJS" homepage="http://requirejs.org">
-        	<license url="https://github.com/jrburke/requirejs/blob/master/LICENSE" type="MIT License" file="../thirdparty/licenses/requireJS-MIT-LICENSE.txt" />
+        <lib name="jszip" displayName="JSZip" npmName="jszip" version="2.2.0" hash="a5402e9bb617f807e6f0af5b7cb9aab1" homepage="http://stuartk.com/jszip/" id="73554900106100005531">
+            <license url="https://github.com/Stuk/jszip/blob/master/LICENSE.markdown" type="MIT" />
+            <copyright>2009-2014 Stuart Knightley, David Duponchel, Franz Buchinger, António Afonso</copyright>
+            <pattern>sap/ui/thirdparty/jszip.js</pattern>
         </lib>
-        <lib name="crossroadsjs" displayName="crossroads.js" homepage="https://github.com/millermedeiros/crossroads.js">
-        	<license url="http://opensource.org/licenses/mit-license.php" type="MIT License" file="../thirdparty/licenses/crossroads-MIT-LICENSE.txt" />
+        <lib name="caja" displayName="Google-Caja JS HTML Sanitizer" npmName="n/a" version="Build 4884" hash="f28a26545017d954f897adf511bf9044" homepage="http://code.google.com/p/google-caja/wiki/JsHtmlSanitizer" id="73554900106100001928">
+            <license url="http://www.apache.org/licenses/LICENSE-2.0" type="Apache-2.0" />
+            <copyright>Google Inc.</copyright>
+            <pattern>sap/ui/thirdparty/caja-html-sanitizer.js</pattern>
         </lib>
-        <lib name="hasherjs" displayName="hasher.js" homepage="https://github.com/millermedeiros/Hasher">
-        	<license url="http://opensource.org/licenses/mit-license.php" type="MIT License" file="../thirdparty/licenses/hasher-MIT-LICENSE.txt" />
+        <lib name="cldr" displayName="Unicode Common Locale Data Repository" npmName="cldr-core" version="43" hash="b4039679caa1a81810d541dd7875ae03" homepage="http://cldr.unicode.org/" id="73555000106100020909">
+            <license url="http://www.unicode.org/copyright.html" type="Unicode-DFS-2015" />
+            <copyright>1991-2014 Unicode, Inc.</copyright>
+            <pattern>sap/ui/core/cldr/*</pattern>
         </lib>
-        <lib name="jssignals" displayName="JS-Signals" homepage="http://millermedeiros.github.io/js-signals/">
-        	<license url="http://opensource.org/licenses/mit-license.php" type="MIT License" file="../thirdparty/licenses/signals-MIT-LICENSE.txt" />
+        <lib name="mobiscroll" displayName="MobiScroll" npmName="n/a" version="2.9.0" hash="2a76d1439bbc5afaf10324b2108e4d9c" homepage="http://mobiscroll.com" id="73554900106100005562">
+            <license url="http://opensource.org/licenses/mit-license.php" type="MIT" />
+            <copyright>2010-2013, Acid Media</copyright>
+            <pattern>sap/ui/thirdparty/mobiscroll/*</pattern>
         </lib>
-        <lib name="blanket" displayName="blanket.js" homepage="http://blanketjs.org/">
-        	<license url="https://github.com/alex-seville/blanket/blob/master/LICENSE" type="MIT License" file="../thirdparty/licenses/blanket-LICENSE.txt" />
+        <lib name="sinonjs" displayName="SinonJS" npmName="sinon" version="1.14.1" hash="5bbc65549709e5c7adc2df0c38ba966a" homepage="http://sinonjs.org" id="73554900106100005532">
+            <license url="https://raw.github.com/cjohansen/Sinon.JS/master/LICENSE" type="BSD-3-Clause" />
+            <copyright>2010-2014, Christian Johansen, christian@cjohansen.no</copyright>
+            <pattern>sap/ui/thirdparty/sinon.js</pattern>
+            <pattern>sap/ui/thirdparty/sinon-server.js</pattern>
         </lib>
-        <lib name="array-polyfills" displayName="Array.prototype Polyfills" homepage="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/">
-        	<license url="https://developer.mozilla.org/en-US/docs/MDN/About#Copyrights_and_licenses" type="CC0 1.0 Universal (CC0 1.0) Public Domain Dedication" file="../thirdparty/licenses/array-polyfills-LICENSE.txt" />
+        <lib name="sinonjs4" displayName="SinonJS" npmName="sinon" version="4.4.6" hash="927f92252e061294b7b2b80835c2966d" homepage="http://sinonjs.org" id="73555000106100012145">
+            <license url="https://raw.github.com/cjohansen/Sinon.JS/master/LICENSE" type="BSD-3-Clause" />
+            <copyright>2010-2017, Christian Johansen, christian@cjohansen.no</copyright>
+            <pattern>sap/ui/thirdparty/sinon-4.js</pattern>
         </lib>
-        <lib name="object-assign-polyfill" displayName="Object.assign Polyfill" homepage="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/assign#Polyfill">
-        	<license url="https://developer.mozilla.org/en-US/docs/MDN/About#Copyrights_and_licenses" type="CC0 1.0 Universal (CC0 1.0) Public Domain Dedication" file="../thirdparty/licenses/Object-assign-polyfill-LICENSE.txt" />
+        <lib name="sinonjs14" displayName="SinonJS 14" npmName="sinon" version="14.0.0" hash="55c6c2bd99ee9698685c47d9f2fb19a5" homepage="http://sinonjs.org" id="73554900106100134880">
+            <license url="https://raw.github.com/cjohansen/Sinon.JS/master/LICENSE" type="BSD-3-Clause" />
+            <copyright>2010-2022, Christian Johansen, christian@cjohansen.no</copyright>
+            <pattern>../test/sap/ui/core/qunit/thirdparty/sinon-14.0.js</pattern>
         </lib>
-        <lib name="unorm" displayName="unorm.js" homepage="https://github.com/walling/unorm">
-        	<license url="http://raw.githubusercontent.com/walling/unorm/v1.3.3/LICENSE.md" type="MIT License" file="../thirdparty/licenses/unorm-MIT-LICENSE.txt" />
+        <lib name="sinon-qunit" displayName="Sinon-qunit" npmName="sinon-qunit" version="2.0.0" hash="513b42becaeb0164dbbbb7e632dcac5d" homepage="http://sinonjs.org" id="73554900106100005534">
+            <license url="https://raw.github.com/cjohansen/Sinon.JS/master/LICENSE" type="BSD-3-Clause" />
+            <copyright>2010-2011, Christian Johansen</copyright>
+            <pattern>sap/ui/thirdparty/sinon-qunit.js</pattern>
         </lib>
-        <lib name="tdop" displayName="Top Down Operator Precedence" homepage="https://github.com/douglascrockford/TDOP">
-        	<license url="http://www.apache.org/licenses/LICENSE-2.0" type="Apache License Version 2.0" file="../thirdparty/licenses/TDOP-Apache-LICENSE.txt" />
+        <lib name="urijs" displayName="URI.js" npmName="urijs" version="1.19.11" hash="6fa718e3b9b47eced2a0e212763f3a2b" homepage="http://medialize.github.com/URI.js/" id="73554900106100127022">
+            <license url="http://opensource.org/licenses/mit-license" type="MIT" />
+            <copyright>Rodney Rehm</copyright>
+            <pattern>sap/ui/thirdparty/URI.js</pattern>
+            <pattern>sap/ui/thirdparty/URITemplate.js</pattern>
+            <pattern>sap/ui/thirdparty/SecondLevelDomains.js</pattern>
+            <pattern>sap/ui/thirdparty/IPv6.js</pattern>
         </lib>
-        <lib name="es6-promise" displayName="es6-promise" homepage="https://github.com/jakearchibald/es6-promise/">
-        	<license url="https://raw.githubusercontent.com/jakearchibald/es6-promise/master/LICENSE" type="MIT License" file="../thirdparty/licenses/es6-promise-MIT-LICENSE.txt" />
+        <lib name="punycodejs" displayName="punycode.js" npmName="punycode" version="1.4.0" hash="7c8d076b2b4ebcfe0966bda2e42c133d" homepage="https://github.com/bestiejs/punycode.js/" id="73554900106100045016">
+            <license url="https://github.com/bestiejs/punycode.js/blob/master/LICENSE-MIT.txt" type="MIT" />
+            <copyright>Mathias Bynens</copyright>
+            <pattern>sap/ui/thirdparty/punycode.js</pattern>
         </lib>
-        <lib name="es6-string-method-startsWith" displayName="String.prototype Polyfill (startsWith)" homepage="https://github.com/mathiasbynens/String.prototype.startsWith">
-            <license url="https://github.com/mathiasbynens/String.prototype.startsWith/blob/master/LICENSE-MIT.txt" type="MIT License" file="../thirdparty/licenses/es6-string-methods-basic-MIT-LICENSE.txt" />
+        <lib name="handlebars" displayName="handlebars" npmName="handlebars" version="4.7.7" hash="f31c0c3e00864e12df33939cf24ee286" homepage="http://handlebarsjs.com/" id="73555000106100058827">
+            <license url="https://github.com/handlebars-lang/handlebars.js/" type="MIT" />
+            <copyright>2011-2019 by Yehuda Katz</copyright>
+            <pattern>sap/ui/thirdparty/handlebars.js</pattern>
         </lib>
-        <lib name="es6-string-methods-endsWith" displayName="String.prototype Polyfill (endsWith)" homepage="https://github.com/mathiasbynens/String.prototype.endsWith">
-            <license url="https://github.com/mathiasbynens/String.prototype.endsWith/blob/master/LICENSE-MIT.txt" type="MIT License" file="../thirdparty/licenses/es6-string-methods-basic-MIT-LICENSE.txt" />
+        <lib name="requirejs" displayName="requireJS" npmName="requirejs" version="2.1.8" hash="5f6ee5f00610f2ef63c448eeb9c5a435" homepage="http://requirejs.org" id="73554900106100002036">
+            <license url="https://github.com/jrburke/requirejs/blob/master/LICENSE" type="MIT" />
+            <copyright>2010-2012, The Dojo Foundation</copyright>
+            <pattern>sap/ui/thirdparty/require.js</pattern>
         </lib>
-        <lib name="es6-string-methods-includes" displayName="String.prototype Polyfill (includes)" homepage="https://github.com/mathiasbynens/String.prototype.includes">
-            <license url="https://github.com/mathiasbynens/String.prototype.includes/blob/master/LICENSE-MIT.txt" type="MIT License" file="../thirdparty/licenses/es6-string-methods-basic-MIT-LICENSE.txt" />
+        <lib name="crossroadsjs" displayName="crossroads.js" npmName="crossroads" version="0.12.0" hash="7a65d229bbecf1e40455b3c1e88f0490" homepage="https://github.com/millermedeiros/crossroads.js" id="73554900106100005551">
+            <license url="http://opensource.org/licenses/mit-license.php" type="MIT" />
+            <copyright>Miller Medeiros</copyright>
+            <pattern>sap/ui/thirdparty/crossroads.js</pattern>
         </lib>
-        <lib name="es6-string-methods-repeat" displayName="String.prototype Polyfill (repeat)" homepage="https://github.com/mathiasbynens/String.prototype.repeat">
-            <license url="https://github.com/mathiasbynens/String.prototype.repeat/blob/master/LICENSE-MIT.txt" type="MIT License" file="../thirdparty/licenses/es6-string-methods-basic-MIT-LICENSE.txt" />
+        <lib name="hasherjs" displayName="hasher.js" npmName="hasher" version="1.2.0" hash="d25245b03c1994b75d306896a6a98936" homepage="https://github.com/millermedeiros/Hasher" id="73554900106100002228">
+            <license url="http://opensource.org/licenses/mit-license.php" type="MIT" />
+            <copyright>Miller Medeiros</copyright>
+            <pattern>sap/ui/thirdparty/hasher.js</pattern>
         </lib>
-        <lib name="es6-string-methods-pad" displayName="String.prototype Polyfills (padStart/padEnd)" homepage="https://github.com/uxitten/polyfill">
-            <license url="https://github.com/uxitten/polyfill/blob/master/License.md" type="MIT License" file="../thirdparty/licenses/es6-string-methods-pad-MIT-LICENSE.txt" />
+        <lib name="jssignals" displayName="JS-Signals" npmName="signals" version="1.0.0" hash="c34e89f1b894cea6a89bb452376785a0" homepage="http://millermedeiros.github.io/js-signals/" id="73554900106100005560">
+            <license url="http://opensource.org/licenses/mit-license.php" type="MIT" />
+            <copyright>Miller Medeiros</copyright>
+            <pattern>sap/ui/thirdparty/signals.js</pattern>
         </lib>
-        <lib name="klayjs" displayName="KLayJS" homepage="https://github.com/OpenKieler/klayjs">
-            <license url="https://github.com/OpenKieler/klayjs/blob/master/LICENSE" type="Eclipse Public License" file="../thirdparty/licenses/klayjs-ECLIPSE-LICENSE.txt" />
+        <lib name="blanket" displayName="blanket.js" npmName="blanket" version="1.1.5" hash="725a2c0a5157383a26657ebdf511742e" homepage="http://blanketjs.org/" id="73554900106100002118">
+            <license url="https://github.com/alex-seville/blanket/blob/master/LICENSE" type="MIT" />
+            <copyright>2013 Alex Seville</copyright>
+            <pattern>sap/ui/thirdparty/blanket.js</pattern>
         </lib>
-        <lib name="bignumber" displayName="bignumber.js" homepage="https://github.com/MikeMcl/bignumber.js">
-            <license url="https://github.com/MikeMcl/bignumber.js/blob/master/LICENCE" type="MIT License" file="../thirdparty/licenses/bignumber-MIT-LICENSE.txt" />
+        <lib name="json-in-js" displayName="JSON in JS" npmName="n/a" version="ff55d8d451" homepage="https://github.com/douglascrockford/JSON-js" id="73554900106100003740">
+            <license url="https://github.com/douglascrockford/JSON-js/blob/master/json2.js" type="LicenseRef-JSONinJSPublicDomain" />
+            <copyright>Douglas Crockford</copyright>
+            <pattern partial="true" otherContent="SAP" explanation="JSTokenizer.js is overall written by SAP, but contains code has been taken from the component JSON in JavaScript (https://github.com/douglascrockford/JSON-js/blob/master/json2.js) from Douglas Crockford which is licensed under Public Domain">sap/base/util/JSTokenizer.js</pattern>
         </lib>
+        <lib name="tdop" displayName="Top Down Operator Precedence" npmName="n/a" version="unknown" homepage="https://github.com/douglascrockford/TDOP" id="73554900106100005552">
+            <license url="http://www.apache.org/licenses/LICENSE-2.0" type="Apache-2.0" />
+            <comment>License granted to SAP by Douglas Crockford</comment>
+            <!-- there was mail exchange to get the module granted under Apache license -->
+            <copyright>2010 Douglas Crockford</copyright>
+            <pattern partial="true" otherContent="SAP" explanation="ExpressionParser.js is overall written by SAP, but contains code taken from or inspired by TDOP by Douglas Crockford (see the respective comment)">sap/ui/base/ExpressionParser.js</pattern>
+        </lib>
+        <lib name="klayjs" displayName="KLayJS" npmName="klayjs" version="0.4.1" hash="2c56e7f04ee755e549f41a9547940a30" homepage="https://github.com/OpenKieler/klayjs" id="73554900106100012704">
+            <license url="https://github.com/OpenKieler/klayjs/blob/master/LICENSE" type="EPL-1.0" />
+            <copyright>Ulf Rueegg</copyright>
+            <pattern>sap/ui/thirdparty/klay.js</pattern>
+        </lib>
+        <lib name="bignumber" displayName="bignumber.js" npmName="bignumber.js" version="6.0.0" hash="0fe1f6497d627ce6bff835a1e4cc5caa" homepage="https://github.com/MikeMcl/bignumber.js" id="73555000106100012902">
+            <license url="https://github.com/MikeMcl/bignumber.js/blob/master/LICENCE" type="MIT" />
+            <copyright>2018 Michael Mclaughlin</copyright>
+            <pattern>sap/ui/thirdparty/bignumber.js</pattern>
+        </lib>
+        <lib name="lodash" displayName="lodash" npmName="lodash" version="4.17.21" hash="5ad8f4060a27fe02e24d21567ca45ea5" homepage="https://github.com/lodash/lodash" id="73555000106100057925">
+            <license url="https://github.com/lodash/lodash/blob/master/LICENSE" type="MIT" />
+            <copyright>OpenJS Foundation and other contributors</copyright>
+            <pattern>sap/base/util/restricted/_/lodash.custom.js</pattern>
+        </lib>
+        <lib name="hyphenopoly" displayName="Hyphenopoly" npmName="hyphenopoly" version="3.4.0" hash="cc7f1e6a04746091b382c81810f5bc84" homepage="https://github.com/mnater/Hyphenopoly" id="73555000106100074224">
+            <license url="https://github.com/mnater/Hyphenopoly/blob/master/LICENSE" type="MIT" />
+            <copyright>2021 Mathias Nater</copyright>
+            <pattern>sap/ui/thirdparty/hyphenopoly/*</pattern>
+        </lib>
+        <lib name="p-cancelable" displayName="p-cancelable" npmName="p-cancelable" version="2.0.0" homepage="https://github.com/sindresorhus/p-cancelable/tree/v2.0.0" id="73555000106100034052">
+            <license url="https://github.com/sindresorhus/p-cancelable/blob/v2.0.0/license" type="MIT" />
+            <copyright>Sindre Sorhus &lt;sindresorhus@gmail.com&gt;</copyright>
+            <pattern partial="true" otherContent="@babel/helpers" explanation="_CancelablePromise.js is derived from p-cancelable by Sindre Sorhus and was transpiled with Babel, so the resulting file contains Babel code fragments">sap/base/util/restricted/_CancelablePromise.js</pattern>
+        </lib>
+        <lib name="@babel/helpers" displayName="@babel/helpers" npmName="@babel/helpers" version="7.10.4" homepage="https://github.com/babel/babel/tree/v7.10.4" id="73555000106100041674">
+            <license url="https://github.com/babel/babel/blob/v7.10.4/LICENSE" type="MIT" />
+            <copyright>2014-present Sebastian McKenzie and other contributors</copyright>
+            <pattern partial="true" otherContent="p-cancelable" explanation="_CancelablePromise.js is derived from p-cancelable by Sindre Sorhus and was transpiled with Babel, so the resulting file contains Babel code fragments">sap/base/util/restricted/_CancelablePromise.js</pattern>
+            <!-- Babel transformation added some helper code, hence Babel is mentioned here -->
+        </lib>
+        <lib name="jalaali" displayName="Jalaali JS" npmName="n/a" version="unknown" homepage="https://github.com/jalaali/jalaali-js/" id="73555000106100004826">
+            <!-- version modeled in PPMS: 1.1.0 -->
+            <license url="https://github.com/jalaali/jalaali-js/blob/master/LICENSE" type="MIT" />
+            <copyright>Behrang Norouzinia</copyright>
+            <pattern partial="true" otherContent="SAP" explanation="Persian.js is overall written by SAP, but the calculation is taken from jalaali-js">sap/ui/core/date/Persian.js</pattern>
+        </lib>
+        <lib name="vkbeautify" displayName="vkBeautify" npmName="n/a" version="0.99.00.beta" hash="699860673e5397142998aea71bbea904" homepage="http://www.eslinstructor.net/vkbeautify/" id="73554900106100001834">
+            <license url="https://github.com/vkiryukhin/vkBeautify/blob/master/LICENSE" type="MIT" />
+            <copyright>2012 Vadim Kiryukhin</copyright>
+            <pattern>sap/ui/thirdparty/vkbeautify.js</pattern>
+        </lib>
+        <lib name="node-lru-cache" displayName="node-lru-cache" npmName="lru-cache" version="2.7.3" homepage="https://github.com/isaacs/node-lru-cache" id="73554900106100008214">
+            <license url="https://github.com/isaacs/node-lru-cache/blob/master/LICENSE" type="ISC" />
+            <copyright>Isaac Z. Schlueter and Contributors</copyright>
+            <pattern partial="true" otherContent="SAP" explanation="LRUPersistentCache.js is overall written by SAP, but portions ('Least Recently Used' logic) are taken from the node-lru-cache project (see https://github.com/isaacs/node-lru-cache/blob/v2.7.3/README.md) and modified.">sap/ui/core/cache/LRUPersistentCache.js</pattern>
+        </lib>
+        <lib name="tzdata" displayName="Time Zone Database" npmName="n/a" version="2023c" homepage="http://www.iana.org/time-zones" id="73554900106100123193">
+            <license url="https://github.com/eggert/tz/blob/main/LICENSE" type="LicenseRef-tzdata-PublicDomain" />
+            <copyright>Arthur David Olson, Paul Eggert and other contributors</copyright>
+            <pattern partial="true" otherContent="SAP" explanation="_timezones.js is overall written by SAP, but the list of IANA timezone IDs is taken from the Timezone Database">../test/sap/ui/core/qunit/i18n/helper/_timezones.js</pattern>
+        </lib>
+        <ignore>
+            <file pattern="sap/ui/thirdparty/RequestRecorder.js" />
+            <file pattern="sap/ui/thirdparty/sinon-ie.js" />
+        </ignore>
     </thirdparty>
 
     <documentation xmlns="http://www.sap.com/ui5/buildext/documentation"
@@ -367,20 +430,32 @@
             <name>CA-UI5-COR</name>
             <modules>
                 <module>jquery.sap.*</module>
+                <module>ui5loader*</module>
+                <module>sap/base/*</module>
                 <module>sap/ui/app/*</module>
                 <module>sap/ui/base/*</module>
                 <module>sap/ui/debug/*</module>
+                <module>sap/ui/dom/*</module>
+                <module>sap/ui/events/*</module>
                 <module>sap/ui/model/*</module>
+                <module>sap/ui/performance/*</module>
                 <module>sap/ui/qunit/*</module>
+                <module>sap/ui/security/*</module>
+                <module>sap/ui/test/starter/*</module>
+                <module>sap/ui/util/*</module>
                 <module>sap/ui/Device</module>
                 <module>sap/ui/Global</module>
+                <module>sap/ui/VersionInfo</module>
             </modules>
         </component>
 
         <component>
             <name>CA-UI5-CTR</name>
             <modules>
+                <module>sap/ui/core/StandardMargins</module>
+                <module>sap/ui/core/ContainerPadding</module>
                 <module>sap/ui/core/InvisibleText</module>
+                <module>sap/ui/core/webc/*</module>
             </modules>
         </component>
 
@@ -388,11 +463,18 @@
             <name>CA-UI5-TBL</name>
             <modules>
                 <module>sap/ui/core/dnd/*</module>
+                <module>sap/ui/core/util/Export</module>
+                <module>sap/ui/core/util/ExportCell</module>
+                <module>sap/ui/core/util/ExportColumn</module>
+                <module>sap/ui/core/util/ExportRow</module>
+                <module>sap/ui/core/util/ExportType</module>
+                <module>sap/ui/core/util/ExportTypeCSV</module>
+                <module>sap/ui/core/util/File</module>
             </modules>
         </component>
 
         <component>
-            <name>CA-UI5-FST</name>
+            <name>CA-UI5-TA</name>
             <modules>
                 <module>sap/ui/test/*</module>
             </modules>
@@ -402,6 +484,20 @@
             <name>CA-WDE-MCK</name>
             <modules>
                 <module>sap/ui/core/util/MockServer</module>
+            </modules>
+        </component>
+
+        <component>
+            <name>CA-UI5-CTR-ROD</name>
+            <modules>
+                <module>sap/ui/core/hyphenation/*</module>
+            </modules>
+        </component>
+
+        <component>
+            <name>CA-UI5-CTR-PIR</name>
+            <modules>
+                <module>sap/ui/core/delegate/ScrollEnablement</module>
             </modules>
         </component>
     </ownership>

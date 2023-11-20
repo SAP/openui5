@@ -13,7 +13,6 @@
 
 .sapMMessagePageInner {
 	box-sizing: border-box;
-	display: -ms-flexbox;
 	display: flex;
 	padding: 1rem;
 	position: absolute;
@@ -31,11 +30,8 @@
 
 .sapMMessagePageContentWrapper {
 	margin: auto;
-	display: -ms-flexbox;
 	display: flex;
-	-ms-flex-direction: column;
 	flex-direction: column;
-	-ms-flex-pack:center; // needed to vertically center content only in IE
 	align-items: center;
 	transform: translateY(-1rem);
 	width: 30rem;
@@ -49,13 +45,12 @@
 /* MessagePage inner controls styles*/
 .sapMMessagePage {
 	.sapMMessagePageInner {
-		.sapUiIcon::before {
+		.sapMMessagePageIcon.sapUiIcon::before {
 			font-size: 6rem;
 			color: @sapUiContentNonInteractiveIconColor;
 		}
 
 		& > .sapMMessagePageContentWrapper > * {
-			-ms-flex-negative: 0;
 			max-width: 100%;
 		}
 	}

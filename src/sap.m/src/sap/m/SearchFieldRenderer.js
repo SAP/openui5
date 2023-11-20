@@ -2,23 +2,38 @@
  * ${copyright}
  */
 
-sap.ui.define(["sap/ui/Device", "sap/ui/core/InvisibleText"],
-	function(Device, InvisibleText) {
+sap.ui.define([
+	"sap/ui/Device",
+	"sap/ui/core/InvisibleText",
+	"sap/ui/core/library",
+	"sap/ui/core/Lib"
+],
+	function(
+	Device,
+	InvisibleText,
+	coreLibrary,
+	Library
+) {
 	"use strict";
 
+	/**
+	 * @const Shortcut to sap.ui.core.library.aria.HasPopup
+	 */
+	var HasPopup = coreLibrary.aria.HasPopup;
 
 	/**
 	 * SearchField renderer.
 	 * @namespace
 	 */
 	var SearchFieldRenderer = {
+		apiVersion: 2
 	};
 
 	/**
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
 	 *
 	 * @param {sap.ui.core.RenderManager} rm the RenderManager that can be used for writing to the Render-Output-Buffer
-	 * @param {sap.ui.core.Control} oSF an object representation of the control that should be rendered
+	 * @param {sap.m.SearchField} oSF an object representation of the control that should be rendered
 	 */
 	SearchFieldRenderer.render = function(rm, oSF){
 		// render nothing if control is invisible
@@ -26,173 +41,158 @@ sap.ui.define(["sap/ui/Device", "sap/ui/core/InvisibleText"],
 			return;
 		}
 
-		var sPlaceholder = oSF.getPlaceholder(),
+		var sPlaceholder = oSF.getPlaceholder() || Library.getResourceBundleFor("sap.m").getText("FACETFILTER_SEARCH", undefined, true),
 			sValue = oSF.getValue(),
 			sWidth = oSF.getProperty("width"),
 			sId = oSF.getId(),
 			bShowRefreshButton = oSF.getShowRefreshButton(),
 			bShowSearchBtn = oSF.getShowSearchButton(),
-			oAccAttributes = {}, // additional accessibility attributes
-			sToolTipValue,
-			sRefreshToolTip = oSF.getRefreshButtonTooltip(),
-			sResetToolTipValue,
-			bAccessibility = sap.ui.getCore().getConfiguration().getAccessibility();
+			oAccAttributes = {
+				describedby: {
+					value: SearchFieldRenderer._getDescribedBy(oSF),
+					append: true
+				}
+			};
 
 		// container
-		rm.write("<div");
-		rm.writeControlData(oSF);
-		if (sWidth) { rm.writeAttribute("style", "width:" + sWidth + ";"); }
+		rm.openStart("div", oSF)
+			.class("sapMSF");
 
-		rm.addClass("sapMSF");
+		if (sWidth) {
+			rm.style("width", sWidth);
+		}
 
 		if (sValue) {
-			rm.addClass("sapMSFVal");
-		}
-		if (!oSF.getEnabled()) {
-			rm.addClass("sapMSFDisabled");
+			rm.class("sapMSFVal");
 		}
 
-		rm.writeClasses();
-		rm.write(">");
+		if (!oSF.getEnabled()) {
+			rm.class("sapMSFDisabled");
+		}
+
+		rm.openEnd();
 
 			// 1. Input type="search".
 			//    Enclose input into a <form> to show a correct keyboard
-			rm.write('<form');
-			rm.writeAttribute("id", sId + "-F");
-			rm.addClass('sapMSFF');
+			rm.openStart('form', sId + "-F")
+				.class('sapMSFF');
+
 			if (!bShowSearchBtn) {
-				rm.addClass("sapMSFNS"); //no search button
+				rm.class("sapMSFNS"); // no search button
 			} else if (bShowRefreshButton) {
-				rm.addClass('sapMSFReload');
-			}
-			rm.writeClasses();
-			rm.write('>');
-
-			// self-made placeholder
-			if (!oSF._hasPlaceholder && sPlaceholder) {
-				rm.write("<label ");
-				rm.writeAttribute("id", sId + "-P");
-				rm.writeAttribute("for", sId + "-I");
-
-				rm.addClass("sapMSFPlaceholder");
-				rm.writeClasses();
-				rm.write(">");
-				rm.writeEscaped(sPlaceholder);
-				rm.write("</label>");
+				rm.class('sapMSFReload');
 			}
 
-			rm.write('<input');
-			rm.writeAttribute("type", "search");
-			rm.writeAttribute("autocomplete", "off");
+			rm.openEnd();
+
+			rm.openStart("span", sId + "-staticSearchIcon");
+			rm.attr("aria-hidden", true);
+			rm.class('sapMSFSSI'); // static search icon (needed for the Search Field in the Tool Header)
+			rm.openEnd().close("span");
+
+			rm.voidStart('input', sId + "-I")
+				.class("sapMSFI")
+				.attr("type", "search")
+				.attr("aria-label", sPlaceholder)
+				.attr("autocomplete", "off");
+
+			if (oSF.getEnableSuggestions()) {
+				rm.attr("aria-haspopup", HasPopup.ListBox.toLowerCase());
+			}
 
 			if (Device.browser.safari) {
-				rm.writeAttribute("autocorrect", "off");
+				rm.attr("autocorrect", "off");
 			}
-
-			rm.writeAttribute("id", oSF.getId() + "-I");
-
-			var sTooltip = oSF.getTooltip_AsString();
-			if (sTooltip) {
-				rm.writeAttributeEscaped("title", sTooltip);
-			}
-
-			rm.addClass("sapMSFI");
-
-			if (Device.os.android && Device.os.version >= 4 && Device.os.version < 4.1 ) {
-				rm.addClass("sapMSFIA4"); // specific CSS layout for Android 4.0x
-			}
-
-			rm.writeClasses();
 
 			if (oSF.getEnableSuggestions() && Device.system.phone) {
 				// Always open a dialog on a phone if suggestions are on.
-				// To avoid soft keyboard flickering, set the readonly attribute.
-				rm.writeAttribute("readonly", "readonly");
-			}
-			if (!oSF.getEnabled()) { rm.writeAttribute("disabled","disabled"); }
-			if (sPlaceholder) { rm.writeAttributeEscaped("placeholder", sPlaceholder); }
-			if (oSF.getMaxLength()) { rm.writeAttribute("maxLength", oSF.getMaxLength()); }
-			if (sValue) { rm.writeAttributeEscaped("value", sValue); }
-
-			//ARIA attributes
-			if (oSF.getEnabled() && bShowRefreshButton) {
-				var sAriaF5LabelId = InvisibleText.getStaticId("sap.m", "SEARCHFIELD_ARIA_F5");
-				if ( sAriaF5LabelId ) {
-					oAccAttributes.describedby = {
-						value: sAriaF5LabelId,
-						append: true
-					};
-				}
+				// avoid soft keyboard flickering
+				rm.attr("inputmode", "none");
 			}
 
-			var sInvisibleTextId = oSF.getId() + "-I" + "-labelledby";
-			oAccAttributes.labelledby = {
-				value: sInvisibleTextId,
-				append: true
-			};
-
-			rm.writeAccessibilityState(oSF, oAccAttributes);
-
-			rm.write(">");
-
-			//Invisible text for ACC purpose - announcing placeholder when there is Label or Tooltip for the Input
-			if (bAccessibility) {
-				var sAnnouncement = oSF.getPlaceholder() || "";
-				if (sAnnouncement) {
-					rm.write("<span");
-					rm.writeAttribute("id", sInvisibleTextId);
-					rm.writeAttribute("aria-hidden", "true");
-					rm.addClass("sapUiInvisibleText");
-					rm.writeClasses();
-					rm.write(">");
-					rm.writeEscaped(sAnnouncement.trim());
-					rm.write("</span>");
-				}
+			var sTooltip = oSF.getTooltip_AsString();
+			if (sTooltip) {
+				rm.attr("title", sTooltip);
 			}
+
+			if (!oSF.getEnabled()) {
+				rm.attr("disabled", "disabled");
+			}
+
+			if (sPlaceholder) {
+				rm.attr("placeholder", sPlaceholder);
+			}
+
+			if (oSF.getMaxLength()) {
+				rm.attr("maxlength", oSF.getMaxLength());
+			}
+
+			rm.attr("value", sValue);
+
+			oAccAttributes.disabled = null;
+
+			rm.accessibilityState(oSF, oAccAttributes);
+
+			rm.voidEnd();
 
 			if (oSF.getEnabled()) {
 				// 2. Reset button
-				rm.write("<div");
-				rm.writeAttribute("id", oSF.getId() + "-reset");
-				sResetToolTipValue = sValue === "" ? this.oSearchFieldToolTips.SEARCH_BUTTON_TOOLTIP : this.oSearchFieldToolTips.RESET_BUTTON_TOOLTIP;
-				rm.writeAttributeEscaped("title", sResetToolTipValue); // initial rendering reset is search when no value is set
-				rm.addClass("sapMSFR"); // reset
-				rm.addClass("sapMSFB"); // button
+				rm.openStart("div", sId + "-reset")
+					.class("sapMSFR") // reset
+					.class("sapMSFB") // button
+					.attr("aria-hidden", true);
+
 				if (Device.browser.firefox) {
-					rm.addClass("sapMSFBF"); // firefox, active state by preventDefault
+					rm.class("sapMSFBF"); // firefox, active state by preventDefault
 				}
+
 				if (!bShowSearchBtn) {
-					rm.addClass("sapMSFNS"); //no search button
+					rm.class("sapMSFNS"); //no search button
 				}
-				rm.writeClasses();
-				rm.write("></div>");
+
+				rm.openEnd()
+					.close("div");
 
 				// 3. Search/Refresh button
 				if (bShowSearchBtn) {
-					rm.write("<div");
-					rm.writeAttribute("id", oSF.getId() + "-search");
-					rm.addClass("sapMSFS"); // search
-					rm.addClass("sapMSFB"); // button
+					rm.openStart("div", sId + "-search")
+						.class("sapMSFS") // search
+						.class("sapMSFB") // button
+						.attr("aria-hidden", true);
+
 					if (Device.browser.firefox) {
-						rm.addClass("sapMSFBF"); // firefox, active state by preventDefault
+						rm.class("sapMSFBF"); // firefox, active state by preventDefault
 					}
-					rm.writeClasses();
-					if (bShowRefreshButton) {
-						sToolTipValue = sRefreshToolTip === "" ? this.oSearchFieldToolTips.REFRESH_BUTTON_TOOLTIP : sRefreshToolTip;
-					} else {
-						sToolTipValue = this.oSearchFieldToolTips.SEARCH_BUTTON_TOOLTIP;
-					}
-					rm.writeAttributeEscaped("title", sToolTipValue);
-					rm.write( "></div>");
+
+					rm.openEnd()
+						.close("div");
 				}
 			}
 
-			rm.write("</form>");
+			rm.close("form");
 
-		rm.write("</div>");
+			if (oSF.getEnableSuggestions()) {
 
+				rm.openStart("span", sId + "-SuggDescr")
+					.class("sapUiPseudoInvisibleText")
+					.attr("role", "status")
+					.attr("aria-live", "polite")
+					.openEnd()
+					.close("span");
+			}
+
+		rm.close("div");
 	};
 
+	SearchFieldRenderer._getDescribedBy = function (oSF) {
+		var sDescribedBy = InvisibleText.getStaticId("sap.m", "SEARCHFIELD_ARIA_DESCRIBEDBY");
+
+		if (oSF.getEnabled() && oSF.getShowRefreshButton()) {
+			sDescribedBy += " " + InvisibleText.getStaticId("sap.m", "SEARCHFIELD_ARIA_F5");
+		}
+
+		return sDescribedBy;
+	};
 
 	return SearchFieldRenderer;
 

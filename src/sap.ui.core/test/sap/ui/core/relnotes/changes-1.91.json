@@ -1,0 +1,146 @@
+{
+  "1.91.0": {
+    "date": "June 2021",
+    "notes": [
+      {
+        "id": "5b5346968b5afa7093f07c6644fb0f45898589b8",
+        "type": "FEATURE",
+        "text": " new and updated less parameters for all themes"
+      },
+      {
+        "id": "b8d7b59ce674842aa8299db155bd3337a7716525",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v4.ODataMetaModel#requestObject: support encoding of slash",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180188366"
+          }
+        ]
+      },
+      {
+        "id": "13dfe242b1b18d0d6c75c7042a5d885362ef1f71",
+        "type": "FIX",
+        "text": " Component.onBeforeUnload",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170117638"
+          }
+        ]
+      },
+      {
+        "id": "609ff549637b8f57f802a57db07ca75f2aab2475",
+        "type": "FIX",
+        "text": " Adjust MediaQueryList usage for Safari 13 and older",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400003708942021"
+          }
+        ]
+      },
+      {
+        "id": "a757123d64d6d80cbe577f9dc0b270c723037e95",
+        "type": "FEATURE",
+        "text": " new and updated less parameters for all themes"
+      },
+      {
+        "id": "9b422703798ee0122535e058e62b6fa1dad02b77",
+        "type": "FEATURE",
+        "text": " sap.ui.core.ShortcutHintsMixin: Stop showing ShortcutHintsMixin on mobile phone"
+      },
+      {
+        "id": "81cb61ee4957ba7ce617d08a691aa0ebaabb4852",
+        "type": "FIX",
+        "text": " sap.ui.model.Binding#setContext: Do not replace but reset data state so that it provides changes properly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170155021"
+          }
+        ]
+      },
+      {
+        "id": "d462a84b0a9ccf7fd3a3e68c7ac933e03cd2d5b4",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v4.ODataModel#reportError: handle JSON error response from $batch",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180171988"
+          }
+        ]
+      },
+      {
+        "id": "8d4f21dda8d5b0892abbbfb1b07c33644156f5ca",
+        "type": "FIX",
+        "text": " jquery.js: make 'offset' work with SVG child elements in Safari",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170112268"
+          }
+        ]
+      },
+      {
+        "id": "6ddeaaae8d6065a008dc72e3a8ed3a1a43f7327d",
+        "type": "FIX",
+        "text": " jquery-mobile-custom: check text-selection before calling 'preventDefault'",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180148848"
+          }
+        ]
+      },
+      {
+        "id": "76bf1dc9a68104ca32278730028fce1abe966ff2",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.type.Decimal: precision and scale constraints can have the same value",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180147443"
+          }
+        ]
+      },
+      {
+        "id": "7b8662f3632ae497bdcd0af744ff524f66161ac8",
+        "type": "FEATURE",
+        "text": " Opa: add sibling matcher and selector"
+      },
+      {
+        "id": "176c54c31fe6b217f0b5f275ea9e58d6bbfab07a",
+        "type": "FEATURE",
+        "text": " PasteProvider plugin added"
+      },
+      {
+        "id": "0fdbece63506986fe06bcb97ae111dd8d954ac90",
+        "type": "FEATURE",
+        "text": " core/routing: Introduce Placeholder"
+      },
+      {
+        "id": "2b32a82da8736568181b589e9cd3332e1adba2d9",
+        "type": "FIX",
+        "text": " XMLViewRenderer: Correctly close placeholder div",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500008652872020"
+          }
+        ]
+      },
+      {
+        "id": "60a9885ddfce60ace9f1350f35caca67c2b121fd",
+        "type": "FIX",
+        "text": " sap.ui.core.mvc.View: createContent must support Controls & Promise"
+      },
+      {
+        "id": "d3afbb229c4e9407b311fc3b4a49938a821458b0",
+        "type": "FEATURE",
+        "text": " sap.ui.core.IconPool: Update icon font v4.10"
+      }
+    ]
+  }
+}

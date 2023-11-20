@@ -5,6 +5,14 @@
 
 @_sap_m_CheckBox_SelectedWarningColor: darken(@sapUiFieldWarningColor, 100);
 
+.sapMCb.sapMCbSucc .sapMCbBg {
+	background-color: @sapUiFieldSuccessBackground;
+	border-color: @sapUiFieldSuccessColor;
+	&.sapMCbMarkChecked:before {
+		color: @sapUiFieldSuccessColor;
+	}
+}
+
 .sapMCb.sapMCbWarn .sapMCbBg {
 	background-color: @sapUiFieldWarningBackground;
 	border-color: @sapUiFieldWarningColor;
@@ -21,8 +29,20 @@
 	}
 }
 
+.sapMCb.sapMCbInfo .sapMCbBg {
+	background-color: @sapUiFieldBackground;
+	border-color: @sapUiHighlight;
+	&.sapMCbMarkChecked:before {
+		color: @sapUiHighlight;
+	}
+}
+
 .sapUiForm .sapMCbBg { /* In forms, align left with '0.0625rem(1px)' ( the focus width) */
 	left: 1px; // Must be in pixels to behave correctly in IE
+}
+
+.sapUiForm .sapMCb {
+	padding-left: 2.25rem; // to have right gap between checkbox and label
 }
 
 .sapMCbBg.sapMCbMarkChecked:before {
@@ -60,17 +80,7 @@ html.sap-desktop {
 	}
 
 	.sapUiForm .sapMCb:not(.sapMCbBgDis).sapMCbHasLabel:focus:before {
-		left: -1px; /* Cb in SimpleForm: left border adjustment */
-	}
-}
-
-html[data-sap-ui-browser^="ie"].sap-desktop,
-html[data-sap-ui-browser^="ed"].sap-desktop {
-	.sapMCb:not(.sapMCbBgDis):not(.sapMCbHasLabel):focus > .sapMCbBg {
-		outline-style: dashed;
-	}
-	.sapMCb:not(.sapMCbBgDis):not(.sapMCbDisplayOnly).sapMCbHasLabel:focus:before {
-		border: 1px dashed @sapUiContentFocusColor;
+		left: 0px; /* Cb in SimpleForm: left border adjustment */
 	}
 }
 
@@ -118,6 +128,9 @@ html[data-sap-ui-browser^="ed"].sap-desktop {
 	.sapUiForm .sapMCbBg { /* In forms, align left with '0.0625rem(1px)' ( the focus width) */
 		left: 1px; // Must be in pixels to behave correctly in IE
 	}
+	.sapUiForm .sapMCb {
+		padding-left: 1.5625rem; // to have right gap between checkbox and label
+	}
 }
 
 html.sap-desktop {
@@ -129,7 +142,7 @@ html.sap-desktop {
 		}
 
 		.sapUiForm .sapMCb:not(.sapMCbBgDis):focus:before {
-			left: -0.0625rem;
+			left: 0px;
 		}
 	}
 }

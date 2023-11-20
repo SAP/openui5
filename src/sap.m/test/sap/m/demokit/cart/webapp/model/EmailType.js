@@ -1,6 +1,6 @@
 sap.ui.define([
-	'sap/ui/model/type/String',
-	'sap/ui/model/ValidateException',
+	"sap/ui/model/type/String",
+	"sap/ui/model/ValidateException",
 	"sap/ui/model/resource/ResourceModel"
 ], function (String, ValidateException, ResourceModel) {
 	"use strict";

@@ -1,27 +1,23 @@
 /*!
  * ${copyright}
  */
-sap.ui.define([
-	"sap/ui/test/Opa5",
-	"sap/ui/test/TestUtils"
-], function (Opa5, TestUtils) {
+sap.ui.define([], function () {
 	"use strict";
 
 	return {
-		AdaptSalesOrdersTable : function (Given, When, Then, sUIComponent) {
-			if (!TestUtils.isRealOData()) {
-				Opa5.assert.ok(true, "Test runs only with real OData");
-				return;
-			}
-
+		adaptSalesOrdersTable : function (Given, When, Then, sUIComponent) {
 			Given.iStartMyUIComponent({
+				autoWait : true,
 				componentConfig : {
 					name : sUIComponent || "sap.ui.core.sample.odata.v4.SalesOrdersRTA"
 				}
 			});
+			Then.onAnyPage.iTeardownMyUIComponentInTheEnd();
+
+			When.onAnyPage.applySupportAssistant();
 
 		// SalesOrdersTable
-			When.onTheMainPageRTA.pressAdaptUIButton(/AdaptUISalesOrdersTable/);
+			When.onTheMainPageRTA.pressAdaptUIButton("AdaptUISalesOrdersTable");
 
 			Then.onAdaptUIDialog.checkCheckBoxIsSelected("SalesOrderID", true);
 			Then.onAdaptUIDialog.checkCheckBoxIsSelected("CompanyName", true);
@@ -31,7 +27,6 @@ sap.ui.define([
 			Then.onAdaptUIDialog.checkCheckBoxIsSelected("LifecycleStatusDesc", true);
 			Then.onAdaptUIDialog.checkCheckBoxIsSelected("ChangedAt", true);
 
-
 			// uncheck SalesOrderID
 			When.onAdaptUIDialog.checkCheckBox("SalesOrderID");
 
@@ -39,10 +34,10 @@ sap.ui.define([
 			When.onAdaptUIDialog.checkCheckBox("LifecycleStatus");
 
 			When.onAdaptUIDialog.applyDialog();
-			Then.onTheMainPageRTA.checkNewColumnAppears("SalesOrders", "N", 7);
+			Then.onTheMainPageRTA.checkNewColumnAppears("SalesOrderList", "N", 7);
 
-			// unheck LifecycleStatus
-			When.onTheMainPageRTA.pressAdaptUIButton(/AdaptUISalesOrdersTable/);
+			// uncheck LifecycleStatus
+			When.onTheMainPageRTA.pressAdaptUIButton("AdaptUISalesOrdersTable");
 			Then.onAdaptUIDialog.checkCheckBoxIsSelected("LifecycleStatus", true);
 			When.onAdaptUIDialog.checkCheckBox("LifecycleStatus");
 
@@ -50,7 +45,7 @@ sap.ui.define([
 
 		// SalesOrderDetails
 			When.onTheMainPage.selectSalesOrder(1);
-			When.onTheMainPageRTA.pressAdaptUIButton(/AdaptUISalesOrdersDetails/);
+			When.onTheMainPageRTA.pressAdaptUIButton("AdaptUISalesOrdersDetails");
 
 			// uncheck SalesOrderID
 			When.onAdaptUIDialog.checkCheckBox("SalesOrderID");
@@ -59,17 +54,17 @@ sap.ui.define([
 			When.onAdaptUIDialog.checkCheckBox("LifecycleStatus");
 
 			When.onAdaptUIDialog.applyDialog();
-			Then.onTheMainPageRTA.checkNewPropertyAppears("LifecycleStatus");
+			Then.onTheMainPageRTA.checkNewPropertyAppears(/RTA_LifecycleStatus1/);
 
 			// uncheck LifecycleStatus
-			When.onTheMainPageRTA.pressAdaptUIButton(/AdaptUISalesOrdersDetails/);
+			When.onTheMainPageRTA.pressAdaptUIButton("AdaptUISalesOrdersDetails");
 			Then.onAdaptUIDialog.checkCheckBoxIsSelected("LifecycleStatus", true);
 			When.onAdaptUIDialog.checkCheckBox("LifecycleStatus");
 
 			When.onAdaptUIDialog.applyDialog();
 
 		// BusinessPartner
-			When.onTheMainPageRTA.pressAdaptUIButton(/AdaptUIBusinessPartner/);
+			When.onTheMainPageRTA.pressAdaptUIButton("AdaptUIBusinessPartner");
 
 			// uncheck BusinessPartnerID
 			When.onAdaptUIDialog.checkCheckBox("BusinessPartnerID");
@@ -78,18 +73,17 @@ sap.ui.define([
 			When.onAdaptUIDialog.checkCheckBox("BusinessPartnerRole");
 
 			When.onAdaptUIDialog.applyDialog();
-			Then.onTheMainPageRTA.checkNewPropertyAppears("BusinessPartnerRole");
+			Then.onTheMainPageRTA.checkNewPropertyAppears(/RTA_BusinessPartnerRole2/);
 
-
-			// unheck BusinessPartnerRole
-			When.onTheMainPageRTA.pressAdaptUIButton(/AdaptUIBusinessPartner/);
+			// uncheck BusinessPartnerRole
+			When.onTheMainPageRTA.pressAdaptUIButton("AdaptUIBusinessPartner");
 			Then.onAdaptUIDialog.checkCheckBoxIsSelected("BusinessPartnerRole", true);
 			When.onAdaptUIDialog.checkCheckBox("BusinessPartnerRole");
 			When.onAdaptUIDialog.applyDialog();
 
 		// SalesOrdersLineItem
-			When.onTheMainPageRTA.pressAdaptUIButton(/AdaptUISalesOrderLineItems/);
-			// uncheck SalesOrderID
+			When.onTheMainPageRTA.pressAdaptUIButton("AdaptUISalesOrderLineItems");
+			// uncheck ProductID
 			When.onAdaptUIDialog.checkCheckBox("ProductID");
 			Then.onAdaptUIDialog.checkCheckBoxIsSelected("ProductID", false);
 
@@ -98,11 +92,10 @@ sap.ui.define([
 			Then.onAdaptUIDialog.checkCheckBoxIsSelected("NoteLanguage", true);
 			When.onAdaptUIDialog.applyDialog();
 
-			Then.onTheMainPageRTA.checkNewColumnAppears("SalesOrderLineItems", "E", 12);
+			Then.onTheMainPageRTA.checkNewColumnAppears("SO_2_SOITEM", "E", 12);
 
 			Then.onAnyPage.checkLog();
 			Then.onAnyPage.analyzeSupportAssistant();
-			Then.iTeardownMyUIComponent();
 		}
 	};
 });

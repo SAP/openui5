@@ -1,0 +1,61 @@
+{
+  "1.95.0": {
+    "date": "September 2021",
+    "notes": [
+      {
+        "id": "be872e83320a4f1372207d95960c9c3872bb5b02",
+        "type": "FEATURE",
+        "text": " sap.tnt.InfoLabel: Redesign"
+      },
+      {
+        "id": "bfeface4b6a81a4392cece609d7191a017793fa5",
+        "type": "FIX",
+        "text": "sap.m.ObjectStatus: underline in HCB/HCW themes alignment by spec",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180123396"
+          }
+        ]
+      },
+      {
+        "id": "d8e807530727b0bf28017e05c9866512843e2b61",
+        "type": "FIX",
+        "text": " sap.m.ObjectStatus: inverted state on multiple lines has full background",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180376452"
+          }
+        ]
+      },
+      {
+        "id": "a9ca679a49972cb61be8f7c34fb2aa7f7c967191",
+        "type": "FIX",
+        "text": " sap.m.Button: Emphasized button is now aligned in high contrast themes",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180357955"
+          }
+        ]
+      },
+      {
+        "id": "70249f515236c15ee2197bfae9cbada467ae13ff",
+        "type": "FIX",
+        "text": " sap.m.Dialog: Subheader padding is now correct in Quartz themes",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180314469"
+          }
+        ]
+      },
+      {
+        "id": "d90fbe7ef235b41f63c7517b642f1182c7e64999",
+        "type": "FIX",
+        "text": " sap.m.MessagePage: increase CSS specificity of main icon"
+      }
+    ]
+  }
+}

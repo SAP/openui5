@@ -1,0 +1,127 @@
+<layout:VerticalLayout id="typeaheadLayout"
+	xmlns:layout="sap.ui.layout"
+	width="100%"
+	xmlns="sap.m"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:core="sap.ui.core"
+	xmlns:f="sap.ui.layout.form"
+	xmlns:f2="sap.f"
+	xmlns:mdc="sap.ui.mdc"
+	xmlns:table="sap.ui.mdc"
+
+	xmlns:vhfb="sap.ui.mdc.filterbar.vh"
+	xmlns:mdcv="sap.ui.mdc.valuehelp"
+	xmlns:mdcvc="sap.ui.mdc.valuehelp.content"
+	xmlns:mdcf="sap.ui.mdc.field"
+	xmlns:mdct="sap.ui.mdc.table"
+	xmlns:ui="sap.ui"
+	xmlns:uit="sap.ui.table"
+	xmlns:variants="sap.ui.fl.variants"
+	xmlns:types="sap.ui.v4demo.types"
+	xmlns:demo="sap.ui.v4demo.controls"
+	xmlns:ce="sap.ui.codeeditor"
+	>
+
+
+		<mdc:FilterBar id="FB0" p13nMode="Value" liveMode="false" delegate='\{"name": "delegates/odata/v4/FilterBarDelegate", "payload": \{"collectionName": "Books"\}\}'>
+		<mdc:dependents>
+			<mdc:ValueHelp
+				id="FH1"
+				validateInput="false"
+				delegate='\{"name": "sap/ui/v4demo/delegate/openson/ValueHelp.delegate", "payload": \{\}\}'>
+				<mdc:typeahead>
+					<mdcv:Popover title="Test1" opensOnClick="true">
+						<mdcvc:MTable keyPath="ID" descriptionPath="name" >
+							<Table items='{path : "/Authors", length: 10}' mode="{= ${settings>/maxConditions} === -1 ? 'MultiSelect' : 'SingleSelectMaster'}" width="30rem">
+								<columns>
+									<Column width="5rem">
+										<header>
+											<Text text="ID" />
+										</header>
+									</Column>
+									<Column>
+										<header>
+											<Text text="Name" />
+										</header>
+									</Column>
+								</columns>
+								<items>
+									<ColumnListItem type="Active">
+										<cells>
+											<Text text="{ID}" />
+											<Text text="{name}" />
+										</cells>
+									</ColumnListItem>
+								</items>
+							</Table>
+						</mdcvc:MTable>
+					</mdcv:Popover>
+				</mdc:typeahead>
+				<mdc:dialog>
+					<mdcv:Dialog title="MDC Table with ui.Table">
+						<mdcvc:MDCTable id="mdcTableContent1" keyPath="ID" descriptionPath="name"  group="group1" title="Default Search Template">
+							<mdcvc:filterBar>
+								<vhfb:FilterBar id="mdcFilterbar1" liveMode="false" delegate="{name: 'delegates/GenericVhFilterBarDelegate', payload: {}}">
+									<vhfb:basicSearchField>
+										<mdc:FilterField
+											delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}"
+											dataType= "Edm.String"
+											conditions= "{$filters>/conditions/$search}"
+											propertyKey="$search"
+											width="50%"
+											maxConditions="1"
+											placeholder="Search" />
+									</vhfb:basicSearchField>
+									<vhfb:filterItems>
+										<mdc:FilterField delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" label="Name" conditions="{$filters>/conditions/name}" propertyKey="name"/>
+									</vhfb:filterItems>
+								</vhfb:FilterBar>
+							</mdcvc:filterBar>
+
+								<!-- type="ResponsiveTable" -->
+							<mdc:Table autoBindOnInit="false"
+								id="mdcTable1"
+								width="100%"
+								headerVisible="true"
+								selectionMode="{= ${settings>/maxConditions} === -1 ? 'Multi' : 'SingleMaster'}"
+								p13nMode="Column,Sort"
+								delegate="{name: 'sap/ui/v4demo/delegate/GridTable.delegate', payload: {collectionName: 'Authors'}}"
+								threshold="50">
+								<mdc:type>
+									<mdc:table.GridTableType rowCountMode="Auto"/>
+								</mdc:type>
+								<mdc:columns>
+									<mdc:table.Column id="mdcTable1_col_ID" header="ID" propertyKey="ID">
+										<mdc:Field delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" value="{ID}" editMode="Display"/>
+									</mdc:table.Column>
+									<mdc:table.Column id="mdcTable1_col_name" header="Name" propertyKey="name">
+										<mdc:Field delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" value="{name}" editMode="Display"/>
+									</mdc:table.Column>
+									<mdc:table.Column id="mdcTable1_col_dateOfBirth" header="Date of birth" propertyKey="dateOfBirth">
+										<mdc:Field delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" value="{dateOfBirth}" editMode="Display"/>
+									</mdc:table.Column>
+								</mdc:columns>
+							</mdc:Table>
+						</mdcvc:MDCTable>
+					</mdcv:Dialog>
+				</mdc:dialog>
+			</mdc:ValueHelp>
+
+
+		</mdc:dependents>
+		<mdc:filterItems>
+
+			<mdc:FilterField delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}'
+				id="FB0-FF1-10"
+				label="TestField"
+				conditions="{$filters>/conditions/author_ID}"
+				propertyKey="author_ID"
+				dataType="Edm.Int32"
+				required="false"
+				valueHelp="FH1"
+				display="DescriptionValue"
+				maxConditions="{settings>/maxConditions}" />
+		</mdc:filterItems>
+	</mdc:FilterBar>
+
+</layout:VerticalLayout>

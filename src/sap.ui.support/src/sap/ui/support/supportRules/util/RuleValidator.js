@@ -26,27 +26,24 @@ sap.ui.define([],
 	* Positive cases :
 	* - "-"
 	* - "*"
-	* - "<digit>.<digit><digit>"
+	* - "<number>.<number>"
 	*
 	* @private
 	* @param {string} sVersion Version number in string format - could be - * or numeric.
 	* @returns {boolean} Boolean response if the provided version is valid.
 	*/
 	validateVersion: function(sVersion) {
-
 		if (!sVersion || typeof sVersion !== 'string') {
 			return false;
 		}
 
-		//Match 0 or 1 of the following symbols - "*" or "-" or the following pattern of digits - "<digit>.<digit><digit>"
-		var versionRegEx = /^\*$|^\-$|^\d\.\d\d$/;
+		var versionRegEx = /^\*$|^\-$|^\d\.\d+$/;
 
 		if (sVersion.match(versionRegEx)) {
 			return true;
 		}
 
 		return false;
-
 	},
 
 	/**
@@ -123,4 +120,4 @@ sap.ui.define([],
 };
 
 return RuleValidator;
-}, false);
+});

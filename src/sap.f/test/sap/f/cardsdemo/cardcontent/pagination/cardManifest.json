@@ -1,0 +1,157 @@
+{
+	"_version": "1.15.0",
+	"sap.app": {
+		"id": "sap.ui.CardCSRFToken.Card1",
+		"type": "card",
+		"title": "Cards with Client-Side Pagination",
+		"subTitle": "",
+		"applicationVersion": {
+			"version": "1.0.0"
+		},
+		"shortTitle": "A short title for this Card",
+		"info": "Additional information about this Card",
+		"description": "A long description for this Card",
+		"tags": {
+			"keywords": [
+				"Action",
+				"Host",
+				"Card",
+				"Sample"
+			]
+		}
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"icons": {
+			"icon": "sap-icon://action"
+		}
+	},
+	"sap.card": {
+		"type": "List",
+		"configuration": {
+			"filters": {
+				"f1": {
+					"type": "Select",
+					"value": "1",
+					"items": [
+						{
+							"title": "Filter 1",
+							"key": 1
+						},
+						{
+							"title": "Filter 2",
+							"key": 2
+						}
+					]
+				}
+			}
+		},
+		"header": {
+			"title": "Client-Side Pagination with Static Data"
+		},
+		"content": {
+			"data": {
+				"json": [
+					{
+						"Name": "Name 1"
+					},
+					{
+						"Name": "Name 2"
+					},
+					{
+						"Name": "Name 3"
+					},
+					{
+						"Name": "Name 4"
+					},
+					{
+						"Name": "Name 5"
+					},
+					{
+						"Name": "Name 6"
+					},
+					{
+						"Name": "Name 7"
+					},
+					{
+						"Name": "Name 8"
+					},
+					{
+						"Name": "Name 9"
+					},
+					{
+						"Name": "Name 10"
+					},
+					{
+						"Name": "Name 11"
+					},
+					{
+						"Name": "Name 12"
+					},
+					{
+						"Name": "Name 13"
+					}
+				]
+			},
+			"maxItems": 0,
+			"item": {
+				"title": "{Name}"
+			}
+		},
+		"footer": {
+			"paginator": {
+				"pageSize": 4
+			},
+			"actionsStrip": [
+				{
+					"text": "Action 1",
+					"actions": [
+						{
+							"type": "Custom"
+						}
+					]
+				},
+				{
+					"text": "Action 2",
+					"actions": [
+						{
+							"type": "Custom"
+						}
+					]
+				},
+				{
+					"text": "Action 3",
+					"actions": [
+						{
+							"type": "Custom"
+						}
+					]
+				},
+				{
+					"text": "Action 4",
+					"actions": [
+						{
+							"type": "Custom"
+						}
+					]
+				},
+				{
+					"text": "Action 5",
+					"actions": [
+						{
+							"type": "Custom"
+						}
+					]
+				},
+				{
+					"text": "Action 6",
+					"actions": [
+						{
+							"type": "Custom"
+						}
+					]
+				}
+			]
+		}
+	}
+}

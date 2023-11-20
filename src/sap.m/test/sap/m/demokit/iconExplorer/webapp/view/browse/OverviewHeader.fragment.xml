@@ -1,0 +1,82 @@
+<core:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:f="sap.f"
+	xmlns:core="sap.ui.core">
+	<f:DynamicPageHeader pinnable="false">
+		<FlexBox wrap="Wrap">
+			<VBox class="sapUiSmallMarginEnd">
+				<Label text="Library:" labelFor="libraryPicker" />
+				<Select id="libraryPicker"
+						change=".onChangeFont"
+						selectedKey="{path: 'view>/fontName', mode: 'OneWay'}"
+						items="{
+						path: '/AllFonts',
+						sorter: {
+							path: 'name',
+							descending: false
+						}
+					}">
+					<core:Item key="{name}" text="{
+							path: 'name',
+							formatter: '.formatter.fontName'
+						}" />
+				</Select>
+			</VBox>
+			<VBox class="sapUiSmallMarginEnd">
+				<Label text="Theme:" labelFor="themePicker"/>
+				<Select
+					id="themePicker"
+					change="handleThemeSelection"
+					selectedKey="{view>/SelectedTheme}">
+					<core:ListItem  key="light" text="{i18n>APP_INFORMATION_BTN_APPEARANCE_LIGHT}" />
+					<core:ListItem  key="dark" text="{i18n>APP_INFORMATION_BTN_APPEARANCE_DARK}" />
+					<core:ListItem  key="hcb" text="{i18n>APP_INFORMATION_BTN_APPEARANCE_HCB}" />
+					<core:ListItem  key="hcw" text="{i18n>APP_INFORMATION_BTN_APPEARANCE_HCW}" />
+					<core:ListItem  key="auto" text="{i18n>APP_INFORMATION_BTN_APPEARANCE_AUTO}" />
+				</Select>
+			</VBox>
+			<VBox 
+				id="categorySelectionContainer"
+				visible="{= ${device>/system/phone} ? false : true}"
+				class="sapUiSmallMarginEnd">
+				<Label text="Category:" labelFor="categorySelection" />
+				<ComboBox
+					id="categorySelection"
+					items="{groups}"
+					tooltip="{i18n>overviewSelectCategoryTooltip}"
+					selectionChange=".onSelectCategory"
+					ariaLabelledBy="labelCategory"
+					width="auto">
+					<core:Item
+						key="{name}"
+						text="{text}"/>
+				</ComboBox>
+			</VBox>
+			<VBox>
+				<Label text="Search:" labelFor="searchField" />
+				<SearchField
+					id="searchField"
+					liveChange=".onSearch"
+					tooltip="{i18n>searchPlaceholder}"
+					width="auto"
+					ariaLabelledBy="labelIconSearch">
+				</SearchField>
+				<layoutData>
+					<FlexItemData growFactor="1"/>
+				</layoutData>
+			</VBox>
+		</FlexBox>
+		<OverflowToolbar
+			id="tagSelection"
+			visible="{= ${view>/iconFilterCount} !== 0 &amp;&amp; (${device>/system/phone} ? false : true)}"
+			width="auto"
+			design="Transparent"
+			style="Clear"
+			content="{
+				path: 'groups/0/tags',
+				factory: '._tagSelectionFactory',
+				length: 50
+			}">
+		</OverflowToolbar>
+	</f:DynamicPageHeader>
+</core:FragmentDefinition>

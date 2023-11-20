@@ -1,0 +1,38 @@
+{
+	"sap.app": {
+		"id": "sap.m.sample.GenericTileAsMonitorTile",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "sap.m.sample.GenericTileAsMonitorTile.Page",
+			"type": "XML",
+			"async": true
+		},
+		"dependencies": {
+			"libs": {
+				"sap.m": {},
+				"sap.ui.core": {}
+			}
+		},
+		"resources": {
+			"css": [
+				{
+					"uri": "style.css"
+				}
+			]
+		},
+		"config": {
+			"sample": {
+				"files": [
+					"Page.view.xml",
+					"Page.controller.js",
+					"style.css",
+					"manifest.json"
+				]
+			}
+		}
+	}
+}

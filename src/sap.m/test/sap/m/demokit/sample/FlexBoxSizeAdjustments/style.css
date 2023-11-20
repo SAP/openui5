@@ -1,7 +1,7 @@
 .sapUiDemoFlexBoxSizeAdjustments .sapMFlexItem {
-	border: 1px dashed ;
-	margin: 3px;
-	padding: 3px;
+	border: 1px dashed #000;
+	margin: 0.1875rem;
+	padding: 0.1875rem;
 }
 
 .sapUiDemoFlexBoxSizeAdjustmentsZeroWidthItems .sapMFlexItem {

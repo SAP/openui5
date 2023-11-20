@@ -1,0 +1,69 @@
+/* =============================== */
+/* CSS for control sap.m/TextArea  */
+/* Horizon theme                   */
+/* =============================== */
+
+@_sapMTextAreaPadding: 0.5rem 0.625rem 0.4375rem;
+@_sapMTextAreaPadding_Compact: 0.1875rem 0.5rem 0.125rem;
+@_sapMTextAreaReadonlyPadding: 0.4375rem 0.625rem 0.375rem;
+@_sapMTextAreaReadonlyPadding_Compact: 0.125rem 0.5rem 0.0625rem;
+@_sapMTextAreaValueStateSuccessPadding: 0.5rem 0.625rem 0.4375rem;
+@_sapMTextAreaValueStateSuccessPadding_Compact: 0.1875rem 0.5rem 0.125rem;
+@_sapMTextAreaValueStateInformationPadding: 0.5rem 0.625rem 0.4375rem;
+@_sapMTextAreaValueStateInformationPadding_Compact: 0.1875rem 0.5rem 0.125rem;
+@_sapMTextAreaValueStateErrorWarningPadding: 0.5rem 0.625rem 0.4375rem;
+@_sapMTextAreaValueStateErrorWarningPadding_Compact: 0.1875rem 0.5rem 0.125rem;
+@_sapMTextAreaContentWrapperPadding: 0.0625rem;
+@_sapMTextAreaContentWrapperValueStateSuccessPadding: 0.0625rem;
+@_sapMTextAreaContentWrapperValueStateInformationPadding: 0.0625rem 0.0625rem 0.125rem 0.0625rem;
+@_sapMTextAreaContentWrapperValueStateErrorWarningPadding: 0.0625rem 0.0625rem 0.125rem 0.0625rem;
+
+.sapMInputBase.sapMTextArea {
+	min-height: 2.25rem;
+}
+
+/* Text Area General */
+.sapMFocus.sapMTextArea .sapMInputBaseContentWrapper .sapMInputBaseInner {
+	outline: none;
+}
+
+.sapMInputBase.sapMTextArea .sapMTextAreaInner {
+	line-height: 1.5;
+}
+
+.sapMTextAreaMirror {
+	line-height: 1.5;
+}
+
+.sapMTextArea.sapMInputBaseReadonly .sapMInputBaseReadonlyWrapper {
+	border: @sapUiFieldBorderWidth dashed @sapUiFieldReadOnlyBorderColor;
+}
+
+.sapMFocus.sapMTextArea.sapMInputBase.sapMInputBaseReadonly .sapMInputBaseContentWrapper {
+	&::before {
+		top: 1px;
+		left: 1px;
+		right: 1px;
+		bottom: 1px;
+	}
+}
+
+.sapMTextArea.sapMInputBase.sapMInputBaseReadonly .sapMInputBaseContentWrapper {
+	padding: 0;
+}
+
+.sapMInputBaseContentWrapper ::-webkit-scrollbar:vertical {
+	border-top-right-radius: 0.25rem;
+	border-bottom-right-radius: 0.25rem;
+}
+
+.sapMInputBaseContentWrapper ::-webkit-scrollbar:horizontal {
+	border-bottom-left-radius: 0.25rem;
+	border-bottom-right-radius: 0.25rem;
+}
+
+.sapMTextAreaInner.sapMTextAreaGrow {
+	border: 0.0625rem solid transparent;
+	border-radius: 0.25rem;
+	right: 0;
+}

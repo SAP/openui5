@@ -1,0 +1,56 @@
+{
+  "1.108.0": {
+    "date": "October 2022",
+    "notes": [
+      {
+        "id": "4f5c8d40cbe31134b8e271afbd1c75495f9d7e02",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: fire \"navigate\" event later",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280115969"
+          }
+        ]
+      },
+      {
+        "id": "3201b954ceb686ce95800485f0d334354bf7c434",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageSectionBase: Correct lifecycle issue",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270125667"
+          }
+        ]
+      },
+      {
+        "id": "154dee3f2338920f86db529c7a0323bfa5f7080c",
+        "type": "FIX",
+        "text": " sap.uxap.AnchorBar: Selecting Section from HierarchicalSelect",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270113573"
+          }
+        ]
+      },
+      {
+        "id": "20d2cef961402feab42a9a008d35519b72053b4a",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageSubSection: Layout of unstashed blocks fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270125052"
+          }
+        ]
+      },
+      {
+        "id": "1ea56d66602d74c55dcd60a6168653f66a00dd1e",
+        "type": "FEATURE",
+        "text": " sap.uxap.ObjectPageSection: wrapTitle property added"
+      }
+    ]
+  }
+}

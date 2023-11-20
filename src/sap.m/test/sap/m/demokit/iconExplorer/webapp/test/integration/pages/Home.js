@@ -62,15 +62,6 @@ sap.ui.define([
 						},
 						errorMessage: "Can't see the Input Field"
 					});
-				},
-
-				iPressTheClearButton : function () {
-					return this.waitFor({
-						id:"search-__clearIcon",
-						viewName: sViewName,
-						actions: new Press(),
-						errorMessage: "ClearIcon was not visible and could not be pressed."
-					});
 				}
 			},
 
@@ -83,18 +74,6 @@ sap.ui.define([
 							Opa5.assert.ok(aResults.length > 3, "Found at least 3 block layout cells");
 						},
 						errorMessage: "Can't find block layout cells on the home page"
-					});
-				},
-
-				iShouldNotSeeTheClearIcon : function () {
-					return this.waitFor({
-						id : "search-__clearIcon",
-						viewName: sViewName,
-						success : function (oIcon) {
-							Opa5.assert.ok(oIcon.$().hasClass("sapMSFR"), "Search icon is invisible"
-							);
-						},
-						errorMessage: "ClearIcon is visible in empty input field"
 					});
 				},
 

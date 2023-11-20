@@ -1,0 +1,64 @@
+<mvc:View
+    height="100%"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns="sap.ui.table"
+    xmlns:m="sap.m"
+    xmlns:columnmenu="sap.m.table.columnmenu"
+    xmlns:sap.ui.fl="sap.ui.fl"
+    xmlns:sap.ui.dt="sap.ui.dt"
+    xmlns:vm="sap.ui.fl.variants"
+    controllerName="sap.m.sample.p13n.EngineGridTable.Engine">
+
+    <m:Page showHeader="false">
+        <Table id="persoTable" sort="onSort" columnResize="onColumnResize" columnMove="onColumnMove" rowMode="Auto" ariaLabelledBy="title" sap.ui.fl:flexibility="sap/m/flexibility/EngineFlex" rows="{/items}">
+            <extension>
+                <m:OverflowToolbar>
+                    <m:Title id="title" text="Persons"/>
+                    <m:ToolbarSeparator/>
+                    <vm:VariantManagement for="persoTable"/>
+                    <m:ToolbarSpacer/>
+                    <m:Button icon="sap-icon://action-settings" press="openPersoDialog"/>
+                </m:OverflowToolbar>
+            </extension>
+            <dependents>
+                <columnmenu:Menu id="menu">
+                    <columnmenu:items>
+                        <columnmenu:ActionItem icon="sap-icon://sort" label="Sort" press="onColumnHeaderItemPress"/>
+                        <columnmenu:ActionItem icon="sap-icon://table-column" label="Columns" press="onColumnHeaderItemPress"/>
+                    </columnmenu:items>
+                </columnmenu:Menu>
+            </dependents>
+            <noData>
+                <m:IllustratedMessage enableVerticalResponsiveness="true"/>
+            </noData>
+            <columns>
+                <Column id="firstName_col" sortProperty="firstName" headerMenu="menu" resizable="true" width="11rem" autoResizable="true">
+                    <m:Label text="First Name" />
+                    <template>
+                        <m:Text text="{firstName}"/>
+                    </template>
+                </Column>
+                <Column id="lastName_col" sortProperty="lastName" headerMenu="menu" resizable="true" width="11rem" autoResizable="true">
+                    <m:Label text="Last Name" />
+                    <template>
+                        <m:Text text="{lastName}"/>
+                    </template>
+                </Column>
+                <Column id="city_col" sortProperty="city" headerMenu="menu" resizable="true" width="11rem" autoResizable="true">
+                    <m:Label text="City" />
+                    <template>
+                        <m:Text text="{city}"/>
+                    </template>
+                </Column>
+                <Column id="size_col" sortProperty="size" visible="false" headerMenu="menu" resizable="true" width="11rem" autoResizable="true">
+                    <m:Label text="Size" />
+                    <template>
+                        <m:Text text="{size}"/>
+                    </template>
+                </Column>
+            </columns>
+        </Table>
+
+    </m:Page>
+
+</mvc:View>

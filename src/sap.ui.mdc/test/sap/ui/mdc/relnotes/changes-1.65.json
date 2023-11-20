@@ -1,0 +1,92 @@
+{
+  "1.65.0": {
+    "date": "March 2019",
+    "notes": [
+      {
+        "id": "3c7413ebc2cf4d52564cf5b3551c0232ce0746c5",
+        "type": "FEATURE",
+        "text": "Support for determining actions",
+        "references": []
+      },
+      {
+        "id": "ce448137dbd8ac246022f0613617bb01eddd6adf",
+        "type": "FIX",
+        "text": "Field: only Description displayed while navigate in suggestion",
+        "references": []
+      },
+      {
+        "id": "3c3d3d93c214d94ccb677ae03f588c3d9b4cb625",
+        "type": "FEATURE",
+        "text": "sap_fiori_3: comp + mdc libraries",
+        "references": []
+      },
+      {
+        "id": "c6b527952324db706f087d8da9553f0158af7574",
+        "type": "FIX",
+        "text": "Field with FieldInfo rendered in Edit mode",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980022316"
+          }
+        ]
+      },
+      {
+        "id": "ee29db9bc14634bd09acfe3e1b60be7a8441f82c",
+        "type": "FIX",
+        "text": "mdc:odataV4:Form : Editable binding for Form",
+        "references": []
+      },
+      {
+        "id": "13a065c0cbca65f7fa0eff823b4093f188f26f12",
+        "type": "FIX",
+        "text": "Field: date field wrong pattern after switch to display mode",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980101062"
+          }
+        ]
+      },
+      {
+        "id": "ba5bcbeee9f400ce1b49d37695d98d4404d75560",
+        "type": "FIX",
+        "text": "Field: if unit is not entered error occurs",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980129473"
+          }
+        ]
+      },
+      {
+        "id": "e979a2df6a131bf6f7ea7b1c489ef65933b80b4a",
+        "type": "FIX",
+        "text": "mdc:ODataV4:FilterField Checking for $PropertyPath for VH",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980068288"
+          }
+        ]
+      },
+      {
+        "id": "c9bd6a011e7456a3e0db918d47423ae0ebcceb8d",
+        "type": "FIX",
+        "text": "Field: value not updated after selection",
+        "references": []
+      },
+      {
+        "id": "5b372f00f4c00b6df63a5edbcc6fa0fb5b99efee",
+        "type": "FIX",
+        "text": "FieldValueHelp: show only EEQ conditions in table",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980147519"
+          }
+        ]
+      }
+    ]
+  }
+}

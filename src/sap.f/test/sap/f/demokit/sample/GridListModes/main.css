@@ -1,0 +1,5 @@
+/* Although the image is with height 100%, there is a visual glitch where 2-3 pixels remain empty.
+ In such cases display: block is needed. */
+.imageDisplayBlock {
+	display: block;
+}

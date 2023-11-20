@@ -1,0 +1,165 @@
+<mvc:View
+		height="100%"
+		xmlns:mvc="sap.ui.core.mvc"
+		xmlns:core="sap.ui.core"
+		xmlns:forms="sap.ui.layout.form"
+		xmlns:uxap="sap.uxap"
+		xmlns="sap.m"
+		controllerName="sap.uxap.sample.ObjectPageSubSectionHiddenTitle.controller.ObjectPageSubSectionHiddenTitle"
+		>
+	<uxap:ObjectPageLayout id="ObjectPageLayout" upperCaseAnchorBar="false">
+		<uxap:headerTitle>
+			<uxap:ObjectPageHeader
+					objectTitle="ObjectPageSubSection with hidden title"
+					objectSubtitle="This example demonstrates the showTitle property set to false."/>
+		</uxap:headerTitle>
+
+		<uxap:sections>
+			<uxap:ObjectPageSection titleUppercase="false" title="Sample Forms">
+				<uxap:subSections>
+					<uxap:ObjectPageSubSection title="First Sample Form" titleUppercase="false">
+						<uxap:blocks>
+							<forms:SimpleForm
+								title="Location"
+								editable="false"
+								layout="ColumnLayout">
+
+								<Label text="Country"/>
+								<Text text="France"/>
+
+								<Label text="Subsidiary"/>
+								<Text text="SAP France"/>
+
+							</forms:SimpleForm>
+						</uxap:blocks>
+					</uxap:ObjectPageSubSection>
+					<uxap:ObjectPageSubSection title="Second Sample Form" titleUppercase="false">
+						<uxap:blocks>
+							<forms:SimpleForm
+									title="Location"
+									editable="false"
+									layout="ColumnLayout">
+
+								<Label text="Country"/>
+								<Text text="France"/>
+
+								<Label text="Subsidiary"/>
+								<Text text="SAP France"/>
+
+								<Label text="Building"/>
+								<Text text="LVL B"/>
+
+								<Label text="Room"/>
+								<Text text="AppHaus"/>
+
+							</forms:SimpleForm>
+						</uxap:blocks>
+					</uxap:ObjectPageSubSection>
+				</uxap:subSections>
+			</uxap:ObjectPageSection>
+			<uxap:ObjectPageSection titleUppercase="false" showTitle="false">
+				<uxap:subSections>
+					<uxap:ObjectPageSubSection title="Promoted SubSection with Hidden Title" titleUppercase="false">
+						<Table
+							headerText="Products"
+							items="{
+								path:'/ProductCollection',
+								sorter: {
+									path: 'SupplierName',
+									descending: false
+								}
+							}" >
+							<headerToolbar>
+								<OverflowToolbar>
+									<content>
+										<Title text="Products" level="H2"/>
+										<ToolbarSpacer />
+										<ComboBox id="idPopinLayout"
+											placeholder="Popin layout options"
+											change="onPopinLayoutChanged">
+											<items>
+												<core:Item  text="Block"
+													key="Block"/>
+												<core:Item  text="Grid Large"
+													key="GridLarge"/>
+												<core:Item  text="Grid Small"
+													key="GridSmall"/>
+											</items>
+										</ComboBox>
+										<Label text="Sticky options:" />
+										<CheckBox text="ColumnHeaders"
+											select="onSelect"/>
+										<CheckBox text="HeaderToolbar"
+											select="onSelect"/>
+										<CheckBox text="InfoToolbar"
+											select="onSelect"/>
+										<ToggleButton id="toggleInfoToolbar"
+											text="Hide/Show InfoToolbar"
+											press="onToggleInfoToolbar" />
+									</content>
+								</OverflowToolbar>
+							</headerToolbar>
+							<infoToolbar>
+								<OverflowToolbar>
+									<Label text="Wide range of available products"/>
+								</OverflowToolbar>
+							</infoToolbar>
+
+							<columns>
+								<Column mergeDuplicates="true">
+									<header>
+										<Text text="Supplier" />
+									</header>
+								</Column>
+								<Column mergeDuplicates="true">
+									<header>
+										<Text text="Product" />
+									</header>
+								</Column>
+								<Column
+									minScreenWidth="Tablet"
+									demandPopin="true"
+									hAlign="End" >
+									<header>
+										<Text text="Dimensions" />
+									</header>
+								</Column>
+								<Column
+									minScreenWidth="Tablet"
+									demandPopin="true"
+									hAlign="Center" >
+									<header>
+										<Text text="Weight" />
+									</header>
+								</Column>
+								<Column hAlign="End">
+									<header>
+										<Text text="Price" />
+									</header>
+								</Column>
+							</columns>
+							<ColumnListItem>
+								<Text text="{SupplierName}" />
+								<ObjectIdentifier title="{Name}" text="{ProductId}" />
+								<Text text="{Width} x {Depth} x {Height} {DimUnit}" />
+								<ObjectNumber
+									number="{WeightMeasure}" unit="{WeightUnit}"
+									state="{
+										path: 'WeightMeasure',
+										formatter: 'sap.uxap.sample.ObjectPageSubSectionHiddenTitle.Formatter.weightState'
+									}" />
+								<ObjectNumber
+										number="{
+											parts:[{path:'Price'},{path:'CurrencyCode'}],
+											type: 'sap.ui.model.type.Currency',
+											formatOptions: {showMeasure: false}
+										}"
+										unit="{CurrencyCode}" />
+							</ColumnListItem>
+						</Table>
+					</uxap:ObjectPageSubSection >
+				</uxap:subSections>
+			</uxap:ObjectPageSection>
+		</uxap:sections>
+	</uxap:ObjectPageLayout>
+</mvc:View>

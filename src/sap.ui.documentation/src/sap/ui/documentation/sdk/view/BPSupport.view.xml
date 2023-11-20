@@ -1,0 +1,7 @@
+<mvc:View controllerName="sap.ui.documentation.sdk.controller.BPSupport"
+		xmlns:mvc="sap.ui.core.mvc"
+		xmlns="sap.m"
+		xmlns:l="sap.ui.layout"
+		xmlns:core="sap.ui.core">
+		<Page id="BPSupportPage" showNavButton="false" showFooter="false" showHeader="false" class="sapUiResponsiveContentPadding"></Page>
+</mvc:View>

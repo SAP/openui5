@@ -13,8 +13,8 @@
  * All measurement activities get recorded by jquery.sap.measure, which is located in jquery.sap.global. As the initial
  * interaction is the app startup, we need the measuring capability already before this module is loaded.
  */
-sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/URI', 'sap/ui/Device', 'sap/ui/performance/E2ETrace/Passport', 'sap/ui/performance/Interaction', 'sap/ui/performance/FESR', 'sap/base/Log', 'sap/ui/Global'],
-function(jQuery, URI, Device, Passport, Interaction, FESR, Log) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/performance/trace/Passport', 'sap/ui/performance/trace/Interaction', 'sap/ui/performance/trace/FESR', 'sap/base/Log', 'sap/base/config', 'sap/ui/Global'],
+function(jQuery, Passport, Interaction, FESR, Log, BaseConfig/* ,Global */) {
 	"use strict";
 
 
@@ -43,6 +43,7 @@ function(jQuery, URI, Device, Passport, Interaction, FESR, Log) {
 	 * @static
 	 * @public
 	 * @since 1.36
+	 * @deprecated since 1.58 use {@link module:sap/ui/performance/trace/Interaction} instead
 	 */
 	jQuery.sap.interaction = {};
 
@@ -142,6 +143,7 @@ function(jQuery, URI, Device, Passport, Interaction, FESR, Log) {
 	 * @name jQuery.sap.fesr
 	 * @static
 	 * @private
+	 * @deprecated since 1.58 use {@link module:sap/ui/performance/trace/FESR} instead
 	 */
 	jQuery.sap.fesr = {};
 
@@ -195,6 +197,7 @@ function(jQuery, URI, Device, Passport, Interaction, FESR, Log) {
 	 * @name jQuery.sap.passport
 	 * @static
 	 * @private
+	 * @deprecated since 1.58 use {@link module:sap/ui/performance/trace/Passport} instead
 	 */
 	jQuery.sap.passport = {};
 
@@ -214,25 +217,26 @@ function(jQuery, URI, Device, Passport, Interaction, FESR, Log) {
 	 */
 	jQuery.sap.passport.traceFlags = Passport.traceFlags;
 
-	// @EVO-TODO This should be part of configuration. It is here as this module is required before the actual configuration is loaded.
-	function getInitialFESRState() {
-		var bActive = !!document.querySelector("meta[name=sap-ui-fesr][content=true]"),
-			aParamMatches = window.location.search.match(/[\?|&]sap-ui-(?:xx-)?fesr=(true|x|X|false)&?/);
-		if (aParamMatches) {
-			bActive = aParamMatches[1] && aParamMatches[1] != "false";
-		}
-		return bActive;
-	}
-
 	// start initial interaction
 	jQuery.sap.interaction.notifyStepStart(null, true);
 
 	// activate FESR header generation
-	FESR.setActive(getInitialFESRState());
+	FESR.setActive(BaseConfig.get({
+		name: "sapUiFesr",
+		type: BaseConfig.Type.Boolean,
+		external: true,
+		freeze: true
+	}));
 
 	// *********** Include E2E-Trace Scripts *************
-	if (/sap-ui-xx-e2e-trace=(true|x|X)/.test(location.search)) {
-		sap.ui.requireSync("sap/ui/core/support/trace/E2eTraceLib");
+	if (BaseConfig.get({
+		name: "sapUiXxE2eTrace",
+		type: BaseConfig.Type.Boolean,
+		external: true,
+		freeze: true
+	})) {
+		// jquery.sap.trace.js module gets loaded synchronous via stubbing layer
+		sap.ui.requireSync("sap/ui/core/support/trace/E2eTraceLib"); // legacy-relevant
 	}
 
 	return jQuery;

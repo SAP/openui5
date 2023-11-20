@@ -1,0 +1,18 @@
+{
+  "1.89.0": {
+    "date": "April 2021",
+    "notes": [
+      {
+        "id": "af3c4e06f44418e812d5db89a0bfc47926324ca6",
+        "type": "FIX",
+        "text": " sap.tnt.NavigationListItem: Tooltip is now also shown when item is collapsed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500001866032021"
+          }
+        ]
+      }
+    ]
+  }
+}

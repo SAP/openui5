@@ -1,0 +1,113 @@
+{
+  "1.90.0": {
+    "date": "May 2021",
+    "notes": [
+      {
+        "id": "70661b15ceb2c10318e5781134ef96a28f16c269",
+        "type": "FIX",
+        "text": " sap.ui.core.Popup: support resizing of blocklayer when custom within area is used"
+      },
+      {
+        "id": "9112034f090b8584de9b27e02892ffde82eda52b",
+        "type": "FIX",
+        "text": " core.format.NumberFormat: Make #format and #parse robust",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170107047"
+          },
+          {
+            "type": "BCP",
+            "reference": "2080440164"
+          }
+        ]
+      },
+      {
+        "id": "1ac366b50fed4af12cbe9d6961211492b97b8113",
+        "type": "FEATURE",
+        "text": " Add new shortcuts for forward and backward group skipping"
+      },
+      {
+        "id": "670ed410eda255103ac3756b9e3c31c012f520c7",
+        "type": "FIX",
+        "text": " MockServer: issue with parenthesis parsing in ODATA filters",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170144784"
+          }
+        ]
+      },
+      {
+        "id": "ce6431fb00e0c46311d6eb6059628cce4cbc75eb",
+        "type": "FIX",
+        "text": " DateFormat: Add \"a. m.\" and \"p. m.\" as possible variant for time",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170136809"
+          }
+        ]
+      },
+      {
+        "id": "ce6172722b168f52b8be2140aae600fc05b0a409",
+        "type": "FIX",
+        "text": " core.format.NumberFormat: format string numbers with trailing zero decimals",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170114546"
+          }
+        ]
+      },
+      {
+        "id": "e9f644128467445debd72f5478dea5fb59864c95",
+        "type": "FEATURE",
+        "text": " base.util: Add Deferred module"
+      },
+      {
+        "id": "5d32e0f20de53547288238209e696840a95b86d5",
+        "type": "FIX",
+        "text": " sap.ui.model.analytics.AnalyticalBinding: ensure that keys for multi unit representatives are unique",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400002066562021"
+          }
+        ]
+      },
+      {
+        "id": "b9e4659cee90344ca12168d4f791f5b3a7f1d668",
+        "type": "FIX",
+        "text": " ViewRenderer: needs to have render function"
+      },
+      {
+        "id": "272bf0c03b3a84daa0f18c0f130ec111825ffde7",
+        "type": "FIX",
+        "text": " routing.HashChanger: forward hash to RouterHashChanger during creation",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400002368562021"
+          }
+        ]
+      },
+      {
+        "id": "a1a1c97d2c4823a10a6c72dfe672e346e3a95f1c",
+        "type": "FIX",
+        "text": " Component.createContent: Throw error for async create and missing marker interface"
+      },
+      {
+        "id": "3a5189415e9edff8403fcc47651204f399a1fed8",
+        "type": "FIX",
+        "text": " core/theming: Stabilize Test",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170097761"
+          }
+        ]
+      }
+    ]
+  }
+}

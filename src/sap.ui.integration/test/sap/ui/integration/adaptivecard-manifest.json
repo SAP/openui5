@@ -1,0 +1,33 @@
+{
+	"_version": "1.17.0",
+	"sap.app": {
+		"id": "adaptivecard.embedded",
+		"type": "card"
+	},
+	"sap.card": {
+		"configuration": {
+		  "actionHandlers": {
+				"submit": {
+					"url": "./adaptivecard-manifest.json",
+					"method": "POST"
+				}
+		  }
+		},
+		"header": {
+			"title": "Adaptive Card - Inputs",
+				"subTitle": "sap.ui.integration",
+				"icon": {
+					"src": "sap-icon://sap-ui5"
+				},
+				"status": {
+					"text": "11.12.2019"
+				}
+		},
+		"type": "AdaptiveCard",
+		"content": {
+			"request": {
+				"url": "./adaptivecard-manifest-json.json"
+			}
+		}
+	}
+}

@@ -3,8 +3,13 @@
  */
 
 // Provides default renderer for control sap.ui.commons.layout.BorderLayout
-sap.ui.define(['jquery.sap.global', 'jquery.sap.encoder'],
-	function(jQuery/* , jQuerySap */) {
+sap.ui.define([
+    "sap/ui/thirdparty/jquery",
+    "sap/base/assert",
+    "sap/base/security/encodeXML",
+    "sap/ui/core/Configuration"
+],
+	function(jQuery, assert, encodeXML, Configuration) {
 	"use strict";
 
 
@@ -15,7 +20,7 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.encoder'],
 	 */
 	var BorderLayoutRenderer = {};
 
-	(function() {
+
 		/**
 		 * Renders the HTML for the given control, using the provided.
 		 * {@link sap.ui.core.RenderManager}.
@@ -40,7 +45,7 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.encoder'],
 				end : sizeOf(mAreas.end),
 				bottom : sizeOf(mAreas.bottom)
 			};
-			var bRTL = sap.ui.getCore().getConfiguration().getRTL();
+			var bRTL = Configuration.getRTL();
 
 			// open the outer HTML tag
 			oRm.write("<div");
@@ -78,7 +83,7 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.encoder'],
 
 		BorderLayoutRenderer.animate = function(oArea, bVisible) {
 			// var sBorderLayoutId = oBorderLayout.getId();
-			var bRTL = sap.ui.getCore().getConfiguration().getRTL();
+			var bRTL = Configuration.getRTL();
 			var end = bVisible ? oArea.getSize() : "0";
 
 			switch (oArea.getAreaId()) {
@@ -181,13 +186,13 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.encoder'],
 				oRm.addStyle("height", mAreaSizes.bottom);
 				break;
 			default:
-				jQuery.sap.assert("default branch must not be reached");
+				assert("default branch must not be reached");
 				break;
 			}
 
 			// add overflow definition to the style-attribute value
-			oRm.addStyle("overflow-x", jQuery.sap.encodeHTML(oArea.getOverflowX() || ""));
-			oRm.addStyle("overflow-y", jQuery.sap.encodeHTML(oArea.getOverflowY() || ""));
+			oRm.addStyle("overflow-x", encodeXML(oArea.getOverflowX() || ""));
+			oRm.addStyle("overflow-y", encodeXML(oArea.getOverflowY() || ""));
 
 			// write alignment
 			var sAlign = oArea.getContentAlign();
@@ -198,7 +203,7 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.encoder'],
 					sAlign = "right";
 				}
 			}
-			oRm.addStyle("text-align", jQuery.sap.encodeHTML(sAlign || ""));
+			oRm.addStyle("text-align", encodeXML(sAlign || ""));
 
 			oRm.writeClasses(oArea);
 			oRm.writeStyles();
@@ -217,7 +222,7 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.encoder'],
 			var oOtherArea = oArea.getParent().getArea(sAreaId);
 			return oOtherArea ? oOtherArea.$() : jQuery();
 		}
-	}());
+
 
 	return BorderLayoutRenderer;
 

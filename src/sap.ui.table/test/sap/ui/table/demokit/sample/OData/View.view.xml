@@ -14,7 +14,6 @@
 			<Table
 				id="table"
 				selectionMode="MultiToggle"
-				visibleRowCount="7"
 				enableSelectAll="false"
 				rows="{
 					path: '/ProductSet',
@@ -26,16 +25,16 @@
 				<noData>
 					<m:BusyIndicator class="sapUiMediumMargin"/>
 				</noData>
-				<toolbar>
-					<m:Toolbar>
-						<m:Title id="title" text="Products"></m:Title>
+				<extension>
+					<m:OverflowToolbar style="Clear">
+						<m:Title id="title" text="Products"/>
 						<m:ToolbarSpacer/>
 						<m:Button
 							icon="sap-icon://refresh"
 							tooltip="Reinitialize Model"
 							press="onModelRefresh"/>
-					</m:Toolbar>
-				</toolbar>
+					</m:OverflowToolbar>
+				</extension>
 				<columns>
 					<Column
 						sortProperty="Name"
@@ -99,23 +98,18 @@
 					</Column>
 				</columns>
 				<footer>
-					<m:Toolbar>
+					<m:OverflowToolbar id="infobar">
 						<m:Label text="OData Model Operation Mode:" labelFor="operationMode"/>
 						<m:SegmentedButton
 							id="operationMode"
-							select="onOperationModeChange"
+							selectionChange="onOperationModeChange"
 							selectedKey="{ui>selectedOperationMode}"
 							items="{ui>/operationModes}">
 							<m:items>
 								<m:SegmentedButtonItem text="{ui>name}" key="{ui>name}"/>
 							</m:items>
 						</m:SegmentedButton>
-						<m:ToolbarSpacer/>
-						<m:Button
-							icon="sap-icon://hint"
-							tooltip="Show information"
-							press="showInfo"/>
-					</m:Toolbar>
+					</m:OverflowToolbar>
 				</footer>
 			</Table>
 		</m:content>

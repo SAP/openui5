@@ -1,0 +1,39 @@
+{
+  "1.85.0": {
+    "date": "November 2020",
+    "notes": [
+      {
+        "id": "c5827126286daca34bc0f3e58498507d43241204",
+        "type": "FEATURE",
+        "text": " Table: Dummy column to fill up free space"
+      },
+      {
+        "id": "0361c60c9fb39b037f77a6d5bb887e184d3af4e5",
+        "type": "FEATURE",
+        "text": " sap.m.SinglePlanningCalendar: Special dates visualisation in Month view"
+      },
+      {
+        "id": "0814d832b840264212136198a235d70eac17ad1f",
+        "type": "FIX",
+        "text": " sap.m.ObjectStatus: Fixing height of object status text and icon",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070436175"
+          }
+        ]
+      },
+      {
+        "id": "d05936526a66905301cf551b2fd13832abf9f68c",
+        "type": "FIX",
+        "text": " sap.m.ScrollContainer: Focus outline is now visible",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080342315"
+          }
+        ]
+      }
+    ]
+  }
+}

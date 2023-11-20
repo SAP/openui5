@@ -1,0 +1,182 @@
+<mvc:View
+	class="sapUiSizeCompact"
+	controllerName="sap.ui.core.sample.odata.v4.RecursiveHierarchy.RecursiveHierarchy"
+	xmlns="sap.ui.table"
+	xmlns:m="sap.m"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:rm="sap.ui.table.rowmodes">
+
+	<Table id="table" ariaLabelledBy="title"
+		rows="{path : '/EMPLOYEES',
+			parameters : {$count : false, $orderby : 'AGE', $$patchWithoutSideEffects : true},
+			suspended : true}"
+		selectionMode="None" threshold="0">
+		<extension>
+			<m:Toolbar design="Transparent" class="sapMTBHeader-CTX">
+				<m:Title id="title" level="H1" text="Organizational Chart"/>
+				<m:ToolbarSpacer/>
+				<m:Button icon="sap-icon://create" press=".onCreateRoot" tooltip="Create New Root"/>
+				<m:Button icon="sap-icon://synchronize" id="synchronize" press="onSynchronize"
+					tooltip="Synchronize"/>
+			</m:Toolbar>
+		</extension>
+		<rowMode>
+			<rm:Interactive rowCount="5" minRowCount="2"/>
+		</rowMode>
+		<Column hAlign="End" width="5em">
+			<m:Label text="Level"/>
+			<template>
+				<m:Text text="{= %{@$ui5.node.level} }" wrapping="false"/>
+			</template>
+		</Column>
+		<Column width="4em">
+			<template>
+				<m:Button enabled="{= %{@$ui5.node.isExpanded} !== undefined}"
+					icon="{= %{@$ui5.node.isExpanded} === true
+						? 'sap-icon://collapse'
+						: (%{@$ui5.node.isExpanded} === false
+							? 'sap-icon://expand' : 'sap-icon://e-care')}"
+					id="expand"
+					press=".onToggleExpand"
+					tooltip="{= %{@$ui5.node.isExpanded} === true
+						? 'Collapse'
+						: (%{@$ui5.node.isExpanded} === false ? 'Expand' : 'Leaf')}"
+					/>
+			</template>
+		</Column>
+		<Column>
+			<m:Label text="ID"/>
+			<template>
+				<m:Text text="{ID}" wrapping="false"/>
+			</template>
+		</Column>
+		<Column>
+			<m:Label text="Manager's ID"/>
+			<template>
+				<m:Text text="{MANAGER_ID}" wrapping="false"/>
+			</template>
+		</Column>
+		<Column>
+			<m:Label text="Name"/>
+			<template>
+				<m:Input id="name" value="{Name}" change="onNameChanged"/>
+			</template>
+		</Column>
+		<Column>
+			<m:Label text="Age"/>
+			<template>
+				<m:Text text="{AGE}" wrapping="false"/>
+			</template>
+		</Column>
+		<Column width="4em">
+			<template>
+				<m:Button enabled="{= %{@$ui5.node.isExpanded} !== false}" icon="sap-icon://create"
+					id="create" press=".onCreate" tooltip="Create New Child"/>
+			</template>
+		</Column>
+		<Column width="4em">
+			<template>
+				<m:Button icon="sap-icon://move" id="move" press=".onMove" tooltip="Move"/>
+			</template>
+		</Column>
+		<Column width="4em">
+			<template>
+				<m:Button id="delete" icon="sap-icon://delete" press=".onDelete" tooltip="Delete"/>
+			</template>
+		</Column>
+		<Column width="4em">
+			<template>
+				<m:Button enabled="{= %{@$ui5.node.level} > 1}" icon="sap-icon://back-to-top"
+					press=".onMakeRoot" tooltip="Make Root"/>
+			</template>
+		</Column>
+	</Table>
+
+	<TreeTable id="treeTable" ariaLabelledBy="treeTitle"
+		rows="{path : '/EMPLOYEES',
+			parameters : {$count : false, $orderby : 'AGE', $$patchWithoutSideEffects : true},
+			suspended : true}"
+		selectionMode="None" threshold="0">
+		<extension>
+			<m:Toolbar design="Transparent" class="sapMTBHeader-CTX">
+				<m:Title id="treeTitle" level="H1" text="Organizational Chart - TreeTable"/>
+				<m:ToolbarSpacer/>
+				<m:Button icon="sap-icon://create" press=".onCreateRootInTreeTable"
+					tooltip="Create New Root"/>
+				<m:Button icon="sap-icon://synchronize" id="synchronizeTreeTable"
+					press="onSynchronizeTreeTable" tooltip="SynchronizeTreeTable"/>
+			</m:Toolbar>
+		</extension>
+		<rowMode>
+			<rm:Interactive rowCount="5" minRowCount="2"/>
+		</rowMode>
+		<Column>
+			<m:Label text="ID"/>
+			<template>
+				<m:Text text="{ID}" wrapping="false"/>
+			</template>
+		</Column>
+		<Column hAlign="End" width="5em">
+			<m:Label text="Level"/>
+			<template>
+				<m:Text text="{= %{@$ui5.node.level} }" wrapping="false"/>
+			</template>
+		</Column>
+		<Column>
+			<m:Label text="Manager's ID"/>
+			<template>
+				<m:Text text="{MANAGER_ID}" wrapping="false"/>
+			</template>
+		</Column>
+		<Column>
+			<m:Label text="Name"/>
+			<template>
+				<m:Input id="nameInTreeTable" value="{Name}" change="onNameChanged"/>
+			</template>
+		</Column>
+		<Column>
+			<m:Label text="Age"/>
+			<template>
+				<m:Text text="{AGE}" wrapping="false"/>
+			</template>
+		</Column>
+		<Column width="4em">
+			<template>
+				<m:Button enabled="{= %{@$ui5.node.isExpanded} !== false}" icon="sap-icon://create"
+					id="createInTreeTable" press=".onCreate" tooltip="Create New Child"/>
+			</template>
+		</Column>
+		<Column width="4em">
+			<template>
+				<m:Button icon="sap-icon://move" id="moveInTreeTable" press=".onMoveInTreeTable"
+					tooltip="Move"/>
+			</template>
+		</Column>
+		<Column width="4em">
+			<template>
+				<m:Button id="deleteInTreeTable" icon="sap-icon://delete" press=".onDelete"
+					tooltip="Delete"/>
+			</template>
+		</Column>
+		<Column width="4em">
+			<template>
+				<m:Button enabled="{= %{@$ui5.node.level} > 1}" icon="sap-icon://back-to-top"
+					press=".onMakeRoot" tooltip="Make Root"/>
+			</template>
+		</Column>
+	</TreeTable>
+
+	<mvc:dependents>
+		<m:SelectDialog confirm=".onMoveConfirm" draggable="true" id="moveDialog"
+			items="{path : '/EMPLOYEES', parameters : {$count : true}, suspended : true}"
+			title="Select New Parent For {ID} ({Name})">
+			<m:StandardListItem title="{ID} ({Name})" type="Active" />
+		</m:SelectDialog>
+	</mvc:dependents>
+
+	<m:FormattedText htmlText="&lt;em>Available URL parameters:&lt;/em>
+		&lt;ul>
+			&lt;li> &lt;code>expandTo&lt;/code> Either * for 'expand all' or a number; default 3
+			&lt;li> &lt;code>visibleRowCount&lt;/code> A number; default 5
+			&lt;li> &lt;code>TreeTable&lt;/code> 'Y' for yes, 'N' for no; default both tables"/>
+</mvc:View>

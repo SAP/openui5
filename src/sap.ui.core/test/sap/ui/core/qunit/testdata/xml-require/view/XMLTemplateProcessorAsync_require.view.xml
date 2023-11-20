@@ -1,0 +1,27 @@
+<mvc:View xmlns:core="sap.ui.core"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m"
+	xmlns:helper="testdata.xml-require.helper"
+	xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"
+	displayBlock="true"
+	core:require="{Box:'sap/ui/core/BusyIndicator',
+		AnnotationHelper:'sap/ui/model/odata/AnnotationHelper',
+		HashChanger: 'sap/ui/core/routing/HashChanger',
+		OwnHelper:'testdata/xml-require/helper/Formatter'}"
+	afterInit="HashChanger.getInstance()">
+	<App>
+		<Page id="page" title="Hello"
+			app:data1="{=OwnHelper.groupA.keep('abc')}"
+			app:data2="{=OutputText.foo()}"
+			core:require="{Box:'sap/m/MessageBox',
+				OutputText:'testdata/xml-require/helper/OutputText'}">
+			<Button id="boxButton" text="Show Box" press="Box.show('Boxed')"/>
+			<Button id="helperButton" text="Formatter" press="OwnHelper.groupA.upperCase()"/>
+			<Button core:require="{Toast:'sap/m/MessageToast'}" id="toastButton" text="Show Toast" press="Toast.show(${$source>text})"/>
+			<Button core:require="{Toast:'sap/m/MessageToast'}" id="globalToastButton" text="Show Toast through Global" press="sap.m.MessageToast.show(${$source>text})"/>
+			<Button core:require="{NewBox:'sap/m/MessageBox'}" id="newBoxButton" text="Show Box re-required" press="Box.show('Boxed')"/>
+		</Page>
+		<Button id="outerButton" text="Show Busy Box" press="Box.show(100)"/>
+		<helper:FunctionControl id="functionControl" handler="OwnHelper.groupA.lowerCase" />
+	</App>
+</mvc:View>

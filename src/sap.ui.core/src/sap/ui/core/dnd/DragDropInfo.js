@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(["./DragInfo", "./DropInfo"],
-	function(DragInfo, DropInfo) {
+sap.ui.define(["sap/ui/core/Element", "./DragInfo", "./DropInfo", "sap/base/Log"],
+	function(Element, DragInfo, DropInfo, Log) {
 	"use strict";
 
 	/**
@@ -14,6 +14,7 @@ sap.ui.define(["./DragInfo", "./DropInfo"],
 	 *
 	 * @class
 	 * Provides the configuration for drag-and-drop operations.
+	 *
 	 * <b>Note:</b> This configuration might be ignored due to control {@link sap.ui.core.Element.extend metadata} restrictions.
 	 *
 	 * @extends sap.ui.core.dnd.DropInfo
@@ -24,7 +25,6 @@ sap.ui.define(["./DragInfo", "./DropInfo"],
 	 * @public
 	 * @since 1.52
 	 * @alias sap.ui.core.dnd.DragDropInfo
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var DragDropInfo = DropInfo.extend("sap.ui.core.dnd.DragDropInfo", /** @lends sap.ui.core.dnd.DragDropInfo.prototype */ { metadata: {
 
@@ -57,7 +57,7 @@ sap.ui.define(["./DragInfo", "./DropInfo"],
 			 * @param {object} oControlEvent.getParameters
 			 * @param {sap.ui.core.Element} oControlEvent.getParameters.target The target element that will be dragged
 			 * @param {sap.ui.core.dnd.DragSession} oControlEvent.getParameters.dragSession The UI5 <code>dragSession</code> object that exists only during drag and drop
-			 * @param {Event} oControlEvent.getParameters.browserEvent The underlying browser event
+			 * @param {DragEvent} oControlEvent.getParameters.browserEvent The underlying browser event
 			 * @public
 			 */
 			dragStart: {
@@ -74,7 +74,7 @@ sap.ui.define(["./DragInfo", "./DropInfo"],
 			 * @param {object} oControlEvent.getParameters
 			 * @param {sap.ui.core.Element} oControlEvent.getParameters.target The target element that is being dragged
 			 * @param {sap.ui.core.dnd.DragSession} oControlEvent.getParameters.dragSession The UI5 <code>dragSession</code> object that exists only during drag and drop
-			 * @param {Event} oControlEvent.getParameters.browserEvent The underlying browser event
+			 * @param {DragEvent} oControlEvent.getParameters.browserEvent The underlying browser event
 			 * @public
 			 * @since 1.56
 			 */
@@ -84,14 +84,12 @@ sap.ui.define(["./DragInfo", "./DropInfo"],
 	}});
 
 	// Mixin the DragInfo implementation
-	DragDropInfo.prototype.isDraggable = DragInfo.prototype.isDraggable;
-	DragDropInfo.prototype.fireDragEnd = DragInfo.prototype.fireDragEnd;
-	DragDropInfo.prototype.fireDragStart = DragInfo.prototype.fireDragStart;
+	DragInfo.Mixin.apply(DragDropInfo.prototype);
 
 	DragDropInfo.prototype.getDropTarget = function() {
 		var sTargetElement = this.getTargetElement();
 		if (sTargetElement) {
-			return sap.ui.getCore().byId(sTargetElement);
+			return Element.getElementById(sTargetElement);
 		}
 
 		return this.getParent();
@@ -101,13 +99,13 @@ sap.ui.define(["./DragInfo", "./DropInfo"],
 	 * <code>groupName</code> property must not be set.
 	 *
 	 * @private
-	 * @returns {sap.ui.core.dnd.DragDropInfo} <code>this</code> to allow method chaining.
+	 * @returns {this} <code>this</code> to allow method chaining.
 	 */
 	DragDropInfo.prototype.setGroupName = function() {
-		jQuery.sap.log.error("groupName property must not be set on " + this);
+		Log.error("groupName property must not be set on " + this);
 		return this;
 	};
 
 	return DragDropInfo;
 
-}, /* bExport= */ true);
+});

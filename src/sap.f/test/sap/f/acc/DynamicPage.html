@@ -1,37 +1,24 @@
 <!DOCTYPE html>
 <html>
-<head lang="en">
-	<meta charset="UTF-8">
-	<title>DynamicPage</title>
-	<script src="../DynamicPageUtility.js"></script>
-	<script src="../shared-config.js"></script>
-	<script src="../../../../resources/sap-ui-core.js"
-			id="sap-ui-bootstrap"
-			data-sap-ui-libs="sap.f, sap.m, sap.ui.layout">
-	</script>
-	<script>
-		var fnToggleFooter = function () {
-			oPage.setShowFooter(!oPage.getShowFooter());
-		};
+	<head lang="en">
+		<meta charset="UTF-8">
+		<title>DynamicPage</title>
+		<script src="../shared-config.js"></script>
+		<script src="../../../../resources/sap-ui-core.js"
+				id="sap-ui-bootstrap"
+				data-sap-ui-async="true"
+				data-sap-ui-compatVersion="edge"
+				data-sap-ui-libs='sap.m, sap.f, sap.ui.layout'
+				data-sap-ui-onInit="module:local/DynamicPage"
+				data-sap-ui-resourceroots='{
+					"local": "./",
+					"util": "../",
+					"qunit.internal.acc": "../../../../test-resources/sap/ui/core/qunit/internal/acc"
+				}'>
+		</script>
+	</head>
 
-		var oToggleFooterButton = new sap.m.Button({
-			text: "Toggle footer",
-			press: fnToggleFooter
-		});
-
-		var oTitle = oDynamicPageUtil.getTitle(oToggleFooterButton);
-		var oHeader = oDynamicPageUtil.getHeader();
-		var oContent = new sap.m.Button({text: "Home"});
-		var oFooter = oDynamicPageUtil.getFooter();
-
-		var oPage = oDynamicPageUtil.getDynamicPage(true, oTitle, oHeader, oContent, oFooter);
-
-		var oApp = new sap.m.App("myApp");
-		oApp.addPage(oPage).placeAt("body");
-	</script>
-</head>
-
-<body id="body" class="sapUiBody" role="application">
-</body>
+	<body id="body" class="sapUiBody">
+	</body>
 
 </html>

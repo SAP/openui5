@@ -16,7 +16,7 @@ sap.ui.define([], function() {
 		 * @private
 		 */
 		display: function () {
-			var iViewLevel,
+			var iLevel,
 				sName;
 
 			// don't remember previous displays
@@ -27,12 +27,12 @@ sap.ui.define([], function() {
 			return oPromise.then(function(oViewInfo) {
 				// maybe a wrong name was provided then there is no last displayed target
 				if (this._oLastDisplayedTarget) {
-					iViewLevel = this._getViewLevel(this._oLastDisplayedTarget);
-					sName = this._oLastDisplayedTarget._oOptions.name;
+					iLevel = this._getLevel(this._oLastDisplayedTarget);
+					sName = this._oLastDisplayedTarget._oOptions._name;
 				}
 
 				this._oTargetHandler.navigate({
-					viewLevel: iViewLevel,
+					level: iLevel,
 					navigationIdentifier: sName
 				});
 
@@ -43,8 +43,8 @@ sap.ui.define([], function() {
 		/**
 		 * @private
 		 */
-		_displaySingleTarget: function(sName) {
-			var oTarget = this.getTarget(sName);
+		_displaySingleTarget: function(oTargetInfo) {
+			var oTarget = this.getTarget(oTargetInfo.name);
 
 			return this._super._displaySingleTarget.apply(this, arguments).then(function(oViewInfo){
 				if (oTarget) {

@@ -1,0 +1,75 @@
+{
+	"sap.app": {
+		"id": "sap.f.cardsdemo.componentWithPreview",
+		"type": "card"
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "sap.f.cardsdemo.componentWithPreview.V",
+			"type": "XML",
+			"async": true,
+			"id": "app"
+		},
+		"dependencies": {
+			"libs": {
+				"sap.m": {},
+				"sap.ui.core": {}
+			}
+		}
+	},
+	"sap.card": {
+		"type": "Component",
+		"configuration": {
+			"filters": {
+				"f": {
+					"type": "Select",
+					"item": {
+						"path": "/",
+						"template": {
+							"key": "{title}",
+							"title": "{title}"
+						}
+					},
+					"data": {
+						"json": [
+							{
+								"title": "item 1"
+							}
+						],
+						"mockData": {
+							"json": [
+								{
+									"title": "Mocked item 1"
+								},
+								{
+									"title": "Mocked item 2"
+								},
+								{
+									"title": "Mocked item 3"
+								}
+							]
+						}
+					}
+				}
+			}
+		},
+		"header": {
+			"data": {
+				"json": {
+					"title": "Component Card"
+				},
+				"mockData": {
+					"json": {
+						"title": "Component Card with Mocked Data"
+					}
+				}
+			},
+			"title": "{title}",
+			"subTitle": "{subTitle}",
+			"status": "{subTitle}",
+			"icon": {
+				"src": "{subTitle}"
+			}
+		}
+	}
+}

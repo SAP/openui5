@@ -3,10 +3,17 @@
 /* Belize theme                       */
 /* ================================== */
 
-.sapMGT.sapMGTBackgroundImage {
+.sapMGT.sapMGTBackgroundImage .sapMGTContent {
+	border-bottom-left-radius: 0.125rem;
+	border-bottom-right-radius: 0.125rem;
+	height: auto;
+}
+
+.sapMGT.sapMGTBackgroundImage.sapMGTStateFailed, .sapMGT.sapMGTBackgroundImage.sapMGTStateDisabled {
+
 	.sapMGTContent {
-		border-bottom-left-radius: 0.125rem;
-		border-bottom-right-radius: 0.125rem;
+		border-bottom-left-radius: inherit;
+		border-bottom-right-radius: inherit;
 	}
 }
 
@@ -14,16 +21,45 @@
 	color: @sapUiContentContrastTextColor;
 }
 
+.sapMGT.sapMGTScopeActions{
+	.sapMBtnBase.sapMGTMoreIcon{
+		.sapMBtnIcon{
+			font-size: 1rem;
+			bottom: 0.7rem;
+			left: 0.5rem
+		}
+	}
+}
+
+html.sap-desktop .sapMGTActionButtonPress.sapMGT:active
+{
+	.sapMGTFocusDiv{
+		border: none;
+	}
+}
+
+html.sap-desktop .sapMGTActionButtonPress.sapMGT:focus-visible
+{
+	.sapMGTFocusDiv{
+	border: @sapUiContentFocusWidth @sapUiContentFocusStyle @sapUiContentFocusColor;
+	}
+}
+
 /************************ LINE MODE LIST VIEW ********************/
 
 .sapMGT.sapMGTLineMode {
 	transition: background 0.2s;
 	background: transparent;
+	.sapMBtnBase.sapMGTMoreIcon{
+		.sapMBtnIcon{
+			bottom: 0.7rem;
+		}
+	}
 }
 
 .sap-desktop .sapMGT.sapMGTLineMode:not(.sapMGTDisabled) {
 	&:not(.sapMGTLineModePress):hover {
-		background: fade(@sapUiShellHoverBackground, 10);
+		background: @sapUiTileHoverBackground;
 	}
 }
 
@@ -147,7 +183,7 @@
 /************************************************************/
 
 .sapMGTLineMode .sapMGTHdrTxt {
-	color: @sapUiShellTextColor;
+	color: @sapLinkColor;
 	font-size: @sapMFontMediumSize;
 	text-shadow: @sapUiShadowText;
 }
@@ -180,6 +216,7 @@ html.sap-tablet .sapMGTWithImageHoverOverlay {
 	right: 0;
 	left: 0;
 	bottom: 0;
+	border-radius: inherit;
 }
 
 html.sap-desktop .sapMGTWithoutImageHoverOverlay.sapMGTPressActive,
@@ -202,6 +239,7 @@ html.sap-desktop .sapMGT:hover .sapMGTWithImageHoverOverlay:not(.sapMGTWithImage
 	background: fade(@sapUiShellHoverBackground, 18);
 }
 
+html.sap-desktop .sapFGridContainer .sapFGridContainerItemWrapperNoVisualFocus:focus .sapMGTFocusDiv, // focus inside GridContainer
 html.sap-desktop .sapMGT:focus .sapMGTFocusDiv,
 html.sap-desktop .sapMGT:active .sapMGTFocusDiv,
 html.sap-desktop .sapMGTLineModePress .sapMGTFocusDiv {
@@ -216,7 +254,47 @@ html.sap-desktop .sapMGT.sapMGTBackgroundImage:active .sapMGTFocusDiv {
 		.sapMGTOverlayMixin();
 		border-radius: 0.125rem;
 		margin: -1px;
-		border: 1px dotted @sapUiContentContrastFocusColor;
+		border: 1px dashed @sapUiContentContrastFocusColor;
 		z-index: 0;
+	}
+}
+
+.sapMGT.sapMGTScopeActions.TwoByHalf.sapMGTIconMode {
+	.sapMBtn.sapMGTMoreIcon{
+		.sapMBtnInner{
+			height: 2.25rem;
+			min-width: 0;
+		}
+	}
+}
+
+.sapUiSizeCompact{
+	.sapMGT.sapMGTScopeActions.TwoByHalf.sapMGTIconMode {
+		.sapMBtn.sapMGTMoreIcon{
+			.sapMBtnInner{
+				height: 1.625rem;
+				min-width: 0;
+			}
+		}
+	}
+}
+
+.sapUiMedia-GenericTileDeviceSet-large{
+	.sapMGT.sapMGTScopeActions.sapMGTLineMode{
+		.sapMBtnBase.sapMGTMoreIcon{
+			.sapMBtnIcon{
+				left: -0.5rem;
+			}
+		}
+	}
+}
+
+.sapUiMedia-GenericTileDeviceSet-large{
+	.sapMGT.sapMGTScopeSingleAction.sapMGTLineMode{
+		.sapMBtnBase.sapMGTMoreIcon{
+			.sapMBtnIcon{
+				left: 0.5rem;
+			}
+		}
 	}
 }

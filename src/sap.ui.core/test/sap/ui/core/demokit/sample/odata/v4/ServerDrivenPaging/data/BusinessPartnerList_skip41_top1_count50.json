@@ -1,0 +1,9 @@
+{
+	"@odata.metadataEtag" : "W/\"20191022154832\"",
+	"@odata.count" : 50,
+	"value" : [{
+		"@odata.etag" : "W/\"20190321111935.0000000 \"",
+		"BusinessPartnerID" : "0100000041",
+		"CompanyName" : "South American IT Company"
+	}]
+}

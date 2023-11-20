@@ -1,0 +1,106 @@
+/* =================================== */
+/* CSS for control sap.m/ObjectHeader  */
+/* Evening Horizon theme               */
+/* =================================== */
+
+.sapMOH.sapMOHBgTranslucent,
+.sapMOHC.sapMOHBgTranslucent,
+.sapMOH.sapMOHBgSolid,
+.sapMOHC.sapMOHBgSolid {
+	background-color: @sapUiObjectHeaderBackground;
+}
+
+.sapMOHC.sapMOHBgTranslucent,
+.sapMOHC.sapMOHBgSolid {
+	border-bottom: 0.0625rem solid @sapUiObjectHeaderBorderColor;
+	box-shadow: none;
+}
+.sapMOH.sapMOHBgTransparent,
+.sapMOHC.sapMOHBgTransparent {
+	background: transparent;
+	border-bottom: 0.0625rem solid transparent;
+}
+
+a.sapMOHTitle.sapMOHTitleActive:hover > h1 .sapMText {
+	text-decoration: underline;
+}
+
+.sapMOHTitleArrow > .sapUiIcon {
+	outline-offset: -1px;
+}
+
+.sapMOHTitle.sapMOHTitleActive:focus {
+	outline: none;
+}
+
+.sapMOHTitle.sapMOHTitleActive:focus > h1 span,
+.sapMOHTitle.sapMOHTitleActive:focus > h2 span,
+.sapMOHTitle.sapMOHTitleActive:focus > h3 span,
+.sapMOHTitle.sapMOHTitleActive:focus > h4 span,
+.sapMOHTitle.sapMOHTitleActive:focus > h5 span,
+.sapMOHTitle.sapMOHTitleActive:focus > h6 span,
+.sapMOHIcon.sapMPointer .sapUiIcon.sapUiIconPointer:focus,
+.sapMOHTitleArrow .sapUiIcon:focus {
+	outline: 1px dotted @sapUiContentFocusColor;
+	outline-offset: -1px;
+}
+
+/*** styles for responsive object header ***/
+.sapMOHRTitle h1 {
+	font-size: @sapMFontHeader3Size;
+}
+
+.sapMOHR:not(.sapMOHRNoBorder) {
+	box-shadow: @sapUiShadowHeader;
+}
+
+.sapMOHR.sapMOHRBgSolid,
+.sapMOHR.sapMOHRBgTranslucent {
+	background: @sapUiObjectHeaderBackground;
+}
+
+.sapMOHR.sapMOHRBgTransparent {
+	background: transparent;
+}
+
+.sapMOHRTitleArrow .sapUiIcon:focus {
+	outline: 1px dotted @sapUiContentFocusColor;
+	outline-offset: -1px;
+}
+
+.sapMOHRIcon.sapMPointer .sapUiIcon.sapUiIconPointer:focus {
+	&:before {
+		outline: 1px dotted @sapUiContentFocusColor;
+	}
+}
+
+.sapMOHRTitleActive .sapMOHRTitleText:focus {
+	outline: 1px dotted @sapUiContentFocusColor;
+	outline-offset: -1px;
+}
+
+.sapMOHTitle h6 .sapMText,
+.sapMOHTitle h5 .sapMText,
+.sapMOHTitle h4 .sapMText,
+.sapMOHTitle h3 .sapMText,
+.sapMOHTitle h2 .sapMText,
+.sapMOHTitle h1 .sapMText {
+	font-family: @sapUiObjectHeaderTitleFontFamily;
+	font-size: @sapUiObjectHeaderTitleFontSize;
+	color: @sapUiObjectHeaderTitleTextColor;
+}
+
+html.sap-phone {
+	.sapMOHTitle h6 .sapMText,
+	.sapMOHTitle h5 .sapMText,
+	.sapMOHTitle h4 .sapMText,
+	.sapMOHTitle h3 .sapMText,
+	.sapMOHTitle h2 .sapMText,
+	.sapMOHTitle h1 .sapMText {
+		font-size: @sapUiObjectHeaderTitleSnappedFontSize;
+	}
+}
+
+.sapMOHIntro .sapMText {
+	color: @sapUiObjectHeaderSubtitleTextColor;
+}

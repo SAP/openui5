@@ -10,7 +10,9 @@ sap.ui.define([],
 		 * <code>MenuButton</code> renderer.
 		 * @namespace
 		 */
-		var MenuButtonRenderer = {};
+		var MenuButtonRenderer = {
+			apiVersion: 2
+		};
 
 		MenuButtonRenderer.CSS_CLASS = "sapMMenuBtn";
 
@@ -21,39 +23,22 @@ sap.ui.define([],
 		 * @param {sap.ui.core.RenderManager} oRm
 		 *            The RenderManager that can be used for writing to
 		 *            the Render-Output-Buffer
-		 * @param {sap.ui.core.Control} oMenuButton
+		 * @param {sap.m.MenuButton} oMenuButton
 		 *            The MenuButton to be rendered
 		 */
 		MenuButtonRenderer.render = function(oRm, oMenuButton) {
 			var sWidth = oMenuButton.getWidth();
 
-			//write root DOM element
-			oRm.write("<div");
-			oRm.writeControlData(oMenuButton);
-
-			//write aria attributes
-			this.writeAriaAttributes(oRm, oMenuButton);
-
-			//classes
-			oRm.addClass(MenuButtonRenderer.CSS_CLASS);
-			oRm.addClass(MenuButtonRenderer.CSS_CLASS + oMenuButton.getButtonMode());
-			oRm.writeClasses();
-
-			// set user defined width
+			oRm.openStart("div", oMenuButton);
+			oRm.class(MenuButtonRenderer.CSS_CLASS).class(MenuButtonRenderer.CSS_CLASS + oMenuButton.getButtonMode());
 			if (sWidth != "") {
-				oRm.addStyle("width", sWidth);
+				oRm.style("width", sWidth);
 			}
-			oRm.writeStyles();
-
-			oRm.write(">");
-
+			oRm.openEnd();
+			oMenuButton._ensureBackwardsReference();
 			oRm.renderControl(oMenuButton._getButtonControl());
-
-			oRm.write("</div>");
-		};
-
-		MenuButtonRenderer.writeAriaAttributes = function(oRm, oMenuButton) {
-			oRm.writeAttribute("aria-haspopup", "true");
+			oMenuButton._activeButton = oMenuButton._isSplitButton() ? oMenuButton._getButtonControl()._getArrowButton() : oMenuButton._getButtonControl();
+			oRm.close("div");
 		};
 
 		return MenuButtonRenderer;

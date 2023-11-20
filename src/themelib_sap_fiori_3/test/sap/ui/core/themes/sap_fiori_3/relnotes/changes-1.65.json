@@ -1,0 +1,114 @@
+{
+  "1.65.0": {
+    "date": "March 2019",
+    "notes": [
+      {
+        "id": "c443c4166aa098b4563add2f2c467bf69fc20cc7",
+        "type": "FIX",
+        "text": "sap.m.Carousel: Bullets are now visible in Fiori 3",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980059045"
+          }
+        ]
+      },
+      {
+        "id": "1de4c33069f032c511c0cf3f77d3506591e29328",
+        "type": "FIX",
+        "text": "sap.m.ToggleButton: hover state for Accept and Reject fixed for fiori3",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980111497"
+          }
+        ]
+      },
+      {
+        "id": "11e0337d9b96e7e1c5d8ab47f02639fcd67218dc",
+        "type": "FIX",
+        "text": "sap.m.Token: Font size is aligned with the visual specification",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980102427"
+          }
+        ]
+      },
+      {
+        "id": "fac509871246f68fd90c8b85b1c48877bb867ab1",
+        "type": "FEATURE",
+        "text": "sap.m.SinglePlanningCalendar: appointments shorter that 30 min indicate its duration",
+        "references": []
+      },
+      {
+        "id": "0cce70ca3fd228c36cc282aee38e85bd65bca211",
+        "type": "FEATURE",
+        "text": "sap.tnt.ToolHeader: Now supports sap.m.ObjectStatus for \"Fiori 3 Default\" theme",
+        "references": []
+      },
+      {
+        "id": "de9969e2ac28b498f33a4970c5721342169c636c",
+        "type": "FEATURE",
+        "text": "sap.uxap.ObjectPageHeader: Image styling aligned with Avatar",
+        "references": []
+      },
+      {
+        "id": "0f21e10400bdf43a337c8707362c68dc96816b90",
+        "type": "FIX",
+        "text": "sap.m.PlanningCalendar: Today date highlighted correctly on mobile",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980089083"
+          }
+        ]
+      },
+      {
+        "id": "f3030f283a895f8b0aa65b0f00bf3967c742688b",
+        "type": "FIX",
+        "text": "sap.m.Toolbar: Fiori 3 background for design Auto is fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980134339"
+          }
+        ]
+      },
+      {
+        "id": "c4474d869927e688675d9aa6f394eaaae31a79bc",
+        "type": "FIX",
+        "text": "sap.uxap.ObjectPageHeader: Fixed alignment of icon only actions",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980086263"
+          }
+        ]
+      },
+      {
+        "id": "1e4921cc908293ec23771276ffb0b4f908b26623",
+        "type": "FIX",
+        "text": "uxap.ObjectPage/f.DynamicPage: Floating footer Fiori 3 aligned",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980089600"
+          }
+        ]
+      },
+      {
+        "id": "00a1bd63f3f97145bf0c7a462b4d450a167e357d",
+        "type": "FEATURE",
+        "text": "sap.f.ShellBar: Control productisation",
+        "references": []
+      },
+      {
+        "id": "e3c10daacb99bf5d8f178c16dd8c4531491773b2",
+        "type": "FEATURE",
+        "text": "sap.m.Select: Display multiline value state text",
+        "references": []
+      }
+    ]
+  }
+}

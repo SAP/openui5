@@ -1,0 +1,17 @@
+<core:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core"
+>
+	<ComboBox
+		showSecondaryValues="true"
+		value="{path: 'value', formatter: '._getItemTitle'}"
+		selectedKey="{value}"
+		width="100%"
+		change="_onChange"
+		items="{config/items}"
+	>
+		<items>
+			<core:ListItem key="{key}" text="{= ${title} || ${key}}" additionalText="{description}"/>
+		</items>
+	</ComboBox>
+</core:FragmentDefinition>

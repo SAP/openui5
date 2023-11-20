@@ -1,0 +1,35 @@
+{
+	"sap.app": {
+		"id": "sap.m.sample.InputModelUpdate",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "sap.m.sample.InputModelUpdate.V",
+			"type": "XML",
+			"async": true
+		},
+		"dependencies": {
+			"libs": {
+				"sap.m": {},
+				"sap.ui.core": {}
+			}
+		},
+		"config": {
+			"sample": {
+				"stretch": true,
+				"files": [
+					"localService/mockdata/Employees.json",
+					"localService/response/ODataErrorResponse.json",
+					"localService/metadata.xml",
+					"localService/mockserver.js",
+					"C.controller.js",
+					"V.view.xml",
+					"manifest.json"
+				]
+			}
+		}
+	}
+}

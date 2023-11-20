@@ -4,7 +4,6 @@
 
 // Provides control sap.ui.ux3.Exact.
 sap.ui.define([
-    'jquery.sap.global',
     'sap/ui/commons/Button',
     'sap/ui/commons/Menu',
     'sap/ui/commons/SearchField',
@@ -14,10 +13,10 @@ sap.ui.define([
     './ExactAttribute',
     './ExactBrowser',
     './library',
-    "./ExactRenderer"
+    './ExactRenderer',
+    'sap/ui/commons/library'
 ],
 	function(
-	    jQuery,
 		Button,
 		Menu,
 		SearchField,
@@ -27,9 +26,15 @@ sap.ui.define([
 		ExactAttribute,
 		ExactBrowser,
 		library,
-		ExactRenderer
+		ExactRenderer,
+		commonsLibrary
 	) {
 	"use strict";
+
+
+
+	// shortcut for sap.ui.commons.TextViewDesign
+	var TextViewDesign = commonsLibrary.TextViewDesign;
 
 
 
@@ -53,10 +58,10 @@ sap.ui.define([
 	 * API is not yet finished and might change completely
 	 * @deprecated Since version 1.38.
 	 * @alias sap.ui.ux3.Exact
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var Exact = Control.extend("sap.ui.ux3.Exact", /** @lends sap.ui.ux3.Exact.prototype */ { metadata : {
 
+		deprecated: true,
 		library : "sap.ui.ux3",
 		properties : {
 
@@ -125,14 +130,6 @@ sap.ui.define([
 
 
 
-
-
-
-
-
-
-	(function() {
-
 	/**
 	 * Does the setup when the Exact is created.
 	 * @private
@@ -165,7 +162,7 @@ sap.ui.define([
 		this._resultArea = new ExactArea(this.getId() + "-resultArea");
 		this.addAggregation("controls", this._resultArea);
 
-		this._resultText = new TextView(this.getId() + "-resultAreaTitle", {design: sap.ui.commons.TextViewDesign.Bold});
+		this._resultText = new TextView(this.getId() + "-resultAreaTitle", {design: TextViewDesign.Bold});
 		this._resultText.addStyleClass("sapUiUx3ExactViewTitle");
 		this.addAggregation("controls", this._resultText);
 
@@ -191,7 +188,6 @@ sap.ui.define([
 	 *
 	 * @type sap.ui.ux3.ExactArea
 	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	Exact.prototype.getResultArea = function() {
 		return this._resultArea;
@@ -203,7 +199,6 @@ sap.ui.define([
 	 *
 	 * @type sap.ui.commons.SearchField
 	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	Exact.prototype.getSearchField = function() {
 		return this._search_input;
@@ -238,8 +233,6 @@ sap.ui.define([
 	};
 
 
-	}());
-
 	return Exact;
 
-}, /* bExport= */ true);
+});

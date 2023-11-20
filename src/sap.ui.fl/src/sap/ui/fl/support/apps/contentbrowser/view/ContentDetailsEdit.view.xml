@@ -1,8 +1,6 @@
-<core:View xmlns:core="sap.ui.core"
-		   xmlns:mvc="sap.ui.core.mvc"
-		   xmlns="sap.m" controllerName="sap.ui.fl.support.apps.contentbrowser.controller.ContentDetailsEdit"
-		   xmlns:f="sap.ui.layout.form"
-		   xmlns:html="http://www.w3.org/1999/xhtml">
+<mvc:View xmlns:mvc="sap.ui.core.mvc"
+		  xmlns="sap.m" controllerName="sap.ui.fl.support.apps.contentbrowser.controller.ContentDetailsEdit"
+		  xmlns:f="sap.ui.layout.form">
 	<Page title="{path: 'selectedContent>/', formatter: '.oDataUtils.formatItemTitle'}">
 		<f:SimpleForm
 				minWidth="1024"
@@ -20,7 +18,8 @@
 				<ToolbarSpacer />
 				<Button text="{i18n>save}" press=".onSave" />
 				<Button text="{i18n>cancel}" press=".onCancel" />
+				<CheckBox id="activeVersionCheckBox" text="{i18n>onActiveVersion}" valueState="Warning" visible="false"/>
 			</Toolbar>
 		</footer>
 	</Page>
-</core:View>
+</mvc:View>

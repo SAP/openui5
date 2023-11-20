@@ -1,8 +1,13 @@
 /*global QUnit*/
 
 sap.ui.define([
-	"sap/ui/test/opaQunit"
-], function (opaTest) {
+	"sap/ui/test/opaQunit",
+	"sap/ui/Device",
+	"./pages/Worklist",
+	"./pages/Browser",
+	"./pages/Object",
+	"./pages/App"
+], function (opaTest, Device) {
 	"use strict";
 
 	QUnit.module("Navigation");
@@ -15,14 +20,13 @@ sap.ui.define([
 		Then.onTheWorklistPage.iShouldSeeTheTable();
 	});
 
-	opaTest("Should react on hashchange", function (Given, When, Then) {
+	opaTest("Should react on hash change", function (Given, When, Then) {
 		// Actions
 		When.onTheWorklistPage.iRememberTheItemAtPosition(2);
 		When.onTheBrowser.iChangeTheHashToTheRememberedItem();
 
 		// Assertions
-		Then.onTheObjectPage.iShouldSeeTheRememberedObject().
-			and.theViewIsNotBusyAnymore();
+		Then.onTheObjectPage.iShouldSeeTheRememberedObject();
 	});
 
 	opaTest("Should go back to the TablePage", function (Given, When, Then) {
@@ -58,42 +62,41 @@ sap.ui.define([
 		Then.onTheObjectPage.iShouldSeeTheRememberedObject();
 
 		// Cleanup
-		Then.iTeardownMyAppFrame();
-	});
-
-	opaTest("Should see a busy indication while loading the metadata", function (Given, When, Then) {
-		// Arrangements
-		Given.iStartMyApp({
-			delay: 10000
-		});
-
-		// Assertions
-		Then.onTheAppPage.iShouldSeeTheBusyIndicatorForTheWholeApp();
-
-		// Cleanup
-		Then.iTeardownMyAppFrame();
+		Then.iTeardownMyApp();
 	});
 
 	opaTest("Start the App and simulate metadata error: MessageBox should be shown", function (Given, When, Then) {
 		//Arrangement
-		Given.iStartMyAppOnADesktopToTestErrorHandler("metadataError=true");
+		Given.iStartMyApp({
+			delay: 2000,
+			metadataError: true
+		});
 
 		//Assertions
 		Then.onTheAppPage.iShouldSeeTheMessageBox();
 
+		// Actions
+		When.onTheAppPage.iCloseTheMessageBox();
+
 		// Cleanup
-		Then.iTeardownMyAppFrame();
+		Then.iTeardownMyApp();
 	});
 
 	opaTest("Start the App and simulate bad request error: MessageBox should be shown", function (Given, When, Then) {
 		//Arrangement
-		Given.iStartMyAppOnADesktopToTestErrorHandler("errorType=serverError");
+		Given.iStartMyApp({
+			delay: 2000,
+			errorType: "serverError"
+		});
 
 		//Assertions
 		Then.onTheAppPage.iShouldSeeTheMessageBox();
 
+		// Actions
+		When.onTheAppPage.iCloseTheMessageBox();
+
 		// Cleanup
-		Then.iTeardownMyAppFrame();
+		Then.iTeardownMyApp();
 	});
 
 });

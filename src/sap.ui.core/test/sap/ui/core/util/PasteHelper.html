@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+
+    <title>Paste Helper Example</title>
+
+    <!-- Load UI5 and select "sap_belize" theme -->
+    <script id='sap-ui-bootstrap'
+            src='../../../../../resources/sap-ui-core.js'
+            data-sap-ui-theme='sap_belize'>
+
+    </script>
+    <script>
+        sap.ui.require([
+                    'sap/ui/core/util/PasteHelper',
+                    'sap/ui/core/Core',
+                    'sap/ui/core/Element',
+                    'sap/ui/model/json/JSONModel',
+                    'sap/ui/table/Table',
+                    'sap/ui/table/Column',
+                    'sap/m/TextArea',
+                    'sap/m/Text',
+                    'sap/m/Label',
+                    'sap/m/MessageBox'],
+                function(PasteHelper, Core, Element, JSONModel, Table, Column, TextArea, Text, Label, MessageBox) {
+
+                    // Test Data if not using Excel spreadsheet for copying.
+                    //var aData3_OK = [["Luis", "10", "yes", "2018-12-03", "5 USD"],["Leo", "8", "no","2018-12-18", "15.53 EUR"]];
+                    const testA = "Luis\t10\ttrue\t2018-12-03\t5 USD\tLuis White\nLeo\t8\tfalse\t2018-12-18\t10 EUR\tLeo Bond";
+
+                    const testB = "\"$$ $$Cell 1 Test Multiline\nApple\nHP\nDELL SE\nIBM\nSAP\"\t\"Cell 2 Test Multiline\nSun\nApple\"\t15\t15,36\t15\t15,36\t15\t15,360 kg\t15,36 JPY\t05.12.14\t5 December 2014\tH26.12.5\t05.12.14 00:00\t00:00:00\t05-12-2014 12:00:00 AM\t15     JPY\tFALSE\tOUT OF STOCK";
+
+                    const testC = "ABC AG\tThe company ABC def 123 !\"§$%&/()=?`'-.,;:_#+~ accepts EUR\t15\t15\t15\t15,00\t15\t15,000 kg\t15,00 EUR\t05.12.14\t5 December 2014\tH26.12.5\t05.12.14 00:00\t00:00:00\t05-12-2014 12:00:00 AM\t15,00  EUR\tTRUE\tAVAILABLE\nSAP SE\tThe company SAP SE  accepts USD\t15\t15,3\t15\t15,30\t15\t15,300 kg\t15,30 USD\t05.12.14\t5 December 2014\tH26.12.5\t05.12.14 00:00\t00:00:00\t05-12-2014 12:00:00 AM\t15,30  USD\tFALSE\tOUT OF STOCK\n\"$$ $$'Cell 1 Test Multiline\nApple\nHP\nDELL SE\nIBM\nSAP\"\t\"Cell 2 Test Multiline\nSun\nApple\"\t15\t15,36\t15\t15,36\t15\t15,360 kg\t15,36 JPY\t05.12.14\t5 December 2014\tH26.12.5\t05.12.14 00:00\t00:00:00\t05-12-2014 12:00:00 AM\t15     JPY\tFALSE\tOUT OF STOCK\nSAP A.G.test\t\"The company SAP A.G.test accepts\ntest2\"\t15\t15,368\t15\t15,37\t15\t15,368 kg\t15,37 \t05.12.14\t5 December 2014\tH26.12.5\t05.12.14 00:00\t00:00:00\t05-12-2014 12:00:00 AM\t15,37     \tTRUE\tAVAILABLE\nSAP A.G.test\t\"The company SAP A.G.test accepts RUB\"\t\"1 line\n 2 line\n3 line \n4 line\"\t-1015,368\t-1015\t-1015,37\t-1.015\t-1015,368 kg\t-1015,37 RUB\t05.12.14\t5 December 2014\tH26.12.5\t05.12.14 00:00\t00:00:00\t05-12-2014 12:00:00 AM\t- 1.015,37  RUB\tTRUE\tAVAILABLE";
+
+                    var oTable;
+
+                    function showDataInTable(aData) {
+                        aData = aData || [];
+
+                        if (!oTable) {
+                            var oModel = new JSONModel();
+                            oTable = new Table({
+                                selectionMode: "None"
+                            });
+                            oTable.setModel(oModel);
+                            oTable.bindRows("/data");
+                            oTable.placeAt("content");
+                        }
+                        oTable.destroyColumns();
+                        oTable.getModel().setData({data: []});
+
+                        var aTableData = [];
+                        for (var i = 0; i < aData.length; i++) {
+                            var oRow = {};
+                            for (var j = 0; j < aData[i].length; j++) {
+                                if (i == 0) {
+                                    oTable.addColumn(new Column({
+                                        label: new Label({text: "Column " + (j+1)}),
+                                        template: new Text({text: "{data" + j + "}", wrapping: false}),
+                                        width: "200px"
+                                    }));
+                                }
+                                oRow["data" + j] = aData[i][j];
+                            }
+                            aTableData.push(oRow);
+                        }
+
+                        oTable.getModel().setData({data: aTableData});
+                    }
+
+
+                    function pasteListener(e) {
+                        // call Utility pasteHelper
+                        var aData = PasteHelper.getPastedDataAs2DArray(e);
+
+                        var aColumnsInfo = [
+                            {
+                                property: "name",
+                                type: new sap.ui.model.type.String() //not EDM, but UI5 data type
+                            },
+                            {
+                                property: "age",
+                                type:  new sap.ui.model.odata.type.Byte() // OData type Edm.Byte
+                            },
+                            {
+                                property: "validAbo",
+                                type: new sap.ui.model.type.Boolean() // not EDM type, can be "true" or "false"
+                            },
+                            {
+                                property: "lastLoginDate",
+                                type: new sap.ui.model.odata.type.Date() // OData EDM type
+                            },
+                            {
+                                property: "aboPrice",
+                                type: new sap.ui.model.type.Currency()
+                            },
+                            {
+                                property: "fullName",
+                                customParseFunction: function(data) { return ( data.toUpperCase()) }
+                            }
+                        ];
+                        PasteHelper.parse(aData, aColumnsInfo).then(function(oResult) {
+                            if (oResult.parsedData)
+                            {
+                                showDataInTable(aData);
+                                var msg = "";
+                                var myJSON = JSON.stringify(oResult.parsedData);
+                                Element.getElementById("ta2").setValue(myJSON);
+                                if (e.target.id == "ta1-inner") {
+                                    Element.getElementById("ta1").setValue(e.clipboardData.getData("text"));
+                                }
+                                e.preventDefault();
+
+                            }  else {
+                                var msg = "";
+                                for (var i = 0; i < oResult.errors.length; i++) {
+                                    msg = msg + "\n" + (oResult.errors)[i].message;
+                                }
+                                MessageBox.error(msg);
+                                Element.getElementById("ta2").setValue(msg);
+                                e.preventDefault();
+                            }
+                        });
+
+                    }
+
+                    window.addEventListener('paste', pasteListener);
+
+                    var t1 = new Label({text: "Copy the content presenting data in the clipboard (copied from the excel) from the first text area and paste to the second text area:"});
+                    t1.placeAt('content');
+
+                    var ta1 = new TextArea({
+                        id: "ta1",
+                        width: "70%",
+                        height: "100px",
+                        value: testA
+                    });
+                    ta1.placeAt('content');
+
+                    var ta2 = new TextArea({
+                        id: "ta2",
+                        width: "70%",
+                        value: "Paste the data from excel or from the Text area above here",
+                        height: "100px"
+                    });
+                    ta2.placeAt('content');
+                });
+
+    </script>
+</head>
+<body id='content' class='sapUiBody sapUiSizeCompact'>
+</body>
+</html>

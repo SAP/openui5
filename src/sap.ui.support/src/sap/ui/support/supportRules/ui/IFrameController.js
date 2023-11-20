@@ -3,13 +3,15 @@
  */
 
 sap.ui.define([
-	"jquery.sap.global",
+	"sap/base/Log",
 	"sap/ui/base/ManagedObject",
-	"sap/ui/support/supportRules/WindowCommunicationBus",
+	"sap/ui/support/supportRules/CommunicationBus",
 	"sap/ui/support/supportRules/WCBChannels",
-	"sap/ui/support/supportRules/Constants"
+	"sap/ui/support/supportRules/Constants",
+	"sap/ui/thirdparty/URI",
+	"sap/ui/core/date/UI5Date"
 ],
-function (jQuery, ManagedObject, CommunicationBus, channelNames, constants) {
+function (Log, ManagedObject, CommunicationBus, channelNames, constants, URI, UI5Date) {
 	"use strict";
 
 	var oIFrameController = null;
@@ -21,7 +23,7 @@ function (jQuery, ManagedObject, CommunicationBus, channelNames, constants) {
 	var sFrameUrl;
 
 	function computeFrameOrigin(sUrl) {
-		var frameURI = new window.URI(sUrl);
+		var frameURI = new URI(sUrl);
 		var sOrigin = ( frameURI.protocol() || window.location.protocol.replace(':', '') ) +
 						'://' +
 						( frameURI.host() || window.location.host );
@@ -30,7 +32,7 @@ function (jQuery, ManagedObject, CommunicationBus, channelNames, constants) {
 	}
 
 	function generateIdentifier() {
-		return '' + +new Date();
+		return '' + +UI5Date.getInstance();
 	}
 
 	function openFrame(sUrl) {
@@ -46,6 +48,8 @@ function (jQuery, ManagedObject, CommunicationBus, channelNames, constants) {
 		style.left = "0";
 		style.bottom = "0";
 		style.border = "none";
+		// This fixed a visual glitch with the iframe on chrome see BCP 1870314303
+		style.borderRadius = "1px";
 		style.zIndex = "1001";
 		// style.transition = "width 300ms ease-in-out, height 300ms ease-in-out";
 		style.boxShadow = "1px -10px 42px -4px #888";
@@ -82,7 +86,7 @@ function (jQuery, ManagedObject, CommunicationBus, channelNames, constants) {
 			if (!oIFrameController) {
 				ManagedObject.apply(this, arguments);
 			} else {
-				jQuery.sap.log.warning("Only one support tool allowed");
+				Log.warning("Only one support tool allowed");
 				return oIFrameController;
 			}
 		}
@@ -104,10 +108,10 @@ function (jQuery, ManagedObject, CommunicationBus, channelNames, constants) {
 	IFrameController.prototype.injectFrame = function (supportModeConfig) {
 		sFrameIdentifier = generateIdentifier();
 
-		sFrameUrl = jQuery.sap.getModulePath("sap.ui.support.supportRules.ui",
-			"/overlay.html?sap-ui-xx-formfactor=compact&sap-ui-xx-support-origin=" +
+		sFrameUrl = sap.ui.require.toUrl("sap/ui/support/supportRules/ui/overlay.html") +
+			"?sap-ui-xx-formfactor=compact&sap-ui-xx-support-origin=" +
 			window.location.protocol + "//" + window.location.host + "&" +
-			"sap-ui-xx-frame-identifier=" + sFrameIdentifier);
+			"sap-ui-xx-frame-identifier=" + sFrameIdentifier;
 
 		sFrameOrigin = computeFrameOrigin(sFrameUrl);
 
@@ -171,16 +175,12 @@ function (jQuery, ManagedObject, CommunicationBus, channelNames, constants) {
 		this._oCore = null;
 	};
 
-	IFrameController.prototype.getFrameOrigin = function () {
-		return sFrameOrigin;
-	};
-
-	IFrameController.prototype.getFrameIdentifier = function () {
-		return sFrameIdentifier;
-	};
-
-	IFrameController.prototype.getFrameUrl = function () {
-		return sFrameUrl;
+	IFrameController.prototype.getCommunicationInfo = function () {
+		return {
+			origin: sFrameOrigin,
+			identifier: sFrameIdentifier,
+			url: sFrameUrl
+		};
 	};
 
 	oIFrameController = new IFrameController();

@@ -1,0 +1,89 @@
+{
+	"sap.app": {
+		"id": "card.explorer.data.object.card",
+		"type": "card",
+		"i18n": "i18n/i18n.properties"
+	},
+	"sap.card": {
+		"type": "Object",
+		"data": {
+			"request": {
+				"url": "./mockdata/employee.json"
+			}
+		},
+		"header": {
+			"icon": {
+				"src": "{photo}"
+			},
+			"title": "{firstName} {lastName}",
+			"subTitle": "{position}"
+		},
+		"content": {
+			"hasData": "{/manager}",
+			"groups": [
+				{
+					"title": "{{contactDetails}}",
+					"items": [
+						{
+							"label": "{{firstName}}",
+							"value": "{firstName}"
+						},
+						{
+							"label": "{{lastName}}",
+							"value": "{lastName}"
+						},
+						{
+							"label": "{{phone}}",
+							"value": "{phone}",
+							"actions": [
+								{
+									"type": "Navigation",
+									"parameters": {
+										"url": "tel:{phone}"
+									}
+								}
+							]
+						}
+					]
+				},
+				{
+					"title": "{{organizationalDetails}}",
+					"items": [
+						{
+							"label": "{{directManager}}",
+							"value": "{manager/firstName} {manager/lastName}",
+							"icon": {
+								"src": "{manager/photo}"
+							}
+						}
+					]
+				},
+				{
+					"title": "{{companyDetails}}",
+					"items": [
+						{
+							"label": "{{companyName}}",
+							"value": "{company/name}"
+						},
+						{
+							"label": "{{address}}",
+							"value": "{company/address}"
+						},
+						{
+							"label": "{{website}}",
+							"value": "{company/website}",
+							"actions": [
+								{
+									"type": "Navigation",
+									"parameters": {
+										"url": "{company/website}"
+									}
+								}
+							]
+						}
+					]
+				}
+			]
+		}
+	}
+}

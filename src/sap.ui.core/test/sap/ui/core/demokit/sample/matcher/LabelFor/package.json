@@ -1,0 +1,13 @@
+{
+  "name": "sap.ui.core.sample.matcher.labelfor",
+  "version": "1.0.0",
+  "private": true,
+  "author": "SAP SE",
+  "scripts": {
+    "start": "ui5 serve",
+    "build": "ui5 build"
+  },
+  "devDependencies": {
+    "@ui5/cli": "^3"
+  }
+}

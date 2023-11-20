@@ -1,0 +1,28 @@
+{
+  "1.87.0": {
+    "date": "February 2021",
+    "notes": [
+      {
+        "id": "b74df39d0e34084330c4e103beb8dddc620e2e96",
+        "type": "FEATURE",
+        "text": " sap.ui.layout.cssgrid.ResponsiveColumnLayout: Added new breakpoints"
+      },
+      {
+        "id": "5641f2c62140e156f9b9683b754381739c770484",
+        "type": "FIX",
+        "text": " sap.ui.layout.cssgrid.ResponsiveColumnLayout: 'layoutChange' event is now fired initially",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180033628"
+          }
+        ]
+      },
+      {
+        "id": "6356c09887ee6b50131a60e3271b74d06ad39cd2",
+        "type": "FEATURE",
+        "text": " sap.f.GridList: Introduce 2D keyboard navigation based on the grid"
+      }
+    ]
+  }
+}

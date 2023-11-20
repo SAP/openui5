@@ -1,31 +1,20 @@
 sap.ui.define([
-	"jquery.sap.global",
 	"sap/ui/core/UIComponent",
-	"sap/ui/thirdparty/sinon"
+	"sap/ui/core/mvc/View"
 ],
-function(jQuery, UIComponent, sinon) {
+function(UIComponent, View) {
 	"use strict";
 
 	return UIComponent.extend("sap.ui.core.sample.View.preprocessor.Component", {
 
 		metadata: {
-			dependencies: {
-				libs: [
-					"sap.ui.core",
-					"sap.m"
-				]
-			},
-			config: {
-				sample: {
-					files: [
-						"Sample.view.xml",
-						"Sample.view.js"
-					]
-				}
-			}
+			manifest: "json",
+			interfaces: [
+				"sap.ui.core.IAsyncContentCreation"
+			]
 		},
-		createContent: function(oController) {
-			return sap.ui.jsview("sap.ui.core.sample.View.preprocessor.Sample", true);
+		createContent: function () {
+			return View.create({ viewName: "module:sap/ui/core/sample/View/preprocessor/SampleView"});
 		}
 	});
 });

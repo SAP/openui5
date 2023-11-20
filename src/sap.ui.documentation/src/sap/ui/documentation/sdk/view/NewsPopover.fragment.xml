@@ -1,0 +1,51 @@
+<core:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core">
+	<ResponsivePopover
+		id="newsPopover"
+		placement="Bottom"
+		title="{i18n>APP_NEWS_BTN_TOOLTIP}">
+			<beginButton>
+				<Button
+					id="dismissAllNotifications"
+					text="{i18n>APP_NEWS_DISMISS_ALL_BTN}"
+					press="handleDismissAllPress"
+					enabled="{= %{news>/newsCount} > 0}" />
+			</beginButton>
+			<endButton>
+				<Button
+					id="showAllNotifications"
+					text="{i18n>APP_NEWS_SHOW_ALL_BTN}"
+					press="handleShowAllPress" />
+			</endButton>
+		<VBox>
+		<NotificationList
+			noDataText="{i18n>APP_NEWS_NO_NEW_TEXT}"
+			items="{path:  'news>/items', templateShareable: false}"
+			>
+			<layoutData>
+				<FlexItemData maxHeight="450px" maxWidth="600px" />
+			</layoutData>
+
+			<NotificationListItem
+				title="{news>title}"
+				description="{news>description}"
+				datetime="{news>updated}"
+				close="handleNewsItemClose"
+				class="sapUiDemokitCustomNLI">
+				<buttons>
+					<Button visible="{= %{news>link} !== ''}" text="{i18n>NEWS_BTN_VISIT_LINK}" press="handleVisitNewsLink">
+						<customData>
+							<core:CustomData key="newsLink" value="{news>link}"/>
+						</customData>
+					</Button>
+				</buttons>
+				<customData>
+					<core:CustomData key="newsID" value="{news>id}"/>
+				</customData>
+			</NotificationListItem>
+
+		</NotificationList>
+	</VBox>
+	</ResponsivePopover>
+</core:FragmentDefinition>

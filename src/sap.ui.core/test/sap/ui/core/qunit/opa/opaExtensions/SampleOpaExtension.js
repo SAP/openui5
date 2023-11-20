@@ -3,52 +3,67 @@
  */
 
 sap.ui.define([
-  'jquery.sap.global',
-  'sap/ui/base/Object'
-],function($, Ui5Object) {
-  "use strict";
+	'sap/ui/test/_OpaLogger',
+	'sap/ui/base/Object',
+	'sap/ui/thirdparty/jquery'
+], function (_OpaLogger, Ui5Object, $) {
+	"use strict";
 
-  var oLogger = $.sap.log.getLogger("sap.ui.test.SampleOpaExtension",
-    $.sap.log.Level.DEBUG);
+	var oLogger = _OpaLogger.getLogger("sap.ui.test.SampleOpaExtension");
 
-  var Extension = Ui5Object.extend("sap.ui.test.SampleOpaExtension", {
-    metadata : {
-      publicMethods : [
-        "onAfterInit",
-        "onBeforeExit" ,
-        "getAssertions"
-      ]
-    },
+	var Extension = Ui5Object.extend("sap.ui.test.SampleOpaExtension", {
+		metadata: {
+			publicMethods: [
+				"onAfterInit",
+				"onBeforeExit",
+				"getAssertions"
+			]
+		},
 
-    onAfterInit : function() {
-      oLogger.debug("Default onAfterInit called");
-      return $.when();
-    },
+		onAfterInit: function () {
+			oLogger.info("Default onAfterInit called");
+			Extension.onAfterInitCalls += 1;
+			var deferred = $.Deferred();
+			setTimeout(function () {
+				deferred.resolve();
+			}, 100);
+			return deferred.promise();
+		},
 
-    onBeforeExit : function(){
-      oLogger.debug("Default onBeforeExit called");
-      return $.when();
-    },
+		onBeforeExit: function () {
+			oLogger.info("Default onBeforeExit called");
+			Extension.onBeforeExitCalls += 1;
+			var deferred = $.Deferred();
+			setTimeout(function () {
+				deferred.resolve();
+			}, 100);
+			return deferred.promise();
+		},
 
-    getAssertions : function(){
-      return {
-        myCustomAssertion: function() {
-          var deferred = $.Deferred();
+		getAssertions: function () {
+			return {
+				myCustomAssertion: function () {
+					var deferred = $.Deferred();
 
-          // start custom assertion logic, resolve the promise when ready
-          setTimeout(function() {
-            // Assertion passes
-            deferred.resolve({
-               result: true,
-               message: "Custom assertion passes"
-            });
-          },0);
+					// start custom assertion logic, resolve the promise when ready
+					setTimeout(function () {
+						Extension.assertionCalls += 1;
+						// Assertion passes
+						deferred.resolve({
+							result: true,
+							message: "Custom assertion passes"
+						});
+					}, 100);
 
-          return deferred.promise();
-        }
-      }
-    }
-  });
+					return deferred.promise();
+				}
+			};
+		}
+	});
 
-  return Extension;
+	Extension.onAfterInitCalls = 0;
+	Extension.onBeforeExitCalls = 0;
+	Extension.assertionCalls = 0;
+
+	return Extension;
 });

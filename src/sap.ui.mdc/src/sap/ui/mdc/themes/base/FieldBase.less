@@ -1,0 +1,88 @@
+.sapUiMdcFieldBase {
+	display: inline-block;
+	box-sizing: border-box;
+	overflow: hidden; /* otherwise Text controls consumes too much space in Form */
+	vertical-align: top;
+}
+
+/* TODO: how to reuse from sap.m? */
+@_sap_m_InputBase_InnerMinWidth: 3rem;
+@_sap_m_InputBaseWrapper_Sum_Border: 0.125rem;
+@_InputBase_Control_MinWidth: round((@_sap_m_InputBase_InnerMinWidth + @_sap_m_InputBaseWrapper_Sum_Border), 2);
+@_sap_m_InputBase_InnerMinWidth_Compact: 2rem;
+@_InputBase_Control_MinWidth_Compact: round((@_sap_m_InputBase_InnerMinWidth_Compact + @_sap_m_InputBaseWrapper_Sum_Border), 2);
+@sap_ui_mdc_Field_UnitMinWidth: 5.3rem; /* as defined for SmartField - to avoid truncation of 3-letter currencies or units*/
+@sap_ui_mdc_Field_UnitMinWidth_Compact: 5rem; /* as defined for SmartField - to avoid truncation of 3-letter currencies or units*/
+
+/* In the moment only 2 parts are supported. ValueHelp is only allowed on the last control. If more controls needed inside, CSS might be changed. */
+.sapUiMdcFieldBaseMoreFields{
+	min-width: calc(@_InputBase_Control_MinWidth ~" + 0.5rem + " @sap_ui_mdc_Field_UnitMinWidth); /* to avoid wrapping of inner controls */
+}
+
+.sapUiMdcFieldBaseMoreFields > *:first-child{
+	max-width: calc(~"100% - 0.5rem - " @sap_ui_mdc_Field_UnitMinWidth); /* as input has a min-width, to not cut off unit */
+	min-width: @_InputBase_Control_MinWidth; /* as inner input has this min-width */
+}
+
+.sapUiMdcFieldBaseMoreFields > *:last-child{
+	padding-left: 0.5rem;
+	min-width: calc(~"0.5rem + " @sap_ui_mdc_Field_UnitMinWidth); /* As input has a min-width + padding */
+}
+
+.sapUiSizeCompact {
+	.sapUiMdcFieldBaseMoreFields{
+		min-width: calc(@_InputBase_Control_MinWidth_Compact ~" + 0.5rem + " @sap_ui_mdc_Field_UnitMinWidth_Compact); /* to avoid wrapping of inner controls */
+	}
+
+	.sapUiMdcFieldBaseMoreFields > *:first-child{
+		max-width: calc(~"100% - 0.5rem - " @sap_ui_mdc_Field_UnitMinWidth_Compact); /* as input has a min-width, to not cut off unit */
+		min-width: @_InputBase_Control_MinWidth_Compact; /* as inner input has this min-width */
+	}
+
+	.sapUiMdcFieldBaseMoreFields > *:last-child{
+		min-width: calc(~"0.5rem + " @sap_ui_mdc_Field_UnitMinWidth_Compact); /* As input has a min-width + padding */
+	}
+}
+
+/**
+ * align text-like controls in Table (as done for stand-alone controls in Table)
+ */
+.sapMListTblCell > .sapUiMdcFieldBase > .sapMSlt > .sapMSltLabel,
+.sapMListTblCell > .sapUiMdcFieldBase > .sapMObjectNumber,
+.sapMListTblCell > .sapUiMdcFieldBase > .sapMLabel,
+.sapMListTblCell > .sapUiMdcFieldBase > .sapMText {
+	text-align: inherit !important;
+}
+
+.sapMListTblCell > .sapUiMdcFieldBase > .sapMLnk,
+.sapMListTblCell > .sapUiMdcFieldBase > .sapMText,
+.sapMListTblCell > .sapUiMdcFieldBase > .sapMLabel,
+.sapMListTblCell > .sapUiMdcFieldBase > .sapMObjectNumber,
+.sapMListTblCell > .sapUiMdcFieldBase > .sapMObjectIdentifier,
+.sapMListTblCell > .sapUiMdcFieldBase > .sapMObjStatus {
+	vertical-align: middle;
+}
+
+.sapUiSizeCompact .sapMListTblCell > .sapUiMdcFieldBase > .sapMLnk,
+.sapUiSizeCompact .sapMListTblCell > .sapUiMdcFieldBase > .sapMText,
+.sapUiSizeCompact .sapMListTblCell > .sapUiMdcFieldBase > .sapMLabel,
+.sapUiSizeCompact .sapMListTblCell > .sapUiMdcFieldBase > .sapMObjectNumber,
+.sapUiSizeCompact .sapMListTblCell > .sapUiMdcFieldBase > .sapMObjectIdentifier,
+.sapUiSizeCompact .sapMListTblCell > .sapUiMdcFieldBase > .sapMObjStatus {
+	line-height: 1.4;
+}
+
+.sapMListTblSubCntValInline > .sapUiMdcFieldBase {
+	display: inline-flex; /*to align in mTable PopIn mode*/
+}
+
+/* inside ToolBar */
+.sapUiMdcFieldBase.sapMBarChild {
+	line-height: 1rem;
+}
+
+/* inside Overflow toolbar menu */
+.sapMOTAPopover.sapMPopover .sapMPopoverCont .sapMPopoverScroll>div.sapUiMdcFieldBase  {
+    width: 100% !important;
+    max-width: 100% !important;
+}

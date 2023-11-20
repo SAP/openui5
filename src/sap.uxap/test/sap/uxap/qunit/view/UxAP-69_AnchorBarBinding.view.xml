@@ -1,10 +1,12 @@
-<core:View
-		xmlns:core="sap.ui.core"
+<mvc:View
+		xmlns:mvc="sap.ui.core.mvc"
 		xmlns="sap.uxap"
 		xmlns:m="sap.m"
+		xmlns:core="sap.ui.core"
 		xmlns:html="http://www.w3.org/1999/xhtml"
-		height="100%">
-
+		height="100%"
+		core:require="{formatMessage:'sap/base/strings/formatMessage'}"  
+		>
 
 	<ObjectPageLayout id="ObjectPageLayout">
 		<headerTitle>
@@ -16,46 +18,46 @@
 			<!-- simple binding -->
 			<ObjectPageSection id="section1" title="{/sections/0/title}">
 				<ObjectPageSubSection title="first subsection">
-					<html:div style="height:300px; background-color: #DFF0F7;"></html:div>
+					<html:div class="dummyBlockContent7"></html:div>
 				</ObjectPageSubSection>
 				<ObjectPageSubSection title="second subsection">
-					<html:div style="height:300px; background-color: #DFF0F7;"></html:div>
+					<html:div class="dummyBlockContent7"></html:div>
 				</ObjectPageSubSection>
 			</ObjectPageSection>
 
 			<!-- parts binding -->
 			<ObjectPageSection id="section2" title="{
 				parts:[ {path:'/compositeTitle'}, {path:'/objectCount'}],
-				formatter : 'jQuery.sap.formatMessage'
+				formatter : 'formatMessage'
 			}">
 				<ObjectPageSubSection title="second section first">
-					<html:div style="height:300px; background-color: #DFF0FA;"></html:div>
+					<html:div class="dummyBlockContentA"></html:div>
 				</ObjectPageSubSection>
 				<ObjectPageSubSection title="second section second">
-					<html:div style="height:300px; background-color: #DFF0FA;"></html:div>
+					<html:div class="dummyBlockContentA"></html:div>
 				</ObjectPageSubSection>
 			</ObjectPageSection>
 
 			<!-- no binding -->
 			<ObjectPageSection id="section3" title="Fixed">
 				<customAnchorBarButton>
-					<m:Button text="my third section" press=".handleAnchorBarPress"/>
+					<m:Button text="my third section"/>
 				</customAnchorBarButton>
 				<ObjectPageSubSection>
-					<html:div style="height:300px; background-color: #DFF0FC;"></html:div>
+					<html:div class="dummyBlockContentC"></html:div>
 				</ObjectPageSubSection>
 			</ObjectPageSection>
 
 			<!-- no title -->
 			<ObjectPageSection id="section4">
 				<ObjectPageSubSection>
-					<html:div style="height:300px; background-color: #DFF0FF;"></html:div>
+					<html:div class="dummyBlockContentF"></html:div>
 				</ObjectPageSubSection>
 				<ObjectPageSubSection>
-					<html:div style="height:300px; background-color: #DFF0FF;"></html:div>
+					<html:div class="dummyBlockContentF"></html:div>
 				</ObjectPageSubSection>
 			</ObjectPageSection>
 		</sections>
 	</ObjectPageLayout>
 
-</core:View>
+</mvc:View>

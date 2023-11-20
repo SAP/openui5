@@ -6,7 +6,8 @@ sap.ui.define([
 	//This is only needed to simulate creation of flex changes
 	"sap/ui/fl/FlexControllerFactory",
 	"sap/ui/fl/Utils",
-	"sap/m/MessageBox"
+	"sap/m/MessageBox",
+	"sap/ui/thirdparty/jquery"
 	],
 	function(
 		Controller,
@@ -15,9 +16,23 @@ sap.ui.define([
 		ReuseExtension,
 		FlexControllerFactory,
 		FlexUtils,
-		MessageBox
+		MessageBox,
+		jQuery
 	) {
-	"use strict";
+		"use strict";
+
+	function stringToAscii(string) {
+		var ascii = "";
+
+		for (var i = 0; i < string.length; i++) {
+			ascii += string.charCodeAt(i) + ",";
+		}
+
+		// remove last ","
+		ascii = ascii.substring(0, ascii.length - 1);
+
+		return ascii;
+	}
 
 	return Controller.extend("sap.ui.core.sample.ControllerExtension.Main", {
 		onInit: function() {
@@ -87,20 +102,22 @@ sap.ui.define([
 		// Only needed to simulate changes as done in Web IDE with UI Adaptation Editor, not part of regular controller logic
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 		addChanges: function(){
-			var sFragment = jQuery.sap.loadResource(
-				jQuery.sap.getResourceName('sap.ui.core.sample.ControllerExtension.CustomerExtension', '.fragment.xml'),
-				{
-					dataType: "text"
+			jQuery.ajax({
+				url: "sap/ui/core/sample/ControllerExtension/CustomerExtension.fragment.xml",
+				async: false,
+				dataType: "text",
+				success: function(sFragment) {
+					this._addFragmentToTableToolbar(sFragment, "sap.my");
 				}
-			);
-			this._addFragmentToTableToolbar(sFragment, "sap.my");
-			var sCode = jQuery.sap.loadResource(
-				jQuery.sap.getResourceName("sap.ui.core.sample.ControllerExtension.CustomerExtension"),
-				{
-					dataType: "text"
+			});
+			jQuery.ajax({
+				url: "sap/ui/core/sample/ControllerExtension/CustomerExtension.js",
+				async: false,
+				dataType: "text",
+				success: function(sCode) {
+					this._addControllerExtension(sCode, "sap.my");
 				}
-			);
-			this._addControllerExtension(sCode, "sap.my");
+			});
 			MessageBox.confirm("We will reload the page to apply the controller extension", {
 				onClose: function(){
 					window.location.reload();
@@ -108,20 +125,22 @@ sap.ui.define([
 			});
 		},
 		addOtherChanges: function(){
-			var sFragment = jQuery.sap.loadResource(
-				jQuery.sap.getResourceName('sap.ui.core.sample.ControllerExtension.OtherCustomerExtension', '.fragment.xml'),
-				{
-					dataType: "text"
+			jQuery.ajax({
+				url: "sap/ui/core/sample/ControllerExtension/OtherCustomerExtension.fragment.xml",
+				async: false,
+				dataType: "text",
+				success: function(sFragment) {
+					this._addFragmentToTableToolbar(sFragment, "sap.other");
 				}
-			);
-			this._addFragmentToTableToolbar(sFragment, "sap.other");
-			var sCode = jQuery.sap.loadResource(
-				jQuery.sap.getResourceName("sap.ui.core.sample.ControllerExtension.OtherCustomerExtension"),
-				{
-					dataType: "text"
+			});
+			jQuery.ajax({
+				url: "sap/ui/core/sample/ControllerExtension/OtherCustomerExtension.js",
+				async: false,
+				dataType: "text",
+				success: function(sCode) {
+					this._addControllerExtension(sCode, "sap.other");
 				}
-			);
-			this._addControllerExtension(sCode, "sap.other");
+			});
 			MessageBox.confirm("We will reload the page to apply the controller extension", {
 				onClose: function(){
 					window.location.reload();
@@ -136,7 +155,7 @@ sap.ui.define([
 				content: {
 					targetAggregation: "content",
 					index: 1,
-					fragment: FlexUtils.stringToAscii(sFragment)
+					fragment: stringToAscii(sFragment)
 				},
 				selector: {
 					id: this.getTableToolbar().getId(),
@@ -155,7 +174,7 @@ sap.ui.define([
 				changeType: "codeExt",
 				content: {
 					codeRef: sProjectId + "my.code.ref.doesnt.matter.in.simulation.js",
-					code: sap.ui.fl.Utils.stringToAscii(sCode)
+					code: stringToAscii(sCode)
 				},
 				selector: {
 					controllerName : "sap.ui.core.sample.ControllerExtension.Main"

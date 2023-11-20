@@ -12,4 +12,4 @@ sap.ui.define([],
 				create: "sap/m/designtime/MessagePage.create.fragment.xml"
 			}
 		};
-	}, /* bExport= */ false);
+	});

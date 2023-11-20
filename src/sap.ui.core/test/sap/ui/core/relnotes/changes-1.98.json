@@ -1,0 +1,203 @@
+{
+  "1.98.0": {
+    "date": "January 2022",
+    "notes": [
+      {
+        "id": "4073e969edf022ed0f571caa54093f78d368400d",
+        "type": "FEATURE",
+        "text": " sap.ui.model.odata.v2.ODataListBinding#create: Support creation of a new entry in the binding"
+      },
+      {
+        "id": "8b734933544e837c66f8042d89447cd696c0997b",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v2.ODataModel#callFunction: JSDoc for type of mParameters.urlParameters fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280003987"
+          }
+        ]
+      },
+      {
+        "id": "da186b12eec539be829d7bf6136375df901718ad",
+        "type": "FIX",
+        "text": " sap.ui.core.message.MessageMixin#destroy: cleanup control IDs",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180415452"
+          }
+        ]
+      },
+      {
+        "id": "e473521b360191620828467c72264aa6109fc807",
+        "type": "FIX",
+        "text": " strengthen CSS Classes for Theme Parameters with !important",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170198976"
+          }
+        ]
+      },
+      {
+        "id": "be71b0750686d9779a03eec7281f36b957a6ea6f",
+        "type": "FIX",
+        "text": " theming.Parameters: Fix async usage after theme change",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180393575"
+          }
+        ]
+      },
+      {
+        "id": "ec6a4bd4a6e59c00246036715931a5c3c62cc776",
+        "type": "FIX",
+        "text": " sap.ui.model.analytics.AnalyticalBinding: no need to include automatically added columns to select",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400007616402021"
+          }
+        ]
+      },
+      {
+        "id": "93a336518d97b712360bd934974fc0aaf19d7a3e",
+        "type": "FIX",
+        "text": " sap.ui.core.util.reflection - performance improvement",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180376343"
+          }
+        ]
+      },
+      {
+        "id": "4b038dbed049e5b035474bf8ce4c61237e18685c",
+        "type": "FEATURE",
+        "text": " PressAction: support for click coordinates"
+      },
+      {
+        "id": "494b714998db178a54e327f6acc0a385c21289c2",
+        "type": "FIX",
+        "text": " sap/ui/util/XMLHelper: fix JSDoc and improve implementation",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180388370"
+          }
+        ]
+      },
+      {
+        "id": "673ea04afd8a6ff14824d7e2e2dbc9027d2c668b",
+        "type": "FIX",
+        "text": " MockServer: improve documentation for the 'requests' property"
+      },
+      {
+        "id": "60e10eb6b0cd6078d82b98562a5a374eb7b71b74",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v2.ODataModel#createEntry: consider refreshAfterChange also when retrying the creation"
+      },
+      {
+        "id": "ce230f4f40a0e105fac4dfd03ee4e736e4ac5550",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v4.ODataListBinding#requestFilterForMessages and message target w/o predicate"
+      },
+      {
+        "id": "611099b37ce0fc42999268c1026ef3577fc37c71",
+        "type": "FIX",
+        "text": " ManagedObject: Properties of type object must not be interpreted as bindingInfo",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170256745"
+          }
+        ]
+      },
+      {
+        "id": "4bc46f96b55a6166dcd9af78333114608a70118e",
+        "type": "FEATURE",
+        "text": " Association of sap.m.table.ColumnMenu to columns added"
+      },
+      {
+        "id": "cca70d5d428409671c93e12d98c4132428a2b1ed",
+        "type": "FEATURE",
+        "text": " sap.m.DynamicDateRange: Adds new standard options"
+      },
+      {
+        "id": "bf351f5887ee940076e2cfc5242fbf570e667084",
+        "type": "FIX",
+        "text": " sap.ui.core: remove irreg. whitespace, make testrunner use utf8",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170321198"
+          }
+        ]
+      },
+      {
+        "id": "f4e0a5fb6472a92c849d11156d92d514e4f07401",
+        "type": "FEATURE",
+        "text": " sap.m.DynamicDateRange: Add new option for Date to Year"
+      },
+      {
+        "id": "fef0810a2037f4e45e55ff294adef19e86f299b1",
+        "type": "FEATURE",
+        "text": " Integration cards: Implemented support for requesting CSRF tokens"
+      },
+      {
+        "id": "434ef5430f658cf809ef1e69e0c81facd696057e",
+        "type": "FIX",
+        "text": " Remove/adjust usage of sap.ui.Device.os.ios indicator"
+      },
+      {
+        "id": "98219cc211fb4821cf24519f4f6b930b0a2d2002",
+        "type": "FEATURE",
+        "text": " PressAction: support key modifiers"
+      },
+      {
+        "id": "4c0c42818a5150343a7b02128cc5af77a42b629b",
+        "type": "FIX",
+        "text": " XMLView: Rendering of style attributes",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170281098"
+          },
+          {
+            "type": "BCP",
+            "reference": "2170290345"
+          }
+        ]
+      },
+      {
+        "id": "ee3ba4b56d163982f3f2f8465de6c2f576385030",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v4.Context: setKeepAlive is not supported on bindings with $$sharedRequest"
+      },
+      {
+        "id": "ed2937dc7a1fc7a3c8ecd728e5b011aa933a8660",
+        "type": "FIX",
+        "text": " core.IconPool: Fix JSDoc, @function annotation for static functions",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170285536"
+          }
+        ]
+      },
+      {
+        "id": "15876ecb000fb27fa9b524ad6a7edec08daf041f",
+        "type": "FIX",
+        "text": " Core: avoid feeding lazy dependencies into VersionInfo",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170272029"
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -1,10 +1,11 @@
-/*global describe,it,element,by,takeScreenshot,expect*/
+/*global describe,it,element,by,takeScreenshot,browser,expect*/
 
 describe("sap.m.Switch", function() {
 	"use strict";
+	browser.testrunner.currentSuite.meta.controlName = 'sap.m.Switch';
 
 	it('should load test page',function(){
-		expect(takeScreenshot()).toLookAs('initial');
+		expect(takeScreenshot(element(by.id('switch_page')))).toLookAs('initial');
 	});
 
 	// verify regular switch
@@ -35,4 +36,10 @@ describe("sap.m.Switch", function() {
 		expect(takeScreenshot(element(by.id('switch_semantic')))).toLookAs('switch_semantic_after_click');
 	});
 
+	// verify switch in "bare" vBox
+	it('should click on bare_vbox switch', function() {
+		expect(takeScreenshot(element(by.id('switch_vbox')))).toLookAs('switch_bare_vbox_before_click');
+		element(by.id('switch_vbox')).click();
+		expect(takeScreenshot(element(by.id('switch_vbox')))).toLookAs('switch_bare_vbox_after_click');
+	});
 });

@@ -2,29 +2,29 @@ sap.ui.define(['sap/m/MessageToast','sap/ui/core/mvc/Controller'],
 	function(MessageToast, Controller) {
 	"use strict";
 
-	var ControllerController = Controller.extend("sap.ui.unified.sample.FileUploaderBasic.Controller", {
+	return Controller.extend("sap.ui.unified.sample.FileUploaderBasic.Controller", {
 		handleUploadComplete: function(oEvent) {
-			var sResponse = oEvent.getParameter("response");
-			if (sResponse) {
-				var sMsg = "";
-				var m = /^\[(\d\d\d)\]:(.*)$/.exec(sResponse);
-				if (m[1] == "200") {
-					sMsg = "Return Code: " + m[1] + "\n" + m[2] + "(Upload Success)";
-					oEvent.getSource().setValue("");
-				} else {
-					sMsg = "Return Code: " + m[1] + "\n" + m[2] + "(Upload Error)";
-				}
+			var sResponse = oEvent.getParameter("response"),
+				aRegexResult = /\d{4}/.exec(sResponse),
+				iHttpStatusCode = aRegexResult && parseInt(aRegexResult[0]),
+				sMessage;
 
-				MessageToast.show(sMsg);
+			if (sResponse) {
+				sMessage = iHttpStatusCode === 200 ? sResponse + " (Upload Success)" : sResponse + " (Upload Error)";
+				MessageToast.show(sMessage);
 			}
 		},
 
-		handleUploadPress: function(oEvent) {
+		handleUploadPress: function() {
 			var oFileUploader = this.byId("fileUploader");
-			oFileUploader.upload();
+			oFileUploader.checkFileReadable().then(function() {
+				oFileUploader.upload();
+			}, function(error) {
+				MessageToast.show("The file cannot be read. It may have changed.");
+			}).then(function() {
+				oFileUploader.clear();
+			});
 		}
 	});
-
-	return ControllerController;
 
 });

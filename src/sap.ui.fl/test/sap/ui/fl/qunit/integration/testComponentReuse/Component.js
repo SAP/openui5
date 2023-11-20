@@ -1,23 +1,22 @@
- /*
+/*
 * @${copyright}
 */
 
-sap.ui.define([ "sap/ui/core/UIComponent"], function(UIComponent) {
+sap.ui.define(["sap/ui/core/UIComponent", "sap/ui/core/mvc/XMLView"], function(UIComponent, XMLView) {
 	"use strict";
 	return UIComponent.extend("sap.ui.fl.qunit.integration.testComponentReuse.Component", {
-		init : function() {
-			sap.ui.core.UIComponent.prototype.init.apply(this, arguments);
+		init(...aArgs) {
+			UIComponent.prototype.init.apply(this, aArgs);
 		},
-
-		createContent: function() {
-			var view = sap.ui.view({
-				id: this.createId("myView"),
-				viewName: "sap.ui.fl.qunit.integration.testComponentReuse.View",
-				type: sap.ui.core.mvc.ViewType.XML,
-				async: false // test timing
+		metadata: {
+			interfaces: ["sap.ui.core.IAsyncContentCreation"],
+			manifest: "json"
+		},
+		createContent() {
+			return XMLView.create({
+				id: "myView",
+				viewName: "sap.ui.fl.qunit.integration.testComponentReuse.View"
 			});
-
-			return view;
 		}
 	});
 });

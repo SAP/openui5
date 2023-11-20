@@ -1,0 +1,45 @@
+{
+  "1.86.0": {
+    "date": "January 2021",
+    "notes": [
+      {
+        "id": "4dc59031e279b346342d77c244c405c7959ef7f4",
+        "type": "FIX",
+        "text": " sap.m.ObjectStatus: Colors in list/table context fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080399165"
+          }
+        ]
+      },
+      {
+        "id": "0f6c45c5ade6239923146c90123f43f7e8f1d157",
+        "type": "FEATURE",
+        "text": " sap.m.ObjectNumber: Inverted states and interactivity are added"
+      },
+      {
+        "id": "0d75f3b1a3b59a10f57f9837ee50106776bcd9dd",
+        "type": "FIX",
+        "text": " sap.uxap.HierarchicalSelect: Fixed button's focus on all themes",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070468666"
+          }
+        ]
+      },
+      {
+        "id": "ef25a4c310d8c97a4e64ad4e9f12cd760b3b26ef",
+        "type": "FIX",
+        "text": " sap.m.ActionSheet: Overlaping when not enough space prevented",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080382626"
+          }
+        ]
+      }
+    ]
+  }
+}

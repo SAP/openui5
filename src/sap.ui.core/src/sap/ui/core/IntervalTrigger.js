@@ -1,8 +1,8 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(['jquery.sap.global', '../base/Object', './EventBus'],
-	function(jQuery, BaseObject, EventBus) {
+sap.ui.define(['../base/Object', './EventBus', "sap/base/assert"],
+	function(BaseObject, EventBus, assert) {
 	"use strict";
 
 
@@ -33,7 +33,7 @@ sap.ui.define(['jquery.sap.global', '../base/Object', './EventBus'],
 				this._oEventBus = new EventBus();
 
 				this._delayedCallId = null;
-				this._triggerProxy = jQuery.proxy(trigger, this);
+				this._trigger = trigger.bind(this);
 
 				this._iInterval = 0;
 				if (iInterval) {
@@ -43,20 +43,22 @@ sap.ui.define(['jquery.sap.global', '../base/Object', './EventBus'],
 		});
 
 		/**
-		 * This is the function that will be used for triggering. This function is
-		 * called by a proxy call.
+		 * This is the function that will be used for triggering.
 		 *
 		 * @private
 		 */
 		var trigger = function() {
-			jQuery.sap.clearDelayedCall(this._delayedCallId);
+			if (this._delayedCallId) {
+				 clearTimeout(this._delayedCallId);
+				 this._delayedCallId = null;
+			}
 
 			// if interval is active and there are registered listeners
 			var bHasListeners = this._oEventBus._defaultChannel.hasListeners(_EVENT_ID);
 			if (this._iInterval > 0 && bHasListeners) {
 				this._oEventBus.publish(_EVENT_ID);
 
-				this._delayedCallId = jQuery.sap.delayedCall(this._iInterval, this, this._triggerProxy);
+				this._delayedCallId = setTimeout(this._trigger, this._iInterval);
 			}
 		};
 
@@ -68,7 +70,11 @@ sap.ui.define(['jquery.sap.global', '../base/Object', './EventBus'],
 		IntervalTrigger.prototype.destroy = function() {
 			BaseObject.prototype.destroy.apply(this, arguments);
 
-			delete this._triggerProxy;
+			if (this._delayedCallId) {
+				 clearTimeout(this._delayedCallId);
+				 this._delayedCallId = null;
+			}
+			delete this._trigger;
 
 			this._oEventBus.destroy();
 			delete this._oEventBus;
@@ -85,12 +91,12 @@ sap.ui.define(['jquery.sap.global', '../base/Object', './EventBus'],
 		 *            triggering should occur.
 		 */
 		IntervalTrigger.prototype.setInterval = function(iInterval) {
-			jQuery.sap.assert((typeof iInterval === "number"), "Interval must be an integer value");
+			assert((typeof iInterval === "number"), "Interval must be an integer value");
 
 			// only change and (re)trigger if the interval is different
 			if (this._iInterval !== iInterval) {
 				this._iInterval = iInterval;
-				this._triggerProxy();
+				this._trigger();
 			}
 		};
 
@@ -107,7 +113,7 @@ sap.ui.define(['jquery.sap.global', '../base/Object', './EventBus'],
 		IntervalTrigger.prototype.addListener = function(fnFunction, oListener) {
 			this._oEventBus.subscribe(_EVENT_ID, fnFunction, oListener);
 
-			this._triggerProxy();
+			this._trigger();
 		};
 
 		/**
@@ -123,13 +129,64 @@ sap.ui.define(['jquery.sap.global', '../base/Object', './EventBus'],
 			this._oEventBus.unsubscribe(_EVENT_ID, fnFunction, oListener);
 		};
 
-		/**
+		/*
 		 * @see sap.ui.base.Object#getInterface
-		 * @public
 		 */
 		IntervalTrigger.prototype.getInterface = function() {
 			return this;
 		};
+
+	/**
+	 * Central instance of the IntervalTrigger (Singleton)
+	 *
+	 * @example <caption>Create instance</caption>
+	 *
+	 * sap.ui.require(["sap/ui/core/IntervalTrigger"], function(IntervalTrigger) {
+	 *     var fnDoIt = function(){
+	 *         // my code
+	 *     }
+	 *     IntervalTrigger.addListener(fnDoIt, this);
+	 *     IntervalTrigger.removeListener(fnDoIt, this);
+	 * });
+	 *
+	 * Note: Only <code>addListener</code> and <code>removeListener</code> functions are exposed such that the
+	 * singleton can neither be destroyed nor the interval can be modified.
+	 *
+	 * @return {sap.ui.core.IntervalTrigger} the instance with 200ms interval
+	 */
+	var getInstance = function() {
+
+		var oIntervalTrigger = new IntervalTrigger(200);
+		getInstance = function() {
+			return oIntervalTrigger;
+		};
+		return oIntervalTrigger;
+	};
+
+	/**
+	 * Adds a listener to the list that should be triggered.
+	 *
+	 * @public
+	 * @since 1.61
+	 * @param {function} fnFunction is the called function that should be called when
+	 *            the trigger want to trigger the listener.
+	 * @param {object} [oListener] that should be triggered.
+	 */
+	IntervalTrigger.addListener = function(fnFunction, oListener) {
+		getInstance().addListener(fnFunction, oListener);
+	};
+
+	/**
+	 * Removes corresponding listener from list.
+	 *
+	 * @public
+	 * @since 1.61
+	 * @param {function} fnFunction is the previously registered function
+	 * @param {object} [oListener] that should be removed
+	 */
+	IntervalTrigger.removeListener = function(fnFunction, oListener) {
+		getInstance().removeListener(fnFunction, oListener);
+	};
 
 
 	return IntervalTrigger;

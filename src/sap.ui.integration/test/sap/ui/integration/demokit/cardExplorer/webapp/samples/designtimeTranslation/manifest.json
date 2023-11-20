@@ -1,0 +1,73 @@
+{
+	"_version": "1.18.0",
+	"sap.app": {
+		"id": "sap.ui5.test.editor.listcard.translation",
+		"type": "card",
+		"i18n": "i18n/i18n.properties",
+		"title": "Test Card for Parameters",
+		"subTitle": "Test Card for Parameters",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"icons": {
+			"icon": "sap-icon://accept"
+		}
+	},
+	"sap.card": {
+		"type": "Object",
+		"configuration": {
+			"editor": "./dt/Configuration",
+			"parameters": {
+				"translatableLabel": {
+					"value": "{{TRANSLATED_LABEL}}"
+				},
+				"translatableText": {
+					"value": "{{TRANSLATED_TEXT}}"
+				},
+				"untranslatableLabel": {
+					"value": "Untranslatable Label and Text"
+				},
+				"untranslatableText": {
+					"value": "The untranslatable contents shouldn't be visible in the translation mode."
+				}
+			},
+			"destinations": {
+				"dest": {
+					"name": "Northwind"
+				},
+				"destLabel": {
+					"name": "Products"
+				},
+				"destLabelTrans": {
+					"name": "Orders"
+				}
+			}
+		},
+		"header": {
+			"title": "{{CARDTITLE}}",
+			"subTitle": "{{CARDSUBTITLE}}",
+			"icon": {
+				"src": "sap-icon://accept"
+			}
+		},
+		"content": {
+			"groups": [
+				{
+					"items": [
+						{
+							"label": "{parameters>/translatableLabel/value}",
+							"value": "{parameters>/translatableText/value}"
+						},
+						{
+							"label": "{parameters>/untranslatableLabel/value}",
+							"value": "{parameters>/untranslatableText/value}"
+						}
+					]
+				}
+			]
+		}
+	}
+}

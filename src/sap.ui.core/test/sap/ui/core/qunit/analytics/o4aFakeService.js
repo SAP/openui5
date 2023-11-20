@@ -29,7 +29,7 @@ sap.ui.define([
 		/**
 		 * The predefined default headers used for OData Responses
 		 *
-		 * Same as in test/sap/ui/core/qunit/ODataModelFakeService.js
+		 * Same as in test/sap/ui/core/qunit/odata/data/ODataModelFakeService.js
 		 * Additional BATCH header added:
 		 *   - The boundary parameter is used by "datajs" to parse the response
 		 *     use the predefined value below in the batch mock data
@@ -137,7 +137,7 @@ sap.ui.define([
 		 * Setup the sinon fake HTTP Requests
 		 * and additionally define some parameters, like response delay time
 		 *
-		 * Same as in test/sap/ui/core/qunit/ODataModelFakeService.js
+		 * Same as in test/sap/ui/core/qunit/odata/data/ODataModelFakeService.js
 		 */
 		fake: function (mParams) {
 
@@ -177,4 +177,4 @@ sap.ui.define([
 		}
 	};
 	return o4aFakeService;
-}, /* bExport= */ false);
+});

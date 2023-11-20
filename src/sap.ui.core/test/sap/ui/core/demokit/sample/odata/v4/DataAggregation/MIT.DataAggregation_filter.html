@@ -1,0 +1,297 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<style type="text/css">
+			body {font-family: Arial, "Helvetica Neue", Helvetica, sans-serif;}
+		</style>
+		<title>Manual Integration Test: Data Aggregation With Filter</title>
+	</head>
+	<body>
+		<h1>Manual Integration Test: Data Aggregation With Filter</h1>
+		<h2>DESCRIPTION</h2>
+		Test filtering of aggregated data.
+		<h2>PREPARATION</h2>
+
+		To check console errors open the developer tools before starting the application and check
+		with each step, that there are no errors and warnings. Ignore initial message bundle errors.
+
+		<h3>Testing with mock data</h3>
+		Start the Data Aggregation application URL (adjust host and port if necessary):
+		<ul>
+			<li> local:
+				<a href="http://localhost:8080/test-resources/sap/ui/core/demokit/sample/common/index.html?component=odata.v4.DataAggregation&filter=Region%20GT%20M">
+					http://&lt;host>:&lt;port>/test-resources/sap/ui/core/demokit/sample/common/index.html?component=odata.v4.DataAggregation<b>&filter=Region GT M</b>
+				</a>
+			</li>
+		</ul>
+
+		<h2>REALIZE and CHECK</h2>
+		<h3>0. Initial content</h3>
+			<b>Check:</b> The table should have the following initial content:
+			<table border="1px" cellspacing="0" >
+				<tr>
+					<th>Level</th>
+					<th>Group Level Count</th>
+					<th>(Icon's Tooltip)</th>
+					<th>Country</th>
+					<th>Region</th>
+					<th>Segment</th>
+					<th>Account Responsible</th>
+					<th align="right">Sales Amount</th>
+					<th>Local Currency</th>
+					<th align="right">Sales Number</th>
+					<th>Is Total</th>
+				</tr>
+				<tr>
+					<td>0</td>
+					<td></td>
+					<td>Collapse</td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td align="right">29,709,155</td>
+					<td></td>
+					<td></td>
+					<td><input type="checkbox" checked/></td>
+				</tr>
+				<tr>
+					<td>1</td>
+					<td></td>
+					<td>Expand</td>
+					<td>USA</td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td align="right">26,040,410.00</td>
+					<td>USD</td>
+					<td></td>
+					<td><input type="checkbox" checked/></td>
+				</tr>
+				<tr>
+					<td>1</td>
+					<td></td>
+					<td>Expand</td>
+					<td>United Kingdom</td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td align="right">2,507,155.00</td>
+					<td>GBP</td>
+					<td></td>
+					<td><input type="checkbox" checked/></td>
+				</tr>
+				<tr>
+				<tr>
+					<td>1</td>
+					<td></td>
+					<td>Expand</td>
+					<td>Germany</td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td align="right">1,161,590</td>
+					<td>EUR</td>
+					<td></td>
+					<td><input type="checkbox" checked/></td>
+				</tr>
+				</tr>
+				<tr>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td>&nbsp;</td>
+				</tr>
+			</table>
+		<h3>1. Expand till the end</h3>
+		<ol>
+			<li>Click on the expand button in the last row.</li>
+			<li>Click on any <code>Germany</code> to move the focus to the table.</li>
+			<li>Press CTRL-END to scroll to	the end of the table.</li>
+			<li>Repeat until the last row cannot be expanded anymore.
+			</li>
+			<li><b>Check:</b> The table should have the following content:
+				<br>
+				<table border="1px" cellspacing="0" >
+					<tr>
+						<th>Level</th>
+						<th>Group Level Count</th>
+						<th>(Icon's Tooltip)</th>
+						<th>Country</th>
+						<th>Region</th>
+						<th>Segment</th>
+						<th>Account Responsible</th>
+						<th align="right">Sales Amount</th>
+						<th>Local Currency</th>
+						<th align="right">Sales Number</th>
+						<th>Is Total</th>
+					</tr>
+					<tr>
+						<td>0</td>
+						<td></td>
+						<td>Collapse</td>
+						<td></td>
+						<td></td>
+						<td></td>
+						<td></td>
+						<td align="right">29,709,155</td>
+						<td></td>
+						<td></td>
+						<td><input type="checkbox" checked/></td>
+					</tr>
+					<tr>
+						<td>3</td>
+						<td></td>
+						<td>Expand</td>
+						<td>Germany</td>
+						<td>Saxony</td>
+						<td>Large</td>
+						<td></td>
+						<td align="right">1,019,044</td>
+						<td>EUR</td>
+						<td></td>
+						<td><input type="checkbox" checked/></td>
+					</tr>
+					<tr>
+						<td>3</td>
+						<td></td>
+						<td>Expand</td>
+						<td>Germany</td>
+						<td>Saxony</td>
+						<td>Mid-Size</td>
+						<td></td>
+						<td align="right">116,096</td>
+						<td>EUR</td>
+						<td></td>
+						<td><input type="checkbox" checked/></td>
+					</tr>
+					<tr>
+						<td>3</td>
+						<td>1</td>
+						<td>Expand</td>
+						<td>Germany</td>
+						<td>Saxony</td>
+						<td>Small</td>
+						<td></td>
+						<td align="right">26,450</td>
+						<td>EUR</td>
+						<td></td>
+						<td><input type="checkbox" checked/></td>
+					</tr>
+					<tr>
+						<td>4</td>
+						<td></td>
+						<td>Leaf</td>
+						<td>Germany</td>
+						<td>Saxony</td>
+						<td>Small</td>
+						<td>Michael Meier</td>
+						<td align="right">26,450</td>
+						<td>EUR</td>
+						<td align="right">500</td>
+						<td><input type="checkbox"/></td>
+					</tr>
+				</table>
+			</li>
+		</ol>
+		<h3>2. Use the search field</h3>
+		<ol>
+			<li>Enter "Carol Johnson" in the search field and press ENTER.</li>
+			<li>Click on the expand button of the row with the country <code>United Kingdom</code>.
+			</li>
+			<li>Click on the expand button of the row with the region <code>Wales</code>.</li>
+			<li>Click on the expand button of the row with the segment <code>Large</code>.</li>
+			<li><b>Check:</b> The table should have the following content:
+				<br>
+				<table border="1px" cellspacing="0" >
+					<tr>
+						<th>Level</th>
+						<th>Group Level Count</th>
+						<th>(Icon's Tooltip)</th>
+						<th>Country</th>
+						<th>Region</th>
+						<th>Segment</th>
+						<th>Account Responsible</th>
+						<th align="right">Sales Amount</th>
+						<th>Local Currency</th>
+						<th align="right">Sales Number</th>
+						<th>Is Total</th>
+					</tr>
+					<tr>
+						<td>0</td>
+						<td></td>
+						<td>Collapse</td>
+						<td></td>
+						<td></td>
+						<td></td>
+						<td></td>
+						<td align="right">815,825.00</td>
+						<td>GBP</td>
+						<td></td>
+						<td><input type="checkbox" checked/></td>
+					</tr>
+					<tr>
+						<td>1</td>
+						<td>1</td>
+						<td>Expand</td>
+						<td>United Kingdom</td>
+						<td></td>
+						<td></td>
+						<td></td>
+						<td align="right">815,825.00</td>
+						<td>GBP</td>
+						<td></td>
+						<td><input type="checkbox" checked/></td>
+					</tr>
+					<tr>
+						<td>2</td>
+						<td>3</td>
+						<td>Expand</td>
+						<td>United Kingdom</td>
+						<td>Wales</td>
+						<td></td>
+						<td></td>
+						<td align="right">815,825.00</td>
+						<td>GBP</td>
+						<td></td>
+						<td><input type="checkbox" checked/></td>
+					</tr>
+					<tr>
+						<td>3</td>
+						<td>1</td>
+						<td>Expand</td>
+						<td>United Kingdom</td>
+						<td>Wales</td>
+						<td>Large</td>
+						<td></td>
+						<td align="right">716,262.00</td>
+						<td>GBP</td>
+						<td></td>
+						<td><input type="checkbox" checked/></td>
+					</tr>
+					<tr>
+						<td>4</td>
+						<td></td>
+						<td>Leaf</td>
+						<td>United Kingdom</td>
+						<td>Wales</td>
+						<td>Large</td>
+						<td>Carol Johnson</td>
+						<td align="right">716,262.00</td>
+						<td>GBP</td>
+						<td align="right">1,257</td>
+						<td><input type="checkbox"/></td>
+					</tr>
+				</table>
+			</li>
+			<li>Click on the reset button in the search field.</li>
+			<li>Check: The table should have the initial content again.</li>
+		</ol>
+	</body>
+</html>

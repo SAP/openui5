@@ -1,0 +1,137 @@
+{
+  "1.101.0": {
+    "date": "April 2022",
+    "notes": [
+      {
+        "id": "1f31a000e877a83e09aba354f521e7f42d7d2d54",
+        "type": "FIX",
+        "text": " sap.ui.integration.AdaptiveContent: Stabilize qunit tests",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270052261"
+          }
+        ]
+      },
+      {
+        "id": "ad0418762f49595d421d4a4132295c430feea771",
+        "type": "FEATURE",
+        "text": " sap.ui.integration.CalendarCard: Horizon themes implemented"
+      },
+      {
+        "id": "854ac81156cc2ebb20a9e3d0ad72647cd6a1f7bc",
+        "type": "FIX",
+        "text": " Integration Card: \"encodeURIComponent\" example is now fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270002879"
+          }
+        ]
+      },
+      {
+        "id": "6f6bc1e96f800bc135b8beb97492b22b816d5647",
+        "type": "FIX",
+        "text": " sap.ui.integration.widgets.Card: refreshData method no longer throws Type error",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280081647"
+          }
+        ]
+      },
+      {
+        "id": "f654171214edea6c886c0c63133d6687911424e8",
+        "type": "FIX",
+        "text": " sap.ui.integration.widgets.Card: actionDefinitions order is now correct",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280054832"
+          }
+        ]
+      },
+      {
+        "id": "e17b310896ded70d6169f60d6623c5649ddf4c17",
+        "type": "FEATURE",
+        "text": " sap.ui.integration.widgets.Card: new formatter is introduced"
+      },
+      {
+        "id": "400877b1f20634854246daf5ed279ab6097a5d84",
+        "type": "FEATURE",
+        "text": " Integration cards: Object card now has a new experimental IconGroup item type"
+      },
+      {
+        "id": "e657308d09c66cd1e423766331312fa02045469d",
+        "type": "FIX",
+        "text": " Card Explorer: OData batch request sample now successfully receives data",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280063181"
+          }
+        ]
+      },
+      {
+        "id": "52228598a007aa881e5bed04b68491dfbe8eb8a9",
+        "type": "FIX",
+        "text": " Integration card: Data is now correctly loaded",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280067984"
+          }
+        ]
+      },
+      {
+        "id": "23302ada1210edced5eea6ab07f6186285181884",
+        "type": "FIX",
+        "text": " Integration card: maxItems is now correctly working with binding",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280060860"
+          }
+        ]
+      },
+      {
+        "id": "157064ec6fdc02f383fb618c32b8d6b6cafca880",
+        "type": "FIX",
+        "text": " CardExplorer: Remove older {{parameters.xxx}} syntax from samples"
+      },
+      {
+        "id": "4eb2cf6747ae6b7ae6481db3bb568fe68ad42f89",
+        "type": "FIX",
+        "text": " Integration card: Expression binding is now working correctly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280046317"
+          }
+        ]
+      },
+      {
+        "id": "7197e99cb476306138e047b54b1a216f1e508bac",
+        "type": "FIX",
+        "text": " Integration card: \"No data\" message is now correctly removed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280056156"
+          }
+        ]
+      },
+      {
+        "id": "366b7e5699b905473bf696eee26189b08902de07",
+        "type": "FIX",
+        "text": " Integration card: Complex expression bindings in actions now work correctly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280041944"
+          }
+        ]
+      }
+    ]
+  }
+}

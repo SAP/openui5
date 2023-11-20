@@ -3,16 +3,34 @@
  */
 
 // Provides class sap.ui.core.support.plugins.Performance
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin',
-		'sap/ui/core/support/controls/InteractionSlider',
-		'sap/ui/core/support/controls/InteractionTree',
-		'sap/ui/core/support/controls/TimelineOverview',
-		'sap/m/MessageToast',
-		'sap/ui/thirdparty/jszip',
-		'sap/ui/core/util/File',
-		'jquery.sap.trace'
-	],
-	function(jQuery, Plugin, InteractionSlider, InteractionTree, TimelineOverview, MessageToast, JSZip, File) {
+sap.ui.define([
+	"sap/ui/core/RenderManager",
+	'sap/ui/core/Supportability',
+	'sap/ui/core/support/Plugin',
+	'sap/ui/core/support/controls/InteractionSlider',
+	'sap/ui/core/support/controls/InteractionTree',
+	'sap/ui/core/support/controls/TimelineOverview',
+	'sap/m/MessageToast',
+	'sap/ui/thirdparty/jszip',
+	'sap/ui/core/util/File',
+	"sap/ui/performance/trace/Interaction",
+	"sap/ui/performance/Measurement",
+	"sap/ui/core/date/UI5Date"
+],
+	function(
+		RenderManager,
+		Supportability,
+		Plugin,
+		InteractionSlider,
+		InteractionTree,
+		TimelineOverview,
+		MessageToast,
+		JSZip,
+		File,
+		TraceInteraction,
+		Measurement,
+		UI5Date
+	) {
 		"use strict";
 
 		/**
@@ -30,8 +48,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin',
 			constructor : function(oSupportStub) {
 				Plugin.apply(this, ["sapUiSupportInteraction", "Interaction", oSupportStub]);
 
-				this._oStub = oSupportStub;
-
 				if (this.runsAsToolPlugin()) {
 
 					this._aEventIds = [this.getId() + "SetMeasurements",
@@ -44,7 +60,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin',
 						return ("000" + String(i)).slice(-w);
 					};
 					this._fnFormatTime = function(fNow) {
-						var oNow = new Date(fNow),
+						var oNow =  UI5Date.getInstance(fNow),
 							iMicroSeconds = Math.floor((fNow - Math.floor(fNow)) * 1000);
 						return pad0(oNow.getHours(),2) + ":" + pad0(oNow.getMinutes(),2) + ":" + pad0(oNow.getSeconds(),2) + "." + pad0(oNow.getMilliseconds(),3) + pad0(iMicroSeconds,3);
 					};
@@ -87,101 +103,94 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin',
 
 		function initInTools(oSupportStub) {
 
-			var rm = sap.ui.getCore().createRenderManager();
-			rm.write("<div class=\"sapUiSupportToolbar\">");
-			rm.write("<button id=\"" + this.getId() + "-record\" class=\"sapUiSupportIntToggleRecordingBtn\"></button>");
-			rm.write("<label class='sapUiSupportIntODataLbl'><input type='checkbox' id=\"" + this.getId() + "-odata\" > Enable OData Statistics</label>");
-			rm.write("<div class='sapUiSupportIntFupInputMask'>");
-			rm.write("<input id=\"" + this.getId() + "-fileImport\" tabindex='-1' size='1' accept='application/zip' type='file'/>");
-			rm.write("</div>");
-			rm.write("<button id=\"" + this.getId() + "-import\" class=\"sapUiSupportIntImportExportBtn sapUiSupportIntImportBtn sapUiSupportRoundedButton \">Import</button>");
-			rm.write("<button id=\"" + this.getId() + "-export\" class=\"sapUiSupportIntImportExportBtn sapUiSupportIntExportBtn sapUiSupportRoundedButton sapUiSupportIntHidden \">Export</button>");
-			rm.write("<span id=\"" + this.getId() + "-info\" class=\"sapUiSupportIntRecordingInfo\"></span>");
-			rm.write("</div><div class=\"sapUiSupportInteractionCntnt\">");
-			rm.write("</div>");
+			var rm = new RenderManager().getInterface();
+			rm.openStart("div").class("sapUiSupportToolbar").openEnd();
+				rm.openStart("button", this.getId() + "-record").class("sapUiSupportIntToggleRecordingBtn").openEnd().close("button");
+				rm.openStart("label").class("sapUiSupportIntODataLbl").openEnd();
+					rm.voidStart("input", this.getId() + "-odata").attr("type", "checkbox").voidEnd();
+					rm.text("Enable OData Statistics");
+				rm.close("label");
+				rm.openStart("div").class("sapUiSupportIntFupInputMask").openEnd();
+					rm.voidStart("input", this.getId() + "-fileImport").attr("tabindex", "-1").attr("size", "1").attr("accept", "application/zip").attr("type", "file").voidEnd();
+				rm.close("div");
+				rm.openStart("button", this.getId() + "-import").class("sapUiSupportIntImportExportBtn").class("sapUiSupportIntImportBtn").class("sapUiSupportRoundedButton").openEnd().text("Import").close("button");
+				rm.openStart("button", this.getId() + "-export").class("sapUiSupportIntImportExportBtn").class("sapUiSupportIntExportBtn").class("sapUiSupportRoundedButton").class("sapUiSupportIntHidden").openEnd().text("Export").close("button");
+				rm.openStart("span", this.getId() + "-info").class("sapUiSupportIntRecordingInfo").openEnd().close("span");
+			rm.close("div");
 
-			rm.write('<div class="sapUiPerformanceStatsDiv sapUiSupportIntHidden">');
-			rm.write('<div class="sapUiPerformanceTimeline" style="height: 50px;"></div>');
-			rm.write('<div class="sapUiPerformanceTop">');
-			rm.write('</div>');
+			rm.openStart("div").class("sapUiSupportInteractionCntnt").openEnd();
+			rm.close("div");
 
-			rm.write('<div class="sapUiPerformanceBottom">');
-			rm.write('</div>');
+			rm.openStart("div").class("sapUiPerformanceStatsDiv").class("sapUiSupportIntHidden").openEnd();
+				rm.openStart("div").class("sapUiPerformanceTimeline").openEnd().close("div");
+				rm.openStart("div").class("sapUiPerformanceTop").openEnd();
+				rm.close("div");
 
-			rm.write('</div>');
+				rm.openStart("div").class("sapUiPerformanceBottom").openEnd();
+				rm.close("div");
 
-			rm.flush(this.$().get(0));
+			rm.close("div");
+
+			rm.flush(this.dom());
 			rm.destroy();
 
 			// render timeline
-			rm = sap.ui.getCore().createRenderManager();
+			rm = new RenderManager().getInterface();
 			this._oTimelineOverview.render(rm);
-			rm.flush(this.$().find('.sapUiPerformanceStatsDiv .sapUiPerformanceTimeline').get(0));
+			rm.flush(this.dom('.sapUiPerformanceStatsDiv .sapUiPerformanceTimeline'));
 			rm.destroy();
 
 			// render interaction slider
-			rm = sap.ui.getCore().createRenderManager();
+			rm = new RenderManager().getInterface();
 			this._oInteractionSlider.render(rm);
-			rm.flush(this.$().find('.sapUiPerformanceStatsDiv .sapUiPerformanceTop').get(0));
+			rm.flush(this.dom('.sapUiPerformanceStatsDiv .sapUiPerformanceTop'));
 			rm.destroy();
 			this._oInteractionSlider._registerEventListeners();
-			var that = this;
-			jQuery(".sapUiPerformanceTop").on("InteractionSliderChange", {
-			}, function( event, arg1, arg2 ) {
-				that._oInteractionTree.setRange(arg1, arg2);
-			});
+			this.$().find(".sapUiPerformanceTop").on("InteractionSliderChange", {}, function( event, arg1, arg2 ) {
+				this._oInteractionTree.setRange(arg1, arg2);
+			}.bind(this));
 
-			this.$("refresh").click(jQuery.proxy(function(oEvent) {
-				this._oStub.sendEvent(this.getId() + "Refresh");
-			}, this));
-			this.$("clear").click(jQuery.proxy(function(oEvent) {
-				this._oStub.sendEvent(this.getId() + "Clear");
-			}, this));
-
-			this.$("export").click(jQuery.proxy(function(oEvent) {
+			this.dom("export").addEventListener("click", function(oEvent) {
 				//this._oStub.sendEvent(this.getId() + "Export");
 				this.onsapUiSupportInteractionExport();
-			}, this));
-			this.$("fileImport").change(jQuery.proxy(function(oEvent) {
+			}.bind(this));
+			this.dom("fileImport").addEventListener("change", function(oEvent) {
 				this.onsapUiSupportInteractionImport();
 				//this._oStub.sendEvent(this.getId() + "Import");
-			}, this));
-			this.$("active").click(jQuery.proxy(function(oEvent) {
-				var bActive = false;
-				if (this.$("active").prop("checked")) {
-					bActive = true;
-				}
-				this._oStub.sendEvent(this.getId() + "Activate", {"active": bActive});
-			}, this));
-			this.$("odata").attr('checked',this._bODATA_Stats_On).click(jQuery.proxy(function(oEvent) {
-				jQuery.sap.statistics(!jQuery.sap.statistics());
-			}, this));
+			}.bind(this));
+			this.dom("odata").checked = this._bODATA_Stats_On;
+			this.dom("odata").addEventListener("click", function(oEvent) {
+				this._bODATA_Stats_On = !this._bODATA_Stats_On;
+				this.confirmReload(function () {
+					this._oStub.sendEvent(this._oStub.getMetadata().getClass().EventType.RELOAD_WITH_PARAMETER, {
+						parameterName: "sap-statistics",
+						parameterValue: this._bODATA_Stats_On
+					});
+				}.bind(this));
+			}.bind(this));
 
 
-			this.$('record').attr('data-state', (!this._bFesrActive) ? 'Start recording' : 'Stop recording');
-
-			this.$('record').click(jQuery.proxy(function(oEvent) {
-				if (this.$('record').attr('data-state') === 'Stop recording') {
+			this.dom('record').dataset.state = (!this._bFesrActive) ? 'Start recording' : 'Stop recording';
+			this.dom('record').addEventListener("click", function(oEvent) {
+				var oRecordButton = this.dom('record');
+				if (oRecordButton.dataset.state === 'Stop recording') {
 					this._oStub.sendEvent(this.getId() + "Refresh");
 					this._oStub.sendEvent(this.getId() + "Activate", {"active": false});
-					this.$('record').attr('data-state', 'Start recording');
-					jQuery(".sapUiPerformanceStatsDiv.sapUiSupportIntHidden").removeClass("sapUiSupportIntHidden");
-					jQuery(".sapUiSupportIntExportBtn.sapUiSupportIntHidden").removeClass("sapUiSupportIntHidden");
-				} else if (this.$('record').attr('data-state') === 'Start recording') {
-					jQuery(".sapUiPerformanceStatsDiv").addClass("sapUiSupportIntHidden");
-					jQuery(".sapUiSupportIntExportBtn").addClass("sapUiSupportIntHidden");
+					oRecordButton.dataset.state = 'Start recording';
+					this._showPerfData();
+				} else if (this.dom('record').dataset.state === 'Start recording') {
+					this._hidePerfData();
 					this._oStub.sendEvent(this.getId() + "Clear");
 					this._oStub.sendEvent(this.getId() + "Activate", {"active": true});
-					this.$('record').attr('data-state', 'Stop recording');
+					oRecordButton.dataset.state = 'Stop recording';
 				}
-			}, this));
+			}.bind(this));
 
 		}
 
 		function initInApps(oSupportStub) {
 			var _bFesrActive = /sap-ui-xx-fesr=(true|x|X)/.test(window.location.search);
-			var _bODATA_Stats_On = jQuery.sap.statistics() ||
-				/sap-statistics=(true|x|X)/.test(window.location.search);
+			var _bODATA_Stats_On = Supportability.isStatisticsEnabled();
 
 			this._oStub.sendEvent(this.getId() + "SetQueryString", {"queryString": { bFesrActive: _bFesrActive,
 				bODATA_Stats_On: _bODATA_Stats_On}});
@@ -189,11 +198,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin',
 		}
 
 		function getPerformanceData(oSupportStub, jsonData) {
-			var bActive = jQuery.sap.interaction.getActive() || this._bFesrActive;
+			var bActive = TraceInteraction.getActive() || this._bFesrActive;
 			var aMeasurements = [];
 
 			if (bActive || jsonData) {
-				aMeasurements = jsonData || jQuery.sap.measure.getAllInteractionMeasurements(/*bFinalize=*/true);
+				aMeasurements = jsonData || TraceInteraction.getAll(/*bFinalize=*/true);
 
 				var fetchStart = window.performance.timing.fetchStart;
 
@@ -230,7 +239,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin',
 
 			}
 
-			//this._oStub.$('record').attr('data-state', (bActive) ? 'Stop recording' : 'Start recording');
+			//this._oStub.dom('record').dataset.state = (bActive) ? 'Stop recording' : 'Start recording';
 			this._oStub.sendEvent(this.getId() + "SetMeasurements", { "measurements": aMeasurements });
 			this._oStub.sendEvent(this.getId() + "SetActive", {"active": bActive});
 		}
@@ -246,10 +255,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin',
 			var oParam = oEvent.getParameter("queryString");
 			this._bFesrActive = oParam.bFesrActive;
 			this._bODATA_Stats_On = oParam.bODATA_Stats_On;
-			this.$("odata").attr('checked',this._bODATA_Stats_On);
-			this.$('record').attr('data-state', (!this._bFesrActive) ? 'Start recording' : 'Stop recording');
+			this.dom("odata").checked = this._bODATA_Stats_On;
+			this.dom('record').dataset.state = (!this._bFesrActive) ? 'Start recording' : 'Stop recording';
 		};
-
 
 		/**
 		 * Handler for sapUiSupportInteractionSetMeasurements event
@@ -269,15 +277,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin',
 		 * @private
 		 */
 		Interaction.prototype.onsapUiSupportInteractionSetActive = function(oEvent) {
-
-			var bActive = oEvent.getParameter("active");
-			var oCheckBox = this.$("active");
-
-			if (bActive) {
-				oCheckBox.attr("checked", "checked");
-			} else {
-				oCheckBox.removeAttr("checked");
-			}
 
 		};
 
@@ -301,7 +300,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin',
 		 */
 		Interaction.prototype.onsapUiSupportInteractionClear = function(oEvent) {
 
-			jQuery.sap.measure.clearInteractionMeasurements();
+			TraceInteraction.clear();
 			this._oStub.sendEvent(this.getId() + "SetMeasurements", {"measurements":[]});
 
 		};
@@ -314,7 +313,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin',
 		 */
 		Interaction.prototype.onsapUiSupportInteractionStart = function(oEvent) {
 
-			jQuery.sap.measure.start(this.getId() + "-perf","Measurement by support tool");
+			Measurement.start(this.getId() + "-perf", "Measurement by support tool");
 
 		};
 
@@ -325,9 +324,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin',
 		 * @private
 		 */
 		Interaction.prototype.onsapUiSupportInteractionEnd = function(oEvent) {
-
-			//jQuery.sap.measure.end(this.getId() + "-perf");
-			jQuery.sap.measure.endInteraction(/* bForce= */true);
+			Interaction.end(/* bForce= */true);
 		};
 
 		/**
@@ -340,8 +337,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin',
 
 			var bActive = oEvent.getParameter("active");
 
-			if (jQuery.sap.interaction.getActive() != bActive) {
-				jQuery.sap.interaction.setActive(bActive);
+			if (TraceInteraction.getActive() != bActive) {
+				TraceInteraction.setActive(bActive);
 			}
 
 		};
@@ -374,7 +371,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin',
 		 * @private
 		 */
 		Interaction.prototype.onsapUiSupportInteractionImport = function(oEvent) {
-			var aFiles = this.$().find('#' + this.getId() + "-fileImport").get(0).files;
+			var aFiles = this.dom("fileImport").files;
 
 			if (aFiles.length === 0) {
 				MessageToast.show('Select a file for import first!', {
@@ -490,17 +487,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin',
 			}
 
 			if (aMeasurements.length > 0) {
-				jQuery(".sapUiPerformanceStatsDiv.sapUiSupportIntHidden").removeClass("sapUiSupportIntHidden");
-				jQuery(".sapUiSupportIntExportBtn.sapUiSupportIntHidden").removeClass("sapUiSupportIntHidden");
-				this.$('info').text("Total " + requestsCount + " Requests in " + aMeasurements.length + " Interactions");
+				this._showPerfData();
+				this.dom('info').textContent = "Total " + requestsCount + " Requests in " + aMeasurements.length + " Interactions";
 			} else {
-				jQuery(".sapUiPerformanceStatsDiv").addClass("sapUiSupportIntHidden");
-				jQuery(".sapUiSupportIntExportBtn").addClass("sapUiSupportIntHidden");
-				this.$('info').text("");
+				this._hidePerfData();
+				this.dom('info').textContent = "";
 			}
 
-			var oTimelineDiv = this.$().find('.sapUiPerformanceStatsDiv .sapUiPerformanceTimeline').get(0);
-			var rm = sap.ui.getCore().createRenderManager();
+			var oTimelineDiv = this.dom('.sapUiPerformanceStatsDiv .sapUiPerformanceTimeline');
+			var rm = new RenderManager().getInterface();
 			this._oTimelineOverview.setInteractions(aMeasurements);
 			this._oTimelineOverview.render(rm);
 			rm.flush(oTimelineDiv);
@@ -509,12 +504,20 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin',
 			this._oInteractionSlider._initSlider();
 			this._oInteractionSlider.setDuration(aMeasurements);
 			//
-			var oStatsDiv = this.$().find('.sapUiPerformanceStatsDiv .sapUiPerformanceBottom').get(0);
+			var oStatsDiv = this.dom('.sapUiPerformanceStatsDiv .sapUiPerformanceBottom');
 			this._oInteractionTree.setInteractions(aMeasurements);
 			this._oInteractionTree.renderAt(oStatsDiv);
 		};
 
+		Interaction.prototype._showPerfData = function() {
+			this.dom(".sapUiPerformanceStatsDiv").classList.remove("sapUiSupportIntHidden");
+			this.dom("export").classList.remove("sapUiSupportIntHidden");
+		};
+
+		Interaction.prototype._hidePerfData = function() {
+			this.dom(".sapUiPerformanceStatsDiv").classList.add("sapUiSupportIntHidden");
+			this.dom("export").classList.add("sapUiSupportIntHidden");
+		};
 
 		return Interaction;
-
 	});

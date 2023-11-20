@@ -1,0 +1,16 @@
+<mvc:View
+		xmlns="sap.m"
+		xmlns:mvc="sap.ui.core.mvc"
+		controllerName="sap.ui.mdc.sample.TableODataV4.View">
+	<OverflowToolbar>
+		<Input id="serviceUrl" placeholder="Service URL" width="20%"/>
+		<Input id="collectionName" placeholder="Collection name" width="20%"/>
+		<Input id="initiallyVisibleProperties" placeholder="Comma(,) separated initially visible property names" width="30%"/>
+		<Input id="username" placeholder="User name" width="10%"/>
+		<Input id="password" placeholder="Password" type="Password" width="10%"/>
+		<ToolbarSpacer/>
+		<OverflowToolbarButton icon="sap-icon://restart" tooltip="Refresh" text="Refresh" press=".onRefresh" />
+	</OverflowToolbar>
+	<VBox id="content" fitContainer="true">
+	</VBox>
+</mvc:View>

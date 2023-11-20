@@ -1,22 +1,24 @@
 sap.ui.define([
-	'sap/ui/test/Opa5',
-	'sap/ui/test/matchers/PropertyStrictEquals',
-	'sap/ui/test/actions/Press'
+	"sap/ui/test/Opa5",
+	"./Common",
+	"sap/ui/test/actions/Press"
 ], function (
 	Opa5,
-	PropertyStrictEquals,
+	Common,
 	Press) {
 	"use strict";
 
 	Opa5.createPageObjects({
 		onTheDialog : {
-
+			baseClass: Common,
 			actions : {
 
 				iPressDeleteButtonOnTheConfirmationDialog : function () {
 					return this.waitFor({
 							controlType : "sap.m.Button",
-							matchers : new PropertyStrictEquals({name : "text", value : "Delete"}),
+							matchers: function(oControl){
+								return this.I18NTextExtended(oControl, "MSGBOX_DELETE", "text", "sap.m");
+							}.bind(this),
 							actions : new Press(),
 							errorMessage : "The delete button could not be pressed"
 						}
@@ -25,7 +27,9 @@ sap.ui.define([
 				iPressCancelOnTheConfirmationDialog : function () {
 					return this.waitFor({
 						controlType : "sap.m.Button",
-						matchers : new PropertyStrictEquals({name : "text", value : "Cancel"}),
+						matchers: function(oControl){
+							return this.I18NTextExtended(oControl, "MSGBOX_CANCEL", "text", "sap.m");
+						}.bind(this),
 						actions : new Press(),
 						errorMessage : "The cancel button could not be pressed"
 					});
@@ -37,7 +41,9 @@ sap.ui.define([
 				iShouldBeTakenToTheConfirmationDialog : function () {
 					return this.waitFor({
 						controlType : "sap.m.Button",
-						matchers : new PropertyStrictEquals({name : "text", value : "Delete"}),
+						matchers: function(oControl){
+							return this.I18NTextExtended(oControl, "MSGBOX_DELETE", "text", "sap.m");
+						}.bind(this),
 						success : function (aControl) {
 							Opa5.assert.ok(
 								aControl,

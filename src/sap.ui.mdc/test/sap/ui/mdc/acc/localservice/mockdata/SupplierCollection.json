@@ -1,0 +1,46 @@
+[
+  {
+	"SupplierId": "1234567890.0",
+	"FormattedName": "John Doe",
+	"OrganizationRole": "Research & Development",
+	"Title": "Developer",
+	"CompanyName": "New Economy"
+  },
+  {
+	"SupplierId": "1234567890.1",
+	"FormattedName": "John Doe",
+	"OrganizationRole": "Research & Development",
+	"Title": "Developer",
+	"CompanyName": "New Economy",
+
+	"EmailAddress": "john.doe@neweconomy.com",
+	"FaxNumber": "+001 6101 34869-9",
+	"PhoneNumber": "+001 6101 34869-0",
+	"MobileNumber": "+0049 175 123456",
+	"URL": "www.neweconomy.com",
+	"Street": "800 E 3rd St.",
+	"PostalCode": "90013",
+	"City": "Los Angeles",
+	"State": "CA",
+	"Country": "USA"
+  },
+  {
+	"SupplierId": "1234567890.2",
+	"FormattedName": "John Doe",
+	"OrganizationRole": "Research & Development",
+	"Title": "Developer",
+	"CompanyName": "New Economy",
+	"EmailAddress": "john.doe@neweconomy.com",
+	"FaxNumber": "+001 6101 34869-9",
+	"PhoneNumber": "+001 6101 34869-0",
+	"MobileNumber": "+0049 175 123456",
+	"URL": "www.neweconomy.com",
+	"Street": "800 E 3rd St.",
+	"PostalCode": "90013",
+	"City": "Los Angeles",
+	"State": "CA",
+	"Country": "USA",
+
+	"Photo": "/testsuite/test-resources/sap/ui/documentation/sdk/images/johnDoe.png"
+  }
+]

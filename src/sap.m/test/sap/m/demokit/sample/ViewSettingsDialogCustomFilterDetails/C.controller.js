@@ -1,41 +1,58 @@
 sap.ui.define([
-		'jquery.sap.global',
 		'sap/ui/core/Fragment',
-		'sap/ui/core/mvc/Controller'
-	], function(jQuery, Fragment, Controller) {
+		'sap/ui/core/mvc/Controller',
+		'sap/m/library'
+	], function(Fragment, Controller, mLibrary) {
 	"use strict";
 
-	var CController = Controller.extend("sap.m.sample.ViewSettingsDialogCustomFilterDetails.C", {
+	return Controller.extend("sap.m.sample.ViewSettingsDialogCustomFilterDetails.C", {
 
 		_getDialog : function () {
-			if (!this._oDialog) {
-				this._oDialog = sap.ui.xmlfragment("sap.m.sample.ViewSettingsDialogCustomFilterDetails.Dialog", this);
-				this.getView().addDependent(this._oDialog);
+			var oView = this.getView();
+
+			if (!this._pDialog) {
+				this._pDialog = Fragment.load({
+					id: oView.getId(),
+					name: "sap.m.sample.ViewSettingsDialogCustomFilterDetails.Dialog",
+					controller: this
+				}).then(function(oDialog){
+					oView.addDependent(oDialog);
+					return oDialog;
+				});
 			}
-			return this._oDialog;
+			return this._pDialog;
 		},
+
 		handleOpenDialogSearchContains: function () {
-			this._getDialog()
+			this._getDialog().then(function(oDialog) {
+			oDialog
 				.setFilterSearchCallback(null)
-				.setFilterSearchOperator(sap.m.StringFilterOperator.Contains)
+				.setFilterSearchOperator(mLibrary.StringFilterOperator.Contains)
 				.open();
+			});
 		},
+
 		handleOpenDialogCustomSearch: function() {
-			this._getDialog()
-				.setFilterSearchCallback(this.caseSensitiveStringContains)
-				.open();
+			this._getDialog().then(function(oDialog) {
+				oDialog
+					.setFilterSearchCallback(this.caseSensitiveStringContains)
+					.open();
+			}.bind(this));
 		},
+
+
 		handleOpenDialogSearchWordsStartWith: function() {
-			this._getDialog()
-				.setFilterSearchCallback(null)
-				.setFilterSearchOperator(sap.m.StringFilterOperator.AnyWordStartsWith)
-				.open();
+			this._getDialog().then(function(oDialog) {
+				oDialog
+					.setFilterSearchCallback(null)
+					.setFilterSearchOperator(mLibrary.StringFilterOperator.AnyWordStartsWith)
+					.open();
+			});
 		},
+
 		caseSensitiveStringContains: function (sQuery, sItemText) {
 			return sItemText.indexOf(sQuery) > -1;
 		}
 	});
 
-
-	return CController;
 });

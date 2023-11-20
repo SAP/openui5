@@ -1,0 +1,20 @@
+/* =================================== */
+/* CSS for control sap.m/ListItemBase  */
+/* Quartz High Contrast White theme    */
+/* =================================== */
+
+@_sap_m_ListItemBase_Highlight_InformationColor: @sapUiAccent6;
+@_sap_m_ListItemBase_Navigated: @sapUiListSelectionBorderColor;
+@_sap_m_ListItemBase_Detail_Delete_MarginLeft: 0.25rem;
+
+.sapMLIB.sapMLIBSelected {
+	border-bottom: 0.0625rem solid @sapUiListSelectionBorderColor;
+}
+
+.sapMLIBFocusable:focus {
+	outline-width: 0.125rem;
+}
+
+.sapMTableRowCustomFocus:focus > :not(.sapMListTblDummyCell:last-child)::before {
+	border-width: 2px;
+}

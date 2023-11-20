@@ -1,0 +1,15 @@
+<mvc:View controllerName="sap.m.sample.InputModelUpdate.C"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core"
+	xmlns:f="sap.ui.layout.form">
+	<App>
+		<Page title="Late binding of Input (oData v2)">
+			<VBox>
+				<Text class="sapUiSmallMarginBottom" text="For more details about this sample code and its intended use case, please refer to the description and comments provided within the code."/>
+				<Input id="inputArtistName" value="{initialData>/currentValue}" liveChange="handleLiveChange" />
+				<Button press="fnRebind" text="Bind Input in 3 seconds" />
+			</VBox>
+		</Page>
+	</App>
+</mvc:View>

@@ -1,0 +1,32 @@
+<mvc:View
+	controllerName="sap.f.cardsdemo.controller.Footer"
+	xmlns="sap.m"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:f="sap.f"
+	xmlns:w="sap.ui.integration.widgets"
+	displayBlock="true">
+	<Page title="{i18n>appTitle}">
+		<subHeader>
+			<Toolbar>
+				<ToolbarSpacer />
+				<Title text="Footer (experimental)" />
+				<ToolbarSpacer />
+			</Toolbar>
+		</subHeader>
+		<mvc:View viewName="sap.f.cardsdemo.view.common.CommonCardSettings" type="XML" async="true"></mvc:View>
+		<Panel>
+			<f:GridContainer>
+				<w:Card id="card1" manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/footer/card.json">
+					<w:layoutData>
+						<f:GridContainerItemLayoutData columns="5" />
+					</w:layoutData>
+				</w:Card>
+				<w:Card id="card2" manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/footer/cardHiddenFooter.json">
+					<w:layoutData>
+						<f:GridContainerItemLayoutData columns="5" />
+					</w:layoutData>
+				</w:Card>
+			</f:GridContainer>
+		</Panel>
+	</Page>
+</mvc:View>

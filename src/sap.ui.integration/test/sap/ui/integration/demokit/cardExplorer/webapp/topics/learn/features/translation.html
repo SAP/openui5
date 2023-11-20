@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<title>Translation</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<script src="../../../scripts/boot.js"></script>
+</head>
+
+<body class="sapUiBody topicBody">
+
+	<div class="topic">
+		<div class="content">
+
+			<h1 id="overview">
+				Card Translations
+			</h1>
+
+			<p>
+				Cards can be translated into other languages without changing the manifest. To achieve this you should create a resource bundle.
+				The resource bundle is a collection of <code>&lt;filename&gt;_&lt;locale&gt;.properties</code> files. Each file contains key-value
+				pairs, where the values are language-dependent texts and the keys are language independent.
+				Inside the manifest, the card developers should use the keys with special double curly bracket syntax.
+				During manifest processing the keys are replaced with their translated values, according to the current locale.
+				The developer should provide a default (i18n.properties) fallback file that could be used if there is no better locale match found in the resource bundle.
+				The path to the default (i18n.properties) file has to be set as a value to the "i18n" property of the "sap.app" namespace of the manifest.
+				Besides the double curly bracket syntax, translated texts can also be accessed through the i18n model the card automatically creates (see examples below).
+			</p>
+			<p>
+				<b>Note:</b> If a key from the resource bundle is used, but "i18n" property is not set, the default value "i18n/i18n.properties" will be used, to request a resource bundle.
+			</p>
+
+			<h2 id="predefinedTranslationKeys">
+				Predefined Translation Keys
+			</h2>
+			<p>
+				The i18n model also includes a set of predefined translations which are common for all cards and can be used by each card.
+				The predefined translations have "CARD." prefix in their key.
+			</p>
+			<p>List of predefined translation keys:</p>
+			<table>
+
+				<tr>
+					<th>Translation Key</th>
+					<th>English translation</th>
+					<th>Since</th>
+				</tr>
+				<tr>
+					<td>CARD.COUNT_X_OF_Y</td>
+					<td>{0} of {1}</td>
+					<td>1.67</td>
+				</tr>
+			</table>
+
+			<h2 id="textsWithPlaceholders">Text with Placeholders</h2>
+			<p>
+				It is possible that a resource bundle value contains placeholders. In such case use the <a href="../../../index.html#/learn/formatters/text" target="_parent">text formatter</a>.
+			</p>
+
+			<h2 id="examples">
+				Examples
+			</h2>
+
+			<strong>Translating properties during manifest processing</strong>
+			<p>i18n/i18n.properties</p>
+			<pre class="lang-properties">
+TITLE=My Products
+SUBTITLE=Some Great Products
+</pre>
+			<p>i18n/i18n_de.properties</p>
+			<pre class="lang-properties">
+TITLE=Meine Produkte
+SUBTITLE=Gro\u00DFartige Produkte
+</pre>
+			<p>manifest.json</p>
+			<pre class="lang-json">
+{
+	"sap.app": {
+		"id": "card.explorer.translation.card",
+		"type": "card",<mark>
+		"i18n": "i18n/i18n.properties",</mark>
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.card": {
+		"header": {<mark>
+			"title": "{{TITLE}}",
+			"subTitle": "{{SUBTITLE}}",</mark>
+			...
+		},
+		...
+	}
+}</pre>
+
+			<strong>Translations in binding syntaxes by using the i18n model of the card (where the user i18n files contain
+				keys <code>EXPECTED_ITEMS</code> and <code>subtitle</code>):</strong>
+			<pre class="lang-json">
+{
+	"sap.app": {
+		"id": "card.explorer.translation.card",
+		"type": "card",
+		"i18n": "i18n/i18n.properties",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.card": {
+		"header": {
+			"data": {
+				"json": {
+					"numberOfItems": "17"
+				}
+			},<mark>
+			"title": "{i18n>EXPECTED_ITEMS} {/numberOfItems}",
+			"subTitle": "{i18n>SUBTITLE}",</mark>
+			...
+		},
+		...
+	}
+}
+</pre>
+
+			<a class="try-button sapUiSmallMarginTop" href="../../../index.html#/explore/translation"
+				target="_parent">Try it Out</a>
+		</div>
+	</div>
+
+</body>
+
+</html>

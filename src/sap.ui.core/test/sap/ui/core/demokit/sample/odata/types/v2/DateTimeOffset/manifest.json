@@ -1,0 +1,63 @@
+{
+	"_version": "1.49.0",
+	"sap.app": {
+		"applicationVersion": {
+			"version": "${version}"
+		},
+		"description": "Example how to use OData V2 Edm.DateTimeOffset in SAPUI5 applications",
+		"dataSources": {
+			"default": {
+				"uri": "/sap/demo/ZUI5_EDM_TYPES",
+				"type": "OData",
+				"settings": {
+					"odataVersion": "2.0"
+				}
+			}
+		},
+		"id": "sap.ui.core.sample.odata.types.v2.DateTimeOffset",
+		"type": "application"
+	},
+	"sap.ui5": {
+		"config": {
+			"sample": {
+				"files": [
+					"DateTimeOffset.view.xml",
+					"DateTimeOffset.controller.js",
+					"data/metadataV2.xml",
+					"data/EdmTypesV2.json",
+					"manifest.json",
+					"Component.js",
+					"SandboxModel.js"
+				]
+			}
+		},
+		"dependencies": {
+			"libs": {
+				"sap.m": {},
+				"sap.ui.core": {},
+				"sap.ui.layout": {}
+			}
+		},
+		"handleValidation": true,
+		"models": {
+			"": {
+				"dataSource": "default",
+				"preload": true,
+				"settings": {
+					"canonicalRequests": true,
+					"defaultBindingMode": "TwoWay",
+					"defaultCountMode": "Inline",
+					"earlyTokenRequest": true,
+					"persistTechnicalMessages": true
+				},
+				"type": "sap.ui.core.sample.odata.types.v2.DateTimeOffset.SandboxModel",
+				"uriSettingName": "serviceUrl"
+			}
+		},
+		"rootView": {
+			"viewName": "sap.ui.core.sample.odata.types.v2.DateTimeOffset.DateTimeOffset",
+			"type": "XML",
+			"async": true
+		}
+	}
+}

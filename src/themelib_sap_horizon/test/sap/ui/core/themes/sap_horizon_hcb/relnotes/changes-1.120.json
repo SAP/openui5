@@ -1,0 +1,92 @@
+{
+  "1.120.0": {
+    "date": "October 2023",
+    "notes": [
+      {
+        "id": "074c5ed765674e4e975a1f6c3c0c601f37db5fa9",
+        "type": "FEATURE",
+        "text": " sap.ui.core.IconPool: Update icon font v5.7 and v4.19"
+      },
+      {
+        "id": "4b864d99e6f6ab26a1ebb1d8aad73b78aacc3e09",
+        "type": "FIX",
+        "text": " sap.m.MenuButton: adjust toggled state color",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380105198"
+          }
+        ]
+      },
+      {
+        "id": "d71d4d81f61b1d24c53faa23e67c6840bcec1c06",
+        "type": "FIX",
+        "text": " sap.m.Button: adjust to horizon theme updates"
+      },
+      {
+        "id": "e4aa4f94c6571220c93e3b5fdacd600e03a21221",
+        "type": "FIX",
+        "text": " sap.m.SegmentedButton: align styles",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370083332"
+          }
+        ]
+      },
+      {
+        "id": "809177bdc3eb28d90645b8b836335e4c7694701d",
+        "type": "FEATURE",
+        "text": " sap.tnt.SideNavigation: Added \"width\" property"
+      },
+      {
+        "id": "4962fef59d0c1d90aef3a8b2d5bd4fee6f7dfd0f",
+        "type": "FEATURE",
+        "text": "sap.f.FlexibleColumnLayout: Allow resize columns by dragging"
+      },
+      {
+        "id": "92d74530a2718787ac816aaba9df4cbd8d999d08",
+        "type": "FIX",
+        "text": " sap.ui.core.IconPool: correction for icon 'slim-arrow-up' for theme 'horizon'",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370103925"
+          }
+        ]
+      },
+      {
+        "id": "94a8bff9a4252bbf586c9d813598d321947f5ad9",
+        "type": "FIX",
+        "text": " sap.m.OverflowToolbar: Fix overflowing controls with 100% width",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370093601"
+          }
+        ]
+      },
+      {
+        "id": "fd123fc79d9f9627efb6edfc29d0c6508f8216b6",
+        "type": "FEATURE",
+        "text": " sap.m.ObjectStatus: introduce new set of indication colors"
+      },
+      {
+        "id": "0d0411cc8299574b7b609dd2b411f1fa748dc16e",
+        "type": "FIX",
+        "text": " sap.m.Slider: Handles styles adjusted"
+      },
+      {
+        "id": "babd23a496c12c13f0495558a29ff2fb000adc69",
+        "type": "FIX",
+        "text": " sap.tnt.ToolHeader: Badge on Button for Compact content density is properly positioned now",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370082470"
+          }
+        ]
+      }
+    ]
+  }
+}

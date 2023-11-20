@@ -1,7 +1,6 @@
 <!DOCTYPE HTML>
 <html>
 	<head>
-		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 
 		<title>XMLView - sap.ui.core.mvc - Extended Event Handler Syntax</title>
 
@@ -16,14 +15,16 @@
 		</script>
 
 		<script>
-			sap.ui.getCore().attachInit(function() {
-				var oView = sap.ui.xmlview({viewName:"mvctest.views.ExtendedXMLViewEventHandlerSyntax"});
-				oView.placeAt("content");
+			sap.ui.require(["sap/ui/core/Core"], function(Core) {
+				Core.ready().then(function() {
+					var oView = sap.ui.xmlview({viewName:"mvctest.views.ExtendedXMLViewEventHandlerSyntax"});
+					oView.placeAt("content");
+				});
 			});
 		</script>
 	</head>
 
-	<body class="sapUiBody" role="application">
+	<body class="sapUiBody">
 		<h1>Test Page for Extended XMLView Event Handler Syntax</h1>
 		<div id="content"></div>
 	</body>

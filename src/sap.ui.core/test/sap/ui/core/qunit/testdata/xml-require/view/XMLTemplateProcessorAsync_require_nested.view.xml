@@ -1,0 +1,5 @@
+<mvc:XMLView height="100%" xmlns:mvc="sap.ui.core.mvc" xmlns:core="sap.ui.core" xmlns="sap.m"
+	core:require="{Box:'sap/m/MessageBox'}">
+	<mvc:XMLView viewName="testdata.xml-require.view.XMLTemplateProcessorAsync_require_child" async="true"></mvc:XMLView>
+	<Button></Button>
+</mvc:XMLView>

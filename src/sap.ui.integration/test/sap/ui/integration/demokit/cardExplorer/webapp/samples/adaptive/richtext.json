@@ -1,0 +1,137 @@
+{
+	"_version": "1.17.0",
+	"sap.app": {
+		"id": "adaptivecard.embedded",
+		"type": "card",
+		"title": "Sample of an Adaptive Card with formatted text",
+		"subTitle": "Sample of an Adaptive with formatted text",
+		"applicationVersion": {
+			"version": "1.0.0"
+		},
+		"shortTitle": "A short title for this Card",
+		"info": "Additional information about this Card",
+		"description": "A long description for this Card",
+		"tags": {
+			"keywords": [
+				"Adaptive",
+				"Card",
+				"Formatted",
+				"RichText",
+				"Sample"
+			]
+		}
+	},
+	"sap.card": {
+		"header": {
+			"title": "Rich Text Card",
+			"subTitle": "Adaptive Card with sap.f.cards.Header",
+			"icon": {
+				"src": "sap-icon://text-formatting"
+			}
+		},
+		"type": "AdaptiveCard",
+		"content": {
+			"$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+			"type": "AdaptiveCard",
+			"version": "1.2",
+			"body": [
+				{
+					"type": "RichTextBlock",
+					"inlines": [
+						"This is the first inline. ",
+						{
+							"type": "TextRun",
+							"text": "We support colors, ",
+							"color": "good"
+						},
+						{
+							"type": "TextRun",
+							"text": "both regular and subtle. ",
+							"isSubtle": true
+						},
+						{
+							"type": "TextRun",
+							"text": "Text ",
+							"size": "small"
+						},
+						{
+							"type": "TextRun",
+							"text": "of ",
+							"size": "medium"
+						},
+						{
+							"type": "TextRun",
+							"text": "all ",
+							"size": "large"
+						},
+						{
+							"type": "TextRun",
+							"text": "sizes! ",
+							"size": "extraLarge"
+						},
+						{
+							"type": "TextRun",
+							"text": "Light weight text. ",
+							"weight": "lighter"
+						},
+						{
+							"type": "TextRun",
+							"text": "Bold weight text. ",
+							"weight": "bolder"
+						},
+						{
+							"type": "TextRun",
+							"text": "Highlights. ",
+							"highlight": true
+						},
+						{
+							"type": "TextRun",
+							"text": "Italics. ",
+							"italic": true
+						},
+						{
+							"type": "TextRun",
+							"text": "Strikethrough. ",
+							"strikethrough": true
+						},
+						{
+							"type": "TextRun",
+							"text": "Monospace too!",
+							"fontType": "monospace"
+						}
+					]
+				},
+				{
+					"type": "RichTextBlock",
+					"horizontalAlignment": "center",
+					"inlines": [
+						{
+							"type": "TextRun",
+							"text": "RichTextBlocks also support center alignment."
+						}
+					]
+				},
+				{
+					"type": "RichTextBlock",
+					"horizontalAlignment": "right",
+					"inlines": [
+						{
+							"type": "TextRun",
+							"text": "RichTextBlocks also support right alignment."
+						}
+					]
+				},
+				{
+					"type": "RichTextBlock",
+					"horizontalAlignment": "left",
+					"inlines": [
+						{
+							"type": "TextRun",
+							"text": "RichTextBlocks also support right alignment."
+						}
+					]
+				}
+			]
+		}
+	}
+}

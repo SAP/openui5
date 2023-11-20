@@ -1,0 +1,51 @@
+{
+  "1.82.0": {
+    "date": "August 2020",
+    "notes": [
+      {
+        "id": "35101ba7b64e7ef9381d0c61f4eac0e690d9e8e9",
+        "type": "FIX",
+        "text": " Integration Cards: Unit of measurement is not truncated anymore",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080285173"
+          }
+        ]
+      },
+      {
+        "id": "7a7e2b160af6d82163c3dcb170bbc0010b92c418",
+        "type": "FIX",
+        "text": " sap.m.OverflowToolbar: jQuery incorrect width measurement fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080205481"
+          }
+        ]
+      },
+      {
+        "id": "bf34e30e0aedb91633a6ecb0902be7ff9c64eca5",
+        "type": "FIX",
+        "text": " sap.f.FlexibleColumnLayout: Cleaned all callbacks on cancel resize",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080357173"
+          }
+        ]
+      },
+      {
+        "id": "34e41ff634a02a283829424fe26359e0d88f7149",
+        "type": "FIX",
+        "text": " sap.f.GridContainer: Click on a button inside is now working",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080256996"
+          }
+        ]
+      }
+    ]
+  }
+}

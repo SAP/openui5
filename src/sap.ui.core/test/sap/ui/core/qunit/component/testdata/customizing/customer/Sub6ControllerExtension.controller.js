@@ -1,27 +1,34 @@
-sap.ui.define(['sap/ui/core/mvc/Controller'],
-	function(/* Controller */) {
+sap.ui.define(['sap/ui/core/mvc/ControllerExtension'],
+	function(ControllerExtension) {
 	"use strict";
 
 	/*global oLifecycleSpy */
 
-	sap.ui.controller("testdata.customizing.customer.Sub6ControllerExtension", {
-
-		onInit: function() {
-			oLifecycleSpy("Sub6ControllerExtension Controller onInit()");
+	return ControllerExtension.extend("testdata.customizing.customer.Sub6ControllerExtension", {
+		metadata: {
+			methods: {
+				"myCustomAction1": {"public": true, "final": false},
+				"myCustomAction2": {"public": true, "final": false}
+			}
 		},
 
-		onExit: function() {
-			oLifecycleSpy("Sub6ControllerExtension Controller onExit()");
-		},
+		overrides: {
+			onInit: function() {
+				oLifecycleSpy("Sub6ControllerExtension Controller onInit()");
+			},
 
-		onBeforeRendering: function() {
-			oLifecycleSpy("Sub6ControllerExtension Controller onBeforeRendering()");
-		},
+			onExit: function() {
+				oLifecycleSpy("Sub6ControllerExtension Controller onExit()");
+			},
 
-		onAfterRendering: function() {
-			oLifecycleSpy("Sub6ControllerExtension Controller onAfterRendering()");
-		},
+			onBeforeRendering: function() {
+				oLifecycleSpy("Sub6ControllerExtension Controller onBeforeRendering()");
+			},
 
+			onAfterRendering: function() {
+				oLifecycleSpy("Sub6ControllerExtension Controller onAfterRendering()");
+			}
+		},
 
 		myCustomAction1: function() {
 			//alert("myCustomAction1");

@@ -1,15 +1,16 @@
 sap.ui.define([
 		'sap/m/MessageToast',
 		'sap/ui/core/Fragment',
-		'sap/ui/core/mvc/Controller'
-	], function(MessageToast, Fragment, Controller) {
+		'sap/ui/core/mvc/Controller',
+		'sap/ui/core/Popup'
+	], function(MessageToast, Fragment, Controller, Popup) {
 	"use strict";
 
-	var MenuMenuEventingController = Controller.extend("sap.ui.unified.sample.MenuMenuEventing.MenuMenuEventing", {
+	return Controller.extend("sap.ui.unified.sample.MenuMenuEventing.MenuMenuEventing", {
 
 		onInit: function(){
 			this.byId("openMenu").attachBrowserEvent("tab keyup", function(oEvent){
-				this._bKeyboard = oEvent.type == "keyup";
+				this._bKeyboard = oEvent.type === "keyup";
 			}, this);
 		},
 
@@ -18,33 +19,35 @@ sap.ui.define([
 
 			// create menu only once
 			if (!this._menu) {
-				this._menu = sap.ui.xmlfragment(
-					"sap.ui.unified.sample.MenuMenuEventing.MenuMenuEventing",
-					this
-				);
-				this.getView().addDependent(this._menu);
+				Fragment.load({
+					name: "sap.ui.unified.sample.MenuMenuEventing.MenuMenuEventing",
+					controller: this
+				}).then(function(oMenu){
+					this._menu = oMenu;
+					this.getView().addDependent(this._menu);
+					this._menu.open(this._bKeyboard, oButton, Popup.Dock.BeginTop, Popup.Dock.BeginBottom, oButton);
+				}.bind(this));
+			} else {
+				this._menu.open(this._bKeyboard, oButton, Popup.Dock.BeginTop, Popup.Dock.BeginBottom, oButton);
 			}
-
-			var eDock = sap.ui.core.Popup.Dock;
-			this._menu.open(this._bKeyboard, oButton, eDock.BeginTop, eDock.BeginBottom, oButton);
 		},
 
 		handleMenuItemPress: function(oEvent) {
-			if (oEvent.getParameter("item").getSubmenu()) {
+			var oItem = oEvent.getParameter("item"),
+				sMessage = "";
+
+			if (oItem.getSubmenu()) {
 				return;
 			}
 
-			var msg = "";
-			if (oEvent.getParameter("item").getMetadata().getName() == "sap.ui.unified.MenuTextFieldItem") {
-				msg = "'" + oEvent.getParameter("item").getValue() + "' entered";
+			if (oItem.getMetadata().getName() === "sap.ui.unified.MenuTextFieldItem") {
+				sMessage = "'" + oItem.getValue() + "' entered";
 			} else {
-				msg = "'" + oEvent.getParameter("item").getText() + "' pressed";
+				sMessage = "'" + oItem.getText() + "' pressed";
 			}
 
-			MessageToast.show(msg);
+			MessageToast.show(sMessage);
 		}
 	});
-
-	return MenuMenuEventingController;
 
 });

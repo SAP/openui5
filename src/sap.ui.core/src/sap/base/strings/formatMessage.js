@@ -1,10 +1,6 @@
 /*!
  * ${copyright}
  */
-/*
- * IMPORTANT: This is a private module, its API must not be used and is subject to change.
- * Code other than the OpenUI5 libraries must not introduce dependencies to this module.
- */
 sap.ui.define(["sap/base/assert"], function(assert) {
 	"use strict";
 
@@ -41,14 +37,13 @@ sap.ui.define(["sap/base/assert"], function(assert) {
 	 * that should appear in the result, need to be doubled. In the result, only a single
 	 * single quote will occur.
 	 *
-	 * Example Pattern Strings:
+	 * Example: Pattern Strings
 	 * <pre>
-	 *   formatMessage("Say {0}",     ["Hello"]) -> "Say Hello"    // normal use case
-	 *   formatMessage("Say '{0}'",   ["Hello"]) -> "Say {0}"      // escaped placeholder
-	 *   formatMessage("Say ''{0}''", ["Hello"]) -> "Say 'Hello'"  // doubled single quote
-	 *   formatMessage("Say '{0}'''", ["Hello"]) -> "Say {0}'"     // doubled single quote in quoted fragment
+	 *  formatMessage("Say {0}",     ["Hello"]) -> "Say Hello"    // normal use case
+	 *  formatMessage("Say '{0}'",   ["Hello"]) -> "Say {0}"      // escaped placeholder
+	 *  formatMessage("Say ''{0}''", ["Hello"]) -> "Say 'Hello'"  // doubled single quote
+	 *  formatMessage("Say '{0}'''", ["Hello"]) -> "Say {0}'"     // doubled single quote in quoted fragment
 	 * </pre>
-	 *
 	 * In contrast to java.util.MessageFormat, format types or format styles are not supported.
 	 * Everything after the argument index and up to the first closing curly brace is ignored.
 	 * Nested placeholders (as supported by java.lang.MessageFormat for the format type choice)
@@ -62,12 +57,13 @@ sap.ui.define(["sap/base/assert"], function(assert) {
 	 * value is an array it will be handled like the default described above.
 	 *
 	 * @function
-	 * @exports sap/base/strings/formatMessage
+	 * @since 1.58
+	 * @alias module:sap/base/strings/formatMessage
 	 * @param {string} sPattern A pattern string in the described syntax
 	 * @param {any[]} [aValues=[]] The values to be used instead of the placeholders.
 	 * @returns {string} The formatted result string
 	 * @SecPassthrough {*|return}
-	 * @private
+	 * @public
 	 */
 	var fnFormatMessage = function(sPattern, aValues) {
 		assert(typeof sPattern === "string" || sPattern instanceof String, "pattern must be string");
@@ -87,7 +83,7 @@ sap.ui.define(["sap/base/assert"], function(assert) {
 			} else if ($3) {
 				// a welformed curly brace
 				//   --> emit the argument but ignore other parameters
-				return String(aValues[parseInt($3, 10)]);
+				return String(aValues[parseInt($3)]);
 			}
 			// e.g. malformed curly braces
 			//   --> throw Error

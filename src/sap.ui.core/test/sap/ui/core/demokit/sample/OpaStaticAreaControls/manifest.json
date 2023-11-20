@@ -1,0 +1,32 @@
+{
+	"sap.app": {
+		"id": "sap.ui.core.sample.OpaStaticAreaControls",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"dependencies": {
+			"libs": {
+				"sap.m": {},
+				"sap.ui.core": {}
+			}
+		},
+		"config": {
+			"sample": {
+				"iframe": "OpaStaticAreaControls.html?opaExecutionDelay=700",
+				"stretch": true,
+				"files": [
+					"OpaStaticAreaControls.html",
+					"OpaStaticAreaControls.js",
+					"applicationUnderTest/index.html",
+					"applicationUnderTest/Component.js",
+					"applicationUnderTest/manifest.json",
+					"applicationUnderTest/view/Main.view.xml",
+					"applicationUnderTest/view/Main.controller.js",
+					"manifest.json"
+				]
+			}
+		}
+	}
+}

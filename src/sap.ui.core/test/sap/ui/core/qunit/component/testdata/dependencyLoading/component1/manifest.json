@@ -1,0 +1,18 @@
+{
+	"sap.app": {
+		"id": "sap.ui.test.dependencyLoading.component1"
+	},
+	"sap.ui5": {
+		"componentName": "sap.ui.test.dependencyLoading.component1",
+		"dependencies": {
+			"libs": {
+				"sap.m": {},
+				"sap.tnt": {},
+				"sap.ui.core": {}
+			},
+			"components": {
+				"sap.ui.test.dependencyLoading.component2": {}
+			}
+		}
+	}
+}

@@ -1,0 +1,179 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+	<title>OData V2 Messages</title>
+
+
+	<script id="sap-ui-bootstrap" type="text/javascript" src="/resources/sap-ui-core.js" data-sap-ui-theme="sap_belize"
+	    data-sap-ui-libs="sap.m, sap.ui.codeeditor, sap.ui.layout" data-sap-ui-xx-bindingSyntax="complex">
+	</script>
+	<script>
+
+		sap.ui.require([
+            'sap/ui/core/util/MockServer',
+            'sap/ui/model/odata/v2/ODataModel',
+            'sap/ui/model/json/JSONModel',
+            'sap/ui/model/odata/ODataPropertyBinding',
+            'sap/ui/table/Table',
+            'sap/m/Text',
+            'sap/m/Button',
+            'sap/base/util/merge',
+            'sap/ui/performance/Measurement'
+        ], function(
+            MockServer,
+            ODataModel,
+            JSONModel,
+            ODataPropertyBinding,
+            Table,
+            Text,
+            Button,
+            merge,
+            Measurement
+        ) {
+            var sServiceUri = "/SalesOrderSrv/";
+            var sDataRootPath = "qunit/testdata/SalesOrder/";
+
+            Measurement.setActive(true, ["cu", "cd"]);
+            var oMockServer = new MockServer({
+                rootUri: sServiceUri
+            });
+            oMockServer.simulate("qunit/testdata/SalesOrder/metadata.xml", sDataRootPath);
+
+            var aRequests = oMockServer.getRequests();
+            aRequests.forEach(function (oRequest) {
+				var fnOrginalResponse;
+				var sPath = String(oRequest.path);
+
+				//if (sPath.indexOf("$") == -1) {
+
+					fnOrginalResponse = oRequest.response;
+					oRequest.response = function (oXhr) {
+						var fnOrignalXHRRespond = oXhr.respond;
+						var sUrl = oXhr.url;
+                        var oDo = 10000;
+						oXhr.respond = function (status, headers, content) {
+							var oMessages;
+							if (sUrl === '/SalesOrderSrv/SalesOrderSet/$count') {
+                                content = "" + oDo + 10;
+                            }
+                            else if (sUrl.startsWith('/SalesOrderSrv/SalesOrderSet')) {
+                                var oEntry, oContent = JSON.parse(content);
+
+                                for (var i = 0; i < oDo; i++) {
+                                    oEntry = merge({}, oContent.d.results[0]);
+                                    oEntry.__metadata.uri = sServiceUri + "SalesOrderSet(" + i + ")";
+                                    oEntry.SalesOrderID = "SalesOrderSet(" + i + ")"
+                                    oEntry.ToLineItems = {id:"LI("+i+")"};
+                                    oContent.d.results.push(oEntry);
+                                }
+                                content = JSON.stringify(oContent);
+                            }
+							fnOrignalXHRRespond.apply(this, arguments);
+						};
+						fnOrginalResponse.apply(this, arguments);
+					};
+				//}
+			});
+            oMockServer.start();
+
+            // create an ODataModel from URL
+            var oModel = new ODataModel(sServiceUri, {defaultOperationMode: 'Client'});
+            oModel.setSizeLimit(9999999);
+            sap.ui.getCore().setModel(oModel);
+
+            var oMeasureModel = new JSONModel();
+            sap.ui.getCore().setModel(oMeasureModel, "measure");
+
+            var i = j = 0;
+            var fnCheckUpdateOrig = ODataModel.prototype.checkUpdate;
+            ODataModel.prototype.checkUpdate = function() {
+                i++;
+                Measurement.start("cu" + i, "checkupdate model", ["cu"]);
+                fnCheckUpdateOrig.apply(this, arguments);
+                Measurement.end("cu" + i);
+                sap.ui.getCore().getModel("measure").setData(Measurement.getAllMeasurements());
+            }
+            var fnCheckDataState = ODataModel.prototype.checkDataState;
+            ODataModel.prototype.checkDataState = function() {
+                j++;
+                Measurement.start("cd" + j, "checkDataState model", ["cd"]);
+                fnCheckDataState.apply(this, arguments);
+                Measurement.end("cd" + j);
+                sap.ui.getCore().getModel("measure").setData(Measurement.getAllMeasurements());
+            }
+            var oTable = new Table({ // create Table UI
+                columns : [
+                    {label: "Measure Id", template: new Text({text:"{measure>id}"})},
+                    {label: "Info", template: new Text({text:"{measure>info}"})},
+                    {label: "Time", template: new Text({text:"{measure>time}"})}
+                ]
+            });
+
+            oTable.bindRows({path: "measure>/"}); // bind the rows against a certain root-level collection in the service
+            oTable.placeAt("measure"); // place Table onto UI*/$
+
+            var oButton = new Button({text: 'force checkUpdate', press: function() {
+               oModel.checkUpdate(true);
+            }}).placeAt("measure");
+            var oButton = new Button({text: 'update data', press: function() {
+                oModel.setProperty("/SalesOrderSet(0)/id", "SalesOrderSet(0er)");
+            }}).placeAt("measure");
+            var oButton = new Button({text: 'refresh data', press: function() {
+                oTable.getBinding("items").refresh();
+            }}).placeAt("measure");
+           /* var oTable = new Table({ // create Table UI
+                columns : [
+                    {label: "SO ID", template: "SalesOrderID", sortProperty: "SalesOrderID" },
+                    {label: "SO Descr", template: "Note", sortProperty: "Note" },
+                    {label: "SO Descr Lang", template: "NoteLanguage", sortProperty: "NoteLanguage" },
+                    {label: "SO Cust ID", template: "CustomerID", sortProperty: "CustomerID" },
+                    {label: "Curr", template: "CurrencyCode", sortProperty: "CurrencyCode" },
+                    {label: "Gross Amount", template: "GrossAmount", sortProperty: "GrossAmount" },
+                    {label: "Net Amount", template: "NetAmount", sortProperty: "NetAmount" }
+                ]
+            });
+            oTable.setModel(oModel); // set model to Table
+
+            oTable.bindRows({path: "/SalesOrderSet", defaultOperationMode: 'Client'}); // bind the rows against a certain root-level collection in the service
+
+            oTable.placeAt("content"); // place Table onto UI*/$
+            // create a List control
+
+            var oTable = new sap.m.Table({
+                columns: [
+                    new sap.m.Column({
+                        header: new sap.m.Text({text:"SO ID"})
+                    }),
+                    new sap.m.Column({
+                        header: new sap.m.Text({text:"LI ID"})
+                    })
+                ]
+            });
+
+            // bind the List items to the data collection
+			oTable.bindItems({
+				path : "/SalesOrderSet",
+				template : new sap.m.ColumnListItem({
+					cells: [
+                        new sap.m.Text({text: '{SalesOrderID}'}),
+                        new sap.m.Text({text: '{ToLineItems/id}'})
+                    ]
+                })
+			});
+            oTable.placeAt("content");
+        });
+	</script>
+
+
+</head>
+
+<body class="sapUiBody">
+    <div id="measure"></div>
+    <div id="content"></div>
+</body>
+
+</html>

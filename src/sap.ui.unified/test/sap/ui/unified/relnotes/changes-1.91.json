@@ -1,0 +1,78 @@
+{
+  "1.91.0": {
+    "date": "June 2021",
+    "notes": [
+      {
+        "id": "2a342c014c80ab50230290a4789527f1554c96c8",
+        "type": "FIX",
+        "text": " sap.ui.unified.calendar.CustomYearPicker: current year is focused when there is no year selected",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170138936"
+          }
+        ]
+      },
+      {
+        "id": "7ecbc997270e5d6e7d4710e3fd8073aee3edd0ec",
+        "type": "FIX",
+        "text": " sap.ui.unified.calendar.Month: Accessible name for dummy cell provided",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180167885"
+          }
+        ]
+      },
+      {
+        "id": "0d0286e48ad0007b571fd78b48674ac789cda2e3",
+        "type": "FIX",
+        "text": " sap.ui.unified.FileUploader: After opening dialog are now not trapped with the focus",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170145992"
+          }
+        ]
+      },
+      {
+        "id": "c240e3e2e81d8e46c4f0bc84a052d438fe7230f8",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: width property now works properly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180150671"
+          }
+        ]
+      },
+      {
+        "id": "1e265a0ae6533f31e466f81dd402e250d80b9d9f",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: unfinished interval selection is now properly visualized",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170144190"
+          }
+        ]
+      },
+      {
+        "id": "957a2fe3fa499890803f5c231bfd9d1e0e6d2e6c",
+        "type": "FIX",
+        "text": " sap.ui.unified.calendar.Month: now screen reader announces proper week day on Islamic calendar",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170138934"
+          }
+        ]
+      },
+      {
+        "id": "a0ecbc1e8b715cc5208437449e376e4509e21aed",
+        "type": "FIX",
+        "text": " EmptyIndicator behavior test fix"
+      }
+    ]
+  }
+}

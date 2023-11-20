@@ -1,0 +1,41 @@
+/* =================================== */
+/* CSS for control sap.m/ToggleButton  */
+/* Horizon High Contrast Black theme   */
+/* =================================== */
+
+/* Disabled toggled button */
+.sapMBtnDisabled .sapMToggleBtnPressed.sapMBtnInner,
+html.sap-desktop .sapMBtnDisabled .sapMToggleBtnPressed,
+.sapMBtnDisabled .sapMToggleBtnPressed,
+html.sap-desktop .sapMBtnDisabled .sapMIBar-CTX .sapMToggleBtnPressed,
+.sapMBtnDisabled .sapMIBar-CTX .sapMToggleBtnPressed,
+html.sap-desktop .sapMBtnDisabled .sapMTB-Transparent-CTX .sapMBtnInner.sapMToggleBtnPressed,
+.sapMBtnDisabled .sapMTB-Transparent-CTX .sapMBtnInner.sapMToggleBtnPressed {
+	color: @sapUiHcReducedAltForeground;
+	border-color: @sapUiHcReducedAltForeground;
+	background-color: @sapUiHcReducedBackground;
+}
+
+.sapMBtn .sapMBtnEmphasized.sapMToggleBtnPressed {
+	background-color: @sapUiButtonSelectedBackground;
+	color: @sapUiButtonSelectedTextColor;
+	border-color: @sapUiButtonSelectedBorderColor;
+}
+
+/* Icon in disabled toggled button */
+
+.sapMTB-Transparent-CTX span.sapMBtnInner.sapMToggleBtnPressed .sapMBtnIcon,
+.sapMTB-Transparent-CTX span.sapMBtnInner.sapMToggleBtnPressed.sapMBtnTransparent > .sapMBtnIcon,
+html.sap-desktop .sapMTB-Transparent-CTX .sapMToggleBtnPressed.sapMBtnTransparent > .sapMBtnIcon {
+	color: @sapUiHcStandardForeground;
+}
+
+.sapMBtnDisabled .sapMToggleBtnPressed.sapMBtnInner .sapMBtnIcon,
+.sapMBtnDisabled .sapMToggleBtnPressed.sapMBtnInner.sapMBtnTransparent .sapMBtnIcon,
+html.sap-desktop.sapMToggleBtnPressed.sapMBtnTransparent.sapMBtnDisabled > .sapMBtnIcon{
+	color: @sapUiHcReducedAltForeground;
+}
+
+.sapUiSizeCompact .sapMBar-CTX .sapMBtnDefault.sapMBtnInner.sapMToggleBtnPressed:not(.sapMBtnDisabled) {
+	border-color: @sapUiButtonSelectedBorderColor;
+}

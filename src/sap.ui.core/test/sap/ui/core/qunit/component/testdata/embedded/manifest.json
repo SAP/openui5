@@ -1,0 +1,12 @@
+{
+	"name": "sap.ui.test.embedded.Component",
+	"sap.app": {
+		"id": "sap.ui.test.embedded",
+		"applicationVersion": {
+			"version": "1.0.0"
+		},
+		"embeddedBy": "../../../"
+	},
+	"sap.ui5": {
+	}
+}

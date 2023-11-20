@@ -1,0 +1,72 @@
+{
+  "1.104.0": {
+    "date": "June 2022",
+    "notes": [
+      {
+        "id": "c91e9f6073875190bd79eef672be967be71ac155",
+        "type": "FEATURE",
+        "text": " sap.ui.unified.Calendar: all pickers support two calendar types"
+      },
+      {
+        "id": "290d6602e5e790a0852d392b1432967b34d277ea",
+        "type": "FIX",
+        "text": " sap.ui.core.format.DateFormat: no split weeks for \"en\""
+      },
+      {
+        "id": "88f265ed112369b6750e60ecee1e6a6ddbb15b62",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: adjust selected date announcements",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270015332"
+          }
+        ]
+      },
+      {
+        "id": "8ee9202dd0094b25aab5f89da5540e3ad42a4eff",
+        "type": "FIX",
+        "text": " sap.ui.unified.FileUploader: added messagebundle entry for \"no file chosen\"",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270062388"
+          }
+        ]
+      },
+      {
+        "id": "153096f01957832277f3debb47dceb430ddc6654",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: interval can only be selected in allowed range",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500003507722022"
+          }
+        ]
+      },
+      {
+        "id": "4155cbcb73d671ab2973508938bef83331f15eba",
+        "type": "FIX",
+        "text": " sap.ui.unified.TimesRow: Invalid symbol replaced",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270094593"
+          }
+        ]
+      },
+      {
+        "id": "23f8bcafb19bb88ec17aa7644be885895f008e3f",
+        "type": "FIX",
+        "text": " sap.ui.unified.FileUploader: proper inner element receives focus",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080354200"
+          }
+        ]
+      }
+    ]
+  }
+}

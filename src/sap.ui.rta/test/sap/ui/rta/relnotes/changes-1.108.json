@@ -1,0 +1,23 @@
+{
+  "1.108.0": {
+    "date": "October 2022",
+    "notes": [
+      {
+        "id": "707d2ba9b3cbfb699df4b11df5a4ce378035627d",
+        "type": "FIX",
+        "text": " RTA Toolbar: Disable app variants for home pages"
+      },
+      {
+        "id": "ba17146cce59f31fd266c96b8670f94cdc00f1a3",
+        "type": "FIX",
+        "text": " sap.ui.rta - fix missing lrep serializer for saveAs appVariant",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270123762"
+          }
+        ]
+      }
+    ]
+  }
+}

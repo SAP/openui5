@@ -1,0 +1,17 @@
+<mvc:View
+		controllerName="sap.ui.documentation.sdk.controller.SampleNotFound"
+		xmlns:mvc="sap.ui.core.mvc"
+		xmlns="sap.m">
+
+	<MessagePage
+			id="page"
+			title="{i18n>NOT_FOUND_SAMPLE_TITLE}"
+			text="{i18n>NOT_FOUND_SAMPLE_TEXT}"
+			description="&lt;a target='_self' href='controls' &gt;Samples page&lt;/a&gt;"
+			icon="sap-icon://document"
+			enableFormattedText="true"
+			showNavButton="{device>/system/phone}"
+			navButtonPress="onNavBack">
+	</MessagePage>
+
+</mvc:View>

@@ -1,0 +1,201 @@
+{
+  "1.76.0": {
+    "date": "February 2020",
+    "notes": [
+      {
+        "id": "d865b5e56cb41ba2145f26ccd688563bb8d272b8",
+        "type": "FEATURE",
+        "text": " test recorder: show multiple snippets",
+        "references": []
+      },
+      {
+        "id": "24cf499fd6197e2bb95c63c839d3554760987ace",
+        "type": "FIX",
+        "text": " Opa: handle IDs with special characters in control finder",
+        "references": []
+      },
+      {
+        "id": "3f503ed7089f5389fc4687c607a2e1da9d00abe5",
+        "type": "FIX",
+        "text": " test routing for IE11 and MS edge",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080124283"
+          }
+        ]
+      },
+      {
+        "id": "48c6564d1db5d8d641f0006e17adb2f2374b0a55",
+        "type": "FIX",
+        "text": " Component Models: Don\u0027t create model when dataSource is missing",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "0020751295 0000064446 2020"
+          }
+        ]
+      },
+      {
+        "id": "baf479b88abb40cbed137d8b65a9fdc8523c435a",
+        "type": "FIX",
+        "text": " Drag\u0026Drop: prevent D\u0026D indicator from making the body scroll",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "0020751295 0000009139 2020"
+          }
+        ]
+      },
+      {
+        "id": "b143fe469f29ed6155fd783577ebb7365c5bfd52",
+        "type": "FEATURE",
+        "text": " Opa: introduce drag and drop actions",
+        "references": []
+      },
+      {
+        "id": "4f8ab6976328ab0a8de7d575c3f2121d6dd5b254",
+        "type": "FEATURE",
+        "text": " Opa: property for enter key in EnterText",
+        "references": []
+      },
+      {
+        "id": "dea83f45c851221943866845f4af8ffd959de0cb",
+        "type": "FEATURE",
+        "text": " Support layered ExtensionPoints for Flexibility",
+        "references": []
+      },
+      {
+        "id": "71f0c8605a897ad79125a4a8c7ce0ea0ad607b1d",
+        "type": "FIX",
+        "text": " CommandExecution: Uncaught exception - setProperty of undefined",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070027386"
+          }
+        ]
+      },
+      {
+        "id": "33cbc75355370b3a0377f73efa0b7783714593e5",
+        "type": "FIX",
+        "text": " Controller: Wrong log when apply controller extensions",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980038477"
+          }
+        ]
+      },
+      {
+        "id": "8a9e6965d85631b2efd9f6132b499dd1e4575118",
+        "type": "FIX",
+        "text": " FESR: field length does not match backend length",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "0020242118 0000008405 2020"
+          }
+        ]
+      },
+      {
+        "id": "75ad162380400ced80dcd24ce7b542ed87222a6f",
+        "type": "FIX",
+        "text": " Indication Color Fix",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070006509"
+          }
+        ]
+      },
+      {
+        "id": "8ac9371d3781d35cc8a86f542639cc92bda3c43c",
+        "type": "FIX",
+        "text": " Measurement: end gets logged even it is not in selected category",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980518024"
+          }
+        ]
+      },
+      {
+        "id": "93f9d1b6769bc1dc189ad9196ff63aead50ff92a",
+        "type": "FIX",
+        "text": " XMLView: use correct \u0027resourceBundleAlias\u0027 when loading async",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070025547"
+          }
+        ]
+      },
+      {
+        "id": "a3b7410ef24ba4e55becb2704f01c1e7fa06c78b",
+        "type": "FIX",
+        "text": " core.LocalBusyIndicator: correctly remove the event prevention after rerendering",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080080676"
+          }
+        ]
+      },
+      {
+        "id": "d8c0a018c0c2cddb35ea55e45ff59858f7b0eedd",
+        "type": "FIX",
+        "text": " core.Popup: always use touch mode in mobile safari",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070009967"
+          }
+        ]
+      },
+      {
+        "id": "a148e1ab827fbc4fe3554f15074b3486e5c607cd",
+        "type": "FIX",
+        "text": " ManagedObject(jsdoc): fix the list of built-in types.",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070052060"
+          }
+        ]
+      },
+      {
+        "id": "78e81cbcd82903002392719f8338200d498089cd",
+        "type": "FIX",
+        "text": " core.Popup: actively move focus instead of blur focused element",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880706491"
+          },
+          {
+            "type": "BCP",
+            "reference": "1980242371"
+          }
+        ]
+      },
+      {
+        "id": "3ea0fdaa1e4bb4a39dd2589ca4fde8ea5432870a",
+        "type": "FIX",
+        "text": " routing: Fix failing test in IE",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070042625"
+          }
+        ]
+      },
+      {
+        "id": "50c6ab6dc4884c4cf1da993e95fbac2ee8e047e0",
+        "type": "FEATURE",
+        "text": " core.Icon: 3 new sematic colors (NonInteractive, Tile, Marker)",
+        "references": []
+      }
+    ]
+  }
+}

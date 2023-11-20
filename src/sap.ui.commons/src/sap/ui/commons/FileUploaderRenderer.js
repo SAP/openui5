@@ -3,12 +3,12 @@
  */
 
 // Provides default renderer for control sap.ui.commons.FileUploader
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'sap/ui/unified/FileUploaderRenderer'],
-	function(jQuery, Renderer, FileUploaderRenderer1) {
+sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/unified/FileUploaderRenderer'],
+	function(Renderer, UnifiedFileUploaderRenderer) {
 	"use strict";
 
 
-	var FileUploaderRenderer = Renderer.extend(FileUploaderRenderer1);
+	var FileUploaderRenderer = Renderer.extend(UnifiedFileUploaderRenderer);
 
 	return FileUploaderRenderer;
 

@@ -1,0 +1,16 @@
+/* ================================== */
+/* CSS for control sap.m/TileContent  */
+/* Quartz Dark theme                  */
+/* ================================== */
+
+@_sap_m_TileContent_NewsContentBackgroundColor: fade(@sapBlockLayer_Background, 80);
+@_sap_m_TileContent_NewsFooterTextColor: @_sap_m_NewsContent_SubHeaderTextColor;
+
+.sapMTileCnt.News {
+	background-color: @_sap_m_TileContent_NewsContentBackgroundColor;
+}
+
+.sapMTileCnt.News .sapMTileCntFtrTxt {
+	color: @_sap_m_TileContent_NewsFooterTextColor;
+	text-shadow: 0 0 0.125rem contrast(@_sap_m_NewsContent_SubHeaderTextColor, @sapUiContentShadowColor, @sapUiContentContrastShadowColor, @sapUiContentContrastTextThreshold);
+}

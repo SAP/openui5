@@ -2,14 +2,15 @@
 	xmlns="sap.m"
 	xmlns:core="sap.ui.core">
 	<SelectDialog
+		id="mySelectDialog"
 		noDataText="No Products Found"
 		title="Select Product"
-		search="handleSearch"
-		confirm="handleClose"
-		cancel="handleClose"
+		search=".onSearch"
+		confirm=".onDialogClose"
+		cancel=".onDialogClose"
 		items="{
 			path: '/ProductCollection'
-		}" >
+		}">
 		<StandardListItem
 			title="{Name}"
 			description="{ProductId}"

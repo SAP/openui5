@@ -1,5 +1,6 @@
 <mvc:View
 		xmlns:mvc="sap.ui.core.mvc"
-		xmlns:html="http://www.w3.org/1999/xhtml">
-	<html:div style="height:4em; background-color: #A9EAFF ;"></html:div>
+		xmlns:html="http://www.w3.org/1999/xhtml"
+		controllerName="sap.uxap.sample.SharedBlocks.BlockBlueCtrl">
+	<html:div style="height:4em; background-color: #A9EAFF ;"/>
 </mvc:View>

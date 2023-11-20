@@ -1,0 +1,31 @@
+<mvc:View
+	controllerName="teamCalendar.controller.Main"
+	xmlns="sap.m"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:f="sap.f"
+	xmlns:layout="sap.ui.layout"
+	height="100%">
+	<f:DynamicPage
+		id="dynamicPage"
+		class="sapUiContentPadding"
+		preserveHeaderStateOnScroll="true">
+		<f:title>
+			<f:DynamicPageTitle>
+				<f:heading>
+					<Title
+						text="{calendar>/title}"/>
+				</f:heading>
+				<f:snappedTitleOnMobile>
+					<Title
+						text="{calendar>title}"/>
+				</f:snappedTitleOnMobile>
+			</f:DynamicPageTitle>
+		</f:title>
+		<f:content>
+			<layout:VerticalLayout
+				id="mainContent"
+				width="100%">
+			</layout:VerticalLayout>
+		</f:content>
+	</f:DynamicPage>
+</mvc:View>

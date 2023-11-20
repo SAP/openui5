@@ -1,0 +1,185 @@
+{
+  "1.77.0": {
+    "date": "March 2020",
+    "notes": [
+      {
+        "id": "e56c725eba5f816af0ab62f753b142e6f4e69207",
+        "type": "FIX",
+        "text": " core.EventSimulation: check control id before firing event",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970016344"
+          }
+        ]
+      },
+      {
+        "id": "838f43e8672b79dbf46ef82623e80fba66f47d25",
+        "type": "FEATURE",
+        "text": " ResourceBundle: Locale fallback and supported Locales",
+        "references": []
+      },
+      {
+        "id": "baf3bc54303a98eb3440e6b447a6b143431299bc",
+        "type": "FIX",
+        "text": " ManagedObject: propagate detailedReason to update methods",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970516747"
+          }
+        ]
+      },
+      {
+        "id": "82bd37444fb01be79ee8a57c6975874cde1ed5d8",
+        "type": "FIX",
+        "text": " RenderManager: preserve the DOM for no-longer rendered controls",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070060501"
+          }
+        ]
+      },
+      {
+        "id": "1ea0c99607c3a80290b0c714becb0a4ce187d57b",
+        "type": "FIX",
+        "text": " routing.HashChanger: correct the call order between history and router",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070047882"
+          },
+          {
+            "type": "BCP",
+            "reference": "2070024865"
+          }
+        ]
+      },
+      {
+        "id": "b066517f7ed42c17b2ae2fbb164a634002037d4a",
+        "type": "FEATURE",
+        "text": " Enhance Component factory to handle terminologies",
+        "references": []
+      },
+      {
+        "id": "3c9b5a69ca37cb1cc00d9fbbaac12f8f7952d612",
+        "type": "FEATURE",
+        "text": " Extend ViewCache with terminologies",
+        "references": []
+      },
+      {
+        "id": "115b9ad8c48c0ec4d2365015ea98837d79bc4bc2",
+        "type": "FIX",
+        "text": " Remove Messages on Controls when rebinding",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980347458"
+          }
+        ]
+      },
+      {
+        "id": "20fb66007ea3ccc7e9bab8af06adbfa3cc2c1261",
+        "type": "FIX",
+        "text": " enable text selection only of open popup",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1680187013"
+          }
+        ]
+      },
+      {
+        "id": "09688db62064b293447b224293d4ef86a6c10db7",
+        "type": "FIX",
+        "text": " events.PasteEventFix: use capturing phase to avoid focus change in between",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070103149"
+          }
+        ]
+      },
+      {
+        "id": "f06dabfd9263f67cf1b80d75d398ed1df92a1fe6",
+        "type": "FIX",
+        "text": " sap.ui.core.Popup: disable user selection functionality on EdgeHTML-based Edge",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070106440"
+          }
+        ]
+      },
+      {
+        "id": "efe6cb04bf7e31e78f659e5a80bae82ae9315317",
+        "type": "FIX",
+        "text": " sap.ui.core.message.MessageManager: Detach of validation events corrected",
+        "references": []
+      },
+      {
+        "id": "9b86c9fd068c1947bbc906e45c8db79ac45fd436",
+        "type": "FIX",
+        "text": " Element: Using element data with binding path",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980426003"
+          }
+        ]
+      },
+      {
+        "id": "86f4e091ec7606ed76f7c95796cdb7e75dfcab8f",
+        "type": "FIX",
+        "text": " Reverts \"Element: Using element data with binding path\"",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070123259"
+          }
+        ]
+      },
+      {
+        "id": "43665bb71bb78c75384687e1194a1fc3bd9ab1e4",
+        "type": "FEATURE",
+        "text": " ResourceBundle: Support terminologies and enhanceWith",
+        "references": []
+      },
+      {
+        "id": "12157a8f63597054967c7c36e9c4409d57beaee1",
+        "type": "FEATURE",
+        "text": " core.(Local)BusyIndicator: acc prep for ARIA 1.1",
+        "references": []
+      },
+      {
+        "id": "a1f5ff026566da02133ec021d8a8bae98375ff6b",
+        "type": "FEATURE",
+        "text": " sap.ui.core.cache.CacheManager: Enable support for Firefox and Chrome Browser",
+        "references": []
+      },
+      {
+        "id": "c00ebeff0ae1351206e27b01b2d138e274f2b2c6",
+        "type": "FIX",
+        "text": " caja-html-sanitizer: avoid catastrophic backtracking in lexCss",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500001766652020"
+          }
+        ]
+      },
+      {
+        "id": "66533a6b2c78894c12b790835e90e2a2cdc0e8c8",
+        "type": "FIX",
+        "text": " routing.History: turn off push state when runs in iframe",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400000972652020"
+          }
+        ]
+      }
+    ]
+  }
+}

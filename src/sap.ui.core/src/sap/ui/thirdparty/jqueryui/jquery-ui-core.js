@@ -10,6 +10,25 @@
  */
 (function( $, undefined ) {
 
+// ##### BEGIN: MODIFIED BY SAP
+
+// Resetting lazy getters defined by jquery.sap.stubs to prevent them from loading
+// our implementation of the jQuery plugins. This would be caused by $.extend
+// as it first reads the property which triggers our getter.
+// jQuery UI Core will override them with its own implementation.
+
+// sap/ui/dom/jquery/zIndex
+$.fn.zIndex = undefined;
+
+// sap/ui/dom/jquery/Selection
+$.fn.enableSelection = undefined;
+$.fn.disableSelection = undefined;
+
+// sap/ui/dom/jquery/Selectors
+$.expr.pseudos.focusable = undefined;
+
+// ##### END: MODIFIED BY SAP
+
 var uuid = 0,
 	runiqueId = /^ui-id-\d+$/;
 
@@ -53,7 +72,10 @@ $.fn.extend({
 				this.each(function() {
 					var elem = this;
 					setTimeout(function() {
-						$( elem ).focus();
+						// ##### BEGIN: MODIFIED BY SAP
+						// $( elem ).focus();
+						$( elem ).trigger("focus");
+						// ##### END: MODIFIED BY SAP
 						if ( fn ) {
 							fn.call( elem );
 						}
@@ -155,7 +177,10 @@ function visible( element ) {
 		}).length;
 }
 
-$.extend( $.expr[ ":" ], {
+// ##### BEGIN: MODIFIED BY SAP
+// $.extend( $.expr[ ":" ], {
+$.extend( $.expr.pseudos, {
+// ##### END: MODIFIED BY SAP
 	data: $.expr.createPseudo ?
 		$.expr.createPseudo(function( dataName ) {
 			return function( elem ) {
@@ -257,14 +282,20 @@ $.ui.ie = !!/msie [\w.]+/.exec( navigator.userAgent.toLowerCase() );
 $.support.selectstart = "onselectstart" in document.createElement( "div" );
 $.fn.extend({
 	disableSelection: function() {
-		return this.bind( ( $.support.selectstart ? "selectstart" : "mousedown" ) +
+		// ##### BEGIN: MODIFIED BY SAP
+		// return this.bind( ( $.support.selectstart ? "selectstart" : "mousedown" ) +
+		return this.on( ( $.support.selectstart ? "selectstart" : "mousedown" ) +
+		// ##### END: MODIFIED BY SAP
 			".ui-disableSelection", function( event ) {
 				event.preventDefault();
 			});
 	},
 
 	enableSelection: function() {
-		return this.unbind( ".ui-disableSelection" );
+		// ##### BEGIN: MODIFIED BY SAP
+		// return this.unbind( ".ui-disableSelection" );
+		return this.off( ".ui-disableSelection" );
+		// ##### END: MODIFIED BY SAP
 	}
 });
 

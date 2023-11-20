@@ -1,5 +1,6 @@
 <mvc:View
 	xmlns="sap.ui.table"
+	xmlns:trm="sap.ui.table.rowmodes"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns:u="sap.ui.unified"
 	xmlns:c="sap.ui.core"
@@ -9,9 +10,17 @@
 	<m:Panel>
 		<m:headerToolbar>
 			<m:Toolbar height="3rem">
-				<m:Title text="Unit Formatting"/>
+				<m:Title text="Formatting with bound custom units"/>
 			</m:Toolbar>
 		</m:headerToolbar>
+		<m:content>
+			<m:Label text="{
+				parts:['boundUnits>/value', 'boundUnits>/unit', 'boundUnits>/customUnits'],
+				type: 'sap.ui.core.samples.BoundUnitsType'
+			}"/>
+		</m:content>
+	</m:Panel>
+	<m:Panel>
 		<m:content>
 			<Table rows="{/}">
 				<toolbar>
@@ -102,16 +111,14 @@
 	<m:Panel>
 		<m:content>
 
-			<Table rows="{meters>/data}" visibleRowCount="{meters>/size}" >
+			<Table rows="{meters>/data}" >
+				<rowMode>
+					<trm:Fixed rowCount="{meters>/size}" />
+				</rowMode>
 				<toolbar>
 					<m:Toolbar>
 						<m:content>
 							<m:Title id="meter-title" text="Meters sample Data" />
-							<m:ToolbarSpacer/>
-							<m:Label text="Select a different Locale:" />
-							<m:ComboBox items="{loc>/locales}" selectedKey="{loc>/currentLocale}" selectionChange=".localeChanged">
-								<c:Item key="{loc>key}" text="{loc>key}" />
-							</m:ComboBox>
 						</m:content>
 					</m:Toolbar>
 				</toolbar>
@@ -263,16 +270,14 @@
 	<m:Panel>
 		<m:content>
 
-			<Table rows="{months>/data}" visibleRowCount="{months>/size}" >
+			<Table rows="{months>/data}" >
+				<rowMode>
+					<trm:Fixed rowCount="{months>/size}" />
+				</rowMode>
 				<toolbar>
 					<m:Toolbar>
 						<m:content>
 							<m:Title id="months-title" text="Months sample Data" />
-							<m:ToolbarSpacer/>
-							<m:Label text="Select a different Locale:" />
-							<m:ComboBox items="{loc>/locales}" selectedKey="{loc>/currentLocale}" selectionChange=".localeChanged">
-								<c:Item key="{loc>key}" text="{loc>key}" />
-							</m:ComboBox>
 						</m:content>
 					</m:Toolbar>
 				</toolbar>

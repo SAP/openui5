@@ -436,6 +436,26 @@ var factory = function (signals) {
             return str;
         },
 
+        // ##### BEGIN: MODIFIED BY SAP
+        extrapolate : function(request) {
+            var args = {};
+
+            if (!request){
+                return args;
+            }
+
+            var parObj = this._getParamsObject(request);
+
+            this._paramsIds.forEach(function(id) {
+                if (parObj.hasOwnProperty(id)) {
+                    args[id] = parObj[id];
+                }
+            });
+
+           return args;
+        },
+        // ##### END: MODIFIED BY SAP
+
         dispose : function () {
             this._router.removeRoute(this);
         },
@@ -510,9 +530,17 @@ var factory = function (signals) {
                     //the regex for slash which isn't fully optional based on the given pattern
                     //for example, given patterns foo/:bar: and foobar/:bar:, the slash isn't fully
                     //optional because if the slash is optional, hash "foobar" will also match foo/:bar:
-                    //with parameter bar set to "bar"
+                    //with parameter bar set to "bar".
+                    //
+                    //(?:\\/(?=(?:[^\\/?]+)?)):
+                    //A single slash will be matched because the positive lookahead is optional.
+                    //If there are some symbols after the slash, it must not be a slash '/' or question mark '?'.
+                    //
+                    //(?:\\/?(?=\\?)):
+                    //A single slash is optional, if the slash is followed by questions mark (query param).
+                    //
                     //arsbq stands for "after required slash or before query"
-                    res_arsbq : '(?:(?:\\/(?=(?:[^\\/?]+)?))|^\\/?|\\/?$)'
+                    res_arsbq : '(?:(?:\\/(?=(?:[^\\/?]+)?))|(?:\\/?(?=\\?))|^\\/?|\\/?$)'
                     // ##### END: MODIFIED BY SAP
                 },
                 'RS' : {
@@ -525,14 +553,16 @@ var factory = function (signals) {
                 'RQ' : {
                     //required query string - everything in between `{? }`
                     rgx : /\{\?([^}]+)\}/g,
-                    //everything from `?` till `#` or end of string
-                    res : '\\?([^#]+)'
+                    // ##### BEGIN: MODIFIED BY SAP
+                    //everything from `?` till end of string
+                    res : '\\?(.+)'
                 },
                 'OQ' : {
                     //optional query string - everything in between `:? :`
                     rgx : /:\?([^:]+):/g,
-                    //everything from `?` till `#` or end of string
-                    res : '(?:\\?([^#]*))?'
+                    //everything from `?` till end of string
+                    res : '(?:\\?(.*))?'
+                    // ##### END: MODIFIED BY SAP
                 },
                 'OR' : {
                     //optional rest - everything in between `: *:`
@@ -660,32 +690,40 @@ var factory = function (signals) {
             }
 
             var replaceFn = function(match, prop){
-                    var val;
-                    prop = (prop.substr(0, 1) === '?')? prop.substr(1) : prop;
-                    if (replacements[prop] != null) {
-                        if (typeof replacements[prop] === 'object') {
-                            var queryParts = [];
-                            for(var key in replacements[prop]) {
-                                queryParts.push(encodeURI(key + '=' + replacements[prop][key]));
-                            }
-                            val = '?' + queryParts.join('&');
-                        } else {
-                            // make sure value is a string see #gh-54
-                            val = String(replacements[prop]);
-                        }
+                // ##### BEGIN: MODIFIED BY SAP
+                var val, vParamValue;
 
-                        if (match.indexOf('*') === -1 && val.indexOf('/') !== -1) {
-                            throw new Error('Invalid value "'+ val +'" for segment "'+ match +'".');
+                if (prop.charAt(0) === '?') {
+                    vParamValue = replacements[prop] || replacements[prop.substring(1)];
+                } else {
+                    vParamValue = replacements[prop];
+                }
+
+                if (vParamValue != null) {
+                    if (typeof vParamValue === 'object') {
+                        var queryParts = [];
+                        for (var key in vParamValue) {
+                            queryParts.push(encodeURI(key + '=' + vParamValue[key]));
                         }
+                        val = '?' + queryParts.join('&');
+                    } else {
+                        // make sure value is a string see #gh-54
+                        val = String(vParamValue);
+                        // ##### END: MODIFIED BY SAP
                     }
-                    else if (match.indexOf('{') !== -1) {
-                        throw new Error('The segment '+ match +' is required.');
+
+                    if (match.indexOf('*') === -1 && val.indexOf('/') !== -1) {
+                        throw new Error('Invalid value "'+ val +'" for segment "'+ match +'".');
                     }
-                    else {
-                        val = '';
-                    }
-                    return val;
-                };
+                }
+                else if (match.indexOf('{') !== -1) {
+                    throw new Error('The segment '+ match +' is required.');
+                }
+                else {
+                    val = '';
+                }
+                return val;
+            };
 
             if (! TOKENS.OS.trail) {
                 TOKENS.OS.trail = new RegExp('(?:'+ TOKENS.OS.id +')+$');

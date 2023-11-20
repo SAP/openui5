@@ -3,9 +3,13 @@
  */
 
 // Provides default renderer for control sap.ui.commons.Splitter
-sap.ui.define(['jquery.sap.global'],
-	function(jQuery) {
+sap.ui.define(['sap/ui/core/library'],
+	function(coreLibrary) {
 	"use strict";
+
+
+	// shortcut for sap.ui.core.Orientation
+	var Orientation = coreLibrary.Orientation;
 
 
 	/**
@@ -16,11 +20,10 @@ sap.ui.define(['jquery.sap.global'],
 	/**
 	 * Renders the HTML for the Splitter, using the provided {@link sap.ui.core.RenderManager}.
 	 *
-	 * @param {sap.ui.core.RenderManager} oRenderManager The RenderManager that can be used for writing to the Render-Output-Buffer
+	 * @param {sap.ui.core.RenderManager} rm The RenderManager that can be used for writing to the Render-Output-Buffer
 	 * @param {sap.ui.core.Control} oControl An object representation of the control that should be rendered
 	 */
-	SplitterRenderer.render = function(oRenderManager, oControl) {
-		var rm = oRenderManager;
+	SplitterRenderer.render = function(rm, oControl) {
 		var orientation = oControl.getSplitterOrientation();
 		var position = oControl.getSplitterPosition();
 		var dimensionSecPane;
@@ -56,10 +59,10 @@ sap.ui.define(['jquery.sap.global'],
 		} else {
 			rm.addStyle("overflow", "hidden");
 		}
-		if (orientation == sap.ui.core.Orientation.Vertical) {
+		if (orientation == Orientation.Vertical) {
 			rm.addClass("sapUiVSplitterFirstPane");
 			rm.addStyle("width", position + "%");
-		} else if (orientation == sap.ui.core.Orientation.Horizontal) {
+		} else if (orientation == Orientation.Horizontal) {
 			rm.addClass("sapUiHSplitterFirstPane");
 			rm.addStyle("height", position + "%");
 		}
@@ -78,14 +81,14 @@ sap.ui.define(['jquery.sap.global'],
 
 		/*rendering the splitter bar*/
 		rm.write("<div  id=\"" + oControl.getId() + "_SB\" tabIndex=\"0\" role=\"separator\" title=\"" + oControl.getText("SPLITTER_MOVE") + "\"");
-		if (orientation == sap.ui.core.Orientation.Vertical) {
+		if (orientation == Orientation.Vertical) {
 			if (oControl.getSplitterBarVisible()) {
 				rm.addClass("sapUiVerticalSplitterBar");
 			} else {
 				rm.addClass("sapUiVerticalSplitterBarHidden");
 			}
 			rm.addStyle("width", 0 + "%");
-		} else if (orientation == sap.ui.core.Orientation.Horizontal) {
+		} else if (orientation == Orientation.Horizontal) {
 			if (oControl.getSplitterBarVisible()) {
 				rm.addClass("sapUiHorizontalSplitterBar");
 			} else {
@@ -105,10 +108,10 @@ sap.ui.define(['jquery.sap.global'],
 		} else {
 			rm.addStyle("overflow", "hidden");
 		}
-		if (orientation == sap.ui.core.Orientation.Vertical) {
+		if (orientation == Orientation.Vertical) {
 			rm.addClass("sapUiVSplitterSecondPane");
 			rm.addStyle("width", dimensionSecPane + '%');
-		} else if (orientation == sap.ui.core.Orientation.Horizontal) {
+		} else if (orientation == Orientation.Horizontal) {
 			rm.addClass("sapUiHSplitterSecondPane");
 			rm.addStyle("height", dimensionSecPane + '%');
 		}

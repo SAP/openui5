@@ -1,0 +1,122 @@
+<mvc:View xmlns:mvc="sap.ui.core.mvc"
+		   xmlns="sap.uxap"
+		   xmlns:layout="sap.ui.layout"
+		   xmlns:m="sap.m"
+		   xmlns:goals="sap.uxap.sample.SharedBlocks.goals"
+		   height="100%">
+	<ObjectPageLayout id="ObjectPageLayout"
+					  enableLazyLoading="false"
+					  showTitleInHeaderContent="true"
+					  showEditHeaderButton="true"
+					  editHeaderButtonPress="handleEditBtnPress"
+					  upperCaseAnchorBar="false">
+		<landmarkInfo>
+			<ObjectPageAccessibleLandmarkInfo
+					rootRole="Region"
+					rootLabel="Order Information"
+					contentRole="Main"
+					contentLabel="Order Details"
+					headerRole="Region"
+					headerLabel="Order Header"
+					footerRole="Region"
+					footerLabel="Order Footer"
+					navigationRole="Navigation"
+					navigationLabel="Order navigation"/>
+		</landmarkInfo>
+		<headerTitle>
+			<ObjectPageHeader objectImageURI="./test-resources/sap/uxap/images/imageID_275314.png"
+							  objectTitle="Denise Smith"
+							  objectImageShape="Circle"
+							  objectImageAlt="Denise Smith"
+							  objectSubtitle="Senior UI Developer"
+							  isObjectTitleAlwaysVisible="false"
+							  isObjectSubtitleAlwaysVisible="false">
+				<actions>
+					<ObjectPageHeaderActionButton icon="sap-icon://pull-down" text="show section" type="Emphasized"/>
+					<ObjectPageHeaderActionButton icon="sap-icon://show" text="show state" type="Emphasized"/>
+					<ObjectPageHeaderActionButton text="Toggle Footer" hideIcon="true" hideText="false" type="Emphasized" press="toggleFooter"/>
+				</actions>
+				<breadcrumbs>
+					<m:Breadcrumbs id="breadcrumbsId" currentLocationText="Object Page Example" >
+						<m:Link text="Page 1 a very long link" press="handleLink1Press"/>
+						<m:Link text="Page 2 long link" press="handleLink2Press"/>
+					</m:Breadcrumbs>
+				</breadcrumbs>
+			</ObjectPageHeader>
+		</headerTitle>
+
+		<headerContent>
+			<layout:VerticalLayout>
+				<m:Link text="+33 6 4512 5158"/>
+				<m:Link text="DeniseSmith@sap.com"/>
+			</layout:VerticalLayout>
+
+			<layout:HorizontalLayout>
+				<m:Image src="./test-resources/sap/uxap/images/linkedin.png"/>
+				<m:Image src="./test-resources/sap/uxap/images/Twitter.png"/>
+			</layout:HorizontalLayout>
+
+			<layout:VerticalLayout>
+				<m:Label text="Hello! I am Tim and I use UxAP"/>
+				<m:VBox height="63px">
+					<m:Label text="Achieved goals"/>
+					<m:ProgressIndicator
+							percentValue="30"
+							displayValue="30%"
+							showValue="true"
+							state="None"/>
+				</m:VBox>
+			</layout:VerticalLayout>
+
+			<layout:VerticalLayout>
+				<m:Label text="San Jose, USA"/>
+			</layout:VerticalLayout>
+		</headerContent>
+
+		<sections>
+			<ObjectPageSection titleUppercase="false" title="Typed View">
+				<subSections>
+					<ObjectPageSubSection titleUppercase="false">
+						<blocks>
+							<goals:GoalsBlockJS id="goalsblock2"/>
+						</blocks>
+					</ObjectPageSubSection>
+				</subSections>
+			</ObjectPageSection>
+			<ObjectPageSection titleUppercase="false" title="JSON View">
+				<subSections>
+					<ObjectPageSubSection titleUppercase="false">
+						<blocks>
+							<goals:GoalsBlockJSON id="goalsblock3"/>
+						</blocks>
+					</ObjectPageSubSection>
+				</subSections>
+			</ObjectPageSection>
+			<ObjectPageSection titleUppercase="false" title="HTML View">
+				<subSections>
+					<ObjectPageSubSection titleUppercase="false">
+						<blocks>
+							<goals:GoalsBlockHTML id="goalsblock4"/>
+						</blocks>
+					</ObjectPageSubSection>
+				</subSections>
+			</ObjectPageSection>
+			<ObjectPageSection titleUppercase="false" title="XML View">
+				<subSections>
+					<ObjectPageSubSection titleUppercase="false">
+						<blocks>
+							<goals:GoalsBlock id="goalsblock1"/>
+						</blocks>
+					</ObjectPageSubSection>
+				</subSections>
+			</ObjectPageSection>
+		</sections>
+		<footer>
+			<m:OverflowToolbar>
+				<m:ToolbarSpacer />
+				<m:Button type="Accept" text="Accept"/>
+				<m:Button type="Reject" text="Reject"/>
+			</m:OverflowToolbar>
+		</footer>
+	</ObjectPageLayout>
+</mvc:View>

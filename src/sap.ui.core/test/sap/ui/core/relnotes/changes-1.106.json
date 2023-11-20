@@ -1,0 +1,295 @@
+{
+  "1.106.0": {
+    "date": "August 2022",
+    "notes": [
+      {
+        "id": "cd520fc77edc65e638f7a7e57eae2a7ffd2e3cfb",
+        "type": "FIX",
+        "text": " sap/ui/core/util/Mockserver: improve number handling",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280151906"
+          }
+        ]
+      },
+      {
+        "id": "909119d289ce258da7517d841f5907f99055476e",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v4.Context#doSetProperty: report error although context is destroyed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280150835"
+          }
+        ]
+      },
+      {
+        "id": "93717c82e707744977f169235f027bd2f84e5103",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.ODataTreeBindingFlat#_calcIndexDelta: fix index delta calculation to always return the correct binding length",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400005773722022"
+          }
+        ]
+      },
+      {
+        "id": "2987b55203bd1ecd62b4368045b48118113c287e",
+        "type": "FIX",
+        "text": " sap.ui.core.ScrollEnablement: Scroll-end callback issue corrected",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500004009642022"
+          }
+        ]
+      },
+      {
+        "id": "f4ecdcabad79e7833855b349c9e9b82c920c1a82",
+        "type": "FIX",
+        "text": " core.Popup: correctly align Blocklayer with within area in RTL mode",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280154052"
+          }
+        ]
+      },
+      {
+        "id": "d9e57866a4e7ba106f67e2792c61e9da0048e0c6",
+        "type": "FIX",
+        "text": " sap.ui.core.Configuration: Disable timezone configuration"
+      },
+      {
+        "id": "7bdfd083879632b47c3cdc486c471f9b724d0311",
+        "type": "FIX",
+        "text": " sap/ui/base/ManagedObject: Clone Object Bindings",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270069150"
+          }
+        ]
+      },
+      {
+        "id": "f4ad1b8e28261195173f37bf194719f4584cd4ba",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v4.ODataModel: document more parameters for TypeScript",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280143893"
+          }
+        ]
+      },
+      {
+        "id": "2eeaf175f4f4bc94b0dc743dc525e7d840194b08",
+        "type": "FIX",
+        "text": " sap.ui.core: address SDK feedback in samples and API reference"
+      },
+      {
+        "id": "8428c2d31298693acc1bc3de72fff7dfd8eabcb1",
+        "type": "FIX",
+        "text": " RenderManager: Keep track of focused element before preserving DOM",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970240933"
+          }
+        ]
+      },
+      {
+        "id": "54043fc7e83eb8446e5a809081ee338831d8d0b9",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v4.ODataListBinding#filter: allow removal for FilterType.Control",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280148151"
+          }
+        ]
+      },
+      {
+        "id": "ec07a6d87ec4717849bb82989b25a8c682195ebc",
+        "type": "FIX",
+        "text": " MockServer: fix the OData system query selection",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280133414"
+          }
+        ]
+      },
+      {
+        "id": "5c24494c5ca88a77904cd8d921937ad530a21475",
+        "type": "FIX",
+        "text": " sap.ui.core: adapt return types to textual description"
+      },
+      {
+        "id": "343a38ecf1ff98ea4afa60500b3f15b580b05915",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v2.ODataListBinding: Handling of createActivate-event after rebinding",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280135558"
+          }
+        ]
+      },
+      {
+        "id": "d6440a45ec836d14f3264d518a31f073c849521b",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v4.Context#hasPendingChanges: fix for changes w/o property binding"
+      },
+      {
+        "id": "29f33fc73bd2ea1df1f79e24a78013e9197e14d0",
+        "type": "FIX",
+        "text": " Enable Controller extensions for legacy application"
+      },
+      {
+        "id": "f04936f1224c5dab58bb3ab0bafc513f19112d8e",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v4.ODataListBinding#doReplaceWith: ...",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180347338"
+          },
+          {
+            "type": "BCP",
+            "reference": "2280113990"
+          },
+          {
+            "type": "BCP",
+            "reference": "2280127015"
+          },
+          {
+            "type": "BCP",
+            "reference": "2280134548"
+          }
+        ]
+      },
+      {
+        "id": "78e6c31c36068a62de7df591b8d2c10d925445c7",
+        "type": "FIX",
+        "text": " sap.ui.core: adapt return types to textual description"
+      },
+      {
+        "id": "dd0ec0809bc0766b016268468175760b3b881752",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v4.lib._Cache#drillDown: Avoid endless loop...",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280141880"
+          }
+        ]
+      },
+      {
+        "id": "1233137302e3c3684e67611c659c3611d8cbd65a",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v4.ODataListBinding#doReplaceWith: take care of created contexts",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180347338"
+          },
+          {
+            "type": "BCP",
+            "reference": "2280113990"
+          },
+          {
+            "type": "BCP",
+            "reference": "2280127015"
+          },
+          {
+            "type": "BCP",
+            "reference": "2280134548"
+          }
+        ]
+      },
+      {
+        "id": "9e35baa6bd256cbecce221096e4f08155c9a45b7",
+        "type": "FIX",
+        "text": " Table: Change vertical alignment of icons inside a cell to avoid cutting off",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400004445502022"
+          }
+        ]
+      },
+      {
+        "id": "049c02f081d82b64c97fe70be47663eff4f9aabd",
+        "type": "FIX",
+        "text": " DateFormat: Apply timezone offset correctly in case of out-of-normal-range seconds",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500004773012022"
+          }
+        ]
+      },
+      {
+        "id": "ac8851b665d87820c97d0f2c9331314d5bf77d7b",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v4.lib._CollectionCache#refreshKeptElements: check for late properties..."
+      },
+      {
+        "id": "4ebdb057792d3108e2300dd4709f2b790051b9be",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v2.ODataModel#setProperty: reverting a time property does not fail",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500002233972022"
+          }
+        ]
+      },
+      {
+        "id": "48feffd67c6439c3ab54a0e25340307663bc9ace",
+        "type": "FIX",
+        "text": " sap.ui.model.Binding#destroy: revert fix to ensure that binding is removed from the model's active bindings list",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280121518"
+          }
+        ]
+      },
+      {
+        "id": "cd2c47ffc18063519fd0aabf3748ce8c88542f9d",
+        "type": "FIX",
+        "text": " sap.ui.performance: End pending Interactions"
+      },
+      {
+        "id": "48cb6db5f175849acc072abc036e2d5d75a1c06b",
+        "type": "FIX",
+        "text": " sap.ui.core.demokit.sample.TypeFloat: usage of preserveDecimals"
+      },
+      {
+        "id": "1e701e10eb0ac957e6659a89ec489ccdd36e70fb",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v2.ODataModel: process transition message only once",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280114574"
+          }
+        ]
+      },
+      {
+        "id": "a51bf68240731fc07c8b6076c0cdcfe38563f326",
+        "type": "FEATURE",
+        "text": " sap.ui.core.format.DateFormat: formatOptions for week calculation"
+      },
+      {
+        "id": "22e2d1bce1653d5814a3837a1c81fc8751b5ba73",
+        "type": "FEATURE",
+        "text": " TestRecorder: Add wdi5 dialect"
+      }
+    ]
+  }
+}

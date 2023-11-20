@@ -5,7 +5,7 @@
 		xmlns:mvc="sap.ui.core.mvc"
 		xmlns:core="sap.ui.core"
 		xmlns:layout="sap.ui.layout"
-		xmlns:controls="sap.ui.documentation.sdk.controls">
+		xmlns:controls="sap.ui.documentation">
 
 	<m:Page
 			id="controlsDetailPage"

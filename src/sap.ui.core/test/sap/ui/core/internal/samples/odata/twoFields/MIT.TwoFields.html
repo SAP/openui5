@@ -1,0 +1,468 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<style type="text/css">
+			body {font-family: Arial, "Helvetica Neue", Helvetica, sans-serif;}
+		</style>
+		<title>Manual Integration Test: Currency and unit amount in two fields</title>
+	</head>
+	<body>
+		<h1>Manual Integration Test: Currency and unit amount in two fields</h1>
+		<h2>DESCRIPTION</h2>
+		Test for showing and entering unit or currency amounts in two fields based on the
+		sap.ui.model.odata.type.Unit or sap.ui.model.odata.type.Currency.
+		<h2>PREPARATION</h2>
+		To check console errors, open the developer tools before starting the application and check
+		with each step that there are no errors and warnings.
+
+		You can start the <i>Two Fields for Unit and Currency</i> application with the following URL
+		(adjust host and port if necessary)
+		<a href="http://localhost:8080/test-resources/sap/ui/core/internal/samples/odata/twoFields/index.html?sap-ui-language=EN">
+			http://localhost:8080/test-resources/sap/ui/core/internal/samples/odata/twoFields/index.html?sap-ui-language=EN</a>.
+		Note: Each test has a specific initial state corresponding to parameters for the application
+		URL; you find the corresponding application URL with the respective test.
+
+		<h2>REALIZE and CHECK</h2>
+		<h3>1) Entry of amount (step 1) and currency (step 2) in previously empty input fields
+			(success case)</h3>
+		Start
+		<a href="http://localhost:8080/test-resources/sap/ui/core/internal/samples/odata/twoFields/index.html?unit=&sap-ui-language=EN">
+			http://localhost:8080/test-resources/sap/ui/core/internal/samples/odata/twoFields/index.html?unit=&sap-ui-language=EN</a>.
+		<ul>
+			<li><b>Check:</b> Value field is empty.</li>
+			<li><b>Check:</b> Value field has no error.</li>
+			<li><b>Check:</b> Unit field is empty.</li>
+			<li><b>Check:</b> Unit field has no error.</li>
+			<li><b>Check:</b> Model contents is "value=null, unit=null".</li>
+		</ul>
+		Enter value "100" and press return.
+		<ul>
+			<li><b>Check:</b> Value field shows "100".</li>
+			<li><b>Check:</b> Value field has no error.</li>
+			<li><b>Check:</b> Unit field is empty.</li>
+			<li><b>Check:</b> Unit field has no error.</li>
+			<li><b>Check:</b> Model contents is "value=100, unit=null".</li>
+		</ul>
+		Enter unit "DEG" and press return.
+		<ul>
+			<li><b>Check:</b> Value field shows "100.0".</li>
+			<li><b>Check:</b> Value field has no error.</li>
+			<li><b>Check:</b> Unit field shows "DEG".</li>
+			<li><b>Check:</b> Unit field has no error.</li>
+			<li><b>Check:</b> Model contents is "value=100, unit=DEG".</li>
+		</ul>
+
+		Start
+		<a href="http://localhost:8080/test-resources/sap/ui/core/internal/samples/odata/twoFields/index.html?currency=&sap-ui-language=EN">
+			http://localhost:8080/test-resources/sap/ui/core/internal/samples/odata/twoFields/index.html?currency=&sap-ui-language=EN</a>.
+		<ul>
+			<li><b>Check:</b> Value field is empty.</li>
+			<li><b>Check:</b> Value field has no error.</li>
+			<li><b>Check:</b> Currency field is empty.</li>
+			<li><b>Check:</b> Currency field has no error.</li>
+			<li><b>Check:</b> Model contents is "value=null, unit=null".</li>
+		</ul>
+		Enter value "100" and press return.
+		<ul>
+			<li><b>Check:</b> Value field shows "100.00".</li>
+			<li><b>Check:</b> Value field has no error.</li>
+			<li><b>Check:</b> Currency field is empty.</li>
+			<li><b>Check:</b> Currency field has no error.</li>
+			<li><b>Check:</b> Model contents is "value=100, unit=null".</li>
+		</ul>
+		Enter currency "JPY" and press return.
+		<ul>
+			<li><b>Check:</b> Value field shows "100".</li>
+			<li><b>Check:</b> Value field has no error.</li>
+			<li><b>Check:</b> Currency field shows "JPY".</li>
+			<li><b>Check:</b> Currency field has no error.</li>
+			<li><b>Check:</b> Model contents is "value=100, unit=JPY".</li>
+		</ul>
+		Enter currency "USDN" and press return.
+		<ul>
+			<li><b>Check:</b> Value field shows "100.00000".</li>
+			<li><b>Check:</b> Value field has no error.</li>
+			<li><b>Check:</b> Currency field shows "USDN".</li>
+			<li><b>Check:</b> Currency field has no error.</li>
+			<li><b>Check:</b> Model contents is "value=100, unit=USDN".</li>
+		</ul>
+
+		<h3>2) Entry of amount (step 1) and currency (step 2) in previously empty input fields
+			(error case)</h3>
+		Start
+		<a href="http://localhost:8080/test-resources/sap/ui/core/internal/samples/odata/twoFields/index.html?currency=&sap-ui-language=EN">
+			http://localhost:8080/test-resources/sap/ui/core/internal/samples/odata/twoFields/index.html?currency=&sap-ui-language=EN</a>.
+		<ul>
+			<li><b>Check:</b> Value field is empty.</li>
+			<li><b>Check:</b> Value field has no error.</li>
+			<li><b>Check:</b> Currency field is empty.</li>
+			<li><b>Check:</b> Currency field has no error.</li>
+			<li><b>Check:</b> Model contents is "value=null, unit=null".</li>
+		</ul>
+		Enter value "100.1" and press return.
+		<ul>
+			<li><b>Check:</b> Value field shows "100.10".</li>
+			<li><b>Check:</b> Value field has no error.</li>
+			<li><b>Check:</b> Currency field is empty.</li>
+			<li><b>Check:</b> Currency field has no error.</li>
+			<li><b>Check:</b> Model contents is "value=100.1, unit=null".</li>
+		</ul>
+		Enter currency "JPY" and press return.
+		<ul>
+			<li><b>Check:</b> Value field shows "100.1".</li>
+			<li><b>Check:</b> Value field shows error "Enter a number without decimals.".</li>
+			<li><b>Check:</b> Currency field shows "JPY".</li>
+			<li><b>Check:</b> Currency field shows error
+				"Enter a currency allowing at least 1 decimals".
+			</li>
+			<li><b>Check:</b> Model contents is "value=100.1, unit=null".</li>
+		</ul>
+
+		<h3>3) Currency is already available, the user enters an invalid amount.</h3>
+		Start
+		<a href="http://localhost:8080/test-resources/sap/ui/core/internal/samples/odata/twoFields/index.html?currency=JPY&sap-ui-language=EN">
+			http://localhost:8080/test-resources/sap/ui/core/internal/samples/odata/twoFields/index.html?currency=JPY&sap-ui-language=EN</a>.
+		<ul>
+			<li><b>Check:</b> Value field is empty.</li>
+			<li><b>Check:</b> Value field has no error.</li>
+			<li><b>Check:</b> Currency field shows "JPY".</li>
+			<li><b>Check:</b> Currency field has no error.</li>
+			<li><b>Check:</b> Model contents is "value=null, unit=JPY".</li>
+		</ul>
+		Enter value "100.1" and press return.
+		<ul>
+			<li><b>Check:</b> Value field shows "100.1".</li>
+			<li><b>Check:</b> Value field shows error "Enter a number without decimals.".</li>
+			<li><b>Check:</b> Currency field shows "JPY".</li>
+			<li><b>Check:</b> Currency field shows error
+				"Enter a currency allowing at least 1 decimals".
+			</li>
+			<li><b>Check:</b> Model contents is "value=null, unit=JPY".</li>
+		</ul>
+
+		<h3>4) Currency is already available, the user enters a valid amount.</h3>
+		Start
+		<a href="http://localhost:8080/test-resources/sap/ui/core/internal/samples/odata/twoFields/index.html?currency=JPY&sap-ui-language=EN">
+			http://localhost:8080/test-resources/sap/ui/core/internal/samples/odata/twoFields/index.html?currency=JPY&sap-ui-language=EN</a>.
+		<ul>
+			<li><b>Check:</b> Value field is empty.</li>
+			<li><b>Check:</b> Value field has no error.</li>
+			<li><b>Check:</b> Currency field shows "JPY".</li>
+			<li><b>Check:</b> Currency field has no error.</li>
+			<li><b>Check:</b> Model contents is "value=null, unit=JPY".</li>
+		</ul>
+		Enter value "100" and press return.
+		<ul>
+			<li><b>Check:</b> Value field shows "100".</li>
+			<li><b>Check:</b> Value field has no error.".</li>
+			<li><b>Check:</b> Currency field shows "JPY".</li>
+			<li><b>Check:</b> Currency field has no error.</li>
+			<li><b>Check:</b> Model contents is "value=100, unit=JPY".</li>
+		</ul>
+
+		<h3>5) Currency is available, the field is not editable or enabled. The user enters an
+			invalid amount.</h3>
+		For testing with a not editable field, start
+		<a href="http://localhost:8080/test-resources/sap/ui/core/internal/samples/odata/twoFields/index.html?currency=JPY~readonly&sap-ui-language=EN">
+			http://localhost:8080/test-resources/sap/ui/core/internal/samples/odata/twoFields/index.html?currency=JPY~readonly&sap-ui-language=EN</a>.
+		<ul>
+			<li><b>Check:</b> Value field is empty.</li>
+			<li><b>Check:</b> Value field has no error.</li>
+			<li><b>Check:</b> Currency field shows "JPY".</li>
+			<li><b>Check:</b> Currency field has no error.</li>
+			<li><b>Check:</b> Model contents is "value=null, unit=JPY".</li>
+		</ul>
+		Enter value "100.1" and press return.
+		<ul>
+			<li><b>Check:</b> Value field shows "100.1".</li>
+			<li><b>Check:</b> Value field shows error "Enter a number without decimals.".</li>
+			<li><b>Check:</b> Currency field shows "JPY".</li>
+			<li><b>Check:</b> Currency field has no error.</li>
+			<li><b>Check:</b> Model contents is "value=null, unit=JPY".</li>
+		</ul>
+
+		Repeat this test with a disabled field, start
+		<a href="http://localhost:8080/test-resources/sap/ui/core/internal/samples/odata/twoFields/index.html?currency=JPY~disabled&sap-ui-language=EN">
+			http://localhost:8080/test-resources/sap/ui/core/internal/samples/odata/twoFields/index.html?currency=JPY~disabled&sap-ui-language=EN</a>.
+
+		<h3>6) Amount is in a not editable or enabled field, currency is changed so that the
+			amount has too many decimal places.</h3>
+		For testing with a not editable field, start
+		<a href="http://localhost:8080/test-resources/sap/ui/core/internal/samples/odata/twoFields/index.html?currency=EUR&value=100.1~readonly&sap-ui-language=EN">
+			http://localhost:8080/test-resources/sap/ui/core/internal/samples/odata/twoFields/index.html?currency=EUR&value=100.1~readonly&sap-ui-language=EN</a>.
+		<ul>
+			<li><b>Check:</b> Value field shows "100.10".</li>
+			<li><b>Check:</b> Value field has no error.</li>
+			<li><b>Check:</b> Currency field shows "EUR".</li>
+			<li><b>Check:</b> Currency field has no error.</li>
+			<li><b>Check:</b> Model contents is "value=100.1, unit=EUR".</li>
+		</ul>
+		Enter currency "JPY" and press return.
+		<ul>
+			<li><b>Check:</b> Value field shows "100.1".</li>
+			<li><b>Check:</b> Value field has no error.</li>
+			<li><b>Check:</b> Currency field shows "JPY".</li>
+			<li><b>Check:</b> Currency field shows error
+				"Enter a currency allowing at least 1 decimals".
+			</li>
+			<li><b>Check:</b> Model contents is "value=100.1, unit=EUR".</li>
+		</ul>
+
+		Repeat this test with a disabled field, start
+		<a href="http://localhost:8080/test-resources/sap/ui/core/internal/samples/odata/twoFields/index.html?currency=EUR&value=100.1~disabled&sap-ui-language=EN">
+			http://localhost:8080/test-resources/sap/ui/core/internal/samples/odata/twoFields/index.html?currency=EUR&value=100.1~disabled&sap-ui-language=EN</a>.
+
+		<h3>7) Entry of amount (step 1) and new currency (step 2) with previously available currency
+			(success case)</h3>
+		Start
+		<a href="http://localhost:8080/test-resources/sap/ui/core/internal/samples/odata/twoFields/index.html?currency=EUR&sap-ui-language=EN">
+			http://localhost:8080/test-resources/sap/ui/core/internal/samples/odata/twoFields/index.html?currency=EUR&sap-ui-language=EN</a>.
+		<ul>
+			<li><b>Check:</b> Value field is empty.</li>
+			<li><b>Check:</b> Value field has no error.</li>
+			<li><b>Check:</b> Currency field shows "EUR".</li>
+			<li><b>Check:</b> Currency field has no error.</li>
+			<li><b>Check:</b> Model contents is "value=null, unit=EUR".</li>
+		</ul>
+		Enter value "100" and press return.
+		<ul>
+			<li><b>Check:</b> Value field shows "100.00".</li>
+			<li><b>Check:</b> Value field has no error.</li>
+			<li><b>Check:</b> Currency field shows "EUR".</li>
+			<li><b>Check:</b> Currency field has no error.</li>
+			<li><b>Check:</b> Model contents is "value=100, unit=EUR".</li>
+		</ul>
+		Enter currency "JPY" and press return.
+		<ul>
+			<li><b>Check:</b> Value field shows "100".</li>
+			<li><b>Check:</b> Value field has no error.</li>
+			<li><b>Check:</b> Currency field shows "JPY".</li>
+			<li><b>Check:</b> Currency field has no error.</li>
+			<li><b>Check:</b> Model contents is "value=100, unit=JPY".</li>
+		</ul>
+
+		<h3>8) Entry of amount (step 1) and new currency (step 2) with previously available currency
+			(error case)</h3>
+		Start
+		<a href="http://localhost:8080/test-resources/sap/ui/core/internal/samples/odata/twoFields/index.html?currency=EUR&sap-ui-language=EN">
+			http://localhost:8080/test-resources/sap/ui/core/internal/samples/odata/twoFields/index.html?currency=EUR&sap-ui-language=EN</a>.
+		<ul>
+			<li><b>Check:</b> Value field is empty.</li>
+			<li><b>Check:</b> Value field has no error.</li>
+			<li><b>Check:</b> Currency field shows "EUR".</li>
+			<li><b>Check:</b> Currency field has no error.</li>
+			<li><b>Check:</b> Model contents is "value=null, unit=EUR".</li>
+		</ul>
+		Enter value "100.1" and press return.
+		<ul>
+			<li><b>Check:</b> Value field shows "100.10".</li>
+			<li><b>Check:</b> Value field has no error.</li>
+			<li><b>Check:</b> Currency field shows "EUR".</li>
+			<li><b>Check:</b> Currency field has no error.</li>
+			<li><b>Check:</b> Model contents is "value=100.1, unit=EUR".</li>
+		</ul>
+		Enter currency "JPY" and press return.
+		<ul>
+			<li><b>Check:</b> Value field shows "100.1".</li>
+			<li><b>Check:</b> Value field shows error "Enter a number without decimals.".</li>
+			<li><b>Check:</b> Currency field shows "JPY".</li>
+			<li><b>Check:</b> Currency field shows error
+				"Enter a currency allowing at least 1 decimals".
+			</li>
+			<li><b>Check:</b> Model contents is "value=100.1, unit=EUR".</li>
+		</ul>
+
+		<h3>9) The backend sends an invalid quantity: No error is shown</h3>
+		Start
+		<a href="http://localhost:8080/test-resources/sap/ui/core/internal/samples/odata/twoFields/index.html?unit=KG&value=1.54&sap-ui-language=EN">
+			http://localhost:8080/test-resources/sap/ui/core/internal/samples/odata/twoFields/index.html?unit=KG&value=1.54&sap-ui-language=EN</a>.
+		<ul>
+			<li><b>Check:</b> Value field shows "1.54".</li>
+			<li><b>Check:</b> Value field has no error.</li>
+			<li><b>Check:</b> Unit field shows "KG".</li>
+			<li><b>Check:</b> Unit field has no error.</li>
+			<li><b>Check:</b> Model contents is "value=1.54, unit=KG".</li>
+		</ul>
+
+		<h3>10) Entry of an invalid unit</h3>
+		Start
+		<a href="http://localhost:8080/test-resources/sap/ui/core/internal/samples/odata/twoFields/index.html?currency=EUR&value=1.23&sap-ui-language=EN">
+			http://localhost:8080/test-resources/sap/ui/core/internal/samples/odata/twoFields/index.html?currency=EUR&value=1.23&sap-ui-language=EN</a>.
+		<ul>
+			<li><b>Check:</b> Value field shows "1.23".</li>
+			<li><b>Check:</b> Value field has no error.</li>
+			<li><b>Check:</b> Currency field shows "EUR".</li>
+			<li><b>Check:</b> Currency field has no error.</li>
+			<li><b>Check:</b> Model contents is "value=1.23, unit=EUR".</li>
+		</ul>
+		Enter currency "WRONG" and press return.
+		<ul>
+			<li><b>Check:</b> Value field shows "1.23".</li>
+			<li><b>Check:</b> Value field has no error.</li>
+			<li><b>Check:</b> Currency field shows "WRONG".</li>
+			<li><b>Check:</b> Currency field shows error "Enter a valid currency".</li>
+			<li><b>Check:</b> Model contents is "value=1.23, unit=EUR".</li>
+		</ul>
+
+		<h3>11) Invalid currency amount can be fixed by changing to a valid matching currency</h3>
+		Start
+		<a href="http://localhost:8080/test-resources/sap/ui/core/internal/samples/odata/twoFields/index.html?currency=JPY&value=1&sap-ui-language=EN">
+			http://localhost:8080/test-resources/sap/ui/core/internal/samples/odata/twoFields/index.html?currency=JPY&value=1&sap-ui-language=EN</a>.
+		<ul>
+			<li><b>Check:</b> Value field shows "1".</li>
+			<li><b>Check:</b> Value field has no error.</li>
+			<li><b>Check:</b> Currency field shows "JPY".</li>
+			<li><b>Check:</b> Currency field has no error.</li>
+			<li><b>Check:</b> Model contents is "value=1, unit=JPY".</li>
+		</ul>
+		Enter value "2.34" and press return.
+		<ul>
+			<li><b>Check:</b> Value field shows "2.34".</li>
+			<li><b>Check:</b> Value field shows error "Enter a number without decimals.".</li>
+			<li><b>Check:</b> Currency field shows "JPY".</li>
+			<li><b>Check:</b> Currency field shows error
+				"Enter a currency allowing at least 2 decimals".
+			</li>
+			<li><b>Check:</b> Model contents is "value=1, unit=JPY".</li>
+		</ul>
+		Enter currency "EUR" and press return.
+		<ul>
+			<li><b>Check:</b> Value field shows "2.34".</li>
+			<li><b>Check:</b> Value field has no error.</li>
+			<li><b>Check:</b> Currency field shows "EUR".</li>
+			<li><b>Check:</b> Currency field has no error.</li>
+			<li><b>Check:</b> Model contents is "value=2.34, unit=EUR".</li>
+		</ul>
+
+		<h3>12) Invalid value at one part only shown at that part</h3>
+		Start
+		<a href="http://localhost:8080/test-resources/sap/ui/core/internal/samples/odata/twoFields/index.html?currency=EUR&sap-ui-language=EN">
+			http://localhost:8080/test-resources/sap/ui/core/internal/samples/odata/twoFields/index.html?currency=EUR&sap-ui-language=EN</a>.
+		<ul>
+			<li><b>Check:</b> Value field is empty.</li>
+			<li><b>Check:</b> Value field has no error.</li>
+			<li><b>Check:</b> Currency field shows "EUR".</li>
+			<li><b>Check:</b> Currency field has no error.</li>
+			<li><b>Check:</b> Model contents is "value=null, unit=EUR".</li>
+		</ul>
+		Enter value "-1" and press return.
+		<ul>
+			<li><b>Check:</b> Value field shows "-1".</li>
+			<li><b>Check:</b> Value field shows error
+				"Enter a number with a minimum value of 0".
+			</li>
+			<li><b>Check:</b> Currency field shows "EUR".</li>
+			<li><b>Check:</b> Currency field has no error.</li>
+			<li><b>Check:</b> Model contents is "value=null, unit=EUR".</li>
+		</ul>
+		Enter value "5" and press return.
+		<ul>
+			<li><b>Check:</b> Value field shows "5.00".</li>
+			<li><b>Check:</b> Value field has no error.</li>
+			<li><b>Check:</b> Currency field shows "EUR".</li>
+			<li><b>Check:</b> Currency field has no error.</li>
+			<li><b>Check:</b> Model contents is "value=5, unit=EUR".</li>
+		</ul>
+
+		<h3>13) Changing a non parsable value to a value that leads to a ValidateException on both
+			parts leads to both parts highlighted</h3>
+		Start
+		<a href="http://localhost:8080/test-resources/sap/ui/core/internal/samples/odata/twoFields/index.html?unit=M%2FL&value=2.1&sap-ui-language=EN">
+			http://localhost:8080/test-resources/sap/ui/core/internal/samples/odata/twoFields/index.html?unit=M%2FL&value=2.1&sap-ui-language=EN</a>.
+		<ul>
+			<li><b>Check:</b> Value field shows "2.100".</li>
+			<li><b>Check:</b> Value field has no error.</li>
+			<li><b>Check:</b> Unit field shows "M/L".</li>
+			<li><b>Check:</b> Unit field has no error.</li>
+			<li><b>Check:</b> Model contents is "value=2.1, unit=M/L".</li>
+		</ul>
+		Enter unit "XYZ" and press return.
+		<ul>
+			<li><b>Check:</b> Value field shows "2.1".</li>
+			<li><b>Check:</b> Value field has no error.</li>
+			<li><b>Check:</b> Unit field shows "XYZ".</li>
+			<li><b>Check:</b> Unit field shows error "Enter a valid unit".</li>
+			<li><b>Check:</b> Model contents is "value=2.1, unit=M/L".</li>
+		</ul>
+		Enter unit "KG" and press return.
+		<ul>
+			<li><b>Check:</b> Value field shows "2.1".</li>
+			<li><b>Check:</b> Value field shows error "Enter a number without decimals.".</li>
+			<li><b>Check:</b> Unit field shows "KG".</li>
+			<li><b>Check:</b> Unit field shows error "Enter a unit allowing at least 1 decimals".
+			</li>
+			<li><b>Check:</b> Model contents is "value=2.1, unit=M/L".</li>
+		</ul>
+		Enter value "2" and press return.
+		<ul>
+			<li><b>Check:</b> Value field shows "2".</li>
+			<li><b>Check:</b> Value field has no error.</li>
+			<li><b>Check:</b> Unit field shows "KG".</li>
+			<li><b>Check:</b> Unit field has no error.</li>
+			<li><b>Check:</b> Model contents is "value=2, unit=KG".</li>
+		</ul>
+
+		<h3>14) Changing to a different valid value after entering a non-parsable unit must keep the
+			illegal unit. Correction to the unit writes both value and unit to the model. The same
+			applies when changing roles of value and unit.</h3>
+		Start
+		<a href="http://localhost:8080/test-resources/sap/ui/core/internal/samples/odata/twoFields/index.html?unit=KG&value=2&sap-ui-language=EN">
+			http://localhost:8080/test-resources/sap/ui/core/internal/samples/odata/twoFields/index.html?unit=KG&value=2&sap-ui-language=EN</a>.
+		<ul>
+			<li><b>Check:</b> Value field shows "2".</li>
+			<li><b>Check:</b> Value field has no error.</li>
+			<li><b>Check:</b> Unit field shows "KG".</li>
+			<li><b>Check:</b> Unit field has no error.</li>
+			<li><b>Check:</b> Model contents is "value=2, unit=KG".</li>
+		</ul>
+		Enter unit "XYZ" and press return.
+		<ul>
+			<li><b>Check:</b> Value field shows "2".</li>
+			<li><b>Check:</b> Value field has no error.</li>
+			<li><b>Check:</b> Unit field shows "XYZ".</li>
+			<li><b>Check:</b> Unit field shows error "Enter a valid unit".</li>
+			<li><b>Check:</b> Model contents is "value=2, unit=KG".</li>
+		</ul>
+		Enter value "3" and press return.
+		<ul>
+			<li><b>Check:</b> Value field shows "3".</li>
+			<li><b>Check:</b> Value field shows error "Enter a valid unit to change the number".
+			</li>
+			<li><b>Check:</b> Unit field shows "XYZ".</li>
+			<li><b>Check:</b> Unit field shows error "Enter a valid unit".</li>
+			<li><b>Check:</b> Model contents is "value=2, unit=KG".</li>
+		</ul>
+		Enter unit "DEG" and press return.
+		<ul>
+			<li><b>Check:</b> Value field shows "3.0".</li>
+			<li><b>Check:</b> Value field has no error.</li>
+			<li><b>Check:</b> Unit field shows "DEG".</li>
+			<li><b>Check:</b> Unit field has no error.</li>
+			<li><b>Check:</b> Model contents is "value=3, unit=DEG".</li>
+		</ul>
+		Enter value "ABC" and press return.
+		<ul>
+			<li><b>Check:</b> Value field shows "ABC".</li>
+			<li><b>Check:</b> Value field shows error "Enter a number".</li>
+			<li><b>Check:</b> Unit field shows "DEG".</li>
+			<li><b>Check:</b> Unit field has no error.</li>
+			<li><b>Check:</b> Model contents is "value=3, unit=DEG".</li>
+		</ul>
+		Enter unit "M/L" and press return.
+		<ul>
+			<li><b>Check:</b> Value field shows "ABC".</li>
+			<li><b>Check:</b> Value field shows error "Enter a number".</li>
+			<li><b>Check:</b> Unit field shows "M/L".</li>
+			<li><b>Check:</b> Unit field shows error "Enter a valid number to change the unit".</li>
+			<li><b>Check:</b> Model contents is "value=3, unit=DEG".</li>
+		</ul>
+		Enter value "4.1" and press return.
+		<ul>
+			<li><b>Check:</b> Value field shows "4.100".</li>
+			<li><b>Check:</b> Value field has no error.</li>
+			<li><b>Check:</b> Unit field shows "M/L".</li>
+			<li><b>Check:</b> Unit field has no error.</li>
+			<li><b>Check:</b> Model contents is "value=4.1, unit=M/L".</li>
+		</ul>
+	</body>
+</html>

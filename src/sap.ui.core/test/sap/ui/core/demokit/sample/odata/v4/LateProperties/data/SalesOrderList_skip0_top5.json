@@ -1,0 +1,55 @@
+{
+	"@odata.metadataEtag" : "W/\"20191129135853\"",
+	"value" : [
+		{
+			"@odata.etag" : "W/\"20191126092802.4246740 \"",
+			"SalesOrderID" : "0500000000",
+			"BuyerID" : "0100000001",
+			"SO_2_BP" : {
+				"@odata.etag" : "W/\"20190321111935.0000000 \"",
+				"BusinessPartnerID" : "0100000001",
+				"CompanyName" : "Becker Berlin"
+			}
+		},
+		{
+			"@odata.etag" : "W/\"20191018065742.0620640 \"",
+			"SalesOrderID" : "0500000001",
+			"BuyerID" : "0100000003",
+			"SO_2_BP" : {
+				"@odata.etag" : "W/\"20190524115810.7071360 \"",
+				"BusinessPartnerID" : "0100000003",
+				"CompanyName" : "Talpa"
+			}
+		},
+		{
+			"@odata.etag" : "W/\"20190904220000.0000000 \"",
+			"SalesOrderID" : "0500000002",
+			"BuyerID" : "0100000006",
+			"SO_2_BP" : {
+				"@odata.etag" : "W/\"20190321111935.0000000 \"",
+				"BusinessPartnerID" : "0100000006",
+				"CompanyName" : "Asia High tech"
+			}
+		},
+		{
+			"@odata.etag" : "W/\"20191202100433.1903450 \"",
+			"SalesOrderID" : "0500000003",
+			"BuyerID" : "0100000007",
+			"SO_2_BP" : {
+				"@odata.etag" : "W/\"20190321111935.0000000 \"",
+				"BusinessPartnerID" : "0100000007",
+				"CompanyName" : "Laurent"
+			}
+		},
+		{
+			"@odata.etag" : "W/\"20190904220000.0000000 \"",
+			"SalesOrderID" : "0500000004",
+			"BuyerID" : "0100000007",
+			"SO_2_BP" : {
+				"@odata.etag" : "W/\"20190321111935.0000000 \"",
+				"BusinessPartnerID" : "0100000007",
+				"CompanyName" : "Laurent"
+			}
+		}
+	]
+}

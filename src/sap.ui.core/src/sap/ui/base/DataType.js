@@ -2,11 +2,18 @@
  * ${copyright}
  */
 
-// Provides class sap.ui.base.DataType
-sap.ui.define(['jquery.sap.global'],
-	function(jQuery) {
-	"use strict";
+/* global Set */
 
+// Provides class sap.ui.base.DataType
+sap.ui.define([
+	'sap/base/util/ObjectPath',
+	"sap/base/assert",
+	"sap/base/Log",
+	"sap/base/util/isPlainObject",
+	'sap/base/util/resolveReference'
+],
+	function(ObjectPath, assert, Log, isPlainObject, resolveReference) {
+	"use strict";
 
 	/**
 	 * Pseudo-Constructor for class <code>DataType</code>, never to be used.
@@ -117,7 +124,7 @@ sap.ui.define(['jquery.sap.global'],
 	 * Returns the object with keys and values from which this enum type was created
 	 * or <code>undefined</code> if this is not an enum type.
 	 *
-	 * @returns {object} Object with enum keys and values or <code>undefined</code>
+	 * @returns {Object<string,string>|undefined} Object with enum keys and values or <code>undefined</code>
 	 * @public
 	 */
 	DataType.prototype.getEnumValues = function() {
@@ -169,11 +176,11 @@ sap.ui.define(['jquery.sap.global'],
 	 * they are applied to controls. It is not intended to break-out of the value range
 	 * defined by a type.
 	 *
-	 * @param {function} fnNormalizer Function to apply for normalizing
+	 * @param {function(any):any} fnNormalizer Function to apply for normalizing
 	 * @public
 	 */
 	DataType.prototype.setNormalizer = function(fnNormalizer) {
-		jQuery.sap.assert(typeof fnNormalizer === "function", "DataType.setNormalizer: fnNormalizer must be a function");
+		assert(typeof fnNormalizer === "function", "DataType.setNormalizer: fnNormalizer must be a function");
 		this._fnNormalizer = typeof fnNormalizer === "function" ? fnNormalizer : undefined;
 	};
 
@@ -189,7 +196,6 @@ sap.ui.define(['jquery.sap.global'],
 	DataType.prototype.normalize = function(oValue) {
 		return this._fnNormalizer ? this._fnNormalizer(oValue) : oValue;
 	};
-
 
 	function createType(sName, mSettings, oBase) {
 
@@ -236,6 +242,109 @@ sap.ui.define(['jquery.sap.global'],
 		return oType;
 	}
 
+	var mTypes = {
+
+		"any" :
+			createType("any", {
+				defaultValue : null,
+				isValid : function(vValue) {
+					return true;
+				}
+			}),
+
+		"boolean" :
+			createType("boolean", {
+				defaultValue : false,
+				isValid : function(vValue) {
+					return typeof vValue === "boolean";
+				},
+				parseValue: function(sValue) {
+					return sValue == "true";
+				}
+			}),
+
+		"int" :
+			createType("int", {
+				defaultValue : 0,
+				isValid : function(vValue) {
+					return typeof vValue === "number" && (isNaN(vValue) || Math.floor(vValue) == vValue);
+				},
+				parseValue: function(sValue) {
+					return parseInt(sValue);
+				}
+			}),
+
+		"float" :
+			createType("float", {
+				defaultValue : 0.0,
+				isValid : function(vValue) {
+					return typeof vValue === "number";
+				},
+				parseValue: function(sValue) {
+					return parseFloat(sValue);
+				}
+			}),
+
+		"string" :
+			createType("string", {
+				defaultValue : "",
+				isValid : function(vValue) {
+					return typeof vValue === "string" || vValue instanceof String;
+				},
+				parseValue: function(sValue) {
+					return sValue;
+				}
+			}),
+
+		"object" :
+			createType("object", {
+				defaultValue : null,
+				isValid : function(vValue) {
+					return typeof vValue === "object" || typeof vValue === "function";
+				},
+				parseValue: function(sValue) {
+					return sValue ? JSON.parse(sValue) : null;
+				}
+			}),
+
+		"function" :
+			createType("function", {
+				defaultValue : null,
+				isValid : function(vValue) {
+					return vValue == null || typeof vValue === 'function';
+				},
+				/*
+				 * Note: the second parameter <code>_oOptions</code> is a hidden feature for internal use only.
+				 * Its structure is subject to change. No code other than the XMLTemplateProcessor must use it.
+				 */
+				parseValue: function(sValue, _oOptions) {
+					if ( sValue === "" ) {
+						return undefined;
+					}
+
+					if ( !/^\.?[A-Z_\$][A-Z0-9_\$]*(\.[A-Z_\$][A-Z0-9_\$]*)*$/i.test(sValue) ) {
+						throw new Error(
+							"Function references must consist of dot separated " +
+							"simple identifiers (A-Z, 0-9, _ or $) only, but was '" + sValue + "'");
+					}
+
+					var fnResult,
+						oContext = _oOptions && _oOptions.context,
+						oLocals = _oOptions && _oOptions.locals;
+
+					fnResult = resolveReference(sValue,
+						Object.assign({".": oContext}, oLocals));
+
+					if ( fnResult && this.isValid(fnResult) ) {
+						return fnResult;
+					}
+
+					throw new TypeError("The string '" + sValue + "' couldn't be resolved to a function");
+				}
+			})
+
+	};
+
 	// The generic "array" type must not be exposed by DataType.getType to avoid direct usage
 	// as type of a managed property. It is therefore not stored in the mTypes map
 	var arrayType = createType("array", {
@@ -243,7 +352,7 @@ sap.ui.define(['jquery.sap.global'],
 	});
 
 	function createArrayType(componentType) {
-		jQuery.sap.assert(componentType instanceof DataType, "DataType.<createArrayType>: componentType must be a DataType");
+		assert(componentType instanceof DataType, "DataType.<createArrayType>: componentType must be a DataType");
 
 		// create a new type object with the base type as prototype
 		var oType = Object.create(DataType.prototype);
@@ -295,6 +404,8 @@ sap.ui.define(['jquery.sap.global'],
 
 		return oType;
 	}
+
+	const mEnumRegistry = Object.create(null);
 
 	function createEnumType(sTypeName, oEnum) {
 
@@ -356,118 +467,6 @@ sap.ui.define(['jquery.sap.global'],
 		return oType;
 	}
 
-	var mTypes = {
-
-		"any" :
-			createType("any", {
-				defaultValue : null,
-				isValid : function(vValue) {
-					return true;
-				}
-			}),
-
-		"boolean" :
-			createType("boolean", {
-				defaultValue : false,
-				isValid : function(vValue) {
-					return typeof vValue === "boolean";
-				},
-				parseValue: function(sValue) {
-					return sValue == "true";
-				}
-			}),
-
-		"int" :
-			createType("int", {
-				defaultValue : 0,
-				isValid : function(vValue) {
-					return typeof vValue === "number" && Math.floor(vValue) == vValue;
-				},
-				parseValue: function(sValue) {
-					return parseInt(sValue, 10);
-				}
-			}),
-
-		"float" :
-			createType("float", {
-				defaultValue : 0.0,
-				isValid : function(vValue) {
-					return typeof vValue === "number";
-				},
-				parseValue: function(sValue) {
-					return parseFloat(sValue);
-				}
-			}),
-
-		"string" :
-			createType("string", {
-				defaultValue : "",
-				isValid : function(vValue) {
-					return typeof vValue === "string" || vValue instanceof String;
-				},
-				parseValue: function(sValue) {
-					return sValue;
-				}
-			}),
-
-		"object" :
-			createType("object", {
-				defaultValue : null,
-				isValid : function(vValue) {
-					return typeof vValue === "object" || typeof vValue === "function";
-				},
-				parseValue: function(sValue) {
-					return sValue ? JSON.parse(sValue) : null;
-				}
-			}),
-
-		"function" :
-			createType("function", {
-				defaultValue : null,
-				isValid : function(vValue) {
-					return vValue == null || typeof vValue === 'function';
-				},
-				/*
-				 * Note: the second parameter <code>_oOptions</code> is a hidden feature for internal use only.
-				 * Its structure is subject to change. No code other than the XMLTemplateProcessor must use it.
-				 */
-				parseValue: function(sValue, _oOptions) {
-					if ( sValue === "" ) {
-						return undefined;
-					}
-
-					if ( !/^\.?[A-Z_\$][A-Z0-9_\$]*(\.[A-Z_\$][A-Z0-9_\$]*)*$/i.test(sValue) ) {
-						throw new Error(
-							"Function references must consist of dot separated " +
-							"simple identifiers (A-Z, 0-9, _ or $) only, but was '" + sValue + "'");
-					}
-
-					// TODO implementation should be moved to / shared with EventHandlerResolver
-					var fnResult,
-						bLocal,
-						contextObj = _oOptions && _oOptions.context;
-
-					if ( sValue[0] === '.' ) {
-						// starts with a dot, must be a controller local function
-						// usage of jQuery.sap.getObject to allow addressing functions in properties
-						if ( contextObj ) {
-							fnResult = jQuery.sap.getObject(sValue.slice(1), undefined, contextObj);
-							bLocal = true;
-						}
-					} else {
-						fnResult = jQuery.sap.getObject(sValue);
-					}
-
-					if ( fnResult && this.isValid(fnResult) ) {
-						return bLocal ? fnResult.bind(contextObj) : fnResult;
-					}
-
-					throw new TypeError("The string '" + sValue + "' couldn't be resolved to a function");
-				}
-			})
-
-	};
-
 	/**
 	 * Looks up the type with the given name and returns it.
 	 *
@@ -512,7 +511,7 @@ sap.ui.define(['jquery.sap.global'],
 	 * @public
 	 */
 	DataType.getType = function(sTypeName) {
-		jQuery.sap.assert( sTypeName && typeof sTypeName === 'string', "sTypeName must be a non-empty string");
+		assert( sTypeName && typeof sTypeName === 'string', "sTypeName must be a non-empty string");
 
 		var oType = mTypes[sTypeName];
 		if ( !(oType instanceof DataType) ) {
@@ -525,19 +524,32 @@ sap.ui.define(['jquery.sap.global'],
 					mTypes[sTypeName] = oType;
 				}
 			} else if ( sTypeName !== 'array') {
-				oType = jQuery.sap.getObject(sTypeName);
+				// check if we have a valid pre-registered enum
+				oType = mEnumRegistry[sTypeName];
+
+				/**
+				 * If an enum was not registered beforehand (either explicitly via registerEnum or
+				 * via a Proxy in the library namespace), we have to look it up in the global object.
+				 * @deprecated since 1.120
+				 */
+				if (oType == null) {
+					oType = ObjectPath.get(sTypeName);
+					if (oType != null) {
+						Log.error(`The type '${sTypeName}' was accessed via globals. Defining enums via globals is deprecated. Please require the module 'sap/ui/base/DataType' and call the static 'DataType.registerEnum' API.`);
+					}
+				}
+
 				if ( oType instanceof DataType ) {
 					mTypes[sTypeName] = oType;
-				} else if ( jQuery.isPlainObject(oType) ) {
+				} else if ( isPlainObject(oType) ) {
 					oType = mTypes[sTypeName] = createEnumType(sTypeName, oType);
+					delete mEnumRegistry[sTypeName];
+				} else if ( oType ) {
+					Log.warning("'" + sTypeName + "' is not a valid data type. Falling back to type 'any'.");
+					oType = mTypes.any;
 				} else {
-					if ( oType ) {
-						jQuery.sap.log.warning("'" + sTypeName + "' is not a valid data type. Falling back to type 'any'.");
-						oType = mTypes.any;
-					} else {
-						jQuery.sap.log.error("data type '" + sTypeName + "' could not be found.");
-						oType = undefined;
-					}
+					Log.error("data type '" + sTypeName + "' could not be found.");
+					oType = undefined;
 				}
 			}
 		}
@@ -572,10 +584,10 @@ sap.ui.define(['jquery.sap.global'],
 	 * <b>Note:</b> The creation of new primitive types is not supported. When a type is created
 	 * without a base type, it is automatically derived from the primitive type <code>any</code>.
 	 *
-	 * <b>Note:</b> If a type has to be used in classes tagged with <code>@ui5-metamodel</code>,
-	 * then the implementation of <code>isValid</code> must exactly have the structure shown
-	 * in the example above (single return statement, regular expression literal of the form
-	 * <code>/^(...)$/</code>, calling <code>/regex/.test()</code> on the given value).
+	 * <b>Note:</b> If a type has to be used in classes, then the implementation of
+	 * <code>isValid</code> must exactly have the structure shown in the example above (single
+	 * return statement, regular expression literal of the form <code>/^(...)$/</code>, calling
+	 * <code>/regex/.test()</code> on the given value).
 	 * Only the inner part of the regular expression literal can be different.
 	 *
 	 * @param {string} sName Unique qualified name of the new type
@@ -585,64 +597,109 @@ sap.ui.define(['jquery.sap.global'],
 	 *                       type (inherited if not given)
 	 * @param {function} [mSettings.parseValue] Parse function that converts a locale independent
 	 *                       string into a value of the type (inherited if not given)
-	 * @param {sap.ui.base.DataType|string} [base='any'] Base type for the new type
+	 * @param {sap.ui.base.DataType|string} [vBase='any'] Base type for the new type
 	 * @returns {sap.ui.base.DataType} The newly created type object
 	 * @public
 	 */
-	DataType.createType = function(sName, mSettings, oBase) {
-		jQuery.sap.assert(typeof sName === "string" && sName, "DataType.createType: type name must be a non-empty string");
-		jQuery.sap.assert(oBase == null || oBase instanceof DataType || typeof oBase === "string" && oBase,
+	DataType.createType = function(sName, mSettings, vBase) {
+		assert(typeof sName === "string" && sName, "DataType.createType: type name must be a non-empty string");
+		assert(vBase == null || vBase instanceof DataType || typeof vBase === "string" && vBase,
 				"DataType.createType: base type must be empty or a DataType or a non-empty string");
 		if ( /[\[\]]/.test(sName) ) {
-			jQuery.sap.log.error(
+			Log.error(
 				"DataType.createType: array types ('something[]') must not be created with createType, " +
 				"they're created on-the-fly by DataType.getType");
 		}
-		if ( typeof oBase === "string" ) {
-			oBase = DataType.getType(oBase);
+		if ( typeof vBase === "string" ) {
+			vBase = DataType.getType(vBase);
 		}
-		oBase = oBase || mTypes.any;
-		if ( oBase.isArrayType() || oBase.isEnumType() ) {
-			jQuery.sap.log.error("DataType.createType: base type must not be an array- or enum-type");
+		vBase = vBase || mTypes.any;
+		if ( vBase.isArrayType() || vBase.isEnumType() ) {
+			Log.error("DataType.createType: base type must not be an array- or enum-type");
 		}
 		if ( sName === 'array' || mTypes[sName] instanceof DataType ) {
 			if ( sName === 'array' || mTypes[sName].getBaseType() == null ) {
 				throw new Error("DataType.createType: primitive or hidden type " + sName + " can't be re-defined");
 			}
-			jQuery.sap.log.warning("DataTypes.createType: type " + sName + " is redefined. " +
+			Log.warning("DataTypes.createType: type " + sName + " is redefined. " +
 				"This is an unsupported usage of DataType and might cause issues." );
 		}
-		var oType = mTypes[sName] = createType(sName, mSettings, oBase);
+		var oType = mTypes[sName] = createType(sName, mSettings, vBase);
 		return oType;
 	};
 
 
 	// ---- minimal support for interface types -------------------------------------------------------------------
 
-	var mInterfaces = {};
+	var oInterfaces = new Set();
 
 	/**
 	 * Registers the given array of type names as known interface types.
 	 * Only purpose is to enable the {@link #isInterfaceType} check.
 	 * @param {string[]} aTypes interface types to be registered
 	 * @private
-	 * @sap-restricted sap.ui.base,sap.ui.core.Core
+	 * @ui5-restricted sap.ui.core.Core
 	 */
 	DataType.registerInterfaceTypes = function(aTypes) {
-		for (var i = 0; i < aTypes.length; i++) {
-			jQuery.sap.setObject(aTypes[i], mInterfaces[aTypes[i]] = new String(aTypes[i]));
-		}
+		aTypes.forEach(function(sType) {
+			oInterfaces.add(sType);
+
+			// Defining the interface on global namespace for compatibility reasons.
+			// This has never been a public feature and it is strongly discouraged it be relied upon.
+			// An interface must always be referenced by a string literal, not via the global namespace.
+			ObjectPath.set(sType, sType);
+		});
+	};
+
+	/**
+	 * Registers an enum under the given name.
+	 * With version 2.0, registering an enum becomes mandatory when said enum is to be used in
+	 * properties of a {@link sap.ui.base.ManagedObject ManagedObject} subclass.
+	 *
+	 * Example:<br>
+	 * <pre>
+	 *    DataType.registerEnum("my.enums.Sample", {
+	 *       "A": "A",
+	 *       "B": "B",
+	 *       ...
+	 *    });
+	 * </pre>
+	 *
+	 * @param {string} sTypeName the type name in dot syntax, e.g. sap.ui.my.EnumType
+	 * @param {object} mContent the enum content
+	 * @public
+	 * @since 1.120.0
+	 */
+	DataType.registerEnum = function(sTypeName, mContent) {
+		mEnumRegistry[sTypeName] = mContent;
+	};
+
+	/**
+	 * Checks if the given object contains only static content
+	 * and can be regarded as an enum candidate.
+	 *
+	 * @param {object} oObject the enum candidate
+	 * @returns {boolean} whether the given object can be regarded as an enum candidate
+	 * @private
+	 * @ui5-restricted sap.ui.core.Lib
+	 */
+	DataType._isEnumCandidate = function(oObject) {
+		return !Object.keys(oObject).some((key) => {
+			const propertyType = typeof oObject[key];
+			return propertyType === "object" || propertyType === "function";
+		});
 	};
 
 	/**
 	 * @param {string} sType name of type to check
 	 * @returns {boolean} whether the given type is known to be an interface type
 	 * @private
-	 * @sap-restricted sap.ui.base,sap.ui.core.Core
+	 * @ui5-restricted sap.ui.base.ManagedObject
 	 */
 	DataType.isInterfaceType = function(sType) {
-		return mInterfaces.hasOwnProperty(sType) && jQuery.sap.getObject(sType) === mInterfaces[sType];
+		return oInterfaces.has(sType);
 	};
+
 
 	return DataType;
 

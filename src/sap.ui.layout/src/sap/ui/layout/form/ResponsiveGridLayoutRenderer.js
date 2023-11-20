@@ -2,8 +2,10 @@
  * ${copyright}
  */
 
-sap.ui.define(['sap/ui/core/Renderer', './FormLayoutRenderer'],
-	function(Renderer, FormLayoutRenderer) {
+sap.ui.define([
+	'sap/ui/core/Renderer',
+	'./FormLayoutRenderer'
+	], function(Renderer, FormLayoutRenderer) {
 	"use strict";
 
 
@@ -12,6 +14,8 @@ sap.ui.define(['sap/ui/core/Renderer', './FormLayoutRenderer'],
 	 * @namespace
 	 */
 	var ResponsiveGridLayoutRenderer = Renderer.extend(FormLayoutRenderer);
+
+	ResponsiveGridLayoutRenderer.apiVersion = 2;
 
 	ResponsiveGridLayoutRenderer.getMainClass = function(){
 		return "sapUiFormResGrid";

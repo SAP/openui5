@@ -3,9 +3,13 @@
  */
 
 // Provides default renderer for control sap.ui.commons.RadioButtonGroup
-sap.ui.define([],
-	function() {
+sap.ui.define(["sap/ui/core/library"],
+	function(coreLibrary) {
 	"use strict";
+
+
+	// shortcut for sap.ui.core.ValueState
+	var ValueState = coreLibrary.ValueState;
 
 
 	/**
@@ -19,13 +23,10 @@ sap.ui.define([],
 	/**
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
 	 *
-	 * @param {sap.ui.core.RenderManager} oRenderManager the RenderManager that can be used for writing to the Render-Output-Buffer
+	 * @param {sap.ui.core.RenderManager} rm the RenderManager that can be used for writing to the Render-Output-Buffer
 	 * @param {sap.ui.core.Control} oControl an object representation of the control that should be rendered
 	 */
-	RadioButtonGroupRenderer.render = function(oRenderManager, oRBGroup){
-		// convenience variable
-		var rm = oRenderManager;
-
+	RadioButtonGroupRenderer.render = function(rm, oRBGroup){
 		// Return immediately if control has no RadioButtons
 		if (!oRBGroup.aRBs) {
 			return;
@@ -46,7 +47,7 @@ sap.ui.define([],
 			}
 		}
 
-		rm.write("<DIV");
+		rm.write("<div");
 		rm.writeControlData(oRBGroup);
 		rm.addClass("sapUiRbG");
 		if (iColumns > 1) {
@@ -79,7 +80,7 @@ sap.ui.define([],
 		// ARIA
 		rm.writeAccessibilityState(oRBGroup, {
 			role: "radiogroup",
-			invalid: oRBGroup.getValueState() == sap.ui.core.ValueState.Error,
+			invalid: oRBGroup.getValueState() == ValueState.Error,
 			disabled: !oRBGroup.getEditable()
 		});
 
@@ -91,7 +92,7 @@ sap.ui.define([],
 		for (var c = 0; c < iColumns; c++) {
 			if (iColumns > 1 && iColumns != oRBGroup.aRBs.length) {
 				// if only 1 column -> no DIV necessary
-				rm.write("<DIV");
+				rm.write("<div");
 				rm.addClass("sapUiRbGCol");
 				rm.writeClasses();
 				rm.write(">"); // DIV element
@@ -103,16 +104,16 @@ sap.ui.define([],
 			}
 
 			if (iColumns > 1 && iColumns != oRBGroup.aRBs.length) {
-				rm.write("</DIV>");
+				rm.write("</div>");
 			}
 		}
 
 		if (iColumns > 1 && iColumns != oRBGroup.aRBs.length) {
 			// dummy Column to avoid big spaces between RadioButtons in Safari
-			rm.write('<DIV class="sapUiRbGDummy"> </DIV>');
+			rm.write('<div class="sapUiRbGDummy"> </DIV>');
 		}
 
-		rm.write("</DIV>");
+		rm.write("</div>");
 	};
 
 	return RadioButtonGroupRenderer;

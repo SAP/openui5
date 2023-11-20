@@ -1,27 +1,31 @@
 /*!
  * ${copyright}
  */
-sap.ui.require([
-	"jquery.sap.global",
-	"sap/ui/Device",
+sap.ui.define([
+	"sap/base/Log",
+	"sap/base/util/ObjectPath",
 	"sap/ui/base/BindingParser",
 	"sap/ui/base/ManagedObject",
 	"sap/ui/base/SyncPromise",
-	"sap/ui/core/CustomizingConfiguration",
+	"sap/ui/core/Component",
 	"sap/ui/core/XMLTemplateProcessor",
+	"sap/ui/core/date/UI5Date",
 	"sap/ui/core/util/XMLPreprocessor",
 	"sap/ui/model/BindingMode",
+	"sap/ui/model/ChangeReason",
 	"sap/ui/model/Context",
 	"sap/ui/model/json/JSONModel",
-	"jquery.sap.xml" // needed to have jQuery.sap.parseXML
-], function (jQuery, Device, BindingParser, ManagedObject, SyncPromise, CustomizingConfiguration,
-		XMLTemplateProcessor, XMLPreprocessor, BindingMode, Context, JSONModel/*, jQuerySapXml*/) {
-	/*global QUnit, sinon, window */
+	"sap/ui/performance/Measurement",
+	"sap/ui/util/XMLHelper"
+], function (Log, ObjectPath, BindingParser, ManagedObject, SyncPromise, Component,
+		XMLTemplateProcessor, UI5Date, XMLPreprocessor, BindingMode, ChangeReason, Context,
+		JSONModel, Measurement, XMLHelper) {
+	/*global QUnit, sinon */
 	/*eslint consistent-this: 0, max-nested-callbacks: 0, no-loop-func: 0, no-warning-comments: 0*/
 	"use strict";
 
 	var sComponent = "sap.ui.core.util.XMLPreprocessor",
-		iOldLogLevel = jQuery.sap.log.getLevel(sComponent);
+		iOldLogLevel = Log.getLevel(sComponent);
 
 	//---------------------------------------------------------------------------------------------
 	// "public" methods to be used directly in test functions
@@ -40,10 +44,11 @@ sap.ui.require([
 		var oModel = new JSONModel(oData);
 
 		oModel.$$valueAsPromise = true;
+
 		oModel.bindProperty = function () {
 			var oBinding = JSONModel.prototype.bindProperty.apply(this, arguments);
 
-			oBinding.checkUpdate = function (){
+			oBinding.checkUpdate = function () {
 				var vValue = this._getValue();
 
 				if (this.mParameters.$$valueAsPromise) {
@@ -66,20 +71,77 @@ sap.ui.require([
 			return oBinding;
 		};
 
+		oModel.bindList = function () {
+			var oBinding = JSONModel.prototype.bindList.apply(this, arguments),
+				fnGetContexts = oBinding.getContexts,
+				bWaited = false;
+
+			oBinding.enableExtendedChangeDetection = function (bDetectUpdates, vKey) {
+				if (bDetectUpdates || vKey !== undefined) {
+					throw new Error("Unexpected: enableExtendedChangeDetection(" + bDetectUpdates
+						+ ", " + vKey + ")");
+				}
+				this.bUseExtendedChangeDetection = true;
+			};
+
+			oBinding.getContexts = function () {
+				var aContexts;
+
+				if (bWaited) {
+					return fnGetContexts.apply(this, arguments);
+				}
+				setTimeout(function () {
+					bWaited = true;
+					oBinding._fireChange({reason: ChangeReason.Change});
+				}, 5);
+				aContexts = [];
+				if (this.bUseExtendedChangeDetection) {
+					aContexts.dataRequested = true;
+				}
+				return aContexts;
+			};
+
+			return oBinding;
+		};
+
 		return oModel;
 	}
 
 	/**
-	 * Creates an <mvc:View> tag with namespace definitions.
+	 * Creates an <mvc:View> tag with namespace definitions and requires modules.
+	 *
 	 * @param {string} [sPrefix="template"]
 	 *   the prefix for the template namespace
+	 * @param {Object<string,object>} [mRequiredModules]
+	 *   map from alias to module content which should be required
+	 * @param {object} [that]
+	 *   the test context
 	 * @returns {string}
 	 *   <mvc:View> tag
 	 */
-	function mvcView(sPrefix) {
-		sPrefix = sPrefix || "template";
-		return '<mvc:View xmlns="sap.ui.core" xmlns:mvc="sap.ui.core.mvc" xmlns:' + sPrefix
-			+ '="http://schemas.sap.com/sapui5/extension/sap.ui.core.template/1">';
+	function mvcView(sPrefix, mRequiredModules, that) {
+		var sAlias,
+			mAlias2Path = {},
+			sFakePath,
+			sView = '<mvc:View'
+				+ ' xmlns="sap.ui.core"'
+				+ ' xmlns:mvc="sap.ui.core.mvc"'
+				+ ' xmlns:' + (sPrefix || "template")
+					+ '="http://schemas.sap.com/sapui5/extension/sap.ui.core.template/1"';
+
+		if (mRequiredModules) {
+			for (sAlias in mRequiredModules) {
+				sFakePath = "foo/" + sAlias;
+				mAlias2Path[sAlias] = sFakePath;
+				that.expectRequire(true, [sFakePath], function () {
+					return [mRequiredModules[sAlias]];
+				});
+			}
+
+			return sView
+				+ ' template:require="' + JSON.stringify(mAlias2Path).replaceAll('"', "'") + '">';
+		}
+		return sView + '>';
 	}
 
 	/**
@@ -92,8 +154,8 @@ sap.ui.require([
 	 *   a settings object for the preprocessor
 	 * @param {boolean} [bAsync]
 	 *   Whether the view should be async
-	 * @returns {Element}
-	 *   the processed view content as an XML document element
+	 * @returns {Element|Promise}
+	 *   the processed view content as an XML document element, or a promise on it
 	 */
 	function process(oViewContent, mSettings, bAsync) {
 		var oViewInfo = {
@@ -105,9 +167,6 @@ sap.ui.require([
 				_supportInfo : function () {} // Note: FAKE support info handler
 			};
 
-		if (bAsync) {
-			mSettings["X-async"] = true; // eXperimental async switch, to be removed soon
-		}
 		return XMLPreprocessor.process(oViewContent, oViewInfo, mSettings);
 	}
 
@@ -115,7 +174,7 @@ sap.ui.require([
 	 * Expects a warning with the given message for the given log mock.
 	 *
 	 * @param {object} oLogMock
-	 *   mock for <code>jQuery.sap.log</code>
+	 *   mock for <code>sap.base.log</code>
 	 * @param {string} sExpectedWarning
 	 *   expected warning message
 	 * @param {any} [vDetails]
@@ -126,7 +185,7 @@ sap.ui.require([
 	function warn(oLogMock, sExpectedWarning, vDetails) {
 		return oLogMock.expects("warning")
 			// do not construct arguments in vain!
-			.exactly(jQuery.sap.log.isLoggable(jQuery.sap.log.Level.WARNING, sComponent) ? 1 : 0)
+			.exactly(Log.isLoggable(Log.Level.WARNING, sComponent) ? 1 : 0)
 			.withExactArgs(_matchArg(sExpectedWarning), _matchArg(vDetails), sComponent);
 	}
 
@@ -137,7 +196,7 @@ sap.ui.require([
 	 * @returns {Element} the DOM document's root element
 	 */
 	function xml(assert, aContent) {
-		var oDocument = jQuery.sap.parseXML(aContent.join(""));
+		var oDocument = XMLHelper.parse(aContent.join(""));
 		assert.strictEqual(oDocument.parseError.errorCode, 0, "XML parsed correctly");
 		return oDocument.documentElement;
 	}
@@ -174,22 +233,10 @@ sap.ui.require([
 	function _normalizeXml(sXml) {
 		/*jslint regexp: true*/
 		sXml = sXml
-			// Note: IE > 8 does not add all namespaces at root level, but deeper inside the tree!
-			// Note: Chrome adds all namespaces at root level, but before other attributes!
 			.replace(/ xmlns.*?=\".*?\"/g, "")
-			// Note: browsers differ in whitespace for empty HTML(!) tags
-			.replace(/ \/>/g, '/>');
-		if (Device.browser.msie || Device.browser.edge) {
-			// Microsoft shuffles attribute order; sort multiple attributes alphabetically:
-			// - no escaped quotes in attribute values!
-			// - e.g. <In a="..." b="..."/> or <template:repeat a="..." t:b="...">
-			sXml = sXml.replace(/<[\w:]+( [\w:]+="[^"]*"){2,}(?=\/?>)/g, function (sMatch) {
-				var aParts = sMatch.split(" ");
-				// aParts[0] e.g. "<In" or "<template:repeat"
-				// sMatch does not contain "/>" or ">" at end!
-				return aParts[0] + " " + aParts.slice(1).sort().join(" ");
-			});
-		}
+			.replace(/ \/>/g, '/>')
+			// Note: template:require attribute is removed by the conversion
+			.replace(/ \w+:require=".*?"/, "");
 		return sXml;
 	}
 
@@ -205,17 +252,15 @@ sap.ui.require([
 	 *   A sync promise for timing which resolves with the result of the code under test
 	 */
 	function _withBalancedBindAggregation(that, assert, fnCodeUnderTest) {
-		var fnBindAggregation = ManagedObject.prototype.bindAggregation,
-			oBindAggregationExpectation,
-			fnUnbindAggregation = ManagedObject.prototype.unbindAggregation,
+		var oBindAggregationExpectation,
 			oUnbindAggregationExpectation;
 
 		oBindAggregationExpectation = that.mock(ManagedObject.prototype).expects("bindAggregation")
 			.atLeast(0).withExactArgs("list", sinon.match({mode : BindingMode.OneTime}))
-			.callsFake(fnBindAggregation);
+			.callThrough();
 		oUnbindAggregationExpectation = that.mock(ManagedObject.prototype)
 			.expects("unbindAggregation").atLeast(0).withExactArgs("list", true)
-			.callsFake(fnUnbindAggregation);
+			.callThrough();
 
 		return SyncPromise.resolve(fnCodeUnderTest()).then(function (oResult) {
 			assert.strictEqual(oUnbindAggregationExpectation.callCount,
@@ -237,9 +282,7 @@ sap.ui.require([
 	 *   A sync promise for timing which resolves with the result of the code under test
 	 */
 	function _withBalancedBindProperty(that, assert, fnCodeUnderTest) {
-		var fnBindProperty = ManagedObject.prototype.bindProperty,
-			oBindPropertyExpectation,
-			fnUnbindProperty = ManagedObject.prototype.unbindProperty,
+		var oBindPropertyExpectation,
 			oUnbindPropertyExpectation;
 
 		function checkBindingMode(oBindingInfo) {
@@ -258,9 +301,9 @@ sap.ui.require([
 
 		oBindPropertyExpectation = that.mock(ManagedObject.prototype).expects("bindProperty")
 			.atLeast(0).withExactArgs("any", sinon.match(checkBindingMode))
-			.callsFake(fnBindProperty);
+			.callThrough();
 		oUnbindPropertyExpectation = that.mock(ManagedObject.prototype).expects("unbindProperty")
-			.atLeast(0).withExactArgs("any", true).callsFake(fnUnbindProperty);
+			.atLeast(0).withExactArgs("any", true).callThrough();
 
 		return SyncPromise.resolve(fnCodeUnderTest()).then(function (oResult) {
 			assert.strictEqual(oUnbindPropertyExpectation.callCount,
@@ -273,17 +316,19 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.module("sap.ui.core.util.XMLPreprocessor", {
 		afterEach : function () {
-			sap.ui.core.CustomizingConfiguration = this.oCustomizingConfiguration;
-			jQuery.sap.log.setLevel(iOldLogLevel, sComponent);
+			Log.setLevel(iOldLogLevel, sComponent);
 			delete window.foo;
+			this.oLogMock.expects("debug")
+				.withExactArgs("Plug-in visitor for namespace 'foo', local name 'Bar'", null,
+					sComponent);
+			XMLPreprocessor.plugIn(null, "foo", "Bar");
 		},
 
 		beforeEach : function () {
-			this.oCustomizingConfiguration = sap.ui.core.CustomizingConfiguration;
 			// do not rely on ERROR vs. DEBUG due to minified sources
-			jQuery.sap.log.setLevel(jQuery.sap.log.Level.DEBUG, sComponent);
+			Log.setLevel(Log.Level.DEBUG, sComponent);
 
-			this.oLogMock = this.mock(jQuery.sap.log);
+			this.oLogMock = this.mock(Log);
 			this.oLogMock.expects("warning").never();
 			this.oLogMock.expects("error").never();
 			// do not flood the console ;-)
@@ -294,6 +339,11 @@ sap.ui.require([
 			this.oXMLTemplateProcessorMock = this.mock(XMLTemplateProcessor);
 			this.oXMLTemplateProcessorMock.expects("loadTemplate").never();
 			this.oXMLTemplateProcessorMock.expects("loadTemplatePromise").never();
+
+			this.oSapUiMock = this.mock(sap.ui);
+			// @see sap.ui.base.Event#init
+			this.oSapUiMock.expects("require").on(sap.ui).atLeast(0)
+				.withExactArgs("sap/ui/core/Messaging").callThrough();
 		},
 
 		/**
@@ -356,7 +406,7 @@ sap.ui.require([
 			}).then(function (oResult) {
 				// assertions
 				assert.strictEqual(oResult, oViewContent);
-				sActual = _normalizeXml(jQuery.sap.serializeXML(oViewContent));
+				sActual = _normalizeXml(XMLHelper.serialize(oViewContent));
 				if (Array.isArray(vExpected)) {
 					sExpected = _normalizeXml(vExpected.join(""));
 					assert.strictEqual(sActual, sExpected, "XML looks as expected: " + sExpected);
@@ -380,8 +430,13 @@ sap.ui.require([
 		 *   a settings object for the preprocessor
 		 * @param {number|string} [vOffender=1]
 		 *   (index of) offending statement
+		 * @param {boolean} [bAsync]
+		 *   Whether the view should be async
+		 * @returns {sap.ui.base.SyncPromise}
+		 *   A sync promise for timing
 		 */
-		checkError : function (assert, aViewContent, sExpectedMessage, mSettings, vOffender) {
+		checkError : function (assert, aViewContent, sExpectedMessage, mSettings, vOffender,
+				bAsync) {
 			var oViewContent = xml(assert, aViewContent);
 
 			if (vOffender === undefined || typeof vOffender === "number") {
@@ -391,16 +446,17 @@ sap.ui.require([
 			this.oLogMock.expects("error")
 				.withExactArgs(_matchArg(sExpectedMessage), "qux", sComponent);
 
-			try {
-				process(oViewContent, mSettings);
+			return SyncPromise.resolve().then(function () {
+				return process(oViewContent, mSettings, bAsync);
+			}).then(function () {
 				assert.ok(false);
-			} catch (ex) {
+			}, function (oError) {
 				assert.strictEqual(
-					_normalizeXml(ex.message),
+					_normalizeXml(oError.message),
 					_normalizeXml("qux: " + sExpectedMessage),
-					ex.stack
+					oError.stack
 				);
-			}
+			});
 		},
 
 		/**
@@ -426,18 +482,31 @@ sap.ui.require([
 		 *   a regular expression which is expected to match the serialized original view content.
 		 * @param {boolean} [bAsync]
 		 *   Whether the view should be async
+		 * @param {function} [fnVisitor]
+		 *   A visitor for namespace 'foo', local name 'Bar'
 		 * @returns {sap.ui.base.SyncPromise}
 		 *   A sync promise for timing
 		 */
 		checkTracing : function (assert, bDebug, aExpectedMessages, aViewContent, mSettings,
-				vExpected, bAsync) {
+				vExpected, bAsync, fnVisitor) {
 			var aMessagesInActualOrder = [],
 				aMessagesInExpectedOrder = [],
 				that = this;
 
+			if (fnVisitor) {
+				// BEWARE: w/o this expectation, checkTracing() will NOT complain about any
+				// "Unexpected call: debug(...)"!
+				this.oLogMock.expects("debug")
+					.withExactArgs("Plug-in visitor for namespace 'foo', local name 'Bar'",
+						sinon.match.func, sComponent);
+				XMLPreprocessor.plugIn(fnVisitor, "foo", "Bar");
+			}
+
 			this.oDebugExpectation.never();
+			this.oLogMock.expects("debug").atLeast(0)
+					.withArgs(sinon.match.string, sinon.match.func, "sap.ui.Rendering");
 			if (!bDebug) {
-				jQuery.sap.log.setLevel(jQuery.sap.log.Level.WARNING, sComponent);
+				Log.setLevel(Log.Level.WARNING, sComponent);
 			} else {
 				aExpectedMessages.forEach(function (oExpectedMessage, i) {
 					var vExpectedDetail = oExpectedMessage.d;
@@ -485,6 +554,48 @@ sap.ui.require([
 		},
 
 		/**
+		 * Sets up a mock that allows to require the given module names. Calls the given callback
+		 * (a)synchronously to retrieve the module values.
+		 *
+		 * @param {boolean} bAsync - Whether the async API is expected to be used
+		 * @param {string[]} aURNs - The slash-separated unified resource names
+		 * @param {function} [fnCallback] - A callback function which returns the array of module
+		 *   values and adds modules to the global namespace as a side effect
+		 * @param {boolean} [bAllAvailable] - Whether all modules are available synchronously
+		 */
+		expectRequire : function (bAsync, aURNs, fnCallback, bAllAvailable) {
+			var aAvailableModules = bAllAvailable
+					? fnCallback()
+					: [aURNs.length > 1 ? {} : null], // assume some, but not all are available ;-)
+				that = this;
+
+			if (bAsync) {
+				aURNs.forEach(function (sURN, i) {
+					that.oSapUiMock.expects("require")
+						.withExactArgs(sURN, i, aURNs)
+						.returns(aAvailableModules[i]);
+				});
+				if (!bAllAvailable) {
+					this.oSapUiMock.expects("require")
+						.withExactArgs(aURNs, sinon.match.func, sinon.match.func)
+						.callsFake(function (aDependencies, fnFactory, fnErrback) {
+							setTimeout(function () {
+								fnFactory.apply(null, fnCallback && fnCallback());
+							}, 0); // simulate AMD
+						});
+				}
+				/**@deprecated As of version 1.120.0*/
+				this.oSapUiMock.expects("requireSync").never();
+			} else {
+				/**@deprecated As of version 1.120.0*/
+				aURNs.forEach(function (sURN, i) {
+					that.oSapUiMock.expects("requireSync").withArgs(sURN)
+						.callsFake(i === 0 ? fnCallback : undefined);
+				});
+			}
+		},
+
+		/**
 		 * Checks that the XML preprocessor throws the expected error message when called on the
 		 * given view content. Determines the offending content by <code>id="unexpected"</code>.
 		 *
@@ -494,6 +605,8 @@ sap.ui.require([
 		 * @param {string} sExpectedMessage
 		 *   no caller identification expected;
 		 *   "{0}" is replaced with the line of the view content which has id="unexpected"
+		 * @returns {sap.ui.base.SyncPromise}
+		 *   A sync promise for timing
 		 */
 		unexpected : function (assert, aViewContent, sExpectedMessage) {
 			var iUnexpected;
@@ -504,7 +617,7 @@ sap.ui.require([
 				}
 			});
 
-			this.checkError(assert, aViewContent, sExpectedMessage, undefined, iUnexpected);
+			return this.checkError(assert, aViewContent, sExpectedMessage, undefined, iUnexpected);
 		}
 	});
 
@@ -533,17 +646,17 @@ sap.ui.require([
 
 			QUnit.test(aViewContent[1] + ", warn = " + bWarn, function (assert) {
 				if (!bWarn) {
-					jQuery.sap.log.setLevel(jQuery.sap.log.Level.ERROR, sComponent);
+					Log.setLevel(Log.Level.ERROR, sComponent);
 				}
 
-				this.check(assert, aViewContent);
+				return this.check(assert, aViewContent);
 			});
 		});
 	});
 
 	//*********************************************************************************************
 	QUnit.test("XML with template:if test='true'", function (assert) {
-		this.check(assert, [
+		return this.check(assert, [
 			mvcView(),
 			'<template:if test="true">',
 			'<In id="first"/>',
@@ -559,14 +672,11 @@ sap.ui.require([
 	[false, true].forEach(function (bWarn) {
 		QUnit.test("Warnings w/o debug output log caller, warn = " + bWarn, function (assert) {
 			// no debug output --> caller information should be logged once
-			jQuery.sap.log.setLevel(bWarn
-				? jQuery.sap.log.Level.WARNING
-				: jQuery.sap.log.Level.ERROR,
-				sComponent);
+			Log.setLevel(bWarn ? Log.Level.WARNING : Log.Level.ERROR, sComponent);
 			warn(this.oLogMock, "Warning(s) during processing of qux", null)
 				.exactly(bWarn ? 1 : 0);
 
-			this.check(assert, [
+			return this.check(assert, [
 				mvcView(),
 				'<template:if test="true"/>', // 1st warning
 				'<template:if test="true"/>', // 2nd warning
@@ -577,7 +687,7 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("XML with multiple template:if", function (assert) {
-		this.check(assert, [
+		return this.check(assert, [
 			mvcView(),
 			'<template:if test="true">',
 			'<In id="true"/>',
@@ -591,7 +701,7 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("XML with nested template:if (as last child)", function (assert) {
-		this.check(assert, [
+		return this.check(assert, [
 			mvcView(),
 			'<template:if test="true">',
 			'<In id="true"/>',
@@ -605,7 +715,7 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("XML with nested template:if (as inner child)", function (assert) {
-		this.check(assert, [
+		return this.check(assert, [
 			mvcView(),
 			'<template:if test="true">',
 			'<In id="true"/>',
@@ -621,9 +731,12 @@ sap.ui.require([
 	//*********************************************************************************************
 	// Note: "X" is really nothing special
 	["true", true, 1, "X"].forEach(function (oFlag) {
-		QUnit.test("XML with template:if test='{/flag}', truthy, flag = " + oFlag,
+		QUnit.test("XML with template:if test='{/flag}', truthy, async = true, flag = " + oFlag,
 			function (assert) {
-				this.check(assert, [
+				this.oSapUiMock.expects("require").on(sap.ui)
+					.atLeast(0) // only for the 1st run
+					.withArgs(["sap/ui/model/type/Boolean"]).callThrough();
+				return this.check(assert, [
 					mvcView("t"),
 					'<t:if test="{path: \'/flag\', type: \'sap.ui.model.type.Boolean\'}">',
 					'<In id="flag"/>',
@@ -631,7 +744,31 @@ sap.ui.require([
 					'</mvc:View>'
 				], {
 					models: new JSONModel({flag: oFlag})
-				});
+				}, undefined, true);
+			}
+		);
+	});
+
+	//*********************************************************************************************
+	// Note: "X" is really nothing special
+	["true", true, 1, "X"].forEach(function (oFlag) {
+		/**
+		 * @deprecated since 1.119.0
+		 */
+		QUnit.test("XML with template:if test='{/flag}', truthy, async = false, flag = " + oFlag,
+			function (assert) {
+				this.oSapUiMock.expects("require").on(sap.ui)
+					.atLeast(0) // only for the 1st run
+					.withArgs("sap/ui/model/type/Boolean").callThrough();
+				return this.check(assert, [
+					mvcView("t"),
+					'<t:if test="{path: \'/flag\', type: \'sap.ui.model.type.Boolean\'}">',
+					'<In id="flag"/>',
+					'</t:if>',
+					'</mvc:View>'
+				], {
+					models: new JSONModel({flag: oFlag})
+				}, undefined, false);
 			}
 		);
 	});
@@ -641,7 +778,7 @@ sap.ui.require([
 	["false", false, 0, null, undefined, NaN, ""].forEach(function (oFlag) {
 		QUnit.test("XML with template:if test='{/flag}', falsy, flag = " + oFlag,
 			function (assert) {
-				this.check(assert, [
+				return this.check(assert, [
 					mvcView(),
 					'<template:if test="{/flag}">',
 					'<Out/>',
@@ -661,7 +798,7 @@ sap.ui.require([
 			function (assert) {
 				var oModel = new JSONModel({flag: oFlag});
 
-				this.check(assert, [
+				return this.check(assert, [
 					mvcView(),
 					'<template:if test="{flag}">',
 					'<In id="flag"/>',
@@ -683,7 +820,7 @@ sap.ui.require([
 				}
 			}
 		};
-		this.check(assert, [
+		return this.check(assert, [
 			mvcView(),
 			'<template:if test="{formatter: \'foo.Helper.not\', path:\'/flag\'}">',
 			'<In id="flag"/>',
@@ -698,8 +835,7 @@ sap.ui.require([
 	[{
 		aViewContent : [
 			mvcView(),
-			'<template:if test="' + "{formatter: 'foo.Helper.fail', path:'/flag'}"
-				+ '">',
+			'<template:if test="' + "{formatter: 'foo.Helper.fail', path:'/flag'}" + '">',
 			'<Out/>',
 			'</template:if>',
 			'</mvc:View>'
@@ -734,10 +870,9 @@ sap.ui.require([
 				function (assert) {
 					var oError = new Error("deliberate failure");
 
-					this.mock(sap.ui.core.CustomizingConfiguration).expects("getViewExtension")
-						.never();
+					this.mock(Component).expects("getCustomizing").never();
 					if (!bWarn) {
-						jQuery.sap.log.setLevel(jQuery.sap.log.Level.ERROR, sComponent);
+						Log.setLevel(Log.Level.ERROR, sComponent);
 					}
 					warn(this.oLogMock,
 							sinon.match(/\[ \d\] Error in formatter: Error: deliberate failure/),
@@ -753,14 +888,13 @@ sap.ui.require([
 					};
 
 					if (bWarn && oFixture.aDebugMessages) {
-						this.checkTracing(assert, true, oFixture.aDebugMessages, aViewContent, {
-								models : new JSONModel({flag : true})
-							}, vExpected);
-					} else {
-						this.check(assert, aViewContent, {
-							models : new JSONModel({flag : true})
-						}, vExpected);
+						return this.checkTracing(assert, true, oFixture.aDebugMessages,
+							aViewContent, {models : new JSONModel({flag : true})}, vExpected);
 					}
+
+					return this.check(assert, aViewContent, {
+						models : new JSONModel({flag : true})
+					}, vExpected);
 				}
 			);
 		});
@@ -787,9 +921,8 @@ sap.ui.require([
 	}, {
 		aViewContent : [
 			mvcView(),
-			'<template:if test="'
-			+ "{path:'/some/path',formatter:'.someMethod'}{path:'/some/path',formatter:'foo.bar'}"
-			+ '">',
+			'<template:if test="' + "{path:'/some/path',formatter:'.someMethod'}"
+				+ "{path:'/some/path',formatter:'foo.bar'}" + '">',
 			'<Out/>',
 			'</template:if>',
 			'</mvc:View>'
@@ -826,17 +959,16 @@ sap.ui.require([
 				vExpected = oFixture.vExpected && oFixture.vExpected.slice();
 
 			QUnit.test(aViewContent[1] + ", warn = " + bWarn, function (assert) {
-				this.mock(sap.ui.core.CustomizingConfiguration).expects("getViewExtension")
-					.never();
+				this.mock(Component).expects("getCustomizing").never();
 				if (!bWarn) {
-					jQuery.sap.log.setLevel(jQuery.sap.log.Level.ERROR, sComponent);
+					Log.setLevel(Log.Level.ERROR, sComponent);
 				}
 				warn(this.oLogMock,
 						oFixture.sMessage || sinon.match(/\[ \d\] Binding not ready/),
 						aViewContent[1])
 					.exactly(bWarn ? 1 : 0); // do not construct arguments in vain!
 
-				this.check(assert, aViewContent, {
+				return this.check(assert, aViewContent, {
 					models : new JSONModel()
 				}, vExpected);
 			});
@@ -852,7 +984,7 @@ sap.ui.require([
 				}
 			}
 		};
-		this.check(assert, [
+		return this.check(assert, [
 			mvcView(),
 			'<template:if test="false">',
 			'<template:if test="{formatter: \'foo.Helper.forbidden\', path:\'/flag\'}"/>',
@@ -865,7 +997,7 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("XML with template:if test='false' and template:then", function (assert) {
-		this.check(assert, [
+		return this.check(assert, [
 			mvcView(),
 			'<template:if test="false">',
 			'<template:then>',
@@ -878,7 +1010,7 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("XML with template:if test='true' and template:then", function (assert) {
-		this.check(assert, [
+		return this.check(assert, [
 			mvcView(),
 			'<template:if test="true">',
 			'<!-- some comment node -->',
@@ -892,7 +1024,7 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("XML with nested template:if test='true' and template:then", function (assert) {
-		this.check(assert, [
+		return this.check(assert, [
 			mvcView(),
 			// it is essential for the test that there is not tag between the if's
 			'<template:if test="true">',
@@ -908,7 +1040,7 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("XML with template:if test='true' and template:then/else", function (assert) {
-		this.check(assert, [
+		return this.check(assert, [
 			mvcView(),
 			'<template:if test="true">',
 			'<template:then>',
@@ -925,7 +1057,7 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("XML with template:if test='false' and template:then/else", function (assert) {
-		this.check(assert, [
+		return this.check(assert, [
 			mvcView(),
 			'<template:if test="false">',
 			'<template:then>',
@@ -942,7 +1074,7 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("XML with nested template:if test='true' and template:then/else",
 		function (assert) {
-			this.check(assert, [
+			return this.check(assert, [
 				mvcView(),
 				'<template:if test="true">',
 				'<In id="true"/>',
@@ -1035,7 +1167,7 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test('<template:elseif>: if is true', function (assert) {
-		this.check(assert, [
+		return this.check(assert, [
 			mvcView(),
 			'<template:if test="true">',
 			'<template:then>',
@@ -1055,7 +1187,7 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test('<template:elseif>: all false, w/ else', function (assert) {
-		this.check(assert, [
+		return this.check(assert, [
 			mvcView(),
 			'<template:if test="false">',
 			'<template:then>',
@@ -1074,7 +1206,7 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test('<template:elseif>: all false, w/o else', function (assert) {
-		this.check(assert, [
+		return this.check(assert, [
 			mvcView(),
 			'<template:if test="false">',
 			'<template:then>',
@@ -1090,7 +1222,7 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test('<template:elseif>: elseif is true', function (assert) {
-		this.check(assert, [
+		return this.check(assert, [
 			mvcView(),
 			'<template:if test="false">',
 			'<template:then>',
@@ -1123,7 +1255,7 @@ sap.ui.require([
 			}
 		};
 
-		this.check(assert, [
+		return this.check(assert, [
 			mvcView().replace(">", ' xmlns:html="http://www.w3.org/1999/xhtml">'),
 			'<!-- some comment node -->', // to test skipping of none ELEMENT_NODES while visiting
 			'<Label text="{formatter: \'foo.Helper.help\','
@@ -1173,7 +1305,7 @@ sap.ui.require([
 		var sTitle = "binding resolution: ignore [object Object], debug = " + bDebug;
 
 		QUnit.test(sTitle, function (assert) {
-			this.checkTracing(assert, bDebug, [
+			return this.checkTracing(assert, bDebug, [
 				{m : "[ 0] Start processing qux"},
 				{m : "[ 0] text = [object Object]", d : 1},
 				{m : "[ 0] Ignoring [object Array] value for attribute text", d : 3},
@@ -1194,7 +1326,7 @@ sap.ui.require([
 				models: new JSONModel({
 					"string" : "[object Object]",
 					"Array" : [],
-					"Date" : new Date(),
+					"Date" : UI5Date.getInstance(),
 					"Object" : {}
 				})
 			}, [
@@ -1301,10 +1433,8 @@ sap.ui.require([
 			 * @param {number} i
 			 */
 			function checkInterfaceForPart(oInterface, i) {
-				var oCreateBindingContextExpectation,
-					oInterface2Part,
-					oModel = oInterface.getModel(i),
-					fnCreateBindingContext = oModel.createBindingContext;
+				var oInterface2Part,
+					oModel = oInterface.getModel(i);
 
 				// interface to ith part
 				oInterface2Part = oInterface.getInterface(i);
@@ -1352,8 +1482,7 @@ sap.ui.require([
 				assert.strictEqual(oInterface2Part.getSetting("bindTexts"), true, "settings");
 
 				try {
-					oCreateBindingContextExpectation = that.mock(oModel)
-						.expects("createBindingContext").callsFake(fnCreateBindingContext);
+					that.mock(oModel).expects("createBindingContext").callThrough();
 
 					// "drill-down" into ith part with absolute path
 					oInterface2Part = oInterface.getInterface(i, "/absolute/path");
@@ -1362,13 +1491,12 @@ sap.ui.require([
 					assert.strictEqual(oInterface2Part.getPath(), "/absolute/path");
 					assert.strictEqual(oInterface2Part.getSetting("bindTexts"), true, "settings");
 				} finally {
-					oCreateBindingContextExpectation.restore();
+					oModel.createBindingContext.restore();
 				}
 
 				try {
 					// simulate a model which creates the context asynchronously
-					oCreateBindingContextExpectation = that.mock(oModel)
-						.expects("createBindingContext").twice();
+					that.mock(oModel).expects("createBindingContext").twice();
 
 					oInterface2Part = oInterface.getInterface(i, "String");
 
@@ -1377,7 +1505,7 @@ sap.ui.require([
 					assert.strictEqual(e.message,
 						"Model could not create binding context synchronously: " + oModel);
 				} finally {
-					oCreateBindingContextExpectation.restore();
+					oModel.createBindingContext.restore();
 				}
 			}
 
@@ -1431,6 +1559,9 @@ sap.ui.require([
 							));
 						}
 
+						assert.strictEqual(oInterface._slice(0, i), oInterface);
+						assert.strictEqual(oInterface._slice(0, i + 1), oInterface);
+
 						assert.throws(function () {
 							oInterface.getInterface(i);
 						}, new RegExp("Invalid index of part: " + i));
@@ -1466,7 +1597,7 @@ sap.ui.require([
 				}
 			};
 
-			this.checkTracing(assert, bDebug, [
+			return this.checkTracing(assert, bDebug, [
 				{m : "[ 0] Start processing qux"},
 				{m : "[ 0] undefined = /somewhere/com.sap.vocabularies.UI.v1.HeaderInfo"},
 				{m : "[ 0] Removed attribute text", d : 1},
@@ -1476,6 +1607,11 @@ sap.ui.require([
 				{m : "[ 0] Binding not ready for attribute text", d : 5},
 				{m : "[ 0] text = [Customer] {CustomerName}", d : 6},
 				{m : "[ 0] text = [Customer]", d : 7},
+				{m : "[ 0] text = Customer: {CustomerName}", d : 8},
+				{m : "[ 0] text = [Customer] {CustomerName}", d : 9},
+				{m : "[ 0] text = Customer: [Customer] {CustomerName}", d : 10},
+				{m : "[ 0] text = Customer - [Customer] {CustomerName}", d : 11},
+				{m : "[ 0] text = [Customer] {CustomerName} - Customer", d : 12},
 				{m : "[ 0] Finished processing qux"}
 			], [
 				mvcView(),
@@ -1488,6 +1624,20 @@ sap.ui.require([
 				'<Text text="{parts: [{path: \'Title/Label\'}, {path: \'Title/Value\'}],'
 					+ ' formatter: \'foo.Helper.formatParts\'}"/>',
 				'<Text text="{formatter: \'foo.Helper.formatParts\', path: \'Title/Label\'}"/>',
+				// check that requiresIContext works inside expression binding
+				'<Text text="{= ${Title/Label/String} + \': \''
+					+ '+ ${formatter: \'foo.Helper.help\', path: \'Title/Value\'} }"/>',
+				'<Text text="{= ${parts: [{path: \'Title/Label\'}, {path: \'Title/Value\'}],'
+					+ ' formatter: \'foo.Helper.formatParts\'} }"/>',
+				'<Text text="{= ${Title/Label/String} + \': \''
+					+ ' + ${parts: [{path: \'Title/Label\'}, {path: \'Title/Value\'}],'
+					+ ' formatter: \'foo.Helper.formatParts\'} }"/>',
+				'<Text text="{= ${formatter: \'foo.Helper.help\', path: \'Title/Label\'}'
+					+ ' + \' - \' + ${parts: [{path: \'Title/Label\'}, {path: \'Title/Value\'}],'
+					+ ' formatter: \'foo.Helper.formatParts\'} }"/>',
+				'<Text text="{= ${parts: [{path: \'Title/Label\'}, {path: \'Title/Value\'}],'
+					+ ' formatter: \'foo.Helper.formatParts\'} + \' - \''
+					+ ' + ${formatter: \'foo.Helper.help\', path: \'Title/Label\'} }"/>',
 				'</mvc:View>'
 			], {
 				models : oModel,
@@ -1502,7 +1652,12 @@ sap.ui.require([
 				// Note: XML serializer outputs &gt; encoding...
 				'<Text text="{unrelated&gt;/some/path}"/>',
 				'<Text text="[Customer] {CustomerName}"/>',
-				'<Text text="[Customer]"/>'
+				'<Text text="[Customer]"/>',
+				'<Text text="Customer: {CustomerName}"/>',
+				'<Text text="[Customer] {CustomerName}"/>',
+				'<Text text="Customer: [Customer] {CustomerName}"/>',
+				'<Text text="Customer - [Customer] {CustomerName}"/>',
+				'<Text text="[Customer] {CustomerName} - Customer"/>'
 			]);
 		});
 	});
@@ -1519,7 +1674,7 @@ sap.ui.require([
 						}
 					};
 
-				this.checkTracing(assert, bDebug, [
+				return this.checkTracing(assert, bDebug, [
 					{m : "[ 0] Start processing qux"},
 					{m : "[ 0] Error in formatter of attribute text Error: deliberate failure",
 						d : 1},
@@ -1553,7 +1708,7 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("template:with", function (assert) {
-		this.check(assert, [
+		return this.check(assert, [
 			mvcView(),
 			'<template:with path="/some/random/path">',
 			'<template:if test="{flag}">',
@@ -1591,7 +1746,7 @@ sap.ui.require([
 			.withExactArgs("/some/#random/path")
 			.returns(oMetaModel.createBindingContext("/some/random/path"));
 
-		this.check(assert, [
+		return this.check(assert, [
 			mvcView(),
 			'<template:with path="/some/#random/path" var="path">',
 			'<template:if test="{path>flag}">',
@@ -1606,6 +1761,9 @@ sap.ui.require([
 	//TODO createBindingContext should also be used w/o var
 
 	//*********************************************************************************************
+	/**
+	 * @deprecated As of version 1.120.0
+	 */
 	[false, true].forEach(function (bHasHelper) {
 		QUnit.test("template:with and 'named context', has helper = " + bHasHelper,
 			function (assert) {
@@ -1614,7 +1772,7 @@ sap.ui.require([
 						help : function () {} // empty helper must not make any difference
 					}
 				};
-				this.check(assert, [
+				return this.check(assert, [
 					mvcView(),
 					'<template:with path="/some" var="some">',
 					'<template:with path="some>random/path" var="path"'
@@ -1641,8 +1799,43 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	[false, true].forEach(function (bHasHelper) {
+		QUnit.test("template:with and 'named context', has helper = " + bHasHelper,
+			function (assert) {
+				return this.check(assert, [
+					mvcView("", {
+						Helper : {
+							// empty helper must not make any difference
+							help : function () { }
+						}
+					}, this),
+					'<template:with path="/some" var="some">',
+					'<template:with path="some>random/path" var="path"'
+						+ (bHasHelper ? ' helper="Helper.help"' : '') + '>',
+					'<template:if test="{path>flag}">',
+					'<In id="flag"/>',
+					'</template:if>',
+					'</template:with>',
+					'</template:with>',
+					'</mvc:View>'
+				], {
+					models : new JSONModel({
+						some : {
+							random : {
+								path : {
+									flag : true
+								}
+							}
+						}
+					})
+				});
+			}
+		);
+	});
+
+	//*********************************************************************************************
 	QUnit.test("template:with and 'named context', missing variable name", function (assert) {
-		this.checkError(assert, [
+		return this.checkError(assert, [
 			mvcView(),
 			'<template:with path="/unused" var=""/>',
 			'</mvc:View>'
@@ -1651,7 +1844,7 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("template:with and 'named context', missing model", function (assert) {
-		this.checkError(assert, [
+		return this.checkError(assert, [
 			mvcView(),
 			'<template:with path="some>random/path" var="path"/>', // "some" not defined here!
 			'</mvc:View>'
@@ -1660,7 +1853,7 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("template:with and 'named context', missing context", function (assert) {
-		this.checkError(assert, [
+		return this.checkError(assert, [
 			mvcView(),
 			'<template:with path="some/random/place" var="place"/>',
 			'</mvc:View>'
@@ -1670,27 +1863,81 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	/**
+	 * @deprecated As of version 1.120.0
+	 */
+	[false, true].forEach(function (bAsync) {
+		[false, true].forEach(function (bWithVar) {
+			QUnit.test("template:with and helper, async = " + bAsync + ", with var = " + bWithVar,
+					function (assert) {
+				var oModel = new JSONModel({
+						target : {
+							flag : true
+						}
+					});
+
+				window.foo = {
+					Helper : {
+						help : function (oContext) {
+							assert.ok(oContext instanceof Context);
+							assert.strictEqual(oContext.getModel(), oModel);
+							assert.strictEqual(oContext.getPath(), "/some/random/path");
+							return bAsync ? Promise.resolve("/target") : "/target";
+						}
+					}
+				};
+				return this.checkTracing(assert, true, [
+					{m : "[ 0] Start processing qux"},
+					{m : "[ 1] " + (bWithVar ? "target" : "") + " = /target", d : 1},
+					{m : "[ 2] test == true --> true", d : 2},
+					{m : "[ 2] Finished", d : "</template:if>"},
+					{m : "[ 1] Finished", d : "</template:with>"},
+					{m : "[ 0] Finished processing qux"}
+				], [
+					mvcView(),
+					'<template:with path="/some/random/path" helper="foo.Helper.help"'
+						+ (bWithVar ? ' var="target"' : '') + '>',
+					'<template:if test="{' + (bWithVar ? 'target>' : '') + 'flag}">',
+					'<In id="flag"/>',
+					'</template:if>',
+					'</template:with>',
+					'</mvc:View>'
+				], {
+					models : oModel
+				}, /*vExpected*/undefined, bAsync);
+			});
+		});
+	});
+
+	//*********************************************************************************************
 	[false, true].forEach(function (bWithVar) {
-		QUnit.test("template:with and helper, with var = " + bWithVar, function (assert) {
+		QUnit.test("template:with and helper, with var = " + bWithVar,
+				function (assert) {
 			var oModel = new JSONModel({
 					target : {
 						flag : true
 					}
 				});
 
-			window.foo = {
-				Helper : {
-					help : function (oContext) {
-						assert.ok(oContext instanceof Context);
-						assert.strictEqual(oContext.getModel(), oModel);
-						assert.strictEqual(oContext.getPath(), "/some/random/path");
-						return "/target";
+			return this.checkTracing(assert, true, [
+				{m : "[ 0] Start processing qux"},
+				{m : "[ 1] " + (bWithVar ? "target" : "") + " = /target", d : 1},
+				{m : "[ 2] test == true --> true", d : 2},
+				{m : "[ 2] Finished", d : "</template:if>"},
+				{m : "[ 1] Finished", d : "</template:with>"},
+				{m : "[ 0] Finished processing qux"}
+			], [
+				mvcView("", {
+					Helper : {
+						help : function (oContext) {
+							assert.ok(oContext instanceof Context);
+							assert.strictEqual(oContext.getModel(), oModel);
+							assert.strictEqual(oContext.getPath(), "/some/random/path");
+							return Promise.resolve("/target");
+						}
 					}
-				}
-			};
-			this.check(assert, [
-				mvcView(),
-				'<template:with path="/some/random/path" helper="foo.Helper.help"'
+				}, this),
+				'<template:with path="/some/random/path" helper="Helper.help"'
 					+ (bWithVar ? ' var="target"' : '') + '>',
 				'<template:if test="{' + (bWithVar ? 'target>' : '') + 'flag}">',
 				'<In id="flag"/>',
@@ -1699,11 +1946,14 @@ sap.ui.require([
 				'</mvc:View>'
 			], {
 				models : oModel
-			});
+			}, /*vExpected*/undefined, true);
 		});
 	});
 
 	//*********************************************************************************************
+	/**
+	 * @deprecated As of version 1.120.0
+	 */
 	[false, true].forEach(function (bWithVar) {
 		QUnit.test("template:with and helper changing the model, with var = " + bWithVar,
 			function (assert) {
@@ -1724,7 +1974,7 @@ sap.ui.require([
 						}
 					}
 				};
-				this.check(assert, [
+				return this.check(assert, [
 					mvcView(),
 					'<template:with path="/some/random/path" helper="foo.Helper.help"'
 						+ (bWithVar ? ' var="target"' : '') + '>',
@@ -1744,10 +1994,52 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	[false, true].forEach(function (bWithVar) {
+		QUnit.test("template:with and helper changing the model, with var = " + bWithVar,
+			function (assert) {
+				var oMetaModel = new JSONModel({
+						target : {
+							flag : true
+						}
+					}),
+					oModel = new JSONModel();
+
+				return this.check(assert, [
+					mvcView("", {
+						Helper : {
+							help : function (oContext) {
+								assert.ok(oContext instanceof Context);
+								assert.strictEqual(oContext.getModel(), oModel);
+								assert.strictEqual(oContext.getPath(), "/some/random/path");
+								return oMetaModel.createBindingContext("/target");
+							}
+						}
+					}, this),
+					'<template:with path="/some/random/path" helper="Helper.help"'
+						+ (bWithVar ? ' var="target"' : '') + '>',
+					'<template:if test="{' + (bWithVar ? 'target>' : '') + 'flag}">',
+					'<In id="flag"/>',
+					'</template:if>',
+					'</template:with>',
+					'</mvc:View>'
+				], {
+					models : {
+						meta : oMetaModel,
+						"undefined" : oModel
+					}
+				});
+			}
+		);
+	});
+
+	//*********************************************************************************************
+	/**
+	 * @deprecated As of version 1.120.0
+	 */
 	[undefined, {}].forEach(function (fnHelper) {
 		QUnit.test("template:with and helper = " + fnHelper, function (assert) {
 			window.foo = fnHelper;
-			this.checkError(assert, [
+			return this.checkError(assert, [
 				mvcView(),
 				'<template:with path="/unused" var="target" helper="foo"/>',
 				'</mvc:View>'
@@ -1758,8 +2050,23 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	[undefined, {}].forEach(function (fnHelper) {
+		QUnit.test("template:with and helper = " + fnHelper, function (assert) {
+			return this.checkError(assert, [
+				mvcView("", {
+					Helper : fnHelper
+				}, this),
+				'<template:with path="/unused" var="target" helper="foo"/>',
+				'</mvc:View>'
+			], "Cannot resolve helper for {0}", {
+				models : new JSONModel()
+			});
+		});
+	});
+
+	//*********************************************************************************************
 	QUnit.test('<template:with helper=".">', function (assert) {
-		this.checkError(assert, [
+		return this.checkError(assert, [
 			mvcView(),
 			'<template:with path="/unused" var="target" helper="."/>',
 			'</mvc:View>'
@@ -1769,22 +2076,48 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	[true, ""].forEach(function (vResult) {
-		QUnit.test("template:with and helper returning " + vResult, function (assert) {
-			window.foo = function () {
-				return vResult;
-			};
-			this.checkError(assert, [
-				mvcView(),
-				'<template:with path="/unused" var="target" helper="foo"/>',
-				'</mvc:View>'
-			], "Illegal helper result '" + vResult + "' in {0}", {
-				models : new JSONModel()
+	/**
+	 * @deprecated As of version 1.120.0
+	 */
+	[false, true].forEach(function (bAsync) {
+		[true, ""].forEach(function (vResult) {
+			QUnit.test("template:with and helper returning " + vResult + ", bAsync = " + bAsync,
+					function (assert) {
+				window.foo = function () {
+					return vResult;
+				};
+				this.checkError(assert, [
+					mvcView(),
+					'<template:with path="/unused" var="target" helper="foo"/>',
+					'</mvc:View>'
+				], "Illegal helper result '" + vResult + "' in {0}", {
+					models : new JSONModel()
+				}, undefined, bAsync);
 			});
 		});
 	});
 
 	//*********************************************************************************************
+	[true, ""].forEach(function (vResult) {
+		QUnit.test("template:with and helper returning " + vResult, function (assert) {
+			return this.checkError(assert, [
+				mvcView("", {
+					foo : function () {
+						return vResult;
+					}
+				}, this),
+				'<template:with path="/unused" var="target" helper="foo"/>',
+				'</mvc:View>'
+			], "Illegal helper result '" + vResult + "' in {0}", {
+				models : new JSONModel()
+			}, undefined, true);
+		});
+	});
+
+	//*********************************************************************************************
+	/**
+	 * @deprecated As of version 1.120.0
+	 */
 	QUnit.test('template:with repeated w/ same variable and value', function (assert) {
 		var oModel = new JSONModel(),
 			sTemplate1 = '<template:with path="bar>/my/path" var="bar"/>',
@@ -1799,8 +2132,36 @@ sap.ui.require([
 		warn(this.oLogMock, "[ 1] Set unchanged path: /my/path", sTemplate2);
 		warn(this.oLogMock, "[ 1] Set unchanged path: /my/path", sTemplate3);
 
-		this.check(assert, [
+		return this.check(assert, [
 			mvcView(),
+			sTemplate1,
+			sTemplate2,
+			sTemplate3,
+			'</mvc:View>'
+		], {
+			models : {bar : oModel},
+			bindingContexts : {
+				bar : oModel.createBindingContext("/my/path")
+			}
+		});
+	});
+	//*********************************************************************************************
+	QUnit.test('template:with repeated w/ same variable and value', function (assert) {
+		var oModel = new JSONModel(),
+			sTemplate1 = '<template:with path="bar>/my/path" var="bar"/>',
+			sTemplate2 = '<template:with path="bar>bla" helper="foo"/>',
+			sTemplate3 = '<template:with path="bar>/my/path"/>';
+
+		warn(this.oLogMock, "[ 1] Set unchanged path: /my/path", sTemplate1);
+		warn(this.oLogMock, "[ 1] Set unchanged path: /my/path", sTemplate2);
+		warn(this.oLogMock, "[ 1] Set unchanged path: /my/path", sTemplate3);
+
+		return this.check(assert, [
+			mvcView("", {
+				foo : function () {
+					return "/my/path";
+				}
+			}, this),
 			sTemplate1,
 			sTemplate2,
 			sTemplate3,
@@ -1814,8 +2175,92 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	/**
+	 * @deprecated As of version 1.120.0
+	 */
+	QUnit.test("template:with synchronously and helper returning Promise", function (assert) {
+		window.foo = function () {
+			return Promise.resolve();
+		};
+		return this.checkError(assert, [
+			mvcView(),
+			'<template:with path="/unused" helper="foo"/>',
+			'</mvc:View>'
+		], "Async helper in sync view in {0}", {
+			models : new JSONModel()
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("template:with synchronously and helper returning Promise", function (assert) {
+		return this.checkError(assert, [
+			mvcView("", {
+				foo : function () {
+					return Promise.resolve();
+				}
+			}, this),
+			'<template:with path="/unused" helper="foo"/>',
+			'</mvc:View>'
+		], "Async helper in sync view in {0}", {
+			models : new JSONModel()
+		});
+	});
+
+	//*********************************************************************************************
+	/**
+	 * @deprecated As of version 1.120.0
+	 */
+	QUnit.test("template:with synchronously and helper returning SyncPromise", function (assert) {
+		var oModel = new JSONModel({
+				target : {
+					flag : true
+				}
+			});
+
+		window.foo = function (oContext) {
+			return SyncPromise.resolve("/target");
+		};
+		return this.check(assert, [
+			mvcView(),
+			'<template:with path="/some/random/path" helper="foo">',
+			'<template:if test="{flag}">',
+			'<In id="flag"/>',
+			'</template:if>',
+			'</template:with>',
+			'</mvc:View>'
+		], {
+			models : oModel
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("template:with synchronously and helper returning SyncPromise", function (assert) {
+		var oModel = new JSONModel({
+				target : {
+					flag : true
+				}
+			});
+
+		return this.check(assert, [
+			mvcView("", {
+				foo : function (oContext) {
+					return SyncPromise.resolve("/target");
+				}
+			}, this),
+			'<template:with path="/some/random/path" helper="foo">',
+			'<template:if test="{flag}">',
+			'<In id="flag"/>',
+			'</template:if>',
+			'</template:with>',
+			'</mvc:View>'
+		], {
+			models : oModel
+		});
+	});
+
+	//*********************************************************************************************
 	QUnit.test("template:repeat w/o named models", function (assert) {
-		this.check(assert, [
+		return this.check(assert, [
 			mvcView(),
 			'<template:repeat list="{/items}">',
 			'<In src="{src}"/>',
@@ -1839,8 +2284,34 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("template:repeat & iSizeLimit", function (assert) {
+		function many(vValue) {
+			var aArray = [],
+				i;
+
+			for (i = 0; i < 200; i += 1) {
+				aArray.push(vValue);
+			}
+
+			return aArray;
+		}
+
+		return this.check(assert, [
+			mvcView(),
+			'<template:repeat list="{/items}">',
+			'<In src="{src}"/>',
+			'</template:repeat>',
+			'</mvc:View>'
+		], {
+			models : new JSONModel({
+				items : many({src : "A"})
+			})
+		}, many('<In src="A"/>'));
+	});
+
+	//*********************************************************************************************
 	QUnit.test("template:repeat, startIndex & length", function (assert) {
-		this.check(assert, [
+		return this.check(assert, [
 			mvcView(),
 			'<template:repeat list="' + "{path:'/items',startIndex:1,length:2}" + '">',
 			'<In src="{src}"/>',
@@ -1866,7 +2337,7 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("template:repeat with named models", function (assert) {
-		this.check(assert, [
+		return this.check(assert, [
 			mvcView(),
 			'<template:repeat list="{modelName>/items}">',
 			'<In src="{modelName>src}"/>',
@@ -1893,7 +2364,7 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test('template:repeat w/o list', function (assert) {
-		this.checkError(assert, [
+		return this.checkError(assert, [
 			mvcView(),
 			'<template:repeat/>',
 			'</mvc:View>'
@@ -1902,7 +2373,7 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test('template:repeat list="no binding"', function (assert) {
-		this.checkError(assert, [
+		return this.checkError(assert, [
 			mvcView(),
 			'<template:repeat list="no binding"/>',
 			'</mvc:View>'
@@ -1911,7 +2382,7 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test('template:repeat list="{unknown>foo}"', function (assert) {
-		this.checkError(assert, [
+		return this.checkError(assert, [
 			mvcView(),
 			'<template:repeat list="{unknown>foo}"/>',
 			'</mvc:View>'
@@ -1922,7 +2393,7 @@ sap.ui.require([
 	QUnit.test('template:repeat list="{/unsupported/path}"', function (assert) {
 		//TODO is this the expected behavior? the loop has no iterations and that's it?
 		// Note: the same happens with a relative path if there is no binding context for the model
-		this.check(assert, [
+		return this.check(assert, [
 			mvcView(),
 			'<template:repeat list="{/unsupported/path}"/>',
 			'</mvc:View>'
@@ -1933,7 +2404,7 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("template:repeat w/ complex binding and model", function (assert) {
-		this.check(assert, [
+		return this.check(assert, [
 			mvcView(),
 			// Note: foo: 'bar' just serves as placeholder for any parameter (complex syntax)
 			'<template:repeat list="{foo: \'bar\', path:\'modelName>/items\'}">',
@@ -1961,7 +2432,7 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("template:repeat nested", function (assert) {
-		this.check(assert, [
+		return this.check(assert, [
 			mvcView(),
 			'<template:repeat list="{customer>/orders}">',
 			'<In src="{customer>id}"/>',
@@ -2002,7 +2473,7 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("template:repeat with loop variable", function (assert) {
-		this.check(assert, [
+		return this.check(assert, [
 			mvcView(),
 			'<template:repeat list="{modelName>/items}" var="item">',
 			'<In src="{item>src}"/>',
@@ -2029,30 +2500,43 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("template:repeat with missing loop variable", function (assert) {
-		this.checkError(assert, [
+		return this.checkError(assert, [
 			mvcView(),
 			'<template:repeat var="" list="{/unused}"/>',
 			'</mvc:View>'
 		], "Missing variable name for {0}");
 	});
 
-	[false, true].forEach(function (bAsync) {
+	[/**@deprecated As of version 1.120.0*/false, true].forEach(function (bAsync) {
 		[false, true].forEach(function (bDebug) {
 			//**************************************************************************************
 			QUnit.test("fragment support incl. template:require, async = " + bAsync
 					+ ", debug = " + bDebug, function (assert) {
 				var sModuleName = "sap.ui.core.sample.ViewTemplate.scenario.Helper",
-					sInElement = '<In xmlns="sap.ui.core" xmlns:template='
+					sTextElement = '<Text xmlns="sap.ui.core" xmlns:template='
 						+ '"http://schemas.sap.com/sapui5/extension/sap.ui.core.template/1"'
-						+ ' template:require="' + sModuleName + '"/>';
+						+ ' template:require="' + sModuleName + '" text="'
+						+ "{formatter: 'foo.Helper.bar', path: '/flag'}" + '"/>',
+					sFragmentXml = xml(assert, [sTextElement]),
+					aURNs = ["sap/ui/core/sample/ViewTemplate/scenario/Helper"];
 
-				this.mock(jQuery.sap).expects("require").on(jQuery.sap).withExactArgs(sModuleName);
-				this.expectLoad(bAsync, "myFragment", xml(assert, [sInElement]));
+				this.expectLoad(bAsync, "myFragment", sFragmentXml);
+				this.expectRequire(bAsync, aURNs, function () {
+					window.foo = {
+						Helper : {
+							bar : function (vValue) {
+								return "*" + vValue + "*";
+							}
+						}
+					};
+					return [window.foo.Helper];
+				});
 				this.expectLoad(bAsync, "yetAnotherFragment",
 					xml(assert, ['<In xmlns="sap.ui.core"/>']));
 				return this.checkTracing(assert, bDebug, [
 						{m : "[ 0] Start processing qux"},
 						{m : "[ 1] fragmentName = myFragment", d : 1},
+						{m : "[ 1] text = *true*", d : sTextElement},
 						{m : "[ 1] Finished", d : "</Fragment>"},
 						{m : "[ 1] fragmentName = yetAnotherFragment", d : 4},
 						{m : "[ 1] Finished", d : "</Fragment>"},
@@ -2064,17 +2548,21 @@ sap.ui.require([
 						'</Fragment>',
 						'<Fragment fragmentName="yetAnotherFragment" type="XML"/>',
 						'</mvc:View>'
-					], {}, [
-						sInElement,
+					], {
+						models : new JSONModel({flag : true})
+					}, [
+						'<Text template:require="' + sModuleName + '" text="*true*"/>',
 						'<In/>'
 					], bAsync);
 			});
 
 			//**************************************************************************************
+			/**
+			 * @deprecated As of version 1.120.0
+			 */
 			QUnit.test("fragment with FragmentDefinition incl. template:require, async = " + bAsync
 					+ ", debug = " + bDebug, function (assert) {
-				var oExpectation = this.mock(jQuery.sap).expects("require"),
-					aModuleNames = [
+				var aModuleNames = [
 						"foo.Helper",
 						"sap.ui.core.sample.ViewTemplate.scenario.Helper",
 						"sap.ui.model.odata.AnnotationHelper"
@@ -2083,16 +2571,29 @@ sap.ui.require([
 						'<FragmentDefinition xmlns="sap.ui.core" xmlns:template='
 							+ '"http://schemas.sap.com/sapui5/extension/sap.ui.core.template/1"'
 							+ ' template:require="' + aModuleNames.join(" ") + '">',
-						'<In id="first"/>',
+						'<Text id="first" text="'
+							+ "{formatter: 'foo.Helper.bar', path: '/flag'}" + '"/>',
 						'<Fragment fragmentName="innerFragment" type="XML"/>',
 						'<In id="last"/>',
 						'</FragmentDefinition>'
+					],
+					aURNs = [
+						"foo/Helper",
+						"sap/ui/core/sample/ViewTemplate/scenario/Helper",
+						"sap/ui/model/odata/AnnotationHelper"
 					];
 
-				// Note: jQuery.sap.require() supports "varargs" style
-				oExpectation.on(jQuery.sap).withExactArgs.apply(oExpectation, aModuleNames);
-
 				this.expectLoad(bAsync, "myFragment", xml(assert, aFragmentContent));
+				this.expectRequire(bAsync, aURNs, function () {
+					window.foo = {
+						Helper : {
+							bar : function (vValue) {
+								return "*" + vValue + "*";
+							}
+						}
+					};
+					return [window.foo.Helper, {}, {}];
+				});
 				this.expectLoad(bAsync, "innerFragment",
 					xml(assert, ['<In xmlns="sap.ui.core" id="inner"/>']));
 				this.expectLoad(bAsync, "yetAnotherFragment",
@@ -2100,6 +2601,7 @@ sap.ui.require([
 				return this.checkTracing(assert, bDebug, [
 						{m : "[ 0] Start processing qux"},
 						{m : "[ 1] fragmentName = myFragment", d : 1},
+						{m : "[ 1] text = *true*", d : aFragmentContent[1]},
 						{m : "[ 2] fragmentName = innerFragment", d : aFragmentContent[2]},
 						{m : "[ 2] Finished", d : "</Fragment>"},
 						{m : "[ 1] Finished", d : "</Fragment>"},
@@ -2111,8 +2613,10 @@ sap.ui.require([
 						'<Fragment fragmentName="myFragment" type="XML"/>',
 						'<Fragment fragmentName="yetAnotherFragment" type="XML"/>',
 						'</mvc:View>'
-					], {}, [
-						'<In id="first"/>',
+					], {
+						models : new JSONModel({flag : true})
+					}, [
+						'<Text id="first" text="*true*"/>',
 						'<In id="inner"/>',
 						'<In id="last"/>',
 						'<In id="yetAnother"/>'
@@ -2121,10 +2625,73 @@ sap.ui.require([
 		});
 	});
 
+	//**************************************************************************************
+	[false, true].forEach(function (bDebug) {
+		//**************************************************************************************
+		var sTitle = "fragment with FragmentDefinition incl. template:require, debug = "
+			+ bDebug;
+
+		QUnit.test(sTitle, function (assert) {
+			var mModuleNames = {
+					MyHelper : "foo.Helper",
+					Helper : "sap.ui.core.sample.ViewTemplate.scenario.Helper",
+					AnnotationHelper : "sap.ui.model.odata.AnnotationHelper"
+				},
+				aFragmentContent = [
+					'<FragmentDefinition xmlns="sap.ui.core" xmlns:template='
+					+ '"http://schemas.sap.com/sapui5/extension/sap.ui.core.template/1"'
+					+ ' template:require="'
+					+ JSON.stringify(mModuleNames).replaceAll('"', "'") + '">',
+					'<Text id="first" text="'
+						+ "{formatter: 'MyHelper.bar', path: '/flag'}" + '"/>',
+					'<Fragment fragmentName="innerFragment" type="XML"/>',
+					'<In id="last"/>',
+					'</FragmentDefinition>'
+				];
+
+			this.expectLoad(true, "myFragment", xml(assert, aFragmentContent));
+			this.expectRequire(true, Object.values(mModuleNames), function () {
+					return [{
+						bar : function (vValue) {
+							return "*" + vValue + "*";
+						}
+					}, {}, {}];
+				});
+			this.expectLoad(true, "innerFragment",
+				xml(assert, ['<In xmlns="sap.ui.core" id="inner"/>']));
+			this.expectLoad(true, "yetAnotherFragment",
+				xml(assert, ['<In xmlns="sap.ui.core" id="yetAnother"/>']));
+
+			return this.checkTracing(assert, bDebug, [
+				{m : "[ 0] Start processing qux"},
+				{m : "[ 1] fragmentName = myFragment", d : 1},
+				{m : "[ 1] text = *true*", d : aFragmentContent[1]},
+				{m : "[ 2] fragmentName = innerFragment", d : aFragmentContent[2]},
+				{m : "[ 2] Finished", d : "</Fragment>"},
+				{m : "[ 1] Finished", d : "</Fragment>"},
+				{m : "[ 1] fragmentName = yetAnotherFragment", d : 2},
+				{m : "[ 1] Finished", d : "</Fragment>"},
+				{m : "[ 0] Finished processing qux"}
+			], [
+				mvcView(),
+				'<Fragment fragmentName="myFragment" type="XML"/>',
+				'<Fragment fragmentName="yetAnotherFragment" type="XML"/>',
+				'</mvc:View>'
+			], {
+				models : new JSONModel({flag : true})
+			}, [
+				'<Text id="first" text="*true*"/>',
+				'<In id="inner"/>',
+				'<In id="last"/>',
+				'<In id="yetAnother"/>'
+			], true);
+		});
+	});
+
 	//*********************************************************************************************
 	QUnit.test("dynamic fragment names", function (assert) {
 		this.expectLoad(false, "dynamicFragmentName", xml(assert, ['<In xmlns="sap.ui.core"/>']));
-		this.check(assert, [
+		return this.check(assert, [
 				mvcView(),
 				'<Fragment fragmentName="{= \'dynamicFragmentName\' }" type="XML"/>',
 				'</mvc:View>'
@@ -2164,7 +2731,7 @@ sap.ui.require([
 		this.expectLoad(false, "myFragment",
 			xml(assert, ['<In xmlns="sap.ui.core" src="{src}" />']));
 
-		this.check(assert, [
+		return this.check(assert, [
 			mvcView(),
 			'<template:repeat list="{/items}">',
 			'<Fragment fragmentName="myFragment" type="XML"/>',
@@ -2189,7 +2756,7 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("fragment with type != XML", function (assert) {
-		this.check(assert, [
+		return this.check(assert, [
 				mvcView(),
 				'<Fragment fragmentName="nonXMLFragment" type="JS"/>',
 				'</mvc:View>'
@@ -2202,7 +2769,7 @@ sap.ui.require([
 	QUnit.test("error on fragment with simple cyclic reference", function (assert) {
 		this.expectLoad(false, "cycle",
 			xml(assert, ['<Fragment xmlns="sap.ui.core" fragmentName="cycle" type="XML"/>']));
-		this.checkError(assert, [
+		return this.checkError(assert, [
 				mvcView(),
 				'<Fragment fragmentName="cycle" type="XML"/>',
 				'</mvc:View>'
@@ -2229,7 +2796,7 @@ sap.ui.require([
 		this.expectLoad(false, "B",
 			xml(assert, ['<Fragment xmlns="sap.ui.core" fragmentName="A" type="XML"/>']));
 
-		this.checkError(assert, [
+		return this.checkError(assert, [
 				mvcView(),
 				'<Fragment fragmentName="A" type="XML"/>',
 				'</mvc:View>'
@@ -2294,10 +2861,8 @@ sap.ui.require([
 				'<In src="fragment"/>',
 				'</FragmentDefinition>'
 			]));
-			// debug output for dynamic names must still appear!
-			delete sap.ui.core.CustomizingConfiguration;
 
-			this.checkTracing(assert, bDebug, [
+			return this.checkTracing(assert, bDebug, [
 				{m : "[ 0] Start processing qux"},
 				{m : "[ 0] bar = /com.sap.vocabularies.UI.v1.HeaderInfo/Title"},
 				{m : "[ 0] baz = /"},
@@ -2346,21 +2911,20 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	[
-		sap.ui.core.CustomizingConfiguration, // symbolic value, see below!
 		undefined,
 		{className : "sap.ui.core.Fragment", type : "JSON"},
 		{className : "sap.ui.core.mvc.View", type : "XML"}
-	].forEach(function (oViewExtension) {
-		QUnit.test("<ExtensionPoint>: no (supported) configuration", function (assert) {
-			if (oViewExtension === sap.ui.core.CustomizingConfiguration) {
-				delete sap.ui.core.CustomizingConfiguration;
-			} else {
-				this.mock(sap.ui.core.CustomizingConfiguration).expects("getViewExtension")
-					.withExactArgs("this.sViewName", "myExtensionPoint", "this._sOwnerId")
-					.returns(oViewExtension);
-			}
+	].forEach(function (oViewExtension, i) {
+		QUnit.test("<ExtensionPoint>: no (supported) configuration, " + i, function (assert) {
+			this.mock(Component).expects("getCustomizing")
+				.withExactArgs("this._sOwnerId", {
+					extensionName : "myExtensionPoint",
+					name : "this.sViewName",
+					type : "sap.ui.viewExtensions"
+				})
+				.returns(oViewExtension);
 
-			this.check(assert, [
+			return this.check(assert, [
 					mvcView(),
 					'<ExtensionPoint name="myExtensionPoint">',
 					'<template:if test="true">', // checks that content is processed
@@ -2380,7 +2944,7 @@ sap.ui.require([
 	["outerExtensionPoint", "{:= 'outerExtensionPoint' }"].forEach(function (sName) {
 		QUnit.test("<ExtensionPoint name='" + sName + "'>: XML fragment configured",
 			function (assert) {
-				var oCustomizingConfigurationMock = this.mock(sap.ui.core.CustomizingConfiguration),
+				var oComponentMock = this.mock(Component),
 					aOuterReplacement = [
 						'<template:if test="true" xmlns="sap.ui.core" xmlns:template='
 							+ '"http://schemas.sap.com/sapui5/extension/sap.ui.core.template/1"'
@@ -2390,8 +2954,12 @@ sap.ui.require([
 					];
 
 				// <ExtensionPoint name="outerExtensionPoint">
-				oCustomizingConfigurationMock.expects("getViewExtension")
-					.withExactArgs("this.sViewName", "outerExtensionPoint", "this._sOwnerId")
+				oComponentMock.expects("getCustomizing")
+					.withExactArgs( "this._sOwnerId", {
+						extensionName : "outerExtensionPoint",
+						name : "this.sViewName",
+						type : "sap.ui.viewExtensions"
+					})
 					.returns({
 						className : "sap.ui.core.Fragment",
 						fragmentName : "acme.OuterReplacement",
@@ -2400,13 +2968,16 @@ sap.ui.require([
 				this.expectLoad(false, "acme.OuterReplacement", xml(assert, aOuterReplacement));
 				// Note: mock result of loadTemplate() is not analyzed by check() method, of course
 				warn(this.oLogMock, '[ 2] Constant test condition', aOuterReplacement[0]);
-				this.mock(jQuery.sap).expects("require").on(jQuery.sap)
-					.withExactArgs("foo.Helper", "bar.Helper");
+				this.expectRequire(false, ["foo/Helper", "bar/Helper"]);
 
 				// <ExtensionPoint name="outerReplacement">
 				// --> nothing configured, just check that it is processed
-				oCustomizingConfigurationMock.expects("getViewExtension")
-					.withExactArgs("acme.OuterReplacement", "outerReplacement", "this._sOwnerId");
+				oComponentMock.expects("getCustomizing")
+					.withExactArgs( "this._sOwnerId", {
+						extensionName : "outerReplacement",
+						name : "acme.OuterReplacement",
+						type : "sap.ui.viewExtensions"
+					});
 
 				// <Fragment fragmentName="myFragment" type="XML"/>
 				this.expectLoad(false, "myFragment", xml(assert, [
@@ -2415,8 +2986,12 @@ sap.ui.require([
 
 				// <ExtensionPoint name="innerExtensionPoint"/>
 				// --> fragment name is used here!
-				oCustomizingConfigurationMock.expects("getViewExtension")
-					.withExactArgs("myFragment", "innerExtensionPoint", "this._sOwnerId")
+				oComponentMock.expects("getCustomizing")
+					.withExactArgs( "this._sOwnerId", {
+						extensionName : "innerExtensionPoint",
+						name : "myFragment",
+						type : "sap.ui.viewExtensions"
+					})
 					.returns({
 						className : "sap.ui.core.Fragment",
 						fragmentName : "acme.InnerReplacement",
@@ -2428,15 +3003,23 @@ sap.ui.require([
 
 				// <ExtensionPoint name="innerReplacement">
 				// --> nothing configured, just check that it is processed
-				oCustomizingConfigurationMock.expects("getViewExtension")
-					.withExactArgs("acme.InnerReplacement", "innerReplacement", "this._sOwnerId");
+				oComponentMock.expects("getCustomizing")
+					.withExactArgs( "this._sOwnerId", {
+						extensionName : "innerReplacement",
+						name : "acme.InnerReplacement",
+						type : "sap.ui.viewExtensions"
+					});
 
 				// <ExtensionPoint name="lastExtensionPoint">
 				// --> nothing configured, just check that view name is used again
-				oCustomizingConfigurationMock.expects("getViewExtension")
-					.withExactArgs("this.sViewName", "lastExtensionPoint", "this._sOwnerId");
+				oComponentMock.expects("getCustomizing")
+					.withExactArgs( "this._sOwnerId", {
+						extensionName : "lastExtensionPoint",
+						name : "this.sViewName",
+						type : "sap.ui.viewExtensions"
+					});
 
-				this.check(assert, [
+				return this.check(assert, [
 						mvcView(),
 						'<ExtensionPoint name="' + sName + '">',
 						'<template:error />', // this must not be processed!
@@ -2455,21 +3038,20 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("template:require - single module", function (assert) {
-		var sModuleName = "sap.ui.core.sample.ViewTemplate.scenario.Helper",
-			oRootElement = xml(assert, [
-				mvcView().replace(">", ' template:require="' + sModuleName + '">'),
+		var oRootElement = xml(assert, [
+				mvcView().replace(">",
+					' template:require="sap.ui.core.sample.ViewTemplate.scenario.Helper">'),
 				'</mvc:View>'
 			]);
 
-		this.mock(jQuery.sap).expects("require").on(jQuery.sap).withExactArgs(sModuleName);
+		this.expectRequire(false, ["sap/ui/core/sample/ViewTemplate/scenario/Helper"]);
 
 		process(oRootElement);
 	});
 
 	//*********************************************************************************************
 	QUnit.test("template:require - multiple modules", function (assert) {
-		var oExpectation = this.mock(jQuery.sap).expects("require"),
-			aModuleNames = [
+		var aModuleNames = [
 				"foo.Helper",
 				"sap.ui.core.sample.ViewTemplate.scenario.Helper",
 				"sap.ui.model.odata.AnnotationHelper"
@@ -2479,17 +3061,21 @@ sap.ui.require([
 				'</mvc:View>'
 			]);
 
-		// Note: jQuery.sap.require() supports "varargs" style
-		oExpectation.on(jQuery.sap).withExactArgs.apply(oExpectation, aModuleNames);
+		this.expectRequire(false, [
+			"foo/Helper",
+			"sap/ui/core/sample/ViewTemplate/scenario/Helper",
+			"sap/ui/model/odata/AnnotationHelper"
+		]);
 
 		process(oRootElement);
 	});
 
 	//*********************************************************************************************
+	/**
+	 * @deprecated As of version 1.120.0
+	 */
 	QUnit.test("template:alias", function (assert) {
-		var fnComplexParser = BindingParser.complexParser,
-			fnGetObject = jQuery.sap.getObject,
-			jQuerySapMock = this.mock(jQuery.sap);
+		var oObjectPathMock = this.mock(ObjectPath);
 
 		window.foo = {
 			Helper : {
@@ -2517,15 +3103,16 @@ sap.ui.require([
 		};
 
 		// make sure we do not create namespaces!
-		jQuerySapMock.expects("getObject").atLeast(1).withExactArgs(sinon.match.string)
-			.callsFake(fnGetObject);
-		jQuerySapMock.expects("getObject").atLeast(1)
-			.withExactArgs(sinon.match.string, /*iNoCreates*/undefined, sinon.match.object)
-			.callsFake(fnGetObject);
+		oObjectPathMock.expects("get").atLeast(1)
+			.withExactArgs(sinon.match.string.or(sinon.match.array))
+			.callThrough();
+		oObjectPathMock.expects("get").atLeast(1)
+			.withExactArgs(sinon.match.string.or(sinon.match.array), sinon.match.object)
+			.callThrough();
 		this.mock(BindingParser).expects("complexParser").atLeast(1)
 			.withExactArgs(sinon.match.string, sinon.match.object, sinon.match.bool,
-				/*bTolerateFunctionsNotFound*/true, /*bStaticContext*/true)
-			.callsFake(fnComplexParser);
+				/*bTolerateFunctionsNotFound*/true, /*bStaticContext*/true, /*bPreferContext*/true)
+			.callThrough();
 
 		// Note: <Label text="..."> remains unresolved, <Text text="..."> MUST be resolved
 		this.check(assert, [
@@ -2533,15 +3120,14 @@ sap.ui.require([
 			"<Label text=\"{formatter: '.bar', path: '/'}\"/>",
 			"<Label text=\"{formatter: '.foo', path: '/'}\"/>",
 			'<template:alias name=".bar" value="foo.Helper.bar">',
-				"<Text text=\"{formatter: '.bar', path: '/'}\"/>",
+				"<Text text=\"{formatter: '.bar', path: '/', parameters: {foo : 'bar'}}\"/>",
 				"<Label text=\"{formatter: '.foo', path: '/'}\"/>",
 				'<template:alias name=".foo" value="foo.Helper.foo">',
 					"<Text text=\"{formatter: '.foo', path: '/'}\"/>",
 					// redefine existing alias
 					'<template:alias name=".foo" value="foo.Helper.bar">',
 						"<Text text=\"{formatter: '.foo', path: '/'}\"/>",
-						"<Text text=\"{formatter: 'foo.Helper.checkScope', path: '/',"
-							+ " parameters: {foo: 'bar'}}\"/>",
+						"<Label text=\"{formatter: 'foo.Helper.checkScope', path: '/'}\"/>",
 					'</template:alias>',
 					// old value must be used again
 					"<Text text=\"{formatter: '.foo', path: '/'}\"/>",
@@ -2571,7 +3157,98 @@ sap.ui.require([
 				"<Label text=\"{formatter: '.foo', path: '/'}\"/>",
 					'<Text text="/foo"/>',
 						'<Text text="/bar"/>',
-						'<Text/>', // checkScope() returns undefined
+						// The nearest .foo alias doesn't have "Helper" defined,
+						// therefore the formatter can't be resolved
+						"<Label text=\"{formatter: 'foo.Helper.checkScope', path: '/'}\"/>",
+					'<Text text="/foo"/>',
+			"<Label text=\"{formatter: '.bar', path: '/'}\"/>",
+			"<Label text=\"{formatter: '.foo', path: '/'}\"/>",
+				'<Text text="/foo"/>',
+					'<Text text="/bar"/>'
+		]);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("template:alias", function (assert) {
+		var oObjectPathMock = this.mock(ObjectPath),
+			mRequiredModules = {
+				Helper : {
+					bar : function () {
+						assert.ok(!this || !("bar" in this), "no jQuery.proxy(..., oScope) used");
+						// return absolute path so this function serves as helper & formatter!
+						return "/bar";
+					},
+					checkScope : function () {
+						// Note: this makes sure that the current scope of aliases is passed as
+						// binding parameter for v4.ODataMetaModel's computed annotations
+						assert.deepEqual(this.getBindingInfo("any").parameters, {
+							scope : {
+								Helper : mRequiredModules.Helper,
+								bar : mRequiredModules.Helper.bar,
+								// see "redefine existing alias" below
+								foo : mRequiredModules.Helper.bar
+							}
+						}, "scope available in binding info");
+					},
+					foo : function () {
+						assert.ok(!this || !("foo" in this), "no jQuery.proxy(..., oScope) used");
+						return "/foo";
+					}
+				}
+			};
+
+		oObjectPathMock.expects("get").atLeast(1)
+			.withExactArgs(sinon.match.string.or(sinon.match.array), sinon.match.object)
+			.callThrough();
+		this.mock(BindingParser).expects("complexParser").atLeast(1)
+			.withExactArgs(sinon.match.string, sinon.match.object, sinon.match.bool,
+				/*bTolerateFunctionsNotFound*/true, /*bStaticContext*/true, /*bPreferContext*/true)
+			.callThrough();
+
+		// Note: <Label text="..."> remains unresolved, <Text text="..."> MUST be resolved
+		return this.check(assert, [
+			mvcView("", mRequiredModules, this),
+			"<Label text=\"{formatter: '.bar', path: '/'}\"/>",
+			"<Label text=\"{formatter: '.foo', path: '/'}\"/>",
+			'<template:alias name=".bar" value="Helper.bar">',
+				"<Text text=\"{formatter: '.bar', path: '/', parameters: {foo : 'bar'}}\"/>",
+				"<Label text=\"{formatter: '.foo', path: '/'}\"/>",
+				'<template:alias name=".foo" value="Helper.foo">',
+					"<Text text=\"{formatter: '.foo', path: '/'}\"/>",
+					// redefine existing alias
+					'<template:alias name=".foo" value="Helper.bar">',
+						"<Text text=\"{formatter: '.foo', path: '/'}\"/>",
+						"<Label text=\"{formatter: 'Helper.checkScope', path: '/'}\"/>",
+					'</template:alias>',
+					// old value must be used again
+					"<Text text=\"{formatter: '.foo', path: '/'}\"/>",
+				'</template:alias>',
+				// <template:repeat> uses scope
+				"<template:repeat list=\"{path: '/', factory: '.bar'}\"/>",
+				// <template:with> uses scope
+				'<template:with path="/" helper=".bar"/>',
+			'</template:alias>',
+			// aliases go out of scope
+			"<Label text=\"{formatter: '.bar', path: '/'}\"/>",
+			"<Label text=\"{formatter: '.foo', path: '/'}\"/>",
+			// relative aliases
+			'<template:alias name=".H" value="Helper">',
+				"<Text text=\"{formatter: '.H.foo', path: '/'}\"/>",
+				'<template:alias name=".bar" value=".H.bar">',
+					"<Text text=\"{formatter: '.bar', path: '/'}\"/>",
+				'</template:alias>',
+			'</template:alias>',
+			'</mvc:View>'
+		], {
+			models : new JSONModel({/*don't care*/})
+		}, [
+			"<Label text=\"{formatter: '.bar', path: '/'}\"/>",
+			"<Label text=\"{formatter: '.foo', path: '/'}\"/>",
+				'<Text text="/bar"/>',
+				"<Label text=\"{formatter: '.foo', path: '/'}\"/>",
+					'<Text text="/foo"/>',
+						'<Text text="/bar"/>',
+						"<Label/>", // checkScope() returns undefined
 					'<Text text="/foo"/>',
 			"<Label text=\"{formatter: '.bar', path: '/'}\"/>",
 			"<Label text=\"{formatter: '.foo', path: '/'}\"/>",
@@ -2583,12 +3260,12 @@ sap.ui.require([
 	//*********************************************************************************************
 	[
 		'<template:alias/>',
-		'<template:alias name="foo"/>',
+		'<template:alias name=""/>',
 		'<template:alias name="."/>',
 		'<template:alias name=".foo.bar"/>'
 	].forEach(function (sViewContent) {
 		QUnit.test(sViewContent, function (assert) {
-			this.checkError(assert, [
+			return this.checkError(assert, [
 				mvcView(),
 				sViewContent,
 				'</mvc:View>'
@@ -2604,7 +3281,7 @@ sap.ui.require([
 		'value=".notFound"'
 	].forEach(function (sValue) {
 		QUnit.test('<template:alias name=".foo" ' + sValue + '>', function (assert) {
-			this.checkError(assert, [
+			return this.checkError(assert, [
 				mvcView(),
 				'<template:alias name=".foo" ' + sValue + '/>',
 				'</mvc:View>'
@@ -2614,7 +3291,7 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("Test console log for two digit nesting level", function (assert) {
-		this.check(assert, [
+		return this.check(assert, [
 			mvcView(),
 			'<template:if test="true">',
 			'<template:if test="true">',
@@ -2649,8 +3326,8 @@ sap.ui.require([
 				'<Text text="{CustomerName}"/>',
 				'</mvc:View>'
 			],
-			oAverageSpy = this.spy(jQuery.sap.measure, "average"),
-			oEndSpy = this.spy(jQuery.sap.measure, "end")
+			oAverageSpy = this.spy(Measurement, "average"),
+			oEndSpy = this.spy(Measurement, "end")
 				.withArgs("sap.ui.core.util.XMLPreprocessor.process"),
 			oCountSpy = oAverageSpy.withArgs("sap.ui.core.util.XMLPreprocessor.process", "",
 				["sap.ui.core.util.XMLPreprocessor"]),
@@ -2682,8 +3359,8 @@ sap.ui.require([
 				'<Text text="{unrelated>/some/path}"/>',
 				'</mvc:View>'
 			],
-			oAverageSpy = this.spy(jQuery.sap.measure, "average"),
-			oEndSpy = this.spy(jQuery.sap.measure, "end")
+			oAverageSpy = this.spy(Measurement, "average"),
+			oEndSpy = this.spy(Measurement, "end")
 				.withArgs("sap.ui.core.util.XMLPreprocessor.process"),
 			oResolvedSpy = oAverageSpy.withArgs(
 				"sap.ui.core.util.XMLPreprocessor/getResolvedBinding",
@@ -2757,7 +3434,7 @@ sap.ui.require([
 		sLocalName : undefined
 	}].forEach(function (oFixture) {
 		QUnit.test("plugIn, sLocalName: " + oFixture.sLocalName, function (assert) {
-			var fnVisitor = this.spy(),
+			var fnVisitor = this.stub().returns(SyncPromise.resolve()),
 				oXml = xml(assert, oFixture.aContent); // <mvc:View>
 
 			window.foo = {
@@ -2785,6 +3462,7 @@ sap.ui.require([
 			assert.ok(fnVisitor.alwaysCalledWithExactly(
 				oXml.firstChild,
 				{
+					find : sinon.match.func,
 					getContext : sinon.match.func,
 					getResult : sinon.match.func,
 					getSettings : sinon.match.func,
@@ -2795,7 +3473,7 @@ sap.ui.require([
 					visitChildNodes : sinon.match.func,
 					visitNode : sinon.match.func,
 					"with" : sinon.match.func
-				})); // does not work in IE: fnVisitor.printf("%C")
+				}), fnVisitor.printf("%C"));
 		});
 	});
 
@@ -2828,7 +3506,7 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	[false, true].forEach(function (bDebug) {
-		QUnit.test("plugIn, debug tracing for visitor calls: " + bDebug, function (assert) {
+		QUnit.test("plugIn, debug tracing for visitor calls = " + bDebug, function (assert) {
 			var aExpectedMessages = [
 					{m : "[ 0] Start processing qux"},
 					{m : "[ 1] Calling visitor", d : 1},
@@ -2842,21 +3520,15 @@ sap.ui.require([
 					'</mvc:View>'
 				];
 
-			try {
-				XMLPreprocessor.plugIn(function () {
-					if (bDebug) {
-						jQuery.sap.log.debug("I am your visitor!", undefined, sComponent);
-					}
-				}, "foo", "Bar");
+			XMLPreprocessor.plugIn(function () {
+				if (bDebug) {
+					Log.debug("I am your visitor!", undefined, sComponent);
+				}
+				return SyncPromise.resolve();
+			}, "foo", "Bar");
 
-				this.checkTracing(assert, bDebug, aExpectedMessages, aViewContent, {},
-					[aViewContent[1]]);
-			} finally {
-				this.oLogMock.expects("debug")
-					.withExactArgs("Plug-in visitor for namespace 'foo', local name 'Bar'", null,
-						sComponent);
-				XMLPreprocessor.plugIn(null, "foo", "Bar");
-			}
+			return this.checkTracing(assert, bDebug, aExpectedMessages, aViewContent, {},
+				[aViewContent[1]]);
 		});
 	});
 
@@ -2869,26 +3541,86 @@ sap.ui.require([
 			],
 			that = this;
 
-		try {
-			XMLPreprocessor.plugIn(function (oElement, oInterface) {
-				assert.strictEqual(oInterface.getResult(oElement.getAttribute("test"), oElement),
-					42, "returns {any} value");
-				assert.strictEqual(oInterface.getResult(oElement.getAttribute("value"), oElement),
-					"{}", "bMandatory must be hardcoded to true");
-				assert.throws(function () {
-					warn(that.oLogMock, "[ 1] Binding not ready", aViewContent[1]);
-					oInterface.getResult("{missing>/}", oElement);
-				}, new Error("Binding not ready: {missing>/}"));
-				assert.strictEqual(oInterface.getResult(""), "");
-				// Note: oInterface.getResult() throws
-				//       TypeError: Cannot read property 'length' of undefined
-				//           at Object.BindingParser.complexParser
-			}, "foo", "Bar");
+		XMLPreprocessor.plugIn(function (oElement, oInterface) {
+			var oPromise;
 
-			process(xml(assert, aViewContent), {models: new JSONModel({answer: 42})});
-		} finally {
-			XMLPreprocessor.plugIn(null, "foo", "Bar");
-		}
+			// code under test
+			assert.strictEqual(oInterface.getResult(oElement.getAttribute("test")).unwrap(),
+				42, "returns {any} value");
+
+			// code under test
+			assert.strictEqual(oInterface.getResult(oElement.getAttribute("value")).unwrap(),
+				"{}", "bMandatory must be hardcoded to true");
+
+			warn(that.oLogMock, "[ 1] Binding not ready", aViewContent[1]);
+			// code under test
+			assert.strictEqual(oInterface.getResult("{missing>/}", oElement), null);
+
+			// code under test
+			assert.strictEqual(oInterface.getResult("").unwrap(), "");
+
+			// TypeError: Cannot read property 'length' of undefined
+			//   at Object.BindingParser.complexParser
+			oPromise = oInterface.getResult();
+			assert.strictEqual(oPromise.isRejected(), true);
+			oPromise.caught();
+
+			return SyncPromise.resolve();
+		}, "foo", "Bar");
+
+		process(xml(assert, aViewContent), {models: new JSONModel({answer: 42})});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("plugIn, async getResult", function (assert) {
+		return this.checkTracing(assert, true, [
+			{m : "[ 0] Start processing qux"},
+			{m : "[ 1] Calling visitor", d : 1},
+			{m : "[ 1] tooltip = sync",
+				d : '<f:Bar xmlns:f="foo" test="world" tooltip="{/sync}"/>'},
+			{m : "[ 1] Finished", d : "</f:Bar>"},
+			{m : "[ 0] Finished processing qux"}
+		], [
+			mvcView(),
+			'<f:Bar xmlns:f="foo" test="{/hello}" tooltip="{/sync}"/>',
+			'</mvc:View>'
+		], {
+			models : asyncModel({hello : "world", sync : "sync"})
+		}, [
+			'<f:Bar xmlns:f="foo" test="world" tooltip="sync"/>'
+		], true, function (oElement, oInterface) { // visitor for f:Bar
+			// code under test
+			return oInterface.getResult(oElement.getAttribute("test")).then(function (vValue) {
+				oElement.setAttribute("test", vValue);
+				return oInterface.visitAttributes(oElement);
+			});
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("plugIn, async getResult uncaught promise", function (assert) {
+		return this.checkTracing(assert, true, [
+			{m : "[ 0] Start processing qux"},
+			{m : "[ 1] Calling visitor", d : 1},
+			{m : "[ 1] Finished", d : "</f:Bar>"},
+			{m : "[ 0] Finished processing qux"}
+		], [
+			mvcView(),
+			'<f:Bar xmlns:f="foo" test="{/hello}" tooltip="{/sync}"/>',
+			'</mvc:View>'
+		], {
+			models : asyncModel({hello : "world", sync : "sync"})
+		}, [
+			'<f:Bar xmlns:f="foo" test="{/hello}" tooltip="{/sync}"/>'
+		], true, function (oElement, oInterface) { // visitor for f:Bar
+
+			// code under test
+			var oPromise = oInterface.getResult(); // will fail, first param is not optional
+			assert.strictEqual(oPromise.isRejected(), true);
+			oPromise.caught();
+
+			return SyncPromise.resolve();
+		});
 	});
 
 	//*********************************************************************************************
@@ -2910,105 +3642,200 @@ sap.ui.require([
 				}
 			};
 
-		try {
-			XMLPreprocessor.plugIn(function (oElement, oInterface) {
-				var mMySettings = oInterface.getSettings(),
-					oMyViewInfo = oInterface.getViewInfo();
+		XMLPreprocessor.plugIn(function (oElement, oInterface) {
+			var mMySettings = oInterface.getSettings(),
+				oMyViewInfo = oInterface.getViewInfo();
 
-				assert.deepEqual(mMySettings, mSettings);
-				// Note: jQuery.extend() cannot clone objects constructed via new operator!
-//				mMySettings.models.setProperty("/answer", -1);
-//				assert.strictEqual(mSettings.models.getProperty("/answer"), 42, "deep copy");
+			assert.deepEqual(mMySettings, mSettings);
+			// Note: jQuery.extend() cannot clone objects constructed via new operator!
+//			mMySettings.models.setProperty("/answer", -1);
+//			assert.strictEqual(mSettings.models.getProperty("/answer"), 42, "deep copy");
 
-				assert.deepEqual(oMyViewInfo, oViewInfo);
-				//TODO If we cannot win for mSettings, is it worth trying for oViewInfo?
-				oMyViewInfo.nestedObject.foo = "hacked";
-				assert.strictEqual(oViewInfo.nestedObject.foo, "bar", "deep copy");
-			}, "foo", "Bar");
+			assert.deepEqual(oMyViewInfo, oViewInfo);
+			//TODO If we cannot win for mSettings, is it worth trying for oViewInfo?
+			oMyViewInfo.nestedObject.foo = "hacked";
+			assert.strictEqual(oViewInfo.nestedObject.foo, "bar", "deep copy");
 
-			XMLPreprocessor.process(xml(assert, aViewContent), oViewInfo, mSettings);
-		} finally {
-			XMLPreprocessor.plugIn(null, "foo", "Bar");
-		}
+			return SyncPromise.resolve();
+		}, "foo", "Bar");
+
+		XMLPreprocessor.process(xml(assert, aViewContent), oViewInfo, mSettings);
 	});
 
 	//*********************************************************************************************
-	QUnit.test("plugIn, visit*", function (assert) {
-		try {
-			XMLPreprocessor.plugIn(function (oElement, oInterface) {
-				var oChildNodes = oElement.childNodes;
+	[false, true].forEach(function (bAsync) {
+		QUnit.test("plugIn, visitAttribute; async = " + bAsync, function (assert) {
+			var oModel = bAsync
+				? asyncModel({answer : 42})
+				: new JSONModel({answer : 42});
 
-				oInterface.visitAttributes(oChildNodes.item(0));
-				oInterface.visitChildNodes(oChildNodes.item(1));
-				oInterface.visitNode(oChildNodes.item(2));
-				// this is initially returned as old visitor, see above
-				XMLPreprocessor.visitNodeWrapper(oChildNodes.item(3), oInterface);
+			XMLPreprocessor.plugIn(function (oElement, oInterface) {
+				var oChildNode = oElement.childNodes.item(0);
+
 				// Note: there is also getAttributeNode()...
-				oInterface.visitAttribute(oChildNodes.item(4),
-					oChildNodes.item(4).getAttributeNodeNS("", "text"));
+				return oInterface.visitAttribute(oChildNode,
+					oChildNode.getAttributeNodeNS("", "text"));
 			}, "foo", "Bar");
 
-			this.check(assert, [
+			return this.check(assert, [
+				mvcView(),
+				'<f:Bar xmlns:f="foo">',
+				'<In id="visitAttribute" src="{/answer}" text="{/answer}"/>',
+				'</f:Bar>',
+				'</mvc:View>'
+			], {models: oModel}, [
+				'<f:Bar xmlns:f="foo">',
+				'<In id="visitAttribute" src="{/answer}" text="42"/>',
+				'</f:Bar>'
+			], bAsync);
+		});
+	});
+
+	//*********************************************************************************************
+	[false, true].forEach(function (bAsync) {
+		QUnit.test("plugIn, visitAttributes; async = " + bAsync, function (assert) {
+			var oModel = bAsync
+				? asyncModel({answer : 42})
+				: new JSONModel({answer : 42});
+
+			XMLPreprocessor.plugIn(function (oElement, oInterface) {
+				return oInterface.visitAttributes(oElement.childNodes.item(0));
+			}, "foo", "Bar");
+
+			return this.check(assert, [
 				mvcView(),
 				'<f:Bar xmlns:f="foo">',
 				'<In id="visitAttributes: {/answer}">',
 					'<Out id="no visitAttributes: {/answer}"/>',
 				'</In>',
-				'<Out id="no visitChildNodes: {/answer}">',
-					'<In id="visitChildNodes: {/answer}"/>',
-				'</Out>',
-				'<In id="visitNode: {/answer}">',
-					'<In id="visitNode: {/pi}"/>',
-				'</In>',
-				'<In id="visitNodeWrapper: {/answer}">',
-					'<In id="visitNodeWrapper: {/pi}"/>',
-				'</In>',
-				'<In id="visitAttribute" src="{/answer}" text="{/answer}"/>',
 				'</f:Bar>',
 				'</mvc:View>'
-			], {
-				models: new JSONModel({answer : 42, pi : 3.14})
-			}, [
+			], {models: oModel}, [
 				'<f:Bar xmlns:f="foo">',
 				'<In id="visitAttributes: 42">',
 					'<Out id="no visitAttributes: {/answer}"/>',
 				'</In>',
-				'<Out id="no visitChildNodes: {/answer}">',
-					'<In id="visitChildNodes: 42"/>',
-				'</Out>',
-				'<In id="visitNode: 42">',
-					'<In id="visitNode: 3.14"/>',
-				'</In>',
-				'<In id="visitNodeWrapper: 42">',
-					'<In id="visitNodeWrapper: 3.14"/>',
-				'</In>',
-				'<In id="visitAttribute" src="{/answer}" text="42"/>',
 				'</f:Bar>'
-			]);
-		} finally {
-			XMLPreprocessor.plugIn(null, "foo", "Bar");
-		}
+			], bAsync);
+		});
 	});
 
 	//*********************************************************************************************
-	QUnit.test("plugIn, insertFragment", function (assert) {
-		this.expectLoad(false, "fragmentName", xml(assert, ['<In xmlns="sap.ui.core"/>']));
+	[false, true].forEach(function (bAsync) {
+		QUnit.test("plugIn, visitChildNodes; async = " + bAsync, function (assert) {
+			var oModel = bAsync
+				? asyncModel({answer : 42})
+				: new JSONModel({answer : 42});
 
-		try {
 			XMLPreprocessor.plugIn(function (oElement, oInterface) {
-				oInterface.insertFragment("fragmentName", oElement);
+				return oInterface.visitChildNodes(oElement.childNodes.item(0));
 			}, "foo", "Bar");
 
-			this.check(assert, [
+			return this.check(assert, [
+				mvcView(),
+				'<f:Bar xmlns:f="foo">',
+				'<Out id="no visitChildNodes: {/answer}">',
+					'<In id="visitChildNodes: {/answer}"/>',
+				'</Out>',
+				'</f:Bar>',
+				'</mvc:View>'
+			], {models: oModel}, [
+				'<f:Bar xmlns:f="foo">',
+				'<Out id="no visitChildNodes: {/answer}">',
+					'<In id="visitChildNodes: 42"/>',
+				'</Out>',
+				'</f:Bar>'
+			], bAsync);
+		});
+	});
+
+	//*********************************************************************************************
+	[false, true].forEach(function (bAsync) {
+		QUnit.test("plugIn, visitNode; async = " + bAsync, function (assert) {
+			var oModel = bAsync
+				? asyncModel({answer : 42, pi : 3.14})
+				: new JSONModel({answer : 42, pi : 3.14});
+
+			this.oLogMock.expects("error")
+				.withExactArgs('Unexpected tag <template:foo id="unexpected"/>', "qux", sComponent);
+			XMLPreprocessor.plugIn(function (oElement, oInterface) {
+				oInterface.visitNode(oElement.childNodes.item(1)).then(function () {
+					assert.ok(false);
+				}, function () {
+					assert.ok(true);
+				});
+
+				return oInterface.visitNode(oElement.childNodes.item(0));
+			}, "foo", "Bar");
+
+			return this.check(assert, [
+				mvcView(),
+				'<f:Bar xmlns:f="foo">',
+				'<In id="visitNode: {/answer}">',
+					'<In id="visitNode: {/pi}"/>',
+				'</In>',
+				'<template:foo id="unexpected"/>',
+				'</f:Bar>',
+				'</mvc:View>'
+			], {models: oModel}, [
+				'<f:Bar xmlns:f="foo">',
+				'<In id="visitNode: 42">',
+					'<In id="visitNode: 3.14"/>',
+				'</In>',
+				'<template:foo id="unexpected"/>',
+				'</f:Bar>'
+			], bAsync);
+		});
+	});
+
+	//*********************************************************************************************
+	[false, true].forEach(function (bAsync) {
+		QUnit.test("plugIn, visitNodeWrapper; async = " + bAsync, function (assert) {
+			var oModel = bAsync
+				? asyncModel({answer : 42, pi : 3.14})
+				: new JSONModel({answer : 42, pi : 3.14});
+
+			XMLPreprocessor.plugIn(function (oElement, oInterface) {
+				// this is initially returned as old visitor, see above
+				return XMLPreprocessor.visitNodeWrapper(oElement.childNodes.item(0),
+					oInterface);
+			}, "foo", "Bar");
+
+			return this.check(assert, [
+				mvcView(),
+				'<f:Bar xmlns:f="foo">',
+				'<In id="visitNodeWrapper: {/answer}">',
+					'<In id="visitNodeWrapper: {/pi}"/>',
+				'</In>',
+				'</f:Bar>',
+				'</mvc:View>'
+			], {models: oModel}, [
+				'<f:Bar xmlns:f="foo">',
+				'<In id="visitNodeWrapper: 42">',
+					'<In id="visitNodeWrapper: 3.14"/>',
+				'</In>',
+				'</f:Bar>'
+			], bAsync);
+		});
+	});
+
+	//*********************************************************************************************
+	[false, true].forEach(function (bAsync) {
+		QUnit.test("plugIn, insertFragment; async = " + bAsync, function (assert) {
+			this.expectLoad(bAsync, "fragmentName", xml(assert, ['<In xmlns="sap.ui.core"/>']));
+
+			XMLPreprocessor.plugIn(function (oElement, oInterface) {
+				return oInterface.insertFragment("fragmentName", oElement);
+			}, "foo", "Bar");
+
+			return this.check(assert, [
 				mvcView(),
 				'<f:Bar xmlns:f="foo"/>',
 				'</mvc:View>'
-			], null, [
+			], {}, [
 				'<In />'
-			]);
-		} finally {
-			XMLPreprocessor.plugIn(null, "foo", "Bar");
-		}
+			], bAsync);
+		});
 	});
 
 	//*********************************************************************************************
@@ -3019,16 +3846,12 @@ sap.ui.require([
 				'</mvc:View>'
 			];
 
-		try {
-			XMLPreprocessor.plugIn(function (oElement, oInterface) {
-				return null; // something other than undefined
-			}, "foo", "Bar");
+		XMLPreprocessor.plugIn(function (oElement, oInterface) {
+			return SyncPromise.resolve(null); // something other than undefined
+		}, "foo", "Bar");
 
-			this.checkError(assert, aViewContent, "Unexpected return value from visitor for {0}",
-				null, 1);
-		} finally {
-			XMLPreprocessor.plugIn(null, "foo", "Bar");
-		}
+		return this.checkError(assert, aViewContent, "Unexpected return value from visitor for {0}",
+			null, 1);
 	});
 
 	//*********************************************************************************************
@@ -3044,44 +3867,42 @@ sap.ui.require([
 				'</mvc:View>'
 			];
 
-		try {
-			XMLPreprocessor.plugIn(function (oElement, oInterface) {
-				var oContext = oInterface.getContext(oElement.getAttribute("path")),
-					oDefaultContext = oInterface.getContext(/*default model, empty path*/);
+		XMLPreprocessor.plugIn(function (oElement, oInterface) {
+			var oContext = oInterface.getContext(oElement.getAttribute("path")),
+				oDefaultContext = oInterface.getContext(/*default model, empty path*/);
 
-				assert.strictEqual(oContext.getModel(), oModel);
-				assert.strictEqual(oContext.getPath(), "/hidden/answer");
+			assert.strictEqual(oContext.getModel(), oModel);
+			assert.strictEqual(oContext.getPath(), "/hidden/answer");
 
-				assert.strictEqual(oDefaultContext.getModel(), oModel);
-				assert.strictEqual(oDefaultContext.getPath(), "/hidden/answer");
+			assert.strictEqual(oDefaultContext.getModel(), oModel);
+			assert.strictEqual(oDefaultContext.getPath(), "/hidden/answer");
 
-				assert.throws(function () {
-					oInterface.getContext("{meta>answer}");
-				}, new Error("Must be a simple path, not a binding: {meta>answer}"));
+			assert.throws(function () {
+				oInterface.getContext("{meta>answer}");
+			}, new Error("Must be a simple path, not a binding: {meta>answer}"));
 
-				assert.throws(function () {
-					oInterface.getContext("foo>");
-				}, new Error("Unknown model 'foo': foo>"));
+			assert.throws(function () {
+				oInterface.getContext("foo>");
+			}, new Error("Unknown model 'foo': foo>"));
 
-				assert.throws(function () {
-					oInterface.getContext("other>");
-				}, new Error("Cannot resolve path: other>"));
-			}, "foo", "Bar");
+			assert.throws(function () {
+				oInterface.getContext("other>");
+			}, new Error("Cannot resolve path: other>"));
 
-			process(xml(assert, aViewContent), {
-				bindingContexts : {
-					"undefined" : oModel.createBindingContext("/hidden/answer"),
-					meta : oModel.createBindingContext("/hidden")
-				},
-				models : {
-					"undefined" : oModel,
-					meta : oModel,
-					other : oModel
-				}
-			});
-		} finally {
-			XMLPreprocessor.plugIn(null, "foo", "Bar");
-		}
+			return SyncPromise.resolve();
+		}, "foo", "Bar");
+
+		process(xml(assert, aViewContent), {
+			bindingContexts : {
+				"undefined" : oModel.createBindingContext("/hidden/answer"),
+				meta : oModel.createBindingContext("/hidden")
+			},
+			models : {
+				"undefined" : oModel,
+				meta : oModel,
+				other : oModel
+			}
+		});
 	});
 
 	//*********************************************************************************************
@@ -3098,50 +3919,129 @@ sap.ui.require([
 			],
 			that = this;
 
-		try {
-			XMLPreprocessor.plugIn(function (oElement, oInterface) {
-				var oContext = oInterface.getContext(oElement.getAttribute("path")),
-					oDerivedInterface = oInterface.with({a : oContext, b : oContext}),
-					oEmptyInterface = oInterface.with(null, /*bReplace*/true),
-					oNewInterface = oInterface.with({a : oContext, b : oContext}, /*bReplace*/true);
+		XMLPreprocessor.plugIn(function (oElement, oInterface) {
+			var oContext = oInterface.getContext(oElement.getAttribute("path")),
+				oDerivedInterface = oInterface.with({a : oContext, b : oContext}),
+				oEmptyInterface = oInterface.with(null, /*bReplace*/true),
+				oNewInterface = oInterface.with({a : oContext, b : oContext}, /*bReplace*/true);
 
-				assert.strictEqual(oDerivedInterface.getResult("{a>}"), 42, "a is known");
-				assert.strictEqual(oDerivedInterface.getResult("{b>}"), 42, "b is known");
-				assert.strictEqual(oDerivedInterface.getResult("{meta>answer}"), 42,
-					"meta is inherited");
+			assert.strictEqual(oDerivedInterface.getResult("{a>}").unwrap(), 42, "a is known");
+			assert.strictEqual(oDerivedInterface.getResult("{b>}").unwrap(), 42, "b is known");
+			assert.strictEqual(oDerivedInterface.getResult("{meta>answer}").unwrap(), 42,
+				"meta is inherited");
 
-				assert.throws(function () { // no inheritance here!
-					warn(that.oLogMock, "[ 1] Binding not ready");
-					oEmptyInterface.getResult("{meta>}");
-				}, new Error("Binding not ready: {meta>}"));
+			// no inheritance here!
+			warn(that.oLogMock, "[ 1] Binding not ready");
+			assert.strictEqual(oEmptyInterface.getResult("{meta>}"), null);
 
-				assert.strictEqual(oNewInterface.getResult("{a>}"), 42, "a is known");
-				assert.strictEqual(oNewInterface.getResult("{b>}"), 42, "b is known");
-				assert.throws(function () { // no inheritance here!
-					warn(that.oLogMock, "[ 1] Binding not ready");
-					oNewInterface.getResult("{meta>}");
-				}, new Error("Binding not ready: {meta>}"));
+			assert.strictEqual(oNewInterface.getResult("{a>}").unwrap(), 42, "a is known");
+			assert.strictEqual(oNewInterface.getResult("{b>}").unwrap(), 42, "b is known");
+			// no inheritance here!
+			warn(that.oLogMock, "[ 1] Binding not ready");
+			assert.strictEqual(oNewInterface.getResult("{meta>}"), null);
 
-				assert.strictEqual(oInterface.with(), oInterface, "no map");
-				assert.strictEqual(oInterface.with({}), oInterface, "empty map");
-			}, "foo", "Bar");
+			assert.strictEqual(oInterface.with(), oInterface, "no map");
+			assert.strictEqual(oInterface.with({}), oInterface, "empty map");
 
-			process(xml(assert, aViewContent), {
-				bindingContexts : {
-					meta : oModel.createBindingContext("/hidden")
-				},
-				models : {
-					meta : oModel
-				}
-			});
-		} finally {
-			XMLPreprocessor.plugIn(null, "foo", "Bar");
-		}
+			return SyncPromise.resolve();
+		}, "foo", "Bar");
+
+		process(xml(assert, aViewContent), {
+			bindingContexts : {
+				meta : oModel.createBindingContext("/hidden")
+			},
+			models : {
+				meta : oModel
+			}
+		});
 	});
 	//TODO safety check for invalidated ICallback instances in each visit*() etc. call?
 	//     !bReplace && !oWithControl.getParent()
 
 	//*********************************************************************************************
+	[function (assert, oElement, oInterface) { // use find() like Array#forEach
+		var aElements = ["test", "tooltip"];
+
+		// code under test
+		return oInterface.find(aElements, function (sAttribute, i, aElements0) {
+			assert.strictEqual(i, sAttribute === "test" ? 0 : 1);
+			assert.strictEqual(aElements0, aElements);
+			return oInterface.visitAttribute(oElement,
+				oElement.attributes.getNamedItem(sAttribute));
+		}).then(function (vResult) {
+			assert.strictEqual(vResult, undefined);
+		});
+	}, function (assert, oElement, oInterface) { // use find() like Array#find
+		var aElements = ["test", "tooltip", "unknown"];
+
+		// code under test
+		return oInterface.find(aElements, function (sAttribute, i, aElements0) {
+			assert.strictEqual(i, sAttribute === "test" ? 0 : 1);
+			assert.strictEqual(aElements0, aElements);
+			return oInterface.visitAttribute(oElement,
+				oElement.attributes.getNamedItem(sAttribute)).then(function () {
+					return sAttribute === "tooltip";
+				});
+		}).then(function (vResult) {
+			assert.strictEqual(vResult, "tooltip");
+		});
+	}, function (assert, oElement, oInterface) { // special cases
+		var oSyncPromise;
+
+		// code under test
+		oSyncPromise = oInterface.find([]);
+
+		assert.strictEqual(oSyncPromise.isFulfilled(), true);
+		assert.strictEqual(oSyncPromise.getResult(), undefined);
+
+		// code under test
+		oSyncPromise = oInterface.find(["foo"], function (vElement) {
+			throw new Error(vElement);
+		});
+
+		assert.strictEqual(oSyncPromise.isRejected(), true, "rejects instead of throwing");
+		assert.strictEqual(oSyncPromise.getResult().message, "foo");
+		oSyncPromise.caught();
+
+		// code under test
+		oSyncPromise = oInterface.find(["foo"], function () {
+			return Promise.resolve();
+		});
+
+		assert.ok(oSyncPromise instanceof SyncPromise);
+		assert.strictEqual(oSyncPromise.isPending(), true, "a pending sync promise");
+
+		// do like the other visitors
+		return oInterface.visitAttributes(oElement).then(function () {
+			return oSyncPromise;
+		});
+	}].forEach(function (fnVisitor, i) {
+		QUnit.test("plugIn, find:" + i, function (assert) {
+			return this.checkTracing(assert, true, [
+				{m : "[ 0] Start processing qux"},
+				{m : "[ 1] Calling visitor", d : 1},
+				{m : "[ 1] test = world", d : 1},
+				{m : "[ 1] tooltip = sync",
+					d : '<f:Bar xmlns:f="foo" test="world" tooltip="{/sync}"/>'},
+				{m : "[ 1] Finished", d : "</f:Bar>"},
+				{m : "[ 0] Finished processing qux"}
+			], [
+				mvcView(),
+				'<f:Bar xmlns:f="foo" test="{/hello}" tooltip="{/sync}"/>',
+				'</mvc:View>'
+			], {
+				models : asyncModel({hello : "world", sync : "sync"})
+			}, [
+				'<f:Bar xmlns:f="foo" test="world" tooltip="sync"/>'
+			], true, fnVisitor.bind(null, assert));
+		});
+	});
+	//TODO sanity check that visitor returns a *sync* promise in case of sync XML Templating?
+
+	//*********************************************************************************************
+	/**
+	 * @deprecated As of version 1.120.0
+	 */
 	QUnit.test("async fragment in template:alias/if/repeat/with", function (assert) {
 		// Note: <Label text="..."> remains unresolved, <Text text="..."> MUST be resolved
 		var aFragmentContent = ["<Text text=\"{formatter: '.bar', path: 'here>flag'}\"/>"],
@@ -3169,6 +4069,87 @@ sap.ui.require([
 				}
 			}
 		};
+
+		this.expectLoad(true, "myFragmentA", sFragmentXml);
+		this.expectLoad(true, "myFragmentB", sFragmentXml);
+		this.expectLoad(true, "myFragmentC", sFragmentXml);
+
+		return this.checkTracing(assert, true, [
+			{m : "[ 0] Start processing qux"},
+			{m : "[ 1] here = /some/random/path", d : 2},
+			{m : "[ 2] test == \"true\" --> true", d : 3},
+			{m : "[ 3] Starting", d : 4},
+			{m : "[ 3]  = /items/0", d : 4},
+			{m : "[ 4] fragmentName = myFragmentA", d : 5},
+			{m : "[ 4] text = *true*", d : aFragmentContent[0]},
+			{m : "[ 4] Finished", d : "</Fragment>"},
+			{m : "[ 3]  = /items/1", d : 4},
+			{m : "[ 4] fragmentName = myFragmentB", d : 5},
+			{m : "[ 4] text = *true*", d : aFragmentContent[0]},
+			{m : "[ 4] Finished", d : "</Fragment>"},
+			{m : "[ 3]  = /items/2", d : 4},
+			{m : "[ 4] fragmentName = myFragmentC", d : 5},
+			{m : "[ 4] text = *true*", d : aFragmentContent[0]},
+			{m : "[ 4] Finished", d : "</Fragment>"},
+			{m : "[ 3] Finished", d : "</template:repeat>"},
+			{m : "[ 2] Finished", d : "</template:if>"},
+			{m : "[ 1] Finished", d : "</template:with>"},
+			{m : "[ 0] Binding not ready for attribute text", d : 10},
+			{m : "[ 0] Binding not ready for attribute text", d : 11},
+			{m : "[ 0] Finished processing qux"}
+		], aViewContent, {
+			models : new JSONModel({
+				items : [{
+					src : "myFragmentA"
+				}, {
+					src : "myFragmentB"
+				}, {
+					src : "myFragmentC"
+				}],
+				some : {
+					random : {
+						path : {
+							flag : true
+						}
+					}
+				}
+			})
+		}, [
+			'<Text text="*true*"/>',
+			'<Text text="*true*"/>',
+			'<Text text="*true*"/>',
+			// Note: XML serializer outputs &gt; encoding...
+			aViewContent[10].replace(">", "&gt;"),
+			aViewContent[11]
+		], true);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("async fragment in template:alias/if/repeat/with", function (assert) {
+		// Note: <Label text="..."> remains unresolved, <Text text="..."> MUST be resolved
+		var aFragmentContent = ["<Text text=\"{formatter: '.bar', path: 'here>flag'}\"/>"],
+			sFragmentXml = xml(assert, aFragmentContent),
+			aViewContent = [
+				mvcView("", {
+					Helper : {
+						bar : function (vValue) {
+							return "*" + vValue + "*";
+						}
+					}
+				}, this),
+				'<template:alias name=".bar" value="Helper.bar">',
+				'<template:with path="/some/random/path" var="here">',
+				'<template:if test="true">',
+				'<template:repeat list="{/items}">',
+				'<Fragment fragmentName="{src}" type="XML"/>',
+				'</template:repeat>',
+				'</template:if>',
+				'</template:with>', // context goes out of scope
+				'</template:alias>', // alias goes out of scope
+				'<Text text="{here>flag}"/>',
+				"<Label text=\"{formatter: '.bar', path: '/'}\"/>",
+				'</mvc:View>'
+			];
 
 		this.expectLoad(true, "myFragmentA", sFragmentXml);
 		this.expectLoad(true, "myFragmentB", sFragmentXml);
@@ -3329,7 +4310,7 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("<template:if> still works synchronously", function (assert) {
+	QUnit.test("async <template:if>", function (assert) {
 		return this.checkTracing(assert, true, [
 			{m : "[ 0] Start processing qux"},
 			{m : "[ 1] test == false --> false", d : 1},
@@ -3337,16 +4318,223 @@ sap.ui.require([
 			{m : "[ 0] Finished processing qux"}
 		], [
 			mvcView(),
-			// Note: expression binding uses a formatter which is wrapped, but SyncPromise#unwrap
-			// must be used!
-			'<template:if test="{= %{/sync} !== \'sync\' }">',
+			'<template:if test="{= %{/hello} !== \'world\' }">',
 			'<Out id="false"/>',
 			'</template:if>',
 			'</mvc:View>'
 		], {
-			models : asyncModel({sync : "sync"})
+			models : asyncModel({hello : "world"})
 		}, undefined, true);
+	});
+
+	//*********************************************************************************************
+[false, true].forEach(function (bAllAvailable) {
+	QUnit.test("async require on view level, all available: " + bAllAvailable, function (assert) {
+		var oHelper = {
+				bar : function (vValue) {
+					return "*" + vValue + "*";
+				}
+			},
+			aViewContent = [
+				mvcView().replace(">", ' template:require="foo.Helper not.Used">'),
+				"<Text text=\"{formatter: 'foo.Helper.bar', path: '/flag'}\"/>",
+				'</mvc:View>'
+			];
+
+		this.expectRequire(true, ["foo/Helper", "not/Used"], function () {
+			window.foo = {
+				Helper : oHelper
+			};
+			return [oHelper, {/*not used*/}];
+		}, bAllAvailable);
+
+		return this.checkTracing(assert, true, [
+			{m : "[ 0] Start processing qux"},
+			{m : "[ 0] text = *true*", d : 1},
+			{m : "[ 0] Finished processing qux"}
+		], aViewContent, {
+			models : new JSONModel({flag : true})
+		}, [
+			'<Text text="*true*"/>'
+		], true);
+	});
+});
+
+	//*********************************************************************************************
+	QUnit.test("AMD require on view and fragment level", function (assert) {
+		var aFragmentContent = [
+				'<FragmentDefinition xmlns="sap.ui.core" xmlns:template='
+					+ '"http://schemas.sap.com/sapui5/extension/sap.ui.core.template/1"'
+					+ ' template:require="{Helper : \'bar/Helper\'}">',
+				"<Text text=\"{formatter: 'Helper.bar', path: '/flag'}\"/>",
+				'</FragmentDefinition>'
+			],
+			aViewContent = [
+				mvcView("t").replace(">", ' t:require="{Helper : \'foo/Helper\'}">'),
+				'<t:alias name="bar" value="Helper.bar">',
+				'<Fragment fragmentName="myFragment" type="XML"/>',
+				"<Text text=\"{formatter: 'bar', path: '/flag'}\"/>",
+				'</t:alias>',
+				'</mvc:View>'
+			];
+
+		this.expectRequire(true, ["foo/Helper"], function () {
+			var oHelper = {
+					bar : function (vValue) {
+						return "*" + vValue + "*";
+					}
+				};
+
+			return [oHelper];
+		});
+		this.expectLoad(true, "myFragment", xml(assert, aFragmentContent));
+		this.expectRequire(true, ["bar/Helper"], function () {
+			var oHelper = {
+					bar : function (vValue) {
+						return "%" + vValue + "%";
+					}
+				};
+
+			return [oHelper];
+		});
+
+		return this.checkTracing(assert, true, [
+			{m : "[ 0] Start processing qux"},
+			{m : "[ 1] fragmentName = myFragment", d : 2},
+			{m : "[ 1] text = %true%", d : aFragmentContent[1]},
+			{m : "[ 1] Finished", d : "</Fragment>"},
+			{m : "[ 0] text = *true*", d : 3},
+			{m : "[ 0] Finished processing qux"}
+		], aViewContent, {
+			models : new JSONModel({flag : true})
+		}, [
+			'<Text text="%true%"/>',
+			'<Text text="*true*"/>'
+		], true);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("empty template:require", function (assert) {
+		return this.checkTracing(assert, true, [
+			{m : "[ 0] Start processing qux"},
+			{m : "[ 0] Finished processing qux"}
+		], [
+			mvcView().replace(">", ' template:require="">'),
+			'</mvc:View>'
+		], {}, [], true);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("async extension point", function (assert) {
+		var aReplacement = [
+				'<Text text=\"{/foo}\"/>'
+			],
+			aViewContent = [
+				mvcView(),
+				'<ExtensionPoint name="{/hello}"/>',
+				"<Text text=\"{/flag}\"/>",
+				'</mvc:View>'
+			];
+
+		this.mock(Component).expects("getCustomizing")
+			.withExactArgs("this._sOwnerId", {
+				extensionName : "world",
+				name : "this.sViewName",
+				type : "sap.ui.viewExtensions"
+			})
+			.returns({
+				className : "sap.ui.core.Fragment",
+				fragmentName : "acme.Replacement",
+				type : "XML"
+			});
+		this.expectLoad(true, "acme.Replacement", xml(assert, aReplacement));
+
+		return this.checkTracing(assert, true, [
+			{m : "[ 0] Start processing qux"},
+			{m : "[ 0] name = world", d : 1},
+			{m : "[ 1] fragmentName = acme.Replacement", d : 1},
+			{m : "[ 1] text = bar", d : aReplacement[0]},
+			{m : "[ 1] Finished", d : "</ExtensionPoint>"},
+			{m : "[ 0] text = true", d : 2},
+			{m : "[ 0] Finished processing qux"}
+		], aViewContent, {
+			models : asyncModel({flag : true, foo : "bar", hello : "world"})
+		}, [
+			'<Text text="bar"/>',
+			'<Text text="true"/>'
+		], true);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("async template:repeat", function (assert) {
+		return this.checkTracing(assert, true, [
+			{m : "[ 0] Start processing qux"},
+			{m : "[ 1] Starting", d : 1},
+			{m : "[ 1]  = /items/0", d : 1},
+			{m : "[ 1] src = A", d : 2},
+			{m : "[ 1]  = /items/1", d : 1},
+			{m : "[ 1] src = B", d : 2},
+			{m : "[ 1]  = /items/2", d : 1},
+			{m : "[ 1] src = C", d : 2},
+			{m : "[ 1] Finished", d : "</template:repeat>"},
+			{m : "[ 0] Finished processing qux"}
+		], [
+			mvcView(),
+			'<template:repeat list="{/items}">',
+			'<In src="{src}"/>',
+			'</template:repeat>',
+			'</mvc:View>'
+		], {
+			models : asyncModel({
+				items : [{
+					src : "A"
+				}, {
+					src : "B"
+				}, {
+					src : "C"
+				}]
+			})
+		}, [
+			'<In src="A"/>',
+			'<In src="B"/>',
+			'<In src="C"/>'
+		], true);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("async template:repeat in sync view", function (assert) {
+		return this.check(assert, [
+			mvcView(),
+			'<template:repeat list="{/items}">',
+			'<In src="{src}"/>',
+			'</template:repeat>',
+			'</mvc:View>'
+		], {
+			models : asyncModel({
+				items : [{
+					src : "A"
+				}, {
+					src : "B"
+				}, {
+					src : "C"
+				}]
+			})
+		}, []);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("async formatter in sync view", function (assert) {
+		window.foo = function () {
+			return Promise.resolve();
+		};
+		return this.checkError(assert, [
+			mvcView(),
+			'<Text text="{path: \'/\', formatter: \'foo\'}" tooltip="{/bar}"/>',
+			'</mvc:View>'
+		], "Async formatter in sync view in {path: '/', formatter: 'foo'} of {0}", {
+			models : new JSONModel()
+		});
 	});
 });
 //TODO we have completely missed support for unique IDs in fragments via the "id" property!
-//TODO somehow trace ex.stack, but do not duplicate ex.message and take care of PhantomJS
+//TODO somehow trace ex.stack, but do not duplicate ex.message

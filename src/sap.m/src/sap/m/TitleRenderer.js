@@ -3,75 +3,84 @@
  */
 
 // Provides default renderer for control sap.m.Title
-sap.ui.define(["sap/ui/core/library"],
-	function(coreLibrary) {
+sap.ui.define(["sap/ui/core/Renderer", "sap/ui/core/library", "sap/m/HyphenationSupport"],
+	function(Renderer, coreLibrary, HyphenationSupport) {
 	"use strict";
 
-
-	// shortcut for sap.ui.core.TextAlign
-	var TextAlign = coreLibrary.TextAlign;
+	// shortcut for sap.ui.core.TextDirection
+	var TextDirection = coreLibrary.TextDirection;
 
 	// shortcut for sap.ui.core.TitleLevel
 	var TitleLevel = coreLibrary.TitleLevel;
-
 
 	/**
 	 * Title renderer.
 	 * @namespace
 	 */
-	var TitleRenderer = {};
+	var TitleRenderer = {
+		apiVersion: 2
+	};
 
 	/**
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
 	 * @param {sap.ui.core.RenderManager} oRm the RenderManager that can be used for writing to the Render-Output-Buffer
-	 * @param {sap.ui.core.Control} oShell an object representation of the control that should be rendered
+	 * @param {sap.m.Title} oTitle an object representation of the control that should be rendered
 	 */
 	TitleRenderer.render = function(oRm, oTitle){
 		var oAssoTitle = oTitle._getTitle(),
-			sLevel = (oAssoTitle ? oAssoTitle.getLevel() : oTitle.getLevel()) || TitleLevel.Auto,
+			oTitleContent = oTitle.getContent(),
+			sLevel = (oAssoTitle && !oTitleContent ? oAssoTitle.getLevel() : oTitle.getLevel()) || TitleLevel.Auto,
 			bAutoLevel = sLevel == TitleLevel.Auto,
-			sTag = bAutoLevel ? "div" : sLevel;
+			sTag = bAutoLevel ? "div" : sLevel.toLowerCase(),
+			sText = !oTitleContent ? HyphenationSupport.getTextForRender(oTitle, "main") : "",
+			sTextDir = oTitle.getTextDirection(),
+			sTextAlign = Renderer.getTextAlign(oTitle.getTextAlign(), sTextDir),
+			sTooltip;
 
-		oRm.write("<", sTag);
-		oRm.writeControlData(oTitle);
-		oRm.addClass("sapMTitle");
-		oRm.addClass("sapMTitleStyle" + (oTitle.getTitleStyle() || TitleLevel.Auto));
-		oRm.addClass(oTitle.getWrapping() ? "sapMTitleWrap" : "sapMTitleNoWrap");
-		oRm.addClass("sapUiSelectable");
+		oRm.openStart(sTag, oTitle);
+		oRm.class("sapMTitle");
+		oRm.class("sapMTitleStyle" + oTitle.getTitleStyle());
+		oRm.class(oTitle.getWrapping() ? "sapMTitleWrap" : "sapMTitleNoWrap");
+		oRm.class("sapUiSelectable");
 
 		var sWidth = oTitle.getWidth();
 		if (!sWidth) {
-			oRm.addClass("sapMTitleMaxWidth");
+			oRm.class("sapMTitleMaxWidth");
 		} else {
-			oRm.addStyle("width", sWidth);
+			oRm.style("width", sWidth);
 		}
 
-		var sTextAlign = oTitle.getTextAlign();
-		if (sTextAlign && sTextAlign != TextAlign.Initial) {
-			oRm.addClass("sapMTitleAlign" + sTextAlign);
+		if (sTextAlign) {
+			oRm.style("text-align", sTextAlign);
 		}
 
-		if (oTitle.getParent() instanceof sap.m.Toolbar) {
-			oRm.addClass("sapMTitleTB");
-		}
-
-		var sTooltip = oAssoTitle ? oAssoTitle.getTooltip_AsString() : oTitle.getTooltip_AsString();
+		sTooltip = oAssoTitle && !oTitleContent ? oAssoTitle.getTooltip_AsString() : oTitle.getTooltip_AsString();
 		if (sTooltip) {
-			oRm.writeAttributeEscaped("title", sTooltip);
+			oRm.attr("title", sTooltip);
 		}
 
 		if (bAutoLevel) {
-			oRm.writeAttribute("role", "heading");
+			oRm.attr("role", "heading");
+			oRm.attr("aria-level", oTitle._getAriaLevel());
 		}
 
-		oRm.writeClasses();
-		oRm.writeStyles();
+		if (!oTitleContent) {
+			HyphenationSupport.writeHyphenationClass(oRm, oTitle);
+		}
 
-		oRm.write("><span");
-		oRm.writeAttribute("id", oTitle.getId() + "-inner");
-		oRm.write(">");
-		oRm.writeEscaped(oAssoTitle ? oAssoTitle.getText() : oTitle.getText());
-		oRm.write("</span></", sTag, ">");
+		oRm.openEnd();
+
+		oRm.openStart("span", oTitle.getId() + "-inner");
+		oRm.attr("dir", sTextDir !== TextDirection.Inherit ? sTextDir.toLowerCase() : "auto");
+		oRm.openEnd();
+		if (oTitleContent) { // render a control added in the titleControl aggregation ...
+			oRm.renderControl(oTitleContent);
+		} else { // ... or just a text if there is no such control
+			oRm.text(sText);
+		}
+		oRm.close("span");
+
+		oRm.close(sTag);
 	};
 
 	return TitleRenderer;

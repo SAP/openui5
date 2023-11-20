@@ -1,0 +1,185 @@
+<mvc:View
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:tnt="sap.tnt"
+	xmlns:mdc="sap.ui.mdc"
+	xmlns:form="sap.ui.layout.form"
+	xmlns:m="sap.m"
+	xmlns:c="sap.ui.core"
+	controllerName="sap.ui.mdc.integration.field.dateContent.controller.App">
+	<App id="app">
+		<Page id="pageId">
+			<headerContent></headerContent>
+			<content class="sapUiContentPadding">
+				<form:SimpleForm layout="ColumnLayout" editable="true"
+					labelSpanXL="5" labelSpanL="5" labelSpanM="4" columnsXL="3" columnsL="2" columnsM="1"
+					singleContainerFullSize="false" adjustLabelSpan="false">
+
+					<c:Title text="Field"></c:Title>
+
+					<m:Label text="DatePicker - Date"></m:Label>
+					<mdc:Field id="F-Date"
+						value="{data>/date}"
+						label="DatePicker - Date"
+						dataType="sap.ui.model.type.Date"
+						maxConditions="1"></mdc:Field>
+					<mdc:Field id="F-Date-D"
+						value="{data>/date}"
+						dataType="sap.ui.model.type.Date"
+						editMode="Display"></mdc:Field>
+
+					<m:Label text="DateTimePicker - DateTime"></m:Label>
+					<mdc:Field id="F-DateTime"
+						value="{data>/dateTime}"
+						dataType="sap.ui.model.type.DateTime"
+						maxConditions="1"></mdc:Field>
+					<mdc:Field id="F-DateTime-D"
+						value="{data>/dateTime}"
+						dataType="sap.ui.model.type.DateTime"
+						editMode="Display"></mdc:Field>
+
+					<m:Label text="TimePicker - Time"></m:Label>
+					<mdc:Field id="F-Time"
+						value="{data>/time}"
+						dataType="sap.ui.model.type.Time"
+						maxConditions="1"></mdc:Field>
+					<mdc:Field id="F-Time-D"
+						value="{data>/time}"
+						dataType="sap.ui.model.type.Time"
+						editMode="Display"></mdc:Field>
+
+					<!--
+					<c:Title text="Field with maxConditions='-1'"></c:Title>
+
+					<m:Label text="DatePicker - Date"></m:Label>
+					<mdc:Field id="F-Date-2"
+						value="{data>/date}"
+						label="DatePicker - Date"
+						dataType="sap.ui.model.type.Date"
+						maxConditions="-1"></mdc:Field>
+					<mdc:Field id="F-Date-2-D"
+						value="{data>/date}"
+						dataType="sap.ui.model.type.Date"
+						editMode="Display"></mdc:Field>
+
+					<m:Label text="DateTimePicker - DateTime"></m:Label>
+					<mdc:Field id="F-DateTime-2"
+						value="{data>/dateTime}"
+						dataType="sap.ui.model.type.DateTime"
+						maxConditions="-1"></mdc:Field>
+					<mdc:Field id="F-DateTime-2-D"
+						value="{data>/dateTime}"
+						dataType="sap.ui.model.type.DateTime"
+						editMode="Display"></mdc:Field>
+
+					<m:Label text="TimePicker - Time"></m:Label>
+					<mdc:Field id="F-Time-2"
+						value="{data>/time}"
+						dataType="sap.ui.model.type.Time"
+						maxConditions="-1"></mdc:Field>
+					<mdc:Field id="F-Time-2-D"
+						value="{data>/time}"
+						dataType="sap.ui.model.type.Time"
+						editMode="Display"></mdc:Field>
+					-->
+
+					<c:Title text="FilterField with maxConditions='1'"></c:Title>
+
+					<m:Label text="DatePicker - Date"></m:Label>
+					<mdc:FilterField id="FF-Date"
+						label="DatePicker - Date"
+						dataType="sap.ui.model.type.Date"
+						maxConditions="1"
+						operators="EQ"></mdc:FilterField>
+
+					<m:Label text="DateTimePicker - DateTime"></m:Label>
+					<mdc:FilterField id="FF-DateTime"
+						dataType="sap.ui.model.type.DateTime"
+						maxConditions="1"
+						operators="EQ"></mdc:FilterField>
+
+					<m:Label text="TimePicker - Time"></m:Label>
+					<mdc:FilterField id="FF-Time"
+						dataType="sap.ui.model.type.Time"
+						maxConditions="1"
+						operators="EQ"></mdc:FilterField>
+
+					<m:Label text="DateRangeSelection - Date"/>
+					<mdc:FilterField id="FF-DateRange"
+						dataType="sap.ui.model.type.Date"
+						display="Value"
+						maxConditions="1"
+						operators="BT"></mdc:FilterField>
+
+					<m:Label text="DateRangeSelection - DateTime"/>
+					<mdc:FilterField id="FF-DateTimeRange"
+						dataType="sap.ui.model.type.DateTime"
+						display="Value"
+						maxConditions="1"
+						operators="BT"></mdc:FilterField>
+
+					<m:Label text="DynamicDateRange - Date"/>
+					<mdc:FilterField id="FF-DDR-Date"
+						dataType="sap.ui.model.type.Date"
+						display="Value"
+						maxConditions="1"></mdc:FilterField>
+
+					<m:Label text="DynamicDateRange - DateTime"/>
+					<mdc:FilterField id="FF-DDR-DateTime"
+						dataType="sap.ui.model.type.DateTime"
+						display="Value"
+						maxConditions="1"></mdc:FilterField>
+
+					<c:Title text="FilterField with maxConditions='-1'"></c:Title>
+
+					<m:Label text="DatePicker - Date"></m:Label>
+					<mdc:FilterField id="FF-Date-2"
+						label="DatePicker - Date"
+						dataType="sap.ui.model.type.Date"
+						maxConditions="-1"
+						operators="EQ"></mdc:FilterField>
+
+					<m:Label text="DateTimePicker - DateTime"></m:Label>
+					<mdc:FilterField id="FF-DateTime-2"
+						dataType="sap.ui.model.type.DateTime"
+						maxConditions="-1"
+						operators="EQ"></mdc:FilterField>
+
+					<m:Label text="TimePicker - Time"></m:Label>
+					<mdc:FilterField id="FF-Time-2"
+						dataType="sap.ui.model.type.Time"
+						maxConditions="-1"
+						operators="EQ"></mdc:FilterField>
+
+					<m:Label text="DateRangeSelection - Date"/>
+					<mdc:FilterField id="FF-DateRange-2"
+						dataType="sap.ui.model.type.Date"
+						display="Value"
+						maxConditions="-1"
+						operators="BT"></mdc:FilterField>
+
+					<m:Label text="DateRangeSelection - DateTime"/>
+					<mdc:FilterField id="FF-DateTimeRange-2"
+						dataType="sap.ui.model.type.DateTime"
+						display="Value"
+						maxConditions="-1"
+						operators="BT"></mdc:FilterField>
+
+					<m:Label text="DynamicDateRange - Date"/>
+					<mdc:FilterField id="FF-DDR-Date-2"
+						dataType="sap.ui.model.type.Date"
+						display="Value"
+						maxConditions="-1"></mdc:FilterField>
+
+					<m:Label text="DynamicDateRange - DateTime"/>
+					<mdc:FilterField id="FF-DDR-DateTime-2"
+						dataType="sap.ui.model.type.DateTime"
+						display="Value"
+						maxConditions="-1"></mdc:FilterField>
+
+				</form:SimpleForm>
+			</content>
+		</Page>
+	</App>
+</mvc:View>

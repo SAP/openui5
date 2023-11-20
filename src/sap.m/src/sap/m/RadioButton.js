@@ -7,21 +7,25 @@ sap.ui.define([
 	'./library',
 	'sap/ui/core/Control',
 	'sap/ui/core/EnabledPropagator',
-	'./RadioButtonGroup',
+	"sap/ui/core/Lib",
+	'sap/ui/core/message/MessageMixin',
+	'sap/m/Label',
 	'sap/ui/core/library',
+	'sap/base/strings/capitalize',
 	'./RadioButtonRenderer'
 ],
 function(
 	library,
 	Control,
 	EnabledPropagator,
-	RadioButtonGroup,
+	Library,
+	MessageMixin,
+	Label,
 	coreLibrary,
+	capitalize,
 	RadioButtonRenderer
 	) {
 	"use strict";
-
-
 
 	// shortcut for sap.ui.core.TextAlign
 	var TextAlign = coreLibrary.TextAlign;
@@ -32,7 +36,12 @@ function(
 	// shortcut for sap.ui.core.TextDirection
 	var TextDirection = coreLibrary.TextDirection;
 
-
+	var getNextSelectionNumber = (function () {
+		var i = 0;
+		return function () {
+			return i++;
+		};
+	}());
 
 	/**
 	 * Constructor for a new RadioButton.
@@ -43,7 +52,11 @@ function(
 	 * @class
 	 * RadioButton is a control similar to a {@link sap.m.CheckBox checkbox}, but it allows you to choose only one of the predefined set of options.
 	 * Multiple radio buttons have to belong to the same group (have the same value for <code>groupName</code>) in order to be mutually exclusive.
-	 * A wrapper control {@link sap.m.RadioButtonGroup RadioButtonGroup} can be used instead of individual radio buttons.
+	 *
+	 * It is recommended to use the wrapper control {@link sap.m.RadioButtonGroup RadioButtonGroup} instead of individual radio buttons.
+	 * This will provide better screen reader support for the user.
+	 * Use the <code>RadioButton</code> control on its own only if there is a wrapper control that handles the screen reader support. For example, such wrappers are sap.m.List, sap.m.Table and sap.f.GridList.
+	 *
 	 * <h3>Structure</h3>
 	 * <ul>
 	 * <li>Radio buttons can have a value state like Error or Warning.</li>
@@ -82,126 +95,136 @@ function(
 	 * @public
 	 * @alias sap.m.RadioButton
 	 * @see {@link fiori:https://experience.sap.com/fiori-design-web/radio-button/ Radio Button}
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
-	var RadioButton = Control.extend("sap.m.RadioButton", /** @lends sap.m.RadioButton.prototype */ { metadata : {
+	var RadioButton = Control.extend("sap.m.RadioButton", /** @lends sap.m.RadioButton.prototype */ {
+		metadata : {
+			interfaces : [
+				"sap.ui.core.IFormContent",
+				"sap.m.IToolbarInteractiveControl"
+			],
+			library : "sap.m",
+			properties : {
+				/**
+				 * Specifies if the radio button is disabled.
+				 */
+				enabled : {type : "boolean", group : "Behavior", defaultValue : true},
 
-		interfaces : ["sap.ui.core.IFormContent"],
-		library : "sap.m",
-		properties : {
+				/**
+				 * Specifies the select state of the radio button
+				 */
+				selected : {type : "boolean", group : "Data", defaultValue : false},
 
-			/**
-			 * Specifies if the radio button is disabled.
-			 */
-			enabled : {type : "boolean", group : "Behavior", defaultValue : true},
+				/**
+				 * Name of the radio button group the current radio button belongs to. You can define a new name for the group.
+				 * If no new name is specified, this radio button belongs to the sapMRbDefaultGroup per default. Default behavior of a radio button in a group is that when one of the radio buttons in a group is selected, all others are unselected.
+				 *
+				 * <b>Note</b> To ensure screen reader support it is recommended to use the {@link sap.m.RadioButtonGroup RadioButtonGroup} wrapper instead of using the <code>groupName</code> property.
+				 * Use this property only in cases where a wrapper control will handle the screen reader support. For example such wrappers are <code>sap.m.List</code>, <code>sap.m.Table</code> and <code>sap.f.GridList</code>.
+				 */
+				groupName : {type : "string", group : "Behavior", defaultValue : 'sapMRbDefaultGroup'},
 
-			/**
-			 * Specifies the select state of the radio button
-			 */
-			selected : {type : "boolean", group : "Data", defaultValue : false},
+				/**
+				 * Specifies the text displayed next to the RadioButton
+				 */
+				text : {type : "string", group : "Appearance", defaultValue : null},
 
-			/**
-			 * Name of the radio button group the current radio button belongs to. You can define a new name for the group.
-			 * If no new name is specified, this radio button belongs to the sapMRbDefaultGroup per default. Default behavior of a radio button in a group is that when one of the radio buttons in a group is selected, all others are unselected.
-			 */
-			groupName : {type : "string", group : "Behavior", defaultValue : 'sapMRbDefaultGroup'},
+				/**
+				 * Options for the text direction are RTL and LTR. Alternatively, the control can inherit the text direction from its parent container.
+				 */
+				textDirection : {type : "sap.ui.core.TextDirection", group : "Appearance", defaultValue : TextDirection.Inherit},
 
-			/**
-			 * Specifies the text displayed next to the RadioButton
-			 */
-			text : {type : "string", group : "Appearance", defaultValue : null},
+				/**
+				 * Width of the RadioButton or it's label depending on the useEntireWidth property.
+				 * By Default width is set only for the label.
+				 * @see {sap.m.RadioButton#useEntireWidth}
+				 */
+				width : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : ''},
 
-			/**
-			 * Options for the text direction are RTL and LTR. Alternatively, the control can inherit the text direction from its parent container.
-			 */
-			textDirection : {type : "sap.ui.core.TextDirection", group : "Appearance", defaultValue : TextDirection.Inherit},
+				/**
+				 * Indicates if the given width will be applied for the whole RadioButton or only it's label.
+				 * By Default width is set only for the label.
+				 * @since 1.42
+				 */
+				useEntireWidth : {type : "boolean", group: "Appearance", defaultValue : false },
 
-			/**
-			 * Width of the RadioButton or it's label depending on the useEntireWidth property.
-			 * By Default width is set only for the label.
-			 * @see {sap.m.RadioButton#useEntireWidth}
-			 */
-			width : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : ''},
+				/**
+				 * This is a flag to switch on activeHandling. When it is switched off,
+				 * there will not be visual changes on active state. Default value is 'true'
+				 */
+				activeHandling : {type : "boolean", group : "Appearance", defaultValue : true},
 
-			/**
-			 * Indicates if the given width will be applied for the whole RadioButton or only it's label.
-			 * By Default width is set only for the label.
-			 * @since 1.42
-			 */
-			useEntireWidth : {type : "boolean", group: "Appearance", defaultValue : false },
+				/**
+				 * Specifies whether the user can select the radio button.
+				 *
+				 * @since 1.25
+				 */
+				editable : {type : "boolean", group : "Behavior", defaultValue : true},
 
-			/**
-			 * This is a flag to switch on activeHandling. When it is switched off,
-			 * there will not be visual changes on active state. Default value is 'true'
-			 */
-			activeHandling : {type : "boolean", group : "Appearance", defaultValue : true},
+				/**
+				 * Marker for the correctness of the current value e.g., Error, Success, etc.
+				 * @since 1.25
+				 */
+				valueState : {type : "sap.ui.core.ValueState", group : "Data", defaultValue : ValueState.None},
 
-			/**
-			 * Specifies whether the user can select the radio button.
-			 * @since 1.25
-			 */
-			editable : {type : "boolean", group : "Behavior", defaultValue : true},
+				/**
+				 * Specifies the alignment of the radio button. Available alignment settings are "Begin", "Center", "End", "Left", and "Right".
+				 * @since 1.28
+				 */
+				textAlign : {type : "sap.ui.core.TextAlign", group : "Appearance", defaultValue : TextAlign.Begin},
 
-			/**
-			 *
-			 * Enumeration sap.ui.core.ValueState provides state values Error, Success, Warning, None
-			 * @since 1.25
-			 */
-			valueState : {type : "sap.ui.core.ValueState", group : "Data", defaultValue : ValueState.None},
+				/**
+				 * Specifies if the RadioButton should be editable. This property meant to be used by parent controls (e.g. RadioButtoGroup).
+				 * @since 1.61
+				 * @private
+				 */
+				editableParent: { type: "boolean", group: "Behavior", defaultValue: true, visibility: "hidden"},
 
-			/**
-			 * Specifies the alignment of the radio button. Available alignment settings are "Begin", "Center", "End", "Left", and "Right".
-			 * @since 1.28
-			 */
-			textAlign : {type : "sap.ui.core.TextAlign", group : "Appearance", defaultValue : TextAlign.Begin}
-		},
-		events : {
+				/**
+				 * Defines the text that appears in the tooltip of the <code>RadioButton</code>. If this is not specified, a default text is shown from the resource bundle.
+				 * @private
+				 */
+				valueStateText: { type: "string", group: "Misc", defaultValue: null, visibility: "hidden" }
 
-			/**
-			 * Event is triggered when the user makes a change on the radio button (selecting or unselecting it).
-			 */
-			select : {
-				parameters : {
+			},
+			events : {
+				/**
+				 * Event is triggered when the user makes a change on the radio button (selecting or unselecting it).
+				 */
+				select : {
+					parameters : {
 
-					/**
-					 * Checks whether the RadioButton is active or not.
-					 */
-					selected : {type : "boolean"}
+						/**
+						 * Checks whether the RadioButton is active or not.
+						 */
+						selected : {type : "boolean"}
+					}
 				}
-			}
+			},
+			associations : {
+				/**
+				 * Association to controls / IDs which describe this control (see WAI-ARIA attribute aria-describedby).
+				 */
+				ariaDescribedBy : {type : "sap.ui.core.Control", multiple : true, singularName : "ariaDescribedBy"},
+
+				/**
+				 * Association to controls / IDs which label this control (see WAI-ARIA attribute aria-labelledby).
+				 */
+				ariaLabelledBy : {type : "sap.ui.core.Control", multiple : true, singularName : "ariaLabelledBy"}
+			},
+			dnd: { draggable: true, droppable: false },
+			designtime: "sap/m/designtime/RadioButton.designtime"
 		},
-		associations : {
 
-			/**
-			 * Association to controls / IDs which describe this control (see WAI-ARIA attribute aria-describedby).
-			 */
-			ariaDescribedBy : {type : "sap.ui.core.Control", multiple : true, singularName : "ariaDescribedBy"},
-
-			/**
-			 * Association to controls / IDs which label this control (see WAI-ARIA attribute aria-labelledby).
-			 */
-			ariaLabelledBy : {type : "sap.ui.core.Control", multiple : true, singularName : "ariaLabelledBy"}
-		},
-		designtime: "sap/m/designtime/RadioButton.designtime"
-	}});
-
-
-	/**
-	 * Method to set a RadioButton's state to active or inactive.
-	 *
-	 * @name sap.m.RadioButton#setActiveState
-	 * @function
-	 * @param {boolean} bActive - Sets the active state to true or false
-	 * @type void
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
-
-	/**
-	 * This file defines behavior for the control,
-	 */
+		renderer: RadioButtonRenderer
+	});
 
 	EnabledPropagator.call(RadioButton.prototype);
+
+	// Apply the message mixin so all Messages on the RadioButton will have additionalText property set to ariaLabelledBy's text of the RadioButton
+	// and have valueState property of the RadioButton set to the message type.
+	MessageMixin.call(RadioButton.prototype);
+
+	RadioButton.getNextSelectionNumber = getNextSelectionNumber;
 
 	RadioButton.prototype._groupNames = {};
 
@@ -213,13 +236,49 @@ function(
 		PREV: "prev"
 	};
 
+	RadioButton.prototype.init = function () {
+		this._iSelectionNumber = -1;
+	};
+
+	RadioButton.prototype.onBeforeRendering = function() {
+		var sGroupName = this.getGroupName();
+
+		this._updateGroupName(sGroupName);
+		this._updateLabelProperties();
+
+		// If this radio button is selected, explicitly deselect the other radio buttons in the same group
+		if (this.getSelected() && sGroupName !== "" && this._isLastSelectedInGroup(sGroupName)) {
+			this._deselectOthersInGroup(sGroupName);
+		}
+	};
+
+	/*
+	 * Destroys all related objects to the RadioButton
+	 * @protected
+	 */
+	RadioButton.prototype.exit = function() {
+		var sGroupName = this.getGroupName(),
+			aControlsInGroup = this._groupNames[sGroupName],
+			iGroupNameIndex = aControlsInGroup && aControlsInGroup.indexOf(this);
+
+		this._iTabIndex = null;
+
+		if (this._oLabel) {
+			this._oLabel.destroy();
+			this._oLabel = null;
+		}
+
+		if (iGroupNameIndex >= -1) {
+			aControlsInGroup.splice(iGroupNameIndex, 1);
+		}
+	};
+
 	/**
 	 * Function is called when the radio button is tapped.
 	 * @param {jQuery.Event} oEvent The event object
 	 * @private
 	 */
 	RadioButton.prototype.ontap = function(oEvent) {
-
 		if (!this.getEnabled() || !this.getEditable()) {
 			return;
 		}
@@ -227,7 +286,7 @@ function(
 		var oParent = this.getParent();
 
 		// check if the RadioButton is part of a RadioButtonGroup which is disabled/readonly
-		if (oParent instanceof RadioButtonGroup && (!oParent.getEnabled() || !oParent.getEditable())) {
+		if (oParent && oParent.isA("sap.m.RadioButtonGroup") && (!oParent.getEnabled() || !oParent.getEditable())) {
 			return;
 		}
 
@@ -248,21 +307,48 @@ function(
 	};
 
 	/**
+	 * Sets RadioButton's groupName. Only one radioButton from the same group can be selected
+	 * @param {string} sGroupName - Name of the group to which the RadioButton will belong.
+	 * @returns {this} Reference to the control instance for chaining
+	 * @public
+	 */
+	RadioButton.prototype.setGroupName = function(sGroupName) {
+		this._updateGroupName(sGroupName, this.getGroupName());
+		this.setProperty("groupName", sGroupName);
+		return this;
+	};
+
+	/**
+	 * Sets the state of the RadioButton to selected.
+	 * @param {boolean} bSelected - defines if the radio button is selected
+	 * @returns {this} Reference to the control instance for chaining
+	 * @public
+	 */
+	RadioButton.prototype.setSelected = function(bSelected) {
+		this.setProperty("selected", bSelected);
+
+		if (this.getSelected()) {
+			this._iSelectionNumber = getNextSelectionNumber();
+		}
+
+		return this;
+	};
+
+	/**
 	 * Function is called when radiobutton is being touched. Only necessary for Android/Blackberry.
 	 * @param {jQuery.Event} oEvent The event object
 	 * @private
 	 */
-	RadioButton.prototype.ontouchstart = function(oEvent) {
-
+	RadioButton.prototype.ontouchstart = function (oEvent) {
 		//for control who need to know if they should handle events from the CheckBox control
-		oEvent.originalEvent._sapui_handledByControl = true;
+		oEvent.setMarked();
 		if (this.getEnabled() && this.getActiveHandling()) {
-			this.$().toggleClass("sapMRbBTouched", true);
+			this.addStyleClass("sapMRbBTouched");
 		}
 	};
 
-	RadioButton.prototype.ontouchend = function(oEvent) {
-		this.$().toggleClass("sapMRbBTouched", false);
+	RadioButton.prototype.ontouchend = function () {
+		this.removeStyleClass("sapMRbBTouched");
 	};
 
 	RadioButton.prototype.onsapnext = function(oEvent) {
@@ -344,7 +430,7 @@ function(
 	 * @private
 	 */
 	RadioButton.prototype._keyboardHandler = function(sPosition, bSelect) {
-		if (this.getParent() instanceof RadioButtonGroup) {
+		if (this.getParent() && this.getParent().isA("sap.m.RadioButtonGroup")) {
 			return;
 		}
 
@@ -362,20 +448,20 @@ function(
 	/**
 	 * @see sap.ui.core.Control#getAccessibilityInfo
 	 * @protected
-	 * @returns {Object} The <code>sap.m.RadioButton</code> accessibility information
+	 * @returns {sap.ui.core.AccessibilityInfo} The <code>sap.m.RadioButton</code> accessibility information
 	 */
 	RadioButton.prototype.getAccessibilityInfo = function() {
-		var oBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+		var oBundle = Library.getResourceBundleFor("sap.m");
 		return {
 			role: "radio",
 			type: oBundle.getText("ACC_CTR_TYPE_RADIO"),
-			description: (this.getText() || "") + (this.getSelected() ? (" " + oBundle.getText("ACC_CTR_STATE_CHECKED")) : ""),
+			description: (this.getText() || "") + (this.getSelected() ? (" " + oBundle.getText("ACC_CTR_STATE_CHECKED")) : (" " + oBundle.getText("ACC_CTR_STATE_NOT_CHECKED"))),
 			enabled: this.getEnabled(),
 			editable: this.getEditable()
 		};
 	};
 
-	/*
+	/**
 	 * RadioButton without label must not be stretched in Form.
 	 */
 	RadioButton.prototype.getFormDoNotAdjustWidth = function() {
@@ -386,7 +472,7 @@ function(
 	 * Determines next focusable item
 	 *
 	 * @param {enum} sNavigation any item from KH_NAVIGATION
-	 * @returns {RadioButton} Control instance for method chaining
+	 * @returns {sap.m.RadioButton} Next focusable radio button
 	 * @private
 	 */
 	RadioButton.prototype._getNextFocusItem = function(sNavigation) {
@@ -421,193 +507,23 @@ function(
 	// #############################################################################
 	/**
 	* Pseudo event for pseudo 'select' event... space, enter, ... without modifiers (Ctrl, Alt or Shift)
-	* @param {object} oEvent - provides information for the event
+	* @param {jQuery.Event} oEvent - provides information for the event
 	* @public
 	*/
 	RadioButton.prototype.onsapselect = function(oEvent) {
-
 		oEvent.preventDefault();
 		this.ontap(oEvent);
 	};
 
-	RadioButton.prototype.setEnabled = function(bEnabled) {
-		this.setProperty("enabled", bEnabled, false);
-
-		return this;
-	};
-
-
-
 	// #############################################################################
-	// Overwritten methods that are also generated in RadioButton.API.js
+	// Overwritten & private methods
 	// #############################################################################
 
 	/**
-	 * Sets the state of the RadioButton to selected.
-	 * @param {boolean} bSelected - defines if the radio button is selected
-	 * @returns {sap.m.RadioButton} Reference to the control instance for chaining
-	 * @public
-	 */
-	RadioButton.prototype.setSelected = function(bSelected) {
-		var oControl,
-			bSelectedOld = this.getSelected(),
-			sGroupName = this.getGroupName(),
-			aControlsInGroup = this._groupNames[sGroupName],
-			iLength = aControlsInGroup && aControlsInGroup.length;
-
-		this.setProperty("selected", bSelected, true); // No re-rendering
-		this._changeGroupName(this.getGroupName());
-
-		if (!!bSelected && sGroupName && sGroupName !== "") { // If this radio button is selected and groupName is set, explicitly deselect the other radio buttons of the same group
-			for (var i = 0; i < iLength; i++) {
-				oControl = aControlsInGroup[i];
-
-				if (oControl instanceof RadioButton && oControl !== this && oControl.getSelected()) {
-					oControl.fireSelect({ selected: false });
-					oControl.setSelected(false);
-				}
-			}
-		}
-
-		if ((bSelectedOld !== !!bSelected) && this.getDomRef()) {
-			this.$().toggleClass("sapMRbSel", bSelected);
-
-			if (bSelected) {
-				this.getDomRef().setAttribute("aria-checked", "true");
-				this.getDomRef("RB").checked = true;
-				this.getDomRef("RB").setAttribute("checked", "checked");
-			} else {
-				this.getDomRef().removeAttribute("aria-checked"); // aria-checked=false is default value and need not be set explicitly
-				this.getDomRef("RB").checked = false;
-				this.getDomRef("RB").removeAttribute("checked");
-			}
-		}
-
-		return this;
-	};
-
-	/**
-	 * Sets the text for the RadioButton's label.
-	 * @param {string} sText - The text to be set
-	 * @returns {sap.m.RadioButton} Reference to the control instance for chaining
-	 * @public
-	 */
-	RadioButton.prototype.setText = function(sText) {
-		this.setProperty("text", sText, true);
-
-		if (this._oLabel) {
-			this._oLabel.setText(this.getText());
-		} else {
-			this._createLabel("text", this.getText());
-		}
-
-		this.toggleStyleClass("sapMRbHasLabel", !!sText);
-
-		return this;
-	};
-
-	/**
-	 * Depeding on useEntireWidth sets the width to the RadioButton's label or the whole RadioButton
-	 * @param {boolean} bUserEntireWidth - Determines if the width will be set to the label only or to the whole RadioButton
-	 * @private
-	 */
-	RadioButton.prototype._setWidth = function(bUserEntireWidth) {
-		if (!bUserEntireWidth) {
-			this._setLableWidth();
-		} else {
-			this._setLableWidth("auto");
-		}
-	};
-
-	/**
-	 * Sets the width for the RadioButton's label.
-	 * @param {string} sWidth - CSS size to be set as width
-	 * @private
-	 */
-	RadioButton.prototype._setLableWidth = function(sWidth) {
-		sWidth = sWidth || this.getWidth();
-
-		if (this._oLabel) {
-			this._oLabel.setWidth(sWidth);
-		} else {
-			this._createLabel("width", sWidth);
-		}
-	};
-
-	/**
-	 * Sets the text direction for the RadioButton's label.
-	 * @param {string} sDirection - Text direction to be set to RadioButton's label
-	 * @returns {sap.m.RadioButton} Reference to the control instance for chaining
-	 * @public
-	 */
-	RadioButton.prototype.setTextDirection = function(sDirection) {
-
-		this.setProperty("textDirection", sDirection, true);
-		if (this._oLabel) {
-			this._oLabel.setTextDirection(this.getTextDirection());
-		} else {
-			this._createLabel("textDirection", this.getTextDirection());
-		}
-		return this;
-	};
-
-	/**
-	 * Sets RadioButton's groupName. Only one radioButton from the same group can be selected
-	 * @param {string} sGroupName - Name of the group to which the RadioButton will belong.
-	 * @returns {sap.m.RadioButton} Reference to the control instance for chaining
-	 * @public
-	 */
-	RadioButton.prototype.setGroupName = function(sGroupName) {
-		this._changeGroupName(sGroupName, this.getGroupName());
-		return this.setProperty("groupName", sGroupName, true);
-	};
-
-	RadioButton.prototype.onBeforeRendering = function() {
-		// Set the width before rendering as both width and useEntireWidth are dependent
-		this._setWidth(this.getUseEntireWidth());
-		return this._changeGroupName(this.getGroupName());
-	};
-
-	RadioButton.prototype.onAfterRendering = function() {
-		var sGroupName = this.getGroupName();
-		this._setAriaPositionAttributes(sGroupName);
-	};
-
-	/**
-	 * Destroys all related objects to the RadioButton
-	 * @public
-	 */
-	RadioButton.prototype.exit = function() {
-		var sGroupName = this.getGroupName(),
-			aControlsInGroup = this._groupNames[sGroupName],
-			iGroupNameIndex = aControlsInGroup && aControlsInGroup.indexOf(this);
-
-		this._iTabIndex = null;
-		if (this._oLabel) {
-			this._oLabel.destroy();
-		}
-
-		if (iGroupNameIndex >= -1) {
-			aControlsInGroup.splice(iGroupNameIndex, 1);
-		}
-	};
-
-	/**
-	 * Creates label and sets a property to it.
-	 * @param {string} prop - Property to be set to the new label.
-	 * @param {string} value - Value of the property which will be set.
-	 * @private
-	 */
-	RadioButton.prototype._createLabel = function(prop, value) {
-		this._oLabel = new sap.m.Label(this.getId() + "-label").addStyleClass("sapMRbBLabel").setParent(this, null, true);
-		this._oLabel.setProperty(prop, value, false);
-	};
-
-	/*
 	 * Sets the tab index of the control
 	 *
 	 * @param {int} iTabIndex - Greater than or equal to -1
-	 * @return {sap.m.RadioButton}
+	 * @return {this}
 	 * @since 1.16
 	 * @protected
 	 */
@@ -622,36 +538,61 @@ function(
 		return this;
 	};
 
-	/*
-	 * Sets the textAlign to the internal label
-	 * @param {string} sAlign
-	 * @return {sap.m.RadioButton}
-	 * @since 1.28
-	 * @public
+	/**
+	 * Sets the private valueStateText property. Required, in order to make the MessageMixin work.
+	 *
+	 * @private
+	 * @param {string} sText The new value of the property.
+	 * @returns {this} Reference to the control instance for chaining.
 	 */
-	RadioButton.prototype.setTextAlign = function(sAlign) {
-		this.setProperty("textAlign", sAlign, true);
-		if (this._oLabel) {
-			this._oLabel.setTextAlign(this.getTextAlign());
-		} else {
-			this._createLabel("textAlign", this.getTextAlign());
-		}
-		return this;
+	RadioButton.prototype.setValueStateText = function(sText) {
+		return this.setProperty("valueStateText", sText);
 	};
 
 	/**
-	 * Changes the groupname of a RadioButton.
+	 * Maintains the RadioButton's internal Label's text property.
+	 * @param {string} sText - The text to be set
+	 * @public
+	 */
+	RadioButton.prototype._updateLabelProperties = function () {
+		var oLabel = this._getLabel();
+		var sText = this.getText();
+		var bUseEntireWidth = this.getUseEntireWidth();
+
+		this.toggleStyleClass("sapMRbHasLabel", !!sText);
+
+		// Set the width before rendering as both width and useEntireWidth are dependent
+		oLabel.setText(sText)
+			.setWidth(!bUseEntireWidth ? this.getWidth() : "auto")
+			.setTextDirection(this.getTextDirection())
+			.setTextAlign(this.getTextAlign());
+	};
+
+	/**
+	 * Returns the RadioButton's internal Label control.
+	 * @private
+	 */
+	RadioButton.prototype._getLabel = function () {
+		if (!this._oLabel) {
+			this._oLabel = new Label(this.getId() + "-label");
+			this._oLabel.addStyleClass("sapMRbBLabel").setParent(this, null, true);
+		}
+
+		return this._oLabel;
+	};
+
+	/**
+	 * Update the groupname of a RadioButton.
 	 * @param {string} sNewGroupName - Name of the new group.
 	 * @param {string} sOldGroupName - Name of the old group.
 	 * @private
 	 */
-	RadioButton.prototype._changeGroupName = function(sNewGroupName, sOldGroupName) {
+	RadioButton.prototype._updateGroupName = function (sNewGroupName, sOldGroupName) {
 		var aNewGroup = this._groupNames[sNewGroupName],
 			aOldGroup = this._groupNames[sOldGroupName];
 
 		if (aOldGroup && aOldGroup.indexOf(this) !== -1) {
 			aOldGroup.splice(aOldGroup.indexOf(this), 1);
-			this._setAriaPositionAttributes(sOldGroupName);
 		}
 
 		if (!aNewGroup) {
@@ -660,42 +601,51 @@ function(
 
 		if (aNewGroup.indexOf(this) === -1) {
 			aNewGroup.push(this);
-			this._setAriaPositionAttributes(sNewGroupName);
 		}
+	};
 
+	RadioButton.prototype._isLastSelectedInGroup = function (sGroupName) {
+		var aControlsInGroup = this._groupNames[sGroupName];
+
+		return aControlsInGroup.every(function (aButton) {
+			return aButton._iSelectionNumber <= this._iSelectionNumber;
+		}.bind(this));
+	};
+
+	RadioButton.prototype._deselectOthersInGroup = function (sGroupName) {
+		var aControlsInGroup = this._groupNames[sGroupName],
+			iLength = aControlsInGroup && aControlsInGroup.length;
+
+		for (var i = 0; i < iLength; i++) {
+			var oControl = aControlsInGroup[i];
+
+			if (oControl instanceof RadioButton && oControl !== this && oControl.getSelected()) {
+				oControl.fireSelect({ selected: false });
+				oControl.setSelected(false);
+			}
+		}
 	};
 
 	/**
-	 * Recalculates and sets the correct aria-posinset and aria-setsize attribute values
-	 * This is done based on the rendered in the DOM radio buttons which are in the provided group.
+	 * Required by the {@link sap.m.IToolbarInteractiveControl} interface.
+	 * Determines if the Control is interactive.
 	 *
-	 * @param {string} [sGroupName] The name of the group for which the ARIA attributes should be recalculated
+	 * @returns {boolean} If it is an interactive Control
+	 *
 	 * @private
+	 * @ui5-restricted sap.m.OverflowToolBar, sap.m.Toolbar
 	 */
-	RadioButton.prototype._setAriaPositionAttributes = function (sGroupName) {
-		var aGroup = this._groupNames[sGroupName],
-			iRenderedIndex = 0,
-			iRenderedInGroupCount;
-
-		if (!aGroup.length || !this.getDomRef()) {
-			return;
-		}
-
-		// Find how many buttons are rendered in the group
-		iRenderedInGroupCount = aGroup.reduce(function (iRenderedInGroupCount, oRadioButton) {
-			return oRadioButton.getDomRef() ? ++iRenderedInGroupCount : iRenderedInGroupCount;
-		}, 0);
-
-		// For every radio button in the group - recalculate its index and set its properties
-		aGroup.forEach(function(oRadioButton) {
-			var oRadioDom = oRadioButton.getDomRef();
-			if (oRadioDom) {
-				oRadioDom.setAttribute("aria-posinset", ++iRenderedIndex);
-				oRadioDom.setAttribute("aria-setsize", iRenderedInGroupCount);
-			}
-		});
+	RadioButton.prototype._getToolbarInteractive = function () {
+		return true;
 	};
 
-	return RadioButton;
+	// Private properties setter generation
+	["editableParent"].forEach(function(privatePropName) {
+		RadioButton.prototype["_set" + capitalize(privatePropName)] = function (vValue) {
+			// prevent invalidation as the parent will rerender its children
+			return this.setProperty(privatePropName, vValue, true);
+		};
+	});
 
+	return RadioButton;
 });

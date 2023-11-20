@@ -1,0 +1,586 @@
+{
+	"_version": "1.12.0",
+	"sap.app": {
+		"id": "sap.f.cardsdemo",
+		"type": "application",
+		"i18n": {
+			"bundleUrl": "i18n/i18n.properties",
+			"supportedLocales": [
+				"",
+				"en"
+			],
+			"fallbackLocale": "en"
+		},
+		"title": "{{appTitle}}",
+		"description": "{{appDescription}}",
+		"applicationVersion": {
+			"version": "1.0.0"
+		},
+		"dataSources": {
+			"getActivities": {
+				"uri": "/getData/"
+			}
+		}
+	},
+	"sap.ui5": {
+		"services": {
+			"UserRecent": {
+				"factoryName": "cardsdemo.service.UserRecentFactory"
+			},
+			"Navigation": {
+				"factoryName": "cardsdemo.service.SampleNavigationFactory"
+			}
+		},
+		"rootView": {
+			"viewName": "sap.f.cardsdemo.view.Main",
+			"type": "XML",
+			"async": true,
+			"id": "app"
+		},
+		"dependencies": {
+			"minUI5Version": "1.98.0",
+			"libs": {
+				"sap.f": {},
+				"sap.m": {},
+				"sap.ui.codeeditor": {},
+				"sap.ui.core": {},
+				"sap.ui.integration": {},
+				"sap.ui.layout": {}
+			}
+		},
+		"resources": {
+			"css": [
+				{
+					"uri": "css/styles.css"
+				}
+			]
+		},
+		"models": {
+			"i18n": {
+				"type": "sap.ui.model.resource.ResourceModel",
+				"settings": {
+					"bundleName": "sap.f.cardsdemo.i18n.i18n",
+					"supportedLocales": [
+						"",
+						"en"
+					],
+					"fallbackLocale": "en"
+				},
+				"preload": true
+			}
+		},
+		"routing": {
+			"config": {
+				"routerClass": "sap.m.routing.Router",
+				"type": "View",
+				"viewType": "XML",
+				"path": "sap.f.cardsdemo.view",
+				"controlId": "app",
+				"controlAggregation": "pages",
+				"transition": "slide",
+				"bypassed": {
+					"target": "notFound"
+				},
+				"async": true
+			},
+			"routes": [
+				{
+					"pattern": "",
+					"name": "main",
+					"target": "main"
+				},
+				{
+					"pattern": "splitter",
+					"name": "splitter",
+					"target": "splitter"
+				},
+				{
+					"pattern": "listContent",
+					"name": "listContent",
+					"target": "listContent"
+				},
+				{
+					"pattern": "calendarContent",
+					"name": "calendarContent",
+					"target": "calendarContent"
+				},
+				{
+					"pattern": "cardErrors",
+					"name": "cardErrors",
+					"target": "cardErrors"
+				},
+				{
+					"pattern": "tableContent",
+					"name": "tableContent",
+					"target": "tableContent"
+				},
+				{
+					"pattern": "webPageContent",
+					"name": "webPageContent",
+					"target": "webPageContent"
+				},
+				{
+					"pattern": "defaultHeader",
+					"name": "defaultHeader",
+					"target": "defaultHeader"
+				},
+				{
+					"pattern": "numericHeader",
+					"name": "numericHeader",
+					"target": "numericHeader"
+				},
+				{
+					"pattern": "footer",
+					"name": "footer",
+					"target": "footer"
+				},
+				{
+					"pattern": "analyticalContent",
+					"name": "analyticalContent",
+					"target": "analyticalContent"
+				},
+				{
+					"pattern": "manifest",
+					"name": "manifest",
+					"target": "manifest"
+				},
+				{
+					"pattern": "componentCard",
+					"name": "componentCard",
+					"target": "componentCard"
+				},
+				{
+					"pattern": "sapfCard",
+					"name": "sapfCard",
+					"target": "sapfCard"
+				},
+				{
+					"pattern": "gridContainer",
+					"name": "gridContainer",
+					"target": "gridContainer"
+				},
+				{
+					"pattern": "gridContainerQuery",
+					"name": "gridContainerQuery",
+					"target": "gridContainerQuery"
+				},
+				{
+					"pattern": "timelineContent",
+					"name": "timelineContent",
+					"target": "timelineContent"
+				},
+				{
+					"pattern": "adaptiveCard",
+					"name": "adaptiveCard",
+					"target": "adaptiveCard"
+				},
+				{
+					"pattern": "calendarCard",
+					"name": "calendarCard",
+					"target": "calendarCard"
+				},
+				{
+					"pattern": "navigationService",
+					"name": "navigationService",
+					"target": "navigationService"
+				},
+				{
+					"pattern": "dataService",
+					"name": "dataService",
+					"target": "dataService"
+				},
+				{
+					"pattern": "objectContent",
+					"name": "objectContent",
+					"target": "objectContent"
+				},
+				{
+					"pattern": "analyticsCloudContent",
+					"name": "analyticsCloudContent",
+					"target": "analyticsCloudContent"
+				},
+				{
+					"pattern": "dnd3",
+					"name": "dnd3",
+					"target": "dnd3"
+				},
+				{
+					"pattern": "delayedLoading",
+					"name": "delayedLoading",
+					"target": "delayedLoading"
+				},
+				{
+					"pattern": "noHeaderNoContent",
+					"name": "noHeaderNoContent",
+					"target": "noHeaderNoContent"
+				},
+				{
+					"pattern": "minHeight",
+					"name": "minHeight",
+					"target": "minHeight"
+				},
+				{
+					"pattern": "dataMode",
+					"name": "dataMode",
+					"target": "dataMode"
+				},
+				{
+					"pattern": "translation",
+					"name": "translation",
+					"target": "translation"
+				},
+				{
+					"pattern": "bundle",
+					"name": "bundle",
+					"target": "bundle"
+				},
+				{
+					"pattern": "manifestReady",
+					"name": "manifestReady",
+					"target": "manifestReady"
+				},
+				{
+					"pattern": "badges",
+					"name": "badges",
+					"target": "badges"
+				},
+				{
+					"pattern": "preview",
+					"name": "preview",
+					"target": "preview"
+				},
+				{
+					"pattern": "filters",
+					"name": "filters",
+					"target": "filters"
+				},
+				{
+					"pattern": "extensionAndHost",
+					"name": "extensionAndHost",
+					"target": "extensionAndHost"
+				},
+				{
+					"pattern": "parameters",
+					"name": "parameters",
+					"target": "parameters"
+				},
+				{
+					"pattern": "manifestResolver",
+					"name": "manifestResolver",
+					"target": "manifestResolver"
+				},
+				{
+					"pattern": "stateChangedEvent",
+					"name": "stateChangedEvent",
+					"target": "stateChangedEvent"
+				},
+				{
+					"pattern": "showCardWithResolvedManifest",
+					"name": "showCardWithResolvedManifest",
+					"target": "showCardWithResolvedManifest"
+				},
+				{
+					"pattern": "csrfToken",
+					"name": "csrfToken",
+					"target": "csrfToken"
+				},
+				{
+					"pattern": "submitAction",
+					"name": "submitAction",
+					"target": "submitAction"
+				},
+				{
+					"pattern": "pagination",
+					"name": "pagination",
+					"target": "pagination"
+				},
+				{
+					"pattern": "message",
+					"name": "message",
+					"target": "message"
+				},
+				{
+					"pattern": "transparent",
+					"name": "transparent",
+					"target": "transparent"
+				},
+				{
+					"pattern": "showCard",
+					"name": "showCard",
+					"target": "showCard"
+				},
+				{
+					"pattern": "measurements",
+					"name": "measurements",
+					"target": "measurements"
+				},
+				{
+					"pattern": "requests",
+					"name": "requests",
+					"target": "requests"
+				},
+				{
+					"pattern": "modelSizeLimit",
+					"name": "modelSizeLimit",
+					"target": "modelSizeLimit"
+				},
+				{
+					"pattern": "tilesVariants",
+					"name": "tilesVariants",
+					"target": "tilesVariants"
+				}
+			],
+			"targets": {
+				"main": {
+					"id": "main",
+					"name": "Main",
+					"level": 1
+				},
+				"splitter": {
+					"id": "splitter",
+					"name": "Splitter",
+					"level": 1
+				},
+				"notFound": {
+					"id": "notFound",
+					"name": "NotFound",
+					"transition": "show"
+				},
+				"listContent": {
+					"id": "listContent",
+					"name": "ListContent",
+					"level": 1
+				},
+				"calendarContent": {
+					"id": "calendarContent",
+					"name": "calendarContent",
+					"level": 1
+				},
+				"cardErrors": {
+					"id": "cardErrors",
+					"name": "CardErrors",
+					"level": 1
+				},
+				"tableContent": {
+					"id": "tableContent",
+					"name": "TableContent",
+					"level": 1
+				},
+				"webPageContent": {
+					"id": "webPageContent",
+					"name": "WebPageContent",
+					"level": 1
+				},
+				"analyticalContent": {
+					"id": "analyticalContent",
+					"name": "AnalyticalContent",
+					"level": 1
+				},
+				"defaultHeader": {
+					"id": "defaultHeader",
+					"name": "DefaultHeader",
+					"level": 1
+				},
+				"numericHeader": {
+					"id": "numericHeader",
+					"name": "NumericHeader",
+					"level": 1
+				},
+				"footer": {
+					"id": "footer",
+					"name": "Footer",
+					"level": 1
+				},
+				"manifest": {
+					"id": "manifest",
+					"name": "Manifest",
+					"level": 1
+				},
+				"componentCard": {
+					"id": "componentCard",
+					"name": "ComponentCard",
+					"level": 1
+				},
+				"sapfCard": {
+					"id": "sapfCard",
+					"name": "sapfCard",
+					"level": 1
+				},
+				"gridContainer": {
+					"id": "GridContainer",
+					"name": "GridContainer",
+					"level": 1
+				},
+				"gridContainerQuery": {
+					"id": "GridContainerQuery",
+					"name": "GridContainerQuery",
+					"level": 1
+				},
+				"navigationService": {
+					"id": "navigationService",
+					"name": "NavigationService",
+					"level": 1
+				},
+				"dataService": {
+					"id": "dataService",
+					"name": "DataService",
+					"level": 1
+				},
+				"delayedLoading": {
+					"id": "delayedLoading",
+					"name": "DelayedLoading",
+					"level": 1
+				},
+				"timelineContent": {
+					"id": "timelineContent",
+					"name": "timelineContent",
+					"level": 1
+				},
+				"adaptiveCard": {
+					"id": "adaptiveCard",
+					"name": "AdaptiveCard",
+					"level": 1
+				},
+				"calendarCard": {
+					"id": "calendarCard",
+					"name": "CalendarCard",
+					"level": 1
+				},
+				"objectContent": {
+					"id": "objectContent",
+					"name": "ObjectContent",
+					"level": 1
+				},
+				"analyticsCloudContent": {
+					"id": "analyticsCloudContent",
+					"name": "AnalyticsCloudContent",
+					"level": 1
+				},
+				"dnd3": {
+					"id": "dnd3",
+					"name": "Dnd3",
+					"level": 1
+				},
+				"noHeaderNoContent": {
+					"id": "noHeaderNoContent",
+					"name": "NoHeaderNoContent",
+					"level": 1
+				},
+				"minHeight": {
+					"id": "minHeight",
+					"name": "MinHeight",
+					"level": 1
+				},
+				"dataMode": {
+					"id": "dataMode",
+					"name": "DataMode",
+					"level": 1
+				},
+				"translation": {
+					"id": "translation",
+					"name": "Translation",
+					"level": 1
+				},
+				"bundle": {
+					"id": "bundle",
+					"name": "Bundle",
+					"level": 1
+				},
+				"manifestReady": {
+					"id": "manifestReady",
+					"name": "ManifestReady",
+					"level": 1
+				},
+				"badges": {
+					"id": "badges",
+					"name": "Badges",
+					"level": 1
+				},
+				"preview": {
+					"id": "preview",
+					"name": "Preview",
+					"level": 1
+				},
+				"filters": {
+					"id": "filters",
+					"name": "Filters",
+					"level": 1
+				},
+				"extensionAndHost": {
+					"id": "extensionAndHost",
+					"name": "ExtensionAndHost",
+					"level": 1
+				},
+				"parameters": {
+					"id": "parameters",
+					"name": "Parameters",
+					"level": 1
+				},
+				"manifestResolver": {
+					"id": "manifestResolver",
+					"name": "ManifestResolver",
+					"level": 1
+				},
+				"stateChangedEvent": {
+					"id": "stateChangedEvent",
+					"name": "StateChangedEvent",
+					"level": 1
+				},
+				"showCardWithResolvedManifest": {
+					"id": "showCardWithResolvedManifest",
+					"name": "ShowCardWithResolvedManifest",
+					"level": 1
+				},
+				"csrfToken": {
+					"id": "csrfToken",
+					"name": "CsrfToken",
+					"level": 1
+				},
+				"submitAction": {
+					"id": "submitAction",
+					"name": "SubmitAction",
+					"level": 1
+				},
+				"pagination": {
+					"id": "pagination",
+					"name": "Pagination"
+				},
+				"message": {
+					"id": "message",
+					"name": "Message",
+					"level": 1
+				},
+				"transparent": {
+					"id": "transparent",
+					"name": "Transparent",
+					"level": 1
+				},
+				"showCard": {
+					"id": "showCard",
+					"name": "ShowCard",
+					"level": 1
+				},
+				"measurements": {
+					"id": "measurements",
+					"name": "CardMeasurements",
+					"level": 1
+				},
+				"requests": {
+					"id": "requests",
+					"name": "Requests",
+					"level": 1
+				},
+				"modelSizeLimit": {
+					"id": "modelSizeLimit",
+					"name": "ModelSizeLimit",
+					"level": 1
+				},
+				"tilesVariants": {
+					"id": "tilesVariants",
+					"name": "TilesVariants",
+					"level": 1
+				}
+			}
+		}
+	}
+}

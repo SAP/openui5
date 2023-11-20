@@ -1,56 +1,65 @@
 sap.ui.define([
-		'jquery.sap.global',
 		'sap/m/Button',
 		'sap/m/Dialog',
 		'sap/m/MessageToast',
 		'sap/m/RatingIndicator',
 		'sap/m/TextArea',
-		'sap/m/VBox',
 		'sap/ui/core/mvc/Controller',
-		'sap/ui/model/json/JSONModel'
-	], function(jQuery, Button, Dialog, MessageToast, RatingIndicator, TextArea, VBox, Controller, JSONModel) {
+		'sap/ui/model/json/JSONModel',
+		"sap/m/library",
+		"sap/ui/core/Popup"
+], function(
+	Button,
+	Dialog,
+	MessageToast,
+	RatingIndicator,
+	TextArea,
+	Controller,
+	JSONModel,
+	MLibrary,
+	Popup
+) {
 	"use strict";
+	var URLHelper = MLibrary.URLHelper,
+		ButtonType = MLibrary.ButtonType;
 
-	var CController = Controller.extend("sap.m.sample.ObjectAttributes.C", {
+	return Controller.extend("sap.m.sample.ObjectAttributes.C", {
 
 		onInit: function(evt) {
 			// set explored app's demo model on this sample
-			var oModel = new JSONModel(sap.ui.require.toUrl("sap/ui/demo/mock") + "/products.json");
+			var oModel = new JSONModel(sap.ui.require.toUrl("sap/ui/demo/mock/products.json"));
 			this.getView().setModel(oModel);
 		},
 
 		handleSAPLinkPressed: function(oEvent) {
-			sap.m.URLHelper.redirect("http://www.sap.com", true);
+			URLHelper.redirect("http://www.sap.com", true);
 		},
 
 		handleFeedbacklinkPressed: function(oEvent) {
 			var oDialog = new Dialog({
 				title: "Provide feedback",
 				content: [
-					new VBox({
-						fitContainer: true,
-						items: [
-							new RatingIndicator({
-								maxValue: 5
-							}), new TextArea({
-								placeholder: "What do you think about this item?",
-								rows: 5,
-								cols: 30
-							})
-						]
+					new RatingIndicator({
+						maxValue: 5
+					}),
+					new TextArea({
+						placeholder: "What do you think about this item?",
+						rows: 5,
+						cols: 30,
+						width: "100%"
 					})
 				],
 				beginButton: new Button({
 					text: "Submit",
-					type: sap.m.ButtonType.Accept,
+					type: ButtonType.Accept,
 					press: function(oEvent) {
 						oDialog.setBusyIndicatorDelay(0);
 						oDialog.setBusy(true);
 						setTimeout(function() {
 							MessageToast.show("Feedback sent.", {
 								duration: 2000,
-								my: sap.ui.core.Popup.Dock.CenterCenter,
-								at: sap.ui.core.Popup.Dock.CenterCenter,
+								my: Popup.Dock.CenterCenter,
+								at: Popup.Dock.CenterCenter,
 								of: oDialog,
 								onClose: function() {
 									oDialog.close();
@@ -62,17 +71,14 @@ sap.ui.define([
 				}),
 				endButton: new Button({
 					text: "Cancel",
-					type: sap.m.ButtonType.Reject,
+					type: ButtonType.Reject,
 					press: function(oEvent) {
 						oDialog.close();
 					}
 				})
-			});
+			}).addStyleClass("sapUiContentPadding");
 			oDialog.open();
 		}
 	});
-
-
-	return CController;
 
 });

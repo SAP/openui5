@@ -1,0 +1,1 @@
+<Button id="customFrag1BtnWithCustAction" xmlns="sap.m" text="This Button is in an Extension Fragment and triggers a Customer Action" press=".extension.testdata.customizing.customersub.Sub2SubControllerExtension.customerAction" />

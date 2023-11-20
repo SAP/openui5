@@ -24,25 +24,26 @@
 
 .sapUiUfdCurrencyValue {
 	text-align: right;
+	font-variant-numeric: tabular-nums;
 }
 
 .sapUiUfdCurrencyCurrency {
-	text-align: start;
-	margin-left: 0.5rem;
+	text-align: end;
 	overflow: hidden;
 	text-overflow: ellipsis;
-	width: 2rem;
+	width: 3rem;
+	font-family: @sapUiContentMonospaceFontFamily;
 }
 
-.sapUiUfdCurrencyNoVal .sapUiUfdCurrencyValue,
-.sapUiUfdCurrencyNoVal .sapUiUfdCurrencyCurrency {
+.sapUiUfdCurrency .sapMEmptyIndicator.sapMEmptyIndicatorAuto {
 	display: none;
 }
 
-.sapUiTableCell .sapUiUfdCurrency {
-	vertical-align: middle;
+.sapMShowEmpty-CTX .sapUiUfdCurrency .sapMEmptyIndicator.sapMEmptyIndicatorAuto {
+	display: inline-block;
+	text-align: end;
 }
 
-.sapUiAnalyticalTableSum .sapUiTableCell .sapUiUfdCurrency {
-	font-weight: bold;
+.sapUiTableDataCell .sapUiUfdCurrency {
+	vertical-align: middle;
 }

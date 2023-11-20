@@ -1,16 +1,14 @@
 sap.ui.define([
 	"sap/ui/core/mvc/Controller"
-], function (Controller) {
+], (Controller) => {
 	"use strict";
 
-	return Controller.extend("sap.ui.demo.walkthrough.controller.App", {
-
-		onShowHello : function () {
+	return Controller.extend("ui5.walkthrough.controller.App", {
+		onShowHello() {
 			// show a native JavaScript alert
 			/* eslint-disable no-alert */
 			alert("Hello World");
 			/* eslint-enable no-alert */
 		}
 	});
-
 });

@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<title>Dynamic Counter</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<script src="../../../scripts/boot.js"></script>
+</head>
+
+<body class="sapUiBody topicBody">
+
+	<div class="topic">
+		<div class="content">
+
+			<h1 id="overview">
+				Card Header Dynamic Counter
+			</h1>
+
+			<p>
+				Item based cards (List, Table and Timeline) add the possibility to create a dynamic counter in the
+				header.
+				The dynamic counter changes based on the number of visible items in the card or the language.
+			</p>
+
+			<h2 id="examples">
+				Examples
+			</h2>
+
+			<p>Using header status text along with predefined translation key and a dynamic parameter:</p>
+			<pre class="lang-json">{
+	"sap.app": {
+		"id": "card.explorer.dynamic.counter.card",
+		"type": "card",
+		"i18n": "i18n/i18n.properties",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.card": {
+		"header": {
+			...
+			"status": {
+				"text": {
+					"format": {
+						"translationKey": "i18n>CARD.COUNT_X_OF_Y",
+						"parts": [
+							"parameters>/visibleItems",
+							"/count"
+						]
+					}
+				}
+			}
+		},
+		"content": {
+			"maxItems": 2,
+			"item": {
+				....
+			}
+		}
+	}
+}</pre>
+
+			<a class="try-button" href="../../../index.html#/explore/dynamicCounter" target="_parent">Try it Out</a>
+
+		</div>
+	</div>
+
+</body>
+
+</html>

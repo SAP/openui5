@@ -1,0 +1,224 @@
+.sapUiMedia-StdExt-Tablet .sapUiDocLightTable,
+.sapUiMedia-StdExt-Phone .sapUiDocLightTable {
+	display: flex;
+	flex-flow: row wrap;
+	width: 100%;
+}
+
+.sapUiMedia-StdExt-Tablet .sapUiDocLightTable .row,
+.sapUiMedia-StdExt-Tablet .sapUiDocLightTable .head,
+.sapUiMedia-StdExt-Phone .sapUiDocLightTable .row,
+.sapUiMedia-StdExt-Phone .sapUiDocLightTable .head {
+	display: flex;
+	flex-flow: row wrap;
+	flex: 1 100%;
+	width: calc(100% - 10px);
+}
+
+/* 5 columns */
+.sapUiMedia-StdExt-Tablet .sapUiDocLightTable.columns-5 .cell {
+	flex: 2 0;
+}
+.sapUiMedia-StdExt-Tablet .sapUiDocLightTable.columns-5 .cell:nth-child(4),
+.sapUiMedia-StdExt-Tablet .sapUiDocLightTable.columns-5 .cell:nth-child(3) {
+	flex: 1.5 0;
+}
+
+/* 4 columns */
+.sapUiMedia-StdExt-Tablet .sapUiDocLightTable.columns-4 .cell {
+	flex: 2 0;
+}
+.sapUiMedia-StdExt-Tablet .sapUiDocLightTable.columns-4 .cell:nth-child(3) {
+	flex: 1.5 0;
+}
+
+/* 3 columns */
+.sapUiMedia-StdExt-Tablet .sapUiDocLightTable.columns-3 .cell {
+	flex: 1 0;
+}
+
+/* 2 columns */
+.sapUiMedia-StdExt-Tablet .sapUiDocLightTable.columns-2 .cell {
+	flex: 1 0;
+}
+
+.sapUiMedia-StdExt-Phone .sapUiDocLightTable .head .cell:nth-child(1n + 2) {
+	display: none;
+}
+
+.sapUiMedia-StdExt-Phone .sapUiDocLightTable .row .cell {
+	flex: 1 100%;
+}
+
+.sapUiMedia-StdExt-Phone .sapUiDocLightTable:not(.columns-2) .cell .inTitle {
+	display: block;
+	font-size: 0.875rem;
+	color: #666666;
+}
+
+.sapUiMedia-StdExt-Tablet .sapUiDocLightTable .head .cell:last-child {
+	display: none;
+}
+
+.sapUiMedia-StdExt-Tablet .sapUiDocLightTable .row .cell:last-child {
+	flex: 1 100%;
+}
+
+/* Look */
+.sapUiMedia-Std-Desktop .sapUiDocLightTable {
+	display: table;
+	width: 100%;
+	border-collapse: collapse;
+}
+
+.sapUiMedia-Std-Desktop .sapUiDocLightTable .row,
+.sapUiMedia-Std-Desktop .sapUiDocLightTable .head {
+	display: table-row;
+}
+
+.sapUiMedia-Std-Desktop .sapUiDocLightTable .cell {
+	display: table-cell;
+}
+
+.sapUiMedia-Std-Desktop .sapUiDocLightTable.sapUiDocumentationParamsTable,
+.sapUiMedia-Std-Desktop .sapUiDocLightTable.columns-3,
+.sapUiMedia-Std-Desktop .sapUiDocLightTable.columns-2:not(.sapUiDocumentation2ColumnsEqualTable) {
+	table-layout: fixed;
+}
+
+.sapUiMedia-Std-Desktop .sapUiDocLightTable.sapUiDocumentationParamsTable .cell:last-child,
+.sapUiMedia-Std-Desktop .sapUiDocLightTable.sapUiDocumentation2ColumnsEqualTable .cell:last-child,
+.sapUiMedia-Std-Desktop .sapUiDocLightTable.sapUiDocumentationSpecialSettingsTable .cell:last-child {
+	width: 50%;
+}
+
+.sapUiMedia-Std-Desktop .sapUiDocLightTable.columns-2:not(.sapUiDocumentation2ColumnsEqualTable) .cell:last-child {
+	width: 50%
+}
+
+.sapUiDocLightTable .row .cell:last-child {
+	word-wrap: break-word;
+}
+
+.sapUiDocumentationParamWrap {
+	word-wrap: break-word;
+}
+
+.sapUiDocLightTable .head .cell,
+.sapUiDocLightTable .cell div {
+	line-height: 1.4rem;
+	font-size: 0.875rem;
+}
+
+.sapUiDocLightTable .inTitle {
+	display: none;
+}
+
+.sapUiDocLightTable .cell {
+	padding: 0.5rem;
+	vertical-align: top;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	min-width: 6rem;
+}
+
+.sapUiDocLightTable .cell:first-child,
+.sapUiMedia-StdExt-Phone .sapUiDocLightTable .cell,
+.sapUiMedia-StdExt-Tablet .sapUiDocLightTable .cell {
+	padding-left: 16px;
+}
+
+.sapUiDocLightTable .sapUiJSD p {
+    margin: 0;
+}
+
+.sapUiDocLightTable .head {
+	background-color: #e5e5e5;
+	border-bottom: solid 1px #e5e5e5;
+	border-left: solid 1px #e5e5e5;
+	border-right: solid 1px #e5e5e5;
+}
+
+.sapUiDocLightTable .row {
+	background-color: #ffffff;
+	border-bottom: solid 1px #e5e5e5;
+	border-left: solid 1px #e5e5e5;
+	border-right: solid 1px #e5e5e5;
+}
+
+.sapUiTheme-sap_belize_hcb .sapUiDocLightTable .head,
+.sapUiTheme-sap_belize_hcb .sapUiDocLightTable .row {
+	background-color: #000000;
+	border-bottom: solid 1px #ffffff;
+	border-left: solid 1px #ffffff;
+	border-right: solid 1px #ffffff;
+}
+
+.sapUiTheme-sap_belize_hcb .sapUiDocLightTable .head {
+	border-top: 1px solid #ffffff;
+	border-bottom: 0.125rem solid #ffffff;
+}
+
+.sapUiTheme-sap_belize_hcw .sapUiDocLightTable .head,
+.sapUiTheme-sap_belize_hcw .sapUiDocLightTable .row {
+	background-color: #ffffff;
+	border-bottom: solid 1px #000000;
+	border-left: solid 1px #000000;
+	border-right: solid 1px #000000;
+}
+
+.sapUiTheme-sap_belize_hcw .sapUiDocLightTable .head {
+	border-top: 1px solid #000000;
+	border-bottom: 0.125rem solid #000000;
+}
+
+.sapUiTheme-sap_horizon_dark,
+.sapUiTheme-sap_fiori_3_dark {
+	.sapUiDocLightTable .head {
+		background-color: #232931;
+		border-bottom: solid 1px #3a4552;
+	}
+
+	.sapUiDocLightTable .row {
+		background-color: #29313a;
+		border-bottom: solid 1px #3a4552;
+	}
+
+	.sapUiDocLightTable .head,
+	.sapUiDocLightTable .row {
+		border-left: none;
+		border-right: none;
+	}
+}
+
+.sapUiTheme-sap_horizon_hcb,
+.sapUiTheme-sap_fiori_3_hcb {
+	.sapUiDocLightTable .head,
+	.sapUiDocLightTable .row {
+		background-color: #000000;
+		border-bottom: solid 1px #ffffff;
+		border-left: solid 1px #ffffff;
+		border-right: solid 1px #ffffff;
+	}
+
+	.sapUiDocLightTable .head {
+		border-top: 1px solid #ffffff;
+		border-bottom: 0.125rem solid #ffffff;
+	}
+}
+
+.sapUiTheme-sap_horizon_hcw
+.sapUiTheme-sap_fiori_3_hcw {
+	.sapUiDocLightTable .head,
+	.sapUiDocLightTable .row {
+		background-color: #ffffff;
+		border-bottom: solid 1px #000000;
+		border-left: solid 1px #000000;
+		border-right: solid 1px #000000;
+	}
+
+	.sapUiDocLightTable .head {
+		border-top: 1px solid #000000;
+		border-bottom: 0.125rem solid #000000;
+	}
+}

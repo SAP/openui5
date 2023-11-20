@@ -1,0 +1,188 @@
+<mvc:View
+	controllerName="sap.tnt.sample.ToolPageNavigation.C"
+	xmlns="sap.m"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:tnt="sap.tnt"
+	height="100%">
+	<tnt:ToolPage id="toolPage">
+		<tnt:header>
+			<tnt:ToolHeader>
+				<Button
+					visible="{= ${device>/system/phone}}"
+					id="sideNavigationToggleButton"
+					icon="sap-icon://menu2"
+					type="Transparent"
+					press=".onSideNavButtonPress">
+					<layoutData>
+						<OverflowToolbarLayoutData priority="NeverOverflow" />
+					</layoutData>
+				</Button>
+				<Image height="1.5rem"
+					   class="sapUiSmallMarginBegin"
+					   src="https://www.sap.com/dam/application/shared/logos/sap-logo-svg.svg" />
+				<Title level="H1" text="Product Name" wrapping="false" id="productName">
+					<layoutData>
+						<OverflowToolbarLayoutData priority="Disappear"/>
+					</layoutData>
+				</Title>
+				<Text text="Second Тitle" wrapping="false" id="secondTitle">
+					<layoutData>
+						<OverflowToolbarLayoutData priority="Disappear"/>
+					</layoutData>
+				</Text>
+				<ToolbarSpacer />
+				<SearchField width="16rem" id="searchField">
+					<layoutData>
+						<OverflowToolbarLayoutData priority="Low" group="1"/>
+					</layoutData>
+				</SearchField>
+				<ToolbarSpacer id="spacer">
+					<layoutData>
+						<OverflowToolbarLayoutData priority="Low" group="1"/>
+					</layoutData>
+				</ToolbarSpacer>
+				<Button visible="false" icon="sap-icon://search" type="Transparent" id="searchButton" tooltip="Search"/>
+				<OverflowToolbarButton icon="sap-icon://source-code" type="Transparent" tooltip="Action 1" text="Action 1">
+					<layoutData>
+						<OverflowToolbarLayoutData group="2"/>
+					</layoutData>
+				</OverflowToolbarButton>
+				<OverflowToolbarButton icon="sap-icon://card" type="Transparent" tooltip="Action 2" text="Action 2">
+					<layoutData>
+						<OverflowToolbarLayoutData group="2"/>
+					</layoutData>
+				</OverflowToolbarButton>
+				<ToolbarSeparator>
+					<layoutData>
+						<OverflowToolbarLayoutData group="2"/>
+					</layoutData>
+				</ToolbarSeparator>
+				<OverflowToolbarButton icon="sap-icon://action-settings" type="Transparent" text="Settings"/>
+				<Button icon="sap-icon://bell" type="Transparent" tooltip="Notification">
+					<layoutData>
+						<OverflowToolbarLayoutData priority="NeverOverflow"/>
+					</layoutData>
+				</Button>
+				<tnt:ToolHeaderUtilitySeparator/>
+				<ToolbarSpacer width="1.125rem"/>
+				<Avatar src="test-resources/sap/tnt/images/Woman_avatar_01.png" displaySize="XS" press=".onAvatarPressed" tooltip="Profile">
+					<layoutData>
+						<OverflowToolbarLayoutData priority="NeverOverflow"/>
+					</layoutData>
+				</Avatar>
+			</tnt:ToolHeader>
+		</tnt:header>
+		<tnt:subHeader>
+			<tnt:ToolHeader visible="{=! ${device>/system/phone}}">
+				<IconTabHeader
+						selectedKey="{/selectedKey}"
+						items="{path: '/navigation'}"
+						select=".onItemSelect"
+						mode="Inline">
+					<layoutData>
+						<OverflowToolbarLayoutData priority="NeverOverflow" shrinkable="true" />
+					</layoutData>
+					<items>
+						<IconTabFilter
+								items="{items}"
+								icon="{icon}"
+								text="{title}"
+								key="{key}">
+							<items>
+								<IconTabFilter
+										text="{title}"
+										key="{key}"
+										enabled="{enabled}">
+								</IconTabFilter>
+							</items>
+						</IconTabFilter>
+					</items>
+				</IconTabHeader>
+			</tnt:ToolHeader>
+		</tnt:subHeader>
+		<tnt:sideContent>
+			<tnt:SideNavigation
+				visible="{= ${device>/system/phone}}"
+				expanded="true"
+				selectedKey="{/selectedKey}"
+				itemSelect=".onItemSelect">
+				<tnt:NavigationList items="{path: '/navigation'}">
+					<tnt:NavigationListItem
+						text="{title}"
+						icon="{icon}"
+						enabled="{enabled}"
+						expanded="{expanded}"
+						items="{items}"
+						key="{key}">
+						<tnt:NavigationListItem
+							text="{title}"
+							key="{key}"
+							enabled="{enabled}" />
+					</tnt:NavigationListItem>
+				</tnt:NavigationList>
+			</tnt:SideNavigation>
+		</tnt:sideContent>
+		<tnt:mainContents>
+			<NavContainer id="pageContainer" initialPage="page1">
+				<pages>
+					<ScrollContainer
+						id="page1"
+						horizontal="false"
+						vertical="true"
+						height="100%"
+						class="sapUiContentPadding">
+						<Text text="Home" />
+					</ScrollContainer>
+					<ScrollContainer
+						id="page2"
+						horizontal="false"
+						vertical="true"
+						height="100%"
+						class="sapUiContentPadding">
+						<Text text="Applications" />
+					</ScrollContainer>
+					<ScrollContainer
+						id="page3"
+						horizontal="false"
+						vertical="true"
+						height="100%"
+						class="sapUiContentPadding">
+						<Text text="Users and Groups" />
+					</ScrollContainer>
+					<ScrollContainer
+						id="page4"
+						horizontal="false"
+						vertical="true"
+						height="100%"
+						class="sapUiContentPadding">
+						<Text text="Identity" />
+					</ScrollContainer>
+					<ScrollContainer
+							id="page5"
+							horizontal="false"
+							vertical="true"
+							height="100%"
+							class="sapUiContentPadding">
+						<Text text="Provisioning" />
+					</ScrollContainer>
+					<ScrollContainer
+							id="page6"
+							horizontal="false"
+							vertical="true"
+							height="100%"
+							class="sapUiContentPadding">
+						<Text text="Monitoring" />
+					</ScrollContainer>
+					<ScrollContainer
+							id="page7"
+							horizontal="false"
+							vertical="true"
+							height="100%"
+							class="sapUiContentPadding">
+						<Text text="Resources" />
+					</ScrollContainer>
+				</pages>
+			</NavContainer>
+		</tnt:mainContents>
+	</tnt:ToolPage>
+</mvc:View>

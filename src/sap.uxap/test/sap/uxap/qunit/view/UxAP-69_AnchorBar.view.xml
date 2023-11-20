@@ -1,5 +1,5 @@
-<core:View
-		xmlns:core="sap.ui.core"
+<mvc:View
+		xmlns:mvc="sap.ui.core.mvc"
 		xmlns="sap.uxap"
 		xmlns:m="sap.m"
 		xmlns:html="http://www.w3.org/1999/xhtml"
@@ -15,89 +15,102 @@
 		<sections>
 			<ObjectPageSection id="section1" title="{/sections/0/title}">
 				<customAnchorBarButton>
-					<m:Button text="my first section" press=".handleAnchorBarPress"/>
+					<m:Button text="my first section"/>
 				</customAnchorBarButton>
 				<ObjectPageSubSection title="first section">
-					<html:div style="height:300px; background-color: #DFF0F7;"></html:div>
+					<html:div class="dummyBlockContent7"></html:div>
 				</ObjectPageSubSection>
 			</ObjectPageSection>
 			<ObjectPageSection id="section2" title="{/sections/1/title}">
 				<ObjectPageSubSection title="second section first">
-					<html:div style="height:300px; background-color: #DFF0FA;"></html:div>
+					<customAnchorBarButton>
+						<m:Button text="custom sub-section button" icon="sap-icon://show"/>
+					</customAnchorBarButton>
+					<html:div class="dummyBlockContentA"></html:div>
 				</ObjectPageSubSection>
 				<ObjectPageSubSection title="second section second">
-					<html:div style="height:300px; background-color: #DFF0FA;"></html:div>
+					<html:div class="dummyBlockContentA"></html:div>
 				</ObjectPageSubSection>
 			</ObjectPageSection>
 			<ObjectPageSection id="section3" title="{/sections/2/title}">
 				<customAnchorBarButton>
-					<m:Button text="my third section" press=".handleAnchorBarPress"/>
+					<m:Button text="my third section"/>
 				</customAnchorBarButton>
 				<ObjectPageSubSection>
-					<html:div style="height:300px; background-color: #DFF0FC;"></html:div>
+					<html:div class="dummyBlockContentC"></html:div>
 				</ObjectPageSubSection>
 			</ObjectPageSection>
 			<ObjectPageSection id="section4" title="{/sections/3/title}">
 				<ObjectPageSubSection>
-					<html:div style="height:300px; background-color: #DFF0FF;"></html:div>
+					<html:div class="dummyBlockContentF"></html:div>
 				</ObjectPageSubSection>
 			</ObjectPageSection>
 			<ObjectPageSection id="section5" title="Section 5">
 				<ObjectPageSubSection>
-					<html:div style="height:300px; background-color: #DFF0FF;"></html:div>
+					<html:div class="dummyBlockContentF"></html:div>
 				</ObjectPageSubSection>
 			</ObjectPageSection>
 			<ObjectPageSection id="section6" title="Section 6">
 				<ObjectPageSubSection>
-					<html:div style="height:300px; background-color: #DFF0FF;"></html:div>
+					<html:div class="dummyBlockContentF"></html:div>
 				</ObjectPageSubSection>
 			</ObjectPageSection>
 			<ObjectPageSection id="section7" title="Section 7">
 				<ObjectPageSubSection>
-					<html:div style="height:300px; background-color: #DFF0FF;"></html:div>
+					<html:div class="dummyBlockContentF"></html:div>
 				</ObjectPageSubSection>
 			</ObjectPageSection>
 			<ObjectPageSection id="section8" title="Section 8">
 				<ObjectPageSubSection>
-					<html:div style="height:300px; background-color: #DFF0FF;"></html:div>
+					<html:div class="dummyBlockContentF"></html:div>
 				</ObjectPageSubSection>
 			</ObjectPageSection>
 			<ObjectPageSection id="section9" title="Section 9">
 				<ObjectPageSubSection>
-					<html:div style="height:300px; background-color: #DFF0FF;"></html:div>
+					<html:div class="dummyBlockContentF"></html:div>
 				</ObjectPageSubSection>
 			</ObjectPageSection>
 			<ObjectPageSection id="section10" title="Section 10">
 				<ObjectPageSubSection>
-					<html:div style="height:300px; background-color: #DFF0FF;"></html:div>
+					<html:div class="dummyBlockContentF"></html:div>
 				</ObjectPageSubSection>
 			</ObjectPageSection>
 			<ObjectPageSection id="section11" title="Section 11">
 				<ObjectPageSubSection>
-					<html:div style="height:300px; background-color: #DFF0FF;"></html:div>
+					<html:div class="dummyBlockContentF"></html:div>
 				</ObjectPageSubSection>
 			</ObjectPageSection>
 			<ObjectPageSection id="section12" title="Section 12">
 				<ObjectPageSubSection>
-					<html:div style="height:300px; background-color: #DFF0FF;"></html:div>
+					<html:div class="dummyBlockContentF"></html:div>
 				</ObjectPageSubSection>
 			</ObjectPageSection>
 			<ObjectPageSection id="section13" title="Section 13">
 				<ObjectPageSubSection>
-					<html:div style="height:300px; background-color: #DFF0FF;"></html:div>
+					<html:div class="dummyBlockContentF"></html:div>
 				</ObjectPageSubSection>
 			</ObjectPageSection>
 			<ObjectPageSection id="section14" title="Section 14">
 				<ObjectPageSubSection>
-					<html:div style="height:300px; background-color: #DFF0FF;"></html:div>
+					<html:div class="dummyBlockContentF"></html:div>
 				</ObjectPageSubSection>
 			</ObjectPageSection>
 			<ObjectPageSection id="section15" title="Section 15">
 				<ObjectPageSubSection>
-					<html:div style="height:300px; background-color: #DFF0FF;"></html:div>
+					<html:div class="dummyBlockContentF"></html:div>
+				</ObjectPageSubSection>
+			</ObjectPageSection>
+			<ObjectPageSection id="section16"
+				title="Section with veeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeryyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy
+						loooooooooooooooooooooooooooooooooooooong teeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeext">
+				<ObjectPageSubSection>
+					<html:div class="dummyBlockContentF"></html:div>
+				</ObjectPageSubSection>
+				<ObjectPageSubSection title="second section second">
+					<html:div class="dummyBlockContentA"></html:div>
 				</ObjectPageSubSection>
 			</ObjectPageSection>
 		</sections>
 	</ObjectPageLayout>
 
-</core:View>
+</mvc:View>

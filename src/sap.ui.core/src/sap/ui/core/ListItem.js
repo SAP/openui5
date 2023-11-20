@@ -4,7 +4,7 @@
 
 // Provides control sap.ui.core.ListItem.
 sap.ui.define(['./Item', './library'],
-	function(Item, library) {
+	function(Item) {
 	"use strict";
 
 
@@ -15,7 +15,8 @@ sap.ui.define(['./Item', './library'],
 	 * @param {object} [mSettings] initial settings for the new control
 	 *
 	 * @class
-	 * An item that is used in lists or list-similar controls such as DropdownBox, for example.
+	 * An item that is used in list controls, such as <code>DropdownBox</code>.
+	 *
 	 * The element foresees the usage of additional texts displayed in a second column.
 	 * @extends sap.ui.core.Item
 	 *
@@ -24,7 +25,6 @@ sap.ui.define(['./Item', './library'],
 	 *
 	 * @public
 	 * @alias sap.ui.core.ListItem
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var ListItem = Item.extend("sap.ui.core.ListItem", /** @lends sap.ui.core.ListItem.prototype */ { metadata : {
 

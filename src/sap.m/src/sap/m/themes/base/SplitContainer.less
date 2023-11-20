@@ -17,38 +17,17 @@
 
 .sapMSplitContainerMaster {
 	box-sizing: border-box;
-	width: 320px;
+	width: 20rem;
 	float: left;
 	left: 0;
 	z-index: 1;
 	background-color: @sapUiGroupContentBackground;
-	border-right: 1px solid @sapUiGroupContentBorderColor;
-}
-
-.sapMSplitContainerMaster > .sapMSplitContainerMasterBlindLayer {
-	border: none;
-	position: absolute;
-	top: 0;
-	left: 0;
-	width: 100%;
-	height: 100%;
-	z-index: -1;
-	display: none;
-}
-
-.sapMSplitContainerPortrait.sapMSplitContainerShowHide > .sapMSplitContainerMaster > .sapMSplitContainerMasterBlindLayer,
-.sapMSplitContainerHideMode > .sapMSplitContainerMaster > .sapMSplitContainerMasterBlindLayer {
-	display: block;
+	border-right: 0.0625rem solid @sapUiGroupContentBorderColor;
 }
 
 .sapMSplitContainerDetail {
 	box-sizing: border-box;
 	height: 100%;
-
-	/* IE Windows 8 */
-	/* This elements receives events when not panning in vertial direction */
-	touch-action: pan-y;
-	-ms-touch-action: pan-y;
 }
 
 /* Default Master Animation Behavior */
@@ -73,7 +52,6 @@
 	border-right: @sapUiGroupContentBorderColor;
 	background-clip: padding-box;
 	-webkit-background-clip: padding-box;
-	-ms-background-clip: padding-box;
 }
 
 .sapMSplitContainerPopover > .sapMPopoverCont > .sapMPopoverScroll > .sapMSplitContainerMaster {
@@ -145,7 +123,6 @@
 	to { opacity: 0.7; }
 }
 
-/* IE */
 @keyframes sapMSplitContainerSlideout {
 	from {
 		width: 320px;

@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<title>Card Actions</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<script src="../../../scripts/boot.js"></script>
+</head>
+
+<body class="sapUiBody topicBody">
+
+	<div class="topic">
+		<div class="content">
+			<h1 id="overview">Hide Card</h1>
+			<p>HideCard action type is used to hide a card, which was opened by a preceding <code>ShowCard</code> action.</p>
+			<p>Default behavior: Closes the dialog in which the card is opened.</p>
+
+			<div class="messageStripWarning">
+				Experimental feature since version 1.112. The API may change.
+			</div>
+
+			<h2 id="parameters">Parameters</h2>
+			<p>This actions doesn't have parameters.</p>
+
+			<h2 id="examples">Examples</h2>
+			<p>Example how to hide a card that was shown by the <code>ShowCard</code> action:</p>
+			<pre class="lang-json">
+{
+	"sap.app": {
+		"id": "card.explorer.actions.showHideDetailsCard",
+		"type": "card",
+	},
+	"sap.card": {
+		"type": "Object",
+		"configuration": {
+			"parameters": {
+				"orderId": {
+					"value": ""
+				}
+			}
+		},
+		"data": {
+			...
+		},
+		"header": {
+			"data": {
+				"path": "/value/0"
+			},
+			"icon": {
+				"src": "sap-icon://sap-ui5"
+			},
+			"title": "Order for {ShipName}",
+			"subTitle": "ID {parameters>/orderId/value}"
+		},
+		"content": {
+			"groups": [
+				{
+					"items": [
+						{
+							"label": "Name",
+							"value": "{ShipName}"
+						},
+						{
+							"label": "Address",
+							"value": "{ShipAddress}"
+						},
+						{
+							"label": "Country",
+							"value": "{ShipCountry}"
+						},
+						{
+							"label": "City",
+							"value": "{ShipCity}"
+						},
+						{
+							"label": "Postal code",
+							"value": "{ShipPostalCode}"
+						}
+					]
+				}
+			]
+		},
+		"footer": {
+			"actionsStrip": [
+				{
+					"text": "Close",
+					"buttonType": "Emphasized",
+					<mark>"actions": [
+						{
+							"type": "HideCard"
+						}
+					]</mark>
+				}
+			]
+		}
+	}
+}</pre>
+			<a class="try-button" href="../../../index.html#/explore/cardActions/showHideCard" target="_parent">Try it Out</a>
+		</div>
+	</div>
+</body>
+
+</html>

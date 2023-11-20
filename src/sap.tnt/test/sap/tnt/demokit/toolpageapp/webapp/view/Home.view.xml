@@ -19,7 +19,7 @@
 				<l:BlockLayoutCell class="sapUiNoContentPadding">
 					<Image
 						src="{
-							path: 'view>/isPhone',
+							parts: [{path:'view>/isPhone'}, {path:'i18n>homeImage'}],
 							formatter: '.formatter.srcImageValue'
 						}"
 						width="100%"
@@ -106,9 +106,11 @@
 					backgroundColorShade="ShadeB">
 					<l:VerticalLayout>
 						<core:Icon
+							id="supplierIcon"
 							src="sap-icon://supplier"
 							size="2.5rem"
-							color="Default"/>
+							color="Default"
+							/>
 						<Title
 							text="{i18n>supplierTitle}"
 							level="H3"

@@ -1,10 +1,11 @@
 sap.ui.define(['sap/ui/core/UIComponent'],
-function(UIComponent) {
-	'use strict';
+	function(UIComponent) {
+		'use strict';
 
-	return UIComponent.extend('appUnderTest.Component', {
-		metadata: {
-			'rootView': 'appUnderTest.view.Main'
-		}
+		return UIComponent.extend('appUnderTest.Component', {
+			metadata: {
+				manifest: 'json',
+				interfaces: ['sap.ui.core.IAsyncContentCreation']
+			}
+		});
 	});
-});

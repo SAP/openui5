@@ -1,0 +1,84 @@
+{
+	"sap.app": {
+		"id": "my.card.qunit.test.TableCard"
+	},
+	"sap.card": {
+		"type": "Table",
+		"header": {
+			"title": "Sales Orders for Key Accounts"
+		},
+		"content": {
+			"data": {
+				"json": [
+					{
+						"salesOrder": "5000010050",
+						"customer": "Robert Brown Entertainment",
+						"status": "Delivered",
+						"statusState": "Success",
+						"orderUrl": "http://www.sap.com",
+						"percent": 30,
+						"percentValue": "30%",
+						"progressState": "Error",
+						"iconSrc": "sap-icon://help"
+					},
+					{
+						"salesOrder": "5000010051",
+						"customer": "Entertainment Argentinia",
+						"status": "Canceled",
+						"statusState": "Error",
+						"orderUrl": "http://www.sap.com",
+						"percent": 70,
+						"percentValue": "70 of 100",
+						"progressState": "Success",
+						"iconSrc": "sap-icon://help"
+					}
+				]
+			},
+			"row": {
+				"columns": [
+					{
+						"title": "Sales Order",
+						"value": "{salesOrder}",
+						"identifier": true
+					},
+					{
+						"title": "Customer",
+						"value": "{customer}"
+					},
+					{
+						"title": "Status",
+						"value": "{status}",
+						"state": "{statusState}",
+						"hAlign": "End"
+					},
+					{
+						"title": "Order ID",
+						"value": "{orderUrl}",
+						"url": "{orderUrl}"
+					},
+					{
+						"title": "Progress",
+						"progressIndicator": {
+							"percent": "{percent}",
+							"text": "{percentValue}",
+							"state": "{progressState}"
+						}
+					},
+					{
+						"title": "Avatar",
+						"icon": {
+							"src": "{iconSrc}"
+						}
+					},
+					{
+						"title": "Sales Order",
+						"value": "{salesOrder}",
+						"identifier": {
+							"url": "{orderUrl}"
+						}
+					}
+				]
+			}
+		}
+	}
+}

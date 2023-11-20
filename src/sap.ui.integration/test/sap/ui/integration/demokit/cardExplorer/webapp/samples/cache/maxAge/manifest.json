@@ -1,0 +1,59 @@
+{
+	"_version": "1.14.0",
+	"sap.app": {
+		"id": "card.explorer.cache.maxAge",
+		"type": "card",
+		"title": "Sample for Cache with Stale While Revalidate",
+		"subTitle": "Sample for Cache with Stale While Revalidate",
+		"applicationVersion": {
+			"version": "1.0.0"
+		},
+		"shortTitle": "A short title for this card",
+		"info": "Additional information about this card",
+		"description": "A long description for this card",
+		"tags": {
+			"keywords": [
+				"List",
+				"Numeric",
+				"Card",
+				"Sample"
+			]
+		}
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"icons": {
+			"icon": "sap-icon://list"
+		}
+	},
+	"sap.card": {
+		"type": "List",
+		"designtime": "dt/Configuration",
+		"data": {
+			"request": {
+				"url": "./data.json",
+				"cache": {
+					"maxAge": 3600,
+					"staleWhileRevalidate": true
+				}
+			}
+		},
+		"header": {
+			"title": "Stale While Revalidate with Max Age: 1 Hour",
+			"subTitle": "Cached data is considered fresh for 1 hour, then card acts as default",
+			"icon": {
+				"src": "sap-icon://desktop-mobile"
+			}
+		},
+		"content": {
+			"data": {
+				"path": "/items"
+			},
+			"maxItems": 5,
+			"item": {
+				"title": "{Name}",
+				"description": "{Description}"
+			}
+		}
+	}
+}

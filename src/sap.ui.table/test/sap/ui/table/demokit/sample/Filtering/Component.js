@@ -4,29 +4,8 @@ sap.ui.define([
 	"use strict";
 
 	return UIComponent.extend("sap.ui.table.sample.Filtering.Component", {
-		metadata : {
-			rootView : {
-				"viewName": "sap.ui.table.sample.Filtering.View",
-				"type": "XML",
-				"async": true
-			},
-			dependencies : {
-				libs : [
-					"sap.ui.table",
-					"sap.ui.unified",
-					"sap.m"
-				]
-			},
-
-			config : {
-				sample : {
-					stretch : true,
-					files : [
-						"View.view.xml",
-						"Controller.controller.js"
-					]
-				}
-			}
+		metadata: {
+			manifest: "json"
 		}
 	});
 

@@ -1,10 +1,19 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(['jquery.sap.global','sap/ui/base/ManagedObject'],
-function (jQuery, ManagedObject) {
+sap.ui.define([
+	'sap/ui/thirdparty/jquery',
+	'sap/ui/base/ManagedObject',
+	"sap/base/security/encodeXML"
+],
+function(jQuery,
+		 ManagedObject,
+		 encodeXML) {
 	'use strict';
 	var TreeViewer = ManagedObject.extend("sap.ui.core.support.controls.TreeViewer", {
+		metadata: {
+			library: "sap.ui.core"
+		},
 		constructor: function() {
 			ManagedObject.apply(this, arguments);
 			this._oRenderParent = null;
@@ -14,10 +23,10 @@ function (jQuery, ManagedObject) {
 
 	//private functions and vars
 	var mRenderTemplates = {
-		nodestart : "<div tabIndex=\"0\" idx=\"{idx}\" class=\"node start {cssclass}\" haschildnodes=\"{haschildnodes}\" visible=\"{visible}\" collapsed=\"{collapsed}\" style=\"padding-left:{pxlevel}\" level=\"{level}\" raise=\"_selectNode\" args=\"{idx}\"><span class=\"expand\" raise=\"_toggleNode\" args=\"{idx}\"></span>&lt;<span class=\"nstag\" reason=\"tagName\"><span class=\"ns\" reason=\"namespace\">{namespaceURI}</span><span class=\"tag\"  reason=\"localName\">{localName}</span></span>",
+		nodestart : "<div tabindex=\"0\" idx=\"{idx}\" class=\"node start {cssclass}\" haschildnodes=\"{haschildnodes}\" visible=\"{visible}\" collapsed=\"{collapsed}\" level=\"{level}\" raise=\"_selectNode\" args=\"{idx}\"><span class=\"expand\" raise=\"_toggleNode\" args=\"{idx}\"></span>&lt;<span class=\"nstag\" reason=\"tagName\"><span class=\"ns\" reason=\"namespace\">{namespaceURI}</span><span class=\"tag\"  reason=\"localName\">{localName}</span></span>",
 		nodestartend : "&gt;</div>",
-		nodenochildend : "&gt;&lt;/<span class=\"nstagend\"><span class=\"nstag\"><span class=\"ns\">{namespaceURI}</span><span class=\"tag\">{localName}</span></span></span>&gt;</div><div class=\"node end\" style=\"display:none\" visible=\"{visible}\" haschildnodes=\"{haschildnodes}\" collapsed=\"{collapsed}\" style=\"padding-left:{pxlevel}\" level=\"{level}\">&lt;/<span class=\"nstag\"><span class=\"ns\">{namespaceURI}</span><span class=\"tag\">{localName}</span></span>&gt;</div>",
-		nodeend : "<div class=\"node end {cssclass}\" visible=\"{visible}\" haschildnodes=\"{haschildnodes}\" collapsed=\"{collapsed}\" style=\"padding-left:{pxlevel}\" level=\"{level}\">&lt;/<span class=\"nstag\"><span class=\"ns\">{namespaceURI}</span><span class=\"tag\">{localName}</span></span>&gt;</div>",
+		nodenochildend : "&gt;&lt;/<span class=\"nstagend\"><span class=\"nstag\"><span class=\"ns\">{namespaceURI}</span><span class=\"tag\">{localName}</span></span></span>&gt;</div><div class=\"node end sapUiSupportViewInfoElementHidden\" visible=\"{visible}\" haschildnodes=\"{haschildnodes}\" collapsed=\"{collapsed}\" level=\"{level}\">&lt;/<span class=\"nstag\"><span class=\"ns\">{namespaceURI}</span><span class=\"tag\">{localName}</span></span>&gt;</div>",
+		nodeend : "<div class=\"node end {cssclass}\" visible=\"{visible}\" haschildnodes=\"{haschildnodes}\" collapsed=\"{collapsed}\" level=\"{level}\">&lt;/<span class=\"nstag\"><span class=\"ns\">{namespaceURI}</span><span class=\"tag\">{localName}</span></span>&gt;</div>",
 		attribute: "&nbsp;<span class=\"attr\" modified=\"{modified}\" oldValue=\"{oldValue}\" title=\"{oldValue}\" reason=\"attributeName\"><span class=\"attrname\">{attributeName}</span>=&quot;<span class=\"attrvalue\" reason=\"attributeValue\">{attributeValue}</span>&quot;</span>",
 		idattribute: "&nbsp;<span class=\"attr\" modified=\"{modified}\" oldValue=\"{oldValue}\" title=\"originalValue: {oldValue}\" reason=\"attributeName\"><span class=\"attrname\">{attributeName}</span>=&quot;<span class=\"attrvalue attrvalue1\" reason=\"attributeValue\">{attributeValue1}</span><span class=\"attrvalue attrvalue2\" reason=\"attributeValue\">{attributeValue2}</span>&quot;</span>",
 		nodeinfo: "<span class=\"info {color}\" selected=\"{selected}\"title=\"{tooltip}\" raise=\"_onInfoClick\" args=\"{idx},{infoidx}\"></span>"
@@ -26,10 +35,10 @@ function (jQuery, ManagedObject) {
 	var iLevel = 1;
 	var iIdx = -1;
 	function nextWithIndent(oNode) {
-		var iLevel = parseInt(oNode.getAttribute("level"), 10);
+		var iLevel = parseInt(oNode.getAttribute("level"));
 		oNode = oNode.nextSibling;
 		while (oNode) {
-			if (parseInt(oNode.getAttribute("level"), 10) == iLevel) {
+			if (parseInt(oNode.getAttribute("level")) == iLevel) {
 				return oNode;
 			}
 			oNode = oNode.nextSibling;
@@ -94,18 +103,18 @@ function (jQuery, ManagedObject) {
 				if (!oRenderContext.bIgnoreIds) {
 					oRenderContext.addWithParam(mRenderTemplates.idattribute, {
 						attributeName: oAttribute.name,
-						attributeValue1: jQuery.sap.encodeHTML(String(oAttribute.value || "")),
+						attributeValue1: encodeXML(String(oAttribute.value || "")),
 						attributeValue2: oNode.getAttribute("__id"),
 						modified: bModified,
-						oldValue: jQuery.sap.encodeHTML(sOldValue)
+						oldValue: encodeXML(sOldValue)
 					});
 				}
 			} else {
 				oRenderContext.addWithParam(mRenderTemplates.attribute, {
 					attributeName: oAttribute.name,
-					attributeValue: jQuery.sap.encodeHTML(String(oAttribute.value || "")),
+					attributeValue: encodeXML(String(oAttribute.value || "")),
 					modified: bModified,
-					oldValue: jQuery.sap.encodeHTML(sOldValue)
+					oldValue: encodeXML(sOldValue)
 				});
 			}
 		}
@@ -140,10 +149,9 @@ function (jQuery, ManagedObject) {
 			visible: iLevel < oRenderContext.initialExpandedLevel,
 			cssclass: sCssClass,
 			level: iLevel,
-			pxlevel: (iLevel * 16) + "px",
 			collapsed: iLevel >= (oRenderContext.initialExpandedLevel - 1),
 			localName: oNode.localName,
-			namespaceURI:  oNode.namespaceURI ? jQuery.sap.encodeHTML(String(oNode.namespaceURI)) + ":" : ""
+			namespaceURI:  oNode.namespaceURI ? encodeXML(String(oNode.namespaceURI)) + ":" : ""
 		});
 
 		var aInfos = oRenderContext.fnNodeInfos(oNode);
@@ -154,8 +162,8 @@ function (jQuery, ManagedObject) {
 					idx: iIdx + "",
 					infoidx: i + "",
 					selected: oInfo.selected || false,
-					color: jQuery.sap.encodeHTML(oInfo.color) || "orange",
-					tooltip: jQuery.sap.encodeHTML(oInfo.tooltip) || ""
+					color: encodeXML(oInfo.color) || "orange",
+					tooltip: encodeXML(oInfo.tooltip) || ""
 				});
 			}
 		}
@@ -169,10 +177,9 @@ function (jQuery, ManagedObject) {
 				visible: iLevel < oRenderContext.initialExpandedLevel,
 				level: iLevel,
 				cssclass: sCssClass,
-				pxlevel: (iLevel * 16) + "px",
 				collapsed: iLevel >= (oRenderContext.initialExpandedLevel - 1),
 				localName: oNode.localName,
-				namespaceURI:  oNode.namespaceURI ? jQuery.sap.encodeHTML(String(oNode.namespaceURI)) + ":" : ""
+				namespaceURI:  oNode.namespaceURI ? encodeXML(String(oNode.namespaceURI)) + ":" : ""
 			});
 
 		} else {
@@ -181,10 +188,9 @@ function (jQuery, ManagedObject) {
 				haschildnodes: bHasChildNodes,
 				visible: iLevel < oRenderContext.initialExpandedLevel,
 				level: iLevel,
-				pxlevel: (iLevel * 16) + "px",
 				collapsed: iLevel >= (oRenderContext.initialExpandedLevel - 1),
 				localName: oNode.localName,
-				namespaceURI: oNode.namespaceURI ? jQuery.sap.encodeHTML(String(oNode.namespaceURI)) + ":" : ""
+				namespaceURI: oNode.namespaceURI ? encodeXML(String(oNode.namespaceURI)) + ":" : ""
 			});
 		}
 	}
@@ -242,7 +248,6 @@ function (jQuery, ManagedObject) {
 			var aAll = this._oRootObject.querySelectorAll("*");
 			return aAll[iIndex];
 		}
-		return null;
 	};
 
 	TreeViewer.prototype._getIndexOfNode = function(oDataNode) {
@@ -298,7 +303,7 @@ function (jQuery, ManagedObject) {
 
 	TreeViewer.prototype._iSelectedIndex = -1;
 	TreeViewer.prototype._selectNode = function(iIndex, aReasons) {
-		iIndex = parseInt(iIndex, 10);
+		iIndex = parseInt(iIndex);
 		var oNode = this._getStartNodeByIndex(iIndex);
 		if (this._oSelectedNode === oNode) {
 			return;
@@ -314,9 +319,9 @@ function (jQuery, ManagedObject) {
 	};
 
 	TreeViewer.prototype._onInfoClick = function(iIndex, iInfoIndex) {
-		iIndex = parseInt(iIndex, 10);
+		iIndex = parseInt(iIndex);
 		this._selectNode(iIndex, ["template"]);
-		this.fnInfoPress(this._getDataObjectByIndex(iIndex), parseInt(iInfoIndex, 10));
+		this.fnInfoPress(this._getDataObjectByIndex(iIndex), parseInt(iInfoIndex));
 		return true;
 	};
 
@@ -330,12 +335,12 @@ function (jQuery, ManagedObject) {
 		if (!oDomRef || oDomRef.getAttribute("visible") === "true") {
 			return;
 		}
-		var iLevel = parseInt(oDomRef.getAttribute("level"), 10);
+		var iLevel = parseInt(oDomRef.getAttribute("level"));
 		oDomRef = oDomRef.previousSibling;
 		while (oDomRef) {
-			var iCurrentLevel = parseInt(oDomRef.getAttribute("level"), 10);
+			var iCurrentLevel = parseInt(oDomRef.getAttribute("level"));
 			if (iCurrentLevel < iLevel && oDomRef.getAttribute("collapsed") === "true") {
-				this._toggleNode(parseInt(oDomRef.getAttribute("idx"), 10));
+				this._toggleNode(parseInt(oDomRef.getAttribute("idx")));
 			}
 			oDomRef = oDomRef.previousSibling;
 		}
@@ -367,13 +372,13 @@ function (jQuery, ManagedObject) {
 	};
 
 	TreeViewer.prototype._toggleNode = function(iIndex) {
-		iIndex = parseInt(iIndex, 10);
+		iIndex = parseInt(iIndex);
 		var oNode = this._getStartNodeByIndex(iIndex);
 		if (oNode) {
-			var iLevel = parseInt(oNode.getAttribute("level"), 10);
+			var iLevel = parseInt(oNode.getAttribute("level"));
 			var oNextNode = oNode.nextSibling;
 			while (oNextNode) {
-				if (parseInt(oNextNode.getAttribute("level"), 10) > iLevel) {
+				if (parseInt(oNextNode.getAttribute("level")) > iLevel) {
 					if (oNode.getAttribute("collapsed") === "true") {
 						if (oNextNode.getAttribute("collapsed") === "true") {
 							oNextNode.setAttribute("visible", "true");
@@ -388,7 +393,7 @@ function (jQuery, ManagedObject) {
 						oNextNode.setAttribute("visible", "false");
 					}
 				}
-				if (parseInt(oNextNode.getAttribute("level"), 10) === iLevel) {
+				if (parseInt(oNextNode.getAttribute("level")) === iLevel) {
 					if (oNode.getAttribute("collapsed") === "true") {
 						oNextNode.setAttribute("visible", "true");
 					} else {
@@ -453,6 +458,11 @@ function (jQuery, ManagedObject) {
 			}
 			oRenderContext.add("</div>");
 			this._oRenderParent.innerHTML = oRenderContext.toString();
+
+			jQuery(this._oRenderParent).find(".node.start, .node.end").each(function (index, item) {
+				item.style.paddingLeft = 16 * parseFloat(item.getAttribute("level")) + "px";
+			});
+
 			var that = this;
 			this._oRenderParent.firstChild.addEventListener("click", function(oEvent) {
 				var oDomRef = oEvent.target,
@@ -525,57 +535,6 @@ function (jQuery, ManagedObject) {
 				}
 			});
 		}
-	};
-
-	TreeViewer.getCss = function() {
-		return [
-		'.treeviewer { padding-top:10px;margin-left:15px;font-family: consolas, monospace; width: 100%; overflow: auto; height: 100%; position: relative; cursor:default}',
-		'.treeviewer .node {border: 1px solid transparent}',
-		'.treeviewer .node.start {white-space: nowrap;}',
-		'.treeviewer .node.inactive {color: gray!important; opacity:0.6}',
-		'.treeviewer .node.inactive SPAN {color: gray!important; background-color:transparent!important;}',
-		'.treeviewer .node.replace .nstag {text-decoration: line-through}',
-		'.treeviewer .node.start.select {background-color: #fff8ad;}',
-		'.treeviewer .node.start.highlight {background-color:#fff;}',
-		'.treeviewer .node.end {white-space: nowrap;}',
-		'.treeviewer .node .info {margin: 0px 2px}',
-		'.treeviewer .node .info.orange {border: 1px solid orange;}',
-		'.treeviewer .node .info.orange[selected=\'true\'] {background-color:orange;}',
-		'.treeviewer .node .info.blue {border: 1px solid #007dc0;}',
-		'.treeviewer .node .info.blue[selected=\'true\'] {background-color:#007dc0;}',
-		'.treeviewer .node .info.green {border: 1px solid green}',
-		'.treeviewer .node .info.green[selected=\'true\'] {background-color:green;}',
-		'.treeviewer .node .info.red {border: 1px solid #b93232}',
-		'.treeviewer .node .info.red[selected=\'true\'] {background-color:#b93232;}',
-		'.treeviewer .node .info {opacity: 0.6;display: inline-block;border-radius: 10px;height: 6px;width: 6px;}',
-		'.treeviewer .node .info[selected=\'true\'] {opacity: 1;display: inline-block;border-radius: 10px;height: 6px;width: 6px;}',
-		'.treeviewer .node .info:hover {opacity: 1}',
-		'.treeviewer .node .attrname {color:#b93232; border: 1px solid transparent; display:inline-block;}',
-		'.treeviewer .node .attrname:hover {border: 1px solid #b93232;background-color:#fde3d5}',
-		'.treeviewer .node .attrvalue {color:#007dc0; border: 1px solid transparent; display:inline-block;}',
-		'.treeviewer .node .attr[modified=\'true\'] .attrvalue {color:#d210f3; border: 1px solid transparent; display:inline-block;}',
-		'.treeviewer .node .attr[modified=\'true\'] {background-color:#ffe7fc;}',
-		'.treeviewer .node .attr[oldvalue=\'null\'] .attrname {color:#d210f3; border: 1px solid transparent; display:inline-block;}',
-		'.treeviewer.id1 .node .attrvalue2 {display:none;}',
-		'.treeviewer.id2 .node .attrvalue1 {display:none;}',
-		'.treeviewer .node .attrvalue:hover {border: 1px solid #007dc0;background-color:#e1e1ff}',
-		'.treeviewer .node .ns {color:green}',
-		'.treeviewer.hideNS .node .ns {display:none}',
-		'.treeviewer.hideInactive .node.inactive {display:none!important}',
-		'.treeviewer .node .tag {color:green}',
-		'.treeviewer .node .nstag {color:green; border: 1px solid transparent; display:inline-block;}',
-		'.treeviewer .node.start .nstag:hover {border: 1px solid green;background-color:#d5e6d5}',
-		'.treeviewer .node.start .nstagend .nstag:hover {border: 1px solid transparent;background-color:transparent}',
-		'.treeviewer .node.end[visible=\'true\'] {display: inline-block;}',
-		'.treeviewer .node:focus {border: 1px dotted #e1e1ff;outline:none}',
-		'.treeviewer .node.end[visible=\'true\'][haschildnodes=\'true\'] {display: block;}',
-		'.treeviewer .node[visible=\'false\'] {display: none;}',
-		'.treeviewer .node[collapsed=\'true\'][haschildnodes=\'true\'] .expand {border-color: transparent transparent transparent #cecece;border-radius: 0;border-style: solid;border-width: 4px 3px 4px 8px;height: 0;width: 0;position: relative;margin-top: 0px;margin-left: -10px;display: inline-block;}',
-		'.treeviewer .node[collapsed=\'false\'][haschildnodes=\'true\'] .expand {border-color: #cecece transparent transparent transparent;border-radius: 0;border-style: solid;border-width: 8px 4px 0px 4px;height: 0;width: 0;position: relative;margin-top: 0px;margin-left: -12px;margin-right: 5px;display: inline-block;}',
-		'.treeviewer .node[collapsed=\'true\'][haschildnodes=\'true\']:hover .expand {border-color: transparent transparent transparent #aaa;}',
-		'.treeviewer .node[collapsed=\'false\'][haschildnodes=\'true\']:hover .expand {border-color: #aaa transparent transparent transparent;}',
-		'.treeviewer .node[collapsed=\'true\'][haschildnodes=\'true\'] .expand:hover {border-color: transparent transparent transparent #999;}',
-		'.treeviewer .node[collapsed=\'false\'][haschildnodes=\'true\'] .expand:hover {border-color: #999 transparent transparent transparent;}'].join("");
 	};
 
 	return TreeViewer;

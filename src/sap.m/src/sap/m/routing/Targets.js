@@ -1,20 +1,29 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(['sap/ui/core/routing/Targets', './TargetHandler', './Target', './async/Targets', './sync/Targets', 'jquery.sap.global'],
-	function(Targets, TargetHandler, Target, asyncTargets, syncTargets, jQuery) {
+sap.ui.define(['sap/ui/core/routing/Targets', './TargetHandler', './Target', './async/Targets', './sync/Targets', "sap/base/Log"],
+	function(Targets, TargetHandler, Target, asyncTargets, syncTargets, Log) {
 		"use strict";
 
 		/**
-		 * Provides a convenient way for placing views into the correct containers of your application.
-		 * The mobile extension of Targets also handles the triggering of page navigation when the target control is a {@link sap.m.SplitContainer}, a {@link sap.m.NavContainer} or a control which extends one of these.
-		 * Other controls are also allowed, but the extra parameters viewLevel, transition and transitionParameters are ignored and it will behave like {@link sap.ui.core.routing.Targets}.
-		 * When a target is displayed, dialogs will be closed. To change this use {@link #getTargetHandler} and {@link sap.m.routing.TargetHandler#setCloseDialogs}.
+		 * Constructor for a new <code>Targets</code> class.
 		 *
 		 * @class
+		 * Provides a convenient way for placing views into the correct containers of your app.
+		 *
+		 * The mobile extension of <code>Targets</code> also handles the triggering
+		 * of page navigation when the target control is an <code>{@link sap.m.SplitContainer}</code>,
+		 * an <code>{@link sap.m.NavContainer}</code> or a control which extends one of these.
+		 * Other controls are also allowed, but the extra parameters <code>level</code>,
+		 * <code>transition</code> and <code>transitionParameters</code> are ignored and it behaves
+		 * as <code>{@link sap.ui.core.routing.Targets}</code>.
+		 *
+		 * When a target is displayed, dialogs will be closed. To change this use
+		 * <code>{@link #getTargetHandler}</code> and <code>{@link sap.m.routing.TargetHandler#setCloseDialogs}</code>.
+		 *
 		 * @extends sap.ui.core.routing.Targets
 		 * @param {object} oOptions
-		 * @param {sap.ui.core.routing.Views} oOptions.views the views instance will create the views of all the targets defined, so if 2 targets have the same viewName, the same instance of the view will be displayed.
+		 * @param {sap.ui.core.routing.Views} oOptions.views the views instance will create the views of all the targets defined, so if 2 targets have the same name, the same instance of the view will be displayed.
 		 * @param {object} [oOptions.config] this config allows all the values oOptions.targets.anyName allows, these will be the default values for properties used in the target.<br/>
 		 * For example if you are only using xmlViews in your app you can specify viewType="XML" so you don't have to repeat this in every target.<br/>
 		 * If a target specifies viewType="JS", the JS will be stronger than the XML here is an example.
@@ -70,13 +79,15 @@ sap.ui.define(['sap/ui/core/routing/Targets', './TargetHandler', './Target', './
 		 * {
 		 *     targets: {
 		 *         welcome: {
-		 *             viewName: "Welcome",
+		 *             type: "View",
+		 *             name: "Welcome",
 		 *             viewType: "XML",
 		 *             ....
 		 *             // Other target parameters
 		 *         },
 		 *         goodbye: {
-		 *             viewName: "Bye",
+		 *             type: "View",
+		 *             name: "Bye",
 		 *             viewType: "JS",
 		 *             ....
 		 *             // Other target parameters
@@ -88,22 +99,28 @@ sap.ui.define(['sap/ui/core/routing/Targets', './TargetHandler', './Target', './
 		 *
 		 * This will create two targets named 'welcome' and 'goodbye' you can display both of them or one of them using the {@link #display} function.
 		 *
-		 * @param {string} oOptions.targets.anyName.viewName The name of a view that will be created.
-		 * To place the view into a Control use the controlAggregation and controlId. Views will only be created once per viewName.
+		 * @param {string} oOptions.targets.anyName.type Defines whether the target creates an instance of 'View' or 'Component'.
+		 * @param {string} [oOptions.targets.anyName.name] Defines the name of the View or Component that will be
+		 * created. For type 'Component', use option <code>usage</code> instead if an owner component exists.
+		 * To place the view or component into a Control, use the options <code>controlAggregation</code> and
+		 * <code>controlId</code>. Instance of View or Component will only be created once per <code>name</code> or
+		 * <code>usage</code> combined with <code>id</code>.
 		 * <pre>
 		 * <code>
 		 * {
 		 *     targets: {
 		 *         // If display("masterWelcome") is called, the master view will be placed in the 'MasterPages' of a control with the id splitContainter
 		 *         masterWelcome: {
-		 *             viewName: "Welcome",
+		 *             type: "View",
+		 *             name: "Welcome",
 		 *             controlId: "splitContainer",
 		 *             controlAggregation: "masterPages"
 		 *         },
 		 *         // If display("detailWelcome") is called after the masterWelcome, the view will be removed from the master pages and added to the detail pages, since the same instance is used. Also the controls inside of the view will have the same state.
 		 *         detailWelcome: {
 		 *             // same view here, that's why the same instance is used
-		 *             viewName: "Welcome",
+		 *             type: "View",
+		 *             name: "Welcome",
 		 *             controlId: "splitContainer",
 		 *             controlAggregation: "detailPages"
 		 *         }
@@ -112,28 +129,26 @@ sap.ui.define(['sap/ui/core/routing/Targets', './TargetHandler', './Target', './
 		 * </code>
 		 * </pre>
 		 *
-		 * If you want to have a second instance of the welcome view you can use the following:
-		 *
-		 *
+		 * If you want to have a second instance of the welcome view you can assign the targets with different ids:
 		 *
 		 * <pre>
 		 * <code>
-		 * // Some code you execute before you display the taget named 'detailWelcome':
-		 * var oView = sap.ui.view(({ viewName : "Welcome", type : sap.ui.core.mvc.ViewType.XML});
-		 * oTargets.getViews().setView("WelcomeWithAlias", oView)
-		 *
 		 * {
 		 *     targets: {
-		 *         // If display("masterWelcome") is called, the master viewName will be placed in the 'MasterPages' of a control with the id splitContainter
+		 *         // If display("masterWelcome") is called, the "masterWelcome" view will be placed in the 'MasterPages' of a control with the id splitContainter
 		 *         masterWelcome: {
-		 *             viewName: "Welcome",
+		 *             type: "View",
+		 *             name: "Welcome",
+		 *             id: "masterWelcome",
 		 *             controlId: "splitContainer",
 		 *             controlAggregation: "masterPages"
 		 *         },
-		 *         // If display("detailWelcome") is called after the masterWelcome, a second instance with an own controller instance will be added in the detail pages.
+		 *         // If display("detailWelcome") is called after the "masterWelcome", a second instance with an own controller instance will be added in the detail pages.
 		 *         detailWelcome: {
-		 *             // same viewName here, that's why the same instance is used
-		 *             viewName: "WelcomeWithAlias",
+		 *             type: "View",
+		 *             name: "Welcome",
+		 *             // another instance will be created because a different id is used
+		 *             id: "detailWelcome",
 		 *             controlId: "splitContainer",
 		 *             controlAggregation: "detailPages"
 		 *         }
@@ -143,13 +158,13 @@ sap.ui.define(['sap/ui/core/routing/Targets', './TargetHandler', './Target', './
 		 * </pre>
 		 *
 		 *
-		 * @param {string} [oOptions.targets.anyName.viewType]
-		 * The type of the view that is going to be created. These are the supported types: {@link sap.ui.core.mvc.ViewType}.
-		 * You always have to provide a viewType except if you are using {@link sap.ui.core.routing.Views#setView}.
-		 * @param {string} [oOptions.targets.anyName.viewPath]
-		 * A prefix that will be prepended in front of the viewName.<br/>
-		 * <b>Example:</b> viewName is set to "myView" and viewPath is set to "myApp" - the created viewName will be "myApp.myView".
-		 * @param {string} [oOptions.targets.anyName.viewId] The id of the created view.
+		 * @param {string} [oOptions.targets.anyName.usage] Defines the 'usage' name for 'Component' target which refers to the '/sap.ui5/componentUsages' entry in the owner component's manifest.
+		 * @param {string} [oOptions.targets.anyName.viewType=oOptions.config.viewType] The type of the view that is going to be created. These are the supported types: {@link sap.ui.core.mvc.ViewType}.
+		 * You always have to provide a viewType except if <code>oOptions.config.viewType</code> is set or using {@link sap.ui.core.routing.Views#setView}.
+		 * @param {string} [oOptions.targets.anyName.path]
+		 * A prefix that will be prepended in front of the <code>name</code>.<br/>
+		 * <b>Example:</b> <code>name</code> is set to "myView" and <code>path</code> is set to "myApp" - the created view's name will be "myApp.myView".
+		 * @param {string} [oOptions.targets.anyName.id] The id of the created view or component.
 		 * This is will be prefixed with the id of the component set to the views instance provided in oOptions.views. For details see {@link sap.ui.core.routing.Views#getView}.
 		 * @param {string} [oOptions.targets.anyName.targetParent]
 		 * The id of the parent of the controlId - This should be the id of the view that contains your controlId,
@@ -218,11 +233,13 @@ sap.ui.define(['sap/ui/core/routing/Targets', './TargetHandler', './Target', './
 		 *             // a reference to the app control in the rootView created by our UIComponent
 		 *             controlId: 'myApp',
 		 *             // An app has a pages aggregation where the views need to be put into
-		 *             controlAggregation: 'pages'
+		 *             controlAggregation: 'pages',
+		 *             // all targets have type "View"
+		 *             type: "View"
 		 *         },
 		 *         targets: {
 		 *             detail: {
-		 *                 viewName: 'Detail'
+		 *                 name: 'Detail'
 		 *             },
 		 *             secondTabContent: {
 		 *                 // A reference to the detail target defined above
@@ -232,7 +249,7 @@ sap.ui.define(['sap/ui/core/routing/Targets', './TargetHandler', './Target', './
 		 *                 // An IconTabFilter has an aggregation called content so we need to overwrite the pages set in the config as default.
 		 *                 controlAggregation: 'content',
 		 *                 // A view containing the content
-		 *                 viewName: 'SecondTabContent'
+		 *                 name: 'SecondTabContent'
 		 *             }
 		 *         }
 		 *     });
@@ -244,27 +261,28 @@ sap.ui.define(['sap/ui/core/routing/Targets', './TargetHandler', './Target', './
 		 * So a parent will always be created before the target referencing it.
 		 *
 		 *
-		 * @param {int} [oOptions.targets.anyName.viewLevel]
+		 * @param {int} [oOptions.targets.anyName.level]
 		 * If you are having an application that has a logical order of views (eg: a create account process, first provide user data, then review and confirm them).
 		 * You always want to show a backwards transition if a navigation from the confirm to the userData page takes place.
-		 * Therefore you may use the viewLevel. The viewLevel has to be an integer. The user data page should have a lower number than the confirm page.
+		 * Therefore you may use the <code>level</code>. The <code>level</code> has to be an integer. The user data page should have a lower number than the confirm page.
 		 * These levels should represent the user process of your application and they do not have to match the container structure of your Targets.
-		 * If the user navigates between views with the same viewLevel, a forward transition is taken. If you pass a direction into the display function, the viewLevel will be ignored.<br/>
+		 * If the user navigates between targets with the same <code>level</code>, a forward transition is taken.
+		 * If you pass a direction into the display function, the <code>level</code> will be ignored.<br/>
 		 * <b>Example:</b></br>
 		 * <pre>
 		 * <code>
 		 *     {
 		 *         targets: {
 		 *             startPage: {
-		 *                 viewLevel: 0
+		 *                 level: 0
 		 *                 // more properties
 		 *             },
 		 *             userData: {
-		 *                 viewLevel: 1
+		 *                 level: 1
 		 *                 // more properties
 		 *             },
 		 *             confirmRegistration: {
-		 *                 viewLevel: 2
+		 *                 level: 2
 		 *                 // more properties
 		 *             },
 		 *             settings: {
@@ -278,13 +296,13 @@ sap.ui.define(['sap/ui/core/routing/Targets', './TargetHandler', './Target', './
 		 * Currently the 'userData' target is displayed.
 		 * <ul>
 		 *     <li>
-		 *         If we navigate to 'startPage' the navContainer will show a backwards navigation, since the viewLevel is lower.
+		 *         If we navigate to 'startPage' the navContainer will show a backwards navigation, since the <code>level</code> is lower.
 		 *     </li>
 		 *     <li>
-		 *         If we navigate to 'userData' the navContainer will show a forwards navigation, since the viewLevel is higher.
+		 *         If we navigate to 'userData' the navContainer will show a forwards navigation, since the <code>level</code> is higher.
 		 *     </li>
 		 *     <li>
-		 *         If we navigate to 'settings' the navContainer will show a forwards navigation, since the viewLevel is not defined and cannot be compared.
+		 *         If we navigate to 'settings' the navContainer will show a forwards navigation, since the <code>level</code> is not defined and cannot be compared.
 		 *     </li>
 		 * </ul>
 		 *
@@ -307,8 +325,8 @@ sap.ui.define(['sap/ui/core/routing/Targets', './TargetHandler', './Target', './
 
 				// temporarily: for checking the url param
 				function checkUrl() {
-					if (jQuery.sap.getUriParameters().get("sap-ui-xx-asyncRouting") === "true") {
-						jQuery.sap.log.warning("Activation of async view loading in routing via url parameter is only temporarily supported and may be removed soon", "MobileTargets");
+					if (new URLSearchParams(window.location.search).get("sap-ui-xx-asyncRouting") === "true") {
+						Log.warning("Activation of async view loading in routing via url parameter is only temporarily supported and may be removed soon", "MobileTargets");
 						return true;
 					}
 					return false;
@@ -360,7 +378,7 @@ sap.ui.define(['sap/ui/core/routing/Targets', './TargetHandler', './Target', './
 			},
 
 			_constructTarget : function (oOptions, oParent) {
-				return new Target(oOptions, this._oViews, oParent, this._oTargetHandler);
+				return new Target(oOptions, this.getViews(), oParent, this._oTargetHandler);
 			},
 
 			/**
@@ -369,17 +387,17 @@ sap.ui.define(['sap/ui/core/routing/Targets', './TargetHandler', './Target', './
 			 * @return {number} The view level
 			 * @private
 			 */
-			_getViewLevel : function (oTarget) {
-				var iViewLevel;
+			_getLevel : function (oTarget) {
+				var iLevel;
 				do {
-					iViewLevel = oTarget._oOptions.viewLevel;
-					if (iViewLevel !== undefined) {
-						return iViewLevel;
+					iLevel = oTarget._oOptions.hasOwnProperty("level") ? oTarget._oOptions.level : oTarget._oOptions.viewLevel;
+					if (iLevel !== undefined) {
+						return iLevel;
 					}
 					oTarget = oTarget._oParent;
 				} while (oTarget);
 
-				return iViewLevel;
+				return iLevel;
 			}
 		});
 

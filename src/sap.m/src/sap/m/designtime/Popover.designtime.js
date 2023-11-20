@@ -24,7 +24,7 @@ sap.ui.define([],
 			},
 			aggregations: {
 				content: {
-					domRef: ":sap-domref > .sapMPopoverCont > .sapMPopoverScroll",
+					domRef: ":sap-domref > .sapMPopoverCont",
 					actions: {
 						move: "moveControls"
 					}
@@ -47,4 +47,4 @@ sap.ui.define([],
 			}
 		};
 
-	}, /* bExport= */ false);
+	});

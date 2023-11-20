@@ -11,20 +11,21 @@ sap.ui.define([],
 	 * ToolbarSeparator renderer.
 	 * @namespace
 	 */
-	var ToolbarSeparatorRenderer = {};
+	var ToolbarSeparatorRenderer = {
+		apiVersion: 2
+	};
 
 	ToolbarSeparatorRenderer.render = function(rm, oControl) {
-		rm.write("<div");
-		rm.writeControlData(oControl);
-		rm.addClass("sapMTBSeparator");
+		rm.openStart("div", oControl);
+		rm.class("sapMTBSeparator");
 
 		//ARIA
-		rm.writeAccessibilityState(oControl, {
+		rm.accessibilityState(oControl, {
 			role: "separator"
 		});
 
-		rm.writeClasses();
-		rm.write("></div>");
+		rm.openEnd();
+		rm.close("div");
 	};
 
 	return ToolbarSeparatorRenderer;

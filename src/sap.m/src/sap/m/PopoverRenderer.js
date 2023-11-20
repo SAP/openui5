@@ -1,8 +1,14 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/m/library'],
-	function (jQuery, Device, library) {
+sap.ui.define([
+	'sap/ui/Device',
+	'sap/m/library',
+	"sap/ui/core/ControlBehavior",
+	"sap/ui/dom/getScrollbarSize",
+	"sap/ui/core/IconPool"
+],
+	function(Device, library, ControlBehavior, getScrollbarSize, IconPool) {
 		"use strict";
 
 		// shortcut for sap.m.PlacementType
@@ -12,49 +18,52 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/m/library'],
 		 * Popover renderer.
 		 * @namespace
 		 */
-		var PopoverRenderer = {};
+		var PopoverRenderer = {
+			apiVersion: 2
+		};
 
 		/**
 		 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
 		 *
 		 * @param {sap.ui.core.RenderManager} rm The RenderManager that can be used for writing to the Render-Output-Buffer
-		 * @param {sap.ui.core.Control} oControl An object representation of the control that should be rendered
+		 * @param {sap.m.Popover} oControl An object representation of the control that should be rendered
 		 */
-		PopoverRenderer.render = function(rm, oControl) {
-			var aClassNames;
-
-			// container
-			rm.write("<div");
-			rm.writeControlData(oControl);
-			aClassNames = this.generateRootClasses(oControl);
-			aClassNames.forEach(function(sClassName, index) {
-				rm.addClass(sClassName);
+		PopoverRenderer.render = function(oRm, oControl) {
+			oRm.openStart("div", oControl);
+			var aClassNames = this.generateRootClasses(oControl);
+			aClassNames.forEach(function(sClassName) {
+				oRm.class(sClassName);
 			});
-			rm.writeClasses();
+
+			if (!oControl.getHorizontalScrolling()) {
+				oRm.class("sapMPopoverHorScrollDisabled");
+			}
+
+			if (!oControl.getVerticalScrolling()) {
+				oRm.class("sapMPopoverVerScrollDisabled");
+			}
 
 			var sTooltip = oControl.getTooltip_AsString();
-
 			if (sTooltip) {
-				rm.writeAttributeEscaped("title", sTooltip);
+				oRm.attr("title", sTooltip);
 			}
 
-			rm.writeAttribute("tabindex", "-1");
-
-			// ARIA
-			rm.writeAccessibilityState(oControl, oControl._getAccessibilityOptions());
-
-			rm.write(">");
+			oRm.attr("tabindex", "-1")
+				.accessibilityState(oControl, oControl._getAccessibilityOptions()) // ARIA
+				.openEnd();
 
 			if (oControl.getResizable()) {
-				rm.writeIcon("sap-icon://resize-corner", ["sapMPopoverResizeHandle"], { "title" : ""});
+				oRm.icon("sap-icon://resize-corner", ["sapMPopoverResizeHandle"], {
+					"aria-hidden": true
+				});
 			}
 
-			this.renderContent(rm, oControl);
-			rm.write("</div>");	// container
+			this.renderContent(oRm, oControl);
+			oRm.close("div");
 		};
 
 		PopoverRenderer.isButtonFooter = function(footer) {
-			if (footer instanceof sap.m.Bar) {
+			if (footer && footer.isA("sap.m.Bar")) {
 				var aContentLeft = footer.getContentLeft(),
 					aContentRight = footer.getContentRight(),
 					aContentMiddle = footer.getContentMiddle(),
@@ -63,7 +72,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/m/library'],
 					bMiddleTwoButtons = false;
 
 				if (aContentMiddle && aContentMiddle.length === 2) {
-					if ((aContentMiddle[0] instanceof sap.m.Button) && (aContentMiddle[1] instanceof sap.m.Button)) {
+					if ((aContentMiddle[0] && aContentMiddle[0].isA("sap.m.Button")) && (aContentMiddle[1] && aContentMiddle[1].isA("sap.m.Button"))) {
 						bMiddleTwoButtons = true;
 					}
 				}
@@ -74,8 +83,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/m/library'],
 			}
 		};
 
-		PopoverRenderer.renderContent = function(rm, oControl) {
-			var oHeader,
+		PopoverRenderer.renderContent = function(oRm, oControl) {
+			var oHeader = oControl._getAnyHeader(),
 				sId = oControl.getId(),
 				i = 0,
 				contents = oControl._getAllContent(),
@@ -83,129 +92,129 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/m/library'],
 				oSubHeader = oControl.getSubHeader(),
 				sContentWidth = oControl.getContentWidth(),
 				sContentMinWidth = oControl.getContentMinWidth(),
-				sContentHeight = oControl.getContentHeight(),
-				sFooterClass = "sapMPopoverFooter ";
-
-			if (oControl.getShowHeader()) {
-				oHeader = oControl._getAnyHeader();
-			}
+				sContentHeight = oControl.getContentHeight();
 
 			if (Device.system.desktop) {
-
 				// invisible element for cycling keyboard navigation
-				rm.write("<span class='sapMPopoverHiddenFocusable' id='" + oControl.getId() + "-firstfe' tabindex='0'></span>");
+				oRm.openStart("span", oControl.getId() + "-firstfe")
+					.class("sapMPopoverHiddenFocusable")
+					.attr("tabindex", "0")
+					.attr("role", "presentation")
+					.openEnd()
+					.close("span");
 			}
 
-			// header
+			// Header
 			if (oHeader) {
-
-				rm.write("<header");
-				rm.addClass("sapMPopoverHeader");
-				rm.writeClasses();
-				rm.write(">");
+				oRm.openStart("header")
+					.class("sapMPopoverHeader")
+					.openEnd();
 
 				if (oHeader._applyContextClassFor) {
 					oHeader._applyContextClassFor("header");
-
 				}
-				rm.renderControl(oHeader);
-				rm.write("</header>");
+				oRm.renderControl(oHeader);
+				oRm.close("header");
 			}
 
-			// sub header
+			// Sub header
 			if (oSubHeader) {
 
-				rm.write("<header");
-				rm.addClass("sapMPopoverSubHeader");
-				rm.writeClasses();
-				rm.write(">");
+				oRm.openStart("header")
+					.class("sapMPopoverSubHeader")
+					.openEnd();
 
 				if (oSubHeader._applyContextClassFor) {
 					oSubHeader._applyContextClassFor("subheader");
 				}
 
-				rm.renderControl(oSubHeader);
-				rm.write("</header>");
+				oRm.renderControl(oSubHeader);
+				oRm.close("header");
 			}
 
 			// content container
-			rm.write("<div");
-			rm.writeAttribute("id", sId + "-cont");
-
+			oRm.openStart("div", sId + "-cont");
 			if (sContentWidth) {
-				rm.addStyle("width", sContentWidth);
+				oRm.style("width", sContentWidth);
 			}
 
 			if (sContentMinWidth) {
-				rm.addStyle("min-width", sContentMinWidth);
+				oRm.style("min-width", sContentMinWidth);
 			}
 
 			if (sContentHeight) {
-				rm.addStyle("height", sContentHeight);
+				oRm.style("height", sContentHeight);
 			}
 
-			rm.writeStyles();
-			rm.addClass("sapMPopoverCont");
-			rm.writeClasses();
+			oRm.class("sapMPopoverCont");
 
-			if (sap.ui.getCore().getConfiguration().getAccessibility() && !sap.ui.getCore().getConfiguration().getAvoidAriaApplicationRole()) {
-				rm.writeAttribute("role", "application");
+			// Note: If this property should become public in the future, the property will have to be set on a level
+			// that will encapsulate the header and the footer of the popover as well.
+			if (ControlBehavior.isAccessibilityEnabled()
+				&& oControl.getProperty("ariaRoleApplication")) {
+				oRm.attr("role", "application");
 			}
 
-			rm.write(">");
+			oRm.openEnd();
 
 			// scroll area
-			rm.write('<div class="sapMPopoverScroll"');
-			rm.writeAttribute("id", oControl.getId() + "-scroll");
+			oRm.openStart("div", oControl.getId() + "-scroll")
+				.class("sapMPopoverScroll");
 
-			if (!oControl.getHorizontalScrolling()) {
-				rm.addStyle(sap.ui.getCore().getConfiguration().getRTL() ? "margin-left" : "margin-right", jQuery.sap.scrollbarSize().width + "px");
-			}
-
-			rm.writeStyles();
-			rm.write(">");
+			oRm.openEnd();
 
 			for (i = 0; i < contents.length; i++) {
-				rm.renderControl(contents[i]);
+				oRm.renderControl(contents[i]);
 			}
 
-			rm.write("</div>");	// scroll area
-			rm.write("</div>");	// content container
+			oRm.close("div");	// scroll area
+			oRm.close("div");	// content container
 
-			// footer
+			// Footer
 			if (oFooter) {
+
+				oRm.openStart("footer")
+					.class("sapMPopoverFooter");
+
 				if (this.isButtonFooter(oFooter)) {
-					sFooterClass += "sapMPopoverSpecialFooter";
+					oRm.class("sapMPopoverSpecialFooter");
 				}
 
-				rm.write("<footer");
-				rm.addClass(sFooterClass);
-				rm.writeClasses();
-				rm.write(">");
+				oRm.openEnd();
 
 				if (oFooter._applyContextClassFor) {
 					oFooter._applyContextClassFor("footer");
 					oFooter.addStyleClass("sapMTBNoBorders");
 				}
 
-				rm.renderControl(oFooter);
+				oRm.renderControl(oFooter);
 
-				rm.write("</footer>");
+				oRm.close("footer");
 			}
 
-			// arrow
+			// Arrow
 			if (oControl.getShowArrow()) {
-				rm.write("<span");
-				rm.writeAttribute("id", sId + "-arrow");
-				rm.addClass("sapMPopoverArr");
-				rm.writeClasses();
-				rm.write("></span>");	// arrow tip
+				oRm.openStart("span", sId + "-arrow")
+					.class("sapMPopoverArr")
+					.openEnd()
+					.close("span");	// arrow tip
 			}
 
 			if (Device.system.desktop) {
+				//invisible element for desktop keyboard navigation
+				oRm.openStart("span", oControl.getId() + "-middlefe")
+					.class("sapMPopoverHiddenFocusable")
+					.attr("tabindex", "-1")
+					.openEnd()
+					.close("span");
 
 				// invisible element for desktop keyboard navigation
-				rm.write("<span class='sapMPopoverHiddenFocusable' id='" + oControl.getId() + "-lastfe' tabindex='0'></span>");
+				oRm.openStart("span", oControl.getId() + "-lastfe")
+					.class("sapMPopoverHiddenFocusable")
+					.attr("tabindex", "0")
+					.attr("role", "presentation")
+					.openEnd()
+					.close("span");
 			}
 		};
 
@@ -215,11 +224,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/m/library'],
 				oFooter = oControl.getFooter(),
 				bVerScrollable = oControl.getVerticalScrolling() && !oControl._forceDisableScrolling,
 				bHorScrollable = oControl.getHorizontalScrolling() && !oControl._forceDisableScrolling,
-				oHeaderControl;
-
-			if (oControl.getShowHeader()) {
 				oHeaderControl = oControl._getAnyHeader();
-			}
 
 			if (oHeaderControl) {
 				aClassNames.push("sapMPopoverWithBar");
@@ -268,29 +273,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/m/library'],
 
 			// add custom classes set by the application as well
 			return aClassNames.concat(oControl.aCustomStyleClasses);
-		};
-
-		PopoverRenderer.rerenderContentOnly = function(oControl) {
-			var $Popover = oControl.$(),
-				oPopoverDomRef = oControl.getDomRef(),
-				aClassNames, oRm;
-
-			if (!oPopoverDomRef) {
-
-				// popover isn't rendered yet, just return
-				return;
-			}
-
-			$Popover.removeClass();
-			aClassNames = this.generateRootClasses(oControl);
-			$Popover.addClass(aClassNames.join(" "));
-			oRm = sap.ui.getCore().createRenderManager();
-			this.renderContent(oRm, oControl);
-			oRm.flush(oPopoverDomRef, true);
-			oRm.destroy();
-
-			// recalculate the size and position of popover
-			oControl._onOrientationChange();
 		};
 
 		return PopoverRenderer;

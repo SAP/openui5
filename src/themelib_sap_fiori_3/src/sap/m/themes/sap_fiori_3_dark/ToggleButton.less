@@ -1,0 +1,34 @@
+/* ==================================== */
+/* CSS for control sap.m/ToggleButton   */
+/* Quartz Dark theme                    */
+/* ==================================== */
+
+/* hover and down on toggled button */
+.sapMBtn:hover > .sapMBtnHoverable.sapMToggleBtnPressed:not(.sapMBtnActive),
+.sapMBtn .sapMBtnHoverable.sapMToggleBtnPressed:hover {
+	&.sapMBtnReject {
+		background-color: @sapUiButtonRejectSelectedHoverBackground;
+		border-color: @sapUiButtonRejectSelectedHoverBorderColor;
+		color: @sapUiButtonRejectSelectedTextColor;
+		& .sapUiIcon {
+			color: @sapUiButtonRejectSelectedTextColor;
+		}
+	}
+	&.sapMBtnAccept {
+		background-color: @sapUiButtonAcceptSelectedHoverBackground;
+		border-color: @sapUiButtonAcceptSelectedHoverBorderColor;
+		color: @sapUiButtonAcceptSelectedTextColor;
+		& .sapUiIcon {
+			color: @sapUiButtonAcceptSelectedTextColor;
+		}
+	}
+	&.sapMBtnAttention {
+		background-color: @sapUiButtonAttentionSelectedHoverBackground;
+		border-color: @sapUiButtonAttentionSelectedHoverBorderColor;
+		color: @sapUiButtonAttentionSelectedTextColor;
+		& .sapUiIcon {
+			color: @sapUiButtonAttentionSelectedTextColor;
+		}
+	}
+}
+

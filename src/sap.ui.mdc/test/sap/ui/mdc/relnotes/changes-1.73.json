@@ -1,0 +1,87 @@
+{
+  "1.73.0": {
+    "date": "November 2019",
+    "notes": [
+      {
+        "id": "02021ffce03bb0583bf6829054a8645f276c9f7d",
+        "type": "FIX",
+        "text": " FIeldHelp: temporary disable suspend on type-ahead",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970564062"
+          }
+        ]
+      },
+      {
+        "id": "009fe35662d721391c295fab0fd14f5499d96700",
+        "type": "FIX",
+        "text": " FieldHelp: If ListBinding not exist handle it as suspended",
+        "references": []
+      },
+      {
+        "id": "1a3ba3b6bc43b3c5efedbe96fa7300fd0e85d9e3",
+        "type": "FIX",
+        "text": " FieldHelp: call Filter with parameters only if filled",
+        "references": []
+      },
+      {
+        "id": "b89cf253b1dc06d4ecb23968d2b18bb4ed953c2d",
+        "type": "FIX",
+        "text": " Chart: HTML rendering issue fixed",
+        "references": []
+      },
+      {
+        "id": "882963a6446bb10ef16f1d5eca579ee81c224650",
+        "type": "FIX",
+        "text": " Field: if SearchField error on same search",
+        "references": []
+      },
+      {
+        "id": "c4d479f0302a32f281f937db8a07da08709f69e8",
+        "type": "FIX",
+        "text": " FieldHelp: do not open if field is not focused anymore",
+        "references": []
+      },
+      {
+        "id": "e4cbf0390d54f7ca31d5720883555af5c62cb58b",
+        "type": "FIX",
+        "text": " FieldHelp: suspend ListBinding on search",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970564062"
+          }
+        ]
+      },
+      {
+        "id": "920785e433d9f2da3998c9ae452babfbc88a6c5c",
+        "type": "FIX",
+        "text": " FieldValueHelp: destroy ConditionModel on exit",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970611390"
+          }
+        ]
+      },
+      {
+        "id": "ed3fb69391e562b1e36585e939974d422b41615e",
+        "type": "FIX",
+        "text": " Field: return accessibility info of content control",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970564590"
+          }
+        ]
+      },
+      {
+        "id": "3f55480d230885aac389f2dfba6de130b47621f6",
+        "type": "FIX",
+        "text": " FilterField: NotEqual filter only works for one filter",
+        "references": []
+      }
+    ]
+  }
+}

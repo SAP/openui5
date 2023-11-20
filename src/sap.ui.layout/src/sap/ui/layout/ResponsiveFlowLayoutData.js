@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.ui.layout.ResponsiveFlowLayoutData.
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/LayoutData', './library'],
-	function(jQuery, LayoutData, library) {
+sap.ui.define(['sap/ui/core/LayoutData', './library', "sap/base/Log"],
+	function(LayoutData, library, Log) {
 	"use strict";
 
 
@@ -26,7 +26,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/LayoutData', './library'],
 	 * @public
 	 * @since 1.16.0
 	 * @alias sap.ui.layout.ResponsiveFlowLayoutData
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var ResponsiveFlowLayoutData = LayoutData.extend("sap.ui.layout.ResponsiveFlowLayoutData", /** @lends sap.ui.layout.ResponsiveFlowLayoutData.prototype */ { metadata : {
 
@@ -70,7 +69,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/LayoutData', './library'],
 		if (iWeight >= 1) {
 			this.setProperty("weight", iWeight);
 		} else {
-			jQuery.sap.log.warning("Values smaller than 1 are invalid. Default value '1' is used instead", this);
+			Log.warning("Values smaller than 1 are invalid. Default value '1' is used instead", this);
 			this.setProperty("weight", ResponsiveFlowLayoutData.WEIGHT);
 		}
 
@@ -81,7 +80,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/LayoutData', './library'],
 		// if the element should not be line-breakable and a forced linebreak should
 		// be set
 		if (this.getLinebreakable() == false && bLinebreak) {
-			jQuery.sap.log.warning("Setting 'linebreak' AND 'linebreakable' doesn't make any sense. Please set either 'linebreak' or 'linebreakable'", this);
+			Log.warning("Setting 'linebreak' AND 'linebreakable' doesn't make any sense. Please set either 'linebreak' or 'linebreakable'", this);
 		} else {
 			this.setProperty("linebreak", bLinebreak);
 		}
@@ -92,7 +91,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/LayoutData', './library'],
 		// if the element has a forced line break and the element should be set to
 		// not line-breakable
 		if (this.getLinebreak() === true && bLinebreakable === false) {
-			jQuery.sap.log.warning("Setting 'linebreak' AND 'linebreakable' doesn't make any sense. Please set either 'linebreak' or 'linebreakable'", this);
+			Log.warning("Setting 'linebreak' AND 'linebreakable' doesn't make any sense. Please set either 'linebreak' or 'linebreakable'", this);
 		} else {
 			this.setProperty("linebreakable", bLinebreakable);
 			// this.setMinWidth(0);

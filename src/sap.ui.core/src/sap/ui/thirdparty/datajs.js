@@ -24,6 +24,9 @@
     if (typeof define === 'function' && define.amd) {
         define('datajs', datajs);
         define('OData', odata);
+        // ##### BEGIN: MODIFIED BY SAP
+        define('sap/ui/thirdparty/datajs', odata);
+        // ##### END: MODIFIED BY SAP
     } else {
         window.datajs = datajs;
         window.OData = odata;
@@ -7954,7 +7957,7 @@
             return invokeRequest(request, success, error, handler, httpClient, context);
         } catch (err) {
         	// ##### BEGIN: MODIFIED BY SAP
-            // errors in success handler for sync requests are catched here and result in error handler calls.
+            // errors in success handler for sync requests are caught here and result in error handler calls.
         	// So here we fix this and throw that error further.
         	if (err.bIsSuccessHandlerError) {
         		throw err;

@@ -1,0 +1,99 @@
+<mvc:View
+	controllerName="sap.m.sample.CarouselWithDisplayOptions.C"
+	xmlns="sap.m"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:f="sap.ui.layout.form"
+	height="100%">
+	<Page class="sapUiContentPadding">
+		<f:SimpleForm
+			labelSpanL="6"
+			labelSpanM="6"
+			editable="true"
+			layout="ResponsiveGridLayout">
+			<Label text="Resize carousel's container" />
+			<Slider
+				value="100"
+				liveChange=".onResizeCarouselContainer"
+				width="300px"
+				min="50"
+				step="25"
+				max="100" />
+		</f:SimpleForm>
+
+		<HBox justifyContent="Center" renderType="Bare">
+			<Panel id="carouselContainer" height="650px" backgroundDesign="Transparent">
+				<Carousel
+					id="carouselSample"
+					loop="true"
+					class="sapUiContentPadding">
+					<customLayout>
+						<CarouselLayout/>
+					</customLayout>
+				</Carousel>	
+			</Panel>
+		</HBox>
+
+		<f:SimpleForm
+			labelSpanL="6"
+			labelSpanM="6"
+			editable="true"
+			layout="ResponsiveGridLayout">
+			<Label text="Carousel arrow placement" />
+			<RadioButtonGroup columns="2" select=".onArrowsPlacementSelect">
+				<RadioButton text="Content" tooltip="Places the arrows on the sides of the content" />
+				<RadioButton text="PageIndicator" tooltip="Places the arrows on the sides of the page indicator" />
+			</RadioButtonGroup>
+
+			<Label text="Page indicator placement" />
+			<RadioButtonGroup columns="2" select=".onPageIndicatorPlacementSelect">
+				<RadioButton text="Bottom" tooltip="Places the page indicator on the bottom of the carousel" />
+				<RadioButton text="Top" tooltip="Places the page indicator on the top of the carousel" />
+			</RadioButtonGroup>
+
+			<Label text="Carousel background design" />
+			<RadioButtonGroup columns="3" select=".onBackgroundDesignSelect">
+				<RadioButton text="Solid" tooltip="Chooses a Solid background for the carousel." />
+				<RadioButton text="Translucent" selected="true" tooltip="Chooses a Translucent background for the carousel (Default)." />
+				<RadioButton text="Transparent" tooltip="Chooses a Transparent background for the carousel." />
+			</RadioButtonGroup>
+
+			<Label text="Show page indicator" />
+			<Switch
+				state="true"
+				tooltip="Toggles the page indicator of the carousel"
+				change=".onShowPageIndicatorChange" />
+
+			<Label text="Page indicator background design" />
+			<RadioButtonGroup columns="3" select=".onPageIndicatorBackgroundDesignSelect">
+				<RadioButton text="Solid" tooltip="Chooses a Solid background for the page indicator (Default)." />
+				<RadioButton text="Translucent" tooltip="Chooses a Translucent background for the page indicator." />
+				<RadioButton text="Transparent" tooltip="Chooses a Transparent background for the page indicator." />
+			</RadioButtonGroup>
+
+			<Label text="Page indicator border design" />
+			<RadioButtonGroup columns="2" select=".onPageIndicatorBorderDesignSelect">
+				<RadioButton text="Solid" tooltip="Chooses a Solid border for the page indicator (Default)." />
+				<RadioButton text="None" tooltip="Chooses no border for the page indicator." />
+			</RadioButtonGroup>
+
+			<Label text="Number of images to display (In this example up to 9)" />
+			<Input
+				type="Number"
+				value="3"
+				liveChange=".onNumberOfImagesChange"
+				width="320px" />
+
+			<Label text="Number of pages to display" />
+			<Input
+				type="Number"
+				value="1"
+				liveChange=".onNumberOfPages"
+				width="320px" />
+
+			<Label text="Scroll mode - visible pages" />
+			<Switch state="false"
+				tooltip="Toggles the scrollMode property of the carousel"
+				change=".OnScrollModeChange" />	
+		</f:SimpleForm>
+	</Page>
+</mvc:View>

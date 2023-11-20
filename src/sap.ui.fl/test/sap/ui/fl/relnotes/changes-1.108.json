@@ -1,0 +1,17 @@
+{
+  "1.108.0": {
+    "date": "October 2022",
+    "notes": [
+      {
+        "id": "8662fb5a126f75f312f98fcb68b2797351509f7a",
+        "type": "FIX",
+        "text": " sap.ui.rta - update context based adaptation route"
+      },
+      {
+        "id": "f2fd96b44b2f563073d2449471754186559da5bc",
+        "type": "FEATURE",
+        "text": " sap.ui.fl: enable condensing for ObjectStorageConnector"
+      }
+    ]
+  }
+}

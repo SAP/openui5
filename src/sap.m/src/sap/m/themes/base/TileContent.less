@@ -8,33 +8,30 @@
 	box-sizing: border-box;
 	position: relative;
 	height: 6.375rem;
+    vertical-align: top;
 
 	/* FrameType: Auto */
 	&.sapMFrameTypeAuto {
-		min-width: 10.875rem;
-		max-width: 22.5rem;
+		min-width: 9rem;
 	}
 
 	/* FrameType: TwoByOne */
 	&.sapMFrameTypeTwoByOne {
-		width: 22.375rem;
-
-		&.News {
-			width: 22.5rem; //2px more, because the tile's border is omitted
-		}
+		width: 100%;
 	}
 
 	/* FrameType: OneByOne */
 	&.sapMFrameTypeOneByOne {
-		width: 10.875rem;
+		width: 100%;
 	}
 }
 
 /* Improved behaviour for TileContent in GenericTile */
-.sapMGT .sapMTileCnt.sapMFrameTypeAuto:only-child {
+.sapMGT .sapMTileCnt.sapMFrameTypeAuto:only-of-type {
 	width: 100%;
 }
-.sapMGT .sapMTileCnt.sapMFrameTypeAuto:not(:only-child) {
+
+.sapMGT .sapMTileCnt.sapMFrameTypeAuto:not(:only-of-type) {
 	width: ~"calc(50% - 0.25rem)"; //0.5rem margin between the contents
 }
 
@@ -48,13 +45,22 @@
 	right: 0;
 	left: 0;
 	box-sizing: border-box;
-	height: 1.1875rem;
-	bottom: 0.625rem;
-	margin-left: 0.9375rem;
-	margin-right: 0.9375rem;
-	line-height: 1.1875rem;
+	height: 1rem;
+	bottom: 1rem;
+	margin-left: 1rem;
+	margin-right: 1rem;
+	line-height: normal;
 	font-family: @sapUiFontFamily;
 	font-size: @sapMFontMediumSize;
+	font-weight: normal;
+}
+
+.sapMGT .sapMTileCntFtrTxt {
+	text-align: left;
+}
+
+html[dir=rtl] .sapMGT .sapMTileCntFtrTxt {
+	text-align: right;
 }
 
 .sapMTileCntFooterTextColorNeutral {
@@ -86,7 +92,6 @@ html[dir=rtl] .sapMTileCntFtrTxt {
 }
 
 .sapMTileCntContent > .sapMTcInnerMarker {
-	display: inline-block;
 	vertical-align: bottom;
 	line-height: normal;
 }
@@ -95,8 +100,8 @@ html[dir=rtl] .sapMTileCntFtrTxt {
 	height: 3.875rem;
 	margin-bottom: 0.25rem;
 	margin-top: 0.25rem;
-	padding-left: 0.9375rem;
-	padding-right: 0.9375rem;
+	padding-left: 1rem;
+	padding-right: 1rem;
 }
 
 .sapMTileCnt + .sapMTileCnt {
@@ -109,7 +114,7 @@ html[dir=rtl] .sapMTileCntFtrTxt {
 
 .sapMTileCnt.News {
 	height: 6.125rem;
-	margin-top: 0.3125rem;
+	margin-top: 0.125rem;
 	background-color: @sapUiTileBackground;
 
 	.sapMTileCntContent {
@@ -127,56 +132,119 @@ html[dir=rtl] .sapMTileCntFtrTxt {
 	}
 }
 
+.Stretch {
+	.sapMTileCnt.News{
+		height: 100%;
+
+		.sapMTileCntContent {
+			margin-top: 1rem;
+		}
+
+		.sapMTileCntFtrTxt {
+			font-size: @sapMFontSmallSize;
+		}
+	}
+}
+
 .sapMTileSmallPhone {
 	.sapMTileCnt {
 		height: 5.5rem;
-
-		&.sapMFrameTypeAuto {
-			min-width: 9.125rem;
-			max-width: 19rem;
-		}
-
-		&.sapMFrameTypeTwoByOne {
-			width: 18.875rem;
-
-			&.News {
-				width: 19rem;
-			}
-		}
-		&.sapMFrameTypeOneByOne {
-			width: 9.125rem;
-		}
 	}
 
 	.sapMTileCntFtrTxt {
 		height: 1.063rem;
-		line-height: 1.063rem;
-		bottom: 0.4375rem;
-		margin-left: 0.5625rem;
-		margin-right: 0.5625rem;
+		line-height: normal;
+		bottom: 0.5rem;
+		margin-left: 0.5rem;
+		margin-right: 0.5rem;
 		font-size: @sapMFontSmallSize;
 	}
 
 	.sapMTileCntContent {
-		height: 3.563rem;
-		line-height: 3.563rem;
 		margin-bottom: 0.25rem;
 		margin-top: 0.25rem;
-		padding-left: 0.5625rem;
-		padding-right: 0.5625rem;
+		padding-left: 0.5rem;
+		padding-right: 0.5rem;
 	}
 
 	.sapMTileCnt.News {
 		height: 5.25rem;
 
 		.sapMTileCntContent {
-			padding-left: 0.625rem;
-			padding-right: 0.625rem;
+			padding-left: 0.5rem;
+			padding-right: 0.5rem;
+			margin-top: 0.25rem;
 		}
 
 		.sapMTileCntFtrTxt {
-			margin-left: 0.625rem;
-			margin-right: 0.625rem;
+			margin-left: 0.5rem;
+			margin-right: 0.5rem;
 		}
+	}
+
+	.sapMTileSmallPhone.Stretch {
+		.sapMTileCnt.News {
+			height: 100%;
+		}
+		.sapMTileFtrCnt > .sapMTileNavContainer {
+			padding-bottom: 1rem;
+		}	
+	}
+}
+.sapMGTStateLoading {
+	&.sapMTileSmallPhone:not(.sapMGTActionMode) {
+		.sapMTileCntContentShimmerPlaceholderWithDescription{
+			padding-top: 0;
+		}
+		.sapMTileCntContentShimmerPlaceholderItem {
+			.sapMTileCntContentShimmerPlaceholderRows {
+				.sapMTileCntContentShimmerPlaceholderItemTextFooter, .sapMTileCntContentShimmerPlaceholderItemBox {
+					top:0rem;
+				}
+			}
+		}
+	}
+	.sapMTileCntContentShimmerPlaceholderItem {
+		.sapMTileCntContentShimmerPlaceholderRows {
+			.sapMTileCntContentShimmerPlaceholderItemTextFooter, .sapMTileCntContentShimmerPlaceholderItemBox {
+				top:1rem;
+			}
+		}
+	}
+	.sapMTileCntContentShimmerPlaceholderWithDescription {
+		padding: 1rem 0rem 0rem 0rem;
+	}
+}
+.sapMGT.sapMTileSmallPhone.sapMGTStateLoading.OneByOne {
+	.sapMTileCntContentShimmerPlaceholderItemTextFooter{
+		width: 5.875rem;
+	}
+}
+.sapMTileCntContentShimmerPlaceholderItem {
+	.sapMTileCntContentShimmerPlaceholderRows {
+		.sapMTileCntContentShimmerPlaceholderItemTextFooter, .sapMTileCntContentShimmerPlaceholderItemBox {
+			top:0.85rem;
+		}
+	}
+}
+
+.sapMGTStateLoaded.TwoByHalf, .sapMGTStateLoaded.OneByHalf,
+.sapMGTStateDisabled.TwoByHalf, .sapMGTStateDisabled.OneByHalf,
+.sapMGTStateFailed.TwoByHalf, .sapMGTStateFailed.OneByHalf  {
+	.sapMTileCntContentShimmerPlaceholderItem.sapMTileCntContentShimmerPlaceholderWithDescription {
+		padding: 0rem 1rem 0rem 1rem;
+	}
+
+}
+
+
+.sapMTileCnt.sapMTileCntDisabled {
+	position: relative;
+
+	&:after {
+		.sapMGTOverlayMixin();
+		display: block;
+		content: "";
+		background-color: fade(@sapUiTileBackground, 80);
 	}
 }

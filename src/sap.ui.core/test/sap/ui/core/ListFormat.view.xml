@@ -1,0 +1,71 @@
+<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:layout="sap.ui.layout" xmlns:form="sap.ui.layout.form"
+	displayBlock="true"> 
+	<App>
+		<Page title="ListFormat" enableScrolling="false">
+			<layout:Splitter>
+				<layout:VerticalLayout width="100%">
+						<form:SimpleForm layout="ResponsiveGridLayout" width="100%" editable="true">
+
+							<core:Title text="ListFormatter" />
+
+							<Label text="Format Options" />
+							<TextArea id="formatOptions" class="large" editable="false" rows="3"
+								value="{path:'/formatOptions', formatter: '.formatFormatOptions'}"
+							/>
+
+							<Label text="Type" />
+							<Select change=".onTypeChange">
+								<core:Item key="standard" text="standard" />
+								<core:Item key="or" text="or" />
+							</Select>
+
+							<Label text="Style" />
+							<Select change=".onStyleChange">
+								<core:Item key="wide" text="wide" />
+								<core:Item key="short" text="short" />
+							</Select>
+
+						</form:SimpleForm>
+
+						<form:SimpleForm layout="ResponsiveGridLayout" columnsL="1" width="100%" editable="true">
+
+							<core:Title text="Input" />
+
+							<Label text="Array" />
+							<Input class="large" 
+									value="{
+										path: '/parsedValueDisplay',
+										bindingMode: 'OneWay'
+									}"
+									liveChange=".onInputLiveChange" />
+
+							<Label text="String" />
+							<Input class="large" 
+									value="{
+										path: '/formattedValue',
+										bindingMode: 'OneWay'
+									}"
+									liveChange=".onStringLiveChange" />
+
+						</form:SimpleForm>
+						
+				</layout:VerticalLayout>
+
+				<layout:VerticalLayout width="90%">
+
+						<List class="margin" items="{/locales}">
+							<LocaleListItem xmlns="local"
+									locale="{}"
+									text="{
+										parts: ['/parsedValue',  ''],
+										formatter: '.formatLocaleText'
+									}"
+							/>
+						</List>
+
+				</layout:VerticalLayout>
+
+			</layout:Splitter>
+		</Page>
+	</App>
+</mvc:View>

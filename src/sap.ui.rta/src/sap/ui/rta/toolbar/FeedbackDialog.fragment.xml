@@ -1,0 +1,24 @@
+<core:FragmentDefinition
+	xmlns:core="sap.ui.core"
+	xmlns="sap.m"
+	xmlns:util="sap.ui.fl.util">
+	<Dialog
+		id="sapUiRtaFeedbackIFrameDialog"
+		title="{i18n>TIT_FEEDBACK}"
+		contentWidth="50rem"
+		contentHeight="50rem"
+		draggable="true">
+		<content>
+			<util:IFrame
+				id="sapUiRtaFeedbackIFrameDialog_iFrame"
+				url="{feedbackModel>/url}"
+				height="46rem"/>
+		</content>
+		<buttons>
+			<Button
+				id="sapUiRtaFeedbackIFrameDialog_ButtonClose"
+				text="{i18n>BTN_CLOSE_FEEDBACK_DIALOG}"
+				press=".closeFeedbackForm"/>
+		</buttons>
+	</Dialog>
+</core:FragmentDefinition>

@@ -1,0 +1,89 @@
+{
+  "1.88.0": {
+    "date": "March 2021",
+    "notes": [
+      {
+        "id": "e1895193ca5d61e56f4f1a3b34d553c05a4f1ce4",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: Arrows in navigation are now disabled when border reached",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400001420432021"
+          }
+        ]
+      },
+      {
+        "id": "f79da913aec6e8a472e5c0bb774d95714b4c791b",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: week selection working properly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180121275"
+          }
+        ]
+      },
+      {
+        "id": "676414a196c81600bc0f280c17a2da9858ba9283",
+        "type": "FEATURE",
+        "text": " sap.ui.unified.Currency: Currency can now have more than three symbols"
+      },
+      {
+        "id": "a9fb60aa09966ea77e592d6e8800090a74240f91",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: year picker is properly displayed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180051173"
+          }
+        ]
+      },
+      {
+        "id": "12acd479de9454685e15d2b54bd30ceff5677bb8",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: All information is now present in text spacing",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180120743"
+          }
+        ]
+      },
+      {
+        "id": "4d15f48cfa98474dd7b3dd049100fe87aa80939f",
+        "type": "FIX",
+        "text": " sap.m.DatePicker: now possible to select month in sap.m.MonthPicker with combined device",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180080565"
+          }
+        ]
+      },
+      {
+        "id": "3ce419eb51dd62097728028c0376262c8b1a0ec1",
+        "type": "FIX",
+        "text": " CalendarRow: Appointments with no overlap are rendered in the same level",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400000342992021"
+          }
+        ]
+      },
+      {
+        "id": "0038a6f3aedc8aabababffa5f7ff0584d4283ec1",
+        "type": "FIX",
+        "text": " sap.ui.unified.FileUploader: file not blocked",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400008348942020"
+          }
+        ]
+      }
+    ]
+  }
+}

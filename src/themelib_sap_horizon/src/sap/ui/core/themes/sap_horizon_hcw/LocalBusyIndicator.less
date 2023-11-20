@@ -1,0 +1,24 @@
+/* =============================================== */
+/* CSS for control sap.ui.core/LocalBusyIndicator  */
+/* Horizon High Contrast White theme               */
+/* =============================================== */
+
+@_sap_ui_core_LocalBusyIndicator_Background: fade(@sapUiHcStandardBackground, 30%);
+@_sap_ui_core_LocalBusyIndicator_Color: @sapContent_BusyColor;
+
+.sapUiLocalBusyIndicatorSizeSection,
+.sapUiLocalBusyIndicatorSizeBig {
+    font-size: @_sap_ui_core_LocalBusyIndicator_SizeMedium;
+}
+
+.sapUiLocalBusyIndicatorShowContainer>div.sapUiLocalBusyIndicatorAnimation {
+    background-color: @sapList_Background;
+    box-shadow: @sapContent_Shadow2;
+    border-radius: @sapElement_BorderCornerRadius;
+    padding: 1rem 2rem;
+    max-width: 15rem;
+    /* Centers the busy indicator markers considering the size of the white container */
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+}

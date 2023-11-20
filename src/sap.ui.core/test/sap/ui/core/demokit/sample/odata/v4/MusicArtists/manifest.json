@@ -1,0 +1,120 @@
+{
+	"_version" : "1.8.0",
+	"sap.app" : {
+		"ach" : "CA-UI5-COR",
+		"applicationVersion" : {
+			"version" : "${version}"
+		},
+		"description" : "Example for OData V4 music artists service with draft handling",
+		"dataSources" : {
+			"default" : {
+				"uri" : "/sap/opu/odata4/sap/sadl_gw_appmusic_draft/srvd/sap/sadl_gw_appmusicdr_definition/0001/",
+				"type" : "OData",
+				"settings" : {
+					"odataVersion" : "4.0"
+				}
+			}
+		},
+		"id" : "sap.ui.core.sample.odata.v4.MusicArtists",
+		"title" : "Music Artists",
+		"type" : "application"
+	},
+	"sap.ui" : {
+		"deviceTypes" : {
+			"desktop" : true,
+			"phone" : true,
+			"tablet" : true
+		},
+		"technology" : "UI5"
+	},
+	"sap.ui5" : {
+		"config" : {
+			"sample" : {
+				"files" : [
+					"Component.js",
+					"MasterList.controller.js",
+					"MasterList.view.xml",
+					"ObjectPage.controller.js",
+					"ObjectPage.view.xml",
+					"PublicationObjectPage.controller.js",
+					"PublicationObjectPage.view.xml",
+					"manifest.json",
+					"SandboxModel.js",
+					"../../../common/SandboxModelHelper.js"
+				]
+			}
+		},
+		"contentDensities" : {
+			"compact" : true,
+			"cozy" : true
+		},
+		"dependencies" : {
+			"minUI5Version" : "1.98.0",
+			"libs" : {
+				"sap.m" : {}
+			}
+		},
+		"handleValidation" : true,
+		"models" : {
+			"" : {
+				"dataSource" : "default",
+				"preload" : true,
+				"settings" : {
+					"autoExpandSelect" : true,
+					"earlyRequests" : true,
+					"operationMode" : "Server"
+				},
+				"type" : "sap.ui.core.sample.odata.v4.MusicArtists.SandboxModel",
+				"uriSettingName" : "serviceUrl"
+			}
+		},
+		"rootView" : {
+			"async" : true,
+			"id" : "app",
+			"type" : "XML",
+			"viewName" : "sap.ui.core.sample.odata.v4.MusicArtists.App"
+		},
+		"routing" : {
+			"config" : {
+				"async" : true,
+				"controlAggregation" : "pages",
+				"controlId" : "app",
+				"routerClass" : "sap.m.routing.Router",
+				"type" : "View",
+				"path" : "sap.ui.core.sample.odata.v4.MusicArtists",
+				"viewType" : "XML"
+			},
+			"routes" : [
+				{
+					"pattern" : "",
+					"name" : "masterList",
+					"target" : "masterList"
+				},
+				{
+					"pattern" : "objectPage/{artistPath}",
+					"name" : "objectPage",
+					"target" : "objectPage"
+				},
+				{
+					"pattern" : "publicationObjectPage/{artistPath}/{publicationPath}",
+					"name" : "publicationObjectPage",
+					"target" : "publicationObjectPage"
+				}
+			],
+			"targets" : {
+				"masterList" : {
+					"name" : "MasterList",
+					"level" : 0
+				},
+				"objectPage" : {
+					"name" : "ObjectPage",
+					"level" : 1
+				},
+				"publicationObjectPage" : {
+					"name" : "PublicationObjectPage",
+					"level" : 2
+				}
+			}
+		}
+	}
+}

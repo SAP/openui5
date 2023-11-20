@@ -2,15 +2,18 @@
  * ${copyright}
  */
 
-sap.ui.define(['sap/ui/core/InvisibleText'],
-	function(InvisibleText) {
+sap.ui.define(['sap/ui/core/InvisibleText', "sap/ui/core/Lib", "sap/ui/unified/library"],
+
+	function(InvisibleText, Library, unifiedLibrary) {
 	"use strict";
 
 	/**
 	 * Legend renderer.
 	 * @namespace
 	 */
-	var CalendarLegendRenderer = {};
+	var CalendarLegendRenderer = {
+		apiVersion: 2
+	};
 
 	/**
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
@@ -22,49 +25,66 @@ sap.ui.define(['sap/ui/core/InvisibleText'],
 
 		var aStandardItems = oLeg.getAggregation("_standardItems"),
 			aCustomItems = oLeg.getItems(),
+			iCustomItemsLength = this.defineItemsLength(oLeg, aCustomItems.length),
+			iCount = (aStandardItems ? aStandardItems.length : 0) + (aCustomItems ? aCustomItems.length : 0),
+			sOwnedItemIds = "",
+			aStandardItems = aStandardItems || [],
+			aCustomItems = aCustomItems || [],
+			iSliceIndex = 4,
 			i,
 			iIdLength,
-			sColumnWidth;
+			sColumnWidth,
+			sCustomItemType,
+			iIndex = 1;
 
-		oRm.write("<div");
-		oRm.writeControlData(oLeg);
-		oRm.addClass("sapUiUnifiedLegend");
-		oRm.writeClasses();
-		oRm.write(">");
+		oRm.openStart("div", oLeg);
+		oRm.class("sapUiUnifiedLegend");
+		oRm.attr("aria-label", oLeg._getLegendAriaLabel());
+		oRm.attr("role", "list");
+		sOwnedItemIds = oLeg._extractItemIdsString(aStandardItems.concat(aCustomItems));
+		oRm.attr("aria-owns", sOwnedItemIds);
+
+		oRm.openEnd();
 
 		this.renderItemsHeader(oRm, oLeg);
 
 		if (aStandardItems || aCustomItems) {
-			oRm.write("<div");
-			oRm.addClass("sapUiUnifiedLegendItems");
-			oRm.writeClasses();
+			oRm.openStart("div");
+			oRm.class("sapUiUnifiedLegendItems");
 			sColumnWidth = oLeg.getColumnWidth();
-			oRm.writeAttribute("style", "column-width:" + sColumnWidth + ";-moz-column-width:" + sColumnWidth + ";-webkit-column-width:" + sColumnWidth + ";");
-			oRm.writeStyles();
-			oRm.write(">");
+			oRm.style("column-width", sColumnWidth);
+			oRm.style("-moz-column-width", sColumnWidth);
+			oRm.style("-webkit-column-width", sColumnWidth);
+			oRm.openEnd();
 
 			if (aStandardItems) {
 				// rendering standard days and colors
 				iIdLength = oLeg.getId().length + 1; //+1, because of the dash in "CalLeg1-Today"?
 				for (i = 0; i < aStandardItems.length; ++i) {
 					var sClass = "sapUiUnifiedLegend" + aStandardItems[i].getId().slice(iIdLength);
-					this.renderLegendItem(oRm, sClass, aStandardItems[i], ["sapUiUnifiedLegendSquareColor"]);
+					this.renderLegendItem(oRm, sClass, aStandardItems[i], ["sapUiUnifiedLegendSquareColor"], iIndex++, iCount);
 				}
 			}
 
 			if (aCustomItems) {
 				// rendering special day and colors
-				for (i = 0; i < aCustomItems.length; i++) {
-					this.renderLegendItem(oRm, "sapUiCalLegDayType" + oLeg._getItemType(aCustomItems[i], aCustomItems).slice(4), aCustomItems[i], ["sapUiUnifiedLegendSquareColor"]);
+				for (i = 0; i < iCustomItemsLength; i++) {
+					sCustomItemType = oLeg._getItemType(aCustomItems[i], aCustomItems);
+
+					if (sCustomItemType === unifiedLibrary.CalendarDayType.NonWorking) {
+						iSliceIndex = 0;
+					}
+
+					this.renderLegendItem(oRm, "sapUiCalLegDayType" + sCustomItemType.slice(iSliceIndex), aCustomItems[i], ["sapUiUnifiedLegendSquareColor"], iIndex++, iCount);
 				}
 			}
-
-			oRm.write("</div>");
+			this.renderAdditionalItems(oRm, oLeg); //like more sections with items
+			oRm.close("div");
 		}
 
 		this.renderAdditionalContent(oRm, oLeg); //like more sections with items
 
-		oRm.write("</div>");
+		oRm.close("div");
 	};
 
 	/**
@@ -75,39 +95,41 @@ sap.ui.define(['sap/ui/core/InvisibleText'],
 	 * @param {sap.ui.unified.CalenderLegendItem} oItem item element
 	 * @param {string[]} aColorClasses Css classes to be added to the color bullet item in front of the legend item
 	 */
-	CalendarLegendRenderer.renderLegendItem = function(oRm, sClass, oItem, aColorClasses) {
+	CalendarLegendRenderer.renderLegendItem = function(oRm, sClass, oItem, aColorClasses, iIndex, iCount) {
 
 		var sText = oItem.getText();
 		var sTooltip = oItem.getTooltip_AsString();
 
 		// new LegendItem
-		oRm.write("<div");
-		oRm.writeElementData(oItem);
+		oRm.openStart("div", oItem);
 
 		if (sTooltip) {
-			oRm.writeAttributeEscaped('title', sTooltip);
+			oRm.attr('title', sTooltip);
 		}
 
-		oRm.addClass("sapUiUnifiedLegendItem");
-		oRm.addClass(sClass);
-		oRm.writeClasses();
-		oRm.write(">");
+		oRm.attr("role", "listitem");
+		oRm.attr("aria-posinset", iIndex);
+		oRm.attr("aria-setsize", iCount);
+
+		oRm.class("sapUiUnifiedLegendItem");
+		oRm.class(sClass);
+		oRm.openEnd();
+
 		// draw the square background
-		oRm.write("<div");
-		oRm.addClass("sapUiUnifiedLegendSquare");
-		oRm.writeClasses();
-		oRm.write(">");
+		oRm.openStart("div");
+		oRm.class("sapUiUnifiedLegendSquare");
+		oRm.openEnd();
+
 		// draw the square color
 		this.renderColor(oRm, oItem.getColor(), aColorClasses);
-		oRm.write("</div>"); //close background
+		oRm.close("div"); //close background
 		// write description
-		oRm.write("<div");
-		oRm.writeAttribute("id", oItem.getId() + "-Text");
-		oRm.addClass("sapUiUnifiedLegendDescription");
-		oRm.writeClasses();
-		oRm.write(">");
-		oRm.writeEscaped(sText);
-		oRm.write("</div></div>"); // close description, LegendItem
+		oRm.openStart("div", oItem.getId() + "-Text");
+		oRm.class("sapUiUnifiedLegendDescription");
+		oRm.openEnd();
+		oRm.text(sText);
+		oRm.close("div"); // close description
+		oRm.close("div"); // close LegendItem
 	};
 
 	/**
@@ -132,6 +154,21 @@ sap.ui.define(['sap/ui/core/InvisibleText'],
 	};
 
 	/**
+	 * Determines how many custom items will be rendered.
+	 * @param {sap.ui.unified.CalendarLegend} oLeg an object representation of the legend that should be rendered
+	 * @param {int} iCustomItemsLength the length of the custom items
+	 * @returns {int} the length of the custom items to be rendered
+	 * @since 1.74
+	 */
+	CalendarLegendRenderer.defineItemsLength = function(oLeg, iCustomItemsLength) {
+		return iCustomItemsLength;
+	};
+
+	CalendarLegendRenderer.renderAdditionalItems = function(oRm, oLeg) {
+		//to be used to render additional items after the existing items
+	};
+
+	/**
 	 * Renders a color bullet in front of a legend item.
 	 * @param {sap.ui.core.RenderManager} oRm the RenderManager that can be used for writing to the render output buffer
 	 * @param {string} sColor Item bullet color
@@ -139,16 +176,15 @@ sap.ui.define(['sap/ui/core/InvisibleText'],
 	 * @since 1.50
 	 */
 	CalendarLegendRenderer.renderColor = function(oRm, sColor, aColorClasses) {
-		oRm.write("<div");
+		oRm.openStart("div");
 		for (var i = 0; i < aColorClasses.length; i++) {
-			oRm.addClass(aColorClasses[i]);
+			oRm.class(aColorClasses[i]);
 		}
 		if (sColor) {
-			oRm.addStyle("background-color", sColor);
-			oRm.writeStyles();
+			oRm.style("background-color", sColor);
 		}
-		oRm.writeClasses();
-		oRm.write("></div>"); // close color
+		oRm.openEnd();
+		oRm.close("div"); // close color
 	};
 
 	/**
@@ -203,8 +239,8 @@ sap.ui.define(['sap/ui/core/InvisibleText'],
 		}
 
 		if (!CalendarLegendRenderer.typeARIATexts[sType]) {
-			rb = sap.ui.getCore().getLibraryResourceBundle("sap.ui.unified");
-			sText = rb.getText("LEGEND_UNNAMED_TYPE", parseInt(sType.slice(4), 10).toString());
+			rb = Library.getResourceBundleFor("sap.ui.unified");
+			sText = rb.getText("LEGEND_UNNAMED_TYPE", parseInt(sType.slice(4)).toString());
 			CalendarLegendRenderer.typeARIATexts[sType] = new InvisibleText({ text: sText });
 			CalendarLegendRenderer.typeARIATexts[sType].toStatic();
 		}

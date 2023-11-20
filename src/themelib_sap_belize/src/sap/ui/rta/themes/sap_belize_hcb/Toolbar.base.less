@@ -1,0 +1,15 @@
+/******************************************************************
+	Style of the RTA Toolbar (all types) - belize_hcb Theme
+*******************************************************************/
+@_sap_ui_rta_Toolbar_Base_BaseColor: @sapUiNeutralBG; //#000000
+@_sap_ui_rta_Toolbar_Base_TextColor: @sapUiNeutralElement; //#ffffff
+@_sap_ui_rta_Toolbar_Base_BoxShadow_DarkColor: fade(@sapUiNeutralElement, 80%); //rgba(255, 255, 255, 0.8)
+@_sap_ui_rta_Toolbar_Base_BoxShadow_LightColor: @sapUiNeutralElement; //#ffffff
+@_sap_ui_rta_Toolbar_Base_BaseBG: @sapUiNeutralBG; //#000000
+
+.sapUiRtaMode {
+	.sapUiRtaToolbar {
+		box-shadow: 0 0.625rem 2rem 0 @_sap_ui_rta_Toolbar_Base_BoxShadow_DarkColor,
+		0 0 0.625rem -0.125rem @_sap_ui_rta_Toolbar_Base_BoxShadow_LightColor; //10px 32px 10px 2px
+	}
+}

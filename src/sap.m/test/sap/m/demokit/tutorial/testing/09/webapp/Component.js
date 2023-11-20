@@ -1,9 +1,8 @@
 sap.ui.define([
 	'sap/ui/core/UIComponent',
 	'sap/ui/model/resource/ResourceModel',
-	'sap/ui/demo/bulletinboard/model/models',
-	'sap/ui/Device'
-], function (UIComponent, ResourceModel, models, Device) {
+	'./model/models'
+], function (UIComponent, ResourceModel, models) {
 	"use strict";
 
 	return UIComponent.extend("sap.ui.demo.bulletinboard.Component", {

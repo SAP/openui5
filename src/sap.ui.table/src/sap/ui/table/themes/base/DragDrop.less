@@ -1,7 +1,7 @@
-/* ====================================== */
-/* CSS for control sap.ui.table/DragDrop  */
-/* Base theme                             */
-/* ====================================== */
+/* ============================== */
+/* CSS for sap.ui.table/DragDrop  */
+/* Base theme                     */
+/* ============================== */
 
 @_sap_ui_table_DragDrop_ColumnDnDHighlightColor: @sapUiListHighlightColor;
 @_sap_ui_table_DragDrop_ReorderIndicatorWidth: 2px;
@@ -13,7 +13,7 @@
 		pointer-events: none;
 	}
 
-	.sapUiTableCol {
+	.sapUiTableHeaderCell {
 		cursor: move;
 
 		* {
@@ -22,25 +22,24 @@
 	}
 }
 
-
 /* Column Reordering */
 
-.sapUiTableCol.sapUiTableColReorderGhost {
+.sapUiTableHeaderCell.sapUiTableColReorderGhost {
 	position: absolute;
 	width: auto;
 	max-width: 200px;
 	cursor: pointer;
-	border: 1px solid @sapUiListBorderColor;
+	border: @_sap_ui_table_BaseBorderWidth solid @sapUiListBorderColor;
 	background-color: @sapUiListHeaderBackground;
 	box-shadow: @sapUiShadowLevel2;
 }
 
-.sapUiSizeCozy.sapUiTableCol.sapUiTableColReorderGhost .sapUiTableColCell > * {
+.sapUiSizeCozy.sapUiTableHeaderCell.sapUiTableColReorderGhost .sapUiTableCellInner > * {
 	height: 100%;
-	line-height: 3rem;
+	line-height: @_sap_ui_table_BaseSizeCozy;
 }
 
-.sapUiSizeCozy.sapUiTableCol.sapUiTableColReorderGhost {
+.sapUiSizeCozy.sapUiTableHeaderCell.sapUiTableColReorderGhost {
 	padding-top: 0;
 	padding-bottom: 0;
 }
@@ -65,8 +64,8 @@ html[dir=rtl] .sapUiTableColReorderIndicator {
 }
 
 html[data-sap-ui-animation^="on"] .sapUiTableColReorderIndicator {
-	transition-property : left;
-	transition-duration : 100ms;
+	transition-property: left;
+	transition-duration: 100ms;
 }
 
 .sapUiTableColReorderIndicatorInner {
@@ -85,14 +84,14 @@ html[data-sap-ui-animation^="on"] .sapUiTableColReorderIndicator {
 	width: 0;
 }
 
-.sapUiTableColReorderIndicatorArrow:after,
-.sapUiTableColReorderIndicatorArrow:before {
+.sapUiTableColReorderIndicatorArrow::after,
+.sapUiTableColReorderIndicatorArrow::before {
 	position: absolute;
 	top: 0;
 	content: " ";
 }
 
-.sapUiTableColReorderIndicatorArrow:after {
+.sapUiTableColReorderIndicatorArrow::after {
 	height: 2 * @_sap_ui_table_DragDrop_ReorderIndicatorWidth;
 	width: 2 * @_sap_ui_table_DragDrop_ReorderIndicatorWidth;
 	border-radius: @_sap_ui_table_DragDrop_ReorderIndicatorWidth;
@@ -101,19 +100,18 @@ html[data-sap-ui-animation^="on"] .sapUiTableColReorderIndicator {
 	background-color: @sapUiListHeaderBackground;
 }
 
-.sapUiTableColReorderIndicatorArrow:before {
+.sapUiTableColReorderIndicatorArrow::before {
 	height: 4 * @_sap_ui_table_DragDrop_ReorderIndicatorWidth;
 	width: 4 * @_sap_ui_table_DragDrop_ReorderIndicatorWidth;
 	border-radius: 2 * @_sap_ui_table_DragDrop_ReorderIndicatorWidth;
 	background-color: @_sap_ui_table_DragDrop_ColumnDnDHighlightColor;
 }
 
-
 .sapUiTableColReorderFade {
 	position: relative;
 }
 
-.sapUiTableColReorderFade:after {
+.sapUiTableColReorderFade::after {
 	content: " ";
 	position: absolute;
 	top: 0;
@@ -121,16 +119,10 @@ html[data-sap-ui-animation^="on"] .sapUiTableColReorderIndicator {
 	right: 0;
 	bottom: -1px;
 	z-index: 3;
-	border-left: 1px solid @_sap_ui_table_DragDrop_ColumnDnDHighlightColor;
-	border-right: 1px solid @_sap_ui_table_DragDrop_ColumnDnDHighlightColor;
-	background-color: fade(@sapUiBaseColor, 80);
+	background-color: @sapUiListHoverBackground;
+	opacity: 0.5;
 	box-sizing: border-box;
 }
-
-.sapUiTableLastRow .sapUiTableColReorderFade:after {
-	border-bottom: 1px solid @_sap_ui_table_DragDrop_ColumnDnDHighlightColor;
-}
-
 
 /* Column Resizing */
 
@@ -167,7 +159,6 @@ html.sap-desktop .sapUiTableColRsz.sapUiTableColRszActive:hover {
 	opacity: 1;
 }
 
-
 /* Table Height Resizing */
 
 .sapUiTableHeightResizer {
@@ -200,7 +191,7 @@ html.sap-desktop .sapUiTableColRsz.sapUiTableColRszActive:hover {
 	position: absolute;
 	background-color: @_sap_ui_table_DragDrop_ColumnDnDHighlightColor;
 	color: @sapUiContentContrastTextColor;
-	z-index:10000;
+	z-index: 10000;
 }
 
 .sapUiTableRowGhost {

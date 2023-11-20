@@ -1,12 +1,11 @@
 sap.ui.define([
-		'jquery.sap.global',
 		'sap/ui/Device',
 		'sap/ui/core/mvc/Controller',
 		'sap/ui/model/json/JSONModel'
-	], function(jQuery, Device, Controller, JSONModel) {
+	], function(Device, Controller, JSONModel) {
 	"use strict";
 
-	var CController = Controller.extend("sap.ui.layout.sample.HorizontalLayout.C", {
+	return Controller.extend("sap.ui.layout.sample.HorizontalLayout.C", {
 
 		onInit: function () {
 			this.getView().setModel(new JSONModel({
@@ -16,12 +15,9 @@ sap.ui.define([
 			}));
 
 			// set explored app's demo model on this sample
-			var oImgModel = new JSONModel(sap.ui.require.toUrl("sap/ui/demo/mock") + "/img.json");
+			var oImgModel = new JSONModel(sap.ui.require.toUrl("sap/ui/demo/mock/img.json"));
 			this.getView().setModel(oImgModel, "img");
 		}
 	});
-
-
-	return CController;
 
 });

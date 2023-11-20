@@ -5,9 +5,32 @@
 sap.ui.define([
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/fl/support/apps/contentbrowser/lrepConnector/LRepConnector",
-	"sap/ui/fl/support/apps/contentbrowser/utils/DataUtils"
-], function (Controller, LRepConnector, DataUtils) {
+	"sap/ui/fl/support/apps/contentbrowser/utils/DataUtils",
+	"sap/ui/fl/Layer",
+	"sap/m/Dialog",
+	"sap/m/Text",
+	"sap/m/Button",
+	"sap/m/Input",
+	"sap/m/library",
+	"sap/ui/model/json/JSONModel",
+	"sap/ui/core/UIComponent"
+], function(
+	Controller,
+	LRepConnector,
+	DataUtils,
+	Layer,
+	Dialog,
+	Text,
+	Button,
+	Input,
+	mobileLibrary,
+	JSONModel,
+	UIComponent
+) {
 	"use strict";
+
+	// shortcut for sap.m.ButtonType
+	var {ButtonType} = mobileLibrary;
 
 	/**
 	 * Controller for editing content in Content Browser.
@@ -16,21 +39,22 @@ sap.ui.define([
 	 * @alias sap.ui.fl.support.apps.contentbrowser.controller.ContentDetailsEdit
 	 * @author SAP SE
 	 * @version ${version}
-	 * @experimental Since 1.45
+	 * @since 1.45
+	 * @private
 	 */
 	return Controller.extend("sap.ui.fl.support.apps.contentbrowser.controller.ContentDetailsEdit", {
 
 		oSelectedContentModel: undefined,
-		oDataUtils : DataUtils,
+		oDataUtils: DataUtils,
 
 		/**
 		 * Initialize function;
 		 * Handles data binding and route matching.
 		 * @public
 		 */
-		onInit: function () {
+		onInit() {
 			this._initAndBindSelectedContentModel();
-			var oRouter = sap.ui.core.UIComponent.getRouterFor(this);
+			var oRouter = UIComponent.getRouterFor(this);
 			oRouter.getRoute("ContentDetailsEdit").attachMatched(this._onRouteMatched, this);
 		},
 
@@ -38,19 +62,19 @@ sap.ui.define([
 		 * Creates and binds of the model for the selected content.
 		 * @private
 		 */
-		_initAndBindSelectedContentModel: function () {
-			this.oSelectedContentModel = new sap.ui.model.json.JSONModel();
+		_initAndBindSelectedContentModel() {
+			this.oSelectedContentModel = new JSONModel();
 			this.getView().setModel(this.oSelectedContentModel, "selectedContent");
 		},
 
 		/**
 		 * Handler if a route was matched;
 		 * Obtains information about layer, namespace, filename, and file type from the route's arguments, and then requests content from Layered Repository.
-		 * @param {Object} oRouteMatch - route object which is specified in the router and matched via regexp
+		 * @param {object} oRouteMatch - Route object which is specified in the router and matched via regexp
 		 * @returns {Promise} - <code>LRepConnector</code> "getContent" promise
 		 * @private
 		 */
-		_onRouteMatched: function (oRouteMatch) {
+		_onRouteMatched(oRouteMatch) {
 			var that = this;
 			var mRouteArguments = oRouteMatch.getParameter("arguments");
 
@@ -64,14 +88,14 @@ sap.ui.define([
 			if (oModelData.namespace[oModelData.namespace.length - 1] !== "/") {
 				oModelData.namespace += "/";
 			}
-			var sContentSuffix = oModelData.namespace + oModelData.fileName + "." + oModelData.fileType;
+			var sContentSuffix = `${oModelData.namespace + oModelData.fileName}.${oModelData.fileType}`;
 
 			var oPage = that.getView().getContent()[0];
 			oPage.setBusy(true);
 
 			return LRepConnector.getContent(oModelData.layer, sContentSuffix, null, null, true).then(
 				that._onContentReceived.bind(that, oModelData, oPage, sContentSuffix),
-				function () {
+				function() {
 					oPage.setBusy(false);
 				}
 			);
@@ -80,22 +104,31 @@ sap.ui.define([
 		/**
 		 * Handler if content data was received;
 		 * Formats the received data into the correct file type and requests the file metadata.
-		 * @param {Object} oModelData - model data of current page
-		 * @param {Object} oPage - current page used to set display busy mode on/off
-		 * @param {Object} sContentSuffix - content suffix to send metadata request
-		 * @param {Object} oData - data which is received from <code>LRepConnector</code> "getContent" promise
-		 * @returns {Promise} - <code>LRepConnector</code> "getContent" promise
+		 * @param {object} oModelData - Model data of current page
+		 * @param {object} oPage - Current page used to set display busy mode on/off
+		 * @param {object} sContentSuffix - Content suffix to send metadata request
+		 * @param {object} oData - Data which is received from <code>LRepConnector</code> "getContent" promise
+		 * @returns {Promise} <code>LRepConnector</code> "getContent" promise
 		 * @private
 		 */
-		_onContentReceived: function (oModelData, oPage, sContentSuffix, oData) {
-			var that = this;
+		_onContentReceived(oModelData, oPage, sContentSuffix, oData) {
 			return LRepConnector.getContent(oModelData.layer, sContentSuffix, true).then(
-				function (oMetadata) {
+				function(oMetadata) {
 					oModelData.data = DataUtils.formatData(oData, oModelData.fileType);
 					oModelData.metadata = oMetadata;
-					that.oSelectedContentModel.setData(oModelData);
+					this.oSelectedContentModel.setData(oModelData);
+					oModelData.metadata.some(function(oMetadata) {
+						if (oMetadata.name === "layer") {
+							if (oMetadata.value === "CUSTOMER") {
+								this.getView().byId("activeVersionCheckBox").setVisible(true);
+							} else {
+								this.getView().byId("activeVersionCheckBox").setVisible(true);
+							}
+							return true;
+						}
+					}.bind(this));
 					oPage.setBusy(false);
-				}, function () {
+				}.bind(this), function() {
 					oPage.setBusy(false);
 				}
 			);
@@ -103,30 +136,90 @@ sap.ui.define([
 
 		/**
 		 * Handler for a "Save" action in "Edit" mode;
-		 * Checks the current layer, namespace, filename, and file type and calls <code>LRepConnector</code> "saveFile" to save the file;
-		 * After the file has been successfully saved, navigates to "Display" mode of the content.
-		 * @returns {Promise} - <code>LRepConnector</code> "saveFiles" promise
+		 * Checks the current layer, namespace, filename, and file type and select correct transport id (through a dialog if necessary) and trigger save request of file.
 		 * @public
 		 */
-		onSave: function () {
+		onSave() {
+			var that = this;
 			var oSelectedContentModel = this.getView().getModel("selectedContent");
+			var bOnActivatedVersion = this.getView().byId("activeVersionCheckBox").getSelected();
 			var oContentData = oSelectedContentModel.getData();
 			var sLayer;
-
-			oContentData.metadata.some(function (oMetadata) {
+			var sTransportIdFromContent;
+			var sPackageFromContent;
+			var sTransportId;
+			var sPackageName;
+			oContentData.metadata.some(function(oMetadata) {
 				if (oMetadata.name === "layer") {
 					sLayer = oMetadata.value;
 					return true;
 				}
 			});
+			oContentData.metadata.some(function(mMetadata) {
+				if (mMetadata.name === "transportId") {
+					sTransportIdFromContent = mMetadata.value;
+					return true;
+				}
+			});
+			try {
+				sPackageFromContent = JSON.parse(oContentData.data).packageName;
+			} catch (e) {
+				// when content is not in JSON format (Ex: js or code_ext file), package is undefined but does not break the code.
+			}
 
-			return LRepConnector.saveFile(
-				sLayer,
-				oContentData.namespace,
-				oContentData.fileName,
-				oContentData.fileType,
-				oContentData.data
-			).then(this._navToDisplayMode.bind(this));
+			if ((sLayer === Layer.USER) ||
+				(sLayer === "LOAD") ||
+				(sLayer === "VENDOR_LOAD") ||
+				(!sTransportIdFromContent && (!sPackageFromContent || sPackageFromContent === "$TMP"))) {
+				sTransportId = undefined;
+				this._saveFile(sLayer, oContentData.namespace, oContentData.fileName, oContentData.fileType, oContentData.data, sTransportId, sPackageName, bOnActivatedVersion);
+			} else if (sTransportIdFromContent === "ATO_NOTIFICATION") {
+				sTransportId = sTransportIdFromContent;
+				this._saveFile(sLayer, oContentData.namespace, oContentData.fileName, oContentData.fileType, oContentData.data, sTransportId, sPackageName, bOnActivatedVersion);
+			} else {
+				var isPackageVisible = !!(sLayer === Layer.VENDOR || sLayer === Layer.CUSTOMER_BASE);
+				var oPackageInput = new Input({visible: isPackageVisible, placeholder: "Package name (Only necessary for cross client content)" });
+				var oTransportInput = new Input({placeholder: "Transport ID or ATO_NOTIFICATION" });
+				var oDialog = new Dialog({
+					title: "{i18n>transportInput}",
+					type: "Message",
+					content: [
+						new Text({text: "{i18n>transportInputDescription}"}),
+						oPackageInput,
+						oTransportInput],
+					beginButton: new Button({
+						text: "{i18n>confirm}",
+						type: ButtonType.Reject,
+						press() {
+							sPackageName = oPackageInput.getValue();
+							sTransportId = oTransportInput.getValue();
+							oDialog.close();
+							that._saveFile(sLayer, oContentData.namespace, oContentData.fileName, oContentData.fileType, oContentData.data, sTransportId, sPackageName);
+						}
+					}),
+					endButton: new Button({
+						text: "{i18n>cancel}",
+						press() {
+							oDialog.close();
+						}
+					}),
+					afterClose() {
+						oDialog.destroy();
+					}
+				});
+				this.getView().addDependent(oDialog);
+				oDialog.open();
+			}
+		},
+
+		/**
+		 * Send request to back end to saved file.
+		 * After the file has been successfully saved, navigates to "Display" mode of the content.
+		 * @returns {Promise} <code>LRepConnector</code> "saveFiles" promise
+		 * @private
+		 */
+		_saveFile(sLayer, sNameSpace, sFileName, sFileType, sData, sTransportId, sPackageName, bSupport) {
+			return LRepConnector.saveFile(sLayer, sNameSpace, sFileName, sFileType, sData, sTransportId, sPackageName, bSupport).then(this._navToDisplayMode.bind(this));
 		},
 
 		/**
@@ -134,7 +227,7 @@ sap.ui.define([
 		 * Navigates back to "Display" mode of the content.
 		 * @public
 		 */
-		onCancel: function () {
+		onCancel() {
 			this._navToDisplayMode();
 		},
 
@@ -143,16 +236,16 @@ sap.ui.define([
 		 * Gathers layer, namespace, filename, and file type information and navigates to "ContentDetailsFlip" target.
 		 * @private
 		 */
-		_navToDisplayMode: function () {
+		_navToDisplayMode() {
 			var oSelectedContentModel = this.getView().getModel("selectedContent");
 			var oContentData = oSelectedContentModel.getData();
-			var oRouter = sap.ui.core.UIComponent.getRouterFor(this);
+			var oRouter = UIComponent.getRouterFor(this);
 
 			oRouter.navTo("ContentDetailsFlip", {
-				"layer": oContentData.layer,
-				"namespace": encodeURIComponent(oContentData.namespace),
-				"fileName": oContentData.fileName,
-				"fileType": oContentData.fileType
+				layer: oContentData.layer,
+				namespace: encodeURIComponent(oContentData.namespace),
+				fileName: oContentData.fileName,
+				fileType: oContentData.fileType
 			});
 		}
 	});

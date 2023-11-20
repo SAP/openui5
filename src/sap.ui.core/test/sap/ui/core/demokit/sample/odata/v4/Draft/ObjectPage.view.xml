@@ -1,0 +1,88 @@
+<mvc:View
+		class="sapUiSizeCompact"
+		controllerName="sap.ui.core.sample.odata.v4.Draft.ObjectPage"
+		xmlns="sap.m"
+		xmlns:form="sap.ui.layout.form"
+		xmlns:mvc="sap.ui.core.mvc">
+	<Page showHeader="false">
+		<form:SimpleForm ariaLabelledBy="objectPageTitle" backgroundDesign="Transparent"
+				editable="true" id="Products::detail" layout="ColumnLayout">
+			<form:toolbar>
+				<Toolbar design="Transparent">
+					<Button icon="{ui>/sShowListIcon}" id="showList" press="onShowList"
+							tooltip="{ui>/sShowListTooltip}"/>
+					<Title id="objectPageTitle" level="H2" text="Product Details"/>
+					<Button enabled="{= %{IsActiveEntity} }"
+							icon="sap-icon://edit" id="edit" press="onEdit" text="Edit"
+							tooltip="Start editing"/>
+					<Button enabled="{= !%{IsActiveEntity} }"
+							icon="sap-icon://save" id="save" press="onSave" text="Save"
+							tooltip="Save changes"/>
+					<Button enabled="{= !%{IsActiveEntity} }"
+							icon="sap-icon://sys-cancel-2" id="cancel" press="onCancel"
+							text="Cancel" tooltip="Cancel changes"/>
+				</Toolbar>
+			</form:toolbar>
+			<Label labelFor="Product::ID" text="Product ID"/>
+			<Input editable="false" id="Product::ID" value="{ID}"/>
+			<Label labelFor="Product::name" text="Name"/>
+			<Input editable="{= !%{IsActiveEntity} }" id="Product::name" value="{name}"/>
+			<Label labelFor="Product::amount" text="Amount"/>
+			<Input editable="{= !%{IsActiveEntity} }" id="Product::amount"
+					value="{amount}"/>
+			<Label labelFor="Product::categoryID" text="Category ID"/>
+			<Input editable="{= !%{IsActiveEntity} }" id="Product::categoryID"
+					value="{categoryID}"/>
+			<Label labelFor="Product::_Category::name" text="Category Name"/>
+			<Input editable="{= !%{IsActiveEntity} }" id="Product::_Category::name"
+					value="{_Category/name}"/>
+			<Label labelFor="Product::IsActiveEntity" text="Is Active Entity"/>
+			<Input editable="false" id="Product::IsActiveEntity" value="{IsActiveEntity}"/>
+			<Label labelFor="Product::HasActiveEntity" text="Has Active Entity"/>
+			<Input editable="false" id="Product::HasActiveEntity"
+					value="{HasActiveEntity}"/>
+			<Label labelFor="Product::HasDraftEntity" text="Has Draft Entity"/>
+			<Input editable="false" id="Product::HasDraftEntity" value="{HasDraftEntity}"/>
+			<Label labelFor="Product::DraftAdministrativeData::CreationDateTime"
+					text="Created At"/>
+			<Input editable="false" id="Product::DraftAdministrativeData::CreationDateTime"
+					value="{DraftAdministrativeData/CreationDateTime}"/>
+			<Label labelFor="Product::DraftAdministrativeData::LastChangeDateTime"
+					text="Last Changed At"/>
+			<Input editable="false"
+					id="Product::DraftAdministrativeData::LastChangeDateTime"
+					value="{DraftAdministrativeData/LastChangeDateTime}"/>
+		</form:SimpleForm>
+		<Table growing="true" growingThreshold="5" id="_Parts" items="{
+					parameters : {
+						$count : true,
+						$orderby : 'ID',
+						$$ownRequest : true
+					},
+					path : '_Parts'
+				}">
+			<headerToolbar>
+				<Toolbar>
+					<Title level="H3" text="Parts"/>
+				</Toolbar>
+			</headerToolbar>
+			<columns>
+				<Column>
+					<Text text="Part ID"/>
+				</Column>
+				<Column>
+					<Text text="Description"/>
+				</Column>
+				<Column hAlign="Right">
+					<Text text="Quantity"/>
+				</Column>
+			</columns>
+			<ColumnListItem>
+				<Text id="_Parts::ID" text="{ID}"/>
+				<Text id="_Parts::description" text="{description}"/>
+				<Input editable="{= !%{_Product/IsActiveEntity} }" id="_Parts::quantity"
+						textAlign="Right" value="{quantity}"/>
+			</ColumnListItem>
+		</Table>
+	</Page>
+</mvc:View>

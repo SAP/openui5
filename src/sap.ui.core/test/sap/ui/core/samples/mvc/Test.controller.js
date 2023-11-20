@@ -1,32 +1,31 @@
-sap.ui.define(['sap/ui/core/mvc/Controller'],
-	function(Controller) {
+sap.ui.define([
+	'sap/ui/core/mvc/Controller',
+	'sap/m/MessageToast'
+], function(Controller, MessageToast) {
 	"use strict";
 
 	return Controller.extend("sap.ui.core.mvctest.Test", {
 
 		onInit: function(oEvent) {
-			alert(oEvent.getSource().getId() + ": Test controller init");
-			function onPress(oEvent) {
-				alert("pressed");
-			}
+			MessageToast.show(oEvent.getSource().getId() + ": Test controller init");
 		},
 
 
 		doIt: function(oEvent) {
-			alert(oEvent.getSource().getId() + ": does it!");
+			MessageToast.show(oEvent.getSource().getId() + ": does it!");
 		},
 
 
 		onBeforeRendering: function(oEvent) {
-			alert(oEvent.getSource().getId() + ": Test controller onBeforeRendering");
+			MessageToast.show(oEvent.getSource().getId() + ": Test controller onBeforeRendering");
 		},
 
 		onAfterRendering: function(oEvent) {
-			alert(oEvent.getSource().getId() + ": Test controller onAfterRendering");
+			MessageToast.show(oEvent.getSource().getId() + ": Test controller onAfterRendering");
 		},
 
 		onExit: function(oEvent) {
-			alert(oEvent.getSource().getId() + ": Test controller exit");
+			MessageToast.show(oEvent.getSource().getId() + ": Test controller exit");
 		}
 
 	});

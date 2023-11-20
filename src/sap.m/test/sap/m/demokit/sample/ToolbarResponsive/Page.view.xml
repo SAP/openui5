@@ -6,6 +6,9 @@
 	height="100%">
 	<Page
 		showHeader="false">
+		<content>
+			<Text text="See the actions in the footer toolbar." class="sapUiSmallMargin"/>
+		</content>
 		<footer>
 			<Toolbar>
 				<ToolbarSpacer/>

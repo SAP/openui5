@@ -1,7 +1,7 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(['jquery.sap.global', 'sap/ui/rta/command/FlexCommand'], function(jQuery, FlexCommand) {
+sap.ui.define(["sap/ui/rta/command/FlexCommand"], function(FlexCommand) {
 	"use strict";
 
 	/**
@@ -15,42 +15,35 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/rta/command/FlexCommand'], function(
 	 * @private
 	 * @since 1.34
 	 * @alias sap.ui.rta.command.Rename
-	 * @experimental Since 1.34. This class is experimental and provides only limited functionality. Also the API might be
-	 *               changed in future.
 	 */
 	var Rename = FlexCommand.extend("sap.ui.rta.command.Rename", {
-		metadata : {
-			library : "sap.ui.rta",
-			properties : {
-				renamedElement : {
-					type : "object"
+		metadata: {
+			library: "sap.ui.rta",
+			properties: {
+				renamedElement: {
+					type: "object"
 				},
-				newValue : {
-					type : "string",
-					defaultValue : "new text"
+				newValue: {
+					type: "string",
+					defaultValue: "new text"
 				}
 			},
-			associations : {},
-			events : {}
+			associations: {},
+			events: {}
 		}
 	});
 
 	Rename.prototype._getChangeSpecificData = function() {
-
 		var mSpecificInfo = {
-				changeType : this.getChangeType(),
-				selector : {
-					id : this.getElement().getId()
-				},
-				renamedElement : {
-					id : this.getRenamedElement().getId()
-				},
-				value : this.getNewValue()
+			changeType: this.getChangeType(),
+			renamedElement: {
+				id: this.getRenamedElement().getId()
+			},
+			value: this.getNewValue()
 		};
 
 		return mSpecificInfo;
 	};
 
 	return Rename;
-
-}, /* bExport= */true);
+});

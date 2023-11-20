@@ -1,0 +1,35 @@
+<mvc:View
+	controllerName="sap.m.sample.SinglePlanningCalendarCreateApp.Page"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:unified="sap.ui.unified"
+	xmlns="sap.m">
+	<VBox class="sapUiSmallMargin">
+		<SinglePlanningCalendar
+			id="SPC1"
+			title= "My Calendar"
+			appointmentSelect="handleAppointmentSelect"
+			headerDateSelect="handleHeaderDateSelect"
+			startDateChange="handleStartDateChange"
+			startDate="{path: '/startDate'}"
+			appointments="{path: '/appointments'}">
+			<actions>
+				<Button id="addNewAppointment" text="Create" press="handleAppointmentCreate" tooltip="Add new appointment" />
+			</actions>
+			<views>
+				<SinglePlanningCalendarDayView key="DayView" title="Day" />
+				<SinglePlanningCalendarWorkWeekView key="WorkWeekView" title="Work Week" />
+				<SinglePlanningCalendarWeekView key="WeekView" title="Week" />
+			</views>
+			<appointments>
+				<unified:CalendarAppointment
+					title= "{title}"
+					text= "{text}"
+					type= "{type}"
+					icon= "{icon}"
+					startDate= "{startDate}"
+					endDate= "{endDate}">
+				</unified:CalendarAppointment>
+			</appointments>
+		</SinglePlanningCalendar>
+	</VBox>
+</mvc:View>

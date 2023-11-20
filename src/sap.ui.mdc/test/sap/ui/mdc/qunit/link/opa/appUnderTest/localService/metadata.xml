@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="1.0"
+		   xmlns:edmx="http://schemas.microsoft.com/ado/2007/06/edmx"
+		   xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata"
+		   xmlns:sap="http://www.sap.com/Protocols/SAPData">
+	<edmx:DataServices m:DataServiceVersion="2.0">
+		<Schema Namespace="EPM_DEVELOPER_SCENARIO_SRV"
+				sap:schema-version="0" xmlns="http://schemas.microsoft.com/ado/2008/09/edm">
+			<EntityType Name="Product" sap:service-schema-version="1"
+						sap:service-version="1" sap:semantics="aggregate"
+						sap:content-version="1">
+				<Key>
+					<PropertyRef Name="ProductId"/>
+				</Key>
+				<Property Name="ProductId" Type="Edm.String" Nullable="false"
+						  MaxLength="10" sap:aggregation-role="dimension" sap:label="Product ID"
+						  sap:creatable="false" sap:updatable="false" sap:sortable="true"
+						  sap:filterable="true"/>
+				<Property Name="Category" Type="Edm.String" Nullable="false"
+						  MaxLength="40" sap:aggregation-role="dimension" sap:label="Category"
+						  sap:creatable="false" sap:updatable="false" sap:sortable="true"
+						  sap:filterable="true"/>
+				<Property Name="Name" Type="Edm.String" Nullable="false"
+						  MaxLength="255" sap:aggregation-role="dimension" sap:label="Name"
+						  sap:creatable="false" sap:updatable="false" sap:sortable="true"
+						  sap:filterable="true"/>
+				<Property Name="Image" Type="Edm.String" Nullable="false"
+						  sap:aggregation-role="dimension" sap:label="Image"
+						  sap:creatable="false" sap:updatable="false" sap:sortable="true"
+						  sap:filterable="true"/>
+			</EntityType>
+			<EntityContainer Name="EPM_DEVELOPER_SCENARIO_SRV"
+							 m:IsDefaultEntityContainer="true">
+				<EntitySet Name="ProductCollection" EntityType="EPM_DEVELOPER_SCENARIO_SRV.Product"
+						   sap:creatable="false" sap:updatable="false" sap:deletable="false"
+						   sap:pageable="false" sap:content-version="1"/>
+			</EntityContainer>
+			<Annotations Target="EPM_DEVELOPER_SCENARIO_SRV.Product"
+						 xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="com.sap.vocabularies.UI.v1.LineItem">
+					<Collection>
+						<Record Type="com.sap.vocabularies.UI.v1.DataField">
+							<PropertyValue Property="Value" Path="Name"/>
+						</Record>
+						<Record Type="com.sap.vocabularies.UI.v1.DataField">
+							<PropertyValue Property="Value" Path="ProductId"/>
+						</Record>
+						<Record Type="com.sap.vocabularies.UI.v1.DataField">
+							<PropertyValue Property="Value" Path="Category"/>
+						</Record>
+					</Collection>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="EPM_DEVELOPER_SCENARIO_SRV.Product/Name"
+						 xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="com.sap.vocabularies.Common.v1.SemanticObject"
+							String="appUnderTest_SemanticObjectName"/>
+			</Annotations>
+			<Annotations Target="EPM_DEVELOPER_SCENARIO_SRV.Product/Category"
+						 xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="com.sap.vocabularies.Common.v1.SemanticObject"
+							String="appUnderTest_SemanticObjectCategory"/>
+			</Annotations>
+		</Schema>
+	</edmx:DataServices>
+</edmx:Edmx>

@@ -1,0 +1,26 @@
+{
+	"_version": "1.9.0",
+
+	"sap.app": {
+		"id": "sap.m.sample.messageHandlingConcept",
+		"type": "application",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "sap.m.sample.messageHandlingConcept.View",
+			"type": "XML",
+			"async": true
+		},
+		"dependencies": {
+			"libs": {
+				"sap.m": {},
+				"sap.ui.core": {},
+				"sap.ui.layout": {}
+			}
+		}
+	}
+}

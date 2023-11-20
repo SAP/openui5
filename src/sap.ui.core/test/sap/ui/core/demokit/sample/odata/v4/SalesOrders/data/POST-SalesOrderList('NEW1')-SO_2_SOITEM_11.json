@@ -1,0 +1,9 @@
+{
+	"SalesOrderID" : "NEW1",
+	"ItemPosition" : "11",
+	"DeliveryDate" : "2022-03-12T10:07:56Z",
+	"GrossAmount" : "5890.5",
+	"ProductID" : "HT-1003",
+	"Quantity" : "3.000",
+	"QuantityUnit" : "EA"
+}

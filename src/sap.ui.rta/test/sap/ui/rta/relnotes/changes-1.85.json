@@ -1,0 +1,29 @@
+{
+  "1.85.0": {
+    "date": "November 2020",
+    "notes": [
+      {
+        "id": "b9b0cbee1a89d9ba5654f6e8d8885dea10874fd5",
+        "type": "FIX",
+        "text": ": RTA Add Iframe Sizing Issue",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070394535"
+          }
+        ]
+      },
+      {
+        "id": "371df0da45d43a10ebbe835ffe3c1107cae0c5c3",
+        "type": "FIX",
+        "text": ": RTA Additional Elements Demo-App Ushell-Mock-Fix",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080366650"
+          }
+        ]
+      }
+    ]
+  }
+}

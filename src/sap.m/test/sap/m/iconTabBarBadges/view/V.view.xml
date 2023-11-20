@@ -1,0 +1,332 @@
+<mvc:View 
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core"
+	controllerName="sap.m.iconTabBarBadges.controller.C"
+	displayBlock="true">
+	<App>
+		<Page title="Badges">
+			<headerContent>
+				<ToggleButton id="densityModeBox" text="sapUiSizeCompact" press="onToggleCompact" />
+			</headerContent>
+			<Button text="Add Badge To Visible Item" press=".addToVisible" />
+			<Button text="Add Badge To Sub Item" press=".addToSubItem" />
+			<Button text="Add Badge To 'split-mode tab' Root Item" press=".addToSplitModeTabRootItem" />
+			<Button text="Add Badge To 'split-mode tab' Sub Item" press=".addToSplitModeTabSubItem" />
+			<Button text="Add Badge To 'More' Item" press=".addToMoreItem" />
+			<Button text="Add Badge To 'More' Sub Item" press=".addToMoreSubItem" />
+			<Button text="Add Badge To 'Icon' Item" press=".addToIconItem" />
+			<IconTabBar class="maxWidth">
+				<items>
+					<IconTabFilter key="item1" text="Item 1">
+						<Text text="Info" />
+						<customData>
+							<BadgeCustomData visible="true" />
+						</customData>
+					</IconTabFilter>
+					<IconTabFilter text="Item 2">
+						<items>
+							<IconTabFilter text="Item 2 1">
+								<Text text="Info" />
+								<items>
+									<IconTabFilter id="item211" text="Item 2 1 1">
+										<Text text="Info" />
+									</IconTabFilter>
+								</items>
+							</IconTabFilter>
+						</items>
+					</IconTabFilter>
+					<IconTabFilter id="item3" text="Item 3">
+						<Text text="Info" />
+					</IconTabFilter>
+					<IconTabFilter id="item4" text="Item 4">
+						<Text text="Info" />
+						<items>
+							<IconTabFilter text="Nested Info 1">
+								<Text text="Nested Info 1" />
+							</IconTabFilter>
+							<IconTabFilter id="item402" text="Nested Info 2">
+								<Text text="Nested Info 2" />
+							</IconTabFilter>
+						</items>
+					</IconTabFilter>
+					<IconTabFilter text="Item 5">
+						<Text text="Info" />
+					</IconTabFilter>
+					<IconTabFilter text="Item 6">
+						<customData>
+							<core:CustomData key="a" value="b" writeToDom="true" />
+							<BadgeCustomData visible="true" />
+						</customData>
+						<Text text="Info" />
+					</IconTabFilter>
+					<IconTabFilter text="Item 7">
+						<customData>
+							<core:CustomData key="c" value="d" writeToDom="true" />
+						</customData>
+						<Text text="Info" />
+					</IconTabFilter>
+					<IconTabFilter text="Item 8">
+						<Text text="Info" />
+					</IconTabFilter>
+					<IconTabFilter text="Item 9">
+						<Text text="Info" />
+					</IconTabFilter>
+					<IconTabFilter text="Item 10">
+						<Text text="Info" />
+					</IconTabFilter>
+					<IconTabFilter text="Item 11">
+						<Text text="Info" />
+					</IconTabFilter>
+					<IconTabFilter text="Item 12">
+						<Text text="Info" />
+					</IconTabFilter>
+					<IconTabFilter text="Item 13">
+						<Text text="Info" />
+					</IconTabFilter>
+					<IconTabFilter text="Item 14">
+						<Text text="Info" />
+					</IconTabFilter>
+					<IconTabFilter text="Item 15">
+						<Text text="Info" />
+					</IconTabFilter>
+					<IconTabFilter id="item16" text="Item 16">
+						<Text text="Info" />
+					</IconTabFilter>
+					<IconTabFilter text="Item 17">
+						<Text text="Info" />
+						<items>
+							<IconTabFilter text="Item 17 1">
+								<Text text="Info" />
+								<items>
+									<IconTabFilter id="item1711" text="Item 17 1 1">
+										<Text text="Info" />
+									</IconTabFilter>
+								</items>
+							</IconTabFilter>
+						</items>
+					</IconTabFilter>
+				</items>
+			</IconTabBar>
+			<IconTabBar id="iconTabBarTextOnly" class="maxWidth">
+				<items>
+					<IconTabFilter key="item1" text="Item 1">
+						<Text text="Info" />
+						<customData>
+							<BadgeCustomData visible="true" />
+						</customData>
+					</IconTabFilter>
+					<IconTabFilter text="Item 2">
+						<items>
+							<IconTabFilter text="Item 2 1">
+								<Text text="Info" />
+								<items>
+									<IconTabFilter text="Item 2 1 1">
+										<Text text="Info" />
+										<customData>
+											<BadgeCustomData visible="true" />
+										</customData>
+									</IconTabFilter>
+								</items>
+							</IconTabFilter>
+						</items>
+					</IconTabFilter>
+					<IconTabFilter text="Item 3">
+						<Text text="Info" />
+					</IconTabFilter>
+					<IconTabFilter text="Item 4">
+						<Text text="Info" />
+						<customData>
+							<BadgeCustomData visible="true" />
+						</customData>
+						<items>
+							<IconTabFilter text="Nested Info 1">
+								<Text text="Nested Info 1" />
+							</IconTabFilter>
+							<IconTabFilter text="Nested Info 2">
+								<Text text="Nested Info 2" />
+								<customData>
+									<BadgeCustomData visible="true" />
+								</customData>
+							</IconTabFilter>
+						</items>
+					</IconTabFilter>
+					<IconTabFilter text="Item 5">
+						<Text text="Info" />
+					</IconTabFilter>
+					<IconTabFilter text="Item 6">
+						<customData>
+							<core:CustomData key="a" value="b" writeToDom="true" />
+							<BadgeCustomData visible="true" />
+						</customData>
+						<Text text="Info" />
+					</IconTabFilter>
+					<IconTabFilter text="Item 7">
+						<customData>
+							<core:CustomData key="c" value="d" writeToDom="true" />
+						</customData>
+						<Text text="Info" />
+					</IconTabFilter>
+					<IconTabFilter text="Item 8">
+						<Text text="Info" />
+					</IconTabFilter>
+					<IconTabFilter text="Item 9">
+						<Text text="Info" />
+					</IconTabFilter>
+					<IconTabFilter text="Item 10">
+						<Text text="Info" />
+					</IconTabFilter>
+					<IconTabFilter text="Item 11">
+						<Text text="Info" />
+					</IconTabFilter>
+					<IconTabFilter text="Item 12">
+						<Text text="Info" />
+					</IconTabFilter>
+					<IconTabFilter text="Item 13">
+						<Text text="Info" />
+					</IconTabFilter>
+					<IconTabFilter text="Item 14">
+						<Text text="Info" />
+					</IconTabFilter>
+					<IconTabFilter text="Item 15">
+						<Text text="Info" />
+					</IconTabFilter>
+					<IconTabFilter text="Item 16">
+						<Text text="Info" />
+					</IconTabFilter>
+					<IconTabFilter text="Item 17">
+						<Text text="Info" />
+						<items>
+							<IconTabFilter text="Item 17 1">
+								<Text text="Info" />
+								<items>
+									<IconTabFilter text="Item 17 1 1">
+										<Text text="Info" />
+										<customData>
+											<BadgeCustomData visible="true" />
+										</customData>
+									</IconTabFilter>
+								</items>
+							</IconTabFilter>
+						</items>
+					</IconTabFilter>
+				</items>
+			</IconTabBar>
+			<IconTabBar id="iconTabBarTextAndCount">
+				<items>
+					<IconTabFilter text="Item 1" count="5">
+						<Text text="Info" />
+						<customData>
+							<BadgeCustomData visible="true" />
+						</customData>
+					</IconTabFilter>
+					<IconTabFilter text="Item 2" count="6">
+						<Text text="Info" />
+						<customData>
+							<BadgeCustomData visible="true" />
+						</customData>
+					</IconTabFilter>
+				</items>
+			</IconTabBar>
+			<IconTabBar id="iconTabBarIconOnly">
+				<items>
+					<IconTabFilter icon="sap-icon://warning">
+						<Text text="Info" />
+						<customData>
+							<BadgeCustomData visible="true" />
+						</customData>
+					</IconTabFilter>
+					<IconTabFilter id="iconTab" icon="sap-icon://warning" iconColor="Negative">
+						<Text text="Info" />
+					</IconTabFilter>
+					<IconTabFilter icon="sap-icon://warning" count="25" iconColor="Neutral">
+						<Text text="Info" />
+						<customData>
+							<BadgeCustomData visible="true" />
+						</customData>
+					</IconTabFilter>
+					<IconTabFilter icon="sap-icon://warning" count="25" iconColor="Positive">
+						<Text text="Info" />
+						<customData>
+							<BadgeCustomData visible="true" />
+						</customData>
+					</IconTabFilter>
+					<IconTabFilter icon="sap-icon://warning" count="25" iconColor="Contrast">
+						<Text text="Info" />
+						<customData>
+							<BadgeCustomData visible="true" />
+						</customData>
+					</IconTabFilter>
+				</items>
+			</IconTabBar>
+			<IconTabBar id="iconTabBarIconAndText">
+				<items>
+					<IconTabFilter text="Tab" icon="sap-icon://warning">
+						<Text text="Info" />
+						<customData>
+							<BadgeCustomData visible="true" />
+						</customData>
+					</IconTabFilter>
+					<IconTabFilter text="Tab" icon="sap-icon://warning" iconColor="Negative">
+						<Text text="Info" />
+						<customData>
+							<BadgeCustomData visible="true" />
+						</customData>
+					</IconTabFilter>
+					<IconTabFilter text="Tab" icon="sap-icon://warning" count="25" iconColor="Neutral">
+						<Text text="Info" />
+						<customData>
+							<BadgeCustomData visible="true" />
+						</customData>
+					</IconTabFilter>
+					<IconTabFilter text="Tab" icon="sap-icon://warning" count="25" iconColor="Positive">
+						<Text text="Info" />
+						<customData>
+							<BadgeCustomData visible="true" />
+						</customData>
+					</IconTabFilter>
+					<IconTabFilter text="Tab" icon="sap-icon://warning" count="25" iconColor="Contrast">
+						<Text text="Info" />
+						<customData>
+							<BadgeCustomData visible="true" />
+						</customData>
+					</IconTabFilter>
+				</items>
+			</IconTabBar>
+			<IconTabBar id="iconTabBarHorizontal">
+				<items>
+					<IconTabFilter design="Horizontal" text="Tab" icon="sap-icon://warning">
+						<Text text="Info" />
+						<customData>
+							<BadgeCustomData visible="true" />
+						</customData>
+					</IconTabFilter>
+					<IconTabFilter design="Horizontal" text="Tab" icon="sap-icon://warning" iconColor="Negative">
+						<Text text="Info" />
+						<customData>
+							<BadgeCustomData visible="true" />
+						</customData>
+					</IconTabFilter>
+					<IconTabFilter design="Horizontal" text="Tab" icon="sap-icon://warning" count="25" iconColor="Neutral">
+						<Text text="Info" />
+						<customData>
+							<BadgeCustomData visible="true" />
+						</customData>
+					</IconTabFilter>
+					<IconTabFilter design="Horizontal" text="Tab" icon="sap-icon://warning" count="25" iconColor="Positive">
+						<Text text="Info" />
+						<customData>
+							<BadgeCustomData visible="true" />
+						</customData>
+					</IconTabFilter>
+					<IconTabFilter design="Horizontal" text="Tab" icon="sap-icon://warning" count="25" iconColor="Contrast">
+						<Text text="Info" />
+						<customData>
+							<BadgeCustomData visible="true" />
+						</customData>
+					</IconTabFilter>
+				</items>
+			</IconTabBar>
+		</Page>
+	</App>
+</mvc:View>

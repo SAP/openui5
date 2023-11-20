@@ -1,7 +1,11 @@
 /*global QUnit*/
 
 sap.ui.define([
-	"sap/ui/test/opaQunit"
+	"sap/ui/test/opaQunit",
+	"./pages/Master",
+	"./pages/Detail",
+	"./pages/Browser",
+	"./pages/App"
 ], function (opaTest) {
 	"use strict";
 
@@ -9,18 +13,16 @@ sap.ui.define([
 
 	opaTest("Should navigate on press", function (Given, When, Then) {
 		// Arrangements
-		Given.iStartTheApp({
-			hash: "/Objects/ObjectID_13"
-		});
+		Given.iStartMyApp();
 
 		// Actions
-		When.onTheMasterPage.iRememberTheSelectedItem().
-			and.iRememberTheIdOfListItemAtPosition(1).
+		When.onTheMasterPage.iRememberTheIdOfListItemAtPosition(1).
 			and.iPressOnTheObjectAtPosition(1);
 
 		// Assertions
 		Then.onTheDetailPage.iShouldSeeTheRememberedObject().
 			and.iShouldSeeHeaderActionButtons();
+		Then.onTheBrowserPage.iShouldSeeTheHashForTheRememberedObject();
 	});
 
 	opaTest("Should press full screen toggle button: The app shows one column", function (Given, When, Then) {
@@ -28,8 +30,8 @@ sap.ui.define([
 		When.onTheDetailPage.iPressTheHeaderActionButton("enterFullScreen");
 
 		// Assertions
-		Then.onTheDetailPage.theAppShowsFCLDesign("MidColumnFullScreen").
-			and.iShouldSeeTheFullScreenToggleButton("exitFullScreen");
+		Then.onTheAppPage.theAppShowsFCLDesign("MidColumnFullScreen");
+		Then.onTheDetailPage.iShouldSeeTheFullScreenToggleButton("exitFullScreen");
 	});
 
 	opaTest("Should press full screen toggle button: The app shows two columns", function (Given, When, Then) {
@@ -37,29 +39,28 @@ sap.ui.define([
 		When.onTheDetailPage.iPressTheHeaderActionButton("exitFullScreen");
 
 		// Assertions
-		Then.onTheDetailPage.theAppShowsFCLDesign("TwoColumnsMidExpanded").
-			and.iShouldSeeTheFullScreenToggleButton("enterFullScreen");
+		Then.onTheAppPage.theAppShowsFCLDesign("TwoColumnsMidExpanded");
+		Then.onTheDetailPage.iShouldSeeTheFullScreenToggleButton("enterFullScreen");
 	});
 
 	opaTest("Should react on hash change", function (Given, When, Then) {
 		// Actions
-		When.onTheMasterPage.iRememberTheIdOfListItemAtPosition(2);
+		When.onTheMasterPage.iRememberTheIdOfListItemAtPosition(0);
 		When.onTheBrowserPage.iChangeTheHashToTheRememberedItem();
 
 		// Assertions
-		Then.onTheDetailPage.iShouldSeeTheRememberedObject().and.iShouldSeeNoBusyIndicator();
+		Then.onTheDetailPage.iShouldSeeTheRememberedObject();
 		Then.onTheMasterPage.theRememberedListItemShouldBeSelected();
 	});
 
+
 	opaTest("Detail Page Shows Object Details", function (Given, When, Then) {
-		// Actions
-		When.onTheDetailPage.iLookAtTheScreen();
+
 		// Assertions
 		Then.onTheDetailPage.iShouldSeeTheObjectLineItemsList().
 			and.theDetailViewShouldContainOnlyFormattedUnitNumbers().
 			and.theLineItemsListShouldHaveTheCorrectNumberOfItems().
-			and.theLineItemsHeaderShouldDisplayTheAmountOfEntries().
-			and.theLineItemsTableShouldContainOnlyFormattedUnitNumbers();
+			and.theLineItemsHeaderShouldDisplayTheAmountOfEntries();
 
 	});
 
@@ -77,33 +78,45 @@ sap.ui.define([
 		When.onTheDetailPage.iPressTheHeaderActionButton("closeColumn");
 
 		// Assertions
-		Then.onTheDetailPage.theAppShowsFCLDesign("OneColumn");
+		Then.onTheAppPage.theAppShowsFCLDesign("OneColumn");
 		Then.onTheMasterPage.theListShouldHaveNoSelection();
 
 		// Cleanup
-		Then.iTeardownMyAppFrame();
+		Then.iTeardownMyApp();
 	});
 
 	opaTest("Start the App and simulate metadata error: MessageBox should be shown", function (Given, When, Then) {
 		//Arrangement
-		Given.iStartMyAppOnADesktopToTestErrorHandler("metadataError=true");
+		Given.iStartMyApp({
+			delay: 2000,
+			metadataError: true
+		});
 
 		// Assertions
 		Then.onTheAppPage.iShouldSeeTheMessageBox();
 
+		// Actions
+		When.onTheAppPage.iCloseTheMessageBox();
+
 		// Cleanup
-		Then.iTeardownMyAppFrame();
+		Then.iTeardownMyApp();
 	});
 
 	opaTest("Start the App and simulate bad request error: MessageBox should be shown", function (Given, When, Then) {
 		//Arrangement
-		Given.iStartMyAppOnADesktopToTestErrorHandler("errorType=serverError");
+		Given.iStartMyApp({
+			delay: 2000,
+			errorType: 'serverError'
+		});
 
 		// Assertions
 		Then.onTheAppPage.iShouldSeeTheMessageBox();
 
+		// Actions
+		When.onTheAppPage.iCloseTheMessageBox();
+
 		// Cleanup
-		Then.iTeardownMyAppFrame();
+		Then.iTeardownMyApp();
 	});
 
 });

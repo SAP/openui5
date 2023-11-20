@@ -1,11 +1,12 @@
 /*!
  * ${copyright}
  */
-
+/*eslint-disable max-len */
 // Provides class sap.ui.model.odata.ODataTreeBindingAdapter
-sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', './v2/ODataTreeBinding', 'sap/ui/model/TreeBindingAdapter', 'sap/ui/model/TreeAutoExpandMode', 'sap/ui/model/ChangeReason', './OperationMode'],
-	function(jQuery, TreeBinding, ODataTreeBinding, TreeBindingAdapter, TreeAutoExpandMode, ChangeReason, OperationMode) {
+sap.ui.define(['sap/ui/model/TreeBinding', './v2/ODataTreeBinding', 'sap/ui/model/TreeBindingAdapter', 'sap/ui/model/TreeAutoExpandMode', 'sap/ui/model/ChangeReason', './OperationMode', 'sap/base/assert', 'sap/ui/model/Filter', 'sap/ui/model/odata/ODataUtils'],
+	function(TreeBinding, ODataTreeBinding, TreeBindingAdapter, TreeAutoExpandMode, ChangeReason, OperationMode, assert, Filter, ODataUtils) {
 	"use strict";
+
 
 	/**
 	 * Adapter for TreeBindings to add the ListBinding functionality and use the
@@ -16,6 +17,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', './v2/ODataTreeB
 	 * @alias sap.ui.model.odata.ODataTreeBindingAdapter
 	 * @function
 	 * @experimental This module is only for experimental and internal use!
+	 *
 	 * @public
 	 */
 	var ODataTreeBindingAdapter = function() {
@@ -65,12 +67,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', './v2/ODataTreeB
 	};
 
 	/**
-	 * Returns true or false, depending on the child count of the given node.
-	 * @override
+	 * Returns whether the node has children.
+	 *
+	 * @param {object} oNode The node
+	 * @returns {boolean} Whether the node has children
+	 *
 	 * @private
+	 * @ui5-restricted sap.ui.table.AnalyticalTable, sap.ui.table.TreeTable
 	 */
 	ODataTreeBindingAdapter.prototype.nodeHasChildren = function(oNode) {
-		jQuery.sap.assert(oNode, "ODataTreeBindingAdapter.nodeHasChildren: No node given!");
+		assert(oNode, "ODataTreeBindingAdapter.nodeHasChildren: No node given!");
 
 		//check if the node has children
 		if (!oNode) {
@@ -84,9 +90,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', './v2/ODataTreeB
 	};
 
 	/**
-	 * Calculates a group id for the given node.
-	 * The actual group ID differs between hierarchy-annotations and navigation properties
-	 * @override
+	 * Calculates a group id for the given node. The actual group ID differs between
+	 * hierarchy-annotations and navigation properties.
+	 *
+	 * @param {object} oNode The node
+	 * @returns {string} The calculated group id
+	 *
 	 * @private
 	 */
 	ODataTreeBindingAdapter.prototype._calculateGroupID = function (oNode) {
@@ -115,18 +124,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', './v2/ODataTreeB
 				//odata navigation properties
 				sGroupIDSuffix = oNode.context.sPath.substring(1) + "/";
 			}
-		} else {
+		} else if (this.bHasTreeAnnotations) {
 			//case 2: node sits on root level
-			if (this.bHasTreeAnnotations) {
-				sGroupIDBase = "/";
-				// See comment at replacement above
-				sEncodedValue = (oNode.context.getProperty(this.oTreeProperties["hierarchy-node-for"]) + "").replace(/\//g, "%2F");
-				sGroupIDSuffix = sEncodedValue + "/";
-			} else {
-				//odata nav properties case
-				sGroupIDBase = "/";
-				sGroupIDSuffix = oNode.context.sPath[0] === "/" ? oNode.context.sPath.substring(1) : oNode.context.sPath;
-			}
+			sGroupIDBase = "/";
+			// See comment at replacement above
+			sEncodedValue = (oNode.context.getProperty(this.oTreeProperties["hierarchy-node-for"])
+				+ "").replace(/\//g, "%2F");
+			sGroupIDSuffix = sEncodedValue + "/";
+		} else {
+			//odata nav properties case
+			sGroupIDBase = "/";
+			sGroupIDSuffix = oNode.context.sPath[0] === "/"
+				? oNode.context.sPath.substring(1) : oNode.context.sPath;
 		}
 
 		var sGroupID = sGroupIDBase + sGroupIDSuffix;
@@ -136,10 +145,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', './v2/ODataTreeB
 
 	/**
 	 * Resets all fields, which are used by the TreeBindingAdapter.
+	 *
+	 * @param {sap.ui.model.Context} [oContext] Only reset specific content matching the context
+	 * @param {object} [mParameters] Additional parameters
+	 *
 	 * @private
 	 */
 	ODataTreeBindingAdapter.prototype.resetData = function(oContext, mParameters) {
-		var vReturn = ODataTreeBinding.prototype.resetData.call(this, oContext, mParameters);
+		ODataTreeBinding.prototype.resetData.call(this, oContext, mParameters);
 
 		// clear the mapping table
 		this._aRowIndexMap = [];
@@ -158,8 +171,123 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', './v2/ODataTreeB
 			// clear the tree state
 			this._createTreeState(true);
 		}
+	};
 
-		return vReturn;
+	/**
+	 * Expand a nodes subtree to a given level
+	 *
+	 * @param {int} iIndex the absolute row index
+	 * @param {int} iLevel the level to which the data should be expanded
+	 * @param {boolean} bSuppressChange if set to true, no change event will be fired
+	 * @return {Promise} A promise resolving once the expansion process has been completed
+	 *
+	 * @public
+	 * @see sap.ui.model.odata.v2.ODataTreeBinding#expandNodeToLevel
+	 */
+	ODataTreeBindingAdapter.prototype.expandNodeToLevel = function (iIndex, iLevel, bSuppressChange) {
+		var that = this;
+
+		if (this.sOperationMode !== "Server") {
+			// To support OperationMode.Client, addition logic to work on already loaded nodes is required
+			return Promise.reject(new Error("expandNodeToLevel() does not support binding operation modes other than OperationMode.Server"));
+		}
+
+		var oNode = this.findNode(iIndex),
+			aParams = [],
+			sApplicationFilters = "";
+
+		if (this.sOperationMode == "Server" || this.bUseServersideApplicationFilters) {
+			sApplicationFilters = this.getFilterParams();
+		}
+
+		var sNodeIdForFilter = oNode.context.getProperty(this.oTreeProperties["hierarchy-node-for"]);
+
+		var oEntityType = this._getEntityType();
+		var sNodeFilterParameter = ODataUtils._createFilterParams(
+			new Filter(this.oTreeProperties["hierarchy-node-for"], "EQ", sNodeIdForFilter), this.oModel.oMetadata, oEntityType);
+
+		var sLevelFilter = this._getLevelFilterParams("LE", iLevel);
+
+
+		//construct node filter parameter
+		aParams.push("$filter=" + sNodeFilterParameter + "%20and%20" + sLevelFilter +
+			(sApplicationFilters ? "%20and%20" + sApplicationFilters : ""));
+
+		if (this.sCustomParams) {
+			aParams.push(this.sCustomParams);
+		}
+
+		return this._loadSubTree(oNode, aParams)
+			.then(function (oData) {
+				// only expand nodes below (visually above) the given level
+				var aEntries = oData.results.filter(function(oEntry) {
+					return oEntry[that.oTreeProperties["hierarchy-level-for"]] < iLevel;
+				});
+				this._expandSubTree(oNode, aEntries);
+				if (!bSuppressChange) {
+					this._fireChange({ reason: ChangeReason.Expand });
+				}
+			}.bind(this));
+
+	};
+
+	/**
+	 * Expand supplied child nodes of a given node
+	 *
+	 * @param {object} oParentNode Parent to expand the nodes for
+	 * @param {Array} aData Subtree data
+	 *
+	 * @private
+	 */
+	ODataTreeBindingAdapter.prototype._expandSubTree = function(oParentNode, aData) {
+		this._updateTreeState({groupID: oParentNode.groupID, expanded: true});
+
+		var sParentNodeID, sParentGroupID, sNodeId,
+			mParentGroupIDs = {},
+			i;
+
+		sNodeId = oParentNode.context.getProperty(this.oTreeProperties["hierarchy-node-for"]);
+		mParentGroupIDs[sNodeId] = oParentNode.groupID;
+
+		for (i = 1; i < aData.length; i++) {
+			var sId, sKey, sGroupID,
+				oEntry, oContext;
+
+			oEntry = aData[i];
+			sId = oEntry[this.oTreeProperties["hierarchy-node-for"]];
+			sParentNodeID = oEntry[this.oTreeProperties["hierarchy-parent-node-for"]];
+
+			// Leaf nodes should not be expanded
+			if (oEntry[this.oTreeProperties["hierarchy-drill-state-for"]] === "leaf") {
+				continue;
+			}
+
+			sKey = this.oModel._getKey(oEntry);
+			oContext = this.oModel.getContext("/" + sKey);
+
+			sParentGroupID = mParentGroupIDs[sParentNodeID];
+
+			sGroupID = this._calculateGroupID({
+				parent: {
+					groupID: sParentGroupID
+				},
+				context: oContext
+			});
+			mParentGroupIDs[sId] = sGroupID;
+
+			this._updateTreeState({
+				groupID: sGroupID,
+				expanded: true
+			});
+		}
+
+	};
+
+	ODataTreeBindingAdapter.prototype.getLength = function() {
+        if ((!this._oRootNode || !this._oRootNode.magnitude) && this.oFinalLengths[null]) {
+            return this.oLengths[null];
+        }
+        return TreeBindingAdapter.prototype.getLength.apply(this);
 	};
 
 	/**
@@ -168,6 +296,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', './v2/ODataTreeB
 	 * Please see the constructor documentation of sap.ui.model.odata.v2.ODataTreeBinding for the API documentation of the "treeState" constructor parameter.
 	 *
 	 * @name sap.ui.model.odata.ODataTreeBindingAdapter#getCurrentTreeState
+	 * @function
+	 *
 	 * @public
 	 */
 

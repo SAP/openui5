@@ -1,21 +1,21 @@
 <mvc:View controllerName="testdata.complexsyntax" xmlns:core="sap.ui.core"
-	xmlns:mvc="sap.ui.core.mvc" xmlns="sap.ui.commons" xmlns:table="sap.ui.table"
+	xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m" xmlns:table="sap.ui.table"
 	xmlns:html="http://www.w3.org/1999/xhtml">
 	<html:h2>
-		<Label text="Hello Mr. {path:'/singleEntry/firstName', formatter:'.myFormatter'}, {/singleEntry/lastName}"></Label>
+		<Label text="Hello Mr. {path:'/singleEntry/firstName', formatter:'.formatter.name'}, {/singleEntry/lastName}"></Label>
 	</html:h2>
 	<table:Table rows="{/table}">
 		<table:columns>
 			<table:Column>
 				<Label text="Name"></Label>
 				<table:template>
-					<TextField value="{path:'gender', formatter:'.myGenderFormatter'} {firstName}, {lastName}"></TextField>
+					<Input value="{path:'gender', formatter:'.formatter.gender'} {firstName}, {lastName}"></Input>
 				</table:template>
 			</table:Column>
 			<table:Column>
 				<Label text="Birthday"></Label>
 				<table:template>
-					<TextField value="{parts:[{path:'birthday/day'},{path:'birthday/month'},{path:'birthday/year'}], formatter:'my.globalFormatter'}"></TextField>
+					<Input value="{parts:[{path:'birthday/day'},{path:'birthday/month'},{path:'birthday/year'}], formatter:'.formatter.date'}"></Input>
 				</table:template>
 			</table:Column>
 		</table:columns>

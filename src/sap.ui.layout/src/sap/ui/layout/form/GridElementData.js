@@ -3,8 +3,10 @@
  */
 
 // Provides control sap.ui.layout.form.GridElementData.
-sap.ui.define(['sap/ui/core/LayoutData', 'sap/ui/layout/library'],
-	function(LayoutData, library) {
+sap.ui.define([
+	'sap/ui/core/LayoutData',
+	'sap/ui/layout/library'
+	], function(LayoutData, library) {
 	"use strict";
 
 	/**
@@ -24,7 +26,9 @@ sap.ui.define(['sap/ui/core/LayoutData', 'sap/ui/layout/library'],
 	 * @public
 	 * @since 1.16.0
 	 * @alias sap.ui.layout.form.GridElementData
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
+	 * @deprecated Since version 1.67.0.
+	 * as <code>sap.ui.commons</code> library is deprecated and the <code>GridLayout</code> must not be used in responsive applications.
+	 * Please use <code>ResponsiveGridLayout</code> or <code>ColumnLayout</code> instead.
 	 */
 	var GridElementData = LayoutData.extend("sap.ui.layout.form.GridElementData", /** @lends sap.ui.layout.form.GridElementData.prototype */ { metadata : {
 
@@ -50,13 +54,6 @@ sap.ui.define(['sap/ui/core/LayoutData', 'sap/ui/layout/library'],
 			vCells : {type : "int", group : "Appearance", defaultValue : 1}
 		}
 	}});
-
-	///**
-	// * This file defines behavior for the control,
-	// */
-	//sap.ui.commons.form.GridElementData.prototype.init = function(){
-	//   // do something for initialization...
-	//};
 
 	return GridElementData;
 

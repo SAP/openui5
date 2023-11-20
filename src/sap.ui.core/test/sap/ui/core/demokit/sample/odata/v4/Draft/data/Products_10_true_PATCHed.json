@@ -1,0 +1,15 @@
+{
+	"DraftAdministrativeData" : null,
+	"HasActiveEntity" : false,
+	"HasDraftEntity" : false,
+	"ID" : 10,
+	"IsActiveEntity" : true,
+	"amount" : "100",
+	"categoryID" : 1000,
+	"name" : "Test",
+	"_Category" : {
+		"ID" : 1000,
+		"IsActiveEntity" : true,
+		"name" : "First category"
+	}
+}

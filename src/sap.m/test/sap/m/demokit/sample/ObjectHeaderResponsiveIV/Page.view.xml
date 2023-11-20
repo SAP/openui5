@@ -2,7 +2,6 @@
 	height="100%"
 	controllerName="sap.m.sample.ObjectHeaderResponsiveIV.Page"
 	xmlns:mvc="sap.ui.core.mvc"
-	xmlns:l="sap.ui.layout"
 	xmlns="sap.m">
 	<ObjectHeader
 		id="oh1"
@@ -27,24 +26,23 @@
 		markFlagged="true"
 		markFavorite="true"
 		numberState="Success"
-		backgroundDesign="Translucent">
-		<attributes>
-			<ObjectAttribute
-				title="ProductID"
-				text="{ProductId}"/>
-			<ObjectAttribute
-				title="Manufacturer"
-				text="{SupplierName}"/>
-			<ObjectAttribute
-				title="Category"
-				text="{Category}"/>
-			<ObjectAttribute
-				title="Weight per unit"
-				text="{WeightMeasure} {WeightUnit}"/>
-			<ObjectAttribute
-				title="Dimension per unit"
-				text="{Width} x {Depth} x {Height} {DimUnit}"/>
-		</attributes>
+		backgroundDesign="Translucent"
+		class="sapUiResponsivePadding--header" >
+		<ObjectAttribute
+			title="ProductID"
+			text="{ProductId}"/>
+		<ObjectAttribute
+			title="Manufacturer"
+			text="{SupplierName}"/>
+		<ObjectAttribute
+			title="Category"
+			text="{Category}"/>
+		<ObjectAttribute
+			title="Weight per unit"
+			text="{WeightMeasure} {WeightUnit}"/>
+		<ObjectAttribute
+			title="Dimension per unit"
+			text="{Width} x {Depth} x {Height} {DimUnit}"/>
 		<statuses>
  			<ObjectStatus
 				title="Approval"
@@ -59,38 +57,46 @@
 				class="sapUiResponsiveContentPadding">
 				<items>
 					<IconTabFilter
+						key="info"
 						icon="sap-icon://hint">
 						<Text text="Info content goes here ..." />
 					</IconTabFilter>
 					<IconTabFilter
+						key="attachments"
 						icon="sap-icon://attachment"
 						count="3">
 						<Text text="Attachments go here ..." />
 					</IconTabFilter>
 					<IconTabFilter
+						key="notes"
 						icon="sap-icon://notes"
 						count="12">
 						<Text text="Notes go here ..." />
 					</IconTabFilter>
 					<IconTabFilter
+						key="people"
 						icon="sap-icon://group">
 						<Text text="People content goes here ..." />
 					</IconTabFilter>
 					<IconTabFilter
+						key="info2"
 						icon="sap-icon://hint">
 						<Text text="Info content goes here ..." />
 					</IconTabFilter>
 					<IconTabFilter
+						key="attachments2"
 						icon="sap-icon://attachment"
 						count="3">
 						<Text text="Attachments go here ..." />
 					</IconTabFilter>
 					<IconTabFilter
+						key="notes2"
 						icon="sap-icon://notes"
 						count="12">
 						<Text text="Notes go here ..." />
 					</IconTabFilter>
 					<IconTabFilter
+						key="people2"
 						icon="sap-icon://group">
 						<Text text="People content goes here ..." />
 					</IconTabFilter>

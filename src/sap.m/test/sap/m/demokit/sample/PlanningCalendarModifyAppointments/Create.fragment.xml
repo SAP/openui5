@@ -2,10 +2,17 @@
 		xmlns:l="sap.ui.layout"
 		xmlns:core="sap.ui.core"
 		xmlns="sap.m">
-	<l:VerticalLayout
+	<Dialog id="createDialog">
+		<beginButton>
+			<Button text="Save" type="Emphasized" press="handleDialogSaveButton"/>
+		</beginButton>
+		<endButton>
+			<Button text="Cancel" press="handleDialogCancelButton"/>
+		</endButton>
+		<l:VerticalLayout
 			class="sapUiContentPadding"
 			width="100%">
-		<l:content>
+			<CheckBox id="isIntervalAppointment" text="Interval appointment" select="handleAppointmentTypeChange"/>
 			<Label text="Select person: " labelFor="selectPerson"/>
 			<Select
 					id="selectPerson"
@@ -33,6 +40,6 @@
 					change="handleCreateChange"/>
 			<Label text="More information: " labelFor="inputInfo"/>
 			<Input id="moreInfo"/>
-		</l:content>
-	</l:VerticalLayout>
+		</l:VerticalLayout>
+	</Dialog>
 </core:FragmentDefinition>

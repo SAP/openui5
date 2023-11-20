@@ -1,0 +1,25 @@
+<mvc:View
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m">
+	<App id="app">
+		<Page>
+			<subHeader>
+				<Toolbar>
+					<ToolbarSpacer />
+					<Title text="IllustratedMessage" />
+					<ToolbarSpacer />
+				</Toolbar>
+			</subHeader>
+
+			<Panel>
+				<IllustratedMessage title="Test Title">
+
+					<additionalContent>
+						<Button text="Compose" />
+					</additionalContent>
+
+				</IllustratedMessage>
+			</Panel>
+		</Page>
+	</App>
+</mvc:View>

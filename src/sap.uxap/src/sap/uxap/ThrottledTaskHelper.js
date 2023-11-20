@@ -3,7 +3,7 @@
  */
 
 sap.ui.define([
-	"jquery.sap.global",
+	"sap/ui/thirdparty/jquery",
 	'sap/ui/base/Object'
 ], function (jQuery, BaseObject) {
 	"use strict";
@@ -15,7 +15,7 @@ sap.ui.define([
 	 * and returns a promise object whenever execution requested
 	 * @private
 	 * */
-	var ThrottledTask = BaseObject.extend("ThrottledTask", {
+	var ThrottledTask = BaseObject.extend("sap.uxap.ThrottledTask", {
 
 		/**
 		 * @param {function} fnTask - the function to throttle
@@ -39,7 +39,7 @@ sap.ui.define([
 			var oReturnPromise = this._getPromise();
 
 			if (this._iTimer) {
-				jQuery.sap.clearDelayedCall(this._iTimer);
+				clearTimeout(this._iTimer);
 				this._iTimer = null;
 			}
 
@@ -52,20 +52,24 @@ sap.ui.define([
 			}
 
 			// throttle
-			this._iTimer = jQuery.sap.delayedCall(this._iDelay, this, function () {
+			this._iTimer = setTimeout(function () {
 				if (this._oPromise) {
 					var bSuccess = this._fnTask.call(this._oContext, this._oTaskOptions);
 					this._completePromise(bSuccess);
 				}
-			}.bind(this));
+			}.bind(this), this._iDelay);
 
 			return oReturnPromise;
+		},
+
+		isPending: function() {
+			return this._iTimer != null;
 		},
 
 		_getPromise: function () {
 
 			if (!this._oPromise) {
-				this._oPromise = new window.Promise(function (resolve, reject) {
+				this._oPromise = new Promise(function (resolve, reject) {
 					this._fnResolvePromise = resolve;
 					this._fnRejectPromise = reject;
 				}.bind(this));

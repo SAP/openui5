@@ -1,0 +1,28 @@
+{
+	"@odata.count" : "4",
+	"value" : [{
+		"ID" : 10,
+		"IsActiveEntity" : true,
+		"amount" : "100",
+		"categoryID" : 1000,
+		"name" : "Product 1"
+	}, {
+		"ID" : 20,
+		"IsActiveEntity" : false,
+		"amount" : "200",
+		"categoryID" : 2000,
+		"name" : "Product 2 (draft)"
+	}, {
+		"ID" : 30,
+		"IsActiveEntity" : true,
+		"amount" : "1000",
+		"categoryID" : 3000,
+		"name" : "third product"
+	}, {
+		"ID" : 40,
+		"IsActiveEntity" : true,
+		"amount" : "1000",
+		"categoryID" : 3000,
+		"name" : "no object page"
+	}]
+}

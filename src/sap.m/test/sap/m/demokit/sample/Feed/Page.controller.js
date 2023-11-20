@@ -1,17 +1,16 @@
 sap.ui.define([
-	"jquery.sap.global",
 	"sap/m/MessageToast",
 	"sap/ui/core/format/DateFormat",
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/model/json/JSONModel"
-], function(jQuery, MessageToast, DateFormat, Controller, JSONModel) {
+], function(MessageToast, DateFormat, Controller, JSONModel) {
 	"use strict";
 
 	return Controller.extend("sap.m.sample.Feed.Page", {
 
 		onInit: function() {
 			// set mock model
-			var sPath = sap.ui.require.toUrl("sap/m/sample/Feed") + "/feed.json";
+			var sPath = sap.ui.require.toUrl("sap/m/sample/Feed/feed.json");
 			var oModel = new JSONModel(sPath);
 			this.getView().setModel(oModel);
 		},

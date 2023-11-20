@@ -4,18 +4,12 @@
 
 sap.ui.define([
 	"sap/ui/core/EventBus",
-	"sap/base/util/equal",
-	"sap/base/util/includes",
 	"sap/base/util/isPlainObject",
-	"sap/base/util/isWindow",
 	"sap/base/Log"
 ],
 function (
 	EventBus,
-	equal,
-	includes,
 	isPlainObject,
-	isWindow,
 	Log
 ) {
 	"use strict";
@@ -25,14 +19,16 @@ function (
 
 	/**
 	 * @class
-	 * <h3>Overview</h3>
-	 * This class is responsible for the communication between different window objects.
+	 * Responsible for the communication between different window objects.
 	 *
+	 * <h3>Overview</h3>
 	 * This class is a singleton. The class instance can be retrieved as follows:
 	 * <ul>
 	 *   <li>via the constructor <code>new sap.ui.core.postmessage.Bus()</code></li>
 	 *   <li>via the static method <code>sap.ui.core.postmessage.Bus.getInstance()</code></li>
 	 * </ul>
+	 *
+	 * For supported data types for payload messages, see {@link https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API/Structured_clone_algorithm}.
 	 *
 	 * @extends sap.ui.core.EventBus
 	 * @alias sap.ui.core.postmessage.Bus
@@ -81,8 +77,8 @@ function (
 	};
 
 	/**
-	 * Returns an instance of the class
-	 * @return {sap.ui.core.postmessage.Bus}
+	 * Returns an instance of the class.
+	 * @returns {sap.ui.core.postmessage.Bus} An instance of the class.
 	 * @static
 	 * @public
 	 */
@@ -100,7 +96,7 @@ function (
 	 * @param {string} mParameters.origin - Origin of the receiving window, e.g. http://example.com
 	 * @param {string} mParameters.channelId - Channel identifier
 	 * @param {string} mParameters.eventId - Event identifier
-	 * @param {*} [mParameters.data] - Payload data
+	 * @param {*} [mParameters.data] - Payload data. For supported data types see - {@link https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API/Structured_clone_algorithm}
 	 * @throws {TypeError} when invalid data is specified
 	 * @public
 	 */
@@ -129,7 +125,7 @@ function (
 
 		// Validation
 		if (
-			!isWindow(oTarget)
+			(typeof window === "undefined") || !(oTarget != null && oTarget === oTarget.window)
 			|| oTarget === window // avoid self-messaging
 		) {
 			throw TypeError("Target must be a window object and has to differ from current window");
@@ -146,16 +142,13 @@ function (
 
 		// Accept host immediately when message is sent
 		if (
-			!includes(
-				[
-					PostMessageBus.event.READY,
-					PostMessageBus.event.ACCEPTED,
-					PostMessageBus.event.DECLINED
-				],
-				sEventId
-			)
+			![
+				PostMessageBus.event.READY,
+				PostMessageBus.event.ACCEPTED,
+				PostMessageBus.event.DECLINED
+			].includes(sEventId)
 			&& sOrigin !== '*'
-			&& !includes(this._aAcceptedOrigins, sOrigin)
+			&& !this._aAcceptedOrigins.includes(sOrigin)
 		) {
 			this._aAcceptedOrigins.push(sOrigin);
 		}
@@ -201,7 +194,7 @@ function (
 	 * @param {object}
 	 *            [oListener] Object that wants to be notified when the event occurs (<code>this</code> context within the
 	 *                        handler function). If it is not specified, the handler function is called in the context of the event bus.
-	 * @return {sap.ui.core.postmessage.Bus} Returns <code>this</code> to allow method chaining
+	 * @return {this} Returns <code>this</code> to allow method chaining
 	 * @public
 	 */
 
@@ -217,7 +210,8 @@ function (
 	 * @private
 	 */
 	PostMessageBus.prototype._getText = function (sKey, aParameters) {
-		return sap.ui.getCore().getLibraryResourceBundle().getText(sKey, aParameters);
+		return sap.ui.getCore().getLibraryResourceBundle(true)
+		.then(function(oLibraryResourceBundle) { return oLibraryResourceBundle.getText(sKey, aParameters); });
 	};
 
 	/**
@@ -250,12 +244,12 @@ function (
 	 * @private
 	 */
 	PostMessageBus.prototype._processEvent = function (oEvent) {
-		return new Promise(function (fnResolve) {
+		return new Promise(function (fnResolve, fnReject) {
 			var mData = oEvent.data;
 			var sOrigin = oEvent.origin;
 
 			// Ignore messages from disabled hosts
-			if (includes(this._aDeclinedOrigins, sOrigin)) {
+			if (this._aDeclinedOrigins.includes(sOrigin)) {
 				fnResolve();
 				return;
 			}
@@ -270,7 +264,7 @@ function (
 							eventId: PostMessageBus.event.DECLINED
 						});
 						fnResolve();
-					} else if (includes(this._aAcceptedOrigins, sOrigin)) {
+					} else if (this._aAcceptedOrigins.includes(sOrigin)) {
 						this.publish({
 							target: oEvent.source,
 							origin: oEvent.origin,
@@ -281,9 +275,10 @@ function (
 					} else {
 						// Show dialog
 						sap.ui.require(["sap/ui/core/postmessage/confirmationDialog"], function (confirmationDialog) {
-							confirmationDialog(
-								this._getText('PostMessage.Message', [mData.data, sOrigin])
-							)
+							this._getText('PostMessage.Message', [mData.data, sOrigin])
+							.then(function(sText) {
+								return confirmationDialog(sText);
+							})
 							.then(
 								function () {
 									this.addAcceptedOrigin(sOrigin);
@@ -305,7 +300,7 @@ function (
 								}.bind(this)
 							)
 							.then(fnResolve);
-						}.bind(this));
+						}.bind(this), fnReject);
 					}
 					break;
 				}
@@ -318,7 +313,7 @@ function (
 					break;
 				}
 				default: {
-					if (includes(this._aAcceptedOrigins, sOrigin)) {
+					if (this._aAcceptedOrigins.includes(sOrigin)) {
 						this._emitMessage(oEvent);
 					}
 					fnResolve();
@@ -395,7 +390,7 @@ function (
 		if (typeof sOrigin !== 'string') {
 			throw new TypeError('Expected a string, but got ' + typeof sOrigin);
 		}
-		if (!includes(this._aAcceptedOrigins, sOrigin)) {
+		if (!this._aAcceptedOrigins.includes(sOrigin)) {
 			this._aAcceptedOrigins.push(sOrigin);
 		}
 	};
@@ -434,7 +429,7 @@ function (
 		if (typeof sOrigin !== 'string') {
 			throw new TypeError('Expected a string, but got ' + typeof sOrigin);
 		}
-		if (!includes(this._aDeclinedOrigins, sOrigin)) {
+		if (!this._aDeclinedOrigins.includes(sOrigin)) {
 			this._aDeclinedOrigins.push(sOrigin);
 		}
 	};

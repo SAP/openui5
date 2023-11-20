@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<title>Card Bundle Overview</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<script src="../../scripts/boot.js"></script>
+</head>
+
+<body class="sapUiBody topicBody">
+	<div class="topic">
+		<div class="content">
+
+			<h1 id="overview">Card Bundle Overview</h1>
+			<h2 id="what">What is a Card Bundle?</h2>
+			<p>
+				A Card Bundle is the zipped version of a folder that contains all resources that the card needs for
+				rendering and configuration.
+				The filename of this ZIP has the following format: <code>[CARDNAME].card.zip</code>
+			</p>
+			<h2 id="contained">What is contained in the Card Bundle?</h2>
+			<p>
+				The card's manifest.json contains the most important information to configure a card.
+				Nevertheless, other resources might also be needed for runtime or configuration purposes.
+				Such files are:
+			</p>
+			<ul>
+				<li>Image resources that are used instead of icons from an icon font</li>
+				<li>Translations of texts for the card <a href="../../index.html#/learn/features/translation"
+						target="_parent">details</a></li>
+				<li>Other static resources, for example static JSON data</li>
+				<li>Artifacts that define the Configuration Editor of the card</li>
+				<li>UI5 Component files in case of a <a href="../../index.html#/learn/typesOther/component"
+						target="_parent">Component Card</a></li>
+				<li>JavaScript logic held in <a href="../../index.html#/learn/features/extension"
+						target="_parent">Extension</a> file</li>
+			</ul>
+
+			<h2 id="resolvingPaths">How are paths resolved?</h2>
+			<p>
+				When the <code>manifest</code> property of the card is set as a URL to the <code>manifest.json</code>
+				file all paths are
+				<b>resolved relatively</b> to that file and will be loaded from there. If the <code>manifest</code>
+				property is set as an <code>object</code>
+				the <a href="../../index.html#/integrate/usage" target="_parent">baseUrl</a> property can be used as a
+				starting point when resolving paths.
+				If both manifest URL and base URL are defined - the base URL will be used for resolving paths.
+			</p>
+
+			<h2 id="conventions">Conventions</h2>
+			<p>
+				A Card Bundle should have the name: <code>[CARDNAME].card.zip</code>
+			</p>
+			<p>
+				Translation files and images should be stored in a separate folders for convenience.
+			</p>
+
+			<h2 id="componentCards">Component Cards</h2>
+			<p>
+				For production environments the resources of the card should be optimized.
+				For Component cards all modules should be packed into one single file called Component-preload.js.
+				For instructions how to build it read <a href="../../index.html#/learn/bundle/componentPreload" target="_parent">Component Preload</a>.
+			</p>
+
+			<h2 id="example">Example</h2>
+			<p>
+				Here is an example folder structure of a Card Bundle that includes a manifest.json, i18n translation
+				files, an icon and Configuration Editor.<br />
+				<a href="./resources/news.card.zip">Download the Card Bundle: news.card.zip</a>
+			</p>
+			<pre class="lang-yaml">
+-  manifest.json
+-  images
+   -  news.png
+-  i18n
+   -  messagebundle.properties
+   -  messagebundle_en.properties
+   -  messagebundle_de.properties
+-  dt
+   -  Configuration.js
+		</pre>
+
+			<p>
+				The manifest.json refers these files
+			</p>
+
+			<pre class="lang-json">{
+	"_version": "1.15.0",
+	"sap.app": {
+		"id": "cardexplorer.sample.news",
+		"type": "card",
+		"i18n": "i18n/messagebundle.properties"
+		"title": "{{mainTitle}}",
+		"subTitle": "{{mainDescription}}",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"icons": {
+			"icon": "images/news.png"
+		}
+	},
+	"sap.card": {
+		"configuration": {
+			"editor": "./dt/Configuration"
+			"parameters": {
+				"city": {
+					"value": "Berlin"
+				}
+			}
+		},
+		"type": "List",
+		"header": {
+			"title": "{{cardTitle}} {parameters>/city}",
+			"subTitle": "{{cardSubTitle}}",
+			"icon": {
+				"src": "sap-icon://customer-briefing"
+			},
+			"actions": [
+				{
+					"type": "Navigation",
+					"parameters": {
+						"url": "https://services.odata.org/V2/Northwind/Northwind.svc"
+					}
+				}
+			]
+		},
+		"content": {
+			"data": {
+				"request": {
+					"url": "https://services.odata.org/V2/Northwind/Northwind.svc/Customer_and_Suppliers_by_Cities",
+					"parameters": {
+						"$filter": "{parameters>/city/value}",
+					}
+				},
+				"path": "/articles"
+			},
+			"item": {
+				"title": "{CompanyName}",
+				"description": "{ContactName}",
+			},
+			"maxItems": 5
+		}
+	}
+}
+</pre>
+			<p>
+				NOTE: The paths to the i18n translation files and to the header icon are relative to the manifest.json
+			</p>
+
+		</div>
+	</div>
+</body>
+
+</html>

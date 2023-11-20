@@ -1,19 +1,27 @@
-/*
- * ! ${copyright}
+/*!
+ * ${copyright}
  */
 
 sap.ui.define([
-	'sap/ui/dt/Plugin',
-	'sap/ui/dt/plugin/ElementMover',
-	'sap/ui/dt/OverlayUtil',
-	'sap/ui/dt/OverlayRegistry'
+	"sap/ui/dt/Plugin",
+	"sap/ui/dt/plugin/ElementMover",
+	"sap/ui/dt/OverlayUtil",
+	"sap/ui/dt/Util",
+	"sap/ui/dt/OverlayRegistry",
+	"sap/ui/events/KeyCodes",
+	"sap/ui/Device"
 ], function(
 	Plugin,
 	ElementMover,
 	OverlayUtil,
-	OverlayRegistry
+	DtUtil,
+	OverlayRegistry,
+	KeyCodes,
+	Device
 ) {
 	"use strict";
+
+	var INSERT_AFTER_ELEMENT = true;
 
 	/**
 	 * Constructor for a new CutPaste.
@@ -28,10 +36,8 @@ sap.ui.define([
 	 * @private
 	 * @since 1.34
 	 * @alias sap.ui.dt.plugin.CutPaste
-	 * @experimental Since 1.34. This class is experimental and provides only limited functionality. Also the API might be changed in future.
 	 */
-	var CutPaste = Plugin.extend("sap.ui.dt.plugin.CutPaste", /** @lends sap.ui.dt.plugin.CutPaste.prototype */
-	{
+	var CutPaste = Plugin.extend("sap.ui.dt.plugin.CutPaste", /** @lends sap.ui.dt.plugin.CutPaste.prototype */ {
 		metadata: {
 			library: "sap.ui.dt",
 			properties: {
@@ -58,19 +64,26 @@ sap.ui.define([
 	 */
 	CutPaste.prototype.registerElementOverlay = function(oOverlay) {
 		var oElement = oOverlay.getElement();
-		//Register key down so that ESC is possible on all overlays
-		oOverlay.attachBrowserEvent("keydown", this._onKeyDown, this);
-		if (
-			this.getElementMover().isMovableType(oElement)
-			&& this.getElementMover().checkMovable(oOverlay)
-			&& !OverlayUtil.isInAggregationBinding(oOverlay, oElement.sParentAggregationName)
-		) {
-			oOverlay.setMovable(true);
-		}
-
-		if (this.getElementMover().getMovedOverlay()) {
-			this.getElementMover().activateTargetZonesFor(this.getElementMover().getMovedOverlay());
-		}
+		this.getElementMover().checkMovable(oOverlay)
+		.then(function(bMovable) {
+			// Register key down so that ESC is possible on all overlays
+			oOverlay.attachBrowserEvent("keydown", this._onKeyDown, this);
+			if (
+				this.getElementMover().isMovableType(oElement)
+					&& bMovable
+			) {
+				oOverlay.setMovable(true);
+			}
+			if (this.getElementMover().getMovedOverlay()) {
+				this.getElementMover().activateTargetZonesFor(this.getElementMover().getMovedOverlay());
+			}
+		}.bind(this))
+		.catch(function(oError) {
+			throw DtUtil.createError(
+				"CutPaste#registerElementOverlay",
+				`An error occurred during checkMovable: ${oError}`
+			);
+		});
 	};
 
 	/**
@@ -103,28 +116,27 @@ sap.ui.define([
 		var oTargetZoneAggregation = this._getTargetZoneAggregation(oTargetOverlay);
 		if ((oTargetZoneAggregation) || (OverlayUtil.isInTargetZoneAggregation(oTargetOverlay))) {
 			return true;
-		} else {
-			return false;
 		}
+		return false;
 	};
 
 	CutPaste.prototype._onKeyDown = function(oEvent) {
 		var oOverlay = OverlayRegistry.getOverlay(oEvent.currentTarget.id);
 
 		// on macintosh os cmd-key is used instead of ctrl-key
-		var bCtrlKey = sap.ui.Device.os.macintosh ? oEvent.metaKey : oEvent.ctrlKey;
+		var bCtrlKey = Device.os.macintosh ? oEvent.metaKey : oEvent.ctrlKey;
 
-		if ((oEvent.keyCode === jQuery.sap.KeyCodes.X) && (oEvent.shiftKey === false) && (oEvent.altKey === false) && (bCtrlKey === true)) {
+		if ((oEvent.keyCode === KeyCodes.X) && (oEvent.shiftKey === false) && (oEvent.altKey === false) && (bCtrlKey === true)) {
 			// CTRL+X
 			this.cut(oOverlay);
 			oEvent.stopPropagation();
-		} else if ((oEvent.keyCode === jQuery.sap.KeyCodes.V) && (oEvent.shiftKey === false) && (oEvent.altKey === false) && (bCtrlKey === true)) {
+		} else if ((oEvent.keyCode === KeyCodes.V) && (oEvent.shiftKey === false) && (oEvent.altKey === false) && (bCtrlKey === true)) {
 			// CTRL+V
 			if (this.getElementMover().getMovedOverlay()) {
 				this.paste(oOverlay);
 			}
 			oEvent.stopPropagation();
-		} else if (oEvent.keyCode === jQuery.sap.KeyCodes.ESCAPE) {
+		} else if (oEvent.keyCode === KeyCodes.ESCAPE) {
 			// ESC
 			this.stopCutAndPaste();
 			oEvent.stopPropagation();
@@ -138,8 +150,12 @@ sap.ui.define([
 			this.getElementMover().setMovedOverlay(oOverlay);
 			oOverlay.addStyleClass("sapUiDtOverlayCutted");
 
-			this.getElementMover().activateAllValidTargetZones(this.getDesignTime());
+			return this.getElementMover().activateAllValidTargetZones(this.getDesignTime())
+			.then(function() {
+				oOverlay.focus();
+			});
 		}
+		return Promise.resolve(undefined);
 	};
 
 	/**
@@ -162,7 +178,7 @@ sap.ui.define([
 				this.getElementMover().insertInto(oCutOverlay, oTargetZoneAggregation);
 				bResult = true;
 			} else if (OverlayUtil.isInTargetZoneAggregation(oTargetOverlay)) {
-				this.getElementMover().repositionOn(oCutOverlay, oTargetOverlay);
+				this.getElementMover().repositionOn(oCutOverlay, oTargetOverlay, INSERT_AFTER_ELEMENT);
 				bResult = true;
 			}
 		}
@@ -170,7 +186,7 @@ sap.ui.define([
 		// focus get invalidated, see BCP 1580061207
 		if (bResult) {
 			oCutOverlay.setSelected(true);
-			setTimeout(function () {
+			setTimeout(function() {
 				oCutOverlay.focus();
 			}, 0);
 		}
@@ -185,7 +201,7 @@ sap.ui.define([
 	CutPaste.prototype.paste = function(oTargetOverlay) {
 		var bPasteExecuted = this._executePaste(oTargetOverlay);
 
-		if (bPasteExecuted === true){
+		if (bPasteExecuted === true) {
 			this.stopCutAndPaste();
 		}
 	};
@@ -207,16 +223,15 @@ sap.ui.define([
 	};
 
 	CutPaste.prototype._getTargetZoneAggregation = function(oTargetOverlay) {
-		var aAggregationOverlays = oTargetOverlay.getAggregationOverlays();
+		var aAggregationOverlays = oTargetOverlay.getChildren();
 		var aPossibleTargetZones = aAggregationOverlays.filter(function(oAggregationOverlay) {
 			return oAggregationOverlay.isTargetZone();
 		});
 		if (aPossibleTargetZones.length > 0) {
 			return aPossibleTargetZones[0];
-		} else {
-			return null;
 		}
+		return null;
 	};
 
 	return CutPaste;
-}, /* bExport= */true);
+});

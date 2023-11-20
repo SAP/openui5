@@ -1,0 +1,76 @@
+<mvc:View
+	xmlns="sap.m"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:w="sap.ui.integration.widgets"
+	controllerName="sap.f.cardsdemo.controller.DefaultHeader"
+	displayBlock="true">
+	<Page title="{i18n>appTitle}">
+		<subHeader>
+			<Toolbar>
+				<ToolbarSpacer />
+				<Title text="Default Header" />
+				<ToolbarSpacer />
+			</Toolbar>
+		</subHeader>
+		<Panel>
+			<w:Card
+				id="card1"
+				manifest="{manifests>/defaultHeader/card1}"
+				baseUrl="{cardsPlayground>/playgroundBaseUrl}"
+				width="300px"
+				class="sapUiSmallMargin" />
+			<w:Card
+				id="card2"
+				manifest="{manifests>/defaultHeader/card2}"
+				baseUrl="{cardsPlayground>/playgroundBaseUrl}"
+				width="300px"
+				class="sapUiSmallMargin" />
+			<w:Card
+				id="card3"
+				manifest="{manifests>/defaultHeader/card3}"
+				baseUrl="{cardsPlayground>/playgroundBaseUrl}"
+				width="300px"
+				height="200px"
+				class="sapUiSmallMargin" />
+			<w:Card
+				id="card4"
+				manifest="{manifests>/defaultHeader/card4}"
+				baseUrl="{cardsPlayground>/playgroundBaseUrl}"
+				width="320px"
+				class="sapUiSmallMargin" />
+			<w:Card
+				id="card5"
+				manifest="{manifests>/defaultHeader/card5}"
+				baseUrl="{cardsPlayground>/playgroundBaseUrl}"
+				width="320px"
+				class="sapUiSmallMargin" />
+			<w:Card
+				id="defaultDataTimestamp"
+				manifest="{manifests>/defaultHeader/defaultDataTimestamp}"
+				baseUrl="{cardsPlayground>/playgroundBaseUrl}"
+				width="320px"
+				class="sapUiSmallMargin" />
+			<w:Card
+				id="hiddenHeader"
+				manifest="{manifests>/defaultHeader/hiddenHeader}"
+				baseUrl="{cardsPlayground>/playgroundBaseUrl}"
+				width="320px"
+				class="sapUiSmallMargin" />
+			<w:Card
+				manifest="{manifests>/defaultHeader/hiddenStatus}"
+				baseUrl="{cardsPlayground>/playgroundBaseUrl}"
+				width="320px"
+				class="sapUiSmallMargin" />
+			<w:Card
+				manifest="{manifests>/defaultHeader/hiddenIconWithSrc}"
+				baseUrl="{cardsPlayground>/playgroundBaseUrl}"
+				width="320px"
+				class="sapUiSmallMargin" />
+			<w:Card
+				id="withLargeIcon"
+				manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/tilesVariants/sample4.json"
+				width="320px"
+				class="sapUiSmallMargin" />
+		</Panel>
+	</Page>
+</mvc:View>

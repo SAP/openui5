@@ -1,0 +1,171 @@
+{
+	"_version": "1.12.0",
+	"sap.app": {
+		"id": "sap.ui.demo.cardExplorer",
+		"type": "application",
+		"i18n": {
+			"bundleUrl": "i18n/i18n.properties",
+			"supportedLocales": [
+				""
+			],
+			"fallbackLocale": ""
+		},
+		"title": "{{appTitle}}",
+		"description": "{{appDescription}}",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"icons": {
+			"icon": "sap-icon://image-viewer",
+			"favIcon": "",
+			"phone": "",
+			"phone@2": "",
+			"tablet": "",
+			"tablet@2": ""
+		},
+		"deviceTypes": {
+			"desktop": true,
+			"tablet": true,
+			"phone": true
+		}
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "sap.ui.demo.cardExplorer.view.App",
+			"type": "XML",
+			"async": true,
+			"id": "app"
+		},
+		"dependencies": {
+			"minUI5Version": "1.60.0",
+			"libs": {
+				"sap.f": {},
+				"sap.m": {},
+				"sap.tnt": {},
+				"sap.ui.core": {},
+				"sap.ui.integration": {
+					"lazy": true
+				},
+				"sap.ui.layout": {},
+				"sap.ui.unified": {}
+			}
+		},
+		"componentUsages": {
+			"cookieSettingsDialog": {
+				"name": "sap.ui.documentation.sdk.cookieSettingsDialog"
+			}
+		},
+		"resources": {
+			"css": [
+				{
+					"uri": "css/style.css"
+				},
+				{
+					"uri": "css/FileEditor.css"
+				}
+			]
+		},
+		"contentDensities": {
+			"compact": true,
+			"cozy": true
+		},
+		"models": {
+			"i18n": {
+				"type": "sap.ui.model.resource.ResourceModel",
+				"settings": {
+					"bundleName": "sap.ui.demo.cardExplorer.i18n.i18n",
+					"supportedLocales": [
+						""
+					],
+					"fallbackLocale": ""
+				}
+			}
+		},
+		"routing": {
+			"config": {
+				"routerClass": "sap.m.routing.Router",
+				"viewType": "XML",
+				"viewPath": "sap.ui.demo.cardExplorer.view",
+				"controlId": "navContainer",
+				"controlAggregation": "pages",
+				"async": true
+			},
+			"routes": [
+				{
+					"pattern": "",
+					"name": "default",
+					"target": "overview"
+				},
+				{
+					"pattern": "overview/{topic}/:subTopic:/:id:",
+					"name": "overview",
+					"target": "overview"
+				},
+				{
+					"pattern": "learn/{topic}/:subTopic:/:id:",
+					"name": "learnDetail",
+					"target": "learnDetail"
+				},
+				{
+					"pattern": "explore/{sample}/:subSample:",
+					"name": "exploreSamples",
+					"target": "exploreSamples"
+				},
+				{
+					"pattern": "exploreOverview/{topic}/:subTopic:/:id:",
+					"name": "exploreOverview",
+					"target": "exploreOverview"
+				},
+				{
+					"pattern": "integrate/{topic}/:subTopic:/:id:",
+					"name": "integrate",
+					"target": "integrate"
+				},
+				{
+					"pattern": "designtime/{topic}/:subTopic:/:id:",
+					"name": "designtime",
+					"target": "designtime"
+				}
+			],
+			"targets": {
+				"overview": {
+					"viewName": "Overview",
+					"viewId": "overview",
+					"viewLevel": 2
+				},
+				"learnDetail": {
+					"viewName": "LearnDetail",
+					"viewId": "learnDetail",
+					"viewLevel": 2
+				},
+				"exploreSamples": {
+					"viewName": "ExploreSamples",
+					"viewId": "exploreSamples",
+					"viewLevel": 2
+				},
+				"exploreOverview": {
+					"viewName": "ExploreOverview",
+					"viewId": "exploreOverview",
+					"viewLevel": 2
+				},
+				"integrate": {
+					"viewName": "Integrate",
+					"viewId": "Integrate",
+					"viewLevel": 2
+				},
+				"designtime": {
+					"viewName": "Designtime",
+					"viewId": "Designtime",
+					"viewLevel": 2
+				},
+				"notFound": {
+					"viewName": "NotFound",
+					"viewId": "notFound"
+				}
+			}
+		}
+	}
+}

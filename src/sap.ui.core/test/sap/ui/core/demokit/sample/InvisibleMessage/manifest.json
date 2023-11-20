@@ -1,0 +1,32 @@
+{
+	"sap.app": {
+		"id": "sap.ui.core.sample.InvisibleMessage",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "sap.ui.core.sample.InvisibleMessage.InvisibleMessage",
+			"type": "XML",
+			"async": true
+		},
+		"dependencies": {
+			"libs": {
+				"sap.m": {},
+				"sap.ui.core": {}
+			}
+		},
+		"config": {
+			"sample": {
+				"stretch": true,
+				"files": [
+					"InvisibleMessage.view.xml",
+					"InvisibleMessage.controller.js",
+					"manifest.json",
+					"Component.js"
+				]
+			}
+		}
+	}
+}

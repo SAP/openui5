@@ -1,0 +1,20 @@
+version: 2
+updates:
+- package-ecosystem: npm
+  directory: "/"
+  schedule:
+    interval: weekly
+    day: sunday
+    time: "10:00"
+    timezone: Etc/UTC
+  reviewers: # UI5 Core Foundation team
+    - "RandomByte"
+    - "matz3"
+    - "flovogt"
+    - "codeworrior"
+  versioning-strategy: increase
+  labels:
+    - "in progress"
+    - "dependencies"
+  # We are only interested in security updates, so we disable all other updates via the following option:
+  open-pull-requests-limit: 0

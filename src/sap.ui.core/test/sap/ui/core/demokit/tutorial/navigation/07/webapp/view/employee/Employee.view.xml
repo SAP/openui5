@@ -8,7 +8,7 @@
 		id="employeePage"
 		title="{i18n>EmployeeDetailsOf} {FirstName} {LastName}"
 		showNavButton="true"
-		navButtonPress="onNavBack"
+		navButtonPress=".onNavBack"
 		class="sapUiResponsiveContentPadding">
 		<content>
 			<Panel
@@ -28,20 +28,20 @@
 						labelSpanL="3" labelSpanM="3" emptySpanL="4" emptySpanM="4"
 						columnsL="1" columnsM="1">
 						<f:content>
-							<Label text="{i18n>formFirstName}" />
-							<Text text="{FirstName}" />
-							<Label text="{i18n>formLastName}" />
-							<Text text="{LastName}" />
-							<Label text="{i18n>formAddress}" />
-							<Text text="{Address}" />
-							<Label text="{i18n>formCity}" />
-							<Text text="{City}, {Region}" />
-							<Label text="{i18n>formPostalCode}" />
-							<Text text="{PostalCode}" />
-							<Label text="{i18n>formPhoneHome}" />
-							<Text text="{HomePhone}" />
-							<Label text="{i18n>formCountry}" />
-							<Text text="{Country}" />
+							<Label text="{i18n>formFirstName}"/>
+							<Text text="{FirstName}"/>
+							<Label text="{i18n>formLastName}"/>
+							<Text text="{LastName}"/>
+							<Label text="{i18n>formAddress}"/>
+							<Text text="{Address}"/>
+							<Label text="{i18n>formCity}"/>
+							<Text text="{City}, {Region}"/>
+							<Label text="{i18n>formPostalCode}"/>
+							<Text text="{PostalCode}"/>
+							<Label text="{i18n>formPhoneHome}"/>
+							<Text text="{HomePhone}"/>
+							<Label text="{i18n>formCountry}"/>
+							<Text text="{Country}"/>
 						</f:content>
 					</f:SimpleForm>
 				</content>

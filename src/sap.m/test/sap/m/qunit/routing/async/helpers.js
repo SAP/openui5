@@ -1,49 +1,39 @@
-sap.ui.define(
-	[],
-	function () {
+sap.ui.define([
+	"sap/ui/core/mvc/View"
+], function (View) {
 		"use strict";
-
 		var _mViewDelays;
 
-		function createViewAndController(sName) {
-			sap.ui.controller(sName, {});
-			sap.ui.jsview(sName, {
-				createContent: function () {
-				},
-				getController: function () {
-					return sap.ui.controller(sName);
-				}
-			});
+		function createViewAndController (sName) {
+			var oView = View.create({viewName: "sap.ui.test.views." + sName, type: "XML"});
 
-			// return sap.ui.jsview(sName, sName);
+			return oView;
 		}
 
-		function createViewAndControllerAsync(sName) {
-			return createViewMock({viewName: sName});
-		}
-
-		function createViewMock(oViewOptions) {
+		function createViewMock (oViewOptions) {
 			var oView;
-			createViewAndController(oViewOptions.viewName);
+
 			return {
 				loaded: function() {
-					oView = sap.ui.jsview(oViewOptions.viewName, oViewOptions.viewName);
+					oView = View.create({viewName: oViewOptions.name, type: "XML"});
 					return new Promise(function(resolve) {
 						setTimeout(function() {
 							resolve(oView);
-						}, _mViewDelays[oViewOptions.viewName]);
+						}, _mViewDelays && _mViewDelays[oViewOptions.name] || 0);
 					});
 				},
 				destroy: function() {
 					oView.destroy();
+				},
+				isA: function(sClass) {
+					return sClass === "sap.ui.core.mvc.View";
 				}
 			};
 		}
 
 		return {
-			createViewMock: createViewMock,
 			createViewAndController: createViewAndController,
-			createViewAndControllerAsync: createViewAndControllerAsync,
+			createViewMock: createViewMock,
 			setViewDelays: function(mViewDelays) {
 				_mViewDelays = mViewDelays;
 			}

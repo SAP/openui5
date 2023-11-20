@@ -1,0 +1,19 @@
+/* =================================== */
+/* CSS for control sap.tnt/ToolHeader  */
+/* Quartz HCB theme                    */
+/* =================================== */
+
+@_sap_tnt_ToolHeader_Height: 2.75rem;
+@_sap_tnt_ToolHeader_IconHeight: 0.75rem;
+
+// ==========================================================================
+// sap.m.Avatar / sap.f.Avatar overriding
+// ==========================================================================
+
+.sapTntToolHeader .sapFAvatar {
+	background-color: @_sap_tnt_ToolHeader_AvatarBackground;
+	.sapFAvatarInitialsHolder,
+	.sapUiIcon.sapFAvatarTypeIcon  {
+		color: @_sap_tnt_ToolHeader_AvatarColor;
+	}
+}

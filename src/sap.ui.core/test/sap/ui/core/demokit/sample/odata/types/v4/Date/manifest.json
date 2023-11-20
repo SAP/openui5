@@ -1,0 +1,65 @@
+{
+	"_version": "1.49.0",
+	"sap.app": {
+		"applicationVersion": {
+			"version": "${version}"
+		},
+		"description": "Example how to use OData V4 Edm.Date in SAPUI5 applications",
+		"dataSources": {
+			"default": {
+				"uri": "/sap/demo/zui5_edm_types_v4/",
+				"type": "OData",
+				"settings": {
+					"odataVersion": "4.0"
+				}
+			}
+		},
+		"id": "sap.ui.core.sample.odata.types.v4.Date",
+		"type": "application"
+	},
+	"sap.ui5": {
+		"config": {
+			"sample": {
+				"files": [
+					"Date.view.xml",
+					"Date.controller.js",
+					"data/metadataV4.xml",
+					"data/EdmTypesV4.json",
+					"manifest.json",
+					"Component.js",
+					"SandboxModel.js"
+				]
+			}
+		},
+		"dependencies": {
+			"libs": {
+				"sap.m": {},
+				"sap.ui.core": {},
+				"sap.ui.layout": {}
+			}
+		},
+		"handleValidation": true,
+		"models": {
+			"": {
+				"dataSource": "default",
+				"preload": true,
+				"settings": {
+					"autoExpandSelect": true,
+					"earlyRequests": true,
+					"groupProperties": {
+						"UpdateGroup": {"submit": "API"}
+					},
+					"operationMode": "Server",
+					"updateGroupId": "UpdateGroup"
+				},
+				"type": "sap.ui.core.sample.odata.types.v4.Date.SandboxModel",
+				"uriSettingName": "serviceUrl"
+			}
+		},
+		"rootView": {
+			"viewName": "sap.ui.core.sample.odata.types.v4.Date.Date",
+			"type": "XML",
+			"async": true
+		}
+	}
+}

@@ -1,0 +1,34 @@
+{
+	"sap.app": {
+		"id": "sap.m.sample.TabContainerMHC",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "sap.m.sample.TabContainerMHC.TabContainer",
+			"type": "XML",
+			"async": true
+		},
+		"dependencies": {
+			"libs": {
+				"sap.m": {},
+				"sap.ui.core": {},
+				"sap.ui.layout": {}
+			}
+		},
+		"config": {
+			"sample": {
+				"stretch": true,
+				"files": [
+					"TabContainer.view.xml",
+					"Display.fragment.xml",
+					"Edit.fragment.xml",
+					"TabContainer.controller.js",
+					"manifest.json"
+				]
+			}
+		}
+	}
+}

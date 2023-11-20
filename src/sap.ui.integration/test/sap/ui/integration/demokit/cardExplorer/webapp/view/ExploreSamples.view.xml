@@ -1,0 +1,131 @@
+<mvc:View controllerName="sap.ui.demo.cardExplorer.controller.ExploreSamples"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m"
+	xmlns:l="sap.ui.layout"
+	xmlns:f="sap.f"
+	xmlns:core="sap.ui.core"
+	xmlns:cardExplorer="sap.ui.demo.cardExplorer.controls">
+	<l:ResponsiveSplitter id="splitView">
+		<l:PaneContainer orientation="Horizontal">
+			<l:SplitPane id="cardPane" requiredParentWidth="1">
+				<Page>
+					<customHeader>
+						<Bar>
+							<contentLeft>
+								<Title class="sapUiSmallMarginBegin" text="{/sample/title}"></Title>
+							</contentLeft>
+							<contentRight>
+								<ComboBox id="subSample" selectedKey="{/subSample/key}" items="{/sample/subSamples}" visible="{= ${/sample/subSamples} ? true : false }" selectionChange="onSubSampleChange">
+									<core:Item key="{key}" text="{title}" />
+								</ComboBox>
+							</contentRight>
+						</Bar>
+					</customHeader>
+					<VBox height="100%">
+						<MessageStrip
+							text="This sample includes cards that demonstrate the additional logic for integration with the host environment. If you want to use it in SAP Business Application Studio, it has to be imported there as an application."
+							visible="{settings>/isApplication}"
+							class="sapUiSmallMargin"
+							showIcon="true"
+						/>
+						<MessageStrip text="This feature is experimental - it may be deleted, or incompatible API changes may be done before its official public release." visible="{= !!${/sample/experimental} || !!${/subSample/experimental} }" showIcon="true" type="Warning" class="sapUiSmallMargin"/>
+						<MessageStrip text="This sample uses a mock server which may interfere with your data requests." visible="{= !!${/sample/mockServer} || !!${/subSample/mockServer} }" showIcon="true" type="Warning" class="sapUiSmallMargin"/>
+						<f:GridContainer id="cardContainer" visible="{= !${settings>/useIFrame} }"></f:GridContainer>
+						<core:HTML id="iframeWrapper" visible="{= ${settings>/useIFrame} }" preferDOM="false" content='&lt;div style="height:100%;"&gt;&lt;/div&gt;'>
+							<core:layoutData>
+								<FlexItemData growFactor="1" />
+							</core:layoutData>
+						</core:HTML>
+					</VBox>
+				</Page>
+			</l:SplitPane>
+			<l:SplitPane requiredParentWidth="1">
+				<Page id="editPage" showFooter="{= ${settings>/editorType} === 'CARDEDITOR' &amp;&amp; ${settings>/editorMode} !== 'Translation'}">
+					<customHeader>
+						<OverflowToolbar id="toolbar">
+							<Button class="sapUiSmallMarginBegin" text="Run" type="Emphasized" icon="sap-icon://media-play" press="onRunPressed" enabled="{settings>/editable}">
+								<layoutData>
+									<OverflowToolbarLayoutData priority="High" />
+								</layoutData>
+							</Button>
+							<CheckBox text="Auto Run" selected="{settings>/autoRun}" enabled="{settings>/editable}">
+								<layoutData>
+									<OverflowToolbarLayoutData priority="Low" />
+								</layoutData>
+							</CheckBox>
+							<CheckBox text="Schema Validation" selected="{settings>/schemaValidation}" enabled="{settings>/editable}" select=".onSchemaValidationCheck">
+								<layoutData>
+									<OverflowToolbarLayoutData priority="Low" />
+								</layoutData>
+							</CheckBox>
+							<ToolbarSpacer />
+							<MenuButton id="downloadSampleButton" icon="sap-icon://download" tooltip="Download" text="Download" type="Transparent">
+								<menu>
+									<Menu>
+										<MenuItem text="Manifest File" 
+											icon="sap-icon://document-text"
+											visible="{= !${settings>/isApplication} }"
+											press=".onDownloadCardManifestFile" />
+										<MenuItem text="{= (${settings>/isApplication} || ${settings>/isPreloadProject}) ? 'All files as .zip' : 'Bundle as card.zip'}"
+											icon="sap-icon://attachment-zip-file"
+											press=".onDownloadZip" />
+									</Menu>
+								</menu>
+								<layoutData>
+									<OverflowToolbarLayoutData priority="High" />
+								</layoutData>
+							</MenuButton>
+							<OverflowToolbarButton
+								text="{= ${settings>/editorType} === 'TEXT' ? 'Switch to Visual BAS Editor' : 'Switch to Text Editor'}"
+								tooltip="{= ${settings>/editorType} === 'TEXT' ? 'Switch to Visual BAS Editor' : 'Switch to Text Editor'}"
+								icon="sap-icon://developer-settings"
+								enabled="{settings>/editable}"
+								type="Transparent"
+								visible="{= ${settings>/editable} &amp;&amp; ${settings>/internal} }"
+								press=".onChangeBASEditor"
+							>
+								<layoutData>
+									<OverflowToolbarLayoutData priority="Low" />
+								</layoutData>
+							</OverflowToolbarButton>
+							<OverflowToolbarButton
+								text="{= ${settings>/editorType} === 'TEXT' ? 'Switch to Card Configuration Editor' : 'Switch to Text Editor'}"
+								tooltip="{= ${settings>/editorType} === 'TEXT' ? 'Switch to Card Configuration Editor' : 'Switch to Text Editor'}"
+								icon="sap-icon://wrench"
+								enabled="{= ${settings>/editable}}"
+								type="Transparent"
+								visible="{= ${settings>/designtimeEnabled} &amp;&amp; ${settings>/editable} &amp;&amp; ${settings>/internal} &amp;&amp; ${settings>/editorType} !== 'CARDEDITOR' }"
+								press=".onChangeCardEditor"
+							>
+								<layoutData>
+									<OverflowToolbarLayoutData priority="Low" />
+								</layoutData>
+							</OverflowToolbarButton>
+							<OverflowToolbarButton
+								text="Change Position"
+								tooltip="Change Position"
+								class="orientationBtn"
+								icon="sap-icon://header"
+								type="Transparent"
+								press=".onChangeSplitterOrientation"
+							>
+								<layoutData>
+									<OverflowToolbarLayoutData priority="Low" />
+								</layoutData>
+							</OverflowToolbarButton>
+						</OverflowToolbar>
+					</customHeader>
+					<cardExplorer:FileEditor id="fileEditor" manifestChange="onFileEditorManifestChange" designtimeChange="onFileEditorDesigntimeChange" fileSwitch="onFileSwitch" visible="{= ${settings>/editorType} === 'TEXT' }" />
+					<footer>
+						<OverflowToolbar>
+							<ToolbarSpacer/>
+							<Button text="Apply" press=".onApplyCardEditorChanges" />
+							<Button text="Reset" press=".onResetCardEditor" />
+							<Button text="{= ${settings>/manifestChangesShowed} ? 'Hide Manifest Changes' : 'Show Manifest Changes'}" enabled="{settings>/manifestChanged}" press=".onShowManifestChanges"/>
+						</OverflowToolbar>
+					</footer>
+				</Page>
+			</l:SplitPane>
+		</l:PaneContainer>
+	</l:ResponsiveSplitter>
+</mvc:View>

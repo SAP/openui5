@@ -1,0 +1,46 @@
+{
+	"sap.app": {
+		"id": "sap.f.cardsdemo.webpage.card1",
+		"type": "card",
+		"title": "Sample of a WebPage Card",
+		"subTitle" :"Sample of a WebPage Card",
+		"applicationVersion": {
+			"version": "1.0.0"
+		},
+		"shortTitle": "A short title for this Card",
+		"info": "Additional information about this Card",
+		"description": "A long description for this Card",
+		"tags": {
+			"keywords": [
+				"WebPage",
+				"Card",
+				"Sample"
+			]
+		}
+	},
+	"sap.ui": {
+		"technology": "UI5"
+	},
+	"sap.card": {
+		"type": "WebPage",
+		"configuration": {
+			"parameters": {
+				"minHeight": {
+					"description": "Minimum height of the content",
+					"type": "string",
+					"value": "25rem"
+				}
+			}
+		},
+		"header": {
+			"title": "OpenUI5 Events",
+			"icon": {
+				"src": "sap-icon://desktop-mobile"
+			}
+		},
+		"content": {
+			"src": "https://openui5.org/events",
+			"minHeight": "{parameters>/minHeight/value}"
+		}
+	}
+}

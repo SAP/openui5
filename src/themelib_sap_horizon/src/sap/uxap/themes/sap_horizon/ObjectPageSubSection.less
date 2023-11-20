@@ -1,0 +1,87 @@
+/* ============================================== */
+/* CSS for control sap.uxap/ObjectPageSubSection  */
+/* Horizon theme                                  */
+/* ============================================== */
+
+.sapUxAPObjectPageSubSectionHeaderTitle {
+	font-size: @sapMFontHeader5Size;
+	color: @sapUiGroupTitleTextColor;
+	padding-bottom: 0.5rem;
+	line-height: normal;
+}
+
+.sapUxAPObjectPageSubSectionHeaderTitleUppercase {
+	text-transform: uppercase;
+}
+
+.sapUxAPObjectPageLayout-Std-Desktop .sapUxAPBlockContainer {
+	padding: 0 1rem;
+}
+
+/* responsive paddings */
+.sapUxAPObjectPageLayout.sapUiResponsiveContentPadding {
+	&.sapUxAPObjectPageLayout-Std-Tablet .sapUxAPBlockContainer,
+	&.sapUxAPObjectPageLayout-Std-Desktop .sapUxAPBlockContainer {
+		padding-left: 2rem;
+		padding-right: 2rem;
+	}
+	&.sapUxAPObjectPageLayout-Std-Desktop-XL .sapUxAPBlockContainer {
+		padding-left: 3rem;
+		padding-right: 3rem;
+	}
+}
+
+/* compact size */
+.sapUiSizeCompact {
+	.sapUxAPObjectPageSubSectionHeaderTitle {
+		height: 1.125rem;
+		line-height: normal;
+		font-weight: bold;
+	}
+}
+
+// =====================================
+// =====================================
+// Delta Styles for Horizon
+// =====================================
+
+// Page Sub Section Focus - Experimental
+.sapUxAPObjectPageSubSection:focus {
+	outline: 2px solid @sapUiContentFocusColor;
+    outline-offset: -0.1875rem;
+}
+
+.sapUxAPObjectPageLayout-Std-Phone .sapUxAPObjectPageSubSection .sapUiRespGrid.sapUiRespGridHSpace1 {
+    padding: 0.5rem 0.5rem 0.5rem 0.5rem;
+
+}
+
+.sapUxAPObjectPageSubSection {
+    padding: 0;
+    padding-top: 0.5rem;
+}
+
+.sapUxAPObjectPageSectionHeader:not(.sapUxAPObjectPageSectionHeaderHidden) + .sapUxAPObjectPageSectionContainer > .sapUiRespGrid >
+div[class^="sapUiRespGrid"]:first-child > .sapUxAPObjectPageSubSection:not(.sapUxAPObjectPageSubSectionPromoted) {
+	padding-top: 0;
+}
+
+// =====================================
+// Object Page spacing fixes - To help address the too much white space customer feedback
+// =====================================
+.sapUxAPObjectPageLayout-Std-Tablet .sapUxAPBlockContainer,
+.sapUiSizeCompact .sapUxAPObjectPageLayout-Std-Phone .sapUxAPBlockContainer {
+    padding: 0 0.5rem 0rem 0rem;
+}
+
+.sapUiSizeCompact .sapUxAPObjectPageLayout-Std-Desktop .sapUxAPBlockContainer {
+    padding: 0 0.5rem;
+}
+
+.sapUxAPObjectPageLayout-Std-Desktop .sapUxAPBlockContainer {
+    padding: 0;
+}
+
+.sapUxAPBlockContainer .sapUxAPObjectPageSubSectionAlignContent {
+	padding: 0 1rem;
+}

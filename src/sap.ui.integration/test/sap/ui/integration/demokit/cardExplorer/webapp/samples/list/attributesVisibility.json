@@ -1,0 +1,98 @@
+{
+	"_version": "1.46.0",
+	"sap.app": {
+		"id": "card.explorer.attributes.list.card",
+		"type": "card",
+		"title": "Sample of a List with Attributes",
+		"subTitle": "Sample of a List with Attributes",
+		"applicationVersion": {
+			"version": "1.0.0"
+		},
+		"shortTitle": "A short title for this Card",
+		"info": "Additional information about this Card",
+		"description": "A long description for this Card",
+		"tags": {
+			"keywords": [
+				"List",
+				"Attributes",
+				"Card",
+				"Sample"
+			]
+		}
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"icons": {
+			"icon": "sap-icon://list"
+		}
+	},
+	"sap.card": {
+		"type": "List",
+		"header": {
+			"title": "Notebooks"
+		},
+		"content": {
+			"data": {
+				"json": [
+					{
+						"Name": "Notebook Basic 15",
+						"Availability": "Out of stock",
+						"AvailabilityState": "Error",
+						"Monitor": "18\" LCD"
+					},
+					{
+						"Name": "Notebook Basic 17",
+						"Availability": "Available",
+						"AvailabilityState": "Success",
+						"Processor": "2,80 GHz quad core",
+						"Monitor": "17\" LCD",
+						"RAM": "",
+						"HHD": "500 GB Hard Disc",
+						"OS": "Windows 8 Pro"
+					},
+					{
+						"Name": "Notebook Basic 19",
+						"Availability": "Only 2 left",
+						"AvailabilityState": "Warning",
+						"Processor": "2,80 GHz quad core",
+						"Monitor": "18\" LCD",
+						"RAM": "4 GB DDR3 RAM",
+						"HHD": "",
+						"OS": "Windows 8 Pro"
+					}
+				]
+			},
+			"maxItems": 3,
+			"item": {
+				"title": "{Name}",
+				"info": {
+					"value": "{Availability}",
+					"state": "{AvailabilityState}"
+				},
+				"attributesLayoutType": "TwoColumns",
+				"attributes": [
+					{
+						"value": "{Processor}",
+						"visible": "{= !!${Processor} }"
+					},
+					{
+						"value": "{Monitor}",
+						"visible": "{= !!${Monitor} }"
+					},
+					{
+						"value": "{RAM}",
+						"visible": "{= !!${RAM} }"
+					},
+					{
+						"value": "{HHD}",
+						"visible": "{= !!${HHD} }"
+					},
+					{
+						"value": "{OS}",
+						"visible": "{= !!${OS} }"
+					}
+				]
+			}
+		}
+	}
+}

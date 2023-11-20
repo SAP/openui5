@@ -1,0 +1,13 @@
+{
+  "1.73.0": {
+    "date": "November 2019",
+    "notes": [
+      {
+        "id": "7ef76f6114535372f47a00be1259c6ca2aab8b04",
+        "type": "FEATURE",
+        "text": " DataStateIndicator: Table plug-in for binding messages added",
+        "references": []
+      }
+    ]
+  }
+}

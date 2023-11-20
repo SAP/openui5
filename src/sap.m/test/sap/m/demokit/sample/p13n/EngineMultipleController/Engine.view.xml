@@ -1,0 +1,107 @@
+<mvc:View
+    height="100%"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns="sap.m"
+    xmlns:plugins="sap.m.plugins"
+    xmlns:columnmenu="sap.m.table.columnmenu"
+    xmlns:sap.ui.fl="sap.ui.fl"
+    xmlns:sap.ui.dt="sap.ui.dt"
+    xmlns:vm="sap.ui.fl.variants"
+    xmlns:dnd="sap.ui.core.dnd"
+    xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"
+    controllerName="sap.m.sample.p13n.EngineMultipleController.Engine">
+
+    <Page showHeader="false">
+
+        <Table id="persoTable" ariaLabelledBy="title" fixedLayout="Strict"
+		    autoPopinMode="true" growing="true" sticky="ColumnHeaders,HeaderToolbar" popinLayout="GridSmall">
+
+            <headerToolbar>
+                <OverflowToolbar >
+                    <Title id="title" text="Persons"/>
+                    <ToolbarSeparator/>
+                    <vm:VariantManagement for="persoTable"/>
+                    <ToolbarSpacer/>
+                    <Button icon="sap-icon://action-settings" press="openPersoDialog" tooltip="Settings"/>
+                    <Button icon="sap-icon://add-employee" press="openPersoDialogPeople" tooltip="Settings"/>
+                </OverflowToolbar>
+            </headerToolbar>
+
+            <dependents>
+                <columnmenu:Menu id="menu">
+                    <columnmenu:items>
+                        <columnmenu:ActionItem icon="sap-icon://table-column" label="Columns"/>
+                    </columnmenu:items>
+                </columnmenu:Menu>
+            </dependents>
+
+            <dragDropConfig>
+                <dnd:DragDropInfo sourceAggregation="columns" targetAggregation="columns" dropPosition="Between" drop="onColumnMove"/>
+            </dragDropConfig>
+
+            <noData>
+                <IllustratedMessage/>
+            </noData>
+
+            <columns>
+                <Column id="id_col" headerMenu="menu">
+                    <header>
+                        <Text text="ID"/>
+                    </header>
+                </Column>
+                <Column id="firstName_col" headerMenu="menu">
+                        <Text text="First Name"/>
+                </Column>
+                <Column id="lastName_col" headerMenu="menu">
+                    <Text text="Last Name"/>
+                </Column>
+                <Column id="city_col" headerMenu="menu">
+                    <Text text="City"/>
+                </Column>
+                <Column id="size_col" hAlign="End" visible="false" headerMenu="menu">
+                    <Text text="Size"/>
+                </Column>
+            </columns>
+
+            <items>
+                <ColumnListItem>
+                    <Text text="P1"/>
+                    <Text text="Peter"/>
+                    <Text text="Mueller"/>
+                    <Text text="Walldorf"/>
+                    <Text text="1.75"/>
+                </ColumnListItem>
+                <ColumnListItem>
+                    <Text text="P2"/>
+                    <Text text="Petra"/>
+                    <Text text="Maier"/>
+                    <Text text="Walldorf"/>
+                    <Text text="1.85"/>
+                </ColumnListItem>
+                <ColumnListItem>
+                    <Text text="P3"/>
+                    <Text text="Thomas"/>
+                    <Text text="Smith"/>
+                    <Text text="Walldorf"/>
+                    <Text text="1.95"/>
+                </ColumnListItem>
+                <ColumnListItem>
+                    <Text text="P4"/>
+                    <Text text="John"/>
+                    <Text text="Williams"/>
+                    <Text text="Walldorf"/>
+                    <Text text="1.65"/>
+                </ColumnListItem>
+                <ColumnListItem>
+                    <Text text="P5"/>
+                    <Text text="Maria"/>
+                    <Text text="Jones"/>
+                    <Text text="Walldorf"/>
+                    <Text text="1.55"/>
+                </ColumnListItem>
+            </items>
+        </Table>
+
+    </Page>
+
+</mvc:View>

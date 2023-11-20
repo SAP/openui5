@@ -11,62 +11,84 @@ sap.ui.define(['./BarInPageEnabler'],
 	 * Toolbar renderer.
 	 * @namespace
 	 */
-	var ToolbarRenderer = {};
-
-	// determines whether toolbar has new flexbox (shrink) support
-	ToolbarRenderer.hasNewFlexBoxSupport = (function() {
-		var oStyle = document.documentElement.style;
-		return (oStyle.flex !== undefined || oStyle.webkitFlexShrink !== undefined);
-	}());
+	var ToolbarRenderer = {
+		apiVersion: 2
+	};
 
 	/**
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
 	 * @protected
 	 * @param {sap.ui.core.RenderManager} oRM the RenderManager that can be used for writing to the render output buffer.
-	 * @param {sap.ui.core.Control} oControl an object representation of the control that should be rendered.
+	 * @param {sap.m.Toolbar} oControl an object representation of the control that should be rendered.
 	 */
 	ToolbarRenderer.render = BarInPageEnabler.prototype.render;
+
+	/**
+	 * Writes the accessibility state of the given toolbar using the given renderer manager.
+	 * To be overwritten by subclasses.
+	 *
+	 * @private
+	 * @param {sap.ui.core.RenderManager} oRm - The renderer manager to use for writing the accessibility state.
+	 * @param {sap.m.Toolbar} oToolbar - The toolbar to write the accessibility state for.
+	 * @returns {void}
+	 *
+	 * @description
+	 * This function uses the `assignAccessibilityState` method of the toolbar to obtain a map of ARIA properties to set on
+	 * the rendered toolbar element. If the map is empty, the accessibility state is set to `null` to ensure that no
+	 * unnecessary ARIA attributes are present. Otherwise, the accessibility state is set to the toolbar.
+	 * The purpose of this logic is to ensure that the rendered toolbar has appropriate ARIA attributes for accessibility
+	 * purposes, while avoiding unnecessary attributes that could be confusing or misleading to users of assistive technology.
+	 */
+	ToolbarRenderer.writeAccessibilityState = function(oRm, oToolbar) {
+		var oAccInfo = {},
+			mAriaProps = oToolbar.assignAccessibilityState(oAccInfo);
+
+		if (!Object.keys(mAriaProps).length) {
+			oRm.accessibilityState(null);
+		} else {
+			oRm.accessibilityState(oToolbar, mAriaProps);
+		}
+	};
 
 	/**
 	 * Add classes attributes and styles to the root tag
 	 *
 	 * @param {sap.ui.core.RenderManager} oRm the RenderManager that can be used for writing to the Render-Output-Buffer
-	 * @param {sap.ui.core.Control} oToolbar an object representation of the control that should be rendered
+	 * @param {sap.m.Toolbar} oToolbar an object representation of the control that should be rendered
 	 */
 	ToolbarRenderer.decorateRootElement = function (oRm, oToolbar) {
-		oRm.addClass("sapMTB");
-
-		// ARIA
-		oRm.writeAccessibilityState(oToolbar, {
-			role: oToolbar._getAccessibilityRole()
-		});
-
-
-		if (!ToolbarRenderer.hasNewFlexBoxSupport) {
-			oRm.addClass("sapMTBOldFlex");
+		var bToolbarActive = oToolbar.getActive();
+		if (bToolbarActive) {
+			oRm.class("sapMTBActive");
 		} else {
-			oRm.addClass("sapMTBNewFlex");
+			this.writeAccessibilityState(oRm, oToolbar);
+			oRm.class("sapMTBInactive");
 		}
 
-		if (oToolbar.getActive()) {
-			oRm.addClass("sapMTBActive");
-			oRm.writeAttribute("tabindex", "0");
-		} else {
-			oRm.addClass("sapMTBInactive");
-		}
+		oRm.class("sapMTB");
+		oRm.class("sapMTBNewFlex");
 
-		oRm.addClass("sapMTB" + oToolbar.getStyle());
-		oRm.addClass("sapMTB-" + oToolbar.getActiveDesign() + "-CTX");
+		oRm.class("sapMTB" + oToolbar.getStyle());
+		oRm.class("sapMTB-" + oToolbar.getActiveDesign() + "-CTX");
 
-		var sWidth = oToolbar.getWidth();
-		var sHeight = oToolbar.getHeight();
-		sWidth && oRm.addStyle("width", sWidth);
-		sHeight && oRm.addStyle("height", sHeight);
+		oRm.style("width", oToolbar.getWidth());
+		oRm.style("height", oToolbar.getHeight());
 	};
 
 	ToolbarRenderer.renderBarContent = function(rm, oToolbar) {
+		var oFirstVisibleControl = null;
+
+		if (oToolbar.getActive()) {
+			rm.renderControl(oToolbar._getActiveButton());
+		}
 		oToolbar.getContent().forEach(function(oControl) {
 			BarInPageEnabler.addChildClassTo(oControl, oToolbar);
+			if (!oFirstVisibleControl && oControl.getVisible()) {
+				oControl.addStyleClass("sapMBarChildFirstChild");
+				oFirstVisibleControl = oControl;
+			} else {
+				oControl.removeStyleClass("sapMBarChildFirstChild");
+			}
 			rm.renderControl(oControl);
 		});
 	};

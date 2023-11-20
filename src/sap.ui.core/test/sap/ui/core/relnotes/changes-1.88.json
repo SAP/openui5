@@ -1,0 +1,125 @@
+{
+  "1.88.0": {
+    "date": "March 2021",
+    "notes": [
+      {
+        "id": "c8c1177c3c9ef4c6988aac7063c1750bf34bafa5",
+        "type": "FIX",
+        "text": " sap.f.DynamicPageTitle: Cutting of buttons is fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180085793"
+          }
+        ]
+      },
+      {
+        "id": "ce6c04ec2ff09299e8f1c59dfbcf9d2eb1484e7e",
+        "type": "FIX",
+        "text": " XMLTemplateProcessor: hide stashed objects only where supported"
+      },
+      {
+        "id": "ce4aac0358f9eabb28de1c1e91999babcb90d1ad",
+        "type": "FIX",
+        "text": " message/ControlMessageProcessor: Avoid updating messages on destroyed controls",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180107439"
+          }
+        ]
+      },
+      {
+        "id": "a1bd8f42e59ddf02614b5998dd92c50cebb50050",
+        "type": "FIX",
+        "text": " core.TooltipBase: avoid unneccessary rendering during open",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180121173"
+          }
+        ]
+      },
+      {
+        "id": "b4efdf14404c2cff51f8b5af5b3b2b257b54c58d",
+        "type": "FEATURE",
+        "text": " Localization: add Serbian (Latin), enhance Locale mappings",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1780409720"
+          }
+        ]
+      },
+      {
+        "id": "9c8642a2cfbf15a32b5b96f61b629506d7bf2b20",
+        "type": "FEATURE",
+        "text": " sap.ui.core.UIComponent: Introduce activate/deactivate API"
+      },
+      {
+        "id": "10ba5dd520c1631607e93d8f33c5a19725920350",
+        "type": "FEATURE",
+        "text": " base/ManagedObject: Introduce API to receive Own Models"
+      },
+      {
+        "id": "9565ef7b89e513c33a5d8d2f05dfcec18d8d8abf",
+        "type": "FIX",
+        "text": " core.support.Hotkeys: prevent the default when the hotkey is pressed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180076369"
+          }
+        ]
+      },
+      {
+        "id": "99a2e7f23cb3cae779272fdb39e4675353ceeaea",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v2.ODataModel#_submitRequest: avoid TypeError if request is aborted",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080258237"
+          }
+        ]
+      },
+      {
+        "id": "52531ee6a0fa7b8d00230e074450ab0a311c6b5f",
+        "type": "FIX",
+        "text": " sap.ui.core.routing.Router: do not navigate when the router is stopped"
+      },
+      {
+        "id": "1dbabcfdcad551ff571c4492841e92b39fc9ea90",
+        "type": "FEATURE",
+        "text": " sap.ui.core.format.NumberFormat: formatOption showNumber for unit and currency"
+      },
+      {
+        "id": "ea93910f91422a7e221343e362c50024440bfd62",
+        "type": "FEATURE",
+        "text": " test recorder: assert property values"
+      },
+      {
+        "id": "c958c64742dd6f449481a772abf10da22be17dd9",
+        "type": "FIX",
+        "text": " sap.ui.model.FilterProcessor#normalizeFilterValue: don't fail if the value is the name of a prototype function",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180072688"
+          }
+        ]
+      },
+      {
+        "id": "2cbfbe7f7a68fad6e3df1e2cda6e50023ef511a6",
+        "type": "FIX",
+        "text": " sap.ui.model.analytics.AnalyticalBinding: support selecting only the text of a measure",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500000644142021"
+          }
+        ]
+      }
+    ]
+  }
+}

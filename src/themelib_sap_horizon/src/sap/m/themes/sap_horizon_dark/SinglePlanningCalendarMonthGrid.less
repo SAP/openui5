@@ -1,0 +1,60 @@
+/* ====================================================== */
+/* CSS for control sap.m/SinglePlanningCalendarMonthGrid  */
+/* Evening Horizon theme                                  */
+/* ====================================================== */
+.calendarSpecialDayTypeColorMixIn(@class, @color) {
+	.sapMSPCMonthGrid {
+		.@{class} .specialDateIndicator {
+			background-color: @color;
+		}
+	}
+}
+
+.calendarSpecialDayTypeColorMixIn(sapUiCalendarSpecialDayType01, @sapLegendColor1);
+.calendarSpecialDayTypeColorMixIn(sapUiCalendarSpecialDayType02, @sapLegendColor2);
+.calendarSpecialDayTypeColorMixIn(sapUiCalendarSpecialDayType03, @sapLegendColor3);
+.calendarSpecialDayTypeColorMixIn(sapUiCalendarSpecialDayType04, @sapLegendColor4);
+.calendarSpecialDayTypeColorMixIn(sapUiCalendarSpecialDayType05, @sapLegendColor5);
+.calendarSpecialDayTypeColorMixIn(sapUiCalendarSpecialDayType06, @sapLegendColor6);
+.calendarSpecialDayTypeColorMixIn(sapUiCalendarSpecialDayType07, @sapLegendColor7);
+.calendarSpecialDayTypeColorMixIn(sapUiCalendarSpecialDayType08, @sapLegendColor8);
+.calendarSpecialDayTypeColorMixIn(sapUiCalendarSpecialDayType09, @sapLegendColor9);
+.calendarSpecialDayTypeColorMixIn(sapUiCalendarSpecialDayType10, @sapLegendColor10);
+.calendarSpecialDayTypeColorMixIn(sapUiCalendarSpecialDayType11, @sapLegendColor11);
+.calendarSpecialDayTypeColorMixIn(sapUiCalendarSpecialDayType12, @sapLegendColor12);
+.calendarSpecialDayTypeColorMixIn(sapUiCalendarSpecialDayType13, @sapLegendColor13);
+.calendarSpecialDayTypeColorMixIn(sapUiCalendarSpecialDayType14, @sapLegendColor14);
+.calendarSpecialDayTypeColorMixIn(sapUiCalendarSpecialDayType15, @sapLegendColor15);
+.calendarSpecialDayTypeColorMixIn(sapUiCalendarSpecialDayType16, @sapLegendColor16);
+.calendarSpecialDayTypeColorMixIn(sapUiCalendarSpecialDayType17, @sapLegendColor17);
+.calendarSpecialDayTypeColorMixIn(sapUiCalendarSpecialDayType18, @sapLegendColor18);
+.calendarSpecialDayTypeColorMixIn(sapUiCalendarSpecialDayType19, @sapLegendColor19);
+.calendarSpecialDayTypeColorMixIn(sapUiCalendarSpecialDayType20, @sapLegendColor20);
+
+html.sap-desktop .sapMSPCMonthDay:not(.sapMSPCMonthDayToday):focus::after {
+	border: 0.125rem solid @sapUiContentFocusColor;
+}
+
+html.sap-desktop .sapMSPCMonthDay.sapMSPCMonthDayToday:focus .sapMSPCMonthNowMarker::after {
+	border: none;
+	outline: 0.125rem solid @sapUiContentFocusColor;
+	outline-offset: -0.25rem;
+}
+
+.specialDateIndicator {
+	top: 0.1875rem;
+	right: 0.1875rem;
+}
+
+.sapMSPCMonthDay.sapMSPCMonthDayToday .specialDateIndicator {
+	top: 0.3125rem;
+	right: 0.3125rem;
+}
+
+.sapMSPCMonthGrid .sapMSPCMonthLnkMore {
+	right: 0.1875rem;
+}
+
+.sapMSPCMonthGrid .sapMSPCMonthDay.sapMSPCMonthDayToday .sapMSPCMonthLnkMore {
+	right: 0.3125rem;
+}

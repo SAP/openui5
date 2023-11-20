@@ -21,10 +21,6 @@
 
 .sapUiInteractionTreeItem {
 	box-sizing: border-box;
-
-	display: -webkit-box;
-	display: -webkit-flex;
-	display: -ms-flexbox;
 	display: flex;
 }
 
@@ -53,15 +49,11 @@
 	pointer-events: none;
 	-webkit-user-select: none;  /* Chrome all / Safari all */
 	-moz-user-select: none;     /* Firefox all */
-	-ms-user-select: none;      /* IE 10+ */
 	user-select: none;
 }
 
 .sapUiInteractionTreeItemRight {
 	position: relative;
-	-webkit-box-flex: 1;
-	-webkit-flex-grow: 1;
-	-ms-flex: 1 1;
 	flex-grow: 1;
 
 	box-sizing: border-box;
@@ -103,7 +95,6 @@
 	pointer-events: none;
 	-webkit-user-select: none;  /* Chrome all / Safari all */
 	-moz-user-select: none;     /* Firefox all */
-	-ms-user-select: none;      /* IE 10+ */
 	user-select: none;
 }
 
@@ -111,7 +102,6 @@
 	box-shadow: 0 2px 2px 0 rgba(0,0,0,0.1);
 	border-bottom: 1px solid #bfbfbf;
 	position: relative;
-	/*z-index: 100;*/
 }
 
 .sapUiInteractionTree li[data-interaction-index="0"] .sapUiInteractionItemDiv  {
@@ -263,10 +253,6 @@ li.sapUiInteractionItemExpanded {
 	height: 1.125rem;
 }
 
-.sapUiInteractionHeader {
-
-}
-
 .sapUiInteractionGridLinesContainer {
 	background-color: white;
 	position: absolute;
@@ -399,4 +385,8 @@ li.sapUiInteractionItemExpanded {
 
 .sapUiSupportIntPopoverForm .sapUiForm .sapUiFormTitle {
 	width: calc(100% - 80px);
+}
+
+.sapUiPerformanceTimeline {
+	height: 50px;
 }

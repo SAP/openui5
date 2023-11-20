@@ -6,17 +6,18 @@
 sap.ui.define(function () {
 	"use strict";
 
+	// noinspection UnnecessaryLocalVariableJS
 	/**
-	* Specifies the value list type of a property.
-	*
-	* @alias sap.ui.model.odata.v4.ValueListType
-	* @enum {string}
-	* @public
-	* @readonly
-	* @since 1.45.0
-	*
-	* @see sap.ui.model.odata.v4.ODataMetaModel#getValueListType
-	*/
+	 * Specifies the value list type of a property.
+	 *
+	 * @alias sap.ui.model.odata.v4.ValueListType
+	 * @enum {string}
+	 * @public
+	 * @readonly
+	 * @since 1.45.0
+	 *
+	 * @see sap.ui.model.odata.v4.ODataMetaModel#getValueListType
+	 */
 	var ValueListType = { // keep the var for JSDoc generation
 		/**
 		 * There is no value list.
@@ -47,5 +48,4 @@ sap.ui.define(function () {
 	};
 
 	return ValueListType;
-
 }, /* bExport= */ true);

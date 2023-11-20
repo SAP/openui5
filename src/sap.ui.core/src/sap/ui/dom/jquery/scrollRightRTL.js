@@ -1,12 +1,31 @@
 /*!
  * ${copyright}
  */
-/*
- * IMPORTANT: This is a private module, its API must not be used and is subject to change.
- * Code other than the OpenUI5 libraries must not introduce dependencies to this module.
- */
-sap.ui.define(["sap/ui/Device", "sap/ui/thirdparty/jquery"], function(Device, jQuery) {
+sap.ui.define(["sap/ui/util/_FeatureDetection", "sap/ui/thirdparty/jquery"], function(_FeatureDetection, jQuery) {
 	"use strict";
+
+	var fnScroll;
+
+	if (_FeatureDetection.initialScrollPositionIsZero()) {
+		// actual chrome/safari/ff
+		fnScroll = function(oDomRef) {
+			return (-oDomRef.scrollLeft);
+		};
+	} else {
+		//legacy chromium
+		fnScroll = function(oDomRef) {
+			return oDomRef.scrollWidth - oDomRef.scrollLeft - oDomRef.clientWidth;
+		};
+	}
+
+	/**
+	 * This module provides the {@link jQuery#scrollRightRTL} API.
+	 *
+	 * @namespace
+	 * @name module:sap/ui/dom/jquery/scrollRightRTL
+	 * @public
+	 * @since 1.58
+	 */
 
 	/**
 	 * Returns the MIRRORED scrollLeft value of the first element in the given jQuery collection in right-to-left mode.
@@ -19,35 +38,21 @@ sap.ui.define(["sap/ui/Device", "sap/ui/thirdparty/jquery"], function(Device, jQ
 	 * Returns "undefined" if no element is given.
 	 *
 	 * @return {int} The scroll position, counted from the rightmost position
-	 * @private
+	 * @public
+	 * @name jQuery#scrollRightRTL
 	 * @author SAP SE
+	 * @since 0.20.0
 	 * @function
-	 * @exports sap/ui/dom/jquery/scrollRightRTL
+	 * @requires module:sap/ui/dom/jquery/scrollRightRTL
 	 */
 	var fnScrollRightRTL = function() {
 		var oDomRef = this.get(0);
 		if (oDomRef) {
-
-			if (Device.browser.msie) {
-				return oDomRef.scrollLeft;
-
-			} else if (Device.browser.firefox || (Device.browser.safari && Device.browser.version >= 10)) {
-				// Firefox and Safari 10+ behave the same although Safari is a WebKit browser
-				return (-oDomRef.scrollLeft);
-
-			} else if (Device.browser.webkit) {
-				// WebKit browsers (except Safari 10+, as it's handled above)
-				return oDomRef.scrollWidth - oDomRef.scrollLeft - oDomRef.clientWidth;
-
-			} else {
-				// unrecognized browser; it is hard to return a best guess, as browser strategies are very different, so return the actual value
-				return oDomRef.scrollLeft;
-			}
+			return fnScroll(oDomRef);
 		}
 	};
 
 	jQuery.fn.scrollRightRTL = fnScrollRightRTL;
-
 
 	return jQuery;
 });

@@ -1,0 +1,86 @@
+<mvc:View
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core"
+	xmlns:layout="sap.ui.layout"
+	xmlns:form="sap.ui.layout.form"
+	xmlns:table="sap.ui.table"
+	xmlns:tablerm="sap.ui.table.rowmodes"
+	displayBlock="true">
+
+	<layout:VerticalLayout>
+
+		<Title text="Strings" />
+		<form:SimpleForm layout="ResponsiveGridLayout" columnsL="1" width="100%" editable="true">
+
+
+			<core:Title text="Output" />
+
+			<Label text="Plain" />
+			<Text textDirection="{/rtl}" text="{/string}" />
+
+			<Label text="Character Codes (hex)" />
+			<Text textDirection="{/rtl}"
+					text="{
+						path: '/string',
+						formatter: '.formatAsHex'
+						}" />
+						
+			<Label text="Character Codes (hex + custom)" />
+			<Text textDirection="{/rtl}"
+					text="{
+						path: '/string',
+						formatter: '.formatAsHexCustom'
+						}" />
+
+
+			<core:Title text="Input" />
+
+			<Switch state="false" customTextOn="RTL" customTextOff="LTR"
+					change=".onRTLChange" />
+
+			<Label text="Plain" />
+			<Input value="{/string}" />
+			
+			<Label text="Character Codes (hex)" />
+			<Input value="{
+						path: '/string',
+						formatter: '.formatAsHex'
+					}"
+					change=".onHexChanged" />
+
+			<Label text="Character Codes (hex + custom)" />
+			<Input value="{
+						path: '/string',
+						formatter: '.formatAsHexCustom'
+					}"
+					change=".onHexCustomChanged" />
+		</form:SimpleForm>
+
+		<Title text="Special Characters" />
+		<table:Table selectionMode="None" rows="{specialChars>/rows}" >
+			<table:rowMode>
+				<tablerm:Fixed rowCount="{=${specialChars>/rows}.length}" />
+			</table:rowMode>
+			<table:columns>
+				<table:Column>
+					<table:label>
+						<Label text="Custom" />
+					</table:label>
+					<table:template>
+						<Text text="{specialChars>custom}" />
+					</table:template>
+				</table:Column>
+				<table:Column>
+					<table:label>
+						<Label text="Hex Code" />
+					</table:label>
+					<table:template>
+						<Text text="{specialChars>code}" />
+					</table:template>
+				</table:Column>
+			</table:columns>
+		</table:Table>
+
+	</layout:VerticalLayout>
+</mvc:View>

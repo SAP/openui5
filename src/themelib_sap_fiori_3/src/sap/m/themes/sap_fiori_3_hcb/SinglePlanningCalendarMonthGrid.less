@@ -1,0 +1,37 @@
+/* ====================================================== */
+/* CSS for control sap.m/SinglePlanningCalendarMonthGrid  */
+/* Quartz High Contrast Black theme                       */
+/* ====================================================== */
+.calendarSpecialDayTypeColorMixIn(@class, @color) {
+	.sapMSPCMonthGrid {
+		.@{class} .specialDateIndicator {
+			background-color: @color;
+		}
+	}
+}
+
+html.sap-desktop .sapMSPCMonthDay:not(.sapMSPCMonthDayToday):focus::after,
+html.sap-desktop .sapMSPCMonthDay.sapMSPCMonthDayToday:focus .sapMSPCMonthNowMarker::after {
+	border-width: 0.125rem;
+}
+
+.calendarSpecialDayTypeColorMixIn(sapUiCalendarSpecialDayType01, @sapLegendColor1);
+.calendarSpecialDayTypeColorMixIn(sapUiCalendarSpecialDayType02, @sapLegendColor2);
+.calendarSpecialDayTypeColorMixIn(sapUiCalendarSpecialDayType03, @sapLegendColor3);
+.calendarSpecialDayTypeColorMixIn(sapUiCalendarSpecialDayType04, @sapLegendColor4);
+.calendarSpecialDayTypeColorMixIn(sapUiCalendarSpecialDayType05, @sapLegendColor5);
+.calendarSpecialDayTypeColorMixIn(sapUiCalendarSpecialDayType06, @sapLegendColor6);
+.calendarSpecialDayTypeColorMixIn(sapUiCalendarSpecialDayType07, @sapLegendColor7);
+.calendarSpecialDayTypeColorMixIn(sapUiCalendarSpecialDayType08, @sapLegendColor8);
+.calendarSpecialDayTypeColorMixIn(sapUiCalendarSpecialDayType09, @sapLegendColor9);
+.calendarSpecialDayTypeColorMixIn(sapUiCalendarSpecialDayType10, @sapLegendColor10);
+.calendarSpecialDayTypeColorMixIn(sapUiCalendarSpecialDayType11, @sapLegendColor11);
+.calendarSpecialDayTypeColorMixIn(sapUiCalendarSpecialDayType12, @sapLegendColor12);
+.calendarSpecialDayTypeColorMixIn(sapUiCalendarSpecialDayType13, @sapLegendColor13);
+.calendarSpecialDayTypeColorMixIn(sapUiCalendarSpecialDayType14, @sapLegendColor14);
+.calendarSpecialDayTypeColorMixIn(sapUiCalendarSpecialDayType15, @sapLegendColor15);
+.calendarSpecialDayTypeColorMixIn(sapUiCalendarSpecialDayType16, @sapLegendColor16);
+.calendarSpecialDayTypeColorMixIn(sapUiCalendarSpecialDayType17, @sapLegendColor17);
+.calendarSpecialDayTypeColorMixIn(sapUiCalendarSpecialDayType18, @sapLegendColor18);
+.calendarSpecialDayTypeColorMixIn(sapUiCalendarSpecialDayType19, @sapLegendColor19);
+.calendarSpecialDayTypeColorMixIn(sapUiCalendarSpecialDayType20, @sapLegendColor20);

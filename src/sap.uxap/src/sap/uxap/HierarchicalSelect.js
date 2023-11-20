@@ -4,12 +4,11 @@
 
 // Provides control sap.uxap.HierarchicalSelect.
 sap.ui.define([
-    "jquery.sap.global",
-    "sap/m/Select",
-    "sap/ui/Device",
-    "./library",
-    "./HierarchicalSelectRenderer"
-], function(jQuery, Select, Device, library, HierarchicalSelectRenderer) {
+	"sap/m/Select",
+	"sap/ui/Device",
+	"sap/ui/thirdparty/jqueryui/jquery-ui-position",
+	"./HierarchicalSelectRenderer"
+], function(Select, Device, jQuery, HierarchicalSelectRenderer) {
 	"use strict";
 
 	/**
@@ -31,7 +30,6 @@ sap.ui.define([
 	 * @public
 	 * @since 1.26
 	 * @alias sap.uxap.HierarchicalSelect
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var HierarchicalSelect = Select.extend("sap.uxap.HierarchicalSelect", /** @lends sap.uxap.HierarchicalSelect.prototype */ {
 		metadata: {
@@ -44,7 +42,9 @@ sap.ui.define([
 				 */
 				upperCase: {type: "boolean", group: "Appearance", defaultValue: false}
 			}
-		}
+		},
+
+		renderer: HierarchicalSelectRenderer
 	});
 
 	HierarchicalSelect.POPOVER_MIN_WIDTH_REM = 11;
@@ -57,6 +57,17 @@ sap.ui.define([
 
 		Select.prototype.onAfterRenderingPicker.call(this);
 
+		this._applyHierarchyLevelClasses();
+	};
+
+	HierarchicalSelect.prototype.onAfterRenderingList = function() {
+
+		Select.prototype.onAfterRenderingList.call(this);
+
+		this._applyHierarchyLevelClasses();
+	};
+
+	HierarchicalSelect.prototype._applyHierarchyLevelClasses = function () {
 		var aItems = this.getItems() || [];
 
 		aItems.forEach(function (oItem) {
@@ -65,7 +76,6 @@ sap.ui.define([
 			oItem.$().addClass(sClass);
 		}, this);
 	};
-
 
 	HierarchicalSelect.prototype.setUpperCase = function (bValue, bSuppressInvalidate) {
 
@@ -85,7 +95,7 @@ sap.ui.define([
 	 * Keyboard handling requirement to have the same behavior on [ENTER] key
 	 * as on [SPACE] key (namely, to toggle the open state the select dropdown)
 	 */
-	HierarchicalSelect.prototype.onsapenter = Select.prototype.onsapspace;
+	HierarchicalSelect.prototype.onsapenter = Select.prototype.ontap;
 
 	/**
 	 * Keyboard handling of [UP], [PAGE-UP], [PAGE-DOWN], [HOME], [END] keys
@@ -154,7 +164,7 @@ sap.ui.define([
 			oPopoverDomRef = oPopover.getDomRef("cont"),
 			sMinWidth = oPopoverDomRef.style.minWidth;
 
-		if (jQuery.sap.endsWith(sMinWidth, "rem")) {
+		if (sMinWidth.endsWith("rem")) {
 			sMinWidth = sMinWidth.substring(0, sMinWidth.length - 3);
 			var iMinWidth = parseFloat(sMinWidth);
 			if (iMinWidth < HierarchicalSelect.POPOVER_MIN_WIDTH_REM && oPopoverDomRef) {

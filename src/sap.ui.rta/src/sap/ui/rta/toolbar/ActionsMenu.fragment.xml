@@ -1,0 +1,76 @@
+<core:FragmentDefinition
+		xmlns="sap.m"
+		xmlns:core="sap.ui.core">
+	<Menu
+			id="sapUiRta_actions"
+			class="sapUiRtaToolbarVisualizationSelection">
+		<MenuItem
+				id="sapUiRta_translateMenu"
+				icon="sap-icon://translate"
+				visible="{= ${controls>/translation/visible}}"
+				enabled="{controls>/translation/enabled}"
+				tooltip="{i18n>BTN_TRANSLATE}"
+				text="{i18n>BTN_TRANSLATE}" >
+			<items>
+				<MenuItem
+						text="{i18n>BTN_OPEN_DOWNLOAD_TRANSLATION}"
+						press=".openDownloadTranslationDialog"
+						icon="sap-icon://download"/>
+				<MenuItem
+						text="{i18n>BTN_OPEN_UPLOAD_TRANSLATION}"
+						press=".openUploadTranslationDialog"
+						enabled="{= ${translation>/sourceLanguages}.length > 0}"
+						icon="sap-icon://upload"/>
+			</items>
+		</MenuItem>
+		<MenuItem
+				id="sapUiRta_appVariantMenu"
+				icon="sap-icon://BusinessSuiteInAppSymbols/icon-variant-configuration"
+				enabled="{controls>/appVariantMenu/enabled}"
+				visible="{= (${controls>/appVariantMenu/visible} &amp;&amp; ${controls>/modeSwitcher} === 'adaptation')}"
+				text="{i18n>BTN_MANAGE_APPS_TXT}" >
+			<items>
+				<MenuItem
+						id="sapUiRta_appVariantOverview"
+						icon="sap-icon://action-settings"
+						enabled="{controls>/appVariantMenu/overview/enabled}"
+						visible="{= (${controls>/appVariantMenu/overview/visible} &amp;&amp; ${controls>/modeSwitcher} === 'adaptation')}"
+						text="{i18n>BTN_MANAGE_APPS_ITEM}" >
+					<items>
+						<MenuItem
+								id="sapUiRta_keyUser"
+								press=".overviewForKeyUser"
+								icon="sap-icon://key-user-settings"
+								text="{i18n>MENU_ITEM_KEY_USER}" />
+						<MenuItem
+								id="sapUiRta_developer"
+								press=".overviewForDeveloper"
+								icon="sap-icon://developer-settings"
+								text="{i18n>MENU_ITEM_SAP_DEVELOPER}" />
+					</items>
+				</MenuItem>
+				<MenuItem
+						id="sapUiRta_manageApps"
+						icon="sap-icon://action-settings"
+						press=".manageApps"
+						enabled="{controls>/appVariantMenu/manageApps/enabled}"
+						visible="{= (${controls>/appVariantMenu/manageApps/visible} &amp;&amp; ${controls>/modeSwitcher} === 'adaptation')}"
+						text="{i18n>BTN_MANAGE_APPS_ITEM}" />
+				<MenuItem
+						id="sapUiRta_saveAs"
+						visible="{= (${controls>/appVariantMenu/saveAs/visible} &amp;&amp; ${controls>/modeSwitcher} === 'adaptation')}"
+						enabled="{parts: ['controls>/appVariantMenu/saveAs/enabled', 'versions>/displayedVersion'], formatter: '.formatSaveAsEnabled'}"
+						press=".saveAs"
+						icon="sap-icon://copy"
+						text="{i18n>BTN_SAVE_AS}" />
+				</items>
+		</MenuItem>
+		<MenuItem
+				id="sapUiRta_restore"
+				icon="sap-icon://reset"
+				enabled="{controls>/restore/enabled}"
+				visible="{= (${controls>/restore/visible} &amp;&amp; ((${controls>/modeSwitcher} === 'visualization') || (${controls>/modeSwitcher} === 'adaptation')))}"
+				press=".restore"
+				text="{i18n>BTN_RESTORE}" />
+	</Menu>
+</core:FragmentDefinition>

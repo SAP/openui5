@@ -1,0 +1,53 @@
+/*********************************************************************
+	Style of the DT Contextmenu - Horizon High Contrast White theme
+**********************************************************************/
+@_sap_ui_dt_ContextMenu_Border_Radius: @sapUiButtonBorderCornerRadius; // .375rem
+@_sap_ui_dt_ContextMenu_OpenSubMenuBG: @sapUiSelected; //#0f5c93
+@_sap_ui_dt_ContextMenu_OpenSubMenuBorder: @sapUiNeutralBG; //000
+
+.sapUiDtContextMenu {
+	.sapUiMnuLst {
+		.sapUiMnuItm {
+
+			&:focus {
+				border-radius: @_sap_ui_dt_ContextMenu_Border_Radius;
+			}
+
+			&.sapUiMnuItmSubMnuOpen {
+				background-color: @_sap_ui_dt_ContextMenu_OpenSubMenuBG;
+				border-bottom: 0.0625rem solid @_sap_ui_dt_ContextMenu_OpenSubMenuBorder !important; //1px
+				border-radius: @_sap_ui_dt_ContextMenu_Border_Radius;
+
+				&.sapUiMnuItmHov {
+					background-color: @_sap_ui_dt_ContextMenu_OpenSubMenuBG;
+				}
+			}
+		}
+	}
+}
+
+.sapUiDtContextMiniMenu:not(.sapUiSubmenu) {
+	.sapUiMnuLst {
+		.sapUiMnuItm {
+
+			&.sapUiMnuItmHov {
+				.sapUiIcon {
+					border-radius: @_sap_ui_dt_ContextMenu_Border_Radius;
+				}
+			}
+
+			&.sapUiMnuItmSubMnuOpen {
+				background-color: @_sap_ui_dt_ContextMenu_OpenSubMenuBorder;
+
+				.sapUiIcon {
+					background-color: @_sap_ui_dt_ContextMenu_OpenSubMenuBG;
+					border-radius: @_sap_ui_dt_ContextMenu_Border_Radius;
+				}
+			}
+
+			&:focus {
+				border-radius: @_sap_ui_dt_ContextMenu_Border_Radius;
+			}
+		}
+	}
+}

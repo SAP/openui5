@@ -8,11 +8,6 @@ html.sap-desktop .sapMToken:focus {
 	outline-offset: -3px;
 }
 
-html[data-sap-ui-browser^="ie"].sap-desktop,
-html[data-sap-ui-browser^="ed"].sap-desktop {
-	.sapMToken:focus {
-		.sapMTokenText:before {
-			border: 0.125rem dashed @sapUiContentFocusColor; //dashed only in IE due to visual issues with dotted - ticket 1670468323
-		}
-	}
+.sapMTokenIcon {
+	font-size: @sapMFontLargeSize;
 }

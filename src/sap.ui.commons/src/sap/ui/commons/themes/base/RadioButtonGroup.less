@@ -9,14 +9,8 @@
 
 .sapUiRbGTab{
 	display: -webkit-box;
-	display: -ms-flexbox;
 	display: -webkit-flex;
 	display: flex;
-}
-
-html[data-sap-ui-browser^="ie"] .sapUiRbGTab{
-	display: table;
-	table-layout: fixed;
 }
 
 .sapUiRbGCol{
@@ -29,25 +23,13 @@ html[data-sap-ui-browser^="ie"] .sapUiRbGTab{
 .sapUiRbGTabFlex > .sapUiRbGCol{
 	flex-grow: 1;
 	-webkit-flex-grow: 1;
-	-ms-flex: 1;
-}
-
-html[data-sap-ui-browser^="ie"] .sapUiRbGCol{
-	display: table-cell;
-	padding-right: 15px;
 }
 
 .sapUiRbGDummy{
 	flex-grow: 1000;
 	-webkit-flex-grow: 1000;
 	-webkit-box-flex: 1000;
-	-ms-flex: 1000;
 	min-width: 1px;
-}
-
-html[data-sap-ui-browser^="ie"] .sapUiRbGDummy{
-	display: table-cell;
-	width: 1px;
 }
 
 .sapUiRbG > .sapUiRb,

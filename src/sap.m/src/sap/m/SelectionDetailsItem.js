@@ -3,14 +3,34 @@
  */
 
 // Provides control sap.m.SelectionDetailsItem.
-sap.ui.define(["jquery.sap.global", "sap/ui/core/Element", "sap/m/ListItemBase", "./library", "sap/m/Button", "sap/m/OverflowToolbar", "sap/m/ToolbarSpacer", "sap/ui/base/Interface"],
-	function(jQuery, Element, ListItemBase, library, Button, OverflowToolbar, ToolbarSpacer, Interface) {
+sap.ui.define([
+	"sap/ui/core/Element",
+	"sap/m/ListItemBase",
+	"./library",
+	"sap/m/Button",
+	"sap/m/OverflowToolbar",
+	"sap/m/ToolbarSpacer",
+	"sap/ui/base/Interface",
+	"./SelectionDetailsListItemRenderer"
+],
+	function(
+		Element,
+		ListItemBase,
+		library,
+		Button,
+		OverflowToolbar,
+		ToolbarSpacer,
+		Interface,
+		SelectionDetailsListItemRenderer
+	) {
 	"use strict";
 
 	/**
 	 * @private
 	 */
-	var SelectionDetailsListItem = ListItemBase.extend("sap.m.SelectionDetailsListItem");
+	var SelectionDetailsListItem = ListItemBase.extend("sap.m.SelectionDetailsListItem", {
+		renderer: SelectionDetailsListItemRenderer
+	});
 
 	SelectionDetailsListItem.prototype.onBeforeRendering = function() {
 		var sType;
@@ -19,7 +39,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Element", "sap/m/ListItemBase",
 		} else {
 			sType = library.ListType.Inactive;
 		}
-		this.setProperty("type", sType, true);
+		this.setType(sType);
 	};
 
 	/**
@@ -42,7 +62,6 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Element", "sap/m/ListItemBase",
 	 * @protected
 	 * @alias sap.m.SelectionDetailsItem
 	 * @since 1.48.0
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var SelectionDetailsItem = Element.extend("sap.m.SelectionDetailsItem", /** @lends sap.m.SelectionDetailsItem.prototype */ {
 		metadata : {
@@ -96,7 +115,9 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Element", "sap/m/ListItemBase",
 	 */
 	SelectionDetailsItem.prototype.getFacade = function() {
 		var oFacade = new Interface(this, SelectionDetailsItem.prototype._aFacadeMethods);
-		this.getFacade = jQuery.sap.getter(oFacade);
+		this.getFacade = function() {
+			return oFacade;
+		};
 		return oFacade;
 	};
 
@@ -110,7 +131,9 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Element", "sap/m/ListItemBase",
 			this._oListItem = new SelectionDetailsListItem({
 				press: [this._onSelectionDetailsListItemPress, this]
 			});
-			this._oListItem._getParentElement = jQuery.sap.getter(this);
+			this._oListItem._getParentElement = function() {
+				return this;
+			}.bind(this);
 			this._addOverflowToolbar();
 		}
 

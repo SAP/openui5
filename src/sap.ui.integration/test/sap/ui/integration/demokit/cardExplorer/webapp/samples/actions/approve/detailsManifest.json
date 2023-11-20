@@ -1,0 +1,125 @@
+{
+	"sap.app": {
+		"id": "card.explorer.bitetosnack.approve.order",
+		"type": "card",
+		"title": "Sample of a Bite to Snack Card",
+		"subTitle": "Sample of Snack Card",
+		"applicationVersion": {
+			"version": "1.0.0"
+		},
+		"shortTitle": "A short title for this Card",
+		"info": "Additional information about this Card",
+		"description": "A long description for this Card",
+		"tags": {
+			"keywords": [
+				"Object",
+				"Card",
+				"Sample"
+			]
+		}
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"icons": {
+			"icon": "sap-icon://switch-classes"
+		}
+	},
+	"sap.card": {
+		"type": "Object",
+		"extension": "./ApproveCardExtension",
+		"data": {
+			"json": {
+				"reasons": [
+					{
+						"id": "reason1",
+						"title": "Reason 1"
+					},
+					{
+						"id": "reason2",
+						"title": "Reason 2"
+					}
+				]
+			}
+		},
+		"header": {
+			"icon": {
+				"src": "./../../images/DonnaMoore.png"
+			},
+			"title": "Dona Moore",
+			"subTitle": "Purchase Requisition Denial",
+			"closeButton": {
+				"visible": false
+			}
+		},
+		"content": {
+			"groups": [
+				{
+					"alignment": "Stretch",
+					"items": [
+						{
+							"value": "Reject the expense for:"
+						},
+						{
+							"value": "Ultra Jet Super Highspeed"
+						},
+						{
+							"value": "15,000.00 EUR",
+							"type": "Status",
+							"state": "Information"
+						}
+					]
+				},
+				{
+					"alignment": "Stretch",
+					"items": [
+						{
+							"id": "reason",
+							"label": "Reason",
+							"type": "ComboBox",
+							"placeholder": "Select",
+							"item": {
+								"path": "/reasons",
+								"template": {
+									"key": "{id}",
+									"title": "{title}"
+								}
+							}
+						},
+						{
+							"id": "comment",
+							"label": "Comment",
+							"type": "TextArea",
+							"rows": 4,
+							"placeholder": "Comment"
+						}
+					]
+				}
+			]
+		},
+		"footer": {
+			"actionsStrip": [
+				{
+					"text": "Cancel",
+					"buttonType": "Transparent",
+					"actions": [
+						{
+							"type": "HideCard"
+						}
+					]
+				},
+				{
+					"text": "Deny",
+					"buttonType": "Reject",
+					"actions": [
+						{
+							"type": "Custom",
+							"parameters": {
+								"status": "denied"
+							}
+						}
+					]
+				}
+			]
+		}
+	}
+}

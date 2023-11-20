@@ -9,11 +9,9 @@
 				id="PC1"
 				startDate="{path: '/startDate'}"
 				rows="{path: '/people'}"
-				appointmentsVisualization="Filled"
-				appointmentSelect="handleAppointmentSelect">
+				appointmentsVisualization="Filled">
 			<toolbarContent>
 				<Title text="Title" titleStyle="H4"/>
-				<ToolbarSpacer/>
 				<Label text="Logged in as" />
 				<Select
 						id="userRole"
@@ -39,7 +37,7 @@
 						appointmentDragEnter="handleAppointmentDragEnter"
 						appointmentResize="handleAppointmentResize"
 						appointmentCreate="handleAppointmentCreate"
-						appointments="{path : 'appointments', templateShareable: 'true'}">
+						appointments="{path : 'appointments', templateShareable: false}">
 					<appointments>
 						<unified:CalendarAppointment
 								startDate="{start}"

@@ -1,0 +1,12 @@
+{
+  "1.102.0": {
+    "date": "May 2022",
+    "notes": [
+      {
+        "id": "4939d1838eff26a2ab4dc364496a4be570b193dc",
+        "type": "FEATURE",
+        "text": " sap.ui.fl CompVariant with Versioning"
+      }
+    ]
+  }
+}

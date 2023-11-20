@@ -1,0 +1,31 @@
+{
+	"sap.app": {
+		"id": "sap.m.sample.MessageStripWithEnableFormattedText",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "sap.m.sample.MessageStripWithEnableFormattedText.view.MessageStripWithEnableFormattedText",
+			"type": "XML",
+			"async": true
+		},
+		"dependencies": {
+			"libs": {
+				"sap.m": {},
+				"sap.ui.core": {},
+				"sap.ui.layout": {}
+			}
+		},
+		"config": {
+			"sample": {
+				"files": [
+					"view/MessageStripWithEnableFormattedText.view.xml",
+					"controller/MessageStripWithEnableFormattedText.controller.js",
+					"manifest.json"
+				]
+			}
+		}
+	}
+}

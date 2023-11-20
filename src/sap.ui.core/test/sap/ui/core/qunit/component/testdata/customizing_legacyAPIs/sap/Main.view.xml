@@ -1,0 +1,29 @@
+<mvc:View xmlns="sap.m" xmlns:l="sap.ui.layout"
+	xmlns:html="http://www.w3.org/1999/xhtml" xmlns:mvc="sap.ui.core.mvc"
+	xmlns:core="sap.ui.core" controllerName="testdata.customizing.sap.Main">
+	<l:VerticalLayout>
+		<Text text="SAP Component"></Text>
+
+		<mvc:XMLView id="sub1View" viewName="testdata.customizing.sap.Sub1" />
+
+		<mvc:XMLView id="sub2View" viewName="testdata.customizing.sap.Sub2" />
+
+		<mvc:XMLView id="sub3View" viewName="testdata.customizing.sap.Sub3" />
+
+		<!-- fragment without id behaves different to a fragment with id -->
+		<core:Fragment fragmentName="testdata.customizing.sap.Frag1" type="XML" />
+		<core:Fragment id="frag1" fragmentName="testdata.customizing.sap.Frag1" type="XML" />
+
+		<html:h2>JSView Extension Tests start below:</html:h2>
+		<mvc:View viewName="module:testdata/customizing/sap/Sub4Typed" />
+
+		<html:h2>HTML View Modification Tests start below:</html:h2>
+		<mvc:HTMLView viewName="testdata.customizing.sap.Sub5" />
+
+		<mvc:XMLView id="sub6View" viewName="testdata.customizing.sap.Sub6" />
+
+		<!-- This view's controller should get not get the instance-specific extensions of Sub6 -->
+		<mvc:XMLView id="sub6View_Strich" viewName="testdata.customizing.sap.Sub6" />
+
+	</l:VerticalLayout>
+</mvc:View>

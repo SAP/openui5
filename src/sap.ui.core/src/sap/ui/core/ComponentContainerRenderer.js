@@ -13,50 +13,42 @@ sap.ui.define(function() {
 	 * @alias sap.ui.core.ComponentContainerRenderer
 	 */
 	var ComponentContainerRenderer = {
+		apiVersion: 2
 	};
 
 
 	/**
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
 	 *
-	 * @param {sap.ui.core.RenderManager} oRenderManager RenderManager that can be used for writing to the Render-Output-Buffer
-	 * @param {sap.ui.core.Control} oControl Object representation of the control that should be rendered
+	 * @param {sap.ui.core.RenderManager} oRM RenderManager that can be used for writing to the Render-Output-Buffer
+	 * @param {sap.ui.core.ComponentContainer} oComponentContainer The ComponentContainer that should be rendered
 	 */
-	ComponentContainerRenderer.render = function(oRenderManager, oComponentContainer){
+	ComponentContainerRenderer.render = function(oRM, oComponentContainer){
 
 		// convenience variable
-		var oRM = oRenderManager;
 		var oComponent = oComponentContainer.getComponentInstance();
 		var sWidth = oComponentContainer.getWidth();
 		var sHeight = oComponentContainer.getHeight();
 
-		oRM.write("<div");
-		oRM.writeControlData(oComponentContainer);
-		if (sWidth) {
-			oRM.addStyle("width", sWidth);
-		}
-		if (sHeight) {
-			oRM.addStyle("height", sHeight);
-		}
-		oRM.writeStyles();
-		oRM.addClass("sapUiComponentContainer"); // this class can be used to be able to style the container, for example for support or demo reasons
-		oRM.writeClasses();
-		oRM.write(">");
-		oRM.write("<div id=\"" + oComponentContainer.getId() + "-uiarea\"");
+		oRM.openStart("div", oComponentContainer);
+		oRM.style("width", sWidth);
+		oRM.style("height", sHeight);
+		oRM.class("sapUiComponentContainer"); // this class can be used to be able to style the container, for example for support or demo reasons
+		oRM.openEnd();
+		oRM.openStart("div", oComponentContainer.getId() + "-uiarea");
 		if (sWidth && sWidth !== "auto") {
-			oRM.addStyle("width", "100%"); // if a width is specified we use 100% width for the uiarea
+			oRM.style("width", "100%"); // if a width is specified we use 100% width for the uiarea
 		}
 		if (sHeight && sHeight !== "auto") {
-			oRM.addStyle("height", "100%"); // if a height is specified we use 100% height for the uiarea
+			oRM.style("height", "100%"); // if a height is specified we use 100% height for the uiarea
 		}
-		oRM.writeStyles();
-		oRM.write(">");
+		oRM.openEnd();
 		if (oComponent) {
 			oComponent.render(oRM);
 		}
-		oRM.write("</div></div>");
+		oRM.close("div");
+		oRM.close("div");
 	};
-
 
 
 	return ComponentContainerRenderer;

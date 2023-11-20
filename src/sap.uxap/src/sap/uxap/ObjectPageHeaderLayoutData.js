@@ -26,7 +26,6 @@ sap.ui.define(["sap/ui/core/LayoutData", "./library"], function (LayoutData, lib
 	 * @public
 	 * @since 1.26
 	 * @alias sap.uxap.ObjectPageHeaderLayoutData
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var ObjectPageHeaderLayoutData = LayoutData.extend("sap.uxap.ObjectPageHeaderLayoutData", /** @lends sap.uxap.ObjectPageHeaderLayoutData.prototype */ {
 		metadata: {

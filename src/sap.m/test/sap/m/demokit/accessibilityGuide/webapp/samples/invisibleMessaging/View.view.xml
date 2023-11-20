@@ -1,0 +1,25 @@
+<mvc:View
+	controllerName="sap.m.sample.invisibleMessaging.Controller"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core"
+	height="100%">
+		<App>
+			<Page
+				showHeader="false"
+				id="page"
+				backgroundDesign="Solid">
+				<content>
+					<FormattedText class="sapUiSmallMargin" htmlText="The &lt;code&gt;sap.ui.core.InvisibleMessage&lt;/code&gt; enables developers to specify the message to be announced when something dynamically changes on the user interface. In this manner, the class allows control and application developers to improve the usability of the applications, by sending dedicated messages to the screen reader users:" />
+					<HBox class="sapUiSmallMargin" alignItems="Center">
+						<Input id="input" placeholder="Try pressing the button with and without entering text here...">
+							<layoutData>
+								<FlexItemData growFactor="1" />
+							</layoutData>
+						</Input>
+						<Button press=".fnHandler" text="Test me" class="sapUiSmallMargin"/>
+					</HBox>
+				</content>
+			</Page>
+		</App>
+</mvc:View>

@@ -6,11 +6,10 @@ describe('sap.m.SplitApp', function() {
 	var bPhone = null;
 
 	it("SplitApp initial rendering",function() {
-		browser.executeScript(function () {
-			return sap.ui.Device.system.phone;
-		}).then(function (response) {
-			bPhone = response;
-		});
+		browser.executeScript("return sap.ui.Device.system.phone;")
+			.then(function (response) {
+				bPhone = response;
+			});
 		expect(takeScreenshot()).toLookAs("SplitApp-InitialRendering");
 	});
 

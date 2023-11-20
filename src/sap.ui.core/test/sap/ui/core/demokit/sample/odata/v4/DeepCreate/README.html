@@ -1,0 +1,55 @@
+<!DOCTYPE HTML>
+<html lang="en">
+	<head>
+		<style>
+			body {font-family: Arial, Helvetica, sans-serif;}
+		</style>
+		<title>Demo Application: Deep Create</title>
+	</head>
+	<body>
+		<h1>Demo Application: Deep Create</h1>
+		<h2>DESCRIPTION</h2>
+		This demo application demonstrates how to work with deep created entities, composed via
+		<a href="https://sdk.openui5.org/api/sap.ui.model.odata.v4.ODataListBinding/methods/create">
+			V4 ODataModel#getKeepAliveContext API</a> which are
+			displayed within a list report and an object page that are synchronised via
+		<a href="https://sdk.openui5.org/api/sap.ui.model.odata.v4.ODataModel/methods/getKeepAliveContext">
+			V4 ODataModel#getKeepAliveContext</a> API.
+
+		<h3>Start Up</h3>
+		<ol>
+			<li>Start the DeepCreate application with URL:
+				<a href="/test-resources/sap/ui/core/demokit/sample/common/index.html?component=odata.v4.DeepCreate">
+					/test-resources/sap/ui/core/demokit/sample/common/index.html?component=odata.v4.DeepCreate
+				</a></li>
+			<li><b>Note:</b> The list report appears and you see some sales orders.</li>
+		</ol>
+		<h2>Scenario: Create sales order, create line items and reset changes</h2>
+		<ol>
+			<li>Press the <code>Create</code> button.</li>
+			<li><b>Note:</b> The object page with an inital sales order appears.</li>
+			<li>Press the <code>Create</code> button for the line items several times.</li>
+			<li><b>Note:</b> The line items table reflects the deeply created line items.</li>
+			<li><b>Note:</b> The title of the line items table reflects the correct count.</li>
+			<li>Select the <code>check mark</code> of one or more line items.</li>
+			<li>Press the <code>Delete</code> button.</li>
+			<li><b>Note:</b> The checked line items are gone and the title of the line items table
+				reflects the correct count.</li>
+			<li>Press the <code>Reset Changes</code> button.</li>
+			<li><b>Note:</b> The list report is displayed again and the created sales order is gone.
+			</li>
+		</ol>
+		<h2>Scenario: Create sales order, create line items and save</h2>
+		<ol>
+			<li>Press the <code>Create</code> button.</li>
+			<li><b>Note:</b> The object page with an inital sales order appears.</li>
+			<li>Press the <code>Create</code> button for the line items two times.</li>
+			<li><b>Note:</b> The line items table reflects the deeply created line items and the
+				title of the line items table reflects the correct count.</li>
+			<li>Press the <code>Save</code> button.</li>
+			<li><b>Note:</b> The <code>Sales Order ID</code> now is "0500000007",
+				<code>Buyer Name</code> is "SAP", <code>Gross Amount</code> is "6825,84", the
+				<code>Item Position</code> are filled and you got a bonus line item.</li>
+		</ol>
+	</body>
+</html>

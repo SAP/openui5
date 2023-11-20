@@ -1,22 +1,29 @@
 /*!
  * ${copyright}
  */
-
+/*eslint-disable max-len */
 // Provides an abstraction for model bindings
-sap.ui.define(['sap/ui/base/Object'],
-	function(BaseObject) {
+sap.ui.define(['sap/ui/base/Object', "sap/base/util/isPlainObject"],
+	function(BaseObject, isPlainObject) {
 	"use strict";
 
 
 	/**
-	 * Constructor for Context class.
+	 * Constructor for Context class. The constructor must only be called by model-internal methods.
 	 *
 	 * @class
-	 * The Context is a pointer to an object in the model data, which is used to
-	 * allow definition of relative bindings, which are resolved relative to the
-	 * defined object.
-	 * Context elements are created either by the ListBinding for each list entry
-	 * or by using createBindingContext.
+	 * The Context is a pointer to an object in the model data. A relative binding needs a context
+	 * as a reference point in order to resolve its path; without a context, a relative binding is
+	 * unresolved and does not point to model data. Context instances can, for example, be created
+	 * in the following ways:
+	 * <ul>
+	 * <li>by a {@link sap.ui.model.ListBinding} for each list entry,</li>
+	 * <li>as the single context associated with a {@link sap.ui.model.ContextBinding},</li>
+	 * <li>by calling {@link sap.ui.model.Model#createBindingContext}.</li>
+	 * </ul>
+	 *
+	 * For more information on the concept of data binding and binding contexts, see
+	 * {@link topic:e2e6f4127fe4450ab3cf1339c42ee832 documentation on binding syntax}.
 	 *
 	 * @param {sap.ui.model.Model} oModel the model
 	 * @param {string} sPath the binding path
@@ -34,7 +41,7 @@ sap.ui.define(['sap/ui/base/Object'],
 			this.oModel = oModel;
 			this.sPath = sPath;
 			this.bForceRefresh = false;
-
+			this.sDeepPath = "";
 		},
 
 		metadata : {
@@ -84,7 +91,7 @@ sap.ui.define(['sap/ui/base/Object'],
 	 * @return {object} the context object
 	 */
 	Context.prototype.getObject = function(sPath, mParameters) {
-		if (jQuery.isPlainObject(sPath)) {
+		if (isPlainObject(sPath)) {
 			mParameters = sPath;
 			sPath = undefined;
 		}
@@ -94,6 +101,9 @@ sap.ui.define(['sap/ui/base/Object'],
 	/**
 	 * Sets the force refresh flag of the context. If this is set, the context will force a refresh of dependent
 	 * bindings, when the context is propagated.
+	 *
+	 * @deprecated since 1.93.0; only supported by the OData V2 Model; use V2 specific Context
+	 *   instead
 	 * @private
 	 * @param {boolean} bForceRefresh the force refresh flag
 	 */
@@ -103,6 +113,9 @@ sap.ui.define(['sap/ui/base/Object'],
 
 	/**
 	 * This method returns, whether dependent bindings need to be refreshed.
+	 *
+	 * @deprecated since 1.93.0; only supported by the OData V2 Model; use V2 specific Context
+	 *   instead
 	 * @private
 	 * @return {boolean} the force refresh flag
 	 */
@@ -114,6 +127,9 @@ sap.ui.define(['sap/ui/base/Object'],
 	 * Sets the preliminary flag of the context. If this is set, the context is not yet linked to actual model
 	 * data, but does just contain path information. This can be used by dependent bindings to send their request
 	 * in parallel to the request of the context binding.
+	 *
+	 * @deprecated since 1.93.0; only supported by the OData V2 Model; use V2 specific Context
+	 *   instead
 	 * @private
 	 * @param {boolean} bPreliminary the preliminary flag
 	 */
@@ -123,8 +139,11 @@ sap.ui.define(['sap/ui/base/Object'],
 
 	/**
 	 * This method returns, whether the context is preliminary.
+	 *
+	 * @deprecated since 1.93.0; only supported by the OData V2 Model; use V2 specific Context
+	 *   instead
 	 * @private
-	 * @sap-restricted sap.suite.ui.generic
+	 * @ui5-restricted sap.suite.ui.generic
 	 * @return {boolean} the preliminary flag
 	 */
 	Context.prototype.isPreliminary = function() {
@@ -134,6 +153,9 @@ sap.ui.define(['sap/ui/base/Object'],
 	/**
 	 * Sets the updated flag of the context. If this is set, the context was updated. E.g. the path changed from
 	 * a preliminary path to the canonical one.
+	 *
+	 * @deprecated since 1.93.0; only supported by the OData V2 Model; use V2 specific Context
+	 *   instead
 	 * @private
 	 * @param {boolean} bUpdated the preliminary flag
 	 */
@@ -143,11 +165,26 @@ sap.ui.define(['sap/ui/base/Object'],
 
 	/**
 	 * This method returns, whether the context is updated.
+	 *
+	 * @deprecated since 1.93.0; only supported by the OData V2 Model; use V2 specific Context
+	 *   instead
 	 * @private
 	 * @return {boolean} the updated flag
 	 */
 	Context.prototype.isUpdated = function() {
 		return this.bUpdated;
+	};
+
+	/**
+	 * Whether this context has changed. By default this context cannot be changed but subclasses
+	 * can override this behaviour.
+	 *
+	 * @return {boolean} Whether this context has changed
+	 * @private
+	 * @ui5-restricted sap.ui.base.ManagedObject
+	 */
+	Context.prototype.hasChanged = function() {
+		return false;
 	};
 
 	/**
@@ -160,24 +197,41 @@ sap.ui.define(['sap/ui/base/Object'],
 	 * @private
 	 */
 	Context.hasChanged = function(oOldContext, oNewContext) {
-		var bChanged = false;
-
-		if (oOldContext !== oNewContext) {
-			bChanged = true;
-		} else if (oNewContext && oNewContext.isUpdated()) {
-			bChanged = true;
-		} else if (oNewContext && oNewContext.isRefreshForced()) {
-			bChanged = true;
-		}
-
-		return bChanged;
+		// The check below is used in ManagedObject.setBindingContext as well to avoid
+		// a dependency to Context (ManagedObject should be databinding free).
+		// Both places must kept in sync!
+		return oOldContext !== oNewContext
+			|| !!oNewContext && !!oNewContext.hasChanged();
 	};
 
 	/**
-	 * toString method returns path for compatibility
+	 * Returns the path of this Context instance.
+	 *
+	 * @returns {string} The path
 	 */
 	Context.prototype.toString = function() {
 		return this.sPath;
+	};
+
+	/**
+	 * Returns messages associated with this context, that is messages belonging to the object
+	 * referred to by this context or a child object of that object. The messages are sorted by
+	 * their {@link sap.ui.core.message.Message#getType type} according to the type's severity in a
+	 * way that messages with highest severity come first.
+	 *
+	 * @returns {sap.ui.core.message.Message[]}
+	 *   The messages associated with this context sorted by severity; empty array in case no
+	 *   messages exist
+	 * @throws {Error}
+	 *   In case the context's model does not implement the method
+	 *   {@link sap.ui.model.Model#getMessages}
+	 *
+	 * @public
+	 * @see sap.ui.model.Model#getMessages
+	 * @since 1.76.0
+	 */
+	Context.prototype.getMessages = function () {
+		return this.oModel.getMessages(this);
 	};
 
 	return Context;

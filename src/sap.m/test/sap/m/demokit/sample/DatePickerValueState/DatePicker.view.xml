@@ -1,0 +1,15 @@
+<mvc:View
+	xmlns:mvc="sap.ui.core.mvc"
+	controllerName="sap.m.sample.DatePickerValueState.DatePicker"
+	xmlns="sap.m">
+	<FlexBox items="{path: '/modelData'}" direction="Column">
+		<VBox class="sapUiTinyMargin" >
+			<Label text="{label}" labelFor="DP"/>
+			<DatePicker
+				id="DP"
+				width="100%"
+				valueState="{valueState}"
+				valueStateText="{valueStateText}"/>
+		</VBox>
+	</FlexBox>
+</mvc:View>

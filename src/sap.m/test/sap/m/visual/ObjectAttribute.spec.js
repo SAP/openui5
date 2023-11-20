@@ -7,6 +7,9 @@ describe('sap.m.ObjectAttribute', function() {
 
 	// Rendered properly
 	it('should be rendered properly', function () {
+		browser.executeScript(function() { // ensure the page is scrolled to top
+			document.getElementById("testPage-cont").scrollTop = 0;
+		});
 		expect(takeScreenshot(element(by.id('testPage')))).toLookAs('objectAttribute_page');
 	});
 
@@ -29,6 +32,13 @@ describe('sap.m.ObjectAttribute', function() {
 			document.getElementById("testPage-cont").scrollTop = 1550;
 		});
 		expect(takeScreenshot(element(by.id('testPage')))).toLookAs('objectAttribute_page4');
+	});
+
+	it('hebrew rtl example', function() {
+		browser.executeScript(function() { // scroll page down
+			document.getElementById("testPage-cont").scrollTop = 3000;
+		});
+		expect(takeScreenshot(element(by.id('testPage')))).toLookAs('objectAttribute_rtl_example');
 	});
 
 });

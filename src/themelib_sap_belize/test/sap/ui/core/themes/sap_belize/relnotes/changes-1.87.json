@@ -1,0 +1,29 @@
+{
+  "1.87.0": {
+    "date": "February 2021",
+    "notes": [
+      {
+        "id": "aa3d1669709762a6d90bd6ca33c93c3e2f0c1efe",
+        "type": "FIX",
+        "text": " sap.f.GridContainer: Focus of items is now visualized correctly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180033672"
+          }
+        ]
+      },
+      {
+        "id": "8c1494d30c4a4e7c87e302eee1143b7532019349",
+        "type": "FIX",
+        "text": " sap.m.ObjectStatus, sap.m.ObjectNumber: fixed vertical alignment",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080465490"
+          }
+        ]
+      }
+    ]
+  }
+}

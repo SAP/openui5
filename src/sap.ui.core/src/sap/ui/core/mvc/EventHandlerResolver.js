@@ -4,16 +4,31 @@
 
 // Provides module sap.ui.core.mvc.EventHandlerResolver.
 sap.ui.define([
-		"jquery.sap.global",
-		"sap/ui/base/ManagedObject",
-		"sap/ui/base/BindingParser",
-		"sap/ui/core/Element",
-		"sap/ui/model/BindingMode",
-		"sap/ui/model/CompositeBinding",
-		"sap/ui/model/json/JSONModel", // TODO: think about lazy-loading in async case
-		"sap/ui/model/base/ManagedObjectModel"
-	],
-	function(jQuery, ManagedObject, BindingParser, Element, BindingMode, CompositeBinding, JSONModel, MOM) {
+	"sap/ui/base/BindingParser",
+	"sap/ui/core/CommandExecution",
+	"sap/ui/model/BindingMode",
+	"sap/ui/model/CompositeBinding",
+	"sap/ui/model/json/JSONModel",
+	"sap/ui/model/base/ManagedObjectModel",
+	"sap/base/util/JSTokenizer",
+	"sap/base/util/ObjectPath",
+	"sap/base/util/resolveReference",
+	"sap/base/Log",
+	"sap/ui/base/DesignTime"
+],
+	function(
+		BindingParser,
+		CommandExecution,
+		BindingMode,
+		CompositeBinding,
+		JSONModel,
+		MOM,
+		JSTokenizer,
+		ObjectPath,
+		resolveReference,
+		Log,
+		DesignTime
+	) {
 		"use strict";
 
 		var EventHandlerResolver = {
@@ -25,18 +40,15 @@ sap.ui.define([
 			 * <ul>
 			 * <li><i>relative</i>: names starting with a dot ('.') must specify a handler in
 			 *     the controller (example: <code>".myLocalHandler"</code>)</li>
-			 * <li><i>absolute</i>: names that contain, but do not start with a dot ('.') are
-			 *     always assumed to mean a global handler function. {@link jQuery.sap.getObject}
+			 * <li><i>absolute</i>: names that contain, but do not start with a dot ('.') are first checked
+			 *     against the given local variables <code>mLocals</code>. When it can't be resolved, it's
+			 *     then assumed to mean a global handler function. {@link module:sap/base/util/ObjectPath.get}
 			 *     will be used to retrieve the function (example: <code>"some.global.handler"</code> )</li>
-			 * <li><i>legacy</i>: Names that contain no dot at all are first interpreted as a relative name
-			 *     and then - if nothing is found - as an absolute name. This variant is only supported
-			 *     for backward compatibility (example: <code>"myHandler"</code>)</li>
+			 * <li><i>legacy</i>: Names that contain no dot at all are first checked against the
+			 *     <code>oController</code>. If nothing is found, it's interpreted as a relative name and
+			 *     then - if nothing is found - as an absolute name. This variant is only supported for
+			 *     backward compatibility (example: <code>"myHandler"</code>)</li>
 			 * </ul>
-			 *
-			 * The returned settings will always use the given <code>oController</code> as context object ('this')
-			 * This should allow the implementation of generic global handlers that might need an easy back link
-			 * to the controller/view in which they are currently used (e.g. to call createId/byId). It also makes
-			 * the development of global event handlers more consistent with controller local event handlers.
 			 *
 			 * The event handler name can either be a pure function name (defined in the controller, or globally,
 			 * as explained above), or the function name can be followed by braces containing parameters that
@@ -44,58 +56,74 @@ sap.ui.define([
 			 * parsed like a binding expression, so in addition to static values also bindings and certain operators
 			 * can be used.
 			 *
+			 * As long as no event handler parameters are specified and regardless of where the function
+			 * was looked up, the event handler will be executed with the given <code>oController</code>
+			 * as the context object ('this'). This should allow the implementation of generic global
+			 * handlers that might need an easy back link to the controller/view in which they are currently
+			 * used (e.g. to call createId/byId). It also makes the development of global event handlers
+			 * more consistent with controller local event handlers. However, once event parameters are specified,
+			 * the 'this' context is always the object on which the handler function is defined.
+			 *
 			 * <strong>Note</strong>: It is not mandatory but improves readability of declarative views when
 			 * legacy names are converted to relative names where appropriate.
 			 *
 			 * @param {string} sName the event handler name to resolve
 			 * @param {sap.ui.core.mvc.Controller} oController the controller to use as context
+			 * @param {object} [mLocals] local variables allowed in the sName as map of variable name to value
 			 * @return {any[]} an array with function and context object, suitable for applySettings.
 			 * @private
 			 */
-			resolveEventHandler: function(sName, oController) {
+			resolveEventHandler: function(sName, oController, mLocals) {
 
-				var fnHandler;
+				var fnHandler, iStartBracket, sFunctionName;
 				sName = sName.trim();
 
-				if (sap.ui.getCore().getConfiguration().getControllerCodeDeactivated()) {
+				if (DesignTime.isControllerCodeDeactivated()) {
 					// When design mode is enabled, controller code is not loaded. That is why we stub the handler functions.
 					fnHandler = function() {};
 				} else {
-					// check for extended event handler syntax
-					var iStartBracket = sName.indexOf("("),
-						sFunctionName = sName;
-					if (iStartBracket > 0) {
-						sFunctionName = sName.substring(0, iStartBracket).trim();
-					} else if (iStartBracket === 0) {
-						throw new Error("Event handler name starts with a bracket, must start with a function name " +
-								"(or with a dot followed by controller-local function name): " + sName);
-					}
-
-					switch (sFunctionName.indexOf('.')) {
-						case 0:
-							// starts with a dot, must be a controller local handler
-							// usage of jQuery.sap.getObject to allow addressing functions in properties
-							fnHandler = oController && jQuery.sap.getObject(sFunctionName.slice(1), undefined, oController);
-							break;
-						case -1:
-							// no dot at all: first check for a controller local, then for a global handler
-							fnHandler = oController && oController[sFunctionName];
-							if ( fnHandler != null ) {
-								// If the name can be resolved, don't try to find a global handler (even if it is not a function).
-								break;
+					//check for command usage - create handler that triggers the CommandExecution
+					if (sName.startsWith("cmd:")) {
+						var sCommand = sName.substr(4);
+						fnHandler = function(oEvent) {
+							var oCommandExecution = CommandExecution.find(oEvent.getSource(), sCommand);
+							if (oCommandExecution) {
+								oCommandExecution.trigger();
+							} else {
+								Log.error("Handler '" + sName + "' could not be resolved. No CommandExecution defined for command: " + sCommand);
 							}
-							// falls through
-						default:
-							fnHandler = jQuery.sap.getObject(sFunctionName);
-					}
+						};
+						fnHandler._sapui_commandName = sCommand;
+					} else {
+						// check for extended event handler syntax
+						iStartBracket = sName.indexOf("(");
+						sFunctionName = sName;
 
+						if (iStartBracket > 0) {
+							sFunctionName = sName.substring(0, iStartBracket).trim();
+						} else if (iStartBracket === 0) {
+							throw new Error("Event handler name starts with a bracket, must start with a function name " +
+									"(or with a dot followed by controller-local function name): " + sName);
+						}
+
+						fnHandler = resolveReference(sFunctionName,
+							Object.assign({".": oController}, mLocals), {
+								// resolve a name without leading dot under oController only when it doesn't contains dot
+								preferDotContext: sFunctionName.indexOf(".") === -1,
+								// the resolved function shouldn't be bound to any context because it may need to be bound
+								// to controller regardless where the handler is resolved if the sFunctionName doesn't have
+								// parentheses
+								bindContext: false
+							}
+						);
+					}
 					// handle extended event handler syntax
 					if (fnHandler && iStartBracket > 0) {
 						var iEndBracket = sName.lastIndexOf(")");
 						if (iEndBracket > iStartBracket) {
 
 							if (sName.substring(iStartBracket).indexOf("{=") > -1) {
-								jQuery.sap.log.warning("It looks like an event handler parameter contains a binding expression ({=...}). This is not allowed and will cause an error later on " +
+								Log.warning("It looks like an event handler parameter contains a binding expression ({=...}). This is not allowed and will cause an error later on " +
 									"because the entire event handler is already considered an expression: " + sName);
 							}
 
@@ -114,26 +142,28 @@ sap.ui.define([
 										oSourceModel = new MOM(oEvent.getSource());
 									}
 
-									var mGlobals = {"$controller": oController, $event: oEvent};
+									var mEventHandlerVariables = {"$controller": oController, $event: oEvent};
+
 									if (sFunctionName.indexOf(".") > 0) {
 										// if function has no leading dot (which would mean it is a Controller method), but has a dot later on, accept the first component as global object
 										var sGlobal = sFunctionName.split(".")[0];
-										mGlobals[sGlobal] = window[sGlobal];
-
+										mEventHandlerVariables[sGlobal] = window[sGlobal];
 									} else if (sFunctionName.indexOf(".") === -1) {
 										if (oController && oController[sFunctionName]) {
 											// if function has no dot at all, and oController has a member with the same name, this member should be used as function
 											// (this tells the expression parser to use the same logic as applied above)
 											sExpression = "$controller." + sExpression;
-
 										} else if (window[sFunctionName]) {
-											mGlobals[sFunctionName] = window[sFunctionName];
+											mEventHandlerVariables[sFunctionName] = window[sFunctionName];
 										}
 									}
 
+									// if a scope object exist, assign the scope object to the global object
+									Object.assign(mEventHandlerVariables, mLocals);
+
 									// the following line evaluates the expression
 									// in case all parameters are constants, it already calls the event handler along with all its arguments, otherwise it returns a binding info
-									var oExpressionParserResult = BindingParser.parseExpression(sExpression.replace(/^\./, "$controller."), 0, {oContext: oController}, mGlobals);
+									var oExpressionParserResult = BindingParser.parseExpression(sExpression.replace(/^\./, "$controller."), 0, {oContext: oController}, mEventHandlerVariables);
 
 									if (oExpressionParserResult.result) { // a binding info
 										// we need to trigger evaluation (but we don't need the result, evaluation already calls the event handler)
@@ -154,7 +184,7 @@ sap.ui.define([
 								};
 							})(sFunctionName, oController);
 						} else {
-							jQuery.sap.log.error("Syntax error in event handler '" + sName + "': arguments must be enclosed in a pair of brackets");
+							Log.error("Syntax error in event handler '" + sName + "': arguments must be enclosed in a pair of brackets");
 						}
 					}
 				}
@@ -167,13 +197,75 @@ sap.ui.define([
 					return [ fnHandler, oController ];
 				}
 
-				jQuery.sap.log.warning("Event handler name '" + sName + "' could not be resolved to an event handler function");
+				Log.warning("Event handler name '" + sName + "' could not be resolved to an event handler function");
 				// return undefined
+			},
+
+			/**
+			 * Parses and splits the incoming string into meaningful event handler definitions
+			 *
+			 * Examples:
+			 *
+			 * parse(".fnControllerMethod")
+			 * => [".fnControllerMethod"]
+			 *
+			 * parse(".doSomething('Hello World'); .doSomething2('string'); globalFunction")
+			 * => [".doSomething('Hello World')", ".doSomething2('string')", "globalFunction"]
+
+			 * parse(".fnControllerMethod; .fnControllerMethod(${  path:'/someModelProperty', formatter: '.myFormatter', type: 'sap.ui.model.type.String'}    ); globalFunction")
+			 * => [".fnControllerMethod", ".fnControllerMethod(${  path:'/someModelProperty', formatter: '.myFormatter', type: 'sap.ui.model.type.String'}    )", "globalFunction"]
+			 *
+			 * @param {string} [sValue] - Incoming string
+			 * @return {string[]} - Array of event handler definitions
+			 */
+			parse: function parse(sValue) {
+				sValue = sValue.trim();
+				var oTokenizer = new JSTokenizer();
+				var aResult = [];
+				var sBuffer = "";
+				var iParenthesesCounter = 0;
+
+				oTokenizer.init(sValue, 0);
+				for (;;) {
+					var sSymbol = oTokenizer.next();
+					if ( sSymbol === '"' || sSymbol === "'" ) {
+						var pos = oTokenizer.getIndex();
+						oTokenizer.string();
+						sBuffer += sValue.slice(pos, oTokenizer.getIndex());
+						sSymbol = oTokenizer.getCh();
+					}
+					if ( !sSymbol ) {
+						break;
+					}
+					switch (sSymbol) {
+						case "(":
+							iParenthesesCounter++;
+							break;
+						case ")":
+							iParenthesesCounter--;
+							break;
+						default:
+							break;
+					}
+
+					if (sSymbol === ";" && iParenthesesCounter === 0) {
+						aResult.push(sBuffer.trim());
+						sBuffer = "";
+					} else {
+						sBuffer += sSymbol;
+					}
+				}
+
+				if (sBuffer) {
+					aResult.push(sBuffer.trim());
+				}
+
+				return aResult;
 			}
 		};
 
 		function getBindingValue(oBindingInfo, oElement, oController, oParametersModel, oSourceModel) { // TODO: refactor ManagedObject and re-use parts that have been copied here
-			var oType;
+			var oType, oPart;
 			oBindingInfo.mode = BindingMode.OneWay;
 
 			if (!oBindingInfo.parts) {
@@ -196,7 +288,7 @@ sap.ui.define([
 
 			for (var i = 0; i < oBindingInfo.parts.length; i++) {
 
-				var oPart = oBindingInfo.parts[i];
+				oPart = oBindingInfo.parts[i];
 				if (typeof oPart == "string") {
 					oPart = { path: oPart };
 					oBindingInfo.parts[i] = oPart;
@@ -229,13 +321,6 @@ sap.ui.define([
 				}
 
 				oType = oPart.type;
-				if (typeof oType == "string") {
-					clType = jQuery.sap.getObject(oType);
-					if (typeof clType !== "function") {
-						throw new Error("Cannot find type \"" + oType + "\" used for binding \"" + oPart.path + "\"!");
-					}
-					oType = new clType(oPart.formatOptions, oPart.constraints);
-				}
 
 				oBinding = oModel.bindProperty(oPart.path, oContext, oBindingInfo.parameters);
 				oBinding.setType(oType /* type that is able to parse etc. */, oPart.targetType /* string, boolean, etc. */ || "any");
@@ -248,10 +333,7 @@ sap.ui.define([
 			if (aBindings.length > 1 || ( oBindingInfo.formatter && oBindingInfo.formatter.textFragments )) {
 				// Create type instance if needed
 				oType = oBindingInfo.type;
-				if (typeof oType == "string") {
-					var clType = jQuery.sap.getObject(oType);
-					oType = new clType(oBindingInfo.formatOptions, oBindingInfo.constraints);
-				}
+
 				oBinding = new CompositeBinding(aBindings, oBindingInfo.useRawValues, oBindingInfo.useInternalValues);
 				oBinding.setType(oType /* type that is able to parse etc. */, oPart.targetType /* string, boolean, etc. */ || "any");
 				oBinding.setBindingMode(BindingMode.OneTime);

@@ -7,6 +7,7 @@
 	xmlns:c="sap.ui.core"
 	xmlns:f="sap.ui.layout.form"
 	xmlns:t="sap.ui.table"
+	xmlns:trm="sap.ui.table.rowmodes"
 	xmlns:mvc="sap.ui.core.mvc">
 	<l:Splitter>
 		<l:contentAreas>
@@ -67,8 +68,8 @@
 											<menu>
 												<Menu itemSelected="onReportPress">
 													<items>
-														<MenuItem text="View" press="onViewReport"/>
-														<MenuItem text="Download" press="onDownloadReport"/>
+														<MenuItem text="View" />
+														<MenuItem text="Download" />
 													</items>
 												</Menu>
 											</menu>
@@ -121,13 +122,14 @@
 							selectionMode="Single"
 							selectionBehavior="RowOnly"
 							enableColumnReordering="false"
-							expandFirstLevel="true"
 							rows="{path: '/issues'}"
-							rowSelectionChange="onRowSelectionChanged"
-							rowHeight="24"
-							visibleRowCountMode="Auto">
+							rowSelectionChange="onRowSelectionChanged">
+						<t:rowMode>
+							<trm:Auto rowContentHeight="24"/>
+						</t:rowMode>
 						<t:columns>
-							<t:Column label="Issues" resizable="false">
+							<t:Column resizable="false">
+								<Label text="Issues"/>
 								<t:template>
 									<FormattedText htmlText="{formattedName}"/>
 								</t:template>
@@ -150,12 +152,13 @@
 						<t:Table
 							rows="{path: '/selectedIssue/issues'}"
 							selectionMode="Single"
-							rowHeight="24"
 							selectionBehavior="RowOnly"
 							enableColumnReordering="false"
-							visibleRowCount="{/visibleRowCount}"
 							rowSelectionChange="onRowSelection"
 							id="issueTable">
+							<t:rowMode>
+								<trm:Fixed rowContentHeight="24" rowCount="{/visibleRowCount}"/>
+							</t:rowMode>
 							<t:columns>
 								<t:Column
 									width="36px"
@@ -173,8 +176,8 @@
 								<t:Column
 									sortProperty="context/id"
 									filterProperty="context/id"
-									label="Control Id"
 									resizable="false">
+									<Label text="Control Id"/>
 									<t:template>
 										<Text text="{context/id}" wrapping="false" tooltip="{context/id}"></Text>
 									</t:template>
@@ -182,48 +185,62 @@
 								<t:Column
 									sortProperty="context/className"
 									filterProperty="context/className"
-									label="Class name"
 									resizable="false">
+									<Label text="Class name"/>
 									<t:template>
 										<Text text="{context/className}" wrapping="false" tooltip="{context/className}"></Text>
 									</t:template>
 								</t:Column>
 							</t:columns>
 						</t:Table>
-						<f:SimpleForm
+						<f:Form
 							editable="true"
-							visible="{= ${/visibleIssuesCount} > 0}"
-							layout="ResponsiveGridLayout"
-							breakpointM="400">
-							<f:content>
-								<Label text="Details" />
-								<Text
-									text="{/selectedIssue/details}"
-									width="100%"
-									visible="{= ${/selectedIssue/details} !== ''}"/>
-								<Label text="Resolution" />
-								<Text text="{/selectedIssue/resolution}" />
-								<Label
-									text="URLs"
-									visible="{
-										parts: [
-											'/selectedIssue/resolutionUrls'
-										],
-										formatter: '.formatter.hasResolutionUrls'
-									}" />
-								<HBox
-									wrap="Wrap"
-									items="{/selectedIssue/resolutionUrls}">
-									<Link text="{
-										parts: [
-											'/selectedIssue/resolutionUrls',
-											''
-										],
-										formatter: '.formatter.resolutionUrl'
-									}" press="openDocumentation" />
-								</HBox>
-							</f:content>
-						</f:SimpleForm>
+							visible="{= ${/visibleIssuesCount} > 0}">
+							<f:layout>
+								<f:ColumnLayout />
+							</f:layout>
+							<f:formContainers>
+								<f:FormContainer>
+									<f:formElements>
+										<f:FormElement label="Details">
+											<f:fields>
+												<Text
+														text="{/selectedIssue/details}"
+														width="100%"
+														visible="{= ${/selectedIssue/details} !== ''}"/>
+											</f:fields>
+										</f:FormElement>
+										<f:FormElement label="Resolution">
+											<f:fields>
+												<Text text="{/selectedIssue/resolution}" />
+											</f:fields>
+										</f:FormElement>
+										<f:FormElement label="URLs"
+													   visible="{
+															parts: [
+																'/selectedIssue/resolutionUrls'
+															],
+															formatter: '.formatter.hasResolutionUrls'
+														}"
+													   fields="{/selectedIssue/resolutionUrls}">
+											<f:fields>
+												<Link text="{
+														parts: [
+															'/selectedIssue/resolutionUrls',
+															''
+														],
+														formatter: '.formatter.resolutionUrl'
+													}" press="openDocumentation">
+													<layoutData>
+														<f:ColumnElementData cellsLarge="8" cellsSmall="12" />
+													</layoutData>
+												</Link>
+											</f:fields>
+										</f:FormElement>
+									</f:formElements>
+								</f:FormContainer>
+							</f:formContainers>
+						</f:Form>
 					</Panel>
 				</content>
 			</Page>

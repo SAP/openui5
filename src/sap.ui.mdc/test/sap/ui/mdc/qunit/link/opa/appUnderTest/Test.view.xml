@@ -1,0 +1,61 @@
+<mvc:View
+	height="100%"
+	class="sapUiSizeCompact"
+	xmlns="sap.m"
+	controllerName="appUnderTest.Test"
+	xmlns:flp="sap.ui.mdc.flp.info"
+	xmlns:mdc="sap.ui.mdc"
+	xmlns:mdcField="sap.ui.mdc.field"
+	xmlns:mdcLink="sap.ui.mdc.link"
+	xmlns:mvc="sap.ui.core.mvc">
+
+	<App id="MyApp">
+		<Page>
+			<headerContent>
+				<Button icon="sap-icon://wrench" press="onPressRTA"/>
+			</headerContent>
+			<content class="sapUiContentPadding">
+				<Table id="idTable" items="{path: '/ProductCollection'}">
+					<columns>
+						<Column>
+							<Text text="Name"/>
+						</Column>
+						<Column>
+							<Text text="Product ID"/>
+						</Column>
+						<Column>
+							<Text text="Category"/>
+						</Column>
+					</columns>
+					<items>
+						<ColumnListItem>
+							<cells>
+								<mdc:Field id="IDField_N" value="{Name}" editMode="Display">
+									<mdc:fieldInfo>
+										<mdc:Link
+											delegate='\{ "name": "appUnderTest/FlpTestDelegate", "payload": \{ "semanticObjects": ["appUnderTest_SemanticObjectName"], "mainSemanticObject": "appUnderTest_SemanticObjectName" \} \}'>
+										</mdc:Link>
+									</mdc:fieldInfo>
+								</mdc:Field>
+								<mdc:Field id="IDField_P" value="{ProductId}" editMode="Display">
+									<mdc:fieldInfo>
+										<mdc:Link
+											delegate='\{ "name": "appUnderTest/TestDelegate" \}'>
+										</mdc:Link>
+									</mdc:fieldInfo>
+								</mdc:Field>
+								<mdc:Field id="IDField_C" value="{Category}" editMode="Display">
+									<mdc:fieldInfo>
+										<mdc:Link
+											delegate='\{ "name": "sap/ui/mdc/ushell/LinkDelegate", "payload": \{ "semanticObjects": ["appUnderTest_SemanticObjectCategory"], "mainSemanticObject": "appUnderTest_SemanticObjectCategory" \} \}'>
+										</mdc:Link>
+									</mdc:fieldInfo>
+								</mdc:Field>
+							</cells>
+						</ColumnListItem>
+					</items>
+				</Table>
+			</content>
+		</Page>
+	</App>
+</mvc:View>

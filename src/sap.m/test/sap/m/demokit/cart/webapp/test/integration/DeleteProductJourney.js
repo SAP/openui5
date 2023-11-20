@@ -5,16 +5,26 @@
  global QUnit
  */
 sap.ui.define([
-	'sap/ui/test/opaQunit',
-	'./pages/Home',
-	'./pages/Category',
-	'./pages/Product',
-	'./pages/Cart',
-	'./pages/Dialog'
-], function (opaTest) {
+	"sap/base/i18n/Localization",
+	"sap/ui/test/opaQunit",
+	"./pages/Home",
+	"./pages/Category",
+	"./pages/Product",
+	"./pages/Cart",
+	"./pages/Dialog"
+], function (Localization, opaTest) {
 	"use strict";
 
-	QUnit.module("Delete Product Journey");
+	var sDefaultLanguage = Localization.getLanguage();
+
+	QUnit.module("Delete Product Journey", {
+		before : function () {
+			Localization.setLanguage("en-US");
+		},
+		after : function () {
+			Localization.setLanguage(sDefaultLanguage);
+		}
+	});
 
 	opaTest("Should see the product list", function (Given, When, Then) {
 		// Arrangements
@@ -33,7 +43,7 @@ sap.ui.define([
 		// Actions
 		When.onTheCategory.iPressOnTheFirstProduct();
 		When.onTheProduct.iAddTheDisplayedProductToTheCart();
-		When.onTheCategory.iGoToTheCartPage();
+		When.onTheProduct.iToggleTheCart();
 
 		// Assertions
 		Then.onTheCart.iShouldSeeTheProductInMyCart().

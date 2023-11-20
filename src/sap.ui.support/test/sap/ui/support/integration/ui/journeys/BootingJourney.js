@@ -1,7 +1,8 @@
 /*global QUnit*/
 
 sap.ui.define([
-	"sap/ui/test/opaQunit"
+	"sap/ui/test/opaQunit",
+	"../SupportAssistantOpaConfig"
 ], function (opaTest) {
 	"use strict";
 
@@ -11,7 +12,8 @@ sap.ui.define([
 
 	opaTest("Should see the toolbar of the Support Assistant", function (Given, When, Then) {
 
-		Given.iStartMyApp();
+		Given.iDeletePersistedData()
+			.and.iStartMyApp();
 
 		Then.onTheMainPage.iShouldSeeTheToolbar();
 	});
@@ -22,6 +24,18 @@ sap.ui.define([
 
 		Then.onTheMainPage.iShouldSeeRulesButton(EXPECTED_RULES_COUNT);
 
+		Then.iTeardownSupportAssistantFrame();
+	});
+
+	opaTest("Should see the settings popover if temporary rules are disabled", function (Given, When, Then) {
+
+		Given.iDeletePersistedData()
+			.and.iDisableEval()
+			.and.iStartMyApp();
+
+		Then.onTheRulesPage.iShouldSeeStorageSettingsPopOver();
+
+		Given.iEnableEval();
 		Then.iTeardownSupportAssistantFrame();
 	});
 

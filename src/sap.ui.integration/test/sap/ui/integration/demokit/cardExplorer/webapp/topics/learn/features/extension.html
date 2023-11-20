@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<title>Extension</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<script src="../../../scripts/boot.js"></script>
+</head>
+
+<body class="sapUiBody topicBody">
+
+	<div class="topic">
+		<div class="content">
+
+			<h1 id="overview">
+				Card Extension
+			</h1>
+
+			<p>
+				Cards provide a rich set of capabilities out of the box. The Extension JavaScript module provides means
+				for the card developers to define custom logic where additional functionality is needed.
+				The module needs to be part of the card bundle and allows for:
+			</p>
+			<div class="tableWrapper">
+				<table>
+					<tr>
+						<th>Functionality</th>
+						<th>Description</th>
+						<th>Responsibility of</th>
+					</tr>
+					<tr>
+						<td>Custom logic for fetching data</td>
+						<td>
+							In case you need specific handling for the data retrieval, when direct request to a data
+							service endpoint is not enough,
+							you can provide a custom function that will collect and provide the data to the card.
+						</td>
+						<td>Extension, Manifest</td>
+					</tr>
+					<tr>
+						<td>Custom formatters</td>
+						<td>Define custom formatters and then use them in the manifest the same way as the already
+							predefined formatters which the card provides.</td>
+						<td>Extension, Manifest</td>
+					</tr>
+					<tr>
+						<td>Custom actions</td>
+						<td>In the extension you can define custom actions, which will appear in the header of the card.
+						</td>
+						<td>Extension</td>
+					</tr>
+				</table>
+			</div>
+
+			<h2 id="manifestProperties">Manifest Properties</h2>
+			<div class="tableWrapper">
+				<table>
+					<tr>
+						<th>Property</th>
+						<th>Type</th>
+						<th>Required</th>
+						<th>Default</th>
+						<th>Description</th>
+						<th>Schema Version</th>
+						<th>Since</th>
+					</tr>
+					<tr>
+						<td>extension</td>
+						<td>string</td>
+						<td>No</td>
+						<td></td>
+						<td>The path to the extension module. It is resolved relatively to the card.</td>
+						<td>1.23</td>
+						<td>1.79</td>
+					</tr>
+				</table>
+			</div>
+
+			<h2 id="Lifecycle">Extension Lifecycle</h2>
+			<p>
+				The extension lifecycle is bound to the card that uses it.
+				The below listed hooks can be used to react on key card events.
+			</p>
+			<div class="tableWrapper">
+				<table>
+					<tr>
+						<th>Name</th>
+						<th>Description</th>
+					</tr>
+					<tr>
+						<td>init</td>
+						<td>
+							Called when the extension is instantiated.
+						</td>
+					</tr>
+					<tr>
+						<td>exit</td>
+						<td>
+							Called when the extension is destroyed.
+						</td>
+					</tr>
+					<tr>
+						<td>onCardReady</td>
+						<td>
+							Called after the card is initialized. After this <code>getCard()</code> returns an interface to the card.
+							Read more in the <a href="#extensionApi">Extension API</a>.
+						</td>
+					</tr>
+					<tr>
+						<td>loadDependencies</td>
+						<td>
+							Called during the preparation of the card content, before it is displayed for the first time.
+							Use it to load critical libraries or resources, without which the data in the content cannot be displayed.
+							It is important to return a <code>Promise</code>, which will be awaited by the card.
+							Until the promise is resolved, the card content displays a loading animation.
+							For performance optimization the dependencies loading happens in parallel with data loading,
+							therefore your data loading method shouldn't depend on this hook.
+							<br>
+							<b>Note:</b> This hook can only be used in conjunction with the card content (<code>"sap.card"/content</code>),
+								not with the card header, footer, or other part.
+							<br>
+							<b>Note:</b> This hook is experimental since 1.108 and may change!
+						</td>
+					</tr>
+				</table>
+			</div>
+
+			<h2 id="extensionApi">Extension API</h2>
+			<p>
+				In the Extension JavaScript module you can use <code>getCard()</code> method, which provides an <a
+					data-demokit-href="#/api/sap.ui.integration.widgets.CardFacade" target="_blank">interface</a> to the card API.
+				For example you can resolve destinations or get access to the card parameters.
+				For detailed information about all the available methods, read the <a data-demokit-href="#/api/sap.ui.integration.Extension"
+					target="_blank">sap.ui.integration.Extension API.</a>
+			</p>
+
+			<h2 id="extensionRequirements">
+				Extension Requirements
+			</h2>
+			<ul>
+				<li>The extension should be defined in a UI5 Module and extend the <a data-demokit-href="#/api/sap.ui.integration.Extension"
+						target="_blank">sap.ui.integration.Extension</a> class.</li>
+				<li>For optimal loading performance it is recommended to avoid any dependencies that are not part of the sap.ui.integration library.</li>
+			</ul>
+			<b>Note:</b> Each card can have only one extension.
+
+			<h2 id="sharing">
+				Using a Shared Extension
+			</h2>
+			<p>
+				Shared extensions allow one extension to be reused by multiple cards.
+				</br>
+				</br>
+				<b>Prerequisite:</b> The extension must be part of a UI5 library and this library has to be registered by the host developers. This library may also include other modules which are used in the extension if needed.
+
+				To use an extension from a shared library first define this library as dependency of the card:
+
+				<pre class="lang-json">
+"sap.ui5": {
+	"dependencies": {
+		"libs": {
+			"my.lib.cards": {}
+		}
+	}
+}</pre>
+
+				Then you can refer to the extension from this library with the following syntax:
+				<pre class="lang-json">
+"sap.card"{
+	"extension": "module:my/lib/cards/CommonExtension"
+}
+</pre>
+
+			<a class="try-button sapUiSmallMarginTop" href="../../../index.html#/explore/extension/sharedExtension" target="_parent">Try
+				it Out</a>
+
+			</p>
+
+			<h2 id="examples">
+				Examples
+			</h2>
+			<p>Manifest</p>
+			<pre class="lang-json">{
+	"sap.app": {
+		"id": "card.explorer.cardWithExtension",
+		"type": "card",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.card": {
+		"extension": "./SampleExtension",
+		"data": {
+			"extension": {
+				"method": "myGetDataMethod"
+			}
+		}
+		"header": {
+			...
+		},
+		"content": {
+			...
+		}
+	}
+}
+</pre>
+			<p>Extension</p>
+			<pre class="lang-js">
+sap.ui.define(["sap/ui/integration/Extension"], function (Extension) {
+
+	var SampleExtension = Extension.extend("card.explorer.cardWithExtension.SampleExtension");
+
+	SampleExtension.prototype.myGetDataMethod = function () {
+		var oData1 = { user: "John" }; // this data can be fetched from data service
+		var oData2 = { user: "Peter" }; // this data can be fetched from another data service
+
+		// in the end data from both data services is combined into a single array
+		return Promise.resolve([oData1, oData2]);
+	};
+
+	return SampleExtension;
+});
+</pre>
+			<a class="try-button sapUiSmallMarginTop" href="../../../index.html#/explore/extension" target="_parent">Try
+				it Out</a>
+		</div>
+	</div>
+</body>
+
+</html>

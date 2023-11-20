@@ -1,23 +1,18 @@
 sap.ui.define([
-	'jquery.sap.global',
-	'sap/ui/demo/cart/controller/BaseController',
-	'sap/ui/model/json/JSONModel',
-	'sap/ui/Device',
-	'sap/ui/demo/cart/model/formatter',
-	'sap/m/MessageBox',
-	'sap/m/Dialog',
-	'sap/m/Button',
-	'sap/ui/core/routing/History'
-], function (
-	$,
+	"./BaseController",
+	"sap/ui/model/json/JSONModel",
+	"sap/ui/Device",
+	"../model/formatter",
+	"sap/m/MessageBox",
+	"sap/m/MessageToast"
+], function(
 	BaseController,
 	JSONModel,
 	Device,
 	formatter,
 	MessageBox,
-	Dialog,
-	Button,
-	History) {
+	MessageToast
+) {
 	"use strict";
 
 	var sCartModelName = "cartProducts";
@@ -30,10 +25,19 @@ sap.ui.define([
 		onInit: function () {
 			this._oRouter = this.getRouter();
 			this._oRouter.getRoute("cart").attachPatternMatched(this._routePatternMatched, this);
+			this._oRouter.getRoute("productCart").attachPatternMatched(this._routePatternMatched, this);
+			this._oRouter.getRoute("comparisonCart").attachPatternMatched(this._routePatternMatched, this);
 			// set initial ui configuration model
 			var oCfgModel = new JSONModel({});
 			this.getView().setModel(oCfgModel, "cfg");
 			this._toggleCfgModel();
+
+			var oEditButton = this.byId("editButton");
+			oEditButton.addEventDelegate({
+				onAfterRendering : function () {
+					oEditButton.focus();
+				}
+			});
 		},
 
 		onExit: function () {
@@ -46,15 +50,11 @@ sap.ui.define([
 		},
 
 		_routePatternMatched: function () {
-			// show welcome page if cart is loaded from URL
-			var oHistory = History.getInstance();
-			if (!oHistory.getPreviousHash() && !sap.ui.Device.system.phone) {
-				this.getRouter().getTarget("welcome").display();
-			}
+			this._setLayout("Three");
 			var oCartModel = this.getModel("cartProducts");
 			var oCartEntries = oCartModel.getProperty("/cartEntries");
 			//enables the proceed and edit buttons if the cart has entries
-			if (!jQuery.isEmptyObject(oCartEntries)) {
+			if (Object.keys(oCartEntries).length > 0) {
 				oCartModel.setProperty("/showProceedButton", true);
 				oCartModel.setProperty("/showEditButton", true);
 			}
@@ -83,10 +83,6 @@ sap.ui.define([
 				listItemType: (bInDelete ? sPhoneType : "Inactive"),
 				pageTitle: (bInDelete ? oBundle.getText("appTitle") : oBundle.getText("cartTitleEdit"))
 			});
-		},
-
-		onNavButtonPress: function () {
-			this.getOwnerComponent().myNavBack();
 		},
 
 		onEntryListPress: function (oEvent) {
@@ -132,14 +128,14 @@ sap.ui.define([
 			// why are the items cloned? - the JSON model checks if the values in the object are changed.
 			// if we do our modifications on the same reference, there will be no change detected.
 			// so we modify after the clone.
-			var oListToAddItem = $.extend({}, oModelData[sListToAddItem]);
-			var oListToDeleteItem = $.extend({}, oModelData[sListToDeleteItem]);
+			var oListToAddItem = Object.assign({}, oModelData[sListToAddItem]);
+			var oListToDeleteItem = Object.assign({}, oModelData[sListToDeleteItem]);
 			var sProductId = oProduct.ProductId;
 
 			// find existing entry for product
 			if (oListToAddItem[sProductId] === undefined) {
 				// copy new entry
-				oListToAddItem[sProductId] = $.extend({}, oProduct);
+				oListToAddItem[sProductId] = Object.assign({}, oProduct);
 			}
 
 			//Delete the saved Product from cart
@@ -148,19 +144,21 @@ sap.ui.define([
 			oCartModel.setProperty("/" + sListToDeleteItem, oListToDeleteItem);
 		},
 
-		_showProduct: function (item) {
-			// send event to refresh
-			var sPath = item.getBindingContext(sCartModelName).getPath();
-			var oEntry = this.getView().getModel(sCartModelName).getProperty(sPath);
-			var sId = oEntry.ProductId;
-			if (!sap.ui.Device.system.phone) {
-				// Update the URL hash making the products inside the cart bookmarkable
-				this._oRouter.navTo("cartProductView", {
-					productId: sId
-				}, true); // Don't create a history entry
+		_showProduct: function (oItem) {
+			var oEntry = oItem.getBindingContext(sCartModelName).getObject();
+
+			// close cart when showing a product on phone
+			var bCartVisible = false;
+			if (!Device.system.phone) {
+				bCartVisible = this.getModel("appView").getProperty("/layout").startsWith("Three");
 			} else {
-				this._oRouter.navTo("cartProduct", {productId: sId});
+				bCartVisible = false;
+				this._setLayout("Two");
 			}
+			this._oRouter.navTo(bCartVisible ? "productCart" : "product", {
+				id: oEntry.Category,
+				productId: oEntry.ProductId
+			}, !Device.system.phone);
 		},
 
 		onCartEntriesDelete: function (oEvent) {
@@ -179,9 +177,10 @@ sap.ui.define([
 		 * @param {sap.ui.base.Event} oEvent Event object
 		 */
 		_deleteProduct: function (sCollection, oEvent) {
-			var oBindingContext = oEvent.getParameter("listItem").getBindingContext(sCartModelName);
-			var sEntryId = oBindingContext.getObject().ProductId;
-			var oBundle = this.getResourceBundle();
+			var oBindingContext = oEvent.getParameter("listItem").getBindingContext(sCartModelName),
+				oBundle = this.getResourceBundle(),
+				sEntryId = oBindingContext.getProperty("ProductId"),
+				sEntryName = oBindingContext.getProperty("Name");
 
 			// show confirmation dialog
 			MessageBox.show(oBundle.getText("cartDeleteDialogMsg"), {
@@ -195,12 +194,15 @@ sap.ui.define([
 						return;
 					}
 					var oCartModel = oBindingContext.getModel();
-					var oCollectionEntries = $.extend({}, oCartModel.getData()[sCollection]);
+					var oCollectionEntries = Object.assign({}, oCartModel.getData()[sCollection]);
 
 					delete oCollectionEntries[sEntryId];
 
 					// update model
-					oCartModel.setProperty("/" + sCollection, $.extend({}, oCollectionEntries));
+					oCartModel.setProperty("/" + sCollection, Object.assign({}, oCollectionEntries));
+
+					MessageToast.show(oBundle.getText("cartDeleteDialogConfirmDeleteMsg",
+						[sEntryName]));
 				}
 			});
 		},
@@ -211,26 +213,7 @@ sap.ui.define([
 		 * @public
 		 */
 		onProceedButtonPress: function () {
-			this._oRouter.navTo("checkout");
-		},
-
-		/**
-		 * Helper function to reset the cart model.
-		 * @private
-		 */
-		_resetCart: function () {
-			var oCartModel = this.getView().getModel(sCartModelName);
-
-			//all relevant cart properties are set back to default. Content is deleted.
-			oCartModel.setProperty("/cartEntries", {});
-			oCartModel.setProperty("/savedForLaterEntries", {});
-			oCartModel.setProperty("/totalPrice", "0");
-
-			//navigates back to home screen
-			this._oRouter.navTo("home");
-			if (!Device.system.phone) {
-				this._oRouter.getTargets().display("welcome");
-			}
+			this.getRouter().navTo("checkout");
 		}
 	});
 });

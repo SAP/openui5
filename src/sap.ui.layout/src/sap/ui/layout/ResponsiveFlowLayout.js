@@ -4,22 +4,26 @@
 
 // Provides control sap.ui.layout.ResponsiveFlowLayout.
 sap.ui.define([
-    'jquery.sap.global',
-    'sap/ui/core/Control',
-    './ResponsiveFlowLayoutData',
-    './library',
-    'sap/ui/core/ResizeHandler',
-    'sap/ui/Device',
-    "./ResponsiveFlowLayoutRenderer"
+	"sap/base/i18n/Localization",
+	'sap/ui/core/Control',
+	"sap/ui/core/RenderManager",
+	'sap/ui/core/ResizeHandler',
+	'./library',
+	'./ResponsiveFlowLayoutData',
+	'./ResponsiveFlowLayoutRenderer',
+	'sap/ui/thirdparty/jquery',
+	// jQuery Plugin "rect"
+	'sap/ui/dom/jquery/rect'
 ],
 	function(
-	    jQuery,
+		Localization,
 		Control,
-		ResponsiveFlowLayoutData,
-		library,
+		RenderManager,
 		ResizeHandler,
-		Device,
-		ResponsiveFlowLayoutRenderer
+		library,
+		ResponsiveFlowLayoutData,
+		ResponsiveFlowLayoutRenderer,
+		jQuery
 	) {
 	"use strict";
 
@@ -42,35 +46,38 @@ sap.ui.define([
 	 * @public
 	 * @since 1.16.0
 	 * @alias sap.ui.layout.ResponsiveFlowLayout
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
-	var ResponsiveFlowLayout = Control.extend("sap.ui.layout.ResponsiveFlowLayout", /** @lends sap.ui.layout.ResponsiveFlowLayout.prototype */ { metadata : {
+	var ResponsiveFlowLayout = Control.extend("sap.ui.layout.ResponsiveFlowLayout", /** @lends sap.ui.layout.ResponsiveFlowLayout.prototype */ {
+		metadata : {
 
-		library : "sap.ui.layout",
-		properties : {
+			library : "sap.ui.layout",
+			properties : {
 
-			/**
-			 * If set to false, all added controls will keep their width, or otherwise, the controls will be stretched to the possible width of a row.
-			 */
-			responsive : {type : "boolean", group : "Misc", defaultValue : true}
+				/**
+				 * If set to false, all added controls will keep their width, or otherwise, the controls will be stretched to the possible width of a row.
+				 */
+				responsive : {type : "boolean", group : "Misc", defaultValue : true}
+			},
+			defaultAggregation : "content",
+			aggregations : {
+
+				/**
+				 * Added content that should be positioned. Every content item should have a ResponsiveFlowLayoutData attached, or otherwise, the default values are used.
+				 */
+				content : {type : "sap.ui.core.Control", multiple : true, singularName : "content"}
+			},
+			associations: {
+
+				/**
+				 * Association to controls / IDs that label this control (see WAI-ARIA attribute <code>aria-labelledby</code>).
+				 * @since 1.48.7
+				 */
+				ariaLabelledBy: { type: "sap.ui.core.Control", multiple: true, singularName: "ariaLabelledBy" }
+			}
 		},
-		defaultAggregation : "content",
-		aggregations : {
 
-			/**
-			 * Added content that should be positioned. Every content item should have a ResponsiveFlowLayoutData attached, or otherwise, the default values are used.
-			 */
-			content : {type : "sap.ui.core.Control", multiple : true, singularName : "content"}
-		},
-		associations: {
-
-			/**
-			 * Association to controls / IDs that label this control (see WAI-ARIA attribute <code>aria-labelledby</code>).
-			 * @since 1.48.7
-			 */
-			ariaLabelledBy: { type: "sap.ui.core.Control", multiple: true, singularName: "ariaLabelledBy" }
-		}
-	}});
+		renderer: ResponsiveFlowLayoutRenderer
+	});
 
 
 	(function() {
@@ -78,7 +85,7 @@ sap.ui.define([
 			this._rows = [];
 
 			this._bIsRegistered = false;
-			this._proxyComputeWidths = jQuery.proxy(computeWidths, this);
+			this._proxyComputeWidths = computeWidths.bind(this);
 
 			this._iRowCounter = 0;
 		};
@@ -86,7 +93,7 @@ sap.ui.define([
 			delete this._rows;
 
 			if (this._IntervalCall) {
-				jQuery.sap.clearDelayedCall(this._IntervalCall);
+				clearTimeout(this._IntervalCall);
 				this._IntervalCall = undefined;
 			}
 
@@ -192,7 +199,7 @@ sap.ui.define([
 			var currentRow = -1;
 
 			var fnCurrentWrapping = function(j) {
-				var $cont = jQuery.sap.byId(oRow.cont[j].id);
+				var $cont = jQuery(document.getElementById(oRow.cont[j].id));
 				if ($cont.length > 0) {
 					var offset = $cont[0].offsetLeft;
 					if (lastOffsetLeft >= offset) {
@@ -207,7 +214,7 @@ sap.ui.define([
 			};
 
 			// Find out the "rows" within a row
-			if (sap.ui.getCore().getConfiguration().getRTL()) {
+			if (Localization.getRTL()) {
 				// for RTL-mode the elements have to be checked the other way round
 				for (var i = oRow.cont.length - 1; i >= 0; i--) {
 					fnCurrentWrapping(i);
@@ -453,7 +460,7 @@ sap.ui.define([
 						var tPercentage = percW;
 
 						oRm.renderControl(oCont.control);
-						oRm.write("</div>");
+						oRm.close("div");
 
 						/*
 						 * Render all following elements that should wrap with the
@@ -487,22 +494,22 @@ sap.ui.define([
 							oRm.writeHeader(sHeaderId, oStyles, aClasses);
 
 							oRm.renderControl(oCont.breakWith[jj].control);
-							oRm.write("</div>");
+							oRm.close("div");
 						}
 					} else {
 						oRm.renderControl(oCont.control);
 					}
-					oRm.write("</div>"); // content
+					oRm.close("div"); // content
 
-					oRm.write("</div>"); // container
+					oRm.close("div"); // container
 				}
-				oRm.write("</div>"); // row
+				oRm.close("div"); // row
 
 				this._iRowCounter++;
 			}
 		};
 
-		var computeWidths = function(bInitial) {
+		var computeWidths = function() {
 			this._iRowCounter = 0;
 
 			this._oDomRef = this.getDomRef();
@@ -513,7 +520,7 @@ sap.ui.define([
 
 				if (this._rows) {
 					for (var i = 0; i < this._rows.length; i++) {
-						var $Row = this._$DomRef.find("#" + sId + "-row" + i);
+						var $Row = jQuery(document.getElementById(sId + "-row" + i));
 
 						var oTargetWrapping = getTargetWrapping(this._rows[i], iInnerWidth);
 						var oCurrentWrapping = getCurrentWrapping(this._rows[i], $Row, this);
@@ -530,17 +537,8 @@ sap.ui.define([
 							bRender = bRender || (oRowRect.width !== oPrevRect.width) && (oRowRect.height !== oPrevRect.height);
 						}
 
-						// if this should be the initial rendering -> do it
-						bRender = bRender || (typeof (bInitial) === "boolean" && bInitial);
-
 						if (this._bLayoutDataChanged || bRender) {
-
-							//in IE when setting the innerHTML property to "" the changes do not take effect correctly and all the children are gone
-							if (Device.browser.internet_explorer){
-								jQuery(this._oDomRef).empty();
-							} else {
-								this._oDomRef.innerHTML = "";
-							}
+							this._oDomRef.innerHTML = "";
 
 							// reset this to be clean for next check interval
 							this._bLayoutDataChanged = false;
@@ -552,15 +550,8 @@ sap.ui.define([
 						this._getRenderManager().flush(this._oDomRef);
 
 						for (var i = 0; i < this._rows.length; i++) {
-							var oTmpRect = this._getElementRect(jQuery.sap.byId(sId + "-row" + i));
+							var oTmpRect = this._getElementRect(jQuery(document.getElementById(sId + "-row" + i)));
 							this._rows[i].oRect = oTmpRect;
-						}
-					}
-
-					if (this._rows.length === 0) {
-						if (this._resizeHandlerComputeWidthsID) {
-							ResizeHandler.deregister(this._resizeHandlerComputeWidthsID);
-							delete this._resizeHandlerComputeWidthsID;
 						}
 					}
 				}
@@ -575,11 +566,6 @@ sap.ui.define([
 		ResponsiveFlowLayout.prototype.onBeforeRendering = function() {
 			// update the internal structure of the rows
 			updateRows(this);
-
-			if (this._resizeHandlerFullLengthID) {
-				ResizeHandler.deregister(this._resizeHandlerFullLengthID);
-				delete this._resizeHandlerFullLengthID;
-			}
 		};
 
 		/**
@@ -587,21 +573,17 @@ sap.ui.define([
 		 * If the layout should be responsive, it is necessary to fix the width of the content
 		 * items to correspond to the width of the layout.
 		 */
-		ResponsiveFlowLayout.prototype.onAfterRendering = function(oEvent) {
+		ResponsiveFlowLayout.prototype.onAfterRendering = function() {
 			this._oDomRef = this.getDomRef();
 			this._$DomRef = jQuery(this._oDomRef);
 
-			// Initial Width Adaptation
-			this._proxyComputeWidths(true);
+			this._proxyComputeWidths();
 
 			if (this.getResponsive()) {
 				if (!this._resizeHandlerComputeWidthsID) {
-					this._resizeHandlerComputeWidthsID = ResizeHandler.register(this, this._proxyComputeWidths);
-				}
-			} else {
-				if (this._resizeHandlerComputeWidthsID) {
-					ResizeHandler.deregister(this._resizeHandlerComputeWidthsID);
-					delete this._resizeHandlerComputeWidthsID;
+					// Trigger rerendering when the control is resized so width recalculations
+					// are handled in the on after rendering hook the same way as the initial width calculations.
+					this._resizeHandlerComputeWidthsID = ResizeHandler.register(this, ResponsiveFlowLayout.prototype.rerender.bind(this));
 				}
 			}
 		};
@@ -610,12 +592,29 @@ sap.ui.define([
 			if (oEvent.type === "LayoutDataChange") {
 				this._bLayoutDataChanged = true;
 			}
-			if (!this._resizeHandlerComputeWidthsID) {
-				this._resizeHandlerComputeWidthsID = ResizeHandler.register(this, this._proxyComputeWidths);
+			if (this.getResponsive() && !this._resizeHandlerComputeWidthsID) {
+				// Trigger rerendering when the control is resized so width recalculations
+				// are handled in the on after rendering hook the same way as the initial width calculations.
+				this._resizeHandlerComputeWidthsID = ResizeHandler.register(this, ResponsiveFlowLayout.prototype.rerender.bind(this));
 			}
 
 			updateRows(this);
 			this._proxyComputeWidths();
+		};
+
+		ResponsiveFlowLayout.prototype.setResponsive = function(bResponsive) {
+			Control.prototype.setProperty.call(this, "responsive", bResponsive);
+			if (bResponsive && !this._resizeHandlerComputeWidthsID) {
+				// Trigger rerendering when the control is resized so width recalculations
+				// are handled in the on after rendering hook the same way as the initial width calculations.
+				this._resizeHandlerComputeWidthsID = ResizeHandler.register(this, ResponsiveFlowLayout.prototype.rerender.bind(this));
+			} else if (this._resizeHandlerComputeWidthsID) {
+				if (this._resizeHandlerComputeWidthsID) {
+					ResizeHandler.deregister(this._resizeHandlerComputeWidthsID);
+					delete this._resizeHandlerComputeWidthsID;
+				}
+			}
+			return this;
 		};
 
 		/**
@@ -653,10 +652,11 @@ sap.ui.define([
 		 */
 		ResponsiveFlowLayout.prototype.addContent = function(oContent) {
 			if (oContent && this._IntervalCall) {
-				jQuery.sap.clearDelayedCall(this._IntervalCall);
+				clearTimeout(this._IntervalCall);
 				this._IntervalCall = undefined;
 			}
 			this.addAggregation("content", oContent);
+			return this;
 		};
 
 		/**
@@ -672,10 +672,11 @@ sap.ui.define([
 		 */
 		ResponsiveFlowLayout.prototype.insertContent = function(oContent, iIndex) {
 			if (oContent && this._IntervalCall) {
-				jQuery.sap.clearDelayedCall(this._IntervalCall);
+				clearTimeout(this._IntervalCall);
 				this._IntervalCall = undefined;
 			}
 			this.insertAggregation("content", oContent, iIndex);
+			return this;
 		};
 
 		/**
@@ -688,7 +689,7 @@ sap.ui.define([
 		 */
 		ResponsiveFlowLayout.prototype.removeContent = function(oContent) {
 			if (oContent && this._IntervalCall) {
-				jQuery.sap.clearDelayedCall(this._IntervalCall);
+				clearTimeout(this._IntervalCall);
 				this._IntervalCall = undefined;
 			}
 			this.removeAggregation("content", oContent);
@@ -722,10 +723,10 @@ sap.ui.define([
 
 		/**
 		 * Returns a rectangle describing the current visual positioning of 1st DOM in the collection.
-		 * The difference with the function rect() in jQuery.sap.dom.js is that the height and width are cut to the
+		 * The difference with the function rect() in sap/ui/dom/jquery/rect.js is that the height and width are cut to the
 		 * 1st digit after the decimal separator and this is consistent across all browsers.
 		 * @param {object} oElement The jQuery collection to check
-		 * @returns {object} Object with properties top, left, width and height or null if no such element
+		 * @returns {object|null} Object with properties top, left, width and height or null if no such element
 		 * @private
 		 */
 		ResponsiveFlowLayout.prototype._getElementRect = function (oElement) {
@@ -746,28 +747,23 @@ sap.ui.define([
 		 */
 		ResponsiveFlowLayout.prototype._getRenderManager = function () {
 			if (!this.oRm) {
-				this.oRm = sap.ui.getCore().createRenderManager();
-				this.oRm.writeStylesAndClasses = function() {
-					this.writeStyles();
-					this.writeClasses();
-				};
+				this.oRm = new RenderManager().getInterface();
 				this.oRm.writeHeader = function(sId, oStyles, aClasses) {
-					this.write('<div id="' + sId + '"');
+					this.openStart("div", sId);
 
 					if (oStyles) {
 						for ( var key in oStyles) {
 							if (key === "width" && oStyles[key] === "100%") {
-								this.addClass("sapUiRFLFullLength");
+								this.class("sapUiRFLFullLength");
 							}
-							this.addStyle(key, oStyles[key]);
+							this.style(key, oStyles[key]);
 						}
 					}
 					for (var i = 0; i < aClasses.length; i++) {
-						this.addClass(aClasses[i]);
+						this.class(aClasses[i]);
 					}
 
-					this.writeStylesAndClasses();
-					this.write(">");
+					this.openEnd();
 				};
 			}
 			return this.oRm;

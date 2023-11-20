@@ -2,22 +2,26 @@
  * ${copyright}
  */
 
-sap.ui.define(function () {
+sap.ui.define(["sap/ui/core/Lib"], function (Library) {
 	"use strict";
 
-	var MessageViewRenderer = {};
+	var MessageViewRenderer = {
+		apiVersion: 2
+	};
 
 	var CSS_CLASS = "sapMMsgView";
 
 	MessageViewRenderer.render = function (oRm, oControl) {
-		oRm.write("<div");
-		oRm.writeControlData(oControl);
-		oRm.writeStyles();
-		oRm.addClass(CSS_CLASS);
-		oRm.writeClasses();
-		oRm.write(">");
+		var oResourceBundle = Library.getResourceBundleFor("sap.m");
+
+		oRm.openStart("section", oControl);
+		oRm.class(CSS_CLASS);
+		oRm.accessibilityState(oControl, {
+			label: oResourceBundle.getText("MESSAGE_VIEW_ARIA_LABEL")
+		});
+		oRm.openEnd();
 		oRm.renderControl(oControl._navContainer);
-		oRm.write("</div>");
+		oRm.close("section");
 	};
 
 	return MessageViewRenderer;

@@ -1,0 +1,31 @@
+/******************************************************************
+	Style of the DT Contextmenu - sap_hcb Theme
+*******************************************************************/
+@_sap_ui_dt_ContextMenu_OpenSubMenuBG: @sapUiSelected; //#0f5d94
+@_sap_ui_dt_ContextMenu_OpenSubMenuBorder: @sapUiNeutralBG; //000
+
+.sapUiDtContextMenu {
+	.sapUiMnuLst {
+		.sapUiMnuItm {
+			border-top: 0.0625rem solid transparent; //1px
+			&.sapUiMnuItmDsbl {
+				opacity: 1;
+			}
+		}
+	}
+}
+
+
+.sapUiDtContextMiniMenu {
+	.sapUiMnuItm {
+		border: none;
+
+		&.sapUiMnuItmSubMnuOpen {
+			background-color: @_sap_ui_dt_ContextMenu_OpenSubMenuBorder;
+
+			.sapUiIcon {
+				background-color: @_sap_ui_dt_ContextMenu_OpenSubMenuBG;
+			}
+		}
+	}
+}

@@ -1,0 +1,324 @@
+{
+  "1.64.0": {
+    "date": "February 2019",
+    "notes": [
+      {
+        "id": "fc06e2e51a9fef687cc588ad03a51df7df20571f",
+        "type": "FEATURE",
+        "text": "Databinding: Support asynchronous parsing and validation",
+        "references": []
+      },
+      {
+        "id": "27f6c52f8bdf9111bc75fd038c0bf446035ad5f5",
+        "type": "FEATURE",
+        "text": "PasteHelper: Test page extension for data validation.",
+        "references": []
+      },
+      {
+        "id": "f1c839c7695dc1566e35de41cee24a2ff900f377",
+        "type": "FEATURE",
+        "text": "v2.ODataModel: Update navigation properties in changed entity",
+        "references": []
+      },
+      {
+        "id": "b26b5cfc8ada2c0f5bcfe86a1f04f1d50b72cb8e",
+        "type": "FIX",
+        "text": "sap.ui.core: Remove circular dependency Component <-> Core",
+        "references": []
+      },
+      {
+        "id": "48fbef23b2fbce0bfc76f92e1492363a78b70d14",
+        "type": "FIX",
+        "text": "variable @sapContent_GridSize is undefined",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970141244"
+          }
+        ]
+      },
+      {
+        "id": "bd4e2fc76cf736e3b40fa821953a60ef2e71fb32",
+        "type": "FEATURE",
+        "text": "Adds public API for loadData promise",
+        "references": [
+          {
+            "type": "GitHub",
+            "reference": "2213"
+          },
+          {
+            "type": "GitHub",
+            "reference": "2282"
+          },
+          {
+            "type": "BCP",
+            "reference": "1880574213"
+          }
+        ]
+      },
+      {
+        "id": "726759ebc8fa59c71eb0994e78bd5cd46b0e3908",
+        "type": "FIX",
+        "text": "DateInterval: Allow dash-like chars as delimiter for parsing",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970072645"
+          }
+        ]
+      },
+      {
+        "id": "84fdb5182b58649e575c0f8e5608c5784c4a6fa2",
+        "type": "FIX",
+        "text": "Element_destroy.qunit.js: adapted incompatible document call",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970167389"
+          }
+        ]
+      },
+      {
+        "id": "fb27097710cfbb779881a1b210814e33fd8785ba",
+        "type": "FIX",
+        "text": "Hyphenation: Improve HyphenationPlayground to not have errors",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970131263"
+          }
+        ]
+      },
+      {
+        "id": "b5ca9ff70d06c28b6cdb7e9abd9d3b28a303ba20",
+        "type": "FIX",
+        "text": "ManagedObjectModel: Missing to observe/unobserve existing children",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870551736"
+          }
+        ]
+      },
+      {
+        "id": "0b2c9958da29e4af2d6d62fc929f34b85b1e3d69",
+        "type": "FIX",
+        "text": "core.Popup: check the existence of blur method before call it",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970044373"
+          }
+        ]
+      },
+      {
+        "id": "49528d10ffd8f146146675035f611feb43d26621",
+        "type": "FEATURE",
+        "text": "sap.ui.core: integrated es6-shim to allow restricted ES6 API",
+        "references": []
+      },
+      {
+        "id": "8f9ae9b655d1135fa4717c28389b347f38a7a6b4",
+        "type": "FEATURE",
+        "text": "v2.ODataModel: getCanonicalRequests",
+        "references": []
+      },
+      {
+        "id": "27ca61f2682e1f60b1cec8aa697b094c94f62a17",
+        "type": "FIX",
+        "text": "Assert the type of url is string instead of checking the value",
+        "references": [
+          {
+            "type": "GitHub",
+            "reference": "2437"
+          },
+          {
+            "type": "BCP",
+            "reference": "1980004613"
+          }
+        ]
+      },
+      {
+        "id": "232456c5b88de60ad6e3771e194c066c4596c20a",
+        "type": "FIX",
+        "text": "CompositeBinding: Always call validateValue with all values",
+        "references": []
+      },
+      {
+        "id": "f872ee25dd66a5cc91aebcc8488cf3a4c253bbe3",
+        "type": "FIX",
+        "text": "ManagedObject: Static binding for altType \"string\"",
+        "references": []
+      },
+      {
+        "id": "be5a03ebfb174c92ea495d12685442d6f1259fa5",
+        "type": "FIX",
+        "text": "ManagedObjectModel: fix extended change detection",
+        "references": []
+      },
+      {
+        "id": "45da2d63cb02e00b1bbeb919e71e6523cc42c930",
+        "type": "FIX",
+        "text": "core.routing: check existence of targets before display a target",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970082853"
+          }
+        ]
+      },
+      {
+        "id": "cf0f0070a847c9d74c8d66b22ab41517b8de5389",
+        "type": "FIX",
+        "text": "es6-shim: apply the polyfills sync when required with amd",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980015210"
+          }
+        ]
+      },
+      {
+        "id": "026315cdf5ccb8c957c3e1f617c7163dd2637589",
+        "type": "FIX",
+        "text": "es6-shim: include ES2017 String.prototype.pad(Start|End) functions",
+        "references": []
+      },
+      {
+        "id": "3960720ed62b23049ad5b6344033ba7c6492a939",
+        "type": "FIX",
+        "text": "es6-shim: include es6-promise polyfill for Edge (17)",
+        "references": []
+      },
+      {
+        "id": "e4984718ce135043c8a526320eb1e83936ac6cc7",
+        "type": "FIX",
+        "text": "sap.ui.core: include es6-shim-nopromise into bundles",
+        "references": []
+      },
+      {
+        "id": "e86034631fccad9c329213f81431958b45a6d9c0",
+        "type": "FIX",
+        "text": "v2.ODataModel: Only update already expanded nav properties",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980017086"
+          }
+        ]
+      },
+      {
+        "id": "a7a165a1b0a4cc384a954c766abaa3329850d0ff",
+        "type": "FIX",
+        "text": "v2/ODataModel: Prevent invalid cache entries",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970162407"
+          }
+        ]
+      },
+      {
+        "id": "5d2d08705af4c1a62fba87c8aa4c98747b24dda1",
+        "type": "FEATURE",
+        "text": "Messaging: Introduce MessageScope",
+        "references": []
+      },
+      {
+        "id": "ef87ca82251c990928d6feb79a0befe78e7c0742",
+        "type": "FEATURE",
+        "text": "sap_fiori_3: commons + ux3 libraries",
+        "references": []
+      },
+      {
+        "id": "058bdda6c8b4608ad48c7e5dba514671680d5583",
+        "type": "FIX",
+        "text": "AppCacheBuster: ensure to keep URL parameters and hash",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870529187"
+          }
+        ]
+      },
+      {
+        "id": "192145d8dafb6c1a74c770eeec19ef3d30e5d549",
+        "type": "FIX",
+        "text": "Drag-and-Drop: Text in input fields should be selectable",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980028391"
+          }
+        ]
+      },
+      {
+        "id": "17ceca68d6baeaa5e7984977715dc46c03271214",
+        "type": "FIX",
+        "text": "ManagedObject: supressInvalidate",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980022467"
+          }
+        ]
+      },
+      {
+        "id": "0da223ca6f7cd15a83b9ed45131696ab1a7fe99a",
+        "type": "FIX",
+        "text": "ManagedObjectModel: Paging",
+        "references": []
+      },
+      {
+        "id": "ee87a1b96dbe641664902869305922cc98adc2b5",
+        "type": "FIX",
+        "text": "ODataPropertyBinding: Correct data state check",
+        "references": []
+      },
+      {
+        "id": "e42c871c8cd95fdbdc62552890409c5ca447e4b8",
+        "type": "FIX",
+        "text": "core/Fragment: Adding object as possible option for controller",
+        "references": [
+          {
+            "type": "GitHub",
+            "reference": "2267"
+          },
+          {
+            "type": "BCP",
+            "reference": "1870457531"
+          }
+        ]
+      },
+      {
+        "id": "1bfc2bc92ebb3fff52b098a84598a11d3d631f3f",
+        "type": "FIX",
+        "text": "mvc/Controller: restored missing JSDoc line",
+        "references": []
+      },
+      {
+        "id": "24b02e63c461062f2711b641a75ad835f80e158e",
+        "type": "FEATURE",
+        "text": "Expose UI5 events as custom browser events.",
+        "references": []
+      },
+      {
+        "id": "7cc7f3a1a0ba4b21c2f77963128f897205f50cb6",
+        "type": "FIX",
+        "text": "es6-shim: include es6-promise polyfill for Edge (17)",
+        "references": []
+      },
+      {
+        "id": "43fa45c97cc45ff06deefdb9aff8e12c71c2305c",
+        "type": "FIX",
+        "text": "jQuery.sap.history: make the qUnit tests stable",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980043386"
+          }
+        ]
+      }
+    ]
+  }
+}

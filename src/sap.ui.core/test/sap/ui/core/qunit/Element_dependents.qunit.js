@@ -1,20 +1,20 @@
+/*global QUnit, sinon */
 sap.ui.define([
 	'sap/ui/core/Element',
 	'sap/ui/core/Control'
 ], function(Element, Control) {
 
 	"use strict";
-	/*global QUnit, sinon */
 
-	QUnit.module("Invalidation", {
+	QUnit.module("Dependents", {
 		beforeEach: function() {
-			this.sandbox = sinon.sandbox.create();
+			this.sandbox = sinon.sandbox.create(); // TODO Candidate for new sinon-qunit-bridge
 			this.element = new Element();
 			this.element.addDependent(new Control());
 			this.element.addDependent(new Control());
 			this.sandbox.spy(this.element, "invalidate");
 		},
-		afterEach: function() {
+		afterEach: function(assert) {
 			assert.notOk(this.element.invalidate.called, "then the element should not invalidate");
 			this.element.destroy();
 			this.sandbox.restore();

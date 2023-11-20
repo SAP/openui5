@@ -270,7 +270,7 @@ iScroll.prototype = {
 	},
 
 	_end: function (e) {
-		// SAP modification:
+		// MODIFIED BY SAP:
 		// iScroll still stays in scrolling mode as long as there are other touches. This is fine when those touches are inside the scrollable area,
 		// as those touches just continue the scrolling process. But when the scrolled area is pulled down (or up) and the remaining touch is outside the scrolled area
 		// (=touching the background behind the page), and then this touch is also removed, then the page will not snap back.

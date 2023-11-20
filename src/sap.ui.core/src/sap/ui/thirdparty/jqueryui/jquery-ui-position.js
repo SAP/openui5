@@ -43,7 +43,11 @@ function getDimensions( elem ) {
 			offset: { top: 0, left: 0 }
 		};
 	}
-	if ( $.isWindow( raw ) ) {
+	// ##### BEGIN: MODIFIED BY SAP
+	// with jQuery 3.5.1, isWindow() became deprecated
+	// if ( $.isWindow( raw ) ) {
+	if ( raw.window === raw ) {
+	// ##### END: MODIFIED BY SAP
 		return {
 			width: elem.width(),
 			height: elem.height(),
@@ -59,7 +63,8 @@ function getDimensions( elem ) {
 	}
 	// ##### BEGIN: MODIFIED BY SAP
 	// When positioning around SVG elements, method getBoundingClientRect should be used
-	if (typeof window.SVGElement !== "undefined" && raw instanceof window.SVGElement) {
+	// If the control expects getBoundingClientRect to be returned, useClientRect flag should be passed
+	if ((typeof window.SVGElement !== "undefined" && raw instanceof window.SVGElement) || raw.useClientRect) {
 		var boundingClientRect = raw.getBoundingClientRect();
 
 		return {
@@ -82,9 +87,14 @@ $.position = {
 			return cachedScrollbarWidth;
 		}
 		var w1, w2,
-			div = $( "<div style='display:block;position:absolute;width:50px;height:50px;overflow:hidden;'><div style='height:100px;width:auto;'></div></div>" ),
+			// ##### BEGIN: MODIFIED BY SAP
+			// CSP Modification - remove inline style
+			// div = $( "<div style='display:block;position:absolute;width:50px;height:50px;overflow:hidden;'><div style='height:100px;width:auto;'></div></div>" ),
+			div = $( "<div><div></div></div>" ),
 			innerDiv = div.children()[0];
-
+			div[0].style = "display:block;position:absolute;width:50px;height:50px;overflow:hidden;";
+			innerDiv.style = "height:100px;width:auto;";
+			// ##### END: MODIFIED BY SAP
 		$( "body" ).append( div );
 		w1 = innerDiv.offsetWidth;
 		div.css( "overflow", "scroll" );
@@ -115,13 +125,21 @@ $.position = {
 	},
 	getWithinInfo: function( element ) {
 		var withinElement = $( element || window ),
-			isWindow = $.isWindow( withinElement[0] ),
+			// ##### BEGIN: MODIFIED BY SAP
+			// with jQuery 3.5.1, isWindow() became deprecated
+			//isWindow = $.isWindow( withinElement[0] ),
+			isWindow = !!withinElement[0] && withinElement[0] === withinElement[0].window,
+			// ##### END: MODIFIED BY SAP
 			isDocument = !!withinElement[ 0 ] && withinElement[ 0 ].nodeType === 9;
 		return {
 			element: withinElement,
 			isWindow: isWindow,
 			isDocument: isDocument,
-			offset: withinElement.offset() || { left: 0, top: 0 },
+			// ##### BEGIN: MODIFIED BY SAP
+			// with jQuery 3.5.1, offset() must not be called on a window object, only on elements
+			//offset: withinElement.offset() || { left: 0, top: 0 },
+			offset: (isWindow ? null : withinElement.offset()) || { left: 0, top: 0 },
+			// ##### END: MODIFIED BY SAP
 			scrollLeft: withinElement.scrollLeft(),
 			scrollTop: withinElement.scrollTop(),
 			width: isWindow ? withinElement.width() : withinElement.outerWidth(),
@@ -139,7 +157,14 @@ $.fn.position = function( options ) {
 	options = $.extend( {}, options );
 
 	var atOffset, targetWidth, targetHeight, targetOffset, basePosition, dimensions,
-		target = $( options.of ),
+		// ##### BEGIN: MODIFIED BY SAP
+		// target = $( options.of ),
+
+		// Make sure string options are treated as CSS selectors
+		target = typeof options.of === "string" ?
+			$( document ).find( options.of ) :
+			$( options.of ),
+		// ##### END: MODIFIED BY SAP
 		within = $.position.getWithinInfo( options.within ),
 		scrollInfo = $.position.getScrollInfo( within ),
 		collision = ( options.collision || "flip" ).split( " " ),

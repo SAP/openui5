@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define([],
-	function() {
+sap.ui.define(["sap/ui/core/Lib"],
+	function(Library) {
 	"use strict";
 
 
@@ -12,6 +12,15 @@ sap.ui.define([],
 	 * @namespace
 	 */
 	var CalendarRenderer = {
+		apiVersion: 2
+	};
+
+	// Holds the possible values for the "_currentPicker" property.
+	var CURRENT_PICKERS = {
+		MONTH: "month", // represents the "month" aggregation
+		MONTH_PICKER: "monthPicker",  // represents the "monthPicker" aggregation
+		YEAR_PICKER: "yearPicker",  // represents the "yearPicker" aggregation
+		YEAR_RANGE_PICKER: "yearRangePicker"  // represents the "yearRangePicker" aggregation
 	};
 
 	/**
@@ -22,89 +31,106 @@ sap.ui.define([],
 	 */
 	CalendarRenderer.render = function(oRm, oCal){
 
-		oCal._iMode = 0; // it's rendered always as DayPicker
+		var sId = oCal.getId(),
+			sTooltip = oCal.getTooltip_AsString(),
+			aMonths = oCal.getAggregation("month"),
+			sCurrentPicker = oCal.getProperty("_currentPicker"),
+			sWidth = oCal.getWidth(),
+			rb = Library.getResourceBundleFor("sap.ui.unified"),
+			mAccProps = {labelledby: {value: "", append: false}};
 
-		var sId = oCal.getId();
-		var sTooltip = oCal.getTooltip_AsString();
-		var aMonths = oCal.getAggregation("month");
-		var sWidth = oCal.getWidth();
-
-		oRm.write("<div");
-		oRm.writeControlData(oCal);
-		oRm.addClass("sapUiCal");
+		oRm.openStart("div", oCal);
+		oRm.class("sapUiCal");
 		if (aMonths.length > 1) {
-			oRm.addClass("sapUiCalMulti");
+			oRm.class("sapUiCalMulti");
 		}
-		// This makes the calendar focusable and therefore
-		// the white empty areas can be clicked without closing the calendar
-		// by accident.
-		oRm.writeAttribute("tabindex", "-1");
 
-		var rb = sap.ui.getCore().getLibraryResourceBundle("sap.ui.unified");
-		var mAccProps = {labelledby: {value: "", append: false}}; // render on Month
-		if (oCal._bPoupupMode) {
-			mAccProps["role"] = "dialog";
-		}
-		oRm.writeAccessibilityState(oCal, mAccProps);
+		oRm.accessibilityState(oCal, mAccProps);
 
 		if (sTooltip) {
-			oRm.writeAttributeEscaped('title', sTooltip);
+			oRm.attr("title", sTooltip);
 		}
 
 		if (sWidth) {
-			oRm.addClass("sapUiCalWidth");
-			oRm.addStyle("width", sWidth);
-			oRm.writeStyles();
+			oRm.class("sapUiCalWidth");
+			oRm.style("width", sWidth);
 		}
 
 		if (oCal._getSecondaryCalendarType()) {
-			oRm.addClass("sapUiCalSecType");
+			oRm.class("sapUiCalSecType");
 		}
 
 		if (this.addAttributes) {
 			// additional stuff by inherited controls
 			this.addAttributes(oRm, oCal);
 		}
-		oRm.writeClasses();
-		oRm.write(">"); // div element
+		oRm.openEnd(); // div element
 
 		var oHeader = oCal.getAggregation("header");
 		oRm.renderControl(oHeader);
 
-		var iMonthsCount = aMonths.length;
-		oRm.write("<div id=\"" + sId + "-content\" class=\"sapUiCalContent\">");
-		for (var i = 0; i < iMonthsCount; i++) {
-			var oMonth = aMonths[i];
-			oRm.renderControl(oMonth);
-			if (iMonthsCount === 2 && i === 0) {
-				oRm.renderControl(oCal.getAggregation("secondMonthHeader"));
+		oRm.openStart("div", sId + "-content");
+		oRm.class("sapUiCalContent");
+		oRm.openEnd();
+
+		if (oCal.getMonths() > 1) { // in case of more than 1 month - render them below the actual picker
+			switch (sCurrentPicker) {
+				case CURRENT_PICKERS.MONTH_PICKER: // month picker
+				case CURRENT_PICKERS.YEAR_PICKER: // year picker
+				case CURRENT_PICKERS.YEAR_RANGE_PICKER: // year picker
+					this.renderMonths(oRm, oCal, aMonths);
+					this.renderCalContentOverlay(oRm, oCal, sId);
+					break;
+				// no default
 			}
 		}
-
-		this.renderCalContentOverlay(oRm, oCal, sId);
-
-		if (!oCal._bNamesLengthChecked) {
-			// render MonthPicker to check month names length
-			var oMonthPicker = oCal.getAggregation("monthPicker");
-			oRm.renderControl(oMonthPicker);
+		switch (sCurrentPicker) {
+			case CURRENT_PICKERS.MONTH: // month picker
+				this.renderMonths(oRm, oCal, aMonths);
+				break;
+			case CURRENT_PICKERS.MONTH_PICKER: // month picker
+				oRm.renderControl(oCal._getMonthPicker());
+				break;
+			case CURRENT_PICKERS.YEAR_PICKER: // year picker
+				oRm.renderControl(oCal._getYearPicker());
+				break;
+			case CURRENT_PICKERS.YEAR_RANGE_PICKER: // year picker
+				oRm.renderControl(oCal._getYearRangePicker());
+				break;
+			// no default
 		}
 
-		oRm.write("</div>");
+		oRm.close("div");
 
-		oRm.write("<button id=\"" + sId + "-cancel\" class=\"sapUiCalCancel\" tabindex=\"-1\">");
-		oRm.write(rb.getText("CALENDAR_CANCEL"));
-		oRm.write("</button>");
-
-		// dummy element to catch tabbing in from next element
-		oRm.write("<div id=\"" + sId + "-end\" tabindex=\"0\" style=\"width:0;height:0;position:absolute;right:0;bottom:0;\"></div>");
+		//when used in a DatePicker, in mobile there is no cancel button
+		if (!oCal._bSkipCancelButtonRendering) {
+			oRm.openStart("button", sId + "-cancel");
+			oRm.class("sapUiCalCancel");
+			oRm.attr("tabindex", "-1");
+			oRm.openEnd();
+			oRm.text(rb.getText("CALENDAR_CANCEL"));
+			oRm.close("button");
+		}
 
 		this.renderCalContentAndArrowsOverlay(oRm, oCal, sId);
 
-		oRm.write("</div>");
+		oRm.close("div");
+	};
+
+	CalendarRenderer.renderMonths = function(oRm, oCal, aMonths) {
+		aMonths.forEach(function(oMonth, iIndex) {
+			oRm.renderControl(oMonth);
+			if (aMonths.length === 2 && iIndex === 0) {
+				oRm.renderControl(oCal.getAggregation("secondMonthHeader"));
+			}
+		});
 	};
 
 	CalendarRenderer.renderCalContentOverlay = function(oRm, oCal, sId) {
-		oRm.write("<div id=\"" + sId + "-contentOver\" class=\"sapUiCalContentOver\" style=\"display:none;\"></div>");
+		oRm.openStart("div", sId + "-contentOver");
+		oRm.class("sapUiCalContentOver");
+		oRm.openEnd();
+		oRm.close("div");
 	};
 
 	CalendarRenderer.renderCalContentAndArrowsOverlay = function(oRm, oCal, sId) {

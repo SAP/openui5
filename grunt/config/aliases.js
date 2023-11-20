@@ -1,9 +1,6 @@
 // task aliases
 
 var semver = require('semver');
-var async = require('async');
-var path = require('path');
-var cldr = require('../../lib/cldr-openui5/lib/index.js');
 
 module.exports = function(grunt, config) {
 
@@ -35,60 +32,6 @@ module.exports = function(grunt, config) {
 				aTasks.push('eslint');
 			}
 			grunt.task.run(aTasks);
-		},
-
-		// QUnit test task
-		'test': function(mode) {
-
-			if (!mode || (mode !== 'src' && mode !== 'target')) {
-				mode = 'src';
-			}
-
-			grunt.option('port', 0); // use random port
-
-			// listen to the connect server startup
-			grunt.event.on('connect.*.listening', function(hostname, port) {
-
-				// 0.0.0.0 does not work in windows
-				if (hostname === '0.0.0.0') {
-					hostname = 'localhost';
-				}
-
-				// set baseUrl (using hostname / port from connect task)
-				grunt.config(['selenium_qunit', 'options', 'baseUrl'], 'http://' + hostname + ':' + port);
-
-				// run selenium task
-				grunt.task.run(['selenium_qunit:run']);
-			});
-
-			// cleanup and start connect server
-			grunt.task.run([
-				'clean:surefire-reports',
-				'openui5_connect:' + mode
-			]);
-		},
-
-		// Visualtest task
-		'visualtest' : function(mode) {
-
-			if (!mode || (mode !== 'src' && mode !== 'target')) {
-				mode = 'src';
-			}
-
-			// listen to the connect server startup
-			grunt.event.on('connect.*.listening', function(hostname, port) {
-				// 0.0.0.0 does not work in windows
-				if (hostname === '0.0.0.0') {
-					hostname = 'localhost';
-				}
-
-				// set baseUrl (using hostname / port from connect task)
-				grunt.config(['selenium_visualtest', 'options', 'baseUrl'], 'http://' + hostname + ':' + port);
-
-				// run visualtest task
-				grunt.task.run(['selenium_visualtest:run']);
-			});
-			grunt.task.run(['openui5_connect:' + mode]);
 		},
 
 		// Build task
@@ -191,11 +134,6 @@ module.exports = function(grunt, config) {
 			'copy:bundle'
 		],
 
-		// Package task (execute optionally after 'build')
-		'package': [
-			'compress:target'
-		],
-
 		'lastchange': function() {
 			var done = this.async();
 
@@ -268,7 +206,7 @@ module.exports = function(grunt, config) {
 			var sapUiBuildtime = config.buildtime;
 			var version = config.package && config.package.version;
 			var useDefaultTemplate = grunt.option('default-template');
-			
+
 			if (!useDefaultTemplate) {
 				var sapUiVersionJson = {
 					name: "openui5",
@@ -296,6 +234,7 @@ module.exports = function(grunt, config) {
 					return;
 				}
 				aTasks.push('jsdoc:library-' + library.name);
+				aTasks.push('copy:faq-target-' + library.name);
 				if (!useDefaultTemplate) {
 					aTasks.push('ui5docs-preprocess:library-' + library.name);
 				}
@@ -307,58 +246,11 @@ module.exports = function(grunt, config) {
 			grunt.task.run(aTasks);
 		},
 
-		// CLDR modules are not added to package.json/devDependencies to avoid bloating of the node_modules folder
-		'cldr': [
-		    'cldr-download',
-		    'cldr-generate'
-		],
-		'cldr-download': [
-		    'npm-install:cldr-core@32.0.0',
-		    'npm-install:cldr-numbers-modern@32.0.0',
-		    'npm-install:cldr-dates-modern@32.0.0',
-		    'npm-install:cldr-misc-modern@32.0.0',
-		    'npm-install:cldr-units-modern@32.0.0',
-		    'npm-install:cldr-localenames-modern@32.0.0',
-		    'npm-install:cldr-cal-islamic-modern@32.0.0',
-		    'npm-install:cldr-cal-japanese-modern@32.0.0',
-		    'npm-install:cldr-cal-persian-modern@32.0.0'
-		],
-		'cldr-generate': function() {
-			var done = this.async();
-
-			var baseFolder = path.join(__dirname, "../../");
-
-			var outputFolder = grunt.option("output"),
-				prettyPrint = grunt.option("prettyPrint");
-
-			if (typeof prettyPrint !== "boolean") {
-				prettyPrint = true;
-			}
-
-			if (!outputFolder) {
-				outputFolder = path.join(baseFolder, "src/sap.ui.core/src/sap/ui/core/cldr");
-			}
-
-			if (outputFolder) {
-				cldr({
-					output: outputFolder,
-					prettyPrint: prettyPrint
-				}).on("generated", function() {
-					grunt.log.ok("DONE", "Files saved to", outputFolder);
-				}).on("error", function(err) {
-					grunt.log.error(err);
-					done(false);
-				}).start();
-			}
-		},
-
 		// Default task (called when just running "grunt")
 		'default': [
 			'lint',
 			'clean',
-			'build',
-			'mochaTest',
-			'test'
+			'build'
 		]
 
 	};

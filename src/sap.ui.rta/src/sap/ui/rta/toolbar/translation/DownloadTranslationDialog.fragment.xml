@@ -1,0 +1,51 @@
+<core:FragmentDefinition
+		xmlns="sap.m"
+		xmlns:core="sap.ui.core" >
+	<Dialog
+		title="{i18n>TIT_DOWNLOAD_CHANGED_TEXTS}"
+		type="Message"
+		contentWidth="33%">
+		<Label
+			labelFor="languageSelection"
+			wrappingType="Hyphenated"
+			wrapping="true"
+			width="auto"
+			text="{i18n>MSG_DOWNLOAD_CHANGED_TEXTS}"
+			class="sapUiTinyMarginBottom">
+		</Label>
+		<MessageStrip
+			id="dirtyChangesExistsMessage"
+			text="{i18n>MSG_DOWNLOAD_CHANGED_TEXTS_DIRTY_CHANGES_EXIST}"
+			class="sapUiTinyMarginBottom"
+			visible="{translation>/translationRelevantDirtyChangesExist}">
+		</MessageStrip>
+		<Select
+			width="100%"
+			id="selectedSourceLanguage"
+			items="{translation>/sourceLanguages}"
+			selectedKey="{translation>/sourceLanguage}">
+			<core:Item key="{translation>}" text="{translation>}"/>
+		</Select>
+		<Input
+			width="100%"
+			id="selectedTargetLanguage"
+			value="{translation>/targetLanguage}"
+			placeholder="{i18n>TXT_TARGET_LANGUAGE}">
+		</Input>
+		<beginButton>
+			<Button
+				id="downloadTranslation"
+				text="{i18n>BTN_DOWNLOAD_CHANGED_TEXTS}"
+				type="Emphasized"
+				icon="sap-icon://download"
+				enabled="{= !!${translation>/sourceLanguages}.length}"
+				press=".onDownloadFile" />
+		</beginButton>
+		<endButton>
+			<Button
+				id="cancelDownloadTranslation"
+				text="{i18n>BUT_DOWNLOAD_CHANGED_TEXTS_CANCEL}"
+				press=".onCancelDownloadDialog" />
+		</endButton>
+	</Dialog>
+</core:FragmentDefinition>

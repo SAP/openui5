@@ -3,13 +3,17 @@
  */
 
 // Provides class sap.ui.core.support.plugins.Selector (Selector support plugin)
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Popup', '../Plugin', '../Support'],
-	function(jQuery, Popup, Plugin, Support) {
+sap.ui.define([
+	"sap/ui/core/Element",
+	"sap/ui/core/Popup",
+	"sap/ui/core/RenderManager",
+	"sap/ui/core/StaticArea",
+	"../Plugin",
+	"../Support",
+	"sap/ui/thirdparty/jquery",
+	"sap/base/util/uid"
+], function (Element, Popup, RenderManager, StaticArea, Plugin, Support, jQuery, uid) {
 	"use strict";
-
-
-
-
 
 		/**
 		 * Creates an instance of sap.ui.core.support.plugins.Selector.
@@ -42,23 +46,27 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Popup', '../Plugin', '../Suppor
 			highlight(oEvent.getParameter("id"), this, oEvent.getParameter("sendInfo"));
 		};
 
-
 		Selector.prototype.init = function(oSupportStub){
 			Plugin.prototype.init.apply(this, arguments);
 
 			var jPopupRef;
 
 			if (!this._sPopupId) {
-				this._sPopupId = this.getId() + "-" + jQuery.sap.uid();
-				var rm = sap.ui.getCore().createRenderManager();
-				rm.write("<div id='" + this._sPopupId + "' style='border: 2px solid rgb(0, 128, 0); background-color: rgba(0, 128, 0, .55);'></div>");
-				rm.flush(sap.ui.getCore().getStaticAreaRef(), false, true);
+				this._sPopupId = this.getId() + "-" + uid();
+				var rm = new RenderManager();
+				rm.openStart("div", this._sPopupId)
+					.style("border", "2px solid rgb(0, 128, 0)")
+					.style("background-color", "rgba(0, 128, 0, .55)")
+					.openEnd()
+					.close("div");
+
+				rm.flush(StaticArea.getDomRef(), false, true);
 				rm.destroy();
 
-				jPopupRef = jQuery.sap.byId(this._sPopupId);
+				jPopupRef = jQuery(document.getElementById(this._sPopupId));
 				this._oPopup.setContent(jPopupRef[0]);
 			} else {
-				jPopupRef = jQuery.sap.byId(this._sPopupId);
+				jPopupRef = jQuery(document.getElementById(this._sPopupId));
 			}
 
 			var that = this;
@@ -79,31 +87,29 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Popup', '../Plugin', '../Suppor
 				that._oPopup.close(0);
 			};
 
-			jPopupRef.bind("click", this._fCloseHandler);
-			jQuery(document).bind("mousedown", this._fSelectHandler);
+			jPopupRef.on("click", this._fCloseHandler);
+			jQuery(document).on("mousedown", this._fSelectHandler);
 
 		};
-
 
 		Selector.prototype.exit = function(oSupportStub){
 			this._oPopup.close(0);
 			if (this._fCloseHandler) {
-				jQuery.sap.byId(this._sPopupId).unbind("click", this._fCloseHandler);
+				jQuery(document.getElementById(this._sPopupId)).off("click", this._fCloseHandler);
 				this._fCloseHandler = null;
 			}
 			if (this._fSelectHandler) {
-				jQuery(document).unbind("mousedown", this._fSelectHandler);
+				jQuery(document).off("mousedown", this._fSelectHandler);
 				this._fSelectHandler = null;
 			}
 			Plugin.prototype.exit.apply(this, arguments);
 		};
 
-
 		function highlight(sId, oPlugin, bSend){
 			if (sId) {
-				var oElem = sap.ui.getCore().byId(sId);
+				var oElem = Element.getElementById(sId);
 				if (oElem) {
-					var jPopupRef = jQuery.sap.byId(oPlugin._sPopupId);
+					var jPopupRef = jQuery(document.getElementById(oPlugin._sPopupId));
 					var jRef = oElem.$();
 					if (jRef.is(":visible")) {
 						jPopupRef.width(jRef.outerWidth());
@@ -122,13 +128,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Popup', '../Plugin', '../Suppor
 			return false;
 		}
 
-
 		function getElementDetailsForEvent(oElement, oPlugin){
 			//TODO: to be extended
 			return {"id": oElement.getId()};
 		}
-
-
 
 	return Selector;
 

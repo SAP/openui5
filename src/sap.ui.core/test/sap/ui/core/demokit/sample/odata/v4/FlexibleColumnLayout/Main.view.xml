@@ -1,0 +1,203 @@
+<mvc:View
+	class="sapUiSizeCompact"
+	controllerName="sap.ui.core.sample.odata.v4.FlexibleColumnLayout.Main"
+	xmlns="sap.m" xmlns:f="sap.f" xmlns:form="sap.ui.layout.form" xmlns:mvc="sap.ui.core.mvc"
+	xmlns:plugins="sap.m.plugins">
+	<App>
+	<Page floatingFooter="true" id="page" showHeader="false">
+	<Toolbar>
+		<Button icon="sap-icon://add" id="create" press="onCreateSalesOrder" text="Create"
+				tooltip="Create Sales Order"/>
+		<Button icon="sap-icon://save" id="save" press="onSave" text="Save" tooltip="Save changes"/>
+		<Button id="cancel" icon="sap-icon://sys-cancel-2" press="onCancel" text="Cancel"
+				tooltip="Cancel changes"/>
+		<ToolbarSpacer/>
+		<Button id="showMessages" icon="sap-icon://message-popup" tooltip="Show messages"
+				press="onToggleMessagePopover" text="{ui>/iMessages}"
+				type="{= ${ui>/iMessages} ? 'Emphasized' : 'Default' }"/>
+	</Toolbar>
+	<f:FlexibleColumnLayout id="layout" layout="{ui>/sLayout}">
+		<f:beginColumnPages>
+			<VBox id="listReport">
+				<Table growing="true" growingThreshold="5" id="SalesOrderList"
+					items="{path : '/SalesOrderList',
+						filters : [
+							{path : 'SalesOrderID', operator : 'GE', value1 : '0500000000'},
+							{path : 'LifecycleStatus', operator : 'EQ', value1 : 'N'}
+						],
+						parameters : {$count : true}}"
+					mode="SingleSelectMaster" selectionChange="onSalesOrderSelect">
+					<headerToolbar>
+						<Toolbar id="salesOrderListToolbar">
+							<Title id="salesOrderListTitle" level="H2"
+								text="{headerContext>$count} New Sales Orders">
+								<layoutData>
+									<ToolbarLayoutData shrinkable="false"/>
+								</layoutData>
+							</Title>
+							<SearchField id="filterGrossAmount" search="onFilterSalesOrders"
+									placeholder="Gross amount greater than" width="50%">
+								<layoutData>
+									<ToolbarLayoutData shrinkable="false"/>
+								</layoutData>
+							</SearchField>
+							<Button enabled="true" icon="sap-icon://refresh"
+								id="refreshSalesOrderList" press="onRefreshSalesOrderList"
+								tooltip="Refresh Sales Order List"/>
+						</Toolbar>
+					</headerToolbar>
+					<columns>
+						<Column hAlign="Right" width="9em">
+							<Button iconFirst="false" icon="{ui>/sSortSalesOrderIDIcon}"
+								id="sortBySalesOrderId" press="onSortBySalesOrderID"
+								text="Sales Order ID"/>
+						</Column>
+						<Column demandPopin="true">
+							<Text text="Buyer Name"/>
+						</Column>
+						<Column demandPopin="true">
+							<Text text="Note"/>
+						</Column>
+						<Column demandPopin="true" hAlign="Right">
+							<Text text="Gross Amount"/>
+						</Column>
+						<Column demandPopin="true">
+							<Text text="Currency"/>
+						</Column>
+					</columns>
+					<ColumnListItem type="Navigation">
+						<Text id="salesOrderId" text="{SalesOrderID}"/>
+						<Text binding="{SO_2_BP}" text="{CompanyName}"/>
+						<Text id="salesOrderNote" text="{Note}"/>
+						<Text id="grossAmount" text="{GrossAmount}"/>
+						<Text text="{CurrencyCode}"/>
+					</ColumnListItem>
+				</Table>
+			</VBox>
+		</f:beginColumnPages>
+		<f:midColumnPages>
+			<VBox id="objectPage" visible="{=${ui>/bSalesOrderSelected}}">
+				<form:SimpleForm ariaLabelledBy="objectPageTitle" backgroundDesign="Transparent"
+					editable="true" id="SalesOrderList::detail" layout="ColumnLayout">
+					<form:toolbar>
+						<Toolbar design="Transparent">
+							<Title id="objectPageTitle" level="H2" text="Sales Order Details"/>
+							<Button enabled="true" icon="sap-icon://delete" id="deleteSalesOrder"
+								press="onDeleteSalesOrder" tooltip="Delete sales order"/>
+							<Button enabled="true" icon="sap-icon://sys-cancel-2"
+								id="resetSalesOrder" press="onResetContext"
+								tooltip="Reset Sales Order"/>
+							<Button enabled="true" icon="sap-icon://refresh" id="refreshSalesOrder"
+								press="onRefreshSalesOrder" tooltip="Refresh Sales Order"/>
+							<Button enabled="true" icon="sap-icon://trend-up"
+								id="increaseSalesOrderItemsQuantity"
+								press="onIncreaseSalesOrderItemsQuantity"
+								tooltip="Increase all Sales Order Items' Quantities by 1"/>
+						</Toolbar>
+					</form:toolbar>
+					<Label labelFor="SalesOrder::id" text="Sales Order ID"/>
+					<Input editable="false" id="SalesOrder::id" value="{SalesOrderID}"/>
+					<Label labelFor="SalesOrder::createdAt" text="Created At"/>
+					<Input editable="false" id="SalesOrder::createdAt" value="{CreatedAt}"/>
+					<Label labelFor="SalesOrder::changedAt" text="Changed At"/>
+					<Input editable="false" id="SalesOrder::changedAt" value="{ChangedAt}"/>
+					<Label labelFor="SalesOrder::status" text="Lifecycle Status"/>
+					<Input editable="false" id="SalesOrder::status" value="{LifecycleStatusDesc}"/>
+					<Label labelFor="SalesOrder::note" text="Note"/>
+					<Input id="SalesOrder::note" value="{Note}"/>
+					<Label labelFor="SalesOrder::grossAmount" text="Gross Amount"/>
+					<Input editable="false" id="SalesOrder::grossAmount" value="{GrossAmount}"/>
+					<Label labelFor="SalesOrder::currency" text="Currency"/>
+					<Input id="SalesOrder::currency" value="{CurrencyCode}"/>
+				</form:SimpleForm>
+				<Table growing="true" growingThreshold="5" id="SO_2_SOITEM"
+					items="{
+						parameters : {
+							$count : true,
+							$orderby : 'ItemPosition',
+							$$ownRequest : true
+						},
+						path : 'SO_2_SOITEM'
+					}" mode="SingleSelectMaster" selectionChange="onSalesOrderLineItemSelect">
+					<dependents>
+						<plugins:DataStateIndicator/>
+					</dependents>
+					<headerToolbar>
+						<Toolbar id="lineItemsToolbar">
+							<Title id="lineItemsTitle" level="H2"
+								text="{headerContext>$count} Sales Order Line Items"/>
+							<Button press="onCreateLineItem" tooltip="Create Line Item"
+								id="createSalesOrderLineItem" icon="sap-icon://add"/>
+						</Toolbar>
+					</headerToolbar>
+					<columns>
+						<Column>
+							<Text text="ProductID"/>
+						</Column>
+						<Column>
+							<Text text="Item Position"/>
+						</Column>
+						<Column hAlign="Right">
+							<Text text="Quantity"/>
+						</Column>
+						<Column>
+							<Text text="Quantity Unit"/>
+						</Column>
+						<Column hAlign="Right" width="8em">
+							<Button enabled="{= !%{@$ui5.context.isTransient} }"
+									id="sortByGrossAmount" icon="{ui>/sSortGrossAmountIcon}"
+									iconFirst="false" press="onSortByGrossAmount"
+									text="Gross Amount" tooltip="Sort by Gross Amount"/>
+						</Column>
+						<Column width="5em">
+							<Text text="Currency"/>
+						</Column>
+					</columns>
+					<ColumnListItem type="Navigation" highlight="{
+								parts : [
+									'messages>/',
+									{mode : 'OneTime', path : '', targetType : 'any'}
+								],
+								formatter : 'sap.ui.core.sample.odata.v4.FlexibleColumnLayout.Formatter.formatRowHighlight'
+							}" >
+						<Text text="{ProductID}"/>
+						<Text id="itemPosition" text="{ItemPosition}"/>
+						<Text id="itemQuantity" text="{Quantity}" textAlign="Right"/>
+						<Text text="{QuantityUnit}"/>
+						<Text text="{GrossAmount}"/>
+						<Text text="{CurrencyCode}"/>
+					</ColumnListItem>
+				</Table>
+			</VBox>
+		</f:midColumnPages>
+		<f:endColumnPages>
+			<VBox id="subObjectPage" visible="{=${ui>/bSalesOrderItemSelected}}">
+				<form:SimpleForm ariaLabelledBy="lineItemDetailsTitle" editable="true"
+						layout="ColumnLayout" title="Line Item Details">
+					<form:toolbar>
+						<Toolbar design="Transparent">
+							<Title id="lineItemDetailsTitle" level="H2" text="Line Item Details"/>
+							<Button enabled="true" icon="sap-icon://delete"
+								id="deleteSalesOrderItem" press="onDeleteSalesOrderItem"
+								tooltip="Delete sales order item"/>
+							<Button enabled="true" icon="sap-icon://sys-cancel-2"
+								id="resetLineItem" press="onResetContext"
+								tooltip="Reset Sales Order Line Item"/>
+						</Toolbar>
+					</form:toolbar>
+					<Label labelFor="SO_2_ITEM::productId" text="ProductId"/>
+					<Input editable="false" id="SO_2_ITEM::productId" value="{ProductID}"/>
+					<Label labelFor="SO_2_ITEM::itemPosition" text="Sales Order Item Position"/>
+					<Input editable="false" id="SO_2_ITEM::itemPosition" value="{ItemPosition}"/>
+					<Label labelFor="SO_2_ITEM::quantity" text="Quantity"/>
+					<Input id="SO_2_ITEM::quantity" value="{Quantity}"
+						change="rememberChangedSalesOrderContext"/>
+					<Label text="Unit"/>
+					<Text text="{QuantityUnit}"/>
+				</form:SimpleForm>
+			</VBox>
+		</f:endColumnPages>
+	</f:FlexibleColumnLayout>
+	</Page>
+	</App>
+</mvc:View>

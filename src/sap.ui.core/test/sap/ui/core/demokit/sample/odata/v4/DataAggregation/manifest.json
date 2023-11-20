@@ -7,17 +7,16 @@
 		},
 		"dataSources" : {
 			"default" : {
-				"uri" : "/serviceroot.svc/",
+				"uri" : "/odata/v4/sap.fe.managepartners.ManagePartnersService/",
 				"type" : "OData",
 				"settings" : {
 					"odataVersion" : "4.0"
 				}
 			}
 		},
-		"description" : "{{sap.app.description}}",
+		"description" : "Example for OData V4 Data Aggregation",
 		"id" : "sap.ui.core.sample.odata.v4.DataAggregation",
-		"i18n" : "i18n/i18n.properties",
-		"title" : "{{sap.app.title}}",
+		"title" : "OData V4 Data Aggregation",
 		"type" : "application"
 	},
 	"sap.ui" : {
@@ -35,7 +34,9 @@
 					"Component.js",
 					"DataAggregation.controller.js",
 					"DataAggregation.view.xml",
-					"manifest.json"
+					"manifest.json",
+					"SandboxModel.js",
+					"../../../common/SandboxModelHelper.js"
 				]
 			}
 		},
@@ -55,18 +56,13 @@
 				"dataSource" : "default",
 				"preload" : true,
 				"settings" : {
-					"autoExpandSelect" : false,
-					"earlyRequests": true,
-					"groupId" : "$direct",
-					"operationMode" : "Server",
-					"synchronizationMode" : "None"
-				}
+					"autoExpandSelect" : true,
+					"earlyRequests" : true,
+					"operationMode" : "Server"
+				},
+				"type" : "sap.ui.core.sample.odata.v4.DataAggregation.SandboxModel",
+				"uriSettingName" : "serviceUrl"
 			}
-		},
-		"resources": {
-			"js": [{
-				"uri": "Sandbox.js"
-			}]
 		},
 		"rootView" : {
 			"async" : true,

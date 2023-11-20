@@ -1,32 +1,39 @@
- /*
+/*
 * @${copyright}
 */
 
-sap.ui.define([ "sap/ui/core/UIComponent"], function(UIComponent) {
+sap.ui.define([
+	"sap/ui/core/UIComponent",
+	"sap/ui/core/ComponentContainer"
+], function(
+	UIComponent,
+	ComponentContainer
+) {
 	"use strict";
 	return UIComponent.extend("sap.ui.fl.qunit.integration.testComponentComplex.Component", {
-		init : function() {
-			sap.ui.core.UIComponent.prototype.init.apply(this, arguments);
+		metadata: {
+			interfaces: ["sap.ui.core.IAsyncContentCreation"],
+			manifest: "json"
 		},
-
-		createContent: function() {
-			var oEmbeddedComponent = this.runAsOwner( function () {
-				return sap.ui.component({
-					name: "sap.ui.fl.qunit.integration.testComponentReuse",
-					id: this.createId("sap.ui.fl.qunit.integration.testComponentReuse"),
-					manifestFirst: true,
-					"metadata": {
-						"manifest": "json"
-					}
+		init(...aArgs) {
+			UIComponent.prototype.init.apply(this, aArgs);
+		},
+		createContent() {
+			return this.createComponent({
+				usage: "myUsage",
+				id: this.createId("sap.ui.fl.qunit.integration.testComponentReuse"),
+				metadata: {
+					manifest: "json"
+				},
+				async: true
+			}).then(function(oEmbedded) {
+				var oComponentContainer = new ComponentContainer(this.createId("myContainer"), {
+					propagateModel: true,
+					component: oEmbedded
 				});
-			}.bind( this ) );
 
-			var oComponentContainer = new sap.ui.core.ComponentContainer(this.createId("myContainer"), {
-				propagateModel: true
-			});
-			oComponentContainer.setComponent(oEmbeddedComponent);
-
-			return oComponentContainer;
+				return oComponentContainer;
+			}.bind(this));
 		}
 	});
 });

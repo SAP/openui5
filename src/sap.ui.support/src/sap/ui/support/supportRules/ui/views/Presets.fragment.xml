@@ -1,0 +1,71 @@
+<core:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core">
+	<ResponsivePopover
+		id="presetsPopover"
+		title="Selection Preset"
+		placement="Bottom"
+		contentWidth="400px"
+		contentHeight="300px">
+		<customHeader>
+			<Bar design="Header">
+				<contentMiddle>
+					<Title id="rulePresetsTitle" text="Rule Presets" />
+				</contentMiddle>
+				<contentRight>
+					<core:Icon id="help" width="18px" src="sap-icon://sys-help" decorative="false" press="openHelp" />
+				</contentRight>
+			</Bar>
+		</customHeader>
+		<Page showHeader="false">
+			<List
+				id="select"
+				items="{
+					path: '/selectionPresets',
+					sorter: {
+						path: '',
+						group: '.grouper'
+					},
+					groupHeaderFactory: '.getGroupHeader'
+				}"
+				itemPress="onPresetItemPress"
+				selectionChange="onPresetChange"
+				mode="SingleSelectMaster">
+				<CustomListItem selected="{selected}" type="Active" tooltip="{description}">
+					<HBox
+						alignItems="Start"
+						justifyContent="SpaceBetween">
+						<FormattedText
+							class="sapUiTinyMargin sapUiSupportToolPresetTitle"
+							htmlText="{= ${isModified} ? '&lt;em&gt;' + ${title} + '&lt;/em&gt;' : ${title} }"/>
+						<HBox
+							alignItems="Start"
+							justifyContent="SpaceBetween"
+							class="sapUiTinyMarginEnd">
+							<Button
+								id="undoButton"
+								tooltip="Return to default selection"
+								icon="sap-icon://refresh"
+								type="Transparent"
+								press="onPresetItemReset"
+								visible="{= ${isModified} ? true : false}"/>
+							<Button
+								tooltip="Delete Preset"
+								icon="sap-icon://sys-cancel"
+								type="Transparent"
+								press="onPresetItemDelete"
+								visible="{= ${disableDelete} ? false : true}" />
+						</HBox>
+					</HBox>
+				</CustomListItem>
+			</List>
+			<footer>
+				<Toolbar>
+					<ToolbarSpacer />
+					<Button id="presetImport" text="Import" press="onImportPress" />
+					<Button id="presetExport" text="Export" press="onExportPress" />
+				</Toolbar>
+			</footer>
+		</Page>
+	</ResponsivePopover>
+</core:FragmentDefinition>

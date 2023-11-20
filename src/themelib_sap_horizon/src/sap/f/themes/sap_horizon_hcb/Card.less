@@ -1,0 +1,50 @@
+/* ================================== */
+/* CSS for control sap.f/Card         */
+/* Horizon High Contrast Black theme  */
+/* ================================== */
+
+@_sap_f_Card_BoxShadow: none;
+@_sap_f_Card_HeaderFocusBorderBottomOffset: 2px;
+@_sap_f_Card_Badge_Background: @sapUiHighlight;
+@_sap_f_Card_Badge_Border: 0.0625rem solid @sapUiContentForegroundBorderColor;
+@_sap_f_Card_Badge_Background: @sapUiHighlight;
+
+.sapFCard .sapFCardHeader.sapFCardSectionClickable {
+	&:hover {
+		.sapFCardNumericIndicatorsMain {
+			.sapMNCValue,
+			.sapMNCIndicator,
+			.sapMNCScale,
+			.sapMNCIndIcon {
+				color: @sapUiContentContrastTextColor;
+			}
+		}
+	}
+
+	&:active {
+		.sapFCardNumericIndicatorsMain {
+			.sapMNCValue,
+			.sapMNCIndicator,
+			.sapMNCScale,
+			.sapMNCIndIcon {
+				color: @sapUiContentContrastTextColor;
+			}
+		}
+	}
+}
+
+.sapFCard {
+
+	.sapFCardHeader {
+		border-bottom: none;
+		padding-bottom: 0.75rem;
+	}
+
+	.sapFCardFooter {
+		padding-top: 0.75rem;
+	}
+}
+
+.sapFCard .sapMNC, .sapFCardNumericIndicatorsSide {
+	margin-top: 0.25rem;
+}

@@ -1,15 +1,11 @@
 /*global QUnit*/
 
-(function () {
+sap.ui.define([
+		"sap/ui/support/supportRules/RuleSerializer"],
+	function (RuleSerializer) {
 	"use strict";
 
-	jQuery.sap.require("sap/ui/support/supportRules/RuleSerializer");
-
-	QUnit.module("RuleSerializer API test", {
-		setup: function () {
-			this.rs = sap.ui.support.supportRules.RuleSerializer;
-		}
-	});
+	QUnit.module("RuleSerializer API test");
 
 	QUnit.test("Serialize plain object test", function (assert) {
 		//The \\n here is because FireFoxESR adds the "use strict" with 2 new lines
@@ -23,17 +19,17 @@
 				/* eslint-enable strict, no-undef*/
 				e: [1, 2, "str"]
 			},
-			serializedString = this.rs.serialize(serializedObject);
+			serializedString = RuleSerializer.serialize(serializedObject);
 
 		assert.equal(serializedString, expectedString, "The serializer should save functions as strings");
 	});
 
 	QUnit.test("Deserialize object", function (assert) {
 		var serializedString = '{"a":1,"b":"str","c":false,"d":"function () { tempFunc(); }","e":[1,2,"str"],"check":"function () { tempFunc(); }"}',
-			deserializedObj = this.rs.deserialize(serializedString);
+			deserializedObj = RuleSerializer.deserialize(serializedString);
 
 		var partiallyDeserialized = JSON.parse(serializedString);
-		var partiallyDeserializedObj = this.rs.deserialize(partiallyDeserialized);
+		var partiallyDeserializedObj = RuleSerializer.deserialize(partiallyDeserialized);
 
 		assert.equal(deserializedObj.a, 1, "property a should be equal to 1");
 		assert.equal(deserializedObj.b, "str", "property b should be equal to 'str'");
@@ -47,4 +43,4 @@
 		assert.equal(typeof deserializedObj.check, "function", "property 'check' should be of type function");
 		assert.equal(typeof partiallyDeserializedObj.check, "function", "property 'check' should be of type function in partiallyDeserializedObj");
 	});
-}());
+});

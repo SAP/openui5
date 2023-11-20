@@ -22,8 +22,8 @@ sap.ui.define([
 	 *
 	 * @constructor
 	 * @public
+	 * @deprecated as of version 1.88
 	 * @alias sap.m.UploadCollectionParameter
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var UploadCollectionParameter = Element.extend("sap.m.UploadCollectionParameter", /** @lends sap.m.UploadCollectionParameter.prototype */ {
 		metadata: {

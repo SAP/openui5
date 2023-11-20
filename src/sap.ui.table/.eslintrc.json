@@ -1,0 +1,37 @@
+{
+	"overrides": [
+		/*
+		 * Productive code and test code of sap.ui.table has been cleaned up.
+		 * No more references to the global jQuery allowed
+		 */
+		{
+			"files": [
+				"src/**/*.js",
+				"test/**/*.js"
+			],
+			"globals": {
+				"jQuery": "off"
+			},
+			"rules": {
+				"space-before-function-paren": ["error", "never"],
+				"space-before-blocks": "error",
+				"space-in-parens": "error",
+				"block-spacing": "error",
+				"key-spacing": "error",
+				"comma-spacing": "error",
+				"comma-style": "error",
+				"eol-last": ["error", "never"],
+				//"padded-blocks": ["error", "never"],
+				"array-bracket-spacing": "error",
+				"no-multi-spaces": "error",
+				"no-multiple-empty-lines": ["error", {"max": 1}],
+				"no-whitespace-before-property": "error",
+				"object-curly-newline": ["error", {"consistent": true}],
+				"object-curly-spacing": "error",
+				"max-depth": ["warn", 4],
+				"max-len": ["warn", 150],
+				"complexity": ["warn", { "max": 12 }]
+			}
+		}
+	]
+}

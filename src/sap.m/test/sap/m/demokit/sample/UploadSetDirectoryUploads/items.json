@@ -1,0 +1,69 @@
+{
+	"items": [
+		{
+			"fileName": "Business Plan Agenda.doc",
+			"mediaType": "application/msword",
+			"url": "demokit/sample/UploadCollection/LinkedDocuments/Business Plan Agenda.doc",
+			"uploadState": "Complete",
+			"markers": [
+				{
+					"type": "Draft"
+				},
+				{
+					"type": "Favorite"
+				},
+				{
+					"type": "Flagged"
+				},
+				{
+					"type": "Locked"
+				},
+				{
+					"type": "Unsaved"
+				}
+			],
+			"statuses": [
+				{
+					"title": "Uploaded By",
+					"text": "Jane Burns",
+					"active": true
+				},
+				{
+					"title": "Uploaded On",
+					"text": "2014-07-28",
+					"active": false
+				},
+				{
+					"title": "File Size",
+					"text": "25",
+					"active": false
+				},
+				{
+					"title":"Document Info Record",
+					"text":"SSP/101010101",
+					"state":"Information"
+				}
+			],
+			"selected": false
+		},
+		{
+			"fileName": "Picture of a woman.png",
+			"mimeType": "image/png",
+			"thumbnailUrl": "test-resources/sap/m/images/Woman_04.png",
+			"url": "test-resources/sap/m/images/Woman_04.png",
+			"uploadState": "Complete",
+			"statuses": [
+				{
+					"title": "Uploaded By",
+					"text": "Jane Burns",
+					"active": true
+				},
+				{
+					"title": "Uploaded On",
+					"text": "2014-07-28",
+					"active": false
+				}
+			]
+		}
+	]
+}

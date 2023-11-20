@@ -16,15 +16,14 @@
 			showEmptyIntervalHeaders="false">
 			<toolbarContent>
 				<Title text="Title" titleStyle="H4"/>
-				<ToolbarSpacer/>
 				<ToggleButton icon="sap-icon://decrease-line-height"
 							  tooltip="Toggle Day Names Line"
 							  press="toggleDayNamesLine"/>
 			</toolbarContent>
 			<rows>
 				<PlanningCalendarRow
-					appointments="{path : 'appointments', templateShareable: 'true'}"
-					intervalHeaders="{path: 'headers', templateShareable: 'true'}">
+					appointments="{path : 'appointments', templateShareable: false}"
+					intervalHeaders="{path: 'headers', templateShareable: false}">
 					<appointments>
 						<unified:CalendarAppointment
 							startDate="{start}"

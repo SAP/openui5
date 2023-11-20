@@ -1,0 +1,22 @@
+<core:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core">
+	<SelectDialog
+		id="selectContexts"
+		noDataText="{i18n>NO_DATA}"
+		multiSelect="true"
+		resizable="true"
+		draggable="true"
+		growing="true"
+		growingThreshold="50"
+		title="{i18n>SELECT_ROLE_DIALOG_TITLE}"
+		search=".onSearch"
+		confirm=".onSelectContexts"
+		items="{contexts>/values}">
+		<StandardListItem
+			title="{contexts>id}"
+			description="{path: 'contexts>description', formatter: '.formatTooltip'}"
+			wrapping="true"
+			selected="{ parts: ['contexts>', 'selectedContexts>/selected'], formatter: '.isSelected' }"/>
+	</SelectDialog>
+</core:FragmentDefinition>

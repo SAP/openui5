@@ -3,8 +3,8 @@
  */
 
 // Provides default renderer for the sap.ui.ux3.ThingInspector
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './OverlayRenderer'],
-	function(jQuery, Renderer, OverlayRenderer) {
+sap.ui.define(['sap/ui/core/Renderer', './OverlayRenderer'],
+	function(Renderer, OverlayRenderer) {
 	"use strict";
 
 
@@ -18,15 +18,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './OverlayRenderer']
 	 * Renders the ThingInspector content
 	 *
 	 * @param {sap.ui.core.RenderManager}
-	 *            oRenderManager the RenderManager that can be used for writing to
+	 *            rm the RenderManager that can be used for writing to
 	 *            the Render-Output-Buffer
 	 * @param {sap.ui.core.Control}
 	 *            oControl an object representation of the control that should be
 	 *            rendered
 	 */
-	ThingInspectorRenderer.renderContent = function(oRenderManager, oControl) {
-		// convenience variable
-		var rm = oRenderManager;
+	ThingInspectorRenderer.renderContent = function(rm, oControl) {
 		rm.write("<div role='Main' class='sapUiUx3TIContent' id='" + oControl.getId() + "-content'>");
 		rm.renderControl(oControl._oThingViewer);
 		rm.write("</div>");
@@ -36,14 +34,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './OverlayRenderer']
 	 * Add root class to ThingInspector
 	 *
 	 * @param {sap.ui.core.RenderManager}
-	 *            oRenderManager the RenderManager that can be used for writing to
+	 *            rm the RenderManager that can be used for writing to
 	 *            the Render-Output-Buffer
 	 * @param {sap.ui.core.Control}
 	 *            oControl an object representation of the control that should be
 	 *            rendered
 	 */
-	ThingInspectorRenderer.addRootClasses = function(oRenderManager, oControl) {
-		var rm = oRenderManager;
+	ThingInspectorRenderer.addRootClasses = function(rm, oControl) {
 		rm.addClass("sapUiUx3TI");
 	};
 
@@ -51,14 +48,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './OverlayRenderer']
 	 * Add class to ThingInspector
 	 *
 	 * @param {sap.ui.core.RenderManager}
-	 *            oRenderManager the RenderManager that can be used for writing to
+	 *            rm the RenderManager that can be used for writing to
 	 *            the Render-Output-Buffer
 	 * @param {sap.ui.core.Control}
 	 *            oControl an object representation of the control that should be
 	 *            rendered
 	 */
-	ThingInspectorRenderer.addOverlayClasses = function(oRenderManager, oControl) {
-		var rm = oRenderManager;
+	ThingInspectorRenderer.addOverlayClasses = function(rm, oControl) {
 		rm.addClass("sapUiUx3TIOverlay");
 	};
 

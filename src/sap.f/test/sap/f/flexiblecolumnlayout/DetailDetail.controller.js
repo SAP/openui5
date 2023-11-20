@@ -1,7 +1,6 @@
 sap.ui.define([
-	"sap/ui/model/json/JSONModel",
 	"sap/ui/core/mvc/Controller"
-], function (JSONModel, Controller) {
+], function (Controller) {
 	"use strict";
 
 	return Controller.extend("flexiblecolumnlayout.DetailDetail", {
@@ -26,4 +25,4 @@ sap.ui.define([
 			this.oRouter.navTo("detail", {layout: sNextLayout});
 		}
 	});
-}, true);
+});

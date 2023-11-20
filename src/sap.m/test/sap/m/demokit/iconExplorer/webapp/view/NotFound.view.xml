@@ -3,15 +3,12 @@
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.m">
 
-	<MessagePage
-		title="{i18n>notFoundTitle}"
-		text="{i18n>notFoundText}"
-		icon="sap-icon://document"
-		id="page"
-		description="">
-		<customDescription>
-			<Link id="link" text="{i18n>backToOverview}" press="onLinkPressed"/>
-		</customDescription>
-	</MessagePage>
+	<VBox renderType="Bare" justifyContent="Center" height="100%">
+		<IllustratedMessage illustrationType="sapIllus-PageNotFound">
+			<additionalContent>
+				<Button id="link" text="{i18n>backToOverview}" press=".onButtonPressed"/>
+			</additionalContent>
+		</IllustratedMessage>
+	</VBox>
 
 </mvc:View>

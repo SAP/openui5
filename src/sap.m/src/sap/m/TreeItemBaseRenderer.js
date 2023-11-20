@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(['./ListItemBaseRenderer', 'sap/ui/core/Renderer'],
-	function(ListItemBaseRenderer, Renderer) {
+sap.ui.define(["./ListItemBaseRenderer", "sap/base/i18n/Localization", "sap/ui/core/Renderer"],
+	function(ListItemBaseRenderer, Localization, Renderer) {
 	"use strict";
 
 	/**
@@ -11,19 +11,25 @@ sap.ui.define(['./ListItemBaseRenderer', 'sap/ui/core/Renderer'],
 	 * @namespace
 	 */
 	var TreeItemBaseRenderer = Renderer.extend(ListItemBaseRenderer);
+	TreeItemBaseRenderer.apiVersion = 2;
 
 	TreeItemBaseRenderer.renderLIAttributes = function(rm, oLI) {
-		rm.addClass("sapMTreeItemBase");
+		rm.class("sapMTreeItemBase");
 
 		if (!oLI.isTopLevel()) {
-			rm.addClass("sapMTreeItemBaseChildren");
+			rm.class("sapMTreeItemBaseChildren");
+		}
+		if (oLI.isLeaf()) {
+			rm.class("sapMTreeItemBaseLeaf");
+		} else {
+			rm.attr("aria-expanded", oLI.getExpanded());
 		}
 
 		var iIndentation = oLI._getPadding();
-		if (sap.ui.getCore().getConfiguration().getRTL()){
-			rm.addStyle("padding-right", iIndentation + "rem");
+		if (Localization.getRTL()){
+			rm.style("padding-right", iIndentation + "rem");
 		} else {
-			rm.addStyle("padding-left", iIndentation + "rem");
+			rm.style("padding-left", iIndentation + "rem");
 		}
 
 	};
@@ -44,8 +50,8 @@ sap.ui.define(['./ListItemBaseRenderer', 'sap/ui/core/Renderer'],
 	/**
 	 * Returns the ARIA accessibility role.
 	 *
-	 * @param {sap.ui.core.Control} oLI An object representation of the control
-	 * @returns {String}
+	 * @param {sap.m.TreeItemBase} oLI An object representation of the control
+	 * @returns {string}
 	 * @protected
 	 */
 	TreeItemBaseRenderer.getAriaRole = function(oLI) {

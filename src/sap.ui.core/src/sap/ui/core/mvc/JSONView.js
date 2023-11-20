@@ -4,24 +4,36 @@
 
 // Provides control sap.ui.core.mvc.JSONView.
 sap.ui.define([
-    'jquery.sap.global',
-    './View',
-    './JSONViewRenderer',
-    './EventHandlerResolver',
-	'sap/base/util/extend',
-    'sap/ui/base/ManagedObject',
-    'sap/ui/core/library',
-    'sap/ui/model/resource/ResourceModel'
+	'./View',
+	'./JSONViewRenderer',
+	'./ViewType',
+	'./EventHandlerResolver',
+	'sap/base/util/merge',
+	'sap/ui/base/ManagedObject',
+	'sap/ui/model/resource/ResourceModel',
+	'sap/base/Log',
+	'sap/base/util/LoaderExtensions'
 ],
-	function(jQuery, View, JSONViewRenderer, EventHandlerResolver, extend, ManagedObject, library, ResourceModel) {
+	function(
+		View,
+		JSONViewRenderer,
+		ViewType,
+		EventHandlerResolver,
+		merge,
+		ManagedObject,
+		ResourceModel,
+		Log,
+		LoaderExtensions
+	) {
 	"use strict";
-
-	// shortcut for enum(s)
-	var ViewType = library.mvc.ViewType;
-
 
 	/**
 	 * Constructor for a new mvc/JSONView.
+	 *
+	 * <strong>Note:</strong> Application code shouldn't call the constructor directly, but rather use the factory
+	 * {@link sap.ui.core.mvc.JSONView.create JSONView.create} or {@link sap.ui.core.mvc.View.create View.create}
+	 * with type {@link sap.ui.core.mvc.ViewType.JSON JSON}. The factory simplifies asynchronous loading of a view
+	 * and future features might be added to the factory only.
 	 *
 	 * @param {string} [sId] id for the new control, generated automatically if no id is given
 	 * @param {object} [mSettings] initial settings for the new control
@@ -33,35 +45,40 @@ sap.ui.define([
 	 *
 	 * @public
 	 * @alias sap.ui.core.mvc.JSONView
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
+	 * @deprecated Since version 1.120, please consider using {@link sap.ui.core.mvc.XMLView XMLViews} or "typed views" (view classes
+	 *             written in JavaScript) instead. For more information, see the documentation on
+	 *             {@link topic:91f27e3e6f4d1014b6dd926db0e91070 View types}.
 	 */
-	var JSONView = View.extend("sap.ui.core.mvc.JSONView", /** @lends sap.ui.core.mvc.JSONView.prototype */ { metadata : {
-
-		library : "sap.ui.core"
-	}});
+	var JSONView = View.extend("sap.ui.core.mvc.JSONView", /** @lends sap.ui.core.mvc.JSONView.prototype */ {
+		metadata : {
+			library : "sap.ui.core"
+		},
+		renderer: JSONViewRenderer
+	});
 
 	/**
 	 * Creates a JSON view of the given configuration.
 	 *
-	 * @param {map} mOptions A map containing the view configuration options.
-	 * @param {string} [mOptions.id] Specifies an ID for the View instance. If no ID is given, an ID will be generated.
-	 * @param {string} [mOptions.viewName] The view name that corresponds to a JSON module that can be loaded
-	 * via the module system (viewName + suffix ".view.json").
-	 * @param {string|object} [mOptions.definition] view definition as a JSON string or an object literal
-	 * @param {sap.ui.core.mvc.Controller} [vView.controller] Controller instance to be used for this view.
+	 * @param {object} oOptions An object containing the view configuration options.
+	 * @param {string} [oOptions.id] Specifies an ID for the view instance. If no ID is given, an ID will be generated.
+	 * @param {string} [oOptions.viewName] The view name (in dot-notation) that corresponds to a JSON resource that can
+	 *                    be loaded via the module system (viewName + suffix ".view.json").
+	 * @param {string|object} [oOptions.definition] view definition as a JSON string or an object literal
+	 * @param {sap.ui.core.mvc.Controller} [oOptions.controller] Controller instance to be used for this view.
 	 * The given controller instance overrides the controller defined in the view definition. Sharing a controller instance
 	 * between multiple views is not supported.
 	 * @public
+	 * @since 1.56.0
 	 * @static
-	 * @return {Promise} a Promise which resolves with the created JSONView instance.
+	 * @returns {Promise<sap.ui.core.mvc.JSONView>} A promise which resolves with the created <code>JSONView</code> instance.
 	 */
-	JSONView.create = function(mOptions) {
-		var mParameters = extend(true, {}, mOptions);
+	JSONView.create = function(oOptions) {
+		var mParameters = merge({}, oOptions);
 		//remove unsupported options:
 		for (var sOption in mParameters) {
 			if (sOption === 'preprocessors') {
-				delete mParameters[sOption];
-				jQuery.sap.log.warning("JSView.create does not support the option preprocessors!");
+				delete mParameters['preprocessors'];
+				Log.warning("JSONView.create does not support the option preprocessors!");
 			}
 		}
 		mParameters.type = ViewType.JSON;
@@ -82,6 +99,13 @@ sap.ui.define([
 	 * The controller property can hold a controller instance. If a controller instance is given,
 	 * it overrides the controller defined in the view.
 	 *
+	 * When property <code>async</code> is set to true, the view definition and the controller class (and its
+	 * dependencies) will be loaded asynchronously. Any controls used in the view might be loaded sync or
+	 * async, depending on the view configuration. Even when the view definition is provided as string or object tree,
+	 * controller or controls might be loaded
+	 * asynchronously. In any case, a view instance will be returned synchronously by this factory API, but its
+	 * content (control tree) might appear only later. Also see {@link sap.ui.core.mvc.View#loaded}.
+	 *
 	 * Like with any other control, an id is optional and will be created when missing.
 	 *
 	 * @param {string} [sId] id of the newly created view
@@ -92,11 +116,12 @@ sap.ui.define([
 	 * @param {sap.ui.core.mvc.Controller} [vView.controller] controller to be used for this view instance
 	 * @public
 	 * @static
-	 * @deprecated since 1.56: Use sap.ui.core.mvc.JSONView.create instead.
+	 * @deprecated Since 1.56. Use {@link sap.ui.core.mvc.JSONView.create JSONView.create} to create view instances
 	 * @return {sap.ui.core.mvc.JSONView} the created JSONView instance
+	 * @ui5-global-only
 	 */
 	sap.ui.jsonview = function(sId, vView) {
-		return sap.ui.view(sId, vView, ViewType.JSON);
+		return sap.ui.view(sId, vView, ViewType.JSON); // legacy-relevant
 	};
 
 	/**
@@ -108,10 +133,12 @@ sap.ui.define([
 	JSONView._sType = ViewType.JSON;
 
 	/**
-	* Flag for feature detection of asynchronous loading/rendering
-	* @public
-	* @since 1.30
-	*/
+	 * Flag for feature detection of asynchronous loading/rendering.
+	 * @public
+	 * @readonly
+	 * @type {boolean}
+	 * @since 1.30
+	 */
 	JSONView.asyncSupport = true;
 
 	JSONView.prototype.initViewSettings = function(mSettings) {
@@ -129,8 +156,19 @@ sap.ui.define([
 		var that = this;
 		var fnInitModel = function() {
 			if ((that._oJSONView.resourceBundleName || that._oJSONView.resourceBundleUrl) && (!mSettings.models || !mSettings.models[that._oJSONView.resourceBundleAlias])) {
-				var model = new ResourceModel({bundleName:that._oJSONView.resourceBundleName, bundleUrl:that._oJSONView.resourceBundleUrl});
-				that.setModel(model, that._oJSONView.resourceBundleAlias);
+				var oModel = new ResourceModel({
+					bundleName: that._oJSONView.resourceBundleName,
+					bundleUrl: that._oJSONView.resourceBundleUrl,
+					async: mSettings.async
+				});
+				var vBundle = oModel.getResourceBundle();
+				// if ResourceBundle was created with async flag vBundle will be a Promise
+				if (vBundle instanceof Promise) {
+					return vBundle.then(function() {
+						that.setModel(oModel, that._oJSONView.resourceBundleAlias);
+					});
+				}
+				that.setModel(oModel, that._oJSONView.resourceBundleAlias);
 			}
 		};
 
@@ -146,7 +184,7 @@ sap.ui.define([
 			// TODO model this as a property as soon as write-once-during-init properties become available
 			this.mProperties["viewContent"] = mSettings.viewContent;
 			if (typeof mSettings.viewContent === "string") {
-				this._oJSONView = jQuery.parseJSON(mSettings.viewContent);
+				this._oJSONView = JSON.parse(mSettings.viewContent);
 				if (!this._oJSONView) { // would lead to errors later on
 					throw new Error("error when parsing viewContent: " + mSettings.viewContent);
 				}
@@ -214,17 +252,18 @@ sap.ui.define([
 	 * Loads and returns the template from a given URL.
 	 *
 	 * @param {string} sTemplateName The name of the template
+	 * @param {object} [mOptions] with view settings
 	 * @param {boolean} [mOptions.async=false] whether the action should be performed asynchronously
 	 * @return {string|Promise} the template data, or a Promise resolving with it when async
 	 * @private
 	 */
 	JSONView.prototype._loadTemplate = function(sTemplateName, mOptions) {
-		var sResourceName = jQuery.sap.getResourceName(sTemplateName, ".view.json");
+		var sResourceName = sTemplateName.replace(/\./g, "/") + ".view.json";
 		if (!mOptions || !mOptions.async) {
-			this._oJSONView = jQuery.sap.loadResource(sResourceName);
+			this._oJSONView = LoaderExtensions.loadResource(sResourceName);
 		} else {
 			var that = this;
-			return jQuery.sap.loadResource(sResourceName, mOptions).then(function(oJSONView) {
+			return LoaderExtensions.loadResource(sResourceName, mOptions).then(function(oJSONView) {
 				that._oJSONView = oJSONView;
 			});
 		}

@@ -1,0 +1,86 @@
+{
+	"@odata.metadataEtag" : "W/\"20191022154832\"",
+	"@odata.count" : 50,
+	"value" : [{
+		"@odata.etag" : "W/\"20190321111935.0000000 \"",
+		"BusinessPartnerID" : "0100000021",
+		"CompanyName" : "Florida Holiday Company"
+	}, {
+		"@odata.etag" : "W/\"20190321111935.0000000 \"",
+		"BusinessPartnerID" : "0100000022",
+		"CompanyName" : "Quimica Madrilenos"
+	}, {
+		"@odata.etag" : "W/\"20190321111935.0000000 \"",
+		"BusinessPartnerID" : "0100000023",
+		"CompanyName" : "Getränkegroßhandel Janssen"
+	}, {
+		"@odata.etag" : "W/\"20190321111935.0000000 \"",
+		"BusinessPartnerID" : "0100000024",
+		"CompanyName" : "JaTeCo"
+	}, {
+		"@odata.etag" : "W/\"20190321111935.0000000 \"",
+		"BusinessPartnerID" : "0100000025",
+		"CompanyName" : "Tessile Casa Di Roma"
+	}, {
+		"@odata.etag" : "W/\"20190321111935.0000000 \"",
+		"BusinessPartnerID" : "0100000026",
+		"CompanyName" : "Vente Et Réparation de Ordinateur"
+	}, {
+		"@odata.etag" : "W/\"20190321111935.0000000 \"",
+		"BusinessPartnerID" : "0100000027",
+		"CompanyName" : "Developement Para O Governo"
+	}, {
+		"@odata.etag" : "W/\"20190321111935.0000000 \"",
+		"BusinessPartnerID" : "0100000028",
+		"CompanyName" : "Brazil Technologies"
+	}, {
+		"@odata.etag" : "W/\"20190321111935.0000000 \"",
+		"BusinessPartnerID" : "0100000029",
+		"CompanyName" : "C.R.T.U."
+	}, {
+		"@odata.etag" : "W/\"20190321111935.0000000 \"",
+		"BusinessPartnerID" : "0100000030",
+		"CompanyName" : "Jologa"
+	}, {
+		"@odata.etag" : "W/\"20190321111935.0000000 \"",
+		"BusinessPartnerID" : "0100000031",
+		"CompanyName" : "Baleda"
+	}, {
+		"@odata.etag" : "W/\"20190321111935.0000000 \"",
+		"BusinessPartnerID" : "0100000032",
+		"CompanyName" : "Angeré"
+	}, {
+		"@odata.etag" : "W/\"20190321111935.0000000 \"",
+		"BusinessPartnerID" : "0100000033",
+		"CompanyName" : "PC Gym Tec"
+	}, {
+		"@odata.etag" : "W/\"20190321111935.0000000 \"",
+		"BusinessPartnerID" : "0100000034",
+		"CompanyName" : "Japan Insurance Partner"
+	}, {
+		"@odata.etag" : "W/\"20190321111935.0000000 \"",
+		"BusinessPartnerID" : "0100000035",
+		"CompanyName" : "Entertainment Argentinia"
+	}, {
+		"@odata.etag" : "W/\"20190321111935.0000000 \"",
+		"BusinessPartnerID" : "0100000036",
+		"CompanyName" : "African Gold And Diamond Corporation"
+	}, {
+		"@odata.etag" : "W/\"20190321111935.0000000 \"",
+		"BusinessPartnerID" : "0100000037",
+		"CompanyName" : "PicoBit"
+	}, {
+		"@odata.etag" : "W/\"20190321111935.0000000 \"",
+		"BusinessPartnerID" : "0100000038",
+		"CompanyName" : "Bionic Research Lab"
+	}, {
+		"@odata.etag" : "W/\"20190321111935.0000000 \"",
+		"BusinessPartnerID" : "0100000039",
+		"CompanyName" : "Indian IT Trading Company"
+	}, {
+		"@odata.etag" : "W/\"20190321111935.0000000 \"",
+		"BusinessPartnerID" : "0100000040",
+		"CompanyName" : "Chemia A Technicznie Fabryka"
+	}],
+	"@odata.nextLink" : "/sap/opu/odata4/sap/zui5_testv4/default/sap/zui5_epm_sample/0002/BusinessPartnerList?$top=21&$skip=21&$select=BusinessPartnerID,CompanyName&$filter=BusinessPartnerID%20lt%20%270100000050%27&$count=true&custom-option=value&sap-client=120&$skiptoken=20"
+}

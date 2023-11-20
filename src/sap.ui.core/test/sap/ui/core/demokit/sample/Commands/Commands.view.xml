@@ -1,0 +1,98 @@
+ <mvc:View
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:core="sap.ui.core"
+	xmlns="sap.m"
+	controllerName="sap.ui.core.sample.Commands.Commands"
+	displayBlock="true">
+	<App id="commands">
+		<Page id="page" title="Commands">
+			<dependents>
+				<core:CommandExecution id="CE_SAVE" command="Save" enabled="true" execute=".onSave" />
+				<core:CommandExecution id="CE_DELETE" command="Delete" enabled="true" execute=".onDelete" />
+				<Popover
+					id="popoverCommand"
+					title="Popover"
+					class="sapUiContentPadding">
+					<dependents>
+						<core:CommandExecution id="CE_SAVE_POPOVER" enabled="true" command="Save" execute=".onSave" />
+					</dependents>
+					<footer>
+						<Toolbar>
+							<Button text="Delete" press="cmd:Delete" enabled="{$cmd>Delete/enabled}" />
+							<ToolbarSpacer/>
+							<Button text="Save" press="cmd:Save" enabled="{$cmd>Save/enabled}" />
+						</Toolbar>
+					</footer>
+					<Input value="{viewModel>/value}" />
+				</Popover>
+				<Popover
+					id="popover"
+					title="Popover"
+					class="sapUiContentPadding">
+					<footer>
+						<Toolbar>
+							<Button text="Delete" press="cmd:Delete" enabled="{$cmd>Delete/enabled}" />
+							<ToolbarSpacer/>
+							<Button text="Save" press="cmd:Save" enabled="{$cmd>Save/enabled}" />
+						</Toolbar>
+					</footer>
+					<Input value="{viewModel>/value}" />
+				</Popover>
+			</dependents>
+			<Panel headerText="Button">
+				<Button text="Save" press="cmd:Save" tooltip="Save" />
+			</Panel>
+			<!-- Input -->
+			<Panel headerText="sap.m.Input">
+				<Input id="myInput" value="{viewModel>/value}" />
+			</Panel>
+			<Panel headerText="sap.m.Combobox">
+				<ComboBox
+					items="{ path: 'viewModel>/countries'}"
+					selectedKey="{viewModel>/selected}">
+					<core:Item key="{viewModel>key}" text="{viewModel>text}" />
+				</ComboBox>
+			</Panel>
+			<Panel headerText="sap.m.Select">
+				<Select
+					selectedKey='{viewModel>/selected}'
+					items="{
+						path: 'viewModel>/countries',
+						sorter: {path: 'text'}
+					}">
+					<core:Item key="{viewModel>key}" text="{viewModel>text}" />
+				</Select>
+			</Panel>
+			<Panel headerText="Popover - CommandExecution defined on underlying content">
+			<Button press=".onPopoverOpen" text="Open Popover" ariaHasPopup="Dialog" />
+			</Panel>
+			<Panel headerText="Popover - CommandExecution defined in Popup content">
+			<Button press=".onCommandPopoverOpen" text="Open Popover" ariaHasPopup="Dialog" />
+			</Panel>
+			<Panel headerText="toggle enabled/visibility for CommandExecution in Page">
+				<Panel headerText="enabled">
+					<Label text="Save:"/>
+					<Switch state="true" change=".onToggleSave"/>
+					<Label text="Delete:"/>
+					<Switch state="true" change=".onToggleDelete"/>
+				</Panel>
+				<Panel headerText="visible">
+					<Label text="Save:"/>
+					<Switch state="true" change=".onToggleSaveVisibility"/>
+					<Label text="Delete:"/>
+					<Switch state="true" change=".onToggleDeleteVisibility"/>
+				</Panel>
+			</Panel>
+			<Panel headerText="toggle enabled/visibility for CommandExecution in Popover">
+				<Panel headerText="enabled">
+					<Label text="Save:"/>
+					<Switch state="true" change=".onTogglePopoverSave"/>
+				</Panel>
+				<Panel headerText="visible">
+					<Label text="Save:"/>
+					<Switch state="true" change=".onTogglePopoverSaveVisibility"/>
+				</Panel>
+			</Panel>
+		</Page>
+	</App>
+</mvc:View>

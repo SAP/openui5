@@ -1,0 +1,29 @@
+{
+  "1.81.0": {
+    "date": "July 2020",
+    "notes": [
+      {
+        "id": "eff64f08258b49175aa04c03971cfb0de733fe36",
+        "type": "FIX",
+        "text": " Table: RowActions column positioning",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400004376962020"
+          }
+        ]
+      },
+      {
+        "id": "8c9ac8b7d2b460dad54f33d617614b1ad3f99021",
+        "type": "FIX",
+        "text": " sap.ui.table - row adaptation disabled",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080052788"
+          }
+        ]
+      }
+    ]
+  }
+}

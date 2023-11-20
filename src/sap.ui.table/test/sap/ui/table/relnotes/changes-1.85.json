@@ -1,0 +1,12 @@
+{
+  "1.85.0": {
+    "date": "November 2020",
+    "notes": [
+      {
+        "id": "8d637c1beb98b989d31d32d7fa48633873f878c8",
+        "type": "FIX",
+        "text": " sap.m.Table, sap.ui.table.Table: Paste event API documentation fixed"
+      }
+    ]
+  }
+}

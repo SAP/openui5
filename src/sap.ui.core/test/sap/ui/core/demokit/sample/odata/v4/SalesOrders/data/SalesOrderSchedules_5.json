@@ -1,0 +1,34 @@
+{
+	"@odata.metadataEtag" : "W/\"20191008145915\"",
+	"value" : [{
+		"ScheduleKey" : "005056A71E3D1ED68DDAAE99B0154B70",
+		"DeliveryDate" : "2016-06-26T22:00:00Z"
+	}, {
+		"ScheduleKey" : "005056A71E3D1ED68DDAAE99B0156B70",
+		"DeliveryDate" : "2016-06-26T22:00:00Z"
+	}, {
+		"ScheduleKey" : "005056A71E3D1ED68DDAAE99B0158B70",
+		"DeliveryDate" : "2016-06-26T22:00:00Z"
+	}, {
+		"ScheduleKey" : "005056A71E3D1ED68DDAAE99B015AB70",
+		"DeliveryDate" : "2016-06-26T22:00:00Z"
+	}, {
+		"ScheduleKey" : "005056A71E3D1ED68DDAAE99B015CB70",
+		"DeliveryDate" : "2016-06-26T22:00:00Z"
+	}, {
+		"ScheduleKey" : "005056A71E3D1ED68DDAAE99B015EB70",
+		"DeliveryDate" : "2016-06-26T22:00:00Z"
+	}, {
+		"ScheduleKey" : "005056A71E3D1ED68DDAAE99B0160B70",
+		"DeliveryDate" : "2016-06-26T22:00:00Z"
+	}, {
+		"ScheduleKey" : "005056A71E3D1ED68DDAAE99B0162B70",
+		"DeliveryDate" : "2016-06-26T22:00:00Z"
+	}, {
+		"ScheduleKey" : "005056A71E3D1ED68DDAAE99B0164B70",
+		"DeliveryDate" : "2016-06-26T22:00:00Z"
+	}, {
+		"ScheduleKey" : "005056A71E3D1ED68DDAAE99B0166B70",
+		"DeliveryDate" : "2016-06-26T22:00:00Z"
+	}]
+}

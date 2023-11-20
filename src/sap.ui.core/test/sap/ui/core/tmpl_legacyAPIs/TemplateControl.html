@@ -1,0 +1,140 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+
+	<meta charset="utf-8">
+
+	<title>Template - sap.ui.core.tmpl (Simple)</title>
+
+	<script src="../shared-config.js"></script>
+	<script id="sap-ui-bootstrap"
+			src="../../../../../resources/sap-ui-core.js"
+			data-sap-ui-libs="sap.ui.commons"
+			data-sap-ui-theme="sap_bluecrystal"
+			>
+	</script>
+
+	<link type="text/css" rel="stylesheet" href="res/tmpl.css">
+
+	<script id="aNewControl" data-control="a.NewControl" type="text/x-handlebars-template">
+
+		<h3>{{property name="lastName"}}, {{property name="firstName"}}</h3>
+		<ul>
+		{{#aggregation name="locations" type="sap.ui.commons.TextView" multiple="true"}}
+			<li>{{control}}</li>
+		{{/aggregation}}
+		</ul>
+
+	</script>
+
+	<script id="aOtherControl" data-control="a.OtherControl" type="text/x-handlebars-template">
+
+		<span {{controlData}}>
+			<h3>{{property name="lastName"}}, {{property name="firstName"}}</h3>
+			<ul>
+			{{#aggregation name="locations" type="sap.ui.commons.TextView" multiple="true"}}
+				<li>{{control}}</li>
+			{{/aggregation}}
+			</ul>
+		</span>
+
+	</script>
+
+	<script>
+
+		// sample code
+		jQuery(function() {
+
+			// show the code below the content element
+			var $Script = jQuery.sap.byId("aNewControl");
+			var sTemplate = jQuery.sap.escapeHTML($Script.html());
+			jQuery("<pre>").html(sTemplate).insertAfter(jQuery.sap.byId("content"));
+
+			var $Script = jQuery.sap.byId("aOtherControl");
+			var sTemplate = jQuery.sap.escapeHTML($Script.html());
+			jQuery("<pre>").html(sTemplate).insertAfter(jQuery.sap.byId("contentOther"));
+
+			// define the model
+			var oModel = new sap.ui.model.json.JSONModel({
+				title: "Persons",
+				persons: [{
+					firstName: "Peter",
+					lastName: "Muessig",
+					locations: ["HD", "HN"]
+				}, {
+					firstName: "Tim",
+					lastName: "Back",
+					locations: ["HD", "MA"]
+				}, {
+					firstName: "Christoph",
+					lastName: "Kraemer",
+					locations: ["HD", "F"]
+				}]
+			});
+			sap.ui.getCore().setModel(oModel);
+
+			// declare the control based on a template
+			sap.ui.template("aNewControl");
+
+			// create the new control and place it
+			var oControl = new a.NewControl({
+				lastName: "{lastName}",
+				firstName: "{firstName}",
+				locations: {
+					path: "locations",
+					template: new sap.ui.commons.TextView({
+						text: "{}"
+					})
+				}
+			});
+
+			var oRowRepeater = new sap.ui.commons.RowRepeater({
+				design: "Transparent",
+				rows: {
+					path: "/persons",
+					template: oControl
+				}
+			});
+			oRowRepeater.placeAt("content");
+
+			// declare the control based on a template
+			sap.ui.template("aOtherControl");
+
+			// create the new control and place it
+			oControl = new a.OtherControl({
+				lastName: "{lastName}",
+				firstName: "{firstName}",
+				locations: {
+					path: "locations",
+					template: new sap.ui.commons.TextView({
+						text: "{}"
+					})
+				}
+			});
+
+			oRowRepeater = new sap.ui.commons.RowRepeater({
+				design: "Transparent",
+				rows: {
+					path: "/persons",
+					template: oControl
+				}
+			});
+			oRowRepeater.placeAt("contentOther");
+
+		});
+
+	</script>
+
+</head>
+<body class="sapUiBody">
+
+	<h1><code>sap.ui.core.tmpl.Template</code> - Test Page</h1>
+
+	<h2 style="color: red;">Experimental support for control definition via Template!</h2>
+
+	<div id="content"></div>
+
+	<div id="contentOther"></div>
+
+</body>
+</html>

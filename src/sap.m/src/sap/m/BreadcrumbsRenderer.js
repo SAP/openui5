@@ -10,7 +10,10 @@ sap.ui.define(["sap/m/Text"], function (Text) {
 	 * Breadcrumbs renderer.
 	 * @namespace
 	 */
-	var BreadcrumbsRenderer = {};
+	var BreadcrumbsRenderer = {
+		apiVersion: 2
+	};
+
 
 	/**
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
@@ -20,48 +23,55 @@ sap.ui.define(["sap/m/Text"], function (Text) {
 	 */
 	BreadcrumbsRenderer.render = function (oRm, oControl) {
 		var aControls = oControl._getControlsForBreadcrumbTrail(),
-			oSelect = oControl._getSelect();
+			oSelect = oControl._getSelect(),
+			sSeparator = oControl._sSeparatorSymbol,
+			sDefaultAriaLabelledBy = oControl._getInvisibleText().getId(),
+			aAriaLabelledBy = oControl.getAriaLabelledBy().slice();
 
-		oRm.write("<ul");
-		oRm.writeControlData(oControl);
-		oRm.addClass("sapMBreadcrumbs");
-		oRm.writeClasses();
-		oRm.writeAttribute("role", "navigation");
-		oRm.writeAttributeEscaped("aria-label", BreadcrumbsRenderer._getResourceBundleText("BREADCRUMB_LABEL"));
-		oRm.write(">");
+		oRm.openStart("nav", oControl);
+		oRm.class("sapMBreadcrumbs");
+
+		aAriaLabelledBy.push(sDefaultAriaLabelledBy);
+
+		oRm.accessibilityState(null, {
+			labelledby: {
+				value: aAriaLabelledBy.join(" "),
+				append: true
+			}
+		});
+
+		if (oControl._iMinWidth && oControl._iMinWidth !== oControl.MIN_WIDTH_IN_OFT) {
+			oRm.style("min-width", oControl._iMinWidth + "px");
+		}
+
+		oRm.openEnd();
+		oRm.openStart("ol");
+		oRm.openEnd();
 
 		if (oSelect.getVisible()) {
-			this._renderControlInListItem(oRm, oSelect, false, "sapMBreadcrumbsSelectItem");
+			this._renderControlInListItem(oRm, oSelect, sSeparator, false, "sapMBreadcrumbsSelectItem");
 		}
 
-		aControls.forEach(function (oChildControl) {
-			this._renderControlInListItem(oRm, oChildControl, oChildControl instanceof Text);
+		aControls.forEach(function (oChildControl, iIndex) {
+			this._renderControlInListItem(oRm, oChildControl, sSeparator, oChildControl instanceof Text, undefined, iIndex, aControls.length);
 		}, this);
 
-		oRm.write("</ul>");
+		oRm.close("ol");
+		oRm.close("nav");
 	};
 
-	BreadcrumbsRenderer._renderControlInListItem = function (oRm, oControl, bSkipSeparator, sAdditionalItemClass) {
-		oRm.write("<li");
-		oRm.writeAttribute("role", "presentation");
-		oRm.writeAttribute("aria-hidden", "true");
-		oRm.addClass("sapMBreadcrumbsItem");
-		oRm.addClass(sAdditionalItemClass);
-		oRm.writeClasses();
-		oRm.write(">");
+	BreadcrumbsRenderer._renderControlInListItem = function (oRm, oControl, sSeparator, bSkipSeparator, sAdditionalItemClass, iIndex, iVisibleItemsCount) {
+		oRm.openStart("li");
+		oRm.class("sapMBreadcrumbsItem");
+		oRm.class(sAdditionalItemClass);
+		oRm.openEnd();
 		oRm.renderControl(oControl);
 		if (!bSkipSeparator) {
-			oRm.write("<span");
-			oRm.addClass("sapMBreadcrumbsSeparator");
-			oRm.writeClasses();
-			oRm.write(">/</span>");
+			oRm.openStart("span").class("sapMBreadcrumbsSeparator").attr("aria-hidden", true).openEnd().text(sSeparator).close("span");
 		}
-		oRm.write("</li>");
+		oRm.close("li");
 	};
 
-	BreadcrumbsRenderer._getResourceBundleText = function (sText) {
-		return sap.ui.getCore().getLibraryResourceBundle("sap.m").getText(sText);
-	};
 
 	return BreadcrumbsRenderer;
 

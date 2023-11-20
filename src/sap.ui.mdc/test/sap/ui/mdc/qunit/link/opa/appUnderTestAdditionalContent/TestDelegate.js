@@ -1,0 +1,43 @@
+/*!
+ * ${copyright}
+ */
+sap.ui.define([
+	"sap/ui/mdc/LinkDelegate",
+	"sap/ui/mdc/link/LinkItem",
+	"testutils/link/ContactDetails",
+	"testutils/link/ContactDetailsItem"
+], function(LinkDelegate, LinkItem, ContactDetails, ContactDetailsItem) {
+	"use strict";
+
+	const SampleLinkDelegate = Object.assign({}, LinkDelegate);
+
+	SampleLinkDelegate.fetchLinkItems = function() {
+		const aLinkItems = [
+			new LinkItem({
+				key: "IDLinkItem00",
+				text: "{ProductId}",
+				description: "{Name}",
+				icon: "{Image}",
+				href: "#link00"
+			})
+		];
+		return Promise.resolve(aLinkItems);
+	};
+
+	SampleLinkDelegate.fetchAdditionalContent = function() {
+		const aAdditionalConten = [
+			new ContactDetails({
+				items: new ContactDetailsItem({
+					photo: "/testsuite/test-resources/sap/ui/documentation/sdk/images/johnDoe.png",
+					formattedName: "John Doe",
+					title: "Developer",
+					role: "Research & Development",
+					org: "New Economy"
+				})
+			})
+		];
+		return Promise.resolve(aAdditionalConten);
+	};
+
+	return SampleLinkDelegate;
+});

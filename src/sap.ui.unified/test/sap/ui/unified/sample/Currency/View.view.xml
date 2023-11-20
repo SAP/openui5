@@ -1,34 +1,62 @@
 <mvc:View
 	controllerName="sap.ui.unified.sample.Currency.Controller"
-	xmlns:l="sap.ui.layout"
-	xmlns:u="sap.ui.unified"
+	xmlns="sap.m"
 	xmlns:mvc="sap.ui.core.mvc"
-	xmlns="sap.m">
-	<l:VerticalLayout>
-		<Text text="Various currencies with and without decimals"/>
-		<u:Currency value="2300.12" currency="EUR" useSymbol="true" />
-		<u:Currency value="38" currency="EUR" useSymbol="false" />
-		<u:Currency value="1928472" currency="JPY" useSymbol="true" />
-		<u:Currency value="233.9385763" currency="JPY" useSymbol="false" />
-		<u:Currency value="125.02" currency="USD" useSymbol="true" />
-		<u:Currency value="2125.02843" currency="USD" useSymbol="false" />
-		<u:Currency value="9283" currency="TND" useSymbol="true" />
-		<u:Currency value="235.0298" currency="TND" useSymbol="false" />
+	xmlns:l="sap.ui.layout"
+	xmlns:u="sap.ui.unified">
+	<l:Grid
+		defaultSpan="XL7 L12 M12 S12">
+		<List
+			id="listOneId"
+			headerText="Various currencies with and without decimals"
+			items="{path: '/variousNumberDataModel'}">
+			<CustomListItem>
+				<u:Currency value="{price}" currency="{currency}" useSymbol="false"/>
+			</CustomListItem>
+		</List>
 
-		<Text text="Currency without decimals"/>
-		<u:Currency value="2300.12" currency="JPY" useSymbol="true" />
-		<u:Currency value="38" currency="JPY" useSymbol="true" />
-		<u:Currency value="1928472" currency="JPY" useSymbol="true" />
-		<u:Currency value="233" currency="JPY" useSymbol="true" />
+		<List
+			id="listTwoId"
+			headerText="Currency without decimals"
+			items="{path: '/nonDecimalCurrencyDataModel'}">
+			<CustomListItem>
+				<u:Currency value="{price}" currency="{currency}" useSymbol="false"/>
+			</CustomListItem>
+		</List>
 
-		<Text text="Currency without decimals using maxPrecision"/>
-		<u:Currency value="2300.12" currency="JPY" useSymbol="true" maxPrecision="0" />
-		<u:Currency value="38" currency="JPY" useSymbol="true" maxPrecision="0" />
-		<u:Currency value="1928472" currency="JPY" useSymbol="true" maxPrecision="0" />
-		<u:Currency value="233" currency="JPY" useSymbol="true" maxPrecision="0" />
+		<List
+			id="listThreeId"
+			headerText="Currency without decimals using maxPrecision"
+			items="{path: '/nonDecimalCurrencyDataModel'}">
+			<CustomListItem>
+				<u:Currency value="{price}" currency="{currency}" useSymbol="false" maxPrecision="0"/>
+			</CustomListItem>
+		</List>
 
-		<Text text="Currency with really big numbers" />
-		<u:Currency stringValue="12345678901234567890123" currency="USD" useSymbol="true" />
-		<u:Currency stringValue="123456789012345678901.23" currency="USD" useSymbol="true" />
-	</l:VerticalLayout>
+		<List
+			id="listFourId"
+			headerText="Currency with really big numbers"
+			items="{path: '/bigNumberDataModel'}">
+			<CustomListItem>
+				<u:Currency stringValue="{price}" currency="{currency}" useSymbol="false"/>
+			</CustomListItem>
+		</List>
+
+		<List
+			id="listFiveId"
+			headerText="Custom currencies with decimals"
+			items="{path: '/customCurrencyDataModel'}">
+			<CustomListItem>
+				<u:Currency stringValue="{price}" currency="{currency}" useSymbol="false"/>
+			</CustomListItem>
+		</List>
+		<List
+			id="listSixId"
+			headerText="Different currencies with maxPrecision 3"
+			items="{path: '/variousNumberDataModel'}">
+			<CustomListItem>
+				<u:Currency stringValue="{price}" currency="{currency}" useSymbol="false" maxPrecision="3"/>
+			</CustomListItem>
+		</List>
+	</l:Grid>
 </mvc:View>

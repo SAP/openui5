@@ -5,8 +5,8 @@
 // Provides the Design Time Metadata for the sap.m.ObjectIdentifier control.
 sap.ui.define([
 	'sap/m/library',
-	'jquery.sap.global'
-], function(MLibrary, jQuery) {
+	"sap/base/Log"
+], function(MLibrary, Log) {
 	"use strict";
 	var oWrapper;
 	return {
@@ -26,23 +26,27 @@ sap.ui.define([
 			return oWrapper ? oWrapper.getStableElements(oObjectIdentifier) : null;
 		},
 		actions: {
-			settings: function() {
-				if (!oWrapper) {
-					return;
-				}
-				if (!oWrapper.isSettingsAvailable()) {
-					jQuery.sap.log.error("sap.ui.comp.navpopover.ObjectIdentifier.designtime: 'settings' action is not available");
-					return;
-				}
-				return {
-					handler: function(oObjectIdentifier, fGetUnsavedChanges) {
-						return oWrapper.execute(oObjectIdentifier, fGetUnsavedChanges);
+			settings: function(oObjectIdentifier) {
+				// Checking for the model which is set inside the sap.ui.comp.providers.ControlProvider in case the title link has SmartLink functionality
+				if (oObjectIdentifier.getModel("$sapuicompcontrolprovider_distinctSO")) {
+					if (!oWrapper) {
+						return;
 					}
-				};
+					if (!oWrapper.isSettingsAvailable()) {
+						Log.error("sap.m.ObjectIdentifier.designtime: 'settings' action is not available");
+						return;
+					}
+					return {
+						handler: function(oObjectIdentifier, fGetUnsavedChanges) {
+							return oWrapper.execute(oObjectIdentifier, fGetUnsavedChanges);
+						}
+					};
+				}
+				return null;
 			}
 		},
 		templates: {
 			create: "sap/m/designtime/ObjectIdentifier.create.fragment.xml"
 		}
 	};
-}, /* bExport= */false);
+});

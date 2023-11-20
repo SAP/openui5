@@ -1,0 +1,14 @@
+{
+  "name": "team-calendar",
+  "version": "1.0.0",
+  "author": "SAP SE",
+  "private": true,
+  "description": "Team Calendar",
+  "scripts": {
+    "start": "ui5 serve",
+    "build": "ui5 build"
+  },
+  "devDependencies": {
+    "@ui5/cli": "^3"
+  }
+}

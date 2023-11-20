@@ -1,0 +1,100 @@
+<mvc:View
+		controllerName="sap.ui.documentation.sdk.controller.Sitemap"
+		xmlns:mvc="sap.ui.core.mvc"
+		xmlns="sap.m"
+		xmlns:l="sap.ui.layout"
+		>
+
+	<Page
+		id="sitemapPage"
+		showSubHeader="false"
+		showFooter="false"
+		showNavButton="true"
+		title="{i18n>SITEMAP_TITLE}"
+		titleAlignment="Center"
+		navButtonPress="onNavButtonPress"
+		class="sapUiDemoKitSitemapPage sapUiContentPadding">
+		<content>
+			<l:HorizontalLayout class="sapUiDemoKitSitemapLinksWrapper sapUiResponsiveMargin" allowWrapping="true">
+				<l:VerticalLayout width="100%">
+					<Title titleStyle="H3" text="{i18n>APP_TABHEADER_ITEM_API_REFERENCE}"></Title>
+				</l:VerticalLayout>
+				<l:HorizontalLayout
+					class="sapUiDemoKitSitemapLinksWrapper"
+					allowWrapping="true"
+					content="{/api}"
+				>
+					<l:VerticalLayout class="sapUiContentPadding sapUiDemoKitSitemapLink">
+						<Link tooltip="{name}" href="{href}" text="{name}"></Link>
+					</l:VerticalLayout>
+
+				</l:HorizontalLayout>
+			</l:HorizontalLayout>
+
+			<l:HorizontalLayout class="sapUiDemoKitSitemapLinksWrapper sapUiResponsiveMargin" allowWrapping="true">
+				<l:VerticalLayout width="100%">
+					<Title titleStyle="H3" text="{i18n>APP_TABHEADER_ITEM_DOCUMENTATION}"></Title>
+				</l:VerticalLayout>
+				<l:HorizontalLayout
+					class="sapUiDemoKitSitemapLinksWrapper"
+					allowWrapping="true"
+					content="{/topic}"
+				>
+					<l:VerticalLayout class="sapUiContentPadding sapUiDemoKitSitemapLink">
+						<Link tooltip="{name}" href="{href}" text="{name}"></Link>
+					</l:VerticalLayout>
+
+				</l:HorizontalLayout>
+			</l:HorizontalLayout>
+
+			<l:HorizontalLayout class="sapUiDemoKitSitemapLinksWrapper sapUiResponsiveMargin" allowWrapping="true">
+				<l:VerticalLayout width="100%">
+					<Title titleStyle="H3" text="{i18n>APP_TABHEADER_ITEM_SAMPLES}"></Title>
+				</l:VerticalLayout>
+				<l:HorizontalLayout
+					class="sapUiDemoKitSitemapLinksWrapper"
+					allowWrapping="true"
+					content="{/entity}"
+				>
+					<l:VerticalLayout class="sapUiContentPadding sapUiDemoKitSitemapLink">
+						<Link tooltip="{name}" href="{href}" text="{name}"></Link>
+					</l:VerticalLayout>
+
+				</l:HorizontalLayout>
+			</l:HorizontalLayout>
+
+			<l:HorizontalLayout class="sapUiDemoKitSitemapLinksWrapper sapUiResponsiveMargin" allowWrapping="true">
+				<l:VerticalLayout width="100%">
+					<Title titleStyle="H3" text="{i18n>APP_TABHEADER_ITEM_DEMO_APPS}"></Title>
+				</l:VerticalLayout>
+				<l:HorizontalLayout
+					class="sapUiDemoKitSitemapLinksWrapper"
+					allowWrapping="true"
+					content="{/demoApps}"
+				>
+					<l:VerticalLayout class="sapUiContentPadding sapUiDemoKitSitemapLink">
+						<Link tooltip="{name}" href="{href}" text="{name}"></Link>
+					</l:VerticalLayout>
+
+				</l:HorizontalLayout>
+			</l:HorizontalLayout>
+
+			<l:HorizontalLayout class="sapUiDemoKitSitemapLinksWrapper sapUiResponsiveMargin" allowWrapping="true">
+				<l:VerticalLayout width="100%">
+					<Title titleStyle="H3" text="{i18n>APP_TABHEADER_ITEM_TOOLS}"></Title>
+				</l:VerticalLayout>
+				<l:HorizontalLayout
+					class="sapUiDemoKitSitemapLinksWrapper"
+					allowWrapping="true"
+					content="{/tools}"
+				>
+					<l:VerticalLayout class="sapUiContentPadding sapUiDemoKitSitemapLink">
+						<Link tooltip="{name}" href="{href}" text="{name}"></Link>
+					</l:VerticalLayout>
+
+				</l:HorizontalLayout>
+			</l:HorizontalLayout>
+
+		</content>
+	</Page>
+</mvc:View>

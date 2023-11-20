@@ -1,0 +1,23 @@
+{
+  "1.90.0": {
+    "date": "May 2021",
+    "notes": [
+      {
+        "id": "e9f644128467445debd72f5478dea5fb59864c95",
+        "type": "FEATURE",
+        "text": " base.util: Add Deferred module"
+      },
+      {
+        "id": "aa37e0e9fd1c6e68e2fb7bafa54742bf04af8187",
+        "type": "FIX",
+        "text": " FieldValueHelp: support navigation properties in table",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170093134"
+          }
+        ]
+      }
+    ]
+  }
+}

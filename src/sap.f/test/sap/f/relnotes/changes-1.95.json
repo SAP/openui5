@@ -1,0 +1,104 @@
+{
+  "1.95.0": {
+    "date": "September 2021",
+    "notes": [
+      {
+        "id": "b2ee5525063bd8df702723fd9e685afcbb45e410",
+        "type": "FIX",
+        "text": " Integration cards: Card type is now announced upon focus",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170188036"
+          }
+        ]
+      },
+      {
+        "id": "736748b0a87a763a44df4ee15cb12441eb36cacf",
+        "type": "FEATURE",
+        "text": " sap.f.Card: New property \"state\" for the SideIndicators implemented"
+      },
+      {
+        "id": "94d48d2d0f442eb8cca3f759b1dfb29ec60aae90",
+        "type": "FIX",
+        "text": " sap.f.Card: Header now grows to take available space when no content is set",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170188328"
+          }
+        ]
+      },
+      {
+        "id": "4ce07c7db2e71a5513961d9deccb95ed4a87f4b5",
+        "type": "FIX",
+        "text": " sap.f.IllustrationPool: Removed redundant file request",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500005735492021"
+          }
+        ]
+      },
+      {
+        "id": "8227bef0b6f00535241387ec3f6952fb50f155f8",
+        "type": "FIX",
+        "text": " sap.f.GridContainer: Header role description is now correctly read by JAWS",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170128520"
+          }
+        ]
+      },
+      {
+        "id": "29b73d92789fa35da499366793a9b03fc3c163c0",
+        "type": "FEATURE",
+        "text": " Integration cards: Added \"refreshData\" method"
+      },
+      {
+        "id": "90ba5f880bd24c0d9bb89ee3414442fedffb592a",
+        "type": "FIX",
+        "text": " Integration cards: List card compact sizes are now correct",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180363992"
+          }
+        ]
+      },
+      {
+        "id": "bba8b6c143c208cedcc7304de21b2d944afc8043",
+        "type": "FEATURE",
+        "text": " sap.f.FlexibleColumnLayout: Added landmarkInfo aggregation"
+      },
+      {
+        "id": "50de284246ff115384e4c26eceb30ca92641c87c",
+        "type": "FIX",
+        "text": " sap.f.DynamicPage: Correct maxScrollHeight computation",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180305489"
+          }
+        ]
+      },
+      {
+        "id": "85db4faa3af63f6bf7f2c44cfb706fe9e29fd3c3",
+        "type": "FIX",
+        "text": " sap.f.DynamicPageHeader: Additional text read on collapse/expand button",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180201389"
+          }
+        ]
+      },
+      {
+        "id": "503e9e2255b350ade2fca7fef336ce5a60c03712",
+        "type": "FIX",
+        "text": " sap.f.ShellBar: Stabilized qunit"
+      }
+    ]
+  }
+}

@@ -1,179 +1,22 @@
-<!DOCTYPE HTML>
+<!DOCTYPE html>
 <html>
-<head>
-<meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta charset="utf-8">
-<title>sap.m.UploadCollection for Pending Upload File List</title>
+	<head>
+		<meta charset="utf-8">
+		<title>sap.m.UploadCollection for Pending Upload File List</title>
 
-<script src="shared-config.js"></script>
-<script src="../../../resources/sap-ui-core.js"
-	id="sap-ui-bootstrap" data-sap-ui-libs="sap.m">
-</script>
-
-<script>
-
-	jQuery.sap.initMobile();
-	jQuery.sap.require("sap.m.MessageToast");
-
-	/* =========================================================== */
-	/* UploadCollection                                            */
-	/* =========================================================== */
-
-	// The upper and lower case letters are on purpose to prove that they don't matter
-	var aFileTypes = ["jPg", "tXT", "ppt", "doc", "xls", "pdf", "PNG"];
-	var iRequestCounter = 0, sFileName;
-	var oUploadButton = new sap.m.Button({
-		text : "start upload",
-		press : fnUpload
-	});
-	var oRemoveButton = new sap.m.Button({
-		text : "Remove Selected Item",
-		press : fnRemove
-	});
-
-	var oUploadCollection = fnCreateUploadCollection();
-
-
-	/* =========================================================== */
-	/* Creates an instance of UploadCollection                     */
-	/* =========================================================== */
-	function fnCreateUploadCollection() {
-		return new sap.m.UploadCollection({
-			maximumFilenameLength : 55,
-			maximumFileSize : 50,
-			multiple : true,
-			sameFilenameAllowed : true,
-			instantUpload : false,
-			fileType : aFileTypes,
-			mode : "SingleSelectMaster",
-			toolbar : new sap.m.OverflowToolbar({
-				content : [
-					new sap.m.Title("attachmentTitle"),
-					new sap.m.ToolbarSpacer(),
-					new sap.m.SearchField({
-						width : "10rem",
-						search : fnSearch
-					}),
-					new sap.m.UploadCollectionToolbarPlaceholder(),
-					new sap.m.Button({
-						icon : "sap-icon://money-bills",
-						enabled : false,
-						type : "Transparent"
-					}),
-					new sap.m.Button({
-						text : "Details",
-						press : fnDetailsPress,
-						type : "Transparent"
-					})
-				]
-			}),
-			// events
-			change : fnChange,
-			filenameLengthExceed : fnfilenameLengthExceed,
-			fileSizeExceed : fnFileSizeExceed,
-			typeMissmatch : fnTypeMissmatch,
-			uploadComplete : fnUploadComplete,
-			beforeUploadStarts : fnBeforeUploadStarts
-		}).addEventDelegate({
-			onBeforeRendering : function() {
-				fnUpdateAttachmentTitle();
-			}
-		});
-	}
-
-	/* =========================================================== */
-	/* Handles UploadCollection Events                              */
-	/* =========================================================== */
-	function fnChange(oEvent) {
-		sap.m.MessageToast.show("Event change triggered");
-	}
-
-	function fnUpload(oEvent) {
-		if (oUploadCollection.getItems().length > 0) {
-			oUploadCollection.upload();
-			sap.m.MessageToast.show("Upload has been started");
-		}
-	}
-
-	function fnRemove(oEvent) {
-		oUploadCollection.removeItem(oUploadCollection.getSelectedItem());
-	}
-
-	function fnBeforeUploadStarts(oEvent) {
-		sFileName = oEvent.getParameter("fileName");
-		iRequestCounter++;
-		var oHeaderParameter = new sap.m.UploadCollectionParameter({
-			name : "FileNameForTesting",
-			value : sFileName
-		});
-		oEvent.getParameters().addHeaderParameter(oHeaderParameter);
-		// Delays the beforeUploadStarts message in order to see the upload message
-		setTimeout(function() {
-			sap.m.MessageToast.show("Event beforeUploadStarts triggered, see log for more ...");
-		}, 2000);
-		jQuery.sap.log.info("Event beforeUploadStarts triggered for file " + sFileName);
-	}
-
-	function fnfilenameLengthExceed(oEvent) {
-		sap.m.MessageToast.show("Event filenameLengthExceed triggered");
-	}
-
-	function fnFileSizeExceed(oEvent) {
-		sap.m.MessageToast.show("Event fileSizeExceed triggered");
-	}
-
-	function fnTypeMissmatch(oEvent) {
-		sap.m.MessageToast.show("Event typeMissmatch triggered");
-	}
-
-	function fnDetailsPress(oEvent) {
-		if (oUploadCollection.getSelectedItem()) {
-			sap.m.MessageToast.show("Details button was clicked for file: "
-									+ oUploadCollection.getSelectedItem().getFileName());
-		} else {
-			sap.m.MessageToast.show("First, select an item");
-		}
-	}
-
-	function fnSearch(oEvent) {
-		sap.m.MessageToast.show("Search feature isn't available in this sample");
-	}
-
-	function fnUpdateAttachmentTitle() {
-		sap.ui.getCore().byId("attachmentTitle").setText("Attachments (" + oUploadCollection.getItems().length + ")");
-	}
-
-	function fnUploadComplete(oEvent) {
-		sFileName = oEvent.getParameter("files")[0].fileName;
-		// Delays the uploadComplete message in order to see the beforeUploadStarts message
-		setTimeout(function() {
-			sap.m.MessageToast.show("Event uploadComplete triggered, see log for more ...")
-		}, 4000);
-		jQuery.sap.log.info("Event uploadComplete triggered for file " + sFileName);
-		if (iRequestCounter <= 1) {
-			setTimeout(function() {
-				oUploadCollection.removeAllItems();
-			}, 6000);
-			iRequestCounter = 0;
-		} else {
-			iRequestCounter--;
-		}
-	}
-
-	/* ============================================================	*/
-	/* Creates Page                   								*/
-	/* ============================================================ */
-	// As jQuery.sap.initMobile() is used, it is not needed to create an app and the page can be put directly into the HTML document
-	var oPage = new sap.m.Page("page", {
-		title : "Test Page for sap.m.UploadCollection with Pending Upload",
-		content : oUploadCollection,
-		footer : new sap.m.Bar({
-			contentMiddle : [ oUploadButton, oRemoveButton ]
-		})
-	}).placeAt("body");
-</script>
-
-</head>
-<body id="body" class="sapUiBody">
-</body>
+		<script src="shared-config.js"></script>
+		<script id="sap-ui-bootstrap"
+				src="../../../resources/sap-ui-core.js"
+				data-sap-ui-async="true"
+				data-sap-ui-compatVersion="edge"
+				data-sap-ui-libs="sap.m"
+				data-sap-ui-onInit="module:local/UploadCollectionForPendingUpload"
+				data-sap-ui-resourceRoots='{
+					"local": "./",
+					"qunit.internal.acc": "../../../test-resources/sap/ui/core/qunit/internal/acc"
+				}'>
+		</script>
+	</head>
+	<body id="body" class="sapUiBody">
+	</body>
 </html>

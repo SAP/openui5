@@ -2,24 +2,28 @@
  * ${copyright}
  */
 
-sap.ui.define(["sap/m/library", "jquery.sap.global"],
-	function(library, jQuery) {
+sap.ui.define(["sap/m/library", "sap/base/security/encodeCSS", "sap/ui/core/Theming"],
+	function(library, encodeCSS, Theming) {
 	"use strict";
 
 	// shortcut for sap.m.GenericTileMode
 	var GenericTileMode = library.GenericTileMode;
 
-	// shortcut for sap.m.GenericTileScope
-	var GenericTileScope = library.GenericTileScope;
-
 	// shortcut for sap.m.LoadState
 	var LoadState = library.LoadState;
+
+	// shortcut for sap.m.FrameType
+	var frameTypes = library.FrameType;
+
+	var ValueColor = library.ValueColor;
 
 	/**
 	 * GenericTile renderer.
 	 * @namespace
 	 */
-	var GenericTileRenderer = {};
+	var GenericTileRenderer = {
+		apiVersion: 2    // enable in-place DOM patching
+	};
 
 	/**
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
@@ -34,77 +38,375 @@ sap.ui.define(["sap/m/library", "jquery.sap.global"],
 		var sHeaderImage = oControl.getHeaderImage();
 		var bHasPress = oControl.hasListeners("press");
 		var sState = oControl.getState();
-		var sScope = oControl.getScope();
-		var sStateClass = jQuery.sap.encodeCSS("sapMGTState" + sState);
-		var sScopeClass = jQuery.sap.encodeCSS("sapMGTScope" + sScope);
+		var sStateClass = encodeCSS("sapMGTState" + sState);
+		var sScopeClass;
+		var frameType = oControl.getFrameType();
+		var sAriaRoleDescription = oControl.getAriaRoleDescription();
+		var sAriaRole = oControl.getAriaRole();
+		var isHalfFrame = frameType === frameTypes.OneByHalf || frameType === frameTypes.TwoByHalf;
+		var sBGColor = oControl._sBGColor;
+		var bIsIconModeOneByOne = oControl._isIconMode() && frameType === frameTypes.OneByOne;
+		var aLinkTileContent = oControl.getLinkTileContents();
 
-		oRm.write("<div");
-		oRm.writeControlData(oControl);
-		if (sTooltipText) {
-			oRm.writeAttributeEscaped("title", sTooltipText);
-		}
-		oRm.addClass("sapMGT");
-		oRm.addClass(sStateClass);
-		oRm.addClass(sScopeClass);
-		// render actions view for SlideTile actions scope
-		if (sScope !== GenericTileScope.Actions && oControl._bShowActionsView) {
-			oRm.addClass("sapMGTScopeActions");
-		}
-		oRm.addClass(oControl.getFrameType());
-		if (bHasPress) {
-			oRm.writeAttribute("role", "button");
+		// Render a link when URL is provided, not in action scope and the state is enabled
+		var bRenderLink = oControl.getUrl() && (!oControl._isInActionScope() || oControl.getMode() === GenericTileMode.IconMode) && sState !== LoadState.Disabled && !oControl._isNavigateActionEnabled() && !oControl._isActionMode();
+
+		if (oControl._isInActionScope()) {
+			sScopeClass = encodeCSS("sapMGTScopeActions");
 		} else {
-			oRm.writeAttribute("role", "presentation");
+			sScopeClass = encodeCSS("sapMGTScopeDisplay");
 		}
-		oRm.writeAttributeEscaped("aria-label", sAriaText);
+
+		if (bRenderLink) {
+			oRm.openStart("a", oControl);
+			oRm.attr("href", oControl.getUrl());
+			oRm.attr("rel", "noopener noreferrer");
+			if (!this._isDragabble(oControl)) {
+				oRm.attr("draggable", "false"); // <a> elements are draggable per default, use UI5 DnD instead
+			}
+		} else {
+			oRm.openStart("div",oControl );
+		}
+
+		if (sTooltipText && sState !== LoadState.Loading) {
+			oRm.attr("title", sTooltipText);
+		}
+
+		oRm.class("sapMGT");
+		oRm.class(sStateClass);
+		oRm.class(sScopeClass);
+		// render actions view for SlideTile actions scope
+		if (!oControl._isInActionScope() && oControl._bShowActionsView) {
+			oRm.class("sapMGTScopeActions");
+		}
+		//Set respective Class for IconMode
+		if (oControl._isIconMode()){
+			if (frameType === frameTypes.OneByOne) {
+				var sClass = "sapMGTOneByOne";
+			} else if (frameType === frameTypes.TwoByHalf) {
+				var sClass = "TwoByHalf";
+			}
+		}
+		oRm.class(oControl._isIconMode() ? sClass : frameType);
+
+		var bIsArticleMode = oControl.getMode() === GenericTileMode.ArticleMode,
+			bIsActionMode = oControl.getMode() === GenericTileMode.ActionMode;
+
+		if (bIsActionMode) {
+			oRm.class("sapMGTActionMode");
+		}
+		if (bIsArticleMode) {
+			oRm.class("sapMGTArticleMode");
+		}
+		if (oControl._isIconMode()) {
+			oRm.class("sapMGTIconMode");
+			if (this._isThemeHighContrast()) {
+				oRm.class("HighContrastTile");
+			}
+		}
+		if (!bIsArticleMode && !bIsActionMode && frameType !== frameTypes.OneByHalf && (oControl.getSystemInfo() || oControl.getAppShortcut())) {
+			oRm.class("tileWithAppInfo");
+		}
+		//Set respective Class/ BackgroundColor for IconMode
+		if (oControl._isIconMode()) {
+			if (frameType === frameTypes.TwoByHalf) {
+				oRm.class("sapMGTTwoByHalf");
+			} else if (frameType === frameTypes.OneByOne) {
+				if (!this._isThemeHighContrast()) {
+					oRm.style("background-color", sBGColor);
+				} else {
+					oRm.style("border-color", sBGColor);
+					oRm.style("box-shadow", "0 0 0 1px" + sBGColor);
+				}
+			}
+		}
+
+		if (sAriaRole) {
+			oRm.attr("role", sAriaRole);
+		} else if (!bRenderLink) { // buttons only; <a> elements always have the default role
+				oRm.attr("role", bHasPress ? "button" : "presentation");
+		} else {
+				oRm.attr("role", "link");
+		}
+		if (sState === LoadState.Loaded) {
+			oRm.attr("aria-label", sAriaText);
+		}
+		if (sAriaRoleDescription) {
+			oRm.attr("aria-roledescription", sAriaRoleDescription );
+		}
 		if (sState !== LoadState.Disabled) {
-			oRm.addClass("sapMPointer");
-			oRm.writeAttribute("tabindex", "0");
+			if (!oControl.isInActionRemoveScope() && oControl.getPressEnabled()) {
+				oRm.class("sapMPointer");
+			}
+			if (!oControl.getPressEnabled()) {
+				oRm.class("sapMAutoPointer");
+			}
+			oRm.attr("tabindex", "0");
+		}
+		if (oControl.getWidth()) {
+			oRm.style("width", oControl.getWidth() );
 		}
 		if (oControl.getBackgroundImage()) {
-			oRm.write(" style='background-image:url(");
-			oRm.writeEscaped(oControl.getBackgroundImage());
-			oRm.write(");'");
-			oRm.addClass("sapMGTBackgroundImage");
+			oRm.style("background-image", "url('" + encodeCSS(oControl.getBackgroundImage()) + "')");
+			oRm.class("sapMGTBackgroundImage");
 		}
 		if (oControl.getMode() === GenericTileMode.HeaderMode) {
-			oRm.addClass("sapMGTHeaderMode");
+			oRm.class("sapMGTHeaderMode");
 		}
-		oRm.writeClasses();
-		oRm.write(">");
-
-		oRm.write("<div");
-		oRm.addClass("sapMGTHdrContent");
-		oRm.addClass(oControl.getFrameType());
-		if (sTooltipText) {
-			oRm.writeAttributeEscaped("title", sTooltipText);
-		}
-		oRm.writeClasses();
-		oRm.write(">");
-		if (sHeaderImage) {
-			oRm.renderControl(oControl._oImage);
-		}
-
-		this._renderHeader(oRm, oControl);
-		if (oControl.getSubheader()) {
-			this._renderSubheader(oRm, oControl);
-		}
-		oRm.write("</div>");
-
-		oRm.write("<div");
-		oRm.addClass("sapMGTContent");
-		oRm.writeClasses();
-		oRm.writeAttribute("id", oControl.getId() + "-content");
-		oRm.write(">");
 		var aTileContent = oControl.getTileContent();
 		var iLength = aTileContent.length;
-		for (var i = 0; i < iLength; i++) {
-			oControl._checkFooter(aTileContent[i], oControl);
-			oRm.renderControl(aTileContent[i]);
+		if (this._isNewsContentPresent(aTileContent,iLength)){
+			oRm.class("sapMGTNewsContent");
 		}
-		oRm.write("</div>");
+		if (aLinkTileContent.length > 0) {
+			oRm.class("sapMGTLinkTileContent");
+		}
+		oRm.openEnd();
+		if (sTooltipText) {
+			oControl.getAggregation("_invisibleText").setText(sTooltipText);
+			oRm.renderControl(oControl.getAggregation("_invisibleText"));
+		}
+		var isFooterPresent = false;
+		var isContentPresent = false;
+		function renderLoadingShimmerIconMode(oRm, bIsLoading) {
+			if (frameType === frameTypes.OneByOne) {
+				oRm.openStart("div").class("sapMGTContentShimmerPlaceholderItemOneByOne");
+				oRm.class("sapMGTContentShimmerPlaceholderWithDescriptionOneByOne");
+				oRm.openEnd();
+				oRm.openStart("div")
+					.class("sapMGTContentShimmerPlaceholderRowsOneByOne")
+					.openEnd();
+				oRm.openStart("div")
+					.class("sapMGTContentShimmerPlaceholderIconOneByOne")
+					.class("sapMGTLoadingShimmer")
+					.openEnd()
+					.close("div");
+				if (bIsLoading){
+					oRm.openStart("div")
+					.class("sapMGTContentShimmerPlaceholderItemTextOneByOne")
+					.class("sapMGTLoadingShimmer")
+					.openEnd()
+					.close("div");
+				}
+			} else {
+				oRm.openStart("div").class("sapMGTContentShimmerPlaceholderItemTwoByHalf");
+				oRm.class("sapMGTContentShimmerPlaceholderWithDescriptionTwoByHalf");
+				if (!oControl.getIconLoaded() && !bIsLoading) {
+					oRm.class("sapMGTContentShimmerPlaceholderWithDescriptionTwoByHalfIconLoaded");
+				}
+				oRm.openEnd();
+				oRm.openStart("div")
+					.class("sapMGTContentShimmerPlaceholderRowsTwoByHalf")
+					.openEnd();
+				oRm.openStart("div")
+					.class("sapMGTContentShimmerPlaceholderIconTwoByHalf")
+					.class("sapMGTLoadingShimmer")
+					.openEnd()
+					.close("div");
+				if (bIsLoading){
+					oRm.openStart("div")
+					.class("sapMGTContentShimmerPlaceholderItemTextTwoByHalf")
+					.class("sapMGTLoadingShimmer")
+					.openEnd()
+					.close("div");
+				}
+			}
+			oRm.close("div");
+			oRm.close("div");
+		}
+		if (sState === LoadState.Loading) {
+			//Setplaceholders for IconMode.
+			if (oControl._isIconMode()) {
+				renderLoadingShimmerIconMode(oRm, true);
+			} else {
+				oRm.openStart("div").class("sapMGTContentShimmerPlaceholderItem");
+				oRm.class("sapMGTContentShimmerPlaceholderWithDescription");
+				oRm.openEnd();
+				oRm.openStart("div")
+					.class("sapMGTContentShimmerPlaceholderRows")
+					.openEnd();
+				oRm.openStart("div")
+					.class("sapMGTContentShimmerPlaceholderItemHeader")
+					.class("sapMGTLoadingShimmer")
+					.openEnd()
+					.close("div");
+				oRm.openStart("div")
+					.class("sapMGTContentShimmerPlaceholderItemText")
+					.class("sapMGTLoadingShimmer")
+					.openEnd()
+					.close("div");
+				if (!isHalfFrame) {
+					for (var i = 0; i < iLength; i++) {
+						oRm.renderControl(aTileContent[i]);
+					}
+				}
+				oRm.close("div");
+				oRm.close("div");
+			}
+		} else {
+			if (!bIsActionMode && this._isValueColorValid(oControl.getValueColor())) {
+				oRm.openStart("div");
+				oRm.class("sapMGTCriticalBorder");
+				oRm.class(oControl.getValueColor());
+				oRm.openEnd();
+				oRm.close("div");
+			}
+			//Set respective Class/ BackgroundColor for IconMode
+			if (oControl._isIconMode()) {
+				if (!oControl.getIconLoaded()) {
+					renderLoadingShimmerIconMode(oRm, false);
+				} else {
+					if (frameType === frameTypes.OneByOne) {
+						oRm.openStart("div");
+						oRm.class("sapMGTHideOverflow");
+						oRm.openEnd();
+						oRm.openStart("div");
+						oRm.class("sapMGTIconWrapper");
+						oRm.openEnd();
+					}
+					oRm.openStart("div");
 
-		if (sState !== LoadState.Loaded) {
+					if (frameType === frameTypes.OneByOne) {
+						oRm.class("sapMGTOneByOneIcon");
+					} else {
+						oRm.class("sapMGTTwoByHalfIcon");
+						if (oControl._sTileBadge) {
+							oRm.class("sapMGTIconBadge");
+						} else if (!this._isThemeHighContrast()) {
+								oRm.style("background-color", sBGColor);
+						} else {
+							oRm.class("HighContrastTile");
+							oRm.style("border-color", sBGColor);
+							oRm.style("box-shadow", "0 0 0 1px" + sBGColor);
+						}
+					}
+					oRm.openEnd();
+					if (oControl.getTileIcon() || oControl._sTileBadge) {
+						var sAggregation = oControl._generateIconAggregation(oControl._sTileBadge ? "sap-icon://folder-full" : oControl.getTileIcon());
+						if (sAggregation) {
+							var oIcon = oControl.getAggregation(sAggregation);
+							if (oControl._sTileBadge) {
+								oIcon.setColor(sBGColor);
+							}
+							oRm.renderControl(oIcon);
+						}
+						if (oControl._sTileBadge) {
+							oRm.openStart("div", oControl.getId() + "-tileBadge").class("sapMGTileBadge").openEnd();
+							oRm.text(oControl._sTileBadge);
+							oRm.close("div");
+						}
+					}
+					oRm.close("div");
+				}
+			}
+
+			//Wrapper div for adjusting to Info Container
+			if (this._shouldRenderInfoContainer(oControl) && frameType === frameTypes.TwoByHalf) {
+				oRm.openStart("div", oControl.getId() + "-wrapper").class("sapMGTWrapper").openEnd();
+				oRm.openStart("div", oControl.getId() + "-wrapper-content").class("sapMGTWrapperCnt").openEnd();
+			}
+
+			oRm.openStart("div");
+			oRm.class("sapMGTHdrContent");
+			if (oControl._isIconMode() ){
+				if (frameType === frameTypes.OneByOne) {
+					var sClass = "sapMGTOneByOne";
+					if (!oControl.getIconLoaded()) {
+						sClass = sClass.concat(" sapMGTOneByOneIconLoaded");
+					}
+				} else if (frameType === frameTypes.TwoByHalf) {
+					var sClass = "TwoByHalf";
+				}
+			}
+			oRm.class(oControl._isIconMode()	? sClass : frameType);
+			if (sTooltipText) {
+				oRm.attr("title", sTooltipText);
+			}
+			if (bIsActionMode && oControl.getFrameType() === frameTypes.TwoByOne && sHeaderImage) {
+				oRm.class("sapMGTHdrImage");
+			}
+			oRm.openEnd();
+
+			//Render Header Image
+			if (sHeaderImage) {
+				oControl._oImage.removeStyleClass(ValueColor.None);
+				if (this._sPreviousStyleClass) {
+					oControl._oImage.removeStyleClass(this._sPreviousStyleClass);
+				}
+				this._sPreviousStyleClass = this._isValueColorValid(oControl.getValueColor()) ? oControl.getValueColor() : ValueColor.None;
+				oControl._oImage.addStyleClass(this._sPreviousStyleClass);
+
+				oRm.renderControl(oControl._oImage);
+			}
+
+			this._renderHeader(oRm, oControl);
+			if (bIsIconModeOneByOne) {
+				oRm.close("div");
+				oRm.close("div");
+			}
+			for (var i = 0; i < iLength; i++) {
+				isFooterPresent = oControl._checkFooter(aTileContent[i], oControl) && (aTileContent[i].getFooter() ||  aTileContent[i].getUnit());
+				var oAggregationContent = aTileContent[i].getContent();
+				if (oAggregationContent) {
+					if (frameType === frameTypes.OneByHalf && oAggregationContent.getMetadata().getElementName() === "sap.m.ImageContent") {
+						isContentPresent = false;
+					} else {
+						isContentPresent = true;
+						break;
+					}
+				}
+			}
+
+			if (!(isHalfFrame && isContentPresent) && oControl.getSubheader()) {
+				this._renderSubheader(oRm, oControl);
+			}
+				oRm.close("div");
+
+			if ( !oControl._isIconMode() ) { //Restrict creation of Footer for IconMode
+				oRm.openStart("div", oControl.getId() + "-content");
+				oRm.class("sapMGTContent");
+				if (frameType === frameTypes.TwoByOne) {
+					oRm.class("TwoByOne");
+				}
+				if (oControl.getSystemInfo() || oControl.getAppShortcut()) {
+					if (aTileContent.length === 0){
+						oRm.class("appInfoWithoutTileCnt");
+					}
+					if (isFooterPresent && frameType !== frameTypes.OneByHalf) {
+						oRm.class("appInfoWithFooter");
+					} else {
+						oRm.class("appInfoWithoutFooter");
+					}
+				}
+				oRm.openEnd();
+				if (aLinkTileContent.length > 0) {
+					oRm.openStart("div", oControl.getId() + "-linkTileContent").class("sapMGTLinkTileContentWrapper").openEnd();
+					for (var i = 0; i < aLinkTileContent.length; i++) {
+						oRm.renderControl(aLinkTileContent[i].getLinkTileContentInstance());
+					}
+					oRm.close("div");
+				}
+				for (var i = 0; i < iLength; i++) {
+					oRm.renderControl(aTileContent[i]);
+				}
+
+				//Render InfoContainer except for TwoByHalf frame
+				if (this._shouldRenderInfoContainer(oControl) && frameType !== frameTypes.TwoByHalf) {
+					this._renderInfoContainer(oRm, oControl);
+				}
+
+				oRm.close("div");
+			}
+
+			//Render InfoContainer for TwoByHalf frame
+			if (this._shouldRenderInfoContainer(oControl) && frameType === frameTypes.TwoByHalf) {
+				oRm.close("div");
+				this._renderInfoContainer(oRm, oControl);
+				oRm.close("div");
+			}
+		}
+
+		if (sState !== LoadState.Loaded && sState !== LoadState.Loading) {
 			this._renderStateOverlay(oRm, oControl, sTooltipText);
 		}
 
@@ -113,65 +415,128 @@ sap.ui.define(["sap/m/library", "jquery.sap.global"],
 			this._renderFocusDiv(oRm, oControl);
 		}
 
-		if (sScope === GenericTileScope.Actions) {
+		if (oControl._isInActionScope()) {
 			this._renderActionsScope(oRm, oControl);
 		}
-		oRm.write("</div>");
+		if (bRenderLink) {
+			oRm.close("a");
+		} else {
+			oRm.close("div");
+		}
+	};
+
+	/**
+	 * Checks if the GenericTile should be draggable or not.
+	 * @param {sap.m.GenericTile} oControl The GenericTile control
+	 * @returns {boolean} True if the GenericTile is draggable, false otherwise
+	 * @private
+	 */
+	 GenericTileRenderer._isDragabble = function(oControl) {
+		var bDraggable = oControl.getDragDropConfig().some(function(vDragDropInfo){
+			return vDragDropInfo.isDraggable(oControl);
+		});
+
+		if (!bDraggable) {
+			// also check parent config
+			var oParent = oControl.getParent();
+			if (oParent && oParent.getDragDropConfig) {
+				bDraggable = oParent.getDragDropConfig().some(function(vDragDropInfo){
+					return vDragDropInfo.isDraggable(oControl);
+				});
+			}
+		}
+		return bDraggable;
+	};
+
+	/**
+	 * Checks if the GenericTile should render the info container.
+	 * @param {sap.m.GenericTile} oControl The GenericTile control
+	 * @returns {boolean} True if the info container should be rendered, false otherwise
+	 * @private
+	 */
+	GenericTileRenderer._shouldRenderInfoContainer = function(oControl) {
+		var frameType = oControl.getFrameType(),
+			bIsArticleMode = oControl.getMode() === GenericTileMode.ArticleMode,
+			bIsActionMode = oControl.getMode() === GenericTileMode.ActionMode,
+			bIsIconMode = oControl.getMode() === GenericTileMode.IconMode;
+			if (frameType === frameTypes.OneByOne && bIsIconMode){
+				return true;
+			}
+		return !bIsArticleMode && !bIsActionMode && !bIsIconMode && frameType !== frameTypes.OneByHalf && (oControl.getSystemInfo() || oControl.getAppShortcut());
+	};
+
+	/**
+	 * Renders the Info Container.
+	 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer
+	 * @param {sap.m.GenericTile} oControl The control that will be rendered
+	 * @private
+	 */
+	GenericTileRenderer._renderInfoContainer = function(oRm, oControl) {
+		oRm.openStart("div", oControl.getId() + "-tInfo");
+		oRm.class("sapMGTTInfoContainer");
+		oRm.openEnd();
+		oRm.openStart("div", oControl.getId() + "-tInfo-content");
+		oRm.class("sapMGTTInfo");
+		oRm.openEnd();
+		if (oControl.getAppShortcut()) {
+			oRm.openStart("div", oControl.getId() + "-appShortcutWrapper");
+			oRm.class("sapMGTAppShortcutText").openEnd();
+			oRm.renderControl(oControl._oAppShortcut);
+			oRm.close("div");
+		}
+		if (oControl.getSystemInfo()) {
+			oRm.openStart("div", oControl.getId() + "-sytemInfoWrapper");
+			oRm.class("sapMGTSystemInfoText").openEnd();
+			oRm.renderControl(oControl._oSystemInfo);
+			oRm.close("div");
+		}
+		oRm.close("div");
+		oRm.close("div");
 	};
 
 	GenericTileRenderer._renderFocusDiv = function(oRm, oControl) {
-		oRm.write("<div");
-		oRm.addClass("sapMGTFocusDiv");
-		oRm.writeClasses();
-		oRm.writeAttribute("id", oControl.getId() + "-focus");
-		oRm.write(">");
-		oRm.write("</div>");
+		oRm.openStart("div", oControl.getId() + "-focus");
+		oRm.class("sapMGTFocusDiv");
+		oRm.openEnd();
+		oRm.close("div");
 	};
 
 	GenericTileRenderer._renderStateOverlay = function(oRm, oControl, sTooltipText) {
 		var sState = oControl.getState();
-		oRm.write("<div");
-		oRm.addClass("sapMGTOverlay");
-		oRm.writeClasses();
-		oRm.writeAttribute("id", oControl.getId() + "-overlay");
+		oRm.openStart("div", oControl.getId() + "-overlay");
+		oRm.class("sapMGTOverlay");
 		if (sTooltipText) {
-			oRm.writeAttributeEscaped("title", sTooltipText);
+			oRm.attr("title", sTooltipText);
 		}
-		oRm.write(">");
+		oRm.openEnd();
 		switch (sState) {
 			case LoadState.Loading :
 				oControl._oBusy.setBusy(sState == LoadState.Loading);
 				oRm.renderControl(oControl._oBusy);
 				break;
 			case LoadState.Failed :
-				oRm.write("<div");
-				oRm.writeAttribute("id", oControl.getId() + "-failed-ftr");
-				oRm.addClass("sapMGenericTileFtrFld");
-				oRm.writeClasses();
-				oRm.write(">");
-				oRm.write("<div");
-				oRm.writeAttribute("id", oControl.getId() + "-failed-icon");
-				oRm.addClass("sapMGenericTileFtrFldIcn");
-				oRm.writeClasses();
-				oRm.write(">");
-				oRm.renderControl(oControl._oWarningIcon);
-				oRm.write("</div>");
+				oRm.openStart("div", oControl.getId() + "-failed-ftr");
+				oRm.class("sapMGenericTileFtrFld");
+				oRm.openEnd();
+				oRm.openStart("div", oControl.getId() + "-failed-icon");
+				oRm.class("sapMGenericTileFtrFldIcn");
+				oRm.openEnd();
+				oRm.renderControl(oControl._oErrorIcon);
+				oRm.close("div");
 
-				if (oControl.getScope() !== GenericTileScope.Actions && !oControl._bShowActionsView) {
-					oRm.write("<div");
-					oRm.writeAttribute("id", oControl.getId() + "-failed-text");
-					oRm.addClass("sapMGenericTileFtrFldTxt");
-					oRm.writeClasses();
-					oRm.write(">");
+				if (!oControl._isInActionScope() && !oControl._bShowActionsView) {
+					oRm.openStart("div", oControl.getId() + "-failed-text");
+					oRm.class("sapMGenericTileFtrFldTxt");
+					oRm.openEnd();
 					oRm.renderControl(oControl.getAggregation("_failedMessageText"));
-					oRm.write("</div>");
+					oRm.close("div");
 				}
 
-				oRm.write("</div>");
+				oRm.close("div");
 				break;
 			default :
 		}
-		oRm.write("</div>");
+		oRm.close("div");
 	};
 
 	GenericTileRenderer._renderActionsScope = function(oRm, oControl) {
@@ -182,16 +547,21 @@ sap.ui.define(["sap/m/library", "jquery.sap.global"],
 	};
 
 	GenericTileRenderer._renderHoverOverlay = function(oRm, oControl) {
-		oRm.write("<div");
+		oRm.openStart("div", oControl.getId() + "-hover-overlay");
 		if (oControl.getBackgroundImage()) {
-			oRm.addClass("sapMGTWithImageHoverOverlay");
+			oRm.class("sapMGTWithImageHoverOverlay");
 		} else {
-			oRm.addClass("sapMGTWithoutImageHoverOverlay");
+			oRm.class("sapMGTWithoutImageHoverOverlay");
+			if (oControl._isIconMode()) { //Set respective BorderRadius for IconMode
+				if (oControl.getFrameType() === frameTypes.OneByOne) {
+					oRm.style("border-radius", "1rem");
+				} else {
+					oRm.style("border-radius", "0.75rem");
+				}
+			}
 		}
-		oRm.writeClasses();
-		oRm.writeAttribute("id", oControl.getId() + "-hover-overlay");
-		oRm.write(">");
-		oRm.write("</div>");
+		oRm.openEnd();
+		oRm.close("div");
 	};
 
 	/**
@@ -199,16 +569,18 @@ sap.ui.define(["sap/m/library", "jquery.sap.global"],
 	 *
 	 * @private
 	 * @param {sap.ui.core.RenderManager} oRm the RenderManager that can be used for writing to the render output buffer
-	 * @param {sap.ui.core.Control} oControl an object representation of the control whose title should be rendered
+	 * @param {sap.m.GenericTile} oControl an object representation of the control whose title should be rendered
 	 */
 	GenericTileRenderer._renderHeader = function(oRm, oControl) {
-		oRm.write("<div");
-		oRm.addClass("sapMGTHdrTxt");
-		oRm.writeClasses();
-		oRm.writeAttribute("id", oControl.getId() + "-hdr-text");
-		oRm.write(">");
+		oRm.openStart("div", oControl.getId() + "-hdr-text");
+		oRm.class("sapMGTHdrTxt");
+		if (oControl._isActionMode() && this._isValueColorValid(oControl.getValueColor())) {
+			oRm.class("sapMGTCriticalHdrTxt");
+			oRm.class(oControl.getValueColor());
+		}
+		oRm.openEnd();
 		oRm.renderControl(oControl._oTitle);
-		oRm.write("</div>");
+		oRm.close("div");
 	};
 
 	/**
@@ -216,16 +588,47 @@ sap.ui.define(["sap/m/library", "jquery.sap.global"],
 	 *
 	 * @private
 	 * @param {sap.ui.core.RenderManager} oRm the RenderManager that can be used for writing to the render output buffer
-	 * @param {sap.ui.core.Control} oControl an object representation of the control whose description should be rendered
+	 * @param {sap.m.GenericTile} oControl an object representation of the control whose description should be rendered
 	 */
 	GenericTileRenderer._renderSubheader = function(oRm, oControl) {
-		oRm.write("<div");
-		oRm.addClass("sapMGTSubHdrTxt");
-		oRm.writeClasses();
-		oRm.writeAttribute("id", oControl.getId() + "-subHdr-text");
-		oRm.write(">");
-		oRm.writeEscaped(oControl.getSubheader());
-		oRm.write("</div>");
+		oRm.openStart("div", oControl.getId() + "-subHdr-text");
+		oRm.class("sapMGTSubHdrTxt");
+		oRm.openEnd();
+		oRm.renderControl(oControl._oSubTitle);
+		oRm.close("div");
+	};
+
+	/**
+	 * Checks for valid value color
+	 *
+	 * @private
+	 */
+	 GenericTileRenderer._isValueColorValid = function(sValueColor) {
+		if (sValueColor == ValueColor.Good || sValueColor == ValueColor.Error || sValueColor == ValueColor.Neutral || sValueColor == ValueColor.Critical) {
+			return true;
+		}
+		return false;
+	};
+
+	/**
+	 * Checks whether the current theme is a high contrast theme like sap_belize_hcb or sap_belize_hcw.
+	 * @returns {boolean} True if the theme name contains hcb or hcw, false otherwise
+	 * @private
+	 */
+	GenericTileRenderer._isThemeHighContrast = function() {
+		return /(hcw|hcb)/g.test(Theming.getTheme());
+	};
+
+	GenericTileRenderer._isNewsContentPresent = function(aTileContent,iLength) {
+		var bIsPresent = false;
+		for (var i = 0; i < iLength; i++) {
+			var oAggregationContent = aTileContent[i].getContent();
+			if (oAggregationContent && oAggregationContent.isA("sap.m.NewsContent")) {
+				bIsPresent = true;
+				break;
+			}
+		}
+		return bIsPresent;
 	};
 
 	return GenericTileRenderer;

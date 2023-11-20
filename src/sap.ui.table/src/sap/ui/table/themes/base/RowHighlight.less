@@ -1,0 +1,86 @@
+/* ================================== */
+/* CSS for sap.ui.table/RowHighlight  */
+/* Base theme                         */
+/* ================================== */
+
+@_sap_ui_table_RowHighlight_SuccessColor: @sapUiSuccessBorder;
+@_sap_ui_table_RowHighlight_ErrorColor: @sapUiErrorBorder;
+@_sap_ui_table_RowHighlight_WarningColor: @sapUiWarningBorder;
+@_sap_ui_table_RowHighlight_InformationColor: @sapUiInformationBorder;
+@_sap_ui_table_RowHighlight_Indication01Color: @sapUiIndication1;
+@_sap_ui_table_RowHighlight_Indication02Color: @sapUiIndication2;
+@_sap_ui_table_RowHighlight_Indication03Color: @sapUiIndication3;
+@_sap_ui_table_RowHighlight_Indication04Color: @sapUiIndication4;
+@_sap_ui_table_RowHighlight_Indication05Color: @sapUiIndication5;
+@_sap_ui_table_RowHighlight_Indication06Color: @sapUiIndication6;
+@_sap_ui_table_RowHighlight_Indication07Color: @sapUiIndication7;
+@_sap_ui_table_RowHighlight_Indication08Color: @sapUiIndication8;
+
+.sapUiTableRowHighlight {
+	height: 100%;
+	width: @_sap_ui_table_RowHighlightIndicatorWidth;
+	border-bottom: @_sap_ui_table_BaseBorderWidth solid @sapUiListBorderColor;
+	border-right: @_sap_ui_table_RowHighlightBorderRightWidth solid @sapUiListBackground;
+
+	&.sapUiTableRowHighlightNone {
+		border-right-color: transparent;
+	}
+
+	.sapUiTableRowLastFixedTop > &,
+	.sapUiTableRowLastScrollable > & {
+		border-bottom-color: @sapUiListTableFixedBorder;
+	}
+
+	.sapUiTableGroupHeaderRow &,
+	.sapUiTableSummaryRow & {
+		display: none;
+	}
+
+	&.sapUiTableRowHighlightSuccess {
+		background-color: @_sap_ui_table_RowHighlight_SuccessColor;
+	}
+
+	&.sapUiTableRowHighlightError {
+		background-color: @_sap_ui_table_RowHighlight_ErrorColor;
+	}
+
+	&.sapUiTableRowHighlightWarning {
+		background-color: @_sap_ui_table_RowHighlight_WarningColor;
+	}
+
+	&.sapUiTableRowHighlightInformation {
+		background-color: @_sap_ui_table_RowHighlight_InformationColor;
+	}
+
+	&.sapUiTableRowHighlightIndication01 {
+		background-color: @_sap_ui_table_RowHighlight_Indication01Color;
+	}
+
+	&.sapUiTableRowHighlightIndication02 {
+		background-color: @_sap_ui_table_RowHighlight_Indication02Color;
+	}
+
+	&.sapUiTableRowHighlightIndication03 {
+		background-color: @_sap_ui_table_RowHighlight_Indication03Color;
+	}
+
+	&.sapUiTableRowHighlightIndication04 {
+		background-color: @_sap_ui_table_RowHighlight_Indication04Color;
+	}
+
+	&.sapUiTableRowHighlightIndication05 {
+		background-color: @_sap_ui_table_RowHighlight_Indication05Color;
+	}
+
+	&.sapUiTableRowHighlightIndication06 {
+		background-color: @_sap_ui_table_RowHighlight_Indication06Color;
+	}
+
+	&.sapUiTableRowHighlightIndication07 {
+		background-color: @_sap_ui_table_RowHighlight_Indication07Color;
+	}
+
+	&.sapUiTableRowHighlightIndication08 {
+		background-color: @_sap_ui_table_RowHighlight_Indication08Color;
+	}
+}

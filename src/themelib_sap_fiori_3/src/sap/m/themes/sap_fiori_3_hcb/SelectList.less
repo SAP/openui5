@@ -1,0 +1,39 @@
+/* ================================= */
+/* CSS for control sap.m/SelectList  */
+/* Quartz High Contrast Black theme  */
+/* ================================= */
+
+@_sap_m_SelectListItem_Height: 2.5rem;
+@_sap_m_SelectListItem_CompactHeight: 2rem;
+@_sap_m_SelectListItemBelizeFocus_Height: 0.375rem; // 2 borders * 0.125rem + 2 offsets (top and bottom) * 0.0625rem
+
+/* selected */
+.sapMSelectListItemBaseSelected {
+	background: @sapUiListSelectionBackgroundColor;
+	border-bottom: 0.0625rem solid @sapUiListSelectionBorderColor;
+}
+
+.sapMSelectListItemBaseHoverable:hover {
+	border-bottom: 0.0625rem solid @sapUiListBorderColor;
+}
+
+.sapMSelectListItemBaseSelected.sapMSelectListItemBaseHoverable:hover {
+	border-bottom: 0.0625rem solid @sapUiListSelectionBorderColor;
+}
+
+.sapMSltPicker-CTX .sapMSelectListItemBaseSelected,
+.sapMComboBoxBasePicker-CTX .sapMSelectListItemBaseSelected,
+/* focus */
+html.sap-desktop .sapMSelectListItemBase:focus {
+	outline: @sapUiContentFocusWidth @sapUiContentFocusStyle @sapUiContentFocusColor;
+	outline-offset: -0.1875rem;
+}
+
+.sapMSelectListItemBase.sapMSelectListItemBasePressed .sapMSelectListItemIcon {
+	color: @sapUiContentContrastIconColor;
+}
+
+/* disabled */
+.sapMSelectListItemBaseDisabled {
+	opacity: 0.5;
+}

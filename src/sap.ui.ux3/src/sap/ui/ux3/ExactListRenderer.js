@@ -3,8 +3,8 @@
  */
 
 // Provides default renderer for the sap.ui.ux3.ExactListRenderer
-sap.ui.define(['jquery.sap.global'],
-	function(jQuery) {
+sap.ui.define(["sap/ui/core/Configuration"],
+	function(Configuration) {
 	"use strict";
 
 
@@ -19,12 +19,11 @@ sap.ui.define(['jquery.sap.global'],
 	/**
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
 	 *
-	 * @param {sap.ui.core.RenderManager} oRenderManager the RenderManager that can be used for writing to the Render-Output-Buffer
+	 * @param {sap.ui.core.RenderManager} rm the RenderManager that can be used for writing to the Render-Output-Buffer
 	 * @param {sap.ui.core.Control} oControl an object representation of the control that should be rendered
 	 */
-	ExactListRenderer.render = function(oRenderManager, oControl){
+	ExactListRenderer.render = function(rm, oControl){
 
-		var rm = oRenderManager;
 		var aSubLists = oControl.getSubLists();
 		var oAttribute = oControl._getAtt();
 
@@ -170,7 +169,7 @@ sap.ui.define(['jquery.sap.global'],
 	 */
 	ExactListRenderer.getExpanderSymbol = function(bExpanded, bHorizontal){
 		if (bHorizontal) {
-			if (sap.ui.getCore().getConfiguration().getRTL()) {
+			if (Configuration.getRTL()) {
 				return bExpanded ? "&#9654;" : "&#9664;";
 			} else {
 				return bExpanded ? "&#9664;" : "&#9654;";

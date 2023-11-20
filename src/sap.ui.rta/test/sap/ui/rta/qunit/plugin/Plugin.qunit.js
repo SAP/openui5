@@ -1,88 +1,120 @@
-/*global QUnit*/
+/* global QUnit */
 
-QUnit.config.autostart = false;
-
-sap.ui.require([
-	'sap/ui/dt/DesignTime',
-	'sap/ui/rta/plugin/Plugin',
-	'sap/ui/rta/plugin/Remove',
-	'sap/ui/rta/plugin/Rename',
-	'sap/ui/rta/plugin/ControlVariant',
-	'sap/ui/rta/command/CommandFactory',
-	'sap/ui/fl/registry/ChangeRegistry',
-	'sap/m/Button',
-	'sap/ui/layout/VerticalLayout',
-	'sap/ui/dt/ElementOverlay',
-	'sap/ui/dt/OverlayRegistry',
-	'sap/ui/dt/OverlayUtil',
-	'sap/m/Label',
-	'sap/ui/core/Title',
-	'sap/m/Input',
-	'sap/ui/layout/form/Form',
-	'sap/ui/layout/form/FormContainer',
-	'sap/ui/layout/form/SimpleForm',
-	'sap/uxap/ObjectPageSection',
-	'sap/ui/fl/Utils',
-	'sap/ui/dt/ElementDesignTimeMetadata',
-	'sap/ui/fl/changeHandler/MoveControls',
-	'sap/ui/thirdparty/sinon-4'
-],
-function(
-	DesignTime,
-	Plugin,
-	Remove,
-	Rename,
-	ControlVariant,
-	CommandFactory,
-	ChangeRegistry,
+sap.ui.define([
+	"sap/m/Button",
+	"sap/m/Label",
+	"sap/m/Input",
+	"sap/m/List",
+	"sap/m/CustomListItem",
+	"sap/ui/core/Title",
+	"sap/ui/dt/DesignTime",
+	"sap/ui/dt/OverlayRegistry",
+	"sap/ui/dt/OverlayUtil",
+	"sap/ui/fl/write/api/ChangesWriteAPI",
+	"sap/ui/fl/Utils",
+	"sap/ui/layout/VerticalLayout",
+	"sap/ui/layout/form/Form",
+	"sap/ui/layout/form/FormContainer",
+	"sap/ui/layout/form/SimpleForm",
+	"sap/ui/rta/command/CommandFactory",
+	"sap/ui/rta/plugin/Plugin",
+	"sap/ui/rta/plugin/Remove",
+	"sap/ui/rta/plugin/Rename",
+	"sap/ui/model/json/JSONModel",
+	"sap/ui/thirdparty/sinon-4",
+	"sap/ui/qunit/utils/nextUIUpdate"
+], function(
 	Button,
-	VerticalLayout,
-	ElementOverlay,
+	Label,
+	Input,
+	List,
+	CustomListItem,
+	Title,
+	DesignTime,
 	OverlayRegistry,
 	OverlayUtil,
-	Label,
-	Title,
-	Input,
+	ChangesWriteAPI,
+	FlexUtils,
+	VerticalLayout,
 	Form,
 	FormContainer,
 	SimpleForm,
-	ObjectPageSection,
-	FlexUtils,
-	ElementDesignTimeMetadata,
-	MoveControlsChangeHandler,
-	sinon
+	CommandFactory,
+	Plugin,
+	Remove,
+	Rename,
+	JSONModel,
+	sinon,
+	nextUIUpdate
 ) {
 	"use strict";
-	QUnit.start();
 
-	var sandbox = sinon.sandbox.create();
+	var sandbox = sinon.createSandbox();
 
-	QUnit.module("Given this the Plugin is initialized", {
-		beforeEach : function(assert) {
-			var done = assert.async();
-
-			var oChangeRegistry = ChangeRegistry.getInstance();
-			oChangeRegistry.registerControlsForChanges({
-				"VerticalLayout" : {
-					"moveControls": "default"
-				}
+	QUnit.module("Given a Plugin and 'hasChangeHandler' is called", {
+		beforeEach() {
+			this.oPlugin = new Plugin({
+				commandFactory: new CommandFactory()
 			});
+			this.oButton = new Button();
+			this.oGetChangeHandlerStub = sandbox.stub(ChangesWriteAPI, "getChangeHandler");
+		},
+		afterEach() {
+			this.oButton.destroy();
+			sandbox.restore();
+		}
+	}, function() {
+		QUnit.test("when the ChangesWriteAPI resolves with a change handler", function(assert) {
+			this.oGetChangeHandlerStub.resolves();
+			return this.oPlugin.hasChangeHandler("moveControls", this.oButton, "my.ControlType").then(function(bHasChangeHandler) {
+				assert.strictEqual(bHasChangeHandler, true, "then the function returns true");
+				assert.equal(this.oGetChangeHandlerStub.callCount, 1, "the ChangesWriteAPI was called");
+				assert.equal(this.oGetChangeHandlerStub.lastCall.args[0].changeType, "moveControls", "the change type was correctly passed");
+				assert.equal(this.oGetChangeHandlerStub.lastCall.args[0].controlType, "my.ControlType", "the control type was taken from the control");
+				assert.equal(this.oGetChangeHandlerStub.lastCall.args[0].element, this.oButton, "the control was correctly passed");
+			}.bind(this));
+		});
+
+		QUnit.test("when the ChangesWriteAPI rejects", function(assert) {
+			this.oGetChangeHandlerStub.rejects();
+			return this.oPlugin.hasChangeHandler("moveControls", this.oButton).then(function(bHasChangeHandler) {
+				assert.strictEqual(bHasChangeHandler, false, "then the function returns false");
+				assert.equal(this.oGetChangeHandlerStub.callCount, 1, "the ChangesWriteAPI was called");
+			}.bind(this));
+		});
+
+		QUnit.test("when 'getVariantManagement' is called", function(assert) {
+			var oObjectWithVM = {
+				getVariantManagement() {
+					return "variant-test";
+				}
+			};
+			var sVarMgmtRefForButton = this.oPlugin.getVariantManagementReference(oObjectWithVM);
+			var sVarMgmtRefForEmptyObject = this.oPlugin.getVariantManagementReference({});
+			assert.equal(sVarMgmtRefForButton, "variant-test", "then for the control with variant ChangeHandler the variant management reference is returned");
+			assert.equal(sVarMgmtRefForEmptyObject, undefined, "then for the control without variant ChangeHandler undefined is returned");
+		});
+	});
+
+	QUnit.module("Given the Plugin is initialized with move registered for a control", {
+		async beforeEach(assert) {
+			var done = assert.async();
 
 			this.oButton = new Button();
 			this.oLayout = new VerticalLayout({
-				content : [
+				content: [
 					this.oButton
 				]
 			}).placeAt("qunit-fixture");
 
-			sap.ui.getCore().applyChanges();
+			await nextUIUpdate();
 
 			this.oDesignTime = new DesignTime({
-				rootElements : [this.oLayout]
+				rootElements: [this.oLayout]
 			});
 
-			this.oPlugin = new sap.ui.rta.plugin.Plugin({
-				commandFactory : new CommandFactory()
+			this.oPlugin = new Plugin({
+				commandFactory: new CommandFactory()
 			});
 			this.oRemovePlugin = new Remove();
 
@@ -94,18 +126,13 @@ function(
 				this.oButtonOverlay = OverlayRegistry.getOverlay(this.oButton);
 				done();
 			}.bind(this));
-
 		},
-		afterEach : function() {
+		afterEach() {
 			this.oLayout.destroy();
 			this.oDesignTime.destroy();
 			sandbox.restore();
 		}
 	}, function() {
-		QUnit.test("when the hasChangeHandler function is called", function(assert) {
-			assert.strictEqual(this.oPlugin.hasChangeHandler("moveControls", this.oLayout), true, "then the function returns true");
-		});
-
 		QUnit.test("when an overlay gets deregistered and registered again and visible change event gets fired", function(assert) {
 			var oGetRelevantOverlays = sandbox.spy(this.oRemovePlugin, "_getRelevantOverlays");
 
@@ -121,7 +148,6 @@ function(
 		});
 
 		QUnit.test("when Overlays are registered/deregistered and _isEditableByPlugin method is called", function(assert) {
-
 			assert.notOk(this.oButtonOverlay.getEditable(), "then the Overlay is not editable");
 			assert.notOk(this.oPlugin._isEditableByPlugin(this.oButtonOverlay), "then the overlay is not editable by this plugin");
 			assert.notOk(this.oRemovePlugin._isEditableByPlugin(this.oButtonOverlay), "then the overlay is not editable by this plugin");
@@ -156,49 +182,152 @@ function(
 
 		QUnit.test("when the control has no stable id and hasStableId method is called", function(assert) {
 			assert.strictEqual(this.oPlugin.hasStableId(this.oButtonOverlay), false, "then it returns false");
-			assert.strictEqual(this.oButtonOverlay.getElementHasStableId(), false, "then the 'getElementHasStableId' property of the Overlay is set to false");
+			assert.strictEqual(this.oButtonOverlay.data("hasStableId"), false, "then the 'getElementHasStableId' property of the Overlay is set to false");
 		});
 
 		QUnit.test("when hasStableId method is called without an overlay", function(assert) {
 			assert.strictEqual(this.oPlugin.hasStableId(), false, "then it returns false");
 		});
+
+		QUnit.test("when hasStableId method is called with an overlay whose element is being destroyed", function(assert) {
+			this.oButton.destroy();
+			assert.strictEqual(this.oPlugin.hasStableId(this.oButtonOverlay), false, "then it returns false");
+		});
+
+		QUnit.test("when evaluateEditable is called for elements", function(assert) {
+			var oModifyPluginListSpy = sandbox.spy(this.oPlugin, "_modifyPluginList");
+
+			this.oPlugin.evaluateEditable([this.oLayoutOverlay], {onRegistration: false});
+			assert.equal(oModifyPluginListSpy.callCount, 1, "_modifyPluginList was called once");
+			assert.equal(oModifyPluginListSpy.lastCall.args[0], this.oLayoutOverlay, "first parameter is the overlay");
+		});
+
+		QUnit.test("when evaluateEditable is called for elements that is editable but not adaptable", function(assert) {
+			sandbox.stub(this.oLayoutOverlay.getDesignTimeMetadata(), "markedAsNotAdaptable").returns(true);
+			var oModifyPluginListSpy = sandbox.spy(this.oPlugin, "_modifyPluginList");
+
+			this.oPlugin.evaluateEditable([this.oLayoutOverlay], {onRegistration: false});
+			assert.equal(oModifyPluginListSpy.callCount, 1, "_modifyPluginList was called once");
+			assert.equal(oModifyPluginListSpy.lastCall.args[0], this.oLayoutOverlay, "first parameter is the overlay");
+			assert.equal(oModifyPluginListSpy.lastCall.args[1], false, "then editable is false");
+		});
+
+		QUnit.test("when evaluateEditable is called with getStableElements in DTMD returning a selector", function(assert) {
+			var oModifyPluginListSpy = sandbox.spy(this.oPlugin, "_modifyPluginList");
+			var oSetProcessingStatusSpy = sandbox.spy(this.oPlugin, "setProcessingStatus");
+			sandbox.stub(this.oLayoutOverlay.getDesignTimeMetadata(), "getStableElements").returns([{id: "id"}]);
+
+			this.oPlugin.evaluateEditable([this.oLayoutOverlay], {onRegistration: false});
+			assert.equal(oSetProcessingStatusSpy.firstCall.args[0], true, "the plugin switched to processing state on first");
+			assert.equal(oModifyPluginListSpy.lastCall.args[1], true, "the _modifyPluginList function is called");
+			assert.equal(oSetProcessingStatusSpy.lastCall.args[0], false, "the plugin switched the processing state off again");
+		});
+
+		QUnit.test("when evaluateEditable is called and _isEditable returns a promise", function(assert) {
+			sandbox.restore();
+			var fnDone = assert.async();
+			var oModifyPluginListSpy = sandbox.spy(this.oPlugin, "_modifyPluginList");
+			var oSetProcessingStatusSpy = sandbox.spy(this.oPlugin, "setProcessingStatus");
+			sandbox.stub(this.oLayoutOverlay.getDesignTimeMetadata(), "getStableElements").returns([{id: "id"}]);
+			sandbox.stub(this.oPlugin, "_isEditable").resolves(true);
+
+			this.oPlugin.evaluateEditable([this.oLayoutOverlay], {onRegistration: false});
+			assert.equal(oSetProcessingStatusSpy.firstCall.args[0], true, "the plugin switched to processing state on first");
+			this.oPlugin.attachEventOnce("processingStatusChange", function() {
+				assert.equal(oModifyPluginListSpy.lastCall.args[1], true, "the _modifyPluginList function is called");
+				assert.equal(oSetProcessingStatusSpy.lastCall.args[0], false, "the plugin switched the processing state off again");
+				fnDone();
+			});
+		});
+
+		QUnit.test("when evaluateEditable is called for an element which has a responsible element", function(assert) {
+			var done = assert.async();
+			var oModifyPluginListSpy = sandbox.spy(this.oPlugin, "_modifyPluginList");
+			sandbox.stub(this.oPlugin, "getActionName").returns("actionName");
+
+			// clearing up all default actions and replacing with getResponsibleElement()
+			this.oLayoutOverlay.getDesignTimeMetadata().getData().actions = {
+				getResponsibleElement: function() {
+					return this.oButton;
+				}.bind(this),
+				actionsFromResponsibleElement: ["actionName"]
+			};
+
+			var fnProcessingFinishCallBack = function(done, oEvent) {
+				if (oEvent.getParameter("processing") === false) {
+					assert.ok(this.oPlugin._isEditable.alwaysCalledWith(this.oButtonOverlay), "then editable evaluation is always performed on the responsible element");
+					assert.equal(oModifyPluginListSpy.callCount, 1, "_modifyPluginList was called once");
+					assert.ok(oModifyPluginListSpy.calledWith(this.oLayoutOverlay, true), "then the plugin list was modified for the source overlay with editable set to true");
+					this.oPlugin.detachEvent("processingStatusChange", fnProcessingFinishCallBack);
+					done();
+				}
+			}.bind(this, done);
+
+			this.oPlugin.attachEvent("processingStatusChange", fnProcessingFinishCallBack);
+
+			this.oPlugin.evaluateEditable([this.oLayoutOverlay], {onRegistration: false});
+		});
+
+		QUnit.test("when evaluateEditable is called for an element overlay with a disabled action and a responsible element", function(assert) {
+			var done = assert.async();
+			sandbox.stub(this.oPlugin, "getActionName").returns("actionName");
+
+			// clearing up all default actions and replacing with getResponsibleElement()
+			this.oLayoutOverlay.getDesignTimeMetadata().getData().actions = {
+				getResponsibleElement: function() {
+					return this.oButton;
+				}.bind(this)
+			};
+			var fnProcessingFinishCallBack = function(done, oEvent) {
+				if (oEvent.getParameter("processing") === false) {
+					assert.equal(this.oPlugin._isEditable.callCount, 1, "then editable evaluation was still done");
+					assert.ok(this.oPlugin._isEditable.calledWith(this.oLayoutOverlay), "then the editable check was performed on the source element overlay");
+					this.oPlugin.detachEvent("processingStatusChange", fnProcessingFinishCallBack);
+					done();
+				}
+			}.bind(this, done);
+
+			this.oPlugin.attachEvent("processingStatusChange", fnProcessingFinishCallBack);
+
+			this.oPlugin.evaluateEditable([this.oLayoutOverlay], {onRegistration: false});
+		});
 	});
 
 	QUnit.module("Given the Designtime is initialized with 2 Plugins with _isEditable not stubbed", {
-		beforeEach : function(assert) {
+		async beforeEach(assert) {
 			var done = assert.async();
 
 			this.oButton = new Button("button");
 			this.oLayout = new VerticalLayout({
-				content : [
+				content: [
 					this.oButton
 				]
 			}).placeAt("qunit-fixture");
 
-			sap.ui.getCore().applyChanges();
+			await nextUIUpdate();
 
-			this.oCheckControlIdSpy = sandbox.spy(FlexUtils,"checkControlId");
+			this.oCheckControlIdSpy = sandbox.spy(FlexUtils, "checkControlId");
 
+			var oCommandFactory = new CommandFactory();
 			this.oRenamePlugin = new Rename({
-				commandFactory : new CommandFactory()
+				commandFactory: oCommandFactory
 			});
 			this.oRemovePlugin = new Remove({
-				commandFactory : new CommandFactory()
+				commandFactory: oCommandFactory
 			});
 			this.oDesignTime = new DesignTime({
-				rootElements : [this.oLayout],
+				rootElements: [this.oLayout],
 				plugins: [this.oRemovePlugin, this.oRenamePlugin]
 			});
 
-			this.oPlugin = new sap.ui.rta.plugin.Plugin();
+			this.oPlugin = new Plugin();
 
 			this.oDesignTime.attachEventOnce("synced", function() {
 				this.oButtonOverlay = OverlayRegistry.getOverlay(this.oButton);
 				done();
 			}.bind(this));
-
 		},
-		afterEach : function() {
+		afterEach() {
 			this.oLayout.destroy();
 			this.oDesignTime.destroy();
 			sandbox.restore();
@@ -206,103 +335,207 @@ function(
 	}, function() {
 		QUnit.test("when the controls are checked for a stable id and at least one plugin has been initialized", function(assert) {
 			assert.equal(this.oCheckControlIdSpy.callCount, 2, "then the utility method to check the control id has been already called element overlays");
-			assert.strictEqual(this.oButtonOverlay.getElementHasStableId(), true, "and the 'getElementHasStableId' property of the Overlay is set to true");
+			assert.strictEqual(this.oButtonOverlay.data("hasStableId"), true, "and the 'getElementHasStableId' property of the Overlay is set to true");
 			assert.ok(this.oPlugin.hasStableId(this.oButtonOverlay), "then if hasStableId is called again it also returns true");
-			assert.equal(this.oCheckControlIdSpy.callCount, 2, "but then the utility method to check the control ids is not called a another time");
+			assert.equal(this.oCheckControlIdSpy.callCount, 2, "but then the utility method to check the control ids is not called another time");
+			assert.equal(this.oButtonOverlay.getEditableByPlugins().length, 2, "then the overlay is editable by 2 plugins");
 		});
 	});
 
-	QUnit.module("Given the Designtime is initialized with 2 Plugins with _isEditable stubbed", {
-		beforeEach : function(assert) {
+	QUnit.module("Given the Designtime is initialized with 2 Plugins with _isEditable stubbed asynchronous", {
+		async beforeEach(assert) {
 			var done = assert.async();
+			var oModel = new JSONModel([{text: "item1"}, {text: "item2"}, {text: "item3"}]);
+			this.oCustomListItemTemplate = new CustomListItem("boundListItem", {content: [new Button("boundListItem-btn", {text: "{text}"})]});
+			this.oBoundList = new List("boundlist").setModel(oModel);
+			this.oBoundList.bindAggregation("items", {
+				path: "/",
+				template: this.oCustomListItemTemplate,
+				templateShareable: false
+			});
 
 			this.oButton = new Button("button");
+			this.oInvisibleButton = new Button("invisibleButton", { visible: false });
 			this.oLayout = new VerticalLayout({
-				content : [
-					this.oButton
+				content: [
+					this.oInvisibleButton,
+					this.oButton,
+					this.oBoundList
 				]
 			}).placeAt("qunit-fixture");
+			await nextUIUpdate();
 
-			sap.ui.getCore().applyChanges();
-
+			var oCommandFactory = new CommandFactory();
 			this.oRenamePlugin = new Rename({
-				commandFactory : new CommandFactory()
+				commandFactory: oCommandFactory
 			});
 			this.oRemovePlugin = new Remove({
-				commandFactory : new CommandFactory()
+				commandFactory: oCommandFactory
 			});
-			sandbox.stub(this.oRenamePlugin, "_isEditable").returns(true);
+			sandbox.stub(this.oRenamePlugin, "_isEditable").resolves(true);
 			sandbox.stub(this.oRemovePlugin, "_isEditable").returns(false);
+			this.oModifyPluginListSpy = sandbox.spy(Plugin.prototype, "_modifyPluginList");
 
 			this.oDesignTime = new DesignTime({
-				rootElements : [this.oLayout],
+				rootElements: [this.oLayout],
 				plugins: [this.oRemovePlugin, this.oRenamePlugin]
 			});
 
-			this.oPlugin = new sap.ui.rta.plugin.Plugin();
+			this.oPlugin = new Plugin();
 
 			this.oDesignTime.attachEventOnce("synced", function() {
 				this.oButtonOverlay = OverlayRegistry.getOverlay(this.oButton);
+				this.oInvisibleButtonOverlay = OverlayRegistry.getOverlay(this.oInvisibleButton);
 				this.oLayoutOverlay = OverlayRegistry.getOverlay(this.oLayout);
 				done();
 			}.bind(this));
-
 		},
-		afterEach : function() {
+		afterEach() {
 			this.oLayout.destroy();
 			this.oDesignTime.destroy();
 			sandbox.restore();
 		}
 	}, function() {
-		QUnit.test("when the overlay is not registered yet (has no DTMD) or is undefined and hasStableId is called", function(assert) {
-			sandbox.stub(this.oButtonOverlay, "getDesignTimeMetadata").returns(null);
-			var oSetStableIdSpy = sandbox.spy(ElementOverlay.prototype, "setElementHasStableId");
-			assert.notOk(this.oPlugin.hasStableId(this.oButtonOverlay), "then the button has no stable ID");
-			assert.equal(oSetStableIdSpy.callCount, 0, "and the result is not saved on the overlay");
-
-			assert.notOk(this.oPlugin.hasStableId(this.oButtonOverlay2), "then the button has no stable ID");
-			assert.equal(oSetStableIdSpy.callCount, 0, "and the result is not saved on the overlay");
-		});
-
 		QUnit.test("when the event elementModified is thrown with visibility change", function(assert) {
 			var oSetRelevantSpy = sandbox.spy(this.oButtonOverlay, "setRelevantOverlays");
 			var oGetRelevantSpy = sandbox.spy(this.oButtonOverlay, "getRelevantOverlays");
-			sandbox.stub(OverlayUtil, "findAllOverlaysInContainer").returns([this.oButtonOverlay]);
+			var oFindAllOverlaysInContainerStub = sandbox.stub(OverlayUtil, "findAllOverlaysInContainer").returns([this.oButtonOverlay]);
 			this.oButtonOverlay.fireElementModified({
 				type: "propertyChanged",
 				name: "visible"
 			});
-			assert.equal(oSetRelevantSpy.callCount, 1, "then findAllOverlaysInContainer is only called once");
+			assert.equal(oFindAllOverlaysInContainerStub.callCount, 1, "then findAllOverlaysInContainer is only called once");
+			assert.equal(oSetRelevantSpy.callCount, 2, "then setRelevantOverlays is called twice");
 			assert.equal(oGetRelevantSpy.callCount, 2, "then getRelevantOverlays is called twice");
 			assert.equal(this.oButtonOverlay.getRelevantOverlays().length, 1, "then only one overlay is relevant");
 		});
 
+		QUnit.test("when the event elementModified is thrown with visibility changed to true and geometry becoming visible afterwards", function(assert) {
+			var oSetRelevantSpy = sandbox.spy(this.oButtonOverlay, "setRelevantOverlays");
+			var oGetRelevantSpy = sandbox.spy(this.oButtonOverlay, "getRelevantOverlays");
+			var oEvaluateSpy = sandbox.spy(this.oRenamePlugin, "evaluateEditable");
+			var oFindAllOverlaysInContainerStub = sandbox.stub(OverlayUtil, "findAllOverlaysInContainer").returns([this.oButtonOverlay]);
+			this.oButtonOverlay.getGeometry().visible = false;
+			this.oButtonOverlay.fireElementModified({
+				type: "propertyChanged",
+				name: "visible",
+				value: true
+			});
+			assert.equal(oFindAllOverlaysInContainerStub.callCount, 1, "then findAllOverlaysInContainer is only called once");
+			assert.equal(oSetRelevantSpy.callCount, 2, "then setRelevantOverlays is called twice");
+			assert.equal(oGetRelevantSpy.callCount, 2, "then getRelevantOverlays is called twice");
+			assert.equal(this.oButtonOverlay.getRelevantOverlays().length, 1, "then only one overlay is relevant");
+			assert.equal(oEvaluateSpy.callCount, 0, "the evaluate function was not yet called");
+
+			this.oButtonOverlay.getGeometry().visible = true;
+			this.oButtonOverlay.fireGeometryChanged();
+			assert.equal(oEvaluateSpy.callCount, 1, "the evaluate function was called");
+
+			this.oButtonOverlay.getGeometry().visible = false;
+			this.oButtonOverlay.fireGeometryChanged();
+			assert.equal(oEvaluateSpy.callCount, 1, "the evaluate function was not called again");
+
+			this.oButtonOverlay.getGeometry().visible = true;
+			this.oButtonOverlay.fireGeometryChanged();
+			assert.equal(oEvaluateSpy.callCount, 1, "the evaluate function was not called again");
+
+			this.oInvisibleButtonOverlay.fireGeometryChanged();
+			assert.equal(oEvaluateSpy.callCount, 1, "the evaluate function was not called again");
+		});
+
 		QUnit.test("when the event elementModified is thrown with aggregation change", function(assert) {
+			var fnDone = assert.async();
 			var oSetRelevantSpy = sandbox.spy(this.oLayoutOverlay, "setRelevantOverlays");
 			var oGetRelevantSpy = sandbox.spy(this.oLayoutOverlay, "getRelevantOverlays");
-			sandbox.stub(OverlayUtil, "findAllOverlaysInContainer").returns([this.oLayoutOverlay]);
+			var oFindAllOverlaysInContainerStub = sandbox.stub(OverlayUtil, "findAllOverlaysInContainer").returns([this.oLayoutOverlay]);
+
+			// Element modified callback is async due to debouncing, make sure to wait for both plugins
+			// to start editable evaluation as a workaround
+			var oEvaluateEditableStub = sandbox.stub(Plugin.prototype, "evaluateEditable")
+			.callThrough()
+			.onSecondCall()
+			.callsFake(function(...aArgs) {
+				oEvaluateEditableStub.wrappedMethod.apply(this.oRemovePlugin, aArgs);
+				assert.strictEqual(oFindAllOverlaysInContainerStub.callCount, 1, "then findAllOverlaysInContainer is only called once");
+				assert.strictEqual(oSetRelevantSpy.callCount, 2, "then setRelevantOverlays is called twice");
+				assert.strictEqual(oGetRelevantSpy.callCount, 2, "then getRelevantOverlays is called twice");
+				assert.strictEqual(this.oLayoutOverlay.getRelevantOverlays().length, 4, "then four overlays are relevant");
+				fnDone();
+			}.bind(this));
+
 			this.oLayoutOverlay.fireElementModified({
 				type: "removeAggregation",
 				name: "content"
 			});
-			assert.equal(oSetRelevantSpy.callCount, 1, "then findAllOverlaysInContainer is only called once");
-			assert.equal(oGetRelevantSpy.callCount, 2, "then getRelevantOverlays is called twice");
-			assert.equal(this.oLayoutOverlay.getRelevantOverlays().length, 2, "then two overlays are relevant");
 		});
 
-		QUnit.test("when the event elementModified is thrown with overlayRendered", function(assert) {
+		QUnit.test("when the elementModified event is thrown multiple times in a row", function(assert) {
+			var fnDone = assert.async();
+			var oEvaluateEditableStub = sandbox.stub(this.oRenamePlugin, "evaluateEditable")
+			.callsFake(function(...aArgs) {
+				oEvaluateEditableStub.wrappedMethod.apply(this.oRemovePlugin, aArgs);
+				assert.ok(oEvaluateEditableStub.calledOnce, "then the evaluation is only executed once");
+				fnDone();
+			}.bind(this));
+
+			this.oLayoutOverlay.fireElementModified({
+				type: "removeAggregation",
+				name: "content"
+			});
+			this.oLayoutOverlay.fireElementModified({
+				type: "removeAggregation",
+				name: "content"
+			});
+		});
+
+		QUnit.test("when the elementModified callback is triggered after the designtime was destroyed", function(assert) {
+			var oEvaluateEditableSpy = sandbox.spy(this.oRenamePlugin, "evaluateEditable");
+			var fnDone = assert.async();
+			this.oLayoutOverlay.fireElementModified({
+				type: "addOrSetAggregation",
+				name: "content"
+			});
+			// Using a timeout here is bad but there is no reliable way to access the
+			// callback that was debounced without exposing private members of the plugin
+			setTimeout(function() {
+				assert.ok(oEvaluateEditableSpy.notCalled, "then the original callback is never executed");
+				fnDone();
+			}, 100);
+			this.oDesignTime.destroy();
+		});
+
+		QUnit.test("when the event elementModified is thrown with afterRendering", function(assert) {
 			var oSetRelevantSpy = sandbox.spy(this.oLayoutOverlay, "setRelevantOverlays");
 			var oGetRelevantSpy = sandbox.spy(this.oLayoutOverlay, "getRelevantOverlays");
 			var oEvaluateSpy = sandbox.spy(this.oRenamePlugin, "evaluateEditable");
+			var oFindAllOverlaysInContainerStub = sandbox.stub(OverlayUtil, "findAllOverlaysInContainer").returns([this.oLayoutOverlay]);
+			this.oLayoutOverlay.fireElementModified({
+				type: "afterRendering"
+			});
+			assert.equal(oFindAllOverlaysInContainerStub.callCount, 0, "then findAllOverlaysInContainer is not called");
+			assert.equal(oSetRelevantSpy.callCount, 0, "then setRelevantOverlays is not called");
+			assert.equal(oGetRelevantSpy.callCount, 0, "then getRelevantOverlays is not called");
+			assert.equal(oEvaluateSpy.callCount, 1, "then only evaluateEditable is called");
+			assert.deepEqual(oEvaluateSpy.args[0], [[this.oLayoutOverlay], {onRegistration: false}], "then evaluateEditable is called with the correct parameters");
+		});
+
+		QUnit.test("when _getRelevantOverlays is called for an Overlay that is part of a binding template", function(assert) {
+			var oCustomListItemTemplateOverlay = OverlayRegistry.getOverlay(this.oCustomListItemTemplate);
+			assert.equal(this.oRenamePlugin._getRelevantOverlays(oCustomListItemTemplateOverlay).length, 0, "then no overlays are returned");
+		});
+
+		QUnit.test("when the event elementModified is thrown but the plugin is busy", function(assert) {
+			sandbox.restore();
+			var oModifyPluginListSpy = sandbox.spy(this.oRenamePlugin, "_modifyPluginList");
 			sandbox.stub(OverlayUtil, "findAllOverlaysInContainer").returns([this.oLayoutOverlay]);
+			this.oRenamePlugin.isBusy = function() {
+				return true;
+			};
 			this.oLayoutOverlay.fireElementModified({
 				type: "overlayRendered",
 				id: this.oLayoutOverlay.getId()
 			});
-			assert.equal(oSetRelevantSpy.callCount, 0, "then findAllOverlaysInContainer is not called");
-			assert.equal(oGetRelevantSpy.callCount, 0, "then getRelevantOverlays is not called");
-			assert.equal(oEvaluateSpy.callCount, 1, "then only evaluateEditable is called");
-			assert.deepEqual(oEvaluateSpy.args[0], [[this.oLayoutOverlay], {onRegistration: true}], "then evaluateEditable is called with the correct parameters");
+			assert.equal(oModifyPluginListSpy.callCount, 0, "then _modifyPluginList is not called");
 		});
 
 		QUnit.test("when _modifyPluginList is called multiple times", function(assert) {
@@ -322,19 +555,18 @@ function(
 	});
 
 	QUnit.module("Given the Plugin is initialized", {
-		beforeEach : function(assert) {
-
+		async beforeEach(assert) {
 			this.oGroup = new FormContainer("group");
 			this.oForm = new Form("Form", {
-				formContainers : [this.oGroup]
+				formContainers: [this.oGroup]
 			}).placeAt("qunit-fixture");
 
-			this.oCheckControlIdSpy = sandbox.spy(FlexUtils,"checkControlId");
+			this.oCheckControlIdSpy = sandbox.spy(FlexUtils, "checkControlId");
 
-			sap.ui.getCore().applyChanges();
+			await nextUIUpdate();
 
-			this.oPlugin = new sap.ui.rta.plugin.Plugin({
-				commandFactory : new CommandFactory()
+			this.oPlugin = new Plugin({
+				commandFactory: new CommandFactory()
 			});
 			this.oDesignTime = new DesignTime({
 				rootElements: [
@@ -350,62 +582,90 @@ function(
 				done();
 			}.bind(this));
 		},
-		afterEach : function(assert) {
-			this.oForm.destroy();
+		afterEach() {
 			this.oDesignTime.destroy();
+			this.oForm.destroy();
 			sandbox.restore();
 		}
 	}, function() {
 		QUnit.test("when DesignTimeMetadata has no actions but aggregations with actions and checkAggregationsOnSelf method is called", function(assert) {
 			this.oFormOverlay.setDesignTimeMetadata({
-				aggregations : {
-					formContainers : {
-						actions : {
+				aggregations: {
+					formContainers: {
+						actions: {
 							changeType: "addGroup"
 						}
 					}
 				}
 			});
 
-			assert.ok(this.oPlugin.checkAggregationsOnSelf(this.oFormOverlay, "changeType"), "then it returns true");
+			return this.oPlugin.checkAggregationsOnSelf(this.oFormOverlay, "changeType")
+			.then(function(bCheck) {
+				assert.ok(bCheck, "then it returns true");
+			});
 		});
 
 		QUnit.test("when DesignTimeMetadata has actions and checkAggregations method is called without the action name", function(assert) {
 			this.oFormOverlay.setDesignTimeMetadata({
-				actions : {}
+				actions: {}
 			});
 
-			assert.notOk(this.oPlugin.checkAggregationsOnSelf(this.oFormOverlay, undefined), "then it returns false");
+			return this.oPlugin.checkAggregationsOnSelf(this.oFormOverlay, undefined)
+			.then(function(bCheck) {
+				assert.notOk(bCheck, "then it returns false");
+			});
+		});
+
+		QUnit.test("when DesignTimeMetadata has no actions but aggregations with actions and checkAggregationsOnSelf method is called with the aggregation name", function(assert) {
+			this.oFormOverlay.setDesignTimeMetadata({
+				aggregations: {
+					formContainers: {
+						actions: {
+							changeType: "addGroup"
+						}
+					}
+				}
+			});
+
+			return this.oPlugin.checkAggregationsOnSelf(this.oFormOverlay, "changeType", "formContainers")
+			.then(function(bCheck) {
+				assert.ok(bCheck, "then it returns true for the correct aggregation");
+				return this.oPlugin.checkAggregationsOnSelf(this.oFormOverlay, "changeType", "dummyAggregation")
+				.then(function(bCheck) {
+					assert.notOk(bCheck, "then it returns false for another aggregation");
+				});
+			}.bind(this));
 		});
 	});
 
 	QUnit.module("Given the Plugin is initialized.", {
-		beforeEach : function(assert) {
-
-			this.oTitle0 = new Title({id : "Title0"});
-			this.oLabel0 = new Label({id : "Label0"});
-			this.oInput0 = new Input({id : "Input0"});
+		async beforeEach() {
+			this.oTitle0 = new Title({id: "Title0"});
+			this.oLabel0 = new Label({id: "Label0"});
+			this.oInput0 = new Input({id: "Input0"});
 			this.oSimpleForm = new SimpleForm("SimpleForm", {
-				title : "Simple Form",
-				content : [this.oTitle0, this.oLabel0, this.oInput0]
+				layout: "ResponsiveGridLayout",
+				title: "Simple Form",
+				content: [this.oTitle0, this.oLabel0, this.oInput0]
 			});
 
 			this.oVerticalLayout = new VerticalLayout({
-				content : [this.oSimpleForm]
+				content: [this.oSimpleForm]
 			}).placeAt("qunit-fixture");
 
-			sap.ui.getCore().applyChanges();
+			await nextUIUpdate();
 
 			this.oForm = this.oSimpleForm.getAggregation("form");
-			this.oFormContainer = this.oSimpleForm.getAggregation("form").getAggregation("formContainers")[0];
+			[this.oFormContainer] = this.oSimpleForm.getAggregation("form").getAggregation("formContainers");
 
-			this.oCheckControlIdSpy = sandbox.spy(FlexUtils,"checkControlId");
+			this.oCheckControlIdSpy = sandbox.spy(FlexUtils, "checkControlId");
 
-			this.oPlugin = new sap.ui.rta.plugin.Plugin({
-				commandFactory : new CommandFactory()
+			this.oPlugin = new Plugin({
+				commandFactory: new CommandFactory()
 			});
 		},
-		afterEach : function(assert) {
+		afterEach() {
+			this.oPlugin.destroy();
 			this.oVerticalLayout.destroy();
 			sandbox.restore();
 		}
@@ -414,12 +674,12 @@ function(
 			var done = assert.async();
 
 			var oDesignTimeMetadata = {
-				aggregations : {
-					formContainer : {
-						actions : {
-							createContainer : {
-								changeType : "addSimpleFormGroup",
-								changeOnRelevantContainer : true
+				aggregations: {
+					formContainer: {
+						actions: {
+							createContainer: {
+								changeType: "addSimpleFormGroup",
+								changeOnRelevantContainer: true
 							}
 						}
 					}
@@ -431,8 +691,8 @@ function(
 					this.oVerticalLayout
 				],
 				plugins: [],
-				designTimeMetadata : {
-					"sap.ui.layout.form.SimpleForm" : oDesignTimeMetadata
+				designTimeMetadata: {
+					"sap.ui.layout.form.SimpleForm": oDesignTimeMetadata
 				}
 			});
 
@@ -448,10 +708,10 @@ function(
 			var done = assert.async();
 
 			var oDesignTimeMetadata = {
-				aggregations : {
-					form : {
-						actions : {
-							getStableElements : function(oElement) {
+				aggregations: {
+					form: {
+						actions: {
+							getStableElements(oElement) {
 								var aStableElements = [];
 								var oLabel;
 								var oTitleOrToolbar;
@@ -486,15 +746,15 @@ function(
 					this.oVerticalLayout
 				],
 				plugins: [],
-				designTimeMetadata : {
-					"sap.ui.layout.form.SimpleForm" : oDesignTimeMetadata
+				designTimeMetadata: {
+					"sap.ui.layout.form.SimpleForm": oDesignTimeMetadata
 				}
 			});
 
 			this.oDesignTime.attachEventOnce("synced", function() {
 				this.oFormContainerOverlay = OverlayRegistry.getOverlay(this.oFormContainer);
 				assert.equal(this.oCheckControlIdSpy.callCount, 0, "then the utility method to check the control id has not yet been called for this Overlay");
-				assert.strictEqual(this.oFormContainerOverlay.getElementHasStableId(), undefined, "and the 'getElementHasStableId' property of the Overlay is still undefined");
+				assert.strictEqual(this.oFormContainerOverlay.data("hasStableId"), null, "and the 'hasStableId' custom data of the Overlay is still undefined");
 				assert.ok(this.oPlugin.hasStableId(this.oFormContainerOverlay), "then if hasStableId is called it returns true");
 				assert.equal(this.oCheckControlIdSpy.callCount, 3, "and the utility method to check the control id is called once for each stable element");
 				assert.ok(this.oPlugin.hasStableId(this.oFormContainerOverlay), "then a second call of hasStableId also returns true");
@@ -506,27 +766,27 @@ function(
 	});
 
 	QUnit.module("Given this the Plugin is initialized.", {
-		beforeEach : function(assert) {
-
+		async beforeEach(assert) {
 			this.oTitle0 = new Title();
 			this.oLabel0 = new Label();
 			this.oInput0 = new Input();
 			this.oSimpleForm = new SimpleForm("SimpleForm", {
-				title : "Simple Form",
-				content : [this.oTitle0, this.oLabel0, this.oInput0]
+				layout: "ResponsiveGridLayout",
+				title: "Simple Form",
+				content: [this.oTitle0, this.oLabel0, this.oInput0]
 			});
 
 			this.oVerticalLayout = new VerticalLayout({
-				content : [this.oSimpleForm]
+				content: [this.oSimpleForm]
 			}).placeAt("qunit-fixture");
 
-			sap.ui.getCore().applyChanges();
+			await nextUIUpdate();
 
-			this.oFormContainer = this.oSimpleForm.getAggregation("form").getAggregation("formContainers")[0];
+			[this.oFormContainer] = this.oSimpleForm.getAggregation("form").getAggregation("formContainers");
 
-			this.oCheckControlIdSpy = sandbox.spy(FlexUtils,"checkControlId");
+			this.oCheckControlIdSpy = sandbox.spy(FlexUtils, "checkControlId");
 
-			this.oPlugin = new sap.ui.rta.plugin.Plugin();
+			this.oPlugin = new Plugin();
 			this.oDesignTime = new DesignTime({
 				rootElements: [
 					this.oVerticalLayout
@@ -542,7 +802,7 @@ function(
 				done();
 			}.bind(this));
 		},
-		afterEach : function(assert) {
+		afterEach() {
 			this.oVerticalLayout.destroy();
 			this.oDesignTime.destroy();
 			sandbox.restore();
@@ -550,10 +810,10 @@ function(
 	}, function() {
 		QUnit.test("when the control has no stable id and it has no stable elements to be retrieved by function in newly set DT Metadata", function(assert) {
 			this.oFormContainerOverlay.setDesignTimeMetadata({
-				aggregations : {
-					form : {
-						actions : {
-							getStableElements : function(oElement) {
+				aggregations: {
+					form: {
+						actions: {
+							getStableElements(oElement) {
 								var aStableElements = [];
 								var oLabel;
 								var oTitleOrToolbar;
@@ -583,16 +843,16 @@ function(
 				}
 			});
 			assert.equal(this.oCheckControlIdSpy.callCount, 0, "then the utility method to check the control id has not yet been called for this Overlay");
-			assert.strictEqual(this.oFormContainerOverlay.getElementHasStableId(), undefined, "and the 'getElementHasStableId' property of the Overlay is still undefined");
+			assert.strictEqual(this.oFormContainerOverlay.data("hasStableId"), null, "and the 'hasStableId' property of the Overlay is still undefined");
 			assert.notOk(this.oPlugin.hasStableId(this.oFormContainerOverlay), "then if hasStableId is called it returns false");
 			assert.equal(this.oCheckControlIdSpy.callCount, 1, "and the utility method to check the control id is called once for each stable element");
 		});
 
 		QUnit.test("when the control has no stable id, no actions and hasStableId method is called", function(assert) {
 			this.oFormContainerOverlay.setDesignTimeMetadata({
-				aggregations : {
-					form : {
-						actions : {}
+				aggregations: {
+					form: {
+						actions: {}
 					}
 				}
 			});
@@ -600,161 +860,7 @@ function(
 		});
 	});
 
-	QUnit.module("Given the Plugin is initialized", {
-		beforeEach : function(assert) {
-			var done = assert.async();
-
-			var oChangeRegistry = ChangeRegistry.getInstance();
-			oChangeRegistry.registerControlsForChanges({
-				"ObjectPageSection" : {
-					"rename": "sap/ui/fl/changeHandler/BaseRename"
-				},
-				"sap.m.Button" : {
-					"removeButton": "sap/ui/fl/changeHandler/Base"
-				},
-				"sap.ui.core._StashedControl" : {
-					"unstashControl": "sap/ui/fl/changeHandler/UnstashControl"
-				}
-			});
-			this.oObjectPageSection = new ObjectPageSection();
-			this.oButton = new Button();
-			this.oLayout = new VerticalLayout({
-				content : [this.oObjectPageSection, this.oButton]
-			}).placeAt("qunit-fixture");
-
-			sap.ui.getCore().applyChanges();
-
-			this.oDesignTime = new DesignTime({
-				rootElements : [this.oLayout]
-			});
-
-			this.oPlugin = new sap.ui.rta.plugin.Plugin({
-				commandFactory : new CommandFactory()
-			});
-			this.oControlVariantPlugin = new sap.ui.rta.plugin.ControlVariant({
-				commandFactory : new CommandFactory()
-			});
-
-			this.oDesignTime.attachEventOnce("synced", function() {
-				this.oLayoutOverlay = OverlayRegistry.getOverlay(this.oLayout);
-				this.oObjectPageSectionOverlay = OverlayRegistry.getOverlay(this.oObjectPageSection);
-				this.oButtonOverlay = OverlayRegistry.getOverlay(this.oButton);
-				done();
-			}.bind(this));
-
-		},
-		afterEach : function() {
-			this.oLayout.destroy();
-			this.oDesignTime.destroy();
-			sandbox.restore();
-		}
-	}, function() {
-		QUnit.test("when the control is checked for a variant change handler", function(assert) {
-			var bVariantChangeHandlerForSectionRename = this.oPlugin._hasVariantChangeHandler("rename", this.oObjectPageSection);
-			var bVariantChangeHandlerForButtonRemove = this.oPlugin._hasVariantChangeHandler("removeButton", this.oButton);
-			assert.ok(bVariantChangeHandlerForSectionRename, "then the control has a variant ChangeHandler");
-			assert.notOk(bVariantChangeHandlerForButtonRemove, "then the control has no variant ChangeHandler");
-		});
-
-		QUnit.test("when calling 'getVariantManagementReference'", function(assert) {
-			this.oButtonOverlay.setDesignTimeMetadata({
-				actions: {
-					remove: {
-						changeType: "removeButton"
-					}
-				}
-			});
-
-			sandbox.stub(this.oObjectPageSectionOverlay, "getVariantManagement").returns("variant-test");
-			sandbox.stub(this.oButtonOverlay, "getVariantManagement").returns(undefined);
-			var oObjectPageSectionAction = this.oObjectPageSectionOverlay.getDesignTimeMetadata().getAction("rename", this.oObjectPageSectionOverlay.getElement());
-			var oButtonAction = this.oButtonOverlay.getDesignTimeMetadata().getAction("remove", this.oButtonOverlay.getElement());
-
-			var sVarMgmtRefForObjectPageSection = this.oPlugin.getVariantManagementReference(this.oObjectPageSectionOverlay, oObjectPageSectionAction);
-			var sVarMgmtRefForButton = this.oPlugin.getVariantManagementReference(this.oButtonOverlay, oButtonAction);
-			assert.equal(sVarMgmtRefForObjectPageSection, "variant-test", "then for the control with variant ChangeHandler the variant management reference is returned");
-			assert.equal(sVarMgmtRefForButton, undefined, "then for the control without variant ChangeHandler undefined is returned");
-		});
-
-		QUnit.test("when calling 'getVariantManagementReference' with a stashed control", function(assert) {
-			var mSettings = {};
-			mSettings.sParentId = this.oObjectPageSection.getId();
-			var oStashedControl = new sap.ui.core._StashedControl("stashedControl",mSettings);
-
-
-			var oDesignTimeMetadata = new ElementDesignTimeMetadata(
-				{
-					data: {
-						actions: {
-							reveal: {
-								changeType: "unstashControl"
-							}
-						}
-					}
-				}
-			);
-
-			//Faked in AdditionalElementsPlugin
-			var oRevealAction = oDesignTimeMetadata.getAction("reveal");
-			var oObjectPageSectionAction = this.oObjectPageSectionOverlay.getDesignTimeMetadata().getAction("rename", this.oObjectPageSectionOverlay.getElement());
-
-			sandbox.stub(this.oObjectPageSectionOverlay, "getVariantManagement").returns("variant-test");
-
-			var sVarMgmtRefForObjectPageSection = this.oPlugin.getVariantManagementReference(this.oObjectPageSectionOverlay, oObjectPageSectionAction);
-			var sVarMgmtRefForStashedControl = this.oPlugin.getVariantManagementReference(this.oObjectPageSectionOverlay, oRevealAction, false, oStashedControl);
-
-			assert.equal(sVarMgmtRefForObjectPageSection, "variant-test", "then for the control with variant ChangeHandler the variant management reference is returned");
-			assert.equal(sVarMgmtRefForStashedControl, "variant-test", "then for the stashed control with variant ChangeHandler variant management reference from parent is returned, as no overlay exists");
-		});
-	});
-
-	QUnit.module("Given this the Plugin is initialized", {
-		beforeEach : function(assert) {
-			var done = assert.async();
-
-			var oChangeRegistry = ChangeRegistry.getInstance();
-			oChangeRegistry.registerControlsForChanges({
-				"VerticalLayout" : {
-					"moveControls": "default"
-				}
-			});
-
-			this.oButton = new Button();
-			this.oLayout = new VerticalLayout({
-				content : [
-					this.oButton
-				]
-			}).placeAt("qunit-fixture");
-
-			sap.ui.getCore().applyChanges();
-
-			this.oDesignTime = new DesignTime({
-				rootElements : [this.oLayout]
-			});
-
-			this.oPlugin = new sap.ui.rta.plugin.Plugin({
-				commandFactory : new CommandFactory()
-			});
-			this.oRemovePlugin = new Remove();
-
-			sandbox.stub(this.oPlugin, "_isEditable").returns(true);
-			sandbox.stub(this.oRemovePlugin, "_isEditable").returns(true);
-
-			this.oDesignTime.attachEventOnce("synced", function() {
-				this.oLayoutOverlay = OverlayRegistry.getOverlay(this.oLayout);
-				this.oButtonOverlay = OverlayRegistry.getOverlay(this.oButton);
-				done();
-			}.bind(this));
-
-		},
-		afterEach : function() {
-			this.oLayout.destroy();
-			this.oDesignTime.destroy();
-			sandbox.restore();
-		}
-	}, function() {
-		QUnit.test("when '_getChangeHandler' is called with a control that has the default change handler registered for 'moveControls'", function(assert) {
-			assert.strictEqual(this.oPlugin._getChangeHandler("moveControls", this.oLayout), MoveControlsChangeHandler, "then the function returns the correct change handler");
-		});
+	QUnit.done(function() {
+		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });

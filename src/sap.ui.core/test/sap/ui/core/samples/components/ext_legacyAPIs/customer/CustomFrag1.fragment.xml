@@ -1,0 +1,7 @@
+<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core">
+	<Panel headerText="Customer Fragment 1">
+		<Button text="This Button is in an Extension Fragment" />
+		<Text text="{path:'/number', formatter:'.formatNumber'}" tooltip="formatted number in extension Fragment CustomFrag1"></Text>
+		<core:ExtensionPoint name="epCustomFrag1" />
+	</Panel>
+</core:FragmentDefinition>

@@ -1,7 +1,6 @@
 <!DOCTYPE HTML>
 <html>
 <head>
-	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<title>sap.m.OverflowToolbar inside RichTextEditor</title>
 
 
@@ -32,7 +31,36 @@
 			}
 
 			try {
-				oCore.loadLibrary("sap.ui.richtexteditor");
+				sap.ui.require(["sap/ui/richtexteditor/RichTextEditor", "sap/m/App", "sap/m/Page", "sap/m/Button"],
+					function (RTE, App, Page, Button) {
+						var oRichTextEditor = new RTE("myRTE", {
+							editorType: sap.ui.richtexteditor.EditorType.TinyMCE4,
+							width: "100%",
+							height: "300px",
+							showGroupFont: true,
+							showGroupUndo: true,
+							showGroupLink: true,
+							showGroupInsert: true,
+							customToolbar: true,
+							tooltip: "My RTE Tooltip",
+							value: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean libero urna, bibendum non dapibus in, sollicitudin ac nulla. Donec ac mi at mi commodo sollicitudin.",
+							customButtons: [new Button({
+								id: "my-custom-button",
+								text: "Custom Button",
+								icon: "sap-icon://crm-sales",
+								type: "Transparent",
+								press: function () {
+									oRichTextEditor.setValue("Hello world!");
+								}
+							})],
+							ready: function () {
+								var oTinyMCE = oRichTextEditor.getNativeApi();
+								oTinyMCE.selection.select(oTinyMCE.getBody(), true);
+							}
+						});
+
+						_buildLayout(App, Page, [oRichTextEditor]);
+					});
 			} catch (e) {
 				sap.ui.require(["sap/m/App", "sap/m/Page", "sap/m/OverflowToolbar", "sap/m/Button"],
 					function (App, Page, OverflowToolbar, Button) {
@@ -61,41 +89,6 @@
 						_buildLayout(App, Page, [oToolbar, oButton2, oButton1]);
 					});
 			}
-
-			if (!oCore.getLoadedLibraries()["sap.ui.richtexteditor"]) {
-				return;
-			}
-
-			sap.ui.require(["sap/ui/richtexteditor/RichTextEditor", "sap/m/App", "sap/m/Page", "sap/m/Button"],
-				function (RTE, App, Page, Button) {
-					var oRichTextEditor = new RTE("myRTE", {
-						editorType: sap.ui.richtexteditor.EditorType.TinyMCE4,
-						width: "100%",
-						height: "300px",
-						showGroupFont: true,
-						showGroupUndo: true,
-						showGroupLink: true,
-						showGroupInsert: true,
-						customToolbar: true,
-						tooltip: "My RTE Tooltip",
-						value: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean libero urna, bibendum non dapibus in, sollicitudin ac nulla. Donec ac mi at mi commodo sollicitudin.",
-						customButtons: [new Button({
-							id: "my-custom-button",
-							text: "Custom Button",
-							icon: "sap-icon://crm-sales",
-							type: "Transparent",
-							press: function () {
-								oRichTextEditor.setValue("Hello world!");
-							}
-						})],
-						ready: function () {
-							var oTinyMCE = oRichTextEditor.getNativeApi();
-							oTinyMCE.selection.select(oTinyMCE.getBody(), true);
-						}
-					});
-
-					_buildLayout(App, Page, [oRichTextEditor]);
-				});
 		});
 	</script>
 </head>

@@ -2,11 +2,11 @@
  * ${copyright}
  */
 
-sap.ui.define(['./Matcher'], function (Matcher) {
+sap.ui.define(['sap/ui/test/matchers/Matcher'], function (Matcher) {
 	"use strict";
 
 	/**
-	 * @class Visible - check if a controls domref is visible
+	 * @class Checks if a controls domref is visible.
 	 * @private
 	 * @extends sap.ui.test.matchers.Matcher
 	 * @name sap.ui.test.matchers.Visible
@@ -14,15 +14,18 @@ sap.ui.define(['./Matcher'], function (Matcher) {
 	 * @since 1.34
 	 */
 	return Matcher.extend("sap.ui.test.matchers.Visible", /** @lends sap.ui.test.matchers.Visible.prototype */ {
-		isMatching:  function(oControl) {
-			if (!oControl.getDomRef()) {
-				this._oLogger.debug("Control '" + oControl + "'' is not rendered");
-				return false;
-			}
+		isMatching: function (oControl) {
+			var oDomRef = oControl.$();
+			var bVisible = false;
 
-			var bVisible = oControl.$().is(":visible");
-			if (!bVisible) {
-				this._oLogger.debug("Control '" + oControl + "' is not visible");
+			if (oDomRef.length) {
+				if (oDomRef.is(":hidden") || oDomRef.css("visibility") === "hidden") {
+					this._oLogger.debug("Control '" + oControl + "' is not visible");
+				} else {
+					bVisible = true;
+				}
+			} else {
+				this._oLogger.debug("Control '" + oControl + "'' is not rendered");
 			}
 
 			return bVisible;

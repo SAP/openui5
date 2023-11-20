@@ -1,0 +1,280 @@
+{
+  "1.88.0": {
+    "date": "March 2021",
+    "notes": [
+      {
+        "id": "e1895193ca5d61e56f4f1a3b34d553c05a4f1ce4",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: Arrows in navigation are now disabled when border reached",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400001420432021"
+          }
+        ]
+      },
+      {
+        "id": "09d12d2b52b0ba16ca578accacb92b9ab95b0067",
+        "type": "FIX",
+        "text": " sap.m.Table: strict layout single column handling bug is fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180127458"
+          },
+          {
+            "type": "BCP",
+            "reference": "2180136742"
+          },
+          {
+            "type": "BCP",
+            "reference": "2180129886"
+          },
+          {
+            "type": "BCP",
+            "reference": "2180129839"
+          }
+        ]
+      },
+      {
+        "id": "7279b572cd392319132cfc46ea63fe2d58b9f8e3",
+        "type": "FIX",
+        "text": " sap.m.Link: Now has four side focus in popin of table",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180123486"
+          }
+        ]
+      },
+      {
+        "id": "beb9d501308b3b0f581f1604224ec5c728ef7527",
+        "type": "FIX",
+        "text": " sap.m.RadioButton: Invalid state is read out only once",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180055487"
+          }
+        ]
+      },
+      {
+        "id": "9b11a49171912580a10e0a31811ebeee52c5629f",
+        "type": "FIX",
+        "text": " sap.m.ViewSettingsDialog: group item selected state is properly applied",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180060562"
+          }
+        ]
+      },
+      {
+        "id": "b28b855708ca513a811606e9bbb79f16a19201ab",
+        "type": "FIX",
+        "text": " sap.m.DatePicker: referencing invisible text elements as aria labelled by now works",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400000848162021"
+          }
+        ]
+      },
+      {
+        "id": "ab045b2440d0e2d27133f7a82003f942b6159941",
+        "type": "FEATURE",
+        "text": " SinglePlanningCalendar: We no longer have duplicate ID in appointment parts"
+      },
+      {
+        "id": "ab6acd86de3cda65b21cae80941827cdd07f8bf0",
+        "type": "FIX",
+        "text": " sap.m.Input: Text is now selected correctly"
+      },
+      {
+        "id": "1482c03053983f3f3c9fae95fc97780ed6ad3c2a",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: Changing Token text invalidates the MultiInput",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180078969"
+          }
+        ]
+      },
+      {
+        "id": "a9fb60aa09966ea77e592d6e8800090a74240f91",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: year picker is properly displayed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180051173"
+          }
+        ]
+      },
+      {
+        "id": "05b97e94bce894d5d87ba1321ad39734ea8b20b0",
+        "type": "FIX",
+        "text": " sap.m.ListItemBase: content of list item should not overflow",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180120943"
+          }
+        ]
+      },
+      {
+        "id": "3ce419eb51dd62097728028c0376262c8b1a0ec1",
+        "type": "FIX",
+        "text": " CalendarRow: Appointments with no overlap are rendered in the same level",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400000342992021"
+          }
+        ]
+      },
+      {
+        "id": "4acf5131fe437a60319279b71b649fc2ad528adb",
+        "type": "FIX",
+        "text": " Input controls: Curly braces properly escaped",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180097576"
+          }
+        ]
+      },
+      {
+        "id": "176d1aab87147cab037d2b19d0551d135b4b9348",
+        "type": "FIX",
+        "text": " sap.m.StepInput: ValueState is now correct when specific case is performed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180047450"
+          }
+        ]
+      },
+      {
+        "id": "d900592b1c0c7dc78d29d029918646a856835ac5",
+        "type": "FIX",
+        "text": " sap.m.ObjectHeader: Flag position alignment",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180080490"
+          }
+        ]
+      },
+      {
+        "id": "ba880434f384a5784dbdcad3a753f1f07a489655",
+        "type": "FIX",
+        "text": " sap.m.Input: SuggestionItemSelected fired correctly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180085158"
+          },
+          {
+            "type": "BCP",
+            "reference": "2180088592"
+          }
+        ]
+      },
+      {
+        "id": "65a63c59d5b35698f6d1ed688b3e30c345ae8b5b",
+        "type": "FIX",
+        "text": " sap.m.Label: Colon symbol is properly aligned in all languages",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180097518"
+          }
+        ]
+      },
+      {
+        "id": "454a41c8b7034c673a9c34b92921ced54b7bdce5",
+        "type": "FEATURE",
+        "text": " Use avatar instead of an image"
+      },
+      {
+        "id": "45f6cf2b731b17bae8cf8676ad969a9ff400c852",
+        "type": "FIX",
+        "text": " TablePersoDialog: resetAll button fix",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080241800"
+          }
+        ]
+      },
+      {
+        "id": "673e64160a068e09eb6301e5e8f7df3a2e2c6198",
+        "type": "FIX",
+        "text": " sap.m.SuggestionsPopover: Navigating from list to input updates the value",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180086257"
+          }
+        ]
+      },
+      {
+        "id": "6e9d77ce7c36d313eeea32fa217e7d9a0ca45743",
+        "type": "FIX",
+        "text": " sap.m.ComboBox: Performance optimisations",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400000292512021"
+          }
+        ]
+      },
+      {
+        "id": "148c566dce130ac03fb25809643320efa3b0007b",
+        "type": "FIX",
+        "text": " sap.m.RadioButton: No longer overflows when used standalone or in Groups with 1 column",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080199747"
+          }
+        ]
+      },
+      {
+        "id": "0fd31688bf2d8e9c2e89e3beac7cddf01e2d21e1",
+        "type": "FIX",
+        "text": " sap.m.MultiComboBox: Focus should stay on the input field on open",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180046863"
+          }
+        ]
+      },
+      {
+        "id": "df8a377567810ce1db30e797586da1dc17496fad",
+        "type": "FIX",
+        "text": " sap.m.Title: Demokit page is now aligned",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180095227"
+          }
+        ]
+      },
+      {
+        "id": "b9e64f87c9098569f69b47f5e268a8a7400e6a20",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: Escape curly braces when creating Token",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180090423"
+          }
+        ]
+      }
+    ]
+  }
+}

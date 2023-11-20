@@ -6,6 +6,10 @@
 			.sapMFlexItem {
 				margin:0 0 0 2rem;
 			}
+
+			.sapMLightBoxImage {
+				 margin: 10px;
+			}
 		</style>
 		<script src="shared-config.js"></script>
 		<script src="../../../resources/sap-ui-core.js"
@@ -18,14 +22,13 @@
 				imageContent: new sap.m.LightBoxItem({
 					imageSrc: 'images/demo/nature/elephant.jpg',
 					title: 'I am a title',
-					subtitle: 'Sample image',
 					alt: 'picture of elephant'
 				})
 			});
 
 			var oLightBoxBig = new sap.m.LightBox('lB2', {
 				imageContent: new sap.m.LightBoxItem({
-					imageSrc: 'images/demo/nature/aLotOfElephants.jpg',
+					imageSrc: 'images/demo/nature/ALotOfElephants.jpg',
 					title: 'I am a title',
 					subtitle: 'Very big image',
 					alt: 'picture of elephant'
@@ -77,6 +80,14 @@
 				})
 			});
 
+			var oLightBoxInvalidImageTimeout = new sap.m.LightBox('lB8A', {
+				imageContent: new sap.m.LightBoxItem({
+					title: 'Light box with image - time out error',
+					subtitle: 'Second line',
+					imageSrc: 'images/demo/nature/ALotOfElephants.jpg'
+				})
+			});
+
 			var oLightBoxInvalidImage = new sap.m.LightBox('lB8', {
 				imageContent: new sap.m.LightBoxItem({
 					title: 'Light box with invalid image',
@@ -88,7 +99,6 @@
 			var oLightBoxInvalidImage2 = new sap.m.LightBox('lB9', {
 				imageContent: new sap.m.LightBoxItem({
 					title: 'Light box with invalid image',
-					subtitle: 'Second line',
 					imageSrc: 'invalidSource'
 				})
 			});
@@ -156,6 +166,23 @@
 				densityAware: false
 			});
 
+			var oTextTimeOut = new sap.m.Text({
+				text: "The following image is used for testing the error message when the image is not loaded in 10 seconds. To see it, simulate slow network connection in your browser. For example, in Chrome DevTools set the speed to 'Slow 3G' in the 'Network' tab."
+			});
+
+			var oInvalidImageTimeOut = new sap.m.Image('image8A', {
+				src: 'images/demo/nature/elephant.jpg',
+				alt: 'opens light box with image that will time out. The lightbox will display an error message for time out',
+				decorative: false,
+				width: '100px',
+				detailBox: oLightBoxInvalidImageTimeout,
+				densityAware: false
+			});
+
+			var oTextImageError = new sap.m.Text({
+				text: "Next two samples are used for testing the error message, when the image could not be loaded"
+			});
+
 			var oInvalidImage = new sap.m.Image('image8', {
 				src: 'images/demo/nature/elephant.jpg',
 				alt: 'opens light box with image that has a wrong source set. The lightbox will display an error message',
@@ -184,6 +211,17 @@
 				}
 			});
 
+			var oVBox = new sap.m.VBox({
+				items: [
+					oTextTimeOut,
+					oInvalidImageTimeOut,
+					oTextImageError,
+					oInvalidImage,
+					oInvalidImage2,
+					compactSizeButton
+				]
+			});
+
 			var oPage = new sap.m.Page("myPage", {
 				content: [
 					oImage,
@@ -193,15 +231,13 @@
 					oImageSquare,
 					oImageVerticalMin,
 					oImageHorizontalMin,
-					oInvalidImage,
-					oInvalidImage2,
-					compactSizeButton
+					oVBox
 				]
 			});
 
 			var oApp = new sap.m.App("myApp", {
 				initialPage:"myPage"
-			});			
+			});
 			oApp.addPage(oPage);
 
 			oApp.placeAt("body");

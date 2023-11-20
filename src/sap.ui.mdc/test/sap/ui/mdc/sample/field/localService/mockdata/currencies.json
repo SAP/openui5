@@ -1,0 +1,22 @@
+[
+	{
+		"id": "EUR",
+		"unit": "EUR",
+		"text": "Euro"
+	},
+	{
+		"id": "USD",
+		"unit": "USD",
+		"text": "US-Dollar"
+	},
+	{
+		"id": "JPY",
+		"unit": "JPY",
+		"text": "Japan Yen"
+	},
+	{
+		"id": "SEK",
+		"unit": "SEK",
+		"text": "Swedish krona"
+	}
+]

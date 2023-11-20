@@ -1,0 +1,340 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta charset="UTF-8">
+
+<title>PropertyHelper example</title>
+
+<script src="../../shared-config.js"></script>
+<script id="sap-ui-bootstrap" type="text/javascript"
+		src="../../../../../../resources/sap-ui-core.js"
+		data-sap-ui-libs="sap.m, sap.ui.layout, sap.ui.codeeditor"
+		data-sap-ui-compatVersion="edge"
+		data-sap-ui-xx-bindingSyntax="complex">
+</script>
+<style>
+	#content {
+		display: flex;
+		flex-direction: column;
+	}
+	#main {
+		flex: 1 1 auto;
+	}
+	#main > :first-child {
+		height: 100%;
+	}
+	#log {
+		max-height: 500px;
+		overflow: auto;
+	}
+	#log:not(:empty) {
+		border: 2px solid red;
+	}
+	#log > .error {
+		color: red;
+	}
+	#log > .warning {
+		color: darkorange;
+	}
+</style>
+<script>
+	sap.ui.require([
+		"sap/base/Log",
+		"sap/ui/model/json/JSONModel",
+		"sap/ui/layout/cssgrid/CSSGrid",
+		"sap/ui/codeeditor/CodeEditor",
+		"sap/m/TextArea",
+		"sap/m/Input",
+		"sap/m/Title",
+		"sap/m/Text",
+		"sap/m/OverflowToolbar",
+		"sap/m/ToolbarSpacer",
+		"sap/m/Button",
+		"sap/m/CheckBox",
+		"sap/ui/model/type/String"
+	], function(Log,
+	JSONModel,
+	CSSGrid,
+	CodeEditor,
+	TextArea,
+	Input,
+	Title,
+	Text,
+	OverflowToolbar,
+	ToolbarSpacer,
+	Button,
+	CheckBox,
+	StringType
+	) {
+		sap.ui.getCore().attachInit(function() {
+			var aInitialPropertyInfos = [
+				{
+					name: "PropertyA",
+					label: "Property A",
+					dataType: "String"
+				}, {
+					name: "PropertyB",
+					label: "Property B",
+					visible: false,
+					path: "blub",
+					dataType: "String",
+					maxConditions: 2,
+					group: "groupA",
+					groupLabel: "Group A",
+					filterable: false,
+					sortable: true
+				}, {
+					name: "ComplexPropertyA",
+					label: "Complex property A",
+					propertyInfos: ["PropertyA", "PropertyB"]
+				}
+			];
+			var mInitialAdditionalAttributesMetadata = {
+				filterable: true,
+				sortable: true,
+				propertyInfos: true,
+				additionalAttribute: {type: "string", "default": {value: "default value"}}
+			};
+			var oSettings = new JSONModel({helperSettingsEnabled: true});
+
+			var oPropertyInfosInput = new CodeEditor({
+				type: "json"
+			}).setValue(stringify(aInitialPropertyInfos));
+			var oInputLayout = new CSSGrid({
+				items: [
+					new OverflowToolbar({
+						content: [
+							new Title({text: "Property info input"}),
+							new ToolbarSpacer(),
+							new Button({
+								text: "Reset",
+								press: function() {
+									oPropertyInfosInput.setValue(stringify(aInitialPropertyInfos));
+									savePropertyInfos();
+								}
+							}),
+							new Button({
+								text: "Save",
+								press: function() {
+									savePropertyInfos();
+								},
+								enabled: false
+							})
+						]
+					}),
+					oPropertyInfosInput
+				],
+				gridTemplateRows: "auto 1fr"
+			});
+
+			var oPropertyHelperClassInput = new Input({
+				value: "sap.ui.mdc.util.PropertyHelper",
+				placeholder: "Path to PropertyHelper module",
+				liveChange: function(oEvent) {
+					var sValue = oEvent.getParameter("value");
+					oSettings.setProperty("/helperSettingsEnabled", sValue === "sap.ui.mdc.util.PropertyHelper");
+				}
+			});
+			var oAdditionalAttributesInput = new CodeEditor({
+				type: "json",
+				visible: "{/helperSettingsEnabled}"
+			}).setValue(stringify(mInitialAdditionalAttributesMetadata));
+			var oSettingsLayout = new CSSGrid({
+				items: [
+					new OverflowToolbar({
+						content: [
+							new Title({text: "PropertyHelper settings"}),
+							new ToolbarSpacer(),
+							new Button({
+								text: "Reset",
+								press: function() {
+									oPropertyHelperClassInput.setValue("sap.ui.mdc.util.PropertyHelper");
+									oAdditionalAttributesInput.setValue(stringify(mInitialAdditionalAttributesMetadata));
+									oSettings.setProperty("/helperSettingsEnabled", true);
+									savePropertyHelperSettings();
+								}
+							}),
+							new Button({
+								text: "Save",
+								press: function() {
+									savePropertyHelperSettings();
+								},
+								enabled: false
+							})
+						]
+					}),
+					new Text({text: "Class"}),
+					oPropertyHelperClassInput,
+					new Text({text: "Additional attribute metadata", visible: "{/helperSettingsEnabled}"}),
+					oAdditionalAttributesInput,
+				],
+				gridTemplateRows: "auto auto auto auto 1fr"
+			});
+
+			var oPropertyOutput = new CodeEditor({
+				type: "json",
+				editable: false
+			});
+			var oFullOutputCheckBox = new CheckBox({
+				text: "Including non-enumerable"
+			});
+			var oOutputLayout = new CSSGrid({
+				items: [
+					new OverflowToolbar({
+						content: [
+							new Title({text: "PropertyHelper#getProperties"}),
+							oFullOutputCheckBox,
+							new ToolbarSpacer(),
+							new Button({
+								text: "Update",
+								press: function() {
+									update();
+								}
+							})
+						]
+					}),
+					oPropertyOutput
+				],
+				gridTemplateRows: "auto 1fr"
+			});
+
+			new CSSGrid({
+				items: [oInputLayout, oSettingsLayout, oOutputLayout],
+				gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))",
+				gridAutoRows: "1fr",
+				models: oSettings
+			}).placeAt("main");
+
+			function update() {
+				var sPropertyInfos = oPropertyInfosInput.getValue();
+				var sAdditionalAttributes = oAdditionalAttributesInput.getValue();
+				var bFullOutput = oFullOutputCheckBox.getSelected();
+				var aPropertyInfos = sPropertyInfos ? JSON.parse(sPropertyInfos) : undefined;
+				var mAdditionalAttributesMetadata = sAdditionalAttributes ? JSON.parse(sAdditionalAttributes) : undefined;
+				var aLogEntries = [];
+				var oLogListener = {
+					onLogEntry: function(oLogEntry) {
+						if (oLogEntry.message.indexOf("Invalid property definition") === 0) {
+							aLogEntries.push(oLogEntry);
+						}
+					}
+				};
+
+				clearLog();
+
+				sap.ui.require([
+					oPropertyHelperClassInput.getValue().trim().replace(/\./g, "/")
+				], function(PropertyHelper) {
+					try {
+						Log.addLogListener(oLogListener);
+						if (oSettings.getProperty("/helperSettingsEnabled")) {
+							oPropertyHelper = new PropertyHelper(aPropertyInfos, null, mAdditionalAttributesMetadata);
+						} else {
+							oPropertyHelper = new PropertyHelper(aPropertyInfos);
+						}
+						Log.removeLogListener(oLogListener);
+
+						if (bFullOutput) {
+							oPropertyOutput.setValue(stringify(oPropertyHelper.getProperties().map(getFullPropertyJSON)));
+						} else {
+							oPropertyOutput.setValue(stringify(oPropertyHelper.getProperties()));
+						}
+
+						oPropertyHelper.destroy();
+					} catch (e) {
+						oPropertyOutput.setValue();
+						writeLogEntry(e.message, Log.Level.ERROR);
+						throw e;
+					}
+
+					aLogEntries.forEach(function(oEntry) {
+						if (oEntry.message.indexOf("Invalid property definition") === 0) {
+							writeLogEntry(oEntry.message, oEntry.level);
+						}
+					})
+				}, function(e) {
+					writeLogEntry(e.message, Log.Level.ERROR);
+				});
+			}
+
+			function getFullPropertyJSON(oProperty) {
+				var oJSON = {};
+				var aFunctionKeys = [];
+				var aReferenceKeys = [];
+				var aOrderedKeys = [];
+
+				Object.getOwnPropertyNames(oProperty).forEach(function(sKey) {
+					if (typeof oProperty[sKey] === "function") {
+						aFunctionKeys.push(sKey);
+					} else if (sKey.startsWith("_")) {
+						aReferenceKeys.push(sKey);
+					} else {
+						aOrderedKeys.push(sKey);
+					}
+				});
+
+				aReferenceKeys.forEach(function(sKey) {
+					aOrderedKeys.splice(aOrderedKeys.indexOf(sKey.substring(1)) + 1, 0, sKey);
+				});
+
+				aOrderedKeys.forEach(function(sKey) {
+					oJSON[sKey] = oProperty[sKey];
+				});
+
+				aFunctionKeys.forEach(function(sKey) {
+					oJSON[sKey + "()"] = oProperty[sKey]();
+				})
+
+				return oJSON;
+			}
+
+			function clearLog() {
+				document.getElementById("log").innerText = "";
+			}
+
+			function writeLogEntry(sMessage, iLevel) {
+				var oLogElement = document.getElementById("log");
+				var oLogEntryElement = document.createElement("div");
+
+				oLogEntryElement.innerText = sMessage.split("\n")[0];
+
+				switch (iLevel) {
+					case Log.Level.ERROR:
+						oLogEntryElement.classList.add("error");
+						break;
+					case Log.Level.WARNING:
+						oLogEntryElement.classList.add("warning");
+						break;
+					default:
+				}
+
+				oLogElement.appendChild(oLogEntryElement);
+			}
+
+			function savePropertyInfos() {
+
+			}
+
+			function savePropertyHelperSettings() {
+
+			}
+
+			update();
+		});
+});
+
+	function stringify(vValue) {
+		return JSON.stringify(vValue, null, 4)
+	}
+</script>
+</head>
+<body class="sapUiBody sapUiSizeCompact">
+<div id="content" style="height: 100vh;">
+	<div id="main"></div>
+	<div id="log"></div>
+</div>
+</body>
+</html>
+

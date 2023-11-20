@@ -1,0 +1,19 @@
+{
+	"@odata.metadataEtag" : "W/\"20200804153016\"",
+	"value" : [{
+		"@odata.etag" : "W/\"20200807145436.8614010 \"",
+		"SalesOrderID" : "0500000004",
+		"Note" : "Test (refreshed)",
+		"CurrencyCode" : "EUR",
+		"GrossAmount" : "1001.00",
+		"LifecycleStatusDesc" : "New",
+		"Messages" : [],
+		"CreatedAt" : "2020-08-01T22:00:00Z",
+		"ChangedAt" : "2020-08-23T17:08:35.968275Z",
+		"SO_2_BP" : {
+			"@odata.etag" : "W/\"20200702154409.0000000 \"",
+			"BusinessPartnerID" : "0100000006",
+			"CompanyName" : "Asia High tech"
+		}
+	}]
+}

@@ -1,14 +1,14 @@
 /*
  * grunt ui5docs-api-index task.
  *
- * (c) Copyright 2009-2018 SAP SE or an SAP affiliate company.
+ * (c) Copyright 2009-2023 SAP SE or an SAP affiliate company.
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
  */
 
 'use strict';
 
 const path = require('path');
-const indexer = require("../../lib/jsdoc/create-api-index");
+const indexer = require("../../lib/jsdoc/createIndexFiles");
 
 module.exports = function(grunt) {
 

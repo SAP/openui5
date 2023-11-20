@@ -3,8 +3,8 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', './BarInPageEnabler', 'sap/ui/Device'],
-	function(jQuery, BarInPageEnabler, Device) {
+sap.ui.define(['./BarInPageEnabler', "sap/base/i18n/Localization", 'sap/ui/Device', "sap/base/Log", 'sap/m/HBox'],
+	function(BarInPageEnabler, Localization, Device, Log, HBox) {
 	"use strict";
 
 
@@ -12,7 +12,9 @@ sap.ui.define(['jquery.sap.global', './BarInPageEnabler', 'sap/ui/Device'],
 	 * Bar renderer.
 	 * @namespace
 	 */
-	var BarRenderer = {};
+	var BarRenderer = {
+		apiVersion: 2
+	};
 
 	/////////////////
 	//Bar in page delegation
@@ -22,7 +24,7 @@ sap.ui.define(['jquery.sap.global', './BarInPageEnabler', 'sap/ui/Device'],
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
 	 * @protected
 	 * @param {sap.ui.core.RenderManager} oRM The RenderManager that can be used for writing to the Render-Output-Buffer.
-	 * @param {sap.ui.core.Control} oControl An object representation of the control that should be rendered
+	 * @param {sap.m.Bar} oControl An object representation of the control that should be rendered
 	 */
 	BarRenderer.render = BarInPageEnabler.prototype.render;
 
@@ -34,21 +36,25 @@ sap.ui.define(['jquery.sap.global', './BarInPageEnabler', 'sap/ui/Device'],
 	 * Adds classes attributes and styles to the root tag
 	 *
 	 * @param {sap.ui.core.RenderManager} oRM The RenderManager that can be used for writing to the Render-Output-Buffer
-	 * @param {sap.ui.core.Control} oControl An object representation of the control that should be rendered
+	 * @param {sap.m.Bar} oControl An object representation of the control that should be rendered
 	 */
 	BarRenderer.decorateRootElement = function (oRM, oControl) {
-		oRM.addClass("sapMBar");
-		oRM.addClass(this.getContext(oControl));
+		oRM.class("sapMBar");
+		oRM.class(this.getContext(oControl));
 
-		oRM.writeAccessibilityState(oControl, {
-			"role": oControl._getRootAccessibilityRole()
+		oRM.accessibilityState(oControl, {
+			"role": oControl._getRootAccessibilityRole(),
+			"level":  oControl._getRootAriaLevel()
 		});
 
-		if (oControl.getTranslucent() && (Device.support.touch  || jQuery.sap.simulateMobileOnDesktop)) {
-			oRM.addClass("sapMBarTranslucent");
+		/**
+		 * @deprecated since version 1.18.6.
+		 */
+		if (oControl.getTranslucent() && Device.support.touch) {
+			oRM.class("sapMBarTranslucent");
 		}
 
-		oRM.addClass("sapMBar-CTX");
+		oRM.class("sapMBar-CTX");
 	};
 
 	/**
@@ -63,30 +69,35 @@ sap.ui.define(['jquery.sap.global', './BarInPageEnabler', 'sap/ui/Device'],
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
 	 *
 	 * @param {sap.ui.core.RenderManager} oRM The RenderManager that can be used for writing to the Render-Output-Buffer
-	 * @param {sap.ui.core.Control} oControl An object representation of the control that should be rendered
+	 * @param {sap.m.Bar} oControl An object representation of the control that should be rendered
 	 */
 	BarRenderer.renderBarContent = function(oRM, oControl) {
-		var sClosingDiv = "</div>";
-
 		//left content area
-		oRM.write("<div id='" + oControl.getId() + "-BarLeft' ");
-		oRM.addClass('sapMBarLeft');
-		oRM.addClass('sapMBarContainer');
-		oRM.writeClasses();
+		oRM.openStart("div", oControl.getId() + "-BarLeft");
+		oRM.class("sapMBarLeft");
+		oRM.class("sapMBarContainer");
 		writeWidthIfContentOccupiesWholeArea("left", oRM, oControl);
-		oRM.write(">");
+		oRM.openEnd();
 
 		this.renderAllControls(oControl.getContentLeft(), oRM, oControl);
 
-		oRM.write(sClosingDiv);
+		oRM.close("div");
 
 		//middle content area
-		oRM.write("<div id='" + oControl.getId() + "-BarMiddle' ");
-		oRM.addClass('sapMBarMiddle');
-		oRM.writeClasses();
-		oRM.write(">");
+		oRM.openStart("div", oControl.getId() + "-BarMiddle");
+		oRM.class("sapMBarMiddle");
+		oRM.openEnd();
+
+		var bFlexBox = false;
+		/**
+		 * @deprecated As of version 1.16
+		 */
 		if (oControl.getEnableFlexBox()) {
-			oControl._oflexBox = oControl._oflexBox || new sap.m.HBox(oControl.getId() + "-BarPH", {alignItems: "Center"}).addStyleClass("sapMBarPH").setParent(oControl, null, true);
+			bFlexBox = true;
+			oControl._oflexBox = oControl._oflexBox
+				|| new HBox(oControl.getId() + "-BarPH", {
+					alignItems: "Center"
+				}).addStyleClass("sapMBarPH").setParent(oControl, null, true);
 			var bContentLeft = !!oControl.getContentLeft().length,
 				bContentMiddle = !!oControl.getContentMiddle().length,
 				bContentRight = !!oControl.getContentRight().length;
@@ -99,40 +110,39 @@ sap.ui.define(['jquery.sap.global', './BarInPageEnabler', 'sap/ui/Device'],
 			});
 
 			oRM.renderControl(oControl._oflexBox);
-		} else {
-			oRM.write("<div id='" + oControl.getId() + "-BarPH' ");
-			oRM.addClass('sapMBarPH');
-			oRM.addClass('sapMBarContainer');
+		}
+
+		if (!bFlexBox) {
+			oRM.openStart("div", oControl.getId() + "-BarPH");
+			oRM.class("sapMBarPH");
+			oRM.class("sapMBarContainer");
 			writeWidthIfContentOccupiesWholeArea("middle", oRM, oControl);
-			oRM.writeClasses();
-			oRM.write(">");
+			oRM.openEnd();
 
 			this.renderAllControls(oControl.getContentMiddle(), oRM, oControl);
 
-			oRM.write(sClosingDiv);
+			oRM.close("div");
 		}
-		oRM.write(sClosingDiv);
-
+		oRM.close("div");
 
 		//right content area
-		oRM.write("<div id='" + oControl.getId() + "-BarRight'");
-		oRM.addClass('sapMBarRight');
-		oRM.addClass('sapMBarContainer');
-		if (sap.ui.getCore().getConfiguration().getRTL()) {
-			oRM.addClass("sapMRTL");
+		oRM.openStart("div", oControl.getId() + "-BarRight");
+		oRM.class("sapMBarRight");
+		oRM.class("sapMBarContainer");
+		if (Localization.getRTL()) {
+			oRM.class("sapMRTL");
 		}
-		oRM.writeClasses();
 		writeWidthIfContentOccupiesWholeArea("right", oRM, oControl);
-		oRM.write(">");
+		oRM.openEnd();
 
 		this.renderAllControls(oControl.getContentRight(), oRM, oControl);
 
-		oRM.write(sClosingDiv);
+		oRM.close("div");
 	};
 
 	/**
 	 * Makes the RenderManager render all controls in an array.
-	 * @param {sap.ui.core.Control} aControls The Controls to be rendered
+	 * @param {sap.ui.core.Control[]} aControls The Controls to be rendered
 	 * @param {sap.ui.core.RenderManager} oRM The RenderManager that can be used for writing to the Render-Output-Buffer
 	 * @param {sap.m.Bar} oBar An object representation of the control that should be rendered
 	 */
@@ -154,7 +164,7 @@ sap.ui.define(['jquery.sap.global', './BarInPageEnabler', 'sap/ui/Device'],
 	/**
 	 * Determines which tag or context class the Bar should have.
 	 * @protected
-	 * @param {sap.m.BarBase} oControl The Bar control
+	 * @param {sap.m.Bar} oControl The Bar control
 	 * @returns {string} The context class
 	 */
 	BarRenderer.getContext = function(oControl) {
@@ -168,36 +178,31 @@ sap.ui.define(['jquery.sap.global', './BarInPageEnabler', 'sap/ui/Device'],
 	 * Adds width style to 100% in case of the given content container is the only container with content amongst the three (left, middle, right)
 	 * @param {string} sArea The content container - one of the left, middle or right
 	 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the Render-Output-Buffer.
-	 * @param {sap.ui.core.Control} oControl the Bar instance
+	 * @param {sap.m.Bar} oControl the Bar instance
 	 * @private
 	 */
 	function writeWidthIfContentOccupiesWholeArea(sArea, oRm, oControl) {
 		var bContentLeft = !!oControl.getContentLeft().length,
 			bContentMiddle = !!oControl.getContentMiddle().length,
 			bContentRight = !!oControl.getContentRight().length;
-
-		function writeAndUpdate() {
-			oRm.addStyle("width", "100%");
-			oRm.writeStyles();
-		}
 		switch (sArea.toLowerCase()) {
 			case "left":
 				if (bContentLeft && !bContentMiddle && !bContentRight) {
-					writeAndUpdate();
+					oRm.style("width", "100%");
 				}
 				break;
 			case "middle":
 				if (bContentMiddle && !bContentLeft && !bContentRight) {
-					writeAndUpdate();
+					oRm.style("width", "100%");
 				}
 				break;
 			case "right" :
 				if (bContentRight && !bContentLeft && !bContentMiddle) {
-					writeAndUpdate();
+					oRm.style("width", "100%");
 				}
 				break;
 			default:
-				jQuery.sap.log.error("Cannot determine which of the three content aggregations is alone");
+				Log.error("Cannot determine which of the three content aggregations is alone");
 		}
 	}
 

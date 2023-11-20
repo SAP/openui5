@@ -21,7 +21,6 @@ sap.ui.define(['sap/ui/core/LayoutData', './library'],
 	 * @public
 	 * @since 1.50.0
 	 * @alias sap.ui.layout.BlockLayoutCellData
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) design time metamodel
 	 */
 	var BlockLayoutCellData = LayoutData.extend("sap.ui.layout.BlockLayoutCellData", { metadata : {
 		library : "sap.ui.layout",
@@ -77,7 +76,7 @@ sap.ui.define(['sap/ui/core/LayoutData', './library'],
 	 * Sets width of the cell to all sizes if the width is specified.
 	 * @param iValue
 	 * @public
-	 * @returns {sap.ui.layout.BlockLayoutCellData}
+	 * @returns {this}
 	 */
 	BlockLayoutCellData.prototype.setSize = function (iValue) {
 		this.setProperty("mSize", iValue);

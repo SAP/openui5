@@ -1,0 +1,46 @@
+<mvc:View controllerName="sap.ui.demo.accessibilityGuide.controller.ExploreSamples"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m"
+	xmlns:l="sap.ui.layout"
+	xmlns:f="sap.f"
+	xmlns:core="sap.ui.core"
+    xmlns:cardExplorer="sap.ui.demo.accessibilityGuide.controls"
+  	height="100%"
+	>
+	<l:ResponsiveSplitter id="splitView">
+		<l:PaneContainer orientation="Horizontal">
+			<l:SplitPane id="cardPane" requiredParentWidth="1">
+				<Page>
+					<customHeader>
+						<Bar>
+							<contentLeft>
+								<Title class="sapUiSmallMarginBegin" text="{/sample/title}"></Title>
+							</contentLeft>
+							<contentRight>
+								<ComboBox id="subSample" selectedKey="{/subSample/key}" items="{/sample/subSamples}" visible="{= ${/sample/subSamples} ? true : false }" selectionChange="onSubSampleChange">
+									<core:Item key="{key}" text="{title}" />
+								</ComboBox>
+							</contentRight>
+						</Bar>
+					</customHeader>
+					<core:HTML id="iframeWrapper" visible="{= ${settings>/useIFrame} }" preferDOM="false" content='&lt;div style="height:100%; overflow-y: hidden; overflow-x:auto;"&gt;
+								 &lt;/div&gt;'></core:HTML>
+				</Page>
+			</l:SplitPane>
+			<l:SplitPane requiredParentWidth="1">
+				<Page id="editPage" showHeader="false">
+<!--					<customHeader>-->
+<!--						<OverflowToolbar id="toolbar">-->
+<!--							<Button class="sapUiSmallMarginBegin" text="Run" type="Emphasized" icon="sap-icon://media-play" press="onRunPressed" enabled="{settings>/editable}">-->
+<!--								<layoutData>-->
+<!--									<OverflowToolbarLayoutData priority="High" />-->
+<!--								</layoutData>-->
+<!--							</Button>-->
+<!--						</OverflowToolbar>-->
+<!--					</customHeader>-->
+					<cardExplorer:FileEditor id="fileEditor"/>
+				</Page>
+			</l:SplitPane>
+		</l:PaneContainer>
+	</l:ResponsiveSplitter>
+</mvc:View>

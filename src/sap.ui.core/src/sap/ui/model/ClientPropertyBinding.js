@@ -1,12 +1,11 @@
 /*!
  * ${copyright}
  */
-
+/*eslint-disable max-len */
 // Provides the JSON model implementation of a property binding
 sap.ui.define(['./PropertyBinding'],
 	function(PropertyBinding) {
 	"use strict";
-
 
 	/**
 	 * Creates a new ClientPropertyBinding.
@@ -31,6 +30,7 @@ sap.ui.define(['./PropertyBinding'],
 		constructor : function(oModel, sPath, oContext, mParameters){
 			PropertyBinding.apply(this, arguments);
 			this.oValue = this._getValue();
+			this.setIgnoreMessages(mParameters && mParameters.ignoreMessages);
 		}
 
 	});
@@ -49,19 +49,24 @@ sap.ui.define(['./PropertyBinding'],
 	 */
 	ClientPropertyBinding.prototype._getValue = function(){
 		var sProperty = this.sPath.substr(this.sPath.lastIndexOf("/") + 1);
-		if (sProperty == "__name__") {
-			var aPath = this.oContext.split("/");
+		if (this.oContext && sProperty == "__name__") {
+			var aPath = this.oContext.getPath().split("/");
 			return aPath[aPath.length - 1];
 		}
 		return this.oModel.getProperty(this.sPath, this.oContext); // ensure to survive also not set model object
 	};
 
 	/**
-	 * Setter for context
+	 * Setter for context.
+	 *
+	 * @param {sap.ui.model.Context} oContext The new context to set
 	 */
 	ClientPropertyBinding.prototype.setContext = function(oContext) {
 		if (this.oContext != oContext) {
-			sap.ui.getCore().getMessageManager().removeMessages(this.getDataState().getControlMessages(), true);
+			var Messaging = sap.ui.require("sap/ui/core/Messaging");
+			if (Messaging) {
+				Messaging.removeMessages(this.getDataState().getControlMessages(), true);
+			}
 			this.oContext = oContext;
 			if (this.isRelative()) {
 				this.checkUpdate();
@@ -69,6 +74,21 @@ sap.ui.define(['./PropertyBinding'],
 		}
 	};
 
-	return ClientPropertyBinding;
+	/**
+	 * Returns <code>true</code>, as this binding supports the feature of not propagating model
+	 * messages to the control.
+	 *
+	 * @returns {boolean} <code>true</code>
+	 *
+	 * @public
+	 * @see sap.ui.model.Binding#getIgnoreMessages
+	 * @see sap.ui.model.Binding#setIgnoreMessages
+	 * @since 1.119.0
+	 */
+	// @override sap.ui.model.Binding#supportsIgnoreMessages
+	ClientPropertyBinding.prototype.supportsIgnoreMessages = function () {
+		return true;
+	};
 
+	return ClientPropertyBinding;
 });

@@ -1,58 +1,72 @@
-sap.ui.define(['sap/ui/core/mvc/Controller','sap/ui/model/json/JSONModel'],
-	function(Controller, JSONModel) {
+sap.ui.define([
+	'sap/ui/core/mvc/Controller',
+	'sap/ui/model/json/JSONModel',
+	'sap/ui/core/library',
+	'sap/ui/core/Core',
+	'sap/ui/core/date/UI5Date'
+], function(Controller, JSONModel, coreLibrary, Core, UI5Date) {
 	"use strict";
 
-	var GroupController = Controller.extend("sap.m.sample.DateTimePicker.Group", {
+	// shortcut for sap.ui.core.ValueState
+	var ValueState = coreLibrary.ValueState;
+
+	return Controller.extend("sap.m.sample.DateTimePicker.Group", {
 
 		onInit: function () {
 			// create model
 			var oModel = new JSONModel();
 			oModel.setData({
-				dateValue: new Date()
+				valueDTP2: UI5Date.getInstance(2016, 1, 18, 10, 32, 30),
+				valueDTP3: UI5Date.getInstance(),
+				valueDTP4: UI5Date.getInstance(2016, 1, 18, 10, 32, 30),
+				valueDTP5: UI5Date.getInstance(),
+				valueDTP8: UI5Date.getInstance(2016, 1, 18, 10, 32, 30),
+				valueDTP9: UI5Date.getInstance(),
+				valueDTP10: UI5Date.getInstance(2023, 2, 31, 10, 32, 30),
+				valueDTP11: null,
+				timezoneDTP10: "Australia/Sydney",
+				timezoneDTP11: "Asia/Tokyo"
 			});
 			this.getView().setModel(oModel);
-
-			this.byId("DTP3").setDateValue(new Date());
-			this.byId("DTP6").setInitialFocusedDateValue(new Date(2017, 5, 13, 11, 12, 13));
+			this.byId("DTP6").setInitialFocusedDateValue(UI5Date.getInstance(2017, 5, 13, 11, 12, 13));
 
 			this._iEvent = 0;
 
 			// for the data binding example do not use the change event for check but the data binding parsing events
-			sap.ui.getCore().attachParseError(
-					function(oEvent) {
-						var oElement = oEvent.getParameter("element");
+			Core.attachParseError(
+				function(oEvent) {
+					var oElement = oEvent.getParameter("element");
 
-						if (oElement.setValueState) {
-							oElement.setValueState(sap.ui.core.ValueState.Error);
-						}
-					});
+					if (oElement.setValueState) {
+						oElement.setValueState(ValueState.Error);
+					}
+				});
 
-			sap.ui.getCore().attachValidationSuccess(
-					function(oEvent) {
-						var oElement = oEvent.getParameter("element");
+			Core.attachValidationSuccess(
+				function(oEvent) {
+					var oElement = oEvent.getParameter("element");
 
-						if (oElement.setValueState) {
-							oElement.setValueState(sap.ui.core.ValueState.None);
-						}
-					});
+					if (oElement.setValueState) {
+						oElement.setValueState(ValueState.None);
+					}
+				});
 		},
 
 		handleChange: function (oEvent) {
-			var oText = this.byId("T1");
-			var oDTP = oEvent.oSource;
-			var sValue = oEvent.getParameter("value");
-			var bValid = oEvent.getParameter("valid");
+			var oText = this.byId("textResult"),
+				oDTP = oEvent.getSource(),
+				sValue = oEvent.getParameter("value"),
+				bValid = oEvent.getParameter("valid");
+
 			this._iEvent++;
 			oText.setText("Change - Event " + this._iEvent + ": DateTimePicker " + oDTP.getId() + ":" + sValue);
 
 			if (bValid) {
-				oDTP.setValueState(sap.ui.core.ValueState.None);
+				oDTP.setValueState(ValueState.None);
 			} else {
-				oDTP.setValueState(sap.ui.core.ValueState.Error);
+				oDTP.setValueState(ValueState.Error);
 			}
 		}
 	});
-
-	return GroupController;
 
 });

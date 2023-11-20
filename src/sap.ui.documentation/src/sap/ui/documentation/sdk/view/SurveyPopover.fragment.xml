@@ -1,0 +1,56 @@
+<core:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core">
+	<ResponsivePopover
+		id="surveyPopover"
+		placement="Bottom"
+		contentWidth="24rem"
+		showHeader="false">
+		<Title
+			text="{i18n>SURVEY_POPOVER_TITLE}"
+			level="H5"
+			class="surveyPopoverTitle" />
+		<VBox class="sapUiSmallMarginTopBottom surveyPopoverCustomPaddingBeginEnd" tooltip="{i18n>SURVEY_POPOVER_LONG_SURVEY_TITLE}">
+			<items>
+				<VBox class="sapUiSmallMarginBottom">
+					<items>
+						<HBox>
+							<items>
+								<Title
+									text="{i18n>SURVEY_POPOVER_LONG_SURVEY_TITLE}"
+									class="sapUiTinyMarginEnd"
+									level="H6" />
+								<ObjectStatus
+									class="longSurveyBadge"
+									text="{i18n>SURVEY_POPOVER_LONG_SURVEY_BADGE}"
+									state="Information" inverted="true" />
+							</items>
+						</HBox>
+						<Text
+							class="longSurveyAvailability"
+							text="{i18n>SURVEY_POPOVER_LONG_SURVEY_AVAILABILITY} {appView>/sLongSurveyLastDate}" />
+					</items>
+				</VBox>
+				<Text
+					text="{i18n>SURVEY_POPOVER_LONG_SURVEY_DESC}"
+					class="surveyDescription sapUiSmallMarginBottom" />
+				<Button
+					text="{i18n>SURVEY_POPOVER_LONG_SURVEY_BTN}"
+					tooltip="{i18n>SURVEY_POPOVER_LONG_SURVEY_BTN_TOOLTIP}"
+					icon="sap-icon://generate-shortcut"
+					type="Emphasized"
+					width="100%"
+					press=".longSurveyRedirect" />
+			</items>
+		</VBox>
+		<VBox
+			class="surveyPopoverCustomStylesTop surveyPopoverCustomPaddingBeginEnd surveyPopoverCustomPaddingBottom"
+			tooltip="{i18n>SURVEY_POPOVER_DEFAULT_SURVEY_TITLE}">
+			<items>
+				<Title text="{i18n>SURVEY_POPOVER_DEFAULT_SURVEY_TITLE}" level="H6" class="surveyTitle sapUiSmallMarginBottom" />
+				<Text text="{i18n>SURVEY_POPOVER_DEFAULT_SURVEY_DESC}" class="surveyDescription sapUiSmallMarginBottom" />
+				<Button text="{i18n>SURVEY_POPOVER_DEFAULT_SURVEY_BTN}" width="100%" press=".shortSurveyRedirect" />
+			</items>
+		</VBox>
+	</ResponsivePopover>
+</core:FragmentDefinition>

@@ -126,7 +126,15 @@
 				{ "name" : "switch-classes" },
 				{ "name" : "user-settings" },
 				{ "name" : "visits" },
-				{ "name" : "add-employee" }
+				{ "name" : "add-employee" },
+				{ "name" : "non-binary" },
+				{ "name" : "female" },
+				{ "name" : "gender-male-and-female" },
+				{ "name" : "male" },
+				{ "name" : "biometric-face" },
+				{ "name" : "biometric-thumb" },
+				{ "name" : "people-connected" },
+				{ "name" : "accessibility" }
 			]
 		},
 		{
@@ -203,7 +211,7 @@
 				{ "name" : "mri-scan" },
 				{ "name" : "physical-activity" },
 				{ "name" : "nutrition-activity" },
-				{ "name" : "clinical-tast-tracker" },
+				{ "name" : "clinical-task-tracker" },
 				{ "name" : "temperature" }
 			]
 		},
@@ -238,7 +246,8 @@
 				{ "name" : "lead" },
 				{ "name" : "batch-payments" },
 				{ "name" : "wallet" },
-				{ "name" : "receipt" }
+				{ "name" : "receipt" },
+				{ "name" : "currency" }
 			]
 		},
 		{
@@ -334,7 +343,12 @@
 				{ "name" : "chevron-phase-2" },
 				{ "name" : "program-triangles" },
 				{ "name" : "table-row" },
-				{ "name" : "table-column" }
+				{ "name" : "table-column" },
+				{ "name" : "clear-all" },
+				{ "name" : "sum" },
+				{ "name" : "detail-less" },
+				{ "name" : "detail-more" },
+				{ "name" : "tri-state" }
 			]
 		},
 		{
@@ -348,7 +362,8 @@
 				{ "name" : "folder-blank" },
 				{ "name" : "work-history" },
 				{ "name" : "folder" },
-				{ "name" : "batch-payments" }
+				{ "name" : "batch-payments" },
+				{ "name" : "folder-2" }
 			]
 		},
 		{
@@ -378,7 +393,10 @@
 				{ "name" : "fx" },
 				{ "name" : "text-color" },
 				{ "name" : "strikethrough" },
-				{ "name" : "text" }
+				{ "name" : "text" },
+				{ "name" : "translate" },
+				{ "name" : "detail-less" },
+				{ "name" : "detail-more" }
 			]
 		},
 		{
@@ -466,7 +484,9 @@
 				{ "name" : "system-exit" },
 				{ "name" : "resize-vertical" },
 				{ "name" : "expand-all" },
-				{ "name" : "collapse-all" }
+				{ "name" : "collapse-all" },
+				{ "name" : "combine" },
+				{ "name" : "split" }
 			]
 		},
 		{
@@ -538,7 +558,7 @@
 				{ "name" : "value-help" },
 				{ "name" : "overflow" },
 				{ "name" : "multi-select" },
-				{ "name" : "exit-full-screen"},
+				{ "name" : "exit-full-screen" },
 				{ "name" : "sys-add" },
 				{ "name" : "sys-minus" },
 				{ "name" : "dropdown" },
@@ -728,7 +748,8 @@
 				{ "name" : "pixelate" },
 				{ "name" : "validate" },
 				{ "name" : "keyboard-and-mouse" },
-				{ "name" : "touch" }
+				{ "name" : "touch" },
+				{ "name" : "ai" }
 			]
 		},
 		{
@@ -855,7 +876,10 @@
 				{ "name" : "away" },
 				{ "name" : "busy" },
 				{ "name" : "appear-offline" },
-				{ "name" : "validate" }
+				{ "name" : "validate" },
+				{ "name" : "information" },
+				{ "name" : "in-progress" },
+				{ "name" : "high-priority" }
 			]
 		},
 		{
@@ -865,7 +889,7 @@
 				{ "name" : "task" },
 				{ "name" : "workflow-tasks" },
 				{ "name" : "crm-service-manager" },
-				{ "name" : "clinical-tast-tracker" },
+				{ "name" : "clinical-task-tracker" },
 				{ "name" : "activity-individual" },
 				{ "name" : "activity-2" },
 				{ "name" : "add-activity-2" },
@@ -888,7 +912,10 @@
 				{ "name" : "date-time" },
 				{ "name" : "check-availability" },
 				{ "name" : "accelerated" },
-				{ "name" : "workflow-tasks" }
+				{ "name" : "workflow-tasks" },
+				{ "name" : "select-appointments" },
+				{ "name" : "add-calendar" },
+				{ "name" : "time-off" }
 			]
 		},
 		{
@@ -906,7 +933,8 @@
 				{ "name" : "hello-world" },
 				{ "name" : "message-popup" },
 				{ "name" : "comment" },
-				{ "name" : "ui-notifications" }
+				{ "name" : "ui-notifications" },
+				{ "name" : "feedback" }
 			]
 		},
 		{
@@ -945,7 +973,7 @@
 				{ "name" : "microphone" },
 				{ "name" : "stethoscope" },
 				{ "name" : "study-leave" },
-				{ "name" : "soccor" },
+				{ "name" : "soccer" },
 				{ "name" : "pharmacy" },
 				{ "name" : "nutrition-activity" },
 				{ "name" : "machine" },
@@ -1018,7 +1046,7 @@
 				{ "name" : "offsite-work" },
 				{ "name" : "energy-saving-lightbulb" },
 				{ "name" : "palette" },
-				{ "name" : "soccor" },
+				{ "name" : "soccer" },
 				{ "name" : "goalseek" },
 				{ "name" : "sap-ui5" },
 				{ "name" : "study-leave" },
@@ -1173,7 +1201,15 @@
 				{ "name" : "table-row" },
 				{ "name" : "table-column" },
 				{ "name" : "keyboard-and-mouse" },
-				{ "name" : "touch" }
+				{ "name" : "touch" },
+				{ "name" : "s4hana" },
+				{ "name" : "qr-code" },
+				{ "name" : "cloud-check" },
+				{ "name" : "enablement" },
+				{ "name" : "map-fill" },
+				{ "name" : "bell-2" },
+				{ "name" : "da" },
+				{ "name" : "da-2" }
 			]
 		},
 		{

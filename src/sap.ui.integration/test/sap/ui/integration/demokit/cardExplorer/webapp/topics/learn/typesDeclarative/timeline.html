@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<title>Timeline Card</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<script src="../../../scripts/boot.js"></script>
+</head>
+
+<body class="sapUiBody topicBody">
+	<div class="topic">
+		<div class="content">
+			<h1 id="overview">
+				Timeline Card
+			</h1>
+			<p>
+				The Timeline Card is used to show time-related content.
+			</p>
+			<h2 id="properties">Properties</h2>
+
+			<div class="tableWrapper">
+				<table>
+					<tr>
+						<th>Property</th>
+						<th>Type</th>
+						<th>Default Value</th>
+						<th>Required</th>
+						<th>Description</th>
+						<th>Schema Version</th>
+						<th>Since</th>
+					</tr>
+					<tr>
+						<td>item</td>
+						<td><a href="#timelineItemProperties">TimelineItem</a></td>
+						<td></td>
+						<td>Yes</td>
+						<td>The item template from which all the items in the timeline will be created.</td>
+						<td>1.15.0.</td>
+						<td>1.63</td>
+					</tr>
+					<tr>
+						<td>maxItems</td>
+						<td>int</td>
+						<td></td>
+						<td>No</td>
+						<td>The maximum number of items.</td>
+						<td>1.15.0</td>
+						<td>1.63</td>
+					</tr>
+					<tr>
+						<td>minItems</td>
+						<td>int</td>
+						<td></td>
+						<td>No</td>
+						<td>The minimum number of items that are expected. This property is used to calculate the minimum height of the card.</td>
+						<td>1.50.0</td>
+						<td>1.109</td>
+					</tr>
+				</table>
+			</div>
+
+			<div id="timelineItemProperties" class="boldBlock">TimelineItem Properties</div>
+			<div class="tableWrapper">
+				<table>
+					<tr>
+						<th>Property</th>
+						<th>Type</th>
+						<th>Required</th>
+						<th>Description</th>
+						<th>Schema Version</th>
+						<th>Since</th>
+					</tr>
+					<tr>
+						<td>title</td>
+						<td>string</td>
+						<td>Yes</td>
+						<td>The title of the timeline item.</td>
+						<td>1.15.0</td>
+						<td>1.63</td>
+					</tr>
+					<tr>
+						<td>description</td>
+						<td>string</td>
+						<td>No</td>
+						<td>The description of the timeline item.</td>
+						<td>1.15.0</td>
+						<td>1.63</td>
+					</tr>
+					<tr>
+						<td>dateTime</td>
+						<td>int|string</td>
+						<td>No</td>
+						<td>
+							The dateTime value of the timeline item. It can be:
+							<ul>
+								<li>an integer representing Unix time (also known as POSIX or Epoch time) in milliseconds</li>
+								<li>a string with an integer representing Unix time in milliseconds</li>
+								<li>a string like "Date([number])", where [number] represents Unix time in milliseconds</li>
+							</ul>
+							Any other format will be parsed using <code>Date.parse</code>. The latter is not recommended,
+							as different web browsers implement this function differently, which may lead to unpredictable behavior.
+						</td>
+						<td>1.15.0</td>
+						<td>1.63</td>
+					</tr>
+					<tr>
+						<td>owner</td>
+						<td>string</td>
+						<td>No</td>
+						<td>The owner of the timeline item.</td>
+						<td>1.15.0</td>
+						<td>1.63</td>
+					</tr>
+					<tr>
+						<td>ownerImage</td>
+						<td>string</td>
+						<td>No</td>
+						<td>The owner image of the timeline item.</td>
+						<td>1.15.0</td>
+						<td>1.63</td>
+					</tr>
+					<tr>
+						<td>icon</td>
+						<td><a href="#iconProperties">Icon</a></td>
+						<td>No</td>
+						<td>The icon of the timeline item.</td>
+						<td>1.15.0</td>
+						<td>1.63</td>
+					</tr>
+					<tr>
+						<td>actions</td>
+						<td><a href="../../../index.html#/learn/actions" target="_parent">Actions[]</a></td>
+						<td>No</td>
+						<td>Actions that are triggered when the item is pressed.</td>
+						<td>1.38.0</td>
+						<td>1.97</td>
+					</tr>
+				</table>
+			</div>
+
+			<div id="iconProperties" class="boldBlock">Icon Properties</div>
+			<div class="tableWrapper">
+				<table>
+					<tr>
+						<th>Property</th>
+						<th>Type</th>
+						<th>Default Value</th>
+						<th>Required</th>
+						<th>Description</th>
+						<th>Schema Version</th>
+						<th>Since</th>
+					</tr>
+					<tr>
+						<td>src</td>
+						<td>string</td>
+						<td></td>
+						<td>No</td>
+						<td>Icon name or source URL</td>
+						<td>1.15.0</td>
+						<td>1.63</td>
+					</tr>
+				</table>
+			</div>
+
+			<h2 id="example">Example</h2>
+			<p>Define the type and data for the card:
+			</p>
+			<pre class="lang-json">{
+	"sap.card": {
+		"type": "Timeline",
+		"content" :{
+			"data": {
+				"request": {
+					"url": "./employees.json"
+				}
+			}
+		}
+	}
+}</pre>
+			<p>
+				The content of the employees.json which we are requesting:
+			</p>
+			<pre class="lang-json">[
+	{
+	  "Name": "Laurent Dubois",
+	  "JobTitle": "Accounts Payable Manager",
+	  "Photo": "../images/Laurent_Dubois.png",
+	  "Icon": "sap-icon://activity-individual",
+	  "JobResponsibilities": "I am Laurent. I put great attention to detail.",
+	  "HireDate": "Date(1371020400000)"
+	},
+	{
+	  "Name": "Sabine Mayer",
+	  "JobTitle": "Configuration Expert",
+	  "Photo": "../images/Sabine_Mayer.png",
+	  "Icon": "sap-icon://settings",
+	  "JobResponsibilities": "I am Sabine. And can't wait to get to know the team.",
+	  "HireDate": "Date(1376290800000)"
+	},
+	{
+	  "Name": "Alain Chevalier",
+	  "JobTitle": "Credit Analyst",
+	  "Photo": "../images/Alain_Chevalier.png",
+	  "Icon": "sap-icon://manager-insight",
+	  "JobResponsibilities": "I am Alain. I put great attention to detail.",
+	  "HireDate": "Date(1332403200000)"
+	},
+	{
+	  "Name": "Monique Legrand",
+	  "JobTitle": "Accountant Manager",
+	  "Photo": "../images/Monique_Legrand.png",
+	  "JobResponsibilities": "I am Monique. And i am the new head of Accounting.",
+	  "Icon": "sap-icon://account",
+	  "HireDate": "Date(1422777600000)"
+	}
+]</pre>
+			<p>Define the header:</p>
+			<pre class="lang-json">"header": {
+	"title": "New Team Members",
+	"icon": {
+		"src": "sap-icon://group"
+	}
+}</pre>
+			<p>Define the time content:</p>
+			<pre class="lang-json">"content": {
+	"item": {
+		"dateTime" : {
+			"label": "{{hireDate_label}}",
+			"value": "{HireDate}"
+		},
+		"description" : {
+			"label": "{{jobResponsibilities_label}}",
+			"value": "{JobResponsibilities}"
+		},
+		"title" : {
+			"label": "{{jobTitle_label}}",
+			"value": "{JobTitle}"
+		},
+		"owner" : {
+			"label": "{{name_label}}",
+			"value": "{Name}"
+		},
+		"ownerImage" : {
+			"label": "{{picture_label}}",
+			"value": "{Photo}"
+		},
+		"icon": {
+			"src": "{Icon}"
+		}
+	}
+}</pre>
+			<p>Here is the final manifest definition:</p>
+			<pre class="lang-json">
+{
+	"sap.card": {
+		"type": "Timeline",
+		"header": {
+			"title": "New Team Members",
+			"icon": {
+				"src": "sap-icon://group"
+			}
+		},
+		"content": {
+			"data": {
+				"request": {
+					"url": "./employees.json"
+				}
+			},
+			"item": {
+				"dateTime" : {
+					"label": "{{hireDate_label}}",
+					"value": "{HireDate}"
+				},
+				"description" : {
+					"label": "{{jobResponsibilities_label}}",
+					"value": "{JobResponsibilities}"
+				},
+				"title" : {
+					"label": "{{jobTitle_label}}",
+					"value": "{JobTitle}"
+				},
+				"owner" : {
+					"label": "{{name_label}}",
+					"value": "{Name}"
+				},
+				"ownerImage" : {
+					"label": "{{picture_label}}",
+					"value": "{Photo}"
+				},
+				"icon": {
+					"src": "{Icon}"
+				}
+			}
+		}
+	}
+}</pre>
+			<p>Create the view to display the card:</p>
+			<pre class="lang-xml">
+&lt;mvc:View xmlns:w="sap.ui.integration.widgets"&gt;
+	&lt;w:Card manifest="./manifest.json" width="400px" height="auto" /&gt;
+&lt;/mvc:View&gt;</pre>
+			<a class="try-button" href="../../../index.html#/explore/timeline" target="_parent">Try it Out</a>
+		</div>
+	</div>
+</body>
+
+</html>

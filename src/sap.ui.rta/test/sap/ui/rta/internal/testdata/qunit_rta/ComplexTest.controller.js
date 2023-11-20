@@ -1,31 +1,61 @@
-(function(){
+sap.ui.define([
+	"sap/base/Log",
+	"sap/ui/core/mvc/Controller",
+	"sap/ui/core/util/MockServer",
+	"sap/ui/model/BindingMode",
+	"sap/ui/model/json/JSONModel",
+	"sap/ui/model/odata/v2/ODataModel",
+	"sap/ui/model/odata/CountMode",
+	"sap/ui/fl/Utils",
+	"sap/ui/core/Element"
+], function(
+	Log,
+	Controller,
+	MockServer,
+	BindingMode,
+	JSONModel,
+	ODataModel,
+	CountMode,
+	FlUtils,
+	Element
+) {
 	"use strict";
 
-	sap.ui.controller("sap.ui.rta.qunitrta.ComplexTest", {
+	return Controller.extend("sap.ui.rta.qunitrta.ComplexTest", {
+		onInit() {
+			this._sResourcePath = sap.ui.require.toUrl("sap/ui/rta/test");
+			var oManifest = FlUtils.getAppComponentForControl(this.getView()).getManifest();
+			var iServerDelay = new URLSearchParams(window.location.search).get("serverDelay");
 
-		onInit : function () {
+			var iAutoRespond = iServerDelay || 1000;
+			var oMockServer;
+			var dataSource;
+			var sMockServerPath;
+			var sMetadataUrl;
+			var aEntities = [];
+			var oDataSources = oManifest["sap.app"].dataSources;
 
-			jQuery.sap.require("sap.ui.core.util.MockServer");
-			this._sResourcePath = jQuery.sap.getResourcePath("sap/ui/rta/qunitrta/");
-			var sManifestUrl = this._sResourcePath + "/manifest.json",
-				oManifest = jQuery.sap.syncGetJSON(sManifestUrl).data,
-				oUriParameters = jQuery.sap.getUriParameters();
-
-			var iAutoRespond = (oUriParameters.get("serverDelay") || 1000),
-				oMockServer, dataSource, sMockServerPath, sMetadataUrl, aEntities = [],
-				oDataSources = oManifest["sap.app"]["dataSources"],
-				MockServer = sap.ui.core.util.MockServer;
-
-			sap.ui.core.util.MockServer.config({
+			MockServer.config({
 				autoRespond: true,
 				autoRespondAfter: iAutoRespond
 			});
+
+			var fnGetDataPromise = function(oView) {
+				return new Promise(function(resolve) {
+					oView.bindElement({
+						path: "/Headers(AccountingDocument='100015012',CompanyCode='0001',FiscalYear='2015')",
+						events: {
+							dataReceived: resolve
+						}
+					});
+				});
+			};
 
 			for (var property in oDataSources) {
 				if (oDataSources.hasOwnProperty(property)) {
 					dataSource = oDataSources[property];
 
-					//do we have a mock url in the app descriptor
+					// do we have a mock url in the app descriptor
 					if (dataSource.settings && dataSource.settings.localUri) {
 						if (typeof dataSource.type === "undefined" || dataSource.type === "OData") {
 							oMockServer = new MockServer({
@@ -34,26 +64,27 @@
 							sMetadataUrl = this._sResourcePath + dataSource.settings.localUri;
 							sMockServerPath = sMetadataUrl.slice(0, sMetadataUrl.lastIndexOf("/") + 1);
 							aEntities = dataSource.settings.aEntitySetsNames ? dataSource.settings.aEntitySetsNames : [];
-							oMockServer.simulate(sMetadataUrl , {
+							oMockServer.simulate(sMetadataUrl, {
 								sMockdataBaseUrl: sMockServerPath,
 								bGenerateMissingMockData: true,
-								aEntitySetsNames : aEntities
+								aEntitySetsNames: aEntities
 							});
 						}
-						//else if *Other types can be inserted here, like Annotations*
+						// else if *Other types can be inserted here, like Annotations*
 						oMockServer.start();
-						jQuery.sap.log.info("Running the app with mock data for " + property);
+						Log.info(`Running the app with mock data for ${property}`);
 
 						if (property === "mainService") {
-							var oModel, oView;
+							var oModel;
+							var oView;
 
-							oModel = new sap.ui.model.odata.ODataModel(dataSource.uri, {
+							oModel = new ODataModel(dataSource.uri, {
 								json: true,
 								loadMetadataAsync: true
 							});
 
-							oModel.setDefaultBindingMode(sap.ui.model.BindingMode.TwoWay);
-							oModel.setCountSupported(false);
+							oModel.setDefaultBindingMode(BindingMode.TwoWay);
+							oModel.setDefaultCountMode(CountMode.None);
 							this._oModel = oModel;
 
 							oView = this.getView();
@@ -66,50 +97,36 @@
 								enabled: true
 							};
 
-							var oStateModel = new sap.ui.model.json.JSONModel();
+							var oStateModel = new JSONModel();
 							oStateModel.setData(data);
 							oView.setModel(oStateModel, "state");
-							oView.bindElement("/Headers(AccountingDocument='100015012',CompanyCode='0001',FiscalYear='2015')");
 
+							this._dataPromise = fnGetDataPromise(oView);
 						}
 					} else {
-						jQuery.sap.log.error("Running the app with mock data for " + property);
+						Log.error(`Running the app with mock data for ${property}`);
 					}
 				}
 			}
-
 		},
 
-		_getUrlParameter : function(sParam){
-			var sReturn = "";
-			var sPageURL = window.location.search.substring(1);
-			var sURLVariables = sPageURL.split('&');
-			for (var i = 0; i < sURLVariables.length; i++) {
-				var sParameterName = sURLVariables[i].split('=');
-				if (sParameterName[0] == sParam) {
-					sReturn = sParameterName[1];
-				}
-			}
-			return sReturn;
+		switchToAdaptionMode() {
+			sap.ui.require(["sap/ui/rta/api/startAdaptation"], function(startAdaptation) {
+				var sUriParam = new URLSearchParams(window.location.search).get("sap-ui-xx-ccf");
+				startAdaptation({
+					rootControl: Element.getElementById("Comp1---idMain1"),
+					customFieldUrl: `${this._sResourcePath}/testdata/rta/CustomField.html`,
+					showCreateCustomField: sUriParam === "true",
+					stop() {
+						this.destroy();
+					}
+				});
+			}.bind(this));
 		},
 
-		switchToAdaptionMode : function() {
-
-			jQuery.sap.require("sap.ui.rta.RuntimeAuthoring");
-			var oRta = new sap.ui.rta.RuntimeAuthoring({
-				rootControl : sap.ui.getCore().byId("Comp1---idMain1"),
-				customFieldUrl : this._sResourcePath + "/testdata/rta/CustomField.html",
-				showCreateCustomField : (this._getUrlParameter("sap-ui-xx-ccf") == "true"),
-				flexSettings: {
-					developerMode: false
-				}
-			});
-			oRta.attachEvent('stop', function() {
-				oRta.destroy();
-			});
-			oRta.start();
+		isDataReady() {
+			return this._dataPromise;
 		}
-
 	});
-})();
+});
 

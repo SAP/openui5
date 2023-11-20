@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html><head>
+	<meta http-equiv='Content-Type' content='text/html;charset=UTF-8'>
+	<title>Routing Example Page</title>
+
+	<script id='sap-ui-bootstrap'
+		src='../../../../../../resources/sap-ui-core.js'
+		data-sap-ui-theme='sap_bluecrystal'
+		data-sap-ui-libs='sap.ui.commons,sap.ui.ux3'></script>
+		<!-- add 'sap.ui.table' and/or other libraries if required -->
+
+	<script>
+		// set application namespace. Views and controller are loaded relative to this page
+		sap.ui.loader.config({paths: {"sap/ui/core/samples/routing": "./"}});
+		jQuery.sap.require("sap.ui.core.routing.Router");
+
+
+		var shell = new sap.ui.ux3.Shell("shell", {
+			appTitle:'SAPUI5 Routing Example',
+			worksetItems: [
+				new sap.ui.ux3.NavigationItem("index", { key: "wi_home", text: "Home" }),
+				new sap.ui.ux3.NavigationItem("example1", { key: "wi_example_1", text: "Example Screen 1", subItems: [
+						new sap.ui.ux3.NavigationItem("example11", { key: "wi_example_1_1", text: "Example 1_1" }),
+						new sap.ui.ux3.NavigationItem("example12", { key: "wi_example_1_2", text: "Example 1_2" }),
+						new sap.ui.ux3.NavigationItem("example13", { key: "wi_example_1_3", text: "Example 1_3" })
+					]
+				}),
+				new sap.ui.ux3.NavigationItem("example2", { key: "wi_example_2", text: "Example Screen 2" })
+			],
+			content: sap.ui.view({ type: sap.ui.core.mvc.ViewType.JS,
+				viewName: "sap.ui.core.samples.routing.Index",
+			}),
+			worksetItemSelected: function(oEvent) {
+				var sSelected = oEvent.getParameter("id"),
+					oHashChanger = sap.ui.core.routing.HashChanger.getInstance();
+
+				oHashChanger.setHash(oRouter.getURL("_" + sSelected));
+			}
+		});
+		shell.placeAt('content');
+
+		var oRouter = new sap.ui.core.routing.Router([{
+				pattern: "",
+				name: "_index",
+				view: "sap.ui.core.samples.routing.Index",
+				viewType: sap.ui.core.mvc.ViewType.JS,
+				targetControl: "shell",
+				targetAggregation: "content",
+				clearTarget: true,
+				callback: function() {
+					shell.setSelectedWorksetItem("index");
+				}
+			},
+			{
+				pattern: ["example1", "example1/example11"],
+				name: "_example11",
+				view: "sap.ui.core.samples.routing.Example1",
+				viewType: sap.ui.core.mvc.ViewType.XML,
+				targetControl: "shell",
+				targetAggregation: "content",
+				clearTarget: true,
+				callback: function(oRoute, oArguments) {
+					shell.setSelectedWorksetItem("example11");
+				}
+			},
+			{
+				pattern: "example1/example12",
+				name: "_example12",
+				view: "sap.ui.core.samples.routing.Example12",
+				viewType: sap.ui.core.mvc.ViewType.XML,
+				targetControl: "shell",
+				targetAggregation: "content",
+				clearTarget: true,
+				callback: function(oRoute, oArguments) {
+					shell.setSelectedWorksetItem("example12");
+				}
+			},
+			{
+				pattern: "example1/example13",
+				name: "_example13",
+				view: "sap.ui.core.samples.routing.Example13",
+				viewType: sap.ui.core.mvc.ViewType.XML,
+				targetControl: "shell",
+				targetAggregation: "content",
+				clearTarget: true,
+				callback: function(oRoute, oArguments) {
+					shell.setSelectedWorksetItem("example13");
+				}
+			},
+			{
+				pattern: "example2",
+				name: "_example2",
+				view: "sap.ui.core.samples.routing.Example2",
+				viewType: sap.ui.core.mvc.ViewType.HTML,
+				targetControl: "shell",
+				targetAggregation: "content",
+				clearTarget: true,
+				callback: function(oRoute, oArguments) {
+					shell.setSelectedWorksetItem("example2");
+				}
+			}
+		]);
+		oRouter.initialize();
+	</script>
+
+</head>
+<body class='sapUiBody'>
+	<div id='content'></div>
+</body>
+</html>

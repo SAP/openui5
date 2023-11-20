@@ -58,7 +58,7 @@ sap.ui.define(function() {
 			 */
 			Collapse: "collapse",
 
-			/*
+			/**
 			 * A context was removed from a binding.
 			 * @public
 			 */

@@ -1,50 +1,63 @@
 /*!
  * ${copyright}
  */
-
-sap.ui.define([ 'jquery.sap.global', '../base/Object' ], function(jQuery, BaseObject) {
+/*eslint-disable max-len */
+sap.ui.define([
+	"sap/base/util/deepEqual",
+	"sap/base/util/each",
+	"sap/ui/base/Object",
+	"sap/ui/core/message/Message"
+], function(deepEqual, each, BaseObject, Message) {
 	"use strict";
 
 	/**
 	 * @class
-	 * Provides and update the status data of a binding.
-	 * Depending on the models state and controls state changes, the data state is used to propagated changes to a control.
-	 * The control can react on these changes by implementing the <code>refreshDataState</code> method for the control.
-	 * Here the data state object is passed as a parameter.
-	 *
-	 * Using the {@link #getChanges getChanges} method the control can determine the changed properties and their old and new value.
+	 * Holds the status data of a binding.
+	 * To react to changes of this status data, a control must implement the
+	 * <code>refreshDataState</code> method, which is called with the name of the bound control
+	 * property and the data state object as parameters.
+	 * With the {@link #getChanges} method, the control can determine the changed properties
+	 * and their old and new values.
 	 * <pre>
-	 *     //sample implementation to handle message changes
-	 *     myControl.prototype.refreshDataState = function(oDataState) {
-	 *        var aMessages = oDataState.getChanges().messages;
-	 *        if (aMessages) {
-	 *            for (var i = 0; i &lt; aMessages.length; i++) {
-	 *                console.log(aMessages.message);
-	 *            }
+	 *     // sample implementation to handle message changes
+	 *     myControl.prototype.refreshDataState = function (sPropertyName, oDataState) {
+	 *        oDataState.getMessages().forEach(function (oMessage) {
+	 *            console.log(oMessage.getMessage());
 	 *        }
 	 *     }
 	 *
-	 *     //sample implementation to handle laundering state
-	 *     myControl.prototype.refreshDataState = function(oDataState) {
-	 *        var bLaundering = oDataState.getChanges().laundering || false;
-	 *        this.setBusy(bLaundering);
+	 *     // sample implementation to handle laundering state
+	 *     myControl.prototype.refreshDataState = function (sPropertyName, oDataState) {
+	 *        this.setBusy(oDataState.isLaundering());
 	 *     }
 	 *
-	 *     //sample implementation to handle dirty state
-	 *     myControl.prototype.refreshDataState = function(oDataState) {
-	 *        if (oDataState.isDirty()) console.log("Control " + this.getId() + " is now dirty");
+	 *     // sample implementation to handle dirty state
+	 *     myControl.prototype.refreshDataState = function (sPropertyName, oDataState) {
+	 *        if (oDataState.isDirty()) {
+	 *           console.log("Property " + sPropertyName + " of control " + this.getId()
+	 *               + " is dirty");
+	 *        }
 	 *     }
 	 * </pre>
 	 *
-	 * Using the {@link #getProperty getProperty} method the control can read the properties of the data state. The properties are
+	 * With the {@link #getProperty} method, the control can read a property of the data state.
+	 * The properties are
 	 * <ul>
-	 *     <li><code>value</code> The value formatted by the formatter of the binding
-	 *     <li><code>originalValue</code> The original value of the model formatted by the formatter of the binding
-	 *     <li><code>invalidValue</code> The control value that was tried to be applied to the model but was rejected by a type validation
-	 *     <li><code>modelMessages</code> The messages that were applied to the binding by the <code>sap.ui.model.MessageModel</code>
-	 *     <li><code>controlMessages</code> The messages that were applied due to type validation errors
+	 *     <li><code>controlMessages</code> The {@link sap.ui.core.message.Message messages}
+	 *         created from type validation or parse errors on user input for a property binding
+	 *     <li><code>dirty</code> Whether the value was not yet confirmed by the server; use
+	 *         {@link #isDirty} to read this property
+	 *     <li><code>invalidValue</code> The control value that was rejected by type parsing or
+	 *         validation on user input for a property binding
+	 *     <li><code>laundering</code> Whether the value has been sent to the server but is not yet
+	 *         confirmed
 	 *     <li><code>messages</code> All messages of the data state
-	 *      <li><code>dirty</code> true if the value was not yet confirmed by the server
+	 *     <li><code>modelMessages</code> The {@link sap.ui.core.message.Message messages}
+	 *         available for the binding in its {@link sap.ui.model.Binding#getModel model}
+	 *     <li><code>originalValue</code> The <em>original</em> value of a property binding in
+	 *         {@link sap.ui.model.PropertyBinding#getExternalValue external representation}
+	 *     <li><code>value</code> The value of a property binding in
+	 *         {@link sap.ui.model.PropertyBinding#getExternalValue external representation}
 	 * </ul>
 	 *
 	 * @extends sap.ui.base.Object
@@ -57,44 +70,18 @@ sap.ui.define([ 'jquery.sap.global', '../base/Object' ], function(jQuery, BaseOb
 	 */
 	var DataState = BaseObject.extend("sap.ui.model.DataState", /** @lends sap.ui.model.DataState.prototype */ {
 		metadata : {},
-		constructor : function() {
-			this.mProperties = {
-				modelMessages : [],
-				controlMessages: [],
-				laundering: false,
-				originalValue : undefined,
-				originalInternalValue: undefined,
-				value : undefined,
-				invalidValue: undefined,
-				internalValue: undefined,
-				dirty: false,
-				messages: []
-
-			};
-			//the resolved path of the binding to check for binding context changes
-			this.mChangedProperties = jQuery.sap.extend({},this.mProperties);
+		constructor : function () {
+			this.mProperties = DataState.getInitialProperties();
+			this.mChangedProperties = DataState.getInitialProperties();
 		}
 	});
 
-
 	/**
-	 * sort messages by type 'Error', 'Warning', 'Success', 'Info'
+	 * Updates the given property with the given value.
 	 *
-	 * @param {array} aMessages Array of Messages: {'target':[array of Messages]}
-	 * @private
-	 */
-	DataState.prototype._sortMessages = function(aMessages) {
-		var mSortOrder = {'Error': 0,'Warning':1,'Success':2,'Info':3};
-		aMessages.sort(function(a, b){
-			return mSortOrder[a.type] - mSortOrder[b.type];
-		});
-	};
-
-	/**
-	 * Updates the given property variable
-	 *
-	 * @param {string} sProperty the member variable
-	 * @param {any} vValue the new value;
+	 * @param {string} sProperty - The property name
+	 * @param {any} vValue - The new value
+	 * @returns {this} <code>this</code> to allow method chaining
 	 * @private
 	 */
 	DataState.prototype.setProperty = function(sProperty, vValue) {
@@ -102,11 +89,16 @@ sap.ui.define([ 'jquery.sap.global', '../base/Object' ], function(jQuery, BaseOb
 		return this;
 	};
 
+	/**
+	 * @deprecated Likely unused method
+	 * @returns {this} <code>this</code> to allow method chaining
+	 * @private
+	 */
 	DataState.prototype.calculateChanges = function() {
 		for (var sProperty in this.mChangedProperties) {
 			var vChangedValue = this.mChangedProperties[sProperty].value;
 
-			if (!jQuery.sap.equal(this.mProperties[sProperty], vChangedValue)) {
+			if (!deepEqual(this.mProperties[sProperty], vChangedValue)) {
 				if (Array.isArray(vChangedValue)) {
 					vChangedValue = vChangedValue.slice(0);
 				}
@@ -120,8 +112,8 @@ sap.ui.define([ 'jquery.sap.global', '../base/Object' ], function(jQuery, BaseOb
 	/**
 	 * Returns the current value of the property
 	 *
-	 * @param {string} the name of the property
-	 * @returns {any} the vaue of the property
+	 * @param {string} sProperty - The name of the property
+	 * @returns {any} The value of the property
 	 * @private
 	 */
 	DataState.prototype.getProperty = function(sProperty) {
@@ -129,37 +121,64 @@ sap.ui.define([ 'jquery.sap.global', '../base/Object' ], function(jQuery, BaseOb
 	};
 
 	/**
-	 * Returns the array of all state messages or null.
-	 * This combines the model and control messages.
+	 * Returns an array of all model and control messages, regardless of whether they are old or
+	 * new.
 	 *
-	 * @returns {sap.ui.core.Message[]} the array of all messages or null if no {link:sap.ui.core.messages.ModelManager ModelManager} is used.
+	 * @returns {sap.ui.core.message.Message[]} The array of all messages
+	 *
 	 * @public
+	 * @since 1.98.0
 	 */
-	DataState.prototype.getMessages = function() {
-		var aMessages = [];
-		var aControlMessages = this.mChangedProperties['controlMessages'];
-		var aModelMessages = this.mChangedProperties['modelMessages'];
-		if (aModelMessages || aControlMessages) {
-			aMessages = aMessages.concat(aModelMessages ? aModelMessages : [], aControlMessages ? aControlMessages : []);
-			this._sortMessages(aMessages);
-		}
-		return aMessages;
+	 DataState.prototype.getAllMessages = function () {
+		var oResultSet = new Set();
+
+		this.getMessages().forEach(oResultSet.add.bind(oResultSet));
+		this._getOldMessages().forEach(oResultSet.add.bind(oResultSet));
+
+		return Array.from(oResultSet);
 	};
 
 	/**
-	 * Returns the array of all old state messages or null.
-	 * This combines the model and control messages.
+	 * Returns the array of this data state's current messages combining the model and control
+	 * messages. The array is sorted descendingly by message severity.
 	 *
-	 * @returns {sap.ui.core.Message[]} the array of all messages or null if no {link:sap.ui.core.messages.ModelManager ModelManager} is used.
+	 * @returns {sap.ui.core.message.Message[]} The sorted array of all messages
+	 *
+	 * @public
+	 */
+	DataState.prototype.getMessages = function () {
+		return DataState.getMessagesForProperties(this.mChangedProperties);
+	};
+
+	/**
+	 * Returns the array of this data state's old messages combining the model and control messages.
+	 * The array is sorted descendingly by message severity.
+	 *
+	 * @returns {sap.ui.core.message.Message[]} The sorted array of all old messages
 	 * @private
 	 */
 	DataState.prototype._getOldMessages = function() {
-		var aMessages = [];
-		var aControlMessages = this.mProperties['controlMessages'];
-		var aModelMessages = this.mProperties['modelMessages'];
-		if (aModelMessages || aControlMessages) {
-			aMessages = aMessages.concat(aModelMessages ? aModelMessages : [], aControlMessages ? aControlMessages : []);
-			this._sortMessages(aMessages);
+		return DataState.getMessagesForProperties(this.mProperties);
+	};
+
+	/**
+	 * Returns the array of the messages in the given object combining the model and control
+	 * messages. The array is sorted descendingly by message severity.
+	 *
+	 * @param {object} mProperties
+	 *   Object with properties <code>controlMessages</code> and <code>modelMessages</code> which
+	 *   are both arrays of <code>sap.ui.core.message.Message</code> objects
+	 * @returns {sap.ui.core.message.Message[]} The sorted array of messages
+	 * @private
+	 */
+	DataState.getMessagesForProperties = function (mProperties) {
+		var aMessages = [],
+			aControlMessages = mProperties.controlMessages,
+			aModelMessages = mProperties.modelMessages;
+
+		if (aModelMessages.length || aControlMessages.length) {
+			aMessages = aMessages.concat(aControlMessages || [], aModelMessages || []);
+			aMessages.sort(Message.compare);
 		}
 		return aMessages;
 	};
@@ -167,8 +186,8 @@ sap.ui.define([ 'jquery.sap.global', '../base/Object' ], function(jQuery, BaseOb
 	/**
 	 * Sets an array of model state messages.
 	 *
-	 * @param {array} the model messages for this data state.
-	 * @returns {sap.ui.model.DataState} <code>this</code> to allow method chaining
+	 * @param {sap.ui.core.message.Message[]} [aMessages=[]] The model messages for this data state.
+	 * @returns {this} <code>this</code> to allow method chaining
 	 * @public
 	 */
 	DataState.prototype.setModelMessages = function(aMessages) {
@@ -177,9 +196,10 @@ sap.ui.define([ 'jquery.sap.global', '../base/Object' ], function(jQuery, BaseOb
 	};
 
 	/**
-	 * Returns the array of state messages of the model or undefined
+	 * Returns the array of this data state's current model messages.
 	 *
-	 * @returns {sap.ui.core.Message[]} the array of messages of the model or null if no {link:sap.ui.core.messages.ModelManager ModelManager} is used.
+	 * @returns {sap.ui.core.message.Message[]} The array of messages of the model
+	 *
 	 * @public
 	 */
 	DataState.prototype.getModelMessages = function() {
@@ -189,8 +209,8 @@ sap.ui.define([ 'jquery.sap.global', '../base/Object' ], function(jQuery, BaseOb
 	/**
 	 * Sets an array of control state messages.
 	 *
-	 * @param {sap.ui.core.Message[]} the control messages
-	 * @return {sap.ui.model.DataState} <code>this</code> to allow method chaining
+	 * @param {sap.ui.core.message.Message[]} aMessages - The control messages
+	 * @return {this} <code>this</code> to allow method chaining
 	 * @protected
 	 */
 	DataState.prototype.setControlMessages = function(aMessages) {
@@ -199,9 +219,10 @@ sap.ui.define([ 'jquery.sap.global', '../base/Object' ], function(jQuery, BaseOb
 	};
 
 	/**
-	 * Returns the array of state messages of the control or undefined.
+	 * Returns the array of this data state's current control messages.
 	 *
-	 * @return {sap.ui.core.Message[]} the array of messages of the control or null if no {link:sap.ui.core.messages.ModelManager ModelManager} is used.
+	 * @returns {sap.ui.core.message.Message[]} The array of control messages
+	 *
 	 * @public
 	 */
 	DataState.prototype.getControlMessages = function() {
@@ -211,25 +232,24 @@ sap.ui.define([ 'jquery.sap.global', '../base/Object' ], function(jQuery, BaseOb
 
 	/**
 	 * Returns whether the data state is dirty.
-	 * A data state is dirty if the value was changed
-	 * but is not yet confirmed by a server or the entered value did not yet pass the type validation.
+	 * A data state is dirty if the value was changed but is not yet confirmed by a server or the
+	 * entered value did not yet pass the type validation.
 	 *
-	 * @returns {boolean} true if the data state is dirty
+	 * @returns {boolean} Whether the data state is dirty
 	 * @public
 	 */
 	DataState.prototype.isDirty = function() {
-		var vValue = this.mChangedProperties["value"];
-		var vOriginalValue = this.mChangedProperties["originalValue"];
-		var bControlDirty = this.mChangedProperties["invalidValue"] !== undefined;
+		var vValue = this.mChangedProperties["value"],
+			vOriginalValue = this.mChangedProperties["originalValue"];
 
-		return bControlDirty || !jQuery.sap.equal(vValue, vOriginalValue);
+		return this.isControlDirty() || !deepEqual(vValue, vOriginalValue);
 	};
 
 	/**
 	 * Returns whether the data state is dirty in the UI control.
 	 * A data state is dirty in the UI control if the entered value did not yet pass the type validation.
 	 *
-	 * @returns {boolean} true if the data state is dirty
+	 * @returns {boolean} Whether the data state is dirty
 	 * @public
 	 */
 	DataState.prototype.isControlDirty = function() {
@@ -241,7 +261,7 @@ sap.ui.define([ 'jquery.sap.global', '../base/Object' ], function(jQuery, BaseOb
 	 * If data is sent to the server, the data state becomes laundering until the
 	 * data was accepted or rejected.
 	 *
-	 * @returns {boolean} true if the data is laundering
+	 * @returns {boolean} Whether the data state is laundering
 	 * @public
 	 */
 	 DataState.prototype.isLaundering = function() {
@@ -251,8 +271,8 @@ sap.ui.define([ 'jquery.sap.global', '../base/Object' ], function(jQuery, BaseOb
 	/**
 	 * Sets the laundering state of the data state.
 	 *
-	 * @param {boolean} bLaundering true if the state is laundering
-	 * @returns {sap.ui.model.DataState} <code>this</code> to allow method chaining
+	 * @param {boolean} bLaundering Whether the state is laundering
+	 * @returns {this} <code>this</code> to allow method chaining
 	 * @protected
 	 */
 	DataState.prototype.setLaundering = function(bLaundering) {
@@ -266,7 +286,7 @@ sap.ui.define([ 'jquery.sap.global', '../base/Object' ], function(jQuery, BaseOb
 	 * @returns {any} The value of the data.
 	 * @public
 	 */
-	DataState.prototype.getValue = function(vValue) {
+	DataState.prototype.getValue = function() {
 		return this.getProperty("value");
 	};
 
@@ -274,7 +294,7 @@ sap.ui.define([ 'jquery.sap.global', '../base/Object' ], function(jQuery, BaseOb
 	 * Sets the formatted value of the data state,
 	 *
 	 * @param {any} vValue the value
-	 * @returns {sap.ui.model.DataState} <code>this</code> to allow method chaining
+	 * @returns {this} <code>this</code> to allow method chaining
 	 * @protected
 	 */
 	DataState.prototype.setValue = function(vValue) {
@@ -283,12 +303,12 @@ sap.ui.define([ 'jquery.sap.global', '../base/Object' ], function(jQuery, BaseOb
 	};
 
 	/**
-	 * Returns the dirty value of a binding that was rejected by a type validation.
-	 * This value was of an incorrect type and could not be applied to the model. If the
-	 * value was not rejected it will return null. In this case the current
-	 * model value can be accessed using the <code>getValue</code> method.
+	 * Returns the dirty value of a binding that was rejected by a type validation so that
+	 * it could not be applied to the model. If the
+	 * value was not rejected it returns <code>undefined</code>. In this case the current
+	 * model value can be accessed using the {@link #getValue} method.
 	 *
-	 * @returns {any} the value that was rejected or null
+	 * @returns {any|undefined} The value that was rejected or <code>undefined</code>
 	 * @public
 	 */
 	DataState.prototype.getInvalidValue = function() {
@@ -298,8 +318,9 @@ sap.ui.define([ 'jquery.sap.global', '../base/Object' ], function(jQuery, BaseOb
 	/**
 	 * Sets the dirty value that was rejected by the type validation.
 	 *
-	 * @param {any} vInvalidValue the value that was rejected by the type validation or null if the value was valid
-	 * @returns {sap.ui.model.DataState} <code>this</code> to allow method chaining
+	 * @param {any} vInvalidValue The value that was rejected by the type validation or
+	 *   <code>undefined</code> if the value was valid
+	 * @returns {this} <code>this</code> to allow method chaining
 	 * @protected
 	 */
 	DataState.prototype.setInvalidValue = function(vInvalidValue) {
@@ -311,7 +332,7 @@ sap.ui.define([ 'jquery.sap.global', '../base/Object' ], function(jQuery, BaseOb
 	 * Returns the formatted original value of the data.
 	 * The original value is the last confirmed value.
 	 *
-	 * @returns {any} the original confirmed value of the server
+	 * @returns {any} The original confirmed value of the server
 	 * @public
 	 */
 	DataState.prototype.getOriginalValue = function() {
@@ -321,8 +342,8 @@ sap.ui.define([ 'jquery.sap.global', '../base/Object' ], function(jQuery, BaseOb
 	/**
 	 * Sets the formatted original value of the data.
 	 *
-	 * @param {boolean} vOriginalValue the original value
-	 * @returns {sap.ui.model.DataState} <code>this</code> to allow method chaining
+	 * @param {boolean} vOriginalValue The original value
+	 * @returns {this} <code>this</code> to allow method chaining
 	 * @protected
 	 */
 	DataState.prototype.setOriginalValue = function(vOriginalValue) {
@@ -331,54 +352,87 @@ sap.ui.define([ 'jquery.sap.global', '../base/Object' ], function(jQuery, BaseOb
 	};
 
 	/**
-	 * Returns or sets whether the data state is changed.
-	 * As long as changed was not set to false the data state is dirty
-	 * and the corresponding binding will fire data state change events.
+	 * Returns whether the data state is changed, or resets the data state in case the parameter
+	 * <code>bNewState</code> is false; reset data state means that the data state properties
+	 * are replaced with the changed properties.
+	 * As long as there was no call to this method with <code>bNewState</code> set to false, the
+	 * data state is dirty, and the corresponding binding will fire data state change events.
 	 *
-	 * @param {boolean} [bNewState] the optional new state
-	 * @returns {boolean} whether the data state was changed.
+	 * @param {boolean} [bNewState] Whether the data state is to be reset
+	 * @returns {boolean} Whether the data state was changed
 	 * @protected
 	 */
 	DataState.prototype.changed = function(bNewState) {
 		if (bNewState === false) {
 			//clear the changed properties as changed was reset;
-			this.mProperties = jQuery.sap.extend({},this.mChangedProperties);
+			this.mProperties = Object.assign({},this.mChangedProperties);
 		}
-		return !jQuery.sap.equal(this.mChangedProperties,this.mProperties);
+		return !deepEqual(this.mChangedProperties,this.mProperties);
 	};
 
 	/**
 	 * Returns the changes of the data state in a map that the control can use in the
 	 * <code>refreshDataState</code> method.
-	 * The changed property's name is the key in the map. Each element in the map contains an object of below structure.
-	 * <pre>
-	 *    {
-	 *        oldValue : The old value of the property,
-	 *        value    : The new value of the property
-	 *    }
-	 * </pre>
-	 * The map only contains the changed properties.
+	 * The changed property's name is the key in the map. Each element in the map contains an object
+	 * with the properties <code>oldValue</code> with the old property value and <code>value</code>
+	 * with the new value of the property. The map only contains the changed properties.
 	 *
-	 * @returns {map} the changed of the data state
+	 * @returns {object} The changed properties of the data state
 	 * @public
 	 */
 	DataState.prototype.getChanges = function() {
-		var mChanges = {};
-		jQuery.each(this.mChangedProperties,function(sProperty, vValue) {
-			if (!jQuery.sap.equal(this.mChangedProperties[sProperty],this.mProperties[sProperty])) {
+		var mChanges = {},
+			aMessages,
+			aOldMessages;
+
+		each(this.mChangedProperties,function(sProperty, vValue) {
+			if (!deepEqual(this.mChangedProperties[sProperty],this.mProperties[sProperty])) {
 				mChanges[sProperty] = {};
 				mChanges[sProperty].value = this.mChangedProperties[sProperty];
 				mChanges[sProperty].oldValue = this.mProperties[sProperty];
 			}
 		}.bind(this));
-		var aMessages = this.getMessages();
-		var aOldMessages = this._getOldMessages();
+
+		aMessages = this.getMessages();
+		aOldMessages = this._getOldMessages();
 		if (aMessages.length > 0 || aOldMessages.length > 0) {
 			mChanges["messages"] = {};
 			mChanges["messages"].oldValue = aOldMessages;
 			mChanges["messages"].value = aMessages;
 		}
+
 		return mChanges;
+	};
+
+	/**
+	 * Returns an object containing the data state properties with their initial value; each call
+	 * to this method creates a new object.
+	 *
+	 * @returns {object} An object with the initial data state properties
+	 * @private
+	 */
+	DataState.getInitialProperties = function () {
+		return {
+			controlMessages : [],
+			dirty : false,
+			internalValue : undefined,
+			invalidValue : undefined,
+			laundering : false,
+			messages : [],
+			modelMessages : [],
+			originalInternalValue : undefined,
+			originalValue : undefined,
+			value : undefined
+		};
+	};
+
+	/**
+	 * Resets the data state properties to their initial value.
+	 *
+	 * @private
+	 */
+	DataState.prototype.reset = function () {
+		this.mChangedProperties = DataState.getInitialProperties();
 	};
 
 	return DataState;

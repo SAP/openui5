@@ -1,0 +1,20 @@
+/* ================================= */
+/* CSS for control sap.m/MessageBox  */
+/* Fiori 3 theme                     */
+/* ================================= */
+
+// header shadow - different states
+@_sap_m_MessageBox_HeaderShadow:  inset 0 -0.0625rem;
+@_sap_m_MessageBox_Shadow: @sapUiShadowHeader;
+@_sap_m_MessageBox_InformationShadow: @_sap_m_MessageBox_HeaderShadow @sapUiInformationBorder, @_sap_m_MessageBox_Shadow;
+@_sap_m_MessageBox_WarningShadow: @_sap_m_MessageBox_HeaderShadow @sapUiWarningBorder, @_sap_m_MessageBox_Shadow;
+@_sap_m_MessageBox_ErrorShadow:  @_sap_m_MessageBox_HeaderShadow @sapUiErrorBorder, @_sap_m_MessageBox_Shadow;
+@_sap_m_MessageBox_SuccessShadow: @_sap_m_MessageBox_HeaderShadow @sapUiSuccessBorder, @_sap_m_MessageBox_Shadow;
+
+.sapMDialog.sapMMessageBoxInfo .sapMDialogIcon.sapUiIcon {
+	color: @sapUiInformativeElement;
+}
+
+.sapMMessageBox .sapMDialogFooter .sapMBtn {
+	min-width: 4rem;
+}

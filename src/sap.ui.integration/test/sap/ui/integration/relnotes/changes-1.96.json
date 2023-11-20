@@ -1,0 +1,120 @@
+{
+  "1.96.0": {
+    "date": "October 2021",
+    "notes": [
+      {
+        "id": "7f0cc1bbc1ba2c681467fe2e6c56cdbf7a3ee799",
+        "type": "FIX",
+        "text": " Integration Card: Refresh data icon is now correctly displayed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170237540"
+          }
+        ]
+      },
+      {
+        "id": "0c2c39c95aaeb35e87182aca2bb60cb95d2ce54d",
+        "type": "FEATURE",
+        "text": " Integration card: \"configurationChange\" event is added"
+      },
+      {
+        "id": "65b009f828a670a9331107eb1195af27a36b6507",
+        "type": "FEATURE",
+        "text": " sap.f.cards.NumericHeader: New property \"sideIndicatorsAlignment\" implemented"
+      },
+      {
+        "id": "61b4a9a63a8bce7a5c9dc164da9cd7fc6383428b",
+        "type": "FIX",
+        "text": " sap.ui.integration.widgets.Card: minHeight of Analytical content now works in GridContainer",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170234802"
+          }
+        ]
+      },
+      {
+        "id": "6cff48f635fcbd6259c687de1ef792f3edec0a17",
+        "type": "FIX",
+        "text": " sap.f.Card: The color of the Side Indicator number is fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170226646"
+          }
+        ]
+      },
+      {
+        "id": "8ec37d6034a49472221bf0afc718e4e6f7cb56e5",
+        "type": "FIX",
+        "text": " sap.ui.integration.widgets.Card: refreshData method now hides loading placeholders",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170210778"
+          }
+        ]
+      },
+      {
+        "id": "3fa4ba00d10908f63426f3fc064b7f835a1d5b27",
+        "type": "FEATURE",
+        "text": " sap.ui.integration.widgets.Card: Analytical type now supports all Viz charts"
+      },
+      {
+        "id": "b2ee5525063bd8df702723fd9e685afcbb45e410",
+        "type": "FIX",
+        "text": " Integration cards: Card type is now announced upon focus",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170188036"
+          }
+        ]
+      },
+      {
+        "id": "736748b0a87a763a44df4ee15cb12441eb36cacf",
+        "type": "FEATURE",
+        "text": " sap.f.Card: New property \"state\" for the SideIndicators implemented"
+      },
+      {
+        "id": "b590e4e23645be6d8eafbd4edc1aca7e1c059fd8",
+        "type": "FIX",
+        "text": " CalendarCard: MonthChange action has correct firstDate parameter",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170185686"
+          }
+        ]
+      },
+      {
+        "id": "29b73d92789fa35da499366793a9b03fc3c163c0",
+        "type": "FEATURE",
+        "text": " Integration cards: Added \"refreshData\" method"
+      },
+      {
+        "id": "52e57f80a976edce4e26186e89dfef7888e3db85",
+        "type": "FIX",
+        "text": " Component: Accept multiple onInstanceCreated listeners",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180375313"
+          }
+        ]
+      },
+      {
+        "id": "90ba5f880bd24c0d9bb89ee3414442fedffb592a",
+        "type": "FIX",
+        "text": " Integration cards: List card compact sizes are now correct",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180363992"
+          }
+        ]
+      }
+    ]
+  }
+}

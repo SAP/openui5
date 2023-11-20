@@ -1,0 +1,56 @@
+//Remove border for panels
+.sapUiMDCGroupView .sapMPanelWrappingDivTb{
+    border: none;
+}
+
+//padding between list items in group view
+.sapUiMDCGroupView .sapMLIBContent {
+    padding-bottom: 0.75rem;
+    padding-top: 0.5rem;
+    padding-right: 0.375rem
+}
+
+//remove highlighting in group view
+.sapUiMDCGroupView .sapMLIB .sapMLIBSelected {
+	border-color: transparent;
+	background: @sapUiListBackground;
+}
+
+//Display ':' for Labels
+.sapUiMDCGroupView.sapUiMDCAFLabelMarking .sapMPanelContent .sapMLabelColonAndRequired::before {
+	content: attr(data-colon);
+}
+
+//Custom bar that should look like 'ListView' background (mock columnheader)
+.sapUiMDCGroupView .sapMListInfoTBar {
+    color: @sapUiListTextColor;
+    background: @sapUiListHeaderBackground;
+}
+//remove padding for infotoolbar in panel (mock columnheader)
+.sapUiMDCGroupView .sapMListInfoTBarContainer .sapMIBar.sapMTB.sapMTB-Info-CTX{
+    padding:0
+}
+//remove padding for infotoolbar in panel + padding for first child (mock columnheader)
+.sapUiMDCGroupView .sapMListInfoTBarContainer .sapMIBar.sapMTB .sapMBarChild:first-child {
+    margin-left:0;
+    padding-left: 2.5rem;
+}
+
+
+//Checkbox alignment --> at the top
+.sapUiMDCGroupView li .sapMCLI {
+    align-items: start;
+}
+
+//Margin to display dotted focus outline properly
+.sapUiMDCGroupView .sapMPanel{
+    margin: 2px;
+}
+
+//Adapt standard padding to use the whole content
+.sapUiMDCGroupView .sapMPanelContent{
+    overflow: visible;
+    border-bottom: none;
+    padding: 1rem 1rem 0 0;
+}
+

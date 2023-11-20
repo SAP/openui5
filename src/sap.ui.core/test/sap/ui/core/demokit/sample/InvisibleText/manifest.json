@@ -1,0 +1,31 @@
+{
+	"sap.app": {
+		"id": "sap.ui.core.sample.InvisibleText",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "sap.ui.core.sample.InvisibleText.V",
+			"type": "XML",
+			"async": true
+		},
+		"dependencies": {
+			"libs": {
+				"sap.m": {},
+				"sap.ui.core": {}
+			}
+		},
+		"config": {
+			"sample": {
+				"stretch": true,
+				"files": [
+					"V.view.xml",
+					"V.controller.js",
+					"manifest.json"
+				]
+			}
+		}
+	}
+}

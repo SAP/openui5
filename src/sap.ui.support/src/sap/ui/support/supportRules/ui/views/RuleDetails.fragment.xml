@@ -6,52 +6,90 @@
 		xmlns:t="sap.ui.table"
 		xmlns:core="sap.ui.core"
 		xmlns:tools="sap.ui.codeeditor">
-	<m:Page showHeader="false" visible="{/showRuleProperties}">
+	<m:Page id="ruleDetailsPage" showHeader="false" visible="{/showRuleProperties}">
 		<m:Bar>
-			<m:contentLeft >
-				<m:Title text="{= ${/selectedRule/libName} + ' > ' + ${/selectedRule/title}}" visible="{= ${/selectedRule} !== undefined &amp;&amp; ${/selectedSetPreviewKey} !== 'additionalRulesets'}" titleStyle="H6" class="customMarginLeft" />
+			<m:contentLeft>
+				<m:HBox fitContainer="true" renderType="Bare" class="customHBox">
+					<m:Title text="{= ${/selectedRule/libName} + ' > ' + ${/selectedRule/title}}" visible="{= ${/selectedRule} !== undefined &amp;&amp; ${/selectedSetPreviewKey} !== 'additionalRulesets'}" titleStyle="H6" class="customMarginLeft" />
+					<m:IconTabHeader
+							selectedKey="{/selectedRulePreviewKey}"
+							class="customIconTabHeader">
+						<m:layoutData>
+							<m:FlexItemData growFactor="1" minWidth="0">
+							</m:FlexItemData>
+						</m:layoutData>
+						<m:items>
+							<m:IconTabFilter enabled="{= ${/selectedRule} !== undefined}" key="ruleProperties" text="Rule properties" />
+							<m:IconTabFilter enabled="{= ${/selectedRule} !== undefined}" key="checkFunction" text="Check function" />
+							<m:IconTabFilter enabled="{= ${/selectedRule} !== undefined}" key="jsonOutput" text="Code" />
+						</m:items>
+					</m:IconTabHeader>
+				</m:HBox>
 			</m:contentLeft>
-			<m:contentMiddle>
-				<m:IconTabHeader
-						selectedKey="{/selectedRulePreviewKey}"
-						class="customIconTabHeader">
-					<m:items>
-						<m:IconTabFilter enabled="{= ${/selectedRule} !== undefined}" key="ruleProperties" text="Rule properties" />
-						<m:IconTabFilter enabled="{= ${/selectedRule} !== undefined}" key="checkFunction" text="Check function" />
-						<m:IconTabFilter enabled="{= ${/selectedRule} !== undefined}" key="jsonOutput" text="Code" />
-					</m:items>
-				</m:IconTabHeader>
-			</m:contentMiddle>
 		</m:Bar>
-		<f:SimpleForm
+		<f:Form
 				visible="{= ${/selectedRule/type} !== 'library'  &amp;&amp; ${/selectedRulePreviewKey} === 'ruleProperties' &amp;&amp; ${/selectedRule} !== undefined &amp;&amp; ${/selectedSetPreviewKey} !== 'additionalRulesets'}">
-			<f:content>
-				<m:Label text="ID" />
-				<m:Text text="{/selectedRule/id}" />
-				<m:Label text="Title" />
-				<m:Text text="{/selectedRule/title}" />
-				<m:Label text="Async" />
-				<m:Text text="{= ${/selectedRule/async} === true }" />
-				<m:Label text="Audiences" />
-				<m:Text text="{/selectedRule/audiences}" />
-				<m:Label text="Categories" />
-				<m:Text text="{/selectedRule/categories}" />
-				<m:Label text="Min version" />
-				<m:Text text="{/selectedRule/minversion}" />
-				<m:Label text="Description" />
-				<m:Text text="{/selectedRule/description}" />
-				<m:Label text="Resolution" />
-				<m:Text text="{/selectedRule/resolution}" />
-				<m:Label text="Resolution URLs" />
-				<l:VerticalLayout
-						content="{/selectedRule/resolutionurls}">
-					<m:Link target="_blank"
-							text="{text}"
-							href="{href}"/>
-				</l:VerticalLayout>
-			</f:content>
-			<f:layoutData><l:SplitterLayoutData size="40%" /></f:layoutData>
-		</f:SimpleForm>
+			<f:layout>
+				<f:ColumnLayout />
+			</f:layout>
+			<f:formContainers>
+				<f:FormContainer>
+					<f:formElements>
+						<f:FormElement label="ID">
+							<f:fields>
+								<m:Text text="{/selectedRule/id}" id="ruleID"  />
+							</f:fields>
+						</f:FormElement>
+						<f:FormElement label="Title">
+							<f:fields>
+								<m:Text text="{/selectedRule/title}" id="ruleTitle"  />
+							</f:fields>
+						</f:FormElement>
+						<f:FormElement label="Async">
+							<f:fields>
+								<m:Text text="{= ${/selectedRule/async} === true }" id="ruleAsync"  />
+							</f:fields>
+						</f:FormElement>
+						<f:FormElement label="Audiences">
+							<f:fields>
+								<m:Text text="{/selectedRule/audiences}" id="ruleAudience"  />
+							</f:fields>
+						</f:FormElement>
+						<f:FormElement label="Categories">
+							<f:fields>
+								<m:Text id="ruleCategory" text="{/selectedRule/categories}" />
+							</f:fields>
+						</f:FormElement>
+						<f:FormElement label="Min version">
+							<f:fields>
+								<m:Text id="ruleMinVersion" text="{/selectedRule/minversion}" />
+							</f:fields>
+						</f:FormElement>
+						<f:FormElement label="Description">
+							<f:fields>
+								<m:Text id="ruleDescription" text="{/selectedRule/description}" />
+							</f:fields>
+						</f:FormElement>
+						<f:FormElement label="Resolution">
+							<f:fields>
+								<m:Text id="ruleResolution" text="{/selectedRule/resolution}" />
+							</f:fields>
+						</f:FormElement>
+						<f:FormElement label="Resolution URLs" fields="{/selectedRule/resolutionurls}">
+							<f:fields>
+									<m:Link target="_blank"
+											text="{text}"
+											href="{href}">
+										<m:layoutData>
+											<f:ColumnElementData cellsLarge="8" cellsSmall="12" />
+										</m:layoutData>
+									</m:Link>
+							</f:fields>
+						</f:FormElement>
+					</f:formElements>
+				</f:FormContainer>
+			</f:formContainers>
+		</f:Form>
 		<m:Panel
 				width="100%"
 				height="calc(100% - 2rem)"

@@ -1,16 +1,17 @@
 sap.ui.define([
-	"jquery.sap.global",
+	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/mvc/Controller",
 	"sap/m/MessageToast",
 	"sap/m/MessageBox",
+	"sap/m/UploadCollectionItem",
 	"sap/ui/model/json/JSONModel"
-], function(jQuery, Controller, MessageToast, MessageBox, JSONModel) {
+], function(jQuery, Controller, MessageToast, MessageBox, UploadCollectionItem, JSONModel) {
 	"use strict";
 
 	return Controller.extend("sap.m.sample.UploadCollectionFolderHierarchy.Page", {
 		onInit: function() {
 			// set mock data
-			this.oModel = new JSONModel(sap.ui.require.toUrl("sap/m/sample/UploadCollectionFolderHierarchy") + "/UploadCollectionData.json");
+			this.oModel = new JSONModel(sap.ui.require.toUrl("sap/m/sample/UploadCollectionFolderHierarchy/UploadCollectionData.json"));
 			this.getView().setModel(this.oModel);
 
 			this.oUploadCollection = this.byId("UploadCollection");
@@ -32,7 +33,7 @@ sap.ui.define([
 			var sUploadedFile = oEvent.getParameter("files")[0].fileName;
 
 			oItem = {
-				"documentId": jQuery.now().toString(), // generate Id,
+				"documentId": Date.now().toString(), // generate Id,
 				"fileName": sUploadedFile,
 				"mimeType": "",
 				"thumbnailUrl": "",
@@ -50,9 +51,9 @@ sap.ui.define([
 				}
 			}
 			this.oModel.setProperty(sCurrentPath + "/items", aItems);
-			jQuery.sap.delayedCall(2000, this, function() {
+			setTimeout(function() {
 				MessageToast.show("UploadComplete event triggered.");
-			});
+			}, 2000);
 		},
 
 		onFileDeleted: function(oEvent) {
@@ -88,7 +89,7 @@ sap.ui.define([
 				actions: [MessageBox.Action.OK, MessageBox.Action.CANCEL],
 				onClose: function(oAction) {
 					if (oAction === MessageBox.Action.OK) {
-						this.deleteItemByPath(oItem.getBindingContext().sPath);
+						this.deleteItemByPath(oItem.getBindingContext().getPath());
 					}
 				}.bind(this),
 				dialogId: "messageBoxDeleteFolder"
@@ -121,7 +122,7 @@ sap.ui.define([
 		},
 
 		uploadCollectionItemFactory: function(id, context) {
-			var oItem = new sap.m.UploadCollectionItem(id, {
+			var oItem = new UploadCollectionItem(id, {
 				documentId: "{documentId}",
 				fileName: "{fileName}",
 				mimeType: "{mimeType}",

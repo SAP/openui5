@@ -4,31 +4,37 @@
 
 // Provides control sap.m.Toolbar.
 sap.ui.define([
-	'jquery.sap.global',
 	'./BarInPageEnabler',
 	'./ToolbarLayoutData',
 	'./ToolbarSpacer',
 	'./library',
 	'sap/ui/core/Control',
+	'sap/ui/core/Element',
 	'sap/ui/core/EnabledPropagator',
-	'sap/ui/core/ResizeHandler',
-	'./ToolbarRenderer'
+	"sap/ui/events/KeyCodes",
+	'./ToolbarRenderer',
+	"sap/m/Button",
+	"sap/ui/core/library"
 ],
 function(
-	jQuery,
 	BarInPageEnabler,
 	ToolbarLayoutData,
 	ToolbarSpacer,
 	library,
 	Control,
+	Element,
 	EnabledPropagator,
-	ResizeHandler,
-	ToolbarRenderer
+	KeyCodes,
+	ToolbarRenderer,
+	Button,
+	coreLibrary
 ) {
 	"use strict";
 
 	var ToolbarDesign = library.ToolbarDesign,
 		ToolbarStyle = library.ToolbarStyle;
+
+	var MIN_INTERACTIVE_CONTROLS = 2;
 
 	/**
 	 * Constructor for a new <code>Toolbar</code>.
@@ -60,7 +66,9 @@ function(
 	 * You can define the width of the horizontal space or make it flexible to cover the remaining space
 	 * between the <code>Toolbar</code> items (for example, to to push an item to the edge of the <code>Toolbar</code>.
 	 *
-	 * <b>Note:</b> {@link sap.m.ToolbarLayoutData} should not be used together with {@link sap.m.ToolbarSpacer}.
+	 * <b>Note:</b> The {@link sap.m.ToolbarSpacer} is a flex control that is intended to
+	 * control its own behavior, thus {@link sap.m.ToolbarLayoutData} is not supported as value for the
+	 * <code>layoutData</code> aggregation of {@link sap.m.ToolbarSpacer} and if set it's ignored.
 	 *
 	 * @see {@link fiori:https://experience.sap.com/fiori-design-web/toolbar-overview/ Toolbar}
 	 *
@@ -74,92 +82,118 @@ function(
 	 * @public
 	 * @since 1.16
 	 * @alias sap.m.Toolbar
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
-	var Toolbar = Control.extend("sap.m.Toolbar", /** @lends sap.m.Toolbar.prototype */ { metadata : {
+	var Toolbar = Control.extend("sap.m.Toolbar", /** @lends sap.m.Toolbar.prototype */ {
+		metadata : {
 
-		interfaces : [
-			"sap.ui.core.Toolbar",
-			"sap.m.IBar"
-		],
-		library : "sap.m",
-		properties : {
+			interfaces : [
+				"sap.ui.core.Toolbar",
+				"sap.m.IBar"
+			],
+			library : "sap.m",
+			properties : {
 
-			/**
-			 * Defines the width of the control.
-			 * By default, Toolbar is a block element. If the width is not explicitly set, the control will assume its natural size.
-			 */
-			width : {type : "sap.ui.core.CSSSize", group : "Appearance", defaultValue : null},
+				/**
+				 * Defines the width of the control.
+				 * By default, Toolbar is a block element. If the width is not explicitly set, the control will assume its natural size.
+				 */
+				width : {type : "sap.ui.core.CSSSize", group : "Appearance", defaultValue : null},
 
-			/**
-			 * Indicates that the whole toolbar is clickable. The Press event is fired only if Active is set to true.
-			 * Note: This property should be used when there are no interactive controls inside the toolbar and the toolbar itself is meant to be interactive.
-			 */
-			active : {type : "boolean", group : "Behavior", defaultValue : false},
+				/**
+				 * Indicates that the whole toolbar is clickable. The Press event is fired only if Active is set to true.
+				 * Note: This property should be used when there are no interactive controls inside the toolbar and the toolbar itself is meant to be interactive.
+				 */
+				active : {type : "boolean", group : "Behavior", defaultValue : false},
 
-			/**
-			 * Sets the enabled property of all controls defined in the content aggregation.
-			 * Note: This property does not apply to the toolbar itself, but rather to its items.
-			 */
-			enabled : {type : "boolean", group : "Behavior", defaultValue : true},
+				/**
+				 * Sets the enabled property of all controls defined in the content aggregation.
+				 * Note: This property does not apply to the toolbar itself, but rather to its items.
+				 */
+				enabled : {type : "boolean", group : "Behavior", defaultValue : true},
 
-			/**
-			 * Defines the height of the control. By default, the <code>height</code>
-			 * property depends on the used theme and the <code>design</code> property.
-			 *
-			 * <b>Note:</b> It is not recommended to use this property if the
-			 * <code>sapMTBHeader-CTX</code> class is used
-			 */
-			height : {type : "sap.ui.core.CSSSize", group : "Appearance", defaultValue : ''},
+				/**
+				 * Defines the height of the control. By default, the <code>height</code>
+				 * property depends on the used theme and the <code>design</code> property.
+				 *
+				 * <b>Note:</b> It is not recommended to use this property if the
+				 * <code>sapMTBHeader-CTX</code> class is used
+				 */
+				height : {type : "sap.ui.core.CSSSize", group : "Appearance", defaultValue : ''},
 
-			/**
-			 * Defines the toolbar design.
-			 *
-			 * <b>Note:</b> Design settings are theme-dependent. They also determine the default height of the toolbar.
-			 * @since 1.16.8
-			 */
-			design : {type : "sap.m.ToolbarDesign", group : "Appearance", defaultValue : ToolbarDesign.Auto},
+				/**
+				 * Defines the toolbar design.
+				 *
+				 * <b>Note:</b> Design settings are theme-dependent. They also determine the default height of the toolbar.
+				 * @since 1.16.8
+				 */
+				design : {type : "sap.m.ToolbarDesign", group : "Appearance", defaultValue : ToolbarDesign.Auto},
 
-			/**
-			 * Defines the visual style of the <code>Toolbar</code>.
-			 *
-			 * <b>Note:</b> The visual styles are theme-dependent.
-			 * @since 1.54
-			 */
-			style : {type : "sap.m.ToolbarStyle", group : "Appearance", defaultValue : ToolbarStyle.Standard}
-		},
-		defaultAggregation : "content",
-		aggregations : {
+				/**
+				 * Defines the visual style of the <code>Toolbar</code>.
+				 *
+				 * <b>Note:</b> The visual styles are theme-dependent.
+				 * @since 1.54
+				 */
+				style : {type : "sap.m.ToolbarStyle", group : "Appearance", defaultValue : ToolbarStyle.Standard},
 
-			/**
-			 * The content of the toolbar.
-			 */
-			content : {type : "sap.ui.core.Control", multiple : true, singularName : "content"}
-		},
-		associations : {
+				/**
+				 * Defines the aria-haspopup attribute of the <code>Toolbar</code>. if the active <code>design</code> is true.
+				 *
+				 * <b>Guidance for choosing appropriate value:</b>
+				 * <ul>
+				 * <li> We recommend that you use the {@link sap.ui.core.aria.HasPopup} enumeration.</li>
+				 * <li> If you use controls based on <code>sap.m.Popover</code> or <code>sap.m.Dialog</code>,
+				 * then you must use <code>AriaHasPopup.Dialog</code> (both <code>sap.m.Popover</code> and
+				 * <code>sap.m.Dialog</code> have role "dialog" assigned internally).</li>
+				 * <li> If you use other controls, or directly <code>sap.ui.core.Popup</code>, you need to check
+				 * the container role/type and map the value of <code>ariaHasPopup</code> accordingly.</li>
+				 * </ul>
+				 *
+				 * @since 1.79.0
+				 */
+				ariaHasPopup : {type: "string", group : "Accessibility", defaultValue : null}
+			},
+			defaultAggregation : "content",
+			aggregations : {
 
-			/**
-			 * Association to controls / ids which label this control (see WAI-ARIA attribute aria-labelledby).
-			 */
-			ariaLabelledBy : {type : "sap.ui.core.Control", multiple : true, singularName : "ariaLabelledBy"}
-		},
-		events : {
+				/**
+				 * The content of the toolbar.
+				 */
+				content : {type : "sap.ui.core.Control", multiple : true, singularName : "content"},
 
-			/**
-			 * Fired when the user clicks on the toolbar, if the Active property is set to "true".
-			 */
-			press : {
-				parameters : {
+				/**
+				 * Hidden button that provides focus dom reference for active toolbar.
+				 * @private
+				 */
+				 _activeButton : {type : "sap.m.Button", multiple: false,  visibility: "hidden"}
+			},
+			associations : {
 
-					/**
-					 * The toolbar item that was pressed
-					 */
-					srcControl : {type : "sap.ui.core.Control"}
+				/**
+				 * Association to controls / ids which label this control (see WAI-ARIA attribute aria-labelledby).
+				 */
+				ariaLabelledBy : {type : "sap.ui.core.Control", multiple : true, singularName : "ariaLabelledBy"}
+			},
+			events : {
+
+				/**
+				 * Fired when the user clicks on the toolbar, if the Active property is set to "true".
+				 */
+				press : {
+					parameters : {
+
+						/**
+						 * The toolbar item that was pressed
+						 */
+						srcControl : {type : "sap.ui.core.Control"}
+					}
 				}
-			}
+			},
+			designtime: "sap/m/designtime/Toolbar.designtime"
 		},
-		designtime: "sap/m/designtime/Toolbar.designtime"
-	}});
+
+		renderer: ToolbarRenderer
+	});
 
 	EnabledPropagator.call(Toolbar.prototype);
 
@@ -171,7 +205,7 @@ function(
 	 *
 	 * @static
 	 * @protected
-	 * @param {String} sWidth
+	 * @param {string} sWidth
 	 * @return {boolean}
 	 */
 	Toolbar.isRelativeWidth = function(sWidth) {
@@ -188,11 +222,11 @@ function(
 	 *
 	 * @static
 	 * @protected
-	 * @param {String} sId Control ID
-	 * @return {String} width
+	 * @param {string} sId Control ID
+	 * @return {string} width
 	 */
 	Toolbar.getOrigWidth = function(sId) {
-		var oControl = sap.ui.getCore().byId(sId);
+		var oControl = Element.registry.get(sId);
 		if (!oControl || !oControl.getWidth) {
 			return "";
 		}
@@ -209,7 +243,7 @@ function(
 	 * @static
 	 * @protected
 	 * @param {sap.ui.core.Control} oControl UI5 Control
-	 * @param {String} [sShrinkClass] Shrink item class name
+	 * @param {string} [sShrinkClass] Shrink item class name
 	 * @returns {true|false|undefined|Object}
 	 */
 	Toolbar.checkShrinkable = function(oControl, sShrinkClass) {
@@ -247,6 +281,49 @@ function(
 		}
 	};
 
+	 /**
+	 * Sets the accessibility enablement
+	 * @param {string} bEnabled
+	 * @returns {sap.m.IBar} this for chaining
+	 * @private
+	 */
+	Toolbar.prototype._setEnableAccessibilty = function (bEnabled) {
+		var bFastGroupValue = bEnabled ? "true" : "false",
+			sRoleValue = bEnabled ? "toolbar" : "none";
+
+		this.data("sap-ui-fastnavgroup", bFastGroupValue, bEnabled);
+		this._setRootAccessibilityRole(sRoleValue);
+
+		return this;
+	};
+
+	Toolbar.prototype.enhanceAccessibilityState = function (oElement, mAriaProps) {
+		if (oElement === this.getAggregation("_activeButton")) {
+			return this.assignAccessibilityState(mAriaProps);
+		}
+	};
+
+	Toolbar.prototype.getAccessibilityState = function () {
+		var aAriaLabelledBy = this.getAriaLabelledBy(),
+			bActive = this.getActive();
+
+		return {
+			role: !bActive ? this._getAccessibilityRole() : undefined, // active toolbar is rendered with sap.m.Button as native button
+			haspopup: bActive ? this.getAriaHasPopup() : undefined,
+			labelledby: aAriaLabelledBy.length ? this.getAriaLabelledBy() : this.getTitleId(),
+			roledescription: this._sAriaRoleDescription
+		};
+	};
+
+	Toolbar.prototype.assignAccessibilityState = function (mAriaProps) {
+			if (!this._getAccessibilityRole() && !this.getActive()) {
+				// no role and not active -> no aria properties
+				return {};
+			}
+
+			return Object.assign(mAriaProps, this.getAccessibilityState(mAriaProps));
+	};
+
 	Toolbar.prototype.init = function() {
 		// define group for F6 handling
 		this.data("sap-ui-fastnavgroup", "true", true);
@@ -257,26 +334,12 @@ function(
 		};
 	};
 
-	Toolbar.prototype.onBeforeRendering = function() {
-		this._cleanup();
-	};
-
 	Toolbar.prototype.onAfterRendering = function() {
-		// if there is no shrinkable item, layout is not needed
-		if (!this._checkContents()) {
-			return;
-		}
-
-		// layout the toolbar
-		this._doLayout();
-	};
-
-	Toolbar.prototype.exit = function() {
-		this._cleanup();
+		this._checkContents();
 	};
 
 	Toolbar.prototype.onLayoutDataChange = function() {
-		this.rerender();
+		this.invalidate();
 	};
 
 	Toolbar.prototype.addContent = function(oControl) {
@@ -305,17 +368,18 @@ function(
 
 	// handle tap for active toolbar, do nothing if already handled
 	Toolbar.prototype.ontap = function(oEvent) {
-		if (this.getActive() && !oEvent.isMarked()) {
+		if (this.getActive() && !oEvent.isMarked() || oEvent.srcControl === this._getActiveButton()) {
 			oEvent.setMarked();
 			this.firePress({
 				srcControl : oEvent.srcControl
 			});
+			this.focus();
 		}
 	};
 
 	// fire press event when enter is hit on the active toolbar
 	Toolbar.prototype.onsapenter = function(oEvent) {
-		if (this.getActive() && oEvent.srcControl === this && !oEvent.isMarked()) {
+		if (this.getActive() && !oEvent.isMarked() || oEvent.srcControl === this._getActiveButton()) {
 			oEvent.setMarked();
 			this.firePress({
 				srcControl : this
@@ -323,8 +387,18 @@ function(
 		}
 	};
 
-	// keyboard space handling mimic the enter event
-	Toolbar.prototype.onsapspace = Toolbar.prototype.onsapenter;
+	Toolbar.prototype.onsapspace = function(oEvent) {
+		// Prevent browser scrolling in case of SPACE key
+		if (oEvent.srcControl === this._getActiveButton()) {
+			oEvent.preventDefault();
+		}
+	};
+
+	Toolbar.prototype.onkeyup = function(oEvent){
+		if (oEvent.which === KeyCodes.SPACE) {
+			this.onsapenter(oEvent);
+		}
+	};
 
 	// mark to inform active handling is done by toolbar
 	Toolbar.prototype.ontouchstart = function(oEvent) {
@@ -334,35 +408,9 @@ function(
 	// mark shrinkable contents and render layout data
 	// returns shrinkable and flexible content count
 	Toolbar.prototype._checkContents = function() {
-		var iShrinkableItemCount = 0;
 		this.getContent().forEach(function(oControl) {
-			if (Toolbar.checkShrinkable(oControl)) {
-				iShrinkableItemCount++;
-			}
+			Toolbar.checkShrinkable(oControl);
 		});
-
-		return iShrinkableItemCount;
-	};
-
-	// apply the layout calculation according to flexbox support
-	Toolbar.prototype._doLayout = function() {
-		if (ToolbarRenderer.hasNewFlexBoxSupport) {
-			return;
-		}
-
-		this._resetOverflow();
-	};
-
-	// reset overflow and mark with classname if overflows
-	Toolbar.prototype._resetOverflow = function() {
-		this._deregisterResize();
-		var $This = this.$();
-		var oDomRef = $This[0] || {};
-		$This.removeClass("sapMTBOverflow");
-		var bOverflow = oDomRef.scrollWidth > oDomRef.clientWidth;
-		bOverflow && $This.addClass("sapMTBOverflow");
-		this._iEndPoint = this._getEndPoint();
-		this._registerResize();
 	};
 
 	// gets called when new control is inserted into content aggregation
@@ -381,6 +429,31 @@ function(
 		}
 	};
 
+	Toolbar.prototype.onfocusin = function(oEvent) {
+		if (this.getActive()) {
+			if (oEvent.target === this.getDomRef()) {
+				this._getActiveButton().focus();
+			}
+		}
+	};
+
+	Toolbar.prototype.getFocusDomRef = function() {
+		return this.getActive() ? this._getActiveButton().getFocusDomRef() : this.getDomRef();
+	};
+
+	Toolbar.prototype.getFocusInfo = function() {
+		return {
+			id: this._getActiveButton().getId()
+		};
+	};
+
+	Toolbar.prototype.applyFocusInfo = function(oFocusInfo) {
+		var oDomRef = this.getFocusDomRef();
+		if (oDomRef) {
+			this.focus();
+		}
+	};
+
 	// gets called after content is (re)rendered
 	// here "this" points to the control not to the toolbar
 	Toolbar.prototype._onAfterContentRendering = function() {
@@ -392,7 +465,13 @@ function(
 
 	// gets called when any content property is changed
 	Toolbar.prototype._onContentPropertyChanged = function(oEvent) {
-		if (oEvent.getParameter("name") != "width") {
+		var oPropName = oEvent.getParameter("name");
+
+		if (oPropName === "visible") {
+			this.invalidate();
+		}
+
+		if (oPropName != "width") {
 			return;
 		}
 
@@ -402,94 +481,61 @@ function(
 		oControl.toggleStyleClass(Toolbar.shrinkClass, bPercent);
 	};
 
-	// register interval timer to detect inner content size is changed
-	Toolbar.prototype._registerContentResize = function() {
-		sap.ui.getCore().attachIntervalTimer(this._handleContentResize, this);
-	};
-
-	// deregister interval timer for inner content
-	Toolbar.prototype._deregisterContentResize = function() {
-		sap.ui.getCore().detachIntervalTimer(this._handleContentResize, this);
-	};
-
-	// register toolbar resize handler
-	Toolbar.prototype._registerToolbarResize = function() {
-		// register resize handler only if toolbar has relative width
-		if (Toolbar.isRelativeWidth(this.getWidth())) {
-			var fnResizeProxy = jQuery.proxy(this._handleToolbarResize, this);
-			this._sResizeListenerId = ResizeHandler.register(this, fnResizeProxy);
-		}
-	};
-
-	// deregister toolbar resize handlers
-	Toolbar.prototype._deregisterToolbarResize = function() {
-		sap.ui.getCore().detachIntervalTimer(this._handleContentResize, this);
-		if (this._sResizeListenerId) {
-			ResizeHandler.deregister(this._sResizeListenerId);
-			this._sResizeListenerId = "";
-		}
-	};
-
-	// register resize handlers
-	Toolbar.prototype._registerResize = function() {
-		this._registerToolbarResize();
-		this._registerContentResize();
-	};
-
-	// deregister resize handlers
-	Toolbar.prototype._deregisterResize = function() {
-		this._deregisterToolbarResize();
-		this._deregisterContentResize();
-	};
-
-	// cleanup resize handlers
-	Toolbar.prototype._cleanup = function() {
-		this._deregisterResize();
-	};
-
-	// get the end position of last content
-	Toolbar.prototype._getEndPoint = function() {
-		var oLastChild = (this.getDomRef() || {}).lastElementChild;
-		if (oLastChild) {
-			var iEndPoint = oLastChild.offsetLeft;
-			if (!sap.ui.getCore().getConfiguration().getRTL()) {
-				iEndPoint += oLastChild.offsetWidth;
-			}
-		}
-
-		return iEndPoint || 0;
-	};
-
-	// handle toolbar resize
-	Toolbar.prototype._handleToolbarResize = function() {
-		this._handleResize(false);
-	};
-
-	// handle inner content resize
-	Toolbar.prototype._handleContentResize = function() {
-		this._handleResize(true);
-	};
-
-	// generic resize handler
-	Toolbar.prototype._handleResize = function(bCheckEndPoint) {
-		// check whether end point is changed or not
-		if (bCheckEndPoint && this._iEndPoint == this._getEndPoint()) {
-			return;
-		}
-
-		// re-layout the toolbar
-		this._doLayout();
-	};
-
 	Toolbar.prototype._getAccessibilityRole = function () {
-		var aContent = this.getContent(),
-			sRole = this._getRootAccessibilityRole();
+		var sRootAccessibilityRole = this._getRootAccessibilityRole(),
+			sRole = sRootAccessibilityRole;
 
-		if (this.getActive() && (!aContent || aContent.length === 0)) {
+		if (this.getActive()) {
 			sRole = "button";
+		// Custom root accessibility roles (like 'heading' for Dialog and 'group' for FacetFilter are preserved).
+		// Also when accessibility is disabled, role "none" is preserved.
+		} else if (this._getToolbarInteractiveControlsCount() < MIN_INTERACTIVE_CONTROLS && sRootAccessibilityRole === "toolbar") {
+			sRole = "";
 		}
 
 		return sRole;
+	};
+
+	/**
+	 *
+	 * @returns {number} Toolbar interactive Controls count
+	 * @private
+	 */
+	Toolbar.prototype._getToolbarInteractiveControlsCount = function () {
+		return this.getContent().filter(function (oControl) {
+			return oControl.getVisible()
+				&& oControl.isA("sap.m.IToolbarInteractiveControl")
+				&& typeof (oControl._getToolbarInteractive) === "function" && oControl._getToolbarInteractive();
+		}).length;
+	};
+
+	Toolbar.prototype._getActiveButton = function() {
+		if (!this._activeButton) {
+			this._activeButton = new Button({text: "", id:"sapMTBActiveButton" + this.getId()}).addStyleClass("sapMTBActiveButton");
+			this._activeButton.onfocusin = function() {
+				this.addStyleClass("sapMTBFocused");
+				if (typeof Button.prototype.onfocusin === "function") {
+					 Button.prototype.onfocusin.call(this._activeButton, arguments);
+				}
+			}.bind(this);
+
+			this._activeButton.onfocusout = function() {
+				this.removeStyleClass("sapMTBFocused");
+				if (typeof Button.prototype.onfocusout === "function") {
+					Button.prototype.onfocusout.call(this._activeButton, arguments);
+			   }
+			}.bind(this);
+
+			this.setAggregation("_activeButton", this._activeButton);
+		}
+
+		return this._activeButton;
+	};
+
+	Toolbar.prototype.getAccessibilityInfo = function () {
+		return {
+			children: this.getContent()
+		};
 	};
 
 	/*
@@ -499,7 +545,7 @@ function(
 	 *
 	 * @param {sap.m.ToolbarDesign} sDesign The design for the Toolbar.
 	 * @param {boolean} [bSetAutoDesign] Determines auto design context
-	 * @returns {sap.m.Toolbar}
+	 * @returns {this}
 	 */
 	Toolbar.prototype.setDesign = function(sDesign, bSetAutoDesign) {
 		if (!bSetAutoDesign) {
@@ -507,27 +553,6 @@ function(
 		}
 
 		this._sAutoDesign = this.validateProperty("design", sDesign);
-		return this;
-	};
-
-	Toolbar.prototype.setStyle = function(sNewStyle) {
-		var sTbStyleClass, bEnable;
-
-		if (this.getStyle() === sNewStyle) {
-			return this;
-		}
-
-		this.setProperty("style", sNewStyle, true /* suppress invalidate */);
-
-		if (this.getDomRef()) {
-			Object.keys(ToolbarStyle).forEach(function(sStyleKey) {
-
-				sTbStyleClass = "sapMTB" + sStyleKey;
-				bEnable = (sStyleKey === sNewStyle);
-				this.$().toggleClass(sTbStyleClass, bEnable);
-			}, this);
-		}
-
 		return this;
 	};
 
@@ -553,14 +578,15 @@ function(
 	 * @protected
 	 */
 	Toolbar.prototype.getTitleControl = function() {
-		if (!sap.m.Title) {
+		var Title = sap.ui.require("sap/m/Title");
+		if (!Title) {
 			return;
 		}
 
 		var aContent = this.getContent();
 		for (var i = 0; i < aContent.length; i++) {
 			var oContent = aContent[i];
-			if (oContent instanceof sap.m.Title && oContent.getVisible()) {
+			if (oContent instanceof Title && oContent.getVisible()) {
 				return oContent;
 			}
 		}
@@ -569,7 +595,7 @@ function(
 	/**
 	 * Returns the first sap.m.Title control id inside the toolbar for the accessibility
 	 *
-	 * @returns {String} The <code>sap.m.Title</code> ID
+	 * @returns {sap.ui.core.ID} The <code>sap.m.Title</code> ID
 	 * @since 1.28
 	 * @protected
 	 */
@@ -641,7 +667,7 @@ function(
 	Toolbar.prototype._getContextOptions  = BarInPageEnabler.prototype._getContextOptions;
 
 	/**
-	 * Gets accessibility role of the Root HTML element.
+	 * Sets accessibility role of the Root HTML element.
 	 *
 	 * @param {string} sRole AccessibilityRole of the root Element
 	 * @returns {sap.m.IBar} <code>this</code> to allow method chaining
@@ -656,6 +682,26 @@ function(
 	 * @private
 	 */
 	Toolbar.prototype._getRootAccessibilityRole = BarInPageEnabler.prototype._getRootAccessibilityRole;
+
+
+    /**
+     * Sets accessibility aria-level attribute of the Root HTML element.
+     *
+     * This is only needed if <code>sap.m.Bar</code> has role="heading"
+     * @param {string} sLevel aria-level attribute of the root Element
+     * @returns {sap.m.IBar} <code>this</code> to allow method chaining
+     * @private
+     */
+    Toolbar.prototype._setRootAriaLevel = BarInPageEnabler.prototype._setRootAriaLevel;
+
+    /**
+     * Gets accessibility aria-level attribute of the Root HTML element.
+     *
+     * This is only needed if <code>sap.m.Bar</code> has role="heading"
+     * @returns {string} aria-level
+     * @private
+     */
+    Toolbar.prototype._getRootAriaLevel = BarInPageEnabler.prototype._getRootAriaLevel;
 
 	return Toolbar;
 

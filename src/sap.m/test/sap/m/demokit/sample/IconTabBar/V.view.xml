@@ -1,0 +1,112 @@
+<mvc:View
+	controllerName="sap.m.sample.IconTabBar.C"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m">
+	<IconTabBar
+		id="idIconTabBar"
+		select=".onFilterSelect"
+		class="sapUiResponsiveContentPadding">
+		<items>
+			<IconTabFilter
+				showAll="true"
+				count="{/ProductCollectionStats/Counts/Total}"
+				text="Products"
+				key="All" />
+			<IconTabSeparator />
+			<IconTabFilter
+				icon="sap-icon://begin"
+				iconColor="Positive"
+				count="{/ProductCollectionStats/Counts/Weight/Ok}"
+				text="Ok"
+				key="Ok" />
+			<IconTabFilter
+				icon="sap-icon://compare"
+				iconColor="Critical"
+				count="{/ProductCollectionStats/Counts/Weight/Heavy}"
+				text="Heavy"
+				key="Heavy" />
+			<IconTabFilter
+				icon="sap-icon://inventory"
+				iconColor="Negative"
+				count="{/ProductCollectionStats/Counts/Weight/Overweight}"
+				text="Overweight"
+				key="Overweight" />
+		</items>
+		<content>
+			<Table
+				id="productsTable"
+				inset="false"
+				showSeparators="Inner"
+				headerText="Products"
+				items="{
+					path: '/ProductCollection',
+					sorter: {
+						path: 'Name'
+					}
+				}">
+				<infoToolbar>
+					<OverflowToolbar>
+						<Label text="Wide range of available products"/>
+					</OverflowToolbar>
+				</infoToolbar>
+				<columns>
+					<Column
+						width="12em">
+						<Text text="Product" />
+					</Column>
+					<Column
+						minScreenWidth="Tablet"
+						demandPopin="true">
+						<Text text="Supplier" />
+					</Column>
+					<Column
+						minScreenWidth="Desktop"
+						demandPopin="true"
+						hAlign="End">
+						<Text text="Dimensions" />
+					</Column>
+					<Column
+						minScreenWidth="Desktop"
+						demandPopin="true"
+						hAlign="Center">
+						<Text text="Weight" />
+					</Column>
+					<Column
+						hAlign="End">
+						<Text text="Price" />
+					</Column>
+				</columns>
+				<items>
+					<ColumnListItem>
+						<cells>
+							<ObjectIdentifier
+								title="{Name}"
+								text="{ProductId}"/>
+							<Text
+								text="{SupplierName}" />
+							<Text
+								text="{Width} x {Depth} x {Height} {DimUnit}" />
+							<ObjectNumber
+								number="{WeightMeasure}"
+								unit="{WeightUnit}"
+								state="{
+									parts: [
+										{path: 'WeightMeasure'},
+										{path: 'WeightUnit'}
+									],
+									formatter: '.formatter.weightState'
+								}" />
+							<ObjectNumber
+									number="{
+										parts:[{path:'Price'},{path:'CurrencyCode'}],
+										type: 'sap.ui.model.type.Currency',
+										formatOptions: {showMeasure: false}
+									}"
+									unit="{CurrencyCode}" />
+						</cells>
+					</ColumnListItem>
+				</items>
+			</Table>
+		</content>
+	</IconTabBar>
+</mvc:View>

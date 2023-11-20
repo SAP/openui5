@@ -2,8 +2,12 @@
  * ${copyright}
  */
 
- sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/m/library', 'sap/ui/Device'],
-	function(jQuery, coreLibrary, library, Device) {
+sap.ui.define([
+	"sap/ui/core/Lib",
+	'sap/ui/core/library',
+	'sap/m/library'
+],
+function(Library, coreLibrary, library) {
 	"use strict";
 
 
@@ -19,6 +23,7 @@
 	 * @namespace
 	 */
 	var ShellRenderer = {
+		apiVersion: 2
 	};
 
 
@@ -26,38 +31,39 @@
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
 	 *
 	 * @param {sap.ui.core.RenderManager} rm The RenderManager that can be used for writing to the render output buffer
-	 * @param {sap.ui.core.Control} oControl An object representation of the control that should be rendered
+	 * @param {sap.m.Shell} oControl An object representation of the control that should be rendered
 	 */
 	ShellRenderer.render = function(rm, oControl) {
 		var sTitleLevel = (oControl.getTitleLevel() === TitleLevel.Auto) ? TitleLevel.H1 : oControl.getTitleLevel();
+		sTitleLevel = sTitleLevel.toLowerCase();
 
-		rm.write("<div");
-		rm.writeControlData(oControl);
-		rm.addClass("sapMShell");
+		rm.openStart("div", oControl);
+		rm.class("sapMShell");
 
 		if (oControl.getAppWidthLimited()) {
-			rm.addClass("sapMShellAppWidthLimited");
+			rm.class("sapMShellAppWidthLimited");
 		}
 
 		BackgroundHelper.addBackgroundColorStyles(rm, oControl.getBackgroundColor(),  oControl.getBackgroundImage(), "sapMShellGlobalOuterBackground");
 
-		rm.writeClasses();
-		rm.writeStyles();
-
 		var sTooltip = oControl.getTooltip_AsString();
 		if (sTooltip) {
-			rm.writeAttributeEscaped("title", sTooltip);
+			rm.attr("title", sTooltip);
 		}
 
-		rm.write(">");
+		rm.openEnd();
 
 		/* The background in "SAP_Belize_Deep" must be dark. The contrast class is set to the element wihout any children to avoid unnecessary propagation. */
 		BackgroundHelper.renderBackgroundImageTag(rm, oControl, ["sapContrastPlus", "sapMShellBG", "sapUiGlobalBackgroundImageForce"],  oControl.getBackgroundImage(), oControl.getBackgroundRepeat(), oControl.getBackgroundOpacity());
 
-		rm.write("<div class='sapMShellBrandingBar'></div>");
+		rm.openStart("div");
+		rm.class("sapMShellBrandingBar");
+		rm.openEnd();
+		rm.close("div");
 
-
-		rm.write("<div class='sapMShellCentralBox'>");
+		rm.openStart("div");
+		rm.class("sapMShellCentralBox");
+		rm.openEnd();
 
 
 		// header
@@ -66,69 +72,80 @@
 			extraHeaderClass = "sapMShellBackgroundColorOnlyIfDefault";
 			extraBGClass = "sapUiGlobalBackgroundImageOnlyIfDefault";
 		}
-		rm.write("<header class='sapMShellHeader " + extraHeaderClass + "' id='" + oControl.getId() + "-hdr'>");
-		rm.write("<div class='" + extraBGClass + "'></div>");
+		rm.openStart("header", oControl.getId() + "-hdr");
+		rm.class("sapMShellHeader");
+		rm.class(extraHeaderClass);
+		rm.openEnd();
+		rm.openStart("div");
+		rm.class(extraBGClass);
+		rm.openEnd();
+		rm.close("div");
 		// logo
-		rm.write(ShellRenderer.getLogoImageHtml(oControl));
+		ShellRenderer.renderLogoImage(rm, oControl);
 
 		// header title
 		if (oControl.getTitle()) {
-			rm.write("<" + sTitleLevel);
-			rm.write(" id='" + oControl.getId() + "-hdrTxt' class='sapMShellHeaderText'>");
-			rm.writeEscaped(oControl.getTitle());
-			rm.write("</" + sTitleLevel + ">");
+			rm.openStart(sTitleLevel, oControl.getId() + "-hdrTxt");
+			rm.class("sapMShellHeaderText");
+			rm.openEnd();
+			rm.text(oControl.getTitle());
+			rm.close(sTitleLevel);
 		}
 
 		// header right area
-		rm.write("<span class='sapMShellHeaderRight'>");
+		rm.openStart("span");
+		rm.class("sapMShellHeaderRight");
+		rm.openEnd();
 
 		// headerRightText
-		rm.write("<span id='" + oControl.getId() + "-hdrRightTxt' ");
+		rm.openStart("span", oControl.getId() + "-hdrRightTxt");
 		if (!oControl.getHeaderRightText()) {
-			rm.writeAttribute("style", "display:none;");
+			rm.style("display", "none");
 		}
-		rm.write("class='sapMShellHeaderRightText'>" + jQuery.sap.encodeHTML(oControl.getHeaderRightText()) + "</span>");
-
+		rm.class("sapMShellHeaderRightText");
+		rm.openEnd();
+		rm.text(oControl.getHeaderRightText());
+		rm.close("span");
 
 		// logout button
 		if (oControl.getShowLogout()) {
-			var rb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
-			rm.write("<a id='" + oControl.getId() + "-logout' tabindex='0' role='button' class='sapMShellHeaderLogout'>" + rb.getText("SHELL_LOGOUT") + "</a>");
+			var rb = Library.getResourceBundleFor("sap.m");
+			rm.openStart("a", oControl.getId() + "-logout");
+			rm.attr("tabindex", "0");
+			rm.attr("role", "button");
+			rm.class("sapMShellHeaderLogout");
+			rm.openEnd();
+			rm.text(rb.getText("SHELL_LOGOUT"));
+			rm.close("a");
 		}
 
-		rm.write("</span></header>");
-
-
+		rm.close("span");
+		rm.close("header");
 
 		// content
-		rm.write("<div class='sapMShellContent sapMShellGlobalInnerBackground' id='" + oControl.getId() + "-content' data-sap-ui-root-content='true'>");
+		rm.openStart("div", oControl.getId() + "-content");
+		rm.attr("data-sap-ui-root-content", "true");
+		rm.class("sapMShellContent");
+		rm.class("sapMShellGlobalInnerBackground");
+		rm.openEnd();
 		rm.renderControl(oControl.getApp());
-		rm.write("</div></div></div>");
+		rm.close("div");
+		rm.close("div");
+		rm.close("div");
 	};
 
-	ShellRenderer.getLogoImageHtml = function(oControl) {
-		var sImage = oControl.getLogo(); // configured logo
-		if (!sImage) {
-			jQuery.sap.require("sap.ui.core.theming.Parameters");
-			sImage = sap.ui.core.theming.Parameters._getThemeImage(); // theme logo
-		}
+	ShellRenderer.renderLogoImage = function(rm, oControl) {
+		if (oControl._getImageSrc()) {
+			rm.openStart("div");
+			rm.class("sapMShellLogo");
+			rm.openEnd();
 
-		var result = "";
-		if (sImage) {
-			var oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
-			result = "<div class='sapMShellLogo'>";
-			if (Device.browser.msie) {
-				result += "<span class='sapMShellLogoImgAligner'></span>";
-			}
-			result += "<img id='" + oControl.getId() + "-logo' class='sapMShellLogoImg' src='";
-			result += jQuery.sap.encodeHTML(sImage);
-			result += "' alt='";
-			result += oRb.getText("SHELL_ARIA_LOGO");
-			result += "' /></div>";
+			rm.renderControl(oControl._getImage());
+
+			rm.close("div");
 		}
-		return result;
 	};
 
 	return ShellRenderer;
 
- }, /* bExport= */ true);
+}, /* bExport= */ true);

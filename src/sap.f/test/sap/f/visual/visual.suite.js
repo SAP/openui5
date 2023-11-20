@@ -1,6 +1,13 @@
 /*global module*/
 
 module.exports = [
-	"Avatar.spec.js",
-	"DynamicPage.spec.js"
+	"AdaptiveCardVisualTests.spec.js",
+	"AvatarGroup.spec.js",
+	"DynamicPage.spec.js",
+	"GridContainer.spec.js",
+	"GridListItem.spec.js",
+	"GridListVisualTests.spec.js",
+	"FlexibleColumnLayout.spec.js",
+	"ShellBarVT.spec.js",
+	"SidePanelVisual.spec.js"
 ];

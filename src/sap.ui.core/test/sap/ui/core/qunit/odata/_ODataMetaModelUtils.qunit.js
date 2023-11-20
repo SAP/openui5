@@ -1,11 +1,11 @@
 /*!
  * ${copyright}
  */
-sap.ui.require([
-	"jquery.sap.global",
+sap.ui.define([
+	"sap/base/Log",
 	"sap/ui/model/odata/_AnnotationHelperBasics",
 	"sap/ui/model/odata/_ODataMetaModelUtils"
-], function (jQuery, _AnnotationHelperBasics, Utils) {
+], function (Log, _AnnotationHelperBasics, Utils) {
 	/*global QUnit, sinon */
 	"use strict";
 
@@ -435,17 +435,21 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.odata._ODataMetaModelUtils", {
+		before : function () {
+			this.__ignoreIsolatedCoverage__ = true;
+		},
+
 		beforeEach : function () {
-			this.iOldLogLevel = jQuery.sap.log.getLevel(sLoggingModule);
+			this.iOldLogLevel = Log.getLevel(sLoggingModule);
 			// do not rely on ERROR vs. DEBUG due to minified sources
-			jQuery.sap.log.setLevel(jQuery.sap.log.Level.ERROR, sLoggingModule);
-			this.oLogMock = this.mock(jQuery.sap.log);
+			Log.setLevel(Log.Level.ERROR, sLoggingModule);
+			this.oLogMock = this.mock(Log);
 			this.oLogMock.expects("warning").never();
 			this.oLogMock.expects("error").never();
 		},
 
 		afterEach : function () {
-			jQuery.sap.log.setLevel(this.iOldLogLevel, sLoggingModule);
+			Log.setLevel(this.iOldLogLevel, sLoggingModule);
 		}
 	});
 	//*********************************************************************************************
@@ -563,7 +567,7 @@ sap.ui.require([
 				oProperty = { "name" : "bar", "sap:semantics" : sSemanticsValue };
 
 			this.oLogMock.expects("isLoggable").exactly(bLogExpected ? 1 : 0)
-				.withExactArgs(jQuery.sap.log.Level.WARNING, sLoggingModule)
+				.withExactArgs(Log.Level.WARNING, sLoggingModule)
 				.returns(true);
 			this.oLogMock.expects("warning").exactly(bLogExpected ? 1 : 0)
 				.withExactArgs("Unsupported type for sap:semantics: " + oFixture.oExpectedMessage,
@@ -716,7 +720,7 @@ sap.ui.require([
 				});
 
 				this.oLogMock.expects("isLoggable")
-					.withExactArgs(jQuery.sap.log.Level.WARNING, sLoggingModule)
+					.withExactArgs(Log.Level.WARNING, sLoggingModule)
 					.returns(bIsLoggable);
 				this.oLogMock.expects("warning")
 					// do not construct arguments in vain!
@@ -751,7 +755,7 @@ sap.ui.require([
 					Utils.liftSAPData(oProperty, "Property");
 				});
 				this.oLogMock.expects("isLoggable")
-					.withExactArgs(jQuery.sap.log.Level.WARNING, sLoggingModule)
+					.withExactArgs(Log.Level.WARNING, sLoggingModule)
 					.returns(bIsLoggable);
 				this.oLogMock.expects("warning")
 					// do not construct arguments in vain!
@@ -809,6 +813,105 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	// BCP: 002028376600003415642020
+[false, "~ignoreAnnotationsFromMetadata"].forEach(function (ignoreAnnotationsFromMetadata, i) {
+	QUnit.test("merge: order of visiting nodes, " + i, function (assert) {
+		var oLift0, oLift1, oVisitAssociation0, oVisitAssociation1, oVisitComplexType0,
+			oVisitComplexType1, oVisitEntityContainer0, oVisitEntityContainer1, oVisitEntityType0,
+			oVisitEntityType1,
+			oAnnotations = {},
+			oComplexType = {property : "~property"},
+			oEntityContainer = {
+				associationSet : "~associationSet",
+				entitySet : "~entitySet",
+				functionImport : "~functionImport"
+			},
+			oSchema0 = {},
+			oSchema1 = {},
+			aSchemas = [oSchema0, oSchema1],
+			oData = {
+				dataServices : {
+					schema : aSchemas
+				}
+			},
+			oUtilsMock = this.mock(Utils);
+
+		// Associations, ComplexTypes and EntityType of Schema0
+		oLift0 = oUtilsMock.expects("liftSAPData").withExactArgs(sinon.match.same(oSchema0),
+			ignoreAnnotationsFromMetadata);
+		oVisitAssociation0 = oUtilsMock.expects("visitParents")
+			.withExactArgs(sinon.match.same(oSchema0), sinon.match.same(oAnnotations),
+				"association", sinon.match.func);
+		oVisitComplexType0 = oUtilsMock.expects("visitParents")
+			.withExactArgs(sinon.match.same(oSchema0), sinon.match.same(oAnnotations),
+				"complexType", sinon.match.func);
+		oVisitEntityType0 = oUtilsMock.expects("visitParents")
+			.withExactArgs(sinon.match.same(oSchema0), sinon.match.same(oAnnotations),
+				"entityType", sinon.match.same(Utils.visitEntityType), undefined, ignoreAnnotationsFromMetadata);
+		// Associations, ComplexTypes and EntityType of Schema1
+		oLift1 = oUtilsMock.expects("liftSAPData").withExactArgs(sinon.match.same(oSchema1),
+			ignoreAnnotationsFromMetadata);
+		oVisitAssociation1 = oUtilsMock.expects("visitParents")
+			.withExactArgs(sinon.match.same(oSchema1), sinon.match.same(oAnnotations),
+				"association", sinon.match.func);
+		oVisitComplexType1 = oUtilsMock.expects("visitParents")
+			.withExactArgs(sinon.match.same(oSchema1), sinon.match.same(oAnnotations),
+				"complexType", sinon.match.func);
+		oVisitEntityType1 = oUtilsMock.expects("visitParents")
+			.withExactArgs(sinon.match.same(oSchema1), sinon.match.same(oAnnotations),
+				"entityType", sinon.match.same(Utils.visitEntityType), undefined, ignoreAnnotationsFromMetadata);
+		// EntityContainers of each Schema after all Associations, ComplexTypes and EntityTypes of
+		// all Schemas are processed
+		oVisitEntityContainer0 = oUtilsMock.expects("visitParents")
+			.withExactArgs(sinon.match.same(oSchema0), sinon.match.same(oAnnotations),
+				"entityContainer", sinon.match.func);
+		oVisitEntityContainer1 = oUtilsMock.expects("visitParents")
+			.withExactArgs(sinon.match.same(oSchema1), sinon.match.same(oAnnotations),
+				"entityContainer", sinon.match.func);
+
+		// code under test
+		Utils.merge(oAnnotations, oData, {/*oMetaModel*/}, ignoreAnnotationsFromMetadata);
+
+		// verify order
+		assert.ok(oVisitAssociation0.calledAfter(oLift0));
+		assert.ok(oVisitComplexType0.calledAfter(oVisitAssociation0));
+		assert.ok(oVisitEntityType0.calledAfter(oVisitComplexType0));
+		assert.ok(oLift1.calledAfter(oVisitEntityType0));
+		assert.ok(oVisitAssociation1.calledAfter(oLift1));
+		assert.ok(oVisitComplexType1.calledAfter(oVisitAssociation1));
+		assert.ok(oVisitEntityType1.calledAfter(oVisitComplexType1));
+		assert.ok(oVisitEntityContainer0.calledAfter(oVisitEntityType1));
+		assert.ok(oVisitEntityContainer1.calledAfter(oVisitEntityContainer0));
+
+		// check callbacks
+		oUtilsMock.expects("visitChildren").withExactArgs("~end", "~mChildAnnotations");
+
+		// code under test
+		oVisitAssociation0.args[0][3](/*oAssociation*/{end : "~end"}, "~mChildAnnotations");
+
+		oUtilsMock.expects("visitChildren")
+			.withExactArgs("~property", "~mChildAnnotations", "Property", undefined, undefined, undefined,
+				ignoreAnnotationsFromMetadata);
+		oUtilsMock.expects("addSapSemantics").exactly(ignoreAnnotationsFromMetadata ? 0 : 1)
+			.withExactArgs(sinon.match.same(oComplexType));
+
+		// code under test
+		oVisitComplexType0.args[0][3](oComplexType, "~mChildAnnotations");
+
+		oUtilsMock.expects("visitChildren").withExactArgs("~associationSet", "~mChildAnnotations");
+		oUtilsMock.expects("visitChildren")
+			.withExactArgs("~entitySet", "~mChildAnnotations", "EntitySet",
+				sinon.match.same(aSchemas), undefined, undefined, ignoreAnnotationsFromMetadata);
+		oUtilsMock.expects("visitChildren")
+			.withExactArgs("~functionImport", "~mChildAnnotations", "", null, sinon.match.func, undefined,
+				ignoreAnnotationsFromMetadata);
+
+		// code under test
+		oVisitEntityContainer0.args[0][3](oEntityContainer, "~mChildAnnotations");
+	});
+});
+
+	//*********************************************************************************************
 	QUnit.test("addFilterRestriction: adding valid filter-restrictions", function (assert) {
 		var aFilterRestrictions,
 			oEntitySet = {},
@@ -856,7 +959,7 @@ sap.ui.require([
 					};
 
 				this.oLogMock.expects("isLoggable")
-					.withExactArgs(jQuery.sap.log.Level.WARNING, sLoggingModule)
+					.withExactArgs(Log.Level.WARNING, sLoggingModule)
 					.returns(bIsLoggable);
 				this.oLogMock.expects("warning")
 					// do not construct arguments in vain!
@@ -1424,5 +1527,43 @@ sap.ui.require([
 
 		// code under test
 		assert.strictEqual(Utils.findIndex(aArray, oValue, "foo"), 1);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("liftSAPData w/ ignoreAnnotationsFromMetadata: keeps sap:-attributes", function (assert) {
+		var o = {
+				extensions : [{
+					namespace : "http://www.sap.com/Protocols/SAPData",
+					name : "~name0",
+					value : "~value0"
+				}, {
+					namespace : "http://www.sap.com/Protocols/SAPData",
+					name : "~name1",
+					value : "~value1"
+				}]
+			};
+
+		// code under test
+		Utils.liftSAPData(o, "~sTypeClass", /*bIgnoreAnnotationsFromMetadata*/true);
+
+		assert.strictEqual(o["sap:~name0"], "~value0");
+		assert.strictEqual(o["sap:~name1"], "~value1");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("liftSAPData w/ ignoreAnnotationsFromMetadata: never creates V4-annotations", function (assert) {
+		var o = {
+				extensions : [{
+					namespace : "http://www.sap.com/Protocols/SAPData",
+					name : "searchable",
+					value : "false"
+				}]
+			};
+
+		// code under test
+		Utils.liftSAPData(o, "EntitySet", /*bIgnoreAnnotationsFromMetadata*/true);
+
+		assert.strictEqual(o["sap:searchable"], "false");
+		assert.notOk(o["Org.OData.Capabilities.V1.SearchRestrictions"]);
 	});
 });

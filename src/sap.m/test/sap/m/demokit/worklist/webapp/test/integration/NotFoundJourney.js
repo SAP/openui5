@@ -1,7 +1,11 @@
 /*global QUnit*/
 
 sap.ui.define([
-	"sap/ui/test/opaQunit"
+	"sap/ui/test/opaQunit",
+	"./pages/Worklist",
+	"./pages/Browser",
+	"./pages/NotFound",
+	"./pages/App"
 ], function (opaTest) {
 	"use strict";
 
@@ -12,7 +16,6 @@ sap.ui.define([
 		Given.iStartMyApp();
 
 		//Actions
-		When.onTheWorklistPage.iWaitUntilTheTableIsLoaded();
 		When.onTheBrowser.iChangeTheHashToSomethingInvalid();
 
 		// Assertions
@@ -21,7 +24,6 @@ sap.ui.define([
 
 	opaTest("Clicking the 'Show my worklist' link on the 'Resource not found' page should bring me back to the worklist", function (Given, When, Then) {
 		//Actions
-		When.onTheAppPage.iWaitUntilTheAppBusyIndicatorIsGone();
 		When.onTheNotFoundPage.iPressTheNotFoundShowWorklistLink();
 
 		// Assertions
@@ -44,13 +46,12 @@ sap.ui.define([
 		Then.onTheNotFoundPage.iShouldSeeResourceNotFound();
 
 		// Cleanup
-		Then.iTeardownMyAppFrame();
+		Then.iTeardownMyApp();
 	});
 
 	opaTest("Should see the 'Object not found' page if an invalid object id has been called", function (Given, When, Then) {
-		Given.iStartMyApp({
-			hash: "/Objects/SomeInvalidObjectId"
-		});
+		//Arrangement
+		Given.iStartMyApp({hash : "Objects/SomeInvalidObjectId"});
 
 		// Assertions
 		Then.onTheNotFoundPage.iShouldSeeObjectNotFound();
@@ -58,14 +59,13 @@ sap.ui.define([
 
 	opaTest("Clicking the 'Show my worklist' link on the 'Object not found' page should bring me back to the worklist", function (Given, When, Then) {
 		//Actions
-		When.onTheAppPage.iWaitUntilTheAppBusyIndicatorIsGone();
 		When.onTheNotFoundPage.iPressTheObjectNotFoundShowWorklistLink();
 
 		// Assertions
 		Then.onTheWorklistPage.iShouldSeeTheTable();
 
 		// Cleanup
-		Then.iTeardownMyAppFrame();
+		Then.iTeardownMyApp();
 	});
 
 });

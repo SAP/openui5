@@ -1,0 +1,36 @@
+/* global QUnit */
+
+sap.ui.define([
+	"sap/ui/rta/util/changeVisualization/commands/SplitVisualization",
+	"sap/ui/core/Lib"
+], function(
+	SplitVisualization,
+	Lib
+) {
+	"use strict";
+	var oResourceBundle = Lib.getResourceBundleFor("sap.ui.rta");
+
+	QUnit.module("Base tests", {
+		beforeEach() {
+		},
+		afterEach() {
+		}
+	}, function() {
+		QUnit.test("when a payload with the label is passed", function(assert) {
+			assert.strictEqual(
+				SplitVisualization.getDescription(undefined, "label").descriptionText,
+				oResourceBundle.getText("TXT_CHANGEVISUALIZATION_CHANGE_SPLIT", ["label"]),
+				"then the description text is returned"
+			);
+			assert.strictEqual(
+				SplitVisualization.getDescription(undefined, "label").buttonText,
+				oResourceBundle.getText("BTN_CHANGEVISUALIZATION_SHOW_DEPENDENT_CONTAINER_SPLIT"),
+				"then the button text is returned"
+			);
+		});
+	});
+
+	QUnit.done(function() {
+		document.getElementById("qunit-fixture").style.display = "none";
+	});
+});

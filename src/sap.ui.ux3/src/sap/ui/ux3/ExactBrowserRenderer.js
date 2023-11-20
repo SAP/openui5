@@ -3,8 +3,8 @@
  */
 
 // Provides default renderer for the sap.ui.ux3.ExactBrowser
-sap.ui.define(['jquery.sap.global'],
-	function(jQuery) {
+sap.ui.define(["sap/base/security/encodeXML"],
+	function(encodeXML) {
 	"use strict";
 
 
@@ -19,11 +19,10 @@ sap.ui.define(['jquery.sap.global'],
 	/**
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
 	 *
-	 * @param {sap.ui.core.RenderManager} oRenderManager the RenderManager that can be used for writing to the Render-Output-Buffer
+	 * @param {sap.ui.core.RenderManager} rm the RenderManager that can be used for writing to the Render-Output-Buffer
 	 * @param {sap.ui.core.Control} oControl an object representation of the control that should be rendered
 	 */
-	ExactBrowserRenderer.render = function(oRenderManager, oControl){
-		var rm = oRenderManager;
+	ExactBrowserRenderer.render = function(rm, oControl){
 		rm.write("<div");
 		rm.writeControlData(oControl);
 		rm.addClass("sapUiUx3ExactBrwsr");
@@ -44,7 +43,7 @@ sap.ui.define(['jquery.sap.global'],
 
 		if (oControl.getShowHeader()) {
 			rm.write("<div class=\"sapUiUx3ExactBrwsrHd\"><h2 id=\"" + oControl.getId() + "-hdtitle\">");
-			rm.write(jQuery.sap.encodeHTML(oControl.getHeaderTitle()));
+			rm.write(encodeXML(oControl.getHeaderTitle()));
 			rm.write("</h2><div class=\"sapUiUx3ExactBrwsrHdTool\" role=\"toolbar\">");
 			if (oControl.getEnableSave()) {
 				rm.renderControl(oControl._saveButton);

@@ -1,0 +1,183 @@
+{
+  "1.109.0": {
+    "date": "November 2022",
+    "notes": [
+      {
+        "id": "4a8a827db6a3fbf9446ba9936db04ca84222626e",
+        "type": "FEATURE",
+        "text": " sap.ui.core.format.DateFormat: Support pattern symbol \"B\""
+      },
+      {
+        "id": "172dffcce17048ac59fa8680647e19612be83348",
+        "type": "FEATURE",
+        "text": " sap.ui.core.format.NumberFormat#parse: Support case insensitive units"
+      },
+      {
+        "id": "a6970f7f3239172ebcbf077b62f2b3453d25555f",
+        "type": "FEATURE",
+        "text": " sap/base/Log: Log methods accept Error as details parameter",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270045087"
+          }
+        ]
+      },
+      {
+        "id": "4525e24710c3b206eebe44a590d7450f37ba5444",
+        "type": "FIX",
+        "text": " sap.ui.core: Fix Text Verticalization for libraries QUnit",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270174458"
+          }
+        ]
+      },
+      {
+        "id": "ea3e28b57118b2609cd9dce38cb1681484eb6893",
+        "type": "FIX",
+        "text": " sap.ui.core.date.Japanese: calendar week",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270172759"
+          }
+        ]
+      },
+      {
+        "id": "0e1123e34fb40d78708806a0b56ebd244837f130",
+        "type": "FIX",
+        "text": " core/Icon: increase color contrast ratio for high contrast themes",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270162604"
+          }
+        ]
+      },
+      {
+        "id": "2b17f629bc6142f7e5ddf804a0a8127b4d156105",
+        "type": "FIX",
+        "text": " sap/ui/util/Storage: improve JSDoc / type signatures",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270164451"
+          }
+        ]
+      },
+      {
+        "id": "e331f89de20157cf40d9a7c88df7bb453faa12d5",
+        "type": "FEATURE",
+        "text": " sap.ui.core.IconPool: Update icon font v5.03 and v4.15"
+      },
+      {
+        "id": "8bc4be0e6eac68c86a07be6a27d27ded665bc70f",
+        "type": "FIX",
+        "text": " core.BusyIndicator:Adjust css to align with theme sap_fiori_3",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280150532"
+          }
+        ]
+      },
+      {
+        "id": "52a7c25485ad54eeb2b01572dae5baf293cbe532",
+        "type": "FIX",
+        "text": " m.ColumnListItem: take the popin are into account for drop zones",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270158237"
+          }
+        ]
+      },
+      {
+        "id": "d75745de6a5fd3d44977a0692b7a0bde5d1bbdf1",
+        "type": "FEATURE",
+        "text": " sap.ui.model.odata.v2.ODataModel#createEntry: Support deep create request"
+      },
+      {
+        "id": "0d984186d4ea876b6e90e008ed46fb40b1c68c16",
+        "type": "FIX",
+        "text": " sap.ui.model.ClientListBinding#getContexts: store start and length as given by the control",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270146962"
+          }
+        ]
+      },
+      {
+        "id": "ef397849ae0423ad758ca25ac45a16aa18afc789",
+        "type": "FEATURE",
+        "text": " sap.ui.core: deprecate HTMLView and HTMLFragment"
+      },
+      {
+        "id": "ed3ff6eee9058a6929b5c82cc3552af7da0ccb43",
+        "type": "FEATURE",
+        "text": " sap.ui.core.format.NumberFormat#parseNumberAndCurrencyCode: Add support for case insensitivity for currency codes"
+      },
+      {
+        "id": "380e1819462ba9181c0c8be5a523b1281343907a",
+        "type": "FEATURE",
+        "text": " sap.ui.core.format.DateFormat: introduce calendarWeekNumbering format option"
+      },
+      {
+        "id": "8fef82b05d4cfe30a62604d81da099f37d443cb2",
+        "type": "FIX",
+        "text": " sap.ui.core.format.DateFormat: relative documentation"
+      },
+      {
+        "id": "963795e0e999d7f562a1f93cf3b98b54fb321b50",
+        "type": "FIX",
+        "text": " sap.ui.model.analytics.AnalyticalTreeBindingAdapter: avoid loading data if not needed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270125832"
+          }
+        ]
+      },
+      {
+        "id": "e3f9181804cefa564b860725134704c7bb55dd76",
+        "type": "FEATURE",
+        "text": " sap.m.Carousel: Improve keyboard navigation"
+      },
+      {
+        "id": "b6b3972e10f1e15d7031afc8965855888880ae47",
+        "type": "FIX",
+        "text": " Add information since when classes/methods are deprecated",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270138504"
+          }
+        ]
+      },
+      {
+        "id": "1d2539f34ced97a80c0cbdb41514321a9afba065",
+        "type": "FEATURE",
+        "text": " sap.ui.model.ClientTreeBinding#getCount"
+      },
+      {
+        "id": "166f2dc05599e4dd94097e76dad3738832bbd780",
+        "type": "FIX",
+        "text": " sap/ui/core/format/DateFormat: wide and narrow dayperiods",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280139024"
+          }
+        ]
+      },
+      {
+        "id": "776e551f590c02d6499a294a3921b31a899d3e89",
+        "type": "FIX",
+        "text": " sap.ui.model.(Filter|Sorter).defaultComparator: Use configured locale for comparison"
+      }
+    ]
+  }
+}

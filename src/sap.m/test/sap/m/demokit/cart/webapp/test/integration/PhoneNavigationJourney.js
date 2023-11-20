@@ -1,15 +1,25 @@
 /*global QUnit*/
 
 sap.ui.define([
+	"sap/base/i18n/Localization",
 	"sap/ui/test/opaQunit",
-	'./pages/Welcome',
-	'./pages/Product',
-	'./pages/Home',
-	'./pages/Category'
-], function (opaTest) {
+	"./pages/Welcome",
+	"./pages/Product",
+	"./pages/Home",
+	"./pages/Category"
+], function (Localization, opaTest) {
 	"use strict";
 
-	QUnit.module("Phone navigation");
+	var sDefaultLanguage = Localization.getLanguage();
+
+	QUnit.module("Phone navigation", {
+		before : function () {
+			Localization.setLanguage("en-US");
+		},
+		after : function () {
+			Localization.setLanguage(sDefaultLanguage);
+		}
+	});
 
 	opaTest("Should navigate to a product detail page by pressing the product link of the first product tile", function (Given, When, Then) {
 		// Arrangements
@@ -22,7 +32,7 @@ sap.ui.define([
 
 	opaTest("Should press back button and navigate to welcome view", function (Given, When, Then) {
 		// Actions
-		When.onTheCategory.iPressTheBackButtonInProduct();
+		When.onTheProduct.iPressTheBackButtonInProduct();
 		// Assertions
 		Then.onTheWelcomePage.iShouldSeeTheWelcomePage();
 	});

@@ -4,25 +4,33 @@
 
 // Provides control sap.m.TextArea.
 sap.ui.define([
-	'jquery.sap.global',
 	'./InputBase',
 	'./Text',
+	"sap/ui/core/Lib",
 	'sap/ui/core/ResizeHandler',
 	'./library',
 	'sap/ui/core/library',
+	'sap/ui/core/Core',
+	'sap/ui/events/KeyCodes',
 	'sap/ui/Device',
-	'./TextAreaRenderer'
+	"sap/base/security/encodeXML",
+	'./TextAreaRenderer',
+	"sap/ui/thirdparty/jquery"
 ],
 function(
-	jQuery,
 	InputBase,
 	Text,
+	Lib,
 	ResizeHandler,
 	library,
 	coreLibrary,
+	oCore,
+	KeyCodes,
 	Device,
-	TextAreaRenderer
-	) {
+	encodeXML,
+	TextAreaRenderer,
+	jQuery
+) {
 	"use strict";
 
 
@@ -83,91 +91,95 @@ function(
 	 * @since 1.9.0
 	 * @alias sap.m.TextArea
 	 * @see {@link fiori:https://experience.sap.com/fiori-design-web/text-area/ Text Area}
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
-	var TextArea = InputBase.extend("sap.m.TextArea", /** @lends sap.m.TextArea.prototype */ { metadata : {
+	var TextArea = InputBase.extend("sap.m.TextArea", /** @lends sap.m.TextArea.prototype */ {
+		metadata : {
 
-		library : "sap.m",
-		designtime: "sap/m/designtime/TextArea.designtime",
-		properties : {
+			library : "sap.m",
+			designtime: "sap/m/designtime/TextArea.designtime",
+			properties : {
 
-			/**
-			 * Defines the number of visible text lines for the control.
-			 * <b>Note:</b> The <code>height</code> property wins over the <code>rows</code> property, if both are set.
-			 */
-			rows : {type : "int", group : "Appearance", defaultValue : 2},
+				/**
+				 * Defines the number of visible text lines for the control.
+				 * <b>Note:</b> The <code>height</code> property wins over the <code>rows</code> property, if both are set.
+				 */
+				rows : {type : "int", group : "Appearance", defaultValue : 2},
 
-			/**
-			 * Defines the visible width of the control, in average character widths.
-			 * <b>Note:</b> The <code>width</code> property wins over the <code>cols</code> property, if both are set.
-			 */
-			cols : {type : "int", group : "Appearance", defaultValue : 20},
+				/**
+				 * Defines the visible width of the control, in average character widths.
+				 * <b>Note:</b> The <code>width</code> property wins over the <code>cols</code> property, if both are set.
+				 */
+				cols : {type : "int", group : "Appearance", defaultValue : 20},
 
-			/**
-			 * Defines the height of the control.
-			 */
-			height : {type : "sap.ui.core.CSSSize", group : "Appearance", defaultValue : null},
+				/**
+				 * Defines the height of the control.
+				 */
+				height : {type : "sap.ui.core.CSSSize", group : "Appearance", defaultValue : null},
 
-			/**
-			 * Defines the maximum number of characters that the <code>value</code> can be.
-			 */
-			maxLength : {type : "int", group : "Behavior", defaultValue : 0},
+				/**
+				 * Defines the maximum number of characters that the <code>value</code> can be.
+				 */
+				maxLength : {type : "int", group : "Behavior", defaultValue : 0},
 
-			/**
-			 * Determines whether the characters, exceeding the maximum allowed character count, are visible in the input field.
-			 *
-			 * If set to <code>false</code> the user is not allowed to enter more characters than what is set in the <code>maxLength</code> property.
-			 * If set to <code>true</code> the characters exceeding the <code>maxLength</code> value are selected on paste and the counter below
-			 * the input field displays their number.
-			 *  @since 1.48
-			 */
-			showExceededText: {type: "boolean", group: "Behavior", defaultValue: false},
+				/**
+				 * Determines whether the characters, exceeding the maximum allowed character count, are visible in the input field.
+				 *
+				 * If set to <code>false</code> the user is not allowed to enter more characters than what is set in the <code>maxLength</code> property.
+				 * If set to <code>true</code> the characters exceeding the <code>maxLength</code> value are selected on paste and the counter below
+				 * the input field displays their number.
+				 *  @since 1.48
+				 */
+				showExceededText: {type: "boolean", group: "Behavior", defaultValue: false},
 
-			/**
-			 * Indicates how the control wraps the text, e.g. <code>Soft</code>, <code>Hard</code>, <code>Off</code>.
-			 */
-			wrapping : {type : "sap.ui.core.Wrapping", group : "Behavior", defaultValue : Wrapping.None},
+				/**
+				 * Indicates how the control wraps the text, e.g. <code>Soft</code>, <code>Hard</code>, <code>Off</code>.
+				 */
+				wrapping : {type : "sap.ui.core.Wrapping", group : "Behavior", defaultValue : Wrapping.None},
 
-			/**
-			 * Indicates when the <code>value</code> property gets updated with the user changes. Setting it to <code>true</code> updates the <code>value</code> property whenever the user has modified the text shown on the text area.
-			 * @since 1.30
-			 */
-			valueLiveUpdate : {type : "boolean", group : "Behavior", defaultValue : false},
+				/**
+				 * Indicates when the <code>value</code> property gets updated with the user changes. Setting it to <code>true</code> updates the <code>value</code> property whenever the user has modified the text shown on the text area.
+				 * @since 1.30
+				 */
+				valueLiveUpdate : {type : "boolean", group : "Behavior", defaultValue : false},
 
-			/**
-			 * Indicates the ability of the control to automatically grow and shrink dynamically with its content.
-			 * <b>Note:</b> The <code>height</code> property is ignored, if this property set to <code>true</code>.
-			 * @since 1.38.0
-			 */
-			growing : {type : "boolean", group : "Behavior", defaultValue : false},
+				/**
+				 * Indicates the ability of the control to automatically grow and shrink dynamically with its content.
+				 * <b>Note:</b> This property should not be used when the <code>height</code> property is set.
+				 * @since 1.38.0
+				 */
+				growing : {type : "boolean", group : "Behavior", defaultValue : false},
 
-			/**
-			 * Defines the maximum number of lines that the control can grow.
-			 * @since 1.38.0
-			 */
-			growingMaxLines : {type : "int", group : "Behavior", defaultValue : 0}
+				/**
+				 * Defines the maximum number of lines that the control can grow.
+				 * @since 1.38.0
+				 */
+				growingMaxLines : {type : "int", group : "Behavior", defaultValue : 0}
 
-		},
-		aggregations: {
-			// The hidden aggregation for internal usage
-			_counter: {type: "sap.m.Text", multiple: false, visibility: "hidden"}
-		},
-		events : {
+			},
+			aggregations: {
+				// The hidden aggregation for internal usage
+				_counter: {type: "sap.m.Text", multiple: false, visibility: "hidden"}
+			},
+			events : {
 
-			/**
-			 * Is fired whenever the user has modified the text shown on the text area.
-			 */
-			liveChange : {
-				parameters : {
+				/**
+				 * Is fired whenever the user has modified the text shown on the text area.
+				 */
+				liveChange : {
+					parameters : {
 
-					/**
-					 * The new <code>value</code> of the control.
-					 */
-					value : {type : "string"}
+						/**
+						 * The new <code>value</code> of the control.
+						 */
+						value : {type : "string"}
+					}
 				}
-			}
-		}
-	}});
+			},
+			dnd: { draggable: false, droppable: true }
+		},
+
+		renderer: TextAreaRenderer
+	});
 
 	/**
 	 * Initializes the control.
@@ -213,6 +225,7 @@ function(
 		InputBase.prototype.exit.call(this);
 		jQuery(window).off("resize.sapMTextAreaGrowing");
 		this._detachResizeHandler();
+		this._deregisterEvents();
 	};
 
 	TextArea.prototype.onBeforeRendering = function() {
@@ -222,33 +235,28 @@ function(
 			oCounter.setVisible(false);
 		}
 		this._detachResizeHandler();
+
+		if (this.getGrowing()) {
+			jQuery(window).on("resize.sapMTextAreaGrowing", this._updateOverflow.bind(this));
+		} else {
+			jQuery(window).off("resize.sapMTextAreaGrowing");
+		}
 	};
 
 	// Attach listeners on after rendering and find iscroll
 	TextArea.prototype.onAfterRendering = function() {
 		InputBase.prototype.onAfterRendering.call(this);
-		var oTextAreaRef = this.getFocusDomRef(),
-			fMaxHeight,
-			oStyle;
 
 		if (this.getGrowing()) {
 			// Register resize event
 			this._sResizeListenerId = ResizeHandler.register(this, this._resizeHandler.bind(this));
+
 			// adjust textarea height
 			if (this.getGrowingMaxLines() > 0) {
-				oStyle = window.getComputedStyle(oTextAreaRef);
-				fMaxHeight = parseFloat(oStyle.lineHeight) * this.getGrowingMaxLines() +
-						parseFloat(oStyle.paddingTop) + parseFloat(oStyle.borderTopWidth) + parseFloat(oStyle.borderBottomWidth);
-
-				// bottom padding is out of scrolling content in firefox
-				if (Device.browser.firefox) {
-					fMaxHeight += parseFloat(oStyle.paddingBottom);
-				}
-
-				oTextAreaRef.style.maxHeight = fMaxHeight + "px";
+				this._setGrowingMaxHeight();
 			}
 
-			this._adjustHeight();
+			this._adjustContainerDimensions();
 		}
 
 		this._updateMaxLengthAttribute();
@@ -276,17 +284,90 @@ function(
 	};
 
 	/**
+	 * Removes the <code>touchstart</code> and <code>touchmove</code> custom events
+	 * binded to the textarea in <code>.onAfterRendering</code>.
+	 *
+	 * The semantic renderer does NOT remove DOM structure from the DOM tree;
+	 * therefore all custom events, including the ones that are registered
+	 * with jQuery, must be deregistered correctly at the <code>.onBeforeRendering</code>
+	 * and exit hooks.
+	 *
+	 * @private
+	 *
+	 */
+	TextArea.prototype._deregisterEvents = function() {
+		this.$("inner").off("touchstart").off("touchmove");
+	};
+
+	/**
+	 * Sets the maximum height of the HTML textarea.
+	 * This is the actual implementation of growingMaxLines property.
+	 *
+	 * @private
+	 */
+	TextArea.prototype._setGrowingMaxHeight = function () {
+		var oHiddenDiv = this.getDomRef('hidden'),
+			oLoadedLibraries = Lib.all(),
+			fLineHeight,
+			fMaxHeight,
+			oStyle;
+
+		// The CSS rules might not hve been applied yet and the getComputedStyle function might not return the proper values. So, wait for the theme to be applied properly
+		// The check for loaded libraries is to ensure that sap.m has been loaded. TextArea's CSS sources would be loaded along with the library
+		if (!oLoadedLibraries || !oLoadedLibraries['sap.m']) {
+			oCore.attachThemeChanged(this._setGrowingMaxHeight.bind(this));
+			return;
+		}
+
+		// After it's been executed, we need to release the resources
+		oCore.detachThemeChanged(this._setGrowingMaxHeight);
+
+		oStyle = window.getComputedStyle(oHiddenDiv);
+
+		fLineHeight = this._getLineHeight();
+
+		fMaxHeight = (fLineHeight * this.getGrowingMaxLines()) +
+			parseFloat(oStyle.getPropertyValue("padding-top")) +
+			parseFloat(oStyle.getPropertyValue("border-top-width")) +
+			parseFloat(oStyle.getPropertyValue("border-bottom-width"));
+
+		// bottom padding is out of scrolling content in firefox
+		if (Device.browser.firefox) {
+			fMaxHeight += parseFloat(oStyle.getPropertyValue("padding-bottom"));
+		}
+
+		oHiddenDiv.style.maxHeight = fMaxHeight + "px";
+	};
+
+	/**
+	 * Calculates the line height of the HTML textarea in px.
+	 *
+	 * @returns {float|null} The line height in px
+	 * @private
+	 */
+	TextArea.prototype._getLineHeight = function () {
+		var oTextAreaRef = this.getFocusDomRef(),
+			oStyle;
+
+		if (!oTextAreaRef) {
+			return;
+		}
+
+		oStyle = window.getComputedStyle(oTextAreaRef);
+
+		return isNaN(parseFloat(oStyle.getPropertyValue("line-height"))) ?
+			1.4 * parseFloat(oStyle.getPropertyValue("font-size")) :
+			parseFloat(oStyle.getPropertyValue("line-height"));
+	};
+
+	/**
 	 * Function is called when TextArea is resized
 	 *
 	 * @param {jQuery.Event} oEvent The event object
 	 * @private
 	 */
 	TextArea.prototype._resizeHandler = function (oEvent) {
-		/* If the TextArea is growing:true the height have to be recalculated.
-		When the windows size is increase the heightScroll is not correct.
-		For this reason is needed to set height to "auto" before height recalculation*/
-			this.getFocusDomRef().style.height = "auto";
-			this._adjustHeight();
+		this._adjustContainerDimensions();
 	};
 
 	/**
@@ -333,7 +414,7 @@ function(
 		InputBase.prototype.setValue.call(this, sValue);
 		this._handleShowExceededText();
 		if (this.getGrowing()) {
-			this._adjustHeight();
+			this._adjustContainerDimensions();
 		}
 		return this;
 	};
@@ -351,6 +432,7 @@ function(
 	TextArea.prototype.oninput = function(oEvent) {
 		InputBase.prototype.oninput.call(this, oEvent);
 
+		/* TODO remove after the end of support for Internet Explorer */
 		// Handles paste. This is before checking for "invalid" because in IE after paste the event is set as "invalid"
 		if (this._bPasteIsTriggered) {
 			this._bPasteIsTriggered = false;
@@ -363,14 +445,12 @@ function(
 
 		var oTextAreaRef = this.getFocusDomRef(),
 			sValue = oTextAreaRef.value,
+			bShowExceededText = this.getShowExceededText(),
 			iMaxLength = this.getMaxLength();
 
-		if (this.getShowExceededText() === false && this._getInputValue().length < this.getMaxLength()) {
-			// some browsers do not respect to maxlength property of textarea
-			if (iMaxLength > 0 && sValue.length > iMaxLength) {
-				sValue = sValue.substring(0, iMaxLength);
-				oTextAreaRef.value = sValue;
-			}
+		if (!bShowExceededText && iMaxLength && sValue.length > iMaxLength) {
+			sValue = sValue.substring(0, iMaxLength);
+			oTextAreaRef.value = sValue;
 		}
 
 		// update value property if needed
@@ -385,7 +465,7 @@ function(
 
 		// handle growing
 		if (this.getGrowing()) {
-			this._adjustHeight();
+			this._adjustContainerDimensions();
 		}
 
 		this.fireLiveChange({
@@ -410,41 +490,46 @@ function(
 		}
 	};
 
-	TextArea.prototype.setGrowing = function(bGrowing) {
-		this.setProperty("growing", bGrowing);
-		if (this.getGrowing()) {
-			jQuery(window).on("resize.sapMTextAreaGrowing", this._updateOverflow.bind(this));
-		} else {
-			jQuery(window).off("resize.sapMTextAreaGrowing");
-		}
-		return this;
-	};
-
-	TextArea.prototype._adjustHeight = function() {
+	TextArea.prototype._adjustContainerDimensions = function() {
 		var oTextAreaRef = this.getFocusDomRef(),
-			fHeight;
+			oHiddenDiv = this.getDomRef("hidden"),
+			sHiddenDivMinHeight, sNeededMinHeight;
 
-		if (!oTextAreaRef) {
+		if (!oTextAreaRef || !oHiddenDiv) {
 			return;
 		}
-		//Reset dimensions
-		oTextAreaRef.style.height = "auto";
-		// Calc dimensions of the changed content
-		fHeight = oTextAreaRef.scrollHeight + oTextAreaRef.offsetHeight - oTextAreaRef.clientHeight;
 
-		if (this.getValue() && fHeight !== 0) {
-			oTextAreaRef.style.height = fHeight + "px";
-			this._updateOverflow();
+		oHiddenDiv.style.width = "";
+
+		if (this.getGrowing() &&
+			!this.getWidth() && /* width property overwrites cols */
+			this.getCols() !== 20 /* the default value */) {
+			oHiddenDiv.style.width = (this.getCols() * 0.5) + "rem";
 		}
+
+		sHiddenDivMinHeight = oHiddenDiv.style["min-height"];
+		sNeededMinHeight = this.getRows() * this._getLineHeight() + "px";
+
+		// change the min-height of the mirror div,
+		// depending on the rows, only if needed
+		if (!sHiddenDivMinHeight || sNeededMinHeight !== sHiddenDivMinHeight) {
+			oHiddenDiv.style["min-height"] = sNeededMinHeight;
+		}
+
+		// ensure that there will be left space if the last row is a new line
+		// ensure that possible html/script content is escaped
+		oHiddenDiv.innerHTML = encodeXML(oTextAreaRef.value) + '&nbsp;';
+		this._updateOverflow();
 	};
 
 	TextArea.prototype._updateOverflow = function() {
 		var oTextAreaRef = this.getFocusDomRef(),
+			oHiddenDiv = this.getDomRef("hidden"),
 			fMaxHeight;
 
 		if (oTextAreaRef) {
-			fMaxHeight = parseFloat(window.getComputedStyle(oTextAreaRef)["max-height"]);
-			oTextAreaRef.style.overflowY = (oTextAreaRef.scrollHeight > fMaxHeight) ? "auto" : "";
+			fMaxHeight = parseFloat(window.getComputedStyle(oHiddenDiv)["max-height"]);
+			oTextAreaRef.style.overflowY = (oHiddenDiv.scrollHeight > fMaxHeight) ? "auto" : "";
 		}
 	};
 
@@ -514,7 +599,7 @@ function(
 	};
 
 	TextArea.prototype._getCounterValue = function () {
-		var oBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m"),
+		var oBundle = Lib.getResourceBundleFor("sap.m"),
 				iCharactersExceeded = this.getMaxLength() - this.getValue().length,
 				bExceeded = (iCharactersExceeded < 0 ? true : false),
 				sMessageBundleKey = "TEXTAREA_CHARACTER" + ( Math.abs(iCharactersExceeded) === 1 ? "" : "S") + "_" + (bExceeded ? "EXCEEDED" : "LEFT");
@@ -532,8 +617,8 @@ function(
 	 */
 	TextArea.prototype._behaviour = (function(oDevice) {
 		return {
-			INSIDE_SCROLLABLE_WITHOUT_FOCUS : oDevice.os.ios || oDevice.os.blackberry || oDevice.browser.chrome,
-			PAGE_NON_SCROLLABLE_AFTER_FOCUS : oDevice.os.android && oDevice.os.version >= 4.1
+			INSIDE_SCROLLABLE_WITHOUT_FOCUS : oDevice.os.ios || oDevice.browser.chrome,
+			PAGE_NON_SCROLLABLE_AFTER_FOCUS : oDevice.os.android
 		};
 	}(Device));
 
@@ -585,38 +670,15 @@ function(
 		}
 	};
 
-	// Flag for the Fiori Client on Windows Phone
-	var _bMSWebView = Device.os.windows_phone && (/MSAppHost/i).test(navigator.appVersion);
-
 	/**
-	 * Special handling for the focusing issue in SAP Fiori Client on Windows Phone.
+	 * Special handling for Enter key which triggers the FieldGroupNavigation on Enter. This treatment is only relevant
+	 * for the Enter key itself, as this is used in TextArea to start a new line.
 	 * @param {jQuery.Event} oEvent The event object
 	 * @private
 	 */
-	TextArea.prototype.onfocusin = function(oEvent) {
-		var scrollContainer,
-			$this = this.$();
-
-		InputBase.prototype.onfocusin.apply(this, arguments);
-
-		// Workaround for the scroll-into-view bug in the WebView Windows Phone 8.1
-		// As the browser does not scroll the window as it should, scroll the parent scroll container to make the hidden text visible
-
-		function scrollIntoView() {
-			jQuery(window).scrollTop(0);
-			scrollContainer.scrollTop($this.offset().top - scrollContainer.offset().top + scrollContainer.scrollTop());
-		}
-
-		if (_bMSWebView && $this.height() + $this.offset().top > 260) {
-			for (scrollContainer = $this.parent(); scrollContainer[0]; scrollContainer = scrollContainer.parent()) {
-				if (scrollContainer.css("overflow-y") == "auto") {
-					// make sure to have enough padding to be able to scroll even the bottom control to the top of the screen
-					scrollContainer.children().last().css("padding-bottom", jQuery(window).height() + "px");
-					// do scroll
-					window.setTimeout(scrollIntoView, 100);
-					return;
-				}
-			}
+	TextArea.prototype.onkeyup = function(oEvent) {
+		if (oEvent.keyCode === KeyCodes.ENTER) {
+			oEvent.setMarked("enterKeyConsumedAsContent");
 		}
 	};
 

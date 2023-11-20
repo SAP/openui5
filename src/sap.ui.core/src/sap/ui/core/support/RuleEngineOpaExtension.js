@@ -3,12 +3,30 @@
  */
 
 sap.ui.define([
-	'jquery.sap.global',
-	'sap/ui/base/Object'
-], function(jQuery, Ui5Object) {
+	"sap/ui/core/Lib",
+	"sap/ui/thirdparty/jquery",
+	'sap/ui/base/Object',
+	"sap/base/Log",
+	"sap/ui/support/RuleAnalyzer",
+	"sap/ui/support/library"
+],
+	function(Lib, jQuery, BaseObject, Log, RuleAnalyzer, library) {
 	"use strict";
 
-	var Extension = Ui5Object.extend("sap.ui.core.support.RuleEngineOpaExtension", {
+	/**
+	 * @class
+	 * This class represents an extension for OPA tests which allows running Support Assistant checks.
+	 *
+	 * It enriches the OPA assertions with the methods described in {@link sap.ui.core.support.RuleEngineOpaAssertions}.
+	 *
+	 * For more information, see {@link topic:cfabbd4dfc054936997d9d00916e1668 Integrating the Support Assistant in OPA Tests}.
+	 *
+	 * @extends sap.ui.base.Object
+	 * @alias sap.ui.core.support.RuleEngineOpaExtension
+	 * @since 1.48
+	 * @public
+	 */
+	var Extension = BaseObject.extend("sap.ui.core.support.RuleEngineOpaExtension", /** @lends sap.ui.core.support.RuleEngineOpaExtension.prototype */ {
 		metadata : {
 			publicMethods : [
 				"getAssertions"
@@ -23,7 +41,7 @@ sap.ui.define([
 		 * @returns {jQuery.promise} A promise that gets resolved when the Support Assistant is ready.
 		 */
 		onAfterInit : function () {
-			var bLoaded = sap.ui.getCore().getLoadedLibraries()["sap.ui.support"],
+			var bLoaded = Lib.all()["sap.ui.support"],
 				deferred = jQuery.Deferred();
 
 			if (!bLoaded) {
@@ -33,6 +51,8 @@ sap.ui.define([
 							deferred.resolve();
 						}
 					});
+				}, function (oError) {
+					Log.error("Could not load module 'sap/ui/support/Bootstrap':", oError);
 				});
 			} else {
 				deferred.resolve();
@@ -41,37 +61,61 @@ sap.ui.define([
 			return deferred.promise();
 		},
 
+		/**
+		 * @public
+		 * @returns {sap.ui.core.support.RuleEngineOpaAssertions} Object with the methods which will enhance the OPA assertions.
+		 */
 		getAssertions : function () {
 
 			var fnShouldSkipRulesIssues = function () {
-				return jQuery.sap.getUriParameters().get('sap-skip-rules-issues') == 'true';
+				return new URLSearchParams(window.location.search).get('sap-skip-rules-issues') == 'true';
+			};
+			var getWindow = function () {
+				var opaWindow = window.parent;
+				opaWindow._$files = opaWindow._$files || [];
+				return opaWindow;
 			};
 
-			return {
+			/**
+			 * RuleEngineOpaAssertions represents a set of methods with which OPA test assertions can be enhanced.
+			 * To use this functionality, {@link sap.ui.core.support.RuleEngineOpaExtension RuleEngineOpaExtension} should be provided in the OPA extensions list.
+			 *
+			 * @interface
+			 * @alias sap.ui.core.support.RuleEngineOpaAssertions
+			 * @public
+			 */
+			var oRuleEngineAssertions = {
 				/**
 				 * Run the Support Assistant and analyze against a specific state of the application.
 				 * Depending on the options passed the assertion might either fail or not if any issues were found.
 				 *
 				 * If "sap-skip-rules-issues=true" is set as an URI parameter, assertion result will be always positive.
 				 *
-				 * @param {Object} [options] The options used to configure an analysis.
+				 * @param {object} [options] The options used to configure an analysis.
 				 * @param {boolean} [options.failOnAnyIssues=true] Should the test fail or not if there are issues of any severity.
 				 * @param {boolean} [options.failOnHighIssues] Should the test fail or not if there are issues of high severity.
 				 * This parameter will override failOnAnyIssues if set.
 				 * @param {Array.<{libName:string, ruleId:string}>} [options.rules] The rules to check.
-				 * @param {Object} [executionScope] The execution scope of the analysis.
-				 * @param {('global'|'subtree'|'components')} [executionScope.type=global] The type of the execution scope.
-				 * @param {string|string[]} [executionScope.selectors] The ids of the components or the subtree.
-				*/
+				 * @param {object} [options.preset] This parameter allows for selection of subset of rules for the analysis
+				 * @param {object} [options.executionScope] The execution scope of the analysis.
+				 * @param {string} [options.executionScope.type=global] The type of the execution scope, one of 'global', 'subtree' or 'components'.
+				 * @param {string|string[]} [options.executionScope.selectors] The IDs of the components or the subtree.
+				 * @param {object} [options.metadata] The metadata that will be passed to the analysis.
+				 * @public
+				 * @returns {Promise<{result: boolean, message: string, actual: string, expected: string}>} Promise.
+				 */
 				noRuleFailures: function(options) {
+					options = options || {};
 					var ruleDeferred = jQuery.Deferred(),
-						failOnAnyRuleIssues = options[0] && options[0]["failOnAnyIssues"],
-						failOnHighRuleIssues = options[0] && options[0]["failOnHighIssues"],
-						rules = options[0] && options[0].rules,
-						executionScope = options[0] && options[0].executionScope;
+						failOnAnyRuleIssues = options["failOnAnyIssues"],
+						failOnHighRuleIssues = options["failOnHighIssues"],
+						rules = options.rules,
+						preset = options.preset,
+						metadata = options.metadata,
+						executionScope = options.executionScope;
 
-					jQuery.sap.support.analyze(executionScope, rules).then(function () {
-						var analysisHistory = jQuery.sap.support.getAnalysisHistory(),
+					RuleAnalyzer.analyze(executionScope, rules || preset, metadata).then(function () {
+						var analysisHistory = RuleAnalyzer.getAnalysisHistory(),
 							lastAnalysis = { issues: [] };
 
 						if (analysisHistory.length) {
@@ -107,17 +151,21 @@ sap.ui.define([
 
 					return ruleDeferred.promise();
 				},
+
 				/**
 				 * If there are issues found the assertion result will be false and a report with all the issues will be generated
 				 * in the message of the test. If no issues were found the assertion result will be true and no report will
 				 * be generated.
 				 *
 				 * If "sap-skip-rules-issues=true" is set as an URI parameter, assertion result will be always positive.
+				 *
+				 * @public
+				 * @returns {Promise<{result: boolean, message: string, actual: string, expected: object[]}>} Promise.
 				 */
 				getFinalReport: function () {
 					var ruleDeferred = jQuery.Deferred(),
-						history = jQuery.sap.support.getFormattedAnalysisHistory(),
-						analysisHistory = jQuery.sap.support.getAnalysisHistory(),
+						history = RuleAnalyzer.getFormattedAnalysisHistory(),
+						analysisHistory = RuleAnalyzer.getAnalysisHistory(),
 						totalIssues = analysisHistory.reduce(function (total, analysis) {
 							return total + analysis.issues.length;
 						}, 0),
@@ -140,10 +188,98 @@ sap.ui.define([
 					});
 
 					return ruleDeferred.promise();
+				},
+
+				/**
+				 * Stores analysis history (if such) as last element in window._$files array.
+				 * Accessing this array gives an opportunity to store this history in a file.
+				 *
+				 * @param {object} [options] The options used to configure reporting.
+				 * @param {sap.ui.support.HistoryFormats} [options.historyFormat] The format into which the history object will be converted.
+				 * @param {string} [options.fileName] The name of the file. It should have extension .support-assistant.json". Example: myfile.support-assistant.json
+				 *                                    <b>Note:</b> Extension ".support-assistant.json" will be appended automatically, if it is not already given.
+				 *                                    If only ".json" extension is given, it will be turned to ".support-assistant.json"
+				 *
+				 * @public
+				 * @returns {Promise<{result: boolean, message: string, actual: boolean, expected: boolean}>} Promise.
+				 */
+				getReportAsFileInFormat: function (options) {
+					var oContext,
+						oHistory,
+						oOptions = options || {},
+						ruleDeferred = jQuery.Deferred(),
+						sHistoryFormat = oOptions["historyFormat"],
+						sFileName = oOptions["fileName"];
+
+					switch (sHistoryFormat) {
+						case library.HistoryFormats.Abap:
+							if (!sFileName) {
+								sFileName = "abap-report.support-assistant.json";
+							}
+							oHistory = RuleAnalyzer.getFormattedAnalysisHistory(sHistoryFormat);
+							break;
+						case library.HistoryFormats.String:
+							if (!sFileName) {
+								sFileName = "string-report.support-assistant.json";
+							}
+							oHistory = RuleAnalyzer.getFormattedAnalysisHistory(sHistoryFormat);
+							break;
+						default :
+							if (!sFileName) {
+								sFileName = "report.support-assistant.json";
+							}
+							oHistory = RuleAnalyzer.getAnalysisHistory();
+					}
+
+					sFileName = Extension._formatFileName(sFileName);
+
+					oContext = getWindow();
+
+					oContext._$files[oContext._$files.length] = {
+						name: sFileName,
+						content: JSON.stringify(oHistory)
+					};
+
+					ruleDeferred.resolve({
+						result: true,
+						message: "Support Assistant Analysis History was stored in window._$files with following name " + sFileName,
+						actual: true,
+						expected: true
+					});
+
+					return ruleDeferred.promise();
 				}
 			};
+
+			return oRuleEngineAssertions;
 		}
 	});
+
+	/**
+	 * Appends ".support-assistant.json" to a file name, if not already given.
+	 *
+	 * @private
+	 * @param {string} sFileName Unformatted file name.
+	 * @returns {string} Formatted file name.
+	 */
+	Extension._formatFileName = function (sFileName) {
+
+		var sFormattedFileName = "";
+
+		if ((/\.support-assistant.json$/i).test(sFileName)) { // if the file extension is already .support-assistant.json do nothing
+			sFormattedFileName = sFileName;
+		} else if ((/\.json$/i).test(sFileName)) { // if the file has .json extension, replace it with .support-assistant.json"
+			sFormattedFileName = sFileName.replace(/\.json$/i, ".support-assistant.json");
+		} else { // give standardized one
+			sFormattedFileName = sFileName + ".support-assistant.json";
+		}
+
+		if (sFileName !== sFormattedFileName) {
+			Log.warning("Attempt to save report in file with name " + sFileName + ". Name changed to " + sFormattedFileName + ".");
+		}
+
+		return sFormattedFileName;
+	};
 
 	return Extension;
 });

@@ -1,0 +1,26 @@
+{
+  "sap.app": {
+	"id": "sap.ui.mdc.tableOpaTests.appUnderTestMDCTable",
+	"type": "application",
+	"applicationVersion": {
+	  "version": "1.0.0"
+	}
+  },
+  "sap.ui5": {
+	"rootView": {
+      "id": "MyView",
+	  "viewName": "sap.ui.mdc.tableOpaTests.appUnderTestMDCTable.View",
+	  "type": "XML",
+	  "async": true
+	},
+	"dependencies": {
+	  "libs": {
+		"sap.m": {},
+		"sap.ui.core": {},
+		"sap.ui.mdc": {},
+		"sap.ui.table": {},
+		"sap.ui.fl": {}
+	  }
+	}
+  }
+}

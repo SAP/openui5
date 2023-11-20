@@ -1,7 +1,7 @@
 /*!
  * ${copyright}
  */
-
+/*eslint-disable max-len */
 /**
  * JSON-based DataBinding
  *
@@ -11,10 +11,18 @@
  */
 
 // Provides the JSON object based model implementation
-sap.ui.define(['jquery.sap.global', 'sap/ui/model/ClientModel', 'sap/ui/model/Context', './JSONListBinding', './JSONPropertyBinding', './JSONTreeBinding'],
-	function(jQuery, ClientModel, Context, JSONListBinding, JSONPropertyBinding, JSONTreeBinding) {
+sap.ui.define([
+	"./JSONListBinding",
+	"./JSONPropertyBinding",
+	"./JSONTreeBinding",
+	"sap/base/Log",
+	"sap/base/util/deepExtend",
+	"sap/base/util/isPlainObject",
+	"sap/ui/model/ClientModel",
+	"sap/ui/model/Context"
+], function(JSONListBinding, JSONPropertyBinding, JSONTreeBinding, Log, deepExtend, isPlainObject,
+		ClientModel, Context) {
 	"use strict";
-
 
 	/**
 	 * Constructor for a new JSONModel.
@@ -23,11 +31,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ClientModel', 'sap/ui/model/Co
 	 * JS objects without the need to call setData, setProperty or refresh. Observation does only work for existing
 	 * properties in the JSON, it cannot detect new properties or new array entries.
 	 *
-	 * @param {object|string} oData Either the URL where to load the JSON from or a JS object
-	 * @param {boolean} bObserve Whether to observe the JSON data for property changes (experimental)
+	 * @param {object|string} [oData] Either the URL where to load the JSON from or a JS object
+	 * @param {boolean} [bObserve] Whether to observe the JSON data for property changes (experimental)
 	 *
 	 * @class
-	 * Model implementation for JSON format
+	 * Model implementation for the JSON format.
+	 *
+	 * This model is not prepared to be inherited from.
+	 *
+	 * The model does not support {@link sap.ui.model.json.JSONModel#bindList binding lists} in case the bound data
+	 * contains circular structures and the bound control uses
+	 * {@link topic:7cdff73f308b4b10bdf7d83b7aba72e7 extended change detection}.
 	 *
 	 * @extends sap.ui.model.ClientModel
 	 *
@@ -59,13 +73,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ClientModel', 'sap/ui/model/Co
 	 *
 	 * @param {object} oData the data to set on the model
 	 * @param {boolean} [bMerge=false] whether to merge the data instead of replacing it
+	 * @throws {Error} If the provided data contains a cycle and <code>bMerge</code> is set
 	 *
 	 * @public
 	 */
 	JSONModel.prototype.setData = function(oData, bMerge){
 		if (bMerge) {
 			// do a deep copy
-			this.oData = jQuery.extend(true, Array.isArray(this.oData) ? [] : {}, this.oData, oData);
+			this.oData = deepExtend(Array.isArray(this.oData) ? [] : {}, this.oData, oData);
 		} else {
 			this.oData = oData;
 		}
@@ -106,12 +121,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ClientModel', 'sap/ui/model/Co
 			}
 		}
 		function observeRecursive(oObject, oParentObject, sName) {
+			var i;
+
 			if (Array.isArray(oObject)) {
-				for (var i = 0; i < oObject.length; i++) {
+				for (i = 0; i < oObject.length; i++) {
 					observeRecursive(oObject[i], oObject, i);
 				}
-			} else if (jQuery.isPlainObject(oObject)) {
-				for (var i in oObject) {
+			} else if (isPlainObject(oObject)) {
+				for (i in oObject) {
 					observeRecursive(oObject[i], oObject, i);
 				}
 			}
@@ -133,10 +150,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ClientModel', 'sap/ui/model/Co
 	JSONModel.prototype.setJSON = function(sJSON, bMerge){
 		var oJSONData;
 		try {
-			oJSONData = jQuery.parseJSON(sJSON);
+			oJSONData = JSON.parse(sJSON + "");
 			this.setData(oJSONData, bMerge);
 		} catch (e) {
-			jQuery.sap.log.fatal("The following problem occurred: JSON parse Error: " + e);
+			Log.fatal("The following problem occurred: JSON parse Error: " + e);
 			this.fireParseError({url : "", errorCode : -1,
 				reason : "", srcText : e, line : -1, linepos : -1, filepos : -1});
 		}
@@ -144,9 +161,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ClientModel', 'sap/ui/model/Co
 
 	/**
 	 * Serializes the current JSON data of the model into a string.
-	 * Note: May not work in Internet Explorer 8 because of lacking JSON support (works only if IE 8 mode is enabled)
 	 *
-	 * @return {string} the JSON data serialized as string
+	 * @return {string} The JSON data serialized as string
 	 * @public
 	 */
 	JSONModel.prototype.getJSON = function(){
@@ -163,17 +179,20 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ClientModel', 'sap/ui/model/Co
 	 * Data that is sent to the server is appended to the URL as a query string.
 	 * If the value of the data parameter is an object (map), it is converted to a string and
 	 * url-encoded before it is appended to the URL.
-	 * @param {boolean} [bAsync=true] By default, all requests are sent asynchronous
-	 * (i.e. this is set to true by default). If you need synchronous requests, set this option to false.
-	 * Cross-domain requests do not support synchronous operation. Note that synchronous requests may
-	 * temporarily lock the browser, disabling any actions while the request is active.
+	 * @param {boolean} [bAsync=true] <b>Deprecated as of Version 1.107</b>; always use asynchronous
+	 * loading for performance reasons. By default, all requests are sent asynchronously.
+	 * Synchronous requests may temporarily lock the browser, disabling any actions while
+	 * the request is active. Cross-domain requests do not support synchronous operations.
 	 * @param {string} [sType=GET] The type of request to make ("POST" or "GET"), default is "GET".
 	 * Note: Other HTTP request methods, such as PUT and DELETE, can also be used here, but
 	 * they are not supported by all browsers.
-	 * @param {boolean} [bMerge=false] whether the data should be merged instead of replaced
-	 * @param {string} [bCache=false] force no caching if false. Default is false
+	 * @param {boolean} [bMerge=false] Whether the data should be merged instead of replaced
+	 * @param {boolean} [bCache=true] <b>Deprecated as of Version 1.107</b>; always use the cache
+	 * headers from the back-end system for performance reasons. Disables caching if set to
+	 * <code>false</code>.
 	 * @param {object} [mHeaders] An object of additional header key/value pairs to send along with the request
 	 *
+	 * @return {Promise|undefined} in case bAsync is set to true a Promise is returned; this promise resolves/rejects based on the request status
 	 * @public
 	 */
 	JSONModel.prototype.loadData = function(sURL, oParameters, bAsync, sType, bMerge, bCache, mHeaders){
@@ -188,7 +207,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ClientModel', 'sap/ui/model/Co
 
 		var fnSuccess = function(oData) {
 			if (!oData) {
-				jQuery.sap.log.fatal("The following problem occurred: No data was retrieved by service: " + sURL);
+				Log.fatal("The following problem occurred: No data was retrieved by service: " + sURL);
 			}
 			this.setData(oData, bMerge);
 			this.fireRequestCompleted({url : sURL, type : sType, async : bAsync, headers: mHeaders,
@@ -199,10 +218,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ClientModel', 'sap/ui/model/Co
 			// the textStatus is either passed by jQuery via arguments,
 			// or by us from a promise reject() in the async case
 			var sMessage = sTextStatus || oParams.textStatus;
-			var oParams = bAsync ? oParams.request : oParams;
-			var iStatusCode = oParams.status;
-			var sStatusText = oParams.statusText;
-			var sResponseText = oParams.responseText;
+			var oParameters = bAsync ? oParams.request : oParams;
+			var iStatusCode = oParameters.status;
+			var sStatusText = oParameters.statusText;
+			var sResponseText = oParameters.responseText;
 
 			var oError = {
 				message : sMessage,
@@ -210,11 +229,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ClientModel', 'sap/ui/model/Co
 				statusText : sStatusText,
 				responseText : sResponseText
 			};
-			jQuery.sap.log.fatal("The following problem occurred: " + sMessage, sResponseText + ","	+ iStatusCode + "," + sStatusText);
+			Log.fatal("The following problem occurred: " + sMessage, sResponseText + ","	+ iStatusCode + "," + sStatusText);
 
 			this.fireRequestCompleted({url : sURL, type : sType, async : bAsync, headers: mHeaders,
 				info : "cache=" + bCache + ";bMerge=" + bMerge, infoObject: {cache : bCache, merge : bMerge}, success: false, errorobject: oError});
 			this.fireRequestFailed(oError);
+
+			if (bAsync) {
+				return Promise.reject(oError);
+			}
+
+			return undefined;
 		}.bind(this);
 
 		var _loadData = function(fnSuccess, fnError) {
@@ -239,27 +264,50 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ClientModel', 'sap/ui/model/Co
 				_loadData(resolve, fnReject);
 			});
 
-			this.pSequentialImportCompleted = this.pSequentialImportCompleted.then(function() {
-				//must always resolve
-				return pImportCompleted.then(fnSuccess, fnError).catch(function(oError) {
-					jQuery.sap.log.error("Loading of data failed: " + oError.stack);
-				});
+			// chain the existing loadData calls, so the import is done sequentially
+			var pReturn = this.pSequentialImportCompleted.then(function() {
+				return pImportCompleted.then(fnSuccess, fnError);
 			});
+
+			// attach exception/rejection handler, so the internal import promise always resolves
+			this.pSequentialImportCompleted = pReturn.catch(function(oError) {
+				Log.error("Loading of data failed: " + oError.stack);
+			});
+
+			// return chained loadData promise (sequential imports)
+			// but without a catch handler, so the application can also is notified about request failures
+			return pReturn;
 		} else {
 			_loadData(fnSuccess, fnError);
+
+			return undefined;
 		}
 	};
 
 	/**
-	 * @see sap.ui.model.Model.prototype.bindProperty
+	 * Returns a Promise of the current data-loading state.
+	 * Every currently running {@link sap.ui.model.json.JSONModel#loadData} call is respected by the returned Promise.
+	 * This also includes a potential loadData call from the JSONModel's constructor in case a URL was given.
+	 * The data-loaded Promise will resolve once all running requests have finished.
+	 * Only request, which have been queued up to the point of calling
+	 * this function will be respected by the returned Promise.
 	 *
+	 * @return {Promise} a Promise, which resolves if all pending data-loading requests have finished
+	 * @public
+	 */
+	JSONModel.prototype.dataLoaded = function() {
+		return this.pSequentialImportCompleted;
+	};
+
+	/*
+	 * @see sap.ui.model.ClientModel#bindProperty
 	 */
 	JSONModel.prototype.bindProperty = function(sPath, oContext, mParameters) {
 		var oBinding = new JSONPropertyBinding(this, sPath, oContext, mParameters);
 		return oBinding;
 	};
 
-	/**
+	/*
 	 * @see sap.ui.model.Model.prototype.bindList
 	 *
 	 */
@@ -268,15 +316,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ClientModel', 'sap/ui/model/Co
 		return oBinding;
 	};
 
-	/**
+	/*
 	 * @see sap.ui.model.Model.prototype.bindTree
 	 *
-	 * @param {object}
-	 *         [mParameters=null] additional model specific parameters (optional)
-	 *         If the mParameter <code>arrayNames</code> is specified with an array of string names this names will be checked against the tree data structure
-	 *         and the found data in this array is included in the tree but only if also the parent array is included.
-	 *         If this parameter is not specified then all found arrays in the data structure are bound.
-	 *         If the tree data structure doesn't contain an array you don't have to specify this parameter.
+	 * @param {object} [mParameters]
+	 *   Additional model specific parameters; if the mParameter <code>arrayNames</code> is
+	 *   specified with an array of string names these names will be checked against the tree data
+	 *   structure and the found data in this array is included in the tree, but only if the parent
+	 *   array is also included; if this parameter is not specified then all found arrays in the
+	 *   data structure are bound; if the tree data structure doesn't contain an array, this
+	 *   parameter doesn't need to be specified
 	 *
 	 */
 	JSONModel.prototype.bindTree = function(sPath, oContext, aFilters, mParameters, aSorters) {
@@ -285,14 +334,21 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ClientModel', 'sap/ui/model/Co
 	};
 
 	/**
-	 * Sets a new value for the given property <code>sPropertyName</code> in the model.
-	 * If the model value changed all interested parties are informed.
+	 * Sets <code>oValue</code> as new value for the property defined by the given
+	 * <code>sPath</code> and <code>oContext</code>. Once the new model value has been set, all
+	 * interested parties are informed.
 	 *
-	 * @param {string}  sPath path of the property to set
-	 * @param {any}     oValue value to set the property to
-	 * @param {object} [oContext=null] the context which will be used to set the property
-	 * @param {boolean} [bAsyncUpdate] whether to update other bindings dependent on this property asynchronously
-	 * @return {boolean} true if the value was set correctly and false if errors occurred like the entry was not found.
+	 * @param {string} sPath
+	 *   The path of the property to set
+	 * @param {any} oValue
+	 *   The new value to be set for this property
+	 * @param {sap.ui.model.Context} [oContext]
+	 *   The context used to set the property
+	 * @param {boolean} [bAsyncUpdate]
+	 *   Whether to update other bindings dependent on this property asynchronously
+	 * @return {boolean}
+	 *   <code>true</code> if the value was set correctly, and <code>false</code> if errors
+	 *   occurred, for example if the entry was not found.
 	 * @public
 	 */
 	JSONModel.prototype.setProperty = function(sPath, oValue, oContext, bAsyncUpdate) {
@@ -325,28 +381,46 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ClientModel', 'sap/ui/model/Co
 	};
 
 	/**
-	* Returns the value for the property with the given <code>sPropertyName</code>
-	*
-	* @param {string} sPath the path to the property
-	* @param {sap.ui.model.Context} [oContext=null] the context which will be used to retrieve the property
-	* @return {any} the value of the property
-	* @public
-	*/
+	 * Returns the value for the property with the given path and context.
+	 *
+	 * @param {string} sPath
+	 *   The path to the property
+	 * @param {sap.ui.model.Context} [oContext]
+	 *   The context which will be used to retrieve the property
+	 * @return {any|null|undefined}
+	 *   The value of the property. If the property is not found, <code>null</code> or
+	 *   <code>undefined</code> is returned.
+	 * @public
+	 */
 	JSONModel.prototype.getProperty = function(sPath, oContext) {
 		return this._getObject(sPath, oContext);
 
 	};
 
 	/**
+	 * Returns the value for the property with the given path and context.
+	 *
 	 * @param {string} sPath
+	 *   The path to the property
 	 * @param {object|sap.ui.model.Context} [oContext]
-	 * @returns {any} the node of the specified path/context
+	 *   The context or a JSON object
+	 * @returns {any}
+	 *   The value of the property. If the property path derived from the given path and context is
+	 *   absolute (starts with a "/") but does not lead to a property in the data structure,
+	 *   <code>undefined</code> is returned. If the property path is not absolute, <code>null</code>
+	 *   is returned.
+	 *
+	 *   Note: If a JSON object is given instead of a context, the value of the property is taken
+	 *   from the JSON object. If the given path does not lead to a property, <code>undefined</code>
+	 *   is returned. If the given path represents a falsy JavaScript value, the given JSON object
+	 *   is returned.
+	 * @private
 	 */
 	JSONModel.prototype._getObject = function (sPath, oContext) {
 		var oNode = this.isLegacySyntax() ? this.oData : null;
 		if (oContext instanceof Context) {
 			oNode = this._getObject(oContext.getPath());
-		} else if (oContext) {
+		} else if (oContext != null) {
 			oNode = oContext;
 		}
 		if (!sPath) {

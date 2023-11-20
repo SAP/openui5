@@ -1,33 +1,40 @@
 sap.ui.define([
-	'sap/ui/demo/cart/controller/BaseController',
-	'sap/ui/demo/cart/model/cart',
-	'sap/ui/model/json/JSONModel',
-	'sap/ui/Device',
-	'sap/ui/demo/cart/model/formatter',
-	'sap/m/MessageBox',
-	'sap/ui/core/ValueState',
-	'sap/m/Link',
-	'sap/m/MessagePopover',
-	'sap/m/MessagePopoverItem',
-	'sap/ui/demo/cart/model/EmailType'
+	"./BaseController",
+	"../model/cart",
+	"../model/EmailType",
+	"../model/formatter",
+	"sap/m/Link",
+	"sap/m/MessageBox",
+	"sap/m/MessageItem",
+	"sap/m/MessagePopover",
+	"sap/ui/Device",
+	"sap/ui/core/Messaging",
+	"sap/ui/model/json/JSONModel"
 ], function (
 	BaseController,
 	cart,
-	JSONModel,
-	Device,
+	EmailType,
 	formatter,
-	MessageBox,
-	ValueState,
 	Link,
+	MessageBox,
+	MessageItem,
 	MessagePopover,
-	MessagePopoverItem) {
+	Device,
+	Messaging,
+	JSONModel
+) {
 	"use strict";
 
 	return BaseController.extend("sap.ui.demo.cart.controller.Checkout", {
+
+		types : {
+			email: new EmailType()
+		},
+
 		formatter: formatter,
 
 		onInit: function () {
-			var oModel = new sap.ui.model.json.JSONModel(
+			var oModel = new JSONModel(
 				{
 					SelectedPayment: "Credit Card",
 					SelectedDeliveryMethod: "Standard Delivery",
@@ -58,8 +65,9 @@ sap.ui.define([
 						SecurityCode: "",
 						Expire: ""
 					}
-				}
-			);
+				}),
+				oReturnToShopButton = this.byId("returnToShopButton");
+
 			this.setModel(oModel);
 
 			// previously selected entries in wizard
@@ -69,7 +77,20 @@ sap.ui.define([
 			};
 
 			// Assign the model object to the SAPUI5 core
-			this.setModel(sap.ui.getCore().getMessageManager().getMessageModel(), "message");
+			this.setModel(Messaging.getMessageModel(), "message");
+
+			// switch to single column view for checout process
+			this.getRouter().getRoute("checkout").attachMatched(function () {
+				this._setLayout("One");
+			}.bind(this));
+
+			// set focus to the "Return to Shop" button each time the view is shown to avoid losing
+			// the focus after changing the layout to one column
+			this.getView().addEventDelegate({
+				onAfterShow : function () {
+					oReturnToShopButton.focus();
+				}
+			});
 		},
 
 		/**
@@ -88,7 +109,7 @@ sap.ui.define([
 			/**
 			 * Gather information that will be visible on the MessagePopover
 			 */
-			var oMessageTemplate = new MessagePopoverItem({
+			var oMessageTemplate = new MessageItem({
 				type: '{message>type}',
 				title: '{message>message}',
 				subtitle: '{message>additionalText}',
@@ -137,7 +158,7 @@ sap.ui.define([
 		},
 
 		/**
-		 * Shows warning message if user changes prior selected payment method
+		 * Shows warning message if user changes previously selected payment method
 		 */
 		setPaymentMethod: function () {
 			this._setDiscardableProperty({
@@ -149,7 +170,7 @@ sap.ui.define([
 		},
 
 		/**
-		 * Shows warning message if user changes prior selected delivery address
+		 * Shows warning message if user changes previously selected delivery address
 		 */
 		setDifferentDeliveryAddress: function () {
 			this._setDiscardableProperty({
@@ -174,7 +195,7 @@ sap.ui.define([
 
 		/**
 		 * Called from <code>ordersummary</code>
-		 * shows warning message and cancels order if affirmed
+		 * shows warning message and cancels order if confirmed
 		 */
 		handleWizardCancel: function () {
 			var sText = this.getResourceBundle().getText("checkoutControllerAreYouSureCancel");
@@ -183,7 +204,7 @@ sap.ui.define([
 
 		/**
 		 * Called from <code>ordersummary</code>
-		 * shows warning message and submits order if affirmed
+		 * shows warning message and submits order if confirmed
 		 */
 		handleWizardSubmit: function () {
 			var sText = this.getResourceBundle().getText("checkoutControllerAreYouSureSubmit");
@@ -202,12 +223,12 @@ sap.ui.define([
 		 * Removes validation error messages from the previous step
 		 */
 		_clearMessages: function () {
-			sap.ui.getCore().getMessageManager().removeAllMessages();
+			Messaging.removeAllMessages();
 		},
 
 		/**
 		 * Checks the corresponding step after activation to decide whether the user can proceed or needs
-		 * to correct his input
+		 * to correct the input
 		 */
 		onCheckStepActivation: function(oEvent) {
 			this._clearMessages();
@@ -257,7 +278,7 @@ sap.ui.define([
 		},
 
 		/**
-		 * Check if one or more of the inputs are empty
+		 * Checks if one or more of the inputs are empty
 		 * @param {array} aInputIds - Input ids to be checked
 		 * @returns {boolean}
 		 * @private
@@ -278,7 +299,7 @@ sap.ui.define([
 		},
 
 		/**
-		 * Hiddes button to next WizardStep if validation conditions are not fulfilled
+		 * Hides button to proceed to next WizardStep if validation conditions are not fulfilled
 		 * @param {string} sStepName - the ID of the step to be checked
 		 * @param {array} aInputIds - Input IDs to be checked
 		 * @private
@@ -287,7 +308,7 @@ sap.ui.define([
 			var oWizard = this.byId("shoppingCartWizard"),
 				oStep = this.byId(sStepName),
 				bEmptyInputs = this._checkInputFields(aInputIds),
-				bValidationError = !!sap.ui.getCore().getMessageManager().getMessageModel().getData().length;
+				bValidationError = !!Messaging.getMessageModel().getData().length;
 
 			if (!bValidationError && !bEmptyInputs) {
 				oWizard.validateStep(oStep);
@@ -301,7 +322,7 @@ sap.ui.define([
 		 * Navigates to the summary page in case there are no errors
 		 */
 		checkCompleted: function () {
-			if (sap.ui.getCore().getMessageManager().getMessageModel().getData().length > 0) {
+			if (Messaging.getMessageModel().getData().length > 0) {
 				MessageBox.error(this.getResourceBundle().getText("popOverMessageText"));
 			} else {
 				this.byId("wizardNavContainer").to(this.byId("summaryPage"));
@@ -312,6 +333,7 @@ sap.ui.define([
 		 * navigates to "home" for further shopping
 		 */
 		onReturnToShopButtonPress: function () {
+			this._setLayout("Two");
 			this.getRouter().navTo("home");
 		},
 
@@ -319,7 +341,7 @@ sap.ui.define([
 
 		/**
 		 * Called from both <code>setPaymentMethod</code> and <code>setDifferentDeliveryAddress</code> functions.
-		 * Shows warning message if user changes prior selected choice
+		 * Shows warning message if user changes previously selected choice
 		 * @private
 		 * @param {Object} oParams Object containing message text, model path and WizardSteps
 		 */
@@ -345,7 +367,7 @@ sap.ui.define([
 
 		/**
 		 * Called from <code>handleWizardCancel</code> and <code>handleWizardSubmit</code> functions.
-		 * Shows warning message, resets shopping cart and wizard if affirmed and navigates to given route
+		 * Shows warning message, resets shopping cart and wizard if confirmed and navigates to given route
 		 * @private
 		 * @param {string} sMessage message text
 		 * @param {string} sMessageBoxType message box type (e.g. warning)

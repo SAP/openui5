@@ -1,0 +1,58 @@
+/* ============================= */
+/* CSS for control sap.f/Card    */
+/* Horizon theme                 */
+/* ============================= */
+
+@_sap_f_Card_HeaderFocusBorderBottomOffset: 0px;
+@_sap_f_Card_HeaderFocusBorderTopOffset: 0px;
+@_sap_f_Card_HeaderFocusBorderLeftOffset: 0px;
+@_sap_f_Card_HeaderFocusBorderRightOffset: 0px;
+@_sap_f_Card_HeaderFocusBorderRadius: inherit;
+@_sap_f_Card_BorderRadius: 1rem;
+@_sap_f_Card_TitleFontSize: @sapMFontHeader6Size;
+@_sap_f_Card_HoverBoxShadow: @sapUiContentShadow2;
+@_sap_f_Card_Badge_Background: @sapUiHighlight;
+
+.sapFGridContainer .sapFGridContainerItemWrapperNoVisualFocus:focus .sapFCard,
+.sapFCard {
+	&.sapFCardNoContent .sapFCardHeader::before,
+	&.sapFCardNoHeader::before {
+		border-radius: @_sap_f_Card_BorderRadius;
+	}
+
+	.sapFCardHeader {
+		border-bottom: none;
+		padding-bottom: 0.75rem;
+	}
+
+	.sapFCardFooter {
+		padding-top: 0.75rem;
+	}
+
+	.sapFCardFilterBar .sapFCardFilterBarContent {
+		overflow: unset;
+	}
+}
+
+.sapFCard.sapFCardSectionInteractive:not(.sapFCardPreview):not(.sapFCardTransparent) {
+	&:hover {
+		box-shadow: @_sap_f_Card_HoverBoxShadow;
+	}
+
+	&:active {
+		box-shadow: @_sap_f_Card_BoxShadow;
+	}
+}
+
+.sapFCard .sapFCardHeader .sapFCardStatus {
+	font-size: @sapMFontSmallSize;
+	margin-top: 0.125rem;
+}
+
+.sapFCard .sapMLIBFocusable:focus {
+	outline-offset: -0.125rem;
+}
+
+.sapFCard .sapMNC, .sapFCardNumericIndicatorsSide {
+	margin-top: 0.25rem;
+}

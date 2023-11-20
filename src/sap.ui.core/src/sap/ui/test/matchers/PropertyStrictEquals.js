@@ -2,13 +2,26 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', './Matcher'], function (jQuery, Matcher) {
+sap.ui.define([
+	"sap/ui/base/ManagedObject",
+	'sap/ui/test/matchers/Matcher',
+	"sap/base/strings/capitalize"
+], function (ManagedObject, Matcher, capitalize) {
 	"use strict";
 
 	/**
-	 * PropertyStrictEquals - checks if a property has the exact same value.
+	 * @class
+	 * Checks if a property has the exact same value.
 	 *
-	 * @class PropertyStrictEquals - checks if a property has the exact same value
+	 * As of version 1.72, it is available as a declarative matcher with the following syntax:
+	 * <code><pre>{
+	 *     propertyStrictEquals: {
+	 *         name: "string",
+	 *         value: "any"
+	 *     }
+	 * }
+	 * </code></pre>
+	 *
 	 * @extends sap.ui.test.matchers.Matcher
 	 * @param {object} [mSettings] optional map/JSON-object with initial settings for the new PropertyStrictEquals
 	 * @public
@@ -18,22 +31,29 @@ sap.ui.define(['jquery.sap.global', './Matcher'], function (jQuery, Matcher) {
 	 */
 	return Matcher.extend("sap.ui.test.matchers.PropertyStrictEquals", /** @lends sap.ui.test.matchers.PropertyStrictEquals.prototype */ {
 
-		metadata : {
-			publicMethods : [ "isMatching" ],
-			properties : {
+		metadata: {
+			publicMethods: ["isMatching"],
+			properties: {
 				/**
 				 * The Name of the property that is used for matching.
 				 */
-				name : {
-					type : "string"
+				name: {
+					type: "string"
 				},
 				/**
 				 * The value of the property that is used for matching.
 				 */
-				value : {
-					type : "any"
+				value: {
+					type: "any"
 				}
 			}
+		},
+
+		constructor: function (mSettings) {
+			if (mSettings && mSettings.value) {
+				mSettings.value = ManagedObject.escapeSettingsValue(mSettings.value);
+			}
+			Matcher.prototype.constructor.call(this, mSettings);
 		},
 
 		/**
@@ -43,9 +63,9 @@ sap.ui.define(['jquery.sap.global', './Matcher'], function (jQuery, Matcher) {
 		 * @return {boolean} true if the property has a strictly matching value.
 		 * @public
 		 */
-		isMatching : function (oControl) {
+		isMatching: function (oControl) {
 			var sPropertyName = this.getName(),
-				fnProperty = oControl["get" + jQuery.sap.charToUpperCase(sPropertyName, 0)];
+				fnProperty = oControl["get" + capitalize(sPropertyName, 0)];
 
 			if (!fnProperty) {
 				this._oLogger.error("Control '" + oControl + "' does not have a property '" + sPropertyName + "'");

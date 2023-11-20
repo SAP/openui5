@@ -14,7 +14,8 @@ sap.ui.define(['sap/uxap/BlockBase'],
 						type: "XML"
 					}
 				}
-			}
+			},
+			renderer: {}
 		});
 
 		return BlockBlue;

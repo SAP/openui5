@@ -1,0 +1,47 @@
+<mvc:View
+	class="sapUiSizeCompact"
+	controllerName="sap.ui.core.sample.odata.v4.GridTable.GridTable"
+	xmlns="sap.ui.table"
+	xmlns:m="sap.m"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:rm="sap.ui.table.rowmodes">
+
+	<Table id="table" ariaLabelledBy="title"
+		rows="{path : '/EMPLOYEES', parameters : {$count : false, $orderby : 'AGE'}}"
+		selectionMode="None" threshold="0">
+		<extension>
+			<m:Toolbar design="Transparent" class="sapMTBHeader-CTX">
+				<m:Title id="title" level="H1" text="Employees"/>
+				<m:ToolbarSpacer/>
+				<m:Button icon="sap-icon://synchronize" press="onSynchronize" tooltip="Synchronize"/>
+			</m:Toolbar>
+		</extension>
+		<rowMode>
+			<rm:Fixed rowCount="5"/>
+		</rowMode>
+		<Column>
+			<m:Label text="ID"/>
+			<template>
+				<m:Text text="{ID}" wrapping="false"/>
+			</template>
+		</Column>
+		<Column>
+			<m:Label text="Manager's ID"/>
+			<template>
+				<m:Text text="{MANAGER_ID}" wrapping="false"/>
+			</template>
+		</Column>
+		<Column>
+			<m:Label text="Name"/>
+			<template>
+				<m:Input value="{Name}" change="onNameChanged"/>
+			</template>
+		</Column>
+		<Column>
+			<m:Label text="Age"/>
+			<template>
+				<m:Text text="{AGE}" wrapping="false"/>
+			</template>
+		</Column>
+	</Table>
+</mvc:View>

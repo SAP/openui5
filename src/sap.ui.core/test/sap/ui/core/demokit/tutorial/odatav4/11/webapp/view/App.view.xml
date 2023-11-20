@@ -1,0 +1,318 @@
+<mvc:View
+	controllerName="sap.ui.core.tutorial.odatav4.controller.App"
+	displayBlock="true"
+	xmlns="sap.m"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:l="sap.ui.layout"
+	xmlns:semantic="sap.f.semantic"
+	xmlns:f="sap.ui.layout.form"
+	xmlns:core="sap.ui.core">
+	<Shell>
+		<App busy="{appView>/busy}" class="sapUiSizeCompact">
+			<pages>
+				<Page title="{i18n>peoplePageTitle}">
+					<headerContent>
+						<Button
+							id="resetChangesButton"
+							text="{i18n>resetChangesButtonText}"
+							enabled="{= !${appView>/hasUIChanges}}"
+							press="onResetDataSource"
+							type="Emphasized">
+						</Button>
+					</headerContent>
+					<content>
+						<l:ResponsiveSplitter defaultPane="defaultPane">
+							<l:PaneContainer orientation="Horizontal">
+								<l:SplitPane id="defaultPane">
+									<l:layoutData>
+										<l:SplitterLayoutData id="defaultLayout" size="100%" resizable="false"/>
+									</l:layoutData>
+									<Table
+										id="peopleList"
+										growing="true"
+										growingThreshold="10"
+										items="{
+											path: '/People',
+											parameters: {
+												$count: true,
+												$$updateGroupId : 'peopleGroup'
+											}
+										}"
+										mode="SingleSelectLeft"
+										selectionChange=".onSelectionChange">
+										<headerToolbar>
+											<OverflowToolbar>
+												<content>
+													<ToolbarSpacer/>
+													<SearchField
+														id="searchField"
+														width="20%"
+														placeholder="{i18n>searchFieldPlaceholder}"
+														enabled="{= !${appView>/hasUIChanges}}"
+														search=".onSearch"/>
+													<Button
+														id="addUserButton"
+														icon="sap-icon://add"
+														tooltip="{i18n>createButtonText}"
+														press=".onCreate">
+														<layoutData>
+															<OverflowToolbarLayoutData priority="NeverOverflow"/>
+														</layoutData>
+													</Button>
+													<Button
+														id="deleteUserButton"
+														icon="sap-icon://delete"
+														tooltip="{i18n>deleteButtonText}"
+														press=".onDelete">
+														<layoutData>
+															<OverflowToolbarLayoutData priority="NeverOverflow"/>
+														</layoutData>
+													</Button>
+													<Button
+														id="refreshUsersButton"
+														icon="sap-icon://refresh"
+														enabled="{= !${appView>/hasUIChanges}}"
+														tooltip="{i18n>refreshButtonText}"
+														press=".onRefresh"/>
+													<Button
+														id="sortUsersButton"
+														icon="sap-icon://sort"
+														enabled="{= !${appView>/hasUIChanges}}"
+														tooltip="{i18n>sortButtonText}"
+														press=".onSort"/>
+												</content>
+											</OverflowToolbar>
+										</headerToolbar>
+										<columns>
+											<Column id="userNameColumn">
+												<Text text="{i18n>userNameLabelText}"/>
+											</Column>
+											<Column id="firstNameColumn">
+												<Text text="{i18n>firstNameLabelText}"/>
+											</Column>
+											<Column id="lastNameColumn">
+												<Text text="{i18n>lastNameLabelText}"/>
+											</Column>
+											<Column id="ageColumn">
+												<Text text="{i18n>ageLabelText}"/>
+											</Column>
+										</columns>
+										<items>
+											<ColumnListItem>
+												<cells>
+													<Input
+														value="{UserName}"
+														valueLiveUpdate="true"
+														liveChange=".onInputChange"/>
+												</cells>
+												<cells>
+													<Input
+														value="{FirstName}"
+														liveChange=".onInputChange"/>
+												</cells>
+												<cells>
+													<Input
+														value="{LastName}"
+														liveChange=".onInputChange"/>
+												</cells>
+												<cells>
+													<Input
+														value="{Age}"
+														valueLiveUpdate="true"
+														liveChange=".onInputChange"/>
+												</cells>
+											</ColumnListItem>
+										</items>
+									</Table>
+								</l:SplitPane>
+								<l:SplitPane>
+									<!--Details-->
+									<!--remove busy-->
+									<semantic:SemanticPage
+										id="detailArea"
+										visible="false">
+										<semantic:titleHeading>
+											<Title
+												text="{FirstName} {LastName}"
+												level="H2"/>
+										</semantic:titleHeading>
+										<semantic:headerContent>
+												<FlexBox>
+													<VBox>
+														<ObjectAttribute text="{i18n>userNameLabelText}"/>
+														<ObjectAttribute text="{UserName}"/>
+													</VBox>
+													<VBox class="sapUiMediumMarginBegin">
+														<ObjectAttribute text="{i18n>ageLabelText}"/>
+														<ObjectNumber number="{Age}" unit="Years"/>
+													</VBox>
+												</FlexBox>
+										</semantic:headerContent>
+										<semantic:content>
+											<VBox>
+												<FlexBox wrap="Wrap">
+													<f:Form	editable="false">
+														<f:title>
+															<core:Title text="{i18n>addressTitleText}" />
+														</f:title>
+														<f:layout>
+															<f:ResponsiveGridLayout
+																labelSpanXL="3"
+																labelSpanL="3"
+																labelSpanM="3"
+																labelSpanS="12"
+																adjustLabelSpan="false"
+																emptySpanXL="4"
+																emptySpanL="4"
+																emptySpanM="4"
+																emptySpanS="0"
+																columnsXL="1"
+																columnsL="1"
+																columnsM="1"
+																singleContainerFullSize="false" />
+														</f:layout>
+														<f:formContainers>
+															<f:FormContainer>
+																<f:formElements>
+																	<f:FormElement label="{i18n>addressLabelText}">
+																		<f:fields>
+																			<Text text="{HomeAddress/Address}" />
+																		</f:fields>
+																	</f:FormElement>
+																	<f:FormElement label="{i18n>cityLabelText}">
+																		<f:fields>
+																			<Text text="{HomeAddress/City/Name}" />
+																		</f:fields>
+																	</f:FormElement>
+																	<f:FormElement label="{i18n>regionLabelText}">
+																		<f:fields>
+																			<Text text="{HomeAddress/City/Region}" />
+																		</f:fields>
+																	</f:FormElement>
+																	<f:FormElement label="{i18n>countryLabelText}">
+																		<f:fields>
+																			<Text text="{HomeAddress/City/CountryRegion}" />
+																		</f:fields>
+																	</f:FormElement>
+																</f:formElements>
+															</f:FormContainer>
+														</f:formContainers>
+													</f:Form>
+													<f:Form	editable="false">
+														<f:title>
+															<core:Title text="{i18n>bestFriendTitleText}" />
+														</f:title>
+														<f:layout>
+															<f:ResponsiveGridLayout
+																labelSpanXL="3"
+																labelSpanL="3"
+																labelSpanM="3"
+																labelSpanS="12"
+																adjustLabelSpan="false"
+																emptySpanXL="4"
+																emptySpanL="4"
+																emptySpanM="4"
+																emptySpanS="0"
+																columnsXL="1"
+																columnsL="1"
+																columnsM="1"
+																singleContainerFullSize="false" />
+														</f:layout>
+														<f:formContainers>
+															<f:FormContainer>
+																<f:formElements>
+																	<f:FormElement label="{i18n>nameLabelText}">
+																		<f:fields>
+																			<Text text="{BestFriend/FirstName} {BestFriend/LastName}" />
+																		</f:fields>
+																	</f:FormElement>
+																	<f:FormElement label="{i18n>ageLabelText}">
+																		<f:fields>
+																			<Text text="{BestFriend/Age}" />
+																		</f:fields>
+																	</f:FormElement>
+																	<f:FormElement label="{i18n>userNameLabelText}">
+																		<f:fields>
+																			<Text text="{BestFriend/UserName}" />
+																		</f:fields>
+																	</f:FormElement>
+																</f:formElements>
+															</f:FormContainer>
+														</f:formContainers>
+													</f:Form>
+												</FlexBox>
+												<Table
+													id="friendsTable"
+													width="auto"
+													items="{path: 'Friends',
+															parameters: {
+																$$ownRequest: true
+															}}"
+													noDataText="No Data"
+													class="sapUiSmallMarginBottom">
+													<headerToolbar>
+														<Toolbar>
+															<Title
+																text="Friends"
+																titleStyle="H3"
+																level="H3"/>
+														</Toolbar>
+													</headerToolbar>
+													<columns>
+														<Column>
+															<Text text="User Name"/>
+														</Column>
+														<Column>
+															<Text text="First Name"/>
+														</Column>
+														<Column>
+															<Text text="Last Name"/>
+														</Column>
+														<Column>
+															<Text text="Age"/>
+														</Column>
+													</columns>
+													<items>
+														<ColumnListItem>
+															<cells>
+																<Text text="{UserName}"/>
+															</cells>
+															<cells>
+																<Text text="{FirstName}"/>
+															</cells>
+															<cells>
+																<Text text="{LastName}"/>
+															</cells>
+															<cells>
+																<Text text="{Age}"/>
+															</cells>
+														</ColumnListItem>
+													</items>
+												</Table>
+											</VBox>
+										</semantic:content>
+									</semantic:SemanticPage>
+								</l:SplitPane>
+							</l:PaneContainer>
+						</l:ResponsiveSplitter>
+					</content>
+					<footer>
+						<Toolbar visible="{appView>/hasUIChanges}">
+							<ToolbarSpacer/>
+							<Button
+								id="saveButton"
+								type="Emphasized"
+								text="{i18n>saveButtonText}"
+								enabled="{= ${message>/}.length === 0 &amp;&amp; ${appView>/usernameEmpty} === false }"
+								press=".onSave"/>
+							<Button
+								id="doneButton"
+								text="{i18n>cancelButtonText}"
+								press=".onResetChanges"/>
+						</Toolbar>
+					</footer>
+				</Page>
+			</pages>
+		</App>
+	</Shell>
+</mvc:View>

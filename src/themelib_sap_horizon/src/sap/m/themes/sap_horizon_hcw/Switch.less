@@ -1,0 +1,335 @@
+/* ================================== */
+/* CSS for control sap.m/Switch       */
+/* Horizon High Contrast White theme  */
+/* ================================== */
+
+/* ------------------------------ */
+/* Switch container               */
+/* ------------------------------ */
+
+.sapMSwtCont {
+	overflow: hidden;
+	//in order to have a touchable area of 2.75rem height and 3.5rem width
+	padding: 0.625rem 0.5rem;
+}
+
+/* focus */
+
+html.sap-desktop {
+	.sapMSwtCont:focus > .sapMSwt:before {
+		content: " ";
+		position: absolute;
+		display: block;
+		top: -0.3125rem;
+		left: -0.3125rem;
+		bottom: -0.3125rem;
+		right: -0.3125rem;
+		border: 0.125rem solid @sapUiContentFocusColor;
+		border-radius: 1rem;
+	}
+	.sapUiSizeCompact {
+		.sapMSwtCont:focus > .sapMSwt:before {
+			border-radius: 0.875rem;
+		}
+	}
+}
+
+/* ------------------------------ */
+/* Switch                         */
+/* ------------------------------ */
+
+.sapMSwt {
+	width: 2.875rem;
+	height: 1.5rem;
+	overflow: visible;
+	border: none;
+	margin: 0;
+	border-radius: 0.75rem;
+	&.sapMSwtNoLabel,
+	&.sapMSwtAcceptReject {
+		width: 2.5rem;
+		height: 1.5rem;
+		.sapMSwtText {
+			&.sapMSwtTextOn {
+				left: 1.8rem;
+			}
+			&.sapMSwtTextOff {
+				left: 2rem;
+			}
+		}
+		&.sapMSwtOn .sapMSwtHandle {
+			left: 1.5rem;
+		}
+	}
+}
+
+/* disabled */
+
+.sapMSwtDisabled {
+	opacity: @sapUiContentDisabledOpacity;
+}
+
+/* ------------------------------ */
+/* Text                           */
+/* ------------------------------ */
+.sapMSwtText {
+	line-height: 1.5rem;
+	width: 1.75rem;
+	&.sapMSwtTextOn {
+		color: @sapUiButtonHandleSelectedTextColor;
+		left: 2.125rem;
+		z-index: 1;
+	}
+	&.sapMSwtTextOff {
+		color: @sapUiButtonHandleTextColor;
+		left: 2.125rem;
+		z-index: 1;
+	}
+	.sapMSwtLabel {
+		height: 1.5rem;
+		line-height: 1.375rem;
+		padding: 0;
+		font-family: "72-Condensed-Bold" , "72" , "72full" , Arial, Helvetica, sans-serif;
+	}
+}
+
+/* ------------------------------ */
+/* Switch handler                 */
+/* ------------------------------ */
+
+.sapMSwt .sapMSwtHandle {
+	height: 1.25rem;
+	width: 1.75rem;
+	border-radius: 1rem;
+	border: @sapUiButtonBorderWidth solid;
+	left: 2.0625rem;
+}
+
+.sapMSwt.sapMSwtOn .sapMSwtHandle {
+	left: 2.1875rem;
+}
+
+.sapUiSizeCompact .sapMSwt .sapMSwtHandle,
+.sapMSwtCont .sapMSwt.sapMSwtNoLabel.sapMSwtOn .sapMSwtHandle,
+.sapMSwtCont .sapMSwt.sapMSwtAcceptReject.sapMSwtOn .sapMSwtHandle {
+	left: 2.0625rem;
+}
+
+.sapMSwt.sapMSwtNoLabel .sapMSwtHandle,
+.sapMSwt.sapMSwtAcceptReject .sapMSwtHandle {
+	width: 1.5rem;
+}
+
+//on
+.sapMSwt.sapMSwtOn:not(.sapMSwtAcceptReject) {
+	background: @sapUiButtonTrackSelectedBackground;
+	border: 0.0625rem solid @sapUiButtonTrackSelectedBorderColor;
+	box-sizing: border-box;
+	.sapMSwtHandle {
+		background: @sapUiButtonHandleSelectedBackground;
+		border: 0.125rem solid @sapUiButtonHandleSelectedBorderColor;
+	}
+	&.sapMSwtHoverable:not(.sapMSwtAcceptReject):hover {
+		background: @sapUiButtonTrackSelectedHoverBackground;
+		border: 0.0625rem solid @sapUiButtonTrackSelectedHoverBorderColor;
+		.sapMSwtHandle {
+			background: @sapUiButtonHandleSelectedHoverBackground;
+			box-shadow: 0 0 0 0.125rem @sapUiButtonHandleSelectedHoverBorderColor;
+		}
+	}
+}
+
+//off
+.sapMSwt.sapMSwtOff:not(.sapMSwtAcceptReject) {
+	background: @sapUiButtonTrackBackground;
+	border: 0.0625rem solid @sapUiButtonTrackBorderColor;
+	box-sizing: border-box;
+	.sapMSwtHandle {
+		background: @sapUiButtonHandleBackground;
+		border: 0.125rem solid @sapUiButtonHandleBorderColor;
+	}
+	&.sapMSwtHoverable:not(.sapMSwtAcceptReject):hover {
+		background: @sapUiButtonTrackHoverBackground;
+		border: 0.0625rem solid @sapUiButtonTrackHoverBorderColor;
+		.sapMSwtHandle {
+			background: @sapUiButtonHandleHoverBackground;
+			box-shadow: 0 0 0 0.125rem @sapUiButtonHandleHoverBorderColor;
+		}
+	}
+}
+
+/* ====================================================== */
+/* Switch type "AcceptReject"                             */
+/* ====================================================== */
+
+/* ------------------------------ */
+/* Switch                         */
+/* ------------------------------ */
+
+.sapMSwtAcceptReject.sapMSwt {
+	//on
+	&.sapMSwtOn {
+		background: @sapUiButtonTrackPositiveBackground;
+		border: 0.0625rem solid @sapUiButtonTrackPositiveBorderColor;
+		box-sizing: border-box;
+		.sapMSwtHandle {
+			background: @sapUiButtonHandlePositiveBackground;
+			border: 2px solid @sapUiButtonHandlePositiveBorderColor;
+		}
+		&.sapMSwtHoverable:hover {
+			background: @sapUiButtonTrackPositiveHoverBackground;
+			border: 0.0625rem solid @sapUiButtonTrackPositiveHoverBorderColor;
+			.sapMSwtHandle {
+				background: @sapUiButtonHandlePositiveHoverBackground;
+				box-shadow: 0 0 0 0.125rem @sapUiButtonHandlePositiveHoverBorderColor;
+			}
+		}
+	}
+	//off
+	&.sapMSwtOff {
+		background: @sapUiButtonTrackNegativeBackground;
+		border: 0.0625rem solid @sapUiButtonTrackNegativeBorderColor;
+		box-sizing: border-box;
+		.sapMSwtHandle {
+			background: @sapUiButtonHandleNegativeBackground;
+			border: 2px solid @sapUiButtonHandleNegativeBorderColor;
+		}
+		&.sapMSwtHoverable:hover {
+			background: @sapUiButtonTrackNegativeHoverBackground;
+			border: 0.0625rem solid @sapUiButtonTrackNegativeHoverBorderColor;
+			.sapMSwtHandle {
+				background: @sapUiButtonHandleNegativeHoverBackground;
+				box-shadow: 0 0 0 0.125rem @sapUiButtonHandleNegativeHoverBorderColor;
+			}
+		}
+	}
+}
+
+/* ------------------------------ */
+/* Switch handler                 */
+/* ------------------------------ */
+
+.sapMSwtAcceptReject .sapMSwtWebKit537-35.sapMSwtHandle {
+	border: none;
+}
+
+.sapMSwt.sapMSwtAcceptReject.sapMSwtOn .sapMSwtLabel {
+	color: @sapPositiveTextColor;
+}
+
+.sapMSwt.sapMSwtAcceptReject.sapMSwtOff .sapMSwtLabel {
+	color: @sapNegativeTextColor;
+}
+
+.sapMSwtOn.sapMSwtNoLabel .sapMSwtLabelOn::before {
+	font-family: @sapUiContentIconFontFamily;
+	content: "\e05b";
+	position: absolute;
+	right: 0.375rem;
+	overflow: hidden;
+	vertical-align: middle;
+	font-size: @sapMFontLargeSize;
+	color: @sapUiButtonHandleSelectedTextColor;
+}
+
+.sapMSwtOff.sapMSwtNoLabel .sapMSwtLabelOff::before {
+	font-family: @sapUiContentIconFontFamily;
+	content: "\e069";
+	position: absolute;
+	right: 0.5rem;
+	overflow: hidden;
+	vertical-align: middle;
+	font-size: @sapMFontLargeSize;
+	color: @sapUiButtonHandleTextColor;
+}
+
+.sapMSwtOn.sapMSwtAcceptReject .sapMSwtLabelOn::before,
+.sapMSwtOff.sapMSwtAcceptReject .sapMSwtLabelOff::before {
+	position: absolute;
+	right: 0.375rem;
+	font-size: @sapMFontLargeSize;
+}
+
+.sapMSwtOff.sapMSwtAcceptReject .sapMSwtLabelOff::before {
+	right: 0.625rem;
+}
+
+.sapMSwtOn > .sapMSwtInner {
+	left: -1.25rem;
+}
+
+.sapMSwtOn .sapMSwtTextOff {
+	display: none;
+}
+
+.sapMSwtOff .sapMSwtTextOn {
+	display: none;
+}
+
+/* ------------------------------ */
+/* Compact mode                   */
+/* ------------------------------ */
+
+.sapUiSizeCompact {
+	.sapMSwtCont {
+		//in order to have a touchable area of 2rem height and 3rem width
+		padding-top: 0.375rem;
+		padding-bottom: 0.375rem;
+		.sapMSwt {
+			width: 2.75rem;
+			height: 1.25rem;
+			.sapMSwtHandle {
+				height: 1rem;
+				width: 1.75rem;
+			}
+			.sapMSwtText {
+				line-height: 1.25rem;
+				&.sapMSwtTextOn {
+					left: 2.0625rem;
+				}
+				&.sapMSwtTextOff {
+					left: 2.0625rem;
+				}
+				.sapMSwtLabel {
+					width: 1.75rem;
+					line-height: 1.125rem;
+				}
+			}
+			.sapMSwtOn .sapMSwtHandle {
+				left: 2.125rem;
+			}
+			&.sapMSwtNoLabel,
+			&.sapMSwtAcceptReject {
+				width: 2rem;
+				height: 1.25rem;
+				.sapMSwtHandle {
+					width: 1.25rem;
+				}
+				&.sapMSwtOn .sapMSwtHandle{
+					left: 1.88rem;
+				}
+				.sapMSwtText {
+					&.sapMSwtTextOn {
+						left: 1.325rem;
+					}
+					&.sapMSwtTextOff {
+						left: 1.625rem;
+					}
+				}
+				&.sapMSwtOn .sapMSwtHandle {
+					left: 1.8125rem;
+				}
+			}
+		}
+	}
+	.sapMSwtOn.sapMSwtNoLabel .sapMSwtLabelOn::before,
+	.sapMSwtOn.sapMSwtAcceptReject .sapMSwtLabelOn::before,
+	.sapMSwtOff.sapMSwtNoLabel .sapMSwtLabelOff::before,
+	.sapMSwtOff.sapMSwtAcceptReject .sapMSwtLabelOff::before {
+		font-size: @sapMFontMediumSize;
+		right: 0.3125rem;
+	}
+	.sapMSwtOff.sapMSwtAcceptReject .sapMSwtLabelOff::before {
+		right: 0.4375rem;
+	}
+}

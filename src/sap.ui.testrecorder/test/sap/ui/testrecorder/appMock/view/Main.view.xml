@@ -1,0 +1,19 @@
+<mvc:View controllerName="sap.ui.testrecorder.appMock.view.Main"
+		  xmlns="sap.m"
+		  xmlns:f="sap.ui.layout.form"
+		  xmlns:mvc="sap.ui.core.mvc">
+	<App id="myApp">
+		<Page id="mainPage">
+			<headerContent>
+				<Button text="Button One" />
+				<Button id="stableId" text="Button with ID" />
+			</headerContent>
+			<Input placeholder="Test"></Input>
+			<Button text="Clear Selection" />
+			<DatePicker
+				id="DatePickerOne"
+				placeholder="Enter Date"
+				change="handleChange" />
+		</Page>
+	</App>
+</mvc:View>

@@ -1,0 +1,37 @@
+{
+	"sap.app": {
+		"id": "sap.ui.core.sample.ControllerExtension",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "sap.ui.core.sample.ControllerExtension.Main",
+			"type": "XML",
+			"async": true,
+			"id": "main"
+		},
+		"dependencies": {
+			"libs": {
+				"sap.ui.core": {},
+				"sap.ui.fl": {}
+			}
+		},
+		"config": {
+			"sample": {
+				"files": [
+					"Main.view.xml",
+					"Main.controller.js",
+					"ReuseExtension.js",
+					"CustomerExtension.js",
+					"CustomerExtension.fragment.xml",
+					"OtherCustomerExtension.js",
+					"OtherCustomerExtension.fragment.xml",
+					"Component.js",
+					"manifest.json"
+				]
+			}
+		}
+	}
+}

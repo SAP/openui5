@@ -8,7 +8,7 @@
 					<PropertyRef Name="UserName"/>
 				</Key>
 				<Property Name="UserName" Type="Edm.String" Nullable="false"/>
-				<Property Name="FirstName" Type="Edm.String" Nullable="false"/>
+				<Property Name="FirstName" Type="Edm.String"/>
 				<Property Name="LastName" Type="Edm.String"/>
 				<Property Name="MiddleName" Type="Edm.String"/>
 				<Property Name="Gender" Type="Microsoft.OData.Service.Sample.TrippinInMemory.Models.PersonGender"

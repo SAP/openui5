@@ -1,0 +1,14 @@
+<core:FragmentDefinition
+		xmlns="sap.m"
+		xmlns:core="sap.ui.core" >
+	<Popover
+			placement="Bottom"
+			showHeader="false">
+		<List>
+			<ActionListItem text="{i18n>BTN_OPEN_DOWNLOAD_TRANSLATION}"
+					press=".openDownloadTranslationDialog"/>
+			<ActionListItem text="{i18n>BTN_OPEN_UPLOAD_TRANSLATION}"
+					press=".openUploadTranslationDialog"/>
+		</List>
+	</Popover>
+</core:FragmentDefinition>

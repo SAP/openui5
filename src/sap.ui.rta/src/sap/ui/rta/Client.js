@@ -5,24 +5,26 @@
 sap.ui.define([
 	"sap/ui/base/ManagedObject",
 	"sap/ui/core/postmessage/Bus",
+	"sap/ui/core/Lib",
 	"sap/base/util/uid",
-	"sap/base/util/extend",
+	"sap/base/util/merge",
 	"sap/ui/rta/util/ServiceEventBus",
 	"sap/ui/thirdparty/URI"
-], function (
+], function(
 	ManagedObject,
 	PostMessageBus,
+	Lib,
 	uid,
-	extend,
+	merge,
 	ServiceEventBus,
 	URI
 ) {
 	"use strict";
 
-	var CHANNEL_ID = 'sap.ui.rta.service.receiver';
-	var STATUS_PENDING = 'pending';
-	var STATUS_ACCEPTED = 'accepted';
-	var STATUS_DECLINED = 'declined';
+	var CHANNEL_ID = "sap.ui.rta.service.receiver";
+	var STATUS_PENDING = "pending";
+	var STATUS_ACCEPTED = "accepted";
+	var STATUS_DECLINED = "declined";
 
 	/**
 	 * @class
@@ -59,20 +61,19 @@ sap.ui.define([
 	 * @private
 	 * @ui5-restricted
 	 */
-	var Client = ManagedObject.extend("sap.ui.rta.Client",
-	{
-		metadata : {
-			library : "sap.ui.rta",
-			properties : {
+	var Client = ManagedObject.extend("sap.ui.rta.Client", {
+		metadata: {
+			library: "sap.ui.rta",
+			properties: {
 				/**
 				 * Receiving window object; has to be a different window than the window in which this client is used
 				 */
-				"window": "object",
+				window: "object",
 
 				/**
 				 * Receiving window origin; a valid origin has to be specified, see {@link https://html.spec.whatwg.org/multipage/origin.html#origin}
 				 */
-				"origin": "string"
+				origin: "string"
 			}
 		},
 
@@ -83,8 +84,9 @@ sap.ui.define([
 		 */
 		_bInit: false,
 
-		constructor: function() {
-			ManagedObject.apply(this, arguments);
+		// eslint-disable-next-line object-shorthand
+		constructor: function(...aArgs) {
+			ManagedObject.apply(this, aArgs);
 
 			if (!this.getWindow()) {
 				throw new TypeError("sap.ui.rta.Client: window parameter is required");
@@ -138,13 +140,13 @@ sap.ui.define([
 			this._mEventHandlerIds = {};
 
 			// Await READY event from RTA instance
-			this._oPostMessageBus.subscribeOnce(CHANNEL_ID, PostMessageBus.event.READY, function (oEvent) {
+			this._oPostMessageBus.subscribeOnce(CHANNEL_ID, PostMessageBus.event.READY, function(oEvent) {
 				if (!this._isValidMessage(oEvent)) {
 					return;
 				}
 
 				// ACCEPTED
-				this._oPostMessageBus.subscribeOnce(CHANNEL_ID, PostMessageBus.event.ACCEPTED, function (oEvent) {
+				this._oPostMessageBus.subscribeOnce(CHANNEL_ID, PostMessageBus.event.ACCEPTED, function(oEvent) {
 					if (!this._isValidMessage(oEvent)) {
 						return;
 					}
@@ -156,15 +158,15 @@ sap.ui.define([
 					this._aRequestQueue = [];
 					aRequests.forEach(this._sendRequest, this);
 
-					this._oPostMessageBus.subscribe(CHANNEL_ID, 'getService', this._receiverMethods, this);
-					this._oPostMessageBus.subscribe(CHANNEL_ID, 'callMethod', this._receiverMethods, this);
-					this._oPostMessageBus.subscribe(CHANNEL_ID, 'subscribe', this._receiverMethods, this);
-					this._oPostMessageBus.subscribe(CHANNEL_ID, 'unsubscribe', this._receiverMethods, this);
-					this._oPostMessageBus.subscribe(CHANNEL_ID, 'event', this._receiverEvents, this);
+					this._oPostMessageBus.subscribe(CHANNEL_ID, "getService", this._receiverMethods, this);
+					this._oPostMessageBus.subscribe(CHANNEL_ID, "callMethod", this._receiverMethods, this);
+					this._oPostMessageBus.subscribe(CHANNEL_ID, "subscribe", this._receiverMethods, this);
+					this._oPostMessageBus.subscribe(CHANNEL_ID, "unsubscribe", this._receiverMethods, this);
+					this._oPostMessageBus.subscribe(CHANNEL_ID, "event", this._receiverEvents, this);
 				}, this);
 
 				// DECLINED
-				this._oPostMessageBus.subscribeOnce(CHANNEL_ID, PostMessageBus.event.DECLINED, function (oEvent) {
+				this._oPostMessageBus.subscribeOnce(CHANNEL_ID, PostMessageBus.event.DECLINED, function(oEvent) {
 					if (!this._isValidMessage(oEvent)) {
 						return;
 					}
@@ -174,8 +176,11 @@ sap.ui.define([
 					// Rejecting queued requests
 					var aRequests = this._aRequestQueue.slice();
 					this._aRequestQueue = [];
-					aRequests.forEach(function (mRequest) {
-						mRequest.reject(new Error('sap.ui.rta.Client.getService(): connection to RuntimeAuthoring instance has been refused'));
+					// eslint-disable-next-line max-nested-callbacks
+					aRequests.forEach(function(mRequest) {
+						mRequest.reject(
+							new Error("sap.ui.rta.Client.getService(): connection to RuntimeAuthoring instance has been refused")
+						);
 					});
 				}, this);
 
@@ -185,7 +190,7 @@ sap.ui.define([
 					origin: this.getOrigin(),
 					channelId: CHANNEL_ID,
 					eventId: PostMessageBus.event.CONNECT,
-					data: sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta").getText("SERVICE_NAME")
+					data: Lib.getResourceBundleFor("sap.ui.rta").getText("SERVICE_NAME")
 				});
 			}, this);
 
@@ -198,14 +203,14 @@ sap.ui.define([
 	 * After an object has been destroyed, it can no longer be used.
 	 * @public
 	 */
-	Client.prototype.destroy = function () {
-		this._oPostMessageBus.unsubscribe(CHANNEL_ID, 'getService', this._receiverMethods, this);
-		this._oPostMessageBus.unsubscribe(CHANNEL_ID, 'callMethod', this._receiverMethods, this);
-		this._oPostMessageBus.unsubscribe(CHANNEL_ID, 'subscribe', this._receiverMethods, this);
-		this._oPostMessageBus.unsubscribe(CHANNEL_ID, 'unsubscribe', this._receiverMethods, this);
-		this._oPostMessageBus.unsubscribe(CHANNEL_ID, 'event', this._receiverEvents, this);
+	Client.prototype.destroy = function(...aArgs) {
+		this._oPostMessageBus.unsubscribe(CHANNEL_ID, "getService", this._receiverMethods, this);
+		this._oPostMessageBus.unsubscribe(CHANNEL_ID, "callMethod", this._receiverMethods, this);
+		this._oPostMessageBus.unsubscribe(CHANNEL_ID, "subscribe", this._receiverMethods, this);
+		this._oPostMessageBus.unsubscribe(CHANNEL_ID, "unsubscribe", this._receiverMethods, this);
+		this._oPostMessageBus.unsubscribe(CHANNEL_ID, "event", this._receiverEvents, this);
 
-		ManagedObject.prototype.destroy.apply(this, arguments);
+		ManagedObject.prototype.destroy.apply(this, aArgs);
 	};
 
 	/**
@@ -213,23 +218,23 @@ sap.ui.define([
 	 * @param {string} sServiceName - RTA service name to be requested
 	 * @returns {Promise} - resolves with a service object
 	 */
-	Client.prototype.getService = function (sServiceName) {
+	Client.prototype.getService = function(sServiceName) {
 		if (typeof sServiceName !== "string") {
-			throw new TypeError('sap.ui.rta.Client.getService(): invalid service name specified');
+			throw new TypeError("sap.ui.rta.Client.getService(): invalid service name specified");
 		}
 
 		return this._sendRequest(this._createRequest({
 			target: this.getWindow(),
 			origin: this.getOrigin(),
 			channelId: CHANNEL_ID,
-			eventId: 'getService',
+			eventId: "getService",
 			data: {
 				arguments: [sServiceName]
 			}
 		}));
 	};
 
-	Client.prototype._createRequest = function (mParameters) {
+	Client.prototype._createRequest = function(mParameters) {
 		var sRequestId = uid();
 
 		var mRequest = {
@@ -241,13 +246,13 @@ sap.ui.define([
 				eventId: mParameters.eventId,
 				data: {
 					id: sRequestId,
-					type: 'request',
+					type: "request",
 					body: mParameters.data
 				}
 			}
 		};
 
-		mRequest.promise = new Promise(function (fnResolve, fnReject) {
+		mRequest.promise = new Promise(function(fnResolve, fnReject) {
 			mRequest.resolve = fnResolve;
 			mRequest.reject = fnReject;
 		});
@@ -255,7 +260,7 @@ sap.ui.define([
 		return mRequest;
 	};
 
-	Client.prototype._sendRequest = function (mRequest) {
+	Client.prototype._sendRequest = function(mRequest) {
 		switch (this._sStatus) {
 			case STATUS_ACCEPTED:
 				this._mPendingRequests[mRequest.id] = mRequest;
@@ -265,50 +270,50 @@ sap.ui.define([
 				this._aRequestQueue.push(mRequest);
 				break;
 			case STATUS_DECLINED:
-				mRequest.reject(new Error('sap.ui.rta.Client.getService(): connection to RuntimeAuthoring instance has been refused'));
+				mRequest.reject(new Error("sap.ui.rta.Client.getService(): connection to RuntimeAuthoring instance has been refused"));
 				break;
-			// no default
+			default:
+				// no default
 		}
 
 		return mRequest.promise;
 	};
 
-	Client.prototype._isValidMessage = function (oEvent) {
+	Client.prototype._isValidMessage = function(oEvent) {
 		return this.getWindow() === oEvent.source && this.getOrigin() === oEvent.origin;
 	};
 
-
-	Client.prototype._receiverMethods = function (oEvent) {
+	Client.prototype._receiverMethods = function(oEvent) {
 		if (!this._isValidMessage(oEvent)) {
 			return;
 		}
 
 		var mData = oEvent.data;
 
-		if (mData.type !== 'response') {
+		if (mData.type !== "response") {
 			return;
 		}
 
 		var mRequest = this._mPendingRequests[mData.id];
 
 		switch (oEvent.eventId) {
-			case 'getService':
+			case "getService":
 				var sServiceName = mRequest.request.data.body.arguments[0];
 				var aMethods = mData.body.methods || [];
 				var aEvents = mData.body.events;
-				var mService = extend(
+				var mService = merge(
 					// Create placeholders for methods
-					aMethods.reduce(function (mResult, sMethodName) {
-						mResult[sMethodName] = function () {
+					aMethods.reduce(function(mResult, sMethodName) {
+						mResult[sMethodName] = function(...aArgs) {
 							return this._sendRequest(this._createRequest({
 								target: oEvent.source,
 								origin: oEvent.origin,
 								channelId: CHANNEL_ID,
-								eventId: 'callMethod',
+								eventId: "callMethod",
 								data: {
 									service: sServiceName,
 									method: sMethodName,
-									arguments: Array.prototype.slice.call(arguments)
+									arguments: aArgs
 								}
 							}));
 						}.bind(this);
@@ -319,19 +324,22 @@ sap.ui.define([
 				);
 
 				if (Array.isArray(aEvents) && aEvents.length > 0) {
-					if (!this._oServiceEventBus) {
-						this._oServiceEventBus = new ServiceEventBus();
-					}
-					extend(mService, {
-						attachEvent: function (sEventName, fnCallback, oContext) {
+					this._oServiceEventBus ||= new ServiceEventBus();
+					merge(mService, {
+						attachEvent: function(sEventName, fnCallback, oContext) {
 							if (typeof (sEventName) !== "string" || !sEventName) {
-								throw new TypeError("sap.ui.rta.Client: sEventName must be a non-empty string when calling attachEvent() for a service");
+								throw new TypeError(
+									"sap.ui.rta.Client: sEventName must be a non-empty string when calling attachEvent() for a service"
+								);
 							}
 							if (typeof fnCallback !== "function") {
-								throw new TypeError("sap.ui.rta.Client: fnFunction must be a function when calling attachEvent() for a service");
+								throw new TypeError(
+									"sap.ui.rta.Client: fnFunction must be a function when calling attachEvent() for a service"
+								);
 							}
 
-							// 1. Check whether there are other subscribers for same event, if so, then receiver doesn't need second notification
+							// 1. Check whether there are other subscribers for same event, if so,
+							// then receiver doesn't need second notification
 							var oEventProvider = this._oServiceEventBus.getChannel(sServiceName);
 							var bShouldNotifyReceiver = !oEventProvider || !oEventProvider.hasListeners(sEventName);
 
@@ -344,25 +352,29 @@ sap.ui.define([
 									target: oEvent.source,
 									origin: oEvent.origin,
 									channelId: CHANNEL_ID,
-									eventId: 'subscribe',
+									eventId: "subscribe",
 									data: {
 										service: sServiceName,
 										event: sEventName
 									}
-								})).then(function (mResponse) {
-									this._mEventHandlerIds[sServiceName + ',' + sEventName] = mResponse.id;
+								})).then(function(mResponse) {
+									this._mEventHandlerIds[`${sServiceName},${sEventName}`] = mResponse.id;
 
 									// Use case when detach happens before we received response from RTA instance
 									this._checkIfEventAlive(sServiceName, sEventName);
 								}.bind(this));
 							}
 						}.bind(this),
-						detachEvent: function (sEventName, fnCallback, oContext) {
+						detachEvent: function(sEventName, fnCallback, oContext) {
 							if (typeof (sEventName) !== "string" || !sEventName) {
-								throw new TypeError("sap.ui.rta.Client: sEventName must be a non-empty string when calling detachEvent() for a service");
+								throw new TypeError(
+									"sap.ui.rta.Client: sEventName must be a non-empty string when calling detachEvent() for a service"
+								);
 							}
 							if (typeof fnCallback !== "function") {
-								throw new TypeError("sap.ui.rta.Client: fnFunction must be a function when calling detachEvent() for a service");
+								throw new TypeError(
+									"sap.ui.rta.Client: fnFunction must be a function when calling detachEvent() for a service"
+								);
 							}
 
 							// 1. Unsubscribe from local EventBus
@@ -371,10 +383,10 @@ sap.ui.define([
 							// 2. Check and notify RTA instance if we don't want more events
 							this._checkIfEventAlive(sServiceName, sEventName);
 						}.bind(this),
-						attachEventOnce: function (sEventName, fnCallback, oContext) {
-							function fnOnce() {
+						attachEventOnce(sEventName, fnCallback, oContext) {
+							function fnOnce(...aArgs) {
 								mService.detachEvent(sEventName, fnOnce);
-								fnCallback.apply(oContext, arguments);
+								fnCallback.apply(oContext, aArgs);
 							}
 							mService.attachEvent(sEventName, fnOnce);
 						}
@@ -384,26 +396,27 @@ sap.ui.define([
 				mRequest.resolve(mService);
 				delete this._mPendingRequests[mData.id];
 				break;
-			case 'callMethod':
-				if (mData.status === 'success') {
+			case "callMethod":
+				if (mData.status === "success") {
 					mRequest.resolve(mData.body);
 				} else {
 					mRequest.reject(mData.body);
 				}
 				delete this._mPendingRequests[mData.id];
 				break;
-			case 'subscribe':
-			case 'unsubscribe':
+			case "subscribe":
+			case "unsubscribe":
 				mRequest.resolve(mData.body);
 				delete this._mPendingRequests[mData.id];
 				break;
-			// no default
+			default:
+				// no default
 		}
 	};
 
-	Client.prototype._checkIfEventAlive = function (sServiceName, sEventName) {
+	Client.prototype._checkIfEventAlive = function(sServiceName, sEventName) {
 		var oEventProvider = this._oServiceEventBus.getChannel(sServiceName);
-		var sEventHandlerId = this._mEventHandlerIds[sServiceName + ',' + sEventName];
+		var sEventHandlerId = this._mEventHandlerIds[`${sServiceName},${sEventName}`];
 
 		if (
 			(!oEventProvider || !oEventProvider.hasListeners(sEventName))
@@ -413,7 +426,7 @@ sap.ui.define([
 				target: this.getWindow(),
 				origin: this.getOrigin(),
 				channelId: CHANNEL_ID,
-				eventId: 'unsubscribe',
+				eventId: "unsubscribe",
 				data: {
 					service: sServiceName,
 					event: sEventName,
@@ -423,7 +436,7 @@ sap.ui.define([
 		}
 	};
 
-	Client.prototype._receiverEvents = function (oEvent) {
+	Client.prototype._receiverEvents = function(oEvent) {
 		if (!this._isValidMessage(oEvent)) {
 			return;
 		}
@@ -437,7 +450,7 @@ sap.ui.define([
 		);
 	};
 
-	Client.prototype.setWindow = function (vValue) {
+	Client.prototype.setWindow = function(vValue) {
 		if (this._bInit) {
 			throw new TypeError("sap.ui.rta.Client: Window parameter cannot be changed at runtime; recreate instance of the Client.");
 		}
@@ -450,12 +463,12 @@ sap.ui.define([
 			throw new TypeError("sap.ui.rta.Client: Window object has to be different from the one where Client is running");
 		}
 
-		this.setProperty('window', vValue);
+		this.setProperty("window", vValue);
 
 		return this;
 	};
 
-	Client.prototype.setOrigin = function (vValue) {
+	Client.prototype.setOrigin = function(vValue) {
 		if (this._bInit) {
 			throw new TypeError("sap.ui.rta.Client: Cannot change origin parameter at runtime; recreate instance of the Client.");
 		}
@@ -464,7 +477,7 @@ sap.ui.define([
 			throw new TypeError("sap.ui.rta.Client: Origin parameter is required");
 		}
 
-		if (typeof vValue !== 'string') {
+		if (typeof vValue !== "string") {
 			throw new TypeError("sap.ui.rta.Client: Origin parameter has to be a string");
 		}
 
@@ -472,7 +485,7 @@ sap.ui.define([
 			throw new TypeError("sap.ui.rta.Client: Origin string is invalid");
 		}
 
-		this.setProperty('origin', vValue);
+		this.setProperty("origin", vValue);
 
 		return this;
 	};

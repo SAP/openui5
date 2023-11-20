@@ -1,0 +1,38 @@
+{
+	"d": {
+		"results": [{
+			"__metadata" : {
+				"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SalesOrderSet('205')",
+				"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SalesOrderSet('205')",
+				"type" : "GWSAMPLE_BASIC.SalesOrder"
+			},
+			"SalesOrderID" : "205",
+			"CustomerName" : "SAP",
+			"Note" : "Inline Creation Rows 205",
+			"CurrencyCode" : "EUR",
+			"GrossAmount" : "1137.64"
+		}, {
+			"__metadata" : {
+				"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SalesOrderSet('220')",
+				"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SalesOrderSet('220')",
+				"type" : "GWSAMPLE_BASIC.SalesOrder"
+			},
+			"SalesOrderID" : "220",
+			"CustomerName" : "SAP",
+			"Note" : "1",
+			"CurrencyCode" : "EUR",
+			"GrossAmount" : "8710.62"
+		}, {
+			"__metadata" : {
+				"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SalesOrderSet('221')",
+				"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SalesOrderSet('221')",
+				"type" : "GWSAMPLE_BASIC.SalesOrder"
+			},
+			"SalesOrderID" : "221",
+			"CustomerName" : "SAP",
+			"Note" : "2",
+			"CurrencyCode" : "EUR",
+			"GrossAmount" : "2410.62"
+		}]
+	}
+}

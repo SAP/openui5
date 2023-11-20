@@ -18,7 +18,7 @@ sap.ui.define([], function() {
 		aPanes = oPaneContainer.getPanes();
 		for (var i = 0; i < aPanes.length; i++) {
 			oPane = aPanes[i];
-			if (oPane instanceof sap.ui.layout.SplitPane) {
+			if (oPane && oPane.isA("sap.ui.layout.SplitPane")) {
 				fnCallback(oPane);
 			} else {
 				RSUtil.visitPanes(oPane, fnCallback);

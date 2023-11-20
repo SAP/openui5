@@ -1,0 +1,53 @@
+<core:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:unified="sap.ui.unified"
+	xmlns:core="sap.ui.core">
+	<VBox>
+		<SinglePlanningCalendar
+			id="SinglePlanningCalendar"
+			startDateChange=".startDateChangeHandler"
+			viewChange=".viewChangeHandler"
+			appointments="{path: 'calendar>appointments'}">
+			<actions>
+				<Select id="SinglePlanningCalendarTeamSelector"
+					change=".selectChangeHandler">
+					<core:Item
+						key="Team"
+						text="Team"/>
+				</Select>
+				<Button
+					id="SinglePlanningCalendarCreateAppointmentButton"
+					text="Create"
+					press=".appointmentCreate"
+					tooltip="Create new appointment"/>
+				<Button
+					id="SinglePlanningCalendarLegendButton"
+					icon="sap-icon://legend"
+					press=".openLegend"
+					tooltip="Open Single Planning Calendar legend"
+					ariaHasPopup="Dialog"/>
+			</actions>
+			<views>
+				<SinglePlanningCalendarDayView
+					key="Day"
+					title="Day"/>
+				<SinglePlanningCalendarWeekView
+					key="Week"
+					title="Week"/>
+				<SinglePlanningCalendarMonthView
+					key="OneMonth"
+					title="Month"/>
+			</views>
+			<appointments>
+				<unified:CalendarAppointment
+					title="{calendar>title}"
+					text="{calendar>text}"
+					type="{calendar>type}"
+					icon="{ path: 'calendar>icon', formatter: '.myformatter.fixImagePath' }"
+					startDate="{ path: 'calendar>start', formatter: '.myformatter.utcToLocalDateTime' }"
+					endDate="{ path: 'calendar>end', formatter: '.myformatter.utcToLocalDateTime' }">
+				</unified:CalendarAppointment>
+			</appointments>
+		</SinglePlanningCalendar>
+	</VBox>
+</core:FragmentDefinition>

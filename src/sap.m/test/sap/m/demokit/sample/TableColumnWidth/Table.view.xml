@@ -2,13 +2,15 @@
 	controllerName="sap.m.sample.TableColumnWidth.Table"
 	xmlns:l="sap.ui.layout"
 	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:core="sap.ui.core"
 	xmlns="sap.m">
 	<MessageStrip
-		text="Leave the most important column's width empty(or set it to auto) that it takes much space as it can."
+		text="Set the width of at least one column to auto or the fixedLayout property of the table to Strict."
 		type="Success"
 		class="sapUiSmallMargin"
 		showIcon="true"/>
 	<Table
+		id="table"
 		mode="MultiSelect"
 		items="{
 			path: 'products>/ProductCollection'
@@ -19,6 +21,8 @@
 		<headerToolbar>
 			<Toolbar>
 				<Title text="Products (Correct Usage)" level="H2"/>
+				<ToolbarSpacer />
+				<CheckBox text="Strict Layout" select="onCheckBoxSelect"/>
 			</Toolbar>
 		</headerToolbar>
 		<columns>
@@ -37,7 +41,7 @@
 		</items>
 	</Table>
 	<MessageStrip
-		text="Do not try to give percent width to all columns even it reaches 100% total column width when columns need to be shown as pop-in."
+		text="Do not try to give percent width to all columns even if it reaches 100% total column width."
 		type="Error"
 		class="sapUiLargeMarginTop sapUiSmallMargin"
 		showIcon="true"/>
@@ -50,9 +54,9 @@
 			path: 'columns>/'
 		}">
 		<headerToolbar>
-			<Toolbar>
+			<OverflowToolbar>
 				<Title text="Products (Wrong Usage)" level="H2"/>
-			</Toolbar>
+			</OverflowToolbar>
 		</headerToolbar>
 		<columns>
 			<Column width="{columns>width}" styleClass="{columns>styleClass}" demandPopin="{columns>demandPopin}" minScreenWidth="{columns>minScreenWidth}" popinDisplay="WithoutHeader">

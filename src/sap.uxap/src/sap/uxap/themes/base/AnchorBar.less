@@ -14,54 +14,46 @@ Common Compact/Cozy
 }
 
 .sapUxAPAnchorBar.sapMTB {
-	padding-left: 0;
+	padding-left: 2rem;
 	box-shadow: inset 0 -0.125rem @sapUiObjectHeaderBorderColor;
 }
 
 /* M, L or splitview paddings */
-.sapUiMedia-Std-Tablet .sapUxAPAnchorBar.sapMTB,
-.sapUiMedia-Std-Desktop .sapMSplitContainerDetail .sapUxAPAnchorBar.sapMTB,
-html .sapUiContainer-Medium .sapUxAPAnchorBar.sapMTB,
-html.sapUiMedia-Std-Desktop .sapUiContainer-Medium .sapUxAPAnchorBar.sapMTB,
-html .sapUiContainer-Wide .sapMSplitContainerDetail .sapUxAPAnchorBar.sapMTB {
+.sapUxAPObjectPageLayout-Std-Phone,
+html .sapUiContainer-Narrow {
+	.sapUxAPAnchorBar.sapMTB {
+		padding-left: 0;
+	}
+}
+
+.sapUxAPObjectPageLayout-Std-Tablet .sapUxAPAnchorBar.sapMTB,
+html .sapUiContainer-Medium .sapUxAPAnchorBar.sapMTB {
 	padding-left: 1rem;
 }
 
-html.sapUiMedia-Std-Desktop .sapUiContainer-Narrow .sapUxAPAnchorBar.sapMTB {
-	padding-left: 0;
+.sapUxAPObjectPageLayoutTitleClickEnabled .sapUxAPAnchorBar,
+.sapUxAPObjectPageLayoutHeaderPinnable .sapUxAPAnchorBar {
+	margin-top: 0.8125rem;
 }
 
 .sapUxAPAnchorBar {
 	vertical-align: middle;
+	position: relative;
+	width: 100%;
+	padding: 0;
 }
 
 .sapUxAPAnchorBarScrollContainer {
 	width: 100%;
 }
 
-/* navigation arrows for desktop and tablet only */
-.sapUiMedia-Std-Desktop .sapUxAPAnchorBar,
-.sapUiMedia-Std-Tablet .sapUxAPAnchorBar,
-html .sapUiContainer-Wide .sapUxAPAnchorBar,
-html .sapUiContainer-Medium .sapUxAPAnchorBar {
-	position: relative;
-	width: 100%;
-	padding: 0;
-}
-
 /* leave space for the overflow button to the right */
-.sapUiMedia-Std-Tablet .sapUxAPAnchorBarOverflow,
-.sapUiMedia-Std-Desktop .sapUxAPAnchorBarOverflow,
-html .sapUiContainer-Medium .sapUxAPAnchorBarOverflow,
-html .sapUiContainer-Wide .sapUxAPAnchorBarOverflow {
+.sapUxAPObjectPageLayout:not(.sapUxAPObjectPageLayout-Std-Phone) .sapUxAPAnchorBarOverflow {
 	padding-right: 4rem;
 }
 
 /* not display the select if the bar does not overflow */
-.sapUiMedia-Std-Tablet .sapUxAPAnchorBarOverflow:not(.sapUxAPAnchorBarScrollRight):not(.sapUxAPAnchorBarScrollLeft) .sapUxAPHierarchicalSelect,
-.sapUiMedia-Std-Desktop .sapUxAPAnchorBarOverflow:not(.sapUxAPAnchorBarScrollRight):not(.sapUxAPAnchorBarScrollLeft) .sapUxAPHierarchicalSelect,
-html .sapUiContainer-Medium .sapUxAPAnchorBarOverflow:not(.sapUxAPAnchorBarScrollRight):not(.sapUxAPAnchorBarScrollLeft) .sapUxAPHierarchicalSelect,
-html .sapUiContainer-Wide .sapUxAPAnchorBarOverflow:not(.sapUxAPAnchorBarScrollRight):not(.sapUxAPAnchorBarScrollLeft) .sapUxAPHierarchicalSelect {
+.sapUxAPAnchorBarOverflow:not(.sapUxAPAnchorBarScrollRight):not(.sapUxAPAnchorBarScrollLeft) .sapUxAPHierarchicalSelect {
 	display: none;
 }
 
@@ -73,6 +65,44 @@ html .sapUiContainer-Wide .sapUxAPAnchorBarOverflow:not(.sapUxAPAnchorBarScrollR
 
 .sapMIBar.sapUxAPAnchorBar .sapMBarChild:first-child {
 	margin-left: 0;
+
+	&.sapUxAPHierarchicalSelect {
+		padding-left: 1rem;
+	}
+}
+.sapUxAPAnchorBar .sapUxAPAnchorBarButton.sapMMenuBtn {
+	max-width: 100%;
+
+	.sapMSB {
+		padding-right: 1.5rem;
+		width: auto !important;
+	}
+
+	.sapMSBText {
+		padding-left: 1rem;
+	}
+
+	.sapMSB .sapMSBText.sapMSBTextIE {
+		width: auto !important;
+	}
+
+	.sapMSB .sapMSBText.sapMSBTextIE,
+	.sapMSB .sapMSBText:not(.sapMSBTextIE) .sapMBtnInner {
+		margin-right: 1.25rem;
+	}
+
+	.sapMSBArrow {
+		padding-right: 0.25rem;
+	}
+
+	.sapMSBText:focus >  .sapMBtnInner {
+		outline: none;
+	}
+
+	.sapMSB:focus .sapMSBInner::after {
+		top: 0.125rem;
+		bottom: 0.125rem;
+	}
 }
 
 .sapUxAPAnchorBar .sapUxAPAnchorBarButton {
@@ -90,9 +120,15 @@ html .sapUiContainer-Wide .sapUxAPAnchorBarOverflow:not(.sapUxAPAnchorBarScrollR
 			line-height: 3rem;
 		}
 	}
+
+	.sapMBtn,
+	.sapMSBText .sapMBtnInner,
+	.sapMSBArrow .sapMBtnInner {
+		padding: 0;
+	}
 }
 
-.sapUxAPAnchorBar .sapMBarChild {
+.sapUxAPAnchorBar.sapMIBar.sapMTB .sapMBarChild {
 	margin-left: 0;
 	margin-right: 0;
 }
@@ -100,30 +136,24 @@ html .sapUiContainer-Wide .sapUxAPAnchorBarOverflow:not(.sapUxAPAnchorBarScrollR
 .sapUxAPAnchorBar .sapUxAPAnchorBarButton .sapMBtnIcon {
 	font-size: 0.75rem;
 	width: 1.5rem;
-	right: 0.875rem;
+	right: 0;
 }
 
 .sapUxAPAnchorBar .sapUxAPAnchorBarButton > .sapMBtnIconLast > .sapMBtnContent {
 	padding-right: 1.375rem;
 }
 
-.sapUxAPAnchorBarUpperCase .sapUxAPAnchorBarButton {
+.sapUxAPAnchorBarUpperCase .sapUxAPAnchorBarButton,
+.sapUxAPAnchorBarUpperCase .sapUxAPAnchorBarButton .sapMBtn {
 	text-transform: uppercase;
 }
 
 /* visual in anchor bar */
 
-.sapUxAPAnchorBar .sapUxAPAnchorBarButton .sapMBtnInner.sapMBtnTransparent.sapMBtnHoverable:hover,
-.sapUxAPAnchorBar .sapUxAPAnchorBarButton.sapMBtn:hover > .sapMBtnHoverable {
-	background: none;
-	border: none;
-}
-
-.sapUxAPAnchorBarButton .sapMBtnInner,
-.sapUxAPAnchorBarButton .sapMBtnInner:hover {
-	background: transparent;
-	border: none;
-	text-shadow: none;
+.sapUxAPAnchorBarButton .sapMBtnInner {
+	background: transparent !important;
+	border: none !important;
+	text-shadow: none !important;
 }
 
 .sapUxAPAnchorBarButton {
@@ -141,9 +171,9 @@ html .sapUiContainer-Wide .sapUxAPAnchorBarOverflow:not(.sapUxAPAnchorBarScrollR
 /***********************/
 
 // Not displayed on phone
-.sapUiMedia-Std-Phone .sapUxAPAnchorBar .anchorBarArrowLeft,
-.sapUiMedia-Std-Phone .sapUxAPAnchorBar .anchorBarArrowRight,
-.sapUiMedia-Std-Phone .sapUxAPAnchorBar .sapUxAPAnchorBarScrollContainer,
+.sapUxAPObjectPageLayout-Std-Phone .sapUxAPAnchorBar .anchorBarArrowLeft,
+.sapUxAPObjectPageLayout-Std-Phone .sapUxAPAnchorBar .anchorBarArrowRight,
+.sapUxAPObjectPageLayout-Std-Phone .sapUxAPAnchorBar .sapUxAPAnchorBarScrollContainer,
 html .sapUiContainer-Narrow .sapUxAPAnchorBar .anchorBarArrowLeft,
 html .sapUiContainer-Narrow .sapUxAPAnchorBar .anchorBarArrowRight,
 html .sapUiContainer-Narrow .sapUxAPAnchorBar .sapUxAPAnchorBarScrollContainer {
@@ -164,26 +194,8 @@ html .sapUiContainer-Narrow .sapUxAPAnchorBar .sapUxAPAnchorBarScrollContainer {
 	right: 2.5rem;
 }
 
-// Full-screen alignment (L + XL)
-.sapMSplitContainerHideMode .sapMSplitContainerDetail .sapUxAPAnchorBar.sapUxAPAnchorBarScrollLeft .anchorBarArrowLeft {
-	left: 1rem;
-}
-
-.sapMSplitContainerHideMode .sapMSplitContainerDetail .sapUxAPAnchorBar.sapUxAPAnchorBarScrollRight .anchorBarArrowRight {
-	right: 3rem;
-}
-
-// Split-screen alignment in Detail (M)
-.sapMSplitContainerDetail .sapUxAPAnchorBar.sapUxAPAnchorBarScrollLeft .anchorBarArrowLeft {
-	left: 0.5rem;
-}
-
-.sapMSplitContainerDetail .sapUxAPAnchorBar.sapUxAPAnchorBarScrollRight .anchorBarArrowRight {
-	right: 2.5rem;
-}
-
 // Tablet alignment
-.sapUiMedia-Std-Tablet .sapUxAPAnchorBar.sapUxAPAnchorBarScrollLeft .anchorBarArrowLeft,
+.sapUxAPObjectPageLayout-Std-Tablet .sapUxAPAnchorBar.sapUxAPAnchorBarScrollLeft .anchorBarArrowLeft,
 html .sapUiContainer-Medium .sapUxAPAnchorBar.sapUxAPAnchorBarScrollLeft .anchorBarArrowLeft {
 	left: 0;
 }
@@ -259,52 +271,23 @@ html .sapUiContainer-Medium .sapUxAPAnchorBar.sapUxAPAnchorBarScrollLeft .anchor
 /* END Scroll Arrows */
 /*********************/
 
-/* POPOVER */
-
-.sapMPopover.sapUxAPAnchorBarPopover > .sapMPopoverArr {
-	display: none;
-}
-
-.sapMPopover.sapUxAPAnchorBarPopover .sapMBtn.sapUxAPAnchorBarButton {
-	padding: 0;
-	display: block;
-	width: 100%;
-}
-
-.sapMPopover.sapUxAPAnchorBarPopover button.sapMBtn > .sapMBtnInner {
-	padding-right: 1.75rem;
-	padding-left: 1rem;
-}
-
-.sapMPopover.sapUxAPAnchorBarPopover button.sapMBtn > .sapMBtnInner > .sapMBtnContent {
-	text-shadow: none;
-	text-align: left;
-	overflow: visible;
-}
-
-html[dir=rtl] .sapMPopover.sapUxAPAnchorBarPopover button.sapMBtn > .sapMBtnInner > .sapMBtnContent {
-	text-align: right;
-}
-
-/**********************************
-COZY
-**********************************/
-.sapUxAPAnchorBarPopover .sapMBtn.sapUxAPAnchorBarButton {
-	height: 3rem;
-}
-
-.sapUxAPAnchorBarPopover.sapMPopover .sapMBtn.sapUxAPAnchorBarButton .sapMBtnInner {
-	height: 3rem;
-	border-radius: 0;
-}
-
-.sapUxAPAnchorBarPopover.sapMPopover .sapMBtn.sapUxAPAnchorBarButton .sapMBtnInner .sapMBtnContent {
-	line-height: 3rem;
-}
-
 /**********************************
 Compact
 **********************************/
+
+.sapUiSizeCompact {
+	.sapUxAPAnchorBar .sapUxAPAnchorBarButton.sapMMenuBtn {
+		.sapMSB .sapMSBText.sapMSBTextIE,
+		.sapMSB .sapMSBText:not(.sapMSBTextIE) .sapMBtnInner {
+			margin-right: 0.75rem;
+		}
+	}
+
+	.sapUxAPObjectPageLayoutTitleClickEnabled .sapUxAPAnchorBar,
+	.sapUxAPObjectPageLayoutHeaderPinnable .sapUxAPAnchorBar{
+		margin-top: 0.5rem;
+	}
+}
 
 .sapUiSizeCompact .sapUxAPAnchorBar,
 .sapUiSizeCompact .sapUxAPAnchorBar .sapUxAPAnchorBarButton {
@@ -334,8 +317,8 @@ Compact
 
 .sapUiSizeCompact .sapUxAPAnchorBar.sapUxAPAnchorBarScrollLeft .anchorBarArrow .sapMBtnIcon,
 .sapUiSizeCompact .sapUxAPAnchorBar.sapUxAPAnchorBarScrollRight .anchorBarArrow .sapMBtnIcon {
-	margin-left: 0rem;
-	margin-right: 0rem;
+	margin-left: 0;
+	margin-right: 0;
 }
 
 .sapUiSizeCompact .sapUxAPAnchorBar .sapUxAPAnchorBarButton .sapMBtnInner .sapMBtnContent,
@@ -362,17 +345,15 @@ Compact
 	line-height: 1.375rem;
 }
 
-.sapUiSizeCompact.sapUxAPAnchorBarPopover.sapMPopover .sapMBtn.sapUxAPAnchorBarButton,
-.sapUiSizeCompact.sapUxAPAnchorBarPopover.sapMPopover .sapMBtn.sapUxAPAnchorBarButton .sapMBtnInner {
-	height: 2rem;
-	border-radius: 0;
-}
-
-.sapUiSizeCompact.sapUxAPAnchorBarPopover.sapMPopover .sapMBtn.sapUxAPAnchorBarButton .sapMBtnInner {
-	padding-left: 0.5rem;
-}
-
 // Scroll button container
 .sapUiSizeCompact .sapUxAPAnchorBar .anchorBarArrow > .sapUiHLayoutChildWrapper {
 	height: 2rem;
+}
+
+//Override showing focus of the internal button of MenuButton in IE and Edge
+html[data-sap-ui-browser^="ie"],
+html[data-sap-ui-browser^="ed"] {
+	.sapUxAPAnchorBarButton.sapMMenuBtn .sapMSBInner .sapMBtnFocusDiv {
+		border: 0 none;
+	}
 }

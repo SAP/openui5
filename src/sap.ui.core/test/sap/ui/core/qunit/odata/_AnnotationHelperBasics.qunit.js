@@ -1,19 +1,24 @@
 /*!
  * ${copyright}
  */
-sap.ui.require([
-	"jquery.sap.global",
-	'sap/ui/base/BindingParser',
-	'sap/ui/model/odata/_AnnotationHelperBasics'
-], function (jQuery, BindingParser, Basics) {
+sap.ui.define([
+	"sap/base/Log",
+	"sap/ui/base/BindingParser",
+	"sap/ui/model/odata/_AnnotationHelperBasics",
+	"sap/ui/performance/Measurement"
+], function (Log, BindingParser, Basics, Measurement) {
 	/*global QUnit, sinon */
 	/*eslint no-warning-comments: 0*/
 	"use strict";
 
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.odata._AnnotationHelperBasics", {
+		before : function () {
+			this.__ignoreIsolatedCoverage__ = true;
+		},
+
 		beforeEach : function () {
-			this.oLogMock = this.mock(jQuery.sap.log);
+			this.oLogMock = this.mock(Log);
 			this.oLogMock.expects("warning").never();
 			this.oLogMock.expects("error").never();
 		}
@@ -210,6 +215,18 @@ sap.ui.require([
 			binding : "{path}",
 			expression : "${path}"
 		}, {
+			value : {parameters : {}, result : "binding", value : "path"},
+			binding : "{path}",
+			expression : "${path}"
+		}, {
+			value : {parameters : null, result : "binding", value : "path"},
+			binding : "{path}",
+			expression : "${path}"
+		}, {
+			value : {parameters : {$$noPatch : true}, result : "binding", value : "path"},
+			binding : "{path:'path',parameters:{'$$noPatch':true}}",
+			expression : "${path:'path',parameters:{'$$noPatch':true}}"
+		}, {
 			value : {result : "binding", value : "{foo'bar}"},
 			binding : "{path:'{foo\\'bar}'}",
 			expression : "${path:'{foo\\'bar}'}"
@@ -221,11 +238,16 @@ sap.ui.require([
 			value : {result : "expression", value : "foo(${path})"},
 			binding : "{=foo(${path})}",
 			expression : "foo(${path})"
+		}, {
+			value : {result : "binding", value : "path"},
+			binding : "{path}",
+			expression : "%{path}",
+			raw : true
 		}].forEach(function (oFixture) {
-			assert.strictEqual(Basics.resultToString(oFixture.value, false), oFixture.binding,
-				oFixture.binding);
-			assert.strictEqual(Basics.resultToString(oFixture.value, true), oFixture.expression,
-				oFixture.expression);
+			assert.strictEqual(Basics.resultToString(oFixture.value, false, undefined, oFixture.raw),
+				oFixture.binding, oFixture.binding);
+			assert.strictEqual(Basics.resultToString(oFixture.value, true, undefined, oFixture.raw),
+				oFixture.expression, oFixture.expression);
 		});
 
 		assert.strictEqual(
@@ -235,12 +257,15 @@ sap.ui.require([
 			Basics.resultToString({result : "composite", value : "{FirstName} {LastName}"}, true);
 		}, /Trying to embed a composite binding into an expression binding/,
 			"composite to expression");
+		assert.strictEqual(Basics.resultToString({result : "not_supported"}), undefined, "not_supported");
 	});
 
 	//*********************************************************************************************
 	[
 		{type : "edm:Null", value : "null", binding : null, expression : "null"},
 		{type : "edm:Null", value : null, binding : null, expression : "null"},
+		// Note: undefined is only used internally, no need for value : "undefined"
+		{type : "edm:Null", value : undefined, binding : undefined, expression : "undefined"},
 		{type : "Edm.Boolean", value : "false", expression : "false"},
 		{type : "Edm.Boolean", value : false, expression : "false"},
 // TODO		{type : "Edm.Date", value : "2000-01-01", expression : ""},
@@ -282,11 +307,21 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("resultToString with type", function (assert) {
 		[{
+			value : {type : "Edm.String", formatOptions : {}},
+			binding: ",type:'sap.ui.model.odata.type.String'"
+		}, {
+			value : {type : "Edm.String", formatOptions : {parseKeepsEmptyString : true}},
+			binding: ",type:'sap.ui.model.odata.type.String'"
+				+ ",formatOptions:{'parseKeepsEmptyString':true}"
+		}, {
 			value : {type : "Edm.Boolean", constraints : {}},
 			binding: ",type:'sap.ui.model.odata.type.Boolean'"
 		}, {
 			value : {type : "Edm.Byte", constraints : {nullable : false}},
 			binding : ",type:'sap.ui.model.odata.type.Byte',constraints:{'nullable':false}"
+		}, {
+			value : {type : "Edm.Date", formatOptions : null},
+			binding : ",type:'sap.ui.model.odata.type.Date'"
 		}, {
 			value : {type : "Edm.DateTime", constraints : {displayFormat : "DateOnly"}},
 			binding : ",type:'sap.ui.model.odata.type.DateTime'," +
@@ -306,10 +341,10 @@ sap.ui.require([
 			value : {type : "Edm.Float"},
 			binding : ",type:'sap.ui.model.odata.type.Single'"
 		}, {
-			value : {type : "Edm.Guid"},
-			binding : ",type:'sap.ui.model.odata.type.Guid'"
+			value : {type : "Edm.Guid", parameters : {$$noPatch : true}},
+			binding : ",type:'sap.ui.model.odata.type.Guid',parameters:{'$$noPatch':true}"
 		}, {
-			value : {type : "Edm.Int16"},
+			value : {type : "Edm.Int16", parameters : {}},
 			binding : ",type:'sap.ui.model.odata.type.Int16'"
 		}, {
 			value : {type : "Edm.Int32"},
@@ -324,8 +359,14 @@ sap.ui.require([
 			value : {type : "Edm.String", constraints : {maxLength : 30}},
 			binding : ",type:'sap.ui.model.odata.type.String',constraints:{'maxLength':30}"
 		}, {
+			value : {type : "Edm.Stream"},
+			binding : ",type:'sap.ui.model.odata.type.Stream'"
+		}, {
 			value : {type : "Edm.Time"},
 			binding : ",type:'sap.ui.model.odata.type.Time'"
+		}, {
+			value : {type : "Edm.TimeOfDay"},
+			binding : ",type:'sap.ui.model.odata.type.TimeOfDay'"
 		}].forEach(function (oFixture) {
 			oFixture.value.result = "binding";
 			oFixture.value.value = "foo/'bar'";
@@ -336,6 +377,15 @@ sap.ui.require([
 				"${path:'foo/\\'bar\\''" + oFixture.binding + "}",
 				JSON.stringify(oFixture.value) + " (expression)");
 		});
+
+		assert.strictEqual(Basics.resultToString({
+			constraints : {is : "ignored"},
+			formatOptions : {does : "not matter"},
+			ignoreTypeInPath : false,
+			result : "binding",
+			type : "Edm.Unsupported",
+			value : "foo"
+		}, false, true), "{foo}");
 
 		assert.strictEqual(Basics.resultToString({
 			result : "binding",
@@ -360,10 +410,10 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("followPath: Performance measurement points", function (assert) {
-		var oAverageSpy = this.spy(jQuery.sap.measure, "average")
+		var oAverageSpy = this.spy(Measurement, "average")
 				.withArgs("sap.ui.model.odata.AnnotationHelper/followPath", "",
 					["sap.ui.model.odata.AnnotationHelper"]),
-			oEndSpy = this.spy(jQuery.sap.measure, "end")
+			oEndSpy = this.spy(Measurement, "end")
 				.withArgs("sap.ui.model.odata.AnnotationHelper/followPath"),
 			oMockedInterface = {
 				getModel : function () {

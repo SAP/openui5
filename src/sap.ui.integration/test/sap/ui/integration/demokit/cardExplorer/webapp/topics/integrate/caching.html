@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<title>Caching</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<script src="../../scripts/boot.js"></script>
+</head>
+
+<body class="sapUiBody topicBody">
+	<div class="topic">
+		<div class="content">
+
+			<h1 id="caching">Caching</h1>
+
+			<p>
+				Card's caching is the process of storing copy of the card's data in the browser's cache, so that it can be accessed by the card more quickly. This process is handled mainly by the host environment.
+			</p>
+
+			<h2 id="overview">
+				Overview
+			</h2>
+			<p>
+				The caching is available only if the host environment is prepared and can handle encrypted cache data and understands the cache headers.
+			</p>
+
+			<p>
+				The cards will send cache headers in the data request based on their configuration.
+				To enable caching, you should also develop a service worker (script), which is executed by the user’s browser.
+			</p>
+
+			<p>
+				The cached data must be encrypted.
+			</p>
+
+			<img src="../images/caching.png" alt="Caching Diagram" style="max-width: 100%; width: 800px;">
+
+			<h2 id="enableCaching">
+				Enable Caching
+			</h2>
+
+			<p>
+				After the host environment is prepared to enable the caching - call the useExperimentalCaching method on the host.
+				<pre class="lang-js">
+oHost.useExperimentalCaching();</pre>
+			</p>
+
+			<h2 id="serviceWorker">Service Worker</h2>
+
+			<p>
+				The service worker should handle the fetch event and read the request headers sent by the card to provide the caching.
+			</p>
+
+			<h3 id="headers">
+				Cache Headers
+			</h3>
+
+			<p>
+				The card sends the following cache headers in the request depending on its configuration.
+				<br>Optionally those can be changed by overriding Host#modifyRequestHeaders method.
+			</p>
+
+			<div class="tableWrapper">
+				<table>
+					<tr>
+						<th>Header</th>
+						<th>Description</th>
+						<th>Schema Version</th>
+						<th>Since</th>
+					</tr>
+					<tr>
+						<td>x-sap-card: true</td>
+						<td>
+							Indicates that this request is sent by a card. Use to activate the caching.
+						</td>
+						<td>1.35.0</td>
+						<td>1.94</td>
+					</tr>
+					<tr>
+						<td>Cache-Control: max-age=x</td>
+						<td>
+							Card is configured to accept cache which is newer than the given number of seconds.
+						</td>
+						<td>1.35.0</td>
+						<td>1.94</td>
+					</tr>
+					<tr>
+						<td>Cache-Control: max-age=x, x-stale-while-revalidate</td>
+						<td>
+							Card is configured to accept cache which is newer than the given number of seconds.
+							If the cache is stale (older than the number of seconds), the card can still use it during the revalidation.
+							This is the default card behavior.
+						</td>
+						<td>1.35.0</td>
+						<td>1.94</td>
+					</tr>
+					<tr>
+						<td>Cache-Control: max-age=0, no-store</td>
+						<td>
+							Cache is disabled and should not be stored in the browser.
+						</td>
+						<td>1.35.0</td>
+						<td>1.94</td>
+					</tr>
+				</table>
+			</div>
+
+			<h3 id="broadcasting">
+				Broadcasting on New Data
+			</h3>
+
+			<p>
+				When fresh data is fetched after revalidation, this should be broadcasted to the cards so that they can repeat the request.
+				<br>
+				This happens with "postMessage" with the following payload:
+				<pre class="lang-json">
+{
+	type: "ui-integration-card-update",
+	url: request.url
+}</pre>
+			</p>
+		</div>
+	</div>
+
+
+</body>
+
+</html>

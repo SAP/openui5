@@ -1,0 +1,27 @@
+{
+	"adaptations": [
+		{
+			"id": "id-1591275572834-1",
+			"contexts": {
+				"role": ["SALES"]
+			},
+			"title": "German Admin",
+			"description": "ACH Admin for Germany",
+			"createdBy": "Test User 1",
+			"createdAt": "2022-05-25T07:30:32Z",
+			"changedBy": "Test User 1",
+			"changedAt": "2022-05-27T08:30:32Z"
+		},
+		{
+			"id": "DEFAULT",
+			"contexts": {},
+			"title": "",
+			"description": "",
+			"createdBy": "",
+			"createdAt": "",
+			"changedBy": "",
+			"changedAt": "",
+			"type": "DEFAULT"
+		}
+	]
+}

@@ -1,0 +1,155 @@
+{
+  "1.73.0": {
+    "date": "November 2019",
+    "notes": [
+      {
+        "id": "926f6c047b8c9fefea242e6ae7554083f607ad7c",
+        "type": "FEATURE",
+        "text": " format.NumberFormat: Support lenient-parsing",
+        "references": []
+      },
+      {
+        "id": "afd3c67b012decd9672b8ff5f580cd92ff925fc8",
+        "type": "FIX",
+        "text": " ComponentContainer: Log meaningful error, is usage is defined without owner component",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880578895"
+          }
+        ]
+      },
+      {
+        "id": "80fe335714c1b15d34bb70632afb51c55a9d91e7",
+        "type": "FIX",
+        "text": " DragAndDrop: The text of input fields should be selectable in IE",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970461872"
+          }
+        ]
+      },
+      {
+        "id": "a661a0cd0f25749334eb93a9ddc04bf01f18cd68",
+        "type": "FIX",
+        "text": " ODataContextBinding: multiple preliminary context bindings",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970508510"
+          }
+        ]
+      },
+      {
+        "id": "be4bcd19130161255d7b8a6fe155811bfab00435",
+        "type": "FIX",
+        "text": " core.Icon: move the focus outline out of the icon area",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970423523"
+          },
+          {
+            "type": "BCP",
+            "reference": "1980355440"
+          }
+        ]
+      },
+      {
+        "id": "3e52fec8ef2340e3420c8ac75efdbf079e2c1411",
+        "type": "FIX",
+        "text": " core.routing: reset HashChanger after target display without routing",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970561779"
+          }
+        ]
+      },
+      {
+        "id": "ffe978d208ac884d433fd91bfdc2649488bdff3b",
+        "type": "FIX",
+        "text": " sap.m.Input: Browser autofill now fires change event",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970396803"
+          },
+          {
+            "type": "BCP",
+            "reference": "1980361475"
+          }
+        ]
+      },
+      {
+        "id": "bbb52fb711a8127384ac5ceb4ae3de271200ca9e",
+        "type": "FIX",
+        "text": " sap.ui.core: address SDK feedback (2019/10 and older)",
+        "references": []
+      },
+      {
+        "id": "e1ef29946d5eade708419ecfd8452fd9653236b7",
+        "type": "FIX",
+        "text": " sap.m.Carousel: Image slides now swipe correctly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970535011"
+          }
+        ]
+      },
+      {
+        "id": "5134cdc61e15862c4b07087d7afcd9547e6eeade",
+        "type": "FIX",
+        "text": " sap.ui.core.dnd: double scrollbar during drag-and-drop",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970614786"
+          }
+        ]
+      },
+      {
+        "id": "109a011c6dd3591679d3fc712767020dab175989",
+        "type": "FIX",
+        "text": " core/Shortcut: Restore focus on DOM element instead",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970531258"
+          }
+        ]
+      },
+      {
+        "id": "a41edf2dbfcfb28454b1627175ef0dda97e5f9f5",
+        "type": "FIX",
+        "text": " sap.m.ListBase: Accessibility improvements",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970521416"
+          },
+          {
+            "type": "BCP",
+            "reference": "1970564900"
+          },
+          {
+            "type": "BCP",
+            "reference": "1970625121"
+          },
+          {
+            "type": "BCP",
+            "reference": "1970512440"
+          }
+        ]
+      },
+      {
+        "id": "13dc5374fa3b4f1f6f96741df490d23eb95d8170",
+        "type": "FIX",
+        "text": " sap/base/Log: Limit amount of stored log entries",
+        "references": []
+      }
+    ]
+  }
+}

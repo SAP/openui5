@@ -1,0 +1,56 @@
+{
+  "1.83.0": {
+    "date": "September 2020",
+    "notes": [
+      {
+        "id": "b45370e8f3237ff3fe47c9ec48167dcbf083bf9f",
+        "type": "FIX",
+        "text": " sap.m.TabContainer: Focus is now with same size on both states"
+      },
+      {
+        "id": "afaef0fee950d0424a7c05fd7560c6f0dc465bde",
+        "type": "FIX",
+        "text": " sap.m.TabContainer: Focus is now aligned with visual specification",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070280597"
+          }
+        ]
+      },
+      {
+        "id": "f78834efa88eadc92431c52847cc0b2ab7947595",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: Focus is showing  in High Contrast themes",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070285771"
+          }
+        ]
+      },
+      {
+        "id": "0d021bda320c4daa7a0ddd0d138ca07e25e8beb5",
+        "type": "FIX",
+        "text": " sap.m.ViewSettingsDialog: Focus is now visible on first element",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080374174"
+          }
+        ]
+      },
+      {
+        "id": "9344e20c56892386ee2e0905e8c823fb6600f213",
+        "type": "FIX",
+        "text": " sap.ui.unified.CalendarLegend: Correct non-working day background color",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080379091"
+          }
+        ]
+      }
+    ]
+  }
+}

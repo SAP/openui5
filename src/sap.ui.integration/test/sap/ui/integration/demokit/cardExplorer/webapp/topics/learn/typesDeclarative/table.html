@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<title>Table Card</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<script src="../../../scripts/boot.js"></script>
+</head>
+
+<body class="sapUiBody topicBody">
+	<div class="topic">
+		<div class="content">
+			<h1 id="overview">
+				Table Card
+			</h1>
+			<p>
+				The Table Card is used to display multiple items in table view.
+			</p>
+
+			<h2 id="properties">Properties</h2>
+			<div class="tableWrapper">
+				<table>
+					<tr>
+						<th>Property</th>
+						<th>Type</th>
+						<th>Required</th>
+						<th>Description</th>
+						<th>Schema Version</th>
+						<th>Since</th>
+					</tr>
+					<tr>
+						<td>row</td>
+						<td><a href="#tableRowProperties">TableRow</a></td>
+						<td>Yes</td>
+						<td>The row template from which all the rows in the table will be created.</td>
+						<td>1.15.0</td>
+						<td>1.65</td>
+					</tr>
+					<tr>
+						<td>maxItems</td>
+						<td>int</td>
+						<td>No</td>
+						<td>The maximum number of items.</td>
+						<td>1.15.0</td>
+						<td>1.65</td>
+					</tr>
+					<tr>
+						<td>minItems</td>
+						<td>int</td>
+						<td>No</td>
+						<td>The minimum number of items that are expected. This property is used to calculate the minimum height of the card.</td>
+						<td>1.50.0</td>
+						<td>1.109</td>
+					</tr>
+					<tr>
+						<td>group</td>
+						<td><a href="#groupApi">Group</a>
+						</td>
+						<td>No</td>
+						<td>Defines whether and how items are grouped.</td>
+						<td>1.37.0</td>
+						<td>1.96</td>
+					</tr>
+				</table>
+			</div>
+
+			<div id="tableRowProperties" class="boldBlock">TableRow properties</div>
+			<div class="tableWrapper">
+				<table>
+					<tr>
+						<th>Property</th>
+						<th>Type</th>
+						<th>Required</th>
+						<th>Description</th>
+						<th>Schema Version</th>
+						<th>Since</th>
+					</tr>
+					<tr>
+						<td>columns</td>
+						<td><a href="#tableColumnProperties">TableColumn[]</a></td>
+						<td>Yes</td>
+						<td>Defines the columns attributes.</td>
+						<td>1.15.0</td>
+						<td>1.65</td>
+					</tr>
+					<tr>
+						<td>actions</td>
+						<td><a href="../../../index.html#/learn/actions" target="_parent">Actions[]</a></td>
+						<td>No</td>
+						<td>Actions that are triggered when the row is pressed.</td>
+						<td>1.15.0</td>
+						<td>1.65</td>
+					</tr>
+					<tr>
+						<td>highlight</td>
+						<td>string</td>
+						<td>No</td>
+						<td>The highlight state of the row.</td>
+						<td>1.53.0</td>
+						<td>1.113</td>
+					</tr>
+					<tr>
+						<td>highlightText</td>
+						<td>string</td>
+						<td>No</td>
+						<td>Defines the semantics of the "highlight" property. It is used for accessibility purposes.</td>
+						<td>1.53.0</td>
+						<td>1.113</td>
+					</tr>
+				</table>
+			</div>
+
+			<div id="tableColumnProperties" class="boldBlock">TableColumn properties</div>
+			<p>
+				Every column can display different thing based on the set properties.
+			</p>
+			<div class="tableWrapper">
+				<table>
+					<tr>
+						<th>Property</th>
+						<th>Type</th>
+						<th>Required</th>
+						<th>Description</th>
+						<th>Schema Version</th>
+						<th>Since</th>
+					</tr>
+					<tr>
+						<td>title</td>
+						<td>string</td>
+						<td>No</td>
+						<td>The title of the column.</td>
+						<td>1.15.0</td>
+						<td>1.65</td>
+					</tr>
+					<tr>
+						<td>width</td>
+						<td><a data-demokit-href="#/api/sap.ui.core.CSSSize">sap.ui.core.CSSSize</a></td>
+						<td>No</td>
+						<td>Defines the width of the column.</td>
+						<td>1.15.0</td>
+						<td>1.65</td>
+					</tr>
+					<tr>
+						<td>hAlign</td>
+						<td><a data-demokit-href="#/api/sap.ui.core.TextAlign">sap.ui.core.TextAlign</a></td>
+						<td>No</td>
+						<td>Defines the horizontal alignment of the column content.</td>
+						<td>1.19.0</td>
+						<td>1.75</td>
+					</tr>
+					<tr>
+						<td>value</td>
+						<td>string</td>
+						<td>No</td>
+						<td>Represents the text value of the column.</td>
+						<td>1.15.0</td>
+						<td>1.65</td>
+					</tr>
+					<tr>
+						<td>additionalText</td>
+						<td>string</td>
+						<td>No</td>
+						<td>Represents the additional text for the identifier column.</td>
+						<td>1.53.0</td>
+						<td>1.113</td>
+					</tr>
+					<tr>
+						<td>icon</td>
+						<td><a href="#iconApi">Icon</a></td>
+						<td>No</td>
+						<td>Represents column with icon.</td>
+						<td>1.15.0</td>
+						<td>1.65</td>
+					</tr>
+					<tr>
+						<td>state</td>
+						<td><a data-demokit-href="#/api/sap.ui.core.ValueState">sap.ui.core.ValueState</a></td>
+						<td>No</td>
+						<td>Defines the state of the column. Can be used only together with <code>value</code> property.</td>
+						<td>1.15.0</td>
+						<td>1.65</td>
+					</tr>
+					<tr>
+						<td>showStateIcon</td>
+						<td>boolean</a></td>
+						<td>No</td>
+						<td>Defines if a state icon is shown.</td>
+						<td>1.53.0</td>
+						<td>1.113</td>
+					</tr>
+					<tr>
+						<td>customStateIcon</td>
+						<td>string</td>
+						<td>No</td>
+						<td>The custom state icon. If it is set, then "showStateIcon" property should be set to true.</td>
+						<td>1.53.0</td>
+						<td>1.113</td>
+					</tr>
+					<tr>
+						<td>identifier</td>
+						<td>boolean</td>
+						<td>No</td>
+						<td>Defines whether the column is an identifier.</td>
+						<td>1.15.0</td>
+						<td>1.65</td>
+					</tr>
+					<tr>
+						<td>progressIndicator</td>
+						<td><a href="#progressIndicatorProperties">ProgressIndicator</a></td>
+						<td>No</td>
+						<td>Defines the progress indicator attributes.</td>
+						<td>1.15.0</td>
+						<td>1.65</td>
+					</tr>
+					<tr>
+						<td>visible</td>
+						<td>boolean</td>
+						<td>No</td>
+						<td>Determines the visibility of the column.</td>
+						<td>1.25.0</td>
+						<td>1.81</td>
+					</tr>
+					<tr>
+						<td>actions</td>
+						<td><a href="../../../index.html#/learn/actions" target="_parent">Actions[]</a></td>
+						<td>No</td>
+						<td>Defines actions that can be applied on the column. Actions can be applied only on columns that are identifiers or text.</td>
+						<td>1.31.0</td>
+						<td>1.87</td>
+					</tr>
+				</table>
+			</div>
+
+			<div id="iconApi" class="boldBlock">Icon Properties</div>
+			<div class="tableWrapper">
+				<table>
+					<tr>
+						<th>Property</th>
+						<th>Type</th>
+						<th>Default Value</th>
+						<th>Required</th>
+						<th>Description</th>
+						<th>Schema Version</th>
+						<th>Since</th>
+					</tr>
+					<tr>
+						<td>src</td>
+						<td>string</td>
+						<td></td>
+						<td>No</td>
+						<td>Icon name or source URL</td>
+						<td>1.15.0</td>
+						<td>1.65</td>
+					</tr>
+					<tr>
+						<td>shape</td>
+						<td><a data-demokit-href="#/api/sap.m.AvatarShape" target="_blank">sap.m.AvatarShape</a></td>
+						<td></td>
+						<td>No</td>
+						<td>The shape of the icon.</td>
+						<td>1.15.0</td>
+						<td>1.65</td>
+					</tr>
+					<tr>
+						<td>alt</td>
+						<td>string</td>
+						<td></td>
+						<td>No</td>
+						<td>Alternative text for the icon. If not provided, a default value is set, which might be confusing for screen reader users, when there are more than one card in the view.</td>
+						<td>1.26.0</td>
+						<td>1.82</td>
+					</tr>
+					<tr>
+						<td>size</td>
+						<td>string</td>
+						<td>"XS"</td>
+						<td>No</td>
+						<td>
+							One of "XS", "S" or "M".
+							<br>
+							<b>Note:</b> This property is experimental and may change!
+						</td>
+						<td>1.26.0</td>
+						<td>1.82</td>
+					</tr>
+					<tr>
+						<td>backgroundColor</td>
+						<td><a data-demokit-href="#/api/sap.m.AvatarColor" target="_blank">sap.m.AvatarColor</a></td>
+						<td>"Transparent"</td>
+						<td>No</td>
+						<td>
+							The background color.
+							<br>
+							<b>Note:</b> This property is experimental and may change!
+						</td>
+						<td>1.27.0</td>
+						<td>1.83</td>
+					</tr>
+					<tr>
+						<td>initials</td>
+						<td>string</td>
+						<td></td>
+						<td>No</td>
+						<td>
+							Used as fallback if the "src" property is not set or there is an issue with the resource. Up to two Latin letters can be displayed.
+							If there are more than two letters, or if there's a non-Latin character present, a default image placeholder will be created.
+						</td>
+						<td>1.47.0</td>
+						<td>1.107</td>
+					</tr>
+					<tr>
+						<td>visible</td>
+						<td>boolean</td>
+						<td>No</td>
+						<td>
+							Defines whether the icon should be displayed.
+						</td>
+						<td>1.48.0</td>
+						<td>1.108</td>
+					</tr>
+				</table>
+			</div>
+
+			<div id="progressIndicatorProperties" class="boldBlock">ProgressIndicator Properties</div>
+			<div class="tableWrapper">
+				<table>
+					<tr>
+						<th>Property</th>
+						<th>Type</th>
+						<th>Default Value</th>
+						<th>Required</th>
+						<th>Description</th>
+						<th>Schema Version</th>
+						<th>Since</th>
+					</tr>
+					<tr>
+						<td>percent</td>
+						<td>float</td>
+						<td>0</td>
+						<td>No</td>
+						<td>Specifies the numerical value in percent for the length of the progress bar.</td>
+						<td>1.15.0</td>
+						<td>1.65</td>
+					</tr>
+					<tr>
+						<td>text</td>
+						<td>string</td>
+						<td></td>
+						<td>No</td>
+						<td>The text to be displayed in the bar.</td>
+						<td>1.15.0</td>
+						<td>1.65</td>
+					</tr>
+					<tr>
+						<td>state</td>
+						<td><a data-demokit-href="#/api/sap.ui.core.ValueState">sap.ui.core.ValueState</a></td>
+						<td>"None"</td>
+						<td>No</td>
+						<td>The state of the bar.</td>
+						<td>1.15.0</td>
+						<td>1.65</td>
+					</tr>
+				</table>
+			</div>
+
+			<div id="groupApi" class="boldBlock">Group Properties</div>
+			<div class="tableWrapper">
+				<table>
+					<tr>
+						<th>Property</th>
+						<th>Type</th>
+						<th>Required</th>
+						<th>Description</th>
+						<th>Schema Version</th>
+						<th>Since</th>
+					</tr>
+					<tr>
+						<td>title</td>
+						<td>string</td>
+						<td>Yes</td>
+						<td>Title of the group</td>
+						<td>1.37.0</td>
+						<td>1.96</td>
+					</tr>
+					<tr>
+						<td>order</td>
+						<td><a href="#orderApi">Order</a></td>
+						<td>Yes</td>
+						<td>The sorting order of the group.</td>
+						<td>1.37.0</td>
+						<td>1.96</td>
+					</tr>
+				</table>
+			</div>
+
+			<div id="groupOrderApi" class="boldBlock">Group order Properties</div>
+			<div class="tableWrapper">
+				<table>
+					<tr>
+						<th>Property</th>
+						<th>Type</th>
+						<th>Required</th>
+						<th>Description</th>
+						<th>Schema Version</th>
+						<th>Since</th>
+					</tr>
+					<tr>
+						<td>path</td>
+						<td>string</td>
+						<td>Yes</td>
+						<td>The binding path used for sorting</td>
+						<td>1.37.0</td>
+						<td>1.96</td>
+					</tr>
+					<tr>
+						<td>dir</td>
+						<td>string</td>
+						<td>No</td>
+						<td>The direction of the sorting order - "ASC" (default) or "DESC".</td>
+						<td>1.37.0</td>
+						<td>1.96</td>
+					</tr>
+				</table>
+			</div>
+
+			<h2 id="example">Example</h2>
+			<p>Define the type and data for the card:
+			</p>
+			<p>To bind row information we need to provide a path to the data. Use the root path to bind the column
+				information, as shown in the example below.</p>
+			<pre class="lang-json">
+{
+	"sap.app": {
+		"id": "card.explorer.table.card",
+		"type": "card",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.card": {
+		"type": "Table",
+		"header": {
+			"title": "Sales Orders for Key Accounts",
+			"subTitle": "Today"
+		},
+		"content": {
+			"data": {
+				"request": {
+					"url": "./cardcontent/tableitems.json"
+				},
+				"path": "/results"
+			},
+			"row": {
+				"columns":[{
+					"title": "{/columns/0/title}",
+					"value": "{salesOrder}",
+					"identifier": "{/columns/0/identifier}",
+					"visible": "{/columns/0/visibleFlag}"
+				},
+				{
+					"title": "{/columns/1/title}",
+					"value": "{customerName}",
+					"visible": "{/columns/1/visibleFlag}"
+				},
+				{
+					"title": "{/columns/2/title}",
+					"value": "{netAmount}",
+					"hAlign": "End",
+					"visible": "{/columns/2/visibleFlag}"
+				},
+				{
+					"title": "{/columns/3/title}",
+					"value": "{status}",
+					"state": "{statusState}",
+					"visible": "{/columns/3/visibleFlag}"
+				}],
+				"group": {
+					"title": "{= ${statusState} === 'Success' ? 'Delivered' : 'Not Delivered'}",
+					"order": {
+						"path": "statusState",
+						"dir": "ASC"
+					}
+				}
+			}
+		}
+	}
+}
+</pre>
+			<p>
+				The content of the tableitems.json that we are requesting:
+			</p>
+			<pre class="lang-json">
+{
+	"results": [
+		{
+			"salesOrder": "5000010050",
+			"customerName": "Robert Brown Entertainment",
+			"netAmount": "2K USD",
+			"status": "Delivered",
+			"statusState": "Success"
+		},
+		{
+			"salesOrder": "5000010051",
+			"customerName": "Entertainment Argentinia",
+			"netAmount": "127K USD",
+			"status": "Canceled",
+			"statusState": "Error"
+		},
+		{
+			"salesOrder": "5000010052",
+			"customerName": "Brazil Technologies",
+			"netAmount": "8K USD",
+			"status": "In Progress",
+			"statusState": "Warning"
+		}
+	],
+	"columns": [
+		{
+			"title": "Sales Order",
+			"visibleFlag": true,
+			"identifier": true
+		},
+		{
+			"title": "Customer",
+			"visibleFlag": true
+		},
+		{
+			"title": "Net Amount",
+			"visibleFlag": false
+		},
+		{
+			"title": "Status",
+			"visibleFlag": true
+		}
+	]
+}
+</pre>
+			<p>Create the view to display the card:</p>
+			<pre class="lang-xml">
+&lt;mvc:View xmlns:w="sap.ui.integration.widgets"&gt;
+	&lt;w:Card manifest="./manifest.json" width="400px" height="auto" /&gt;
+&lt;/mvc:View&gt;</pre>
+			<a class="try-button" href="../../../index.html#/explore/table" target="_parent">Try it Out</a>
+		</div>
+	</div>
+</body>
+
+</html>

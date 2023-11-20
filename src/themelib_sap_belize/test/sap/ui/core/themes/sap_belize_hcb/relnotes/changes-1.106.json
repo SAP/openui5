@@ -1,0 +1,18 @@
+{
+  "1.106.0": {
+    "date": "August 2022",
+    "notes": [
+      {
+        "id": "b620ed6f1e4addaf20deab5dcd413ee3693a2eab",
+        "type": "FIX",
+        "text": " \"72\" font: redirect special character from '72' to '72-full'",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      }
+    ]
+  }
+}

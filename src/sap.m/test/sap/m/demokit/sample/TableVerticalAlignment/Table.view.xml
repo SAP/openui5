@@ -12,9 +12,9 @@
 			}
 		}">
 		<headerToolbar>
-			<Toolbar>
+			<OverflowToolbar>
 				<Title text="Products" level="H2"/>
-			</Toolbar>
+			</OverflowToolbar>
 		</headerToolbar>
 		<columns>
 			<Column>

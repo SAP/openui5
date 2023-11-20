@@ -1,0 +1,565 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<title>MultiInput - sap.ui.webc.main</title>
+	<script src="shared-config.js"></script>
+	<script src="../../../../../resources/sap-ui-core.js"
+		id="sap-ui-bootstrap"
+		data-sap-ui-libs="sap.ui.webc.main, sap.ui.layout"
+		data-sap-ui-resourceroots='{
+			"qunit.internal.acc": "../../../../../test-resources/sap/ui/core/qunit/internal/acc"
+		}'>
+	</script>
+	<style>
+		.sapUiBody {
+			height: 100vh;
+			overflow: hidden;
+		}
+	</style>
+
+	<script>
+		sap.ui.getCore().attachInit(function () {
+			sap.ui.require([
+				"sap/ui/webc/main/MultiInput",
+				"sap/ui/webc/main/SuggestionItem",
+				"sap/ui/webc/main/SuggestionGroupItem",
+				"sap/ui/webc/main/Label",
+				"sap/ui/webc/main/Title",
+				"sap/ui/webc/main/Token",
+				"sap/ui/webc/main/Button",
+				"sap/ui/webc/main/Toast",
+				"sap/ui/webc/main/Icon",
+				"sap/ui/webc/fiori/Bar",
+				"sap/ui/webc/fiori/Page",
+				"sap/ui/layout/VerticalLayout",
+			], function (
+				MultiInput,
+				SuggestionItem,
+				SuggestionGroupItem,
+				Label,
+				Title,
+				Token,
+				Button,
+				Toast,
+				Icon,
+				Bar,
+				Page,
+				VerticalLayout
+			) {
+				var oVerticalLayout = new VerticalLayout({
+					content: [
+						new Label("label12", {
+							labelFor: "multiInput12",
+							text: "MultiInput with suggestions, tokenizing of values, and deletion of tokens",
+							required: true,
+							showColon: true
+						}),
+						new MultiInput("multiInput12", {
+							ariaLabelledBy: "label12",
+							placeholder: "Type 'a' to show suggestions...",
+							width: "30rem",
+							showSuggestions: true,
+							suggestionItems: [
+								new SuggestionGroupItem({
+									text: "A"
+								}),
+								new SuggestionItem({
+									additionalText: "Vienna",
+									text: "Austria"
+								}),
+								new SuggestionItem({
+									additionalText: "Canberra",
+									text: "Australia"
+								}),
+								new SuggestionItem({
+									additionalText: "Buenos Aires",
+									text: "Argentina"
+								}),
+								new SuggestionGroupItem({
+									text: "B"
+								}),
+								new SuggestionItem({
+									additionalText: "Manama",
+									text: "Bahrain"
+								}),
+								new SuggestionItem({
+									additionalText: "Sofia",
+									text: "Bulgaria"
+								}),
+								new SuggestionItem({
+									additionalText: "Ouagadougou",
+									text: "Burkina Faso"
+								}),
+								new SuggestionGroupItem({
+									text: "C"
+								}),
+								new SuggestionItem({
+									additionalText: "Ottawa",
+									text: "Canada"
+								}),
+								new SuggestionItem({
+									additionalText: "Santiago",
+									text: "Chile"
+								}),
+								new SuggestionItem({
+									additionalText: "Beijing",
+									text: "China"
+								})
+							],
+							change: handleChange,
+							input: handleInput,
+							tokenDelete: function (oEvent) {
+								var oToken = oEvent.getParameter("token");
+								this.removeToken(oToken);
+							},
+							suggestionItemPreview: handleSuggestionItemPreview,
+							suggestionItemSelect: function (oEvent) {
+								var sText = oEvent.getParameter("item").getProperty("text");
+								this.addToken(new Token({ text: sText }));
+								this.setValue("");
+							}
+						}),
+						new Label("label13", {
+							labelFor: "multiInput13",
+							text: "Disabled MultiInput"
+						}),
+						new MultiInput("multiInput13", {
+							enabled: false,
+							ariaLabelledBy: "label13",
+							tokens: [
+								new Token({
+									text: "Some text...",
+									select: handleTokenSelect
+								})
+							],
+							change: handleChange,
+							input: handleInput,
+							tokenDelete: handleTokenDelete
+						}),
+						new Label("label14", {
+							labelFor: "multiInput14",
+							text: "Readonly MultiInput"
+						}),
+						new MultiInput("multiInput14", {
+							readonly: true,
+							ariaLabelledBy: "label14",
+							tokens: [
+								new Token({
+									text: "Amy",
+									select: handleTokenSelect
+								})
+							],
+							change: handleChange,
+							input: handleInput,
+							tokenDelete: handleTokenDelete
+						}),
+						new Label("label15", {
+							labelFor: "multiInput15",
+							text: "Required MultiInput",
+							required: true
+						}),
+						new MultiInput("multiInput15", {
+							required: true,
+							ariaLabelledBy: "label15",
+							tokens: [
+								new Token({
+									text: "John",
+									select: handleTokenSelect
+								})
+							],
+							change: handleChange,
+							input: handleInput,
+							tokenDelete: handleTokenDelete
+						}),
+						new Label("label2", {
+							labelFor: "multiInput2",
+							text: "MultiInput with nMore"
+						}),
+						new MultiInput("multiInput2", {
+							ariaLabelledBy: "label2",
+							tokens: [
+								new Token({
+									text: "Am",
+									select: handleTokenSelect
+								}),
+								new Token({
+									text: "Dolor",
+									select: handleTokenSelect
+								}),
+								new Token({
+									text: "Lorem",
+									select: handleTokenSelect
+								}),
+								new Token({
+									text: "Ipsum",
+									select: handleTokenSelect
+								}),
+								new Token({
+									text: "As",
+									select: handleTokenSelect
+								}),
+								new Token({
+									text: "Ad",
+									select: handleTokenSelect
+								}),
+							],
+							change: handleChange,
+							input: handleInput,
+							tokenDelete: handleTokenDelete
+						}),
+						new Label("label4", {
+							labelFor: "multiInput4",
+							text: "MultiInput with clear icon"
+						}),
+						new MultiInput("multiInput4", {
+							ariaLabelledBy: "label4",
+							value: "hi",
+							showClearIcon: true,
+							tokens: [
+								new Token({
+									text: "abc",
+									select: handleTokenSelect
+								})
+							],
+							change: handleChange,
+							input: handleInput,
+							tokenDelete: handleTokenDelete
+						}),
+						new Label("label5", {
+							labelFor: "multiInput5",
+							text: "MultiInput with value help"
+						}),
+						new MultiInput("multiInput5", {
+							ariaLabelledBy: "label5",
+							value: "F4 or Alt+Up/Down",
+							showValueHelpIcon: true,
+							tokens: [
+								new Token({
+									text: "123",
+									select: handleTokenSelect
+								})
+							],
+							change: handleChange,
+							input: handleInput,
+							tokenDelete: handleTokenDelete,
+							valueHelpTrigger: handleValueHelpTrigger
+						}),
+						new Label("label6", {
+							labelFor: "multiInput6",
+							text: "MultiInput with suggestions"
+						}),
+						new MultiInput("multiInput6", {
+							ariaLabelledBy: "label6",
+							placeholder: "Type 'a' to show suggestions...",
+							showSuggestions: true,
+							suggestionItems: [
+								new SuggestionGroupItem({
+									text: "A"
+								}),
+								new SuggestionItem({
+									additionalText: "Vienna",
+									text: "Austria"
+								}),
+								new SuggestionItem({
+									additionalText: "Canberra",
+									text: "Australia"
+								}),
+								new SuggestionItem({
+									additionalText: "Buenos Aires",
+									text: "Argentina"
+								}),
+								new SuggestionGroupItem({
+									text: "B"
+								}),
+								new SuggestionItem({
+									additionalText: "Manama",
+									text: "Bahrain"
+								}),
+								new SuggestionItem({
+									additionalText: "Sofia",
+									text: "Bulgaria"
+								}),
+								new SuggestionItem({
+									additionalText: "Ouagadougou",
+									text: "Burkina Faso"
+								}),
+								new SuggestionGroupItem({
+									text: "C"
+								}),
+								new SuggestionItem({
+									additionalText: "Ottawa",
+									text: "Canada"
+								}),
+								new SuggestionItem({
+									additionalText: "Santiago",
+									text: "Chile"
+								}),
+								new SuggestionItem({
+									additionalText: "Beijing",
+									text: "China"
+								})
+							],
+							change: handleChange,
+							input: handleInput,
+							tokenDelete: handleTokenDelete,
+							suggestionItemPreview: handleSuggestionItemPreview,
+							suggestionItemSelect: handleSuggestionItemSelect
+						}),
+						new Label("label7", {
+							labelFor: "multiInput7",
+							text: "MultiInput with value state"
+						}),
+						new MultiInput("multiInput7", {
+							ariaLabelledBy: "label7",
+							tokens: [
+								new Token({
+									text: "1",
+									select: handleTokenSelect
+								})
+							],
+							value: "Error MultiInput",
+							valueState: "Error",
+							change: handleChange,
+							input: handleInput,
+						}),
+						new Label("label8", {
+							labelFor: "multiInput8",
+							text: "MultiInput with value state"
+						}),
+						new MultiInput("multiInput8", {
+							ariaLabelledBy: "label8",
+							tokens: [
+								new Token({
+									text: "2",
+									select: handleTokenSelect
+								})
+							],
+							value: "Warning MultiInput",
+							valueState: "Warning",
+							change: handleChange,
+							input: handleInput,
+						}),
+						new Label("label9", {
+							labelFor: "multiInput9",
+							text: "MultiInput with value state"
+						}),
+						new MultiInput("multiInput9", {
+							ariaLabelledBy: "label9",
+							tokens: [
+								new Token({
+									text: "3",
+									select: handleTokenSelect
+								})
+							],
+							value: "Success MultiInput",
+							valueState: "Success",
+							change: handleChange,
+							input: handleInput,
+						}),
+						new Label("label10", {
+							labelFor: "multiInput10",
+							text: "MultiInput with value state"
+						}),
+						new MultiInput("multiInput10", {
+							ariaLabelledBy: "label10",
+							tokens: [
+								new Token({
+									text: "4",
+									select: handleTokenSelect
+								})
+							],
+							value: "Information MultiInput",
+							valueState: "Information",
+							change: handleChange,
+							input: handleInput,
+						}),
+						new Label("label11", {
+							labelFor: "multiInput11",
+							text: "MultiInput with custom width"
+						}),
+						new MultiInput("multiInput11", {
+							ariaLabelledBy: "label11",
+							width: "20rem",
+							value: "four",
+							showValueHelpIcon: true,
+							showClearIcon: true,
+							tokens: [
+								new Token({
+									text: "one",
+									select: handleTokenSelect
+								}),
+								new Token({
+									text: "two",
+									select: handleTokenSelect
+								}),
+								new Token({
+									text: "three",
+									select: handleTokenSelect
+								}),
+							],
+							change: handleChange,
+							input: handleInput,
+							tokenDelete: handleTokenDelete,
+							valueHelpTrigger: handleValueHelpTrigger
+						}),
+						new Label("label16", {
+							labelFor: "multiInput16",
+							text: "MultiInput with custom icon"
+						}),
+						new MultiInput("multiInput16", {
+							ariaLabelledBy: "label16",
+							width: "20rem",
+							value: "four",
+							showValueHelpIcon: true,
+							showClearIcon: true,
+							tokens: [
+								new Token({
+									text: "one",
+									select: handleTokenSelect
+								}),
+								new Token({
+									text: "two",
+									select: handleTokenSelect
+								}),
+								new Token({
+									text: "three",
+									select: handleTokenSelect
+								}),
+							],
+							icon: new Icon({
+								name: "add",
+								color: "green"
+							}),
+							change: handleChange,
+							input: handleInput,
+							tokenDelete: handleTokenDelete,
+							valueHelpTrigger: handleValueHelpTrigger
+						}),
+						new Label("label17", {
+							labelFor: "multiInput17",
+							text: "Maxlength=10 MultiInput"
+						}),
+						new MultiInput("multiInput17", {
+							maxlength: 10,
+							ariaLabelledBy: "label17",
+							tokens: [
+								new Token({
+									text: "Some text...",
+									select: handleTokenSelect
+								})
+							],
+							change: handleChange,
+							input: handleInput,
+							tokenDelete: handleTokenDelete
+						}),
+						new Label("label18", {
+							labelFor: "multiInput18",
+							text: "MultiInput with data binding"
+						}),
+						new MultiInput("multiInput18", {
+							ariaLabelledBy: "label18",
+							width: "30rem",
+							change: handleChange,
+							input: handleInput,
+							tokenDelete: handleTokenDelete
+						})
+					]
+				}).addStyleClass("sapUiContentPadding");
+
+				jQuery.ajax({
+					url: "https://dummyjson.com/products?limit=30",
+					dataType: "json",
+					success: function (data) {
+						var oMI = sap.ui.getCore().byId("multiInput18");
+						oMI.setModel(new sap.ui.model.json.JSONModel({ modelData: data.products }));
+						oMI.bindAggregation("tokens", {
+							path: "/modelData",
+							template: new Token({
+								text: "{title}",
+								select: handleTokenSelect
+							}),
+							key: "id"
+						});
+					},
+					error: function () {
+						toast.setText("An error has occurred while fetching data.");
+						toast.show();
+					}
+				});
+
+				var toast = new Toast("toast", {
+					duration: 3000
+				})
+				toast.placeAt("body");
+
+				function handleChange(oEvent) {
+					console.log("Event change fired for MultiInput with parameters: ", oEvent.getParameters());
+					toast.setText("Event change fired.");
+					toast.show();
+				}
+
+				function handleInput(oEvent) {
+					console.log("Event input fired for MultiInput with parameters: ", oEvent.getParameters());
+					toast.setText("Event input fired.");
+					toast.show();
+				}
+
+				function handleSuggestionItemPreview(oEvent) {
+					console.log("Event suggestionItemPreview fired for MultiInput with parameters: ", oEvent.getParameters());
+					toast.setText("Event suggestionItemPreview fired.");
+					toast.show();
+				}
+
+				function handleSuggestionItemSelect(oEvent) {
+					console.log("Event suggestionItemSelect fired for MultiInput with parameters: ", oEvent.getParameters());
+					toast.setText("Event suggestionItemSelect fired.");
+					toast.show();
+				}
+
+				function handleIconClick(oEvent) {
+					console.log("Event click fired for Icon with parameters: ", oEvent.getParameters());
+					toast.setText("Event click fired for Icon.");
+					toast.show();
+				}
+
+				function handleTokenSelect(oEvent) {
+					console.log("Event select fired for Token with parameters: ", oEvent.getParameters());
+					toast.setText("Event select fired for Token.");
+					toast.show();
+				}
+
+				function handleTokenDelete(oEvent) {
+					console.log("Event tokenDelete fired for MultiInput with parameters: ", oEvent.getParameters());
+					toast.setText("Event tokenDelete fired.");
+					toast.show();
+				}
+
+				function handleValueHelpTrigger(oEvent) {
+					console.log("Event valueHelpTrigger fired for MultiInput with parameters: ", oEvent.getParameters());
+					toast.setText("Event valueHelpTrigger fired.");
+					toast.show();
+				}
+
+				var oPage = new Page("page", {
+					header: new Bar({
+						middleContent: [
+							new Title({ text: "Test page for sap.ui.webc.main.MultiInput" })
+						]
+					}),
+					content: [
+						oVerticalLayout
+					]
+				});
+
+				oPage.placeAt("body");
+			});
+		});
+	</script>
+</head>
+
+<body id="body" class="sapUiBody">
+</body>
+
+</html>

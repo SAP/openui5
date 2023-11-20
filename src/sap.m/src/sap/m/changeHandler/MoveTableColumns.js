@@ -1,10 +1,9 @@
+/* eslint-disable max-nested-callbacks */
 /*!
  * ${copyright}
  */
 
-sap.ui.define([
-	"jquery.sap.global"
-], function (jQuery) {
+sap.ui.define(["sap/base/Log"], function(Log) {
 	"use strict";
 
 	/**
@@ -13,7 +12,8 @@ sap.ui.define([
 	 * @alias sap.m.changeHandler.MoveTableColumns
 	 * @author SAP SE
 	 * @version ${version}
-	 * @experimental Since 1.48
+	 * @private
+	 * @since 1.48.0
 	 */
 	var MoveTableColumns = {};
 
@@ -23,6 +23,44 @@ sap.ui.define([
 	var COLUMNS_AGGREGATION_NAME = "columns";
 	var CELLS_AGGREGATION_NAME = "cells";
 	var ITEMS_AGGREGATION_NAME = "items";
+
+	function fnSwitchCells(oModifier, oView, oRow, iSourceIndex, iTargetIndex) {
+		return Promise.resolve()
+			.then(oModifier.getAggregation.bind(oModifier, oRow, CELLS_AGGREGATION_NAME))
+			.then(function(aCells) {
+				// ColumnListItem and GroupHeaderListItem are only allowed for the tables items aggregation.
+				if (!aCells) {
+					Log.warning("Aggregation cells to move not found");
+					return Promise.reject();
+				}
+
+				if (iSourceIndex < 0 || iSourceIndex >= aCells.length) {
+					Log.warning("Move cells in table item called with invalid index: " + iSourceIndex);
+					return Promise.reject();
+				}
+
+				var oMovedCell = aCells[iSourceIndex];
+				return Promise.resolve()
+					.then(oModifier.removeAggregation.bind(oModifier,oRow, CELLS_AGGREGATION_NAME, oMovedCell))
+					.then(oModifier.insertAggregation.bind(oModifier, oRow, CELLS_AGGREGATION_NAME, oMovedCell, iTargetIndex, oView));
+			});
+	}
+
+	function fnMoveColumns(oModifier, oView, oTable, iSourceIndex, iTargetIndex) {
+		return Promise.resolve()
+			.then(oModifier.getAggregation.bind(oModifier, oTable, ITEMS_AGGREGATION_NAME))
+			.then(function(aItems) {
+				return aItems.reduce(function(oPreviousPromise, oItem) {
+					return oPreviousPromise
+						.then(function() {
+							if (oModifier.getControlType(oItem) !== "sap.m.GroupHeaderListItem") {
+								return fnSwitchCells(oModifier, oView, oItem, iSourceIndex, iTargetIndex);
+							}
+							return undefined;
+						});
+				}, Promise.resolve());
+			});
+	}
 
 	/**
 	 * Moves a column from one index to another.
@@ -34,92 +72,77 @@ sap.ui.define([
 	 * @param {sap.ui.core.UIComponent} mPropertyBag.appComponent AppComponent
 	 * @param {function} fnIterator - Iterator function which is called on each movedElement, as an argument it gets CurrentIndex
 	 *  of the element and may return TargetIndex as a result.
-	 * @return {boolean} true Indicates whether the change can be applied
+	 * @return {Promise} Promise resolving when change was applied
 	 */
 	function _applyChange(oChange, oRelevantContainer, mPropertyBag, fnIterator) {
-		var oModifier = mPropertyBag.modifier,
-			oView = mPropertyBag.view,
-			oAppComponent = mPropertyBag.appComponent,
-			oChangeContent = oChange.getContent(),
-			oTargetSource = oChange.getDependentControl(SOURCE_ALIAS, mPropertyBag),
-			oTable = oChange.getDependentControl(TARGET_ALIAS, mPropertyBag),
-			aColumns = oModifier.getAggregation(oTable, COLUMNS_AGGREGATION_NAME),
-			switchCells = function (oRow, iSourceIndex, iTargetIndex) {
-				var aCells = oModifier.getAggregation(oRow, CELLS_AGGREGATION_NAME);
+		var oModifier = mPropertyBag.modifier;
+		var oView = mPropertyBag.view;
+		var oAppComponent = mPropertyBag.appComponent;
+		var oChangeContent = oChange.getContent();
+		var oTargetSource = oChange.getDependentControl(SOURCE_ALIAS, mPropertyBag);
+		var oTable = oChange.getDependentControl(TARGET_ALIAS, mPropertyBag);
+		var aColumns;
+		var oMovedElement;
 
-				// ColumnListItem and GroupHeaderListItem are only allowed for the tables items aggregation.
-				if (!aCells) {
-					jQuery.sap.log.warning("Aggregation cells to move not found");
-					return;
+		return Promise.resolve()
+			.then(function() {
+				return oModifier.getAggregation(oTable, COLUMNS_AGGREGATION_NAME);
+			})
+			.then(function(aRetrievedColumns){
+				aColumns = aRetrievedColumns;
+				if (oTargetSource !== oTable) {
+					Log.warning("Moving columns between different tables is not yet supported.");
+					return Promise.reject(false);
 				}
+				// Fetch the information about the movedElements together with the source and target index.
+				return oChangeContent.movedElements.reduce(function (oPreviousPromise, mMovedElement) {
+					var iSourceIndex;
+					var iTargetIndex;
+					var iCurrentIndexInAggregation;
+					var iStoredSourceIndexInChange;
+					var sMovedElementId;
 
-				if (iSourceIndex < 0 || iSourceIndex >= aCells.length) {
-					jQuery.sap.log.warning("Move cells in table item called with invalid index: " + iSourceIndex);
-					return;
-				}
+					return oPreviousPromise.then(function() {
+							oMovedElement = oModifier.bySelector(mMovedElement.selector, oAppComponent, oView);
+							if (!oMovedElement) {
+								sMovedElementId = mMovedElement.selector && mMovedElement.selector.id;
+								Log.warning("The table column with id: '" + sMovedElementId + "' stored in the change is not found and the move operation cannot be applied");
+								return Promise.reject();
+							}
+							iCurrentIndexInAggregation = aColumns.indexOf(oMovedElement);
+							iStoredSourceIndexInChange = mMovedElement.sourceIndex;
+							iTargetIndex = typeof fnIterator === "function" && fnIterator(iStoredSourceIndexInChange);
+							iTargetIndex = typeof iTargetIndex === "number" ? iTargetIndex : mMovedElement.targetIndex;
 
-				var oMovedCell = aCells[iSourceIndex];
-				oModifier.removeAggregation(oRow, CELLS_AGGREGATION_NAME, oMovedCell);
-				oModifier.insertAggregation(oRow, CELLS_AGGREGATION_NAME, oMovedCell, iTargetIndex, oView);
-			},
-			moveColumns = function (iSourceIndex, iTargetIndex) {
-				oModifier.getAggregation(oTable, ITEMS_AGGREGATION_NAME).forEach(function (oItem) {
-					// We are skipping the GroupHeaderListItems, because they are valid for the whole row and does not have cells to move.
-					if (oModifier.getControlType(oItem) === "sap.m.GroupHeaderListItem") {
-						return;
-					}
-
-					switchCells(oItem, iSourceIndex, iTargetIndex);
-				});
-			};
-
-		if (oTargetSource !== oTable) {
-			jQuery.sap.log.warning("Moving columns between different tables is not yet supported.");
-			return false;
-		}
-
-		// Fetch the information about the movedElements together with the source and target index.
-		oChangeContent.movedElements.forEach(function (mMovedElement) {
-			var oMovedElement = oModifier.bySelector(mMovedElement.selector, oAppComponent, oView),
-				iSourceIndex, iTargetIndex, iCurrentIndexInAggregation, iStoredSourceIndexInChange, sMovedElementId;
-
-			if (!oMovedElement) {
-				sMovedElementId = mMovedElement.selector && mMovedElement.selector.id;
-				jQuery.sap.log.warning("The table column with id: '" + sMovedElementId + "' stored in the change is not found and the move operation cannot be applied");
-				return;
-			}
-
-			iCurrentIndexInAggregation = aColumns.indexOf(oMovedElement);
-			iStoredSourceIndexInChange = mMovedElement.sourceIndex;
-			iTargetIndex = jQuery.isFunction(fnIterator) && fnIterator(iCurrentIndexInAggregation);
-			iTargetIndex = jQuery.isNumeric(iTargetIndex) ? iTargetIndex : mMovedElement.targetIndex;
-
-			if (iCurrentIndexInAggregation !== iTargetIndex) {
-				// By default we are getting the index from the aggregation, because it is possible that the order is
-				// already modified and the column that we want to move is not on the passed source index
-				iSourceIndex = iCurrentIndexInAggregation;
-			} else {
-				// In RTA edit mode, the condition will be false, because the aggregation is modified by the drag and drop action.
-				// Therefore, we need to use the passed source index
-				iSourceIndex = iStoredSourceIndexInChange;
-			}
-
-			// move children in `columns` aggregation
-			oModifier.removeAggregation(oTable, COLUMNS_AGGREGATION_NAME, oMovedElement);
-			oModifier.insertAggregation(oTable, COLUMNS_AGGREGATION_NAME, oMovedElement, iTargetIndex, oView);
-
-			// move children in `items` aggregation (actual content)
-			var oTemplate = oModifier.getBindingTemplate(oTable, ITEMS_AGGREGATION_NAME);
-
-			if (oTemplate) {
-				switchCells(oTemplate, iSourceIndex, iTargetIndex);
-				oModifier.updateAggregation(oTable, ITEMS_AGGREGATION_NAME);
-			} else {
-				moveColumns(iSourceIndex, iTargetIndex);
-			}
-		}, this);
-
-		return true;
+							if (iCurrentIndexInAggregation !== iTargetIndex) {
+								// By default we are getting the index from the aggregation, because it is possible that the order is
+								// already modified and the column that we want to move is not on the passed source index
+								iSourceIndex = iCurrentIndexInAggregation;
+							} else {
+								// In RTA edit mode, the condition will be false, because the aggregation is modified by the drag and drop action.
+								// Therefore, we need to use the passed source index
+								iSourceIndex = iStoredSourceIndexInChange;
+							}
+							// move children in `columns` aggregation
+							return oModifier.removeAggregation(oTable, COLUMNS_AGGREGATION_NAME, oMovedElement);
+						})
+						.then(function(){
+							return oModifier.insertAggregation(oTable, COLUMNS_AGGREGATION_NAME, oMovedElement, iTargetIndex, oView);
+						})
+						// move children in `items` aggregation (actual content)
+						.then(function() {
+							return oModifier.getBindingTemplate(oTable, ITEMS_AGGREGATION_NAME);
+						})
+						.then(function(oTemplate) {
+							if (oTemplate) {
+								return fnSwitchCells(oModifier, oView, oTemplate, iSourceIndex, iTargetIndex)
+									.then(oModifier.updateAggregation.bind(oModifier, oTable, ITEMS_AGGREGATION_NAME));
+							} else {
+								return fnMoveColumns(oModifier, oView, oTable, iSourceIndex, iTargetIndex);
+							}
+						});
+				}, Promise.resolve());
+			});
 	}
 
 	/**
@@ -131,19 +154,23 @@ sap.ui.define([
 	 * @param {object} mPropertyBag.view XML node representing a ui5 view
 	 * @param {sap.ui.core.util.reflection.BaseTreeModifier} mPropertyBag.modifier Modifier for the controls
 	 * @param {sap.ui.core.UIComponent} mPropertyBag.appComponent AppComponent
-	 * @return {boolean} true Indicates whether the change can be applied
+	 * @return {Promise} Promise resolving when change was applied
 	 * @public
 	 */
 	MoveTableColumns.applyChange = function (oChange, oRelevantContainer, mPropertyBag) {
 		var aRevertData = [];
 
-		_applyChange(oChange, oRelevantContainer, mPropertyBag, function (iCurrentIndexInAggregation) {
-			aRevertData.unshift({
-				index: iCurrentIndexInAggregation
+		return Promise.resolve()
+			.then(function(){
+				return _applyChange(oChange, oRelevantContainer, mPropertyBag, function (iStoredSourceIndexInChange) {
+					aRevertData.unshift({
+						index: iStoredSourceIndexInChange
+					});
+				});
+			})
+			.then(function() {
+				oChange.setRevertData(aRevertData);
 			});
-		});
-
-		oChange.setRevertData(aRevertData);
 	};
 
 	/**
@@ -155,18 +182,22 @@ sap.ui.define([
 	 * @param {object} mPropertyBag.view XML node representing a ui5 view
 	 * @param {sap.ui.core.util.reflection.BaseTreeModifier} mPropertyBag.modifier Modifier for the controls
 	 * @param {sap.ui.core.UIComponent} mPropertyBag.appComponent AppComponent
-	 * @return {boolean} true Indicates whether the change can be applied
+	 * @return {Promise} Promise resolving when change was reverted
 	 * @public
 	 */
 	MoveTableColumns.revertChange = function (oChange, oRelevantContainer, mPropertyBag) {
 		var aRevertData = oChange.getRevertData();
 
-		_applyChange(oChange, oRelevantContainer, mPropertyBag, function () {
-			var mItem = aRevertData.shift();
-			return mItem && mItem.index;
-		});
-
-		oChange.resetRevertData();
+		return Promise.resolve()
+			.then(function(){
+				return _applyChange(oChange, oRelevantContainer, mPropertyBag, function () {
+					var mItem = aRevertData.shift();
+					return mItem && mItem.index;
+				});
+			})
+			.then(function() {
+				oChange.resetRevertData();
+			});
 	};
 
 	/**
@@ -179,32 +210,32 @@ sap.ui.define([
 	 * @public
 	 */
 	MoveTableColumns.completeChangeContent = function (oChange, mSpecificChangeInfo, mPropertyBag) {
-		var oModifier = mPropertyBag.modifier,
-			oAppComponent = mPropertyBag.appComponent,
-			mChangeData = oChange.getDefinition(),
-			oSourceControl = oModifier.bySelector(mSpecificChangeInfo.source.id, oAppComponent),
-			oTargetControl = oModifier.bySelector(mSpecificChangeInfo.target.id, oAppComponent),
-			mAdditionalSourceInfo = {
-				aggregation: mSpecificChangeInfo.source.aggregation,
-				type: oModifier.getControlType(oSourceControl)
-			},
-			mAdditionalTargetInfo = {
-				aggregation: mSpecificChangeInfo.target.aggregation,
-				type: oModifier.getControlType(oTargetControl)
-			};
+		var oModifier = mPropertyBag.modifier;
+		var oAppComponent = mPropertyBag.appComponent;
+		var oSourceControl = oModifier.bySelector(mSpecificChangeInfo.source.id, oAppComponent);
+		var oTargetControl = oModifier.bySelector(mSpecificChangeInfo.target.id, oAppComponent);
+		var mAdditionalSourceInfo = {
+			aggregation: mSpecificChangeInfo.source.aggregation,
+			type: oModifier.getControlType(oSourceControl)
+		};
+		var	mAdditionalTargetInfo = {
+			aggregation: mSpecificChangeInfo.target.aggregation,
+			type: oModifier.getControlType(oTargetControl)
+		};
 
 		// We need to add the information about the movedElements together with the source and target index
-		mChangeData.content = {movedElements: []};
+		var oContent = {movedElements: []};
 		mSpecificChangeInfo.movedElements.forEach(function (mElement) {
 			var oElement = mElement.element || oModifier.bySelector(mElement.id, oAppComponent);
 
-			mChangeData.content.movedElements.push({
+			oContent.movedElements.push({
 				selector: oModifier.getSelector(oElement, oAppComponent),
 				sourceIndex: mElement.sourceIndex,
 				targetIndex: mElement.targetIndex
 			});
 		});
 
+		oChange.setContent(oContent);
 		oChange.addDependentControl(mSpecificChangeInfo.source.id, SOURCE_ALIAS, mPropertyBag, mAdditionalSourceInfo);
 		oChange.addDependentControl(mSpecificChangeInfo.target.id, TARGET_ALIAS, mPropertyBag, mAdditionalTargetInfo);
 		oChange.addDependentControl(mSpecificChangeInfo.movedElements.map(function (element) {

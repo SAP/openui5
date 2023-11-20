@@ -1,16 +1,16 @@
 /*!
  * ${copyright}
  */
-
 /**
  * Analytical Version Information, used to figure out the version of the ODataModel
  *
  * @namespace
  * @name sap.ui.model.analytics
  * @public
+ * @deprecated As of version 1.117.0
  */
 
-sap.ui.define(['jquery.sap.global'], function(jQuery) {
+sap.ui.define(["sap/base/Log"], function(Log) {
 	"use strict";
 
 	var AnalyticalVersionInfo = {
@@ -31,8 +31,9 @@ sap.ui.define(['jquery.sap.global'], function(jQuery) {
 				case "sap.ui.model.odata.ODataModel": iVersion = this.V1; break;
 				case "sap.ui.model.odata.v2.ODataModel": iVersion = this.V2; break;
 				default: iVersion = this.NONE;
-						 jQuery.sap.log.info("AnalyticalVersionInfo.getVersion(...) - The given object is no instance of ODataModel V1 or V2!");
-						 break;
+					Log.info("AnalyticalVersionInfo.getVersion(...) - The given object is no"
+						+ " instance of ODataModel V1 or V2!");
+					break;
 			}
 			return iVersion;
 		}

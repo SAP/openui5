@@ -1,10 +1,10 @@
 /*!
  * ${copyright}
  */
-
+/*eslint-disable max-len */
 // Provides class sap.ui.model.odata.TreeBindingAdapter
-sap.ui.define(['jquery.sap.global'],
-	function(jQuery) {
+sap.ui.define(["sap/base/util/each"],
+	function(each) {
 		"use strict";
 
 		/**
@@ -13,14 +13,21 @@ sap.ui.define(['jquery.sap.global'],
 		 *
 		 * This module is only for experimental and internal use!
 		 *
+		 * @param {sap.ui.model.TreeBinding} oBinding
+		 *   The binding to add ListBinding functionality to
+		 * @param {object} oControl
+		 *   The tree or tree table control using the given binding; the control is used for
+		 *   selection handling
+		 *
 		 * @alias sap.ui.model.TreeBindingCompatibilityAdapter
 		 * @class
 		 * @protected
+		 *
+		 * @deprecated since 1.96.0; use {@link sap.ui.model.TreeBindingAdapter} instead
 		 */
-		var TreeBindingCompatibilityAdapter = function (oBinding, oTable) {
+		var TreeBindingCompatibilityAdapter = function (oBinding, oControl) {
 			// Code necessary for ClientTreeBinding
-			var that = oTable;
-			jQuery.extend(oBinding, {
+			Object.assign(oBinding, {
 				_init: function(bExpandFirstLevel) {
 					this._bExpandFirstLevel = bExpandFirstLevel;
 					// load the root contexts and create the context info map
@@ -52,7 +59,7 @@ sap.ui.define(['jquery.sap.global'],
 				_expandFirstLevel: function (bSkipFirstLevelLoad) {
 					var that = this;
 					if (this.aContexts && this.aContexts.length > 0) {
-						jQuery.each(this.aContexts.slice(), function(iIndex, oContext) {
+						each(this.aContexts.slice(), function(iIndex, oContext) {
 							if (!bSkipFirstLevelLoad) {
 								that._loadChildContexts(oContext);
 							}
@@ -78,7 +85,7 @@ sap.ui.define(['jquery.sap.global'],
 				_restoreContexts: function(aContexts) {
 					var that = this;
 					var aNewChildContexts = [];
-					jQuery.each(aContexts.slice(), function(iIndex, oContext) {
+					each(aContexts.slice(), function(iIndex, oContext) {
 						var oContextInfo = that._getContextInfo(oContext);
 						if (oContextInfo && oContextInfo.bExpanded) {
 							aNewChildContexts.push.apply(aNewChildContexts, that._loadChildContexts(oContext));
@@ -90,7 +97,7 @@ sap.ui.define(['jquery.sap.global'],
 				},
 				_loadChildContexts: function(oContext) {
 					var oContextInfo = this._getContextInfo(oContext);
-					var iIndex = jQuery.inArray(oContext, this.aContexts);
+					var iIndex = (this.aContexts ? this.aContexts.indexOf(oContext) : -1);
 					var aNodeContexts = this.getNodeContexts(oContext, 0, Number.MAX_VALUE);
 					for (var i = 0, l = aNodeContexts.length; i < l; i++) {
 						this.aContexts.splice(iIndex + i + 1, 0, aNodeContexts[i]);
@@ -217,19 +224,19 @@ sap.ui.define(['jquery.sap.global'],
 					this.toggleContext(this.getContextByIndex(iRowIndex));
 				},
 				storeSelection: function() {
-					var aSelectedIndices = that.getSelectedIndices();
+					var aSelectedIndices = oControl.getSelectedIndices();
 					var aSelectedContexts = [];
-					jQuery.each(aSelectedIndices, function(iIndex, iValue) {
-						aSelectedContexts.push(that.getContextByIndex(iValue));
+					each(aSelectedIndices, function(iIndex, iValue) {
+						aSelectedContexts.push(oControl.getContextByIndex(iValue));
 					});
 					this._aSelectedContexts = aSelectedContexts;
 				},
 				restoreSelection: function() {
-					that.clearSelection();
+					oControl.clearSelection();
 					var _aSelectedContexts = this._aSelectedContexts;
-					jQuery.each(this.aContexts, function(iIndex, oContext) {
-						if (jQuery.inArray(oContext, _aSelectedContexts) >= 0) {
-							that.addSelectionInterval(iIndex, iIndex);
+					each(this.aContexts, function(iIndex, oContext) {
+						if (((_aSelectedContexts ? _aSelectedContexts.indexOf(oContext) : -1)) >= 0) {
+							oControl.addSelectionInterval(iIndex, iIndex);
 						}
 					});
 					this._aSelectedContexts = undefined;
@@ -238,14 +245,15 @@ sap.ui.define(['jquery.sap.global'],
 					// for compatibility reasons (OData Tree Binding)
 					return undefined;
 				},
+				detachSelectionChanged: function() {}, // for compatibility
 				clearSelection: function () {
-					that._oSelection.clearSelection();
+					oControl._oSelection.clearSelection();
 				},
 				attachSort: function() {},
 				detachSort: function() {}
 			});
 			// initialize the binding
-			oBinding._init(oTable.getExpandFirstLevel());
+			oBinding._init(oControl.getExpandFirstLevel());
 
 		};
 

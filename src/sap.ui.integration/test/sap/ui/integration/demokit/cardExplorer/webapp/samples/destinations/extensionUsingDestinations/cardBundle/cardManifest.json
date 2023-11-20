@@ -1,0 +1,69 @@
+{
+	"_version": "1.20.0",
+	"sap.app": {
+		"id": "card.explorer.sample.extensionUsingDestinations.trainings",
+		"type": "card",
+		"title": "Sample of destinations",
+		"subTitle": "Sample of destinations",
+		"applicationVersion": {
+			"version": "1.0.0"
+		},
+		"shortTitle": "A short title for this card",
+		"info": "Additional information about this card",
+		"description": "A long description for this card",
+		"tags": {
+			"keywords": [
+				"Destinations",
+				"Card",
+				"Sample"
+			]
+		}
+	},
+	"sap.card": {
+		"extension": "./DataExtension",
+		"type": "List",
+		"data": {
+			"extension": {
+				"method": "getDataFromDestination"
+			}
+		},
+		"configuration": {
+			"destinations": {
+				"myDestination": {
+					"name": "Northwind"
+				},
+				"myDestinationForImages": {
+					"name": "NorthwindImages"
+				}
+			},
+			"parameters": {
+				"maxItems": {
+					"value": 3,
+					"type": "integer",
+					"label": "Maximum Items",
+					"description": "Defines how many items will be displayed at most."
+				}
+			}
+		},
+		"header": {
+			"title": "Destinations sample",
+			"subTitle": "First {parameters>/maxItems/value} products from destination 'Northwind'",
+			"status": {
+				"text": "top {parameters>/maxItems/value}"
+			}
+		},
+		"content": {
+			"data": {
+				"path": "/value/"
+			},
+			"maxItems": "{parameters>/maxItems/value}",
+			"item": {
+				"title": "{ProductName}",
+				"description": "Unit Price {= format.currency(${UnitPrice}, 'EUR')}",
+				"icon": {
+					"src": "{{destinations.myDestinationForImages}}/Product_{ProductID}.png"
+				}
+			}
+		}
+	}
+}

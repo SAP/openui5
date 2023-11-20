@@ -19,7 +19,7 @@ sap.ui.define(['./Element', './library'],
 	 * @param {object} [mSettings] initial settings for the new control
 	 *
 	 * @class
-	 * Represents a title element that can be used for aggregation with other controls
+	 * Represents a title element that can be used for aggregation with other controls.
 	 * @extends sap.ui.core.Element
 	 *
 	 * @author SAP SE
@@ -28,7 +28,6 @@ sap.ui.define(['./Element', './library'],
 	 * @public
 	 * @since 1.16.0
 	 * @alias sap.ui.core.Title
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var Title = Element.extend("sap.ui.core.Title", /** @lends sap.ui.core.Title.prototype */ { metadata : {
 

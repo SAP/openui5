@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="utf-8" />
+	<title>Editor Test Page with designtime files</title>
+	<script src="../sharedTest.js" localstoragekey="card-designtime-"></script>
+	<script src="../../../../../../resources/sap-ui-integration.js"
+		id="sap-ui-bootstrap"
+		data-sap-ui-theme="sap_horizon"
+		data-sap-ui-oninit="init"
+		data-sap-ui-resourceroots='{"testjs":"../","my.component.sample.cardContentControls":"../"}'>
+	</script>
+	<link rel="stylesheet" href="../sharedTest.css" />
+</head>
+
+<body class="sapUiBody sapUiSizeCompact">
+	<div id="global">
+		<h2>Settings</h2>
+		<label>Page Language:</label>
+		<select id="languageSelect" onchange="switchLanguage(this)">
+		</select>
+		<label>Theme:</label>
+		<select onchange="switchTheme(this)">
+			<option value="sap_horizon">Morning Horizon</option>
+			<option value="sap_horizon_dark">Evening Horizon</option>
+			<option value="sap_horizon_hcb">High Contrast Black</option>
+			<option value="sap_horizon_hcw">High Contrast White</option>
+		</select>
+	</div>
+	<div id="editor" style="width: 800px;">
+		<h2>Admin Mode (only)</h2>
+		<div class="buttons">
+			<button onclick="showSeparatePreview('cardEditorAdmin', this)">
+				Show Separate Preview in Popup
+			</button>
+			<button onclick="showSeparatePreview('cardEditorAdmin', this, 'Dialog')">
+				Show Separate Preview in Dialog
+			</button>
+		</div>
+		<ui-integration-card-editor id="cardEditorAdmin" preview-position="separate" mode="admin" allow-dynamic-values="true" allow-settings="true">
+		</ui-integration-card-editor>
+		<div class="buttons">
+			<button onclick="showCurrentValues('cardEditorAdmin')">
+				Show Current Values (Admin Mode)
+			</button>
+			<button onclick="saveCurrentValues('cardEditorAdmin')">
+				Save Current Values (Admin Mode)
+			</button>
+			<button onclick="loadCurrentValues('cardEditorAdmin')">
+				Load Values (Admin Mode)
+			</button>
+			<button onclick="deleteCurrentValues('cardEditorAdmin')">
+				Delete Values (Admin Mode)
+			</button>
+		</div>
+		<h2>Content Mode (only)</h2>
+		<ui-integration-card-editor id="cardEditorContent" preview-position="right" mode="content" allow-dynamic-values="true" allow-settings="true">
+		</ui-integration-card-editor>
+		<div class="buttons">
+			<button onclick="showCurrentValues('cardEditorContent')">
+				Show Current Values (Content Mode)
+			</button>
+			<button onclick="saveCurrentValues('cardEditorContent')">
+				Save Current Values (Content Mode)
+			</button>
+			<button onclick="loadCurrentValues('cardEditorContent')">
+				Load Values (Content Mode)
+			</button>
+			<button onclick="deleteCurrentValues('cardEditorContent')">
+				Delete Values (Content Mode)
+			</button>
+		</div>
+	</div>
+</body>
+
+</html>

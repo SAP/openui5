@@ -1,0 +1,32 @@
+{
+	"sap.app": {
+		"id": "sap.ui.core.sample.TargetsStandalone",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"dependencies": {
+			"libs": {
+				"sap.m": {},
+				"sap.ui.core": {}
+			}
+		},
+		"config": {
+			"sample": {
+				"iframe": "TargetsStandalone.html",
+				"stretch": true,
+				"files": [
+					"targetsApp/Component.js",
+					"targetsApp/view/View1.view.xml",
+					"targetsApp/controller/View1.controller.js",
+					"targetsApp/view/View2.view.xml",
+					"targetsApp/controller/View2.controller.js",
+					"targetsApp/view/App.view.xml",
+					"TargetsStandalone.html",
+					"manifest.json"
+				]
+			}
+		}
+	}
+}

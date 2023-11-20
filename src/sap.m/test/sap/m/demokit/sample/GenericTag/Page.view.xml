@@ -1,0 +1,53 @@
+<mvc:View
+	controllerName="sap.m.sample.GenericTag.Page"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m"
+	xmlns:l="sap.ui.layout">
+	<l:VerticalLayout
+		class="sapUiContentPadding"
+		width="100%">
+		<l:Grid class="sapUiSmallMarginBottom" hSpacing="0" vSpacing="0" defaultSpan="L4 M6 S12" width="100%">
+			<FlexBox class="sapUiTinyMarginBottom" direction="Column" fitContainer="true" alignItems="Start" justifyContent="Start">
+				<Text text="Generic Tag - KPI"  class="sapUiSmallMarginBottom" />
+				<GenericTag text="Project Cost" design="StatusIconHidden" status="Error"  class="sapUiSmallMarginBottom">
+					<ObjectNumber state="Error" emphasized="false" number="3.5M" unit="EUR"/>
+				</GenericTag>
+
+				<GenericTag text="Project Cost"  design="StatusIconHidden" status="Warning"  class="sapUiSmallMarginBottom">
+					<ObjectNumber state="Warning" emphasized="false" number="2.4M" unit="EUR" />
+				</GenericTag>
+
+				<GenericTag text="Project Cost"  design="StatusIconHidden" status="Success" class="sapUiSmallMarginBottom">
+					<ObjectNumber state="Success" emphasized="false" number="1.6M" unit="EUR" />
+				</GenericTag>
+
+				<GenericTag text="PC"  design="StatusIconHidden" status="Error"  class="sapUiSmallMarginBottom">
+					<ObjectNumber state="Error" emphasized="false" number="35" unit="%"/>
+				</GenericTag>
+
+				<GenericTag text="PC"  design="StatusIconHidden" status="Warning"  class="sapUiSmallMarginBottom">
+					<ObjectNumber state="Warning" emphasized="false" number="71" unit="%" />
+				</GenericTag>
+
+				<GenericTag text="PC"  design="StatusIconHidden" status="Success" class="sapUiSmallMarginBottom">
+					<ObjectNumber state="Success" emphasized="false" number="96" unit="%" />
+				</GenericTag>
+			</FlexBox>
+			<FlexBox direction="Column" fitContainer="true" alignItems="Start" justifyContent="Start">
+				<Text text="Generic Tag - KPI (error handling)" class="sapUiSmallMarginBottom" />
+				<GenericTag text="Project Cost"  design="StatusIconHidden" status="Error" valueState="Error" class="sapUiSmallMarginBottom" />
+			</FlexBox>
+			<FlexBox direction="Column" fitContainer="true" alignItems="Start" justifyContent="Start">
+				<Text text="Generic Tag - Situation" class="sapUiSmallMarginBottom"/>
+				<GenericTag text="Shortage Expected" status="Warning" class="sapUiSmallMarginBottom" />
+				<GenericTag text="Material Shortage" status="Warning" class="sapUiSmallMarginBottom" />
+			</FlexBox>
+			<FlexBox direction="Column" fitContainer="true" alignItems="Start" justifyContent="Start">
+				<Text text="Generic Tag with label" id="genericTagLabel" class="sapUiSmallMarginBottom" />
+				<GenericTag ariaLabelledBy="genericTagLabel" text="Project Cost" design="StatusIconHidden" status="Error"  class="sapUiSmallMarginBottom">
+					<ObjectNumber state="Error" emphasized="false" number="3.5M" unit="EUR"/>
+				</GenericTag>
+			</FlexBox>
+		</l:Grid>
+	</l:VerticalLayout>
+</mvc:View>

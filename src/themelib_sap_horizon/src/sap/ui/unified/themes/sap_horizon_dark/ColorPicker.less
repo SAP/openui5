@@ -1,0 +1,143 @@
+/* =========================================== */
+/* CSS for control sap.ui.unified/ColorPicker  */
+/* Evening Horizon theme                       */
+/* =========================================== */
+
+.sapUiColorPicker-ColorPickerSlider.sapUiSliHori .sapUiSliBar,
+.sapUiColorPicker-ColorPickerSlider.sapUiSliHori .sapUiSliBar .sapUiSliHiLi {
+	border: none;
+	background-color: transparent;
+}
+
+.sapUiColorPicker-ColorPickerAlphaSlider.sapUiSliHori .sapUiSliBar,
+.sapUiColorPicker-ColorPickerAlphaSlider.sapUiSliHori .sapUiSliBar .sapUiSliHiLi {
+	border: none;
+	background-color: transparent;
+}
+
+.sapUnifiedColorPicker {
+	.sapUiColorPicker-ColorPickerAlphaSlider,
+	.sapUiColorPicker-ColorPickerSlider {
+		.sapMSliderHandle {
+			border: 0.125rem solid @sapUiFieldBorderColor;
+			background-color: transparent;
+			height: 1.625rem;
+		}
+	}
+}
+
+.sapUiColorPicker-ColorPickerMatrix.sapUnifiedColorPicker {
+	.sapUiColorPicker-ColorPickerHexField,
+	.sapUiCPHexWrapper,
+	.sapUiCPComparisonWrapper {
+		.sapUiColorPicker-ColorPickerOldColor,
+		.sapUiColorPicker-ColorPickerNewColor {
+			height: 2.25rem;
+		}
+		margin-top: 0.5rem;
+		vertical-align: top;
+	}
+}
+
+.sapUiColorPicker-Large.sapUiCPPhone .sapUiCPComparisonWrapper,
+.sapUiColorPicker-ColorPickerMatrix.sapUnifiedColorPicker .sapUiCPHexWrapper,
+.sapUiColorPicker-ColorPickerMatrix.sapUnifiedColorPicker:not(.sapUiCPPhone) .sapUiCPComparisonWrapper {
+	height: 2.25rem;
+}
+
+.sapUiColorPicker-Large {
+	.sapUiCPHSLVText {
+		padding-left: 2.125rem;
+	}
+}
+
+.sapUiColorPicker-Simplified.sapUnifiedColorPicker.sapUiCPPhone .sapUiColorPicker-ColorPickerNewColor,
+.sapUiColorPicker-Simplified.sapUnifiedColorPicker.sapUiCPPhone .sapUiColorPicker-ColorPickerOldColor {
+	height: 2.75rem;
+}
+
+.sapUiColorPicker-Default.sapUnifiedColorPicker.sapUiCPPhone .sapUiColorPicker-ColorPickerNewColor,
+.sapUiColorPicker-Default.sapUnifiedColorPicker.sapUiCPPhone .sapUiColorPicker-ColorPickerOldColor {
+	height: 2.3125rem;
+}
+
+.sapUiSizeCompact {
+	.sapUnifiedColorPicker:not(.sapUiCPPhone) .sapUiCPComparisonWrapper {
+		height: 1.5rem;
+		vertical-align: top;
+	}
+
+	.sapUiColorPicker-Default.sapUnifiedColorPicker:not(.sapUiCPPhone) .sapMBtn .sapMBtnInner .sapMBtnIcon {
+		margin-left: 0.3rem;
+	}
+
+	.sapUiColorPicker-Simplified.sapUnifiedColorPicker.sapUiCPPhone .sapUiColorPicker-ColorPickerNewColor,
+	.sapUiColorPicker-Simplified.sapUnifiedColorPicker.sapUiCPPhone .sapUiColorPicker-ColorPickerOldColor {
+		height: 2.065rem;
+	}
+	.sapUiColorPicker-Default.sapUnifiedColorPicker.sapUiCPPhone {
+		.sapUiColorPicker-ColorPickerNewColor,
+		.sapUiColorPicker-ColorPickerOldColor {
+			width: 2.5rem;
+			height: 1.5rem;
+		}
+		.sapMBtn {
+			width: 2.5rem;
+			margin-left: 1.1rem;
+		}
+		.sapUiColorPicker-ColorPickerSlider {
+			margin-bottom: 0.0625rem;
+		}
+	}
+	.sapUnifiedColorPicker {
+		.sapUiColorPicker-ColorPickerAlphaSlider,
+		.sapUiColorPicker-ColorPickerSlider {
+			.sapMSliderHandle {
+			  height: 1.25rem;
+			}
+		}
+	}
+}
+
+.sapUiColorPicker-ColorPickerMatrix.sapUnifiedColorPicker.sapUiCPPhone .sapUiColorPicker-ColorPickerAlphaSlider {
+	padding-top: 0.1875rem;
+}
+
+.sapUiColorPicker-ColorPickerMatrix.sapUnifiedColorPicker .sapUiCPPercentSymbol {
+	line-height: 2.75rem;
+}
+
+.sapUiColorPicker-ColorPickerMatrix.sapUnifiedColorPicker .sapUiColorPicker-ColorPickerCircle:after {
+	border-color: @sapUiFieldBorderColor;
+}
+
+.sapUnifiedColorPicker .sapMSliderInner:not(.sapMSliderInnerDisabled):hover .sapMSliderHandle {
+	background: @sapUiButtonBackground;
+	border-color: darken(@sapUiFieldBorderColor, 15);
+}
+
+.sapUnifiedColorPicker .sapMSliderInner::before,
+.sapUnifiedColorPicker .sapMSlider::after {
+	display: none;
+}
+
+.sapUnifiedColorPicker .sapMSliderInner .sapMSliderHandle:focus {
+	outline: 0.1875rem solid @sapUiContentFocusColor;
+}
+
+.sapUnifiedColorPicker .sapMSliderInner .sapMSliderHandle:focus::before {
+	content: "";
+	outline: 0.0625rem solid @sapContent_ContrastFocusColor;
+	outline-offset: -0.125rem;
+}
+
+.sapUnifiedColorPicker .sapMSliderInner .sapMSliderHandle:not(.sapMSliderHandlePressed):not(.sapMRangeSlider.sapMSlider .sapMSliderInner:not(.sapMSliderInnerDisabled):hover > .sapMSliderHandle):not(.sapMRangeSlider.sapMSlider .sapMSliderInner:not(.sapMSliderInnerDisabled) .sapMSliderHandle:focus):after {
+	display: none;
+}
+
+
+.sapUnifiedColorPicker .sapMSliderInner:not(.sapMSliderInnerDisabled).sapMSliderPressed .sapMSliderHandle,
+.sapUnifiedColorPicker .sapMSliderInner:not(.sapMSliderInnerDisabled) .sapMSliderHandle:focus {
+	border: 0.125rem solid darken(@sapUiFieldBorderColor, 15);
+	background-color: transparent;
+}

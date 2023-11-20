@@ -1,15 +1,39 @@
+/*global QUnit, sinon */
 sap.ui.define([
-	"jquery.sap.global",
+	"sap/base/i18n/Localization",
+	"sap/ui/base/Object",
 	"sap/ui/core/cache/CacheManager",
 	"sap/ui/core/Component",
+	"sap/ui/core/Element",
+	"sap/ui/core/mvc/Controller",
 	"sap/ui/core/mvc/View",
+	"sap/ui/core/mvc/ViewType",
 	"sap/ui/core/mvc/XMLView",
-	"./testdata/TestPreprocessor",
+	"sap/ui/VersionInfo",
 	"./AnyViewAsync.qunit",
-	"jquery.sap.script"
-], function(jQuery, Cache, Component, View, XMLView, TestPreprocessor, asyncTestsuite /*, jQuery*/) {
+	"./testdata/TestPreprocessor",
+	"sap/base/Log",
+	"sap/base/strings/hash",
+	"sap/base/util/LoaderExtensions"
+], function(
+	Localization,
+	BaseObject,
+	Cache,
+	Component,
+	Element,
+	Controller,
+	View,
+	ViewType,
+	XMLView,
+	VersionInfo,
+	asyncTestsuite,
+	TestPreprocessor,
+	Log,
+	hash,
+	LoaderExtensions
+) {
+	"use strict";
 
-	// setup test config with generic factory
 	var oConfig = {
 		type : "XML",
 		receiveSource : function(source) {
@@ -18,20 +42,18 @@ sap.ui.define([
 	};
 
 	// set generic view factory
-	oConfig.factory = function(bAsync) {
-		return sap.ui.view({
-			type : "XML",
-			viewName : "testdata.mvc.Async",
-			async : bAsync
+	oConfig.factory = function() {
+		return View.create({
+			type: ViewType.XML,
+			viewName : "testdata.mvc.Async"
 		});
 	};
 	asyncTestsuite("Generic View Factory", oConfig);
 
 	// set XMLView factory
-	oConfig.factory = function(bAsync) {
-		return sap.ui.xmlview({
-			viewName : "testdata.mvc.Async",
-			async : bAsync
+	oConfig.factory = function() {
+		return XMLView.create({
+			viewName : "testdata.mvc.Async"
 		});
 	};
 	asyncTestsuite("XMLView Factory", oConfig);
@@ -41,50 +63,66 @@ sap.ui.define([
 	// error
 	QUnit.test("Error in template - no default aggregation defined", function(assert) {
 		var sXml = [
-				'<core:View xmlns:core="sap.ui.core" xmlns:m="sap.m" xmlns="http://www.w3.org/1999/xhtml">',
+				'<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:m="sap.m">',
 				'	<m:Button>',
 				'		<m:Error/>',
 				'	</m:Button>',
-				'</core:View>'
+				'</mvc:View>'
 			].join(''),
-			sError = "Cannot add direct child without default aggregation defined for control sap.m.Button",
-			view;
+			sError = "Error found in View (id: 'erroneous_view_1').\n" +
+					"XML node: '<m:Error xmlns:m=\"sap.m\"/>':\n" +
+					"Cannot add direct child without default aggregation defined for control sap.m.Button";
+		var sId = "erroneous_view_1";
 
-		return sap.ui.xmlview("erroneous_view_1", {async:true, viewContent:sXml}).loaded().catch(function(error) {
+		return XMLView.create({
+			id: sId,
+			definition: sXml
+		}).catch(function(error) {
+			assert.notOk(Element.getElementById(sId), "Must deregister an erroneous instance");
 			assert.equal(error.message, sError, "Must reject with an error");
 		});
 	});
 
 	QUnit.test("Error in template - text in aggregation", function(assert) {
 		var sXml = [
-			'<core:View xmlns:core="sap.ui.core" xmlns:m="sap.m" xmlns="http://www.w3.org/1999/xhtml">',
+			'<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:m="sap.m">',
 			'	<m:Button>',
 			'		Error',
 			'	</m:Button>',
-			'</core:View>'
+			'</mvc:View>'
 			].join(''),
-			sError = "Cannot add text nodes as direct child of an aggregation. For adding text to an aggregation, a surrounding html tag is needed: Error",
-			view;
+			sError = "Error found in View (id: 'erroneous_view_2').\n" +
+					"XML node: '\t\tError\t':\n" +
+					"Cannot add text nodes as direct child of an aggregation. For adding text to an aggregation, a surrounding html tag is needed.";
+		var sId = "erroneous_view_2";
 
-		return sap.ui.xmlview("erroneous_view_2", {async:true, viewContent:sXml}).loaded().catch(function(error) {
+		return XMLView.create({
+			id: sId,
+			definition: sXml
+		}).catch(function(error) {
+			assert.notOk(Element.getElementById(sId), "Must deregister an erroneous instance");
 			assert.equal(error.message, sError, "Must reject with an error");
 		});
 	});
 
-	QUnit.test("Error in controller", function() {
+	QUnit.test("Error in controller", function(assert) {
 		var sXml = [
-				'<core:View controllerName="example.mvc.test.error" xmlns:core="sap.ui.core">',
-				'</core:View>'
-			].join(''),
-			view;
+				'<mvc:View controllerName="example.mvc.test.error" xmlns:mvc="sap.ui.core.mvc">',
+				'</mvc:View>'
+			].join('');
+		var sId = "erroneous_view_3";
+
 		// define erroneous controller
-		sap.ui.controller("example.mvc.test.error", {
-			onInit: function() {
-				throw new Error("Controller error");
-			}
-		});
-		return sap.ui.xmlview("erroneous_view_3", {async:true, viewContent:sXml}).loaded().catch(function(error) {
-			assert.equal(error.message, "Controller error", "Must reject with an error");
+		return Controller.create({
+			name: "example.mvc.test.error"
+		}).then(function() {
+			return XMLView.create({
+				id: sId,
+				definition: sXml
+			}).catch(function(error) {
+				assert.notOk(Element.getElementById(sId), "Must deregister an erroneous instance");
+				assert.equal(error.message, "Controller error", "Must reject with an error");
+			});
 		});
 	});
 
@@ -110,9 +148,9 @@ sap.ui.define([
 			});
 
 			var xmlWithBindings = [
-				'<core:View xmlns:core="sap.ui.core" xmlns:m="sap.m">',
+				'<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:m="sap.m">',
 				'  <m:Button id="btn" enabled="{/booleanValue}" text="{/stringValue}" width="{/integerValue}" />',
-				'</core:View>'
+				'</mvc:View>'
 			].join('');
 
 			XMLView.create({definition:xmlWithBindings}).then(function (oViewWithBindings1) {
@@ -141,12 +179,12 @@ sap.ui.define([
 	// ==== Cache-relevant test cases ===================================================
 
 	function viewFactory(mCacheSettings, mPreprocessors) {
-		return sap.ui.xmlview({
+		return XMLView.create({
 			viewName: "testdata.mvc.cache",
-			async: true,
 			id: "cachedView",
 			preprocessors: mPreprocessors,
-			cache: mCacheSettings
+			cache: mCacheSettings,
+			type: ViewType.XML
 		});
 	}
 
@@ -156,226 +194,337 @@ sap.ui.define([
 
 	// skip tests for unsupported browsers
 	if (Cache._isSupportedEnvironment()) {
-		Cache.reset().then(function() {
 
-			var sLocation = window.location.host + window.location.pathname,
-				sBuildTimeStamp = "12345"
+		var sLocation = window.location.host + window.location.pathname,
+			sBuildTimeStamp = "12345";
 
-			sinon.stub(sap.ui, "getVersionInfo").returns(Promise.resolve({
-				libraries: [{
-					buildTimestamp: "12345"
-				}]
-			}));
+		sinon.stub(VersionInfo, "load").returns(Promise.resolve({
+			libraries: [{
+				buildTimestamp: "12345"
+			}]
+		}));
 
-			function getKeyParts(aKeys, sManifest) {
-				var sLanguageTag = sap.ui.getCore().getConfiguration().getLanguageTag(),
-					sHashCode = jQuery.sap.hashCode(sManifest || "");
-				return "_" + sLanguageTag + "_" + sBuildTimeStamp + "_" + aKeys.join("_") + "(" + sHashCode + ")";
+		var getKeyParts = function(aKeys, sManifest, aUsedTerminologies) {
+			var sUsedTerminologies = aUsedTerminologies ? aUsedTerminologies.join("_") + "_" : "";
+			var sLanguageTag = Localization.getLanguageTag().toString(),
+				sHashCode = hash(sManifest || "");
+			return "_" + sLanguageTag + "_" + sUsedTerminologies + sBuildTimeStamp + "_" + aKeys.join("_") + "(" + sHashCode + ")";
+		};
+
+		var calculateCacheKey = function(oComponent, oView, aKeys, aUsedTerminologies){
+			return oComponent.getMetadata().getName() +  "_" + oView.getId() + getKeyParts(aKeys, JSON.stringify(oComponent.getManifest()), aUsedTerminologies);
+		};
+
+		QUnit.module("Cache API", {
+			before: function() {
+				return Cache.reset();
+			},
+			beforeEach: function() {
+				this.oSpy = sinon.spy(Cache, "set");
+			},
+			afterEach: function() {
+				this.oSpy.restore();
+				Cache.reset();
+			}
+		});
+
+		QUnit.test("simple cache key", function(assert) {
+			var oSpy = this.oSpy, sKey = "key";
+			assert.expect(1);
+			return viewFactory({
+				keys: [sKey]
+			}).then(function(oView) {
+				sinon.assert.calledWith(oSpy, sLocation + "_cachedView" + getKeyParts([sKey]));
+				oView.destroy();
+			});
+		});
+
+		QUnit.test("cache keys array", function(assert) {
+			var oSpy = this.oSpy, sKey1 = "key1", sKey2 = "key2";
+			assert.expect(1);
+			return viewFactory({
+				keys: [sKey1, Promise.resolve(sKey2)]
+			}).then(function(oView) {
+				sinon.assert.calledWith(oSpy, sLocation + "_cachedView" + getKeyParts([sKey1, sKey2]));
+				oView.destroy();
+			});
+		});
+
+		QUnit.test("no cache key", function(assert) {
+			var error = new Error("Provided cache keys may not be empty or undefined."),
+				oSpy = this.oSpy,
+				oLogSpy = sinon.spy(Log, "error");
+
+			assert.expect(3);
+			return viewFactory({keys: [Promise.resolve()]}).then(function(oView) {
+				sinon.assert.calledWith(oLogSpy, error.message, "XMLViewCacheError", "sap.ui.core.mvc.XMLView");
+				sinon.assert.calledWith(oLogSpy, "Processing the View without caching.", "sap.ui.core.mvc.XMLView");
+				sinon.assert.notCalled(oSpy);
+				oView.destroy();
+				oLogSpy.restore();
+			});
+		});
+
+		QUnit.test("cache key error", function(assert) {
+			var error = new Error("Some Error"),
+				pView = viewFactory({keys: [Promise.reject(error)]});
+
+			assert.expect(1);
+			return pView.catch(function(_error) {
+				assert.equal(_error, error, "Loaded Promise should reject with the thrown error.");
+			});
+		});
+
+		QUnit.test("Check Cache Key w/ Cache Key Provider", function(assert) {
+			var oSpy = this.oSpy;
+			var oLogSpy = sinon.spy(Log, "error");
+
+			function _viewFactory() {
+				return XMLView.create({
+					viewName: "testdata.mvc.cache",
+					id: "cachedView",
+					preprocessors: {
+						xml: [{
+							preprocessor: {
+								process: function (xml, oViewInfo, mSettings) {
+									return xml;
+								},
+								getCacheKey: function() {
+									return "CacheKeyFromProvider";
+								}
+							}
+						}]
+					},
+					cache: {
+						keys: ["originCacheKey"]
+					},
+					type: ViewType.XML
+				});
 			}
 
-			QUnit.module("Cache API", {
-				beforeEach: function() {
-					this.oSpy = sinon.spy(Cache, "set");
+			assert.expect(3);
+			return _viewFactory()
+				.then(function(oView) {
+					var sCacheKey = oSpy.args[0][0];
+					assert.ok(sCacheKey.includes("originCacheKey"), "The cache key should contain origin cache key.");
+					assert.ok(sCacheKey.includes("CacheKeyFromProvider"), "The cache key should contain cache key from provider.");
+					oView.destroy();
+				})
+				.then(_viewFactory).then(function(oView) {
+					assert.notOk(oLogSpy.callCount === 1, "Deprecation error shouldn't be logged.");
+					oLogSpy.restore();
+					oView.destroy();
+				});
+		});
+
+		QUnit.test("cache additional data provider", function(assert) {
+			var oLogSpy = sinon.spy(Log, "error");
+			var AdditionalDataClass = function() {
+				this.foo = true;
+			};
+			var oAdditionalData = new AdditionalDataClass();
+
+			var fnAdditionalDataProvider = {
+				setAdditionalCacheData: function(vData) {
+					oAdditionalData = vData[0];
+					assert.ok(true, "Provide set was called");
 				},
-				afterEach: function() {
-					this.oSpy.restore();
-					Cache.reset();
+				getAdditionalCacheData: function() {
+					assert.ok(true, "Provide get was called");
+					return [oAdditionalData];
 				}
-			});
+			};
 
-			QUnit.test("simple cache key", function(assert) {
-				var oSpy = this.oSpy, sKey = "key";
-				assert.expect(1);
-				return viewFactory({
-					keys: [sKey]
-				}).loaded().then(function(oView) {
-					sinon.assert.calledWith(oSpy, sLocation + "_cachedView" + getKeyParts([sKey]));
-					oView.destroy();
-				});
-			});
-
-			QUnit.test("cache keys array", function(assert) {
-				var oSpy = this.oSpy, sKey1 = "key1", sKey2 = "key2";
-				assert.expect(1);
-				return viewFactory({
-					keys: [sKey1, Promise.resolve(sKey2)]
-				}).loaded().then(function(oView) {
-					sinon.assert.calledWith(oSpy, sLocation + "_cachedView" + getKeyParts([sKey1, sKey2]));
-					oView.destroy();
-				});
-			});
-
-			QUnit.test("no cache key - sync part", function(assert) {
-				var error = new Error("No cache keys provided. At least one is required.");
-				assert.expect(2);
-				assert.throws(viewFactory.bind(null, "foo"), error, "invalid cache config");
-				assert.throws(viewFactory.bind(null, {keys: []}), error, "empty array");
-			});
-
-			QUnit.test("no cache key - async part", function(assert) {
-				var error = new Error("Provided cache keys may not be empty or undefined."),
-					oSpy = this.oSpy,
-					oLogSpy = sinon.spy(jQuery.sap.log, "debug");
-
-				assert.expect(3);
-				return viewFactory({keys: [Promise.resolve()]}).loaded().then(function(oView) {
-					sinon.assert.calledWith(oLogSpy, error.message, "XMLViewCacheError", "sap.ui.core.mvc.XMLView");
-					sinon.assert.calledWith(oLogSpy, "Processing the View without caching.", "sap.ui.core.mvc.XMLView");
-					sinon.assert.notCalled(oSpy);
-					oView.destroy();
-				});
-			});
-
-			QUnit.test("cache key error", function(assert) {
-				var error = new Error("Some Error"),
-					oView = viewFactory({keys: [Promise.reject(error)]});
-
-				assert.expect(1);
-				return oView.loaded().catch(function(_error) {
-					assert.equal(_error, error, "Loaded Promise should reject with the thrown error.");
-					oView.destroy();
-				});
-			});
-
-			QUnit.test("cache additional data", function(assert) {
-				var oSpy = this.oSpy, aAdditionalData = ["foo"];
-
-				function _viewFactory() {
-					return viewFactory({
+			function _viewFactory() {
+				return XMLView.create({
+					id: "myView",
+					cache: {
 						keys: ["key"],
-						additionalData: aAdditionalData
-					}, {
+						additionalData: fnAdditionalDataProvider
+
+					},
+					viewName: "testdata.mvc.cache",
+					preprocessors: {
 						xml: [{
 							preprocessor: function(xml, oViewInfo, mSettings) {
-								mSettings.additionalData.push("bar");
+								mSettings.additionalData[0].bar = true;
 								return xml;
 							},
-							additionalData: aAdditionalData
+							additionalData: [oAdditionalData]
 						}]
-					}).loaded();
-				}
+					}
+				});
+			}
 
-				assert.expect(2);
-				return _viewFactory()
-					.then(function(oView) {
-						// check preprocessor side effect
-						assert.deepEqual(oSpy.args[0][1].additionalData, ["foo", "bar"]);
-						oView.destroy();
-						// reset original data
-						aAdditionalData = ["foo"];
-					})
-					.then(_viewFactory).then(function(oView) {
-						// check replacement from cache
-						assert.deepEqual(aAdditionalData, ["foo", "bar"]);
-						oView.destroy();
-					});
-			});
-
-			QUnit.test("generic key parts", function(assert) {
-				var oSpy = this.oSpy;
-				var sKey = sLocation + "_cachedView" + getKeyParts(["key"]);
-				assert.expect(1);
-				return viewFactory({
-					keys: ["key"]
-				}).loaded().then(function(oView) {
-					sinon.assert.calledWith(oSpy, sKey);
+			assert.expect(7);
+			return _viewFactory()
+				.then(function(oView) {
+					// check preprocessor side effect
+					assert.ok(oAdditionalData.bar, "additionalData enhanced correctly");
+					assert.ok(oAdditionalData.foo, "additionalData ok");
+					oView.destroy();
+					//reset data
+					oAdditionalData = new AdditionalDataClass();
+				})
+				.then(_viewFactory).then(function(oView) {
+					// check replacement from cache
+					assert.ok(oAdditionalData.bar, "additionalData enhanced correctly");
+					assert.ok(oAdditionalData.foo, "additionalData ok");
+					assert.ok(oLogSpy.callCount === 0, "No Deprecation error logged");
+					oLogSpy.restore();
 					oView.destroy();
 				});
-			});
+		});
 
-			QUnit.test("Component integration", function(assert) {
-				var oViewPromise, sKey = "key", oSpy = this.oSpy;
-				function createView() {
-					oViewPromise = viewFactory({
-						keys: [sKey]
-					});
-					return oViewPromise;
-				}
-				new Component("comp").runAsOwner(createView.bind(this));
-				return oViewPromise.loaded().then(function(oView) {
-					var oComp = Component.getOwnerComponentFor(oView);
-					assert.ok(oComp, "owner component is set");
-					// add the components manifest stringified
-					var sManifest = JSON.stringify(oComp.getManifest());
-					sinon.assert.calledWith(oSpy, "sap.ui.core.Component_cachedView" + getKeyParts([sKey], sManifest));
-					oView.destroy();
+
+		QUnit.test("generic key parts", function(assert) {
+			var oSpy = this.oSpy;
+			var sKey = sLocation + "_cachedView" + getKeyParts(["key"]);
+			assert.expect(1);
+			return viewFactory({
+				keys: ["key"]
+			}).then(function(oView) {
+				sinon.assert.calledWith(oSpy, sKey);
+				oView.destroy();
+			});
+		});
+
+		QUnit.test("Component integration", function(assert) {
+			var oViewPromise, sKey = "key", oSpy = this.oSpy;
+			function createView() {
+				oViewPromise = viewFactory({
+					keys: [sKey]
 				});
+				return oViewPromise;
+			}
+			new Component("comp").runAsOwner(createView.bind(this));
+			return oViewPromise.then(function(oView) {
+				var oComp = Component.getOwnerComponentFor(oView);
+				assert.ok(oComp, "owner component is set");
+				// add the components manifest stringified
+				var sManifest = JSON.stringify(oComp.getManifest());
+				sinon.assert.calledWith(oSpy, "sap.ui.core.Component_cachedView" + getKeyParts([sKey], sManifest));
+				oView.destroy();
 			});
+		});
 
-			QUnit.test("Preprocessor integration", function(assert) {
-				var sKey = "key",
-					oSpy = this.oSpy,
-					oViewInfo = {
-						name: "testdata.mvc.cache",
-						componentId: undefined,
-						id: "cachedView",
-						caller: "Element sap.ui.core.mvc.XMLView#cachedView (testdata.mvc.cache)",
-						sync: false
-					};
-				assert.expect(4);
-				assert.ok(TestPreprocessor);
-				// inject the preprocessor, ugly, but has to be done to place the spy
-				View._mPreprocessors["XML"] = View._mPreprocessors["XML"] || {};
-				View._mPreprocessors["XML"]["xml"] = View._mPreprocessors["XML"]["xml"] || [];
-				View._mPreprocessors["XML"]["xml"].push({preprocessor: TestPreprocessor, _settings: {assert: jQuery.noop}});
-				var oGetCacheKeySpy = sinon.spy(TestPreprocessor, "getCacheKey");
-				return viewFactory({keys: [sKey]}).loaded().then(function(oView) {
-					sinon.assert.calledOnce(oGetCacheKeySpy);
-					sinon.assert.calledWith(oGetCacheKeySpy, oViewInfo);
-					// "foo" is the part coming from TestPreprocessor.js
-					sinon.assert.calledWith(oSpy, sLocation + "_cachedView" + getKeyParts(["foo", sKey]));
-					oSpy.restore();
-					oView.destroy();
-					// remove the preprocessor
-					View._mPreprocessors["XML"]["xml"].splice(1,1);
-				});
+		QUnit.test("Preprocessor integration", function(assert) {
+			var sKey = "key",
+				oSpy = this.oSpy,
+				oViewInfo = {
+					name: "testdata.mvc.cache",
+					componentId: undefined,
+					id: "cachedView",
+					caller: "Element sap.ui.core.mvc.XMLView#cachedView (testdata.mvc.cache)",
+					sync: false
+				};
+			assert.expect(4);
+			assert.ok(TestPreprocessor);
+			// inject the preprocessor, ugly, but has to be done to place the spy
+			View._mPreprocessors["XML"] = View._mPreprocessors["XML"] || {};
+			View._mPreprocessors["XML"]["xml"] = View._mPreprocessors["XML"]["xml"] || [];
+			View._mPreprocessors["XML"]["xml"].push({preprocessor: TestPreprocessor, _settings: {assert: function(){}}});
+			var oGetCacheKeySpy = sinon.spy(TestPreprocessor, "getCacheKey");
+			return viewFactory({keys: [sKey]}).then(function(oView) {
+				sinon.assert.calledOnce(oGetCacheKeySpy);
+				sinon.assert.calledWith(oGetCacheKeySpy, oViewInfo);
+				// "foo" is the part coming from TestPreprocessor.js
+				sinon.assert.calledWith(oSpy, sLocation + "_cachedView" + getKeyParts(["foo", sKey]));
+				oSpy.restore();
+				oView.destroy();
+				// remove the preprocessor
+				View._mPreprocessors["XML"]["xml"].splice(1,1);
 			});
+		});
 
-			QUnit.module("Cache integration", {
-				beforeEach: function() {
-					this.oSpy = sinon.spy(jQuery.sap, "loadResource");
-				},
-				afterEach: function() {
-					this.oSpy.restore();
-				}
-			});
 
-			QUnit.test("write to cache", function(assert) {
-				var that = this, sKey = "key";
-				assert.expect(4);
-				return Cache.get(sLocation + "_cachedView" + getKeyParts([sKey])).then(function(oCachedResource) {
-					assert.ok(!oCachedResource, "cache empty");
-					return viewFactory({
-						keys: [sKey]
-					}).loaded().then(function(oView) {
-						assert.ok(that.oSpy.calledWith("testdata/mvc/cache.view.xml"), "load resource called");
-						assert.ok(oView.byId("Button2"), "controls created");
-						return Cache.get(sLocation + "_cachedView" + getKeyParts([sKey])).then(function(oCachedResource) {
-							assert.ok(oCachedResource, "cache filled");
-						}).then(destroy(oView));
-					});
-				});
-			});
 
-			QUnit.test("read from cache", function(assert) {
-				var that = this, sKey = "key";
-				assert.expect(2);
+		QUnit.module("Cache integration", {
+			before: function() {
+				return Cache.reset();
+			},
+			beforeEach: function() {
+				this.oSpy = sinon.spy(LoaderExtensions, "loadResource");
+			},
+			afterEach: function() {
+				this.oSpy.restore();
+			}
+		});
+
+		QUnit.test("write to cache", function(assert) {
+			var that = this, sKey = "key";
+			assert.expect(4);
+			return Cache.get(sLocation + "_cachedView" + getKeyParts([sKey])).then(function(oCachedResource) {
+				assert.ok(!oCachedResource, "cache empty");
 				return viewFactory({
 					keys: [sKey]
-				}).loaded().then(function(oView) {
-					oView.destroy();
-					that.oSpy.reset();
-				}).then(function() {
-					return viewFactory({
-						keys: [sKey]
-					}).loaded().then(function(oView) {
-						assert.ok(!that.oSpy.calledWith("testdata/mvc/cache.view.xml"), "load resource not called");
-						assert.ok(oView.byId("Button2"), "controls created");
-						oView.destroy();
-					});
+				}).then(function(oView) {
+					assert.ok(that.oSpy.calledWith("testdata/mvc/cache.view.xml"), "load resource called");
+					assert.ok(oView.byId("Button2"), "controls created");
+					return Cache.get(sLocation + "_cachedView" + getKeyParts([sKey])).then(function(oCachedResource) {
+						assert.ok(oCachedResource, "cache filled");
+					}).then(destroy(oView));
 				});
 			});
+		});
 
+		QUnit.test("read from cache", function(assert) {
+			var that = this, sKey = "key";
+			assert.expect(2);
+			return viewFactory({
+				keys: [sKey]
+			}).then(function(oView) {
+				oView.destroy();
+				that.oSpy.resetHistory();
+			}).then(function() {
+				return viewFactory({
+					keys: [sKey]
+				}).then(function(oView) {
+					assert.ok(!that.oSpy.calledWith("testdata/mvc/cache.view.xml"), "load resource not called");
+					assert.ok(oView.byId("Button2"), "controls created");
+					oView.destroy();
+				});
+			});
+		});
+
+		QUnit.module("Cache integration with terminologies", {
+			before: function() {
+				return Cache.reset();
+			},
+			beforeEach: function() {
+				this.oSetCacheSpy = sinon.spy(Cache, "set");
+			},
+			afterEach: function() {
+				this.oSetCacheSpy.resetHistory();
+				this.oComponent.destroy();
+			},
+			after: function(){
+				this.oSetCacheSpy.restore();
+				return Cache.reset();
+			}
+		});
+
+		QUnit.test("read from cache with terminologies", function(assert) {
+			var done = assert.async();
+			assert.expect(2);
+			var sKey = "key1";
+			var aUsedTerminologies = ["oil", "gas"];
+			return Component.create({
+				name: "testdata.mvc.terminologies",
+				id: "terminologyComponent",
+				activeTerminologies: aUsedTerminologies,
+				manifest: false
+			}).then(function (oComponent) {
+				this.oComponent = oComponent;
+				oComponent.getRootControl().loaded().then(function (oView) {
+					assert.strictEqual(this.oSetCacheSpy.callCount, 1, "The Cache.set function should be called once");
+					var sExpectedCacheKey = calculateCacheKey(oComponent, oView, [sKey], aUsedTerminologies);
+					this.oSetCacheSpy.getCall(0).returnValue.then(function(){
+						assert.strictEqual(this.oSetCacheSpy.getCall(0).args[0], sExpectedCacheKey, "The Cache.set should be called with the correct view cache key");
+						done();
+					}.bind(this));
+				}.bind(this));
+			}.bind(this));
 		});
 
 	} else {
@@ -383,16 +532,16 @@ sap.ui.define([
 		QUnit.module("Cache integration - unsupported browser");
 
 		QUnit.test("should not break", function(assert) {
-			var that = this, sKey = "key";
+			var sKey = "key";
 			assert.expect(2);
 			return viewFactory({
 				keys: [sKey]
-			}).loaded().then(function(oView1) {
+			}).then(function(oView1) {
 				assert.ok(oView1.byId("Button2"), "controls created");
 				oView1.destroy();
 				return viewFactory({
 					keys: [sKey]
-				}).loaded().then(function(oView2) {
+				}).then(function(oView2) {
 					assert.ok(oView2.byId("Button2"), "controls created");
 					oView2.destroy();
 				});
@@ -406,7 +555,7 @@ sap.ui.define([
 			assert.expect(2);
 			return viewFactory({
 				keys: [sKey]
-			}).loaded().then(function(oView1) {
+			}).then(function(oView1) {
 				sinon.assert.notCalled(oGetSpy);
 				sinon.assert.notCalled(oSetSpy);
 				oGetSpy.restore();

@@ -1,0 +1,171 @@
+/* =========================================== */
+/* CSS for control sap.ui.unified/CalendarRow  */
+/* Evening Horizon theme                       */
+/* =========================================== */
+
+/* intervals */
+.sapUiCalendarRowAppsInt,
+.sapUiCalendarRowAppsSubInt{
+	border-color: @sapUiListVerticalBorderColor;
+}
+
+.sapUiCalendarRowAppsIntHead{
+	font-size: @sapMFontSmallSize;
+	color: @sapUiBaseText;
+}
+
+.sapMListTblRow:not(.sapMLIBSelected) .sapUiCalendarRowAppsNoWork,
+.sapMListTblSubRow:not(.sapMLIBSelected) .sapUiCalendarRowAppsNoWork {
+	background-color: @sapUiLegendNonWorkingBackground;
+}
+
+/* Appointments */
+/* as outlines can't have different offsets on one side (no left border) and don't work in IE just use a inner border */
+html.sap-desktop .sapUiCalendarApp:focus > .sapUiCalendarAppCont:after {
+	position: absolute;
+	top: 0.0625rem;
+	left: 0.0625rem;
+	right: 0.0625rem;
+	bottom: 0.0625rem;
+	content: "";
+	border: 0.125rem solid @sapUiContentFocusColor;
+	pointer-events: none;
+	border-radius: 0.125rem;
+}
+
+html.sap-desktop .sapUiCalendarApp.sapUiCalendarAppSel:focus:hover > .sapUiCalendarAppCont:after {
+	top: 0.125rem;
+	left: 0.125rem;
+	right: 0.125rem;
+	bottom: 0.125rem;
+}
+
+.sapUiCalendarApp,
+.sapUiCalendarAppCont {
+	border-radius: 0.25rem;
+}
+
+.sapUiCalendarAppCont {
+	border-top-left-radius: 0;
+	border-bottom-left-radius: 0;
+}
+
+html.sap-desktop .sapUiCalendarApp:hover:not(:active),
+html.sap-desktop .sapUiCalendarApp:focus:not(:active) > .sapUiCalendarAppCont{
+	background-color: @sapUiListBackground;
+}
+
+html.sap-desktop .sapUiCalendarApp.sapUiCalendarAppSel:hover:not(:active),
+html.sap-desktop .sapUiCalendarApp.sapUiCalendarAppSel:focus:not(:active) > .sapUiCalendarAppCont{
+	background-color: @sapUiContentSelectedBackground;
+}
+
+.sapMListTblRow.sapMLIBFocusable:focus {
+	.sapUiCalendarRowAppsInt.sapUiCalendarRowAppsNoWork:before {
+		position: absolute;
+		top: 0px;
+		left: -1px;
+		right: 1px;
+		bottom: 0px;
+		content: "";
+		border: 0.195rem solid @sapUiContentFocusColor;
+		border-left: none;
+		pointer-events: none;
+	}
+
+	.sapUiCalendarRowAppsIntNoHead.sapUiCalendarRowAppsInt.sapUiCalendarRowAppsNoWork:before {
+		position: absolute;
+		top: 0px;
+		left: -1px;
+		right: 1px;
+		bottom: 1px;
+		content: "";
+		border: 0.0625rem dotted @sapUiContentFocusColor;
+		pointer-events: none;
+	}
+}
+
+html[data-sap-ui-browser ^= "ie"], html[data-sap-ui-browser^="ed"] {
+	.sapUiCalendarApp:focus > .sapUiCalendarAppCont:after{
+		border-style: dashed;
+	}
+}
+
+.sapUiCalendarApp.sapUiCalendarAppSel,
+.sapUiCalendarApp:active,
+.sapUiCalendarApp.sapUiCalendarAppSel:active{
+	color: @sapUiContentSelectedTextColor;
+	background-color:@sapUiContentSelectedBackground
+}
+
+html.sap-desktop .sapUiCalendarApp.sapUiCalendarAppSel:hover:not(:active),
+html.sap-desktop .sapUiCalendarApp.sapUiCalendarAppSel:focus:not(:active){
+	color: @sapUiContentSelectedTextColor;
+}
+
+.sapUiCalendarApp.sapUiCalendarAppSel > .sapUiCalendarAppCont,
+.sapUiCalendarApp:active > .sapUiCalendarAppCont,
+.sapUiCalendarApp.sapUiCalendarAppSel:active > .sapUiCalendarAppCont{
+	border-color: @sapUiListSelectionBorderColor;
+	border-top-left-radius: 0;
+	border-bottom-left-radius: 0;
+}
+
+
+html.sap-desktop .sapUiCalendarApp.sapUiCalendarAppSel:focus:not(:active)  > .sapUiCalendarAppCont,
+html.sap-desktop .sapUiCalendarApp.sapUiCalendarAppSel:hover:not(:active)  > .sapUiCalendarAppCont{
+	border-color: @sapUiListSelectionBorderColor;
+	border-left-color: @sapUiListBackground;
+}
+
+.sapUiCalendarApp.sapUiCalendarAppSel > .sapUiCalendarAppCont > .sapUiCalendarAppIcon,
+.sapUiCalendarApp.sapUiCalendarAppSel > .sapUiCalendarAppCont > .sapUiCalendarAppArrowIconLeft,
+.sapUiCalendarApp.sapUiCalendarAppSel > .sapUiCalendarAppCont > .sapUiCalendarAppArrowIconRight,
+.sapUiCalendarApp.sapUiCalendarAppSel > .sapUiCalendarAppCont .sapUiCalendarAppTitle,
+.sapUiCalendarApp.sapUiCalendarAppSel > .sapUiCalendarAppCont .sapUiCalendarAppText,
+.sapUiCalendarApp.sapUiCalendarAppSel > .sapUiCalendarAppCont .sapUiCalendarAppDescription {
+	color: @sapUiContentSelectedTextColor;
+}
+
+.sapUiCalendarAppTitle{
+	font-size: @sapMFontMediumSize;
+	color: @sapUiBaseText;
+}
+
+.sapUiCalendarAppText{
+	font-size: @sapMFontSmallSize;
+}
+
+.sapUiCalendarRowNow{
+	border-color: @sapUiCalendarColorToday;
+}
+
+.sapUiAppCreate.sapUiCalendarApp.sapUiCalendarAppType01 {
+	border-top-color: darken(@sapUiListBorderColor, 15);
+	border-right-color: darken(@sapUiListBorderColor, 15);
+	border-bottom-color: darken(@sapUiListBorderColor, 15);
+	background-color: lighten(@sapUiAccent1, 50);
+	color: @sapUiListTextColor;
+}
+
+.sapUiCalendarApp.sapUiCalendarAppTent > .sapUiCalendarAppCont {
+	border-top-left-radius: 0;
+	border-bottom-left-radius: 0;
+}
+
+.sapUiCalendarApp.sapUiCalendarAppTent.sapUiCalendarAppSel > .sapUiCalendarAppCont,
+.sapUiCalendarApp.sapUiCalendarAppTent > .sapUiCalendarAppCont:hover {
+	border-style: solid;
+	border-left: none;
+}
+
+.sapUiCalendarAppCont:hover {
+	border-color: @sapUiListSelectionBorderColor;
+}
+
+// SPC
+.sapUiCalendarAppSel:hover .sapUiCalendarAppCont,
+// PC
+.sapUiCalendarAppSel .sapUiCalendarAppCont:hover {
+	box-shadow: inset 0 0 0 0.0625rem @sapUiListSelectionBorderColor;
+}

@@ -1,0 +1,1773 @@
+{
+	"$schema": "http://json-schema.org/draft-06/schema#",
+	"$id": "http://schemas.sap.com/sapui5/designtime/api.json/1.0",
+	"title": "Schema for api.json files",
+	"description": "Schema that describes the structure of the api.json files that the 'sapui5-jsdoc3' template can generate for each UI5 library",
+	"definitions": {
+		"libraryVersion": {
+			"type": "string",
+			"pattern": "^\\d+(\\.\\d+(\\.\\d+([.-][a-zA-Z0-9_-]+)?)?)?$"
+		},
+		"moduleName": {
+			"type": "string",
+			"description": "( package '/' )* name",
+			"pattern": "^([a-zA-Z_][a-zA-Z0-9_.$]*/)*[a-zA-Z_][a-zA-Z0-9_.\\-$]*$"
+		},
+		"since": {
+			"description": "Version with which the documented entity has been introduced the first time, no matter in what state it has been introduced",
+			"$ref": "#/definitions/libraryVersion"
+		},
+		"experimental": {
+			"description": "Describes whether the documented entity is still experimental and should not be used in productive apps. The since attribute describes since when the library is in that state, it must be equal or higher than the since version of the entity, but not higher than the current version of the whole delivery unit.",
+			"type": "object",
+			"properties": {
+				"since": {
+					"$ref": "#/definitions/libraryVersion"
+				},
+				"text": {
+					"type": "string"
+				}
+			}
+		},
+		"deprecated": {
+			"description": "If the entity has been deprecated, this element should contain information about when and why this happened and should describe any potential alternatives",
+			"type": "object",
+			"properties": {
+				"since": {
+					"$ref": "#/definitions/libraryVersion"
+				},
+				"text": {
+					"type": "string"
+				}
+			}
+		},
+		"examples": {
+			"type": "array",
+			"items": {
+				"type": "object",
+				"properties": {
+					"caption": {
+						"type": "string"
+					},
+					"text": {
+						"type": "string"
+					}
+				},
+				"additionalProperties": false
+			}
+		},
+		"exceptions": {
+			"description": "With this element, a callable (constructor, method) can document the exceptions that may occur during its execution",
+			"type": "array",
+			"items": {
+				"type": "object",
+				"properties": {
+					"type": {
+						"type": "string"
+					},
+					"description": {
+						"type": "string"
+					}
+				}
+			}
+		},
+		"references": {
+			"description": "references to internal or external sources of information that are related to the documented entity. References can be URLs, absolute or relative JSDoc symbol names. Relative JSDoc symbols usually are meant to be relative to the documented entity",
+			"type": "array",
+			"items": {
+				"type": "string"
+			}
+		},
+		"nestedProperties": {
+			"type": "object",
+			"additionalProperties": {
+				"type": "object",
+				"properties": {
+					"name": {
+						"type": "string",
+						"minLength": 1
+					},
+					"type": {
+						"type": "string"
+					},
+					"parameterProperties": {
+						"$ref": "#/definitions/nestedProperties"
+					},
+					"description": {
+						"type": "string"
+					},
+					"optional": {
+						"type": "boolean",
+						"defaultValue": false
+					},
+					"defaultValue": {
+					},
+					"since": {
+						"$ref": "#/definitions/since"
+					},
+					"experimental": {
+						"$ref": "#/definitions/experimental"
+					},
+					"deprecated": {
+						"$ref": "#/definitions/deprecated"
+					}
+				},
+				"additionalProperties": false,
+				"required": [
+					"name",
+					"type"
+				]
+			}
+		},
+		"enum-property": {
+			"type": "object",
+			"properties": {
+				"name": {
+					"type": "string",
+					"minLength": 1
+				},
+				"visibility": {
+					"type": "string",
+					"enum": [
+						"public",
+						"protected",
+						"private",
+						"restricted"
+					],
+					"defaultValue": "public"
+				},
+				"allowedFor": {
+					"$comment": "Only present if visibility is 'restricted'",
+					"type": "array",
+					"items": {
+						"type": "string"
+					}
+				},
+				"static": {
+					"type": "boolean"
+				},
+				"type": {
+					"type": "string"
+				},
+				"value": {
+					"oneOf": [
+						{
+							"type": "string"
+						},
+						{
+							"type": "integer"
+						}
+					]
+				},
+				"description": {
+					"type": "string"
+				},
+				"since": {
+					"$ref": "#/definitions/since"
+				},
+				"experimental": {
+					"$ref": "#/definitions/experimental"
+				},
+				"deprecated": {
+					"$ref": "#/definitions/deprecated"
+				},
+				"examples": {
+					"$ref": "#/definitions/examples"
+				},
+				"references": {
+					"$ref": "#/definitions/references"
+				}
+			},
+			"additionalProperties": false,
+			"required": [
+				"name"
+			]
+		},
+		"typedef-property": {
+			"type": "object",
+			"properties": {
+				"name": {
+					"type": "string",
+					"minLength": 1
+				},
+				"visibility": {
+					"type": "string",
+					"enum": [
+						"public",
+						"protected",
+						"private",
+						"restricted"
+					],
+					"defaultValue": "public"
+				},
+				"allowedFor": {
+					"$comment": "Only present if visibility is 'restricted'",
+					"type": "array",
+					"items": {
+						"type": "string"
+					}
+				},
+				"static": {
+					"type": "boolean"
+				},
+				"type": {
+					"type": "string"
+				},
+				"optional": {
+					"type": "boolean"
+				},
+				"properties": {
+					"type": "object",
+					"additionalProperties": {
+						"$ref": "#/definitions/typedef-property"
+					}
+				},
+				"description": {
+					"type": "string"
+				}
+			},
+			"additionalProperties": false,
+			"required": [
+				"name"
+			]
+		},
+		"obj-property": {
+			"type": "object",
+			"properties": {
+				"name": {
+					"type": "string",
+					"minLength": 1
+				},
+				"module": {
+					"$ref": "#/definitions/moduleName"
+				},
+				"export": {
+					"type": "string"
+				},
+				"resource": {
+					"type": "string"
+				},
+				"visibility": {
+					"type": "string",
+					"enum": [
+						"public",
+						"protected",
+						"private",
+						"restricted"
+					],
+					"defaultValue": "public"
+				},
+				"allowedFor": {
+					"$comment": "Only present if visibility is 'restricted'",
+					"type": "array",
+					"items": {
+						"type": "string"
+					}
+				},
+				"static": {
+					"type": "boolean"
+				},
+				"type": {
+					"type": "string"
+				},
+				"description": {
+					"type": "string"
+				},
+				"since": {
+					"$ref": "#/definitions/since"
+				},
+				"experimental": {
+					"$ref": "#/definitions/experimental"
+				},
+				"deprecated": {
+					"$ref": "#/definitions/deprecated"
+				},
+				"examples": {
+					"$ref": "#/definitions/examples"
+				},
+				"references": {
+					"$ref": "#/definitions/references"
+				}
+			},
+			"additionalProperties": false,
+			"required": [
+				"name"
+			]
+		},
+		"obj-callable-parameter": {
+			"type": "object",
+			"properties": {
+				"name": {
+					"type": "string",
+					"minLength": 1
+				},
+				"type": {
+					"type": "string"
+				},
+				"optional": {
+					"type": "boolean",
+					"defaultValue": false
+				},
+				"omissible": {
+					"type": "boolean",
+					"defaultValue": false
+				},
+				"repeatable": {
+					"type": "boolean",
+					"defaultValue": false
+				},
+				"defaultValue": {
+				},
+				"parameterProperties": {
+					"$ref": "#/definitions/nestedProperties"
+				},
+				"description": {
+					"type": "string"
+				},
+				"since": {
+					"$ref": "#/definitions/since"
+				},
+				"experimental": {
+					"$ref": "#/definitions/experimental"
+				},
+				"deprecated": {
+					"$ref": "#/definitions/deprecated"
+				}
+			},
+			"additionalProperties": false,
+			"required": [
+				"name",
+				"type"
+			]
+		},
+		"obj-callable-parameters": {
+			"type": "array",
+			"items": {
+				"$ref": "#/definitions/obj-callable-parameter"
+			}
+		},
+		"obj-constructor": {
+			"type": "object",
+			"properties": {
+				"visibility": {
+					"type": "string",
+					"enum": [
+						"public",
+						"protected",
+						"private",
+						"restricted"
+					],
+					"defaultValue": "public"
+				},
+				"allowedFor": {
+					"$comment": "Only present if visibility is 'restricted'",
+					"type": "array",
+					"items": {
+						"type": "string"
+					}
+				},
+				"typeParameters": {
+					"type": "object",
+					"properties": {
+						"name": {
+							"type": "string"
+						},
+						"type": {
+							"type": "string"
+						},
+						"default": {
+							"type": "string"
+						}
+					},
+					"required": [
+						"name"
+					],
+					"additionalProperties": false
+				},
+				"parameters": {
+					"$ref": "#/definitions/obj-callable-parameters"
+				},
+				"throws": {
+					"$ref": "#/definitions/exceptions"
+				},
+				"description": {
+					"type": "string"
+				},
+				"examples": {
+					"$ref": "#/definitions/examples"
+				},
+				"references": {
+					"$ref": "#/definitions/references"
+				}
+			},
+			"additionalProperties": false,
+			"required": [
+
+			]
+		},
+		"obj-method": {
+			"type": "object",
+			"properties": {
+				"name": {
+					"type": "string",
+					"minLength": 1
+				},
+				"visibility": {
+					"type": "string",
+					"enum": [
+						"public",
+						"protected",
+						"private",
+						"restricted"
+					],
+					"defaultValue": "public"
+				},
+				"allowedFor": {
+					"$comment": "Only present if visibility is 'restricted'",
+					"type": "array",
+					"items": {
+						"type": "string"
+					}
+				},
+				"static": {
+					"type": "boolean"
+				},
+				"typeParameters": {
+					"type": "object",
+					"properties": {
+						"name": {
+							"type": "string"
+						},
+						"type": {
+							"type": "string"
+						},
+						"default": {
+							"type": "string"
+						}
+					},
+					"required": [
+						"name"
+					],
+					"additionalProperties": false
+				},
+				"parameters": {
+					"$ref": "#/definitions/obj-callable-parameters"
+				},
+				"returnValue": {
+					"type": "object",
+					"properties": {
+						"type": {
+							"type": "string"
+						},
+						"description": {
+							"type": "string"
+						}
+					},
+					"additionalProperties": false,
+					"required": [
+
+					]
+				},
+				"throws": {
+					"$ref": "#/definitions/exceptions"
+				},
+				"description": {
+					"type": "string"
+				},
+				"since": {
+					"$ref": "#/definitions/since"
+				},
+				"experimental": {
+					"$ref": "#/definitions/experimental"
+				},
+				"deprecated": {
+					"$ref": "#/definitions/deprecated"
+				},
+				"examples": {
+					"$ref": "#/definitions/examples"
+				},
+				"references": {
+					"$ref": "#/definitions/references"
+				},
+				"ui5-metamodel": {
+					"type": "boolean",
+					"defaultValue": false
+				},
+				"tsSkip": {
+					"documentation": "Whether the method should be omitted from the TypeScript declaration files",
+					"type": "boolean",
+					"defaultValue": false
+				}
+			},
+			"required": [
+				"name"
+			]
+		},
+		"obj-method-propertyNames": {
+			"enum": [
+				"name",
+				"visibility",
+				"allowedFor",
+				"static",
+				"returnValue",
+				"parameters",
+				"throws",
+				"description",
+				"since",
+				"experimental",
+				"deprecated",
+				"examples",
+				"references",
+				"ui5-metamodel",
+				"tsSkip"
+			]
+		},
+		"obj-event": {
+			"type": "object",
+			"properties": {
+				"name": {
+					"type": "string",
+					"minLength": 1
+				},
+				"module": {
+					"$ref": "#/definitions/moduleName"
+				},
+				"resource": {
+					"type": "string"
+				},
+				"visibility": {
+					"type": "string",
+					"enum": [
+						"public",
+						"protected",
+						"private",
+						"restricted"
+					],
+					"defaultValue": "public"
+				},
+				"allowedFor": {
+					"$comment": "Only present if visibility is 'restricted'",
+					"type": "array",
+					"items": {
+						"type": "string"
+					}
+				},
+				"static": {
+					"type": "boolean"
+				},
+				"parameters": {
+					"type": "array",
+					"items": {
+						"type": "object",
+						"properties": {
+							"name": {
+								"type": "string",
+								"minLength": 1
+							},
+							"type": {
+								"type": "string"
+							},
+							"parameterProperties": {
+								"$ref": "#/definitions/nestedProperties"
+							},
+							"description": {
+								"type": "string"
+							},
+							"since": {
+								"$ref": "#/definitions/since"
+							},
+							"experimental": {
+								"$ref": "#/definitions/experimental"
+							},
+							"deprecated": {
+								"$ref": "#/definitions/deprecated"
+							}
+						},
+						"additionalProperties": false,
+						"required": [
+							"name",
+							"type"
+						]
+					}
+				},
+				"description": {
+					"type": "string"
+				},
+				"since": {
+					"$ref": "#/definitions/since"
+				},
+				"experimental": {
+					"$ref": "#/definitions/experimental"
+				},
+				"deprecated": {
+					"$ref": "#/definitions/deprecated"
+				},
+				"examples": {
+					"$ref": "#/definitions/examples"
+				},
+				"references": {
+					"$ref": "#/definitions/references"
+				}
+			},
+			"additionalProperties": false,
+			"required": [
+				"name"
+			]
+		},
+		"ui5-settingName": {
+			"type": "string",
+			"pattern": "_*[a-z][a-zA-Z0-9_]*"
+		},
+		"ui5-specialSetting": {
+			"type": "object",
+			"properties": {
+				"name": {
+					"$ref": "#/definitions/ui5-settingName"
+				},
+				"type": {
+					"type": "string",
+					"defaultValue": "string"
+				},
+				"visibility": {
+					"type": "string",
+					"enum": [
+						"public",
+						"hidden"
+					],
+					"defaultValue": "public"
+				},
+				"description": {
+					"type": "string"
+				},
+				"since": {
+					"$ref": "#/definitions/since"
+				},
+				"experimental": {
+					"$ref": "#/definitions/experimental"
+				},
+				"deprecated": {
+					"$ref": "#/definitions/deprecated"
+				},
+				"methods": {
+					"type": "array",
+					"items": {
+						"type": "string"
+					}
+				}
+			},
+			"additionalProperties": false,
+			"required": [
+				"name"
+			]
+		},
+		"ui5-property": {
+			"type": "object",
+			"properties": {
+				"name": {
+					"$ref": "#/definitions/ui5-settingName"
+				},
+				"type": {
+					"type": "string",
+					"defaultValue": "string"
+				},
+				"defaultValue": {
+				},
+				"group": {
+					"type": "string"
+				},
+				"visibility": {
+					"type": "string",
+					"enum": [
+						"public",
+						"hidden"
+					],
+					"defaultValue": "public"
+				},
+				"description": {
+					"type": "string"
+				},
+				"since": {
+					"$ref": "#/definitions/since"
+				},
+				"bindable": {
+					"type": "boolean",
+					"defaultValue": false
+				},
+				"experimental": {
+					"$ref": "#/definitions/experimental"
+				},
+				"deprecated": {
+					"$ref": "#/definitions/deprecated"
+				},
+				"methods": {
+					"type": "array",
+					"items": {
+						"type": "string"
+					}
+				}
+			},
+			"additionalProperties": false,
+			"required": [
+				"name"
+			]
+		},
+		"ui5-aggregation": {
+			"type": "object",
+			"properties": {
+				"name": {
+					"$ref": "#/definitions/ui5-settingName"
+				},
+				"singularName": {
+					"$ref": "#/definitions/ui5-settingName"
+				},
+				"type": {
+					"type": "string",
+					"defaultValue": "sap.ui.core.Control"
+				},
+				"altTypes": {
+					"type": "array",
+					"items": {
+						"type": "string"
+					}
+				},
+				"cardinality": {
+					"type": "string",
+					"enum": [
+						"0..1",
+						"0..n"
+					],
+					"defaultValue": "0..n"
+				},
+				"visibility": {
+					"type": "string",
+					"enum": [
+						"public",
+						"hidden"
+					],
+					"defaultValue": "public"
+				},
+				"bindable": {
+					"type": "boolean",
+					"defaultValue": false
+				},
+				"description": {
+					"type": "string"
+				},
+				"since": {
+					"$ref": "#/definitions/since"
+				},
+				"experimental": {
+					"$ref": "#/definitions/experimental"
+				},
+				"deprecated": {
+					"$ref": "#/definitions/deprecated"
+				},
+				"methods": {
+					"type": "array",
+					"items": {
+						"type": "string"
+					}
+				},
+				"dnd": {
+					"anyOf": [
+						{
+							"type": "boolean"
+						},
+						{
+							"type": "object",
+							"properties": {
+								"draggable": {
+									"type": "boolean"
+								},
+								"droppable": {
+									"type": "boolean"
+								},
+								"layout": {
+									"type": "string",
+									"enum": [
+										"Vertical",
+										"Horizontal"
+									],
+									"defaultValue": "Vertical"
+								}
+							}
+						}
+					]
+				}
+			},
+			"additionalProperties": false,
+			"required": [
+				"name"
+			]
+		},
+		"ui5-association": {
+			"type": "object",
+			"properties": {
+				"name": {
+					"$ref": "#/definitions/ui5-settingName"
+				},
+				"singularName": {
+					"$ref": "#/definitions/ui5-settingName"
+				},
+				"type": {
+					"type": "string",
+					"defaultValue": "sap.ui.core.Control"
+				},
+				"cardinality": {
+					"type": "string",
+					"enum": [
+						"0..1",
+						"0..n"
+					],
+					"defaultValue": "0..1"
+				},
+				"visibility": {
+					"type": "string",
+					"enum": [
+						"public",
+						"hidden"
+					],
+					"defaultValue": "public"
+				},
+				"description": {
+					"type": "string"
+				},
+				"since": {
+					"$ref": "#/definitions/since"
+				},
+				"experimental": {
+					"$ref": "#/definitions/experimental"
+				},
+				"deprecated": {
+					"$ref": "#/definitions/deprecated"
+				},
+				"methods": {
+					"type": "array",
+					"items": {
+						"type": "string"
+					}
+				}
+			},
+			"additionalProperties": false,
+			"required": [
+				"name"
+			]
+		},
+		"ui5-event": {
+			"type": "object",
+			"properties": {
+				"name": {
+					"$ref": "#/definitions/ui5-settingName"
+				},
+				"visibility": {
+					"type": "string",
+					"enum": [
+						"public",
+						"hidden"
+					],
+					"defaultValue": "public"
+				},
+				"description": {
+					"type": "string"
+				},
+				"since": {
+					"$ref": "#/definitions/since"
+				},
+				"experimental": {
+					"$ref": "#/definitions/experimental"
+				},
+				"deprecated": {
+					"$ref": "#/definitions/deprecated"
+				},
+				"parameters": {
+					"type": "object",
+					"additionalProperties": {
+						"type": "object",
+						"properties": {
+							"name": {
+								"$ref": "#/definitions/ui5-settingName"
+							},
+							"type": {
+								"type": "string"
+							},
+							"description": {
+								"type": "string"
+							},
+							"since": {
+								"$ref": "#/definitions/since"
+							},
+							"experimental": {
+								"$ref": "#/definitions/experimental"
+							},
+							"deprecated": {
+								"$ref": "#/definitions/deprecated"
+							}
+						},
+						"additionalProperties": false,
+						"required": [
+							"name",
+							"type"
+						]
+					}
+				},
+				"allowPreventDefault": {
+					"type": "boolean",
+					"defaultValue": false
+				},
+				"enableEventBubbling": {
+					"type": "boolean",
+					"defaultValue": false
+				},
+				"methods": {
+					"type": "array",
+					"items": {
+						"type": "string"
+					}
+				}
+			},
+			"additionalProperties": false,
+			"required": [
+				"name"
+			]
+		},
+		"ui5-metadata": {
+			"type": "object",
+			"properties": {
+				"stereotype": {
+					"type": "string",
+					"enum": [
+						"object",
+						"element",
+						"control",
+						"component",
+						"library",
+						"controller",
+						"controllerextension",
+						"template"
+					]
+				},
+				"specialSettings": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ui5-specialSetting"
+					}
+				},
+				"properties": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ui5-property"
+					}
+				},
+				"defaultProperty": {
+					"$ref": "#/definitions/ui5-settingName"
+				},
+				"aggregations": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ui5-aggregation"
+					}
+				},
+				"defaultAggregation": {
+					"$ref": "#/definitions/ui5-settingName"
+				},
+				"associations": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ui5-association"
+					}
+				},
+				"events": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ui5-event"
+					}
+				},
+				"dnd": {
+					"anyOf": [
+						{
+							"type": "boolean"
+						},
+						{
+							"type": "object",
+							"properties": {
+								"draggable": {
+									"type": "boolean",
+									"defaultValue": false
+								},
+								"droppable": {
+									"type": "boolean",
+									"defaultValue": false
+								}
+							},
+							"additionalProperties": false
+						}
+					]
+				},
+				"annotations": {
+					"type": "array",
+					"items": {
+						"type": "object",
+						"properties": {
+							"name": {
+								"type": "string"
+							},
+							"namespace": {
+								"type": "string"
+							},
+							"target": {
+								"type": "array",
+								"items": {
+									"type": "string"
+								}
+							},
+							"annotation": {
+								"type": "string"
+							},
+							"defaultValue": {
+							},
+							"appliesTo": {
+								"type": "array",
+								"items": {
+									"type": "string"
+								}
+							},
+							"description": {
+								"type": "string"
+							},
+							"since": {
+								"$ref": "#/definitions/since"
+							},
+							"experimental": {
+								"$ref": "#/definitions/experimental"
+							},
+							"deprecated": {
+								"$ref": "#/definitions/deprecated"
+							}
+						},
+						"additionalProperties": false,
+						"required": [
+							"name"
+						]
+					}
+				},
+				"designtime": {
+					"type": [
+						"boolean",
+						"string"
+					],
+					"defaultValue": false
+				},
+				"metadataClass": {
+					"type": "string"
+				}
+			},
+			"additionalProperties": false,
+			"required": [
+
+			]
+		},
+		"symbol": {
+			"type": "object",
+			"properties": {
+				"kind": {
+					"type": "string",
+					"enum": [
+						"namespace",
+						"class",
+						"interface",
+						"enum",
+						"typedef",
+						"function"
+					]
+				},
+				"name": {
+					"type": "string",
+					"minLength": 1
+				},
+				"basename": {
+					"type": "string",
+					"minLength": 1
+				},
+				"resource": {
+					"type": "string"
+				},
+				"module": {
+					"$ref": "#/definitions/moduleName"
+				},
+				"export": {
+					"type": "string"
+				},
+				"static": {
+					"type": "boolean"
+				},
+				"visibility": {
+					"type": "string",
+					"enum": [
+						"public",
+						"protected",
+						"private",
+						"restricted"
+					],
+					"defaultValue": "public"
+				},
+				"allowedFor": {
+					"$comment": "Only present if visibility is 'restricted'",
+					"type": "array",
+					"items": {
+						"type": "string"
+					}
+				},
+				"description": {
+					"type": "string"
+				},
+				"since": {
+					"$ref": "#/definitions/since"
+				},
+				"experimental": {
+					"$ref": "#/definitions/experimental"
+				},
+				"deprecated": {
+					"$ref": "#/definitions/deprecated"
+				},
+				"examples": {
+					"$comment": "Note that 'examples' 'is not used for the symbol kind 'class', but this has not been modeled to reduce the schema's complexity",
+					"$ref": "#/definitions/examples"
+				},
+				"references": {
+					"$ref": "#/definitions/references"
+				}
+			}
+		},
+		"symbol-propertyNames": {
+			"enum": [
+				"kind",
+				"name",
+				"basename",
+				"resource",
+				"module",
+				"export",
+				"static",
+				"visibility",
+				"allowedFor",
+				"description",
+				"since",
+				"experimental",
+				"deprecated",
+				"examples",
+				"references"
+			]
+		},
+		"typedef-symbol": {
+			"description": "",
+			"allOf": [
+				{
+					"$ref": "#/definitions/symbol"
+				},
+				{
+					"anyOf": [
+						{
+							"$comment": "A typedef for a type alias",
+							"type": "object",
+							"properties": {
+								"kind": {
+									"enum": [
+										"typedef"
+									]
+								},
+								"type": {
+									"type": "string"
+								}
+							},
+							"propertyNames": {
+								"anyOf": [
+									{
+										"$ref": "#/definitions/symbol-propertyNames"
+									},
+									{
+										"enum": [
+											"type"
+										]
+									}
+								]
+							},
+							"required": [
+								"type"
+							]
+						},
+						{
+							"$comment": "A typedef for a structure type",
+							"type": "object",
+							"properties": {
+								"kind": {
+									"enum": [
+										"typedef"
+									]
+								},
+								"extends": {
+									"type": "string"
+								},
+								"properties": {
+									"type": "array",
+									"items": {
+										"$ref": "#/definitions/typedef-property"
+									}
+								}
+							},
+							"propertyNames": {
+								"anyOf": [
+									{
+										"$ref": "#/definitions/symbol-propertyNames"
+									},
+									{
+										"enum": [
+											"extends",
+											"properties"
+										]
+									}
+								]
+							},
+							"required": [
+								"properties"
+							]
+						},
+						{
+							"$comment": "A typedef for a callback type",
+							"type": "object",
+							"properties": {
+								"kind": {
+									"enum": [
+										"typedef"
+									]
+								},
+								"parameters": {
+									"$ref": "#/definitions/obj-callable-parameters"
+								},
+								"returnValue": {
+									"type": "object",
+									"properties": {
+										"type": {
+											"type": "string"
+										},
+										"description": {
+											"type": "string"
+										}
+									},
+									"additionalProperties": false,
+									"required": [
+
+									]
+								},
+								"throws": {
+									"$ref": "#/definitions/exceptions"
+								}
+							},
+							"propertyNames": {
+								"anyOf": [
+									{
+										"$ref": "#/definitions/symbol-propertyNames"
+									},
+									{
+										"enum": [
+											"parameters",
+											"returnValue",
+											"throws"
+										]
+									}
+								]
+							}
+						}
+					]
+				}
+			]
+		},
+		"namespace-symbol": {
+			"$comment": "This schema describes a normal JavaScript namespace with properties and methods",
+			"description": "Namespaces can have the common symbol properties and extend another symbol",
+			"allOf": [
+				{
+					"$ref": "#/definitions/symbol"
+				},
+				{
+					"type": "object",
+					"properties": {
+						"kind": {
+							"enum": [
+								"namespace"
+							]
+						},
+						"extends": {
+							"type": "string"
+						},
+						"properties": {
+							"type": "array",
+							"items": {
+								"$ref": "#/definitions/obj-property"
+							}
+						},
+						"methods": {
+							"type": "array",
+							"items": {
+								"$comment": "Modules can contribute methods to namespaces declared in ohter modules (declaration merging). Methods in namespaces therefore can have module,export and reosufce properties",
+								"allOf": [
+									{
+										"$ref": "#/definitions/obj-method"
+									},
+									{
+										"type": "object",
+										"properties": {
+											"resource": {
+												"type": "string"
+											},
+											"module": {
+												"$ref": "#/definitions/moduleName"
+											},
+											"export": {
+												"type": "string"
+											}
+										},
+										"propertyNames": {
+											"anyOf": [
+												{
+													"$ref": "#/definitions/obj-method-propertyNames"
+												},
+												{
+													"enum": [
+														"resource",
+														"module",
+														"export"
+													]
+												}
+											]
+										}
+									}
+								]
+							}
+						},
+						"events": {
+							"type": "array",
+							"items": {
+								"$ref": "#/definitions/obj-event"
+							}
+						}
+					},
+					"propertyNames": {
+						"anyOf": [
+							{
+								"$ref": "#/definitions/symbol-propertyNames"
+							},
+							{
+								"enum": [
+									"extends",
+									"properties",
+									"methods",
+									"events"
+								]
+							}
+						]
+					}
+				}
+			]
+		},
+		"datatype-symbol": {
+			"$comment": "A special kind of namespace that represents a UI5 DataType instance (should be migrated to a typedef in future)",
+			"description": "Namespaces can have the common symbol properties and extend another symbol",
+			"allOf": [
+				{
+					"$ref": "#/definitions/symbol"
+				},
+				{
+					"type": "object",
+					"properties": {
+						"kind": {
+							"enum": [
+								"namespace"
+							]
+						},
+						"final": {
+							"type": "boolean"
+						},
+						"ui5-metamodel": {
+							"type": "boolean"
+						},
+						"ui5-metadata": {
+							"type": "object",
+							"properties": {
+								"stereotype": {
+									"type": "string",
+									"enum": [
+										"datatype"
+									]
+								},
+								"basetype": {
+									"$comment": "The name of the DataType instance that this type inherits from, defaults to 'string'",
+									"type": "string"
+								},
+								"pattern": {
+									"$comment": "A regular expression that limits the valid values for a string type",
+									"type": "string"
+								},
+								"range": {
+									"$commemt": "Value range for numeric types",
+									"type": "object",
+									"properties": {
+										"minExclusive": {
+											"type": "integer"
+										},
+										"maxInclusive": {
+											"type": "integer"
+										},
+										"minInclusive": {
+											"type": "integer"
+										},
+										"maxExclusive": {
+											"type": "integer"
+										}
+									},
+									"additionalProperties": false
+								}
+							},
+							"additionalProperties": false
+						}
+					},
+					"propertyNames": {
+						"anyOf": [
+							{
+								"$ref": "#/definitions/symbol-propertyNames"
+							},
+							{
+								"enum": [
+									"final",
+									"ui5-metamodel",
+									"ui5-metadata"
+								]
+							}
+						]
+					},
+					"required": [
+						"ui5-metadata"
+					]
+				}
+			]
+		},
+		"interface-symbol": {
+			"description": "Interfaces can have the common symbol properties and extend another symbol",
+			"allOf": [
+				{
+					"$ref": "#/definitions/symbol"
+				},
+				{
+					"properties": {
+						"kind": {
+							"enum": [
+								"interface"
+							]
+						},
+						"extends": {
+							"type": "string"
+						},
+						"ui5-metamodel": {
+							"type": "boolean",
+							"defaultValue": false
+						},
+						"methods": {
+							"type": "array",
+							"items": {
+								"$comment": "Interface methods can be marked as optional",
+								"allOf": [
+									{
+										"$ref": "#/definitions/obj-method"
+									},
+									{
+										"type": "object",
+										"properties": {
+											"optional": {
+												"type": "boolean",
+												"defaultValue": false
+											}
+										},
+										"propertyNames": {
+											"anyOf": [
+												{
+													"$ref": "#/definitions/obj-method-propertyNames"
+												},
+												{
+													"enum": [
+														"optional"
+													]
+												}
+											]
+										}
+									}
+								]
+							}
+						},
+						"events": {
+							"type": "array",
+							"items": {
+								"$ref": "#/definitions/obj-event"
+							}
+						}
+					},
+					"propertyNames": {
+						"anyOf": [
+							{
+								"$ref": "#/definitions/symbol-propertyNames"
+							},
+							{
+								"enum": [
+									"extends",
+									"ui5-metamodel",
+									"methods",
+									"events"
+								]
+							}
+						]
+					}
+				}
+			]
+		},
+		"enum-symbol": {
+			"description": "An enum has the standard symbol properties and may contain a set of properties",
+			"allOf": [
+				{
+					"$ref": "#/definitions/symbol"
+				},
+				{
+					"properties": {
+						"kind": {
+							"enum": [
+								"enum"
+							]
+						},
+						"ui5-metamodel": {
+							"type": "boolean",
+							"defaultValue": false
+						},
+						"properties": {
+							"type": "array",
+							"items": {
+								"$ref": "#/definitions/enum-property"
+							}
+						},
+						"ui5-metadata": {
+							"type": "object",
+							"properties": {
+								"stereotype": {
+									"type": "string",
+									"enum": [
+										"enum"
+									]
+								}
+							},
+							"additionalProperties": false
+						}
+					},
+					"propertyNames": {
+						"anyOf": [
+							{
+								"$ref": "#/definitions/symbol-propertyNames"
+							},
+							{
+								"enum": [
+									"ui5-metamodel",
+									"properties",
+									"ui5-metadata"
+								]
+							}
+						]
+					}
+				}
+			]
+		},
+		"class-symbol": {
+			"description": "A class is the basic building block of our user interfaces; it is a reusable entity with properties, events, methods, and relations. The most important relations are aggregations to other elements, and in this way a tree structure of elements can be created. Note that the term 'control' is used both for the individual instance (object) and for the type (class) of all such instances; sometimes the distinction will be made explicit, sometimes it becomes clear from the context.",
+			"allOf": [
+				{
+					"$ref": "#/definitions/symbol"
+				},
+				{
+					"properties": {
+						"kind": {
+							"enum": [
+								"class"
+							]
+						},
+						"extends": {
+							"type": "string",
+							"description": "any other class, control or element type, incl. the predefined types sap.ui.core/Element and sap.ui.core/Control"
+						},
+						"implements": {
+							"type": "array",
+							"items": {
+								"type": "string"
+							},
+							"description": "interfaces that this class implements"
+						},
+						"abstract": {
+							"type": "boolean",
+							"defaultValue": "false"
+						},
+						"final": {
+							"type": "boolean",
+							"defaultValue": "false"
+						},
+						"ui5-metadata": {
+							"$ref": "#/definitions/ui5-metadata"
+						},
+						"ui5-metamodel": {
+							"type": "boolean",
+							"defaultValue": false
+						},
+						"constructor": {
+							"$ref": "#/definitions/obj-constructor"
+						},
+						"properties": {
+							"type": "array",
+							"items": {
+								"$ref": "#/definitions/obj-property"
+							}
+						},
+						"events": {
+							"type": "array",
+							"items": {
+								"$ref": "#/definitions/obj-event"
+							}
+						},
+						"methods": {
+							"type": "array",
+							"items": {
+								"allOf": [
+									{
+										"$ref": "#/definitions/obj-method"
+									},
+									{
+										"type": "object",
+										"propertyNames": {
+											"$ref": "#/definitions/obj-method-propertyNames"
+										}
+									}
+								]
+							}
+						}
+					},
+					"propertyNames": {
+						"anyOf": [
+							{
+								"$ref": "#/definitions/symbol-propertyNames"
+							},
+							{
+								"enum": [
+									"kind",
+									"extends",
+									"implements",
+									"abstract",
+									"final",
+									"ui5-metadata",
+									"ui5-metamodel",
+									"constructor",
+									"properties",
+									"events",
+									"methods"
+								]
+							}
+						]
+					}
+				}
+			]
+		},
+		"function-symbol": {
+			"description": "A function can be a top-level symbol when exported from a module",
+			"allOf": [
+				{
+					"$ref": "#/definitions/symbol"
+				},
+				{
+					"$ref": "#/definitions/obj-method"
+				},
+				{
+					"properties": {
+						"kind": {
+							"type": "string",
+							"enum": [
+								"function"
+							]
+						},
+						"properties": {
+							"type": "array",
+							"items": {
+								"$ref": "#/definitions/obj-property"
+							}
+						}
+					},
+					"propertyNames": {
+						"anyOf": [
+							{
+								"$ref": "#/definitions/symbol-propertyNames"
+							},
+							{
+								"$ref": "#/definitions/obj-method-propertyNames"
+							},
+							{
+								"enum": [
+									"properties"
+								]
+							}
+						]
+					}
+				}
+			]
+		},
+		"concrete-symbol": {
+			"oneOf": [
+				{
+					"$ref": "#/definitions/class-symbol"
+				},
+				{
+					"$ref": "#/definitions/datatype-symbol"
+				},
+				{
+					"$ref": "#/definitions/enum-symbol"
+				},
+				{
+					"$ref": "#/definitions/function-symbol"
+				},
+				{
+					"$ref": "#/definitions/interface-symbol"
+				},
+				{
+					"$ref": "#/definitions/namespace-symbol"
+				},
+				{
+					"$ref": "#/definitions/typedef-symbol"
+				}
+			]
+		}
+	},
+	"type": "object",
+	"properties": {
+		"$schema-ref": {
+			"description": "A reference to this schema to make the structure of the file obvious.",
+			"type": "string",
+			"enum": [
+				"http://schemas.sap.com/sapui5/designtime/api.json/1.0"
+			]
+		},
+		"library": {
+			"type": "string",
+			"minLength": 1
+		},
+		"version": {
+			"$ref": "#/definitions/libraryVersion"
+		},
+		"symbols": {
+			"type": "array",
+			"items": {
+				"$ref": "#/definitions/concrete-symbol"
+			}
+		}
+	},
+	"additionalProperties": false,
+	"required": [
+		"$schema-ref"
+	]
+}

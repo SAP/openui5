@@ -1,0 +1,14 @@
+[
+	{
+	"StatusId": "S1",
+	"Name": "Available"
+	},
+	{
+	"StatusId": "S2",
+	"Name": "Discontinued"
+	},
+	{
+	"StatusId": "S3",
+	"Name": "Out of Stock"
+	}
+]

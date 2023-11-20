@@ -1,0 +1,18 @@
+<mvc:View
+	controllerName="sap.m.sample.messageToast.Controller"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core"
+	height="100%">
+		<App>
+			<Page
+				showHeader="false"
+				id="page"
+				backgroundDesign="Solid">
+				<content>
+					<Text class="sapUiSmallMargin" text="A message toast is a small, non-disruptive popup for success or information messages that disappears automatically after a few seconds. Toasts automatically disappear after a timeout unless the user moves the mouse over the toast or taps on it. The MessageToast will be announced by the screen reader." />
+					<Button press=".fnHandler" text="Show MessageToast" class="sapUiSmallMargin"/>
+				</content>
+			</Page>
+		</App>
+</mvc:View>

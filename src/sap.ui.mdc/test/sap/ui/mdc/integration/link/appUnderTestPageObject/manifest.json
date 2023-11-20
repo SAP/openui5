@@ -1,0 +1,58 @@
+{
+	"_version": "1.11.0",
+	"sap.app": {
+		"_version": "1.11.0",
+		"id": "sap.ui.mdc.LinkIntegrationTesting.appUnderTestPageObject",
+		"type": "application",
+		"title": "sap.ui.mdc.Link PageObject testing",
+		"description": "sap.ui.mdc.Link testing app for OPA PageObject",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui": {
+		"_version": "1.11.0",
+		"technology": "UI5",
+		"deviceTypes": {
+			"desktop": true,
+			"tablet": true,
+			"phone": true
+		},
+		"supportedThemes": [
+			"sap_belize"
+		]
+	},
+	"sap.ui5": {
+		"_version": "1.11.0",
+		"flexEnabled": true,
+		"rootView": {
+			"viewName": "sap.ui.mdc.LinkIntegrationTesting.appUnderTestPageObject.view.App",
+			"type": "XML",
+			"async": true,
+			"id": "app"
+		},
+		"dependencies": {
+			"minUI5Version": "1.70",
+			"libs": {
+				"sap.m": {
+					"lazy": true
+				},
+				"sap.ui.layout": {
+					"lazy": true
+				},
+				"sap.ui.fl": {
+					"lazy": false
+				},
+				"sap.ui.mdc": {
+					"lazy": false
+				},
+				"sap.ui.rta": {
+					"lazy": true
+				},
+				"sap.ui.dt": {
+					"lazy": true
+				}
+			}
+		}
+	}
+}

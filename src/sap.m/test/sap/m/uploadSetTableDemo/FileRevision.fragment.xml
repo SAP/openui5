@@ -1,0 +1,95 @@
+<!-- Fragment.fragment.xml -->
+<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core" templateShareable="false" class="sapUiTinyMarginTop">
+  <Dialog title="Version Details" id="RevisionDialog" class="sapUiSmallMargin" contentHeight="50rem" contentWidth="80rem" >
+    <content>
+      <Table 
+             id = "RevisionTable"
+             backgroundDesign="Solid"  
+             fixedLayout="false" 
+             class="sapUiTinyMargin sapUiTableBorderVisible" 
+             items="{path: '/', sorter: {path: 'revision', descending: false},templateShareable:false}"
+             mode="SingleSelectLeft"
+             >
+          <headerToolbar>
+               <Toolbar>
+                  <ToolbarSpacer />
+                  <SearchField width="auto" search=".onFilterFiles" class="sapUiSmallMarginEnd" placeholder="Search Revision"/>
+               </Toolbar>
+            </headerToolbar>
+        <columns>
+                <Column id="fileName">
+                    <header>
+                        <Label text="File Name" />
+                    </header>
+                </Column>
+                <Column id="id">
+                    <header>
+                        <Label text="ID" />
+                    </header>
+                </Column>
+                <Column id="revision">
+                    <header>
+                        <Label text="Revision" />
+                    </header>
+                </Column>
+                <Column id="status">
+                    <header>
+                        <Label text="Status" />
+                    </header>
+                </Column>
+                <Column id="fileSize">
+                    <header>
+                        <Label text="File Size" />
+                    </header>
+                </Column>
+        </columns>
+        <items>
+          <ColumnListItem
+            selected="{isSelected}"
+          >
+            <cells>
+              <HBox>
+                        <Image
+                            src="{imageUrl}"
+                            class="sapMUSTItemImage sapMUSTItemIcon"
+                            visible="{= ${imageUrl} !== undefined}"
+                        />
+                        <core:Icon
+                            src="{parts: ['mediaType', 'fileName'], formatter: '.getIconSrc' }"
+                            color="white"
+                            visible="{= ${imageUrl} === undefined || ${imageUrl} === '' }"
+                            class="sapMUSTItemImage sapMUSTItemIcon"
+                        />
+                        <VBox class="sapUiTinyMargin sapUiSmallMarginBegin">
+                            <Link text="{fileName}" />
+                            <Text text="{documentType}" />
+                        </VBox>
+                    </HBox>
+                    <Text text="{id}" />
+                    <HBox>
+                        <Link text="{revision}"/>
+                        <ObjectStatus
+                            class="sapUiTinyMarginBegin"
+						                text="Current"
+                            inverted="true"
+			                      active="false"
+			                      state="Information"
+                            press="getFileVersion"
+                            visible="{isCurrent}"
+                        />  
+                    </HBox>
+                    <Text text="{status}" />
+                    <Text text="{parts: ['fileSize'], formatter: '.getFileSizeWithUnits'}" />
+            </cells>
+          </ColumnListItem>
+        </items>
+      </Table>
+    </content>
+    <buttons>
+      <Button text="Replace Current Version" type="Emphasized" press=".replaceVersionHandler" />
+      <Button text="Add Version" press=".onAddVersion"/>
+      <Button text="Cancel" press=".closeRevisionDialog"/>
+    </buttons>
+    
+  </Dialog>
+</core:FragmentDefinition>

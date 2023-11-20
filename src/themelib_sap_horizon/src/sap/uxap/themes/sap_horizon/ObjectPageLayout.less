@@ -1,0 +1,107 @@
+/* ========================================== */
+/* CSS for control sap.uxap/ObjectPageLayout  */
+/* Horizon theme                              */
+/* ========================================== */
+
+.sapUxAPObjectPageNavigation {
+	background: @sapUiObjectHeaderBackground;
+
+	&.sapUxAPObjectPageNavigationTransparent {
+		background: transparent;
+	}
+
+	&.sapUxAPObjectPageNavigationTranslucent {
+		background: lighten(@sapUiObjectHeaderBackground, 10);
+	}
+}
+
+.sapUxAPObjectPageHeaderDetails {
+	.sapMOHTitle .sapMText {
+		color: @sapUiContentLabelColor;
+	}
+	.sapMLabel {
+		color: @sapUiContentLabelColor;
+	}
+}
+.sapUiSizeCompact .sapUxAPObjectPageNavigation,
+.sapUxAPObjectPageNavigation {
+	.sapUxAPObjectChildPage {
+		height: @sapUiElementLineHeight;
+	}
+}
+
+.sapUxAPObjectPageNavigation .sapUxAPITBar.sapUxAPObjectChildPage {
+	height: 2.9375rem;
+}
+
+.sapUiSizeCompact .sapUxAPObjectPageNavigation .sapUxAPITBar.sapUxAPObjectChildPage {
+	height: 1.9375rem;
+}
+
+/* ======================================== */
+/* Title and Toggle Header Visual Indicator */
+/* ======================================== */
+.sapUxAPObjectPageLayout {
+  &.sapUxAPObjectPageLayoutTitleClickEnabled {
+
+    &.sapUxAPObjectPageLayoutTitleForceHovered .sapFDynamicPageTitle {
+      .title-hover(@sapUiObjectHeaderBackground);
+	}
+
+	&.sapUxAPObjectPageLayoutTitleForceHovered .sapFDynamicPageTitleTranslucent {
+		.title-hover(lighten(@sapUiObjectHeaderBackground, 10));
+	}
+
+	&.sapUxAPObjectPageLayoutTitleForceHovered .sapFDynamicPageTitleTransparent {
+		.title-hover(transparent);
+	}
+  }
+}
+
+// footer
+.sapUxAPObjectPageLayout .sapUxAPObjectPageFooter .sapUxAPObjectPageFloatingFooter {
+	background: @sapUiPageFooterBackground;
+	color: @sapUiPageFooterTextColor;
+	box-shadow: @sapUiShadowLevel1;
+	border: none;
+	border-radius: @sapUiElementBorderCornerRadius;
+}
+
+.title-hover(@backgroundColor) {
+	background-color: darken(@backgroundColor, 3);
+}
+
+
+// =====================================
+// =====================================
+// Delta Styles for Horizon
+// =====================================
+
+.sapUxAPObjectPageLayout:not(.sapUxAPObjectPageLayoutNoAnchorBar)>.sapUxAPObjectPageHeaderStickied>.sapFDynamicPageTitle {
+    box-shadow: none;
+}
+
+.sapUxAPObjectPageLayout .sapMList {
+    box-shadow: none;
+}
+
+
+.sapUxAPObjectPageLayout-Std-Phone .sapMSltPressed>.sapMSltArrow, html.sap-phone .sapMSltPressed>.sapMSltArrow {
+    border-radius: @sapUiButtonBorderCornerRadius;
+    background: @sapUiButtonActiveBackground;
+}
+
+// =====================================
+// OBJECT PAGE  SMART TEMPLATE CONTACTS ICON
+// =====================================
+
+.sapSmartTemplatesObjectPage .sapSmartTemplatesObjectPageContactsImage {
+    color: @sapUiContentNonInteractiveIconColor;
+}
+
+// =====================================
+// Responsive Grid - Object Page spacing fixes
+// =====================================
+.sapUiRespGrid.sapUiRespGridVSpace1>div {
+    margin-bottom: 0.5rem;
+}

@@ -1,0 +1,58 @@
+<mvc:View
+		class="sapUiSizeCompact"
+		controllerName="sap.ui.core.sample.odata.v4.Draft.ListReport"
+		xmlns="sap.m"
+		xmlns:mvc="sap.ui.core.mvc">
+	<Page showHeader="false">
+		<Table growing="true" growingThreshold="5" id="Products"
+				items="{path : '/Products', parameters : {
+							$count : true,
+							$filter :
+								'IsActiveEntity eq false or SiblingEntity/IsActiveEntity eq null',
+							$$getKeepAliveContext : true,
+							$$patchWithoutSideEffects : true
+						}}"
+				mode="SingleSelectMaster" selectionChange="onProductSelect">
+			<headerToolbar>
+				<Toolbar id="productsToolbar">
+					<Title id="productsTitle" level="H1"
+							text="{headerContext>$count} Products">
+						<layoutData>
+							<ToolbarLayoutData shrinkable="false"/>
+						</layoutData>
+					</Title>
+					<Button id="showMessages" icon="sap-icon://message-popup"
+							tooltip="Show messages" press="onToggleMessagePopover"
+							text="{ui>/iMessages} Messages"
+							type="{= ${ui>/iMessages} ? 'Emphasized' : 'Default' }"/>
+					<Link text="Read Me" target="_blank"
+							href="test-resources/sap/ui/core/demokit/sample/odata/v4/Draft/README.html"/>
+				</Toolbar>
+			</headerToolbar>
+			<columns>
+				<Column demandPopin="true">
+					<Text text="Product ID"/>
+				</Column>
+				<Column demandPopin="true">
+					<Text text="Is Active Entity"/>
+				</Column>
+				<Column demandPopin="true">
+					<Text text="Name"/>
+				</Column>
+				<Column demandPopin="true" hAlign="Right">
+					<Text text="Amount"/>
+				</Column>
+				<Column demandPopin="true">
+					<Text text="Category ID"/>
+				</Column>
+			</columns>
+			<ColumnListItem type="Navigation">
+				<Text id="productId" text="{ID}"/>
+				<Text id="isActiveEntity" text="{IsActiveEntity}"/>
+				<Text id="productName" text="{name}"/>
+				<Text id="amount" text="{amount}"/>
+				<Text id="categoryID" text="{categoryID}"/>
+			</ColumnListItem>
+		</Table>
+	</Page>
+</mvc:View>

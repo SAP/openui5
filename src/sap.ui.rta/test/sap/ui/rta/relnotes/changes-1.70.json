@@ -1,0 +1,52 @@
+{
+  "1.70.0": {
+    "date": "August 2019",
+    "notes": [
+      {
+        "id": "9a00fc241f7131f1026119b5810420e0bb920d48",
+        "type": "FIX",
+        "text": ": RTA Responsive Toolbar Button-Icon fix",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970370491"
+          }
+        ]
+      },
+      {
+        "id": "9a56dbd77a5d8ede57fc6b0ac22b26779e2f044a",
+        "type": "FIX",
+        "text": " Core: incorporate feedback from SDK feedback channel (2019/4-7)",
+        "references": []
+      },
+      {
+        "id": "ba356bcdf28c04c4616ffb3a5d3ae4215dec00f4",
+        "type": "FIX",
+        "text": " sap.ui.rta: Placehoder for successful app variant deletion dialog",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980318508"
+          }
+        ]
+      },
+      {
+        "id": "7f85937ce730c797c25155cbd19194dcd3d35f24",
+        "type": "FIX",
+        "text": ": RTA runtime authoring eslint fix",
+        "references": []
+      },
+      {
+        "id": "2dd7a64a81c48b3245891c382ab8b42109d1c386",
+        "type": "FIX",
+        "text": " Inline changes only relevant for Save As will be removed from",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980324271"
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -1,18 +1,14 @@
 sap.ui.define([
-	'sap/ui/test/Opa5',
-	'sap/ui/test/matchers/BindingPath',
-	'sap/ui/test/matchers/Properties',
-	'sap/ui/test/matchers/PropertyStrictEquals',
-	'sap/ui/test/matchers/AggregationFilled',
-	'sap/ui/test/matchers/I18NText',
-	'sap/ui/test/actions/Press',
-	'sap/ui/test/actions/EnterText'
+	"sap/ui/test/Opa5",
+	"./Common",
+	"sap/ui/test/matchers/PropertyStrictEquals",
+	"sap/ui/test/matchers/I18NText",
+	"sap/ui/test/actions/Press",
+	"sap/ui/test/actions/EnterText"
 ], function (
 	Opa5,
-	BindingPath,
-	Properties,
+	Common,
 	PropertyStrictEquals,
-	AggregationFilled,
 	I18NText,
 	Press,
 	EnterText) {
@@ -20,6 +16,7 @@ sap.ui.define([
 
 	Opa5.createPageObjects({
 		onCheckout: {
+			baseClass: Common,
 			viewName: "Checkout",
 			actions: {
 
@@ -199,10 +196,9 @@ sap.ui.define([
 					this.waitFor({
 						searchOpenDialogs: true,
 						controlType: "sap.m.Button",
-						matchers: new PropertyStrictEquals({
-							name: "text",
-							value: "Yes"
-						}),
+						matchers: function(oControl){
+							return this.I18NTextExtended(oControl, "MSGBOX_YES", "text", "sap.m");
+						}.bind(this),
 						success: function (aButtons) {
 							return aButtons.filter(function () {
 								return true;
@@ -360,10 +356,9 @@ sap.ui.define([
 				iShouldGetErrorMessageTextDoesNotMatchTypeForEmailField: function (sEmailFieldValue) {
 					return this.waitFor({
 						id: "cashOnDeliveryEmail",
-						matchers: new PropertyStrictEquals({
-							name: "valueStateText",
-							value: '"' + sEmailFieldValue + '" is not a valid email address'
-						}),
+						matchers: function(oControl){
+							return this.I18NTextExtended(oControl, "checkoutCodEmailValueTypeMismatch", "valueStateText", null, [sEmailFieldValue]);
+						}.bind(this),
 						errorMessage: "The Email field error message text does not match to the type of error (value has wrong format)."
 					});
 				},

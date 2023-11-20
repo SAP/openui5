@@ -2,11 +2,12 @@
 /* CSS for control sap.m/ProgressIndicator  */
 /* Belize theme                             */
 /* ======================================== */
+@sapMPITextLeftTextThreshold: 0.6;
+
+.sapMPITextLeft {
+	padding-left: 0.5rem;
+}
 
 .sapMPIDisplayOnly:not(.sapMPIBarDisabled) .sapMPIBarNeutral {
 	background: @sapUiBaseText;
-}
-
-.sapMPIDisplayOnly:not(.sapMPIBarDisabled) .sapMPIText.sapMPITextLeft {
-	color: contrast(@sapUiBaseText, @sapUiBaseText, @sapUiContentForegroundColor, @sapUiContentContrastTextThreshold);
 }

@@ -1,0 +1,180 @@
+/* ================================= */
+/* CSS for control sap.m/TabStrip    */
+/* Quartz High Contrast White theme  */
+/* ================================= */
+
+@_sap_m_TabStrip_ItemHoverTextColor: darken(@sapUiGroupTitleTextColor, 10);
+@_sap_m_TabStrip_ItemSelectedTextColor: darken(@sapUiGroupTitleTextColor, 20);
+
+.sapMTabStripContainer .sapMTabStrip {
+	background: @sapUiShellBackground;
+	box-shadow: none;
+	height: 3.25rem;
+	.sapMTSRightOverflowButtons {
+		right: 5.2rem;
+		text-align: center;
+		margin-right: 0.5rem;
+		padding-left: 0.5rem;
+		width: 2.75rem;
+		.sapMBtn.sapMBtnBase {
+			margin-left: 0;
+			padding-left: 0.5rem;
+			padding: 0;
+		}
+	}
+	.sapMTSTabsContainer {
+		left: 0;
+		right: 5.8rem;
+		.sapMTSTabs {
+			.sapMTabStripItem {
+				height: 2.625rem;
+				padding: 0 0 0 0.5rem;
+				border: solid 0.0625rem @sapUiObjectHeaderBorderColor;
+				border-radius: 0.125rem 0.125rem 0 0;
+				border-bottom: 0;
+				margin-right: 0.5rem;
+				margin-top: 0.125rem;
+				&:last-child {
+					margin-right: 0;
+				}
+				&:hover {
+					color: @_sap_m_TabStrip_ItemHoverTextColor;
+					background-color: @sapUiListHoverBackground;
+				}
+				&.sapMTabStripItemSelected {
+					height: 2.75rem;
+					border-color: @sapUiListSelectionBorderColor;
+					background-color: @sapUiListSelectionBackgroundColor;
+					padding: 0.125rem 0 0 0.5rem;
+					margin-top: 0
+				}
+				.sapMTSItemCloseBtnCnt {
+					width: 2rem;
+					height: 2.75rem;
+					line-height: 2.4rem;
+					.sapMBtn {
+						width: 1.5rem;
+						height: 2rem;
+						vertical-align: middle;
+					}
+				}
+				.sapMTabContIcon.sapUiIcon{
+					color: @sapUiContentIconColor;
+				}
+			}
+		}
+	}
+	.sapMTSOverflowSelect {
+		width: 2.25rem;
+		height: 2.25rem;
+	}
+	.sapMTSLeftOverflowButtons {
+		margin-left: 0;
+		text-align: left;
+		width: 2.75rem;
+	}
+}
+
+.sapMTabStripContainer {
+	background: @sapUiShellBackground;
+}
+.sapMTSOverflowSelectListItem {
+	padding-right: 0;
+}
+.sapMSltIcon.sapUiIcon.sapUiIconMirrorInRTL {
+	font-size: 1rem;
+}
+
+.sapUiSizeCompact {
+	.sapMTabStrip {
+		.sapMTSRightOverflowButtons {
+			right: 4.7rem;
+		}
+		.sapMTSTabsContainer .sapMTSTabs {
+			.sapMTabStripItem {
+				padding: 0 2rem 0 0.5rem;
+				&:hover {
+					padding: 0 2rem 0 0.5rem;
+				}
+				&.sapMTabStripItemSelected {
+					padding: 0.125rem 2rem 0 0.5rem;
+				}
+				.sapMTSItemCloseBtnCnt {
+					.sapMBtn {
+						opacity: 1;
+					}
+				}
+			}
+		}
+		.sapMTSTouchArea .sapMSlt {
+			margin-top: 0.46rem;
+			width: 2.0rem;
+			height: 1.625rem;
+		}
+	}
+	.sapMTSOverflowSelectListItem .sapMTabStripSelectListItemCloseBtn {
+		visibility: visible; //close button must be always visible
+	}
+}
+
+.sapMTabStrip .sapMTSTabsContainer .sapMTSTabs .sapMTabStripItem:focus::before {
+	border-width: 0.125 * @sapContent_GridSize;
+	top: 0.125rem;
+}
+
+.sapMTabStrip .sapMTSTabsContainer .sapMTSTabs .sapMTabStripItem.sapMTabStripItemSelected:focus::before {
+	top: 0.25rem;
+}
+
+.sapMTabStrip .sapMTSTabsContainer .sapMTSTabs .sapMTabStripItem.sapMTabStripItemSelected {
+	box-shadow: inset 0 0.1875rem 0 @sapUiListTextColor;
+	border-bottom: 0;
+	border-radius: 0.125rem 0.125rem 0 0;
+}
+
+html.sap-phone {
+	.sapMTabStrip .sapMTSTouchArea .sapMSlt {
+		width: 100%;
+	}
+
+	.sapMTabStripSelectListItemCloseBtn {
+		margin-right: 1rem;
+	}
+}
+
+html[dir=rtl] .sapMTabStrip .sapMTSLeftOverflowButtons {
+	text-align: right;
+}
+
+html[dir=ltr] .sapMTabStrip .sapMTSLeftOverflowButtons,
+html[dir=rtl] .sapMTabStrip .sapMTSRightOverflowButtons {
+	background: @sapUiShellBackground;
+}
+
+html[dir=ltr] .sapMTabStrip .sapMTSLeftOverflowButtons::after,
+html[dir=rtl] .sapMTabStrip .sapMTSRightOverflowButtons::after {
+	background: transparent;
+}
+
+html[dir=ltr] .sapMTabStrip .sapMTSRightOverflowButtons,
+html[dir=rtl] .sapMTabStrip .sapMTSLeftOverflowButtons {
+	background: @sapUiShellBackground;
+}
+
+html[dir=ltr] .sapMTabStrip .sapMTSRightOverflowButtons::after,
+html[dir=rtl] .sapMTabStrip .sapMTSLeftOverflowButtons::after {
+	background: transparent;
+}
+
+//no animation for fiori 3 for acc reasons
+html[data-sap-ui-animation='on'] .sapMTabStrip .sapMTSTabsContainer .sapMTSTabs {
+	.sapMTabStripItem,
+	.sapMTabStripItem .sapMTSItemCloseBtnCnt .sapMBtn {
+		-webkit-transition: none;
+		transition: none;
+	}
+}
+
+.sapMSltIconOnly.sapMSltHoverable:hover:not(.sapMSltState) {
+	border: 0.0625rem solid @sapUiButtonEmphasizedHoverBorderColor;
+}

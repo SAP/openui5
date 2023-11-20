@@ -1,0 +1,29 @@
+{
+  "1.89.0": {
+    "date": "March 2021",
+    "notes": [
+      {
+        "id": "b59d2d130a004d1bebb62a9f4e7c2ef6af224340",
+        "type": "FIX",
+        "text": " sap.m.ObjectStatus, sap.m.ObjectNumber: vertical alignment fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180090916"
+          }
+        ]
+      },
+      {
+        "id": "7e4ab4e2e819172ad65803368c4aa78c966c6903",
+        "type": "FIX",
+        "text": " sap.f.DynamicPageTitle: HCW and HCB themes fix",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180136542"
+          }
+        ]
+      }
+    ]
+  }
+}

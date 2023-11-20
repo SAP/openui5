@@ -5,17 +5,13 @@
 /*global sap */
 
 sap.ui.define([
-	"sap/ui/fl/changeHandler/BaseRename"
-], function (BaseRename) {
+	"sap/ui/layout/changeHandler/RenameFormElement"
+], function (RenameFormElement) {
 	"use strict";
 
 	return {
 		"hideControl": "default",
 		"unhideControl": "default",
-		"renameField": BaseRename.createRenameChangeHandler({
-			propertyName: "label",
-			translationTextType: "XFLD",
-			changePropertyName: "fieldLabel"
-		})
+		"renameField": RenameFormElement
 	};
 }, /* bExport= */true);

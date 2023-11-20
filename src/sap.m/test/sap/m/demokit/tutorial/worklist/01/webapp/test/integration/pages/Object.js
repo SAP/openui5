@@ -2,9 +2,9 @@ sap.ui.define([
 	"sap/ui/test/Opa5",
 	"sap/ui/test/actions/Press",
 	"sap/ui/test/matchers/PropertyStrictEquals",
-	"mycompany/myapp/MyWorklistApp/test/integration/pages/Common",
-	"mycompany/myapp/MyWorklistApp/test/integration/pages/shareOptions"
-], function(Opa5, Press, PropertyStrictEquals, Common, shareOptions) {
+	"./Common",
+	"./shareOptions"
+], function (Opa5, Press, PropertyStrictEquals, Common, shareOptions) {
 	"use strict";
 
 	var sViewName = "Object";
@@ -13,7 +13,7 @@ sap.ui.define([
 		onTheObjectPage: {
 			baseClass : Common,
 
-			actions : jQuery.extend({
+			actions : Object.assign({
 				iPressTheBackButton : function () {
 					return this.waitFor({
 						id : "page",
@@ -25,7 +25,7 @@ sap.ui.define([
 
 			}, shareOptions.createActions(sViewName)),
 
-			assertions: jQuery.extend({
+			assertions: Object.assign({
 
 				iShouldSeeTheRememberedObject : function () {
 					return this.waitFor({
@@ -53,6 +53,8 @@ sap.ui.define([
 						matchers : function (oPage) {
 							return oPage.getBusy();
 						},
+						autoWait: false,
+						pollingInterval: 100,
 						success : function (oPage) {
 							Opa5.assert.ok(oPage.getBusy(), "The object view is busy");
 						},
@@ -67,6 +69,7 @@ sap.ui.define([
 						matchers : function (oPage) {
 							return !oPage.getBusy();
 						},
+						autoWait: false,
 						success : function (oPage) {
 							Opa5.assert.ok(!oPage.getBusy(), "The object view is not busy");
 						},
@@ -128,4 +131,5 @@ sap.ui.define([
 		}
 
 	});
+
 });

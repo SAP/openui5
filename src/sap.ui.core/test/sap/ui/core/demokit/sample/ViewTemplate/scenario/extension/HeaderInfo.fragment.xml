@@ -10,7 +10,7 @@
 			<Label labelFor="{path: 'entityType>TypeName', formatter: '.id'}"
 				text="Type Name"/>
 			<Text id="{path: 'entityType>TypeName', formatter: '.id'}"
-				text="{path: 'entityType>TypeName', formatter: 'sap.ui.model.odata.AnnotationHelper.format'}" />
+				text="{path: 'entityType>TypeName', formatter: 'AH.format'}" />
 
 			<template:with path="entityType>Title" var="field">
 				<core:Fragment fragmentName="sap.ui.core.sample.ViewTemplate.scenario.LabeledField" type="XML"/>

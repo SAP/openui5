@@ -1,0 +1,92 @@
+{
+	"sap.app": {
+		"type": "card",
+		"i18n": "i18n/i18n.properties",
+		"id": "test.manifest.translation.card1"
+	},
+	"sap.card": {
+		"data": {
+			"json": {
+				"items": [
+					{
+						"title": "Laurent Dubois",
+						"description": "I am Laurent. I put great attention to detail.",
+						"infoState": "Error",
+						"info": "Manager",
+						"highlight": "Success",
+						"action": {
+							"url": "https://www.w3schools.com"
+						}
+					},
+					{
+						"title": "Alain Chevalier",
+						"description": "I am Alain. I put great attention to detail.",
+						"infoState": "Success",
+						"info": "Credit Analyst",
+						"highlight": "Error"
+					},
+					{
+						"title": "Alain Chevalier",
+						"description": "I am Alain. I put great attention to detail.",
+						"infoState": "Information",
+						"info": "Configuration Expert",
+						"highlight": "Information"
+					},
+					{
+						"title": "Alain Chevalier",
+						"description": "I am Alain. I put great attention to detail.",
+						"highlight": "Warning"
+					},
+					{
+						"title": "Laurent Dubois",
+						"description": "I am Laurent. I put great attention to detail.",
+						"infoState": "Error",
+						"info": "Manager",
+						"highlight": "Success",
+						"action": {
+							"url": "https://www.w3schools.com"
+						}
+					}
+				],
+				"count": 115
+			}
+		},
+		"type": "List",
+		"header": {
+			"title": "{{TITLE}}",
+			"subTitle": "{{SUBTITLE}}",
+			"icon": {
+				"src": "sap-icon://business-objects-experience"
+			},
+			"status": {
+				"text": {
+					"format": {
+						"translationKey": "i18n>CARD.COUNT_X_OF_Y",
+						"parts": [
+							"parameters>/visibleItems",
+							"/count"
+						]
+					}
+				}
+			}
+		},
+		"content": {
+			"data": {
+				"path": "/items"
+			},
+			"maxItems": 2,
+			"item": {
+				"title": {
+					"value": "{title}"
+				},
+				"description": {
+					"value": "{description}"
+				},
+				"highlight": "{highlight}",
+				"info": {
+					"state": "{infoState}"
+				}
+			}
+		}
+	}
+}

@@ -1,0 +1,71 @@
+/* ================================== */
+/* CSS for control sap.m/SearchField  */
+/* Horizon High Contrast White theme  */
+/* ================================== */
+
+// ==========================================================================
+// Variables overriding
+// ==========================================================================
+
+@_sap_m_SearchField_Height: 2.75rem;
+@_sap_m_SearchField_ButtonSize: 2.25rem;
+@_sap_m_SearchField_ButtonFontSize: 1rem;
+@_sap_m_SearchField_Compact_FormPaddingLeft: 0.5rem;
+@_sap_m_SearchField_ResetIcon: "\e03e";
+@_sap_m_SearchField_PlaceholderFontStyle: normal;
+@_sap_m_SearchField_ActiveBackgroundStyle: @sapUiFieldBackgroundStyle;
+
+.sapMSFF {
+	border-radius: @sapUiFieldBorderCornerRadius;
+}
+
+.sapMSFDisabled {
+	opacity: @sapUiContentDisabledOpacity;
+}
+
+.sapMSFB {
+	border-radius: @sapUiFieldBorderCornerRadius;
+	color: @sapUiButtonTextColor;
+	line-height: @_sap_m_SearchField_ButtonSize - @sapUiFieldBorderWidth * 2; // center the icon vertically
+
+	&:first-of-type {
+		margin-left: 0.25rem;
+	}
+
+	&:focus {
+		outline: none;
+	}
+
+	&:hover {
+		box-shadow: @sapUiFieldHoverShadow;
+		background-color: @sapUiButtonHoverBackground;
+		border-left: 2px solid @sapUiButtonHoverBorderColor; // contrast themes specific
+		border-right: 2px solid transparent;
+	}
+
+	&.sapMSFR:not(:last-child):hover { // if there is no search button the right border is not needed
+		border-right: 2px solid @sapUiButtonHoverBorderColor; // contrast themes specific
+	}
+
+	&:active,
+	&.sapMSFBA // Firefox specific
+	{
+		box-shadow: @sapUiFieldHoverShadow;
+		color: @sapUiButtonSelectedTextColor;
+		background-color: @sapUiButtonHoverBackground;
+	}
+}
+
+.sapMSF:not(.sapMSFDisabled):hover .sapMSFF {
+	background-color: @sapUiFieldHoverBackground;
+}
+
+.sapMSF.sapMFocus {
+	.sapMSFF {
+		background-color: @sapUiFieldFocusBackground;
+	}
+
+	&:hover .sapMSFF {
+		box-shadow: none;
+	}
+}

@@ -1,0 +1,11 @@
+{
+    "extends": "",
+    "preBoot": [],
+    "boot": [
+        "sap/ui/core/boot/loadCalendar",
+        "sap/ui/core/boot/loadModules"
+    ],
+    "postBoot": [
+        "sap/ui/core/boot/onInit"
+    ]
+}

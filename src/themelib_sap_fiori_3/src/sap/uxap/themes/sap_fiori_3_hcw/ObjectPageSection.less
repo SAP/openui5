@@ -1,0 +1,55 @@
+/* =========================================== */
+/* CSS for control sap.uxap/ObjectPageSection  */
+/* Quartz High Contrast White theme            */
+/* =========================================== */
+
+.sapUxAPObjectPageLayout-Std-Desktop .sapUxAPObjectPageSubSectionHeader {
+	padding-left: 2rem;
+}
+
+.sapUiSizeCompact .sapUxAPObjectPageSectionHeader,
+.sapUxAPObjectPageSectionHeader {
+	border-top: 0.0625rem solid @sapUiGroupTitleBorderColor;
+	height: 2.75rem;
+	line-height: 2.25rem;
+}
+
+.sapUxAPObjectPageLayoutNoAnchorBar .sapUxAPObjectPageSection:first-of-type > .sapUxAPObjectPageSectionHeader {
+	border-top: 0;
+}
+
+.sapUiSizeCompact .sapUxAPObjectPageSectionTitle,
+.sapUxAPObjectPageSectionTitle {
+	height: 2.75rem;
+	line-height: 2.25rem;
+	color: @sapUiGroupTitleTextColor;
+	font-size: @sapMFontHeader4Size;
+}
+
+.sapUxAPObjectPageSection:focus {
+	outline: @sapUiContentFocusWidth @sapUiContentFocusStyle @sapUiContentFocusColor;
+	outline-offset: -0.1875rem;
+}
+
+.sapUxAPObjectPageSectionHeader,
+.sapUxAPObjectPageSubSectionWithSeeMore .sapUxAPSubSectionSeeMoreContainer {
+	padding-right: 3rem;
+}
+
+.sapUxAPObjectPageLayout-Std-Desktop,
+.sapUxAPObjectPageLayout-Std-Tablet {
+	.sapUxAPObjectPageSectionHeader,
+	html .sapUiContainer-Medium .sapUxAPObjectPageSectionHeader,
+	.sapUxAPObjectPageSubSectionWithSeeMore .sapUxAPSubSectionSeeMoreContainer {
+		padding-right: 2rem;
+		padding-left: 2rem;
+	}
+}
+
+.sapUxAPObjectPageLayout-Std-Phone {
+	.sapUxAPObjectPageSectionHeader,
+	html .sapUiContainer-Narrow .sapUxAPObjectPageSectionHeader,
+	.sapUxAPObjectPageSubSectionWithSeeMore .sapUxAPSubSectionSeeMoreContainer {
+		padding-right: 1rem;
+	}
+}

@@ -1,0 +1,91 @@
+<mvc:View xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.uxap"
+	xmlns:l="sap.ui.layout"
+	xmlns:m="sap.m"
+	xmlns:goals="sap.uxap.sample.SharedBlocks.goals"
+	xmlns:personal="sap.uxap.sample.SharedBlocks.personal"
+	controllerName="sap.uxap.sample.ObjectPageHeaderExpanded.controller.ObjectPageHeaderExpanded"
+	height="100%">
+	<ObjectPageLayout id="ObjectPageLayout" preserveHeaderStateOnScroll="true" upperCaseAnchorBar="false">
+		<headerTitle>
+			<ObjectPageDynamicHeaderTitle>
+				<heading>
+					<m:Title text="Denise Smith" />
+				</heading>
+
+				<expandedContent>
+					<m:Text text="Example of a ObjectPage with Header Content always shown on desktop"/>
+				</expandedContent>
+
+				<snappedContent>
+					<m:Text text="Example of a ObjectPage with Header Content always shown on desktop"/>
+				</snappedContent>
+
+				<snappedTitleOnMobile>
+					<m:Title text="Example of a ObjectPage with Header Content always shown on desktop"/>
+				</snappedTitleOnMobile>
+
+				<actions>
+					<m:Button text="Edit" type="Emphasized"/>
+					<m:Button type="Transparent" text="Delete"/>
+					<m:Button type="Transparent" text="Copy"/>
+					<m:OverflowToolbarButton icon="sap-icon://action" type="Transparent" text="Share" tooltip="action"/>
+				</actions>
+			</ObjectPageDynamicHeaderTitle>
+		</headerTitle>
+
+		<headerContent>
+			<m:FlexBox wrap="Wrap" fitContainer="true">
+				<l:VerticalLayout class="sapUiSmallMarginEnd">
+					<m:ObjectStatus title="User ID" text="12345678"/>
+					<m:ObjectStatus title="Functional Area" text="Developement"/>
+					<m:ObjectStatus title="Cost Center" text="PI DFA GD Programs and Product"/>
+					<m:ObjectStatus title="Email" text="email@address.com"/>
+				</l:VerticalLayout>
+
+				<l:VerticalLayout class="sapUiSmallMarginBeginEnd">
+					<m:Text width="200px" text="Hi, I'm Denise. I am passionate about what I do and I'll go the extra mile to make the customer win."/>
+				</l:VerticalLayout>
+
+				<l:HorizontalLayout class="sapUiSmallMarginBeginEnd">
+					<m:ObjectStatus text="In Stock" state="Error" class="sapUiMediumMarginEnd"/>
+					<m:ObjectStatus title="Label" text="In Stock" state="Warning"/>
+				</l:HorizontalLayout>
+			</m:FlexBox>
+		</headerContent>
+
+		<sections>
+			<ObjectPageSection titleUppercase="false" title="2014 Goals Plan">
+				<subSections>
+					<ObjectPageSubSection titleUppercase="false">
+						<blocks>
+							<goals:GoalsBlock id="goalsblock"/>
+						</blocks>
+					</ObjectPageSubSection>
+				</subSections>
+			</ObjectPageSection>
+
+			<ObjectPageSection titleUppercase="false" title="Personal">
+				<subSections>
+					<ObjectPageSubSection title="Connect" titleUppercase="false">
+						<blocks>
+							<personal:BlockPhoneNumber id="phone"/>
+							<personal:BlockSocial id="social"/>
+							<personal:BlockAdresses id="adresses"/>
+							<personal:BlockMailing id="mailing" columnLayout="1"/>
+						</blocks>
+					</ObjectPageSubSection>
+
+					<ObjectPageSubSection id="paymentSubSection" title="Payment information" titleUppercase="false">
+						<blocks>
+							<personal:PersonalBlockPart1 id="part1" columnLayout="1"/>
+						</blocks>
+						<moreBlocks>
+							<personal:PersonalBlockPart2 id="part2" columnLayout="1"/>
+						</moreBlocks>
+					</ObjectPageSubSection>
+				</subSections>
+			</ObjectPageSection>
+		</sections>
+	</ObjectPageLayout>
+</mvc:View>

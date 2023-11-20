@@ -1,73 +1,74 @@
 {
+	"selectedKey": "",
+
 	"navigation": [
 		{
-			"title": "Home",
+			"titleI18nKey": "sideContentHome",
 			"icon": "sap-icon://home",
 			"expanded": true,
-			"key": "home",
+			"key": "",
 			"items": []
 		},
 		{
-			"title": "Settings",
+			"titleI18nKey": "sideContentSettings",
 			"icon": "sap-icon://settings",
 			"expanded": false,
-			"key": "masterSettings"
-		,
+			"key": "masterSettings",
 			"items": []
 		},
 		{
-			"title": "Statistics",
+			"titleI18nKey": "sideContentStatistics",
 			"icon": "sap-icon://line-chart",
 			"expanded": true,
 			"key": "statistics",
 			"items": [
 				{
-					"title": "Usage Statistics",
-					"key": "Usage Statistics was pressed"
+					"titleI18nKey": "sideContentUsageStatistics",
+					"key": "usageStatistics"
 				},
 				{
-					"title": "Order Statistics",
-					"key": "Order Statistics was pressed"
+					"titleI18nKey": "sideContentOrderStatistics",
+					"key": "orderStatistics"
 				}
 			]
 		}
 	],
 	"fixedNavigation": [
 		{
-			"title": "Important Links",
+			"titleI18nKey": "sideContentImportantLinks",
 			"icon": "sap-icon://chain-link",
-			"key": "Important Links was pressed"
+			"key": "importantLinks"
 		},
 		{
-			"title": "Legal",
+			"titleI18nKey": "sideContentLegal",
 			"icon": "sap-icon://compare",
-			"key": "Legal was pressed"
+			"key": "legal"
 		}
 	],
 	"masterSettings": [
 		{
-			"title": "System Settings",
+			"titleI18nKey": "sideContentSystemSettings",
 			"key": "systemSettings",
 			"selected": true
 		},
 		{
-			"title": "Order Settings",
+			"titleI18nKey": "sideContentOrderSettings",
 			"key": "orderSettings",
 			"selected": false
 		},
 		{
-			"title": "Supplier Settings",
+			"titleI18nKey": "sideContentSupplierSettings",
 			"key": "supplierSettings",
 			"selected": false
 		},
 		{
-			"title": "Campaign Settings",
+			"titleI18nKey": "sideContentCampaignSettings",
 			"key": "campaignSettings",
 			"selected": false
 		},
 		{
-			"title": "Shipping Settings",
-			"key": "shipping Settings",
+			"titleI18nKey": "sideContentShippingSettings",
+			"key": "shippingSettings",
 			"selected": false
 		}
 	]

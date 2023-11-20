@@ -4,14 +4,14 @@
 
 // Provides control sap.m.Tile.
 sap.ui.define([
-	'jquery.sap.global',
 	'./library',
 	'sap/ui/core/InvisibleText',
 	'sap/ui/core/Control',
 	'sap/ui/Device',
-	'./TileRenderer'
+	'./TileRenderer',
+	"sap/ui/thirdparty/jquery"
 ],
-	function(jQuery, library, InvisibleText, Control, Device, TileRenderer) {
+	function(library, InvisibleText, Control, Device, TileRenderer, jQuery) {
 	"use strict";
 
 
@@ -40,26 +40,30 @@ sap.ui.define([
 	 * @since 1.12
 	 * @deprecated as of version 1.50, replaced by {@link sap.m.GenericTile}
 	 * @alias sap.m.Tile
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
-	var Tile = Control.extend("sap.m.Tile", /** @lends sap.m.Tile.prototype */ { metadata : {
+	var Tile = Control.extend("sap.m.Tile", /** @lends sap.m.Tile.prototype */ {
+		metadata : {
 
-		library : "sap.m",
-		properties : {
+			library : "sap.m",
+			deprecated: true,
+			properties : {
 
-			/**
-			 * Determines whether the tile is movable within the surrounding tile container. The remove event is fired by the tile container.
-			 */
-			removable : {type : "boolean", group : "Misc", defaultValue : true}
+				/**
+				 * Determines whether the tile is movable within the surrounding tile container. The remove event is fired by the tile container.
+				 */
+				removable : {type : "boolean", group : "Misc", defaultValue : true}
+			},
+			events : {
+
+				/**
+				 * Tap event is raised if the user taps or clicks the control.
+				 */
+				press : {}
+			}
 		},
-		events : {
 
-			/**
-			 * Tap event is raised if the user taps or clicks the control.
-			 */
-			press : {}
-		}
-	}});
+		renderer: TileRenderer
+	});
 
 	/**
 	 * Initializes the control.
@@ -86,7 +90,7 @@ sap.ui.define([
 	 * @private
 	 */
 	Tile.prototype.onAfterRendering = function(){
-		if (this._rendered && !this._bIsDragged && this.getParent() instanceof sap.m.TileContainer) {
+		if (this._rendered && !this._bIsDragged && this.getParent() && this.getParent().isA("sap.m.TileContainer")) {
 			this.setPos(this._posX,this._posY);
 		}
 		this._rendered = true;
@@ -107,6 +111,11 @@ sap.ui.define([
 			return;
 		}
 		var o = this.getDomRef();
+
+		if (!o) {
+			return;
+		}
+
 		if ("webkitTransform" in o.style) {
 			this.$().css('-webkit-transform','translate3d(' + iX + 'px,' + iY + 'px,0)');
 		} else if ("transform" in o.style) {
@@ -116,6 +125,7 @@ sap.ui.define([
 		} else if ("MozTransform" in o.style) {
 			this.$().css('-moz-transform','translate3d(' + iX + 'px,' + iY + 'px,0)');
 		}
+
 		if (this._invisible) {
 			this.$().css("visibility","");
 			delete this._invisible;
@@ -130,7 +140,7 @@ sap.ui.define([
 	 * @private
 	 */
 	Tile.prototype.setSize = function(iWidth,iHeight){
-		//jQuery.sap.log.debug("Set tile size, id:" + this.getId() + ", x:" + iWidth + ", y:" + iHeight);
+		//Log.debug("Set tile size, id:" + this.getId() + ", x:" + iWidth + ", y:" + iHeight);
 		this._width = iWidth;
 		this._height = iHeight;
 	};
@@ -240,7 +250,7 @@ sap.ui.define([
 		if (!bVisible) {
 			this._rendered = false;
 		}
-		if (this.getParent() && this.getParent() instanceof sap.m.TileContainer) {
+		if (this.getParent() && this.getParent().isA("sap.m.TileContainer")) {
 			this.getParent().invalidate(); // Force rerendering of TileContainer, so the tiles can be rearanged
 		}
 		return this;
@@ -249,7 +259,7 @@ sap.ui.define([
 	/**
 	 * Sets initial visibility of the Tile.
 	 * @param {boolean} bVisible visibility
-	 * @returns {sap.m.Tile} <code>this</code> to allow method chaining
+	 * @returns {this} <code>this</code> to allow method chaining
 	 * @private
 	 */
 	Tile.prototype._setVisible = function(bVisible){

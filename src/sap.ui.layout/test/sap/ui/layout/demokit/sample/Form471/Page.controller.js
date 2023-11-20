@@ -1,9 +1,8 @@
 sap.ui.define([
-		'jquery.sap.global',
 		'sap/ui/core/Fragment',
 		'sap/ui/core/mvc/Controller',
 		'sap/ui/model/json/JSONModel'
-	], function(jQuery, Fragment, Controller, JSONModel) {
+	], function(Fragment, Controller, JSONModel) {
 	"use strict";
 
 	var PageController = Controller.extend("sap.ui.layout.sample.Form471.Page", {
@@ -11,10 +10,12 @@ sap.ui.define([
 		onInit: function (oEvent) {
 
 			// set explored app's demo model on this sample
-			var oModel = new JSONModel(sap.ui.require.toUrl("sap/ui/demo/mock") + "/supplier.json");
+			var oModel = new JSONModel(sap.ui.require.toUrl("sap/ui/demo/mock/supplier.json"));
 			this.getView().setModel(oModel);
 
 			this.getView().bindElement("/SupplierCollection/0");
+
+			this._formFragments = {};
 
 			// Set the initial form to be the display one
 			this._showFormFragment("Display");
@@ -25,21 +26,10 @@ sap.ui.define([
 
 		},
 
-		onExit : function () {
-			for (var sPropertyName in this._formFragments) {
-				if (!this._formFragments.hasOwnProperty(sPropertyName) || this._formFragments[sPropertyName] == null) {
-					return;
-				}
-
-				this._formFragments[sPropertyName].destroy();
-				this._formFragments[sPropertyName] = null;
-			}
-		},
-
 		handleEditPress : function () {
 
 			//Clone the data
-			this._oSupplier = jQuery.extend({}, this.getView().getModel().getData().SupplierCollection[0]);
+			this._oSupplier = Object.assign({}, this.getView().getModel().getData().SupplierCollection[0]);
 			this._toggleButtonsAndView(true);
 
 		},
@@ -63,8 +53,6 @@ sap.ui.define([
 
 		},
 
-		_formFragments: {},
-
 		_toggleButtonsAndView : function (bEdit) {
 			var oView = this.getView();
 
@@ -78,27 +66,30 @@ sap.ui.define([
 		},
 
 		_getFormFragment: function (sFragmentName) {
-			var oFormFragment = this._formFragments[sFragmentName];
+			var pFormFragment = this._formFragments[sFragmentName],
+				oView = this.getView();
 
-			if (oFormFragment) {
-				return oFormFragment;
+			if (!pFormFragment) {
+				pFormFragment = Fragment.load({
+					id: oView.getId(),
+					name: "sap.ui.layout.sample.Form471." + sFragmentName
+				});
+				this._formFragments[sFragmentName] = pFormFragment;
 			}
 
-			oFormFragment = sap.ui.xmlfragment(this.getView().getId(), "sap.ui.layout.sample.Form471." + sFragmentName);
-
-			this._formFragments[sFragmentName] = oFormFragment;
-			return this._formFragments[sFragmentName];
+			return pFormFragment;
 		},
 
 		_showFormFragment : function (sFragmentName) {
 			var oPage = this.byId("page");
 
 			oPage.removeAllContent();
-			oPage.insertContent(this._getFormFragment(sFragmentName));
+			this._getFormFragment(sFragmentName).then(function(oVBox){
+				oPage.insertContent(oVBox);
+			});
 		}
 
 	});
-
 
 	return PageController;
 

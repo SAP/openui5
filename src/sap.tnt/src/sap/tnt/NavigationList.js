@@ -4,309 +4,545 @@
 
 // Provides control sap.tnt.NavigationList
 sap.ui.define([
-    'jquery.sap.global',
-    './library',
-    'sap/ui/core/Control',
-    'sap/m/Popover',
-    'sap/ui/core/delegate/ItemNavigation',
-    'sap/ui/core/InvisibleText',
-    "./NavigationListRenderer"
-],
-	function(
-	    jQuery,
-		library,
-		Control,
-		Popover,
-		ItemNavigation,
-		InvisibleText,
-		NavigationListRenderer
-	) {
-		"use strict";
+	"./library",
+	"sap/ui/core/Core",
+	"sap/ui/core/Lib",
+	"sap/ui/core/Theming",
+	"sap/ui/core/Element",
+	"sap/ui/core/Control",
+	"sap/ui/core/ResizeHandler",
+	"sap/ui/core/Popup",
+	"sap/m/Popover",
+	"sap/ui/core/delegate/ItemNavigation",
+	"sap/ui/core/InvisibleText",
+	"./NavigationListItem",
+	"./NavigationListRenderer",
+	"sap/m/Menu",
+	"sap/m/MenuItem",
+	"sap/base/Log"
+], function (
+	library,
+	Core,
+	Lib,
+	Theming,
+	Element,
+	Control,
+	ResizeHandler,
+	Popup,
+	Popover,
+	ItemNavigation,
+	InvisibleText,
+	NavigationListItem,
+	NavigationListRenderer,
+	Menu,
+	MenuItem,
+	Log
+) {
+	"use strict";
 
-		/**
-		 * Constructor for a new NavigationList.
-		 *
-		 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
-		 * @param {object} [mSettings] Initial settings for the new control
-		 *
-		 * @class
-		 * The NavigationList control is an interactive control, which provides a choice of
-		 * different items, ordered as a list.
-		 * @extends sap.ui.core.Control
-		 *
-		 * @author SAP SE
-		 * @version ${version}
-		 *
-		 * @constructor
-		 * @public
-		 * @since 1.34
-		 * @alias sap.tnt.NavigationList
-		 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
-		 */
-		var NavigationList = Control.extend("sap.tnt.NavigationList", /** @lends sap.tnt.NavigationList.prototype */ {
-			metadata: {
-				library: "sap.tnt",
-				properties: {
-					/**
-					 * Specifies the width of the control.
-					 */
-					width: {type: "sap.ui.core.CSSSize", group: "Dimension"},
-					/**
-					 * Specifies if the control is in expanded or collapsed mode.
-					 */
-					expanded: {type: "boolean", group: "Misc", defaultValue: true}
-				},
-				defaultAggregation: "items",
-				aggregations: {
+	/**
+	 * Constructor for a new <code>NavigationList</code>.
+	 *
+	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
+	 * @param {object} [mSettings] Initial settings for the new control
+	 *
+	 * @class
+	 * The NavigationList control is an interactive control, which provides a choice of
+	 * different items, ordered as a list.
+	 * @extends sap.ui.core.Control
+	 *
+	 * @author SAP SE
+	 * @version ${version}
+	 *
+	 * @constructor
+	 * @public
+	 * @since 1.34
+	 * @alias sap.tnt.NavigationList
+	 */
+	const NavigationList = Control.extend("sap.tnt.NavigationList", /** @lends sap.tnt.NavigationList.prototype */ {
+		metadata: {
+			library: "sap.tnt",
+			properties: {
+				/**
+				 * Specifies the width of the control.
+				 */
+				width: { type: "sap.ui.core.CSSSize", group: "Dimension" },
+				/**
+				 * Specifies if the control is in expanded or collapsed mode.
+				 */
+				expanded: { type: "boolean", group: "Misc", defaultValue: true },
+				/**
+				 * Specifies the currently selected key.
+				 *
+				 * @since 1.62.0
+				 */
+				selectedKey: { type: "string", group: "Data" }
+			},
+			defaultAggregation: "items",
+			aggregations: {
 
-					/**
-					 * The items displayed in the list.
-					 */
-					items: {type: "sap.tnt.NavigationListItem", multiple: true, singularName: "item"}
-				},
-				associations : {
-					/**
-					 * Association to controls / IDs, which describe this control (see WAI-ARIA attribute aria-describedby).
-					 */
-					ariaDescribedBy : { type: "sap.ui.core.Control", multiple: true, singularName: "ariaDescribedBy" },
+				/**
+				 * The items displayed in the list.
+				 */
+				items: { type: "sap.tnt.NavigationListItemBase", multiple: true, singularName: "item" },
 
-					/**
-					 * Association to controls / IDs, which label this control (see WAI-ARIA attribute aria-labelledby).
-					 */
-					ariaLabelledBy : { type: "sap.ui.core.Control", multiple: true, singularName: "ariaLabelledBy" },
+				/**
+				 * The overflow item.
+				 */
+				_overflowItem: { type: "sap.tnt.NavigationListItem", multiple: false, visibility: "hidden" }
+			},
+			associations: {
+				/**
+				 * Association to controls / IDs, which describe this control (see WAI-ARIA attribute aria-describedby).
+				 */
+				ariaDescribedBy: { type: "sap.ui.core.Control", multiple: true, singularName: "ariaDescribedBy" },
 
-					/**
-					 * The currently selected <code>NavigationListItem</code>.
-					 *
-					 * @since 1.52.0
-					 */
-					selectedItem : { type: "sap.tnt.NavigationListItem", multiple: false }
-				},
-				events: {
-					/**
-					 * Fired when an item is selected.
-					 */
-					itemSelect: {
-						parameters: {
-							/**
-							 * The selected item.
-							 */
-							item: {type: "sap.ui.core.Item"}
-						}
+				/**
+				 * Association to controls / IDs, which label this control (see WAI-ARIA attribute aria-labelledby).
+				 */
+				ariaLabelledBy: { type: "sap.ui.core.Control", multiple: true, singularName: "ariaLabelledBy" },
+
+				/**
+				 * The currently selected <code>NavigationListItem</code>.
+				 *
+				 * @since 1.52.0
+				 */
+				selectedItem: { type: "sap.tnt.NavigationListItem", multiple: false }
+			},
+			events: {
+				/**
+				 * Fired when an item is selected.
+				 */
+				itemSelect: {
+					parameters: {
+						/**
+						 * The selected item.
+						 */
+						item: { type: "sap.ui.core.Item" }
 					}
 				}
 			}
-		});
+		},
 
-		/**
-		 * Initializes the control.
-		 * @private
-		 * @override
-		 */
-		NavigationList.prototype.init = function () {
-			this._itemNavigation = new ItemNavigation();
-			this._itemNavigation.setCycling(false);
-			this.addEventDelegate(this._itemNavigation);
+		renderer: NavigationListRenderer
+	});
 
-			this._itemNavigation.setPageSize(10);
-			this._itemNavigation.setDisabledModifiers({
-				sapnext : ["alt", "meta"],
-				sapprevious : ["alt", "meta"]
+	/**
+	 * Initializes the control.
+	 * @private
+	 * @override
+	 */
+	NavigationList.prototype.init = function () {
+		this._oItemNavigation = new ItemNavigation();
+		this._oItemNavigation.setCycling(false)
+			.setPageSize(10)
+			.setDisabledModifiers({
+				sapnext: ["alt", "meta"],
+				sapprevious: ["alt", "meta"]
 			});
 
-			this._resourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.core");
+		this.addDelegate(this._oItemNavigation);
+	};
 
-			if (sap.ui.getCore().getConfiguration().getAccessibility() && !NavigationList._sAriaPopupLabelId) {
-				NavigationList._sAriaPopupLabelId = new InvisibleText({
-					text: '' // add empty string in order to prevent the redundant speech output
-				}).toStatic().getId();
+	/**
+	 * Clears the control dependencies.
+	 * @private
+	 */
+	NavigationList.prototype.exit = function () {
+		if (this._oItemNavigation) {
+			this.removeDelegate(this._oItemNavigation);
+			this._oItemNavigation.destroy();
+			this._oItemNavigation = null;
+		}
+
+		if (this._oPopover) {
+			this._oPopover.destroy();
+			this._oPopover = null;
+		}
+
+		this._deregisterResizeHandler();
+	};
+
+	/**
+	 * Called before the control is rendered.
+	 */
+	NavigationList.prototype.onBeforeRendering = function () {
+		this._deregisterResizeHandler();
+
+		// make sure the initial selected item (if any) is correct
+		const sSelectedKey = this.getSelectedKey();
+		this.setSelectedKey(sSelectedKey);
+	};
+
+	/**
+	 * Called after the control is rendered.
+	 */
+	NavigationList.prototype.onAfterRendering = function () {
+		this._oItemNavigation.setRootDomRef(this.getDomRef());
+		this._updateNavItems();
+
+		if (this.getExpanded()) {
+			return;
+		}
+
+		// clear the vertical scroll when collapsed
+		this.getDomRef().scrollTop = 0;
+		this._sResizeListenerId = ResizeHandler.register(this.getDomRef().parentNode, this._resize.bind(this));
+
+		if (Core.isThemeApplied()) {
+			this._updateOverflowItems();
+		} else {
+			Theming.attachAppliedOnce(this._handleThemeLoad.bind(this));
+		}
+	};
+
+	NavigationList.prototype._deregisterResizeHandler = function () {
+		if (this._sResizeListenerId) {
+			ResizeHandler.deregister(this._sResizeListenerId);
+			this._sResizeListenerId = null;
+		}
+	};
+
+	NavigationList.prototype._handleThemeLoad = function () {
+		this._updateOverflowItems();
+	};
+
+	NavigationList.prototype._resize = function () {
+		this._updateOverflowItems();
+	};
+
+	NavigationList.prototype._updateOverflowItems = function () {
+		var oDomRef = this.getDomRef();
+		if (this.getExpanded() || !oDomRef) {
+			return;
+		}
+
+		const oOverflowItemRef = oDomRef.querySelector(".sapTntNLOverflow");
+		if (!oOverflowItemRef) {
+			return;
+		}
+
+		oOverflowItemRef.classList.add("sapTntNLIHidden");
+
+		const aItemsRefs = [...oDomRef.querySelectorAll("ul > :not(.sapTntNLOverflow)")];
+		let iItemsHeight = aItemsRefs.reduce((iSum, oItemRef) => {
+			oItemRef.classList.remove("sapTntNLIHidden");
+			return iSum + oItemRef.offsetHeight;
+		}, 0);
+
+		const { paddingTop, paddingBottom } = window.getComputedStyle(oDomRef);
+		const iListHeight = oDomRef.offsetHeight - parseFloat(paddingTop) - parseFloat(paddingBottom);
+
+		if (iListHeight >= iItemsHeight) {
+			return;
+		}
+
+		oOverflowItemRef.classList.remove("sapTntNLIHidden");
+		iItemsHeight = oOverflowItemRef.offsetHeight;
+
+		let oSelectedItemRef = oDomRef.querySelector(".sapTntNLISelected");
+		if (oSelectedItemRef) {
+			oSelectedItemRef = oSelectedItemRef.parentNode;
+
+			const { marginTop, marginBottom } = window.getComputedStyle(oSelectedItemRef);
+			iItemsHeight += oSelectedItemRef.offsetHeight + parseFloat(marginTop) + parseFloat(marginBottom);
+		}
+
+		aItemsRefs.forEach((oItemRef) => {
+			if (oItemRef === oSelectedItemRef) {
+				return;
 			}
-		};
 
-		/**
-		 * Called after the control is rendered.
-		 */
-		NavigationList.prototype.onAfterRendering = function() {
-			this._itemNavigation.setRootDomRef(this.getDomRef());
-			this._itemNavigation.setItemDomRefs(this._getDomRefs());
+			const { marginTop, marginBottom }  = window.getComputedStyle(oItemRef);
+			iItemsHeight += oItemRef.offsetHeight + parseFloat(marginTop) + parseFloat(marginBottom);
 
-			if (this._selectedItem) {
-				this._selectedItem._select();
+			if (iItemsHeight >= iListHeight) {
+				oItemRef.classList.add("sapTntNLIHidden");
 			}
-		};
+		});
+	};
 
-		NavigationList.prototype._updateNavItems = function() {
-			this._itemNavigation.setItemDomRefs(this._getDomRefs());
-		};
+	NavigationList.prototype._getOverflowItem = function () {
+		let oOverflowItem = this.getAggregation("_overflowItem");
+		if (!oOverflowItem) {
+			oOverflowItem = new NavigationListItem({
+				text: Lib.getResourceBundleFor("sap.tnt").getText("NAVIGATION_LIST_NAVIGATION_OVERFLOW"),
+				icon: "sap-icon://overflow",
+				selectable: false,
+				select: this._overflowPress.bind(this)
+			});
 
-		/**
-		 * Gets DOM references of the navigation items.
-		 * @private
-		 */
-		NavigationList.prototype._getDomRefs = function() {
-			var domRefs = [];
+			oOverflowItem._isOverflow = true;
 
-			var items = this.getItems();
+			this.setAggregation("_overflowItem", oOverflowItem);
+		}
 
-			for (var i = 0; i < items.length; i++) {
-				jQuery.merge(domRefs, items[i]._getDomRefs());
+		return oOverflowItem;
+	};
+
+	NavigationList.prototype._overflowPress = function (oEvent) {
+		const oOpener = oEvent.getSource();
+		oOpener.getDomRef().querySelector(".sapTntNLI").classList.add("sapTntNLIActive");
+
+		const oMenu = this._createOverflowMenu(oOpener);
+		oMenu.openBy(oOpener, false, Popup.Dock.EndCenter);
+	};
+
+	NavigationList.prototype._createOverflowMenu = function (opener) {
+		const oMenu = new Menu({
+			items: this._createNavigationMenuItems(),
+			itemSelected: (oEvent) => {
+				const oMenuItem = oEvent.getParameter("item");
+				this._selectItem({
+					item: oMenuItem._navItem
+				});
+
+				const oSelectedItemDomRef = this.getDomRef().querySelector(".sapTntNLISelected [tabindex]");
+				oSelectedItemDomRef?.focus();
+
+				oMenu.close();
+				oMenu.destroy();
+			},
+			closed: function () {
+				opener.getDomRef().querySelector(".sapTntNLI").classList.remove("sapTntNLIActive");
+			}
+		});
+
+		oMenu.addStyleClass("sapTntNLMenu");
+
+		// override this method, so we can have a selection
+		// on a menu item with subitems
+		oMenu._handleMenuItemSelect = function (oEvent) {
+			const oUnfdItem = oEvent.getParameter("item");
+			if (!oUnfdItem) {
+				return;
 			}
 
-			return domRefs;
-		};
+			const oMenuItem = this._findMenuItemByUnfdMenuItem(oUnfdItem);
+			if (oMenuItem) {
+				this.fireItemSelected({ item: oMenuItem });
+			}
+		}.bind(oMenu);
 
-		/**
-		 * Adapts popover position.
-		 * @private
-		 */
-		NavigationList.prototype._adaptPopoverPositionParams = function () {
-			if (this.getShowArrow()) {
-				this._marginLeft = 10;
-				this._marginRight = 10;
-				this._marginBottom = 10;
+		this.addDependent(oMenu);
 
-				this._arrowOffset = 18;
-				this._offsets = ["0 -18", "18 0", "0 18", "-18 0"];
+		return oMenu;
+	};
 
-				this._myPositions = ["center bottom", "begin top", "center top", "end top"];
-				this._atPositions = ["center top", "end top", "center bottom", "begin top"];
+	NavigationList.prototype._createNavigationMenuItems = function () {
+		var items = [],
+			menuItems = [];
+
+		this.getItems().forEach((item) => {
+			if (item.isA("sap.tnt.NavigationListGroup")) {
+				items.push(...item.getItems());
 			} else {
-				this._marginTop = 0;
-				this._marginLeft = 0;
-				this._marginRight = 0;
-				this._marginBottom = 0;
-
-				this._arrowOffset = 0;
-				this._offsets = ["0 0", "0 0", "0 0", "0 0"];
-
-				this._myPositions = ["begin bottom", "begin top", "begin top", "end top"];
-				this._atPositions = ["begin top", "end top", "begin bottom", "begin top"];
+				items.push(item);
 			}
-		};
+		});
 
-		/**
-		 * Clears the control dependencies.
-		 * @private
-		 */
-		NavigationList.prototype.exit = function () {
-			if (this._itemNavigation) {
-				this._itemNavigation.destroy();
-			}
-		};
-
-		/**
-		 * Selects an item.
-		 * @private
-		 */
-		NavigationList.prototype._selectItem = function (params) {
-			this.fireItemSelect(params);
-
-			var item = params.item;
-
-			if (this._selectedItem) {
-				this._selectedItem._unselect();
+		items.forEach(function (item) {
+			if (!item.getVisible() || !item.getDomRef().classList.contains("sapTntNLIHidden")) {
+				return;
 			}
 
-			item._select();
+			var menuItem = new MenuItem({
+				icon: item.getIcon(),
+				text: item.getText(),
+				enabled: item.getEnabled()
+			});
+			menuItem._navItem = item;
 
-			this._selectedItem = item;
-			this.setAssociation('selectedItem', item, true);
-		};
+			item.getItems().forEach(function (subItem) {
+				var subMenuItem = new MenuItem({
+					icon: subItem.getIcon(),
+					text: subItem.getText(),
+					enabled: subItem.getEnabled()
+				});
+				subMenuItem._navItem = subItem;
 
-		/**
-		 * Gets the currently selected <code>NavigationListItem</code>.
-		 * @public
-		 * @return {sap.tnt.NavigationListItem|null} The selected item or null if nothing is selected
-		 */
-		NavigationList.prototype.getSelectedItem = function() {
-			var selectedItem = this.getAssociation('selectedItem');
+				menuItem.addItem(subMenuItem);
+			});
 
-			if (!selectedItem) {
-				return null;
-			}
+			menuItems.push(menuItem);
+		});
 
-			return sap.ui.getCore().byId(selectedItem);
-		};
+		return menuItems;
+	};
 
-		/**
-		 * Sets the association for selectedItem. Set <code>null</code> to deselect.
-		 * @public
-		 * @param {string|sap.tnt.NavigationListItem} selectedItem The control to be set as selected
-		 * @param {boolean} suppressInvalidate If true, the managed object's invalidate method is not called
-		 * @return {sap.tnt.NavigationList|null} The <code>selectedItem</code> association
-		 */
-		NavigationList.prototype.setSelectedItem = function(selectedItem, suppressInvalidate) {
-			jQuery.sap.require('sap.tnt.NavigationListItem');
-			var navigationListItem;
+	NavigationList.prototype._updateNavItems = function () {
+		const aDomRefs = this._getFocusDomRefs();
+		this._oItemNavigation.setItemDomRefs(aDomRefs);
+	};
 
-			if (this._selectedItem) {
-				this._selectedItem._unselect();
-			}
+	/**
+	 * Gets DOM references of the navigation items.
+	 * @private
+	 */
+	NavigationList.prototype._getFocusDomRefs = function () {
+		const aDomRefs = this.getItems().flatMap((oItem) => oItem._getFocusDomRefs()),
+			oOverflowDomRef = this._getOverflowItem().getDomRef("a");
 
-			if (!selectedItem) {
-				this._selectedItem = null;
-				return sap.ui.core.Control.prototype.setAssociation.call(this, 'selectedItem', selectedItem, suppressInvalidate);
-			}
+		if (!this.getExpanded() && oOverflowDomRef) {
+			aDomRefs.push(oOverflowDomRef);
+		}
 
-			if (typeof selectedItem !== 'string' && !(selectedItem instanceof sap.tnt.NavigationListItem)) {
-				jQuery.sap.log.warning('Type of selectedItem association should be string or instance of sap.tnt.NavigationListItem. New value was not set.');
-				return this;
-			}
+		return aDomRefs;
+	};
 
-			if (typeof selectedItem === 'string') {
-				navigationListItem = sap.ui.getCore().byId(selectedItem);
-			} else {
-				navigationListItem = selectedItem;
-			}
+	/**
+	 * Adapts popover position.
+	 * @private
+	 */
+	NavigationList.prototype._adaptPopoverPositionParams = function () {
+		if (this.getShowArrow()) {
+			this._marginLeft = 10;
+			this._marginRight = 10;
+			this._marginBottom = 10;
 
-			if (navigationListItem instanceof sap.tnt.NavigationListItem) {
-				navigationListItem._select();
-				this._selectedItem = navigationListItem;
-				return sap.ui.core.Control.prototype.setAssociation.call(this, 'selectedItem', selectedItem, suppressInvalidate);
-			} else {
-				jQuery.sap.log.warning('Type of selectedItem association should be a valid NavigationListItem object or ID. New value was not set.');
-				return this;
-			}
-		};
+			this._arrowOffset = 8;
+			this._offsets = ["0 -8", "8 0", "0 8", "-8 0"];
 
-		/**
-		 * Opens a popover.
-		 * @private
-		 */
-		NavigationList.prototype._openPopover = function (source, list) {
+			this._myPositions = ["center bottom", "begin top", "center top", "end top"];
+			this._atPositions = ["center top", "end top", "center bottom", "begin top"];
+		} else {
+			this._marginTop = 0;
+			this._marginLeft = 0;
+			this._marginRight = 0;
+			this._marginBottom = 0;
 
-			var that = this;
-			var selectedItem = list.getSelectedItem();
-			if (selectedItem && list.isGroupSelected) {
-				selectedItem = null;
-			}
+			this._arrowOffset = 0;
+			this._offsets = ["0 0", "0 0", "0 0", "0 0"];
 
-			var popover = this._popover = new Popover({
-				showHeader: false,
-				horizontalScrolling: false,
-				verticalScrolling: true,
-				initialFocus: selectedItem,
-				afterClose: function () {
-					if (that._popover) {
-						that._popover.destroy();
-						that._popover = null;
-					}
-				},
-				content: list,
-				ariaLabelledBy: [NavigationList._sAriaPopupLabelId]
-			}).addStyleClass('sapContrast sapContrastPlus');
+			this._myPositions = ["begin bottom", "begin top", "begin top", "end top"];
+			this._atPositions = ["begin top", "end top", "begin bottom", "begin top"];
+		}
+	};
 
-			popover._adaptPositionParams = this._adaptPopoverPositionParams;
+	/**
+	 * Selects an item.
+	 * @private
+	 */
+	NavigationList.prototype._selectItem = function (oParams) {
+		this.fireItemSelect(oParams);
+		this.setSelectedItem(oParams.item);
+	};
 
-			popover.openBy(source);
-		};
+	NavigationList.prototype._findItemByKey = function (sKey) {
+		const aAllItems = this.findAggregatedObjects(true, (oObject) => oObject.isA("sap.tnt.NavigationListItem"));
+		return aAllItems.find((oItem) => oItem._getUniqueKey() === sKey);
+	};
 
-		NavigationList.prototype._closePopover = function () {
-			if (this._popover) {
-				this._popover.close();
-			}
-		};
+	/**
+	 * Sets the selected item based on a key.
+	 * @public
+	 * @param {string} sSelectedKey The key of the item to be selected
+	 * @return {this} this pointer for chaining
+	 */
+	NavigationList.prototype.setSelectedKey = function (sSelectedKey) {
+		const oItem = this._findItemByKey(sSelectedKey);
+		this.setSelectedItem(oItem);
 
-		return NavigationList;
+		return this.setProperty("selectedKey", sSelectedKey, true);
+	};
 
-	}, /* bExport= */ true);
+	/**
+	 * Gets the currently selected <code>NavigationListItem</code>.
+	 * @public
+	 * @return {sap.tnt.NavigationListItem|null} The selected item or <code>null</code> if nothing is selected
+	 */
+	NavigationList.prototype.getSelectedItem = function () {
+		return Element.getElementById(this.getAssociation("selectedItem")) || null;
+	};
+
+	/**
+	 * Sets the association for selectedItem. Set <code>null</code> to deselect.
+	 * @public
+	 * @param {string|sap.tnt.NavigationListItem} oItem The control to be set as selected
+	 * @return {sap.tnt.NavigationList|null} The <code>selectedItem</code> association
+	 */
+	NavigationList.prototype.setSelectedItem = function (oItem) {
+		let oSelectedItem;
+		if (this._selectedItem) {
+			this._selectedItem._toggle(false);
+		}
+
+		if (!oItem) {
+			this._selectedItem = null;
+		}
+
+		const bValidItemType = oItem && oItem.isA && oItem.isA("sap.tnt.NavigationListItem");
+		if (typeof oItem != "string" && !bValidItemType) {
+			this.setAssociation("selectedItem", null, true);
+			this._updateOverflowItems();
+			oItem = null;
+		}
+
+		this.setAssociation("selectedItem", oItem, true);
+
+		if (typeof oItem == "string") {
+			oSelectedItem = Element.getElementById(oItem);
+		} else if (bValidItemType) {
+			oSelectedItem = oItem;
+		} else {
+			Log.warning("Type of selectedItem association should be a valid NavigationListItem object or ID. New value was not set.");
+			return this;
+		}
+
+		this.setProperty("selectedKey", oSelectedItem._getUniqueKey(), true);
+
+		oSelectedItem._toggle(true);
+		this._selectedItem = oSelectedItem;
+		this._updateOverflowItems();
+
+		return this;
+	};
+
+	/**
+	 * Opens a popover.
+	 * @private
+	 */
+	NavigationList.prototype._openPopover = function (oOpener, oList) {
+		const oOpenerMainRef = oOpener.getDomRef().querySelector(".sapTntNLI");
+		oOpenerMainRef.classList.add("sapTntNLIActive");
+		let oSelectedItem = oList.getSelectedItem();
+		if (oSelectedItem && oList.isGroupSelected) {
+			oSelectedItem = null;
+		}
+
+		this._oPopover = new Popover({
+			showHeader: false,
+			horizontalScrolling: false,
+			verticalScrolling: true,
+			initialFocus: oSelectedItem,
+			afterClose: () => {
+				if (this._oPopover) {
+					this._oPopover.destroy();
+					this._oPopover = null;
+					oOpenerMainRef.classList.remove("sapTntNLIActive");
+				}
+			},
+			content: oList,
+			ariaLabelledBy: InvisibleText.getStaticId("sap.tnt", "NAVIGATION_LIST_DIALOG_TITLE")
+		}).addStyleClass("sapContrast sapContrastPlus sapTntNLPopover");
+
+		this._oPopover._adaptPositionParams = this._adaptPopoverPositionParams;
+		this._oPopover.openBy(oOpener.getDomRef("a"));
+	};
+
+	NavigationList.prototype._closePopover = function () {
+		if (this._oPopover) {
+			this._oPopover.close();
+		}
+	};
+
+	NavigationList.prototype._containsIcon = function () {
+		const aFound = this.findAggregatedObjects(true,
+			(oObject) => oObject.isA("sap.tnt.NavigationListItem") && !oObject._isOverflow && oObject.getProperty("icon")
+		);
+
+		return !!aFound.length;
+	};
+
+	return NavigationList;
+});

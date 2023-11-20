@@ -1,0 +1,51 @@
+{
+  "1.104.0": {
+    "date": "June 2022",
+    "notes": [
+      {
+        "id": "fd49d7955e20cc8c583697dd220b0971455f661e",
+        "type": "FIX",
+        "text": " FilterField: SearchField clear don't work",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280085536"
+          }
+        ]
+      },
+      {
+        "id": "67fef22dec4f504c0f15ce6a5fc39e1dcc87a470",
+        "type": "FIX",
+        "text": " sap.m.DateTimeField: user interaction is taken with priority",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270083721"
+          }
+        ]
+      },
+      {
+        "id": "42ca4aa9ff655ade998e732855f287fb9d1a6be9",
+        "type": "FIX",
+        "text": " Tables: Column width calculation for Edm.String adjusted",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270098060"
+          }
+        ]
+      },
+      {
+        "id": "b4ccfe3c70f2c9ec893b4e93c47bca2203a26f60",
+        "type": "FIX",
+        "text": " Field: clear currency measure brings error",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270046846"
+          }
+        ]
+      }
+    ]
+  }
+}

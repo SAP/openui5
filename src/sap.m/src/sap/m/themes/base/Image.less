@@ -26,6 +26,18 @@ span.sapMImg {
 	outline: none;
 }
 
+.sapMImgFocusable:focus {
+	outline: 0.0625rem dotted @sapUiContentFocusColor;
+    outline-offset: 0.0625rem;
+	.sapUiRespGrid & {
+		z-index: 100;
+	}
+}
+
+html:not(.sap-desktop) .sapMImgFocusable:focus {
+	outline: none;
+}
+
 
 /* ==========================================================================
    Image opening a LightBox
@@ -35,8 +47,12 @@ span.sapMImg {
 	position: relative;
 	display: inline-block;
 
-	& .sapMImg {
+	.sapMImg {
 		display: block;
+	}
+
+	.sapMLightBoxMagnifyingGlass {
+		line-height: normal;
 	}
 }
 

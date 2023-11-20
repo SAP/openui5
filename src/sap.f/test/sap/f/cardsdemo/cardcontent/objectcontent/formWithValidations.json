@@ -1,0 +1,249 @@
+
+{
+	"sap.app": {
+		"id": "cardsdemo.object.form.sample1",
+		"type": "card",
+		"title": "Sample of an Object Card",
+		"subTitle": "Sample of an Object Card",
+		"applicationVersion": {
+			"version": "1.0.0"
+		},
+		"shortTitle": "A short title for this Card",
+		"info": "Additional information about this Card",
+		"description": "A long description for this Card",
+		"tags": {
+			"keywords": [
+				"Object",
+				"Card",
+				"Sample"
+			]
+		}
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"icons": {
+			"icon": "sap-icon://switch-classes"
+		}
+	},
+	"sap.card": {
+		"type": "Object",
+		"configuration": {
+			"actionHandlers": {
+				"submit": {
+					"url": "./MOCK.json",
+					"method": "GET",
+					"parameters": {
+						"status": "approved",
+						"reason": "{form>/reason}",
+						"comment": "{form>/comment}",
+						"email": "{form>/email}"
+					}
+				}
+			}
+		},
+		"data": {
+			"json": {
+				"reasons": [
+					{
+						"id": "reason1",
+						"title": "Reason 1"
+					},
+					{
+						"id": "reason2",
+						"title": "Reason 2"
+					}
+				],
+				"selectedKey": "",
+				"msg": "dddd",
+				"inputValue": "Some Value",
+				"durationValue": "PT11H22M"
+			}
+		},
+		"header": {
+			"icon": {
+				"text": "JN"
+			},
+			"title": "Julia Neil",
+			"subTitle": "Procurement Purchase Requisition"
+		},
+		"content": {
+			"groups": [
+				{
+					"alignment": "Stretch",
+					"items": [
+						{
+							"value": "15,000.00 EUR",
+							"type": "Status",
+							"state": "Information"
+						},
+						{
+							"value": "For Ultra Jet Super Highspeed"
+						}
+					]
+				},
+				{
+					"alignment": "Stretch",
+					"items": [
+						{
+							"value": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi finibus ex nunc. Nunc quis mattis augue. Phasellus eu mollis ligula, eleifend hendrerit neque. "
+						}
+					]
+				},
+				{
+					"alignment": "Stretch",
+					"items": [
+						{
+							"id": "reason",
+							"label": "Reason",
+							"type": "ComboBox",
+							"placeholder": "Select",
+							"selectedKey": "{/selectedKey}",
+							"required": true,
+							"item": {
+								"path": "/reasons",
+								"template": {
+									"key": "{id}",
+									"title": "{title}"
+								}
+							},
+							"validations": [
+								{
+									"required": true,
+									"message": "Value is required"
+								}
+							]
+						},
+						{
+							"id": "reason2",
+							"label": "Reason 2",
+							"type": "ComboBox",
+							"placeholder": "Select",
+							"required": true,
+							"item": {
+								"path": "/reasons",
+								"template": {
+									"key": "{id}",
+									"title": "{title}"
+								}
+							},
+							"validations": [
+								{
+									"required": true
+								},
+								{
+									"restrictToPredefinedOptions": true
+								}
+							]
+						},
+						{
+							"id": "input1",
+							"label": "Enter Value",
+							"type": "Input",
+							"placeholder": "Enter value",
+							"value": "{/inputValue}",
+							"required": true,
+							"validations": [
+								{
+									"required": true
+								}
+							]
+						},
+						{
+							"id": "reason3",
+							"label": "Reason 3",
+							"type": "ComboBox",
+							"placeholder": "Select",
+							"item": {
+								"path": "/reasons",
+								"template": {
+									"key": "{id}",
+									"title": "{title}"
+								}
+							},
+							"validations": [
+								{
+									"restrictToPredefinedOptions": true
+								}
+							]
+						},
+						{
+							"id": "duration1",
+							"label": "Duration",
+							"type": "Duration",
+							"placeholder": "Enter duration",
+							"value": "{/durationValue}",
+							"validations": [
+								{
+									"required": true
+								}
+							]
+						},
+						{
+							"id": "comment",
+							"label": "Comment",
+							"type": "TextArea",
+							"rows": 4,
+							"placeholder": "Comment",
+							"value": "{/msg}",
+							"required": true,
+							"validations": [
+								{
+									"required": true,
+									"message": "Value is required"
+								},
+								{
+									"minLength": 10,
+									"maxLength": 20,
+									"message": "Your comment should be between 10 and 20 characters.",
+									"type": "Warning"
+								}
+							]
+						},
+						{
+							"id": "email",
+							"label": "Email",
+							"type": "TextArea",
+							"placeholder": "email",
+							"required": true,
+							"validations": [
+								{
+									"required": true,
+									"message": "Email is required"
+								},
+								{
+									"pattern": "^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$",
+									"message": "Enter a valid email"
+								}
+							]
+						},
+						{
+							"id": "dateRange",
+							"label": "Date Range",
+							"type": "DateRange",
+							"required": true,
+							"validations": [
+								{
+									"required": true
+								}
+							]
+						}
+					]
+				}
+			]
+		},
+		"footer": {
+			"actionsStrip": [
+				{
+					"text": "Submit",
+					"buttonType": "Accept",
+					"actions": [
+						{
+							"enabled": "{= !${messages>/hasErrors}}",
+							"type": "Submit"
+						}
+					]
+				}
+			]
+		}
+	}
+}

@@ -16,4 +16,4 @@ sap.ui.define([],
 				group: "DIALOG"
 			}
 		};
-	}, /* bExport= */ false);
+	});

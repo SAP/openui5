@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(["jquery.sap.global", "./DragDropBase"],
-	function(jQuery, DragDropBase) {
+sap.ui.define(["./DragDropBase"],
+	function(DragDropBase) {
 	"use strict";
 
 	/**
@@ -24,7 +24,6 @@ sap.ui.define(["jquery.sap.global", "./DragDropBase"],
 	 * @public
 	 * @since 1.56
 	 * @alias sap.ui.core.dnd.DropInfo
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var DropInfo = DragDropBase.extend("sap.ui.core.dnd.DropInfo", /** @lends sap.ui.core.dnd.DropInfo.prototype */ { metadata: {
 
@@ -66,7 +65,7 @@ sap.ui.define(["jquery.sap.global", "./DragDropBase"],
 			 * @param {object} oControlEvent.getParameters
 			 * @param {sap.ui.core.Element} oControlEvent.getParameters.target The target element on which the dragged element will be dropped
 			 * @param {sap.ui.core.dnd.DragSession} oControlEvent.getParameters.dragSession The UI5 <code>dragSession</code> object that exists only during drag and drop
-			 * @param {Event} oControlEvent.getParameters.browserEvent The underlying browser event
+			 * @param {DragEvent} oControlEvent.getParameters.browserEvent The underlying browser event
 			 * @public
 			 */
 			dragEnter: {
@@ -83,8 +82,8 @@ sap.ui.define(["jquery.sap.global", "./DragDropBase"],
 			 * @param {object} oControlEvent.getParameters
 			 * @param {sap.ui.core.Element} oControlEvent.getParameters.target The target element on which the dragged element will be dropped
 			 * @param {sap.ui.core.dnd.DragSession} oControlEvent.getParameters.dragSession The UI5 <code>dragSession</code> object that exists only during drag and drop
-			 * @param {string} oControlEvent.getParameters.dropPosition The calculated position of the drop action relative to the <code>target</code>, possible values are <code>Before</code>, <code>On</code>, <code>After</code>
-			 * @param {Event} oControlEvent.getParameters.browserEvent The underlying browser event
+			 * @param {sap.ui.core.dnd.RelativeDropPosition} oControlEvent.getParameters.dropPosition The calculated position of the drop action relative to the <code>target</code>
+			 * @param {DragEvent} oControlEvent.getParameters.browserEvent The underlying browser event
 			 * @public
 			 * @since 1.56
 			 */
@@ -102,8 +101,8 @@ sap.ui.define(["jquery.sap.global", "./DragDropBase"],
 			 * @param {sap.ui.core.dnd.DragSession} oControlEvent.getParameters.dragSession The UI5 <code>dragSession</code> object that exists only during drag and drop
 			 * @param {sap.ui.core.Element} oControlEvent.getParameters.draggedControl The element being dragged
 			 * @param {sap.ui.core.Element} oControlEvent.getParameters.droppedControl The element being dropped
-			 * @param {string} oControlEvent.getParameters.dropPosition The calculated position of the drop action relative to the <code>droppedControl</code>, possible values are <code>Before</code>, <code>On</code>, <code>After</code>
-			 * @param {Event} oControlEvent.getParameters.browserEvent The underlying browser event
+			 * @param {sap.ui.core.dnd.RelativeDropPosition} oControlEvent.getParameters.dropPosition The calculated position of the drop action relative to the <code>droppedControl</code>
+			 * @param {DragEvent} oControlEvent.getParameters.browserEvent The underlying browser event
 			 * @public
 			 */
 			drop: {
@@ -129,9 +128,7 @@ sap.ui.define(["jquery.sap.global", "./DragDropBase"],
 
 		// droppable by default
 		var sTargetAggregation = this.getTargetAggregation();
-		var oMetadata = oDropTarget.getMetadata().getDragDropInfo(sTargetAggregation);
-		if (!oMetadata.droppable) {
-			jQuery.sap.log.warning((sTargetAggregation ? sTargetAggregation + " aggregation of " : "") + oDropTarget + " is not configured to be droppable");
+		if (!this.checkMetadata(oDropTarget, sTargetAggregation, "droppable")) {
 			return false;
 		}
 
@@ -221,4 +218,4 @@ sap.ui.define(["jquery.sap.global", "./DragDropBase"],
 
 	return DropInfo;
 
-}, /* bExport= */ true);
+});

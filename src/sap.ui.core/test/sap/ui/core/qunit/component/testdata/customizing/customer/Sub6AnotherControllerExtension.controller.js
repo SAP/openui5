@@ -1,27 +1,34 @@
-sap.ui.define(['sap/ui/core/mvc/Controller'],
-	function(/* Controller */) {
+sap.ui.define(['sap/ui/core/mvc/ControllerExtension'],
+	function(ControllerExtension) {
 	"use strict";
 
 	/*global oLifecycleSpy */
 
-	sap.ui.controller("testdata.customizing.customer.Sub6AnotherControllerExtension", {
-
-		onInit: function() {
-			oLifecycleSpy("Sub6AnotherControllerExtension Controller onInit()");
+	return ControllerExtension.extend("testdata.customizing.customer.Sub6AnotherControllerExtension", {
+		metadata: {
+			methods: {
+				"myCustomAction1": {"public": true, "final": false},
+				"myCustomAction2": {"public": true, "final": false}
+			}
 		},
 
-		onExit: function() {
-			oLifecycleSpy("Sub6AnotherControllerExtension Controller onExit()");
-		},
+		overrides: {
+			onInit: function() {
+				oLifecycleSpy("Sub6AnotherControllerExtension Controller onInit()");
+			},
 
-		onBeforeRendering: function() {
-			oLifecycleSpy("Sub6AnotherControllerExtension Controller onBeforeRendering()");
-		},
+			onExit: function() {
+				oLifecycleSpy("Sub6AnotherControllerExtension Controller onExit()");
+			},
 
-		onAfterRendering: function() {
-			oLifecycleSpy("Sub6AnotherControllerExtension Controller onAfterRendering()");
-		},
+			onBeforeRendering: function() {
+				oLifecycleSpy("Sub6AnotherControllerExtension Controller onBeforeRendering()");
+			},
 
+			onAfterRendering: function() {
+				oLifecycleSpy("Sub6AnotherControllerExtension Controller onAfterRendering()");
+			}
+		},
 
 		myCustomAction1: function() {
 			//alert("myCustomAction1");

@@ -1,0 +1,18 @@
+{
+  "1.83.0": {
+    "date": "September 2020",
+    "notes": [
+      {
+        "id": "e9967b2fa2d37455bfe6cde97858acfbdb29ca44",
+        "type": "FIX",
+        "text": " Table: Synchronization of the scroll position with GanttChart",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400005177142020"
+          }
+        ]
+      }
+    ]
+  }
+}

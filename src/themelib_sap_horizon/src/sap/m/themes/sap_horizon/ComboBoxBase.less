@@ -1,0 +1,19 @@
+/* =================================== */
+/* CSS for control sap.m/ComboBoxBase  */
+/* Horizon theme                       */
+/* =================================== */
+
+.sapMInputBase:not(.sapMInputBaseDisabled).sapMInputBaseIconPressed .sapMInputBaseIconContainer .sapMComboBoxBaseClearIcon,
+.sapMInputBase:not(.sapMInputBaseDisabled).sapMInputBaseIconPressed .sapMInputBaseIconContainer .sapMComboBoxBaseClearIcon:hover {
+	background-color: transparent;
+	box-shadow: none;
+
+	&:active {
+		background-color: @sapField_Focus_Background;
+		box-shadow: @sapContent_Interaction_Shadow;
+	}
+}
+
+.sapMInputBaseIconPressed .sapMComboBoxBaseClearIcon::before {
+	color: @sapUiContentIconColor;
+}

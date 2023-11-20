@@ -1,0 +1,113 @@
+/* ======================================= */
+/* CSS for control sap.f/DynamicPageTitle  */
+/* Quartz High Contrast White theme        */
+/* ======================================= */
+
+.sapFDynamicPageTitleWrapper.sapFDynamicPageTitleSnapped > .sapFDynamicPageTitle:focus,
+.sapFDynamicPageTitleWrapper.sapFDynamicPageTitleOnly > .sapFDynamicPageTitle:focus {
+	box-shadow: none;
+}
+
+html.sap-desktop .sapFDynamicPageTitle.sapFDynamicPageTitleFocus {
+	outline-width: 0.125rem;
+	outline-offset: -0.25rem; // due to bottom border overlapping
+}
+
+.sapFDynamicPageTitleWrapper.sapFDynamicPageTitleSnappedTitleOnMobile > .sapFDynamicPageTitle {
+	border-bottom: 1px solid @sapUiObjectHeaderBorderColor;
+}
+
+.sapFDynamicPageTitle {
+	padding: 0.5rem 2rem;
+	word-wrap: break-word;
+
+	&.sapFDynamicPageTitleTransparent {
+		background: @sapUiObjectHeaderBackground;
+	}
+}
+
+.sapFDynamicPage-Std-Desktop-XL .sapFDynamicPageTitle {
+	padding: 0.5rem 3rem;
+}
+
+.sapFDynamicPage-Std-Tablet {
+	.sapFDynamicPageTitle,
+	.sapFDynamicPageTitleWrapper.sapFDynamicPageTitleSnapped > .sapFDynamicPageTitle {
+		padding: 0.5rem 2rem;
+	}
+
+	// Needed because on some high-end phones in landscape mode,
+	// the width of the viewport is bigger than 600 (Tablet breakpoint).
+	.sapFDynamicPageTitleWrapper.sapFDynamicPageTitleSnappedTitleOnMobile > .sapFDynamicPageTitle {
+		padding: 0 2rem;
+	}
+}
+
+.sapFDynamicPage-Std-Phone {
+	.sapFDynamicPageTitle,
+	.sapFDynamicPageTitleWrapper.sapFDynamicPageTitleOnly > .sapFDynamicPageTitle,
+	.sapFDynamicPageTitleWrapper.sapFDynamicPageTitleSnapped > .sapFDynamicPageTitle {
+		padding: 0.5rem 1rem;
+	}
+
+	.sapFDynamicPageTitleWrapper.sapFDynamicPageTitleSnappedTitleOnMobile > .sapFDynamicPageTitle {
+		padding: 0 1rem;
+	}
+}
+
+.sapFDynamicPageTitle .sapMTB {
+	background: transparent;
+	padding: 0;
+}
+
+.sapFDynamicPageTitleMainNavigationArea > .sapMTBSeparator {
+	margin: 0 0.5rem;
+}
+
+.sapFDynamicPageTitleMainNavigationAreaInner .sapMIBar.sapMTB .sapMBarChild:first-child {
+	margin-left: 0;
+}
+
+/* IE and Edge ignores outline-offset. Use an overlay: */
+/* TODO remove after the end of support for Internet Explorer */
+html[data-sap-ui-browser^="ie"].sap-desktop,
+html[data-sap-ui-browser^="ed"].sap-desktop {
+	.sapFDynamicPageTitle.sapFDynamicPageTitleFocus {
+		outline: none;
+		position: relative;
+	}
+	.sapFDynamicPageTitle.sapFDynamicPageTitleFocus:before {
+		content: " ";
+		box-sizing: border-box;
+		width: 100%;
+		height: 98%; // due to bottom border overlapping
+		position: absolute;
+		left: 0;
+		top: 0;
+		border: 0.125rem dashed @sapUiContentFocusColor;
+		pointer-events: none;
+	}
+}
+
+/* Firefox fix due to focus cut out from top and left */
+html[data-sap-ui-browser^="ff"].sap-desktop {
+	.sapFDynamicPageTitle.sapFDynamicPageTitleFocus {
+		outline: none;
+		position: relative;
+	}
+	.sapFDynamicPageTitle.sapFDynamicPageTitleFocus:before {
+		content: " ";
+		box-sizing: border-box;
+		width: 100%;
+		height: 98%; // due to bottom border overlapping
+		position: absolute;
+		left: 0;
+		top: 0;
+		border: 0.125rem dotted @sapUiContentFocusColor;
+		pointer-events: none;
+	}
+}
+
+.sapFDynamicPageNavigation .sapFDynamicPageTitleWrapper.sapFDynamicPageTitleOnly > .sapFDynamicPageTitle {
+	box-shadow: none;
+}

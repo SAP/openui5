@@ -2,8 +2,13 @@
  * ${copyright}
  */
 
-sap.ui.define(["sap/ui/layout/library", "sap/ui/core/library", "sap/ui/core/theming/Parameters", "sap/ui/layout/form/Form"],
-	function(library, coreLibrary, themingParameters, Form) {
+sap.ui.define([
+	'sap/ui/core/library',
+	'sap/ui/layout/library',
+	'sap/ui/layout/form/Form',
+	'./FormHelper',
+	'sap/ui/core/IconPool' // as RenderManager.icon needs it
+	], function(coreLibrary, library, Form, FormHelper, IconPool) {
 	"use strict";
 
 	// shortcut for sap.ui.core.TitleLevel
@@ -17,18 +22,16 @@ sap.ui.define(["sap/ui/layout/library", "sap/ui/core/library", "sap/ui/core/them
 	 * @namespace
 	 */
 	var FormLayoutRenderer = {
+		apiVersion: 2
 	};
 
 	/**
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
 	 *
-	 * @param {sap.ui.core.RenderManager} oRenderManager the RenderManager that can be used for writing to the Render-Output-Buffer
-	 * @param {sap.ui.core.Control} oLayout an object representation of the control that should be rendered
+	 * @param {sap.ui.core.RenderManager} rm the RenderManager that can be used for writing to the Render-Output-Buffer
+	 * @param {sap.ui.layout.form.FormLayout} oLayout an object representation of the control that should be rendered
 	 */
-	FormLayoutRenderer.render = function(oRenderManager, oLayout){
-		// convenience variable
-		var rm = oRenderManager;
-
+	FormLayoutRenderer.render = function(rm, oLayout){
 		var oForm = oLayout.getParent();
 		if (oForm && oForm instanceof Form) {
 			this.renderForm(rm, oLayout, oForm);
@@ -40,33 +43,27 @@ sap.ui.define(["sap/ui/layout/library", "sap/ui/core/library", "sap/ui/core/them
 	 * Renders the HTML for the given form content, using the provided {@link sap.ui.core.RenderManager}.
 	 *
 	 * @param {sap.ui.core.RenderManager} rm the RenderManager that can be used for writing to the Render-Output-Buffer
-	 * @param {sap.ui.core.Control} oLayout an object representation of the Layout control that should be rendered
-	 * @param {sap.ui.layout.form.Form} oForm, a form control to render its content
+	 * @param {sap.ui.layout.form.FormLayout} oLayout an object representation of the Layout control that should be rendered
+	 * @param {sap.ui.layout.form.Form} oForm a form control to render its content
 	 */
 	FormLayoutRenderer.renderForm = function(rm, oLayout, oForm){
 
 		var oToolbar = oForm.getToolbar();
 
-		rm.write("<div");
-		rm.writeControlData(oLayout);
-		rm.addClass(this.getMainClass());
+		rm.openStart("div", oLayout);
+		rm.class(this.getMainClass());
 		if (oToolbar) {
-			rm.addClass("sapUiFormToolbar");
+			rm.class("sapUiFormToolbar");
 		}
 		this.addBackgroundClass(rm, oLayout);
-		rm.writeClasses();
-		rm.write(">");
+		rm.openEnd();
 
 		// Form header
-		var sSize;
-		if (!oToolbar) {
-			sSize = themingParameters.get('sap.ui.layout.FormLayout:_sap_ui_layout_FormLayout_FormTitleSize');
-		}
-		this.renderHeader(rm, oToolbar, oForm.getTitle(), undefined, false, sSize, oForm.getId());
+		this.renderHeader(rm, oToolbar, oForm.getTitle(), undefined, false, oLayout._sFormTitleSize, oForm.getId());
 
 		this.renderContainers(rm, oLayout, oForm);
 
-		rm.write("</div>");
+		rm.close("div");
 	};
 
 	FormLayoutRenderer.getMainClass = function(){
@@ -77,7 +74,7 @@ sap.ui.define(["sap/ui/layout/library", "sap/ui/core/library", "sap/ui/core/them
 
 		var sBackgroundDesign = oLayout.getBackgroundDesign();
 		if (sBackgroundDesign != BackgroundDesign.Transparent) {
-			rm.addClass("sapUiFormBackgr" + sBackgroundDesign);
+			rm.class("sapUiFormBackgr" + sBackgroundDesign);
 		}
 
 	};
@@ -98,46 +95,47 @@ sap.ui.define(["sap/ui/layout/library", "sap/ui/core/library", "sap/ui/core/them
 		var oToolbar = oContainer.getToolbar();
 		var oTitle = oContainer.getTitle();
 
-		rm.write("<section");
-		rm.writeElementData(oContainer);
-		rm.addClass("sapUiFormContainer");
+		rm.openStart("section", oContainer);
+		rm.class("sapUiFormContainer");
 
 		if (oToolbar) {
-			rm.addClass("sapUiFormContainerToolbar");
+			rm.class("sapUiFormContainerToolbar");
 		} else if (oTitle) {
-			rm.addClass("sapUiFormContainerTitle");
+			rm.class("sapUiFormContainerTitle");
 		}
 
 		if (oContainer.getTooltip_AsString()) {
-			rm.writeAttributeEscaped('title', oContainer.getTooltip_AsString());
+			rm.attr('title', oContainer.getTooltip_AsString());
 		}
-		rm.writeClasses();
 
 		this.writeAccessibilityStateContainer(rm, oContainer);
 
-		rm.write(">");
+		rm.openEnd();
 
-		this.renderHeader(rm, oToolbar, oTitle, oContainer._oExpandButton, bExpandable, TitleLevel.H4, oContainer.getId());
+		this.renderHeader(rm, oToolbar, oTitle, oContainer._oExpandButton, bExpandable, oLayout._sFormSubTitleSize, oContainer.getId());
 
 		if (bExpandable) {
-			rm.write("<div id='" + oContainer.getId() + "-content'");
+			rm.openStart("div", oContainer.getId() + "-content");
 			if (!oContainer.getExpanded()) {
-				rm.addStyle("display", "none");
-				rm.writeStyles();
+				rm.style("display", "none");
 			}
-			rm.write(">");
+			rm.openEnd();
 		}
 
 		var aElements = oContainer.getVisibleFormElements();
 		for (var j = 0, jl = aElements.length; j < jl; j++) {
 			var oElement = aElements[j];
-			this.renderElement(rm, oLayout, oElement);
+			if (oElement.isA("sap.ui.layout.form.SemanticFormElement") && !oElement._getEditable()) {
+				this.renderSemanticElement(rm, oLayout, oElement);
+			} else {
+				this.renderElement(rm, oLayout, oElement);
+			}
 		}
 
 		if (bExpandable) {
-			rm.write("</div>");
+			rm.close("div");
 		}
-		rm.write("</section>");
+		rm.close("section");
 
 	};
 
@@ -145,71 +143,88 @@ sap.ui.define(["sap/ui/layout/library", "sap/ui/core/library", "sap/ui/core/them
 
 		var oLabel = oElement.getLabelControl();
 
-		rm.write("<div");
-		rm.writeElementData(oElement);
-		rm.addClass("sapUiFormElement");
+		rm.openStart("div", oElement);
+		rm.class("sapUiFormElement");
 		if (oLabel) {
-			rm.addClass("sapUiFormElementLbl");
+			rm.class("sapUiFormElementLbl");
 		}
-		rm.writeClasses();
-		rm.write(">");
+		rm.openEnd();
 
 		if (oLabel) {
 			rm.renderControl(oLabel);
 		}
 
-		var aFields = oElement.getFields();
+		var aFields = oElement.getFieldsForRendering();
 		if (aFields && aFields.length > 0) {
 			for (var k = 0, kl = aFields.length; k < kl; k++) {
 				var oField = aFields[k];
 				rm.renderControl(oField);
 			}
 		}
-		rm.write("</div>");
+		rm.close("div");
 
 	};
 
-	/*
-	 * Renders the title for a Form or a FormContainer
+	FormLayoutRenderer.renderSemanticElement = function(rm, oLayout, oElement){
+
+		// just render like standard Element as default
+		this.renderElement(rm, oLayout, oElement);
+
+	};
+
+	/**
+	 * Renders the title for a <code>Form</code> or a <code>FormContainer</code>
+	 *
 	 * If this function is overwritten in a Layout please use the right IDs to be sure aria-describedby works fine
+	 *
+	 * @param {sap.ui.core.RenderManager} rm the RenderManager that can be used for writing to the Render-Output-Buffer
+	 * @param {string|sap.ui.core.Title} oTitle Title text or <code>Title</code> element
+	 * @param {sap.ui.core.Control} [oExpandButton] Button control for expander
+	 * @param {boolean} [bExpander] If <code>true</code> an expander is rendered
+	 * @param {string} sLevel Level of the title. If not set <code>H5</code> is used as default
+	 * @param {string} sContentId ID of the header element (<code>Form</code> or <code>FormContainer</code>)
 	 */
-	FormLayoutRenderer.renderTitle = function(rm, oTitle, oExpandButton, bExpander, sLevelDefault, sContentId){
+	FormLayoutRenderer.renderTitle = function(rm, oTitle, oExpandButton, bExpander, sLevel, sContentId){
 
 		if (oTitle) {
-			//determine title level -> if not set use H4 as default
-			var sLevel = themingParameters.get('sap.ui.layout.FormLayout:_sap_ui_layout_FormLayout_FormSubTitleSize');
-			if (sLevelDefault) {
-				sLevel = sLevelDefault;
-			}
 			if (typeof oTitle !== "string" && oTitle.getLevel() != TitleLevel.Auto) {
 				sLevel = oTitle.getLevel();
 			}
+			if (!sLevel) {
+				// use H5 as fallback -> but it should be set from outside
+				sLevel = "H5";
+			}
 
 			// just reuse TextView class because there font size & co. is already defined
-			rm.write("<" + sLevel + " ");
-			rm.addClass("sapUiFormTitle");
-			rm.addClass("sapUiFormTitle" + sLevel);
-
-			if (typeof oTitle !== "string") {
-				rm.writeElementData(oTitle);
+			if ( typeof oTitle !== "string" ) {
+				rm.openStart(sLevel.toLowerCase(), oTitle);
 				if (oTitle.getTooltip_AsString()) {
-					rm.writeAttributeEscaped('title', oTitle.getTooltip_AsString());
+					rm.attr('title', oTitle.getTooltip_AsString());
 				}
 				if (oTitle.getEmphasized()) {
-					rm.addClass("sapUiFormTitleEmph");
+					rm.class("sapUiFormTitleEmph");
 				}
 			} else {
-				rm.writeAttribute("id", sContentId + "--title");
+				rm.openStart(sLevel.toLowerCase(), sContentId + "--title");
 			}
-			rm.writeClasses();
-			rm.write(">");
+			rm.class("sapUiFormTitle");
+			rm.class("sapUiFormTitle" + sLevel);
+			if (bExpander && oExpandButton) {
+				rm.class("sapUiFormTitleExpandable");
+			}
+			rm.openEnd();
 
 			if (bExpander && oExpandButton) {
 				rm.renderControl(oExpandButton);
 			}
 			if (typeof oTitle === "string") {
 				// Title is just a string
-				rm.writeEscaped(oTitle, true);
+				oTitle.split(/\n/).forEach(function(sLine, iIndex) {
+					if ( iIndex > 0 ) {
+						rm.voidStart("br").voidEnd();
+					}
+					rm.text(sLine);
+				});
 			} else {
 				// title control
 				var sIcon = oTitle.getIcon();
@@ -221,32 +236,48 @@ sap.ui.define(["sap/ui/layout/library", "sap/ui/core/library", "sap/ui/core/them
 					};
 
 					mAttributes["id"] = oTitle.getId() + "-ico";
-					rm.writeIcon(sIcon, aClasses, mAttributes);
+					rm.icon(sIcon, aClasses, mAttributes);
 				}
-				rm.writeEscaped(oTitle.getText(), true);
+				oTitle.getText().split(/\n/).forEach(function(sLine, iIndex) {
+					if ( iIndex > 0 ) {
+						rm.voidStart("br").voidEnd();
+					}
+					rm.text(sLine);
+				});
 			}
 
-			rm.write("</" + sLevel + ">");
+			rm.close(sLevel.toLowerCase());
 		}
 
 	};
 
-	/*
+	/**
 	 * Renders the header, containing Toolbar or Title, for a Form or a FormContainer
+	 *
 	 * If this function is overwritten in a Layout please use the right IDs to be sure aria-describedby works fine
+	 *
+	 * @param {sap.ui.core.RenderManager} rm the RenderManager that can be used for writing to the Render-Output-Buffer
+	 * @param {sap.ui.core.Toolbar} [oToolbar] <code>Toolbar</code> control
+	 * @param {string|sap.ui.core.Title} [oTitle] Title text or <code>Title</code> element
+	 * @param {sap.ui.core.Control} [oExpandButton] Button control for expander
+	 * @param {boolean} [bExpander] If <code>true</code> an expander is rendered
+	 * @param {string} sLevel Level of the title.
+	 * @param {string} sContentId ID of the header element (<code>Form</code> or <code>FormContainer</code>)
 	 */
-	FormLayoutRenderer.renderHeader = function(rm, oToolbar, oTitle, oExpandButton, bExpander, sLevelDefault, sContentId){
+	FormLayoutRenderer.renderHeader = function(rm, oToolbar, oTitle, oExpandButton, bExpander, sLevel, sContentId){
 
 		if (oToolbar) {
 			rm.renderControl(oToolbar);
 		} else {
-			this.renderTitle(rm, oTitle, oExpandButton, bExpander, sLevelDefault, sContentId);
+			this.renderTitle(rm, oTitle, oExpandButton, bExpander, sLevel, sContentId);
 		}
 
 	};
 
 	/*
-	 * Writes the accessibility attributes for FormContainers
+	 * Writes the accessibility attributes for FormContainers.
+	 * @param {sap.ui.core.RenderManager} rm
+	 * @param {sap.ui.layout.form.FormContainer} oContainer
 	 */
 	FormLayoutRenderer.writeAccessibilityStateContainer = function(rm, oContainer){
 
@@ -255,8 +286,9 @@ sap.ui.define(["sap/ui/layout/library", "sap/ui/core/library", "sap/ui/core/them
 		var oToolbar = oContainer.getToolbar();
 		if (oToolbar) {
 			if (!oContainer.getAriaLabelledBy() || oContainer.getAriaLabelledBy().length == 0) {
-				// no aria-label -> use complete Toolbar as fallback
-				mAriaProps["labelledby"] = {value: oToolbar.getId(), append: true};
+				// no aria-label -> use Title of Toolbar
+				var sToolbarTitleID = FormHelper.getToolbarTitle(oToolbar); // FormHelper must already be initialized by FormLayout
+				mAriaProps["labelledby"] = {value: sToolbarTitleID, append: true};
 			}
 		} else if (oTitle) {
 			var sId = "";
@@ -273,7 +305,7 @@ sap.ui.define(["sap/ui/layout/library", "sap/ui/core/library", "sap/ui/core/them
 			mAriaProps["role"] = "form";
 		}
 
-		rm.writeAccessibilityState(oContainer, mAriaProps);
+		rm.accessibilityState(oContainer, mAriaProps);
 
 	};
 

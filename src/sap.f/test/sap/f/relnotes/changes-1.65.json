@@ -1,0 +1,118 @@
+{
+  "1.65.0": {
+    "date": "March 2019",
+    "notes": [
+      {
+        "id": "180263eaf3928fd3a162210d284e2868be1173d9",
+        "type": "FIX",
+        "text": "sap.f.DynamicPage: Ensured header snapped on resize",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970068051"
+          }
+        ]
+      },
+      {
+        "id": "385ab65245d17c3113f4e75aa93cce6582c4282a",
+        "type": "FIX",
+        "text": "sap.f.SemanticPage: Updated documentation for aggregation",
+        "references": [
+          {
+            "type": "GitHub",
+            "reference": "2427"
+          },
+          {
+            "type": "BCP",
+            "reference": "1970171557"
+          }
+        ]
+      },
+      {
+        "id": "a01fb95b6e1a69b4ab0788f26895378c5399c601",
+        "type": "FIX",
+        "text": "sap.f.ShellBar: Unnecessary Second title truncation fixed",
+        "references": []
+      },
+      {
+        "id": "e1959386cf5a9aa1d528e1bfa6aefa88b747fe6e",
+        "type": "FEATURE",
+        "text": "sap.f.Avatar: Custom fallback icon implemented",
+        "references": []
+      },
+      {
+        "id": "d47293478fde608a33dcc0054a299ec7c6bb3677",
+        "type": "FIX",
+        "text": "sap.f.DynamicPage: Fixed validation of headerExpanded property",
+        "references": []
+      },
+      {
+        "id": "27c3dc378facf71afb2620da37aaf13941ea29a1",
+        "type": "FEATURE",
+        "text": "sap.f.DynamicPage: Implemented sticky subheader",
+        "references": []
+      },
+      {
+        "id": "0f6aaeb528c9a758fe23ef12c17aae725eb4f120",
+        "type": "FEATURE",
+        "text": "sap.ui.integration.widgets.Card: Table Card implemented",
+        "references": []
+      },
+      {
+        "id": "2c15336833d6a671ba16965e9d2bc76b0a678c63",
+        "type": "FIX",
+        "text": "sap.f.DynamicPage: Allowed non-animated footer toggle",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980049593"
+          }
+        ]
+      },
+      {
+        "id": "5b3debb5235240a568ea215037ad1b54567bfb92",
+        "type": "FEATURE",
+        "text": "sap.f.GridContainer: Added control sample",
+        "references": []
+      },
+      {
+        "id": "00a1bd63f3f97145bf0c7a462b4d450a167e357d",
+        "type": "FEATURE",
+        "text": "sap.f.ShellBar: Control productisation",
+        "references": []
+      },
+      {
+        "id": "1e5da3dedaf2b37deb74c1cddbe62ef26e999aca",
+        "type": "FEATURE",
+        "text": "sap.ui.integration.widgets.Card: Component Card implemented - experimental",
+        "references": []
+      },
+      {
+        "id": "0c8d142da63dc1185e31cbd7c0e1c5e139bb49e6",
+        "type": "FIX",
+        "text": "sap.f.Avatar: Link image source with quotes fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1780430119"
+          }
+        ]
+      },
+      {
+        "id": "98098031b5cb9110e7d5fc8649914ca375cf4b4c",
+        "type": "FIX",
+        "text": "sap.f.DynamicPageTitle: Removed unnecessary event firings",
+        "references": [
+          {
+            "type": "GitHub",
+            "reference": "2446"
+          },
+          {
+            "type": "BCP",
+            "reference": "1980059507"
+          }
+        ]
+      }
+    ]
+  }
+}

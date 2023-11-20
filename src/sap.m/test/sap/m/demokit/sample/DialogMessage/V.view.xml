@@ -3,33 +3,36 @@
 	xmlns:l="sap.ui.layout"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.m">
-	<l:VerticalLayout
-		class="sapUiContentPadding"
-		width="100%">
-		<l:content>
-			<Button
-				text="Message Dialog"
-				width="230px"
-				press="onMessageDialogPress"
-				class="sapUiSmallMarginBottom" />
-
-			<Button
-				text="Message Dialog (Success)"
-				width="230px"
-				press="onMessageSuccessDialogPress"
-				class="sapUiSmallMarginBottom" />
-
-			<Button
-				text="Message Dialog (Warning)"
-				width="230px"
-				press="onMessageWarningDialogPress"
-				class="sapUiSmallMarginBottom" />
-
-			<Button
-				text="Message Dialog (Error)"
-				width="230px"
-				press="onMessageErrorDialogPress"
-				class="sapUiSmallMarginBottom" />
-		</l:content>
+	<l:VerticalLayout class="sapUiContentPadding" width="100%">
+		<Button
+			text="Message Dialog"
+			width="230px"
+			press=".onDefaultMessageDialogPress"
+			class="sapUiSmallMarginBottom"
+			ariaHasPopup="Dialog" />
+		<Button
+			text="Message Dialog (Success)"
+			width="230px"
+			press=".onSuccessMessageDialogPress"
+			class="sapUiSmallMarginBottom"
+			ariaHasPopup="Dialog" />
+		<Button
+			text="Message Dialog (Warning)"
+			width="230px"
+			press=".onWarningMessageDialogPress"
+			class="sapUiSmallMarginBottom"
+			ariaHasPopup="Dialog" />
+		<Button
+			text="Message Dialog (Error)"
+			width="230px"
+			press=".onErrorMessageDialogPress"
+			class="sapUiSmallMarginBottom"
+			ariaHasPopup="Dialog" />
+		<Button
+			text="Message Dialog (Information)"
+			width="230px"
+			press=".onMessageInformationDialogPress"
+			class="sapUiSmallMarginBottom"
+			ariaHasPopup="Dialog" />
 	</l:VerticalLayout>
 </mvc:View>

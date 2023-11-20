@@ -8,7 +8,7 @@ sap.ui.define(['sap/m/semantic/SemanticButton'], function(SemanticButton) {
 	/**
 	 * Constructor for a new AddAction.
 	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
-	 * @param {object} [mSettings] Custom initial settings for the new control
+	 * @param {object} [mSettings] Optional initial settings for the new control:  a map/JSON-object with initial property values, event listeners etc. for the new object
 	 *
 	 * @class
 	 * An AddAction button has default semantic-specific properties and is
@@ -25,7 +25,6 @@ sap.ui.define(['sap/m/semantic/SemanticButton'], function(SemanticButton) {
 	 * @public
 	 * @since 1.30.0
 	 * @alias sap.m.semantic.AddAction
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 
 	var AddAction = SemanticButton.extend("sap.m.semantic.AddAction", /** @lends sap.m.semantic.AddAction.prototype */ {

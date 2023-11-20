@@ -1,0 +1,92 @@
+<mvc:View
+	controllerName="sap.f.cardsdemo.controller.ManifestResolver"
+	xmlns="sap.m"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:core="sap.ui.core"
+	xmlns:w="sap.ui.integration.widgets"
+	xmlns:form="sap.ui.layout.form"
+	xmlns:editor="sap.ui.codeeditor"
+	displayBlock="true">
+	<Page title="{i18n>appTitle}" enableScrolling="false">
+		<subHeader>
+			<Toolbar>
+				<ToolbarSpacer />
+				<Title text="Resolve Manifest" />
+				<ToolbarSpacer />
+			</Toolbar>
+		</subHeader>
+		<VBox renderType="Bare" height="100%">
+			<form:SimpleForm
+				layout="ResponsiveGridLayout"
+				editable="true"
+				labelSpanXL="2"
+				labelSpanL="2"
+				labelSpanM="2"
+				labelSpanS="12"
+				emptySpanXL="7"
+				emptySpanL="6"
+				emptySpanM="2"
+				emptySpanS="0">
+				<Label labelFor="manifestId" text="Manifest" />
+				<Select id="manifestId" selectedKey="objectCard" change=".onManifestChange">
+					<core:Item text="Object Card" key="objectCard" />
+					<core:Item text="Object Card Form Inputs" key="objectCardFormInputs" />
+					<core:Item text="Calendar Card" key="calendarCard" />
+					<core:Item text="List Card" key="listCard" />
+					<core:Item text="List Card with Grouping" key="listCardGrouping" />
+					<core:Item text="List Card No Data" key="listCardNoData" />
+					<core:Item text="Card with Dynamic Status Text" key="dynamicStatusText" />
+					<core:Item text="List Card with Bullet Graph and Actions" key="listCardBulletGraphActions" />
+					<core:Item text="List Card with Stacked Bar Chart" key="stackedBar" />
+					<core:Item text="List Card with Data Error" key="withDataError" />
+					<core:Item text="Table Card 1" key="tableCard1" />
+					<core:Item text="Table Card 2" key="tableCard2" />
+					<core:Item text="Table Card with Grouping" key="tableCardGroups" />
+					<core:Item text="Table Card No Data" key="tableCardNoData" />
+					<core:Item text="Card with Filters" key="filtersCard" />
+					<core:Item text="Card with Severe Error" key="cardWithSevereError" />
+					<core:Item text="Card with Extension" key="cardWithExtension" />
+				</Select>
+
+				<Label text="baseUrl" labelFor="baseUrlInp" />
+				<Input id="baseUrlInp" />
+
+				<Label />
+				<Button text="Resolve manifest" width="10rem" press=".onResolveManifestPress" />
+			</form:SimpleForm>
+
+			<MessageStrip id="error" type="Error" visible="false" />
+			<HBox>
+				<layoutData>
+					<FlexItemData minHeight="0" growFactor="1"></FlexItemData>
+				</layoutData>
+				<VBox>
+					<Title text="Manifest" class="sapUiTinyMargin" />
+					<editor:CodeEditor
+						id="editor"
+						type="json">
+						<editor:layoutData>
+							<FlexItemData growFactor="1"></FlexItemData>
+						</editor:layoutData>
+					</editor:CodeEditor>
+					<layoutData>
+						<FlexItemData growFactor="1"></FlexItemData>
+					</layoutData>
+				</VBox>
+				<VBox>
+					<Title text="Output" class="sapUiTinyMargin" />
+					<editor:CodeEditor
+						id="output"
+						type="json">
+						<editor:layoutData>
+							<FlexItemData growFactor="1"></FlexItemData>
+						</editor:layoutData>
+					</editor:CodeEditor>
+					<layoutData>
+						<FlexItemData growFactor="1"></FlexItemData>
+					</layoutData>
+				</VBox>
+			</HBox>
+		</VBox>
+	</Page>
+</mvc:View>

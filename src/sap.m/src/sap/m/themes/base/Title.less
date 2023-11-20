@@ -23,6 +23,7 @@
 
 .sapMTitle.sapMTitleWrap {
 	white-space: pre-line;
+	word-wrap: break-word;
 }
 
 .sapMTitle.sapMTitleNoWrap {
@@ -33,42 +34,6 @@
 	max-width: 100%;
 }
 
-
-/* Alignments */
-
-.sapMTitleAlignBegin {
-	text-align: left;
-	text-align: start;
-}
-
-html[dir=rtl][data-sap-ui-browser^="ie"] .sapMTitleAlignBegin,
-html[dir=rtl][data-sap-ui-browser^="ed"] .sapMTitleAlignBegin {
-	text-align: right;
-}
-
-.sapMTitleAlignLeft {
-	text-align: left;
-}
-
-.sapMTitleAlignEnd {
-	text-align: right;
-	text-align: end;
-}
-
-html[dir=rtl][data-sap-ui-browser^="ie"] .sapMTitleAlignEnd,
-html[dir=rtl][data-sap-ui-browser^="ed"] .sapMTitleAlignEnd {
-	text-align: left;
-}
-
-.sapMTitleAlignRight {
-	text-align: right;
-}
-
-.sapMTitleAlignCenter {
-	text-align: center;
-}
-
-
 /* Level Styling */
 
 /* Level Auto*/
@@ -77,15 +42,8 @@ html[dir=rtl][data-sap-ui-browser^="ed"] .sapMTitleAlignEnd {
 	font-size: @sapMFontHeader5Size;
 }
 
-.sapMTB-Transparent-CTX > .sapMTitleTB.sapMTitleStyleAuto {
-	font-size: @sapMFontHeader4Size;
-}
-
-.sapMTB-Info-CTX > .sapMTitle {
-	font-size: @sapMFontHeader6Size;
-	font-style: italic;
-	text-shadow: none;
-	color: @sapUiContentContrastTextColor;
+.sapMTB-Transparent-CTX > .sapMTitleStyleAuto {
+	font-size: @sapUiGroupTitleFontSize;
 }
 
 /* Level H1 */
@@ -141,4 +99,10 @@ html[dir=rtl][data-sap-ui-browser^="ed"] .sapMTitleAlignEnd {
 /* DynamicPageTitle Heading-CTX */
 .sapFDynamicPageTitleHeading-CTX > .sapMTitle {
 	margin-top: 0;
+}
+
+/* Link in Title */
+.sapMTitle .sapMLnk {
+	font-size: inherit;
+	vertical-align: middle;
 }

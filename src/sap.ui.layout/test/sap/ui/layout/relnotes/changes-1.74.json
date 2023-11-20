@@ -1,0 +1,46 @@
+{
+  "1.74.0": {
+    "date": "January 2020",
+    "notes": [
+      {
+        "id": "e9b77599d7721bec738b0a9b2005b7d21692a461",
+        "type": "FIX",
+        "text": " All: fix AMD dependencies to types that are embedded in library.js",
+        "references": []
+      },
+      {
+        "id": "76519b340d4376b79aba96108ea5568523e70f40",
+        "type": "FIX",
+        "text": " FormContainer: forward editable to FormElement on adding",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080016295"
+          }
+        ]
+      },
+      {
+        "id": "114c52d3c89d10833e57fdd87cf31c4b57821315",
+        "type": "FIX",
+        "text": " sap.ui.layout.ResponsiveSplitter: Preserve HTML Control content",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980546244"
+          }
+        ]
+      },
+      {
+        "id": "400b86979c78a32261a536e8b2bea4a54050f012",
+        "type": "FIX",
+        "text": " sap.ui.layout.cssgrid.ResponsiveColumnLayout: Preserve grid gap",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980516714"
+          }
+        ]
+      }
+    ]
+  }
+}

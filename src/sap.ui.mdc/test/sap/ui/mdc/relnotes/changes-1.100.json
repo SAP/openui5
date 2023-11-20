@@ -1,0 +1,59 @@
+{
+  "1.100.0": {
+    "date": "March 2022",
+    "notes": [
+      {
+        "id": "a35e8983a230bda6289a0fa6bcd5971c5b2e4be6",
+        "type": "FEATURE",
+        "text": " FilterField: use DynamicDateRange for DateTime"
+      },
+      {
+        "id": "9ad1d9d6e2658412ae19b5b34721764c6383f377",
+        "type": "FIX",
+        "text": " mdc.FilterBarBase: consider ongoing changes during validation",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280079653"
+          }
+        ]
+      },
+      {
+        "id": "75130bc8293ab7d8c736ea7530992a240fd1be67",
+        "type": "FEATURE",
+        "text": " Field, FilterField, show whitespaces"
+      },
+      {
+        "id": "5f366febc3aeed860d70a2c43e4611af50e0e29c",
+        "type": "FEATURE",
+        "text": " MDC Table: Navigation per Row"
+      },
+      {
+        "id": "4a5bc34d60dfbf91113f4c0b6d2df4a92de559da",
+        "type": "FIX",
+        "text": " mdc.FilterBar: ensure metadata availability during validate",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280021008"
+          }
+        ]
+      },
+      {
+        "id": "8fdb21cbbbca90f9525622afaa656b8bb4785249",
+        "type": "FIX",
+        "text": " mdc.FilterBar: sequence during SUBMIT corrected",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180430298"
+          },
+          {
+            "type": "BCP",
+            "reference": "2280008776"
+          }
+        ]
+      }
+    ]
+  }
+}

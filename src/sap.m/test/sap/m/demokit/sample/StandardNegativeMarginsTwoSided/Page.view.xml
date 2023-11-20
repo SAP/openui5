@@ -1,0 +1,34 @@
+<mvc:View
+	height="100%"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core">
+	<Page showHeader="false" class="sapUiContentPadding">
+		<subHeader>
+			<Toolbar design="Info">
+				<core:Icon src="sap-icon://begin"/>
+				<Text text="This sample demonstrates classes which let you to add negative margin at two opposite sides (begin/end)."/>
+			</Toolbar>
+		</subHeader>
+		<Panel class="sapUiTinyNegativeMarginBeginEnd">
+			<content>
+					<Text text="This panel uses margin class 'sapUiTinyNegativeMarginBeginEnd' to add a -0.5rem space at the panel's left and right sides." class="sapMH4FontSize"/>
+			</content>
+		</Panel>
+		<Panel class="sapUiSmallNegativeMarginBeginEnd">
+			<content>
+					<Text text="This panel uses margin class 'sapUiSmallNegativeMarginBeginEnd' to add a -1rem space at the panel's left and right sides." class="sapMH4FontSize"/>
+			</content>
+		</Panel>
+		<Panel class="sapUiMediumNegativeMarginBeginEnd">
+			<content>
+					<Text text="This panel uses margin class 'sapUiMediumNegativeMarginBeginEnd' to add a -2rem space at the panel's left and right sides." class="sapMH4FontSize"/>
+			</content>
+		</Panel>
+		<Panel class="sapUiLargeNegativeMarginBeginEnd">
+			<content>
+					<Text text="This panel uses margin class 'sapUiLargeNegativeMarginBeginEnd' to add a -3rem space at the panel's left and right sides." class="sapMH4FontSize"/>
+			</content>
+		</Panel>
+	</Page>
+</mvc:View>

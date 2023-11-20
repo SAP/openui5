@@ -1,13 +1,28 @@
 sap.ui.define([
+	"sap/ui/core/IconPool",
+	"sap/ui/core/Theming",
 	"sap/ui/core/UIComponent",
 	"sap/ui/Device",
-	"sap/ui/model/json/JSONModel",
 	"sap/ui/demo/iconexplorer/model/models",
 	"sap/ui/demo/iconexplorer/model/IconModel",
 	"sap/ui/demo/iconexplorer/model/FavoriteModel",
 	"sap/ui/demo/iconexplorer/controller/ErrorHandler",
-	"sap/ui/core/IconPool"
-], function (UIComponent, Device, JSONModel, models, IconModel, FavoriteModel, ErrorHandler, IconPool) {
+	"sap/ui/documentation/sdk/controller/util/ConfigUtil",
+	"sap/ui/model/json/JSONModel",
+	"sap/ui/VersionInfo"
+], function(
+	IconPool,
+	Theming,
+	UIComponent,
+	Device,
+	models,
+	IconModel,
+	FavoriteModel,
+	ErrorHandler,
+	ConfigUtil,
+	JSONModel,
+	VersionInfo
+) {
 	"use strict";
 
 	return UIComponent.extend("sap.ui.demo.iconexplorer.Component", {
@@ -28,64 +43,90 @@ sap.ui.define([
 			UIComponent.prototype.init.apply(this, arguments);
 
 			// set up a helper model to manage OpenUI5/SAPUI5
-			var oVersionInfo = sap.ui.getVersionInfo();
-			var oVersionModel = new JSONModel({
-				isOpenUI5: oVersionInfo && oVersionInfo.gav && /openui5/i.test(oVersionInfo.gav)
-			});
-			this.setModel(oVersionModel, "version");
-
-			// set up a helper model to manage favorite icons
-			var oFavoriteModel = new FavoriteModel();
-			this.setModel(oFavoriteModel, "fav");
-
-			// set up an icon model that loads icons from the icon font
-			var oIconModel = new IconModel(this._oIconsLoadedPromise);
-			this.setModel(oIconModel);
-
-			// set the device model
-			this.setModel(models.createDeviceModel(), "device");
-
-			var aFontLoaded = [],
-				aFontNames = ["SAP-icons"];
-
-			// register TNT icon font
-			IconPool.registerFont({
-				fontFamily: "SAP-icons-TNT",
-				fontURI: sap.ui.require.toUrl("sap/tnt/themes/base/") + "fonts"
-			});
-			aFontLoaded.push(IconPool.fontLoaded("SAP-icons-TNT"));
-			aFontNames.push("SAP-icons-TNT");
-
-			// load SAPUI5 fonts on demand
-			if (!oVersionModel.getProperty("/isOpenUI5")) {
-				// register BusinessSuiteInAppSymbols icon font
-				IconPool.registerFont({
-					fontFamily: "BusinessSuiteInAppSymbols",
-					fontURI: sap.ui.require.toUrl("sap/ushell/themes/base/") + "fonts"
+			VersionInfo.load().then(function (oVersionInfo) {
+				var oVersionModel = new JSONModel({
+					isOpenUI5: oVersionInfo && oVersionInfo.gav && /openui5/i.test(oVersionInfo.gav)
 				});
-				aFontLoaded.push(IconPool.fontLoaded("BusinessSuiteInAppSymbols"));
-				aFontNames.push("BusinessSuiteInAppSymbols");
-			}
+				this.setModel(oVersionModel, "versionData");
 
-			// create wrapper promise so controllers can register to it
-			this.iconsLoaded();
+				// set up a helper model to manage favorite icons
+				var oFavoriteModel = new FavoriteModel();
+				this.setModel(oFavoriteModel, "fav");
 
-			// init icon model when all promises have finished
-			Promise.all(aFontLoaded).then(function () {
-				oIconModel.init(aFontNames);
-				// We resolve the helper promise on component level when the promise in the icon model is resolved.
-				// The app controller is instantiated before the component's init method, so it cannot directly
-				// register to the icon model.
-				oIconModel.iconsLoaded().then(function () {
-					this._fnIconsLoadedResolve();
+				// set up an icon model that loads icons from the icon font
+				var oIconModel = new IconModel(this._oIconsLoadedPromise);
+				this.setModel(oIconModel);
+
+				// set the device model
+				this.setModel(models.createDeviceModel(), "device");
+
+				var aFontsLoaded = [];
+				var sLocalFontFolder = sap.ui.require.toUrl("sap/ui/demo/iconexplorer/fonts/base/");
+
+				var oFontConfigs = {};
+				oFontConfigs["SAP-icons"] = {
+					fontFamily: "SAP-icons",
+					fontURI: sap.ui.require.toUrl("sap/ui/core/themes/base/fonts/"),
+					downloadURI: sLocalFontFolder,
+					downloadURIForHorizon: sap.ui.require.toUrl("sap/ui/demo/iconexplorer/fonts/sap_horizon/")
+				};
+
+				var oTNTConfig = {
+					fontFamily: "SAP-icons-TNT",
+					fontURI: sap.ui.require.toUrl("sap/tnt/themes/base/fonts/"),
+					downloadURI: sLocalFontFolder,
+					downloadURIForHorizon: sap.ui.require.toUrl("sap/ui/demo/iconexplorer/fonts/sap_horizon/")
+				};
+
+				// register TNT icon font
+				IconPool.registerFont(oTNTConfig);
+				aFontsLoaded.push(IconPool.fontLoaded("SAP-icons-TNT"));
+				oFontConfigs["SAP-icons-TNT"] = oTNTConfig;
+
+				// load SAPUI5 fonts on demand
+				if (!oVersionModel.getProperty("/isOpenUI5")) {
+					var oBusinessSuiteConfig = {
+						fontFamily: "BusinessSuiteInAppSymbols"
+					};
+
+					if (Theming.getTheme().includes("sap_horizon")) {
+						oBusinessSuiteConfig.fontURI = sap.ui.require.toUrl("sap/ushell/themes/base/fonts/horizon/");
+						oBusinessSuiteConfig.metadataURI = sap.ui.require.toUrl("sap/ushell/themes/base/fonts/") + oBusinessSuiteConfig.fontFamily + ".json";
+					} else {
+						oBusinessSuiteConfig.fontURI = sap.ui.require.toUrl("sap/ushell/themes/base/fonts/");
+					}
+
+					// register BusinessSuiteInAppSymbols icon font
+					IconPool.registerFont(oBusinessSuiteConfig);
+					aFontsLoaded.push(IconPool.fontLoaded("BusinessSuiteInAppSymbols"));
+					oFontConfigs["BusinessSuiteInAppSymbols"] = oBusinessSuiteConfig;
+				}
+
+				// create wrapper promise so controllers can register to it
+				this.iconsLoaded();
+
+				// init icon model when all promises have finished
+				Promise.all(aFontsLoaded).then(function () {
+					oIconModel.init(Object.keys(oFontConfigs));
+					// We resolve the helper promise on component level when the promise in the icon model is resolved.
+					// The app controller is instantiated before the component's init method, so it cannot directly
+					// register to the icon model.
+					oIconModel.iconsLoaded().then(function () {
+						this._fnIconsLoadedResolve();
+					}.bind(this));
 				}.bind(this));
+				this._oFontConfigs = oFontConfigs;
+
+				// initialize the error handler with the component
+				this._oErrorHandler = new ErrorHandler(this);
+
+				// create the views based on the url/hash
+				this.getRouter().initialize();
 			}.bind(this));
 
-			// initialize the error handler with the component
-			this._oErrorHandler = new ErrorHandler(this);
-
-			// create the views based on the url/hash
-			this.getRouter().initialize();
+			this.getCookiesManagement().then(function(oCookieMgmtComponent) {
+				oCookieMgmtComponent.enable(this.getRootControl());
+			}.bind(this));
 		},
 
 		/**
@@ -102,6 +143,13 @@ sap.ui.define([
 			return this._oIconsLoadedPromise;
 		},
 
+		getConfigUtil: function() {
+			if (!this._oConfigUtil) {
+				this._oConfigUtil = new ConfigUtil(this);
+			}
+			return this._oConfigUtil;
+		},
+
 		/**
 		 * The component is destroyed by UI5 automatically.
 		 * In this method, the ErrorHandler is destroyed.
@@ -110,6 +158,12 @@ sap.ui.define([
 		 */
 		destroy : function () {
 			this._oErrorHandler.destroy();
+
+			this._pCookiesComponent && this._pCookiesComponent.then(function(oCookiesMgmtComponent) {
+				oCookiesMgmtComponent.destroy();
+			});
+			this._oConfigUtil.destroy();
+			this._oConfigUtil = null;
 
 			// call the base component's destroy function
 			UIComponent.prototype.destroy.apply(this, arguments);
@@ -124,19 +178,30 @@ sap.ui.define([
 		getContentDensityClass : function() {
 			if (this._sContentDensityClass === undefined) {
 				// check whether FLP has already set the content density class; do nothing in this case
-				if (jQuery(document.body).hasClass("sapUiSizeCozy") || jQuery(document.body).hasClass("sapUiSizeCompact")) {
+				if (document.body.classList.contains("sapUiSizeCozy") || document.body.classList.contains("sapUiSizeCompact")) {
 					this._sContentDensityClass = "";
 				} else if (!Device.support.touch) { // apply "compact" mode if touch is not supported
 					this._sContentDensityClass = "sapUiSizeCompact";
 				} else {
-					// "cozy" in case of touch support; default for most sap.m controls
-					// but needed for desktop-first controls like sap.ui.table.Table
+					// "cozy" in case of touch support; default for most sap.m controls, but needed for desktop-first controls like sap.ui.table.Table
 					this._sContentDensityClass = "sapUiSizeCozy";
 				}
 			}
 			return this._sContentDensityClass;
-		}
+		},
 
+		getCookiesManagement: function() {
+			var sId = "sap.ui.documentation.sdk.cookieSettingsDialog";
+
+			if (!this._pCookiesComponent) {
+				this._pCookiesComponent = this.createComponent({
+					usage: "cookieSettingsDialog",
+					id: 'cookiesComp-' + sId
+				});
+			}
+
+			return this._pCookiesComponent;
+		}
 	});
 
 });

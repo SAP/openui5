@@ -1,0 +1,35 @@
+{
+  "1.61.0": {
+    "date": "November 2018",
+    "notes": [
+      {
+        "id": "4a6fee205042881ae2bb7776fda75c7d175b1369",
+        "type": "FEATURE",
+        "text": "sap.uxap.ObjectPageLayout: landmarkInfo enablement",
+        "references": []
+      },
+      {
+        "id": "a0747b1aeacca33390eec82f8d3d4facb1a40654",
+        "type": "FIX",
+        "text": "Performance Violation: Stopping fetching XSRF tokens roundtrips",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880731777"
+          }
+        ]
+      },
+      {
+        "id": "b4a85fe5503fba5ea66925441d4eab67a7d102f3",
+        "type": "FIX",
+        "text": "sap.ui.rta - fixed debounce issue in stretch plugin",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870474767"
+          }
+        ]
+      }
+    ]
+  }
+}

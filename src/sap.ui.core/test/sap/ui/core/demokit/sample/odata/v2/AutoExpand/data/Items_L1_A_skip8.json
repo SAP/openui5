@@ -1,0 +1,138 @@
+{
+	"d":{
+		"__count":"12",
+		"results":[{
+			"__metadata":{
+				"id":"/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/Items('.47~8~EUR.53~0000000085')",
+				"uri":"/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/Items('.47~8~EUR.53~0000000085')",
+				"type":"FAR_CUSTOMER_LINE_ITEMS.Item"
+			},
+			"AmountInCompanyCodeCurrency":"8.00",
+			"CompanyCode":"A",
+			"CompanyCodeCurrency":"EUR",
+			"Customer":"85",
+			"CustomerName":"RE RE"
+		}, {
+			"__metadata":{
+				"id":"/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/Items('.47~9~EUR.53~0000000106')",
+				"uri":"/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/Items('.47~9~EUR.53~0000000106')",
+				"type":"FAR_CUSTOMER_LINE_ITEMS.Item"
+			},
+			"AmountInCompanyCodeCurrency":"9.00",
+			"CompanyCode":"A",
+			"CompanyCodeCurrency":"EUR",
+			"Customer":"106",
+			"CustomerName":"asd"
+		}, {
+			"__metadata":{
+				"id":"/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/Items('.47~10~EUR.53~0000000121')",
+				"uri":"/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/Items('.47~10~EUR.53~0000000121')",
+				"type":"FAR_CUSTOMER_LINE_ITEMS.Item"
+			},
+			"AmountInCompanyCodeCurrency":"10.00",
+			"CompanyCode":"A",
+			"CompanyCodeCurrency":"EUR",
+			"Customer":"121",
+			"CustomerName":"A"
+		}, {
+			"__metadata":{
+				"id":"/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/Items('.47~11~EUR.53~0000000131')",
+				"uri":"/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/Items('.47~11~EUR.53~0000000131')",
+				"type":"FAR_CUSTOMER_LINE_ITEMS.Item"
+			},
+			"AmountInCompanyCodeCurrency":"11",
+			"CompanyCode":"A",
+			"CompanyCodeCurrency":"EUR",
+			"Customer":"131",
+			"CustomerName":"MS CUST"
+		}, {
+			"__metadata":{
+				"id":"/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/Items('.47~12~EUR.53~0000000161')",
+				"uri":"/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/Items('.47~12~EUR.53~0000000161')",
+				"type":"FAR_CUSTOMER_LINE_ITEMS.Item"
+			},
+			"AmountInCompanyCodeCurrency":"12.00",
+			"CompanyCode":"A",
+			"CompanyCodeCurrency":"EUR",
+			"Customer":"161",
+			"CustomerName":"EASI"
+		}, {
+			"__metadata":{
+				"id":"/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/Items('.47~13~EUR.53~0000000171')",
+				"uri":"/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/Items('.47~13~EUR.53~0000000171')",
+				"type":"FAR_CUSTOMER_LINE_ITEMS.Item"
+			},
+			"AmountInCompanyCodeCurrency":"13.00",
+			"CompanyCode":"A",
+			"CompanyCodeCurrency":"EUR",
+			"Customer":"171",
+			"CustomerName":"Mia Mia Mieter"
+		}, {
+			"__metadata":{
+				"id":"/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/Items('.47~14~EUR.53~0000000191')",
+				"uri":"/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/Items('.47~14~EUR.53~0000000191')",
+				"type":"FAR_CUSTOMER_LINE_ITEMS.Item"
+			},
+			"AmountInCompanyCodeCurrency":"14.00",
+			"CompanyCode":"A",
+			"CompanyCodeCurrency":"EUR",
+			"Customer":"191",
+			"CustomerName":"ADIDAS DE Ltd. Company"
+		}, {
+			"__metadata":{
+				"id":"/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/Items('.47~15~EUR.53~0000000196')",
+				"uri":"/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/Items('.47~15~EUR.53~0000000196')",
+				"type":"FAR_CUSTOMER_LINE_ITEMS.Item"
+			},
+			"AmountInCompanyCodeCurrency":"15.00",
+			"CompanyCode":"A",
+			"CompanyCodeCurrency":"EUR",
+			"Customer":"196",
+			"CustomerName":"Susi Susi KB-Sorglos"
+		}, {
+			"__metadata":{
+				"id":"/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/Items('.47~16~EUR.53~0000000206')",
+				"uri":"/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/Items('.47~16~EUR.53~0000000206')",
+				"type":"FAR_CUSTOMER_LINE_ITEMS.Item"
+			},
+			"AmountInCompanyCodeCurrency":"16.00",
+			"CompanyCode":"A",
+			"CompanyCodeCurrency":"EUR",
+			"Customer":"206",
+			"CustomerName":"AMD Ltd."
+		}, {
+			"__metadata":{
+				"id":"/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/Items('.47~17~EUR.53~0000000207')",
+				"uri":"/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/Items('.47~17~EUR.53~0000000207')",
+				"type":"FAR_CUSTOMER_LINE_ITEMS.Item"
+			},
+			"AmountInCompanyCodeCurrency":"17.00",
+			"CompanyCode":"A",
+			"CompanyCodeCurrency":"EUR",
+			"Customer":"207",
+			"CustomerName":"Bayer Group Chemicalss"
+		}, {
+			"__metadata":{
+				"id":"/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/Items('.47~17~EUR.53~0000000208')",
+				"uri":"/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/Items('.47~17~EUR.53~0000000208')",
+				"type":"FAR_CUSTOMER_LINE_ITEMS.Item"
+			},
+			"AmountInCompanyCodeCurrency":"17.00",
+			"CompanyCode":"A",
+			"CompanyCodeCurrency":"EUR",
+			"Customer":"208",
+			"CustomerName":"Bayer Group Chemicalss"
+		}, {
+			"__metadata":{
+				"id":"/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/Items('.47~17~EUR.53~0000000209')",
+				"uri":"/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/Items('.47~17~EUR.53~0000000209')",
+				"type":"FAR_CUSTOMER_LINE_ITEMS.Item"
+			},
+			"AmountInCompanyCodeCurrency":"17.00",
+			"CompanyCode":"A",
+			"CompanyCodeCurrency":"EUR",
+			"Customer":"209",
+			"CustomerName":"Bayer Group Chemicalss"
+		}]
+	}
+}

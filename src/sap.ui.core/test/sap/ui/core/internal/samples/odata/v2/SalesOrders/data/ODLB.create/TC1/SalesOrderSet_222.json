@@ -1,0 +1,25 @@
+{
+	"d": {
+		"__metadata" : {
+			"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SalesOrderSet('222')",
+			"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SalesOrderSet('222')",
+			"type" : "GWSAMPLE_BASIC.SalesOrder"
+		},
+		"SalesOrderID" : "222",
+		"CustomerName" : "SAP",
+		"Note" : "4",
+		"CurrencyCode" : "EUR",
+		"GrossAmount" : "1710.62",
+		"ChangedAt" : "\/Date(1638184347617)\/",
+		"ToBusinessPartner" : {
+			"__deferred" : {
+				"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SalesOrderSet('222')/ToBusinessPartner"
+			}
+		},
+		"ToLineItems" : {
+			"__deferred" : {
+				"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SalesOrderSet('222')/ToLineItems"
+			}
+		}
+	}
+}

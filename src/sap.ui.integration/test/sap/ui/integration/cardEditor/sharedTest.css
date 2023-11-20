@@ -1,0 +1,10 @@
+ui-integration-card-editor>DIV>DIV {
+	border: 1px solid rgba(190, 190, 190, 0.5);
+}
+.buttons {
+	margin: 1rem;
+}
+body {
+	margin: 3rem !important;
+	width: calc(100% - 6rem) !important;
+}

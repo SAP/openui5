@@ -1,0 +1,67 @@
+/* ============================== */
+/* CSS for control sap.m/Toolbar  */
+/* Quartz Dark theme              */
+/* ============================== */
+
+html.sap-desktop .sapMTBActive.sapMTBFocused {
+	outline: 0.0625rem dotted @sapUiContentFocusColor;
+	outline-offset: -0.1875rem;
+}
+
+.sapMTB {
+	height: 2.75rem;
+	padding: 0 0.5rem;
+	background: @sapUiToolbarBackground;
+}
+
+/* Transparent Toolbar Context */
+.sapMTB-Transparent-CTX.sapMTB {
+	padding-left: 0.5rem;
+}
+
+/* Info Toolbar Context */
+.sapMIBar.sapMTB.sapMTB-Info-CTX {
+	padding-left: 0.5rem;
+}
+
+/* Solid Toolbar Context */
+.sapMTB-Solid-CTX.sapMTB {
+	background: @sapUiBaseBG;
+}
+
+/* Info Toolbar Context */
+.sapMTB-Info-CTX.sapMTB {
+	background: darken(@sapUiBaseColor, 10);
+
+	> .sapUiIcon {
+		color: @sapUiBaseText;
+	}
+
+	&.sapMTBActive {
+		background: @sapUiInfobarBackground;
+		.generate-contrast-color-toolbar(@sapUiInfobarBackground);
+
+		&:active {
+			.generate-contrast-color-toolbar(@sapUiInfobarActiveBackground);
+		}
+
+		&:hover {
+			.generate-contrast-color-toolbar(@sapUiInfobarHoverBackground);
+		}
+
+		.sapMText,
+		.sapMLabel,
+		> .sapMTitle,
+		> .sapUiIcon {
+			color: inherit;
+		}
+	}
+}
+
+html.sap-desktop .sapMTB-Info-CTX.sapMTBActive.sapMTBFocused {
+	outline-color: @sapUiContentContrastFocusColor;
+}
+
+.generate-contrast-color-toolbar(@backgroundColor) {
+	color: contrast(@backgroundColor, @sapUiBaseText, @sapUiContentContrastTextColor, @sapUiContentContrastTextThreshold);
+}

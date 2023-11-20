@@ -1,0 +1,124 @@
+/* ================================ */
+/* CSS for control sap.m/SlideTile  */
+/* Evening Horizon theme            */
+/* ================================ */
+
+html.sap-desktop .sapMST:focus .sapMSTFocusDiv {
+	border: 1px solid @sapUiTileBackground
+}
+
+html.sap-desktop .sapMST:active{
+	background-color: @sapTile_Active_Background;
+	.sapMSTFocusDiv{
+		border: 1px solid @sapTile_Interactive_BorderColor;
+		border-radius:  @sapTile_BorderCornerRadius;
+		inset: 0;
+	}
+}
+
+.sapMST.sapMSTScopeActions.sapMSTDarkBackground .sapMSTMoreIcon {
+	color: @sapUiContentContrastTextColor;
+}
+
+/* This part is used to achieve dotted white black interlace border*/
+html.sap-desktop .sapMST:focus .sapMSTFocusDiv:after,
+html.sap-desktop .sapMST:active .sapMSTFocusDiv:after {
+	content: "";
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	border-radius: 0.25rem;
+	margin: -1px;
+	border: 1px dotted @sapUiContentFocusColor;
+}
+
+/* Bulleted indicator of multiple tiles*/
+.sapMSTBulleted > span {
+	border: solid 0.0625rem @sapTile_OverlayForegroundColor;
+	opacity: 0.6;
+	box-shadow : 0 0 0.125rem @sapContent_ShadowColor;
+	margin: 0 0.094rem;
+}
+
+.sapMSTBulleted > span.sapMSTActive {
+	background: @sapTile_OverlayForegroundColor;
+	box-shadow: 0 0 0.063rem @sapContent_ShadowColor;
+}
+
+.sapMST {
+	border-radius: @sapTile_BorderCornerRadius;
+	border-color: @sapTile_BorderColor;
+	box-shadow: @sapContent_Shadow0;
+	background: @sapTile_Background;
+	overflow: hidden;
+}
+
+.sapMST.TwoByOne {
+	width: 22.5rem;
+}
+
+.sapMST.TwoByHalf {
+	width: 23rem;
+}
+
+.sapMST .sapMSTIconDisplayArea {
+	background-color: @sapBlockLayer_Background;
+}
+.sapMST.sapMSTIconClickTapArea:hover ~.sapMSTIconDisplayArea{
+	opacity: 0.8;
+}
+
+.sapMST.sapMSTIconPressed .sapMSTIconClickTapArea:hover ~.sapMSTIconDisplayArea {
+	background-color: @sapUiBrand;
+}
+
+.sapMST .sapMSTIconNestedArea {
+	text-shadow: 0px 1px @sapUiButtonEmphasizedTextShadow;
+}
+
+html.sap-desktop .sapMST:focus .sapMSTFocusDiv {
+	border-radius: @sapTile_BorderCornerRadius;
+	box-shadow: none;
+	border: 2px solid @sapContent_FocusColor;
+	inset: 0;
+}
+
+html.sap-desktop .sapMST:focus .sapMSTFocusDiv:after,
+html.sap-desktop .sapMST:active .sapMSTFocusDiv:after {
+	border: none;
+	border-radius: @sapElement_BorderCornerRadius;
+}
+
+html.sap-desktop .sapMST:hover {
+	box-shadow: @sapContent_Shadow2 !important;
+
+	.sapMGT:hover {
+		box-shadow: none !important;
+		opacity: 0.9;
+	}
+
+}
+
+html.sap-desktop .sapMST:active{
+	.sapMGT{
+		opacity: 0.8;
+	}
+}
+
+.sapMST{
+	.sapMGT.OneByOne,.sapMGT.TwoByOne{
+		.sapMTileCnt.News {
+			border-bottom-left-radius: 0;
+			border-bottom-right-radius: 0;
+		}
+	}
+}
+
+.sapMST:not(.sapMSTPauseIcon) .sapMSTIconNestedArea{
+	.sapUiIcon {
+		top: 0rem;
+		left: 0.15rem;
+	}
+}

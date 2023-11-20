@@ -1,0 +1,38 @@
+{
+	"sap.app": {
+		"id": "sap.ui.core.sample.Icon",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "sap.ui.core.sample.Icon.IconGroup",
+			"type": "XML",
+			"async": true
+		},
+		"resources": {
+			"css": [
+				{
+					"uri": "Icon/style.css"
+				}
+			]
+		},
+		"dependencies": {
+			"libs": {
+				"sap.m": {},
+				"sap.ui.core": {}
+			}
+		},
+		"config": {
+			"sample": {
+				"files": [
+					"style.css",
+					"IconGroup.controller.js",
+					"IconGroup.view.xml",
+					"manifest.json"
+				]
+			}
+		}
+	}
+}

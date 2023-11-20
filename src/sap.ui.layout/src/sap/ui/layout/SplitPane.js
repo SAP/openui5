@@ -2,7 +2,6 @@
  * ${copyright}
  */
 
-// Provides control sap.ui.layout.SplitPane.
 sap.ui.define(['./library', 'sap/ui/core/Element'],
 	function(library, Element) {
 	"use strict";
@@ -44,6 +43,8 @@ sap.ui.define(['./library', 'sap/ui/core/Element'],
 
 			/**
 			 * Determines the minimum width of the ResponsiveSplitter(in pixels). When it is reached the pane will be hidden from the screen.
+			 *
+			 * When you are calculating the required parent width to fit your panes, you should also include the width of all split bars between these panes.
 			*/
 			requiredParentWidth: { type : "int", defaultValue : 800}
 		},
@@ -60,9 +61,29 @@ sap.ui.define(['./library', 'sap/ui/core/Element'],
 		var oContent = this.getContent();
 		if (oContent) {
 			return oContent.setLayoutData(oLayoutdata);
-		} else {
-			return this;
 		}
+
+		this._oLayoutData = oLayoutdata;
+		return this;
+	};
+
+	SplitPane.prototype.getLayoutData = function() {
+		var oContent = this.getContent();
+		if (oContent) {
+			return oContent.getLayoutData();
+		}
+
+		return this._oLayoutData;
+	};
+
+	// overrides the default set method in order to apply layout data that is provided before content
+	SplitPane.prototype.setContent = function (oContent) {
+		if (this._oLayoutData) {
+			oContent.setLayoutData(this._oLayoutData);
+			this._oLayoutData = null;
+		}
+
+		return this.setAggregation("content", oContent);
 	};
 
 	SplitPane.prototype.onLayoutDataChange = function() {
@@ -77,5 +98,4 @@ sap.ui.define(['./library', 'sap/ui/core/Element'],
 	};
 
 	return SplitPane;
-
 });

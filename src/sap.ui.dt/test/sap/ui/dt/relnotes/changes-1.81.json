@@ -1,0 +1,29 @@
+{
+  "1.81.0": {
+    "date": "July 2020",
+    "notes": [
+      {
+        "id": "8866eea3cf4bda084f9e6f3bebfd45594e5aa181",
+        "type": "FIX",
+        "text": " sap.ui.dt - contextmenu button FIX",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080290675"
+          }
+        ]
+      },
+      {
+        "id": "04cb8da0da6e28604f4890f6ec15ea8b93db632c",
+        "type": "FIX",
+        "text": " sap.ui.dt - rtl test fix",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080248905"
+          }
+        ]
+      }
+    ]
+  }
+}

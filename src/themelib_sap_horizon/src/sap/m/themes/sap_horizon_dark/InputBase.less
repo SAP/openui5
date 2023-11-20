@@ -1,0 +1,133 @@
+/* ================================ */
+/* CSS for control sap.m/InputBase  */
+/* Evening Horizon theme            */
+/* ================================ */
+
+// ==========================================================================
+// Variables overriding
+// ==========================================================================
+
+@_sap_m_InputBase_InnerMinWidth: 2.75rem;
+@_sap_m_InputBase_InnerPadding: 0 0.625rem;
+@_sap_m_InputBase_DisabledOpacity: @sapUiContentDisabledOpacity;
+@_sap_m_InputBase_IconLineHeight: 2.25rem;
+@_sap_m_InputBase_IconWidth: 2.25rem;
+@_sap_m_InputBase_Compact_IconWidth: 2rem;
+@_sap_m_InputBase_IconMinWidth: 2rem;
+@_sap_m_InputBaseWrapper_Sum_Border: 0;
+@_sap_m_InputBase_FocusOffset: 0px;
+@_sap_m_InputBase_FocusOffset_Busy: @_sap_m_InputBase_FocusOffset;
+@_sap_m_InputBase_FocusBorderRadius: 0.25rem;
+
+.sapMInputBase:not(.sapMInputBaseReadonly) .sapMInputBaseIconContainer .sapMInputBaseIcon {
+	width: @_sap_m_InputBase_IconWidth;
+	height: 2.1875rem;
+	border-radius: @sapUiFieldBorderCornerRadius;
+}
+
+.sapMInputBase .sapMInputBaseContentWrapperState:not(.sapMInputBaseContentWrapperSuccess) .sapMInputBaseIconContainer .sapMInputBaseIcon {
+	height: 2.125rem;
+}
+
+.sapUiSizeCompact .sapMInputBase {
+	&:not(.sapMInputBaseReadonly) .sapMInputBaseIconContainer .sapMInputBaseIcon {
+		width: @_sap_m_InputBase_Compact_IconWidth;
+		height: 1.5625rem;
+		line-height: 1.625rem;
+	}
+
+	.sapMInputBaseContentWrapperState:not(.sapMInputBaseContentWrapperSuccess) .sapMInputBaseIconContainer .sapMInputBaseIcon {
+		height: 1.5rem;
+	}
+}
+
+.sapMInputBase:not(.sapMInputBaseDisabled).sapMInputBaseIconPressed .sapMInputBaseIconContainer .sapMInputBaseIcon,
+.sapMInputBase:not(.sapMInputBaseDisabled) .sapMInputBaseIconContainer .sapMInputBaseIcon:active {
+	background-color: @sapField_Focus_Background;
+	box-shadow: @sapContent_Interaction_Shadow;
+}
+
+.sapMInputBaseIconPressed .sapMInputBaseIcon::before,
+.sapMInputBaseIcon:active {
+	color: @sapUiButtonSelectedTextColor;
+}
+
+.sapMInputBaseIconPressed .sapMInputBaseContentWrapperSuccess .sapMInputBaseIconContainer .sapMInputBaseIcon::before,
+.sapMInputBaseContentWrapperSuccess .sapMInputBaseIconContainer .sapMInputBaseIcon:active {
+	color: @sapUiButtonAcceptSelectedTextColor;
+}
+
+.sapMInputBaseIconPressed .sapMInputBaseContentWrapperError .sapMInputBaseIconContainer .sapMInputBaseIcon::before,
+.sapMInputBaseContentWrapperError .sapMInputBaseIconContainer .sapMInputBaseIcon:active {
+	color: @sapUiButtonRejectSelectedTextColor;
+}
+
+.sapMInputBaseIconPressed .sapMInputBaseContentWrapperWarning .sapMInputBaseIconContainer .sapMInputBaseIcon::before,
+.sapMInputBaseContentWrapperWarning .sapMInputBaseIconContainer .sapMInputBaseIcon:active {
+	color: @sapUiButtonAttentionSelectedTextColor;
+}
+
+.sapMInputBaseHasEndIcons.sapMInputBaseHasBeginIcons .sapMInputBaseContentWrapper {
+	padding-left: 0.125 * @sapContent_GridSize;
+}
+
+.sapMInputBaseDisabled {
+	opacity: @sapUiContentDisabledOpacity;
+}
+
+.sapMFocus.sapMInputBase .sapMInputBaseContentWrapper:not(.sapMInputBaseDisabledWrapper) {
+	background-color: @sapField_Focus_Background;
+	outline: none;
+
+	&::before {
+		border-color: @sapUiFieldActiveBorderColor;
+	}
+
+	&.sapMInputBaseReadonlyWrapper {
+		background: @sapField_ReadOnly_Background;
+	}
+
+	&.sapMInputBaseContentWrapperSuccess:before {
+		border-color: @sapUiFieldSuccessColor;
+	}
+
+	&.sapMInputBaseContentWrapperWarning:before {
+		border-color: @sapUiFieldWarningColor;
+	}
+
+	&.sapMInputBaseContentWrapperError:before {
+		border-color: @sapUiFieldInvalidColor;
+	}
+
+	&.sapMInputBaseContentWrapperInformation:before {
+		border-color: @sapUiFieldInformationColor;
+	}
+}
+
+.sapMInputBase:not(.sapMFocus) .sapMInputBaseContentWrapperState:hover,
+.sapMInputBase:not(.sapMFocus).sapMInputBaseIconPressed .sapMInputBaseContentWrapperState {
+	background-color: @sapField_Hover_Background;
+}
+
+.sapUiSizeCondensed {
+	.sapUiTableDataCell .sapMInputBase .sapMInputBaseIcon {
+		min-width: 1.375rem;
+		height: 1.3125rem;
+		width: 1.375rem;
+		line-height: 1.375rem;
+	}
+	.sapMInputBase .sapMInputBaseContentWrapperState:not(.sapMInputBaseContentWrapperSuccess) .sapMInputBaseIconContainer .sapMInputBaseIcon {
+		height: 1.25rem;
+	}
+	.sapMInputBase {
+		line-height: 1.25rem;
+	}
+}
+
+/* List specific styles */
+.sapMILI-CTX .sapMInputBaseContentWrapper,
+.sapMILI-CTX .sapMInputBaseInner,
+.sapMILI-CTX .sapMInputBaseDisabled .sapMInputBaseInner,
+.sapMILI-CTX .sapMInputBaseReadonlyWrapper .sapMInputBaseInner {
+	text-align: right;
+}

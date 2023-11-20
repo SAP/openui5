@@ -1,0 +1,64 @@
+<mvc:View
+	controllerName="sap.m.sample.IllustratedMessageInPageIllustrative.controller.Main"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core"
+	xmlns:form="sap.ui.layout.form"
+	height="100%">
+	<Page>
+		<form:SimpleForm editable="true" width="450px">
+			<Label text="Enable Vertical Responsiveness">
+				<layoutData>
+					<form:ColumnElementData cellsSmall="8" cellsLarge="-1"/>
+				</layoutData>
+			</Label>
+			<Switch change="onSwitchEVS" state="{/sSelectedEVS}">
+				<layoutData>
+					<form:ColumnElementData cellsSmall="4" cellsLarge="-1"/>
+				</layoutData>
+			</Switch>
+			<Text text="{= ${/sSelectedSize} === 'Auto' &amp;&amp; ${/sSelectedEVS} ? 'IllustratedMessage will choose its size automatically according to its parent container height.' : 'Forced State. IllustratedMessage will keep its size even if the parent container height is changed.'}" textAlign="Center" >
+				<layoutData>
+					<form:ColumnElementData cellsSmall="12" cellsLarge="12"/>
+				</layoutData>
+			</Text>
+			<Label text="Illustration Size">
+				<layoutData>
+					<form:ColumnElementData cellsSmall="4" cellsLarge="-1"/>
+				</layoutData>
+			</Label>
+			<Select change="onSelectSize" items="{/sizeTypes}">
+				<core:Item key="{key}" text="{text}"/>
+				<layoutData>
+					<form:ColumnElementData cellsSmall="8" cellsLarge="-1"/>
+				</layoutData>
+			</Select>
+			<Text text="{= ${/sSelectedSize} === 'Auto' ? 'IllustratedMessage will choose its size automatically according to its parent container width.' : 'Forced State. IllustratedMessage will keep its size even if the parent container width is changed.'}" textAlign="Center" >
+				<layoutData>
+					<form:ColumnElementData cellsSmall="12" cellsLarge="12"/>
+				</layoutData>
+			</Text>
+			<Label text="Illustration Type">
+				<layoutData>
+					<form:ColumnElementData cellsSmall="4" cellsLarge="-1"/>
+				</layoutData>
+			</Label>
+			<Select change="onSelectType" items="{/typeTypes}">
+				<core:Item key="{key}" text="{text}"/>
+				<layoutData>
+					<form:ColumnElementData cellsSmall="8" cellsLarge="-1"/>
+				</layoutData>
+			</Select>
+		</form:SimpleForm>
+
+		<IllustratedMessage
+			id="im"
+			illustrationSize="{/sSelectedSize}"
+			illustrationType="{/sSelectedType}"
+			enableVerticalResponsiveness="{/sSelectedEVS}">
+			<additionalContent>
+				<Button text="Action (optional)" />
+			</additionalContent>
+		</IllustratedMessage>
+	</Page>
+</mvc:View>

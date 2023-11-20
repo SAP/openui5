@@ -60,6 +60,16 @@
 	right: 1rem;
 }
 
+.sapMMLIDisabled .sapMSLITitle,
+.sapMMLIDisabled .sapMSLITitleOnly {
+	color: @sapUiContentDisabledTextColor;
+}
+
+html.sap-phone .sapMMLIDisabled .sapMMenuLIImgThumbIcon,
+html.sap-tablet .sapMMLIDisabled .sapMMenuLIImgThumbIcon {
+	color: @sapUiContentDisabledTextColor;
+}
+
 /* end phone */
 
 /* desktop and tablet */
@@ -69,36 +79,28 @@
 	margin: 0;
 }
 
-.sapMMenu .sapUiMnuItmTxt {
-	padding-right: 2rem;
-	max-width: 16rem;
+.sapMMenu .sapUiMnuItm .sapUiMnuItmIco {
+	position: absolute;
+}
+
+.sapMMenu .sapUiMnuLst .sapUiMnuItm {
+	.sapUiMnuItmIco + .sapUiMnuItmTxt {
+		margin-left: 2.25rem;
+	}
+}
+
+.sapMMenu.sapUiMnu.sapUiMnuCozySupport.sapUiSizeCozy .sapUiMnuItmTxt {
+	padding-right: 3rem;
 	text-overflow: ellipsis;
-}
-
-
-.sapMMenu.sapUiMnu .sapUiMnuNoIco.sapUiMnuNoSbMnu .sapUiMnuItmTxt {
-	max-width: 19rem;
-}
-
-.sapMMenu.sapUiMnu .sapUiMnuNoIco:not(.sapUiMnuNoSbMnu) .sapUiMnuItmTxt,
-.sapMMenu.sapUiMnu .sapUiMnuNoSbMnu:not(.sapUiMnuNoIco) .sapUiMnuItmTxt {
-	max-width: 17.5rem;
 }
 
 //really strong selector in the sapUiMnu demands this
-.sapUiSizeCozy.sapMMenu.sapUiMnu.sapUiMnuCozySupport .sapUiMnuItmTxt {
-	padding-right: 3rem;
-	max-width: 14rem;
+.sapMMenu.sapUiMnu.sapUiMnuCozySupport .sapUiMnuItmTxt {
 	text-overflow: ellipsis;
-}
-
-.sapUiSizeCozy.sapMMenu.sapUiMnu .sapUiMnuNoIco.sapUiMnuNoSbMnu .sapUiMnuItmTxt {
-	max-width: 18rem;
-}
-
-.sapUiSizeCozy.sapMMenu.sapUiMnu .sapUiMnuNoIco:not(.sapUiMnuNoSbMnu) .sapUiMnuItmTxt,
-.sapUiSizeCozy.sapMMenu.sapUiMnu .sapUiMnuNoSbMnu:not(.sapUiMnuNoIco) .sapUiMnuItmTxt {
-	max-width: 16rem;
+	max-width: 100%;
+	max-width: -moz-available;          /* WebKit-based browsers will ignore this. */
+	max-width: -webkit-fill-available;  /* Mozilla-based browsers will ignore this. */
+	max-width: fill-available;
 }
 
 /* end cozy */
@@ -112,6 +114,19 @@
 	line-height: 2rem;
 }
 
+.sapUiSizeCompact {
+	.sapMMenu .sapUiMnuLst .sapUiMnuItm {
+		.sapUiMnuItmIco + .sapUiMnuItmTxt {
+			margin-left: 2rem;
+		}
+	}
+	.sapMMenu.sapUiMnu.sapUiMnuCozySupport .sapUiMnuItmTxt {
+		padding-right: 2.5rem;
+	}
+	.sapMMenu .sapUiMnuLst.sapUiMnuNoSbMnu .sapUiMnuItm .sapUiMnuItmTxt {
+		padding-right: 0.5rem;
+	}
+}
 /* end compact */
 
 /* end desktop and tablet */

@@ -1,0 +1,50 @@
+/******************************************************************
+	Style of the RTA Add Fields Dialog  - sap_fiori_3_dark Theme
+*******************************************************************/
+@_sap_ui_rta_FieldRepository_ListSelect: lighten(@sapUiListActiveTextColor, 10%); //#3e4a58
+@_sap_ui_rta_FieldRepository_ListHoverBG: @sapUiListSelectionHoverBackground; //#395369
+@_sap_ui_rta_FieldRepository_BtnHoverBorder: @sapUiButtonEmphasizedBackground; //#1b8dec
+@_sap_ui_rta_FieldRepository_BtnFocusBorder: @sapUiSelected; //#91c8f6
+
+.sapUiRtaMode {
+
+	.sapUIRtaFieldRepositoryDialog {
+
+		.sapMBtn {
+			&:hover:not(focus) {
+				.sapMBtnInner {
+					border: 0.0625rem solid @_sap_ui_rta_FieldRepository_BtnHoverBorder; //1px
+				}
+			}
+
+			> .sapMBtnInner {
+				border: 0.0625rem solid transparent; //1px
+			}
+
+			&:focus {
+				&:not(:hover) > .sapMFocusable {
+					border: 0.0625rem dotted @_sap_ui_rta_FieldRepository_BtnFocusBorder; //1px
+					outline: none;
+				}
+
+				&:hover > .sapMFocusable {
+					outline: 0.0625rem dotted; //1px
+				}
+			}
+		}
+
+		.sapMLIBHoverable {
+			&:hover {
+				background: @_sap_ui_rta_FieldRepository_ListSelect;
+			}
+
+			&.sapMLIBSelected:hover {
+				background: @_sap_ui_rta_FieldRepository_ListHoverBG;
+			}
+		}
+
+		.sapMLIB.sapMLIBSelected {
+			border-color: transparent;
+		}
+	}
+}

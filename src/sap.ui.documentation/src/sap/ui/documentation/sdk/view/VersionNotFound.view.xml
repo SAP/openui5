@@ -1,0 +1,44 @@
+<mvc:View
+		controllerName="sap.ui.documentation.sdk.controller.VersionNotFound"
+		xmlns:mvc="sap.ui.core.mvc"
+		xmlns:f="sap.f"
+		xmlns="sap.m">
+
+	<App>
+		<Page>
+			<customHeader>
+				<f:ShellBar
+					title="HTTP Status 404 - Not Found"
+					homeIcon="/resources/sap/ui/documentation/sdk/images/logo_ui5.png"
+					homeIconPressed="onHomePress"
+				>
+				</f:ShellBar>
+			</customHeader>
+			<MessagePage
+					id="page"
+					icon="sap-icon://document"
+					description=""
+					showHeader="false"
+					text=""
+					busy="true"
+					>
+					<buttons>
+						<Button
+								id="readMoreButton"
+								visible="false"
+								text="Read More"
+								press="onReadMore"
+								type="Emphasized"
+								width="100%" />
+							<Button
+								id="homePageButton"
+								visible="true"
+								text="Home Page"
+								press="onHomePress"
+								width="100%" />
+					</buttons>
+			</MessagePage>
+		</Page>
+	</App>
+
+</mvc:View>

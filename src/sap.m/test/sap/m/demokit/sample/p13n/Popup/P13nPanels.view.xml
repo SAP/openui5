@@ -1,0 +1,26 @@
+<mvc:View 
+    height="100%"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns="sap.m"
+    xmlns:p13n="sap.m.p13n"
+    xmlns:ce="sap.ui.codeeditor"
+    class="sapUiContentPadding"
+    controllerName="sap.m.sample.p13n.Popup.P13nPanels">
+
+    <VBox class="sapUiSmallMargin">
+
+        <Button id="openBtn" text="Show p13n.Popup" press="onContainerOpen"/>
+
+        <p13n:Popup id="p13nPopup" title="My Custom View Settings" close="onClose" warningText="Are you sure?" reset=".reset">
+            <p13n:panels>
+                <p13n:SelectionPanel id="columnsPanel" title="Columns" enableCount="true" showHeader="true" change="parseP13nState"/>
+                <p13n:SortPanel id="sortPanel" title="Sort" change="parseP13nState"/>
+                <p13n:GroupPanel id="groupPanel" title="Group" change="parseP13nState"/>
+            </p13n:panels>
+        </p13n:Popup>
+
+        <ce:CodeEditor id="p13nEditor" class="sapUiSmallMargin" height="50rem"/>
+
+    </VBox>
+
+</mvc:View>

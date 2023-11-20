@@ -5,107 +5,132 @@
  * Adds support rules of the <code>sap.ui.fl</code>
  * library to the support infrastructure.
  */
-sap.ui.define(["sap/ui/support/library", "sap/ui/fl/Utils", "sap/ui/dt/DesignTime", "sap/ui/core/Component"],
-	function(SupportLib, Utils, DesignTime, Component) {
-		"use strict";
+sap.ui.define([
+	"sap/ui/support/library",
+	"sap/ui/fl/Utils",
+	"sap/ui/dt/DesignTime",
+	"sap/ui/rta/util/validateStableIds",
+	"sap/m/InstanceManager"
+], function(
+	SupportLib,
+	Utils,
+	DesignTime,
+	validateStableIds,
+	InstanceManager
+) {
+	"use strict";
 
-		var Categories = SupportLib.Categories,
-		Audiences = SupportLib.Audiences,
-		Severity = SupportLib.Severity;
+	const {Categories, Audiences, Severity} = SupportLib;
 
-		function isClonedElementFromListBinding(oControl) {
-			var sParentAggregationName = oControl.sParentAggregationName,
-				oParent = oControl.getParent();
-			if (oParent && sParentAggregationName) {
-				var oBindingInfo = oParent.getBindingInfo(sParentAggregationName);
-				if (oBindingInfo && oControl instanceof oBindingInfo.template.getMetadata().getClass()) {
-					return true;
-				} else {
-					return isClonedElementFromListBinding(oParent);
+	function findAppComponent(aElements) {
+		var oAppComponent;
+
+		aElements.some(function(oElement) {
+			oAppComponent = Utils.getAppComponentForControl(oElement);
+			return !!oAppComponent;
+		});
+
+		return oAppComponent;
+	}
+
+	function _isPopupAdaptable(oPopup) {
+		return (!oPopup.isPopupAdaptationAllowed || oPopup.isPopupAdaptationAllowed())
+		&& Utils.getAppComponentForControl(oPopup)
+		&& (oPopup.isA("sap.m.Dialog") || oPopup.isA("sap.m.Popover"));
+	}
+
+	var oStableIdRule = {
+		id: "stableId",
+		audiences: [Audiences.Application],
+		categories: [Categories.Functionality],
+		enabled: true,
+		minversion: "1.28",
+		title: "Stable control IDs are required for SAPUI5 flexibility services",
+		description: "Checks whether the IDs of controls support SAPUI5 flexibility services",
+		resolution: "Replace the generated control ID with a stable ID. We strongly recommend "
+			+ "that you use stable IDs for all controls in your app.",
+		resolutionurls: [{
+			text: "Documentation: Stable IDs: All You Need to Know",
+			href: "https://sdk.openui5.org/topic/f51dbb78e7d5448e838cdc04bdf65403"
+		}],
+		async: true,
+		check(issueManager, oCoreFacade, oScope, resolve) {
+			var oUshellContainer = Utils.getUshellContainer();
+
+			Promise.resolve()
+			.then(function() {
+				if (oUshellContainer) {
+					return Utils.getUShellService("AppLifeCycle")
+					.then(function(oAppLifeCycle) {
+						var mRunningApp = oAppLifeCycle.getCurrentApplication();
+						// Disable this rule for ushell home page (where tiles are located)
+						if (!mRunningApp.homePage) {
+							return mRunningApp.componentInstance;
+						}
+						return undefined;
+					})
+					.catch(function(vError) {
+						throw new Error(`Error getting current application from Unified Shell AppLifeCycle service: ${vError}`);
+					});
 				}
-			}
-			return false;
-		}
-
-		var oStableIdRule = {
-			id: "stableId",
-			audiences: [Audiences.Application],
-			categories: [Categories.Functionality],
-			enabled: true,
-			minversion: "1.28",
-			title: "Stable control IDs are required for SAPUI5 flexibility services",
-			description: "Checks whether the IDs of controls support SAPUI5 flexibility services",
-			resolution: "Replace the generated control ID with a stable ID. We strongly recommend that you use stable IDs for all controls in your app.",
-			resolutionurls: [{
-				text: "Documentation: Stable IDs: All You Need to Know",
-				href: "https://sapui5.hana.ondemand.com/#docs/guide/f51dbb78e7d5448e838cdc04bdf65403.html"
-			}],
-			async: true,
-			check: function (issueManager, oCoreFacade, oScope, resolve) {
-
-				var aElements = oScope.getElements(),
-					oElement,
-					oAppComponent;
-
-				for (var i = 0; i < aElements.length; i++) {
-					oElement = aElements[i];
-					oAppComponent = Utils.getAppComponentForControl(oElement);
-
-					if (oAppComponent) {
-						break;
-					}
-				}
-
+				return findAppComponent(oScope.getElements());
+			})
+			.then(function(oAppComponent) {
 				if (!oAppComponent) {
 					return;
 				}
 
+				var aPopovers = InstanceManager.getOpenPopovers();
+				var aDialogs = InstanceManager.getOpenDialogs();
+				var aAdaptablePopups = aPopovers.concat(aDialogs).filter(_isPopupAdaptable);
+
 				var oDesignTime = new DesignTime({
-					rootElements: [oAppComponent]
+					rootElements: [oAppComponent].concat(aAdaptablePopups)
 				});
 
-				oDesignTime.attachEventOnce("synced", function () {
-					var aOverlays = oDesignTime.getElementOverlays();
+				function fnOnSynced() {
+					var aUnstableOverlays = validateStableIds(oDesignTime.getElementOverlays(), oAppComponent);
 
-					aOverlays.forEach(function (oOverlay) {
-						var oElement = oOverlay.getElementInstance();
-						var sControlId = oElement.getId();
+					aUnstableOverlays.forEach(function(oElementOverlay) {
+						var oElement = oElementOverlay.getElement();
+						var sElementId = oElement.getId();
+						var bHasConcatenatedId = sElementId.includes("--");
 
-						var sHasConcatenatedId = sControlId.indexOf("--") !== -1;
-						if (!Utils.checkControlId(sControlId, oAppComponent, true) && !isClonedElementFromListBinding(oElement)) {
-							if (!sHasConcatenatedId) {
-								issueManager.addIssue({
-									severity: Severity.High,
-									details: "The ID '" + sControlId + "' for the control was generated and flexibility features " +
-									"cannot support controls with generated IDs.",
-									context: {
-										id: sControlId
-									}
-								});
-							} else {
-								issueManager.addIssue({
-									severity: Severity.Low,
-									details: "The ID '" + sControlId + "' for the control was concatenated and has a generated onset.\n" +
-									"To enable the control for flexibility features, you must specify an ID for the control providing the onset, which is marked as high issue.",
-									context: {
-										id: sControlId
-									}
-								});
-							}
+						if (!bHasConcatenatedId) {
+							issueManager.addIssue({
+								severity: Severity.High,
+								details: `The ID '${sElementId}' for the control was generated and flexibility features ` +
+									`cannot support controls with generated IDs.`,
+								context: {
+									id: sElementId
+								}
+							});
+						} else {
+							issueManager.addIssue({
+								severity: Severity.Low,
+								details: `The ID '${sElementId}' for the control was concatenated and has a generated onset.
+									To enable the control for flexibility features, you must specify an ID for the control providing ` +
+									`the onset, which is marked as high issue.`,
+								context: {
+									id: sElementId
+								}
+							});
 						}
 					});
 					oDesignTime.destroy();
 					resolve();
-				});
-			}
-		};
+				}
 
-		return {
-			name: "sap.ui.fl",
-			niceName: "UI5 Flexibility Library",
-			ruleset: [
-				oStableIdRule
-			]
-		};
+				oDesignTime.attachEventOnce("synced", fnOnSynced);
+			});
+		}
+	};
 
-	}, true);
+	return {
+		name: "sap.ui.fl",
+		niceName: "UI5 Flexibility Library",
+		ruleset: [
+			oStableIdRule
+		]
+	};
+}, true);

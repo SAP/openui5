@@ -1,0 +1,85 @@
+<mvc:View
+	controllerName="sap.m.sample.PlanningCalendarAppointmentSizes.Page"
+	xmlns:core="sap.ui.core"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:unified="sap.ui.unified"
+	xmlns="sap.m">
+	<VBox class="sapUiSmallMargin">
+		<HBox>
+			<VBox class="sapUiSmallMarginEnd">
+				<Label text="Appointment Size:"></Label>
+				<Select
+						change="handleAppointmentHeightChange"
+						width="230px">
+					<items>
+						<core:Item key="Regular" text="Regular" />
+						<core:Item key="HalfSize" text="Half-Size" />
+						<core:Item key="Large" text="Large" />
+						<core:Item key="Automatic" text="Automatic" />
+					</items>
+				</Select>
+			</VBox>
+			<VBox class="sapUiSmallMarginEnd">
+				<Label text="Appointment Sort:"></Label>
+				<Select
+						change="handleSortChange"
+						width="230px">
+					<items>
+						<core:Item key="default" text="Default Appointments Sort" />
+						<core:Item key="custom" text="Alphabetical Appointments Sort" />
+					</items>
+				</Select>
+			</VBox>
+			<VBox class="sapUiSmallMarginEnd">
+				<Label text="Appointment Row Rounding:"></Label>
+				<Select
+					change="handleAppointmentRoundingChange"
+					width="230px">
+					<items>
+						<core:Item key="None" text="None" />
+						<core:Item key="HalfColumn" text="Half Column" />
+					</items>
+				</Select>
+			</VBox>
+		</HBox>
+		<PlanningCalendar
+			id="PC1"
+			showIntervalHeaders="false"
+			startDate="{path: '/startDate'}"
+			rows="{path: '/people'}"
+			appointmentsVisualization="Filled">
+			<rows>
+				<PlanningCalendarRow
+					icon="{pic}"
+					title="{name}"
+					text="{role}"
+					appointments="{path : 'appointments', templateShareable: false}"
+					intervalHeaders="{path: 'headers', templateShareable: false}">
+					<appointments>
+						<unified:CalendarAppointment
+							startDate="{start}"
+							endDate="{end}"
+							icon="{pic}"
+							title="{title}"
+							text="{info}"
+							description="{description}"
+							type="{type}"
+							tentative="{tentative}">
+						</unified:CalendarAppointment>
+					</appointments>
+					<intervalHeaders>
+						<unified:CalendarAppointment
+							startDate="{start}"
+							endDate="{end}"
+							icon="{pic}"
+							title="{title}"
+							text="{text}"
+							description="{description}"
+							type="{type}">
+						</unified:CalendarAppointment>
+					</intervalHeaders>
+				</PlanningCalendarRow>
+			</rows>
+		</PlanningCalendar>
+	</VBox>
+</mvc:View>

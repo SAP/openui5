@@ -1,0 +1,57 @@
+/* ================================ */
+/* CSS for control sap.m/SlideTile  */
+/* Fiori 3 theme                    */
+/* ================================ */
+
+html.sap-desktop .sapMST:focus .sapMSTFocusDiv,
+html.sap-desktop .sapMST:active .sapMSTFocusDiv {
+	border: 1px solid @sapUiTileBackground;
+}
+
+.sapMST.sapMSTScopeActions.sapMSTDarkBackground .sapMSTMoreIcon {
+	.sapMBtnIcon{
+		color: @sapUiContentContrastTextColor;
+	}
+}
+
+/* This part is used to achieve dotted white black interlace border*/
+html.sap-desktop .sapMST:focus .sapMSTFocusDiv:after,
+html.sap-desktop .sapMST:active .sapMSTFocusDiv:after {
+	content: "";
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	border-radius: 0.25rem;
+	margin: -1px;
+	border: 1px dotted @sapUiContentFocusColor;
+}
+
+/* Bulleted indicator of multiple tiles*/
+.sapMSTBulleted > span {
+	background-color: @sapUiContentNonInteractiveIconColor;
+	box-shadow: 0 0 0.25rem fade(@sapUiContentShadowColor, 25);
+}
+
+.sapMSTBulleted > span.sapMSTActive {
+	background-color: @sapUiContentContrastIconColor;
+	box-shadow: 0 0 0.25rem fade(@sapUiContentShadowColor, 25);
+}
+
+.sapMST .sapMSTIconDisplayArea {
+	background-color: darken(@sapUiBrand, 18);
+}
+
+.sapMST.sapMSTIconPressed .sapMSTIconClickTapArea:hover ~.sapMSTIconDisplayArea {
+	background-color: @sapUiBrand;
+}
+
+.sapMST .sapMSTIconNestedArea {
+	text-shadow: 0px 1px @sapUiButtonEmphasizedTextShadow;
+}
+
+html.sap-desktop .sapMST .sapMGT:active .sapMGTFocusDiv,
+html.sap-desktop .sapMST .sapMGT:active .sapMGTFocusDiv:after {
+	border: none;
+}

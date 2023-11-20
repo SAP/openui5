@@ -1,7 +1,6 @@
 sap.ui.define([
-	"sap/ui/model/json/JSONModel",
 	"sap/ui/core/mvc/Controller"
-], function (JSONModel, Controller) {
+], function (Controller) {
 	"use strict";
 
 	return Controller.extend("flexiblecolumnlayout.Page3", {
@@ -10,4 +9,4 @@ sap.ui.define([
 			this.oModel = this.getOwnerComponent().getModel();
 		}
 	});
-}, true);
+});

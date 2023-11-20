@@ -1,0 +1,45 @@
+<mvc:View controllerName="test.sap.ui.fl.testApps.controlPersonalizationAPIChanges.controller.FirstSubView" xmlns:mvc="sap.ui.core.mvc"
+	displayBlock="true" xmlns="sap.m" xmlns:sap.ui.fl="sap.ui.fl" xmlns:flVariant="sap.ui.fl.variants">
+	<VBox id="vbox" class="sapUiMediumMargin">
+		<Title text="First View with full concatenated IDs" />
+		<ObjectStatus text="{parts: [
+												  	{path:'/changes'},
+												  	{path:'/firstView/label'},
+												  	{path:'/firstView/variantLabel'}], formatter:'.formatStatusTextCombined'}"
+					  state="{parts: [
+												  	{path:'/changes'},
+												  	{path:'/firstView/label'},
+												  	{path:'/firstView/variantLabel'}], formatter:'.formatStatusStateCombined'}"
+					  id="overallPersStatus"/>
+		<HBox id="hbox">
+			<Button id="createPersonalization" icon="sap-icon://sys-add" press=".createPersonalizationForLabel" />
+			<Button id="resetPersonalization" icon="sap-icon://reset" press=".resetPersonalizationForLabel" />
+			<ObjectStatus text="{parts: [
+												  	{path:'/changes'},
+												  	{path:'/firstView/label'}],
+												  	formatter:'.formatStatusText'}"
+						  state="{parts: [
+												  	{path:'/changes'},
+												  	{path:'/firstView/label'}],
+												  	formatter:'.formatStatusState'}"
+						  id="labelPersStatus"/>
+		</HBox>
+		<Label id="label" text="This is a label with a complete concatenated ID!" sap.ui.fl:flexibility="test/sap/ui/fl/testApps/controlPersonalizationAPIChanges/changeHandlers/label.flexibility" />
+
+		<HBox id="hbox2">
+			<flVariant:VariantManagement id="VariantManagement1" for="variantLabel" select=".updateLabels" />
+			<Button id="createVariantPersonalization" icon="sap-icon://sys-add" press=".createPersonalizationForVariantLabel" />
+			<Button id="resetVariantPersonalization" icon="sap-icon://reset" press=".resetPersonalizationForVariantLabel" />
+			<ObjectStatus text="{parts: [
+												  	{path:'/changes'},
+												  	{path:'/firstView/variantLabel'}],
+												  	formatter:'.formatStatusText'}"
+						  state="{parts: [
+												  	{path:'/changes'},
+												  	{path:'/firstView/variantLabel'}],
+												  	formatter:'.formatStatusState'}"
+						  id="labelInVariantPersStatus"/>
+		</HBox>
+		<Label id="variantLabel" text="This is a label with a complete concatenated ID in a variant!" sap.ui.fl:flexibility="test/sap/ui/fl/testApps/controlPersonalizationAPIChanges/changeHandlers/label.flexibility" />
+	</VBox>
+</mvc:View>

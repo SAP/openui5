@@ -12,7 +12,9 @@ sap.ui.define(function() {
 	 * @namespace
 	 * @alias sap.ui.core.tmpl.TemplateControlRenderer
 	 */
-	var TemplateControlRenderer = {};
+	var TemplateControlRenderer = {
+		apiVersion: 1 // still uses version 1 as the API version of nested template controls is not known
+	};
 
 	/**
 	 * Renders the Template for the given control, using the provided
@@ -35,11 +37,7 @@ sap.ui.define(function() {
 		// if we have no common root tag, the re-rendering would not clean up
 		// the old markup properly.
 		if (!bSkipRootElement) {
-			oRM.write("<div");
-			oRM.writeControlData(oControl);
-			oRM.writeStyles();
-			oRM.writeClasses();
-			oRM.write(">");
+			oRM.openStart("div", oControl).openEnd();
 		}
 
 		// in case of declaring a control the renderTemplate function is part of the
@@ -51,7 +49,7 @@ sap.ui.define(function() {
 		}
 
 		if (!bSkipRootElement) {
-			oRM.write("</div>");
+			oRM.close("div");
 		}
 
 	};

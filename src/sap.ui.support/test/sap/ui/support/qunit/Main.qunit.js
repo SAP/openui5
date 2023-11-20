@@ -1,26 +1,42 @@
 /*global QUnit,sinon*/
 
-sap.ui.require([
-	"jquery.sap.global",
+sap.ui.define([
+	"sap/ui/support/Bootstrap",
 	"sap/ui/support/supportRules/Main",
 	"sap/ui/support/supportRules/WindowCommunicationBus",
 	"sap/ui/support/supportRules/WCBChannels",
 	"sap/ui/support/supportRules/RuleSet",
-	"sap/ui/support/supportRules/RuleSetLoader"],
-	function (jQuery, Main, CommunicationBus, channelNames, RuleSet, RuleSetLoader) {
+	"sap/ui/support/supportRules/RuleSetLoader",
+	"sap/ui/core/Icon",
+	"sap/m/Panel",
+	"sap/m/Button",
+	"sap/m/Text",
+	"sap/base/Log",
+	"sap/base/util/deepExtend",
+	"sap/base/util/ObjectPath"
+	],
+	function (Bootstrap,
+			  Main,
+			  CommunicationBus,
+			  channelNames,
+			  RuleSet,
+			  RuleSetLoader,
+			  Icon,
+			  Panel,
+			  Button,
+			  Text,
+			  Log,
+			  deepExtend,
+			  ObjectPath) {
 		"use strict";
 
-		/*eslint-disable no-unused-vars*/
-		var core;
-		/*eslint-enable no-unused-vars*/
-
 		var spyChannel = function (channelName) {
-			sinon.spy(CommunicationBus, "publish");
+			sinon.spy(CommunicationBus.prototype, "publish");
 
 			return {
 				assertCalled: function (assert) {
-					assert.ok(CommunicationBus.publish.calledWith(channelName), "channel name: " + channelName + " should be called");
-					CommunicationBus.publish.restore();
+					assert.ok(CommunicationBus.prototype.publish.calledWith(channelName), "channel name: " + channelName + " should be called");
+					CommunicationBus.prototype.publish.restore();
 				}
 			};
 		};
@@ -28,7 +44,8 @@ sap.ui.require([
 		function createValidRule(sRuleId) {
 			return {
 				id: sRuleId,
-				check: function () { },
+				check: function () {
+				},
 				title: "title",
 				description: "desc",
 				resolution: "res",
@@ -38,6 +55,27 @@ sap.ui.require([
 			};
 		}
 
+		function createRuleLibWithLib(sLibName, sLibNiceName, aRules) {
+			var oLib = {
+				name: sLibName,
+				niceName: sLibNiceName
+			};
+
+			var oRuleSet = new RuleSet(oLib);
+
+			aRules.forEach(function (oRule) {
+				oRuleSet.addRule(oRule, {});
+			});
+
+			return {
+				lib: oLib,
+				ruleset: oRuleSet
+			};
+		}
+
+		/**
+		 * @deprecated As of version 1.120
+		 */
 		function createValidRules(sRuleId, iNumberOfRules) {
 			var aRules = [];
 
@@ -48,6 +86,9 @@ sap.ui.require([
 			return aRules;
 		}
 
+		/**
+		 * @deprecated As of version 1.120
+		 */
 		function createRuleSet(sLibName, sRuleId, iNumberOfRules) {
 			var oLib = {
 				name: sLibName,
@@ -58,7 +99,7 @@ sap.ui.require([
 
 			var aRules = createValidRules(sRuleId, iNumberOfRules);
 			aRules.forEach(function (oRule) {
-				oRuleSet.addRule(oRule);
+				oRuleSet.addRule(oRule, {});
 			});
 
 			return {
@@ -67,7 +108,10 @@ sap.ui.require([
 			};
 		}
 
-		function createRuleSetObject(sLibName, sRuleId, iNumberOfRules) {
+		/**
+		 * @deprecated As of version 1.120
+		 */
+		function createRuleLibAsObject(sLibName, sRuleId, iNumberOfRules) {
 			return {
 				name: sLibName,
 				niceName: "sap library",
@@ -75,43 +119,22 @@ sap.ui.require([
 			};
 		}
 
-		Main.startPlugin();
-
-		sap.ui.getCore().registerPlugin({
-			startPlugin: function (oCore) {
-				core = oCore;
-			}
-		});
-
 		QUnit.module("Main.js test", {
-			setup: function () {
-				this.clock = sinon.useFakeTimers();
-			},
-			teardown: function () {
-				this.clock.restore();
+			beforeEach: function (assert) {
+				var done = assert.async();
+
+				Bootstrap.initSupportRules(["true", "silent"], {
+					onReady: function() {
+						done();
+					}
+				});
 			}
 		});
-
-		/*
-		TODO: Fix the issue with race condition
-		Temporary commenting the test to avoid build problems.
-		*/
-		// QUnit.test("When a library is loaded", function () {
-		// 	sinon.spy(Main, "_fetchSupportRuleSets");
-
-		// 	core.fireLibraryChanged({
-		// 		stereotype: "library"
-		// 	});
-
-		// 	assert.ok(Main._fetchSupportRuleSets.calledOnce, " the support rules should be updated");
-
-		// 	Main._fetchSupportRuleSets.restore();
-		// });
 
 		QUnit.test("When a new control is created", function (assert) {
 			var spyCoreStateChanged = spyChannel(channelNames.ON_CORE_STATE_CHANGE);
 
-			var icon = new sap.ui.core.Icon();
+			var icon = new Icon();
 			this.clock.tick(600);
 
 			spyCoreStateChanged.assertCalled(assert);
@@ -119,7 +142,7 @@ sap.ui.require([
 		});
 
 		QUnit.test("When a control is deleted", function (assert) {
-			var icon = new sap.ui.core.Icon();
+			var icon = new Icon();
 			var spyCoreStateChanged = spyChannel(channelNames.ON_CORE_STATE_CHANGE);
 
 			icon.destroy();
@@ -148,24 +171,24 @@ sap.ui.require([
 				}
 			};
 
-			var oPanel = new sap.m.Panel({
+			var oPanel = new Panel({
 				id: "rootPanel",
 				content: [
-					new sap.m.Panel({
+					new Panel({
 						id: "innerPanel1",
 						content: [
-							new sap.m.Button({
+							new Button({
 								id: "innerButton"
 							}),
-							new sap.m.Text({
+							new Text({
 								id: "innerText"
 							})
 						]
 					}),
-					new sap.m.Panel({
+					new Panel({
 						id: "innerPanel2",
 						content: [
-							new sap.m.Button({
+							new Button({
 								id: "innerButton2"
 							})
 						]
@@ -186,108 +209,38 @@ sap.ui.require([
 			assertIsDirectChild("innerPanel2", "rootPanel", et);
 			assertIsDirectChild("innerButton", "innerPanel1", et);
 			assertIsDirectChild("innerText", "innerPanel1", et);
-			assertIsDirectChild("innerButton2", "innerPanel2",et);
+			assertIsDirectChild("innerButton2", "innerPanel2", et);
 
 			oPanel.destroy();
 		});
 
 		QUnit.module("Main.js methods", {
-			setup: function () {
-				// Store _mRuleSets
-				this._mRuleSets = jQuery.extend(true, {}, RuleSetLoader._mRuleSets);
+			beforeEach: function () {
+				RuleSet.clearAllRuleSets();
+				// Store _mRuleLibs
+				this._mRuleLibs = deepExtend({}, RuleSetLoader._mRuleLibs);
 
-				RuleSetLoader._mRuleSets = {
-					"temporary": {
-					   "lib": {
-						  "name": "temporary"
-					   },
-					   "ruleset": {
-						  "_oSettings": {
-							 "name": "temporary"
-						  },
-						  "_mRules": {
-							"tmpRule": {
-								"id": "tmpRule",
-								"libName": "temporary"
-							}
-						  },
-						  "getRules": function () {
-							return this._mRules;
-						  }
-					   }
-					},
-					"sap.ui.core": {
-					   "lib": {
-						  "name": "sap.ui.core",
-						  "niceName": "UI5 Core Library"
-					   },
-					   "ruleset": {
-						  "_oSettings": {
-							 "name": "sap.ui.core",
-							 "niceName": "UI5 Core Library"
-						  },
-						  "_mRules": {
-							"preloadAsyncCheck": {
-								"id": "preloadAsyncCheck",
-								"libName": "sap.ui.core"
-							},
-							 "cacheBusterToken": {
-								"id": "cacheBusterToken",
-								"libName": "sap.ui.core"
-							 },
-							 "bindingPathSyntaxValidation": {
-								"id": "bindingPathSyntaxValidation",
-								"libName": "sap.ui.core"
-							 },
-							 "XMLViewWrongNamespace": {
-								"id": "XMLViewWrongNamespace",
-								"libName": "sap.ui.core"
-							 },
-							 "XMLViewDefaultNamespace": {
-								"id": "XMLViewDefaultNamespace",
-								"libName": "sap.ui.core"
-							 }
-						  },
-						  "getRules": function () {
-							return this._mRules;
-						  }
-					   }
-					},
-					"sap.m": {
-					   "lib": {
-						  "name": "sap.m",
-						  "niceName": "UI5 Main Library"
-					   },
-					   "ruleset": {
-						  "_oSettings": {
-							 "name": "sap.m",
-							 "niceName": "UI5 Main Library"
-						  },
-						  "_mRules":{
-							 "onlyIconButtonNeedsTooltip": {
-								"id": "onlyIconButtonNeedsTooltip",
-								"libName": "sap.m"
-							 },
-							 "dialogarialabelledby": {
-								"id": "dialogarialabelledby",
-								"libName": "sap.m"
-							 },
-							 "inputNeedsLabel": {
-								"id": "inputNeedsLabel",
-								"libName": "sap.m"
-							 }
-						  },
-						  "getRules": function () {
-							return this._mRules;
-						  }
-					   }
-					}
+				RuleSetLoader._mRuleLibs = {
+					"temporary": createRuleLibWithLib("temporary", "temporary rules nice name", [
+						createValidRule("tmpRule")
+					]),
+					"sap.ui.core": createRuleLibWithLib("sap.ui.core", "nice name", [
+						createValidRule("preloadAsyncCheck"),
+						createValidRule("cacheBusterToken"),
+						createValidRule("bindingPathSyntaxValidation"),
+						createValidRule("XMLViewWrongNamespace"),
+						createValidRule("XMLViewDefaultNamespace")
+					]),
+					"sap.m": createRuleLibWithLib("sap.m", "nice name", [
+						createValidRule("onlyIconButtonNeedsTooltip"),
+						createValidRule("dialogarialabelledby"),
+						createValidRule("inputNeedsLabel")
+					])
 				};
 			},
-			teardown: function () {
-				// Restore _mRuleSets
-				RuleSetLoader._mRuleSets = jQuery.extend(true, {}, this._mRuleSets);
-				this._mRuleSets = null;
+			afterEach: function () {
+				// Restore _mRuleLibs
+				RuleSetLoader._mRuleLibs = deepExtend({}, this._mRuleLibs);
 				RuleSet.clearAllRuleSets();
 				Main._aSelectedRules = [];
 				Main._oSelectedRulesIds = {};
@@ -398,9 +351,12 @@ sap.ui.require([
 			assert.equal(Object.keys(Main._oSelectedRulesIds).length, 0, "Should reset all selected rules in _oSelectedRulesIds");
 		});
 
-		QUnit.test("_fetchRuleSet with ruleset of type RuleSet and library not present in the available rulesets", function (assert) {
+		/**
+		 * @deprecated As of version 1.120
+		 */
+		QUnit.test("_fetchRuleLib with ruleset of type RuleSet and library not present", function (assert) {
 			// Arrange
-			sinon.stub(jQuery.sap, "getObject", function (sLibName) {
+			sinon.stub(ObjectPath, "get", function (sLibName) {
 				return {
 					library: {
 						support: createRuleSet("sap.uxap", "validRule", 1)
@@ -409,18 +365,21 @@ sap.ui.require([
 			});
 
 			// Act
-			RuleSetLoader._fetchRuleSet("sap.uxap");
+			RuleSetLoader._fetchRuleLib("sap.uxap");
 
 			//Assert
-			assert.ok(RuleSetLoader._mRuleSets["sap.uxap"].ruleset instanceof RuleSet, "Should be an instance of RuleSet");
-			assert.equal(Object.keys(RuleSetLoader._mRuleSets["sap.uxap"].ruleset._mRules).length, 1, "Should have one fetched rule");
+			assert.ok(RuleSetLoader._mRuleLibs["sap.uxap"].ruleset instanceof RuleSet, "Should be an instance of RuleSet");
+			assert.equal(Object.keys(RuleSetLoader._mRuleLibs["sap.uxap"].ruleset._mRules).length, 1, "Should have one fetched rule");
 
-			jQuery.sap.getObject.restore();
+			ObjectPath.get.restore();
 		});
 
-		QUnit.test("_fetchRuleSet with ruleset of type RuleSet and library present in the available rulesets", function (assert) {
+		/**
+		 * @deprecated As of version 1.120
+		 */
+		QUnit.test("_fetchRuleLib with ruleset of type RuleSet and library present in the available rulesets", function (assert) {
 			// Arrange
-			sinon.stub(jQuery.sap, "getObject", function (sLibName) {
+			sinon.stub(ObjectPath, "get", function (sLibName) {
 				return {
 					library: {
 						support: createRuleSet("sap.uxap", "anotherValidRule", 2)
@@ -429,42 +388,48 @@ sap.ui.require([
 			});
 
 			// Setup initial RuleSet
-			RuleSetLoader._mRuleSets["sap.uxap"] = createRuleSet("sap.uxap", "initialValidRule", 2);
+			RuleSetLoader._mRuleLibs["sap.uxap"] = createRuleSet("sap.uxap", "initialValidRule", 2);
 
 			// Act
-			RuleSetLoader._fetchRuleSet("sap.uxap");
+			RuleSetLoader._fetchRuleLib("sap.uxap");
 
 			//Assert
-			assert.ok(RuleSetLoader._mRuleSets["sap.uxap"].ruleset instanceof RuleSet, "Should be an instance of RuleSet");
-			assert.equal(Object.keys(RuleSetLoader._mRuleSets["sap.uxap"].ruleset._mRules).length, 4, "Should have four fetched rules");
+			assert.ok(RuleSetLoader._mRuleLibs["sap.uxap"].ruleset instanceof RuleSet, "Should be an instance of RuleSet");
+			assert.equal(Object.keys(RuleSetLoader._mRuleLibs["sap.uxap"].ruleset._mRules).length, 4, "Should have four fetched rules");
 
-			jQuery.sap.getObject.restore();
+			ObjectPath.get.restore();
 		});
 
-		QUnit.test("_fetchRuleSet with ruleset of type Object and library not present in the available rulesets", function (assert) {
+		/**
+		 * @deprecated As of version 1.120
+		 */
+		QUnit.test("_fetchRuleLib with ruleset of type Object and library not present in the available rulesets", function (assert) {
 			// Arrange
-			sinon.stub(jQuery.sap, "getObject", function (sLibName) {
+			sinon.stub(ObjectPath, "get", function (sLibName) {
 				return {
 					library: {
-						support: createRuleSetObject("sap.uxap", "validRule", 3)
+						support: createRuleLibAsObject("sap.uxap", "validRule", 3)
 					}
 				};
 			});
 
 			// Act
-			RuleSetLoader._fetchRuleSet("sap.uxap");
+			RuleSetLoader._fetchRuleLib("sap.uxap");
 
 			//Assert
-			assert.ok(RuleSetLoader._mRuleSets["sap.uxap"].ruleset instanceof RuleSet, "Should be an instance of RuleSet");
-			assert.equal(Object.keys(RuleSetLoader._mRuleSets["sap.uxap"].ruleset._mRules).length, 3, "Should have three fetched rules");
+			assert.ok(RuleSetLoader._mRuleLibs["sap.uxap"].ruleset instanceof RuleSet, "Should be an instance of RuleSet");
+			assert.equal(Object.keys(RuleSetLoader._mRuleLibs["sap.uxap"].ruleset._mRules).length, 3, "Should have three fetched rules");
 
-			jQuery.sap.getObject.restore();
+			ObjectPath.get.restore();
 		});
 
-		QUnit.test("_fetchRuleSet join two types of rulesets", function (assert) {
+		/**
+		 * @deprecated As of version 1.120
+		 */
+		QUnit.test("_fetchRuleLib join two types of rulesets", function (assert) {
 			// Arrange
-			sinon.stub(jQuery.sap, "getObject", function (sLibName) {
-				var oRuleSet = createRuleSetObject("sap.uxap", "validRule", 2);
+			sinon.stub(ObjectPath, "get", function (sLibName) {
+				var oRuleSet = createRuleLibAsObject("sap.uxap", "validRule", 2);
 
 				// Test if a ruleset with nested arrays of rules joins them correctly
 				// ruleset: [
@@ -489,33 +454,36 @@ sap.ui.require([
 			});
 
 			// Setup initial RuleSet
-			RuleSetLoader._mRuleSets["sap.uxap"] = createRuleSet("sap.uxap", "initialValidRule", 2);
+			RuleSetLoader._mRuleLibs["sap.uxap"] = createRuleSet("sap.uxap", "initialValidRule", 2);
 
 			// Act
-			RuleSetLoader._fetchRuleSet("sap.uxap");
+			RuleSetLoader._fetchRuleLib("sap.uxap");
 
 			//Assert
-			assert.ok(RuleSetLoader._mRuleSets["sap.uxap"].ruleset instanceof RuleSet, "Should be an instance of RuleSet");
-			assert.equal(Object.keys(RuleSetLoader._mRuleSets["sap.uxap"].ruleset._mRules).length, 8, "Should have eight fetched rules");
+			assert.ok(RuleSetLoader._mRuleLibs["sap.uxap"].ruleset instanceof RuleSet, "Should be an instance of RuleSet");
+			assert.equal(Object.keys(RuleSetLoader._mRuleLibs["sap.uxap"].ruleset._mRules).length, 8, "Should have eight fetched rules");
 
-			jQuery.sap.getObject.restore();
+			ObjectPath.get.restore();
 		});
 
-		QUnit.test("_fetchRuleSet with unknown library", function (assert) {
+		/**
+		 * @deprecated As of version 1.120
+		 */
+		QUnit.test("_fetchRuleLib with unknown library", function (assert) {
 			// Arrange
-			sinon.stub(jQuery.sap, "getObject", function (sLibName) {
+			sinon.stub(ObjectPath, "get", function (sLibName) {
 				return;
 			});
-			sinon.spy(jQuery.sap.log, "error");
+			sinon.spy(Log, "error");
 
 			// Act
-			RuleSetLoader._fetchRuleSet("sap.test");
+			RuleSetLoader._fetchRuleLib("sap.test");
 
 			//Assert
-			assert.notOk(RuleSetLoader._mRuleSets["sap.test"], "Should be undefined");
-			assert.equal(jQuery.sap.log.error.callCount, 1, "should have logged an error");
+			assert.notOk(RuleSetLoader._mRuleLibs["sap.test"], "Should be undefined");
+			assert.equal(Log.error.callCount, 1, "should have logged an error");
 
-			jQuery.sap.getObject.restore();
-			jQuery.sap.log.error.restore();
+			ObjectPath.get.restore();
+			Log.error.restore();
 		});
-});
+	});

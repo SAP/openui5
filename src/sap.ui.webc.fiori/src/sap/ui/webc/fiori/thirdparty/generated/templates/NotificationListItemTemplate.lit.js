@@ -1,0 +1,42 @@
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/renderer/LitRenderer"], function (_exports, _LitRenderer) {
+  "use strict";
+
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  _exports.default = void 0;
+  /* eslint no-unused-vars: 0 */
+
+  function block0(context, tags, suffix) {
+    return suffix ? (0, _LitRenderer.html)`<li class="ui5-nli-root ui5-nli-focusable" @focusin="${this._onfocusin}" @focusout="${this._onfocusout}" @keydown="${this._onkeydown}" @keyup="${this._onkeyup}" @click="${this._onclick}" role="listitem" tabindex="${(0, _LitRenderer.ifDefined)(this._tabIndex)}" aria-labelledby="${(0, _LitRenderer.ifDefined)(this.ariaLabelledBy)}"><div class="ui5-nli-actions">${this.showOverflow ? block1.call(this, context, tags, suffix) : block2.call(this, context, tags, suffix)}${this.showClose ? block4.call(this, context, tags, suffix) : undefined}</div><div class="ui5-nli-content"><div class="ui5-nli-title-text-wrapper">${this.hasPriority ? block5.call(this, context, tags, suffix) : undefined}<div id="${(0, _LitRenderer.ifDefined)(this._id)}-title-text" class="ui5-nli-title-text" part="title-text">${(0, _LitRenderer.ifDefined)(this.titleText)}</div></div>${this.hasDesc ? block6.call(this, context, tags, suffix) : undefined}<div id="${(0, _LitRenderer.ifDefined)(this._id)}-footer" class="ui5-nli-footer">${(0, _LitRenderer.repeat)(this.footerItems, (item, index) => item._id || index, (item, index) => block7.call(this, context, tags, suffix, item, index))}<${(0, _LitRenderer.scopeTag)("ui5-link", tags, suffix)} class="ui5-nli-footer-showMore" ?hidden="${this.hideShowMore}" @ui5-click="${(0, _LitRenderer.ifDefined)(this._onShowMoreClick)}" aria-hidden="true" href="#"  showMore-btn>${(0, _LitRenderer.ifDefined)(this.showMoreText)}</${(0, _LitRenderer.scopeTag)("ui5-link", tags, suffix)}></div><span id="${(0, _LitRenderer.ifDefined)(this._id)}-invisibleText" class="ui5-hidden-text">${(0, _LitRenderer.ifDefined)(this.accInvisibleText)}</span></div><div class="ui5-nli-avatar"><slot name="avatar"></slot></div>${this.busy ? block9.call(this, context, tags, suffix) : undefined}</li>` : (0, _LitRenderer.html)`<li class="ui5-nli-root ui5-nli-focusable" @focusin="${this._onfocusin}" @focusout="${this._onfocusout}" @keydown="${this._onkeydown}" @keyup="${this._onkeyup}" @click="${this._onclick}" role="listitem" tabindex="${(0, _LitRenderer.ifDefined)(this._tabIndex)}" aria-labelledby="${(0, _LitRenderer.ifDefined)(this.ariaLabelledBy)}"><div class="ui5-nli-actions">${this.showOverflow ? block1.call(this, context, tags, suffix) : block2.call(this, context, tags, suffix)}${this.showClose ? block4.call(this, context, tags, suffix) : undefined}</div><div class="ui5-nli-content"><div class="ui5-nli-title-text-wrapper">${this.hasPriority ? block5.call(this, context, tags, suffix) : undefined}<div id="${(0, _LitRenderer.ifDefined)(this._id)}-title-text" class="ui5-nli-title-text" part="title-text">${(0, _LitRenderer.ifDefined)(this.titleText)}</div></div>${this.hasDesc ? block6.call(this, context, tags, suffix) : undefined}<div id="${(0, _LitRenderer.ifDefined)(this._id)}-footer" class="ui5-nli-footer">${(0, _LitRenderer.repeat)(this.footerItems, (item, index) => item._id || index, (item, index) => block7.call(this, context, tags, suffix, item, index))}<ui5-link class="ui5-nli-footer-showMore" ?hidden="${this.hideShowMore}" @ui5-click="${(0, _LitRenderer.ifDefined)(this._onShowMoreClick)}" aria-hidden="true" href="#"  showMore-btn>${(0, _LitRenderer.ifDefined)(this.showMoreText)}</ui5-link></div><span id="${(0, _LitRenderer.ifDefined)(this._id)}-invisibleText" class="ui5-hidden-text">${(0, _LitRenderer.ifDefined)(this.accInvisibleText)}</span></div><div class="ui5-nli-avatar"><slot name="avatar"></slot></div>${this.busy ? block9.call(this, context, tags, suffix) : undefined}</li>`;
+  }
+  function block1(context, tags, suffix) {
+    return suffix ? (0, _LitRenderer.html)`<${(0, _LitRenderer.scopeTag)("ui5-button", tags, suffix)} icon="overflow" design="Transparent" @click="${this._onBtnOverflowClick}" class="ui5-nli-overflow-btn" tooltip="${(0, _LitRenderer.ifDefined)(this.overflowBtnAccessibleName)}" aria-label="${(0, _LitRenderer.ifDefined)(this.overflowBtnAccessibleName)}"></${(0, _LitRenderer.scopeTag)("ui5-button", tags, suffix)}>` : (0, _LitRenderer.html)`<ui5-button icon="overflow" design="Transparent" @click="${this._onBtnOverflowClick}" class="ui5-nli-overflow-btn" tooltip="${(0, _LitRenderer.ifDefined)(this.overflowBtnAccessibleName)}" aria-label="${(0, _LitRenderer.ifDefined)(this.overflowBtnAccessibleName)}"></ui5-button>`;
+  }
+  function block2(context, tags, suffix) {
+    return (0, _LitRenderer.html)`${(0, _LitRenderer.repeat)(this.standardActions, (item, index) => item._id || index, (item, index) => block3.call(this, context, tags, suffix, item, index))}`;
+  }
+  function block3(context, tags, suffix, item, index) {
+    return suffix ? (0, _LitRenderer.html)`<${(0, _LitRenderer.scopeTag)("ui5-button", tags, suffix)} icon="${(0, _LitRenderer.ifDefined)(item.icon)}" class="ui5-nli-action" @click="${item.press}" ?disabled="${item.disabled}" design="${(0, _LitRenderer.ifDefined)(item.design)}" data-ui5-external-action-item-id="${(0, _LitRenderer.ifDefined)(item.refItemid)}">${(0, _LitRenderer.ifDefined)(item.text)}</${(0, _LitRenderer.scopeTag)("ui5-button", tags, suffix)}>` : (0, _LitRenderer.html)`<ui5-button icon="${(0, _LitRenderer.ifDefined)(item.icon)}" class="ui5-nli-action" @click="${item.press}" ?disabled="${item.disabled}" design="${(0, _LitRenderer.ifDefined)(item.design)}" data-ui5-external-action-item-id="${(0, _LitRenderer.ifDefined)(item.refItemid)}">${(0, _LitRenderer.ifDefined)(item.text)}</ui5-button>`;
+  }
+  function block4(context, tags, suffix) {
+    return suffix ? (0, _LitRenderer.html)`<${(0, _LitRenderer.scopeTag)("ui5-button", tags, suffix)} icon="decline" design="Transparent" @click="${this._onBtnCloseClick}" tooltip="${(0, _LitRenderer.ifDefined)(this.closeBtnAccessibleName)}" aria-label="${(0, _LitRenderer.ifDefined)(this.closeBtnAccessibleName)}" close-btn></${(0, _LitRenderer.scopeTag)("ui5-button", tags, suffix)}>` : (0, _LitRenderer.html)`<ui5-button icon="decline" design="Transparent" @click="${this._onBtnCloseClick}" tooltip="${(0, _LitRenderer.ifDefined)(this.closeBtnAccessibleName)}" aria-label="${(0, _LitRenderer.ifDefined)(this.closeBtnAccessibleName)}" close-btn></ui5-button>`;
+  }
+  function block5(context, tags, suffix) {
+    return suffix ? (0, _LitRenderer.html)`<${(0, _LitRenderer.scopeTag)("ui5-icon", tags, suffix)} class="ui5-prio-icon ui5-prio-icon--${(0, _LitRenderer.ifDefined)(this.priorityIcon)}" name="${(0, _LitRenderer.ifDefined)(this.priorityIcon)}"></${(0, _LitRenderer.scopeTag)("ui5-icon", tags, suffix)}>` : (0, _LitRenderer.html)`<ui5-icon class="ui5-prio-icon ui5-prio-icon--${(0, _LitRenderer.ifDefined)(this.priorityIcon)}" name="${(0, _LitRenderer.ifDefined)(this.priorityIcon)}"></ui5-icon>`;
+  }
+  function block6(context, tags, suffix) {
+    return (0, _LitRenderer.html)`<div id="${(0, _LitRenderer.ifDefined)(this._id)}-description" class="ui5-nli-description"><slot></slot></div>`;
+  }
+  function block7(context, tags, suffix, item, index) {
+    return (0, _LitRenderer.html)`<slot name="${(0, _LitRenderer.ifDefined)(item.slotName)}"></slot>${item.showDivider ? block8.call(this, context, tags, suffix, item, index) : undefined}`;
+  }
+  function block8(context, tags, suffix, item, index) {
+    return (0, _LitRenderer.html)`<div class="ui5-nli-footer-divider" aria-hidden="true">·</div>`;
+  }
+  function block9(context, tags, suffix) {
+    return suffix ? (0, _LitRenderer.html)`<${(0, _LitRenderer.scopeTag)("ui5-busy-indicator", tags, suffix)} delay="${(0, _LitRenderer.ifDefined)(this.busyDelay)}" active size="Medium" class="ui5-nli-busy" data-sap-focus-ref></${(0, _LitRenderer.scopeTag)("ui5-busy-indicator", tags, suffix)}>` : (0, _LitRenderer.html)`<ui5-busy-indicator delay="${(0, _LitRenderer.ifDefined)(this.busyDelay)}" active size="Medium" class="ui5-nli-busy" data-sap-focus-ref></ui5-busy-indicator>`;
+  }
+  var _default = block0;
+  _exports.default = _default;
+});

@@ -1,7 +1,7 @@
 /*!
  * ${copyright}
  */
-
+/*eslint-disable max-len */
 //Provides an abstraction for list bindings
 sap.ui.define(['sap/ui/model/ContextBinding', 'sap/ui/model/ChangeReason'],
 		function(ContextBinding, ChangeReason) {
@@ -20,6 +20,7 @@ sap.ui.define(['sap/ui/model/ContextBinding', 'sap/ui/model/ChangeReason'],
 	 * @param {object} [mParameters]
 	 * @abstract
 	 * @public
+	 * @deprecated As of version 1.66, please use {@link sap.ui.model.odata.v2.ODataContextBinding} instead.
 	 * @alias sap.ui.model.odata.ODataContextBinding
 	 * @extends sap.ui.model.ContextBinding
 	 */

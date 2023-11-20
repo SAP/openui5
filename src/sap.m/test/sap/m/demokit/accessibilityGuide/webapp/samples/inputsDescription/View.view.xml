@@ -1,0 +1,33 @@
+<mvc:View
+		xmlns:mvc="sap.ui.core.mvc"
+		xmlns="sap.m"
+		xmlns:core="sap.ui.core"
+		height="100%">
+		<App>
+			<Page
+				showHeader="false"
+				id="page"
+				backgroundDesign="Solid">
+				<content>
+					<VBox class="sapUiSmallMargin">
+							<Text text="The input below has description added via the 'description' property."/>
+							<Input
+								value="Notebook 17"
+								description="IT Laptops"
+								width="400px"
+								fieldWidth="75%"
+								class="sapUiSmallMarginBottom" />
+
+							<Text text="In addition, the ariaDescribedBy association of the control allows to enhance the calculated accessible name. The next control is connected to an invisible text node, using it."/>
+							<Input
+								value="I am invisible"
+								ariaDescribedBy="descriptionNodeId"
+								width="400px"
+								fieldWidth="75%"
+								class="sapUiSmallMarginBottom" />
+							<core:InvisibleText id="descriptionNodeId" text="Additional input description referenced by aria-describedby." />
+					</VBox>
+				</content>
+			</Page>
+		</App>
+</mvc:View>

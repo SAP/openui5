@@ -1,0 +1,29 @@
+{
+	"sap.app": {
+		"id": "sap.m.tutorial.walkthrough.20"
+	},
+	"sap.ui5": {
+		"config": {
+			"sample": {
+				"iframe": "webapp/index.html",
+				"files": [
+					"webapp/controller/InvoiceList.controller.js",
+					"webapp/Invoices.json",
+					"webapp/view/InvoiceList.view.xml",
+					"webapp/view/HelloDialog.fragment.xml",
+					"webapp/controller/HelloPanel.controller.js",
+					"webapp/view/HelloPanel.view.xml",
+					"webapp/css/style.css",
+					"webapp/Component.js",
+					"webapp/i18n/i18n.properties",
+					"webapp/controller/App.controller.js",
+					"webapp/view/App.view.xml",
+					"webapp/index.html",
+					"webapp/manifest.json",
+					"ui5.yaml",
+					"package.json"
+				]
+			}
+		}
+	}
+}

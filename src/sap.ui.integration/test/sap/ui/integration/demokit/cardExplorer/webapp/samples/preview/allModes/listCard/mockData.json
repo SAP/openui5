@@ -1,0 +1,44 @@
+{
+	"value": [
+		{
+			"ProductID": 1,
+			"ProductName": "Product 1",
+			"UnitsInStock": 39,
+			"Category": {
+				"Picture": "sap-icon://wrench"
+			}
+		},
+		{
+			"ProductID": 2,
+			"ProductName": "Product 2",
+			"UnitsInStock": 17,
+			"Category": {
+				"Picture": "sap-icon://wrench"
+			}
+		},
+		{
+			"ProductID": 3,
+			"ProductName": "Product 3",
+			"UnitsInStock": 13,
+			"Category": {
+				"Picture": "sap-icon://wrench"
+			}
+		},
+		{
+			"ProductID": 4,
+			"ProductName": "Product 4",
+			"UnitsInStock": 53,
+			"Category": {
+				"Picture": "sap-icon://camera"
+			}
+		},
+		{
+			"ProductID": 5,
+			"ProductName": "Product 5",
+			"UnitsInStock": 0,
+			"Category": {
+				"Picture": "sap-icon://camera"
+			}
+		}
+	]
+}

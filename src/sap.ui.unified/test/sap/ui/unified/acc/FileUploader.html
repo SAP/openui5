@@ -2,121 +2,23 @@
 <html>
 	<head>
 		<meta charset="utf-8">
-		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 		<title>FileUploader ACC Test - sap.ui.unified</title>
 
 		<script src="../shared-config.js"></script>
 		<script id="sap-ui-bootstrap"
-				data-sap-ui-trace="false"
+				data-sap-ui-async="true"
+				data-sap-ui-compatVersion="edge"
 				data-sap-ui-libs="sap.m, sap.ui.unified"
+				data-sap-ui-onInit="module:local/FileUploader"
+				data-sap-ui-resourceroots='{
+					"local": "./",
+					"qunit.internal.acc": "../../../../../test-resources/sap/ui/core/qunit/internal/acc"
+				}'
 				src="../../../../../resources/sap-ui-core.js"
-		>
+				>
 		</script>
-		<script>
-
-		var oFileUploader1 = new sap.ui.unified.FileUploader("FU1", {
-			name: "FU1",
-			uploadUrl: "../../../../../upload/",
-			sendXHR: true,
-			value: "",
-			width: "400px",
-			additionalData: "abc=123&test=456",
-			change: function(oEvent){
-				if(oEvent.getParameter("newValue") == "Test1.html") {
-					oEvent.oSource.setValueState(sap.ui.core.ValueState.Error);
-				}else {
-					oEvent.oSource.setValueState(sap.ui.core.ValueState.None);
-				}
-			}
-		}).placeAt("sample1");
-
-		var oLabel2 = new sap.m.Label({text: "Label", labelFor: "FU2"}).placeAt("sample2");
-		var oFileUploader2 = new sap.ui.unified.FileUploader("FU2", {
-			name: "FU2",
-			uploadUrl: "../../../../../upload/",
-			sendXHR: true,
-			value: "",
-			width: "400px",
-			additionalData: "abc=123&test=456"
-		}).placeAt("sample2");
-
-		var oFileUploader3 = new sap.ui.unified.FileUploader("FU3", {
-			name: "FU3",
-			uploadUrl: "../../../../../upload/",
-			sendXHR: true,
-			value: "",
-			width: "400px",
-			additionalData: "abc=123&test=456",
-			enabled: false
-		}).placeAt("sample3");
-
-		var oFileUploader4 = new sap.ui.unified.FileUploader("FU4", {
-			name: "FU4",
-			uploadUrl: "../../../../../upload/",
-			sendXHR: true,
-			value: "",
-			width: "400px",
-			additionalData: "abc=123&test=456",
-			tooltip: "Tooltip"
-		}).placeAt("sample4");
-
-		var oLabel5 = new sap.m.Label({text: "Label", labelFor: "FU5"}).placeAt("sample5");
-		var oFileUploader5 = new sap.ui.unified.FileUploader("FU5", {
-			name: "FU5",
-			uploadUrl: "../../../../../upload/",
-			sendXHR: true,
-			value: "",
-			width: "400px",
-			additionalData: "abc=123&test=456",
-			tooltip: "Tooltip"
-		}).placeAt("sample5");
-
-		var oFileUploader6 = new sap.ui.unified.FileUploader("FU6", {
-			name: "FU6",
-			uploadUrl: "../../../../../upload/",
-			sendXHR: true,
-			value: "",
-			width: "400px",
-			additionalData: "abc=123&test=456",
-			buttonOnly: true,
-			buttonText: "Choose"
-		}).placeAt("sample6");
-
-		var oFileUploader7 = new sap.ui.unified.FileUploader("FU7", {
-			name: "FU7",
-			uploadUrl: "../../../../../upload/",
-			sendXHR: true,
-			value: "",
-			width: "400px",
-			additionalData: "abc=123&test=456",
-			valueState: sap.ui.core.ValueState.Error
-		}).placeAt("sample7");
-
-		var oFileUploader8 = new sap.ui.unified.FileUploader("FU8", {
-			name: "FU8",
-			uploadUrl: "../../../../../upload/",
-			sendXHR: true,
-			value: "",
-			width: "400px",
-			additionalData: "abc=123&test=456",
-			placeholder: "choose file"
-		}).placeAt("sample8");
-
-		var oFileUploader9 = new sap.ui.unified.FileUploader("FU9", {
-			name: "FU9",
-			uploadUrl: "../../../../../upload/",
-			sendXHR: true,
-			value: "",
-			width: "400px",
-			additionalData: "abc=123&test=456",
-			icon: "sap-icon://save",
-			iconOnly: true
-		}).placeAt("sample9");
-
-		</script>
-
 	</head>
-	<body class="sapUiBody" role="application">
+	<body class="sapUiBody">
 
 		<h1>Test Page for <code>sap.ui.unified.FileUploader</code></h1>
 		<h2 id="H-FU1">Simple FileUploader</h2>

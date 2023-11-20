@@ -2,14 +2,12 @@
  * ${copyright}
  */
 
-/*global location */
 sap.ui.define([
-		"jquery.sap.global",
 		"sap/ui/documentation/sdk/controller/BaseController",
 		"sap/ui/model/json/JSONModel",
-		"sap/ui/documentation/sdk/controller/util/JSDocUtil",
-		"sap/ui/documentation/sdk/controller/util/APIInfo"
-	], function (jQuery, BaseController, JSONModel, JSDocUtil, APIInfo) {
+		"sap/ui/documentation/sdk/controller/util/APIInfo",
+		"sap/ui/documentation/sdk/model/formatter"
+	], function (BaseController, JSONModel, APIInfo, globalFormatter) {
 		"use strict";
 
 		return BaseController.extend("sap.ui.documentation.sdk.controller.ApiDetailIndexDeprecatedExperimental", {
@@ -18,218 +16,93 @@ sap.ui.define([
 			/* lifecycle methods										   */
 			/* =========================================================== */
 
+			formatter: globalFormatter,
+
 			onInit: function () {
-				var oModel = new JSONModel();
-				oModel.setSizeLimit(10000);
-				this.setModel(oModel, "deprecatedAPIs");
-				this.setModel(oModel, "experimentalAPIs");
-				this.setModel(oModel, "sinceAPIs");
+				var oRouter = this.getRouter();
 
-				this.getRouter().getRoute("deprecated").attachPatternMatched(this._onTopicDeprecatedMatched, this);
-				this.getRouter().getRoute("experimental").attachPatternMatched(this._onTopicExperimentalMatched, this);
-				this.getRouter().getRoute("since").attachPatternMatched(this._onTopicSinceMatched, this);
+				this._oModel = new JSONModel();
+				this._oModel .setSizeLimit(10000); /* This will become too small for the since list in time */
+				this.setModel(this._oModel);
 
-				this._currentMedia = this.getView()._getCurrentMediaContainerRange();
+				oRouter.getRoute("deprecated").attachPatternMatched(this._onTopicMatched, this);
+				oRouter.getRoute("experimental").attachPatternMatched(this._onTopicMatched, this);
+				oRouter.getRoute("since").attachPatternMatched(this._onTopicMatched, this);
 
 				this._hasMatched = false;
 			},
 
-			onBeforeRendering: function () {
-				this.getView()._detachMediaContainerWidthChange(this._resizeMessageStrip, this);
-			},
+			_onTopicMatched: function (oEvent) {
+				var sRouteName = oEvent.getParameter("name"),
+				fnDataGetterRef = {
+					experimental: APIInfo.getExperimentalPromise,
+					deprecated: APIInfo.getDeprecatedPromise,
+					since: APIInfo.getSincePromise
+				}[sRouteName];
 
-			onAfterRendering: function () {
-				this._resizeMessageStrip();
-				this.getView()._attachMediaContainerWidthChange(this._resizeMessageStrip, this);
-			},
-
-			onExit: function () {
-				this.getView()._detachMediaContainerWidthChange(this._resizeMessageStrip, this);
-			},
-
-			_onTopicDeprecatedMatched: function (oEvent) {
 				if (this._hasMatched) {
 					return;
 				}
-
 				this._hasMatched = true;
 
-				this.getView().byId("deprecatedList").attachUpdateFinished(this._modifyLinks, this);
+				// Cache allowed members for the filtering
+				this._aAllowedMembers = this.getModel("versionData").getProperty("/allowedMembers");
 
-				APIInfo.getDeprecatedPromise().then(function (oData) {
-					this.getModel("deprecatedAPIs").setData(oData);
-					jQuery.sap.delayedCall(0, this, this._prettify);
+				fnDataGetterRef().then(function (oData) {
+					oData = this._filterVisibleElements(oData);
+					this._oModel.setData(oData);
+
 				}.bind(this));
-			},
-
-			_onTopicExperimentalMatched: function (oEvent) {
-				if (this._hasMatched) {
-					return;
-				}
-
-				this._hasMatched = true;
-
-				this.getView().byId("experimentalList").attachUpdateFinished(this._modifyLinks, this);
-
-				APIInfo.getExperimentalPromise().then(function (oData) {
-					this.getModel("experimentalAPIs").setData(oData);
-					jQuery.sap.delayedCall(0, this, this._prettify);
-				}.bind(this));
-			},
-
-			_onTopicSinceMatched: function (oEvent) {
-				if (this._hasMatched) {
-					return;
-				}
-
-				this._hasMatched = true;
-
-				this.getView().byId("sinceList").attachUpdateFinished(this._modifyLinks, this);
-
-				APIInfo.getSincePromise().then(function (oData) {
-					if (!oData['noVersion'].apis.length) {
-						delete oData['noVersion'];
-					}
-					this.getModel("sinceAPIs").setData(oData);
-					jQuery.sap.delayedCall(0, this, this._prettify);
-				}.bind(this));
-			},
-
-			_prettify: function () {
-				// Google Prettify requires this class
-				jQuery('pre').addClass('prettyprint');
-
-				window.prettyPrint();
-			},
-
-			compareVersions: function (version1, version2) {
-				var sWithoutVersion = "WITHOUT VERSION";
-				if (version1 === sWithoutVersion || !version1) {
-					return -1;
-				}
-
-				if (version2 === sWithoutVersion || !version2) {
-					return 1;
-				}
-
-				var version1Arr = version1.split(".");
-				var version2Arr = version2.split(".");
-				var version1Major = parseInt(version1Arr[0], 10);
-				var version1Minor = parseInt(version1Arr[1], 10);
-				var version2Major = parseInt(version2Arr[0], 10);
-				var version2Minor = parseInt(version2Arr[1], 10);
-
-				if (version1Major > version2Major ||
-					(version1Major === version2Major && version1Minor > version2Minor)) {
-					return -1;
-				}
-
-				if (version2Major > version1Major ||
-					(version2Major === version1Major && version2Minor > version1Minor)) {
-					return 1;
-				}
-
-				return 0;
-			},
-
-			formatTitle: function (sTitle) {
-				return sTitle ? "As of " + sTitle : "Version N/A";
-			},
-
-			formatDescription: function (sText) {
-				sText = this.formatLinks(sText);
-				sText = sText.replace("<p>", '');
-				sText = sText.replace("</p>", '');
-
-				return sText;
-			},
-
-			formatSenderLink: function (sControlName, sEntityName, sEntityType) {
-				if (sEntityType === "methods") {
-					return sControlName + "#" + sEntityName;
-				}
-
-				if (sEntityType === "events") {
-					return sControlName + "#events:" + sEntityName;
-				}
-
-				if (sEntityType === "class") {
-					return sControlName;
-				}
-
-				return "";
 			},
 
 			/**
-			 * This function wraps a text in a span tag so that it can be represented in an HTML control.
-			 * @param {string} sText
-			 * @returns {string}
+			 * Filter all items to be listed depending on their visibility.
+			 * Note: This method modifies the passed oData reference object.
+			 * @param {object} oData the data object to be filtered
+			 * @return {object} filtered data object
 			 * @private
 			 */
-			formatLinks: function (sText) {
-				return JSDocUtil.formatTextBlock(sText, {
-					linkFormatter: function (target, text) {
+			_filterVisibleElements: function (oData) {
+				var oFilteredData = {},
+				    oАscendingOrderData;
 
-						var iHashIndex;
+				Object.keys(oData).forEach(function(sVersion) {
+					var oVersion = oData[sVersion];
 
-						// If the link has a protocol, do not modify, but open in a new window
-						if (target.match("://")) {
-							return '<a target="_blank" href="' + target + '">' + (text || target) + '</a>';
-						}
+					// Is API allowed to be shown based on it's visibility
+					oVersion.apis = oVersion.apis.filter(function (oElement) {
+						return this._aAllowedMembers.indexOf(oElement.visibility) > -1;
+					}.bind(this));
 
-						target = target.trim().replace(/\.prototype\./g, "#");
-						iHashIndex = target.indexOf("#");
-
-						text = text || target; // keep the full target in the fallback text
-
-						if (iHashIndex < 0) {
-							var iLastDotIndex = target.lastIndexOf("."),
-								sClassName = target.substring(0, iLastDotIndex),
-								sMethodName = target.substring(iLastDotIndex + 1),
-								targetMethod = sMethodName;
-
-							if (targetMethod) {
-								if (targetMethod.static === true) {
-									target = sClassName + '/methods/' + sClassName + '.' + sMethodName;
-								} else {
-									target = sClassName + '/methods/' + sMethodName;
-								}
-							}
-						}
-
-						if (iHashIndex === 0) {
-							// a relative reference - we can't support that
-							return "<code>" + target.slice(1) + "</code>";
-						}
-
-						if (iHashIndex > 0) {
-							target = target.slice(0, iHashIndex) + '/methods/' + target.slice(iHashIndex + 1);
-						}
-
-						return "<a class=\"jsdoclink\" href=\"#/api/" + target + "\" target=\"_self\">" + text + "</a>";
-
+					// If we have remaining API's after the filter we add them to the new filtered object.
+					if (oVersion.apis.length > 0) {
+						oFilteredData[sVersion] = oVersion;
 					}
-				});
-			},
+				}.bind(this));
 
-			_resizeMessageStrip: function (oMedia) {
-				var oView = this.getView();
+				oАscendingOrderData = Object.keys(oFilteredData).sort(function(sVersionA, sVersionB) {
+					// Split the version name by dot
+					var aPartsA = sVersionA.split('.'),
+						aPartsB = sVersionB.split('.');
 
-				oMedia = oMedia || oView._getCurrentMediaContainerRange();
+					// Compare the major version part
+					var iMajorA = parseInt(aPartsA[0]),
+						iMajorB = parseInt(aPartsB[0]);
 
-				var sName = oMedia.name,
-					oMessageStripContainer = this.byId("deprecatedAPIStripContainer")
-						|| this.byId("experimentalAPIStripContainer");
+					if (iMajorA !== iMajorB) {
+						return iMajorB - iMajorA;
+					}
 
-				if (!oMessageStripContainer) {
-					return;
-				}
+					// Compare the minor version part
+					var iMinorA = parseInt(aPartsA[1]),
+						iMinorB = parseInt(aPartsB[1]);
+					return iMinorB - iMinorA;
+				  }).reduce(function(oSortedData, sKey) {
+					oSortedData[sKey] = oFilteredData[sKey];
+					return oSortedData;
+				}, {});
 
-				if (sName === "Desktop" || sName === "LargeDesktop") {
-					oMessageStripContainer.setWidth("calc(100% - 3rem)");
-				} else if (sName === "Tablet" || sName === "Phone") {
-					oMessageStripContainer.setWidth("calc(100% - 2rem)");
-				}
+				return oАscendingOrderData;
 			},
 
 			/**
@@ -256,7 +129,7 @@ sap.ui.define([
 							sEntityId = sClassName + "." + sEntityId;
 						}
 
-						sHref = "#/api/" + sClassName;
+						sHref = "api/" + sClassName;
 						if (sEntityType !== "class") {
 							sHref += "/" + sEntityType + "/" + sEntityId;
 						}

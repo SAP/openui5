@@ -1,0 +1,37 @@
+{
+	"sap.app": {
+		"id": "itemsContent",
+		"type": "card"
+	},
+	"sap.card": {
+		"type": "List",
+		"header": {
+			"title": "Request List Content Card",
+			"subTitle": "Card subtitle",
+			"icon": {
+				"src": "sap-icon://accept"
+			}
+		},
+		"content": {
+			"data": {
+				"json": []
+			},
+			"item": {
+				"icon": {
+					"src": "{icon}"
+				},
+				"title": {
+					"value": "{Name}"
+				},
+				"description": {
+					"value": "{Description}"
+				},
+				"highlight": "{state}",
+				"info": {
+					"value": "{info}",
+					"state": "{infoState}"
+				}
+			}
+		}
+	}
+}

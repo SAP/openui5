@@ -11,24 +11,25 @@
 		class="sapUiForceWidthAuto sapUiSmallMargin">
 		<items>
 		<IconTabFilter
+			key="info"
 			text="Info">
 			<f:SimpleForm
-			minWidth="1024"
-			maxContainerCols="2"
-			layout="ResponsiveGridLayout" >
-			<f:title>
-				<core:Title text="A Form" />
-			</f:title>
-			<Label text="Label"/>
-			<Text text="Value"/>
+				layout="ResponsiveGridLayout" >
+				<f:title>
+					<core:Title text="A Form" />
+				</f:title>
+				<Label text="Label"/>
+				<Text text="Value"/>
 			</f:SimpleForm>
 		</IconTabFilter>
 		<IconTabFilter
+			key="attachments"
 			text="Attachments">
 			<List headerText="A List" showSeparators="Inner" >
 			</List>
 		</IconTabFilter>
 		<IconTabFilter
+			key="notes"
 			text="Notes">
 			<FeedInput />
 		</IconTabFilter>

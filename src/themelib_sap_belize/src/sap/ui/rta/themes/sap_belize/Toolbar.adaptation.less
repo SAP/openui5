@@ -1,0 +1,27 @@
+/******************************************************************
+	Style of the RTA Toolbar (type: adaptation) - sap_belize Theme
+*******************************************************************/
+@_sap_ui_rta_Toolbar_Adaptation_BaseColor: darken(@sapUiShellTextColor, 8); //#2F3C48
+@_sap_ui_rta_Toolbar_Adaptation_TextColor: @sapUiContentContrastTextColor; //#fff
+@_sap_ui_rta_Toolbar_Adaptation_BtnFocusBorder: @sapUiContentContrastTextColor; //#fff
+@_sap_ui_rta_Toolbar_Adaptation_BtnHoverText: @sapUiSelected; //#427cac
+@_sap_ui_rta_Toolbar_Adaptation_SegBBtnHoverTextColor: @sapUiContentContrastTextColor; //fff
+@_sap_ui_rta_Toolbar_Adaptation_SegBBtnHoverBG: @sapUiSelected; //#427cac
+@_sap_ui_rta_Toolbar_Adaptation_DraftVersionColor: lighten(@sapUiCriticalText, 15%); //#f9af41
+@_sap_ui_rta_Toolbar_Adaptation_ActiveVersionColor: @sapUiContentSearchHighlightColor; //#d4f7db
+
+.sapUiRtaMode {
+	.sapUiRtaToolbar.sapUiRtaToolbarAdaptation {
+		.sapMBtn {
+			&.sapMBtnDisabled .sapMBtnInner {
+				opacity: 1.0;
+			}
+		}
+
+		.sapMSegBBtn.sapMSegBBtnFocusable {
+			&:hover .sapMSegBBtnInner {
+				background-color: @_sap_ui_rta_Toolbar_Adaptation_SegBBtnHoverBG;
+			}
+		}
+	}
+}

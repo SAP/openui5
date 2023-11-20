@@ -6,7 +6,7 @@
 sap.ui.define(["sap/ui/core/UIComponent"], function(UIComponent) {
 	"use strict";
 
-	return sap.ui.core.UIComponent.extend("sap.ui.test.v4models.unsupportedVersion.Component", {
+	return UIComponent.extend("sap.ui.test.v4models.unsupportedVersion.Component", {
 		metadata: {
 			manifest: {
 				"_version": "1.0.0",

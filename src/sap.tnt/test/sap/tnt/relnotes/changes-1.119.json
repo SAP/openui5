@@ -1,0 +1,45 @@
+{
+  "1.119.0": {
+    "date": "September 2023",
+    "notes": [
+      {
+        "id": "50f70dfc0fb31fd5c25c5cdd6e2da7513e97be94",
+        "type": "FIX",
+        "text": " sap.tnt.SideNavigation: Overflow menu icons are now correctly displayed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370092046"
+          }
+        ]
+      },
+      {
+        "id": "3285d030c137c537bbafe8463cfdba2d2b2b0e76",
+        "type": "FIX",
+        "text": " sap.tnt.NavigationListItem: Avoid unnecessary truncation in SAP Horizon themes",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370091609"
+          }
+        ]
+      },
+      {
+        "id": "79a830f6f898563b576df5ddb33e25ae6682fb67",
+        "type": "FIX",
+        "text": " sap.tnt.ToolPage: SideNavigation shows correctly on mobile",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370091473"
+          }
+        ]
+      },
+      {
+        "id": "8c3dffe38c81e58292d3b1f42d46d7fba91d44dd",
+        "type": "FEATURE",
+        "text": " sap.tnt.SideNavigation: Collapsed mode now shows item title on hover and focus"
+      }
+    ]
+  }
+}

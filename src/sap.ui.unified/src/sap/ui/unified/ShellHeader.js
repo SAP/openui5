@@ -2,8 +2,17 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/Device', 'sap/ui/core/theming/Parameters'],
-	function(jQuery, library, Control, Device, Parameters) {
+sap.ui.define([
+	'./library',
+	"sap/base/i18n/Localization",
+	'sap/ui/core/Control',
+	'sap/ui/Device',
+	"sap/ui/core/ControlBehavior",
+	"sap/ui/core/Lib",
+	'sap/ui/core/theming/Parameters',
+	"sap/ui/thirdparty/jquery"
+],
+	function(library, Localization, Control, Device, ControlBehavior, Library, Parameters, jQuery) {
 	"use strict";
 
 
@@ -29,7 +38,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				rm.write("<div");
 				rm.writeControlData(oHeader);
 				rm.writeAttribute("class", "sapUiUfdShellHeader");
-				if (sap.ui.getCore().getConfiguration().getAccessibility()) {
+				if (ControlBehavior.isAccessibilityEnabled()) {
 					rm.writeAttribute("role", "toolbar");
 				}
 				rm.write(">");
@@ -52,7 +61,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			renderSearch: function(rm, oHeader) {
 				var oSearch = oHeader.getSearch();
 				rm.write("<div id='", oHeader.getId(), "-hdr-search'");
-				if (sap.ui.getCore().getConfiguration().getAccessibility()) {
+				if (ControlBehavior.isAccessibilityEnabled()) {
 					rm.writeAttribute("role", "search");
 				}
 				rm.writeAttribute("class", "sapUiUfdShellSearch" + (oHeader.getSearchVisible() ? "" : " sapUiUfdShellHidden"));
@@ -92,7 +101,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 					if (tooltip) {
 						rm.writeAttributeEscaped("title", tooltip);
 					}
-					if (sap.ui.getCore().getConfiguration().getAccessibility()) {
+					if (ControlBehavior.isAccessibilityEnabled()) {
 						rm.writeAccessibilityState(aItems[i], {
 							role: "button",
 							selected: null,
@@ -115,7 +124,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 					if (tooltip) {
 						rm.writeAttributeEscaped("title", tooltip);
 					}
-					if (sap.ui.getCore().getConfiguration().getAccessibility()) {
+					if (ControlBehavior.isAccessibilityEnabled()) {
 						rm.writeAccessibilityState(oUser, {
 							role: "button"
 						});
@@ -140,7 +149,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			},
 
 			_renderLogo: function(rm, oHeader) {
-				var rb = sap.ui.getCore().getLibraryResourceBundle("sap.ui.unified"),
+				var rb = Library.getResourceBundleFor("sap.ui.unified"),
 					sLogoTooltip = rb.getText("SHELL_LOGO_TOOLTIP"),
 					sIco = oHeader._getLogo();
 
@@ -150,7 +159,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				rm.writeAttributeEscaped("alt", sLogoTooltip);
 				rm.write("src='");
 				rm.writeEscaped(sIco);
-				rm.write("' style='", sIco ? "" : "display:none;","'/>");
+				rm.write("'");
+
+				if (!sIco) {
+					rm.addStyle("display", "none");
+					rm.writeStyles();
+				}
+				rm.write(">");
 				rm.write("</div>");
 			}
 		}
@@ -161,7 +176,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	ShellHeader.prototype.init = function(){
 		var that = this;
 
-		this._rtl = sap.ui.getCore().getConfiguration().getRTL();
+		this._rtl = Localization.getRTL();
 
 		this._handleMediaChange = function(mParams){
 			if (!that.getDomRef()) {

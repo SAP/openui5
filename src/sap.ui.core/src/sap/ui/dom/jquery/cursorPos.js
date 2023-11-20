@@ -1,22 +1,29 @@
 /*!
  * ${copyright}
  */
-/*
- * IMPORTANT: This is a private module, its API must not be used and is subject to change.
- * Code other than the OpenUI5 libraries must not introduce dependencies to this module.
- */
 sap.ui.define(['sap/ui/thirdparty/jquery'], function(jQuery) {
 	"use strict";
 
-	/*
+	/**
+	 * This module provides the {@link jQuery#cursorPos} API.
+	 *
+	 * @namespace
+	 * @name module:sap/ui/dom/jquery/cursorPos
+	 * @public
+	 * @since 1.58
+	 */
+
+	/**
 	 * Sets or gets the position of the cursor in an element that supports cursor positioning.
 	 *
 	 * @param {int} iPos The cursor position to set (or no parameter to retrieve the cursor position)
 	 * @return {int | jQuery} The cursor position (or the jQuery collection if the position has been set)
-	 * @private
+	 * @public
+	 * @name jQuery#cursorPos
 	 * @author SAP SE
+	 * @since 0.9.0
 	 * @function
-	 * @exports sap/ui/dom/jquery/cursorPos
+	 * @requires module:sap/ui/dom/jquery/cursorPos
 	 */
 	var fnCursorPos = function cursorPos(iPos) {
 		var len = arguments.length,

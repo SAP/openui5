@@ -1,0 +1,49 @@
+/******************************************************************
+	Style of the RTA Toolbar (type: adaptation) - sap_fiori_3 Theme
+*******************************************************************/
+@_sap_ui_rta_Toolbar_Adaptation_BaseColor: @sapUiShellBorderColor; //#354a5f
+@_sap_ui_rta_Toolbar_Adaptation_TextColor: @sapUiShellTextColor; //#fff
+@_sap_ui_rta_Toolbar_Adaptation_BtnFocusBorder: @sapUiShellTextColor; //#fff
+@_sap_ui_rta_Toolbar_Adaptation_BtnHoverText: @sapUiSelected; //#0854a0
+@_sap_ui_rta_Toolbar_Adaptation_SegBBtnHoverTextColor: darken(@sapUiButtonHoverBackground, 8%); //#c4e2fc
+@_sap_ui_rta_Toolbar_Adaptation_SegBBtnHoverBG: @sapUiShellBorderColor; //#354a5f
+@_sap_ui_rta_Toolbar_Adaptation_DraftVersionColor: lighten(@sapUiChartCritical, 14%); //#f4aa3f
+@_sap_ui_rta_Toolbar_Adaptation_ActiveVersionColor: @sapUiContentSearchHighlightColor; //#d4f7db
+
+.sapUiRtaMode {
+	.sapUiRtaToolbar.sapUiRtaToolbarAdaptation {
+		.sapMBtn {
+			&.sapMBtnDisabled .sapMBtnInner {
+				opacity: 1.0;
+			}
+		}
+
+		.sapMSegBBtn.sapMSegBBtnFocusable {
+			&.sapMSegBBtnSel {
+				&:hover .sapMSegBBtnInner::after {
+					border-bottom: 0.125rem solid @_sap_ui_rta_Toolbar_Adaptation_SegBBtnHoverTextColor;
+				}
+
+				&:hover .sapMSegBBtnInner {
+					background-color: @_sap_ui_rta_Toolbar_Adaptation_SegBBtnHoverBG;
+				}
+			}
+
+			&:hover .sapMSegBBtnInner {
+				background-color: @_sap_ui_rta_Toolbar_Adaptation_SegBBtnHoverBG;
+			}
+		}
+	}
+}
+
+.sapUiSizeCozy.sapUiRtaMode {
+	.sapUiRtaToolbar {
+		.sapMSegB {
+			.sapMSegBBtn {
+				.sapMSegBBtnInner {
+					line-height: 2rem; //32px
+				}
+			}
+		}
+	}
+}

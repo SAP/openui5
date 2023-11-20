@@ -4,10 +4,11 @@
 
 // Provides control sap.ui.commons.Accordion.
 sap.ui.define([
-    'jquery.sap.global',
+    'sap/ui/thirdparty/jquery',
     './library',
     'sap/ui/core/Control',
-    "./AccordionRenderer",
+    './AccordionRenderer',
+    'sap/ui/dom/jquery/control', // implements jQuery.fn.control'
     'sap/ui/thirdparty/jqueryui/jquery-ui-core',
     'sap/ui/thirdparty/jqueryui/jquery-ui-widget',
     'sap/ui/thirdparty/jqueryui/jquery-ui-mouse',
@@ -35,11 +36,11 @@ sap.ui.define([
 	 * @public
 	 * @deprecated Since version 1.38.
 	 * @alias sap.ui.commons.Accordion
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var Accordion = Control.extend("sap.ui.commons.Accordion", /** @lends sap.ui.commons.Accordion.prototype */ { metadata : {
 
 		library : "sap.ui.commons",
+		deprecated: true,
 		properties : {
 
 			/**
@@ -181,7 +182,6 @@ sap.ui.define([
 
 	/**
 	 * PAGE DOWN key behavior
-	 * Limitation: This key combination is used by Firefox 3.6 to navigate between the opened tabs in the browser.
 	 * Opens the next section and focuses on the header
 	 * @param {jQuery.Event} oEvent Browser event
 	 * @private
@@ -218,7 +218,6 @@ sap.ui.define([
 
 	/**
 	 * PAGE UP key behavior
-	 * Limitation: This key combination is used by Firefox 3.6 to navigate between the opened TABS in the browser.
 	 * Opens the previous section and focuses on the header
 	 * @param {jQuery.Event} oEvent Browser event
 	 * @private
@@ -328,7 +327,7 @@ sap.ui.define([
 		if (oCurrentSection.id == this.getSections()[0].getId()) {
 			oNextFocusableElement = jQuery(oCurrentSection).find("div.sapUiAcdSectionHdr");
 			if (oNextFocusableElement) {
-				oNextFocusableElement.focus();
+				oNextFocusableElement.trigger("focus");
 			}
 		}
 
@@ -343,7 +342,7 @@ sap.ui.define([
 			if (oPreviousSection) {
 				oNextFocusableElement = jQuery(oPreviousSection).find("div.sapUiAcdSectionHdr");
 				if (oNextFocusableElement) {
-					oNextFocusableElement.focus();
+					oNextFocusableElement.trigger("focus");
 				}
 			}
 		}
@@ -379,7 +378,7 @@ sap.ui.define([
 			if (oNextSection) {
 				var oNextFocusableElement = jQuery(oNextSection).find("div.sapUiAcdSectionHdr");
 				if (oNextFocusableElement) {
-					oNextFocusableElement.focus();
+					oNextFocusableElement.trigger("focus");
 				}
 			}
 		}
@@ -412,7 +411,7 @@ sap.ui.define([
 		if (oFocusableSection) {
 			var oNextFocusableElement = jQuery(oFocusableSection).find("div.sapUiAcdSectionHdr");
 			if (oNextFocusableElement) {
-				oNextFocusableElement.focus();
+				oNextFocusableElement.trigger("focus");
 			}
 		}
 
@@ -445,7 +444,7 @@ sap.ui.define([
 		if (oFocusableSection) {
 			var oNextFocusableElement = jQuery(oFocusableSection).find("div.sapUiAcdSectionHdr");
 			if (oNextFocusableElement) {
-				oNextFocusableElement.focus();
+				oNextFocusableElement.trigger("focus");
 			}
 		}
 
@@ -627,7 +626,6 @@ sap.ui.define([
 	 *         Id of the section that is being opened
 	 * @type void
 	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) design time meta model
 	 */
 	Accordion.prototype.openSection = function(sSectionId){
 
@@ -658,7 +656,6 @@ sap.ui.define([
 	 *         Id of the section that is being closed
 	 * @type void
 	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) design time meta model
 	 */
 	Accordion.prototype.closeSection = function(sSectionId){
 
@@ -757,6 +754,7 @@ sap.ui.define([
 
 		this.aSectionTitles.push(oSection.getTitle());
 
+		return this;
 	};
 
 	/**
@@ -776,7 +774,7 @@ sap.ui.define([
 	 * Redefinition of the method to add additional handling
 	 *
 	 * @param {string} sOpenedSectionsId  New value for property openedSectionsId
-	 * @return {sap.ui.commons.Accordion} 'this' to allow method chaining
+	 * @return {this} 'this' to allow method chaining
 	 * @public
 	 */
 	Accordion.prototype.setOpenedSectionsId = function(sOpenedSectionsId) {
@@ -887,7 +885,9 @@ sap.ui.define([
 
 		function adjustHeight() {
 			var oDomRef = that.getDomRef();
-			oDomRef.style.height = oDomRef.clientHeight - 7 + "px";
+			if (oDomRef) {
+				oDomRef.style.height = oDomRef.clientHeight - 7 + "px";
+			}
 		}
 
 		if (core.isThemeApplied()) {
@@ -905,4 +905,4 @@ sap.ui.define([
 
 	return Accordion;
 
-}, /* bExport= */ true);
+});

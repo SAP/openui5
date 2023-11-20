@@ -1,14 +1,14 @@
-<core:View xmlns:core="sap.ui.core"
-		   xmlns="sap.uxap"
-		   height="100%"
-		   controllerName="sap.uxap.component.ObjectPageLayoutUXDrivenFactory"
+<mvc:View xmlns:mvc="sap.ui.core.mvc"
+		  xmlns="sap.uxap"
+		  height="100%"
+		  controllerName="sap.uxap.component.ObjectPageLayoutUXDrivenFactory"
 >
 	<ObjectPageLayout id="ObjectPageLayout"
 					  subSectionLayout="{objectPageLayoutMetadata>/subSectionLayout}"
 					  showAnchorBar="{objectPageLayoutMetadata>/showAnchorBar}"
 					  height="{objectPageLayoutMetadata>/height}"
 					  enableLazyLoading="{objectPageLayoutMetadata>/enableLazyLoading}"
-					  sections="{objectPageLayoutMetadata>/sections}"
+					  sections="{path: 'objectPageLayoutMetadata>/sections', templateShareable: false}"
 					  headerContent="{path:'objectPageLayoutMetadata>/headerContent', factory:'.controlFactory'}"
 					  showAnchorBarPopover="{objectPageLayoutMetadata>/showAnchorBarPopover}"
 					  upperCaseAnchorBar="{objectPageLayoutMetadata>/upperCaseAnchorBar}"
@@ -28,7 +28,7 @@
 							   title="{objectPageLayoutMetadata>title}"
 							   importance="{objectPageLayoutMetadata>importance}"
 							   showTitle="{objectPageLayoutMetadata>showTitle}"
-							   subSections="{objectPageLayoutMetadata>subSections}"
+							   subSections="{path: 'objectPageLayoutMetadata>subSections', templateShareable: false}"
 							   visible="{objectPageLayoutMetadata>visible}">
 
 				<!-- template for objectPageSubSection -->
@@ -53,4 +53,4 @@
 		<!-- template for objectPageSection -->
 	</ObjectPageLayout>
 
-</core:View>
+</mvc:View>

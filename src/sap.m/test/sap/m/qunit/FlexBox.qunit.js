@@ -1,40 +1,37 @@
-/*global document, jQuery, sap, QUnit*/
-(function ($) {
+/*global sinon document, QUnit*/
+
+sap.ui.define([
+	"sap/m/FlexBox",
+	"sap/ui/core/Core",
+	"sap/ui/core/HTML",
+	"sap/m/Image",
+	"sap/m/FlexItemData",
+	"sap/m/Button",
+	"sap/m/VBox",
+	"sap/ui/dom/includeStylesheet",
+	"require"
+], function (
+	FlexBox,
+	Core,
+	HTML,
+	Image,
+	FlexItemData,
+	Button,
+	VBox,
+	includeStylesheet,
+	require
+) {
 	"use strict";
 
-	(function setTitle(sTitle){
-		document.title = sTitle;
-		$(function(){
-			$("#qunit-header").text(sTitle);
-		});
-	})("QUnit Page for FlexBox - sap.m");
-
-	jQuery.sap.require("sap.ui.qunit.qunit-css");
-
-	if (!jQuery.support.flexBoxLayout && !jQuery.support.newFlexBoxLayout && !jQuery.support.ie10FlexBoxLayout) {
-		QUnit.test("Dummy Test", function(assert) {
-			assert.ok(true, "At least one test needs to run to avoid test timeouts!");
-		});
-		return;
-	}
+	var pStyleLoaded = includeStylesheet({
+		url: require.toUrl("./FlexBox.qunit.css")
+	});
 
 	var DOM_RENDER_LOCATION = "qunit-fixture";
 
-	var sVendorPrefix = "";
-
-	if (jQuery.support.flexBoxPrefixed) {
-		if (sap.ui.Device.browser.webkit) {
-			sVendorPrefix = "-webkit-";
-		} else if (sap.ui.Device.browser.mozilla) {
-			sVendorPrefix = "-moz-";
-		} else if (sap.ui.Device.browser.msie) {
-			sVendorPrefix = "-ms-";
-		}
-	}
-
 	// Helper function to create the flexboxes for the tests
 	var getFlexBoxWithItems = function(oBoxConfig, vItemTemplates, vItemConfigs) {
-		var box = new sap.m.FlexBox(oBoxConfig),
+		var box = new FlexBox(oBoxConfig),
 			item = null,
 			i = 0;
 
@@ -43,7 +40,7 @@
 			var j = vItemTemplates;
 			vItemTemplates = [];
 			while (j) {
-				vItemTemplates.push(sap.ui.core.HTML);
+				vItemTemplates.push(HTML);
 				j--;
 			}
 		}
@@ -79,43 +76,47 @@
 			this.vItemTemplates = 3;
 			this.vItemConfigs = [
 				{
-				content: "<div class='items'>1</div>"
+					content: "<div class='items'>1</div>"
 				},
 				{
-				content: "<div class='items'>2</div>"
+					content: "<div class='items'>2</div>"
 				},
 				{
-				content: "<div class='items'>3</div>",
-				visible: false
+					content: "<div class='items'>3</div>",
+					visible: false
 				}
 			];
 			this.oBox = getFlexBoxWithItems(this.oBoxConfig, this.vItemTemplates, this.vItemConfigs);
 			this.oBox.placeAt(DOM_RENDER_LOCATION);
-			this.fixture = jQuery.sap.byId(DOM_RENDER_LOCATION);
-			sap.ui.getCore().applyChanges();
+			this.fixture = document.getElementById(DOM_RENDER_LOCATION);
+			Core.applyChanges();
 		},
 		afterEach: function() {
 			this.oBox.destroy();
 			this.oBox = null;
+			Core.applyChanges();
 		}
 	});
 
 	QUnit.test("FlexBox visible:false", function(assert) {
-		assert.ok(!jQuery(".sapMFlexBox", this.fixture).length, "Flex Box should not be rendered initially");
+		assert.strictEqual(this.fixture.querySelector(".sapMFlexBox"), null, "Flex Box should not be rendered initially");
 	});
 
 	QUnit.test("FlexBox visible:true - Item 3 visible:false", function(assert) {
 		this.oBox.setVisible(true);
-		sap.ui.getCore().applyChanges();
-		assert.ok(jQuery(".sapMFlexBox", this.fixture).length, "Flex Box should now be rendered");
-		assert.equal(jQuery(".sapMFlexBox > .sapMFlexItem:not(.sapUiHiddenPlaceholder)", this.fixture).length, 2, "Only two items should be rendered");
+		Core.applyChanges();
+
+
+		assert.ok(this.fixture.querySelector(".sapMFlexBox"), "Flex Box should now be rendered");
+		assert.strictEqual(this.fixture.querySelectorAll(".sapMFlexBox > .sapMFlexItem:not(.sapUiHiddenPlaceholder)").length, 2, "Only two items should be rendered");
 	});
 
 	QUnit.test("Item 3 visible:true", function(assert) {
 		this.oBox.setVisible(true);
 		this.oBox.getItems()[2].setVisible(true);
-		sap.ui.getCore().applyChanges();
-		assert.equal(jQuery(".sapMFlexBox > .sapMFlexItem:not(.sapUiHiddenPlaceholder)", this.fixture).length, 3, "Three items should now be rendered");
+		Core.applyChanges();
+
+		assert.strictEqual(this.fixture.querySelectorAll(".sapMFlexBox > .sapMFlexItem:not(.sapUiHiddenPlaceholder)").length, 3, "Three items should now be rendered");
 	});
 
 	QUnit.module("Render Type", {
@@ -124,15 +125,15 @@
 				renderType: "List"
 			};
 			this.vItemTemplates = [
-				sap.m.Image,
-				sap.ui.core.HTML,
-				sap.ui.core.HTML
+				Image,
+				HTML,
+				HTML
 			];
 			this.vItemConfigs = [
 				{},
 				{
 					content: "<div class='items'>2</div>",
-					layoutData: new sap.m.FlexItemData({
+					layoutData: new FlexItemData({
 						growFactor: 2,
 						baseSize: "58%"
 					})
@@ -143,36 +144,40 @@
 			];
 			this.oBox = getFlexBoxWithItems(this.oBoxConfig, this.vItemTemplates, this.vItemConfigs);
 			this.oBox.placeAt(DOM_RENDER_LOCATION);
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 		},
 		afterEach: function() {
 			this.oBox.destroy();
 			this.oBox = null;
+			Core.applyChanges();
 		}
 	});
 
 	QUnit.test("List", function(assert) {
-		assert.equal(this.oBox.$().get(0).tagName, "UL", "Flex Box should be rendered as UL");
-		assert.equal(this.oBox.$().find(".sapMFlexItem:first-child").get(0).tagName, "LI", "First item of Flex Box should be rendered as LI");
-		assert.equal(this.oBox.$().find(".sapMFlexItem:nth-child(2)").get(0).tagName, "LI", "Second item of Flex Box should be rendered as LI");
+		var oDomRef = this.oBox.getDomRef();
+
+		assert.equal(oDomRef.tagName, "UL", "Flex Box should be rendered as UL");
+		assert.equal(oDomRef.querySelector(".sapMFlexItem:first-child").tagName, "LI", "First item of Flex Box should be rendered as LI");
+		assert.equal(oDomRef.querySelector(".sapMFlexItem:nth-child(2)").tagName, "LI", "Second item of Flex Box should be rendered as LI");
 	});
 
 	QUnit.test("Div", function(assert) {
 		this.oBox.setRenderType("Div");
-		sap.ui.getCore().applyChanges();
-		assert.equal(this.oBox.$().get(0).tagName, "DIV", "Flex Box should now be rendered as DIV");
-		assert.equal(this.oBox.$().find(".sapMFlexItem:first-child").get(0).tagName, "DIV", "First item of Flex Box should be rendered as DIV");
-		assert.equal(this.oBox.$().find(".sapMFlexItem:nth-child(2)").get(0).tagName, "DIV", "Second item of Flex Box should be rendered as DIV");
+		Core.applyChanges();
+
+		var oDomRef = this.oBox.getDomRef();
+		assert.equal(oDomRef.tagName, "DIV", "Flex Box should now be rendered as DIV");
+		assert.equal(oDomRef.querySelector(".sapMFlexItem:first-child").tagName, "DIV", "First item of Flex Box should be rendered as DIV");
+		assert.equal(oDomRef.querySelector(".sapMFlexItem:nth-child(2)").tagName, "DIV", "Second item of Flex Box should be rendered as DIV");
 	});
 
 	QUnit.test("Bare", function(assert) {
 		this.oBox.setRenderType("Bare");
-		sap.ui.getCore().applyChanges();
-		assert.equal(this.oBox.getItems()[0].$().get(0).tagName, "IMG", "First item of Flex Box should now be rendered as IMG");
-		if (!sap.ui.Device.browser.phantomJS && !sap.ui.Device.browser.internet_explorer) {
-			assert.equal(this.oBox.getItems()[1].getDomRef().style.flexGrow, "2", "Inline style for grow factor is set on second item");
-			assert.equal(this.oBox.getItems()[1].getDomRef().style.flexBasis, "58%", "Inline style for base size is set on second item");
-		}
+		Core.applyChanges();
+
+		assert.equal(this.oBox.getItems()[0].getDomRef().tagName, "IMG", "First item of Flex Box should now be rendered as IMG");
+		assert.equal(this.oBox.getItems()[1].getDomRef().style.flexGrow, "2", "Inline style for grow factor is set on second item");
+		assert.equal(this.oBox.getItems()[1].getDomRef().style.flexBasis, "58%", "Inline style for base size is set on second item");
 	});
 
 	QUnit.module("Inline vs. block display", {
@@ -184,34 +189,28 @@
 			this.vItemConfigs = 3;
 			this.oBox = getFlexBoxWithItems(this.oBoxConfig, this.vItemTemplates, this.vItemConfigs);
 			this.oBox.placeAt(DOM_RENDER_LOCATION);
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 		},
 		afterEach: function() {
 			this.oBox.destroy();
 			this.oBox = null;
+			Core.applyChanges();
 		}
 	});
 
 	QUnit.test("Inline", function(assert) {
 		this.oBox.setDisplayInline(true);
-		if (jQuery.support.newFlexBoxLayout) {
-			assert.equal(this.oBox.$().css('display'), sVendorPrefix + "inline-flex", "Flex Box display property should be set to inline");
-		} else if (jQuery.support.ie10FlexBoxLayout) {
-			assert.equal(this.oBox.$().css('display'), sVendorPrefix + "inline-flexbox", "Flex Box display property should be set to inline");
-		} else {
-			assert.equal(this.oBox.$().css('display'), sVendorPrefix + "inline-box", "Flex Box display property should be set to inline");
-		}
+
+		var sDisplay = window.getComputedStyle(this.oBox.getDomRef()).getPropertyValue("display");
+		assert.equal(sDisplay, "inline-flex", "Flex Box display property should be set to inline-flex");
 	});
 
 	QUnit.test("Block", function(assert) {
 		this.oBox.setDisplayInline(false);
-		if (jQuery.support.newFlexBoxLayout) {
-			assert.equal(this.oBox.$().css('display'), sVendorPrefix + "flex", "Flex Box display property should be set to block");
-		} else if (jQuery.support.ie10FlexBoxLayout) {
-			assert.equal(this.oBox.$().css('display'), sVendorPrefix + "flexbox", "Flex Box display property should be set to block");
-		} else {
-			assert.equal(this.oBox.$().css('display'), sVendorPrefix + "box", "Flex Box display property should be set to block");
-		}
+		Core.applyChanges();
+
+		var sDisplay = window.getComputedStyle(this.oBox.getDomRef()).getPropertyValue("display");
+		assert.equal(sDisplay, "flex", "Flex Box display property should be set to flex");
 	});
 
 	QUnit.module("Fit Container", {
@@ -223,19 +222,25 @@
 			this.vItemConfigs = 3;
 			this.oBox = getFlexBoxWithItems(this.oBoxConfig, this.vItemTemplates, this.vItemConfigs);
 			this.oBox.placeAt(DOM_RENDER_LOCATION);
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 		},
 		afterEach: function() {
 			this.oBox.destroy();
 			this.oBox = null;
+			Core.applyChanges();
 		}
 	});
 
 	QUnit.test("Height 100%", function(assert) {
-		jQuery.sap.byId(DOM_RENDER_LOCATION).css("height", "123px");
+		var oFixtureDomRef = document.getElementById(DOM_RENDER_LOCATION);
+
+		oFixtureDomRef.style.height = "123px";
 		this.oBox.setFitContainer(true);
-		assert.equal(this.oBox.$().css('height'), "123px", "Flex Box height property should be set to 100%");
-		jQuery.sap.byId(DOM_RENDER_LOCATION).css("height", "");
+		Core.applyChanges();
+
+		assert.equal(window.getComputedStyle(this.oBox.getDomRef()).getPropertyValue("height"), "123px", "Flex Box height property should be set to 100%");
+
+		oFixtureDomRef.style.height = "";
 	});
 
 	QUnit.module("Width and height", {
@@ -247,20 +252,23 @@
 			this.vItemConfigs = 3;
 			this.oBox = getFlexBoxWithItems(this.oBoxConfig, this.vItemTemplates, this.vItemConfigs);
 			this.oBox.placeAt(DOM_RENDER_LOCATION);
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 		},
 		afterEach: function() {
 			this.oBox.destroy();
 			this.oBox = null;
+			Core.applyChanges();
 		}
 	});
 
 	QUnit.test("Set explicit dimensions", function(assert) {
 		this.oBox.setWidth("388px");
 		this.oBox.setHeight("398px");
-		sap.ui.getCore().applyChanges();
-		assert.equal(this.oBox.$().css('width'), "388px", "Flex Box width property should be set correctly");
-		assert.equal(this.oBox.$().css('height'), "398px", "Flex Box height property should be set correctly");
+		Core.applyChanges();
+
+		var mStyles = window.getComputedStyle(this.oBox.getDomRef());
+		assert.equal(mStyles.getPropertyValue("width"), "388px", "Flex Box width property should be set correctly");
+		assert.equal(mStyles.getPropertyValue("height"), "398px", "Flex Box height property should be set correctly");
 	});
 
 	QUnit.module("Background Design", {
@@ -271,69 +279,85 @@
 			this.vItemTemplates = 3;
 			this.vItemConfigs = [
 				{
-				content: "<div class='items'>1</div>"
+					content: "<div class='items'>1</div>"
 				},
 				{
-				content: "<div class='items'>2</div>"
+					content: "<div class='items'>2</div>"
 				},
 				{
-				content: "<div class='items'>3</div>",
-				layoutData: new sap.m.FlexItemData({})
+					content: "<div class='items'>3</div>",
+					layoutData: new FlexItemData({})
 				}
 			];
 			this.oBox = getFlexBoxWithItems(this.oBoxConfig, this.vItemTemplates, this.vItemConfigs);
 			this.oBox.placeAt(DOM_RENDER_LOCATION);
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 		},
 		afterEach: function() {
 			this.oBox.destroy();
 			this.oBox = null;
+			Core.applyChanges();
 		}
 	});
 
 	QUnit.test("FlexBox Solid", function(assert) {
 		this.oBox.setBackgroundDesign("Solid");
-		assert.ok(this.oBox.$().hasClass("sapMFlexBoxBGSolid"), "HTML class for Solid is set");
-		assert.ok(!this.oBox.$().hasClass("sapMFlexBoxBGTransparent"), "HTML class for Transparent is not set");
-		assert.ok(!this.oBox.$().hasClass("sapMFlexBoxBGTranslucent"), "HTML class for Translucent is not set");
+		Core.applyChanges();
+
+		var aClasses = this.oBox.getDomRef().classList;
+		assert.strictEqual(aClasses.contains("sapMFlexBoxBGSolid"), true, "HTML class for Solid is set");
+		assert.strictEqual(aClasses.contains("sapMFlexBoxBGTransparent"), false, "HTML class for Transparent is not set");
+		assert.strictEqual(aClasses.contains("sapMFlexBoxBGTranslucent"), false, "HTML class for Translucent is not set");
 	});
 
 	QUnit.test("FlexBox Transparent", function(assert) {
 		this.oBox.setBackgroundDesign("Transparent");
-		assert.ok(this.oBox.$().hasClass("sapMFlexBoxBGTransparent"), "HTML class for Transparent is set");
-		assert.ok(!this.oBox.$().hasClass("sapMFlexBoxBGSolid"), "HTML class for Solid is not set");
-		assert.ok(!this.oBox.$().hasClass("sapMFlexBoxBGTranslucent"), "HTML class for Translucent is not set");
+		Core.applyChanges();
+
+		var aClasses = this.oBox.getDomRef().classList;
+		assert.strictEqual(aClasses.contains("sapMFlexBoxBGTransparent"), true, "HTML class for Transparent is set");
+		assert.strictEqual(aClasses.contains("sapMFlexBoxBGSolid"), false, "HTML class for Solid is not set");
+		assert.strictEqual(aClasses.contains("sapMFlexBoxBGTranslucent"), false, "HTML class for Translucent is not set");
 	});
 
 	QUnit.test("FlexBox Translucent", function(assert) {
 		this.oBox.setBackgroundDesign("Translucent");
-		assert.ok(this.oBox.$().hasClass("sapMFlexBoxBGTranslucent"), "HTML class for Translucent is set");
-		assert.ok(!this.oBox.$().hasClass("sapMFlexBoxBGTransparent"), "HTML class for Transparent is not set");
-		assert.ok(!this.oBox.$().hasClass("sapMFlexBoxBGSolid"), "HTML class for Solid is not set");
+		Core.applyChanges();
+
+		var aClasses = this.oBox.getDomRef().classList;
+		assert.strictEqual(aClasses.contains("sapMFlexBoxBGTranslucent"), true, "HTML class for Translucent is set");
+		assert.strictEqual(aClasses.contains("sapMFlexBoxBGTransparent"), false, "HTML class for Transparent is not set");
+		assert.strictEqual(aClasses.contains("sapMFlexBoxBGSolid"), false, "HTML class for Solid is not set");
 	});
 
 	QUnit.test("Flex item Solid", function(assert) {
 		var oItem3LayoutData = this.oBox.getItems()[2].getLayoutData();
 		oItem3LayoutData.setBackgroundDesign("Solid");
-		assert.ok(oItem3LayoutData.$().hasClass("sapMFlexBoxBGSolid"), "HTML class for Solid is set");
-		assert.ok(!oItem3LayoutData.$().hasClass("sapMFlexBoxBGTransparent"), "HTML class for Transparent is not set");
-		assert.ok(!oItem3LayoutData.$().hasClass("sapMFlexBoxBGTranslucent"), "HTML class for Translucent is not set");
+
+		var aClasses = oItem3LayoutData.getDomRef().classList;
+		assert.strictEqual(aClasses.contains("sapMFlexBoxBGSolid"), true, "HTML class for Solid is set");
+		assert.strictEqual(aClasses.contains("sapMFlexBoxBGTransparent"), false, "HTML class for Transparent is not set");
+		assert.strictEqual(aClasses.contains("sapMFlexBoxBGTranslucent"), false, "HTML class for Translucent is not set");
 	});
 
 	QUnit.test("Flex item Transparent", function(assert) {
 		var oItem3LayoutData = this.oBox.getItems()[2].getLayoutData();
 		oItem3LayoutData.setBackgroundDesign("Transparent");
-		assert.ok(oItem3LayoutData.$().hasClass("sapMFlexBoxBGTransparent"), "HTML class for Transparent is set");
-		assert.ok(!oItem3LayoutData.$().hasClass("sapMFlexBoxBGSolid"), "HTML class for Solid is not set");
-		assert.ok(!oItem3LayoutData.$().hasClass("sapMFlexBoxBGTranslucent"), "HTML class for Translucent is not set");
+
+		var aClasses = oItem3LayoutData.getDomRef().classList;
+		assert.strictEqual(aClasses.contains("sapMFlexBoxBGTransparent"), true, "HTML class for Transparent is set");
+		assert.strictEqual(aClasses.contains("sapMFlexBoxBGSolid"), false, "HTML class for Solid is not set");
+		assert.strictEqual(aClasses.contains("sapMFlexBoxBGTranslucent"), false, "HTML class for Translucent is not set");
 	});
 
 	QUnit.test("Flex item Translucent", function(assert) {
 		var oItem3LayoutData = this.oBox.getItems()[2].getLayoutData();
 		oItem3LayoutData.setBackgroundDesign("Translucent");
-		assert.ok(oItem3LayoutData.$().hasClass("sapMFlexBoxBGTranslucent"), "HTML class for Translucent is set");
-		assert.ok(!oItem3LayoutData.$().hasClass("sapMFlexBoxBGTransparent"), "HTML class for Transparent is not set");
-		assert.ok(!oItem3LayoutData.$().hasClass("sapMFlexBoxBGSolid"), "HTML class for Solid is not set");
+
+		var aClasses = oItem3LayoutData.getDomRef().classList;
+		assert.strictEqual(aClasses.contains("sapMFlexBoxBGTranslucent"), true, "HTML class for Translucent is set");
+		assert.strictEqual(aClasses.contains("sapMFlexBoxBGTransparent"), false, "HTML class for Transparent is not set");
+		assert.strictEqual(aClasses.contains("sapMFlexBoxBGSolid"), false, "HTML class for Solid is not set");
 	});
 
 	QUnit.module("Direction", {
@@ -343,7 +367,7 @@
 			this.vItemConfigs = 3;
 			this.oBox = getFlexBoxWithItems(this.oBoxConfig, this.vItemTemplates, this.vItemConfigs);
 			this.oBox.placeAt(DOM_RENDER_LOCATION);
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 			this.oItem1DomRef = this.oBox.getItems()[0].getDomRef();
 			this.oItem2DomRef = this.oBox.getItems()[1].getDomRef();
 			this.oItem3DomRef = this.oBox.getItems()[2].getDomRef();
@@ -351,23 +375,27 @@
 		afterEach: function() {
 			this.oBox.destroy();
 			this.oBox = null;
+			Core.applyChanges();
 		}
 	});
 
 	QUnit.test("Row Reverse", function(assert) {
 		this.oBox.setDirection("RowReverse");
+		Core.applyChanges();
 		assert.ok((this.oItem2DomRef.getBoundingClientRect().left - this.oItem1DomRef.getBoundingClientRect().left) < 0, "Item 1 should be placed to the right of Item 2");
 		assert.ok((this.oItem3DomRef.getBoundingClientRect().left - this.oItem2DomRef.getBoundingClientRect().left) < 0, "Item 2 should be placed to the right of Item 3");
 	});
 
 	QUnit.test("Column", function(assert) {
 		this.oBox.setDirection("Column");
+		Core.applyChanges();
 		assert.ok((this.oItem2DomRef.getBoundingClientRect().top - this.oItem1DomRef.getBoundingClientRect().top) > 0, "Item 1 should be placed above Item 2");
 		assert.ok((this.oItem3DomRef.getBoundingClientRect().top - this.oItem2DomRef.getBoundingClientRect().top) > 0, "Item 2 should be placed above Item 3");
 	});
 
 	QUnit.test("Column Reverse", function(assert) {
 		this.oBox.setDirection("ColumnReverse");
+		Core.applyChanges();
 		assert.ok((this.oItem2DomRef.getBoundingClientRect().top - this.oItem1DomRef.getBoundingClientRect().top) < 0, "Item 1 should be placed below Item 2");
 		assert.ok((this.oItem3DomRef.getBoundingClientRect().top - this.oItem2DomRef.getBoundingClientRect().top) < 0, "Item 2 should be placed below Item 3");
 	});
@@ -384,16 +412,16 @@
 			this.vItemTemplates = 3;
 			this.vItemConfigs = [
 				{
-				content: "<div class='items'>1</div>",
-				layoutData: new sap.m.FlexItemData({order: 1})
+					content: "<div class='items'>1</div>",
+					layoutData: new FlexItemData({order: 1})
 				},
 				{
-				content: "<div class='items'>2</div>",
-				layoutData: new sap.m.FlexItemData({order: 2})
+					content: "<div class='items'>2</div>",
+					layoutData: new FlexItemData({order: 2})
 				},
 				{
-				content: "<div class='items'>3</div>",
-				layoutData: new sap.m.FlexItemData({order: 3})
+					content: "<div class='items'>3</div>",
+					layoutData: new FlexItemData({order: 3})
 				}
 			];
 			this.oBox = getFlexBoxWithItems(this.oBoxConfig, this.vItemTemplates, this.vItemConfigs);
@@ -401,7 +429,7 @@
 			this.oItem1LayoutData = this.oBox.getItems()[0].getLayoutData();
 			this.oItem2LayoutData = this.oBox.getItems()[1].getLayoutData();
 			this.oItem3LayoutData = this.oBox.getItems()[2].getLayoutData();
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 			this.oItem1DomRef = this.oBox.getItems()[0].getDomRef();
 			this.oItem2DomRef = this.oBox.getItems()[1].getDomRef();
 			this.oItem3DomRef = this.oBox.getItems()[2].getDomRef();
@@ -409,6 +437,7 @@
 		afterEach: function() {
 			this.oBox.destroy();
 			this.oBox = null;
+			Core.applyChanges();
 		}
 	});
 
@@ -416,6 +445,8 @@
 		this.oItem1LayoutData.setOrder(3);
 		this.oItem2LayoutData.setOrder(1);
 		this.oItem3LayoutData.setOrder(2);
+		Core.applyChanges();
+
 		assert.ok((this.oItem2DomRef.getBoundingClientRect().left - this.oItem3DomRef.getBoundingClientRect().left) < 0, "Item 3 should be placed to the right of Item 2");
 		assert.ok((this.oItem3DomRef.getBoundingClientRect().left - this.oItem1DomRef.getBoundingClientRect().left) < 0, "Item 1 should be placed to the right of Item 3");
 	});
@@ -429,20 +460,20 @@
 			this.vItemTemplates = 3;
 			this.vItemConfigs = [
 				{
-				content: "<div class='items'>1</div>",
-				layoutData: new sap.m.FlexItemData({})
+					content: "<div class='items'>1</div>",
+					layoutData: new FlexItemData({})
 				},
 				{
-				content: "<div class='items'>2</div>"
+					content: "<div class='items'>2</div>"
 				},
 				{
-				content: "<div class='items'>3</div>"
+					content: "<div class='items'>3</div>"
 				}
 			];
 			this.oBox = getFlexBoxWithItems(this.oBoxConfig, this.vItemTemplates, this.vItemConfigs);
 			this.oBox.placeAt(DOM_RENDER_LOCATION);
 			this.oItem1LayoutData = this.oBox.getItems()[0].getLayoutData();
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 			this.oBoxDomRef = this.oBox.getDomRef();
 			this.oItem1DomRef = this.oBox.getItems()[0].getDomRef().parentNode;
 			this.oItem2DomRef = this.oBox.getItems()[1].getDomRef().parentNode;
@@ -451,12 +482,14 @@
 		afterEach: function() {
 			this.oBox.destroy();
 			this.oBox = null;
+			Core.applyChanges();
 		}
 	});
 
 	QUnit.test("Justify Content/Align Items: Center/Center", function(assert) {
 		this.oBox.setJustifyContent("Center");
 		this.oBox.setAlignItems("Center");
+		Core.applyChanges();
 		assert.ok(Math.abs(this.oItem1DomRef.getBoundingClientRect().left - this.oBoxDomRef.getBoundingClientRect().left - 130) <= 1, "Item 1 should be placed at the horizontal center");
 		assert.ok(Math.round(this.oItem1DomRef.getBoundingClientRect().top - this.oBoxDomRef.getBoundingClientRect().top - 173) <= 1, "Item 1 should be placed at the vertical center");
 	});
@@ -464,26 +497,27 @@
 	QUnit.test("Justify Content/Align Items: End/End", function(assert) {
 		this.oBox.setJustifyContent("End");
 		this.oBox.setAlignItems("End");
-		assert.ok(Math.abs(this.oItem1DomRef.getBoundingClientRect().left - this.oBoxDomRef.getBoundingClientRect().left - 259) <= 1, "Item 1 should be placed at the horizontal end");
+		Core.applyChanges();
+		assert.ok(Math.abs(this.oItem1DomRef.getBoundingClientRect().left - this.oBoxDomRef.getBoundingClientRect().left - 259) <= 5, "Item 1 should be placed at the horizontal end");
 		assert.ok(Math.abs(this.oItem1DomRef.getBoundingClientRect().top - this.oBoxDomRef.getBoundingClientRect().top - 346) <= 2, "Item 1 should be placed at the vertical end");
 	});
 
 	QUnit.test("Justify Content/Align Items: Space Between/Baseline", function(assert) {
-		this.oItem1DomRef.style.fontSize = "40px";
 		this.oBox.setJustifyContent("SpaceBetween");
 		this.oBox.setAlignItems("Baseline");
+		Core.applyChanges();
+		this.oItem1DomRef.style.fontSize = "40px";
 		assert.ok((this.oItem1DomRef.getBoundingClientRect().left - this.oBoxDomRef.getBoundingClientRect().left) === 0, "Item 1 should be placed at the horizontal start");
 		assert.ok(Math.abs(this.oItem2DomRef.getBoundingClientRect().left - this.oBoxDomRef.getBoundingClientRect().left - 179) <= 1, "Item 2 should be placed at the horizontal center");
 		assert.ok(Math.abs(this.oItem3DomRef.getBoundingClientRect().left - this.oBoxDomRef.getBoundingClientRect().left - 345) <= 1, "Item 3 should be placed at the horizontal end");
-		if (jQuery.support.newFlexBoxLayout || jQuery.support.ie10FlexBoxLayout) {	// Baseline is not supported for align-items by older browsers
-			assert.ok(Math.abs(this.oItem2DomRef.getBoundingClientRect().top - this.oBoxDomRef.getBoundingClientRect().top - 22) <= 1, "Item 2 should be pushed down to align with Item 1 baseline");
-		}
+		assert.ok(Math.abs(this.oItem2DomRef.getBoundingClientRect().top - this.oBoxDomRef.getBoundingClientRect().top - 22) <= 1, "Item 2 should be pushed down to align with Item 1 baseline");
 		this.oItem1DomRef.style.fontSize = "";
 	});
 
 	QUnit.test("Justify Content/Align Items: Space Around/Stretch", function(assert) {
 		this.oBox.setJustifyContent("SpaceAround");
 		this.oBox.setAlignItems("Stretch");
+		Core.applyChanges();
 		assert.ok(Math.abs(this.oItem1DomRef.getBoundingClientRect().left - this.oBoxDomRef.getBoundingClientRect().left - 43) <= 1, "Item 1 should be placed at the horizontal start");
 		assert.ok(Math.abs(this.oItem2DomRef.getBoundingClientRect().left - this.oBoxDomRef.getBoundingClientRect().left - 173) <= 1, "Item 2 should be placed at the horizontal center");
 		assert.ok(Math.abs(this.oItem3DomRef.getBoundingClientRect().left - this.oBoxDomRef.getBoundingClientRect().left - 302) <= 1, "Item 3 should be placed at the horizontal end");
@@ -494,57 +528,57 @@
 	QUnit.test("Justify Content/Align Items: Start/Start", function(assert) {
 		this.oBox.setJustifyContent("Start");
 		this.oBox.setAlignItems("Start");
+		Core.applyChanges();
 		assert.ok((this.oItem1DomRef.getBoundingClientRect().left - this.oBoxDomRef.getBoundingClientRect().left) === 0, "Item 1 should be placed at the horizontal start");
 		assert.ok((this.oItem1DomRef.getBoundingClientRect().top - this.oBoxDomRef.getBoundingClientRect().top) === 0, "Item 1 should be placed at the vertical start");
 	});
 
-	if (jQuery.support.newFlexBoxLayout || jQuery.support.ie10FlexBoxLayout) {	// align-self is not supported by older browsers
-		QUnit.test("Align Self: Start", function(assert) {
-			this.oBox.setAlignItems("Stretch");
-			this.oItem1LayoutData.setAlignSelf("Start");
-			assert.ok((this.oItem1DomRef.getBoundingClientRect().top - this.oBoxDomRef.getBoundingClientRect().top) === 0, "Item 1 should be placed at the vertical start");
-			assert.ok(Math.abs(this.oBoxDomRef.getBoundingClientRect().bottom - this.oItem1DomRef.getBoundingClientRect().bottom - 346) <= 2, "Item 1 should not be stretched");
-		});
+	QUnit.test("Align Self: Start", function(assert) {
+		this.oBox.setAlignItems("Stretch");
+		this.oItem1LayoutData.setAlignSelf("Start");
+		Core.applyChanges();
+		assert.ok((this.oItem1DomRef.getBoundingClientRect().top - this.oBoxDomRef.getBoundingClientRect().top) === 0, "Item 1 should be placed at the vertical start");
+		assert.ok(Math.abs(this.oBoxDomRef.getBoundingClientRect().bottom - this.oItem1DomRef.getBoundingClientRect().bottom - 346) <= 2, "Item 1 should not be stretched");
+	});
 
-		QUnit.test("Align Self: Center", function(assert) {
-			this.oItem1LayoutData.setAlignSelf("Center");
-			assert.ok(Math.abs(this.oItem1DomRef.getBoundingClientRect().top - this.oBoxDomRef.getBoundingClientRect().top - 173) <= 1, "Item 1 should be placed at the vertical center");
-		});
+	QUnit.test("Align Self: Center", function(assert) {
+		this.oItem1LayoutData.setAlignSelf("Center");
+		assert.ok(Math.abs(this.oItem1DomRef.getBoundingClientRect().top - this.oBoxDomRef.getBoundingClientRect().top - 173) <= 1, "Item 1 should be placed at the vertical center");
+	});
 
-		QUnit.test("Align Self: End", function(assert) {
-			this.oItem1LayoutData.setAlignSelf("End");
-			assert.ok(Math.abs(this.oItem1DomRef.getBoundingClientRect().top - this.oBoxDomRef.getBoundingClientRect().top - 346) <= 2, "Item 1 should be placed at the vertical end");
-		});
+	QUnit.test("Align Self: End", function(assert) {
+		this.oItem1LayoutData.setAlignSelf("End");
+		assert.ok(Math.abs(this.oItem1DomRef.getBoundingClientRect().top - this.oBoxDomRef.getBoundingClientRect().top - 346) <= 2, "Item 1 should be placed at the vertical end");
+	});
 
-		QUnit.test("Align Self: Baseline", function(assert) {
-			this.oItem2DomRef.style.fontSize = "40px";
-			this.oItem1LayoutData.setAlignSelf("Baseline");
-			assert.ok((this.oItem1DomRef.getBoundingClientRect().top - this.oBoxDomRef.getBoundingClientRect().top) === 0, "Item 1 should be placed at the vertical start");
-			assert.ok(Math.abs(this.oBoxDomRef.getBoundingClientRect().bottom - this.oItem1DomRef.getBoundingClientRect().bottom - 346) <= 2, "Item 1 should not be stretched");
-			this.oItem2DomRef.style.fontSize = "";
-		});
+	QUnit.test("Align Self: Baseline", function(assert) {
+		this.oItem2DomRef.style.fontSize = "40px";
+		this.oItem1LayoutData.setAlignSelf("Baseline");
+		assert.ok((this.oItem1DomRef.getBoundingClientRect().top - this.oBoxDomRef.getBoundingClientRect().top) === 0, "Item 1 should be placed at the vertical start");
+		assert.ok(Math.abs(this.oBoxDomRef.getBoundingClientRect().bottom - this.oItem1DomRef.getBoundingClientRect().bottom - 346) <= 2, "Item 1 should not be stretched");
+		this.oItem2DomRef.style.fontSize = "";
+	});
 
-		QUnit.test("Align Self: Stretch", function(assert){
-			this.oItem1LayoutData.setAlignSelf("Stretch");
-			assert.ok((this.oItem1DomRef.getBoundingClientRect().top - this.oBoxDomRef.getBoundingClientRect().top) === 0, "Item 1 should be placed at the vertical start");
-			assert.ok((this.oItem1DomRef.getBoundingClientRect().bottom - this.oBoxDomRef.getBoundingClientRect().bottom) === 0, "Item 1 should stretch to the vertical end");
-			this.oBox.setAlignItems("Start");
-			this.oItem1LayoutData.setAlignSelf("Auto");
-		});
-	}
+	QUnit.test("Align Self: Stretch", function(assert){
+		this.oItem1LayoutData.setAlignSelf("Stretch");
+		assert.ok((this.oItem1DomRef.getBoundingClientRect().top - this.oBoxDomRef.getBoundingClientRect().top) === 0, "Item 1 should be placed at the vertical start");
+		assert.ok((this.oItem1DomRef.getBoundingClientRect().bottom - this.oBoxDomRef.getBoundingClientRect().bottom) === 0, "Item 1 should stretch to the vertical end");
+		this.oBox.setAlignItems("Start");
+		this.oItem1LayoutData.setAlignSelf("Auto");
+	});
 
-	if (jQuery.support.newFlexBoxLayout || jQuery.support.ie10FlexBoxLayout) {	// multi-line mode is not supported by older browsers
-		QUnit.module("Multi-line", {
-			beforeEach: function() {
-				this.oBoxConfig = {
-				};
-				this.vItemTemplates = 4;
-				this.vItemConfigs = 4;
-				this.oBox = getFlexBoxWithItems(this.oBoxConfig, this.vItemTemplates, this.vItemConfigs);
-				this.oBox.setWidth("388px");
-				this.oBox.setHeight("398px");
-				this.oBox.placeAt(DOM_RENDER_LOCATION);
-				sap.ui.getCore().applyChanges();
+	QUnit.module("Multi-line", {
+		beforeEach: function() {
+			this.oBoxConfig = {};
+			this.vItemTemplates = 4;
+			this.vItemConfigs = 4;
+			this.oBox = getFlexBoxWithItems(this.oBoxConfig, this.vItemTemplates, this.vItemConfigs);
+			this.oBox.setWidth("388px");
+			this.oBox.setHeight("398px");
+			this.oBox.placeAt(DOM_RENDER_LOCATION);
+
+			this.setDOMStyles = function () {
+				Core.applyChanges();
 				this.oBoxDomRef = this.oBox.getDomRef();
 				this.oItem1DomRef = this.oBox.getItems()[0].getDomRef().parentNode;
 				this.oItem2DomRef = this.oBox.getItems()[1].getDomRef().parentNode;
@@ -557,85 +591,101 @@
 				this.oItem2DomRef.style.minHeight = "75px";
 				this.oItem3DomRef.style.minHeight = "75px";
 				this.oItem4DomRef.style.minHeight = "50px";
-			},
-			afterEach: function() {
-				this.oBox.destroy();
-				this.oBox = null;
-			}
-		});
-
-		QUnit.test("Wrapping: No Wrap", function(assert) {
-			this.oBox.setWrap("NoWrap");
-			assert.ok((this.oItem1DomRef.getBoundingClientRect().top - this.oItem2DomRef.getBoundingClientRect().top) === 0, "Item 1 should be on the same line as Item 2");
-			assert.ok((this.oItem2DomRef.getBoundingClientRect().top - this.oItem3DomRef.getBoundingClientRect().top) === 0, "Item 2 should be on the same line as Item 3");
-			assert.ok((this.oItem3DomRef.getBoundingClientRect().top - this.oItem4DomRef.getBoundingClientRect().top) === 0, "Item 3 should be on the same line as Item 4");
-		});
-
-		QUnit.test("Wrapping: Wrap", function(assert) {
-			this.oBox.setWrap("Wrap");
-			assert.ok((this.oItem4DomRef.getBoundingClientRect().top - this.oItem1DomRef.getBoundingClientRect().top) > 0, "Item 4 should be in a line below Item 2");
-			assert.ok((this.oItem2DomRef.getBoundingClientRect().top - this.oItem1DomRef.getBoundingClientRect().top) > 0, "Item 2 should be in a line below Item 1");
-			assert.ok((this.oItem2DomRef.getBoundingClientRect().top - this.oItem3DomRef.getBoundingClientRect().top) === 0, "Item 2 should be on the same line as Item 3");
-		});
-
-		QUnit.test("Wrapping: Wrap Reverse", function(assert) {
-			this.oBox.setWrap("WrapReverse");
-			assert.ok((this.oItem4DomRef.getBoundingClientRect().top - this.oItem2DomRef.getBoundingClientRect().top) < 0, "Item 4 should be in a line above Item 2");
-			assert.ok((this.oItem2DomRef.getBoundingClientRect().top - this.oItem1DomRef.getBoundingClientRect().top) < 0, "Item 2 should be in a line above Item 1");
-			assert.ok((this.oItem2DomRef.getBoundingClientRect().top - this.oItem3DomRef.getBoundingClientRect().top) === 0, "Item 2 should be on the same line as Item 3");
-		});
-
-		QUnit.test("Align Content: Start", function(assert) {
-			this.oBox.setWrap("Wrap");
-			this.oBox.setAlignContent("Start");
-			assert.ok((this.oItem1DomRef.getBoundingClientRect().top - this.oBoxDomRef.getBoundingClientRect().top) === 0, "Item 1 should be placed at the vertical start");
-			assert.ok(Math.round(this.oItem2DomRef.getBoundingClientRect().top - this.oItem1DomRef.getBoundingClientRect().bottom) === 0, "Item 2 should be directly below Item 1");
-			assert.ok(Math.round(this.oItem4DomRef.getBoundingClientRect().top - this.oItem2DomRef.getBoundingClientRect().bottom) === 0, "Item 4 should be directly below Item 2");
-		});
-
-		QUnit.test("Align Content: Center", function(assert) {
-			this.oBox.setWrap("Wrap");
-			this.oBox.setAlignContent("Center");
-			assert.ok(Math.abs(this.oItem1DomRef.getBoundingClientRect().top - this.oBoxDomRef.getBoundingClientRect().top - 86) <= 2, "Item 1 should be placed towards the vertical center");
-			assert.ok(Math.round(this.oItem2DomRef.getBoundingClientRect().top - this.oItem1DomRef.getBoundingClientRect().bottom) === 0, "Item 2 should be directly below Item 1");
-			assert.ok(Math.round(this.oItem4DomRef.getBoundingClientRect().top - this.oItem2DomRef.getBoundingClientRect().bottom) === 0, "Item 4 should be directly below Item 2");
-		});
-
-		QUnit.test("Align Content: End", function(assert) {
-			this.oBox.setWrap("Wrap");
-			this.oBox.setAlignContent("End");
-			assert.ok(Math.abs(this.oItem4DomRef.getBoundingClientRect().bottom - this.oBoxDomRef.getBoundingClientRect().bottom) <= 1, "Item 4 should be placed at the vertical end");
-			assert.ok(Math.round(this.oItem4DomRef.getBoundingClientRect().top - this.oItem2DomRef.getBoundingClientRect().bottom) === 0, "Item 2 should be directly above Item 4");
-			assert.ok(Math.round(this.oItem2DomRef.getBoundingClientRect().top - this.oItem1DomRef.getBoundingClientRect().bottom) === 0, "Item 1 should be directly above Item 2");
-		});
-
-		QUnit.test("Align Content: Space Between", function(assert) {
-			this.oBox.setWrap("Wrap");
-			this.oBox.setAlignContent("SpaceBetween");
-			assert.ok((this.oItem1DomRef.getBoundingClientRect().top - this.oBoxDomRef.getBoundingClientRect().top) === 0, "Item 1 should be placed at the vertical start");
-			assert.ok(Math.abs(this.oItem2DomRef.getBoundingClientRect().top - this.oBoxDomRef.getBoundingClientRect().top - 186) <= 2, "Item 2 should be placed at the vertical center");
-			assert.ok(Math.abs(this.oItem4DomRef.getBoundingClientRect().bottom - this.oBoxDomRef.getBoundingClientRect().bottom) <= 1, "Item 4 should be placed at the vertical end");
-		});
-
-		if (!jQuery.support.ie10FlexBoxLayout) {		// IE 10 doesn't support Space Around
-			QUnit.test("Align Content: Space Around", function(assert) {
-				this.oBox.setWrap("Wrap");
-				this.oBox.setAlignContent("SpaceAround");
-				assert.ok(Math.abs(this.oItem1DomRef.getBoundingClientRect().top - this.oBoxDomRef.getBoundingClientRect().top - 28) <= 1, "Item 1 should be placed below the vertical start");
-				assert.ok(Math.abs(this.oItem2DomRef.getBoundingClientRect().top - this.oBoxDomRef.getBoundingClientRect().top - 186) <= 2, "Item 2 should be placed at the vertical center");
-				assert.ok(Math.abs(this.oItem4DomRef.getBoundingClientRect().bottom - this.oBoxDomRef.getBoundingClientRect().bottom + 28) <= 1, "Item 4 should be placed above the vertical end");
-			});
+			};
+		},
+		afterEach: function() {
+			this.oBox.destroy();
+			this.oBox = null;
 		}
+	});
 
-		QUnit.test("Align Content: Stretch", function(assert) {
-			this.oBox.setWrap("Wrap");
-			this.oBox.setAlignContent("Stretch");
-			assert.ok(Math.abs(this.oItem1DomRef.getBoundingClientRect().top - this.oBoxDomRef.getBoundingClientRect().top) <= 1, "Item 1 should be placed at the vertical start");
-			assert.ok(Math.abs(this.oItem2DomRef.getBoundingClientRect().top - this.oItem1DomRef.getBoundingClientRect().bottom) <= 1, "Item 2 should be placed directly below Item 1");
-			assert.ok(Math.abs(this.oItem4DomRef.getBoundingClientRect().top - this.oItem2DomRef.getBoundingClientRect().bottom) <= 1, "Item 4 should be placed directly below Item 2");
-			assert.ok(Math.abs(this.oItem4DomRef.getBoundingClientRect().bottom - this.oBoxDomRef.getBoundingClientRect().bottom) <= 1, "Item 4 should be placed at the vertical end");
-		});
-	}
+	QUnit.test("Wrapping: No Wrap", function(assert) {
+		this.oBox.setWrap("NoWrap");
+		Core.applyChanges();
+		this.setDOMStyles();
+		assert.ok((this.oItem1DomRef.getBoundingClientRect().top - this.oItem2DomRef.getBoundingClientRect().top) === 0, "Item 1 should be on the same line as Item 2");
+		assert.ok((this.oItem2DomRef.getBoundingClientRect().top - this.oItem3DomRef.getBoundingClientRect().top) === 0, "Item 2 should be on the same line as Item 3");
+		assert.ok((this.oItem3DomRef.getBoundingClientRect().top - this.oItem4DomRef.getBoundingClientRect().top) === 0, "Item 3 should be on the same line as Item 4");
+	});
+
+	QUnit.test("Wrapping: Wrap", function(assert) {
+		this.oBox.setWrap("Wrap");
+		Core.applyChanges();
+		this.setDOMStyles();
+		assert.ok((this.oItem4DomRef.getBoundingClientRect().top - this.oItem1DomRef.getBoundingClientRect().top) > 0, "Item 4 should be in a line below Item 2");
+		assert.ok((this.oItem2DomRef.getBoundingClientRect().top - this.oItem1DomRef.getBoundingClientRect().top) > 0, "Item 2 should be in a line below Item 1");
+		assert.ok((this.oItem2DomRef.getBoundingClientRect().top - this.oItem3DomRef.getBoundingClientRect().top) === 0, "Item 2 should be on the same line as Item 3");
+	});
+
+	QUnit.test("Wrapping: Wrap Reverse", function(assert) {
+		this.oBox.setWrap("WrapReverse");
+		Core.applyChanges();
+		this.setDOMStyles();
+		assert.ok((this.oItem4DomRef.getBoundingClientRect().top - this.oItem2DomRef.getBoundingClientRect().top) < 0, "Item 4 should be in a line above Item 2");
+		assert.ok((this.oItem2DomRef.getBoundingClientRect().top - this.oItem1DomRef.getBoundingClientRect().top) < 0, "Item 2 should be in a line above Item 1");
+		assert.ok((this.oItem2DomRef.getBoundingClientRect().top - this.oItem3DomRef.getBoundingClientRect().top) === 0, "Item 2 should be on the same line as Item 3");
+	});
+
+	QUnit.test("Align Content: Start", function(assert) {
+		this.oBox.setWrap("Wrap");
+		this.oBox.setAlignContent("Start");
+		Core.applyChanges();
+		this.setDOMStyles();
+		assert.ok((this.oItem1DomRef.getBoundingClientRect().top - this.oBoxDomRef.getBoundingClientRect().top) === 0, "Item 1 should be placed at the vertical start");
+		assert.ok(Math.round(this.oItem2DomRef.getBoundingClientRect().top - this.oItem1DomRef.getBoundingClientRect().bottom) === 0, "Item 2 should be directly below Item 1");
+		assert.ok(Math.round(this.oItem4DomRef.getBoundingClientRect().top - this.oItem2DomRef.getBoundingClientRect().bottom) === 0, "Item 4 should be directly below Item 2");
+	});
+
+	QUnit.test("Align Content: Center", function(assert) {
+		this.oBox.setWrap("Wrap");
+		this.oBox.setAlignContent("Center");
+		Core.applyChanges();
+		this.setDOMStyles();
+		assert.ok(Math.abs(this.oItem1DomRef.getBoundingClientRect().top - this.oBoxDomRef.getBoundingClientRect().top - 86) <= 2, "Item 1 should be placed towards the vertical center");
+		assert.ok(Math.round(this.oItem2DomRef.getBoundingClientRect().top - this.oItem1DomRef.getBoundingClientRect().bottom) === 0, "Item 2 should be directly below Item 1");
+		assert.ok(Math.round(this.oItem4DomRef.getBoundingClientRect().top - this.oItem2DomRef.getBoundingClientRect().bottom) === 0, "Item 4 should be directly below Item 2");
+	});
+
+	QUnit.test("Align Content: End", function(assert) {
+		this.oBox.setWrap("Wrap");
+		this.oBox.setAlignContent("End");
+		Core.applyChanges();
+		this.setDOMStyles();
+		assert.ok(Math.abs(this.oItem4DomRef.getBoundingClientRect().bottom - this.oBoxDomRef.getBoundingClientRect().bottom) <= 1, "Item 4 should be placed at the vertical end");
+		assert.ok(Math.round(this.oItem4DomRef.getBoundingClientRect().top - this.oItem2DomRef.getBoundingClientRect().bottom) === 0, "Item 2 should be directly above Item 4");
+		assert.ok(Math.round(this.oItem2DomRef.getBoundingClientRect().top - this.oItem1DomRef.getBoundingClientRect().bottom) === 0, "Item 1 should be directly above Item 2");
+	});
+
+	QUnit.test("Align Content: Space Between", function(assert) {
+		this.oBox.setWrap("Wrap");
+		this.oBox.setAlignContent("SpaceBetween");
+		Core.applyChanges();
+		this.setDOMStyles();
+		assert.ok((this.oItem1DomRef.getBoundingClientRect().top - this.oBoxDomRef.getBoundingClientRect().top) === 0, "Item 1 should be placed at the vertical start");
+		assert.ok(Math.abs(this.oItem2DomRef.getBoundingClientRect().top - this.oBoxDomRef.getBoundingClientRect().top - 186) <= 2, "Item 2 should be placed at the vertical center");
+		assert.ok(Math.abs(this.oItem4DomRef.getBoundingClientRect().bottom - this.oBoxDomRef.getBoundingClientRect().bottom) <= 1, "Item 4 should be placed at the vertical end");
+	});
+
+	QUnit.test("Align Content: Space Around", function(assert) {
+		this.oBox.setWrap("Wrap");
+		this.oBox.setAlignContent("SpaceAround");
+		Core.applyChanges();
+		this.setDOMStyles();
+		assert.ok(Math.abs(this.oItem1DomRef.getBoundingClientRect().top - this.oBoxDomRef.getBoundingClientRect().top - 28) <= 1, "Item 1 should be placed below the vertical start");
+		assert.ok(Math.abs(this.oItem2DomRef.getBoundingClientRect().top - this.oBoxDomRef.getBoundingClientRect().top - 186) <= 2, "Item 2 should be placed at the vertical center");
+		assert.ok(Math.abs(this.oItem4DomRef.getBoundingClientRect().bottom - this.oBoxDomRef.getBoundingClientRect().bottom + 28) <= 1, "Item 4 should be placed above the vertical end");
+	});
+
+	QUnit.test("Align Content: Stretch", function(assert) {
+		this.oBox.setWrap("Wrap");
+		this.oBox.setAlignContent("Stretch");
+		Core.applyChanges();
+		this.setDOMStyles();
+		assert.ok(Math.abs(this.oItem1DomRef.getBoundingClientRect().top - this.oBoxDomRef.getBoundingClientRect().top) <= 1, "Item 1 should be placed at the vertical start");
+		assert.ok(Math.abs(this.oItem2DomRef.getBoundingClientRect().top - this.oItem1DomRef.getBoundingClientRect().bottom) <= 1, "Item 2 should be placed directly below Item 1");
+		assert.ok(Math.abs(this.oItem4DomRef.getBoundingClientRect().top - this.oItem2DomRef.getBoundingClientRect().bottom) <= 1, "Item 4 should be placed directly below Item 2");
+		assert.ok(Math.abs(this.oItem4DomRef.getBoundingClientRect().bottom - this.oBoxDomRef.getBoundingClientRect().bottom) <= 1, "Item 4 should be placed at the vertical end");
+	});
 
 	QUnit.module("Flexibility", {
 		beforeEach: function() {
@@ -643,16 +693,16 @@
 			this.vItemTemplates = 3;
 			this.vItemConfigs = [
 				{
-				content: "<div class='items'>1</div>",
-				layoutData: new sap.m.FlexItemData({})
+					content: "<div class='items'>1</div>",
+					layoutData: new FlexItemData({})
 				},
 				{
-				content: "<div class='items'>2</div>",
-				layoutData: new sap.m.FlexItemData({})
+					content: "<div class='items'>2</div>",
+					layoutData: new FlexItemData({})
 				},
 				{
-				content: "<div class='items'>3</div>",
-				layoutData: new sap.m.FlexItemData({})
+					content: "<div class='items'>3</div>",
+					layoutData: new FlexItemData({})
 				}
 			];
 			this.oBox = getFlexBoxWithItems(this.oBoxConfig, this.vItemTemplates, this.vItemConfigs);
@@ -662,7 +712,7 @@
 			this.oItem1LayoutData = this.oBox.getItems()[0].getLayoutData();
 			this.oItem2LayoutData = this.oBox.getItems()[1].getLayoutData();
 			this.oItem3LayoutData = this.oBox.getItems()[2].getLayoutData();
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 			this.oItem1DomRef = this.oBox.getItems()[0].getDomRef().parentNode;
 			this.oItem2DomRef = this.oBox.getItems()[1].getDomRef().parentNode;
 			this.oItem3DomRef = this.oBox.getItems()[2].getDomRef().parentNode;
@@ -670,6 +720,7 @@
 		afterEach: function() {
 			this.oBox.destroy();
 			this.oBox = null;
+			Core.applyChanges();
 		}
 	});
 
@@ -689,16 +740,9 @@
 		this.oItem1DomRef.style.width = "100%";
 		this.oItem2DomRef.style.width = "100%";
 		this.oItem3DomRef.style.width = "100%";
-		if (sap.ui.Device.browser.internet_explorer || sap.ui.Device.browser.phantomJS) {
-			// IE 10-11, PhantomJS miscalculate the width of the flex items when box-sizing: border-box
-			assert.ok(Math.abs(this.oItem1DomRef.offsetWidth - 247) <= 1, "Width of Item 1 should be 247 (is " + this.oItem1DomRef.offsetWidth + ")");
-			assert.ok(Math.abs(this.oItem2DomRef.offsetWidth - 107) <= 1, "Width of Item 2 should be 107 (is " + this.oItem2DomRef.offsetWidth + ")");
-			assert.ok(Math.abs(this.oItem3DomRef.offsetWidth - 34) <= 1, "Width of Item 3 should be 34 (is " + this.oItem3DomRef.offsetWidth + ")");
-		} else {
-			assert.ok(Math.abs(this.oItem1DomRef.offsetWidth - 244) <= 1, "Width of Item 1 should be 244 (is " + this.oItem1DomRef.offsetWidth + ")");
-			assert.ok(Math.abs(this.oItem2DomRef.offsetWidth - 101) <= 1, "Width of Item 2 should be 101 (is " + this.oItem2DomRef.offsetWidth + ")");
-			assert.ok(Math.abs(this.oItem3DomRef.offsetWidth - 43) <= 1, "Width of Item 3 should be 43 (is " + this.oItem3DomRef.offsetWidth + ")");
-		}
+		assert.ok(Math.abs(this.oItem1DomRef.offsetWidth - 244) <= 1, "Width of Item 1 should be 244 (is " + this.oItem1DomRef.offsetWidth + ")");
+		assert.ok(Math.abs(this.oItem2DomRef.offsetWidth - 101) <= 1, "Width of Item 2 should be 101 (is " + this.oItem2DomRef.offsetWidth + ")");
+		assert.ok(Math.abs(this.oItem3DomRef.offsetWidth - 43) <= 1, "Width of Item 3 should be 43 (is " + this.oItem3DomRef.offsetWidth + ")");
 	});
 
 	QUnit.test("Base Size", function(assert) {
@@ -713,6 +757,7 @@
 	QUnit.test("Min Height", function(assert) {
 		this.oBox.setAlignItems("Start");
 		this.oItem1LayoutData.setMinHeight("200px");
+		Core.applyChanges();
 		assert.ok(Math.abs(this.oItem1DomRef.offsetHeight - 200) <= 1, "Height of Item 1 should be 200 (is " + this.oItem1DomRef.offsetHeight + ")");
 	});
 
@@ -740,29 +785,30 @@
 			this.oBox = getFlexBoxWithItems(this.oBoxConfig, this.vItemTemplates, this.vItemConfigs);
 			this.oItem1 = this.oBox.getItems()[0];
 			this.oBox.placeAt(DOM_RENDER_LOCATION);
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 		},
 		afterEach: function() {
 			this.oBox.destroy();
 			this.oBox = null;
+			Core.applyChanges();
 		}
 	});
 
 	QUnit.test("Add Item", function(assert) {
-		this.oItem5 = new sap.ui.core.HTML("item5", {
+		this.oItem5 = new HTML("item5", {
 			content: "<div class='items'>5</div>"
 		});
 		this.oBox.addItem(this.oItem5);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		assert.ok(this.oItem5.getDomRef(), "Item 5 should be rendered");
 	});
 
 	QUnit.test("Insert Item", function(assert) {
-		this.oItem6 = new sap.ui.core.HTML("item6", {
+		this.oItem6 = new HTML("item6", {
 			content: "<div class='items'>6</div>"
 		});
 		this.oBox.insertItem(this.oItem6, 2);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		var oFlexItem6 = this.oItem6.getDomRef().parentNode;
 		assert.ok(this.oItem6.getDomRef(), "Item 6 should be rendered");
 		assert.equal(Array.prototype.indexOf.call(oFlexItem6.parentNode.children, oFlexItem6), 2, "Item 6 should be rendered as the third element");
@@ -771,13 +817,13 @@
 	QUnit.test("Remove Item", function(assert) {
 		assert.ok((this.oItem1.getDomRef().parentElement.parentElement === this.oBox.getDomRef()), "Item 1 is present");
 		this.oBox.removeItem(this.oItem1);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		assert.ok((this.oItem1.getDomRef().parentElement.parentElement !== this.oBox.getDomRef()), "Item 1 should have been removed");
 	});
 
 	QUnit.test("Remove All Items", function(assert) {
 		this.oBox.removeAllItems();
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		assert.equal(this.oBox.getDomRef().children.length, 0, "All items should have been removed");
 	});
 
@@ -785,47 +831,109 @@
 		beforeEach: function() {
 			this.oBoxConfig = {};
 			this.vItemTemplates = [
-				sap.m.VBox,
-				sap.ui.core.HTML,
-				sap.ui.core.HTML
+				VBox,
+				HTML,
+				HTML
 			];
 			this.vItemConfigs = [
 				{
-				layoutData: new sap.m.FlexItemData({
-					baseSize: "0",
-					growFactor: 3
-				})
+					layoutData: new FlexItemData({
+						baseSize: "0",
+						growFactor: 3
+					})
 				},
 				{
-				content: "<div class='items'>2</div>",
-				layoutData: new sap.m.FlexItemData({})
+					content: "<div class='items'>2</div>",
+					layoutData: new FlexItemData({})
 				},
 				{
-				content: "<div class='items'>3</div>",
-				layoutData: new sap.m.FlexItemData({})
+					content: "<div class='items'>3</div>",
+					layoutData: new FlexItemData({})
 				}
 			];
 			this.oBox = getFlexBoxWithItems(this.oBoxConfig, this.vItemTemplates, this.vItemConfigs);
 			this.oItem1 = this.oBox.getItems()[0];
 			this.oBox.placeAt(DOM_RENDER_LOCATION);
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 		},
 		afterEach: function() {
 			this.oBox.destroy();
 			this.oBox = null;
+			Core.applyChanges();
 		}
 	});
 
-	QUnit.test("Nested FlexBox rendered without wrapper", function(assert) {
+	QUnit.test("Rendered without wrapper", function(assert) {
 		assert.ok(this.oItem1.getDomRef().classList.contains("sapMVBox"), "Inner VBox should be rendered without a wrapper");
+	});
+
+	QUnit.test("Class names duplication check", function(assert) {
+		var aClassesList = this.oItem1.getDomRef().className.split(" ");
+		var iClassesLength = aClassesList.length;
+		var iClassesLengthWithoutDuplicate = Array.from(new Set(aClassesList)).toString().split(",").length;
+
+		assert.equal(iClassesLength, iClassesLengthWithoutDuplicate, "There are no duplicated class names" );
+	});
+
+	QUnit.module("FlexItemData", {
+		beforeEach: function() {
+
+			this.oLayoutData = new FlexItemData({
+				styleClass: "class1",
+				growFactor: 1
+			});
+
+			this.oBox = new FlexBox({
+				items: [
+					new Button({
+						text : "Text",
+						layoutData: this.oLayoutData
+					})
+				]
+			});
+
+			this.oBox.placeAt(DOM_RENDER_LOCATION);
+			Core.applyChanges();
+		},
+		afterEach: function() {
+			this.oLayoutData = null;
+			this.oBox.destroy();
+			this.oBox = null;
+			Core.applyChanges();
+		}
+	});
+
+	QUnit.test("FlexItemData properties", function(assert) {
+
+		assert.ok(this.oBox.$()[0].firstChild.classList.contains('class1'), "class1 is added");
+
+		this.oLayoutData.setStyleClass('class2');
+		Core.applyChanges();
+
+		assert.ok(this.oBox.$()[0].firstChild.classList.contains('class2'), "class2 is added");
+
+		this.oBox.setRenderType("Bare");
+		Core.applyChanges();
+
+		assert.ok(this.oBox.$()[0].firstChild.classList.contains('class2'), "class2 is added");
+
+		this.oLayoutData.setStyleClass('class3');
+		Core.applyChanges();
+
+		assert.ok(this.oBox.$()[0].firstChild.classList.contains('class3'), "class3 is added");
+
+		this.oLayoutData.setGrowFactor(0);
+		Core.applyChanges();
+
+		assert.strictEqual(window.getComputedStyle(this.oBox.$()[0].firstChild).flexGrow, "0", "flex grow is correctly set");
 	});
 
 	QUnit.module("Accessibility", {
 		beforeEach: function() {
 			this.oBoxConfig = {};
 			this.vItemTemplates = [
-				sap.m.FlexBox,
-				sap.m.FlexBox
+				FlexBox,
+				FlexBox
 			];
 			this.vItemConfigs = [
 				{},
@@ -833,7 +941,7 @@
 			];
 			this.oBox = getFlexBoxWithItems(this.oBoxConfig, this.vItemTemplates, this.vItemConfigs);
 			this.oBox.placeAt(DOM_RENDER_LOCATION);
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 		},
 		afterEach: function() {
 			this.oBox.destroy();
@@ -853,4 +961,33 @@
 		assert.ok(oInfo.editable === undefined || oInfo.editable === null, "Editable");
 		assert.ok(oInfo.children && oInfo.children.length == 2, "Children");
 	});
-})(jQuery);
+
+	QUnit.module("Clone", {
+		beforeEach: function() {
+			this.oBox = new FlexBox({
+				items: [
+					new Button({ text: "Button 1"}),
+					new Button({ text: "Button 2"})
+				]
+			});
+			this.oBox.placeAt(DOM_RENDER_LOCATION);
+			Core.applyChanges();
+		},
+		afterEach: function() {
+			this.oBox.destroy();
+			this.oBox = null;
+		}
+	});
+
+	QUnit.test("Cloned FlexBox child visibility change", function(assert) {
+		var oItemVisibilityChangeSpy = sinon.spy(FlexBox.prototype, "_onItemVisibilityChange");
+		var oClonedBox = this.oBox.clone();
+
+		oClonedBox.getItems()[0].setVisible(false);
+
+		assert.ok(oItemVisibilityChangeSpy.calledOnce, "_onItemVisibilityChange method is called once");
+	});
+
+	// let test starter wait for style sheet
+	return pStyleLoaded;
+});

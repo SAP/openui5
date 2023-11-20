@@ -12,28 +12,6 @@ sap.ui.define([
 
 	return Controller.extend("sap.ui.support.supportRules.ui.controllers.BaseController", {
 
-		onPersistedSettingSelect: function() {
-			var oModel = this.getView().getModel();
-
-			if (oModel.getProperty("/persistingSettings")) {
-				storage.createPersistenceCookie(constants.COOKIE_NAME, true);
-
-				oModel.getProperty("/libraries").forEach(function (lib) {
-					if (lib.title == constants.TEMP_RULESETS_NAME) {
-						storage.setRules(lib.rules);
-					}
-				});
-
-				this.persistExecutionScope();
-				this.persistVisibleColumns();
-				SelectionUtils.persistSelection();
-
-			} else {
-				storage.deletePersistenceCookie(constants.COOKIE_NAME);
-				this.deletePersistedData();
-			}
-		},
-
 		persistExecutionScope: function() {
 			var setting = {
 				analyzeContext: this.model.getProperty("/analyzeContext"),

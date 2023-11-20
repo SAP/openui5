@@ -1,0 +1,108 @@
+<core:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core"
+	xmlns:form="sap.ui.layout.form">
+	<Panel height="100%">
+		<headerToolbar>
+			<Toolbar>
+				<Text
+					text="{Name} - {ProductId}"/>
+				<ToolbarSpacer/>
+				<Button
+					icon="sap-icon://sys-cancel"
+					press=".onRemoveComparison"
+					tooltip="{i18n>removeFromComparisonTooltip}"/>
+			</Toolbar>
+		</headerToolbar>
+		<HBox class="comparebox">
+			<VBox>
+				<Image
+					src="{
+						path : 'PictureUrl',
+						formatter : '.formatter.pictureUrl'
+					}"
+					alt="{i18n>comparisonAlternativeImageText}"
+					densityAware="false"
+					class="sapUiSmallMarginTop"
+					width="100%"
+					height="100%">
+					<detailBox>
+						<LightBox>
+							<imageContent>
+								<LightBoxItem
+									imageSrc="{
+										path : 'PictureUrl',
+										formatter : '.formatter.pictureUrl'
+									}"
+									title="{Name}"/>
+							</imageContent>
+						</LightBox>
+					</detailBox>
+				</Image>
+			</VBox>
+			<VBox alignItems="End">
+				<ObjectListItem
+					class="productPrice welcomePrice"
+					number="{
+						path : 'Price',
+						formatter : '.formatter.price'
+					}"
+					numberUnit="EUR">
+				</ObjectListItem>
+				<ObjectStatus
+					class="sapUiSmallMarginBottom"
+					text="{
+						path : 'Status',
+						formatter : '.formatter.statusText'
+					}"
+					state="{
+						path : 'Status',
+						formatter : '.formatter.statusState'
+					}"/>
+				<Button
+					text="{i18n>addToCartShort}"
+					type="Emphasized"
+					press=".onAddToCart"/>
+			</VBox>
+		</HBox>
+		<form:Form editable="false">
+			<form:layout>
+				<form:ResponsiveGridLayout
+					labelSpanXL="12"
+					labelSpanL="12"
+					labelSpanM="12"
+					labelSpanS="12"
+					adjustLabelSpan="false"
+					emptySpanXL="4"
+					emptySpanL="4"
+					emptySpanM="4"
+					emptySpanS="0"
+					singleContainerFullSize="false"/>
+			</form:layout>
+			<form:formContainers>
+				<form:FormContainer>
+					<form:FormElement label="{i18n>productSupplierAttributeText}">
+						<form:fields>
+							<Text text="{SupplierName}"/>
+						</form:fields>
+					</form:FormElement>
+					<form:FormElement label="{i18n>productDescriptionAttributeText}">
+						<form:fields>
+							<Text text="{ShortDescription}"/>
+						</form:fields>
+					</form:FormElement>
+					<form:FormElement label="{i18n>productWeightAttributeText}">
+						<form:fields>
+							<Text text="{Weight} {WeightUnit}"/>
+						</form:fields>
+					</form:FormElement>
+					<form:FormElement label="{i18n>productMeasuresAttributeText}">
+						<form:fields>
+							<Text text="{DimensionWidth} {Unit}, {DimensionDepth} {Unit}, {DimensionHeight} {Unit}"/>
+						</form:fields>
+					</form:FormElement>
+				</form:FormContainer>
+			</form:formContainers>
+		</form:Form>
+	</Panel>
+</core:FragmentDefinition>

@@ -11,6 +11,7 @@
 	  	"SubSectionTitle1": "Object page sub section with form",
 	  	"SectionTitle2":  "Object page section navproperty",
   		"SectionTitle3": "Object page section with variant management inside",
+  		"SectionTitle4": "Object page section with smartform",
         "Property01": "propValue01",
         "AccountingDocumentKeyComplex" : {
         	"ComplexProperty01" : "some complex Type data"

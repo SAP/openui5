@@ -1,0 +1,28 @@
+{
+	"sap.app": {
+		"id": "sap.m.sample.NumericContentWithoutMargin",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "sap.m.sample.NumericContentWithoutMargin.Page",
+			"type": "XML",
+			"async": true
+		},
+		"dependencies": {
+			"libs": {
+				"sap.ui.core": {}
+			}
+		},
+		"config": {
+			"sample": {
+				"files": [
+					"Page.view.xml",
+					"manifest.json"
+				]
+			}
+		}
+	}
+}

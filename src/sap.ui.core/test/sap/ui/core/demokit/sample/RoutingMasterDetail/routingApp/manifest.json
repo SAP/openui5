@@ -1,0 +1,82 @@
+{
+	"sap.app": {
+		"id": "sap.ui.core.sample.RoutingMasterDetail.routingApp",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"dependencies": {
+			"minUI5Version": "1.98.0"
+		},
+		"rootView": {
+			"viewName": "sap.ui.core.sample.RoutingMasterDetail.routingApp.view.App",
+			"type": "XML",
+			"async": true
+		},
+		"routing": {
+			"config": {
+				"routerClass": "sap.m.routing.Router",
+				"path": "sap.ui.core.sample.RoutingMasterDetail.routingApp.view",
+				"controlId": "rootControl",
+				"type": "View",
+				"viewType": "XML",
+				"async": true
+			},
+			"routes": [
+				{
+					"name": "master",
+					"pattern": "",
+					"target": [
+						"master"
+					]
+				},
+				{
+					"name": "orderDetails",
+					"pattern": "orders/:orderId:",
+					"target": [
+						"master",
+						"orderDetails"
+					]
+				},
+				{
+					"name": "productDetails",
+					"pattern": "orders/:orderId:/products/:productId:",
+					"target": [
+						"master",
+						"productDetails"
+					]
+				}
+			],
+			"targets": {
+				"master": {
+					"name": "Master",
+					"controlAggregation": "masterPages",
+					"level": 0
+				},
+				"orderDetails": {
+					"name": "Detail1",
+					"controlAggregation": "detailPages",
+					"title": {
+						"parts": [
+							"orderName"
+						],
+						"formatter": "jQuery.sap.formatMessage"
+					},
+					"level": 1
+				},
+				"productDetails": {
+					"name": "Detail2",
+					"controlAggregation": "detailPages",
+					"title": {
+						"parts": [
+							"productName"
+						],
+						"formatter": "jQuery.sap.formatMessage"
+					},
+					"level": 2
+				}
+			}
+		}
+	}
+}

@@ -33,20 +33,46 @@ sap.ui.define(["./library", "./ListBase", "./ListRenderer"],
 	 * @constructor
 	 * @public
 	 * @alias sap.m.List
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
+	 * @see {@link fiori:/list-overview/ List}
 	 */
-	var List = ListBase.extend("sap.m.List", /** @lends sap.m.List.prototype */ { metadata : {
+	var List = ListBase.extend("sap.m.List", /** @lends sap.m.List.prototype */ {
+		metadata : {
 
-		library : "sap.m",
-		properties : {
+			library : "sap.m",
+			properties : {
 
-			/**
-			 * Sets the background style of the list. Depending on the theme, you can change the state of the background from <code>Solid</code> to <code>Translucent</code> or to <code>Transparent</code>.
-			 * @since 1.14
-			 */
-			backgroundDesign : {type : "sap.m.BackgroundDesign", group : "Appearance", defaultValue : BackgroundDesign.Solid}
-		}
-	}});
+				/**
+				 * Sets the background style of the list. Depending on the theme, you can change the state of the background from <code>Solid</code> to <code>Translucent</code> or to <code>Transparent</code>.
+				 * @since 1.14
+				 */
+				backgroundDesign : {type : "sap.m.BackgroundDesign", group : "Appearance", defaultValue : BackgroundDesign.Solid}
+			}
+		},
+
+		renderer: ListRenderer
+	});
+
+	List.prototype.getAriaRole = function() {
+		return this._sAriaRole || "list";
+	};
+
+	/**
+	 * Applies the aria <code>role</code> attribute to the control.
+	 *
+	 * Supported values are:
+	 * <ul>
+	 * <li><code>list</code>: This is the default since version 1.105. The rendered items will have the <code>role="listitem"</code>.</li>
+	 * <li><code>listbox</code>: Legacy support. The rendererd items will have the <code>role="option"</code>.</li>
+	 * </ul>
+	 * <b>Note:</b> This method must be called before the control renders.
+	 * @param {string} sRole role attribute for the control
+	 * @protected
+	 * @ui5-restricted
+	 * @since 1.105
+	 */
+	List.prototype.applyAriaRole = function(sRole) {
+		this._sAriaRole = sRole;
+	};
 
 	return List;
 

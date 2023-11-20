@@ -1,157 +1,322 @@
 <mvc:View
-		controllerName="sap.ui.documentation.sdk.controller.App"
-		xmlns="sap.m"
-		xmlns:tnt="sap.tnt"
-		xmlns:core="sap.ui.core"
-		xmlns:mvc="sap.ui.core.mvc"
-		xmlns:custom="sap.ui.documentation.sdk.controls"
-		displayBlock="true"
-		busy="{appView>/busy}"
-		busyIndicatorDelay="{appView>/delay}">
-	<Page
-		showHeader="false"
-		enableScrolling="false"
-		showNavButton="false"
-		class="sapUiDemokit">
-		<content>
-			<tnt:ToolHeader id="headerToolbar">
-				<ToggleButton icon="sap-icon://menu2" type="Transparent" visible="{= ${appView>/bHasMaster} &amp;&amp; !${device>/system/phone} &amp;&amp; !${appView>/bLandscape} &amp;&amp; !${appView>/bSearchMode} }" press="toggleMaster" pressed="{appView>/bIsShownMaster}">
-					<layoutData>
-						<OverflowToolbarLayoutData priority="NeverOverflow" />
-					</layoutData>
-				</ToggleButton>
-				<Image id="sap_logo" src="./resources/sap/ui/documentation/sdk/images/logo_ui5.png"
-					visible="{=!${appView>/bPhoneSize}}"
-					densityAware="false"
-					height="2rem"
-					alt="UI5 logo"
-					class="sapLogo"
-					decorative="false"
-					press="navigateToSection" />
-				<core:ExtensionPoint name="customStartLinks" />
-				<Select id="selectHeader"
-						stashed="true"
-						class="sapUiDocumentationSelect"
-						visible="{=!${appView>/bSearchMode}}"
-						change="navigateToSection"
-						autoAdjustWidth="true">
+	controllerName="sap.ui.documentation.sdk.controller.App"
+	xmlns="sap.m"
+	xmlns:tnt="sap.tnt"
+	xmlns:core="sap.ui.core"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:grid="sap.ui.layout.cssgrid"
+	xmlns:custom="sap.ui.documentation"
+	displayBlock="true"
+	busy="{appView>/busy}"
+	busyIndicatorDelay="{appView>/delay}">
+
+	<tnt:ToolPage id="demoKitPage" class="sapUiDemokit">
+		<tnt:header>
+			<tnt:ToolHeader id="demoKitHeader" class="sapUiDemokitMainHeader">
+				<grid:CSSGrid width="100%" class="sapUiDemokitMainHeaderGrid">
+
+					<grid:customLayout>
+						<grid:GridResponsiveLayout>
+							<grid:layoutXL>
+								<grid:GridSettings
+									gridTemplateColumns="1fr auto 1fr">
+								</grid:GridSettings>
+							</grid:layoutXL>
+							<grid:layoutL>
+								<grid:GridSettings gridTemplateColumns="1fr auto 1fr">
+								</grid:GridSettings>
+							</grid:layoutL>
+							<grid:layoutM>
+								<grid:GridSettings gridTemplateColumns="1fr auto auto">
+								</grid:GridSettings>
+							</grid:layoutM>
+							<grid:layoutS>
+								<grid:GridSettings gridTemplateColumns="1fr auto auto">
+								</grid:GridSettings>
+							</grid:layoutS>
+						</grid:GridResponsiveLayout>
+					</grid:customLayout>
+
+					<HBox alignItems="{= ${appView>/bPhoneSize} ? 'Center' : 'Baseline' }">
+						<Button
+							icon="sap-icon://menu2"
+							press="onSideNavigationButtonPress"
+							visible="{appView>/bPhoneSize}" />
+
+						<Image
+							src="{= ${appView>/bDarkThemeActive} ? ${theme>/darkLogo} : ${theme>/lightLogo} }"
+							alt="{i18n>APP_HEADER_LOGO_ALT}"
+							class="sapUiDemokitMainHeaderLogo"
+							height="2rem"
+							id="sap_logo"
+							decorative="false"
+							press="onHeaderLogoPress" />
+
+						<Title
+							class="sapUiSmallMarginBeginEnd"
+							text="{i18n>APP_HEADER_TITLE}"
+							tooltip="{i18n>APP_HEADER_TITLE}"
+							visible="{= !${appView>/bPhoneSize} }" />
+					</HBox>
+
+					<HBox justifyContent="Center" alignItems="Center">
+						<custom:Search
+							id="searchControl"
+							toggle="onToggleSearchMode"
+							search="onSearch"
+							liveChange="onSearchLiveChange"
+							isOpen="{appView>/bDesktopSize}" />
+					</HBox>
+
+					<OverflowToolbar class="sapUiDemoKitHeaderOTB" style="Clear">
+						<ObjectStatus
+							text="{ parts:
+								['appView>/bShowVersionSwitchButton', 'versionData>/isDevVersion', 'versionData>/version'],
+								formatter: '.formatter.formatVersionStatus'
+							}"
+							state="Information"
+							inverted="false"
+							visible="{= ${appView>/bDesktopSize} &amp;&amp; !${appView>/bSearchMode} }">
+						</ObjectStatus>
+
+						<Button
+							id="versionSwitchButton"
+							class="sapUiDemoKitHeaderActionsVersionSwitch"
+							type="Default"
+							icon="sap-icon://dimension"
+							text="{= ${appView>/bDesktopSize}
+								? [${i18n>APP_VERSION_VERSION}, ${versionData>/version}].join(' ')
+								: '' }"
+							press="onChangeVersionButtonPress"
+							visible="{= ${appView>/bShowVersionSwitchButton} }">
+						</Button>
+
+						<OverflowToolbarButton
+							id="surveyButton"
+							class="sapUiDemoKitHeaderActionsSurveyButton"
+							icon="sap-icon://feedback"
+							press="launchSurvey"
+							text="{i18n>APP_INFORMATION_BTN_FEEDBACK}"
+							tooltip="{i18n>APP_FEEDBACK_BTN_TOOLTIP}">
+							<customData>
+								<BadgeCustomData visible="{appView>/bShowLongSurvey}" value="1" />
+							</customData>
+						</OverflowToolbarButton>
+
+						<OverflowToolbarMenuButton
+							class="sapUiDemoKitHeaderActionsMenuButton"
+							icon="sap-icon://official-service"
+							text="{i18n>APP_INFORMATION_BTN_POLICIES}"
+							tooltip="{i18n>APP_LEGAL_BTN_TOOLTIP}">
+							<menu>
+								<Menu itemSelected="onMenuButtonItemSelected">
+									<MenuItem
+										key="legal"
+										icon="sap-icon://compare"
+										text="{i18n>APP_INFORMATION_BTN_LEGAL}" />
+									<MenuItem
+										key="privacy"
+										icon="sap-icon://locked"
+										text="{i18n>APP_INFORMATION_BTN_PRIVACY}" />
+									<MenuItem
+										key="license"
+										icon="sap-icon://permission"
+										text="{i18n>APP_INFORMATION_BTN_LICENSE}"
+										visible="{versionData>/isOpenUI5}" />
+									<MenuItem
+										key="terms_of_use"
+										icon="sap-icon://document-text"
+										text="{i18n>APP_INFORMATION_BTN_TERMS_OF_USE}"
+										visible="{versionData>/isOpenUI5}" />
+									<MenuItem
+										key="terms_of_use"
+										icon="sap-icon://document-text"
+										text="{i18n>APP_INFORMATION_BTN_TERMS_OF_USE}"
+										visible="{= !${versionData>/isOpenUI5} &amp;&amp; !${versionData>/isDevEnv} }">
+										<items>
+											<MenuItem key="terms_of_use" text="{i18n>APP_INFORMATION_BTN_TERMS_OF_USE}" />
+											<MenuItem key="copyright" text="{i18n>APP_INFORMATION_BTN_COPYRIGHT}" />
+											<MenuItem key="trademark" text="{i18n>APP_INFORMATION_BTN_TRADEMARK}" />
+											<MenuItem key="disclaimer" text="{i18n>APP_INFORMATION_BTN_DISCLAIMER}" />
+										</items>
+									</MenuItem>
+								</Menu>
+							</menu>
+						</OverflowToolbarMenuButton>
+
+						<OverflowToolbarMenuButton
+							id="aboutMenuButton"
+							class="sapUiDemoKitHeaderActionsMenuButton"
+							icon="sap-icon://action-settings"
+							text="{i18n>APP_INFORMATION_BTN_SETTINGS}"
+							tooltip="{i18n>APP_INFORMATION_BTN_TOOLTIP}">
+							<menu>
+								<Menu itemSelected="onMenuButtonItemSelected">
+									<items>
+										<MenuItem
+											key="about"
+											icon="sap-icon://hint"
+											text="{i18n>APP_INFORMATION_BTN_ABOUT}" />
+										<MenuItem
+											key="appearance"
+											icon="sap-icon://palette"
+											text="{i18n>APP_INFORMATION_BTN_APPEARANCE}">
+											<items>
+												<MenuItem key="light" text="{i18n>APP_INFORMATION_BTN_APPEARANCE_LIGHT}" />
+												<MenuItem key="dark" text="{i18n>APP_INFORMATION_BTN_APPEARANCE_DARK}" />
+												<MenuItem key="hcb" text="{i18n>APP_INFORMATION_BTN_APPEARANCE_HCB}" />
+												<MenuItem key="hcw" text="{i18n>APP_INFORMATION_BTN_APPEARANCE_HCW}" />
+												<MenuItem key="auto" text="{i18n>APP_INFORMATION_BTN_APPEARANCE_AUTO}" />
+											</items>
+										</MenuItem>
+										<MenuItem
+											key="sitemap"
+											icon="sap-icon://tree"
+											text="{i18n>APP_INFORMATION_BTN_SITEMAP}"
+											visible="{versionData>/isOpenUI5}" />
+										<MenuItem
+											key="settings"
+											icon="sap-icon://hello-world"
+											text="{i18n>APP_SETTINGS_DIALOG_LANGUAGE}" />
+										<MenuItem
+											key="cookie_preferences"
+											icon="sap-icon://customize"
+											text="{i18n>APP_SETTINGS_DIALOG_COOKIE_PREFERENCES}"
+											visible="{versionData>/enableAdvancedCookieSettings}" />
+									</items>
+								</Menu>
+							</menu>
+						</OverflowToolbarMenuButton>
+
+						<OverflowToolbarButton
+							class="sapUiDemoKitHeaderActionsNewsButton"
+							icon="sap-icon://bell"
+							press="onNewsButtonPress"
+							text="{i18n>APP_INFORMATION_BTN_NEWS}"
+							tooltip="{i18n>APP_NEWS_BTN_TOOLTIP}">
+							<customData>
+								<BadgeCustomData key="badge" value="{news>/newsCount}" />
+							</customData>
+						</OverflowToolbarButton>
+					</OverflowToolbar>
+				</grid:CSSGrid>
+			</tnt:ToolHeader>
+		</tnt:header>
+
+		<tnt:subHeader>
+			<tnt:ToolHeader class="sapUiDemokitSubHeader" visible="{= !${appView>/bPhoneSize} }">
+				<IconTabHeader
+					id="demoKitSubHeader"
+					mode="Inline"
+					select="navigateToSection"
+					selectedKey="home">
 					<items>
-						<core:Item id="welcomeTab" text="Home" key="home"/>
-						<core:Item id="topicMasterTab" text="Documentation" key="topic"/>
-						<core:Item id="apiMasterTab" text="API Reference" key="api"/>
-						<core:Item id="controlsMasterTab" text="Samples" key="controls"/>
-						<core:Item id="demoAppsTab" text="Demo Apps" key="demoapps"/>
-						<core:Item id="toolsTab" text="Tools" key="tools"/>
-					</items>
-					<layoutData>
-						<OverflowToolbarLayoutData priority="NeverOverflow" shrinkable="true" />
-					</layoutData>
-				</Select>
-				<IconTabHeader id="tabHeader"
-						stashed="true"
-						selectedKey="home"
-						showOverflowSelectList="true"
-						backgroundDesign="Transparent"
-						mode="Inline"
-						select="navigateToSection"
-						visible="{=!${appView>/bPhoneSize} || !${appView>/bSearchMode}}">
-					<layoutData>
-						<OverflowToolbarLayoutData priority="NeverOverflow" shrinkable="true" />
-					</layoutData>
-					<items>
-						<IconTabFilter id="welcomeTab" text="Home" key="home" visible="{=${appView>/bPhoneSize}}">
+						<IconTabFilter
+							id="welcomeTab"
+							key="home"
+							icon="sap-icon://home"
+							text="{i18n>APP_TABHEADER_ITEM_HOME}">
 						</IconTabFilter>
-						<IconTabFilter id="topicMasterTab" text="Documentation" key="topic" visible="{= !${appView>/bHideTopicSection}}">
+						<IconTabFilter
+							id="topicMasterTab"
+							key="topic"
+							icon="sap-icon://learning-assistant"
+							text="{i18n>APP_TABHEADER_ITEM_DOCUMENTATION}">
 						</IconTabFilter>
-						<IconTabFilter id="apiMasterTab" text="API Reference" key="api" visible="{= !${appView>/bHideApiSection}}">
+						<IconTabFilter
+							id="apiMasterTab"
+							key="api"
+							icon="sap-icon://syntax"
+							text="{i18n>APP_TABHEADER_ITEM_API_REFERENCE}">
 						</IconTabFilter>
-						<IconTabFilter id="controlsMasterTab" text="Samples" key="controls">
+						<IconTabFilter
+							id="controlsMasterTab"
+							key="controls"
+							icon="sap-icon://example"
+							text="{i18n>APP_TABHEADER_ITEM_SAMPLES}">
 						</IconTabFilter>
-						<IconTabFilter id="demoAppsTab" text="Demo Apps" key="demoapps">
+						<IconTabFilter
+							id="demoAppsTab"
+							key="demoapps"
+							icon="sap-icon://grid"
+							text="{i18n>APP_TABHEADER_ITEM_DEMO_APPS}">
 						</IconTabFilter>
-						<IconTabFilter id="toolsTab" text="Tools" key="tools">
+						<IconTabFilter
+							id="toolsTab"
+							key="tools"
+							icon="sap-icon://wrench"
+							text="{i18n>APP_TABHEADER_ITEM_TOOLS}">
 						</IconTabFilter>
 					</items>
 				</IconTabHeader>
-
-				<ToolbarSpacer visible="{= ${device>/system/phone} || !${appView>/bPhoneSize}}">
-					<layoutData>
-						<OverflowToolbarLayoutData priority="NeverOverflow" minWidth="{= ${device>/system/tablet} ? '' : '1rem'}" />
-					</layoutData>
-				</ToolbarSpacer>
-
-				<ObjectStatus text="{= ${versionData>/isBetaVersion} ? 'Beta version' : 'Version'} {versionData>/version} {= ${versionData>/isBetaVersion} ? '– not for productive use!' : ${versionData>/isDevVersion} ? '- development in progress!' : ''}" state="{= ${versionData>/isBetaVersion} ? 'Error' : ${versionData>/isDevVersion} ? 'Warning' : 'None'}" visible="{=!${appView>/bPhoneSize}}" />
-
-				<Button id="changeVersionButton" press="onChangeVersionButtonPress" type="Transparent" text="Change version" visible="{appView>/bShowVersionSwitchInHeader}">
-					<layoutData>
-						<OverflowToolbarLayoutData priority="NeverOverflow" />
-					</layoutData>
-				</Button>
-
-				<custom:Search id="searchControl" toggle="onToggleSearchMode" search="onSearch" width="{= (${appView>/bPhoneSize} &amp;&amp; ${appView>/bSearchMode}) ? '100%' : ''}"/>
-
-				<Button id="feedBackDialogButton" press="feedbackDialogOpen" icon="sap-icon://comment" type="Transparent" visible="{=!${appView>/bPhoneSize} &amp;&amp; !${appView>/bSearchMode}}">
-
-					<layoutData>
-						<OverflowToolbarLayoutData priority="NeverOverflow" />
-					</layoutData>
-				</Button>
-
-				<MenuButton id="aboutMenuButton" icon="sap-icon://hint" type="Transparent" visible="{=!${appView>/bSearchMode}}">
-					<layoutData>
-						<OverflowToolbarLayoutData priority="NeverOverflow" />
-					</layoutData>
-					<menu>
-						<Menu id="aboutMenu" class="sapContrast sapContrastPlus" itemSelected="handleMenuItemClick">
-							<items>
-								<MenuItem text="{= ${versionData>/isBetaVersion} ? 'Beta' : ''} Version {versionData>/version} {=${versionData>/isDevVersion} ? '- development in progress!' : ''}" visible="{appView>/bPhoneSize}" />
-								<MenuItem text="Change version" visible="{appView>/bShowVersionSwitchInMenu}" />
-								<MenuItem text="Feedback" visible="{appView>/bPhoneSize}" />
-								<MenuItem id="aboutMenuItem" text="About" />
-								<MenuItem text="Legal" />
-								<MenuItem text="Privacy" />
-								<MenuItem text="Terms of Use" visible="{=!${versionData>/isOpenUI5}}">
-									<items>
-										<MenuItem text="Terms of Use" />
-										<MenuItem text="Copyright" />
-										<MenuItem text="Trademark" />
-										<MenuItem text="Disclaimer" />
-									</items>
-								</MenuItem>
-								<MenuItem text="License" visible="{versionData>/isOpenUI5}"/>
-							</items>
-						</Menu>
-					</menu>
-				</MenuButton>
-				<core:ExtensionPoint name="customLinks" />
 			</tnt:ToolHeader>
+		</tnt:subHeader>
 
-			<Bar visible="{= ${device>/system/phone} &amp;&amp; ${appView>/bHasMaster} &amp;&amp; ${headerView>/bShowSubHeader} }" class="sapContrast sapContrastPlus">
-				<contentLeft>
-					<ToggleButton icon="sap-icon://menu2" type="Transparent" press="toggleMaster" pressed="{appView>/bIsShownMaster}">
-						<layoutData>
-							<OverflowToolbarLayoutData priority="NeverOverflow" />
-						</layoutData>
-					</ToggleButton>
-				</contentLeft>
-			</Bar>
+		<tnt:sideContent>
+			<tnt:SideNavigation
+				id="demoKitSideNavigation"
+				visible="{appView>/bPhoneSize}"
+				expanded="false"
+				selectedKey="home"
+				itemSelect="navigateToSection">
+				<tnt:NavigationList>
+					<tnt:NavigationListItem
+						key="home"
+						icon="sap-icon://home"
+						text="{i18n>APP_TABHEADER_ITEM_HOME}" />
+					<tnt:NavigationListItem
+						key="topic"
+						icon="sap-icon://learning-assistant"
+						text="{i18n>APP_TABHEADER_ITEM_DOCUMENTATION}" />
+					<tnt:NavigationListItem
+						key="api"
+						icon="sap-icon://syntax"
+						text="{i18n>APP_TABHEADER_ITEM_API_REFERENCE}" />
+					<tnt:NavigationListItem
+						key="controls"
+						icon="sap-icon://example"
+						text="{i18n>APP_TABHEADER_ITEM_SAMPLES}" />
+					<tnt:NavigationListItem
+						key="demoapps"
+						icon="sap-icon://grid"
+						text="{i18n>APP_TABHEADER_ITEM_DEMO_APPS}" />
+					<tnt:NavigationListItem
+						key="tools"
+						icon="sap-icon://wrench"
+						text="{i18n>APP_TABHEADER_ITEM_TOOLS}">
+					</tnt:NavigationListItem>
+				</tnt:NavigationList>
+			</tnt:SideNavigation>
+		</tnt:sideContent>
 
-			<core:ExtensionPoint name="customControls" />
+		<tnt:mainContents>
+			<OverflowToolbar
+				visible="{= (${appView>/bHasMaster} &amp;&amp; !${appView>/bLandscape}) &#124;&#124; ${appView>/bHasMaster} &amp;&amp; ${appView>/device/system/phone} }">
+				<ToggleButton
+					class="sapUiDocumentationMasterToggleButton"
+					press="toggleMaster"
+					pressed="{appView>/bIsShownMaster}"
+					icon="{= ${appView>/bIsShownMaster} ? 'sap-icon://navigation-left-arrow' : 'sap-icon://navigation-right-arrow' }" />
+				<Title level="H3" text="{appView>/selectedSectionTitle}" />
+			</OverflowToolbar>
+
 			<ScrollContainer
-					id="contentId"
-					width="100%"
-					height="{= ${device>/system/phone} &amp;&amp; ${appView>/bHasMaster} &amp;&amp; ${headerView>/bShowSubHeader} ? 'calc(100% - 5rem)' : 'calc(100% - 3rem)'}"
-					horizontal="false"
-					vertical="false">
-				<SplitApp id="splitApp"
-						  mode="HideMode"
-						  defaultTransitionNameDetail="show"
-						  defaultTransitionNameMaster="fade">
-				</SplitApp>
+				id="demoKitScrollContainer"
+				width="100%"
+				height="{= ${appView>/bHasMaster} &amp;&amp; !${appView>/bLandscape} &amp;&amp; ${appView>/device/system/desktop} ? 'calc(100% - 2rem)'
+					: (${appView>/bHasMaster} &amp;&amp; !${appView>/bLandscape}) ? 'calc(100% - 2.75rem)'
+					: (${appView>/bHasMaster} &amp;&amp; ${appView>/device/system/phone}) ? 'calc(100% - 2.75rem)'
+					: '100%'}"
+				horizontal="false"
+				vertical="false">
+
+				<SplitApp
+					id="splitApp"
+					class="sapUiDocumentationSplitApp"
+					mode="HideMode"
+					defaultTransitionNameDetail="show"
+					defaultTransitionNameMaster="fade" />
 			</ScrollContainer>
-		</content>
-		<footer>
-			<core:ExtensionPoint name="footer" />
-		</footer>
-	</Page>
+		</tnt:mainContents>
+	</tnt:ToolPage>
 </mvc:View>

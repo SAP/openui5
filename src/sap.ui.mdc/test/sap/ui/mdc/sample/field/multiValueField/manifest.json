@@ -1,0 +1,43 @@
+{
+	"sap.app" : {
+		"id" : "ProductCollection",
+		"version" : "1.0",
+		"type" : "application"
+	},
+
+	"sap.ui" : {
+		"technology" : "UI5"
+	},
+
+	"sap.ui5" : {
+		"handleValidation": true,
+		"rootView": {
+			"preprocessors": {
+				"xml": {
+					"models": {
+						"metaList": ""
+					},
+					"bindingContexts" : {
+
+					}
+				}
+			},
+			"type": "XML",
+			"viewName": "sap.ui.mdc.sample.field.multiValueField.Test",
+			"id": "MyView",
+			"height": "100%",
+			"async": true
+		},
+		"dependencies" : {
+			"minUI5Version" : "1.87.0",
+			"libs" : {
+				"sap.ui.core" : {},
+				"sap.m" : {},
+				"sap.ui.layout" : {},
+				"sap.ui.mdc" : {},
+				"sap.ui.fl" : {"lazy" : false}
+			},
+			"components" : {}
+		}
+	}
+}

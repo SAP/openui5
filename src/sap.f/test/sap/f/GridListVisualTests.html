@@ -1,0 +1,32 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta charset="UTF-8">
+
+		<title>GridList Playground</title>
+
+		<script
+			id="sap-ui-bootstrap"
+			type="text/javascript"
+			src="../../../resources/sap-ui-core.js"
+			data-sap-ui-theme="sap_belize"
+			data-sap-ui-libs="sap.f, sap.m"
+			data-sap-ui-async="true"
+			data-sap-ui-compatVersion="edge"
+			data-sap-ui-xx-bindingSyntax="complex"
+			data-sap-ui-oninit="module:sap/ui/core/ComponentSupport"
+			data-sap-ui-resourceroots='{
+				"sap.f.gridlist": "./gridlist"
+			}'>
+		</script>
+		<style>
+			.sapFGridList.alignStart .sapFGridListGroup {
+				align-items: start;
+			}
+		</style>
+	</head>
+
+	<body class="sapUiBody sapUiSizeCompact" id="content">
+		<div data-sap-ui-component data-id="gridplayground" data-name="sap.f.gridlist"></div>
+	</body>
+</html>

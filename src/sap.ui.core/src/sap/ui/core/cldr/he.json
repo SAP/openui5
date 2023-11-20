@@ -1,5 +1,7 @@
 {
 	"__license": "This file has been derived from Unicode Common Locale Data Repository (CLDR) files (http://cldr.unicode.org). See the copyright and permission notice in the Unicode-Data-Files-LICENSE.txt available at the same location as this file or visit http://www.unicode.org/copyright.html",
+	"__version": "43.0.0",
+	"__buildtime": "2023-09-28T11:39:07.908Z",
 	"languages": {
 		"aa": "אפארית",
 		"ab": "אבחזית",
@@ -19,16 +21,19 @@
 		"am": "אמהרית",
 		"an": "אראגונית",
 		"ang": "אנגלית עתיקה",
+		"ann": "אובולו",
 		"anp": "אנג׳יקה",
 		"ar": "ערבית",
 		"ar_001": "ערבית ספרותית",
 		"arc": "ארמית",
 		"arn": "אראוקנית",
 		"arp": "אראפהו",
+		"ars": "ערבית - נג׳ד",
 		"arw": "ארוואק",
 		"as": "אסאמית",
 		"asa": "אסו",
 		"ast": "אסטורית",
+		"atj": "אטיקמק",
 		"av": "אווארית",
 		"awa": "אוואדית",
 		"ay": "איימארית",
@@ -36,7 +41,7 @@
 		"az_alt-short": "אזרית",
 		"ba": "בשקירית",
 		"bal": "באלוצ׳י",
-		"ban": "בלינזית",
+		"ban": "באלינזית",
 		"bar": "בווארית",
 		"bas": "בסאא",
 		"bax": "במום",
@@ -72,6 +77,7 @@
 		"car": "קאריב",
 		"cay": "קאיוגה",
 		"cch": "אטסם",
+		"ccp": "צ׳אקמה",
 		"ce": "צ׳צ׳נית",
 		"ceb": "סבואנו",
 		"cgg": "צ׳יגה",
@@ -86,13 +92,23 @@
 		"chr": "צ׳רוקי",
 		"chy": "שאיין",
 		"ckb": "כורדית סוראנית",
+		"ckb_alt-menu": "כורדית סוראנית",
+		"ckb_alt-variant": "כורדית סוראנית",
+		"clc": "צ׳ילקוטין",
 		"co": "קורסיקנית",
 		"cop": "קופטית",
 		"cr": "קרי",
+		"crg": "מצ׳יף",
 		"crh": "טטרית של קרים",
+		"crj": "קרי דרום מזרחי",
+		"crk": "קרי מישורים",
+		"crl": "קרי צפון מזרחי",
+		"crm": "מוס קרי",
+		"crr": "אלגונקוויאן בקרוליינה",
 		"crs": "קריאולית (סיישל)",
 		"cs": "צ׳כית",
 		"csb": "קשובית",
+		"csw": "סקרי של אזור הביצות",
 		"cu": "סלאבית כנסייתית עתיקה",
 		"cv": "צ׳ובאש",
 		"cy": "וולשית",
@@ -101,7 +117,6 @@
 		"dar": "דרגווה",
 		"dav": "טאיטה",
 		"de": "גרמנית",
-		"de_AT": "גרמנית (אוסטריה)",
 		"de_CH": "גרמנית (שוויץ)",
 		"del": "דלאוור",
 		"den": "סלאבית",
@@ -125,22 +140,15 @@
 		"el": "יוונית",
 		"elx": "עילמית",
 		"en": "אנגלית",
-		"en_AU": "אנגלית (אוסטרליה)",
-		"en_CA": "אנגלית (קנדה)",
-		"en_GB": "אנגלית (בריטניה)",
-		"en_GB-alt-short": "אנגלית (בריטניה)",
-		"en_US": "אנגלית (ארצות הברית)",
 		"en_US-alt-short": "אנגלית (ארה״ב)",
 		"enm": "אנגלית תיכונה",
 		"eo": "אספרנטו",
 		"es": "ספרדית",
-		"es_419": "ספרדית (אמריקה הלטינית)",
-		"es_ES": "ספרדית (ספרד)",
-		"es_MX": "ספרדית (מקסיקו)",
 		"et": "אסטונית",
 		"eu": "בסקית",
 		"ewo": "אוונדו",
 		"fa": "פרסית",
+		"fa_AF": "דארי",
 		"fan": "פנג",
 		"fat": "פאנטי",
 		"ff": "פולה",
@@ -150,7 +158,6 @@
 		"fo": "פארואזית",
 		"fon": "פון",
 		"fr": "צרפתית",
-		"fr_CA": "צרפתית (קנדה)",
 		"fr_CH": "צרפתית (שוויץ)",
 		"frc": "צרפתית קייג׳ונית",
 		"frm": "צרפתית תיכונה",
@@ -186,18 +193,21 @@
 		"hai": "האידה",
 		"hak": "סינית האקה",
 		"haw": "הוואית",
+		"hax": "האידה דרומית",
 		"he": "עברית",
 		"hi": "הינדי",
+		"hi_Latn-alt-variant": "הינגליש",
 		"hil": "היליגאינון",
 		"hit": "חתית",
 		"hmn": "המונג",
 		"ho": "הירי מוטו",
 		"hr": "קרואטית",
-		"hsb": "סורבית גבוהה",
+		"hsb": "סורבית עילית",
 		"hsn": "סינית שיאנג",
 		"ht": "קריאולית (האיטי)",
 		"hu": "הונגרית",
 		"hup": "הופה",
+		"hur": "הלקומלם",
 		"hy": "ארמנית",
 		"hz": "הררו",
 		"ia": "‏אינטרלינגואה",
@@ -208,6 +218,7 @@
 		"ig": "איגבו",
 		"ii": "סצ׳ואן יי",
 		"ik": "אינופיאק",
+		"ikt": "אינוקטיטוט במערב קנדה",
 		"ilo": "אילוקו",
 		"inh": "אינגושית",
 		"io": "אידו",
@@ -235,6 +246,7 @@
 		"kea": "קאבוורדיאנו",
 		"kfo": "קורו",
 		"kg": "קונגו",
+		"kgp": "קיינגאנג",
 		"kha": "קהאסי",
 		"kho": "קוטאנזית",
 		"khq": "קוירה צ׳יני",
@@ -265,6 +277,7 @@
 		"kut": "קוטנאי",
 		"kv": "קומי",
 		"kw": "קורנית",
+		"kwk": "קוואקוואלה",
 		"ky": "קירגיזית",
 		"la": "לטינית",
 		"lad": "לדינו",
@@ -275,6 +288,8 @@
 		"lez": "לזגית",
 		"lg": "גאנדה",
 		"li": "לימבורגית",
+		"lij": "ליגורית",
+		"lil": "לילואט",
 		"lkt": "לקוטה",
 		"ln": "לינגלה",
 		"lo": "לאו",
@@ -282,6 +297,7 @@
 		"lou": "קריאולית לואיזיאנית",
 		"loz": "לוזית",
 		"lrc": "לורית צפונית",
+		"lsm": "סמיה",
 		"lt": "ליטאית",
 		"lu": "לובה-קטנגה",
 		"lua": "לובה-לולואה",
@@ -317,9 +333,10 @@
 		"mn": "מונגולית",
 		"mnc": "מנצ׳ו",
 		"mni": "מניפורית",
+		"moe": "אינו-אמון",
 		"moh": "מוהוק",
 		"mos": "מוסי",
-		"mr": "מראטהי",
+		"mr": "מראטהית",
 		"ms": "מלאית",
 		"mt": "מלטית",
 		"mua": "מונדאנג",
@@ -345,7 +362,7 @@
 		"nia": "ניאס",
 		"niu": "ניואן",
 		"nl": "הולנדית",
-		"nl_BE": "פלמית",
+		"nl_BE": "הולנדית (פלמית)",
 		"nmg": "קוואסיו",
 		"nn": "נורווגית חדשה",
 		"nnh": "נגיאמבון",
@@ -365,6 +382,11 @@
 		"nzi": "נזימה",
 		"oc": "אוקסיטנית",
 		"oj": "אוג׳יבווה",
+		"ojb": "אוג׳יבווה צפון מערבית",
+		"ojc": "אוג׳יבווה (מרכז)",
+		"ojs": "אוג׳י-קרי",
+		"ojw": "אוביג׳ווה מערבית",
+		"oka": "אוקאנגן",
 		"om": "אורומו",
 		"or": "אורייה",
 		"os": "אוסטית",
@@ -376,31 +398,31 @@
 		"pam": "פמפאניה",
 		"pap": "פפיאמנטו",
 		"pau": "פלוואן",
-		"pcm": "ניגרית פידג׳ית",
+		"pcm": "פידגין ניגרי",
 		"peo": "פרסית עתיקה",
 		"phn": "פיניקית",
 		"pi": "פאלי",
+		"pis": "פייג׳ין",
 		"pl": "פולנית",
 		"pon": "פונפיאן",
+		"pqm": "מליסיט-פאסמקוודי",
 		"prg": "פרוסית",
 		"pro": "פרובנסאל עתיקה",
 		"ps": "פאשטו",
 		"ps_alt-variant": "פושטו",
 		"pt": "פורטוגזית",
-		"pt_BR": "פורטוגזית (ברזיל)",
-		"pt_PT": "פורטוגזית (פורטוגל)",
 		"qu": "קצ׳ואה",
 		"quc": "קיצ׳ה",
 		"raj": "ראג׳סטאני",
 		"rap": "רפאנוי",
 		"rar": "ררוטונגאן",
+		"rhg": "רוהינגיה",
 		"rm": "רומאנש",
 		"rn": "קירונדי",
 		"ro": "רומנית",
 		"ro_MD": "מולדבית",
 		"rof": "רומבו",
 		"rom": "רומאני",
-		"root": "רוט",
 		"ru": "רוסית",
 		"rup": "ארומנית",
 		"rw": "קנירואנדית",
@@ -434,6 +456,7 @@
 		"sid": "סידאמו",
 		"sk": "סלובקית",
 		"sl": "סלובנית",
+		"slh": "לשוטסיד",
 		"sm": "סמואית",
 		"sma": "סאמי דרומית",
 		"smj": "לולה סאמי",
@@ -450,6 +473,7 @@
 		"ss": "סאווזי",
 		"ssy": "סאהו",
 		"st": "סותו דרומית",
+		"str": "סאליש מיצרי חואן דה פוקה",
 		"su": "סונדנזית",
 		"suk": "סוקומה",
 		"sus": "סוסו",
@@ -461,31 +485,36 @@
 		"syc": "סירית קלאסית",
 		"syr": "סורית",
 		"ta": "טמילית",
+		"tce": "טצ׳ון דרומית",
 		"te": "טלוגו",
 		"tem": "טימנה",
 		"teo": "טסו",
 		"ter": "טרנו",
 		"tet": "טטום",
 		"tg": "טג׳יקית",
+		"tgx": "טגישית",
 		"th": "תאית",
+		"tht": "טלתנית",
 		"ti": "תיגרינית",
 		"tig": "טיגרית",
 		"tiv": "טיב",
 		"tk": "טורקמנית",
 		"tkl": "טוקלאו",
 		"tl": "טאגאלוג",
-		"tlh": "קלינגון",
+		"tlh": "קלינגונית",
 		"tli": "טלינגיט",
 		"tmh": "טמאשק",
 		"tn": "סוואנה",
 		"to": "טונגאית",
 		"tog": "ניאסה טונגה",
+		"tok": "טוקי פונה",
 		"tpi": "טוק פיסין",
 		"tr": "טורקית",
 		"trv": "טרוקו",
 		"ts": "טסונגה",
 		"tsi": "טסימשיאן",
 		"tt": "טטרית",
+		"ttm": "טצ׳ון צפונית",
 		"tum": "טומבוקה",
 		"tvl": "טובאלו",
 		"tw": "טווי",
@@ -494,7 +523,7 @@
 		"tyv": "טובינית",
 		"tzm": "תמאזיגת של מרכז מרוקו",
 		"udm": "אודמורט",
-		"ug": "אויגור",
+		"ug": "אויגורית",
 		"uga": "אוגריתית",
 		"uk": "אוקראינית",
 		"umb": "אומבונדו",
@@ -503,7 +532,7 @@
 		"uz": "אוזבקית",
 		"vai": "וואי",
 		"ve": "וונדה",
-		"vi": "ויאטנמית",
+		"vi": "וייטנאמית",
 		"vo": "‏וולאפיק",
 		"vot": "ווטיק",
 		"vun": "וונג׳ו",
@@ -524,76 +553,89 @@
 		"ybb": "ימבה",
 		"yi": "יידיש",
 		"yo": "יורובה",
+		"yrl": "נינגטו",
 		"yue": "קנטונזית",
+		"yue_alt-menu": "סינית, קנטונזית",
 		"za": "זואנג",
 		"zap": "זאפוטק",
 		"zbl": "בליסימבולס",
 		"zen": "זנאגה",
 		"zgh": "תמזיע׳ת מרוקאית תקנית",
 		"zh": "סינית",
+		"zh_alt-menu": "סינית, מנדרינית",
 		"zh_Hans": "סינית פשוטה",
+		"zh_Hans-alt-long": "סינית מנדרינית פשוטה",
 		"zh_Hant": "סינית מסורתית",
+		"zh_Hant-alt-long": "סינית מנדרינית מסורתית",
 		"zu": "זולו",
 		"zun": "זוני",
 		"zxx": "ללא תוכן לשוני",
 		"zza": "זאזא"
 	},
 	"scripts": {
-		"Adlm": "Adlm",
-		"Aghb": "Aghb",
-		"Ahom": "Ahom",
+		"Adlm": "אדלם",
+		"Aghb": "אלבני קווקזי",
+		"Ahom": "אהום",
 		"Arab": "ערבי",
 		"Arab-alt-variant": "ערבי-פרסי",
-		"Armi": "Armi",
+		"Aran": "נסתעליק",
+		"Armi": "ארמית רשמית",
 		"Armn": "ארמני",
-		"Avst": "Avst",
+		"Avst": "אווסטן",
 		"Bali": "באלינזי",
-		"Bamu": "Bamu",
-		"Bass": "Bass",
-		"Batk": "Batk",
+		"Bamu": "במום",
+		"Bass": "באסה ואה",
+		"Batk": "בטק",
 		"Beng": "בנגלי",
-		"Bhks": "Bhks",
+		"Bhks": "בהיקסוקי",
 		"Bopo": "בופומופו",
-		"Brah": "Brah",
+		"Brah": "ברהמי",
 		"Brai": "ברייל",
-		"Bugi": "Bugi",
-		"Buhd": "Buhd",
-		"Cakm": "Cakm",
-		"Cans": "Cans",
-		"Cari": "Cari",
+		"Bugi": "בוגינזי",
+		"Buhd": "בוהיד",
+		"Cakm": "צ׳אקמה",
+		"Cans": "כתב הברתי קנדי ילידי מאוחד",
+		"Cari": "קריאן",
 		"Cham": "צ׳אם",
-		"Cher": "צ׳ירוקי",
+		"Cher": "צ׳רוקי",
+		"Chrs": "כורזמיאן",
 		"Copt": "קופטי",
+		"Cpmn": "ציפרו-מינואן",
 		"Cprt": "קפריסאי",
 		"Cyrl": "קירילי",
 		"Cyrs": "קירילי סלאבוני כנסייתי עתיק",
 		"Deva": "דוואנגרי",
-		"Dsrt": "Dsrt",
-		"Dupl": "Dupl",
+		"Diak": "אותיות אי",
+		"Dogr": "דוגרה",
+		"Dsrt": "דסרט",
+		"Dupl": "קיצור של דובילרן",
 		"Egyp": "כתב חרטומים",
-		"Elba": "Elba",
+		"Elba": "אלבסאן",
+		"Elym": "אלימי",
 		"Ethi": "אתיופי",
 		"Geor": "גאורגי",
-		"Glag": "Glag",
-		"Gonm": "Gonm",
+		"Glag": "גלגוליטי",
+		"Gong": "ג’ונג’לה מבולבל",
+		"Gonm": "מסארם גונדי",
 		"Goth": "גותי",
-		"Gran": "Gran",
+		"Gran": "גרנתה",
 		"Grek": "יווני",
 		"Gujr": "גוג׳רטי",
 		"Guru": "גורמוקי",
-		"Hanb": "האנב",
+		"Hanb": "האן עם בופומופו",
 		"Hang": "האנגול",
 		"Hani": "האן",
-		"Hano": "Hano",
+		"Hano": "האנונו",
 		"Hans": "פשוט",
 		"Hans-alt-stand-alone": "האן פשוט",
 		"Hant": "מסורתי",
 		"Hant-alt-stand-alone": "האן מסורתי",
-		"Hatr": "Hatr",
+		"Hatr": "חטרן",
 		"Hebr": "עברי",
 		"Hira": "הירגאנה",
-		"Hluw": "Hluw",
-		"Hmng": "Hmng",
+		"Hluw": "הירוגליפים האנטוליים",
+		"Hmng": "פאהח המונג",
+		"Hmnp": "ניאקנג פואצ׳ה המונג",
 		"Hrkt": "הברתי יפני",
 		"Hung": "הונגרי עתיק",
 		"Inds": "אינדוס",
@@ -601,99 +643,113 @@
 		"Jamo": "ג׳אמו",
 		"Java": "ג׳אוונזי",
 		"Jpan": "יפני",
-		"Kali": "Kali",
+		"Kali": "קאי לי",
 		"Kana": "קטקאנה",
-		"Khar": "Khar",
+		"Khar": "חרושתי",
 		"Khmr": "חמרי",
-		"Khoj": "Khoj",
+		"Khoj": "חוג׳קי",
+		"Kits": "כתב קטן של חיטן",
 		"Knda": "קאנאדה",
 		"Kore": "קוריאני",
-		"Kthi": "Kthi",
-		"Lana": "Lana",
-		"Laoo": "לאית",
+		"Kthi": "קאיתי",
+		"Lana": "לאנה",
+		"Laoo": "לאי",
 		"Latg": "לטיני גאלי",
 		"Latn": "לטיני",
-		"Lepc": "Lepc",
-		"Limb": "Limb",
-		"Lina": "Lina",
-		"Linb": "Linb",
-		"Lisu": "Lisu",
-		"Lyci": "Lyci",
-		"Lydi": "Lydi",
-		"Mahj": "Mahj",
-		"Mand": "Mand",
-		"Mani": "Mani",
-		"Marc": "Marc",
+		"Lepc": "לפחה",
+		"Limb": "לימבו",
+		"Lina": "ליניארי א",
+		"Linb": "ליניארי ב",
+		"Lisu": "פרייזר",
+		"Lyci": "ליקי",
+		"Lydi": "לידי",
+		"Mahj": "מהג׳אני",
+		"Maka": "מקאסאר",
+		"Mand": "מנדאית",
+		"Mani": "מניצ׳י",
+		"Marc": "מרצ׳ן",
 		"Maya": "מאיה",
-		"Mend": "Mend",
-		"Merc": "Merc",
-		"Mero": "Mero",
+		"Medf": "מדפיידרין",
+		"Mend": "מנדה",
+		"Merc": "קורסית מרואיטית",
+		"Mero": "מרואיטית",
 		"Mlym": "מליאלאם",
-		"Modi": "Modi",
+		"Modi": "מודי",
 		"Mong": "מונגולי",
-		"Mroo": "Mroo",
-		"Mtei": "Mtei",
-		"Mult": "Mult",
+		"Mroo": "מרו",
+		"Mtei": "מאיטי מאייק",
+		"Mult": "מולטיני",
 		"Mymr": "מיאנמר",
-		"Narb": "Narb",
-		"Nbat": "Nbat",
-		"Newa": "Newa",
-		"Nkoo": "Nkoo",
-		"Nshu": "Nshu",
-		"Ogam": "Ogam",
-		"Olck": "Olck",
-		"Orkh": "Orkh",
-		"Orya": "אורייה",
-		"Osge": "Osge",
-		"Osma": "Osma",
-		"Palm": "Palm",
-		"Pauc": "Pauc",
-		"Perm": "Perm",
-		"Phag": "Phag",
-		"Phli": "Phli",
-		"Phlp": "Phlp",
+		"Nand": "ננדינאגרי",
+		"Narb": "ערב צפון עתיק",
+		"Nbat": "נבטי",
+		"Newa": "נווארית",
+		"Nkoo": "נ׳קו",
+		"Nshu": "נושו",
+		"Ogam": "אוהם",
+		"Olck": "אול צ׳יקי",
+		"Orkh": "אורחון",
+		"Orya": "אודייה",
+		"Osge": "אוסייג׳",
+		"Osma": "אוסמניה",
+		"Ougr": "אוגורית ישנה",
+		"Palm": "פלמירן",
+		"Pauc": "פאו צ׳ין האו",
+		"Perm": "פרמית ישנה",
+		"Phag": "פאגס",
+		"Phli": "פהלווי כתובתי",
+		"Phlp": "מזמור פהלווי",
 		"Phnx": "פיניקי",
-		"Plrd": "Plrd",
-		"Prti": "Prti",
-		"Rjng": "Rjng",
+		"Plrd": "פולארד פונטי",
+		"Prti": "פרטית כתובה",
+		"Qaag": "זאוגיי",
+		"Rjng": "רג׳אנג",
+		"Rohg": "חניפי",
 		"Runr": "רוני",
-		"Samr": "Samr",
-		"Sarb": "Sarb",
-		"Saur": "Saur",
-		"Sgnw": "Sgnw",
-		"Shaw": "Shaw",
-		"Shrd": "Shrd",
-		"Sidd": "Sidd",
-		"Sind": "Sind",
+		"Samr": "שומרונית",
+		"Sarb": "דרום ערבית",
+		"Saur": "סאוראשטרה",
+		"Sgnw": "חתימה",
+		"Shaw": "שבית",
+		"Shrd": "שרדה",
+		"Sidd": "סידהם",
+		"Sind": "חודוואדי",
 		"Sinh": "סינהלה",
-		"Sora": "Sora",
-		"Soyo": "Soyo",
-		"Sund": "Sund",
-		"Sylo": "Sylo",
+		"Sogd": "סוגדית",
+		"Sogo": "סוגדית עתיקה",
+		"Sora": "סורה סומפנג",
+		"Soyo": "סויומבו",
+		"Sund": "סונדאני",
+		"Sylo": "סילוטי נגרי",
 		"Syrc": "סורי",
 		"Syrj": "סורי מערבי",
 		"Syrn": "סורי מזרחי",
-		"Tagb": "Tagb",
-		"Takr": "Takr",
-		"Tale": "Tale",
-		"Talu": "Talu",
+		"Tagb": "טגבנווה",
+		"Takr": "טאקרי",
+		"Tale": "טאי לה",
+		"Talu": "טאי ליו חדש",
 		"Taml": "טמיל",
-		"Tang": "Tang",
-		"Tavt": "Tavt",
+		"Tang": "טאנגוט",
+		"Tavt": "טאי וייט",
 		"Telu": "טלוגו",
-		"Tfng": "Tfng",
+		"Tfng": "טיפינה",
 		"Tglg": "טגלוג",
 		"Thaa": "תאנה",
 		"Thai": "תאי",
 		"Tibt": "טיבטי",
-		"Tirh": "Tirh",
+		"Tirh": "תרותא",
+		"Tnsa": "טנגסה",
+		"Toto": "טוטו",
 		"Ugar": "אוגריתי",
-		"Vaii": "Vaii",
-		"Wara": "Wara",
+		"Vaii": "ואי",
+		"Vith": "ויטוקוקי",
+		"Wara": "ווראנג סיטי",
+		"Wcho": "וונצ׳ו",
 		"Xpeo": "פרסי עתיק",
-		"Xsux": "Xsux",
-		"Yiii": "Yiii",
-		"Zanb": "Zanb",
+		"Xsux": "כתב היתדות השומרי-אכדי",
+		"Yezi": "יעזי",
+		"Yiii": "יי",
+		"Zanb": "כיכר זנבזר",
 		"Zinh": "מורש",
 		"Zmth": "סימון מתמטי",
 		"Zsye": "אמוג׳י",
@@ -710,7 +766,7 @@
 		"151": "מזרח אירופה",
 		"154": "צפון אירופה",
 		"155": "מערב אירופה",
-		"202": "202",
+		"202": "אפריקה שמדרום לסהרה",
 		"419": "אמריקה הלטינית",
 		"001": "העולם",
 		"002": "אפריקה",
@@ -769,7 +825,7 @@
 		"BS": "איי בהאמה",
 		"BT": "בהוטן",
 		"BV": "האי בובה",
-		"BW": "בוצוואנה",
+		"BW": "בוטסואנה",
 		"BY": "בלארוס",
 		"BZ": "בליז",
 		"CA": "קנדה",
@@ -781,7 +837,7 @@
 		"CG-alt-variant": "קונגו (רפובליקה)",
 		"CH": "שווייץ",
 		"CI": "חוף השנהב",
-		"CI-alt-variant": "CI",
+		"CI-alt-variant": "קוט דיוואר",
 		"CK": "איי קוק",
 		"CL": "צ׳ילה",
 		"CM": "קמרון",
@@ -821,7 +877,7 @@
 		"FO": "איי פארו",
 		"FR": "צרפת",
 		"GA": "גבון",
-		"GB": "הממלכה המאוחדת",
+		"GB": "בריטניה",
 		"GB-alt-short": "בריטניה",
 		"GD": "גרנדה",
 		"GE": "גאורגיה",
@@ -840,7 +896,7 @@
 		"GU": "גואם",
 		"GW": "גינאה-ביסאו",
 		"GY": "גיאנה",
-		"HK": "הונג קונג (אזור מנהלי מיוחד של סין)",
+		"HK": "הונג קונג",
 		"HK-alt-short": "הונג קונג",
 		"HM": "איי הרד ומקדונלד",
 		"HN": "הונדורס",
@@ -891,12 +947,11 @@
 		"MF": "סן מרטן",
 		"MG": "מדגסקר",
 		"MH": "איי מרשל",
-		"MK": "מקדוניה",
-		"MK-alt-variant": "מקדוניה (הרפובליקה היוגוסלבית לשעבר של מקדוניה)",
+		"MK": "מקדוניה הצפונית",
 		"ML": "מאלי",
 		"MM": "מיאנמר (בורמה)",
 		"MN": "מונגוליה",
-		"MO": "מקאו (אזור מנהלי מיוחד של סין)",
+		"MO": "מקאו",
 		"MO-alt-short": "מקאו",
 		"MP": "איי מריאנה הצפוניים",
 		"MQ": "מרטיניק",
@@ -912,7 +967,7 @@
 		"NA": "נמיביה",
 		"NC": "קלדוניה החדשה",
 		"NE": "ניז׳ר",
-		"NF": "איי נורפוק",
+		"NF": "האי נורפוק",
 		"NG": "ניגריה",
 		"NI": "ניקרגואה",
 		"NL": "הולנד",
@@ -921,6 +976,7 @@
 		"NR": "נאורו",
 		"NU": "ניווה",
 		"NZ": "ניו זילנד",
+		"NZ-alt-variant": "אאוטארואה",
 		"OM": "עומאן",
 		"PA": "פנמה",
 		"PE": "פרו",
@@ -954,7 +1010,7 @@
 		"SI": "סלובניה",
 		"SJ": "סבאלברד ויאן מאיין",
 		"SK": "סלובקיה",
-		"SL": "סיירה לאונה",
+		"SL": "סיירה לאון",
 		"SM": "סן מרינו",
 		"SN": "סנגל",
 		"SO": "סומליה",
@@ -964,7 +1020,8 @@
 		"SV": "אל סלבדור",
 		"SX": "סנט מארטן",
 		"SY": "סוריה",
-		"SZ": "סווזילנד",
+		"SZ": "אסוואטיני",
+		"SZ-alt-variant": "סווזילנד",
 		"TA": "טריסטן דה קונה",
 		"TC": "איי טרקס וקייקוס",
 		"TD": "צ׳אד",
@@ -979,6 +1036,7 @@
 		"TN": "תוניסיה",
 		"TO": "טונגה",
 		"TR": "טורקיה",
+		"TR-alt-variant": "טורקיה",
 		"TT": "טרינידד וטובגו",
 		"TV": "טובאלו",
 		"TW": "טייוואן",
@@ -1000,6 +1058,8 @@
 		"VU": "ונואטו",
 		"WF": "איי ווליס ופוטונה",
 		"WS": "סמואה",
+		"XA": "מבטאים חלקיים",
+		"XB": "דו-כיווני חלקי",
 		"XK": "קוסובו",
 		"YE": "תימן",
 		"YT": "מאיוט",
@@ -1023,8 +1083,8 @@
 			"short": "H:mm"
 		},
 		"dateTimeFormats": {
-			"full": "{1} בשעה {0}",
-			"long": "{1} בשעה {0}",
+			"full": "{1}, {0}",
+			"long": "{1}, {0}",
 			"medium": "{1}, {0}",
 			"short": "{1}, {0}",
 			"availableFormats": {
@@ -1041,6 +1101,7 @@
 				"Ehms": "E h:mm:ss a",
 				"EHms": "E H:mm:ss",
 				"Gy": "y G",
+				"GyMd": "d/M/y GGGGG",
 				"GyMMM": "MMM y G",
 				"GyMMMd": "d בMMM y G",
 				"GyMMMEd": "E, d בMMM y G",
@@ -1073,7 +1134,7 @@
 				"yMMMM": "MMMM y",
 				"yQQQ": "QQQ y",
 				"yQQQQ": "QQQQ y",
-				"MMMMW": "שבוע W בMMM",
+				"MMMMW": "שבוע W בMMMM",
 				"yw": "שבוע w בשנת Y"
 			},
 			"appendItems": {
@@ -1091,8 +1152,55 @@
 			},
 			"intervalFormats": {
 				"intervalFormatFallback": "{0} – {1}",
+				"Bh": {
+					"B": "h B – h B",
+					"h": "h–h B"
+				},
+				"Bhm": {
+					"B": "h:mm B – h:mm B",
+					"h": "h:mm–h:mm B",
+					"m": "h:mm–h:mm B"
+				},
 				"d": {
 					"d": "d–d"
+				},
+				"Gy": {
+					"G": "y G – y G",
+					"y": "y – y G"
+				},
+				"GyM": {
+					"G": "M.y GGGGG – M.y GGGGG",
+					"M": "M.y – M.y GGGGG",
+					"y": "M.y – M.y GGGGG"
+				},
+				"GyMd": {
+					"d": "d.M.y – d.M.y GGGGG",
+					"G": "d.M.y GGGGG – d.M.y GGGGG",
+					"M": "d.M.y – d.M.y GGGGG",
+					"y": "d.M.y – d.M.y GGGGG"
+				},
+				"GyMEd": {
+					"d": "E, d.M.y – E, d.M.y GGGGG",
+					"G": "E, d.M.y GGGGG – E, d.M.y GGGGG",
+					"M": "E, d.M.y – E, d.M.y GGGGG",
+					"y": "E, d.M.y – E, d.M.y GGGGG"
+				},
+				"GyMMM": {
+					"G": "MMM y G – MMM y G",
+					"M": "MMM – MMM y G",
+					"y": "MMM y – MMM y G"
+				},
+				"GyMMMd": {
+					"d": "d – d בMMM y G",
+					"G": "d בMMM y G – d בMMM y G",
+					"M": "d בMMM – d בMMM y G",
+					"y": "d בMMM y – d בMMM y G"
+				},
+				"GyMMMEd": {
+					"d": "E, d בMMM – E, d בMMM y G",
+					"G": "E, d בMMM y G – E, d בMMM y G",
+					"M": "E, d בMMM – E, d בMMM y G",
+					"y": "E, d בMMM y – E, d בMMM y G"
 				},
 				"h": {
 					"a": "h a – h a",
@@ -1428,6 +1536,66 @@
 				]
 			}
 		},
+		"flexibleDayPeriods": {
+			"format": {
+				"abbreviated": {
+					"midnight": "חצות",
+					"morning1": "בוקר",
+					"afternoon1": "צהריים",
+					"afternoon2": "אחר הצהריים",
+					"evening1": "ערב",
+					"night1": "לילה",
+					"night2": "לפנות בוקר"
+				},
+				"narrow": {
+					"midnight": "חצות",
+					"morning1": "בבוקר",
+					"afternoon1": "בצהריים",
+					"afternoon2": "אחה״צ",
+					"evening1": "בערב",
+					"night1": "בלילה",
+					"night2": "לפנות בוקר"
+				},
+				"wide": {
+					"midnight": "חצות",
+					"morning1": "בבוקר",
+					"afternoon1": "בצהריים",
+					"afternoon2": "אחר הצהריים",
+					"evening1": "בערב",
+					"night1": "בלילה",
+					"night2": "לפנות בוקר"
+				}
+			},
+			"stand-alone": {
+				"abbreviated": {
+					"midnight": "חצות",
+					"morning1": "בוקר",
+					"afternoon1": "צהריים",
+					"afternoon2": "אחה״צ",
+					"evening1": "ערב",
+					"night1": "לילה",
+					"night2": "לפנות בוקר"
+				},
+				"narrow": {
+					"midnight": "חצות",
+					"morning1": "בוקר",
+					"afternoon1": "צהריים",
+					"afternoon2": "אחה״צ",
+					"evening1": "ערב",
+					"night1": "לילה",
+					"night2": "לפנות בוקר"
+				},
+				"wide": {
+					"midnight": "חצות",
+					"morning1": "בוקר",
+					"afternoon1": "צהריים",
+					"afternoon2": "אחר הצהריים",
+					"evening1": "ערב",
+					"night1": "לילה",
+					"night2": "לפנות בוקר"
+				}
+			}
+		},
 		"era-wide": {
 			"0": "לפני הספירה",
 			"1": "לספירה"
@@ -1437,8 +1605,8 @@
 			"1": "לספירה"
 		},
 		"era-narrow": {
-			"0": "לפנה״ס",
-			"1": "לספירה"
+			"0": "לפני",
+			"1": "אחריי"
 		}
 	},
 	"ca-islamic": {
@@ -1455,8 +1623,8 @@
 			"short": "H:mm"
 		},
 		"dateTimeFormats": {
-			"full": "{1} בשעה {0}",
-			"long": "{1} בשעה {0}",
+			"full": "{1}, {0}",
+			"long": "{1}, {0}",
 			"medium": "{1}, {0}",
 			"short": "{1}, {0}",
 			"availableFormats": {
@@ -1473,6 +1641,7 @@
 				"Ehms": "E h:mm:ss a",
 				"EHms": "E HH:mm:ss",
 				"Gy": "y G",
+				"GyMd": "d/M/y GGGGG",
 				"GyMMM": "MMM y G",
 				"GyMMMd": "d בMMM y G",
 				"GyMMMEd": "E, d בMMM y G",
@@ -1518,8 +1687,55 @@
 			},
 			"intervalFormats": {
 				"intervalFormatFallback": "{0} – {1}",
+				"Bh": {
+					"B": "h B – h B",
+					"h": "h–h B"
+				},
+				"Bhm": {
+					"B": "h:mm B – h:mm B",
+					"h": "h:mm–h:mm B",
+					"m": "h:mm–h:mm B"
+				},
 				"d": {
 					"d": "d–d"
+				},
+				"Gy": {
+					"G": "y G – y G",
+					"y": "G y–y"
+				},
+				"GyM": {
+					"G": "GGGGG y-MM – GGGGG y-MM",
+					"M": "GGGGG y-MM – y-MM",
+					"y": "GGGGG y-MM – y-MM"
+				},
+				"GyMd": {
+					"d": "GGGGG y-MM-dd – y-MM-dd",
+					"G": "GGGGG y-MM-dd – GGGGG y-MM-dd",
+					"M": "d.M.y – d.M.y GGGGG",
+					"y": "d.M.y – d.M.y GGGGG"
+				},
+				"GyMEd": {
+					"d": "E, d.M.y – E, d.M.y GGGGG",
+					"G": "E, d.M.y GGGGG – E, d.M.y GGGGG",
+					"M": "E, d.M.y – E, d.M.y GGGGG",
+					"y": "E, d.M.y – E, d.M.y GGGGG"
+				},
+				"GyMMM": {
+					"G": "MMM y G – MMM y G",
+					"M": "MMM – MMM y G",
+					"y": "MMM y – MMM y G"
+				},
+				"GyMMMd": {
+					"d": "d – d בMMM y G",
+					"G": "d בMMM y G – d בMMM y G",
+					"M": "d בMMM – d בMMM y G",
+					"y": "d בMMM y – d בMMM y G"
+				},
+				"GyMMMEd": {
+					"d": "E, d בMMM – E, d בMMM y G",
+					"G": "E, d בMMM y G – E, d בMMM y G",
+					"M": "E, d בMMM – E, d בMMM y G",
+					"y": "E, d בMMM y – E, d בMMM y G"
 				},
 				"h": {
 					"a": "h a – h a",
@@ -1855,14 +2071,74 @@
 				]
 			}
 		},
+		"flexibleDayPeriods": {
+			"format": {
+				"abbreviated": {
+					"midnight": "חצות",
+					"morning1": "בוקר",
+					"afternoon1": "צהריים",
+					"afternoon2": "אחר הצהריים",
+					"evening1": "ערב",
+					"night1": "לילה",
+					"night2": "לפנות בוקר"
+				},
+				"narrow": {
+					"midnight": "חצות",
+					"morning1": "בבוקר",
+					"afternoon1": "בצהריים",
+					"afternoon2": "אחה״צ",
+					"evening1": "בערב",
+					"night1": "בלילה",
+					"night2": "לפנות בוקר"
+				},
+				"wide": {
+					"midnight": "חצות",
+					"morning1": "בבוקר",
+					"afternoon1": "בצהריים",
+					"afternoon2": "אחר הצהריים",
+					"evening1": "בערב",
+					"night1": "בלילה",
+					"night2": "לפנות בוקר"
+				}
+			},
+			"stand-alone": {
+				"abbreviated": {
+					"midnight": "חצות",
+					"morning1": "בוקר",
+					"afternoon1": "צהריים",
+					"afternoon2": "אחה״צ",
+					"evening1": "ערב",
+					"night1": "לילה",
+					"night2": "לפנות בוקר"
+				},
+				"narrow": {
+					"midnight": "חצות",
+					"morning1": "בוקר",
+					"afternoon1": "צהריים",
+					"afternoon2": "אחה״צ",
+					"evening1": "ערב",
+					"night1": "לילה",
+					"night2": "לפנות בוקר"
+				},
+				"wide": {
+					"midnight": "חצות",
+					"morning1": "בוקר",
+					"afternoon1": "צהריים",
+					"afternoon2": "אחר הצהריים",
+					"evening1": "ערב",
+					"night1": "לילה",
+					"night2": "לפנות בוקר"
+				}
+			}
+		},
 		"era-wide": {
 			"0": "שנת היג׳רה"
 		},
 		"era-abbreviated": {
-			"0": "שנת היג׳רה"
+			"0": "הג׳רה"
 		},
 		"era-narrow": {
-			"0": "AH"
+			"0": "הג׳רה"
 		}
 	},
 	"ca-japanese": {
@@ -1879,8 +2155,8 @@
 			"short": "H:mm"
 		},
 		"dateTimeFormats": {
-			"full": "{1} בשעה {0}",
-			"long": "{1} בשעה {0}",
+			"full": "{1}, {0}",
+			"long": "{1}, {0}",
 			"medium": "{1}, {0}",
 			"short": "{1}, {0}",
 			"availableFormats": {
@@ -1897,6 +2173,7 @@
 				"Ehms": "E h:mm:ss a",
 				"EHms": "E HH:mm:ss",
 				"Gy": "y G",
+				"GyMd": "d/M/y GGGGG",
 				"GyMMM": "MMM y G",
 				"GyMMMd": "d בMMM y G",
 				"GyMMMEd": "E, d בMMM y G",
@@ -1942,8 +2219,55 @@
 			},
 			"intervalFormats": {
 				"intervalFormatFallback": "{0} – {1}",
+				"Bh": {
+					"B": "h B – h B",
+					"h": "h–h B"
+				},
+				"Bhm": {
+					"B": "h:mm B – h:mm B",
+					"h": "h:mm–h:mm B",
+					"m": "h:mm–h:mm B"
+				},
 				"d": {
 					"d": "d–d"
+				},
+				"Gy": {
+					"G": "y G – y G",
+					"y": "G y–y"
+				},
+				"GyM": {
+					"G": "GGGGG y-MM – GGGGG y-MM",
+					"M": "GGGGG y-MM – y-MM",
+					"y": "GGGGG y-MM – y-MM"
+				},
+				"GyMd": {
+					"d": "GGGGG y-MM-dd – y-MM-dd",
+					"G": "GGGGG y-MM-dd – GGGGG y-MM-dd",
+					"M": "d.M.y – d.M.y GGGGG",
+					"y": "d.M.y – d.M.y GGGGG"
+				},
+				"GyMEd": {
+					"d": "E, d.M.y – E, d.M.y GGGGG",
+					"G": "E, d.M.y GGGGG – E, d.M.y GGGGG",
+					"M": "E, d.M.y – E, d.M.y GGGGG",
+					"y": "E, d.M.y – E, d.M.y GGGGG"
+				},
+				"GyMMM": {
+					"G": "MMM y G – MMM y G",
+					"M": "MMM – MMM y G",
+					"y": "MMM y – MMM y G"
+				},
+				"GyMMMd": {
+					"d": "d – d בMMM y G",
+					"G": "d בMMM y G – d בMMM y G",
+					"M": "d בMMM – d בMMM y G",
+					"y": "d בMMM y – d בMMM y G"
+				},
+				"GyMMMEd": {
+					"d": "E, d בMMM – E, d בMMM y G",
+					"G": "E, d בMMM y G – E, d בMMM y G",
+					"M": "E, d בMMM – E, d בMMM y G",
+					"y": "E, d בMMM y – E, d בMMM y G"
 				},
 				"h": {
 					"a": "h a – h a",
@@ -2279,23 +2603,86 @@
 				]
 			}
 		},
+		"flexibleDayPeriods": {
+			"format": {
+				"abbreviated": {
+					"midnight": "חצות",
+					"morning1": "בוקר",
+					"afternoon1": "צהריים",
+					"afternoon2": "אחר הצהריים",
+					"evening1": "ערב",
+					"night1": "לילה",
+					"night2": "לפנות בוקר"
+				},
+				"narrow": {
+					"midnight": "חצות",
+					"morning1": "בבוקר",
+					"afternoon1": "בצהריים",
+					"afternoon2": "אחה״צ",
+					"evening1": "בערב",
+					"night1": "בלילה",
+					"night2": "לפנות בוקר"
+				},
+				"wide": {
+					"midnight": "חצות",
+					"morning1": "בבוקר",
+					"afternoon1": "בצהריים",
+					"afternoon2": "אחר הצהריים",
+					"evening1": "בערב",
+					"night1": "בלילה",
+					"night2": "לפנות בוקר"
+				}
+			},
+			"stand-alone": {
+				"abbreviated": {
+					"midnight": "חצות",
+					"morning1": "בוקר",
+					"afternoon1": "צהריים",
+					"afternoon2": "אחה״צ",
+					"evening1": "ערב",
+					"night1": "לילה",
+					"night2": "לפנות בוקר"
+				},
+				"narrow": {
+					"midnight": "חצות",
+					"morning1": "בוקר",
+					"afternoon1": "צהריים",
+					"afternoon2": "אחה״צ",
+					"evening1": "ערב",
+					"night1": "לילה",
+					"night2": "לפנות בוקר"
+				},
+				"wide": {
+					"midnight": "חצות",
+					"morning1": "בוקר",
+					"afternoon1": "צהריים",
+					"afternoon2": "אחר הצהריים",
+					"evening1": "ערב",
+					"night1": "לילה",
+					"night2": "לפנות בוקר"
+				}
+			}
+		},
 		"era-wide": {
 			"232": "Meiji",
 			"233": "Taishō",
 			"234": "Shōwa",
-			"235": "Heisei"
+			"235": "Heisei",
+			"236": "Reiwa"
 		},
 		"era-abbreviated": {
 			"232": "Meiji",
 			"233": "Taishō",
 			"234": "Shōwa",
-			"235": "Heisei"
+			"235": "Heisei",
+			"236": "Reiwa"
 		},
 		"era-narrow": {
 			"232": "M",
 			"233": "T",
 			"234": "S",
-			"235": "H"
+			"235": "H",
+			"236": "R"
 		}
 	},
 	"ca-persian": {
@@ -2312,8 +2699,8 @@
 			"short": "H:mm"
 		},
 		"dateTimeFormats": {
-			"full": "{1} בשעה {0}",
-			"long": "{1} בשעה {0}",
+			"full": "{1}, {0}",
+			"long": "{1}, {0}",
 			"medium": "{1}, {0}",
 			"short": "{1}, {0}",
 			"availableFormats": {
@@ -2330,6 +2717,7 @@
 				"Ehms": "E h:mm:ss a",
 				"EHms": "E HH:mm:ss",
 				"Gy": "y G",
+				"GyMd": "d/M/y GGGGG",
 				"GyMMM": "MMM y G",
 				"GyMMMd": "d בMMM y G",
 				"GyMMMEd": "E, d בMMM y G",
@@ -2375,8 +2763,55 @@
 			},
 			"intervalFormats": {
 				"intervalFormatFallback": "{0} – {1}",
+				"Bh": {
+					"B": "h B – h B",
+					"h": "h–h B"
+				},
+				"Bhm": {
+					"B": "h:mm B – h:mm B",
+					"h": "h:mm–h:mm B",
+					"m": "h:mm–h:mm B"
+				},
 				"d": {
 					"d": "d–d"
+				},
+				"Gy": {
+					"G": "y G – y G",
+					"y": "G y–y"
+				},
+				"GyM": {
+					"G": "GGGGG y-MM – GGGGG y-MM",
+					"M": "GGGGG y-MM – y-MM",
+					"y": "GGGGG y-MM – y-MM"
+				},
+				"GyMd": {
+					"d": "GGGGG y-MM-dd – y-MM-dd",
+					"G": "GGGGG y-MM-dd – GGGGG y-MM-dd",
+					"M": "d.M.y – d.M.y GGGGG",
+					"y": "d.M.y – d.M.y GGGGG"
+				},
+				"GyMEd": {
+					"d": "E, d.M.y – E, d.M.y GGGGG",
+					"G": "E, d.M.y GGGGG – E, d.M.y GGGGG",
+					"M": "E, d.M.y – E, d.M.y GGGGG",
+					"y": "E, d.M.y – E, d.M.y GGGGG"
+				},
+				"GyMMM": {
+					"G": "MMM y G – MMM y G",
+					"M": "MMM – MMM y G",
+					"y": "MMM y – MMM y G"
+				},
+				"GyMMMd": {
+					"d": "d – d בMMM y G",
+					"G": "d בMMM y G – d בMMM y G",
+					"M": "d בMMM – d בMMM y G",
+					"y": "d בMMM y – d בMMM y G"
+				},
+				"GyMMMEd": {
+					"d": "E, d בMMM – E, d בMMM y G",
+					"G": "E, d בMMM y G – E, d בMMM y G",
+					"M": "E, d בMMM – E, d בMMM y G",
+					"y": "E, d בMMM y – E, d בMMM y G"
 				},
 				"h": {
 					"a": "h a – h a",
@@ -2712,6 +3147,66 @@
 				]
 			}
 		},
+		"flexibleDayPeriods": {
+			"format": {
+				"abbreviated": {
+					"midnight": "חצות",
+					"morning1": "בוקר",
+					"afternoon1": "צהריים",
+					"afternoon2": "אחר הצהריים",
+					"evening1": "ערב",
+					"night1": "לילה",
+					"night2": "לפנות בוקר"
+				},
+				"narrow": {
+					"midnight": "חצות",
+					"morning1": "בבוקר",
+					"afternoon1": "בצהריים",
+					"afternoon2": "אחה״צ",
+					"evening1": "בערב",
+					"night1": "בלילה",
+					"night2": "לפנות בוקר"
+				},
+				"wide": {
+					"midnight": "חצות",
+					"morning1": "בבוקר",
+					"afternoon1": "בצהריים",
+					"afternoon2": "אחר הצהריים",
+					"evening1": "בערב",
+					"night1": "בלילה",
+					"night2": "לפנות בוקר"
+				}
+			},
+			"stand-alone": {
+				"abbreviated": {
+					"midnight": "חצות",
+					"morning1": "בוקר",
+					"afternoon1": "צהריים",
+					"afternoon2": "אחה״צ",
+					"evening1": "ערב",
+					"night1": "לילה",
+					"night2": "לפנות בוקר"
+				},
+				"narrow": {
+					"midnight": "חצות",
+					"morning1": "בוקר",
+					"afternoon1": "צהריים",
+					"afternoon2": "אחה״צ",
+					"evening1": "ערב",
+					"night1": "לילה",
+					"night2": "לפנות בוקר"
+				},
+				"wide": {
+					"midnight": "חצות",
+					"morning1": "בוקר",
+					"afternoon1": "צהריים",
+					"afternoon2": "אחר הצהריים",
+					"evening1": "ערב",
+					"night1": "לילה",
+					"night2": "לפנות בוקר"
+				}
+			}
+		},
 		"era-wide": {
 			"0": "הספירה הפרסית"
 		},
@@ -2720,6 +3215,538 @@
 		},
 		"era-narrow": {
 			"0": "AP"
+		}
+	},
+	"ca-buddhist": {
+		"dateFormats": {
+			"full": "EEEE, d בMMMM y G",
+			"long": "d בMMMM y G",
+			"medium": "d בMMM y G",
+			"short": "d.M.y GGGGG"
+		},
+		"timeFormats": {
+			"full": "H:mm:ss zzzz",
+			"long": "H:mm:ss z",
+			"medium": "H:mm:ss",
+			"short": "H:mm"
+		},
+		"dateTimeFormats": {
+			"full": "{1}, {0}",
+			"long": "{1}, {0}",
+			"medium": "{1}, {0}",
+			"short": "{1}, {0}",
+			"availableFormats": {
+				"Bh": "h B",
+				"Bhm": "h:mm B",
+				"Bhms": "h:mm:ss B",
+				"d": "d",
+				"E": "ccc",
+				"EBhm": "E h:mm B",
+				"EBhms": "E h:mm:ss B",
+				"Ed": "E ה-d",
+				"Ehm": "E h:mm a",
+				"EHm": "E HH:mm",
+				"Ehms": "E h:mm:ss a",
+				"EHms": "E HH:mm:ss",
+				"Gy": "y G",
+				"GyMd": "d/M/y GGGGG",
+				"GyMMM": "MMM y G",
+				"GyMMMd": "d בMMM y G",
+				"GyMMMEd": "E, d בMMM y G",
+				"h": "‏h a",
+				"H": "H",
+				"hm": "h:mm a",
+				"Hm": "H:mm",
+				"hms": "h:mm:ss a",
+				"Hms": "H:mm:ss",
+				"M": "L",
+				"Md": "d.M",
+				"MEd": "E, d/M",
+				"MMM": "LLL",
+				"MMMd": "d בMMM",
+				"MMMEd": "E, d בMMM",
+				"MMMMd": "MMMM d",
+				"ms": "mm:ss",
+				"y": "y G",
+				"yyyy": "y G",
+				"yyyyM": "M.y G",
+				"yyyyMd": "d.M.y G",
+				"yyyyMEd": "E, d/M/y G",
+				"yyyyMM": "MM/y G",
+				"yyyyMMM": "MMM y G",
+				"yyyyMMMd": "d בMMM y G",
+				"yyyyMMMEd": "E, d בMMM y G",
+				"yyyyMMMM": "G y MMMM",
+				"yyyyQQQ": "G y QQQ",
+				"yyyyQQQQ": "G y QQQQ"
+			},
+			"appendItems": {
+				"Day": "{0} ({2}: {1})",
+				"Day-Of-Week": "{0} {1}",
+				"Era": "{1} {0}",
+				"Hour": "{0} ({2}: {1})",
+				"Minute": "{0} ({2}: {1})",
+				"Month": "{0} ({2}: {1})",
+				"Quarter": "{0} ({2}: {1})",
+				"Second": "{0} ({2}: {1})",
+				"Timezone": "{0} {1}",
+				"Week": "{0} ({2}: {1})",
+				"Year": "{1} {0}"
+			},
+			"intervalFormats": {
+				"intervalFormatFallback": "{0} – {1}",
+				"Bh": {
+					"B": "h B – h B",
+					"h": "h–h B"
+				},
+				"Bhm": {
+					"B": "h:mm B – h:mm B",
+					"h": "h:mm–h:mm B",
+					"m": "h:mm–h:mm B"
+				},
+				"d": {
+					"d": "d–d"
+				},
+				"Gy": {
+					"G": "y G – y G",
+					"y": "G y–y"
+				},
+				"GyM": {
+					"G": "GGGGG y-MM – GGGGG y-MM",
+					"M": "GGGGG y-MM – y-MM",
+					"y": "GGGGG y-MM – y-MM"
+				},
+				"GyMd": {
+					"d": "GGGGG y-MM-dd – y-MM-dd",
+					"G": "GGGGG y-MM-dd – GGGGG y-MM-dd",
+					"M": "d.M.y – d.M.y GGGGG",
+					"y": "d.M.y – d.M.y GGGGG"
+				},
+				"GyMEd": {
+					"d": "E, d.M.y – E, d.M.y GGGGG",
+					"G": "E, d.M.y GGGGG – E, d.M.y GGGGG",
+					"M": "E, d.M.y – E, d.M.y GGGGG",
+					"y": "E, d.M.y – E, d.M.y GGGGG"
+				},
+				"GyMMM": {
+					"G": "MMM y G – MMM y G",
+					"M": "MMM – MMM y G",
+					"y": "MMM y – MMM y G"
+				},
+				"GyMMMd": {
+					"d": "d – d בMMM y G",
+					"G": "d בMMM y G – d בMMM y G",
+					"M": "d בMMM – d בMMM y G",
+					"y": "d בMMM y – d בMMM y G"
+				},
+				"GyMMMEd": {
+					"d": "E, d בMMM – E, d בMMM y G",
+					"G": "E, d בMMM y G – E, d בMMM y G",
+					"M": "E, d בMMM – E, d בMMM y G",
+					"y": "E, d בMMM y – E, d בMMM y G"
+				},
+				"h": {
+					"a": "h a – h a",
+					"h": "h–h a"
+				},
+				"H": {
+					"H": "H–H"
+				},
+				"hm": {
+					"a": "h:mm a – h:mm a",
+					"h": "h:mm–h:mm a",
+					"m": "h:mm–h:mm a"
+				},
+				"Hm": {
+					"H": "H:mm–H:mm",
+					"m": "H:mm–H:mm"
+				},
+				"hmv": {
+					"a": "h:mm a – h:mm a v",
+					"h": "h:mm–h:mm a v",
+					"m": "h:mm–h:mm a v"
+				},
+				"Hmv": {
+					"H": "H:mm–H:mm v",
+					"m": "H:mm–H:mm v"
+				},
+				"hv": {
+					"a": "h a – h a v",
+					"h": "h–h a v"
+				},
+				"Hv": {
+					"H": "H–H v"
+				},
+				"M": {
+					"M": "M–M"
+				},
+				"Md": {
+					"d": "dd/MM – dd/MM",
+					"M": "dd/MM – dd/MM"
+				},
+				"MEd": {
+					"d": "EEEE dd/MM – EEEE dd/MM",
+					"M": "EEEE dd/MM – EEEE dd/MM"
+				},
+				"MMM": {
+					"M": "MMM–MMM"
+				},
+				"MMMd": {
+					"d": "d–d MMM",
+					"M": "d MMM – d MMM"
+				},
+				"MMMEd": {
+					"d": "EEEE d MMM – EEEE d MMM",
+					"M": "EEEE d MMM – EEEE d MMM"
+				},
+				"MMMM": {
+					"M": "LLLL–LLLL"
+				},
+				"y": {
+					"y": "y–y"
+				},
+				"yM": {
+					"M": "MM/y – MM/y",
+					"y": "MM/y – MM/y"
+				},
+				"yMd": {
+					"d": "dd/MM/y – dd/MM/y",
+					"M": "dd/MM/y – dd/MM/y",
+					"y": "dd/MM/y – dd/MM/y"
+				},
+				"yMEd": {
+					"d": "EEEE dd/MM/y – EEEE dd/MM/y",
+					"M": "EEEE dd/MM/y – EEEE dd/MM/y",
+					"y": "EEEE dd/MM/y – EEEE dd/MM/y"
+				},
+				"yMMM": {
+					"M": "MMM–MMM y",
+					"y": "MMM y – MMM y"
+				},
+				"yMMMd": {
+					"d": "d–d בMMM y G",
+					"M": "d בMMM – d בMMM y G",
+					"y": "d בMMM y – d בMMM y G"
+				},
+				"yMMMEd": {
+					"d": "E, d בMMM – E, d בMMM y G",
+					"M": "EEEE d MMM – EEEE d MMM y",
+					"y": "E, d, בMMM, y – E, d בMMM, y G"
+				},
+				"yMMMM": {
+					"M": "MMMM – MMMM y G",
+					"y": "MMMM y–MMMM y"
+				}
+			}
+		},
+		"months": {
+			"format": {
+				"abbreviated": [
+					"ינו׳",
+					"פבר׳",
+					"מרץ",
+					"אפר׳",
+					"מאי",
+					"יוני",
+					"יולי",
+					"אוג׳",
+					"ספט׳",
+					"אוק׳",
+					"נוב׳",
+					"דצמ׳"
+				],
+				"narrow": [
+					"1",
+					"2",
+					"3",
+					"4",
+					"5",
+					"6",
+					"7",
+					"8",
+					"9",
+					"10",
+					"11",
+					"12"
+				],
+				"wide": [
+					"ינואר",
+					"פברואר",
+					"מרץ",
+					"אפריל",
+					"מאי",
+					"יוני",
+					"יולי",
+					"אוגוסט",
+					"ספטמבר",
+					"אוקטובר",
+					"נובמבר",
+					"דצמבר"
+				]
+			},
+			"stand-alone": {
+				"abbreviated": [
+					"ינו׳",
+					"פבר׳",
+					"מרץ",
+					"אפר׳",
+					"מאי",
+					"יוני",
+					"יולי",
+					"אוג׳",
+					"ספט׳",
+					"אוק׳",
+					"נוב׳",
+					"דצמ׳"
+				],
+				"narrow": [
+					"1",
+					"2",
+					"3",
+					"4",
+					"5",
+					"6",
+					"7",
+					"8",
+					"9",
+					"10",
+					"11",
+					"12"
+				],
+				"wide": [
+					"ינואר",
+					"פברואר",
+					"מרץ",
+					"אפריל",
+					"מאי",
+					"יוני",
+					"יולי",
+					"אוגוסט",
+					"ספטמבר",
+					"אוקטובר",
+					"נובמבר",
+					"דצמבר"
+				]
+			}
+		},
+		"days": {
+			"format": {
+				"abbreviated": [
+					"יום א׳",
+					"יום ב׳",
+					"יום ג׳",
+					"יום ד׳",
+					"יום ה׳",
+					"יום ו׳",
+					"שבת"
+				],
+				"narrow": [
+					"א׳",
+					"ב׳",
+					"ג׳",
+					"ד׳",
+					"ה׳",
+					"ו׳",
+					"ש׳"
+				],
+				"short": [
+					"א׳",
+					"ב׳",
+					"ג׳",
+					"ד׳",
+					"ה׳",
+					"ו׳",
+					"ש׳"
+				],
+				"wide": [
+					"יום ראשון",
+					"יום שני",
+					"יום שלישי",
+					"יום רביעי",
+					"יום חמישי",
+					"יום שישי",
+					"יום שבת"
+				]
+			},
+			"stand-alone": {
+				"abbreviated": [
+					"יום א׳",
+					"יום ב׳",
+					"יום ג׳",
+					"יום ד׳",
+					"יום ה׳",
+					"יום ו׳",
+					"שבת"
+				],
+				"narrow": [
+					"א׳",
+					"ב׳",
+					"ג׳",
+					"ד׳",
+					"ה׳",
+					"ו׳",
+					"ש׳"
+				],
+				"short": [
+					"א׳",
+					"ב׳",
+					"ג׳",
+					"ד׳",
+					"ה׳",
+					"ו׳",
+					"ש׳"
+				],
+				"wide": [
+					"יום ראשון",
+					"יום שני",
+					"יום שלישי",
+					"יום רביעי",
+					"יום חמישי",
+					"יום שישי",
+					"יום שבת"
+				]
+			}
+		},
+		"quarters": {
+			"format": {
+				"abbreviated": [
+					"Q1",
+					"Q2",
+					"Q3",
+					"Q4"
+				],
+				"narrow": [
+					"1",
+					"2",
+					"3",
+					"4"
+				],
+				"wide": [
+					"רבעון 1",
+					"רבעון 2",
+					"רבעון 3",
+					"רבעון 4"
+				]
+			},
+			"stand-alone": {
+				"abbreviated": [
+					"Q1",
+					"Q2",
+					"Q3",
+					"Q4"
+				],
+				"narrow": [
+					"1",
+					"2",
+					"3",
+					"4"
+				],
+				"wide": [
+					"רבעון 1",
+					"רבעון 2",
+					"רבעון 3",
+					"רבעון 4"
+				]
+			}
+		},
+		"dayPeriods": {
+			"format": {
+				"abbreviated": [
+					"לפנה״צ",
+					"אחה״צ"
+				],
+				"narrow": [
+					"לפנה״צ",
+					"אחה״צ"
+				],
+				"wide": [
+					"לפנה״צ",
+					"אחה״צ"
+				]
+			},
+			"stand-alone": {
+				"abbreviated": [
+					"AM",
+					"PM"
+				],
+				"narrow": [
+					"לפנה״צ",
+					"אחה״צ"
+				],
+				"wide": [
+					"AM",
+					"PM"
+				]
+			}
+		},
+		"flexibleDayPeriods": {
+			"format": {
+				"abbreviated": {
+					"midnight": "חצות",
+					"morning1": "בוקר",
+					"afternoon1": "צהריים",
+					"afternoon2": "אחר הצהריים",
+					"evening1": "ערב",
+					"night1": "לילה",
+					"night2": "לפנות בוקר"
+				},
+				"narrow": {
+					"midnight": "חצות",
+					"morning1": "בבוקר",
+					"afternoon1": "בצהריים",
+					"afternoon2": "אחה״צ",
+					"evening1": "בערב",
+					"night1": "בלילה",
+					"night2": "לפנות בוקר"
+				},
+				"wide": {
+					"midnight": "חצות",
+					"morning1": "בבוקר",
+					"afternoon1": "בצהריים",
+					"afternoon2": "אחר הצהריים",
+					"evening1": "בערב",
+					"night1": "בלילה",
+					"night2": "לפנות בוקר"
+				}
+			},
+			"stand-alone": {
+				"abbreviated": {
+					"midnight": "חצות",
+					"morning1": "בוקר",
+					"afternoon1": "צהריים",
+					"afternoon2": "אחה״צ",
+					"evening1": "ערב",
+					"night1": "לילה",
+					"night2": "לפנות בוקר"
+				},
+				"narrow": {
+					"midnight": "חצות",
+					"morning1": "בוקר",
+					"afternoon1": "צהריים",
+					"afternoon2": "אחה״צ",
+					"evening1": "ערב",
+					"night1": "לילה",
+					"night2": "לפנות בוקר"
+				},
+				"wide": {
+					"midnight": "חצות",
+					"morning1": "בוקר",
+					"afternoon1": "צהריים",
+					"afternoon2": "אחר הצהריים",
+					"evening1": "ערב",
+					"night1": "לילה",
+					"night2": "לפנות בוקר"
+				}
+			}
+		},
+		"era-wide": {
+			"0": "הספירה הבודהיסטית"
+		},
+		"era-abbreviated": {
+			"0": "BE"
+		},
+		"era-narrow": {
+			"0": "BE"
 		}
 	},
 	"dateFields": {
@@ -2905,7 +3932,7 @@
 				"relativeTimePattern-count-many": "לפני {0} שבועות",
 				"relativeTimePattern-count-other": "לפני {0} שבועות"
 			},
-			"relativePeriod": "השבוע של"
+			"relativePeriod": "השבוע של {0}"
 		},
 		"week-short": {
 			"displayName": "שב׳",
@@ -3074,7 +4101,7 @@
 		},
 		"minute-short": {
 			"displayName": "דק׳",
-			"relative-type-0": "בדקה זו",
+			"relative-type-0": "דקה זו",
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-one": "בעוד דקה",
 				"relativeTimePattern-count-two": "בעוד שתי דק׳",
@@ -3090,7 +4117,7 @@
 		},
 		"minute-narrow": {
 			"displayName": "דק׳",
-			"relative-type-0": "בדקה זו",
+			"relative-type-0": "דקה זו",
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-one": "בעוד דקה",
 				"relativeTimePattern-count-two": "בעוד שתי דק׳",
@@ -3153,8 +4180,478 @@
 			}
 		},
 		"zone": {
-			"displayName": "אזור"
+			"displayName": "אזור זמן"
 		}
+	},
+	"timezoneNames": {
+		"Africa": {
+			"Abidjan": "אביג׳אן",
+			"Accra": "אקרה",
+			"Addis_Ababa": "אדיס אבבה",
+			"Algiers": "אלג׳יר",
+			"Asmara": "אסמרה",
+			"Bamako": "במאקו",
+			"Bangui": "בנגואי",
+			"Banjul": "בנג׳ול",
+			"Bissau": "ביסאו",
+			"Blantyre": "בלנטיר",
+			"Brazzaville": "ברזוויל",
+			"Bujumbura": "בוג׳ומבורה",
+			"Cairo": "קהיר",
+			"Casablanca": "קזבלנקה",
+			"Ceuta": "סאוטה",
+			"Conakry": "קונאקרי",
+			"Dakar": "דקאר",
+			"Dar_es_Salaam": "דאר א-סלאם",
+			"Djibouti": "ג׳יבוטי",
+			"Douala": "דואלה",
+			"El_Aaiun": "אל עיון",
+			"Freetown": "פריטאון",
+			"Gaborone": "גבורונה",
+			"Harare": "הרארה",
+			"Johannesburg": "יוהנסבורג",
+			"Juba": "ג׳ובה",
+			"Kampala": "קמפאלה",
+			"Khartoum": "חרטום",
+			"Kigali": "קיגלי",
+			"Kinshasa": "קינשסה",
+			"Lagos": "לאגוס",
+			"Libreville": "ליברוויל",
+			"Lome": "לומה",
+			"Luanda": "לואנדה",
+			"Lubumbashi": "לובומבאשי",
+			"Lusaka": "לוסקה",
+			"Malabo": "מלבו",
+			"Maputo": "מאפוטו",
+			"Maseru": "מסרו",
+			"Mbabane": "מבבנה",
+			"Mogadishu": "מוגדישו",
+			"Monrovia": "מונרוביה",
+			"Nairobi": "ניירובי",
+			"Ndjamena": "נג׳מנה",
+			"Niamey": "ניאמיי",
+			"Nouakchott": "נואקצ׳וט",
+			"Ouagadougou": "וואגאדוגו",
+			"Porto-Novo": "פורטו נובו",
+			"Sao_Tome": "סאו טומה",
+			"Tripoli": "טריפולי",
+			"Tunis": "תוניס",
+			"Windhoek": "וינדהוק",
+			"_parent": "אפריקה"
+		},
+		"America": {
+			"Adak": "אדאק",
+			"Anchorage": "אנקורג׳",
+			"Anguilla": "אנגווילה",
+			"Antigua": "אנטיגואה",
+			"Araguaina": "אראגואינה",
+			"Argentina": {
+				"Buenos_Aires": "בואנוס איירס",
+				"Catamarca": "קטמרקה",
+				"Cordoba": "קורדובה",
+				"Jujuy": "חוחוי",
+				"La_Rioja": "לה ריוחה",
+				"Mendoza": "מנדוזה",
+				"Rio_Gallegos": "ריו גאייגוס",
+				"Salta": "סלטה",
+				"San_Juan": "סן חואן",
+				"San_Luis": "סן לואיס",
+				"Tucuman": "טוקומן",
+				"Ushuaia": "אושוואיה",
+				"_parent": "ארגנטינה"
+			},
+			"Aruba": "ארובה",
+			"Asuncion": "אסונסיון",
+			"Atikokan": "אטיקוקן",
+			"Bahia": "באהיה",
+			"Bahia_Banderas": "באהיה בנדרס",
+			"Barbados": "ברבדוס",
+			"Belem": "בלם",
+			"Belize": "בליז",
+			"Blanc-Sablon": "בלאן-סבלון",
+			"Boa_Vista": "בואה ויסטה",
+			"Bogota": "בוגוטה",
+			"Boise": "בויסי",
+			"Cambridge_Bay": "קיימברידג׳ ביי",
+			"Campo_Grande": "קמפו גרנדה",
+			"Cancun": "קנקון",
+			"Caracas": "קראקס",
+			"Cayenne": "קאיין",
+			"Cayman": "קיימן",
+			"Chicago": "שיקגו",
+			"Chihuahua": "צ׳יוואווה",
+			"Ciudad_Juarez": "סיודד חוארס",
+			"Costa_Rica": "קוסטה ריקה",
+			"Creston": "קרסטון",
+			"Cuiaba": "קויאבה",
+			"Curacao": "קוראסאו",
+			"Danmarkshavn": "דנמרקסהוון",
+			"Dawson": "דוסון",
+			"Dawson_Creek": "דוסון קריק",
+			"Denver": "דנוור",
+			"Detroit": "דטרויט",
+			"Dominica": "דומיניקה",
+			"Edmonton": "אדמונטון",
+			"Eirunepe": "אירונפי",
+			"El_Salvador": "אל סלבדור",
+			"Fort_Nelson": "פורט נלסון",
+			"Fortaleza": "פורטאלזה",
+			"Glace_Bay": "גלייס ביי",
+			"Goose_Bay": "גוס ביי",
+			"Grand_Turk": "גרנד טורק",
+			"Grenada": "גרנדה",
+			"Guadeloupe": "גואדלופ",
+			"Guatemala": "גואטמלה",
+			"Guayaquil": "גואיאקיל",
+			"Guyana": "גיאנה",
+			"Halifax": "הליפקס",
+			"Havana": "הוואנה",
+			"Hermosillo": "הרמוסיו",
+			"Indiana": {
+				"Indianapolis": "אינדיאנפוליס",
+				"Knox": "נוקס, אינדיאנה",
+				"Marengo": "מרנגו, אינדיאנה",
+				"Petersburg": "פיטרסבורג, אינדיאנה",
+				"Tell_City": "טל סיטי, אינדיאנה",
+				"Vevay": "ויוואיי, אינדיאנה",
+				"Vincennes": "וינסנס, אינדיאנה",
+				"Winamac": "וינמאק, אינדיאנה"
+			},
+			"Inuvik": "אינוויק",
+			"Iqaluit": "איקלואיט",
+			"Jamaica": "ג׳מייקה",
+			"Juneau": "ג׳ונו",
+			"Kentucky": {
+				"Louisville": "לואיוויל",
+				"Monticello": "מונטיצ׳לו, קנטאקי"
+			},
+			"Kralendijk": "קרלנדייק",
+			"La_Paz": "לה פאס",
+			"Lima": "לימה",
+			"Los_Angeles": "לוס אנג׳לס",
+			"Lower_Princes": "לואוור פרינסס קוורטר",
+			"Maceio": "מסייאו",
+			"Managua": "מנגואה",
+			"Manaus": "מנאוס",
+			"Marigot": "מריגו",
+			"Martinique": "מרטיניק",
+			"Matamoros": "מטמורוס",
+			"Mazatlan": "מזטלן",
+			"Menominee": "מנומיני",
+			"Merida": "מרידה",
+			"Metlakatla": "מטלקטלה",
+			"Mexico_City": "מקסיקו סיטי",
+			"Miquelon": "מיקלון",
+			"Moncton": "מונקטון",
+			"Monterrey": "מונטריי",
+			"Montevideo": "מונטווידאו",
+			"Montserrat": "מונסראט",
+			"Nassau": "נסאו",
+			"New_York": "ניו יורק",
+			"Nipigon": "ניפיגון",
+			"Nome": "נום",
+			"Noronha": "נורוניה",
+			"North_Dakota": {
+				"Beulah": "ביולה, דקוטה הצפונית",
+				"Center": "סנטר, דקוטה הצפונית",
+				"New_Salem": "ניו סיילם, דקוטה הצפונית"
+			},
+			"Nuuk": "נואוק",
+			"Ojinaga": "אוג׳ינאגה",
+			"Panama": "פנמה",
+			"Pangnirtung": "פנגנירטונג",
+			"Paramaribo": "פרמריבו",
+			"Phoenix": "פיניקס",
+			"Port-au-Prince": "פורט או פראנס",
+			"Port_of_Spain": "פורט אוף ספיין",
+			"Porto_Velho": "פורטו וליו",
+			"Puerto_Rico": "פוארטו ריקו",
+			"Punta_Arenas": "פונטה ארנס",
+			"Rainy_River": "רייני ריבר",
+			"Rankin_Inlet": "רנקין אינלט",
+			"Recife": "רסיפה",
+			"Regina": "רג׳ינה",
+			"Resolute": "רזולוט",
+			"Rio_Branco": "ריו ברנקו",
+			"Santa_Isabel": "סנטה איזבל",
+			"Santarem": "סנטרם",
+			"Santiago": "סנטיאגו",
+			"Santo_Domingo": "סנטו דומינגו",
+			"Sao_Paulo": "סאו פאולו",
+			"Scoresbysund": "סקורסביסונד",
+			"Sitka": "סיטקה",
+			"St_Barthelemy": "סנט ברתלמי",
+			"St_Johns": "סנט ג׳ונס",
+			"St_Kitts": "סנט קיטס",
+			"St_Lucia": "סנט לוסיה",
+			"St_Thomas": "סנט תומאס",
+			"St_Vincent": "סנט וינסנט",
+			"Swift_Current": "סוויפט קרנט",
+			"Tegucigalpa": "טגוסיגלפה",
+			"Thule": "תולה",
+			"Thunder_Bay": "ת׳אנדר ביי",
+			"Tijuana": "טיחואנה",
+			"Toronto": "טורונטו",
+			"Tortola": "טורטולה",
+			"Vancouver": "ונקובר",
+			"Whitehorse": "ווייטהורס",
+			"Winnipeg": "וויניפג",
+			"Yakutat": "יקוטאט",
+			"Yellowknife": "ילונייף",
+			"_parent": "אמריקה"
+		},
+		"Antarctica": {
+			"Casey": "קייסי",
+			"Davis": "דיוויס",
+			"DumontDUrville": "דומון ד׳אורוויל",
+			"Macquarie": "מקווארי",
+			"Mawson": "מוסון",
+			"McMurdo": "מק-מרדו",
+			"Palmer": "פאלמר",
+			"Rothera": "רות׳רה",
+			"Syowa": "סייווה",
+			"Troll": "טרול",
+			"Vostok": "ווסטוק",
+			"_parent": "אנטארקטיקה"
+		},
+		"Arctic": {
+			"Longyearbyen": "לונגיירבין"
+		},
+		"Asia": {
+			"Aden": "עדן",
+			"Almaty": "אלמאטי",
+			"Amman": "עמאן",
+			"Anadyr": "אנדיר",
+			"Aqtau": "אקטאו",
+			"Aqtobe": "אקטובה",
+			"Ashgabat": "אשגבט",
+			"Atyrau": "אטיראו",
+			"Baghdad": "בגדד",
+			"Bahrain": "בחריין",
+			"Baku": "באקו",
+			"Bangkok": "בנגקוק",
+			"Barnaul": "ברנאול",
+			"Beirut": "ביירות",
+			"Bishkek": "בישקק",
+			"Brunei": "ברוניי",
+			"Chita": "צ׳יטה",
+			"Choibalsan": "צ׳ויבלסן",
+			"Colombo": "קולומבו",
+			"Damascus": "דמשק",
+			"Dhaka": "דאקה",
+			"Dili": "דילי",
+			"Dubai": "דובאי",
+			"Dushanbe": "דושנבה",
+			"Famagusta": "פמגוסטה",
+			"Gaza": "עזה",
+			"Hebron": "חברון",
+			"Ho_Chi_Minh": "הו צ׳י מין סיטי",
+			"Hong_Kong": "הונג קונג",
+			"Hovd": "חובד",
+			"Irkutsk": "אירקוטסק",
+			"Jakarta": "ג׳קרטה",
+			"Jayapura": "ג׳איאפורה",
+			"Jerusalem": "ירושלים",
+			"Kabul": "קאבול",
+			"Kamchatka": "קמצ׳טקה",
+			"Karachi": "קראצ׳י",
+			"Kathmandu": "קטמנדו",
+			"Khandyga": "חנדיגה",
+			"Kolkata": "קולקטה",
+			"Krasnoyarsk": "קרסנויארסק",
+			"Kuala_Lumpur": "קואלה לומפור",
+			"Kuching": "קוצ׳ינג",
+			"Kuwait": "כווית",
+			"Macau": "מקאו",
+			"Magadan": "מגדן",
+			"Makassar": "מאקאסאר",
+			"Manila": "מנילה",
+			"Muscat": "מוסקט",
+			"Nicosia": "ניקוסיה",
+			"Novokuznetsk": "נובוקוזנטסק",
+			"Novosibirsk": "נובוסיבירסק",
+			"Omsk": "אומסק",
+			"Oral": "אורל",
+			"Phnom_Penh": "פנום פן",
+			"Pontianak": "פונטיאנק",
+			"Pyongyang": "פיונגיאנג",
+			"Qatar": "קטאר",
+			"Qostanay": "קוסטנאי",
+			"Qyzylorda": "קיזילורדה",
+			"Riyadh": "ריאד",
+			"Sakhalin": "סחלין",
+			"Samarkand": "סמרקנד",
+			"Seoul": "סיאול",
+			"Shanghai": "שנחאי",
+			"Singapore": "סינגפור",
+			"Srednekolymsk": "סרדנייקולימסק",
+			"Taipei": "טאיפיי",
+			"Tashkent": "טשקנט",
+			"Tbilisi": "טביליסי",
+			"Tehran": "טהרן",
+			"Thimphu": "טהימפהו",
+			"Tokyo": "טוקיו",
+			"Tomsk": "טומסק",
+			"Ulaanbaatar": "אולאן באטור",
+			"Urumqi": "אורומקי",
+			"Ust-Nera": "אוסט-נרה",
+			"Vientiane": "ויינטיאן",
+			"Vladivostok": "ולדיווסטוק",
+			"Yakutsk": "יקוטסק",
+			"Yangon": "רנגון",
+			"Yekaterinburg": "יקטרינבורג",
+			"Yerevan": "ירוואן",
+			"_parent": "אסיה"
+		},
+		"Atlantic": {
+			"Azores": "האיים האזוריים",
+			"Bermuda": "ברמודה",
+			"Canary": "האיים הקנריים",
+			"Cape_Verde": "כף ורדה",
+			"Faroe": "פארו",
+			"Madeira": "מדיירה",
+			"Reykjavik": "רייקיאוויק",
+			"South_Georgia": "דרום ג׳ורג׳יה",
+			"St_Helena": "סנט הלנה",
+			"Stanley": "סטנלי"
+		},
+		"Australia": {
+			"Adelaide": "אדלייד",
+			"Brisbane": "בריסביין",
+			"Broken_Hill": "ברוקן היל",
+			"Darwin": "דרווין",
+			"Eucla": "יוקלה",
+			"Hobart": "הוברט",
+			"Lindeman": "לינדמן",
+			"Lord_Howe": "אי הלורד האו",
+			"Melbourne": "מלבורן",
+			"Perth": "פרת׳",
+			"Sydney": "סידני",
+			"_parent": "אוסטרליה"
+		},
+		"Etc": {
+			"UTC": "UTC",
+			"Universal": "זמן אוניברסלי מתואם"
+		},
+		"Europe": {
+			"Amsterdam": "אמסטרדם",
+			"Andorra": "אנדורה",
+			"Astrakhan": "אסטרחן",
+			"Athens": "אתונה",
+			"Belgrade": "בלגרד",
+			"Berlin": "ברלין",
+			"Bratislava": "ברטיסלבה",
+			"Brussels": "בריסל",
+			"Bucharest": "בוקרשט",
+			"Budapest": "בודפשט",
+			"Busingen": "ביזינגן",
+			"Chisinau": "קישינב",
+			"Copenhagen": "קופנהגן",
+			"Dublin": "דבלין",
+			"Gibraltar": "גיברלטר",
+			"Guernsey": "גרנזי",
+			"Helsinki": "הלסינקי",
+			"Isle_of_Man": "האי מאן",
+			"Istanbul": "איסטנבול",
+			"Jersey": "ג׳רזי",
+			"Kaliningrad": "קלינינגרד",
+			"Kiev": "קייב",
+			"Kirov": "קירוב",
+			"Lisbon": "ליסבון",
+			"Ljubljana": "לובליאנה",
+			"London": "לונדון",
+			"Luxembourg": "לוקסמבורג",
+			"Madrid": "מדריד",
+			"Malta": "מלטה",
+			"Mariehamn": "מרייהאמן",
+			"Minsk": "מינסק",
+			"Monaco": "מונקו",
+			"Moscow": "מוסקבה",
+			"Oslo": "אוסלו",
+			"Paris": "פריז",
+			"Podgorica": "פודגוריצה",
+			"Prague": "פראג",
+			"Riga": "ריגה",
+			"Rome": "רומא",
+			"Samara": "סמרה",
+			"San_Marino": "סן מרינו",
+			"Sarajevo": "סרייבו",
+			"Saratov": "סראטוב",
+			"Simferopol": "סימפרופול",
+			"Skopje": "סקופיה",
+			"Sofia": "סופיה",
+			"Stockholm": "שטוקהולם",
+			"Tallinn": "טאלין",
+			"Tirane": "טירנה",
+			"Ulyanovsk": "אוליאנובסק",
+			"Uzhgorod": "אוז׳הורוד",
+			"Vaduz": "ואדוץ",
+			"Vatican": "הוותיקן",
+			"Vienna": "וינה",
+			"Vilnius": "וילנה",
+			"Volgograd": "וולגוגרד",
+			"Warsaw": "ורשה",
+			"Zagreb": "זאגרב",
+			"Zaporozhye": "זפורוז׳יה",
+			"Zurich": "ציריך",
+			"_parent": "אירופה"
+		},
+		"Indian": {
+			"Antananarivo": "אנטננריבו",
+			"Chagos": "צ׳אגוס",
+			"Christmas": "האי כריסטמס",
+			"Cocos": "קוקוס",
+			"Comoro": "קומורו",
+			"Kerguelen": "קרגוולן",
+			"Mahe": "מהא",
+			"Maldives": "האיים המלדיביים",
+			"Mauritius": "מאוריציוס",
+			"Mayotte": "מאיוט",
+			"Reunion": "ראוניון"
+		},
+		"Pacific": {
+			"Apia": "אפיה",
+			"Auckland": "אוקלנד",
+			"Bougainville": "בוגנוויל",
+			"Chatham": "צ׳אטהאם",
+			"Chuuk": "צ׳וק",
+			"Easter": "אי הפסחא",
+			"Efate": "אפטה",
+			"Fakaofo": "פקאופו",
+			"Fiji": "פיג׳י",
+			"Funafuti": "פונפוטי",
+			"Galapagos": "גלפאגוס",
+			"Gambier": "איי גמבייה",
+			"Guadalcanal": "גוודלקנאל",
+			"Guam": "גואם",
+			"Honolulu": "הונולולו",
+			"Kanton": "קנטון",
+			"Kiritimati": "קיריטימאטי",
+			"Kosrae": "קוסרה",
+			"Kwajalein": "קוואג׳ליין",
+			"Majuro": "מאג׳ורו",
+			"Marquesas": "איי מרקיז",
+			"Midway": "מידוויי",
+			"Nauru": "נאורו",
+			"Niue": "ניואה",
+			"Norfolk": "נורפוק",
+			"Noumea": "נומאה",
+			"Pago_Pago": "פאגו פאגו",
+			"Palau": "פלאו",
+			"Pitcairn": "פיטקרן",
+			"Pohnpei": "פונפיי",
+			"Port_Moresby": "פורט מורסבי",
+			"Rarotonga": "רארוטונגה",
+			"Saipan": "סאיפאן",
+			"Tahiti": "טהיטי",
+			"Tarawa": "טאראווה",
+			"Tongatapu": "טונגטאפו",
+			"Wake": "וייק",
+			"Wallis": "ווליס"
+		}
+	},
+	"timezoneNamesFormats": {
+		"gmtFormat": "GMT{0}‎"
 	},
 	"decimalFormat": {
 		"standard": "#,##0.###"
@@ -3210,54 +4707,54 @@
 		"100000000000000-other": "‏000 טריליון"
 	},
 	"decimalFormat-short": {
-		"1000-one": "0K",
-		"1000-two": "0K",
-		"1000-many": "0K",
-		"1000-other": "0K",
-		"10000-one": "00K",
-		"10000-two": "00K",
-		"10000-many": "00K",
-		"10000-other": "00K",
-		"100000-one": "000K",
-		"100000-two": "000K",
-		"100000-many": "000K",
-		"100000-other": "000K",
-		"1000000-one": "0M",
-		"1000000-two": "0M",
-		"1000000-many": "0M",
-		"1000000-other": "0M",
-		"10000000-one": "00M",
-		"10000000-two": "00M",
-		"10000000-many": "00M",
-		"10000000-other": "00M",
-		"100000000-one": "000M",
-		"100000000-two": "000M",
-		"100000000-many": "000M",
-		"100000000-other": "000M",
-		"1000000000-one": "0B",
-		"1000000000-two": "0B",
-		"1000000000-many": "0B",
-		"1000000000-other": "0B",
-		"10000000000-one": "00B",
-		"10000000000-two": "00B",
-		"10000000000-many": "00B",
-		"10000000000-other": "00B",
-		"100000000000-one": "000B",
-		"100000000000-two": "000B",
-		"100000000000-many": "000B",
-		"100000000000-other": "000B",
-		"1000000000000-one": "0T",
-		"1000000000000-two": "0T",
-		"1000000000000-many": "0T",
-		"1000000000000-other": "0T",
-		"10000000000000-one": "00T",
-		"10000000000000-two": "00T",
-		"10000000000000-many": "00T",
-		"10000000000000-other": "00T",
-		"100000000000000-one": "000T",
-		"100000000000000-two": "000T",
-		"100000000000000-many": "000T",
-		"100000000000000-other": "000T"
+		"1000-one": "0K‏",
+		"1000-two": "0K‏",
+		"1000-many": "0K‏",
+		"1000-other": "0K‏",
+		"10000-one": "00K‏",
+		"10000-two": "00K‏",
+		"10000-many": "00K‏",
+		"10000-other": "00K‏",
+		"100000-one": "000K‏",
+		"100000-two": "000K‏",
+		"100000-many": "000K‏",
+		"100000-other": "000K‏",
+		"1000000-one": "0M‏",
+		"1000000-two": "0M‏",
+		"1000000-many": "0M‏",
+		"1000000-other": "0M‏",
+		"10000000-one": "00M‏",
+		"10000000-two": "00M‏",
+		"10000000-many": "00M‏",
+		"10000000-other": "00M‏",
+		"100000000-one": "000M‏",
+		"100000000-two": "000M‏",
+		"100000000-many": "000M‏",
+		"100000000-other": "000M‏",
+		"1000000000-one": "0B‏",
+		"1000000000-two": "0B‏",
+		"1000000000-many": "0B‏",
+		"1000000000-other": "0B‏",
+		"10000000000-one": "00B‏",
+		"10000000000-two": "00B‏",
+		"10000000000-many": "00B‏",
+		"10000000000-other": "00B‏",
+		"100000000000-one": "000B‏",
+		"100000000000-two": "000B‏",
+		"100000000000-many": "000B‏",
+		"100000000000-other": "000B‏",
+		"1000000000000-one": "0T‏",
+		"1000000000000-two": "0T‏",
+		"1000000000000-many": "0T‏",
+		"1000000000000-other": "0T‏",
+		"10000000000000-one": "00T‏",
+		"10000000000000-two": "00T‏",
+		"10000000000000-many": "00T‏",
+		"10000000000000-other": "00T‏",
+		"100000000000000-one": "000T‏",
+		"100000000000000-two": "000T‏",
+		"100000000000000-many": "000T‏",
+		"100000000000000-other": "000T‏"
 	},
 	"scientificFormat": {
 		"standard": "#E0"
@@ -3266,70 +4763,78 @@
 		"standard": "#,##0%"
 	},
 	"currencyFormat": {
-		"standard": "‏#,##0.00 ¤;‏-#,##0.00 ¤",
-		"accounting": "#,##0.00 ¤",
+		"standard": "‏#,##0.00 ‏¤‎;‏-#,##0.00 ‏¤‎",
+		"accounting": "‏#,##0.00 ‏¤‎;‏-#,##0.00 ‏¤‎",
 		"currencySpacing": {
 			"beforeCurrency": {
-				"currencyMatch": "[:^S:]",
+				"currencyMatch": "[[:^S:]&[:^Z:]]",
 				"surroundingMatch": "[:digit:]",
 				"insertBetween": " "
 			},
 			"afterCurrency": {
-				"currencyMatch": "[:^S:]",
+				"currencyMatch": "[[:^S:]&[:^Z:]]",
 				"surroundingMatch": "[:digit:]",
 				"insertBetween": " "
 			}
-		}
+		},
+		"sap-standard": "‏#,##0.00 ‏¤‎;‏-#,##0.00 ‏¤‎",
+		"sap-accounting": "‏#,##0.00 ‏¤‎;‏-#,##0.00 ‏¤‎"
+	},
+	"miscPattern": {
+		"approximately": "~{0}",
+		"atLeast": "≥{0}",
+		"atMost": "≤{0}",
+		"range": "{0}–{1}"
 	},
 	"currencyFormat-short": {
-		"1000-one": "¤ ‏0K",
-		"1000-two": "¤ ‏0K",
-		"1000-many": "¤‏0K",
-		"1000-other": "¤ ‏0K",
-		"10000-one": "¤‏00K",
-		"10000-two": "¤‏00K",
-		"10000-many": "¤‏00K",
-		"10000-other": "¤ ‏00K",
-		"100000-one": "¤‏000K",
-		"100000-two": "¤‏000K",
-		"100000-many": "¤‏000K",
-		"100000-other": "¤‏000K",
-		"1000000-one": "¤‏0M",
-		"1000000-two": "¤‏0M",
-		"1000000-many": "¤‏0M",
-		"1000000-other": "¤‏0M",
-		"10000000-one": "¤‏00M",
-		"10000000-two": "¤‏00M",
-		"10000000-many": "¤‏00M",
-		"10000000-other": "¤‏00M",
-		"100000000-one": "¤‏000M",
-		"100000000-two": "¤‏000M",
-		"100000000-many": "¤‏000M",
-		"100000000-other": "¤‏000M",
-		"1000000000-one": "¤‏0B",
-		"1000000000-two": "¤‏0B",
-		"1000000000-many": "¤‏0B",
-		"1000000000-other": "¤‏0B",
-		"10000000000-one": "¤‏00B",
-		"10000000000-two": "¤‏00B",
-		"10000000000-many": "¤‏00B",
-		"10000000000-other": "¤‏00B",
-		"100000000000-one": "¤‏000B",
-		"100000000000-two": "¤‏000B",
-		"100000000000-many": "¤‏000B",
-		"100000000000-other": "¤‏000B",
-		"1000000000000-one": "¤‏0T",
-		"1000000000000-two": "¤‏0T",
-		"1000000000000-many": "¤‏0T",
-		"1000000000000-other": "¤‏0T",
-		"10000000000000-one": "¤‏00T",
-		"10000000000000-two": "¤‏00T",
-		"10000000000000-many": "¤‏00T",
-		"10000000000000-other": "¤‏00T",
-		"100000000000000-one": "¤‏000T",
-		"100000000000000-two": "¤‏000T",
-		"100000000000000-many": "¤‏000T",
-		"100000000000000-other": "¤‏000T"
+		"1000-one": "‎¤ 0K‏",
+		"1000-two": "‎¤ 0K‏",
+		"1000-many": "‎¤ 0K‏",
+		"1000-other": "‎¤ 0K‏",
+		"10000-one": "‎¤ 00K‏",
+		"10000-two": "‎¤ 00K‏",
+		"10000-many": "‎¤ 00K‏",
+		"10000-other": "‎¤ 00K‏",
+		"100000-one": "‎¤ 000K‏",
+		"100000-two": "‎¤ 000K‏",
+		"100000-many": "‎¤ 000K‏",
+		"100000-other": "‎¤ 000K‏",
+		"1000000-one": "‎¤ 0M‏",
+		"1000000-two": "‎¤ 0M‏",
+		"1000000-many": "‎¤ 0M‏",
+		"1000000-other": "‎¤ 0M‏",
+		"10000000-one": "‎¤ 00M‏",
+		"10000000-two": "‎¤ 00M‏",
+		"10000000-many": "‎¤ 00M‏",
+		"10000000-other": "‎¤ 00M‏",
+		"100000000-one": "‎¤ 000M‏",
+		"100000000-two": "‎¤ 000M‏",
+		"100000000-many": "‎¤ 000M‏",
+		"100000000-other": "‎¤ 000M‏",
+		"1000000000-one": "‎¤ 0B‏",
+		"1000000000-two": "‎¤ 0B‏",
+		"1000000000-many": "‎¤ 0B‏",
+		"1000000000-other": "‎¤ 0B‏",
+		"10000000000-one": "‎¤ 00B‏",
+		"10000000000-two": "‎¤ 00B‏",
+		"10000000000-many": "‎¤ 00B‏",
+		"10000000000-other": "‎¤ 00B‏",
+		"100000000000-one": "‎¤ 000B‏",
+		"100000000000-two": "‎¤ 000B‏",
+		"100000000000-many": "‎¤ 000B‏",
+		"100000000000-other": "‎¤ 000B‏",
+		"1000000000000-one": "‎¤ 0T‏",
+		"1000000000000-two": "‎¤ 0T‏",
+		"1000000000000-many": "‎¤ 0T‏",
+		"1000000000000-other": "‎¤ 0T‏",
+		"10000000000000-one": "‎¤ 00T‏",
+		"10000000000000-two": "‎¤ 00T‏",
+		"10000000000000-many": "‎¤ 00T‏",
+		"10000000000000-other": "‎¤ 00T‏",
+		"100000000000000-one": "‎¤ 000T‏",
+		"100000000000000-two": "‎¤ 000T‏",
+		"100000000000000-many": "‎¤ 000T‏",
+		"100000000000000-other": "‎¤ 000T‏"
 	},
 	"symbols-latn-decimal": ".",
 	"symbols-latn-group": ",",
@@ -3337,6 +4842,7 @@
 	"symbols-latn-percentSign": "%",
 	"symbols-latn-plusSign": "‎+",
 	"symbols-latn-minusSign": "‎-",
+	"symbols-latn-approximatelySign": "~",
 	"symbols-latn-exponential": "E",
 	"symbols-latn-superscriptingExponent": "×",
 	"symbols-latn-perMille": "‰",
@@ -3364,8 +4870,9 @@
 		"VND": "₫",
 		"XAF": "FCFA",
 		"XCD": "EC$",
-		"XOF": "CFA",
-		"XPF": "CFPF"
+		"XOF": "F CFA",
+		"XPF": "CFPF",
+		"XXX": "¤"
 	},
 	"rtl": true,
 	"listPattern-standard-wide": {
@@ -3378,13 +4885,13 @@
 		"2": "{0} או {1}",
 		"start": "{0}, {1}",
 		"middle": "{0}, {1}",
-		"end": "{0}, או {1}"
+		"end": "{0} או {1}"
 	},
 	"listPattern-or-short": {
 		"2": "{0} או {1}",
 		"start": "{0}, {1}",
 		"middle": "{0}, {1}",
-		"end": "{0}, או {1}"
+		"end": "{0} או {1}"
 	},
 	"listPattern-standard-short": {
 		"2": "{0} ו{1}",
@@ -3394,8 +4901,109 @@
 	},
 	"units": {
 		"short": {
+			"10p-1": {
+				"unitPrefixPattern": "דצי{0}"
+			},
+			"10p-2": {
+				"unitPrefixPattern": "סנטי{0}"
+			},
+			"10p-3": {
+				"unitPrefixPattern": "מילי{0}"
+			},
+			"10p-6": {
+				"unitPrefixPattern": "μ{0}"
+			},
+			"10p-9": {
+				"unitPrefixPattern": "ננו{0}"
+			},
+			"10p-12": {
+				"unitPrefixPattern": "פיקו{0}"
+			},
+			"10p-15": {
+				"unitPrefixPattern": "פמטו{0}"
+			},
+			"10p-18": {
+				"unitPrefixPattern": "אטו{0}"
+			},
+			"10p-21": {
+				"unitPrefixPattern": "זפטו{0}"
+			},
+			"10p-24": {
+				"unitPrefixPattern": "יוקטו{0}"
+			},
+			"10p1": {
+				"unitPrefixPattern": "דקא{0}"
+			},
+			"10p2": {
+				"unitPrefixPattern": "הקטו{0}"
+			},
+			"10p3": {
+				"unitPrefixPattern": "קילו{0}"
+			},
+			"10p6": {
+				"unitPrefixPattern": "מגה{0}"
+			},
+			"10p9": {
+				"unitPrefixPattern": "גיגה{0}"
+			},
+			"10p12": {
+				"unitPrefixPattern": "טרה{0}"
+			},
+			"10p15": {
+				"unitPrefixPattern": "פטא{0}"
+			},
+			"10p18": {
+				"unitPrefixPattern": "אקס{0}"
+			},
+			"10p21": {
+				"unitPrefixPattern": "זטא{0}"
+			},
+			"10p24": {
+				"unitPrefixPattern": "יוטא{0}"
+			},
+			"1024p1": {
+				"unitPrefixPattern": "Ki{0}"
+			},
+			"1024p2": {
+				"unitPrefixPattern": "Mi{0}"
+			},
+			"1024p3": {
+				"unitPrefixPattern": "Gi{0}"
+			},
+			"1024p4": {
+				"unitPrefixPattern": "Ti{0}"
+			},
+			"1024p5": {
+				"unitPrefixPattern": "Pi{0}"
+			},
+			"1024p6": {
+				"unitPrefixPattern": "Ei{0}"
+			},
+			"1024p7": {
+				"unitPrefixPattern": "Zi{0}"
+			},
+			"1024p8": {
+				"unitPrefixPattern": "Yi{0}"
+			},
 			"per": {
 				"compoundUnitPattern": "{0}/{1}"
+			},
+			"power2": {
+				"compoundUnitPattern1": "{0}²",
+				"compoundUnitPattern1-count-one": "{0}²",
+				"compoundUnitPattern1-count-two": "{0}²",
+				"compoundUnitPattern1-count-many": "{0}²",
+				"compoundUnitPattern1-count-other": "{0}²"
+			},
+			"power3": {
+				"compoundUnitPattern1": "{0}³",
+				"compoundUnitPattern1-count-one": "{0}³",
+				"compoundUnitPattern1-count-two": "{0}³",
+				"compoundUnitPattern1-count-many": "{0}³",
+				"compoundUnitPattern1-count-other": "{0}³"
+			},
+			"times": {
+				"compoundUnitPattern": "{0}⋅{1}"
 			},
 			"acceleration-g-force": {
 				"displayName": "כוח ג׳י",
@@ -3404,7 +5012,7 @@
 				"unitPattern-count-many": "{0} G",
 				"unitPattern-count-other": "{0} G"
 			},
-			"acceleration-meter-per-second-squared": {
+			"acceleration-meter-per-square-second": {
 				"displayName": "m/s²",
 				"unitPattern-count-one": "{0} m/s²",
 				"unitPattern-count-two": "{0} m/s²",
@@ -3456,10 +5064,10 @@
 			},
 			"area-hectare": {
 				"displayName": "הקטאר",
-				"unitPattern-count-one": "{0} ha",
-				"unitPattern-count-two": "{0} ha",
-				"unitPattern-count-many": "{0} ha",
-				"unitPattern-count-other": "{0} ha"
+				"unitPattern-count-one": "‎{0} ha",
+				"unitPattern-count-two": "‎{0} ha",
+				"unitPattern-count-many": "‎{0} ha",
+				"unitPattern-count-other": "‎{0} ha"
 			},
 			"area-square-meter": {
 				"displayName": "מ״ר",
@@ -3479,40 +5087,47 @@
 			},
 			"area-square-mile": {
 				"displayName": "מייל רבוע",
-				"unitPattern-count-one": "{0} sq mi",
-				"unitPattern-count-two": "{0} sq mi",
-				"unitPattern-count-many": "{0} sq mi",
-				"unitPattern-count-other": "{0} sq mi",
-				"perUnitPattern": "{0}/mi²"
+				"unitPattern-count-one": "‎{0} sq mi",
+				"unitPattern-count-two": "‎{0} sq mi",
+				"unitPattern-count-many": "‎{0} sq mi",
+				"unitPattern-count-other": "‎{0} sq mi",
+				"perUnitPattern": "‎{0}/mi²"
 			},
 			"area-acre": {
 				"displayName": "אקר",
-				"unitPattern-count-one": "{0} ac",
+				"unitPattern-count-one": "‎{0} ac",
 				"unitPattern-count-two": "{0} ac",
-				"unitPattern-count-many": "{0} ac",
-				"unitPattern-count-other": "{0} ac"
+				"unitPattern-count-many": "‎{0} ac",
+				"unitPattern-count-other": "‎{0} ac"
 			},
 			"area-square-yard": {
 				"displayName": "yards²",
-				"unitPattern-count-one": "{0} yd²",
-				"unitPattern-count-two": "{0} yd²",
-				"unitPattern-count-many": "{0} yd²",
-				"unitPattern-count-other": "{0} yd²"
+				"unitPattern-count-one": "‎{0} yd²",
+				"unitPattern-count-two": "‎{0} yd²",
+				"unitPattern-count-many": "‎{0} yd²",
+				"unitPattern-count-other": "‎{0} yd²"
 			},
 			"area-square-foot": {
 				"displayName": "ft²",
-				"unitPattern-count-one": "{0} sq ft",
-				"unitPattern-count-two": "{0} sq ft",
-				"unitPattern-count-many": "{0} sq ft",
-				"unitPattern-count-other": "{0} sq ft"
+				"unitPattern-count-one": "‎{0} sq ft",
+				"unitPattern-count-two": "‎{0} sq ft",
+				"unitPattern-count-many": "‎{0} sq ft",
+				"unitPattern-count-other": "‎{0} sq ft"
 			},
 			"area-square-inch": {
 				"displayName": "in²",
-				"unitPattern-count-one": "{0} in²",
-				"unitPattern-count-two": "{0} in²",
-				"unitPattern-count-many": "{0} in²",
-				"unitPattern-count-other": "{0} in²",
-				"perUnitPattern": "{0}/in²"
+				"unitPattern-count-one": "‎{0} in²",
+				"unitPattern-count-two": "‎{0} in²",
+				"unitPattern-count-many": "‎{0} in²",
+				"unitPattern-count-other": "‎{0} in²",
+				"perUnitPattern": "‎{0}/in²"
+			},
+			"area-dunam": {
+				"displayName": "דונם",
+				"unitPattern-count-one": "{0} דונם",
+				"unitPattern-count-two": "{0} דונם",
+				"unitPattern-count-many": "{0} דונם",
+				"unitPattern-count-other": "{0} דונם"
 			},
 			"concentr-karat": {
 				"displayName": "kt",
@@ -3521,7 +5136,7 @@
 				"unitPattern-count-many": "{0} kt",
 				"unitPattern-count-other": "{0} kt"
 			},
-			"concentr-milligram-per-deciliter": {
+			"concentr-milligram-ofglucose-per-deciliter": {
 				"displayName": "mg/dL",
 				"unitPattern-count-one": "{0} mg/dL",
 				"unitPattern-count-two": "{0} mg/dL",
@@ -3535,12 +5150,47 @@
 				"unitPattern-count-many": "{0} mmol/L",
 				"unitPattern-count-other": "{0} mmol/L"
 			},
-			"concentr-part-per-million": {
+			"concentr-item": {
+				"displayName": "פריט",
+				"unitPattern-count-one": "פריט {0}",
+				"unitPattern-count-two": "{0} פריטים",
+				"unitPattern-count-many": "{0} פריטים",
+				"unitPattern-count-other": "{0} פריטים"
+			},
+			"concentr-permillion": {
 				"displayName": "ppm",
 				"unitPattern-count-one": "{0} ppm",
 				"unitPattern-count-two": "{0} ppm",
 				"unitPattern-count-many": "{0} ppm",
 				"unitPattern-count-other": "{0} ppm"
+			},
+			"concentr-percent": {
+				"displayName": "%",
+				"unitPattern-count-one": "{0}%",
+				"unitPattern-count-two": "{0}%",
+				"unitPattern-count-many": "{0}%",
+				"unitPattern-count-other": "{0}%"
+			},
+			"concentr-permille": {
+				"displayName": "‰",
+				"unitPattern-count-one": "{0}‰",
+				"unitPattern-count-two": "{0}‰",
+				"unitPattern-count-many": "{0}‰",
+				"unitPattern-count-other": "{0}‰"
+			},
+			"concentr-permyriad": {
+				"displayName": "‱",
+				"unitPattern-count-one": "{0}‱",
+				"unitPattern-count-two": "{0}‱",
+				"unitPattern-count-many": "{0}‱",
+				"unitPattern-count-other": "{0}‱"
+			},
+			"concentr-mole": {
+				"displayName": "mol",
+				"unitPattern-count-one": "{0} mol",
+				"unitPattern-count-two": "{0} mol",
+				"unitPattern-count-many": "{0} mol",
+				"unitPattern-count-other": "{0} mol"
 			},
 			"consumption-liter-per-kilometer": {
 				"displayName": "ליטרים/ק״מ",
@@ -3549,7 +5199,7 @@
 				"unitPattern-count-many": "{0} ל׳/ק״מ",
 				"unitPattern-count-other": "{0} ל׳/ק״מ"
 			},
-			"consumption-liter-per-100kilometers": {
+			"consumption-liter-per-100-kilometer": {
 				"displayName": "ל׳/100 ק״מ",
 				"unitPattern-count-one": "ל׳ {0}/100 ק״מ",
 				"unitPattern-count-two": "{0} ל׳/100 ק״מ",
@@ -3569,6 +5219,13 @@
 				"unitPattern-count-two": "{0} mpg Imp.",
 				"unitPattern-count-many": "{0} mpg Imp.",
 				"unitPattern-count-other": "{0} mpg Imp."
+			},
+			"digital-petabyte": {
+				"displayName": "PB",
+				"unitPattern-count-one": "{0} PB",
+				"unitPattern-count-two": "{0} PB",
+				"unitPattern-count-many": "{0} PB",
+				"unitPattern-count-other": "{0} PB"
 			},
 			"digital-terabyte": {
 				"displayName": "TB",
@@ -3635,10 +5292,10 @@
 			},
 			"digital-bit": {
 				"displayName": "ביט",
-				"unitPattern-count-one": "ביט {0}",
-				"unitPattern-count-two": "{0} סיביות",
-				"unitPattern-count-many": "{0} סיביות",
-				"unitPattern-count-other": "{0} סיביות"
+				"unitPattern-count-one": "{0} ביט",
+				"unitPattern-count-two": "{0} ביט",
+				"unitPattern-count-many": "{0} ביט",
+				"unitPattern-count-other": "{0} ביט"
 			},
 			"duration-century": {
 				"displayName": "מאות",
@@ -3647,6 +5304,13 @@
 				"unitPattern-count-many": "{0} מאות",
 				"unitPattern-count-other": "{0} מאות"
 			},
+			"duration-decade": {
+				"displayName": "עשור",
+				"unitPattern-count-one": "עשור {0}",
+				"unitPattern-count-two": "{0} עשורים",
+				"unitPattern-count-many": "{0} עשורים",
+				"unitPattern-count-other": "{0} עשורים"
+			},
 			"duration-year": {
 				"displayName": "שנים",
 				"unitPattern-count-one": "שנה {0}",
@@ -3654,6 +5318,14 @@
 				"unitPattern-count-many": "{0} שנים",
 				"unitPattern-count-other": "{0} שנים",
 				"perUnitPattern": "{0}/שנה"
+			},
+			"duration-quarter": {
+				"displayName": "רבעונים",
+				"unitPattern-count-one": "{0} q",
+				"unitPattern-count-two": "{0} q",
+				"unitPattern-count-many": "{0} q",
+				"unitPattern-count-other": "{0} q",
+				"perUnitPattern": "{0}/q"
 			},
 			"duration-month": {
 				"displayName": "חודשים",
@@ -3794,6 +5466,48 @@
 				"unitPattern-count-many": "{0} קוט״ש",
 				"unitPattern-count-other": "{0} קוט״ש"
 			},
+			"energy-electronvolt": {
+				"displayName": "eV",
+				"unitPattern-count-one": "{0} eV",
+				"unitPattern-count-two": "{0} eV",
+				"unitPattern-count-many": "{0} eV",
+				"unitPattern-count-other": "{0} eV"
+			},
+			"energy-british-thermal-unit": {
+				"displayName": "BTU",
+				"unitPattern-count-one": "{0} Btu",
+				"unitPattern-count-two": "{0} Btu",
+				"unitPattern-count-many": "{0} Btu",
+				"unitPattern-count-other": "{0} Btu"
+			},
+			"energy-therm-us": {
+				"displayName": "US therm",
+				"unitPattern-count-one": "{0} US therm",
+				"unitPattern-count-two": "{0} US therm",
+				"unitPattern-count-many": "{0} US therm",
+				"unitPattern-count-other": "{0} US therm"
+			},
+			"force-pound-force": {
+				"displayName": "lbf",
+				"unitPattern-count-one": "{0} lbf",
+				"unitPattern-count-two": "{0} lbf",
+				"unitPattern-count-many": "{0} lbf",
+				"unitPattern-count-other": "{0} lbf"
+			},
+			"force-newton": {
+				"displayName": "N",
+				"unitPattern-count-one": "{0} N",
+				"unitPattern-count-two": "{0} N",
+				"unitPattern-count-many": "{0} N",
+				"unitPattern-count-other": "{0} N"
+			},
+			"force-kilowatt-hour-per-100-kilometer": {
+				"displayName": "קוט״ש/100 ק״מ",
+				"unitPattern-count-one": "{0} קוט\"ש/100 ק\"מ",
+				"unitPattern-count-two": "{0} קוט\"ש/100 ק\"מ",
+				"unitPattern-count-many": "{0} קוט\"ש/100 ק\"מ",
+				"unitPattern-count-other": "{0} קוט\"ש/100 ק\"מ"
+			},
 			"frequency-gigahertz": {
 				"displayName": "GHz",
 				"unitPattern-count-one": "{0} GHz",
@@ -3822,6 +5536,69 @@
 				"unitPattern-count-many": "{0} Hz",
 				"unitPattern-count-other": "{0} Hz"
 			},
+			"graphics-em": {
+				"displayName": "em",
+				"unitPattern-count-one": "‎{0} em ‎",
+				"unitPattern-count-two": "‎{0} em ‎",
+				"unitPattern-count-many": "‎{0} em ‎",
+				"unitPattern-count-other": "‎{0} em ‎"
+			},
+			"graphics-pixel": {
+				"displayName": "px",
+				"unitPattern-count-one": "‎{0} px ‎",
+				"unitPattern-count-two": "‎{0} px ‎",
+				"unitPattern-count-many": "‎{0} px ‎",
+				"unitPattern-count-other": "‎{0} px ‎"
+			},
+			"graphics-megapixel": {
+				"displayName": "MP",
+				"unitPattern-count-one": "‎{0} MP ‎",
+				"unitPattern-count-two": "‎{0} MP ‎",
+				"unitPattern-count-many": "‎{0} MP ‎",
+				"unitPattern-count-other": "‎{0} MP ‎"
+			},
+			"graphics-pixel-per-centimeter": {
+				"displayName": "ppcm",
+				"unitPattern-count-one": "‎{0} ppcm‎",
+				"unitPattern-count-two": "‎{0} ppcm‎",
+				"unitPattern-count-many": "‎{0} ppcm‎",
+				"unitPattern-count-other": "‎{0} ppcm‎"
+			},
+			"graphics-pixel-per-inch": {
+				"displayName": "ppi",
+				"unitPattern-count-one": "‎{0} ppi‎",
+				"unitPattern-count-two": "‎{0} ppi‎",
+				"unitPattern-count-many": "‎{0} ppi‎",
+				"unitPattern-count-other": "‎{0} ppi‎"
+			},
+			"graphics-dot-per-centimeter": {
+				"displayName": "ppcm",
+				"unitPattern-count-one": "‎{0} dpcm",
+				"unitPattern-count-two": "‎{0} dpcm",
+				"unitPattern-count-many": "‎{0} dpcm",
+				"unitPattern-count-other": "‎{0} dpcm"
+			},
+			"graphics-dot-per-inch": {
+				"displayName": "ppi",
+				"unitPattern-count-one": "‎{0} dpi‎",
+				"unitPattern-count-two": "‎{0} dpi‎",
+				"unitPattern-count-many": "‎{0} dpi‎",
+				"unitPattern-count-other": "‎{0} dpi‎"
+			},
+			"graphics-dot": {
+				"displayName": "נקודה קטנה",
+				"unitPattern-count-one": "{0} נק′ קטנה",
+				"unitPattern-count-two": "{0} נק′ קטנות",
+				"unitPattern-count-many": "{0} נק′ קטנות",
+				"unitPattern-count-other": "{0} נק′ קטנות"
+			},
+			"length-earth-radius": {
+				"displayName": "R⊕",
+				"unitPattern-count-one": "{0} R⊕",
+				"unitPattern-count-two": "{0} R⊕",
+				"unitPattern-count-many": "{0} R⊕",
+				"unitPattern-count-other": "{0} R⊕"
+			},
 			"length-kilometer": {
 				"displayName": "ק״מ",
 				"unitPattern-count-one": "{0} ק״מ",
@@ -3832,8 +5609,8 @@
 			},
 			"length-meter": {
 				"displayName": "מטרים",
-				"unitPattern-count-one": "מ׳",
-				"unitPattern-count-two": "שני מ׳",
+				"unitPattern-count-one": "{0} מ׳",
+				"unitPattern-count-two": "{0} מ׳",
 				"unitPattern-count-many": "{0} מ׳",
 				"unitPattern-count-other": "{0} מ׳",
 				"perUnitPattern": "{0}/מ׳"
@@ -3847,7 +5624,7 @@
 			},
 			"length-centimeter": {
 				"displayName": "ס״מ",
-				"unitPattern-count-one": "ס\\\"מ {0}",
+				"unitPattern-count-one": "{0} ס״מ",
 				"unitPattern-count-two": "{0} ס״מ",
 				"unitPattern-count-many": "{0} ס״מ",
 				"unitPattern-count-other": "{0} ס״מ",
@@ -3861,29 +5638,29 @@
 				"unitPattern-count-other": "{0} מ״מ"
 			},
 			"length-micrometer": {
-				"displayName": "µm",
-				"unitPattern-count-one": "{0} µm",
-				"unitPattern-count-two": "{0} µm",
-				"unitPattern-count-many": "{0} µm",
-				"unitPattern-count-other": "{0} µm"
+				"displayName": "μm",
+				"unitPattern-count-one": "‎{0} μm‎",
+				"unitPattern-count-two": "‎{0} μm‎",
+				"unitPattern-count-many": "‎{0} μm‎",
+				"unitPattern-count-other": "‎{0} μm‎"
 			},
 			"length-nanometer": {
 				"displayName": "nm",
-				"unitPattern-count-one": "{0} nm",
-				"unitPattern-count-two": "{0} nm",
-				"unitPattern-count-many": "{0} nm",
-				"unitPattern-count-other": "{0} nm"
+				"unitPattern-count-one": "‎{0} nm",
+				"unitPattern-count-two": "‎{0} nm",
+				"unitPattern-count-many": "‎{0} nm",
+				"unitPattern-count-other": "‎{0} nm"
 			},
 			"length-picometer": {
 				"displayName": "פ״מ",
 				"unitPattern-count-one": "פ“מ {0}",
-				"unitPattern-count-two": "{0} פיקומטר",
-				"unitPattern-count-many": "{0} פיקומטר",
-				"unitPattern-count-other": "{0} פיקומטר"
+				"unitPattern-count-two": "{0} פ\"מ",
+				"unitPattern-count-many": "{0} פ\"מ",
+				"unitPattern-count-other": "{0} פ\"מ"
 			},
 			"length-mile": {
 				"displayName": "מייל",
-				"unitPattern-count-one": "מייל {0}",
+				"unitPattern-count-one": "{0} מייל",
 				"unitPattern-count-two": "{0} מייל",
 				"unitPattern-count-many": "{0} מייל",
 				"unitPattern-count-other": "{0} מייל"
@@ -3897,26 +5674,26 @@
 			},
 			"length-foot": {
 				"displayName": "רגל",
-				"unitPattern-count-one": "{0} ft",
-				"unitPattern-count-two": "{0} ft",
-				"unitPattern-count-many": "{0} ft",
-				"unitPattern-count-other": "{0} ft",
-				"perUnitPattern": "{0}/ft"
+				"unitPattern-count-one": "‎{0} ft",
+				"unitPattern-count-two": "‎{0} ft",
+				"unitPattern-count-many": "‎{0} ft",
+				"unitPattern-count-other": "‎{0} ft",
+				"perUnitPattern": "‎{0}/ft"
 			},
 			"length-inch": {
 				"displayName": "אינץ׳",
-				"unitPattern-count-one": "{0} in",
-				"unitPattern-count-two": "{0} in",
-				"unitPattern-count-many": "{0} in",
-				"unitPattern-count-other": "{0} in",
-				"perUnitPattern": "{0}/in"
+				"unitPattern-count-one": "‎{0} in",
+				"unitPattern-count-two": "‎{0} in",
+				"unitPattern-count-many": "‎{0} in",
+				"unitPattern-count-other": "‎{0} in",
+				"perUnitPattern": "‎{0}/in"
 			},
 			"length-parsec": {
 				"displayName": "pc",
-				"unitPattern-count-one": "{0} pc",
-				"unitPattern-count-two": "{0} pc",
-				"unitPattern-count-many": "{0} pc",
-				"unitPattern-count-other": "{0} pc"
+				"unitPattern-count-one": "‎{0} pc",
+				"unitPattern-count-two": "‎{0} pc",
+				"unitPattern-count-many": "‎{0} pc",
+				"unitPattern-count-other": "‎{0} pc"
 			},
 			"length-light-year": {
 				"displayName": "שנות אור",
@@ -3927,18 +5704,24 @@
 			},
 			"length-astronomical-unit": {
 				"displayName": "au",
-				"unitPattern-count-one": "{0} au",
-				"unitPattern-count-two": "{0} au",
-				"unitPattern-count-many": "{0} au",
-				"unitPattern-count-other": "{0} au"
+				"unitPattern-count-one": "‎{0} au",
+				"unitPattern-count-two": "‎{0} au",
+				"unitPattern-count-many": "‎{0} au",
+				"unitPattern-count-other": "‎{0} au"
 			},
 			"length-furlong": {
 				"displayName": "fur",
+				"unitPattern-count-one": "{0} fur",
+				"unitPattern-count-two": "{0} fur",
+				"unitPattern-count-many": "{0} fur",
 				"unitPattern-count-other": "{0} fur"
 			},
 			"length-fathom": {
 				"displayName": "fm",
-				"unitPattern-count-other": "{0} fm"
+				"unitPattern-count-one": "{0} fth",
+				"unitPattern-count-two": "{0} fth",
+				"unitPattern-count-many": "{0} fth",
+				"unitPattern-count-other": "{0} fth"
 			},
 			"length-nautical-mile": {
 				"displayName": "מ״י",
@@ -3961,6 +5744,13 @@
 				"unitPattern-count-many": "{0} נק'",
 				"unitPattern-count-other": "{0} נק'"
 			},
+			"length-solar-radius": {
+				"displayName": "R☉",
+				"unitPattern-count-one": "‎{0} R☉‎",
+				"unitPattern-count-two": "‎{0} R☉‎",
+				"unitPattern-count-many": "‎{0} R☉‎",
+				"unitPattern-count-other": "‎{0} R☉‎"
+			},
 			"light-lux": {
 				"displayName": "lux",
 				"unitPattern-count-one": "{0} lx",
@@ -3968,7 +5758,28 @@
 				"unitPattern-count-many": "{0} lx",
 				"unitPattern-count-other": "{0} lx"
 			},
-			"mass-metric-ton": {
+			"light-candela": {
+				"displayName": "cd",
+				"unitPattern-count-one": "{0} cd",
+				"unitPattern-count-two": "{0} cd",
+				"unitPattern-count-many": "{0} cd",
+				"unitPattern-count-other": "{0} cd"
+			},
+			"light-lumen": {
+				"displayName": "lm",
+				"unitPattern-count-one": "{0} lm",
+				"unitPattern-count-two": "{0} lm",
+				"unitPattern-count-many": "{0} lm",
+				"unitPattern-count-other": "{0} lm"
+			},
+			"light-solar-luminosity": {
+				"displayName": "L☉",
+				"unitPattern-count-one": "{0} L☉",
+				"unitPattern-count-two": "{0} L☉",
+				"unitPattern-count-many": "{0} L☉",
+				"unitPattern-count-other": "{0} L☉"
+			},
+			"mass-tonne": {
 				"displayName": "t",
 				"unitPattern-count-one": "{0} t",
 				"unitPattern-count-two": "{0} t",
@@ -4006,7 +5817,7 @@
 				"unitPattern-count-other": "{0} מק״ג"
 			},
 			"mass-ton": {
-				"displayName": "טון",
+				"displayName": "טונה",
 				"unitPattern-count-one": "ט׳ {0}",
 				"unitPattern-count-two": "{0} ט׳",
 				"unitPattern-count-many": "{0} ט׳",
@@ -4048,6 +5859,34 @@
 				"unitPattern-count-two": "{0} CD",
 				"unitPattern-count-many": "{0} CD",
 				"unitPattern-count-other": "{0} CD"
+			},
+			"mass-dalton": {
+				"displayName": "Da",
+				"unitPattern-count-one": "{0} Da",
+				"unitPattern-count-two": "{0} Da",
+				"unitPattern-count-many": "{0} Da",
+				"unitPattern-count-other": "{0} Da"
+			},
+			"mass-earth-mass": {
+				"displayName": "M⊕",
+				"unitPattern-count-one": "{0} M⊕",
+				"unitPattern-count-two": "{0} M⊕",
+				"unitPattern-count-many": "{0} M⊕",
+				"unitPattern-count-other": "{0} M⊕"
+			},
+			"mass-solar-mass": {
+				"displayName": "M☉",
+				"unitPattern-count-one": "{0} M☉",
+				"unitPattern-count-two": "{0} M☉",
+				"unitPattern-count-many": "{0} M☉",
+				"unitPattern-count-other": "{0} M☉"
+			},
+			"mass-grain": {
+				"displayName": "גרעין",
+				"unitPattern-count-one": "גרעין {0}",
+				"unitPattern-count-two": "{0} גרעינים",
+				"unitPattern-count-many": "{0} גרעינים",
+				"unitPattern-count-other": "{0} גרעינים"
 			},
 			"power-gigawatt": {
 				"displayName": "GW",
@@ -4091,33 +5930,33 @@
 				"unitPattern-count-many": "{0} כ״ס",
 				"unitPattern-count-other": "{0} כ״ס"
 			},
-			"pressure-hectopascal": {
-				"displayName": "hPa",
-				"unitPattern-count-one": "{0} hPa",
-				"unitPattern-count-two": "{0} hPa",
-				"unitPattern-count-many": "{0} hPa",
-				"unitPattern-count-other": "{0} hPa"
-			},
-			"pressure-millimeter-of-mercury": {
+			"pressure-millimeter-ofhg": {
 				"displayName": "mm Hg",
 				"unitPattern-count-one": "{0} mm Hg",
 				"unitPattern-count-two": "{0} mm Hg",
 				"unitPattern-count-many": "{0} mm Hg",
 				"unitPattern-count-other": "{0} mm Hg"
 			},
-			"pressure-pound-per-square-inch": {
+			"pressure-pound-force-per-square-inch": {
 				"displayName": "psi",
 				"unitPattern-count-one": "{0} psi",
 				"unitPattern-count-two": "{0} psi",
 				"unitPattern-count-many": "{0} psi",
 				"unitPattern-count-other": "{0} psi"
 			},
-			"pressure-inch-hg": {
+			"pressure-inch-ofhg": {
 				"displayName": "in Hg",
 				"unitPattern-count-one": "{0} inHg",
 				"unitPattern-count-two": "{0} inHg",
 				"unitPattern-count-many": "{0} inHg",
 				"unitPattern-count-other": "{0} inHg"
+			},
+			"pressure-bar": {
+				"displayName": "בר",
+				"unitPattern-count-one": "{0} בר",
+				"unitPattern-count-two": "{0} בר",
+				"unitPattern-count-many": "{0} בר",
+				"unitPattern-count-other": "{0} בר"
 			},
 			"pressure-millibar": {
 				"displayName": "mbar",
@@ -4125,6 +5964,41 @@
 				"unitPattern-count-two": "{0} mbar",
 				"unitPattern-count-many": "{0} mbar",
 				"unitPattern-count-other": "{0} mbar"
+			},
+			"pressure-atmosphere": {
+				"displayName": "atm",
+				"unitPattern-count-one": "{0} atm",
+				"unitPattern-count-two": "{0} atm",
+				"unitPattern-count-many": "{0} atm",
+				"unitPattern-count-other": "{0} atm"
+			},
+			"pressure-pascal": {
+				"displayName": "Pa",
+				"unitPattern-count-one": "{0} Pa",
+				"unitPattern-count-two": "{0} Pa",
+				"unitPattern-count-many": "{0} Pa",
+				"unitPattern-count-other": "{0} Pa"
+			},
+			"pressure-hectopascal": {
+				"displayName": "hPa",
+				"unitPattern-count-one": "{0} hPa",
+				"unitPattern-count-two": "{0} hPa",
+				"unitPattern-count-many": "{0} hPa",
+				"unitPattern-count-other": "{0} hPa"
+			},
+			"pressure-kilopascal": {
+				"displayName": "kPa",
+				"unitPattern-count-one": "{0} kPa",
+				"unitPattern-count-two": "{0} kPa",
+				"unitPattern-count-many": "{0} kPa",
+				"unitPattern-count-other": "{0} kPa"
+			},
+			"pressure-megapascal": {
+				"displayName": "MPa",
+				"unitPattern-count-one": "{0} MPa",
+				"unitPattern-count-two": "{0} MPa",
+				"unitPattern-count-many": "{0} MPa",
+				"unitPattern-count-other": "{0} MPa"
 			},
 			"speed-kilometer-per-hour": {
 				"displayName": "קמ״ש",
@@ -4182,6 +6056,20 @@
 				"unitPattern-count-many": "{0} K",
 				"unitPattern-count-other": "{0} K"
 			},
+			"torque-pound-force-foot": {
+				"displayName": "lbf⋅ft",
+				"unitPattern-count-one": "{0} lbf⋅ft",
+				"unitPattern-count-two": "{0} lbf⋅ft",
+				"unitPattern-count-many": "{0} lbf⋅ft",
+				"unitPattern-count-other": "{0} lbf⋅ft"
+			},
+			"torque-newton-meter": {
+				"displayName": "N⋅m",
+				"unitPattern-count-one": "{0} N⋅m",
+				"unitPattern-count-two": "{0} N⋅m",
+				"unitPattern-count-many": "{0} N⋅m",
+				"unitPattern-count-other": "{0} N⋅m"
+			},
 			"volume-cubic-kilometer": {
 				"displayName": "קמ״ק",
 				"unitPattern-count-one": "קמ״ק {0}",
@@ -4191,10 +6079,10 @@
 			},
 			"volume-cubic-meter": {
 				"displayName": "m³",
-				"unitPattern-count-one": "{0} m³",
-				"unitPattern-count-two": "{0} m³",
-				"unitPattern-count-many": "{0} m³",
-				"unitPattern-count-other": "{0} m³",
+				"unitPattern-count-one": "‎{0} m³",
+				"unitPattern-count-two": "‎{0} m³",
+				"unitPattern-count-many": "‎{0} m³",
+				"unitPattern-count-other": "‎{0} m³",
 				"perUnitPattern": "{0}/m³"
 			},
 			"volume-cubic-centimeter": {
@@ -4207,45 +6095,45 @@
 			},
 			"volume-cubic-mile": {
 				"displayName": "mi³",
-				"unitPattern-count-one": "{0} mi³",
-				"unitPattern-count-two": "{0} mi³",
-				"unitPattern-count-many": "{0} mi³",
-				"unitPattern-count-other": "{0} mi³"
+				"unitPattern-count-one": "‎{0} mi³",
+				"unitPattern-count-two": "‎{0} mi³",
+				"unitPattern-count-many": "‎{0} mi³",
+				"unitPattern-count-other": "‎{0} mi³"
 			},
 			"volume-cubic-yard": {
 				"displayName": "yd³",
-				"unitPattern-count-one": "{0} yd³",
-				"unitPattern-count-two": "{0} yd³",
-				"unitPattern-count-many": "{0} yd³",
-				"unitPattern-count-other": "{0} yd³"
+				"unitPattern-count-one": "‎{0} yd³",
+				"unitPattern-count-two": "‎{0} yd³",
+				"unitPattern-count-many": "‎{0} yd³",
+				"unitPattern-count-other": "‎{0} yd³"
 			},
 			"volume-cubic-foot": {
 				"displayName": "feet³",
-				"unitPattern-count-one": "{0} ft³",
-				"unitPattern-count-two": "{0} ft³",
-				"unitPattern-count-many": "{0} ft³",
-				"unitPattern-count-other": "{0} ft³"
+				"unitPattern-count-one": "‎{0} ft³",
+				"unitPattern-count-two": "‎{0} ft³",
+				"unitPattern-count-many": "‎{0} ft³",
+				"unitPattern-count-other": "‎{0} ft³"
 			},
 			"volume-cubic-inch": {
 				"displayName": "in³",
-				"unitPattern-count-one": "{0} in³",
-				"unitPattern-count-two": "{0} in³",
-				"unitPattern-count-many": "{0} in³",
-				"unitPattern-count-other": "{0} in³"
+				"unitPattern-count-one": "‎{0} in³",
+				"unitPattern-count-two": "‎{0} in³",
+				"unitPattern-count-many": "‎{0} in³",
+				"unitPattern-count-other": "‎{0} in³"
 			},
 			"volume-megaliter": {
 				"displayName": "ML",
-				"unitPattern-count-one": "{0} ML",
-				"unitPattern-count-two": "{0} ML",
-				"unitPattern-count-many": "{0} ML",
-				"unitPattern-count-other": "{0} ML"
+				"unitPattern-count-one": "‎{0} ML",
+				"unitPattern-count-two": "‎{0} ML",
+				"unitPattern-count-many": "‎{0} ML",
+				"unitPattern-count-other": "‎{0} ML"
 			},
 			"volume-hectoliter": {
 				"displayName": "hL",
-				"unitPattern-count-one": "{0} hL",
-				"unitPattern-count-two": "{0} hL",
-				"unitPattern-count-many": "{0} hL",
-				"unitPattern-count-other": "{0} hL"
+				"unitPattern-count-one": "‎{0} hL",
+				"unitPattern-count-two": "‎{0} hL",
+				"unitPattern-count-many": "‎{0} hL",
+				"unitPattern-count-other": "‎{0} hL"
 			},
 			"volume-liter": {
 				"displayName": "ליטר",
@@ -4264,10 +6152,10 @@
 			},
 			"volume-centiliter": {
 				"displayName": "cL",
-				"unitPattern-count-one": "{0} cL",
-				"unitPattern-count-two": "{0} cL",
-				"unitPattern-count-many": "{0} cL",
-				"unitPattern-count-other": "{0} cL"
+				"unitPattern-count-one": "‎{0} cL",
+				"unitPattern-count-two": "‎{0} cL",
+				"unitPattern-count-many": "‎{0} cL",
+				"unitPattern-count-other": "‎{0} cL"
 			},
 			"volume-milliliter": {
 				"displayName": "מ״ל",
@@ -4278,27 +6166,30 @@
 			},
 			"volume-pint-metric": {
 				"displayName": "mpt",
-				"unitPattern-count-one": "{0} mpt",
-				"unitPattern-count-two": "{0} mpt",
-				"unitPattern-count-many": "{0} mpt",
-				"unitPattern-count-other": "{0} mpt"
+				"unitPattern-count-one": "‎{0} mpt",
+				"unitPattern-count-two": "‎{0} mpt",
+				"unitPattern-count-many": "‎{0} mpt",
+				"unitPattern-count-other": "‎{0} mpt"
 			},
 			"volume-cup-metric": {
 				"displayName": "mcup",
-				"unitPattern-count-one": "{0} mc",
-				"unitPattern-count-two": "{0} mc",
-				"unitPattern-count-many": "{0} mc",
-				"unitPattern-count-other": "{0} mc"
+				"unitPattern-count-one": "‎{0} mc",
+				"unitPattern-count-two": "‎{0} mc",
+				"unitPattern-count-many": "‎{0} mc",
+				"unitPattern-count-other": "‎{0} mc"
 			},
 			"volume-acre-foot": {
 				"displayName": "ac ft",
-				"unitPattern-count-one": "{0} ac ft",
-				"unitPattern-count-two": "{0} ac ft",
-				"unitPattern-count-many": "{0} ac ft",
-				"unitPattern-count-other": "{0} ac ft"
+				"unitPattern-count-one": "‎{0} ac ft",
+				"unitPattern-count-two": "‎{0} ac ft",
+				"unitPattern-count-many": "‎{0} ac ft",
+				"unitPattern-count-other": "‎{0} ac ft"
 			},
 			"volume-bushel": {
 				"displayName": "bu",
+				"unitPattern-count-one": "{0} bu",
+				"unitPattern-count-two": "{0} bu",
+				"unitPattern-count-many": "{0} bu",
 				"unitPattern-count-other": "{0} bu"
 			},
 			"volume-gallon": {
@@ -4319,17 +6210,17 @@
 			},
 			"volume-quart": {
 				"displayName": "qts",
-				"unitPattern-count-one": "{0} qt",
-				"unitPattern-count-two": "{0} qt",
-				"unitPattern-count-many": "{0} qt",
-				"unitPattern-count-other": "{0} qt"
+				"unitPattern-count-one": "‎{0} qt",
+				"unitPattern-count-two": "‎{0} qt",
+				"unitPattern-count-many": "‎{0} qt",
+				"unitPattern-count-other": "‎{0} qt"
 			},
 			"volume-pint": {
 				"displayName": "פינט",
-				"unitPattern-count-one": "{0} pt",
-				"unitPattern-count-two": "{0} pt",
-				"unitPattern-count-many": "{0} pt",
-				"unitPattern-count-other": "{0} pt"
+				"unitPattern-count-one": "‎{0} pt",
+				"unitPattern-count-two": "‎{0} pt",
+				"unitPattern-count-many": "‎{0} pt",
+				"unitPattern-count-other": "‎{0} pt"
 			},
 			"volume-cup": {
 				"displayName": "כוסות",
@@ -4340,10 +6231,17 @@
 			},
 			"volume-fluid-ounce": {
 				"displayName": "fl oz",
-				"unitPattern-count-one": "{0} fl oz",
-				"unitPattern-count-two": "{0} fl oz",
-				"unitPattern-count-many": "{0} fl oz",
-				"unitPattern-count-other": "{0} fl oz"
+				"unitPattern-count-one": "‎{0} fl oz",
+				"unitPattern-count-two": "‎{0} fl oz",
+				"unitPattern-count-many": "‎{0} fl oz",
+				"unitPattern-count-other": "‎{0} fl oz"
+			},
+			"volume-fluid-ounce-imperial": {
+				"displayName": "Imp. fl oz",
+				"unitPattern-count-one": "‎{0} fl oz Imp.‎",
+				"unitPattern-count-two": "‎{0} fl oz Imp.‎",
+				"unitPattern-count-many": "‎{0} fl oz Imp.‎",
+				"unitPattern-count-other": "‎{0} fl oz Imp.‎"
 			},
 			"volume-tablespoon": {
 				"displayName": "כפות",
@@ -4359,7 +6257,64 @@
 				"unitPattern-count-many": "{0} כפי׳",
 				"unitPattern-count-other": "{0} כפי׳"
 			},
+			"volume-barrel": {
+				"displayName": "bbl",
+				"unitPattern-count-one": "‎{0} bbl",
+				"unitPattern-count-two": "‎{0} bbl",
+				"unitPattern-count-many": "‎{0} bbl",
+				"unitPattern-count-other": "‎{0} bbl"
+			},
+			"volume-dessert-spoon": {
+				"displayName": "dstspn",
+				"unitPattern-count-one": "{0} dstspn",
+				"unitPattern-count-two": "{0} dstspn",
+				"unitPattern-count-many": "{0} dstspn",
+				"unitPattern-count-other": "{0} dstspn"
+			},
+			"volume-dessert-spoon-imperial": {
+				"displayName": "dstspn Imp",
+				"unitPattern-count-one": "{0} dstspn Imp",
+				"unitPattern-count-two": "{0} dstspn Imp",
+				"unitPattern-count-many": "{0} dstspn Imp",
+				"unitPattern-count-other": "{0} dstspn Imp"
+			},
+			"volume-drop": {
+				"displayName": "טיפה",
+				"unitPattern-count-one": "טיפה",
+				"unitPattern-count-two": "{0} טיפות",
+				"unitPattern-count-many": "{0} טיפות",
+				"unitPattern-count-other": "{0} טיפות"
+			},
+			"volume-dram": {
+				"displayName": "dram fluid",
+				"unitPattern-count-one": "{0} dram fl",
+				"unitPattern-count-two": "{0} dram fl",
+				"unitPattern-count-many": "{0} dram fl",
+				"unitPattern-count-other": "{0} dram fl"
+			},
+			"volume-jigger": {
+				"displayName": "jigger",
+				"unitPattern-count-one": "{0} jigger",
+				"unitPattern-count-two": "{0} jigger",
+				"unitPattern-count-many": "{0} jigger",
+				"unitPattern-count-other": "{0} jigger"
+			},
+			"volume-pinch": {
+				"displayName": "פינץ׳",
+				"unitPattern-count-one": "{0} פינץ'",
+				"unitPattern-count-two": "{0} פינץ'",
+				"unitPattern-count-many": "{0} פינץ'",
+				"unitPattern-count-other": "{0} פינץ'"
+			},
+			"volume-quart-imperial": {
+				"displayName": "qt Imp",
+				"unitPattern-count-one": "{0} qt Imp.",
+				"unitPattern-count-two": "{0} qt Imp.",
+				"unitPattern-count-many": "{0} qt Imp.",
+				"unitPattern-count-other": "{0} qt Imp."
+			},
 			"coordinateUnit": {
+				"displayName": "כיוון",
 				"east": "{0} מז׳",
 				"north": "{0} צפ׳",
 				"south": "{0} דר׳",
@@ -4367,24 +6322,75 @@
 			}
 		}
 	},
+	"lenient-scope-number": {
+		"minusSign": "-‒⁻₋−➖﹣－",
+		"commaSign": ",،٫、︐︑﹐﹑，､",
+		"plusSign": "+⁺₊➕﬩﹢＋"
+	},
+	"currencyFormat-sap-short": {
+		"1000-one": "‎¤ 0K‏",
+		"1000-two": "‎¤ 0K‏",
+		"1000-many": "‎¤ 0K‏",
+		"1000-other": "‎¤ 0K‏",
+		"10000-one": "‎¤ 00K‏",
+		"10000-two": "‎¤ 00K‏",
+		"10000-many": "‎¤ 00K‏",
+		"10000-other": "‎¤ 00K‏",
+		"100000-one": "‎¤ 000K‏",
+		"100000-two": "‎¤ 000K‏",
+		"100000-many": "‎¤ 000K‏",
+		"100000-other": "‎¤ 000K‏",
+		"1000000-one": "‎¤ 0M‏",
+		"1000000-two": "‎¤ 0M‏",
+		"1000000-many": "‎¤ 0M‏",
+		"1000000-other": "‎¤ 0M‏",
+		"10000000-one": "‎¤ 00M‏",
+		"10000000-two": "‎¤ 00M‏",
+		"10000000-many": "‎¤ 00M‏",
+		"10000000-other": "‎¤ 00M‏",
+		"100000000-one": "‎¤ 000M‏",
+		"100000000-two": "‎¤ 000M‏",
+		"100000000-many": "‎¤ 000M‏",
+		"100000000-other": "‎¤ 000M‏",
+		"1000000000-one": "‎¤ 0B‏",
+		"1000000000-two": "‎¤ 0B‏",
+		"1000000000-many": "‎¤ 0B‏",
+		"1000000000-other": "‎¤ 0B‏",
+		"10000000000-one": "‎¤ 00B‏",
+		"10000000000-two": "‎¤ 00B‏",
+		"10000000000-many": "‎¤ 00B‏",
+		"10000000000-other": "‎¤ 00B‏",
+		"100000000000-one": "‎¤ 000B‏",
+		"100000000000-two": "‎¤ 000B‏",
+		"100000000000-many": "‎¤ 000B‏",
+		"100000000000-other": "‎¤ 000B‏",
+		"1000000000000-one": "‎¤ 0T‏",
+		"1000000000000-two": "‎¤ 0T‏",
+		"1000000000000-many": "‎¤ 0T‏",
+		"1000000000000-other": "‎¤ 0T‏",
+		"10000000000000-one": "‎¤ 00T‏",
+		"10000000000000-two": "‎¤ 00T‏",
+		"10000000000000-many": "‎¤ 00T‏",
+		"10000000000000-other": "‎¤ 00T‏",
+		"100000000000000-one": "‎¤ 000T‏",
+		"100000000000000-two": "‎¤ 000T‏",
+		"100000000000000-many": "‎¤ 000T‏",
+		"100000000000000-other": "‎¤ 000T‏"
+	},
 	"currencyDigits": {
 		"ADP": 0,
 		"AFN": 0,
 		"ALL": 0,
-		"AMD": 0,
 		"BHD": 3,
 		"BIF": 0,
 		"BYR": 0,
 		"CLF": 4,
 		"CLP": 0,
-		"COP": 0,
 		"DEFAULT": 2,
 		"DJF": 0,
 		"ESP": 0,
 		"GNF": 0,
-		"GYD": 0,
 		"HUF": 0,
-		"IDR": 0,
 		"IQD": 0,
 		"IRR": 0,
 		"ISK": 0,
@@ -4402,11 +6408,8 @@
 		"MGA": 0,
 		"MGF": 0,
 		"MMK": 0,
-		"MNT": 0,
 		"MRO": 0,
-		"MUR": 0,
 		"OMR": 3,
-		"PKR": 0,
 		"PYG": 0,
 		"RSD": 0,
 		"RWF": 0,
@@ -4418,10 +6421,9 @@
 		"TND": 3,
 		"TRL": 0,
 		"TWD": 0,
-		"TZS": 0,
 		"UGX": 0,
 		"UYI": 0,
-		"UZS": 0,
+		"UYW": 4,
 		"VND": 0,
 		"VUV": 0,
 		"XAF": 0,
@@ -4432,9 +6434,8 @@
 		"ZWD": 0
 	},
 	"plurals": {
-		"one": "i = 1 and v = 0",
-		"two": "i = 2 and v = 0",
-		"many": "v = 0 and n != 0..10 and n % 10 = 0"
+		"one": "i = 1 and v = 0 or i = 0 and v != 0",
+		"two": "i = 2 and v = 0"
 	},
 	"weekData-minDays": 1,
 	"weekData-firstDay": 0,
@@ -4446,35 +6447,93 @@
 	},
 	"eras-gregorian": {
 		"0": {
+			"_code": "gregory-inverse",
+			"_aliases": "bc bce",
 			"_end": "0-12-31"
 		},
 		"1": {
+			"_code": "gregory",
+			"_aliases": "ad ce",
 			"_start": "1-01-01"
 		}
 	},
 	"eras-islamic": {
 		"0": {
+			"_code": "islamic",
+			"_aliases": "ah",
 			"_start": "622-7-15"
 		}
 	},
 	"eras-persian": {
 		"0": {
+			"_code": "persian",
+			"_aliases": "ap",
 			"_start": "622-01-01"
+		}
+	},
+	"eras-buddhist": {
+		"0": {
+			"_code": "buddhist",
+			"_aliases": "be",
+			"_start": "-542-01-01"
 		}
 	},
 	"eras-japanese": {
 		"232": {
+			"_code": "meiji",
 			"_start": "1868-9-8"
 		},
 		"233": {
+			"_code": "taisho",
 			"_start": "1912-7-30"
 		},
 		"234": {
+			"_code": "showa",
 			"_start": "1926-12-25"
 		},
 		"235": {
+			"_code": "heisei",
 			"_start": "1989-1-8"
+		},
+		"236": {
+			"_code": "reiwa",
+			"_start": "2019-5-1"
 		}
 	},
-	"calendarPreference": "gregorian hebrew islamic islamic-civil islamic-tbla"
+	"dayPeriodRules": {
+		"afternoon1": {
+			"_before": "16:00",
+			"_from": "12:00"
+		},
+		"afternoon2": {
+			"_before": "18:00",
+			"_from": "16:00"
+		},
+		"evening1": {
+			"_before": "22:00",
+			"_from": "18:00"
+		},
+		"midnight": {
+			"_at": "00:00"
+		},
+		"morning1": {
+			"_before": "12:00",
+			"_from": "06:00"
+		},
+		"night1": {
+			"_before": "03:00",
+			"_from": "22:00"
+		},
+		"night2": {
+			"_before": "06:00",
+			"_from": "03:00"
+		}
+	},
+	"calendarPreference": [
+		"gregorian",
+		"hebrew",
+		"islamic",
+		"islamic-civil",
+		"islamic-tbla"
+	]
 }

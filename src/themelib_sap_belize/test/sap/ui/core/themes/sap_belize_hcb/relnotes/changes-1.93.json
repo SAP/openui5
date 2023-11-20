@@ -1,0 +1,12 @@
+{
+  "1.93.0": {
+    "date": "July 2021",
+    "notes": [
+      {
+        "id": "79a9ef4d35b532401830ee54f5f3babd20b577aa",
+        "type": "FEATURE",
+        "text": " sap.m.PlanningCalendar: Introducing relative views"
+      }
+    ]
+  }
+}

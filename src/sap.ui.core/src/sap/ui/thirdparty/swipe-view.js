@@ -78,10 +78,10 @@ var SwipeView = (function (window, document) {
 			this.masterPages = [];
 
 			div = document.createElement('div');
-			//SAP MODIFICATION
+			//MODIFIED BY SAP
 			//make slider id unique
 			div.id = this.wrapper.parentElement.id + '-slider';
-			//SAP MODIFICATION
+			//MODIFIED BY SAP
 			//changed position to 'absolute', otherwise problems with carousels
 			//with a fixed height, for example '156px' or '28em'
 			div.style.cssText = 'position:absolute;top:0;height:100%;width:100%;' + cssVendor + 'transition-duration:0;' + cssVendor + 'transform:translateZ(0);' + cssVendor + 'transition-timing-function:ease-out';
@@ -92,7 +92,7 @@ var SwipeView = (function (window, document) {
 
 			for (i=-1; i<2; i++) {
 				div = document.createElement('div');
-				//SAP MODIFICATION
+				//MODIFIED BY SAP
 				//make master page id unique
 				div.id =  this.wrapper.parentElement.id + '-masterpage-' + (i+1);
 				div.style.cssText = cssVendor + 'transform:translateZ(0);position:absolute;top:0;height:100%;width:100%;left:' + i*100 + '%';
@@ -117,7 +117,7 @@ var SwipeView = (function (window, document) {
 			this.slider.addEventListener(transitionEndEvent, this, false);
 			// in Opera >= 12 the transitionend event is lowercase so we register both events
 			if ( vendor == 'O' ) this.slider.addEventListener(transitionEndEvent.toLowerCase(), this, false);
-			//SAP MODIFICATION
+			//MODIFIED BY SAP
 			//Please refer to comment for function 'initialSizeCheck'
 			this._bPerformInitialSizeCheck = true;
 /*			if (!hasTouch) {
@@ -168,7 +168,7 @@ var SwipeView = (function (window, document) {
 /*			if (!hasTouch) {
 				this.wrapper.removeEventListener('mouseout', this, false);
 			}*/
-			//SAP MODIFICATION
+			//MODIFIED BY SAP
 			//remove callback reference
 			this.fnLoadingCallback = null;
 		},
@@ -197,7 +197,7 @@ var SwipeView = (function (window, document) {
 			for (i=0; i<3; i++) {
 				className = this.masterPages[i].className;
 				/(^|\s)swipeview-loading(\s|$)/.test(className) || (this.masterPages[i].className = !className ? 'swipeview-loading' : className + ' swipeview-loading');
-				//SAP MODIFICATION
+				//MODIFIED BY SAP
 				//apply class change to carousel callback
 				if(this.fnLoadingCallback) {
 					this.fnLoadingCallback.call(undefined, i, true);
@@ -244,9 +244,9 @@ var SwipeView = (function (window, document) {
 		},
 
 		next: function () {
-			//SAP MODIFICATION: using pageIndex instead of this.x because it leads to errors
+			//MODIFIED BY SAP: using pageIndex instead of this.x because it leads to errors
 			if (!this.options.loop && this.pageIndex === this.options.numberOfPages - 1) return;
-			//SAP MODIFICATION
+			//MODIFIED BY SAP
 			//Please refer to comment for function 'initialSizeCheck'
 			this.initialSizeCheck();
 			this.directionX = -1;
@@ -255,9 +255,9 @@ var SwipeView = (function (window, document) {
 		},
 
 		prev: function () {
-			//SAP MODIFICATION: using pageIndex instead of this.x because it leads to errors
+			//MODIFIED BY SAP: using pageIndex instead of this.x because it leads to errors
 			if (!this.options.loop && this.pageIndex === 0) return;
-			//SAP MODIFICATION
+			//MODIFIED BY SAP
 			//Please refer to comment for function 'initialSizeCheck'
 			this.initialSizeCheck();
 			this.directionX = 1;
@@ -278,7 +278,7 @@ var SwipeView = (function (window, document) {
 					this.__end(e);
 					break;
 				case resizeEvent:
-					//SAP MODIFICATION
+					//MODIFIED BY SAP
 					//Use sap.ui.core.ResizeHandler instead
 					//this.__resize();
 					break;
@@ -289,7 +289,7 @@ var SwipeView = (function (window, document) {
 			}
 		},
 
-		//SAP MODIFICATION
+		//MODIFIED BY SAP
 		//If the default width is set the swipeview has a bug when calculating the swipe
 		//distance. if that distance is wrong, controls are not centered after a
 		//swipe. To fix that bug, swipe view's 'refreshSize' function is called once initially
@@ -321,13 +321,13 @@ var SwipeView = (function (window, document) {
 		__start: function (e) {
 			//e.preventDefault();
 
-			//SAP MODIFICATION
+			// BEGIN: MODIFIED BY SAP
 			//if move event has already been consumed by let's say switch ore slider control,
 			//we should not act on it any more
 			if(!!e.originalEvent && !!e.originalEvent._sapui_handledByControl) {
 				return;
 			}
-			//END SAP MODIFICATION
+			// END: MODIFIED BY SAP
 
 			if (this.initiated) return;
 			var point = hasTouch ? e.touches[0] : e;
@@ -385,7 +385,7 @@ var SwipeView = (function (window, document) {
 			this.directionLocked = true;
 
 			if (!this.options.loop && (newX > 0 || newX < this.maxX)) {
-				//SAP MODIFICATION BEGIN
+				// BEGIN: MODIFIED BY SAP
 				//Make sure rubber band effect is only shown for IOS
 				if(sap.ui.Device.os.ios) {
 					newX = this.x + (deltaX / 2);
@@ -397,7 +397,7 @@ var SwipeView = (function (window, document) {
 						newX = this.maxX;
 					}
 				}
-				//SAP MODIFICATION END
+				// END: MODIFIED BY SAP
 			}
 
 			if (!this.thresholdExceeded && dist >= this.snapThreshold) {
@@ -425,7 +425,7 @@ var SwipeView = (function (window, document) {
 
 			if (!this.moved) return;
 
-			//SAP MODIFICATION BEGIN
+			// BEGIN: MODIFIED BY SAP
 			//Make sure rubber band effect is shown for left-
 			//and rightmost pages, too
 			var bMoveBack = false;
@@ -440,7 +440,7 @@ var SwipeView = (function (window, document) {
 				this.__pos(-this.page * this.pageWidth);
 				return;
 			}
-			//SAP MODIFICATION END
+			// END: MODIFIED BY SAP
 
 			this.__checkPosition();
 		},
@@ -450,7 +450,7 @@ var SwipeView = (function (window, document) {
 				pageFlipIndex,
 				className;
 
-			//SAP MODIFICATION BEGIN
+			// BEGIN: MODIFIED BY SAP
 			//Make sure that swipe works correctly in loop mode with less than 3 pages
 			if(this.options.loop) {
 				if(this.options.numberOfPages === 1) {
@@ -467,7 +467,7 @@ var SwipeView = (function (window, document) {
 					}
 				}
 			}
-			//SAP MODIFICATION END
+			// END: MODIFIED BY SAP
 
 
 			this.masterPages[this.currentMasterPage].className = this.masterPages[this.currentMasterPage].className.replace(/(^|\s)swipeview-active(\s|$)/, '');
@@ -502,7 +502,7 @@ var SwipeView = (function (window, document) {
 			// Add loading class to flipped page
 			className = this.masterPages[pageFlip].className;
 			/(^|\s)swipeview-loading(\s|$)/.test(className) || (this.masterPages[pageFlip].className = !className ? 'swipeview-loading' : className + ' swipeview-loading');
-			//SAP MODIFICATION
+			//MODIFIED BY SAP
 			//apply class change to carousel callback
 			if(this.fnLoadingCallback) {
 				this.fnLoadingCallback.call(undefined, pageFlip, true);
@@ -529,7 +529,7 @@ var SwipeView = (function (window, document) {
 		},
 
 		__flip: function () {
-			//SAP MODIFICATION
+			//MODIFIED BY SAP
 			//Please refer to comment for function 'initialSizeCheck'
 			this.initialSizeCheck();
 			this.__event('flip');

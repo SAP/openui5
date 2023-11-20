@@ -3,12 +3,12 @@
  */
 
 // Provides helper class ValueStateSupport
-sap.ui.define(['jquery.sap.global', './Element', './library'],
-	function(jQuery, Element, library) {
+sap.ui.define(['./Element', './library', './Lib', "sap/base/assert"],
+	function(Element, coreLib, Library, assert) {
 	"use strict";
 
 	// shortcut for enum(s)
-	var ValueState = library.ValueState;
+	var ValueState = coreLib.ValueState;
 
 		/**
 		 * Helper functionality for value state support.
@@ -25,10 +25,11 @@ sap.ui.define(['jquery.sap.global', './Element', './library'],
 		var ensureTexts = function() {
 			if (!mTexts) { // initialize texts if required
 				mTexts = {};
-				var rb = sap.ui.getCore().getLibraryResourceBundle("sap.ui.core");
+				var rb = Library.getResourceBundleFor("sap.ui.core");
 				mTexts[ValueState.Error] = rb.getText("VALUE_STATE_ERROR");
 				mTexts[ValueState.Warning] = rb.getText("VALUE_STATE_WARNING");
 				mTexts[ValueState.Success] = rb.getText("VALUE_STATE_SUCCESS");
+				mTexts[ValueState.Information] = rb.getText("VALUE_STATE_INFORMATION");
 			}
 		};
 
@@ -46,7 +47,7 @@ sap.ui.define(['jquery.sap.global', './Element', './library'],
 		 * @function
 		 */
 		ValueStateSupport.enrichTooltip = function(oElement, sTooltipText) {
-			jQuery.sap.assert(oElement instanceof Element, "oElement must be an Element");
+			assert(oElement instanceof Element, "oElement must be an Element");
 
 			if (!sTooltipText && oElement.getTooltip()) {
 				return undefined; // this means there is no tooltip text configured, but a tooltip object like a RichTooltip
@@ -67,7 +68,7 @@ sap.ui.define(['jquery.sap.global', './Element', './library'],
 		 * represents one of these states.
 		 *
 		 * @param {sap.ui.core.Element|sap.ui.core.ValueState} vValue the Element of which the valueState needs to be checked, or the ValueState explicitly
-		 * @returns {string} the success/warning/error text, if appropriate; otherwise null
+		 * @returns {string|null} the success/warning/error text, if appropriate; otherwise null
 		 *
 		 * @public
 		 * @name sap.ui.core.ValueStateSupport.getAdditionalText
@@ -97,6 +98,7 @@ sap.ui.define(['jquery.sap.global', './Element', './library'],
 		 *  1 : ValueState.Warning
 		 *  2 : ValueState.Success
 		 *  3 : ValueState.Error
+		 *  4 : ValueState.Information
 		 *
 		 * @param {int} iState the state as an integer
 		 * @return {sap.ui.core.ValueState} the corresponding ValueState object
@@ -114,6 +116,8 @@ sap.ui.define(['jquery.sap.global', './Element', './library'],
 					return ValueState.Success;
 				case 3:
 					return ValueState.Error;
+				case 4:
+					return ValueState.Information;
 				default:
 					return ValueState.None;
 			}

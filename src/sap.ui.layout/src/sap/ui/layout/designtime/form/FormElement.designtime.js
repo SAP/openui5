@@ -3,9 +3,33 @@
  */
 
 // Provides the Design Time Metadata for the sap.ui.layout.form.FormElement
-sap.ui.define(['sap/ui/layout/form/Form', 'sap/ui/layout/form/FormContainer', 'sap/ui/layout/form/ResponsiveGridLayout'],
-	function(Form, FormContainer, ResponsiveGridLayout) {
+sap.ui.define([
+	'sap/ui/layout/form/Form',
+	'sap/ui/layout/form/FormContainer',
+	'sap/ui/layout/form/ResponsiveGridLayout'
+], function(
+	Form,
+	FormContainer,
+	ResponsiveGridLayout
+) {
 	"use strict";
+
+	function fnFindForm(oElement){
+		if (oElement && !(oElement instanceof Form)){
+			 return fnFindForm(oElement.getParent());
+		}
+		return oElement;
+	}
+
+	function fnIsLayoutSupported(oFormElement){
+		var oForm = fnFindForm(oFormElement);
+		if (oForm &&
+			oForm.getLayout() &&
+			oForm.getLayout().getMetadata().getName() === "sap.ui.layout.form.GridLayout"){
+			return false;
+		}
+		return true;
+	}
 
 	return {
 		palette: {
@@ -43,17 +67,35 @@ sap.ui.define(['sap/ui/layout/form/Form', 'sap/ui/layout/form/FormContainer', 's
 			}
 		},
 		actions: {
-			remove: {
-				changeType: "hideControl"
-			},
-			rename: {
-				changeType: "renameField",
-				domRef: function (oControl) {
-					return oControl.getLabelControl().getDomRef();
+			remove: function(oFormElement){
+				if (fnIsLayoutSupported(oFormElement)){
+					return {
+						changeType: "hideControl"
+					};
+				} else {
+					return null;
 				}
 			},
-			reveal: {
-				changeType: "unhideControl"
+			rename: function(oFormElement){
+				if (fnIsLayoutSupported(oFormElement) && oFormElement.getLabelControl()){
+					return {
+						changeType: "renameField",
+						domRef: function (oControl) {
+							return oControl.getLabelControl().getDomRef();
+						}
+					};
+				} else {
+					return null;
+				}
+			},
+			reveal: function(oFormElement){
+				if (fnIsLayoutSupported(oFormElement)){
+					return {
+						changeType: "unhideControl"
+					};
+				} else {
+					return null;
+				}
 			}
 		},
 		name: {
@@ -62,4 +104,4 @@ sap.ui.define(['sap/ui/layout/form/Form', 'sap/ui/layout/form/FormContainer', 's
 		}
 	};
 
-}, /* bExport= */ false);
+});

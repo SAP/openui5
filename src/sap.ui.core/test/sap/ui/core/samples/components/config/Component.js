@@ -1,8 +1,13 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(['jquery.sap.global', 'sap/ui/commons/TextView', 'sap/ui/commons/Tree', 'sap/ui/commons/TreeNode', 'sap/ui/core/UIComponent', 'sap/ui/layout/VerticalLayout'],
-	function(jQuery, TextView, Tree, TreeNode, UIComponent, VerticalLayout) {
+sap.ui.define([
+	"sap/m/Title",
+	"sap/ui/commons/Tree",
+	"sap/ui/commons/TreeNode",
+	"sap/ui/core/UIComponent",
+	"sap/ui/layout/VerticalLayout"
+], function(Title, Tree, TreeNode, UIComponent, VerticalLayout) {
 	"use strict";
 
 
@@ -35,9 +40,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/TextView', 'sap/ui/commons/T
 	Component.prototype.createContent = function() {
 
 		var oLayout = new VerticalLayout();
-		oLayout.addContent(new TextView({
+		oLayout.addContent(new Title({
 			text: "samples.components.config.sap.Component",
-			design: "H3"
+			level: "H3"
 		}));
 		oLayout.addContent(new Tree(this.createId("tree"), {
 			title: "Configuration"
@@ -50,7 +55,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/TextView', 'sap/ui/commons/T
 	Component.prototype.createTreeNodes = function() {
 
 		function createChildren(oParentNode, oConfig) {
-			jQuery.each(oConfig, function(sKey, oValue) {
+			Object.keys(oConfig).forEach(function(sKey) {
+				var oValue = oConfig[sKey];
 				var bIsObject = typeof oValue === "object";
 				var oNode = new TreeNode({
 					text: sKey + (bIsObject ? "" : "=" + oValue),
@@ -65,7 +71,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/TextView', 'sap/ui/commons/T
 
 		var oTree = this.byId("tree");
 		oTree.destroyNodes();
-		createChildren(oTree, this.getMetadata().getConfig());
+		createChildren(oTree, this.getManifestEntry("/sap.ui5/config") || {});
 
 	};
 

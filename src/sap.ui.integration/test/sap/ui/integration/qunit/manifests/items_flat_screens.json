@@ -1,0 +1,21 @@
+{
+	"count": 4,
+	"items": [
+		{
+			"Name": "Flat XXL",
+			"ProductCategory": "flat_screens"
+		},
+		{
+			"Name": "Flat XL",
+			"ProductCategory": "flat_screens"
+		},
+		{
+			"Name": "Bending Screen 21HD",
+			"ProductCategory": "flat_screens"
+		},
+		{
+			"Name": "Ergo Screen E-II",
+			"ProductCategory": "flat_screens"
+		}
+	]
+}

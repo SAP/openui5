@@ -1,0 +1,331 @@
+{
+  "1.62.0": {
+    "date": "December 2018",
+    "notes": [
+      {
+        "id": "6a19fc127bb3fe8653ca74b782cbbe63e3fd5204",
+        "type": "FEATURE",
+        "text": "Introduce Enumeration for Indication Colors",
+        "references": []
+      },
+      {
+        "id": "a28d1e1a51ac38a235dfd9640b06ad9a885e2242",
+        "type": "FEATURE",
+        "text": "core/routing: support routing in nested components",
+        "references": []
+      },
+      {
+        "id": "399d97690ba66b56b1cc0e1c80119d54537b5fa4",
+        "type": "FEATURE",
+        "text": "sap_fiori_3: initial commit of Fiori 3 Default",
+        "references": []
+      },
+      {
+        "id": "7e9e24f65d8205c390d96128881fc17543e99fa8",
+        "type": "FIX",
+        "text": "ManagedObject: improve JSDoc of 'parameters' in bindObject etc.",
+        "references": [
+          {
+            "type": "GitHub",
+            "reference": "1476"
+          },
+          {
+            "type": "BCP",
+            "reference": "1770259772"
+          }
+        ]
+      },
+      {
+        "id": "a0970d3bf956bec5d82337dbe33aa7951f7fe3e9",
+        "type": "FIX",
+        "text": "ODataUtils: Enhance setAnnotationOrigin for HanaXS Use Case",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400006014532018"
+          }
+        ]
+      },
+      {
+        "id": "833b6bd348a01e5ec3dfd1591f2f4c3598b8039b",
+        "type": "FIX",
+        "text": "UriParameters: Fixed parsing of query values with an equal sign",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880708373"
+          }
+        ]
+      },
+      {
+        "id": "8213f13d828521df2018ace7cb7861429f0f43da",
+        "type": "FIX",
+        "text": "i18n.ResourceBundle: Norwegian language support for \"nb\"",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880647149"
+          }
+        ]
+      },
+      {
+        "id": "a322f3a330522a7d02300e66729af27cbcd2e80f",
+        "type": "FEATURE",
+        "text": "Activates XMLProcessing Mode for Async XMLViews",
+        "references": []
+      },
+      {
+        "id": "65c4f232cf6c17540b9a4c427eec6bd4bce5da27",
+        "type": "FEATURE",
+        "text": "New library sap.ui.integration",
+        "references": []
+      },
+      {
+        "id": "1d4bc819c860b4f56701ac12ac99a1ba1f4143ab",
+        "type": "FEATURE",
+        "text": "Opa: search by ID in open dialogs",
+        "references": []
+      },
+      {
+        "id": "af48ff743019c0d06e4f8a31bcbf3d46fb859e62",
+        "type": "FEATURE",
+        "text": "Opa: search by view ID",
+        "references": []
+      },
+      {
+        "id": "ab2d27b0a39cd0df0f6a29b551bef1ea32ec8375",
+        "type": "FEATURE",
+        "text": "UIArea: allow to configure the set of logged events",
+        "references": [
+          {
+            "type": "GitHub",
+            "reference": "1979"
+          },
+          {
+            "type": "BCP",
+            "reference": "1870146534"
+          }
+        ]
+      },
+      {
+        "id": "faa9912ccf3e0c5e28fd68b72efa4a5dd811542f",
+        "type": "FEATURE",
+        "text": "core/routing/Target: ComponentContainer configuration",
+        "references": []
+      },
+      {
+        "id": "e4a5d8cd01b194db81a7f5970f28983a9ef5f13b",
+        "type": "FEATURE",
+        "text": "core/routing: support routing in nested components",
+        "references": []
+      },
+      {
+        "id": "b34c535ffb45d262e2181446943df75d5e11f1e1",
+        "type": "FEATURE",
+        "text": "sap.m.Carousel: Ability to display several items at once",
+        "references": []
+      },
+      {
+        "id": "196f180f06407d1160e3bb156f6de8afaa4f2e40",
+        "type": "FEATURE",
+        "text": "trace/FESR: Enhance API for improved FESR performance logging",
+        "references": []
+      },
+      {
+        "id": "f4f1803f4c9a018216230f3705d3c33759293553",
+        "type": "FIX",
+        "text": "ComboBoxBase: Support for composition characters",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880653816"
+          },
+          {
+            "type": "BCP",
+            "reference": "1880483051"
+          }
+        ]
+      },
+      {
+        "id": "068997b82b9dc572511e6610de14b5be8acd0b95",
+        "type": "FIX",
+        "text": "Core: detect bootstrap script even when query params are present",
+        "references": [
+          {
+            "type": "GitHub",
+            "reference": "2247"
+          },
+          {
+            "type": "BCP",
+            "reference": "1880623957"
+          }
+        ]
+      },
+      {
+        "id": "fba2daa657d5415984b71db787ed8e5540a5e6a0",
+        "type": "FIX",
+        "text": "Device.js: use maxTouchPoints for touch support detection",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880727749"
+          }
+        ]
+      },
+      {
+        "id": "133a975a2f4bb967a76f1931b1b8892ce9fa0054",
+        "type": "FIX",
+        "text": "Icon: properly validate multi-typed color properties",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870457633"
+          }
+        ]
+      },
+      {
+        "id": "d0b9950a732344830cb8c2498ac820e3586cb9c6",
+        "type": "FIX",
+        "text": "ManagedObject: clone only public properties and associations",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870409758"
+          }
+        ]
+      },
+      {
+        "id": "28542bce40ee1f3cc90f7e6811d82f7efc07e1f9",
+        "type": "FIX",
+        "text": "ODataTreeBinding: Fix context change detection",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870516832"
+          }
+        ]
+      },
+      {
+        "id": "1c882fbfc28e8567c06a0ef6244df754e7bf02e3",
+        "type": "FIX",
+        "text": "ODataTreeBinding: Prevent exception when setting context to null",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870419191"
+          }
+        ]
+      },
+      {
+        "id": "1d5f9d99b520ccfc42c97261d4cf99f1f1162e93",
+        "type": "FIX",
+        "text": "Revert for: \"v2.ODataModel: improve checkUpdate performance\"",
+        "references": []
+      },
+      {
+        "id": "f823f1c5a315cac71d207337b614161e6ca87bc6",
+        "type": "FIX",
+        "text": "TreeBindingCompatibilityAdapter: Safe Array indexOf",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870512006"
+          }
+        ]
+      },
+      {
+        "id": "3daa553eaa89ba944741c8754312fe24210e1b74",
+        "type": "FIX",
+        "text": "XMLComposite: detect parser error in given fragment content",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970002581"
+          }
+        ]
+      },
+      {
+        "id": "5aec8e608d152fad9417f46c07f34eeae81661fc",
+        "type": "FIX",
+        "text": "base.DataType: make type 'int' accept NaN as a valid value",
+        "references": [
+          {
+            "type": "GitHub",
+            "reference": "2237"
+          },
+          {
+            "type": "BCP",
+            "reference": "1880615058"
+          }
+        ]
+      },
+      {
+        "id": "5471178bdddbae1cb510ba4ab4ae0fb92cd13260",
+        "type": "FIX",
+        "text": "core.support.plugins.ControlTree: context for OData v4 fixed",
+        "references": []
+      },
+      {
+        "id": "e55f873a97452bad09fa3fb53a231015644fec89",
+        "type": "FIX",
+        "text": "core/rules/App.support.js: Adapt scope of jquerySapUsage rule",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880718299"
+          }
+        ]
+      },
+      {
+        "id": "34d8cd353ed0cf912847f3188dc95fb91df3e944",
+        "type": "FIX",
+        "text": "sap.ui.core/Component: improved variant determination",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870534690"
+          }
+        ]
+      },
+      {
+        "id": "3085b0ca7c647b3f3d3ee1eaf3eda05ebb92dd32",
+        "type": "FIX",
+        "text": "syncXHRBootstrap(Debug).qunit.js - IE support",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970031005"
+          }
+        ]
+      },
+      {
+        "id": "951562e45ec5385d165ccdf4ef4dd83422c525d7",
+        "type": "FIX",
+        "text": "trace/FESR: Fix FESR tests",
+        "references": []
+      },
+      {
+        "id": "583d498abbbe237ff5af2ef21a7a8517f12925e6",
+        "type": "FIX",
+        "text": "v2.ODataModel: improve checkUpdate performance",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400005988892018"
+          }
+        ]
+      },
+      {
+        "id": "789edd1cd3a77f7464b6a570585a31add5b7b73d",
+        "type": "FIX",
+        "text": "v2.ODataModel: memory leak",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870521429"
+          }
+        ]
+      }
+    ]
+  }
+}

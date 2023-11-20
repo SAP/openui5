@@ -1,0 +1,8 @@
+<mvc:View xmlns:mvc="sap.ui.core.mvc"
+		  xmlns="sap.m"
+		  controllerName="my.component.sample.triggerAction.Main">
+
+	<VBox class="sapUiSmallMargin">
+		<Button press=".handleSeeDetails" text="See details" />
+	</VBox>
+</mvc:View>

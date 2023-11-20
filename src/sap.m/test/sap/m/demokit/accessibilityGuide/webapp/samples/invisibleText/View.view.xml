@@ -1,0 +1,35 @@
+<mvc:View
+		xmlns:mvc="sap.ui.core.mvc"
+		xmlns="sap.m"
+		xmlns:core="sap.ui.core"
+		xmlns:form="sap.ui.layout.form"
+		height="100%">
+		<App>
+			<Page
+				showHeader="false"
+				id="page"
+				backgroundDesign="Solid">
+				<content>
+					<VBox class="sapUiSmallMargin">
+							<Text text="The invisible text control provides a simple hidden text that can be used by assistive technologies such as screen readers to provide contextual information."/>
+							<form:SimpleForm
+								maxContainerCols="2"
+								editable="true">
+								<Label
+									text= "Postal code / City" />
+								<Input
+									ariaLabelledBy="postal"
+									value="12345"
+									fieldWidth="35%" />
+								<Input
+									value="Sofia"
+									ariaLabelledBy="city"
+									fieldWidth="35%" />
+							</form:SimpleForm>
+							<core:InvisibleText id="postal" text="Postal code" />
+							<core:InvisibleText id="city" text="City" />
+					</VBox>
+				</content>
+			</Page>
+		</App>
+</mvc:View>

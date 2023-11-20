@@ -1,0 +1,152 @@
+/* ================================ */
+/* CSS for control sap.m/SuggestionsPopover  */
+/* Base theme                       */
+/* ================================ */
+
+@_sap_m_SuggestionsPopover_ItemMinHeight: 2.5rem;
+@_sap_m_SuggestionsPopover_ItemMinHeightCompact: 2rem;
+@_sap_m_SuggestionsPopover_GroupItemHeight: 2.75rem;
+@_sap_m_SuggestionsPopover_GroupItemHeightCompact: 2.75rem;
+
+@_sap_m_SuggestionsPopover_TabularItemHeight: 2.5rem;
+@_sap_m_SuggestionsPopover_TabularItemHeightCompact: 2rem;
+@_sap_m_SuggestionsPopover_TabularGroupItemHeight: 2.5rem;
+@_sap_m_SuggestionsPopover_TabularGroupItemHeightCompact: 2rem;
+
+.sapMSuggestionsPopover {
+	.sapMListUl > .sapMLIB.sapMSLIWrapping {
+		min-height: @_sap_m_SuggestionsPopover_ItemMinHeight;
+	}
+
+	.sapMSLIWrapping > .sapMLIBContent > .sapMSLIDiv {
+		padding: 0.25rem 0rem;
+	}
+
+	.sapMListUl > .sapMLIB.sapMGHLI {
+		height: @_sap_m_SuggestionsPopover_GroupItemHeight;
+	}
+
+	.sapMListTbl .sapMLIB {
+		height: @_sap_m_SuggestionsPopover_TabularItemHeight;
+	}
+
+	.sapMListTbl .sapMListTblHeader,
+	.sapMListTbl .sapMLIB.sapMGHLI {
+		height: @_sap_m_SuggestionsPopover_TabularGroupItemHeight;
+	}
+
+	.sapMListTbl .sapMListTblHeader .sapMColumnHeader,
+	.sapMListTbl .sapMLIB .sapMListTblCell {
+		padding-top: 0.625rem;
+		padding-bottom: 0.625rem;
+	}
+}
+
+div.sapMSuggestionsPopover {
+	border: none;
+	box-shadow: @sapUiContentShadow1;
+}
+
+.sapMSuggestionsPopover.sapMPopover.sapMSuggestionPopoverDefaultWidth {
+	max-width: 40rem;
+}
+
+.sapMSuggestionsPopover.sapMPopover:not(.sapMSuggestionPopoverDefaultWidth):not(.sapMSuggestionPopoverInputWidth) {
+	max-width: ~"calc(100% - 2rem)" !important;
+}
+
+.sapMSuggestionsPopover.sapMPopover .sapMPopoverCont {
+	max-width: 100% !important;
+}
+
+.sapUiSizeCompact {
+	.sapMSuggestionsPopover,
+	&.sapMSuggestionsPopover {
+
+		.sapMListUl > .sapMLIB.sapMSLIWrapping {
+			min-height: @_sap_m_SuggestionsPopover_ItemMinHeightCompact;
+		}
+
+		.sapMSLIWrapping > .sapMLIBContent > .sapMSLIDiv {
+			padding: 0.25rem 0;
+		}
+
+		.sapMListUl > .sapMLIB.sapMGHLI {
+			height: @_sap_m_SuggestionsPopover_GroupItemHeightCompact;
+		}
+
+		.sapMListTbl .sapMLIB {
+			height: @_sap_m_SuggestionsPopover_TabularItemHeightCompact;
+		}
+
+		.sapMListTbl .sapMListTblHeader,
+		.sapMListTbl .sapMLIB.sapMGHLI {
+			height: @_sap_m_SuggestionsPopover_TabularGroupItemHeightCompact;
+		}
+
+		.sapMListTbl .sapMListTblHeader .sapMColumnHeader,
+		.sapMListTbl .sapMLIB .sapMListTblCell {
+			padding-top: 0.25rem;
+			padding-bottom: 0.25rem;
+		}
+	}
+}
+
+.sapMDialog.sapMSuggestionsPopover .sapMDialogScroll .sapMDialogScrollCont {
+	padding: 0;
+}
+
+.sapMInputSuggestionTableHidden {
+	display: none;
+}
+
+.sapMSuggestionsPopover .sapMDLIValue {
+	font-size: @sapMFontMediumSize;
+	color: @sapUiListTextColor;
+	padding-right: 1rem;
+}
+
+.sapMSuggestionsPopover .sapMLIBActive .sapMDLIValue {
+	color: @sapUiListActiveTextColor;
+}
+
+.sapMSuggestionsPopover .sapMDLILabel {
+	font-size: @sapMFontMediumSize;
+}
+
+.sapMSuggestionsPopover .sapMSLITitleOnly {
+	font-size: @sapMFontMediumSize;
+}
+
+div.sapMSuggestionsPopover .sapMSuggestionsPopoverValueState {
+	font-size: @sapMFontSmallSize;
+	line-height: normal;
+	padding: 0.5625rem 1rem;
+
+	&.sapMSuggestionsPopoverErrorState {
+		background: @sapUiErrorBG;
+		color: @sapUiBaseText;
+	}
+
+	&.sapMSuggestionsPopoverInformationState {
+		background: @sapUiInformationBG;
+	}
+
+	&.sapMSuggestionsPopoverSuccessState {
+		background: @sapUiSuccessBG;
+		color: @sapUiBaseText;
+	}
+
+	&.sapMSuggestionsPopoverWarningState {
+		background: @sapUiWarningBG;
+		color: @sapUiBaseText;
+	}
+
+	.sapMSuggestionsPopoverTitle.sapMTitle {
+		padding-left: 0.75rem;
+	}
+}
+
+.sapMSuggestionsPopover .sapMSuggestionsPopoverNoneState {
+	display: none;
+}

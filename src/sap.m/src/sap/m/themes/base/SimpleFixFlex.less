@@ -1,0 +1,27 @@
+.sapUiSimpleFixFlex{
+	display: flex;
+	flex-direction: column;
+	height: 100%;
+	box-sizing: border-box;
+
+	.sapUiSimpleFixFlexFixed {
+		width: 100%;
+		overflow:auto;
+
+		&.sapUiSimpleFixFlexFixedWrap {
+			position: absolute;
+			top: 0;
+		}
+	}
+
+	.sapUiSimpleFixFlexFlexContentContainer {
+		flex: 1 1 auto;
+		overflow: auto;
+		width: 100%;
+
+		.sapUiSimpleFixFlexFlexContent{
+			height: 100%;
+			overflow: auto;
+		}
+	}
+}

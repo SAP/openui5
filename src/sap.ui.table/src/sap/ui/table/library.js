@@ -5,34 +5,51 @@
 /**
  * Initialization Code and shared classes of library sap.ui.table.
  */
-sap.ui.define(['sap/ui/core/Core', 'sap/ui/model/TreeAutoExpandMode',
-	'sap/ui/core/library', // library dependency
-	'sap/ui/unified/library'], // library dependency
-	function(Core, TreeAutoExpandMode) {
-
+sap.ui.define([
+	"sap/ui/core/Lib",
+	"sap/ui/model/TreeAutoExpandMode", // TODO: Remove in UI5 2.0
+	// library dependencies
+	"sap/ui/core/library",
+	"sap/ui/unified/library"
+], function(
+	Library,
+	TreeAutoExpandMode // TODO: Remove in UI5 2.0
+) {
 	"use strict";
 
-	// delegate further initialization of this library to the Core
-	sap.ui.getCore().initLibrary({
-		name : "sap.ui.table",
+	/**
+	 * Table-like controls, mainly for desktop scenarios.
+	 *
+	 * @namespace
+	 * @alias sap.ui.table
+	 * @author SAP SE
+	 * @version ${version}
+	 * @since 0.8
+	 * @public
+	 */
+	var thisLib = Library.init({
+		name: "sap.ui.table",
 		version: "${version}",
-		dependencies : ["sap.ui.core","sap.ui.unified"],
+		dependencies: ["sap.ui.core", "sap.ui.unified"],
 		designtime: "sap/ui/table/designtime/library.designtime",
 		types: [
 			"sap.ui.table.NavigationMode",
 			"sap.ui.table.RowActionType",
 			"sap.ui.table.SelectionBehavior",
 			"sap.ui.table.SelectionMode",
+			/** @deprecated As of version 1.120 */
 			"sap.ui.table.SortOrder",
 			"sap.ui.table.VisibleRowCountMode",
-			"sap.ui.table.SharedDomRef",
-			"sap.ui.table.TreeAutoExpandMode" /*Note: Only added here to ensure that a corresponding module is created automatically. Cannot be used as type for properties!*/
+			/** @deprecated As of version 1.120 */
+			"sap.ui.table.TreeAutoExpandMode", /*Note: Only added here to ensure that a corresponding module is created automatically. Cannot be used as type for properties!*/
+			"sap.ui.table.plugins.SelectionMode"
 		],
 		interfaces: [],
 		controls: [
 			"sap.ui.table.AnalyticalColumnMenu",
 			"sap.ui.table.AnalyticalTable",
 			"sap.ui.table.ColumnMenu",
+			"sap.ui.table.CreationRow",
 			"sap.ui.table.Table",
 			"sap.ui.table.TreeTable",
 			"sap.ui.table.RowAction"
@@ -42,37 +59,32 @@ sap.ui.define(['sap/ui/core/Core', 'sap/ui/model/TreeAutoExpandMode',
 			"sap.ui.table.Column",
 			"sap.ui.table.Row",
 			"sap.ui.table.RowActionItem",
-			"sap.ui.table.RowSettings"
+			"sap.ui.table.RowSettings",
+			"sap.ui.table.rowmodes.RowMode",
+			"sap.ui.table.rowmodes.Fixed",
+			"sap.ui.table.rowmodes.Interactive",
+			"sap.ui.table.rowmodes.Auto",
+			"sap.ui.table.plugins.SelectionPlugin",
+			"sap.ui.table.plugins.MultiSelectionPlugin",
+			"sap.ui.table.plugins.ODataV4Selection"
 		],
 		extensions: {
 			flChangeHandlers: {
-				"sap.ui.table.Column": {
-					"propertyChange" : "default"
-				},
-				"sap.ui.table.Table" : {
-					"moveElements": "default"
-				},
-				"sap.ui.table.AnalyticalTable" : {
-					"moveElements": "default"
-				}
+				// Note: MoveElements change handling is deprecated
+				//
+				// "sap.ui.table.Table": {
+				// 	"moveElements": "default"
+				// },
+				// "sap.ui.table.AnalyticalTable": {
+				// 	"moveElements": "default"
+				// }
 			},
 			//Configuration used for rule loading of Support Assistant
 			"sap.ui.support": {
-				publicRules:true
+				publicRules: true
 			}
 		}
 	});
-
-	/**
-	 * Table-like controls, mainly for desktop scenarios.
-	 *
-	 * @namespace
-	 * @alias sap.ui.table
-	 * @author SAP SE
-	 * @version ${version}
-	 * @public
-	 */
-	var thisLib = sap.ui.table;
 
 	/**
 	 * Navigation mode of the table
@@ -80,7 +92,6 @@ sap.ui.define(['sap/ui/core/Core', 'sap/ui/model/TreeAutoExpandMode',
 	 * @version ${version}
 	 * @enum {string}
 	 * @public
-	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	thisLib.NavigationMode = {
 
@@ -88,7 +99,7 @@ sap.ui.define(['sap/ui/core/Core', 'sap/ui/model/TreeAutoExpandMode',
 		 * Uses the scrollbar control.
 		 * @public
 		 */
-		Scrollbar : "Scrollbar",
+		Scrollbar: "Scrollbar",
 
 		/**
 		 * Uses the paginator control.
@@ -98,7 +109,7 @@ sap.ui.define(['sap/ui/core/Core', 'sap/ui/model/TreeAutoExpandMode',
 		 * @public
 		 * @deprecated As of version 1.38, replaced by {@link sap.ui.table.NavigationMode.Scrollbar}
 		 */
-		Paginator : "Paginator"
+		Paginator: "Paginator"
 
 	};
 
@@ -108,7 +119,6 @@ sap.ui.define(['sap/ui/core/Core', 'sap/ui/model/TreeAutoExpandMode',
 	 * @version ${version}
 	 * @enum {string}
 	 * @public
-	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	thisLib.RowActionType = {
 
@@ -116,22 +126,21 @@ sap.ui.define(['sap/ui/core/Core', 'sap/ui/model/TreeAutoExpandMode',
 		 * Custom defined Row Action.
 		 * @public
 		 */
-		Custom : "Custom",
+		Custom: "Custom",
 
 		/**
 		 * Navigation Row Action.
 		 * @public
 		 */
-		Navigation : "Navigation",
+		Navigation: "Navigation",
 
 		/**
 		 * Delete Row Action.
 		 * @public
 		 */
-		Delete : "Delete"
+		Delete: "Delete"
 
 	};
-
 
 	/**
 	 * Selection behavior of the table
@@ -139,7 +148,6 @@ sap.ui.define(['sap/ui/core/Core', 'sap/ui/model/TreeAutoExpandMode',
 	 * @version ${version}
 	 * @enum {string}
 	 * @public
-	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	thisLib.SelectionBehavior = {
 
@@ -147,22 +155,21 @@ sap.ui.define(['sap/ui/core/Core', 'sap/ui/model/TreeAutoExpandMode',
 		 * Rows can be selected on the complete row.
 		 * @public
 		 */
-		Row : "Row",
+		Row: "Row",
 
 		/**
 		 * Rows can only be selected on the row selector.
 		 * @public
 		 */
-		RowSelector : "RowSelector",
+		RowSelector: "RowSelector",
 
 		/**
 		 * Rows can only be selected on the row (and the selector is hidden).
 		 * @public
 		 */
-		RowOnly : "RowOnly"
+		RowOnly: "RowOnly"
 
 	};
-
 
 	/**
 	 * Selection mode of the table
@@ -170,7 +177,6 @@ sap.ui.define(['sap/ui/core/Core', 'sap/ui/model/TreeAutoExpandMode',
 	 * @version ${version}
 	 * @enum {string}
 	 * @public
-	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	thisLib.SelectionMode = {
 
@@ -178,29 +184,28 @@ sap.ui.define(['sap/ui/core/Core', 'sap/ui/model/TreeAutoExpandMode',
 		 * Select multiple rows at a time (toggle behavior).
 		 * @public
 		 */
-		MultiToggle : "MultiToggle",
+		MultiToggle: "MultiToggle",
 
 		/**
 		 * Select multiple rows at a time.
 		 * @public
 		 * @deprecated As of version 1.38, replaced by {@link sap.ui.table.SelectionMode.MultiToggle}
 		 */
-		Multi : "Multi",
+		Multi: "Multi",
 
 		/**
 		 * Select one row at a time.
 		 * @public
 		 */
-		Single : "Single",
+		Single: "Single",
 
 		/**
 		 * No rows can be selected.
 		 * @public
 		 */
-		None : "None"
+		None: "None"
 
 	};
-
 
 	/**
 	 * Sort order of a column
@@ -208,7 +213,7 @@ sap.ui.define(['sap/ui/core/Core', 'sap/ui/model/TreeAutoExpandMode',
 	 * @version ${version}
 	 * @enum {string}
 	 * @public
-	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
+	 * @deprecated As of version 1.120, replaced with <code>sap.ui.core.SortOrder</code>
 	 */
 	thisLib.SortOrder = {
 
@@ -216,16 +221,15 @@ sap.ui.define(['sap/ui/core/Core', 'sap/ui/model/TreeAutoExpandMode',
 		 * Sort Order: ascending.
 		 * @public
 		 */
-		Ascending : "Ascending",
+		Ascending: "Ascending",
 
 		/**
 		 * Sort Order: descending.
 		 * @public
 		 */
-		Descending : "Descending"
+		Descending: "Descending"
 
 	};
-
 
 	/**
 	 * VisibleRowCountMode of the table
@@ -233,31 +237,26 @@ sap.ui.define(['sap/ui/core/Core', 'sap/ui/model/TreeAutoExpandMode',
 	 * @version ${version}
 	 * @enum {string}
 	 * @public
-	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	thisLib.VisibleRowCountMode = {
 
 		/**
-		 * The table always has as many rows as defined in the visibleRowCount property.
+		 * The table always has as many rows as defined in the <code>visibleRowCount</code> property.
 		 * @public
 		 */
-		Fixed : "Fixed",
+		Fixed: "Fixed",
 
 		/**
-		 * After rendering the table has as many rows as defined in visibleRowCount property. The user is able to change the visible rows by moving a grip with the mouse. The visibleRowCount property is changed accordingly.
+		 * The user can change the <code>visibleRowCount</code> by dragging a resizer.
 		 * @public
 		 */
-		Interactive : "Interactive",
+		Interactive: "Interactive",
 
 		/**
 		 * The table automatically fills the height of the surrounding container.
-		 * The visibleRowCount property is automatically changed accordingly.
-		 * All rows need the same height, otherwise the auto mode doesn't always work as expected.
-		 * The height of all siblings within the same layout container of the table will be subtracted from the available height.
-		 * For performance reasons, it is recommended to add no siblings in the table's parent container.
 		 * @public
 		 */
-		Auto : "Auto"
+		Auto: "Auto"
 
 	};
 
@@ -276,13 +275,13 @@ sap.ui.define(['sap/ui/core/Core', 'sap/ui/model/TreeAutoExpandMode',
 		 * The element id of the Horizontal Scroll Bar of the sap.ui.table.Table.
 		 * @public
 		 */
-		HorizontalScrollBar : "hsb",
+		HorizontalScrollBar: "hsb",
 
 		/**
 		 * The element id of the Vertical Scroll Bar of the sap.ui.table.Table.
 		 * @public
 		 */
-		VerticalScrollBar : "vsb"
+		VerticalScrollBar: "vsb"
 	};
 
 	/**
@@ -329,27 +328,82 @@ sap.ui.define(['sap/ui/core/Core', 'sap/ui/model/TreeAutoExpandMode',
 		hideGroupedColumn: "hideGroupedColumn"
 	};
 
-	// map the new Column to the old ColumnHeader
-	thisLib.ColumnHeader = thisLib.Column;
+	/**
+	 * Enumeration of the <code>ResetAllMode</code> that can be used in a <code>TablePersoController</code>.
+	 * @enum {string}
+	 * @public
+	 * @deprecated As of version 1.115
+	 */
+	thisLib.ResetAllMode = {
 
-	// copy sap.ui.model.TreeAutoExpandMode onto the legacy type sap.ui.table.TreeAutoExpandMode
+		/**
+		 * Default behavior of the <code>TablePersoDialog</code> Reset All button.
+		 * @public
+		 */
+		Default: "Default",
+
+		/**
+		 * Resets the table to the default of the attached <code>PersoService</code>.
+		 * @public
+		 */
+		ServiceDefault: "ServiceDefault",
+
+		/**
+		 * Resets the table to the result of <code>getResetPersData</code> of the attached <code>PersoService</code>.
+		 * @public
+		 */
+		ServiceReset: "ServiceReset"
+	};
+
+	/** @deprecated As of version 1.120 */
+	thisLib.ColumnHeader = thisLib.Column; // map the new Column to the old ColumnHeader
+
 	/**
 	 * Different modes for setting the auto expand mode on tree or analytical bindings.
 	 *
+	 * This is an alias for {@link sap.ui.model.TreeAutoExpandMode} and kept for compatibility reasons.
+	 *
 	 * @version ${version}
-	 * @enum {string}
+	 * @typedef {sap.ui.model.TreeAutoExpandMode}
 	 * @public
-	 * @borrows sap.ui.model.TreeAutoExpandMode.Sequential as Sequential
-	 * @borrows sap.ui.model.TreeAutoExpandMode.Bundled as Bundled
+	 * @deprecated As of version 1.120
 	 */
 	thisLib.TreeAutoExpandMode = TreeAutoExpandMode;
 
+	if (!thisLib.plugins) {
+		thisLib.plugins = {};
+	}
+
+	/**
+	 * Mode of a selection plugin
+	 *
+	 * @version ${version}
+	 * @enum {string}
+	 * @private
+	 */
+	thisLib.plugins.SelectionMode = {
+		/**
+		 * Only one row can be selected at a time.
+		 * @public
+		 */
+		Single: "Single",
+
+		/**
+		 * Multiple rows can be selected.
+		 * @public
+		 */
+		MultiToggle: "MultiToggle"
+	};
+
 	//factory for table to create labels and textviews to be overwritten by commons and mobile library
+	/**
+	 * @deprecated As of version 1.118
+	 */
 	if (!thisLib.TableHelper) {
 		thisLib.TableHelper = {
-			addTableClass: function(){ return ""; }, /* must return some additional CSS class */
-			createLabel: function(mConfig){ throw new Error("no Label control available!"); }, /* must return a Label control */
-			createTextView: function(mConfig){ throw new Error("no TextView control available!"); }, /* must return a textview control */
+			addTableClass: function() { return ""; }, /* must return some additional CSS class */
+			createLabel: function(mConfig) { throw new Error("no Label control available!"); }, /* must return a Label control */
+			createTextView: function(mConfig) { throw new Error("no TextView control available!"); }, /* must return a textview control */
 			bFinal: false /* if true, the helper must not be overwritten by an other library */
 		};
 	}

@@ -1,0 +1,13 @@
+<core:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core"
+>
+	<Input
+		value="{path: 'value', formatter: 'JSON.stringify'}"
+		liveChange="_onLiveChange"
+		showSuggestion="true"
+		showValueHelp="true"
+		valueHelpRequest="_openJsonEditor"
+		enabled="{config/enabled}"
+	/>
+</core:FragmentDefinition>

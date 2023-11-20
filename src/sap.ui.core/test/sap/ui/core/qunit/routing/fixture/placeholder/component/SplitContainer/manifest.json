@@ -1,0 +1,81 @@
+{
+	"sap.app": {
+		"id": "qunit.placeholder.component.SplitContainer",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "qunit.placeholder.component.SplitContainer.view.RootView",
+			"type": "XML",
+			"async": true
+		},
+		"routing": {
+			"config": {
+				"async": true,
+				"controlId": "splitApp",
+				"routerClass": "sap.m.routing.Router",
+				"viewType": "XML",
+				"path": "qunit.placeholder.component.SplitContainer.view"
+			},
+			"routes": [{
+				"pattern": "",
+				"name": "home",
+				"target": ["home", "target1"]
+			},
+			{
+				"pattern": "route1",
+				"name": "route1",
+				"target": ["home", "target2"]
+			},
+			{
+				"pattern": "route2",
+				"name": "route2",
+				"target": ["home", "targetAutoCloseFalse"]
+			}],
+			"targets": {
+				"home": {
+					"controlAggregation": "masterPages",
+					"id": "sampleView",
+					"name": "SampleView",
+					"type": "View",
+					"placeholder": {
+						"autoClose": true,
+						"html": "my/placeholder.fragment.html"
+					}
+				},
+				"target1": {
+					"controlAggregation": "detailPages",
+					"id": "sampleView2",
+					"name": "SampleView2",
+					"type": "View",
+					"placeholder": {
+						"autoClose": true,
+						"html": "my/placeholder.fragment.html"
+					}
+				},
+				"target2": {
+					"controlAggregation": "detailPages",
+					"id": "sampleView3",
+					"name": "SampleView3",
+					"type": "View",
+					"placeholder": {
+						"autoClose": true,
+						"html": "my/placeholder.fragment.html"
+					}
+				},
+				"targetAutoCloseFalse": {
+					"controlAggregation": "detailPages",
+					"id": "sampleView4",
+					"name": "SampleView4",
+					"type": "View",
+					"placeholder": {
+						"autoClose": false,
+						"html": "my/placeholder.fragment.html"
+					}
+				}
+			}
+		}
+	}
+}

@@ -1,0 +1,135 @@
+{
+  "1.86.0": {
+    "date": "January 2021",
+    "notes": [
+      {
+        "id": "0bf0edb1c145f364afc46d28ee98ccf16a17bb1f",
+        "type": "FIX",
+        "text": " Locale: Remove mapping from 'SH' to 'SR' for logon language",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400007189712020"
+          }
+        ]
+      },
+      {
+        "id": "f859ee90db34263f36ccc60910aa680f08026079",
+        "type": "FIX",
+        "text": " sap.ui.core.routing.History: enable complete routing history",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070491972"
+          }
+        ]
+      },
+      {
+        "id": "4824117d1bec9584fb4efa97978dffa6190d72a8",
+        "type": "FEATURE",
+        "text": " Opa: find multiple dom elements in RecordReplay"
+      },
+      {
+        "id": "e8b20856d67feb5b44fdb63eacda0fcda00a044c",
+        "type": "FEATURE",
+        "text": " SemanticFormElement: Semantically connected fields supported"
+      },
+      {
+        "id": "640e60e62077452a5466b8551db8d751568f775c",
+        "type": "FEATURE",
+        "text": " sap.ui.core.IconPool: Update icon font"
+      },
+      {
+        "id": "8f948cd891436fb7d952a9655bf189a8ddb7e82c",
+        "type": "FIX",
+        "text": " routing.Target: wait for the nested component only when it's not initialized",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      },
+      {
+        "id": "412d1f0cf1780fa5cd6f72f79b5a1fa224135ee9",
+        "type": "FIX",
+        "text": " bindAggregation: set ownerId when cloning binding template"
+      },
+      {
+        "id": "7c469d9ca647e8d7423b16eb8f7a0465a7e478b6",
+        "type": "FIX",
+        "text": " base.util.Storage: avoid concurrent modification while looping",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080404229"
+          }
+        ]
+      },
+      {
+        "id": "6c2284916b257cf875cf3be8c5b1da4b78db7f47",
+        "type": "FIX",
+        "text": " TechnicalInfo: Buttons are now longer cut",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080421030"
+          }
+        ]
+      },
+      {
+        "id": "56a3a2505001020844e824139cba90299cf1255d",
+        "type": "FIX",
+        "text": " base/ManagedObject: Aggregation Bindings in JSON Views",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080356736"
+          }
+        ]
+      },
+      {
+        "id": "5298b0cf3d6f4b0298c147ffaff1f0910375f7d5",
+        "type": "FEATURE",
+        "text": " Opa: support static values in bindingPath selector and matcher"
+      },
+      {
+        "id": "3946b4e7e68e8b03e44e22f1a6da83bf1e69edb4",
+        "type": "FIX",
+        "text": " theming/Parameters: Request library-parameters.json with credentials",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070394805"
+          },
+          {
+            "type": "BCP",
+            "reference": "2070394696"
+          }
+        ]
+      },
+      {
+        "id": "488a8a68c52d3d804d1cd5731eed3cbaf1ef4f32",
+        "type": "FIX",
+        "text": " Fragment.js: Extensionpoint is root node",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080383816"
+          }
+        ]
+      },
+      {
+        "id": "e2c16d48b7e48d118e9c7f426ace4f61abaabec8",
+        "type": "FIX",
+        "text": " core.mvc: views should be constructed via factory, not constructor",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070280315"
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -4,21 +4,12 @@
 
 // Provides control sap.uxap.ObjectPageDynamicHeaderContent.
 sap.ui.define([
-    'jquery.sap.global',
-    './library',
-    "./ObjectPageDynamicHeaderContentRenderer"
+	'./library',
+	"./ObjectPageDynamicHeaderContentRenderer",
+	"sap/f/DynamicPageHeader"
 ],
-	function(jQuery, library, ObjectPageDynamicHeaderContentRenderer) {
+	function(library, ObjectPageDynamicHeaderContentRenderer, DynamicPageHeader) {
 		"use strict";
-
-		try {
-			sap.ui.getCore().loadLibrary("sap.f");
-		} catch (e) {
-			jQuery.sap.log.error("The control 'sap.uxap.ObjectPageDynamicHeaderContent' needs library 'sap.f'.");
-			throw (e);
-		}
-
-		var DynamicPageHeader = sap.ui.requireSync("sap/f/DynamicPageHeader");
 
 		/**
 		 * Constructor for a new <code>ObjectPageDynamicHeaderContent</code>.
@@ -52,14 +43,17 @@ sap.ui.define([
 		 * @constructor
 		 * @public
 		 * @alias sap.uxap.ObjectPageDynamicHeaderContent
-		 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 		 * @since 1.52
 		 */
-		var ObjectPageDynamicHeaderContent = DynamicPageHeader.extend("sap.uxap.ObjectPageDynamicHeaderContent", /** @lends sap.uxap.ObjectPageDynamicHeaderContent.prototype */ { metadata : {
+		var ObjectPageDynamicHeaderContent = DynamicPageHeader.extend("sap.uxap.ObjectPageDynamicHeaderContent", /** @lends sap.uxap.ObjectPageDynamicHeaderContent.prototype */ {
+			metadata : {
 
-			interfaces : ["sap.uxap.IHeaderContent"],
-			library : "sap.uxap"
-		}});
+				interfaces : ["sap.uxap.IHeaderContent"],
+				library : "sap.uxap"
+			},
+
+			renderer: ObjectPageDynamicHeaderContentRenderer
+		});
 
 		/**
 		 * Required by the {@link sap.uxap.IHeaderContent} interface.
@@ -67,12 +61,15 @@ sap.ui.define([
 		 * @param bVisible
 		 * @param sContentDesign
 		 * @param bPinnable
+		 * @param sStableId
 		 */
-		ObjectPageDynamicHeaderContent.createInstance = function (aContent, bVisible, sContentDesign, bPinnable) {
+		ObjectPageDynamicHeaderContent.createInstance = function (aContent, bVisible, sContentDesign /* not used */,  bPinnable, sStableId) {
+
 			return new ObjectPageDynamicHeaderContent({
 				content: aContent,
 				visible: bVisible,
-				pinnable: bPinnable
+				pinnable: bPinnable,
+				id: sStableId
 			});
 		};
 
@@ -103,9 +100,15 @@ sap.ui.define([
 		/**
 		 * Required by the {@link sap.uxap.IHeaderContent} interface.
 		 * @param sDesign
+		 * @deprecated As of version 1.40.1
 		 */
 		ObjectPageDynamicHeaderContent.prototype.setContentDesign = function (sDesign) {
 			// implementation not supported
+		};
+
+		ObjectPageDynamicHeaderContent.prototype.setVisible = function (bVisible) {
+			this.getParent() && this.getParent().toggleStyleClass("sapUxAPObjectPageLayoutNoHeaderContent", !bVisible);
+			return this.setProperty("visible", bVisible);
 		};
 
 		return ObjectPageDynamicHeaderContent;

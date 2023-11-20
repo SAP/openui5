@@ -1,0 +1,103 @@
+<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m">
+	<Label
+		wrapping="true"
+		text="IconTabBar with filters with own content and sub tabs. The click area is split to allow the user to display the content or alternatively to expand/collapse the sub tabs."
+		class="sapUiSmallMargin" />
+	<IconTabBar class="sapUiResponsiveContentPadding">
+		<items>
+			<IconTabFilter key="info" text="Info">
+				<items>
+					<IconTabFilter text="Info one">
+						<Text text="Info one content goes here..." />
+						<Text text="Select another sub tab to see its content..." />
+					</IconTabFilter>
+					<IconTabFilter text="Info two">
+						<Text text="Info two content goes here..." />
+					</IconTabFilter>
+					<IconTabFilter text="Info three">
+						<Text text="Info three content goes here..." />
+					</IconTabFilter>
+					<IconTabFilter text="Info four">
+						<Text text="Info four content goes here..." />
+					</IconTabFilter>
+				</items>
+
+				<Text text="Info own content goes here..." />
+				<Text text="Select a sub tab to see its content..." />
+			</IconTabFilter>
+
+			<IconTabFilter key="attachments" text="Attachments">
+				<items>
+					<IconTabFilter text="Attachment one">
+						<Text text="Attachment one goes here..." />
+					</IconTabFilter>
+					<IconTabFilter text="Attachment two">
+						<Text text="Attachment two goes here..." />
+					</IconTabFilter>
+				</items>
+
+				<Text text="Attachments own content goes here..." />
+			</IconTabFilter>
+
+			<IconTabFilter key="notes" text="Notes">
+				<items>
+					<IconTabFilter text="Note one">
+						<Text text="Note one goes here..." />
+					</IconTabFilter>
+					<IconTabFilter text="Note two">
+						<Text text="Note two goes here..." />
+					</IconTabFilter>
+				</items>
+
+				<Text text="Notes own content goes here..." />
+			</IconTabFilter>
+		</items>
+	</IconTabBar>
+
+	<Label
+		wrapping="true"
+		text="IconTabBar with filters without own content - only sub tabs"
+		class="sapUiSmallMargin" />
+	<IconTabBar class="sapUiResponsiveContentPadding">
+		<items>
+			<IconTabFilter key="info" text="Info">
+				<items>
+					<IconTabFilter text="Info one">
+						<Text text="Info one content goes here..." />
+					</IconTabFilter>
+					<IconTabFilter text="Info two">
+						<Text text="Info two content goes here..." />
+					</IconTabFilter>
+					<IconTabFilter text="Info three">
+						<Text text="Info three content goes here..." />
+					</IconTabFilter>
+					<IconTabFilter text="Info four">
+						<Text text="Info four content goes here..." />
+					</IconTabFilter>
+				</items>
+			</IconTabFilter>
+
+			<IconTabFilter key="attachments" text="Attachments">
+				<items>
+					<IconTabFilter text="Attachment one">
+						<Text text="Attachment one goes here..." />
+					</IconTabFilter>
+					<IconTabFilter text="Attachment two">
+						<Text text="Attachment two goes here..." />
+					</IconTabFilter>
+				</items>
+			</IconTabFilter>
+
+			<IconTabFilter key="notes" text="Notes">
+				<items>
+					<IconTabFilter text="Note one">
+						<Text text="Note one content goes here..." />
+					</IconTabFilter>
+					<IconTabFilter text="Note two">
+						<Text text="Note two content goes here..." />
+					</IconTabFilter>
+				</items>
+			</IconTabFilter>
+		</items>
+	</IconTabBar>
+</mvc:View>

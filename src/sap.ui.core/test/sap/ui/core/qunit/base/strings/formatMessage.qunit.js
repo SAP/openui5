@@ -2,10 +2,22 @@
 sap.ui.define(["sap/base/strings/formatMessage"], function(formatMessage) {
 	"use strict";
 
+	QUnit.module("FormatMessage");
+
 	QUnit.test("simple case", function(assert) {
 		assert.equal(formatMessage("Say {0}", ["Hello"]), "Say Hello", "should replace unqouted placeholder0");
 		assert.equal(formatMessage("{2},{1},{0}, {3}!", ["1", "2", "3", "Go"]), "3,2,1, Go!", "should replace multiple placeholders in the right order");
 		assert.equal(formatMessage("{0},{2},{0}, {2}!", ["1", "2", "3", "Go"]), "1,3,1, 3!", "should replace multiple occurences of the same placeholders with the same value");
+	});
+
+	QUnit.test("false/falsy values", function(assert) {
+		assert.equal(formatMessage("Say {0}"), "Say undefined");
+		assert.equal(formatMessage("Say {0}", ""), "Say ");
+		assert.equal(formatMessage("Say {0}", undefined), "Say undefined");
+		assert.equal(formatMessage("Say {0}", []), "Say undefined");
+		assert.equal(formatMessage("Say {0}", [""]), "Say ");
+		assert.equal(formatMessage("Say {0}", [undefined]), "Say undefined");
+		assert.equal(formatMessage("Say {0}", [undefined, "Awesome"]), "Say undefined");
 	});
 
 	QUnit.test("escaping", function(assert) {

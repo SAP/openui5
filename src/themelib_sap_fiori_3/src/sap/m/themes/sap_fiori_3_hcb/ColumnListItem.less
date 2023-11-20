@@ -1,0 +1,28 @@
+/* ==================================== */
+/* CSS for control sap.m/ColumnListItem */
+/* Quartz High Contrast Black theme     */
+/* ==================================== */
+
+@_sap_m_table_SelectionControlWidth: 2.75rem;
+
+/* selection border indicator */
+/* note: adding border-bottom to the td, increased the size of the table, hence not adding border-bottom */
+/* note: adding border-top to the sibling row is not suitable as the sibling row can be hidden and in such case the selection border is lost */
+.sapMTableTBody:not(.sapMListTblHasPopin) > .sapMLIBSelected,
+.sapMTableTBody.sapMListTblHasPopin > .sapMLIBSelected + .sapMListTblSubRow {
+	box-shadow: inset 0px -0.0625rem @sapUiListSelectionBorderColor;
+}
+
+/* selection border indicator was not visible on the last row as the td elements within the last row have a bottom border */
+/* hence applying -0.125rem so that the selection border is visible */
+.sapMTableTBody:not(.sapMListTblHasPopin) > .sapMLIBSelected:last-child,
+.sapMTableTBody.sapMListTblHasPopin > .sapMLIBSelected + .sapMListTblSubRow:last-child {
+	box-shadow: inset 0px -0.125rem @sapUiListSelectionBorderColor;
+}
+
+// Safari work-around as box-shadow is not supported on the <tr> element,
+// hence adding the selection indicator box-shadow to the <td> element
+html[data-sap-ui-browser^="sf"] .sapMTableTBody:not(.sapMListTblHasPopin) > .sapMLIBSelected > td,
+html[data-sap-ui-browser^="sf"] .sapMTableTBody.sapMListTblHasPopin > .sapMLIBSelected + .sapMListTblSubRow > td {
+	box-shadow: inset 0px -0.0625rem @sapUiListSelectionBorderColor;
+}

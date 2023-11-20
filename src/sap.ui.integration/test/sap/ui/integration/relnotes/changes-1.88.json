@@ -1,0 +1,27 @@
+{
+  "1.88.0": {
+    "date": "March 2021",
+    "notes": [
+      {
+        "id": "f27a4a6e762429b045d5c3db91b42cd97e89e042",
+        "type": "FEATURE",
+        "text": " sap.ui.integration.widgets.Card: Introducing new value to dataMode property"
+      },
+      {
+        "id": "b9790083ede97ad0b3ec494d902fb7fb14a661cd",
+        "type": "FEATURE",
+        "text": " CalendarCard: deep link action on appointments"
+      },
+      {
+        "id": "705bbce96bff14e54412d0074c155ed7acfb4450",
+        "type": "FIX",
+        "text": " Integration cards: Action with service attached to link in Object card no longer throws error"
+      },
+      {
+        "id": "88d12c67e7a7f7e556a31354d2e45db479855214",
+        "type": "FIX",
+        "text": " Integration cards: Object card's margin is now correctly applied when there is no group title"
+      }
+    ]
+  }
+}

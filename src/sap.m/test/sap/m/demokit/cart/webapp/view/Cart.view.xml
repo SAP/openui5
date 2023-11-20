@@ -5,9 +5,10 @@
 	<Page
 		id="page"
 		title="{cfg>/pageTitle}"
-		showNavButton="{cfg>/notInDelete}"
-		navButtonPress="onNavButtonPress"
-		showFooter="true" >
+		backgroundDesign="Solid"
+		showNavButton="{appView>/smallScreenMode}"
+		navButtonPress=".onBack"
+		showFooter="true">
 		<landmarkInfo>
 			<PageAccessibleLandmarkInfo
 				rootRole="Region"
@@ -28,7 +29,7 @@
 					{path: 'cartProducts>/savedForLaterEntries'}
 				 ], formatter : '.formatter.hasItems'}"
 				visible="{cfg>/notInDelete}"
-				press="onEditOrDoneButtonPress"
+				press=".onEditOrDoneButtonPress"
 				tooltip="{i18n>cartEditButtonTooltip}"/>
 		</headerContent>
 		<footer>
@@ -38,7 +39,8 @@
 					text="{
 						path : 'cartProducts>/cartEntries',
 						formatter : '.formatter.totalPrice'
-					} EUR" />
+					} EUR"
+					class="sapUiTinyMarginBegin"/>
 				<ToolbarSpacer/>
 				<Button
 					id="proceedButton"
@@ -49,33 +51,37 @@
 						formatter: '.formatter.hasItems'
 					}"
 					visible="{cfg>/notInDelete}"
-					press="onProceedButtonPress" />
+					press=".onProceedButtonPress"/>
 				<Button
 					id="doneButton"
 					text="{i18n>cartDoneButtonText}"
 					enabled="true"
 					visible="{cfg>/inDelete}"
-					press="onEditOrDoneButtonPress" />
+					press=".onEditOrDoneButtonPress"/>
 			</Toolbar>
 		</footer>
 		<content>
 			<List
+				delete=".onCartEntriesDelete"
 				id="entryList"
-				footerText="{
-					path : 'cartProducts>/savedForLaterEntries',
-					formatter : '.formatter.footerTextForCart'
-				}"
-				mode="{cfg>/listMode}"
-				delete="onCartEntriesDelete"
-				selectionChange="onEntryListSelect"
-				noDataText="{i18n>cartNoData}"
 				items="{
 					path : 'cartProducts>/cartEntries',
 					sorter : {
 						path : 'Name',
 						descending : false
 					}
-				}">
+				}"
+				mode="{cfg>/listMode}"
+				noDataText="{i18n>cartNoData}"
+				selectionChange=".onEntryListSelect">
+				<headerToolbar>
+					<Toolbar>
+						<Title
+							level="H6"
+							text="{i18n>Cart_contentLabel}"
+							titleStyle="H6"/>
+					</Toolbar>
+				</headerToolbar>
 				<items>
 					<ObjectListItem
 						intro="{cartProducts>Quantity} x"
@@ -90,13 +96,13 @@
 							formatter : '.formatter.price'
 						}"
 						numberUnit="EUR"
-						press="onEntryListPress"
-						iconDensityAware="false" >
+						press=".onEntryListPress"
+						iconDensityAware="false">
 						<attributes>
 							<ObjectAttribute
 								active="true"
-								press="onSaveForLater"
-								text="{i18n>cartSaveForLaterLinkText}" />
+								press=".onSaveForLater"
+								text="{i18n>cartSaveForLaterLinkText}"/>
 						</attributes>
 						<firstStatus>
 							<ObjectStatus
@@ -107,26 +113,35 @@
 								state="{
 									path : 'cartProducts>Status',
 									formatter : '.formatter.statusState'
-								}" />
+								}"/>
 						</firstStatus>
 					</ObjectListItem>
 				</items>
 			</List>
 			<List
+				delete=".onSaveForLaterDelete"
 				id="saveForLaterList"
-				mode="{cfg>/listMode}"
-				showNoData="false"
-				delete="onSaveForLaterDelete"
-				selectionChange="onEntryListSelect"
 				items="{
 					path : 'cartProducts>/savedForLaterEntries',
 					sorter : {
 						path : 'Name',
 						descending : false
 					}
-				}">
+				}"
+				mode="{cfg>/listMode}"
+				noDataText="{i18n>cartNoItemsSavedForLater}"
+				selectionChange=".onEntryListSelect">
+				<headerToolbar>
+					<Toolbar>
+						<Title
+							level="H6"
+							text="{i18n>cartItemsSavedForLater}"
+							titleStyle="H6"/>
+					</Toolbar>
+				</headerToolbar>
 				<items>
 					<ObjectListItem
+						intro="{cartProducts>Quantity} x"
 						type="{cfg>/listItemType}"
 						icon="{
 							path : 'cartProducts>PictureUrl',
@@ -138,13 +153,13 @@
 							formatter : '.formatter.price'
 						}"
 						numberUnit="EUR"
-						press="onEntryListPress"
-						iconDensityAware="false" >
+						press=".onEntryListPress"
+						iconDensityAware="false">
 						<attributes>
 							<ObjectAttribute
 								active="true"
-								press="onAddBackToBasket"
-								text="{i18n>cartAddToCartLinkText}" />
+								press=".onAddBackToBasket"
+								text="{i18n>cartAddToCartLinkText}"/>
 						</attributes>
 						<firstStatus>
 							<ObjectStatus
@@ -155,7 +170,7 @@
 								state="{
 									path : 'cartProducts>Status',
 									formatter : '.formatter.statusState'
-								}" />
+								}"/>
 						</firstStatus>
 					</ObjectListItem>
 				</items>

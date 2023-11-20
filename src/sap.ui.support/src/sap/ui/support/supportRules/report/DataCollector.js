@@ -5,16 +5,24 @@
 /**
  * Provides methods for information retrieval from the core.
  */
-sap.ui.define(["jquery.sap.global", "sap/ui/core/support/ToolsAPI", "sap/ui/thirdparty/URI", "sap/base/util/LoaderExtensions"],
-	function (jQuery, ToolsAPI, URI, LoaderExtensions) {
+sap.ui.define([
+	"sap/ui/VersionInfo",
+	"sap/base/util/LoaderExtensions",
+	"sap/base/security/encodeXML",
+	"sap/ui/core/Component",
+	"sap/ui/core/Lib",
+	"sap/ui/core/Theming",
+	"sap/ui/core/theming/ThemeManager",
+	"sap/ui/core/support/ToolsAPI",
+	"sap/ui/thirdparty/URI"
+],
+	function (VersionInfo, LoaderExtensions, encodeXML, Component, Lib, Theming, ThemeManager, ToolsAPI, URI) {
 	"use strict";
 
 	/**
 	 * The DataCollector collects information.
 	 */
-	var DataCollector = function(oCore) {
-		this._oCore = oCore;
-
+	var DataCollector = function() {
 		// Set default
 		this._oSupportAssistantInfo = {
 			location: "",
@@ -44,9 +52,9 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/support/ToolsAPI", "sap/ui/thir
 		this._oSupportAssistantInfo.versionAsString = "not available";
 
 		if (oVersion) {
-			this._oSupportAssistantInfo.versionAsString = jQuery.sap.escapeHTML(oVersion.version || "");
-			this._oSupportAssistantInfo.versionAsString += " (built at " + jQuery.sap.escapeHTML(oVersion.buildTimestamp || "");
-			this._oSupportAssistantInfo.versionAsString += ", last change " + jQuery.sap.escapeHTML(oVersion.scmRevision || "") + ")";
+			this._oSupportAssistantInfo.versionAsString = encodeXML(oVersion.version || "");
+			this._oSupportAssistantInfo.versionAsString += " (built at " + encodeXML(oVersion.buildTimestamp || "");
+			this._oSupportAssistantInfo.versionAsString += ", last change " + encodeXML(oVersion.scmRevision || "") + ")";
 		}
 	};
 
@@ -61,21 +69,22 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/support/ToolsAPI", "sap/ui/thir
 	};
 
 	/**
-	 * @returns {Array} All loaded manifest.json files.
+	 * @returns {object[]} All 'sap.app' and 'sap.fiori' entries from all loaded manifest.json files.
 	 */
 	DataCollector.prototype.getAppInfo = function() {
 		var aAppInfos = [];
-		for (var sComponentName in this._oCore.mObjects.component) {
-			var oComponent = this._oCore.mObjects.component[sComponentName],
-				aSapApp = oComponent.getMetadata().getManifestEntry("sap.app"),
-				aSapFiori = oComponent.getMetadata().getManifestEntry("sap.fiori");
+		Component.registry.forEach(function(oComponent) {
+			var oSapApp = oComponent.getManifestEntry("sap.app"),
+				oSapFiori = oComponent.getManifestEntry("sap.fiori");
 
-			aAppInfos.push(aSapApp);
-
-			if (aSapFiori) {
-				aAppInfos.push(aSapFiori);
+			if (oSapApp) {
+				aAppInfos.push(oSapApp);
 			}
-		}
+
+			if (oSapFiori) {
+				aAppInfos.push(oSapFiori);
+			}
+		});
 		return aAppInfos;
 	};
 
@@ -116,14 +125,14 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/support/ToolsAPI", "sap/ui/thir
 		for (var i = 0; i < aModules.length; i++) {
 			aResults.push({
 				moduleName : aModules[i],
-				relativePath: jQuery.sap.getResourcePath(aModules[i]),
-				absolutePath: URI(jQuery.sap.getResourcePath(aModules[i])).absoluteTo(document.location.origin + document.location.pathname).toString()
+				relativePath: sap.ui.require.toUrl(aModules[i]),
+				absolutePath: URI(sap.ui.require.toUrl(aModules[i])).absoluteTo(document.location.origin + document.location.pathname).toString()
 			});
 		}
 		oTechData.resourcePaths = aResults;
 
 		//add theme paths
-		var mLibraries = this._oCore.getLoadedLibraries();
+		var mLibraries = Lib.all();
 		aResults = [];
 		for (var n in mLibraries) {
 			if (n === "") {
@@ -132,9 +141,9 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/support/ToolsAPI", "sap/ui/thir
 				// (e.g. "MyControl" instead of "com.example.MyControl").
 				continue;
 			}
-			var sPath = this._oCore._getThemePath(n, this._oCore.oConfiguration.theme);
+			var sPath = ThemeManager._getThemePath(n, Theming.getTheme());
 			aResults.push({
-				theme : this._oCore.oConfiguration.theme,
+				theme : Theming.getTheme(),
 				library: n,
 				relativePath: sPath,
 				absolutePath: URI(sPath).absoluteTo(document.location.origin + document.location.pathname).toString()
@@ -142,17 +151,15 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/support/ToolsAPI", "sap/ui/thir
 		}
 		oTechData.themePaths = aResults;
 
-		//add SAPUI5 version object
-		try {
+		return VersionInfo.load().then(function (oVersionInfo) {
+			// add SAPUI5 version object
 			oTechData.sapUi5Version = {
-				version: sap.ui.getVersionInfo(),
-				path: sap.ui.resource("", "sap-ui-version.json")
+				version: oVersionInfo,
+				path: sap.ui.require.toUrl("sap-ui-version.json")
 			};
-		} catch (ex) {
-			oTechData.sapUi5Version = null;
-		}
 
-		return oTechData;
+			return oTechData;
+		});
 	};
 
 	return DataCollector;

@@ -1,0 +1,130 @@
+/* ================================= */
+/* CSS for control sap.m/GenericTag  */
+/* Evening Horizon theme             */
+/* ================================= */
+
+@sapMGenericTagBorderWidth: 0.375rem;
+@sapMGenericTagIconPaddingRight: 0.375rem;
+@sapMGenericTagHeightCozy: @sapMGenericTagHeightCompact;
+
+.sapMGenericTagWrap {
+	box-shadow: @sapUiContentShadow0;
+	border-radius: @sapUiButtonBorderCornerRadius;
+	background: ~"0 0 / @{sapMGenericTagBorderWidth} 100% no-repeat linear-gradient(0deg, @{sapUiNeutralElement}, @{sapUiNeutralElement})";
+	background-color: @sapUiNeutralBG;
+	border: none;
+	padding: 0 0.375rem 0 0.75rem;
+
+	.sapMGenericTagWarning & {
+		background: ~"0 0 / @{sapMGenericTagBorderWidth} 100% no-repeat linear-gradient(0deg, @{sapUiCriticalElement}, @{sapUiCriticalElement})";
+		background-color: @sapUiWarningBG;
+
+		.sapMGenericTagIcon {
+			color: @sapUiCriticalElement;
+		}
+
+		.sapMGenericTagValue {
+			color: @sapUiCriticalText;
+		}
+	}
+
+	.sapMGenericTagError & {
+		background: ~"0 0 / @{sapMGenericTagBorderWidth} 100% no-repeat linear-gradient(0deg, @{sapUiNegativeElement}, @{sapUiNegativeElement})";
+		background-color: @sapUiErrorBG;
+
+		.sapMGenericTagIcon {
+			color: @sapUiNegativeElement;
+		}
+
+		.sapMGenericTagValue {
+			color: @sapNegativeTextColor;
+		}
+	}
+
+	.sapMGenericTagSuccess & {
+		background: ~"0 0 / @{sapMGenericTagBorderWidth} 100% no-repeat linear-gradient(0deg, @{sapUiPositiveElement}, @{sapUiPositiveElement})";
+		background-color: @sapUiSuccessBG;
+
+		.sapMGenericTagIcon {
+			color: @sapUiPositiveElement;
+		}
+
+		.sapMGenericTagValue {
+			color: @sapUiPositiveText;
+		}
+	}
+
+	.sapMGenericTagInformation & {
+		background: ~"0 0 / @{sapMGenericTagBorderWidth} 100% no-repeat linear-gradient(0deg, @{sapUiInformativeElement}, @{sapUiInformativeElement})";
+		background-color: @sapUiInformationBG;
+
+		.sapMGenericTagIcon {
+			color: @sapUiInformativeElement;
+		}
+
+		.sapMGenericTagValue {
+			color: @sapUiInformativeText;
+		}
+	}
+
+	&:hover {
+		background-color: @sapUiListHoverBackground;
+		box-shadow: @sapUiContentShadow0;
+
+		.sapMGenericTagText,
+		.sapMGenericTagValue,
+		.sapMGenericTagIcon,
+		.sapMObjectNumberText,
+		.sapMObjectNumberUnit,
+		.sapMGenericTagErrorIcon {
+			text-shadow: none;
+		}
+	}
+
+	.sapMGenericTagText {
+		color: @sapUiListTextColor;
+		text-shadow: @sapUiContentTextShadow;
+	}
+
+	.sapMGenericTagValue {
+		text-shadow: @sapUiContentTextShadow;
+	}
+
+	.sapMGenericTagErrorIcon {
+		color: @sapUiNegativeElement;
+	}
+
+	.sapMGenericTagActive &  {
+		background-color: @sapUiListActiveBackground;
+
+		.sapMGenericTagText,
+		.sapMGenericTagValue,
+		.sapMGenericTagIcon,
+		.sapMObjectNumberText,
+		.sapMObjectNumberUnit,
+		.sapMGenericTagErrorIcon {
+			color: @sapUiListActiveTextColor;
+			text-shadow: none;
+		}
+	}
+}
+
+html.sap-desktop .sapMGenericTag:focus {
+	position: relative;
+	&:after {
+		position: absolute;
+		content: " ";
+		inset: 0;
+		border: @sapUiContentFocusColor @sapUiContentFocusStyle @sapUiContentFocusWidth;
+		border-radius: @sapUiButtonBorderCornerRadius;
+	}
+
+	.sapMGenericTagWrap {
+		box-shadow: none;
+	}
+
+}
+
+.sapUiSizeCozy .sapMGenericTag {
+	margin: 0.5625rem 0;
+}

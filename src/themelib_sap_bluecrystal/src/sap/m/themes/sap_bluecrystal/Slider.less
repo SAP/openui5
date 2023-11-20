@@ -8,6 +8,12 @@
 	background: lighten(@sapUiFieldBorderColor, 11.8);
 }
 
+.sapMSliderInner,
+.sapMSliderProgress {
+	height: 0.1875rem;
+	border-radius: 0;
+}
+
 /* slider handle */
 .sapMSliderHandle {
 	background: fade(@sapUiFieldBackground, 10);
@@ -17,11 +23,6 @@
 /* hover */
 html.sap-desktop .sapMSliderHandle:hover {
 	background: fade(darken(@sapUiFieldBackground, 15), 60);
-}
-
-/* focus */
-html.sap-desktop .sapMSliderHandle:focus {
-	outline: 1px dotted @sapUiContentFocusColor;
 }
 
 /* pressed */

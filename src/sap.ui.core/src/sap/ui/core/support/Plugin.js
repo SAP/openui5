@@ -3,11 +3,15 @@
  */
 
 // Provides class sap.ui.core.support.Plugin
-sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'jquery.sap.dom', 'jquery.sap.script'],
-	function(jQuery, BaseObject/* , jQuerySap1, jQuerySap */) {
+sap.ui.define([
+	"sap/ui/base/Object",
+	"sap/ui/thirdparty/jquery",
+	"sap/base/util/uid",
+	"sap/m/MessageBox",
+	"sap/ui/core/Lib"
+],
+	function(BaseObject, jQuery, uid, MessageBox, Library) {
 	"use strict";
-
-
 
 	/**
 	 * Creates an instance of sap.ui.core.support.Plugin.
@@ -17,17 +21,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'jquery.sap.dom', 'jqu
 	 * @extends sap.ui.base.Object
 	 * @version ${version}
 	 * @private
-	 * @sap-restricted
+	 * @ui5-restricted
 	 * @alias sap.ui.core.support.Plugin
 	 */
 	var Plugin = BaseObject.extend("sap.ui.core.support.Plugin", {
 		constructor : function(sId, sTitle, oStub) {
 			BaseObject.apply(this);
-			this._id = sId ? sId : jQuery.sap.uid();
+			this._id = sId ? sId : uid();
 			this._title = sTitle ? sTitle : "";
 			this._bActive = false;
 			this._aEventIds = [];
 			this._bIsToolPlugin = oStub.isToolStub();
+			this._oStub = oStub;
 		}
 	});
 
@@ -40,13 +45,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'jquery.sap.dom', 'jqu
 	 *
 	 * @param {sap.ui.core.support.Support} oSupportStub the support stub
 	 * @private
-	 * @sap-restricted
+	 * @ui5-restricted
 	 */
 	Plugin.prototype.init = function(oSupportStub){
 		for (var i = 0; i < this._aEventIds.length; i++) {
-			var fHandler = this["on" + this._aEventIds[i]];
-			if (fHandler && jQuery.isFunction(fHandler)) {
-				oSupportStub.attachEvent(this._aEventIds[i], fHandler, this);
+			var fnHandler = this["on" + this._aEventIds[i]];
+			if (typeof fnHandler === "function") {
+				oSupportStub.attachEvent(this._aEventIds[i], fnHandler, this);
 			}
 		}
 		this._bActive = true;
@@ -59,13 +64,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'jquery.sap.dom', 'jqu
 	 *
 	 * @param {sap.ui.core.support.Support} oSupportStub the support stub
 	 * @private
-	 * @sap-restricted
+	 * @ui5-restricted
 	 */
 	Plugin.prototype.exit = function(oSupportStub){
 		for (var i = 0; i < this._aEventIds.length; i++) {
-			var fHandler = this["on" + this._aEventIds[i]];
-			if (fHandler && jQuery.isFunction(fHandler)) {
-				oSupportStub.detachEvent(this._aEventIds[i], fHandler, this);
+			var fnHandler = this["on" + this._aEventIds[i]];
+			if (typeof fnHandler === "function") {
+				oSupportStub.detachEvent(this._aEventIds[i], fnHandler, this);
 			}
 		}
 		this._bActive = false;
@@ -77,7 +82,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'jquery.sap.dom', 'jqu
 	 *
 	 * @return {string} the id
 	 * @private
-	 * @sap-restricted
+	 * @ui5-restricted
 	 */
 	Plugin.prototype.getId = function(){
 		return this._id;
@@ -89,7 +94,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'jquery.sap.dom', 'jqu
 	 *
 	 * @return {string} the title
 	 * @private
-	 * @sap-restricted
+	 * @ui5-restricted
 	 */
 	Plugin.prototype.getTitle = function(){
 		return this._title;
@@ -108,7 +113,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'jquery.sap.dom', 'jqu
 	 *
 	 * @return {boolean} whether this plugin instance can run in the tool window
 	 * @private
-	 * @sap-restricted
+	 * @ui5-restricted
 	 */
 	Plugin.prototype.isToolPlugin = function(){
 		return true;
@@ -127,7 +132,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'jquery.sap.dom', 'jqu
 	 *
 	 * @return {boolean} whether this plugin instance can run in the application window
 	 * @private
-	 * @sap-restricted
+	 * @ui5-restricted
 	 */
 	Plugin.prototype.isAppPlugin = function(){
 		return true;
@@ -142,7 +147,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'jquery.sap.dom', 'jqu
 	 *
 	 * @return {boolean} true if the plugin instance runs in the tool window, otherwise false
 	 * @private
-	 * @sap-restricted
+	 * @ui5-restricted
 	 */
 	Plugin.prototype.runsAsToolPlugin = function(){
 		return this._bIsToolPlugin;
@@ -162,13 +167,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'jquery.sap.dom', 'jqu
 	 * @param {string} [sSuffix] ID suffix to get a jQuery object for
 	 * @return {jQuery} The jQuery wrapped plugin's DOM reference
 	 * @private
-	 * @sap-restricted
+	 * @ui5-restricted
 	 */
 	Plugin.prototype.$ = function(sSuffix){
 		if (this.isToolPlugin()) {
-			var jRef = jQuery.sap.byId(sSuffix ? this.getId() + "-" + sSuffix : this.getId());
+			var jRef = jQuery(document.getElementById(sSuffix ? this.getId() + "-" + sSuffix : this.getId()));
 			if (jRef.length == 0 && !sSuffix) {
-				jRef = jQuery("<DIV/>", {id:this.getId()});
+				jRef = jQuery("<div></div>", {id:this.getId()});
 				jRef.appendTo(jQuery(".sapUiSupportCntnt"));
 			}
 			return jRef;
@@ -177,17 +182,45 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'jquery.sap.dom', 'jqu
 	};
 
 	/**
+	 * Returns a specific DOM element from the DOM tree of this plugin.
+	 *
+	 * If the parameter <code>sSuffixOrSelector</code> is omitted or nullish,
+	 * then the root of the plugin's DOM tree is returned. If a non-empty string is given that
+	 * qualifies as an identifier, the child element with the ID this.getId() + "-" + sSuffixOrSelector is returned.
+	 * Any other string is interpreted as a selector and the first element matching that selector is returned.
+	 *
+	 * If this is the application-side of the plugin (stub), then undefined is returned.
+	 * @param {string} [sSuffixOrSelector] ID suffix or selector describing the element to retrieve
+	 * @returns {HTMLElement|null} The DOM element
+	 * @private
+	 * @ui5-restricted
+	 */
+	Plugin.prototype.dom = function(sSuffixOrSelector) {
+		if (this.isToolPlugin()) {
+			var oDomRef = document.getElementById(this.getId());
+			if ( sSuffixOrSelector == null ) {
+				return oDomRef;
+			}
+			if ( /^[\w-]+$/.test(sSuffixOrSelector) ) {
+				return document.getElementById(this.getId() + "-" + sSuffixOrSelector);
+			}
+			return oDomRef && oDomRef.querySelector(sSuffixOrSelector);
+		}
+		return null;
+	};
+
+	/**
 	 * Adds the given stylesheet to the Support Tool's HTML page.
 	 *
 	 * A &lt;link&gt; tag will be added to the head of the HTML page, referring to the given
 	 * CSS resource. The URL of the resource is determined from the given resource name
-	 * by calling {@link jQuery.sap.getResourcePath}.
+	 * by calling {@link sap.ui.require.toUrl}.
 	 *
 	 * A plugin should call this method only when it is {@link #runsAsToolPlugin running inside the tool window}.
 	 *
 	 * @param {string} sCssResourcePath Resource name of a CSS file, but without the '.css' extension
 	 * @private
-	 * @sap-restricted
+	 * @ui5-restricted
 	 */
 	Plugin.prototype.addStylesheet = function(sCssResourcePath) {
 		if (!sCssResourcePath) {
@@ -207,10 +240,25 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'jquery.sap.dom', 'jqu
 	 *
 	 * @return {boolean} whether the plugin is currently active or not
 	 * @private
-	 * @sap-restricted
+	 * @ui5-restricted
 	 */
 	Plugin.prototype.isActive = function(){
 		return this._bActive;
+	};
+
+	Plugin.prototype.confirmReload = function (fnConfirmCb) {
+		MessageBox.confirm(this._getText("TechInfo.ReloadApp.ConfirmMessage"), {
+			title: this._getText("TechInfo.DebugSources.ConfirmTitle"),
+			onClose: function (oAction) {
+				if (oAction === MessageBox.Action.OK) {
+					fnConfirmCb();
+				}
+			}
+		});
+	};
+
+	Plugin.prototype._getText = function (sKey, aParameters) {
+		return Library.getResourceBundleFor("sap.ui.core").getText(sKey, aParameters);
 	};
 
 	return Plugin;

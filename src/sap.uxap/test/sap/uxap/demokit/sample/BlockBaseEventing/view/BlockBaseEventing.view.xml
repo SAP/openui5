@@ -1,0 +1,29 @@
+<mvc:View height="100%" xmlns:mvc="sap.ui.core.mvc"
+		   xmlns="sap.uxap" xmlns:sample="sap.uxap.sample.BlockBaseEventing.controller.blocks"
+		   xmlns:html="http://www.w3.org/1999/xhtml" controllerName="sap.uxap.sample.BlockBaseEventing.controller.BlockBaseEventing">
+
+	<ObjectPageLayout id="ObjectPageLayout" upperCaseAnchorBar="false">
+		<headerTitle>
+			<ObjectPageHeader objectTitle="Eventing Blocks"/>
+		</headerTitle>
+
+		<sections>
+			<ObjectPageSection titleUppercase="false" title="example">
+				<subSections>
+
+					<ObjectPageSubSection title="Example" titleUppercase="false">
+						<blocks>
+
+							<html:div style="padding:1em;height:4em; background-color: #A9EAFF ;">
+								<html:div style=" display:inline-block;">
+									<sample:EventingBlock id="block" dummy="onDummy"/>
+								</html:div>
+							</html:div>
+						</blocks>
+					</ObjectPageSubSection>
+
+				</subSections>
+			</ObjectPageSection>
+		</sections>
+	</ObjectPageLayout>
+</mvc:View>

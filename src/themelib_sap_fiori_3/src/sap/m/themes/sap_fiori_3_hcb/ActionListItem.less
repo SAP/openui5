@@ -1,0 +1,54 @@
+/* ===================================== */
+/* CSS for control sap.m/ActionListItem  */
+/* Quartz High Contrast Black theme      */
+/* ===================================== */
+
+/* ------------------------------ */
+/* ActionListItem container       */
+/* ------------------------------ */
+
+.sapMLIB.sapMALI {
+	border-bottom: 0; /* overrides LIB style */
+	padding: 0 0.25rem; /* overrides LIB style */
+}
+
+.sapMList .sapMLIB.sapMALI:focus {
+	outline: none; /* overrides LIB style */
+}
+
+/* ------------------------------ */
+/* ActionListItem content         */
+/* ------------------------------ */
+
+.sapMALI > .sapMLIBContent {
+	height: 2.5rem;
+	border: 0.0625rem solid @sapUiButtonActionSelectBorderColor;
+	border-radius: 0.375rem;
+	box-sizing: border-box;
+	-webkit-box-align: center;
+	align-items: center;
+}
+
+/* active */
+.sapMLIBActive.sapMLIB.sapMALI {
+	background: transparent;
+}
+
+.sapMLIBActive.sapMLIB.sapMALI > .sapMLIBContent {
+	background: @sapUiButtonActiveBackground;
+}
+
+/* focus */
+.sapMList .sapMLIB.sapMALI:focus > .sapMLIBContent {
+	outline: 0.125rem dotted @sapUiContentFocusColor;
+	outline-offset: -0.125rem;
+	border: none;
+}
+
+/* ------------------------------ */
+/* Compact size                   */
+/* ------------------------------ */
+
+.sapUiSizeCompact .sapMALI > .sapMLIBContent {
+	height: 1.625rem;
+}

@@ -1,0 +1,37 @@
+<mvc:View controllerName="sap.f.sample.ShellBarWithSearch.controller.ShellBarWithSearch"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.f"
+	xmlns:m="sap.m" height="100%">
+	<ShellBar title="Application Title"
+		secondTitle="Short description"
+		homeIcon="./resources/sap/ui/documentation/sdk/images/logo_ui5.png"
+		showCopilot="true"
+		showNotifications="true"
+		showProductSwitcher="true"
+		notificationsNumber="2">
+		<menu>
+			<m:Menu>
+				<m:MenuItem text="Flight booking" icon="sap-icon://flight" />
+				<m:MenuItem text="Car rental" icon="sap-icon://car-rental" />
+			</m:Menu>
+		</menu>
+		<profile>
+			<m:Avatar initials="UI"/>
+		</profile>
+		<searchManager>
+			<SearchManager id="searchField"
+				search="handlerSearchFieldSearch"
+				liveChange="handlerSearchFieldLiveEvent"
+				suggest="handlerSearchSuggestEvent"
+				enableSuggestions="true"
+				suggestionItems="{
+					path: '/ProductCollection',
+					sorter: { path: 'Name' }
+				}">
+				<suggestionItems>
+					<m:SuggestionItem text="{Name}" description="{path:'Price'} {path:'CurrencyCode'}" key="{ProductId}"/>
+				</suggestionItems>
+			</SearchManager>
+		</searchManager>
+	</ShellBar>
+</mvc:View>

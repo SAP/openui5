@@ -19,6 +19,7 @@ link[id^="sap-ui-theme-"]::after,
 	font-family: @sapUiFontFamily;
 	font-size: @sapUiFontSize;
 	-webkit-tap-highlight-color: rgba(0,0,0,0); /* to prevent touch highlight on the entire body */
+	forced-color-adjust: @sapUiContentForcedColorAdjust;
 }
 
 .sapUiArea {
@@ -75,6 +76,12 @@ link[id^="sap-ui-theme-"]::after,
 	outline: 0 none;
 }
 
+.sapUiBLyWithin {
+	left: auto;
+	right: auto;
+	top: auto;
+	bottom: auto;
+}
 .sapUiBLyBack{
 	/* to prevent HTML page from scrolling if blocked */
 	overflow: hidden;
@@ -92,7 +99,6 @@ link[id^="sap-ui-theme-"]::after,
 .sapUiBody {
 	/* disable pinch zooming */
 	content-zooming: none;
-	-ms-content-zooming: none;
 }
 
 @media (max-width:599px) {
@@ -226,6 +232,24 @@ link[id^="sap-ui-theme-"]::after,
 .sapUiLargeMarginBegin  { margin-left: @sapUiMarginLarge !important; }
 .sapUiLargeMarginEnd    { margin-right: @sapUiMarginLarge !important; }
 
+/* Negative two-sided margins */
+.sapUiTinyNegativeMarginBeginEnd {
+	margin-left: -@sapUiMarginTiny !important;
+	margin-right: -@sapUiMarginTiny !important;
+}
+.sapUiSmallNegativeMarginBeginEnd {
+	margin-left: -@sapUiMarginSmall !important;
+	margin-right: -@sapUiMarginSmall !important;
+}
+.sapUiMediumNegativeMarginBeginEnd {
+	margin-left: -@sapUiMarginMedium !important;
+	margin-right: -@sapUiMarginMedium !important;
+}
+.sapUiLargeNegativeMarginBeginEnd {
+	margin-left: -@sapUiMarginLarge !important;
+	margin-right: -@sapUiMarginLarge !important;
+}
+
 
 /*
  * Class for responsive margins which adapts to the screen size of the currently used device
@@ -293,6 +317,7 @@ link[id^="sap-ui-theme-"]::after,
 	user-select: none;
 	left: 0;
 	top: 0;
+	font-size: 0;
 }
 
 /* CSS classes for bridging two buttons in the technical info dialog */

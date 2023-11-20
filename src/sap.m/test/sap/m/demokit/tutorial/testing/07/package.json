@@ -1,13 +1,13 @@
 {
-  "name": "TestingTutorial",
-  "private": true,
+  "name": "testing-tutorial",
   "version": "1.0.0",
   "author": "SAP SE",
   "description": "UI5 Demo App - Testing Tutorial",
-  "dependencies": {
-    "@openui5/sap.m": "^1",
-    "@openui5/sap.ui.core": "^1",
-    "@openui5/sap.ui.layout": "^1",
-    "@openui5/themelib_sap_belize": "^1"
+  "private": true,
+  "scripts": {
+    "start": "ui5 serve"
+  },
+  "devDependencies": {
+    "@ui5/cli": "^3"
   }
 }

@@ -1,0 +1,12 @@
+<mvc:View
+	controllerName="test.designmode.test01"
+	xmlns="sap.m"
+	xmlns:mvc="sap.ui.core.mvc" >
+
+	<Button
+		id="Button01"
+		text="Save"
+		press="onPress">
+	</Button>
+
+</mvc:View>

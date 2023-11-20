@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="4.0"
+		xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx"
+		xmlns="http://docs.oasis-open.org/odata/ns/edm">
+	<edmx:Reference Uri="/n/a">
+		<edmx:Include Namespace="com.sap.vocabularies.Common.v1"/>
+	</edmx:Reference>
+	<edmx:DataServices>
+		<Schema Namespace="n.a">
+			<Annotations Target="special.cases.Create/Countryoforigin">
+				<Annotation Term="com.sap.vocabularies.Common.v1.ValueListReferences">
+					<Collection>
+						<String>../countryoforigin/$metadata</String>
+					</Collection>
+				</Annotation>
+			</Annotations>
+		</Schema>
+	</edmx:DataServices>
+</edmx:Edmx>

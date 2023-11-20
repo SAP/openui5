@@ -6,33 +6,95 @@
  * Initialization Code and shared classes of library sap.f.
  */
 sap.ui.define(["sap/ui/base/DataType",
+	"sap/m/AvatarShape",
+	"sap/m/AvatarSize",
+	"sap/m/AvatarType",
+	"sap/m/AvatarColor",
+	"sap/m/AvatarImageFitType",
+	"sap/m/IllustratedMessageType",
+	"sap/m/IllustratedMessageSize",
+	"sap/m/library", // library dependency
 	"sap/ui/Global",
 	"sap/ui/core/library",
-	"sap/m/library"], // library dependency
-	function(DataType) {
+	"sap/ui/layout/library"], // library dependency
+	function(DataType,
+			 AvatarShape,
+			 AvatarSize,
+			 AvatarType,
+			 AvatarColor,
+			 AvatarImageFitType,
+			 IllustratedMessageType,
+			 IllustratedMessageSize) {
 
 	"use strict";
 
-	// delegate further initialization of this library to the Core
-	sap.ui.getCore().initLibrary({
+	/**
+	 * SAPUI5 library with controls specialized for SAP Fiori apps.
+	 *
+	 * @namespace
+	 * @alias sap.f
+	 * @author SAP SE
+	 * @version ${version}
+	 * @since 1.44
+	 * @public
+	 */
+	var thisLib = sap.ui.getCore().initLibrary({
 		name : "sap.f",
 		version: "${version}",
-		dependencies : ["sap.ui.core", "sap.m"],
+		dependencies : ["sap.ui.core", "sap.m", "sap.ui.layout"],
 		designtime: "sap/f/designtime/library.designtime",
+		interfaces: [
+			"sap.f.cards.IHeader",
+			"sap.f.ICard",
+			"sap.f.IShellBar",
+			"sap.f.IDynamicPageStickyContent",
+			"sap.f.dnd.IGridDroppable"
+		],
 		types: [
-			"sap.f.LayoutType",
+			"sap.f.AvatarImageFitType",
+			"sap.f.AvatarShape",
+			"sap.f.AvatarSize",
+			"sap.f.AvatarType",
+			"sap.f.AvatarColor",
+			"sap.f.AvatarGroupType",
+			"sap.f.cards.HeaderPosition",
+			"sap.f.cards.NumericHeaderSideIndicatorsAlignment",
 			"sap.f.DynamicPageTitleArea",
-			"sap.f.DynamicPageTitleShrinkRatio"
+			"sap.f.DynamicPageTitleShrinkRatio",
+			"sap.f.IllustratedMessageSize",
+			"sap.f.IllustratedMessageType",
+			"sap.f.LayoutType"
 		],
 		controls: [
 			"sap.f.Avatar",
+			"sap.f.AvatarGroup",
+			"sap.f.AvatarGroupItem",
+			"sap.f.cards.Header",
+			"sap.f.cards.NumericHeader",
+			"sap.f.cards.NumericIndicators",
+			"sap.f.cards.NumericSideIndicator",
+			"sap.f.CalendarInCard",
+			"sap.f.Card",
+			"sap.f.GridContainer",
 			"sap.f.DynamicPage",
 			"sap.f.DynamicPageHeader",
 			"sap.f.DynamicPageTitle",
+			"sap.f.IllustratedMessage",
 			"sap.f.FlexibleColumnLayout",
-			"sap.f.semantic.SemanticPage"
+			"sap.f.semantic.SemanticPage",
+			"sap.f.GridList",
+			"sap.f.GridListItem",
+			"sap.f.PlanningCalendarInCardLegend",
+			"sap.f.ProductSwitch",
+			"sap.f.ProductSwitchItem",
+			"sap.f.ShellBar",
+			"sap.f.SidePanel",
+			"sap.f.Illustration"
 		],
 		elements: [
+			"sap.f.DynamicPageAccessibleLandmarkInfo",
+			"sap.f.GridContainerItemLayoutData",
+			"sap.f.FlexibleColumnLayoutAccessibleLandmarkInfo",
 			"sap.f.semantic.AddAction",
 			"sap.f.semantic.CloseAction",
 			"sap.f.semantic.CopyAction",
@@ -44,6 +106,7 @@ sap.ui.define(["sap/ui/base/DataType",
 			"sap.f.semantic.FlagAction",
 			"sap.f.semantic.FooterMainAction",
 			"sap.f.semantic.FullScreenAction",
+			"sap.f.semantic.MainAction",
 			"sap.f.semantic.MessagesIndicator",
 			"sap.f.semantic.NegativeAction",
 			"sap.f.semantic.PositiveAction",
@@ -54,10 +117,13 @@ sap.ui.define(["sap/ui/base/DataType",
 			"sap.f.semantic.SendEmailAction",
 			"sap.f.semantic.SendMessageAction",
 			"sap.f.semantic.ShareInJamAction",
-			"sap.f.semantic.TitleMainAction"
+			"sap.f.semantic.TitleMainAction",
+			"sap.f.SearchManager",
+			"sap.f.SidePanelItem"
 		],
 		extensions: {
 			flChangeHandlers: {
+				"sap.f.Avatar" : "sap/f/flexibility/Avatar",
 				"sap.f.DynamicPageHeader" : {
 					"hideControl": "default",
 					"unhideControl": "default",
@@ -70,30 +136,20 @@ sap.ui.define(["sap/ui/base/DataType",
 			},
 			//Configuration used for rule loading of Support Assistant
 			"sap.ui.support": {
+				publicRules: true,
 				internalRules:true
 			}
 		}
 	});
 
 	/**
-	 * SAPUI5 library with controls specialized for SAP Fiori apps.
-	 *
-	 * @namespace
-	 * @alias sap.f
-	 * @author SAP SE
-	 * @version ${version}
-	 * @public
-	 */
-	var thisLib = sap.f;
-
-	/**
-	* Defines the areas within the <code>sap.f.DynamicPageTitle</code>.
+	* Defines the areas within the <code>sap.f.DynamicPageTitle</code> control.
 	*
 	* @enum {string}
 	* @public
 	* @since 1.50
-	* @deprecated Since version 1.54
-	* @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
+	* @deprecated Since version 1.54. Consumers of the {@link sap.f.DynamicPageTitle} control should now use
+	*   the <code>areaShrinkRatio</code> property instead of the <code>primaryArea</code> property.
 	*/
 	thisLib.DynamicPageTitleArea = {
 		/**
@@ -119,7 +175,6 @@ sap.ui.define(["sap/ui/base/DataType",
 	* @namespace
 	* @public
 	* @since 1.54
-	* @ui5-metamodel This simple type also will be described in the UI5 (legacy) designtime metamodel
 	*/
 	thisLib.DynamicPageTitleShrinkRatio = DataType.createType('sap.f.DynamicPageTitleShrinkRatio', {
 		isValid : function(vValue) {
@@ -144,7 +199,6 @@ sap.ui.define(["sap/ui/base/DataType",
 	 * @enum {string}
 	 * @public
 	 * @since 1.46
-	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	thisLib.LayoutType = {
 
@@ -268,129 +322,330 @@ sap.ui.define(["sap/ui/base/DataType",
 		EndColumnFullScreen: "EndColumnFullScreen"
 	};
 
-	sap.ui.lazyRequire("sap.f.routing.Router");
-	sap.ui.lazyRequire("sap.f.routing.Target");
-	sap.ui.lazyRequire("sap.f.routing.TargetHandler");
-	sap.ui.lazyRequire("sap.f.routing.Targets");
-
 	/**
 	 * Types of shape for the {@link sap.f.Avatar} control.
 	 *
-	 * @enum {string}
+	 * This is an alias for {@link sap.m.AvatarShape} and only kept for compatibility reasons.
+	 *
+	 * @typedef {sap.m.AvatarShape}
 	 * @public
 	 * @since 1.46
-	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
+	 * @deprecated as of version 1.73. Use the {@link sap.m.AvatarShape} instead.
 	 */
-	thisLib.AvatarShape = {
-		/**
-		 * Circular shape.
-		 * @public
-		 */
-		Circle: "Circle",
-
-		/**
-		 * Square shape.
-		 * @public
-		 */
-		Square: "Square"
-	};
+	thisLib.AvatarShape = AvatarShape;
 
 	/**
 	 * Predefined sizes for the {@link sap.f.Avatar} control.
 	 *
-	 * @enum {string}
+	 * This is an alias for {@link sap.m.AvatarSize} and only kept for compatibility reasons.
+	 *
+	 * @typedef {sap.m.AvatarSize}
 	 * @public
+	 * @deprecated as of version 1.73. Use the {@link sap.m.AvatarSize} instead.
 	 * @since 1.46
-	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
-	thisLib.AvatarSize = {
-		/**
-		 * Control size - 2rem
-		 * Font size - 0.75rem
-		 * @public
-		 */
-		XS: "XS",
+	thisLib.AvatarSize = AvatarSize;
 
-		/**
-		 * Control size - 3rem
-		 * Font size - 1.125rem
-		 * @public
-		 */
-		S: "S",
-
-		/**
-		 * Control size - 4rem
-		 * Font size - 1.625rem
-		 * @public
-		 */
-		M: "M",
-
-		/**
-		 * Control size - 5rem
-		 * Font size - 2rem
-		 * @public
-		 */
-		L: "L",
-
-		/**
-		 * Control size - 7rem
-		 * Font size - 2.75rem
-		 * @public
-		 */
-		XL: "XL",
-
-		/**
-		 * Custom size
-		 * @public
-		 */
-		Custom: "Custom"
-	};
+	/**
+	 * Interface for controls suitable for the <code>stickySubheaderProvider</code>
+	 * association of <code>{@link sap.f.DynamicPage}</code>.
+	 *
+	 * Controls that implemenet this interface should have the following methods:
+	 * <ul>
+	 * <li><code>_getStickyContent</code> - returns the content (control) used in the
+	 * subheader</li>
+	 * <li><code>_returnStickyContent</code> - ensures that the content (control) returned by <code>_getStickyContent</code>,
+	 * is placed back in its place in the provider</li>
+	 * <li><code>_getStickySubHeaderSticked</code> - returns boolean value that shows
+	 * where the sticky content is placed (in its provider or in the
+	 * <code>DynamicPage</code>)</li>
+	 * <li><code>_setStickySubHeaderSticked</code> - accepts a boolean argument to notify
+	 * the provider where its sticky content is placed</li>
+	 * </ul>
+	 *
+	 * @since 1.65
+	 * @name sap.f.IDynamicPageStickyContent
+	 * @interface
+	 * @public
+	 */
 
 	/**
 	 * Types of {@link sap.f.Avatar} based on the displayed content.
 	 *
-	 * @enum {string}
+	 * This is an alias for {@link sap.m.AvatarType} and only kept for compatibility reasons.
+	 *
+	 * @typedef {sap.m.AvatarType}
 	 * @public
+	 * @deprecated as of version 1.73. Use the {@link sap.m.AvatarType} instead.
 	 * @since 1.46
-	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
-	thisLib.AvatarType = {
-		/**
-		 * The displayed content is an icon.
-		 * @public
-		 */
-		Icon: "Icon",
-		/**
-		 * The displayed content is an image.
-		 * @public
-		 */
-		Image: "Image",
-		/**
-		 * The displayed content is initials.
-		 * @public
-		 */
-		Initials: "Initials"
-	};
+	thisLib.AvatarType = AvatarType;
+
+	/**
+	 * Possible background color options for the {@link sap.f.Avatar} control.
+	 *
+	 * <b>Notes:</b>
+	 * <ul>
+	 * <li>Keep in mind that the colors are theme-dependent and can differ based
+	 * on the currently used theme.</li>
+	 * <li> If the <code>Random</code> value is assigned, a random color is
+	 * chosen from the accent options (Accent1 to Accent10).</li>
+	 * </ul>
+	 *
+	 * This is an alias for {@link sap.m.AvatarColor} and only kept for compatibility reasons.
+	 *
+	 * @typedef {sap.m.AvatarColor}
+	 * @public
+	 * @deprecated as of version 1.73. Use the {@link sap.m.AvatarColor} instead.
+	 * @since 1.69
+	 */
+	thisLib.AvatarColor = AvatarColor;
+
 	/**
 	 * Types of image size and position that determine how an image fits in the {@link sap.f.Avatar} control area.
 	 *
+	 * This is an alias for {@link sap.m.AvatarImageFitType} and only kept for compatibility reasons.
+	 *
+	 * @typedef {sap.m.AvatarImageFitType}
+	 * @public
+	 * @deprecated as of version 1.73. Use the {@link sap.m.AvatarImageFitType} instead.
+	 * @since 1.46
+	 */
+	thisLib.AvatarImageFitType = AvatarImageFitType;
+
+	/**
+	 * Group modes for the {@link sap.f.AvatarGroup} control.
+	 *
 	 * @enum {string}
 	 * @public
-	 * @since 1.46
-	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
+	 * @experimental Since 1.73.
+	 * @since 1.73
 	 */
-	thisLib.AvatarImageFitType = {
+	thisLib.AvatarGroupType = {
 		/**
-		 * The image is scaled to be large enough so that the control area is completely covered.
+		 * The avatars are displayed as partially overlapped on top of each other and the entire group has one click/tap area.
+		 *
 		 * @public
 		 */
-		Cover: "Cover",
+		Group: "Group",
+
 		/**
-		 * The image is scaled to the largest size so that both its width and height can fit in the control area.
+		 * The avatars are displayed side-by-side and each avatar has its own click/tap area.
+		 *
 		 * @public
 		 */
-		Contain: "Contain"
+		Individual: "Individual"
 	};
+
+	/**
+	 * Interface that should be implemented by all card controls.
+	 *
+	 * @since 1.62
+	 * @public
+	 * @interface
+	 * @name sap.f.ICard
+	 */
+
+	/**
+	 * The function is used to allow for a common header renderer between different implementations of the {@link sap.f.ICard} interface.
+	 *
+	 * @returns {sap.f.cards.IHeader} The header of the card
+	 * @since 1.62
+	 * @ui5-restricted
+	 * @private
+	 * @function
+	 * @name sap.f.ICard.getCardHeader
+	 */
+
+	/**
+	 * The function is used to allow for a common content renderer between different implementations of the {@link sap.f.ICard} interface.
+	 *
+	 * @returns {sap.ui.core.Control} The content of the card
+	 * @since 1.62
+	 * @ui5-restricted
+	 * @private
+	 * @function
+	 * @name sap.f.ICard.getCardContent
+	 */
+
+	/**
+	 * Allows for a common header renderer between different implementations of the {@link sap.f.ICard} interface.
+	 *
+	 * @returns {sap.f.cards.HeaderPosition} The position of the header of the card
+	 * @since 1.65
+	 * @ui5-restricted
+	 * @private
+	 * @function
+	 * @name sap.f.ICard.getCardHeaderPosition
+	 */
+
+	/**
+	 * Marker interface for controls suitable as a header in controls that implement the {@link sap.f.ICard} interface.
+	 *
+	 * @since 1.62
+	 * @public
+	 * @interface
+	 * @name sap.f.cards.IHeader
+	 */
+
+	/**
+	 * Interface for controls suitable for the <code>additionalContent</code> aggregation of <code>{@link sap.f.ShellBar}</code>.
+	 *
+	 * @since 1.63
+	 * @name sap.f.IShellBar
+	 * @experimental Since 1.63, that provides only limited functionality. Also, it can be removed in future versions.
+	 * @public
+	 * @interface
+	 */
+
+	 /**
+	 * Interface that should be implemented by grid controls, if they are working with the <code>sap.f.dnd.GridDropInfo</code>.
+	 *
+	 * It is highly recommended that those grid controls have optimized <code>removeItem</code> and <code>insertItem</code> methods (if "items" is target drop aggregation).
+	 * Meaning to override them in a way that they don't trigger invalidation.
+	 *
+	 * @since 1.68
+	 * @public
+	 * @interface
+	 * @name sap.f.dnd.IGridDroppable
+	 */
+
+	thisLib.cards = thisLib.cards || {};
+
+	 /**
+	 * Different options for the position of the header in controls that implement the {@link sap.f.ICard} interface.
+	 *
+	 * @enum {string}
+	 * @public
+	 * @since 1.65
+	 */
+	thisLib.cards.HeaderPosition = {
+		/**
+		 * The Header is over the content.
+		 *
+		 * @public
+		 */
+		Top: "Top",
+		/**
+		 * The Header is under the content.
+		 *
+		 * @public
+		 */
+		Bottom: "Bottom"
+	};
+
+	/**
+	 * Different options for the alignment of the side indicators in the numeric header.
+	 *
+	 * @enum {string}
+	 * @public
+	 * @since 1.96
+	 */
+	thisLib.cards.NumericHeaderSideIndicatorsAlignment = {
+		/**
+		 * Sets the alignment to the beginning (left or right depending on LTR/RTL).
+		 *
+		 * @public
+		 */
+		Begin: "Begin",
+		/**
+		 * Explicitly sets the alignment to the end (left or right depending on LTR/RTL).
+		 *
+		 * @public
+		 */
+		End: "End"
+	};
+
+	/**
+	 * Enumeration for different navigation directions.
+	 *
+	 * @enum {string}
+	 * @public
+	 * @since 1.85
+	 */
+	thisLib.NavigationDirection = {
+		/**
+		 * The direction is up.
+		 *
+		 * @public
+		 */
+		Up: "Up",
+		/**
+		 * The direction is down.
+		 *
+		 * @public
+		 */
+		Down: "Down",
+		/**
+		 * The direction is left.
+		 *
+		 * @public
+		 */
+		Left: "Left",
+		/**
+		 * The direction is right.
+		 *
+		 * @public
+		 */
+		Right: "Right"
+	};
+
+	/**
+	 * Enumeration for different SidePanel position.
+	 *
+	 * @enum {string}
+	 * @public
+	 * @since 1.104
+	 */
+	 thisLib.SidePanelPosition = {
+		/**
+		 * The position is left.
+		 *
+		 * @public
+		 */
+		Left: "Left",
+		/**
+		 * The position is right.
+		 *
+		 * @public
+		 */
+		Right: "Right"
+	};
+
+	/**
+	 * Available <code>Illustration</code> types for the {@link sap.f.IllustratedMessage} control.
+	 *
+	 * This is an alias for {@link sap.m.IllustratedMessageType} and only kept for compatibility reasons.
+	 *
+	 * @typedef {sap.m.IllustratedMessageType}
+	 * @public
+	 * @deprecated as of version 1.98. Use the {@link sap.m.IllustratedMessageType} instead.
+	 * @since 1.88
+	 */
+	thisLib.IllustratedMessageType = IllustratedMessageType;
+
+	/**
+	 * Available <code>Illustration</code> sizes for the {@link sap.f.IllustratedMessage} control.
+	 *
+	 * This is an alias for {@link sap.m.IllustratedMessageSize} and only kept for compatibility reasons.
+	 *
+	 * @typedef {sap.m.IllustratedMessageSize}
+	 * @public
+	 * @deprecated as of version 1.98. Use the {@link sap.m.IllustratedMessageSize} instead.
+	 * @since 1.88
+	 */
+	thisLib.IllustratedMessageSize = IllustratedMessageSize;
+
+
+	/**
+	 * @deprecated since 1.56 as lazy loading implies sync loading
+	 */
+	(function() {
+		sap.ui.lazyRequire("sap.f.routing.Router");
+		sap.ui.lazyRequire("sap.f.routing.Target");
+		sap.ui.lazyRequire("sap.f.routing.TargetHandler");
+		sap.ui.lazyRequire("sap.f.routing.Targets");
+	}());
 
 	return thisLib;
 

@@ -1,0 +1,51 @@
+/* ========================================= */
+/* CSS for control sap.ui.commons/TextField  */
+/* Quartz High Contrast White theme          */
+/* ========================================= */
+
+@_sap_ui_commons_TextField_Height: 18px;
+
+.sapUiTf {
+	outline: none; /* remove Safari glow effect */
+	font-size: @sapUiDesktopFontSize;
+	padding-left: 3px;
+	padding-top: 1px;
+}
+
+.sapUiTf:not(.sapUiTfInner) {
+	height: @_sap_ui_commons_TextField_Height;
+}
+
+.sapUiTfBrd.sapUiTfDsbl,
+.sapUiTfBrd.sapUiTfRo {
+	border-color: @sapUiFieldReadOnlyBorderColor;
+}
+
+.sapUiTfBrd.sapUiTfFoc {
+	outline:1px solid @sapUiContentFocusColor;
+	border-color: @sapUiContentFocusColor;
+}
+
+.sapUiTfErr {
+	font-style: italic;
+	font-weight: bold;
+	border-style: dashed;
+}
+
+.sapUiTfErr.sapUiTfStd {
+	border-color: @sapUiFieldBorderColor;
+	background-color: @sapUiHighlight;
+}
+
+.sapUiTfErr.sapUiTfFoc {
+	border-color: @sapUiContentFocusColor;
+}
+
+.sapUiTfWarn {
+	font-style: italic;
+	border-style: dashed;
+}
+
+.sapUiTfWarn.sapUiTfStd {
+	background-color: @sapUiFieldBackground;
+}

@@ -1,5 +1,5 @@
-<core:View height="100%"
-		xmlns:core="sap.ui.core"
+<mvc:View height="100%"
+		xmlns:mvc="sap.ui.core.mvc"
 		xmlns="sap.m"
 		xmlns:l="sap.ui.layout"
 		controllerName="sap.m.sample.DraftIndicator.C">
@@ -25,4 +25,4 @@
 			</l:content>
 		</l:VerticalLayout>
 	</Page>
-</core:View>
+</mvc:View>

@@ -1,8 +1,9 @@
 sap.ui.define([
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/model/json/JSONModel",
-	"./Utils"
-], function(Controller, JSONModel, Utils) {
+	"./Utils",
+	"sap/ui/thirdparty/jquery"
+], function(Controller, JSONModel, Utils, jQuery) {
 	"use strict";
 
 	return Controller.extend("sap.m.sample.TableDnD.Controller", {
@@ -18,18 +19,20 @@ sap.ui.define([
 		},
 
 		initSampleProductsModel: function() {
-			var oData = jQuery.sap.sjax({
-				url: sap.ui.require.toUrl("sap/ui/demo/mock") + "/products.json",
-				dataType: "json"
-			}).data;
-
-			// prepare and initialize the rank property
-			oData.ProductCollection.forEach(function(oProduct) {
-				oProduct.Rank = Utils.ranking.Initial;
-			}, this);
-
 			var oModel = new JSONModel();
-			oModel.setData(oData);
+
+			jQuery.ajax({
+				url: sap.ui.require.toUrl("sap/ui/demo/mock/products.json"),
+				dataType: "json"
+			}).then(function(oData) {
+				// prepare and initialize the rank property
+				oData.ProductCollection.forEach(function(oProduct) {
+					oProduct.Rank = Utils.ranking.Initial;
+				}, this);
+
+				oModel.setData(oData);
+			});
+
 			return oModel;
 		},
 

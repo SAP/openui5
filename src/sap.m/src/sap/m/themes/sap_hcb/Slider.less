@@ -7,6 +7,11 @@
 .sapMSliderInner {
 	border: 1px solid @sapUiFieldBorderColor;
 	background: @sapUiFieldBackground;
+}
+
+.sapMSliderInner,
+.sapMSliderProgress {
+	height: 0.188rem;
 	border-radius: 0.125rem;
 }
 
@@ -14,16 +19,17 @@
 .sapMSliderHandle {
 	background: transparent;
 	border: 0.125rem solid @sapUiFieldBorderColor;
+	&:focus:before {
+		top: -0.3125rem;
+		bottom: -0.3125rem;
+		left: -0.3125rem;
+		right: -0.3125rem;
+	}
 }
 
 /* hover */
 html.sap-desktop .sapMSliderHandle:not(.sapMSliderInnerDisabled ):hover {
 	background: @sapUiFieldActiveBackground;
-}
-
-/* focus */
-html.sap-desktop .sapMSliderHandle:focus {
-	outline: 0.125rem dotted @sapUiContentFocusColor;
 }
 
 /* pressed */

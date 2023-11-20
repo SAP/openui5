@@ -1,0 +1,35 @@
+/* =========================================== */
+/* CSS for control sap.ui.unified/ShellLayout  */
+/* Fiori 3 theme                               */
+/* =========================================== */
+
+@_sap_ui_unified_ShellLayout_CurtainBGStartColor: fade(@sapUiGroupContentBackground,97);
+@_sap_ui_unified_ShellLayout_CurtainBGEndColor: fade(lighten(desaturate(@sapUiHighlight,37),56),97);
+
+._sapUiUfdShellSubHdr { /* Testpage only */
+	background-color: @sapUiShellBackground;
+	color: @sapUiShellTextColor;
+}
+
+.sapUiUfdShell .sapUiUfdShellHead {
+	background-color: @sapUiBlockLayerBackground;
+}
+
+.sapUiUfdShell .sapUiUfdShellBrand {
+	background: @sapUiShellBackground;
+}
+
+.sapUiUfdShell.sapUiUfdShellCurtainVisible .sapUiUfdShellHead,
+.sapUiUfdShell.sapUiUfdShellCurtainVisible .sapUiUfdShellHead > div {
+	background: none;
+	background-color: @sapUiShellBackground;
+	filter: none;
+}
+
+.sapUiUfdShellCurtain {
+	border-bottom: 1px solid @sapUiShellBorderColor;
+	background-image: linear-gradient(to bottom, @_sap_ui_unified_ShellLayout_CurtainBGStartColor 0%, @_sap_ui_unified_ShellLayout_CurtainBGEndColor 100%);
+	background-image: -webkit-linear-gradient(top, @_sap_ui_unified_ShellLayout_CurtainBGStartColor 0%, @_sap_ui_unified_ShellLayout_CurtainBGEndColor 100%);
+	background-attachment: fixed;
+	background-repeat: repeat, no-repeat;
+}

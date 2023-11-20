@@ -1,0 +1,56 @@
+{
+  "1.103.0": {
+    "date": "June 2022",
+    "notes": [
+      {
+        "id": "382a0e31d904630775461a1387a8d9884f68d069",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Allow RTA revert moved headerContent",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180311371"
+          }
+        ]
+      },
+      {
+        "id": "a4031360cab8c2b31d62bcebbeb41d980c68032d",
+        "type": "FIX",
+        "text": " sap.uxap.AnchorBar: Switch to HierarchicalSelect optimized",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400000511102022"
+          }
+        ]
+      },
+      {
+        "id": "96bd15d49ed178f0f02a487ff7740791263ab97c",
+        "type": "FIX",
+        "text": " sap.f.DynamicPageTitle: ObjectPage visual tests updated"
+      },
+      {
+        "id": "7e2c5f9495af17593c050c576b2941d85c240221",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: AnchorBar position is fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270040798"
+          }
+        ]
+      },
+      {
+        "id": "dc61b2fb8b4a9a2acbde2333cbbc47c5126d91a1",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Prevent auto collapsing header",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280068998"
+          }
+        ]
+      }
+    ]
+  }
+}

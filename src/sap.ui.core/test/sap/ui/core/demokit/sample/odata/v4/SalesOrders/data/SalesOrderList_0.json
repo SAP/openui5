@@ -1,5 +1,4 @@
 {
-	"@odata.context" : "$metadata#SalesOrderList(ChangedAt,CreatedAt,LifecycleStatusDesc,Note,SalesOrderID,SO_2_SOITEM(SOITEM_2_PRODUCT(PRODUCT_2_BP(BusinessPartnerID,CompanyName,LegalForm,PhoneNumber))),SO_2_BP(BusinessPartnerID,CompanyName,PhoneNumber),SO_2_SCHDL(ScheduleKey,DeliveryDate))/$entity",
 	"@odata.etag" : "W/\"20160619220000.0000000\"",
 	"ChangedAt" : "2016-06-26T22:00:00.000000Z",
 	"CreatedAt" : "2016-06-26T22:00:00.000000Z",
@@ -24,36 +23,5 @@
 				"Latitude" : "49.293673600000"
 			}
 		}
-	},
-	"SO_2_SCHDL" : [{
-		"ScheduleKey" : "005056A71E3D1ED68DDAAE99B0154B70",
-		"DeliveryDate" : "2016-06-26T22:00:00Z"
-	}, {
-		"ScheduleKey" : "005056A71E3D1ED68DDAAE99B0156B70",
-		"DeliveryDate" : "2016-06-26T22:00:00Z"
-	}, {
-		"ScheduleKey" : "005056A71E3D1ED68DDAAE99B0158B70",
-		"DeliveryDate" : "2016-06-26T22:00:00Z"
-	}, {
-		"ScheduleKey" : "005056A71E3D1ED68DDAAE99B015AB70",
-		"DeliveryDate" : "2016-06-26T22:00:00Z"
-	}, {
-		"ScheduleKey" : "005056A71E3D1ED68DDAAE99B015CB70",
-		"DeliveryDate" : "2016-06-26T22:00:00Z"
-	}, {
-		"ScheduleKey" : "005056A71E3D1ED68DDAAE99B015EB70",
-		"DeliveryDate" : "2016-06-26T22:00:00Z"
-	}, {
-		"ScheduleKey" : "005056A71E3D1ED68DDAAE99B0160B70",
-		"DeliveryDate" : "2016-06-26T22:00:00Z"
-	}, {
-		"ScheduleKey" : "005056A71E3D1ED68DDAAE99B0162B70",
-		"DeliveryDate" : "2016-06-26T22:00:00Z"
-	}, {
-		"ScheduleKey" : "005056A71E3D1ED68DDAAE99B0164B70",
-		"DeliveryDate" : "2016-06-26T22:00:00Z"
-	}, {
-		"ScheduleKey" : "005056A71E3D1ED68DDAAE99B0166B70",
-		"DeliveryDate" : "2016-06-26T22:00:00Z"
-	}]
+	}
 }

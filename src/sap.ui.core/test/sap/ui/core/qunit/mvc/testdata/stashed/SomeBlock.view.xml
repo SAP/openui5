@@ -1,0 +1,6 @@
+<mvc:View
+		xmlns:mvc="sap.ui.core.mvc"
+		xmlns:html="http://www.w3.org/1999/xhtml"
+		controllerName="testdata.mvc.stashed.SomeBlock">
+	<html:div style="height:4em; background-color: #A9EAFF ;"/>
+</mvc:View>

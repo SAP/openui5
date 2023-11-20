@@ -1,0 +1,34 @@
+.sapMMultiComboBox.sapMInputBaseReadonly.sapMMultiComboBoxHasToken.sapMFocus .sapMTokenizer {
+	left: 0;
+}
+
+.sapMMultiComboBoxPicker .sapMListHdrTBar {
+	border-radius: 0;
+}
+
+.sapMMultiComboBoxPicker .sapMMultiComboBoxSelectAll.sapMTB.sapMIBar.sapMMultiComboBoxSelectAllFocused,
+.sapMMultiComboBoxPicker .sapMValueStateHeaderRoot.sapMFocusable:focus {
+	outline: @sapContent_FocusWidth @sapContent_FocusStyle @sapContent_FocusColor;
+	outline-offset: -0.25rem;
+}
+
+.sapMMultiComboBox .sapMTokenizer {
+	padding-top: 1px;
+}
+
+.sapUiSizeCondensed .sapUiTableDataCell .sapMMultiComboBox .sapMTokenizer {
+	padding-top: 0px;
+	.sapMToken {
+		margin-top: 0.0625rem;
+		margin-bottom: 0.0625rem;
+	}
+}
+
+.sapUiSizeCompact {
+	.sapMMultiComboBox.sapMMultiComboBoxHasToken .sapMInputBaseContentWrapper.sapMInputBaseContentWrapperState:not(.sapMInputBaseContentWrapperSuccess) {
+		.sapMToken {
+			margin-top: 0.125rem;
+			margin-bottom: 0.125rem;
+		}
+	}
+}

@@ -1,7 +1,6 @@
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/UIComponent'],
-	function(jQuery, UIComponent) {
+sap.ui.define(['sap/ui/core/UIComponent'],
+	function(UIComponent) {
 	"use strict";
-
 
 	var Component = UIComponent.extend("sap.ui.test.v2inline.Component", {
 
@@ -48,7 +47,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/UIComponent'],
 					"dependencies": {
 						"minUI5Version": "1.22.5",
 						"libs": {
-							"sap.ui.commons": {
+							"sap.ui.layout": {
 								"minVersion": "1.22.0"
 							}
 						},
@@ -66,12 +65,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/UIComponent'],
 							"uri": "i18n/i18n.properties"
 						},
 						"sfapi": {
-							"type": "sap.ui.model.odata.ODataModel",
+							"type": "sap.ui.model.odata.v2.ODataModel",
 							"uri": "./some/odata/service"
 						}
 					},
 
-					"rootView": "sap.ui.test.view.Main",
+					"rootView": {
+						"viewName": "sap.ui.test.view.Main",
+						"type": "XML",
+						"async": true
+					},
 
 					"config": {
 						"any1": {
@@ -90,8 +93,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/UIComponent'],
 
 					"routing": {
 						"config": {
+							"type": "View",
 							"viewType" : "XML",
-							"viewPath": "NavigationWithoutMasterDetailPattern.view",
+							"path": "NavigationWithoutMasterDetailPattern.view",
 							"targetParent": "myViewId",
 							"targetControl": "app",
 							"targetAggregation": "pages",
@@ -156,7 +160,5 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/UIComponent'],
 
 	});
 
-
 	return Component;
-
 });

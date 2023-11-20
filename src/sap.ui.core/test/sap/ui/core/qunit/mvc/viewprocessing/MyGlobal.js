@@ -1,7 +1,8 @@
 /**
- * Control which does not return its class
+ * Control which ...
  */
-sap.ui.define(['sap/ui/base/ManagedObject'], function(ManagedObject){
+sap.ui.define(['sap/ui/base/ManagedObject'], function(ManagedObject) {
+	"use strict";
 
 	var mMap = {};
 	var mList = [];

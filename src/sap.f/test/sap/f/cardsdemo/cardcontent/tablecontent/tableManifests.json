@@ -1,0 +1,257 @@
+{
+	"tablecard1": {
+		"sap.app": {
+			"id": "tablecard1",
+			"type": "card"
+		},
+		"sap.card": {
+			"type": "Table",
+			"header": {
+				"title": "Table Card",
+				"subTitle": "Table Card subtitle"
+			},
+			"content": {
+				"data": {
+					"request": {
+						"url": "./cardcontent/tableitems.json"
+					},
+					"path": "/names"
+				},
+				"row": {
+					"columns": [
+						{
+							"title": "Avatar",
+							"width": "12%",
+							"icon": {
+								"src": "{icon}"
+							}
+						},
+						{
+							"title": "First Name",
+							"value": "{firstName}"
+						},
+						{
+							"title": "Last Name",
+							"value": "{lastName}"
+						},
+						{
+							"title": "Link",
+							"value": "{urlText}",
+							"url": "{url}"
+						},
+						{
+							"title": "Progress",
+							"progressIndicator": {
+								"percent": "{percent}",
+								"text": "{percentValue}",
+								"state": "{progressState}"
+							}
+						}
+					]
+				}
+			}
+		}
+	},
+	"tablecard2": {
+		"sap.app": {
+			"id": "tablecard2",
+			"type": "card"
+		},
+		"sap.card": {
+			"type": "Table",
+			"header": {
+				"title": "New Purchase Orders"
+			},
+			"content": {
+				"data": {
+					"request": {
+						"url": "./cardcontent/tableitems.json"
+					},
+					"path": "/tableCard2"
+				},
+				"row": {
+					"columns": [
+						{
+							"title": "Order ID",
+							"width": "25%",
+							"value": "{orderId}",
+							"url": "{orderUrl}"
+						},
+						{
+							"title": "Avatar",
+							"width": "15%",
+							"icon": {
+								"src": "{icon}",
+								"shape": "Square"
+							}
+						},
+						{
+							"title": "Created By",
+							"value": "{name}"
+						},
+						{
+							"title": "Status",
+							"width": "20%",
+							"value": "{status}",
+							"state": "{statusState}"
+						}
+					]
+				}
+			}
+		}
+	},
+	"tablecard3": {
+		"sap.app": {
+			"id": "tablecard3",
+			"type": "card"
+		},
+		"sap.card": {
+			"type": "Table",
+			"header": {
+				"title": "Sales Orders for Key Accounts"
+			},
+			"content": {
+				"data": {
+					"request": {
+						"url": "./cardcontent/tableitems.json"
+					},
+					"path": "/tableCard3"
+				},
+				"row": {
+					"columns": [
+						{
+							"title": "Sales Order",
+							"value": "{salesOrder}",
+							"identifier": true
+						},
+						{
+							"title": "Customer",
+							"value": "{name}"
+						},
+						{
+							"title": "Net Amount",
+							"value": "{netAmount}"
+						},
+						{
+							"title": "Status",
+							"value": "{status}",
+							"state": "{statusState}",
+							"showStateIcon": "{showStateIcon}",
+							"customStateIcon": "{customStateIcon}"
+						}
+					]
+				}
+			}
+		}
+	},
+	"tablecard4": {
+		"sap.app": {
+			"id": "tablecard4",
+			"type": "card"
+		},
+		"sap.card": {
+			"type": "Table",
+			"header": {
+				"title": "Sales Orders for Key Accounts 123"
+			},
+			"content": {
+				"data": {
+					"request": {
+						"url": "./cardcontent/tableitems.json"
+					},
+					"path": "/tableCard3"
+				},
+				"row": {
+					"columns": [
+						{
+							"title": "Sales Order",
+							"value": "{salesOrder}",
+							"identifier": true
+						},
+						{
+							"title": "Customer",
+							"value": "{name}"
+						}
+					]
+				}
+			}
+		}
+	},
+	"tablecard5": {
+		"sap.app": {
+			"id": "tablecard5",
+			"type": "card"
+		},
+		"sap.card": {
+			"type": "Table",
+			"header": {
+				"title": "Sales Orders for Key Accounts 1234567"
+			},
+			"content": {
+				"maxItems": 5,
+				"data": {
+					"request": {
+						"url": "./cardcontent/tableitems.json"
+					},
+					"path": "/tableCard3"
+				},
+				"row": {
+					"columns": [
+						{
+							"title": "Sales Order",
+							"value": "{salesOrder}",
+							"identifier": true
+						},
+						{
+							"title": "Customer",
+							"value": "{name}"
+						},
+						{
+							"title": "Net Amount",
+							"value": "{netAmount}"
+						}
+					]
+				}
+			}
+		}
+	},
+	"tablecard6": {
+		"sap.app": {
+			"id": "tablecard6",
+			"type": "card"
+		},
+		"sap.card": {
+			"type": "Table",
+			"header": {
+				"title": "Table with minItems set"
+			},
+			"content": {
+				"minItems": 3,
+				"maxItems": 10,
+				"data": {
+					"request": {
+						"url": "./cardcontent/tableitems.json"
+					},
+					"path": "/tableCard3"
+				},
+				"row": {
+					"columns": [
+						{
+							"title": "Sales Order",
+							"value": "{salesOrder}",
+							"identifier": true
+						},
+						{
+							"title": "Customer",
+							"value": "{name}"
+						},
+						{
+							"title": "Net Amount",
+							"value": "{netAmount}"
+						}
+					]
+				}
+			}
+		}
+	}
+}

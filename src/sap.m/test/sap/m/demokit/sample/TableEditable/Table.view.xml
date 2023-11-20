@@ -8,7 +8,7 @@
 		showNavButton="false">
 
 		<content>
-			<Table id="idProductsTable" growing="true" growingThreshold="10">
+			<Table id="idProductsTable" growing="true" growingThreshold="10" paste="onPaste">
 				<headerToolbar>
 					<OverflowToolbar id="otbSubheader">
 						<Title text="Products" level="H2" />
@@ -36,7 +36,7 @@
 					</Column>
 				</columns>
 				<items>
-					<ColumnListItem>
+					<ColumnListItem vAlign="Middle">
 						<cells>
 							<ObjectIdentifier title="{Name}" text="{ProductId}" />
 							<ObjectNumber
@@ -69,7 +69,7 @@
 				<Button text="Order" press="onOrder">
 					<layoutData>
 						<OverflowToolbarLayoutData
-							moveToOverflow="false" />
+							priority="NeverOverflow" />
 					</layoutData>
 				</Button>
 			</OverflowToolbar>

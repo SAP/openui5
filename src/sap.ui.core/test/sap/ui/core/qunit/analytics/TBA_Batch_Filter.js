@@ -97,4 +97,4 @@ sap.ui.define([
 				"--AAD136757C5CF75E21C04F59B8682CEA0--\r\n" +
 				""
 	});
-}, /* bExport= */ false);
+});

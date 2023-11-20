@@ -1,0 +1,78 @@
+{
+  "1.107.0": {
+    "date": "September 2022",
+    "notes": [
+      {
+        "id": "b108d6b6b530eec11146786be4d8092c341526bd",
+        "type": "FEATURE",
+        "text": " sap.f.SidePanel: new control (initial implementation)"
+      },
+      {
+        "id": "f5c2f180eb00402b4ad2c6e5411bbf2e84c0ccda",
+        "type": "FIX",
+        "text": " sap.m.MessageView: Correct activeTitle truncation on Horizon",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280158307"
+          }
+        ]
+      },
+      {
+        "id": "e1041575436e9466ad5e66b2ffb14fb8ee1f8648",
+        "type": "FIX",
+        "text": " sap.m.Page: Correct offset is applied to the content",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270111870"
+          }
+        ]
+      },
+      {
+        "id": "73828b320352e3c909546a8e798cf9e733a9c20a",
+        "type": "FIX",
+        "text": " Integration cards: Footer in Object card is now correctly aligned",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280170159"
+          }
+        ]
+      },
+      {
+        "id": "03a6d051bcef9efbfcd60dcfbee5375c36d92b56",
+        "type": "FIX",
+        "text": " sap.m.Slider: Start/end dot position adjustments",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280159201"
+          }
+        ]
+      },
+      {
+        "id": "58c57d08a13c9af7859db35cb25f39c359c49a37",
+        "type": "FIX",
+        "text": "sap.m.InputBase: Width adjustment for not editable input controls",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280159028"
+          }
+        ]
+      },
+      {
+        "id": "d6f35e51fbeb74bde61db219b8c55230d5b2a838",
+        "type": "FIX",
+        "text": " Integration cards: Button group in Object card is now aligned",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280135973"
+          }
+        ]
+      }
+    ]
+  }
+}

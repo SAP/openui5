@@ -630,13 +630,19 @@ $.widget("ui.sortable", $.ui.mouse, {
 				for ( j = cur.length - 1; j >= 0; j--){
 					inst = $.data(cur[j], this.widgetFullName);
 					if(inst && inst !== this && !inst.options.disabled) {
-						queries.push([$.isFunction(inst.options.items) ? inst.options.items.call(inst.element) : $(inst.options.items, inst.element).not(".ui-sortable-helper").not(".ui-sortable-placeholder"), inst]);
+						// ##### BEGIN: MODIFIED BY SAP
+						// queries.push([$.isFunction(inst.options.items) ? inst.options.items.call(inst.element) : $(inst.options.items, inst.element).not(".ui-sortable-helper").not(".ui-sortable-placeholder"), inst]);
+						queries.push([typeof inst.options.items === "function" ? inst.options.items.call(inst.element) : $(inst.options.items, inst.element).not(".ui-sortable-helper").not(".ui-sortable-placeholder"), inst]);
+						// ##### END: MODIFIED BY SAP
 					}
 				}
 			}
 		}
 
-		queries.push([$.isFunction(this.options.items) ? this.options.items.call(this.element, null, { options: this.options, item: this.currentItem }) : $(this.options.items, this.element).not(".ui-sortable-helper").not(".ui-sortable-placeholder"), this]);
+		// ##### BEGIN: MODIFIED BY SAP
+		// queries.push([$.isFunction(this.options.items) ? this.options.items.call(this.element, null, { options: this.options, item: this.currentItem }) : $(this.options.items, this.element).not(".ui-sortable-helper").not(".ui-sortable-placeholder"), this]);
+		queries.push([typeof this.options.items === "function" ? this.options.items.call(this.element, null, { options: this.options, item: this.currentItem }) : $(this.options.items, this.element).not(".ui-sortable-helper").not(".ui-sortable-placeholder"), this]);
+		// ##### END: MODIFIED BY SAP
 
 		function addItems() {
 			items.push( this );
@@ -671,7 +677,10 @@ $.widget("ui.sortable", $.ui.mouse, {
 
 		var i, j, cur, inst, targetData, _queries, item, queriesLength,
 			items = this.items,
-			queries = [[$.isFunction(this.options.items) ? this.options.items.call(this.element[0], event, { item: this.currentItem }) : $(this.options.items, this.element), this]],
+			// ##### BEGIN: MODIFIED BY SAP
+			// queries = [[$.isFunction(this.options.items) ? this.options.items.call(this.element[0], event, { item: this.currentItem }) : $(this.options.items, this.element), this]],
+			queries = [[typeof this.options.items === "function" ? this.options.items.call(this.element[0], event, { item: this.currentItem }) : $(this.options.items, this.element), this]],
+			// ##### END: MODIFIED BY SAP
 			connectWith = this._connectWith();
 
 		if(connectWith && this.ready) { //Shouldn't be run the first time through due to massive slow-down
@@ -680,7 +689,10 @@ $.widget("ui.sortable", $.ui.mouse, {
 				for (j = cur.length - 1; j >= 0; j--){
 					inst = $.data(cur[j], this.widgetFullName);
 					if(inst && inst !== this && !inst.options.disabled) {
-						queries.push([$.isFunction(inst.options.items) ? inst.options.items.call(inst.element[0], event, { item: this.currentItem }) : $(inst.options.items, inst.element), inst]);
+						// ##### BEGIN: MODIFIED BY SAP
+						// queries.push([$.isFunction(inst.options.items) ? inst.options.items.call(inst.element[0], event, { item: this.currentItem }) : $(inst.options.items, inst.element), inst]);
+						queries.push([typeof inst.options.items === "function" ? inst.options.items.call(inst.element[0], event, { item: this.currentItem }) : $(inst.options.items, inst.element), inst]);
+						// ##### END: MODIFIED BY SAP
 						this.containers.push(inst);
 					}
 				}
@@ -911,7 +923,10 @@ $.widget("ui.sortable", $.ui.mouse, {
 	_createHelper: function(event) {
 
 		var o = this.options,
-			helper = $.isFunction(o.helper) ? $(o.helper.apply(this.element[0], [event, this.currentItem])) : (o.helper === "clone" ? this.currentItem.clone() : this.currentItem);
+			// ##### BEGIN: MODIFIED BY SAP
+			// helper = $.isFunction(o.helper) ? $(o.helper.apply(this.element[0], [event, this.currentItem])) : (o.helper === "clone" ? this.currentItem.clone() : this.currentItem);
+			helper = typeof o.helper === "function" ? $(o.helper.apply(this.element[0], [event, this.currentItem])) : (o.helper === "clone" ? this.currentItem.clone() : this.currentItem);
+			// ##### END: MODIFIED BY SAP
 
 		//Add the helper to the DOM if that didn't happen already
 		if(!helper.parents("body").length) {

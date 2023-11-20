@@ -1,11 +1,10 @@
 /*global QUnit*/
 
-sap.ui.define("sap.m.qunit.PDFViewerBinding", [
-	"test/sap/m/qunit/PDFViewerTestUtils",
-	"sap/m/PDFViewer",
+sap.ui.define([
+	"./PDFViewerTestUtils",
 	"sap/ui/model/json/JSONModel",
 	"sap/m/PDFViewerRenderer"
-], function (TestUtils, PDFViewer, JSONModel, PDFViewerRenderer) {
+], function (TestUtils, JSONModel, PDFViewerRenderer) {
 	"use strict";
 
 	var oPdfViewer = null;
@@ -17,7 +16,7 @@ sap.ui.define("sap.m.qunit.PDFViewerBinding", [
 	});
 
 	// if the environment does not have pdf plugin, then it is not possible to run standard test suite
-	if (!PDFViewerRenderer._isPdfPluginEnabled()) {
+	if (!PDFViewerRenderer._isPdfPluginEnabled() || /HeadlessChrome/.test(window.navigator.userAgent)) {
 		return;
 	}
 
@@ -26,7 +25,7 @@ sap.ui.define("sap.m.qunit.PDFViewerBinding", [
 		var loadDone = assert.async();
 
 		var oModel = new JSONModel({
-			source: "./pdfviewer/sample-file.pdf"
+			source: "test-resources/sap/m/qunit/pdfviewer/sample-file.pdf"
 		});
 
 		var oOptions = {
@@ -51,7 +50,7 @@ sap.ui.define("sap.m.qunit.PDFViewerBinding", [
 		var loadDone2 = assert.async();
 
 		var oModel = new JSONModel({
-			source: "./pdfviewer/sample-file.pdf"
+			source: "test-resources/sap/m/qunit/pdfviewer/sample-file.pdf"
 		});
 
 		var fnLoadHandler1 = function () {
@@ -76,13 +75,13 @@ sap.ui.define("sap.m.qunit.PDFViewerBinding", [
 			oPdfViewer.detachLoaded(fnLoadHandler1);
 			oPdfViewer.attachLoaded(fnLoadHandler2);
 
-			var sExpectedSource = "./pdfviewer/sample-file2.pdf";
+			var sExpectedSource = "test-resources/sap/m/qunit/pdfviewer/sample-file2.pdf";
 			oModel.setData({
 				"source": sExpectedSource
 			});
 			assert.equal(oPdfViewer.getSource(), sExpectedSource);
 
-			TestUtils.rerender();
+			TestUtils.triggerRerender();
 			return Promise.resolve();
 		};
 
@@ -100,7 +99,7 @@ sap.ui.define("sap.m.qunit.PDFViewerBinding", [
 		var loadDone2 = assert.async();
 
 		var oModel = new JSONModel({
-			source: "./pdfviewer/sample-file.pdf"
+			source: "test-resources/sap/m/qunit/pdfviewer/sample-file.pdf"
 		});
 
 		var fnLoadHandler1 = function () {
@@ -126,11 +125,11 @@ sap.ui.define("sap.m.qunit.PDFViewerBinding", [
 			oPdfViewer.detachLoaded(fnLoadHandler1);
 			oPdfViewer.attachLoaded(fnLoadHandler2);
 
-			var sExpectedSource = "./pdfviewer/sample-file2.pdf";
+			var sExpectedSource = "test-resources/sap/m/qunit/pdfviewer/sample-file2.pdf";
 			oPdfViewer.setSource(sExpectedSource);
 			assert.equal(oModel.getProperty('/source'), sExpectedSource);
 
-			TestUtils.rerender();
+			TestUtils.triggerRerender();
 		};
 
 		oPdfViewer = TestUtils.createPdfViewer(oOptions);

@@ -2,10 +2,15 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/NumberFormat',
-		'sap/ui/model/FormatException', 'sap/ui/model/odata/type/ODataType',
-		'sap/ui/model/ParseException', 'sap/ui/model/ValidateException'],
-	function(jQuery, NumberFormat, FormatException, ODataType, ParseException, ValidateException) {
+sap.ui.define([
+	"sap/base/Log",
+	"sap/ui/core/Lib",
+	"sap/ui/core/format/NumberFormat",
+	"sap/ui/model/FormatException",
+	"sap/ui/model/ParseException",
+	"sap/ui/model/ValidateException",
+	"sap/ui/model/odata/type/ODataType"
+], function(Log, Library, NumberFormat, FormatException, ParseException, ValidateException, ODataType) {
 	"use strict";
 
 	/**
@@ -15,24 +20,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/NumberFormat',
 	 *   the locale-dependent error message
 	 */
 	function getErrorMessage() {
-		return sap.ui.getCore().getLibraryResourceBundle().getText("EnterNumber");
-	}
-
-	/**
-	 * Returns the formatter. Creates it lazily.
-	 * @param {sap.ui.model.odata.type.Double} oType
-	 *   the type instance
-	 * @returns {sap.ui.core.format.NumberFormat}
-	 *   the formatter
-	 */
-	function getFormatter(oType) {
-		var oFormatOptions;
-
-		if (!oType.oFormat) {
-			oFormatOptions = jQuery.extend({groupingEnabled : true}, oType.oFormatOptions);
-			oType.oFormat = NumberFormat.getFloatInstance(oFormatOptions);
-		}
-		return oType.oFormat;
+		return Library.getResourceBundleFor("sap.ui.core").getText("EnterNumber");
 	}
 
 	/**
@@ -64,7 +52,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/NumberFormat',
 			if (vNullable === false || vNullable === "false") {
 				oType.oConstraints = {nullable : false};
 			} else if (vNullable !== undefined && vNullable !== true && vNullable !== "true") {
-				jQuery.sap.log.warning("Illegal nullable: " + vNullable, null, oType.getName());
+				Log.warning("Illegal nullable: " + vNullable, null, oType.getName());
 			}
 		}
 
@@ -88,8 +76,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/NumberFormat',
 	 *
 	 * @alias sap.ui.model.odata.type.Double
 	 * @param {object} [oFormatOptions]
-	 *   format options as defined in {@link sap.ui.core.format.NumberFormat}. In contrast to
-	 *   NumberFormat <code>groupingEnabled</code> defaults to <code>true</code>.
+	 *   Format options as defined in {@link sap.ui.core.format.NumberFormat.getFloatInstance}.
+	 *   In contrast to NumberFormat <code>groupingEnabled</code> defaults to <code>true</code>.
+	 * @param {boolean} [oFormatOptions.parseEmptyValueToZero=false]
+	 *   Whether the empty string and <code>null</code> are parsed to <code>0</code> if the <code>nullable</code>
+	 *   constraint is set to <code>false</code>; see {@link #parseValue parseValue}; since 1.115.0
+	 * @param {boolean} [oFormatOptions.preserveDecimals=true]
+	 *   by default decimals are preserved, unless <code>oFormatOptions.style</code> is given as
+	 *   "short" or "long"; since 1.89.0
 	 * @param {object} [oConstraints]
 	 *   constraints; {@link #validateValue validateValue} throws an error if any constraint is
 	 *   violated
@@ -104,6 +98,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/NumberFormat',
 					ODataType.apply(this, arguments);
 					this.oFormatOptions = oFormatOptions;
 					setConstraints(this, oConstraints);
+					this.checkParseEmptyValueToZero();
 				}
 			}
 		);
@@ -126,7 +121,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/NumberFormat',
 	 *   for this type.
 	 * @public
 	 */
-	Double.prototype.formatValue = function(vValue, sTargetType) {
+	Double.prototype.formatValue = function (vValue, sTargetType) {
 		var oFormatOptions,
 			fValue;
 
@@ -141,70 +136,94 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/NumberFormat',
 			throw new FormatException("Illegal " + this.getName() + " value: " + vValue);
 		}
 		switch (this.getPrimitiveType(sTargetType)) {
-		case "any":
-			return vValue;
-		case "float":
-			return fValue;
-		case "int":
-			return Math.floor(fValue);
-		case "string":
-			if (fValue && (Math.abs(fValue) >= 1e15 || Math.abs(fValue) < 1e-4)) {
-				oFormatOptions = getFormatter(this).oFormatOptions;
-				return fValue.toExponential()
-					.replace("e", "\u00a0E") // non-breaking space
-					.replace(".", oFormatOptions.decimalSeparator)
-					.replace("+", oFormatOptions.plusSign)
-					.replace("-", oFormatOptions.minusSign);
-			}
-			return getFormatter(this).format(fValue);
-		default:
-			throw new FormatException("Don't know how to format " + this.getName() + " to "
-				+ sTargetType);
+			case "any":
+				return vValue;
+			case "float":
+				return fValue;
+			case "int":
+				return Math.floor(fValue);
+			case "string":
+				if (fValue && (Math.abs(fValue) >= 1e15 || Math.abs(fValue) < 1e-4)) {
+					oFormatOptions = this.getFormat().oFormatOptions;
+					return fValue.toExponential()
+						.replace("e", "\u00a0E") // non-breaking space
+						.replace(".", oFormatOptions.decimalSeparator)
+						.replace("+", oFormatOptions.plusSign)
+						.replace("-", oFormatOptions.minusSign);
+				}
+				return this.getFormat().format(fValue);
+			default:
+				throw new FormatException("Don't know how to format " + this.getName() + " to "
+					+ sTargetType);
 		}
+	};
+
+	/**
+	 * @override
+	 */
+	Double.prototype.getFormat = function () {
+		if (!this.oFormat) {
+			var oFormatOptions = {groupingEnabled : true},
+				oTypeFormatOptions = this.oFormatOptions || {};
+			if (oTypeFormatOptions.style !== "short" && oTypeFormatOptions.style !== "long") {
+				oFormatOptions.preserveDecimals = true;
+			}
+			Object.assign(oFormatOptions, this.oFormatOptions);
+			delete oFormatOptions.parseEmptyValueToZero;
+			this.oFormat = NumberFormat.getFloatInstance(oFormatOptions);
+		}
+
+		return this.oFormat;
 	};
 
 	/**
 	 * Parses the given value, which is expected to be of the given type, to an Edm.Double in
 	 * <code>number</code> representation.
 	 *
-	 * @param {string|number} vValue
-	 *   the value to be parsed; the empty string and <code>null</code> are parsed to
-	 *   <code>null</code>; note that there is no way to enter <code>Infinity</code> or
+	 * @param {number|string|null} vValue
+	 *   The value to be parsed; note that there is no way to enter <code>Infinity</code> or
 	 *   <code>NaN</code> values
 	 * @param {string} sSourceType
-	 *   the source type (the expected type of <code>vValue</code>); may be "float", "int",
+	 *   The source type (the expected type of <code>vValue</code>); may be "float", "int",
 	 *   "string", or a type with one of these types as its
 	 *   {@link sap.ui.base.DataType#getPrimitiveType primitive type}.
 	 *   See {@link sap.ui.model.odata.type} for more information.
-	 * @returns {number}
-	 *   the parsed value
+	 * @returns {number|null}
+	 *   The parsed value. The empty string and <code>null</code> are parsed to:
+	 *   <ul>
+	 *     <li><code>0</code> if the <code>parseEmptyValueToZero</code> format option
+	 *       is set to <code>true</code> and the <code>nullable</code> constraint is set to <code>false</code>,</li>
+	 *     <li><code>null</code> otherwise.</li>
+	 *   </ul>
 	 * @throws {sap.ui.model.ParseException}
-	 *   if <code>sSourceType</code> is unsupported or if the given string cannot be parsed to a
+	 *   If <code>sSourceType</code> is unsupported or if the given string cannot be parsed to a
 	 *   Double
 	 * @public
 	 * @since 1.29.0
 	 */
-	Double.prototype.parseValue = function(vValue, sSourceType) {
-		var fResult;
+	Double.prototype.parseValue = function (vValue, sSourceType) {
+		var vEmptyValue = this.getEmptyValue(vValue, true);
+		if (vEmptyValue !== undefined) {
+			return vEmptyValue;
+		}
 
-		if (vValue === null || vValue === "") {
-			return null;
-		}
+		var fResult;
 		switch (this.getPrimitiveType(sSourceType)) {
-		case "string":
-			fResult = getFormatter(this).parse(vValue);
-			if (isNaN(fResult)) {
-				throw new ParseException(getErrorMessage());
-			}
-			break;
-		case "int":
-		case "float":
-			fResult = vValue;
-			break;
-		default:
-			throw new ParseException("Don't know how to parse " + this.getName() + " from "
-				+ sSourceType);
+			case "string":
+				fResult = this.getFormat().parse(vValue);
+				if (isNaN(fResult)) {
+					throw new ParseException(getErrorMessage());
+				}
+				break;
+			case "int":
+			case "float":
+				fResult = vValue;
+				break;
+			default:
+				throw new ParseException("Don't know how to parse " + this.getName() + " from "
+					+ sSourceType);
 		}
+
 		return fResult;
 	};
 
@@ -222,7 +241,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/NumberFormat',
 	 *
 	 * @param {number} fValue
 	 *   the value to be validated
-	 * @returns {void}
 	 * @throws {sap.ui.model.ValidateException} if the value is not valid
 	 * @public
 	 * @since 1.29.0

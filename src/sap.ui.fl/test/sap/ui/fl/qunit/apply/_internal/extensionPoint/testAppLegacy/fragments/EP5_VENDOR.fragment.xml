@@ -1,0 +1,6 @@
+<core:FragmentDefinition
+		id="customFragment"
+		xmlns="sap.m"
+		xmlns:core="sap.ui.core">
+		<Text id="EP5_FRAGMENT_TEXT_ID" text="{Name}" />
+</core:FragmentDefinition>

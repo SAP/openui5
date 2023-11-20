@@ -1,0 +1,56 @@
+
+.sapUiSizeCompact .sapMSinglePCGrid {
+	& .sapUiCalItem
+	{
+		text-align: left;
+	}
+
+	& .sapUiCalDayName
+	{
+		text-align: right;
+	}
+}
+
+.sapMSinglePCBlockers,
+.sapMSinglePCAppointments {
+	.sapUiCalendarApp {
+		&.sapUiCalendarAppSel::after {
+			top: 0.0625rem;
+			bottom: 0.0625rem;
+			right: 0.0625rem;
+			left: 0.0625rem;
+		}
+	}
+}
+
+html.sap-desktop {
+	.sapMSinglePCBlockersRow > .sapMSinglePCBlockersColumns > .sapMSinglePCBlockersColumn:focus::after,
+	.sapMSinglePCGridContent .sapMSinglePCColumns .sapMSinglePCRow:focus::after {
+		border: 0.125rem dotted @sapUiContentFocusColor;
+	}
+}
+
+.sapMSinglePCAppointmentWrap.sapUiCalendarRowApps {
+	&:focus {
+		.sapUiCalendarAppCont:after {
+			top: 0;
+			left: 0;
+			right: 0;
+			bottom: 0;
+			border: 0.125rem dotted @sapUiContentFocusColor;
+		}
+	}
+}
+
+.sapMSinglePCAppointmentWrap.sapUiCalendarRowApps.sapUiCalendarApp {
+	width: calc(100% - 0.25rem)
+}
+
+.sapMSinglePC {
+	.sapUiCalendarAppCont{
+		border-left: 0.0625rem solid @sapUiContentForegroundBorderColor;
+	}
+	.sapMSinglePCColumnHeader .sapUiCalItem:focus {
+		outline: none;
+	}
+}

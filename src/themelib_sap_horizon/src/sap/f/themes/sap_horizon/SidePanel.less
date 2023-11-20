@@ -1,0 +1,37 @@
+/* =============================== */
+/* CSS for control sap.f/SidePanel */
+/* Horizon theme                   */
+/* =============================== */
+
+@_sap_ui_layout_Splitter_BarDecorationColors: @sapUiGroupContentBorderColor, transparent;
+
+.sapFSP {
+	.sapFSPSplitterBar {
+		.sapFSPSplitterBarGripIcon {
+			color: @sapUiButtonLiteTextColor;
+		}
+	}
+	.sapFSPSide {
+		.sapFSPSideInner {
+			.sapFSPActionBar {
+
+				.sapFSPItem {
+					.sapUiIcon {
+						border-width: 0.125rem;
+					}
+					&.sapFSPSelected {
+						&::before {
+							width: 0.25rem;
+						}
+					}
+
+					&:focus {
+						&::after {
+							border: 0.125rem solid @sapUiContentSelectedForegroundColor;
+						}
+					}
+				}
+			}
+		}
+	}
+}

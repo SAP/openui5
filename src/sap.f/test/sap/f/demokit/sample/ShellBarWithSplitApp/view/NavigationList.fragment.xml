@@ -1,0 +1,4 @@
+<NavigationListItem xmlns="sap.tnt" text="{title}" icon="{icon}" enabled="{enabled}" expanded="{expanded}" items="{path: 'items', templateShareable:true}"
+					key="{key}">
+	<NavigationListItem text="{title}" key="{key}" enabled="{enabled}" />
+</NavigationListItem>

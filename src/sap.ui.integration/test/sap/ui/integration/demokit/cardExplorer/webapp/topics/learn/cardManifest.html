@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<title>Card Manifest</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<script src="../../scripts/boot.js"></script>
+</head>
+
+<body class="sapUiBody topicBody">
+	<div class="topic">
+		<div class="content">
+			<h1 id="overview">Card Manifest</h1>
+			<p>
+				The card manifest is JSON file that describes the card.
+				It is based on the namespaces definitions in the <a data-demokit-href="#/topic/be0cf40f61184b358b5faedaec98b2da" target="_blank">UI5 Descriptor for Applications, Components and Libraries</a>.
+				Additionally, Integration cards extend this structure by adding the <code>"sap.card"</code> namespace.
+			</p>
+			<p>
+				There are several namespaces that are essential for Integration cards:
+			</p>
+
+			<h2 id="sapCardNamespace">"sap.card" Namespace</h2>
+			<p>
+				<code>"sap.card"</code> is the main namespace to be used when defining Integration cards. It has the following attributes (properties):
+			</p>
+			<div class="tableWrapper">
+				<table>
+					<tr>
+						<th>Property</th>
+						<th>Type</th>
+						<th>Default Value</th>
+						<th>Required</th>
+						<th>Description</th>
+						<th>Schema Version</th>
+						<th>Since</th>
+					</tr>
+					<tr>
+						<td>type</td>
+						<td>string</td>
+						<td></td>
+						<td>Yes</td>
+						<td>
+							The type of the card.
+							One of:
+							<ul>
+								<li>"AdaptiveCard"</li>
+								<li>"Analytical"</li>
+								<li>"Calendar"</li>
+								<li>"Component"</li>
+								<li>"List"</li>
+								<li>"Object"</li>
+								<li>"Table"</li>
+								<li>"Timeline"</li>
+								<li>"WebPage"</li>
+							</ul>
+						</td>
+						<td>1.14.0</td>
+						<td>1.62</td>
+					</tr>
+					<tr>
+						<td>header</td>
+						<td>object</td>
+						<td></td>
+						<td>Yes</td>
+						<td>One of <a href="../../index.html#/learn/headers/default" target="_parent">Header</a> or <a href="../../index.html#/learn/headers/numeric" target="_parent">NumericHeader</a>.</td>
+						<td>1.14.0</td>
+						<td>1.62</td>
+					</tr>
+					<tr>
+						<td>content</td>
+						<td>object</td>
+						<td></td>
+						<td>Yes</td>
+						<td>
+							The content of the card. Based on the "type" property it has different structure. See:
+							<ul>
+								<li><a href="../../index.html#/learn/typesOther/adaptive" target="_parent">Adaptive</a></li>
+								<li><a href="../../index.html#/learn/typesDeclarative/analytical" target="_parent">Analytical</a></li>
+								<li><a href="../../index.html#/learn/typesDeclarative/calendar" target="_parent">Calendar</a></li>
+								<li><a href="../../index.html#/learn/typesOther/component" target="_parent">Component</a></li>
+								<li><a href="../../index.html#/learn/typesDeclarative/list" target="_parent">List</a></li>
+								<li><a href="../../index.html#/learn/typesDeclarative/object" target="_parent">Object</a></li>
+								<li><a href="../../index.html#/learn/typesDeclarative/table" target="_parent">Table</a></li>
+								<li><a href="../../index.html#/learn/typesDeclarative/timeline" target="_parent">Timeline</a></li>
+								<li><a href="../../index.html#/learn/typesOther/webPage" target="_parent">WebPage</a></li>
+							</ul>
+						</td>
+						<td>1.14.0</td>
+						<td>1.62</td>
+					</tr>
+					<tr>
+						<td>footer</td>
+						<td><a href="../../index.html#/learn/footer" target="_parent">Footer</a></td>
+						<td></td>
+						<td>No</td>
+						<td>The footer of the card.</td>
+						<td>1.35.0</td>
+						<td>1.93</td>
+					</tr>
+					<tr>
+						<td>configuration</td>
+						<td><a href="../../index.html#/learn/configuration" target="_parent">Configuration</a></td>
+						<td></td>
+						<td>No</td>
+						<td>General configuration of the card. Allows to define parameters, destinations, filters and more.</td>
+						<td>1.15.0</td>
+						<td>1.65</td>
+					</tr>
+					<tr>
+						<td>extension</td>
+						<td>string</td>
+						<td></td>
+						<td>No</td>
+						<td>Path to extension module.</td>
+						<td>1.23.0</td>
+						<td>1.79</td>
+					</tr>
+					<tr>
+						<td>data</td>
+						<td><a href="../../index.html#/learn/features/data" target="_parent">Data</a></td>
+						<td></td>
+						<td>No</td>
+						<td>Data definition for the card.</td>
+						<td>1.15.0</td>
+						<td>1.65</td>
+					</tr>
+					<tr>
+						<td>requiredHeight</td>
+						<td>string</td>
+						<td></td>
+						<td>No</td>
+						<td>Card minimum required height.</td>
+						<td>1.37.0</td>
+						<td>1.96</td>
+					</tr>
+					<tr>
+						<td>requiredWidth</td>
+						<td>string</td>
+						<td></td>
+						<td>No</td>
+						<td>Card minimum required width.</td>
+						<td>1.37.0</td>
+						<td>1.96</td>
+					</tr>
+				</table>
+			</div>
+
+			<h2 id="sapAppNamespace">"sap.app" Namespace</h2>
+			<p>
+				Besides the <code>"sap.card"</code> namespace, every card manifest should also provide the mandatory fields of the <code>"sap.app"</code> namespace, such as <code>"id"</code> and <code>"type": "card"</code>.
+				Find the full list of the properties in the <a data-demokit-href="#/topic/be0cf40f61184b358b5faedaec98b2da.html#loiobe0cf40f61184b358b5faedaec98b2da/section_sap_app" target="_blank">sap.app section in the UI5 Descriptor for Applications, Components and Libraries</a>.
+			</p>
+
+			<h2 id="sapUi5Namespace">"sap.ui5" Namespace</h2>
+			<p>
+				This namespace is used when the type of the card is "Component" or when there are dependencies to be preloaded for Extension.
+				Find the full list of the properties in the <a data-demokit-href="#/topic/be0cf40f61184b358b5faedaec98b2da.html#loiobe0cf40f61184b358b5faedaec98b2da/section_sap_app" target="_blank">sap.ui5 section in the UI5 Descriptor for Applications, Components and Libraries</a>.
+			</p>
+
+		</div>
+	</div>
+</body>
+
+</html>

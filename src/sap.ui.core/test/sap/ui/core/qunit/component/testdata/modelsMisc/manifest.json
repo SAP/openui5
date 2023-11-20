@@ -1,0 +1,62 @@
+{
+	"sap.app": {
+		"id": "sap.ui.test.modelsMisc",
+		"type": "application",
+
+		"dataSources": {
+			"V2_mainService": {
+				"uri": "/sap/odata/v2/service/",
+				"type": "OData",
+				"settings": {
+					"odataVersion": "2.0",
+					"ignoreAnnotationsFromMetadata": true
+				}
+			},
+
+			"V4_mainService": {
+				"uri": "/sap/odata/v4/service/",
+				"type": "OData",
+				"settings": {
+					"odataVersion": "4.0",
+					"ignoreAnnotationsFromMetadata": true
+				}
+			}
+		}
+	},
+	"sap.ui5": {
+		"dependencies": {
+			"libs": {
+				"sap.ui.core": {}
+			}
+		},
+		"models": {
+			"V2_withoutDataSource": {
+				"type" : "sap.ui.model.odata.v2.ODataModel",
+				"preload": true,
+				"settings": {
+					"serviceUrl": "/sap/odata/v2/service/",
+					"ignoreAnnotationsFromMetadata": true
+				}
+			},
+			"V4_withoutDataSource": {
+				"type" : "sap.ui.model.odata.v4.ODataModel",
+				"preload": true,
+				"settings": {
+					"serviceUrl": "/sap/odata/v4/service/",
+					"ignoreAnnotationsFromMetadata": true
+				}
+			},
+
+			"V2_withDataSource": {
+				"dataSource": "V2_mainService",
+				"preload": true,
+				"settings": {}
+			},
+			"V4_withDataSource": {
+				"dataSource": "V4_mainService",
+				"preload": true,
+				"settings": {}
+			}
+		}
+	}
+}

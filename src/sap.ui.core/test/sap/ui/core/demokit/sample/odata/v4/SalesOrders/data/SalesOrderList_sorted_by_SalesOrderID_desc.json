@@ -1,5 +1,4 @@
 {
-	"@odata.context" : "$metadata#SalesOrderList(BuyerID,ChangedAt,CurrencyCode,GrossAmount,LifecycleStatus,LifecycleStatusDesc,Note,SalesOrderID,SO_2_BP(BusinessPartnerID,CompanyName))",
 	"@odata.count" : "218",
 	"value" : [{
 		"@odata.etag" : "W/\"20160619220000.0000000\"",
@@ -8,7 +7,7 @@
 		"GrossAmount" : "195.16",
 		"LifecycleStatus" : "N",
 		"LifecycleStatusDesc" : "New",
-		"Note" : "EPM DG: SO ID 0500000008 Deliver as fast as possible",
+		"Note" : "EPM DG: SO ID 0500000009 Deliver as fast as possible",
 		"SalesOrderID" : "0500000009",
 		"SO_2_BP" : {
 			"@odata.etag" : "W/\"20160613065313.0000000\"",
@@ -43,7 +42,7 @@
 		"GrossAmount" : "10311.35",
 		"LifecycleStatus" : "N",
 		"LifecycleStatusDesc" : "New",
-		"Note" : "EPM DG: SO ID 0500000007 Deliver as fast as possible",
+		"Note" : "EPM DG: SO ID 0500000008 Deliver as fast as possible",
 		"SalesOrderID" : "0500000008",
 		"SO_2_BP" : {
 			"@odata.etag" : "W/\"20160613065313.0000000\"",
@@ -78,7 +77,7 @@
 		"GrossAmount" : "250.73",
 		"LifecycleStatus" : "N",
 		"LifecycleStatusDesc" : "New",
-		"Note" : "EPM DG: SO ID 0500000006 Deliver as fast as possible",
+		"Note" : "EPM DG: SO ID 0500000007 Deliver as fast as possible",
 		"SalesOrderID" : "0500000007",
 		"SO_2_BP" : {
 			"@odata.etag" : "W/\"20160613065313.0000000\"",

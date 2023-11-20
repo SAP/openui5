@@ -1,7 +1,7 @@
-<View xmlns="sap.m" controllerName="sap.ui.core.sample.TargetsStandalone.targetsApp.controller.View2">
+<mvc:View xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc" controllerName="sap.ui.core.sample.TargetsStandalone.targetsApp.controller.View2">
 	<Page
 		title="Second Page"
 		showNavButton="true"
 		navButtonPress="onBack">
 	</Page>
-</View>
+</mvc:View>

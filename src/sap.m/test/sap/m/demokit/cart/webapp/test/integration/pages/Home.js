@@ -1,9 +1,9 @@
 sap.ui.define([
-	'sap/ui/test/Opa5',
-	'sap/ui/test/matchers/BindingPath',
-	'sap/ui/test/matchers/Properties',
-	'sap/ui/test/matchers/AggregationFilled',
-	'sap/ui/test/actions/Press'
+	"sap/ui/test/Opa5",
+	"sap/ui/test/matchers/BindingPath",
+	"sap/ui/test/matchers/Properties",
+	"sap/ui/test/matchers/AggregationFilled",
+	"sap/ui/test/actions/Press"
 ], function (
 	Opa5,
 	BindingPath,
@@ -31,15 +31,6 @@ sap.ui.define([
 						matchers : new Properties({title : "Speakers"}),
 						actions : new Press(),
 						errorMessage : "The category list does not contain required selection"
-					});
-				},
-
-				iGoToTheCartPage : function () {
-					return this.waitFor({
-						controlType : "sap.m.Button",
-						matchers : new Properties({icon : "sap-icon://cart"}),
-						actions : new Press(),
-						errorMessage : "The cart button was not found and could not be pressed"
 					});
 				}
 			},

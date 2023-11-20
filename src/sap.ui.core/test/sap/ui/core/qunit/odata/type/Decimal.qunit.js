@@ -1,34 +1,35 @@
 /*!
  *{copyright}
  */
-sap.ui.require([
-	"jquery.sap.global",
+sap.ui.define([
+	"sap/base/Log",
+	"sap/base/i18n/Localization",
 	"sap/ui/core/Control",
 	"sap/ui/core/format/NumberFormat",
 	"sap/ui/model/FormatException",
 	"sap/ui/model/ParseException",
 	"sap/ui/model/ValidateException",
-	"sap/ui/model/type/Float",
 	"sap/ui/model/odata/type/Decimal",
 	"sap/ui/model/odata/type/ODataType",
+	"sap/ui/model/type/Float",
 	"sap/ui/test/TestUtils"
-], function (jQuery, Control, NumberFormat, FormatException, ParseException, ValidateException,
-		Float, Decimal, ODataType, TestUtils) {
+], function (Log, Localization, Control, NumberFormat, FormatException, ParseException,
+		ValidateException, Decimal, ODataType, Float, TestUtils) {
 	/*global QUnit, sap, sinon */
 	"use strict";
 
-	var sDefaultLanguage = sap.ui.getCore().getConfiguration().getLanguage();
+	var sDefaultLanguage = Localization.getLanguage();
 
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.odata.type.Decimal", {
 		beforeEach : function () {
-			this.oLogMock = this.mock(jQuery.sap.log);
+			this.oLogMock = this.mock(Log);
 			this.oLogMock.expects("warning").never();
 			this.oLogMock.expects("error").never();
-			sap.ui.getCore().getConfiguration().setLanguage("en-US");
+			Localization.setLanguage("en-US");
 		},
 		afterEach : function () {
-			sap.ui.getCore().getConfiguration().setLanguage(sDefaultLanguage);
+			Localization.setLanguage(sDefaultLanguage);
 		}
 	});
 
@@ -46,6 +47,26 @@ sap.ui.require([
 		assert.strictEqual(oType.oFormat, null, "no formatter preload");
 	});
 
+	//*****************************************************************************************
+	QUnit.test("constructor calls checkParseEmptyValueToZero", function (assert) {
+		var oConstraints = {scale : 3};
+		var oFormatOptions = {"~formatOption" : "foo"};
+
+		var oExpectation = this.mock(ODataType.prototype).expects("checkParseEmptyValueToZero")
+				.withExactArgs()
+				.callsFake(function () {
+					assert.deepEqual(this.oConstraints, oConstraints);
+					assert.strictEqual(this.oFormatOptions, oFormatOptions);
+				});
+
+		// code under test
+		var oType = new Decimal(oFormatOptions, oConstraints);
+
+		assert.ok(oExpectation.calledOn(oType));
+		assert.deepEqual(oType.oConstraints, oConstraints);
+		assert.strictEqual(oType.oFormatOptions, oFormatOptions);
+	});
+
 	//*********************************************************************************************
 	QUnit.test("construct with null values for 'oFormatOptions' and 'oConstraints",
 		function (assert) {
@@ -56,8 +77,29 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+[
+	undefined,
+	{},
+	{preserveDecimals : true},
+	{preserveDecimals : "yes"},
+	{preserveDecimals : undefined},
+	{preserveDecimals : null},
+	{preserveDecimals : false}
+].forEach(function (oFormatOptions, i) {
+	QUnit.test("constructor: oFormatOptions.preserveDecimals; #" + i, function (assert) {
+		// code under test
+		var oType = new Decimal(oFormatOptions);
+
+		// format options are taken as they are - preserveDecimals is considered when creating the
+		// formatter instance
+		assert.strictEqual(oType.oFormatOptions, oFormatOptions);
+	});
+});
+
+	//*********************************************************************************************
 	[
 		{i : {precision : 8, scale : 3}, o : {precision : 8, scale : 3}},
+		{i : {precision : 3, scale : 3}, o : {precision : 3, scale : 3}},
 		{i : {nullable : false, scale : 3}, o : {nullable : false, scale : 3}},
 		{i : {nullable : "foo"}, o : undefined,
 			warning : "Illegal nullable: foo"},
@@ -74,7 +116,8 @@ sap.ui.require([
 		{i : {precision : true}, o : undefined,
 			warning : "Illegal precision: true"},
 		{i : {precision : 2, scale : 3}, o : {precision : 2, scale : Infinity},
-			warning : "Illegal scale: must be less than precision (precision=2, scale=3)"},
+			warning : "Illegal scale: must be less than or equal to precision "
+				+ "(precision=2, scale=3)"},
 		{i : {minimum : "foo"}, o : undefined,
 			warning : "Illegal minimum: foo"},
 		{i : {minimum : "foo123"}, o : undefined,
@@ -115,7 +158,8 @@ sap.ui.require([
 		assert.strictEqual(oType.formatValue("1234.1", "int"), 1234, "target type int");
 		assert.strictEqual(oType.formatValue("1234", "string"), "1,234.000",
 			"target type string");
-		assert.strictEqual(oType.formatValue("1234.1234", "string"), "1,234.123", "rounding");
+		assert.strictEqual(oType.formatValue("1234.1234", "string"), "1,234.1234",
+			"decimals preserved");
 		assert.strictEqual(oType.formatValue("123456", "string"), "123,456.000",
 			"surpassing precision");
 		try {
@@ -131,6 +175,23 @@ sap.ui.require([
 			.returns("string");
 		assert.strictEqual(oType.formatValue("123456", "sap.ui.core.CSSSize"), "123,456.000");
 	});
+
+	//*********************************************************************************************
+[
+	{i : "1.10", o : "1.1"},
+	{i : "100", o : "100"},
+	{i : "1.00", o : "1"},
+	//FIXME some automated tests call formatValue with a number -> fix tests
+	//  for now, support number in order to keep the fix small
+	{i : 77, o : "77"}
+].forEach(function (oFixture, i) {
+	QUnit.test("BCP 188109/2020: format removes trailing zeroes, " + i, function (assert) {
+		var oType = new Decimal({minFractionDigits : 0, maxFractionDigits : 2});
+
+		// code under test
+		assert.strictEqual(oType.formatValue(oFixture.i, "string"), oFixture.o);
+	});
+});
 
 	//*********************************************************************************************
 	QUnit.test("parse", function (assert) {
@@ -186,7 +247,7 @@ sap.ui.require([
 			oExpected = "<1";
 
 		// special: non-breaking space as grouping separator
-		sap.ui.getCore().getConfiguration().setLanguage("sv");
+		Localization.setLanguage("sv");
 
 		assert.strictEqual(oType.formatValue("1234567890123456.789012", "string"),
 			"1\u00a0234\u00a0567\u00a0890\u00a0123\u00a0456,789012",
@@ -279,6 +340,7 @@ sap.ui.require([
 			error : "EnterNumberFraction 1"},
 		{value : "12.3", constraints : {precision : 3, scale : 2},
 			error : "EnterNumberInteger 1"},
+		{value : "12", constraints : {precision : 1}, error : "EnterMaximumOfDigits 1"},
 		{value : "12.34", constraints : {precision : 3, scale : "variable"},
 			error : "EnterNumberPrecision 3"},
 		{value : "1.2", error : "EnterInt"},
@@ -286,7 +348,7 @@ sap.ui.require([
 			error : "EnterNumberIntegerFraction 2 1"},
 		// excess zeros are treated as error (parseValue removes them)
 		{value : "1.0", error : "EnterInt"},
-		{value : "012", constraints : {precision : 2}, error : "EnterNumberInteger 2"},
+		{value : "012", constraints : {precision : 2}, error : "EnterMaximumOfDigits 2"},
 		{value : "99", constraints : {minimum : "100"},
 			error : "EnterNumberMin 100"},
 		{value : "99.999", constraints : {precision : 6, scale : 3, minimum : "100"},
@@ -300,7 +362,17 @@ sap.ui.require([
 		{value : "1000.001", constraints : {precision : 7, scale : 3, maximum : "1000"},
 			error : "EnterNumberMax 1,000.000"},
 		{value : "1000", constraints : {maximum : "1000", maximumExclusive: true},
-			error : "EnterNumberMaxExclusive 1,000"}
+			error : "EnterNumberMaxExclusive 1,000"},
+		{value : "0.1234", constraints : {precision : 3, scale : 3},
+			error : "EnterNumberFraction 3"},
+		{value : "1.1234", constraints : {precision : 3, scale : 3},
+			error : "EnterNumberFractionOnly 3"},
+		{value : "1.123", constraints : {precision : 4, scale : 4},
+			error : "EnterNumberFractionOnly 4"},
+		{value : "-1", constraints : {precision : 2, scale : 2},
+			error : "EnterNumberFractionOnly 2"},
+		{value : "10.2", constraints : {precision : 4, scale : 4},
+			error : "EnterNumberFractionOnly 4"}
 	].forEach(function (oFixture) {
 		QUnit.test("validate : " + oFixture.value, function (assert) {
 			TestUtils.withNormalizedMessages(function () {
@@ -338,13 +410,24 @@ sap.ui.require([
 			}
 		);
 	});
+
+	//*********************************************************************************************
+["+0.1", "+0.123", "-0.1", "-0.123", "0"].forEach(function (sValue) {
+	QUnit.test("validate success equal precision and scale: " + sValue, function (assert) {
+		var oType = new Decimal({}, {precision : 3, scale : 3});
+
+		// code under test
+		oType.validateValue(sValue);
+	});
+});
+
 	//*********************************************************************************************
 	QUnit.test("localization change", function (assert) {
 		var oControl = new Control(),
 			oType = new Decimal();
 
 		oControl.bindProperty("tooltip", {path : "/unused", type : oType});
-		sap.ui.getCore().getConfiguration().setLanguage("de-CH");
+		Localization.setLanguage("de-CH");
 		assert.strictEqual(oType.formatValue("1234", "string"), "1’234",
 			"adjusted to changed language");
 	});
@@ -395,29 +478,79 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	[{
+		set : undefined,
+		expect : {groupingEnabled : true, maxIntegerDigits : Infinity, parseAsString : true,
+			preserveDecimals : true}
+	}, {
+		set : {},
+		expect : {groupingEnabled : true, maxIntegerDigits : Infinity, parseAsString : true,
+			preserveDecimals : true}
+	}, {
+		set : {preserveDecimals : true},
+		expect : {groupingEnabled : true, maxIntegerDigits : Infinity, parseAsString : true,
+			preserveDecimals : true}
+	}, {
+		set : {preserveDecimals : "yes"},
+		expect : {groupingEnabled : true, maxIntegerDigits : Infinity, parseAsString : true,
+			preserveDecimals : "yes"}
+	}, {
+		set : {preserveDecimals : undefined},
+		expect : {groupingEnabled : true, maxIntegerDigits : Infinity, parseAsString : true,
+			preserveDecimals : undefined}
+	}, {
+		set : {preserveDecimals : null},
+		expect : {groupingEnabled : true, maxIntegerDigits : Infinity, parseAsString : true,
+			preserveDecimals : null}
+	}, {
+		set : {preserveDecimals : false},
+		expect : {groupingEnabled : true, maxIntegerDigits : Infinity, parseAsString : true,
+			preserveDecimals : false}
+	}, {
+		set : {style : "short"},
+		expect : {groupingEnabled : true, maxIntegerDigits : Infinity, parseAsString : true,
+			style : "short"}
+	}, {
+		set : {style : "long"},
+		expect : {groupingEnabled : true, maxIntegerDigits : Infinity, parseAsString : true,
+			style : "long"}
+	}, {
+		set : {style : "standard"},
+		expect : {groupingEnabled : true, maxIntegerDigits : Infinity, parseAsString : true,
+			preserveDecimals : true, style : "standard"}
+	}, {
+		set : {preserveDecimals : true, style : "short"},
+		expect : {groupingEnabled : true, maxIntegerDigits : Infinity, parseAsString : true,
+			preserveDecimals : true, style : "short"}
+	}, {
+		set : {preserveDecimals : true, style : "long"},
+		expect : {groupingEnabled : true, maxIntegerDigits : Infinity, parseAsString : true,
+			preserveDecimals : true, style : "long"}
+	}, {
 		set : {foo : "bar"},
 		expect : {foo : "bar", groupingEnabled : true, maxIntegerDigits : Infinity,
-			parseAsString : true}
+			parseAsString : true, preserveDecimals : true}
 	}, {
 		set : {decimalSeparator : ".", maxIntegerDigits : 20}, scale : 13,
 		expect : {decimalSeparator : ".", groupingEnabled : true, maxFractionDigits : 13,
-			maxIntegerDigits : 20, minFractionDigits : 13, parseAsString : true}
+			maxIntegerDigits : 20, minFractionDigits : 13, parseAsString : true,
+			preserveDecimals : true}
 	}, {
 		set : {groupingEnabled : false}, scale : 13,
 		expect : {groupingEnabled : false, maxFractionDigits : 13, maxIntegerDigits : Infinity,
-			minFractionDigits : 13, parseAsString : true}
+			minFractionDigits : 13, parseAsString : true, preserveDecimals : true}
 	}, {
 		set : {decimals : 20}, scale : 13,
 		expect : {decimals : 20, groupingEnabled : true, maxFractionDigits : 13,
-			maxIntegerDigits : Infinity, minFractionDigits : 13, parseAsString : true}
+			maxIntegerDigits : Infinity, minFractionDigits : 13, parseAsString : true,
+			preserveDecimals : true}
 	}, {
 		set : {maxFractionDigits : 20}, scale : 13,
 		expect : {groupingEnabled : true, maxFractionDigits : 20, maxIntegerDigits : Infinity,
-			minFractionDigits : 13, parseAsString : true}
+			minFractionDigits : 13, parseAsString : true, preserveDecimals : true}
 	}, {
 		set : {minFractionDigits : 10}, scale : 13,
 		expect : {groupingEnabled : true, maxFractionDigits : 13, maxIntegerDigits : Infinity,
-			minFractionDigits : 10, parseAsString : true}
+			minFractionDigits : 10, parseAsString : true, preserveDecimals : true}
 	}].forEach(function (oFixture) {
 		QUnit.test("formatOptions: " + JSON.stringify(oFixture.set), function (assert) {
 			var oSpy,
@@ -431,5 +564,38 @@ sap.ui.require([
 			oType.formatValue("42", "string");
 			sinon.assert.calledWithExactly(oSpy, oFixture.expect);
 		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getFormat", function (assert) {
+		var oType = new Decimal({parseEmptyValueToZero : true}, {nullable : false});
+
+		assert.strictEqual(oType.oFormat, null);
+
+		this.mock(NumberFormat).expects("getFloatInstance")
+			.withExactArgs({
+				groupingEnabled : true,
+				maxFractionDigits: 0,
+				maxIntegerDigits : Infinity,
+				minFractionDigits: 0,
+				parseAsString: true,
+				preserveDecimals: true
+			})
+			.returns("~floatInstance");
+
+		// code under test
+		assert.strictEqual(oType.getFormat(), "~floatInstance");
+
+		assert.strictEqual(oType.oFormat, "~floatInstance");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("parseValue calls getEmptyValue", function (assert) {
+		var oType = new Decimal();
+
+		this.mock(oType).expects("getEmptyValue").withExactArgs("~emptyString").returns("~emptyValue");
+
+		// code under test
+		assert.strictEqual(oType.parseValue("~emptyString", "foo"), "~emptyValue");
 	});
 });

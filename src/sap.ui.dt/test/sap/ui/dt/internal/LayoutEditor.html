@@ -1,0 +1,116 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv='Content-Type' content='text/html;charset=UTF-8'/>
+
+		<title>DesignTime with XMLView</title>
+
+		<style>
+			html, body, #content {
+				height : 100%;
+			}
+			.sapUiView {
+				height: 100%;
+			}
+			#palette {
+				float: left;
+				width: 20%;
+				height: 100%;
+				background: lightgrey;
+			}
+			#content {
+				float: left;
+				width: 80%;
+				height: 100%;
+			}
+			#palette_playground {
+				position: absolute;
+				top: -9999px;
+				left: -9999px;
+			}
+		</style>
+
+		<script src="../shared-config.js"></script>
+		<script>
+			window['sap-ui-config'].libs = "sap.ui.dt";
+			document.write('<script src="' + document.location.pathname.match(/(.*)\/test-resources\//)[1] + '/resources/sap-ui-core.js"><' + '/script>');
+		</script>
+
+		<script id="view1" type="sapui5/xmlview">
+			<sap.ui.core.mvc:View
+				height="100%"
+				xmlns="sap.m"
+				xmlns:sap.ui.core.mvc="sap.ui.core.mvc" >
+				<Page title="Title">
+					<content>
+						<Button id="button0" text="Button"/>
+					</content>
+				</Page>
+			</sap.ui.core.mvc:View>
+		</script>
+
+
+		<script>
+			sap.ui.require([
+				"sap/ui/dt/DesignTime",
+				"sap/ui/dt/plugin/ControlDragDrop",
+				"sap/ui/dt/plugin/MouseSelection",
+				"sap/ui/core/mvc/XMLView",
+				"sap/m/Button"
+			],
+			function (
+				DesignTime,
+				ControlDragDrop,
+				MouseSelection,
+				XMLView,
+				Button
+			) {
+				XMLView.create({definition: jQuery('#view1').html()})
+					.then(function (oView) {
+						oView.placeAt('content');
+
+						var aMOVABLE_TYPES = ["sap.m.Button"];
+						var oSelectionPlugin = new MouseSelection();
+						var oDragPlugin = new ControlDragDrop({
+							draggableTypes: aMOVABLE_TYPES
+						});
+
+						window.oDesignTime = new DesignTime({
+							rootElements: [oView],
+							plugins: [
+								oSelectionPlugin,
+								oDragPlugin
+							]
+						});
+
+						var oDraggedOverlay;
+						jQuery("#pallete_button")
+							.on("dragstart", function () {
+								var oButton = new Button({text: "New button"});
+
+								oDesignTime.createOverlay({
+									element: oButton,
+									root: true,
+								}).then(function (oOverlay) {
+									oDraggedOverlay = oOverlay;
+									oDraggedOverlay.placeInOverlayContainer();
+									oDraggedOverlay.$().trigger("dragstart");
+								});
+
+							})
+							.on("dragend", function () {
+								oDraggedOverlay.$().trigger("dragend");
+							});
+					}.bind(this));
+			});
+		</script>
+
+	</head>
+	<body class="sapUiBody">
+		<div id="palette">
+			<button id="pallete_button" draggable="true">Button: drag me</button>
+		</div>
+		<div id="palette_playground"></div>
+		<div id="content"></div>
+	</body>
+</html>

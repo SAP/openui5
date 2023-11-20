@@ -27,12 +27,65 @@ sap.ui.define(['./library', 'sap/ui/core/Control', './ToolbarSeparatorRenderer']
 	 * @public
 	 * @since 1.26
 	 * @alias sap.m.ToolbarSeparator
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
-	var ToolbarSeparator = Control.extend("sap.m.ToolbarSeparator", /** @lends sap.m.ToolbarSeparator.prototype */ { metadata : {
+	var ToolbarSeparator = Control.extend("sap.m.ToolbarSeparator", /** @lends sap.m.ToolbarSeparator.prototype */ {
+		metadata : {
 
-		library : "sap.m"
-	}});
+			library : "sap.m",
+			interfaces : [
+				"sap.m.IOverflowToolbarContent"
+			]
+
+		},
+
+		renderer: ToolbarSeparatorRenderer
+	});
+
+	/**
+	 * Classname to be used, when the control is inside <code>OverflowToolbar</code>.
+	 * @since 1.65
+	 */
+
+	ToolbarSeparator.CLASSNAME_OVERFLOW_TOOLBAR = "sapMTBSeparatorOverflowToolbar";
+
+	/**
+	 * Used for OverflowToolbar functionality.
+	 * @private
+	 */
+
+	ToolbarSeparator.prototype._onBeforeEnterOverflow = function(oControl) {
+		oControl.addStyleClass(ToolbarSeparator.CLASSNAME_OVERFLOW_TOOLBAR);
+	};
+
+	/**
+	 * Used for OverflowToolbar functionality.
+	 * @private
+	 */
+
+	ToolbarSeparator.prototype._onAfterExitOverflow = function(oControl) {
+		oControl.removeStyleClass(ToolbarSeparator.CLASSNAME_OVERFLOW_TOOLBAR);
+	};
+
+	/**
+	 * Sets the behavior of the <code>ToolbarSeparator</code> inside an <code>OverflowToolbar</code> configuration.
+	 * Required by the {@link sap.m.IOverflowToolbarContent} interface.
+	 *
+	 * @public
+	 * @returns {sap.m.OverflowToolbarConfig} Configuration information for the <code>sap.m.IOverflowToolbarContent</code> interface.
+	 * @since 1.65
+	 */
+
+	ToolbarSeparator.prototype.getOverflowToolbarConfig = function() {
+		var oConfig = {
+			canOverflow: true
+		};
+
+		oConfig.onBeforeEnterOverflow = this._onBeforeEnterOverflow;
+
+		oConfig.onAfterExitOverflow = this._onAfterExitOverflow;
+
+		return oConfig;
+	};
 
 	return ToolbarSeparator;
 

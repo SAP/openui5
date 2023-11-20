@@ -1,0 +1,32 @@
+{
+	"sap.app": {
+		"id": "sap.m.sample.MultiInputUpdateModel",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "sap.m.sample.MultiInputModelUpdate.view.MultiInputModelUpdate",
+			"type": "XML",
+			"async": true
+		},
+		"dependencies": {
+			"libs": {
+				"sap.m": {},
+				"sap.ui.core": {},
+				"sap.ui.layout": {}
+			}
+		},
+		"config": {
+			"sample": {
+				"stretch": true,
+				"files": [
+					"view/MultiInputModelUpdate.view.xml",
+					"controller/MultiInputModelUpdate.controller.js",
+					"manifest.json"
+				]
+			}
+		}
+	}
+}

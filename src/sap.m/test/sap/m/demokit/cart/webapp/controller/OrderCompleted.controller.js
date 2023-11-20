@@ -1,5 +1,5 @@
 sap.ui.define([
-	'sap/ui/demo/cart/controller/BaseController'
+	"./BaseController"
 ], function (BaseController) {
 	"use strict";
 
@@ -11,6 +11,7 @@ sap.ui.define([
 
 		onReturnToShopButtonPress: function () {
 			//navigates back to home screen
+			this._setLayout("Two");
 			this._oRouter.navTo("home");
 		}
 	});

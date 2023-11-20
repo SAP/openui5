@@ -1,6 +1,4 @@
-sap.ui.define([
-		"sap/ui/core/mvc/Controller"
-	], function (Controller) {
+sap.ui.define(["sap/ui/core/mvc/Controller", "sap/ui/core/UIComponent"], function(Controller, UIComponent) {
 		"use strict";
 
 		return Controller.extend("sap.ui.demo.iconexplorer.controller.BaseController", {
@@ -10,7 +8,7 @@ sap.ui.define([
 			 * @returns {sap.ui.core.routing.Router} the router for this component
 			 */
 			getRouter : function () {
-				return sap.ui.core.UIComponent.getRouterFor(this);
+				return UIComponent.getRouterFor(this);
 			},
 
 			/**
@@ -41,6 +39,14 @@ sap.ui.define([
 			 */
 			getResourceBundle : function () {
 				return this.getOwnerComponent().getModel("i18n").getResourceBundle();
+			},
+
+			/**
+			 * Navigates to the icons info sub-page
+			 * @public
+			 */
+			onNavToInfo: function () {
+				this.getRouter().navTo("info");
 			}
 
 		});

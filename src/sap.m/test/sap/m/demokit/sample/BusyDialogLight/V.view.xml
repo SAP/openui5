@@ -4,17 +4,14 @@
 	xmlns:l="sap.ui.layout"
 	xmlns:core="sap.ui.core"
 	xmlns="sap.m">
-	<l:VerticalLayout
-		class="sapUiContentPadding"
-		width="100%">
-		<l:content>
-			<Button text="Show Light Busy Dialog"
-				press="handlePress"
-				class="sapUiSmallMarginBottom" />
-		</l:content>
+	<l:VerticalLayout class="sapUiContentPadding" width="100%">
 		<l:dependents>
-			<core:Fragment fragmentName="sap.m.sample.BusyDialogLight.BusyDialog" type="XML">
-			</core:Fragment>
+			<core:Fragment fragmentName="sap.m.sample.BusyDialogLight.BusyDialog" type="XML" />
 		</l:dependents>
+		<Button
+			text="Show Light Busy Dialog"
+			press="handlePress"
+			class="sapUiSmallMarginBottom"
+			ariaHasPopup="Dialog" />
 	</l:VerticalLayout>
 </mvc:View>

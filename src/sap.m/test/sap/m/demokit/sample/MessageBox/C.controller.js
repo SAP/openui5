@@ -1,115 +1,61 @@
 sap.ui.define([
-		'sap/m/MessageBox',
-		'sap/ui/core/Fragment',
-		'sap/ui/core/mvc/Controller',
-		'sap/ui/model/json/JSONModel',
-		'sap/m/MessageToast'
-	], function(MessageBox, Fragment, Controller, JSONModel, MessageToast) {
+	"sap/ui/core/mvc/Controller",
+	"sap/m/MessageBox",
+	"sap/m/MessageToast"
+], function (Controller, MessageBox, MessageToast) {
 	"use strict";
 
-	var CController = Controller.extend("sap.m.sample.MessageBox.C", {
+	return Controller.extend("sap.m.sample.MessageBox.C", {
 
-		onInit : function() {
-			// create any data and a model and set it to the view
-			var oData = {
-				checkBox1Text : "CheckBox",
-				checkBox2Text : "CheckBox - focused"
-			};
-			var oModel = new JSONModel(oData);
-			var oView = this.getView();
-			oView.setModel(oModel);
+		onConfirmationMessageBoxPress: function () {
+			MessageBox.confirm("Approve purchase order 12345?");
 		},
 
-		handleConfirmationMessageBoxPress: function(oEvent) {
-			var bCompact = !!this.getView().$().closest(".sapUiSizeCompact").length;
-			MessageBox.confirm(
-				"Approve purchase order 12345?", {
-					styleClass: bCompact ? "sapUiSizeCompact" : ""
-				}
-			);
+		onAlertMessageBoxPress: function () {
+			MessageBox.alert("The quantity you have reported exceeds the quantity planed.");
 		},
 
-		handleAlertMessageBoxPress: function(oEvent) {
-			var bCompact = !!this.getView().$().closest(".sapUiSizeCompact").length;
-			MessageBox.alert(
-				"The quantity you have reported exceeds the quantity planed.",
-				{
-					styleClass: bCompact ? "sapUiSizeCompact" : ""
-				}
-			);
+		onErrorMessageBoxPress: function () {
+			MessageBox.error("Select a team in the \"Development\" area.\n\"Marketing\" isn't assigned to this area.");
 		},
 
-		handleErrorMessageBoxPress: function(oEvent) {
-			var bCompact = !!this.getView().$().closest(".sapUiSizeCompact").length;
-			MessageBox.error(
-				"Select a team in the \"Development\" area.\n\"Marketing\" isn't assigned to this area.",
-				{
-					styleClass: bCompact ? "sapUiSizeCompact" : ""
-				}
-			);
+		onInfoMessageBoxPress: function () {
+			MessageBox.information("Your booking will be reserved for 24 hours.");
 		},
 
-		handleInfoMessageBoxPress: function(oEvent) {
-			var bCompact = !!this.getView().$().closest(".sapUiSizeCompact").length;
-			MessageBox.information(
-				"You booking will be reserved for 24 hours.",
-				{
-					styleClass: bCompact ? "sapUiSizeCompact" : ""
-				}
-			);
+		onWarningMessageBoxPress: function () {
+			MessageBox.warning("The project schedule was last updated over a year ago.");
 		},
 
-		handleWarningMessageBoxPress: function(oEvent) {
-			var bCompact = !!this.getView().$().closest(".sapUiSizeCompact").length;
-			MessageBox.warning(
-				"The project schedule was last updated over a year ago.",
-				{
-					styleClass: bCompact ? "sapUiSizeCompact" : ""
-				}
-			);
+		onSuccessMessageBoxPress: function () {
+			MessageBox.success("Project 1234567 was created and assigned to team \"ABC\".");
 		},
 
-		handleSuccessMessageBoxPress: function(oEvent) {
-			var bCompact = !!this.getView().$().closest(".sapUiSizeCompact").length;
-			MessageBox.success(
-				"Project 1234567 was created and assigned to team \"ABC\".",
-				{
-					styleClass: bCompact ? "sapUiSizeCompact" : ""
-				}
-			);
+		onResponsivePaddingMessageBox: function () {
+			MessageBox.information("This Message Box has responsive paddings which will adjust based on its content width!", {
+				styleClass: "sapUiResponsivePadding--header sapUiResponsivePadding--content sapUiResponsivePadding--footer"
+			});
 		},
 
-		handleError2MessageBoxPress: function(oEvent) {
-			var bCompact = !!this.getView().$().closest(".sapUiSizeCompact").length;
-			MessageBox.error(
-				"Product A does not exist.",
-				{
-					actions: ["Manage Products", sap.m.MessageBox.Action.CLOSE],
-					styleClass: bCompact ? "sapUiSizeCompact" : "",
-					onClose: function(sAction) {
-						MessageToast.show("Action selected: " + sAction);
-					}
+		onError2MessageBoxPress: function () {
+			MessageBox.error("Product A does not exist.", {
+				actions: ["Manage Products", MessageBox.Action.CLOSE],
+				emphasizedAction: "Manage Products",
+				onClose: function (sAction) {
+					MessageToast.show("Action selected: " + sAction);
 				}
-			);
+			});
 		},
 
-		handleWarning2MessageBoxPress: function(oEvent) {
-			var bCompact = !!this.getView().$().closest(".sapUiSizeCompact").length;
-			MessageBox.warning(
-				"The quantity you have reported exceeds the quantity planned.",
-				{
-					actions: [sap.m.MessageBox.Action.OK, sap.m.MessageBox.Action.CANCEL],
-					styleClass: bCompact ? "sapUiSizeCompact" : "",
-					onClose: function(sAction) {
-						MessageToast.show("Action selected: " + sAction);
-					}
+		onWarning2MessageBoxPress: function () {
+			MessageBox.warning("The quantity you have reported exceeds the quantity planned.", {
+				actions: [MessageBox.Action.OK, MessageBox.Action.CANCEL],
+				emphasizedAction: MessageBox.Action.OK,
+				onClose: function (sAction) {
+					MessageToast.show("Action selected: " + sAction);
 				}
-			);
+			});
 		}
 
 	});
-
-
-	return CController;
-
 });

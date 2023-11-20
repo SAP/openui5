@@ -1,0 +1,80 @@
+<core:FragmentDefinition
+		xmlns="sap.m"
+		xmlns:form="sap.ui.layout.form"
+		xmlns:core="sap.ui.core">
+	<Dialog
+			title="Table Settings"
+			class="sapUiContentPadding"
+			stretchOnPhone="true"
+			id="tableSettings"
+			horizontalScrolling="false"
+			draggable="true"
+			contentWidth="550px">
+		<content>
+			<form:Form editable="true">
+				<form:formContainers>
+					<form:FormContainer>
+						<form:FormElement label="GrowingMode">
+							<Select items="{tabletypesettings>/growingmodes}" selectedKey="Basic" change="onGrowingModeChange">
+								<core:Item key="{tabletypesettings>key}" text="{tabletypesettings>text}"/>
+							</Select>
+						</form:FormElement>
+						<form:FormElement label="SelectionMode">
+							<Select items="{tablesettings>/selectionmodes}" selectedKey="Multi" change="onSelectionModeChange">
+								<core:Item key="{tablesettings>key}" text="{tablesettings>text}" />
+							</Select>
+						</form:FormElement>
+						<form:FormElement label="Highlights">
+							<CheckBox select="onToggleHighlight"/>
+						</form:FormElement>
+						<form:FormElement label="Navigation">
+							<CheckBox select="onToggleNavigation"/>
+						</form:FormElement>
+						<form:FormElement label="Bound Navigation">
+							<CheckBox select="onToggleResponsiveBoundNavigation"/>
+						</form:FormElement>
+						<form:FormElement label="Navigation Indicator">
+							<CheckBox select="onToggleNavIndicator"/>
+						</form:FormElement>
+						<form:FormElement label="P13n">
+							<CheckBox select="onToggleP13n" selected="true"/>
+						</form:FormElement>
+						<form:FormElement label="Busy State">
+							<CheckBox select="onToggleBusyState"/>
+						</form:FormElement>
+						<form:FormElement label="Show details button">
+							<CheckBox select="onToggleShowDetails"/>
+						</form:FormElement>
+						<form:FormElement id="fe-detailsButtonSetting" label="Hide columns with importance..." visible="false">
+							<MultiComboBox id="mcb-detailsButtonSetting" selectionFinish="onButtonSettingSelectionFinish">
+								<items>
+									<core:Item key="Low" text="Low" />
+									<core:Item key="Medium" text="Medium" />
+									<core:Item key="High" text="High" />
+								</items>
+							</MultiComboBox>
+						</form:FormElement>
+						<form:FormElement label="Quick Filter">
+							<CheckBox select="onToggleQuickFilter"/>
+						</form:FormElement>
+					</form:FormContainer>
+				</form:formContainers>
+				<form:layout>
+					<form:ResponsiveGridLayout
+						labelSpanXL="4"
+						labelSpanL="4"
+						labelSpanM="4"
+						labelSpanS="4"
+						emptySpanXL="1"
+						emptySpanL="1"
+						emptySpanM="1"
+						emptySpanS="1"
+					/>
+				</form:layout>
+			</form:Form>
+		</content>
+		<endButton>
+			<Button text="Close" press="onResponsiveTableDialogClose" />
+		</endButton>
+	</Dialog>
+</core:FragmentDefinition>

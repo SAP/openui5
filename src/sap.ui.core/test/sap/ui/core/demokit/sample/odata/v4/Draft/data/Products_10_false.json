@@ -1,0 +1,19 @@
+{
+	"DraftAdministrativeData" : {
+		"CreationDateTime" : "2021-11-10T14:56:08.298Z",
+		"DraftUUID" : "6aa1b201-cd82-472f-a042-cd46fe64d32d",
+		"LastChangeDateTime" : "2021-11-10T14:56:08.298Z"
+	},
+	"HasActiveEntity" : true,
+	"HasDraftEntity" : false,
+	"ID" : 10,
+	"IsActiveEntity" : false,
+	"amount" : "100",
+	"categoryID" : 1000,
+	"name" : "Product 1",
+	"_Category" : {
+		"ID" : 1000,
+		"IsActiveEntity" : false,
+		"name" : "First category"
+	}
+}

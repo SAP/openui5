@@ -1,18 +1,28 @@
 /* global QUnit */
 
 sap.ui.define([
-	'sap/ui/test/opaQunit',
-	'./pages/Home',
-	'./pages/Category',
-	'./pages/Product',
-	'./pages/Cart',
-	'./pages/Checkout',
-	'./pages/OrderCompleted',
-	'./pages/Welcome'
-], function (opaTest) {
+	"sap/base/i18n/Localization",
+	"sap/ui/test/opaQunit",
+	"./pages/Home",
+	"./pages/Category",
+	"./pages/Product",
+	"./pages/Cart",
+	"./pages/Checkout",
+	"./pages/OrderCompleted",
+	"./pages/Welcome"
+], function (Localization, opaTest) {
 	"use strict";
 
-	QUnit.module("Buy Product Journey");
+	var sDefaultLanguage = Localization.getLanguage();
+
+	QUnit.module("Buy Product Journey", {
+		before : function () {
+			Localization.setLanguage("en-US");
+		},
+		after : function () {
+			Localization.setLanguage(sDefaultLanguage);
+		}
+	});
 
 	opaTest("Should see the category list", function (Given, When, Then) {
 		// Arrangements
@@ -47,7 +57,7 @@ sap.ui.define([
 
 		When.onTheProduct.iAddTheDisplayedProductToTheCart();
 
-		When.onTheCategory.iGoToTheCartPage();
+		When.onTheProduct.iToggleTheCart();
 
 		// Assertions
 		Then.onTheCart.iShouldSeeTheProductInMyCart()
@@ -58,13 +68,14 @@ sap.ui.define([
 	});
 
 	opaTest("Should keep the cart when reloading", function (Given, When, Then) {
-
 		// Arrangements
-		Given.iStartMyApp(true);
+		Given.iStartMyApp({
+			keepStorage: true
+		});
 
 		// Actions
 		When.onHome.iPressOnTheFlatScreensCategory();
-		When.onTheCategory.iGoToTheCartPage();
+		When.onTheWelcomePage.iToggleTheCart();
 
 		// Assertions
 		Then.onTheCart.iShouldSeeTheProductInMyCart();
@@ -75,8 +86,9 @@ sap.ui.define([
 
 	opaTest("Should start the app with a bookmarkable cart product", function (Given, When, Then) {
 		//Arrangement
-		Given.iStartMyApp(true,{
-			hash: "#/cart/HT-1254"
+		Given.iStartMyApp({
+			keepStorage: true,
+			hash: "category/FS/product/HT-1254/cart"
 		});
 		//Assertions
 		Then.onTheProduct.iShouldSeeTheRightProduct();
@@ -106,7 +118,7 @@ sap.ui.define([
 	opaTest("Should return to checkout", function (Given, When, Then) {
 
 		// Actions
-		When.onHome.iGoToTheCartPage();
+		When.onTheWelcomePage.iToggleTheCart();
 		When.onTheCart.iPressOnTheProceedButton();
 
 		// Assertions

@@ -1,0 +1,61 @@
+{
+  "1.88.0": {
+    "date": "March 2021",
+    "notes": [
+      {
+        "id": "09d12d2b52b0ba16ca578accacb92b9ab95b0067",
+        "type": "FIX",
+        "text": " sap.m.Table: strict layout single column handling bug is fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180127458"
+          },
+          {
+            "type": "BCP",
+            "reference": "2180136742"
+          },
+          {
+            "type": "BCP",
+            "reference": "2180129886"
+          },
+          {
+            "type": "BCP",
+            "reference": "2180129839"
+          }
+        ]
+      },
+      {
+        "id": "c39c1805dadeb2412d50ca8978be134cbce4131d",
+        "type": "FEATURE",
+        "text": " 72 Monospace fonts for all Belize and Quartz flavors"
+      },
+      {
+        "id": "148c566dce130ac03fb25809643320efa3b0007b",
+        "type": "FIX",
+        "text": " sap.m.RadioButton: No longer overflows when used standalone or in Groups with 1 column",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080199747"
+          }
+        ]
+      },
+      {
+        "id": "589c7997319dfb963760572023015cb389f1ea6a",
+        "type": "FIX",
+        "text": " \"72\" font: redirect tall letters with caron to full version font",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400000373262021"
+          },
+          {
+            "type": "BCP",
+            "reference": "2180021749"
+          }
+        ]
+      }
+    ]
+  }
+}

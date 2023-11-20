@@ -4,7 +4,7 @@ xmlns="sap.m"
 xmlns:mvc="sap.ui.core.mvc"
 height="100%">
 	<Page id="myPage" title="A Page">
-		<simpleform:SimpleForm id="myForm">
+		<simpleform:SimpleForm id="myForm" layout="ColumnLayout">
 			<Title id="myGroup" text="a group"/>
 			<Label id="myGroupElement"  text="a element"/>
 			<Input id="myGroupField" />

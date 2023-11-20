@@ -19,20 +19,15 @@
 			placeholder="Choose a file for Upload...">
 				<u:parameters>
 					<u:FileUploaderParameter
-						name="param1"
-						value="Foo"/>
+						name="Accept-CH"
+						value="Viewport-Width"/>
 					<u:FileUploaderParameter
-						name="param2"
-						value="bar"/>
+						name="Accept-CH"
+						value="Width"/>
+					<u:FileUploaderParameter
+						name="Accept-CH-Lifetime"
+						value="86400"/>
 				</u:parameters>
-				<u:headerParameters>
-					<u:FileUploaderParameter
-						name="headerParam1"
-						value="Foo"/>
-					<u:FileUploaderParameter
-						name="headerParam2"
-						value="bar"/>
-				</u:headerParameters>
 			</u:FileUploader>
 		<Button
 			text="Upload File"

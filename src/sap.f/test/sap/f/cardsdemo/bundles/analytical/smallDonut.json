@@ -1,0 +1,135 @@
+{
+	"_version": "1.35.0",
+	"sap.app": {
+		"id": "cardsdemo.bundles.analytical.smallDonut",
+		"type": "card",
+		"title": "Overrun Phases"
+	},
+	"sap.card": {
+		"type": "Analytical",
+		"header": {
+			"type": "Default",
+			"title": "minHeight of content should be 10rem",
+			"subTitle": "",
+			"actions": [{
+				"type": "Navigation",
+				"parameters": {
+					"url": "/quickLinks"
+				}
+			}]
+		},
+		"content": {
+			"minHeight": "10rem",
+			"chartType": "donut",
+			"data": {
+				"json": {
+					"chartData": [
+						{
+							"PhaseCode": "Preparation",
+							"NumRecords": 5
+						},
+						{
+							"PhaseCode": "Execution",
+							"NumRecords": 2
+						},
+						{
+							"PhaseCode": "PostProcessing",
+							"NumRecords": 3
+						}
+					]
+				},
+				"path": "/chartData"
+			},
+			"title": {
+				"visible": false
+			},
+			"chartProperties": {
+				"general": {
+					"layout": {
+						"padding": 0
+					}
+				},
+				"legend": {
+					"visible": true,
+					"isScrollable": false,
+					"showFullLabel": false
+				},
+				"plotArea": {
+					"radius": 0.2,
+					"dataLabel": {
+						"visible": true,
+						"showTotal": true,
+						"type": "value"
+					},
+					"gridline": {
+						"color": "#cbcbcb",
+						"size": 0.5,
+						"visible": true
+					},
+					"window": {
+						"start": "firstDataPoint",
+						"end": "lastDataPoint"
+					},
+					"dataPointStyle": {
+						"rules": [{
+								"dataContext": { "PhaseCode": "Preparation" },
+								"properties": { "color": "#fcc3a7" },
+								"displayName": "Preparation"
+							},
+							{
+								"dataContext": { "PhaseCode": "Execution" },
+								"properties": { "color": "#f3716c" },
+								"displayName": "Execution"
+							},
+							{
+								"dataContext": { "PhaseCode": "PostProcessing" },
+								"properties": { "color": "#f29b1d" },
+								"displayName": "Post Processing"
+							}
+						]
+					}
+				},
+				"interaction": {
+					"hover": {
+						"opacity": 0.2
+					},
+					"selectability": {
+						"legendSelection": false
+					}
+				},
+				"legendGroup": {
+					"layout": {
+						"position": "right",
+						"alignment": "center",
+						"maxWidth": 0.4
+					}
+				}
+			},
+			"dimensions": [{
+				"label": "PhaseCode",
+				"value": "{PhaseCode}"
+			}],
+			"feeds": [{
+					"uid": "color",
+					"type": "Dimension",
+					"values": ["PhaseCode"]
+				},
+				{
+					"uid": "size",
+					"type": "Measure",
+					"values": ["NumRecords"]
+				}
+			],
+			"measures": [{
+				"label": "NumRecords",
+				"value": "{NumRecords}"
+			}],
+			"actionableArea": "Chart",
+			"actions": [{
+				"type": "Navigation",
+				"parameters": {}
+			}]
+		}
+	}
+
+}

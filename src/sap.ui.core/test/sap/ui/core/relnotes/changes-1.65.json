@@ -1,0 +1,242 @@
+{
+  "1.65.0": {
+    "date": "March 2019",
+    "notes": [
+      {
+        "id": "8730536b234cd87755030c45d8d1cd28a34a7b9d",
+        "type": "FIX",
+        "text": "ODataMessageParser: Affected message target calculation",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980055407"
+          }
+        ]
+      },
+      {
+        "id": "d9049256fc824a376639a1aff30f088ed2d933a5",
+        "type": "FIX",
+        "text": "StaticBinding: Do not recreate static binding when models change",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980059850"
+          }
+        ]
+      },
+      {
+        "id": "fede4d3e3e4f31599763d12ce8dda678931114fe",
+        "type": "FIX",
+        "text": "UIComponent: Only activate processing mode for XMLViews",
+        "references": [
+          {
+            "type": "GitHub",
+            "reference": "2448"
+          },
+          {
+            "type": "BCP",
+            "reference": "1980059652"
+          }
+        ]
+      },
+      {
+        "id": "7509173cabef1b4f524ea693fed965e2004e6a64",
+        "type": "FEATURE",
+        "text": "ManagedObjectObserver: Observe parent change",
+        "references": []
+      },
+      {
+        "id": "b4b52032bf0a602e4a615a33feed542a393c3584",
+        "type": "FEATURE",
+        "text": "SAPUI5 Analytics: Blacklist configuration",
+        "references": []
+      },
+      {
+        "id": "9a82780ee1985ef204c24ecfa7478c05b685d162",
+        "type": "FEATURE",
+        "text": "sap.ui.core.Hyphenation: leftmin and rightmin are changed",
+        "references": []
+      },
+      {
+        "id": "85c571b8d263c6cfab1befd51791b8c3c5d0f67e",
+        "type": "FIX",
+        "text": "Core: Ensure firing the ThemeChanged event when loading libs",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400001131652019"
+          }
+        ]
+      },
+      {
+        "id": "afb96bcd3a2115bdf698015646997da4b8e3ce0f",
+        "type": "FIX",
+        "text": "SimpleType: Fix jsdoc for public methods",
+        "references": [
+          {
+            "type": "GitHub",
+            "reference": "2449"
+          },
+          {
+            "type": "BCP",
+            "reference": "1980059971"
+          }
+        ]
+      },
+      {
+        "id": "52d7a48db92675328d38152f97742c138c7ec614",
+        "type": "FIX",
+        "text": "SimpleType: Remove @public annotation",
+        "references": []
+      },
+      {
+        "id": "08c14bacde6eee987b4aaeaf37869985e6425825",
+        "type": "FIX",
+        "text": "UI5_QUNIT syncXHRBootstrap test fails",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980093700"
+          }
+        ]
+      },
+      {
+        "id": "89921c25c2f0436e223a1be1ef83e5157362f987",
+        "type": "FIX",
+        "text": "XMLTemplateProcessor: run ExtensionPoints with correct owner ID",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970171006"
+          }
+        ]
+      },
+      {
+        "id": "7bc7ad626cd0fa9ffc40b90482748d9e9507a606",
+        "type": "FEATURE",
+        "text": "Opa: set default size for iframe",
+        "references": []
+      },
+      {
+        "id": "b61696d9d60647e188b3139e7311f29ce2dd74c3",
+        "type": "FEATURE",
+        "text": "sap.ui.core: multiple listeners in ManagedObject & XMLView",
+        "references": []
+      },
+      {
+        "id": "2016f6d36621f160a8a1a5183fce918a67c2fad7",
+        "type": "FEATURE",
+        "text": "sap/base/util/isEmptyObject: new module",
+        "references": []
+      },
+      {
+        "id": "c68c54fc4ddcc51ac65a7d6523912dd306584474",
+        "type": "FEATURE",
+        "text": "trace/FESR: Enhance onBeforeCreated hook to allow TTI provision",
+        "references": []
+      },
+      {
+        "id": "de3daddb4f8f6a31a777c0c2132cce6f39ce1042",
+        "type": "FIX",
+        "text": "Prevent jQuery UI Core from triggering lazy stubs",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980059912"
+          }
+        ]
+      },
+      {
+        "id": "f72a5622b25e8d891d138e1a5341b34112c5f511",
+        "type": "FIX",
+        "text": "sap/ui/util/Mobile: Update favicon properly in IE",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400004916292018"
+          }
+        ]
+      },
+      {
+        "id": "5d0cd00942801981b928d504ecfe11111a559e74",
+        "type": "FIX",
+        "text": "trace/FESR: Increase step counter on finished interaction",
+        "references": []
+      },
+      {
+        "id": "4743b15275c15eca8f900ba0f51c098ed470b74c",
+        "type": "FIX",
+        "text": "trace/Passport: Do not reset trace level on call of traceFlags",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002028376500005034922018"
+          }
+        ]
+      },
+      {
+        "id": "dcacfab913aac73a39838aae64c30ab630a8b959",
+        "type": "FEATURE",
+        "text": "Core: Enhance library preload with transitive dependency closure",
+        "references": []
+      },
+      {
+        "id": "84af149f6829e9c5887cad1814b0b0d3df0935c2",
+        "type": "FEATURE",
+        "text": "ODataModel(v2): CSRF token handling for GET requests",
+        "references": []
+      },
+      {
+        "id": "afe08587cbad54bd55e72950dde265c5875fc1a8",
+        "type": "FEATURE",
+        "text": "sap/ui/core/Popup: Add static \"blockLayerStateChange\" event",
+        "references": []
+      },
+      {
+        "id": "81dcb9558071ff156853afbdcd7d18d78dc8fdd5",
+        "type": "FIX",
+        "text": "ComponentSupport: do not throw error for unknown props/events",
+        "references": []
+      },
+      {
+        "id": "f370a90bda3124decad2a470e0d052f0bd063062",
+        "type": "FIX",
+        "text": "dnd: Drop position fix for the horizontal layout in RTL mode",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980079813"
+          }
+        ]
+      },
+      {
+        "id": "897cd0efbb3393ec9f645ca77157820a3e16f47a",
+        "type": "FIX",
+        "text": "sap.ui.core.Hyphenation: Update Hyphenopoly bundle",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980126161"
+          }
+        ]
+      },
+      {
+        "id": "429f584d86e83e20ea67aa0940e079e0d780d3ba",
+        "type": "FEATURE",
+        "text": "sap/base/Log: log details Error#stack in console",
+        "references": []
+      },
+      {
+        "id": "74be4d6ad22d77e3643a2c253af3d81e9865638c",
+        "type": "FIX",
+        "text": "core.Popup: check dangling DOM before calling rect()",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980045314"
+          }
+        ]
+      }
+    ]
+  }
+}

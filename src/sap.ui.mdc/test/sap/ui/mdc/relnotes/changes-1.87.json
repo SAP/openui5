@@ -1,0 +1,44 @@
+{
+  "1.87.0": {
+    "date": "February 2021",
+    "notes": [
+      {
+        "id": "8f6708a444b6c38ca27610a56c858d12236abe31",
+        "type": "FEATURE",
+        "text": " FieldValueHelp: support collective search"
+      },
+      {
+        "id": "ac9519f91af84f8380f9c15e5709c6171dbc9285",
+        "type": "FIX",
+        "text": " Field: support FieldGroupIds",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080441316"
+          }
+        ]
+      },
+      {
+        "id": "01ff54e6f8f54aba240f9bc9f1086fdd657456d8",
+        "type": "FIX",
+        "text": " FieldValueHelp: scroll suggest table only if item selected"
+      },
+      {
+        "id": "46a536d750bc72c671e03c4d0588e9b372931516",
+        "type": "FIX",
+        "text": " ConditionType: use first operator if defaultOperator not exist",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180021169"
+          }
+        ]
+      },
+      {
+        "id": "66b7e9bbaf28368f42f7666e88e5b04107b5722a",
+        "type": "FEATURE",
+        "text": " VariantManagement: Manage Views Dialog - Change \"OK\" to \"Save\""
+      }
+    ]
+  }
+}

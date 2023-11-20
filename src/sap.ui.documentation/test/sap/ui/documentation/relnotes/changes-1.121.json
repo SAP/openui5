@@ -1,0 +1,33 @@
+{
+  "1.121.0": {
+    "date": "November 2023",
+    "notes": [
+      {
+        "id": "07ce8256d4d4dd9d854e552b2eefc8c73cbf1c73",
+        "type": "FIX",
+        "text": " Rename sap/ui/core/Component.get to sap/ui/core/Component.getComponentById"
+      },
+      {
+        "id": "3107dcdc156395aca4d5db67dfe88033d0b0425d",
+        "type": "FIX",
+        "text": " Demo Kit: Align header badge indicators"
+      },
+      {
+        "id": "d9830e717d07e46ab2cd831e6c7aea92521ecaa0",
+        "type": "FIX",
+        "text": " Demo Kit: Static links fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370111469"
+          }
+        ]
+      },
+      {
+        "id": "d5b7f4c1ced58846e9fba66341e9a2b61531a482",
+        "type": "FIX",
+        "text": " sap.ui.documentation: replace UI5 URLs correctly when samples are downloaded"
+      }
+    ]
+  }
+}

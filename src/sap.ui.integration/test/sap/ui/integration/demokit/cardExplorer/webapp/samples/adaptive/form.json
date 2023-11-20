@@ -1,0 +1,160 @@
+{
+	"_version": "1.17.0",
+	"sap.app": {
+		"id": "adaptivecard.embedded",
+		"type": "card",
+		"title": "Sample of an Adaptive Card with Form",
+		"subTitle": "Sample of an Adaptive Card with Form",
+		"applicationVersion": {
+			"version": "1.0.0"
+		},
+		"shortTitle": "A short title for this Card",
+		"info": "Additional information about this Card",
+		"description": "A long description for this Card",
+		"tags": {
+			"keywords": [
+				"Adaptive",
+				"Card",
+				"Form",
+				"Sample"
+			]
+		}
+	},
+	"sap.card": {
+		"header": {
+			"title": "Form Card",
+			"subTitle": "Adaptive Card with sap.f.cards.Header",
+			"icon": {
+				"src": "sap-icon://form"
+			}
+		},
+		"type": "AdaptiveCard",
+		"content": {
+			"$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+			"type": "AdaptiveCard",
+			"version": "1.0",
+			"body": [
+				{
+					"type": "Input.Text",
+					"label": "Your Name",
+					"isRequired": true,
+					"errorMessage": "Please enter a name",
+					"placeholder": "Last, First",
+					"style": "text",
+					"id": "SimpleVal"
+				},
+				{
+					"type": "Input.Text",
+					"label": "Email address",
+					"errorMessage": "Please enter an email",
+					"isRequired": true,
+					"placeholder": "youremail@example.com",
+					"style": "email",
+					"id": "EmailVal"
+				},
+				{
+					"type": "Input.Text",
+					"label": "Phone Number",
+					"errorMessage": "Please enter a number",
+					"isRequired": true,
+					"placeholder": "xxx.xxx.xxxx",
+					"style": "tel",
+					"id": "TelVal",
+					"maxLength": 10
+				},
+				{
+					"type": "Input.Number",
+					"label": "Age",
+					"id": "NumVal",
+					"min": 0,
+					"max": 110,
+					"placeholder": "Age"
+				},
+				{
+					"type": "Input.Date",
+					"label": "Starting Date",
+					"isRequired": true,
+					"errorMessage": "Please enter a date",
+					"placeholder": "Start Date",
+					"id": "DateVal",
+					"value": "2017-09-20"
+				},
+				{
+					"type": "Input.Toggle",
+					"isRequired": true,
+					"title": "I accept the terms and conditions",
+					"id": "Checked",
+					"wrap": true,
+					"value": "false",
+					"valueOn": "true",
+					"valueOff": "false"
+				}
+			],
+			"actions": [
+				{
+					"type": "Action.ShowCard",
+					"title": "Additional Information",
+					"card": {
+						"type": "AdaptiveCard",
+						"body": [
+							{
+								"type": "Input.Text",
+								"label": "Website",
+								"placeholder": "Website Url",
+								"style": "url",
+								"id": "UrlVal"
+							},
+							{
+								"type": "Input.Text",
+								"label": "Description",
+								"style": "text",
+								"isMultiline": true,
+								"id": "MultiLineVal"
+							},
+							{
+								"type": "Input.ChoiceSet",
+								"label": "Do you have a driver's license?",
+								"id": "SingleSelectVal",
+								"style": "expanded",
+								"choices": [
+									{
+										"title": "Yes",
+										"value": "1"
+									},
+									{
+										"title": "No",
+										"value": "2"
+									}
+								]
+							},
+							{
+								"type": "Input.ChoiceSet",
+								"id": "MultiSelectVal",
+								"label": "How do you want to be notified?",
+								"isMultiSelect": true,
+								"choices": [
+									{
+										"title": "Via mail",
+										"value": "1"
+									},
+									{
+										"title": "Via text message",
+										"value": "2"
+									},
+									{
+										"title": "Via Phone call",
+										"value": "3"
+									}
+								]
+							}
+						]
+					}
+				},
+				{
+					"type": "Action.Submit",
+					"title": "Submit"
+				}
+			]
+		}
+	}
+}

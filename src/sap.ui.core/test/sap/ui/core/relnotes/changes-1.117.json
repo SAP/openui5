@@ -1,0 +1,94 @@
+{
+  "1.117.0": {
+    "date": "July 2023",
+    "notes": [
+      {
+        "id": "ea7b23a43d511e9765f77df138d15356b8fae58c",
+        "type": "FEATURE",
+        "text": " core/IconPool: Register theme dependent icons"
+      },
+      {
+        "id": "1d559122574e5e60463f10a69a50acda0776efb0",
+        "type": "FIX",
+        "text": " XMLTemplateProcessor: Support for core:require statements in XHTML",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380095467"
+          }
+        ]
+      },
+      {
+        "id": "52d2f5b8319b93d263d4b351f827bde81ed04d36",
+        "type": "FEATURE",
+        "text": " SemanticFormElement: support rendering of Links"
+      },
+      {
+        "id": "d40946273ccb223859fbfbd133eb3b921888a972",
+        "type": "FIX",
+        "text": " OPA: Exclude static area controls from Component parent check",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380100969"
+          }
+        ]
+      },
+      {
+        "id": "cf538db6aa1f9282b9fce7c3f0f162ca0fc61d51",
+        "type": "FIX",
+        "text": " ManagedObjectModel: checkUpdate - wrong filter used",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380087615"
+          }
+        ]
+      },
+      {
+        "id": "156ac9219e6bbd7fe18b1bdf1c51c4a84cee3bbe",
+        "type": "FIX",
+        "text": " sap.ui.core.date.UI5Date#setYear: behave like Date#setYear",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380087420"
+          }
+        ]
+      },
+      {
+        "id": "9d62c0557f64264db1a73b5ac65ed6d6841286a5",
+        "type": "FIX",
+        "text": " base/Localization: setLanguage shouldn't change '_' to '-'",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380086486"
+          }
+        ]
+      },
+      {
+        "id": "340da24686201e8f179f5bb908ac8fe67e92c9d7",
+        "type": "FIX",
+        "text": " Theming: Make setThemeRoot more robust",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380086664"
+          }
+        ]
+      },
+      {
+        "id": "7c822b5dd4c806dc2cfb38bad963d9fdb5c00f5e",
+        "type": "FIX",
+        "text": " core/message/MessageMixin: no warning when label text isn't changed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380083086"
+          }
+        ]
+      }
+    ]
+  }
+}

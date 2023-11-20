@@ -30,10 +30,4 @@ describe("sap.m.MessageStrip", function() {
 	it("should show MessageStrip with a long text of type information and a close button", function() {
 		expect(takeScreenshot(element(by.id("mcontainer6")))).toLookAs("verylong-messagestrip");
 	});
-
-	it("should show all MessageStrips with margin between them", function() {
-		element(by.id("margin-button")).click();
-		expect(takeScreenshot()).toLookAs("messagestrips-with-margin");
-	});
-
 });

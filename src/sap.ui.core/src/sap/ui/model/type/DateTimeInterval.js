@@ -1,7 +1,7 @@
 /*!
  * ${copyright}
  */
-
+/*eslint-disable max-len */
 // Provides the base implementation for all model implementations
 sap.ui.define(['./DateInterval', 'sap/ui/core/format/DateFormat'],
 	function(DateInterval, DateFormat) {
@@ -28,8 +28,8 @@ sap.ui.define(['./DateInterval', 'sap/ui/core/format/DateFormat'],
 	 *           by the data source.
 	 *           For a list of all available options, see {@link sap.ui.core.format.DateFormat.getDateTimeInstance DateFormat}.
 	 * @param {object} [oConstraints] Value constraints
-	 * @param {Date|String} [oConstraints.minimum] Smallest value allowed for this type. Values for constraints must use the same type as configured via <code>oFormatOptions.source</code>.
-	 * @param {Date|String} [oConstraints.maximum] Largest value allowed for this type. Values for constraints must use the same type as configured via <code>oFormatOptions.source</code>.
+	 * @param {Date|string} [oConstraints.minimum] Smallest value allowed for this type. Values for constraints must use the same type as configured via <code>oFormatOptions.source</code>.
+	 * @param {Date|string} [oConstraints.maximum] Largest value allowed for this type. Values for constraints must use the same type as configured via <code>oFormatOptions.source</code>.
 	 * @alias sap.ui.model.type.DateTimeInterval
 	 */
 	var DateTimeInterval = DateInterval.extend("sap.ui.model.type.DateTimeInterval", /** @lends sap.ui.model.type.DateTimeInterval.prototype */ {

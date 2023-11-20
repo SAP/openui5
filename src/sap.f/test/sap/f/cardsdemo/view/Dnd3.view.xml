@@ -1,0 +1,150 @@
+<mvc:View xmlns:dnd="sap.ui.core.dnd"
+	xmlns:fdnd="sap.f.dnd"
+	xmlns="sap.m"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:core="sap.ui.core"
+	xmlns:f="sap.f"
+	xmlns:w="sap.ui.integration.widgets"
+	xmlns:grid="sap.ui.layout.cssgrid"
+	xmlns:card="sap.f.cards"
+	displayBlock="true"
+	controllerName="sap.f.cardsdemo.controller.Dnd3">
+
+	<Page title="{i18n>appTitle}">
+
+		<subHeader>
+			<Toolbar>
+				<ToolbarSpacer/>
+				<Title text="Using drag and drop with sap.f.GridContainer, Example 3"/>
+				<ToolbarSpacer/>
+			</Toolbar>
+		</subHeader>
+
+		<content>
+
+			<Panel headerText="Tiles Group 1">
+				<f:GridContainer id="grid1" items="{
+						path: '/',
+						key: 'uniqueKey',
+						factory: '.createItem'
+					}">
+				</f:GridContainer>
+			</Panel>
+
+			<Panel headerText="Tiles Group 2 (Empty)">
+				<f:GridContainer id="gridEmpty" items="{
+					path: '/',
+					key: 'uniqueKey',
+					factory: '.createItem'
+				}">
+				</f:GridContainer>
+			</Panel>
+
+			<Panel headerText="Tiles Group 3 (Different Drop Group)">
+				<f:GridContainer id="gridDifferentGroup" items="{
+						path: '/',
+						key: 'uniqueKey',
+						factory: '.createItem'
+					}">
+					<f:dragDropConfig>
+						<fdnd:GridDropInfo groupName="different" dropLayout="Horizontal" targetAggregation="items" dropPosition="Between"></fdnd:GridDropInfo>
+					</f:dragDropConfig>
+				</f:GridContainer>
+			</Panel>
+
+			<HBox>
+				<Panel headerText="Tiles Group 4 (Prevents Drop)">
+					<f:GridContainer id="grid4" items="{
+							path: '/',
+							key: 'uniqueKey',
+							factory: '.createItem'
+						}">
+					</f:GridContainer>
+					<layoutData>
+						<FlexItemData growFactor="1" styleClass="sapUiMediumMarginEnd"></FlexItemData>
+					</layoutData>
+				</Panel>
+
+				<Panel headerText="Tiles Group 5">
+					<f:GridContainer id="grid5" items="{
+							path: '/',
+							key: 'uniqueKey',
+							factory: '.createItem'
+						}">
+					</f:GridContainer>
+					<layoutData>
+						<FlexItemData growFactor="1"></FlexItemData>
+					</layoutData>
+				</Panel>
+			</HBox>
+
+			<Panel headerText="Card Group 1">
+				<f:GridContainer id="grid6" snapToRow="true" items="{
+						path: '/',
+						key: 'uniqueKey',
+						factory: '.createItem'
+					}">
+				</f:GridContainer>
+			</Panel>
+
+			<Panel headerText="Card Group 2">
+				<f:GridContainer id="grid7" snapToRow="true" items="{
+						path: '/',
+						key: 'uniqueKey',
+						factory: '.createItem'
+					}">
+				</f:GridContainer>
+			</Panel>
+
+			<Panel headerText="Links (test)">
+				<List width="200px" id="links1" items="{
+						path: '/',
+						factory: '.createItem'
+					}">
+					<CustomListItem>
+						<HBox>
+							<Link id="link1" class="sapUiSmallMargin" text="{header}" target="_blank" href="{href}" />
+						</HBox>
+					</CustomListItem>
+				</List>
+			</Panel>
+
+			<Panel headerText="Grid List">
+				<f:GridList
+					id="gridList1"
+					items="{
+						path: '/'
+					}"
+					growing="true"
+					growingThreshold="9">
+
+					<f:headerToolbar>
+						<Toolbar>
+							<content>
+								<Title text="GridList, header (not droppable)" />
+								<ToolbarSpacer/>
+								<SearchField width="15rem"/>
+							</content>
+						</Toolbar>
+					</f:headerToolbar>
+
+					<f:customLayout>
+						<grid:GridBoxLayout/>
+					</f:customLayout>
+
+					<CustomListItem>
+						<VBox >
+							<VBox class="sapUiSmallMargin">
+								<layoutData>
+									<FlexItemData growFactor="1" shrinkFactor="0" />
+								</layoutData>
+								<Title text="{title}" wrapping="true" />
+								<Label text="{subtitle}" wrapping="true" />
+							</VBox>
+						</VBox>
+					</CustomListItem>
+				</f:GridList>
+			</Panel>
+		</content>
+	</Page>
+</mvc:View>

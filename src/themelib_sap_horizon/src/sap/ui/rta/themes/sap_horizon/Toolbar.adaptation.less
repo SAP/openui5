@@ -1,0 +1,99 @@
+/******************************************************************
+	Style of the RTA Toolbar (type: adaptation) - Horizon Theme
+*******************************************************************/
+@_sap_ui_rta_Toolbar_Adaptation_BaseColor: @sapUiToolbarBackground; //#fff
+@_sap_ui_rta_Toolbar_Adaptation_TextColor: @sapUiShellTextColor; //#223548
+@_sap_ui_rta_Toolbar_Adaptation_BtnFocusBorder: @sapUiShellTextColor; //#223548
+@_sap_ui_rta_Toolbar_Adaptation_BtnHoverText: @sapUiShellTextColor; //#223548
+@_sap_ui_rta_Toolbar_Adaptation_FocusColor: @sapUiToolbarBackground; //#fff
+@_sap_ui_rta_Toolbar_Adaptation_FocusOutlineCol: @sapUiSelected; //#0070f2
+@_sap_ui_rta_Toolbar_Adaptation_BorderRadius: @sapUiButtonBorderCornerRadius; //0.5rem
+@_sap_ui_rta_Toolbar_Adaptation_BtnFocusBorder: transparent;
+@_sap_ui_rta_Toolbar_Adaptation_SegBBtnHoverTextColor: @sapUiShellTextColor;
+@_sap_ui_rta_Toolbar_Adaptation_DraftVersionColor: @sapUiCriticalText; //#b95100
+@_sap_ui_rta_Toolbar_Adaptation_ActiveVersionColor: @sapUiPositiveText; //#256f3a
+@_sap_ui_rta_Toolbar_Adaptation_BaseColorLight: @sapUiGroupTitleBorderColor; // #a8b3bd
+@_sap_ui_rta_Toolbar_Adaptation_VersionHistoryHover: @sapUiListHoverBackground; // #eaecee
+
+.sapUiRtaMode {
+	.sapUiRtaToolbar.sapUiRtaToolbarAdaptation {
+
+		.sapMSegB {
+			.sapMSegBBtn {
+				.sapMSegBBtnInnerWrapper {
+					border: none;
+					background-color: @_sap_ui_rta_Toolbar_Adaptation_BaseColor;
+				}
+
+				&.sapMSegBBtnFocusable {
+					&.sapMSegBBtnSel:focus .sapMSegBBtnInner {
+						outline: 0.0625rem solid @_sap_ui_rta_Toolbar_Adaptation_FocusColor; //1px
+						outline-offset: -0.125rem; //2px
+					}
+
+					&:focus .sapMSegBBtnInner {
+						outline: none;
+
+						&:after {
+							left: 0.0625rem;
+							top: 0.0625rem;
+							right: 0.0625rem;
+							bottom: 0.0625rem;
+						}
+					}
+
+					&.sapMSegBBtnSel {
+						&:hover .sapMSegBBtnInner {
+							color: @_sap_ui_rta_Toolbar_Adaptation_BaseColor;
+
+							&:after {
+								content: none;
+							}
+						}
+
+						& .sapMSegBBtnInner {
+							background: @_sap_ui_rta_Toolbar_Adaptation_FocusOutlineCol;
+							color: @_sap_ui_rta_Toolbar_Adaptation_BaseColor;
+
+							&:after {
+								content: none;
+							}
+
+							.sapUiIcon {
+								color: @_sap_ui_rta_Toolbar_Adaptation_BaseColor;
+							}
+						}
+					}
+				}
+			}
+		}
+
+		.sapMBtn {
+			&.sapMBtnDisabled .sapMBtnInner {
+				opacity: 1.0;
+			}
+		}
+
+		.sapMTB:not(.sapMTB-Info-CTX) {
+			border-top-right-radius: 0;
+			border-top-left-radius: 0;
+		}
+
+		.sapUiRtaVersionButton.sapUiRtaDraftVersionAccent {
+			&:hover {
+				> span > span > bdi {
+					color: @_sap_ui_rta_Toolbar_Adaptation_DraftVersionColor !important;
+				}
+			}
+		}
+
+		.sapUiRtaVersionButton.sapUiRtaActiveVersionAccent {
+			&:hover {
+				> span > span > bdi {
+					color: @_sap_ui_rta_Toolbar_Adaptation_ActiveVersionColor !important;
+				}
+			}
+		}
+
+	}
+}

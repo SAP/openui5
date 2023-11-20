@@ -33,42 +33,45 @@ sap.ui.define([
 	 * @constructor
 	 * @public
 	 * @alias sap.m.InputListItem
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
+	 * @see {@link fiori:/input-list-item/ Input List Item}
 	 */
-	var InputListItem = ListItemBase.extend("sap.m.InputListItem", /** @lends sap.m.InputListItem.prototype */ { metadata : {
+	var InputListItem = ListItemBase.extend("sap.m.InputListItem", /** @lends sap.m.InputListItem.prototype */ {
+		metadata : {
 
-		library : "sap.m",
-		properties : {
+			library : "sap.m",
+			properties : {
 
-			/**
-			 * Label of the list item
-			 */
-			label : {type : "string", group : "Misc", defaultValue : null},
+				/**
+				 * Label of the list item
+				 */
+				label : {type : "string", group : "Misc", defaultValue : null},
 
-			/**
-			 * This property specifies the label text directionality with enumerated options. By default, the label inherits text direction from the DOM.
-			 * @since 1.30.0
-			 */
-			labelTextDirection : {type : "sap.ui.core.TextDirection", group : "Appearance", defaultValue : TextDirection.Inherit}
+				/**
+				 * This property specifies the label text directionality with enumerated options. By default, the label inherits text direction from the DOM.
+				 * @since 1.30.0
+				 */
+				labelTextDirection : {type : "sap.ui.core.TextDirection", group : "Appearance", defaultValue : TextDirection.Inherit}
+			},
+			defaultAggregation : "content",
+			aggregations : {
+
+				/**
+				 * Content controls can be added
+				 */
+				content : {type : "sap.ui.core.Control", multiple : true, singularName : "content", bindable : "bindable"}
+			},
+			designtime: "sap/m/designtime/InputListItem.designtime"
 		},
-		defaultAggregation : "content",
-		aggregations : {
 
-			/**
-			 * Content controls can be added
-			 */
-			content : {type : "sap.ui.core.Control", multiple : true, singularName : "content", bindable : "bindable"}
-		},
-		designtime: "sap/m/designtime/InputListItem.designtime"
-	}});
+		renderer: InputListItemRenderer
+	});
 
 	InputListItem.prototype.getContentAnnouncement = function() {
-		var sAnnouncement = this.getLabel();
+		var sAnnouncement = this.getLabel() + " . ";
 		this.getContent().forEach(function(oContent) {
 			sAnnouncement += ListItemBase.getAccessibilityText(oContent) + " ";
 		});
-
-		return sAnnouncement;
+		return sAnnouncement.trim();
 	};
 
 	return InputListItem;

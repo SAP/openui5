@@ -1,0 +1,17 @@
+/******************************************************************
+	Style of Dialogs shown in RTA - sap_belize_hcw Theme
+*******************************************************************/
+@_sap_ui_rta_Dialogs_BorderLightColor: @sapUiNeutralBG; //#ffffff
+@_sap_ui_rta_Dialogs_BorderDarkColor: @sapUiNeutralElement; //#000000
+@_sap_ui_rta_Dialogs_BoxShadowColor: fade(@sapUiNeutralElement, 50%); //rgba(0, 0, 0, 0.5)
+
+.sapMDialog.sapUiRTABorder {
+	box-shadow: 0 0.625rem 4rem 0 @_sap_ui_rta_Dialogs_BoxShadowColor, 0 0 0.625rem -0.125rem @_sap_ui_rta_Dialogs_BorderLightColor;
+}
+
+.sapUiRtaPopover {
+	&.sapMPopover, .sapMPopover {
+		box-shadow: 0 0.625rem 4rem 0 @_sap_ui_rta_Dialogs_BoxShadowColor, 0 0 0.625rem -0.125rem @_sap_ui_rta_Dialogs_BorderLightColor;
+
+	}
+}

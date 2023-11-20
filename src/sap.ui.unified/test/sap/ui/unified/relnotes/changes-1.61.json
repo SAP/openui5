@@ -1,0 +1,198 @@
+{
+  "1.61.0": {
+    "date": "October 2018",
+    "notes": [
+      {
+        "id": "e61926df34c27f8aec7becbe05322b31f0afc988",
+        "type": "FEATURE",
+        "text": "ui.unified.Month: Keyboard interval selection aligned",
+        "references": []
+      },
+      {
+        "id": "02e6c6fe4fcc7f225c91466a073f0b54e0dd5fbe",
+        "type": "FIX",
+        "text": "sap.ui.unified.CalendarDateInterval: button text is read correctly now",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870391389"
+          }
+        ]
+      },
+      {
+        "id": "caeb54f3777d6361fcd8e8ea6e2ab604ecc81850",
+        "type": "FIX",
+        "text": "ShellLayout: Fix QUnit test for IE",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880717867"
+          }
+        ]
+      },
+      {
+        "id": "811672e14234ceea9731f9586ec48eb6bcd549c5",
+        "type": "FIX",
+        "text": "sap.ui.unified.Calendar: aria-label is not encoded twice now",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870391389"
+          }
+        ]
+      },
+      {
+        "id": "ffa8e3eff12f1736b0c8a43f5499aa34f0660b95",
+        "type": "FIX",
+        "text": "sap.ui.unified.Menu: Menu works correctly on combi devices",
+        "references": [
+          {
+            "type": "GitHub",
+            "reference": "2290"
+          },
+          {
+            "type": "BCP",
+            "reference": "1880727749"
+          }
+        ]
+      },
+      {
+        "id": "945f8034def3e41b1c1752680c3ef52c8d533524",
+        "type": "FIX",
+        "text": "Shell: Fix QUnit test for IE",
+        "references": []
+      },
+      {
+        "id": "9b8e2b12df8dbafa8c799404f38078bc23b7777e",
+        "type": "FIX",
+        "text": "sap.m.PlanningCalendar - API appointment (de)selection works now.",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880678579"
+          }
+        ]
+      },
+      {
+        "id": "44e2c7eeaf0576e12f4b02af24adf72b9f65f919",
+        "type": "FIX",
+        "text": "sap.ui.unified, sap.ui.layout: qunits work correctly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870472933"
+          },
+          {
+            "type": "BCP",
+            "reference": "1870472938"
+          },
+          {
+            "type": "BCP",
+            "reference": "1870472850"
+          },
+          {
+            "type": "BCP",
+            "reference": "1870472847"
+          },
+          {
+            "type": "BCP",
+            "reference": "1870476944"
+          }
+        ]
+      },
+      {
+        "id": "7522fe8b46606403adab8ef8868c822a42be5318",
+        "type": "FIX",
+        "text": "sap.ui.unified, sap.ui.layout: qunits work correctly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870472933"
+          },
+          {
+            "type": "BCP",
+            "reference": "1870472938"
+          },
+          {
+            "type": "BCP",
+            "reference": "1870472850"
+          },
+          {
+            "type": "BCP",
+            "reference": "1870472847"
+          },
+          {
+            "type": "BCP",
+            "reference": "1870476944"
+          }
+        ]
+      },
+      {
+        "id": "d9414b18462bf5f55a1d0b9f669b6cec66c6f890",
+        "type": "FIX",
+        "text": "sap.ui.unified.Calendar: MonthInterval, TimeInterval and CalendarRow examples using sap.m library instead of sap.ui.commons",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880700986"
+          }
+        ]
+      },
+      {
+        "id": "7ed46d96b74a0d68e43d756b0095072db63a6f30",
+        "type": "FIX",
+        "text": "sap.ui.unified.Calendar[Time/Month]TimeInterval: test page fix",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880701050"
+          }
+        ]
+      },
+      {
+        "id": "e43a50eb0ac889c53db79959a50609a406f4a976",
+        "type": "FIX",
+        "text": "sap.ui.unified.FileUploader: Labeling improved",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880418654"
+          }
+        ]
+      },
+      {
+        "id": "04578cdae47aedd90988bb38e8b5ffbb61441e2f",
+        "type": "FIX",
+        "text": "sap.ui.unified.Menu: test works on IE",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870472938"
+          }
+        ]
+      },
+      {
+        "id": "5e28e5c7409753be04ac5ce7e356dba48047f895",
+        "type": "FIX",
+        "text": "sap.ui.unified.ColorPicker: Now qunits work correctly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870472847"
+          }
+        ]
+      },
+      {
+        "id": "85fca6ddf610e76ee75ba48db3bb9aa6816acaa5",
+        "type": "FIX",
+        "text": "ui.unified.Calendar: Color of secondary numbers updated",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880701106"
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -1,7 +1,6 @@
 sap.ui.define([
-	"sap/ui/model/json/JSONModel",
 	"sap/ui/core/mvc/Controller"
-], function (JSONModel, Controller) {
+], function (Controller) {
 	"use strict";
 
 	return Controller.extend("flexiblecolumnlayout.FlexibleColumnLayout", {
@@ -62,4 +61,4 @@ sap.ui.define([
 			this.oRouter.detachBeforeRouteMatched(this.onBeforeRouteMatched, this);
 		}
 	});
-}, true);
+});

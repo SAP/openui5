@@ -2,11 +2,9 @@
  * ${copyright}
  */
 sap.ui.define([
-	'sap/ui/rta/command/FlexCommand',
-	"sap/ui/rta/Utils"
+	"sap/ui/rta/command/FlexCommand"
 ], function(
-	FlexCommand,
-	Utils
+	FlexCommand
 ) {
 	"use strict";
 
@@ -31,51 +29,51 @@ sap.ui.define([
 	 * @private
 	 * @since 1.38
 	 * @alias sap.ui.rta.command.BindProperty
-	 * @experimental Since 1.38. This class is experimental and provides only limited functionality. Also the API might be
-	 *               changed in future.
 	 */
 	var BindProperty = FlexCommand.extend("sap.ui.rta.command.BindProperty", {
-		metadata : {
-			library : "sap.ui.rta",
-			properties : {
-				propertyName : {
-					type : "string"
+		metadata: {
+			library: "sap.ui.rta",
+			properties: {
+				propertyName: {
+					type: "string"
 				},
-				newBinding : {
-					type : "string"
+				newBinding: {
+					type: "string"
 				},
-				changeType : {
-					type : "string",
-					defaultValue : "propertyBindingChange"
+				changeType: {
+					type: "string",
+					defaultValue: "propertyBindingChange"
 				}
 			},
-			associations : {},
-			events : {}
+			associations: {},
+			events: {}
 		}
 	});
 
 	/**
-	 * @override to suppress the binding strings to be used as
+	 * Overridden to suppress the binding strings to be used as binding.
+	 * @override
 	 */
-	BindProperty.prototype.bindProperty = function(sName, oBindingInfo){
-		if (sName === "newBinding"){
+	BindProperty.prototype.bindProperty = function(...aArgs) {
+		const [sName, oBindingInfo] = aArgs;
+		if (sName === "newBinding") {
 			return this.setNewBinding(oBindingInfo.bindingString);
 		}
-		return FlexCommand.prototype.bindProperty.apply(this, arguments);
+		return FlexCommand.prototype.bindProperty.apply(this, aArgs);
 	};
 
 	BindProperty.prototype._getChangeSpecificData = function() {
 		var oElement = this.getElement();
 		// general format
 		var mSpecificChangeInfo = {
-			changeType : this.getChangeType(),
-			selector : {
-				id : oElement.getId(),
-				type : oElement.getMetadata().getName()
+			changeType: this.getChangeType(),
+			selector: {
+				id: oElement.getId(),
+				type: oElement.getMetadata().getName()
 			},
-			content : {
-				property : this.getPropertyName(),
-				newBinding : this.getNewBinding()
+			content: {
+				property: this.getPropertyName(),
+				newBinding: this.getNewBinding()
 			}
 		};
 
@@ -83,5 +81,4 @@ sap.ui.define([
 	};
 
 	return BindProperty;
-
-}, /* bExport= */true);
+});

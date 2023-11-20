@@ -10,7 +10,7 @@
 					"Run Integration Tests": "test-resources/sap/tnt/demokit/toolpageapp/webapp/test/integration/opaTests.qunit.html"
 				},
 				"icon": "retail-store",
-				"desc": "Tool page for admins, built with the sap.tnt.ToolPage",
+				"desc": "Backoffice tool, built with the sap.tnt.ToolPage",
 				"config": "test-resources/sap/tnt/demokit/toolpageapp/demoapp.json"
 			}
 		]
@@ -61,7 +61,6 @@
 				"since": "1.34",
 				"samples": [
 					"sap.tnt.sample.ToolHeader",
-					"sap.tnt.sample.ToolHeaderControls",
 					"sap.tnt.sample.ToolHeaderIconTabHeader"
 				]
 			},
@@ -71,15 +70,17 @@
 				"category": "Layout",
 				"since": "1.34",
 				"samples": [
-					"sap.tnt.sample.ToolPage"
+					"sap.tnt.sample.ToolPageHorizontalNavigation",
+					"sap.tnt.sample.ToolPage",
+					"sap.tnt.sample.ToolPageNavigation"
 				]
 			}
 		],
 		"samples": [
 			{
 				"id": "sap.tnt.sample.InfoLabel",
-				"name": "InfoLabel in non-editable Form",
-				"description": "<code>InfoLabel</code> used in non-editable <code>Form</code>. Property <code>displayOnly</code> of the Control must be set to true"
+				"name": "InfoLabel",
+				"description": "<code>InfoLabel</code> with all available color schemes"
 			},
 			{
 				"id": "sap.tnt.sample.InfoLabelInTable",
@@ -104,12 +105,7 @@
 			{
 				"id": "sap.tnt.sample.ToolHeader",
 				"name": "ToolHeader",
-				"description": "ToolHeader is useful for showing lists of action buttons"
-			},
-			{
-				"id": "sap.tnt.sample.ToolHeaderControls",
-				"name": "ToolHeader Controls",
-				"description": "ToolHeader can contain any controls"
+				"description": "ToolHeader that mimics the content of the Shell."
 			},
 			{
 				"id": "sap.tnt.sample.ToolHeaderIconTabHeader",
@@ -118,8 +114,18 @@
 			},
 			{
 				"id": "sap.tnt.sample.ToolPage",
-				"name": "Tool Page",
-				"description": "A tool page layout combining ToolHeader, SideNavigation and content part"
+				"name": "Tool Page with Vertical Navigation",
+				"description": "A tool page layout with vertical navigation"
+			},
+			{
+				"id": "sap.tnt.sample.ToolPageHorizontalNavigation",
+				"name": "Tool Page with Horizontal Navigation",
+				"description": "A tool page layout with horizontal navigation"
+			},
+			{
+				"id": "sap.tnt.sample.ToolPageNavigation",
+				"name": "Tool Page Horizontal and Vertical Navigation",
+				"description": "A tool page layout with horizontal navigation (on desktop and tablet) and vertical navigation (on phone)"
 			}
 		]
 	}

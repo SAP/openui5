@@ -16,58 +16,48 @@ sap.ui.define(["sap/ui/core/library", "sap/ui/core/Renderer", "./ListItemBaseRen
 	 * @namespace
 	 */
 	var InputListItemRenderer = Renderer.extend(ListItemBaseRenderer);
+	InputListItemRenderer.apiVersion = 2;
 
 	/**
 	 * Renders the HTML for the given control, using the provided
 	 * {@link sap.ui.core.RenderManager}.
 	 *
-	 * @param {sap.ui.core.RenderManager}
-	 *          oRenderManager the RenderManager that can be used for writing to the
-	 *          Render-Output-Buffer
-	 * @param {sap.ui.core.Control}
-	 *          oControl an object representation of the control that should be
-	 *          rendered
+	 * @param {sap.ui.core.RenderManager} rm
+	 *          RenderManager that can be used to render the control's DOM
+	 * @param {sap.m.InputListItem} oLI
+	 *          The item to be rendered
 	 */
 	InputListItemRenderer.renderLIAttributes = function(rm, oLI) {
-		rm.addClass("sapMILI");
+		rm.class("sapMILI");
 	};
 
 	InputListItemRenderer.renderLIContent = function(rm, oLI) {
 
-		var sLabel = oLI.getLabel();
-
 		// List item label
+		var sLabel = oLI.getLabel();
+		var sInnerLabel = oLI.getId() + "-label";
 		if (sLabel) {
-			var sLabelId = oLI.getId() + "-label",
-				sLabelDir = oLI.getLabelTextDirection();
+			rm.openStart("span", sInnerLabel);
+			rm.class("sapMILILabel");
 
-			rm.write('<span id="' + sLabelId + '" class="sapMILILabel"');
-
+			var sLabelDir = oLI.getLabelTextDirection();
 			if (sLabelDir !== TextDirection.Inherit) {
-				rm.writeAttribute("dir", sLabelDir.toLowerCase());
+				rm.attr("dir", sLabelDir.toLowerCase());
 			}
 
-			rm.write('>');
-			rm.writeEscaped(sLabel);
-			rm.write('</span>');
+			rm.openEnd();
+			rm.text(sLabel);
+			rm.close("span");
 		}
 
-		// List item input content
-		rm.write('<div class="sapMILIDiv sapMILI-CTX">');
-
-		oLI.getContent().forEach(function(oContent) {
-
-			// if not already exists add the label as a labelledby association whenever possible
-			if (sLabelId &&
-				oContent.addAriaLabelledBy &&
-				oContent.getAriaLabelledBy().indexOf(sLabelId) == -1) {
-				oContent.addAssociation("ariaLabelledBy", sLabelId, true);
+		rm.openStart("div").class("sapMILIDiv").class("sapMILI-CTX").openEnd();
+		oLI.getContent().forEach(function(oControl) {
+			if (oControl.addAriaLabelledBy && oControl.getAriaLabelledBy().indexOf(sInnerLabel) === -1) {
+				oControl.addAriaLabelledBy(sInnerLabel);
 			}
-
-			rm.renderControl(oContent);
+			rm.renderControl(oControl);
 		});
-
-		rm.write('</div>');
+		rm.close("div");
 	};
 
 

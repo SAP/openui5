@@ -1,0 +1,27 @@
+<mvc:View
+	height="100%"
+	controllerName="sap.m.sample.SelectWithWrappedItemText.controller.SelectWithWrappedItemText"
+	xmlns:core="sap.ui.core"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m">
+	<Select
+			width="300px"
+			wrapItemsText="true"
+			class="sapUiLargeMargin"
+			items="{
+				path: '/ProductCollection',
+				sorter: { path: 'Name' }
+			}">
+		<core:Item key="{ProductId}" text="{Name}" />
+	</Select>
+	<Select
+			width="300px"
+			wrapItemsText="true"
+			class="sapUiLargeMargin"
+			items="{
+				path: '/ProductCollection2',
+				sorter: { path: 'Name' }
+			}">
+		<core:Item key="{ProductId}" text="{Name}" />
+	</Select>
+</mvc:View>

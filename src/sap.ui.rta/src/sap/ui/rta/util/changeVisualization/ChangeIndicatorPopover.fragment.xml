@@ -1,0 +1,55 @@
+<core:FragmentDefinition
+	xmlns:core="sap.ui.core"
+	xmlns="sap.m"
+	xmlns:l="sap.ui.layout">
+	<Popover
+		showHeader="false"
+		placement="PreferredTopOrFlip"
+		id="popover"
+		class="sapUiRtaPopover sapUiRtaChangeVisualizationPopover">
+		<Table
+			ariaLabelledBy="Changes"
+			items="{details>/}"
+			inset="false"
+			fixedLayout="false"
+			width="auto">
+			<columns>
+				<Column
+					width="auto">
+					<Text text="{i18n>TIT_CHANGEVISUALIZATION_TYPE}" />
+				</Column>
+				<Column
+					width="auto">
+					<Text text="{i18n>TIT_CHANGEVISUALIZATION_DESCRIPTION}" />
+				</Column>
+				<Column
+					width="auto">
+					<Text text="{i18n>TIT_CHANGEVISUALIZATION_DATE}" />
+				</Column>
+			</columns>
+			<items>
+				<ColumnListItem>
+					<cells>
+						<core:Icon
+							src="{details>icon}"
+							class="sapUiTinyMarginBegin"
+							tooltip="{details>iconTooltip}"/>
+						<HBox alignItems="Center">
+							<Text
+								text="{details>description}"
+								tooltip="{details>descriptionTooltip}"/>
+							<Button
+								visible="{= !!${details>detailButtonText}}"
+								text="{details>detailButtonText}"
+								press="._showDependentElements"
+								class="sapUiTinyMarginBegin"/>
+						</HBox>
+						<Text
+							text="{details>relativeDate}"
+							tooltip="{details>fullDate}"/>
+					</cells>
+				</ColumnListItem>
+			</items>
+		</Table>
+	</Popover>
+</core:FragmentDefinition>

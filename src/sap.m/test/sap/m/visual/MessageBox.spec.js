@@ -40,6 +40,19 @@ describe("sap.m.MessageBox", function () {
 		expect(takeScreenshot(element(by.id("messageBoxId1")))).toLookAs("mbox-details1");
 		browser.executeScript("sap.ui.getCore().byId('messageBoxId1').getContent()[0].getAggregation('items')[1].firePress();");
 		expect(takeScreenshot(element(by.id("messageBoxId1")))).toLookAs("mbox-details2");
+		browser.executeScript("sap.ui.getCore().byId('messageBoxId1').close();");
+	});
+
+	it("Should open MessageBox with custom actions and emphasizedAction", function () {
+		element(by.id("btnEmphasizedAction")).click();
+		expect(takeScreenshot(element(by.id("mboxEmphasizedAction")))).toLookAs("mbox-emphasizedAction");
+		browser.executeScript("sap.ui.getCore().byId('mboxEmphasizedAction').close();");
+	});
+
+	it("Should open MessageBox with custom actions and emphasizedAction", function () {
+		element(by.id("btnNoEmphasizedAction")).click();
+		expect(takeScreenshot(element(by.id("mboxNoEmphasizedAction")))).toLookAs("mbox-no-emphasizedAction");
+		browser.executeScript("sap.ui.getCore().byId('mboxNoEmphasizedAction').close();");
 	});
 
 });

@@ -3,29 +3,27 @@
 	xmlns:core="sap.ui.core"
 	xmlns:form="sap.ui.layout.form"
 	xmlns:mvc="sap.ui.core.mvc"
-	xmlns:template="http://schemas.sap.com/sapui5/extension/sap.ui.core.template/1">
-
+	xmlns:template="http://schemas.sap.com/sapui5/extension/sap.ui.core.template/1"
+	template:require="{AH: 'sap/ui/model/odata/AnnotationHelper'}">
 	<!-- "meta" model's binding context MUST point to an entity type -->
-	<template:alias name=".AH" value="sap.ui.model.odata.AnnotationHelper">
-		<template:with path="meta>com.sap.vocabularies.UI.v1.Badge" var="badge">
-			<form:SimpleForm layout="ResponsiveGridLayout">
-				<form:title>
-					<core:Title text="{path: 'badge>HeadLine', formatter: '.AH.format'}"/>
-				</form:title>
+	<template:with path="meta>com.sap.vocabularies.UI.v1.Badge" var="badge">
+		<form:SimpleForm layout="ResponsiveGridLayout">
+			<form:title>
+				<core:Title text="{path: 'badge>HeadLine', formatter: 'AH.format'}"/>
+			</form:title>
 
-				<Label text="{path: 'badge>Title/Label', formatter: '.AH.format'}"/>
-				<Text text="{path: 'badge>Title/Value', formatter: '.AH.format'}"/>
+			<Label text="{path: 'badge>Title/Label', formatter: 'AH.format'}"/>
+			<Text text="{path: 'badge>Title/Value', formatter: 'AH.format'}"/>
 
-				<Label text="{path: 'badge>MainInfo/Label', formatter: '.AH.format'}"/>
-				<template:with path="badge>MainInfo" var="field">
-					<core:Fragment fragmentName="sap.ui.core.sample.ViewTemplate.tiny.Field" type="XML"/>
-				</template:with>
+			<Label text="{path: 'badge>MainInfo/Label', formatter: 'AH.format'}"/>
+			<template:with path="badge>MainInfo" var="field">
+				<core:Fragment fragmentName="sap.ui.core.sample.ViewTemplate.tiny.Field" type="XML"/>
+			</template:with>
 
-				<Label text="{path: 'badge>SecondaryInfo/Label', formatter: '.AH.format'}"/>
-				<template:with path="badge>SecondaryInfo" var="field">
-					<core:Fragment fragmentName="sap.ui.core.sample.ViewTemplate.tiny.Field" type="XML"/>
-				</template:with>
-			</form:SimpleForm>
-		</template:with>
-	</template:alias>
+			<Label text="{path: 'badge>SecondaryInfo/Label', formatter: 'AH.format'}"/>
+			<template:with path="badge>SecondaryInfo" var="field">
+				<core:Fragment fragmentName="sap.ui.core.sample.ViewTemplate.tiny.Field" type="XML"/>
+			</template:with>
+		</form:SimpleForm>
+	</template:with>
 </mvc:View>

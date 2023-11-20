@@ -1,0 +1,113 @@
+{
+	"sap.app": {
+		"id": "card.explorer.dataSources.topProducts",
+		"type": "card"
+	},
+	"sap.card": {
+		"configuration": {
+			"parameters": {
+				"numberOfProducts": {
+					"value": 2,
+					"type": "integer"
+				},
+				"filterVisibility": {
+					"value": false,
+					"type": "boolean"
+				}
+			},
+			"filters": {
+				"category": {
+					"value": "notebooks",
+					"type": "string",
+					"label": "Category",
+					"description": "Filter the products by category.",
+					"items":  [
+						{
+							"title": "Flat Screen Monitors",
+							"key": "flat_screens"
+						},
+						{
+							"title": "Notebooks",
+							"key": "notebooks"
+						}
+					]
+				},
+				"city": {
+					"value": "sofia",
+					"type": "string",
+					"label": "City",
+					"description": "Filter the products by city.",
+					"items":  [
+						{
+							"title": "Sofia",
+							"key": "sofia"
+						},
+						{
+							"title": "Stara Zagora",
+							"key": "stara_zagora"
+						}
+					]
+				},
+				"country": {
+					"type": "Search",
+					"label": "Country",
+					"value": "France",
+					"placeholder": "Provide a country name"
+				},
+				"period": {
+					"type": "DateRange",
+					"value": {
+						"option": "today",
+						"values": []
+					},
+					"options": [
+						"today",
+						"yesterday",
+						"tomorrow",
+						"dateRange",
+						"nextDays",
+						"lastDays"
+					],
+					"label": "Activity period"
+				},
+				"hiddenFilter": {
+					"visible": "{parameters>/filterVisibility/value}"
+				}
+			}
+		},
+		"data": {
+			"request": {
+				"url": "./items_{filters>/category/value}.json"
+			}
+		},
+		"type": "List",
+		"header": {
+			"title": "Products by category",
+			"subTitle": "Category {filters>/category/value}",
+			"icon": {
+				"src": "sap-icon://product"
+			},
+			"status": {
+				"text": {
+					"format": {
+						"translationKey": "i18n>CARD.COUNT_X_OF_Y",
+						"parts": [
+							"parameters>/visibleItems",
+							"/count"
+						]
+					}
+				}
+			}
+		},
+		"content": {
+			"data": {
+				"path": "/items"
+			},
+			"item": {
+				"title": "{Name}",
+				"description": "{ProductCategory}"
+			},
+			"maxItems": "{{parameters.numberOfProducts}}"
+		}
+	}
+}

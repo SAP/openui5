@@ -86,8 +86,13 @@ $.widget("ui.draggable", $.ui.mouse, {
 		}
 
 		$(o.iframeFix === true ? "iframe" : o.iframeFix).each(function() {
-			$("<div class='ui-draggable-iframeFix' style='background: #fff;'></div>")
+			// ##### BEGIN: MODIFIED BY SAP
+			// CSP Modification - remove inline style
+			// $("<div class='ui-draggable-iframeFix' style='background: #fff;'></div>")
+			$("<div class='ui-draggable-iframeFix'></div>")
 			.css({
+				background: "#fff",
+			// ##### END: MODIFIED BY SAP
 				width: this.offsetWidth+"px", height: this.offsetHeight+"px",
 				position: "absolute", opacity: "0.001", zIndex: 1000
 			})
@@ -238,7 +243,10 @@ $.widget("ui.draggable", $.ui.mouse, {
 			return false;
 		}
 
-		if((this.options.revert === "invalid" && !dropped) || (this.options.revert === "valid" && dropped) || this.options.revert === true || ($.isFunction(this.options.revert) && this.options.revert.call(this.element, dropped))) {
+		// ##### BEGIN: MODIFIED BY SAP
+		// if((this.options.revert === "invalid" && !dropped) || (this.options.revert === "valid" && dropped) || this.options.revert === true || ($.isFunction(this.options.revert) && this.options.revert.call(this.element, dropped))) {
+		if((this.options.revert === "invalid" && !dropped) || (this.options.revert === "valid" && dropped) || this.options.revert === true || (typeof this.options.revert === "function" && this.options.revert.call(this.element, dropped))) {
+		// ##### END: MODIFIED BY SAP
 			$(this.helper).animate(this.originalPosition, parseInt(this.options.revertDuration, 10), function() {
 				if(that._trigger("stop", event) !== false) {
 					that._clear();
@@ -288,7 +296,10 @@ $.widget("ui.draggable", $.ui.mouse, {
 	_createHelper: function(event) {
 
 		var o = this.options,
-			helper = $.isFunction(o.helper) ? $(o.helper.apply(this.element[0], [event])) : (o.helper === "clone" ? this.element.clone().removeAttr("id") : this.element);
+			// ##### BEGIN: MODIFIED BY SAP
+			// helper = $.isFunction(o.helper) ? $(o.helper.apply(this.element[0], [event])) : (o.helper === "clone" ? this.element.clone().removeAttr("id") : this.element);
+			helper = typeof o.helper === "function" ? $(o.helper.apply(this.element[0], [event])) : (o.helper === "clone" ? this.element.clone().removeAttr("id") : this.element);
+			// ##### END: MODIFIED BY SAP
 
 		if(!helper.parents("body").length) {
 			helper.appendTo((o.appendTo === "parent" ? this.element[0].parentNode : o.appendTo));

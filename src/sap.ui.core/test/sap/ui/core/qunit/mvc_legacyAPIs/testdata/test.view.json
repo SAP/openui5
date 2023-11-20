@@ -1,0 +1,55 @@
+{	"Type": "sap.ui.core.JSONView",
+	"controllerName":"example.mvc_legacyAPIs.test",
+	"content": [{
+		"Type":"sap.m.Panel",
+		"id":"myPanel",
+		"content":[
+			{
+				"Type":"sap.m.Button",
+				"id":"Button1",
+				"text":"Hello World!",
+				"press": "doIt"
+			},
+			{
+				"Type": "sap.m.SearchField"
+			},
+			{
+				"Type":"sap.m.Button",
+				"id":"Button2",
+				"text":"Hello"
+			},
+			{
+				"Type":"sap.m.Button",
+				"id":"ButtonX",
+				"text":"Another Hello",
+				"press": ".sap.doIt"
+			},
+			{
+				"Type":"sap.ui.core.mvc.JSONView",
+				"viewName":"example.mvc_legacyAPIs.test2",
+				"id":"MyJSONView"
+			},
+			{
+				"Type":"sap.ui.core.mvc.JSView",
+				"viewName":"example.mvc_legacyAPIs.test2",
+				"id":"MyJSView"
+			},
+			{
+				"Type":"sap.ui.core.mvc.XMLView",
+				"viewName":"example.mvc_legacyAPIs.test2",
+				"id":"MyXMLView"
+			},
+			{
+				"Type":"sap.ui.core.mvc.HTMLView",
+				"viewName":"example.mvc_legacyAPIs.test2",
+				"controllerName":"example.mvc_legacyAPIs.test",
+				"id":"MyHTMLView"
+			},
+			{
+				"Type":"sap.m.Button",
+				"id":"ButtonWithBinding",
+				"text": "{path:\"/test\", formatter: \".valueFormatter\"}"
+			}
+		]
+	}]
+}

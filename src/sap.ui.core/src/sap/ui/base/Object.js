@@ -11,20 +11,23 @@
  */
 
 // Provides class sap.ui.base.Object
-sap.ui.define(['jquery.sap.global', './Interface', './Metadata'],
-	function(jQuery, Interface, Metadata) {
+sap.ui.define(['./Metadata', "sap/base/Log"],
+	function(Metadata, Log) {
 	"use strict";
 
 
 	/**
-	 * Constructor for an sap.ui.base.Object.
+	 * Constructor for an <code>sap.ui.base.Object</code>.
 	 *
-	 * @class Base class for all SAPUI5 Objects
+	 * Subclasses of this class should always call the constructor of their base class.
+	 *
+	 * @class Base class for all SAPUI5 Objects.
 	 * @abstract
 	 * @author Malte Wedel
 	 * @version ${version}
 	 * @public
 	 * @alias sap.ui.base.Object
+	 * @throws {Error} When an instance of the class or its subclasses is created without the <code>new</code> operator.
 	 */
 	var BaseObject = Metadata.createClass("sap.ui.base.Object", {
 
@@ -38,28 +41,37 @@ sap.ui.define(['jquery.sap.global', './Interface', './Metadata'],
 	});
 
 	/**
-	 * Destructor method for objects
+	 * Destructor method for objects.
 	 * @public
 	 */
 	BaseObject.prototype.destroy = function() {
 	};
 
 	/**
-	 * Returns the public interface of the object.
+	 * Returns the public facade of this object.
 	 *
-	 * @return {sap.ui.base.Interface} the public interface of the object
+	 * By default, the public facade is implemented as an instance of {@link sap.ui.base.Interface},
+	 * exposing the <code>publicMethods</code> as defined in the metadata of the class of this object.
+	 *
+	 * See the documentation of the {@link #.extend extend} method for an explanation of <code>publicMethods</code>.
+	 *
+	 * The facade is created on the first call of <code>getInterface</code> and reused for all later calls.
+	 *
 	 * @public
+	 * @returns {sap.ui.base.Object} A facade for this object, with at least the public methods of the class of this.
 	 */
 	BaseObject.prototype.getInterface = function() {
 		// New implementation that avoids the overhead of a dedicated member for the interface
 		// initially, an Object instance has no associated Interface and the getInterface
 		// method is defined only in the prototype. So the code here will be executed.
 		// It creates an interface (basically the same code as in the old implementation)
-		var oInterface = new Interface(this, this.getMetadata().getAllPublicMethods());
+		var oInterface = new BaseObject._Interface(this, this.getMetadata().getAllPublicMethods());
 		// Now this Object instance gets a new, private implementation of getInterface
 		// that returns the newly created oInterface. Future calls of getInterface on the
 		// same Object therefore will return the already created interface
-		this.getInterface = jQuery.sap.getter(oInterface);
+		this.getInterface = function() {
+			return oInterface;
+		};
 		// as the first caller doesn't benefit from the new method implementation we have to
 		// return the created interface as well.
 		return oInterface;
@@ -78,21 +90,30 @@ sap.ui.define(['jquery.sap.global', './Interface', './Metadata'],
 	 */
 
 	/**
+	 * The structure of the "metadata" object which is passed when inheriting from sap.ui.base.Object using its static "extend" method.
+	 * See {@link sap.ui.base.Object.extend} for details on its usage.
+	 *
+	 * @typedef {object} sap.ui.base.Object.MetadataOptions
+	 *
+	 * @property {string[]} [interfaces] set of names of implemented interfaces (defaults to no interfaces)
+	 * @property {boolean} [abstract=false] flag that marks the class as abstract (purely informational, defaults to false)
+	 * @property {boolean} [final=false] flag that marks the class as final (defaults to false)
+	 * @property {boolean} [deprecated=false] flag that marks the class as deprecated (defaults to false). May lead to an additional warning
+	 *     log message at runtime when the object is still used. For the documentation, also add a <code>@deprecated</code> tag in the JSDoc,
+	 *     describing since when it is deprecated and what any alternatives are.
+	 *
+	 * @public
+	 */
+
+	/**
 	 * Creates a subclass of class sap.ui.base.Object with name <code>sClassName</code>
 	 * and enriches it with the information contained in <code>oClassInfo</code>.
 	 *
 	 * <code>oClassInfo</code> might contain three kinds of information:
 	 * <ul>
-	 * <li><code>metadata:</code> an (optional) object literal with metadata about the class.
-	 * The information in the object literal will be wrapped by an instance of {@link sap.ui.base.Metadata Metadata}
-	 * and might contain the following information
-	 * <ul>
-	 * <li><code>interfaces:</code> {string[]} (optional) set of names of implemented interfaces (defaults to no interfaces)</li>
-	 * <li><code>publicMethods:</code> {string[]} (optional) list of methods that should be part of the public
-	 * facade of the class</li>
-	 * <li><code>abstract:</code> {boolean} (optional) flag that marks the class as abstract (purely informational, defaults to false)</li>
-	 * <li><code>final:</code> {boolean} (optional) flag that marks the class as final (defaults to false)</li>
-	 * </ul>
+	 * <li><code>metadata:</code> an (optional) object literal with metadata about the class like implemented interfaces,
+	 * see {@link sap.ui.base.Object.MetadataOptions MetadataOptions} for details.
+	 * The information in the object literal will be wrapped by an instance of {@link sap.ui.base.Metadata Metadata}.
 	 * Subclasses of sap.ui.base.Object can enrich the set of supported metadata (e.g. see {@link sap.ui.core.Element.extend}).
 	 * </li>
 	 *
@@ -105,6 +126,12 @@ sap.ui.define(['jquery.sap.global', './Interface', './Metadata'],
 	 * object of the newly created class. Callers can thereby add methods or properties to all instances of the
 	 * class. But be aware that the given values are shared between all instances of the class. Usually, it doesn't
 	 * make sense to use primitive values here other than to declare public constants.
+	 *
+	 * If such a property has a function as its value, and if the property name does not start with an underscore
+	 * or with the prefix "on", the property name will be automatically added to the list of public methods of the
+	 * class (see property <code>publicMethods</code> in the <code>metadata</code> section). If a method's name
+	 * matches that pattern, but is not meant to be public, it shouldn't be included in the class info object,
+	 * but be assigned to the prototype instead.
 	 * </li>
 	 *
 	 * </ul>
@@ -158,14 +185,16 @@ sap.ui.define(['jquery.sap.global', './Interface', './Metadata'],
 		// create Metadata object
 		var oMetadata = new (FNMetaImpl || Metadata)(sClassName, oStaticInfo);
 		var fnClass = oMetadata.getClass();
-		fnClass.getMetadata = fnClass.prototype.getMetadata = jQuery.sap.getter(oMetadata);
+		fnClass.getMetadata = fnClass.prototype.getMetadata = function() {
+			return oMetadata;
+		};
 		// enrich function
 		if ( !oMetadata.isFinal() ) {
 			fnClass.extend = function(sSCName, oSCClassInfo, fnSCMetaImpl) {
 				return Metadata.createClass(fnClass, sSCName, oSCClassInfo, fnSCMetaImpl || FNMetaImpl);
 			};
 		}
-		jQuery.sap.log.debug("defined class '" + sClassName + "'" + (oMetadata.getParent() ? " as subclass of " + oMetadata.getParent().getName() : "") );
+		Log.debug("defined class '" + sClassName + "'" + (oMetadata.getParent() ? " as subclass of " + oMetadata.getParent().getName() : "") );
 		return oMetadata;
 	};
 
@@ -184,6 +213,10 @@ sap.ui.define(['jquery.sap.global', './Interface', './Metadata'],
 	 * with type names (e.g. by introducing mixins), then this method might detect matches
 	 * for those names as well.
 	 *
+	 * @example
+	 * myObject.isA("sap.ui.core.Control"); // true if myObject is an instance of sap.ui.core.Control
+	 * myObject.isA(["sap.ui.core.Control", "sap.ui.core.Fragment"]); // true if myObject is an instance of sap.ui.core.Control or sap.ui.core.Fragment
+	 *
 	 * @param {string|string[]} vTypeName Type or types to check for
 	 * @returns {boolean} Whether this object is an instance of the given type or of any of the given types
 	 * @public
@@ -199,15 +232,78 @@ sap.ui.define(['jquery.sap.global', './Interface', './Metadata'],
 	 *
 	 * Please see the API documentation of {@link sap.ui.base.Object#isA} for more details.
 	 *
-	 * @param {object} oObject Object which will be checked whether it is an instance of the given type
+	 * @param {any} oObject Object which will be checked whether it is an instance of the given type
 	 * @param {string|string[]} vTypeName Type or types to check for
 	 * @returns {boolean} Whether the given object is an instance of the given type or of any of the given types
 	 * @public
 	 * @since 1.56
 	 * @static
+	 * @deprecated Since 1.120, please use {@link sap.ui.base.Object.isObjectA}.
 	 */
 	BaseObject.isA = function(oObject, vTypeName) {
 		return oObject instanceof BaseObject && oObject.isA(vTypeName);
+	};
+
+	/**
+	 * Checks whether the given object is an instance of the named type.
+	 * This function is a short-hand convenience for {@link sap.ui.base.Object#isA}.
+	 *
+	 * Please see the API documentation of {@link sap.ui.base.Object#isA} for more details.
+	 *
+	 * @param {any} oObject Object which will be checked whether it is an instance of the given type
+	 * @param {string|string[]} vTypeName Type or types to check for
+	 * @returns {boolean} Whether the given object is an instance of the given type or of any of the given types
+	 * @public
+	 * @since 1.120
+	 * @static
+	 */
+	BaseObject.isObjectA = function(oObject, vTypeName) {
+		return oObject instanceof BaseObject && oObject.isA(vTypeName);
+	};
+
+	/**
+	 * @param  {sap.ui.base.Object} [oObject] Object for which a facade should be created
+	 * @param  {string[]} [aMethods=[]] Names of the methods, that should be available in the new facade
+	 * @param  {boolean} [_bReturnFacade=false] If true, the return value of a function call is this created Interface instance instead of the BaseObject interface
+	 * @private
+	 * @static
+	 */
+	BaseObject._Interface = function(oObject, aMethods, _bReturnFacade) {
+		// if object is null or undefined, return itself
+		if (!oObject) {
+			return oObject;
+		}
+
+		function fCreateDelegator(oObject, sMethodName) {
+			return function() {
+					// return oObject[sMethodName].apply(oObject, arguments);
+					var tmp = oObject[sMethodName].apply(oObject, arguments);
+					// to avoid to hide the implementation behind the interface you need
+					// to override the getInterface function in the object or create the interface with bFacade = true
+					if (_bReturnFacade) {
+						return this;
+					} else {
+						return (tmp instanceof BaseObject) ? tmp.getInterface() : tmp;
+					}
+				};
+		}
+
+		// if there are no methods return
+		if (!aMethods) {
+			return {};
+		}
+
+		var sMethodName;
+
+		// create functions for all delegated methods
+		// PERFOPT: 'cache' length of aMethods to reduce # of resolutions
+		for (var i = 0, ml = aMethods.length; i < ml; i++) {
+			sMethodName = aMethods[i];
+			//!oObject[sMethodName] for 'lazy' loading interface methods ;-)
+			if (!oObject[sMethodName] || typeof oObject[sMethodName] === "function") {
+				this[sMethodName] = fCreateDelegator(oObject, sMethodName);
+			}
+		}
 	};
 
 	return BaseObject;

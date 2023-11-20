@@ -1,0 +1,10 @@
+<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m" xmlns:test="testdata.mvc">
+	<Panel id="aPanel">
+		<content>
+			<mvc:View id="embedded-async-true" viewName="module:testdata/mvc/TypedView" async="true"></mvc:View>
+			<mvc:View id="embedded-async-true2" viewName="module:testdata/mvc/TypedView2" async="true"></mvc:View>
+			<test:TypedViewSyncCreateContent id="embedded-async-typed-declaration" async="true"/>
+			<test:TypedViewWithRenderer id="embedded-async-typed-declaration-with-renderer" async="true"/>
+		</content>
+	</Panel>
+</mvc:View>

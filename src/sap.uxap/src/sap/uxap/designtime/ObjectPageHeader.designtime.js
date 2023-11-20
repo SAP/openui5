@@ -21,9 +21,13 @@ sap.ui.define([],
 						move: {
 							changeType: "moveControls"
 						}
+					},
+					name: {
+						singular: "OBJECT_PAGE_HEADER_NAME",
+						plural: "OBJECT_PAGE_HEADER_NAME_PLURAL"
 					}
 				}
 			}
 		};
 
-	}, /* bExport= */ false);
+	});

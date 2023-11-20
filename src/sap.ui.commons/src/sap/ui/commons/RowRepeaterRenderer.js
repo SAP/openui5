@@ -3,9 +3,13 @@
  */
 
 // Provides default renderer for control sap.ui.commons.RowRepeater
-sap.ui.define(['jquery.sap.global', './Button', './Paginator', './Toolbar'],
-	function(jQuery, Button, Paginator, Toolbar) {
+sap.ui.define(['./Button', './Paginator', './Toolbar', './library'],
+	function(Button, Paginator, Toolbar, library) {
 	"use strict";
+
+
+	// shortcut for sap.ui.commons.RowRepeaterDesign
+	var RowRepeaterDesign = library.RowRepeaterDesign;
 
 
 	/**
@@ -32,7 +36,7 @@ sap.ui.define(['jquery.sap.global', './Button', './Paginator', './Toolbar'],
 		oRenderManager.write(">");
 
 		// render the row repeater header (not in BARESHELL design)
-		if ( oControl.getDesign() !== sap.ui.commons.RowRepeaterDesign.BareShell) {
+		if ( oControl.getDesign() !== RowRepeaterDesign.BareShell) {
 			this.renderHeader(oRenderManager, oControl);
 		}
 
@@ -40,7 +44,7 @@ sap.ui.define(['jquery.sap.global', './Button', './Paginator', './Toolbar'],
 		this.renderBody(oRenderManager, oControl);
 
 		// render the row repeater footer (not in BARESHELL design)
-		if ( oControl.getDesign() !== sap.ui.commons.RowRepeaterDesign.BareShell) {
+		if ( oControl.getDesign() !== RowRepeaterDesign.BareShell) {
 			this.renderFooter(oRenderManager, oControl);
 		}
 
@@ -109,7 +113,7 @@ sap.ui.define(['jquery.sap.global', './Button', './Paginator', './Toolbar'],
 	//	if(oTitle.getIcon()!==null) {
 	//		oRenderManager.write("<img");
 	//		oRenderManager.writeAttributeEscaped("src", oTitle.getIcon());
-	//		oRenderManager.write("/>");
+	//		oRenderManager.write(">");
 	//	}
 	//
 	//	// render the text if provided
@@ -136,7 +140,7 @@ sap.ui.define(['jquery.sap.global', './Button', './Paginator', './Toolbar'],
 			if (oTitle.getIcon()) {
 				oRenderManager.write("<img");
 				oRenderManager.writeAttributeEscaped("src", oTitle.getIcon());
-				oRenderManager.write("/>");
+				oRenderManager.write(">");
 			}
 			// closing DIV
 			oRenderManager.write("</div>");

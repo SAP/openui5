@@ -3,11 +3,12 @@
  */
 
 sap.ui.define([
-	"jquery.sap.global", "./_AnnotationHelperBasics"
-], function (jQuery, _AnnotationHelperBasics) {
+	"./_AnnotationHelperBasics",
+	"sap/base/Log",
+	"sap/base/util/deepExtend",
+	"sap/base/util/extend"
+], function (_AnnotationHelperBasics, Log, deepExtend, extend) {
 	"use strict";
-
-	/*global Promise */
 
 	var oBoolFalse = { "Bool" : "false" },
 		oBoolTrue = { "Bool" : "true" },
@@ -150,7 +151,7 @@ sap.ui.define([
 				"NonSortableProperties" ]
 		},
 		rValueList = /^com\.sap\.vocabularies\.Common\.v1\.ValueList(#.*)?$/,
-		iWARNING = jQuery.sap.log.Level.WARNING,
+		iWARNING = Log.Level.WARNING,
 		Utils;
 
 
@@ -182,10 +183,10 @@ sap.ui.define([
 			if (sTypeClass === "EntitySet" && oExtension.value === sNonDefaultValue) {
 				// potentially nested structure so do deep copy
 				if (bDeepCopy) {
-					jQuery.extend(true, o, mV2ToV4[oExtension.name]);
+					deepExtend(o, mV2ToV4[oExtension.name]);
 				} else {
 					// Warning: Passing false for the first argument is not supported!
-					jQuery.extend(o, mV2ToV4[oExtension.name]);
+					extend(o, mV2ToV4[oExtension.name]);
 				}
 			}
 		},
@@ -204,8 +205,8 @@ sap.ui.define([
 				sFilterRestrictionValue = mFilterRestrictions[oProperty["sap:filter-restriction"]];
 
 			if (!sFilterRestrictionValue) {
-				if (jQuery.sap.log.isLoggable(iWARNING, sLoggingModule)) {
-					jQuery.sap.log.warning("Unsupported sap:filter-restriction: "
+				if (Log.isLoggable(iWARNING, sLoggingModule)) {
+					Log.warning("Unsupported sap:filter-restriction: "
 							+ oProperty["sap:filter-restriction"],
 						oEntitySet.entityType + "." + oProperty.name, sLoggingModule);
 				}
@@ -317,8 +318,8 @@ sap.ui.define([
 					}
 					aMatches = rSemanticsWithTypes.exec(sV2Semantics);
 					if (!aMatches) {
-						if (jQuery.sap.log.isLoggable(iWARNING, sLoggingModule)) {
-							jQuery.sap.log.warning("Unsupported sap:semantics: " + sV2Semantics,
+						if (Log.isLoggable(iWARNING, sLoggingModule)) {
+							Log.warning("Unsupported sap:semantics: " + sV2Semantics,
 								oType.name + "." + oProperty.name, sLoggingModule);
 						}
 						return;
@@ -393,6 +394,7 @@ sap.ui.define([
 				(aTypes || []).forEach(function (oType) {
 					(oType.property || []).forEach(function (oProperty) {
 						var sAnnotationName,
+							oInterface,
 							sSemantics,
 							oTarget,
 							oUnitPath,
@@ -400,11 +402,16 @@ sap.ui.define([
 							oUnitProperty;
 
 						if (sUnitPath) {
+							oInterface = {
+								getModel : function () {
+									return oMetaModel;
+								},
+								getPath : function () {
+									return oType.$path;
+								}
+							};
 							oUnitPath = {"Path" : sUnitPath};
-							oTarget = _AnnotationHelperBasics.followPath({
-								getModel : function () { return oMetaModel; },
-								getPath : function () { return oType.$path; }
-							}, oUnitPath);
+							oTarget = _AnnotationHelperBasics.followPath(oInterface, oUnitPath);
 							if (oTarget && oTarget.resolvedPath) {
 								oUnitProperty = oMetaModel.getProperty(oTarget.resolvedPath);
 								sSemantics = oUnitProperty["sap:semantics"];
@@ -412,8 +419,8 @@ sap.ui.define([
 									sAnnotationName = "Org.OData.Measures.V1.Unit";
 								} else if (sSemantics === "currency-code") {
 									sAnnotationName = "Org.OData.Measures.V1.ISOCurrency";
-								} else if (jQuery.sap.log.isLoggable(iWARNING, sLoggingModule)) {
-									jQuery.sap.log.warning("Unsupported sap:semantics='"
+								} else if (Log.isLoggable(iWARNING, sLoggingModule)) {
+									Log.warning("Unsupported sap:semantics='"
 											+ sSemantics + "' at sap:unit='" + sUnitPath + "'; "
 											+ "expected 'currency-code' or 'unit-of-measure'",
 										oType.namespace + "." + oType.name + "/" + oProperty.name,
@@ -423,8 +430,8 @@ sap.ui.define([
 								if (sAnnotationName && !(sAnnotationName in oProperty)) {
 									oProperty[sAnnotationName] = oUnitPath;
 								}
-							} else if (jQuery.sap.log.isLoggable(iWARNING, sLoggingModule)) {
-								jQuery.sap.log.warning("Path '" + sUnitPath
+							} else if (Log.isLoggable(iWARNING, sLoggingModule)) {
+								Log.warning("Path '" + sUnitPath
 										+ "' for sap:unit cannot be resolved",
 									oType.namespace + "." + oType.name + "/" + oProperty.name,
 									sLoggingModule);
@@ -582,7 +589,7 @@ sap.ui.define([
 
 			sPropertyName = sPropertyName || "name";
 			if (aArray) {
-				for (i = 0, n = aArray.length; i < n; i++) {
+				for (i = 0, n = aArray.length; i < n; i += 1) {
 					if (aArray[i][sPropertyName] === vExpectedPropertyValue) {
 						return i;
 					}
@@ -693,11 +700,12 @@ sap.ui.define([
 			if (oSchema) {
 				aArray = oSchema[sArrayName];
 				if (aArray) {
-					aArray.forEach(function (oThing) {
+					aArray.some(function (oThing) {
 						if (oThing.name === sName) {
 							vResult = bAsPath ? oThing.$path : oThing;
-							return false; // break
+							return true;
 						}
+						return false;
 					});
 				}
 			}
@@ -722,11 +730,12 @@ sap.ui.define([
 					: vModel.getObject("/dataServices/schema");
 
 			if (aSchemas) {
-				aSchemas.forEach(function (o) {
+				aSchemas.some(function (o) {
 					if (o.namespace === sNamespace) {
 						oSchema = o;
-						return false; // break
+						return true;
 					}
+					return false;
 				});
 			}
 
@@ -761,8 +770,8 @@ sap.ui.define([
 					var sTargetType = oV4TypeInfo.typeMapping[sType];
 					if (sTargetType) {
 						aResult.push(oV4TypeInfo.v4EnumType + "/" + sTargetType);
-					} else if (jQuery.sap.log.isLoggable(iWARNING, sLoggingModule)) {
-						jQuery.sap.log.warning("Unsupported type for sap:semantics: " + sType,
+					} else if (Log.isLoggable(iWARNING, sLoggingModule)) {
+						Log.warning("Unsupported type for sap:semantics: " + sType,
 							oType.name + "." + oProperty.name, sLoggingModule);
 					}
 				});
@@ -817,7 +826,7 @@ sap.ui.define([
 
 			if (sCreatable && sCreatablePath) {
 				// inconsistent service if both v2 annotations are set
-				jQuery.sap.log.warning("Inconsistent service",
+				Log.warning("Inconsistent service",
 					"Use either 'sap:creatable' or 'sap:creatable-path' at navigation property "
 						+ "'" + oEntitySet.entityType + "/" + oNavigationProperty.name + "'",
 					sLoggingModule);
@@ -874,7 +883,7 @@ sap.ui.define([
 				// only if a second extension (sap:xable-path or sap:xable) is processed,
 				// the warning is logged and the entity set is marked as non-deletable or
 				// non-updatable
-				jQuery.sap.log.warning("Inconsistent service",
+				Log.warning("Inconsistent service",
 					"Use either 'sap:" + sV2Annotation + "' or 'sap:" + sV2Annotation + "-path'"
 						+ " at entity set '" + o.name + "'", sLoggingModule);
 				oValue = oBoolFalse;
@@ -900,8 +909,10 @@ sap.ui.define([
 		 * @param {string} sTypeClass
 		 *   the type class of the given object; supported type classes are "Property" and
 		 *   "EntitySet"
+		 * @param {boolean} [bIgnoreAnnotationsFromMetadata]
+		 *   whether annotations from metadata are ignored, so that no V4 annotations are created for them
 		 */
-		liftSAPData : function (o, sTypeClass) {
+		liftSAPData : function (o, sTypeClass, bIgnoreAnnotationsFromMetadata) {
 			if (!o.extensions) {
 				return;
 			}
@@ -909,9 +920,15 @@ sap.ui.define([
 			o.extensions.forEach(function (oExtension) {
 				if (oExtension.namespace === "http://www.sap.com/Protocols/SAPData") {
 					o["sap:" + oExtension.name] = oExtension.value;
-					Utils.addV4Annotation(o, oExtension, sTypeClass);
+					if (!bIgnoreAnnotationsFromMetadata) {
+						Utils.addV4Annotation(o, oExtension, sTypeClass);
+					}
 				}
 			});
+			if (bIgnoreAnnotationsFromMetadata) {
+				return;
+			}
+
 			// after all SAP V2 annotations are lifted up add V4 annotations that are calculated
 			// by multiple V2 annotations or that have a different default value
 			switch (sTypeClass) {
@@ -944,8 +961,10 @@ sap.ui.define([
 		 *   metadata "JSON"
 		 * @param {sap.ui.model.odata.ODataMetaModel} oMetaModel
 		 *   the metamodel
+		 * @param {boolean} [bIgnoreAnnotationsFromMetadata]
+		 *   whether annotations from metadata are ignored, so that no V4 annotations are created for them
 		 */
-		merge : function (oAnnotations, oData, oMetaModel) {
+		merge : function (oAnnotations, oData, oMetaModel, bIgnoreAnnotationsFromMetadata) {
 			var aSchemas = oData.dataServices.schema;
 
 			if (!aSchemas) {
@@ -957,43 +976,58 @@ sap.ui.define([
 				// remove datajs artefact for inline annotations in $metadata
 				delete oSchema.annotations;
 
-				Utils.liftSAPData(oSchema);
+				Utils.liftSAPData(oSchema, bIgnoreAnnotationsFromMetadata);
 				oSchema.$path = "/dataServices/schema/" + i;
 				sSchemaVersion = oSchema["sap:schema-version"];
-				if (sSchemaVersion) {
+				if (sSchemaVersion && !bIgnoreAnnotationsFromMetadata) {
 					oSchema["Org.Odata.Core.V1.SchemaVersion"] = {
 						String : sSchemaVersion
 					};
 				}
-				jQuery.extend(oSchema, oAnnotations[oSchema.namespace]);
+				extend(oSchema, oAnnotations[oSchema.namespace]);
 
 				Utils.visitParents(oSchema, oAnnotations, "association",
 					function (oAssociation, mChildAnnotations) {
+						// as per https://www.sap.com/Protocols/SAPData there are no sap: annotations for assocation
+						// => parameter bIgnoreAnnotationsFromMetadata is irrelevant
 						Utils.visitChildren(oAssociation.end, mChildAnnotations);
 					});
 
 				Utils.visitParents(oSchema, oAnnotations, "complexType",
 					function (oComplexType, mChildAnnotations) {
-						Utils.visitChildren(oComplexType.property, mChildAnnotations, "Property");
-						Utils.addSapSemantics(oComplexType);
+						Utils.visitChildren(oComplexType.property, mChildAnnotations, "Property",
+							/*aSchemas*/undefined, /*fnCallback*/undefined, /*iStartIndex*/undefined,
+							bIgnoreAnnotationsFromMetadata);
+						if (!bIgnoreAnnotationsFromMetadata) {
+							Utils.addSapSemantics(oComplexType);
+						}
 					});
 
 				// visit all entity types before visiting the entity sets to ensure that V2
 				// annotations are already lifted up and can be used for calculating entity
 				// set annotations which are based on V2 annotations on entity properties
-				Utils.visitParents(oSchema, oAnnotations, "entityType", Utils.visitEntityType);
+				Utils.visitParents(oSchema, oAnnotations, "entityType", Utils.visitEntityType,
+					/*iIndex*/ undefined, bIgnoreAnnotationsFromMetadata);
+			});
 
+			aSchemas.forEach(function (oSchema) {
+				// visit entity container after all entity types of all schemas are visited
 				Utils.visitParents(oSchema, oAnnotations, "entityContainer",
 					function (oEntityContainer, mChildAnnotations) {
+						// for association sets, visitChildren does not create V4-annotations
+						// => parameter bIgnoreAnnotationsFromMetadata is irrelevant
 						Utils.visitChildren(oEntityContainer.associationSet, mChildAnnotations);
 						Utils.visitChildren(oEntityContainer.entitySet, mChildAnnotations,
-							"EntitySet", aSchemas);
+							"EntitySet", aSchemas, /*fnCallback*/undefined, /*iStartIndex*/undefined,
+							bIgnoreAnnotationsFromMetadata);
 						Utils.visitChildren(oEntityContainer.functionImport, mChildAnnotations,
-							"", null, Utils.visitParameters.bind(this,
-								oAnnotations, oSchema, oEntityContainer));
+							"", null, Utils.visitParameters.bind(this, oAnnotations, oSchema, oEntityContainer),
+							/*iStartIndex*/undefined, bIgnoreAnnotationsFromMetadata);
 					});
 			});
-			Utils.addUnitAnnotations(aSchemas, oMetaModel);
+			if (!bIgnoreAnnotationsFromMetadata) {
+				Utils.addUnitAnnotations(aSchemas, oMetaModel);
+			}
 		},
 
 		/**
@@ -1013,9 +1047,11 @@ sap.ui.define([
 		 *   optional callback for each child
 		 * @param {number} [iStartIndex=0]
 		 *   optional start index in the given array
+		 * @param {boolean} [bIgnoreAnnotationsFromMetadata]
+		 *   whether annotations from metadata are ignored, so that no V4 annotations are created for them
 		 */
 		visitChildren : function (aChildren, mChildAnnotations, sTypeClass, aSchemas, fnCallback,
-				iStartIndex) {
+				iStartIndex, bIgnoreAnnotationsFromMetadata) {
 			if (!aChildren) {
 				return;
 			}
@@ -1024,12 +1060,12 @@ sap.ui.define([
 			}
 			aChildren.forEach(function (oChild) {
 				// lift SAP data for easy access to SAP Annotations for OData V 2.0
-				Utils.liftSAPData(oChild, sTypeClass);
+				Utils.liftSAPData(oChild, sTypeClass, bIgnoreAnnotationsFromMetadata);
 			});
 			aChildren.forEach(function (oChild) {
 				var oEntityType;
 
-				if (sTypeClass === "EntitySet") {
+				if (sTypeClass === "EntitySet" && !bIgnoreAnnotationsFromMetadata) {
 					// calculated entity set annotations need to be added before V4
 					// annotations are merged
 					oEntityType = Utils.getObject(aSchemas, "entityType", oChild.entityType);
@@ -1037,10 +1073,10 @@ sap.ui.define([
 				}
 
 				if (fnCallback) {
-					fnCallback(oChild);
+					fnCallback(oChild, bIgnoreAnnotationsFromMetadata);
 				}
 				// merge V4 annotations after child annotations are processed
-				jQuery.extend(oChild, mChildAnnotations[oChild.name || oChild.role]);
+				extend(oChild, mChildAnnotations[oChild.name || oChild.role]);
 			});
 		},
 
@@ -1051,11 +1087,19 @@ sap.ui.define([
 		 *   the entity type
 		 * @param {object} mChildAnnotations
 		 *   map from child name (or role) to annotations
+		 * @param {boolean} [bIgnoreAnnotationsFromMetadata]
+		 *   whether annotations from metadata are ignored, so that no V4 annotations are created for them
 		 */
-		visitEntityType : function (oEntityType, mChildAnnotations) {
-			Utils.visitChildren(oEntityType.property, mChildAnnotations, "Property");
+		visitEntityType : function (oEntityType, mChildAnnotations, bIgnoreAnnotationsFromMetadata) {
+			Utils.visitChildren(oEntityType.property, mChildAnnotations, "Property",
+				/*aSchemas*/undefined, /*fnCallback*/undefined, /*iStartIndex*/undefined,
+				bIgnoreAnnotationsFromMetadata);
+			// for navigation properties, visitChildren does not create V4-annotations
+			// => parameter bIgnoreAnnotationsFromMetadata is irrelevant
 			Utils.visitChildren(oEntityType.navigationProperty, mChildAnnotations);
-			Utils.addSapSemantics(oEntityType);
+			if (!bIgnoreAnnotationsFromMetadata) {
+				Utils.addSapSemantics(oEntityType);
+			}
 		},
 
 		/**
@@ -1069,8 +1113,11 @@ sap.ui.define([
 		 *   the entity container
 		 * @param {object} oFunctionImport
 		 *   a function import's V2 metadata object
+		 * @param {boolean} [bIgnoreAnnotationsFromMetadata]
+		 *   whether annotations from metadata are ignored, so that no V4 annotations are created for them
 		 */
-		visitParameters : function (oAnnotations, oSchema, oEntityContainer, oFunctionImport) {
+		visitParameters : function (oAnnotations, oSchema, oEntityContainer, oFunctionImport,
+				bIgnoreAnnotationsFromMetadata) {
 			var mAnnotations;
 
 			if (!oFunctionImport.parameter) {
@@ -1080,9 +1127,8 @@ sap.ui.define([
 				oSchema.namespace + "." + oEntityContainer.name, true);
 			oFunctionImport.parameter.forEach(
 				function (oParam) {
-					Utils.liftSAPData(oParam);
-					jQuery.extend(oParam,
-						mAnnotations[oFunctionImport.name + "/" + oParam.name]);
+					Utils.liftSAPData(oParam, /*sTypeClass*/undefined, bIgnoreAnnotationsFromMetadata);
+					extend(oParam, mAnnotations[oFunctionImport.name + "/" + oParam.name]);
 				}
 			);
 		},
@@ -1102,8 +1148,11 @@ sap.ui.define([
 		 *   mandatory callback for each parent, child annotations are passed in
 		 * @param {number} [iIndex]
 		 *   optional index of a single parent to visit; default is to visit all
+		 * @param {boolean} [bIgnoreAnnotationsFromMetadata]
+		 *   whether annotations from metadata are ignored, so that no V4 annotations are created for them
 		 */
-		visitParents : function (oSchema, oAnnotations, sArrayName, fnCallback, iIndex) {
+		visitParents : function (oSchema, oAnnotations, sArrayName, fnCallback, iIndex,
+				bIgnoreAnnotationsFromMetadata) {
 			var aParents = oSchema[sArrayName];
 
 			function visitParent(oParent, j) {
@@ -1111,14 +1160,14 @@ sap.ui.define([
 					mChildAnnotations = Utils.getChildAnnotations(oAnnotations, sQualifiedName,
 						sArrayName === "entityContainer");
 
-				Utils.liftSAPData(oParent);
+				Utils.liftSAPData(oParent, /*sTypeClass*/undefined, bIgnoreAnnotationsFromMetadata);
 				// @see sap.ui.model.odata.ODataMetadata#_getEntityTypeByName
 				oParent.namespace = oSchema.namespace;
 				oParent.$path = oSchema.$path + "/" + sArrayName + "/" + j;
 
-				fnCallback(oParent, mChildAnnotations);
+				fnCallback(oParent, mChildAnnotations, bIgnoreAnnotationsFromMetadata);
 				// merge V4 annotations after child annotations are processed
-				jQuery.extend(oParent, oAnnotations[sQualifiedName]);
+				extend(oParent, oAnnotations[sQualifiedName]);
 			}
 
 			if (!aParents) {
@@ -1133,4 +1182,4 @@ sap.ui.define([
 	};
 
 	return Utils;
-}, /* bExport= */ false);
+});

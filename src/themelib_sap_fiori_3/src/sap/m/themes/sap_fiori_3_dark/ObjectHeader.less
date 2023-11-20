@@ -1,0 +1,74 @@
+/* =================================== */
+/* CSS for control sap.m/ObjectHeader  */
+/* Quartz Dark theme                   */
+/* =================================== */
+
+.sapMOH.sapMOHBgTranslucent,
+.sapMOHC.sapMOHBgTranslucent,
+.sapMOH.sapMOHBgSolid,
+.sapMOHC.sapMOHBgSolid {
+	background-color: @sapUiObjectHeaderBackground;
+}
+
+.sapMOHC.sapMOHBgTranslucent,
+.sapMOHC.sapMOHBgSolid {
+	border: none;
+	box-shadow: none;
+}
+.sapMOH.sapMOHBgTransparent,
+.sapMOHC.sapMOHBgTransparent {
+	background: transparent;
+}
+
+a.sapMOHTitle.sapMOHTitleActive:hover > h1 .sapMText {
+	text-decoration: underline;
+}
+
+.sapMOHTitleArrow > .sapUiIcon {
+	outline-offset: -1px;
+}
+
+.sapMOHTitle.sapMOHTitleActive:focus {
+	outline: none;
+}
+
+.sapMOHTitle.sapMOHTitleActive:focus > h1 span,
+.sapMOHIcon.sapMPointer .sapUiIcon.sapUiIconPointer:focus,
+.sapMOHTitleArrow .sapUiIcon:focus {
+	outline: 1px dotted @sapUiContentFocusColor;
+	outline-offset: -1px;
+}
+
+/*** styles for responsive object header ***/
+.sapMOHR:not(.sapMOHRNoBorder) {
+	box-shadow: @sapUiShadowHeader;
+}
+
+.sapUiMedia-Std-Phone .sapMOHR .sapMITH {
+	padding: 0 0.525rem;
+}
+
+.sapMOHR.sapMOHRBgSolid,
+.sapMOHR.sapMOHRBgTranslucent {
+	background: @sapUiObjectHeaderBackground;
+}
+
+.sapMOHR.sapMOHRBgTransparent {
+	background: transparent;
+}
+
+.sapMOHRTitleArrow .sapUiIcon:focus {
+	outline: 1px dotted @sapUiContentFocusColor;
+	outline-offset: -1px;
+}
+
+.sapMOHRIcon.sapMPointer .sapUiIcon.sapUiIconPointer:focus {
+	&:before {
+		outline: 1px dotted @sapUiContentFocusColor;
+	}
+}
+
+.sapMOHRTitleActive .sapMOHRTitleText:focus {
+	outline: 1px dotted @sapUiContentFocusColor;
+	outline-offset: -1px;
+}

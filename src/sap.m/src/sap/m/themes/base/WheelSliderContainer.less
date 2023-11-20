@@ -1,0 +1,64 @@
+/* =========================================== */
+/* CSS for control sap.m/WheelSliderContainer  */
+/* Base Styles                                 */
+/* =========================================== */
+
+.sapMWSContainer {
+	width: 100%;
+	height: 100%;
+	min-width: 20rem;
+	box-sizing: border-box;
+	padding: 1rem;
+	text-align: center;
+	position: relative;
+	&:before {
+		content: '';
+		display: inline-block;
+		height: 100%;
+		vertical-align: middle;
+	}
+	.sapMWSContainerLabel {
+		display: none;
+		box-sizing: border-box;
+	}
+	.sapMWSContainerLabel {
+		font-size: @sapMFontHeader5Size;
+		color: @sapUiCalendarColorToday;
+	}
+}
+
+.sapUiSizeCompact {
+	.sapMWSContainer {
+		padding: 0.5rem;
+		margin: auto;
+	}
+}
+
+.sap-phone {
+	.sapMWSContainer {
+		max-height: 38rem; // 12 * item height + label's height
+		height: 100%;
+		padding: 1rem;
+		box-sizing: border-box;
+		margin: auto;
+		text-align: center;
+		&:before {
+			content: '';
+			display: inline-block;
+			height: 100%;
+			margin-right: -0.25rem;
+			vertical-align: middle;
+		}
+		.sapMWSContainerLabel {
+			position: absolute;
+			top: 0;
+			left: 50%;
+			transform: translate(-50%, 0);
+			display: block;
+			height: 2rem;
+			line-height: 2rem;
+			font-size: @sapMFontHeader5Size;
+			color: @sapUiCalendarColorToday;
+		}
+	}
+}

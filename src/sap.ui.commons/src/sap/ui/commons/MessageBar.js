@@ -4,24 +4,35 @@
 
 // Provides control sap.ui.commons.MessageBar.
 sap.ui.define([
-  'jquery.sap.global',
+  'sap/ui/thirdparty/jquery',
+  'sap/base/Log',
   './library',
   'sap/ui/core/Control',
   'sap/ui/core/Popup',
   './MessageToast',
   './MessageList',
-  "./MessageBarRenderer"
+  './MessageBarRenderer',
+  'sap/ui/core/Configuration',
+  // jQuery Plugin "rect"
+  'sap/ui/dom/jquery/rect'
 ],
 	function(
 	  jQuery,
+	  Log,
 	  library,
 	  Control,
 	  Popup,
 	  MessageToast,
 	  MessageList,
-	  MessageBarRenderer
+	  MessageBarRenderer,
+	  Configuration
 	) {
 	"use strict";
+
+
+
+	// shortcut for sap.ui.commons.MessageType
+	var MessageType = library.MessageType;
 
 
 
@@ -40,7 +51,6 @@ sap.ui.define([
 	 * @public
 	 * @deprecated Since version 1.4.0. Instead, use the <code>sap.m.MessagePopover</code> control.
 	 * @alias sap.ui.commons.MessageBar
-	 * @ui5-metamodel This control/element also will be described in the UI5 design-time metamodel
 	 */
 	var MessageBar = Control.extend("sap.ui.commons.MessageBar", /** @lends sap.ui.commons.MessageBar.prototype */ { metadata : {
 
@@ -159,7 +169,7 @@ sap.ui.define([
 	 * @private
 	 */
 	MessageBar.prototype.onmousedown = function (oEvent) {
-	//jQuery.sap.log.debug("MESSAGEBAR: ONMOUSEDOWN");
+	//Log.debug("MESSAGEBAR: ONMOUSEDOWN");
 		var oSource  = oEvent.target;
 		var jSource = jQuery(oSource);
 
@@ -172,6 +182,7 @@ sap.ui.define([
 
 
 	  // MessageBar start position:
+		// jQuery Plugin "rect"
 		this.oMsgBarDragStartPosition       = this.$().rect();
 		this.oMsgBarDragStartPosition.right = Number(this.$().css('right').replace("px", ""));
 
@@ -186,13 +197,13 @@ sap.ui.define([
 
 		// Activating our move handler:
 		var jDocument = jQuery(window.document);
-		jDocument.bind("mousemove", jQuery.proxy(this.handleMove, this));
+		jDocument.on("mousemove", jQuery.proxy(this.handleMove, this));
 		if (window.parent) {
-			jQuery(window.parent.document).bind("mousemove", jQuery.proxy(this.handleMove, this), true);
+			jQuery(window.parent.document).on("mousemove", jQuery.proxy(this.handleMove, this), true);
 		}
 
 		// Fix for IE blue text selection while dragging:
-		jDocument.bind("selectstart",jQuery.proxy(this.ondragstart,this), true);
+		jDocument.on("selectstart",jQuery.proxy(this.ondragstart,this), true);
 	};
 
 	/**
@@ -201,7 +212,7 @@ sap.ui.define([
 	 * @private
 	 */
 	MessageBar.prototype.handleMove = function (event) {
-	//jQuery.sap.log.debug("MESSAGEBAR: HANDLEMOVE");
+	//Log.debug("MESSAGEBAR: HANDLEMOVE");
 		if (!this.sDragMode) {
 			return;
 		}
@@ -245,7 +256,7 @@ sap.ui.define([
 	 * @private
 	 */
 	MessageBar.prototype.onmouseup = function (oEvent) {
-	//jQuery.sap.log.debug("MESSAGEBAR: ONMOUSEUP");
+	//Log.debug("MESSAGEBAR: ONMOUSEUP");
 		if (!this.sDragMode) {
 			return;
 		}
@@ -263,11 +274,11 @@ sap.ui.define([
 
 		// Removing our move handler:
 		var jDocument = jQuery(window.document);
-		jDocument.unbind("mousemove", jQuery.proxy(this.handleMove, this));
+		jDocument.off("mousemove", jQuery.proxy(this.handleMove, this));
 		if (window.parent) {
-			jQuery(window.parent.document).unbind("mousemove", jQuery.proxy(this.handleMove, this));
+			jQuery(window.parent.document).off("mousemove", jQuery.proxy(this.handleMove, this));
 		}
-		jDocument.unbind("selectstart",jQuery.proxy(this.ondragstart,this));
+		jDocument.off("selectstart",jQuery.proxy(this.ondragstart,this));
 
 		this.sDragMode = null;
 
@@ -301,9 +312,9 @@ sap.ui.define([
 	  } else if (jSource.hasClass("sapUiMsgBarHome")) {
 			this.backHome();
 	  } else {
-		jQuery.sap.log.debug("Warning: MessageBar unsupported click on " + jSource.attr('className'));
+		Log.debug("Warning: MessageBar unsupported click on " + jSource.attr('className'));
 	  }
-	}
+	};
 
 	// #############################################################################
 	// Internal Utilities
@@ -311,7 +322,7 @@ sap.ui.define([
 	/**
 	 * This utility checks what action the Toaster should execute next.
 	 * @private
-	 */;
+	 */
 	MessageBar.prototype.checkForToast = function() {
 	  // No more toast if Multiple Toasts has already been displayed:
 	  if (this.maxToastsReached) {
@@ -451,7 +462,7 @@ sap.ui.define([
 	MessageBar.prototype.getSnapPoint = function() {
 	  if (!this.snapPoint) {
 		  this.snapPoint = this.getAnchorSnapPoint();
-		  if (sap.ui.getCore().getConfiguration().getRTL()) {
+		  if (Configuration.getRTL()) {
 			this.snapPoint = this.snapPoint.replace("begin", "right").replace("end", "left");
 		  } else {
 			this.snapPoint = this.snapPoint.replace("begin", "left").replace("end", "right");
@@ -473,7 +484,7 @@ sap.ui.define([
 	  var anchor = null;
 	  var anchorId = this.getAnchorID();
 	  if (anchorId) {
-		anchor = jQuery.sap.domById(anchorId);
+		anchor = document.getElementById(anchorId);
 	  }
 	  if (!anchor) {
 		anchor = document.body;
@@ -530,12 +541,12 @@ sap.ui.define([
 		var id = this.getId();
 
 	  // Updating the Error Count and Visibility:
-	  var oCount = jQuery.sap.domById(id + "__ErrorCount");
+	  var oCount = document.getElementById(id + "__ErrorCount");
 	  if (!oCount) {
 		// The MessageBar has to be available on the DOM in order to update it!
 		// This code is required as the MessageBar is first created.
 		  this.open();
-		oCount = jQuery.sap.domById(id + "__ErrorCount");
+		oCount = document.getElementById(id + "__ErrorCount");
 	  }
 	  var count   = this.aErrors.length;
 	  var oldText = oCount.innerHTML;
@@ -548,14 +559,14 @@ sap.ui.define([
 
 		if (newText == "(0)") {
 		  // Allowing empty queues not to be displayed:
-		  jIcon  = jQuery.sap.byId(id + "__ErrorImg");
-		  jCount = jQuery.sap.byId(id + "__ErrorCount");
+		  jIcon  = jQuery(document.getElementById(id + "__ErrorImg"));
+		  jCount = jQuery(document.getElementById(id + "__ErrorCount"));
 		  jIcon.addClass("sapUiMsgBarZeroCount");
 		  jCount.addClass("sapUiMsgBarZeroCount");
 		} else if (oldText == "(0)") {
 		  // Displaying the non-empty queue:
-		  jIcon  = jQuery.sap.byId(id + "__ErrorImg");
-		  jCount = jQuery.sap.byId(id + "__ErrorCount");
+		  jIcon  = jQuery(document.getElementById(id + "__ErrorImg"));
+		  jCount = jQuery(document.getElementById(id + "__ErrorCount"));
 		  jIcon.removeClass("sapUiMsgBarZeroCount");
 		  jCount.removeClass("sapUiMsgBarZeroCount");
 		}
@@ -563,7 +574,7 @@ sap.ui.define([
 
 
 	  // Updating the Warning Count and Visibility:
-	  oCount  = jQuery.sap.domById(id + "__WarningCount");
+	  oCount  = document.getElementById(id + "__WarningCount");
 	  count   = this.aWarnings.length;
 	  oldText = oCount.innerHTML;
 	  newText = "(" + count + ")";
@@ -575,14 +586,14 @@ sap.ui.define([
 
 		if (newText == "(0)") {
 		  // Allowing empty queues not to be displayed:
-		  jIcon  = jQuery.sap.byId(id + "__WarningImg");
-		  jCount = jQuery.sap.byId(id + "__WarningCount");
+		  jIcon  = jQuery(document.getElementById(id + "__WarningImg"));
+		  jCount = jQuery(document.getElementById(id + "__WarningCount"));
 		  jIcon.addClass("sapUiMsgBarZeroCount");
 		  jCount.addClass("sapUiMsgBarZeroCount");
 		} else if (oldText == "(0)") {
 		  // Displaying the non-empty queue:
-		  jIcon  = jQuery.sap.byId(id + "__WarningImg");
-		  jCount = jQuery.sap.byId(id + "__WarningCount");
+		  jIcon  = jQuery(document.getElementById(id + "__WarningImg"));
+		  jCount = jQuery(document.getElementById(id + "__WarningCount"));
 		  jIcon.removeClass("sapUiMsgBarZeroCount");
 		  jCount.removeClass("sapUiMsgBarZeroCount");
 		}
@@ -590,7 +601,7 @@ sap.ui.define([
 
 
 	  // Updating the Success Count and Visibility:
-	  oCount  = jQuery.sap.domById(id + "__SuccessCount");
+	  oCount  = document.getElementById(id + "__SuccessCount");
 	  count   = this.aSuccesses.length;
 	  oldText = oCount.innerHTML;
 	  newText = "(" + count + ")";
@@ -602,14 +613,14 @@ sap.ui.define([
 
 		if (newText == "(0)") {
 		  // Allowing empty queues not to be displayed:
-		  jIcon  = jQuery.sap.byId(id + "__SuccessImg");
-		  jCount = jQuery.sap.byId(id + "__SuccessCount");
+		  jIcon  = jQuery(document.getElementById(id + "__SuccessImg"));
+		  jCount = jQuery(document.getElementById(id + "__SuccessCount"));
 		  jIcon.addClass("sapUiMsgBarZeroCount");
 		  jCount.addClass("sapUiMsgBarZeroCount");
 		} else if (oldText == "(0)") {
 		  // Displaying the non-empty queue:
-		  jIcon  = jQuery.sap.byId(id + "__SuccessImg");
-		  jCount = jQuery.sap.byId(id + "__SuccessCount");
+		  jIcon  = jQuery(document.getElementById(id + "__SuccessImg"));
+		  jCount = jQuery(document.getElementById(id + "__SuccessCount"));
 		  jIcon.removeClass("sapUiMsgBarZeroCount");
 		  jCount.removeClass("sapUiMsgBarZeroCount");
 		}
@@ -706,7 +717,6 @@ sap.ui.define([
 	 * @param {sap.ui.commons.Message[]} aAMessages Array of messages.
 	 * @type void
 	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 design-time metamodel
 	 */
 	MessageBar.prototype.addMessages = function(aMessages) {
 	  if (!aMessages) {
@@ -725,23 +735,23 @@ sap.ui.define([
 
 		// Now, inserting each message into its proper queue:
 		  switch (aMessages[i].getType()) {
-			case sap.ui.commons.MessageType.Error:
+			case MessageType.Error:
 			  // Adding the "new" Error message:
 			this.aErrors.push(aMessages[i]);
 			  break;
 
-			case sap.ui.commons.MessageType.Warning:
+			case MessageType.Warning:
 			  // Adding the "new" Warning message:
 			this.aWarnings.push(aMessages[i]);
 			  break;
 
-			case sap.ui.commons.MessageType.Success:
+			case MessageType.Success:
 			  // Adding the "new" Success message:
 			this.aSuccesses.push(aMessages[i]);
 			  break;
 
 			default:
-			  jQuery.sap.log.debug("ERROR: MessageBar supplied messageType=" + aMessages[i].getType());
+			  Log.debug("ERROR: MessageBar supplied messageType=" + aMessages[i].getType());
 		  } // end switch
 		} // end for
 
@@ -761,7 +771,6 @@ sap.ui.define([
 	 * @param {string[]} aIds Messages IDs to be deleted.
 	 * @type void
 	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	MessageBar.prototype.deleteMessages = function(aIds) {
 	  if (!aIds) {
@@ -783,10 +792,9 @@ sap.ui.define([
 	/**
 	 * Deletes all messages.
 	 *
-	 * @returns {sap.ui.commons.MessageBar} <code>this</code> to allow method chaining
+	 * @returns {this} <code>this</code> to allow method chaining
 	 *
 	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	MessageBar.prototype.deleteAllMessages = function() {
 	  // Closing the corresponding Details if any:
@@ -828,7 +836,7 @@ sap.ui.define([
 	 * in order to toggle the <code>visibility:hidden;</code> attribute over the control.
 	 *
 	 * @param {boolean} bVisible New value for property <code>visible</code>
-	 * @return {sap.ui.commons.MessageBar} <code>this</code> to allow method chaining
+	 * @return {this} <code>this</code> to allow method chaining
 	 * @public
 	 */
 	MessageBar.prototype.setVisible = function(bVisible) {
@@ -847,4 +855,4 @@ sap.ui.define([
 
 	return MessageBar;
 
-}, /* bExport= */ true);
+});

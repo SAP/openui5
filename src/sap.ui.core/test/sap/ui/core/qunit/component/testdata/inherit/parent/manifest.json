@@ -18,7 +18,7 @@
 		"dependencies": {
 			"minUI5Version": "1.22.5",
 			"libs": {
-				"sap.ui.commons": {
+				"sap.ui.layout": {
 					"minVersion": "1.22.0"
 				}
 			},
@@ -47,7 +47,11 @@
 			}
 		},
 
-		"rootView": "sap.ui.test.view.Main",
+		"rootView": {
+			"viewName": "sap.ui.test.view.Main",
+			"type": "XML",
+			"async": true
+		},
 
 		"extends": {
 			"extensions": {
@@ -80,8 +84,9 @@
 
 		"routing": {
 			"config": {
+				"type": "View",
 				"viewType": "XML",
-				"viewPath": "NavigationWithoutMasterDetailPattern.view",
+				"path": "NavigationWithoutMasterDetailPattern.view",
 				"targetParent": "myViewId",
 				"targetControl": "app",
 				"targetAggregation": "pages",

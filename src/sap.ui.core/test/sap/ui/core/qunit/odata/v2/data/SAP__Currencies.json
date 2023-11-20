@@ -1,0 +1,2558 @@
+{
+	"d" : {
+		"results" : [
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('ADP')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('ADP')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "ADP",
+				"ISOCode" : "ADP",
+				"Text" : "Peseta",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('AED')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('AED')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "AED",
+				"ISOCode" : "AED",
+				"Text" : "Dirham",
+				"DecimalPlaces" : 2
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('AFA')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('AFA')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "AFA",
+				"ISOCode" : "AFA",
+				"Text" : "Afghani",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('AFN')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('AFN')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "AFN",
+				"ISOCode" : "AFN",
+				"Text" : "Afghani",
+				"DecimalPlaces" : 2
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('ALL')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('ALL')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "ALL",
+				"ISOCode" : "ALL",
+				"Text" : "Lek",
+				"DecimalPlaces" : 2
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('AMD')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('AMD')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "AMD",
+				"ISOCode" : "AMD",
+				"Text" : "Dram",
+				"DecimalPlaces" : 2
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('ANG')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('ANG')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "ANG",
+				"ISOCode" : "ANG",
+				"Text" : "W.Ind.Guilder",
+				"DecimalPlaces" : 2
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('AOA')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('AOA')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "AOA",
+				"ISOCode" : "AOA",
+				"Text" : "Kwansa",
+				"DecimalPlaces" : 2
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('AOK')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('AOK')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "AOK",
+				"ISOCode" : "AOK",
+				"Text" : "Kwanza",
+				"DecimalPlaces" : 2
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('AON')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('AON')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "AON",
+				"ISOCode" : "AON",
+				"Text" : "New Kwanza",
+				"DecimalPlaces" : 2
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('AOR')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('AOR')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "AOR",
+				"ISOCode" : "AOR",
+				"Text" : "Kwanza Reajust.",
+				"DecimalPlaces" : 2
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('ARA')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('ARA')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "ARA",
+				"ISOCode" : "ARA",
+				"Text" : "Austral",
+				"DecimalPlaces" : 2
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('ARS')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('ARS')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "ARS",
+				"ISOCode" : "ARS",
+				"Text" : "Arg. Peso",
+				"DecimalPlaces" : 2
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('ATS')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('ATS')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "ATS",
+				"ISOCode" : "ATS",
+				"Text" : "Shilling",
+				"DecimalPlaces" : 2
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('AUD')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('AUD')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "AUD",
+				"ISOCode" : "AUD",
+				"Text" : "Austr. Dollar",
+				"DecimalPlaces" : 2
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('AWG')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('AWG')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "AWG",
+				"ISOCode" : "AWG",
+				"Text" : "Aruban Florin",
+				"DecimalPlaces" : 2
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('AZM')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('AZM')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "AZM",
+				"ISOCode" : "AZM",
+				"Text" : "Manat",
+				"DecimalPlaces" : 2
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('AZN')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('AZN')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "AZN",
+				"ISOCode" : "AZN",
+				"Text" : "Manat",
+				"DecimalPlaces" : 2
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('BAD')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('BAD')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "BAD",
+				"ISOCode" : "BAD",
+				"Text" : "Dinar",
+				"DecimalPlaces" : 2
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('BAM')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('BAM')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "BAM",
+				"ISOCode" : "BAM",
+				"Text" : "Convert. Mark",
+				"DecimalPlaces" : 2
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('BBD')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('BBD')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "BBD",
+				"ISOCode" : "BBD",
+				"Text" : "Dollar",
+				"DecimalPlaces" : 2
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('BDT')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('BDT')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "BDT",
+				"ISOCode" : "BDT",
+				"Text" : "Taka",
+				"DecimalPlaces" : 2
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('BEF')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('BEF')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "BEF",
+				"ISOCode" : "BEF",
+				"Text" : "Belgian Franc",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('BGL')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('BGL')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "BGL",
+				"ISOCode" : "BGL",
+				"Text" : "Lev",
+				"DecimalPlaces" : 2
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('BGN')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('BGN')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "BGN",
+				"ISOCode" : "BGN",
+				"Text" : "Lev",
+				"DecimalPlaces" : 2
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('BHD')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('BHD')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "BHD",
+				"ISOCode" : "BHD",
+				"Text" : "Dinar",
+				"DecimalPlaces" : 3
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('BIF')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('BIF')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "BIF",
+				"ISOCode" : "BIF",
+				"Text" : "Burundi Franc",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('BMD')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('BMD')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "BMD",
+				"ISOCode" : "BMD",
+				"Text" : "Bermudan Dollar",
+				"DecimalPlaces" : 2
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('BND')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('BND')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "BND",
+				"ISOCode" : "BND",
+				"Text" : "Dollar",
+				"DecimalPlaces" : 2
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('BOB')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('BOB')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "BOB",
+				"ISOCode" : "BOB",
+				"Text" : "Boliviano",
+				"DecimalPlaces" : 2
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('BRC')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('BRC')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "BRC",
+				"ISOCode" : "BRC",
+				"Text" : "Real",
+				"DecimalPlaces" : 2
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('BRL')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('BRL')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "BRL",
+				"ISOCode" : "BRL",
+				"Text" : "Real",
+				"DecimalPlaces" : 2
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('BSD')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('BSD')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "BSD",
+				"ISOCode" : "BSD",
+				"Text" : "Dollar",
+				"DecimalPlaces" : 2
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('BTN')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('BTN')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "BTN",
+				"ISOCode" : "BTN",
+				"Text" : "Ngultrum",
+				"DecimalPlaces" : 2
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('BWP')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('BWP')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "BWP",
+				"ISOCode" : "BWP",
+				"Text" : "Pula",
+				"DecimalPlaces" : 2
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('BYB')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('BYB')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "BYB",
+				"ISOCode" : "BYB",
+				"Text" : "Belarus. Ruble",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('BYN')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('BYN')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "BYN",
+				"ISOCode" : "BYN",
+				"Text" : "Bela. Ruble N.",
+				"DecimalPlaces" : 2
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('BYR')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('BYR')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "BYR",
+				"ISOCode" : "BYR",
+				"Text" : "Ruble",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('BZD')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('BZD')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "BZD",
+				"ISOCode" : "BZD",
+				"Text" : "Dollar",
+				"DecimalPlaces" : 2
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('CAD')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('CAD')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "CAD",
+				"ISOCode" : "CAD",
+				"Text" : "Canadian Dollar",
+				"DecimalPlaces" : 2
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('CDF')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('CDF')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "CDF",
+				"ISOCode" : "CDF",
+				"Text" : "test data",
+				"DecimalPlaces" : 2
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('CFP')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('CFP')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "CFP",
+				"ISOCode" : "",
+				"Text" : "Fr. Franc (Pac)",
+				"DecimalPlaces" : 2
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('CHF')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('CHF')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "CHF",
+				"ISOCode" : "CHF",
+				"Text" : "Swiss Franc",
+				"DecimalPlaces" : 2
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('CLP')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('CLP')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "CLP",
+				"ISOCode" : "CLP",
+				"Text" : "Peso",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('CNY')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('CNY')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "CNY",
+				"ISOCode" : "CNY",
+				"Text" : "Renminbi",
+				"DecimalPlaces" : 2
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('COP')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('COP')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "COP",
+				"ISOCode" : "COP",
+				"Text" : "Peso",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('CRC')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('CRC')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "CRC",
+				"ISOCode" : "CRC",
+				"Text" : "Cost.Rica Colon",
+				"DecimalPlaces" : 2
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('CSD')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('CSD')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "CSD",
+				"ISOCode" : "CSD",
+				"Text" : "Serbian Dinar",
+				"DecimalPlaces" : 2
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('CUC')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('CUC')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "CUC",
+				"ISOCode" : "CUC",
+				"Text" : "Peso Convertib.",
+				"DecimalPlaces" : 2
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('CUP')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('CUP')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "CUP",
+				"ISOCode" : "CUP",
+				"Text" : "Cuban Peso",
+				"DecimalPlaces" : 2
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('CVE')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('CVE')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "CVE",
+				"ISOCode" : "CVE",
+				"Text" : "Escudo",
+				"DecimalPlaces" : 2
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('CYP')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('CYP')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "CYP",
+				"ISOCode" : "CYP",
+				"Text" : "Cyprus Pound",
+				"DecimalPlaces" : 2
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('CZK')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('CZK')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "CZK",
+				"ISOCode" : "CZK",
+				"Text" : "Krona",
+				"DecimalPlaces" : 2
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('DEM')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('DEM')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "DEM",
+				"ISOCode" : "DEM",
+				"Text" : "German Mark",
+				"DecimalPlaces" : 2
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('DEM3')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('DEM3')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "DEM3",
+				"ISOCode" : "",
+				"Text" : "(Int.) DEM 3 DP",
+				"DecimalPlaces" : 3
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('DJF')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('DJF')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "DJF",
+				"ISOCode" : "DJF",
+				"Text" : "Djibouti Franc",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('DKK')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('DKK')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "DKK",
+				"ISOCode" : "DKK",
+				"Text" : "Danish Krone",
+				"DecimalPlaces" : 2
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('DOP')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('DOP')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "DOP",
+				"ISOCode" : "DOP",
+				"Text" : "Dominican Peso",
+				"DecimalPlaces" : 2
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('DZD')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('DZD')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "DZD",
+				"ISOCode" : "DZD",
+				"Text" : "Dinar",
+				"DecimalPlaces" : 2
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('ECS')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('ECS')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "ECS",
+				"ISOCode" : "ECS",
+				"Text" : "Sucre",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('ECU')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('ECU')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "ECU",
+				"ISOCode" : "0",
+				"Text" : "ECU",
+				"DecimalPlaces" : 2
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('EEK')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('EEK')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "EEK",
+				"ISOCode" : "EEK",
+				"Text" : "Krona",
+				"DecimalPlaces" : 2
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('EGP')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('EGP')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "EGP",
+				"ISOCode" : "EGP",
+				"Text" : "Pound",
+				"DecimalPlaces" : 2
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('ERN')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('ERN')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "ERN",
+				"ISOCode" : "ERN",
+				"Text" : "Nakfa",
+				"DecimalPlaces" : 2
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('ESP')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('ESP')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "ESP",
+				"ISOCode" : "ESP",
+				"Text" : "Peseta",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('ETB')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('ETB')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "ETB",
+				"ISOCode" : "ETB",
+				"Text" : "Birr",
+				"DecimalPlaces" : 2
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('EUR')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('EUR')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "EUR",
+				"ISOCode" : "",
+				"Text" : "Euro",
+				"DecimalPlaces" : 2
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('EUR3')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('EUR3')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "EUR3",
+				"ISOCode" : "",
+				"Text" : "Euro",
+				"DecimalPlaces" : 2
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('FIM')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('FIM')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "FIM",
+				"ISOCode" : "FIM",
+				"Text" : "Finnish markka",
+				"DecimalPlaces" : 2
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('FJD')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('FJD')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "FJD",
+				"ISOCode" : "FJD",
+				"Text" : "Dollar",
+				"DecimalPlaces" : 2
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('FKP')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('FKP')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "FKP",
+				"ISOCode" : "FKP",
+				"Text" : "Falkland Pound",
+				"DecimalPlaces" : 2
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('FRF')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('FRF')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "FRF",
+				"ISOCode" : "FRF",
+				"Text" : "French Franc",
+				"DecimalPlaces" : 2
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('GBP')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('GBP')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "GBP",
+				"ISOCode" : "GBP",
+				"Text" : "Pound",
+				"DecimalPlaces" : 2
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('GEK')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('GEK')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "GEK",
+				"ISOCode" : "GEK",
+				"Text" : "Kupon",
+				"DecimalPlaces" : 2
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('GEL')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('GEL')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "GEL",
+				"ISOCode" : "GEL",
+				"Text" : "Lari",
+				"DecimalPlaces" : 2
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('GHC')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('GHC')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "GHC",
+				"ISOCode" : "GHC",
+				"Text" : "Cedi",
+				"DecimalPlaces" : 2
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('GHS')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('GHS')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "GHS",
+				"ISOCode" : "GHS",
+				"Text" : "Cedi",
+				"DecimalPlaces" : 2
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('GIP')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('GIP')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "GIP",
+				"ISOCode" : "GIP",
+				"Text" : "Gibraltar Pound",
+				"DecimalPlaces" : 2
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('GMD')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('GMD')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "GMD",
+				"ISOCode" : "GMD",
+				"Text" : "Dalasi",
+				"DecimalPlaces" : 2
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('GNF')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('GNF')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "GNF",
+				"ISOCode" : "GNF",
+				"Text" : "Franc",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('GRD')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('GRD')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "GRD",
+				"ISOCode" : "GRD",
+				"Text" : "Drachma",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('GTQ')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('GTQ')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "GTQ",
+				"ISOCode" : "GTQ",
+				"Text" : "Quetzal",
+				"DecimalPlaces" : 2
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('GWP')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('GWP')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "GWP",
+				"ISOCode" : "GWP",
+				"Text" : "Guinea Peso",
+				"DecimalPlaces" : 2
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('GYD')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('GYD')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "GYD",
+				"ISOCode" : "GYD",
+				"Text" : "Guyana Dollar",
+				"DecimalPlaces" : 2
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('HKD')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('HKD')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "HKD",
+				"ISOCode" : "HKD",
+				"Text" : "H.K.Dollar",
+				"DecimalPlaces" : 2
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('HNL')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('HNL')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "HNL",
+				"ISOCode" : "HNL",
+				"Text" : "Lempira",
+				"DecimalPlaces" : 2
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('HRK')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('HRK')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "HRK",
+				"ISOCode" : "HRK",
+				"Text" : "Kuna",
+				"DecimalPlaces" : 2
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('HTG')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('HTG')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "HTG",
+				"ISOCode" : "HTG",
+				"Text" : "Gourde",
+				"DecimalPlaces" : 2
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('HUF')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('HUF')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "HUF",
+				"ISOCode" : "HUF",
+				"Text" : "Forint",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('IDR')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('IDR')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "IDR",
+				"ISOCode" : "IDR",
+				"Text" : "Rupiah",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('IEP')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('IEP')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "IEP",
+				"ISOCode" : "IEP",
+				"Text" : "Irish Punt",
+				"DecimalPlaces" : 2
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('ILS')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('ILS')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "ILS",
+				"ISOCode" : "ILS",
+				"Text" : "Scheckel",
+				"DecimalPlaces" : 2
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('INR')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('INR')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "INR",
+				"ISOCode" : "INR",
+				"Text" : "Rupee",
+				"DecimalPlaces" : 2
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('IQD')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('IQD')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "IQD",
+				"ISOCode" : "IQD",
+				"Text" : "Dinar",
+				"DecimalPlaces" : 3
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('IRR')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('IRR')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "IRR",
+				"ISOCode" : "IRR",
+				"Text" : "Rial",
+				"DecimalPlaces" : 2
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('ISK')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('ISK')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "ISK",
+				"ISOCode" : "ISK",
+				"Text" : "Krona",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('ITL')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('ITL')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "ITL",
+				"ISOCode" : "ITL",
+				"Text" : "Lire",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('JMD')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('JMD')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "JMD",
+				"ISOCode" : "JMD",
+				"Text" : "Jamaican Dollar",
+				"DecimalPlaces" : 2
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('JOD')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('JOD')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "JOD",
+				"ISOCode" : "JOD",
+				"Text" : "Jordanian Dinar",
+				"DecimalPlaces" : 3
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('JPY')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('JPY')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "JPY",
+				"ISOCode" : "JPY",
+				"Text" : "Yen",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('KES')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('KES')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "KES",
+				"ISOCode" : "KES",
+				"Text" : "Shilling",
+				"DecimalPlaces" : 2
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('KGS')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('KGS')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "KGS",
+				"ISOCode" : "KGS",
+				"Text" : "Som",
+				"DecimalPlaces" : 2
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('KHR')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('KHR')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "KHR",
+				"ISOCode" : "KHR",
+				"Text" : "Riel",
+				"DecimalPlaces" : 2
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('KIS')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('KIS')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "KIS",
+				"ISOCode" : "KIS",
+				"Text" : "Som",
+				"DecimalPlaces" : 2
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('KMF')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('KMF')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "KMF",
+				"ISOCode" : "KMF",
+				"Text" : "Comoros Franc",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('KPW')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('KPW')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "KPW",
+				"ISOCode" : "KPW",
+				"Text" : "N. Korean Won",
+				"DecimalPlaces" : 2
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('KRW')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('KRW')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "KRW",
+				"ISOCode" : "KRW",
+				"Text" : "S.Korean Won",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('KWD')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('KWD')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "KWD",
+				"ISOCode" : "KWD",
+				"Text" : "Dinar",
+				"DecimalPlaces" : 3
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('KYD')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('KYD')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "KYD",
+				"ISOCode" : "KYD",
+				"Text" : "Cayman Dollar",
+				"DecimalPlaces" : 2
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('KZT')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('KZT')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "KZT",
+				"ISOCode" : "KZT",
+				"Text" : "Tenge",
+				"DecimalPlaces" : 2
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('LAK')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('LAK')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "LAK",
+				"ISOCode" : "LAK",
+				"Text" : "Kip",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('LBP')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('LBP')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "LBP",
+				"ISOCode" : "LBP",
+				"Text" : "Lebanese Pound",
+				"DecimalPlaces" : 2
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('LKR')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('LKR')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "LKR",
+				"ISOCode" : "LKR",
+				"Text" : "Sri Lanka Rupee",
+				"DecimalPlaces" : 2
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('LRD')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('LRD')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "LRD",
+				"ISOCode" : "LRD",
+				"Text" : "Liberian Dollar",
+				"DecimalPlaces" : 2
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('LSL')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('LSL')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "LSL",
+				"ISOCode" : "LSL",
+				"Text" : "Loti",
+				"DecimalPlaces" : 2
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('LTL')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('LTL')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "LTL",
+				"ISOCode" : "LTL",
+				"Text" : "Lita",
+				"DecimalPlaces" : 2
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('LUF')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('LUF')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "LUF",
+				"ISOCode" : "LUF",
+				"Text" : "Lux. Franc",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('LVL')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('LVL')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "LVL",
+				"ISOCode" : "LVL",
+				"Text" : "Lat",
+				"DecimalPlaces" : 2
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('LYD')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('LYD')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "LYD",
+				"ISOCode" : "LYD",
+				"Text" : "Libyan Dinar",
+				"DecimalPlaces" : 3
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('MAD')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('MAD')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "MAD",
+				"ISOCode" : "MAD",
+				"Text" : "Dirham",
+				"DecimalPlaces" : 2
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('MDL')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('MDL')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "MDL",
+				"ISOCode" : "MDL",
+				"Text" : "Leu",
+				"DecimalPlaces" : 2
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('MGA')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('MGA')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "MGA",
+				"ISOCode" : "MGA",
+				"Text" : "Madagasc.Ariary",
+				"DecimalPlaces" : 2
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('MGF')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('MGF')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "MGF",
+				"ISOCode" : "MGF",
+				"Text" : "Madagascan Fr.",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('MKD')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('MKD')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "MKD",
+				"ISOCode" : "MKD",
+				"Text" : "Maced. Denar",
+				"DecimalPlaces" : 2
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('MMK')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('MMK')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "MMK",
+				"ISOCode" : "MMK",
+				"Text" : "Kyat",
+				"DecimalPlaces" : 2
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('MNT')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('MNT')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "MNT",
+				"ISOCode" : "MNT",
+				"Text" : "Tugrik",
+				"DecimalPlaces" : 2
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('MOP')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('MOP')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "MOP",
+				"ISOCode" : "MOP",
+				"Text" : "Pataca",
+				"DecimalPlaces" : 2
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('MRO')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('MRO')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "MRO",
+				"ISOCode" : "MRO",
+				"Text" : "Ouguiya",
+				"DecimalPlaces" : 2
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('MRU')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('MRU')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "MRU",
+				"ISOCode" : "MRU",
+				"Text" : "Ouguiya",
+				"DecimalPlaces" : 2
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('MTL')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('MTL')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "MTL",
+				"ISOCode" : "MTL",
+				"Text" : "Lira",
+				"DecimalPlaces" : 2
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('MUR')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('MUR')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "MUR",
+				"ISOCode" : "MUR",
+				"Text" : "Rupee",
+				"DecimalPlaces" : 2
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('MVR')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('MVR')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "MVR",
+				"ISOCode" : "MVR",
+				"Text" : "Rufiyaa",
+				"DecimalPlaces" : 2
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('MWK')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('MWK')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "MWK",
+				"ISOCode" : "MWK",
+				"Text" : "Malawi Kwacha",
+				"DecimalPlaces" : 2
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('MXN')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('MXN')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "MXN",
+				"ISOCode" : "MXN",
+				"Text" : "Peso",
+				"DecimalPlaces" : 2
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('MXP')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('MXP')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "MXP",
+				"ISOCode" : "MXP",
+				"Text" : "Peso",
+				"DecimalPlaces" : 2
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('MYR')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('MYR')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "MYR",
+				"ISOCode" : "MYR",
+				"Text" : "Ringgit",
+				"DecimalPlaces" : 2
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('MZM')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('MZM')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "MZM",
+				"ISOCode" : "MZM",
+				"Text" : "Metical",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('MZN')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('MZN')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "MZN",
+				"ISOCode" : "MZN",
+				"Text" : "Metical",
+				"DecimalPlaces" : 2
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('NAD')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('NAD')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "NAD",
+				"ISOCode" : "NAD",
+				"Text" : "Namibian Dollar",
+				"DecimalPlaces" : 2
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('NGN')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('NGN')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "NGN",
+				"ISOCode" : "NGN",
+				"Text" : "Naira",
+				"DecimalPlaces" : 2
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('NIC')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('NIC')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "NIC",
+				"ISOCode" : "NIC",
+				"Text" : "Cordoba",
+				"DecimalPlaces" : 2
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('NIO')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('NIO')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "NIO",
+				"ISOCode" : "NIO",
+				"Text" : "Cordoba Oro",
+				"DecimalPlaces" : 2
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('NLG')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('NLG')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "NLG",
+				"ISOCode" : "NLG",
+				"Text" : "Guilder",
+				"DecimalPlaces" : 2
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('NOK')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('NOK')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "NOK",
+				"ISOCode" : "NOK",
+				"Text" : "Norwegian Krone",
+				"DecimalPlaces" : 2
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('NPR')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('NPR')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "NPR",
+				"ISOCode" : "NPR",
+				"Text" : "Rupee",
+				"DecimalPlaces" : 2
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('NZD')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('NZD')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "NZD",
+				"ISOCode" : "NZD",
+				"Text" : "N.Zeal.Dollars",
+				"DecimalPlaces" : 2
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('OMR')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('OMR')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "OMR",
+				"ISOCode" : "OMR",
+				"Text" : "Omani Rial",
+				"DecimalPlaces" : 3
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('PAB')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('PAB')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "PAB",
+				"ISOCode" : "PAB",
+				"Text" : "Balboa",
+				"DecimalPlaces" : 2
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('PEI')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('PEI')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "PEI",
+				"ISOCode" : "PEI",
+				"Text" : "Inti",
+				"DecimalPlaces" : 2
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('PEN')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('PEN')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "PEN",
+				"ISOCode" : "PEN",
+				"Text" : "New Sol",
+				"DecimalPlaces" : 2
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('PGK')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('PGK')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "PGK",
+				"ISOCode" : "PGK",
+				"Text" : "Kina",
+				"DecimalPlaces" : 2
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('PHP')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('PHP')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "PHP",
+				"ISOCode" : "PHP",
+				"Text" : "Peso",
+				"DecimalPlaces" : 2
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('PKR')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('PKR')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "PKR",
+				"ISOCode" : "PKR",
+				"Text" : "Rupee",
+				"DecimalPlaces" : 2
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('PLN')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('PLN')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "PLN",
+				"ISOCode" : "PLN",
+				"Text" : "Zloty",
+				"DecimalPlaces" : 2
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('PLZ')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('PLZ')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "PLZ",
+				"ISOCode" : "PLZ",
+				"Text" : "Zloty",
+				"DecimalPlaces" : 2
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('PTE')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('PTE')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "PTE",
+				"ISOCode" : "PTE",
+				"Text" : "Escudo",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('PYG')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('PYG')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "PYG",
+				"ISOCode" : "PYG",
+				"Text" : "Guarani",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('QAR')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('QAR')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "QAR",
+				"ISOCode" : "QAR",
+				"Text" : "Rial",
+				"DecimalPlaces" : 2
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('RMB')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('RMB')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "RMB",
+				"ISOCode" : "",
+				"Text" : "Yuan Renminbi",
+				"DecimalPlaces" : 2
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('ROL')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('ROL')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "ROL",
+				"ISOCode" : "ROL",
+				"Text" : "Leu (Old)",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('RON')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('RON')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "RON",
+				"ISOCode" : "RON",
+				"Text" : "Leu",
+				"DecimalPlaces" : 2
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('RSD')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('RSD')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "RSD",
+				"ISOCode" : "RSD",
+				"Text" : "Serbian Dinar",
+				"DecimalPlaces" : 2
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('RUB')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('RUB')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "RUB",
+				"ISOCode" : "RUB",
+				"Text" : "Ruble",
+				"DecimalPlaces" : 2
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('RUR')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('RUR')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "RUR",
+				"ISOCode" : "RUR",
+				"Text" : "Rouble",
+				"DecimalPlaces" : 2
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('RWF')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('RWF')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "RWF",
+				"ISOCode" : "RWF",
+				"Text" : "Franc",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('SAR')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('SAR')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "SAR",
+				"ISOCode" : "SAR",
+				"Text" : "Rial",
+				"DecimalPlaces" : 2
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('SBD')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('SBD')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "SBD",
+				"ISOCode" : "SBD",
+				"Text" : "Sol.Isl.Dollar",
+				"DecimalPlaces" : 2
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('SCR')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('SCR')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "SCR",
+				"ISOCode" : "SCR",
+				"Text" : "Rupee",
+				"DecimalPlaces" : 2
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('SDD')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('SDD')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "SDD",
+				"ISOCode" : "SDD",
+				"Text" : "Dinar",
+				"DecimalPlaces" : 2
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('SDG')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('SDG')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "SDG",
+				"ISOCode" : "SDG",
+				"Text" : "Pound",
+				"DecimalPlaces" : 2
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('SDP')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('SDP')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "SDP",
+				"ISOCode" : "SDP",
+				"Text" : "Pound",
+				"DecimalPlaces" : 2
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('SEK')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('SEK')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "SEK",
+				"ISOCode" : "SEK",
+				"Text" : "Swedish Krona",
+				"DecimalPlaces" : 2
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('SGD')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('SGD')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "SGD",
+				"ISOCode" : "SGD",
+				"Text" : "Sing.Dollar",
+				"DecimalPlaces" : 2
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('SHP')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('SHP')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "SHP",
+				"ISOCode" : "SHP",
+				"Text" : "St.Helena Pound",
+				"DecimalPlaces" : 2
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('SIT')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('SIT')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "SIT",
+				"ISOCode" : "SIT",
+				"Text" : "Tolar",
+				"DecimalPlaces" : 2
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('SKK')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('SKK')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "SKK",
+				"ISOCode" : "SKK",
+				"Text" : "Krona",
+				"DecimalPlaces" : 2
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('SLL')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('SLL')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "SLL",
+				"ISOCode" : "SLL",
+				"Text" : "Leone",
+				"DecimalPlaces" : 2
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('SOS')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('SOS')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "SOS",
+				"ISOCode" : "SOS",
+				"Text" : "Shilling",
+				"DecimalPlaces" : 2
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('SRD')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('SRD')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "SRD",
+				"ISOCode" : "SRD",
+				"Text" : "Surinam Doillar",
+				"DecimalPlaces" : 2
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('SRG')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('SRG')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "SRG",
+				"ISOCode" : "SRG",
+				"Text" : "Surinam Guilder",
+				"DecimalPlaces" : 2
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('SSP')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('SSP')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "SSP",
+				"ISOCode" : "SSP",
+				"Text" : "Pound",
+				"DecimalPlaces" : 2
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('STD')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('STD')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "STD",
+				"ISOCode" : "STD",
+				"Text" : "Dobra",
+				"DecimalPlaces" : 2
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('SUR')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('SUR')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "SUR",
+				"ISOCode" : "SUR",
+				"Text" : "Rouble",
+				"DecimalPlaces" : 2
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('SVC')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('SVC')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "SVC",
+				"ISOCode" : "SVC",
+				"Text" : "Colon",
+				"DecimalPlaces" : 2
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('SYP')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('SYP')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "SYP",
+				"ISOCode" : "SYP",
+				"Text" : "Syrian Pound",
+				"DecimalPlaces" : 2
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('SZL')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('SZL')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "SZL",
+				"ISOCode" : "SZL",
+				"Text" : "Lilangeni",
+				"DecimalPlaces" : 2
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('THB')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('THB')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "THB",
+				"ISOCode" : "THB",
+				"Text" : "Baht",
+				"DecimalPlaces" : 2
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('TJR')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('TJR')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "TJR",
+				"ISOCode" : "TJR",
+				"Text" : "Ruble",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('TJS')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('TJS')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "TJS",
+				"ISOCode" : "TJS",
+				"Text" : "Somoni",
+				"DecimalPlaces" : 2
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('TMM')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('TMM')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "TMM",
+				"ISOCode" : "TMM",
+				"Text" : "Manat (Old)",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('TMT')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('TMT')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "TMT",
+				"ISOCode" : "TMT",
+				"Text" : "Manat",
+				"DecimalPlaces" : 2
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('TND')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('TND')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "TND",
+				"ISOCode" : "TND",
+				"Text" : "Dinar",
+				"DecimalPlaces" : 3
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('TOP')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('TOP')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "TOP",
+				"ISOCode" : "TOP",
+				"Text" : "Pa'anga",
+				"DecimalPlaces" : 2
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('TPE')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('TPE')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "TPE",
+				"ISOCode" : "TPE",
+				"Text" : "Timor Escudo",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('TRL')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('TRL')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "TRL",
+				"ISOCode" : "TRL",
+				"Text" : "Lira (Old)",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('TRY')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('TRY')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "TRY",
+				"ISOCode" : "TRY",
+				"Text" : "Lira",
+				"DecimalPlaces" : 2
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('TTD')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('TTD')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "TTD",
+				"ISOCode" : "TTD",
+				"Text" : "T.+ T. Dollar",
+				"DecimalPlaces" : 2
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('TWD')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('TWD')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "TWD",
+				"ISOCode" : "TWD",
+				"Text" : "Dollar",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('TZS')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('TZS')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "TZS",
+				"ISOCode" : "TZS",
+				"Text" : "Shilling",
+				"DecimalPlaces" : 2
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('UAH')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('UAH')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "UAH",
+				"ISOCode" : "UAH",
+				"Text" : "Hryvnia",
+				"DecimalPlaces" : 2
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('UAK')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('UAK')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "UAK",
+				"ISOCode" : "UAK",
+				"Text" : "Karbowanez",
+				"DecimalPlaces" : 2
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('UGS')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('UGS')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "UGS",
+				"ISOCode" : "UGS",
+				"Text" : "Uganda Shilling",
+				"DecimalPlaces" : 2
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('UGX')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('UGX')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "UGX",
+				"ISOCode" : "UGX",
+				"Text" : "Shilling",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('UNI')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('UNI')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "UNI",
+				"ISOCode" : "UNI",
+				"Text" : "uni",
+				"DecimalPlaces" : 2
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('USD')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('USD')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "USD",
+				"ISOCode" : "USD",
+				"Text" : "US Dollar",
+				"DecimalPlaces" : 2
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('USDN')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('USDN')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "USDN",
+				"ISOCode" : "",
+				"Text" : "US Dollar",
+				"DecimalPlaces" : 5
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('UYP')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('UYP')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "UYP",
+				"ISOCode" : "UYP",
+				"Text" : "New Peso",
+				"DecimalPlaces" : 2
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('UYU')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('UYU')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "UYU",
+				"ISOCode" : "UYU",
+				"Text" : "Peso",
+				"DecimalPlaces" : 2
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('UZS')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('UZS')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "UZS",
+				"ISOCode" : "UZS",
+				"Text" : "Total",
+				"DecimalPlaces" : 2
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('VEB')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('VEB')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "VEB",
+				"ISOCode" : "VEB",
+				"Text" : "Bolivar (Old)",
+				"DecimalPlaces" : 2
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('VEF')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('VEF')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "VEF",
+				"ISOCode" : "VEF",
+				"Text" : "Bolivar",
+				"DecimalPlaces" : 2
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('VES')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('VES')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "VES",
+				"ISOCode" : "VES",
+				"Text" : "Bolivar",
+				"DecimalPlaces" : 2
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('VND')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('VND')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "VND",
+				"ISOCode" : "VND",
+				"Text" : "Dong",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('VUV')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('VUV')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "VUV",
+				"ISOCode" : "VUV",
+				"Text" : "Vatu",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('WST')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('WST')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "WST",
+				"ISOCode" : "WST",
+				"Text" : "Tala",
+				"DecimalPlaces" : 2
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('XAF')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('XAF')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "XAF",
+				"ISOCode" : "XAF",
+				"Text" : "CFA Franc BEAC",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('XCD')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('XCD')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "XCD",
+				"ISOCode" : "XCD",
+				"Text" : "Dollar",
+				"DecimalPlaces" : 2
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('XCU')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('XCU')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "XCU",
+				"ISOCode" : "XCU",
+				"Text" : "ECU",
+				"DecimalPlaces" : 2
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('XEU')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('XEU')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "XEU",
+				"ISOCode" : "XEU",
+				"Text" : "E.C.U.",
+				"DecimalPlaces" : 2
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('XOF')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('XOF')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "XOF",
+				"ISOCode" : "XOF",
+				"Text" : "CFA Franc BCEAO",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('XPF')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('XPF')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "XPF",
+				"ISOCode" : "XPF",
+				"Text" : "Franc",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('YER')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('YER')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "YER",
+				"ISOCode" : "YER",
+				"Text" : "Yemeni Ryal",
+				"DecimalPlaces" : 2
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('YUM')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('YUM')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "YUM",
+				"ISOCode" : "YUM",
+				"Text" : "New Dinar",
+				"DecimalPlaces" : 2
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('ZAR')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('ZAR')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "ZAR",
+				"ISOCode" : "ZAR",
+				"Text" : "Rand",
+				"DecimalPlaces" : 2
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('ZMK')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('ZMK')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "ZMK",
+				"ISOCode" : "ZMK",
+				"Text" : "Kwacha",
+				"DecimalPlaces" : 2
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('ZMW')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('ZMW')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "ZMW",
+				"ISOCode" : "ZMW",
+				"Text" : "Kwacha",
+				"DecimalPlaces" : 2
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('ZRN')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('ZRN')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "ZRN",
+				"ISOCode" : "ZRN",
+				"Text" : "Zaire",
+				"DecimalPlaces" : 2
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('ZRZ')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('ZRZ')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "ZRZ",
+				"ISOCode" : "ZRZ",
+				"Text" : "Zaire",
+				"DecimalPlaces" : 2
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('ZWD')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('ZWD')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "ZWD",
+				"ISOCode" : "ZWD",
+				"Text" : "Zimbabwe Dollar",
+				"DecimalPlaces" : 2
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('ZWL')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('ZWL')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "ZWL",
+				"ISOCode" : "ZWL",
+				"Text" : "Zimbabwe Dollar",
+				"DecimalPlaces" : 2
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('ZWN')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('ZWN')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "ZWN",
+				"ISOCode" : "ZWN",
+				"Text" : "Zimbabwe Dollar",
+				"DecimalPlaces" : 2
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('ZWR')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__Currencies('ZWR')",
+					"type" : "GWSAMPLE_BASIC.SAP__Currency"
+				},
+				"CurrencyCode" : "ZWR",
+				"ISOCode" : "ZWR",
+				"Text" : "Zimbabwe Dollar",
+				"DecimalPlaces" : 2
+			}
+		]
+	}
+}

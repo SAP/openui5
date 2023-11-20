@@ -1,28 +1,34 @@
 /*!
  * ${copyright}
  */
-
+/*eslint-disable max-len */
 // Provides class sap.ui.model.odata.ODataAnnotations
-sap.ui.define(['./AnnotationParser', 'jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/EventProvider'],
-	function(AnnotationParser, jQuery, Device, EventProvider) {
+sap.ui.define([
+	"./AnnotationParser",
+	"sap/base/assert",
+	"sap/base/Log",
+	"sap/base/i18n/Localization",
+	"sap/base/util/extend",
+	"sap/base/util/isEmptyObject",
+	"sap/ui/base/EventProvider",
+	"sap/ui/thirdparty/jquery"
+], function (AnnotationParser, assert, Log, Localization, extend, isEmptyObject, EventProvider,
+		jQuery) {
 	"use strict";
 
-	/*global ActiveXObject */
-
-
-
 	/**
-	 * @param {string|string[]} aAnnotationURI The annotation-URL or an array of URLS that should be parsed and merged
+	 * @param {string|string[]} aAnnotationURI The annotation-URL or an array of URLs that should be parsed and merged
 	 * @param {sap.ui.model.odata.ODataMetadata} oMetadata
 	 * @param {object} mParams
 	 *
-	 * @class Implementation to access oData Annotations
+	 * @class Implementation to access OData Annotations
 	 *
 	 * @author SAP SE
 	 * @version
 	 * ${version}
 	 *
 	 * @public
+	 * @deprecated As of version 1.66, please use {@link sap.ui.model.odata.v2.ODataAnnotations} instead.
 	 * @alias sap.ui.model.odata.ODataAnnotations
 	 * @extends sap.ui.base.EventProvider
 	 */
@@ -53,19 +59,19 @@ sap.ui.define(['./AnnotationParser', 'jquery.sap.global', 'sap/ui/Device', 'sap/
 			this.oRequestHandles = [];
 			this.oLoadEvent = null;
 			this.oFailedEvent = null;
-			this.mCustomHeaders = mOptions.headers ? jQuery.extend({}, mOptions.headers) : {};
+			this.mCustomHeaders = mOptions.headers ? extend({}, mOptions.headers) : {};
 
 			if (mOptions.urls) {
 				this.addUrl(mOptions.urls);
 
 				if (!this.bAsync) {
 					// Synchronous loading, we can directly check for errors
-					jQuery.sap.assert(
-						!jQuery.isEmptyObject(this.oMetadata),
+					assert(
+						!isEmptyObject(this.oMetadata),
 						"Metadata must be available for synchronous annotation loading"
 					);
 					if (this.oError) {
-						jQuery.sap.log.error(
+						Log.error(
 							"OData annotations could not be loaded: " + this.oError.message
 						);
 					}
@@ -82,14 +88,22 @@ sap.ui.define(['./AnnotationParser', 'jquery.sap.global', 'sap/ui/Device', 'sap/
 	///////////////////////////////////////////////// Prototype Members ////////////////////////////////////////////////
 
 	/**
+	 * Returns the raw annotation data
+	 *
+	 * @private
+	 * @returns {object} the annotation data
+	 */
+	ODataAnnotations.prototype.getData = function() {
+		return this.oAnnotations;
+	};
+
+	/**
 	 * returns the raw annotation data
 	 *
 	 * @public
 	 * @returns {object} returns annotations data
 	 */
-	ODataAnnotations.prototype.getAnnotationsData = function() {
-		return this.oAnnotations;
-	};
+	ODataAnnotations.prototype.getAnnotationsData = ODataAnnotations.prototype.getData;
 
 	/**
 	 * Checks whether annotations from at least one source are available
@@ -113,30 +127,40 @@ sap.ui.define(['./AnnotationParser', 'jquery.sap.global', 'sap/ui/Device', 'sap/
 	};
 
 	/**
-	 * Fire event loaded to attached listeners.
+	 * The <code>loaded</code> event is fired after new annotations have been added to this object.
 	 *
-	 * @param {map} [mArguments] Map of arguments that will be given as parameters to the event handler
-	 * @return {sap.ui.model.odata.ODataAnnotations} <code>this</code> to allow method chaining
+	 * @name sap.ui.model.odata.ODataAnnotations#loaded
+	 * @event
+	 * @param {sap.ui.base.Event} oEvent
+	 * @public
+	 */
+
+	/**
+	 * Fires event {@link #event:loaded loaded} to attached listeners.
+	 *
+	 * @param {object} [oParameters] Parameters that will be given as parameters to the event handler
+	 * @return {this} <code>this</code> to allow method chaining
 	 * @protected
 	 */
-	ODataAnnotations.prototype.fireLoaded = function(mArguments) {
-		this.fireEvent("loaded", mArguments);
+	ODataAnnotations.prototype.fireLoaded = function(oParameters) {
+		this.fireEvent("loaded", oParameters);
 		return this;
 	};
 
 	/**
-	 * Attach event-handler <code>fnFunction</code> to the 'loaded' event of this <code>sap.ui.model.odata.ODataAnnotations</code>.
-	 *
+	 * Attaches event handler <code>fnFunction</code> to the {@link #event:loaded loaded} event of this
+	 * <code>sap.ui.model.odata.ODataAnnotations</code>.
 	 *
 	 * @param {object}
-	 *            [oData] The object, that should be passed along with the event-object when firing the event.
+	 *            [oData] An application-specific payload object that will be passed to the event handler
+	 *            along with the event object when firing the event
 	 * @param {function}
-	 *            fnFunction The function to call, when the event occurs. This function will be called on the
-	 *            oListener-instance (if present) or in a 'static way'.
+	 *            fnFunction The function to be called, when the event occurs
 	 * @param {object}
-	 *            [oListener] Object on which to call the given function. If empty, the global context (window) is used.
+	 *            [oListener] Context object to call the event handler with. Defaults to this
+	 *            <code>sap.ui.model.odata.ODataAnnotations</code> itself
 	 *
-	 * @return {sap.ui.model.odata.ODataAnnotations} <code>this</code> to allow method chaining
+	 * @returns {this} Reference to <code>this</code> in order to allow method chaining
 	 * @public
 	 */
 	ODataAnnotations.prototype.attachLoaded = function(oData, fnFunction, oListener) {
@@ -145,15 +169,16 @@ sap.ui.define(['./AnnotationParser', 'jquery.sap.global', 'sap/ui/Device', 'sap/
 	};
 
 	/**
-	 * Detach event-handler <code>fnFunction</code> from the 'loaded' event of this <code>sap.ui.model.odata.ODataAnnotations</code>.
+	 * Detaches event handler <code>fnFunction</code> from the {@link #event:loaded loaded} event of this
+	 * <code>sap.ui.model.odata.ODataAnnotations</code>.
 	 *
-	 * The passed function and listener object must match the ones previously used for event registration.
+	 * The passed function and listener object must match the ones used for event registration.
 	 *
 	 * @param {function}
-	 *            fnFunction The function to call, when the event occurs.
+	 *            fnFunction The function to be called, when the event occurs
 	 * @param {object}
-	 *            oListener Object on which the given function had to be called.
-	 * @return {sap.ui.model.odata.ODataAnnotations} <code>this</code> to allow method chaining
+	 *            [oListener] Context object on which the given function had to be called
+	 * @returns {this} Reference to <code>this</code> in order to allow method chaining
 	 * @public
 	 */
 	ODataAnnotations.prototype.detachLoaded = function(fnFunction, oListener) {
@@ -163,36 +188,47 @@ sap.ui.define(['./AnnotationParser', 'jquery.sap.global', 'sap/ui/Device', 'sap/
 
 
 	/**
-	 * Fire event failed to attached listeners.
+	 * The <code>failed</code> event is fired when loading, parsing or merging new annotations failed.
 	 *
-	 * @param {object} [mArguments] the arguments to pass along with the event.
-	 * @param {string} [mArguments.message]  A text that describes the failure.
-	 * @param {string} [mArguments.statusCode]  HTTP status code returned by the request (if available)
-	 * @param {string} [mArguments.statusText] The status as a text, details not specified, intended only for diagnosis output
-	 * @param {string} [mArguments.responseText] Response that has been received for the request ,as a text string
+	 * @name sap.ui.model.odata.ODataAnnotations#failed
+	 * @event
+	 * @param {sap.ui.base.Event} oEvent
+	 * @public
+	 */
+
+	/**
+	 * Fires event {@link #event:failed failed} to attached listeners.
 	 *
-	 * @return {sap.ui.model.odata.ODataAnnotations} <code>this</code> to allow method chaining
+	 * @param {object} [oParameters] Parameters to pass along with the event
+	 * @param {string} [oParameters.message]  A text that describes the failure.
+	 * @param {string} [oParameters.statusCode]  HTTP status code returned by the request (if available)
+	 * @param {string} [oParameters.statusText] The status as a text, details not specified, intended only for diagnosis output
+	 * @param {string} [oParameters.responseText] Response that has been received for the request ,as a text string
+	 *
+	 * @returns {this} Reference to <code>this</code> in order to allow method chaining
 	 * @protected
 	 */
-	ODataAnnotations.prototype.fireFailed = function(mArguments) {
-		this.fireEvent("failed", mArguments);
+	ODataAnnotations.prototype.fireFailed = function(oParameters) {
+		this.fireEvent("failed", oParameters);
 		return this;
 	};
 
 
 	/**
-	 * Attach event-handler <code>fnFunction</code> to the 'failed' event of this <code>sap.ui.model.odata.ODataAnnotations</code>.
+	 * Attaches event handler <code>fnFunction</code> to the {@link #event:failed failed} event of this
+	 * <code>sap.ui.model.odata.ODataAnnotations</code>.
 	 *
 	 *
 	 * @param {object}
-	 *            [oData] The object, that should be passed along with the event-object when firing the event.
+	 *            [oData] An application-specific payload object that will be passed to the event handler
+	 *            along with the event object when firing the event
 	 * @param {function}
-	 *            fnFunction The function to call, when the event occurs. This function will be called on the
-	 *            oListener-instance (if present) or in a 'static way'.
+	 *            fnFunction The function to be called, when the event occurs
 	 * @param {object}
-	 *            [oListener] Object on which to call the given function. If empty, the global context (window) is used.
+	 *            [oListener] Context object to call the event handler with. Defaults to this
+	 *            <code>sap.ui.model.odata.ODataAnnotations</code> itself
 	 *
-	 * @return {sap.ui.model.odata.ODataAnnotations} <code>this</code> to allow method chaining
+	 * @returns {this} Reference to <code>this</code> in order to allow method chaining
 	 * @public
 	 */
 	ODataAnnotations.prototype.attachFailed = function(oData, fnFunction, oListener) {
@@ -201,15 +237,16 @@ sap.ui.define(['./AnnotationParser', 'jquery.sap.global', 'sap/ui/Device', 'sap/
 	};
 
 	/**
-	 * Detach event-handler <code>fnFunction</code> from the 'failed' event of this <code>sap.ui.model.odata.ODataAnnotations</code>.
+	 * Detaches event handler <code>fnFunction</code> from the {@link #event:failed failed} event of this
+	 * <code>sap.ui.model.odata.ODataAnnotations</code>.
 	 *
-	 * The passed function and listener object must match the ones previously used for event registration.
+	 * The passed function and listener object must match the ones used for event registration.
 	 *
 	 * @param {function}
-	 *            fnFunction The function to call, when the event occurs.
+	 *            fnFunction The function to be called, when the event occurs
 	 * @param {object}
-	 *            oListener Object on which the given function had to be called.
-	 * @return {sap.ui.model.odata.ODataAnnotations} <code>this</code> to allow method chaining
+	 *            [oListener] Context object on which the given function had to be called
+	 * @returns {this} Reference to <code>this</code> in order to allow method chaining
 	 * @public
 	 */
 	ODataAnnotations.prototype.detachFailed = function(fnFunction, oListener) {
@@ -224,12 +261,12 @@ sap.ui.define(['./AnnotationParser', 'jquery.sap.global', 'sap/ui/Device', 'sap/
 	 * To remove these headers simply set the mHeaders parameter to {}. Please also note that when calling this method
 	 * again all previous custom headers are removed unless they are specified again in the mCustomHeaders parameter.
 	 *
-	 * @param {map} mHeaders the header name/value map.
+	 * @param {Object<string,string>} mHeaders the header name/value map.
 	 * @public
 	 */
 	ODataAnnotations.prototype.setHeaders = function(mHeaders) {
 		// Copy headers (dont use reference to mHeaders map)
-		this.mCustomHeaders = jQuery.extend({}, mHeaders);
+		this.mCustomHeaders = extend({}, mHeaders);
 	};
 
 	/**
@@ -247,31 +284,11 @@ sap.ui.define(['./AnnotationParser', 'jquery.sap.global', 'sap/ui/Device', 'sap/
 			vXML = null;
 		}
 
-		if (Device.browser.msie) {
-			// IE creates an XML Document, but we cannot use it since it does not support the
-			// evaluate-method. So we have to create a new document from the XML string every time.
-			// This also leads to using a difference XPath implementation @see getXPath
-			oXMLDoc = new ActiveXObject("Microsoft.XMLDOM"); // ??? "Msxml2.DOMDocument.6.0"
-			oXMLDoc.preserveWhiteSpace = true;
-
-			// The MSXML implementation does not parse documents with the technically correct "xmlns:xml"-attribute
-			// So if a document contains 'xmlns:xml="http://www.w3.org/XML/1998/namespace"', IE will stop working.
-			// This hack removes the XML namespace declaration which is then implicitly set to the default one.
-			if (sXMLContent.indexOf(" xmlns:xml=") > -1) {
-				sXMLContent = sXMLContent
-					.replace(' xmlns:xml="http://www.w3.org/XML/1998/namespace"', "")
-					.replace(" xmlns:xml='http://www.w3.org/XML/1998/namespace'", "");
-			}
-
-			oXMLDoc.loadXML(sXMLContent);
-		} else if (vXML) {
+		if (vXML) {
 			oXMLDoc = vXML;
-		} else if (window.DOMParser) {
-			oXMLDoc = new DOMParser().parseFromString(sXMLContent, 'application/xml');
 		} else {
-			jQuery.sap.log.fatal("The browser does not support XML parsing. Annotations are not available.");
+			oXMLDoc = new DOMParser().parseFromString(sXMLContent, 'application/xml');
 		}
-
 
 		return oXMLDoc;
 	};
@@ -283,12 +300,7 @@ sap.ui.define(['./AnnotationParser', 'jquery.sap.global', 'sap/ui/Device', 'sap/
 	 * @return {boolean} true if errors exist false otherwise
 	 */
 	ODataAnnotations.prototype._documentHasErrors = function(oXMLDoc) {
-		return (
-			// All browsers including IE
-			oXMLDoc.getElementsByTagName("parsererror").length > 0
-			// IE 11 special case
-			|| (oXMLDoc.parseError && oXMLDoc.parseError.errorCode !== 0)
-		);
+		return oXMLDoc.getElementsByTagName("parsererror").length > 0;
 	};
 
 	/**
@@ -297,7 +309,6 @@ sap.ui.define(['./AnnotationParser', 'jquery.sap.global', 'sap/ui/Device', 'sap/
 	 *
 	 * @param {map} mAnnotations The new annotations that should be merged into the ones in this instance
 	 * @param {boolean} [bSuppressEvents] if set to true, the "loaded"-event is not fired
-	 * @returns {void}
 	 */
 	ODataAnnotations.prototype._mergeAnnotationData = function(mAnnotations, bSuppressEvents) {
 		if (!this.oAnnotations) {
@@ -320,7 +331,7 @@ sap.ui.define(['./AnnotationParser', 'jquery.sap.global', 'sap/ui/Device', 'sap/
 	 *
 	 * @param {object} oXMLDocument The XML document to parse for annotations
 	 * @param {string} sXMLContent The XML content as string to parse for annotations
-	 * @param {map} [mOptions] Additional options
+	 * @param {object} [mOptions] Additional options
 	 * @param {function} [mOptions.success] Success callback gets an objec as argument with the
 	 *                   properties "annotations" containing the parsed annotations and "xmlDoc"
 	 *                   containing the XML-Document that was returned by the request.
@@ -339,7 +350,7 @@ sap.ui.define(['./AnnotationParser', 'jquery.sap.global', 'sap/ui/Device', 'sap/
 			error:      function() {},
 			fireEvents: false
 		};
-		mOptions = jQuery.extend({}, mDefaultOptions, mOptions);
+		mOptions = extend({}, mDefaultOptions, mOptions);
 
 		var oXMLDoc = this._createXMLDocument(oXMLDocument, sXMLContent);
 
@@ -379,7 +390,7 @@ sap.ui.define(['./AnnotationParser', 'jquery.sap.global', 'sap/ui/Device', 'sap/
 			// Check if Metadata is loaded on the model. We need the Metadata to parse the annotations
 
 			var oMetadata = this.oMetadata.getServiceMetadata();
-			if (!oMetadata || jQuery.isEmptyObject(oMetadata)) {
+			if (!oMetadata || isEmptyObject(oMetadata)) {
 				// Metadata is not loaded, wait for it before trying to parse
 				this.oMetadata.attachLoaded(fnParseDocument);
 			} else {
@@ -489,8 +500,8 @@ sap.ui.define(['./AnnotationParser', 'jquery.sap.global', 'sap/ui/Device', 'sap/
 			var mAjaxOptions = {
 				url: sUrl,
 				async: that.bAsync,
-				headers: jQuery.extend({}, that.mCustomHeaders, {
-					"Accept-Language": sap.ui.getCore().getConfiguration().getLanguageTag() // Always overwrite
+				headers: extend({}, that.mCustomHeaders, {
+					"Accept-Language": Localization.getLanguageTag().toString() // Always overwrite
 				})
 			};
 
@@ -504,13 +515,13 @@ sap.ui.define(['./AnnotationParser', 'jquery.sap.global', 'sap/ui/Device', 'sap/
 					type:			"fail",
 					url:			sUrl,
 					message:		sStatusText,
-					statusCode:		oJQXHR.statusCode,
+					statusCode:		oJQXHR.status,
 					statusText:		oJQXHR.statusText,
 					responseText:	oJQXHR.responseText
 				};
 
 				if (that.bAsync) {
-					that.oFailedEvent = jQuery.sap.delayedCall(0, that, that.fireFailed, [ that.oError ]);
+					that.oFailedEvent = setTimeout(that.fireFailed.bind(that, that.oError), 0);
 				} else {
 					that.fireFailed(that.oError);
 				}
@@ -526,7 +537,7 @@ sap.ui.define(['./AnnotationParser', 'jquery.sap.global', 'sap/ui/Device', 'sap/
 							type:			"success",
 							url: 			sUrl,
 							message:		sStatusText,
-							statusCode:		oJQXHR.statusCode,
+							statusCode:		oJQXHR.status,
 							statusText:		oJQXHR.statusText,
 							responseText:		oJQXHR.responseText
 						});
@@ -555,10 +566,10 @@ sap.ui.define(['./AnnotationParser', 'jquery.sap.global', 'sap/ui/Device', 'sap/
 
 		EventProvider.prototype.destroy.apply(this, arguments);
 		if (this.oLoadEvent) {
-			jQuery.sap.clearDelayedCall(this.oLoadEvent);
+			clearTimeout(this.oLoadEvent);
 		}
 		if (this.oFailedEvent) {
-			jQuery.sap.clearDelayedCall(this.oFailedEvent);
+			clearTimeout(this.oFailedEvent);
 		}
 	};
 

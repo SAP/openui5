@@ -1,0 +1,141 @@
+<core:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:f="sap.f"
+	xmlns:grid="sap.ui.layout.cssgrid"
+	xmlns:core="sap.ui.core">
+	<f:SidePanelItem icon="sap-icon://information" text="Details">
+		<f:GridList id="preview" class="SidePanelGridList">
+			<f:customLayout>
+				<grid:GridBasicLayout gridTemplateColumns="1fr" gridGap="1rem" />
+			</f:customLayout>
+			<f:GridListItem>
+				<VBox justifyContent="Center" alignItems="Center">
+					<core:Icon
+						id="previewIcon"
+						size="5rem"
+						src="sap-icon://{view>/iconPath}{name}"/>
+					<Title text="{name}" class="sapUiSmallMarginTop" />
+					<Text text="{
+							path: 'view>/fontName',
+							formatter: '.formatter.fontName'
+					}"/>
+				</VBox>
+			</f:GridListItem>
+			<f:GridListItem id="previewCopy">
+				<Title text="{i18n>previewCopyTitle}" />
+				<HBox>
+					<Input
+						id="previewCopyCode"
+						editable="false"
+						value="sap-icon://{view>/iconPath}{name}">
+						<layoutData>
+							<FlexItemData growFactor="1" />
+						</layoutData>
+					</Input>
+					<Button
+						icon="sap-icon://copy"
+						type="Emphasized"
+						tooltip="{i18n>previewCopyIconToClipboard}"
+						press=".onCopyCodeToClipboard"
+						class="sapUiTinyMarginBegin"
+						ariaLabelledBy="labelCopyButton"/>
+				</HBox>
+				<HBox>
+					<Input
+						id="previewCopyIcon"
+						editable="false"
+						value="{view>/iconPath}{name} {i18n>overviewSymbolText}">
+						<layoutData>
+							<FlexItemData growFactor="1" />
+						</layoutData>
+					</Input>
+					<Button
+						icon="sap-icon://copy"
+						type="Emphasized"
+						tooltip="{i18n>previewCopyIconToClipboard}"
+						press=".onCopyIconToClipboard"
+						class="sapUiTinyMarginBegin"
+						ariaLabelledBy="labelCopyButton"/>
+				</HBox>
+				<HBox>
+					<Input
+						id="previewCopyUnicode"
+						editable="false"
+						value="{
+							path: 'name',
+							formatter: '.formatter.getUnicodeTextByName'}">
+						<layoutData>
+							<FlexItemData growFactor="1" />
+						</layoutData>
+					</Input>
+					<Button
+						icon="sap-icon://copy"
+						type="Emphasized"
+						tooltip="{i18n>previewCopyIconToClipboard}"
+						press=".onCopyUnicodeToClipboard"
+						class="sapUiTinyMarginBegin"
+						ariaLabelledBy="labelCopyButton"/>
+				</HBox>
+			</f:GridListItem>
+			<f:GridListItem id="previewUseCases">
+				<HBox justifyContent="SpaceAround">
+					<!-- Preview for only icon buttons -->
+					<Button
+						icon="sap-icon://{view>/iconPath}{name}"
+						class="sapUiTinyMarginEnd"
+						tooltip="{i18n>previewIconButton}"
+						ariaLabelledBy="labelPreviewButton"/>
+					<Button
+						icon="sap-icon://{view>/iconPath}{name}"
+						type="Accept"
+						class="sapUiTinyMarginEnd"
+						tooltip="{i18n>previewIconButton}"
+						ariaLabelledBy="labelPreviewButton"/>
+					<Button
+						icon="sap-icon://{view>/iconPath}{name}"
+						type="Reject"
+						class="sapUiTinyMarginEnd"
+						tooltip="{i18n>previewIconButton}"
+						ariaLabelledBy="labelPreviewButton"/>
+					<Button
+						icon="sap-icon://{view>/iconPath}{name}"
+						type="Emphasized"
+						class="sapUiTinyMarginEnd"
+						tooltip="{i18n>previewIconButton}"
+						ariaLabelledBy="labelPreviewButton"/>
+				</HBox>
+			</f:GridListItem>
+			<f:GridListItem id="previewInfo">
+				<Title text="{i18n>previewInfoTitle}" />
+				<ObjectAttribute
+					id="unicodeInfo"
+					title="{i18n>previewInfoUnicode}"
+					text="?"/>
+				<ObjectAttribute
+					title="{i18n>previewInfoCSSClass}"
+					text="icon-{name}"/>
+			</f:GridListItem>
+			<f:GridListItem>
+				<Title text="{i18n>previewInfoCategory}" />
+				<ObjectAttribute
+					id="categoryInfo"
+					text="?"/>
+			</f:GridListItem>
+			<f:GridListItem>
+				<Title text="{i18n>previewInfoTag}" />
+				<Tokenizer
+					width="100%"
+					tokens="{
+						path: 'tags',
+						templateShareable: true
+					}"
+					renderMode="Narrow"
+					editable="false">
+					<Token
+						text="{name}"
+						press=".onTagSelect"/>
+				</Tokenizer>
+			</f:GridListItem>
+		</f:GridList>
+	</f:SidePanelItem>
+</core:FragmentDefinition>

@@ -1,0 +1,122 @@
+{
+  "1.94.0": {
+    "date": "August 2021",
+    "notes": [
+      {
+        "id": "e16a3bf5679508eaa8741a44da6fc426e3645dbd",
+        "type": "FIX",
+        "text": " sap.ui.core.routing.History: Keep aHistory and HistoryState in sync",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180361838"
+          }
+        ]
+      },
+      {
+        "id": "c3355383e302ea407904d18873380c519e8afdf7",
+        "type": "FIX",
+        "text": " core.routing: add option 'rootView' for dynamic Target",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180159152"
+          }
+        ]
+      },
+      {
+        "id": "3a135878fc2933fe6eda3b138fafd9240c0b8035",
+        "type": "FIX",
+        "text": " core.routing: resolving container after \"rootView\" option is set",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180345721"
+          },
+          {
+            "type": "BCP",
+            "reference": "2180343370"
+          }
+        ]
+      },
+      {
+        "id": "fcf483431df9df4473589f0141a31bf48c76de30",
+        "type": "FIX",
+        "text": " crossroads: Match patterns w/ optional parameters and optional slashes",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180291823"
+          },
+          {
+            "type": "BCP",
+            "reference": "002075129500005662652021"
+          },
+          {
+            "type": "BCP",
+            "reference": "002075129500005654522021"
+          }
+        ]
+      },
+      {
+        "id": "eeb4df191826efbbeab904996d48329058f8750a",
+        "type": "FIX",
+        "text": " routing.History: use HashChanger to fetch hash and wait it till init",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180169665"
+          },
+          {
+            "type": "BCP",
+            "reference": "2180299462"
+          }
+        ]
+      },
+      {
+        "id": "50edea3dbcf89d965aa27c7a366218eea7f25d52",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v4.Context#setProperty: report error on failure",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180259145"
+          }
+        ]
+      },
+      {
+        "id": "b791e44cd0f7113e8b91f0f2cc13ca1a1db231c4",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v4.ODataMetaModel#getObject: Annotations at enum members",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180316466"
+          }
+        ]
+      },
+      {
+        "id": "5d822d4562527e3dd7642ce2a36641a08ca0586c",
+        "type": "FIX",
+        "text": " thirdparty.Crossroads: interpolate query parameter with pound sign",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180314201"
+          }
+        ]
+      },
+      {
+        "id": "29ffc09e205e575cead2327d411ed1f9bcb146f8",
+        "type": "FIX",
+        "text": " core.qunit.routing.HistoryUtils: check for the usage of pushState",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180319180"
+          }
+        ]
+      }
+    ]
+  }
+}

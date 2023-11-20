@@ -1,0 +1,206 @@
+{
+  "1.104.0": {
+    "date": "June 2022",
+    "notes": [
+      {
+        "id": "9bc6a5ff453966172077abc28720b3e6f3f096d1",
+        "type": "FIX",
+        "text": " sap/ui/base/ManagedObject: Check for isBound",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280118072"
+          }
+        ]
+      },
+      {
+        "id": "b4615a49cd9b5e300d7d12bf506535401577b49a",
+        "type": "FIX",
+        "text": " sap.ui.core.format.DateFormat: Do not translate Etc/GMT+-X timezones",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280085236"
+          }
+        ]
+      },
+      {
+        "id": "48820c1174abb50d4ca3f4b59880175f6cc6a9d9",
+        "type": "FIX",
+        "text": " sap.ui.model.Binding#destroy: ensure that binding is removed from the model's active bindings list"
+      },
+      {
+        "id": "290d6602e5e790a0852d392b1432967b34d277ea",
+        "type": "FIX",
+        "text": " sap.ui.core.format.DateFormat: no split weeks for \"en\""
+      },
+      {
+        "id": "a4fd3ec8dc8293bc70d9f50d4c1a97bf351b9a52",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v4.ODataListBinding#getContexts: a word of warning",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270085692"
+          }
+        ]
+      },
+      {
+        "id": "50400ccf7426d964c09aab7377561036280307c7",
+        "type": "FEATURE",
+        "text": " sap.ui.core.IconPool: Update icon font v5.02 and v4.14"
+      },
+      {
+        "id": "ff9d20f20feb1389179f4897c196523538db7cde",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v2.ODataModel#callFunction: encode key values for function target",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270075487"
+          }
+        ]
+      },
+      {
+        "id": "913e28cb09a49567aa3415f95ab810e7cb526a07",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v4.lib._Cache#update: fire patchReceived event when merged PATCHes fail",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280103069"
+          }
+        ]
+      },
+      {
+        "id": "0c88244e53a69817a55d34723734357bcc947e0f",
+        "type": "FIX",
+        "text": " sap.ui.core.format.TimezoneUtil: fractionalSecond fallback",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280083818"
+          }
+        ]
+      },
+      {
+        "id": "875d798e19fc8341359a17e24f55eb513b0dbf8d",
+        "type": "FIX",
+        "text": " sap.ui.core.format.NumberFormat: strictGroupingValidation formatOption",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400006986122021"
+          },
+          {
+            "type": "BCP",
+            "reference": "2180381028"
+          }
+        ]
+      },
+      {
+        "id": "949874034ab1c20d08690f841b04c2d864023576",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v4.ODataListBinding#getAllCurrentContexts: do not fire unnecessary change events",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270093727"
+          }
+        ]
+      },
+      {
+        "id": "e2ef993e69629cbbfd943da83753aec31b5ff64b",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v4.ODataModel#resetChanges: restore changes correctly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270079668"
+          }
+        ]
+      },
+      {
+        "id": "82e049dfdd00981600b1c17c1214425113c4195e",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v2.ODataContextBinding#_fireChange: Reset context's updated flag to initial value",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400002462642022"
+          }
+        ]
+      },
+      {
+        "id": "d321e7d025c53726a2367cf11b9f32105acb19f9",
+        "type": "FIX",
+        "text": " routing.History: clarify return type of getPreviousHash"
+      },
+      {
+        "id": "41d16da59a3ea2db619ce83e9e763f0cfc246189",
+        "type": "FIX",
+        "text": " sap/ui/util/Mobile.js: Add check for parameters",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270099497"
+          }
+        ]
+      },
+      {
+        "id": "6a0c295e8be945605ef5cb5c86c3cb7cbe7b5332",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.type.UnitMixin#validateValue: Ignore trailing zeroes in decimal places",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270090634"
+          }
+        ]
+      },
+      {
+        "id": "8f74c6e007c5907a0a2306216eeaef27b236ed15",
+        "type": "FIX",
+        "text": " core.Component: Correctly handle empty activeTerminologies array"
+      },
+      {
+        "id": "b2d8c63d31684342cb38c998193720d6b0b6e7c9",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v2.Context#delete: Use default change group and change set id for entity type",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270088174"
+          }
+        ]
+      },
+      {
+        "id": "3029192d63002a0e913d6138643cb12a2cf703ac",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v4.Context#doSetProperty: avoid TypeError...",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270087626"
+          }
+        ]
+      },
+      {
+        "id": "c3dcbfd39ae69d06815b3f44328f784d8b9cb0da",
+        "type": "FIX",
+        "text": " sap.ui.core: attach/detach event handler correctly"
+      },
+      {
+        "id": "88646ac4e5a2f4b0585e6ab10fa020e7410cb136",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v4.ODataListBinding#create: avoid \"Failed to drill-down into ($uid=id-...)\"",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270085667"
+          }
+        ]
+      }
+    ]
+  }
+}

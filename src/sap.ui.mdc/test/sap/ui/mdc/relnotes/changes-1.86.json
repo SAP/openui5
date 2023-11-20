@@ -1,0 +1,33 @@
+{
+  "1.86.0": {
+    "date": "January 2021",
+    "notes": [
+      {
+        "id": "a5dc330d6a3fdcfba9604e3fe9e8a00bbae924ee",
+        "type": "FEATURE",
+        "text": " Field: support to be used in SematicFormelement"
+      },
+      {
+        "id": "67e3870abe0a03a6c3ec34d6da61fdee46947c9a",
+        "type": "FEATURE",
+        "text": " InParameter: create filter for empty if initial"
+      },
+      {
+        "id": "25a2a22490d3e9c938c46f5043ff28c8ccaf68f2",
+        "type": "FIX",
+        "text": " Field: Currency field brings error if no custom currencies",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070267027"
+          }
+        ]
+      },
+      {
+        "id": "72441195f33543aeecf482b2a7d734348cab8a3b",
+        "type": "FEATURE",
+        "text": " mdc.FilterBar: Adaptable suspendSelection behavior provided"
+      }
+    ]
+  }
+}

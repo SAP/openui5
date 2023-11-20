@@ -1,0 +1,116 @@
+{
+  "1.85.0": {
+    "date": "October 2020",
+    "notes": [
+      {
+        "id": "96dfb778703aac68e5e65164bdaf6d9f434e135d",
+        "type": "FIX",
+        "text": " sap.m.WizardProgressNavigator: Adjust selection bar according to spec",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070401296"
+          }
+        ]
+      },
+      {
+        "id": "af707c9182f8b2d43e4b2527ab1cb2e7780a1e7a",
+        "type": "FIX",
+        "text": " sap.m.IconTabBar: Fixed whitespace on mobile",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070379467"
+          }
+        ]
+      },
+      {
+        "id": "d05936526a66905301cf551b2fd13832abf9f68c",
+        "type": "FIX",
+        "text": " sap.m.ScrollContainer: Focus outline is now visible",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080342315"
+          }
+        ]
+      },
+      {
+        "id": "c1d96019328f35b196ed7cbfc13d1b709d7e2fcd",
+        "type": "FIX",
+        "text": " sap.m.Link: Contrast is now fixed when in selected row",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080323699"
+          }
+        ]
+      },
+      {
+        "id": "779d891bc2e97e29680dc1ef79daed617ed7551d",
+        "type": "FIX",
+        "text": " sap.m.ObjectStatus: Visual Design specification parameters applied for Large Design"
+      },
+      {
+        "id": "57a51f152ef57778f0608b568814831a169e85e9",
+        "type": "FIX",
+        "text": " \"72\" font: add fallback font for glyphs with diacritics",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080350984"
+          }
+        ]
+      },
+      {
+        "id": "b45370e8f3237ff3fe47c9ec48167dcbf083bf9f",
+        "type": "FIX",
+        "text": " sap.m.TabContainer: Focus is now with same size on both states"
+      },
+      {
+        "id": "afaef0fee950d0424a7c05fd7560c6f0dc465bde",
+        "type": "FIX",
+        "text": " sap.m.TabContainer: Focus is now aligned with visual specification",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070280597"
+          }
+        ]
+      },
+      {
+        "id": "f78834efa88eadc92431c52847cc0b2ab7947595",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: Focus is showing  in High Contrast themes",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070285771"
+          }
+        ]
+      },
+      {
+        "id": "0d021bda320c4daa7a0ddd0d138ca07e25e8beb5",
+        "type": "FIX",
+        "text": " sap.m.ViewSettingsDialog: Focus is now visible on first element",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080374174"
+          }
+        ]
+      },
+      {
+        "id": "9344e20c56892386ee2e0905e8c823fb6600f213",
+        "type": "FIX",
+        "text": " sap.ui.unified.CalendarLegend: Correct non-working day background color",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080379091"
+          }
+        ]
+      }
+    ]
+  }
+}

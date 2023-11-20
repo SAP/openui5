@@ -2,10 +2,16 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global','sap/ui/base/ManagedObject'],
-function (jQuery, ManagedObject) {
+sap.ui.define([
+	'sap/ui/base/ManagedObject',
+	"sap/base/security/encodeXML"
+],
+function(ManagedObject, encodeXML) {
 	'use strict';
 	var ObjectViewer = ManagedObject.extend("sap.ui.core.support.controls.ObjectViewer", {
+		metadata: {
+			library: "sap.ui.core"
+		},
 		constructor: function() {
 			ManagedObject.apply(this, arguments);
 			this._oRenderParent = null;
@@ -15,9 +21,9 @@ function (jQuery, ManagedObject) {
 
 	//private functions and vars
 	var mRenderTemplates = {
-		rowstart : "<div class=\"{cssclass}\" collapsed=\"{collapsed}\" visible=\"{visible}\" style=\"padding-left:{pxlevel};margin-left: 16px;\" idx=\"{idx}\" key=\"{key}\" sectionkey=\"{sectionkey}\" level=\"level\" raise=\"_select\" hover=\"_hover\" args=\"{sectionkey},{key}\">",
+		rowstart : "<div class=\"sapUiSupportObjectViewerMarginLeft {cssclass}\" collapsed=\"{collapsed}\" visible=\"{visible}\" idx=\"{idx}\" key=\"{key}\" sectionkey=\"{sectionkey}\" level=\"{level}\" raise=\"_select\" hover=\"_hover\" args=\"{sectionkey},{key}\">",
 		namestart : "<span class=\"key\" title=\"{key}\">",
-		keyinfo : "<span class=\"keyinfo {color}\" selected=\"{selected}\" sectionkey=\"{sectionkey}\" key=\"{key}\" raise=\"_keyInfoPress\" args=\"{sectionkey},{key},{infoidx}\"  title=\"{tooltip}\" style=\"margin-right:{pxlevel}\"></span>",
+		keyinfo : "<span class=\"keyinfo {color}\" selected=\"{selected}\" sectionkey=\"{sectionkey}\" key=\"{key}\" raise=\"_keyInfoPress\" args=\"{sectionkey},{key},{infoidx}\"  title=\"{tooltip}\"></span>",
 		nameend : "{key}</span>",
 		separator : "<span class=\"colon\">:</span>",
 		valuestart : "<span class=\"value\" title=\"{value}\"><input {readonly} class=\"valueInput\"value=\"{value}\" raise=\"_changeValue\" args=\"{sectionkey},{key}\" autocomplete=\"off\" autocorrect=\"off\" autocapitalize=\"off\" spellcheck=\"false\">",
@@ -47,7 +53,6 @@ function (jQuery, ManagedObject) {
 					sectionkey: n,
 					key: m,
 					level: oContent._level || 0,
-					pxlevel: ((oContent._level || 0) * 16) + "px",
 					cssclass: "",
 					visible: !bCollapsed,
 					header: n,
@@ -64,7 +69,6 @@ function (jQuery, ManagedObject) {
 							infoidx: i + "",
 							sectionkey: n,
 							key: m,
-							pxlevel: (((oContent[m].__level || 0) * 16) + 3) + "px",
 							selected: oInfo.selected || false,
 							color: oInfo.color || "orange",
 							tooltip: oInfo.tooltip || ""
@@ -77,13 +81,13 @@ function (jQuery, ManagedObject) {
 				});
 				oRenderContext.addWithParam(mRenderTemplates.separator, {});
 				oRenderContext.addWithParam(mRenderTemplates.valuestart, {
-					value: jQuery.sap.encodeHTML(String(oContent[m].value)),
+					value: encodeXML(String(oContent[m].value)),
 					readonly: oContent[m].__change ? "" : "readonly",
 					sectionkey: n,
 					key: m
 				});
 				oRenderContext.addWithParam(mRenderTemplates.valueend, {
-					value: jQuery.sap.encodeHTML(String(oContent[m].value))
+					value: encodeXML(String(oContent[m].value))
 				});
 				oRenderContext.addWithParam(mRenderTemplates.rowend, {});
 
@@ -93,7 +97,6 @@ function (jQuery, ManagedObject) {
 						sectionkey: n,
 						key: m,
 						level: oContent._level || 0,
-						pxlevel: ((oContent._level || 0) * 16) + "px",
 						cssclass: "hiddenkey",
 						visible: !bCollapsed,
 						header: n,
@@ -110,10 +113,9 @@ function (jQuery, ManagedObject) {
 								infoidx: i + "",
 								sectionkey: n,
 								key: m,
-								pxlevel: (((oContent[m].__level || 0) * 16) + 3) + "px",
 								selected: oInfo.selected || false,
 								color: oInfo.color || "orange",
-								tooltip: jQuery.sap.encodeHTML(String(oInfo.tooltip) || "")
+								tooltip: encodeXML(String(oInfo.tooltip) || "")
 							});
 						}
 					}
@@ -123,13 +125,13 @@ function (jQuery, ManagedObject) {
 					});
 					oRenderContext.addWithParam(mRenderTemplates.separator, {});
 					oRenderContext.addWithParam(mRenderTemplates.valuestart, {
-						value: jQuery.sap.encodeHTML(String(oContent[m].value2)),
+						value: encodeXML(String(oContent[m].value2)),
 						readonly: "readonly",
 						sectionkey: n,
 						key: m
 					});
 					oRenderContext.addWithParam(mRenderTemplates.valueend, {
-						value: jQuery.sap.encodeHTML(String(oContent[m].value2))
+						value: encodeXML(String(oContent[m].value2))
 					});
 					oRenderContext.addWithParam(mRenderTemplates.rowend, {});
 
@@ -187,7 +189,7 @@ function (jQuery, ManagedObject) {
 		}
 	};
 	ObjectViewer.prototype._keyInfoPress = function(sSection, sKey, iInfo) {
-		iInfo = parseInt(iInfo, 10);
+		iInfo = parseInt(iInfo);
 		this.fnInfoPress(sSection, sKey, iInfo);
 		return true;
 	};
@@ -259,6 +261,7 @@ function (jQuery, ManagedObject) {
 			}
 			oRenderContext.add("</div>");
 			this._oRenderParent.innerHTML = oRenderContext.toString();
+
 			var that = this;
 			this._oRenderParent.firstChild.addEventListener("click", function(oEvent) {
 				if (oEvent.target.tagName === "INPUT") {
@@ -314,18 +317,14 @@ function (jQuery, ManagedObject) {
 			this._oRenderParent.firstChild.addEventListener("change", function(oEvent) {
 
 				var oDomRef = oEvent.target,
-					bResult = false,
 					aReasons = [],
 					sValue = [oDomRef.value, oDomRef];
-				while (!bResult) {
-					if (oDomRef.getAttribute("raise")) {
-						if (oDomRef.getAttribute("args")) {
-							var aArgs = oDomRef.getAttribute("args").split(",");
-							aArgs = aArgs.concat(aReasons,sValue);
-							bResult = that[oDomRef.getAttribute("raise")].apply(that, aArgs);
-						}
+				if (oDomRef.getAttribute("raise")) {
+					if (oDomRef.getAttribute("args")) {
+						var aArgs = oDomRef.getAttribute("args").split(",");
+						aArgs = aArgs.concat(aReasons,sValue);
+						that[oDomRef.getAttribute("raise")].apply(that, aArgs);
 					}
-					break;
 				}
 			});
 			this._oRenderParent.firstChild.addEventListener("mouseout", function(oEvent) {
@@ -353,41 +352,6 @@ function (jQuery, ManagedObject) {
 				}
 			});
 		}
-	};
-	ObjectViewer.getCss = function() {
-		return [
-		'.objectviewer {white-space: nowrap;font-family:consolas;display:block;cursor:default;width: 100%; overflow: auto; height: 100%; padding:10px; box-sizing:border-box;}',
-		'.objectviewer .key {white-space: nowrap;color: #b93232; width: 40%; overflow:hidden; display: inline-block; text-overflow: ellipsis;}',
-		'.objectviewer .hiddenkey .keyinfo{visibility:hidden}',
-		'.objectviewer .hiddenkey .colon{visibility:hidden}',
-		'.objectviewer .hiddenkey .key{visibility:hidden}',
-		'.objectviewer .value {white-space: nowrap;color: #007dc0; width: 50%; overflow:hidden; display: inline-block; text-overflow: ellipsis;}',
-		'.objectviewer .value .valueInput {font-family:consolas;border:none; padding:0; background-color:transparent;white-space: nowrap;color: #007dc0; width: 100%; overflow:hidden; display: inline-block; text-overflow: ellipsis;}',
-		'.objectviewer .value .valueInput:not([readonly])[error=\'true\'] {color:#d80000;solid 2px rgba(255, 0, 0, 0.26)}',
-		'.objectviewer .value .valueInput:not([readonly]):hover {background-color:#f5f5f5}',
-		'.objectviewer .value .valueInput:not([readonly]):focus {background-color:#fff;border:none;outline:none}',
-		'.objectviewer .colon {padding:0 6px;display: inline-block;overflow: hidden; width: 2%}',
-		'.objectviewer .header {color:#666; font-size: 14px; font-family:arial;margin: 3px 0 2px;}',
-		'.objectviewer .control .key{font-weight:bold; color:#333}',
-		'.objectviewer .control .value{font-weight:bold; color:#333}',
-		'.objectviewer .keyinfo.orange {border: 1px solid orange;}',
-		'.objectviewer .keyinfo.blue {border: 1px solid #007dc0;}',
-		'.objectviewer .keyinfo.green {border: 1px solid green;}',
-		'.objectviewer .keyinfo.red {border: 1px solid #cc1919;}',
-		'.objectviewer .keyinfo.orange[selected=\'true\'] {background-color: orange;}',
-		'.objectviewer .keyinfo.blue[selected=\'true\'] {background-color: #007dc0;}',
-		'.objectviewer .keyinfo.green[selected=\'true\'] {background-color: green;}',
-		'.objectviewer .keyinfo.red[selected=\'true\'] {background-color: #cc1919;}',
-		'.objectviewer .keyinfo {display: inline-block; border-radius: 10px; height: 10px;width: 10px;overflow: hidden; margin-right: 3px;position: relative;vertical-align: top;margin-top: 1px;}',
-		'.objectviewer .header[collapsed=\'true\'] .expand{border-color: transparent transparent transparent #cecece;border-radius: 0;border-style: solid;border-width: 4px 3px 4px 8px;height: 0;width: 0;position: relative;margin-top: 0px;margin-left: 2px;display: inline-block;}',
-		'.objectviewer [collapsed=\'false\'] .expand  {border-color: #cecece transparent transparent transparent;border-radius: 0;border-style: solid;border-width: 8px 4px 0px 4px;height: 0;width: 0;position: relative;margin-top: 0px;margin-left: 0px;margin-right: 5px;display: inline-block;}',
-		'.objectviewer [collapsed=\'true\'] .expand:hover {border-color: transparent transparent transparent #aaa;}',
-		'.objectviewer [collapsed=\'false\'] .expand:hover {border-color: #aaa transparent transparent transparent;}',
-		'.objectviewer [visible=\'false\'] {display: none}',
-		'.objectviewer .internal {opacity: 0.7}',
-		'.objectviewer .private {opacity: 0.7}',
-		'.objectviewer .default {opacity: 0.7}',
-		'.objectviewer .end { border-top:1px solid #e0e0e0; height:1px;}'].join("");
 	};
 
 	return ObjectViewer;

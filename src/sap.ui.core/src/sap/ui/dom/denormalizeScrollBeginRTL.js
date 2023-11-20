@@ -1,12 +1,22 @@
 /*!
  * ${copyright}
  */
-/*
- * IMPORTANT: This is a private module, its API must not be used and is subject to change.
- * Code other than the OpenUI5 libraries must not introduce dependencies to this module.
- */
-sap.ui.define(["sap/ui/Device"], function(Device) {
+sap.ui.define(["sap/ui/util/_FeatureDetection"], function(_FeatureDetection) {
 	"use strict";
+
+	var fnDenormalize;
+
+	if (_FeatureDetection.initialScrollPositionIsZero()) {
+		//actual chrome/safari/ff
+		fnDenormalize = function(iNormalizedScrollBegin, oDomRef) {
+			return -iNormalizedScrollBegin;
+		};
+	} else {
+		//legacy chrome
+		fnDenormalize = function(iNormalizedScrollBegin, oDomRef) {
+			return oDomRef.scrollWidth - oDomRef.clientWidth - iNormalizedScrollBegin;
+		};
+	}
 
 	/**
 	 * For the given scroll position measured from the "beginning" of a container (the right edge in RTL mode)
@@ -23,29 +33,16 @@ sap.ui.define(["sap/ui/Device"], function(Device) {
 	 * Only use this method in RTL mode, as the behavior in LTR mode is undefined and may change!
 	 *
 	 * @function
+	 * @since 1.58
 	 * @param {int} iNormalizedScrollBegin The distance from the rightmost position to which the element should be scrolled
 	 * @param {Element} oDomRef The DOM Element to which scrollLeft will be applied
 	 * @return {int} The scroll position that must be set for the DOM element
-	 * @private
-	 * @author SAP SE
-	 * @exports sap/ui/dom/denormalizeScrollBeginRTL
+	 * @public
+	 * @alias module:sap/ui/dom/denormalizeScrollBeginRTL
 	 */
 	var fnDenormalizeScrollBeginRTL = function(iNormalizedScrollBegin, oDomRef) {
-
 		if (oDomRef) {
-			if (Device.browser.msie) {
-				return iNormalizedScrollBegin;
-
-			} else if (Device.browser.webkit) {
-				return oDomRef.scrollWidth - oDomRef.clientWidth - iNormalizedScrollBegin;
-
-			} else if (Device.browser.firefox) {
-				return -iNormalizedScrollBegin;
-
-			} else {
-				// unrecognized browser; it is hard to return a best guess, as browser strategies are very different, so return the actual value
-				return iNormalizedScrollBegin;
-			}
+			return fnDenormalize(iNormalizedScrollBegin, oDomRef);
 		}
 	};
 

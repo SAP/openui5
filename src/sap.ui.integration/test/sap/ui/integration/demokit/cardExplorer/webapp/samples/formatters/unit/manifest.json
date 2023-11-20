@@ -1,0 +1,88 @@
+{
+	"_version": "1.17.0",
+	"sap.app": {
+		"id": "card.explorer.format.unit",
+		"type": "card",
+		"title": "Sample for Unit Formatters",
+		"subTitle": "Sample for Unit Formatters",
+		"applicationVersion": {
+			"version": "1.0.0"
+		},
+		"shortTitle": "A short title for this Card",
+		"info": "Additional information about this Card",
+		"description": "A long description for this Card",
+		"tags": {
+			"keywords": [
+				"Unit",
+				"Formatter",
+				"Card",
+				"Sample"
+			]
+		}
+	},
+	"sap.card": {
+		"type": "List",
+		"configuration": {
+			"parameters": {
+				"cardUnitType": {
+					"value": "length-kilometer",
+					"type": "string",
+					"label": "Unit of length",
+					"description": "The unit of length in which all distances will be displayed."
+				}
+			}
+		},
+		"header": {
+			"title": "Fleet management",
+			"subTitle": "Company vehicles located further than {= format.unit(150, ${parameters>/cardUnitType/value}, 'de')} from base are highlighted in red",
+			"icon": {
+				"src": "sap-icon://desktop-mobile"
+			},
+			"status": {
+				"text": "4 of 5"
+			}
+		},
+		"content": {
+			"data": {
+				"json": [
+					{
+						"Name": "Cargo truck",
+						"image": "sap-icon://shipping-status",
+						"Distance": 155
+					},
+					{
+						"Name": "Tow truck",
+						"image": "sap-icon://vehicle-repair",
+						"Distance": 30
+					},
+					{
+						"Name": "Company bus",
+						"image": "sap-icon://bus-public-transport",
+						"Distance": 130
+					},
+					{
+						"Name": "Maintenance truck",
+						"image": "sap-icon://inventory",
+						"Distance": 169
+					},
+					{
+						"Name": "Company car",
+						"image": "sap-icon://car-rental",
+						"Distance": 140
+					}
+				]
+			},
+			"maxItems": 4,
+			"item": {
+				"title": "{Name}",
+				"description": "Distance from base:",
+				"highlight": "{= ${Distance} < 150 ? 'Success' : 'Error'}",
+				"icon": {
+					"src": "{image}"
+				},
+				"info": {
+					"value": "{= format.unit(${Distance}, ${parameters>/cardUnitType/value})}"}
+			}
+		}
+	}
+}

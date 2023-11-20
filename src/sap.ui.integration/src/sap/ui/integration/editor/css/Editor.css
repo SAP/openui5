@@ -1,0 +1,683 @@
+
+.sapUiIntegrationEditor {
+	padding: 1rem 1rem 1rem 0.5rem;
+	display: flex;
+	box-sizing: border-box;
+}
+
+.sapUiIntegrationEditor .sapUiIntegrationEditorForm {
+	height: var(--sapUiIntegrationEditorFormHeight, 350px);;
+	width: var(--sapUiIntegrationEditorFormWidth, 100%);
+	box-sizing: border-box;
+	margin:0 0.5rem;
+	overflow-y: auto;
+	overflow-x: hidden;
+	padding: 0;
+	position: relative;
+}
+
+.sapUiIntegrationEditor .sapMPanel {
+	min-height: 2.1rem;
+}
+.sapUiIntegrationEditor .sapMPanelContent {
+	padding-top: 0;
+	padding-bottom: 0.625rem;
+}
+.sapUiIntegrationEditor .sapUiIntegrationEditorTranslationPanel .sapMPanelContent {
+	padding: 0.625rem 1rem 1.375rem 0rem;
+}
+
+.sapUiIntegrationEditorSubTab {
+	margin-top: 0.625rem;
+}
+
+.sapUiIntegrationEditor .sapUiIntegrationEditorSubPanel .sapMPanelContent {
+	padding: 0.625rem 1rem 0rem 1rem;
+}
+.sapUiIntegrationEditor .sapMPanel > .sapMPanelHdr, .sapUiIntegrationEditor .sapMPanelWrappingDiv, .sapUiIntegrationEditor .sapMPanelWrappingDivTb {
+	border: none;
+}
+
+.sapUiIntegrationEditor.sapUiIntegrationEditorTranslation .sapUiIntegrationEditorForm{
+	height: 210px;
+}
+
+.sapUiIntegrationEditor .sapUiIntegrationEditorForm::-webkit-scrollbar {
+	width: 7px !important;
+	background-color: transparent !important	;
+	transition: all 0.5s ease-in;
+}
+
+.sapUiIntegrationEditor .sapUiIntegrationEditorForm::-webkit-scrollbar-thumb {
+	background-color: transparent !important;
+	width: 7px;
+}
+
+.sapUiIntegrationEditor .sapUiIntegrationEditorForm:hover::-webkit-scrollbar-thumb {
+	background-color: var(--sapUiChartScrollbarBorderColor, rgba(148, 148, 148, 0.4))!important;
+}
+
+.sapUiIntegrationEditor.sapUiIntegrationEditorDark .sapUiIntegrationEditorForm:hover::-webkit-scrollbar-thumb {
+	background-color: var(--sapUiChartScrollbarBorderColor, rgba(222, 222, 222, 0.2))!important;;
+}
+
+.sapUiIntegrationEditor .sapUiIntegrationEditorItem {
+	margin-top:0rem;
+}
+
+.sapUiIntegrationEditor .sapUiIntegrationEditorItem .sapMText {
+	margin: 0.4rem 0 0.6rem 0;
+}
+
+.sapUiIntegrationEditor .sapUiIntegrationEditorItem .sapUiIntegrationEditorSettingsField,
+.sapUiIntegrationEditor .sapUiIntegrationEditorItem .sapUiIntegrationEditorItemField .sapUiIntegrationEditorEditor {
+	display:inline-block;
+	transition: width 0.5s, opacity 0.1s;
+	vertical-align: bottom;
+	overflow: hidden;
+	padding-left:1px;
+	box-sizing: border-box;
+}
+
+/** force inputs with no border **/
+.sapUiIntegrationEditor input, .sapUiComponentContainer input, #sap-ui-static input {
+	border: none;
+	height: 100%;
+}
+
+#sap-ui-static .sapMSliderTooltip {
+	min-width: 3.2rem;
+}
+
+.sapUiIntegrationEditor .sapUiIntegrationEditorItem .sapUiLocalBusyIndicatorAnimation {
+	left: 1.3rem;
+	transform: scale3d(0.4, 0.4, 1);
+	transform-origin: 0px 0px;
+}
+
+.sapUiIntegrationEditor .sapUiIntegrationEditorItem .sapUiIntegrationEditorItemField .sapUiIntegrationEditorEditor {
+	width: 100%;
+}
+.sapUiIntegrationEditor .sapUiIntegrationEditorForm.settingsButtonSpace .sapUiIntegrationEditorItem .sapUiIntegrationEditorItemField .sapUiIntegrationEditorEditor,
+.sapUiIntegrationEditor .sapUiIntegrationEditorForm.settingsButtonSpace .sapUiIntegrationEditorItem .sapUiIntegrationEditorItemField .sapUiIntegrationEditorHint{
+	white-space: normal;
+}
+.sapUiIntegrationEditor .sapUiIntegrationEditorHint{
+	white-space: normal;
+}
+
+.sapUiIntegrationEditor .sapUiIntegrationEditorItem .sapUiIntegrationEditorItemField {
+	width: 100%;
+	max-width: 100%;
+	display: inline-block;
+	white-space: nowrap;
+}
+
+.sapUiIntegrationEditor .sapUiIntegrationEditorSettingsButton {
+	display: inline-block;
+}
+
+.sapUiIntegrationEditor .sapUiIntegrationEditorSettingsButton .sapMBtnIcon {
+	color: var(--sapUiContentLabelColor, #c0c0c0);
+	margin-top: -1px;
+}
+
+.sapUiIntegrationEditor .sapUiIntegrationEditorSettingsButton.settings .sapMBtnIcon {
+	color: unset;
+	margin-top: -1px;
+}
+.sapUiIntegrationEditor .sapUiIntegrationEditorSettingsButton.settings .sapMBtnIcon::after {
+	content: "\e0a6";
+    border-radius: 50%;
+    position: absolute;
+    margin-left: -10px;
+    margin-top: 0.4rem;
+    font-size: 10px;
+    background-color:var(--sapUiButtonHoverBackground,#f5f5f5);
+    clip-path: circle(5px at 5px 12px);
+}
+.sapUiIntegrationEditor .sapUiIntegrationEditorSettingsButton.dynamicvalue .sapMBtnIcon{
+	color: unset;
+}
+
+.sapUiIntegrationEditor .sapUiIntegrationEditorItem .sapUiIntegrationEditorSettingsField {
+	width:1px;
+}
+
+.sapUiIntegrationEditor .sapUiIntegrationEditorItem .col1 {
+	width: 49.5%;
+}
+
+.sapUiIntegrationEditor .notWrappingRow {
+	width: 100%;
+}
+
+.sapUiIntegrationEditor .notWrappingRow .sapMFlexItem {
+	width: 50%;
+}
+
+.sapUiIntegrationEditor .notWrappingRow .notWrappingRowLabelBox {
+	width: 50%;
+}
+.sapUiIntegrationEditor .notWrappingRow .notWrappingRowLabelBox .sapMFlexItem {
+	width: 84%;
+}
+.sapUiIntegrationEditor .notWrappingRow .notWrappingRowLabelBox .sapMFlexItem .sapUiIntegrationEditorDescriptionIcon {
+	margin-left: -0.5rem;
+}
+
+.sapUiIntegrationEditor .sapUiIntegrationEditorItem .notWrappingBox {
+	margin: 7px 0 0 0;
+}
+
+.sapUiIntegrationEditor .sapUiIntegrationEditorItem .sapUiIntegrationEditorItemLabel {
+	display: block;
+	white-space: nowrap;
+	padding-top: 7px;
+	width: 100%;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+.sapUiIntegrationEditor .sapUiIntegrationEditorItem .description .sapMLabel {
+	max-width: calc(100% - 1.2rem);
+}
+.sapUiIntegrationEditor .sapUiIntegrationEditorItem .sapUiIntegrationEditorItemLabel .sapMLabel {
+	width: calc(100% - 1.2rem);
+}
+.sapUiIntegrationEditor .sapUiIntegrationEditorItem .sapUiIntegrationEditorItemLabelWithInfo {
+	padding-right: 10px;
+}
+
+.sapUiIntegrationEditor .sapUiIntegrationEditorItem .sapUiIntegrationEditorItemLabelWithRequired .sapMLabelTextWrapper {
+	max-width: 100% !important;
+}
+
+.sapUiIntegrationEditor .sapUiIntegrationEditorDescriptionIcon {
+	vertical-align: top;
+	padding-top: 9px;
+}
+
+.sapUiIntegrationEditor .sapUiIntegrationEditorItem .sapMTitle {
+	margin-top:0.3rem;
+}
+
+.sapUiIntegrationEditor .sapUiIntegrationEditorItemCol1 {
+	width: calc(50% - 0.5rem);
+	margin-right:0.5rem;
+	display: inline-block;
+	vertical-align: top;
+}
+
+.sapUiIntegrationEditor .sapUiIntegrationEditorItemCol1 .sapUiIntegrationEditorItemField {
+	max-width: 100%;
+}
+
+.sapUiIntegrationEditor .sapUiIntegrationEditorItemCol2 {
+	width: calc(50% - 0.5rem);
+	margin-left:0.5rem;
+	display: inline-block;
+	vertical-align: top;
+}
+
+.sapUiIntegrationEditor .sapUiIntegrationEditorItemCol2 .sapUiIntegrationEditorItemField {
+	max-width: 100%;
+}
+
+.sapUiIntegrationEditorItemObjectFieldDetailsPopover .sapMTBStandard {
+    border-bottom: 0px !important;
+}
+
+.sapUiIntegrationEditorItemObjectFieldDetailsPopover .sapUiFormResGridCont > div {
+    padding-top: 0.2rem !important;
+}
+
+.sapUiIntegrationEditor .sapUiIntegrationEditorItem .sapUiIntegrationEditorItemObjectFieldForm {
+	border: solid 0.0625rem #d9d9d9;
+	margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.sapUiIntegrationEditor .sapUiIntegrationEditorItem .sapUiIntegrationEditorItemObjectFieldForm .sapMTB {
+    height: 2.0rem !important;
+}
+
+.sapUiIntegrationEditor .sapUiIntegrationEditorItem .sapUiIntegrationEditorItemObjectFieldForm .sapMTBStandard {
+    border-bottom: 0px !important;
+	margin-bottom: 0px !important;
+}
+
+.sapUiIntegrationEditor .sapUiIntegrationEditorItem .sapUiIntegrationEditorItemObjectFieldForm .sapUiFormResGrid > div {
+    padding-top: 0px;
+    box-sizing: border-box;
+}
+
+.sapUiIntegrationEditor .sapUiIntegrationEditorItem .sapUiIntegrationEditorItemObjectFieldForm .sapUiFormResGridCont > div {
+    padding-top: 0.2rem !important;
+}
+
+.sapUiIntegrationEditor .sapUiIntegrationEditorItem .sapUiIntegrationEditorItemObjectFieldTable .sapUiTableDataCell > .sapUiTableCellInner,
+.sapUiIntegrationEditor .sapUiIntegrationEditorItem .sapUiIntegrationEditorItemObjectListFieldTable .sapUiTableDataCell > .sapUiTableCellInner{
+	text-overflow: unset;
+}
+
+.sapUiIntegrationEditor .sapUiIntegrationEditorItem .sapUiIntegrationEditorItemObjectFieldTable .sapMTBStandard,
+.sapUiIntegrationEditor .sapUiIntegrationEditorItem .sapUiIntegrationEditorItemObjectListFieldTable .sapMTBStandard {
+    margin-bottom: 0px !important;
+	padding-left: 0.25rem !important;
+}
+
+.sapUiIntegrationEditor .sapUiIntegrationEditorItem .sapUiIntegrationEditorItemObjectFieldTable .sapMTB,
+.sapUiIntegrationEditor .sapUiIntegrationEditorItem .sapUiIntegrationEditorItemObjectListFieldTable .sapMTB{
+	height: 2rem !important;
+}
+
+.sapUiIntegrationEditorPopover .sapUiIntegrationEditorDescriptionText {
+	max-width: 300px !important;
+	font-size: 0.8rem;
+}
+
+.sapUiIntegrationFieldTranslation .sapMPopoverTitle{
+	max-width: 300px !important;
+	font-size: 1.125rem;
+	text-align: center;
+    width: 100%;
+	padding: 0.5rem 0 0 0;
+}
+
+.sapUiIntegrationFieldTranslation .sapMLIB.sapMGHLI,
+.sapUiIntegrationEditorItemObjectFieldDetailsPopover .sapMLIB.sapMGHLI {
+    font-weight: bold;
+	border-bottom: 0;
+	height: 2.25rem;
+    padding-top: 0.5rem;
+}
+
+.sapUiIntegrationFieldTranslation .sapMCLI,
+.sapUiIntegrationEditorItemObjectFieldDetailsPopover .sapMCLI {
+    padding: 0 1rem 0 1rem;
+	border-bottom: 0;
+}
+
+.sapUiIntegrationFieldTranslation .sapMCurrentLanguageVBox {
+    padding: 0 1.8rem 0.5rem 1rem;
+}
+
+.sapUiIntegrationFieldTranslation .sapMHeaderTitle{
+	font-size: 1rem;
+	padding: 0.5rem 0 0.5rem 0.5rem;
+}
+
+.sapUiIntegrationFieldTranslationText {
+	padding: 0.4rem 1rem 0.5rem 0;
+}
+
+.sapUiIntegrationFieldSettings .description {
+	max-width: 380px;
+	margin: 0.3rem;
+	font-size: 0.75rem;
+	height: 3.5rem;
+}
+
+.sapUiIntegrationFieldSettings .selectvariable .sapUiIcon::before{
+	content: "\e1ef"
+}
+
+/* default width for menu*/
+#sap-ui-static > .sapUiIntegrationFieldSettingsMenu{
+	width: 266px;
+	border-top-left-radius: 1px;
+	border-top-right-radius: 1px;
+}
+
+/* reset width for menu for sub menus */
+#sap-ui-static > .sapUiIntegrationFieldSettingsMenu ~ .sapUiIntegrationFieldSettingsMenu{
+	width: unset;
+	border-top-left-radius: 4px;
+	border-top-right-radius: 4px;
+}
+.sapUiIntegrationFieldSettings .sapMPopoverHeader::after {
+	display: none !important;
+}
+
+.sapUiIntegrationFieldSettings .headertitle {
+	border-bottom: 1px solid var(--sapUiTileSeparatorColor,#e5e5e5);
+}
+.sapUiIntegrationFieldSettings .headertitle > DIV {
+	width:100%;
+	padding: 0.5rem 1rem;
+}
+
+.sapUiIntegrationFieldSettings .currentval {
+	border-top: 1px solid var(--sapUiTileSeparatorColor,#e5e5e5);
+	background-color: var(--sapUiBaseBG,#f5f5f5);
+	height: 5rem;
+	transition: opacity 0.1s;
+	position: absolute;
+	bottom: 0;
+}
+
+.sapUiIntegrationFieldSettings footer {
+	margin-top: 0rem;
+}
+
+.sapUiIntegrationFieldSettings .tableHdr {
+	padding: 0 0 0 0 !important;
+	height: 2rem !important;
+	border-bottom: none;
+}
+
+.sapUiIntegrationFieldSettings .commonSettings {
+	margin-top: 1rem;
+	margin-left: 1rem;
+	margin-right: 1rem;
+}
+
+.sapUiIntegrationFieldSettings .SettingsPAVTable {
+	margin-left: 1rem;
+	width: calc(100% - 2rem) !important;
+}
+
+.tableHdr .sapMListTblHeaderCell {
+	padding: 0rem;
+}
+
+.sapUiIntegrationFieldSettings .pavTblCellText {
+	color: var(--sapMLabelColor, #6a6d70);
+	font-size: 0.8rem !important;
+}
+
+.sapUiIntegrationFieldSettings .pavlistItem {
+	padding: 0 0 0 0 !important;
+	background: none !important;
+	box-shadow: none !important;
+}
+
+.sapUiIntegrationFieldSettings .sapMScrollContV::-webkit-scrollbar {
+	width: 0.25rem !important;
+}
+
+.sapUiIntegrationFieldSettings .currentval > DIV:first-child{
+	padding: 0.5rem 1rem 0;
+}
+.sapUiIntegrationFieldSettings .currentval > DIV:last-child{
+	padding: 0.5rem 1rem;
+}
+
+.sapUiIntegrationEditorSettingsField .sapMInputBaseInner {
+	visibility: hidden;
+}
+
+.sapUiIntegrationFieldSettings .stitle {
+	width: 100%;
+}
+.sapUiIntegrationFieldSettings .stitle > DIV {
+	width: 90%;
+}
+.sapUiIntegrationFieldSettings .stitle > DIV .sapMTitle {
+	padding-top: 0.5rem;
+}
+.sapUiIntegrationFieldSettings .stitle > DIV .sapMBtn {
+	margin-left: 2rem;
+}
+.sapUiIntegrationFieldSettings .cbrow {
+	width: 100%;
+}
+.sapUiIntegrationFieldSettings .cbrow > DIV:first-child {
+	width: 70%;
+}
+.sapUiIntegrationFieldSettings .cbrow > DIV > .sapMLabel {
+	padding-top: 0.5rem;
+}
+
+.sapUiIntegrationFieldSettings {
+	opacity: 0;
+}
+
+.sapUiIntegrationFieldSettings .resetbutton {
+	margin: 0 0.3rem;
+}
+
+/* Image Select */
+.sapUiIntegrationImageSelect .image {
+	max-height: 30em;
+	max-width: 20em;
+}
+
+/* Icon Select */
+.sapUiIntegrationIconSelectList li[aria-posinset] IMG.sapMSelectListItemIcon {
+	width: 1.1rem;
+	height: 1.1rem;
+	border:none;
+	vertical-align: middle;
+}
+
+.sapUiIntegrationIconSelectList li[aria-posinset].sapMSelectListItem {
+	display:inline-block;
+	overflow: hidden;
+	font-size: 1.3rem;
+	text-overflow: unset;
+	width: 3rem;
+	padding-left: 0.8rem;
+}
+.sapUiIntegrationIconSelectList li[aria-posinset='2'].sapMSelectListItem {
+	border-bottom: 1px solid var(--sapTile_SeparatorColor,#e5e5e5);
+	margin-bottom: 0.5rem;
+}
+.sapUiIntegrationIconSelectList li .sapUiIcon {
+	color: var(--sapUiContentLabelColor, #333);
+
+}
+
+.sapUiIntegrationIconSelectList li[aria-posinset='2'].sapMSelectListItem,
+.sapUiIntegrationIconSelectList li[aria-posinset='1'].sapMSelectListItem {
+	display:inherit;
+	overflow: inherit;
+	font-size:0.875rem;
+	text-overflow: inherit;
+	width: inherit;
+}
+.sapUiIntegrationIconSelectList li[aria-posinset].sapMSelectListItem .sapUiIcon::before {
+	margin-right: 2rem;
+	padding-top: 5px;
+	display: inline-block;
+}
+
+.sapUiIntegrationIconSelectList li[aria-posinset].sapMSelectListItemBaseSelected {
+	background-color: var(--sapUiListSelectionBackgroundColor, #e5f0fa);
+	border: 0.0625rem solid var(--sapUiHighlight, #0854a0);
+	border-radius: 3px;
+}
+
+.sapUiIntegrationIconSelectList li[aria-posinset='2'] .sapMSelectListItemIcon {
+	width: 1rem;
+	height: 1rem;
+}
+.sapUiIntegrationIconSelectList li.sapMSelectListItemBaseDisabled {
+	display: none !important
+}
+.sapUiIntegrationIconSelect .sapMSelectListItemIconCustom {
+	background-size: 1.1rem 1.1rem;
+	margin-left: -0.4rem;
+	width:1.1rem;
+	height : 1.5rem;
+	background-repeat:no-repeat;
+	background-position: center;
+	color:transparent;
+	vertical-align:top;
+}
+
+.sapUiIntegrationEditor .sapUiIntegrationEditorForm .sapUiIntegrationEditorFieldMessageStrip {
+	margin: -0.3rem 0 0 0.1rem;
+	padding: 0 0.5rem;
+	position: absolute;
+	min-height: 1.2rem;
+	opacity: 0;
+	transition: opacity 0.3s;
+	z-index:1;
+}
+.sapUiIntegrationEditor .sapUiIntegrationEditorForm .sapUiIntegrationEditorFieldMessageStrip .sapMText {
+	font-size: 0.75rem;
+	vertical-align: middle;
+}
+.sapUiIntegrationEditor .sapUiIntegrationEditorForm .sapUiIntegrationEditorFieldMessageStrip .sapUiIcon {
+	font-size: 0.75rem;
+}
+.sapUiIntegrationEditor .sapUiIntegrationEditorForm .sapUiIntegrationEditorFieldMessageStrip .sapMMsgStripIcon {
+	width: 1.4rem;
+	margin: 0.20rem 0.4rem;
+	vertical-align: top;
+	padding-top: 6px;
+}
+.sapUiIntegrationEditor .sapUiIntegrationEditorForm .sapUiIntegrationEditorFieldMessageStrip .sapMMsgStripIcon ~ .sapMMsgStripMessage {
+    margin-left: 0.85rem;
+}
+.sapUiIntegrationEditor .sapUiIntegrationEditorForm .sapUiIntegrationEditorPanelHeader {
+	margin-right: 1rem;
+	padding-right: 0;
+}
+.sapUiIntegrationEditor .sapUiIntegrationEditorItem .sapUiIntegrationEditorPanelHeader .sapMTitle {
+    margin-top: 0;
+}
+.sapUiIntegrationEditor .sapUiIntegrationEditorForm .sapUiIntegrationEditorTabMessageStrip {
+	margin: -0.575rem 1rem -0.625rem 2rem;
+	padding: 0 0.5rem;
+	min-height: 1.2rem;
+	transition: opacity 0.3s;
+	z-index:1;
+}
+.sapUiIntegrationEditor .sapUiIntegrationEditorForm .sapUiIntegrationEditorTabMessageStrip .sapMText {
+	font-size: 0.75rem;
+	vertical-align: middle;
+}
+.sapUiIntegrationEditor .sapUiIntegrationEditorForm .sapUiIntegrationEditorPanelMessageStrip {
+	margin: -0.3rem 1rem 0 2rem;
+	padding: 0 0.5rem;
+	min-height: 1.2rem;
+	transition: opacity 0.3s;
+	z-index:1;
+}
+.sapUiIntegrationEditor .sapUiIntegrationEditorForm .sapUiIntegrationEditorPanelMessageStrip .sapMText {
+	font-size: 0.75rem;
+	vertical-align: middle;
+}
+.sapUiIntegrationEditor .sapUiIntegrationEditorForm .sapUiIntegrationEditorPanelMessageStrip .sapUiIcon {
+	font-size: 0.75rem;
+}
+.sapUiIntegrationEditor .sapUiIntegrationEditorForm .sapUiIntegrationEditorPanelMessageStrip .sapMMsgStripIcon {
+	width: 1.4rem;
+	vertical-align: top;
+	padding-top: 0.4375rem;
+}
+.sapUiIntegrationEditor .sapUiIntegrationEditorForm .sapUiIntegrationEditorPanelMessageStrip .sapMMsgStripIcon ~ .sapMMsgStripMessage {
+    margin-left: 0.85rem;
+}
+
+.sapUiIntegrationEditor .sapUiIntegrationEditorMessageIcon.error,
+.sapUiIntegrationEditor .sapUiIntegrationEditorMessageIcon.warning,
+.sapUiIntegrationEditor .sapUiIntegrationEditorMessageIcon.success {
+	display: inline-block;
+}
+
+.sapUiIntegrationEditor .sapUiIntegrationEditorMessageIcon.error::before {
+	content:"\e0b1" !important;
+	color: var(--sapUiNegativeText, darkred);
+}
+.sapUiIntegrationEditor .sapUiIntegrationEditorMessageIcon.warning::before {
+	content:"\e201";
+	color: var(--sapUiCriticalText, darkorange);
+}
+.sapUiIntegrationEditor .sapUiIntegrationEditorMessageIcon.success::before {
+	content:"\e203";
+	opacity: 0;
+	transition: opacity 1.4s ease-out;
+	color: var(--sapUiPositiveText, green);
+}
+.sapUiIntegrationEditor .sapUiIntegrationEditorMessageIcon {
+	margin: 0.10rem 0.5rem;
+	vertical-align: top;
+	display: none;
+	padding-top: 8px;
+	/*
+	right: 3.2rem;
+    position: absolute;
+    margin-top: 1.2rem;
+    z-index: 5;
+    */
+}
+.sapUiIntegrationEditor .sapUiIntegrationEditorHint {
+	padding: 0.1rem 0.1rem 0.2rem;
+}
+.sapUiIntegrationEditor .sapUiIntegrationEditorHint *{
+	font-size: 0.75rem;
+}
+.sapUiIntegrationEditorItem > .sapMFT {
+	margin-bottom:0.5rem;
+}
+.sapUiIntegrationEditorItem .sapUiIntegrationEditorSpacerWithLine {
+	height: 10px;
+	border-bottom: ridge !important;
+	margin-bottom: 5px !important;
+}
+.sapUiIntegrationEditorItem .sapUiIntegrationEditorSpacerWithoutLine {
+	height: 15px;
+}
+.sapUiIntegrationEditorItem .sapUiIntegrationEditorFieldAlignEnd {
+	text-align: end;
+}
+.sapUiIntegrationEditorItem .sapUiIntegrationEditorSettingBox {
+	max-width: 5rem;
+}
+
+/* Color Select */
+.sapUiIntegrationColorSelect.noColorValueOrTransparentValue .sapUiIcon::before {
+	opacity: 0.5;
+	color: transparent;
+	background-size: 10px 10px;
+	background-position: 0px 0px, 0px 10px, 10px -10px, -10px 10px;
+	border: 1px dashed #808080;
+	padding: 0px 0px;
+	background-image: linear-gradient(45deg, #ddd 25%, transparent 25%), linear-gradient(-45deg, #ddd 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #ddd 75%), linear-gradient(-45deg, transparent 75%, #ddd 75%);
+}
+
+.sapUiIntegrationColorSelect.hasColorValue .sapUiIcon::before {
+	text-shadow: unset;
+	opacity: unset;
+	background-size: unset;
+	background-position: unset;
+	border: unset;
+	padding: unset;
+	background-image: unset;
+	color: var(--colorValue);
+}
+
+.errorBTNImage .sapMBtnIcon  {
+	color: #b00 !important;
+	font-size: 12px !important;
+}
+
+.warningBTNImage .sapMBtnIcon  {
+	color: var(--sapUiCriticalText, darkorange) !important;
+	font-size: 12px !important;
+}
+
+.validationBTNMargin .sapMITBFilterExpandBtn {
+	margin-left: 0.1rem !important;
+}
+
+.cardEditorIconTabBarBG {
+	background-color: lightgrey;
+}
+
+.errorBTN .sapMBtnInner {
+	border: none !important;
+	background-color: inherit !important;
+}
+
+.errorBTNDisabled {
+	opacity: unset !important;
+}
+
+.tabMessageStrip .sapMText {
+	font-size: 0.875rem !important;
+	font-weight: normal !important;
+}

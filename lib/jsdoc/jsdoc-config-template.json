@@ -15,6 +15,7 @@
 				"apijson"
 			],
 			"version": "${version}",
+            "uilib": "${libraryName}",
 			"apiJsonFolder": "${apiJsonFolder}",
 			"apiJsonFile": "${apiJsonFile}",
 			"includeSettingsInConstructor": false

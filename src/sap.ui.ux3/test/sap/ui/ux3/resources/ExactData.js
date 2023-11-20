@@ -1,3 +1,5 @@
+/* exports exactTestData */
+/* eslint-disable no-implicit-globals */
 var exactTestData = {};
 
 (function() {

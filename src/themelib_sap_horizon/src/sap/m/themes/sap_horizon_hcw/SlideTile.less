@@ -1,0 +1,95 @@
+/* ================================== */
+/* CSS for control sap.m/SlideTile    */
+/* Horizon High Contrast White theme  */
+/* ================================== */
+
+.sapMSTFocusDiv {
+	border-radius: 0.25rem;
+}
+
+html.sap-desktop .sapMST:focus .sapMSTFocusDiv,
+html.sap-desktop .sapMST:active .sapMGTFocusDiv {
+	left: 0;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	border: 0.125rem dotted @sapUiContentFocusColor;
+}
+
+html.sap-desktop .sapMST:focus:not([tabindex]) {
+	border-color: transparent;
+}
+
+/* Bulleted indicator of multiple tiles*/
+.sapMSTBulleted > span {
+	border: solid 0.0625rem @sapTile_OverlayForegroundColor;
+	opacity: 0.6;
+	box-shadow : 0 0 0.125rem @sapContent_ShadowColor;
+	margin: 0 0.094rem;
+}
+
+.sapMSTBulleted > span.sapMSTActive {
+	background: @sapTile_OverlayForegroundColor;
+	box-shadow: 0 0 0.063rem @sapContent_ShadowColor;
+}
+
+.sapMST .sapMSTIconDisplayArea {
+	background-color: @sapButton_Background;
+	border: 0.0625rem solid @sapButton_BorderColor;
+}
+
+.sapMST .sapMSTIconNestedArea .sapUiIcon{
+	color: @sapButton_IconColor !important;
+}
+
+.sapMST .sapMSTIconClickTapArea:hover ~.sapMSTIconDisplayArea {
+	background-color: @sapButton_Active_Background;
+}
+
+.sapMST .sapMGT {
+	border: none;
+}
+
+.sapMST:hover {
+	box-shadow: none;
+	.sapMSTFocusDiv{
+		outline: 0.1875rem solid;
+	}
+}
+
+.sapMST .sapMGT:active .sapMGTFocusDiv {
+	border: none;
+}
+
+html.sap-desktop .sapMST.sapMSTIconPressed .sapMSTIconClickTapArea:hover ~.sapMSTIconDisplayArea {
+	border-color: @sapButton_Active_BorderColor;
+	background-color: @sapButton_Active_Background;
+}
+
+html.sap-desktop .sapMST.sapMSTIconPressed{
+	.sapMSTIconNestedArea{
+		.sapUiIcon{
+			color: @sapButton_Active_TextColor !important;
+		}
+	}
+}
+
+.sapMSTWrapper>.sapMGT{
+	&:not(.sapMGTStateDisabled):hover, &:not(.sapMGTStateDisabled):active {
+		border: none !important;
+	}
+}
+
+.sapMST .sapMSTIconNestedArea {
+	.sapUiIcon {
+		top: 0.1rem;
+		right: 0.04rem
+	}
+}
+
+.sapMST:not(.sapMSTPauseIcon) .sapMSTIconNestedArea{
+	.sapUiIcon {
+		top: 0.05rem;
+		left: 0.1rem;
+	}
+}

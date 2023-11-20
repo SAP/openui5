@@ -1,8 +1,9 @@
 /*!
  *{copyright}
  */
-sap.ui.require([
-	"jquery.sap.global",
+sap.ui.define([
+	"sap/base/Log",
+	"sap/base/i18n/Localization",
 	"sap/ui/core/Control",
 	"sap/ui/core/format/NumberFormat",
 	"sap/ui/model/FormatException",
@@ -11,25 +12,25 @@ sap.ui.require([
 	"sap/ui/model/odata/type/Int64",
 	"sap/ui/model/odata/type/ODataType",
 	"sap/ui/test/TestUtils"
-], function (jQuery, Control, NumberFormat, FormatException, ParseException, ValidateException,
-		Int64, ODataType, TestUtils) {
+], function (Log, Localization, Control, NumberFormat, FormatException, ParseException,
+		ValidateException, Int64, ODataType, TestUtils) {
 	/*global QUnit, sinon */
 	"use strict";
 
-	var sDefaultLanguage = sap.ui.getCore().getConfiguration().getLanguage(),
+	var sDefaultLanguage = Localization.getLanguage(),
 		NUMBER_MIN_SAFE_INTEGER = -9007199254740991,
 		NUMBER_MAX_SAFE_INTEGER = 9007199254740991;
 
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.odata.type.Int64", {
 		beforeEach : function () {
-			this.oLogMock = this.mock(jQuery.sap.log);
+			this.oLogMock = this.mock(Log);
 			this.oLogMock.expects("warning").never();
 			this.oLogMock.expects("error").never();
-			sap.ui.getCore().getConfiguration().setLanguage("en-US");
+			Localization.setLanguage("en-US");
 		},
 		afterEach : function () {
-			sap.ui.getCore().getConfiguration().setLanguage(sDefaultLanguage);
+			Localization.setLanguage(sDefaultLanguage);
 		}
 	});
 
@@ -44,6 +45,26 @@ sap.ui.require([
 		assert.ok(oType.hasOwnProperty("oConstraints"), "be V8-friendly");
 		assert.strictEqual(oType.oConstraints, undefined, "default constraints");
 		assert.strictEqual(oType.oFormat, null, "no formatter preload");
+	});
+
+	//*****************************************************************************************
+	QUnit.test("constructor calls checkParseEmptyValueToZero", function (assert) {
+		var oConstraints = {nullable : false}; // otherwise there are no constraints set to the type
+		var oFormatOptions = {"~formatOption" : "foo"};
+
+		var oExpectation = this.mock(ODataType.prototype).expects("checkParseEmptyValueToZero")
+				.withExactArgs()
+				.callsFake(function () {
+					assert.deepEqual(this.oConstraints, oConstraints);
+					assert.strictEqual(this.oFormatOptions, oFormatOptions);
+				});
+
+		// code under test
+		var oType = new Int64(oFormatOptions, oConstraints);
+
+		assert.ok(oExpectation.calledOn(oType));
+		assert.deepEqual(oType.oConstraints, oConstraints);
+		assert.strictEqual(oType.oFormatOptions, oFormatOptions);
 	});
 
 	//*********************************************************************************************
@@ -181,7 +202,7 @@ sap.ui.require([
 		var oType = new Int64({plusSign : ">", minusSign : "<"});
 
 		// special: non-breaking space as grouping separator
-		sap.ui.getCore().getConfiguration().setLanguage("sv");
+		Localization.setLanguage("sv");
 
 		assert.strictEqual(oType.parseValue(">1 234 567 890 123 456", "string"),
 			"1234567890123456", "plus sign, spaces");
@@ -309,7 +330,7 @@ sap.ui.require([
 			oType = new Int64();
 
 		oControl.bindProperty("tooltip", {path : "/unused", type : oType});
-		sap.ui.getCore().getConfiguration().setLanguage("de-CH");
+		Localization.setLanguage("de-CH");
 		assert.strictEqual(oType.formatValue("1234", "string"), "1’234",
 			"adjusted to changed language");
 	});
@@ -332,5 +353,29 @@ sap.ui.require([
 			oType.formatValue(42, "string");
 			sinon.assert.calledWithExactly(oSpy, oFixture.expect);
 		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getFormat", function (assert) {
+		var oType = new Int64({parseEmptyValueToZero : true}, {nullable : false});
+
+		assert.strictEqual(oType.oFormat, null);
+
+		this.mock(NumberFormat).expects("getIntegerInstance")
+			.withExactArgs({groupingEnabled : true, parseAsString: true})
+			.returns("~integerInstance");
+
+		// code under test
+		assert.strictEqual(oType.getFormat(), "~integerInstance");
+	});
+
+	//*****************************************************************************************
+	QUnit.test("parseValue calls getEmptyValue", function (assert) {
+		var oType = new Int64();
+
+		this.mock(oType).expects("getEmptyValue").withExactArgs("~emptyString").returns("~emptyValue");
+
+		// code under test
+		assert.strictEqual(oType.parseValue("~emptyString", "foo"), "~emptyValue");
 	});
 });

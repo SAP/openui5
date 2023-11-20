@@ -1,0 +1,31 @@
+{
+	"sap.app": {
+		"type": "card",
+		"id": "card.explorer.extension.customActions",
+		"i18n": "i18n/i18n.properties"
+	},
+	"sap.card": {
+		"extension": "./CustomActionsExtension",
+		"data": {
+			"json": [
+				{ "training": "Scrum", "location": "Online" },
+				{ "training": "Quality Management", "location": "Classroom Attendance" },
+				{ "training": "Test Driven Development", "location": "Classroom Attendance" },
+				{ "training": "Integration Cards Training", "location": "Online" }
+			]
+		},
+		"type": "List",
+		"header": {
+			"title": "Available Trainings",
+			"icon": {
+				"src": "sap-icon://activities"
+			}
+		},
+		"content": {
+			"item": {
+				"title": "{training}",
+				"description": "{location}"
+			}
+		}
+	}
+}

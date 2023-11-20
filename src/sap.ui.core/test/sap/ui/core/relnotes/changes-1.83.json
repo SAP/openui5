@@ -1,0 +1,223 @@
+{
+  "1.83.0": {
+    "date": "September 2020",
+    "notes": [
+      {
+        "id": "11c55065d5b3f79b1cfcd70999c61a9f9cd6ea40",
+        "type": "FIX",
+        "text": " scrollLeftRTL: adapt to chrome behavior change",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070328364"
+          }
+        ]
+      },
+      {
+        "id": "5660dfb6068497bfd850de22b8f8592f2dffa4ed",
+        "type": "FEATURE",
+        "text": " sap.m.Button: new API exposed to set aria-haspopup according to ARIA 1.1"
+      },
+      {
+        "id": "bed6ed612490ebf6d22a9880a8e5a1ac28370abc",
+        "type": "FIX",
+        "text": " Revent '[FIX] routing.HashChanger: avoid forwarding \"updateHashOnly\" event to router'",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070320172"
+          }
+        ]
+      },
+      {
+        "id": "5a2cbc35738e8bb617a48706bad824df9659584d",
+        "type": "FIX",
+        "text": " ODataTreeBinding: Suppress 'dataReceived' event if request is aborted",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500005566692020"
+          },
+          {
+            "type": "BCP",
+            "reference": "1980148224"
+          }
+        ]
+      },
+      {
+        "id": "126affe984d65decff05171597d43fc1243ebbfc",
+        "type": "FEATURE",
+        "text": " Opa: handle promise constructor in autowaiter"
+      },
+      {
+        "id": "df0e9ba3c976b2d6b433c33942eb7b5b5b1e65b3",
+        "type": "FIX",
+        "text": " routing.HashChanger: avoid forwarding \"updateHashOnly\" event to router",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080039881"
+          }
+        ]
+      },
+      {
+        "id": "73c205265ef7359d44aca6c93657395b80e217cb",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.ODataMessageParser#parse: (part2) do not consider 204 response for a GET request",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080337477"
+          }
+        ]
+      },
+      {
+        "id": "55c1c22e56c072e612c5e9c81de5a07baad2d0dd",
+        "type": "FEATURE",
+        "text": " Opa: activate waiters conditionally"
+      },
+      {
+        "id": "fc72dc00bed467e33e9b89c81e7266273d9a4910",
+        "type": "FIX",
+        "text": " format/NumberFormat: consider control characters in minus sign",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400005462222020"
+          }
+        ]
+      },
+      {
+        "id": "7a20955bf94237d19c693a829d153a3562646ff4",
+        "type": "FIX",
+        "text": " sap.ui.model.analytics.AnalyticalTreeBindingAdapter#setNumberOfExpandedLevels: expand only as many levels as grouped dimensions are available",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500005340402020"
+          }
+        ]
+      },
+      {
+        "id": "dfadfc96e3fbff0d3e6591ff83f7725e44a1daa7",
+        "type": "FIX",
+        "text": " Opa: disable entertext for disabled and non-editable controls"
+      },
+      {
+        "id": "862f9c705a14ebeca0683408f16d3536f71bec68",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.ODataMessageParser#parse: do not consider 204 response for a GET request",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080337477"
+          }
+        ]
+      },
+      {
+        "id": "ad76a114328e7ff21731a4d234b2c13825853f76",
+        "type": "FIX",
+        "text": " Opa: escape characters in EnterText constructor",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070287245"
+          }
+        ]
+      },
+      {
+        "id": "f49e66ee1e56ae2c126fc925d4fe42579aa7fdd6",
+        "type": "FIX",
+        "text": " format/DateFormat: Immutability of input Date after format",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070281118"
+          }
+        ]
+      },
+      {
+        "id": "256e5db0623f16b1b856eb8f90590b32058b31c3",
+        "type": "FIX",
+        "text": " sap.ui.model.type.(Float|Integer)#validateValue: properly format constraint values in validation messages",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400005567672020"
+          }
+        ]
+      },
+      {
+        "id": "d80e08fc66278bad8334f6418802f01bd01dd565",
+        "type": "FIX",
+        "text": " UniversalDate: fix ie11 date constructor problem",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080296923"
+          }
+        ]
+      },
+      {
+        "id": "e0a5cb0b9325495350999430d4a9a6c9324b18b2",
+        "type": "FIX",
+        "text": " ManagedObject: remove deprecation claim for bindElement",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070280653"
+          }
+        ]
+      },
+      {
+        "id": "a23302079ec7feab35c56005f7d79ce2f1de1e31",
+        "type": "FIX",
+        "text": " qunit-reporter-junit: Nested modules support",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870252403"
+          }
+        ]
+      },
+      {
+        "id": "6eab1c3ea13996261979ec5219afb3b62b6fce4d",
+        "type": "FIX",
+        "text": " ComponentContainer: log component creation errors with stack trace",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070280387"
+          }
+        ]
+      },
+      {
+        "id": "6b6472115f726fb18b899c8ec5a7d45b3100c91a",
+        "type": "FIX",
+        "text": " Diagnostics Tool: Control tree now shows invalid bindings",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070273160"
+          }
+        ]
+      },
+      {
+        "id": "c1e5ee430cd860cdaace2a47b4461869ee64636f",
+        "type": "FIX",
+        "text": " sap.ui.core.routing.Router: TitleChanged event was not propagated correctly when target on parent has no title",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080344993"
+          }
+        ]
+      },
+      {
+        "id": "e5beb2eedbdaecb1fe703e84cd5cbffce9d6938a",
+        "type": "FIX",
+        "text": " handlebars: usage of latest version 4.7.6"
+      }
+    ]
+  }
+}

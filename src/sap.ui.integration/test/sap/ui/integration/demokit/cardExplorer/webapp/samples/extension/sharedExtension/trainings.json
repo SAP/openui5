@@ -1,0 +1,6 @@
+[
+	{ "training": "Scrum", "location": "Online" },
+	{ "training": "Quality Management", "location": "Classroom Attendance" },
+	{ "training": "Test Driven Development", "location": "Classroom Attendance" },
+	{ "training": "Integration Cards Training", "location": "Online" }
+]

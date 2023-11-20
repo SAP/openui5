@@ -1,0 +1,88 @@
+<mvc:View
+	xmlns="sap.m"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:f="sap.f"
+	xmlns:w="sap.ui.integration.widgets"
+	displayBlock="true">
+	<Page title="{i18n>appTitle}">
+		<subHeader>
+			<Toolbar>
+				<ToolbarSpacer />
+				<Title text="Card without Header &amp; Card without Content" />
+				<ToolbarSpacer />
+			</Toolbar>
+		</subHeader>
+
+		<Panel>
+			<f:GridContainer>
+				<w:Card id="i1" manifest="{manifests>/noHeaderNoContent/i1}" baseUrl="{cardsPlayground>/playgroundBaseUrl}">
+					<w:layoutData>
+						<f:GridContainerItemLayoutData columns="4" />
+					</w:layoutData>
+				</w:Card>
+
+				<w:Card id="i2" manifest="{manifests>/noHeaderNoContent/i2}" baseUrl="{cardsPlayground>/playgroundBaseUrl}">
+					<w:layoutData>
+						<f:GridContainerItemLayoutData columns="4" />
+					</w:layoutData>
+				</w:Card>
+
+				<f:Card id="f3" height="100%">
+					<f:layoutData>
+						<f:GridContainerItemLayoutData columns="2" rows="2" />
+					</f:layoutData>
+					<f:content>
+						<VBox alignItems="Center" justifyContent="Center" width="100%">
+							<Avatar src="sap-icon://SAP-icons-TNT/application-service" />
+							<Link text="Create Application" />
+						</VBox>
+					</f:content>
+				</f:Card>
+
+				<w:Card id="i4" manifest="{manifests>/noHeaderNoContent/i4}" baseUrl="{cardsPlayground>/playgroundBaseUrl}">
+					<w:layoutData>
+						<f:GridContainerItemLayoutData columns="4" />
+					</w:layoutData>
+				</w:Card>
+
+				<w:Card height="220px" id="i5" manifest="{manifests>/noHeaderNoContent/i5}" baseUrl="{cardsPlayground>/playgroundBaseUrl}">
+					<w:layoutData>
+						<f:GridContainerItemLayoutData columns="3" />
+					</w:layoutData>
+				</w:Card>
+
+				<w:Card id="i6-error" manifest="{manifests>/noHeaderNoContent/i6-error}">
+					<w:layoutData>
+						<f:GridContainerItemLayoutData columns="3" />
+					</w:layoutData>
+				</w:Card>
+
+				<w:Card id="i7-error" manifest="{manifests>/noHeaderNoContent/i7-error}">
+					<w:layoutData>
+						<f:GridContainerItemLayoutData columns="3" />
+					</w:layoutData>
+				</w:Card>
+				<w:Card id="ListNodata-error" manifest="{manifests>/noHeaderNoContent/ListNodata-error}">
+					<w:layoutData>
+						<f:GridContainerItemLayoutData columns="3" />
+					</w:layoutData>
+				</w:Card>
+				<w:Card id="TableNodata-error" manifest="{manifests>/noHeaderNoContent/TableNodata-error}">
+					<w:layoutData>
+						<f:GridContainerItemLayoutData columns="3" />
+					</w:layoutData>
+				</w:Card>
+				<w:Card id="Custom-error" manifest="{manifests>/noHeaderNoContent/Custom-error}">
+					<w:layoutData>
+						<f:GridContainerItemLayoutData columns="3" />
+					</w:layoutData>
+				</w:Card>
+				<w:Card id="BadUrl-error" manifest="{manifests>/noHeaderNoContent/BadUrl-error}">
+					<w:layoutData>
+						<f:GridContainerItemLayoutData columns="3" />
+					</w:layoutData>
+				</w:Card>
+			</f:GridContainer>
+		</Panel>
+	</Page>
+</mvc:View>

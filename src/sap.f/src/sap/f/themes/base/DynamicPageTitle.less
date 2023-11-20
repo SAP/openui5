@@ -20,7 +20,7 @@
 }
 
 .sapFDynamicPageTitle {
-	z-index: 3;
+	z-index: 4;
 	position: relative;
 	min-height: 3rem;
 	padding: 0.5rem 2rem 0.5rem 3rem;
@@ -31,9 +31,35 @@
 	box-sizing: border-box;
 	background: @sapUiObjectHeaderBackground;
 
-	&:focus {
-		outline: 0.0625rem dotted @sapUiContentFocusColor;
-		outline-offset: -0.0625rem;
+	.sapFDynamicPageToggleHeaderIndicator.sapUiHidden {
+		display: none;
+	}
+
+	.sapFDynamicPageTitleExpanded.sapUiHidden *,
+	.sapFDynamicPageTitleSnapped.sapUiHidden * {
+		visibility: hidden;
+	}
+
+	.sapFDynamicPageTitleMain > .sapFDynamicPageTitleMainInner {
+		.sapFDynamicPageTitleMainContent .sapMTB {
+			padding-left: 0.5rem;
+			padding-right: 0.5rem;
+		}
+
+		.sapFDynamicPageTitleMainActions {
+			padding-left: 0.5rem;
+		}
+	}
+
+	html.sap-desktop & {
+		&.sapFDynamicPageTitleFocus {
+			outline: 0.0625rem dotted @sapUiContentFocusColor;
+			outline-offset: -0.0625rem;
+		}
+	}
+
+	.sapFDynamicPageTitleFocusSpan {
+		outline: none;
 	}
 
 	.sapFDynamicPageTitleTop {
@@ -56,7 +82,7 @@
 
 		&> .sapFDynamicPageTitleTopRight {
 			width: 25%;
-			dispaly: flex;
+			display: flex;
 			display: -webkit-flex;
 			align-items: center;
 			-webkit-align-items: center;
@@ -83,6 +109,10 @@
 		-webkit-flex-direction: row;
 		box-sizing: border-box;
 
+		&.sapUiHidden {
+			position: absolute;
+		}
+
 		&> .sapFDynamicPageTitleMainNavigationArea,
 		&> .sapFDynamicPageTitleMainNavigationArea > .sapFDynamicPageTitleMainNavigationAreaInner{
 			display: flex;
@@ -95,10 +125,19 @@
 	.sapFDynamicPageTitleActionsBar.sapMTB {
 		justify-content: flex-end;
 		-webkit-justify-content: flex-end;
+		overflow: visible;
 	}
 }
 
+ .sapFDynamicPageTitleMainNavigationAreaInner .sapMIBar.sapMTB .sapMBarChild:first-child {
+	 margin-left: 0.25rem;
+ }
 
+ .sapFDynamicPageTitleMainContent .sapMIBar.sapMTB .sapMBarChild:first-child {
+	margin-left: 0;
+}
+
+/* TODO remove after the end of support for Internet Explorer */
 html[data-sap-ui-browser^="ie"].sap-desktop,
 html[data-sap-ui-browser^="ed"].sap-desktop {
 	.sapFDynamicPageTitleMain {
@@ -107,13 +146,14 @@ html[data-sap-ui-browser^="ed"].sap-desktop {
 }
 
 /* IE and Edge ignores outline-offset. Use an overlay: */
+/* TODO remove after the end of support for Internet Explorer */
 html[data-sap-ui-browser^="ie"].sap-desktop,
 html[data-sap-ui-browser^="ed"].sap-desktop {
-	.sapFDynamicPageTitle:focus {
+	.sapFDynamicPageTitle.sapFDynamicPageTitleFocus {
 		outline: none;
 		position: relative;
 	}
-	.sapFDynamicPageTitle:focus:before {
+	.sapFDynamicPageTitle.sapFDynamicPageTitleFocus:before {
 		content: " ";
 		box-sizing: border-box;
 		width: 100%;
@@ -128,11 +168,11 @@ html[data-sap-ui-browser^="ed"].sap-desktop {
 
 /* Firefox fix due to focus cut out from top and left */
 html[data-sap-ui-browser^="ff"].sap-desktop {
-	.sapFDynamicPageTitle:focus {
+	.sapFDynamicPageTitle.sapFDynamicPageTitleFocus {
 		outline: none;
 		position: relative;
 	}
-	.sapFDynamicPageTitle:focus:before {
+	.sapFDynamicPageTitle.sapFDynamicPageTitleFocus:before {
 		content: " ";
 		box-sizing: border-box;
 		width: 100%;
@@ -167,11 +207,10 @@ html[data-sap-ui-browser^="ff"].sap-desktop {
 		-webkit-flex-direction: column;
 		justify-content: space-between;
 		-webkit-justify-content: space-between;
-		min-width: 48px;
+		min-width: 0;
 
 		.sapFDynamicPageTitleMainHeadingInner,
 		.sapFDynamicPageTitleMainHeadingSnappedExpandContent {
-			overflow: hidden;
 			text-overflow: ellipsis;
 			white-space: nowrap;
 			box-sizing: border-box;
@@ -182,8 +221,12 @@ html[data-sap-ui-browser^="ff"].sap-desktop {
 			min-width: 1px;
 			max-width: 100%;
 			color: @sapUiGroupTitleTextColor;
-			font-size: @sapMFontHeader3Size;
 			margin-top: 0.1875rem;
+
+			/* Override Title styles, required by VD */
+			.sapMTitle {
+				font-size: @sapMFontHeader3Size;
+			}
 		}
 
 		.sapFDynamicPageTitleMainHeadingSnappedExpandContent {
@@ -199,13 +242,23 @@ html[data-sap-ui-browser^="ff"].sap-desktop {
 	}
 
 	.sapFDynamicPageTitleMainContent {
-		min-width: 48px;
-		padding: 0 0 0.5rem 0.5rem;
+		min-width: 0.0625rem;
+		padding: 0 0 0 0.5rem;
+
+		&.sapFDynamicPageTitleMainContentHasContent {
+			min-width: 3rem;
+			flex-grow: 1;
+		}
 	}
 
 	.sapFDynamicPageTitleMainActions {
 		margin-left: auto;
-		min-width: 48px;
+		min-width: 0.0625rem;
+		flex-grow: 1;
+
+		&.sapFDynamicPageTitleMainActionsHasContent {
+			min-width: 3rem;
+		}
 
 	.sapFDynamicPageTitleActionsBar .sapMLabel.sapMLabelMaxWidth,
 	.sapFDynamicPageTitleActionsBar .sapMLnk.sapMLnkMaxWidth {
@@ -214,11 +267,6 @@ html[data-sap-ui-browser^="ff"].sap-desktop {
 		max-width: none;
 	}
   }
-
-	/* Override Title and Label styles, required by VD */
-	.sapMTitle {
-		font-size: @sapMFontHeader3Size;
-	}
 }
 
 .sapFDynamicPageTitleMain.sapFDynamicPageTitleMainNoContent > .sapFDynamicPageTitleMainInner {
@@ -230,6 +278,15 @@ html[data-sap-ui-browser^="ff"].sap-desktop {
 
 /* Tablet Size */
 .sapFDynamicPage-Std-Tablet {
+
+	// Needed because on some high-end phones in landscape mode,
+	// the width of the viewport is bigger than 600 (Tablet breakpoint).
+	.sapFDynamicPageTitleWrapper.sapFDynamicPageTitleSnappedTitleOnMobile > .sapFDynamicPageTitle {
+		padding: 0 0.25rem 0 2rem;
+		min-height: 2rem;
+		height: 2rem;
+	}
+
 	.sapFDynamicPageTitleWrapper.sapFDynamicPageTitleSnapped > .sapFDynamicPageTitle {
 		padding: 0.5rem 1rem 1rem 2rem;
 	}
@@ -255,6 +312,18 @@ html[data-sap-ui-browser^="ff"].sap-desktop {
 	}
 }
 
+.sapFDynamicPageTitle .sapFDynamicPageTitleSnappedTitleOnMobile {
+	min-height: 100%;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	flex: 0 1 auto;
+
+	.sapUiIcon {
+		flex: 0 0 2rem;
+	}
+}
+
 /* Phone Size */
 .sapFDynamicPage-Std-Phone {
 
@@ -264,6 +333,12 @@ html[data-sap-ui-browser^="ff"].sap-desktop {
 				padding-bottom: 0;
 			}
 		}
+	}
+
+	.sapFDynamicPageTitleWrapper.sapFDynamicPageTitleSnappedTitleOnMobile > .sapFDynamicPageTitle {
+		padding: 0 0.25rem 0 1rem;
+		min-height: 2rem;
+		height: 2rem;
 	}
 
 	.sapFDynamicPageTitleWrapper.sapFDynamicPageTitleSnapped > .sapFDynamicPageTitle {

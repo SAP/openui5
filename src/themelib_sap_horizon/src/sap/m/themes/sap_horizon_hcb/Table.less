@@ -1,0 +1,45 @@
+/* ================================== */
+/* CSS for control sap.m/Table        */
+/* Horizon High Contrast Black theme  */
+/* ================================== */
+
+@_sap_m_Table_SelNavColWidth: 2.75rem;
+
+.sapMListTblHeader,
+.sapMListTblFooter {
+	background: @sapUiListBackground;
+}
+
+.sapMListTbl {
+	/* HCB Additional Style */
+	border: 1px solid @sapUiListHeaderBorderColor;
+}
+
+.sapMSticky .sapMTB-Info-CTX.sapMTB.sapMListInfoTBar {
+	margin-top: 0;
+	margin-bottom: 0;
+}
+
+/* table column header */
+.sapMListTbl th {
+	border-bottom: 0.125rem solid @sapUiListHeaderBorderColor;
+}
+
+// to ensure that the bottom focus outline is visible on the table header row,
+// the <th> bottom border color is made transparent
+.sapMLIBFocusable:not(.sapMTableRowCustomFocus):focus > .sapMTableTH {
+	border-bottom-color: transparent;
+}
+
+.sapMTableRowCustomFocus:focus > :not(.sapMListTblDummyCell:last-child)::before {
+	border-width: 2px;
+}
+
+.sapMColumnHeaderActive:focus {
+	outline-width: 3px;
+}
+
+/* table footer */
+.sapMListTblFooter > td {
+	border-top: 0.125rem solid @sapUiListTableFooterBorder;
+}

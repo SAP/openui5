@@ -1,5 +1,7 @@
 {
 	"__license": "This file has been derived from Unicode Common Locale Data Repository (CLDR) files (http://cldr.unicode.org). See the copyright and permission notice in the Unicode-Data-Files-LICENSE.txt available at the same location as this file or visit http://www.unicode.org/copyright.html",
+	"__version": "43.0.0",
+	"__buildtime": "2023-09-28T11:39:07.908Z",
 	"languages": {
 		"aa": "阿法文",
 		"ab": "阿布哈茲文",
@@ -22,6 +24,7 @@
 		"am": "阿姆哈拉文",
 		"an": "阿拉貢文",
 		"ang": "古英文",
+		"ann": "奧博洛語",
 		"anp": "昂加文",
 		"ar": "阿拉伯文",
 		"ar_001": "現代標準阿拉伯文",
@@ -30,6 +33,8 @@
 		"aro": "阿拉奧納文",
 		"arp": "阿拉帕霍文",
 		"arq": "阿爾及利亞阿拉伯文",
+		"ars": "納吉迪阿拉伯文",
+		"ars_alt-menu": "阿拉伯文（納吉迪）",
 		"arw": "阿拉瓦克文",
 		"ary": "摩洛哥阿拉伯文",
 		"arz": "埃及阿拉伯文",
@@ -37,6 +42,7 @@
 		"asa": "阿蘇文",
 		"ase": "美國手語",
 		"ast": "阿斯圖里亞文",
+		"atj": "阿提卡梅克語",
 		"av": "阿瓦爾文",
 		"avk": "科塔瓦文",
 		"awa": "阿瓦文",
@@ -88,6 +94,7 @@
 		"car": "加勒比文",
 		"cay": "卡尤加文",
 		"cch": "阿燦文",
+		"ccp": "查克馬文",
 		"ce": "車臣文",
 		"ceb": "宿霧文",
 		"cgg": "奇加文",
@@ -102,14 +109,24 @@
 		"chr": "柴羅基文",
 		"chy": "沙伊安文",
 		"ckb": "中庫德文",
+		"ckb_alt-menu": "中庫德文",
+		"ckb_alt-variant": "庫德文（索拉尼）",
+		"clc": "齊爾柯廷語",
 		"co": "科西嘉文",
 		"cop": "科普特文",
 		"cps": "卡皮茲文",
 		"cr": "克里文",
+		"crg": "米奇夫語",
 		"crh": "土耳其文（克里米亞半島）",
+		"crj": "東南克里語",
+		"crk": "平原克里語",
+		"crl": "北部東克里語",
+		"crm": "穆斯克里文",
+		"crr": "卡羅萊納阿爾岡昆語",
 		"crs": "塞席爾克里奧爾法文",
 		"cs": "捷克文",
 		"csb": "卡舒布文",
+		"csw": "沼澤克里語",
 		"cu": "宗教斯拉夫文",
 		"cv": "楚瓦什文",
 		"cy": "威爾斯文",
@@ -118,7 +135,6 @@
 		"dar": "達爾格瓦文",
 		"dav": "台塔文",
 		"de": "德文",
-		"de_AT": "德文（奧地利）",
 		"de_CH": "高地德文（瑞士）",
 		"del": "德拉瓦文",
 		"den": "斯拉夫",
@@ -144,18 +160,9 @@
 		"el": "希臘文",
 		"elx": "埃蘭文",
 		"en": "英文",
-		"en_AU": "英文（澳洲）",
-		"en_CA": "英文（加拿大）",
-		"en_GB": "英文（英國）",
-		"en_GB-alt-short": "英文（英國）",
-		"en_US": "英文（美國）",
-		"en_US-alt-short": "英文（美國）",
 		"enm": "中古英文",
 		"eo": "世界文",
 		"es": "西班牙文",
-		"es_419": "西班牙文（拉丁美洲）",
-		"es_ES": "西班牙文（西班牙）",
-		"es_MX": "西班牙文（墨西哥）",
 		"esu": "中尤皮克文",
 		"et": "愛沙尼亞文",
 		"eu": "巴斯克文",
@@ -172,8 +179,6 @@
 		"fo": "法羅文",
 		"fon": "豐文",
 		"fr": "法文",
-		"fr_CA": "法文（加拿大）",
-		"fr_CH": "法文（瑞士）",
 		"frc": "卡真法文",
 		"frm": "中古法文",
 		"fro": "古法文",
@@ -214,8 +219,11 @@
 		"hai": "海達文",
 		"hak": "客家話",
 		"haw": "夏威夷文",
+		"hax": "南海達語",
 		"he": "希伯來文",
 		"hi": "印地文",
+		"hi_Latn": "印地語（拉丁文）",
+		"hi_Latn-alt-variant": "印地語",
 		"hif": "斐濟印地文",
 		"hil": "希利蓋農文",
 		"hit": "赫梯文",
@@ -227,6 +235,7 @@
 		"ht": "海地文",
 		"hu": "匈牙利文",
 		"hup": "胡帕文",
+		"hur": "哈爾魁梅林語",
 		"hy": "亞美尼亞文",
 		"hz": "赫雷羅文",
 		"ia": "國際文",
@@ -237,6 +246,7 @@
 		"ig": "伊布文",
 		"ii": "四川彝文",
 		"ik": "依奴皮維克文",
+		"ikt": "西加拿大因紐特語",
 		"ilo": "伊洛闊文",
 		"inh": "印古什文",
 		"io": "伊多文",
@@ -303,6 +313,7 @@
 		"kut": "庫特奈文",
 		"kv": "科米文",
 		"kw": "康瓦耳文",
+		"kwk": "誇誇嘉誇語",
 		"ky": "吉爾吉斯文",
 		"la": "拉丁文",
 		"lad": "拉迪諾文",
@@ -315,6 +326,7 @@
 		"lg": "干達文",
 		"li": "林堡文",
 		"lij": "利古里亞文",
+		"lil": "利洛威特文",
 		"liv": "利伏尼亞文",
 		"lkt": "拉科塔文",
 		"lmo": "倫巴底文",
@@ -324,6 +336,7 @@
 		"lou": "路易斯安那克里奧爾文",
 		"loz": "洛齊文",
 		"lrc": "北盧爾文",
+		"lsm": "薩米亞文",
 		"lt": "立陶宛文",
 		"ltg": "拉特加萊文",
 		"lu": "魯巴加丹加文",
@@ -362,6 +375,7 @@
 		"mn": "蒙古文",
 		"mnc": "滿族文",
 		"mni": "曼尼普爾文",
+		"moe": "因紐艾蒙語",
 		"moh": "莫霍克文",
 		"mos": "莫西文",
 		"mr": "馬拉地文",
@@ -405,7 +419,7 @@
 		"nr": "南地畢列文",
 		"nso": "北索托文",
 		"nus": "努埃爾文",
-		"nv": "納瓦霍文",
+		"nv": "納瓦荷文",
 		"nwc": "古尼瓦爾文",
 		"ny": "尼揚賈文",
 		"nym": "尼揚韋齊文",
@@ -414,6 +428,11 @@
 		"nzi": "尼茲馬文",
 		"oc": "奧克西坦文",
 		"oj": "奧杰布瓦文",
+		"ojb": "西北奧吉布瓦語",
+		"ojc": "中央奧吉布瓦語",
+		"ojs": "奧吉克里語",
+		"ojw": "西奧吉布瓦語",
+		"oka": "奧卡諾根語",
 		"om": "奧羅莫文",
 		"or": "歐迪亞文",
 		"os": "奧塞提文",
@@ -433,16 +452,16 @@
 		"pfl": "普法爾茨德文",
 		"phn": "腓尼基文",
 		"pi": "巴利文",
+		"pis": "皮金語",
 		"pl": "波蘭文",
 		"pms": "皮埃蒙特文",
 		"pnt": "旁狄希臘文",
 		"pon": "波那貝文",
+		"pqm": "馬里希特帕薩瑪奎迪文",
 		"prg": "普魯士文",
 		"pro": "古普羅旺斯文",
 		"ps": "普什圖文",
 		"pt": "葡萄牙文",
-		"pt_BR": "葡萄牙文（巴西）",
-		"pt_PT": "葡萄牙文（葡萄牙）",
 		"qu": "蓋楚瓦文",
 		"quc": "基切文",
 		"qug": "欽博拉索海蘭蓋丘亞文",
@@ -450,6 +469,7 @@
 		"rap": "復活島文",
 		"rar": "拉羅通加文",
 		"rgn": "羅馬格諾里文",
+		"rhg": "羅興亞文",
 		"rif": "里菲亞諾文",
 		"rm": "羅曼斯文",
 		"rn": "隆迪文",
@@ -457,7 +477,6 @@
 		"ro_MD": "摩爾多瓦文",
 		"rof": "蘭博文",
 		"rom": "吉普賽文",
-		"root": "根語言",
 		"rtm": "羅圖馬島文",
 		"ru": "俄文",
 		"rue": "盧森尼亞文",
@@ -498,6 +517,7 @@
 		"sid": "希達摩文",
 		"sk": "斯洛伐克文",
 		"sl": "斯洛維尼亞文",
+		"slh": "南盧紹錫德語",
 		"sli": "下西利西亞文",
 		"sly": "塞拉亞文",
 		"sm": "薩摩亞文",
@@ -517,6 +537,7 @@
 		"ssy": "薩霍文",
 		"st": "塞索托文",
 		"stq": "沙特菲士蘭文",
+		"str": "海峽薩利希語",
 		"su": "巽他文",
 		"suk": "蘇庫馬文",
 		"sus": "蘇蘇文",
@@ -529,6 +550,7 @@
 		"syr": "敘利亞文",
 		"szl": "西利西亞文",
 		"ta": "坦米爾文",
+		"tce": "南塔穹語",
 		"tcy": "圖盧文",
 		"te": "泰盧固文",
 		"tem": "提姆文",
@@ -536,7 +558,9 @@
 		"ter": "泰雷諾文",
 		"tet": "泰頓文",
 		"tg": "塔吉克文",
+		"tgx": "塔吉什語",
 		"th": "泰文",
+		"tht": "塔爾坦語",
 		"ti": "提格利尼亞文",
 		"tig": "蒂格雷文",
 		"tiv": "提夫文",
@@ -551,6 +575,7 @@
 		"tn": "塞茲瓦納文",
 		"to": "東加文",
 		"tog": "東加文（尼亞薩）",
+		"tok": "道本語",
 		"tpi": "托比辛文",
 		"tr": "土耳其文",
 		"tru": "圖羅尤文",
@@ -559,6 +584,7 @@
 		"tsd": "特薩克尼恩文",
 		"tsi": "欽西安文",
 		"tt": "韃靼文",
+		"ttm": "北塔穹語",
 		"ttt": "穆斯林塔特文",
 		"tum": "圖姆布卡文",
 		"tvl": "吐瓦魯文",
@@ -606,6 +632,7 @@
 		"yo": "約魯巴文",
 		"yrl": "奈恩加圖文",
 		"yue": "粵語",
+		"yue_alt-menu": "粵語",
 		"za": "壯文",
 		"zap": "薩波特克文",
 		"zbl": "布列斯符號",
@@ -613,8 +640,11 @@
 		"zen": "澤納加文",
 		"zgh": "標準摩洛哥塔馬塞特文",
 		"zh": "中文",
+		"zh_alt-menu": "中文",
 		"zh_Hans": "簡體中文",
+		"zh_Hans-alt-long": "簡體中文",
 		"zh_Hant": "繁體中文",
+		"zh_Hant-alt-long": "繁體中文",
 		"zu": "祖魯文",
 		"zun": "祖尼文",
 		"zxx": "無語言內容",
@@ -625,8 +655,9 @@
 		"Afak": "阿法卡文字",
 		"Aghb": "高加索阿爾巴尼亞文",
 		"Ahom": "阿洪姆文",
-		"Arab": "阿拉伯文",
+		"Arab": "阿拉伯字母",
 		"Arab-alt-variant": "波斯阿拉伯文字",
+		"Aran": "波斯體",
 		"Armi": "皇室亞美尼亞文",
 		"Armn": "亞美尼亞文",
 		"Avst": "阿維斯陀文",
@@ -650,7 +681,7 @@
 		"Cirt": "色斯文",
 		"Copt": "科普特文",
 		"Cprt": "塞浦路斯文",
-		"Cyrl": "斯拉夫文",
+		"Cyrl": "西里爾文字",
 		"Cyrs": "西里爾文（古教會斯拉夫文變體）",
 		"Deva": "天城文",
 		"Dsrt": "德瑟雷特文",
@@ -666,7 +697,7 @@
 		"Gonm": "岡德文",
 		"Goth": "歌德文",
 		"Gran": "格蘭他文字",
-		"Grek": "希臘文",
+		"Grek": "希臘字母",
 		"Gujr": "古吉拉特文",
 		"Guru": "古魯穆奇文",
 		"Hanb": "標上注音符號的漢字",
@@ -737,7 +768,7 @@
 		"Ogam": "歐甘文",
 		"Olck": "桑塔利文",
 		"Orkh": "鄂爾渾文",
-		"Orya": "歐利亞文",
+		"Orya": "歐迪亞文",
 		"Osge": "歐塞奇文",
 		"Osma": "歐斯曼亞文",
 		"Palm": "帕米瑞拉文字",
@@ -750,7 +781,9 @@
 		"Phnx": "腓尼基文",
 		"Plrd": "柏格理拼音符",
 		"Prti": "帕提亞文（碑銘體）",
+		"Qaag": "佐基文",
 		"Rjng": "拉讓文",
+		"Rohg": "哈乃斐羅興亞文",
 		"Roro": "朗格朗格象形文",
 		"Runr": "古北歐文字",
 		"Samr": "撒馬利亞文",
@@ -767,7 +800,7 @@
 		"Soyo": "索永布文字",
 		"Sund": "巽他文",
 		"Sylo": "希洛弟納格里文",
-		"Syrc": "敍利亞文",
+		"Syrc": "敘利亞文",
 		"Syre": "敘利亞文（福音體文字變體）",
 		"Syrj": "敘利亞文（西方文字變體）",
 		"Syrn": "敘利亞文（東方文字變體）",
@@ -811,7 +844,7 @@
 		"151": "東歐",
 		"154": "北歐",
 		"155": "西歐",
-		"202": "202",
+		"202": "撒哈拉撒沙漠以南非洲",
 		"419": "拉丁美洲",
 		"001": "世界",
 		"002": "非洲",
@@ -882,7 +915,7 @@
 		"CG-alt-variant": "剛果共和國",
 		"CH": "瑞士",
 		"CI": "象牙海岸",
-		"CI-alt-variant": "CI",
+		"CI-alt-variant": "象牙海岸",
 		"CK": "庫克群島",
 		"CL": "智利",
 		"CM": "喀麥隆",
@@ -941,7 +974,7 @@
 		"GU": "關島",
 		"GW": "幾內亞比索",
 		"GY": "蓋亞那",
-		"HK": "中國香港特別行政區",
+		"HK": "香港",
 		"HK-alt-short": "香港",
 		"HM": "赫德島及麥唐納群島",
 		"HN": "宏都拉斯",
@@ -992,12 +1025,11 @@
 		"MF": "法屬聖馬丁",
 		"MG": "馬達加斯加",
 		"MH": "馬紹爾群島",
-		"MK": "馬其頓",
-		"MK-alt-variant": "前南斯拉夫馬其頓共和國",
+		"MK": "北馬其頓",
 		"ML": "馬利",
 		"MM": "緬甸",
 		"MN": "蒙古",
-		"MO": "中國澳門特別行政區",
+		"MO": "澳門",
 		"MO-alt-short": "澳門",
 		"MP": "北馬利安納群島",
 		"MQ": "馬丁尼克",
@@ -1022,6 +1054,7 @@
 		"NR": "諾魯",
 		"NU": "紐埃島",
 		"NZ": "紐西蘭",
+		"NZ-alt-variant": "紐西蘭",
 		"OM": "阿曼",
 		"PA": "巴拿馬",
 		"PE": "秘魯",
@@ -1065,7 +1098,8 @@
 		"SV": "薩爾瓦多",
 		"SX": "荷屬聖馬丁",
 		"SY": "敘利亞",
-		"SZ": "史瓦濟蘭",
+		"SZ": "史瓦帝尼",
+		"SZ-alt-variant": "史瓦濟蘭",
 		"TA": "特里斯坦達庫尼亞群島",
 		"TC": "土克斯及開科斯群島",
 		"TD": "查德",
@@ -1075,11 +1109,12 @@
 		"TJ": "塔吉克",
 		"TK": "托克勞群島",
 		"TL": "東帝汶",
-		"TL-alt-variant": "TL",
+		"TL-alt-variant": "東帝汶",
 		"TM": "土庫曼",
 		"TN": "突尼西亞",
 		"TO": "東加",
 		"TR": "土耳其",
+		"TR-alt-variant": "土耳其",
 		"TT": "千里達及托巴哥",
 		"TV": "吐瓦魯",
 		"TW": "台灣",
@@ -1088,7 +1123,6 @@
 		"UG": "烏干達",
 		"UM": "美國本土外小島嶼",
 		"UN": "聯合國",
-		"UN-alt-short": "聯合國",
 		"US": "美國",
 		"US-alt-short": "美國",
 		"UY": "烏拉圭",
@@ -1102,6 +1136,8 @@
 		"VU": "萬那杜",
 		"WF": "瓦利斯群島和富圖那群島",
 		"WS": "薩摩亞",
+		"XA": "偽區域",
+		"XB": "偽比迪",
 		"XK": "科索沃",
 		"YE": "葉門",
 		"YT": "馬約特島",
@@ -1119,10 +1155,10 @@
 			"short": "y/M/d"
 		},
 		"timeFormats": {
-			"full": "ah:mm:ss [zzzz]",
-			"long": "ah:mm:ss [z]",
-			"medium": "ah:mm:ss",
-			"short": "ah:mm"
+			"full": "Bh:mm:ss [zzzz]",
+			"long": "Bh:mm:ss [z]",
+			"medium": "Bh:mm:ss",
+			"short": "Bh:mm"
 		},
 		"dateTimeFormats": {
 			"full": "{1} {0}",
@@ -1138,23 +1174,24 @@
 				"EBhm": "E Bh:mm",
 				"EBhms": "E Bh:mm:ss",
 				"Ed": "d E",
-				"Ehm": "E ah:mm",
+				"Ehm": "E Bh:mm",
 				"EHm": "E HH:mm",
-				"Ehms": "E ah:mm:ss",
+				"Ehms": "E Bh:mm:ss",
 				"EHms": "E HH:mm:ss",
 				"Gy": "Gy年",
+				"GyMd": "G y/M/d",
 				"GyMMM": "Gy年M月",
 				"GyMMMd": "Gy年M月d日",
 				"GyMMMEd": "Gy年M月d日 E",
-				"h": "ah時",
+				"h": "Bh時",
 				"H": "H時",
-				"hm": "ah:mm",
+				"hm": "Bh:mm",
 				"Hm": "HH:mm",
-				"hms": "ah:mm:ss",
+				"hms": "Bh:mm:ss",
 				"Hms": "HH:mm:ss",
-				"hmsv": "ah:mm:ss [v]",
+				"hmsv": "Bh:mm:ss [v]",
 				"Hmsv": "HH:mm:ss [v]",
-				"hmv": "ah:mm [v]",
+				"hmv": "Bh:mm [v]",
 				"Hmv": "HH:mm [v]",
 				"M": "M月",
 				"Md": "M/d",
@@ -1169,6 +1206,7 @@
 				"yM": "y/M",
 				"yMd": "y/M/d",
 				"yMEd": "y/M/d（E）",
+				"yMEEEEd": "y年M月d日 EEEE",
 				"yMM": "y/MM",
 				"yMMM": "y年M月",
 				"yMMMd": "y年M月d日",
@@ -1176,7 +1214,7 @@
 				"yMMMM": "y年M月",
 				"yQQQ": "y年QQQ",
 				"yQQQQ": "y年QQQQ",
-				"MMMMW": "MMM的第W週",
+				"MMMMW": "MMMM的第W週",
 				"yw": "Y年的第w週"
 			},
 			"appendItems": {
@@ -1193,21 +1231,70 @@
 				"Year": "{1} {0}"
 			},
 			"intervalFormats": {
-				"intervalFormatFallback": "{0} – {1}",
+				"intervalFormatFallback": "{0} – {1}",
+				"Bh": {
+					"B": "Bh時 – Bh時",
+					"h": "Bh–h時"
+				},
+				"Bhm": {
+					"B": "Bh:mm – Bh:mm",
+					"h": "Bh:mm–h:mm",
+					"m": "Bh:mm–h:mm"
+				},
 				"d": {
 					"d": "d日至d日"
 				},
+				"Gy": {
+					"G": "Gy – Gy",
+					"y": "Gy–y"
+				},
+				"GyM": {
+					"G": "GGGGGy-MM – GGGGGy-MM",
+					"M": "GGGGGy-MM – y-MM",
+					"y": "GGGGGy-MM – y-MM"
+				},
+				"GyMd": {
+					"d": "GGGGGy-MM-dd – y-MM-dd",
+					"G": "GGGGGy-MM-dd – GGGGGy-MM-dd",
+					"M": "GGGGGy-MM-dd – y-MM-dd",
+					"y": "GGGGGy-MM-dd – y-MM-dd"
+				},
+				"GyMEd": {
+					"d": "GGGGGy-MM-dd, E – y-MM-dd, E",
+					"G": "GGGGGy-MM-dd, E – GGGGGy-MM-dd, E",
+					"M": "GGGGGy-MM-dd, E – y-MM-dd, E",
+					"y": "GGGGGy-MM-dd, E – y-MM-dd, E"
+				},
+				"GyMMM": {
+					"G": "Gy年MMM – Gy年MMM",
+					"M": "Gy年MMM–MMM",
+					"y": "Gy年MMM – y年MMM"
+				},
+				"GyMMMd": {
+					"d": "Gy年MMMd–d日",
+					"G": "Gy年MMMd日 – Gy年MMMd日",
+					"M": "Gy年MMMd日 – MMMd日",
+					"y": "Gy年MMMd日 – y年MMMd日"
+				},
+				"GyMMMEd": {
+					"d": "Gy年MMMd日, E – MMMd日, E",
+					"G": "Gy年MMMd日, E – Gy年MMMd日, E",
+					"M": "Gy年MMMd日, E – MMMd日, E",
+					"y": "Gy年MMMd日, E – y年MMMd日, E"
+				},
 				"h": {
 					"a": "ah時至ah時",
-					"h": "ah時至h時"
+					"B": "Bh時至Bh時",
+					"h": "Bh時至h時"
 				},
 				"H": {
 					"H": "HH – HH"
 				},
 				"hm": {
 					"a": "ah:mm至ah:mm",
-					"h": "ah:mm至h:mm",
-					"m": "ah:mm至h:mm"
+					"B": "Bh:mm至Bh:mm",
+					"h": "Bh:mm至h:mm",
+					"m": "Bh:mm至h:mm"
 				},
 				"Hm": {
 					"H": "HH:mm – HH:mm",
@@ -1215,8 +1302,9 @@
 				},
 				"hmv": {
 					"a": "ah:mm至ah:mm [v]",
-					"h": "ah:mm至h:mm [v]",
-					"m": "ah:mm至h:mm [v]"
+					"B": "Bh:mm至Bh:mm [v]",
+					"h": "Bh:mm至h:mm [v]",
+					"m": "Bh:mm至h:mm [v]"
 				},
 				"Hmv": {
 					"H": "HH:mm – HH:mm [v]",
@@ -1224,7 +1312,8 @@
 				},
 				"hv": {
 					"a": "ah時至ah時 [v]",
-					"h": "ah時至h時 [v]"
+					"B": "Bh時至Bh時 [v]",
+					"h": "Bh時至h時 [v]"
 				},
 				"Hv": {
 					"H": "HH – HH [v]"
@@ -1531,6 +1620,66 @@
 				]
 			}
 		},
+		"flexibleDayPeriods": {
+			"format": {
+				"abbreviated": {
+					"midnight": "午夜",
+					"morning1": "清晨",
+					"morning2": "上午",
+					"afternoon1": "中午",
+					"afternoon2": "下午",
+					"evening1": "晚上",
+					"night1": "凌晨"
+				},
+				"narrow": {
+					"midnight": "午夜",
+					"morning1": "清晨",
+					"morning2": "上午",
+					"afternoon1": "中午",
+					"afternoon2": "下午",
+					"evening1": "晚上",
+					"night1": "凌晨"
+				},
+				"wide": {
+					"midnight": "午夜",
+					"morning1": "清晨",
+					"morning2": "上午",
+					"afternoon1": "中午",
+					"afternoon2": "下午",
+					"evening1": "晚上",
+					"night1": "凌晨"
+				}
+			},
+			"stand-alone": {
+				"abbreviated": {
+					"midnight": "午夜",
+					"morning1": "清晨",
+					"morning2": "上午",
+					"afternoon1": "中午",
+					"afternoon2": "下午",
+					"evening1": "晚上",
+					"night1": "凌晨"
+				},
+				"narrow": {
+					"midnight": "午夜",
+					"morning1": "清晨",
+					"morning2": "上午",
+					"afternoon1": "中午",
+					"afternoon2": "下午",
+					"evening1": "晚上",
+					"night1": "凌晨"
+				},
+				"wide": {
+					"midnight": "午夜",
+					"morning1": "清晨",
+					"morning2": "上午",
+					"afternoon1": "中午",
+					"afternoon2": "下午",
+					"evening1": "晚上",
+					"night1": "凌晨"
+				}
+			}
+		},
 		"era-wide": {
 			"0": "西元前",
 			"1": "西元"
@@ -1552,10 +1701,10 @@
 			"short": "Gy/M/d"
 		},
 		"timeFormats": {
-			"full": "ah:mm:ss [zzzz]",
-			"long": "ah:mm:ss [z]",
-			"medium": "ah:mm:ss",
-			"short": "ah:mm"
+			"full": "Bh:mm:ss [zzzz]",
+			"long": "Bh:mm:ss [z]",
+			"medium": "Bh:mm:ss",
+			"short": "Bh:mm"
 		},
 		"dateTimeFormats": {
 			"full": "{1}{0}",
@@ -1571,19 +1720,20 @@
 				"EBhm": "E Bh:mm",
 				"EBhms": "E Bh:mm:ss",
 				"Ed": "d日（E）",
-				"Ehm": "E ah:mm",
+				"Ehm": "E Bh:mm",
 				"EHm": "E HH:mm",
-				"Ehms": "E ah:mm:ss",
+				"Ehms": "E Bh:mm:ss",
 				"EHms": "E HH:mm:ss",
 				"Gy": "Gy年",
+				"GyMd": "G y/M/d",
 				"GyMMM": "Gy年M月",
 				"GyMMMd": "Gy年M月d日",
 				"GyMMMEd": "Gy年M月d日E",
-				"h": "ah時",
+				"h": "Bh時",
 				"H": "H時",
-				"hm": "ah:mm",
+				"hm": "Bh:mm",
 				"Hm": "H:mm",
-				"hms": "ah:mm:ss",
+				"hms": "Bh:mm:ss",
 				"Hms": "H:mm:ss",
 				"M": "M月",
 				"Md": "M/d",
@@ -1619,38 +1769,89 @@
 				"Year": "{1} {0}"
 			},
 			"intervalFormats": {
-				"intervalFormatFallback": "{0} – {1}",
+				"intervalFormatFallback": "{0} – {1}",
+				"Bh": {
+					"B": "h B – h B",
+					"h": "h–h B"
+				},
+				"Bhm": {
+					"B": "h:mm B – h:mm B",
+					"h": "h:mm–h:mm B",
+					"m": "h:mm–h:mm B"
+				},
 				"d": {
 					"d": "d日至d日"
 				},
+				"Gy": {
+					"G": "G y – G y",
+					"y": "G y–y"
+				},
+				"GyM": {
+					"G": "GGGGG y-MM – GGGGG y-MM",
+					"M": "GGGGG y-MM – y-MM",
+					"y": "GGGGG y-MM – y-MM"
+				},
+				"GyMd": {
+					"d": "GGGGG y-MM-dd – y-MM-dd",
+					"G": "GGGGG y-MM-dd – GGGGG y-MM-dd",
+					"M": "GGGGG y-MM-dd – y-MM-dd",
+					"y": "GGGGG y-MM-dd – y-MM-dd"
+				},
+				"GyMEd": {
+					"d": "GGGGG y-MM-dd, E – y-MM-dd, E",
+					"G": "GGGGG y-MM-dd, E – GGGGG y-MM-dd, E",
+					"M": "GGGGG y-MM-dd, E – y-MM-dd, E",
+					"y": "GGGGG y-MM-dd, E – y-MM-dd, E"
+				},
+				"GyMMM": {
+					"G": "G y MMM – G y MMM",
+					"M": "G y MMM–MMM",
+					"y": "G y MMM – y MMM"
+				},
+				"GyMMMd": {
+					"d": "G y MMM d–d",
+					"G": "G y MMM d – G y MMM d",
+					"M": "G y MMM d – MMM d",
+					"y": "G y MMM d – y MMM d"
+				},
+				"GyMMMEd": {
+					"d": "G y MMM d, E – MMM d, E",
+					"G": "G y MMM d, E – G y MMM d, E",
+					"M": "G y MMM d, E – MMM d, E",
+					"y": "G y MMM d, E – y MMM d, E"
+				},
 				"h": {
-					"a": "ah時至ah時",
-					"h": "ah時至h時"
+					"a": "h a – h a",
+					"B": "Bh時至Bh時",
+					"h": "Bh時至h時"
 				},
 				"H": {
 					"H": "HH–HH"
 				},
 				"hm": {
-					"a": "ah:mm至ah:mm",
-					"h": "ah:mm至h:mm",
-					"m": "ah:mm至h:mm"
+					"a": "h:mm a – h:mm a",
+					"B": "Bh:mm至Bh:mm",
+					"h": "Bh:mm至h:mm",
+					"m": "Bh:mm至h:mm"
 				},
 				"Hm": {
 					"H": "HH:mm–HH:mm",
 					"m": "HH:mm–HH:mm"
 				},
 				"hmv": {
-					"a": "ah:mm至ah:mm [v]",
-					"h": "ah:mm至h:mm [v]",
-					"m": "ah:mm至h:mm [v]"
+					"a": "h:mm a – h:mm a v",
+					"B": "Bh:mm至Bh:mm [v]",
+					"h": "Bh:mm至h:mm [v]",
+					"m": "Bh:mm至h:mm [v]"
 				},
 				"Hmv": {
 					"H": "HH:mm–HH:mm [v]",
 					"m": "HH:mm–HH:mm [v]"
 				},
 				"hv": {
-					"a": "ah時至ah時 [v]",
-					"h": "ah時至h時 [v]"
+					"a": "h a – h a v",
+					"B": "Bh時至Bh時 [v]",
+					"h": "Bh時至h時 [v]"
 				},
 				"Hv": {
 					"H": "HH–HH [v]"
@@ -1957,6 +2158,66 @@
 				]
 			}
 		},
+		"flexibleDayPeriods": {
+			"format": {
+				"abbreviated": {
+					"midnight": "午夜",
+					"morning1": "清晨",
+					"morning2": "上午",
+					"afternoon1": "中午",
+					"afternoon2": "下午",
+					"evening1": "晚上",
+					"night1": "凌晨"
+				},
+				"narrow": {
+					"midnight": "午夜",
+					"morning1": "清晨",
+					"morning2": "上午",
+					"afternoon1": "中午",
+					"afternoon2": "下午",
+					"evening1": "晚上",
+					"night1": "凌晨"
+				},
+				"wide": {
+					"midnight": "午夜",
+					"morning1": "清晨",
+					"morning2": "上午",
+					"afternoon1": "中午",
+					"afternoon2": "下午",
+					"evening1": "晚上",
+					"night1": "凌晨"
+				}
+			},
+			"stand-alone": {
+				"abbreviated": {
+					"midnight": "午夜",
+					"morning1": "清晨",
+					"morning2": "上午",
+					"afternoon1": "中午",
+					"afternoon2": "下午",
+					"evening1": "晚上",
+					"night1": "凌晨"
+				},
+				"narrow": {
+					"midnight": "午夜",
+					"morning1": "清晨",
+					"morning2": "上午",
+					"afternoon1": "中午",
+					"afternoon2": "下午",
+					"evening1": "晚上",
+					"night1": "凌晨"
+				},
+				"wide": {
+					"midnight": "午夜",
+					"morning1": "清晨",
+					"morning2": "上午",
+					"afternoon1": "中午",
+					"afternoon2": "下午",
+					"evening1": "晚上",
+					"night1": "凌晨"
+				}
+			}
+		},
 		"era-wide": {
 			"0": "伊斯蘭曆"
 		},
@@ -1975,13 +2236,13 @@
 			"short": "Gy/M/d"
 		},
 		"timeFormats": {
-			"full": "ah:mm:ss [zzzz]",
-			"long": "ah:mm:ss [z]",
-			"medium": "ah:mm:ss",
-			"short": "ah:mm"
+			"full": "Bh:mm:ss [zzzz]",
+			"long": "Bh:mm:ss [z]",
+			"medium": "Bh:mm:ss",
+			"short": "Bh:mm"
 		},
 		"dateTimeFormats": {
-			"full": "{1} {0}",
+			"full": "{1}{0}",
 			"long": "{1} {0}",
 			"medium": "{1} {0}",
 			"short": "{1} {0}",
@@ -1994,27 +2255,28 @@
 				"EBhm": "E Bh:mm",
 				"EBhms": "E Bh:mm:ss",
 				"Ed": "d日（E）",
-				"Ehm": "E ah:mm",
+				"Ehm": "E Bh:mm",
 				"EHm": "E HH:mm",
-				"Ehms": "E ah:mm:ss",
+				"Ehms": "E Bh:mm:ss",
 				"EHms": "E HH:mm:ss",
 				"Gy": "Gy年",
+				"GyMd": "G y/M/d",
 				"GyMMM": "Gy年M月",
 				"GyMMMd": "Gy年M月d日",
 				"GyMMMEd": "Gy年M月d日E",
-				"h": "ah時",
+				"h": "Bh時",
 				"H": "H時",
-				"hm": "ah:mm",
+				"hm": "Bh:mm",
 				"Hm": "HH:mm",
-				"hms": "ah:mm:ss",
+				"hms": "Bh:mm:ss",
 				"Hms": "HH:mm:ss",
 				"M": "M月",
 				"Md": "M/d",
 				"MEd": "M/d（E）",
 				"MMM": "LLL",
-				"MMMd": "MMM d",
+				"MMMd": "M月d日",
 				"MMMEd": "M月d日E",
-				"MMMMd": "MMMM d",
+				"MMMMd": "M月d日",
 				"ms": "mm:ss",
 				"y": "Gy年",
 				"yyyy": "Gy年",
@@ -2042,38 +2304,89 @@
 				"Year": "{1} {0}"
 			},
 			"intervalFormats": {
-				"intervalFormatFallback": "{0} – {1}",
+				"intervalFormatFallback": "{0} – {1}",
+				"Bh": {
+					"B": "h B – h B",
+					"h": "h–h B"
+				},
+				"Bhm": {
+					"B": "h:mm B – h:mm B",
+					"h": "h:mm–h:mm B",
+					"m": "h:mm–h:mm B"
+				},
 				"d": {
 					"d": "d日至d日"
 				},
+				"Gy": {
+					"G": "G y – G y",
+					"y": "G y–y"
+				},
+				"GyM": {
+					"G": "GGGGG y-MM – GGGGG y-MM",
+					"M": "GGGGG y-MM – y-MM",
+					"y": "GGGGG y-MM – y-MM"
+				},
+				"GyMd": {
+					"d": "GGGGG y-MM-dd – y-MM-dd",
+					"G": "GGGGG y-MM-dd – GGGGG y-MM-dd",
+					"M": "GGGGG y-MM-dd – y-MM-dd",
+					"y": "GGGGG y-MM-dd – y-MM-dd"
+				},
+				"GyMEd": {
+					"d": "GGGGG y-MM-dd, E – y-MM-dd, E",
+					"G": "GGGGG y-MM-dd, E – GGGGG y-MM-dd, E",
+					"M": "GGGGG y-MM-dd, E – y-MM-dd, E",
+					"y": "GGGGG y-MM-dd, E – y-MM-dd, E"
+				},
+				"GyMMM": {
+					"G": "G y MMM – G y MMM",
+					"M": "G y MMM–MMM",
+					"y": "G y MMM – y MMM"
+				},
+				"GyMMMd": {
+					"d": "G y MMM d–d",
+					"G": "G y MMM d – G y MMM d",
+					"M": "G y MMM d – MMM d",
+					"y": "G y MMM d – y MMM d"
+				},
+				"GyMMMEd": {
+					"d": "G y MMM d, E – MMM d, E",
+					"G": "G y MMM d, E – G y MMM d, E",
+					"M": "G y MMM d, E – MMM d, E",
+					"y": "G y MMM d, E – y MMM d, E"
+				},
 				"h": {
-					"a": "ah時至ah時",
-					"h": "ah時至h時"
+					"a": "h a – h a",
+					"B": "Bh時至Bh時",
+					"h": "Bh時至h時"
 				},
 				"H": {
 					"H": "HH–HH"
 				},
 				"hm": {
-					"a": "ah:mm至ah:mm",
-					"h": "ah:mm至h:mm",
-					"m": "ah:mm至h:mm"
+					"a": "h:mm a – h:mm a",
+					"B": "Bh:mm至Bh:mm",
+					"h": "Bh:mm至h:mm",
+					"m": "Bh:mm至h:mm"
 				},
 				"Hm": {
 					"H": "HH:mm–HH:mm",
 					"m": "HH:mm–HH:mm"
 				},
 				"hmv": {
-					"a": "ah:mm至ah:mm [v]",
-					"h": "ah:mm至h:mm [v]",
-					"m": "ah:mm至h:mm [v]"
+					"a": "h:mm a – h:mm a v",
+					"B": "Bh:mm至Bh:mm [v]",
+					"h": "Bh:mm至h:mm [v]",
+					"m": "Bh:mm至h:mm [v]"
 				},
 				"Hmv": {
 					"H": "HH:mm–HH:mm [v]",
 					"m": "HH:mm–HH:mm [v]"
 				},
 				"hv": {
-					"a": "ah時至ah時 [v]",
-					"h": "ah時至h時 [v]"
+					"a": "h a – h a v",
+					"B": "Bh時至Bh時 [v]",
+					"h": "Bh時至h時 [v]"
 				},
 				"Hv": {
 					"H": "HH–HH [v]"
@@ -2104,39 +2417,47 @@
 					"M": "LLLL至LLLL"
 				},
 				"y": {
-					"y": "G y至y"
+					"y": "G y至y",
+					"G": "G y至G y"
 				},
 				"yM": {
 					"M": "G y/M至y/M",
-					"y": "G y/M至y/M"
+					"y": "G y/M至y/M",
+					"G": "G y/M至G y/M"
 				},
 				"yMd": {
 					"d": "G y/M/d至y/M/d",
 					"M": "G y/M/d至y/M/d",
-					"y": "G y/M/d至y/M/d"
+					"y": "G y/M/d至y/M/d",
+					"G": "G y/M/d至G y/M/d"
 				},
 				"yMEd": {
 					"d": "G y/M/dE至y/M/dE",
 					"M": "G y/M/dE至y/M/dE",
-					"y": "G y/M/dE至y/M/dE"
+					"y": "G y/M/dE至y/M/dE",
+					"G": "G y/M/dE至G y/M/dE"
 				},
 				"yMMM": {
 					"M": "G y年M月至M月",
-					"y": "G y年M月至y年M月"
+					"y": "G y年M月至y年M月",
+					"G": "G y年M月至G y年M月"
 				},
 				"yMMMd": {
 					"d": "G y年M月d日至d日",
 					"M": "G y年M月d日至M月d日",
-					"y": "G y年M月d日至y年M月d日"
+					"y": "G y年M月d日至y年M月d日",
+					"G": "G y年M月d日至G y年M月d日"
 				},
 				"yMMMEd": {
 					"d": "G y年M月d日E至d日E",
 					"M": "G y年M月d日E至M月d日E",
-					"y": "G y年M月d日E至y年M月d日E"
+					"y": "G y年M月d日E至y年M月d日E",
+					"G": "G y年M月d日E至G y年M月d日E"
 				},
 				"yMMMM": {
 					"M": "G y年M月至M月",
-					"y": "G y年M月至y年M月"
+					"y": "G y年M月至y年M月",
+					"G": "G y年M月至G y年M月"
 				}
 			}
 		},
@@ -2380,23 +2701,86 @@
 				]
 			}
 		},
+		"flexibleDayPeriods": {
+			"format": {
+				"abbreviated": {
+					"midnight": "午夜",
+					"morning1": "清晨",
+					"morning2": "上午",
+					"afternoon1": "中午",
+					"afternoon2": "下午",
+					"evening1": "晚上",
+					"night1": "凌晨"
+				},
+				"narrow": {
+					"midnight": "午夜",
+					"morning1": "清晨",
+					"morning2": "上午",
+					"afternoon1": "中午",
+					"afternoon2": "下午",
+					"evening1": "晚上",
+					"night1": "凌晨"
+				},
+				"wide": {
+					"midnight": "午夜",
+					"morning1": "清晨",
+					"morning2": "上午",
+					"afternoon1": "中午",
+					"afternoon2": "下午",
+					"evening1": "晚上",
+					"night1": "凌晨"
+				}
+			},
+			"stand-alone": {
+				"abbreviated": {
+					"midnight": "午夜",
+					"morning1": "清晨",
+					"morning2": "上午",
+					"afternoon1": "中午",
+					"afternoon2": "下午",
+					"evening1": "晚上",
+					"night1": "凌晨"
+				},
+				"narrow": {
+					"midnight": "午夜",
+					"morning1": "清晨",
+					"morning2": "上午",
+					"afternoon1": "中午",
+					"afternoon2": "下午",
+					"evening1": "晚上",
+					"night1": "凌晨"
+				},
+				"wide": {
+					"midnight": "午夜",
+					"morning1": "清晨",
+					"morning2": "上午",
+					"afternoon1": "中午",
+					"afternoon2": "下午",
+					"evening1": "晚上",
+					"night1": "凌晨"
+				}
+			}
+		},
 		"era-wide": {
 			"232": "明治",
 			"233": "大正",
 			"234": "昭和",
-			"235": "平成"
+			"235": "平成",
+			"236": "令和"
 		},
 		"era-abbreviated": {
 			"232": "明治",
 			"233": "大正",
 			"234": "昭和",
-			"235": "平成"
+			"235": "平成",
+			"236": "令和"
 		},
 		"era-narrow": {
 			"232": "明治",
 			"233": "大正",
 			"234": "昭和",
-			"235": "平成"
+			"235": "平成",
+			"236": "令和"
 		}
 	},
 	"ca-persian": {
@@ -2407,10 +2791,10 @@
 			"short": "G y/M/d"
 		},
 		"timeFormats": {
-			"full": "ah:mm:ss [zzzz]",
-			"long": "ah:mm:ss [z]",
-			"medium": "ah:mm:ss",
-			"short": "ah:mm"
+			"full": "Bh:mm:ss [zzzz]",
+			"long": "Bh:mm:ss [z]",
+			"medium": "Bh:mm:ss",
+			"short": "Bh:mm"
 		},
 		"dateTimeFormats": {
 			"full": "{1}{0}",
@@ -2426,19 +2810,20 @@
 				"EBhm": "E Bh:mm",
 				"EBhms": "E Bh:mm:ss",
 				"Ed": "d E",
-				"Ehm": "E ah:mm",
+				"Ehm": "E Bh:mm",
 				"EHm": "E HH:mm",
-				"Ehms": "E ah:mm:ss",
+				"Ehms": "E Bh:mm:ss",
 				"EHms": "E HH:mm:ss",
 				"Gy": "G y年",
+				"GyMd": "G y/M/d",
 				"GyMMM": "G y年M月",
 				"GyMMMd": "G y年M月d日",
 				"GyMMMEd": "G y年M月d日 E",
-				"h": "ah時",
+				"h": "Bh時",
 				"H": "H時",
-				"hm": "ah:mm",
+				"hm": "Bh:mm",
 				"Hm": "H:mm",
-				"hms": "ah:mm:ss",
+				"hms": "Bh:mm:ss",
 				"Hms": "H:mm:ss",
 				"M": "M月",
 				"Md": "M/d",
@@ -2474,38 +2859,89 @@
 				"Year": "{1} {0}"
 			},
 			"intervalFormats": {
-				"intervalFormatFallback": "{0} – {1}",
+				"intervalFormatFallback": "{0} – {1}",
+				"Bh": {
+					"B": "h B – h B",
+					"h": "h–h B"
+				},
+				"Bhm": {
+					"B": "h:mm B – h:mm B",
+					"h": "h:mm–h:mm B",
+					"m": "h:mm–h:mm B"
+				},
 				"d": {
 					"d": "d日至d日"
 				},
+				"Gy": {
+					"G": "G y – G y",
+					"y": "G y–y"
+				},
+				"GyM": {
+					"G": "GGGGG y-MM – GGGGG y-MM",
+					"M": "GGGGG y-MM – y-MM",
+					"y": "GGGGG y-MM – y-MM"
+				},
+				"GyMd": {
+					"d": "GGGGG y-MM-dd – y-MM-dd",
+					"G": "GGGGG y-MM-dd – GGGGG y-MM-dd",
+					"M": "GGGGG y-MM-dd – y-MM-dd",
+					"y": "GGGGG y-MM-dd – y-MM-dd"
+				},
+				"GyMEd": {
+					"d": "GGGGG y-MM-dd, E – y-MM-dd, E",
+					"G": "GGGGG y-MM-dd, E – GGGGG y-MM-dd, E",
+					"M": "GGGGG y-MM-dd, E – y-MM-dd, E",
+					"y": "GGGGG y-MM-dd, E – y-MM-dd, E"
+				},
+				"GyMMM": {
+					"G": "G y MMM – G y MMM",
+					"M": "G y MMM–MMM",
+					"y": "G y MMM – y MMM"
+				},
+				"GyMMMd": {
+					"d": "G y MMM d–d",
+					"G": "G y MMM d – G y MMM d",
+					"M": "G y MMM d – MMM d",
+					"y": "G y MMM d – y MMM d"
+				},
+				"GyMMMEd": {
+					"d": "G y MMM d, E – MMM d, E",
+					"G": "G y MMM d, E – G y MMM d, E",
+					"M": "G y MMM d, E – MMM d, E",
+					"y": "G y MMM d, E – y MMM d, E"
+				},
 				"h": {
-					"a": "ah時至ah時",
-					"h": "ah時至h時"
+					"a": "h a – h a",
+					"B": "Bh時至Bh時",
+					"h": "Bh時至h時"
 				},
 				"H": {
 					"H": "HH–HH"
 				},
 				"hm": {
-					"a": "ah:mm至ah:mm",
-					"h": "ah:mm至h:mm",
-					"m": "ah:mm至h:mm"
+					"a": "h:mm a – h:mm a",
+					"B": "Bh:mm至Bh:mm",
+					"h": "Bh:mm至h:mm",
+					"m": "Bh:mm至h:mm"
 				},
 				"Hm": {
 					"H": "HH:mm–HH:mm",
 					"m": "HH:mm–HH:mm"
 				},
 				"hmv": {
-					"a": "ah:mm至ah:mm [v]",
-					"h": "ah:mm至h:mm [v]",
-					"m": "ah:mm至h:mm [v]"
+					"a": "h:mm a – h:mm a v",
+					"B": "Bh:mm至Bh:mm [v]",
+					"h": "Bh:mm至h:mm [v]",
+					"m": "Bh:mm至h:mm [v]"
 				},
 				"Hmv": {
 					"H": "HH:mm–HH:mm [v]",
 					"m": "HH:mm–HH:mm [v]"
 				},
 				"hv": {
-					"a": "ah時至ah時 [v]",
-					"h": "ah時至h時 [v]"
+					"a": "h a – h a v",
+					"B": "Bh時至Bh時 [v]",
+					"h": "Bh時至h時 [v]"
 				},
 				"Hv": {
 					"H": "HH–HH [v]"
@@ -2812,6 +3248,66 @@
 				]
 			}
 		},
+		"flexibleDayPeriods": {
+			"format": {
+				"abbreviated": {
+					"midnight": "午夜",
+					"morning1": "清晨",
+					"morning2": "上午",
+					"afternoon1": "中午",
+					"afternoon2": "下午",
+					"evening1": "晚上",
+					"night1": "凌晨"
+				},
+				"narrow": {
+					"midnight": "午夜",
+					"morning1": "清晨",
+					"morning2": "上午",
+					"afternoon1": "中午",
+					"afternoon2": "下午",
+					"evening1": "晚上",
+					"night1": "凌晨"
+				},
+				"wide": {
+					"midnight": "午夜",
+					"morning1": "清晨",
+					"morning2": "上午",
+					"afternoon1": "中午",
+					"afternoon2": "下午",
+					"evening1": "晚上",
+					"night1": "凌晨"
+				}
+			},
+			"stand-alone": {
+				"abbreviated": {
+					"midnight": "午夜",
+					"morning1": "清晨",
+					"morning2": "上午",
+					"afternoon1": "中午",
+					"afternoon2": "下午",
+					"evening1": "晚上",
+					"night1": "凌晨"
+				},
+				"narrow": {
+					"midnight": "午夜",
+					"morning1": "清晨",
+					"morning2": "上午",
+					"afternoon1": "中午",
+					"afternoon2": "下午",
+					"evening1": "晚上",
+					"night1": "凌晨"
+				},
+				"wide": {
+					"midnight": "午夜",
+					"morning1": "清晨",
+					"morning2": "上午",
+					"afternoon1": "中午",
+					"afternoon2": "下午",
+					"evening1": "晚上",
+					"night1": "凌晨"
+				}
+			}
+		},
 		"era-wide": {
 			"0": "波斯曆"
 		},
@@ -2820,6 +3316,541 @@
 		},
 		"era-narrow": {
 			"0": "波斯曆"
+		}
+	},
+	"ca-buddhist": {
+		"dateFormats": {
+			"full": "Gy年M月d日EEEE",
+			"long": "Gy年M月d日",
+			"medium": "Gy年M月d日",
+			"short": "Gy/M/d"
+		},
+		"timeFormats": {
+			"full": "Bh:mm:ss [zzzz]",
+			"long": "Bh:mm:ss [z]",
+			"medium": "Bh:mm:ss",
+			"short": "Bh:mm"
+		},
+		"dateTimeFormats": {
+			"full": "{1}{0}",
+			"long": "{1} {0}",
+			"medium": "{1} {0}",
+			"short": "{1} {0}",
+			"availableFormats": {
+				"Bh": "Bh時",
+				"Bhm": "Bh:mm",
+				"Bhms": "Bh:mm:ss",
+				"d": "d日",
+				"E": "ccc",
+				"EBhm": "E Bh:mm",
+				"EBhms": "E Bh:mm:ss",
+				"Ed": "d日（E）",
+				"Ehm": "E Bh:mm",
+				"EHm": "E HH:mm",
+				"Ehms": "E Bh:mm:ss",
+				"EHms": "E HH:mm:ss",
+				"Gy": "Gy年",
+				"GyMd": "Gy/M/d",
+				"GyMMM": "Gy年M月",
+				"GyMMMd": "Gy年M月d日",
+				"GyMMMEd": "Gy年M月d日E",
+				"h": "Bh時",
+				"H": "H時",
+				"hm": "Bh:mm",
+				"Hm": "H:mm",
+				"hms": "Bh:mm:ss",
+				"Hms": "H:mm:ss",
+				"M": "M月",
+				"Md": "M/d",
+				"MEd": "M/d（E）",
+				"MMM": "LLL",
+				"MMMd": "M月d日",
+				"MMMEd": "M月d日E",
+				"MMMMd": "M月d日",
+				"ms": "mm:ss",
+				"y": "Gy年",
+				"yyyy": "Gy年",
+				"yyyyM": "Gy/M",
+				"yyyyMd": "Gy/M/d",
+				"yyyyMEd": "Gy/M/d（E）",
+				"yyyyMMM": "Gy年M月",
+				"yyyyMMMd": "Gy年M月d日",
+				"yyyyMMMEd": "Gy年M月d日E",
+				"yyyyMMMM": "Gy年M月",
+				"yyyyQQQ": "Gy年QQQ",
+				"yyyyQQQQ": "Gy年QQQQ"
+			},
+			"appendItems": {
+				"Day": "{0} ({2}: {1})",
+				"Day-Of-Week": "{0} {1}",
+				"Era": "{1} {0}",
+				"Hour": "{0} ({2}: {1})",
+				"Minute": "{0} ({2}: {1})",
+				"Month": "{0} ({2}: {1})",
+				"Quarter": "{0} ({2}: {1})",
+				"Second": "{0} ({2}: {1})",
+				"Timezone": "{0} {1}",
+				"Week": "{0} ({2}: {1})",
+				"Year": "{1} {0}"
+			},
+			"intervalFormats": {
+				"intervalFormatFallback": "{0} – {1}",
+				"Bh": {
+					"B": "h B – h B",
+					"h": "h–h B"
+				},
+				"Bhm": {
+					"B": "h:mm B – h:mm B",
+					"h": "h:mm–h:mm B",
+					"m": "h:mm–h:mm B"
+				},
+				"d": {
+					"d": "d日至d日"
+				},
+				"Gy": {
+					"G": "G y – G y",
+					"y": "G y–y"
+				},
+				"GyM": {
+					"G": "GGGGG y-MM – GGGGG y-MM",
+					"M": "GGGGG y-MM – y-MM",
+					"y": "GGGGG y-MM – y-MM"
+				},
+				"GyMd": {
+					"d": "GGGGG y-MM-dd – y-MM-dd",
+					"G": "GGGGG y-MM-dd – GGGGG y-MM-dd",
+					"M": "GGGGG y-MM-dd – y-MM-dd",
+					"y": "GGGGG y-MM-dd – y-MM-dd"
+				},
+				"GyMEd": {
+					"d": "GGGGG y-MM-dd, E – y-MM-dd, E",
+					"G": "GGGGG y-MM-dd, E – GGGGG y-MM-dd, E",
+					"M": "GGGGG y-MM-dd, E – y-MM-dd, E",
+					"y": "GGGGG y-MM-dd, E – y-MM-dd, E"
+				},
+				"GyMMM": {
+					"G": "G y MMM – G y MMM",
+					"M": "G y MMM–MMM",
+					"y": "G y MMM – y MMM"
+				},
+				"GyMMMd": {
+					"d": "G y MMM d–d",
+					"G": "G y MMM d – G y MMM d",
+					"M": "G y MMM d – MMM d",
+					"y": "G y MMM d – y MMM d"
+				},
+				"GyMMMEd": {
+					"d": "G y MMM d, E – MMM d, E",
+					"G": "G y MMM d, E – G y MMM d, E",
+					"M": "G y MMM d, E – MMM d, E",
+					"y": "G y MMM d, E – y MMM d, E"
+				},
+				"h": {
+					"a": "h a – h a",
+					"B": "Bh時至Bh時",
+					"h": "Bh時至h時"
+				},
+				"H": {
+					"H": "HH–HH"
+				},
+				"hm": {
+					"a": "h:mm a – h:mm a",
+					"B": "Bh:mm至Bh:mm",
+					"h": "Bh:mm至h:mm",
+					"m": "Bh:mm至h:mm"
+				},
+				"Hm": {
+					"H": "HH:mm–HH:mm",
+					"m": "HH:mm–HH:mm"
+				},
+				"hmv": {
+					"a": "h:mm a – h:mm a v",
+					"B": "Bh:mm至Bh:mm [v]",
+					"h": "Bh:mm至h:mm [v]",
+					"m": "Bh:mm至h:mm [v]"
+				},
+				"Hmv": {
+					"H": "HH:mm–HH:mm [v]",
+					"m": "HH:mm–HH:mm [v]"
+				},
+				"hv": {
+					"a": "h a – h a v",
+					"B": "Bh時至Bh時 [v]",
+					"h": "Bh時至h時 [v]"
+				},
+				"Hv": {
+					"H": "HH–HH [v]"
+				},
+				"M": {
+					"M": "M月至M月"
+				},
+				"Md": {
+					"d": "M/d至M/d",
+					"M": "M/d至M/d"
+				},
+				"MEd": {
+					"d": "M/d E至M/d E",
+					"M": "M/d E至M/d E"
+				},
+				"MMM": {
+					"M": "LLL至LLL"
+				},
+				"MMMd": {
+					"d": "M月d日至d日",
+					"M": "M月d日至M月d日"
+				},
+				"MMMEd": {
+					"d": "M月d日E至d日E",
+					"M": "M月d日E至M月d日E"
+				},
+				"MMMM": {
+					"M": "LLLL至LLLL"
+				},
+				"y": {
+					"y": "G y至y"
+				},
+				"yM": {
+					"M": "G y/M至y/M",
+					"y": "G y/M至y/M"
+				},
+				"yMd": {
+					"d": "G y/M/d至y/M/d",
+					"M": "G y/M/d至y/M/d",
+					"y": "G y/M/d至y/M/d"
+				},
+				"yMEd": {
+					"d": "G y/M/dE至y/M/dE",
+					"M": "G y/M/dE至y/M/dE",
+					"y": "G y/M/dE至y/M/dE"
+				},
+				"yMMM": {
+					"M": "G y年M月至M月",
+					"y": "G y年M月至y年M月"
+				},
+				"yMMMd": {
+					"d": "G y年M月d日至d日",
+					"M": "G y年M月d日至M月d日",
+					"y": "G y年M月d日至y年M月d日"
+				},
+				"yMMMEd": {
+					"d": "G y年M月d日E至d日E",
+					"M": "G y年M月d日E至M月d日E",
+					"y": "G y年M月d日E至y年M月d日E"
+				},
+				"yMMMM": {
+					"M": "G y年M月至M月",
+					"y": "G y年M月至y年M月"
+				}
+			}
+		},
+		"months": {
+			"format": {
+				"abbreviated": [
+					"1月",
+					"2月",
+					"3月",
+					"4月",
+					"5月",
+					"6月",
+					"7月",
+					"8月",
+					"9月",
+					"10月",
+					"11月",
+					"12月"
+				],
+				"narrow": [
+					"1",
+					"2",
+					"3",
+					"4",
+					"5",
+					"6",
+					"7",
+					"8",
+					"9",
+					"10",
+					"11",
+					"12"
+				],
+				"wide": [
+					"1月",
+					"2月",
+					"3月",
+					"4月",
+					"5月",
+					"6月",
+					"7月",
+					"8月",
+					"9月",
+					"10月",
+					"11月",
+					"12月"
+				]
+			},
+			"stand-alone": {
+				"abbreviated": [
+					"1月",
+					"2月",
+					"3月",
+					"4月",
+					"5月",
+					"6月",
+					"7月",
+					"8月",
+					"9月",
+					"10月",
+					"11月",
+					"12月"
+				],
+				"narrow": [
+					"1",
+					"2",
+					"3",
+					"4",
+					"5",
+					"6",
+					"7",
+					"8",
+					"9",
+					"10",
+					"11",
+					"12"
+				],
+				"wide": [
+					"1月",
+					"2月",
+					"3月",
+					"4月",
+					"5月",
+					"6月",
+					"7月",
+					"8月",
+					"9月",
+					"10月",
+					"11月",
+					"12月"
+				]
+			}
+		},
+		"days": {
+			"format": {
+				"abbreviated": [
+					"週日",
+					"週一",
+					"週二",
+					"週三",
+					"週四",
+					"週五",
+					"週六"
+				],
+				"narrow": [
+					"日",
+					"一",
+					"二",
+					"三",
+					"四",
+					"五",
+					"六"
+				],
+				"short": [
+					"日",
+					"一",
+					"二",
+					"三",
+					"四",
+					"五",
+					"六"
+				],
+				"wide": [
+					"星期日",
+					"星期一",
+					"星期二",
+					"星期三",
+					"星期四",
+					"星期五",
+					"星期六"
+				]
+			},
+			"stand-alone": {
+				"abbreviated": [
+					"週日",
+					"週一",
+					"週二",
+					"週三",
+					"週四",
+					"週五",
+					"週六"
+				],
+				"narrow": [
+					"日",
+					"一",
+					"二",
+					"三",
+					"四",
+					"五",
+					"六"
+				],
+				"short": [
+					"日",
+					"一",
+					"二",
+					"三",
+					"四",
+					"五",
+					"六"
+				],
+				"wide": [
+					"星期日",
+					"星期一",
+					"星期二",
+					"星期三",
+					"星期四",
+					"星期五",
+					"星期六"
+				]
+			}
+		},
+		"quarters": {
+			"format": {
+				"abbreviated": [
+					"第1季",
+					"第2季",
+					"第3季",
+					"第4季"
+				],
+				"narrow": [
+					"1",
+					"2",
+					"3",
+					"4"
+				],
+				"wide": [
+					"第1季",
+					"第2季",
+					"第3季",
+					"第4季"
+				]
+			},
+			"stand-alone": {
+				"abbreviated": [
+					"第1季",
+					"第2季",
+					"第3季",
+					"第4季"
+				],
+				"narrow": [
+					"1",
+					"2",
+					"3",
+					"4"
+				],
+				"wide": [
+					"第1季",
+					"第2季",
+					"第3季",
+					"第4季"
+				]
+			}
+		},
+		"dayPeriods": {
+			"format": {
+				"abbreviated": [
+					"上午",
+					"下午"
+				],
+				"narrow": [
+					"上午",
+					"下午"
+				],
+				"wide": [
+					"上午",
+					"下午"
+				]
+			},
+			"stand-alone": {
+				"abbreviated": [
+					"上午",
+					"下午"
+				],
+				"narrow": [
+					"上午",
+					"下午"
+				],
+				"wide": [
+					"上午",
+					"下午"
+				]
+			}
+		},
+		"flexibleDayPeriods": {
+			"format": {
+				"abbreviated": {
+					"midnight": "午夜",
+					"morning1": "清晨",
+					"morning2": "上午",
+					"afternoon1": "中午",
+					"afternoon2": "下午",
+					"evening1": "晚上",
+					"night1": "凌晨"
+				},
+				"narrow": {
+					"midnight": "午夜",
+					"morning1": "清晨",
+					"morning2": "上午",
+					"afternoon1": "中午",
+					"afternoon2": "下午",
+					"evening1": "晚上",
+					"night1": "凌晨"
+				},
+				"wide": {
+					"midnight": "午夜",
+					"morning1": "清晨",
+					"morning2": "上午",
+					"afternoon1": "中午",
+					"afternoon2": "下午",
+					"evening1": "晚上",
+					"night1": "凌晨"
+				}
+			},
+			"stand-alone": {
+				"abbreviated": {
+					"midnight": "午夜",
+					"morning1": "清晨",
+					"morning2": "上午",
+					"afternoon1": "中午",
+					"afternoon2": "下午",
+					"evening1": "晚上",
+					"night1": "凌晨"
+				},
+				"narrow": {
+					"midnight": "午夜",
+					"morning1": "清晨",
+					"morning2": "上午",
+					"afternoon1": "中午",
+					"afternoon2": "下午",
+					"evening1": "晚上",
+					"night1": "凌晨"
+				},
+				"wide": {
+					"midnight": "午夜",
+					"morning1": "清晨",
+					"morning2": "上午",
+					"afternoon1": "中午",
+					"afternoon2": "下午",
+					"evening1": "晚上",
+					"night1": "凌晨"
+				}
+			}
+		},
+		"era-wide": {
+			"0": "佛曆"
+		},
+		"era-abbreviated": {
+			"0": "佛曆"
+		},
+		"era-narrow": {
+			"0": "佛曆"
 		}
 	},
 	"dateFields": {
@@ -3112,6 +4143,476 @@
 			"displayName": "時區"
 		}
 	},
+	"timezoneNames": {
+		"Africa": {
+			"Abidjan": "阿比讓",
+			"Accra": "阿克拉",
+			"Addis_Ababa": "阿迪斯阿貝巴",
+			"Algiers": "阿爾及爾",
+			"Asmara": "阿斯瑪拉",
+			"Bamako": "巴馬科",
+			"Bangui": "班吉",
+			"Banjul": "班竹",
+			"Bissau": "比紹",
+			"Blantyre": "布蘭太爾",
+			"Brazzaville": "布拉柴維爾",
+			"Bujumbura": "布松布拉",
+			"Cairo": "開羅",
+			"Casablanca": "卡薩布蘭卡",
+			"Ceuta": "休達",
+			"Conakry": "柯那克里",
+			"Dakar": "達喀爾",
+			"Dar_es_Salaam": "沙蘭港",
+			"Djibouti": "吉布地",
+			"Douala": "杜阿拉",
+			"El_Aaiun": "阿尤恩",
+			"Freetown": "自由城",
+			"Gaborone": "嘉柏隆里",
+			"Harare": "哈拉雷",
+			"Johannesburg": "約翰尼斯堡",
+			"Juba": "朱巴",
+			"Kampala": "坎帕拉",
+			"Khartoum": "喀土穆",
+			"Kigali": "基加利",
+			"Kinshasa": "金夏沙",
+			"Lagos": "拉哥斯",
+			"Libreville": "自由市",
+			"Lome": "洛美",
+			"Luanda": "羅安達",
+			"Lubumbashi": "盧本巴希",
+			"Lusaka": "路沙卡",
+			"Malabo": "馬拉博",
+			"Maputo": "馬普托",
+			"Maseru": "馬賽魯",
+			"Mbabane": "墨巴本",
+			"Mogadishu": "摩加迪休",
+			"Monrovia": "蒙羅維亞",
+			"Nairobi": "奈洛比",
+			"Ndjamena": "恩賈梅納",
+			"Niamey": "尼亞美",
+			"Nouakchott": "諾克少",
+			"Ouagadougou": "瓦加杜古",
+			"Porto-Novo": "波多諾佛",
+			"Sao_Tome": "聖多美",
+			"Tripoli": "的黎波里",
+			"Tunis": "突尼斯",
+			"Windhoek": "溫得和克",
+			"_parent": "非洲"
+		},
+		"America": {
+			"Adak": "艾達克",
+			"Anchorage": "安克拉治",
+			"Anguilla": "安奎拉",
+			"Antigua": "安地卡",
+			"Araguaina": "阿拉圭那",
+			"Argentina": {
+				"Buenos_Aires": "布宜諾斯艾利斯",
+				"Catamarca": "卡塔馬卡",
+				"Cordoba": "哥多華",
+				"Jujuy": "胡胡伊",
+				"La_Rioja": "拉略哈",
+				"Mendoza": "門多薩",
+				"Rio_Gallegos": "里奧加耶戈斯",
+				"Salta": "薩爾塔",
+				"San_Juan": "聖胡安",
+				"San_Luis": "聖路易",
+				"Tucuman": "吐庫曼",
+				"Ushuaia": "烏斯懷亞",
+				"_parent": "阿根廷"
+			},
+			"Aruba": "荷屬阿魯巴",
+			"Asuncion": "亞松森",
+			"Atikokan": "阿蒂科肯",
+			"Bahia": "巴伊阿",
+			"Bahia_Banderas": "巴伊亞班德拉斯",
+			"Barbados": "巴貝多",
+			"Belem": "貝倫",
+			"Belize": "貝里斯",
+			"Blanc-Sablon": "白朗薩布隆",
+			"Boa_Vista": "保維斯塔",
+			"Bogota": "波哥大",
+			"Boise": "波夕",
+			"Cambridge_Bay": "劍橋灣",
+			"Campo_Grande": "格蘭場",
+			"Cancun": "坎昆",
+			"Caracas": "卡拉卡斯",
+			"Cayenne": "開雲",
+			"Cayman": "開曼群島",
+			"Chicago": "芝加哥",
+			"Chihuahua": "奇華華",
+			"Ciudad_Juarez": "華雷斯",
+			"Costa_Rica": "哥斯大黎加",
+			"Creston": "克雷斯頓",
+			"Cuiaba": "古雅巴",
+			"Curacao": "庫拉索",
+			"Danmarkshavn": "丹馬沙文",
+			"Dawson": "道森",
+			"Dawson_Creek": "道森克里克",
+			"Denver": "丹佛",
+			"Detroit": "底特律",
+			"Dominica": "多米尼克",
+			"Edmonton": "艾德蒙吞",
+			"Eirunepe": "艾魯內佩",
+			"El_Salvador": "薩爾瓦多",
+			"Fort_Nelson": "納爾遜堡",
+			"Fortaleza": "福塔力莎",
+			"Glace_Bay": "格雷斯貝",
+			"Goose_Bay": "鵝灣",
+			"Grand_Turk": "大特克島",
+			"Grenada": "格瑞納達",
+			"Guadeloupe": "瓜地洛普",
+			"Guatemala": "瓜地馬拉",
+			"Guayaquil": "瓜亞基爾",
+			"Guyana": "蓋亞那",
+			"Halifax": "哈里法克斯",
+			"Havana": "哈瓦那",
+			"Hermosillo": "埃莫西約",
+			"Indiana": {
+				"Indianapolis": "印第安那波里斯",
+				"Knox": "印第安那州諾克斯",
+				"Marengo": "印第安那州馬倫哥",
+				"Petersburg": "印第安那州彼得堡",
+				"Tell_City": "印第安那州泰爾城",
+				"Vevay": "印第安那州維威",
+				"Vincennes": "印第安那州溫森斯",
+				"Winamac": "印第安那州威納馬克"
+			},
+			"Inuvik": "伊奴維克",
+			"Iqaluit": "伊魁特",
+			"Jamaica": "牙買加",
+			"Juneau": "朱諾",
+			"Kentucky": {
+				"Louisville": "路易斯維爾",
+				"Monticello": "肯塔基州蒙地卻羅"
+			},
+			"Kralendijk": "克拉倫代克",
+			"La_Paz": "拉巴斯",
+			"Lima": "利馬",
+			"Los_Angeles": "洛杉磯",
+			"Lower_Princes": "下太子區",
+			"Maceio": "馬瑟歐",
+			"Managua": "馬拿瓜",
+			"Manaus": "瑪瑙斯",
+			"Marigot": "馬里戈特",
+			"Martinique": "馬丁尼克",
+			"Matamoros": "馬塔莫羅斯",
+			"Mazatlan": "馬薩特蘭",
+			"Menominee": "美諾米尼",
+			"Merida": "梅里達",
+			"Metlakatla": "梅特拉卡特拉",
+			"Mexico_City": "墨西哥市",
+			"Miquelon": "密啟崙",
+			"Moncton": "蒙克頓",
+			"Monterrey": "蒙特瑞",
+			"Montevideo": "蒙特維多",
+			"Montserrat": "蒙哲臘",
+			"Nassau": "拿索",
+			"New_York": "紐約",
+			"Nipigon": "尼皮岡",
+			"Nome": "諾姆",
+			"Noronha": "諾倫哈",
+			"North_Dakota": {
+				"Beulah": "北達科他州布由拉",
+				"Center": "北達科他州中心",
+				"New_Salem": "北達科他州紐沙倫"
+			},
+			"Nuuk": "努克",
+			"Ojinaga": "奧希納加",
+			"Panama": "巴拿馬",
+			"Pangnirtung": "潘尼爾東",
+			"Paramaribo": "巴拉馬利波",
+			"Phoenix": "鳳凰城",
+			"Port-au-Prince": "太子港",
+			"Port_of_Spain": "西班牙港",
+			"Porto_Velho": "維留港",
+			"Puerto_Rico": "波多黎各",
+			"Punta_Arenas": "蓬塔阿雷納斯",
+			"Rainy_River": "雨河鎮",
+			"Rankin_Inlet": "蘭今灣",
+			"Recife": "雷西非",
+			"Regina": "里賈納",
+			"Resolute": "羅斯魯特",
+			"Rio_Branco": "里約布蘭",
+			"Santa_Isabel": "聖伊薩貝爾",
+			"Santarem": "聖塔倫",
+			"Santiago": "聖地牙哥",
+			"Santo_Domingo": "聖多明哥",
+			"Sao_Paulo": "聖保羅",
+			"Scoresbysund": "伊托科爾托米特",
+			"Sitka": "錫特卡",
+			"St_Barthelemy": "聖巴托洛繆島",
+			"St_Johns": "聖約翰",
+			"St_Kitts": "聖基茨",
+			"St_Lucia": "聖露西亞",
+			"St_Thomas": "聖托馬斯",
+			"St_Vincent": "聖文森",
+			"Swift_Current": "斯威夫特卡倫特",
+			"Tegucigalpa": "德古斯加巴",
+			"Thule": "杜里",
+			"Thunder_Bay": "珊德灣",
+			"Tijuana": "提華納",
+			"Toronto": "多倫多",
+			"Tortola": "托爾托拉",
+			"Vancouver": "溫哥華",
+			"Whitehorse": "懷特霍斯",
+			"Winnipeg": "溫尼伯",
+			"Yakutat": "雅庫塔",
+			"Yellowknife": "耶洛奈夫",
+			"_parent": "美洲"
+		},
+		"Antarctica": {
+			"Casey": "凱西",
+			"Davis": "戴維斯",
+			"DumontDUrville": "杜蒙杜比爾",
+			"Macquarie": "麥覺理",
+			"Mawson": "莫森",
+			"McMurdo": "麥克默多",
+			"Palmer": "帕麥",
+			"Rothera": "羅瑟拉",
+			"Syowa": "昭和基地",
+			"Troll": "綽爾",
+			"Vostok": "沃斯托克",
+			"_parent": "南極洲"
+		},
+		"Arctic": {
+			"Longyearbyen": "隆意耳拜恩"
+		},
+		"Asia": {
+			"Aden": "亞丁",
+			"Almaty": "阿拉木圖",
+			"Amman": "安曼",
+			"Anadyr": "阿那底",
+			"Aqtau": "阿克套",
+			"Aqtobe": "阿克托比",
+			"Ashgabat": "阿什哈巴特",
+			"Atyrau": "阿特勞",
+			"Baghdad": "巴格達",
+			"Bahrain": "巴林",
+			"Baku": "巴庫",
+			"Bangkok": "曼谷",
+			"Barnaul": "巴爾瑙爾",
+			"Beirut": "貝魯特",
+			"Bishkek": "比什凱克",
+			"Brunei": "汶萊",
+			"Chita": "赤塔",
+			"Choibalsan": "喬巴山",
+			"Colombo": "可倫坡",
+			"Damascus": "大馬士革",
+			"Dhaka": "達卡",
+			"Dili": "帝力",
+			"Dubai": "杜拜",
+			"Dushanbe": "杜桑貝",
+			"Famagusta": "法馬古斯塔",
+			"Gaza": "加薩",
+			"Hebron": "赫布隆",
+			"Ho_Chi_Minh": "胡志明市",
+			"Hong_Kong": "香港",
+			"Hovd": "科布多",
+			"Irkutsk": "伊爾庫次克",
+			"Jakarta": "雅加達",
+			"Jayapura": "加亞布拉",
+			"Jerusalem": "耶路撒冷",
+			"Kabul": "喀布爾",
+			"Kamchatka": "堪察加",
+			"Karachi": "喀拉蚩",
+			"Kathmandu": "加德滿都",
+			"Khandyga": "堪地加",
+			"Kolkata": "加爾各答",
+			"Krasnoyarsk": "克拉斯諾亞爾斯克",
+			"Kuala_Lumpur": "吉隆坡",
+			"Kuching": "古晉",
+			"Kuwait": "科威特",
+			"Macau": "澳門",
+			"Magadan": "馬加丹",
+			"Makassar": "馬卡沙爾",
+			"Manila": "馬尼拉",
+			"Muscat": "馬斯開特",
+			"Nicosia": "尼古西亞",
+			"Novokuznetsk": "新庫茲涅茨克",
+			"Novosibirsk": "新西伯利亞",
+			"Omsk": "鄂木斯克",
+			"Oral": "烏拉爾",
+			"Phnom_Penh": "金邊",
+			"Pontianak": "坤甸",
+			"Pyongyang": "平壤",
+			"Qatar": "卡達",
+			"Qostanay": "庫斯塔奈",
+			"Qyzylorda": "克孜勒奧爾達",
+			"Riyadh": "利雅德",
+			"Sakhalin": "庫頁島",
+			"Samarkand": "撒馬爾罕",
+			"Seoul": "首爾",
+			"Shanghai": "上海",
+			"Singapore": "新加坡",
+			"Srednekolymsk": "中科雷姆斯克",
+			"Taipei": "台北",
+			"Tashkent": "塔什干",
+			"Tbilisi": "第比利斯",
+			"Tehran": "德黑蘭",
+			"Thimphu": "廷布",
+			"Tokyo": "東京",
+			"Tomsk": "托木斯克",
+			"Ulaanbaatar": "烏蘭巴托",
+			"Urumqi": "烏魯木齊",
+			"Ust-Nera": "烏斯內拉",
+			"Vientiane": "永珍",
+			"Vladivostok": "海參崴",
+			"Yakutsk": "雅庫次克",
+			"Yangon": "仰光",
+			"Yekaterinburg": "葉卡捷林堡",
+			"Yerevan": "葉里溫",
+			"_parent": "亞洲"
+		},
+		"Atlantic": {
+			"Azores": "亞速爾群島",
+			"Bermuda": "百慕達",
+			"Canary": "加納利",
+			"Cape_Verde": "維德角",
+			"Faroe": "法羅群島",
+			"Madeira": "馬得拉群島",
+			"Reykjavik": "雷克雅維克",
+			"South_Georgia": "南喬治亞",
+			"St_Helena": "聖赫勒拿島",
+			"Stanley": "史坦利"
+		},
+		"Australia": {
+			"Adelaide": "阿得雷德",
+			"Brisbane": "布利斯班",
+			"Broken_Hill": "布羅肯希爾",
+			"Darwin": "達爾文",
+			"Eucla": "尤克拉",
+			"Hobart": "荷巴特",
+			"Lindeman": "林德曼",
+			"Lord_Howe": "豪勳爵島",
+			"Melbourne": "墨爾本",
+			"Perth": "伯斯",
+			"Sydney": "雪梨",
+			"_parent": "澳洲"
+		},
+		"Etc": {
+			"UTC": "UTC",
+			"Universal": "世界標準時間"
+		},
+		"Europe": {
+			"Amsterdam": "阿姆斯特丹",
+			"Andorra": "安道爾",
+			"Astrakhan": "阿斯特拉罕",
+			"Athens": "雅典",
+			"Belgrade": "貝爾格勒",
+			"Berlin": "柏林",
+			"Bratislava": "布拉提斯拉瓦",
+			"Brussels": "布魯塞爾",
+			"Bucharest": "布加勒斯特",
+			"Budapest": "布達佩斯",
+			"Busingen": "布辛根",
+			"Chisinau": "基西紐",
+			"Copenhagen": "哥本哈根",
+			"Dublin": "都柏林",
+			"Gibraltar": "直布羅陀",
+			"Guernsey": "根息島",
+			"Helsinki": "赫爾辛基",
+			"Isle_of_Man": "曼島",
+			"Istanbul": "伊斯坦堡",
+			"Jersey": "澤西島",
+			"Kaliningrad": "加里寧格勒",
+			"Kiev": "基輔",
+			"Kirov": "基洛夫",
+			"Lisbon": "里斯本",
+			"Ljubljana": "盧比安納",
+			"London": "倫敦",
+			"Luxembourg": "盧森堡",
+			"Madrid": "馬德里",
+			"Malta": "馬爾他",
+			"Mariehamn": "瑪麗港",
+			"Minsk": "明斯克",
+			"Monaco": "摩納哥",
+			"Moscow": "莫斯科",
+			"Oslo": "奧斯陸",
+			"Paris": "巴黎",
+			"Podgorica": "波多里察",
+			"Prague": "布拉格",
+			"Riga": "里加",
+			"Rome": "羅馬",
+			"Samara": "沙馬拉",
+			"San_Marino": "聖馬利諾",
+			"Sarajevo": "塞拉耶佛",
+			"Saratov": "薩拉托夫",
+			"Simferopol": "辛非洛浦",
+			"Skopje": "史高比耶",
+			"Sofia": "索菲亞",
+			"Stockholm": "斯德哥爾摩",
+			"Tallinn": "塔林",
+			"Tirane": "地拉那",
+			"Ulyanovsk": "烏里揚諾夫斯克",
+			"Uzhgorod": "烏茲哥洛",
+			"Vaduz": "瓦都茲",
+			"Vatican": "梵蒂岡",
+			"Vienna": "維也納",
+			"Vilnius": "維爾紐斯",
+			"Volgograd": "伏爾加格勒",
+			"Warsaw": "華沙",
+			"Zagreb": "札格瑞布",
+			"Zaporozhye": "札波羅結",
+			"Zurich": "蘇黎世",
+			"_parent": "歐洲"
+		},
+		"Indian": {
+			"Antananarivo": "安塔那那利弗",
+			"Chagos": "查戈斯",
+			"Christmas": "聖誕島",
+			"Cocos": "科科斯群島",
+			"Comoro": "科摩羅群島",
+			"Kerguelen": "凱爾蓋朗島",
+			"Mahe": "馬埃島",
+			"Maldives": "馬爾地夫",
+			"Mauritius": "模里西斯",
+			"Mayotte": "馬約特島",
+			"Reunion": "留尼旺島"
+		},
+		"Pacific": {
+			"Apia": "阿皮亞",
+			"Auckland": "奧克蘭",
+			"Bougainville": "布干維爾",
+			"Chatham": "查坦",
+			"Chuuk": "楚克",
+			"Easter": "復活島",
+			"Efate": "埃法特",
+			"Fakaofo": "法考福",
+			"Fiji": "斐濟",
+			"Funafuti": "富那富提",
+			"Galapagos": "加拉巴哥群島",
+			"Gambier": "甘比爾群島",
+			"Guadalcanal": "瓜達康納爾島",
+			"Guam": "關島",
+			"Honolulu": "檀香山",
+			"Kanton": "坎頓島",
+			"Kiritimati": "基里地馬地島",
+			"Kosrae": "科斯瑞",
+			"Kwajalein": "瓜加林島",
+			"Majuro": "馬朱諾",
+			"Marquesas": "馬可薩斯島",
+			"Midway": "中途島",
+			"Nauru": "諾魯",
+			"Niue": "紐埃島",
+			"Norfolk": "諾福克",
+			"Noumea": "諾美亞",
+			"Pago_Pago": "巴哥巴哥",
+			"Palau": "帛琉",
+			"Pitcairn": "皮特肯群島",
+			"Pohnpei": "波納佩",
+			"Port_Moresby": "莫士比港",
+			"Rarotonga": "拉羅湯加",
+			"Saipan": "塞班",
+			"Tahiti": "大溪地",
+			"Tarawa": "塔拉瓦",
+			"Tongatapu": "東加塔布島",
+			"Wake": "威克",
+			"Wallis": "瓦利斯"
+		}
+	},
+	"timezoneNamesFormats": {
+		"gmtFormat": "GMT{0}"
+	},
 	"decimalFormat": {
 		"standard": "#,##0.###"
 	},
@@ -3154,16 +4655,24 @@
 		"accounting": "¤#,##0.00;(¤#,##0.00)",
 		"currencySpacing": {
 			"beforeCurrency": {
-				"currencyMatch": "[:^S:]",
+				"currencyMatch": "[[:^S:]&[:^Z:]]",
 				"surroundingMatch": "[:digit:]",
 				"insertBetween": " "
 			},
 			"afterCurrency": {
-				"currencyMatch": "[:^S:]",
+				"currencyMatch": "[[:^S:]&[:^Z:]]",
 				"surroundingMatch": "[:digit:]",
 				"insertBetween": " "
 			}
-		}
+		},
+		"sap-standard": "#,##0.00¤",
+		"sap-accounting": "#,##0.00¤;(#,##0.00¤)"
+	},
+	"miscPattern": {
+		"approximately": "~{0}",
+		"atLeast": "{0}+",
+		"atMost": "≤{0}",
+		"range": "{0}-{1}"
 	},
 	"currencyFormat-short": {
 		"1000-other": "0",
@@ -3185,6 +4694,7 @@
 	"symbols-latn-percentSign": "%",
 	"symbols-latn-plusSign": "+",
 	"symbols-latn-minusSign": "-",
+	"symbols-latn-approximatelySign": "~",
 	"symbols-latn-exponential": "E",
 	"symbols-latn-superscriptingExponent": "×",
 	"symbols-latn-perMille": "‰",
@@ -3210,7 +4720,7 @@
 		"VND": "₫",
 		"XAF": "FCFA",
 		"XCD": "EC$",
-		"XOF": "CFA",
+		"XOF": "F CFA",
 		"XPF": "CFPF"
 	},
 	"rtl": false,
@@ -3240,14 +4750,109 @@
 	},
 	"units": {
 		"short": {
+			"10p-1": {
+				"unitPrefixPattern": "{0} 公寸"
+			},
+			"10p-2": {
+				"unitPrefixPattern": "{0} 公分"
+			},
+			"10p-3": {
+				"unitPrefixPattern": "{0} 公釐"
+			},
+			"10p-6": {
+				"unitPrefixPattern": "{0} 微米"
+			},
+			"10p-9": {
+				"unitPrefixPattern": "{0} 奈米"
+			},
+			"10p-12": {
+				"unitPrefixPattern": "{0} 皮米"
+			},
+			"10p-15": {
+				"unitPrefixPattern": "{0} 飛米"
+			},
+			"10p-18": {
+				"unitPrefixPattern": "{0} 阿米"
+			},
+			"10p-21": {
+				"unitPrefixPattern": "{0} 仄米"
+			},
+			"10p-24": {
+				"unitPrefixPattern": "{0} 麼米"
+			},
+			"10p1": {
+				"unitPrefixPattern": "{0} 公丈"
+			},
+			"10p2": {
+				"unitPrefixPattern": "{0} 公引"
+			},
+			"10p3": {
+				"unitPrefixPattern": "{0} 公里"
+			},
+			"10p6": {
+				"unitPrefixPattern": "{0} 兆米"
+			},
+			"10p9": {
+				"unitPrefixPattern": "{0} 吉米"
+			},
+			"10p12": {
+				"unitPrefixPattern": "{0} 太米"
+			},
+			"10p15": {
+				"unitPrefixPattern": "{0} 拍米"
+			},
+			"10p18": {
+				"unitPrefixPattern": "{0} 艾米"
+			},
+			"10p21": {
+				"unitPrefixPattern": "{0} 皆米"
+			},
+			"10p24": {
+				"unitPrefixPattern": "{0} 佑米"
+			},
+			"1024p1": {
+				"unitPrefixPattern": "Ki{0}"
+			},
+			"1024p2": {
+				"unitPrefixPattern": "Mi{0}"
+			},
+			"1024p3": {
+				"unitPrefixPattern": "Gi{0}"
+			},
+			"1024p4": {
+				"unitPrefixPattern": "Ti{0}"
+			},
+			"1024p5": {
+				"unitPrefixPattern": "Pi{0}"
+			},
+			"1024p6": {
+				"unitPrefixPattern": "Ei{0}"
+			},
+			"1024p7": {
+				"unitPrefixPattern": "Zi{0}"
+			},
+			"1024p8": {
+				"unitPrefixPattern": "Yi{0}"
+			},
 			"per": {
 				"compoundUnitPattern": "{0}/{1}"
+			},
+			"power2": {
+				"compoundUnitPattern1": "{0}²",
+				"compoundUnitPattern1-count-other": "{0}²"
+			},
+			"power3": {
+				"compoundUnitPattern1": "{0}³",
+				"compoundUnitPattern1-count-other": "{0}³"
+			},
+			"times": {
+				"compoundUnitPattern": "{0}⋅{1}"
 			},
 			"acceleration-g-force": {
 				"displayName": "G 力",
 				"unitPattern-count-other": "{0} G 力"
 			},
-			"acceleration-meter-per-second-squared": {
+			"acceleration-meter-per-square-second": {
 				"displayName": "公尺/平方秒",
 				"unitPattern-count-other": "{0} 公尺/平方秒"
 			},
@@ -3312,11 +4917,15 @@
 				"unitPattern-count-other": "{0} 平方英寸",
 				"perUnitPattern": "{0}/平方英寸"
 			},
+			"area-dunam": {
+				"displayName": "杜納畝",
+				"unitPattern-count-other": "{0} 杜納畝"
+			},
 			"concentr-karat": {
 				"displayName": "克拉",
 				"unitPattern-count-other": "{0} 克拉"
 			},
-			"concentr-milligram-per-deciliter": {
+			"concentr-milligram-ofglucose-per-deciliter": {
 				"displayName": "毫克/分升",
 				"unitPattern-count-other": "{0} 毫克/分升"
 			},
@@ -3324,15 +4933,35 @@
 				"displayName": "毫莫耳/公升",
 				"unitPattern-count-other": "{0} 毫莫耳/公升"
 			},
-			"concentr-part-per-million": {
+			"concentr-item": {
+				"displayName": "個項目",
+				"unitPattern-count-other": "{0} 個項目"
+			},
+			"concentr-permillion": {
 				"displayName": "百萬分率",
 				"unitPattern-count-other": "{0} 百萬分率"
+			},
+			"concentr-percent": {
+				"displayName": "百分比",
+				"unitPattern-count-other": "{0}%"
+			},
+			"concentr-permille": {
+				"displayName": "千分比",
+				"unitPattern-count-other": "{0}‰"
+			},
+			"concentr-permyriad": {
+				"displayName": "‱",
+				"unitPattern-count-other": "{0}‱"
+			},
+			"concentr-mole": {
+				"displayName": "莫耳",
+				"unitPattern-count-other": "{0} 莫耳"
 			},
 			"consumption-liter-per-kilometer": {
 				"displayName": "公升/公里",
 				"unitPattern-count-other": "{0} 升/公里"
 			},
-			"consumption-liter-per-100kilometers": {
+			"consumption-liter-per-100-kilometer": {
 				"displayName": "升/100 公里",
 				"unitPattern-count-other": "{0} 升/100 公里"
 			},
@@ -3343,6 +4972,10 @@
 			"consumption-mile-per-gallon-imperial": {
 				"displayName": "英里/英制加侖",
 				"unitPattern-count-other": "{0} 英里/英制加侖"
+			},
+			"digital-petabyte": {
+				"displayName": "PB",
+				"unitPattern-count-other": "{0} PB"
 			},
 			"digital-terabyte": {
 				"displayName": "TB",
@@ -3388,10 +5021,19 @@
 				"displayName": "世紀",
 				"unitPattern-count-other": "{0} 世紀"
 			},
+			"duration-decade": {
+				"displayName": "10 年",
+				"unitPattern-count-other": "{0}0 年"
+			},
 			"duration-year": {
 				"displayName": "年",
 				"unitPattern-count-other": "{0} 年",
 				"perUnitPattern": "{0}/年"
+			},
+			"duration-quarter": {
+				"displayName": "刻",
+				"unitPattern-count-other": "{0} 刻",
+				"perUnitPattern": "{0}/刻"
 			},
 			"duration-month": {
 				"displayName": "月",
@@ -3475,6 +5117,30 @@
 				"displayName": "千瓦小時",
 				"unitPattern-count-other": "{0} 千瓦小時"
 			},
+			"energy-electronvolt": {
+				"displayName": "電子伏特",
+				"unitPattern-count-other": "{0} 電子伏特"
+			},
+			"energy-british-thermal-unit": {
+				"displayName": "英熱單位",
+				"unitPattern-count-other": "{0} 英熱單位"
+			},
+			"energy-therm-us": {
+				"displayName": "美制撒姆",
+				"unitPattern-count-other": "{0} 美制撒姆"
+			},
+			"force-pound-force": {
+				"displayName": "lbf",
+				"unitPattern-count-other": "{0} lbf"
+			},
+			"force-newton": {
+				"displayName": "N",
+				"unitPattern-count-other": "{0} N"
+			},
+			"force-kilowatt-hour-per-100-kilometer": {
+				"displayName": "kWh/100km",
+				"unitPattern-count-other": "{0} kWh/100km"
+			},
 			"frequency-gigahertz": {
 				"displayName": "吉赫",
 				"unitPattern-count-other": "{0} 吉赫"
@@ -3490,6 +5156,42 @@
 			"frequency-hertz": {
 				"displayName": "赫茲",
 				"unitPattern-count-other": "{0} 赫茲"
+			},
+			"graphics-em": {
+				"displayName": "em",
+				"unitPattern-count-other": "{0} em"
+			},
+			"graphics-pixel": {
+				"displayName": "px",
+				"unitPattern-count-other": "{0} px"
+			},
+			"graphics-megapixel": {
+				"displayName": "MP",
+				"unitPattern-count-other": "{0} MP"
+			},
+			"graphics-pixel-per-centimeter": {
+				"displayName": "ppcm",
+				"unitPattern-count-other": "{0} ppcm"
+			},
+			"graphics-pixel-per-inch": {
+				"displayName": "ppi",
+				"unitPattern-count-other": "{0} ppi"
+			},
+			"graphics-dot-per-centimeter": {
+				"displayName": "dpcm",
+				"unitPattern-count-other": "{0} dpcm"
+			},
+			"graphics-dot-per-inch": {
+				"displayName": "dpi",
+				"unitPattern-count-other": "{0} dpi"
+			},
+			"graphics-dot": {
+				"displayName": "px",
+				"unitPattern-count-other": "{0} px"
+			},
+			"length-earth-radius": {
+				"displayName": "R⊕",
+				"unitPattern-count-other": "{0} R⊕"
 			},
 			"length-kilometer": {
 				"displayName": "公里",
@@ -3561,7 +5263,7 @@
 				"unitPattern-count-other": "{0} 化朗"
 			},
 			"length-fathom": {
-				"displayName": "fm",
+				"displayName": "英尋",
 				"unitPattern-count-other": "{0} 英尋"
 			},
 			"length-nautical-mile": {
@@ -3576,11 +5278,27 @@
 				"displayName": "點",
 				"unitPattern-count-other": "{0} 點"
 			},
+			"length-solar-radius": {
+				"displayName": "R☉",
+				"unitPattern-count-other": "{0} R☉"
+			},
 			"light-lux": {
 				"displayName": "勒克斯",
 				"unitPattern-count-other": "{0} 勒克斯"
 			},
-			"mass-metric-ton": {
+			"light-candela": {
+				"displayName": "燭光",
+				"unitPattern-count-other": "{0} 燭光"
+			},
+			"light-lumen": {
+				"displayName": "流明",
+				"unitPattern-count-other": "{0} 流明"
+			},
+			"light-solar-luminosity": {
+				"displayName": "L☉",
+				"unitPattern-count-other": "{0} L☉"
+			},
+			"mass-tonne": {
 				"displayName": "公噸",
 				"unitPattern-count-other": "{0} 公噸"
 			},
@@ -3603,11 +5321,11 @@
 				"unitPattern-count-other": "{0} 微克"
 			},
 			"mass-ton": {
-				"displayName": "英噸",
-				"unitPattern-count-other": "{0} 英噸"
+				"displayName": "美噸",
+				"unitPattern-count-other": "{0} 美噸"
 			},
 			"mass-stone": {
-				"displayName": "st",
+				"displayName": "英石",
 				"unitPattern-count-other": "{0} 英石"
 			},
 			"mass-pound": {
@@ -3627,6 +5345,22 @@
 			"mass-carat": {
 				"displayName": "克拉",
 				"unitPattern-count-other": "{0} 克拉"
+			},
+			"mass-dalton": {
+				"displayName": "達爾頓",
+				"unitPattern-count-other": "{0} 達爾頓"
+			},
+			"mass-earth-mass": {
+				"displayName": "地球質量",
+				"unitPattern-count-other": "{0} 地球質量"
+			},
+			"mass-solar-mass": {
+				"displayName": "太陽質量",
+				"unitPattern-count-other": "{0} 太陽質量"
+			},
+			"mass-grain": {
+				"displayName": "格林",
+				"unitPattern-count-other": "{0} 格林"
 			},
 			"power-gigawatt": {
 				"displayName": "吉瓦",
@@ -3652,25 +5386,45 @@
 				"displayName": "匹",
 				"unitPattern-count-other": "{0} 匹"
 			},
-			"pressure-hectopascal": {
-				"displayName": "百帕",
-				"unitPattern-count-other": "{0} 百帕"
-			},
-			"pressure-millimeter-of-mercury": {
+			"pressure-millimeter-ofhg": {
 				"displayName": "毫米汞柱",
 				"unitPattern-count-other": "{0} 毫米汞柱"
 			},
-			"pressure-pound-per-square-inch": {
+			"pressure-pound-force-per-square-inch": {
 				"displayName": "磅力/平方英寸",
 				"unitPattern-count-other": "{0} 磅力/平方英寸"
 			},
-			"pressure-inch-hg": {
+			"pressure-inch-ofhg": {
 				"displayName": "英寸汞柱",
 				"unitPattern-count-other": "{0} 英寸汞柱"
+			},
+			"pressure-bar": {
+				"displayName": "巴",
+				"unitPattern-count-other": "{0} 巴"
 			},
 			"pressure-millibar": {
 				"displayName": "毫巴",
 				"unitPattern-count-other": "{0} 毫巴"
+			},
+			"pressure-atmosphere": {
+				"displayName": "atm",
+				"unitPattern-count-other": "{0} atm"
+			},
+			"pressure-pascal": {
+				"displayName": "帕",
+				"unitPattern-count-other": "{0} 帕"
+			},
+			"pressure-hectopascal": {
+				"displayName": "百帕",
+				"unitPattern-count-other": "{0} 百帕"
+			},
+			"pressure-kilopascal": {
+				"displayName": "千帕",
+				"unitPattern-count-other": "{0} 千帕"
+			},
+			"pressure-megapascal": {
+				"displayName": "兆帕",
+				"unitPattern-count-other": "{0} 兆帕"
 			},
 			"speed-kilometer-per-hour": {
 				"displayName": "公里/小時",
@@ -3701,8 +5455,16 @@
 				"unitPattern-count-other": "{0}°F"
 			},
 			"temperature-kelvin": {
-				"displayName": "K",
-				"unitPattern-count-other": "{0} K"
+				"displayName": "克耳文",
+				"unitPattern-count-other": "{0} 克耳文"
+			},
+			"torque-pound-force-foot": {
+				"displayName": "磅英尺",
+				"unitPattern-count-other": "{0} 磅英尺"
+			},
+			"torque-newton-meter": {
+				"displayName": "牛頓米",
+				"unitPattern-count-other": "{0} 牛頓米"
 			},
 			"volume-cubic-kilometer": {
 				"displayName": "立方公里",
@@ -3772,7 +5534,7 @@
 				"unitPattern-count-other": "{0} 英畝英尺"
 			},
 			"volume-bushel": {
-				"displayName": "bu",
+				"displayName": "蒲式耳",
 				"unitPattern-count-other": "{0} 蒲式耳"
 			},
 			"volume-gallon": {
@@ -3801,6 +5563,10 @@
 				"displayName": "液盎司",
 				"unitPattern-count-other": "{0} 液盎司"
 			},
+			"volume-fluid-ounce-imperial": {
+				"displayName": "英液盎司",
+				"unitPattern-count-other": "{0} 英液盎司"
+			},
 			"volume-tablespoon": {
 				"displayName": "湯匙",
 				"unitPattern-count-other": "{0} 湯匙"
@@ -3809,7 +5575,40 @@
 				"displayName": "茶匙",
 				"unitPattern-count-other": "{0} 茶匙"
 			},
+			"volume-barrel": {
+				"displayName": "桶",
+				"unitPattern-count-other": "{0} 桶"
+			},
+			"volume-dessert-spoon": {
+				"displayName": "甜品匙",
+				"unitPattern-count-other": "{0} 甜品匙"
+			},
+			"volume-dessert-spoon-imperial": {
+				"displayName": "英制甜品匙",
+				"unitPattern-count-other": "{0} 英制甜品匙"
+			},
+			"volume-drop": {
+				"displayName": "滴",
+				"unitPattern-count-other": "{0} 滴"
+			},
+			"volume-dram": {
+				"displayName": "打蘭",
+				"unitPattern-count-other": "{0} 打蘭"
+			},
+			"volume-jigger": {
+				"displayName": "量酒杯",
+				"unitPattern-count-other": "{0} 量酒杯"
+			},
+			"volume-pinch": {
+				"displayName": "小撮",
+				"unitPattern-count-other": "{0} 小撮"
+			},
+			"volume-quart-imperial": {
+				"displayName": "英制夸脫",
+				"unitPattern-count-other": "{0} 英制夸脫"
+			},
 			"coordinateUnit": {
+				"displayName": "方向",
 				"east": "東經{0}",
 				"north": "北緯{0}",
 				"south": "南緯{0}",
@@ -3817,24 +5616,39 @@
 			}
 		}
 	},
+	"lenient-scope-number": {
+		"minusSign": "-‐‒–⁻₋−➖﹣－",
+		"commaSign": ",،٫⹁、︐︑﹐﹑，､",
+		"plusSign": "+⁺₊➕﬩﹢＋"
+	},
+	"currencyFormat-sap-short": {
+		"1000-other": "0",
+		"10000-other": "0萬 ¤",
+		"100000-other": "00萬 ¤",
+		"1000000-other": "000萬 ¤",
+		"10000000-other": "0000萬 ¤",
+		"100000000-other": "0億 ¤",
+		"1000000000-other": "00億 ¤",
+		"10000000000-other": "000億 ¤",
+		"100000000000-other": "0000億 ¤",
+		"1000000000000-other": "0兆 ¤",
+		"10000000000000-other": "00兆 ¤",
+		"100000000000000-other": "000兆 ¤"
+	},
 	"currencyDigits": {
 		"ADP": 0,
 		"AFN": 0,
 		"ALL": 0,
-		"AMD": 0,
 		"BHD": 3,
 		"BIF": 0,
 		"BYR": 0,
 		"CLF": 4,
 		"CLP": 0,
-		"COP": 0,
 		"DEFAULT": 2,
 		"DJF": 0,
 		"ESP": 0,
 		"GNF": 0,
-		"GYD": 0,
 		"HUF": 0,
-		"IDR": 0,
 		"IQD": 0,
 		"IRR": 0,
 		"ISK": 0,
@@ -3852,11 +5666,8 @@
 		"MGA": 0,
 		"MGF": 0,
 		"MMK": 0,
-		"MNT": 0,
 		"MRO": 0,
-		"MUR": 0,
 		"OMR": 3,
-		"PKR": 0,
 		"PYG": 0,
 		"RSD": 0,
 		"RWF": 0,
@@ -3868,10 +5679,9 @@
 		"TND": 3,
 		"TRL": 0,
 		"TWD": 0,
-		"TZS": 0,
 		"UGX": 0,
 		"UYI": 0,
-		"UZS": 0,
+		"UYW": 4,
 		"VND": 0,
 		"VUV": 0,
 		"XAF": 0,
@@ -3887,40 +5697,96 @@
 	"weekData-weekendStart": 6,
 	"weekData-weekendEnd": 0,
 	"timeData": {
-		"_allowed": "hB hb H h",
+		"_allowed": "hB hb h H",
 		"_preferred": "h"
 	},
 	"eras-gregorian": {
 		"0": {
+			"_code": "gregory-inverse",
+			"_aliases": "bc bce",
 			"_end": "0-12-31"
 		},
 		"1": {
+			"_code": "gregory",
+			"_aliases": "ad ce",
 			"_start": "1-01-01"
 		}
 	},
 	"eras-islamic": {
 		"0": {
+			"_code": "islamic",
+			"_aliases": "ah",
 			"_start": "622-7-15"
 		}
 	},
 	"eras-persian": {
 		"0": {
+			"_code": "persian",
+			"_aliases": "ap",
 			"_start": "622-01-01"
+		}
+	},
+	"eras-buddhist": {
+		"0": {
+			"_code": "buddhist",
+			"_aliases": "be",
+			"_start": "-542-01-01"
 		}
 	},
 	"eras-japanese": {
 		"232": {
+			"_code": "meiji",
 			"_start": "1868-9-8"
 		},
 		"233": {
+			"_code": "taisho",
 			"_start": "1912-7-30"
 		},
 		"234": {
+			"_code": "showa",
 			"_start": "1926-12-25"
 		},
 		"235": {
+			"_code": "heisei",
 			"_start": "1989-1-8"
+		},
+		"236": {
+			"_code": "reiwa",
+			"_start": "2019-5-1"
 		}
 	},
-	"calendarPreference": "gregorian roc chinese"
+	"dayPeriodRules": {
+		"afternoon1": {
+			"_before": "13:00",
+			"_from": "12:00"
+		},
+		"afternoon2": {
+			"_before": "19:00",
+			"_from": "13:00"
+		},
+		"evening1": {
+			"_before": "24:00",
+			"_from": "19:00"
+		},
+		"midnight": {
+			"_at": "00:00"
+		},
+		"morning1": {
+			"_before": "08:00",
+			"_from": "05:00"
+		},
+		"morning2": {
+			"_before": "12:00",
+			"_from": "08:00"
+		},
+		"night1": {
+			"_before": "05:00",
+			"_from": "00:00"
+		}
+	},
+	"calendarPreference": [
+		"gregorian",
+		"roc",
+		"chinese"
+	]
 }

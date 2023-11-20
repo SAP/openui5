@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>Labeling</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<script src="../../../scripts/boot.js"></script>
+</head>
+<body class="sapUiBody topicBody">
+	<div class="topic">
+		<div class="content">
+			<h1 id="overview">Overview</h1>
+
+			<h2 id="landmark-api">UI5 Landmarks API</h2>
+			<p>
+				The purpose of this technique is to provide programmatic access to sections of a web page.
+				Landmark roles (or "landmarks") programmatically identify sections of a page.
+				Landmarks help assistive technology (AT) users orient themselves to a page and help them navigate easily to various sections within a page.
+			</p>
+			<p>
+				Landmarks also provide an easy way for AT users to skip over blocks of content that are repeated on multiple pages and notify them of the programmatic structure of a page.
+				For instance, if there is a common navigation menu found on every page,
+				landmarks can be used to skip over it and navigate from one section to another.
+			</p>
+
+
+			<p>Support for landmark roles in UI5 is provided for:</p>
+			<ul>
+				<li>sap.f.DynamicPage</li>
+				<li>sap.m.Page</li>
+				<li>sap.m.Panel</li>
+				<li>sap.uxap.ObjectPage</li>
+			</ul>
+
+			<p>Before seeing how a landmark is set to these controls you must understand what landmark roles we can use.</p>
+			<p>Supported landmark roles in UI5 are stored in enum <a href="https://sdk.openui5.org/api/sap.ui.core.AccessibleLandmarkRole" target="_blank">sap.ui.core.AccessibleLandmarkRole</a>.</p>
+
+			<h3 id="dynamic-page">sap.f.DynamicPage</h3>
+			<p>To add a landmark to the DynamicPage you must use <code>landmarkInfo</code> aggregation with value <a href="https://sdk.openui5.org/api/sap.f.DynamicPageAccessibleLandmarkInfo" target="_blank">sap.f.DynamicPageAccessibleLandmarkInfo</a>. Depending on your use case you should choose a value from <a href="#usecase">AccessibleLandmarkRole</a>.</p>
+			<pre class="lang-xml">
+&lt;landmarkInfo&gt;
+	&lt;DynamicPageAccessibleLandmarkInfo
+			rootRole="Region"
+			rootLabel="Product Details"
+			contentRole="Main"
+			contentLabel="Product Description"
+			footerRole="Banner"
+			footerLabel="Product Footer"
+			headerRole="Banner"
+			headerLabel="Product Header" /&gt;
+&lt;/landmarkInfo&gt;</pre>
+			<a class="try-button" href="../../../index.html#/explore/dynamicPage" target="_parent">See Example</a>
+
+			<h3 id="m-page">sap.m.Page</h3>
+			<p>To add a landmark to the Page you must use <code>landmarkInfo</code> aggregation with value <a href="https://sdk.openui5.org/api/sap.m.PageAccessibleLandmarkInfo" target="_blank">sap.m.PageAccessibleLandmarkInfo</a>. Depending on your use case you should choose a value from <a href="#usecase">AccessibleLandmarkRole</a>.</p>
+				<pre class="lang-xml">
+&lt;landmarkInfo&gt;
+	&lt;PageAccessibleLandmarkInfo
+			rootRole="Region"
+			rootLabel="Product Details"
+			contentRole="Main"
+			contentLabel="Product Description"
+			headerRole="Region"
+			headerLabel="Product Header"
+			footerRole="Region"
+			footerLabel="Product Footer"
+			subHeaderRole="Region"
+			subHeaderLabel="Product second header" /&gt;
+&lt;/landmarkInfo&gt;</pre>
+			<a class="try-button" href="../../../index.html#/explore/page" target="_parent">See Example</a>
+
+			<h2 id="m-panel">sap.m.Panel</h2>
+			<p>To add a landmark to the Panel we must use <code>accessibleRole</code> property with value from enum <a href="https://sdk.openui5.org/api/sap.m.PanelAccessibleRole"></a>sap.m.PanelAccessibleRole.</p>
+			<pre class="lang-xml">
+&lt;Panel accessibleRole="Region"&gt;&lt;/Panel&gt;</pre>
+
+			<a class="try-button" href="../../../index.html#/explore/panel" target="_parent">See Example</a>
+			<h2 id="object-page">sap.uxap.ObjectPage</h2>
+			<p>To add a landmark to the ObjectPage we must use <code>landmarkInfo</code> aggregation with value <a href="https://sdk.openui5.org/api/sap.uxap.DynamicPageAccessibleLandmarkInfo" target="_blank">sap.uxap.ObjectPageAccessibleLandmarkInfo</a>. Depending on your use case you should choose a value from <a href="#usecase">AccessibleLandmarkRole</a>.</p>
+			<pre class="lang-xml">
+&lt;landmarkInfo&gt;
+	&lt;ObjectPageAccessibleLandmarkInfo
+			rootRole="Region"
+			rootLabel="Order Information"
+			contentRole="Main"
+			contentLabel="Order Details"
+			headerRole="Region"
+			headerLabel="Order Header"
+			footerRole="Region"
+			footerLabel="Order Footer"
+			navigationRole="Navigation"
+			navigationLabel="Order navigation" /&gt;
+&lt;/landmarkInfo&gt;</pre>
+			<a class="try-button" href="../../../index.html#/explore/objectPage" target="_parent">See Example</a>
+		</div>
+		<div class="navigation">
+			<h4>Table of Contents</h4>
+			<div><a href="#overview">Overview</a></div>
+			<div><a href="#landmark-api">UI5 Landmarks API</a></div>
+			<div><a href="#dynamic-page">DynamicPage</a></div>
+			<div><a href="#m-page">Page</a></div>
+			<div><a href="#m-panel">Panel</a></div>
+			<div><a href="#object-page">ObjectPage</a></div>
+		</div>
+	</div>
+</body>
+</html>

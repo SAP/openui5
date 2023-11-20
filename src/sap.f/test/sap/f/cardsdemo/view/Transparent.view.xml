@@ -1,0 +1,32 @@
+<mvc:View
+	xmlns="sap.m"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:core="sap.ui.core"
+	xmlns:w="sap.ui.integration.widgets"
+	xmlns:f="sap.f"
+	displayBlock="true">
+	<Page title="{i18n>appTitle}">
+		<f:GridContainer class="sapUiTinyMargin">
+			<w:Card design="Transparent" id="component1" manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/transparent/component/manifest.json">
+				<w:layoutData>
+					<f:GridContainerItemLayoutData columns="30" />
+				</w:layoutData>
+			</w:Card>
+		</f:GridContainer>
+
+		<f:Card id="containerCard" class="sapUiTinyMargin sapFCardTransparent" width="100%">
+			<f:content>
+				<HBox>
+					<w:Card class="sapUiTinyMargin" id="todo1" manifest="{manifests>/transparent/todo1}" baseUrl="{cardsPlayground>/playgroundBaseUrl}" width="300px"></w:Card>
+					<w:Card class="sapUiTinyMargin" id="todo2" manifest="{manifests>/transparent/todo1}" baseUrl="{cardsPlayground>/playgroundBaseUrl}" width="300px"></w:Card>
+				</HBox>
+			</f:content>
+		</f:Card>
+
+		<w:Card class="sapUiTinyMargin" design="Transparent" id="object1" manifest="{manifests>/transparent/object1}" baseUrl="{cardsPlayground>/playgroundBaseUrl}" width="600px"></w:Card>
+		<w:Card class="sapUiTinyMargin" design="Transparent" id="list1" manifest="{manifests>/transparent/list1}" baseUrl="{cardsPlayground>/playgroundBaseUrl}" width="300px"></w:Card>
+		<w:Card class="sapUiTinyMargin" design="Transparent" id="todo3" manifest="{manifests>/transparent/todo1}" baseUrl="{cardsPlayground>/playgroundBaseUrl}" width="300px"></w:Card>
+		<w:Card class="sapUiTinyMargin" design="Transparent" id="table1" manifest="{manifests>/transparent/tablecard1}" baseUrl="{cardsPlayground>/playgroundBaseUrl}" width="300px"></w:Card>
+		<core:HTML id="cardCustomElement" content="&lt;ui-integration-card manifest=&quot;{cardsPlayground>/playgroundBaseUrl}/cardcontent/objectcontent/manifest.json&quot; class=&quot;sapFCardTransparent&quot;&gt;&lt;/ui-integration-card&gt;" />
+	</Page>
+</mvc:View>

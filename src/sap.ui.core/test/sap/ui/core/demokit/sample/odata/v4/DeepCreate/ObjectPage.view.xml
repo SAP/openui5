@@ -1,0 +1,92 @@
+<mvc:View
+		class="sapUiSizeCompact"
+		controllerName="sap.ui.core.sample.odata.v4.DeepCreate.ObjectPage"
+		xmlns="sap.m"
+		xmlns:demo="sap.ui.core.sample.common"
+		xmlns:form="sap.ui.layout.form"
+		xmlns:mvc="sap.ui.core.mvc">
+	<Page showHeader="false" floatingFooter="true">
+		<form:SimpleForm ariaLabelledBy="objectPageTitle" backgroundDesign="Transparent"
+				editable="true" id="objectPage" layout="ResponsiveGridLayout">
+			<form:toolbar>
+				<Toolbar design="Transparent">
+					<Title id="objectPageTitle" level="H2" text="Sales Order Details"/>
+				</Toolbar>
+			</form:toolbar>
+			<Label labelFor="SalesOrder::id" text="Sales Order ID"/>
+			<Input editable="false" id="SalesOrder::id" value="{SalesOrderID}"/>
+			<Label labelFor="SalesOrder::buyerID" text="Buyer Name"/>
+			<Input editable="false" id="SalesOrder::CompanyName" value="{SO_2_BP/CompanyName}"/>
+			<Label labelFor="SalesOrder::status" text="Lifecycle Status"/>
+			<Input editable="false" id="SalesOrder::status" value="{LifecycleStatusDesc}"/>
+			<Label labelFor="SalesOrder::grossAmount" text="Gross Amount"/>
+			<Input editable="false" id="SalesOrder::grossAmount" value="{GrossAmount}"/>
+			<Label labelFor="SalesOrder::currency" text="Currency"/>
+			<demo:ValueHelp id="SalesOrder::currency" value="{CurrencyCode}"/>
+			<Label labelFor="SalesOrder::note" text="Note"/>
+			<Input id="SalesOrder::note" value="{Note}"/>
+		</form:SimpleForm>
+		<Table growing="true" growingThreshold="5" id="SO_2_SOITEM"
+				items="{
+						parameters : {
+							$count : true,
+							$$ownRequest : true
+						},
+						path : 'SO_2_SOITEM'
+					}" mode="MultiSelect">
+			<headerToolbar>
+				<Toolbar id="lineItemsToolbar">
+					<Title id="lineItemsTitle" level="H2"
+						text="{headerContext>$count} Sales Order Line Items"/>
+					<ToolbarSpacer/>
+					<Button press="onCreateLineItem" tooltip="Create Line Item"
+						id="createLineItem" icon="sap-icon://add" text="Create"/>
+					<Button press="onDeleteLineItem" tooltip="Delete Selected Line Items"
+						id="deleteLineItem" icon="sap-icon://delete" text="Delete"/>
+				</Toolbar>
+			</headerToolbar>
+			<columns>
+				<Column>
+					<Text text="Item Position"/>
+				</Column>
+				<Column>
+					<Text text="ProductID"/>
+				</Column>
+				<Column hAlign="Right">
+					<Text text="Quantity"/>
+				</Column>
+				<Column>
+					<Text text="Quantity Unit" width="8em"/>
+				</Column>
+				<Column hAlign="Right">
+					<Text text="Gross Amount"/>
+				</Column>
+				<Column>
+					<Text text="Currency"/>
+				</Column>
+				<Column>
+					<Text text="Note"/>
+				</Column>
+			</columns>
+			<ColumnListItem id="lineItem">
+				<Text text="{ItemPosition}" width="8em"/>
+				<demo:ValueHelp id="productID" value="{ProductID}"/>
+				<Input value="{Quantity}" textAlign="Right" width="8em"/>
+				<Text text="{QuantityUnit}" width="3em"/>
+				<Text text="{GrossAmount}"/>
+				<Text text="{CurrencyCode}"/>
+				<Input value="{Note}" width="16em"/>
+			</ColumnListItem>
+		</Table>
+		<footer>
+			<OverflowToolbar>
+				<Button id="showMessages" icon="sap-icon://message-popup" tooltip="Show messages"
+					press="onToggleMessagePopover" text="{ui>/iMessages} Messages"
+					type="{= ${ui>/iMessages} ? 'Emphasized' : 'Default' }"/>
+				<ToolbarSpacer/>
+				<Button id="resetChanges" press="onResetChanges" text="Reset Changes"/>
+				<Button id="save" press="onSave" text="Save" type="Emphasized"/>
+			</OverflowToolbar>
+		</footer>
+	</Page>
+</mvc:View>

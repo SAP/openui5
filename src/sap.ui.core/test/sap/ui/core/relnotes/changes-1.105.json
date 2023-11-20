@@ -1,0 +1,278 @@
+{
+  "1.105.0": {
+    "date": "July 2022",
+    "notes": [
+      {
+        "id": "f04936f1224c5dab58bb3ab0bafc513f19112d8e",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v4.ODataListBinding#doReplaceWith: ...",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180347338"
+          },
+          {
+            "type": "BCP",
+            "reference": "2280113990"
+          },
+          {
+            "type": "BCP",
+            "reference": "2280127015"
+          },
+          {
+            "type": "BCP",
+            "reference": "2280134548"
+          }
+        ]
+      },
+      {
+        "id": "78e6c31c36068a62de7df591b8d2c10d925445c7",
+        "type": "FIX",
+        "text": " sap.ui.core: adapt return types to textual description"
+      },
+      {
+        "id": "dd0ec0809bc0766b016268468175760b3b881752",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v4.lib._Cache#drillDown: Avoid endless loop...",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280141880"
+          }
+        ]
+      },
+      {
+        "id": "1233137302e3c3684e67611c659c3611d8cbd65a",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v4.ODataListBinding#doReplaceWith: take care of created contexts",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180347338"
+          },
+          {
+            "type": "BCP",
+            "reference": "2280113990"
+          },
+          {
+            "type": "BCP",
+            "reference": "2280127015"
+          },
+          {
+            "type": "BCP",
+            "reference": "2280134548"
+          }
+        ]
+      },
+      {
+        "id": "9e35baa6bd256cbecce221096e4f08155c9a45b7",
+        "type": "FIX",
+        "text": " Table: Change vertical alignment of icons inside a cell to avoid cutting off",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400004445502022"
+          }
+        ]
+      },
+      {
+        "id": "049c02f081d82b64c97fe70be47663eff4f9aabd",
+        "type": "FIX",
+        "text": " DateFormat: Apply timezone offset correctly in case of out-of-normal-range seconds",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500004773012022"
+          }
+        ]
+      },
+      {
+        "id": "ac8851b665d87820c97d0f2c9331314d5bf77d7b",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v4.lib._CollectionCache#refreshKeptElements: check for late properties..."
+      },
+      {
+        "id": "4ebdb057792d3108e2300dd4709f2b790051b9be",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v2.ODataModel#setProperty: reverting a time property does not fail",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500002233972022"
+          }
+        ]
+      },
+      {
+        "id": "48feffd67c6439c3ab54a0e25340307663bc9ace",
+        "type": "FIX",
+        "text": " sap.ui.model.Binding#destroy: revert fix to ensure that binding is removed from the model's active bindings list",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280121518"
+          }
+        ]
+      },
+      {
+        "id": "cd2c47ffc18063519fd0aabf3748ce8c88542f9d",
+        "type": "FIX",
+        "text": " sap.ui.performance: End pending Interactions"
+      },
+      {
+        "id": "48cb6db5f175849acc072abc036e2d5d75a1c06b",
+        "type": "FIX",
+        "text": " sap.ui.core.demokit.sample.TypeFloat: usage of preserveDecimals"
+      },
+      {
+        "id": "1e701e10eb0ac957e6659a89ec489ccdd36e70fb",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v2.ODataModel: process transition message only once",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280114574"
+          }
+        ]
+      },
+      {
+        "id": "a51bf68240731fc07c8b6076c0cdcfe38563f326",
+        "type": "FEATURE",
+        "text": " sap.ui.core.format.DateFormat: formatOptions for week calculation"
+      },
+      {
+        "id": "22e2d1bce1653d5814a3837a1c81fc8751b5ba73",
+        "type": "FEATURE",
+        "text": " TestRecorder: Add wdi5 dialect"
+      },
+      {
+        "id": "9bc6a5ff453966172077abc28720b3e6f3f096d1",
+        "type": "FIX",
+        "text": " sap/ui/base/ManagedObject: Check for isBound",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280118072"
+          }
+        ]
+      },
+      {
+        "id": "b4615a49cd9b5e300d7d12bf506535401577b49a",
+        "type": "FIX",
+        "text": " sap.ui.core.format.DateFormat: Do not translate Etc/GMT+-X timezones",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280085236"
+          }
+        ]
+      },
+      {
+        "id": "48820c1174abb50d4ca3f4b59880175f6cc6a9d9",
+        "type": "FIX",
+        "text": " sap.ui.model.Binding#destroy: ensure that binding is removed from the model's active bindings list"
+      },
+      {
+        "id": "290d6602e5e790a0852d392b1432967b34d277ea",
+        "type": "FIX",
+        "text": " sap.ui.core.format.DateFormat: no split weeks for \"en\""
+      },
+      {
+        "id": "a4fd3ec8dc8293bc70d9f50d4c1a97bf351b9a52",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v4.ODataListBinding#getContexts: a word of warning",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270085692"
+          }
+        ]
+      },
+      {
+        "id": "50400ccf7426d964c09aab7377561036280307c7",
+        "type": "FEATURE",
+        "text": " sap.ui.core.IconPool: Update icon font v5.02 and v4.14"
+      },
+      {
+        "id": "ff9d20f20feb1389179f4897c196523538db7cde",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v2.ODataModel#callFunction: encode key values for function target",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270075487"
+          }
+        ]
+      },
+      {
+        "id": "913e28cb09a49567aa3415f95ab810e7cb526a07",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v4.lib._Cache#update: fire patchReceived event when merged PATCHes fail",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280103069"
+          }
+        ]
+      },
+      {
+        "id": "0c88244e53a69817a55d34723734357bcc947e0f",
+        "type": "FIX",
+        "text": " sap.ui.core.format.TimezoneUtil: fractionalSecond fallback",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280083818"
+          }
+        ]
+      },
+      {
+        "id": "875d798e19fc8341359a17e24f55eb513b0dbf8d",
+        "type": "FIX",
+        "text": " sap.ui.core.format.NumberFormat: strictGroupingValidation formatOption",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400006986122021"
+          },
+          {
+            "type": "BCP",
+            "reference": "2180381028"
+          }
+        ]
+      },
+      {
+        "id": "949874034ab1c20d08690f841b04c2d864023576",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v4.ODataListBinding#getAllCurrentContexts: do not fire unnecessary change events",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270093727"
+          }
+        ]
+      },
+      {
+        "id": "e2ef993e69629cbbfd943da83753aec31b5ff64b",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v4.ODataModel#resetChanges: restore changes correctly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270079668"
+          }
+        ]
+      },
+      {
+        "id": "82e049dfdd00981600b1c17c1214425113c4195e",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v2.ODataContextBinding#_fireChange: Reset context's updated flag to initial value",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400002462642022"
+          }
+        ]
+      }
+    ]
+  }
+}

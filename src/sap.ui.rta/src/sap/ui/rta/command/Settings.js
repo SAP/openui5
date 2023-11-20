@@ -1,7 +1,7 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(['sap/ui/rta/command/FlexCommand'], function(FlexCommand) {
+sap.ui.define(["sap/ui/rta/command/FlexCommand"], function(FlexCommand) {
 	"use strict";
 
 	/**
@@ -14,57 +14,41 @@ sap.ui.define(['sap/ui/rta/command/FlexCommand'], function(FlexCommand) {
 	 * @constructor
 	 * @private
 	 * @since 1.44
-	 * @alias sap.ui.rta.command.BaseCommand
-	 * @experimental Since 1.44. This class is experimental and provides only limited functionality. Also the API might be
-	 *               changed in future.
+	 * @alias sap.ui.rta.command.Settings
 	 */
 	var Settings = FlexCommand.extend("sap.ui.rta.command.Settings", {
-		metadata : {
-			library : "sap.ui.rta",
-			properties : {
-				content : {
-					type : "any"
+		metadata: {
+			library: "sap.ui.rta",
+			properties: {
+				content: {
+					type: "any",
+					group: "content"
 				}
 			},
-			associations : {},
-			events : {}
+			associations: {},
+			events: {}
 		}
 	});
 
-
-	Settings.prototype._getChangeSpecificData = function(bForward) {
-
-		var mSpecificInfo = {
-				changeType : this.getChangeType(),
-				content : this.getContent()
-		};
-
-		return mSpecificInfo;
-	};
-
-
 	/**
 	 * @override
 	 */
-	Settings.prototype.execute = function() {
+	Settings.prototype.execute = function(...aArgs) {
 		if (this.getElement()) {
-			return FlexCommand.prototype.execute.apply(this, arguments);
-		} else {
-			return Promise.resolve();
+			return FlexCommand.prototype.execute.apply(this, aArgs);
 		}
+		return Promise.resolve();
 	};
 
 	/**
 	 * @override
 	 */
-	Settings.prototype.undo = function() {
+	Settings.prototype.undo = function(...aArgs) {
 		if (this.getElement()) {
-			return FlexCommand.prototype.undo.apply(this, arguments);
-		} else {
-			return Promise.resolve();
+			return FlexCommand.prototype.undo.apply(this, aArgs);
 		}
+		return Promise.resolve();
 	};
 
 	return Settings;
-
-}, /* bExport= */true);
+});

@@ -3,18 +3,10 @@
 /* High Contrast Black theme           */
 /* =================================== */
 
-html[data-sap-ui-browser='ie11'] .sapMLIBFocusable:focus {
-	outline-width: 3px;
-}
+@_sap_m_ListItemBase_Highlight_InformationColor: @sapUiAccent6;
 
 .sapMLIBFocusable:focus {
-	outline: 0.125rem dotted @sapUiContentFocusColor;
-	outline-offset: -0.125rem;
-}
-
-/* IE ignores outline-offset. Use an overlay: */
-.sapMLIBLegacyOutline:focus::before {
-	border: 0.125rem dotted @sapUiContentFocusColor;
+	outline-width: 0.125rem;
 }
 
 html.sap-desktop .sapMLIBImgNav:focus,
@@ -22,4 +14,8 @@ html.sap-desktop .sapMLIBIconDet:focus,
 html.sap-desktop .sapMLIBIconDel:focus {
 	outline: 0.125rem dotted @sapUiContentFocusColor;
 	outline-offset: -0.125rem;
+}
+
+.sapMTableRowCustomFocus:focus > :not(.sapMListTblDummyCell:last-child)::before {
+	border-width: 2px;
 }

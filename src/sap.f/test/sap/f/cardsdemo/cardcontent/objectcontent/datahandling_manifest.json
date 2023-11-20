@@ -1,0 +1,174 @@
+{
+	"sap.app": {
+		"id": "cardsdemo.object.datahandling",
+		"type": "card",
+		"i18n": "i18n/i18n.properties"
+	},
+	"sap.card": {
+		"type": "Object",
+		"data": {
+			"request": {
+				"url": "./datahandling_employee.json"
+			}
+		},
+		"header": {
+			"data": {
+				"path": "/nested_level_1/nested_level_2"
+			},
+			"icon": {
+				"src": "{photo}"
+			},
+			"title": "{firstName} {lastName}",
+			"subTitle": "{position}"
+		},
+		"content": {
+			"data": {
+				"path": "/nested_level_1/nested_level_2"
+			},
+			"groups": [
+				{
+					"title": "{{contactDetails}}",
+					"items": [
+						{
+							"label": "{{firstName}}",
+							"value": "{firstName}"
+						},
+						{
+							"label": "{{lastName}}",
+							"value": "{lastName}"
+						},
+						{
+							"label": "{{phone}}",
+							"value": "{phone}",
+							"tooltip":  "{{phoneTooltip}}",
+							"actions": [
+								{
+									"type": "Navigation",
+									"parameters": {
+										"url": "tel:{phone}"
+									}
+								}
+							]
+						},
+						{
+							"label": "Attachments",
+							"type": "ButtonGroup",
+							"path": "attachments",
+							"template": {
+								"icon": "{icon}",
+								"text": "{title}",
+								"actions": [
+									{
+										"type": "Navigation",
+										"parameters": {
+											"url": "{url}"
+										}
+									}
+								]
+							}
+						}
+					]
+				},
+				{
+					"title": "{{organizationalDetails}}",
+					"items": [
+						{
+							"label": "{{directManager}}",
+							"value": "{manager/firstName} {manager/lastName}",
+							"icon": {
+								"src": "{manager/photo}"
+							}
+						},
+						{
+							"label": "Team. With Actions",
+							"type": "IconGroup",
+							"path": "team",
+							"template": {
+								"icon": {
+									"src": "{imageUrl}",
+									"text": "{= format.initials(${firstName} + ' ' + ${lastName}) }"
+								},
+								"actions": [
+									{
+										"type": "Navigation",
+										"parameters": {
+											"url": "{imageUrl}"
+										}
+									}
+								]
+							}
+						},
+						{
+							"label": "Team. Without Actions",
+							"type": "IconGroup",
+							"path": "team",
+							"template": {
+								"icon": {
+									"src": "{imageUrl}",
+									"text": "{= format.initials(${firstName} + ' ' + ${lastName}) }"
+								}
+							}
+						}
+					]
+				},
+				{
+					"title": "{{companyDetails}}",
+					"items": [
+						{
+							"label": "{{companyName}}",
+							"value": "{company/name}"
+						},
+						{
+							"label": "{{address}}",
+							"value": "{company/address}"
+						},
+						{
+							"label": "{{website}}",
+							"value": "{company/website}",
+							"actions": [
+								{
+									"type": "Navigation",
+									"parameters": {
+										"url": "{company/website}"
+									}
+								}
+							]
+						}
+					]
+				}
+			]
+		},
+		"footer": {
+			"actionsStrip": [
+				{
+					"type": "Link",
+					"text": "Link to Meal",
+					"icon": "sap-icon://action",
+					"actions": [
+						{
+							"type": "Navigation",
+							"parameters": {
+								"url": "{agendaUrl}"
+							}
+						}
+					]
+				},
+				{
+					"type": "ToolbarSpacer"
+				},
+				{
+					"text": "Approve",
+					"overflowPriority": "High",
+					"actions": [
+						{
+							"type": "Custom",
+							"parameters": {
+								"method": "approve"
+							}
+						}
+					]
+				}
+			]
+		}
+	}
+}

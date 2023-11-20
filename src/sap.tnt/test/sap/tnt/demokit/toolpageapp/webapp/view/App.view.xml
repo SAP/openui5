@@ -1,7 +1,7 @@
 <mvc:View height="100%"
 	controllerName="sap.ui.demo.toolpageapp.controller.App"
-	xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.m"
+	xmlns:mvc="sap.ui.core.mvc"
 	xmlns:tnt="sap.tnt">
 	<tnt:ToolPage
 		id="app"
@@ -12,8 +12,8 @@
 					id="sideNavigationToggleButton"
 					icon="sap-icon://menu2"
 					type="Transparent"
-					press="onSideNavButtonPress"
-					tooltip="{i18n>navigationToggleButtonTooltip}">
+					press=".onSideNavButtonPress"
+					tooltip="{i18n>collpaseMenuButtonText}">
 					<layoutData>
 						<OverflowToolbarLayoutData priority="NeverOverflow"/>
 					</layoutData>
@@ -28,7 +28,7 @@
 					icon="sap-icon://message-popup"
 					visible="{= ${alerts>/alerts/errors}.length === 0 ? false : true }"
 					type="Transparent"
-					press="onMessagePopoverPress"
+					press=".onMessagePopoverPress"
 					tooltip="{i18n>errorButtonTooltip}">
 					<layoutData>
 						<OverflowToolbarLayoutData closeOverflowOnInteraction="false"/>
@@ -39,7 +39,7 @@
 					icon="sap-icon://ui-notifications"
 					visible="{= ${alerts>/alerts/notifications}.length === 0 ? false : true }"
 					type="Transparent"
-					press="onNotificationPress"
+					press=".onNotificationPress"
 					tooltip="{i18n>notificationButtonTooltip}">
 					<layoutData>
 						<OverflowToolbarLayoutData closeOverflowOnInteraction="false"/>
@@ -49,7 +49,7 @@
 					id="userButton"
 					text="{i18n>userName}"
 					type="Transparent"
-					press="onUserNamePress">
+					press=".onUserNamePress">
 					<layoutData>
 						<OverflowToolbarLayoutData closeOverflowOnInteraction="false"/>
 					</layoutData>
@@ -59,24 +59,26 @@
 		<tnt:sideContent>
 			<tnt:SideNavigation
 				expanded="true"
-				itemSelect="onItemSelect">
+				selectedKey="{side>/selectedKey}">
 				<tnt:NavigationList
 					items="{
 						path: 'side>/navigation',
 						templateShareable: false
 					}">
 					<tnt:NavigationListItem
-						text="{side>title}"
+						text="{path: 'side>titleI18nKey', formatter: '.getBundleText'}"
 						icon="{side>icon}"
 						expanded="{side>expanded}"
 						items="{
 							path: 'side>items',
 							templateShareable: false
 						}"
-						key="{side>key}">
+						key="{side>key}"
+						href="#/{side>key}">
 						<tnt:NavigationListItem
-							text="{side>title}"
-							key="{side>key}">
+							text="{path: 'side>titleI18nKey', formatter: '.getBundleText'}"
+							key="{side>key}"
+							href="#/{side>key}">
 						</tnt:NavigationListItem>
 					</tnt:NavigationListItem>
 				</tnt:NavigationList>
@@ -87,9 +89,10 @@
 							templateShareable: false
 						}">
 						<tnt:NavigationListItem
-							text="{side>title}"
+							text="{path: 'side>titleI18nKey', formatter: '.getBundleText'}"
 							icon="{side>icon}"
-							key="{side>key}">
+							key="{side>key}"
+							href="#/{side>key}">
 						</tnt:NavigationListItem>
 					</tnt:NavigationList>
 				</tnt:fixedItem>

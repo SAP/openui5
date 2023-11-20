@@ -17,14 +17,14 @@
                     enableSelectAll="false"
                     ariaLabelledBy="title">
                 <extension>
-                    <m:Toolbar>
+                    <m:OverflowToolbar style="Clear">
                         <m:Title id="title" text="Clothing"/>
                         <m:ToolbarSpacer/>
                         <m:Button text="Collapse all" press="onCollapseAll"/>
                         <m:Button text="Collapse selection" press="onCollapseSelection"/>
                         <m:Button text="Expand first level" press="onExpandFirstLevel"/>
                         <m:Button text="Expand selection" press="onExpandSelection"/>
-                    </m:Toolbar>
+                    </m:OverflowToolbar>
                 </extension>
                 <columns>
                     <Column width="13rem">

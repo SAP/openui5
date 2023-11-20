@@ -1,21 +1,20 @@
 <core:FragmentDefinition
 		xmlns="sap.m"
 		xmlns:core="sap.ui.core">
-	<ViewSettingsDialog
+	<ViewSettingsDialog id="settingsDialogCustomTab"
 			confirm="handleConfirm">
 		<customTabs>
 			<ViewSettingsCustomTab id="app-settings" icon="sap-icon://action-settings" title="Settings" tooltip="Application Settings">
 				<content>
 					<Panel height="386px">
-						<content>
 						<Label text="Theme" design="Bold" id="VSDThemeLabel"/>
 						<SegmentedButton
 								class="vsdSetting"
-								selectedButton="VSDsap_bluecrystal"
+								selectedButton="VSDsap_quartzlight"
 								id="VSDThemeButtons"
 								width="100%" >
 							<Button text="High Contrast Black" id="VSDsap_hcb" />
-							<Button text="Blue Crystal" id="VSDsap_bluecrystal" />
+							<Button text="Quartz Light" id="VSDsap_quartzlight" />
 						</SegmentedButton>
 						<Label text="Compact Content Density" design="Bold" />
 						<SegmentedButton
@@ -34,7 +33,6 @@
 							<Button text="On" id="VSDRTLOn" />
 							<Button text="Off" id="VSDRTLOff" />
 						</SegmentedButton>
-						</content>
 					</Panel>
 				</content>
 			</ViewSettingsCustomTab>

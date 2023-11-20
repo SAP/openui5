@@ -1,16 +1,21 @@
-(function () {
+sap.ui.define([
+	"sap/m/IconTabBar",
+	"sap/m/IconTabFilter",
+	"sap/m/Button",
+	"sap/ui/dt/enablement/elementDesigntimeTest",
+	"sap/ui/rta/enablement/elementActionTest"
+], function (
+	IconTabBar,
+	IconTabFilter,
+	Button,
+	elementDesigntimeTest,
+	elementActionTest
+) {
 	"use strict";
 
-	sap.ui.require([
-		"sap/ui/dt/test/report/QUnit",
-		"sap/ui/dt/test/ElementEnablementTest",
-		"sap/m/IconTabBar",
-		"sap/m/IconTabFilter",
-		"sap/m/Button",
-		"sap/ui/rta/test/controlEnablingCheck"
-	], function (QUnitReport, ElementEnablementTest, IconTabBar, IconTabFilter, Button, rtaControlEnablingCheck) {
-
-		var oElementEnablementTest = new ElementEnablementTest({
+	return Promise.resolve()
+	.then(function () {
+		return elementDesigntimeTest({
 			type: "sap.m.IconTabBar",
 			create: function () {
 				return new IconTabBar("tabbar", {
@@ -25,19 +30,15 @@
 				});
 			}
 		});
-		oElementEnablementTest.run().then(function (oData) {
-			new QUnitReport({
-				data: oData
-			});
-		});
-
+	})
+	.then(function() {
 		var fnGetTabBarView = function (sId) {
 			return 	'<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m">' +
 				'<IconTabBar id="' + sId + '">' +
 					'<items>' +
-						'<IconTabFilter id="first" />' +
-						'<IconTabFilter id="second" />' +
-						'<IconTabFilter id="third" />' +
+						'<IconTabFilter id="first" key="firstTab"/>' +
+						'<IconTabFilter id="second" key="secondTab"/>' +
+						'<IconTabFilter id="third" key="thirdTab"/>' +
 					'</items>' +
 					'<content>' +
 						'<Button id="first-content" />' +
@@ -84,8 +85,16 @@
 			};
 		};
 
+		var fnGetConfirmSelectedElementAssert = function (sTabBarId, iSelectedKey) {
+			return function (oUiComponent, oViewAfterAction, assert) {
+				assert.strictEqual(oViewAfterAction.byId(sTabBarId).getSelectedKey(),
+				iSelectedKey,
+				"then the proper element has been selected");
+			};
+		};
+
 		// Move action for items
-		rtaControlEnablingCheck("Checking the move action for IconTabBar control items", {
+		elementActionTest("Checking the move action for IconTabBar control items", {
 			xmlView: fnGetTabBarView("tabbar"),
 			action: fnGetMoveActionObject("tabbar", "first", "items"),
 			afterAction: fnGetConfirmElementPositionAssert("tabbar", 2, "first", "Items"),
@@ -94,12 +103,31 @@
 		});
 
 		// Move action for content
-		rtaControlEnablingCheck("Checking the move action for IconTabBar control content", {
+		elementActionTest("Checking the move action for IconTabBar control content", {
 			xmlView: fnGetTabBarView("tabbar2"),
 			action: fnGetMoveActionObject("tabbar2", "first-content", "content"),
 			afterAction: fnGetConfirmElementPositionAssert("tabbar2", 2, "first-content", "Content"),
 			afterUndo: fnGetConfirmElementPositionAssert("tabbar2", 0, "first-content", "Content"),
 			afterRedo: fnGetConfirmElementPositionAssert("tabbar2", 2, "first-content", "Content")
 		});
+
+		// Settings action to select tab
+		elementActionTest("Checking the select tab action for IconTabBar control", {
+			xmlView: fnGetTabBarView("tabbar"),
+			action: {
+				name: "settings",
+				controlId: "tabbar",
+				parameter: {
+					changeType: "selectIconTabBarFilter",
+					content: {
+						selectedKey: "secondTab",
+						previousSelectedKey: "firstTab"
+					}
+				}
+			},
+			afterAction: fnGetConfirmSelectedElementAssert("tabbar", "secondTab"),
+			afterUndo: fnGetConfirmSelectedElementAssert("tabbar", "firstTab"),
+			afterRedo: fnGetConfirmSelectedElementAssert("tabbar", "secondTab")
+		});
 	});
-})();
+});

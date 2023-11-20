@@ -1,0 +1,32 @@
+{
+	"sap.app": {
+		"id": "sap.m.sample.ResponsivePopover",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "sap.m.sample.ResponsivePopover.view.ResponsivePopover",
+			"type": "XML",
+			"async": true
+		},
+		"dependencies": {
+			"libs": {
+				"sap.m": {},
+				"sap.ui.core": {},
+				"sap.ui.layout": {}
+			}
+		},
+		"config": {
+			"sample": {
+				"files": [
+					"view/ResponsivePopover.view.xml",
+					"controller/ResponsivePopover.controller.js",
+					"view/Popover.fragment.xml",
+					"manifest.json"
+				]
+			}
+		}
+	}
+}

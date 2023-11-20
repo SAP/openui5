@@ -6,6 +6,7 @@
 .sapUxAPObjectPageSection {
 	margin-left: 0;
 	margin-bottom: 0;
+	position: relative;
 }
 
 .sapUxAPObjectPageSectionTitleUppercase {
@@ -19,20 +20,35 @@
 	padding: 0 3rem 0 3rem;
 }
 
-.sapUiMedia-Std-Desktop .sapMSplitContainer:not(.sapMSplitContainerHideMode) .sapMSplitContainerDetail .sapUxAPObjectPageSectionHeader,
-.sapUiMedia-Std-Tablet .sapMSplitContainer:not(.sapMSplitContainerHideMode) .sapMSplitContainerDetail .sapUxAPObjectPageSectionHeader,
-html .sapUiContainer-Medium .sapMSplitContainer:not(.sapMSplitContainerHideMode) .sapMSplitContainerDetail .sapUxAPObjectPageSectionHeader {
-	padding-left: 2rem;
+.sapUxAPObjectPageSectionHeading {
+	padding: 0.5rem 3rem;
 }
 
-.sapUiMedia-Std-Tablet .sapUxAPObjectPageSectionHeader,
+/* header height is involved in calculation of the scroll position
+so we reset it when the section header is hidden */
+.sapUxAPObjectPageSectionHeaderHidden {
+	overflow: hidden;
+	height: 0 !important;
+	padding: 0 !important;
+	border: none !important;
+}
+
+.sapUxAPObjectPageLayout-Std-Tablet .sapUxAPObjectPageSectionHeader,
 html .sapUiContainer-Medium .sapUxAPObjectPageSectionHeader {
-	padding: 0 2rem 0 2rem;
+	padding: 0 0 0.5rem 2rem;
 }
 
-.sapUiMedia-Std-Phone .sapUxAPObjectPageSectionHeader,
+.sapUxAPObjectPageLayout-Std-Tablet .sapUxAPObjectPageSectionHeading {
+	padding: 0.5rem 0 0.5rem 2rem;
+}
+
+.sapUxAPObjectPageLayout-Std-Phone .sapUxAPObjectPageSectionHeader,
 html .sapUiContainer-Narrow .sapUxAPObjectPageSectionHeader {
-	padding: 0 1rem 0 1rem;
+	padding: 0 0 0.5rem 1rem;
+}
+
+.sapUxAPObjectPageLayout-Std-Phone .sapUxAPObjectPageSectionHeading {
+	padding: 0.5rem 0 0.5rem 1rem;
 }
 
 .sapUxAPObjectPageSectionTitle {
@@ -54,6 +70,13 @@ html .sapUiContainer-Narrow .sapUxAPObjectPageSectionHeader {
 	margin-left: 0.5rem;
 }
 
+.sapUxAPObjectPageSection .sapUxAPObjectPageSectionContainer > .sapUiRespGrid,
+.sapUxAPObjectPageSection .sapUxAPObjectPageSectionContainer > .sapUiRespGrid > .sapUiRespGridSpanXL12.sapUiRespGridSpanL12.sapUiRespGridSpanM12.sapUiRespGridSpanS12  {
+	padding: 0;
+	margin: 0;
+	width: 100%;
+}
+
 .sapUiSizeCompact .sapUxAPSectionShowHideButton {
 	margin-top: 0.5rem;
 }
@@ -69,9 +92,13 @@ html .sapUiContainer-Narrow .sapUxAPObjectPageSectionHeader {
 	line-height: 2rem;
 }
 
-/* IE and Edge ignores outline-offset. Use an overlay: */
-html[data-sap-ui-browser^="ie"].sap-desktop,
-html[data-sap-ui-browser^="ed"].sap-desktop {
+html[data-sap-ui-browser^="ed"].sap-desktop .sapUxAPObjectPageSection:focus {
+	outline-style: dashed;
+}
+
+/* IE ignores outline-offset. Use an overlay: */
+/* TODO remove after the end of support for Internet Explorer */
+html[data-sap-ui-browser^="ie"].sap-desktop {
 	.sapUxAPObjectPageSection:focus {
 		outline: none;
 		position: relative;
@@ -87,4 +114,21 @@ html[data-sap-ui-browser^="ed"].sap-desktop {
 		border: 0.0625rem dashed @sapUiContentFocusColor;
 		pointer-events: none;
 	}
+}
+
+// Styles needed for wrapTitle property
+.sapUxAPObjectPageSection.sapUxAPObjectPageSectionWrapTitle
+.sapUxAPObjectPageSectionHeader
+.sapUxAPObjectPageSectionTitle  {
+	height: auto;
+	word-break: break-word;
+	white-space: break-spaces;
+	overflow: auto;
+	line-height: inherit;
+	border-bottom: none;
+}
+
+.sapUxAPObjectPageSection.sapUxAPObjectPageSectionWrapTitle
+.sapUxAPObjectPageSectionHeader {
+	height: auto;
 }

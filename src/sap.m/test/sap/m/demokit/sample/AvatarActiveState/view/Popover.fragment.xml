@@ -1,0 +1,14 @@
+<core:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core"
+	xmlns:f="sap.f"
+	xmlns:l="sap.ui.layout">
+	<Popover
+		id="userMenu"
+		title="User Menu"
+		titleAlignment="Center"
+		placement="Bottom"
+		afterClose="onPopoverClose">
+		<core:Fragment fragmentName="sap.m.sample.AvatarActiveState.view.UserMenu" type="XML"> </core:Fragment>
+	</Popover>
+</core:FragmentDefinition>

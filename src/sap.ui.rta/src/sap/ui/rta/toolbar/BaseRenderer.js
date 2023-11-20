@@ -3,33 +3,32 @@
  */
 
 sap.ui.define([
-	'sap/ui/core/Renderer',
-	'sap/m/ToolbarRenderer'
+	"sap/ui/core/Renderer",
+	"sap/m/HBoxRenderer"
 ],
 function(
 	Renderer,
-	ToolbarRenderer
+	HBoxRenderer
 ) {
 	"use strict";
 
-	var BaseRenderer = Renderer.extend('sap.ui.rta.toolbar.BaseRenderer', ToolbarRenderer);
+	var BaseRenderer = Renderer.extend.call(HBoxRenderer, "sap.ui.rta.toolbar.BaseRenderer");
 
-	BaseRenderer.decorateRootElement = function (oRM, oControl) {
-		// base CSS classes
-		oRM.addClass('sapUiRtaToolbar');
-		oRM.addClass('sapContrastPlus'); // for 'sap_belize_plus' theme
-		oRM.addClass("color_" + oControl.getColor());
+	BaseRenderer.apiVersion = 1; // @todo-semantic-rendering out of order .class() and .style() calls before openStart
+
+	BaseRenderer.render = function(oRM, oControl) {
+		oRM.class("sapUiRtaToolbar");
+		oRM.class(`color_${oControl.getColor()}`);
 
 		// setting type if exists
-		oControl.type && oRM.addClass("type_" + oControl.type);
+		oControl.type && oRM.class(`type_${oControl.type}`);
 
 		// setting z-index if exists
 		var iZIndex = oControl.getZIndex();
-		iZIndex && oRM.addStyle("z-index", iZIndex);
+		iZIndex && oRM.style("z-index", iZIndex);
 
-		ToolbarRenderer.decorateRootElement(oRM, oControl);
+		HBoxRenderer.render(oRM, oControl);
 	};
-
 
 	return BaseRenderer;
 });

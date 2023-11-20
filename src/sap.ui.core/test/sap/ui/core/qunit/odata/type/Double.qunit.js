@@ -1,8 +1,9 @@
 /*!
  *{copyright}
  */
-sap.ui.require([
-	"jquery.sap.global",
+sap.ui.define([
+	"sap/base/Log",
+	"sap/base/i18n/Localization",
 	"sap/ui/core/Control",
 	"sap/ui/core/format/NumberFormat",
 	"sap/ui/model/FormatException",
@@ -11,24 +12,24 @@ sap.ui.require([
 	"sap/ui/model/odata/type/Double",
 	"sap/ui/model/odata/type/ODataType",
 	"sap/ui/test/TestUtils"
-], function (jQuery, Control, NumberFormat, FormatException, ParseException, ValidateException,
-		Double, ODataType, TestUtils) {
+], function (Log, Localization, Control, NumberFormat, FormatException, ParseException,
+		ValidateException, Double, ODataType, TestUtils) {
 	/*global QUnit, sinon */
 	"use strict";
 	/*eslint no-warning-comments: 0 */
 
-	var sDefaultLanguage = sap.ui.getCore().getConfiguration().getLanguage();
+	var sDefaultLanguage = Localization.getLanguage();
 
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.odata.type.Double", {
 		beforeEach : function () {
-			this.oLogMock = this.mock(jQuery.sap.log);
+			this.oLogMock = this.mock(Log);
 			this.oLogMock.expects("warning").never();
 			this.oLogMock.expects("error").never();
-			sap.ui.getCore().getConfiguration().setLanguage("en-US");
+			Localization.setLanguage("en-US");
 		},
 		afterEach : function () {
-			sap.ui.getCore().getConfiguration().setLanguage(sDefaultLanguage);
+			Localization.setLanguage(sDefaultLanguage);
 		}
 	});
 
@@ -46,6 +47,26 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("constructor calls checkParseEmptyValueToZero", function (assert) {
+		var oConstraints = {nullable : false};
+		var oFormatOptions = {"~formatOption" : "foo"};
+
+		var oExpectation = this.mock(ODataType.prototype).expects("checkParseEmptyValueToZero")
+				.withExactArgs()
+				.callsFake(function () {
+					assert.deepEqual(this.oConstraints, oConstraints);
+					assert.strictEqual(this.oFormatOptions, oFormatOptions);
+				});
+
+		// code under test
+		var oType = new Double(oFormatOptions, oConstraints);
+
+		assert.ok(oExpectation.calledOn(oType));
+		assert.deepEqual(oType.oConstraints, oConstraints);
+		assert.strictEqual(oType.oFormatOptions, oFormatOptions);
+	});
+
+	//*********************************************************************************************
 	QUnit.test("construct with null values for 'oFormatOptions' and 'oConstraints",
 		function (assert) {
 			var oType = new Double(null, null);
@@ -53,6 +74,26 @@ sap.ui.require([
 			assert.deepEqual(oType.oFormatOptions, null, "no format options");
 			assert.deepEqual(oType.oConstraints, undefined, "default constraints");
 	});
+
+	//*********************************************************************************************
+[
+	undefined,
+	{},
+	{preserveDecimals : true},
+	{preserveDecimals : "yes"},
+	{preserveDecimals : undefined},
+	{preserveDecimals : null},
+	{preserveDecimals : false}
+].forEach(function (oFormatOptions, i) {
+	QUnit.test("constructor: oFormatOptions.preserveDecimals; #" + i, function (assert) {
+		// code under test
+		var oType = new Double(oFormatOptions);
+
+		// format options are taken as they are - preserveDecimals is considered when creating the
+		// formatter instance
+		assert.strictEqual(oType.oFormatOptions, oFormatOptions);
+	});
+});
 
 	//*********************************************************************************************
 	[
@@ -130,7 +171,7 @@ sap.ui.require([
 		// Swedish is interesting because it uses a different decimal separator, non-breaking
 		// space as grouping separator and _not_ the 'E' for the exponential format.
 		// TODO The 'e' is not replaced because NumberFormat doesn't care either (esp. in parse).
-		sap.ui.getCore().getConfiguration().setLanguage("sv");
+		Localization.setLanguage("sv");
 
 		assert.strictEqual(oType.formatValue("-1.234e+3", "string"), "<1\u00a0234",
 			"check modification");
@@ -220,18 +261,54 @@ sap.ui.require([
 		oControl.bindProperty("tooltip", {path : "/unused", type : oType});
 		assert.strictEqual(oType.formatValue("1.234e3", "string"), "1,234",
 			"before language change");
-		sap.ui.getCore().getConfiguration().setLanguage("de-CH");
+		Localization.setLanguage("de-CH");
 		assert.strictEqual(oType.formatValue("1.234e3", "string"), "1’234",
 			"adjusted to changed language");
 	});
 
 	//*********************************************************************************************
 	[{
+		set : undefined,
+		expect : {groupingEnabled : true, preserveDecimals : true}
+	}, {
+		set : {},
+		expect : {groupingEnabled : true, preserveDecimals : true}
+	}, {
+		set : {preserveDecimals : true},
+		expect : {groupingEnabled : true, preserveDecimals : true}
+	}, {
+		set : {preserveDecimals : "yes"},
+		expect : {groupingEnabled : true, preserveDecimals : "yes"}
+	}, {
+		set : {preserveDecimals : undefined},
+		expect : {groupingEnabled : true, preserveDecimals : undefined}
+	}, {
+		set : {preserveDecimals : null},
+		expect : {groupingEnabled : true, preserveDecimals : null}
+	}, {
+		set : {preserveDecimals : false},
+		expect : {groupingEnabled : true, preserveDecimals : false}
+	}, {
+		set : {style : "short"},
+		expect : {groupingEnabled : true, style : "short"}
+	}, {
+		set : {style : "long"},
+		expect : {groupingEnabled : true, style : "long"}
+	}, {
+		set : {style : "standard"},
+		expect : {groupingEnabled : true, preserveDecimals : true, style : "standard"}
+	}, {
+		set : {preserveDecimals : true, style : "short"},
+		expect : {groupingEnabled : true, preserveDecimals : true, style : "short"}
+	}, {
+		set : {preserveDecimals : true, style : "long"},
+		expect : {groupingEnabled : true, preserveDecimals : true, style : "long"}
+	}, {
 		set : {foo : "bar"},
-		expect : {foo : "bar", groupingEnabled : true}
+		expect : {foo : "bar", groupingEnabled : true, preserveDecimals : true}
 	}, {
 		set : {decimals : 7, groupingEnabled : false},
-		expect : {decimals : 7, groupingEnabled : false}
+		expect : {decimals : 7, groupingEnabled : false, preserveDecimals : true}
 	}].forEach(function (oFixture) {
 		QUnit.test("formatOptions: " + JSON.stringify(oFixture.set), function (assert) {
 			var oSpy,
@@ -247,6 +324,7 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("format: bad input type", function (assert) {
+		// no need to use UI5Date.getInstance as date value doesn't matter
 		var oBadModelValue = new Date(),
 			oType = new Double();
 
@@ -256,5 +334,31 @@ sap.ui.require([
 			}, new FormatException("Illegal " + oType.getName() + " value: " + oBadModelValue));
 		});
 		assert.strictEqual(oType.formatValue(oBadModelValue, "any"), oBadModelValue);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getFormat", function (assert) {
+		var oType = new Double({parseEmptyValueToZero : true}, {nullable : false});
+
+		assert.strictEqual(oType.oFormat, null);
+
+		this.mock(NumberFormat).expects("getFloatInstance")
+			.withExactArgs({preserveDecimals: true, groupingEnabled: true})
+			.returns("~floatInstance");
+
+		// code under test
+		assert.strictEqual(oType.getFormat(), "~floatInstance");
+		assert.strictEqual(oType.oFormat, "~floatInstance");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("parseValue calls getEmptyValue", function (assert) {
+		var oType = new Double();
+
+		this.mock(oType).expects("getEmptyValue").withExactArgs("~emptyString", /*bNumeric*/true)
+			.returns("~emptyValue");
+
+		// code under test
+		assert.strictEqual(oType.parseValue("~emptyString", "foo"), "~emptyValue");
 	});
 });

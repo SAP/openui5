@@ -1,0 +1,38 @@
+/******************************************************************
+	Style of the RTA Toolbar (type: adaptation) - sap_hcb Theme
+*******************************************************************/
+@_sap_ui_rta_Toolbar_Adaptation_BaseColor: @sapUiNeutralBG; //#000000
+@_sap_ui_rta_Toolbar_Adaptation_TextColor: @sapUiNeutralElement; //#ffffff
+@_sap_ui_rta_Toolbar_Adaptation_BtnFocusBorder: @sapUiNeutralElement; //#ffffff
+@_sap_ui_rta_Toolbar_Adaptation_FocusOutlineCol: @sapUiNeutralBorder; //#fff
+@_sap_ui_rta_Toolbar_Adaptation_SegBBtnHoverTextColor: @sapUiNeutralElement; //#ffffff
+@_sap_ui_rta_Toolbar_Adaptation_BtnHoverText: @sapUiNeutralElement; //#ffffff
+
+.sapUiRtaMode {
+	.sapUiRtaToolbar.sapUiRtaToolbarAdaptation {
+		.sapMBtn {
+			&:focus .sapMFocusable {
+				outline: 0.125rem dotted @_sap_ui_rta_Toolbar_Adaptation_FocusOutlineCol;
+				outline-offset: -0.125rem; //2px
+				border-color: transparent;
+			}
+		}
+
+		.sapMSegB {
+			.sapMSegBBtn {
+				border: none;
+
+				&.sapMSegBBtnFocusable {
+					&:focus {
+						outline: none;
+
+						.sapMSegBBtnInner {
+							outline-width: 0.125rem; //2px
+							outline-offset: -0.125rem; //2px
+						}
+					}
+				}
+			}
+		}
+	}
+}

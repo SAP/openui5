@@ -1,123 +1,104 @@
-/* global QUnit*/
+/* global QUnit */
 
-QUnit.config.autostart = false;
-
-sap.ui.require([
+sap.ui.define([
 	"sap/ui/dt/DOMUtil",
-	'sap/ui/Device'
-],
-function(
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/Device",
+	"sap/ui/dom/jquery/scrollLeftRTL"
+], function(
 	DOMUtil,
+	jQuery,
 	Device
 ) {
 	"use strict";
 
+	var SCROLLBAR_WIDTH = DOMUtil.getScrollbarWidth();
+	var RELATIVE_POS_LEFT = -35;
+
 	QUnit.module("Given that a container is rendered with a bigger content element (for scrollbars)", {
-		beforeEach : function() {
-			this.oContent = jQuery("<div style='background: red; width: 200px; height: 200px; position: relative; left: -35px; top: 40px;'></div>");
-			this.oContainer = jQuery("<div style='background: blue; width: 100px; height: 100px; overflow: auto;'></div>");
-			this.oContainer.append(this.oContent).appendTo("#qunit-fixture");
+		beforeEach() {
+			this.oContent = document.createElement("div");
+			this.oContent.style.background = "red";
+			this.oContent.style.width = "200px";
+			this.oContent.style.height = "200px";
+			this.oContent.style.position = "relative";
+			this.oContent.style.left = "-35px";
+			this.oContent.style.top = "40px";
+			this.oContainer = document.createElement("div");
+			this.oContainer.style.background = "blue";
+			this.oContainer.style.width = "100px";
+			this.oContainer.style.height = "100px";
+			this.oContainer.style.overflow = "auto";
+			this.oContainer.append(this.oContent);
+			document.getElementById("qunit-fixture").append(this.oContainer);
 		},
-		afterEach : function() {
+		afterEach() {
 			this.oContainer.remove();
 		}
-	}, function(){
+	}, function() {
 		QUnit.test("when getOffsetFromParent is called for the content without scrolling", function(assert) {
-			var oContentGeometry = DOMUtil.getGeometry(this.oContent.get(0));
-			var mOffset = DOMUtil.getOffsetFromParent(oContentGeometry, this.oContainer.get(0));
-			//TODO: Remove when bug in Chrome and Safari is fixed
-			var iExpectedOffsetLeft = (Device.browser.webkit || Device.browser.blink) ? -47 : -35;
-			if (!Device.browser.phantomJS){
-				assert.strictEqual(
-					mOffset.left,
-					iExpectedOffsetLeft,
-					"the left offset is correct");
-			}
-			assert.strictEqual(
-				mOffset.top,
-				40,
-				"the top offset is correct");
+			var oContentGeometry = DOMUtil.getGeometry(this.oContent);
+			var mOffset = DOMUtil.getOffsetFromParent(oContentGeometry, this.oContainer);
+			var iExpectedOffsetLeft = (Device.browser.safari && !Device.browser.mobile)
+				? RELATIVE_POS_LEFT - SCROLLBAR_WIDTH
+				: RELATIVE_POS_LEFT;
+			// in some cases (special physical devices) the offset is returend as decimal value
+			// actually we need to round the offset for chrome browser on mac
+			assert.strictEqual(Math.ceil(mOffset.left), iExpectedOffsetLeft, `the left offset is correct - result: ${
+				Math.ceil(mOffset.left)} / expected value: ${iExpectedOffsetLeft}`);
+			assert.strictEqual(mOffset.top, 40, "the top offset is correct");
 		});
 
 		QUnit.test("when getOffsetFromParent is called for the content after scrolling on the container", function(assert) {
-			var oContainerDomRef = this.oContainer.get(0);
-			var oContentGeometry = DOMUtil.getGeometry(this.oContent.get(0));
+			var oContentGeometry = DOMUtil.getGeometry(this.oContent);
 			var iScrollValue = -50;
-			//TODO: Remove when bug in Chrome and Safari is fixed
-			var iExpectedOffsetLeft = (Device.browser.webkit || Device.browser.blink) ? -97 : -85;
-			// IE and Edge use positive leftScroll
-			if (Device.browser.msie || Device.browser.edge) {
-				iScrollValue = -iScrollValue;
-			}
-			// Blink (Chrome) uses positive leftScroll but starts on the extreme left
-			if (Device.browser.blink){
-				var iMaxScrollWidth = oContainerDomRef.scrollWidth - oContainerDomRef.clientWidth;
-				iScrollValue = iMaxScrollWidth + iScrollValue;
-			}
-			this.oContainer.scrollLeft(iScrollValue);
-			this.oContainer.scrollTop(60);
-			var mOffset = DOMUtil.getOffsetFromParent(oContentGeometry, oContainerDomRef);
-			if (!Device.browser.phantomJS){
-				assert.strictEqual(
-					mOffset.left,
-					iExpectedOffsetLeft,
-					"the left offset is correct");
-			}
-			assert.strictEqual(
-				mOffset.top,
-				100,
-				"the top offset is correct");
+			var iRelativePosLeft = iScrollValue + RELATIVE_POS_LEFT;
+			var iExpectedOffsetLeft = (Device.browser.safari && !Device.browser.mobile)
+				? iRelativePosLeft - SCROLLBAR_WIDTH
+				: iRelativePosLeft;
+			var iMaxScrollWidth = this.oContainer.scrollWidth - this.oContainer.clientWidth;
+			iScrollValue = iMaxScrollWidth + iScrollValue;
+			// scrollLeftRTL is a function from UI5 Core JQuery
+			jQuery(this.oContainer).scrollLeftRTL(iScrollValue);
+			this.oContainer.scrollTop = 60;
+			var mOffset = DOMUtil.getOffsetFromParent(oContentGeometry, this.oContainer);
+			// round for offset value is actually nedded for chrome browser on mac
+			assert.strictEqual(Math.ceil(mOffset.left), iExpectedOffsetLeft,
+				`the left offset is correct - result: ${Math.ceil(mOffset.left)} / expected value: ${iExpectedOffsetLeft}`);
+			assert.strictEqual(mOffset.top, 100, "the top offset is correct");
 		});
 	});
 
 	QUnit.module("getScrollLeft()", {
-		beforeEach: function() {
-			this.$Panel = jQuery('<div/>').css({
-				'width': '100px',
-				'height': '100px',
-				'overflow': 'auto'
-			}).appendTo("#qunit-fixture");
-
-			jQuery('<div/>').css({
-				'width': '200px',
-				'height': '200px'
-			}).appendTo(this.$Panel);
+		beforeEach() {
+			var oInnerPanel = document.createElement("div");
+			oInnerPanel.style.width = "200px";
+			oInnerPanel.style.height = "200px";
+			this.oPanel = document.createElement("div");
+			this.oPanel.style.width = "100px";
+			this.oPanel.style.height = "100px";
+			this.oPanel.style.overflow = "auto";
+			this.oPanel.append(oInnerPanel);
+			document.getElementById("qunit-fixture").append(this.oPanel);
 		},
-		afterEach: function() {
-			this.$Panel.remove();
+		afterEach() {
+			this.oPanel.remove();
 		}
-	}, function(){
-		QUnit.test("initial position", function (assert) {
-			if (!Device.browser.phantomJS){
-				assert.strictEqual(DOMUtil.getScrollLeft(this.$Panel.get(0)), 0);
-			} else {
-				assert.ok(true, "PhantomJS ignored on this test");
-			}
+	}, function() {
+		QUnit.test("initial position", function(assert) {
+			var iScrollLeftResult = DOMUtil.getScrollLeft(this.oPanel);
+			assert.strictEqual(Math.round(iScrollLeftResult), 0);
 		});
-		QUnit.test("scrolled to the most left position", function (assert) {
-			var iMaxScrollLeftValue = this.$Panel.get(0).scrollWidth - this.$Panel.get(0).clientWidth;
-			var iScrollValue;
-
-			if (Device.browser.blink || Device.browser.phantomJS) {
-				iScrollValue = 0;
-			} else if (Device.browser.msie || Device.browser.edge) {
-				iScrollValue = iMaxScrollLeftValue;
-			} else {
-				iScrollValue = -iMaxScrollLeftValue;
-			}
-
-			this.$Panel.scrollLeft(iScrollValue);
-			if (!Device.browser.phantomJS){
-				assert.strictEqual(DOMUtil.getScrollLeft(this.$Panel.get(0)), -iMaxScrollLeftValue);
-			} else {
-				assert.ok(true, "PhantomJS ignored on this test");
-			}
+		QUnit.test("scrolled to the most left position", function(assert) {
+			var iMaxScrollLeftValue = this.oPanel.scrollWidth - this.oPanel.clientWidth;
+			// scrollLeftRTL is a function from UI5 Core JQuery
+			jQuery(this.oPanel).scrollLeftRTL(0);
+			var iScrollLeftResult = DOMUtil.getScrollLeft(this.oPanel);
+			assert.strictEqual(Math.round(iScrollLeftResult), -iMaxScrollLeftValue);
 		});
 	});
 
 	QUnit.done(function() {
-		jQuery("#qunit-fixture").hide();
+		document.getElementById("qunit-fixture").style.display = "none";
 	});
-
-	QUnit.start();
 });

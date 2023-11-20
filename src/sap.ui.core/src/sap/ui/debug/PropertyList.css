@@ -1,0 +1,25 @@
+.sapDbgSeparator {
+	border-bottom: 1px solid gray;
+}
+
+.sapDbgPropertyList {
+	font-size: 8pt;
+	width: 100%;
+	table-layout: fixed;
+}
+
+.sapDbgPLSubheader {
+	padding-top: 0.5rem;
+	font-style: italic;
+}
+
+.sapDbgPropertyList input[type='text'],
+.sapDbgPropertyList select {
+	width: 100%;
+	font-size: 8pt;
+	background-color: #f5f5f5;
+}
+
+.sapDbgPropertyList input.sapDbgComplexValue {
+	color: #a5a5a5;
+}

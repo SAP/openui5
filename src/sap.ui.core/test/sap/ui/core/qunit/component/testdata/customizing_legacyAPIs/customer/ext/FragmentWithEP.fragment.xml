@@ -1,0 +1,9 @@
+<core:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core">
+	<Panel>
+		<core:ExtensionPoint name="EPInFragment">
+			<Button id="extEPButton" text="This Button is default content" />
+		</core:ExtensionPoint>
+	</Panel>
+</core:FragmentDefinition>

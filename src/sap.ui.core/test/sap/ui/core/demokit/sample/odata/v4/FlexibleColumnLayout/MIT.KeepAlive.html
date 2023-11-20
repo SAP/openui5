@@ -1,0 +1,239 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<style type="text/css">
+			body {font-family: Arial, "Helvetica Neue", Helvetica, sans-serif;}
+		</style>
+		<title>Manual Integration Test: Flexible Column Layout - Keep-alive Scenario</title>
+	</head>
+	<body>
+		<h1>Manual Integration Test: Flexible Column Layout - Keep-alive Scenario</h1>
+		<h2>DESCRIPTION</h2>
+		This demo application is used to demonstrate how to synchronize data between a list report
+		(left column), an object page (middle column) and a sub-object page (right column) by using
+		the <code>Context#setKeepAlive</code> API method.
+		<p>
+		Additionally, it is used to test the creation of a sales order together with its items using
+		a single request ("deep create") in non-draft mode.
+		<h2>PREPARATION</h2>
+			To check console errors open the developer tools before starting the application and
+			check with each step, that there are no errors and warnings.
+		<h3>Testing with mock data</h3>
+		Start the FlexibleColumnLayout application URL (adjust host and port if necessary):
+			<ul>
+				<li> local:
+					<a href="http://localhost:8080/test-resources/sap/ui/core/demokit/sample/common/index.html?component=odata.v4.FlexibleColumnLayout">
+						http://&lt;host>:&lt;port>/test-resources/sap/ui/core/demokit/sample/common/index.html?component=odata.v4.FlexibleColumnLayout
+					</a>
+				</li>
+			</ul>
+		<h2>REALIZE and CHECK</h2>
+		<h3>List report and object page are in sync</h3>
+		<ol>
+			<li>Select the first sales order in the sales order list report.</li>
+			<li><b>Check:</b> An object page for the sales order appears.</li>
+			<li>Enter 'Test' into the <code>Note</code> input field of the object page.</li>
+			<li>Press the <code>Sales Order ID</code> button in the header of the respective column
+				of the sales orders table of the list report.</li>
+			<li><b>Check:</b> The sales order list is sorted by the <code>SalesOrderID</code>
+				and the selected sales order does no longer appear in the list report. It is still
+				present in the object page.</li>
+			<li>Press the <code>Sales Order ID</code> button in the header of the respective column
+				of the sales orders table of the list report.</li>
+			<li><b>Check:</b> The sales order appears again in the list report and and its property
+				<code>Note</code> has the value 'Test'.</li>
+			<li>Enter 'Test (changed)' into the <code>Note</code> input field (of the object page)
+				and leave the field.</li>
+			<li><b>Check:</b> Both the list report and the object page are in sync.</li>
+			<li>Press the <code>Cancel</code> button.</li>
+			<li><b>Check:</b> Both the list report and the object page are in sync.</li>
+		</ol>
+		<h3>Object page and sub-object page are in sync</h3>
+		<ol>
+			<li>Select the first sales order line item on the object page.</li>
+			<li><b>Check:</b> A sub-object page with item details appears.</li>
+			<li>Enter '2' into the <code>Quantity</code> input field of the sub-object page.</li>
+			<li>Press the <code>Gross Amount</code> button.</li>
+			<li><b>Check:</b> The sales order item list is sorted by the <code>GrossAmount</code>
+				and the selected sales order item is no longer part	of the items list. In the
+				sub-object page it is still present.</li>
+			<li>Press <code>Reset Line Item</code> on the sub-object page.</li>
+			<li><b>Check:</b> The <code>Quantity</code> is again '4.000'.</li>
+			<li>Enter 'Test (changed)' into the <code>Note</code> input field (of the object page)
+				and leave the field.</li>
+			<li>Press the <code>Create Line Item</code> button in the toolbar of the sales order
+				line items table.</li>
+			<li><b>Check:</b> A new line item occurs and the count for the sales order line item
+				table in both, the title and below the <code>More</code> button is 28.
+			</li>
+			<li>Enter '' into the <code>Quantity</code> input field of the sub-object page
+				and leave the field.</li>
+			<li><b>Check:</b> The <code>Quantity</code> input field of the new sales order line item
+				has a colored border indicating an error.</li>
+			<li>Press the <code>Reset Sales Order</code> button on the object page.</li>
+			<li><b>Check:</b> The <code>Quantity</code> is again '4.000' and the error is gone.</li>
+			<li><b>Check:</b> The <code>Note</code> (of the object page) is again
+				'Test (original)'.</li>
+			<li><b>Check:</b> The new line item is gone and the count for the sales order line item
+				table in both, the title and below the <code>More</code> button is 27 again.
+			</li>
+			<li>Enter '2' into the <code>Quantity</code> input field of the sub-object page.</li>
+			<li>Press the <code>More</code> button on the item table of the object page.</li>
+			<li><b>Check:</b> Both the object page and the sub-object page are in sync.</li>
+			<li>Press the <code>Cancel</code> button.</li>
+			<li><b>Check:</b> Both the object page and the sub-object page are in sync.</li>
+		</ol>
+		<h3>Delete a kept-alive context that is not visible in the sales orders table; after
+			deletion the count does not change</h3>
+		<ol>
+			<li>Select the fifth sales order on the list report that is currently sorted ascending
+				by the <code>Sales Order ID</code>.</li>
+			<li><b>Check:</b> The object page is updated.</li>
+			<li><b>Check:</b> The count for the sales order table in both, the title and below the
+				<code>More</code> button is 10.</li>
+			<li>Enter 'Test' into the <code>Note</code> input field of the object page.</li>
+			<li>Enter '1000' in the search field of the sales order table.</li>
+			<li><b>Check:</b> The count for the sales order table in both, the title and below the
+				<code>More</code> button is 7.</li>
+			<li><b>Check:</b> The table is filtered and the selected sales order is not visible on
+				the sales order table.</li>
+			<li>Press the <code>Cancel</code> button.</li>
+			<li>Press the <code>Delete</code> button on the sales order object page.</li>
+			<li><b>Check:</b> The object page vanishes and there is no error message.</li>
+			<li>Press the <code>Sales Order ID</code> button in the header of the respective
+				column of the sales orders table of the list report.</li>
+			<li><b>Check:</b> The deleted sales order is not visible in the list report.</li>
+			<li><b>Check:</b> The count for the sales order table in both, the title and below the
+				<code>More</code> button is still 7.</li>
+			<li><b>Check:</b> The corresponding sales order is no longer existing and the object
+				page vanishes.</li>
+		</ol>
+		<h3>Delete a kept-alive context in a table with transient contexts; after deletion the
+			count changes</h3>
+		<ol>
+			<li>Select the first sales order on the list report that is currently sorted ascending
+				by the <code>Sales Order ID</code>.</li>
+			<li><b>Check:</b> An object page for the first sales order occurs.</li>
+			<li><b>Check:</b> The count for the sales order line item table in both, the title and
+				below the <code>More</code> button is 27.</li>
+			<li>Select the first sales order line item on the object page.</li>
+			<li><b>Check:</b> A sub-object page with the item details appears.</li>
+			<li>Press the <code>Gross Amount</code> button.</li>
+			<li><b>Check:</b> The sales order item list is sorted by <code>GrossAmount</code> and
+				the selected sales order item is no longer part of the items list. In the sub-object
+				page it is still present.</li>
+			<li><b>Check:</b> The count of sales order line items table is still 27.</li>
+			<li>Press the <code>Create Line Item</code> button in the toolbar of the sales order
+				line items table.</li>
+			<li><b>Check:</b> A new line item occurs and the count for the sales order line item
+				table in both, the title and below the <code>More</code> button is 28.
+			</li>
+			<li>Press the <code>Delete</code> button of the sub-object page.</li>
+			<li><b>Check:</b> The sub object page vanishes.</li>
+			<li><b>Check:</b> The newly created sales order item is still there and the count for
+				the sales order line item table in both, the title and below the <code>More</code>
+				button is 27.</li>
+			<li>Press the <code>Cancel</code> button.</li>
+			<li><b>Check:</b> The newly created sales order item vanishes and the count for the
+				sales order line item table in both, the title and below the <code>More</code>
+				button is 26.</li>
+		</ol>
+		<h3>Refresh the object page of a kept-alive context that is not visible in the sales orders
+			table; after refreshing the sales order is no longer available</h3>
+		<ol>
+			<li>Press the <code>Sales Order ID</code> button in the header of the respective column
+				of the sales orders table of the list report.</li>
+			<li>Select the second sales order in the sales order list report.</li>
+			<li><b>Check:</b> An object page with the sales order appears.</li>
+			<li>Press the <code>Sales Order ID</code> button in the header of the respective column
+				of the sales orders table of the list report.</li>
+			<li><b>Check:</b> The sales order list is sorted by the <code>SalesOrderID</code>
+				and the selected sales order does no longer appear in the list report. It is still
+				present in the object page.</li>
+			<li><b>Check:</b> The value of the <code>Sales Order ID</code> input field is
+				'0500000009'</li>
+			<li>Press the <code>Refresh</code> button on the sales order object page.</li>
+			<li><b>Check:</b> The corresponding sales order is no longer existing and the object
+				page vanishes.</li>
+		</ol>
+		<h3>Refresh the object page of a kept-alive context that is visible in the sales orders
+			table; after refreshing the object page, the sales order does no longer appear in the
+			list</h3>
+		<ol>
+			<li>Select the first sales order in the sales order list report.</li>
+			<li><b>Check:</b> An object page for the sales order appears.</li>
+			<li>Enter '1000' in the search field of the sales order table.</li>
+			<li><b>Check:</b> The table is filtered but the selected sales order is still visible on
+				the sales order table.
+			<li>Press the <code>Refresh</code> button on the sales order object page.</li>
+			<li><b>Check</b> The object page is updated and shows new data but the sales order
+				does no longer appear in the sales order table.</li>
+		</ol>
+		<h3>Refresh the <code>New Sales Orders</code> list with a kept-alive context that is not
+			visible in the list; after refreshing the <code>New Sales Orders</code> list, the sales
+			order appears again in the list</h3>
+		<ol>
+			<li>Select the fifth sales order in the <code>New Sales Orders</code> list.</li>
+			<li><b>Check:</b> An object page <code>Sales Order Details</code> for the selected
+				sales order appears.</li>
+			<li>Enter '1000' in the search field of the <code>New Sales Orders</code> list and
+				press enter.</li>
+			<li><b>Check:</b> That the sales order '0500000004' is filtered out from the
+				<code>New Sales Orders</code> list, but still exists on the
+				<code>Sales Order Details</code> object page.
+			<li>Press the <code>Refresh</code> button on the <code>New Sales Orders</code>
+				list.</li>
+			<li><b>Check</b> The object page <code>Sales Order Details</code> is updated and
+				shows new data and the sales order '0500000004' appears again in the
+				<code>New Sales Orders</code> list.</li>
+		</ol>
+		<h3>Increase sales order line items' quantities</h3>
+		<ol>
+			<li>Select the first sales order in the list report.</li>
+			<li><b>Check:</b> An object page <code>Sales Order Details</code> for the selected
+				sales order appears.</li>
+			<li>Select the first sales order line item on the object page.</li>
+			<li><b>Check:</b> A sub-object page with item details appears.</li>
+			<li>Press the <code>Gross Amount</code> button.</li>
+			<li><b>Check:</b> The sales order item list is sorted by the <code>GrossAmount</code>
+				and the selected sales order item is no longer part of the items list. In the
+				sub-object page it is still present.</li>
+			<li>Press the <code>Increase all Sales Order Items' Quantities by 1</code> button.</li>
+			<li><b>Check:</b> The quantity on the sub-object page and all quantities for line items
+				in the object page are increased by one.</li>
+			<li><b>Check:</b> The gross amount and the note for the selected sales order in the
+				list report and object page changed too.</li>
+		</ol>
+		<i>Technical background: requestSideEffects must also update the item in the sub-object
+			page even if it is not in the list currently.</i>
+		<h3>Deep create</h3>
+		<ol>
+			<li>Press the <code>Create</code> button.</li>
+			<li><b>Check:</b> An empty sales order is shown at the top of the list report and in
+				the object page. It contains one line item with a quantity of "2.000".</li>
+			<li>Enter 'Deep Create' in the <code>Note</code> field of the object page.</li>
+			<li>Press the <code>Create Line Item</code> button in the toolbar of the sales order
+				line items table thrice.</li>
+			<li><b>Check:</b> Three new line items occur, each with a quantity of "2.000". The
+				count for the sales order line item table is 4.
+			<li>Select the second sales order line item on the object page.</li>
+			<li><b>Check:</b> A sub-object page with item details appears.</li>
+			<li>Press the <code>Delete</code> button of the sub-object page.</li>
+			<li><b>Check:</b> The sub object page vanishes, and the line item is removed from the
+				item table in the object page.</li>
+			<li>Select the second sales order line item on the object page.</li>
+			<li><b>Check:</b> A sub-object page with item details appears.</li>
+			<li>Enter '4' in the Quantity field of the item details.</li>
+			<li>Press the <code>Save</code> button.</li>
+			<li><b>Check:</b> The sales order now has ID '0500000005'.</li>
+			<li><b>Check:</b> The Gross Amount of the sales order now is '14,176.90'.</li>
+			<li><b>Check:</b> The sales order line items now have item positions.</li>
+			<li><b>Check:</b> The sub-object page has been closed.</li>
+			<li>Select the second sales order line item on the object page.</li>
+			<li><b>Check:</b> A sub-object page with item details appears.</li>
+			<li>Enter '3' in the Quantity field of the item details.</li>
+			<li>Press the <code>Save</code> button.</li>
+			<li><b>Check:</b> The gross amount in the object page changed to "12,404.77".</li>
+		</ol>
+	</body>
+</html>

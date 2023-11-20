@@ -1,0 +1,151 @@
+<mvc:View
+		controllerName="sap.m.sample.WhitespacePattern.C"
+		xmlns:mvc="sap.ui.core.mvc"
+		xmlns="sap.m"
+		xmlns:core="sap.ui.core"
+		xmlns:f="sap.ui.layout.form">
+
+	<MessageStrip text="More information could be found on the following page:" class="sapUiMediumMargin">
+		<link>
+			<Link text="Whitespaces concept" href="topic/37deb0bee3e2474887f1521cc583ab69"/>
+		</link>
+	</MessageStrip>
+
+	<f:Form editable="true">
+		<f:layout>
+			<f:ResponsiveGridLayout
+					labelSpanXL="4"
+					labelSpanL="3"
+					labelSpanM="4"
+					labelSpanS="12"
+					adjustLabelSpan="false"
+					emptySpanXL="0"
+					emptySpanL="4"
+					emptySpanM="0"
+					emptySpanS="0"
+					columnsXL="2"
+					columnsL="1"
+					columnsM="1"
+					singleContainerFullSize="false"/>
+		</f:layout>
+		<f:formContainers>
+			<f:FormContainer>
+				<f:formElements>
+					<f:FormElement label="sap.m.Input">
+						<f:fields>
+							<Input placeholder="Type 'Text'"
+								   showSuggestion="true"
+								   suggestionItems="{/}">
+								<suggestionItems>
+									<core:ListItem
+											key="{key}"
+											text="{
+												path : 'text',
+												formatter : '.whitespace2Char'
+											}"
+											additionalText="{
+												path : 'additionalText',
+												formatter : '.whitespace2Char'
+											}"/>
+								</suggestionItems>
+							</Input>
+						</f:fields>
+					</f:FormElement>
+					<f:FormElement label="sap.m.MultiInput">
+						<f:fields>
+							<MultiInput placeholder="Type 'Text'"
+										showSuggestion="true"
+										suggestionItems="{/}">
+								<suggestionItems>
+									<core:ListItem
+											key="{key}"
+											text="{
+												path : 'text',
+												formatter : '.whitespace2Char'
+											}"
+											additionalText="{
+												path : 'additionalText',
+												formatter : '.whitespace2Char'
+											}"/>
+								</suggestionItems>
+							</MultiInput>
+						</f:fields>
+					</f:FormElement>
+					<f:FormElement label="sap.m.MultiComboBox">
+						<f:fields>
+							<MultiComboBox
+									placeholder="Type 'Text'"
+									showSecondaryValues="true"
+									items="{/}">
+								<core:ListItem
+										key="{key}"
+										text="{
+											path : 'text',
+											formatter : '.whitespace2Char'
+										}"
+										additionalText="{
+											path : 'additionalText',
+											formatter : '.whitespace2Char'
+										}"/>
+							</MultiComboBox>
+						</f:fields>
+					</f:FormElement>
+				</f:formElements>
+			</f:FormContainer>
+		</f:formContainers>
+	</f:Form>
+
+
+	<f:Form editable="false">
+		<f:layout>
+			<f:ResponsiveGridLayout
+					labelSpanXL="4"
+					labelSpanL="3"
+					labelSpanM="4"
+					labelSpanS="12"
+					adjustLabelSpan="false"
+					emptySpanXL="0"
+					emptySpanL="4"
+					emptySpanM="0"
+					emptySpanS="0"
+					columnsXL="2"
+					columnsL="1"
+					columnsM="1"
+					singleContainerFullSize="false"/>
+		</f:layout>
+		<f:formContainers>
+			<f:FormContainer>
+				<f:formElements>
+					<f:FormElement label="sap.m.Token">
+						<f:fields>
+							<Token text="{ path : '/9/text', formatter : '.whitespace2Char' }"
+								   key="{/9/key}"/>
+						</f:fields>
+					</f:FormElement>
+					<f:FormElement label="sap.m.Text">
+						<f:fields>
+							<ObjectStatus text="{ path : '/9/text', formatter : '.whitespace2Char' }"/>
+						</f:fields>
+					</f:FormElement>
+					<f:FormElement label="sap.m.ObjectNumber">
+						<f:fields>
+							<ObjectNumber
+									number="{ path : '/9/text', formatter : '.whitespace2Char' }"/>
+						</f:fields>
+					</f:FormElement>
+					<f:FormElement label="sap.m.Title">
+						<f:fields>
+							<Title text="{ path : '/9/text', formatter : '.whitespace2Char' }"/>
+						</f:fields>
+					</f:FormElement>
+					<f:FormElement label="sap.m.Label">
+						<f:fields>
+							<Label text="{ path : '/9/text', formatter : '.whitespace2Char' }"/>
+						</f:fields>
+					</f:FormElement>
+				</f:formElements>
+			</f:FormContainer>
+		</f:formContainers>
+	</f:Form>
+
+</mvc:View>

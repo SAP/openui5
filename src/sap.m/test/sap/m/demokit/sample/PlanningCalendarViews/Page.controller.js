@@ -1,56 +1,64 @@
 sap.ui.define([
 		'sap/ui/core/mvc/Controller',
 		'sap/ui/model/json/JSONModel',
-		'sap/m/MessageBox'
+		'sap/m/MessageBox',
+		'sap/ui/Device',
+		'sap/ui/unified/library',
+		'sap/ui/unified/DateTypeRange',
+		'sap/m/PlanningCalendarView',
+		'sap/ui/core/date/UI5Date'
 	],
-	function (Controller, JSONModel, MessageBox) {
+	function (Controller, JSONModel, MessageBox, Device, unifiedLibrary, DateTypeRange, PlanningCalendarView, UI5Date) {
 		"use strict";
 
-		var PageController = Controller.extend("sap.m.sample.PlanningCalendarViews.Page", {
+		var CalendarIntervalType = unifiedLibrary.CalendarIntervalType;
+		var CalendarDayType = unifiedLibrary.CalendarDayType;
+
+		return Controller.extend("sap.m.sample.PlanningCalendarViews.Page", {
 
 			onInit: function () {
 				// create model
 				var oModel = new JSONModel();
 				oModel.setData({
-					startDate: new Date(2017, 1, 8, 8, 0),
+					startDate: UI5Date.getInstance(2017, 1, 8, 8, 0),
 					people: [{
-						pic: "test-resources/sap/ui/demokit/explored/img/John_Miller.png",
+						pic: "test-resources/sap/ui/documentation/sdk/images/John_Miller.png",
 						name: "John Miller",
 						role: "team member",
 						freeDays: [5, 6],
 						freeHours: [0, 1, 2, 3, 4, 5, 6, 17, 19, 20, 21, 22, 23],
 						appointments: [{
-							start: new Date(2016, 11, 2, 11, 30),
-							end: new Date(2016, 11, 2, 13, 30),
+							start: UI5Date.getInstance(2016, 11, 2, 11, 30),
+							end: UI5Date.getInstance(2016, 11, 2, 13, 30),
 							title: "Online Meeting",
 							type: "Type03",
 							tentative: true
 						},
 							{
-								start: new Date(2017, 0, 15, 13, 30),
-								end: new Date(2017, 0, 29, 17, 30),
+								start: UI5Date.getInstance(2017, 0, 15, 13, 30),
+								end: UI5Date.getInstance(2017, 0, 29, 17, 30),
 								title: "Discussion with clients",
 								info: "online meeting",
 								type: "Type02",
 								tentative: false
 							},
 							{
-								start: new Date(2017, 1, 7, 0, 1),
-								end: new Date(2017, 1, 7, 23, 59),
+								start: UI5Date.getInstance(2017, 1, 7, 0, 1),
+								end: UI5Date.getInstance(2017, 1, 7, 23, 59),
 								title: "Vacation",
 								type: "Type02",
 								tentative: false
 							},
 							{
-								start: new Date(2017, 1, 8, 8, 30),
-								end: new Date(2017, 1, 8, 15, 0),
+								start: UI5Date.getInstance(2017, 1, 8, 8, 30),
+								end: UI5Date.getInstance(2017, 1, 8, 15, 0),
 								title: "Meeting",
 								type: "Type05",
 								tentative: false
 							},
 							{
-								start: new Date(2017, 1, 8, 8, 0),
-								end: new Date(2017, 1, 8, 17, 0),
+								start: UI5Date.getInstance(2017, 1, 8, 8, 0),
+								end: UI5Date.getInstance(2017, 1, 8, 17, 0),
 								title: "Team meeting",
 								info: "room 106",
 								type: "Type01",
@@ -58,30 +66,30 @@ sap.ui.define([
 								tentative: false
 							},
 							{
-								start: new Date(2017, 1, 9, 7, 30),
-								end: new Date(2017, 1, 9, 16, 30),
+								start: UI5Date.getInstance(2017, 1, 9, 7, 30),
+								end: UI5Date.getInstance(2017, 1, 9, 16, 30),
 								title: "Meet Donna Moore",
 								info: "regular",
 								type: "Type08",
 								tentative: false
 							},
 							{
-								start: new Date(2017, 1, 10, 0, 0),
-								end: new Date(2017, 1, 11, 23, 29),
+								start: UI5Date.getInstance(2017, 1, 10, 0, 0),
+								end: UI5Date.getInstance(2017, 1, 11, 23, 29),
 								title: "Private appointment",
 								type: "Type06",
 								tentative: true
 							},
 							{
-								start: new Date(2017, 3, 17, 8, 30),
-								end: new Date(2017, 3, 17, 15, 30),
+								start: UI5Date.getInstance(2017, 3, 17, 8, 30),
+								end: UI5Date.getInstance(2017, 3, 17, 15, 30),
 								title: "Meet Max Mustermann",
 								type: "Type02",
 								tentative: true
 							},
 							{
-								start: new Date(2017, 3, 3, 10, 0),
-								end: new Date(2017, 3, 3, 12, 0),
+								start: UI5Date.getInstance(2017, 3, 3, 10, 0),
+								end: UI5Date.getInstance(2017, 3, 3, 12, 0),
 								title: "Team meeting",
 								info: "room 1",
 								type: "Type01",
@@ -89,23 +97,23 @@ sap.ui.define([
 								tentative: false
 							},
 							{
-								start: new Date(2017, 2, 4, 11, 30),
-								end: new Date(201, 2, 4, 13, 30),
+								start: UI5Date.getInstance(2017, 2, 4, 11, 30),
+								end: UI5Date.getInstance(201, 2, 4, 13, 30),
 								title: "Online Meeting",
 								type: "Type03",
 								tentative: true
 							},
 							{
-								start: new Date(2017, 0, 15, 13, 30),
-								end: new Date(2017, 0, 29, 17, 30),
+								start: UI5Date.getInstance(2017, 0, 15, 13, 30),
+								end: UI5Date.getInstance(2017, 0, 29, 17, 30),
 								title: "Discussion with clients",
 								info: "online meeting",
 								type: "Type02",
 								tentative: false
 							},
 							{
-								start: new Date(2017, 1, 7, 0, 1),
-								end: new Date(2017, 1, 7, 23, 59),
+								start: UI5Date.getInstance(2017, 1, 7, 0, 1),
+								end: UI5Date.getInstance(2017, 1, 7, 23, 59),
 								title: "Vacation",
 								type: "Type02",
 								tentative: false
@@ -113,8 +121,8 @@ sap.ui.define([
 						],
 						headers: [
 							{
-								start: new Date(2017, 1, 9, 11, 30),
-								end: new Date(2017, 1, 9, 14, 0),
+								start: UI5Date.getInstance(2017, 1, 9, 11, 30),
+								end: UI5Date.getInstance(2017, 1, 9, 14, 0),
 								title: "Lunch",
 								type: "Type03"
 							}
@@ -127,30 +135,30 @@ sap.ui.define([
 							freeDays: [0, 6],
 							freeHours: [0, 1, 2, 3, 4, 5, 6, 7, 18, 19, 20, 21, 22, 23],
 							appointments: [{
-								start: new Date(2017, 0, 2, 11, 30),
-								end: new Date(2017, 0, 2, 13, 30),
+								start: UI5Date.getInstance(2017, 0, 2, 11, 30),
+								end: UI5Date.getInstance(2017, 0, 2, 13, 30),
 								title: "Online Meeting",
 								type: "Type03",
 								tentative: true
 							},
 								{
-									start: new Date(2017, 0, 15, 13, 30),
-									end: new Date(2017, 0, 29, 11, 30),
+									start: UI5Date.getInstance(2017, 0, 15, 13, 30),
+									end: UI5Date.getInstance(2017, 0, 29, 11, 30),
 									title: "Meeting with managers",
 									info: "online meeting",
 									type: "Type02",
 									tentative: false
 								},
 								{
-									start: new Date(2017, 1, 5, 0, 1),
-									end: new Date(2017, 1, 5, 23, 59),
+									start: UI5Date.getInstance(2017, 1, 5, 0, 1),
+									end: UI5Date.getInstance(2017, 1, 5, 23, 59),
 									title: "Education",
 									type: "Type03",
 									tentative: false
 								},
 								{
-									start: new Date(2017, 1, 8, 8, 0),
-									end: new Date(2017, 1, 8, 17, 0),
+									start: UI5Date.getInstance(2017, 1, 8, 8, 0),
+									end: UI5Date.getInstance(2017, 1, 8, 17, 0),
 									title: "Team meeting",
 									info: "room 106",
 									type: "Type01",
@@ -158,69 +166,69 @@ sap.ui.define([
 									tentative: false
 								},
 								{
-									start: new Date(2017, 1, 9, 10, 0),
-									end: new Date(2017, 1, 9, 16, 30),
+									start: UI5Date.getInstance(2017, 1, 9, 10, 0),
+									end: UI5Date.getInstance(2017, 1, 9, 16, 30),
 									title: "Meeting",
 									info: "phone",
 									type: "Type02",
 									tentative: false
 								},
 								{
-									start: new Date(2017, 1, 10, 0, 0),
-									end: new Date(2017, 1, 0, 23, 59),
+									start: UI5Date.getInstance(2017, 1, 10, 0, 0),
+									end: UI5Date.getInstance(2017, 1, 0, 23, 59),
 									title: "Blocker",
 									type: "Type04",
 									tentative: false
 								},
 								{
-									start: new Date(2017, 1, 10, 7, 30),
-									end: new Date(2017, 1, 10, 16, 30),
+									start: UI5Date.getInstance(2017, 1, 10, 7, 30),
+									end: UI5Date.getInstance(2017, 1, 10, 16, 30),
 									title: "Meet Donna Moore",
 									info: "regular",
 									type: "Type08",
 									tentative: false
 								},
 								{
-									start: new Date(2017, 1, 12, 0, 1),
-									end: new Date(2017, 1, 12, 23, 59),
+									start: UI5Date.getInstance(2017, 1, 12, 0, 1),
+									end: UI5Date.getInstance(2017, 1, 12, 23, 59),
 									title: "New Product",
 									info: "room 105",
 									type: "Type04",
 									tentative: false
 								},
 								{
-									start: new Date(2017, 2, 2, 11, 30),
-									end: new Date(2017, 2, 2, 13, 30),
+									start: UI5Date.getInstance(2017, 2, 2, 11, 30),
+									end: UI5Date.getInstance(2017, 2, 2, 13, 30),
 									title: "Online Meeting",
 									type: "Type03",
 									tentative: true
 								},
 								{
-									start: new Date(2017, 2, 15, 13, 30),
-									end: new Date(2017, 2, 29, 17, 30),
+									start: UI5Date.getInstance(2017, 2, 15, 13, 30),
+									end: UI5Date.getInstance(2017, 2, 29, 17, 30),
 									title: "Meeting with managers",
 									info: "online meeting",
 									type: "Type02",
 									tentative: false
 								},
 								{
-									start: new Date(2017, 4, 2, 11, 30),
-									end: new Date(2017, 4, 2, 13, 30),
+									start: UI5Date.getInstance(2017, 4, 2, 11, 30),
+									end: UI5Date.getInstance(2017, 4, 2, 13, 30),
 									title: "Online Meeting",
 									type: "Type03",
 									tentative: true
 								},
 								{
-									start: new Date(2017, 2, 15, 13, 30),
-									end: new Date(2017, 2, 29, 17, 30),
+									start: UI5Date.getInstance(2017, 2, 15, 13, 30),
+									end: UI5Date.getInstance(2017, 2, 29, 17, 30),
 									title: "Discussion with clients",
 									info: "online meeting",
 									type: "Type02",
 									tentative: false
 								},
 								{
-									start: new Date(2017, 3, 7, 0, 1),
-									end: new Date(2017, 3, 7, 23, 59),
+									start: UI5Date.getInstance(2017, 3, 7, 0, 1),
+									end: UI5Date.getInstance(2017, 3, 7, 23, 59),
 									title: "Vacation",
 									type: "Type02",
 									tentative: false
@@ -228,8 +236,8 @@ sap.ui.define([
 							],
 							headers: [
 								{
-									start: new Date(2017, 1, 14, 0, 0),
-									end: new Date(2017, 1, 14, 23, 59),
+									start: UI5Date.getInstance(2017, 1, 14, 0, 0),
+									end: UI5Date.getInstance(2017, 1, 14, 23, 59),
 									title: "Valentine's Day",
 									type: "Type03"
 								}
@@ -243,21 +251,24 @@ sap.ui.define([
 			},
 
 			handleGroupModeChange: function (oEvent) {
-				var selectedItem = oEvent.getParameter("selectedItem");
-				if (selectedItem) {
-					var oPC1 = this.byId("PC1");
-					oPC1.setGroupAppointmentsMode(selectedItem.getKey());
+				var oSelectedItem = oEvent.getParameter("selectedItem");
+				if (oSelectedItem) {
+					this.byId("PC1").setGroupAppointmentsMode(oSelectedItem.getKey());
 				}
 			},
 
 			handleAppointmentSelect: function (oEvent) {
-				var oAppointment = oEvent.getParameter("appointment");
+				var oAppointment = oEvent.getParameter("appointment"),
+					sSelected,
+					aAppointments,
+					sValue;
+
 				if (oAppointment) {
-					var sSelected = oAppointment.getSelected() ? "selected" : "deselected";
+					sSelected = oAppointment.getSelected() ? "selected" : "deselected";
 					MessageBox.show("'" + oAppointment.getTitle() + "' " + sSelected + ". \n Selected appointments: " + this.byId("PC1").getSelectedAppointments().length);
 				} else {
-					var aAppointments = oEvent.getParameter("appointments"),
-						sValue = aAppointments.length + " Appointments selected";
+					aAppointments = oEvent.getParameter("appointments");
+					sValue = aAppointments.length + " Appointments selected";
 					MessageBox.show(sValue);
 				}
 			},
@@ -266,7 +277,7 @@ sap.ui.define([
 				if (this.byId("PC1").getViewKey() === "nonWorking"){
 					this.handleNonWorkingSpecialDates(oEvent);
 				} else {
-					var oPC = oEvent.oSource,
+					var oPC = oEvent.getSource(),
 						oStartDate = oEvent.getParameter("startDate"),
 						oEndDate = oEvent.getParameter("endDate"),
 						oRow = oEvent.getParameter("row"),
@@ -278,14 +289,16 @@ sap.ui.define([
 							end: oEndDate,
 							title: "new appointment",
 							type: "Type09"
-						};
+						},
+						aSelectedRows,
+						i;
 
 					if (oRow) {
 						iIndex = oPC.indexOfRow(oRow);
 						oData.people[iIndex].appointments.push(oAppointment);
 					} else {
-						var aSelectedRows = oPC.getSelectedRows();
-						for (var i = 0; i < aSelectedRows.length; i++) {
+						aSelectedRows = oPC.getSelectedRows();
+						for (i = 0; i < aSelectedRows.length; i++) {
 							iIndex = oPC.indexOfRow(aSelectedRows[i]);
 							oData.people[iIndex].appointments.push(oAppointment);
 						}
@@ -295,7 +308,7 @@ sap.ui.define([
 				}
 			},
 
-			handleViewChange: function (oEvent) {
+			handleViewChange: function () {
 				this.determineControlsVisibility();
 			},
 
@@ -307,17 +320,16 @@ sap.ui.define([
 			handleNonWorkingSpecialDates: function (oEvent){
 				var oPC1 = this.byId("PC1"),
 					aSpecialDates = oPC1.getSpecialDates() || [],
-					oStartDate = oEvent.getParameter("startDate");
-
-				//determine add or remove
-				var oFound = aSpecialDates.find(function(oDateRange) {
-					return oDateRange.getStartDate().getTime() === oStartDate.getTime();
-				});
+					oStartDate = oEvent.getParameter("startDate"),
+					//determine add or remove
+					oFound = aSpecialDates.find(function(oDateRange) {
+						return oDateRange.getStartDate().getTime() === oStartDate.getTime();
+					});
 
 				if (!oFound) {
-					oPC1.addSpecialDate(new sap.ui.unified.DateTypeRange({
-						startDate: new Date(oStartDate.getTime()),
-						type: sap.ui.unified.CalendarDayType.NonWorking
+					oPC1.addSpecialDate(new DateTypeRange({
+						startDate: UI5Date.getInstance(oStartDate.getTime()),
+						type: CalendarDayType.NonWorking
 					}));
 				} else {
 					oPC1.removeSpecialDate(oFound);
@@ -325,13 +337,16 @@ sap.ui.define([
 			},
 
 			/*
-			sap.m.Label should be visible only for non-working days view.
-			sap.m.Select should be visible only for months view because only there is a grouping.
+			 * sap.m.Label should be visible only for non-working days view.
+			 * sap.m.Select should be visible only for months view because only there is a grouping.
 			 */
 			determineControlsVisibility: function () {
 				var bLabelVisible = this.byId("PC1").getViewKey() === "nonWorking",
-					bSelectVisible = this.byId("PC1").getViewKey() === "M";
+					bSelectVisible = false;
 				this.byId("label").setVisible(bLabelVisible);
+				if (Device.system.desktop){
+					bSelectVisible = this.byId("PC1").getViewKey() === "M";
+				}
 				this.byId("select").setVisible(bSelectVisible);
 			},
 
@@ -343,9 +358,9 @@ sap.ui.define([
 			onPress: function (oEvent) {
 				if (!oEvent.getParameter("pressed")) {
 					this.byId("PC1").addView(
-						new sap.m.PlanningCalendarView({
+						new PlanningCalendarView({
 							key: "A",
-							intervalType: sap.ui.unified.CalendarIntervalType.Hour,
+							intervalType: CalendarIntervalType.Hour,
 							description: "hours view",
 							intervalsS: 2,
 							intervalsM: 4,
@@ -354,9 +369,9 @@ sap.ui.define([
 						})
 					);
 					this.byId("PC1").addView(
-						new sap.m.PlanningCalendarView({
+						new PlanningCalendarView({
 							key: "D",
-							intervalType: sap.ui.unified.CalendarIntervalType.Day,
+							intervalType: CalendarIntervalType.Day,
 							description: "days view",
 							intervalsS: 1,
 							intervalsM: 3,
@@ -365,9 +380,9 @@ sap.ui.define([
 						})
 					);
 					this.byId("PC1").addView(
-						new sap.m.PlanningCalendarView({
+						new PlanningCalendarView({
 							key: "M",
-							intervalType: sap.ui.unified.CalendarIntervalType.Month,
+							intervalType: CalendarIntervalType.Month,
 							description: "months view",
 							intervalsS: 1,
 							intervalsM: 2,
@@ -376,9 +391,9 @@ sap.ui.define([
 						})
 					);
 					this.byId("PC1").addView(
-						new sap.m.PlanningCalendarView({
+						new PlanningCalendarView({
 							key: "nonWorking",
-							intervalType: sap.ui.unified.CalendarIntervalType.Day,
+							intervalType: CalendarIntervalType.Day,
 							description: "days with non-working dates",
 							intervalsS: 1,
 							intervalsM: 5,
@@ -389,10 +404,10 @@ sap.ui.define([
 				} else {
 					this.byId("PC1").destroyViews();
 				}
+				this.byId("select").setVisible(false);
+				this.byId("label").setVisible(false);
 			}
 
 		});
-
-		return PageController;
 
 	});

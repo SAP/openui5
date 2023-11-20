@@ -1,0 +1,20 @@
+{
+	"sap.app": {
+		"id": "sap.ui.test.dependencyLoading.componentVariant"
+	},
+	"sap.ui5": {
+		"componentName": "sap.ui.test.dependencyLoading.component1",
+		"dependencies": {
+			"libs": {
+				"sap.m": {},
+				"sap.ui.core": {},
+				"sap.ui.table": {}
+			}
+		},
+		"resources": {
+			"js": [{
+				"uri": "scripts/componentVariant_1_inheritedScript.js"
+			}]
+		}
+	}
+}

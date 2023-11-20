@@ -1,0 +1,78 @@
+<mvc:View
+		height="100%"
+		controllerName="sap.ui.demo.terminologies.App"
+		xmlns:layout="sap.ui.layout"
+		xmlns:form="sap.ui.layout.form"
+		xmlns:core="sap.ui.core"
+		xmlns:mvc="sap.ui.core.mvc"
+		xmlns="sap.m">
+	<App id="app">
+		<Page
+				id="page"
+				showHeader="true">
+			<layout:BlockLayout>
+				<layout:BlockLayoutRow>
+					<layout:BlockLayoutCell>
+
+						<form:SimpleForm
+								layout="ColumnLayout"
+								editable="true"
+						>
+							<form:content>
+								<core:Title text="Selection"></core:Title>
+								<Label text="AppVariant"></Label>
+								<Select
+										forceSelection="false"
+										selectedKey="{/selectedKeyApp}"
+										items="{/apps}"
+										change="onChangeApp">
+									<core:Item key="{id}" text="{name}" />
+								</Select>
+
+								<Label text="Terminology"></Label>
+								<Select
+										forceSelection="false"
+										selectedKey="{/selectedKey}"
+										items="{/terminologies}"
+										change="onChangeTerminology">
+									<core:Item key="{id}" text="{name}" />
+								</Select>
+								<Label text="Language"></Label>
+								<Select
+										forceSelection="false"
+										selectedKey="{/selectedKeyLang}"
+										items="{/languages}"
+										change="onChangeLanguage">
+									<core:Item key="{id}" text="{name}" />
+								</Select>
+
+								<core:Title text="Texts"></core:Title>
+
+								<Label text="Text defined in terminologies (TERMINOLOGY_KEY)"></Label>
+								<Text text="{path: 'i18n>TERMINOLOGY_KEY', formatter: '.formatter.i18ntext'}" id="terminologytext" class="terminologytext"></Text>
+
+								<Label text="Text defined in AppVariants (APPVAR_KEY)"></Label>
+								<Text text="{i18n>APPVAR_KEY}" id="appvartext" class="appvartext"></Text>
+
+								<Label text="Text defined in appvar1 and base (MAX_APPVAR1_KEY)"></Label>
+								<Text text="{i18n>MAX_APPVAR1_KEY}" id="maxappvar1" class="maxappvar1"></Text>
+
+							</form:content>
+
+						</form:SimpleForm>
+					</layout:BlockLayoutCell>
+
+					<layout:BlockLayoutCell>
+						<VBox>
+
+							<Title text="Configuration"></Title>
+							<core:HTML id="htmlConfigurationImage"></core:HTML>
+						</VBox>
+					</layout:BlockLayoutCell>
+				</layout:BlockLayoutRow>
+
+
+			</layout:BlockLayout>
+		</Page>
+	</App>
+</mvc:View>

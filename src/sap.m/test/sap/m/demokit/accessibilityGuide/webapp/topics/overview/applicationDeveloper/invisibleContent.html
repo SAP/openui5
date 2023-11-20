@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>Invisible Content</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<script src="../../../scripts/boot.js"></script>
+</head>
+<body class="sapUiBody topicBody">
+	<div class="topic">
+		<div class="content">
+			<h1 id="overview">Overview</h1>
+
+			<h2 id="invisible-messageing">Invisible Messaging</h2>
+			<p>The invisible message provides a hidden message that can be used by screen readers, when the UI content changes dynamically (for example, when a page is refreshed).</p>
+
+			<p>In the <code>init</code> method, we need to get the instance of the Invisible Messaging service:</p>
+			<pre class="lang-js">
+onInit: function () {
+	// ... some other code
+
+	this.oInvisibleMessage = InvisibleMessage.getInstance();
+
+	// ... some other code
+}
+			</pre>
+
+			<p>Then in some other handler function, we can use it:</p>
+			<pre class="lang-js">
+fnHandler: function () {
+	// ... handle something
+
+	this.oInvisibleMessage.announce(sMessage, InvisibleMessageMode.Assertive);
+}
+			</pre>
+			<a class="try-button" href="../../../index.html#/explore/invisibleMessaging" target="_parent">See Example</a>
+
+			<h2 id="invisible-text">Invisible Text</h2>
+			<p>The invisible text provides a hidden text that can be used by screen readers to provide contextual information. The hidden text can for example be referenced in the <code>ariaLabelledBy</code> or <code>ariaDescribedBy</code> associations of other controls.</p>
+			<pre class="lang-xml">
+&lt;form:SimpleForm
+	maxContainerCols="2"
+	editable="true"&gt;
+	&lt;Label
+		text= "Postal code / City" /&gt;
+	&lt;Input
+<mark>		ariaLabelledBy="postal"</mark>
+		value="12345"
+		fieldWidth="35%" /&gt;
+	&lt;Input
+		value="Sofia"
+<mark>		ariaLabelledBy="city"</mark>
+		fieldWidth="35%" /&gt;
+&lt;/form:SimpleForm&gt;
+<mark>&lt;core:InvisibleText id="postal" text="Postal code" /&gt;</mark>
+<mark>&lt;core:InvisibleText id="city" text="City" /&gt;</mark>
+			</pre>
+			<a class="try-button" href="../../../index.html#/explore/invisibleText" target="_parent">See Example</a>
+		</div>
+		<div class="navigation">
+			<h4>Table of Contents</h4>
+			<div><a href="#overview">Overview</a></div>
+			<div><a href="#invisible-messageing">Invisible Messaging</a></div>
+			<div><a href="#invisible-text">Invisible Text</a></div>
+		</div>
+	</div>
+</body>
+</html>

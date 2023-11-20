@@ -1,14 +1,22 @@
 {
-	"_version": "1.9.0",
+	"_version": "1.21.0",
+
 	"sap.app": {
 		"id": "mycompany.myapp.MyWorklistApp",
 		"type": "application",
-		"i18n": "i18n/i18n.properties",
+		"i18n": {
+			"bundleUrl": "i18n/i18n.properties",
+			"supportedLocales": [
+				""
+			],
+			"fallbackLocale": ""
+		},
 		"title": "{{appTitle}}",
 		"description": "{{appDescription}}",
 		"applicationVersion": {
 			"version": "1.0.0"
 		},
+		"resources": "resources.json",
 		"dataSources": {
 			"mainService": {
 				"uri": "/northwind/V2/Northwind/Northwind.svc/",
@@ -18,12 +26,9 @@
 					"localUri": "localService/metadata.xml"
 				}
 			}
-		},
-		"sourceTemplate": {
-			"id": "sap.ui.ui5-template-plugin.1worklist",
-			"version": "1.52.7"
 		}
 	},
+
 	"sap.ui": {
 		"technology": "UI5",
 		"icons": {
@@ -40,6 +45,7 @@
 			"phone": true
 		}
 	},
+
 	"sap.ui5": {
 		"rootView": {
 			"viewName": "mycompany.myapp.MyWorklistApp.view.App",
@@ -48,11 +54,11 @@
 			"id": "app"
 		},
 		"dependencies": {
-			"minUI5Version": "1.42.0",
+			"minUI5Version": "1.98.0",
 			"libs": {
-				"sap.ui.core": {},
+				"sap.f": {},
 				"sap.m": {},
-				"sap.f": {}
+				"sap.ui.core": {}
 			}
 		},
 		"contentDensities": {
@@ -63,7 +69,11 @@
 			"i18n": {
 				"type": "sap.ui.model.resource.ResourceModel",
 				"settings": {
-					"bundleName": "mycompany.myapp.MyWorklistApp.i18n.i18n"
+					"bundleName": "mycompany.myapp.MyWorklistApp.i18n.i18n",
+					"supportedLocales": [
+						""
+					],
+					"fallbackLocale": ""
 				}
 			},
 			"": {
@@ -74,14 +84,13 @@
 		"routing": {
 			"config": {
 				"routerClass": "sap.m.routing.Router",
+				"type": "View",
 				"viewType": "XML",
-				"viewPath": "mycompany.myapp.MyWorklistApp.view",
+				"path": "mycompany.myapp.MyWorklistApp.view",
 				"controlId": "app",
 				"controlAggregation": "pages",
 				"bypassed": {
-					"target": [
-						"notFound"
-					]
+					"target": ["notFound"]
 				},
 				"async": true
 			},
@@ -89,38 +98,34 @@
 				{
 					"pattern": "",
 					"name": "worklist",
-					"target": [
-						"worklist"
-					]
+					"target": ["worklist"]
 				},
 				{
 					"pattern": "Products/{objectId}",
 					"name": "object",
-					"target": [
-						"object"
-					]
+					"target": ["object"]
 				}
 			],
 			"targets": {
 				"worklist": {
-					"viewName": "Worklist",
-					"viewId": "worklist",
-					"viewLevel": 1,
+					"name": "Worklist",
+					"id": "worklist",
+					"level": 1,
 					"title": "{i18n>worklistViewTitle}"
 				},
 				"object": {
-					"viewName": "Object",
-					"viewId": "object",
-					"viewLevel": 2,
+					"name": "Object",
+					"id": "object",
+					"level": 2,
 					"title": "{i18n>objectViewTitle}"
 				},
 				"objectNotFound": {
-					"viewName": "ObjectNotFound",
-					"viewId": "objectNotFound"
+					"name": "ObjectNotFound",
+					"id": "objectNotFound"
 				},
 				"notFound": {
-					"viewName": "NotFound",
-					"viewId": "notFound"
+					"name": "NotFound",
+					"id": "notFound"
 				}
 			}
 		}

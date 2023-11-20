@@ -1,0 +1,33 @@
+{
+	"sap.app": {
+		"id": "card.bundle.list",
+		"type": "card",
+		"i18n": "i18n/i18n.properties"
+	},
+	"sap.card": {
+		"type": "List",
+		"header": {
+			"title": "{{title}}",
+			"subTitle": "{{subtitle}}"
+		},
+		"data": {
+			"request": {
+				"url": "./mockdata/employees.json"
+			}
+		},
+		"content": {
+			"item": {
+				"title": "{Title}",
+				"description": "{Position}",
+				"icon": {
+					"src": "{Icon}"
+				},
+				"actions": [
+					{
+						"type": "Navigation"
+					}
+				]
+			}
+		}
+	}
+}

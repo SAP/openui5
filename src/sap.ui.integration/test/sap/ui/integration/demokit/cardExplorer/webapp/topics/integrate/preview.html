@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<title>Preview</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<script src="../../scripts/boot.js"></script>
+</head>
+
+<body class="sapUiBody topicBody">
+	<div class="topic">
+		<div class="content">
+			<h1 id="overview">Preview</h1>
+			<div class="messageStripWarning">Experimental feature since version 1.112.</div>
+			<p>Displaying cards in preview mode is handy for the situations where the end user is exploring, selecting or configuring proposed or available cards.</p>
+
+			<h2 id="modes">Usage</h2>
+			<p>
+				It is up to the host environment to trigger card rendering into preview mode, depending on specific use cases or scenarios where this mode is applicable.
+				The public <a data-demokit-href="#/api/sap.ui.integration.widgets.Card%23controlProperties" target="_blank"><code>previewMode</code></a> property is provided to set the desired preview mode.
+			</p>
+
+			<h2 id="modes">Modes</h2>
+			<p>
+				All available preview modes are listed in <a data-demokit-href="#/api/sap.ui.integration.CardPreviewMode" target="_blank"><code>sap.ui.integration.CardPreviewMode</code></a>.
+			</p>
+
+			<ul>
+				<li>"Off" - Preview is turned off, real data is displayed.</li>
+				<li>
+					<p>"MockData" - In this mode if the card is configured with mock data, it is displayed instead of the real data.</p>
+					<img src="../images/previewMockData.png" alt="Caching Diagram" style="max-width: 100%;">
+					<p>If the card is missing mock data configuration (the <code>mockData</code> sub-section in the manifests' data section), it will fall back to display an Abstract preview with a message notification like:</p>
+					<img src="../images/previewMockDataMissingConfiguration.png" alt="Caching Diagram" style="max-width: 100%;">
+				</li>
+				<li>
+					<p>"Abstract" - In this mode cards display abstract placeholders.</p>
+					<img src="../images/previewAbstract.png" alt="Caching Diagram" style="max-width: 100%;">
+				</li>
+			</ul>
+
+			<h2 id="examples">Example</h2>
+			<p>Card that displays mock data in preview:</p>
+
+			<p>XML View</p>
+			<pre class="lang-xml">
+&lt;mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:w="sap.ui.integration.widgets"&gt;
+	&lt;w:Card manifest="./manifest.json" previewMode="MockData"/&gt;
+&lt;/mvc:View&gt;
+</pre>
+
+			<a class="try-button" href="../../index.html#/explore/preview" target="_parent">Try it Out</a>
+		</div>
+	</div>
+</body>
+
+</html>

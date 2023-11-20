@@ -1,0 +1,87 @@
+<mvc:View controllerName="sap.ui.core.sample.RoutingNestedComponent.reuse.products.controller.Detail"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m"
+	xmlns:l="sap.ui.layout"
+	xmlns:f="sap.ui.layout.form"
+	xmlns:core="sap.ui.core"
+	displayBlock="true"
+	busyIndicatorDelay="0"
+	busy="true">
+	<Page id="page"
+		showHeader="false"
+		showNavButton="false"
+		enableScrolling="true"
+		class="sapUiContentPadding productsPage">
+		<VBox >
+			<f:Form id="FormDisplay354"
+			editable="false" core:require="{Currency:'sap/ui/model/type/Currency'}">
+				<f:title>
+					<core:Title text="{i18n>detailViewTitle}" />
+				</f:title>
+				<f:layout>
+					<f:ResponsiveGridLayout labelSpanXL="3"
+						labelSpanL="3"
+						labelSpanM="3"
+						labelSpanS="12"
+						adjustLabelSpan="false"
+						emptySpanXL="4"
+						emptySpanL="4"
+						emptySpanM="4"
+						emptySpanS="0"
+						columnsXL="1"
+						columnsL="1"
+						columnsM="1"
+						singleContainerFullSize="false" />
+				</f:layout>
+				<f:formContainers>
+					<f:FormContainer>
+						<f:FormElement label="ID">
+							<f:fields>
+								<Text text="{ProductID}" />
+							</f:fields>
+						</f:FormElement>
+						<f:FormElement label="Name">
+							<f:fields>
+								<Text text="{ProductName}" />
+							</f:fields>
+						</f:FormElement>
+						<f:FormElement label="Supplier">
+							<f:fields>
+								<Link text="{Supplier/CompanyName}"
+									press="onPressSupplier" />
+							</f:fields>
+						</f:FormElement>
+						<f:FormElement label="Price">
+							<f:fields>
+								<Text text="{parts:[{path:'UnitPrice'}, {path:'',value:'USD'}], type:'Currency', formatOptions:{currencyCode: false}}" />
+							</f:fields>
+						</f:FormElement>
+						<f:FormElement label="Quantity per Unit">
+							<f:fields>
+								<Text text="{QuantityPerUnit}" />
+							</f:fields>
+						</f:FormElement>
+					</f:FormContainer>
+					<f:FormContainer>
+						<f:FormElement label="Category">
+							<f:fields>
+								<Link text="{Category/CategoryName}"
+									press="onPressCategory" />
+							</f:fields>
+						</f:FormElement>
+						<f:FormElement label="Description">
+							<f:fields>
+								<Text text="{Category/Description}" />
+							</f:fields>
+						</f:FormElement>
+						<f:FormElement label="Image">
+							<f:fields>
+								<Image src="{path:'Category/Picture', formatter:'.base64StringToImage'}" />
+							</f:fields>
+						</f:FormElement>
+					</f:FormContainer>
+				</f:formContainers>
+			</f:Form>
+		</VBox>
+	</Page>
+</mvc:View>

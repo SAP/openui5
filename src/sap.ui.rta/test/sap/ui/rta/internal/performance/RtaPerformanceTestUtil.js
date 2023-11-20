@@ -1,74 +1,21 @@
 sap.ui.define([
 	"sap/ui/rta/RuntimeAuthoring",
 	"sap/ui/rta/plugin/Plugin",
-	"sap/ui/dt/DesignTime",
-	"sap/ui/fl/Utils",
-	"sap/ui/fl/registry/Settings",
-	'sap/ui/thirdparty/sinon'
+	"sap/ui/dt/OverlayRegistry",
+	"sap/base/Log"
 ], function(
 	RuntimeAuthoring,
 	Plugin,
-	DesignTime,
-	FlexUtils,
-	FlexSettings,
-	sinon
-){
+	OverlayRegistry,
+	Log
+) {
 	"use strict";
 
-	var oManifest = {
-		"sap.app" : {
-			applicationVersion : {
-				version : "1.2.3"
-			}
-		}
-	};
-
-	var oMockedAppComponent = {
-		getManifestEntry: function () {
-			return {};
-		},
-		getMetadata: function () {
-			return {
-				getName: function () {
-					return "someName";
-				},
-				getManifest: function () {
-					return oManifest;
-				}
-			};
-		},
-		getManifest: function () {
-			return oManifest;
-		},
-		getModel: function () {}
-	};
-
 	var Util = {
-
-		_createStartRtaFunction: function(oRuntimeAuthoring) {
-			return function() {
-				return Promise.all([
-					new Promise(function (fnResolve) {
-						oRuntimeAuthoring.attachStart(fnResolve);
-					}),
-					oRuntimeAuthoring.start()
-				]);
-			};
-		},
-
-		_defineTestStubs: function(oRuntimeAuthoring) {
-			sinon.stub(FlexSettings, "getInstance").returns(Promise.resolve({
-				isProductiveSystem: function() { return false; },
-				hasMergeErrorOccured: function() { return false; }
-			}));
-			sinon.stub(FlexUtils, "getAppComponentForControl").returns(oMockedAppComponent);
-			var oFlexController = oRuntimeAuthoring._getFlexController();
-			sinon.stub(oFlexController, "getComponentChanges").returns(Promise.resolve([]));
-		},
-
-		startRta: function(oHorizontalLayout, aPlugins) {
+		startRta(oHorizontalLayout, aPlugins) {
 			var oRuntimeAuthoring = new RuntimeAuthoring({
-				rootControl: oHorizontalLayout
+				rootControl: oHorizontalLayout,
+				showToolbars: false
 			});
 			if (aPlugins && Array.isArray(aPlugins)) {
 				if (!aPlugins.length) {
@@ -76,61 +23,53 @@ sap.ui.define([
 				}
 				oRuntimeAuthoring.setPlugins(aPlugins);
 			}
-			Util._defineTestStubs(oRuntimeAuthoring);
-
-			// will result in custom timer in webPageTest
-			window.performance.mark("rta.start.starts");
-
-			return Promise.all([
-				new Promise(function (fnResolve) {
-					oRuntimeAuthoring.attachStart(fnResolve);
-				}),
-				oRuntimeAuthoring.start()
-			])
-			.then(function() {
-				var sMeasureName = "RTA start function called";
-				//will result in custom timer in webPageTest
-				window.performance.mark("rta.start.ends");
-				window.performance.measure(sMeasureName, "rta.start.starts", "rta.start.ends");
-				sap.ui.rta.startTime = window.performance.getEntriesByName(sMeasureName)[0].duration;
-				jQuery.sap.log.info(sMeasureName, sap.ui.rta.startTime + "ms");
-				//visual change at the end
-				var oOverlay = sap.ui.dt.OverlayRegistry.getOverlay(oHorizontalLayout);
-				oOverlay.setSelected(true);
-			})
-			.then(function() {
-				sinon.restore();
-			});
-		},
-
-		startRtaWithoutDt: function(oHorizontalLayout) {
-			var oRuntimeAuthoring = new RuntimeAuthoring({
-				rootControl: oHorizontalLayout
-			});
-			Util._defineTestStubs(oRuntimeAuthoring);
-			sinon.stub(DesignTime.prototype, "addRootElement");
 
 			// will result in custom timer in webPageTest
 			window.performance.mark("rta.start.starts");
 
 			return oRuntimeAuthoring.start()
-
 			.then(function() {
-				var sMeasureName = "RTA start function called without starting DT";
-				//will result in custom timer in webPageTest
+				var sMeasureName = "RTA start function called";
+				// will result in custom timer in webPageTest
 				window.performance.mark("rta.start.ends");
 				window.performance.measure(sMeasureName, "rta.start.starts", "rta.start.ends");
-				sap.ui.rta.startTime = window.performance.getEntriesByName(sMeasureName)[0].duration;
-				jQuery.sap.log.info(sMeasureName, sap.ui.rta.startTime + "ms");
-			})
-			.then(function() {
-				sinon.restore();
+				window.wpp.customMetrics.startTime = window.performance.getEntriesByName(sMeasureName)[0].duration;
+				Log.info(sMeasureName, `${window.wpp.customMetrics.startTime}ms`);
+				// visual change at the end
+				var oOverlay = OverlayRegistry.getOverlay(oHorizontalLayout);
+				oOverlay.setSelected(true);
 			});
 		},
 
-		startRtaConstructorOnly: function(oHorizontalLayout) {
+		startRtaWithoutStretch(oRootControl) {
+			var oRuntimeAuthoring = new RuntimeAuthoring({
+				rootControl: oRootControl,
+				showToolbars: false
+			});
+			var mPlugins = oRuntimeAuthoring.getDefaultPlugins();
+			delete mPlugins.stretch;
+			oRuntimeAuthoring.setPlugins(mPlugins);
+
+			// will result in custom timer in webPageTest
+			window.performance.mark("rta.start.starts");
+
+			return oRuntimeAuthoring.start()
+			.then(function() {
+				var sMeasureName = "RTA start function called";
+				// will result in custom timer in webPageTest
+				window.performance.mark("rta.start.ends");
+				window.performance.measure(sMeasureName, "rta.start.starts", "rta.start.ends");
+				window.wpp.customMetrics.startTime = window.performance.getEntriesByName(sMeasureName)[0].duration;
+				Log.info(sMeasureName, `${window.wpp.customMetrics.startTime}ms`);
+				// visual change at the end
+				var oOverlay = OverlayRegistry.getOverlay(oRootControl);
+				oOverlay.setSelected(true);
+			});
+		},
+
+		startRtaConstructorOnly(oHorizontalLayout) {
 			var iRtaStartCounter = 1000;
-			var sMeasureName = "RTA init function called " + iRtaStartCounter + " times";
+			var sMeasureName = `RTA init function called ${iRtaStartCounter} times`;
 			window.performance.clearMeasures();
 
 			// will result in custom timer in webPageTest
@@ -139,20 +78,19 @@ sap.ui.define([
 			for (var i = 0; i < iRtaStartCounter; i++) {
 				/* eslint no-new: 0 */
 				new RuntimeAuthoring({
-					rootControl : oHorizontalLayout
+					rootControl: oHorizontalLayout
 				});
 			}
 
-			//will result in custom timer in webPageTest
+			// will result in custom timer in webPageTest
 			window.performance.mark("rta.init.ends");
 			window.performance.measure(sMeasureName, "rta.init.starts", "rta.init.ends");
-			sap.ui.rta.creationTime = window.performance.getEntriesByName(sMeasureName)[0].duration;
-			jQuery.sap.log.info(sMeasureName, sap.ui.rta.creationTime + "ms");
+			window.wpp.customMetrics.creationTime = window.performance.getEntriesByName(sMeasureName)[0].duration;
+			Log.info(sMeasureName, `${window.wpp.customMetrics.creationTime}ms`);
 		}
 	};
 
 	window.startRta = Util.startRta;
-	window.startRtaWithoutDt = Util.startRtaWithoutDt;
 	window.startRtaConstructorOnly = Util.startRtaConstructorOnly;
 
 	return Util;

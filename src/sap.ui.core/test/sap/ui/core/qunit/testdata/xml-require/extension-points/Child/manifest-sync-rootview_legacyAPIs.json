@@ -1,0 +1,33 @@
+{
+	"_version": "0.0.1",
+	"sap.app": {
+		"id": "testdata.xml-require.extension-points.Child"
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "testdata.xml-require.extension-points.Parent.Main",
+			"type": "XML",
+			"id": "app",
+			"async": false
+		},
+		"extends": {
+			"component" : "testdata.xml-require.extension-points.Parent",
+			"extensions": {
+				"sap.ui.viewExtensions": {
+					"testdata.xml-require.extension-points.Parent.Main": {
+						"EP_Require": {
+							"className": "sap.ui.core.mvc.View",
+							"viewName": "testdata.xml-require.extension-points.Child.EP_Require",
+							"type": "XML"
+						},
+						"EP_NoRequire": {
+							"className": "sap.ui.core.mvc.View",
+							"viewName": "testdata.xml-require.extension-points.Child.EP_NoRequire",
+							"type": "XML"
+						}
+					}
+				 }
+			}
+		}
+	}
+}

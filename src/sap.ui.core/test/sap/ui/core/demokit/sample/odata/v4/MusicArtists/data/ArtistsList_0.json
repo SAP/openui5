@@ -1,0 +1,76 @@
+{
+	"@odata.metadataEtag" : "W/\"20180726141226\"",
+	"value" : [
+		{
+			"ArtistUUID" : "005056ab-6fd8-1ee8-9ff2-ae6f1e740206",
+			"CountryOfOrigin_Text" : "England",
+			"FoundingYear" : "1974",
+			"HasDraftEntity" : false,
+			"IsActiveEntity" : true,
+			"Name" : "The Queen"
+		}, {
+			"ArtistUUID" : "005056ab-6fd8-1ee8-9ff2-ae6f1e73c206",
+			"CountryOfOrigin_Text" : "USA",
+			"FoundingYear" : "1989",
+			"HasDraftEntity" : false,
+			"IsActiveEntity" : true,
+			"Name" : "Elvis Presley"
+		}, {
+			"ArtistUUID" : "005056ab-6fd8-1ed8-a29b-7811bb33654f",
+			"CountryOfOrigin_Text" : "USA",
+			"FoundingYear" : "1989",
+			"HasDraftEntity" : true,
+			"IsActiveEntity" : true,
+			"Name" : "Tupac Shakur"
+		}, {
+			"ArtistUUID" : "005056ab-6fd8-1ed8-a3cc-f6c1dcaa5f73",
+			"CountryOfOrigin_Text" : "USA",
+			"FoundingYear" : "1989",
+			"HasDraftEntity" : false,
+			"IsActiveEntity" : true,
+			"Name" : "Dr. Dre"
+		}, {
+			"ArtistUUID" : "005056ab-6fd8-1ed8-a3cc-f6c1dcab5f73",
+			"CountryOfOrigin_Text" : "USA",
+			"FoundingYear" : "1991",
+			"HasDraftEntity" : true,
+			"IsActiveEntity" : true,
+			"Name" : "Snoop Dogg"
+		}, {
+			"ArtistUUID" : "005056ab-6fd8-1ee8-9ff2-ae6f1e73e206",
+			"CountryOfOrigin_Text" : "USA",
+			"FoundingYear" : "1972",
+			"HasDraftEntity" : false,
+			"IsActiveEntity" : true,
+			"Name" : "Eminem"
+		}, {
+			"ArtistUUID" : "005056ab-6fd8-1ee8-9ff2-ae6f1e742206",
+			"CountryOfOrigin_Text" : "USA",
+			"FoundingYear" : "1990",
+			"HasDraftEntity" : false,
+			"IsActiveEntity" : true,
+			"Name" : "Rick James"
+		}, {
+			"ArtistUUID" : "005056ab-6fd8-1ee8-9ff2-ae6f1e744206",
+			"CountryOfOrigin_Text" : "USA",
+			"FoundingYear" : "1989",
+			"HasDraftEntity" : false,
+			"IsActiveEntity" : true,
+			"Name" : "Digital Underground"
+		}, {
+			"ArtistUUID" : "005056ab-6fd8-1ee8-9ff2-ae6f1e746206",
+			"CountryOfOrigin_Text" : "England",
+			"FoundingYear" : "1000",
+			"HasDraftEntity" : true,
+			"IsActiveEntity" : true,
+			"Name" : "Black Eyed Peas"
+		}, {
+			"ArtistUUID" : "005056ab-6fd8-1ee8-9ff2-ae6f1e748206",
+			"CountryOfOrigin_Text" : "USA",
+			"FoundingYear" : "2002",
+			"HasDraftEntity" : false,
+			"IsActiveEntity" : true,
+			"Name" : "Leonard Cohen"
+		}
+	]
+}

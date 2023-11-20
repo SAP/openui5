@@ -1,16 +1,23 @@
 {
-	"_version": "1.9.0",
+	"_version": "1.21.0",
 
 	"sap.app": {
 		"id": "sap.ui.demo.masterdetail",
 		"type": "application",
-		"i18n": "i18n/i18n.properties",
+		"i18n": {
+			"bundleUrl": "i18n/i18n.properties",
+			"supportedLocales": [
+				""
+			],
+			"fallbackLocale": ""
+		},
 		"title": "{{appTitle}}",
 		"description": "{{appDescription}}",
 
 		"applicationVersion": {
 		"version": "1.0.0"
 		},
+		"resources": "resources.json",
 		"dataSources": {
 			"mainService": {
 				"uri": "/here/goes/your/serviceUrl/",
@@ -49,14 +56,11 @@
 		},
 
 		"dependencies": {
-			"minUI5Version": "1.42.0",
+			"minUI5Version": "1.98.0",
 			"libs": {
-				"sap.ui.core": {
-				},
-				"sap.m": {
-				},
-				"sap.f": {
-				}
+				"sap.f": {},
+				"sap.m": {},
+				"sap.ui.core": {}
 			}
 		},
 
@@ -69,7 +73,11 @@
 			"i18n": {
 				"type": "sap.ui.model.resource.ResourceModel",
 				"settings": {
-					"bundleName": "sap.ui.demo.masterdetail.i18n.i18n"
+					"bundleName": "sap.ui.demo.masterdetail.i18n.i18n",
+					"supportedLocales": [
+						""
+					],
+					"fallbackLocale": ""
 				}
 			},
 			"": {
@@ -81,15 +89,13 @@
 		"routing": {
 			"config": {
 				"routerClass": "sap.f.routing.Router",
+				"type": "View",
 				"viewType": "XML",
-				"viewPath": "sap.ui.demo.masterdetail.view",
-				"controlId": "app",
+				"path": "sap.ui.demo.masterdetail.view",
+				"controlId": "layout",
 				"controlAggregation": "beginColumnPages",
 				"bypassed": {
-					"target": [
-						"master",
-						"notFound"
-					]
+					"target": "notFound"
 				},
 				"async": true
 			},
@@ -112,30 +118,24 @@
 
 			"targets": {
 				"master": {
-					"viewName": "Master",
-					"viewLevel": 1,
-					"viewId": "master"
+					"name": "Master",
+					"level": 1,
+					"id": "master"
 				},
 				"object": {
-					"viewName": "Detail",
-					"viewId": "detail",
-					"viewLevel": 1,
+					"name": "Detail",
+					"id": "detail",
+					"level": 1,
 					"controlAggregation": "midColumnPages"
 				},
 				"detailObjectNotFound": {
-					"viewName": "DetailObjectNotFound",
-					"viewId": "detailObjectNotFound",
-					"controlAggregation": "midColumnPages"
-				},
-				"detailNoObjectsAvailable": {
-					"viewName": "DetailNoObjectsAvailable",
-					"viewId": "detailNoObjectsAvailable",
+					"name": "DetailObjectNotFound",
+					"id": "detailObjectNotFound",
 					"controlAggregation": "midColumnPages"
 				},
 				"notFound": {
-					"viewName": "NotFound",
-					"viewId": "notFound",
-					"controlAggregation": "midColumnPages"
+					"name": "NotFound",
+					"id": "notFound"
 				}
 			}
 		}

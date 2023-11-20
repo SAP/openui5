@@ -5,10 +5,6 @@
 
 @_sap_m_ViewSettingsDialog_HeaderBorderColor: darken(@sapUiGroupContentBackground, 8);
 
-.sapMVSDUpperList {
-	border-bottom: 1px solid @sapUiToolbarSeparatorColor;
-}
-
 .sapMTB.sapMVSDFilterHeaderToolbar {
 	background-color:  @sapUiGroupContentBackground;
 	border-bottom: 1px solid @_sap_m_ViewSettingsDialog_HeaderBorderColor;
@@ -38,4 +34,28 @@
 .sapMPageWithSubHeader .sapMIBar.sapMHeader-CTX {
 	border-bottom: none;
 	box-shadow: none;
+}
+
+.sapMVSD {
+	.sapMPageSubHeader .sapMVSDBar {
+		height: 2.75rem;
+	}
+	.sapMTB.sapMVSDFilterHeaderToolbar {
+		padding-left: 0;
+	}
+	.sapMPage > .sapMPageHeader + .sapMPageSubHeader + section {
+		top: 6rem;
+	}
+}
+
+.sapUiSizeCompact .sapMVSD {
+	.sapMPageSubHeader .sapMVSDBar {
+		height: 2rem;
+	}
+	.sapMTB.sapMVSDFilterHeaderToolbar {
+		padding-left: 0.75rem;
+	}
+	.sapMPage > .sapMPageHeader + .sapMPageSubHeader + section {
+		top: 4.75rem;
+	}
 }

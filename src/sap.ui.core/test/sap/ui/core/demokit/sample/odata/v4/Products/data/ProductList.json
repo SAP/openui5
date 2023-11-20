@@ -1,0 +1,53 @@
+{
+	"@odata.metadataEtag" : "W/\"20190123140814\"",
+	"@odata.count" : 5,
+	"value" : [{
+		"@odata.etag" : "W/\"20190206095439.7120550 \"",
+		"ProductID" : "H-100",
+		"Name" : "Notebook Basic 15",
+		"WeightMeasure" : "4.000",
+		"WeightUnit" : "KG",
+		"CurrencyCode" : "USD",
+		"Price" : "1966.20"
+	}, {
+		"@odata.etag" : "W/\"20190205102113.4535820 \"",
+		"ProductID" : "H-NEW",
+		"Name" : "Notebook New",
+		"WeightMeasure" : null,
+		"WeightUnit" : null,
+		"CurrencyCode" : null,
+		"Price" : null
+	}, {
+		"@odata.etag" : "W/\"20190205102113.4535820 \"",
+		"ProductID" : "H-1000",
+		"Name" : "Notebook Basic 15",
+		"WeightMeasure" : "43.000",
+		"WeightUnit" : "KG",
+		"CurrencyCode" : "JPY",
+		"Price" : "256"
+	}, {
+		"@odata.etag" : "W/\"20180705125019.1778050 \"",
+		"ProductID" : "H-1002",
+		"Name" : "Notebook Basic 15",
+		"WeightMeasure" : "4.200",
+		"WeightUnit" : "KG",
+		"CurrencyCode" : "EUR",
+		"Price" : "956.00"
+	}, {
+		"@odata.etag" : "W/\"20180705132100.9255970 \"",
+		"ProductID" : "H-1003",
+		"Name" : "Notebook Basic 16",
+		"WeightMeasure" : "4.200",
+		"WeightUnit" : "KG",
+		"CurrencyCode" : "BHD",
+		"Price" : "123.456"
+	}, {
+		"@odata.etag" : "W/\"20180705202552.1428650 \"",
+		"ProductID" : "H-1005",
+		"Name" : "myy jay notebook",
+		"WeightMeasure" : "4.200",
+		"WeightUnit" : "KG",
+		"CurrencyCode" : "EUR3",
+		"Price" : "956.00"
+	}]
+}

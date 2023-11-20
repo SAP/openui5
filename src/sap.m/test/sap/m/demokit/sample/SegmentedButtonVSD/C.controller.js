@@ -1,27 +1,29 @@
 sap.ui.define([
-		'jquery.sap.global',
 		'sap/m/MessageToast',
 		'sap/ui/core/Fragment',
 		'sap/ui/core/mvc/Controller'
-	], function(jQuery, MessageToast, Fragment, Controller) {
+	], function(MessageToast, Fragment, Controller) {
 	"use strict";
 
-	var CController = Controller.extend("sap.m.sample.SegmentedButtonVSD.C", {
+	return Controller.extend("sap.m.sample.SegmentedButtonVSD.C", {
 
-		onExit : function () {
-			if (this._oDialog) {
-				this._oDialog.destroy();
-			}
-		},
+		handleOpenDialog: function () {
+			var oView = this.getView();
 
-		handleOpenDialog: function (oEvent) {
-			if (!this._oDialog) {
-				this._oDialog = sap.ui.xmlfragment("sap.m.sample.SegmentedButtonVSD.Dialog", this);
+			if (!this._pDialog) {
+				this._pDialog = Fragment.load({
+					id: oView.getId(),
+					name: "sap.m.sample.SegmentedButtonVSD.Dialog",
+					controller: this
+				}).then(function(oDialog) {
+					oView.addDependent(oDialog);
+					return oDialog;
+				});
 			}
-			this._oDialog.setModel(this.getView().getModel());
-			// toggle compact style
-			jQuery.sap.syncStyleClass("sapUiSizeCompact", this.getView(), this._oDialog);
-			this._oDialog.open();
+			this._pDialog.then(function(oDialog){
+				oDialog.setModel(oView.getModel());
+				oDialog.open();
+			});
 		},
 
 		handleConfirm: function (oEvent) {
@@ -30,8 +32,5 @@ sap.ui.define([
 			}
 		}
 	});
-
-
-	return CController;
 
 });

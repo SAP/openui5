@@ -1,19 +1,26 @@
 sap.ui.define([
+	"sap/base/Log",
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/unified/Menu",
 	"sap/ui/unified/MenuItem",
 	"sap/m/MessageToast",
 	"sap/ui/core/format/DateFormat",
+	"sap/ui/core/Popup",
 	"sap/m/Menu",
 	"sap/m/MenuItem",
-	"sap/ui/table/sample/TableExampleUtils"
-], function(Controller, JSONModel, Menu, MenuItem, MessageToast, DateFormat, MenuM, MenuItemM, TableExampleUtils) {
+	"sap/m/table/columnmenu/Menu",
+	"sap/m/table/columnmenu/ActionItem",
+	"sap/m/ToolbarSpacer",
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/Device",
+	"sap/ui/core/date/UI5Date"
+], function(Log, Controller, JSONModel, Menu, MenuItem, MessageToast, DateFormat, Popup, MenuM, MenuItemM, ColumnMenu, ActionItem, ToolbarSpacer, jQuery, Device, UI5Date) {
 	"use strict";
 
 	return Controller.extend("sap.ui.table.sample.Menus.Controller", {
 
-		onInit : function () {
+		onInit: function() {
 			var oView = this.getView();
 
 			// set explored app's demo model on this sample
@@ -25,32 +32,40 @@ sap.ui.define([
 				showFreezeMenuEntry: false,
 				enableCellFilter: false
 			}), "ui");
+
+			this.associateHeaderMenus();
+
+			sap.ui.require(["sap/ui/table/sample/TableExampleUtils"], function(TableExampleUtils) {
+				var oTb = oView.byId("infobar");
+				oTb.addContent(new ToolbarSpacer());
+				oTb.addContent(TableExampleUtils.createInfoButton("sap/ui/table/sample/Menus"));
+			}, function(oError) { /*ignore*/ });
 		},
 
-		initSampleDataModel : function() {
+		initSampleDataModel: function() {
 			var oModel = new JSONModel();
 
 			var oDateFormat = DateFormat.getDateInstance({source: {pattern: "timestamp"}, pattern: "dd/MM/yyyy"});
 
-			jQuery.ajax(sap.ui.require.toUrl("sap/ui/demo/mock") + "/products.json", {
+			jQuery.ajax(sap.ui.require.toUrl("sap/ui/demo/mock/products.json"), {
 				dataType: "json",
-				success: function (oData) {
+				success: function(oData) {
 					var aTemp1 = [];
 					var aTemp2 = [];
 					var aSuppliersData = [];
 					var aCategoryData = [];
 					for (var i = 0; i < oData.ProductCollection.length; i++) {
 						var oProduct = oData.ProductCollection[i];
-						if (oProduct.SupplierName && jQuery.inArray(oProduct.SupplierName, aTemp1) < 0) {
+						if (oProduct.SupplierName && aTemp1.indexOf(oProduct.SupplierName) < 0) {
 							aTemp1.push(oProduct.SupplierName);
 							aSuppliersData.push({Name: oProduct.SupplierName});
 						}
-						if (oProduct.Category && jQuery.inArray(oProduct.Category, aTemp2) < 0) {
+						if (oProduct.Category && aTemp2.indexOf(oProduct.Category) < 0) {
 							aTemp2.push(oProduct.Category);
 							aCategoryData.push({Name: oProduct.Category});
 						}
-						oProduct.DeliveryDate = (new Date()).getTime() - (i % 10 * 4 * 24 * 60 * 60 * 1000);
-						oProduct.DeliveryDateStr = oDateFormat.format(new Date(oProduct.DeliveryDate));
+						oProduct.DeliveryDate = Date.now() - (i % 10 * 4 * 24 * 60 * 60 * 1000);
+						oProduct.DeliveryDateStr = oDateFormat.format(UI5Date.getInstance(oProduct.DeliveryDate));
 						oProduct.Heavy = oProduct.WeightMeasure > 1000 ? "true" : "false";
 						oProduct.Available = oProduct.Status == "Available" ? true : false;
 					}
@@ -60,15 +75,15 @@ sap.ui.define([
 
 					oModel.setData(oData);
 				},
-				error: function () {
-					jQuery.sap.log.error("failed to load json");
+				error: function() {
+					Log.error("failed to load json");
 				}
 			});
 
 			return oModel;
 		},
 
-		onColumnSelect : function (oEvent) {
+		onColumnSelect: function(oEvent) {
 			var oCurrentColumn = oEvent.getParameter("column");
 			var oImageColumn = this.byId("image");
 			if (oCurrentColumn === oImageColumn) {
@@ -76,7 +91,7 @@ sap.ui.define([
 			}
 		},
 
-		onColumnMenuOpen: function (oEvent) {
+		onColumnMenuOpen: function(oEvent) {
 			var oCurrentColumn = oEvent.getSource();
 			var oImageColumn = this.byId("image");
 			if (oCurrentColumn != oImageColumn) {
@@ -87,8 +102,8 @@ sap.ui.define([
 			oEvent.preventDefault();
 		},
 
-		onProductIdCellContextMenu : function (oEvent) {
-			if (sap.ui.Device.support.touch) {
+		onProductIdCellContextMenu: function(oEvent) {
+			if (Device.support.touch) {
 				return; //Do not use context menus on touch devices
 			}
 
@@ -115,15 +130,15 @@ sap.ui.define([
 
 			//Open the menu on the cell
 			var oCellDomRef = oEvent.getParameter("cellDomRef");
-			var eDock = sap.ui.core.Popup.Dock;
+			var eDock = Popup.Dock;
 			this._oIdContextMenu.open(false, oCellDomRef, eDock.BeginTop, eDock.BeginBottom, oCellDomRef, "none none");
 		},
 
-		onQuantityCustomItemSelect : function(oEvent) {
+		onQuantityCustomItemSelect: function(oEvent) {
 			MessageToast.show("Some custom action triggered on column 'Quantity'.");
 		},
 
-		onQuantitySort : function(oEvent) {
+		onQuantitySort: function(oEvent) {
 			var bAdd = oEvent.getParameter("ctrlKey") === true;
 			var oColumn = this.byId("quantity");
 			var sOrder = oColumn.getSortOrder() == "Ascending" ? "Descending" : "Ascending";
@@ -131,11 +146,7 @@ sap.ui.define([
 			this.byId("table").sort(oColumn, sOrder, bAdd);
 		},
 
-		showInfo : function(oEvent) {
-			TableExampleUtils.showInfo(sap.ui.require.toUrl("sap/ui/table/sample/Menus") + "/info.json", oEvent.getSource());
-		},
-
-		onToggleContextMenu : function(oEvent) {
+		onToggleContextMenu: function(oEvent) {
 			if (oEvent.getParameter("pressed")) {
 				this.byId("table").setContextMenu(new MenuM({
 					items: [
@@ -145,6 +156,40 @@ sap.ui.define([
 				}));
 			} else {
 				this.byId("table").destroyContextMenu();
+			}
+		},
+
+		associateHeaderMenus: function() {
+			this.oMenu = new ColumnMenu();
+			this.byId("name").setHeaderMenu(this.oMenu.getId());
+			this.byId("productId").setHeaderMenu(this.oMenu.getId());
+
+			this.oCustomMenu = new ColumnMenu({
+				items: [
+					new ActionItem({
+						label: "My custom menu entry",
+						press: [function(oEvent) {
+							this.onQuantityCustomItemSelect(oEvent);
+						}, this]
+					}),
+					new ActionItem({
+						label: "Sort",
+						icon: "sap-icon://sort",
+						press: [function(oEvent) {
+							this.onQuantitySort(oEvent);
+						}, this]
+					})
+				]
+			});
+			this.byId("quantity").setHeaderMenu(this.oCustomMenu.getId());
+		},
+
+		onExit: function() {
+			if (this.oMenu) {
+				this.oMenu.destroy();
+			}
+			if (this.oCustomMenu) {
+				this.oCustomMenu.destroy();
 			}
 		}
 

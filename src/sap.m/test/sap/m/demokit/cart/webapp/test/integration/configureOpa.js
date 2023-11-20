@@ -1,24 +1,24 @@
 sap.ui.define([
 	"sap/ui/test/Opa5",
-	"Arrangement",
+	"Startup",
 	// QUnit additions
 	"sap/ui/qunit/qunit-css",
 	"sap/ui/qunit/qunit-junit",
 	"sap/ui/qunit/qunit-coverage",
 	// Page Objects
-	"sap/ui/demo/cart/test/integration/pages/Home",
-	"sap/ui/demo/cart/test/integration/pages/Welcome",
-	"sap/ui/demo/cart/test/integration/pages/Category",
-	"sap/ui/demo/cart/test/integration/pages/Product",
-	"sap/ui/demo/cart/test/integration/pages/Cart",
-	"sap/ui/demo/cart/test/integration/pages/Dialog",
-	"sap/ui/demo/cart/test/integration/pages/Checkout",
-	"sap/ui/demo/cart/test/integration/pages/OrderCompleted"
-], function (Opa5, Arrangement) {
+	"./pages/Home",
+	"./pages/Welcome",
+	"./pages/Category",
+	"./pages/Product",
+	"./pages/Cart",
+	"./pages/Dialog",
+	"./pages/Checkout",
+	"./pages/OrderCompleted"
+], function (Opa5, Startup) {
 	"use strict";
 
 	Opa5.extendConfig({
-		arrangements : new Arrangement(),
+		arrangements : new Startup(),
 		viewNamespace : "sap.ui.demo.cart.view.",
 		autoWait: true
 	});

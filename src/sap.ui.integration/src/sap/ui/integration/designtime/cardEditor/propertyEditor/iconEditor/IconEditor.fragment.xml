@@ -1,0 +1,39 @@
+<core:FragmentDefinition
+	xmlns="sap.ui.integration.designtime.cardEditor"
+	xmlns:m="sap.m"
+	xmlns:core="sap.ui.core"
+	xmlns:layout="sap.ui.layout"
+>
+	<m:FlexBox>
+		<layout:VerticalLayout>
+			<PropertyEditor
+				renderLabel="false"
+				init="wrapperInit"
+				valueChange="_onTypeChange"
+				config="{path: 'configs>/selectConfig'}"
+				value="{path: 'icon>/type'}"
+			/>
+			<layout:layoutData>
+				<m:FlexItemData baseSize="120px" />
+			</layout:layoutData>
+		</layout:VerticalLayout>
+		<layout:VerticalLayout width="calc(100% - 16px)" class="sapUiTinyMarginBeginEnd">
+			<PropertyEditor
+				renderLabel="false"
+				init="wrapperInit"
+				valueChange="_updateValue"
+				config="{path: 'configs>/valueConfig/config'}"
+				value="{parts: ['configs>/valueConfig/key', 'icon>/'], formatter: '._prepareValue'}"
+			/>
+			<layout:layoutData>
+				<m:FlexItemData growFactor="1" />
+			</layout:layoutData>
+		</layout:VerticalLayout>
+		<m:Button
+			icon="sap-icon://developer-settings"
+			tooltip="{i18n>BASE_EDITOR.ICON.BUTTON_SETTINGS}"
+			press="_handleSettings"
+		/>
+	</m:FlexBox>
+</core:FragmentDefinition>
+

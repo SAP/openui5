@@ -1,0 +1,86 @@
+[
+  {
+	"ProductId": "1239102",
+	"Name": "Power Projector 4713",
+	"Category": "Projector",
+	"Image" : "/testsuite/test-resources/sap/ui/documentation/sdk/images/HT-6100.jpg"
+  },
+  {
+	"ProductId": "2212-121-828",
+	"Name": "Gladiator MX",
+	"Category": "Graphics Card",
+	"Image" : "/testsuite/test-resources/sap/ui/documentation/sdk/images/HT-1072.jpg"
+  },
+  {
+	"ProductId": "K47322.1",
+	"Name": "Hurricane GX",
+	"Category": "Graphics Card",
+	"Image" : "/testsuite/test-resources/sap/ui/documentation/sdk/images/HT-1070.jpg"
+  },
+  {
+	"ProductId": "22134T",
+	"Name": "Webcam",
+	"Category": "Accessory",
+	"Image" : "/testsuite/test-resources/sap/ui/documentation/sdk/images/HT-1112.jpg"
+  },
+  {
+	"ProductId": "P1239823",
+	"Name": "Monitor Locking Cable",
+	"Category": "Accessory",
+	"Image" : "/testsuite/test-resources/sap/ui/documentation/sdk/images/HT-1110.jpg"
+  },
+  {
+	"ProductId": "214-121-828",
+	"Name": "Laptop Case",
+	"Category": "Accessory",
+	"Image" : "/testsuite/test-resources/sap/ui/documentation/sdk/images/HT-1114.jpg"
+  },
+  {
+	"ProductId": "XKP-312548",
+	"Name": "USB Stick 16 GByte",
+	"Category": "Accessory",
+	"Image" : "/testsuite/test-resources/sap/ui/documentation/sdk/images/HT-1118.jpg"
+  },
+  {
+	"ProductId": "KTZ-12012.V2",
+	"Name": "Deskjet Super Highspeed",
+	"Category": "Printer",
+	"Image" : "/testsuite/test-resources/sap/ui/documentation/sdk/images/HT-1041.jpg"
+  },
+  {
+	"ProductId": "89932-922",
+	"Name": "Laser Allround Pro",
+	"Category": "Printer",
+	"Image" : "/testsuite/test-resources/sap/ui/documentation/sdk/images/HT-1040.jpg"
+  },
+  {
+	"ProductId": "38094020.1",
+	"Name": "Flat S",
+	"Category": "Monitor",
+	"Image" : "/testsuite/test-resources/sap/ui/documentation/sdk/images/HT-1035.jpg"
+  },
+  {
+	"ProductId": "870394932",
+	"Name": "Flat Medium",
+	"Category": "Monitor",
+	"Image" : "/testsuite/test-resources/sap/ui/documentation/sdk/images/HT-1032.jpg"
+  },
+  {
+	"ProductId": "282948303-02",
+	"Name": "Flat X-large II",
+	"Category": "Monitor",
+	"Image" : "/testsuite/test-resources/sap/ui/documentation/sdk/images/HT-1030.jpg"
+  },
+  {
+	"ProductId": "OP-38800002",
+	"Name": "High End Laptop 2b",
+	"Category": "Laptop",
+	"Image" : "/testsuite/test-resources/sap/ui/documentation/sdk/images/HT-1001.jpg"
+  },
+  {
+	"ProductId": "977700-11",
+	"Name": "Hardcore Hacker",
+	"Category": "Keyboard",
+	"Image" : "/testsuite/test-resources/sap/ui/documentation/sdk/images/HT-1063.jpg"
+  }
+]

@@ -1,0 +1,137 @@
+/* =================================== */
+/* CSS for control sap.m/ColorPalette  */
+/* Horizon theme                       */
+/* =================================== */
+
+@_sap_m_ColorPalette_SwatchWidthHitAreaCozy: 2.375rem;
+@_sap_m_ColorPalette_SwatchWidthHitAreaCompact: 1.75rem;
+
+html:not(.sap-phone) .sapMColorPalette .sapMColorPaletteSquare {
+	border-radius: 0.25rem;
+	&:hover {
+		border-radius: 0.4375rem;
+		margin: 0.0625rem;
+		width: 2.25rem;
+		height: 2.25rem;
+		& > div {
+			border-radius: 0.375rem;
+		}
+	}
+	div {
+		border-radius: 0.1875rem;
+	}
+}
+
+.sap-desktop .sapMColorPalette .sapMBtn:focus {
+	&:after {
+		border-color: @sapUiContentFocusColor;
+	}
+}
+
+.sap-desktop .sapContrast,
+.sap-desktop.sapContrast {
+	.sapMColorPalette .sapMBtn {
+		&:focus:after {
+			border-color: @sapUiContentFocusColor;
+
+		}
+		&:active,
+		> .sapMBtnActive,
+		&:hover > .sapMBtnActive,
+		&:active > .sapMBtnActive {
+			color: @sapUiListTextColor;
+		}
+	}
+}
+
+html:not(.sap-phone) .sapMColorPalette .sapMColorPaletteSquare:focus {
+	&:after {
+		display: none;
+	}
+	&:before {
+		border: 0.125rem solid @sapUiContentFocusColor;
+		border-radius: 0.4375rem;
+		top: -0.3125rem;
+		left: -0.3125rem;
+		bottom: -0.3125rem;
+		right: -0.3125rem;
+	}
+	&:hover {
+		&:after {
+			display: block;
+			border: 0.0625rem solid @sapUiContentContrastFocusColor;
+			border-radius: 0.3125rem;
+			top: 0.0625rem;
+			left: 0.0625rem;
+			bottom: 0.0625rem;
+			right: 0.0625rem;
+		}
+		&:before {
+			border: 0.125rem solid @sapUiContentFocusColor;
+			border-radius: 0.4375rem;
+			top: -0.0625rem;
+			left: -0.0625rem;
+			bottom: -0.0625rem;
+			right: -0.0625rem;
+		}
+	}
+}
+
+html:not(.sap-phone) .sapMColorPalette,
+.sapMColorPalette {
+	.sapMBtn {
+		&:focus {
+			.sap-desktop & {
+				&:after {
+					border-radius: 0.5rem;
+					border: 0.125rem solid @sapUiContentFocusColor;
+				}
+			}
+		}
+		.sapMBtnInner {
+			height: 2.75rem;
+			.sapMBtnContent {
+				line-height: 2.75rem;
+			}
+			&.sapMBtnText {
+				padding: 0;
+			}
+		}
+	}
+	.sapMBtnInner {
+		border-radius: 0;
+	}
+}
+
+html:not(.sap-phone) .sapUiSizeCompact .sapMColorPalette {
+	.sapMBtn .sapMBtnInner {
+		height: 2rem;
+		.sapMBtnContent {
+			line-height: 2rem;
+		}
+	}
+	.sapMColorPaletteSquare:hover {
+		margin: 0.0625rem;
+		width: 1.625rem;
+		height: 1.625rem;
+	}
+	.sapMColorPaletteSquare:focus:not(:hover):before {
+		top: -0.25rem;
+		left: -0.25rem;
+		bottom: -0.25rem;
+		right: -0.25rem;
+	}
+}
+
+html.sap-desktop .sapMColorPalette .sapMBtn:focus > .sapMFocusable:before {
+	display: none;
+}
+
+.sap-phone .sapMColorPalette .sapMColorPaletteSquare {
+	& > div {
+		border-radius: 0.25rem;
+		&:active {
+			border-radius: 0.4375rem;
+		}
+	}
+}

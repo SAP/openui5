@@ -1,17 +1,38 @@
 sap.ui.define([
-	"sap/ui/demo/iconexplorer/controller/BaseController",
+	"sap/m/Label",
+	"sap/m/MessageToast",
+	"sap/m/ToggleButton",
+	"sap/ui/Device",
+	"sap/ui/core/Core",
+	"sap/ui/core/Element",
+	"sap/ui/core/Fragment",
 	"sap/ui/core/IconPool",
-	"sap/ui/model/json/JSONModel",
+	"sap/ui/core/Theming",
+	"sap/ui/core/theming/Parameters",
+	"sap/ui/demo/iconexplorer/controller/BaseController",
 	"sap/ui/demo/iconexplorer/model/formatter",
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator",
-	"sap/ui/Device",
-	"sap/m/MessageToast",
-	"sap/m/Label",
-	"sap/m/ToggleButton",
-	"sap/m/library",
-	"jquery.sap.global"
-], function (BaseController, IconPool, JSONModel, formatter, Filter, FilterOperator, Device, MessageToast, Label, ToggleButton, mobileLibrary, $) {
+	"sap/ui/model/json/JSONModel",
+	"sap/ui/documentation/sdk/controller/util/ThemePicker"
+], function(
+	Label,
+	MessageToast,
+	ToggleButton,
+	Device,
+	Core,
+	Element,
+	Fragment,
+	IconPool,
+	Theming,
+	Parameters,
+	BaseController,
+	formatter,
+	Filter,
+	FilterOperator,
+	JSONModel,
+	ThemePicker
+	) {
 	"use strict";
 
 	var TYPING_DELAY = 200; // ms
@@ -30,7 +51,8 @@ sap.ui.define([
 		 */
 		onInit : function () {
 			var oViewModel,
-				oTagModel;
+				oTagModel,
+				sThemeKey = ThemePicker._oConfigUtil.getCookieValue("appearance") || "light";
 
 			this._oPreviousQueryContext = {};
 			this._oCurrentQueryContext = null;
@@ -39,27 +61,36 @@ sap.ui.define([
 			oViewModel = new JSONModel({
 				growingThreshold : 200,
 				iconFilterCount: this.getResourceBundle().getText("overviewTabAllInitial"),
+				allIconsCount: 99,
 				overviewNoDataText : this.getResourceBundle().getText("overviewNoDataText"),
+				SelectedCopyMode: "uri",
+				SelectedTheme: sThemeKey,
+				CopyModeCollection: [
+					{
+						"CopyModeId": "uri",
+						"Name": "URI"
+					},
+					{
+						"CopyModeId": "sym",
+						"Name": "Symbol"
+					},
+					{
+						"CopyModeId": "uni",
+						"Name": "Unicode"
+					}
+				],
 				fontName: "",
 				iconPath : "",
-				busy : true
+				busy : true,
+				getSomeResultsVisible: false,
+				noResultsVisible: false,
+				contentVisible: false
 			});
 			this.setModel(oViewModel, "view");
 
 			// helper model for managing the tag selection
 			oTagModel = new JSONModel();
 			this.setModel(oTagModel, "tags");
-
-			// Sets the current previewCopyIcon and the fontName when pressing an icon
-			this.byId("previewCopyIcon").addEventDelegate({
-				onAfterRendering: function () {
-					var $previewCopyIcon = this.byId("previewCopyIcon").$(),
-						sFontName = this.getModel("view").getProperty("/fontName");
-
-					// always set current font family for the preview
-					$previewCopyIcon.children("span").css("font-family", sFontName);
-				}.bind(this)
-			});
 
 			// register to both new and legacy pattern to not break bookmarked URLs
 			this.getRouter().getRoute("legacy").attachPatternMatched(this._updateUI, this);
@@ -110,8 +141,8 @@ sap.ui.define([
 		 * @param oEvent
 		 */
 		onChangeFont : function(oEvent) {
-			var oListItem = oEvent.getParameter("listItem"),
-				sSelectedFont = oListItem.getCustomData()[0].getValue();
+			var oListItem = oEvent.getParameter("selectedItem"),
+				sSelectedFont = oListItem.getKey();
 
 			this.getModel("view").setProperty("/busy", true, null, true);
 			this.getRouter().navTo("overview", {
@@ -120,7 +151,31 @@ sap.ui.define([
 				},
 				fontName: sSelectedFont
 			});
-			this.byId("selectFont").close();
+		},
+
+		handleThemeSelection: function (oEvent) {
+			var sTargetText = oEvent.getParameter("selectedItem").getKey();
+			if (ThemePicker._getTheme()[sTargetText]) {
+				ThemePicker._updateAppearance(sTargetText);
+			}
+		},
+
+		handleCopyToClipboardClick: function (oEvent) {
+			var oParent = oEvent.getSource().getParent(),
+				// Depending where we press the copy button (from the Grid or Detail fragment), the
+				// drill-down for the icon src is different
+				sIconURI = oParent.getParent().getItems()[0].getSrc ? // Grid fragment
+				oParent.getParent().getItems()[0].getSrc() : // Grid fragment
+				oParent.getCells()[0].getSrc(), // Detail fragment
+				sSelectedCopyMode = this.getModel("view").getProperty("/SelectedCopyMode");
+
+			if (sSelectedCopyMode === "uri") {
+				this._onCopyCodeToClipboard(sIconURI);
+			} else if (sSelectedCopyMode === "sym") {
+				this._onCopyIconToClipboard(sIconURI);
+			} else if (sSelectedCopyMode === "uni") {
+				this._onCopyUnicodeToClipboard(sIconURI.substr(sIconURI.lastIndexOf("/") + 1, sIconURI.length - 1));
+			}
 		},
 
 		/**
@@ -129,22 +184,28 @@ sap.ui.define([
 		 * @public
 		 */
 		onUpdateFinished : function () {
+			var oResultItemsBinding = this.byId("results").getBinding(this._sAggregationName),
+				iFilteredIcons = oResultItemsBinding.getLength(),
+				iAllIcons = oResultItemsBinding.oList.length;
+
 			function getRootControl(oEvent) {
-				if (oEvent.srcControl.getMetadata().getName().search("CustomListItem") >= 0) {
-					// keyboard event, get child
-					return oEvent.srcControl.getContent()[0];
-				} else if (oEvent.srcControl.getMetadata().getName().search("VerticalLayout") >= 0) {
-					// layout clicked, just return it
-					return oEvent.srcControl;
-				} else {
-					// inner control clicked, return parent
-					return oEvent.srcControl.getParent();
-				}
+				return Core.byId(oEvent.currentTarget.id);
 			}
 			// show total count of items
-			this.getModel("view").setProperty("/iconFilterCount", this.byId("results").getBinding(this._sAggregationName).getLength(), null, true);
-			// register press callback for grid and visual mode
-			if (this._oCurrentQueryContext.tab === "grid" || this._oCurrentQueryContext.tab === "visual") {
+			this.getModel("view").setProperty("/iconFilterCount", iFilteredIcons, null, true);
+			this.getModel("view").setProperty("/allIconsCount", iAllIcons, null, true);
+
+			if (this._oCurrentQueryContext.tab !== "favorites") {
+				this.getModel("view").setProperty("/getSomeResultsVisible", iFilteredIcons === iAllIcons, null, true);
+				this.getModel("view").setProperty("/contentVisible", iFilteredIcons > 0 && iFilteredIcons !== iAllIcons, null, true);
+			} else {
+				this.getModel("view").setProperty("/getSomeResultsVisible", false, null, true);
+				this.getModel("view").setProperty("/contentVisible", iFilteredIcons > 0, null, true);
+			}
+			this.getModel("view").setProperty("/noResultsVisible", iFilteredIcons === 0, null, true);
+
+			// register press callback for grid
+			if (this._oCurrentQueryContext.tab === "grid") {
 				if (!this._oPressLayoutCellDelegate) {
 					this._oPressLayoutCellDelegate = {
 						// tap: set selected and hoverable class
@@ -157,17 +218,6 @@ sap.ui.define([
 								return;
 							}
 
-							// reset previoulsy pressed item and store current item
-							if (this._oPreviouslySelectedLayoutCell) {
-								this._oPreviouslySelectedLayoutCell.removeStyleClass("sapMLIBSelected");
-								this._oPreviouslySelectedLayoutCell.removeStyleClass("sapMLIBHoverable");
-							}
-							// set the LIB styles on the current cell
-							oRoot.addStyleClass("sapMLIBSelected");
-
-							this._oPreviouslySelectedLayoutCell = oRoot;
-							oRoot.addStyleClass("sapMLIBHoverable");
-
 							// select the icon
 							this._updateHash("icon", oBindingContext.getProperty("name"));
 						}.bind(this),
@@ -178,10 +228,10 @@ sap.ui.define([
 							oRoot.addStyleClass("sapMLIBActive");
 							oRoot.removeStyleClass("sapMLIBHoverable");
 							if (!this._sNormalIconColor) {
-								this._sNormalIconColor = oRoot.$().find(".sapUiIcon").control(0).getColor();
+								this._sNormalIconColor = Element.closestTo(oRoot.$().find(".sapUiIcon")[0]).getColor();
 							}
-							oRoot.$().find(".sapUiVltCell > .sapUiIcon").control().forEach(function (oIcon) {
-								oIcon.setColor(sap.ui.core.theming.Parameters.get("sapUiTextInverted"));
+							oRoot.$().find(".sapMFlexItem > .sapUiIcon").control().forEach(function (oIcon) {
+								oIcon.setColor(Parameters.get("sapUiTextInverted"));
 							});
 						}.bind(this),
 						// touchend: remove active class, reset icon color
@@ -189,7 +239,7 @@ sap.ui.define([
 							var oRoot = getRootControl(oEvent);
 
 							oRoot.removeStyleClass("sapMLIBActive");
-							oRoot.$().find(".sapUiVltCell > .sapUiIcon").control().forEach(function (oIcon) {
+							oRoot.$().find(".sapMFlexItem > .sapUiIcon").control().forEach(function (oIcon) {
 								oIcon.setColor(this._sNormalIconColor);
 							}.bind(this));
 						}.bind(this)
@@ -224,13 +274,13 @@ sap.ui.define([
 		/**
 		 * Event handler for changing the icon browse mode.
 		 * We update the hash in case a new tab is selected.
-		 * @param {sap.ui.base.Event} oEvent the tabSelect event of the IconTabBar
+		 * @param {sap.ui.base.Event} oEvent the selectionChange event of the SegmentedButton
 		 */
-		onTabSelect : function (oEvent){
-			if (oEvent.getParameter("selectedKey") === "all") {
+		onSegmentSelected : function (oEvent){
+			if (oEvent.getParameter("item").getKey() === "all") {
 				this._updateHash("reset", "all");
 			} else {
-				this._updateHash("tab", oEvent.getParameter("selectedKey"));
+				this._updateHash("tab", oEvent.getParameter("item").getKey());
 			}
 		},
 
@@ -300,13 +350,9 @@ sap.ui.define([
 		 * @public
 		 */
 		onCopyCodeToClipboard: function () {
-			var sString = this.byId("previewCopyCode").getValue(),
-				oResourceBundle = this.getResourceBundle(),
-				sSuccessText, sExceptionText;
+			var sIconSrc = this.byId("previewCopyCode").getValue();
 
-			sSuccessText = oResourceBundle.getText("previewCopyToClipboardSuccess", [sString]);
-			sExceptionText = oResourceBundle.getText("previewCopyToClipboardFail", [sString]);
-			this._copyStringToClipboard(sString, sSuccessText, sExceptionText);
+			this._onCopyCodeToClipboard(sIconSrc);
 		},
 
 		/**
@@ -314,14 +360,9 @@ sap.ui.define([
 		 * @public
 		 */
 		onCopyUnicodeToClipboard: function () {
-			var oResourceBundle = this.getResourceBundle(),
-				sSuccessText, sExceptionText,
-				sIconName = this.byId("preview").getBindingContext().getObject().name,
-				sString = this.getModel().getUnicodeHTML(sIconName);
-			sString = sString.substring(2, sString.length - 1);
-			sSuccessText = oResourceBundle.getText("previewCopyUnicodeToClipboardSuccess", [sString]);
-			sExceptionText = oResourceBundle.getText("previewCopyUnicodeToClipboardFail", [sString]);
-			this._copyStringToClipboard(sString, sSuccessText, sExceptionText);
+			var sIconName = this.byId("preview").getBindingContext().getObject().name;
+
+			this._onCopyUnicodeToClipboard(sIconName);
 		},
 
 		/**
@@ -329,35 +370,9 @@ sap.ui.define([
 		 * @public
 		 */
 		onCopyIconToClipboard: function () {
-			var sString = this.byId("previewCopyCode").getValue(),
-				oResourceBundle = this.getResourceBundle(),
-				sSuccessText, sExceptionText,
-				sIcon = this.getModel().getUnicode(sString);
+			var sIconSrc = this.byId("previewCopyCode").getValue();
 
-			sSuccessText = oResourceBundle.getText("previewCopyToClipboardSuccess", [sString]);
-			sExceptionText = oResourceBundle.getText("previewCopyToClipboardFail", [sString]);
-			this._copyStringToClipboard(sIcon, sSuccessText, sExceptionText);
-		},
-
-		/**
-		 * Shows a random icon in the preview pane
-		 * @public
-		 */
-		onSurpriseMe: function () {
-			var sFontName = this.getModel("view").getProperty("/fontName"),
-				aIcons = this.getModel().getProperty("/" + sFontName + "/groups/0/icons"),
-				oRandomItem = aIcons[Math.floor(Math.random() * aIcons.length)];
-
-			this._updateHash("icon", oRandomItem.name);
-		},
-
-		/**
-		 * Downloads the icon font relatively from the UI5 delivery
-		 * @public
-		 */
-		onDownload: function () {
-			var sFontName = this.getModel("view").getProperty("/fontName");
-			mobileLibrary.URLHelper.redirect(sap.ui.require.toUrl("sap/ui/core") + "/themes/base/fonts/" + sFontName + ".ttf");
+			this._onCopyIconToClipboard(sIconSrc);
 		},
 
 		/* =========================================================== */
@@ -365,18 +380,63 @@ sap.ui.define([
 		/* =========================================================== */
 
 		/**
+		 * Copies the icon to the clipboard and displays a message
+		 * @param {string} iconSrc the icon source string that has to be copied to the clipboard
+		 * @private
+		 */
+		_onCopyIconToClipboard: function (iconSrc) {
+			var	oResourceBundle = this.getResourceBundle(),
+				sSuccessText, sExceptionText,
+				sIcon = this.getModel().getUnicode(iconSrc);
+
+			sSuccessText = oResourceBundle.getText("previewCopyToClipboardSuccess", [iconSrc]);
+			sExceptionText = oResourceBundle.getText("previewCopyToClipboardFail", [iconSrc]);
+			this._copyStringToClipboard(sIcon, sSuccessText, sExceptionText);
+		},
+
+		/**
+		 * Copies the unicode part from the input field to the clipboard and displays a message
+		 * @param {string} iconName the icon name string that has to be copied to the clipboard
+		 * @private
+		 */
+		_onCopyUnicodeToClipboard: function (iconName) {
+			var oResourceBundle = this.getResourceBundle(),
+				sSuccessText, sExceptionText,
+				sString = this.getModel().getUnicodeHTML(iconName);
+			sString = sString.substring(2, sString.length - 1);
+			sSuccessText = oResourceBundle.getText("previewCopyUnicodeToClipboardSuccess", [sString]);
+			sExceptionText = oResourceBundle.getText("previewCopyUnicodeToClipboardFail", [sString]);
+			this._copyStringToClipboard(sString, sSuccessText, sExceptionText);
+		},
+
+		/**
+		 * Copies the value of the code input field to the clipboard and displays a message
+		 * @param {string} iconSrc the icon source string that has to be copied to the clipboard
+		 * @private
+		 */
+		_onCopyCodeToClipboard: function (iconSrc) {
+			var oResourceBundle = this.getResourceBundle(),
+				sSuccessText, sExceptionText;
+
+			sSuccessText = oResourceBundle.getText("previewCopyToClipboardSuccess", [iconSrc]);
+			sExceptionText = oResourceBundle.getText("previewCopyToClipboardFail", [iconSrc]);
+			this._copyStringToClipboard(iconSrc, sSuccessText, sExceptionText);
+		},
+
+		/**
 		 * Copies the string to the clipboard and displays a message
 		 * @param {string} copyText the text string that has to be copied to the clipboard
 		 * @private
 		 */
 		_copyStringToClipboard: function (copyText, successText, exceptionText) {
-			var $temp = $("<input>");
+			var oTemp = document.createElement("input");
 
 			try {
-				$("body").append($temp);
-				$temp.val(copyText).select();
+				document.body.append(oTemp);
+				oTemp.value = copyText;
+				oTemp.select();
 				document.execCommand("copy");
-				$temp.remove();
+				oTemp.remove();
 
 				MessageToast.show(successText);
 			} catch (oException) {
@@ -399,9 +459,6 @@ sap.ui.define([
 					this.byId("preview").bindElement({
 						path: sPath
 					});
-
-					var sIconSymbol = this.getModel().getUnicodeHTML(sIcon);
-					this.byId("previewCopyIcon").setHtmlText("<span>" + sIconSymbol + "</span>" + sIcon);
 
 					// update the group information with a timeout as this task takes some time to calculate
 					setTimeout(function () {
@@ -439,8 +496,8 @@ sap.ui.define([
 				oQuery.tab = this._oPreviousQueryContext.tab;
 			}
 
-			// check tab value against a whitelist
-			var aValidKeys = ["details", "grid", "visual", "favorites"];
+			// check tab value against an allowlist
+			var aValidKeys = ["details", "grid", "favorites"];
 			if (aValidKeys.indexOf(oQuery.tab) < 0) {
 				oQuery.tab = "grid";
 			}
@@ -481,87 +538,85 @@ sap.ui.define([
 					this.getModel().setFont(sFontName);
 					oViewModel.setProperty("/busy", false, null, true);
 				}
-
-				// tab
-				if (!this.byId("iconTabBar")) {
-					return;
-				}
-				this.byId("iconTabBar").setSelectedKey(oQuery.tab);
+				this.byId("layoutSelectionSB").setSelectedKey(oQuery.tab);
 				if (bTabChanged) {
-					var oContent = this.byId("resultContainer").getContent();
+					var oResultContainer = this.byId("resultContainer");
 
-					// destroy last content item (1 is the search bar and 2 is the tags bar)
-					if (oContent.length === 3) {
-						oContent.pop().destroy();
-					}
 					// uppercase first letter
 					var sFragmentName = formatter.uppercaseFirstLetter(oQuery.tab);
 
-					// add new content to the end of result container
-					var oResultsFragment = sap.ui.xmlfragment(
-						this.getView().getId(),
-						"sap.ui.demo.iconexplorer.view.browse." + sFragmentName,
-						this);
-					this.byId("resultContainer").addContent(oResultsFragment);
+					// first destroy old content, then add new content to the end of result container
+					this._resultsLoaded = Promise.resolve(this._resultsLoaded)
+						.catch(function() {})
+						.then(function() {
+							oResultContainer.getContent()[1] && oResultContainer.getContent()[1].destroy();
+							// load the fragment only now
+							return Fragment.load({
+								id: this.getView().getId(),
+								name: "sap.ui.demo.iconexplorer.view.browse." + sFragmentName,
+								controller: this
+							});
+						}.bind(this))
+						.then(function(oFragmentContent){
+							oResultContainer.addContent(oFragmentContent);
+						});
 
 					var bCategoriesVisible = !(Device.system.phone || oQuery.tab == "favorites");
-					this.byId("categorySelection").setVisible(bCategoriesVisible);
+					this.byId("categorySelectionContainer").setVisible(bCategoriesVisible);
 				}
 
-				// icon
-				if (oQuery.icon && bIconChanged) {
-					this._previewIcon(oQuery.icon);
-					this.byId("preview").setVisible(true);
-					if (this.byId("preview").getLayoutData().getSize() === "0px") {
-						this.byId("preview").getLayoutData().setSize("350px");
-					}
-				} else if (!oQuery.icon) {
-					if (bInitial) {
-						this._previewIcon("sap-ui5");
-					}
-					this.byId("preview").setVisible(false);
-					this.byId("preview").getLayoutData().setSize("0px");
-				}
-
-				// category
-				this.byId("categorySelection").setSelectedKey(oQuery.cat || "all");
-				if ((oQuery.cat || bCategoryChanged || bFontChanged) && oQuery.tab !== "favorites") {
-					if (bInitial || bFontChanged || bTabChanged) {
-						this._selectCategory(oQuery);
-					} else {
-						clearTimeout(this._iCategorySelectionTimeout);
-						this._iCategorySelectionTimeout = setTimeout(function () {
-							this._selectCategory(oQuery);
-						}.bind(this), TYPING_DELAY);
-					}
-				}
-
-				// search & tags
-				this.byId("searchField").setValue(oQuery.search);
-				if (bInitial || bFontChanged || bSearchChanged || bTagChanged || bTabChanged) {
-					// search
-					if (bInitial || bFontChanged || bTabChanged) {
-						this._searchIcons(oQuery.search, oQuery.tag);
-					} else {
-						clearTimeout(this._iSearchTimeout);
-						this._iSearchTimeout = setTimeout(function () {
-							this._searchIcons(oQuery.search, oQuery.tag);
-						}.bind(this), TYPING_DELAY);
-					}
-
-					// tags
-					if (bInitial || bFontChanged || bTabChanged) {
-						if (oQuery.tab === "favorites") {
-							this._aCategoryTags = undefined;
+				this._resultsLoaded.then(function() {
+					// icon
+					if (oQuery.icon && bIconChanged) {
+						this._previewIcon(oQuery.icon);
+						this.byId("preview").setVisible(true);
+					} else if (!oQuery.icon) {
+						if (bInitial) {
+							this._previewIcon("sap-ui5");
 						}
-						this._updateTags(oQuery);
-					} else {
-						clearTimeout(this._iTagTimeout);
-						this._iTagTimeout = setTimeout(function () {
-							this._updateTags(oQuery);
-						}.bind(this), TYPING_DELAY);
+						this.byId("preview").setVisible(false);
 					}
-				}
+
+					// category
+					this.byId("categorySelection").setSelectedKey(oQuery.cat || "all");
+					if ((oQuery.cat || bCategoryChanged || bFontChanged) && oQuery.tab !== "favorites") {
+						if (bInitial || bFontChanged || bTabChanged) {
+							this._selectCategory(oQuery);
+						} else {
+							clearTimeout(this._iCategorySelectionTimeout);
+							this._iCategorySelectionTimeout = setTimeout(function () {
+								this._selectCategory(oQuery);
+							}.bind(this), TYPING_DELAY);
+						}
+					}
+
+					// search & tags
+					this.byId("searchField").setValue(oQuery.search);
+					if (bInitial || bFontChanged || bSearchChanged || bTagChanged || bTabChanged) {
+						// search
+						if (bInitial || bFontChanged || bTabChanged) {
+							this._searchIcons(oQuery.search, oQuery.tag);
+						} else {
+							clearTimeout(this._iSearchTimeout);
+							this._iSearchTimeout = setTimeout(function () {
+								this._searchIcons(oQuery.search, oQuery.tag);
+							}.bind(this), TYPING_DELAY);
+						}
+
+						// tags
+						if (bInitial || bFontChanged || bTabChanged) {
+							if (oQuery.tab === "favorites") {
+								this._aCategoryTags = undefined;
+							}
+							this._updateTags(oQuery);
+						} else {
+							clearTimeout(this._iTagTimeout);
+							this._iTagTimeout = setTimeout(function () {
+								this._updateTags(oQuery);
+							}.bind(this), TYPING_DELAY);
+						}
+					}
+				}.bind(this));
 
 			}.bind(this));
 		},
@@ -685,11 +740,13 @@ sap.ui.define([
 			}
 
 			// filter icon list
-			var oResultBinding = this.byId("results").getBinding(this._sAggregationName);
-			if (oResultBinding !== undefined) {
-				oResultBinding.filter(this._vFilterSearch);
-				this.getModel("view").setProperty("/overviewNoDataText", this.getResourceBundle().getText("overviewNoDataWithSearchText"), null, true);
-			}
+			this._resultsLoaded.then(function () {
+				var oResultBinding = this.byId("results").getBinding(this._sAggregationName);
+				if (oResultBinding !== undefined) {
+					oResultBinding.filter(this._vFilterSearch);
+					this.getModel("view").setProperty("/overviewNoDataText", this.getResourceBundle().getText("overviewNoDataWithSearchText"), null, true);
+				}
+			}.bind(this));
 		},
 
 		/**
@@ -718,14 +775,17 @@ sap.ui.define([
 				path: sGroupPath + "/icons",
 				length: this.getModel("view").getProperty("/growingThreshold"),
 				template: this.byId("results").getBindingInfo(this._sAggregationName).template.clone(),
-				templateSharable: true,
+				templateShareable: true,
 				events: {
 					change: this.onUpdateFinished.bind(this)
 				},
 				suspended: true
 			});
 			// apply filters
-			this.byId("results").getBinding(this._sAggregationName).filter(this._vFilterSearch);
+			this._resultsLoaded.then(function () {
+				this.byId("results").getBinding(this._sAggregationName).filter(this._vFilterSearch);
+			}.bind(this));
+
 			// update tags
 			this._aCategoryTags = this.getModel().getProperty(sGroupPath + "/tags");
 			// update tag bar directly with all tags of this category when no search or tag is selected
@@ -741,44 +801,46 @@ sap.ui.define([
 		 */
 		_updateTags: function (oQuery) {
 			// caution: it is really important to use getCurrentContexts and not getContexts here as the later modifies the binding
-			var aContexts = this.byId("results").getBinding(this._sAggregationName).getCurrentContexts(),
-				aAllTags = [],
-				aCurrentTags = [],
-				bTagVisible = false,
-				sFontName = this.getModel("view").getProperty("/fontName"),
-				i;
+			this._resultsLoaded.then(function () {
+				var aContexts = this.byId("results").getBinding(this._sAggregationName).getCurrentContexts(),
+					aAllTags = [],
+					aCurrentTags = [],
+					bTagVisible = false,
+					sFontName = this.getModel("view").getProperty("/fontName"),
+					i;
 
-			// collect all current tags from the result list
-			for (i = 0; i < aContexts.length; i++) {
-				aAllTags = aAllTags.concat(aContexts[i].getProperty("tags").map(function(oItem) { return oItem.name; }));
-			}
-
-			// no category selected yet: use all tags
-			if (!this._aCategoryTags) {
-				this._aCategoryTags = this.getModel().getProperty("/" + sFontName + "/groups/0/tags");
-			}
-
-			// filter tags to the currently visible
-			for (i = 0; i < this._aCategoryTags.length; i++) {
-				if (aAllTags.indexOf(this._aCategoryTags[i].name) >= 0) {
-					this._aCategoryTags[i].pressed = (this._aCategoryTags[i].name === oQuery.tag);
-					if (this._aCategoryTags[i].pressed) {
-						bTagVisible = true;
-					}
-					aCurrentTags.push(this._aCategoryTags[i]);
+				// collect all current tags from the result list
+				for (i = 0; i < aContexts.length; i++) {
+					aAllTags = aAllTags.concat(aContexts[i].getProperty("tags").map(function(oItem) { return oItem.name; }));
 				}
-			}
 
-			// add current tag if it is not visible yet (tag bar only contains the top [x] tags)
-			if (oQuery.tag && !bTagVisible) {
-				aCurrentTags.push({
-					pressed : true,
-					name : oQuery.tag
-				});
-			}
+				// no category selected yet: use all tags
+				if (!this._aCategoryTags) {
+					this._aCategoryTags = this.getModel().getProperty("/" + sFontName + "/groups/0/tags");
+				}
 
-			// update model data and bind the tags
-			this._updateTagSelectionBar(aCurrentTags);
+				// filter tags to the currently visible
+				for (i = 0; i < this._aCategoryTags.length; i++) {
+					if (aAllTags.indexOf(this._aCategoryTags[i].name) >= 0) {
+						this._aCategoryTags[i].pressed = (this._aCategoryTags[i].name === oQuery.tag);
+						if (this._aCategoryTags[i].pressed) {
+							bTagVisible = true;
+						}
+						aCurrentTags.push(this._aCategoryTags[i]);
+					}
+				}
+
+				// add current tag if it is not visible yet (tag bar only contains the top [x] tags)
+				if (oQuery.tag && !bTagVisible) {
+					aCurrentTags.push({
+						pressed : true,
+						name : oQuery.tag
+					});
+				}
+
+				// update model data and bind the tags
+				this._updateTagSelectionBar(aCurrentTags);
+			}.bind(this));
 		},
 
 		/**
@@ -812,7 +874,8 @@ sap.ui.define([
 				return new ToggleButton(sId, {
 					text: "{tags>name}",
 					pressed: "{tags>pressed}",
-					press: [this.onTagSelect, this]
+					press: [this.onTagSelect, this],
+					ariaLabelledBy: this.byId("labelTags")
 				});
 			}
 		}

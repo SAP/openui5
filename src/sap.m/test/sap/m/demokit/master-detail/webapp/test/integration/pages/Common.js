@@ -1,87 +1,38 @@
 sap.ui.define([
-	"sap/ui/test/Opa5"
-], function(Opa5) {
+	"sap/ui/test/Opa5",
+	"sap/ui/demo/masterdetail/localService/mockserver",
+	"sap/base/strings/capitalize",
+	"sap/ui/core/Core"
+], function (Opa5, mockserver, capitalize, oCore) {
 	"use strict";
-
-	function getFrameUrl (sHash, sUrlParameters) {
-		var sUrl = sap.ui.require.toUrl("sap/ui/demo/masterdetail/test/mockServer.html");
-		sHash = sHash || "";
-		sUrlParameters = sUrlParameters ? "?" + sUrlParameters : "";
-
-		if (sHash) {
-			sHash = "#" + (sHash.indexOf("/") === 0 ? sHash.substring(1) : sHash);
-		} else {
-			sHash = "";
-		}
-
-		return sUrl + sUrlParameters + sHash;
-	}
 
 	return Opa5.extend("sap.ui.demo.masterdetail.test.integration.pages.Common", {
 
-		iStartTheApp : function (oOptions) {
-			oOptions = oOptions || {};
-			// Start the app with a minimal delay to make tests run fast but still async to discover basic timing issues
-			this.iStartMyAppInAFrame(getFrameUrl(oOptions.hash, "serverDelay=50"));
+		getEntitySet: function  (sEntitySet) {
+			return mockserver.getMockServer().getEntitySetData(sEntitySet);
 		},
+		I18NTextExtended: function(oControl, sResourceId, sPropertyName, sLibrary, aParams){
+			var oModel, oResourceBundle, sText;
+			var fnProperty = oControl["get" + capitalize(sPropertyName, 0)];
 
-		iStartTheAppWithDelay : function (sHash, iDelay) {
-			this.iStartMyAppInAFrame(getFrameUrl(sHash, "serverDelay=" + iDelay));
-		},
+			// check property
+			if (!fnProperty) {
+				return false;
+			}
 
-		iLookAtTheScreen : function () {
-			return this;
-		},
+			var sPropertyValue = fnProperty.call(oControl);
 
-		iStartMyAppOnADesktopToTestErrorHandler : function (sParam) {
-			this.iStartMyAppInAFrame(getFrameUrl("", sParam));
-		},
+			if (sLibrary) {
+				oResourceBundle = oCore
+					.getLibraryResourceBundle(sLibrary);
+			} else {
+				oModel = oControl.getModel("i18n");
+				oResourceBundle = oModel.getResourceBundle();
+			}
 
-		createAWaitForAnEntitySet : function  (oOptions) {
-			return {
-				success: function () {
-					var bMockServerAvailable = false,
-						aEntitySet;
+			sText = oResourceBundle.getText(sResourceId, aParams);
 
-					this.getMockServer().then(function (oMockServer) {
-						aEntitySet = oMockServer.getEntitySetData(oOptions.entitySet);
-						bMockServerAvailable = true;
-					});
-
-					return this.waitFor({
-						check: function () {
-							return bMockServerAvailable;
-						},
-						success : function () {
-							oOptions.success.call(this, aEntitySet);
-						}
-					});
-				}
-			};
-		},
-
-		getMockServer : function () {
-			return new Promise(function (success) {
-				Opa5.getWindow().sap.ui.require(["sap/ui/demo/masterdetail/localService/mockserver"], function (mockserver) {
-					success(mockserver.getMockServer());
-				});
-			});
-		},
-
-		theUnitNumbersShouldHaveTwoDecimals : function (sControlType, sViewName, sSuccessMsg, sErrMsg) {
-			var rTwoDecimalPlaces =  /^-?\d+\.\d{2}$/;
-
-			return this.waitFor({
-				controlType : sControlType,
-				viewName : sViewName,
-				success : function (aNumberControls) {
-					Opa5.assert.ok(aNumberControls.every(function(oNumberControl){
-							return rTwoDecimalPlaces.test(oNumberControl.getNumber());
-						}),
-						sSuccessMsg);
-				},
-				errorMessage : sErrMsg
-			});
+			return sText === sPropertyValue;
 		}
 
 	});

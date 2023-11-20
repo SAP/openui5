@@ -3,8 +3,8 @@
  */
 
 // Provides default renderer for control sap.ui.unified.SplitContainer
-sap.ui.define(["sap/ui/core/library"],
-	function(coreLibrary) {
+sap.ui.define(["sap/ui/core/ControlBehavior", "sap/ui/core/library", "sap/ui/core/Configuration"],
+	function(ControlBehavior, coreLibrary, Configuration) {
 	"use strict";
 
 
@@ -22,7 +22,7 @@ sap.ui.define(["sap/ui/core/library"],
 	/**
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
 	 * @param {sap.ui.core.RenderManager} rm the RenderManager that can be used for writing to the Render-Output-Buffer
-	 * @param {sap.ui.core.Control} oShell an object representation of the control that should be rendered
+	 * @param {sap.ui.unified.SplitContainer} oControl an object representation of the control that should be rendered
 	 */
 	SplitContainerRenderer.render = function(rm, oControl){
 		var sId = oControl.getId();
@@ -33,7 +33,7 @@ sap.ui.define(["sap/ui/core/library"],
 		rm.writeControlData(oControl);
 		rm.addClass("sapUiUfdSpltCont");
 		rm.addClass("sapUiUfdSpltCont" + (bVertical ? "V" : "H"));
-		if (sap.ui.getCore().getConfiguration().getAnimation()) {
+		if (ControlBehavior.getAnimationMode() !== Configuration.AnimationMode.none) {
 			rm.addClass("sapUiUfdSpltContAnim");
 		}
 
@@ -52,7 +52,11 @@ sap.ui.define(["sap/ui/core/library"],
 		var sSidePaneId = sId + "-pane";
 
 		var sWidth = oControl.getShowSecondaryContent() ? oControl.getSecondaryContentSize() : "0";
-		rm.write("<aside id='", sSidePaneId, "' style='width:", sWidth, "'");
+		rm.write("<aside id='", sSidePaneId);
+		rm.write("'");
+		rm.addStyle("width", sWidth);
+		rm.writeStyles();
+
 		rm.addClass("sapUiUfdSpltContPane");
 		if (!oControl.getShowSecondaryContent()) {
 			rm.addClass("sapUiUfdSplitContSecondClosed");

@@ -1,34 +1,49 @@
 /*!
  * ${copyright}
  */
-
+/*eslint-disable max-len */
 // Provides the concept of a sorter for list bindings
-sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'],
-	function(jQuery, BaseObject) {
+sap.ui.define([
+	"sap/base/Log",
+	"sap/base/i18n/Localization",
+	"sap/ui/base/Object"
+], function(Log, Localization, BaseObject) {
 	"use strict";
-
 
 	/**
 	 *
-	 * Constructor for Sorter
+	 * Constructor for Sorter.
 	 *
 	 * @class
-	 * Sorter for the list binding
-	 * This object defines the sort order for the list binding.
+	 * Sorter for list bindings.
+	 *
+	 * Instances of this class define the sort order for a list binding.
 	 *
 	 *
 	 * @param {string} sPath the binding path used for sorting
 	 * @param {boolean} [bDescending=false] whether the sort order should be descending
-	 * @param {boolean|function} [vGroup] configure grouping of the content, can either be true to enable grouping
-	 *        based on the raw model property value, or a function which calculates the group value out of the
-	 *        context (e.g. oContext.getProperty("date").getYear() for year grouping). The control needs to
-	 *        implement the grouping behaviour for the aggregation which you want to group. In case a function
-	 *        is provided it must either return a primitive type value as the group key or an object containing
-	 *        a "key" property and additional properties needed for group visualization.
-	 *        <b>Note:</b> Grouping is only possible (and only makes sense) for the primary sort property.
-	 * @param {function} [fnComparator] a custom comparator function, which is used for clientside sorting instead
-	 *        of the default comparator method. Information about parameters and expected return values of such a
-	 *        method can be found in the default comparator documentation.
+	 * @param {boolean|function} [vGroup] configure grouping of the content, can either be true to
+	 *   enable grouping based on the raw model property value, or a function which calculates the
+	 *   group value out of the context (e.g. oContext.getProperty("date").getYear() for year
+	 *   grouping). The control needs to implement the grouping behaviour for the aggregation which
+	 *   you want to group. In case a function is provided it must either return a primitive type
+	 *   value as the group key or an object containing a "key" property and additional properties
+	 *   needed for group visualization. This object or the object with the primitive type return
+	 *   value as "key" property is passed to the <code>groupHeaderFactory</code> function that has
+	 *   been specified to create the group header for the control aggregation; see
+	 *   {@link sap.ui.base.ManagedObject#bindAggregation}.
+	 *   <b>Note:</b> Grouping via <code>vGroup=true</code> is only possible (and only makes sense)
+	 *   for the primary sort property. A more complicated grouping is possible by providing a
+	 *   grouping function. The sort order needs to fit to the grouping also in this case. See also
+	 *   {@link topic:ec79a5d5918f4f7f9cbc2150e66778cc Sorting, Grouping, and Filtering for List
+	 *   Binding}.
+	 * @param {function} [fnComparator] A custom comparator function, which is used for client-side
+	 *   sorting instead of the default comparator method. Information about parameters and expected
+	 *   return values of such a method can be found in the
+	 *   {@link #.defaultComparator default comparator} documentation.
+	 *   <b>Note:</b> Custom comparator functions are meant to be used on the client. Models that
+	 *   implement sorting in the backend usually don't support custom comparator functions. Consult
+	 *   the documentation of the specific model implementation.
 	 * @public
 	 * @alias sap.ui.model.Sorter
 	 * @extends sap.ui.base.Object
@@ -50,7 +65,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'],
 			if (iSeparatorPos > 0) {
 				// Model names are ignored, this must be kept for compatibility reasons. But using model names in the
 				// sorter path make no technical sense as the binding cannot access any other models.
-				jQuery.sap.log.error("Model names are not allowed in sorter-paths: \"" + this.sPath + "\"");
+				Log.error("Model names are not allowed in sorter-paths: \"" + this.sPath + "\"");
 				this.sPath = this.sPath.substr(iSeparatorPos + 1);
 			}
 
@@ -68,11 +83,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'],
 		},
 
 		/**
-		 * Returns a group object, at least containing a key property for group detection.
+		 * Returns a group object, at least containing a "key" property for group detection.
 		 * May contain additional properties as provided by a custom group function.
 		 *
 		 * @param {sap.ui.model.Context} oContext the binding context
-		 * @return {object} An object containing a key property and optional custom properties
+		 * @return {Object<string, any>} An object containing a key property and optional custom properties
 		 * @public
 		 */
 		getGroup : function(oContext) {
@@ -126,7 +141,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'],
 			return 1;
 		}
 		if (typeof a == "string" && typeof b == "string") {
-			return a.localeCompare(b);
+			return a.localeCompare(b, Localization.getLanguageTag().toString());
 		}
 		if (a < b) {
 			return -1;

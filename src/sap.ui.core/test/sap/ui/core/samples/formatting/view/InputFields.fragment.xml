@@ -1,0 +1,118 @@
+<c:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:c="sap.ui.core"
+	xmlns:l="sap.ui.layout"
+	xmlns:semantic="sap.m.semantic"
+	xmlns:f="sap.f"
+	xmlns:card="sap.f.cards">
+	
+	<l:VerticalLayout class="sapUiContentPadding" width="100%">
+
+		<f:GridContainer class="sapUiSmallMargin">
+			<f:layout>
+				<f:GridContainerSettings rowSize="5rem" columnSize="5rem" gap="1rem" />
+			</f:layout>
+			<f:layoutS>
+				<f:GridContainerSettings rowSize="4.25rem" columnSize="4.25rem" gap="0.75rem" />
+			</f:layoutS>
+			<f:items>
+				<!-- Unit -->
+				<f:Card>
+					<f:layoutData>
+						<f:GridContainerItemLayoutData columns="3" />
+					</f:layoutData>
+					<f:header>
+						<card:Header
+							title="Unit (CLDR)"
+							subtitle="t, kg, g, kn, km/h"
+							iconSrc="sap-icon://compare-2"/>
+					</f:header>
+					<f:content>
+						<VBox
+							class="sapUiSmallMargin"
+							justifyContent="SpaceBetween">
+							<HBox justifyContent="SpaceBetween">
+								<Input id="inputUnitCLDR" />
+								<Label id="labelUnitCLDR" />
+							</HBox>
+							
+						</VBox>
+					</f:content>
+				</f:Card>
+
+				<f:Card>
+					<f:layoutData>
+						<f:GridContainerItemLayoutData columns="3" />
+					</f:layoutData>
+					<f:header>
+						<card:Header
+							title="Unit (custom)"
+							subtitle="GB, pks"
+							iconSrc="sap-icon://compare-2"/>
+					</f:header>
+					<f:content>
+						<VBox
+							class="sapUiSmallMargin"
+							justifyContent="SpaceBetween">
+							<HBox justifyContent="SpaceBetween">
+								<Input id="inputUnitCustom" />
+								<Label id="labelUnitCustom" />
+							</HBox>
+							
+						</VBox>
+					</f:content>
+				</f:Card>
+
+				<!-- Currency -->
+				<f:Card>
+					<f:layoutData>
+						<f:GridContainerItemLayoutData columns="3" />
+					</f:layoutData>
+					<f:header>
+						<card:Header
+							title="Currency (CLDR)"
+							subtitle="EUR, €, USD, $, JPY, ..."
+							iconSrc="sap-icon://money-bills"/>
+					</f:header>
+					<f:content>
+						<VBox
+							class="sapUiSmallMargin"
+							justifyContent="SpaceBetween">
+							<HBox justifyContent="SpaceBetween">
+								<Input id="inputCurrencyCLDR" />
+								<Label id="labelCurrencyCLDR" />
+							</HBox>
+							
+						</VBox>
+					</f:content>
+				</f:Card>
+
+				<f:Card>
+					<f:layoutData>
+						<f:GridContainerItemLayoutData columns="3" />
+					</f:layoutData>
+					<f:header>
+						<card:Header
+							title="Currency (custom)"
+							subtitle="BTC, DOL, EU, EURO, Ƀ, $"
+							iconSrc="sap-icon://money-bills"/>
+					</f:header>
+					<f:content>
+						<VBox
+							class="sapUiSmallMargin"
+							justifyContent="SpaceBetween">
+							<HBox justifyContent="SpaceBetween">
+								<Input id="inputCurrencyCustom" />
+								<Label id="labelCurrencyCustom" />
+							</HBox>
+							
+						</VBox>
+					</f:content>
+				</f:Card>
+
+			</f:items>
+		</f:GridContainer>
+	</l:VerticalLayout>
+
+</c:FragmentDefinition>

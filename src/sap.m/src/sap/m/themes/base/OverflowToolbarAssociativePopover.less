@@ -9,12 +9,8 @@
 	outline: none;
   }
 
-  &.sapMOTAPButtonsWithIcons {
-	.sapMOTAPButtonNoIcon {
-	  &> .sapMBtnInner > span.sapMBtnContent {
-		margin-left: 1.625rem;
-	  }
-	}
+  .sapMBtn .sapMBtnInner {
+	justify-content: flex-start;
   }
 
   &.sapMPopover .sapMPopoverCont .sapMPopoverScroll {
@@ -28,6 +24,13 @@
 	/* All elements inside must have display block */
 	&> :not(.sapMOTAPHidden) {
 	  display: block;
+	}
+
+	&> .sapMTBSeparator.sapMTBSeparatorOverflowToolbar {
+		&:first-child,
+		&:last-child {
+			display: none;
+		}
 	}
 
 	/* Button, ToggleButton, OverflowToolbarButton */
@@ -79,17 +82,11 @@
 	  max-width: 100% !important;
 	}
 
+	/* Menu Button */
+	&> .sapMMenuBtn {
+		max-width: 100% !important;
+	}
   }
-}
-
-html[data-sap-ui-browser^="ie"] .sapMOTAPopover.sapMPopover .sapMPopoverCont .sapMPopoverScroll > button.sapMBtn > .sapMBtnInner,
-html[data-sap-ui-browser^="ed"] .sapMOTAPopover.sapMPopover .sapMPopoverCont .sapMPopoverScroll > button.sapMBtn > .sapMBtnInner {
-  text-align: left;
-}
-
-html[dir=rtl][data-sap-ui-browser^="ie"] .sapMOTAPopover.sapMPopover .sapMPopoverCont .sapMPopoverScroll > button.sapMBtn > .sapMBtnInner,
-html[dir=rtl][data-sap-ui-browser^="ed"] .sapMOTAPopover.sapMPopover .sapMPopoverCont .sapMPopoverScroll > button.sapMBtn > .sapMBtnInner {
-  text-align: right;
 }
 
 /* Compact mode overrides */
@@ -100,19 +97,17 @@ html[dir=rtl][data-sap-ui-browser^="ed"] .sapMOTAPopover.sapMPopover .sapMPopove
 	&.sapMPopover .sapMPopoverCont .sapMPopoverScroll {
 	  padding: 0.1875rem 0.375rem;
 	}
-  }
 
+	.sapMBtnInner.sapMBtnIconFirst:not(.sapMBtnBack) {
+	  padding-left: 0.5rem;
+	  padding-right: 0.5rem;
+	}
+  }
 }
 
 /* Phone mode overrides */
 html.sap-phone {
 	.sapMOTAPopover {
 	  overflow: hidden !important;
-	}
-}
-
-.sapMOTAPopover {
-	.sapMBtnTransparent:not(.sapMBtnActive):not(.sapMToggleBtnPressed), .sapMBtnDisabled .sapMBtnTransparent  {
-		color: @sapUiButtonTextColor;
 	}
 }

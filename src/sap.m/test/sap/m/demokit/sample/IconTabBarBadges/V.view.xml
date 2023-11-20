@@ -1,0 +1,318 @@
+<mvc:View
+	controllerName="sap.m.sample.IconTabBarBadges.C"
+	xmlns="sap.m"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:f="sap.ui.layout.form">
+	<Panel>
+		<f:SimpleForm
+			editable="true"
+			labelSpanXL="2"
+			labelSpanL="2"
+			labelSpanM="3"
+			labelSpanS="5"
+			layout="ResponsiveGridLayout">
+			<Label text="Tab Density Mode" />
+			<RadioButtonGroup columns="3" select=".onTabDensityModeSelect">
+				<RadioButton text="Cozy" />
+				<RadioButton text="Compact" />
+				<RadioButton text="Inherit" />
+			</RadioButtonGroup>
+		</f:SimpleForm>
+
+		<IconTabBar
+			id="iconTabBar0"
+			enableTabReordering="true"
+			class="sapUiResponsiveContentPadding" />
+
+		<IconTabBar id="iconTabBar1" class="sapUiResponsiveContentPadding">
+			<items>
+				<IconTabFilter key="info" text="Info">
+					<Text text="Info content goes here ..." />
+				</IconTabFilter>
+				<IconTabFilter key="attachments" text="Attachments">
+					<Text text="Attachments go here ..." />
+					<customData>
+						<BadgeCustomData visible="true"/>
+					</customData>
+				</IconTabFilter>
+				<IconTabFilter key="notes" text="Notes">
+					<Text text="Notes go here ..." />
+				</IconTabFilter>
+				<IconTabFilter key="people" text="People">
+					<Text text="People content goes here ..." />
+				</IconTabFilter>
+			</items>
+		</IconTabBar>
+
+		<IconTabBar
+			id="iconTabBar2"
+			headerMode="Inline"
+			class="sapUiResponsiveContentPadding">
+			<items>
+				<IconTabFilter
+					key="info"
+					text="Info"
+					count="3">
+					<Text text="Info content goes here ..." />
+				</IconTabFilter>
+				<IconTabFilter
+					key="attachments"
+					text="Attachments"
+					count="4321">
+					<customData>
+						<BadgeCustomData visible="true"/>
+					</customData>
+					<Text text="Attachments go here ..." />
+				</IconTabFilter>
+				<IconTabFilter
+					key="notes"
+					text="Notes"
+					count="333">
+					<Text text="Notes go here ..." />
+				</IconTabFilter>
+				<IconTabFilter
+					key="people"
+					text="People"
+					count="34">
+					<Text text="People content goes here ..." />
+				</IconTabFilter>
+			</items>
+		</IconTabBar>
+
+		<IconTabBar id="iconTabBar3" class="sapUiResponsiveContentPadding">
+			<items>
+				<IconTabFilter
+					key="info"
+					text="Info"
+					count="3">
+					<Text text="Info content goes here ..." />
+				</IconTabFilter>
+				<IconTabFilter
+					key="attachments"
+					text="Attachments"
+					count="4321">
+					<customData>
+						<BadgeCustomData visible="true"/>
+					</customData>
+					<Text text="Attachments go here ..." />
+				</IconTabFilter>
+				<IconTabFilter
+					key="notes"
+					text="Notes"
+					count="333">
+					<Text text="Notes go here ..." />
+				</IconTabFilter>
+				<IconTabFilter
+					key="people"
+					text="People"
+					count="34">
+					<Text text="People content goes here ..." />
+				</IconTabFilter>
+			</items>
+		</IconTabBar>
+
+		<IconTabBar id="iconTabBar4" class="sapUiResponsiveContentPadding">
+			<items>
+				<IconTabFilter key="info" icon="sap-icon://hint">
+					<Text text="Info content goes here ..." />
+				</IconTabFilter>
+				<IconTabFilter
+					key="attachments"
+					icon="sap-icon://attachment"
+					count="3">
+					<customData>
+						<BadgeCustomData visible="true"/>
+					</customData>
+					<Text text="Attachments go here ..." />
+				</IconTabFilter>
+				<IconTabFilter
+					key="notes"
+					icon="sap-icon://notes"
+					count="12">
+					<Text text="Notes go here ..." />
+				</IconTabFilter>
+				<IconTabFilter key="people" icon="sap-icon://group">
+					<Text text="People content goes here ..." />
+				</IconTabFilter>
+			</items>
+		</IconTabBar>
+		<IconTabBar id="iconTabBar5" class="sapUiResponsiveContentPadding">
+			<items>
+				<IconTabFilter
+					key="info"
+					icon="sap-icon://hint"
+					iconColor="Critical">
+					<Text text="Info content goes here ..." />
+				</IconTabFilter>
+				<IconTabSeparator icon="" />
+				<IconTabFilter
+					key="attachments"
+					icon="sap-icon://attachment"
+					iconColor="Neutral"
+					count="3">
+					<customData>
+						<BadgeCustomData visible="true"/>
+					</customData>
+					<Text text="Attachments go here ..." />
+				</IconTabFilter>
+				<IconTabSeparator icon="sap-icon://vertical-grip" />
+				<IconTabFilter
+					key="notes"
+					icon="sap-icon://notes"
+					iconColor="Positive"
+					count="12">
+					<Text text="Notes go here ..." />
+				</IconTabFilter>
+				<IconTabSeparator icon="sap-icon://process" />
+				<IconTabFilter
+					key="people"
+					icon="sap-icon://group"
+					iconColor="Negative">
+					<Text text="People content goes here ..." />
+				</IconTabFilter>
+			</items>
+		</IconTabBar>
+
+		<IconTabBar id="iconTabBar6" class="sapUiResponsiveContentPadding">
+			<items>
+				<IconTabFilter
+					icon="sap-icon://begin"
+					iconColor="Positive"
+					design="Horizontal"
+					count="53 of 123"
+					text="Confirm Ok"
+					key="Ok" >
+					<Text text="Filtered items goes here ..." />
+				</IconTabFilter>
+				<IconTabSeparator icon="sap-icon://open-command-field" />
+				<IconTabFilter
+					icon="sap-icon://compare"
+					iconColor="Critical"
+					design="Horizontal"
+					count="51 of 123"
+					text="Check Heavys"
+					key="Heavy">
+					<customData>
+						<BadgeCustomData visible="true"/>
+					</customData>
+				</IconTabFilter>
+				<IconTabSeparator icon="sap-icon://open-command-field" />
+				<IconTabFilter
+					icon="sap-icon://inventory"
+					iconColor="Negative"
+					design="Horizontal"
+					count="19 of 123"
+					text="Claim Overweights"
+					key="Overweight" />
+			</items>
+		</IconTabBar>
+
+		<IconTabBar id="iconTabBar7" class="sapUiResponsiveContentPadding">
+			<items>
+				<IconTabFilter
+					showAll="true"
+					count="123"
+					text="Products"
+					key="All" >
+					<Text text="Filtered items goes here ..." />
+					<customData>
+						<BadgeCustomData visible="true"/>
+					</customData>
+				</IconTabFilter>
+				<IconTabSeparator />
+				<IconTabFilter
+					icon="sap-icon://begin"
+					iconColor="Positive"
+					count="53"
+					text="Ok"
+					key="Ok">
+					<customData>
+						<BadgeCustomData visible="true"/>
+					</customData>
+				</IconTabFilter>
+				<IconTabFilter
+					icon="sap-icon://compare"
+					iconColor="Critical"
+					count="51"
+					text="Heavy"
+					key="Heavy">
+					<customData>
+						<BadgeCustomData visible="true"/>
+					</customData>
+				</IconTabFilter>
+				<IconTabFilter
+					icon="sap-icon://inventory"
+					iconColor="Negative"
+					count="19"
+					text="Overweight"
+					key="Overweight">
+					<customData>
+						<BadgeCustomData visible="true"/>
+					</customData>
+				</IconTabFilter>
+			</items>
+		</IconTabBar>
+
+		<IconTabBar id="iconTabBar8" class="sapUiResponsiveContentPadding">
+		<items>
+			<IconTabFilter key="info" text="Info">
+				<items>
+					<IconTabFilter text="Info one">
+						<Text text="Info one content goes here..." />
+					</IconTabFilter>
+					<IconTabFilter text="Info two">
+						<Text text="Info two content goes here..." />
+						<customData>
+							<BadgeCustomData visible="true"/>
+						</customData>
+					</IconTabFilter>
+					<IconTabFilter text="Info three with badge">
+						<Text text="Info three content goes here..." />
+						<customData>
+							<BadgeCustomData visible="true"/>
+						</customData>
+					</IconTabFilter>
+					<IconTabFilter text="Info four">
+						<Text text="Info four content goes here..." />
+					</IconTabFilter>
+				</items>
+			</IconTabFilter>
+
+			<IconTabFilter key="attachments" text="Attachments">
+				<customData>
+					<BadgeCustomData visible="true"/>
+				</customData>
+				<items>
+					<IconTabFilter text="Attachment one">
+						<Text text="Attachment one goes here..." />
+					</IconTabFilter>
+					<IconTabFilter text="Attachment two">
+						<Text text="Attachment two goes here..." />
+					</IconTabFilter>
+				</items>
+
+				<Text text="Attachments own content goes here..." />
+			</IconTabFilter>
+
+			<IconTabFilter key="notes" text="Notes">
+				<customData>
+					<BadgeCustomData visible="true"/>
+				</customData>
+				<items>
+					<IconTabFilter text="Note one">
+						<Text text="Note one goes here..." />
+					</IconTabFilter>
+					<IconTabFilter text="Note two">
+						<customData>
+							<BadgeCustomData visible="true"/>
+						</customData>
+						<Text text="Note two goes here..." />
+					</IconTabFilter>
+				</items>
+
+				<Text text="Notes own content goes here..." />
+			</IconTabFilter>
+		</items>
+	</IconTabBar>
+	</Panel>
+</mvc:View>

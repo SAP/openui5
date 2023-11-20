@@ -25,9 +25,8 @@
 		</semantic:headerContent>
 
 		<semantic:sendEmailAction>
-			<semantic:SendEmailAction id="shareEmail" press="onShareEmailPress"/>
+			<semantic:SendEmailAction id="shareEmail" press=".onShareEmailPress"/>
 		</semantic:sendEmailAction>
-
 
 	</semantic:SemanticPage>
 

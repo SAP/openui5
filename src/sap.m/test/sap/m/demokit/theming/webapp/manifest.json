@@ -1,12 +1,18 @@
 {
-	"_version": "1.8.0",
+	"_version": "1.21.0",
 
 	"sap.app": {
 	"id": "sap.ui.demo.theming",
 		"type": "application",
-		"i18n": "i18n/i18n.properties",
+		"i18n": {
+			"bundleUrl": "i18n/i18n.properties",
+			"supportedLocales": [
+				""
+			],
+			"fallbackLocale": ""
+		},
 		"title": "{{appTitle}}",
-		"description": "{{}}",
+		"description": "{{appDescription}}",
 		"applicationVersion": {
 			"version": "1.0.0"
 		}
@@ -38,7 +44,7 @@
 		},
 
 		"dependencies": {
-			"minUI5Version": "1.36.0",
+			"minUI5Version": "1.98.0",
 			"libs": {
 				"sap.ui.core": {
 					"minVersion": "1.36.0"
@@ -69,7 +75,11 @@
 			"i18n": {
 				"type": "sap.ui.model.resource.ResourceModel",
 				"settings": {
-					"bundleName": "sap.ui.demo.theming.i18n.i18n"
+					"bundleName": "sap.ui.demo.theming.i18n.i18n",
+					"supportedLocales": [
+						""
+					],
+					"fallbackLocale": ""
 				}
 			},
 			"class":{
@@ -80,8 +90,9 @@
 		"routing": {
 			"config": {
 				"routerClass": "sap.m.routing.Router",
+				"type": "View",
 				"viewType": "XML",
-				"viewPath": "sap.ui.demo.theming.view",
+				"path": "sap.ui.demo.theming.view",
 				"controlId": "app",
 				"controlAggregation": "pages",
 				"bypassed": {
@@ -100,13 +111,13 @@
 
 			"targets": {
 				"overview": {
-					"viewName": "Overview",
-					"viewId": "overview",
-					"viewLevel": 1
+					"name": "Overview",
+					"id": "overview",
+					"level": 1
 				},
 				"notFound": {
-					"viewName": "NotFound",
-					"viewId": "notFound"
+					"name": "NotFound",
+					"id": "notFound"
 				}
 			}
 		}

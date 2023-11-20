@@ -1,0 +1,22 @@
+{
+	"@odata.metadataEtag" : "W/\"20191008145915\"",
+	"value" : [{
+		"ScheduleKey" : "005056A71E3D1ED68DDA8CB5CA1C8B46",
+		"DeliveryDate" : "2016-06-26T22:00:00Z"
+	}, {
+		"ScheduleKey" : "005056A71E3D1ED68DDA8CB5CA1CAB46",
+		"DeliveryDate" : "2016-06-26T22:00:00Z"
+	}, {
+		"ScheduleKey" : "005056A71E3D1ED68DDA8CB5CA1CCB46",
+		"DeliveryDate" : "2016-06-26T22:00:00Z"
+	}, {
+		"ScheduleKey" : "005056A71E3D1ED68DDA8CB5CA1CEB46",
+		"DeliveryDate" : "2016-06-26T22:00:00Z"
+	}, {
+		"ScheduleKey" : "005056A71E3D1ED68DDA8CB5CA1D0B46",
+		"DeliveryDate" : "2016-06-26T22:00:00Z"
+	}, {
+		"ScheduleKey" : "005056A71E3D1ED68DDA8CB5CA1D2B46",
+		"DeliveryDate" : "2016-06-26T22:00:00Z"
+	}]
+}

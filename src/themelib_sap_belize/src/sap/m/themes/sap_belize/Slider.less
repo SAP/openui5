@@ -11,6 +11,15 @@
 .sapMSliderInner {
 	background: @_sap_m_Slider_Background;
 }
+.sapMSliderTickmarks {
+	top: -0.8125em;
+}
+
+.sapMSliderInner,
+.sapMSliderProgress {
+	height: 0.1875rem;
+	border-radius: 0;
+}
 
 /* slider handle */
 .sapMSliderHandle {
@@ -21,12 +30,7 @@
 /* hover */
 .sapMSliderHandle:hover {
 	background-color: @_sap_m_Slider_HandleHoverBackground;
-	border: 0.125rem solid @_sap_m_Slider_HandleBorderColor;;
-}
-
-/* focus */
-html.sap-desktop .sapMSliderHandle:focus {
-	outline: 1px dotted @sapUiContentFocusColor;
+	border: 0.125rem solid @_sap_m_Slider_HandleBorderColor;
 }
 
 /* pressed */
@@ -38,4 +42,11 @@ html.sap-desktop .sapMSliderHandle:focus {
 /* disabled */
 .sapMSliderDisabled {
 	opacity: 0.5;
+}
+
+.sapUiSizeCompact {
+	.sapMSliderTickmarks {
+		height: 1rem;
+		top: -0.4375rem;
+	}
 }

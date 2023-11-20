@@ -11,11 +11,14 @@
 
 // Provides class sap.m.semantic.SemanticConfiguration
 sap.ui.define([
-	"sap/ui/base/Metadata",
+	"sap/ui/base/Object",
 	"sap/m/library",
 	"sap/m/OverflowToolbarLayoutData",
-	"sap/ui/core/IconPool"
-], function(Metadata, library, OverflowToolbarLayoutData, IconPool) {
+	"sap/ui/core/IconPool",
+	"sap/ui/core/InvisibleText",
+	"sap/ui/core/Messaging",
+	"sap/ui/core/Lib"
+], function(BaseObject, library, OverflowToolbarLayoutData, IconPool, InvisibleText, Messaging, Library) {
 	"use strict";
 
 	// shortcut for sap.m.ButtonType
@@ -37,11 +40,12 @@ sap.ui.define([
 	 * @private
 	 * @since 1.30.0
 	 * @alias sap.m.semantic.SemanticConfiguration
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 
-	var SemanticConfiguration = Metadata.createClass("sap.m.semantic.SemanticConfiguration", {
-
+	var SemanticConfiguration = BaseObject.extend("sap.m.semantic.SemanticConfiguration", {
+		getInterface: function() {
+			return this; // no facade
+		}
 	});
 
 	/*
@@ -118,7 +122,7 @@ sap.ui.define([
 	SemanticConfiguration._oTypeConfigs = (function () { //TODO: set from outside?
 
 	var oTypeConfigs = {},
-			oBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+			oBundle = Library.getResourceBundleFor("sap.m");
 
 		oTypeConfigs["sap.m.semantic.MultiSelectAction"] = {
 			position: SemanticConfiguration.prototype._PositionInPage.headerRight,
@@ -247,8 +251,7 @@ sap.ui.define([
 			getSettings: function() {
 				return {
 					icon: IconPool.getIconURI("add"),
-					text: oBundle.getText("SEMANTIC_CONTROL_ADD"),
-					tooltip: oBundle.getText("SEMANTIC_CONTROL_ADD")
+					text: oBundle.getText("SEMANTIC_CONTROL_ADD")
 				};
 			},
 			order: 0,
@@ -260,8 +263,7 @@ sap.ui.define([
 			getSettings: function() {
 				return {
 					icon: IconPool.getIconURI("favorite"),
-					text: oBundle.getText("SEMANTIC_CONTROL_FAVORITE"),
-					tooltip: oBundle.getText("SEMANTIC_CONTROL_FAVORITE")
+					text: oBundle.getText("SEMANTIC_CONTROL_FAVORITE")
 				};
 			},
 			order: 1,
@@ -273,8 +275,7 @@ sap.ui.define([
 			getSettings: function() {
 				return {
 					icon: IconPool.getIconURI("flag"),
-					text: oBundle.getText("SEMANTIC_CONTROL_FLAG"),
-					tooltip: oBundle.getText("SEMANTIC_CONTROL_FLAG")
+					text: oBundle.getText("SEMANTIC_CONTROL_FLAG")
 				};
 			},
 			order: 2,
@@ -301,8 +302,7 @@ sap.ui.define([
 			getSettings: function() {
 				return {
 					icon: IconPool.getIconURI("sort"),
-					text: oBundle.getText("SEMANTIC_CONTROL_SORT"),
-					tooltip: oBundle.getText("SEMANTIC_CONTROL_SORT")
+					text: oBundle.getText("SEMANTIC_CONTROL_SORT")
 				};
 			},
 			constraints: "IconOnly"
@@ -321,7 +321,7 @@ sap.ui.define([
 			getEventDelegates: function(oContext) {
 				return {
 					onAfterRendering: function () {
-						this.$().attr({"aria-haspopup": true});
+						this.$().attr({"aria-haspopup": "listbox"});
 					}.bind(oContext)
 				};
 			},
@@ -333,8 +333,7 @@ sap.ui.define([
 			getSettings: function() {
 				return {
 					icon: IconPool.getIconURI("filter"),
-					text: oBundle.getText("SEMANTIC_CONTROL_FILTER"),
-					tooltip: oBundle.getText("SEMANTIC_CONTROL_FILTER")
+					text: oBundle.getText("SEMANTIC_CONTROL_FILTER")
 				};
 			},
 			constraints: "IconOnly"
@@ -350,6 +349,13 @@ sap.ui.define([
 					tooltip: oBundle.getText("SEMANTIC_CONTROL_FILTER")
 				};
 			},
+			getEventDelegates: function(oContext) {
+				return {
+					onAfterRendering: function () {
+						this.$().attr({"aria-haspopup": "listbox"});
+					}.bind(oContext)
+				};
+			},
 			constraints: "IconOnly"
 		};
 
@@ -358,8 +364,7 @@ sap.ui.define([
 			getSettings: function() {
 				return {
 					icon: IconPool.getIconURI("group-2"),
-					text: oBundle.getText("SEMANTIC_CONTROL_GROUP"),
-					tooltip: oBundle.getText("SEMANTIC_CONTROL_GROUP")
+					text: oBundle.getText("SEMANTIC_CONTROL_GROUP")
 				};
 			},
 			constraints: "IconOnly"
@@ -373,13 +378,14 @@ sap.ui.define([
 				return {
 					icon: IconPool.getIconURI("group-2"),
 					type: "IconOnly",
-					autoAdjustWidth: true
+					autoAdjustWidth: true,
+					tooltip: oBundle.getText("SEMANTIC_CONTROL_GROUP")
 				};
 			},
 			getEventDelegates: function(oContext) {
 				return {
 					onAfterRendering: function () {
-						this.$().attr({"aria-haspopup": true});
+						this.$().attr({"aria-haspopup": "listbox"});
 					}.bind(oContext)
 				};
 			},
@@ -401,7 +407,7 @@ sap.ui.define([
 			getSettings: function() {
 				return {
 					icon: IconPool.getIconURI("discussion-2"),
-					text: oBundle.getText("SEMANTIC_CONTROL_DISCUSS_IN_JAM")
+					text: oBundle.getText("SEMANTIC_CONTROL_DISCUSS_IN_WORK_ZONE")
 				};
 			},
 			order: 1,
@@ -413,7 +419,7 @@ sap.ui.define([
 			getSettings: function() {
 				return {
 					icon: IconPool.getIconURI("share-2"),
-					text: oBundle.getText("SEMANTIC_CONTROL_SHARE_IN_JAM")
+					text: oBundle.getText("SEMANTIC_CONTROL_SHARE_ON_WORK_ZONE")
 				};
 			},
 			order: 2,
@@ -459,6 +465,7 @@ sap.ui.define([
 		oTypeConfigs["sap.m.semantic.MessagesIndicator"] = {
 			position: SemanticConfiguration.prototype._PositionInPage.footerLeft,
 			getSettings: function() {
+				var sTooltipId = InvisibleText.getStaticId("sap.m", "SEMANTIC_CONTROL_MESSAGES_INDICATOR");
 				return {
 					icon: IconPool.getIconURI("message-popup"),
 					text: {
@@ -467,7 +474,7 @@ sap.ui.define([
 							return aMessages.length || 0;
 						}
 					},
-					tooltip: oBundle.getText("SEMANTIC_CONTROL_MESSAGES_INDICATOR"),
+					ariaDescribedBy: sTooltipId,
 					type: ButtonType.Emphasized,
 					visible: {
 						path: "message>/",
@@ -475,7 +482,7 @@ sap.ui.define([
 							return aMessages && aMessages.length > 0;
 						}
 					},
-					models: {message: sap.ui.getCore().getMessageManager().getMessageModel()},
+					models: {message: Messaging.getMessageModel()},
 					layoutData: new OverflowToolbarLayoutData({
 						priority: OverflowToolbarPriority.NeverOverflow
 					})
@@ -497,4 +504,4 @@ sap.ui.define([
 	})();
 
 	return SemanticConfiguration;
-}, /* bExport= */ false);
+});

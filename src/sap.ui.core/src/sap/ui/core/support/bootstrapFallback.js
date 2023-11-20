@@ -4,7 +4,7 @@
 
 /*global console */
 
-// This file provides a fallback to load UI5 in support.html / msiebridge.html
+// This file provides a fallback to load UI5 in support.html
 (function() {
 	'use strict';
 

@@ -3,67 +3,116 @@
 	controllerName="sap.ui.core.sample.odata.v4.DataAggregation.DataAggregation"
 	xmlns="sap.ui.table"
 	xmlns:m="sap.m"
-	xmlns:mvc="sap.ui.core.mvc">
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:rm="sap.ui.table.rowmodes">
 
 	<!-- TODO: enable sorting in table -->
 	<!-- TODO: enhance auto type detection for @$ui5.node.*? -->
-	<Table id="table"
-		rows="{path : '/BusinessPartners',
-			parameters : {
-				$$aggregation : {
-					aggregate : {
-						SalesAmount : {subtotals : true},
-						SalesNumber : {}
-					},
-					group : {
-						Region : {},
-						Currency : {}
-					},
-					groupLevels : ['Region']
-				},
+	<!-- Note: for $$aggregation, see controller's onInit! -->
+	<Table id="table" ariaLabelledBy="title"
+		rows="{path : '/BusinessPartners', parameters : {
 				$count : false,
-				$orderby : 'Region desc,Currency'
-			}}" selectionMode="None"
-			title="Sales Amount by Region ({headerContext>$count})">
+				$orderby : 'Country desc,Region desc,Segment,AccountResponsible'
+			}, suspended : true}" selectionMode="None" threshold="0">
+		<extension>
+			<m:Toolbar design="Transparent" class="sapMTBHeader-CTX">
+				<m:Title id="title" level="H1" text="Sales Amount by Account Responsible"/>
+				<m:ToolbarSpacer/>
+				<m:SearchField id="search" placeholder="Search for anything..." search="onSearch"
+					value="{ui>/sSearch}" width="40%"/>
+				<m:Button icon="sap-icon://download" press="onDownload" tooltip="Download"/>
+				<m:Button id="showMessages" icon="sap-icon://message-popup" tooltip="Show messages"
+					press="onToggleMessagePopover" text="{ui>/iMessages}"
+					type="{= ${ui>/iMessages} ? 'Emphasized' : 'Default' }"/>
+			</m:Toolbar>
+		</extension>
+		<rowMode>
+			<rm:Fixed rowCount="{ui>/iVisibleRowCount}" fixedTopRowCount="1"/>
+		</rowMode>
 		<Column hAlign="End" width="5em">
 			<m:Label text="Level"/>
 			<template>
-				<m:Text text="{= %{@$ui5.node.level} }"/><!-- Note: type not really useful here -->
+				<m:Text wrapping="false" text="{= %{@$ui5.node.level} }"/><!-- Note: type not
+				really useful here -->
 			</template>
 		</Column>
-		<Column width="3em">
+		<Column hAlign="Center" width="5em">
+			<m:Label text="Group Level Count"/>
 			<template>
-				<m:ToggleButton enabled="{= %{@$ui5.node.isExpanded} !== undefined}"
+				<m:Label text="{= %{@$ui5.node.groupLevelCount} }"/>
+			</template>
+		</Column>
+		<Column width="4em">
+			<template>
+				<m:Button enabled="{= %{@$ui5.node.isExpanded} !== undefined}"
+					id="expand"
 					icon="{= %{@$ui5.node.isExpanded} === true
 						? 'sap-icon://collapse'
 						: (%{@$ui5.node.isExpanded} === false
 							? 'sap-icon://expand' : 'sap-icon://e-care')}"
-					tooltip="{= %{@$ui5.node.isExpanded} === true ? 'Collapse' : 'Expand'}"
+					press=".onToggleExpand"
+					tooltip="{= %{@$ui5.node.isExpanded} === true
+						? 'Collapse'
+						: (%{@$ui5.node.isExpanded} === false ? 'Expand' : 'Leaf')}"
 					/>
 			</template>
 		</Column>
-		<Column template="Region">
+		<Column>
+			<m:Label text="Country"/>
+			<template>
+				<m:Text text="{Country}" wrapping="false"/>
+			</template>
+		</Column>
+		<Column>
 			<m:Label text="Region"/>
+			<template>
+				<m:Text text="{Region}" wrapping="false"/>
+			</template>
 		</Column>
-		<Column hAlign="End" template="SalesAmount">
+		<Column>
+			<m:Label text="Segment"/>
+			<template>
+				<m:Text text="{Segment}" wrapping="false"/>
+			</template>
+		</Column>
+		<Column>
+			<m:Label text="Account Responsible"/>
+			<template>
+				<m:Text text="{AccountResponsible}" wrapping="false"/>
+			</template>
+		</Column>
+		<Column hAlign="End">
 			<m:Label text="Sales Amount"/>
+			<template>
+				<m:Text text="{
+					parts : ['SalesAmountLocalCurrency', 'LocalCurrency', {
+						mode : 'OneTime',
+						path : '/##@@requestCurrencyCodes',
+						targetType : 'any'
+					}],
+					type : 'sap.ui.model.odata.type.Currency',
+					formatOptions : { showMeasure : false }
+				}" wrapping="false"/>
+			</template>
 		</Column>
-<!-- TODO
-		<Column template="Currency">
-			<m:Label text="Currency"/>
+		<Column>
+			<m:Label text="Local Currency"/>
+			<template>
+				<m:Text text="{LocalCurrency}" wrapping="false"/>
+			</template>
 		</Column>
--->
-<!-- TODO how can we influence the cell content PER ROW?
-		<Column hAlign="End"
-			template="{= %{@$ui5.node.isTotal} ? undefined : 'SalesNumber'}">
+		<Column hAlign="End">
+			<template>
+				<m:Text text="{
+					path : 'SalesNumber',
+					type : 'sap.ui.model.odata.type.Decimal',
+					constraints : { scale : 0 }
+				}" wrapping="false"/>
+			</template>
 			<m:Label text="Sales Number"/>
 		</Column>
-		<Column template="{= %{@$ui5.node.isTotal} ? undefined : 'Currency'}">
-			<m:Label text="Currency"/>
-		</Column>
--->
 		<Column hAlign="Center" width="5em">
-			<m:Label text="Subtotal"/>
+			<m:Label text="Is Total"/>
 			<template>
 				<m:CheckBox selected="{= %{@$ui5.node.isTotal} }" editable="false"/>
 			</template>

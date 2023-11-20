@@ -2,7 +2,6 @@
 
 sap.ui.define([
 	"sap/ui/test/opaQunit",
-	"./pages/App",
 	"./pages/Overview",
 	"./pages/Home",
 	"./pages/Preview"
@@ -10,28 +9,6 @@ sap.ui.define([
 	"use strict";
 
 	QUnit.module("Navigation");
-
-	opaTest("Should see the busy indicator on app view while icon metadata is loaded", function (Given, When, Then) {
-		// Arrangements
-		Given.iStartMyApp({
-			hash: "overview/SAP-icons",
-			delay: 5000 // to really see the busy indicator
-		});
-
-		// Assertions
-		Then.onTheAppPage.iShouldSeeTheBusyIndicatorForTheWholeApp();
-	});
-
-	opaTest("Should see the busy indicator on overview table after metadata is loaded", function (Given, When, Then) {
-		//Actions
-		When.onTheAppPage.iWaitUntilTheAppBusyIndicatorIsGone();
-
-		// Assertions
-		Then.onTheOverviewPage.iShouldSeeTheResultsTableBusyIndicatorOrItemsLoaded();
-
-		// Cleanup
-		Then.iTeardownMyApp();
-	});
 
 	opaTest("Search for an Icon should navigate to the Overview page", function (Given, When, Then) {
 		// Arrangements

@@ -1,0 +1,28 @@
+{
+	"sap.app": {
+		"id": "teamCalendar",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "teamCalendar.view.Main",
+			"type": "XML",
+			"async": true
+		},
+		"models": {
+			"calendar": {
+				"type": "sap.ui.model.json.JSONModel",
+				"uri": "model/Calendar.json"
+			}
+		},
+		"dependencies": {
+			"libs": {
+				"sap.m": {},
+				"sap.ui.core": {},
+				"sap.ui.unified": {}
+			}
+		}
+	}
+}

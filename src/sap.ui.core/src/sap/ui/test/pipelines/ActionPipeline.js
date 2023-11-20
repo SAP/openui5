@@ -3,11 +3,9 @@
  */
 
 sap.ui.define([
-		'jquery.sap.global',
-		'sap/ui/base/Object',
-		'./PipelineFactory'
-	],
-	function($, UI5Object, PipelineFactory) {
+	'sap/ui/base/Object',
+	'sap/ui/test/pipelines/PipelineFactory'
+], function(UI5Object, PipelineFactory) {
 		"use strict";
 		var oPipelineFactory = new PipelineFactory({
 			name: "Action",
@@ -39,7 +37,7 @@ sap.ui.define([
 
 				var aActions = oPipelineFactory.create(oOptions.actions);
 
-				if (!$.isArray(vControl)) {
+				if (!Array.isArray(vControl)) {
 					aControls = [vControl];
 				} else {
 					aControls = vControl;

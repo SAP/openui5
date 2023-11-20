@@ -1,29 +1,28 @@
 sap.ui.define([
-	'sap/ui/test/Opa5',
-	'sap/ui/test/matchers/AggregationFilled',
-	'sap/ui/test/matchers/AggregationEmpty',
-	'sap/ui/test/matchers/Properties',
-	'sap/ui/test/matchers/PropertyStrictEquals',
-	'sap/ui/test/matchers/AggregationContainsPropertyEqual',
-	'sap/ui/test/matchers/AggregationLengthEquals',
-	'sap/ui/test/matchers/BindingPath',
-	'sap/ui/test/matchers/Ancestor',
-	'sap/ui/test/actions/Press'
+	"sap/ui/test/Opa5",
+	"./Common",
+	"sap/ui/test/matchers/AggregationFilled",
+	"sap/ui/test/matchers/AggregationEmpty",
+	"sap/ui/test/matchers/Properties",
+	"sap/ui/test/matchers/AggregationContainsPropertyEqual",
+	"sap/ui/test/matchers/AggregationLengthEquals",
+	"sap/ui/test/matchers/BindingPath",
+	"sap/ui/test/actions/Press"
 ], function (
 	Opa5,
+	Common,
 	AggregationFilled,
 	AggregationEmpty,
 	Properties,
-	PropertyStrictEquals,
 	AggregationContainsPropertyEqual,
 	AggregationLengthEquals,
 	BindingPath,
-	Ancestor,
 	Press) {
 	"use strict";
 
 	Opa5.createPageObjects({
 		onTheCart : {
+			baseClass: Common,
 			viewName : "Cart",
 
 			actions : {
@@ -51,7 +50,9 @@ sap.ui.define([
 				iPressOnTheSaveChangesButton : function () {
 					return this.waitFor({
 						controlType : "sap.m.Button",
-						matchers : new Properties({ text : "Save Changes"}),
+						matchers: function(oControl){
+							return this.I18NTextExtended(oControl, "cartDoneButtonText", "text");
+						}.bind(this),
 						actions : new Press(),
 						errorMessage : "The accept button could not be pressed"
 					});
@@ -60,7 +61,7 @@ sap.ui.define([
 				iPressOnTheProceedButton : function () {
 					return this.waitFor({
 						id : "proceedButton",
-						actions : new sap.ui.test.actions.Press()
+						actions : new Press()
 					});
 				},
 
@@ -80,17 +81,17 @@ sap.ui.define([
 					});
 				},
 
-                iPressTheBackButton: function () {
-                    this.waitFor({
-                        controlType: "sap.m.Button",
-                        matchers: new Properties({type: "Back"}),
-                        actions: new Press(),
-                        errorMessage: "The back button was not found and could not be pressed"
-                    });
-                }
+				iPressTheBackButton: function () {
+					this.waitFor({
+						controlType: "sap.m.Button",
+						matchers: new Properties({type: "Back"}),
+						actions: new Press(),
+						errorMessage: "The back button was not found and could not be pressed"
+					});
+				}
 			},
 
-            assertions : {
+			assertions : {
 
 				iShouldSeeTheProductInMyCart : function () {
 					return this.waitFor({
@@ -103,14 +104,14 @@ sap.ui.define([
 					});
 				},
 
-                iShouldSeeTheCart: function () {
-                    return this.waitFor({
-                        success: function () {
-                            Opa5.assert.ok(true, "The cart was successfully displayed");
-                        },
-                        errorMessage: "The cart was not displayed"
-                    });
-                },
+				iShouldSeeTheCart: function () {
+					return this.waitFor({
+						success: function () {
+							Opa5.assert.ok(true, "The cart was successfully displayed");
+						},
+						errorMessage: "The cart was not displayed"
+					});
+				},
 
 				iShouldNotSeeASaveForLaterFooter : function () {
 					return this.waitFor({
@@ -125,7 +126,7 @@ sap.ui.define([
 				iShouldSeeAnEmptyCart : function () {
 					return this.waitFor({
 						id : "entryList",
-						matchers : new AggregationLengthEquals({name : "items", length: 0}),
+						matchers : new AggregationEmpty({name : "items"}),
 						success : function () {
 							Opa5.assert.ok(true, "The cart has no entries");
 						},
@@ -187,7 +188,7 @@ sap.ui.define([
 					});
 				},
 
-	            iShouldSeeTheEditButtonDisabled : function () {
+				iShouldSeeTheEditButtonDisabled : function () {
 					return this.theEditButtonHelper(false);
 				},
 
@@ -272,7 +273,9 @@ sap.ui.define([
 				iShouldSeeTheTotalPriceEqualToZero : function () {
 					return this.waitFor({
 						id: "totalPriceText",
-						matchers: new PropertyStrictEquals({name: "text", value: "Total: 0,00 EUR"}),
+						matchers: function(oControl){
+							return this.I18NTextExtended(oControl, "cartTotalPrice", "text", null, ["0,00 EUR"]);
+						}.bind(this),
 						success: function () {
 							Opa5.assert.ok(true, "Total price is updated correctly");
 						},
@@ -283,7 +286,9 @@ sap.ui.define([
 				iShouldSeeTheTotalPriceUpdated: function () {
 					return this.waitFor({
 						id: "totalPriceText",
-						matchers: new PropertyStrictEquals({name: "text", value: "Total: 250,00 EUR"}),
+						matchers: function(oControl){
+							return this.I18NTextExtended(oControl, "cartTotalPrice", "text", null, ["250,00 EUR"]);
+						}.bind(this),
 						success: function () {
 							Opa5.assert.ok(true, "Total price is updated correctly");
 						},

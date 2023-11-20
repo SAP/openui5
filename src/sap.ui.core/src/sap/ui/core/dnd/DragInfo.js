@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(["jquery.sap.global", "./DragDropBase"],
-	function(jQuery, DragDropBase) {
+sap.ui.define(["./DragDropBase"],
+	function(DragDropBase) {
 	"use strict";
 
 	/**
@@ -14,6 +14,7 @@ sap.ui.define(["jquery.sap.global", "./DragDropBase"],
 	 *
 	 * @class
 	 * Provides the configuration for drag operations.
+	 *
 	 * <b>Note:</b> This configuration might be ignored due to control {@link sap.ui.core.Element.extend metadata} restrictions.
 	 *
 	 * @extends sap.ui.core.dnd.DragDropBase
@@ -24,7 +25,6 @@ sap.ui.define(["jquery.sap.global", "./DragDropBase"],
 	 * @public
 	 * @since 1.56
 	 * @alias sap.ui.core.dnd.DragInfo
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var DragInfo = DragDropBase.extend("sap.ui.core.dnd.DragInfo", /** @lends sap.ui.core.dnd.DragInfo.prototype */ { metadata: {
 
@@ -50,7 +50,7 @@ sap.ui.define(["jquery.sap.global", "./DragDropBase"],
 			 * @param {object} oControlEvent.getParameters
 			 * @param {sap.ui.core.Element} oControlEvent.getParameters.target The target element that will be dragged
 			 * @param {sap.ui.core.dnd.DragSession} oControlEvent.getParameters.dragSession The UI5 <code>dragSession</code> object that exists only during drag and drop
-			 * @param {Event} oControlEvent.getParameters.browserEvent The underlying browser event
+			 * @param {DragEvent} oControlEvent.getParameters.browserEvent The underlying browser event
 			 * @public
 			 */
 			dragStart: {
@@ -58,7 +58,7 @@ sap.ui.define(["jquery.sap.global", "./DragDropBase"],
 			},
 
 			/**
-			 * This event is fired when a drag operation is being ended.
+			 * This event is fired when a drag operation is ended.
 			 *
 			 * @name sap.ui.core.dnd.DragInfo#dragEnd
 			 * @event
@@ -67,7 +67,7 @@ sap.ui.define(["jquery.sap.global", "./DragDropBase"],
 			 * @param {object} oControlEvent.getParameters
 			 * @param {sap.ui.core.Element} oControlEvent.getParameters.target The target element that is being dragged
 			 * @param {sap.ui.core.dnd.DragSession} oControlEvent.getParameters.dragSession The UI5 <code>dragSession</code> object that exists only during drag and drop
-			 * @param {Event} oControlEvent.getParameters.browserEvent The underlying browser event
+			 * @param {DragEvent} oControlEvent.getParameters.browserEvent The underlying browser event
 			 * @public
 			 * @since 1.56
 			 */
@@ -76,63 +76,111 @@ sap.ui.define(["jquery.sap.global", "./DragDropBase"],
 		}
 	}});
 
-	DragInfo.prototype.isDraggable = function(oControl) {
-		if (!this.getEnabled()) {
+	/**
+	 * Provides DragInfo mixin for the subclasses that need DragInfo functionalities.
+	 *
+	 * @private
+	 * @mixin
+	 * @since 1.87
+	 */
+	DragInfo.Mixin = function() {
+
+		this.isDraggable = function(oControl) {
+			if (!this.getEnabled()) {
+				return false;
+			}
+
+			var oDragSource = this.getParent();
+			if (!oDragSource) {
+				return false;
+			}
+
+			// metadata restrictions
+			var sSourceAggregation = this.getSourceAggregation();
+			if (!this.checkMetadata(oDragSource, sSourceAggregation, "draggable")) {
+				return false;
+			}
+
+			// control itself is the drag source or
+			// control is in the aggregation of the drag source
+			if ((oDragSource === oControl && !sSourceAggregation) ||
+				(oControl.getParent() === oDragSource && sSourceAggregation === oControl.sParentAggregationName)) {
+				return oControl.isDragAllowed && !oControl.isDragAllowed(this) ? false : true;
+			}
+
 			return false;
-		}
+		};
 
-		var oDragSource = this.getParent();
-		if (!oDragSource) {
-			return false;
-		}
+		this.fireDragStart = function(oEvent) {
+			if (!oEvent || !oEvent.dragSession) {
+				return;
+			}
 
-		// draggable by default
-		var sSourceAggregation = this.getSourceAggregation();
-		var oMetadata = oDragSource.getMetadata().getDragDropInfo(sSourceAggregation);
-		if (!oMetadata.draggable) {
-			jQuery.sap.log.warning((sSourceAggregation ? sSourceAggregation + " aggregation of " : "") + oDragSource + " is not configured to be draggable");
-			return false;
-		}
+			var oDragSession = oEvent.dragSession;
+			return this.fireEvent("dragStart", {
+				dragSession: oDragSession,
+				browserEvent: oEvent.originalEvent,
+				target: oDragSession.getDragControl()
+			}, true);
+		};
 
-		// control itself is the drag source
-		if (oDragSource === oControl && !sSourceAggregation) {
-			return true;
-		}
+		this.fireDragEnd = function(oEvent) {
+			if (!oEvent || !oEvent.dragSession) {
+				return;
+			}
 
-		// control is in the aggregation of the drag source
-		if (oControl.getParent() === oDragSource && sSourceAggregation === oControl.sParentAggregationName) {
-			return true;
-		}
+			var oDragSession = oEvent.dragSession;
+			return this.fireEvent("dragEnd", {
+				dragSession: oDragSession,
+				browserEvent: oEvent.originalEvent,
+				target: oDragSession.getDragControl()
+			});
+		};
 
-		return false;
+		this.setEnabled = function(bEnabled) {
+			this.setProperty("enabled", bEnabled, false);
+			this.invalidateDraggables();
+			return this;
+		};
+
+		this.setParent = function() {
+			DragDropBase.prototype.setParent.apply(this, arguments);
+			this.invalidateDraggables();
+			return this;
+		};
+
+		this.setSourceAggregation = function(sSourceAggregation) {
+			var sOldSourceAggregation = this.getSourceAggregation();
+			if (sOldSourceAggregation == sSourceAggregation) {
+				return this;
+			}
+
+			sOldSourceAggregation && this.invalidateDraggables();
+			this.setProperty("sourceAggregation", sSourceAggregation, false);
+			this.invalidateDraggables();
+			return this;
+		};
+
+		this.invalidateDraggables = function() {
+			var oParent = this.getParent();
+			if (oParent && oParent.bOutput == true) {
+				var sSourceAggregation = this.getSourceAggregation();
+				if (sSourceAggregation) {
+					[].concat(oParent.getAggregation(sSourceAggregation)).forEach(function(oAggregation) {
+						if (oAggregation && oAggregation.bOutput == true) {
+							oAggregation.invalidate();
+						}
+					});
+				} else {
+					oParent.invalidate();
+				}
+			}
+		};
+
 	};
 
-	DragInfo.prototype.fireDragStart = function(oEvent) {
-		if (!oEvent || !oEvent.dragSession) {
-			return;
-		}
-
-		var oDragSession = oEvent.dragSession;
-		return this.fireEvent("dragStart", {
-			dragSession: oDragSession,
-			browserEvent: oEvent.originalEvent,
-			target: oDragSession.getDragControl()
-		}, true);
-	};
-
-	DragInfo.prototype.fireDragEnd = function(oEvent) {
-		if (!oEvent || !oEvent.dragSession) {
-			return;
-		}
-
-		var oDragSession = oEvent.dragSession;
-		return this.fireEvent("dragEnd", {
-			dragSession: oDragSession,
-			browserEvent: oEvent.originalEvent,
-			target: oDragSession.getDragControl()
-		});
-	};
+	DragInfo.Mixin.apply(DragInfo.prototype);
 
 	return DragInfo;
 
-}, /* bExport= */ true);
+});

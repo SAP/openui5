@@ -2,10 +2,15 @@
  * ${copyright}
  */
 
-sap.ui.define(['sap/ui/base/ManagedObject'],
-	function (ManagedObject) {
-		'use strict';
-		var TimelineOverview = ManagedObject.extend("sap.ui.core.support.controls.TimelineOverview", {});
+sap.ui.define([
+	"sap/ui/base/ManagedObject"
+], function (ManagedObject) {
+		"use strict";
+		var TimelineOverview = ManagedObject.extend("sap.ui.core.support.controls.TimelineOverview", {
+			metadata: {
+				library: "sap.ui.core"
+			}
+		});
 
 		TimelineOverview.prototype.setInteractions = function (interactions) {
 
@@ -34,14 +39,12 @@ sap.ui.define(['sap/ui/base/ManagedObject'],
 		};
 
 		TimelineOverview.prototype.render = function (rm) {
-			rm.write('<div id="sapUiInteractionTimelineOverview"><ol id="' + this.getId() + '"');
+			rm.openStart("div", "sapUiInteractionTimelineOverview")
+				.openEnd();
 
-			rm.addClass("InteractionTimeline");
-
-			rm.writeClasses();
-
-			rm.write(">");
-
+			rm.openStart("ol", this.getId())
+				.class("InteractionTimeline")
+				.openEnd();
 
 			var interaction,
 				interactions = this.interactions;
@@ -69,7 +72,8 @@ sap.ui.define(['sap/ui/base/ManagedObject'],
 				this.renderInteractionStep(rm, interaction, i);
 			}
 
-			rm.write("</ol></div>");
+			rm.close("ol");
+			rm.close("div");
 		};
 
 		TimelineOverview.prototype.renderInteractionStep = function (rm, step, index) {
@@ -77,45 +81,70 @@ sap.ui.define(['sap/ui/base/ManagedObject'],
 			var MAX_ALLOWED_HEIGHT_IN_PERC = 69,
 				stepDurationInPercent = Math.ceil((step.totalDuration / this.maxDuration) * MAX_ALLOWED_HEIGHT_IN_PERC);
 
+			rm.openStart("li")
+				.openEnd();
 
-			var stepDurationInPercentInlineStyle = 'height: ' + stepDurationInPercent + '%;';
+			rm.openStart("div")
+				.class("bars-wrapper")
+				.attr("title", "Duration: " + step.totalDuration + "ms")
+				.openEnd();
+
+			rm.openStart("div")
+				.class("duration")
+				.style("height", stepDurationInPercent + "%;");
+
 			if (stepDurationInPercent > 0) {
-				stepDurationInPercentInlineStyle += ' min-height: 1px;';
+				rm.style("min-height", "1px");
 			}
 
-			rm.write('<li>');
-			rm.write('<div class="bars-wrapper" title="Duration: ' + step.totalDuration + 'ms">');
-			rm.write('<div class="duration" style="' + stepDurationInPercentInlineStyle + '">');
+			rm.openEnd();
+
 			// write step duration
 			var aInteractions = step.interactions,
 				stepInteractionInPercent = 100;
 			aInteractions.forEach(function(interaction, index) {
 				stepInteractionInPercent = (step.totalDuration === 0) ? 100 : Math.ceil((interaction.calculatedDuration
 					/ step.totalDuration) * 100);
-				rm.write('<div class="requestType" style="height: ' + stepInteractionInPercent + '%; min-height: 1px;"></div>');
+				rm.openStart("div")
+					.class("requestType")
+					.style("height", stepInteractionInPercent + "%")
+					.style("min-height", "1px")
+					.openEnd()
+					.close("div");
+
 				//write spacer between interactions
 				if (index !== (aInteractions.length - 1)) {
-					rm.write('<div style="min-height: 1px;"></div>');
+					rm.openStart("div")
+						.style("min-height", "1px")
+						.openEnd()
+						.close("div");
 				}
 			});
 
+			rm.close("div"); // duration
+			rm.close("div"); // bars-wrapper
 
-			rm.write('</div>');
-			rm.write('</div>');
 			var intIndex = index + 1;
 			var sClassNameSeparator = (intIndex % 10 === 0 ) ? "sapUiInteractionTimelineStepRightBold" :
 				"sapUiInteractionTimelineStepRight";
 
 			if (intIndex % 2 === 0 ) {
-				rm.write('<div class="' + sClassNameSeparator + '"></div>');
+				rm.openStart("div")
+					.class(sClassNameSeparator)
+					.openEnd()
+					.close("div");
 			}
 
 			if (intIndex % 10 === 0 && intIndex !== this.stepCount) {
-				rm.write('<div class="sapUiInteractionTimelineTimeLbl">' + Math.round((index * this.timeRange /
-						this.stepCount) / 10 ) / 100 + 's</div>');
+				rm.openStart("div")
+					.class("sapUiInteractionTimelineTimeLbl")
+					.openEnd()
+					.text(Math.round((index * this.timeRange / this.stepCount) / 10 ) / 100 + "s")
+					.close("div");
 			}
-			rm.write('</li>');
+			rm.close("li");
 		};
+
 		TimelineOverview.prototype._getTimelineOverviewData = function(copiedData) {
 			var stepCount = this.stepCount;
 			var stepTime = this.timeRange / stepCount;
@@ -134,7 +163,7 @@ sap.ui.define(['sap/ui/base/ManagedObject'],
 				};
 
 				/* eslint-disable no-loop-func */
-				selectedStepsByTime.map(function(step) {
+				selectedStepsByTime.forEach(function(step) {
 					stepItem.totalDuration += step.calculatedDuration;
 				});
 				/* eslint-enable no-loop-func */

@@ -12,13 +12,11 @@ sap.ui.define([
 	opaTest("Should see the homepage displayed", function (Given, When, Then) {
 		// Arrangements
 		Given.iStartMyApp({
-			hash: "",
-			delay:3000
+			hash: ""
 		});
 
 		// Assertions
-		Then.onTheHomePage.iShouldSeeSomeFontTiles().
-			and.iShouldNotSeeTheClearIcon();
+		Then.onTheHomePage.iShouldSeeSomeFontTiles();
 
 	});
 	opaTest("Should navigate to SAP icon TNT", function (Given, When, Then) {
@@ -35,16 +33,6 @@ sap.ui.define([
 
 		// Assertions
 		Then.onTheHomePage.iShouldSeeSomeFontTiles();
-	});
-
-	opaTest("Should clear searchField via clear icon press", function (Given, When, Then) {
-		//Actions
-		When.onTheHomePage.iEnterTextIntoSearchField().
-		and.iPressTheClearButton();
-
-		// Assertions
-		Then.onTheHomePage.theSearchFieldShouldBeEmpty().
-			and.iShouldNotSeeTheClearIcon();
 
 		// Cleanup
 		Then.iTeardownMyApp();

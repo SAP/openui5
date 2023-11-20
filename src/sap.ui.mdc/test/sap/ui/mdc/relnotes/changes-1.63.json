@@ -1,0 +1,85 @@
+{
+  "1.63.0": {
+    "date": "January 2019",
+    "notes": [
+      {
+        "id": "7de292b3241372ee754cb625034170cba0f1a3ac",
+        "type": "FIX",
+        "text": "base.FilterBar: ignore value change for filter field",
+        "references": []
+      },
+      {
+        "id": "448780c26482721570cb890b7a3deceab7becb46",
+        "type": "FEATURE",
+        "text": "MDCChart: Only show sortable fields in personalization",
+        "references": []
+      },
+      {
+        "id": "ffb5ce9773caaf019cc39ec2e199fc329a0da8b0",
+        "type": "FIX",
+        "text": "MDCChart: Small delegate fixes",
+        "references": []
+      },
+      {
+        "id": "a82ca8dc283a747679d4f76724f8b130c30bb72c",
+        "type": "FIX",
+        "text": "base.FilterBar: fix incompatibility with IE",
+        "references": []
+      },
+      {
+        "id": "dd1275d64cfe3708e686eeabf870d75b17a90e95",
+        "type": "FEATURE",
+        "text": "MDCChart: Fixes in Personalisation and Delegate",
+        "references": []
+      },
+      {
+        "id": "d13a8e2bda564d6cf62303f45c88bfd597a39576",
+        "type": "FEATURE",
+        "text": "MDCChart: FullScreen",
+        "references": []
+      },
+      {
+        "id": "7dabfcb6a17603d877addbd250775df72002ef9d",
+        "type": "FIX",
+        "text": "MDCChart: Remove scrolling in the fullscreen",
+        "references": []
+      },
+      {
+        "id": "70de9c1ffa28b83b0b99d60f3007c9f2cae86356",
+        "type": "FIX",
+        "text": "MDCChart: Repair time dimensions sample",
+        "references": []
+      },
+      {
+        "id": "9fedab2d731ff28e58e0df034c0ef36395a5803f",
+        "type": "FEATURE",
+        "text": "MDCChart: Toggle legend visibility",
+        "references": []
+      },
+      {
+        "id": "5a4070146420b56e09346b1f548ad5fe6c587622",
+        "type": "FIX",
+        "text": "FieldBase: Avoid resetting field while focused",
+        "references": []
+      },
+      {
+        "id": "d27a147070eac5886cc8a18c22139fb00613db75",
+        "type": "FIX",
+        "text": "FieldBase: Make check for focus/editing more robust",
+        "references": []
+      },
+      {
+        "id": "efbccea2e59db1e894f763125085340cd3671c11",
+        "type": "FIX",
+        "text": "MDCChart: There should binding information without vizChart",
+        "references": []
+      },
+      {
+        "id": "07e0e9b42be6de4397d1fd691d6e9253a844ac07",
+        "type": "FIX",
+        "text": "MDCChart: Update Chart fragment to new structure",
+        "references": []
+      }
+    ]
+  }
+}

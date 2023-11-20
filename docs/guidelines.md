@@ -46,13 +46,14 @@ General
 JavaScript Coding Guidelines
 ----------------------------
 
--   No global JavaScript variables; organize all global objects in an `sap.\*` namespace structure or extend the `jQuery.sap` object. The methods `sap.ui.define(...)` and `jQuery.sap.declare(sModuleName)` assist in doing so, find [more details here](guidelines/jsnamespaces.md).
+-   No global JavaScript variables; Use AMD modules for encapsulation. For more information, see [Best Practices for Loading Modules](https://sdk.openui5.org/topic/00737d6c1b864dc3ab72ef56611491c4) and [API Reference: `sap.ui.define`](https://sdk.openui5.org/api/sap.ui/methods/sap.ui.define).
     -   This also means: no undeclared variables
     -   When using global variables introduced by other libraries, declare the usage in a special "global"-comment: `/*global JSZip, OpenAjax */`
 -   Do not access internal (private) members of other objects
 -   Do not use console.log()
--   Use jQuery.sap.byId("&lt;someId&gt;") instead of jQuery("\#&lt;someId&gt;") when &lt;someId&gt; is not a known string - certain characters in IDs need to be escaped for jQuery to work correctly
--   Keep modifications of jQuery and other embedded Open Source to a minimum and document them clearly with the term "SAP modification"
+-   Use `jQuery(window.document.getElementById("<someId>")` instead of `jQuery("#<someId>")` when &lt;someId&gt; is not a known string - certain characters in IDs need to be escaped for jQuery to work correctly
+-   Keep modifications of jQuery and other embedded Open Source to a minimum and document them clearly with the terms "BEGIN: MODIFIED BY SAP" and "END: MODIFIED BY SAP" before and after the modified section. Also add the following sentence to the copyright comment:
+```Modifications SAP SE or an SAP affiliate company and OpenUI5 contributors. All rights reserved.```
     -   Such modifications may not alter the standard behavior of the used library in a way that breaks other libraries
 
 ### Code Formatting
@@ -126,9 +127,8 @@ But do NOT use hungarian notation for API method parameters: the documentation w
 
 | Implementation | Description |
 |-------------|----------------|
-| `this.bReady = false;`| Instance fields (members) should be initialized and described in the constructor function. If necessary
- remove them again in <code>MyClass.prototype.exit = function() { delete this.bReady; }</code> to prevent memory leaks |
 | `this._bFinalized` | Private members should have a name starting with an underscore |
+| `this._aItems = [];`| Instance fields (members) should be initialized and described in the constructor function. If necessary set them to undefined in <code>MyClass.prototype.exit = function() { this._aItems = undefined; }</code> to prevent memory leaks |
 | `MyClass.prototype.doSomething = function(){...}` | Instance methods are defined as members of the prototype of the constructor function |
 | `MyClass.doSomething = function(){...}` | Static members (fields and functions) are defined as members of the constructor function object itself |
 | <code>MyClass.prototype.isOpen = function() { return true; }</code> | Members that return a Boolean value should be prefixed with `is`. An exception are Control properties for Boolean values. The Getters are prefixed with `get`.  |
@@ -136,7 +136,7 @@ But do NOT use hungarian notation for API method parameters: the documentation w
 | <code>MyClass.prototype._onMetadataLoaded = function() {...}</code> | Members that are attached to an event and thus are used as event listeners should be prefixed with `on`. Since event listeners usually are used in a private manner they should be prefixed with a <code>_</code> as well. |
 | <code>MyClass.prototype.metadataLoaded = function() { return new Promise({...}); }</code> | Members that return a <code>Promise</code> should be named with a verbal phrase in past tense that states what they do |
 | <code>MyClass.prototype.setSomething = function() {... return this;}</code> | API methods with no return value should return `this` to enable method chaining |
-| <code>SuperClass.extend(…)</code> | Subclasses should use this way to extend a class<br>If there is no base class, the prototype is automatically initialized by JavaScript as an empty object literal and must not be assigned manually. Consider inheriting from `sap.ui.base.Object` |
+| <code>SuperClass.extend(…)</code> | Subclasses should use this way to extend a class<br>If there is no base class, the prototype is automatically initialized by JavaScript as an empty object literal and must not be assigned manually. Consider inheriting from `sap/ui/base/Object` |
 | `SuperClass.apply(this, arguments);` | Subclasses have to call (or apply) their parent's constructor |
 
 -   Constructor + methods + statics are combined in a single JS source file named and located after the qualified name of the class (precondition for the class loading)
@@ -146,19 +146,10 @@ See the [example for creating a class (with documentation)](guidelines/classexam
 
 ### Documentation (JSDoc)
 
-For documenting JavaScript, UI5 uses the JSDoc3 toolkit which mimics JavaDoc. See the [JSDoc3 Toolkit Homepage](http://usejsdoc.org/) for an explanation of the available tags.
+For documenting JavaScript, UI5 uses the JSDoc toolkit which mimics JavaDoc. See the [JSDoc Toolkit Homepage](https://jsdoc.app/) for an explanation of the available tags.
 
--   Document the constructor with `@class, @author, @since`, …
--   For subclasses, document the inheritance by using an `@extends` tag in their constructor doclet
--   Document at least public and protected methods with JSDoc, mark them as `@public`/`@protected`
-    -   When you also document private methods with JSDoc, mark them with `@private` (this is currently the default in UI5, but not in JSDoc, so it is safer to explicitly specify it)
-    -   "Protected" is not clearly defined in a JavaScript environment, in UI5 it means: not for use by applications, but might be used even outside the same class or subclasses, but only in closely related classes.
--   Document method parameters with type (in curly braces) and parameter name (in square brackets if optional)
--   For static helper classes that only provide static methods use `@namespace`
+For further details, see [JSDoc Guidelines](guidelines/jsdoc.md).
 
-See the [example for creating a class with documentation](guidelines/classexample.md).
-
-Also see the [list of common JSDoc pitfalls](guidelines/jsdocpitfalls.md).
 
 UI5 Control Development Guidelines
 ----------------------------------
@@ -295,7 +286,7 @@ General:
 -   Proper API documentation
 -   Translation: all texts visible in the UI must be translatable
     -   Do not provide translations, only provide the "developer english" version in messagebundle.properties, but annotate properly for translators, see [this page](guidelines/translationfiles.md) for details.
--   Follow the compatibility rules, as specified [here](https://openui5.hana.ondemand.com/docs/guide/91f087396f4d1014b6dd926db0e91070.html)
+-   Follow the compatibility rules, as specified [here](https://sdk.openui5.org/topic/91f087396f4d1014b6dd926db0e91070)
 -   Make sure other Open Source libraries (or parts of them) are officially approved before adding them to UI5. Do not add code you "found" somewhere.
 
 For controls in addition:
@@ -332,7 +323,7 @@ The commit message consists of two or three parts, separated by empty lines.
 The commit summary is the first line of the commit message.
 - It should be 50-70 characters long.
 - Must be prefixed by `[FIX]` or `[FEATURE]` and should start with the control/component which was the main subject of the change
--   Instead of `[FIX]`/`[FEATURE]` and at any other location in the commit message `[INTERNAL]` can be used for commits/explanations which should not be part of the change log. If you add `[INTERNAL]` as only prefix to the commit message, the entire message won't be part of the change log. If you add this prefix to the middle of the message everything after this prefix will be ignored for the change log.
+-   Instead of `[FIX]`/`[FEATURE]` an `[INTERNAL]` can be used for commits/explanations which should not be part of the change log. If this tag is used the message won’t appear in the release/patch notes.
 - Do not use any `[` or `]` within the summary but for the prefixes.
 
 ### Description

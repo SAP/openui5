@@ -1,0 +1,22 @@
+<mvc:View displayBlock="true" height="100%" controllerName="sap.ui.v4demo.controller.App" xmlns:mvc="sap.ui.core.mvc" xmlns:core="sap.ui.core" xmlns:l="sap.ui.layout" xmlns:f="sap.ui.layout.form" xmlns:f2="sap.f" xmlns:mdc="sap.ui.mdc" xmlns:vhfb="sap.ui.mdc.filterbar.vh" xmlns:mdcc="sap.ui.mdc.chart" xmlns:mdcf="sap.ui.mdc.field" xmlns:mdct="sap.ui.mdc.table" xmlns:ui="sap.ui" xmlns:uit="sap.ui.table" xmlns:variants="sap.ui.fl.variants" xmlns="sap.m" xmlns:types="sap.ui.v4demo.types" xmlns:demo="sap.ui.v4demo.controls">
+	<App id="app">
+		<Page id="P0" class="sapUiContentPadding" showNavButton="false">
+			<customHeader>
+				<Toolbar>
+					<core:Icon src="sap-icon://dimension" />
+					<Title text="MDC.ValueHelp Integration Test App"/>
+					<ToolbarSpacer />
+					<Label text="View" labelFor="viewSwitch" />
+					<Select id="viewSwitch" forceSelection="false" selectedKey="{settings>/selectedView/path}" items="{
+						path: 'settings>/views',
+						sorter: { path: 'text' }
+					}" change=".onViewSwitch">
+						<core:Item key="{settings>path}" text="{settings>text}" />
+					</Select>
+					<variants:VariantManagement id="VM" for="P0" />
+				</Toolbar>
+			</customHeader>
+			<content></content>
+		</Page>
+	</App>
+</mvc:View>

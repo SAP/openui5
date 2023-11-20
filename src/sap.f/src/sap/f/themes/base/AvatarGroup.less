@@ -1,0 +1,275 @@
+/* ============================= */
+/* CSS for control sap.f/AvatarGroup  */
+/* Base theme                    */
+/* ============================= */
+.sapFAvatarGroup {
+	width: 100%;
+	overflow: hidden;
+	padding: 0.0625rem;
+	margin: 0px;
+	display: inline-block;
+	white-space: nowrap;
+	max-width: 100%;
+
+	&.sapFAvatarGroupXS {
+		min-width: 2rem;
+		max-height: 2.00625rem;
+	}
+
+	&.sapFAvatarGroupS {
+		min-width: 3rem;
+		max-height: 3.00625rem;
+	}
+
+	&.sapFAvatarGroupM {
+		min-width: 4rem;
+		max-height: 4.00625rem;
+	}
+
+	&.sapFAvatarGroupL {
+		min-width: 5rem;
+		max-height: 5.00625rem;
+	}
+
+	&.sapFAvatarGroupXL {
+		min-width: 7rem;
+		max-height: 7.00625rem;
+	}
+}
+
+.sapFAvatarGroup:focus {
+	outline: @sapContent_FocusWidth @sapContent_FocusStyle @sapUiContentFocusColor;
+}
+
+.sapFAvatarGroupGroup {
+	cursor: pointer;
+
+	.sapFAvatarGroupItem {
+		display: inline-block;
+	}
+}
+
+.sapFAvatarGroupNonInteractive {
+	pointer-events: none;
+
+	&.sapFAvatarGroupIndividual .sapFAvatarGroupItem {
+		pointer-events: none;
+	}
+}
+
+.sapFAvatarGroupIndividual {
+	pointer-events: none;
+
+	.sapFAvatar {
+		pointer-events: none;
+	}
+
+	.sapFAvatarGroupMoreButton {
+		pointer-events: all;
+		cursor: pointer;
+	}
+
+	.sapFAvatarGroupItem {
+		pointer-events: all;
+		display: inline-block;
+		cursor: pointer;
+		padding: 0;
+		margin: 0;
+	}
+
+	.sapFAvatarGroupItem:focus {
+		outline: @sapContent_FocusWidth @sapContent_FocusStyle @sapUiContentFocusColor;
+	}
+
+	.sapFAvatarGroupItemXS {
+		height: 2rem;
+
+		&.sapFAvatarGroupItem:not(:last-child) {
+			margin-right: 0.0625rem;
+		}
+	}
+
+	.sapFAvatarGroupItemS {
+		height: 3rem;
+
+		&.sapFAvatarGroupItem:not(:last-child) {
+			margin-right: 0.125rem;
+		}
+	}
+
+	.sapFAvatarGroupItemM {
+		height: 4rem;
+
+		&.sapFAvatarGroupItem:not(:last-child) {
+			margin-right: 0.125rem;
+		}
+	}
+
+	.sapFAvatarGroupItemL {
+		height: 5rem;
+
+		&.sapFAvatarGroupItem:not(:last-child) {
+			margin-right: 0.25rem;;
+		}
+	}
+
+	.sapFAvatarGroupItemXL {
+		height: 7rem;
+
+		&.sapFAvatarGroupItem:not(:last-child) {
+			margin-right: 0.25rem;;
+		}
+	}
+
+	.sapFAvatarGroupItemCustom {
+		height: inherit;
+
+		&.sapFAvatarGroupItem:not(:last-child) {
+			margin-right: 0.125rem;
+		}
+	}
+}
+
+.sapFAvatarGroupGroup:not(.sapFAvatarGroupShowMore) {
+	pointer-events: all;
+}
+
+.sapFAvatarGroupGroup {
+	.sapFAvatarGroupItem:not(:last-child) {
+		&.sapFAvatarGroupItemXS {
+			margin-right: -0.75rem;
+		}
+
+		&.sapFAvatarGroupItemS {
+			margin-right: -1.25rem;
+		}
+
+		&.sapFAvatarGroupItemM {
+			margin-right: -1.625rem;
+		}
+
+		&.sapFAvatarGroupItemL {
+			margin-right: -2rem;
+		}
+
+		&.sapFAvatarGroupItemXL {
+			margin-right: -2.75rem;
+		}
+
+		&.sapFAvatarGroupItemCustom {
+			margin-right: var(--sapUiAvatarGroupCustomMarginRight);
+		}
+	}
+
+	.sapFAvatar,
+	.sapFAvatarGroupMoreButton {
+		pointer-events: none;
+	}
+}
+
+.sapFAvatarGroupMoreButton.sapMBtn {
+	padding: 0;
+ }
+
+ .sapFAvatarGroupMoreButton.sapMBtn:focus .sapMBtnFocusDiv {
+	border: none;
+}
+
+.sapFAvatarGroupMoreButton.sapMBtn:focus > .sapMBtnInner.sapMFocusable.sapMIE {
+	outline: @sapContent_FocusWidth @sapContent_FocusStyle @sapUiContentFocusColor;
+}
+
+ .sapFAvatarGroupMoreButton.sapMBtn:focus > .sapMFocusable.sapMBtnInner {
+	outline-offset: 0;
+}
+
+ .sapFAvatarGroupMoreButton .sapMBtnInner {
+	border-radius: 50%;
+ }
+
+ .sapMBtn.sapFAvatarGroupMoreButton.sapFAvatarGroupMoreButtonXS {
+	 height: 2rem;
+ }
+
+ .sapMBtn.sapFAvatarGroupMoreButton.sapFAvatarGroupMoreButtonS {
+	height: 3rem;
+}
+
+.sapMBtn.sapFAvatarGroupMoreButton.sapFAvatarGroupMoreButtonM {
+	height: 4rem;
+}
+
+.sapMBtn.sapFAvatarGroupMoreButton.sapFAvatarGroupMoreButtonL {
+	height: 5rem;
+}
+
+.sapMBtn.sapFAvatarGroupMoreButton.sapFAvatarGroupMoreButtonXL {
+	height: 7rem;
+}
+
+.sapMBtn.sapFAvatarGroupMoreButton.sapFAvatarGroupMoreButtonCustom {
+	height: inherit;
+	min-width: inherit;
+	font-size: inherit;
+	line-height: inherit;
+}
+
+ .sapFAvatarGroupMoreButtonXS .sapMBtnInner {
+	height: 2rem;
+	min-width: 2rem;
+	font-size: 0.75rem;
+
+	.sapMBtnContent {
+		line-height: 2rem;
+	}
+ }
+
+ .sapFAvatarGroupMoreButtonS .sapMBtnInner {
+	height: 3rem;
+	min-width: 3rem;
+	font-size: 1.125rem;
+
+	.sapMBtnContent {
+		line-height: 3rem;
+	}
+ }
+
+ .sapFAvatarGroupMoreButtonM .sapMBtnInner {
+	height: 4rem;
+	min-width: 4rem;
+	font-size: 1.625rem;
+
+	.sapMBtnContent {
+		line-height: 4rem;
+	}
+ }
+
+ .sapFAvatarGroupMoreButtonL .sapMBtnInner {
+	height: 5rem;
+	min-width: 5rem;
+	font-size: 2rem;
+
+	.sapMBtnContent {
+		line-height: 5rem;
+	}
+ }
+
+ .sapFAvatarGroupMoreButtonXL .sapMBtnInner {
+	height: 7rem;
+	min-width: 7rem;
+	font-size: 2.75rem;
+
+	.sapMBtnContent {
+		line-height: 7rem;
+	}
+ }
+
+.sapFAvatarGroupMoreButtonCustom .sapMBtnInner {
+	height: inherit;
+	min-width: inherit;
+	font-size: inherit;
+
+	.sapMBtnContent {
+		line-height: inherit;
+	}
+}

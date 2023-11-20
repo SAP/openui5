@@ -3,7 +3,7 @@
 	xmlns:core="sap.ui.core">
 	<Dialog
 		title="Table Dialog"
-		class="sapUiPopupWithPadding" >
+		class="sapUiContentPadding" >
 		<content>
 			<Table
 				mode="MultiSelect"

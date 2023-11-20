@@ -1,0 +1,40 @@
+{
+  "1.88.0": {
+    "date": "March 2021",
+    "notes": [
+      {
+        "id": "9798e9cce4c83854c9f78069725ac05472a8936a",
+        "type": "FIX",
+        "text": " FieldValueHelp: support complex InParameters for check",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180108029"
+          }
+        ]
+      },
+      {
+        "id": "d447cc992d444f909231ed7518b8035f9421c677",
+        "type": "FIX",
+        "text": " mdc.FilterBarBase: correction for the Save As scenario",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180097837"
+          }
+        ]
+      },
+      {
+        "id": "718a70f29cc46e9004101e9ab40d97990a1e988e",
+        "type": "FIX",
+        "text": " Field: on FieldHelp selection remove only own valueState",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180075729"
+          }
+        ]
+      }
+    ]
+  }
+}

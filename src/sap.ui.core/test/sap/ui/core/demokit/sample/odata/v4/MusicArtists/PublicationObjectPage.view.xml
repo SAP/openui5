@@ -1,0 +1,59 @@
+<mvc:View
+	controllerName="sap.ui.core.sample.odata.v4.MusicArtists.PublicationObjectPage"
+	height="100%"
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core"
+	xmlns:f="sap.ui.layout.form"
+	xmlns:mvc="sap.ui.core.mvc">
+	<Page id="publicationObjectPage" navButtonPress="onBack" showHeader="true" showNavButton="true">
+		<content>
+			<VBox class="sapUiSmallMargin">
+				<f:Form editable="true">
+					<f:title>
+						<core:Title text="Publication Details"/>
+					</f:title>
+					<f:layout>
+						<f:ResponsiveGridLayout
+							adjustLabelSpan="false"
+							columnsXL="1"
+							columnsL="1"
+							columnsM="1"
+							emptySpanXL="4"
+							emptySpanL="4"
+							emptySpanM="4"
+							emptySpanS="0"
+							labelSpanXL="3"
+							labelSpanL="3"
+							labelSpanM="3"
+							labelSpanS="12"
+							singleContainerFullSize="false"/>
+					</f:layout>
+					<f:formContainers>
+						<f:FormContainer>
+							<f:formElements>
+								<f:FormElement label="Name">
+									<f:fields>
+										<Input editable="{ui-op>/bEditMode}" value="{Name}"/>
+									</f:fields>
+								</f:FormElement>
+								<f:FormElement label="Release Date">
+									<f:fields>
+										<Input editable="{ui-op>/bEditMode}"
+											value="{ReleaseDate}"/>
+									</f:fields>
+								</f:FormElement>
+								<f:FormElement label="Price">
+									<f:fields>
+										<Input editable="{ui-op>/bEditMode}" value="{Price}"/>
+										<Input editable="{ui-op>/bEditMode}"
+											value="{CurrencyCode}"/>
+									</f:fields>
+								</f:FormElement>
+							</f:formElements>
+						</f:FormContainer>
+					</f:formContainers>
+				</f:Form>
+			</VBox>
+		</content>
+	</Page>
+</mvc:View>

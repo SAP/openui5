@@ -4,7 +4,7 @@
 
 	<ViewSettingsDialog
 		id="viewSettingsDialog"
-		confirm="onConfirmViewSettingsDialog">
+		confirm=".onConfirmViewSettingsDialog">
 		<sortItems>
 			<ViewSettingsItem
 				text="{i18n>masterSort1}"
@@ -18,7 +18,6 @@
 			<ViewSettingsFilterItem
 				id="filterItems"
 				text="{i18n>masterFilterName}"
-				key="Price"
 				multiSelect="false">
 				<items>
 					<ViewSettingsItem

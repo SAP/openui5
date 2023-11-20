@@ -1,0 +1,41 @@
+{
+	"sap.app": {
+		"id": "sap.m.demokit.teamCalendar.webapp",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"config": {
+			"demokit": {
+				"iframe": "webapp/index.html",
+				"stretch": true,
+				"files": [
+					"webapp/controller/Main.controller.js",
+					"webapp/images/Donna_Moore.jpg",
+					"webapp/images/Elena_Petrova.jpg",
+					"webapp/images/John_Li.jpg",
+					"webapp/images/John_Miller.png",
+					"webapp/model/Calendar.json",
+					"webapp/model/formatter.js",
+					"webapp/test/integration/arrangements/Startup.js",
+					"webapp/test/integration/pages/Main.js",
+					"webapp/test/integration/AllJourneys.js",
+					"webapp/test/integration/MainJourney.js",
+					"webapp/test/integration/opaTests.qunit.js",
+					"webapp/test/integration/opaTests.qunit.html",
+					"webapp/view/Main.view.xml",
+					"webapp/view/Legend.fragment.xml",
+					"webapp/view/PlanningCalendar.fragment.xml",
+					"webapp/view/SinglePlanningCalendar.fragment.xml",
+					"webapp/Component.js",
+					"webapp/index.html",
+					"webapp/manifest.json",
+					"demoapp.json",
+					"ui5.yaml",
+					"package.json"
+				]
+			}
+		}
+	}
+}

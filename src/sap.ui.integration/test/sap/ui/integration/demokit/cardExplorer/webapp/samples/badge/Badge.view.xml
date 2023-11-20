@@ -1,0 +1,27 @@
+<mvc:View
+	controllerName="sap.ui.integration.sample.Badge.Badge"
+	xmlns:w="sap.ui.integration.widgets"
+	xmlns:f="sap.f"
+	xmlns="sap.m"
+	xmlns:mvc="sap.ui.core.mvc"
+	class="badgeView">
+	<Button text="Show Badges" press=".onButtonPress" />
+	<f:GridContainer>
+		<w:Card id="cardId1" manifest="./cardManifest.json">
+			<w:customData>
+				<BadgeCustomData value="New" />
+			</w:customData>
+			<w:layoutData>
+				<f:GridContainerItemLayoutData columns="4" />
+			</w:layoutData>
+		</w:Card>
+		<w:Card id="cardId2" manifest="./cardManifest.json">
+			<w:customData>
+				<BadgeCustomData value="New" />
+			</w:customData>
+			<w:layoutData>
+				<f:GridContainerItemLayoutData columns="4" />
+			</w:layoutData>
+		</w:Card>
+	</f:GridContainer>
+</mvc:View>

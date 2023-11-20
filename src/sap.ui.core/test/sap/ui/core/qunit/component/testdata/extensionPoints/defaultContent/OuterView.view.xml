@@ -1,0 +1,13 @@
+<mvc:View xmlns:m="sap.m" xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc">
+
+	<m:Button id="outerView_button_before" text="Nothing" />
+
+	<core:ExtensionPoint name="outerView_doesntExistDefaultContentIsUsed">
+		<m:Button id="outerView_buttonInDefaultContent_before" />
+		<mvc:XMLView viewName="testdata.extensionPoints.defaultContent.InnerView" id="innerView" />
+		<m:Button id="outerView_buttonInDefaultContent_after" />
+	</core:ExtensionPoint>
+
+	<m:Button id="outerView_button_after" text="Nothing" />
+
+</mvc:View>

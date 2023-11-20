@@ -1,9 +1,8 @@
 /*!
  * ${copyright}
  */
-
-sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'jquery.sap.trace'],
-	function(jQuery, Device) {
+sap.ui.define(['sap/ui/Device', 'sap/ui/performance/trace/Passport', 'sap/base/Log', 'sap/ui/thirdparty/URI'],
+	function(Device, Passport, Log, URI) {
 		"use strict";
 
 		/*global alert, confirm, performance */
@@ -38,12 +37,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'jquery.sap.trace'],
 				this.statusCode = xmlHttpReq.status;
 				this.status = xmlHttpReq.statusText;
 				this.startTimestamp = xmlHttpReq.xstartTimestamp;
-				this.firstByteSent = xmlHttpReq.xfirstByteSent ? xmlHttpReq.xfirstByteSent : xmlHttpReq.xstartTimestamp; //not available on IE9
+				this.firstByteSent = xmlHttpReq.xfirstByteSent;
 				this.lastByteSent = this.firstByteSent; //last Byte sent cannot be captured
 				this.firstByteReceived = xmlHttpReq.xfirstByteReceived ? xmlHttpReq.xfirstByteReceived : xmlHttpReq.xlastByteReceived;
 				this.lastByteReceived = xmlHttpReq.xlastByteReceived;
 				this.sentBytes = 0; //cannot be captured
-				this.receivedBytes = xmlHttpReq.responseText.length; //uncompressed
+				this.receivedBytes = ((xmlHttpReq.responseType == "text") || (xmlHttpReq.responseType == "")) ? xmlHttpReq.responseText.length : 0; //uncompressed length
+				if (Log.isLoggable()) {
+					Log.debug("E2eTraceLib.Message: Response Type is \"" + xmlHttpReq.responseType + "\"");
+				}
 
 				//public methods
 				this.getDuration = function() {
@@ -95,7 +97,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'jquery.sap.trace'],
 					if (xmlHttpReq.xurl === sDefaultUploadUrl) {
 						return; // ignore requests to upload-url
 					}
-					jQuery.sap.log.info(timestamp + ", " + this.xidx + ": MessageFinished");
+					Log.info(timestamp + ", " + this.xidx + ": MessageFinished");
 					xmlHttpReq.xlastByteReceived = timestamp;
 					this.messages.push(new Message(xmlHttpReq));
 					this.pendingMessages -= 1;
@@ -182,6 +184,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'jquery.sap.trace'],
 					if (r) {
 						busTrx.createTransactionStep();
 					} else {
+						busTrxRecording = false;
 						var busTrxXml = busTrx.getBusinessTransactionXml();
 						if (busTrx.fnCallback && typeof (busTrx.fnCallback) === 'function') {
 							busTrx.fnCallback(busTrxXml);
@@ -208,8 +211,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'jquery.sap.trace'],
 						} else {
 							// alternatively allow upload via form
 							try {
-								var bDone = true;
-								while (bDone) {
+								var bDone = false;
+								while (!bDone) {
 
 									/*eslint-disable no-alert */
 									var sUrl = window.prompt('Please enter a valid URL for the store server', 'http://<host>:<port>');
@@ -227,18 +230,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'jquery.sap.trace'],
 										xmlHttpPost.open("POST", sUrl + '/E2EClientTraceUploadW/UploadForm.jsp', false);
 										xmlHttpPost.setRequestHeader('Content-type', 'multipart/form-data; boundary="' + boundary + '"');
 										xmlHttpPost.send(postBody);
-										break;
+										bDone = true;
 									}
 								}
 							} catch (ex) {
 								// exception caused by popup blocker
-								jQuery.sap.log.error(ex.name + ": " + ex.message, "", "sap.ui.core.support.trace.E2eTraceLib");
+								Log.error(ex.name + ": " + ex.message, "", "sap.ui.core.support.trace.E2eTraceLib");
 							}
 						}
 
 						// allow clean-up of resources by initializing a new BusinessTransaction
 						busTrx = null;
-						busTrxRecording = false;
 					}
 				}
 			};
@@ -267,7 +269,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'jquery.sap.trace'],
 
 				// timestamps dependent on browser type
 				var getTstmp = function(tstmp) {
-					jQuery.sap.log.info(tstmp, "", "E2ETraceLibIE");
+					Log.info(tstmp, "", "E2ETraceLibIE");
 					return tstmp;
 				};
 				//check if browser supports PerformanceTiming
@@ -275,12 +277,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'jquery.sap.trace'],
 					// handle browser dependencies in (hires) time stamps
 					if (Device.browser.chrome && Device.browser.version >= 49) {
 						getTstmp = function(tstmp) {
-							jQuery.sap.log.info(tstmp, "", "E2ETraceLibCR");
+							Log.info(tstmp, "", "E2ETraceLibCR");
 							return performance.timing.navigationStart + tstmp;
 						};
 					} else if (Device.browser.firefox && Device.browser.version >= 48) {
 						getTstmp = function(tstmp) {
-							jQuery.sap.log.info(tstmp, "", "E2ETraceLibFF");
+							Log.info(tstmp, "", "E2ETraceLibFF");
 							return performance.timing.navigationStart + tstmp;
 						};
 					}
@@ -289,12 +291,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'jquery.sap.trace'],
 
 				// event listeners
 				function onLoadstart(event) {
-					jQuery.sap.log.info(getTstmp(event.timeStamp) + ", " + this.xidx + ": loadstart");
+					Log.info(getTstmp(event.timeStamp) + ", " + this.xidx + ": loadstart");
 					this.xfirstByteSent = getTstmp(event.timeStamp);
 				}
 
 				function onProgress(event) {
-					jQuery.sap.log.info(getTstmp(event.timeStamp) + ", " + this.xidx + ": progress");
+					Log.info(getTstmp(event.timeStamp) + ", " + this.xidx + ": progress");
 					if (event.loaded > 0) {
 						if (!this.xfirstByteReceived) {
 							this.xfirstByteReceived = getTstmp(event.timeStamp);
@@ -307,24 +309,24 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'jquery.sap.trace'],
 
 				function onError(event) {
 					var tStamp = getTstmp(event.timeStamp);
-					jQuery.sap.log.info(tStamp + ", " + this.xidx + ": error");
+					Log.info(tStamp + ", " + this.xidx + ": error");
 					busTrx.getCurrentTransactionStep().onMessageFinished(this, tStamp);
 				}
 
 				function onAbort(event) {
 					var tStamp = getTstmp(event.timeStamp);
-					jQuery.sap.log.info(tStamp + ", " + this.xidx + ": abort");
+					Log.info(tStamp + ", " + this.xidx + ": abort");
 					busTrx.getCurrentTransactionStep().onMessageFinished(this, tStamp);
 				}
 
 				function onLoad(event) {
 					var tStamp = getTstmp(event.timeStamp);
-					jQuery.sap.log.info(tStamp + ", " + this.xidx + ": load");
+					Log.info(tStamp + ", " + this.xidx + ": load");
 					busTrx.getCurrentTransactionStep().onMessageFinished(this, tStamp);
 				}
 
-				// start jQuery.sap.trace and override xhr
-				jQuery.sap.passport.setActive(true);
+				// start injection of PASSPORT headers by intercepting XHR calls
+				Passport.setActive(true);
 
 				fopen = window.XMLHttpRequest.prototype.open;
 				fsetRequestHeader = window.XMLHttpRequest.prototype.setRequestHeader;
@@ -355,14 +357,21 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'jquery.sap.trace'],
 						} else {
 							this.xstartTimestamp = Date.now();
 						}
-						//jQuery.sap.log.info(this.xstartTimestamp + ", " + idx + " " + arguments[0] + " " + arguments[1]);
+						// Log.info(this.xstartTimestamp + ", " + idx + " " + arguments[0] + " " + arguments[1]);
 						this.xmethod = arguments[0];
 						this.xurl = arguments[1];
-						this.xDsrGuid = jQuery.sap.fesr.getCurrentTransactionId(); //see jquery.sap.trace, former EbbLib.js
+						this.xDsrGuid = Passport.getTransactionId(); // see sap/ui/performance/Passport, former EppLib.js
 
-						//do not set passport as this is done already in jquery.sap.trace
+						//do not set passport as this is done already in sap/ui/performance/Passport
 						//this.setRequestHeader("SAP-PASSPORT", EppLib.passportHeader(busTrx.getCurrentTransactionStep().trcLvl, busTrx.id, this.xDsrGuid));
-						this.setRequestHeader("X-CorrelationID", busTrx.getCurrentTransactionStep().getId() + "-" + idx);
+						//matching function isCORSRequest from FESR.js
+						var sHOST = (new URI(this.xurl)).host();
+						if (!(sHOST && (sHOST != window.location.host))) {
+						//if ((this.xRequestHeaders != undefined) && (this.xRequestHeaders[0][0] == "SAP-PASSPORT")) {
+							this.setRequestHeader("X-CorrelationID", busTrx.getCurrentTransactionStep().getId() + "-" + idx);
+						} else if (Log.isLoggable()) {
+							Log.debug("E2ETraceLib.Message: No SAP Passport - trace header suppressed.");
+						}
 
 						//attach event listeners
 						this.addEventListener("loadstart", onLoadstart, false);
@@ -387,9 +396,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'jquery.sap.trace'],
 						}
 
 						busTrx = new BusinessTransaction(
-							jQuery.sap.fesr.getRootId(),
+							Passport.getRootId(),
 							new Date(),
-							jQuery.sap.passport.traceFlags(sTraceLevel),
+							Passport.traceFlags(sTraceLevel),
 							fnCallback
 						);
 						busTrx.createTransactionStep();

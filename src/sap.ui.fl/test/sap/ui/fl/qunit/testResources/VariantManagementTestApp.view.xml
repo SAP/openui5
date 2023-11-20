@@ -9,9 +9,17 @@
 	xmlns:html="http://www.w3.org/1999/xhtml">
 	<Page title="Variant Management Testapp" id="page" enableScrolling="false">
 		<content>
-			<Button id="Button"
-					text="Test">
-			</Button>
+			<Button id="Button" text="Test" />
+
+			<HBox id="hbox1">
+				<Button id="hbox1Button1" text="Test" />
+			</HBox>
+			<HBox id="hbox2">
+				<Button id="hbox2Button1" text="Test" />
+				<VBox>
+					<Button id="hbox2InnerButton1" text="Test" />
+				</VBox>
+			</HBox>
 
 			<uxap:ObjectPageLayout id="ObjectPageLayout">
 				<uxap:headerTitle>
@@ -24,6 +32,7 @@
 							<Bar>
 								<contentRight>
 									<vm:VariantManagement id="VariantManagement1" for="ObjectPageLayout" updateVariantInURL="true"></vm:VariantManagement>
+									<vm:VariantManagement id="VariantManagement3" for="hbox1 hbox2" updateVariantInURL="true"></vm:VariantManagement>
 								</contentRight>
 							</Bar>
 						</uxap:navigationBar>
@@ -34,7 +43,9 @@
 					<uxap:ObjectPageSection id="ObjectPageSection1">
 						<uxap:ObjectPageSubSection  id="ObjectPageSubSection1" title="SubSectionTitle1">
 							<form:SimpleForm class="sapUiSmallMargin"
-											 title="Simple Form" id="MainForm"
+											 title="Simple Form"
+											 layout="ColumnLayout"
+											 id="MainForm"
 											 maxContainerCols="3"
 											 editable="true">
 								<form:content>
@@ -59,6 +70,7 @@
 							<form:SimpleForm class="sapUiNoMargin"
 											 title="Simple Form bound to EntityTypeNav using navigation" id="NavPropertyForm"
 											 maxContainerCols="3"
+											 layout="ColumnLayout"
 											 editable="true">
 								<form:content>
 									<core:Title id="Title3" text="Title 3" />
@@ -78,17 +90,15 @@
 					</uxap:ObjectPageSection>
 
 					<uxap:ObjectPageSection id="ObjectPageSection3" title="SectionTitle3">
-						<uxap:ObjectPageSubSection id="ObjectPageSubSection2">
+						<uxap:ObjectPageSubSection id="ObjectPageSubSection3">
 							<l:Grid>
 								<Bar>
 									<contentRight>
-										<vm:VariantManagement id="VariantManagement2" for="ObjectPageSubSection2" updateVariantInURL="true"></vm:VariantManagement>
+										<vm:VariantManagement id="VariantManagement2" for="ObjectPageSubSection3" updateVariantInURL="true"></vm:VariantManagement>
 									</contentRight>
 								</Bar>
-								<html:div>
-									<Title id = "TextTitle1" text="Text Title 1"></Title>
-									<Title id = "TextTitle2" text="Text Title 2"></Title>
-								</html:div>
+								<Title id="TextTitle1" text="Text Title 1"></Title>
+								<Title id="TextTitle2" text="Text Title 2"></Title>
 							</l:Grid>
 						</uxap:ObjectPageSubSection>
 					</uxap:ObjectPageSection>

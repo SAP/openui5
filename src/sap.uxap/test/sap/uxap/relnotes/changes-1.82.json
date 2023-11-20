@@ -1,0 +1,29 @@
+{
+  "1.82.0": {
+    "date": "August 2020",
+    "notes": [
+      {
+        "id": "5b87deb148dbe65b427adc3656904927e05ffac3",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageSubSection: Removed unnecessary height of actions",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080299059"
+          }
+        ]
+      },
+      {
+        "id": "1547a4836fb3fe95fa0c576c8f95403c297b897d",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageHeader: Fixed visual misalignment",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070233100"
+          }
+        ]
+      }
+    ]
+  }
+}

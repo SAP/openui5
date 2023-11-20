@@ -1,0 +1,25 @@
+li.sapTntNLISelected[id$="suppliersItem"] > div.sapTntNLI {
+	background-color: antiquewhite;
+}
+
+li.sapTntNLISelected[id$="categoriesItem"] > div.sapTntNLI {
+	background-color: aquamarine;
+}
+
+li.sapTntNLISelected[id$="productsItem"] > div.sapTntNLI {
+	background-color: lightblue;
+}
+
+.maxWidth100 {
+	max-width: 100%;
+}
+
+nav.sapMBreadcrumbs {
+	margin: 0 !important;
+	padding: 5px;
+}
+
+/* Use initial positioning to give other DOM elements around the tnt tool page space */
+.sapTntToolPage {
+	position: initial;
+}

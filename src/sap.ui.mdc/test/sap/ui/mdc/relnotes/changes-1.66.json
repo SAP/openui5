@@ -1,0 +1,24 @@
+{
+  "1.66.0": {
+    "date": "April 2019",
+    "notes": [
+      {
+        "id": "97d55ef6eb569d4de2ce23b073344396303cdcdd",
+        "type": "FIX",
+        "text": "ChartPanel: Remove unknown properties",
+        "references": []
+      },
+      {
+        "id": "7f586ac03d4000c25b0df6abdf59d48347079cba",
+        "type": "FIX",
+        "text": "Field: clear field leads to error",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970130880"
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,295 @@
+{
+  "1.74.0": {
+    "date": "November 2019",
+    "notes": [
+      {
+        "id": "7116075c11047014122932992af36fa238c117e4",
+        "type": "FIX",
+        "text": " Opa: use correct context in matchers",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970551549"
+          }
+        ]
+      },
+      {
+        "id": "4cf7f6646572b832a5a6db35ca40a207e205f6f5",
+        "type": "FIX",
+        "text": " JSView: Fix documentation of JSView.create",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970154879"
+          }
+        ]
+      },
+      {
+        "id": "a1eee5aec97d6ee7065a302e9cc48147ac8e64dd",
+        "type": "FEATURE",
+        "text": " Introduced new predifined negative margin classes",
+        "references": []
+      },
+      {
+        "id": "23fae0ac1ec4e6c65f5dcafeb4d46f1aad80c2cf",
+        "type": "FEATURE",
+        "text": " Opa: introduce test recorder",
+        "references": []
+      },
+      {
+        "id": "2cf7fa3bd436eca52af3009c5357f375db8214ba",
+        "type": "FEATURE",
+        "text": " demokit: sample app for routing nested component",
+        "references": []
+      },
+      {
+        "id": "849c47e218b88079adeb384e88522760975888fd",
+        "type": "FEATURE",
+        "text": " sample.RoutingNestedComponent: add explanation text and diagram to home page",
+        "references": []
+      },
+      {
+        "id": "ae08460a7c703d9a29a1a9dbea9a2edc1bd1efc2",
+        "type": "FIX",
+        "text": " ShortcutHelper: Fix mapping to browser keys between \u0027Space\u0027 and \u0027Plus\u0027",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980490083"
+          }
+        ]
+      },
+      {
+        "id": "75d500192520ea0246ee6b6df4790fb2881f8ded",
+        "type": "FIX",
+        "text": " core/Component: Propagate commands to nested Components",
+        "references": []
+      },
+      {
+        "id": "0fb9357578424d539945760198732e9f6f481f8f",
+        "type": "FIX",
+        "text": " jQuery: Make parseHTML work with domain relaxation",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400007453322019"
+          }
+        ]
+      },
+      {
+        "id": "d8b04a77e07038cc8a72ac88768fe6fda4352dd9",
+        "type": "FIX",
+        "text": " sap.ui.core.Icon: Alignment in form",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880397883"
+          }
+        ]
+      },
+      {
+        "id": "cf56c6e4c871d087b6f7eb56c40330050870f236",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.ODataMessageParser: cleanup messages after refresh",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970590829"
+          },
+          {
+            "type": "BCP",
+            "reference": "1970544211"
+          }
+        ]
+      },
+      {
+        "id": "ae6970076df8014e6682d2fdac995ddca6aa21dc",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.ODataModel: revert introduction of #_read",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980483785"
+          }
+        ]
+      },
+      {
+        "id": "ebd1585bd61366c467fb44fb3b17fc09a7c4b236",
+        "type": "FIX",
+        "text": " v2/ODataModel: Don\u0027t resolve canonical with function imports",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980434820"
+          }
+        ]
+      },
+      {
+        "id": "3cc1f676ea1c13fe21b975ef5260a12eb164c927",
+        "type": "FEATURE",
+        "text": " sap.ui.core.cache.CacheManager: Enable support for Safari",
+        "references": []
+      },
+      {
+        "id": "2c6fb26f981e982faa93cad11acce1f7fe4d7d88",
+        "type": "FEATURE",
+        "text": " sap.ui.core.cache.CacheManager: Enable support for Safari/iOS",
+        "references": []
+      },
+      {
+        "id": "9ba3f4cd93eaefb27208bcbdf8544d8d7109dae6",
+        "type": "FIX",
+        "text": " ManagedObject: Support extended change detection with named models",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980470497"
+          }
+        ]
+      },
+      {
+        "id": "3414d9538a030c6fa01b1a5c27cf0e817eb4fdd3",
+        "type": "FIX",
+        "text": " Revert fix \"sap.ui.core.Icon: Alignment in form\"",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880397883"
+          }
+        ]
+      },
+      {
+        "id": "0479c5fd4c9295664bc1d05e41d582572354f0eb",
+        "type": "FIX",
+        "text": " routing.HashChanger: provide mapping between fullHash and newHash",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970532610"
+          }
+        ]
+      },
+      {
+        "id": "ebfd8599e7be54d6994b67977a664b74c5f55e99",
+        "type": "FIX",
+        "text": " routing: Detach titleChanged handler when stop listening to hashChange",
+        "references": []
+      },
+      {
+        "id": "9333e208be20523dbe9f9f5ec9a00a6e4a262842",
+        "type": "FIX",
+        "text": " v2.ODataModel: Fixed issues with success/error handler in submitChanges",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500006882642019"
+          }
+        ]
+      },
+      {
+        "id": "844f2f43c9f655064d2ba58b257f287eb660fb78",
+        "type": "FEATURE",
+        "text": " routing: Propagate titleChanged event from nested Component",
+        "references": []
+      },
+      {
+        "id": "43f6aefe028b2d8578902b26d9c2525ae9f75e03",
+        "type": "FEATURE",
+        "text": " sap.ui.integration.widgets.Card: Calendar content added",
+        "references": []
+      },
+      {
+        "id": "fb4dbd91f2dac6bcce276a7eefbd8d42e8cc044b",
+        "type": "FEATURE",
+        "text": " ui5loader: support for \u0027bundles\u0027 configuration",
+        "references": []
+      },
+      {
+        "id": "e9b77599d7721bec738b0a9b2005b7d21692a461",
+        "type": "FIX",
+        "text": " All: fix AMD dependencies to types that are embedded in library.js",
+        "references": []
+      },
+      {
+        "id": "e6fc9b1b2e24c9cd00cd48f1ffa09656d8308abb",
+        "type": "FIX",
+        "text": " ResourceModel: fix JSDoc references to ResourceBundle",
+        "references": []
+      },
+      {
+        "id": "278fcc3732df613a8b936488125142fe7af80e6b",
+        "type": "FIX",
+        "text": " XMLTemplateProcessor: correctly set owner ID for stashed controls",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970586639"
+          },
+          {
+            "type": "BCP",
+            "reference": "0020751294 0000781231 2019"
+          }
+        ]
+      },
+      {
+        "id": "b439045014ae57cc93cf6de58ae61dfabb7eecc4",
+        "type": "FIX",
+        "text": " format/NumberFormat: currency long format",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080004890"
+          }
+        ]
+      },
+      {
+        "id": "8cb68cc8ec47b2d0086ab2c784f13dec122f5030",
+        "type": "FIX",
+        "text": " jquery-mobile-custom: clean up the previous tap handler on new mousedown event",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080020695"
+          }
+        ]
+      },
+      {
+        "id": "987a3547c09677bccf1658ad8fb7e465a8c84258",
+        "type": "FIX",
+        "text": " jquery-mobile-custom: clean up the tap handler on \u0027mouseout\u0027",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970554912"
+          },
+          {
+            "type": "BCP",
+            "reference": "1970532711"
+          }
+        ]
+      },
+      {
+        "id": "787c545710dfe7ca02df188d45fd7a7f6747bfc8",
+        "type": "FIX",
+        "text": " routing.HistoryTest: exclude Safari from using PushState in History Test",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080023088"
+          }
+        ]
+      },
+      {
+        "id": "be1cf39c18de1ec0346e490b3684025b607b0c63",
+        "type": "FIX",
+        "text": " sap.m.Select: Busy select now has correct visible focus in IE",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870362962"
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -1,5 +1,4 @@
 {
-	"@odata.context" : "../$metadata#FOO0",
 	"@odata.etag" : "W/\"20160613143341.1548870\"",
 	"BusinessPartnerID" : "0100000000",
 	"CompanyName" : "SAP",

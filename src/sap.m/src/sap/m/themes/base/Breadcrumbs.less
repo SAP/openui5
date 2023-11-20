@@ -2,16 +2,21 @@
 /* CSS for control sap.m/Breadcrumbs  */
 /* Base theme                         */
 /* ================================== */
+@_sap_m_Breadcrumbs_MinWidth_OFT: 1px;
 
 .sapMBreadcrumbs {
-	margin: 0 0 0.5rem 0;
-	padding: 0;
 	white-space: nowrap;
-	list-style-type: none;
-	display: -webkit-box; /* OLD - iOS 6-, Safari 3.1-6 */
-	display: -webkit-flex; /* NEW - Chrome */
-	display: flex;
 	outline: none;
+	margin: 0 0 0.5rem 0;
+
+	> ol {
+		display: -webkit-box; /* OLD - iOS 6-, Safari 3.1-6 */
+		display: -webkit-flex; /* NEW - Chrome */
+		display: flex;
+		margin: 0;
+		padding: 0;
+		list-style-type: none;
+	}
 
 	.sapMSlt {
 		border: 0;
@@ -29,11 +34,18 @@
 		}
 	}
 
-	.sapMSltIconOnly.sapMSltHoverable:hover, .sapMSltPressed.sapMSltIconOnly:not(.sapMSltDisabled),
-	.sapMSltIconOnly.sapMSltPressed.sapMSltHoverable:not(.sapMSltState):hover,
-	.sapMSltPressed:not(.sapMSltDisabled), .sapMSltIconOnly.sapMSltPressed.sapMSltHoverable:hover {
+	.sapMBreadcrumbsItem.sapMBreadcrumbsSelectItem >
+	.sapMSlt.sapMSltIconOnly.sapMSltWithIcon.sapMSltHoverable.sapMSltWithArrow {
 		background: transparent;
 		border: none;
+
+		&.sapMSltFocused,
+		&:hover {
+			.sapMSltIcon:before {
+				color: @sapUiLinkHover;
+				border-bottom: 0.0625rem solid @sapUiLinkHover;
+			}
+		}
 	}
 
 	.sapMSltIcon:before {
@@ -43,6 +55,7 @@
 		speak: none;
 		content: "...\e1ef";
 		font-size: @sapMFontMediumSize;
+		padding-bottom: 0.0625rem;
 	}
 
 	.sapMLnk, .sapMBreadcrumbsCurrentLocation, .sapMSlt, .sapMBreadcrumbsSeparator {
@@ -68,7 +81,12 @@
 
 	.sapMBreadcrumbsCurrentLocation {
 		font-weight: normal;
-		line-height: 1.4;
+		color: @sapUiContentLabelColor;
+
+		&:focus {
+			outline: 1px dotted @sapUiContentFocusColor;
+			outline-offset: -1px;
+		}
 	}
 
 	.sapMBreadcrumbsItem {
@@ -81,6 +99,7 @@
 
 	.sapMBreadcrumbsSeparator {
 		padding: 0 0.25rem;
+		font-size: @sapMFontMediumSize;
 	}
 
 	.sapMBreadcrumbsItem, .sapMBreadcrumbsSeparator {
@@ -95,4 +114,21 @@
 .sapUiSizeCompact .sapMBreadcrumbs .sapMSlt {
 	margin: 0;
 	height: 1.2rem;
+}
+
+/* make Breadcrumbs shrinkable when used in OTB */
+.sapMOTB .sapMBreadcrumbs {
+	min-width: @_sap_m_Breadcrumbs_MinWidth_OFT; /* needed for width calculations on initial render */
+	max-width: 100%;
+}
+
+.sapMOTB .sapMBreadcrumbs .sapMBreadcrumbsItem:last-child {
+	flex-basis: 2.5rem;
+	flex-grow: 1;
+	overflow: hidden;
+}
+
+/* prevent Breadcrumbs with long text from causing a horizontal scrollbar in OTB Menu */
+.sapMOverflowToolbarMenu-CTX .sapMBreadcrumbs {
+	max-width: 90vw;
 }

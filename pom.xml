@@ -15,7 +15,7 @@
 
 	<groupId>com.sap.openui5</groupId>
 	<artifactId>reactor</artifactId>
-	<version>1.57.0-SNAPSHOT</version>
+	<version>1.121.0-SNAPSHOT</version><!--MainVersion-->
 	<packaging>pom</packaging>
 
 
@@ -46,16 +46,26 @@
 		<module>src/sap.ui.documentation</module>
 		<module>src/sap.ui.dt</module>
 		<module>src/sap.tnt</module>
-		<module>src/sap.ui.demokit</module>
 		<module>src/sap.uxap</module>
 		<module>src/sap.ui.fl</module>
+		<module>src/sap.ui.mdc</module>
 		<module>src/sap.ui.rta</module>
 		<module>src/sap.ui.codeeditor</module>
 		<module>src/sap.ui.support</module>
+		<module>src/sap.ui.integration</module>
+		<module>src/sap.ui.testrecorder</module>
+		<module>src/sap.ui.webc.main</module>
+		<module>src/sap.ui.webc.common</module>
+		<module>src/sap.ui.webc.fiori</module>
 
 		<!-- theme libraries -->
 		<module>src/themelib_sap_bluecrystal</module>
 		<module>src/themelib_sap_belize</module>
+		<module>src/themelib_sap_fiori_3</module>
+		<module>src/themelib_sap_horizon</module>
+
+		<!-- JSDoc template -->
+		<module>lib/jsdoc</module>
 
 	</modules>
 
@@ -70,14 +80,14 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
-		<!-- default compiler level is 1.6 -->
-		<maven.compiler.source>1.6</maven.compiler.source>
-		<maven.compiler.target>1.6</maven.compiler.target>
+		<!-- default compiler level is 1.8 -->
+		<maven.compiler.source>1.8</maven.compiler.source>
+		<maven.compiler.target>1.8</maven.compiler.target>
 
 		<!-- filtering properties -->
 		<version>${project.version}</version>
-		<copyright><![CDATA[UI development toolkit for HTML5 (OpenUI5)
- * (c) Copyright 2009-2018 SAP SE or an SAP affiliate company.
+		<copyright><![CDATA[OpenUI5
+ * (c) Copyright 2009-2023 SAP SE or an SAP affiliate company.
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
 ]]></copyright>
 		<buildtime>${maven.build.timestamp}</buildtime>
@@ -86,6 +96,37 @@
 		<!-- JSLint/ESLint report path -->
 		<sonar.javascript.jslint.reportPath>target/jslint/jslint.xml</sonar.javascript.jslint.reportPath>
 
+		<!-- Maven build phase in which npm-sources should be packaged	 -->
+		<!-- Set to 'package' to enable packaging for a project in general -->
+		<npm.package.phase>never</npm.package.phase>
+
+		<!-- internal properties, do not modify -->
+		<effective.npm.package.phase>${npm.package.phase}</effective.npm.package.phase>
+
+		<!-- Node.js settings -->
+		<node.version>16.19.0</node.version>
+		<node.gav>gav:org.nodejs.download.node:node</node.gav>
+		<node.location>${node.gav}</node.location>
+		<node.forceNoProxy>true</node.forceNoProxy>
+
+		<!-- NPM settings -->
+		<npm.version>9.6.0</npm.version>
+		<npm.registry>${xmake.import.NPM.0}</npm.registry>
+
+		<!-- skip eslint validation -->
+		<sap.ui5.eslint.skip.validation>true</sap.ui5.eslint.skip.validation>
+		<!-- fail on eslint error -->
+		<sap.ui5.eslint.failonerror>true</sap.ui5.eslint.failonerror>
+		<!-- only validate the changed files -->
+		<sap.ui5.eslint.onlyChangedFiles>true</sap.ui5.eslint.onlyChangedFiles>
+		<!-- send eslint result as Gerrit inline comment -->
+		<sap.ui5.eslint.sendGerritComment>true</sap.ui5.eslint.sendGerritComment>
+		<!-- quite or verbose execution -->
+		<sap.ui5.eslint.quite>true</sap.ui5.eslint.quite>
+		<!-- Eslint tools version -->
+		<sap.ui5.eslint.tools.version>0.1.1</sap.ui5.eslint.tools.version>
+		<!-- ESLint version (for all OpenUI5 projects) -->
+		<sap.openui5.eslintnode.version>8.51.0</sap.openui5.eslintnode.version>
  	</properties>
 
 
@@ -110,15 +151,59 @@
 						<extension>gif</extension>
 						<extension>png</extension>
 						<extension>ico</extension>
+						<extension>swf</extension>
+						<extension>wav</extension>
 						<extension>properties</extension><!-- excluded as those files don't use UTF-8 encoding and as no filtering is needed -->
 						<extension>woff</extension>
 						<extension>woff2</extension>
+						<extension>hpb</extension><!-- hyphenation pattern binary (introduced by OSS component 'hyphenopoly') -->
+						<extension>wasm</extension><!-- web assembly, compiled binary -->
 					</nonFilteredFileExtensions>
+
+					<!--
+						With the default delimiter settings, filtering fails for lines with an odd number of delimiter chars
+						like in
+
+						  @version @version@
+
+						We therefore disable the defaults and use only ${*}.
+
+					  -->
+					<useDefaultDelimiters>false</useDefaultDelimiters>
 					<delimiters>
 						<delimiter>${*}</delimiter>
 					</delimiters>
-					<useDefaultDelimiters>false</useDefaultDelimiters>
+
 				</configuration>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<version>2.3.2</version>
+				<executions>
+					<execution>
+						<id>npm-resources</id>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+						<!-- we use the 'phase' as a substitute for the missing 'skip' property of the jar-plugin		   -->
+						<!-- for non-library projects and for all builds other than the nightly build, it is set to 'never' -->
+						<phase>${effective.npm.package.phase}</phase>
+						<configuration>
+							<classesDirectory>${project.basedir}</classesDirectory>
+							<classifier>npm-resources</classifier>
+							<includes>
+								<include>package.json</include>
+								<include>ui5.yaml</include>
+								<include>.dtsgenrc</include>
+								<include>.npmignore</include>
+								<include>src/**/*</include>
+								<include>test/**/*</include>
+							</includes>
+						</configuration>
+					</execution>
+				</executions>
 			</plugin>
 
 		</plugins>
@@ -132,7 +217,7 @@
 
 	<profiles>
 
-		<!-- attach the LICENSE.txt file -->
+		<!-- attach the LICENSE.txt and THIRDPARTY.txt files -->
 		<profile>
 
 			<activation>
@@ -145,7 +230,7 @@
 
 				<plugins>
 
-					<!-- attach the LICENSE.txt as separate artifact -->
+					<!-- attach the LICENSE.txt and THIRDPARTY.txt as separate artifacts -->
 					<plugin>
 						<groupId>org.codehaus.mojo</groupId>
 						<artifactId>build-helper-maven-plugin</artifactId>
@@ -164,6 +249,11 @@
 											<type>txt</type>
 											<classifier>LICENSE</classifier>
 										</artifact>
+										<artifact>
+											<file>${basedir}/THIRDPARTY.txt</file>
+											<type>txt</type>
+											<classifier>THIRDPARTY</classifier>
+										</artifact>
 									</artifacts>
 								</configuration>
 							</execution>
@@ -176,122 +266,14 @@
 
 		</profile>
 
-		<!-- internal build related plugins & configuration -->
 		<profile>
-
-			<id>internal.build</id>
-
-			<properties>
-				<sap.ui5.translationArea>073003</sap.ui5.translationArea>
-				<sap.ui5.translationDomain>BC</sap.ui5.translationDomain>
-				<sap.ui5.translationDeveloper></sap.ui5.translationDeveloper>
-				<sap.ui5.translationCollection>SAPUI5 UI library</sap.ui5.translationCollection>
-				<sap.ui5.translationLanguages></sap.ui5.translationLanguages>
-			</properties>
-
-			<build>
-
-				<pluginManagement>
-					<plugins>
-
-						<!-- legacy migration helper (for internal use) -->
-						<plugin>
-							<groupId>com.sap.ui5.tools.build</groupId>
-							<artifactId>ui5builder-maven-plugin</artifactId>
-							<version>1.57.0-SNAPSHOT</version>
-						</plugin>
-
-						<!-- translation support (for internal use) -->
-						<plugin>
-							<groupId>com.sap.ldi</groupId>
-							<artifactId>translation-plugin</artifactId>
-							<version>0.21.0</version>
-							<configuration>
-								<translationArea>${sap.ui5.translationArea}</translationArea>
-								<translationDomain>${sap.ui5.translationDomain}</translationDomain>
-								<translationDeveloper>${sap.ui5.translationDeveloper}</translationDeveloper>
-								<translationCollection>${sap.ui5.translationCollection}</translationCollection>
-								<languages>${sap.ui5.translationLanguages}</languages>
-								<!-- only consider the sources -->
-								<useDefaultTranslationResourceDirs>false</useDefaultTranslationResourceDirs>
-								<translationResources>
-									<translationResource>src</translationResource>
-								</translationResources>
-								<!-- do not change developer English -->
-								<!-- skipUpdateDeveloperEnglish>true</skipUpdateDeveloperEnglish -->
-							</configuration>
-						</plugin>
-
-					</plugins>
-				</pluginManagement>
-
-				<plugins>
-
-					<!-- translation support (specify non-existent path to ignore it) -->
-					<plugin>
-						<groupId>com.sap.ldi</groupId>
-						<artifactId>translation-plugin</artifactId>
-						<inherited>false</inherited>
-						<configuration>
-							<translationResources>
-								<translationResource>nonexistentpath</translationResource>
-							</translationResources>
-						</configuration>
-					</plugin>
-
-				</plugins>
-
-			</build>
-
-		</profile>
-
-		<profile>
-
-			<id>eslint.build</id>
-
-			<properties>
-
-				<!-- skip eslint validation -->
-				<sap.ui5.eslint.skip.validation>true</sap.ui5.eslint.skip.validation>
-
-				<!-- fail on eslint error -->
-				<sap.ui5.eslint.failonerror>true</sap.ui5.eslint.failonerror>
-
-				<!-- only validate the changed files -->
-				<sap.ui5.eslint.onlyChangedFiles>true</sap.ui5.eslint.onlyChangedFiles>
-
-			</properties>
-
+			<id>eslintnode.build</id>
 			<build>
 				<plugins>
 					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-dependency-plugin</artifactId>
-						<version>2.10</version>
-						<executions>
-							<execution>
-								<phase>verify</phase>
-								<goals>
-									<goal>unpack</goal>
-								</goals>
-							</execution>
-						</executions>
-						<configuration>
-							<artifactItems>
-								<artifactItem>
-									<groupId>com.sap.ui5.tools.eslint</groupId>
-									<artifactId>eslint-plugin-openui5</artifactId>
-									<version>0.1.0-SNAPSHOT</version>
-									<outputDirectory>${project.build.directory}/eslint-plugin-openui5</outputDirectory>
-								</artifactItem>
-							</artifactItems>
-						</configuration>
-					</plugin>
-					<!-- when adopting the plugin here please also adopt src/testsuite/pom.xml -->
-					<plugin>
-						<groupId>com.sap.eslint</groupId>
-						<artifactId>eslint-maven-plugin</artifactId>
-						<version>0.1.14</version>
+						<groupId>com.sap.ui5.tools.maven</groupId>
+						<artifactId>eslintnode-maven-plugin</artifactId>
+						<version>0.2.4</version>
 						<executions>
 							<execution>
 								<phase>verify</phase>
@@ -301,62 +283,87 @@
 							</execution>
 						</executions>
 						<configuration>
-							<version>1.10.3</version>
-							<skip>${sap.ui5.eslint.skip.validation}</skip>
-							<failOnError>${sap.ui5.eslint.failonerror}</failOnError>
-							<onlyChangedFiles>${sap.ui5.eslint.onlyChangedFiles}</onlyChangedFiles>
-							<quiet>true</quiet>
-							<includes>
-								<include>src/**</include>
-								<include>test/**</include>
-							</includes>
-							<plugins>
-								<openui5>${project.build.directory}/eslint-plugin-openui5/plugin.js</openui5>
-							</plugins>
+							<version>${sap.openui5.eslintnode.version}</version>
+							<nodeType>SHARED</nodeType>
+							<nodeVersion>${node.version}</nodeVersion>
+							<nodeLocation>${node.location}</nodeLocation>
+							<npmRegistry>${npm.registry}</npmRegistry>
+							<npmVersion>${npm.version}</npmVersion>
 							<formatters>
-								<formatter implementation="com.sap.eslint.java.formatters.JSLintSonarFormatter">
-									<outputFile>${project.build.directory}/jslint/jslint.xml</outputFile>
+								<formatter>
+									<name>sonar</name>
+									<output>${project.build.directory}/jslint/jslint.xml</output>
 								</formatter>
 							</formatters>
+							<failOnError>${sap.ui5.eslint.failonerror}</failOnError>
+							<onlyChangedFiles>${sap.ui5.eslint.onlyChangedFiles}</onlyChangedFiles>
+							<sendGerritComment>${sap.ui5.eslint.sendGerritComment}</sendGerritComment>
+							<eslintToolsVersion>${sap.ui5.eslint.tools.version}</eslintToolsVersion>
+							<quiet>${sap.ui5.eslint.quite}</quiet>
+							<skip>${sap.ui5.eslint.skip.validation}</skip>
 						</configuration>
 					</plugin>
 				</plugins>
 			</build>
-
 		</profile>
 
 		<profile>
 
 			<id>nightly.build</id>
 
+			<activation>
+				<property>
+					<name>ldi.releaseBuild</name>
+				</property>
+			</activation>
+
 			<properties>
 
 				<!-- validate all files for the nightly build (attention: profile nightly.build must stay after eslint.build!) -->
 				<sap.ui5.eslint.onlyChangedFiles>false</sap.ui5.eslint.onlyChangedFiles>
-
+				<!-- don't send Gerrit comment in nightly build -->
+				<sap.ui5.eslint.sendGerritComment>false</sap.ui5.eslint.sendGerritComment>
 			</properties>
 
 		</profile>
 
+		<!-- Newer JDKs 9 and higher require at least Maven 3.6.x due to JAXB issues to load package-info.java  -->
+		<!-- Details: https://stackoverflow.com/questions/52157040/jaxb-package-info-ignored-when-using-java-10 -->
 		<profile>
-
-			<id>testsuite.build</id>
-
+			<id>jdk9plus.build</id>
 			<activation>
-				<activeByDefault>true</activeByDefault>
-				<property>
-					<name>ui5workspace</name>
-				</property>
+				<jdk>(1.8,)</jdk>
 			</activation>
-
-			<modules>
-
-				<!-- testsuite -->
-				<module>src/testsuite-utils</module>
-				<module>src/testsuite</module>
-
-			</modules>
-
+			<properties>
+				<!-- To ensure compatibility with a JDK8 built- or runtime, the target "release" must be set to 8       -->
+				<!-- Details: https://www.morling.dev/blog/bytebuffer-and-the-dreaded-nosuchmethoderror/                -->
+				<!--     and: https://maven.apache.org/plugins/maven-compiler-plugin/examples/set-compiler-release.html -->
+				<maven.compiler.release>8</maven.compiler.release>
+			</properties>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-enforcer-plugin</artifactId>
+						<version>3.0.0-M3</version>
+						<executions>
+							<execution>
+								<id>enforce-versions</id>
+								<goals>
+								<goal>enforce</goal>
+								</goals>
+								<configuration>
+									<rules>
+										<requireMavenVersion>
+											<version>[3.6.0,)</version>
+										</requireMavenVersion>
+									</rules>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
 		</profile>
 
 	</profiles>

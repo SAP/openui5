@@ -31,6 +31,7 @@ describe("sap.m.ResponsivePopover", function() {
 
 	it('Should open ResponsivePopover', function() {
 		element(by.id('btnPopoverBottom')).click();
+		element(by.id('actionButton1')).click();
 		expect(takeScreenshot(element(by.id(_resolvePopover('popoverBottom-popover'))))).toLookAs('responsive-popover');
 		_closePopover("popoverBottom-closeButton");
 	});
@@ -40,7 +41,7 @@ describe("sap.m.ResponsivePopover", function() {
 		expect(takeScreenshot(element(by.id(_resolvePopover('popoverWithNavContainer-popover'))))).toLookAs('responsive-popover2-first-page');
 		element(by.id('listPage')).click();
 		expect(takeScreenshot(element(by.id(_resolvePopover('popoverWithNavContainer-popover'))))).toLookAs('responsive-popover2-detail-page');
-		_closePopover("popoverWithNavContainer-closeButton");
+		_closePopover("closeButton1");
 	});
 
 	it('Should open ResponsivePopover with shared title', function() {
@@ -48,7 +49,7 @@ describe("sap.m.ResponsivePopover", function() {
 		expect(takeScreenshot(element(by.id(_resolvePopover('popoverHeader-popover'))))).toLookAs('responsive-popover-shared-title1');
 		element(by.id('btnNextPage')).click();
 		expect(takeScreenshot(element(by.id(_resolvePopover('popoverHeader-popover'))))).toLookAs('responsive-popover-shared-title2');
-		_closePopover("popoverHeader-closeButton");
+		_closePopover("closeButton2");
 	});
 
 });

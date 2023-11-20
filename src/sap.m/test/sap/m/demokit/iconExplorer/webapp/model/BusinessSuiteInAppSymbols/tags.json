@@ -14,7 +14,9 @@
 	},
 	"icon-component" : {
 		"tags" : [
-			"component"
+			"component",
+			"plus",
+			"add"
 		]
 	},
 	"icon-component-private" : {
@@ -873,17 +875,6 @@
 			"neutral"
 		]
 	},
-	"icon-split-segmentation" : {
-		"tags" : [
-			"split",
-			"separate",
-			"divide",
-			"arrows",
-			"segmentation",
-			"segment",
-			"target group"
-		]
-	},
 	"icon-manage-budget" : {
 		"tags" : [
 			"arrows",
@@ -1084,18 +1075,6 @@
 			"data"
 		]
 	},
-	"icon-remove-filter" : {
-		"tags" : [
-			"filter",
-			"organise",
-			"aggregate",
-			"data",
-			"clear",
-			"delete",
-			"remove",
-			"cancel"
-		]
-	},
 	"icon-vip-customer" : {
 		"tags" : [
 			"person",
@@ -1175,7 +1154,8 @@
 			"logistics",
 			"driver",
 			"truck",
-			"person"
+			"person",
+			"vehicle"
 		]
 	},
 	"icon-keep-segment" : {
@@ -1383,12 +1363,6 @@
 			"grab",
 			"take",
 			"drag"
-		]
-	},
-	"icon-component" : {
-		"tags" : [
-			"plus",
-			"add"
 		]
 	},
 	"icon-water" : {
@@ -1988,13 +1962,6 @@
 			"transportation"
 		]
 	},
-	"icon-truck-driver" : {
-		"tags" : [
-			"vehicle",
-			"truck",
-			"driver"
-		]
-	},
 	"icon-return delivery" : {
 		"tags" : [
 			"vehicle",
@@ -2443,13 +2410,81 @@
 			"folder"
 		]
 	},
-	"icon-alert-groups": {
-		"tags": [
+	"icon-alert-groups" : {
+		"tags" : [
 			"indicator",
 			"groups",
 			"alert",
 			"status",
 			"folder"
-	]
-  }
+		]
+	},
+	"icon-function-alert" : {
+		"tags" : [
+			"status",
+			"function",
+			"alert"
+		]
+	},
+	"icon-function-hierarchy" : {
+		"tags" : [
+			"status",
+			"function",
+			"hierarchy"
+		]
+	},
+	"icon-rfid": {
+		"tags": [
+			"device",
+			"location",
+			"indicator",
+			"alert"
+		]
+	},
+	"icon-input": {
+		"tags": [
+			"actions",
+			"arrow",
+			"status"
+		]
+	},
+	"icon-software-item" : {
+		"tags" : [
+			"actions",
+			"arrow",
+			"status"
+		]
+	},
+	"icon-product-view" : {
+		"tags" : [
+			"actions",
+			"arrow",
+			"status"
+		]
+	},
+	"icon-software-item-variant" : {
+		"tags" : [
+			"actions",
+			"arrow",
+			"status"
+		]
+	},
+	"icon-lighthouse" : {
+		"tags" : [
+			"status",
+			"building",
+			"things",
+			"important",
+			"highlight",
+			"app",
+			"light"
+		]
+	},
+	"icon-demand-unit" : {
+		"tags" : [
+			"people",
+			"person",
+			"circle"
+		]
+	}
 }

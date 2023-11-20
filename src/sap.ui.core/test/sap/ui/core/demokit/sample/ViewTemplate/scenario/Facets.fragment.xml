@@ -3,22 +3,22 @@
 	xmlns:core="sap.ui.core"
 	xmlns:scenario="sap.ui.core.sample.ViewTemplate.scenario"
 	xmlns:template="http://schemas.sap.com/sapui5/extension/sap.ui.core.template/1">
-	<template:repeat list="{facets>}" var="facet">
+<template:repeat list="{facets>}" var="facet">
 		<template:if test="{= ${facet>RecordType} === 'com.sap.vocabularies.UI.v1.CollectionFacet'}">
 			<template:then>
-				<Panel expandable="true" expanded="true" headerText="{path: 'facet>Label', formatter: 'sap.ui.model.odata.AnnotationHelper.format'}">
+				<Panel expandable="true" expanded="true" headerText="{path: 'facet>Label', formatter: 'AH.format'}">
 					<template:with path="facet>Facets" var="facets">
 						<core:Fragment fragmentName="sap.ui.core.sample.ViewTemplate.scenario.Facets" type="XML"/>
 					</template:with>
 				</Panel>
 			</template:then>
 			<template:elseif test="{= ${facet>RecordType} === 'com.sap.vocabularies.UI.v1.ReferenceFacet'}">
-				<core:Fragment fragmentName="{= ${path: 'facet>Target', formatter: 'sap.ui.model.odata.AnnotationHelper.isMultiple'} === 'true'
+				<core:Fragment fragmentName="{= ${path: 'facet>Target', formatter: 'AH.isMultiple'} === 'true'
 					? 'sap.ui.core.sample.ViewTemplate.scenario.TableFacet'
 					: 'sap.ui.core.sample.ViewTemplate.scenario.FormFacet' }" type="XML"/>
 			</template:elseif>
 			<template:else>
-				<scenario:Form title="{path: 'facet>Label', formatter: 'sap.ui.model.odata.AnnotationHelper.format'}">
+				<scenario:Form title="{path: 'facet>Label', formatter: 'AH.format'}">
 					<Label labelFor="{path: 'facet>', formatter: '.id'}"
 						text="Unsupported Facet Type"/>
 					<Text id="{path: 'facet>', formatter: '.id'}" text="{facet>RecordType}"/>

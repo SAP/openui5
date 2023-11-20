@@ -1,50 +1,47 @@
-sap.ui.define(['jquery.sap.global','sap/ui/core/util/MockServer'],
-	function(jQuery, MockServer1) {
+sap.ui.define([
+	"sap/ui/core/util/MockServer",
+	"sap/ui/thirdparty/jquery"
+], function (MockServer, jQuery) {
 	"use strict";
 
-	var MockServer = {
+	return {
 
-		backendProductSearchService: function() {
-			if (!this._osp) {
+		connectToMockProductSearchService: function () {
+			if (!this._oOSP) {
+				return new Promise(function (fnResolve) {
+					jQuery.ajax(sap.ui.require.toUrl("sap/ui/demo/mock/products.json"), {
+						success: function (oData) {
+							this._oProductData = oData;
+							this._oOSP = new MockServer({
+								rootUri: "http://localhost/productsearch",
+								requests: [{
+									method: "GET",
+									path: "/:term",
+									response: function (oXHR, sTerm) {
+										var aResults = this._oProductData.ProductCollection
+											.filter(function (mProduct) {
+												return mProduct.Name.match(new RegExp('^' + sTerm, 'i'));
+											})
+											.map(function (mProduct) {
+												return mProduct.Name;
+											});
 
-				// use explored app's demo data
-				this._productCount = 0;
-				jQuery.ajax(sap.ui.require.toUrl("sap/ui/demo/mock") + "/products.json", {
-					async: false,
-					success: function (data) {
-						this._productData = data;
-					}.bind(this)
-				});
+										oXHR.respondJSON(200, null, [sTerm, aResults]);
 
-				// init server
-				this._osp = new MockServer1({
-					rootUri: "http://localhost/productsearch",
-					requests: [
-						{
-							method: "GET",
-							path: "/:term",
-							response: function (oXhr, sTerm) {
-								var aResults = this._productData.ProductCollection
-									.filter(function (mProduct) {
-										return mProduct.Name.match(new RegExp('^' + sTerm, 'i'));
-									})
-									.map(function (mProduct) {
-										return mProduct.Name;
-									});
-								oXhr.respondJSON(200, null, [sTerm, aResults]);
-								return true;
-							}.bind(this)
-						}
-					]
-				});
-				this._osp.start();
+										return true;
+									}.bind(this)
+								}]
+							});
+
+							this._oOSP.start();
+							fnResolve(this._oOSP);
+						}.bind(this)
+					});
+
+				}.bind(this));
 			}
-			return this._osp;
+
+			return Promise.resolve(this._oOSP);
 		}
-
 	};
-
-
-	return MockServer;
-
-}, /* bExport= */ true);
+});

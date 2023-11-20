@@ -1,0 +1,248 @@
+<mvc:View
+	height="100%"
+	viewName="sap.ui.testrecorder.ui.views.Main"
+	controllerName="sap.ui.testrecorder.ui.controllers.Main"
+	xmlns="sap.m"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:c= "sap.ui.core"
+	xmlns:l="sap.ui.layout"
+	xmlns:f="sap.ui.layout.form"
+	xmlns:code="sap.ui.codeeditor" >
+	<Page showHeader="false">
+		<l:FixFlex>
+			<!-- top title bar for the frame. buttons vary depending on frame mode (docked or new window)-->
+			<l:fixContent>
+				<Bar id="ttMaximizeHeaderBar" class="sapContrast ttPageBar ttMiniPageBar">
+					<contentMiddle>
+						<Image src="../ui/images/Logo_O_22x22.png" densityAware="false"></Image>
+						<Text text="{/iFrameTitle}" />
+						<c:Icon src="sap-icon://full-screen" press="toggleMinimize" />
+					</contentMiddle>
+				</Bar>
+				<Bar id="ttStandardHeaderBar" class="sapContrast ttPageBar ttStandardPageBar">
+					<contentLeft>
+						<Image src="../ui/images/Logo_O_22x22.png" densityAware="false"></Image>
+						<Text text="{/iFrameTitle}" />
+					</contentLeft>
+					<contentMiddle>
+						<Text text="{controls>/framework/name} {controls>/framework/version}" />
+					</contentMiddle>
+					<contentRight>
+						<!-- <c:Icon src="sap-icon://sys-help" tooltip="{i18n>TestRecorder.TitleBar.Documentation.Tooltip}" /> -->
+						<c:Icon src="sap-icon://settings" press="openSettingsDialog" tooltip="{i18n>TestRecorder.TitleBar.Window.Settings.Tooltip}"/>
+
+						<c:Icon src="sap-icon://minimize" press="toggleMinimize" tooltip="{i18n>TestRecorder.TitleBar.Window.Minimize.Tooltip}" visible="{/isInIframe}" />
+						<c:Icon src="sap-icon://slim-arrow-down" press="dockBottom" tooltip="{i18n>TestRecorder.TitleBar.Window.Dock.Bottom.Tooltip}" />
+						<c:Icon src="sap-icon://slim-arrow-left" press="dockLeft" tooltip="{i18n>TestRecorder.TitleBar.Window.Dock.Left.Tooltip}" />
+						<c:Icon src="sap-icon://slim-arrow-right" press="dockRight" tooltip="{i18n>TestRecorder.TitleBar.Window.Dock.Right.Tooltip}" />
+
+						<c:Icon src="sap-icon://popup-window" press="openWindow" tooltip="{i18n>TestRecorder.TitleBar.Window.New.Tooltip}" visible="{/isInIframe}"/>
+						<c:Icon src="sap-icon://decline" press="close" tooltip="{i18n>TestRecorder.TitleBar.Window.Close.Tooltip}"/>
+					</contentRight>
+				</Bar>
+			</l:fixContent>
+
+			<!-- main recorder content -->
+
+			<l:flexContent>
+				<l:ResponsiveSplitter defaultPane="tree-pane">
+					<l:PaneContainer>
+
+					<!-- control tree pane -->
+
+					<l:SplitPane requiredParentWidth="300" id="tree-pane">
+						<Panel height="100%">
+						<c:HTML id="elementTreeContainer" content='&lt;control-tree&gt;  &lt;/control-tree&gt;'></c:HTML>
+						</Panel>
+					</l:SplitPane>
+
+					<!-- snippet pane -->
+
+					<l:SplitPane  requiredParentWidth="400">
+						<Panel>
+						<ScrollContainer vertical="true">
+							<VBox>
+								<HBox alignItems="Center">
+									<Label text="{i18n>TestRecorder.Inspect.Snippet.Dropdown.Label}" labelFor="SelectDialect" class="sapUiSmallMarginEnd"/>
+									<Select
+										id="SelectDialect"
+										forceSelection="false"
+										selectedKey="{/selectedDialect}"
+										items="{/dialects}"
+										class="sapUiSmallMarginEnd">
+										<c:Item key="{key}" text="{label}" />
+									</Select>
+									<Label text="{i18n>TestRecorder.Inspect.Snippet.MultiSwitch.Label}" labelFor="multiSwitch" class="sapUiSmallMarginEnd" />
+									<Switch id="multiSwitch" state="{/settings/multipleSnippets}" type="AcceptReject" change="_onChangeMultiple"/>
+								</HBox>
+							</VBox>
+							<code:CodeEditor
+								id="codeEditor"
+								value="{
+									path: 'controls>/codeSnippet',
+									events: {
+										change: '._onCodeEditorChange'
+									}
+								}"
+								height="calc(100vh - 180px)"
+								width="100%"
+								type="javascript"
+								colorTheme="theme-ambiance"
+								lineNumbers="false"/>
+							<HBox justifyContent="End" alignItems="Center">
+								<Button text="{i18n>TestRecorder.Inspect.Snippet.Copy.Text}" press="copyCodeSnippet"/>
+								<Button text="{i18n>TestRecorder.Inspect.Snippet.Clear.Text}" press="clearCodeSnippet" class="sapUiSmallMarginBegin"/>
+							</HBox>
+						</ScrollContainer>
+						</Panel>
+					</l:SplitPane>
+
+					<!-- common info pane -->
+
+					<l:SplitPane requiredParentWidth="900px">
+						<Panel class="ttCommonInfoPanel">
+							<IconTabBar
+								id="tabBar"
+								class="sapUiResponsiveContentPadding"
+								stretchContentHeight="true">
+								<items>
+									<IconTabFilter
+										key="properties"
+										text="{i18n>TestRecorder.Inspect.Properties.Title}">
+										<Table
+											id="propertiesTable"
+											items="{controls>/properties/own}"
+											headerText="{i18n>TestRecorder.Inspect.Properties.Own.Header.Text}" >
+											<columns>
+												<Column>
+													<Text text="{i18n>TestRecorder.Inspect.Properties.Property.Text}" />
+												</Column>
+												<Column>
+													<Text text="{i18n>TestRecorder.Inspect.Properties.Value.Text}" />
+												</Column>
+												<Column>
+													<Text text="{i18n>TestRecorder.Inspect.Properties.Type.Text}" />
+												</Column>
+											</columns>
+											<ColumnListItem>
+												<HBox>
+													<c:Icon src="sap-icon://add-process"
+														class="sapUiSmallMarginEnd"
+														tooltip="{i18n>TestRecorder.Inspect.Properties.Property.Icon.Tooltip}"
+														press="handlePropertyIconPress"/>
+													<Text text="{controls>property}"/>
+												</HBox>
+												<Text text="{controls>value}"/>
+												<Text text="{controls>type}"/>
+											</ColumnListItem>
+										</Table>
+										<Table
+											items="{controls>/properties/inherited}"
+											headerText="{i18n>TestRecorder.Inspect.Properties.Inherited.Header.Text}" >
+											<columns>
+												<Column>
+													<Text text="{i18n>TestRecorder.Inspect.Properties.Property.Text}" />
+												</Column>
+												<Column>
+													<Text text="{i18n>TestRecorder.Inspect.Properties.Value.Text}" />
+												</Column>
+												<Column>
+													<Text text="{i18n>TestRecorder.Inspect.Properties.Type.Text}" />
+												</Column>
+												<Column>
+													<Text text="{i18n>TestRecorder.Inspect.Properties.Inherited.Text}" />
+												</Column>
+											</columns>
+											<ColumnListItem>
+												<HBox>
+													<c:Icon src="sap-icon://add-process"
+														class="sapUiSmallMarginEnd"
+														tooltip="{i18n>TestRecorder.Inspect.Properties.Property.Icon.Tooltip}"
+														press="handlePropertyIconPress"/>
+													<Text text="{controls>property}"/>
+												</HBox>
+												<Text text="{controls>value}"/>
+												<Text text="{controls>type}"/>
+												<Text text="{controls>inheritedFrom}"/>
+											</ColumnListItem>
+										</Table>
+									</IconTabFilter>
+									<IconTabFilter
+										key="bindings"
+										text="{i18n>TestRecorder.Inspect.Bindings.Title}">
+										<Table
+											items="{controls>/bindings/context}"
+											headerText="{i18n>TestRecorder.Inspect.Bindings.Context.Header.Text}" >
+											<columns>
+												<Column>
+													<Text text="{i18n>TestRecorder.Inspect.Bindings.Path.Text}" />
+												</Column>
+												<Column>
+													<Text text="{i18n>TestRecorder.Inspect.Bindings.Model.Text}" />
+												</Column>
+											</columns>
+											<ColumnListItem>
+												<Text text="{controls>path}"/>
+												<Text text="{controls>model}"/>
+											</ColumnListItem>
+										</Table>
+										<Table
+											items="{controls>/bindings/properties}"
+											headerText="{i18n>TestRecorder.Inspect.Bindings.Properties.Header.Text}" >
+											<columns>
+												<Column>
+													<Text text="{i18n>TestRecorder.Inspect.Bindings.Property.Text}" />
+												</Column>
+												<Column>
+													<Text text="{i18n>TestRecorder.Inspect.Bindings.RelativePath.Text}" />
+												</Column>
+												<Column>
+													<Text text="{i18n>TestRecorder.Inspect.Bindings.AbsolutePath.Text}" />
+												</Column>
+												<Column>
+													<Text text="{i18n>TestRecorder.Inspect.Bindings.Model.Text}" />
+												</Column>
+											</columns>
+											<ColumnListItem>
+												<Text text="{controls>property}"/>
+												<Text text="{controls>relativePath}"/>
+												<Text text="{controls>absolutePath}"/>
+												<Text text="{controls>model}"/>
+											</ColumnListItem>
+										</Table>
+										<Table
+											items="{controls>/bindings/aggregations}"
+											headerText="{i18n>TestRecorder.Inspect.Bindings.Aggregations.Header.Text}" >
+											<columns>
+												<Column>
+													<Text text="{i18n>TestRecorder.Inspect.Bindings.Aggregation.Text}" />
+												</Column>
+												<Column>
+													<Text text="{i18n>TestRecorder.Inspect.Bindings.RelativePath.Text}" />
+												</Column>
+												<Column>
+													<Text text="{i18n>TestRecorder.Inspect.Bindings.AbsolutePath.Text}" />
+												</Column>
+												<Column>
+													<Text text="{i18n>TestRecorder.Inspect.Bindings.Model.Text}" />
+												</Column>
+											</columns>
+											<ColumnListItem>
+												<Text text="{controls>aggregation}"/>
+												<Text text="{controls>relativePath}"/>
+												<Text text="{controls>absolutePath}"/>
+												<Text text="{controls>model}"/>
+											</ColumnListItem>
+										</Table>
+									</IconTabFilter>
+								</items>
+							</IconTabBar>
+						</Panel>
+					</l:SplitPane>
+				</l:PaneContainer>
+			</l:ResponsiveSplitter>
+
+		</l:flexContent>
+	</l:FixFlex>
+</Page>
+</mvc:View>

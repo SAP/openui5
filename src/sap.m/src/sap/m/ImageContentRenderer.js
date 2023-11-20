@@ -10,7 +10,9 @@ sap.ui.define([],
 	 * ImageContent renderer.
 	 * @namespace
 	 */
-	var ImageContentRenderer = {};
+	var ImageContentRenderer = {
+		apiVersion : 2  // enable in-place DOM patching
+	};
 
 	/**
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
@@ -19,26 +21,24 @@ sap.ui.define([],
 	 * @param {sap.m.ImageContent} oControl the control to be rendered
 	 */
 	ImageContentRenderer.render = function(oRm, oControl) {
-		oRm.write("<div");
-		oRm.writeControlData(oControl);
-		oRm.addClass("sapMImageContent");
+		oRm.openStart("div",oControl);
+		oRm.class("sapMImageContent");
 		var sTooltip = oControl.getTooltip_AsString();
 		if (sTooltip) {
-			oRm.writeAttributeEscaped("title", sTooltip);
+			oRm.attr("title", sTooltip);
 		}
 		if (oControl.hasListeners("press")) {
-			oRm.addClass("sapMPointer");
-			oRm.writeAttribute("tabindex", "0");
+			oRm.class("sapMPointer");
+			oRm.attr("tabindex", "0");
 		}
-		oRm.writeClasses();
-		oRm.write(">");
+		oRm.openEnd();
 
 		var oContent = oControl.getAggregation("_content");
 		if (oContent) {
 			oContent.addStyleClass("sapMImageContentImageIcon");
 			oRm.renderControl(oContent);
 		}
-		oRm.write("</div>");
+		oRm.close("div");
 	};
 
 	return ImageContentRenderer;

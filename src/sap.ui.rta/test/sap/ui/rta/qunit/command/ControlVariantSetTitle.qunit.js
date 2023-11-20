@@ -1,167 +1,105 @@
-/* global QUnit sinon */
-
-jQuery.sap.require("sap.ui.qunit.qunit-coverage");
+/* global QUnit */
 
 sap.ui.define([
-	// internal:
-	'sap/ui/fl/Utils',
-	'sap/ui/core/Manifest',
-	'sap/ui/rta/command/CommandFactory',
-	'sap/ui/dt/ElementDesignTimeMetadata',
-	'sap/ui/dt/OverlayRegistry',
-	'sap/ui/dt/ElementOverlay',
-	'sap/ui/fl/variants/VariantManagement',
-	'sap/ui/rta/plugin/ControlVariant',
-	'sap/ui/fl/variants/VariantModel',
-	'sap/ui/fl/FlexControllerFactory',
-	// should be last:
-	'sap/ui/thirdparty/sinon',
-	'sap/ui/thirdparty/sinon-ie',
-	'sap/ui/thirdparty/sinon-qunit'
-],
-function(
-	Utils,
-	Manifest,
-	CommandFactory,
-	ElementDesignTimeMetadata,
-	OverlayRegistry,
-	ElementOverlay,
+	"sap/ui/fl/variants/VariantManagement",
+	"sap/ui/fl/Layer",
+	"sap/ui/fl/apply/api/ControlVariantApplyAPI",
+	"sap/ui/rta/command/CommandFactory",
+	"sap/ui/rta/library",
+	"sap/ui/thirdparty/sinon-4",
+	"test-resources/sap/ui/fl/api/FlexTestAPI",
+	"test-resources/sap/ui/rta/qunit/RtaQunitUtils"
+], function(
 	VariantManagement,
-	ControlVariant,
-	VariantModel,
-	FlexControllerFactory
+	Layer,
+	ControlVariantApplyAPI,
+	CommandFactory,
+	rtaLibrary,
+	sinon,
+	FlexTestAPI,
+	RtaQunitUtils
 ) {
-	'use strict';
+	"use strict";
 
-	var oManifestObj = {
-		"sap.app": {
-			id: "MyComponent",
-			"applicationVersion": {
-				"version": "1.2.3"
-			}
-		}
-	};
-	var oManifest = new Manifest(oManifestObj);
+	var sandbox = sinon.createSandbox();
+	var oMockedAppComponent = RtaQunitUtils.createAndStubAppComponent(sinon, "Dummy");
 
-	var oMockedAppComponent = {
-		getLocalId: function () {
-			return undefined;
-		},
-		getModel: function () {return oModel;},
-		getId: function() {
-			return "RTADemoAppMD";
-		},
-		getManifestObject: function() {
-			return oManifest;
-		}
-	};
-
-	sinon.stub(Utils, "getAppComponentForControl").returns(oMockedAppComponent);
-	sinon.stub(Utils, "getComponentClassName").returns("Dummy.Component");
-
-	var oFlexController = FlexControllerFactory.createForControl(oMockedAppComponent, oManifest);
-	var oData = {
-		"variantMgmtId1": {
-			"defaultVariant": "variant0",
-			"variants": [
-				{
-					"author": "SAP",
-					"key": "variantMgmtId1",
-					"layer": "VENDOR",
-					"visible": true,
-					"title": "Standard"
-				}, {
-					"author": "Me",
-					"key": "variant0",
-					"layer": "CUSTOMER",
-					"visible": true,
-					"title": "variant A"
+	QUnit.module("FLVariant Set Title", {
+		beforeEach() {
+			var oData = {
+				variantMgmtId1: {
+					currentVariant: "variant0",
+					defaultVariant: "variant0",
+					variants: [
+						{
+							author: "Me",
+							key: "variant0",
+							layer: Layer.CUSTOMER,
+							visible: true,
+							title: "variant A"
+						}
+					]
 				}
-			]
-		}
-	};
-
-	var oModel = new VariantModel(oData, oFlexController, oMockedAppComponent);
-
-	var oVariant = {
-		"content": {
-			"fileName":"variant0",
-			"content": {
-				"title": "variant A"
-			},
-			"layer":"CUSTOMER",
-			"variantReference":"variant00",
-			"reference": "Dummy.Component"
-		},
-		"controlChanges" : [
-			{
-				"fileName":"change44",
-				"layer":"CUSTOMER"
-			},
-			{
-				"fileName":"change45",
-				"layer":"CUSTOMER"
-			}
-		]
-	};
-
-	sinon.stub(oModel, "getVariant").returns(oVariant);
-	sinon.stub(oModel.oVariantController, "_setVariantData").returns(1);
-	sinon.stub(oModel.oVariantController, "_updateChangesForVariantManagementInMap");
-
-	QUnit.module("Given a variant management control ...", {
-		beforeEach : function(assert) {
-			this.oVariantManagement = new VariantManagement("variantMgmtId1");
-			this.oVariantManagement.setModel(oModel, "$FlexVariants");
-		},
-		afterEach : function(assert) {
-			this.oVariantManagement.destroy();
-		}
-	});
-
-	QUnit.test("when calling command factory for setTitle and undo", function(assert) {
-		var done = assert.async();
-
-		var oDummyOverlay = {
-			getVariantManagement : function(){
-				return "idMain1--variantManagementOrdersTable";
-			}
-		};
-		sinon.stub(OverlayRegistry, "getOverlay").returns(oDummyOverlay);
-
-		var oDesignTimeMetadata = new ElementDesignTimeMetadata({ data : {} });
-		var mFlexSettings = {layer: "CUSTOMER"};
-		var sNewText = "Test";
-
-		var oControlVariantSetTitleCommand = CommandFactory.getCommandFor(this.oVariantManagement, "setTitle", {
-			newText : sNewText
-		}, oDesignTimeMetadata, mFlexSettings);
-
-		assert.ok(oControlVariantSetTitleCommand, "control variant setTitle command exists for element");
-		oControlVariantSetTitleCommand.execute().then(function() {
-			var oTitleChange = oControlVariantSetTitleCommand.getVariantChange();
-			var oPreparedChange = oControlVariantSetTitleCommand.getPreparedChange();
-			assert.equal(oPreparedChange, oTitleChange, "then the prepared change is available");
-			assert.equal(oTitleChange.getText("title"), sNewText, "then title is correctly set in change");
-			var oData = oControlVariantSetTitleCommand.oModel.getData();
-			assert.equal(oData["variantMgmtId1"].variants[1].title, sNewText, "then title is correctly set in model");
-			assert.equal(this.oVariantManagement.getTitle().getText(), sNewText, "then title is correctly set in variant management control");
-			assert.equal(oControlVariantSetTitleCommand.oModel.oFlexController._oChangePersistence.getDirtyChanges().length, 1, "then 1 dirty change is present");
-
-			oControlVariantSetTitleCommand.undo().then( function() {
-				oTitleChange = oControlVariantSetTitleCommand.getVariantChange();
-				oPreparedChange = oControlVariantSetTitleCommand.getPreparedChange();
-				assert.notOk(oPreparedChange, "then no prepared change is available after undo");
-				oData = oControlVariantSetTitleCommand.oModel.getData();
-				assert.equal(oData["variantMgmtId1"].variants[1].title, "variant A", "then title is correctly reverted in model");
-				assert.equal(this.oVariantManagement.getTitle().getText(), "variant A", "then title is correctly set in variant management control");
-				assert.equal(oControlVariantSetTitleCommand.oModel.oFlexController._oChangePersistence.getDirtyChanges().length, 0, "then the dirty change is removed");
-				assert.notOk(oTitleChange, "then title change from command unset");
-				done();
+			};
+			return FlexTestAPI.createVariantModel({
+				data: oData,
+				appComponent: this.oMockedAppComponent
+			}).then(function(oInitializedModel) {
+				this.oModel = oInitializedModel;
+				this.oVariantManagement = new VariantManagement("variantMgmtId1");
+				this.oVariantManagement.setModel(this.oModel, ControlVariantApplyAPI.getVariantModelName());
+				sandbox.stub(oMockedAppComponent, "getModel").returns(this.oModel);
 			}.bind(this));
-		}.bind(this));
+		},
+		afterEach() {
+			sandbox.restore();
+		}
+	}, function() {
+		QUnit.test("execute and undo", function(assert) {
+			var oSetTitleCommand;
+			var sNewText = "Test";
+			var oAddChangeStub = sandbox.stub(this.oModel, "addVariantChange").resolves("setTitleChange");
+			var oDeleteStub = sandbox.stub(this.oModel, "deleteVariantChange").resolves();
 
+			return CommandFactory.getCommandFor(this.oVariantManagement, "setTitle", {
+				newText: sNewText
+			}, null, {layer: Layer.CUSTOMER})
+
+			.then(function(oCommand) {
+				oSetTitleCommand = oCommand;
+				return oSetTitleCommand.execute();
+			}).then(function() {
+				assert.strictEqual(oSetTitleCommand.getOldText(), "variant A", "the old text was set in the command");
+				var mExpectedParams = {
+					appComponent: oMockedAppComponent,
+					variantReference: "variant0",
+					changeType: "setTitle",
+					title: sNewText,
+					layer: Layer.CUSTOMER,
+					generator: rtaLibrary.GENERATOR_NAME
+				};
+				assert.strictEqual(oAddChangeStub.callCount, 1, "the add function was called once");
+				assert.deepEqual(oAddChangeStub.firstCall.args[0], "variantMgmtId1", "the first parameter is the variantManagement reference");
+				assert.deepEqual(oAddChangeStub.firstCall.args[1], mExpectedParams, "the second parameter is the correct property bag");
+
+				return oSetTitleCommand.undo();
+			}).then(function() {
+				var mExpectedParams = {
+					variantReference: "variant0",
+					changeType: "setTitle",
+					title: "variant A"
+				};
+				assert.strictEqual(oDeleteStub.callCount, 1, "the change got deleted");
+				assert.strictEqual(oDeleteStub.firstCall.args[0], "variantMgmtId1", "the vm reference was passed");
+				assert.deepEqual(oDeleteStub.firstCall.args[1], mExpectedParams, "the propertyBag was passed");
+				assert.strictEqual(oDeleteStub.firstCall.args[2], "setTitleChange", "the change was passed");
+			});
+		});
 	});
 
-
+	QUnit.done(function() {
+		oMockedAppComponent._restoreGetAppComponentStub();
+		oMockedAppComponent.destroy();
+		document.getElementById("qunit-fixture").style.display = "none";
+	});
 });

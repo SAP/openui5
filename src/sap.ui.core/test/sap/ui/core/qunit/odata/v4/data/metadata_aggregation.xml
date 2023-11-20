@@ -1,0 +1,279 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<edmx:Edmx xmlns="http://docs.oasis-open.org/odata/ns/edm" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx" Version="4.0">
+	<edmx:Reference Uri="http://docs.oasis-open.org/odata/odata/v4.0/errata03/os/complete/vocabularies/Org.OData.Measures.V1.xml">
+		<edmx:Include Namespace="Org.OData.Measures.V1" Alias="Measures"/>
+	</edmx:Reference>
+	<edmx:Reference Uri="http://docs.oasis-open.org/odata/odata/v4.0/errata03/os/complete/vocabularies/Org.OData.Core.V1.xml">
+		<edmx:Include Namespace="Org.OData.Core.V1" Alias="Core"/>
+	</edmx:Reference>
+	<edmx:Reference Uri="/odata/vocabularies/blob/master/Common.xml">
+		<edmx:Include Namespace="com.sap.vocabularies.Common.v1" Alias="Common"/>
+	</edmx:Reference>
+	<edmx:Reference Uri="http://docs.oasis-open.org/odata/odata-data-aggregation-ext/v4.0/cs02/vocabularies/Org.OData.Aggregation.V1.xml">
+		<edmx:Include Namespace="Org.OData.Aggregation.V1" Alias="Aggregation"/>
+	</edmx:Reference>
+	<edmx:Reference Uri="/odata/vocabularies/blob/master/Analytics.xml">
+		<edmx:Include Namespace="com.sap.vocabularies.Analytics.v1" Alias="Analytics"/>
+	</edmx:Reference>
+	<edmx:DataServices>
+		<Schema Namespace="com.odata.v4.aggregation.BusinessPartnerTest" Alias="Self">
+			<EntityType Name="BusinessPartnerType">
+				<Key>
+					<PropertyRef Name="Id"/>
+				</Key>
+				<Property Name="Id" Type="Edm.Int16" Nullable="false">
+					<Annotation Term="Common.Label">
+						<String>Business Partner Id</String>
+					</Annotation>
+				</Property>
+				<Property Name="Name" Type="Edm.String" Nullable="false">
+					<Annotation Term="Aggregation.Groupable">
+						<Bool>true</Bool>
+					</Annotation>
+					<Annotation Term="Common.Label">
+						<String>Business Partner</String>
+					</Annotation>
+				</Property>
+				<Property Name="Country" Type="Edm.String" Nullable="false">
+					<Annotation Term="Aggregation.Groupable">
+						<Bool>true</Bool>
+					</Annotation>
+					<Annotation Term="Common.Label">
+						<String>Country Key</String>
+					</Annotation>
+				</Property>
+				<Property Name="CountryText" Type="Edm.String" Nullable="false">
+					<Annotation Term="Aggregation.Groupable">
+						<Bool>true</Bool>
+					</Annotation>
+					<Annotation Term="Common.Label">
+						<String>Country Text</String>
+					</Annotation>
+				</Property>
+				<Property Name="Region" Type="Edm.String" Nullable="false">
+					<Annotation Term="Aggregation.Groupable">
+						<Bool>true</Bool>
+					</Annotation>
+					<Annotation Term="Common.Label">
+						<String>Region Key</String>
+					</Annotation>
+				</Property>
+				<Property Name="RegionText" Type="Edm.String" Nullable="false">
+					<Annotation Term="Aggregation.Groupable">
+						<Bool>true</Bool>
+					</Annotation>
+					<Annotation Term="Common.Label">
+						<String>Region Text</String>
+					</Annotation>
+				</Property>
+				<Property Name="Segment" Type="Edm.String" Nullable="false">
+					<Annotation Term="Aggregation.Groupable">
+						<Bool>true</Bool>
+					</Annotation>
+					<Annotation Term="Common.Label">
+						<String>Segment</String>
+					</Annotation>
+				</Property>
+				<Property Name="Industry" Type="Edm.String" Nullable="false">
+					<Annotation Term="Aggregation.Groupable">
+						<Bool>true</Bool>
+					</Annotation>
+					<Annotation Term="Common.Label">
+						<String>Industry</String>
+					</Annotation>
+				</Property>
+				<Property Name="AccountResponsible" Type="Edm.String" Nullable="false">
+					<Annotation Term="Aggregation.Groupable">
+						<Bool>true</Bool>
+					</Annotation>
+					<Annotation Term="Common.Label">
+						<String>Account Responsible</String>
+					</Annotation>
+				</Property>
+				<Property Name="SalesNumber" Type="Edm.Int32" Nullable="false">
+					<Annotation Term="Aggregation.Aggregatable">
+						<Bool>true</Bool>
+					</Annotation>
+					<Annotation Term="Common.Label">
+						<String>Sales Number</String>
+					</Annotation>
+				</Property>
+				<Property Name="SalesAmount" Type="Edm.Decimal" Precision="16">
+					<Annotation Term="Measures.ISOCurrency">
+						<Path>Currency</Path>
+					</Annotation>
+					<Annotation Term="Aggregation.Aggregatable">
+						<Bool>true</Bool>
+					</Annotation>
+					<Annotation Term="Common.Label">
+						<String>Sales Amount</String>
+					</Annotation>
+					<Annotation Term="Aggregation.ContextDefiningProperties">
+						<Collection>
+							<PropertyPath>Currency</PropertyPath>
+						</Collection>
+					</Annotation>
+				</Property>
+				<Property Name="SalesAmountLocalCurrency" Type="Edm.Decimal" Precision="16">
+					<Annotation Term="Measures.ISOCurrency">
+						<Path>LocalCurrency</Path>
+					</Annotation>
+					<Annotation Term="Aggregation.Aggregatable">
+						<Bool>true</Bool>
+					</Annotation>
+					<Annotation Term="Aggregation.ContextDefiningProperties">
+						<Collection>
+							<PropertyPath>LocalCurrency</PropertyPath>
+						</Collection>
+					</Annotation>
+					<Annotation Term="Common.Label">
+						<String>Currency (Sales Amount)</String>
+					</Annotation>
+				</Property>
+				<Property Name="AmountPerSale" Type="Edm.Decimal" Precision="16">
+					<Annotation Term="Measures.ISOCurrency">
+						<Path>Currency</Path>
+					</Annotation>
+					<Annotation Term="Aggregation.Aggregatable">
+						<Bool>true</Bool>
+					</Annotation>
+					<Annotation Term="Aggregation.ContextDefiningProperties">
+						<Collection>
+							<PropertyPath>Currency</PropertyPath>
+						</Collection>
+					</Annotation>
+					<Annotation Term="Common.Label">
+						<String>Amount per Sale</String>
+					</Annotation>
+				</Property>
+				<Property Name="Currency" Type="Edm.String" Nullable="false">
+					<Annotation Term="Aggregation.Groupable">
+						<Bool>true</Bool>
+					</Annotation>
+					<Annotation Term="Common.Label">
+						<String>Currency</String>
+					</Annotation>
+				</Property>
+				<Property Name="LocalCurrency" Type="Edm.String" Nullable="false">
+					<Annotation Term="Aggregation.Groupable">
+						<Bool>true</Bool>
+					</Annotation>
+					<Annotation Term="Common.Label">
+						<String>Local Currency</String>
+					</Annotation>
+				</Property>
+				<Property Name="myMessages" Type="Collection(Self.MessageType)">
+					<Annotation Term="Common.Label">
+						<String>Messages</String>
+					</Annotation>
+				</Property>
+				<Annotation Term="Common.Messages">
+					<Path>myMessages</Path>
+				</Annotation>
+			</EntityType>
+			<EntityType Name="MessageDetailsType">
+				<Key>
+					<PropertyRef Name="Id"/>
+				</Key>
+				<Property Name="Id" Type="Edm.Int16" Nullable="false"/>
+				<Property Name="LongText" Type="Edm.String" Nullable="false"/>
+			</EntityType>
+			<ComplexType Name="MessageType">
+				<Property Name="code" Type="Edm.String" Nullable="false"/>
+				<Property Name="message" Type="Edm.String" Nullable="false"/>
+				<Property Name="numericSeverity" Type="Edm.Byte" Nullable="false"/>
+				<Property Name="transition" Type="Edm.Boolean" Nullable="false"/>
+				<Property Name="target" Type="Edm.String"/>
+				<Property Name="longtextUrl" Type="Edm.String"/>
+			</ComplexType>
+			<EntityContainer Name="Container">
+				<EntitySet Name="BusinessPartners" EntityType="Self.BusinessPartnerType"/>
+				<EntitySet Name="Messages" EntityType="Self.MessageDetailsType"/>
+				<Annotation Term="Aggregation.ApplySupported">
+					<Record>
+						<PropertyValue Property="Transformations">
+							<Collection>
+								<String>aggregate</String>
+								<String>topcount</String>
+								<String>bottomcount</String>
+								<String>identity</String>
+								<String>concat</String>
+								<String>groupby</String>
+								<String>filter</String>
+								<String>expand</String>
+								<String>top</String>
+								<String>skip</String>
+								<String>orderby</String>
+							</Collection>
+						</PropertyValue>
+						<PropertyValue Property="CustomAggregationMethods">
+							<Collection>
+								<String>Custom.concat</String>
+							</Collection>
+						</PropertyValue>
+						<PropertyValue Property="Rollup">
+							<EnumMember>Aggregation.RollupType/None</EnumMember>
+						</PropertyValue>
+						<PropertyValue Property="PropertyRestrictions">
+							<Bool>true</Bool>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+			</EntityContainer>
+			<Annotations Target="Self.BusinessPartnerType">
+				<Annotation Term="Aggregation.CustomAggregate" Qualifier="SalesAmount">
+					<Annotation Term="Aggregation.ContextDefiningProperties">
+						<Collection>
+							<PropertyPath>Currency</PropertyPath>
+						</Collection>
+					</Annotation>
+					<String>Edm.Decimal</String>
+				</Annotation>
+				<Annotation Term="Aggregation.CustomAggregate" Qualifier="SalesAmountMUH">
+					<Annotation Term="Aggregation.ContextDefiningProperties">
+						<Collection>
+							<PropertyPath>Currency</PropertyPath>
+						</Collection>
+					</Annotation>
+					<String>Edm.Decimal</String>
+				</Annotation>
+				<Annotation Term="Aggregation.CustomAggregate" Qualifier="SalesAmountLocalCurrency">
+					<Annotation Term="Aggregation.ContextDefiningProperties">
+						<Collection>
+							<PropertyPath>LocalCurrency</PropertyPath>
+						</Collection>
+					</Annotation>
+					<String>Edm.Decimal</String>
+				</Annotation>
+				<Annotation Term="Aggregation.CustomAggregate" Qualifier="SalesAmountLocalCurrencyMUH">
+					<Annotation Term="Aggregation.ContextDefiningProperties">
+						<Collection>
+							<PropertyPath>LocalCurrency</PropertyPath>
+						</Collection>
+					</Annotation>
+					<String>Edm.Decimal</String>
+				</Annotation>
+				<Annotation Term="Aggregation.CustomAggregate" Qualifier="AmountPerSale">
+					<Annotation Term="Aggregation.ContextDefiningProperties">
+						<Collection>
+							<PropertyPath>Currency</PropertyPath>
+						</Collection>
+					</Annotation>
+					<String>Edm.Decimal</String>
+				</Annotation>
+				<Annotation Term="Aggregation.CustomAggregate" Qualifier="SalesNumber">
+					<String>Edm.Int32</String>
+				</Annotation>
+				<Annotation Term="Aggregation.CustomAggregate" Qualifier="NumberOfCustomers">
+					<String>Edm.Int32</String>
+				</Annotation>
+				<Annotation Term="Aggregation.CustomAggregate" Qualifier="LocalCurrency">
+					<String>Edm.String</String>
+				</Annotation>
+				<Annotation Term="Aggregation.CustomAggregate" Qualifier="Currency">
+					<String>Edm.String</String>
+				</Annotation>
+			</Annotations>
+		</Schema>
+	</edmx:DataServices>
+</edmx:Edmx>

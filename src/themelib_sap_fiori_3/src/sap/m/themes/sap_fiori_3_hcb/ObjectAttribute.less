@@ -1,0 +1,64 @@
+/* ====================================== */
+/* CSS for control sap.m/ObjectAttribute  */
+/* Quartz High Contrast Black theme       */
+/* ====================================== */
+
+@_sap_m_ObjectAttribute_ListTextShadowColor: none;
+
+.sapMListTbl .sapMObjectAttributeActive .sapMText,
+.sapMObjectAttributeActive .sapMText,
+.sapMObjectAttributeActive .sapMObjectAttributeText {
+	text-decoration: underline;
+}
+
+.sapMObjectAttributeActive .sapMObjectAttributeText:focus {
+	position: relative;
+}
+
+.sapMObjectAttributeActive .sapMObjectAttributeText:focus::after {
+	pointer-events: none;
+	display: block;
+	content: "";
+	position: absolute;
+	top: 2px;
+	left: 1px;
+	bottom: 2px;
+	right: 1px;
+	outline: 2px dotted @sapUiContentFocusColor;
+}
+
+.sapMObjectAttributeActive .sapMObjectAttributeText:focus {
+	text-decoration: none;
+}
+
+.sapMObjectAttributeActive .sapMObjectAttributeText:active,
+.sapMObjectAttributeActive .sapMObjectAttributeText:hover {
+	text-decoration: none;
+	color: @sapUiLinkHover;
+}
+
+/*=========================================== */
+/* Custom design for Responsive Object Header */
+/*=========================================== */
+
+.sapMOHR .sapMObjectAttributeActive .sapMObjectAttributeText:active,
+.sapMOHR .sapMObjectAttributeActive .sapMObjectAttributeText:hover,
+.sapMOHR .sapMObjectAttributeActive .sapMObjectAttributeText:focus {
+	text-decoration: none;
+	color: @sapUiLinkHover;
+}
+
+/*=========================================== */
+/* Custom design for Static Object Header     */
+/*=========================================== */
+
+.sapMOH .sapMObjectAttributeActive .sapMObjectAttributeText:active,
+.sapMOH .sapMObjectAttributeActive .sapMObjectAttributeText:hover {
+	text-decoration: none;
+	color: @sapUiLinkHover;
+}
+
+.sapMOHR .sapMObjectAttributeActive .sapMObjectAttributeText,
+.sapMOH .sapMObjectAttributeActive .sapMObjectAttributeText {
+	text-shadow: @_sap_m_ObjectAttribute_ListTextShadowColor;
+}

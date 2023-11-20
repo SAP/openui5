@@ -1,0 +1,63 @@
+<mvc:View
+	controllerName="sap.m.sample.TableViewSettingsDialog.SettingsDialogController"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m"
+	height="100%">
+	<Page showHeader="false">
+		<Table id="idProductsTable"
+			items="{/ProductCollection}">
+			<headerToolbar>
+				<OverflowToolbar>
+					<Title text="Products" level="H2"/>
+					<ToolbarSpacer/>
+					<Button
+						tooltip="Sort"
+						icon="sap-icon://sort"
+						press="handleSortButtonPressed"/>
+					<Button
+						tooltip="Filter"
+						icon="sap-icon://filter"
+						press="handleFilterButtonPressed"/>
+					<Button
+						tooltip="Group"
+						icon="sap-icon://group-2"
+						press="handleGroupButtonPressed"/>
+					<ToggleButton icon="sap-icon://menu" tooltip="Enable Custom Context Menu" press="onToggleContextMenu" />
+				</OverflowToolbar>
+			</headerToolbar>
+			<infoToolbar>
+				<OverflowToolbar id="vsdFilterBar" visible="false">
+					<Text id="vsdFilterLabel" />
+				</OverflowToolbar>
+			</infoToolbar>
+			<columns>
+				<Column id="product" width="12em" headerMenu="columnHeaderMenu"><Text text="Product" /></Column>
+				<Column minScreenWidth="Tablet" demandPopin="true"><Text text="Supplier" /></Column>
+				<Column minScreenWidth="Tablet" demandPopin="true" hAlign="End"><Text text="Dimensions" /></Column>
+				<Column minScreenWidth="Tablet" demandPopin="true" hAlign="Center"><Text text="Weight" /></Column>
+				<Column hAlign="End"><Text text="Price" /></Column>
+			</columns>
+			<items>
+				<ColumnListItem vAlign="Middle">
+					<cells>
+						<ObjectIdentifier title="{Name}" text="{ProductId}" />
+						<Text text="{SupplierName}" />
+						<Text text="{Width} x {Depth} x {Height} {DimUnit}" />
+						<ObjectNumber number="{WeightMeasure}" unit="{WeightUnit}"
+							state="{
+								path: 'WeightMeasure',
+								formatter: 'sap.m.sample.TableViewSettingsDialog.Formatter.weightState'
+							}" />
+						<ObjectNumber
+								number="{
+									parts:[{path:'Price'},{path:'CurrencyCode'}],
+									type: 'sap.ui.model.type.Currency',
+									formatOptions: {showMeasure: false}
+								}"
+								unit="{CurrencyCode}" />
+					</cells>
+				</ColumnListItem>
+			</items>
+		</Table>
+	</Page>
+</mvc:View>

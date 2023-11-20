@@ -62,7 +62,7 @@
 
 				<ToolbarSpacer/>
 
-				<Button text="Save" type="Accept" enabled="{view>/dirty}" press="onSave"/>
+				<Button text="Save" type="Accept" press="onSave"/>
 				<Button text="Revert Changes" type="Reject" press="onRevertChanges"/>
 				<Button text="Has pending changes" press="onCheckHasPendingChanges"/>
 

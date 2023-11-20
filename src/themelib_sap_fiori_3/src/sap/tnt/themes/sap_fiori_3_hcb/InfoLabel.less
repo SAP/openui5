@@ -1,0 +1,33 @@
+/* ================================= */
+/* CSS for control sap.tnt/InfoLabel */
+/* Quartz High Contrast Black theme   */
+/* ================================= */
+
+// ==========================================================================
+// Variables overriding
+// ==========================================================================
+
+@_sap_tnt_InfoLabel_LineHeightDisplayOnly: 0.875rem;
+
+.sapTntInfoLabel {
+	background: @sapUiGroupContentBackground;
+	border: solid 0.0625rem @sapUiGroupContentBorderColor;
+
+	.sapTntInfoLabelInner {
+		color: @sapUiBaseText;
+	}
+
+	&.sapTntInfoLabelDisplayOnly {
+		background: @sapUiGroupContentBackground;
+		border: solid 1px @sapUiGroupContentBorderColor;
+
+		.sapTntInfoLabelInner {
+			color: @sapUiBaseText;
+			line-height: 0.875rem;
+		}
+
+		&.sapTntInfoLabelWithIcon .sapUiIcon {
+			line-height: 0.875rem;
+		}
+	}
+}

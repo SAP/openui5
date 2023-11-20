@@ -1,0 +1,96 @@
+{
+	"_version": "1.12.0",
+	"sap.app": {
+		"id": "sap.my.test.widget.component",
+		"type": "card",
+		"i18n": {
+			"bundleUrl": "i18n/i18n.properties",
+			"supportedLocales": [
+				"",
+				"de",
+				"en"
+			],
+			"fallbackLocale": "en"
+		},
+		"title": "{{TITLE}}",
+		"subTitle": "{{SUBTITLE}}",
+		"shortTitle": "{{SHORTTITLE}}",
+		"info": "{{INFO}}",
+		"description": "{{DESCRIPTION}}",
+		"tags": {
+			"keywords": [
+				"{{KEYWORD1}}",
+				"{{KEYWORD2}}"
+			]
+		}
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"icons": {
+			"icon": "img/app_icon.png"
+		}
+	},
+	"sap.ui5": {
+		"dependencies": {
+			"minUI5Version": "1.67.0",
+			"libs": {
+				"sap.m": {},
+				"sap.ui.core": {}
+			}
+		},
+		"rootView": {
+			"viewName": "sap.my.test.widget.component.view.Widget",
+			"type": "XML",
+			"async": true,
+			"id": "app"
+		},
+		"models": {
+			"i18n": {
+				"type": "sap.ui.model.resource.ResourceModel",
+				"settings": {
+					"bundleName": "sap.my.test.widget.component.i18n.i18n",
+					"supportedLocales": [
+						"",
+						"de",
+						"en"
+					],
+					"fallbackLocale": "en"
+				}
+			}
+		},
+		"resources": {
+			"css": [
+				{
+					"uri": "css/styles.css"
+				}
+			]
+		}
+	},
+	"sap.card": {
+		"type": "Component",
+		"configuration": {
+			"parameters": {
+				"text": {
+					"value": "{{TITLE}}"
+				},
+				"stringProperty": {
+					"value": "stringValue"
+				},
+				"intProperty": {
+					"value" : 2
+				},
+				"floatProperty": {
+					"value": 2.2
+				},
+				"dateProperty": {
+					"value": "2019-12-12T20:00"
+				}
+			},
+			"destinations": {
+				"myDestination": {
+					"name": "Northwind"
+				}
+			}
+		}
+	}
+}

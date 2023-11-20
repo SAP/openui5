@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>Card</title>
+	<script type="text/javascript"
+			src="../../../../../resources/sap-ui-core.js"
+			id="sap-ui-bootstrap"
+			data-sap-ui-bindingSyntax="complex"
+			data-sap-ui-libs="sap.m"
+			data-sap-ui-compatVersion="edge"
+			data-sap-ui-preload="async"
+			data-sap-ui-async="true"
+			data-sap-ui-theme="sap_belize"
+			data-sap-ui-language="en">
+	</script>
+
+	<script>
+		sap.ui.getCore().attachInit(function () {
+			sap.ui.require([
+				"sap/ui/integration/widgets/Card"
+			], function (Card) {
+
+				var oManifest = {
+					"sap.app": {
+						"type": "card",
+						"i18n": "i18n/i18n.properties",
+						"id": "my.card"
+					},
+					"sap.card": {
+						"type": "List",
+						"header": {
+							"title": "{{appTitle}}",
+							"subTitle": "{{appDescription}}",
+							"icon": {
+								"src": "./icons/edit.png"
+							}
+						}
+					}
+				};
+
+				var sManifestUrl = "./bundle/manifest.json";
+
+				var oCard = new Card({
+					width: "400px",
+					height: "auto",
+					manifest: oManifest,
+					baseUrl: "./bundle/"
+				});
+				var oCard2 = new Card({
+					width: "400px",
+					height: "auto",
+					manifest: sManifestUrl
+				});
+				oCard.placeAt("content");
+				oCard2.placeAt("content");
+			});
+		});
+	</script>
+</head>
+<body id="content" class="sapUiBody">
+</body>
+</html>

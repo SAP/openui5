@@ -4,18 +4,20 @@
 
 // Provides control sap.uxap.ObjectPageHeaderContent.
 sap.ui.define([
-    "sap/ui/core/Control",
-    "./library",
-    "sap/m/Button",
-    "./ObjectImageHelper",
-    "./ObjectPageHeaderContentRenderer"
+	"sap/ui/core/Control",
+	"./library",
+	"sap/m/Button",
+	"./ObjectImageHelper",
+	"./ObjectPageHeaderContentRenderer",
+	"sap/ui/core/Lib"
 ],
 	function(
-	    Control,
+		Control,
 		library,
 		Button,
 		ObjectImageHelper,
-		ObjectPageHeaderContentRenderer
+		ObjectPageHeaderContentRenderer,
+		Library
 	) {
 		"use strict";
 
@@ -56,7 +58,6 @@ sap.ui.define([
 		 * @public
 		 * @since 1.30
 		 * @alias sap.uxap.ObjectPageHeaderContent
-		 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 		 */
 		var ObjectPageHeaderContent = Control.extend("sap.uxap.ObjectPageHeaderContent", /** @lends sap.uxap.ObjectPageHeaderContent.prototype */ {
 			metadata: {
@@ -69,12 +70,13 @@ sap.ui.define([
 					 * Determines the design of the header - Light or Dark.
 					 * <b>Note: </b>This property is deprecated. It will continue to work in the Blue Crystal theme,
 					 * but it will not be taken into account for the Belize themes.
-					 * @deprecated Since version 1.40.1
+					 * @deprecated As of version 1.40.1
 					 */
 					contentDesign: {
 						type: "sap.uxap.ObjectPageHeaderDesign",
 						group: "Misc",
-						defaultValue: ObjectPageHeaderDesign.Light
+						defaultValue: ObjectPageHeaderDesign.Light,
+						deprecated: true
 					}
 				},
 				aggregations: {
@@ -92,9 +94,11 @@ sap.ui.define([
 
 					_objectImage: {type: "sap.ui.core.Control", multiple: false, visibility: "hidden"},
 
-					_placeholder: {type: "sap.ui.core.Icon", multiple: false, visibility: "hidden"}
+					_placeholder: {type: "sap.m.Avatar", multiple: false, visibility: "hidden"}
 				}
-			}
+			},
+
+			renderer: ObjectPageHeaderContentRenderer
 		});
 
 
@@ -106,7 +110,7 @@ sap.ui.define([
 				return;
 			}
 
-			if (oParent && (oParent instanceof library.ObjectPageLayout) && oParent.getShowEditHeaderButton()) {
+			if (oParent && oParent.isA("sap.uxap.ObjectPageLayout") && oParent.getShowEditHeaderButton()) {
 				oEditHeaderButton = this._getInternalBtnAggregation("_editHeaderButton", "EDIT_HEADER", "-editHeaderBtn", "Transparent");
 				oEditHeaderButton.attachPress(this._handleEditHeaderButtonPress, this);
 			}
@@ -127,7 +131,7 @@ sap.ui.define([
 		ObjectPageHeaderContent.prototype._getInternalBtnAggregation = function (sAggregationName, sBtnText, sBtnIdText, sBtnType) {
 			if (!this.getAggregation(sAggregationName)) {
 				var oBtn = new Button({
-					text: library.i18nModel.getResourceBundle().getText(sBtnText),
+					text: Library.getResourceBundleFor("sap.uxap").getText(sBtnText),
 					type: sBtnType,
 					id: this.getId() + sBtnIdText
 				});
@@ -184,18 +188,24 @@ sap.ui.define([
 
 			if (!oLayoutData) {
 				return;
-			} else if (oLayoutData instanceof library.ObjectPageHeaderLayoutData) {
+			} else if (oLayoutData.isA("sap.uxap.ObjectPageHeaderLayoutData")) {
 				return oLayoutData;
 			} else if (oLayoutData.getMetadata().getName() == "sap.ui.core.VariantLayoutData") {
 				// multiple LayoutData available - search here
 				var aLayoutData = oLayoutData.getMultipleLayoutData();
 				for (var i = 0; i < aLayoutData.length; i++) {
 					var oLayoutData2 = aLayoutData[i];
-					if (oLayoutData2 instanceof library.ObjectPageHeaderLayoutData) {
+					if (oLayoutData2.isA("sap.uxap.ObjectPageHeaderLayoutData")) {
 						return oLayoutData2;
 					}
 				}
 			}
+		};
+
+
+		ObjectPageHeaderContent.prototype.setVisible = function (bVisible) {
+			this.getParent() && this.getParent().toggleStyleClass("sapUxAPObjectPageLayoutNoHeaderContent", !bVisible);
+			return this.setProperty("visible", bVisible);
 		};
 
 		/**
@@ -203,12 +213,14 @@ sap.ui.define([
 		 * @param aContent
 		 * @param bVisible
 		 * @param sContentDesign
+		 * @param bPinnable
+		 * @param sStableId
 		 */
-		ObjectPageHeaderContent.createInstance = function (aContent, bVisible, sContentDesign) {
+		ObjectPageHeaderContent.createInstance = function (aContent, bVisible, sContentDesign /* not used */, bPinnable, sStableId) {
 			return new ObjectPageHeaderContent({
 				content: aContent,
 				visible: bVisible,
-				contentDesign: sContentDesign
+				id: sStableId
 			});
 		};
 

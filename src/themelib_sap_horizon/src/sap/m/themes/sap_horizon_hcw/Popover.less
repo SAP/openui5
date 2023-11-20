@@ -1,0 +1,170 @@
+/* ================================== */
+/* CSS for control sap.m/Popover      */
+/* Horizon High Contrast White theme  */
+/* ================================== */
+
+.sapMPopoverArr:after {
+	background: @sapUiGroupContentBackground;
+	box-shadow: @sapUiContentShadow2;
+}
+
+.sapMPopoverWithBar > .sapMPopoverArr {
+	&.sapMPopoverArrUp:after,
+	&.sapMPopoverHeaderAlignArr:after {
+		background-color: @sapUiPageHeaderBackground;
+	}
+}
+
+.sapMPopoverWithFooter > .sapMPopoverArr.sapMPopoverFooterAlignArr:after {
+	background-color: @sapUiPageFooterBackground;
+}
+
+.sapMPopover .sapMIBar.sapMHeader-CTX {
+	background-color: @sapUiPageHeaderBackground;
+}
+
+.sapMPopover .sapMIBar.sapMSubHeader-CTX {
+	background-color: @sapUiPageHeaderBackground;
+}
+
+.sapUiSizeCompact {
+	.sapMPopoverFooter, .sapMPopoverHeader {
+		.sapMIBar, .sapMBar {
+			height: 2.5rem;
+
+			& > .sapMBarLeft,
+			& > .sapMBarRight {
+				height: 2.5rem;
+				line-height: 2.5rem;
+
+				.sapMBtn {
+					vertical-align: middle;
+				}
+			}
+
+			& > .sapMBarMiddle .sapMBarPH {
+				height: 2.5rem;
+				line-height: 2.5rem;
+
+				.sapMBtn {
+					vertical-align: middle;
+				}
+			}
+		}
+	}
+}
+
+.sapMPopoverHeader, .sapMPopoverFooter, .sapMPopoverSubHeader {
+	.sapUi-Std-PaddingS, .sapUi-Std-PaddingM,
+	.sapUi-Std-PaddingL, .sapUi-Std-PaddingXL {
+		&.sapMBar {
+			.sapMBarMiddle .sapMBarPH {
+				padding-left: 0;
+				padding-right: 0;
+			}
+
+			.sapMBarLeft {
+				padding-left: inherit;
+
+				.sapMBarChild {
+					padding-right: 0.5rem;
+				}
+			}
+
+			.sapMBarRight {
+				padding-right: inherit;
+
+				.sapMBarChild {
+					padding-left: 0.5rem;
+				}
+			}
+		}
+	}
+}
+
+.sapMPopoverHeader, .sapMPopoverSubHeader {
+	position: relative;
+	z-index: 2;
+
+	.sapMBar {
+		.sapMBarContainer {
+			padding-left: 0;
+			padding-right: 0;
+		}
+		.sapMBarLeft {
+			padding-left: 1rem;
+		}
+		.sapMBarMiddle .sapMBarContainer {
+			padding: 0 1rem;
+		}
+		.sapMBarRight {
+			padding-right: 1rem;
+		}
+	}
+}
+
+.sapMPopoverWithoutSubHeader .sapMPopoverHeader, .sapMPopoverSubHeader {
+	&:after {
+		content: "";
+		position: absolute;
+		height: 1px;
+		bottom: 0px;
+		width: 100%;
+		box-shadow: @sapUiShadowHeader;
+		z-index: 1;
+	}
+
+	.sapMIBar-CTX {
+		z-index: 2;
+	}
+}
+
+.sapMPopoverWithSubHeader .sapMPopoverHeader .sapMIBar-CTX {
+	box-shadow: none;
+}
+
+.sapMPopover {
+	border-radius: @sapUiPopoverBorderCornerRadius;
+
+	.sapMPopoverCont {
+		padding: 0.0625rem;
+	}
+
+	&.sapMPopoverWithoutBar .sapMPopoverCont,
+	.sapMIBar.sapMHeader-CTX {
+		border-top-right-radius: @sapUiPopoverBorderCornerRadius;
+		border-top-left-radius: @sapUiPopoverBorderCornerRadius;
+	}
+
+	&.sapMPopoverWithoutFooter .sapMPopoverCont,
+	.sapMIBar.sapMFooter-CTX {
+		border-bottom-right-radius: @sapUiPopoverBorderCornerRadius;
+		border-bottom-left-radius: @sapUiPopoverBorderCornerRadius;
+	}
+}
+
+/* pointing downward arrow */
+.sapMPopoverArrDown:after {
+	margin: -0.5rem 0 0 0.125rem;
+}
+
+/* pointing right arrow */
+.sapMPopoverArrRight:after {
+	margin: 0.1875rem 0 0 -0.5rem;
+}
+
+/* pointing upward arrow */
+.sapMPopoverArrUp:after {
+	margin: 0.3125rem 0 0 0.1875rem;
+}
+
+/* pointing left arrow */
+.sapMPopoverArrLeft:after {
+	margin: 0.125rem 0 0 0.3125rem;
+}
+
+.sapMPopoverResizeHandle {
+	top: -8px;
+	right: -3px;
+	color: @sapButton_Lite_TextColor;
+}

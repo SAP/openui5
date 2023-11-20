@@ -1,0 +1,64 @@
+{
+	"sap.app": {
+		"type": "card",
+		"id": "card.explorer.extension.batchRequest"
+	},
+	"sap.card": {
+		"configuration": {
+			"parameters": {
+				"supplierId": {
+					"value": "100000038"
+				}
+			},
+			"destinations": {
+				"ProductsMockServer": {
+					"name": "ProductsMockServer",
+					"label": "Products Mock",
+					"defaultUrl": "/SEPMRA_PROD_MAN/"
+				}
+			}
+		},
+		"data": {
+			"request": {
+				"url": "{{destinations.ProductsMockServer}}/$batch",
+				"method": "POST",
+				"batch": {
+					"supplier": {
+						"method": "GET",
+						"url": "SEPMRA_C_PD_Supplier('{parameters>/supplierId/value}')",
+						"headers": {
+							"Accept": "application/json"
+						}
+					},
+					"products": {
+						"method": "GET",
+						"url": "SEPMRA_C_PD_Product?$top=2&$filter=Supplier eq '{parameters>/supplierId/value}'",
+						"headers": {
+							"Accept": "application/json"
+						}
+					}
+				}
+			}
+		},
+		"type": "List",
+		"header": {
+			"data": {
+				"path": "/supplier/d"
+			},
+			"icon": {
+				"src": "sap-icon://cargo-train"
+			},
+			"title": "Supplied by {CompanyName}",
+			"subTitle": "Contact {EmailAddress}"
+		},
+		"content": {
+			"data": {
+				"path": "/products/d/results"
+			},
+			"item": {
+				"title": "{Name}",
+				"description": "{ProductCategory}"
+			}
+		}
+	}
+}

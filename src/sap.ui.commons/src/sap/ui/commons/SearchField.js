@@ -4,21 +4,32 @@
 
 // Provides control sap.ui.commons.SearchField.
 sap.ui.define([
-    'jquery.sap.global',
-    './ComboBox',
-    './ComboBoxRenderer',
-    './ListBox',
-    './TextField',
-    './TextFieldRenderer',
-    './library',
-    'sap/ui/core/Control',
-    'sap/ui/core/History',
-    'sap/ui/core/Renderer',
-    "./SearchFieldRenderer",
-    'jquery.sap.dom'
+	'sap/ui/thirdparty/jquery',
+	'./ComboBox',
+	'./ComboBoxRenderer',
+	'./ListBox',
+	'./TextField',
+	'./TextFieldRenderer',
+	'./library',
+	'sap/ui/core/Control',
+	'sap/ui/core/History',
+	'sap/ui/core/Renderer',
+	'./SearchFieldRenderer',
+	'sap/ui/core/library',
+	'./Button',
+	'sap/ui/Device',
+	'sap/ui/core/SeparatorItem',
+	'sap/ui/core/ListItem',
+	'sap/ui/events/KeyCodes',
+	'sap/ui/dom/containsOrEquals',
+	'sap/ui/core/Configuration',
+	// jQuery Plugin "rect"
+	'sap/ui/dom/jquery/rect',
+	// jQuery.fn.getSelectedText
+	'sap/ui/dom/jquery/getSelectedText'
 ],
 	function(
-	    jQuery,
+		jQuery,
 		ComboBox,
 		ComboBoxRenderer,
 		ListBox,
@@ -27,10 +38,26 @@ sap.ui.define([
 		library,
 		Control,
 		History,
-		Renderer/*, DOM*/,
-		SearchFieldRenderer
+		Renderer,
+		SearchFieldRenderer,
+		coreLibrary,
+		Button,
+		Device,
+		SeparatorItem,
+		ListItem,
+		KeyCodes,
+		containsOrEquals,
+		Configuration
 	) {
 	"use strict";
+
+
+
+	// shortcut for sap.ui.core.TextAlign
+	var TextAlign = coreLibrary.TextAlign;
+
+	// shortcut for sap.ui.core.ValueState
+	var ValueState = coreLibrary.ValueState;
 
 
 
@@ -52,10 +79,10 @@ sap.ui.define([
 	 * @public
 	 * @deprecated Since version 1.38. Instead, use the <code>sap.m.SearchField</code> control.
 	 * @alias sap.ui.commons.SearchField
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var SearchField = Control.extend("sap.ui.commons.SearchField", /** @lends sap.ui.commons.SearchField.prototype */ { metadata : {
 
+		deprecated: true,
 		interfaces : [
 			"sap.ui.commons.ToolbarItem"
 		],
@@ -122,7 +149,7 @@ sap.ui.define([
 			 * Visualizes warnings or errors related to the input field. Possible values: Warning, Error, Success, None.
 			 * @since 1.32
 			 */
-			valueState: {type : "sap.ui.core.ValueState", group : "Appearance", defaultValue : sap.ui.core.ValueState.None},
+			valueState: {type : "sap.ui.core.ValueState", group : "Appearance", defaultValue : ValueState.None},
 
 			/**
 			 * Placeholder for the input field.
@@ -133,7 +160,7 @@ sap.ui.define([
 			/**
 			 * Sets the horizontal alignment of the text
 			 */
-			textAlign : {type : "sap.ui.core.TextAlign", group : "Appearance", defaultValue : sap.ui.core.TextAlign.Begin},
+			textAlign : {type : "sap.ui.core.TextAlign", group : "Appearance", defaultValue : TextAlign.Begin},
 
 			/**
 			 *
@@ -210,8 +237,6 @@ sap.ui.define([
 	}});
 
 
-	(function() {
-
 	var _DEFAULT_VISIBLE_ITEM_COUNT = 20;
 
 	//***********************************************
@@ -269,7 +294,7 @@ sap.ui.define([
 	SearchField.prototype.onAfterRendering = function(){
 		if (this.getShowExternalButton()) {
 			var iButtonWidth = this._btn.$().outerWidth(true);
-			this._ctrl.$().css(sap.ui.getCore().getConfiguration().getRTL() ? "left" : "right", iButtonWidth + "px");
+			this._ctrl.$().css(Configuration.getRTL() ? "left" : "right", iButtonWidth + "px");
 	    }
 		_setClearTooltip(this);
 	};
@@ -342,7 +367,6 @@ sap.ui.define([
 	 *
 	 * @type void
 	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	SearchField.prototype.clearHistory = function() {
 		this._oHistory.clear();
@@ -359,7 +383,6 @@ sap.ui.define([
 	 *         The list of suggestions belonging to the suggest value
 	 * @type void
 	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	SearchField.prototype.suggest = function(sSuggestValue, aSuggestions) {
 		if (!this.getEnableListSuggest() || !sSuggestValue || !aSuggestions) {
@@ -371,7 +394,7 @@ sap.ui.define([
 
 	SearchField.prototype.setEnableListSuggest = function(bEnableListSuggest) {
 		if ((this.getEnableListSuggest() && bEnableListSuggest) || (!this.getEnableListSuggest() && !bEnableListSuggest)) {
-			return;
+			return this;
 		}
 		_initChildControls(this, bEnableListSuggest);
 		this.setProperty("enableListSuggest", bEnableListSuggest);
@@ -467,9 +490,8 @@ sap.ui.define([
 
 	SearchField.prototype.setShowExternalButton = function(bShowExternalButton) {
 		if (!this._btn) {
-			jQuery.sap.require("sap.ui.commons.Button");
-			var that = this;
-			this._btn = new sap.ui.commons.Button(this.getId() + "-btn", {
+		    var that = this;
+			this._btn = new Button(this.getId() + "-btn", {
 				text: getText("SEARCHFIELD_BUTTONTEXT"),
 				enabled: this.getEditable() && this.getEnabled(),
 				press: function(){
@@ -616,7 +638,7 @@ sap.ui.define([
 
 
 	var isMobile = function() {
-		return sap.ui.Device.browser.mobile && !sap.ui.Device.system.desktop;
+		return Device.browser.mobile && !Device.system.desktop;
 	};
 
 
@@ -629,7 +651,7 @@ sap.ui.define([
 		oRM.write("<div");
 		oRM.writeAttributeEscaped('id', oCtrl.getId() + '-searchico');
 		oRM.writeAttribute('unselectable', 'on');
-		if (sap.ui.getCore().getConfiguration().getAccessibility()) {
+		if (Configuration.getAccessibility()) {
 			oRM.writeAttribute("role", "presentation");
 		}
 		oRM.addClass("sapUiSearchFieldIco");
@@ -645,7 +667,7 @@ sap.ui.define([
 	TextField.extend("sap.ui.commons.SearchField.TF", {
 
 		metadata : {
-			visibility : "hidden"
+			library: "sap.ui.commons"
 		},
 
 	  constructor : function (sId, mSettings) {
@@ -721,7 +743,7 @@ sap.ui.define([
 	    },
 
 	    renderInnerAttributes : function(oRM, oCtrl) {
-				if (!sap.ui.Device.os.ios) { //on iOS the input is not focused if type search
+			if (!Device.os.ios) { //on iOS the input is not focused if type search
 					oRM.writeAttribute("type", "search");
 				}
 	      if (isMobile()) {
@@ -744,7 +766,7 @@ sap.ui.define([
 	ComboBox.extend("sap.ui.commons.SearchField.CB", {
 
 		metadata : {
-			visibility : "hidden"
+			library: "sap.ui.commons"
 		},
 
 		constructor: function(sId, mSettings) {
@@ -811,7 +833,7 @@ sap.ui.define([
 				if (this.getEditable() && this.getEnabled()) {
 					this.focus();
 				}
-			} else if (jQuery.sap.containsOrEquals(this.getDomRef("providerico"), oEvent.target)) {
+			} else if (containsOrEquals(this.getDomRef("providerico"), oEvent.target)) {
 				if (this.getEditable() && this.getEnabled()) {
 					this.focus();
 				}
@@ -828,8 +850,7 @@ sap.ui.define([
 			_setClearTooltip(this.getParent());
 
 			if (oEvent) {
-				var oKC = jQuery.sap.KeyCodes;
-				if (oEvent.keyCode === oKC.F2) {
+				if (oEvent.keyCode === KeyCodes.F2) {
 					// toggle action mode
 					var $FocusDomRef = jQuery(this.getFocusDomRef());
 					var bDataInNavArea = $FocusDomRef.data("sap.InNavArea");
@@ -838,7 +859,7 @@ sap.ui.define([
 					}
 				}
 
-				if (ComboBox._isHotKey(oEvent) || oEvent.keyCode === oKC.F4 && oEvent.which === 0 /* this is the Firefox case and ensures 's' with same charCode is accepted */) {
+				if (ComboBox._isHotKey(oEvent) || oEvent.keyCode === KeyCodes.F4 && oEvent.which === 0 /* this is the Firefox case and ensures 's' with same charCode is accepted */) {
 					return;
 				}
 
@@ -849,9 +870,9 @@ sap.ui.define([
 				}
 
 				var iKC = oEvent.which || oEvent.keyCode;
-				if (iKC !== oKC.ESCAPE || this instanceof SearchField.TF/* Textfield uses the same onkeyup function therefore check */) {
+				if (iKC !== KeyCodes.ESCAPE || this instanceof SearchField.TF/* Textfield uses the same onkeyup function therefore check */) {
 					this._triggerValueHelp = true;
-					this._lastKeyIsDel = iKC == oKC.DELETE || iKC == oKC.BACKSPACE;
+					this._lastKeyIsDel = iKC == KeyCodes.DELETE || iKC == KeyCodes.BACKSPACE;
 				}
 
 			}
@@ -859,12 +880,14 @@ sap.ui.define([
 			if (this._triggerValueHelp) {
 				this._triggerValueHelp = false;
 				if (this._sSuggest) {
-					jQuery.sap.clearDelayedCall(this._sSuggest);
+					clearTimeout(this._sSuggest);
 					this._sSuggest = null;
 				}
 				var sCurrentValue = jQuery(this.getInputDomRef()).val();
 				if ((sCurrentValue && sCurrentValue.length >= this.getParent().getStartSuggestion()) || (!sCurrentValue && this.getParent().getStartSuggestion() == 0)) {
-					this._sSuggest = jQuery.sap.delayedCall(200, this, "_triggerSuggest", [sCurrentValue]);
+					this._sSuggest = setTimeout(function() {
+						this._triggerSuggest(sCurrentValue);
+					}.bind(this), 200);
 				} else if (this._doUpdateList) { // Textfield uses the same onkeyup function -> therefore check existence of this function
 					this._doUpdateList(sCurrentValue, true);
 				}
@@ -903,12 +926,12 @@ sap.ui.define([
 				var iCount = Math.min(aValues.length, iMax);
 
 				if (bSeparatorBefore && iCount > 0) {
-					oLb.addItem(new sap.ui.core.SeparatorItem());
+					oLb.addItem(new SeparatorItem());
 				}
 
 				for (var i = 0; i < iCount; i++) {
 					// oLb.addAggregation("items", new sap.ui.core.ListItem({text: aSug[i]}), true);
-					oLb.addItem(new sap.ui.core.ListItem({
+					oLb.addItem(new ListItem({
 						text: aValues[i]
 					}));
 				}
@@ -920,7 +943,7 @@ sap.ui.define([
 			var iSuggestCount = addToListbox(oLb, sSuggestVal && sSuggestVal.length >= this.getParent().getStartSuggestion() ? this._mSuggestions[sSuggestVal] : [], this.getParent().getMaxSuggestionItems(), iHistoryCount > 0);
 
 			if (iHistoryCount <= 0 && iSuggestCount == 0) {
-				oLb.addItem(new sap.ui.core.ListItem({
+				oLb.addItem(new ListItem({
 					text: getText("SEARCHFIELD_NO_ITEMS"),
 					enabled: false
 				}));
@@ -931,6 +954,7 @@ sap.ui.define([
 			var iMaxPopupItems = this.getMaxPopupItems();
 			oLb.setVisibleItems(iMaxPopupItems < iItemsLength ? iMaxPopupItems : iItemsLength);
 			oLb.setSelectedIndex(-1);
+			// jQuery Plugin "rect"
 			oLb.setMinWidth(jQuery(this.getDomRef()).rect().width + "px");
 			oLb.rerender();
 			return bEmpty;
@@ -1000,12 +1024,12 @@ sap.ui.define([
 					oRM.write("<div");
 					oRM.writeAttributeEscaped('id', oCtrl.getId() + '-providerico');
 					oRM.writeAttribute('unselectable', 'on');
-					if (sap.ui.getCore().getConfiguration().getAccessibility()) {
+					if (Configuration.getAccessibility()) {
 						oRM.writeAttribute("role", "presentation");
 					}
 					oRM.addClass("sapUiSearchFieldProvIco");
 					oRM.writeClasses();
-					oRM.write("><img src=\"" + oCtrl.getParent().getSearchProvider().getIcon() + "\"/></div>");
+					oRM.write("><img src=\"" + oCtrl.getParent().getSearchProvider().getIcon() + "\"></div>");
 				}
 			},
 
@@ -1018,7 +1042,7 @@ sap.ui.define([
 			},
 
 			renderInnerAttributes: function(oRM, oCtrl) {
-				if (!sap.ui.Device.os.ios) { // on iOS the input is not focused if type search
+				if (!Device.os.ios) { // on iOS the input is not focused if type search
 					oRM.writeAttribute("type", "search");
 				}
 				if (isMobile()) {
@@ -1031,9 +1055,7 @@ sap.ui.define([
 
 	});
 
-	}());
-
 
 	return SearchField;
 
-}, /* bExport= */ true);
+});

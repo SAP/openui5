@@ -16,7 +16,21 @@ sap.ui.define([],
 			},
 			actions: {
 				remove: {
-					changeType: "hideControl"
+					changeType: "hideControl",
+					isEnabled: function (oElement) {
+						var oSection = oElement.getParent(),
+							aVisibleSubSections;
+
+						if (oSection) {
+							aVisibleSubSections = oSection.getSubSections().filter(function (oSubSection) {
+								return oSubSection.getVisible();
+							});
+
+							return aVisibleSubSections.length > 1;
+						}
+
+						return false;
+					}
 				},
 				reveal: {
 					changeType: "unhideControl"
@@ -43,4 +57,4 @@ sap.ui.define([],
 			}
 		};
 
-	}, /* bExport= */ false);
+	});

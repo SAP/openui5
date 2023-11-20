@@ -6,6 +6,7 @@
 .sapMScrollCont {
 	overflow: hidden;
 	position: relative; /* to make the iScroll scrollbars appear at the correct position, if enabled */
+	outline: none;
 }
 
 .sapMScrollContV .sapMScrollContScroll {
@@ -14,3 +15,8 @@
 
 /* mixin call for creating container content padding classes (arguments: rootContainer, contentSelector) */
 .sapUiContainerContentPadding(~".sapMScrollCont", ~"> .sapMScrollContScroll");
+
+.sapMScrollCont:focus {
+	outline: @sapUiContentFocusWidth @sapUiContentFocusStyle @sapUiContentFocusColor;
+	outline-offset: 0.0625rem;
+}

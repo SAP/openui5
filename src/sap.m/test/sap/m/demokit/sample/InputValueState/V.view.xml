@@ -1,0 +1,64 @@
+<mvc:View
+	controllerName="sap.m.sample.InputValueState.C"
+	xmlns="sap.m"
+	xmlns:mvc="sap.ui.core.mvc">
+	<VBox class="sapUiSmallMargin">
+		<Input
+			value="Value state None"
+			class="sapUiSmallMarginTopBottom" />
+
+		<Input
+			showClearIcon="true"
+			valueState="Success"
+			value="Value state Success"
+			class="sapUiSmallMarginTopBottom" />
+
+		<Input
+			showClearIcon="true"
+			valueState="Warning"
+			valueStateText="Warning message. Extra long text used as a warning message. Extra long text used as a warning message - 2. Extra long text used as a warning message - 3. Extra long text used as a warning message - 4. Extra long text used as a warning message - 5."
+			value="Value state Warning."
+			class="sapUiSmallMarginTopBottom" />
+
+		<Input
+			showClearIcon="true"
+			valueState="Warning"
+			value="Value state Warning with message containing a link."
+			class="sapUiSmallMarginTopBottom">
+			<formattedValueStateText>
+				<FormattedText htmlText="There is a conflict with the current value. Recommendation based on: %%0">
+					<controls>
+						<Link
+							text="See more information"
+							href=""
+							press=".onFormattedTextLinkPress" />
+					</controls>
+				</FormattedText>
+			</formattedValueStateText>
+		</Input>
+
+		<Input
+			valueState="Error"
+			value="Value state Error"
+			class="sapUiSmallMarginTopBottom" />
+
+		<Input
+			valueState="Information"
+			value="Value state Information"
+			class="sapUiSmallMarginTopBottom" />
+
+		<Input
+			valueState="Information"
+			value="Value state Information with message containing multiple links."
+			class="sapUiSmallMarginTopBottom">
+			<formattedValueStateText>
+				<FormattedText htmlText="Recommendation based on: %%0 and %%1.">
+					<controls>
+						<Link text="link 1" press=".onFormattedTextLinkPress" />
+						<Link text="link 2" press=".onFormattedTextLinkPress" />
+					</controls>
+				</FormattedText>
+			</formattedValueStateText>
+		</Input>
+	</VBox>
+</mvc:View>

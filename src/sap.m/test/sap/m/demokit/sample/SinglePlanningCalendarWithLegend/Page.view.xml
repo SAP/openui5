@@ -1,0 +1,65 @@
+<mvc:View
+	controllerName="sap.m.sample.SinglePlanningCalendarWithLegend.Page"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:unified="sap.ui.unified"
+	xmlns:l="sap.ui.layout"
+	xmlns="sap.m">
+	<l:DynamicSideContent
+		id="DynamicSideContent"
+		class="sapUiDSCExplored sapUiContentPadding"
+		sideContentVisibility="AlwaysShow"
+		showSideContent="{path: 'stateModel>/legendShown'}"
+		containerQuery="true">
+		<VBox>
+			<SinglePlanningCalendar
+				id="SPC1"
+				class="sapUiSmallMarginTop"
+				title= "My Calendar"
+				startHour="8"
+				endHour="20"
+				fullDay="false"
+				startDate="{path: '/startDate'}"
+				appointments="{path: '/appointments'}"
+				specialDates="{path: '/specialDates'}"
+				legend="SinglePlanningCalendarLegend">
+				<actions>
+					<ToggleButton text="Full Day" press="toggleFullDay"/>
+					<ToggleButton pressed="{path: 'stateModel>/legendShown'}" icon="sap-icon://legend"/>
+				</actions>
+				<views>
+					<SinglePlanningCalendarDayView key="DayView" title="Day" />
+					<SinglePlanningCalendarWorkWeekView key="WorkWeekView" title="Work Week" />
+					<SinglePlanningCalendarWeekView key="WeekView" title="Week" />
+				</views>
+				<specialDates>
+					<unified:DateTypeRange
+							startDate="{start}"
+							endDate="{end}"
+							type="{type}"
+							color="{color}"/>
+				</specialDates>
+				<appointments>
+					<unified:CalendarAppointment
+						title= "{title}"
+						text= "{text}"
+						type= "{type}"
+						icon= "{icon}"
+						startDate= "{startDate}"
+						endDate= "{endDate}">
+					</unified:CalendarAppointment>
+				</appointments>
+			</SinglePlanningCalendar>
+		</VBox>
+		<l:sideContent width="200px">
+			<PlanningCalendarLegend id="SinglePlanningCalendarLegend" items="{path : '/legendItems', templateShareable: true}" appointmentItems="{path : '/legendAppointmentItems',
+									templateShareable: true}" class="sapUiSmallMarginTop">
+				<items>
+					<unified:CalendarLegendItem text="{text}" type="{type}" color="{color}" tooltip="{text}" />
+				</items>
+				<appointmentItems>
+					<unified:CalendarLegendItem text="{text}" type="{type}" tooltip="{text}" />
+				</appointmentItems>
+			</PlanningCalendarLegend>
+		</l:sideContent>
+	</l:DynamicSideContent>
+</mvc:View>

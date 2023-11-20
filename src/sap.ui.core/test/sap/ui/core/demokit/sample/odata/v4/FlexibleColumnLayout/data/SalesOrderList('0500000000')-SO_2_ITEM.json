@@ -1,0 +1,45 @@
+{
+	"@odata.metadataEtag" : "W/\"20200721151616\"",
+	"@odata.count" : "27",
+	"value" : [{
+		"SalesOrderID" : "0500000000",
+		"ItemPosition" : "0000000010",
+		"CurrencyCode" : "USD",
+		"GrossAmount" : "7473.2",
+		"Quantity" : "4.000",
+		"QuantityUnit" : "EA",
+		"ProductID" : "HT-1002"
+	}, {
+		"SalesOrderID" : "0500000000",
+		"ItemPosition" : "0000000020",
+		"CurrencyCode" : "EUR",
+		"GrossAmount" : "2972.62",
+		"Quantity" : "2.000",
+		"QuantityUnit" : "EA",
+		"ProductID" : "HT-1001"
+	}, {
+		"SalesOrderID" : "0500000000",
+		"ItemPosition" : "0000000030",
+		"CurrencyCode" : "EUR",
+		"GrossAmount" : "1092.42",
+		"Quantity" : "2.000",
+		"QuantityUnit" : "EA",
+		"ProductID" : "HT-1020"
+	}, {
+		"SalesOrderID" : "0500000000",
+		"ItemPosition" : "0000000040",
+		"CurrencyCode" : "EUR",
+		"GrossAmount" : "3927",
+		"Quantity" : "2.000",
+		"QuantityUnit" : "EA",
+		"ProductID" : "HT-1003"
+	}, {
+		"SalesOrderID" : "0500000000",
+		"ItemPosition" : "0000000050",
+		"CurrencyCode" : "USD",
+		"GrossAmount" : "1067.43",
+		"Quantity" : "3.000",
+		"QuantityUnit" : "EA",
+		"ProductID" : "HT-1007"
+	}]
+}

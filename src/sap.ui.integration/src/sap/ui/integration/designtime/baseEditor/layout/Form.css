@@ -1,0 +1,11 @@
+.sapUiForm.sapUiIntegrationBaseEditorFormLayout > .sapUiFormResGrid > div {
+	padding: 0;
+}
+
+.sapUiForm.sapUiIntegrationBaseEditorFormLayout .sapUiRespGridMedia-Std-Phone.sapUiFormResGridCont > div:first-child.sapUiFormElementLbl {
+	padding-top: 0.625rem;
+}
+
+.sapUiForm.sapUiIntegrationBaseEditorFormLayout .sapUiFormContainerTitle > .sapUiFormTitle {
+	margin-bottom: 0;
+}

@@ -1,0 +1,34 @@
+{
+	"sap.app": {
+		"id": "sap.ui.core.sample.XMLComposite.02",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "sap.ui.core.sample.XMLComposite.02.V",
+			"type": "XML",
+			"async": true
+		},
+		"dependencies": {
+			"libs": {
+				"sap.m": {},
+				"sap.ui.core": {},
+				"sap.ui.layout": {}
+			}
+		},
+		"config": {
+			"sample": {
+				"stretch": true,
+				"files": [
+					"manifest.json",
+					"V.view.xml",
+					"C.controller.js",
+					"comp/Table.js",
+					"comp/Table.control.xml"
+				]
+			}
+		}
+	}
+}

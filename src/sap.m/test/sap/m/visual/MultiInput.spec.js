@@ -1,99 +1,141 @@
-/*global describe,it,element,by,takeScreenshot,expect,browser*/
+/*global describe,it,element,by,takeScreenshot,expect,browser,protractor*/
 
 describe('sap.m.MultiInput', function() {
 	"use strict";
 
-	var bPhone = null;
-
 	it("should load test page", function () {
-		browser.executeScript(function () {
-			return sap.ui.Device.system.phone;
-		}).then(function (response) {
-			bPhone = response;
-		});
-
+		element(by.id("customCssButton")).click();
 		expect(takeScreenshot()).toLookAs("initial");
 	});
 
 	//Initial Compact Mode
 	it("should select Compact mode", function () {
 		element(by.id("compactMode")).click();
-		expect(takeScreenshot(element(by.id("page1")))).toLookAs("compact-mode");
+		expect(takeScreenshot()).toLookAs("compact-mode");
 		element(by.id("compactMode")).click();
 	});
 
-	//Single Line Mode
-	it("should show on SingleLineMode", function () {
-		expect(takeScreenshot(element(by.id("multiInputCustomValidator")))).toLookAs("multi-input-custom-validator");
+	// MultiInput - tabular suggestions
+	it("should show MultiInput with tabular suggestions", function () {
+		element(by.id("tabularSuggestMI-inner")).click();
+		browser.actions().sendKeys("t").perform();
+		expect(takeScreenshot()).toLookAs("multi-input-with-tabular-suggestions");
+		browser.actions().sendKeys(protractor.Key.BACK_SPACE).perform();
 	});
 
-	//Single Line Mode selected
-	it("should focus on SingleLineMode", function () {
-		element(by.id("multiInputCustomValidator")).click();
-		expect(takeScreenshot(element(by.id("multiInputCustomValidator")))).toLookAs("multi-input-custom-validator-selected");
-	});
-
-	//MultiInpuit not selected
-	it("should show on multiInputCustomAsyncValidator tokens", function () {
-		expect(takeScreenshot(element(by.id("multiInputCustomAsyncValidator")))).toLookAs("multi-input-custom-async-validator");
-	});
-
-	//MultiInpuit  selected
-	it("should focus on multiInputCustomAsyncValidator tokens", function () {
-		element(by.id("multiInputCustomAsyncValidator")).click();
-		expect(takeScreenshot(element(by.id("multiInputCustomAsyncValidator")))).toLookAs("multi-input-custom-async-validator-slct");
-	});
-
-	//Multiple line enabled not  selected
-	it("should show on Multi input enabled tokens", function () {
-		expect(takeScreenshot(element(by.id("mI5")))).toLookAs("multi-input-line-not-selected");
-	});
-
-	//Multiple line enabled  selected
-	it("should focus on Multi input enabled tokens", function () {
-		element(by.id("mI5")).click();
-		expect(takeScreenshot()).toLookAs("multi-input-line-selected");
-		if (bPhone) {
-			element(by.id("mI5-popup-closeButton")).click();
-		}
-	});
-
-	//Multiinput warning
-	it("should show on multiInput warning", function () {
-		browser.executeScript('document.getElementById("mIWarning").scrollIntoView()').then(function() {
-			expect(takeScreenshot(element(by.id("mIWarning")))).toLookAs("multi-input-warning-not-selected");
+	// MultiInput invalidated
+	it("should invalidate the MultiInput, so all MI elements are there", function () {
+		browser.executeScript('document.getElementById("dataBoundMultiInput").scrollIntoView()').then(function() {
+			browser.executeScript('sap.ui.getCore().byId("dataBoundMultiInput").getTokens()[1].setText("Lorem ipsulum")').then(function() {
+				expect(takeScreenshot(element(by.id("dataBoundMultiInput")))).toLookAs("token-update-text");
+			});
 		});
 	});
 
-	//Multiinput error
-	it("should show on multiInput error", function () {
-		expect(takeScreenshot(element(by.id("mIError")))).toLookAs("multi-input-error-not-selected");
+	// MultiInput with suggestions
+	it("Should visualize input with suggestions", function () {
+		var oMultiInput = element(by.id("mIWithSuggestions"));
+		browser.executeScript("document.getElementById('mIWithSuggestions').scrollIntoView()").then(function() {
+			oMultiInput.click();
+			expect(takeScreenshot(oMultiInput)).toLookAs("MI_with_suggestions_focused");
+
+			browser.actions().sendKeys("A").perform();
+			expect(takeScreenshot()).toLookAs("suggestions_visible");
+
+			browser.actions().sendKeys(protractor.Key.ARROW_DOWN).perform();
+			expect(takeScreenshot()).toLookAs("group_header_focused");
+
+			browser.actions().sendKeys(protractor.Key.ARROW_DOWN).perform();
+			expect(takeScreenshot()).toLookAs("first_suggestion_focused");
+
+			browser.actions().sendKeys("A").perform();
+			expect(takeScreenshot()).toLookAs("input_field_focused");
+
+			browser.actions().sendKeys(protractor.Key.BACK_SPACE).perform();
+			browser.actions().sendKeys(protractor.Key.BACK_SPACE).perform();
+		});
 	});
 
-	//Multiinput success
-	it("should show on multiInput success", function () {
-		expect(takeScreenshot(element(by.id("mISuccess")))).toLookAs("multi-input-mISuccess-not-selected");
+	// MultiInput with sticky header suggestions
+	it("Should visualize multiInput with sticky header suggestions", function () {
+		var oMultiInput = element(by.id("multiInputWithStickySuggestions-inner"));
+		browser.executeScript("document.getElementById('multiInputWithStickySuggestions').scrollIntoView()").then(function() {
+			oMultiInput.click();
+			expect(takeScreenshot(oMultiInput)).toLookAs("MI_with_sticky_suggestions_focused");
+
+			browser.actions().sendKeys("A").perform();
+			expect(takeScreenshot(oMultiInput)).toLookAs("MI_with_sticky_suggestions_text_inserted");
+
+			for (var index = 0; index < 25; index++) {
+				browser.actions().sendKeys(protractor.Key.ARROW_DOWN).perform();
+			}
+
+			expect(takeScreenshot()).toLookAs("MI_with_sticky_suggestions_table_visible");
+		});
 	});
 
-	//Multiinput error selected
-	it("should focus on multiInput error selected", function () {
-		element(by.id("mIError")).click();
-		expect(takeScreenshot(element(by.id("mIError")))).toLookAs("multi-input-error-selected");
+	// MultiInput with long suggestions and 100% popover width
+	it("Should visualize MultiInput with long suggestions and 100% popover width", function () {
+		var oMultiInput = element(by.id("mi-long-sugg-small-width"));
+		browser.executeScript("document.getElementById('mi-long-sugg-small-width').scrollIntoView()").then(function() {
+			oMultiInput.click();
+			browser.actions().sendKeys("S").perform();
+
+			expect(takeScreenshot()).toLookAs("suggestions_popover_margins");
+
+			browser.actions().sendKeys(protractor.Key.ESCAPE).perform();
+		});
 	});
 
-	//Multiinput error selected
-	it("should show  multiInput multiInputNotEditable", function () {
-		expect(takeScreenshot(element(by.id("multiInputNotEditable")))).toLookAs("multi-input-not-editalbe");
+	// MultiInput with placeholder and nMore
+	it("Should visualize MultiInput placeholder when nMore was previously present", function () {
+		var oMultiInput = element(by.id("mi-placeholder"));
+		browser.executeScript("arguments[0].scrollIntoView()", oMultiInput).then(function () {
+			expect(takeScreenshot()).toLookAs("multiinput_nmore_initial");
+
+			browser.executeScript("sap.ui.getCore().byId('mi-placeholder').setTokens([])");
+			expect(takeScreenshot()).toLookAs("multiinput_placeholder");
+
+			oMultiInput.click();
+			expect(takeScreenshot()).toLookAs("multiinput_placeholder_focus");
+
+			element(by.id("mi-long-sugg-small-width")).click();
+			expect(takeScreenshot()).toLookAs("multiinput_placeholder_blur");
+		});
 	});
 
-	//Show multi input no placeholder
-	it("should show   multiInput no placeholder", function () {
-		expect(takeScreenshot(element(by.id("multiInputNotEditable")))).toLookAs("multi-input-not-editable");
+	it("Should visualize MultiInput with long suggestions", function () {
+		var oWrappingMultiInput = element(by.id("mi-wrapping"));
+
+		browser.executeScript("document.getElementById('mi-wrapping').scrollIntoView()").then(function () {
+			oWrappingMultiInput.click();
+
+			// Should show wrapping suggestions
+			browser.actions().sendKeys("I").perform();
+			expect(takeScreenshot()).toLookAs("wrapping_suggestions_visible");
+
+			// Should focus the first suggestion
+			browser.actions().sendKeys(protractor.Key.ARROW_DOWN).perform();
+			expect(takeScreenshot()).toLookAs("wrapping_first_suggestion_focused");
+
+			// Should close the dropdown and clear the value
+			browser.actions().sendKeys(protractor.Key.ESCAPE).perform();
+			browser.actions().sendKeys(protractor.Key.BACK_SPACE).perform();
+		});
 	});
 
-	//Show selected multi input no placeholder
-	it("should show   multiInput no placeholder", function () {
-		element(by.id("multiInputNotEditable")).click();
-		expect(takeScreenshot(element(by.id("multiInputNotEditable")))).toLookAs("multi-input-not-editable-selected");
+	// Suggestions' max-width should be 40rem
+	it("should limit the SuggestionsPopover max-width to 40rem", function() {
+		var multiInputLongSuggestions = element(by.id("mi-wrapping"));
+
+		multiInputLongSuggestions.click();
+
+		// Should open suggestions
+		browser.actions().sendKeys("l").perform();
+		expect(takeScreenshot()).toLookAs("mi-wrapping");
+
+		// Should close the dropdown and clear the value
+		browser.actions().sendKeys(protractor.Key.ESCAPE).perform();
+		browser.actions().sendKeys(protractor.Key.BACK_SPACE).perform();
 	});
 });

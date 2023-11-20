@@ -1,0 +1,12 @@
+{
+  "1.93.0": {
+    "date": "July 2021",
+    "notes": [
+      {
+        "id": "08d95c7669f09a824891c2f413ae93bb37c2c63b",
+        "type": "FEATURE",
+        "text": " Integrate @ui5/webcomponents in OpenUI5"
+      }
+    ]
+  }
+}

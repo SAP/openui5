@@ -1,0 +1,38 @@
+<mvc:View controllerName="sap.ui.core.sample.RoutingNestedComponent.controller.App"
+	xmlns="sap.m"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:tnt="sap.tnt">
+	<tnt:ToolPage id="toolPage">
+		<tnt:header>
+			<tnt:ToolHeader>
+				<ToolbarSpacer />
+				<Title text="{= ${titleModel>/title} || ${i18n>appTitle}}" />
+				<ToolbarSpacer />
+			</tnt:ToolHeader>
+		</tnt:header>
+		<tnt:sideContent>
+			<tnt:SideNavigation itemSelect=".onItemSelect">
+				<tnt:NavigationList id="navigationList">
+					<tnt:NavigationListItem text="Home"
+						icon="sap-icon://home"
+						key="home" />
+					<tnt:NavigationListItem text="Suppliers"
+						id="suppliersItem"
+						icon="sap-icon://supplier"
+						key="suppliers" />
+					<tnt:NavigationListItem text="Categories"
+						id="categoriesItem"
+						icon="sap-icon://group"
+						key="categories" />
+					<tnt:NavigationListItem text="Products"
+						id="productsItem"
+						icon="sap-icon://product"
+						key="products" />
+				</tnt:NavigationList>
+			</tnt:SideNavigation>
+		</tnt:sideContent>
+		<tnt:mainContents>
+			<App id="app" />
+		</tnt:mainContents>
+	</tnt:ToolPage>
+</mvc:View>

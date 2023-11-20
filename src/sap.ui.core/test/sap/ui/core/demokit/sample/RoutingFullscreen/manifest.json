@@ -1,0 +1,33 @@
+{
+	"sap.app": {
+		"id": "sap.ui.core.sample.RoutingFullscreen",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"dependencies": {
+			"libs": {
+				"sap.m": {},
+				"sap.ui.core": {}
+			}
+		},
+		"config": {
+			"sample": {
+				"iframe": "RoutingFullscreen.html",
+				"stretch": true,
+				"files": [
+					"routingApp/Component.js",
+					"routingApp/manifest.json",
+					"routingApp/view/View1.view.xml",
+					"routingApp/controller/View1.controller.js",
+					"routingApp/view/View2.view.xml",
+					"routingApp/controller/View2.controller.js",
+					"routingApp/view/App.view.xml",
+					"RoutingFullscreen.html",
+					"manifest.json"
+				]
+			}
+		}
+	}
+}

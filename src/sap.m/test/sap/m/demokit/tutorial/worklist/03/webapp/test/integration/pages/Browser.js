@@ -1,6 +1,6 @@
 sap.ui.define([
 	"sap/ui/test/Opa5",
-	"mycompany/myapp/MyWorklistApp/test/integration/pages/Common"
+	"./Common"
 ], function(Opa5, Common) {
 	"use strict";
 
@@ -31,7 +31,7 @@ sap.ui.define([
 				iChangeTheHashToSomethingInvalid : function () {
 					return this.waitFor({
 						success : function () {
-							Opa5.getHashChanger().setHash("/somethingInvalid");
+							Opa5.getHashChanger().setHash("somethingInvalid");
 						}
 					});
 				},
@@ -40,24 +40,7 @@ sap.ui.define([
 					return this.waitFor({
 						success : function () {
 							var sObjectId = this.getContext().currentItem.id;
-							Opa5.getHashChanger().setHash("/Products/" + sObjectId);
-						}
-					});
-				},
-
-				iRestartTheAppWithTheRememberedItem : function (oOptions) {
-					var sObjectId;
-					this.waitFor({
-						success : function () {
-							sObjectId = this.getContext().currentItem.id;
-							this.iTeardownMyAppFrame();
-						}
-					});
-
-					return this.waitFor({
-						success : function() {
-							oOptions.hash = "/Products/" + encodeURIComponent(sObjectId);
-							this.iStartMyApp(oOptions);
+							Opa5.getHashChanger().setHash("Products/" + sObjectId);
 						}
 					});
 				}
@@ -67,4 +50,5 @@ sap.ui.define([
 		}
 
 	});
+
 });

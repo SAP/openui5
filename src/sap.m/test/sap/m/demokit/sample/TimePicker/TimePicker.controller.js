@@ -1,69 +1,93 @@
-sap.ui.define(['sap/m/library','sap/ui/core/mvc/Controller','sap/ui/model/json/JSONModel'],
-	function(library, Controller, JSONModel) {
+sap.ui.define([
+	'sap/ui/core/mvc/Controller',
+	'sap/ui/core/library',
+	'sap/ui/core/Core',
+	'sap/ui/model/json/JSONModel',
+	'sap/ui/core/date/UI5Date'
+	], function(Controller, coreLibrary, Core, JSONModel, UI5Date) {
 		"use strict";
 
-		var TimePickerMaskMode = library.TimePickerMaskMode,
-			TPController = Controller.extend("sap.m.sample.TimePicker.TimePicker", {
+		var ValueState = coreLibrary.ValueState;
+
+		return Controller.extend("sap.m.sample.TimePicker.TimePicker", {
 
 			onInit: function () {
 				// create model
 				var oModel = new JSONModel();
 				oModel.setData({
-					dateValue: new Date()
+					"maskMode": {
+						"state": true
+					},
+					"timePickers": {
+						"TP1": {
+							"value": "19:15",
+							"format": "HH:mm",
+							"placeholder" :"Enter meeting start time"
+						},
+						"TP2": {
+							"format": "HH:mm:ss",
+							"showCurrentTimeButton": "true",
+							"placeholder" :"Enter meeting end time"
+						},
+						"TP3": {
+							"value": UI5Date.getInstance(),
+							"placeholder" :"Enter daily task deadline"
+						},
+						"TP4": {
+							"format": "hh:mm:ss a",
+							"placeholder" :"Enter time"
+						},
+						"TP5": {
+							"format": "hh:mm:ss a",
+							"initialFocusedDateValue": UI5Date.getInstance(2017, 8, 9, 10, 11, 12),
+							"placeholder" :"Enter time"
+						},
+						"TP6": {
+							"format": "HH:mm:ss",
+							"support2400": true,
+							"value": "23:40:50",
+							"placeholder" :"Enter meeting start time"
+						}
+					}
 				});
 				this.getView().setModel(oModel);
-
-				this.byId("TP3").setDateValue(new Date());
-				this.byId("TP5").setInitialFocusedDateValue(new Date(2017, 8, 9, 10, 11, 12));
-
 				this._iEvent = 0;
 
 				// for the data binding example do not use the change event for check but the data binding parsing events
-				sap.ui.getCore().attachParseError(
+				Core.attachParseError(
 					function(oEvent) {
 						var oElement = oEvent.getParameter("element");
 
 						if (oElement.setValueState) {
-							oElement.setValueState(sap.ui.core.ValueState.Error);
+							oElement.setValueState(ValueState.Error);
 						}
 					});
 
-				sap.ui.getCore().attachValidationSuccess(
+				Core.attachValidationSuccess(
 					function(oEvent) {
 						var oElement = oEvent.getParameter("element");
 
 						if (oElement.setValueState) {
-							oElement.setValueState(sap.ui.core.ValueState.None);
+							oElement.setValueState(ValueState.None);
 						}
 					});
 			},
 
 			handleChange: function (oEvent) {
-				var oText = this.byId("T1");
-				var oTP = oEvent.oSource;
-				var sValue = oEvent.getParameter("value");
-				var bValid = oEvent.getParameter("valid");
+				var oText = this.byId("T1"),
+					oTP = oEvent.getSource(),
+					sValue = oEvent.getParameter("value"),
+					bValid = oEvent.getParameter("valid");
 				this._iEvent++;
-				oText.setText("Change - Event " + this._iEvent + ": TimePicker " + oTP.getId() + ":" + sValue);
+				oText.setText("'change' Event #" + this._iEvent + " from TimePicker '" + oTP.getId() + "': " + sValue + (bValid ? ' (valid)' : ' (invalid)'));
 
 				if (bValid) {
-					oTP.setValueState(sap.ui.core.ValueState.None);
+					oTP.setValueState(ValueState.None);
 				} else {
-					oTP.setValueState(sap.ui.core.ValueState.Error);
+					oTP.setValueState(ValueState.Error);
 				}
-			},
-
-			handleChangeMaskMode: function (oEvent) {
-				var sMaskMode = oEvent.getParameter("state") ? TimePickerMaskMode.On : TimePickerMaskMode.Off;
-
-				this.byId("TP1").setMaskMode(sMaskMode);
-				this.byId("TP2").setMaskMode(sMaskMode);
-				this.byId("TP3").setMaskMode(sMaskMode);
-				this.byId("TP4").setMaskMode(sMaskMode);
-				this.byId("TP5").setMaskMode(sMaskMode);
 			}
-		});
 
-		return TPController;
+		});
 
 	});

@@ -1,0 +1,156 @@
+{
+  "1.74.0": {
+    "date": "November 2019",
+    "notes": [
+      {
+        "id": "4b9f9e9b1f144c602eea3a74ee8ec179af7711c6",
+        "type": "FEATURE",
+        "text": " Field: prefer user input if binding updates late",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970588106"
+          }
+        ]
+      },
+      {
+        "id": "34d28592ea908c58e833b6099303458f51b06af0",
+        "type": "FEATURE",
+        "text": " FieldValueHelp: hide SearchField if no search defined",
+        "references": []
+      },
+      {
+        "id": "6ae4914bb75ef2a5aa3f1d547fbf8de2b5a4311a",
+        "type": "FIX",
+        "text": " DefineConditionPanel: Fields not updated if condition changed",
+        "references": []
+      },
+      {
+        "id": "76fb0315b682a22f6d7d89b7082f33fe3f55c7b7",
+        "type": "FIX",
+        "text": " Field: Text not updated after select from help",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980460973"
+          }
+        ]
+      },
+      {
+        "id": "ad831a1b2b7b275aec228b5e20b177a148adcea4",
+        "type": "FIX",
+        "text": " Field: better support for OneWay-Binding of additionalValue",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980420013"
+          }
+        ]
+      },
+      {
+        "id": "fb6827ed37ebbbadb666f688d95ce8d980f48bfa",
+        "type": "FIX",
+        "text": " FieldValueHelp: no description displayed for InParameter",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980458404"
+          }
+        ]
+      },
+      {
+        "id": "9691b16b41fc52fd43f98ae87e9dccc550b9b760",
+        "type": "FEATURE",
+        "text": " FilerOperatorUtil : exclude operation added",
+        "references": []
+      },
+      {
+        "id": "d79dcfc9ba2004cad7641b1f395dec5ab8c4b2fe",
+        "type": "FEATURE",
+        "text": " sap.ui.mdc: new sap_fiori_3_hcb and sap_fiori_3_hcw themes",
+        "references": []
+      },
+      {
+        "id": "65839fbcde7f4e9c7322d1ce162ec0d7f7122e6b",
+        "type": "FEATURE",
+        "text": " sap.ui.mdc: sap_belize_hcb and sap_belize_hcw themes",
+        "references": []
+      },
+      {
+        "id": "63db6da9e122534e62ee8b308a4aea1804bbf6cf",
+        "type": "FIX",
+        "text": " FieldValueHelp: if FilterBar in LiveMode show result on open",
+        "references": []
+      },
+      {
+        "id": "88c62db7c979a50476a22c73477f75c3da65a7d3",
+        "type": "FIX",
+        "text": " FieldValueHelp: if FilterBar in LiveMode show result on open",
+        "references": []
+      },
+      {
+        "id": "d84418ce45dc51969ffc845d813fea49974443c0",
+        "type": "FIX",
+        "text": " FieldValueHelp: no arrow navigation if table suspended",
+        "references": []
+      },
+      {
+        "id": "3dad7dc871fa4cc001aa4b4f53474f2bca2f6155",
+        "type": "FIX",
+        "text": " FilterField: sap.ui.model.odata.type.DateTimeOffset support V4",
+        "references": []
+      },
+      {
+        "id": "f84e4f3b26d217f9213c5545afbc8e68a0e120fa",
+        "type": "FEATURE",
+        "text": " ConditionConverter: to stringify conditions",
+        "references": []
+      },
+      {
+        "id": "036f35411c69f659d14a5bddfed0e26717b8357c",
+        "type": "FEATURE",
+        "text": " DateUtil: add functions to use UniversalDate",
+        "references": []
+      },
+      {
+        "id": "63a2c3f3e4d6cde0bfc83338cff478e0def88172",
+        "type": "FEATURE",
+        "text": " Field: Forward ariaLabelledBy to inner control",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970627258"
+          }
+        ]
+      },
+      {
+        "id": "973a6b107341df734b632bc8073c15883104e8a8",
+        "type": "FIX",
+        "text": " Field: changing editMode before delegate loaded fails",
+        "references": []
+      },
+      {
+        "id": "53d80926d373ff81c0ccf681c9828fdd0b71dd3a",
+        "type": "FIX",
+        "text": " Field: wrong search string if text entered after )",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080014979"
+          }
+        ]
+      },
+      {
+        "id": "8f7d9d7de1f1e14ba0847d1860cde93e06def41e",
+        "type": "FIX",
+        "text": " FieldHelp: place popover on top if no space on buttom",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080001091"
+          }
+        ]
+      }
+    ]
+  }
+}

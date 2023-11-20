@@ -4,46 +4,26 @@
 /* ================================= */
 
 .sapUiIcon {
-	position: relative;
 	cursor: default;
 	text-align: center;
 	display: inline-block;
 	vertical-align: baseline;
 	line-height: 1;
+	position: relative;
+}
+
+.sapUiTableCell > .sapUiTableCellInner > .sapUiIcon {
+	vertical-align: middle;
 }
 
 .sapUiIconPointer {
 	cursor: pointer;
 }
 
-html:not([data-sap-ui-browser^="ie"]):not([data-sap-ui-browser^="ed"]) .sapUiIcon:focus {
-	outline-width: 1px;
-	outline-style: dashed;
-	/* keep the outline within the area of the icon */
-	outline-offset: -1px;
-}
-
-/*
- * IE 11 and Edge (version < 15) don't support outline-offset.
- * The outline is implemented using the ::after pseudo element.
- *
- * Edge 15 is already released but can't be upgraded automatically,
- * therefore the approach is still used for all Edge versions.
- */
-html[data-sap-ui-browser^="ie"], html[data-sap-ui-browser^="ed"] {
-	.sapUiIcon:focus {
-		outline: none;
-	}
-	.sapUiIcon:focus::after {
-		content: "";
-		position: absolute;
-		top: 0px;
-		bottom: 0px;
-		left: 0px;
-		right: 0px;
-		border-width: 1px;
-		border-style: dashed;
-	}
+.sapUiIcon:focus {
+	outline-width: @sapUiContentFocusWidth;
+	outline-style: @sapUiContentFocusStyle;
+	outline-color: @sapUiContentFocusColor;
 }
 
 .sapUiIcon::before {
@@ -51,6 +31,14 @@ html[data-sap-ui-browser^="ie"], html[data-sap-ui-browser^="ed"] {
 	speak: none;
 	font-weight: normal;
 	-webkit-font-smoothing: antialiased;
+}
+
+.sapUiIcon > .sapUiIconTitle {
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	left: 0;
+	top: 0;
 }
 
 /*
@@ -71,9 +59,85 @@ html[dir=rtl] .sapUiIconMirrorInRTL:not(.sapUiIconSuppressMirrorInRTL) {
 }
 
 /**
- * The Default color for Icon which always points to the variable across themes.
- * Therefore it's defined in the base theme.
+ * The Default color and the semantic colors for Icon which always points to the variable across themes.
  */
 .sapUiIconColorDefault {
 	color: @sapUiContentIconColor;
+}
+
+.sapUiIconColorContrast {
+	color: @sapUiContentContrastIconColor;
+}
+
+.sapUiIconColorNeutral {
+	color: @sapUiNeutralElement;
+}
+
+.sapUiIconColorCritical {
+	color: @sapUiCriticalElement;
+}
+
+.sapUiIconColorPositive {
+	color: @sapUiPositiveElement;
+}
+
+.sapUiIconColorNegative {
+	color: @sapUiNegativeElement;
+}
+
+.sapUiIconColorNonInteractive {
+	color: @sapUiContentNonInteractiveIconColor;
+}
+
+.sapUiIconColorTile {
+	color: @sapUiTileIconColor;
+}
+
+.sapUiIconColorMarker {
+	color: @sapUiContentMarkerIconColor;
+}
+
+.sapUiIconBGColorDefault {
+	color: @sapUiGroupContentBackground;
+	background-color: @sapUiContentIconColor;
+}
+
+.sapUiIconBGColorContrast {
+	color: @sapUiContentIconColor;
+	background-color: @sapUiContentContrastIconColor;
+}
+
+.sapUiIconBGColorNeutral {
+	color: @sapUiGroupContentBackground;
+	background-color: @sapUiNeutralElement;
+}
+
+.sapUiIconBGColorCritical {
+	color: @sapUiGroupContentBackground;
+	background-color: @sapUiCriticalElement;
+}
+
+.sapUiIconBGColorPositive {
+	color: @sapUiGroupContentBackground;
+	background-color: @sapUiPositiveElement;
+}
+
+.sapUiIconBGColorNegative {
+	color: @sapUiGroupContentBackground;
+	background-color: @sapUiNegativeElement;
+}
+
+.sapUiIconBGColorNonInteractive {
+	color: @sapUiGroupContentBackground;
+	background-color: @sapUiContentNonInteractiveIconColor;
+}
+
+.sapUiIconBGColorTile {
+	color: @sapUiGroupContentBackground;
+	background-color: @sapUiTileIconColor;
+}
+
+.sapUiIconBGColorMarker {
+	color: @sapUiGroupContentBackground;
+	background-color: @sapUiContentMarkerIconColor;
 }

@@ -11,15 +11,15 @@ sap.ui.define('sap/ui/debug/LogViewer', function() {
 	 * Constructs a LogViewer in the given window, embedded into the given DOM element.
 	 * If the DOM element doesn't exist, a DIV is created.
 	 *
-	 * @param {Window} oTargetWindow the window where the log will be displayed in
-	 * @param {sRootId} sRootId id of the top level element that will contain the log entries
+	 * @param {Window} oWindow The window where the log will be displayed in
+	 * @param {sRootId} sRootId ID of the top level element that will contain the log entries
 	 *
 	 * @class HTML LogViewer that displays all entries of a Logger, as long as they match a filter and a minimal log level
 	 * @alias sap.ui.debug.LogViewer
 	 */
 	var LogViewer = function(oWindow, sRootId) {
 		this.oWindow = oWindow;
-		this.oDomNode = oWindow.document.getElementById(sRootId);
+		this.oDomNode = oWindow.querySelector("#" + sRootId);
 		if (!this.oDomNode) {
 			var oDiv = this.oWindow.document.createElement("DIV");
 			oDiv.setAttribute("id", sRootId);
@@ -37,7 +37,7 @@ sap.ui.define('sap/ui/debug/LogViewer', function() {
 			this.oWindow.document.body.appendChild(oDiv);
 			this.oDomNode = oDiv;
 		}
-		this.iLogLevel = 3; /* jQuery.sap.log.LogLevel.INFO */
+		this.iLogLevel = 3; /* Log.LogLevel.INFO */
 		this.sLogEntryClassPrefix = undefined;
 		this.clear();
 		this.setFilter(LogViewer.NO_FILTER);
@@ -70,7 +70,7 @@ sap.ui.define('sap/ui/debug/LogViewer', function() {
 	 */
 	LogViewer.prototype.addEntry = function(oLogEntry) {
 
-		var oDomEntry = this.oWindow.document.createElement("div");
+		var oDomEntry = this.oWindow.ownerDocument.createElement("div");
 
 		// style the entry
 		if ( this.sLogEntryClassPrefix ) {
@@ -86,7 +86,7 @@ sap.ui.define('sap/ui/debug/LogViewer', function() {
 
 		// create text as text node
 		var sText = LogViewer.xmlEscape(oLogEntry.time + "  " + oLogEntry.message),
-			oTextNode = this.oWindow.document.createTextNode(sText);
+			oTextNode = this.oWindow.ownerDocument.createTextNode(sText);
 		oDomEntry.appendChild(oTextNode);
 		oDomEntry.title = oLogEntry.message;
 
@@ -107,7 +107,7 @@ sap.ui.define('sap/ui/debug/LogViewer', function() {
 
 		// when attached to a log, clear the dom node and add all entries from the log
 		var aLog = this.oLogger.getLogEntries();
-		for (var i = this.iFirstEntry,l = aLog.length;i < l;i++) {
+		for (var i = this.iFirstEntry,l = aLog.length;i < l; i++) {
 			if ( aLog[i].level <= this.iLogLevel ) {
 				this.addEntry(aLog[i]);
 			}

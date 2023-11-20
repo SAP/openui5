@@ -1,0 +1,19 @@
+<mvc:View content="{path: '/supplier', templateShareable:false}"
+	xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc"
+	controllerName="sap.ui.sample.mvc.XMLViewBindableAggregation"
+	afterRendering=".afterRendering">
+	<mvc:content>
+		<Panel headerText="{name}">
+			<core:ExtensionPoint name="Button_Ext_As_BindingTemplate">
+				<Button id="PanelButton" text="{name}" />
+			</core:ExtensionPoint>
+		</Panel>
+	</mvc:content>
+	<mvc:dependents>
+		<Dialog id="dialog" title="Shared Dialog">
+			<endButton>
+				<Button text="Close" press=".closeDialog" />
+			</endButton>
+		</Dialog>
+	</mvc:dependents>
+</mvc:View>

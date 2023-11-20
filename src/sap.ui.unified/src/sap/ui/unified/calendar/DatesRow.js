@@ -4,13 +4,19 @@
 
 //Provides control sap.ui.unified.Calendar.
 sap.ui.define([
-	'jquery.sap.global',
+	"sap/ui/core/Lib",
+	"sap/ui/core/RenderManager",
 	'sap/ui/unified/calendar/CalendarUtils',
 	'sap/ui/unified/calendar/CalendarDate',
 	'sap/ui/unified/calendar/Month',
 	'sap/ui/unified/library',
-	"./DatesRowRenderer"
-], function(jQuery, CalendarUtils, CalendarDate, Month, library, DatesRowRenderer) {
+	"./DatesRowRenderer",
+	"sap/ui/thirdparty/jquery",
+	'sap/ui/core/format/DateFormat',
+	'sap/ui/core/Locale',
+	'sap/ui/core/date/UI5Date',
+	'sap/ui/core/InvisibleText'
+], function(Library, RenderManager, CalendarUtils, CalendarDate, Month, library, DatesRowRenderer, jQuery, DateFormat, Locale, UI5Date, InvisibleText) {
 	"use strict";
 
 	/*
@@ -36,7 +42,6 @@ sap.ui.define([
 	 * @public
 	 * @since 1.30.0
 	 * @alias sap.ui.unified.calendar.DatesRow
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var DatesRow = Month.extend("sap.ui.unified.calendar.DatesRow", /** @lends sap.ui.unified.calendar.DatesRow.prototype */ { metadata : {
 
@@ -61,10 +66,18 @@ sap.ui.define([
 			 * If not set the day names are shown inside the single days.
 			 * @since 1.34.0
 			 */
-			showDayNamesLine : {type : "boolean", group : "Appearance", defaultValue : true}
+			showDayNamesLine : {type : "boolean", group : "Appearance", defaultValue : true},
+
+			/**
+			 * If set, the calendar week numbering is used for display.
+			 * If not set, the calendar week numbering of the global configuration is used.
+			 * Note: This property should not be used with <code>Month.prototype.firstDayOfWeek</code> property.
+			 * @since 1.110.0
+			 */
+			 calendarWeekNumbering : { type : "sap.ui.core.date.CalendarWeekNumbering", group : "Appearance", defaultValue: null}
 
 		}
-	}});
+	}, renderer: DatesRowRenderer});
 
 	DatesRow.prototype.init = function(){
 
@@ -76,12 +89,49 @@ sap.ui.define([
 		//example: [{ len: 3, number: 12 }, { len: 7, number: 13 }, ...]
 		this._aWeekNumbers = [];
 
+		this._bAlwaysShowSpecialDates = true;
+
 	};
 
-	/*
-	 * Sets a start date.
-	 * @param {Date} oStartDate A JavaScript date
-	 * @return {sap.ui.unified.calendar.DatesRow} <code>this</code> for method chaining
+	DatesRow.prototype.exit = function() {
+		Month.prototype.exit(this, arguments);
+		if (this._invisibleDayHint) {
+			this._invisibleDayHint.destroy();
+			this._invisibleDayHint = null;
+		}
+	};
+
+	DatesRow.prototype._setAriaRole = function(sRole){
+		this._ariaRole = sRole;
+
+		return this;
+	};
+
+	DatesRow.prototype._getAriaRole = function(){
+
+		return this._ariaRole ? this._ariaRole : "gridcell";
+	};
+
+	DatesRow.prototype._getDayDescription = function() {
+		return this._fnInvisibleHintFactory().getId();
+	};
+
+	DatesRow.prototype._fnInvisibleHintFactory = function() {
+		if (!this._invisibleDayHint) {
+			this._invisibleDayHint = new InvisibleText({
+				text: Library.getResourceBundleFor("sap.m").getText("SLIDETILE_ACTIVATE")
+			}).toStatic();
+		}
+
+		return this._invisibleDayHint;
+	};
+
+	/**
+	 * Sets start date of the row.
+	 *
+	 * @param {Date|module:sap/ui/core/date/UI5Date} oStartDate A date instance
+	 * @returns {this} Reference to <code>this</code> for method chaining
+	 * @public
 	 */
 	DatesRow.prototype.setStartDate = function(oStartDate){
 
@@ -90,7 +140,7 @@ sap.ui.define([
 		var iYear = oStartDate.getFullYear();
 		CalendarUtils._checkYearInValidRange(iYear);
 
-		this.setProperty("startDate", oStartDate, true);
+		this.setProperty("startDate", oStartDate);
 		this._oStartDate = CalendarDate.fromLocalJSDate(oStartDate, this.getPrimaryCalendarType());
 
 		if (this.getDomRef()) {
@@ -114,7 +164,7 @@ sap.ui.define([
 	DatesRow.prototype._getStartDate = function(){
 
 		if (!this._oStartDate) {
-			this._oStartDate = CalendarDate.fromLocalJSDate(new Date(), this.getPrimaryCalendarType());
+			this._oStartDate = CalendarDate.fromLocalJSDate(UI5Date.getInstance(), this.getPrimaryCalendarType());
 		}
 
 		return this._oStartDate;
@@ -127,8 +177,8 @@ sap.ui.define([
 	 * beginning with <code>startDate</code> and <code>days</code> days
 	 * So set this properties before setting the date.
 	 *
-	 * @param {object} oDate JavaScript date object for start date.
-	 * @returns {sap.ui.unified.calendar.DatesRow} <code>this</code> to allow method chaining
+	 * @param {Date|module:sap/ui/core/date/UI5Date} oDate date instance for start date.
+	 * @returns {this} Reference to <code>this</code> for method chaining
 	 * @public
 	 */
 	DatesRow.prototype.setDate = function(oDate){
@@ -145,16 +195,15 @@ sap.ui.define([
 	};
 
 	/**
-	 * displays the a given date without setting the focus
+	 * Displays the given date without setting the focus
 	 *
 	 * Property <code>date</code> date to be focused or displayed. It must be in the displayed date range
 	 * beginning with <code>startDate</code> and <code>days</code> days
 	 * So set this properties before setting the date.
 	 *
-	 * @param {object} oDate JavaScript date object for focused date.
-	 * @returns {sap.ui.unified.calendar.DatesRow} <code>this</code> to allow method chaining
+	 * @param {Date|module:sap/ui/core/date/UI5Date} oDate date instance for focused date.
+	 * @returns {this} Reference to <code>this</code> for method chaining
 	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	DatesRow.prototype.displayDate = function(oDate){
 
@@ -166,6 +215,12 @@ sap.ui.define([
 		Month.prototype.displayDate.apply(this, arguments);
 
 		return this;
+
+	};
+
+	DatesRow.prototype._setTopPosition = function(iTop){
+
+		this._iTopPosition = iTop;
 
 	};
 
@@ -181,29 +236,26 @@ sap.ui.define([
 
 	};
 
-	/**
-	 * Setter for property <code>firstDayOfWeek</code>.
-	 *
-	 * Property <code>firstDayOfWeek</code> is not supported in <code>sap.ui.unified.calendar.DatesRow</code> control.
-	 *
-	 * @protected
-	 * @param {int} iFirstDayOfWeek The first day of the week
-	 * @returns {sap.ui.unified.calendar.DatesRow} <code>this</code> to allow method chaining
-	 */
-	DatesRow.prototype.setFirstDayOfWeek = function(iFirstDayOfWeek){
+	DatesRow.setSecondaryCalendarType = function(sCalendarType){
+		this._bSecondaryCalendarTypeSet = true;
+		Month.prototype.setSecondaryCalendarType.apply(this, arguments);
 
-		if (iFirstDayOfWeek == -1) {
-			return this.setProperty("firstDayOfWeek", iFirstDayOfWeek, false); // rerender
-		} else {
-			throw new Error("Property firstDayOfWeek not supported " + this);
-		}
-
+		return this;
 	};
 
+	/**
+	 * Handler used for controling the behaviour when border is reached.
+	 *
+	 * The method this._getRelativeInfo provides information from the PlanningCalendar about the relative views.
+	 *
+	 * @private
+	 * @param {int} oControlEvent The control event.
+	 */
 	DatesRow.prototype._handleBorderReached = function(oControlEvent){
 
 		var oEvent = oControlEvent.getParameter("event");
-		var iDays = this.getDays();
+		var iDays = this._getRelativeInfo ? this.getDays() * this._getRelativeInfo().iIntervalSize : this.getDays();
+		var iStep = this._getRelativeInfo ? this._getRelativeInfo().iIntervalSize : 1;
 		var oOldDate = this._getDate();
 		var oFocusedDate = new CalendarDate(oOldDate, this.getPrimaryCalendarType());
 
@@ -212,13 +264,13 @@ sap.ui.define([
 			case "sapnext":
 			case "sapnextmodifiers":
 				//go to next day
-				oFocusedDate.setDate(oFocusedDate.getDate() + 1);
+				oFocusedDate.setDate(oFocusedDate.getDate() + iStep);
 				break;
 
 			case "sapprevious":
 			case "sappreviousmodifiers":
 				//go to previous day
-				oFocusedDate.setDate(oFocusedDate.getDate() - 1);
+				oFocusedDate.setDate(oFocusedDate.getDate() - iStep);
 				break;
 
 			case "sappagedown":
@@ -243,6 +295,7 @@ sap.ui.define([
 
 	/**
 	 * Checks if given date is focusable.
+	 *
 	 * @param {Date} oDate JavaScript (local) date.
 	 * @returns {boolean} true if the date is focusable, false otherwise.
 	 */
@@ -258,7 +311,13 @@ sap.ui.define([
 		var oStartDate = this._getStartDate();
 
 		var oEndDate = new CalendarDate(oStartDate, this.getPrimaryCalendarType());
-		oEndDate.setDate(oEndDate.getDate() + this.getDays());
+		var iAdditionalDays = this.getDays();
+
+		if (this._getRelativeInfo && this._getRelativeInfo().bIsRelative) {
+			iAdditionalDays = this.getDays() * this._getRelativeInfo().iIntervalSize;
+		}
+
+		oEndDate.setDate(oEndDate.getDate() + iAdditionalDays);
 		var oCalDate = CalendarDate.fromLocalJSDate(oDate, this.getPrimaryCalendarType());
 
 		return oCalDate.isSameOrAfter(oStartDate) && oCalDate.isBefore(oEndDate);
@@ -290,7 +349,7 @@ sap.ui.define([
 			var $Container = this.$("Head");
 
 			if ($Container.length > 0) {
-				var oRm = sap.ui.getCore().createRenderManager();
+				var oRm = new RenderManager().getInterface();
 				this.getRenderer().renderHeaderLine(oRm, this, oLocaleData, oStartDate);
 				oRm.flush($Container[0]);
 				oRm.destroy();
@@ -310,13 +369,13 @@ sap.ui.define([
 
 	/**
 	 * Returns the weeks with their length and number for the displayed dates.
+	 *
 	 * @returns {Array} Array with objects containing info about the weeks. Example: [{ len: 3, number: 12 }, { len: 7, number: 13 }, ...]
 	 * @private
 	 */
 	DatesRow.prototype.getWeekNumbers = function() {
 		var iDays = this.getDays(),
-			oLocale = this._getLocale(),
-			oLocaleData = this._getLocaleData(),
+			sLocale = this._getLocale(),
 			oCalType = this.getPrimaryCalendarType(),
 			oStartDate = this._getStartDate(),
 			oDate = new CalendarDate(oStartDate, oCalType),
@@ -329,7 +388,9 @@ sap.ui.define([
 		}
 
 		this._aWeekNumbers = aDisplayedDates.reduce(function (aWeekNumbers, oDay) {
-			var iWeekNumber = CalendarUtils.calculateWeekNumber(oDay.toUTCJSDate(), oDay.getYear(), oLocale, oLocaleData);
+			var oDateFormat = DateFormat.getInstance({pattern: "w", calendarType: this.getPrimaryCalendarType(), calendarWeekNumbering: this.getCalendarWeekNumbering()}, new Locale(sLocale));
+
+			var iWeekNumber = Number(oDateFormat.format(oDay.toUTCJSDate(), true));
 
 			if (!aWeekNumbers.length || aWeekNumbers[aWeekNumbers.length - 1].number !== iWeekNumber) {
 				aWeekNumbers.push({
@@ -341,7 +402,7 @@ sap.ui.define([
 			aWeekNumbers[aWeekNumbers.length - 1].len++;
 
 			return aWeekNumbers;
-		}, []);
+		}.bind(this), []);
 
 		return this._aWeekNumbers;
 	};

@@ -1,15 +1,19 @@
-(function () {
+sap.ui.define([
+	"sap/ui/layout/FixFlex",
+	"sap/m/Text",
+	"sap/ui/dt/enablement/elementDesigntimeTest",
+	"sap/ui/rta/enablement/elementActionTest"
+], function (
+	FixFlex,
+	Text,
+	elementDesigntimeTest,
+	elementActionTest
+) {
 	"use strict";
 
-	sap.ui.require([
-		"sap/ui/dt/test/report/QUnit",
-		"sap/ui/dt/test/ElementEnablementTest",
-		"sap/ui/layout/FixFlex",
-		"sap/m/Text",
-		"sap/ui/rta/test/controlEnablingCheck"
-	], function (QUnitReport, ElementEnablementTest, FixFlex, Text, rtaControlEnablingCheck) {
-
-		var oElementEnablementTest = new ElementEnablementTest({
+	return Promise.resolve()
+	.then(function () {
+		return elementDesigntimeTest({
 			type: "sap.ui.layout.FixFlex",
 			create: function () {
 				return new FixFlex({
@@ -22,12 +26,8 @@
 				});
 			}
 		});
-		oElementEnablementTest.run().then(function (oData) {
-			new QUnitReport({
-				data: oData
-			});
-		});
-
+	})
+	.then(function() {
 		// Move action
 		var fnConfirmElement1IsOn3rdPosition = function (oUiComponent, oViewAfterAction, assert) {
 			assert.strictEqual(oViewAfterAction.byId("txt1").getId(),
@@ -40,7 +40,7 @@
 				"then the control has been moved to the previous position");
 		};
 
-		rtaControlEnablingCheck("Checking the move action for FixFlex control", {
+		elementActionTest("Checking the move action for FixFlex control", {
 			xmlView: '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m" xmlns:l="sap.ui.layout">' +
 			'<l:FixFlex id="idFixFlex">' +
 				'<l:fixContent>' +
@@ -88,7 +88,7 @@
 			assert.strictEqual(oViewAfterAction.byId("idFixFlex").getVisible(), true, "then the FixFlex element is visible");
 		};
 
-		rtaControlEnablingCheck("Checking the remove action for FixFlex", {
+		elementActionTest("Checking the remove action for FixFlex", {
 			xmlView: '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m" xmlns:l="sap.ui.layout">"' +
 			'<l:FixFlex id="idFixFlex">' +
 				'<l:fixContent>' +
@@ -109,7 +109,7 @@
 			afterRedo: fnConfirmFixFlexIsInvisible
 		});
 
-		rtaControlEnablingCheck("Checking the reveal action for a FixFlex", {
+		elementActionTest("Checking the reveal action for a FixFlex", {
 			xmlView: '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m" xmlns:l="sap.ui.layout">"' +
 			'<l:FixFlex id="idFixFlex" visible="false">' +
 				'<l:fixContent>' +
@@ -129,6 +129,5 @@
 			afterUndo: fnConfirmFixFlexIsInvisible,
 			afterRedo: fnConfirmFixFLexIsVisible
 		});
-
 	});
-})();
+});

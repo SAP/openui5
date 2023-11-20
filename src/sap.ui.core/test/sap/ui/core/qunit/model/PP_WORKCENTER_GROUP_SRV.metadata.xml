@@ -1,0 +1,519 @@
+<edmx:Edmx xmlns:edmx="http://schemas.microsoft.com/ado/2007/06/edmx"
+		   xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata"
+		   xmlns:sap="http://www.sap.com/Protocols/SAPData" Version="1.0">
+	<edmx:DataServices m:DataServiceVersion="2.0">
+		<Schema xmlns="http://schemas.microsoft.com/ado/2008/09/edm"
+				Namespace="PP_WORKCENTER_GROUP_SRV" xml:lang="en" sap:schema-version="1">
+			<EntityType Name="WRKCTRGRPEDITFLAG" sap:content-version="1">
+				<Key>
+					<PropertyRef Name="WRKCTREGRPFLAG"/>
+				</Key>
+				<Property Name="WRKCTREGRPFLAG" Type="Edm.String" Nullable="false" MaxLength="1"
+						  sap:unicode="false" sap:label="Indicator" sap:creatable="false"
+						  sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+			</EntityType>
+			<EntityType Name="C_ManageWrkCtrGrpWorkCenterVHType"
+						sap:label="Consumption View for Work Center VH" sap:content-version="1">
+				<Key>
+					<PropertyRef Name="WorkCenter"/>
+					<PropertyRef Name="Plant"/>
+					<PropertyRef Name="WorkCenterInternalID"/>
+				</Key>
+				<Property Name="WorkCenter" Type="Edm.String" Nullable="false" MaxLength="8"
+						  sap:display-format="UpperCase" sap:text="WorkCenterText"
+						  sap:label="Work Center1" sap:quickinfo="Work Center"
+						  sap:value-list="standard"/>
+				<Property Name="Plant" Type="Edm.String" Nullable="false" MaxLength="4"
+						  sap:display-format="UpperCase" sap:label="Plant"/>
+				<Property Name="WorkCenterInternalID" Type="Edm.String" Nullable="false"
+						  MaxLength="8" sap:display-format="NonNegative" sap:label="Object ID"
+						  sap:quickinfo="Object ID of the resource"/>
+				<Property Name="WorkCenterText" Type="Edm.String" MaxLength="40"
+						  sap:label="Work Center Description" sap:quickinfo="Work Center Text"/>
+				<Property Name="WorkCenterResponsible" Type="Edm.String" MaxLength="3"
+						  sap:display-format="UpperCase" sap:label="Person Responsible"
+						  sap:quickinfo="Person Responsible for the Work Center"/>
+			</EntityType>
+			<EntityType Name="C_WorkCenterGroupAdminvDataType"
+						sap:label="Consumption View for Admin Data" sap:content-version="1">
+				<Key>
+					<PropertyRef Name="ObjectTypeCode"/>
+					<PropertyRef Name="ObjectInternalID"/>
+				</Key>
+				<Property Name="ObjectTypeCode" Type="Edm.String" Nullable="false" MaxLength="2"
+						  sap:display-format="UpperCase" sap:label="Object Type"
+						  sap:quickinfo="Object types of the CIM resource"/>
+				<Property Name="ObjectInternalID" Type="Edm.String" Nullable="false" MaxLength="8"
+						  sap:display-format="NonNegative" sap:label="Object ID"
+						  sap:quickinfo="Object ID of the resource"/>
+				<Property Name="CreationDate" Type="Edm.DateTime" Precision="0"
+						  sap:display-format="Date" sap:label="Created On"
+						  sap:quickinfo="Date Record Created On"/>
+				<Property Name="CreatedByUser" Type="Edm.String" MaxLength="12"
+						  sap:display-format="UpperCase" sap:label="Created By"
+						  sap:quickinfo="User Who Created Record"/>
+				<Property Name="LastChangeDate" Type="Edm.DateTime" Precision="0"
+						  sap:display-format="Date" sap:label="Changed On"
+						  sap:quickinfo="Last Changed On"/>
+				<Property Name="LastChangedByUser" Type="Edm.String" MaxLength="12"
+						  sap:display-format="UpperCase" sap:label="Changed By"
+						  sap:quickinfo="Name of Person Who Changed Object"/>
+				<NavigationProperty Name="to_CreatedByUserContactCard"
+									Relationship="PP_WORKCENTER_GROUP_SRV.assoc_48FBFAE3D734EBCFD348F95B4DBBF5EA"
+									FromRole="FromRole_assoc_48FBFAE3D734EBCFD348F95B4DBBF5EA"
+									ToRole="ToRole_assoc_48FBFAE3D734EBCFD348F95B4DBBF5EA"/>
+				<NavigationProperty Name="to_LastChangedByUserContactCard"
+									Relationship="PP_WORKCENTER_GROUP_SRV.assoc_B27B5DCE6414B3960AD7A4F6A28F25B4"
+									FromRole="FromRole_assoc_B27B5DCE6414B3960AD7A4F6A28F25B4"
+									ToRole="ToRole_assoc_B27B5DCE6414B3960AD7A4F6A28F25B4"/>
+			</EntityType>
+			<EntityType Name="C_WorkCenterGroupAssgdWrkCtrType"
+						sap:label="Assigned Work Centers in Group" sap:content-version="1">
+				<Key>
+					<PropertyRef Name="HierarchyRootNode"/>
+					<PropertyRef Name="HierarchyNode"/>
+					<PropertyRef Name="HierarchyNodeType"/>
+				</Key>
+				<Property Name="HierarchyRootNode" Type="Edm.String" Nullable="false" MaxLength="8"
+						  sap:display-format="NonNegative" sap:label="Object ID"
+						  sap:quickinfo="Object ID of the resource"/>
+				<Property Name="HierarchyNode" Type="Edm.String" Nullable="false" MaxLength="8"
+						  sap:display-format="NonNegative" sap:label="Object ID"
+						  sap:quickinfo="Object ID of the resource"/>
+				<Property Name="HierarchyNodeType" Type="Edm.String" Nullable="false" MaxLength="2"
+						  sap:display-format="UpperCase" sap:label="Object Type"
+						  sap:quickinfo="Object types of the CIM resource"/>
+				<Property Name="ObjectName" Type="Edm.String" MaxLength="10"
+						  sap:display-format="UpperCase" sap:label="Work Center"
+						  sap:quickinfo="Name of hierarchy"/>
+				<Property Name="ObjectDescription" Type="Edm.String" MaxLength="40"
+						  sap:label="Description" sap:quickinfo="Work Center Text"/>
+				<Property Name="Plant" Type="Edm.String" MaxLength="4"
+						  sap:display-format="UpperCase" sap:label="Plant"/>
+				<Property Name="WorkCenterCategoryCode" Type="Edm.String" MaxLength="4"
+						  sap:display-format="UpperCase" sap:label="Work Center Category"/>
+				<Property Name="WorkCenterCategoryName" Type="Edm.String" MaxLength="20"
+						  sap:text="WorkCenterCategoryCode" sap:label="Category"
+						  sap:quickinfo="Name of the Work Center Category"/>
+				<Property Name="WorkCenterAssgmtIsDirect" Type="Edm.String" MaxLength="1"
+						  sap:display-format="UpperCase" sap:label="Direct Assignment"
+						  sap:quickinfo="Work Center Assignment is Direct"/>
+				<Property Name="WorkCenterGroupObjectCount" Type="Edm.Int32"
+						  sap:label="Where Used"/>
+				<Property Name="WorkCenterGroupType" Type="Edm.String" MaxLength="10"
+						  sap:display-format="UpperCase" sap:label="WrkCtrGrpType"
+						  sap:quickinfo="Work Center Group Type"/>
+			</EntityType>
+			<EntityType Name="C_WorkCenterGroupStructureType"
+						sap:label="Work Center Group Structure" sap:content-version="1">
+				<Key>
+					<PropertyRef Name="WorkCenterGroupTypeCode"/>
+					<PropertyRef Name="WorkCenterGroupInternalID"/>
+					<PropertyRef Name="ObjectTypeCode"/>
+					<PropertyRef Name="ObjectInternalID"/>
+					<PropertyRef Name="WorkCenterTypeCode"/>
+					<PropertyRef Name="WorkCenterInternalID"/>
+				</Key>
+				<Property Name="WorkCenterGroupTypeCode" Type="Edm.String" Nullable="false"
+						  MaxLength="2" sap:display-format="UpperCase" sap:label="Object Type"
+						  sap:quickinfo="Object types of the CIM resource" sap:creatable="false"
+						  sap:updatable="false"/>
+				<Property Name="WorkCenterGroupInternalID" Type="Edm.String" Nullable="false"
+						  MaxLength="8" sap:display-format="NonNegative" sap:label="Object ID"
+						  sap:quickinfo="Object ID of the resource" sap:creatable="false"
+						  sap:updatable="false"/>
+				<Property Name="ObjectTypeCode" Type="Edm.String" Nullable="false" MaxLength="2"
+						  sap:display-format="UpperCase" sap:label="Object Type"
+						  sap:quickinfo="Object types of the CIM resource" sap:creatable="false"
+						  sap:updatable="false"/>
+				<Property Name="ObjectInternalID" Type="Edm.String" Nullable="false" MaxLength="8"
+						  sap:display-format="NonNegative" sap:label="Object ID"
+						  sap:quickinfo="Object ID of the resource" sap:creatable="false"
+						  sap:updatable="false"/>
+				<Property Name="WorkCenterTypeCode" Type="Edm.String" Nullable="false" MaxLength="2"
+						  sap:display-format="UpperCase" sap:label="Type"
+						  sap:quickinfo="Type of resource which is superior in the hierarchy"
+						  sap:creatable="false" sap:updatable="false"/>
+				<Property Name="WorkCenterInternalID" Type="Edm.String" Nullable="false"
+						  MaxLength="8" sap:display-format="NonNegative" sap:label="ID"
+						  sap:quickinfo="ID of superior object in the hierarchy"
+						  sap:creatable="false" sap:updatable="false"/>
+				<Property Name="ObjectName" Type="Edm.String" MaxLength="10"
+						  sap:display-format="UpperCase" sap:label="Object Name"
+						  sap:quickinfo="Name of hierarchy" sap:creatable="false"
+						  sap:updatable="false"/>
+				<Property Name="ObjectDescription" Type="Edm.String" MaxLength="40"
+						  sap:label="Object Description" sap:quickinfo="Production Resource Text"
+						  sap:creatable="false" sap:updatable="false"/>
+				<Property Name="Plant" Type="Edm.String" MaxLength="4"
+						  sap:display-format="UpperCase" sap:label="Plant" sap:creatable="false"
+						  sap:updatable="false"/>
+				<Property Name="ObjectTypeText" Type="Edm.String" MaxLength="60"
+						  sap:label="Object Type" sap:quickinfo="Production Resource Type Name"/>
+				<Property Name="WorkCenterGroupObjectCount" Type="Edm.Int32" sap:label="Where Used"
+						  sap:creatable="false" sap:updatable="false"/>
+			</EntityType>
+			<EntityType Name="C_WorkCenterGroupTreeType" sap:label="Work Center Groups Tree"
+						sap:content-version="1">
+				<Key>
+					<PropertyRef Name="HierarchyRootNode"/>
+					<PropertyRef Name="HierarchyParentNode"/>
+					<PropertyRef Name="HierarchyNode"/>
+					<PropertyRef Name="HierarchyNodeType"/>
+				</Key>
+				<Property Name="HierarchyRootNode" Type="Edm.String" Nullable="false" MaxLength="8"
+						  sap:display-format="NonNegative" sap:label="Object ID"
+						  sap:quickinfo="Object ID of the resource"/>
+				<Property Name="HierarchyParentNode" Type="Edm.String" Nullable="false"
+						  MaxLength="8" sap:display-format="NonNegative" sap:label="Object ID"
+						  sap:quickinfo="Object ID of the resource"/>
+				<Property Name="HierarchyNode" Type="Edm.String" Nullable="false" MaxLength="8"
+						  sap:display-format="NonNegative" sap:label="Object ID"
+						  sap:quickinfo="Object ID of the resource"/>
+				<Property Name="HierarchyNodeType" Type="Edm.String" Nullable="false" MaxLength="2"
+						  sap:display-format="UpperCase" sap:label="Object Type"
+						  sap:quickinfo="Object types of the CIM resource"/>
+				<Property Name="ParentNode" Type="Edm.String" MaxLength="16"
+						  sap:hierarchy-parent-node-for="HierarchyNodeUniqueID"/>
+				<Property Name="HierarchyNodeUniqueID" Type="Edm.String" MaxLength="16"
+						  sap:hierarchy-node-for="HierarchyNodeUniqueID"/>
+				<Property Name="WorkCenterGroupRoot" Type="Edm.String" MaxLength="10"
+						  sap:display-format="UpperCase" sap:label="Group"
+						  sap:quickinfo="Name of hierarchy" sap:value-list="standard"/>
+				<Property Name="WorkCenterGroup" Type="Edm.String" MaxLength="10"
+						  sap:display-format="UpperCase" sap:label="Hierarchy Name"
+						  sap:quickinfo="Name of hierarchy"/>
+				<Property Name="ObjectName" Type="Edm.String" MaxLength="10"
+						  sap:display-format="UpperCase" sap:label="Name"
+						  sap:quickinfo="Name of hierarchy"/>
+				<Property Name="ObjectDescription" Type="Edm.String" MaxLength="40"
+						  sap:label="Description" sap:quickinfo="Work Center Text"/>
+				<Property Name="ObjectTypeText" Type="Edm.String" MaxLength="60"
+						  sap:label="Object Type" sap:quickinfo="Production Resource Type Name"/>
+				<Property Name="WorkCenterGroupType" Type="Edm.String" MaxLength="10"
+						  sap:display-format="UpperCase" sap:label="Group Type"
+						  sap:quickinfo="Work Center Group Type"/>
+				<Property Name="WorkCenterGroupTypeDescription" Type="Edm.String" MaxLength="40"
+						  sap:label="Group Type Description"
+						  sap:quickinfo="Work Center Group Type Description"/>
+				<Property Name="WorkCenterGroupRootType" Type="Edm.String" MaxLength="10"
+						  sap:display-format="UpperCase" sap:text="WorkCenterGroupRootTypeDesc"
+						  sap:label="Group Type" sap:quickinfo="Work Center Group Type"
+						  sap:value-list="standard"/>
+				<Property Name="WorkCenterGroupRootTypeDesc" Type="Edm.String" MaxLength="40"
+						  sap:label="Group Type"
+						  sap:quickinfo="Work Center Group Type Description"/>
+				<Property Name="NumberOfWorkCenters" Type="Edm.Int16"
+						  sap:label="Total Work Centers"/>
+				<Property Name="WorkCenterGroupObjectCount" Type="Edm.Int32"
+						  sap:label="Where Used"/>
+				<Property Name="Plant" Type="Edm.String" MaxLength="4"
+						  sap:display-format="UpperCase" sap:label="Plant"
+						  sap:value-list="standard"/>
+				<Property Name="PlantName" Type="Edm.String" MaxLength="30" sap:label="Plant Name"/>
+				<Property Name="WrkCtrGrpNodeID" Type="Edm.Int64"/>
+				<Property Name="WrkCtrGrpParentNodeID" Type="Edm.Int64"/>
+				<Property Name="HierarchyNodeSubTreeSize" Type="Edm.Int64"/>
+				<Property Name="WrkCtrGrpHierarchyLevel" Type="Edm.Int32"
+						  sap:hierarchy-level-for="HierarchyNodeUniqueID"/>
+				<Property Name="HierarchyNodeIsOrphan" Type="Edm.Byte"/>
+				<Property Name="HierarchyNodeIsCycleEndPoint" Type="Edm.Byte"/>
+				<Property Name="WrkCtrGrpDrillState" Type="Edm.String" MaxLength="8"
+						  sap:hierarchy-drill-state-for="HierarchyNodeUniqueID"/>
+				<NavigationProperty Name="to_AdminData"
+									Relationship="PP_WORKCENTER_GROUP_SRV.assoc_5D6A1FC56C1B4BFEB58C29A9793CF53B"
+									FromRole="FromRole_assoc_5D6A1FC56C1B4BFEB58C29A9793CF53B"
+									ToRole="ToRole_assoc_5D6A1FC56C1B4BFEB58C29A9793CF53B"/>
+				<NavigationProperty Name="to_AssgdWrkCtr"
+									Relationship="PP_WORKCENTER_GROUP_SRV.assoc_6A0946873C1F2ED089F94D04B26F2CA9"
+									FromRole="FromRole_assoc_6A0946873C1F2ED089F94D04B26F2CA9"
+									ToRole="ToRole_assoc_6A0946873C1F2ED089F94D04B26F2CA9"/>
+				<NavigationProperty Name="to_WorkCenterGroupStructure"
+									Relationship="PP_WORKCENTER_GROUP_SRV.assoc_934EDE236F30D9F8AC1E2DC7F0CF21AB"
+									FromRole="FromRole_assoc_934EDE236F30D9F8AC1E2DC7F0CF21AB"
+									ToRole="ToRole_assoc_934EDE236F30D9F8AC1E2DC7F0CF21AB"/>
+				<NavigationProperty Name="to_WorkCenterGroupWhereUsed"
+									Relationship="PP_WORKCENTER_GROUP_SRV.assoc_7CE807F52500F52B9B10346910247DDF"
+									FromRole="FromRole_assoc_7CE807F52500F52B9B10346910247DDF"
+									ToRole="ToRole_assoc_7CE807F52500F52B9B10346910247DDF"/>
+				<NavigationProperty Name="to_WorkCenterVH"
+									Relationship="PP_WORKCENTER_GROUP_SRV.assoc_2C8888011CEB4D1F705634976E958123"
+									FromRole="FromRole_assoc_2C8888011CEB4D1F705634976E958123"
+									ToRole="ToRole_assoc_2C8888011CEB4D1F705634976E958123"/>
+			</EntityType>
+			<EntityType Name="C_WorkCenterGroupWhereUsedType"
+						sap:label="Work Center Group Where Used" sap:content-version="1">
+				<Key>
+					<PropertyRef Name="WorkCenterGroupTypeCode"/>
+					<PropertyRef Name="WorkCenterGroupInternalID"/>
+					<PropertyRef Name="ObjectTypeCode"/>
+					<PropertyRef Name="ObjectInternalID"/>
+					<PropertyRef Name="WorkCenterTypeCode"/>
+					<PropertyRef Name="WorkCenterInternalID"/>
+				</Key>
+				<Property Name="WorkCenterGroupTypeCode" Type="Edm.String" Nullable="false"
+						  MaxLength="2" sap:display-format="UpperCase" sap:label="Object Type"
+						  sap:quickinfo="Object types of the CIM resource"/>
+				<Property Name="WorkCenterGroupInternalID" Type="Edm.String" Nullable="false"
+						  MaxLength="8" sap:display-format="NonNegative" sap:label="Object ID"
+						  sap:quickinfo="Object ID of the resource"/>
+				<Property Name="ObjectTypeCode" Type="Edm.String" Nullable="false" MaxLength="2"
+						  sap:display-format="UpperCase" sap:label="Object Type"
+						  sap:quickinfo="Object types of the CIM resource"/>
+				<Property Name="ObjectInternalID" Type="Edm.String" Nullable="false" MaxLength="8"
+						  sap:display-format="NonNegative" sap:label="Object ID"
+						  sap:quickinfo="Object ID of the resource"/>
+				<Property Name="WorkCenterTypeCode" Type="Edm.String" Nullable="false" MaxLength="2"
+						  sap:display-format="UpperCase" sap:label="Type"
+						  sap:quickinfo="Type of resource which is superior in the hierarchy"/>
+				<Property Name="WorkCenterInternalID" Type="Edm.String" Nullable="false"
+						  MaxLength="8" sap:display-format="NonNegative" sap:label="ID"
+						  sap:quickinfo="ID of superior object in the hierarchy"/>
+				<Property Name="WorkCenterGroup" Type="Edm.String" MaxLength="10"
+						  sap:display-format="UpperCase" sap:label="Group"
+						  sap:quickinfo="Name of hierarchy"/>
+				<Property Name="WorkCenterGroupDescription" Type="Edm.String" MaxLength="40"
+						  sap:label="Description" sap:quickinfo="Production Resource Text"/>
+				<Property Name="Plant" Type="Edm.String" MaxLength="4"
+						  sap:display-format="UpperCase" sap:label="Plant"/>
+			</EntityType>
+			<EntityType Name="I_UserContactCardType" sap:label="User Contact Card"
+						sap:content-version="1">
+				<Key>
+					<PropertyRef Name="ContactCardID"/>
+				</Key>
+				<Property Name="ContactCardID" Type="Edm.String" Nullable="false" MaxLength="12"
+						  sap:display-format="UpperCase" sap:text="UserDescription" sap:label="User"
+						  sap:quickinfo="User Name in User Master Record"/>
+				<Property Name="Person" Type="Edm.String" MaxLength="10"
+						  sap:display-format="UpperCase" sap:label="Person Number"/>
+				<Property Name="BusinessPartnerUUID" Type="Edm.Guid" sap:label="BP GUID"
+						  sap:quickinfo="Business Partner GUID"/>
+				<Property Name="FirstName" Type="Edm.String" MaxLength="40" sap:label="First Name"/>
+				<Property Name="LastName" Type="Edm.String" MaxLength="40" sap:label="Last Name"/>
+				<Property Name="FullName" Type="Edm.String" MaxLength="80" sap:label="Full Name"
+						  sap:quickinfo="Full Name of Person"/>
+				<Property Name="UserDescription" Type="Edm.String" MaxLength="80"
+						  sap:label="Description" sap:quickinfo="User Description"/>
+				<Property Name="AddressID" Type="Edm.String" MaxLength="10"
+						  sap:display-format="UpperCase" sap:label="Address Number"/>
+				<Property Name="PhoneNumber" Type="Edm.String" MaxLength="30" sap:label="Phone"
+						  sap:quickinfo="Contact Card Phone Number" sap:semantics="tel"/>
+				<Property Name="MobilePhoneNumber" Type="Edm.String" MaxLength="30"
+						  sap:label="Mobile" sap:quickinfo="Contact Card Mobile Phone Number"
+						  sap:semantics="tel"/>
+				<Property Name="FaxNumber" Type="Edm.String" MaxLength="30" sap:label="Fax"
+						  sap:quickinfo="Contact Card Fax Number" sap:semantics="tel"/>
+				<Property Name="EmailAddress" Type="Edm.String" MaxLength="241" sap:label="E-Mail"
+						  sap:quickinfo="Contact Card E-Mail Address" sap:semantics="email"/>
+				<Property Name="Department" Type="Edm.String" MaxLength="40"
+						  sap:label="Department"/>
+				<Property Name="FunctionalTitleName" Type="Edm.String" MaxLength="40"
+						  sap:label="Function"/>
+				<Property Name="ContactCardRole" Type="Edm.String" MaxLength="7"/>
+				<Property Name="ContactCardType" Type="Edm.String" MaxLength="4"/>
+				<Property Name="ContactCardNavLinkSemanticObj" Type="Edm.String" MaxLength="4"/>
+				<Property Name="ContactCardNavLinkQueryPart" Type="Edm.String" MaxLength="17"/>
+			</EntityType>
+			<Association Name="assoc_B27B5DCE6414B3960AD7A4F6A28F25B4" sap:content-version="1">
+				<End Type="PP_WORKCENTER_GROUP_SRV.C_WorkCenterGroupAdminvDataType" Multiplicity="1"
+					 Role="FromRole_assoc_B27B5DCE6414B3960AD7A4F6A28F25B4"/>
+				<End Type="PP_WORKCENTER_GROUP_SRV.I_UserContactCardType" Multiplicity="0..1"
+					 Role="ToRole_assoc_B27B5DCE6414B3960AD7A4F6A28F25B4"/>
+			</Association>
+			<Association Name="assoc_48FBFAE3D734EBCFD348F95B4DBBF5EA" sap:content-version="1">
+				<End Type="PP_WORKCENTER_GROUP_SRV.C_WorkCenterGroupAdminvDataType" Multiplicity="1"
+					 Role="FromRole_assoc_48FBFAE3D734EBCFD348F95B4DBBF5EA"/>
+				<End Type="PP_WORKCENTER_GROUP_SRV.I_UserContactCardType" Multiplicity="0..1"
+					 Role="ToRole_assoc_48FBFAE3D734EBCFD348F95B4DBBF5EA"/>
+			</Association>
+			<Association Name="assoc_5D6A1FC56C1B4BFEB58C29A9793CF53B" sap:content-version="1">
+				<End Type="PP_WORKCENTER_GROUP_SRV.C_WorkCenterGroupTreeType" Multiplicity="1"
+					 Role="FromRole_assoc_5D6A1FC56C1B4BFEB58C29A9793CF53B">
+					<OnDelete Action="Cascade"/>
+				</End>
+				<End Type="PP_WORKCENTER_GROUP_SRV.C_WorkCenterGroupAdminvDataType" Multiplicity="1"
+					 Role="ToRole_assoc_5D6A1FC56C1B4BFEB58C29A9793CF53B"/>
+			</Association>
+			<Association Name="assoc_6A0946873C1F2ED089F94D04B26F2CA9" sap:content-version="1">
+				<End Type="PP_WORKCENTER_GROUP_SRV.C_WorkCenterGroupTreeType" Multiplicity="1"
+					 Role="FromRole_assoc_6A0946873C1F2ED089F94D04B26F2CA9">
+					<OnDelete Action="Cascade"/>
+				</End>
+				<End Type="PP_WORKCENTER_GROUP_SRV.C_WorkCenterGroupAssgdWrkCtrType"
+					 Multiplicity="*" Role="ToRole_assoc_6A0946873C1F2ED089F94D04B26F2CA9"/>
+			</Association>
+			<Association Name="assoc_934EDE236F30D9F8AC1E2DC7F0CF21AB" sap:content-version="1">
+				<End Type="PP_WORKCENTER_GROUP_SRV.C_WorkCenterGroupTreeType" Multiplicity="1"
+					 Role="FromRole_assoc_934EDE236F30D9F8AC1E2DC7F0CF21AB">
+					<OnDelete Action="Cascade"/>
+				</End>
+				<End Type="PP_WORKCENTER_GROUP_SRV.C_WorkCenterGroupStructureType" Multiplicity="*"
+					 Role="ToRole_assoc_934EDE236F30D9F8AC1E2DC7F0CF21AB"/>
+			</Association>
+			<Association Name="assoc_7CE807F52500F52B9B10346910247DDF" sap:content-version="1">
+				<End Type="PP_WORKCENTER_GROUP_SRV.C_WorkCenterGroupTreeType" Multiplicity="1"
+					 Role="FromRole_assoc_7CE807F52500F52B9B10346910247DDF">
+					<OnDelete Action="Cascade"/>
+				</End>
+				<End Type="PP_WORKCENTER_GROUP_SRV.C_WorkCenterGroupWhereUsedType" Multiplicity="*"
+					 Role="ToRole_assoc_7CE807F52500F52B9B10346910247DDF"/>
+			</Association>
+			<Association Name="assoc_2C8888011CEB4D1F705634976E958123" sap:content-version="1">
+				<End Type="PP_WORKCENTER_GROUP_SRV.C_WorkCenterGroupTreeType" Multiplicity="1"
+					 Role="FromRole_assoc_2C8888011CEB4D1F705634976E958123"/>
+				<End Type="PP_WORKCENTER_GROUP_SRV.C_ManageWrkCtrGrpWorkCenterVHType"
+					 Multiplicity="*" Role="ToRole_assoc_2C8888011CEB4D1F705634976E958123"/>
+			</Association>
+			<EntityContainer Name="PP_WORKCENTER_GROUP_SRV_Entities"
+							 m:IsDefaultEntityContainer="true" sap:message-scope-supported="true"
+							 sap:supported-formats="atom json xlsx">
+				<EntitySet Name="WRKCTRGRPEDITFLAGCollection"
+						   EntityType="PP_WORKCENTER_GROUP_SRV.WRKCTRGRPEDITFLAG"
+						   sap:content-version="1"/>
+				<EntitySet Name="C_ManageWrkCtrGrpWorkCenterVH"
+						   EntityType="PP_WORKCENTER_GROUP_SRV.C_ManageWrkCtrGrpWorkCenterVHType"
+						   sap:creatable="false" sap:updatable="false" sap:deletable="false"
+						   sap:searchable="true" sap:content-version="1"/>
+				<EntitySet Name="C_WorkCenterGroupAdminvData"
+						   EntityType="PP_WORKCENTER_GROUP_SRV.C_WorkCenterGroupAdminvDataType"
+						   sap:creatable="false" sap:updatable="false" sap:deletable="false"
+						   sap:content-version="1"/>
+				<EntitySet Name="C_WorkCenterGroupAssgdWrkCtr"
+						   EntityType="PP_WORKCENTER_GROUP_SRV.C_WorkCenterGroupAssgdWrkCtrType"
+						   sap:creatable="false" sap:updatable="false" sap:deletable="false"
+						   sap:content-version="1"/>
+				<EntitySet Name="C_WorkCenterGroupStructure"
+						   EntityType="PP_WORKCENTER_GROUP_SRV.C_WorkCenterGroupStructureType"
+						   sap:creatable="false" sap:updatable="false" sap:deletable="false"
+						   sap:content-version="1"/>
+				<EntitySet Name="C_WorkCenterGroupTree"
+						   EntityType="PP_WORKCENTER_GROUP_SRV.C_WorkCenterGroupTreeType"
+						   sap:creatable="false" sap:updatable="false" sap:deletable="false"
+						   sap:content-version="1"/>
+				<EntitySet Name="C_WorkCenterGroupWhereUsed"
+						   EntityType="PP_WORKCENTER_GROUP_SRV.C_WorkCenterGroupWhereUsedType"
+						   sap:creatable="false" sap:updatable="false" sap:deletable="false"
+						   sap:content-version="1"/>
+				<EntitySet Name="I_UserContactCard"
+						   EntityType="PP_WORKCENTER_GROUP_SRV.I_UserContactCardType"
+						   sap:creatable="false" sap:updatable="false" sap:deletable="false"
+						   sap:searchable="true" sap:addressable="false" sap:content-version="1"/>
+				<AssociationSet Name="assoc_2C8888011CEB4D1F705634976E958123"
+								Association="PP_WORKCENTER_GROUP_SRV.assoc_2C8888011CEB4D1F705634976E958123"
+								sap:creatable="false" sap:updatable="false" sap:deletable="false"
+								sap:content-version="1">
+					<End EntitySet="C_WorkCenterGroupTree"
+						 Role="FromRole_assoc_2C8888011CEB4D1F705634976E958123"/>
+					<End EntitySet="C_ManageWrkCtrGrpWorkCenterVH"
+						 Role="ToRole_assoc_2C8888011CEB4D1F705634976E958123"/>
+				</AssociationSet>
+				<AssociationSet Name="assoc_B27B5DCE6414B3960AD7A4F6A28F25B4"
+								Association="PP_WORKCENTER_GROUP_SRV.assoc_B27B5DCE6414B3960AD7A4F6A28F25B4"
+								sap:creatable="false" sap:updatable="false" sap:deletable="false"
+								sap:content-version="1">
+					<End EntitySet="C_WorkCenterGroupAdminvData"
+						 Role="FromRole_assoc_B27B5DCE6414B3960AD7A4F6A28F25B4"/>
+					<End EntitySet="I_UserContactCard"
+						 Role="ToRole_assoc_B27B5DCE6414B3960AD7A4F6A28F25B4"/>
+				</AssociationSet>
+				<AssociationSet Name="assoc_7CE807F52500F52B9B10346910247DDF"
+								Association="PP_WORKCENTER_GROUP_SRV.assoc_7CE807F52500F52B9B10346910247DDF"
+								sap:creatable="false" sap:updatable="false" sap:deletable="false"
+								sap:content-version="1">
+					<End EntitySet="C_WorkCenterGroupTree"
+						 Role="FromRole_assoc_7CE807F52500F52B9B10346910247DDF"/>
+					<End EntitySet="C_WorkCenterGroupWhereUsed"
+						 Role="ToRole_assoc_7CE807F52500F52B9B10346910247DDF"/>
+				</AssociationSet>
+				<AssociationSet Name="assoc_934EDE236F30D9F8AC1E2DC7F0CF21AB"
+								Association="PP_WORKCENTER_GROUP_SRV.assoc_934EDE236F30D9F8AC1E2DC7F0CF21AB"
+								sap:creatable="false" sap:updatable="false" sap:deletable="false"
+								sap:content-version="1">
+					<End EntitySet="C_WorkCenterGroupTree"
+						 Role="FromRole_assoc_934EDE236F30D9F8AC1E2DC7F0CF21AB"/>
+					<End EntitySet="C_WorkCenterGroupStructure"
+						 Role="ToRole_assoc_934EDE236F30D9F8AC1E2DC7F0CF21AB"/>
+				</AssociationSet>
+				<AssociationSet Name="assoc_6A0946873C1F2ED089F94D04B26F2CA9"
+								Association="PP_WORKCENTER_GROUP_SRV.assoc_6A0946873C1F2ED089F94D04B26F2CA9"
+								sap:creatable="false" sap:updatable="false" sap:deletable="false"
+								sap:content-version="1">
+					<End EntitySet="C_WorkCenterGroupTree"
+						 Role="FromRole_assoc_6A0946873C1F2ED089F94D04B26F2CA9"/>
+					<End EntitySet="C_WorkCenterGroupAssgdWrkCtr"
+						 Role="ToRole_assoc_6A0946873C1F2ED089F94D04B26F2CA9"/>
+				</AssociationSet>
+				<AssociationSet Name="assoc_5D6A1FC56C1B4BFEB58C29A9793CF53B"
+								Association="PP_WORKCENTER_GROUP_SRV.assoc_5D6A1FC56C1B4BFEB58C29A9793CF53B"
+								sap:creatable="false" sap:updatable="false" sap:deletable="false"
+								sap:content-version="1">
+					<End EntitySet="C_WorkCenterGroupTree"
+						 Role="FromRole_assoc_5D6A1FC56C1B4BFEB58C29A9793CF53B"/>
+					<End EntitySet="C_WorkCenterGroupAdminvData"
+						 Role="ToRole_assoc_5D6A1FC56C1B4BFEB58C29A9793CF53B"/>
+				</AssociationSet>
+				<AssociationSet Name="assoc_48FBFAE3D734EBCFD348F95B4DBBF5EA"
+								Association="PP_WORKCENTER_GROUP_SRV.assoc_48FBFAE3D734EBCFD348F95B4DBBF5EA"
+								sap:creatable="false" sap:updatable="false" sap:deletable="false"
+								sap:content-version="1">
+					<End EntitySet="C_WorkCenterGroupAdminvData"
+						 Role="FromRole_assoc_48FBFAE3D734EBCFD348F95B4DBBF5EA"/>
+					<End EntitySet="I_UserContactCard"
+						 Role="ToRole_assoc_48FBFAE3D734EBCFD348F95B4DBBF5EA"/>
+				</AssociationSet>
+				<FunctionImport Name="SaveWrkCtrGrpDetails"
+								ReturnType="PP_WORKCENTER_GROUP_SRV.WRKCTRGRPEDITFLAG"
+								EntitySet="WRKCTRGRPEDITFLAGCollection" m:HttpMethod="GET"
+								sap:label="Save work Center Group">
+					<Parameter Name="GROUPNAME" Type="Edm.String" Mode="In" MaxLength="10"/>
+					<Parameter Name="GROUPID" Type="Edm.String" Mode="In" MaxLength="8"/>
+					<Parameter Name="DESCRIPTION" Type="Edm.String" Mode="In" MaxLength="40"/>
+					<Parameter Name="PLANT" Type="Edm.String" Mode="In" MaxLength="4"/>
+					<Parameter Name="GROUPTYPE" Type="Edm.String" Mode="In" MaxLength="2"/>
+				</FunctionImport>
+				<FunctionImport Name="IsWrkCtrGrpEditable"
+								ReturnType="PP_WORKCENTER_GROUP_SRV.WRKCTRGRPEDITFLAG"
+								EntitySet="WRKCTRGRPEDITFLAGCollection" m:HttpMethod="GET"
+								sap:label="Edit Group Wrk Ctr">
+					<Parameter Name="GROUPID" Type="Edm.String" Mode="In" MaxLength="8"/>
+				</FunctionImport>
+			</EntityContainer>
+			<Annotations xmlns="http://docs.oasis-open.org/odata/ns/edm"
+						 Target="PP_WORKCENTER_GROUP_SRV.PP_WORKCENTER_GROUP_SRV_Entities">
+				<Annotation Term="Common.ApplyMultiUnitBehaviorForSortingAndFiltering" Bool="true"/>
+				<Annotation Term="Aggregation.ApplySupported">
+					<Record>
+						<PropertyValue Property="Transformations">
+							<Collection>
+								<String>aggregate</String>
+								<String>groupby</String>
+								<String>filter</String>
+							</Collection>
+						</PropertyValue>
+						<PropertyValue Property="Rollup" EnumMember="None"/>
+					</Record>
+				</Annotation>
+			</Annotations>
+			<Annotations xmlns="http://docs.oasis-open.org/odata/ns/edm"
+						 Target="PP_WORKCENTER_GROUP_SRV.C_WorkCenterGroupAssgdWrkCtrType">
+				<Annotation Term="Common.SemanticKey">
+					<Collection>
+						<PropertyPath>HierarchyNodeType</PropertyPath>
+						<PropertyPath>HierarchyNode</PropertyPath>
+						<PropertyPath>HierarchyRootNode</PropertyPath>
+					</Collection>
+				</Annotation>
+			</Annotations>
+			<Annotations xmlns="http://docs.oasis-open.org/odata/ns/edm"
+						 Target="PP_WORKCENTER_GROUP_SRV.C_WorkCenterGroupVHType">
+				<Annotation Term="Common.SemanticKey">
+					<Collection>
+						<PropertyPath>WorkCenterGroupType</PropertyPath>
+						<PropertyPath>WorkCenterGroup</PropertyPath>
+					</Collection>
+				</Annotation>
+			</Annotations>
+		</Schema>
+	</edmx:DataServices>
+</edmx:Edmx>

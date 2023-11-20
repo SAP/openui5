@@ -1,0 +1,286 @@
+[
+	{
+		"title": "List Card",
+		"description": "Example page for Integration Card of type List",
+		"route": "listContent",
+		"group": "Card Type Examples"
+	},
+	{
+		"title": "Table Card",
+		"description": "Example page for Integration Card of type Table",
+		"route": "tableContent",
+		"group": "Card Type Examples"
+	},
+	{
+		"title": "Analytical Card",
+		"description": "Example page for Integration Card of type Analytical",
+		"route": "analyticalContent",
+		"group": "Card Type Examples"
+	},
+	{
+		"title": "Object Card",
+		"description": "Example page for Integration Card of type Object",
+		"route": "objectContent",
+		"group": "Card Type Examples"
+	},
+	{
+		"title": "AnalyticsCloud Card",
+		"description": "Example page for Integration Card of type AnalyticsCloud. Used for displaying data from SAP Analytics Cloud",
+		"route": "analyticsCloudContent",
+		"group": "Card Type Examples"
+	},
+	{
+		"title": "Component Card",
+		"description": "Example page for Integration Card of type Component",
+		"route": "componentCard",
+		"group": "Card Type Examples"
+	},
+	{
+		"title": "sap.f.Card",
+		"description": "Example page for Control of type sap.f.Card",
+		"route": "sapfCard",
+		"group": "Card Type Examples"
+	},
+	{
+		"title": "TimelineContent Card",
+		"description": "Example page for Integration Card of type Timeline",
+		"route": "timelineContent",
+		"group": "Card Type Examples"
+	},
+	{
+		"title": "Adaptive Card",
+		"description": "Example page for Integration Card of type AdaptiveCard",
+		"route": "adaptiveCard",
+		"group": "Card Type Examples"
+	},
+	{
+		"title": "Calendar Card",
+		"description": "Example page for Integration Card of type CalendarCard",
+		"route": "calendarCard",
+		"group": "Card Type Examples"
+	},
+	{
+		"title": "WebPage Card",
+		"description": "Example page for Integration Card of type WebPage",
+		"route": "webPageContent",
+		"group": "Card Type Examples"
+	},
+	{
+		"title": "Fit Container",
+		"description": "The cards fit the whole container allowing it to dynamically change their sizes.",
+		"route": "splitter",
+		"usage": "The cards have no height and width (defined by the container control)",
+		"group": "Layout Examples"
+	},
+	{
+		"title": "Grid Container",
+		"description": "Grid Container",
+		"route": "gridContainer",
+		"group": "Layout Examples"
+	},
+	{
+		"title": "Grid Container, containerQuery=true",
+		"description": "Grid Container, containerQuery=true",
+		"route": "gridContainerQuery",
+		"group": "Layout Examples"
+	},
+	{
+		"title": "GridContainer Drag and Drop with Target Position",
+		"description": "",
+		"route": "dnd3",
+		"usage": "",
+		"group": "Layout Examples"
+	},
+	{
+		"title": "Navigation Action",
+		"description": "Navigation action examples",
+		"route": "navigationService",
+		"group": "Card Actions"
+	},
+	{
+		"title": "Submit Action",
+		"description": "",
+		"route": "submitAction",
+		"usage": "",
+		"group": "Card Actions"
+	},
+	{
+		"title": "Show Card Action",
+		"description": "Showing a card in a dialog for Bite and Snack scenario",
+		"route": "showCard",
+		"group": "Card Actions"
+	},
+	{
+		"title": "Min-height of the Card Content",
+		"description": "Examples of cards with no height provided (default value) or with specified height",
+		"route": "minHeight",
+		"group": "Layout Examples"
+	},
+	{
+		"title": "Manifest Resolver",
+		"description": "Play around with manifest resolving",
+		"route": "manifestResolver",
+		"group": "Mobile SDK Examples"
+	},
+	{
+		"title": "Show Card With Resolved Manifest",
+		"description": "The show card action when handled by Mobile SDK",
+		"route": "showCardWithResolvedManifest",
+		"group": "Mobile SDK Examples"
+	},
+	{
+		"title": "stateChanged Event",
+		"description": "Play around with stateChanged event",
+		"route": "stateChangedEvent",
+		"group": "Mobile SDK Examples"
+	},
+	{
+		"title": "Default Header",
+		"description": "Example page for Card with Default Header",
+		"route": "defaultHeader",
+		"group": "Header and Footer"
+	},
+	{
+		"title": "Numeric Header",
+		"description": "Example page for Card with Numeric Header",
+		"route": "numericHeader",
+		"group": "Header and Footer"
+	},
+	{
+		"title": "Footer (experimental)",
+		"description": "Having buttons with actions in a footer",
+		"route": "footer",
+		"group": "Header and Footer"
+	},
+	{
+		"title": "Manifest initialization",
+		"description": "Three types of manifest initializations are possible",
+		"route": "manifest",
+		"group": "Initialization and Data"
+	},
+	{
+		"title": "Data Service",
+		"description": "Examples for FLP data scenarios",
+		"route": "dataService",
+		"group": "Initialization and Data"
+	},
+	{
+		"title": "Loading behavior",
+		"description": "Busy indicators and heights examples",
+		"route": "delayedLoading",
+		"group": "Initialization and Data"
+	},
+	{
+		"title": "No Header / No Content",
+		"description": "Examples of cards with no header or no content provided",
+		"route": "noHeaderNoContent",
+		"group": "Initialization and Data"
+	},
+	{
+		"title": "Active/Inactive data mode",
+		"description": "Example with 'enabled' property of the Card",
+		"route": "dataMode",
+		"group": "Initialization and Data"
+	},
+	{
+		"title": "Translations & Header Count",
+		"description": "Example with card translations and count binding",
+		"route": "translation",
+		"group": "Localization and Customization"
+	},
+	{
+		"title": "Card bundles",
+		"description": "Example with card bundles with static resources and baseURL usage",
+		"route": "bundle",
+		"group": "Initialization and Data"
+	},
+	{
+		"title": "Manifest Ready Event",
+		"description": "Example showing the manifestReady event",
+		"route": "manifestReady",
+		"group": "Initialization and Data"
+	},
+	{
+		"title": "Badges",
+		"description": "Example with cards with badge",
+		"route": "badges",
+		"group": "Localization and Customization"
+	},
+	{
+		"title": "Preview",
+		"route": "preview",
+		"group": "Localization and Customization"
+	},
+	{
+		"title": "Filters",
+		"description": "Example with cards using Filters",
+		"route": "filters",
+		"group": "Localization and Customization"
+	},
+	{
+		"title": "Extension and Host",
+		"description": "Example with cards using Extension and Host",
+		"route": "extensionAndHost",
+		"group": "Localization and Customization"
+	},
+	{
+		"title": "Parameters",
+		"description": "Card Parameters",
+		"route": "parameters",
+		"group": "Localization and Customization"
+	},
+	{
+		"title": "CSRF Tokens",
+		"description": "Play around with CSRF tokens",
+		"route": "csrfToken",
+		"group": "Security and Performance"
+	},
+	{
+		"title": "Pagination",
+		"description": "Play around with pagination.",
+		"route": "pagination",
+		"group": "Security and Performance"
+	},
+	{
+		"title": "Message",
+		"description": "Play around with showMessage() method",
+		"route": "message",
+		"group": "Errors and Messages"
+	},
+	{
+		"title": "Transparent",
+		"description": "Card without background and border",
+		"route": "transparent",
+		"group": "Card Variants"
+	},
+	{
+		"title": "Performance Measurements",
+		"description": "Get an overview of which card lifecycle events are measured.\nNote: this page is not optimized and the results should not be taken into account",
+		"route": "measurements",
+		"group": "Security and Performance"
+	},
+	{
+		"title": "Data Requests",
+		"description": "Play around with data requests.",
+		"route": "requests",
+		"group": "Initialization and Data"
+	},
+	{
+		"title": "Card Errors",
+		"description": "Play around with Card errors.",
+		"route": "cardErrors",
+		"group": "Errors and Messages"
+	},
+	{
+		"title": "Model Size Limit",
+		"description": "Play around with Card model size limit.",
+		"route": "modelSizeLimit",
+		"group": "Security and Performance"
+	},
+	{
+		"title": "Tiles Variants",
+		"description": "Render cards as tiles.",
+		"route": "tilesVariants",
+		"group": "Card Variants"
+	}
+]

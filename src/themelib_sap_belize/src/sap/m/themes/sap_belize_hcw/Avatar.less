@@ -1,0 +1,45 @@
+/* ============================= */
+/* CSS for control sap.m/Avatar  */
+/* High Contrast White theme     */
+/* ============================= */
+
+@_sap_m_Avatar_Hover_Box_Shadow_Offset: 0px;
+
+.sapFAvatarImageContain,
+.sapFAvatarIcon,
+.sapFAvatarInitials {
+	border: 0.125rem solid @sapUiFieldBorderColor;
+}
+
+.sapFAvatarIcon,
+.sapFAvatarInitialsHolder {
+	color: @sapUiBaseText;
+}
+
+.sapFAvatarColorTransparent,
+.sapFAvatarColorTileIcon,
+.sapFAvatarColorPlaceholder {
+	background-color: @sapUiBaseBG;
+}
+
+.sapFAvatarFocusable:focus {
+	outline-width: 0.125rem;
+}
+
+// Create classes which would just set background color of Avatar
+.generateColor (@accentIndex) {
+	@css-selector: ~"sapFAvatarColorAccent@{accentIndex}"; // Create the css selector string
+
+	// Build the real CSS selector.
+	.@{css-selector} {
+		background-color: @sapUiBaseBG;
+	}
+}
+
+.sapFAvatarBadgeIcon {
+	background-color: @sapUiBaseBG;
+	border: 0.0625rem solid @sapUiFieldBorderColor;
+	> .sapUiIcon {
+		color: @sapUiBaseText;
+	}
+}

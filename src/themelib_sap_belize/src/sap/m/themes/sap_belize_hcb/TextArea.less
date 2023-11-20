@@ -1,0 +1,21 @@
+/* ================================= */
+/* CSS for control sap.m/TextArea    */
+/* Belize High Contrast Black theme  */
+/* ================================= */
+
+@_sapMTextAreaPadding: 0.5625rem 0.6875rem;
+@_sapMTextAreaReadonlyPadding: 0.5625rem 0.6875rem;
+@_sapMTextAreaValueStateSuccessPadding: 0.5625rem 0.6875rem;
+@_sapMTextAreaValueStateInformationPadding: 0.5625rem 0.6875rem;
+@_sapMTextAreaValueStateInformationPadding_Compact: 0.125rem 0.4375rem;
+@_sapMTextAreaValueStateErrorWarningPadding: 0.5625rem 0.6875rem;
+@_sapMTextAreaValueStateErrorWarningPadding_Compact: 0.125rem 0.4375rem;
+
+.sapMFocus.sapMTextArea {
+	& .sapMInputBaseContentWrapper {
+		.sapMInputBaseInner {
+			outline: 2px dotted @sapUiContentFocusColor;
+			outline-offset: -3px;
+		}
+	}
+}

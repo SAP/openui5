@@ -1,0 +1,157 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<style type="text/css">
+			body {font-family: Arial, "Helvetica Neue", Helvetica, sans-serif;}
+		</style>
+		<title>Manual Integration Test: Create Multiple Sales Orders</title>
+	</head>
+	<body>
+		<h1>Manual Integration Test: Create Multiple Sales Orders</h1>
+		<h2>DESCRIPTION</h2>
+		Test creation of multiple entities with the Sales Orders application.
+		<h2>PREPARATION</h2>
+		To check console errors open the developer tools before starting the application and check
+		with each step, that there are no errors and warnings.
+		<h3>Testing with mock data</h3>
+		Start the Sales Orders application with following URL (adjust host and port if necessary):
+		<ul>
+			<li> local: <a href="http://localhost:8080/test-resources/sap/ui/core/demokit/sample/common/index.html?component=odata.v4.SalesOrders">http://localhost:8080/test-resources/sap/ui/core/demokit/sample/common/index.html?component=odata.v4.SalesOrders</a></li>
+		</ul>
+		New sales orders can be created only, if the <code>Note</code> property has one of the
+		following values: <code>"new 1"</code>, <code>"new 2"</code>, <code>"new 3"</code>, or
+		<code>"new 4"</code> (without quotation marks).
+		<h3>Testing with back end</h3>
+		Configure your IDE to be able to execute the Sales Orders application against an ABAP
+		back-end system.<br>
+		Start the Sales Orders application with the URL (adjust host and port if necessary):
+		<ul>
+			<li>local: <a href="http://localhost:8080/test-resources/sap/ui/core/demokit/sample/common/index.html?component=odata.v4.SalesOrders&realOData=true">http://localhost:8080/test-resources/sap/ui/core/demokit/sample/common/index.html?component=odata.v4.SalesOrders&amp;realOData=true</a></li>
+		</ul>
+		<h2>REALIZE and CHECK</h2>
+		<h3>Multiple create, delete and reset changes</h3>
+		<ol>
+			<li>Click on the <code>Create</code> button in the <code>Sales Orders</code> table.</li>
+			<li><b>Check:</b> The table below the <code>Create Sales Order</code> dialog gets a
+				new first row with an empty <code>Sales Order ID</code> and the <code>Note</code> as
+				displayed in the <code>Create Sales Order</code> dialog.</li>
+			<li>Modify the content of the <code>Note</code> input field of the
+				<code>Create Sales Order</code> dialog for example to: "new 1".</li>
+			<li><b>Check:</b> The <code>Note</code> of the first sales order (table below the
+				dialog) is updated automatically after leaving the input field of the dialog.</li>
+			<li>Click on <code>OK</code> in the <code>Create Sales Order</code> dialog.</li>
+			<li>Click on <code>Save</code> button in the <code>Sales Orders</code> table.</li>
+			<li><b>Check:</b> You get a success message for creating the sales order.</li>
+			<li>Click on <code>OK</code> in the <code>Success</code> dialog.</li>
+			<li><b>Check:</b> The content of the new sales order is updated (for example
+				<code>Sales Order ID</code>).</li>
+			<li><b>Create a second sales order</b>: Repeat steps 1 - 9 for example with the
+				<code>Note</code>: "new 2".</li>
+			<li><b>Create a third sales order</b>: Repeat steps 1 - 5 (do not save!) for example
+				with the <code>Note</code>: "new 3".</li>
+			<li><b>Create a fourth sales order</b>: Repeat steps 1 - 5 (do not save!) for example
+				with the <code>Note</code>: "new 4".</li>
+			<li>Select the sales order created in step 11 (with <code>Note</code> "new 3").</li>
+			<li>Click on <code>Delete</code> button in the <code>Sales Orders</code> table.</li>
+			<li><b>Check:</b> The selected sales order is removed from the <code>Sales Orders</code>
+				table.</li>
+			<li>Click on <code>Cancel sales order list changes</code> button in the
+				<code>Sales Orders</code> table.</li>
+			<li><b>Check:</b> The not yet saved new sales order created in step 12 is gone.</li>
+		</ol>
+		<h3>Multiple Create and Deferred Delete</h3>
+		<ol start="18">
+			<li>Create and save a sales order by repeating Steps 1 - 9 with the <code>Note</code>
+				"new 3".</li>
+			<li>Create and save a sales order by repeating Steps 1 - 9 with the <code>Note</code>
+				"new 4".</li>
+			<li>Select the sales order in the first row (with <code>Note</code> "new 4").</li>
+			<li>Click on the <code>Delete</code> button in the <code>Sales Orders</code> table.</li>
+			<li><b>Check:</b> The Sales Order Details become invisible.
+			<li><b>Check:</b> The selected sales order is removed from the <code>Sales Orders</code>
+				table and the count in the title is decreased by one.</li>
+			<li>Select the sales order in the first row (with <code>Note</code> "new 3").</li>
+			<li>Click on the <code>Delete</code> button in the <code>Sales Orders</code> table.</li>
+			<li><b>Check:</b> The selected sales order is removed from the <code>Sales Orders</code>
+				table and the count in the title is decreased by one.</li>
+			<li>Click on the <code>Cancel sales order list changes</code> button in the
+				<code>Sales Orders</code> table.</li>
+			<li><b>Check:</b> The two deleted rows reappear and the count in the title is increased
+				by two.</li>
+			<li><b>Check:</b> The sales order with <code>Note</code> "new 3" is selected again and
+				shown in the Sales Order Details.
+			<li>Repeat Steps 20 - 25.</li>
+			<li>Click on the <code>Save</code> button in the <code>Sales Orders</code> table.</li>
+		</ol>
+
+		<h3>Multiple create, POST with back-end error, restart after fix works fine</h3>
+		<ol start="30">
+			<li>Create 2 new sales orders by repeating steps 11 and 12.</li>
+			<li>Change the <code>Note</code> of a not yet saved new sales order (for example with
+				the <code>Note</code> "new 4") to "RAISE_ERROR" (without quotation marks).</li>
+			<li>Click on <code>Save</code> button in the <code>Sales Orders</code> table.</li>
+			<li><b>Check:</b> The message pop-over opens and you got an error that the value
+				"RAISE_ERROR" for the <code>Note</code> property is not allowed.</li>
+			<li>Close the message pop-over.</li>
+			<li><b>Check:</b> Both sales orders created in step 21 don't have a sales order ID.</li>
+			<li>Change the invalid <code>Note</code> from "RAISE_ERROR" to for example "new 4"
+				(without quotation marks).</li>
+			<li>Click on <code>Save</code> button in the <code>Sales Orders</code> table.</li>
+			<li><b>Check:</b> You get a success message for creating both sales orders. Confirm each
+				success dialog with <code>OK</code>.</li>
+			<li><b>Check:</b> The content of the two new sales order is updated (for example
+				<code>Sales Order ID</code>).</li>
+		</ol>
+		<h3>Multiple create, relative</h3>
+		<ol start="40">
+			<li>Create a new sales order: Repeat steps 1 - 9 for example with the <code>Note
+			  </code>: "new 3".</li>
+			<li>Click on the <code>Create</code> button in the <code>Sales Order Line Items</code>
+				table.</li>
+			<li><b>Check:</b> You can't select a different sales order in the <code>Sales Orders
+				</code> table.</li>
+			<li>Update the <code>Note</code> of the newly created sales order line item to "new 10".
+				</li>
+			<li>Create a second sales order line item by clicking on the <code>Create</code> button
+				in the <code>Sales Order Line Items</code> table.</li>
+			<li><b>Check:</b> The secondly created sales order line item is inserted after the
+				formerly created one.</li>
+			<li>Update the <code>Note</code> of the last created sales order line item to "new 20".
+				</li>
+			<li>Click on the <code>Save</code> button in the <code>Sales Order Details</code>
+				section.</li>
+			<li>Click on <code>OK</code> in the <code>Success</code> dialog two times.</li>
+			<li><b>Check:</b> The <code>Sales Order Line Items</code> table header shows 2
+				<code>Sales Order Line Items</code> in realOData mode and 0 in mock data mode.<br>
+				<i>Remark:</i> With mock data the table gets empty because of a restriction in
+				the mock server implementation.</li>
+			<li>If <code>realOData=true</code>
+				<ul>
+					<li>Open the Sales Order Schedules dialog.</li>
+					<li><b>Check:</b> The table contains two schedules.</li>
+					<li>Click on <code>Select all</code>.</li>
+					<li>Click on <code>Delete selected schedules</code>.</li>
+					<li><b>Check:</b> The <code>Sales Order Schedules</code> table is empty.</li>
+					<li>Close the Sales Orders Schedules dialog.</li>
+					<li><b>Check:</b> The <code>Sales Order Line Items</code> table is empty.</li>
+				</ul>
+			<li><b>Check:</b> You now can select a different sales order in the <code>Sales Orders
+				</code> table.</li>
+		</ol>
+		<h3>Deferred Deletion of a Line Item</h3>
+		If <code>realOData=false</code>:
+		<ol start="52">
+			<li>Select the line item with <code>Item Position</code> "10".</li>
+			<li>Click on the <code>Delete sales order line item</code>.</li>
+			<li><b>Check:</b> The line item is removed from the table and the count in the title is
+				decreased by one.</li>
+			<li>Click on the <code>Cancel</code> button in the <code>Sales Order Details</code>
+				section.</li>
+			<li><b>Check:</b> The line item reappears and the count in the title is increased by
+				one.</li>
+			<li>Repeat Steps 52 - 54</li>
+			<li>Click on the <code>Save</code> button in the <code>Sales Order Details</code>
+				section.</li>
+		</ol>
+	</body>
+</html>

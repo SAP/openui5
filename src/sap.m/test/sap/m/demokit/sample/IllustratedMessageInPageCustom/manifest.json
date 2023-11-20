@@ -1,0 +1,41 @@
+{
+	"sap.app": {
+		"id": "sap.m.sample.IllustratedMessageInPageCustom",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "sap.m.sample.IllustratedMessageInPageCustom.view.Main",
+			"type": "XML",
+			"async": true
+		},
+		"resourceRoots": {
+			"illustrations": "custom_illustrations"
+		},
+		"dependencies": {
+			"libs": {
+				"sap.m": {},
+				"sap.ui.core": {},
+				"sap.ui.layout": {}
+			}
+		},
+		"config": {
+			"sample": {
+				"stretch": true,
+				"files": [
+					"custom_illustrations/metadata.json",
+					"custom_illustrations/Custom-Dialog-EmptyCart.svg",
+					"custom_illustrations/Custom-Dot-EmptyCart.svg",
+					"custom_illustrations/Custom-Scene-EmptyCart.svg",
+					"custom_illustrations/Custom-Spot-EmptyCart.svg",
+					"controller/Main.controller.js",
+					"view/Main.view.xml",
+					"Component.js",
+					"manifest.json"
+				]
+			}
+		}
+	}
+}

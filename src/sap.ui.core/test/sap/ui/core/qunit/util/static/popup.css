@@ -1,0 +1,60 @@
+#popup {
+	background-color: yellow;
+	width: 300px;
+	height: 100px;
+	position: absolute;
+	left: -560px;
+	top: 270px;
+	visibility: hidden;
+	display: none;
+}
+
+#popupcontent {
+	background-color: red;
+	width: 100px;
+	height: 50px;
+	border-width: 0px;
+	color: rgb(0, 0, 0);
+}
+
+#secondpopupcontent {
+	background-color: lightgreen;
+	width: 100px;
+	position: absolute;
+	left: 150px;
+	top: 40px;
+	height: 50px;
+	border-width: 0px;
+	color: rgb(0, 0, 0);
+}
+
+#focusableElement2 {
+	border: none;
+	border-width: 0px;
+	color: rgb(0, 0, 0);
+}
+
+#popupcontent:focus,
+#secondpopupcontent:focus,
+#focusableElement2:focus,
+#popup:focus {
+	border: 3px dotted black;
+	border-width: 3px;
+	color: rgb(255, 0, 0);
+}
+
+#withinArea {
+	position: fixed;
+	width: 300px;
+	height: 300px;
+	left: 100px;
+	top: 100px;
+}
+
+#withinArea1 {
+	position: fixed;
+	width: 400px;
+	height: 400px;
+	bottom: 100px;
+	right: 100px;
+}

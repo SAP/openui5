@@ -1,7 +1,10 @@
 sap.ui.define([
-	'jquery.sap.global'
-] , function ($) {
+	"sap/ui/core/library"
+] , function(coreLibrary) {
 	"use strict";
+
+	// shortcut for sap.ui.core.ValueState
+	var ValueState = coreLibrary.ValueState;
 
 	return {
 
@@ -12,7 +15,7 @@ sap.ui.define([
 		 * @returns {string} sValue 4rem in compact mode, 5rem on cozy mode
 		 */
 		previewPanelHeight : function (sDummy) {
-			if ($("body").hasClass("sapUiSizeCompact") || $("body").find(".sapUiSizeCompact").length) {
+			if (document.body.classList.contains("sapUiSizeCompact") || document.getElementsByClassName("sapUiSizeCompact").length) {
 				return "6.0625rem";
 			} else {
 				return "8rem";
@@ -93,9 +96,9 @@ sap.ui.define([
 		 */
 		deliveryState: function (sDelivery) {
 			if (sDelivery === "OpenUI5") {
-				return sap.ui.core.ValueState.Success;
+				return ValueState.Success;
 			} else {
-				return sap.ui.core.ValueState.Error;
+				return ValueState.Error;
 			}
 		},
 
@@ -110,5 +113,4 @@ sap.ui.define([
 			}
 
 	};
-
 });

@@ -34,14 +34,6 @@
 	border-radius: @_sap_ui_commons_TabStrip_BorderRadius @_sap_ui_commons_TabStrip_BorderRadius 0 0;
 }
 
-html[data-sap-ui-browser^="ie"] .sapUiTab,
-html[data-sap-ui-browser^="ie"] .sapUiTabSel,
-html[data-sap-ui-browser^="ie"] .sapUiTabDsbl {
-	/*in IE outline-offset not works, so use border instead*/
-	border-bottom-width: 1px;
-	padding-bottom: 1px;
-}
-
 .sapUiTab:hover,
 .sapUiTabSel:hover {
 	background-color: @sapUiHighlight;
@@ -68,22 +60,9 @@ html[data-sap-ui-browser^="ie"] .sapUiTabDsbl {
 	outline-offset: -1px;
 }
 
-html[data-sap-ui-browser^="ie"] .sapUiTab:focus,
-html[data-sap-ui-browser^="ie"] .sapUiTabDsbl:focus{
-	/*in IE outline-offset not works, so use border instead*/
-	outline: none;
-	border: 1px dashed @sapUiHighlight;
-}
-
 .sapUiTabSel:focus {
 	outline: 1px dashed @sapUiHighlight;
 	outline-offset: -1px;
-}
-
-html[data-sap-ui-browser^="ie"] .sapUiTabSel:focus{
-	/*in IE outline-offset not works, so use border instead*/
-	outline: none;
-	border: 1px dashed @sapUiHighlight;
 }
 
 .sapUiTabSel {

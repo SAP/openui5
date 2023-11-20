@@ -1,0 +1,31 @@
+sap.ui.require([
+	"sap/m/Shell",
+	"sap/m/App",
+	"sap/m/Page",
+	"sap/ui/core/ComponentContainer",
+	"sap/ui/core/Core"
+], function(
+	Shell, App, Page, ComponentContainer, Core) {
+	"use strict";
+
+	Core.attachInit(function() {
+		new Shell ({
+			app : new App ({
+				pages : [
+					new Page({
+						title : "{{TITLE}}",
+						enableScrolling : {{SCROLLING}},
+						content : [
+							new ComponentContainer({
+								{{HEIGHT}}name : "{{SAMPLE_ID}}",
+								settings : {
+									id : "{{SAMPLE_ID}}"
+								}
+							})
+						]
+					})
+				]
+			})
+		}).placeAt("content");
+	});
+});

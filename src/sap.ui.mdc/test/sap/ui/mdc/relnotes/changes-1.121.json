@@ -1,0 +1,62 @@
+{
+  "1.121.0": {
+    "date": "November 2023",
+    "notes": [
+      {
+        "id": "872e05a85a374a918cb8f821916f972b4714f477",
+        "type": "FIX",
+        "text": " Field: Currency/unit value do not overwrite initial parts with null",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380087372"
+          }
+        ]
+      },
+      {
+        "id": "f666a8858adbb4376ccb84f911a68d59a2673f84",
+        "type": "FIX",
+        "text": " Field: not possible to enter multiple lines",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370128724"
+          }
+        ]
+      },
+      {
+        "id": "aad65937d95c1e941ebaa86173cfe0cd8e42c072",
+        "type": "FIX",
+        "text": " Field: Autocomplete shows wrong value if backend slow",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370136431"
+          }
+        ]
+      },
+      {
+        "id": "2b111cd674060686dea41483d6760c5fc040200a",
+        "type": "FIX",
+        "text": " ValueHelp: first item shown as selected too when other item is selected",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370127159"
+          }
+        ]
+      },
+      {
+        "id": "f4d7fd6a9aedf1546eced885b0ae2665f3968a78",
+        "type": "FIX",
+        "text": " ValueHelp: busy indicator for typeahed stays forever",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370124674"
+          }
+        ]
+      }
+    ]
+  }
+}

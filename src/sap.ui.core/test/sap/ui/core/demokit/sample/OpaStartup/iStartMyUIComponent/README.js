@@ -1,3 +1,5 @@
+/*global QUnit */
+
 sap.ui.require(
 	[
 		"sap/m/Panel",
@@ -5,7 +7,7 @@ sap.ui.require(
 	], function(Panel, Text) {
 	"use strict";
 
-	jQuery("#readme").css({
+	Object.assign(document.getElementById("readme").style, {
 		top: "350px",
 		position: "fixed",
 		left: 0,
@@ -13,7 +15,7 @@ sap.ui.require(
 	});
 
 	QUnit.done(function () {
-		jQuery("#readme").css({
+		Object.assign(document.getElementById("readme").style, {
 			width: "100%",
 			top: "190px"
 		});
@@ -21,11 +23,11 @@ sap.ui.require(
 
 	var oText = new Text(),
 		oPanel = new Panel({
-		headerText: "README",
-		expandable: true,
-		expanded: true,
-		content: oText
-	});
+			headerText: "README",
+			expandable: true,
+			expanded: true,
+			content: oText
+		});
 
 	oText.setText("******Definition******\n" +
 		"	The function iStartMyUIComponent allows starting a UIComponent by using a component.js file" +

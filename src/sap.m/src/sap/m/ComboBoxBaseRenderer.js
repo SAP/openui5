@@ -11,7 +11,7 @@ sap.ui.define(['./ComboBoxTextFieldRenderer', 'sap/ui/core/Renderer'],
 		 * @namespace
 		 */
 		var ComboBoxBaseRenderer = Renderer.extend(ComboBoxTextFieldRenderer);
-
+		ComboBoxBaseRenderer.apiVersion = 2;
 		/**
 		 * CSS class to be applied to the root element of the control.
 		 *
@@ -24,12 +24,16 @@ sap.ui.define(['./ComboBoxTextFieldRenderer', 'sap/ui/core/Renderer'],
 		 * Retrieves the accessibility state of the control.
 		 * To be overwritten by subclasses.
 		 *
-		 * @param {sap.ui.core.Control} oControl An object representation of the control that should be rendered.
+		 * @param {sap.m.ComboBoxBase} oControl An object representation of the control that should be rendered.
 		 * @returns {object} The accessibility state of the control
 		 */
 		ComboBoxBaseRenderer.getAccessibilityState = function (oControl) {
-			var mAccessibilityState = ComboBoxTextFieldRenderer.getAccessibilityState.call(this, oControl);
-			mAccessibilityState.expanded = oControl.isOpen();
+			var mAccessibilityState = ComboBoxTextFieldRenderer.getAccessibilityState.call(this, oControl),
+				oPicker = oControl.getPicker();
+
+			if (oPicker) {
+				mAccessibilityState.controls = oPicker.getId();
+			}
 			return mAccessibilityState;
 		};
 
@@ -37,20 +41,20 @@ sap.ui.define(['./ComboBoxTextFieldRenderer', 'sap/ui/core/Renderer'],
 		 * Add classes to the control.
 		 *
 		 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer.
-		 * @param {sap.ui.core.Control} oControl An object representation of the control that should be rendered.
+		 * @param {sap.m.ComboBoxBase} oControl An object representation of the control that should be rendered.
 		 */
 		ComboBoxBaseRenderer.addOuterClasses = function (oRm, oControl) {
 			ComboBoxTextFieldRenderer.addOuterClasses.apply(this, arguments);
 
 			var CSS_CLASS = ComboBoxBaseRenderer.CSS_CLASS_COMBOBOXBASE;
-			oRm.addClass(CSS_CLASS);
+			oRm.class(CSS_CLASS);
 
 			if (!oControl.getEnabled()) {
-				oRm.addClass(CSS_CLASS + "Disabled");
+				oRm.class(CSS_CLASS + "Disabled");
 			}
 
 			if (!oControl.getEditable()) {
-				oRm.addClass(CSS_CLASS + "Readonly");
+				oRm.class(CSS_CLASS + "Readonly");
 			}
 		};
 
@@ -63,7 +67,7 @@ sap.ui.define(['./ComboBoxTextFieldRenderer', 'sap/ui/core/Renderer'],
 		 */
 		ComboBoxBaseRenderer.addButtonClasses = function (oRm, oControl) {
 			ComboBoxTextFieldRenderer.addButtonClasses.apply(this, arguments);
-			oRm.addClass(ComboBoxBaseRenderer.CSS_CLASS_COMBOBOXBASE + "Arrow");
+			oRm.class(ComboBoxBaseRenderer.CSS_CLASS_COMBOBOXBASE + "Arrow");
 		};
 
 		return ComboBoxBaseRenderer;

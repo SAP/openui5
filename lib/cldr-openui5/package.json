@@ -1,0 +1,24 @@
+{
+  "name": "cldr-openui5",
+  "description": "OpenUI5 CLDR Generator",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "node cli.js",
+    "test": "npm run lint && npm run mocha",
+    "mocha": "mocha",
+    "lint": "eslint ./"
+  },
+  "author": "SAP SE",
+  "engines": {
+    "node": ">=18.14.0",
+    "npm": ">=9"
+  },
+  "devDependencies": {
+    "extend": "^2.0.0",
+    "json2json": "^0.2.4",
+    "mocha": "^10.2.0",
+    "pacote": "^15.1.1",
+    "sinon": "^15.1.0"
+  }
+}

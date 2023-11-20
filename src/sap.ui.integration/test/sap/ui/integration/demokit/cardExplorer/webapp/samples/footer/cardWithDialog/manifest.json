@@ -1,0 +1,154 @@
+{
+	"_version": "1.35.0",
+	"sap.app": {
+		"id": "card.explorer.footer.cardWithDialog",
+		"type": "card",
+		"title": "Sample of an Adaptive Card with Customized Actions",
+		"subTitle": "Sample of an Adaptive Card with Customized Actions",
+		"applicationVersion": {
+			"version": "1.0.0"
+		},
+		"shortTitle": "A short title for this Card",
+		"info": "Additional information about this Card",
+		"description": "A long description for this Card",
+		"tags": {
+			"keywords": [
+				"Adaptive",
+				"Card",
+				"Form",
+				"Sample",
+				"OpenURL",
+				"Actions"
+			]
+		}
+	},
+	"sap.ui5": {
+		"min-version": ""
+	},
+	"sap.card": {
+		"type": "AdaptiveCard",
+		"extension": "./DetailsDialogExtension",
+		"header": {
+			"title": "Join Next Meeting",
+			"subTitle": "Starts in 2 Hours",
+			"icon": {
+				"src": "sap-icon://appointment"
+			},
+			"actions": [
+				{
+					"type": "Custom",
+					"parameters": {
+						"method": "OpenDetailsDialog"
+					}
+				}
+			]
+		},
+		"configuration": {
+			"enableMarkdown": true
+		},
+		"content": {
+			"$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+			"type": "AdaptiveCard",
+			"version": "1.0",
+			"body": [
+				{
+					"type": "ColumnSet",
+					"columns": [
+						{
+							"type": "Column",
+							"items": [
+								{
+									"type": "Image",
+									"url": "data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==",
+									"size": "Small",
+									"style": "auto"
+								}
+							],
+							"width": "auto"
+						},
+						{
+							"type": "Column",
+							"items": [
+								{
+									"type": "TextBlock",
+									"text": "Engineering Meeting - Show & Tell 1",
+									"wrap": true
+								},
+								{
+									"type": "TextBlock",
+									"spacing": "None",
+									"text": "06:00 pm - 07:00 pm",
+									"isSubtle": true,
+									"wrap": true
+								}
+							],
+							"width": "stretch"
+						}
+					]
+				},
+				{
+					"type": "ColumnSet",
+					"columns": [
+						{
+							"type": "Column",
+							"items": [
+								{
+									"type": "Image",
+									"style": "Person",
+									"url": "./samples/footer/cardWithDialog/images/DonnaMoore.png",
+									"size": "small"
+								}
+							],
+							"width": "auto"
+						},
+						{
+							"type": "Column",
+							"items": [
+								{
+									"type": "TextBlock",
+									"text": "Donna Moore"
+								},
+								{
+									"type": "TextBlock",
+									"spacing": "None",
+									"text": "Organizer",
+									"isSubtle": true
+								}
+							],
+							"width": "stretch",
+							"verticalContentAlignment": "Center"
+						}
+					]
+				}
+			]
+		},
+		"footer": {
+			"actionsStrip": [
+				{
+					"text": "Join",
+					"buttonType": "Emphasized",
+					"actions": [
+						{
+							"type": "Navigation",
+							"parameters": {
+								"url": "msteams:/l/meetup-join/19:meeting_YWUyY2I3NDUtYWFhZi00YmZjLWE0YzEtMTNkYjBjZWEzMTg3@thread.v2/0?context=%7b%22Tid%22%3a%2242f7676c-f455-423c-82f6-dc2d99791af7%22%2c%22Oid%22%3a%2254995cbb-44a1-4a68-b6f5-e7d561a44433%22%7d&anon=true&deeplinkId=b2899f17-5ce3-4a55-9741-65be6ad26bb5&launchAgent=join_launcher&type=meetup-join&directDl=true&msLaunch=true&enableMobilePage=true&fqdn=teams.microsoft.com"
+							}
+						}
+					]
+				},
+				{
+					"text": "Details",
+					"buttonType": "Transparent",
+					"actions": [
+						{
+							"type": "Custom",
+							"parameters": {
+								"method": "OpenDetailsDialog"
+							}
+						}
+					]
+				}
+			]
+		}
+	}
+}

@@ -1,0 +1,31 @@
+<ActionSheet id="actionSheet"
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core"
+	core:require="{ MessageToast: 'sap/m/MessageToast' }"
+	title="Choose Your Action"
+	showCancelButton="true"
+	placement="Bottom">
+	<Button
+		text="Accept"
+		icon="sap-icon://accept"
+		press="MessageToast.show('Selected action is ' + ${$source>/text})" />
+	<Button
+		text="Reject"
+		icon="sap-icon://decline"
+		press="MessageToast.show('Selected action is ' + ${$source>/text})" />
+	<Button
+		text="Email"
+		icon="sap-icon://email"
+		press="MessageToast.show('Selected action is ' + ${$source>/text})" />
+	<Button
+		text="Forward"
+		icon="sap-icon://forward"
+		press="MessageToast.show('Selected action is ' + ${$source>/text})" />
+	<Button
+		text="Delete"
+		icon="sap-icon://delete"
+		press="MessageToast.show('Selected action is ' + ${$source>/text})" />
+	<Button
+		text="Other"
+		press="MessageToast.show('Selected action is ' + ${$source>/text})" />
+</ActionSheet>

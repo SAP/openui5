@@ -1,0 +1,24 @@
+{
+	"d" : {
+		"__count" : "1",
+		"results" : [{
+			"__metadata" : {
+				"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='245',ItemPosition='010')",
+				"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='245',ItemPosition='010')",
+				"type" : "GWSAMPLE_BASIC.SalesOrderLineItem"
+			},
+			"SalesOrderID" : "245",
+			"ItemPosition" : "010",
+			"ProductID" : "HT-1111",
+			"Note" : "Item 010",
+			"NoteLanguage" : "EN",
+			"CurrencyCode" : "EUR",
+			"GrossAmount" : "8.21",
+			"NetAmount" : "6.90",
+			"TaxAmount" : "1.31",
+			"DeliveryDate" : "\/Date(1649063553730)\/",
+			"Quantity" : "1",
+			"QuantityUnit" : "EA"
+		}]
+	}
+}

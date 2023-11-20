@@ -1,0 +1,60 @@
+[
+	{
+		"fileName": "id_01_addColumn",
+		"changeType": "addColumn",
+		"reference": "test",
+		"content": {
+			"name": "column3",
+			"index": 1
+		},
+		"selector": {
+			"id": "view--mdcTable",
+			"idIsLocal": false
+		},
+		"layer": "USER",
+		"creation": "2020-02-10T08:57:31.119Z"
+	},
+	{
+		"fileName": "id_02_addColumn",
+		"changeType": "addColumn",
+		"reference": "test",
+		"content": {
+			"name": "column4",
+			"index": 4
+		},
+		"selector": {
+			"id": "view--mdcTable",
+			"idIsLocal": false
+		},
+		"layer": "USER",
+		"creation": "2020-02-11T08:57:31.119Z"
+	},{
+		"fileName": "id_01_removeColumn",
+		"changeType": "removeColumn",
+		"reference": "test",
+		"content": {
+			"name": "column0",
+			"id": "mdcTable--column0"
+		},
+		"selector": {
+			"id": "view--mdcTable",
+			"idIsLocal": false
+		},
+		"layer": "USER",
+		"creation": "2020-02-12T06:33:51.192Z"
+	},{
+		"fileName": "id_02_removeColumn",
+		"changeType": "removeColumn",
+		"reference": "test",
+		"content": {
+			"name": "column1",
+			"id": "mdcTable--column1"
+		},
+		"selector": {
+			"id": "view--mdcTable",
+			"idIsLocal": false
+		},
+		"layer": "USER",
+		"creation": "2020-02-13T06:33:51.192Z"
+	}
+]

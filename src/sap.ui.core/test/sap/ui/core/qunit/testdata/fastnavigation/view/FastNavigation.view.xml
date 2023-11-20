@@ -1,0 +1,55 @@
+<mvc:View
+	xmlns:core="sap.ui.core"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:main="sap.ui.webc.main"
+	xmlns:form="sap.ui.layout.form"
+	xmlns:html="http://www.w3.org/1999/xhtml"
+	xmlns="sap.m">
+	<main:Button text="Button1" id="button1"></main:Button>
+	<main:Panel id="Panel1" headerText="Panel Header">
+		<main:List headerText="Custom Content">
+			<main:CustomListItem id="ListItem1">
+				<HBox>
+					<core:Icon size="2rem" src="sap-icon://attachment-photo" class="sapUiSmallMarginBegin sapUiSmallMarginTopBottom" />
+					<VBox class="sapUiSmallMarginBegin sapUiSmallMarginTopBottom" >
+						<main:Button text="ListItem1"/>
+					</VBox>
+				</HBox>
+			</main:CustomListItem>
+			<main:CustomListItem id="ListItem2">
+				<HBox>
+					<core:Icon size="2rem" src="sap-icon://attachment-photo" class="sapUiSmallMarginBegin sapUiSmallMarginTopBottom" />
+					<VBox class="sapUiSmallMarginBegin sapUiSmallMarginTopBottom" >
+						<main:Button text="ListItem2"/>
+					</VBox>
+				</HBox>
+			</main:CustomListItem>
+		</main:List>
+	</main:Panel>
+	<html:test-component>
+		<html:div id="Div1" slot="FirstSlot" tabindex="0">Test1</html:div>
+		<html:div id="Div2" slot="SecondSlot" tabindex="0">Test2</html:div>
+		<html:div id="Div3" slot="FirstSlot" tabindex="0">Test3</html:div>
+	</html:test-component>
+	<form:Form>
+		<form:layout>
+				<form:ResponsiveGridLayout></form:ResponsiveGridLayout>
+		</form:layout>
+		<form:FormContainer>
+			<form:FormElement>
+				<main:Input id="Input1"></main:Input>
+			</form:FormElement>
+			<form:FormElement>
+				<main:Input id="Input2"></main:Input>
+			</form:FormElement>
+		</form:FormContainer>
+		<form:FormContainer>
+			<form:FormElement>
+				<main:Input id="Input3"></main:Input>
+			</form:FormElement>
+			<form:FormElement>
+				<main:Input id="Input4"></main:Input>
+			</form:FormElement>
+		</form:FormContainer>
+	</form:Form>
+</mvc:View>

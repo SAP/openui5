@@ -1,5 +1,4 @@
 <mvc:View
-		id="versionInfo"
 		height="100%"
 		xmlns:mvc="sap.ui.core.mvc"
 		xmlns:core="sap.ui.core">

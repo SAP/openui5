@@ -1,0 +1,33 @@
+{
+	"sap.app": {
+		"id": "sap.ui.core.sample.XMLComposite.01",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "sap.ui.core.sample.XMLComposite.01.V",
+			"type": "XML",
+			"async": true
+		},
+		"dependencies": {
+			"libs": {
+				"sap.m": {},
+				"sap.ui.layout": {}
+			}
+		},
+		"config": {
+			"sample": {
+				"stretch": true,
+				"files": [
+					"manifest.json",
+					"V.view.xml",
+					"C.controller.js",
+					"comp/SearchField.js",
+					"comp/SearchField.control.xml"
+				]
+			}
+		}
+	}
+}

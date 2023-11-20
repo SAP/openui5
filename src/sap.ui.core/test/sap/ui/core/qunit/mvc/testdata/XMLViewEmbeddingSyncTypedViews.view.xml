@@ -1,0 +1,8 @@
+<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m" xmlns:test="testdata.mvc">
+	<Panel id="aPanel">
+		<content>
+			<mvc:View id="embedded-no-async" viewName="module:testdata/mvc/TypedViewSyncCreateContent"></mvc:View>
+			<mvc:View id="embedded-async-false" viewName="module:testdata/mvc/TypedViewSyncCreateContent" async="false"></mvc:View>
+		</content>
+	</Panel>
+</mvc:View>

@@ -2,16 +2,26 @@ sap.ui.define([
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/model/json/JSONModel",
 	"sap/m/MessageToast",
-	"sap/ui/table/sample/TableExampleUtils"
-], function(Controller, JSONModel, MessageToast, TableExampleUtils) {
+	"sap/m/ToolbarSpacer",
+	"sap/ui/table/Row",
+	"sap/ui/thirdparty/jquery"
+], function(Controller, JSONModel, MessageToast, ToolbarSpacer, TableRow, jQuery) {
 	"use strict";
 
 	return Controller.extend("sap.ui.table.sample.DnD.Controller", {
 
-		onInit: function () {
+		onInit: function() {
+			var oView = this.getView();
+
 			// set explored app's demo model on this sample
 			this.oProductsModel = this.initSampleProductsModel();
-			this.getView().setModel(this.oProductsModel);
+			oView.setModel(this.oProductsModel);
+
+			sap.ui.require(["sap/ui/table/sample/TableExampleUtils"], function(TableExampleUtils) {
+				var oTb = oView.byId("infobar");
+				oTb.addContent(new ToolbarSpacer());
+				oTb.addContent(TableExampleUtils.createInfoButton("sap/ui/table/sample/DnD"));
+			}, function(oError) { /*ignore*/ });
 		},
 
 		onExit: function() {
@@ -36,10 +46,15 @@ sap.ui.define([
 		},
 
 		initSampleProductsModel: function() {
-			var oData = jQuery.sap.sjax({
-				url: sap.ui.require.toUrl("sap/ui/demo/mock") + "/products.json",
-				dataType: "json"
-			}).data;
+			var oData;
+			jQuery.ajax({
+				async: false,
+				url: sap.ui.require.toUrl("sap/ui/demo/mock/products.json"),
+				dataType: "json",
+				success: function(oResponse) {
+					oData = oResponse;
+				}
+			});
 
 			// prepare and initialize the rank property
 			oData.ProductCollection.forEach(function(oProduct) {
@@ -113,7 +128,7 @@ sap.ui.define([
 			var iNewRank = oConfig.defaultRank;
 			var oDroppedRow = oEvent.getParameter("droppedControl");
 
-			if (oDroppedRow && oDroppedRow instanceof sap.ui.table.Row) {
+			if (oDroppedRow && oDroppedRow instanceof TableRow) {
 				// get the dropped row data
 				var sDropPosition = oEvent.getParameter("dropPosition");
 				var oDroppedRowContext = oDroppedRow.getBindingContext();
@@ -146,7 +161,7 @@ sap.ui.define([
 				// insert always as a first row
 				var iNewRank = this.config.defaultRank;
 				if (oFirstRowContext) {
-					iNewRank =  this.config.rankAlgorithm.Before(oFirstRowContext.getProperty("Rank"));
+					iNewRank = this.config.rankAlgorithm.Before(oFirstRowContext.getProperty("Rank"));
 				}
 
 				this.oProductsModel.setProperty("Rank", iNewRank, oSelectedRowContext);
@@ -183,10 +198,6 @@ sap.ui.define([
 
 		moveDown: function() {
 			this.moveSelectedRow("Down");
-		},
-
-		showInfo : function(oEvent) {
-			TableExampleUtils.showInfo(sap.ui.require.toUrl("sap/ui/table/sample/DnD") + "/info.json", oEvent.getSource());
 		}
 	});
 

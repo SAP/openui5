@@ -12,7 +12,7 @@
 			}
 		}">
 		<headerToolbar>
-			<Toolbar>
+			<OverflowToolbar>
 				<content>
 					<Title text="Products" level="H2"/>
 					<ToolbarSpacer />
@@ -28,29 +28,23 @@
 								key="GridSmall"/>
 						</items>
 					</ComboBox>
-					<MultiComboBox id="idSticky"
-						placeholder="Sticky options"
-						selectionFinish="onSelectionFinish"
-						width="15%">
-						<items>
-							<core:Item  text="Column headers"
-								key="ColumnHeaders"/>
-							<core:Item  text="Header Toolbar"
-								key="HeaderToolbar"/>
-							<core:Item  text="Info Toolbar"
-								key="InfoToolbar"/>
-						</items>
-					</MultiComboBox>
+					<Label text="Sticky options:" />
+					<CheckBox text="ColumnHeaders"
+						select="onSelect"/>
+					<CheckBox text="HeaderToolbar"
+						select="onSelect"/>
+					<CheckBox text="InfoToolbar"
+						select="onSelect"/>
 					<ToggleButton id="toggleInfoToolbar"
 						text="Hide/Show InfoToolbar"
 						press="onToggleInfoToolbar" />
 				</content>
-			</Toolbar>
+			</OverflowToolbar>
 		</headerToolbar>
 		<infoToolbar>
-			<Toolbar active="ture">
+			<OverflowToolbar>
 				<Label text="Wide range of available products"/>
-			</Toolbar>
+			</OverflowToolbar>
 		</infoToolbar>
 		<columns>
 			<Column
@@ -80,7 +74,7 @@
 			</Column>
 		</columns>
 		<items>
-			<ColumnListItem>
+			<ColumnListItem vAlign="Middle">
 				<cells>
 					<ObjectIdentifier
 						title="{Name}"

@@ -2,9 +2,18 @@
  * ${copyright}
  */
 
-/*
- * IMPORTANT: This is a private module, its API must not be used and is subject to change.
- * Code other than the Core tests must not yet introduce dependencies to this module.
+/**
+ * IMPORTANT: This is a private module, its API must not be used in production and is
+ * subject to change.
+ *
+ * It may be used to experiment with an alternative bootstrap of a UI5 application.
+ *
+ * Currently, it does not fully recreate the environment of the regular UI5 bootstrap
+ * (<code>sap-ui-core.js</code>), but only a subset as required by UI5 Controls
+ * (<code>sap.m</code>) or UI5 Web Components.
+ *
+ * @private
+ * @experimental
  */
 
 /*global document, sap */
@@ -31,6 +40,11 @@
 		var pending = urls.length,
 			errors = 0;
 
+		if (pending === 0) {
+			callback();
+			return;
+		}
+
 		function listener(e) {
 			pending--;
 			if ( e.type === 'error' ) {
@@ -52,24 +66,24 @@
 		}
 	}
 
-	// cascade 1: polyfills, can all be loaded in parallel
+	// cascade 1: the loader
 	loadScripts([
-		"sap/ui/thirdparty/baseuri.js",
-		"sap/ui/thirdparty/es6-promise.js",
-		"sap/ui/thirdparty/es6-string-methods.js",
-		"sap/ui/thirdparty/es6-object-assign.js"
+		"ui5loader.js"
 	], function() {
-		// cascade 2: the loader
+		// cascade 2: the loader configuration script
+		sap.ui.loader.config({
+			async: true
+		});
 		loadScripts([
-			"ui5loader.js"
+			"sap/ui/core/boot/_bootConfig.js"
 		], function() {
-			// cascade 3: the loader configuration script
-			sap.ui.loader.config({
-				async:true
-			});
+			// cascade 3: load autoconfig
 			loadScripts([
 				"ui5loader-autoconfig.js"
-			]);
+			], function() {
+				// cascade 4: the boot script
+				loadScripts(["sap/ui/core/boot/_runBoot.js"]);
+			});
 		});
 	});
 

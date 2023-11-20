@@ -1,0 +1,83 @@
+{
+	"_version": "1.17.0",
+	"sap.app": {
+		"id": "card.explorer.format.date",
+		"type": "card",
+		"title": "Sample for DateTime Formatters",
+		"subTitle": "Sample for DateTime Formatters",
+		"applicationVersion": {
+			"version": "1.0.0"
+		},
+		"shortTitle": "A short title for this Card",
+		"info": "Additional information about this Card",
+		"description": "A long description for this Card",
+		"tags": {
+			"keywords": [
+				"Date",
+				"Time",
+				"Formatter",
+				"Card",
+				"Sample"
+			]
+		}
+	},
+	"sap.card": {
+		"type": "List",
+		"header": {
+			"title": "Orders in the Interval {= format.date(['2020-05-05T00:00:00.000Z', Date.now()], { interval: true }) }",
+			"icon": {
+				"src": "sap-icon://desktop-mobile"
+			},
+			"status": {
+				"text": "4 of 5"
+			}
+		},
+		"content": {
+			"data": {
+				"json": [
+					{
+						"Name": "Keyboard and Mouse",
+						"Image": "sap-icon://keyboard-and-mouse",
+						"Price": 155,
+						"Created": "/Date(1600430944000)/"
+					},
+					{
+						"Name": "ITelO Vault",
+						"Image": "sap-icon://shield",
+						"Price": 30,
+						"Created": 1600430944000
+					},
+					{
+						"Name": "Notebook Professional 15",
+						"Image": "sap-icon://laptop",
+						"Price": 30,
+						"Created": "Fri Sep 18 2020 03:24:00 GMT+0200 (Eastern European Standard Time)"
+					},
+					{
+						"Name": "Ergo Screen E-I",
+						"Image": "sap-icon://desktop-mobile",
+						"Created": "Sun May 2 2021 03:24:00 GMT+0200 (Eastern European Standard Time)",
+						"Price": 69
+					},
+					{
+						"Name": "Laser Professional Eco",
+						"Image": "sap-icon://keyboard-and-mouse",
+						"Created": "2020-08-17T01:24:00.000Z",
+						"Price": 40
+					}
+				]
+			},
+			"maxItems": 4,
+			"item": {
+				"title": "{Name}",
+				"description": "Created on {= format.date(${Created}) }",
+				"icon": {
+					"src": "{Image}"
+				},
+				"info": {
+					"value": "{Price}$"
+				}
+			}
+		}
+	}
+}

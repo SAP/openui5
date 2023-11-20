@@ -1,0 +1,40 @@
+/* ================================= */
+/* CSS for control sap.m/Token       */
+/* Quartz High Contrast Black theme  */
+/* ================================= */
+
+@_sap_m_Token_TokenPadding: 0.5rem;
+@_sap_m_Token_TokenCompactPadding: 0.25rem;
+@_sap_m_Token_LeftPadding: 0.3125rem;
+@_sap_m_Token_TokenSize: @sapMFontSmallSize + (2 * @_sap_m_Token_TokenPadding) - @_sap_m_Token_LeftPadding;
+@_sap_m_Token_TokenCompactSize: @sapMFontSmallSize  + @_sap_m_Token_TokenCompactPadding;
+
+.sapMToken {
+	border-radius: 0.25rem;
+	padding-left: 0.3125rem;
+}
+
+html.sap-desktop .sapMToken.sapMTokenSelected:not(.sapMTokenReadOnly):hover {
+	background: @sapUiButtonSelectedHoverBackground;
+	border: @sapUiButtonBorderWidth solid @sapUiButtonSelectedHoverBorderColor;
+}
+
+html.sap-desktop .sapMToken {
+	&.sapMTokenReadOnly,
+	&.sapMTokenReadOnly:hover,
+	&.sapMTokenReadOnly.sapMTokenSelected,
+	&.sapMTokenReadOnly.sapMTokenSelected:hover {
+		color: @sapUiContentLabelColor;
+		background: @sapUiFieldReadOnlyBackground;
+		border: @sapUiButtonBorderWidth solid @sapUiFieldReadOnlyBorderColor;
+	}
+}
+
+html.sap-desktop .sapMToken:focus {
+	outline: @sapUiContentFocusWidth @sapUiContentFocusStyle @sapUiContentFocusColor;
+	outline-offset: -0.1875rem;
+}
+
+html.sap-desktop .sapMToken.sapMTokenSelected:focus {
+	outline: @sapUiContentFocusWidth @sapUiContentFocusStyle @sapUiContentContrastFocusColor;
+}

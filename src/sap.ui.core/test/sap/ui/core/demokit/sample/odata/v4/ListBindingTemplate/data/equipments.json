@@ -1,5 +1,4 @@
 {
-	"@odata.context" : "$metadata#Equipments(Category,EmployeeId,ID,Name,EQUIPMENT_2_PRODUCT(ID,Name,PRODUCT_2_CATEGORY(CategoryIdentifier,CategoryName),PRODUCT_2_SUPPLIER(SUPPLIER_ID,Supplier_Name)))",
 	"@odata.metadataEtag" : "W/\"20180213164903\"",
 	"value" : [{
 		"Category" : "Electronics",

@@ -1,11 +1,12 @@
 /*global QUnit*/
 
 sap.ui.define([
-	"jquery.sap.global",
+	"sap/ui/thirdparty/jquery",
 	"sap/m/PDFViewer",
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/Device"
-], function ($, PDFViewer, JSONModel, Device) {
+	"sap/ui/Device",
+	"sap/ui/core/Core"
+], function ($, PDFViewer, JSONModel, Device, oCore) {
 	"use strict";
 
 	var testUtils = {};
@@ -118,11 +119,11 @@ sap.ui.define([
 
 	testUtils.renderPdfViewer = function renderPdfViewer(oPdfViewer) {
 		oPdfViewer.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 	};
 
-	testUtils.rerender = function rerender() {
-		sap.ui.getCore().applyChanges();
+	testUtils.triggerRerender = function triggerRerender() {
+		oCore.applyChanges();
 	};
 
 	testUtils.wait = function wait(duration) {
@@ -140,4 +141,4 @@ sap.ui.define([
 	};
 
 	return testUtils;
-}, true);
+});

@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+
+	<title>showItems functionality</title>
+
+	<script src="shared-config.js"></script>
+	<script src="../../../resources/sap-ui-core.js"
+			id="sap-ui-bootstrap"
+			data-sap-ui-compatVersion="edge"
+			data-sap-ui-xx-bindingSyntax="complex"
+			data-sap-ui-libs="sap.m">
+	</script>
+
+	<script id="ShowItemsApp" type="text/xmldata">
+		<mvc:View
+				controllerName="myController"
+				displayBlock="true"
+				xmlns:core="sap.ui.core"
+				xmlns:mvc="sap.ui.core.mvc"
+				xmlns="sap.m"
+				xmlns:f="sap.ui.layout.form">
+			<App>
+				<Page>
+					<customHeader>
+						<Toolbar>
+							<ToolbarSpacer/>
+							<Title text="showItems() enabled controls" level="H2"/>
+							<ToolbarSpacer/>
+							<Button id="customCssButton" text="Toggle custom CSS for visual test" press="applyCustomCss" />
+						</Toolbar>
+					</customHeader>
+					<f:Form width="100%">
+						<f:layout>
+							<f:ResponsiveGridLayout
+								labelSpanXL="3"
+								labelSpanL="3"
+								labelSpanM="3"
+								labelSpanS="12"
+								adjustLabelSpan="false"
+								emptySpanXL="2"
+								emptySpanL="2"
+								emptySpanM="0"
+								emptySpanS="0"
+								columnsXL="1"
+								columnsL="1"
+								columnsM="1"
+								singleContainerFullSize="false" />
+						</f:layout>
+
+						<f:formContainers>
+							<f:FormContainer>
+								<f:formElements>
+									<f:FormElement label="Input (List)">
+										<f:fields>
+											<Button id="btnInput1" text="showItems()" press="handleOpen" />
+											<Button id="btnInput1Filter" text="showItems(fnFilter)"
+													press="handleOpen"/>
+											<Input
+													id="input1"
+													showSuggestion="true"
+													suggestionItems="{/}">
+												<suggestionItems>
+													<core:Item text="{Name}" key="{ProductId}"/>
+												</suggestionItems>
+											</Input>
+										</f:fields>
+									</f:FormElement>
+
+									<f:FormElement label="Input (Table)">
+										<f:fields>
+											<Button id="btnInput2" text="showItems()" press="handleOpen"/>
+											<Button id="btnInput2Filter" text="showItems(fnFilter)"
+													press="handleOpen"/>
+											<Input
+													id="input2"
+													showSuggestion="true"
+													suggestionRows="{/}">
+												<suggestionColumns>
+													<Column>
+														<header>
+															<Label text="Name"/>
+														</header>
+													</Column>
+													<Column>
+														<header>
+															<Label text="Key"/>
+														</header>
+													</Column>
+												</suggestionColumns>
+												<suggestionRows>
+													<ColumnListItem>
+														<cells>
+															<Label text="{Name}"/>
+															<Label text="{ProductId}"/>
+														</cells>
+													</ColumnListItem>
+												</suggestionRows>
+											</Input>
+										</f:fields>
+									</f:FormElement>
+
+									<f:FormElement label="MultiInput (List)">
+										<f:fields>
+											<Button id="btnMultiInput1" text="showItems()" press="handleOpen" />
+											<Button id="btnMultiInput1Filter" text="showItems(fnFilter)"
+													press="handleOpen"/>
+											<MultiInput
+													id="multiInput1"
+													showSuggestion="true"
+													suggestionItems="{/}">
+												<suggestionItems>
+													<core:Item text="{Name}" key="{ProductId}"/>
+												</suggestionItems>
+											</MultiInput>
+										</f:fields>
+									</f:FormElement>
+
+									<f:FormElement label="MultiInput (Table)">
+										<f:fields>
+											<Button id="btnMultiInput2" text="showItems()" press="handleOpen"/>
+											<Button id="btnMultiInput2Filter" text="showItems(fnFilter)"
+													press="handleOpen"/>
+											<MultiInput
+													id="multiInput2"
+													showSuggestion="true"
+													suggestionRows="{/}">
+												<suggestionColumns>
+													<Column>
+														<header>
+															<Label text="Name"/>
+														</header>
+													</Column>
+													<Column>
+														<header>
+															<Label text="Key"/>
+														</header>
+													</Column>
+												</suggestionColumns>
+												<suggestionRows>
+													<ColumnListItem>
+														<cells>
+															<Label text="{Name}"/>
+															<Label text="{ProductId}"/>
+														</cells>
+													</ColumnListItem>
+												</suggestionRows>
+											</MultiInput>
+										</f:fields>
+									</f:FormElement>
+
+									<f:FormElement label="ComboBox">
+										<f:fields>
+											<Button id="btnComboBox1" text="showItems()" press="handleOpen"/>
+											<Button id="btnComboBox1Filter" text="showItems(fnFilter)" press="handleOpen"/>
+											<ComboBox
+													id="combo1"
+													items="{/}">
+												<items>
+													<core:Item text="{Name}" key="{ProductId}"/>
+												</items>
+											</ComboBox>
+										</f:fields>
+									</f:FormElement>
+
+									<f:FormElement label="ComboBox (lazyLoading)">
+										<f:fields>
+											<Button id="btnComboBox2" text="showItems()" press="handleOpenLazy"/>
+											<Button id="btnComboBox2Filter" text="showItems(fnFilter)" press="handleOpenLazy"/>
+											<ComboBox
+													id="combo2"
+													items="{
+																path: '/',
+																suspended: true
+															}">
+												<items>
+													<core:Item text="{Name}" key="{ProductId}"/>
+												</items>
+											</ComboBox>
+										</f:fields>
+									</f:FormElement>
+
+									<f:FormElement label="ComboBox (Grouping)">
+										<f:fields>
+											<Button id="btnComboBox3" text="showItems()" press="handleOpen"/>
+											<Button id="btnComboBox3Filter" text="showItems(fnFilter)" press="handleOpen"/>
+											<ComboBox
+													id="combo3"
+													items="{
+																path: '/',
+																sorter: {
+																	path: 'SupplierName',
+																	descending: true,
+																	group: true
+																}
+															}">
+												<items>
+													<core:Item text="{Name}" key="{ProductId}"/>
+												</items>
+											</ComboBox>
+										</f:fields>
+									</f:FormElement>
+
+									<f:FormElement label="MultiComboBox">
+										<f:fields>
+											<Button id="btnMultiComboBox1" text="showItems()" press="handleOpen"/>
+											<Button id="btnMultiComboBox1Filter" text="showItems(fnFilter)"
+													press="handleOpen"/>
+											<MultiComboBox
+													id="multiComboBox1"
+													items="{/}">
+												<items>
+													<core:Item text="{Name}" key="{ProductId}"/>
+												</items>
+											</MultiComboBox>
+										</f:fields>
+									</f:FormElement>
+
+									<f:FormElement label="MultiComboBox (Grouping)">
+										<f:fields>
+											<Button id="btnMultiComboBox2" text="showItems()" press="handleOpen"/>
+											<Button id="btnMultiComboBox2Filter" text="showItems(fnFilter)"
+													press="handleOpen"/>
+											<MultiComboBox
+													id="multiComboBox2"
+													items="{
+																path: '/',
+																sorter: {
+																	path: 'SupplierName',
+																	descending: true,
+																	group: true
+																}
+															}">
+												<items>
+													<core:Item text="{Name}" key="{ProductId}"/>
+												</items>
+											</MultiComboBox>
+										</f:fields>
+									</f:FormElement>
+
+									<f:FormElement label="ComboBox Group- ML use case">
+										<f:fields>
+											<Button id="btnComboBox4Filter" text="showItems(fnFilter)" press="handleOpenByGroup"/>
+											<ComboBox
+													id="combo4"
+													items="{
+																path: '/',
+																sorter: {
+																	path: 'SupplierName',
+																	descending: true,
+																	group: true
+																}
+															}">
+												<items>
+													<core:Item text="{Name}" key="{ProductId}"/>
+												</items>
+											</ComboBox>
+										</f:fields>
+									</f:FormElement>
+
+									<f:FormElement label="MultiComboBox Group- ML use case">
+										<f:fields>
+											<Button id="btnMultiComboBox3Filter" text="showItems(fnFilter)" press="handleOpenByGroup"/>
+											<MultiComboBox
+													id="multiComboBox3"
+													items="{
+																path: '/',
+																sorter: {
+																	path: 'SupplierName',
+																	descending: true,
+																	group: true
+																}
+															}">
+												<items>
+													<core:Item text="{Name}" key="{ProductId}"/>
+												</items>
+											</MultiComboBox>
+										</f:fields>
+									</f:FormElement>
+
+								</f:formElements>
+							</f:FormContainer>
+						</f:formContainers>
+					</f:Form>
+				</Page>
+			</App>
+		</mvc:View>
+	</script>
+
+	<script>
+		sap.ui.getCore().attachInit(function () {
+			sap.ui.require([
+				"sap/ui/core/mvc/XMLView",
+				'sap/ui/core/mvc/Controller',
+				'sap/ui/model/json/JSONModel',
+				'sap/m/Token'
+			], function (XMLView, Controller, JSONModel, Token) {
+
+				Controller.extend("myController", {
+					_btnToControlMap: {
+						"btnInput1": "input1",
+						"btnInput1Filter": "input1",
+						"btnInput2": "input2",
+						"btnInput2Filter": "input2",
+						"btnMultiInput1": "multiInput1",
+						"btnMultiInput1Filter": "multiInput1",
+						"btnMultiInput2": "multiInput2",
+						"btnMultiInput2Filter": "multiInput2",
+						"btnComboBox1": "combo1",
+						"btnComboBox1Filter": "combo1",
+						"btnComboBox2": "combo2",
+						"btnComboBox2Filter": "combo2",
+						"btnComboBox3": "combo3",
+						"btnComboBox3Filter": "combo3",
+						"btnMultiComboBox1": "multiComboBox1",
+						"btnMultiComboBox1Filter": "multiComboBox1",
+						"btnMultiComboBox2": "multiComboBox2",
+						"btnMultiComboBox2Filter": "multiComboBox2",
+						"btnComboBox4Filter": "combo4",
+						"btnMultiComboBox3Filter": "multiComboBox3"
+					},
+
+					onInit: function () {
+						var oModel = new JSONModel("../ui/documentation/sdk/mockserver/ProductCollection.json");
+
+						this.getView().setModel(oModel);
+						this.setUpMultiInput();
+					},
+
+					setUpMultiInput: function () {
+						this.getView().byId("multiInput2").addValidator(function (args) {
+							if (args.suggestionObject){
+								var key = args.suggestionObject.getCells()[1].getText();
+								var text = args.suggestionObject.getCells()[0].getText();
+
+								return new Token({key: key, text: text});
+							}
+							return null;
+						});
+					},
+
+					handleOpenByGroup: function (oEvent) {
+						this.handleOpen(oEvent, this._filterItemsByGroup.bind(this));
+					},
+
+					handleOpenLazy: function (oEvent) {
+						var sBtnId = this._resolveButtonId(oEvent.getSource().getId()),
+								oTargetControl = this._getTargetControl(sBtnId);
+
+						setTimeout(function () {
+							oTargetControl.getBinding("items").resume();
+						}, 2000);
+
+						this.handleOpen(oEvent);
+					},
+
+					handleOpen: function (oEvent, fnFilter) {
+						var sBtnId = this._resolveButtonId(oEvent.getSource().getId()),
+								oTargetControl = this._getTargetControl(sBtnId),
+								bUseFiltering = this._shouldUseFilterFn(sBtnId),
+								fnFilterItems;
+
+						if (bUseFiltering) {
+							fnFilterItems = fnFilter || this._filterItems;
+						}
+
+						oTargetControl.showItems(fnFilterItems);
+					},
+					applyCustomCss: function() {
+						var $body = jQuery("body");
+
+						$body.toggleClass("customClassForVisualTests");
+					},
+					_resolveButtonId: function (sId) {
+						return Object.keys(this._btnToControlMap).reduce(function (sAcc, sKey) {
+							if (sId.indexOf(sKey) > -1) {
+								sAcc = sKey;
+							}
+
+							return sAcc;
+						}.bind(this));
+					},
+					_getTargetControl: function (sBtnId) {
+						var sInputId = this._btnToControlMap[sBtnId];
+
+						return this.getView().byId(sInputId);
+					},
+					_shouldUseFilterFn: function (sBtnId) {
+						return sBtnId && sBtnId.indexOf("Filter") > -1;
+					},
+					_filterItems: function (sValue, oItem) {
+						if (oItem.getCells) {
+							return /notebook/gi.test(oItem.getCells()[0].getText());
+						} else {
+							return /notebook/gi.test(oItem.getText());
+						}
+					},
+					_filterItemsByGroup: function (sValue, oItem) {
+						var aData = this.getView().getModel().getData(),
+								sItemText = oItem.getText();
+
+						return aData && !!aData.filter(function (oData) {
+							return oData['Name'] === sItemText && oData["SupplierName"] === "Very Best Screens";
+						}).length;
+					}
+				});
+
+
+				XMLView.create({definition: jQuery('#ShowItemsApp').html()})
+						.then(function (oViewInstance) {
+							oViewInstance.placeAt("content");
+						});
+			});
+		});
+	</script>
+	<style type="text/css">
+		.customClassForVisualTests {
+			caret-color: transparent;
+		}
+	</style>
+</head>
+<body id='content' class='sapUiBody sapUiSizeCompact'></body>
+</html>

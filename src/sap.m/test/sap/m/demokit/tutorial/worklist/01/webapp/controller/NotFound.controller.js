@@ -1,5 +1,5 @@
 sap.ui.define([
-	"mycompany/myapp/MyWorklistApp/controller/BaseController"
+	"./BaseController"
 ], function (BaseController) {
 	"use strict";
 
@@ -14,4 +14,5 @@ sap.ui.define([
 		}
 
 	});
+
 });

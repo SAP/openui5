@@ -3,8 +3,36 @@
  */
 
 // Provides control sap.m.ActionSheet.
-sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './library', 'sap/ui/core/Control','sap/ui/core/delegate/ItemNavigation', 'sap/ui/core/InvisibleText', 'sap/ui/base/ManagedObject', 'sap/ui/Device', './ActionSheetRenderer'],
-	function(jQuery, Dialog, Popover, library, Control, ItemNavigation, InvisibleText, ManagedObject, Device, ActionSheetRenderer) {
+sap.ui.define([
+	'./Dialog',
+	'./Popover',
+	'./library',
+	'sap/ui/core/Control',
+	"sap/ui/core/ControlBehavior",
+	"sap/ui/core/Element",
+	"sap/ui/core/Lib",
+	'sap/ui/core/delegate/ItemNavigation',
+	'sap/ui/core/InvisibleText',
+	'sap/ui/Device',
+	'./ActionSheetRenderer',
+	'./Button',
+	"sap/ui/thirdparty/jquery"
+],
+	function(
+		Dialog,
+		Popover,
+		library,
+		Control,
+		ControlBehavior,
+		Element,
+		Library,
+		ItemNavigation,
+		InvisibleText,
+		Device,
+		ActionSheetRenderer,
+		Button,
+		jQuery
+	) {
 	"use strict";
 
 
@@ -53,102 +81,117 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './library', 'sap/u
 	 * @since 1.9.1
 	 * @alias sap.m.ActionSheet
 	 * @see {@link fiori:https://experience.sap.com/fiori-design-web/action-sheet/ Action Sheet}
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
-	var ActionSheet = Control.extend("sap.m.ActionSheet", /** @lends sap.m.ActionSheet.prototype */ { metadata : {
+	var ActionSheet = Control.extend("sap.m.ActionSheet", /** @lends sap.m.ActionSheet.prototype */ {
+		metadata : {
 
-		library : "sap.m",
-		properties : {
+			library : "sap.m",
+			properties : {
 
-			/**
-			 * The ActionSheet behaves as an sap.m.Popover in iPad and this property is the information about on which side will the popover be placed at. Possible values are sap.m.PlacementType.Left, sap.m.PlacementType.Right, sap.m.PlacementType.Top, sap.m.PlacementType.Bottom, sap.m.PlacementType.Horizontal, sap.m.PlacementType.HorizontalPreferedLeft, sap.m.PlacementType.HorizontalPreferedRight, sap.m.PlacementType.Vertical, sap.m.PlacementType.VerticalPreferedTop, sap.m.PlacementType.VerticalPreferedBottom. The default value is sap.m.PlacementType.Bottom.
-			 */
-			placement : {type : "sap.m.PlacementType", group : "Appearance", defaultValue : PlacementType.Bottom},
-
-			/**
-			 * If this is set to true, there will be a cancel button shown below the action buttons. There won't be any cancel button shown in iPad regardless of this property. The default value is set to true.
-			 */
-			showCancelButton : {type : "boolean", group : "Appearance", defaultValue : true},
-
-			/**
-			 * This is the text displayed in the cancelButton. Default value is "Cancel", and it's translated according to the current locale setting. This property will be ignored when running either in iPad or showCancelButton is set to false.
-			 */
-			cancelButtonText : {type : "string", group : "Appearance", defaultValue : null},
-
-			/**
-			 * Title will be shown in the header area in iPhone and every Android devices. This property will be ignored in tablets and desktop browser.
-			 */
-			title : {type : "string", group : "Appearance", defaultValue : null}
-		},
-		aggregations : {
-
-			/**
-			 * These buttons are added to the content area in ActionSheet control. When button is tapped, the ActionSheet is closed before the tap event listener is called.
-			 */
-			buttons : {type : "sap.m.Button", multiple : true, singularName : "button"},
-
-			/**
-			 * The internally managed cancel button.
-			 */
-			_cancelButton : {type : "sap.m.Button", multiple : false, visibility : "hidden"},
-
-			/**
-			* Hidden texts used for accesibility
-			*/
-			_invisibleAriaTexts: {type : "sap.ui.core.InvisibleText", multiple : true, visibility : "hidden"}
-		},
-		defaultAggregation : "buttons",
-		events : {
-
-			/**
-			 * This event is fired when the cancelButton is tapped. For iPad, this event is also fired when showCancelButton is set to true, and Popover is closed by tapping outside.
-			 * @deprecated Since version 1.20.0.
-			 * This event is deprecated, use the cancelButtonPress event instead.
-			 */
-			cancelButtonTap : {deprecated: true},
-
-			/**
-			 * This event will be fired before the ActionSheet is opened.
-			 */
-			beforeOpen : {},
-
-			/**
-			 * This event will be fired after the ActionSheet is opened.
-			 */
-			afterOpen : {},
-
-			/**
-			 * This event will be fired before the ActionSheet is closed.
-			 */
-			beforeClose : {
 				/**
-				 * This indicates the trigger of closing the dialog. If dialog is closed by either leftButton or rightButton, the button that closes the dialog is set to this parameter. Otherwise this parameter is set to null. This is valid only for Phone mode of the ActionSheet
+				 * The ActionSheet behaves as an sap.m.Popover in iPad and this property is the information about on which side will the popover be placed at.
 				 *
+				 * Possible values are sap.m.PlacementType.Left, sap.m.PlacementType.Right, sap.m.PlacementType.Top, sap.m.PlacementType.Bottom, sap.m.PlacementType.Horizontal,
+				 * sap.m.PlacementType.HorizontalPreferredLeft, sap.m.PlacementType.HorizontalPreferredRight, sap.m.PlacementType.Vertical, sap.m.PlacementType.VerticalPreferredTop,
+				 * sap.m.PlacementType.VerticalPreferredBottom. The default value is sap.m.PlacementType.Bottom.
 				 */
-				origin: {type: "sap.m.Button"}
-			},
+				placement : {type : "sap.m.PlacementType", group : "Appearance", defaultValue : PlacementType.Bottom},
 
-			/**
-			 * This event will be fired after the ActionSheet is closed.
-			 */
-			afterClose : {
 				/**
-				 * This indicates the trigger of closing the dialog. If dialog is closed by either leftButton or rightButton, the button that closes the dialog is set to this parameter. Otherwise this parameter is set to null. This is valid only for Phone mode of the ActionSheet
+				 * If this is set to true, there will be a cancel button shown below the action buttons. There won't be any cancel button shown in iPad regardless of this property. The default value is set to true.
 				 */
-				origin: {type: "sap.m.Button"}
-			},
+				showCancelButton : {type : "boolean", group : "Appearance", defaultValue : true},
 
-			/**
-			 * This event is fired when the cancelButton is clicked. For iPad, this event is also fired when showCancelButton is set to true, and Popover is closed by clicking outside.
-			 */
-			cancelButtonPress : {}
+				/**
+				 * This is the text displayed in the cancelButton. Default value is "Cancel", and it's translated according to the current locale setting. This property will be ignored when running either in iPad or showCancelButton is set to false.
+				 */
+				cancelButtonText : {type : "string", group : "Appearance", defaultValue : null},
+
+				/**
+				 * Title will be shown in the header area in iPhone and every Android devices. This property will be ignored in tablets and desktop browser.
+				 */
+				title : {type : "string", group : "Appearance", defaultValue : null}
+			},
+			aggregations : {
+
+				/**
+				 * These buttons are added to the content area in ActionSheet control. When button is tapped, the ActionSheet is closed before the tap event listener is called.
+				 */
+				buttons : {type : "sap.m.Button", multiple : true, singularName : "button"},
+
+				/**
+				 * The internally managed cancel button.
+				 */
+				_cancelButton : {type : "sap.m.Button", multiple : false, visibility : "hidden"},
+
+				/**
+				* Hidden texts used for accesibility
+				*/
+				_invisibleAriaTexts: {type : "sap.ui.core.InvisibleText", multiple : true, visibility : "hidden"}
+			},
+			defaultAggregation : "buttons",
+			events : {
+
+				/**
+				 * This event is fired when the cancelButton is tapped. For iPad, this event is also fired when showCancelButton is set to true, and Popover is closed by tapping outside.
+				 * @deprecated Since version 1.20.0.
+				 * This event is deprecated, use the cancelButtonPress event instead.
+				 */
+				cancelButtonTap : {deprecated: true},
+
+				/**
+				 * This event will be fired before the ActionSheet is opened.
+				 */
+				beforeOpen : {},
+
+				/**
+				 * This event will be fired after the ActionSheet is opened.
+				 */
+				afterOpen : {},
+
+				/**
+				 * This event will be fired before the ActionSheet is closed.
+				 */
+				beforeClose : {
+					parameters: {
+						/**
+						 * This indicates the trigger of closing the dialog. If dialog is closed by either leftButton or rightButton, the button that closes the dialog is set to this parameter. Otherwise this parameter is set to null. This is valid only for Phone mode of the ActionSheet
+						 *
+						 */
+						origin: {type: "sap.m.Button"}
+					}
+				},
+
+				/**
+				 * This event will be fired after the ActionSheet is closed.
+				 */
+				afterClose : {
+					parameters: {
+						/**
+						 * This indicates the trigger of closing the control. If dialog is closed by either selection or closeButton (on mobile device), the button that closes the dialog is set to this parameter. Otherwise this parameter is set to null.
+						 */
+						origin: {type: "sap.m.Button"}
+					}
+				},
+
+				/**
+				 * This event is fired when the cancelButton is clicked.
+				 *
+				 * <b>Note: </b> For any device other than phones, this event would be fired always when the Popover closes. To prevent this behavior, the <code>showCancelButton</code> property needs to be set to <code>false</code>.
+				 */
+				cancelButtonPress : {}
+			},
+			designtime: "sap/m/designtime/ActionSheet.designtime"
 		},
-		designtime: "sap/m/designtime/ActionSheet.designtime"
-	}});
+
+		renderer: ActionSheetRenderer
+	});
 
 	ActionSheet.prototype.init = function() {
 		// this method is kept here empty in case some control inherits from it but forgets to check the existence of this function when chaining the call
 		this._fnOrientationChange = this._orientationChange.bind(this);
+		//initializing a variable to store information about the selected action when afterClose event has happened.
+		this._actionSelected = null;
 	};
 
 	ActionSheet.prototype.exit = function() {
@@ -195,18 +238,52 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './library', 'sap/u
 			this._oItemNavigation.setPageSize(5);
 
 			this._oItemNavigation.setDisabledModifiers({
-				sapnext: ["alt"],
-				sapprevious: ["alt"]
+				// Alt + arrow keys are reserved for browser navigation
+				sapnext: [
+					"alt", // Windows and Linux
+					"meta" // Apple (⌘)
+				],
+				sapprevious: [
+					"alt",
+					"meta"
+				]
 			});
 
 		}
 	};
 
+	ActionSheet.prototype.onmousedown = function (oEvent) {
+		//We need this to provide information on how was the Popover dismissed for the afterClose event.
+		if (oEvent.srcControl.isA("sap.m.Button") && this.getButtons().indexOf(oEvent.srcControl) !== -1) {
+			this._actionSelected = oEvent.srcControl;
+		}
+	};
+
 	ActionSheet.prototype.onBeforeRendering = function() {
+		var sTitle, sPlacement;
 		// The item navigation instance has to be destroyed and created again once the control is rerendered
 		// because the intital tabindex setting is only done once inside the item navigation but we need it here
 		// every time after the control is rerendered
 		this._clearItemNavigation();
+
+		sTitle = this.getTitle();
+		if (this._parent && !this.isPropertyInitial("title") && this._parent.getTitle() !== sTitle) {
+			if (Device.system.phone) {
+				this._parent.setTitle(sTitle);
+				this._parent.setShowHeader(!!sTitle);
+			}
+
+			if (sTitle) {
+				this._parent.addStyleClass("sapMActionSheetDialogWithTitle");
+			} else {
+				this._parent.removeStyleClass("sapMActionSheetDialogWithTitle");
+			}
+		}
+
+		sPlacement = this.getPlacement();
+		if (this._parent && !Device.system.phone && !this.isPropertyInitial("placement") && this._parent.setPlacement() !== sPlacement) {
+			this._parent.setPlacement(sPlacement);
+		}
 	};
 
 	ActionSheet.prototype.onAfterRendering = function() {
@@ -226,10 +303,9 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './library', 'sap/u
 	 * It can be not only a UI5 control, but also an existing DOM reference. The side of the placement depends on the <code>placement</code> property set in the Popover (on tablet and desktop).
 	 * On other platforms, ActionSheet behaves as a standard dialog and this parameter is ignored because dialog is aligned to the screen.
 	 *
-	 * @param {object} oControl The control to which the ActionSheet is opened
+	 * @param {sap.ui.core.Control|HTMLElement} oControl The control to which the ActionSheet is opened
 	 *
 	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	ActionSheet.prototype.openBy = function(oControl){
 		var that = this;
@@ -245,7 +321,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './library', 'sap/u
 			}
 
 			if (!Device.system.phone) {
-			//create a Popover instance for iPad
+				//create a Popover instance for iPad
 				this._parent = new Popover({
 					placement: this.getPlacement(),
 					showHeader: false,
@@ -265,28 +341,12 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './library', 'sap/u
 							that.fireCancelButtonTap(); // (This event is deprecated, use the "cancelButtonPress" event instead)
 							that.fireCancelButtonPress();
 						}
-						that.fireAfterClose();
+						that._onAfterClose(that._actionSelected);
+						that._actionSelected = null;
 					},
 					ariaLabelledBy: this.getPopupHiddenLabelId() || undefined
 				}).addStyleClass("sapMActionSheetPopover");
-
-				if (Device.browser.internet_explorer) {
-					this._parent._fnAdjustPositionAndArrow = jQuery.proxy(function() {
-						Popover.prototype._adjustPositionAndArrow.apply(this);
-
-						var $this = this.$(),
-							fContentWidth = $this.children(".sapMPopoverCont")[0].getBoundingClientRect().width;
-						jQuery.each($this.find(".sapMActionSheet > .sapMBtn"), function(index, oButtonDom){
-							var $button = jQuery(oButtonDom),
-								fButtonWidth;
-							$button.css("width", "");
-							fButtonWidth = oButtonDom.getBoundingClientRect().width;
-							if (fButtonWidth <= fContentWidth) {
-								$button.css("width", "100%");
-							}
-						});
-					}, this._parent);
-				}
+				this._parent._setAriaRoleApplication(true);
 			} else {
 				//create a Dialog instance for the rest
 				this._parent = new Dialog({
@@ -306,9 +366,9 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './library', 'sap/u
 						});
 					},
 					afterClose: function(oEvent){
-						that.fireAfterClose({
-							origin: oEvent.getParameter("origin")
-						});
+						that._actionSelected = oEvent.getParameter("origin");
+						that._onAfterClose(that._actionSelected);
+						that._actionSelected = null;
 
 						Device.resize.detachHandler(that._fnOrientationChange);
 					}
@@ -369,11 +429,10 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './library', 'sap/u
 
 	/**
 	 * Calling this method will make the ActionSheet disappear from the screen.
-	 * @param {object} oControl The control to close
+	 *
 	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
-	ActionSheet.prototype.close = function(oControl){
+	ActionSheet.prototype.close = function(){
 		if (this._parent) {
 			this._parent.close();
 		}
@@ -381,21 +440,20 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './library', 'sap/u
 
 	/**
 	 * The method checks if the ActionSheet is open. It returns true when the ActionSheet is currently open (this includes opening and closing animations), otherwise it returns false.
-	 * @param {object} oControl The control in question
+	 *
 	 * @returns {boolean} Whether the ActionSheet is open.
 	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
-	ActionSheet.prototype.isOpen = function(oControl){
+	ActionSheet.prototype.isOpen = function(){
 		return !!this._parent && this._parent.isOpen();
 	};
 
 	ActionSheet.prototype._createCancelButton = function() {
 		if (!this._oCancelButton) {
-			var sCancelButtonText = (this.getCancelButtonText()) ? this.getCancelButtonText() : sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("ACTIONSHEET_CANCELBUTTON_TEXT"),
+			var sCancelButtonText = (this.getCancelButtonText()) ? this.getCancelButtonText() : Library.getResourceBundleFor("sap.m").getText("ACTIONSHEET_CANCELBUTTON_TEXT"),
 				that = this;
-	//			var sButtonStyle = (sap.ui.Device.os.ios) ? sap.m.ButtonType.Unstyled : sap.m.ButtonType.Default;
-			this._oCancelButton = new sap.m.Button(this.getId() + '-cancelBtn', {
+	//			var sButtonStyle = (Device.os.ios) ? ButtonType.Unstyled : ButtonType.Default;
+			this._oCancelButton = new Button(this.getId() + '-cancelBtn', {
 				text: sCancelButtonText,
 				type: ButtonType.Reject,
 				press : function() {
@@ -431,7 +489,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './library', 'sap/u
 		return this;
 	};
 
-	ActionSheet.prototype._preProcessActionButton = function(oButton){
+	ActionSheet.prototype._preProcessActionButton = function(oButton) {
 		var sType = oButton.getType();
 
 		if (sType !== ButtonType.Accept && sType !== ButtonType.Reject) {
@@ -439,48 +497,13 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './library', 'sap/u
 		}
 		oButton.addStyleClass("sapMBtnInverted"); // dark background
 
+		if (!oButton.getIcon()) {
+			oButton.addStyleClass("sapMActionSheetButtonNoIcon");
+		}
+		oButton.addStyleClass("sapMActionSheetButton");
+
 		this._parent && this._parent.invalidate();
 
-		return this;
-	};
-
-	ActionSheet.prototype.setShowCancelButton = function(bValue){
-		if (this._parent) {
-			if (Device.system.phone) {
-				//if iPhone, we need to rerender to show or hide the cancel button
-				this.setProperty("showCancelButton", bValue, false);
-			}
-		} else {
-			this.setProperty("showCancelButton", bValue, true);
-		}
-		return this;
-	};
-
-	ActionSheet.prototype.setTitle = function(sTitle){
-		this.setProperty("title", sTitle, true);
-		if (this._parent && Device.system.phone) {
-			this._parent.setTitle(sTitle);
-			this._parent.toggleStyleClass("sapMDialog-NoHeader", !sTitle);
-		}
-
-		if (this._parent) {
-			if (sTitle) {
-				this._parent.addStyleClass("sapMActionSheetDialogWithTitle");
-			} else {
-				this._parent.removeStyleClass("sapMActionSheetDialogWithTitle");
-			}
-		}
-		return this;
-	};
-
-	ActionSheet.prototype.setPlacement = function(sPlacement){
-		this.setProperty("placement", sPlacement, true);
-
-		if (!Device.system.phone) {
-			if (this._parent) {
-				this._parent.setPlacement(sPlacement);
-			}
-		}
 		return this;
 	};
 
@@ -498,21 +521,21 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './library', 'sap/u
 	ActionSheet.prototype._addAriaHiddenTexts = function(oButton) {
 		var sButtonId = oButton.getId(),
 			oInvisibleText;
-		if (sap.ui.getCore().getConfiguration().getAccessibility()) {
+		if (ControlBehavior.isAccessibilityEnabled()) {
 			oInvisibleText = new InvisibleText(sButtonId + "-actionSheetHiddenText");
 
 			this.addAggregation("_invisibleAriaTexts", oInvisibleText, false);
-			oButton.addAriaLabelledBy(oInvisibleText.getId());
+			oButton.addAriaDescribedBy(oInvisibleText.getId());
 		}
 	};
 
 	ActionSheet.prototype._removeAriaHiddenTexts = function(oButton) {
-		oButton.getAriaLabelledBy().forEach(function(sId) {
-			var oControl = sap.ui.getCore().byId(sId);
+		oButton.getAriaDescribedBy().forEach(function(sId) {
+			var oControl = Element.getElementById(sId);
 
 			if (oControl instanceof InvisibleText && sId.indexOf("actionSheetHiddenText") > -1) {
 				this.removeAggregation("_invisibleAriaTexts", oControl, false);
-				oButton.removeAriaLabelledBy(oControl);
+				oButton.removeAriaDescribedBy(oControl);
 				oControl.destroy();
 			}
 		}, this);
@@ -592,7 +615,18 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './library', 'sap/u
 	 * @private
 	 */
 	ActionSheet.prototype._applyContextualSettings = function () {
-		ManagedObject.prototype._applyContextualSettings.call(this, ManagedObject._defaultContextualSettings);
+		Control.prototype._applyContextualSettings.call(this);
+	};
+
+	/**
+	 * Extends the afterClose event by providing context information.
+	 * @param {sap.m.Button | null} oAction Action selected on Popover close
+	 * @private
+	 */
+	ActionSheet.prototype._onAfterClose = function (oAction) {
+		this.fireAfterClose({
+			origin: oAction
+		});
 	};
 
 	return ActionSheet;

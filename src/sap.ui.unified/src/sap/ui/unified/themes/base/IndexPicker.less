@@ -1,0 +1,36 @@
+.sapMIP {
+	margin: 0.5rem;
+
+	.sapMIPRow {
+		height: 2.5rem;
+		line-height: 2.5rem;
+
+		.sapMIPItem {
+			width: 4rem;
+			height: 2.5rem;
+			line-height: 2.5rem;
+		}
+	}
+
+	.sapUiCalHead {
+		padding-bottom: 0.5rem;
+	}
+}
+
+html.sap-desktop .sapMIP .sapUiCalItem:focus > .sapUiCalItemText,
+html.sap-desktop .sapMIP .sapUiCalItem:focus,
+html.sap-desktop .sapMIP .sapUiCalItemSel.sapUiCalItemSelBetween:focus {
+	outline: 0.0625rem dotted @sapUiContentFocusColor;
+	outline-offset: -0.25rem;
+}
+
+html.sap-desktop .sapMIP .sapUiCalItemSel:focus{
+	outline-color: @sapUiContentContrastFocusColor;
+	background-color: @sapUiContentSelectedBackground;
+}
+
+html.sap-desktop .sapMIP .sapUiCalItemSel:active{
+	outline-color: @sapUiContentContrastFocusColor;
+	background-color: @sapUiContentSelectedBackground;
+	color: @sapUiContentContrastTextColor;
+}

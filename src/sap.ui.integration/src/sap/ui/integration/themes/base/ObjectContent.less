@@ -1,0 +1,163 @@
+/* ====================================================== */
+/* CSS for control sap.ui.integration.cards/ObjectContent */
+/* Base theme                                             */
+/* ====================================================== */
+
+.sapFCardObjectContent {
+	padding: 1rem;
+}
+
+.sapUiIntCardWithFooter .sapFCardObjectContent {
+	padding-bottom: 0;
+}
+
+.sapFCardObjectGroup {
+
+	.sapFCardObjectItemTitle {
+		margin-bottom: 0.5rem;
+	}
+
+	> .sapFCardObjectItemLabel {
+		margin-top: 1rem;
+	}
+
+	&:not(.sapFCardObjectGroupLastInColumn) {
+		padding-bottom: 1.75rem;
+	}
+
+	&:not(.sapFCardObjectGroupWithTitle) {
+
+		/* Don't apply margin to the first label when there is no title */
+		> .sapFCardObjectItemLabel {
+			margin-top: 0;
+		}
+
+		/* Apply margin to the rest of the labels */
+		> .sapFCardObjectItemLabel ~ .sapFCardObjectItemLabel {
+			margin-top: 1rem;
+		}
+	}
+
+	// Don't add margin top to the value if it's the first element in the group (not labeled)
+	.sapFCardObjectItemValue:not(:first-child) {
+		margin-top: 0.25rem;
+	}
+
+	.sapFCardObjectItemPairContainer {
+		min-width: 0; // prevent overflow of the flex container
+	}
+
+	.sapFCardObjectItemAvatar {
+		margin-right: 0.5rem;
+		flex-shrink: 0;
+	}
+
+	// Rating Indicator
+	.sapMRI {
+		margin-bottom: 0;
+	}
+
+	// Image
+
+	> .sapMImg.sapFCardObjectImage {
+		margin-top: 1rem;
+	}
+
+	.sapMImg.sapFCardObjectImageFullWidth:first-child {
+		top: -16px;
+		margin-top: 0;
+	}
+
+	.sapMImg.sapFCardObjectImageFullWidth:last-child {
+		margin-bottom: -16px;
+	}
+
+	.sapMImg.sapFCardObjectImageFullWidth:only-child {
+		margin-bottom: -32px;
+	}
+
+	.sapMImg.sapFCardObjectImageFullWidth {
+		width: calc(100% + 32px);
+		left: -16px;
+	}
+}
+
+.sapFCardObjectSpaceBetweenGroup {
+	margin-right: 2rem;
+}
+
+.sapFCard .sapFCardContent {
+	.sapFCardObjectContent .sapUiAFLayout .sapUiAFLayoutItem.sapFCardInvisibleContent {
+		display: none;
+	}
+}
+
+// Removing top space of NumericIndicators
+.sapUiIntOCNumericIndicators {
+	// size L
+	&:not(.sapMTileSmallPhone) {
+		// number
+		.sapMNCValue >:first-child {
+			padding-top: 0;
+			height: 2.5rem;
+			line-height: 2rem;
+		}
+
+		// trend and unit
+		.sapMNCValue :nth-child(2) {
+			padding-top: 0;
+			height: 2rem;
+		}
+	}
+
+	// size S
+	&.sapMTileSmallPhone {
+		.sapMNC {
+			width: auto;
+		}
+
+		// number
+		.sapMNCValue :first-child {
+			padding-top: 0.25rem;
+		}
+
+		// trend and unit
+		.sapMNCValue .sapMNCIndScale {
+			padding-top: 0px;
+
+			.sapMNCScale,
+			.sapMNCIndIcon {
+				padding-top: 0;
+			}
+		}
+	}
+}
+
+.sapUiIntOCNumericIndicators .sapUiIntOCNumericIndicatorsDetails {
+	color: @sapUiTileTextColor;
+	height: 1rem;
+}
+
+.sapFCardObjectContent {
+
+	.sapFAvatarGroupInactive {
+		pointer-events: none;
+
+		&.sapFAvatarGroupIndividual .sapFAvatarGroupItem {
+			pointer-events: none;
+		}
+	}
+
+	.sapFAvatarGroupMoreButton.sapMBtnDisabled {
+		cursor: default;
+		opacity: 1;
+	}
+
+	.sapUiIntCardObjectButtonGroup {
+		padding-left: 0;
+
+		.sapMBarChild:first-child {
+			margin-left: 0;
+		}
+	}
+}

@@ -1,0 +1,6 @@
+.sapUiTstBtn {
+	padding: 0 6px;
+}
+
+/* Inline theming parameters */
+#sap-ui-theme-sap\.ui\.legacy\.testlib{background-image:url('data:text/plain;utf-8,%7B%22sapUiLegacyTstTextColor%22%3A%22%23fafafa%22%2C%22sapUiLegacyText%22%3A%22%23ffffff%22%2C%22sapUiLegacyTestUrl1%22%3A%22url(%27..%2F..%2Fimg1.jpg%27)%22%2C%22sapUiLegacyTestUrl2%22%3A%22none%22%7D')};

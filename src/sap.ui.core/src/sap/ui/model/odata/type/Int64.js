@@ -2,10 +2,16 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', 'sap/ui/model/odata/type/ODataType',
-               'sap/ui/model/FormatException', 'sap/ui/model/ParseException',
-               'sap/ui/core/format/NumberFormat', 'sap/ui/model/ValidateException'],
-	function(jQuery, ODataType, FormatException, ParseException, NumberFormat, ValidateException) {
+sap.ui.define([
+	"sap/base/Log",
+	"sap/base/util/extend",
+	"sap/ui/core/Lib",
+	"sap/ui/core/format/NumberFormat",
+	"sap/ui/model/FormatException",
+	"sap/ui/model/ParseException",
+	"sap/ui/model/ValidateException",
+	"sap/ui/model/odata/type/ODataType"
+], function(Log, extend, Library, NumberFormat, FormatException, ParseException, ValidateException, ODataType) {
 	"use strict";
 
 	var rInteger = /^[-+]?(\d+)$/, // user input for an Int64 w/o the sign
@@ -22,7 +28,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/odata/type/ODataType',
 	 * @param {string} sValue
 	 *   value to be checked
 	 * @param {object} oRange
-	 *   the allowed range object with minimum and maximum as <code>string</string>
+	 *   the allowed range object with minimum and maximum as <code>string</code>
 	 * @returns {string}
 	 *   the error text or <code>undefined</code> if the check was successful
 	 */
@@ -50,24 +56,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/odata/type/ODataType',
 	}
 
 	/**
-	 * Returns the formatter. Creates it lazily.
-	 * @param {sap.ui.model.odata.type.Int64} oType
-	 *   the type instance
-	 * @returns {sap.ui.core.format.NumberFormat}
-	 *   the formatter
-	 */
-	function getFormatter(oType) {
-		var oFormatOptions;
-
-		if (!oType.oFormat) {
-			oFormatOptions = jQuery.extend({groupingEnabled : true}, oType.oFormatOptions);
-			oFormatOptions.parseAsString = true;
-			oType.oFormat = NumberFormat.getIntegerInstance(oFormatOptions);
-		}
-		return oType.oFormat;
-	}
-
-	/**
 	 * Fetches a text from the message bundle and formats it using the parameters.
 	 *
 	 * @param {string} sKey
@@ -78,7 +66,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/odata/type/ODataType',
 	 *   the message
 	 */
 	function getText(sKey, aParams) {
-		return sap.ui.getCore().getLibraryResourceBundle().getText(sKey, aParams);
+		return Library.getResourceBundleFor("sap.ui.core").getText(sKey, aParams);
 	}
 
 	/**
@@ -110,7 +98,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/odata/type/ODataType',
 			if (vNullable === false || vNullable === "false") {
 				oType.oConstraints = {nullable : false};
 			} else if (vNullable !== undefined && vNullable !== true && vNullable !== "true") {
-				jQuery.sap.log.warning("Illegal nullable: " + vNullable, null, oType.getName());
+				Log.warning("Illegal nullable: " + vNullable, null, oType.getName());
 			}
 		}
 		oType._handleLocalizationChange();
@@ -133,8 +121,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/odata/type/ODataType',
 	 *
 	 * @alias sap.ui.model.odata.type.Int64
 	 * @param {object} [oFormatOptions]
-	 *   format options as defined in {@link sap.ui.core.format.NumberFormat}. In contrast to
-	 *   NumberFormat <code>groupingEnabled</code> defaults to <code>true</code>.
+	 *   Format options as defined in {@link sap.ui.core.format.NumberFormat.getIntegerInstance}.
+	 *   In contrast to NumberFormat <code>groupingEnabled</code> defaults to <code>true</code>.
+	 * @param {boolean} [oFormatOptions.parseEmptyValueToZero=false]
+	 *   Whether the empty string and <code>null</code> are parsed to <code>"0"</code> if the <code>nullable</code>
+	 *   constraint is set to <code>false</code>; see {@link #parseValue parseValue}; since 1.115.0
 	 * @param {object} oConstraints
 	 *   constraints; {@link #validateValue validateValue} throws an error if any constraint is
 	 *   violated
@@ -148,6 +139,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/odata/type/ODataType',
 				ODataType.apply(this, arguments);
 				this.oFormatOptions = oFormatOptions;
 				setConstraints(this, oConstraints);
+				this.checkParseEmptyValueToZero();
 			}
 		});
 
@@ -169,28 +161,42 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/odata/type/ODataType',
 	 *   exceeds <code>Number.MIN/MAX_SAFE_INTEGER</code>
 	 * @public
 	 */
-	Int64.prototype.formatValue = function(sValue, sTargetType) {
+	Int64.prototype.formatValue = function (sValue, sTargetType) {
 		var sErrorText;
 
 		if (sValue === null || sValue === undefined) {
 			return null;
 		}
 		switch (this.getPrimitiveType(sTargetType)) {
-		case "any":
-			return sValue;
-		case "float":
-		case "int":
-			sErrorText = checkValueRange(this, sValue, oSafeRange);
-			if (sErrorText) {
-				throw new FormatException(sErrorText);
-			}
-			return parseInt(sValue, 10);
-		case "string":
-			return getFormatter(this).format(sValue);
-		default:
-			throw new FormatException("Don't know how to format " + this.getName() + " to "
-				+ sTargetType);
+			case "any":
+				return sValue;
+			case "float":
+			case "int":
+				sErrorText = checkValueRange(this, sValue, oSafeRange);
+				if (sErrorText) {
+					throw new FormatException(sErrorText);
+				}
+				return parseInt(sValue);
+			case "string":
+				return this.getFormat().format(sValue);
+			default:
+				throw new FormatException("Don't know how to format " + this.getName() + " to "
+					+ sTargetType);
 		}
+	};
+
+	/**
+	 * @override
+	 */
+	Int64.prototype.getFormat = function () {
+		if (!this.oFormat) {
+			var oFormatOptions = extend({groupingEnabled : true}, this.oFormatOptions);
+			oFormatOptions.parseAsString = true;
+			delete oFormatOptions.parseEmptyValueToZero;
+			this.oFormat = NumberFormat.getIntegerInstance(oFormatOptions);
+		}
+
+		return this.oFormat;
 	};
 
 	/**
@@ -216,45 +222,52 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/odata/type/ODataType',
 	 * Parses the given value, which is expected to be of the given type, to an Int64 in
 	 * <code>string</code> representation.
 	 *
-	 * @param {string|number} vValue
-	 *   the value to be parsed; the empty string and <code>null</code> are parsed to
-	 *   <code>null</code>
+	 * @param {string|number|null} vValue
+	 *   The value to be parsed
 	 * @param {string} sSourceType
-	 *   the source type (the expected type of <code>vValue</code>); may be "float", "int",
+	 *   The source type (the expected type of <code>vValue</code>); may be "float", "int",
 	 *   "string", or a type with one of these types as its
 	 *   {@link sap.ui.base.DataType#getPrimitiveType primitive type}.
 	 *   See {@link sap.ui.model.odata.type} for more information.
-	 * @returns {string}
-	 *   the parsed value
+	 * @returns {string|null}
+	 *   The parsed value. The empty string and <code>null</code> are parsed to:
+	 *   <ul>
+	 *     <li><code>"0"</code> if the <code>parseEmptyValueToZero</code> format option
+	 *       is set to <code>true</code> and the <code>nullable</code> constraint is set to <code>false</code>,</li>
+	 *     <li><code>null</code> otherwise.</li>
+	 *   </ul>
+	 *
 	 * @throws {sap.ui.model.ParseException}
-	 *   if <code>sSourceType</code> is unsupported or if the given string cannot be parsed to a
+	 *   If <code>sSourceType</code> is unsupported or if the given string cannot be parsed to a
 	 *   Int64
 	 * @public
 	 */
-	Int64.prototype.parseValue = function(vValue, sSourceType) {
-		var sResult;
+	Int64.prototype.parseValue = function (vValue, sSourceType) {
+		var vEmptyValue = this.getEmptyValue(vValue);
+		if (vEmptyValue !== undefined) {
+			return vEmptyValue;
+		}
 
-		if (vValue === null || vValue === "") {
-			return null;
-		}
+		var sResult;
 		switch (this.getPrimitiveType(sSourceType)) {
-		case "string":
-			sResult = getFormatter(this).parse(vValue);
-			if (!sResult) {
-				throw new ParseException(getText("EnterInt"));
-			}
-			break;
-		case "int":
-		case "float":
-			sResult = NumberFormat.getIntegerInstance({
-					maxIntegerDigits : Infinity,
-					groupingEnabled : false
-				}).format(vValue);
-			break;
-		default:
-			throw new ParseException("Don't know how to parse " + this.getName() + " from "
-				+ sSourceType);
+			case "string":
+				sResult = this.getFormat().parse(vValue);
+				if (!sResult) {
+					throw new ParseException(getText("EnterInt"));
+				}
+				break;
+			case "int":
+			case "float":
+				sResult = NumberFormat.getIntegerInstance({
+						maxIntegerDigits : Infinity,
+						groupingEnabled : false
+					}).format(vValue);
+				break;
+			default:
+				throw new ParseException("Don't know how to parse " + this.getName() + " from "
+					+ sSourceType);
 		}
+
 		return sResult;
 	};
 
@@ -264,7 +277,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/odata/type/ODataType',
 	 *
 	 * @param {string} sValue
 	 *   the value to be validated
-	 * @returns {void}
 	 * @throws {sap.ui.model.ValidateException} if the value is not valid
 	 * @public
 	 */

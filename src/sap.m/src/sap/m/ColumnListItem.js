@@ -4,14 +4,16 @@
 
 // Provides control sap.m.ColumnListItem.
 sap.ui.define([
-	"jquery.sap.global",
 	"sap/ui/core/Element",
 	"sap/ui/core/library",
 	"./library",
 	"./ListItemBase",
-	"./ColumnListItemRenderer"
+	"./ColumnListItemRenderer",
+	"sap/ui/thirdparty/jquery",
+	// jQuery custom selectors ":sapFocusable", ":sapTabbable"
+	"sap/ui/dom/jquery/Selectors"
 ],
-	function(jQuery, Element, coreLibrary, library, ListItemBase, ColumnListItemRenderer) {
+	function(Element, coreLibrary, library, ListItemBase, ColumnListItemRenderer, jQuery) {
 	"use strict";
 
 
@@ -36,6 +38,7 @@ sap.ui.define([
 	 * The inherited <code>counter</code> property of <code>sap.m.ListItemBase</code> is not supported.
 	 *
 	 * @extends sap.m.ListItemBase
+	 * @implements sap.m.ITableItem
 	 *
 	 * @author SAP SE
 	 * @version ${version}
@@ -44,41 +47,45 @@ sap.ui.define([
 	 * @public
 	 * @since 1.12
 	 * @alias sap.m.ColumnListItem
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
-	var ColumnListItem = ListItemBase.extend("sap.m.ColumnListItem", /** @lends sap.m.ColumnListItem.prototype */ { metadata : {
+	var ColumnListItem = ListItemBase.extend("sap.m.ColumnListItem", /** @lends sap.m.ColumnListItem.prototype */ {
+		metadata : {
+			interfaces : [
+				"sap.m.ITableItem"
+			],
+			library : "sap.m",
+			properties : {
 
-		library : "sap.m",
-		properties : {
+				/**
+				 * Sets the vertical alignment of all the cells within the table row (including selection and navigation).
+				 * <b>Note:</b> <code>vAlign</code> property of <code>sap.m.Column</code> overrides the property for cell vertical alignment if both are set.
+				 * @since 1.20
+				 */
+				vAlign : {type : "sap.ui.core.VerticalAlign", group : "Appearance", defaultValue : VerticalAlign.Inherit}
+			},
+			defaultAggregation : "cells",
+			aggregations : {
 
-			/**
-			 * Sets the vertical alignment of all the cells within the table row (including selection and navigation).
-			 * <b>Note:</b> <code>vAlign</code> property of <code>sap.m.Column</code> overrides the property for cell vertical alignment if both are set.
-			 * @since 1.20
-			 */
-			vAlign : {type : "sap.ui.core.VerticalAlign", group : "Appearance", defaultValue : VerticalAlign.Inherit}
+				/**
+				 * Every <code>control</code> inside the <code>cells</code> aggregation defines one cell of the row.
+				 * <b>Note:</b> The order of the <code>cells</code> aggregation must match the order of the <code>columns</code> aggregation of <code>sap.m.Table</code>.
+				 */
+				cells : {type : "sap.ui.core.Control", multiple : true, singularName : "cell", bindable : "bindable"}
+			}
 		},
-		defaultAggregation : "cells",
-		aggregations : {
 
-			/**
-			 * Every <code>control</code> inside the <code>cells</code> aggregation defines one cell of the row.
-			 * <b>Note:</b> The order of the <code>cells</code> aggregation must match the order of the <code>columns</code> aggregation of <code>sap.m.Table</code>.
-			 */
-			cells : {type : "sap.ui.core.Control", multiple : true, singularName : "cell", bindable : "bindable"}
-		}
-	}});
+		renderer: ColumnListItemRenderer
+	});
 
 	/**
 	 * TablePopin element that handles own events.
 	 */
 	var TablePopin = Element.extend("sap.m.TablePopin", {
 		ontap: function(oEvent) {
-			if (oEvent.isMarked()) {
-				return;
+			// prevent the tap event if selection is done within the popin control and mark the event
+			if (oEvent.isMarked() || ListItemBase.detectTextSelection(this.getDomRef())) {
+				return oEvent.stopImmediatePropagation(true);
 			}
-
-			// focus to the main row if there is nothing to focus in the popin
 			if (oEvent.srcControl === this || !jQuery(oEvent.target).is(":sapFocusable")) {
 				this.getParent().focus();
 			}
@@ -94,7 +101,22 @@ sap.ui.define([
 		this._aClonedHeaders = [];
 	};
 
+	ColumnListItem.prototype.onBeforeRendering = function() {
+		ListItemBase.prototype.onBeforeRendering.call(this);
+		this.aAriaOwns = [];
+		if (this._oPopin && this._oDomRef) {
+			this.$Popin().off();
+		}
+	};
+
 	ColumnListItem.prototype.onAfterRendering = function() {
+		if (this._oPopin) {
+			this.$().attr("aria-owns", this.aAriaOwns.join(" "));
+			this.isActionable(true) && this.$Popin().on("mouseenter mouseleave", function(oEvent) {
+				this.previousSibling.classList.toggle("sapMPopinHovered", oEvent.type == "mouseenter");
+			});
+		}
+
 		ListItemBase.prototype.onAfterRendering.call(this);
 		this._checkTypeColumn();
 	};
@@ -138,18 +160,17 @@ sap.ui.define([
 		if (!this._oPopin) {
 			this._oPopin = new TablePopin({
 				id: this.getId() + "-sub"
-			}).addEventDelegate({
+			}).addDelegate({
 				// handle the events of pop-in
 				ontouchstart: this.ontouchstart,
 				ontouchmove: this.ontouchmove,
 				ontap: this.ontap,
 				ontouchend: this.ontouchend,
 				ontouchcancel: this.ontouchcancel,
-				onsaptabnext: this.onsaptabnext,
-				onsaptabprevious: this.onsaptabprevious,
 				onsapup: this.onsapup,
 				onsapdown: this.onsapdown,
-				oncontextmenu: this.oncontextmenu
+				oncontextmenu: this.oncontextmenu,
+				onkeydown: this.onkeydown
 			}, this).setParent(this, null, true);
 		}
 
@@ -194,6 +215,24 @@ sap.ui.define([
 		return this.$().add(this.$Popin()).find(":sapTabbable");
 	};
 
+	/**
+	 * Calculates and returns the bounding client rectangle
+	 * of the drop area taking the popin area into account.
+	 * @private
+	 */
+	ColumnListItem.prototype.getDropAreaRect = function() {
+		var oPopin = null;
+		var oDomRef = this.getDomRef();
+		var mDropRect = oDomRef.getBoundingClientRect().toJSON();
+		if (this._oPopin && (oPopin = this.getDomRef("sub"))) {
+			var mPopinRect = oPopin.getBoundingClientRect();
+			mDropRect.bottom = mPopinRect.bottom;
+			mDropRect.height += mPopinRect.height;
+		}
+
+		return mDropRect;
+	};
+
 	ColumnListItem.prototype.getAccessibilityType = function(oBundle) {
 		return oBundle.getText("ACC_CTR_TYPE_ROW");
 	};
@@ -204,43 +243,93 @@ sap.ui.define([
 			return;
 		}
 
-		var sAnnouncement = "",
+		var aOutput = [],
 			aCells = this.getCells(),
-			aColumns = oTable.getColumns(true);
+			aColumns = oTable.getRenderedColumns();
 
 		aColumns.forEach(function(oColumn) {
 			var oCell = aCells[oColumn.getInitialOrder()];
-			if (!oCell || !oColumn.getVisible() || (oColumn.isHidden() && !oColumn.isPopin())) {
+			if (!oCell) {
 				return;
 			}
 
 			var oHeader = oColumn.getHeader();
 			if (oHeader && oHeader.getVisible()) {
-				sAnnouncement += ListItemBase.getAccessibilityText(oHeader) + " ";
+				aOutput.push(ListItemBase.getAccessibilityText(oHeader) + " " + ListItemBase.getAccessibilityText(oCell, true));
+			} else {
+				aOutput.push(ListItemBase.getAccessibilityText(oCell, true));
 			}
-
-			sAnnouncement += ListItemBase.getAccessibilityText(oCell, true) + " ";
 		});
 
-		return sAnnouncement;
+		return aOutput.filter(Boolean).join(" . ").trim();
 	};
 
 	// update the aria-selected for the cells
 	ColumnListItem.prototype.updateSelectedDOM = function(bSelected, $This) {
 		ListItemBase.prototype.updateSelectedDOM.apply(this, arguments);
 
-		// update popin as well
+		$This.find(".sapMTblCellFocusable").attr("aria-selected", bSelected);
 		if (this.hasPopin()) {
-			this.$Popin().attr("aria-selected", bSelected);
+			this.$("subcont").attr("aria-selected", bSelected);
 		}
+	};
+
+	ColumnListItem.prototype.onfocusin = function(oEvent) {
+		if (oEvent.isMarked()) {
+			return;
+		}
+
+		if (oEvent.srcControl === this) {
+			this.$().children(".sapMListTblCellDup").find(":sapTabbable").attr("tabindex", -1);
+		}
+
+		ListItemBase.prototype.onfocusin.apply(this, arguments);
+	};
+
+	ColumnListItem.prototype.onsapenter = ColumnListItem.prototype.onsapspace = function(oEvent) {
+		if (oEvent.isMarked()) {
+			return;
+		}
+
+		var sTargetId = oEvent.target.id;
+		var sEventHandler = "on" + oEvent.type;
+		if (sTargetId == this.getId() + "-ModeCell") {
+			oEvent.target = this.getDomRef();
+			sEventHandler = this.getMode() == "Delete" ? "onsapdelete" : "onsapspace";
+		} else if (sTargetId == this.getId() + "-TypeCell") {
+			oEvent.target = this.getDomRef();
+			if (this.getType() == "Navigation") {
+				sEventHandler = "onsapenter";
+			} else {
+				oEvent.code = "KeyE";
+				oEvent.ctrlKey = true;
+				sEventHandler = "onkeydown";
+			}
+		}
+
+		ListItemBase.prototype[sEventHandler].call(this, oEvent);
+	};
+
+	ColumnListItem.prototype.setType = function(sType) {
+		ListItemBase.prototype.setType.call(this, sType);
+		this._checkTypeColumn();
+		return this;
+	};
+
+	ColumnListItem.prototype.setParent = function() {
+		ListItemBase.prototype.setParent.apply(this, arguments);
+		this._checkTypeColumn();
+		return this;
 	};
 
 	// informs the table when item's type column requirement is changed
 	ColumnListItem.prototype._checkTypeColumn = function(bNeedsTypeColumn) {
+		if (!this.getParent()) {
+			return;
+		}
 		if (bNeedsTypeColumn == undefined) {
 			bNeedsTypeColumn = this._needsTypeColumn();
 		}
-
 		if (this._bNeedsTypeColumn != bNeedsTypeColumn) {
 			this._bNeedsTypeColumn = bNeedsTypeColumn;
 			this.informList("TypeColumnChange", bNeedsTypeColumn);

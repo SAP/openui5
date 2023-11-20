@@ -1,7 +1,7 @@
 /*!
  * URI.js - Mutating URLs
  *
- * Version: 1.19.1
+ * Version: 1.19.11
  *
  * Author: Rodney Rehm
  * Web: http://medialize.github.io/URI.js/
@@ -17,17 +17,17 @@
     // Node
     module.exports = factory(require('./punycode'), require('./IPv6'), require('./SecondLevelDomains'));
   } else if (typeof define === 'function' && define.amd) {
-	// AMD. Register as an anonymous module.
-	// ##### BEGIN: MODIFIED BY SAP
-	// define(['./punycode', './IPv6', './SecondLevelDomains'], factory);
-	// we can't support loading URI.js via AMD define. URI.js is packaged with SAPUI5 code
-	// and define() doesn't execute synchronously. So the UI5 code executed after URI.js
-	// fails as it is missing the URI.js code.
-	// Instead we use the standard init code and only expose the result via define()
-	// The (optional) dependencies are lost or must be loaded in advance
-	root.URI = factory(root.punycode, root.IPv6, root.SecondLevelDomains, root);
-	define('sap/ui/thirdparty/URI', [], function() { return root.URI; });
-	// ##### END: MODIFIED BY SAP
+    // AMD. Register as an anonymous module.
+    // ##### BEGIN: MODIFIED BY SAP
+    // define(['./punycode', './IPv6', './SecondLevelDomains'], factory);
+    // we can't support loading URI.js via AMD define. URI.js is packaged with SAPUI5 code
+    // and define() doesn't execute synchronously. So the UI5 code executed after URI.js
+    // fails as it is missing the URI.js code.
+    // Instead we use the standard init code and only expose the result via define()
+    // The (optional) dependencies are lost or must be loaded in advance
+    root.URI = factory(root.punycode, root.IPv6, root.SecondLevelDomains, root);
+    define('sap/ui/thirdparty/URI', [], function() { return root.URI; });
+    // ##### END: MODIFIED BY SAP
   } else {
     // Browser globals (root is window)
     root.URI = factory(root.punycode, root.IPv6, root.SecondLevelDomains, root);
@@ -90,7 +90,7 @@
     return /^[0-9]+$/.test(value);
   }
 
-  URI.version = '1.19.1';
+  URI.version = '1.19.11';
 
   var p = URI.prototype;
   var hasOwn = Object.prototype.hasOwnProperty;
@@ -248,6 +248,9 @@
     // balanced parens inclusion (), [], {}, <>
     parens: /(\([^\)]*\)|\[[^\]]*\]|\{[^}]*\}|<[^>]*>)/g,
   };
+  URI.leading_whitespace_expression = /^[\x00-\x20\u00a0\u1680\u2000-\u200a\u2028\u2029\u202f\u205f\u3000\ufeff]+/
+  // https://infra.spec.whatwg.org/#ascii-tab-or-newline
+  URI.ascii_tab_whitespace = /[\u0009\u000A\u000D]+/g
   // http://www.iana.org/assignments/uri-schemes.html
   // http://en.wikipedia.org/wiki/List_of_TCP_and_UDP_port_numbers#Well-known_ports
   URI.defaultPorts = {
@@ -503,6 +506,11 @@
         preventInvalidHostname: URI.preventInvalidHostname
       };
     }
+
+    string = string.replace(URI.leading_whitespace_expression, '')
+    // https://infra.spec.whatwg.org/#ascii-tab-or-newline
+    string = string.replace(URI.ascii_tab_whitespace, '')
+
     // [protocol"://"[username[":"password]"@"]hostname[":"port]"/"?][path]["?"querystring]["#"fragment]
 
     // extract fragment
@@ -521,6 +529,11 @@
       string = string.substring(0, pos);
     }
 
+    // slashes and backslashes have lost all meaning for the web protocols (https, http, wss, ws)
+    string = string.replace(/^(https?|ftp|wss?)?:+[/\\]*/i, '$1://');
+    // slashes and backslashes have lost all meaning for scheme relative URLs
+    string = string.replace(/^[/\\]{2,}/i, '//');
+
     // extract protocol
     if (string.substring(0, 2) === '//') {
       // relative-scheme
@@ -535,7 +548,7 @@
         if (parts.protocol && !parts.protocol.match(URI.protocol_expression)) {
           // : may be within the path
           parts.protocol = undefined;
-        } else if (string.substring(pos + 1, pos + 3) === '//') {
+        } else if (string.substring(pos + 1, pos + 3).replace(/\\/g, '/') === '//') {
           string = string.substring(pos + 3);
 
           // extract "user:pass@host:port"
@@ -621,17 +634,22 @@
   };
   URI.parseUserinfo = function(string, parts) {
     // extract username:password
+    var _string = string
+    var firstBackSlash = string.indexOf('\\');
+    if (firstBackSlash !== -1) {
+      string = string.replace(/\\/g, '/')
+    }
     var firstSlash = string.indexOf('/');
     var pos = string.lastIndexOf('@', firstSlash > -1 ? firstSlash : string.length - 1);
     var t;
 
-    // authority@ must come before /path
+    // authority@ must come before /path or \path
     if (pos > -1 && (firstSlash === -1 || pos < firstSlash)) {
       t = string.substring(0, pos).split(':');
       parts.username = t[0] ? URI.decode(t[0]) : null;
       t.shift();
       parts.password = t[0] ? URI.decode(t.join(':')) : null;
-      string = string.substring(pos + 1);
+      string = _string.substring(pos + 1);
     } else {
       parts.username = null;
       parts.password = null;
@@ -662,7 +680,10 @@
       // no "=" is null according to http://dvcs.w3.org/hg/url/raw-file/tip/Overview.html#collect-url-parameters
       value = v.length ? URI.decodeQuery(v.join('='), escapeQuerySpace) : null;
 
-      if (hasOwn.call(items, name)) {
+      if (name === '__proto__') {
+        // ignore attempt at exploiting JavaScript internals
+        continue;
+      } else if (hasOwn.call(items, name)) {
         if (typeof items[name] === 'string' || items[name] === null) {
           items[name] = [items[name]];
         }
@@ -678,6 +699,7 @@
 
   URI.build = function(parts) {
     var t = '';
+    var requireAbsolutePath = false
 
     if (parts.protocol) {
       t += parts.protocol + ':';
@@ -685,12 +707,13 @@
 
     if (!parts.urn && (t || parts.hostname)) {
       t += '//';
+      requireAbsolutePath = true
     }
 
     t += (URI.buildAuthority(parts) || '');
 
     if (typeof parts.path === 'string') {
-      if (parts.path.charAt(0) !== '/' && typeof parts.hostname === 'string') {
+      if (parts.path.charAt(0) !== '/' && requireAbsolutePath) {
         t += '/';
       }
 
@@ -753,7 +776,10 @@
     var t = '';
     var unique, key, i, length;
     for (key in data) {
-      if (hasOwn.call(data, key) && key) {
+      if (key === '__proto__') {
+        // ignore attempt at exploiting JavaScript internals
+        continue;
+      } else if (hasOwn.call(data, key)) {
         if (isArray(data[key])) {
           unique = {};
           for (i = 0, length = data[key].length; i < length; i++) {

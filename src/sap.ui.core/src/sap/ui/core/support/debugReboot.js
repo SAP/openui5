@@ -1,7 +1,6 @@
 /*!
  * ${copyright}
  */
-
 /*
  * IMPORTANT: This is a private module, its API must not be used and is subject to change.
  * Code other than the OpenUI5 libraries must not introduce dependencies to this module.
@@ -56,14 +55,14 @@
 			// replace the bootstrap tag with a newly created script tag to enable restarting the core from a different server
 			var _getScript = function(oScript, rRegex) {
 				if (oScript && oScript.getAttribute("src") && rRegex.exec(oScript.getAttribute("src"))) {
-					return oScript;
+					  return oScript;
 				}
 			};
 
-			var oScript = _getScript(document.querySelector('SCRIPT[src][id=sap-ui-bootstrap]'), /^((?:.*\/)?resources\/)/);
+			var oScript = _getScript(document.querySelector('SCRIPT[src][id=sap-ui-bootstrap]'), /^((?:[^?#]*\/)?resources\/)/);
 			if (!oScript) {
 				var aScripts = document.querySelectorAll('SCRIPT[src]');
-				var rBootScripts = /^(.*\/)?(?:sap-ui-(core|custom|boot|merged)(?:-.*)?)\.js(?:[?#]|$)/;
+				var rBootScripts = /^([^?#]*\/)?(?:sap-ui-(?:core|custom|boot|merged)(?:-[^?#/]*)?|jquery.sap.global|ui5loader(?:-autoconfig)?)\.js(?:[?#]|$)/;
 				for (var iScriptIndex = 0; iScriptIndex < aScripts.length; iScriptIndex++ ) {
 					oScript = _getScript(aScripts[iScriptIndex], rBootScripts);
 					if ( oScript ) {

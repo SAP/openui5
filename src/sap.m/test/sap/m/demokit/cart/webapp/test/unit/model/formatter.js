@@ -146,35 +146,9 @@ sap.ui.define([
 	QUnit.test("Should return the url to a product picture relative to the app's root directory", function (assert) {
 
 		// Act
-		var sResult  = formatter.pictureUrl("sap/ui/demokit/explored/img/foo.jpg");
+		var sResult  = formatter.pictureUrl("sap/ui/demo/mock/images/foo.jpg");
 
 		//Assert
-		assert.strictEqual(sResult, "./../../../../ui/demokit/explored/img/foo.jpg", "The formatter returned the correct URL");
-	});
-
-	QUnit.module("footerTextForCart");
-
-	function footerTextForCartTestCase(assert, oProducts, sExpectedText) {
-		//Act
-		var oControllerStub = {
-			getResourceBundle: function () {
-				return new FakeI18nModel({
-					"cartSavedForLaterFooterText": "1"
-				}).getResourceBundle();
-			}
-		};
-		var fnStubbedFormatter = formatter.footerTextForCart.bind(oControllerStub);
-		var sText = fnStubbedFormatter(oProducts);
-
-		//Assert
-		assert.strictEqual(sText, sExpectedText, "Correct total text was assigned");
-	}
-
-	QUnit.test("Should return \"\" for no products", function (assert) {
-		footerTextForCartTestCase.call(this, assert, {}, "");
-	});
-
-	QUnit.test("Should return \"cartSavedForLaterFooterText\" for products", function (assert) {
-		footerTextForCartTestCase.call(this, assert, {1: "foo"}, "1");
+		assert.strictEqual(sResult, "./../../localService/mockdata/images/foo.jpg", "The formatter returned the correct URL");
 	});
 });

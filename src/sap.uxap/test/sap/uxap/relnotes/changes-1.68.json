@@ -1,0 +1,29 @@
+{
+  "1.68.0": {
+    "date": "June 2019",
+    "notes": [
+      {
+        "id": "602aeeff6408f1cf5892de47ef22e2f4807f918c",
+        "type": "FIX",
+        "text": "sap.uxap.ObjectPageSection: Flickering in Mozilla Firefox fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970054561"
+          }
+        ]
+      },
+      {
+        "id": "86e989bf16a0594251678f9b39908adc96c130a1",
+        "type": "FIX",
+        "text": "sap.uxap.ObjectPageLayout: Improved Runtime Adaptation (RTA) behavior",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970246385"
+          }
+        ]
+      }
+    ]
+  }
+}

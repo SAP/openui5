@@ -1,0 +1,42 @@
+[
+	{
+		"fileName": "id_1_hideControl",
+		"changeType": "hideControl",
+		"reference": "sap.ui.rta.test",
+		"selector": {
+			"id": "idMain1--GeneralLedgerDocument.Name",
+			"idIsLocal": true
+		},
+		"creation": "2019-12-16T12:37:17.294Z"
+	},
+	{
+		"fileName": "id_2_hideControl",
+		"changeType": "hideControl",
+		"reference": "sap.ui.rta.test",
+		"selector": {
+			"id": "idMain1--GeneralLedgerDocument.Name",
+			"idIsLocal": true
+		},
+		"creation": "2019-12-16T12:37:17.294Z"
+	},
+	{
+		"fileName": "id_3_hideControl",
+		"changeType": "hideControl",
+		"reference": "sap.ui.rta.test",
+		"selector": {
+			"id": "idMain1--GeneralLedgerDocument.Name",
+			"idIsLocal": true
+		},
+		"creation": "2019-12-16T12:37:17.294Z"
+	},
+	{
+		"fileName": "id_4_hideControl",
+		"changeType": "hideControl",
+		"reference": "sap.ui.rta.test",
+		"selector": {
+			"id": "idMain1--GeneralLedgerDocument.Name",
+			"idIsLocal": true
+		},
+		"creation": "2019-12-16T12:37:17.294Z"
+	}
+]

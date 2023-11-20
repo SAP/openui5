@@ -1,0 +1,83 @@
+{
+	"_version": "1.15.0",
+	"sap.app": {
+		"id": "card.explorer.activities.timeline.card",
+		"type": "card",
+		"title": "Sample of a Activities Timeline",
+		"subTitle": "Sample of a Activities Timeline",
+		"applicationVersion": {
+			"version": "1.0.0"
+		},
+		"shortTitle": "A short title for this Card",
+		"info": "Additional information about this Card",
+		"description": "A long description for this Card",
+		"tags": {
+			"keywords": [
+				"Timeline",
+				"Card",
+				"Sample"
+			]
+		}
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"icons": {
+			"icon": "sap-icon://activity-items"
+		}
+	},
+	"sap.card": {
+		"type": "Timeline",
+		"header": {
+			"title": "Past Activities",
+			"subTitle": "For October"
+		},
+		"content": {
+			"maxItems": 3,
+			"data": {
+				"json": [
+					{
+						"Title": "Weekly sync: Marketplace / Design Stream",
+						"Description": "MRR WDF18 C3.2(GLASSBOX)",
+						"Icon": "sap-icon://appointment-2",
+						"Time": "2021-10-25T10:00:00.000Z",
+						"Url": "/activity1"
+					},
+					{
+						"Title": "Video Conference for FLP@SF, S4,Hybris",
+						"Icon": "sap-icon://my-view",
+						"Time": "2021-10-25T14:00:00.000Z",
+						"Url": "/activity2"
+					},
+					{
+						"Title": "Call 'Project Nimbus'",
+						"Icon": "sap-icon://outgoing-call",
+						"Time": "2021-10-25T16:00:00.000Z",
+						"Url": "/activity3"
+					}
+				]
+			},
+			"item": {
+				"dateTime": {
+					"value": "{Time}"
+				},
+				"description": {
+					"value": "{Description}"
+				},
+				"title": {
+					"value": "{Title}"
+				},
+				"icon": {
+					"src": "{Icon}"
+				},
+				"actions": [
+					{
+						"type": "Navigation",
+						"parameters": {
+							"url": "{Url}"
+						}
+					}
+				]
+			}
+		}
+	}
+}

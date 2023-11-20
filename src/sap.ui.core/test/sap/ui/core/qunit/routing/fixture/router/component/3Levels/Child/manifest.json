@@ -1,0 +1,42 @@
+{
+	"sap.app": {
+		"id": "qunit.router.component.3Levels.Child",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "qunit.router.component.3Levels.Child.view.RootView",
+			"type": "XML",
+			"async": true
+		},
+		"routing": {
+			"config": {
+				"async": true
+			},
+			"routes": [
+				{
+					"pattern": "product/{id}",
+					"name": "product",
+					"target": {
+						"name": "nestedComp",
+						"prefix": "nestedComp"
+					}
+				},
+				{
+					"pattern": "",
+					"name": "nestedHome"
+				}
+			],
+			"targets" : {
+				"nestedComp": {
+					"name": "qunit.router.component.3Levels.GrandChild",
+					"type": "Component",
+					"controlId": "shell",
+					"controlAggregation": "content"
+				}
+			}
+		}
+	}
+}

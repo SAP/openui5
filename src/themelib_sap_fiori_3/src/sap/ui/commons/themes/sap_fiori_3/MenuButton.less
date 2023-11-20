@@ -1,0 +1,69 @@
+/* ========================================== */
+/* CSS for control sap.ui.commons/MenuButton  */
+/* Fiori 3 theme                              */
+/* ========================================== */
+
+.sapUiMenuButton{
+	font-family: @sapUiDesktopFontFamily;
+	font-size: @sapUiDesktopFontSize;
+	position: relative;
+}
+
+.sapUiMenuButton.sapUiBtnS{
+	padding-right: 15px;
+}
+
+/* TODO remove after the end of support for Internet Explorer */
+html[data-sap-ui-browser^="ie"] .sapUiMenuButton.sapUiBtnS.sapUiBtnAct,
+html[data-sap-ui-browser^="ie"] .sapUiMenuButton.sapUiBtnS.sapUiBtnDsbl:active{
+	padding-right: 16px;
+}
+
+.sapUiMenuButtonIco {
+	margin-left: 6px;
+	bottom: 4px;
+	right: 3px;
+	position: absolute;
+	background-image: url("img/menubutton/Menu_Regular.png");
+}
+
+.sapUiBtnDsbl.sapUiMenuButton > .sapUiMenuButtonIco {
+	background-image: url("img/menubutton/Menu_Disabled.png");
+}
+
+.sapUiBtnLite > .sapUiMenuButtonIco{
+	right: 4px;
+}
+
+html[data-sap-ui-browser="ff3"] .sapUiMenuButtonIco{
+	right: 10px; /*Firefox positions icon too much right - why ever*/
+}
+
+html[dir=rtl][data-sap-ui-browser="ff3"] .sapUiMenuButtonIco{
+	right: -10px; /*Firefox positions icon too much right - why ever*/
+}
+
+html[data-sap-ui-browser="ff3"] .sapUiBtnLite > .sapUiMenuButtonIco{
+	right: 11px; /*Firefox positions icon too much right - why ever*/
+	bottom: 6px;
+}
+
+html[dir=rtl][data-sap-ui-browser="ff3"] .sapUiBtnLite > .sapUiMenuButtonIco{
+	right: -11px; /*Firefox positions icon too much right - why ever*/
+}
+
+/* TODO remove after the end of support for Internet Explorer */
+html[data-sap-ui-browser^="ie"] .sapUiMenuButtonIco{
+	bottom: 3px;
+}
+
+/* TODO remove after the end of support for Internet Explorer */
+html[data-sap-ui-browser^="ie"] .sapUiBtnLite > .sapUiMenuButtonIco{
+	bottom: 4px;
+}
+
+.sapUiBtnS.sapUiBtnAccept > .sapUiMenuButtonIco,
+.sapUiBtnS.sapUiBtnReject > .sapUiMenuButtonIco,
+.sapUiBtnS.sapUiBtnEmph > .sapUiMenuButtonIco{
+	background-image: url("img/menubutton/Menu_Hover.png");
+}

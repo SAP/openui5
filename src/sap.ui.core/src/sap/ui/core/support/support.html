@@ -1,34 +1,32 @@
 <!DOCTYPE HTML>
-<html style="overflow: auto;">
+<html>
 <head>
-	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta charset="utf-8">
 	<title>UI5 Diagnostics</title>
-	<script>
-	// set bootstrap config which will be used by the script below and the fallback script
-	window["sap-ui-config"] = {
-		libs: "sap.ui.core",
-		modules: "sap.ui.core.support.Support",
-		onInit: "sap.ui.core.support.Support.getStub(sap.ui.core.support.Support.StubType.TOOL)"
-	};
-	</script>
 	<link rel="stylesheet" href="support.css" type="text/css">
 	<link rel="stylesheet" href="InteractionTree.css" type="text/css">
 	<link rel="stylesheet" href="interactionSlider.css" type="text/css">
 	<link rel="stylesheet" href="TimelineOverview.css" type="text/css">
-	<script id="sap-ui-bootstrap" src="../../../../sap-ui-core.js" data-sap-ui-theme="sap_belize" data-sap-ui-bindingsyntax="complex"></script>
+	<link rel="stylesheet" href="ViewInfo.css" type="text/css">
+	<script id="sap-ui-bootstrap" src="../../../../sap-ui-core.js"
+			data-sap-ui-async="true"
+			data-sap-ui-compatVersion="edge"
+			data-sap-ui-libs="sap.ui.core"
+			data-sap-ui-oninit="module:sap/ui/core/support/BootSupportTool"
+			data-sap-ui-theme="sap_horizon"
+			></script>
 	<script src="bootstrapFallback.js"></script>
 </head>
 <body class="sapUiSupportBody">
 <div class="sapUiButtonsContainer sapUiSupportHdr">
 	<div class="title">Diagnostics</div>
-	<button
-		type="button"
-		class="sapUiSupportHelpButton"
-		title="Documentation"
-		onclick="window.open('https://openui5.hana.ondemand.com/#docs/guide/6ec18e80b0ce47f290bc2645b0cc86e6.html', '_blank');" >
-		&#xe1c4;
-	</button>
+	<a target="_blank" rel="noopener noreferrer" href="https://sdk.openui5.org/topic/6ec18e80b0ce47f290bc2645b0cc86e6">
+		<button type="button"
+				class="sapUiSupportHelpButton"
+				title="Documentation">
+			&#xe1c4;
+		</button>
+	</a>
 </div>
 <div class="sapUiSupportCntnt"></div>
 </body>

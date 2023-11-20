@@ -1,0 +1,76 @@
+{
+	"sap.app": {
+		"id": "card.resolver.filters",
+		"type": "card",
+		"title": "Sample of a Card with Filters"
+	},
+	"sap.card": {
+		"configuration": {
+			"filters": {
+				"shipper": {
+					"value": "{parameters>/selectedShipperID/value}",
+					"type": "Select",
+					"label": "Shipper",
+					"item": {
+						"path": "/value",
+						"template": {
+							"key": "{ShipperID}",
+							"title": "{CompanyName}"
+						}
+					},
+					"data": {
+						"request": {
+							"url": "{{destinations.Northwind_V4}}/Shippers"
+						}
+					}
+				}
+			},
+			"destinations": {
+				"Northwind_V4": {
+					"name": "Northwind_V4",
+					"label": "Northwind V4 Service URL",
+					"defaultUrl": "https://services.odata.org/V4/Northwind/Northwind.svc"
+				}
+			},
+			"parameters": {
+				"maxOrdersShown": {
+					"value": 3,
+					"type": "integer",
+					"label": "Number of orders",
+					"description": "The maximum number of orders that are shown in the list."
+				},
+				"selectedShipperID": {
+					"value": 3,
+					"type": "integer",
+					"label": "The default selected shipper"
+				}
+			}
+		},
+		"data": {
+			"request": {
+				"url": "{{destinations.Northwind_V4}}/Orders",
+				"parameters": {
+					"$filter": "Shipper/ShipperID eq {filters>/shipper/value}"
+				}
+			},
+			"path": "/value/"
+		},
+		"type": "List",
+		"header": {
+			"title": "Orders by Shipper {filters>/shipper/selectedItem/title}",
+			"icon": {
+				"src": "sap-icon://product"
+			}
+		},
+		"content": {
+			"item": {
+				"title": "{ShipName}",
+				"description": "{ShipAddress}",
+				"info": {
+					"value": "{ShipCountry}"
+				}
+			},
+			"maxItems" : "{parameters>/maxOrdersShown/value}"
+		}
+	}
+}

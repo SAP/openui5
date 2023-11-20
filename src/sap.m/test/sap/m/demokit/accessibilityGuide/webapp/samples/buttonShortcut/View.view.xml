@@ -1,0 +1,23 @@
+<mvc:View
+		controllerName="sap.m.sample.buttonShortcut.Controller"
+		xmlns:mvc="sap.ui.core.mvc"
+		xmlns="sap.m"
+		xmlns:core="sap.ui.core"
+		height="100%">
+		<App>
+			<Page
+				backgroundDesign="Solid"
+				id="page"
+				showHeader="false">
+				<dependents>
+					<core:CommandExecution command="Save" enabled="true" execute=".onSave" />
+					<core:CommandExecution command="Delete" enabled="true" execute=".onDelete" />
+				</dependents>
+				<VBox class="sapUiSmallMargin">
+					<Button text="Save" press="cmd:Save" tooltip="Save" />
+					<ToolbarSpacer />
+					<Button text="Delete" press="cmd:Delete" tooltip="Delete" />
+				</VBox>
+			</Page>
+		</App>
+</mvc:View>

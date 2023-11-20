@@ -1,0 +1,35 @@
+{
+  "1.80.0": {
+    "date": "June 2020",
+    "notes": [
+      {
+        "id": "b81759d97a3c2ec51b7c20c0598c70fb86ad7945",
+        "type": "FIX",
+        "text": " For add xml change fill moduleName in change definition",
+        "references": []
+      },
+      {
+        "id": "d227f7652013a21106062b3e7e55025cb7501578",
+        "type": "FIX",
+        "text": " fl.VariantManagement: remove css style when placed in a ToolBar",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080175143"
+          }
+        ]
+      },
+      {
+        "id": "b5efee9cee75e0dd54c76502b79a9dcdd3f9d085",
+        "type": "FIX",
+        "text": " sap.ui.fl - extension point default content issue fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080202656"
+          }
+        ]
+      }
+    ]
+  }
+}

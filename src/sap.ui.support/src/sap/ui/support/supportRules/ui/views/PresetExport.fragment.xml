@@ -1,0 +1,61 @@
+<core:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core"
+	xmlns:f="sap.ui.layout.form">
+	<Dialog
+		id="exportDialog"
+		title="Export a Rule Preset"
+		resizable="true"
+		contentWidth="550px"
+		contentHeight="250px">
+		<f:SimpleForm
+			editable="true"
+			binding="{/currentExportData}"
+			layout="ResponsiveGridLayout"
+			labelSpanXL="3"
+			labelSpanL="3"
+			labelSpanM="3"
+			labelSpanS="3">
+			<f:content>
+				<Label text="Title" labelFor="title" class="sapUiTinyMarginBottom" />
+				<Input id="title" required="true" value="{title}" maxLength="80" class="sapUiTinyMarginBottom" valueState="None" valueLiveUpdate="true"/>
+
+				<Label text="ID" labelFor="presetId" class="sapUiTinyMarginBottom" />
+				<Input
+					id="presetId"
+					maxLength="50"
+					valueState="None"
+					class="sapUiTinyMarginBottom"
+					placeholder="Enter a custom ID or a system one will be generated"
+					value="{
+						path: 'id',
+						type: 'sap.ui.model.type.String',
+						constraints: {
+							search: '^[a-zA-Z0-9\\.\\-\\_]*$'
+						}
+					}"/>
+
+				<Label text="Description" labelFor="description" class="sapUiTinyMarginBottom" />
+				<TextArea id="description" width="100%" value="{descriptionValue}" class="sapUiTinyMarginBottom" />
+
+				<Label text="Date" labelFor="dateExportedForDisplay" class="sapUiTinyMarginBottom" />
+				<Text
+					id="dateExportedForDisplay"
+					text="{
+						path: 'dateExportedForDisplay',
+						type: 'sap.ui.model.type.DateTime',
+						formatOptions: {
+							style: 'medium'
+						}
+					}"
+					class="sapUiTinyMarginBottom" />
+			</f:content>
+		</f:SimpleForm>
+		<beginButton>
+			<Button id="cancel" text="Cancel" press="onExportCancelPress" />
+		</beginButton>
+		<endButton>
+			<Button id="exportBtn" text="Export" type="Emphasized" press="onExportFinalizePress" class="sapUiTinyMarginEnd" />
+		</endButton>
+	</Dialog>
+</core:FragmentDefinition>

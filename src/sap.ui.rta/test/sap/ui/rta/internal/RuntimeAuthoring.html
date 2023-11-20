@@ -1,42 +1,59 @@
 <!DOCTYPE HTML>
 <html>
+
 <head>
+	<title>RuntimeAuthoring - sap.ui.rta</title>
 
-<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-
-<title>RuntimeAuthoring - sap.ui.rta</title>
-
-
-<script>
-	document.write('\
+	<script>
+		document.write('\
 		<script \
 			id="sap-ui-bootstrap" \
+			data-sap-ui-async="true" \
 			data-sap-ui-theme="sap_belize" \
-			data-sap-ui-noConflict="true" \
+			data-sap-ui-language="en" \
 			data-sap-ui-resourceroots=\'{"sap.ui.rta.test": "testdata/rta/"}\'\
 			data-sap-ui-libs="sap.m, sap.ui.layout, sap.ui.comp, sap.ui.rta" \
-			src="' + document.location.pathname.match(/(.*)\/test-resources\//)[1] + '/resources/sap-ui-core.js" \
+			data-sap-ui-xx-bindingSyntax="complex" \
+			data-sap-ui-flexibilityServices=\'[{"connector": "LocalStorageConnector"}]\'\
+			src="' +
+			document.location.pathname.match(/(.*)\/test-resources\//)[1] + '/resources/sap-ui-core.js" \
 		><' + '/script>'
-	);
-</script>
+		);
+	</script>
 
-<script type="text/javascript">
-
-	var oCompCont = new sap.ui.core.ComponentContainer("CompCont1", {
-		component : sap.ui.component({
-			name: "sap.ui.rta.test",
-			id : "Comp1",
-			componentData: {
-				"showAdaptButton" : true
-			}
-		})
-	});
-
-	oCompCont.placeAt("content");
-
-</script>
+	<script type="text/javascript">
+		sap.ui.require([
+			"sap/ui/core/ComponentContainer",
+			"sap/ui/core/Component",
+			"sap/ui/core/Core"
+		], function(ComponentContainer, Component, Core) {
+			return Core.ready().then(() => {
+				return Component.create({
+					name: "sap.ui.rta.test",
+					id: "Comp1",
+					componentData: {
+						"showAdaptButton": true
+					}
+				});
+			}).then((oComponent) => {
+				return new ComponentContainer("CompCont1", {
+					component: oComponent,
+					async: true
+				});
+			})
+			.then((oComponentContainer) => {
+				oComponentContainer.placeAt("content");
+			});
+		});
+	</script>
+	<style>
+		.sapUiRtaMode .sapUiRtaRoot {
+			margin-top: 3rem;
+		}
+	</style>
 </head>
-<body class="sapUiBody" role="application">
+
+<body class="sapUiBody sapUiSizeCompact">
 	<div id="content"></div>
 </body>
 

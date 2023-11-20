@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.m.VisibleItem.
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Item'],
-	function(jQuery, library, Item) {
+sap.ui.define(['./library', 'sap/ui/core/Item', "sap/ui/thirdparty/jquery"],
+	function(library, Item, jQuery) {
 		"use strict";
 
 
@@ -66,7 +66,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Item'],
 		 */
 		VisibleItem.prototype.setVisible = function(bValue) {
 			if (this.getVisible() === bValue) {
-				return;
+				return this;
 			}
 
 			var $refs = this._getRefs();

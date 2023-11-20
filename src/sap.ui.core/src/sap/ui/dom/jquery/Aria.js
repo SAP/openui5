@@ -1,18 +1,23 @@
 /*!
  * ${copyright}
  */
-/*
- * IMPORTANT: This is a private module, its API must not be used and is subject to change.
- * Code other than the OpenUI5 libraries must not introduce dependencies to this module.
- */
 sap.ui.define(['sap/ui/thirdparty/jquery'], function(jQuery) {
 	"use strict";
 
 	/**
-	 * @exports sap/ui/dom/jquery/Aria
-	 * @private
+	 * This module provides the following API:
+	 * <ul>
+	 * <li>{@link jQuery#addAriaLabelledBy}</li>
+	 * <li>{@link jQuery#removeAriaLabelledBy}</li>
+	 * <li>{@link jQuery#addAriaDescribedBy}</li>
+	 * <li>{@link jQuery#removeAriaDescribedBy}</li>
+	 * </ul>
+	 *
+	 * @namespace
+	 * @name module:sap/ui/dom/jquery/Aria
+	 * @public
+	 * @since 1.58
 	 */
-	var Aria = Object.create(null);
 
 	/**
 	 * Adds space separated value to the given attribute.
@@ -74,16 +79,19 @@ sap.ui.define(['sap/ui/thirdparty/jquery'], function(jQuery) {
 	}
 
 	/**
-	 * Adds the given ID reference to the the aria-labelledby attribute.
+	 * Adds the given ID reference to the aria-labelledby attribute.
 	 *
 	 * @param {string} sId The ID reference of an element
 	 * @param {boolean} [bPrepend=false] Whether prepend or not
 	 * @return {jQuery} <code>this</code> to allow method chaining.
-	 * @private
+	 * @name jQuery#addAriaLabelledBy
+	 * @public
 	 * @author SAP SE
+	 * @since 1.30.0
 	 * @function
+	 * @requires module:sap/ui/dom/jquery/Aria
 	 */
-	Aria.addLabelledBy = function(sId, bPrepend) {
+	jQuery.fn.addAriaLabelledBy = function(sId, bPrepend) {
 		return addToAttributeList.call(this, "aria-labelledby", sId, bPrepend);
 	};
 
@@ -92,11 +100,14 @@ sap.ui.define(['sap/ui/thirdparty/jquery'], function(jQuery) {
 	 *
 	 * @param {string} sId The ID reference of an element
 	 * @return {jQuery} <code>this</code> to allow method chaining.
-	 * @private
+	 * @name jQuery#removeAriaLabelledBy
+	 * @public
 	 * @author SAP SE
+	 * @since 1.30.0
 	 * @function
+	 * @requires module:sap/ui/dom/jquery/Aria
 	 */
-	Aria.removeLabelledBy = function(sId) {
+	jQuery.fn.removeAriaLabelledBy = function(sId) {
 		return removeFromAttributeList.call(this, "aria-labelledby", sId);
 	};
 
@@ -106,11 +117,14 @@ sap.ui.define(['sap/ui/thirdparty/jquery'], function(jQuery) {
 	 * @param {string} sId The ID reference of an element
 	 * @param {boolean} [bPrepend=false] whether prepend or not
 	 * @return {jQuery} <code>this</code> to allow method chaining.
-	 * @private
+	 * @name jQuery#addAriaDescribedBy
+	 * @public
 	 * @author SAP SE
+	 * @since 1.30.0
 	 * @function
+	 * @requires module:sap/ui/dom/jquery/Aria
 	 */
-	Aria.addDescribedBy = function(sId, bPrepend) {
+	jQuery.fn.addAriaDescribedBy = function(sId, bPrepend) {
 		return addToAttributeList.call(this, "aria-describedby", sId, bPrepend);
 	};
 
@@ -119,18 +133,16 @@ sap.ui.define(['sap/ui/thirdparty/jquery'], function(jQuery) {
 	 *
 	 * @param {string} sId The ID reference of an element
 	 * @return {jQuery} <code>this</code> to allow method chaining.
-	 * @private
+	 * @name jQuery#removeAriaDescribedBy
+	 * @public
 	 * @author SAP SE
+	 * @since 1.30.0
 	 * @function
+	 * @requires module:sap/ui/dom/jquery/Aria
 	 */
-	Aria.removeDescribedBy = function(sId) {
+	jQuery.fn.removeAriaDescribedBy = function(sId) {
 		return removeFromAttributeList.call(this, "aria-describedby", sId);
 	};
-
-	jQuery.fn.addAriaLabelledBy = Aria.addLabelledBy;
-	jQuery.fn.removeAriaLabelledBy = Aria.removeLabelledBy;
-	jQuery.fn.addAriaDescribedBy = Aria.addDescribedBy;
-	jQuery.fn.removeAriaDescribedBy = Aria.removeDescribedBy;
 
 	return jQuery;
 

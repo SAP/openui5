@@ -1,0 +1,12 @@
+{
+  "1.103.0": {
+    "date": "May 2022",
+    "notes": [
+      {
+        "id": "84cb94393eaab1847ef1389618b4e7089a8ab79a",
+        "type": "FEATURE",
+        "text": " sap.ui.unified.CalendarLegend: Horizon themes applied"
+      }
+    ]
+  }
+}

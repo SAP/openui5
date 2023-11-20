@@ -1,0 +1,34 @@
+{
+  "1.95.0": {
+    "date": "September 2021",
+    "notes": [
+      {
+        "id": "02412ae4ad9dadb9066728bf117413ee0bff1f98",
+        "type": "FIX",
+        "text": " sap.ui.commons.Tree: has all needed images",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400005744622021"
+          }
+        ]
+      },
+      {
+        "id": "dec73d300d982360dd13c5bfcb6907e47ed3d58a",
+        "type": "FIX",
+        "text": " sap.m.ViewSettingsDialog: control is aligned to visual specifications",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180317779"
+          }
+        ]
+      },
+      {
+        "id": "d90fbe7ef235b41f63c7517b642f1182c7e64999",
+        "type": "FIX",
+        "text": " sap.m.MessagePage: increase CSS specificity of main icon"
+      }
+    ]
+  }
+}

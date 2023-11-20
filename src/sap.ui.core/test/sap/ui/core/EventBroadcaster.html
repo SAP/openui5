@@ -1,0 +1,174 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<title>EventBroadcaster test page</title>
+
+	<script src="shared-config.js"></script>
+	<script id="sap-ui-bootstrap"
+			src="../../../../resources/sap-ui-core.js"
+			data-sap-ui-libs="sap.m">
+	</script>
+
+	<script id="myXml" type="text/xmldata">
+			<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:l="sap.ui.layout"
+			 	controllerName="eventBroadcasterTestController" displayBlock="true">
+				<App>
+					<Page title="Enable EventBroadcaster">
+						<Panel headerText="Playground for events" expandable="true" expanded="true">
+							<content>
+								<Select>
+									<items>
+										<core:Item text="Item 1"/>
+										<core:Item text="Item 2"/>
+										<core:Item text="Item 3"/>
+										<core:Item text="Item 4"/>
+									</items>
+								</Select>
+								<Input/>
+								<Switch/>
+								<TimePicker/>
+							</content>
+						</Panel>
+						<Panel headerText="ExcludeList configuration for filtering events" expandable="true" expanded="true">
+								<l:VerticalLayout class="sapUiLargeMarginBegin">
+									<Label text="Enter events configuration:" />
+									<TextArea id="txtConfig" rows="10" width="550px" />
+									<l:HorizontalLayout>
+										<Button id="setConfig" text="Set ExcludeList" press="setExcludeListConfig"/>
+										<Button id="getConfig" text="Get ExcludeList events configuration" press="getExcludeListConfig"/>
+									</l:HorizontalLayout>
+								</l:VerticalLayout>
+						</Panel>
+						<Table id="log"
+								inset="false">
+								<headerToolbar>
+									<Toolbar>
+										<content>
+											<Title text="List of events" level="H2"/>
+											<ToolbarSpacer />
+											<Button id="clearTableRowsBtn" text="Clear rows" press="clearRows"/>
+										</content>
+									</Toolbar>
+								</headerToolbar>
+								<columns>
+									<Column
+										id="date"
+										width="20rem">
+										<Text text="Date" />
+									</Column>
+									<Column
+										id="eventName">
+										<Text text="Event Name" />
+									</Column>
+									<Column
+										id="targetElement">
+										<Text text="Target Element" />
+									</Column>
+									<Column
+										id="targetElementType">
+										<Text text="Target Element Type" />
+									</Column>
+									<Column
+										id="componentId">
+										<Text text="Component Id" />
+									</Column>
+									<Column
+										id="componentVersion">
+										<Text text="Component Version" />
+									</Column>
+								</columns>
+							</Table>
+							<customHeader>
+								<Bar>
+									<contentRight>
+										<Label text="Custom Events: "/>
+										<Switch id="customEventsBtn" tooltip="Enable/Disable broadcasting of CustomEvents" change="enableDisableCustomEvents"/>
+										<Label text="Listener: "/>
+										<Switch id="listenerBtn" tooltip="Attach/Detach listener for Custom Events" change="attachDetachListener"/>
+									</contentRight>
+								</Bar>
+							</customHeader>
+					</Page>
+				</App>
+			</mvc:View>
+
+
+	</script>
+
+	<script>
+		sap.ui.require(['sap/ui/core/Core', 'sap/ui/core/mvc/XMLView', 'sap/ui/core/support/usage/EventBroadcaster',
+							'sap/ui/core/mvc/Controller', 'sap/m/ColumnListItem', 'sap/m/Text', 'sap/m/MessageToast'],
+			function (Core, XMLView, EventBroadcaster, Controller, ColumnListItem, Text, MessageToast) {
+				"use strict";
+
+				Core.ready().then(function () {
+				var oTable;
+
+				var BroadcasterController = Controller.extend("eventBroadcasterTestController", {
+					onInit: function () {
+						oTable = this.getView().byId("log");
+					},
+					enableDisableCustomEvents: function (oEvent) {
+						if (oEvent.getParameter("state")) {
+							EventBroadcaster.enable();
+						} else {
+							EventBroadcaster.disable();
+						}
+					},
+					attachDetachListener: function (oEvent) {
+						if (oEvent.getParameter("state")) {
+							window.addEventListener("UI5Event", this._fnListener)
+						} else {
+							window.removeEventListener("UI5Event", this._fnListener)
+						}
+					},
+					clearRows: function () {
+						oTable.destroyItems();
+					},
+					_fnListener: function (oEvent) {
+						var oEvtDetail = oEvent.detail;
+						oTable.insertItem(new ColumnListItem({
+							cells: [
+								new Text({text: new Date(oEvtDetail.timestamp) + "(" + oEvtDetail.timestamp + ")"}),
+								new Text({text: oEvtDetail.eventName}),
+								new Text({text: oEvtDetail.targetId}),
+								new Text({text: oEvtDetail.targetType}),
+								new Text({text: oEvtDetail.componentId}),
+								new Text({text: oEvtDetail.componentVersion})
+							]
+						}, 0));
+					},
+					setExcludeListConfig: function () {
+						var oConfig;
+						try {
+							oConfig = JSON.parse(this.getView().byId("txtConfig").getValue());
+							EventBroadcaster.setEventsExcludeList(oConfig);
+						} catch (e) {
+							MessageToast.show("Please enter valid JSON." + e.message);
+						}
+					},
+					getExcludeListConfig: function () {
+						this.getView().byId("txtConfig").setValue(JSON.stringify(EventBroadcaster.getEventsExcludeList()));
+					}
+				});
+
+				XMLView.create({
+					id: "eventBroadcasterTestView",
+					definition: jQuery('#myXml').html(),
+					controller: new BroadcasterController()
+				}).then(function (oView) {
+					oView.placeAt("content");
+				});
+			});
+		});
+	</script>
+
+</head>
+<body class="sapUiBody">
+<h1>Test Page for <code>sap.ui.core.support.usage.EventBroadcaster</code></h1>
+
+<div id="content"></div>
+
+
+</body>
+</html>

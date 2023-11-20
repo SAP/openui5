@@ -1,0 +1,6 @@
+<mvc:View xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m" xmlns:ui="sap.ui">
+	<panel headerText="Hello World">
+		<Button text="Press me"></Button>
+	</panel>
+	<ui:core.Icon src="sap-icon://search" /> <!-- Should not cause an issue -->
+</mvc:View>

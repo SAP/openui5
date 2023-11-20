@@ -1,10 +1,10 @@
 /*!
  * ${copyright}
  */
-
+/*eslint-disable max-len */
 // Provides the base implementation for all model implementations
-sap.ui.define(['sap/ui/model/SimpleType', 'sap/ui/model/FormatException', 'sap/ui/model/ParseException'],
-	function(SimpleType, FormatException, ParseException) {
+sap.ui.define(["sap/ui/core/Lib", 'sap/ui/model/SimpleType', 'sap/ui/model/FormatException', 'sap/ui/model/ParseException'],
+	function(Library, SimpleType, FormatException, ParseException) {
 	"use strict";
 
 
@@ -20,8 +20,12 @@ sap.ui.define(['sap/ui/model/SimpleType', 'sap/ui/model/FormatException', 'sap/u
 	 * @version ${version}
 	 *
 	 * @public
-	 * @param {object} [oFormatOptions] formatting options. Boolean doesn't support any specific format options
-	 * @param {object} [oConstraints] value constraints. Boolean doesn't support additional constraints
+	 * @param {object} [oFormatOptions]
+	 *   Format options as defined in the interface of {@link sap.ui.model.SimpleType}; this
+	 *   type ignores them, since it does not support any format options
+	 * @param {object} [oConstraints]
+	 *   Constraints as defined in the interface of {@link sap.ui.model.SimpleType}; this
+	 *   type ignores them, since it does not support any constraints
 	 * @alias sap.ui.model.type.Boolean
 	 */
 	var BooleanType = SimpleType.extend("sap.ui.model.type.Boolean", /** @lends sap.ui.model.type.Boolean.prototype */ {
@@ -38,13 +42,11 @@ sap.ui.define(['sap/ui/model/SimpleType', 'sap/ui/model/FormatException', 'sap/u
 			return null;
 		}
 		switch (this.getPrimitiveType(sInternalType)) {
-			case "boolean":
 			case "any":
+			case "boolean":
 				return bValue;
 			case "string":
 				return bValue.toString();
-			case "int": // TODO return 1 for true?!
-			case "float":
 			default:
 				throw new FormatException("Don't know how to format Boolean to " + sInternalType);
 		}
@@ -62,21 +64,14 @@ sap.ui.define(['sap/ui/model/SimpleType', 'sap/ui/model/FormatException', 'sap/u
 				if (oValue.toLowerCase() == "false" || oValue == "" || oValue == " ") {
 					return false;
 				}
-				oBundle = sap.ui.getCore().getLibraryResourceBundle();
+				oBundle = Library.getResourceBundleFor("sap.ui.core");
 				throw new ParseException(oBundle.getText("Boolean.Invalid"));
-			case "int": // TODO return 1 for true?!
-			case "float":
 			default:
 				throw new ParseException("Don't know how to parse Boolean from " + sInternalType);
 		}
 	};
 
-	BooleanType.prototype.validateValue = function(sValue) {
-
-	};
-
-
+	BooleanType.prototype.validateValue = function() {};
 
 	return BooleanType;
-
 });

@@ -2,57 +2,76 @@
  * ${copyright}
  */
 sap.ui.define([
-	'sap/m/Button',
-	'sap/m/Column',
-	'sap/m/ColumnListItem',
-	'sap/m/ComboBox',
-	'sap/m/Input',
-	'sap/m/PlacementType',
-	'sap/m/ResponsivePopover',
-	'sap/m/Table',
-	'sap/m/Text',
+	"sap/base/Log",
+	"sap/m/Button",
+	"sap/m/Column",
+	"sap/m/ColumnListItem",
+	"sap/m/ComboBox",
+	"sap/m/Input",
+	"sap/m/library",
+	"sap/m/ResponsivePopover",
+	"sap/m/Table",
+	"sap/m/Text",
 	"sap/ui/core/Control",
 	"sap/ui/core/Item",
 	"sap/ui/model/odata/v4/ValueListType"
-], function(Button, Column, ColumnListItem, ComboBox, Input, PlacementType, ResponsivePopover,
-		Table, Text, Control, Item, ValueListType) {
+], function (Log, Button, Column, ColumnListItem, ComboBox, Input, library,
+		ResponsivePopover, Table, Text, Control, Item, ValueListType) {
 	"use strict";
 
-	var ValueHelp;
+	// shortcut for sap.m.PlacementType
+	var PlacementType = library.PlacementType,
+		bSharedRequest
+			= new URLSearchParams(window.location.search).get("$$sharedRequest") !== "false";
 
-	ValueHelp = Control.extend("sap.ui.core.sample.common.ValueHelp", {
+	return Control.extend("sap.ui.core.sample.common.ValueHelp", {
 		metadata : {
 			interfaces : ["sap.ui.core.IFormContent"],
 			properties : {
-				enabled : {type: "boolean", defaultValue: true, bindable: "bindable"},
-				value: {type: "string", group: "Data", defaultValue: null, bindable: "bindable"}
+				enabled : {type : "boolean", defaultValue : true, bindable : "bindable"},
+				qualifier : {type : "string", defaultValue : "", bindable : "bindable"},
+				value : {type : "string", group : "Data", defaultValue : null,
+					bindable : "bindable"}
 			},
 			aggregations : {
 				field : {type : "sap.ui.core.Control", multiple : false, visibility : "hidden"}
 			},
-			associations: {
+			associations : {
 				/**
 				 * Association to controls / IDs that label this control (see WAI-ARIA attribute
 				 * aria-labelledby).
 				 */
-				ariaLabelledBy: {
-					type: "sap.ui.core.Control",
-					multiple: true,
-					singularName: "ariaLabelledBy"
+				ariaLabelledBy : {
+					type : "sap.ui.core.Control",
+					multiple : true,
+					singularName : "ariaLabelledBy"
 				}
 			},
-			events : {}
+			events : {
+				selectionChanged : {
+					parameters : {
+						context : {type : "object"},
+						value : {type : "string"}
+					}
+				}
+			}
 		},
 
 		renderer : {
-			render : function(oRm, oValueHelp) {
-				oRm.write("<div");
-				oRm.writeControlData(oValueHelp);
-				oRm.writeClasses(oValueHelp);
-				oRm.write(">");
+			apiVersion : 2,
+			render : function (oRm, oValueHelp) {
+				oRm.openStart("div", oValueHelp).openEnd();
 				oRm.renderControl(oValueHelp.getAggregation("field"));
-				oRm.write("</div>");
+				oRm.close("div");
 			}
+		},
+
+		getValueState : function () {
+			return this.getAggregation("field").getValueState();
+		},
+
+		getValueStateText : function () {
+			return this.getAggregation("field").getValueStateText();
 		},
 
 		init : function () {
@@ -60,31 +79,33 @@ sap.ui.define([
 			this.attachModelContextChange(this.onModelContextChange);
 		},
 
-		addAssociation : function() {
+		addAssociation : function () {
 			var oField = this.getAggregation("field");
 
+			Control.prototype.addAssociation.apply(this, arguments);
 			if (oField) {
 				oField.addAssociation.apply(oField, arguments);
-			} // else: will be called again later
+			}
 			return this;
 		},
 
-		getAccessibilityInfo : function() {
+		getAccessibilityInfo : function () {
 			var oField = this.getAggregation("field");
 
 			return oField && oField.getAccessibilityInfo();
 		},
 
-		removeAssociation : function() {
+		removeAssociation : function () {
 			var oField = this.getAggregation("field");
 
 			if (oField) {
 				oField.removeAssociation.apply(oField, arguments);
 			}
+			Control.prototype.removeAssociation.apply(this, arguments);
 			return this;
 		},
 
-		onModelContextChange : function (oEvent) {
+		onModelContextChange : function () {
 			var oBinding = this.getBinding("value"),
 				that = this;
 
@@ -102,7 +123,7 @@ sap.ui.define([
 					switch (sValueListType) {
 						case ValueListType.Standard:
 							oField = new Input({
-								change: that.onValueChange.bind(that),
+								change : that.onValueChange.bind(that),
 								id : sId,
 								showValueHelp : true,
 								value : that.getValue(),
@@ -124,16 +145,17 @@ sap.ui.define([
 							});
 					}
 					that.setAggregation("field", oField);
+					that.getAriaLabelledBy().forEach(oField.addAriaLabelledBy.bind(oField));
 				});
 			}
 		},
 
-		onLoadItems : function (oEvent) {
+		onLoadItems : function () {
 			var oBinding = this.getBinding("value"),
 				oComboBox = this.getAggregation("field"),
 				that = this;
 
-			oBinding.requestValueListInfo().then(function (mValueListInfo) {
+			oBinding.requestValueListInfo(true).then(function (mValueListInfo) {
 				var oItem = new Item(),
 					oValueListMapping = mValueListInfo[""],
 					aParameters = oValueListMapping.Parameters,
@@ -142,40 +164,46 @@ sap.ui.define([
 					sAdditionalText = aParameters[2] && aParameters[2].ValueListProperty;
 
 				function onSelectionChange(oEvent) {
-					that.setValue(oEvent.getParameters("selectedItem").selectedItem.getText());
+					that.setValue(oEvent.getParameter("selectedItem").getKey(),
+						oBinding.getContext());
 				}
 
-				oItem.bindProperty("key", {path: sKey, model: "ValueList"});
-				oItem.bindProperty("text", {path: sText, model: "ValueList"});
+				oItem.bindProperty("key", {path : sKey, model : "ValueList"});
+				oItem.bindProperty("text", {path : sText, model : "ValueList"});
 				if (sAdditionalText) {
 					oComboBox.setShowSecondaryValues(true);
 					oItem.bindProperty("additionalText",
-						{path: sAdditionalText, model: "ValueList"});
+						{path : sAdditionalText, model : "ValueList"});
 				}
 
 				oComboBox.setModel(oValueListMapping.$model, "ValueList");
 				oComboBox.bindItems({
 					model : "ValueList",
 					path : "/" + oValueListMapping.CollectionPath,
+					parameters : {
+						// For value helps it makes sense to share the requests.
+						// Here it would not be necessary to specify $$sharedRequest
+						// as separate value help models will implicitly use $$sharedRequest.
+						$$sharedRequest : bSharedRequest
+					},
 					template : oItem
 				});
 				oComboBox.attachSelectionChange(onSelectionChange);
 			}).catch(function (oError) {
-				jQuery.sap.log.error(oError, undefined,
-					"sap.ui.core.sample.common.ValueHelp");
+				Log.error(oError, undefined, "sap.ui.core.sample.common.ValueHelp");
 			});
 		},
 
 		onValueChange : function (oEvent) {
-			this.setProperty("value", oEvent.getParameter("newValue"));
+			this.setValue(oEvent.getParameter("newValue"), oEvent.getSource().getBindingContext());
 		},
 
-		onValueHelp : function (oEvent) {
+		onValueHelp : function () {
 			var oBinding = this.getBinding("value"),
 				oInput = this.getAggregation("field"),
 				that = this;
 
-			oBinding.requestValueListInfo().then(function (mValueListInfo) {
+			oBinding.requestValueListInfo(true).then(function (mValueListInfo) {
 				var oButton = new Button({
 						icon : "sap-icon://decline",
 						tooltip : "Close"
@@ -191,30 +219,24 @@ sap.ui.define([
 						growing : true,
 						mode : "SingleSelectMaster"
 					}),
-					oValueListMapping = mValueListInfo[""]; // TODO not necessarily correct
+					oValueListMapping = mValueListInfo[that.getQualifier()] || mValueListInfo[""];
 
 				function onClose() {
 					oPopover.close();
 				}
 
 				function onSelectionChange(oEvent) {
-					var oValueHelpControl = oEvent.getSource().getSelectedItems()[0].getCells()[0];
-
-					that.setValue(oValueHelpControl.getText());
+					that.setValue(oEvent.getParameter("listItem").getCells()[0].getText(),
+						oBinding.getContext());
 					oPopover.close();
 				}
 
-				// TODO use Label annotation
-				oPopover.setTitle("Value Help: " + oValueListMapping.CollectionPath);
-				oTable.setModel(oValueListMapping.$model);
-				oTable.bindItems({
-					path : "/" + oValueListMapping.CollectionPath,
-					template : oColumnListItem
-				});
+				oPopover.setTitle("Value Help: "
+					+ (oValueListMapping.Label || oValueListMapping.CollectionPath));
 				oValueListMapping.Parameters.forEach(function (oParameter) {
 					var sParameterPath = oParameter.ValueListProperty;
 
-					// TODO use Label annotation
+					// TODO label from the property
 					oTable.addColumn(new Column({
 						header : new Text({
 							text : sParameterPath,
@@ -223,16 +245,40 @@ sap.ui.define([
 					}));
 					oColumnListItem.addCell(new Text({text : "{" + sParameterPath + "}"}));
 				});
+				oTable.bindItems({
+					path : "/" + oValueListMapping.CollectionPath,
+					parameters : {
+						// For value helps it makes sense to share the requests.
+						// Here it would not be necessary to specify $$sharedRequest
+						// as separate value help models will implicitly use $$sharedRequest.
+						$$sharedRequest : bSharedRequest
+					},
+					template : oColumnListItem
+				});
+				oTable.setModel(oValueListMapping.$model);
 				oTable.attachSelectionChange(onSelectionChange);
 				oButton.attachPress(onClose);
 				oPopover.addContent(oTable);
 				oPopover.data("openedBy", oInput);
+				oPopover.setInitialFocus(oTable);
 				oPopover.openBy(oInput);
-
 			}).catch(function (oError) {
-				jQuery.sap.log.error(oError, undefined,
-					"sap.ui.core.sample.common.ValueHelp");
+				Log.error(oError, undefined, "sap.ui.core.sample.common.ValueHelp");
 			});
+		},
+
+		refreshDataState : function (sName, oDataState) {
+			var oField = this.getAggregation("field"),
+				fnOriginalGetBinding = this.getBinding, //TODO: improve with CPOUI5ODATAV4-868
+				that = this;
+
+			if (oField) {
+				oField.getBinding = function (sName) {
+					return that.getBinding(sName);
+				};
+				oField.refreshDataState.call(oField, sName, oDataState);
+				oField.getBinding = fnOriginalGetBinding;
+			}
 		},
 
 		setEnabled : function (bEnabled) {
@@ -241,15 +287,16 @@ sap.ui.define([
 			}
 		},
 
-		setValue : function (sValue) {
+		setValue : function (sValue, oContext) {
 			var oField = this.getAggregation("field");
 
 			this.setProperty("value", sValue);
 			if (oField) {
 				oField.setValue(sValue);
 			}
+			if (oContext) {
+				this.fireEvent("selectionChanged", {context : oContext, value : sValue});
+			}
 		}
 	});
-
-	return ValueHelp;
 });

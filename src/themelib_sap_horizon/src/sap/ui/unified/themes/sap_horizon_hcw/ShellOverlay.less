@@ -1,0 +1,57 @@
+/* ============================================ */
+/* CSS for control sap.ui.unified/ShellOverlay  */
+/* Horizon High Contrast White theme            */
+/* ============================================ */
+
+.sapUiUfdShellOvrlyCntnt,
+.sapUiUfdShellOvrlyHeadCntnt {
+	background-color: @sapUiShellBackground;
+}
+
+.sapUiUfdShellOvrlyHeadClose,
+.sapUiUfdShellOvrlyHeadClose:focus,
+.sapUiUfdShellOvrlyHeadClose:visited {
+	color: @sapUiButtonIconColor;
+}
+
+.sapUiUfdShellOvrlyHeadClose:active,
+.sapUiUfdShellOvrlyHeadClose:hover{
+	background-color: @sapUiButtonActiveBackground;
+}
+
+.sapUiUfdShellOvrlyHeadClose {
+	border: 1px solid @sapUiButtonBorderColor;
+	border-radius: 6px;
+	line-height: 1;
+}
+
+.sapUiUfdShellOvrlyHeadClose:before {
+	left: -8px;
+}
+
+.sapUiUfdShellOvrlyHeadClose:focus {
+	border: 2px dotted @sapUiContentFocusColor;
+	border-radius: 0;
+	padding: 9px;
+}
+
+.sapUiUfdShellOvrlyAnim.sapUiUfdShellOvrly {
+	background: fade(@sapUiBlockLayerBackground, 30);
+}
+
+.sapUiUfdShellOvrlyAnim.sapUiUfdShellOvrly > div {
+	box-shadow: 0 0 40px 2px @sapUiContentShadowColor;
+}
+
+.sapUiUfdShellOvrlyHead,
+.sapUiUfdShellOvrlyCntnt > div {
+	border-width: 0 2px 1px 2px;
+	border-color: @sapUiGroupContentBorderColor;
+	border-style: solid;
+}
+
+html.sapUiMedia-Std-Phone .sapUiUfdShellOvrlyCntnt > div,
+html.sapUiMedia-Std-Phone .sapUiUfdShellOvrlyHead {
+	border-left: 0;
+	border-right: 0;
+}

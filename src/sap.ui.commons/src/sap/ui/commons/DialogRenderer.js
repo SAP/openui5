@@ -3,8 +3,8 @@
  */
 
 // Provides default renderer for control sap.ui.commons.Dialog
-sap.ui.define(['jquery.sap.global'],
-	function(jQuery) {
+sap.ui.define([],
+	function() {
 	"use strict";
 
 
@@ -74,7 +74,7 @@ sap.ui.define(['jquery.sap.global'],
 		rm.write("><span style='display:none;' id='", oControl.getId(), "-acc'>", rb.getText("DIALOG_CLOSE_HELP"), "</span>");
 
 		// Header
-		rm.write("<span id='" + oControl.getId() + "-fhfe' tabIndex='0'></span><div id='" + oControl.getId() + "-hdr' class='sapUiDlgHdr'>");
+		rm.write("<span id='" + oControl.getId() + "-fhfe' tabindex='0'></span><div id='" + oControl.getId() + "-hdr' class='sapUiDlgHdr'>");
 		rm.write("<span class='sapUiDlgHdrLeft' id='" + oControl.getId() + "-hdrL'>");
 
 		// Header label
@@ -99,7 +99,7 @@ sap.ui.define(['jquery.sap.global'],
 
 		if (oControl.getShowCloseButton()) {
 			rm.write("<a id='", oControl.getId(), "-close' class='sapUiDlgCloseBtn' href='#'");
-			rm.write(" tabIndex='-1'"); // according to accessibility experts (O.K. and M.J.), the 'x' should not be tab-able
+			rm.write(" tabindex='-1'"); // according to accessibility experts (O.K. and M.J.), the 'x' should not be tab-able
 			rm.writeAttribute("role","button");
 			rm.writeAttributeEscaped("aria-label", rb.getText("DIALOG_CLOSE_HELP"));
 			rm.writeAttributeEscaped("title", rb.getText("DIALOG_CLOSE_TEXT"));
@@ -145,7 +145,7 @@ sap.ui.define(['jquery.sap.global'],
 		}
 
 		// End of Dialog
-		rm.write("<span id='" + oControl.getId() + "-fhee' tabIndex='0'></span></div>");
+		rm.write("<span id='" + oControl.getId() + "-fhee' tabindex='0'></span></div>");
 
 	};
 

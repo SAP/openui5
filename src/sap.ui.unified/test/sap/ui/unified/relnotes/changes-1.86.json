@@ -1,0 +1,78 @@
+{
+  "1.86.0": {
+    "date": "January 2021",
+    "notes": [
+      {
+        "id": "faaf59634dfe39b58e59a50eef44cff1c79c4598",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: The deselection of group appointments work",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180007784"
+          }
+        ]
+      },
+      {
+        "id": "e45aa73cb096d857eb8ea266a6c591963d40cf1c",
+        "type": "FIX",
+        "text": " sap.ui.unified.CalendarDateInterval: navigating with the keyboard arrows works",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080400387"
+          }
+        ]
+      },
+      {
+        "id": "41a57b93bb5f493e8704f1fffbef45ab09f0e3d8",
+        "type": "FIX",
+        "text": " sap.ui.unified.CalendarDateInterval: Tests are now passing on Safari 13",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070459081"
+          }
+        ]
+      },
+      {
+        "id": "bedbd4f4e46fff809af3d167fbb97cb880a7e63b",
+        "type": "FIX",
+        "text": " sap.m.DateRangeSelection: can select a range in month with 4 weeks",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080437818"
+          }
+        ]
+      },
+      {
+        "id": "ffb209904d95bb043baf56ddbe347bfdc88d6618",
+        "type": "FIX",
+        "text": " sap.m.SinglePlanningCalendar: all day events are now properly displayed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080419463"
+          }
+        ]
+      },
+      {
+        "id": "85ca9ff2747a5759e32480085d1e476a0faf587b",
+        "type": "FIX",
+        "text": " sap.ui.unified.Month: week numbers are displayed correctly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070390829"
+          }
+        ]
+      },
+      {
+        "id": "60fb73e58b2386ea0faf3cae28055a69a6636b3b",
+        "type": "FIX",
+        "text": " sap.ui.unified.FileUploader: change event listener reattached"
+      }
+    ]
+  }
+}

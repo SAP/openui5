@@ -1,0 +1,69 @@
+{
+  "1.64.0": {
+    "date": "February 2019",
+    "notes": [
+      {
+        "id": "48fbef23b2fbce0bfc76f92e1492363a78b70d14",
+        "type": "FIX",
+        "text": "variable @sapContent_GridSize is undefined",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970141244"
+          }
+        ]
+      },
+      {
+        "id": "3bf0af9829546f06b24e25666549fcd57009359e",
+        "type": "FIX",
+        "text": "sap.m.CheckBox: Focus outline in SimpleForm is fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970110538"
+          }
+        ]
+      },
+      {
+        "id": "16bbab7451d4b2ecf98ed94f4b8cf1cd1eb2e6c8",
+        "type": "FIX",
+        "text": "sap.f.Avatar: Displaying transparent image is now correct",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970178419"
+          }
+        ]
+      },
+      {
+        "id": "5e84afc81a451c0390c84b28324a75a6052fbdff",
+        "type": "FEATURE",
+        "text": "sap.uxap.ObjectPageDynamicHeaderTitle: Single-line title on phone",
+        "references": []
+      },
+      {
+        "id": "ef87ca82251c990928d6feb79a0befe78e7c0742",
+        "type": "FEATURE",
+        "text": "sap_fiori_3: commons + ux3 libraries",
+        "references": []
+      },
+      {
+        "id": "3588421dec14c9d97eec0cea4931e6df8ca43912",
+        "type": "FEATURE",
+        "text": "sap.f.ShellBar: Accessibility enablement",
+        "references": []
+      },
+      {
+        "id": "dc9c9b26da98fdd0897aa9dbbf6a7683e656de4c",
+        "type": "FIX",
+        "text": "sap.m.Switch: hover color fixed for Fiori 3 theme",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980055094"
+          }
+        ]
+      }
+    ]
+  }
+}

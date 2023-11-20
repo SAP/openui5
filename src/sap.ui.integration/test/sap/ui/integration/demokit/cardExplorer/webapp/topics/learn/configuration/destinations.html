@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<title>Destinations</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<script src="../../../scripts/boot.js"></script>
+</head>
+
+<body class="sapUiBody topicBody">
+
+	<div class="topic">
+		<div class="content">
+
+			<h1 id="overview">
+				Destinations
+			</h1>
+
+			<p>
+				Destinations are used for outbound communication to a remote resource and contain the required
+				connection information.
+				They are represented by symbolic names that are used by the cloud application to refer to a remote
+				connection.
+				When a card is using SAP BTP destinations, those are configured in the manifest.
+				Inside the manifest, the card developer indicates the name of the destination and the URL that
+				depends on this destination.
+			</p>
+			<p>
+				Inside the host environment, the host application developer creates a method that resolves a given
+				destination name to an absolute URL. This happens with the help of the sap.ui.integration.Host element.
+			</p>
+			<p>
+				For more information of SAP Business Technology Platform destinations, check our <a data-demokit-href="#/topic/3a16c7a2f1e944deb000db49e5ece6be"
+					target="_blank">Create a Northwind Destination</a> example.
+			</p>
+
+			<h2 id="inTheManifest">
+				In the manifest
+			</h2>
+
+			<p>
+				In section <code>configuration</code>, sub section <code>destinations</code> of the card, the card
+				developer can describe the destinations on which the card depends. Those described destinations can be
+				referred inside a data request description with a placeholder like this:
+				<code>{{destinations.myDestinationKey}}</code>. See the example below.
+			</p>
+
+			<h3 id="properties">Destination properties</h3>
+
+			<div class="tableWrapper">
+				<table>
+					<tr>
+						<th>Property</th>
+						<th>Type</th>
+						<th>Required</th>
+						<th>Default</th>
+						<th>Description</th>
+						<th>Schema Version</th>
+						<th>Since</th>
+					</tr>
+					<tr>
+						<td>name</td>
+						<td>string</td>
+						<td>Yes</td>
+						<td></td>
+						<td>The name of the destination. This should be the same name that is used in the SAP Cloud
+							Platform. The host environment is responsible to resolve that name to a URL.</td>
+						<td>1.20.0</td>
+						<td>1.76</td>
+					</tr>
+					<tr>
+						<td>defaultUrl</td>
+						<td>string</td>
+						<td>No</td>
+						<td></td>
+						<td>Default url for the destination. If the destination can not be resolved by the host, this
+							url will be used.</td>
+						<td>1.21.0</td>
+						<td>1.77</td>
+					</tr>
+				</table>
+			</div>
+
+			<p>
+				<b>Note</b>: If you are developing a Component Card please check the <a
+					href="../../../index.html#/explore/destinations/component" target="_parent">Component Card
+					sample</a>.
+			</p>
+
+			<h2 id="inTheHostEnvironment">
+				In the host environment
+			</h2>
+
+			<p>
+				For detailed information about the contribution from host environment, see <a
+					href="../../../index.html#/integrate/destinations" target="_parent">Integrate Destinations</a>.
+			</p>
+
+			<h2 id="examples">
+				Example
+			</h2>
+
+			<p>An example with a card which fetches data from Northwind service:</p>
+			<pre class="lang-json">
+"sap.card": {
+	"type": "Table",
+	"data": {
+		"request": {
+			"url": "{{destinations.myDestination}}/Orders",
+			"parameters": {
+				"$format": "json",
+				"$top": "{parameters>/maxItems/value}",
+				"$orderby": "Freight desc"
+			}
+		}
+	},
+	"configuration": {
+		"destinations": {
+			"myDestination": {
+				"name": "Northwind"
+			}
+		},
+		"parameters": {
+			"maxItems": {
+				"value": 7,
+				"type": "integer"
+			}
+		}
+	},
+	"content": {
+		"data": {
+			"path": "/value/"
+		},
+		"maxItems": "{parameters>/maxItems/value}",
+		"row": {
+			"columns": [{
+					"title": "Customer",
+					"value": "{ShipName}"
+				},
+				{
+					"title": "Country",
+					"value": "{ShipCountry}"
+				},
+				{
+					"title": "Freight",
+					"value": "{Freight}"
+				}
+			]
+		}
+	}
+}</pre>
+
+			<a class="try-button" href="../../../index.html#/explore/destinations" target="_parent">Try it Out</a>
+		</div>
+	</div>
+</body>
+
+</html>

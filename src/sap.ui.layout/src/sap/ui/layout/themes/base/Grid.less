@@ -17,8 +17,11 @@
 
 div[class*="sapUiRespGrid"] > div[class*="sapUiRespGridSpan"] {
     float: left;
-    overflow: hidden;
 	min-height: 1px; // BCP: 1770523047
+}
+
+div.sapUiRespGridOverflowHidden[class*="sapUiRespGrid"] > div[class*="sapUiRespGridSpan"] {
+	overflow: hidden;
 }
 
 /* CLEAR FIX */

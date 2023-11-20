@@ -1,0 +1,93 @@
+{
+  "1.121.0": {
+    "date": "November 2023",
+    "notes": [
+      {
+        "id": "692e7c386e9a92a7b85448660e6c98eadff09e0e",
+        "type": "FIX",
+        "text": " core/Shortcut: trigger \"blur\" within a timeout",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500007245922023"
+          }
+        ]
+      },
+      {
+        "id": "4a16709820f3ebc0d65886d8087fa6b279363924",
+        "type": "FIX",
+        "text": " sap.f.FlexibleColumnLayout: fix not visible column",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370126866"
+          }
+        ]
+      },
+      {
+        "id": "14eed81026df8c27714e3e6705273fb883d8fa92",
+        "type": "FIX",
+        "text": " sap.f.FlexibleColumnLayout: Reveal/conceal mechanism fixed"
+      },
+      {
+        "id": "eb065ab90e63a40aae5aa1f0a1aa7104cd3e5a39",
+        "type": "FIX",
+        "text": " sap.f.SidePanel: actionBarExpanded now works when there is only one action item",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370132714"
+          }
+        ]
+      },
+      {
+        "id": "b7a62857a6efe6760afc17d6469d6d5e3172b426",
+        "type": "FIX",
+        "text": " sap.f.FlexibleColumnLayout: Restrict column size",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370115780"
+          }
+        ]
+      },
+      {
+        "id": "1904bb6ffe08b6d5f54fa45b06d9cdd044d965d2",
+        "type": "FIX",
+        "text": " sap.f.DynamicPage: Fix RTA for content of DynamicPageTitle",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500008317072023"
+          }
+        ]
+      },
+      {
+        "id": "2bc4758fcf78c6eae3748b987541e99d9535fccb",
+        "type": "FIX",
+        "text": " sap.ui.integration.widgets.Card: aria-level is correct when card is in dialog",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370104563"
+          }
+        ]
+      },
+      {
+        "id": "9851fa26f844d02372bdfb23efa7ce4b061b1a44",
+        "type": "FIX",
+        "text": " sap.f.DynamicPageHeader: Aligned with visual specification",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370081951"
+          },
+          {
+            "type": "BCP",
+            "reference": "2370103521"
+          }
+        ]
+      }
+    ]
+  }
+}

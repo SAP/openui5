@@ -1,0 +1,70 @@
+<mvc:View
+	xmlns="sap.m"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:f="sap.f"
+	xmlns:w="sap.ui.integration.widgets"
+	displayBlock="true"
+	controllerName="sap.f.cardsdemo.controller.TableContent">
+	<Page title="{i18n>appTitle}">
+		<subHeader>
+			<Toolbar>
+				<ToolbarSpacer/>
+				<Title text="Table Content Card "/>
+				<ToolbarSpacer/>
+			</Toolbar>
+		</subHeader>
+		<mvc:View viewName="sap.f.cardsdemo.view.common.CommonCardSettings" type="XML" async="true"></mvc:View>
+		<f:GridContainer class="sapUiSmallMargin">
+			<w:Card
+				id="tablecard1"
+				baseUrl="{cardsPlayground>/playgroundBaseUrl}"
+				manifest="{manifests>/tablecard1}"
+				height="auto"
+				class="sapUiMediumMarginEnd">
+				<w:layoutData>
+					<f:GridContainerItemLayoutData columns="6" />
+				</w:layoutData>
+			</w:Card>
+			<w:Card
+				id="tablecard2"
+				baseUrl="{cardsPlayground>/playgroundBaseUrl}"
+				manifest="{manifests>/tablecard2}">
+				<w:layoutData>
+					<f:GridContainerItemLayoutData columns="5" />
+				</w:layoutData>
+			</w:Card>
+			<w:Card
+				id="tablecard3"
+				baseUrl="{cardsPlayground>/playgroundBaseUrl}"
+				manifest="{manifests>/tablecard3}">
+				<w:layoutData>
+					<f:GridContainerItemLayoutData columns="5" />
+				</w:layoutData>
+			</w:Card>
+			<w:Card
+				id="tablecard4"
+				baseUrl="{cardsPlayground>/playgroundBaseUrl}"
+				manifest="{manifests>/tablecard4}">
+				<w:layoutData>
+					<f:GridContainerItemLayoutData columns="5" />
+				</w:layoutData>
+			</w:Card>
+			<w:Card
+				id="tablecard5"
+				baseUrl="{cardsPlayground>/playgroundBaseUrl}"
+				manifest="{manifests>/tablecard5}">
+				<w:layoutData>
+					<f:GridContainerItemLayoutData columns="5" />
+				</w:layoutData>
+			</w:Card>
+			<w:Card
+				id="tablecard6"
+				baseUrl="{cardsPlayground>/playgroundBaseUrl}"
+				manifest="{manifests>/tablecard6}">
+				<w:layoutData>
+					<f:GridContainerItemLayoutData columns="5" />
+				</w:layoutData>
+			</w:Card>
+		</f:GridContainer>
+	</Page>
+</mvc:View>

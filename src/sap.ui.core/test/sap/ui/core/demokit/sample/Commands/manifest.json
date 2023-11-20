@@ -1,0 +1,44 @@
+{
+	"_version": "1.12.0",
+	"sap.app": {
+		"id": "sap.ui.core.sample.Commands",
+		"type": "application"
+	},
+	"sap.ui5": {
+		"dependencies": {
+			"libs": {
+				"sap.m": {},
+				"sap.ui.core": {}
+			}
+		},
+		"commands": {
+			"Save": {
+				"shortcut": "Ctrl+S"
+			},
+			"Delete": {
+				"shortcut": "Ctrl+D"
+			}
+		},
+		"models": {
+			"viewModel": {
+				"type": "sap.ui.model.json.JSONModel"
+			}
+		},
+		"rootView": {
+			"viewName": "sap.ui.core.sample.Commands.Commands",
+			"type": "XML",
+			"async": true,
+			"id": "commands"
+		},
+		"config": {
+			"sample": {
+				"files": [
+					"Component.js",
+					"Commands.view.xml",
+					"Commands.controller.js",
+					"manifest.json"
+				]
+			}
+		}
+	}
+}

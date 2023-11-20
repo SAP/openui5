@@ -1,0 +1,10 @@
+<mvc:View xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc"
+		  xmlns="sap.m" xmlns:html="http://www.w3.org/1999/xhtml"
+		  width="100%"
+		  displayBlock="true"
+		  controllerName="my.component.sample.advanced.Main">
+
+	<VBox class="sapUiSmallMargin">
+		<Label text="Value for parameter 'city' is:" /><Text id="cityValue"/>
+	</VBox>
+</mvc:View>

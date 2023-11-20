@@ -1,0 +1,86 @@
+{
+	"_version": "1.17.0",
+	"sap.app": {
+		"id": "adaptivecard.embedded",
+		"type": "card",
+		"title": "Sample of an Adaptive Card with different Action styles",
+		"subTitle": "Sample of an Adaptive Card with different Action styles",
+		"applicationVersion": {
+			"version": "1.0.0"
+		},
+		"shortTitle": "A short title for this Card",
+		"info": "Additional information about this Card",
+		"description": "A long description for this Card",
+		"tags": {
+			"keywords": [
+				"Adaptive",
+				"Card",
+				"Form",
+				"Sample",
+				"Styles",
+				"Actions"
+			]
+		}
+	},
+	"sap.card": {
+		"configuration": {
+			"actionHandlers": {
+				"submit": {
+					"url": "./action-styling.json",
+					"method": "GET"
+				}
+			}
+		},
+		"type": "AdaptiveCard",
+		"header": {
+			"title": "Board Meeting",
+			"subTitle": "Invitation",
+			"icon": {
+				"src": "sap-icon://appointment"
+			}
+		},
+		"content": {
+			"$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+			"version": "1.0",
+			"body": [
+				{
+					"type": "TextBlock",
+					"text": "Please confirm your attendance",
+					"wrap": true,
+					"style": "heading"
+				},
+				{
+					"type": "FactSet",
+					"facts": [
+						{
+							"title": "From",
+							"value": "Emily Williams"
+						},
+						{
+							"title": "Date",
+							"value": "August 17, 3:00 PM"
+						},
+						{
+							"title": "Location",
+							"value": "9696 Plymouth Dr., East Lansing, MI 48823"
+						}
+					]
+				}
+			],
+			"actions": [
+				{
+					"type": "Action.Submit",
+					"style": "positive",
+					"title": "Accept",
+					"data": "accept"
+				},
+				{
+					"type": "Action.Submit",
+					"title": "Decline",
+					"style": "destructive",
+					"data": "decline"
+				}
+			]
+		}
+	}
+}

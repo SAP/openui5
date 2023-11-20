@@ -3,25 +3,28 @@
 /* Belize theme                               */
 /* ========================================== */
 
-/* background color for the sections of the page below the header: */
-.sapUxAPObjectPageContainer, /* (1) the sections container */
-.sapUxAPObjectPageContainer + div, /* (2) the spacer */
-.sapUxAPObjectPageHeaderDetailsHidden /* (3) the placeholder for the headerContent is also part of the page content bellow the header */ {
-  background-color: @sapUiGlobalBackgroundColor;
+.sapUshellShell {
+	/* background color for the sections of the page below the header: */
+	.sapUxAPObjectPageContainer, /* (1) the sections container */
+	.sapUxAPObjectPageContainer + div, /* (2) the spacer */
+	.sapUxAPObjectPageHeaderDetailsHidden /* (3) the placeholder for the headerContent is also part of the page content bellow the header */ {
+		background-color: @sapUiGlobalBackgroundColor;
+	}
+}
+
+.sapUxAPObjectPageNavigation {
+	background: @sapUiObjectHeaderBackground;
+
+	&.sapUxAPObjectPageNavigationTransparent {
+		background: transparent;
+	}
+
+	&.sapUxAPObjectPageNavigationTranslucent {
+		background: lighten(@sapUiObjectHeaderBackground, 10);
+	}
 }
 
 .sapUxAPObjectPageHeaderDetails {
-	.sapMObjectNumberEmph.sapMObjectNumber {
-		> .sapMObjectNumberText {
-			font-family: @sapUiFontHeaderFamily;
-			font-size: 1.375rem;
-			font-weight: @sapUiFontHeaderWeight;
-		}
-		> .sapMObjectNumberUnit {
-			font-family: @sapUiFontFamily;
-			font-size: @sapMFontSmallSize;
-		}
-	}
 	.sapMObjectNumberEmph.sapMObjectNumber:not(.sapMObjectNumberStatusError):not(.sapMObjectNumberStatusWarning):not(.sapMObjectNumberStatusSuccess) {
 		color: @sapUiGroupTitleTextColor;
 	}
@@ -49,21 +52,23 @@
 	height: 1.9375rem;
 }
 
-// title hover
-.sapUxAPObjectPageLayout.sapUxAPObjectPageLayoutTitleClickEnabled .sapFDynamicPageTitle:hover {
-	background-color: darken(@sapUiObjectHeaderBackground, 3);
-}
-
-
 /* ======================================== */
 /* Title and Toggle Header Visual Indicator */
 /* ======================================== */
 .sapUxAPObjectPageLayout {
   &.sapUxAPObjectPageLayoutTitleClickEnabled {
-    .sapFDynamicPageTitle:hover,
+
     &.sapUxAPObjectPageLayoutTitleForceHovered .sapFDynamicPageTitle {
-      background-color: darken(@sapUiObjectHeaderBackground, 3);
-    }
+      .title-hover(@sapUiObjectHeaderBackground);
+	}
+
+	&.sapUxAPObjectPageLayoutTitleForceHovered .sapFDynamicPageTitleTranslucent {
+		.title-hover(lighten(@sapUiObjectHeaderBackground, 10));
+	}
+
+	&.sapUxAPObjectPageLayoutTitleForceHovered .sapFDynamicPageTitleTransparent {
+		.title-hover(transparent);
+	}
 
     &.sapUxAPObjectPageLayoutTitleForceHovered {
       .sapFDynamicPageToggleHeaderIndicator {
@@ -89,6 +94,7 @@
     }
 
     // active state
+    & > .sapMBtnInner.sapMFocusable.sapMBtnActive,
     &:focus > .sapMBtnInner.sapMFocusable.sapMBtnActive {
       background: @sapUiSelected;
       color: @sapUiButtonActiveBackground;
@@ -102,4 +108,8 @@
 	color: @sapUiPageFooterTextColor;
 	box-shadow: @sapUiShadowLevel1;
 	border-color: transparent;
+}
+
+.title-hover(@backgroundColor) {
+	background-color: darken(@backgroundColor, 3);
 }

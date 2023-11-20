@@ -1,0 +1,79 @@
+{
+	"_version": "1.38.0",
+	"sap.app": {
+		"id": "card.explorer.extension.showMessage",
+		"type": "card",
+		"title": "Sample of a List with Message",
+		"subTitle": "Sample of a List with Message",
+		"applicationVersion": {
+			"version": "1.0.0"
+		},
+		"shortTitle": "A short title for this Card",
+		"info": "Additional information about this Card",
+		"description": "A long description for this Card",
+		"tags": {
+			"keywords": [
+				"Card",
+				"Sample",
+				"Extension",
+				"Data",
+				"Refresh"
+			]
+		}
+	},
+	"sap.card": {
+		"type": "List",
+		"extension": "./ShowMessageExtension",
+		"header": {
+			"title": "Products",
+			"icon": {
+				"src": "sap-icon://products"
+			}
+		},
+		"content": {
+			"data": {
+				"request": {
+					"url": "/products"
+				}
+			},
+			"item": {
+				"title": "{Name}",
+				"description": "{Description}",
+				"info": {
+					"value": "{Id}"
+				},
+				"actionsStrip": [
+					{
+						"text": "Add to Favorites",
+						"visible": "{= !${IsFavorite} }",
+						"actions": [
+							{
+								"type": "Custom",
+								"parameters": {
+									"method": "addToFavorites",
+									"name": "{Name}",
+									"id": "{Id}"
+								}
+							}
+						]
+					},
+					{
+						"buttonType": "Transparent",
+						"text": "Remove",
+						"actions": [
+							{
+								"type": "Custom",
+								"parameters": {
+									"method": "remove",
+									"name": "{Name}",
+									"id": "{Id}"
+								}
+							}
+						]
+					}
+				]
+			},
+			"maxItems": 4
+		}
+	}
+}

@@ -1,8 +1,11 @@
 <mvc:View
 	height="100%"
 	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:core="sap.ui.core"
 	xmlns="sap.m">
 	<Page>
+		<core:InvisibleText id="inputLabel" text="Input label"/>
+
 		<MessageStrip text="Left and Right aligned content." class="sapUiTinyMargin"/>
 		<OverflowToolbar class="sapUiMediumMarginTop">
 			<Button text="Reject" type="Reject"/>
@@ -29,7 +32,7 @@
 			<ToolbarSpacer/>
 			<CheckBox text="CheckBox"/>
 			<ToolbarSpacer/>
-			<Button icon="sap-icon://drop-down-list"/>
+			<Button tooltip="Dropdown" icon="sap-icon://drop-down-list"/>
 			<ToolbarSpacer/>
 			<RadioButton text="RadioButton"/>
 			<ToolbarSpacer/>
@@ -47,11 +50,11 @@
 
 		<MessageStrip text="ToolbarSpacer does not have to be flexible, a fixed width can be specified too." class="sapUiTinyMargin"/>
 		<OverflowToolbar class="sapUiMediumMarginTop">
-			<Input width="100px" placeholder="First Name"/>
-			<Input width="100px" placeholder="Last Name"/>
+			<Input ariaLabelledBy="inputLabel" width="100px" placeholder="First Name"/>
+			<Input ariaLabelledBy="inputLabel" width="100px" placeholder="Last Name"/>
 			<ToolbarSpacer width="40px"/>
-			<Input type="Email" width="100px" placeholder="Email"/>
-			<Input type="Number" width="80px" placeholder="Age"/>
+			<Input ariaLabelledBy="inputLabel" type="Email" width="100px" placeholder="Email"/>
+			<Input ariaLabelledBy="inputLabel" type="Number" width="80px" placeholder="Age"/>
 			<ToolbarSpacer/>
 			<Button text="Submit" type="Accept"/>
 		</OverflowToolbar>

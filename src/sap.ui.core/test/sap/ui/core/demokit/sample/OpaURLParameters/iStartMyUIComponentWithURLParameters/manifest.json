@@ -1,0 +1,31 @@
+{
+	"sap.app": {
+		"id": "sap.ui.core.sample.OpaURLParameters.iStartMyUIComponentWithURLParameters",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"dependencies": {
+			"libs": {
+				"sap.m": {},
+				"sap.ui.core": {}
+			}
+		},
+		"config": {
+			"sample": {
+				"iframe": "iStartMyUIComponentWithURLParameters.html?opaExecutionDelay=700",
+				"stretch": true,
+				"files": [
+					"iStartMyUIComponentWithURLParameters.html",
+					"iStartMyUIComponentWithURLParameters.js",
+					"applicationUnderTest/Component.js",
+					"applicationUnderTest/manifest.json",
+					"applicationUnderTest/view/Main.view.xml",
+					"applicationUnderTest/controller/Main.controller.js",
+					"manifest.json"
+				]
+			}
+		}
+	}
+}

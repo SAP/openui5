@@ -1,14 +1,24 @@
 /*!
  * ${copyright}
  */
-sap.ui.require([
-	"jquery.sap.global",
+sap.ui.define([
+	"sap/base/Log",
+	"sap/base/util/JSTokenizer",
+	"sap/ui/base/BindingInfo",
 	"sap/ui/base/BindingParser",
 	"sap/ui/base/ExpressionParser",
 	"sap/ui/core/Icon",
+	"sap/ui/core/InvisibleText",
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/model/odata/ODataUtils"
-], function (jQuery, BindingParser, ExpressionParser, Icon, JSONModel, ODataUtils) {
+	"sap/ui/performance/Measurement",
+	"sap/ui/thirdparty/URI",
+	// following imports are only used while dynamically evaluating expressions
+	"sap/ui/model/odata/ODataUtils",
+	"sap/ui/model/odata/type/String",
+	"sap/ui/model/type/Integer",
+	"sap/ui/thirdparty/URITemplate"
+], function (Log, JSTokenizer, BindingInfo, BindingParser, ExpressionParser, Icon, InvisibleText,
+		JSONModel, Measurement, URI) {
 	/*global QUnit, sinon */
 	/*eslint no-warning-comments: 0 */
 	"use strict";
@@ -46,13 +56,16 @@ sap.ui.require([
 	 * @param {object} [oScope] - the object to resolve formatter functions in the control
 	 */
 	function check(assert, sExpression, vResult, oScope) {
-		var oIcon = new Icon({
-				color: sExpression[0] === "{" ? sExpression : "{=" + sExpression + "}",
+		var oInvisibleText = new InvisibleText({
+				text: sExpression[0] === "{" ? sExpression : "{=" + sExpression + "}",
 				models: oModel
 			}, oScope);
 
-		oIcon.bindObject("/");
-		assert.strictEqual(oIcon.getColor(), oIcon.validateProperty("color", vResult));
+		oInvisibleText.bindObject("/");
+		assert.strictEqual(oInvisibleText.getText(),
+			oInvisibleText.validateProperty("text", vResult));
+
+		oInvisibleText.destroy();
 	}
 
 	/**
@@ -80,7 +93,7 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.module("sap.ui.base.ExpressionParser", {
 		beforeEach : function () {
-			this.oLogMock = this.mock(jQuery.sap.log);
+			this.oLogMock = this.mock(Log);
 			this.oLogMock.expects("warning").never();
 			this.oLogMock.expects("error").never();
 		},
@@ -315,6 +328,68 @@ sap.ui.require([
 	);
 
 	//*********************************************************************************************
+	QUnit.test("Locals: function call, undefined, shadowing", function (assert) {
+		var sInput = "{= MODEL.someFunction(undefined, ${A}) + Infinity }",
+			mLocals = {
+				Infinity : 42, // local shadows global
+				MODEL : {
+					someFunction : function (a, b) {
+						return a + "," + b;
+					}
+				}
+			},
+			oBindingInfo;
+
+		// code under test
+		oBindingInfo = BindingParser.complexParser(sInput, mLocals, false, false, true);
+
+		assert.deepEqual(oBindingInfo.formatter("foo"), "undefined,foo42");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("Locals: constant", function (assert) {
+		var sInput = "{= MODEL.someFunction() }",
+			mLocals = {
+				MODEL : {
+					someFunction : function () {
+						return "foo";
+					}
+				}
+			};
+
+		// sinon workaround: The BindingInfo.parse function uses getter and setter to lazily
+		// evaluate the binding-syntax. Sinon is not able to mock such properties with
+		// accessor functions.
+		var fnOrig = BindingInfo.parse;
+		BindingInfo.parse = function (sString, oContext, bUnescape) {
+			assert.strictEqual(sString, sInput);
+			assert.strictEqual(mLocals, oContext);
+			assert.strictEqual(bUnescape, true);
+
+			// bStaticContext = true, just like XMLPreprocessor would do it
+			return BindingParser.complexParser(sString, oContext, bUnescape, false, true);
+		};
+
+		// "code under test"
+		check(assert, sInput, "foo", mLocals);
+
+		// reset the mocked parse function
+		BindingInfo.parse = fnOrig;
+	});
+
+	//*********************************************************************************************
+	QUnit.test("parse: no globals - no undefined!", function (assert) {
+		this.oLogMock.expects("warning").withExactArgs(
+			"Unsupported global identifier 'undefined' in expression parser input 'undefined'",
+			undefined, "sap.ui.base.ExpressionParser");
+
+		this.mock(Object).expects("assign").never(); // no copy needed!
+
+		// code under test
+		ExpressionParser.parse(null, "undefined", 0, {});
+	});
+
+	//*********************************************************************************************
 	[
 		{ binding: "{=odata.fillUriTemplate(.}", message: "Unexpected .", token: "." },
 		{ binding: "{=odata.fillUriTemplate('foo', )}", message: "Unexpected )", token: ")" },
@@ -339,7 +414,7 @@ sap.ui.require([
 		{ binding: "{=[1 2]}", message: "Expected , but instead saw 2", token: "2"},
 		{ binding: "{=[1+]}", message: "Unexpected ]", token: "]"},
 		{ binding: "{=[1,]}", message: "Unexpected ]", token: "]"},
-		// Note: jQuery.sap._createJSTokenizer()#string fails with at: length + 2
+		// Note: sap/base/util/JSTokenizer#string fails with at: length + 2
 		{ binding: "{= '}", message: "Bad string", at: 6}, // nud
 		{ binding: "{= 0 '}", message: "Bad string", at: 8} // led
 	].forEach(function (oFixture) {
@@ -398,6 +473,9 @@ sap.ui.require([
 	}, {
 		expression: "{=odata.fillUriTemplate('http://foo.com/p1,p2')}",
 		result: "http://foo.com/p1,p2"
+	}, { // BCP: 1870419342
+		expression: "{=odata.fillUriTemplate('\n http://foo.com/\n\t\t\t\t\t\t\t\t\t',{})}",
+		result: "http://foo.com/"
 	}]);
 
 	//*********************************************************************************************
@@ -518,23 +596,181 @@ sap.ui.require([
 	]);
 
 	//*********************************************************************************************
-	QUnit.test("odata.compare", function (assert) {
-		this.mock(sap.ui).expects("requireSync")
-			.withExactArgs("sap/ui/model/odata/v4/ODataUtils").returns(ODataUtils);
-		this.mock(ODataUtils).expects("compare")
-			.withExactArgs(2, 3).returns("-1");
+	checkFixtures("odata.collection", [{
+		expression: "{= odata.collection([0, 1, 2]) }",
+		result: "0,1,2"
+	}, {
+		expression: "{= odata.collection([0, 1, undefined, 3, undefined, 5, undefined]) }",
+		result: "0,1,3,5"
+	}, {
+		expression: "{= odata.collection([0, '', NaN, undefined, ' ', [], false]) }",
+		result: "0,,NaN, ,,false"
+	}]);
 
+	//*********************************************************************************************
+	QUnit.test("odata.compare, ODataUtils is loaded", function (assert) {
+		const oDataUtils = {compare() {}};
+		const oSapUiMock = this.mock(sap.ui);
+		oSapUiMock.expects("require").withExactArgs("sap/ui/model/odata/v4/ODataUtils").returns(oDataUtils);
+		this.mock(oDataUtils).expects("compare").withExactArgs(2, 3).returns("-1");
+		// While destroying the control used in the check function, require is sometimes called
+		oSapUiMock.expects("require").withExactArgs("sap/ui/core/ResizeHandler").atLeast(0).callThrough();
+		oSapUiMock.expects("require").withExactArgs("sap/ui/core/FocusHandler").atLeast(0).callThrough();
+
+		// code under test
 		check(assert, "{=odata.compare(2,3)}", "-1");
 	});
 
 	//*********************************************************************************************
-	QUnit.test("odata.uriEncode", function (assert) {
-		this.mock(sap.ui).expects("requireSync")
-			.withExactArgs("sap/ui/model/odata/ODataUtils").returns(ODataUtils);
-		this.mock(ODataUtils).expects("formatValue")
-			.withExactArgs("foo", "Edm.String").returns("'foo'");
+	QUnit.test("odata.compare throws error if ODataUtils is not loaded", function (assert) {
+		const oSapUiMock = this.mock(sap.ui);
 
+		oSapUiMock.expects("require").withExactArgs("sap/ui/model/odata/v4/ODataUtils").returns(undefined);
+		/** @deprecated As of version 1.120.0 */
+		oSapUiMock.expects("requireSync").withExactArgs("sap/ui/model/odata/v4/ODataUtils").returns(undefined);
+		// While destroying the control used in the check function, require is sometimes called
+		oSapUiMock.expects("require").withExactArgs("sap/ui/core/ResizeHandler").atLeast(0).callThrough();
+		oSapUiMock.expects("require").withExactArgs("sap/ui/core/FocusHandler").atLeast(0).callThrough();
+		const sExpression = "{=odata.compare(2,3)}";
+		this.oLogMock.expects("warning").withExactArgs("TypeError: Expression uses 'odata.compare' which requires"
+				+ " to import 'sap/ui/model/odata/v4/ODataUtils' in advance",
+				sExpression,
+				"sap.ui.base.ExpressionParser");
+
+		// code under test
+		check(assert, sExpression, "undefined");
+	});
+	/** @deprecated As of version 1.120.0 */
+	QUnit.test("odata.compare, load ODataUtils on demand", function (assert) {
+		const oDataUtils = {compare() {}};
+		const oSapUiMock = this.mock(sap.ui);
+
+		oSapUiMock.expects("require").withExactArgs("sap/ui/model/odata/v4/ODataUtils").returns(undefined);
+		oSapUiMock.expects("requireSync").withExactArgs("sap/ui/model/odata/v4/ODataUtils").returns(oDataUtils);
+		this.mock(oDataUtils).expects("compare").withExactArgs(2, 3).returns("-1");
+		// While destroying the control used in the check function, require is sometimes called
+		oSapUiMock.expects("require").withExactArgs("sap/ui/core/ResizeHandler").atLeast(0).callThrough();
+		oSapUiMock.expects("require").withExactArgs("sap/ui/core/FocusHandler").atLeast(0).callThrough();
+
+		// code under test
+		check(assert, "{=odata.compare(2,3)}", "-1");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("odata.uriEncode, ODataUtils is loaded", function (assert) {
+		const oDataUtils = {formatValue() {}};
+		const oSapUiMock = this.mock(sap.ui);
+		oSapUiMock.expects("require").withExactArgs("sap/ui/model/odata/ODataUtils").returns(oDataUtils);
+		this.mock(oDataUtils).expects("formatValue").withExactArgs("foo", "Edm.String").returns("'foo'");
+		// While destroying the control used in the check function, require is sometimes called
+		oSapUiMock.expects("require").withExactArgs("sap/ui/core/ResizeHandler").atLeast(0).callThrough();
+		oSapUiMock.expects("require").withExactArgs("sap/ui/core/FocusHandler").atLeast(0).callThrough();
+
+		// code under test
 		check(assert, "{=odata.uriEncode('foo', 'Edm.String')}", "'foo'");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("odata.uriEncode throws error if ODataUtils is not loaded", function (assert) {
+		const oSapUiMock = this.mock(sap.ui);
+		oSapUiMock.expects("require").withExactArgs("sap/ui/model/odata/ODataUtils").returns(undefined);
+		/** @deprecated As of version 1.120.0 */
+		oSapUiMock.expects("requireSync").withExactArgs("sap/ui/model/odata/ODataUtils").returns(undefined);
+		// While destroying the control used in the check function, require is sometimes called
+		oSapUiMock.expects("require").withExactArgs("sap/ui/core/ResizeHandler").atLeast(0).callThrough();
+		oSapUiMock.expects("require").withExactArgs("sap/ui/core/FocusHandler").atLeast(0).callThrough();
+		const sExpression = "{=odata.uriEncode('foo', 'Edm.String')}";
+		this.oLogMock.expects("warning").withExactArgs("TypeError: Expression uses 'odata.uriEncode' which requires"
+				+ " to import 'sap/ui/model/odata/ODataUtils' in advance",
+				sExpression,
+				"sap.ui.base.ExpressionParser");
+
+		// code under test
+		check(assert, sExpression, "undefined");
+	});
+	/** @deprecated As of version 1.120.0 */
+	QUnit.test("odata.uriEncode, load ODataUtils on demand", function (assert) {
+		const oDataUtils = {formatValue() {}};
+		const oSapUiMock = this.mock(sap.ui);
+		oSapUiMock.expects("require").withExactArgs("sap/ui/model/odata/ODataUtils").returns(undefined);
+		oSapUiMock.expects("requireSync").withExactArgs("sap/ui/model/odata/ODataUtils").returns(oDataUtils);
+		this.mock(oDataUtils).expects("formatValue").withExactArgs("foo", "Edm.String").returns("'foo'");
+		// While destroying the control used in the check function, require is sometimes called
+		oSapUiMock.expects("require").withExactArgs("sap/ui/core/ResizeHandler").atLeast(0).callThrough();
+		oSapUiMock.expects("require").withExactArgs("sap/ui/core/FocusHandler").atLeast(0).callThrough();
+
+		// code under test
+		check(assert, "{=odata.uriEncode('foo', 'Edm.String')}", "'foo'");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("odata.fillUriTemplate, URITemplate is loaded", function (assert) {
+		const oOriginalExpand = URI.expand;
+		const oSapUiMock = this.mock(sap.ui);
+		const oURI = {expand() {}};
+		this.mock(oURI).expects("expand").withExactArgs("http://foo/{t},{m}", {m : "tel", t : "mail"})
+			.returns("http://foo/mail,tel");
+		URI.expand = oURI.expand;
+		// While destroying the control used in the check function, require is sometimes called
+		oSapUiMock.expects("require").withExactArgs("sap/ui/core/ResizeHandler").atLeast(0).callThrough();
+		oSapUiMock.expects("require").withExactArgs("sap/ui/core/FocusHandler").atLeast(0).callThrough();
+		oSapUiMock.expects("require").withExactArgs("sap/ui/core/Messaging").atLeast(0).callThrough();
+
+		// code under test
+		check(assert, "{=odata.fillUriTemplate('http://foo/{t},{m}', {'t': ${/mail}, 'm': ${/tel}})}",
+			"http://foo/mail,tel");
+
+		// cleanup
+		URI.expand = oOriginalExpand;
+	});
+
+	//*********************************************************************************************
+	QUnit.test("odata.fillUriTemplate throws error if URITemplate is not loaded", function (assert) {
+		const oOriginalExpand = URI.expand;
+		const oSapUiMock = this.mock(sap.ui);
+		/** @deprecated As of version 1.120.0 */
+		oSapUiMock.expects("requireSync").withExactArgs("sap/ui/thirdparty/URITemplate");
+		URI.expand = undefined;
+		// While destroying the control used in the check function, require is sometimes called
+		oSapUiMock.expects("require").withExactArgs("sap/ui/core/ResizeHandler").atLeast(0).callThrough();
+		oSapUiMock.expects("require").withExactArgs("sap/ui/core/FocusHandler").atLeast(0).callThrough();
+		oSapUiMock.expects("require").withExactArgs("sap/ui/core/Messaging").atLeast(0).callThrough();
+		const sExpression = "{=odata.fillUriTemplate('http://foo/{t},{m}', {'t': ${/mail}, 'm': ${/tel}})}";
+		this.oLogMock.expects("warning").withExactArgs("TypeError: Expression uses 'odata.fillUriTemplate' which"
+			+ " requires to import 'sap/ui/thirdparty/URITemplate' in advance",
+			sExpression,
+			"sap.ui.base.ExpressionParser");
+
+		// code under test
+		check(assert,sExpression, "");
+
+		// cleanup
+		URI.expand = oOriginalExpand;
+	});
+	/** @deprecated As of version 1.120.0 */
+	QUnit.test("odata.fillUriTemplate, load URITemplate on demand", function (assert) {
+		const oOriginalExpand = URI.expand;
+		const oSapUiMock = this.mock(sap.ui);
+		const oURI = {expand() {}};
+		oSapUiMock.expects("requireSync").withExactArgs("sap/ui/thirdparty/URITemplate").callsFake(function () {
+			URI.expand = oURI.expand;
+
+			return "~URITemplate";
+		});
+		this.mock(oURI).expects("expand").withExactArgs("http://foo/{t},{m}", {m : "tel", t : "mail"})
+			.returns("http://foo/mail,tel");
+		URI.expand = undefined;
+		// While destroying the control used in the check function, require is sometimes called
+		oSapUiMock.expects("require").withExactArgs("sap/ui/core/ResizeHandler").atLeast(0).callThrough();
+		oSapUiMock.expects("require").withExactArgs("sap/ui/core/FocusHandler").atLeast(0).callThrough();
+		oSapUiMock.expects("require").withExactArgs("sap/ui/core/Messaging").atLeast(0).callThrough();
+
+		// code under test
+		check(assert,"{=odata.fillUriTemplate('http://foo/{t},{m}', {'t': ${/mail}, 'm': ${/tel}})}",
+			"http://foo/mail,tel");
+
+		// cleanup
+		URI.expand = oOriginalExpand;
 	});
 
 	//*********************************************************************************************
@@ -544,8 +780,8 @@ sap.ui.require([
 		// w/o try/catch, a formatter's exception is thrown out of the control's c'tor...
 		// --> expression binding provides the comfort of an "automatic try/catch"
 		assert.throws(function () {
-			return new Icon({
-				color : {
+			return new InvisibleText({
+				text : {
 					path : '/',
 					formatter : function () { return null.toString(); }
 				},
@@ -574,12 +810,14 @@ sap.ui.require([
 			models : oModel
 		});
 		assert.strictEqual(oIcon.getDecorative(), true);
+		oIcon.destroy();
 
 		oIcon = new Icon({
 			decorative : "{= !!${/IsActiveEntity} }",
 			models : oModel
 		});
 		assert.strictEqual(oIcon.getDecorative(), false);
+		oIcon.destroy();
 
 		oIcon = new Icon({
 			decorative : "{= ${/IsActiveEntity} }",
@@ -588,6 +826,7 @@ sap.ui.require([
 		assert.strictEqual(oIcon.getDecorative(), true, "default value used!");
 		assert.strictEqual(oIcon.validateProperty("decorative", undefined), true,
 			"default value used!");
+		oIcon.destroy();
 	});
 
 	//*********************************************************************************************
@@ -608,10 +847,10 @@ sap.ui.require([
 				+ "${path: '/five', formatter: '.myFormatter'} : '7'", "~5~", 1);
 
 		// if we do not ensure that both ${mail} become the same part, evaluation is performed on
-		// partly resolved parts when calling oIcon.bindObject() after oIcon.bindProperty() in
-		// check(). Then the first ${mail} is already resolved (-> truthy) while the second still
-		// is null, the expression runs into an exception (" Cannot read property 'indexOf' of
-		// null") and raises a warning.
+		// partly resolved parts when calling oInvisibleText.bindObject() after
+		// oInvisibleText.bindProperty() in check(). Then the first ${mail} is already resolved
+		// (-> truthy) while the second still is null, the expression runs into an exception
+		// ("Cannot read property 'indexOf' of null") and raises a warning.
 		check(assert, "${mail} && ${mail}.indexOf('mail')", "0");
 	});
 
@@ -621,7 +860,7 @@ sap.ui.require([
 		QUnit.test("saveBindingAsPart: primitive value " + vPrimitiveValue, function (assert) {
 			var sBinding = "{:= ${foo : '~primitive~'} }";
 
-			this.mock(jQuery.sap).expects("parseJS")
+			this.mock(JSTokenizer).expects("parseJS")
 				.once() // this would be violated by bad code
 				.withExactArgs(sBinding, 5)
 				.returns({
@@ -637,10 +876,10 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("parse: Performance measurement points", function (assert) {
-		var oAverageSpy = this.spy(jQuery.sap.measure, "average")
+		var oAverageSpy = this.spy(Measurement, "average")
 				.withArgs("sap.ui.base.ExpressionParser#parse", "",
 					["sap.ui.base.ExpressionParser"]),
-			oEndSpy = this.spy(jQuery.sap.measure, "end")
+			oEndSpy = this.spy(Measurement, "end")
 				.withArgs("sap.ui.base.ExpressionParser#parse");
 
 		ExpressionParser.parse(function () { assert.ok(false, "unexpected call"); }, "{='foo'}", 2);
@@ -740,12 +979,9 @@ sap.ui.require([
 				message: sMessage,
 				at: iAt,
 				text: sInput
-			},
-			oTokenizer = jQuery.sap._createJSTokenizer();
+			};
 
-		this.mock(jQuery.sap).expects("_createJSTokenizer").withExactArgs()
-			.returns(oTokenizer);
-		this.mock(oTokenizer).expects("white").withExactArgs()
+		this.mock(JSTokenizer.prototype).expects("white").withExactArgs()
 			.throws(oError);
 
 		this.checkError(assert, sInput, sMessage, iAt);
@@ -754,12 +990,9 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("JSTokenizer throws Error", function (assert) {
 		var sExpression = "{= 'foo' }",
-			oError = new Error("Must not set index 0 before previous index 1"),
-			oTokenizer = jQuery.sap._createJSTokenizer();
+			oError = new Error("Must not set index 0 before previous index 1");
 
-		this.mock(jQuery.sap).expects("_createJSTokenizer").withExactArgs()
-			.returns(oTokenizer);
-		this.mock(oTokenizer).expects("setIndex")
+		this.mock(JSTokenizer.prototype).expects("setIndex")
 			.throws(oError);
 
 		assert.throws(function () {
@@ -769,16 +1002,19 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("Internal incident 1680322832", function (assert) {
-		var oIcon,
+		var oInvisibleText,
 			oModel = new JSONModel({ID : "T 1000"});
 
 		// code under test (used to fail with "Bad string")
-		oIcon = new Icon({
-			color : "'{= encodeURIComponent(${/ID}) }'",
+		oInvisibleText = new InvisibleText({
+			text : "'{= encodeURIComponent(${/ID}) }'",
 			models : oModel
 		});
 
-		assert.strictEqual(oIcon.getColor(), oIcon.validateProperty("color", "'T%201000'"));
+		assert.strictEqual(oInvisibleText.getText(),
+			oInvisibleText.validateProperty("text", "'T%201000'"));
+
+		oInvisibleText.destroy();
 	});
 
 	//*********************************************************************************************
@@ -811,5 +1047,26 @@ sap.ui.require([
 		assert.strictEqual(oResult.result.formatter("mail"), 42);
 		assert.strictEqual(oMethodExpectation.thisValues[1], mGlobals.that, "that");
 		assert.notStrictEqual(oMethodExpectation.thisValues[1], mGlobals.My, "not My");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("BCP: 2370033311", function (assert) {
+		// DOT
+		check(assert, "{= parseInt.constructor === undefined }", true);
+
+		// PROPERTY_ACCESS
+		check(assert, "{= parseInt['constructor'] === undefined }", true);
+
+		// BINDING
+		check(assert, "{= ${/mail/toString/constructor} === undefined }", true);
+
+		// FUNCTION_CALL
+		check(assert, "{= ${path:'/mail', formatter:'.myFormatter'}() === undefined }", true, {
+			myFormatter: function () {
+				return function () {
+					return parseInt.constructor;
+				};
+			}
+		});
 	});
 });

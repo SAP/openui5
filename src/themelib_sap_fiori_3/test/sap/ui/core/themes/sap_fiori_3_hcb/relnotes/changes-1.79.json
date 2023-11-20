@@ -1,0 +1,89 @@
+{
+  "1.79.0": {
+    "date": "May 2020",
+    "notes": [
+      {
+        "id": "979a972646f6a8a7052103a345073fbc0a7237de",
+        "type": "FIX",
+        "text": " sap.f.ShellBar: AdditionalContent methods are now working",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070177398"
+          }
+        ]
+      },
+      {
+        "id": "6562048d06f41048401a23ff474481ffc9d4e676",
+        "type": "FIX",
+        "text": " sap.m.Button - Back Button now have proper right padding",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070227399"
+          }
+        ]
+      },
+      {
+        "id": "dacb5a8dd0b61d3462b71af5a32f0eb80723d1c9",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar - fixed background for selected weekend days on focus",
+        "references": [
+          {
+            "type": "BCP"
+          }
+        ]
+      },
+      {
+        "id": "699f269abd2338610949f189c67d3798bc5a7f7a",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar - proper appointment background color when selected+not focused+hovered",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2040306340"
+          }
+        ]
+      },
+      {
+        "id": "2ce944067b1d856355c209e1a5aafe03e2952e0d",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: Appointments have correct looking borders in hover state",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070245513"
+          }
+        ]
+      },
+      {
+        "id": "d8741f3bebd87d24a08b93e37f9eaae9c0a54455",
+        "type": "FEATURE",
+        "text": " sap.m.Panel: Active area for expand/collapse enlarged",
+        "references": []
+      },
+      {
+        "id": "fd048c0b3a5215cb114a57b36397a584e12337e4",
+        "type": "FIX",
+        "text": " sap.m.SinglePlanningCalendar: Appointments have correct opacity",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070236654"
+          }
+        ]
+      },
+      {
+        "id": "0ad2a41923cdc9285d63a6b271777c22ab9a6e4f",
+        "type": "FIX",
+        "text": " sap.m.Switch: Proper focus is applied in all Quartz themes",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070247797"
+          }
+        ]
+      }
+    ]
+  }
+}

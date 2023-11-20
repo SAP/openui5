@@ -33,30 +33,34 @@ sap.ui.define([
 	 * @constructor
 	 * @public
 	 * @alias sap.m.DisplayListItem
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
+	 * @see {@link fiori:/display-list-item/ Display List Item}
 	 */
-	var DisplayListItem = ListItemBase.extend("sap.m.DisplayListItem", /** @lends sap.m.DisplayListItem.prototype */ { metadata : {
+	var DisplayListItem = ListItemBase.extend("sap.m.DisplayListItem", /** @lends sap.m.DisplayListItem.prototype */ {
+		metadata : {
 
-		library : "sap.m",
-		properties : {
+			library : "sap.m",
+			properties : {
 
-			/**
-			 * Defines the label of the list item.
-			 */
-			label : {type : "string", group : "Misc", defaultValue : null},
+				/**
+				 * Defines the label of the list item.
+				 */
+				label : {type : "string", group : "Misc", defaultValue : null},
 
-			/**
-			 * Defines the value of the list item.
-			 */
-			value : {type : "string", group : "Data", defaultValue : null},
+				/**
+				 * Defines the value of the list item.
+				 */
+				value : {type : "string", group : "Data", defaultValue : null},
 
-			/**
-			 * Defines the <code>value</code> text directionality with enumerated options. By default, the control inherits text direction from the DOM.
-			 * @since 1.28.0
-			 */
-			valueTextDirection : {type : "sap.ui.core.TextDirection", group : "Appearance", defaultValue : TextDirection.Inherit}
-		}
-	}});
+				/**
+				 * Defines the <code>value</code> text directionality with enumerated options. By default, the control inherits text direction from the DOM.
+				 * @since 1.28.0
+				 */
+				valueTextDirection : {type : "sap.ui.core.TextDirection", group : "Appearance", defaultValue : TextDirection.Inherit}
+			}
+		},
+
+		renderer: DisplayListItemRenderer
+	});
 
 	DisplayListItem.prototype.getContentAnnouncement = function() {
 		return this.getLabel() + " " + this.getValue();

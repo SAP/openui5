@@ -1,0 +1,19 @@
+/* ================================== */
+/* CSS for sap.ui.table/RowSelection  */
+/* Evening Horizon theme              */
+/* ================================== */
+
+@_sap_ui_table_RowSelection_CheckBoxBorderWidth: 0.0625rem; /*@sapUiFieldBorderWidth;*/
+@_sap_ui_table_RowSelection_CheckBoxBorderRadius: @sapUiFieldBorderCornerRadius;
+@_sap_ui_table_RowSelection_CheckBoxBorderRadiusCozy: @sapUiFieldBorderCornerRadius;
+
+.sapUiTableRowSelectionHeaderCell:not(.sapUiTableSelAll) .sapUiTableSelectAllCheckBox::after,
+.sapUiTableSelModeMultiToggle .sapUiTableRowSel .sapUiTableRowSelectionCell::after {
+    border-color: @sapUiContentFocusColor;
+}
+
+.sapUiTableRowSelectionHeaderCell:hover .sapUiTableSelectAllCheckBox::after,
+.sapUiTableRowHvr .sapUiTableRowSelectionCell::after{
+    background-color: @sapUiFieldHoverBackground;
+    box-shadow: @sapUiContentInteractionShadow;
+}

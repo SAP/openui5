@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.ui.commons.form.FormContainer.
-sap.ui.define(['jquery.sap.global', 'sap/ui/commons/library', 'sap/ui/layout/form/FormContainer'],
-	function(jQuery, library, FormContainer1) {
+sap.ui.define(['sap/ui/commons/library', 'sap/ui/layout/form/FormContainer'],
+	function(library, LayoutFormContainer) {
 	"use strict";
 
 
@@ -28,17 +28,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/library', 'sap/ui/layout/for
 	 * @deprecated Since version 1.16.0.
 	 * moved to sap.ui.layout library. Please use this one.
 	 * @alias sap.ui.commons.form.FormContainer
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
-	var FormContainer = FormContainer1.extend("sap.ui.commons.form.FormContainer", /** @lends sap.ui.commons.form.FormContainer.prototype */ { metadata : {
+	var FormContainer = LayoutFormContainer.extend("sap.ui.commons.form.FormContainer", /** @lends sap.ui.commons.form.FormContainer.prototype */ { metadata : {
 
 		deprecated : true,
 		library : "sap.ui.commons"
 	}});
-
-	/**
-	 * This file defines behavior for the control,
-	 */
 
 	/* Overwrite to have right "since" in there */
 
@@ -61,7 +56,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/library', 'sap/ui/layout/for
 	* Default value is <code>true</code>
 	*
 	* @param {boolean} bVisible new value for property <code>visible</code>
-	* @return {sap.ui.commons.form.FormContainer} <code>this</code> to allow method chaining
+	* @return {this} <code>this</code> to allow method chaining
 	* @public
 	* @since 1.12.0
 	* @name sap.ui.commons.form.FormContainer#setVisible
@@ -70,4 +65,4 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/library', 'sap/ui/layout/for
 
 	return FormContainer;
 
-}, /* bExport= */ true);
+});

@@ -1,0 +1,84 @@
+/* ============================ */
+/* CSS for control sap.m/Token  */
+/* Horizon theme                */
+/* ============================ */
+
+@_sap_m_Token_TokenPadding: 0.5rem;
+@_sap_m_Token_TokenCompactPadding: 0.25rem;
+@_sap_m_Token_LeftPadding: 0.3125rem;
+@_sap_m_Token_TokenSize: @sapMFontSmallSize + (2 * @_sap_m_Token_TokenPadding) - @_sap_m_Token_LeftPadding;
+@_sap_m_Token_TokenCompactSize: @sapMFontSmallSize + @_sap_m_Token_TokenCompactPadding;
+
+.sapMToken {
+	padding-left: @_sap_m_Token_LeftPadding;
+	border-radius: 0.375rem;
+	color: @sapTextColor;
+	font-size: @sapFontSize;
+}
+
+.sapMTokenSelected,
+.sapMToken.sapMTokenReadOnly.sapMTokenSelected {
+	background: @sapUiButtonSelectedBackground;
+	border: @sapUiButtonBorderWidth solid @sapUiButtonSelectedBorderColor;
+	border-radius: 0.375rem;
+	font-family: @sapFontSemiboldDuplexFamily;
+}
+
+.sapMToken.sapMTokenSelected::before {
+	content: '';
+	position: absolute;
+	pointer-events: none;
+	z-index: 2;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	height: 2px;
+	background-color: @sapUiButtonSelectedBorderColor;
+}
+
+html.sap-desktop .sapMToken:not(.sapMTokenSelected):not(.sapMTokenReadOnly):not(:focus):hover {
+	background: @sapUiButtonHoverBackground;
+	border: @sapUiButtonBorderWidth solid @sapUiButtonTokenBorderColor;
+	border-radius: 0.375rem;
+}
+
+html.sap-desktop .sapMToken.sapMTokenSelected:not(.sapMTokenReadOnly):hover {
+	background: @sapUiButtonSelectedHoverBackground;
+	border: @sapUiButtonBorderWidth solid @sapUiButtonSelectedBorderColor;
+}
+
+.sapMToken.sapMTokenReadOnly {
+	padding: 0.25rem 0.3125rem;
+	color: @sapUiContentLabelColor;
+
+	.sapMTokenText {
+		line-height: 1rem;
+	}
+}
+
+html.sap-desktop .sapMToken:focus {
+	outline: @sapUiContentFocusWidth @sapUiContentFocusStyle @sapUiContentFocusColor;
+	border-radius: 0.5rem;
+	outline-offset: 0.0625rem;
+}
+
+html.sap-desktop .sapMToken:not(.sapMTokenSelected):not(.sapMTokenReadOnly):focus:hover {
+	border: @sapUiButtonBorderWidth solid @sapUiButtonTokenBorderColor;
+}
+
+html.sap-desktop .sapUiSizeCompact .sapMToken:focus,
+html.sap-desktop .sapUiSizeCondensed .sapMToken:focus {
+	outline-offset: 0;
+}
+
+html.sap-desktop .sapUiSizeCondensed .sapMToken:focus {
+	outline-width: 1px;
+}
+
+.sapUiSizeCompact .sapMToken.sapMTokenReadOnly {
+	padding: 0.125rem 0.25rem;
+
+	.sapMTokenText {
+		line-height: 0.875rem;
+	}
+}

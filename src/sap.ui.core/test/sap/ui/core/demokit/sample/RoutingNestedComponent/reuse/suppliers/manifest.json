@@ -1,0 +1,147 @@
+{
+	"_version": "1.21.0",
+	"sap.app": {
+		"id": "sap.ui.core.sample.RoutingNestedComponent.reuse.suppliers",
+		"type": "application",
+		"i18n": {
+			"bundleUrl": "i18n/i18n.properties",
+			"supportedLocales": [
+				""
+			],
+			"fallbackLocale": ""
+		},
+		"title": "{{appTitle}}",
+		"description": "{{appDescription}}",
+		"applicationVersion": {
+			"version": "1.0.0"
+		},
+		"dataSources": {
+			"mainService": {
+				"uri": "/myservice/V2/Northwind.svc",
+				"type": "OData",
+				"settings": {
+					"odataVersion": "2.0",
+					"localUri": "../../localService/metadata.xml"
+				}
+			}
+		}
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"deviceTypes": {
+			"desktop": true,
+			"tablet": true,
+			"phone": true
+		}
+	},
+	"sap.ui5": {
+		"contentDensities": {
+			"cozy": true,
+			"compact": true
+		},
+		"rootView": {
+			"viewName": "sap.ui.core.sample.RoutingNestedComponent.reuse.suppliers.view.App",
+			"type": "XML",
+			"id": "app"
+		},
+		"componentUsages": {
+			"productsComponent": {
+				"name": "sap.ui.core.sample.RoutingNestedComponent.reuse.products",
+				"settings": {},
+				"componentData": {},
+				"lazy": true
+			}
+		},
+		"dependencies": {
+			"minUI5Version": "1.72",
+			"libs": {
+				"sap.m": {},
+				"sap.ui.core": {}
+			}
+		},
+		"models": {
+			"i18n": {
+				"type": "sap.ui.model.resource.ResourceModel",
+				"settings": {
+					"bundleName": "sap.ui.core.sample.RoutingNestedComponent.reuse.suppliers.i18n.i18n",
+					"supportedLocales": [
+						""
+					],
+					"fallbackLocale": ""
+				}
+			},
+			"": {
+				"dataSource": "mainService",
+				"preload": true,
+				"settings": {
+					"defaultBindingMode": "TwoWay",
+					"useBatch": false,
+					"defaultCountMode": "Inline"
+				}
+			}
+		},
+		"resources": {
+			"css": [
+				{
+					"uri": "css/style.css"
+				}
+			]
+		},
+		"routing": {
+			"config": {
+				"routerClass": "sap.m.routing.Router",
+				"viewType": "XML",
+				"path": "sap.ui.core.sample.RoutingNestedComponent.reuse.suppliers.view",
+				"controlId": "app",
+				"controlAggregation": "pages",
+				"transition": "slide",
+				"bypassed": {
+					"target": "notFound"
+				}
+			},
+			"routes": [
+				{
+					"name": "list",
+					"pattern": "",
+					"target": "list"
+				},
+				{
+					"name": "detail",
+					"pattern": "detail/{id}",
+					"target": {
+						"name": "products",
+						"prefix": "p"
+					}
+				}
+			],
+			"targets": {
+				"list": {
+					"type": "View",
+					"id": "list",
+					"name": "List",
+					"title": "Supplier List"
+				},
+				"detail": {
+					"type": "View",
+					"id": "detail",
+					"name": "Detail",
+					"title": "{CompanyName}"
+				},
+				"products": {
+					"type": "Component",
+					"usage": "productsComponent",
+					"parent": "detail",
+					"controlId": "box",
+					"controlAggregation": "items",
+					"id": "productInSupplier"
+				},
+				"notFound": {
+					"type": "View",
+					"id": "notFound",
+					"name": "NotFound",
+					"transition": "show"
+				}
+			}
+		}
+	}
+}

@@ -1,0 +1,131 @@
+{
+  "1.113.0": {
+    "date": "April 2023",
+    "notes": [
+      {
+        "id": "44066a74ddcdea6eb88f3928b25d7515a1bc1766",
+        "type": "FEATURE",
+        "text": " sap.ui.core.Configuration: provide central calendar week numbering config"
+      },
+      {
+        "id": "cb6639651d0a8c199e484aa96a0dbf13ef143361",
+        "type": "FIX",
+        "text": " core.Locale: Fix cross reference in the JSDoc of getExtension",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370030891"
+          }
+        ]
+      },
+      {
+        "id": "9d5a4539a46b03bcf4a5b10f54a9b5efb73ed0d7",
+        "type": "FIX",
+        "text": " sap.ui.model.SimpleType: validation messages are separated by a single dot",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380043909"
+          }
+        ]
+      },
+      {
+        "id": "313f8888f0f58b660e2f9746081f82a4ba8af913",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v2.ODataTreeBinding: Fix grouping of Application filters in OperationMode.Server",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370010564"
+          }
+        ]
+      },
+      {
+        "id": "6b1f62496447a74ab7db4dbf611540a59ebc1ec8",
+        "type": "FIX",
+        "text": " sap.m.Label: Label is now correctly rendered inside a Form",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370025954"
+          }
+        ]
+      },
+      {
+        "id": "e21f069a461748678590eaf5cce4ecf4a0f9bff5",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.ODataTreeBindingFlat#_hasChangedEntity: node may be unset",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400001959552023"
+          }
+        ]
+      },
+      {
+        "id": "1a5e2ec5911bfeb55cac677d95ff3631286da9a1",
+        "type": "FIX",
+        "text": " sap.ui.core.date.UniversalDateUtils#_getDateFromWeekStartByDayOffset: Fix usage of inconsistent locale",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380029711"
+          }
+        ]
+      },
+      {
+        "id": "716f29d4b901a17de2d77afc2383fab710f04dae",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v2.ODataModel#setProperty: workaround for incomplete referential constraints",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380045943"
+          }
+        ]
+      },
+      {
+        "id": "918f5d7d1ba6efb5cafbd948f7b1fa95123aa0dd",
+        "type": "FEATURE",
+        "text": " sap.ui.core.format.DateFormat: introduce format option intervalDelimiter"
+      },
+      {
+        "id": "0c790440ff5437f41bc1386a3ce1f8d3054eb00e",
+        "type": "FIX",
+        "text": " theming.ThemeManager: Ensure adding of custom.css",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400001514272023"
+          }
+        ]
+      },
+      {
+        "id": "b6afea9c381aafcd683c5dcede980e95e76a483d",
+        "type": "FEATURE",
+        "text": " sap.ui.model.odata.v2.ODataListBinding: createActivate event allows to cancel context activation"
+      },
+      {
+        "id": "6b6cb0060390675476d86e807343732d0240a0e8",
+        "type": "FIX",
+        "text": " sap.ui.core.format.NumberFormat#format: Use correct plural rule for units",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380043244"
+          }
+        ]
+      },
+      {
+        "id": "50a50d647921b8b923b5be18b575f9812c2ef5b8",
+        "type": "FEATURE",
+        "text": " sap.ui.test.RecordReplay: API Enhancements"
+      },
+      {
+        "id": "61e6d05e078c27f1a7e15af0fa791d4e72b93d2b",
+        "type": "FIX",
+        "text": " JSDoc: Correct misplaced block tags"
+      }
+    ]
+  }
+}

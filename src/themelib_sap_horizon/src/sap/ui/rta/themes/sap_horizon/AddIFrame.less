@@ -1,0 +1,65 @@
+/******************************************************************
+	Style of the RTA Add IFrame Dialog  - Horizon Theme
+*******************************************************************/
+@_sap_ui_rta_AddIFrame_DelimiterLineColor: @sapUiToolbarSeparatorColor; //#d9d9d9
+@_sap_ui_rta_AddIFrame_BorderRadius: @sapUiGroupBorderCornerRadius; //0.5rem
+@_sap_ui_rta_AddIFrame_PreviewTlbarHoverBG: @sapUiButtonHoverBackground; //fff
+
+.sapUiRtaMode {
+	.sapUiRtaAddIFrameDialog {
+		.sapUiRtaAddIFrameDialogVlWrapper {
+			.sapUiRtaAddIFrameDialogEditGrid {
+
+				.sapUiRtaAddIFrameDialogParameters {
+					.sapMScrollCont {
+						border-radius: @_sap_ui_rta_AddIFrame_BorderRadius;
+					}
+				}
+
+				.sapUiRtaAddIFrameDialogEditUrl {
+					.sapMTextArea {
+						.sapMInputBaseContentWrapper {
+							border: 0.0625rem solid @_sap_ui_rta_AddIFrame_BorderColor; //1px
+							border-radius: @_sap_ui_rta_AddIFrame_BorderRadius;
+							background-image: none;
+						}
+
+						.sapMTextAreaInner {
+							border: none;
+						}
+					}
+				}
+			}
+
+			.sapUiRtaAddIFrameDialogPreviewLinkGrid {
+				.sapUiRtaAddIFrameDialogPreviewLinkPanel {
+
+					&.sapMPanel .sapMPanelWrappingDiv:not(.sapMPanelWrappingDivExpanded),
+					&.sapMPanel .sapMPanelWrappingDivTb:not(.sapMPanelWrappingDivTbExpanded) {
+						border-radius: 0;
+					}
+
+					.sapUiRtaAddIFrameDialogPreviewLinkToolbar {
+						padding-left: 0;
+						padding-right: 0.125rem;
+
+						&.sapMTB:hover,
+						&.sapMTB-Solid-CTX.sapMTB:hover {
+							background-color: @_sap_ui_rta_AddIFrame_PreviewTlbarHoverBG;
+						}
+					}
+				}
+			}
+
+			.sapUiRtaAddIFrameDialogPreviewGrid {
+				border-radius: @_sap_ui_rta_AddIFrame_BorderRadius;
+				padding-bottom: 0.5rem;
+			}
+		}
+	}
+}
+
+// adapt scrollbars to rounded corners
+html.sap-desktop:not(.sapUiNativeScrollbars) ::-webkit-scrollbar {
+	background-color: inherit !important;
+}

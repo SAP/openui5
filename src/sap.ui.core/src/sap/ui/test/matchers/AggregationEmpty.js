@@ -2,7 +2,10 @@
  * ${copyright}
  */
 
-sap.ui.define(['./Matcher', './AggregationLengthEquals'], function(Matcher, AggregationLengthEquals) {
+sap.ui.define([
+	'sap/ui/test/matchers/Matcher',
+	'sap/ui/test/matchers/AggregationLengthEquals'
+], function (Matcher, AggregationLengthEquals) {
 	"use strict";
 
 	var oAggregationLengthMatcher = new AggregationLengthEquals({
@@ -10,9 +13,17 @@ sap.ui.define(['./Matcher', './AggregationLengthEquals'], function(Matcher, Aggr
 	});
 
 	/**
-	 * AggregationEmpty - checks if an aggregation is empty.
+	 * @class
+	 * Checks if an aggregation is empty.
 	 *
-	 * @class AggregationEmpty - checks if an aggregation is empty
+	 * As of version 1.72, it is available as a declarative matcher with the following syntax:
+	 * <code><pre>{
+	 *     aggregationEmpty: {
+	 *         name: "string"
+	 *     }
+	 * }
+	 * </code>
+	 *
 	 * @param {object} [mSettings] optional map/JSON-object with initial settings for the new AggregationEmptyMatcher
 	 * @extends sap.ui.test.matchers.Matcher
 	 * @public
@@ -20,14 +31,14 @@ sap.ui.define(['./Matcher', './AggregationLengthEquals'], function(Matcher, Aggr
 	 */
 	return Matcher.extend("sap.ui.test.matchers.AggregationEmpty", /** @lends sap.ui.test.matchers.AggregationEmpty.prototype */ {
 
-		metadata : {
-			publicMethods : [ "isMatching" ],
-			properties : {
+		metadata: {
+			publicMethods: ["isMatching"],
+			properties: {
 				/**
 				 * The name of the aggregation that is used for matching.
 				 */
-				name : {
-					type : "string"
+				name: {
+					type: "string"
 				}
 			}
 		},
@@ -39,11 +50,11 @@ sap.ui.define(['./Matcher', './AggregationLengthEquals'], function(Matcher, Aggr
 		 * @return {boolean} true if the Aggregation set in the property aggregationName is empty, false if it is not.
 		 * @public
 		 */
-		isMatching : function (oControl) {
+		isMatching: function (oControl) {
 			oAggregationLengthMatcher.setName(this.getName());
 			return oAggregationLengthMatcher.isMatching(oControl);
 		}
 
 	});
 
-}, /* bExport= */ true);
+});

@@ -1,22 +1,29 @@
 /*!
  * ${copyright}
  */
-sap.ui.require([
-	"jquery.sap.global",
+sap.ui.define([
+	"sap/base/Log",
+	"sap/base/i18n/Formatting",
+	"sap/ui/core/CalendarType",
+	"sap/ui/core/format/DateFormat",
 	"sap/ui/model/odata/ODataUtils",
-	"sap/ui/model/odata/v4/lib/_Helper",
-	"sap/ui/model/odata/v4/ODataUtils"
-], function (jQuery, BaseODataUtils, _Helper, ODataUtils) {
-	/*global QUnit, sinon */
-	/*eslint no-warning-comments: 0 */
+	"sap/ui/model/odata/v4/ODataUtils",
+	"sap/ui/model/odata/v4/lib/_Batch",
+	"sap/ui/model/odata/v4/lib/_Helper"
+], function (Log, Formatting, CalendarType, DateFormat, BaseODataUtils, ODataUtils, _Batch,
+		_Helper) {
 	"use strict";
 
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.odata.v4.ODataUtils", {
 		beforeEach : function () {
-			this.oLogMock = this.mock(jQuery.sap.log);
+			this.sDefaultCalendarType = Formatting.getCalendarType();
+			this.oLogMock = this.mock(Log);
 			this.oLogMock.expects("warning").never();
 			this.oLogMock.expects("error").never();
+		},
+		afterEach : function () {
+			Formatting.setCalendarType(this.sDefaultCalendarType);
 		}
 	});
 
@@ -59,6 +66,9 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("parseDate", function (assert) {
+		Formatting.setCalendarType(CalendarType.Japanese);
+		ODataUtils._setDateTimeFormatter();
+
 		assert.strictEqual(ODataUtils.parseDate("2000-01-01").getTime(), Date.UTC(2000, 0, 1));
 
 		[
@@ -80,6 +90,9 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("parseDateTimeOffset", function (assert) {
+		Formatting.setCalendarType(CalendarType.Japanese);
+		ODataUtils._setDateTimeFormatter();
+
 		assert.strictEqual(
 			ODataUtils.parseDateTimeOffset("2015-03-08T19:32:56.123456789012+02:00").getTime(),
 			Date.UTC(2015, 2, 8, 17, 32, 56, 123));
@@ -122,6 +135,9 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("parseTimeOfDay", function (assert) {
+		Formatting.setCalendarType(CalendarType.Japanese);
+		ODataUtils._setDateTimeFormatter();
+
 		assert.strictEqual(ODataUtils.parseTimeOfDay("23:59:59.123456789012").getTime(),
 			Date.UTC(1970, 0, 1, 23, 59, 59, 123));
 
@@ -174,6 +190,88 @@ sap.ui.require([
 			.returns("bar");
 
 		assert.strictEqual(ODataUtils.formatLiteral(42, "foo"), "bar");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_setDateTimeFormatter", function () {
+		var oDateFormatMock = this.mock(DateFormat);
+
+		oDateFormatMock.expects("getDateInstance")
+			.withExactArgs({
+				calendarType : CalendarType.Gregorian,
+				pattern : "yyyy-MM-dd",
+				strictParsing : true,
+				UTC : true
+			})
+			.callThrough();
+		oDateFormatMock.expects("getDateTimeInstance")
+			.withExactArgs({
+				calendarType : CalendarType.Gregorian,
+				pattern : "yyyy-MM-dd'T'HH:mm:ss.SSSXXX",
+				strictParsing : true
+			})
+			.callThrough();
+		oDateFormatMock.expects("getTimeInstance")
+			.withExactArgs({
+				calendarType : CalendarType.Gregorian,
+				pattern : "HH:mm:ss.SSS",
+				strictParsing : true,
+				UTC : true
+			})
+			.callThrough();
+
+		// code under test
+		ODataUtils._setDateTimeFormatter();
+	});
+
+	//*********************************************************************************************
+	QUnit.test("deserializeBatchResponse: success", function (assert) {
+		var aResponses = [];
+
+		this.mock(_Batch).expects("deserializeBatchResponse").withExactArgs("foo", "bar")
+			.returns(aResponses);
+
+		// code under test
+		assert.strictEqual(ODataUtils.deserializeBatchResponse("foo", "bar"), aResponses);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("deserializeBatchResponse: failure", function (assert) {
+		var oError = new Error();
+
+		this.mock(_Batch).expects("deserializeBatchResponse").withExactArgs("foo", "bar")
+			.throws(oError);
+
+		assert.throws(function () {
+			// code under test
+			ODataUtils.deserializeBatchResponse("foo", "bar");
+		}, oError);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("serializeBatchRequest: success", function (assert) {
+		var aRequests = [],
+			oResult = {};
+
+		this.mock(_Batch).expects("serializeBatchRequest")
+			.withExactArgs(sinon.match.same(aRequests), "foo").returns(oResult);
+
+		// code under test
+		assert.strictEqual(ODataUtils.serializeBatchRequest(aRequests, "foo"), oResult);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("serializeBatchRequest: failure", function (assert) {
+		var oError = new Error(),
+			aRequests = [];
+
+		this.mock(_Batch).expects("serializeBatchRequest")
+			.withExactArgs(sinon.match.same(aRequests), "foo").throws(oError);
+
+		assert.throws(function () {
+			// code under test
+			ODataUtils.serializeBatchRequest(aRequests, "foo");
+		}, oError);
 	});
 });
 //TODO from https://www.w3.org/TR/xmlschema11-2/#vp-dt-timezone:

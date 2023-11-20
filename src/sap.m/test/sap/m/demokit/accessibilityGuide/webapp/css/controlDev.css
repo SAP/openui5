@@ -1,0 +1,18 @@
+.button {
+	background-color: rgb(239, 239, 239);
+	border-color: rgb(133, 133, 133);
+	border-radius: 2px;
+	border-width: 2px;
+	border-style: outset;
+	padding: 1px 6px;
+	font: 400 13.3333px Arial;
+	margin: 0em;
+	word-spacing: normal;
+	text-transform: none;
+	text-indent: 0px;
+	text-shadow: none;
+	display: inline-block;
+	text-align: center;
+	align-items: flex-start;
+	box-sizing: border-box;
+}

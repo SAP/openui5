@@ -1,0 +1,62 @@
+{
+	"_version": "1.14.0",
+	"sap.app": {
+		"id": "card.explorer.data.jsonContentType",
+		"type": "card",
+		"title": "Sample for Data Usage in Cards",
+		"subTitle": "Sample for Data Usage in Cards",
+		"applicationVersion": {
+			"version": "1.0.0"
+		},
+		"shortTitle": "A short title for this Card",
+		"info": "Additional information about this Card",
+		"description": "A long description for this Card",
+		"tags": {
+			"keywords": [
+				"Data",
+				"Card",
+				"Sample"
+			]
+		}
+	},
+	"sap.card": {
+		"type": "List",
+		"configuration": {
+			"parameters": {
+				"supplierId": {
+					"value": "100000000",
+					"type": "string"
+				}
+			}
+		},
+		"data": {
+			"request": {
+				"url": "/graphql",
+				"method": "POST",
+				"headers": {
+					"Content-Type": "application/json"
+				},
+				"parameters": {
+					"query": "\\{Products(Supplier: {parameters>/supplierId/value}) \\{Name ProductCategory Weight WeightUnit\\}\\}"
+				}
+			},
+			"path": "/data"
+		},
+		"header": {
+			"title": "Products by Supplier {parameters>/supplierId/value}",
+			"subTitle": "Query in Request Body",
+			"icon": {
+				"src": "sap-icon://product"
+			}
+		},
+		"content": {
+			"item": {
+				"title": "{Name}",
+				"description": "{ProductCategory}",
+				"info": {
+					"value": "Weight {Weight}{WeightUnit}"
+				}
+			}
+		}
+	}
+}

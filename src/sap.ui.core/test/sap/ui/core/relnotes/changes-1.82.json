@@ -1,0 +1,172 @@
+{
+  "1.82.0": {
+    "date": "August 2020",
+    "notes": [
+      {
+        "id": "b06771862af6fe115d13d1effab151ccfb7b7449",
+        "type": "FIX",
+        "text": " Revert: core.Fragment: fix error handling",
+        "references": []
+      },
+      {
+        "id": "16bdc08584c9d30ebee6746c2a2884270d692133",
+        "type": "FIX",
+        "text": " core.Fragment: fix error handling",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080321485"
+          }
+        ]
+      },
+      {
+        "id": "4eddeb973b8e57d74282b39d5d205076aa3ea2d3",
+        "type": "FIX",
+        "text": " core.IconFont: update icon name \"S/4HANA\" to \"s4hana\"",
+        "references": [
+          {
+            "type": "BCP"
+          }
+        ]
+      },
+      {
+        "id": "8fff86ca85f7c4c74c8e5b6178b385731c27df4e",
+        "type": "FIX",
+        "text": " core.routing.History: make test robust for Safari",
+        "references": [
+          {
+            "type": "BCP"
+          }
+        ]
+      },
+      {
+        "id": "92e0ab7a03b7d72adb6337b6ba533016401a9b0c",
+        "type": "FIX",
+        "text": " core/Element: Focus shouldn\u0027t be called with empty object",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080335699"
+          }
+        ]
+      },
+      {
+        "id": "0b68ef3ce8505e66611b68d53306a8b69e02b16b",
+        "type": "FIX",
+        "text": " core/Element: preventScrolling Test failed in Firefox",
+        "references": []
+      },
+      {
+        "id": "f2161d716e7cc45ebf48f1bf6b8678c6bdb70ceb",
+        "type": "FIX",
+        "text": " sap.ui.core.Router: support of multiple targets with the same title and titlechanged event propagation",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080321371"
+          }
+        ]
+      },
+      {
+        "id": "d0706217a799eb88c97a73b02c4b78e0abaee1db",
+        "type": "FIX",
+        "text": " sap/ui/thirdparty/jquery-mobile-custom: enable swipe event on internet explorer and edge",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080241660"
+          }
+        ]
+      },
+      {
+        "id": "5f963feb4b8f1dc938ac0e9a1fe30d5b3204a791",
+        "type": "FEATURE",
+        "text": " core: upgrade jQuery to 3.5.1 (w/ compatibility layer)",
+        "references": []
+      },
+      {
+        "id": "5f5b9a8b12f2c6e272b63b114c716eabbec940f9",
+        "type": "FIX",
+        "text": " ShortcutHint: correct the font size and positioning",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080281837"
+          }
+        ]
+      },
+      {
+        "id": "3cf8b9623c91403869cbe6eddb658c0eaacee290",
+        "type": "FIX",
+        "text": " encodeURL: extend encoding to code points beyond 0xffff",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080272749"
+          }
+        ]
+      },
+      {
+        "id": "a59315aded9ea092534d0847b9a9269b9722b3c0",
+        "type": "FIX",
+        "text": " format/DateFormat: timezone Z and X patterns",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080284929"
+          }
+        ]
+      },
+      {
+        "id": "df5b5076b6783f47875c6794b6ceb5610110d7b4",
+        "type": "FIX",
+        "text": " sap.ui.core.Popup: restore the user selection when popup is invalidated",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080313132"
+          }
+        ]
+      },
+      {
+        "id": "504e8f31619e4b06a45481c917e51876fe345fc7",
+        "type": "FIX",
+        "text": " sap/ui/thirdparty/datajs: make OData the default AMD export",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080356740"
+          }
+        ]
+      },
+      {
+        "id": "e5beb2eedbdaecb1fe703e84cd5cbffce9d6938a",
+        "type": "FIX",
+        "text": " handlebars: usage of latest version 4.7.6",
+        "references": []
+      },
+      {
+        "id": "5b4405b621c820471e477a1281a560d38804b6c7",
+        "type": "FIX",
+        "text": " sap/ui/base/syncXHRFix: Properly handle failing sync XHR",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "0020751294 0000282364 2020"
+          }
+        ]
+      },
+      {
+        "id": "1d36bce41a9bca154d7864c836e859f4415c5a09",
+        "type": "FIX",
+        "text": " ui5loader: use a separate queue for each sync execution",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080197839"
+          }
+        ]
+      }
+    ]
+  }
+}

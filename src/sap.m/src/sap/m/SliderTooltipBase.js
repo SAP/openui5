@@ -2,18 +2,8 @@
 * ${copyright}
 */
 
-sap.ui.define([
-	'jquery.sap.global',
-	'sap/ui/core/Control',
-	'./library',
-	'./SliderTooltipBaseRenderer'
-],
-function(
-	jQuery,
-	Control,
-	Library,
-	SliderTooltipBaseRenderer
-	) {
+sap.ui.define(['sap/ui/core/Control', './library', './SliderTooltipBaseRenderer'],
+function(Control, Library, SliderTooltipBaseRenderer) {
 		"use strict";
 
 		/**
@@ -35,12 +25,13 @@ function(
 		 * @public
 		 * @since 1.56
 		 * @alias sap.m.SliderTooltipBase
-		 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 		 */
 		var SliderTooltipBase = Control.extend("sap.m.SliderTooltipBase", /** @lends sap.m.SliderTooltipBase.prototype */ {
 			metadata: {
 				library: "sap.m"
-			}
+			},
+
+			renderer: SliderTooltipBaseRenderer
 		});
 
 		SliderTooltipBase.prototype.init = function () {
@@ -51,8 +42,8 @@ function(
 		 * Updates value of the tooltip.
 		 *
 		 * @param {float} fValue The new value
-		 * @sap-restricted sap.m.Slider
 		 * @private
+		 * @ui5-restricted sap.m.Slider
 		 */
 		SliderTooltipBase.prototype.setValue = function (fValue) {
 			this.fValue = fValue;
@@ -62,6 +53,7 @@ function(
 		/**
 		 * Gets the value of the tooltip.
 		 *
+		 * @returns {float} The current value of the tooltip.
 		 * @protected
 		 */
 		SliderTooltipBase.prototype.getValue = function () {

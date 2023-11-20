@@ -3,8 +3,8 @@
 /* Base theme                        */
 /* ================================= */
 
-@_sap_m_SelectListItem_Height: 2.5rem;
-@_sap_m_SelectListItem_CompactHeight: 2rem;
+@_sap_m_SelectList_ItemHeight: 2.5rem;
+@_sap_m_SelectList_ItemCompactHeight: 2rem;
 
 /* ------------------------------ */
 /* commons styles                 */
@@ -17,8 +17,7 @@
 
 /* disabled */
 
-.sapMSelectListDisabled,
-.sapMSelectListItemBaseDisabled {
+.sapMSelectListDisabled {
 	pointer-events: none;
 }
 
@@ -34,11 +33,6 @@
 	background: @sapUiListBackground;
 }
 
-.sapMSelectListTableLayout {
-	display: table;
-	border-collapse: collapse;
-}
-
 /* ------------------------------ */
 /* item                           */
 /* ------------------------------ */
@@ -47,11 +41,10 @@
 	outline: none;
 	-webkit-user-select: none;
 	-moz-user-select: none;
-	-ms-user-select: none;
 	user-select: none;
 	color: @sapUiListTextColor;
 	font-size: @sapMFontMediumSize;
-	height: @_sap_m_SelectListItem_Height;
+	height: @_sap_m_SelectList_ItemHeight;
 	cursor: pointer;
 }
 
@@ -60,7 +53,11 @@
 	text-overflow: ellipsis;
 	white-space: nowrap;
 	padding: 0 1rem 0 1rem;
-	line-height: @_sap_m_SelectListItem_Height;
+	line-height: @_sap_m_SelectList_ItemHeight;
+}
+
+.sapMSelectListItemIcon {
+	padding-right: 0.4375rem;
 }
 
 li.sapMSelectListItemBaseInvisible {
@@ -70,6 +67,11 @@ li.sapMSelectListItemBaseInvisible {
 /* elements inside the select effects the size of the browsers default dragging ghost element */
 .sapUiDnDDragging .sapMSelectListItemBase + .sapMSelectListItemBase {
 	display: none;
+}
+
+/* disabled */
+.sapMSelectListItemBaseDisabled {
+	cursor: unset;
 }
 
 /* hover */
@@ -83,8 +85,8 @@ li.sapMSelectListItemBaseInvisible {
 }
 
 /* pressed and pressed selected */
-.sapMSelectListItemBase.sapMSelectListItemBasePressed,
-.sapMSelectListItemBase.sapMSelectListItemBasePressed.sapMSelectListItemBaseSelected {
+:not(.sapMSelectListItemBaseDisabled).sapMSelectListItemBase.sapMSelectListItemBasePressed,
+:not(.sapMSelectListItemBaseDisabled).sapMSelectListItemBase.sapMSelectListItemBasePressed.sapMSelectListItemBaseSelected {
 	color: @sapUiListActiveTextColor;
 	background: @sapUiListActiveBackground;
 }
@@ -93,54 +95,6 @@ li.sapMSelectListItemBaseInvisible {
 html.sap-desktop .sapMSelectListItemBase:focus {
 	outline: dotted 1px;
 	outline-offset: -2px;
-}
-
-html[data-sap-ui-browser^="ie"].sap-desktop,
-html[data-sap-ui-browser^="ed"].sap-desktop {
-
-	.sapMSelectListItemBase:not(.sapMSelectListRow):focus::before,
-	.sapMSltPicker-CTX .sapMSelectListItemBaseSelected:not(.sapMSelectListRow)::before,
-	.sapMComboBoxBasePicker-CTX .sapMSelectListItemBaseSelected:not(.sapMSelectListRow)::before {
-		content: " ";
-		position: absolute;
-		top: 1px;
-		right: 1px;
-		bottom: 1px;
-		left: 1px;
-		pointer-events: none;
-	}
-
-	.sapMSelectListItemBase:focus,
-	.sapMSltPicker-CTX .sapMSelectListItemBaseSelected,
-	.sapMComboBoxBasePicker-CTX .sapMSelectListItemBaseSelected {
-		outline: none;
-		position: relative;
-	}
-
-	.sapMSelectListCell {
-		position: relative;
-	}
-
-	.sapMSelectListItemBase:focus,
-	.sapMSltPicker-CTX .sapMSelectListItemBaseSelected,
-	.sapMComboBoxBasePicker-CTX .sapMSelectListItemBaseSelected {
-		.sapMSelectListCell::before {
-			position: absolute;
-			bottom: 1px;
-			left: 0;
-			right: 0;
-			content: " ";
-			pointer-events: none;
-		}
-
-		.sapMSelectListFirstCell.sapMSelectListCell::before {
-			left: 1px;
-		}
-
-		.sapMSelectListLastCell.sapMSelectListCell::before {
-			right: 1px;
-		}
-	}
 }
 
 /* ------------------------------ */
@@ -182,9 +136,9 @@ html[data-sap-ui-browser^="ed"].sap-desktop {
 /* ------------------------------ */
 
 .sapUiSizeCompact .sapMSelectListItemBase {
-	height: @_sap_m_SelectListItem_CompactHeight;
+	height: @_sap_m_SelectList_ItemCompactHeight;
 }
 
 .sapUiSizeCompact .sapMSelectListItem {
-	line-height: @_sap_m_SelectListItem_CompactHeight;
+	line-height: @_sap_m_SelectList_ItemCompactHeight;
 }

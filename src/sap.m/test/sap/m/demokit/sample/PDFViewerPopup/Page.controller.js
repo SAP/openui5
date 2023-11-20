@@ -1,9 +1,8 @@
 sap.ui.define([
-	"jquery.sap.global",
 	"sap/ui/core/mvc/Controller",
 	"sap/m/PDFViewer",
 	"sap/ui/model/json/JSONModel"
-], function (jQuery, Controller, PDFViewer, JSONModel) {
+], function (Controller, PDFViewer, JSONModel) {
 	"use strict";
 
 	var PageController = Controller.extend("sap.m.sample.PDFViewerPopup.Page", {
@@ -13,12 +12,12 @@ sap.ui.define([
 			this.getView().addDependent(this._pdfViewer);
 
 			var oSample1Model = new JSONModel({
-				Source: sap.ui.require.toUrl("sap/m/sample/PDFViewerPopup") + "/sample1.pdf",
-				Preview: sap.ui.require.toUrl("sap/m/sample/PDFViewerPopup") + "/sample1.jpg"
+				Source: sap.ui.require.toUrl("sap/m/sample/PDFViewerPopup/sample1.pdf"),
+				Preview: sap.ui.require.toUrl("sap/m/sample/PDFViewerPopup/sample1.jpg")
 			});
 			var oSample2Model = new JSONModel({
-				Source: sap.ui.require.toUrl("sap/m/sample/PDFViewerPopup") + "/sample2.pdf",
-				Preview: sap.ui.require.toUrl("sap/m/sample/PDFViewerPopup") + "/sample2.jpg"
+				Source: sap.ui.require.toUrl("sap/m/sample/PDFViewerPopup/sample2.pdf"),
+				Preview: sap.ui.require.toUrl("sap/m/sample/PDFViewerPopup/sample2.jpg")
 			});
 
 			this.byId('image1').setModel(oSample1Model);

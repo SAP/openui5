@@ -1,0 +1,334 @@
+{
+  "1.61.0": {
+    "date": "October 2018",
+    "notes": [
+      {
+        "id": "08c40843ca84d19de79a402b311376690775eda6",
+        "type": "FIX",
+        "text": "performance/trace/FESR: deal with unsupported window.Performance API",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870446987"
+          }
+        ]
+      },
+      {
+        "id": "da57892154aec7ce634cdb4db6a90e38244280d9",
+        "type": "FIX",
+        "text": "sap.ui.model.analytics.odata4analytics#_renderPropertyFilterValue",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880577456"
+          }
+        ]
+      },
+      {
+        "id": "9053b21ed36ca0afb88616ab877ba272da5c4864",
+        "type": "FIX",
+        "text": "Unit Type: Only parse and format valid values",
+        "references": []
+      },
+      {
+        "id": "bef16433d491ac044626fd7cb0dc67a14a871b0e",
+        "type": "FEATURE",
+        "text": "PropertyBinding: Allow targetType \"raw\" and \"internal\"",
+        "references": []
+      },
+      {
+        "id": "f9b759118987bc73145abd82b5d09549c04843e0",
+        "type": "FIX",
+        "text": "CompositeBinding: Don't set undefined values on nested bindings",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880710938"
+          }
+        ]
+      },
+      {
+        "id": "3cccd7109bb4ccc2f0cd5391fafbd8d801dbd3d0",
+        "type": "FIX",
+        "text": "CompositeBinding: Fixed typo when checking target type",
+        "references": []
+      },
+      {
+        "id": "a777f8e9ba8ca16c715e04b65b49a00549d6c0b2",
+        "type": "FIX",
+        "text": "Core: Default to async preload when ui5loader is async",
+        "references": []
+      },
+      {
+        "id": "58e7f5098c50e476712a72cb2aeaaaa93abde04d",
+        "type": "FIX",
+        "text": "core.routing/UIComponent: let router destroy dependency",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880578900"
+          }
+        ]
+      },
+      {
+        "id": "dd63de234840865b16f621785c1ac8d40ecacf97",
+        "type": "FIX",
+        "text": "core/Control: corrected visibility of blocked property",
+        "references": []
+      },
+      {
+        "id": "c306f06f00aa32077b3acb4427a2d5d2502f732d",
+        "type": "FIX",
+        "text": "core/Control: fixed wrong jsdoc tag",
+        "references": []
+      },
+      {
+        "id": "a3abe51f184a6362db3ec8b88cc098dab2fbc3d1",
+        "type": "FIX",
+        "text": "routing.History: maintain the history state after hash replacement",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880686177"
+          },
+          {
+            "type": "BCP",
+            "reference": "1880687236"
+          }
+        ]
+      },
+      {
+        "id": "fb63838d96165d666b14a7b953a8ebf8ab8e57e2",
+        "type": "FIX",
+        "text": "sap/ui/core/Manifest: finalize resolveUri API",
+        "references": []
+      },
+      {
+        "id": "244f193c66230c71333600f2566c287c511a9501",
+        "type": "FEATURE",
+        "text": "Core#setThemeRoot: Add forceUpdate parameter",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880689890"
+          }
+        ]
+      },
+      {
+        "id": "5a35b7fadf2c97dd09d5e739d82c706511055639",
+        "type": "FEATURE",
+        "text": "Opa: add adapters for QUnit todo and skip",
+        "references": []
+      },
+      {
+        "id": "c70b85b761b552deb1d0203dd88f5ff3099416c7",
+        "type": "FEATURE",
+        "text": "mvc.Controller: Adopt controller extension for async",
+        "references": []
+      },
+      {
+        "id": "e9a9d512e3b085e636a012e462cab80917c41691",
+        "type": "FIX",
+        "text": "Aggregation Forwarding: also clone forwarded bindings",
+        "references": []
+      },
+      {
+        "id": "3c10095ed4950a908ee37e334cada22d870d5902",
+        "type": "FIX",
+        "text": "Component: register the module path for app variants",
+        "references": []
+      },
+      {
+        "id": "4ea0c9936a86bde283e52dff5837f3907bd7f391",
+        "type": "FIX",
+        "text": "Explored documentation: Controller Extension",
+        "references": [
+          {
+            "type": "GitHub",
+            "reference": "2248"
+          },
+          {
+            "type": "BCP",
+            "reference": "1880625390"
+          }
+        ]
+      },
+      {
+        "id": "bb56af8cfe511d3f7caa7c52aaa9fbc7f307fecb",
+        "type": "FIX",
+        "text": "Model.removeBinding: performance",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400005859532018"
+          }
+        ]
+      },
+      {
+        "id": "e4ad1ebd1aaf3ac6f8613a7a09999fd92883627e",
+        "type": "FIX",
+        "text": "core.Popup: blur focus element only when it's not in a Popup",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880721798"
+          }
+        ]
+      },
+      {
+        "id": "bf890ed36239d151b6b256f08877a0088599c81a",
+        "type": "FEATURE",
+        "text": "Introduction of Indication less parameters",
+        "references": []
+      },
+      {
+        "id": "a324ce4e18dd7a2e17d4922642d0c97bd79f422d",
+        "type": "FEATURE",
+        "text": "sap.m.Column: enabling sort indicator",
+        "references": []
+      },
+      {
+        "id": "52ba580ac7370ee833051b357f389392a61a8dd0",
+        "type": "FIX",
+        "text": "JSONModel#loadData: Corrects API Documentation",
+        "references": [
+          {
+            "type": "GitHub",
+            "reference": "2285"
+          },
+          {
+            "type": "BCP",
+            "reference": "1880717196"
+          }
+        ]
+      },
+      {
+        "id": "5f245a1aaddeb9a49d876938ff52356173a25b0d",
+        "type": "FIX",
+        "text": "NumberFormat: correctly handle option precision with CurrencyFormat",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880662411"
+          }
+        ]
+      },
+      {
+        "id": "c152fe11bff8f01b6cf487a7598c3942a6a11db3",
+        "type": "FIX",
+        "text": "TreeBindingUtils: Fixes negative $skip values",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870460769"
+          }
+        ]
+      },
+      {
+        "id": "9ebc5dae9ff7a276742a603b259fb6cd7d877682",
+        "type": "FIX",
+        "text": "core.support.plugins.ControlTree: Binding Infos for OData v4 fixed",
+        "references": []
+      },
+      {
+        "id": "6cd0ddd7023a50d60562cdb08d3faf92ba7d21e8",
+        "type": "FIX",
+        "text": "sap.ui.model.odata.AnnotationsParser: nested annotation w/o qualifier",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880610531"
+          }
+        ]
+      },
+      {
+        "id": "5f9fc4901ef7f8f3fd398b69b34e19be5c8a4bb5",
+        "type": "FIX",
+        "text": "type.Date: Format contstraints for validation error message",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870468811"
+          }
+        ]
+      },
+      {
+        "id": "d08f802a439c3a10621b5e87f481737169a7c364",
+        "type": "FEATURE",
+        "text": "Manifest: alternative manifest.json URL for manifest objects",
+        "references": []
+      },
+      {
+        "id": "c7b953e85eed283fd6cac90323bfaf59e3388410",
+        "type": "FEATURE",
+        "text": "StaticBinding: Support declaration of static binding values",
+        "references": []
+      },
+      {
+        "id": "a0b2ae3429614627ac59a2ae5fc4adeb5935bee7",
+        "type": "FIX",
+        "text": "ControllerExtension.qunit",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870473334"
+          }
+        ]
+      },
+      {
+        "id": "f90d7ebc36368d78611153e99fd860201cc97ee1",
+        "type": "FIX",
+        "text": "ManagedObjectModel: asynchron checkUpdate does nothing",
+        "references": []
+      },
+      {
+        "id": "87833590c6d5cf9c729fbe9b39c95f88e02064ef",
+        "type": "FIX",
+        "text": "NumberFormat: Fixed bug in short currency parsing",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500005959522018"
+          }
+        ]
+      },
+      {
+        "id": "73caaf72ea5a3614efe71b15e29b8813c1d3725b",
+        "type": "FIX",
+        "text": "sap.ui.core.Core: Replaced each function implementation with each utils module. Fixes: https://github.com/SAP/openui5/issues/2304",
+        "references": [
+          {
+            "type": "GitHub",
+            "reference": "2304"
+          },
+          {
+            "type": "BCP",
+            "reference": "1870473318"
+          }
+        ]
+      },
+      {
+        "id": "8510f4a8d6ab75afc6434064b8bbc5e64d02105f",
+        "type": "FIX",
+        "text": "sap.ui.model.odata.AnnotationsParser: nested annotation w/o qualifier",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880610531"
+          }
+        ]
+      },
+      {
+        "id": "365139c52d945535f492d17a960161e36b52e7b7",
+        "type": "FIX",
+        "text": "sap.ui.model.odata.AnnotationsParser: nested annotation w/o qualifier (2)",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880610531"
+          }
+        ]
+      }
+    ]
+  }
+}

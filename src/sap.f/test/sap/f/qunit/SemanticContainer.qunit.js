@@ -1,9 +1,20 @@
-/* global QUnit,sinon,SemanticUtil*/
-
-(function ($, QUnit, sinon) {
+/*global QUnit, sinon*/
+sap.ui.define([
+	"sap/ui/core/library",
+	"./SemanticUtil",
+	"sap/ui/core/Core"
+],
+function (
+	coreLibrary,
+	SemanticUtil,
+	oCore
+) {
 	"use strict";
 
 	sinon.config.useFakeTimers = false;
+
+	// shortcut for sap.ui.core.aria.HasPopup
+	var AriaHasPopup = coreLibrary.aria.HasPopup;
 
 	var oFactory = SemanticUtil.oFactory,
 		oSemanticConfiguration = oFactory.getSemanticConfiguration();
@@ -219,7 +230,8 @@
 	QUnit.test("test Custom Text Actions", function (assert) {
 		var oButton = oFactory.getAction(),
 			oButton2 = oFactory.getAction(),
-			iContentCount = 0, iContentIdx = 0;
+			iContentCount = 0, iContentIdx = 0,
+			aGetterResult;
 
 		// Act
 		iContentCount++;
@@ -232,12 +244,15 @@
 			"The action is added is on index: " + iContentIdx);
 
 		// Act
+		aGetterResult = this.oSemanticTitle.getCustomTextActions();
 		iContentCount--;
 		this.oSemanticTitle.removeAllCustomTextActions();
 
 		// Assert
 		assert.equal(this.oSemanticTitle.getCustomTextActions().length, iContentCount,
 			"The single action has been removed - actions left: " + iContentCount);
+		assert.equal(aGetterResult.length, 1,
+			"The result of the earlier call to getCustomTextActions is unchanged");
 
 		// Act
 		iContentCount += 2;
@@ -275,7 +290,8 @@
 	QUnit.test("test Custom Icon Actions", function (assert) {
 		var oButton = oFactory.getAction(),
 			oButton2 = oFactory.getAction(),
-			iContentCount = 0, iContentIdx = 0;
+			iContentCount = 0, iContentIdx = 0,
+			aGetterResult;
 
 		// Act
 		iContentCount++;
@@ -288,12 +304,15 @@
 			"The action is added is on index: " + iContentIdx);
 
 		// Act
+		aGetterResult = this.oSemanticTitle.getCustomIconActions();
 		iContentCount--;
 		this.oSemanticTitle.removeAllCustomIconActions();
 
 		// Assert
 		assert.equal(this.oSemanticTitle.getCustomIconActions().length, iContentCount,
 			"The single action has been removed - actions left: " + iContentCount);
+		assert.equal(aGetterResult.length, 1,
+			"The result of the earlier call to getCustomIconActions is unchanged");
 
 		// Act
 		iContentCount += 2;
@@ -412,7 +431,8 @@
 	QUnit.test("test Custom Actions", function (assert) {
 		var oButton = oFactory.getAction(),
 			oButton2 = oFactory.getAction(),
-			iContentCount = 0, iContentIdx = 0;
+			iContentCount = 0, iContentIdx = 0,
+			aGetterResult;
 
 		// Act
 		iContentCount++;
@@ -425,12 +445,15 @@
 			"The action is added is on index: " + iContentIdx);
 
 		// Act
+		aGetterResult = this.oSemanticFooter.getCustomActions();
 		iContentCount--;
 		this.oSemanticFooter.removeAllCustomActions();
 
 		// Assert
 		assert.equal(this.oSemanticFooter.getCustomActions().length, iContentCount,
 			"The single action has been removed - actions left: " + iContentCount);
+		assert.equal(aGetterResult.length, 1,
+			"The result of the earlier call to getCustomActions is unchanged");
 
 		// Act
 		iContentCount += 2;
@@ -662,6 +685,7 @@
 		var oButton = oFactory.getAction(),
 			oButton2 = oFactory.getAction(),
 			iContentCount = 0, iContentIdx = 0, mMode = {initial: "initial", menu: "menu"},
+			aGetterResult,
 			oSpy = this.spy(this.oSemanticShareMenu, "_fireContentChanged");
 
 		// Assert
@@ -682,6 +706,7 @@
 			"The action is added is on index: " + iContentIdx);
 
 		// Act
+		aGetterResult = this.oSemanticShareMenu.getCustomActions();
 		iContentCount--;
 		this.oSemanticShareMenu.removeAllCustomActions();
 
@@ -691,6 +716,8 @@
 		assert.ok(oSpy.called, "The Internal ContentChanged event is fired");
 		assert.equal(this.oSemanticShareMenu.getCustomActions().length, iContentCount,
 			"The single action has been removed - actions left: " + iContentCount);
+		assert.equal(aGetterResult.length, 1,
+			"The result of the earlier call to getCustomActions is unchanged");
 
 		// Act
 		iContentCount += 2;
@@ -800,15 +827,29 @@
 		oSaveAsTileAction.destroy();
 	});
 
-	QUnit.module("SemanticShareMenu destroy", {
+	QUnit.module("Accessibility", {
 		beforeEach: function () {
 			this.oActionSheet = oFactory.getActionSheet();
 			this.oSemanticShareMenu = oFactory.getSemanticShareMenu(this.oActionSheet);
 		},
 		afterEach: function () {
 			this.oActionSheet.destroy();
+			this.oSemanticShareMenu .destroy();
 			this.oSemanticShareMenu = null;
 			this.oActionSheet = null;
 		}
 	});
-})(jQuery, QUnit, sinon);
+
+	QUnit.test("Aria attributes", function (assert) {
+		// arrange
+		var oShareMenuBtn = this.oSemanticShareMenu._getShareMenuButton();
+
+		// arrange
+		oShareMenuBtn.placeAt("qunit-fixture");
+		oCore.applyChanges();
+
+		// assert
+		assert.equal(oShareMenuBtn.getAriaHasPopup(), AriaHasPopup.Menu, "aria-haspopup is as expected");
+	});
+
+});

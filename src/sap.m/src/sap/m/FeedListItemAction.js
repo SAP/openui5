@@ -23,7 +23,6 @@ sap.ui.define(["sap/ui/core/Element"],
 	 * @public
 	 * @alias sap.m.FeedListItemAction
 	 * @since 1.52.0
-	 * @ui5-metamodel This element will be described in the UI5 (legacy) designtime metamodel as well
 	 */
 	var FeedListItemAction = Element.extend("sap.m.FeedListItemAction", /** @lends sap.m.FeedListItemAction.prototype */ {
 		metadata: {
@@ -42,7 +41,16 @@ sap.ui.define(["sap/ui/core/Element"],
 				/**
 				 * The key of the item.
 				 */
-				key: { type: "string", group: "Misc", defaultValue: "" }
+				key: { type: "string", group: "Misc", defaultValue: "" },
+				/**
+				 * Hides or shows a button on the UI.
+				 */
+				visible: { type: "boolean", group: "Appearance", defaultValue: true },
+				/**
+				 * Enables or disables a button on the UI. All buttons are enabled by default.
+				 * Disabled buttons are colored differently as per the theme of the UI.
+				 */
+				enabled: { type: "boolean", group: "Appearance", defaultValue: true }
 			},
 			events: {
 				/**

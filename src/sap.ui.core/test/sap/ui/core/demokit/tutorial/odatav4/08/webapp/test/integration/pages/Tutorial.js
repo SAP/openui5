@@ -1,12 +1,11 @@
 sap.ui.define([
-	'sap/ui/test/Opa5',
-	'sap/ui/test/matchers/AggregationLengthEquals',
-	'sap/ui/test/matchers/PropertyStrictEquals',
-	'sap/ui/test/matchers/BindingPath',
-	'sap/ui/test/matchers/I18NText',
-	'sap/ui/test/actions/Press',
-	'sap/ui/test/actions/EnterText'
-], function (Opa5, AggregationLengthEquals, PropertyStrictEquals, BindingPath, I18NText, Press, EnterText) {
+	"sap/ui/test/Opa5",
+	"sap/ui/test/matchers/AggregationLengthEquals",
+	"sap/ui/test/matchers/PropertyStrictEquals",
+	"sap/ui/test/matchers/BindingPath",
+	"sap/ui/test/actions/Press",
+	"sap/ui/test/actions/EnterText"
+], function (Opa5, AggregationLengthEquals, PropertyStrictEquals, BindingPath, Press, EnterText) {
 	"use strict";
 
 	var sViewName = "App",
@@ -84,9 +83,9 @@ sap.ui.define([
 						viewName : sViewName,
 						matchers : [
 							// Find the input fields for the new entry
-							new BindingPath({
-								path : "/People/-1"
-							}),
+							function (oControl) {
+								return oControl.getBindingContext().getIndex() === 0;
+							},
 							// Keep only empty input fields
 							function (oItem) {
 								return !oItem.getValue();
@@ -184,7 +183,7 @@ sap.ui.define([
 								+ iNumber + " items");
 						},
 						errorMessage : "Table not found or it does not have "
-						+ iNumber + " entries"
+							+ iNumber + " entries"
 					});
 				},
 
@@ -194,12 +193,15 @@ sap.ui.define([
 						viewName : sViewName,
 						matchers : function (oTable) {
 							var oListBinding = getListBinding(oTable);
+
 							return oListBinding && oListBinding.getLength() === iNumber;
 						},
 						success : function () {
-							Opa5.assert.ok(true, "The table shows a total of " + iNumber + " users");
+							Opa5.assert.ok(true, "The table shows a total of " + iNumber
+								+ " users");
 						},
-						errorMessage : "Table not found or it does not show " + iNumber + " total users"
+						errorMessage : "Table not found or it does not show " + iNumber
+							+ " total users"
 					});
 				},
 
@@ -209,6 +211,7 @@ sap.ui.define([
 						viewName : sViewName,
 						matchers : function (oTable) {
 							var oFirstItem = getFirstTableEntry(oTable);
+
 							return oFirstItem && oFirstItem.getProperty("LastName") === sLastName;
 						},
 						success : function () {
@@ -240,39 +243,45 @@ sap.ui.define([
 					var sDesiredState = bEnabled ? "enabled" : "disabled";
 
 					return this.waitFor({
-						id : /searchField$|addUserButton$|deleteUserButton$|refreshUsersButton$|sortUsersButton$/,
+						id : /searchField$|refreshUsersButton$|sortUsersButton$/,
 						viewName : sViewName,
-						autoWait : false,	// Needed because we want to find disabled controls, too
+						autoWait : false, // Needed because we want to find disabled controls, too
 						matchers : new PropertyStrictEquals({
 							name : "enabled",
 							value : bEnabled
 						}),
 						check : function (aControls) {
 							// Validate that ALL controls have the right state
-							return aControls.length === 5;
+							return aControls.length === 3;
 						},
 						success : function () {
-							Opa5.assert.ok(true, "All controls in the table toolbar are " + sDesiredState);
+							Opa5.assert.ok(true, "All controls in the table toolbar are "
+								+ sDesiredState);
 						},
-						errorMessage : "Not all controls in the table toolbar could be found or not all are " + sDesiredState
+						errorMessage : "Not all controls in the table toolbar could be found or "
+							+ "not all are " + sDesiredState
 					});
 				},
 
-				theMessageToastShouldShow : function (sTextId) {
+				theMessageToastShouldShow : function (sTextId, sArg0) {
 					return this.waitFor({
 						autoWait : false,
 						id : sTableId,
 						viewName : sViewName,
 						check : function (oControl) {
 							// Locate the message toast using its CSS class name and content
-							var sText = oControl.getModel("i18n").getResourceBundle().getText(sTextId);
-							var sSelector = ".sapMMessageToast:contains('" + sText + "')";
+							var sText = oControl.getModel("i18n").getResourceBundle()
+									.getText(sTextId, [sArg0]),
+								sSelector = ".sapMMessageToast:contains('" + sText + "')";
+
 							return !!Opa5.getJQuery()(sSelector).length;
 						},
 						success : function () {
-							Opa5.assert.ok(true, "Could see the MessageToast showing text with ID " + sTextId);
+							Opa5.assert.ok(true, "Could see the MessageToast showing text with ID "
+								+ sTextId);
 						},
-						errorMessage : "Could not see a MessageToast showing text with ID " + sTextId
+						errorMessage : "Could not see a MessageToast showing text with ID "
+							+ sTextId
 					});
 				},
 

@@ -1,9 +1,15 @@
-sap.ui.getCore().attachInit(function() {
-	var button = new sap.m.Button({text: "Press me!"});
-	button.placeAt("ui5content");
-	var input = new sap.m.Input({value: "Change me!"});
-	input.placeAt("ui5content");
-	var search = new sap.m.SearchField({value: "Change me!"});
-	search.placeAt("ui5content");
-	jQuery("#htmlcontent").html("<button>Press me!</button><input type=\"text\" value=\"Change me!\">");
-})
+sap.ui.require([
+	"sap/ui/core/Core",
+	"sap/m/Button",
+	"sap/m/Input",
+	"sap/m/SearchField"
+], function(Core, Button, Input, SearchField) {
+	"use strict";
+	Core.ready().then(function () {
+		new Button({text: "Press me!"}).placeAt("ui5content");
+		new Input({value: "Change me!"}).placeAt("ui5content");
+		new SearchField({value: "Change me!"}).placeAt("ui5content");
+		document.getElementById("htmlcontent").innerHTML =
+			"<button>Press me!</button><input type=\"text\" value=\"Change me!\">";
+	});
+});

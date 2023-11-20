@@ -1,0 +1,44 @@
+/* ====================================== */
+/* CSS for control sap.m/RatingIndicator  */
+/* Quartz High Contrast Black theme       */
+/* ====================================== */
+
+.sapMRI {
+	text-shadow: @sapUiContentTextShadow;
+
+	.sapMRISel, .sapMRIHov {
+		color: @sapUiContentRatedColor;
+	}
+
+	.sapMRIUnsel,
+	&.sapMRIReadOnly .sapMRIUnsel,
+	&.sapMRIDisplayOnly .sapMRIUnsel {
+		color: @sapUiContentUnratedColor;
+	}
+
+	&.sapMRIDisplayOnly {
+		text-shadow: none;
+
+		.sapMRIIconSel {
+			color: @sapUiContentIconColor;
+		}
+	}
+
+	&.sapMRIDisabled {
+		text-shadow: none;
+
+		.sapMRIUnsel, .sapMRISel {
+			color: @sapUiContentDisabledTextColor;
+		}
+	}
+}
+
+/* Custom focus outline */
+html.sap-desktop .sapMRI:focus:not(.sapMRIDisabled):not(.sapMRIDisplayOnly) {
+	outline: @sapUiContentFocusWidth @sapUiContentFocusStyle @sapUiContentFocusColor;
+	outline-offset: 0.0625rem;
+}
+
+.sapMRIIconSel, .sapMRIIconUnsel, .sapMRIIconHov, .sapMRIIconReadOnly {
+	font-size: 1.5rem;
+}

@@ -1,13 +1,9 @@
-/*!
- * ${copyright}
- */
-
 sap.ui.define([
-	"jquery.sap.global",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/core/IconPool",
-	"sap/ui/demo/iconexplorer/model/Sorter"
-], function (jQuery, JSONModel, IconPool, Sorter) {
+	"sap/ui/demo/iconexplorer/model/Sorter",
+	"sap/base/Log"
+], function (JSONModel, IconPool, Sorter, Log) {
 	"use strict";
 
 	return JSONModel.extend("sap.ui.demo.iconexplorer.model.IconModel", {
@@ -163,7 +159,7 @@ sap.ui.define([
 		 */
 		getUnicode: function (sName) {
 			var sFontName = (this._sFontName === "SAP-icons" ? undefined : this._sFontName),
-				oInfo = IconPool.getIconInfo(this._sFontName + "/" + sName, sFontName);
+				oInfo = IconPool.getIconInfo(sName, sFontName);
 
 			return (oInfo ? oInfo.content : "?");
 		},
@@ -195,15 +191,12 @@ sap.ui.define([
 			["groups.json", "tags.json"].forEach(function (sName) {
 				aPromises.push(new Promise(function (fnResolve, fnReject) {
 					// load font metadata asynchronously
-					jQuery.ajax({
-						url: sap.ui.require.toUrl("sap/ui/demo/iconexplorer") + "/model/" + sFontName + "/" + sName,
-						dataType: "json",
-						success: function (oData) {
-							fnResolve(oData);
-						},
-						error: function (oError) {
-							fnReject(oError);
-						}
+					var oJSONModel = new JSONModel(sap.ui.require.toUrl("sap/ui/demo/iconexplorer/model/" + sFontName + "/" + sName));
+					oJSONModel.attachRequestCompleted(function ()  {
+						fnResolve(this.getData());
+					});
+					oJSONModel.attachRequestFailed(function (oError) {
+						fnReject(oError);
 					});
 				}));
 			} );
@@ -243,7 +236,7 @@ sap.ui.define([
 			this.setProperty("/AllFonts", aAllFonts);
 
 			// trace elapsed time
-			jQuery.sap.log.info("IconModel: Loaded and sorted all icons of " + sFontName + " in " + (new Date().getTime() - this._iStartTime) + " ms");
+			Log.info("IconModel: Loaded and sorted all icons of " + sFontName + " in " + (new Date().getTime() - this._iStartTime) + " ms");
 
 			// set the model data
 			this.setProperty("/" + sFontName, oGroups);
@@ -262,7 +255,7 @@ sap.ui.define([
 		/**
 		 * Processes all groups: sort groups by name and enrich the model data
 		 * Sorting is done in the model once for faster processing in the views
-		 * @param {string} sFontName name of currently selected font to be loaded
+		 * @param {array} oGroups name of currently selected font to be loaded
 		 * @private
 		 */
 		_processGroups : function(oGroups) {
@@ -289,6 +282,13 @@ sap.ui.define([
 			var	aIconNames = IconPool.getIconNames(sFontName === "SAP-icons" ? undefined : sFontName),
 				sIconPath = (sFontName === "SAP-icons" ? "" : sFontName + "/"),
 				sDelivery = (["SAP-icons", "SAP-icons-TNT"].indexOf(sFontName) >= 0 ? "OpenUI5" : "SAPUI5");
+
+			// Remove icons starting with capitol character from the "SAP-icons-TNT" font, because they are deprecated.
+			if (sFontName === "SAP-icons-TNT") {
+				aIconNames = aIconNames.filter(function (sIconName) {
+					return sIconName[0] !== sIconName[0].toUpperCase();
+				});
+			}
 
 			// add all icons from icon pool and append tag info
 			var aIcons = aIconNames.map(function (sIconName) {
@@ -321,10 +321,6 @@ sap.ui.define([
 				count : aIcons.length
 			});
 
-			// Add all icons of this font to the AllIcons path in IconModel for the global search
-			/*var aClonedIcons = aIcons.map(function (oIcon) {
-				return jQuery.extend(true, {}, oIcon);
-			});*/
 			this.setProperty("/AllIcons", this.getProperty("/AllIcons").concat(aIcons));
 
 			// calculate top tag and relate tags to other groups than "all"
@@ -333,7 +329,7 @@ sap.ui.define([
 
 		/**
 		 * Calculates the top tag and relates the tags from the "all" group to each group
-		 * @param {string} sFontName name of currently selected font to be loaded
+		 * @param {array} oGroups name of currently selected font to be loaded
 		 * @private
 		 */
 		_calculateTagsPerGroup: function (oGroups) {
@@ -351,7 +347,7 @@ sap.ui.define([
 						oGroups.groups[i].icons[j].tagString = aIcon.tagString;
 						oTags = aIcon.tags;
 					} else {
-						jQuery.sap.log.info("IconModel: Failed to load tags for " + oGroups.groups[i].icons[j].name);
+						Log.info("IconModel: Failed to load tags for " + oGroups.groups[i].icons[j].name);
 					}
 
 					// Count tag occurrence for every tag in group
@@ -397,7 +393,7 @@ sap.ui.define([
 		/**
 		 * Finds icon metadata in the all group
 		 * @param {Object} oAllGroup a map of all icons for the current font
-		 * @param {Object} {oCurrentIcon} the item to look up
+		 * @param {Object} oCurrentIcon the item to look up
 		 * @returns {Object} the icon metadata requested
 		 * @private
 		 */

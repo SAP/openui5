@@ -1,0 +1,1057 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<style type="text/css">
+			body {font-family: Arial, "Helvetica Neue", Helvetica, sans-serif;}
+		</style>
+		<title>Manual Integration Test: Recursive Hierarchy</title>
+	</head>
+	<body>
+		<h1>Manual Integration Test: Recursive Hierarchy</h1>
+		<h2>DESCRIPTION</h2>
+		Test scrolling of a partially expanded recursive hierarchy, as well as collapsing and
+		expanding of nodes.
+		<h2>PREPARATION</h2>
+
+		To check console errors open the developer tools before starting the application and check
+		with each step, that there are no errors and warnings. Ignore initial message bundle errors.
+
+		<h3>Testing with mock data</h3>
+		Start the Recursive Hierarchy application URL (adjust host and port if necessary):
+		<ul>
+			<li> local:
+				<a href="http://localhost:8080/test-resources/sap/ui/core/demokit/sample/common/index.html?component=odata.v4.RecursiveHierarchy">
+					http://&lt;host>:&lt;port>/test-resources/sap/ui/core/demokit/sample/common/index.html?component=odata.v4.RecursiveHierarchy
+				</a>
+			</li>
+		</ul>
+
+		<h2>REALIZE and CHECK</h2>
+		<h3>First Page</h3>
+		<ul>
+			<li><b>Check:</b> The table should have the following content:
+				<table border="1px" cellspacing="0" >
+					<tr>
+						<th>Level</th>
+						<th>(Icon's Tooltip)</th>
+						<th>ID</th>
+						<th>Manager's ID</th>
+						<th>Name</th>
+						<th>Age</th>
+					</tr>
+					<tr>
+						<td>1</td><td>Collapse</td><td>0</td><td></td><td>Alpha</td><td>60</td>
+					</tr>
+					<tr>
+						<td>2</td><td>Collapse</td><td>1</td><td>0</td><td>Beta</td><td>55</td>
+					</tr>
+					<tr>
+						<td>3</td><td>Expand</td><td>1.1</td><td>1</td><td>Gamma</td><td>41</td>
+					</tr>
+					<tr>
+						<td>3</td><td>Expand</td><td>1.2</td><td>1</td><td>Zeta</td><td>42</td>
+					</tr>
+					<tr>
+						<td>2</td><td>Leaf</td><td>2</td><td>0</td><td>Kappa</td><td>56</td>
+					</tr>
+				</table>
+			</li>
+		</ul>
+		<h3>Collapse And Expand 0 (Alpha)</h3>
+		<ul>
+			<li>Click on the collapse button in the row 0 (Alpha).</li>
+			<li><b>Check:</b> The table should have the following content:
+				<table border="1px" cellspacing="0" >
+					<tr>
+						<th>Level</th>
+						<th>(Icon's Tooltip)</th>
+						<th>ID</th>
+						<th>Manager's ID</th>
+						<th>Name</th>
+						<th>Age</th>
+					</tr>
+					<tr>
+						<td>1</td><td>Expand</td><td>0</td><td></td><td>Alpha</td><td>60</td>
+					</tr>
+					<tr>
+						<td></td><td>&nbsp;</td><td></td><td></td><td></td><td></td>
+					</tr>
+					<tr>
+						<td></td><td>&nbsp;</td><td></td><td></td><td></td><td></td>
+					</tr>
+					<tr>
+						<td></td><td>&nbsp;</td><td></td><td></td><td></td><td></td>
+					</tr>
+					<tr>
+						<td></td><td>&nbsp;</td><td></td><td></td><td></td><td></td>
+					</tr>
+				</table>
+			</li>
+			<li>Click on the expand button in the row 0 (Alpha).</li>
+			<li><b>Check:</b> The table should have the same content as initially (see above).
+			</li>
+		</ul>
+		<h3>Expand 1.2 (Zeta) and 1.1 (Gamma)</h3>
+		<ul>
+			<li>Click on the expand buttons in the rows 1.2 (Zeta) and 1.1 (Gamma).</li>
+			<li><b>Check:</b> The table should have the following content:
+				<table border="1px" cellspacing="0" >
+					<tr>
+						<th>Level</th>
+						<th>(Icon's Tooltip)</th>
+						<th>ID</th>
+						<th>Manager's ID</th>
+						<th>Name</th>
+						<th>Age</th>
+					</tr>
+					<tr>
+						<td>1</td><td>Collapse</td><td>0</td><td></td><td>Alpha</td><td>60</td>
+					</tr>
+					<tr>
+						<td>2</td><td>Collapse</td><td>1</td><td>0</td><td>Beta</td><td>55</td>
+					</tr>
+					<tr>
+						<td>3</td><td>Collapse</td><td>1.1</td><td>1</td><td>Gamma</td><td>41</td>
+					</tr>
+					<tr>
+						<td>4</td><td>Leaf</td><td>1.1.1</td><td>1.1</td><td>Delta</td><td>38</td>
+					</tr>
+					<tr>
+						<td>4</td><td>Leaf</td><td>1.1.2</td><td>1.1</td><td>Epsilon</td><td>39</td>
+					</tr>
+				</table>
+			</li>
+			<li>Scroll down row by row until 1.2 (Zeta) is at the top.</li>
+			<li><b>Check:</b> The table should have the following content:
+				<table border="1px" cellspacing="0" >
+					<tr>
+						<th>Level</th>
+						<th>(Icon's Tooltip)</th>
+						<th>ID</th>
+						<th>Manager's ID</th>
+						<th>Name</th>
+						<th>Age</th>
+					</tr>
+					<tr>
+						<td>3</td><td>Collapse</td><td>1.2</td><td>1</td><td>Zeta</td><td>42</td>
+					</tr>
+					<tr>
+						<td>4</td><td>Leaf</td><td>1.2.1</td><td>1.2</td><td>Eta</td><td>31</td>
+					</tr>
+					<tr>
+						<td>4</td><td>Leaf</td><td>1.2.2</td><td>1.2</td><td>Theta</td><td>32</td>
+					</tr>
+					<tr>
+						<td>4</td><td>Leaf</td><td>1.2.3</td><td>1.2</td><td>Ioata</td><td>33</td>
+					</tr>
+					<tr>
+						<td>4</td><td>Leaf</td><td>1.2.4</td><td>1.2</td><td>Kappa</td><td>34</td>
+					</tr>
+				</table>
+			</li>
+		</ul>
+		<h3>Collapse 1 (Beta)</h3>
+		<ul>
+			<li>Scroll to the top.</li>
+			<li>Click on the collapse button in the row 1 (Beta).</li>
+			<li><b>Check:</b> The table should have the following content:
+				<table border="1px" cellspacing="0" >
+					<tr>
+						<th>Level</th>
+						<th>(Icon's Tooltip)</th>
+						<th>ID</th>
+						<th>Manager's ID</th>
+						<th>Name</th>
+						<th>Age</th>
+					</tr>
+					<tr>
+						<td>1</td><td>Collapse</td><td>0</td><td></td><td>Alpha</td><td>60</td>
+					</tr>
+					<tr>
+						<td>2</td><td>Expand</td><td>1</td><td>0</td><td>Beta</td><td>55</td>
+					</tr>
+					<tr>
+						<td>2</td><td>Leaf</td><td>2</td><td>0</td><td>Kappa</td><td>56</td>
+					</tr>
+					<tr>
+						<td>2</td><td>Leaf</td><td>3</td><td>0</td><td>Lambda</td><td>57</td>
+					</tr>
+					<tr>
+						<td>2</td><td>Collapse</td><td>4</td><td>0</td><td>Mu</td><td>58</td>
+					</tr>
+				</table>
+			</li>
+		</ul>
+		<h3>Collapse 4 (Mu)</h3>
+		<ul>
+			<li>Click on the collapse button in the row 4 (Mu).</li>
+			<li><b>Check:</b> The table should have the following content:
+				<table border="1px" cellspacing="0" >
+					<tr>
+						<th>Level</th>
+						<th>(Icon's Tooltip)</th>
+						<th>ID</th>
+						<th>Manager's ID</th>
+						<th>Name</th>
+						<th>Age</th>
+					</tr>
+					<tr>
+						<td>1</td><td>Collapse</td><td>0</td><td></td><td>Alpha</td><td>60</td>
+					</tr>
+					<tr>
+						<td>2</td><td>Expand</td><td>1</td><td>0</td><td>Beta</td><td>55</td>
+					</tr>
+					<tr>
+						<td>2</td><td>Leaf</td><td>2</td><td>0</td><td>Kappa</td><td>56</td>
+					</tr>
+					<tr>
+						<td>2</td><td>Leaf</td><td>3</td><td>0</td><td>Lambda</td><td>57</td>
+					</tr>
+					<tr>
+						<td>2</td><td>Expand</td><td>4</td><td>0</td><td>Mu</td><td>58</td>
+					</tr>
+				</table>
+			</li>
+		</ul>
+		<h3>Scroll To The Bottom</h3>
+		<ul>
+			<li>Scroll down row by row to the bottom.</li>
+			<li><b>Check:</b> The table should have the following content:
+				<table border="1px" cellspacing="0" >
+					<tr>
+						<th>Level</th>
+						<th>(Icon's Tooltip)</th>
+						<th>ID</th>
+						<th>Manager's ID</th>
+						<th>Name</th>
+						<th>Age</th>
+					</tr>
+						<td>2</td><td>Leaf</td><td>2</td><td>0</td><td>Kappa</td><td>56</td>
+					<tr>
+					</tr>
+					<tr>
+						<td>2</td><td>Leaf</td><td>3</td><td>0</td><td>Lambda</td><td>57</td>
+					</tr>
+					<tr>
+						<td>2</td><td>Expand</td><td>4</td><td>0</td><td>Mu</td><td>58</td>
+					</tr>
+					<tr>
+						<td>2</td><td>Collapse</td><td>5</td><td>0</td><td>Xi</td><td>59</td>
+					</tr>
+					<tr>
+						<td>3</td><td>Expand</td><td>5.1</td><td>5</td><td>Omicron</td><td>41</td>
+					</tr>
+				</table>
+			</li>
+		</ul>
+		<h3>Expand 4 (Mu)</h3>
+		<ul>
+			<li>Click on the expand button in the row 4 (Mu).</li>
+			<li><b>Check:</b> The table should have the following content:
+				<table border="1px" cellspacing="0" >
+					<tr>
+						<th>Level</th>
+						<th>(Icon's Tooltip)</th>
+						<th>ID</th>
+						<th>Manager's ID</th>
+						<th>Name</th>
+						<th>Age</th>
+					</tr>
+					<tr>
+						<td>2</td><td>Leaf</td><td>2</td><td>0</td><td>Kappa</td><td>56</td>
+					<tr>
+					</tr>
+					<tr>
+						<td>2</td><td>Leaf</td><td>3</td><td>0</td><td>Lambda</td><td>57</td>
+					</tr>
+					<tr>
+						<td>2</td><td>Collapse</td><td>4</td><td>0</td><td>Mu</td><td>58</td>
+					</tr>
+					<tr>
+						<td>3</td><td>Leaf</td><td>4.1</td><td>4</td><td>Nu</td><td>41</td>
+					</tr>
+					<tr>
+						<td>2</td><td>Collapse</td><td>5</td><td>0</td><td>Xi</td><td>59</td>
+					</tr>
+				</table>
+			</li>
+		</ul>
+		<h3>Expand 5.1 (Omicron)</h3>
+		<ul>
+			<li>Scroll down one row, then click on the expand button in the row 5.1 (Omicron), and
+				PAGE DOWN once to show the first page of children.</li>
+			<li><b>Check:</b> The table should have the following content:
+				<table border="1px" cellspacing="0" >
+					<tr>
+						<th>Level</th>
+						<th>(Icon's Tooltip)</th>
+						<th>ID</th>
+						<th>Manager's ID</th>
+						<th>Name</th>
+						<th>Age</th>
+					</tr>
+					<tr>
+						<td>4</td><td>Leaf</td><td>5.1.1</td><td>5.1</td><td>Pi</td><td>21</td>
+					</tr>
+					<tr>
+						<td>4</td><td>Leaf</td><td>5.1.2</td><td>5.1</td><td>Rho</td><td>22</td>
+					</tr>
+					<tr>
+						<td>4</td><td>Leaf</td><td>5.1.3</td><td>5.1</td><td>Sigma</td><td>23</td>
+					</tr>
+					<tr>
+						<td>4</td><td>Leaf</td><td>5.1.4</td><td>5.1</td><td>Tau</td><td>24</td>
+					</tr>
+					<tr>
+						<td>4</td><td>Leaf</td><td>5.1.5</td><td>5.1</td><td>Upsilon</td><td>25</td>
+					</tr>
+				</table>
+			</li>
+		</ul>
+		<h3>Scroll To The Bottom</h3>
+		<ul>
+			<li>Scroll to the bottom.</li>
+			<li><b>Check:</b> The table should have the following content:
+				<table border="1px" cellspacing="0" >
+					<tr>
+						<th>Level</th>
+						<th>(Icon's Tooltip)</th>
+						<th>ID</th>
+						<th>Manager's ID</th>
+						<th>Name</th>
+						<th>Age</th>
+					</tr>
+					<tr>
+						<td>4</td><td>Leaf</td><td>5.1.5</td><td>5.1</td><td>Upsilon</td><td>25</td>
+					</tr>
+					<tr>
+						<td>4</td><td>Leaf</td><td>5.1.6</td><td>5.1</td><td>Phi</td><td>26</td>
+					</tr>
+					<tr>
+						<td>4</td><td>Leaf</td><td>5.1.7</td><td>5.1</td><td>Chi</td><td>27</td>
+					</tr>
+					<tr>
+						<td>4</td><td>Leaf</td><td>5.1.8</td><td>5.1</td><td>Psi</td><td>28</td>
+					</tr>
+					<tr>
+						<td>4</td><td>Leaf</td><td>5.1.9</td><td>5.1</td><td>Omega</td><td>29</td>
+					</tr>
+				</table>
+			</li>
+		</ul>
+		<h3>Collapse 0 (Alpha)</h3>
+		<ul>
+			<li>Scroll to the top and click on the collapse button in the row 0 (Alpha).</li>
+			<li><b>Check:</b> The table should have the following content:
+				<table border="1px" cellspacing="0" >
+					<tr>
+						<th>Level</th>
+						<th>(Icon's Tooltip)</th>
+						<th>ID</th>
+						<th>Manager's ID</th>
+						<th>Name</th>
+						<th>Age</th>
+					</tr>
+					<tr>
+						<td>1</td><td>Expand</td><td>0</td><td></td><td>Alpha</td><td>60</td>
+					</tr>
+					<tr>
+						<td></td><td>&nbsp;</td><td></td><td></td><td></td><td></td>
+					</tr>
+					<tr>
+						<td></td><td>&nbsp;</td><td></td><td></td><td></td><td></td>
+					</tr>
+					<tr>
+						<td></td><td>&nbsp;</td><td></td><td></td><td></td><td></td>
+					</tr>
+					<tr>
+						<td></td><td>&nbsp;</td><td></td><td></td><td></td><td></td>
+					</tr>
+				</table>
+			</li>
+		</ul>
+		<h3>Synchronize (1st Time)</h3>
+		<ul>
+			<li>Click on the "Synchronize" button in the top right corner.</li>
+			<li><b>Check:</b> The table should have the following content:
+				<table border="1px" cellspacing="0" >
+					<tr>
+						<th>Level</th>
+						<th>(Icon's Tooltip)</th>
+						<th>ID</th>
+						<th>Manager's ID</th>
+						<th>Name</th>
+						<th>Age</th>
+					</tr>
+					<tr>
+						<td>1</td><td>Expand</td><td>0</td><td></td><td>Alpha #1</td><td>160</td>
+					</tr>
+					<tr>
+						<td></td><td>&nbsp;</td><td></td><td></td><td></td><td></td>
+					</tr>
+					<tr>
+						<td></td><td>&nbsp;</td><td></td><td></td><td></td><td></td>
+					</tr>
+					<tr>
+						<td></td><td>&nbsp;</td><td></td><td></td><td></td><td></td>
+					</tr>
+					<tr>
+						<td></td><td>&nbsp;</td><td></td><td></td><td></td><td></td>
+					</tr>
+				</table>
+			</li>
+		</ul>
+		<h3>Expand 0 (Alpha)</h3>
+		<ul>
+			<li>Click on the expand button in the row 0 (Alpha).</li>
+			<li><b>Check:</b> The table should have the following content:
+				<table border="1px" cellspacing="0" >
+					<tr>
+						<th>Level</th>
+						<th>(Icon's Tooltip)</th>
+						<th>ID</th>
+						<th>Manager's ID</th>
+						<th>Name</th>
+						<th>Age</th>
+					</tr>
+					<tr>
+						<td>1</td><td>Collapse</td><td>0</td><td></td><td>Alpha #1</td><td>160</td>
+					</tr>
+					<tr>
+						<td>2</td><td>Expand</td><td>1</td><td>0</td><td>Beta #1</td><td>155</td>
+					</tr>
+					<tr>
+						<td>2</td><td>Leaf</td><td>2</td><td>0</td><td>Kappa #1</td><td>156</td>
+					</tr>
+					<tr>
+						<td>2</td><td>Leaf</td><td>3</td><td>0</td><td>Lambda #1</td><td>157</td>
+					</tr>
+					<tr>
+						<td>2</td><td>Collapse</td><td>4</td><td>0</td><td>Mu #1</td><td>158</td>
+					</tr>
+				</table>
+			</li>
+		</ul>
+		<h3>Expand 1 (Beta)</h3>
+		<ul>
+			<li>Click on the expand button in the row 1 (Beta).</li>
+			<li><b>Check:</b> The table should have the following content:
+				<table border="1px" cellspacing="0" >
+					<tr>
+						<th>Level</th>
+						<th>(Icon's Tooltip)</th>
+						<th>ID</th>
+						<th>Manager's ID</th>
+						<th>Name</th>
+						<th>Age</th>
+					</tr>
+					<tr>
+						<td>1</td><td>Collapse</td><td>0</td><td></td><td>Alpha #1</td><td>160</td>
+					</tr>
+					<tr>
+						<td>2</td><td>Collapse</td><td>1</td><td>0</td><td>Beta #1</td><td>155</td>
+					</tr>
+					<tr>
+						<td>3</td><td>Collapse</td><td>1.1</td><td>1</td><td>Gamma #1</td><td>141</td>
+					</tr>
+					<tr>
+						<td>4</td><td>Leaf</td><td>1.1.1</td><td>1.1</td><td>Delta #1</td><td>138</td>
+					</tr>
+					<tr>
+						<td>4</td><td>Leaf</td><td>1.1.2</td><td>1.1</td><td>Epsilon #1</td><td>139</td>
+					</tr>
+				</table>
+			</li>
+		</ul>
+		<h3>Collapse 1.1 (Gamma)</h3>
+		<ul>
+			<li>Click on the collapse button in the row 1.1 (Gamma).</li>
+			<li><b>Check:</b> The table should have the following content:
+				<table border="1px" cellspacing="0" >
+					<tr>
+						<th>Level</th>
+						<th>(Icon's Tooltip)</th>
+						<th>ID</th>
+						<th>Manager's ID</th>
+						<th>Name</th>
+						<th>Age</th>
+					</tr>
+					<tr>
+						<td>1</td><td>Collapse</td><td>0</td><td></td><td>Alpha #1</td><td>160</td>
+					</tr>
+					<tr>
+						<td>2</td><td>Collapse</td><td>1</td><td>0</td><td>Beta #1</td><td>155</td>
+					</tr>
+					<tr>
+						<td>3</td><td>Expand</td><td>1.1</td><td>1</td><td>Gamma #1</td><td>141</td>
+					</tr>
+					<tr>
+						<td>3</td><td>Collapse</td><td>1.2</td><td>1</td><td>Zeta #1</td><td>142</td>
+					</tr>
+					<tr>
+						<td>4</td><td>Leaf</td><td>1.2.1</td><td>1.2</td><td>Eta #1</td><td>131</td>
+					</tr>
+				</table>
+			</li>
+		</ul>
+		<h3>Collapse 1.2 (Zeta)</h3>
+		<ul>
+			<li>Click on the collapse button in the row 1.2 (Zeta).</li>
+			<li><b>Check:</b> The table should have the following content:
+				<table border="1px" cellspacing="0" >
+					<tr>
+						<th>Level</th>
+						<th>(Icon's Tooltip)</th>
+						<th>ID</th>
+						<th>Manager's ID</th>
+						<th>Name</th>
+						<th>Age</th>
+					</tr>
+					<tr>
+						<td>1</td><td>Collapse</td><td>0</td><td></td><td>Alpha #1</td><td>160</td>
+					</tr>
+					<tr>
+						<td>2</td><td>Collapse</td><td>1</td><td>0</td><td>Beta #1</td><td>155</td>
+					</tr>
+					<tr>
+						<td>3</td><td>Expand</td><td>1.1</td><td>1</td><td>Gamma #1</td><td>141</td>
+					</tr>
+					<tr>
+						<td>3</td><td>Expand</td><td>1.2</td><td>1</td><td>Zeta #1</td><td>142</td>
+					</tr>
+					<tr>
+						<td>2</td><td>Leaf</td><td>2</td><td>0</td><td>Kappa #1</td><td>156</td>
+					</tr>
+				</table>
+			</li>
+		</ul>
+		<h3>Expand 1.1 (Gamma)</h3>
+		<ul>
+			<li>Click on the expand button in the row 1.1 (Gamma).</li>
+			<li><b>Check:</b> The table should have the following content:
+				<table border="1px" cellspacing="0" >
+					<tr>
+						<th>Level</th>
+						<th>(Icon's Tooltip)</th>
+						<th>ID</th>
+						<th>Manager's ID</th>
+						<th>Name</th>
+						<th>Age</th>
+					</tr>
+					<tr>
+						<td>1</td><td>Collapse</td><td>0</td><td></td><td>Alpha #1</td><td>160</td>
+					</tr>
+					<tr>
+						<td>2</td><td>Collapse</td><td>1</td><td>0</td><td>Beta #1</td><td>155</td>
+					</tr>
+					<tr>
+						<td>3</td><td>Collapse</td><td>1.1</td><td>1</td><td>Gamma #1</td><td>141</td>
+					</tr>
+					<tr>
+						<td>4</td><td>Leaf</td><td>1.1.1</td><td>1.1</td><td>Delta #1</td><td>138</td>
+					</tr>
+					<tr>
+						<td>4</td><td>Leaf</td><td>1.1.2</td><td>1.1</td><td>Epsilon #1</td><td>139</td>
+					</tr>
+				</table>
+			</li>
+		</ul>
+		<h3>Synchronize (2nd Time)</h3>
+		<ul>
+			<li>Click on the "Synchronize" button in the top right corner.</li>
+			<li><b>Check:</b> The table should have the following content:
+				<table border="1px" cellspacing="0" >
+					<tr>
+						<th>Level</th>
+						<th>(Icon's Tooltip)</th>
+						<th>ID</th>
+						<th>Manager's ID</th>
+						<th>Name</th>
+						<th>Age</th>
+					</tr>
+					<tr>
+						<td>1</td><td>Collapse</td><td>0</td><td></td><td>Alpha #2</td><td>260</td>
+					</tr>
+					<tr>
+						<td>2</td><td>Collapse</td><td>1</td><td>0</td><td>Beta #2</td><td>255</td>
+					</tr>
+					<tr>
+						<td>3</td><td>Collapse</td><td>1.1</td><td>1</td><td>Gamma #2</td><td>241</td>
+					</tr>
+					<tr>
+						<td>4</td><td>Leaf</td><td>1.1.1</td><td>1.1</td><td>Delta #2</td><td>238</td>
+					</tr>
+					<tr>
+						<td>4</td><td>Leaf</td><td>1.1.2</td><td>1.1</td><td>Epsilon #2</td><td>239</td>
+					</tr>
+				</table>
+			</li>
+		</ul>
+		<h3>Collapse 1.1 (Gamma)</h3>
+		<ul>
+			<li>Click on the collapse button in the row 1.1 (Gamma).</li>
+			<li><b>Check:</b> The table should have the following content:
+				<table border="1px" cellspacing="0" >
+					<tr>
+						<th>Level</th>
+						<th>(Icon's Tooltip)</th>
+						<th>ID</th>
+						<th>Manager's ID</th>
+						<th>Name</th>
+						<th>Age</th>
+					</tr>
+					<tr>
+						<td>1</td><td>Collapse</td><td>0</td><td></td><td>Alpha #2</td><td>260</td>
+					</tr>
+					<tr>
+						<td>2</td><td>Collapse</td><td>1</td><td>0</td><td>Beta #2</td><td>255</td>
+					</tr>
+					<tr>
+						<td>3</td><td>Expand</td><td>1.1</td><td>1</td><td>Gamma #2</td><td>241</td>
+					</tr>
+					<tr>
+						<td>3</td><td>Expand</td><td>1.2</td><td>1</td><td>Zeta #2</td><td>242</td>
+					</tr>
+					<tr>
+						<td>2</td><td>Leaf</td><td>2</td><td>0</td><td>Kappa #2</td><td>256</td>
+					</tr>
+				</table>
+			</li>
+		</ul>
+		<h3>Collapse 1 (Beta)</h3>
+		<ul>
+			<li>Click on the collapse button in the row 1 (Beta).</li>
+			<li><b>Check:</b> The table should have the following content:
+				<table border="1px" cellspacing="0" >
+					<tr>
+						<th>Level</th>
+						<th>(Icon's Tooltip)</th>
+						<th>ID</th>
+						<th>Manager's ID</th>
+						<th>Name</th>
+						<th>Age</th>
+					</tr>
+					<tr>
+						<td>1</td><td>Collapse</td><td>0</td><td></td><td>Alpha #2</td><td>260</td>
+					</tr>
+					<tr>
+						<td>2</td><td>Expand</td><td>1</td><td>0</td><td>Beta #2</td><td>255</td>
+					</tr>
+					<tr>
+						<td>2</td><td>Leaf</td><td>2</td><td>0</td><td>Kappa #2</td><td>256</td>
+					</tr>
+					<tr>
+						<td>2</td><td>Leaf</td><td>3</td><td>0</td><td>Lambda #2</td><td>257</td>
+					</tr>
+					<tr>
+						<td>2</td><td>Collapse</td><td>4</td><td>0</td><td>Mu #2</td><td>258</td>
+					</tr>
+				</table>
+			</li>
+		</ul>
+		<h3>Collapse 4 (Mu) And 5 (Xi)</h3>
+		<ul>
+			<li>Click on the collapse button in the row 4 (Mu), scroll down one row, and
+				click on the collapse button in the row 5 (Xi).</li>
+			<li><b>Check:</b> The table should have the following content:
+				<table border="1px" cellspacing="0" >
+					<tr>
+						<th>Level</th>
+						<th>(Icon's Tooltip)</th>
+						<th>ID</th>
+						<th>Manager's ID</th>
+						<th>Name</th>
+						<th>Age</th>
+					</tr>
+					<tr>
+						<td>2</td><td>Expand</td><td>1</td><td>0</td><td>Beta #2</td><td>255</td>
+					</tr>
+					<tr>
+						<td>2</td><td>Leaf</td><td>2</td><td>0</td><td>Kappa #2</td><td>256</td>
+					</tr>
+					<tr>
+						<td>2</td><td>Leaf</td><td>3</td><td>0</td><td>Lambda #2</td><td>257</td>
+					</tr>
+					<tr>
+						<td>2</td><td>Expand</td><td>4</td><td>0</td><td>Mu #2</td><td>258</td>
+					</tr>
+					<tr>
+						<td>2</td><td>Expand</td><td>5</td><td>0</td><td>Xi #2</td><td>259</td>
+					</tr>
+				</table>
+			</li>
+		</ul>
+		<h3>Collapse 0 (Alpha)</h3>
+		<ul>
+			<li>Scroll to the top and click on the collapse button in the row 0 (Alpha).</li>
+			<li><b>Check:</b> The table should have the following content:
+				<table border="1px" cellspacing="0" >
+					<tr>
+						<th>Level</th>
+						<th>(Icon's Tooltip)</th>
+						<th>ID</th>
+						<th>Manager's ID</th>
+						<th>Name</th>
+						<th>Age</th>
+					</tr>
+					<tr>
+						<td>1</td><td>Expand</td><td>0</td><td></td><td>Alpha #2</td><td>260</td>
+					</tr>
+					<tr>
+						<td></td><td>&nbsp;</td><td></td><td></td><td></td><td></td>
+					</tr>
+					<tr>
+						<td></td><td>&nbsp;</td><td></td><td></td><td></td><td></td>
+					</tr>
+					<tr>
+						<td></td><td>&nbsp;</td><td></td><td></td><td></td><td></td>
+					</tr>
+					<tr>
+						<td></td><td>&nbsp;</td><td></td><td></td><td></td><td></td>
+					</tr>
+				</table>
+			</li>
+		</ul>
+		<h3>Synchronize (3rd Time)</h3>
+		<ul>
+			<li>Click on the "Synchronize" button in the top right corner.</li>
+			<li><b>Check:</b> The table should have the following content:
+				<table border="1px" cellspacing="0" >
+					<tr>
+						<th>Level</th>
+						<th>(Icon's Tooltip)</th>
+						<th>ID</th>
+						<th>Manager's ID</th>
+						<th>Name</th>
+						<th>Age</th>
+					</tr>
+					<tr>
+						<td>1</td><td>Expand</td><td>0</td><td></td><td>Alpha #3</td><td>360</td>
+					</tr>
+					<tr>
+						<td></td><td>&nbsp;</td><td></td><td></td><td></td><td></td>
+					</tr>
+					<tr>
+						<td></td><td>&nbsp;</td><td></td><td></td><td></td><td></td>
+					</tr>
+					<tr>
+						<td></td><td>&nbsp;</td><td></td><td></td><td></td><td></td>
+					</tr>
+					<tr>
+						<td></td><td>&nbsp;</td><td></td><td></td><td></td><td></td>
+					</tr>
+				</table>
+			</li>
+		</ul>
+		<h3>Expand 0 (Alpha)</h3>
+		<ul>
+			<li>Click on the expand button in the row 0 (Alpha).</li>
+			<li><b>Check:</b> The table should have the following content:
+				<table border="1px" cellspacing="0" >
+					<tr>
+						<th>Level</th>
+						<th>(Icon's Tooltip)</th>
+						<th>ID</th>
+						<th>Manager's ID</th>
+						<th>Name</th>
+						<th>Age</th>
+					</tr>
+					<tr>
+						<td>1</td><td>Collapse</td><td>0</td><td></td><td>Alpha #3</td><td>360</td>
+					</tr>
+					<tr>
+						<td>2</td><td>Expand</td><td>1</td><td>0</td><td>Beta #3</td><td>355</td>
+					</tr>
+					<tr>
+						<td>2</td><td>Leaf</td><td>2</td><td>0</td><td>Kappa #3</td><td>356</td>
+					</tr>
+					<tr>
+						<td>2</td><td>Leaf</td><td>3</td><td>0</td><td>Lambda #3</td><td>357</td>
+					</tr>
+					<tr>
+						<td>2</td><td>Expand</td><td>4</td><td>0</td><td>Mu #3</td><td>358</td>
+					</tr>
+				</table>
+			</li>
+		</ul>
+		<h3>Show 5 (Xi)</h3>
+		<ul>
+			<li>Scroll down one row.</li>
+			<li><b>Check:</b> The table should have the following content:
+				<table border="1px" cellspacing="0" >
+					<tr>
+						<th>Level</th>
+						<th>(Icon's Tooltip)</th>
+						<th>ID</th>
+						<th>Manager's ID</th>
+						<th>Name</th>
+						<th>Age</th>
+					</tr>
+					<tr>
+						<td>2</td><td>Expand</td><td>1</td><td>0</td><td>Beta #3</td><td>355</td>
+					</tr>
+					<tr>
+						<td>2</td><td>Leaf</td><td>2</td><td>0</td><td>Kappa #3</td><td>356</td>
+					</tr>
+					<tr>
+						<td>2</td><td>Leaf</td><td>3</td><td>0</td><td>Lambda #3</td><td>357</td>
+					</tr>
+					<tr>
+						<td>2</td><td>Expand</td><td>4</td><td>0</td><td>Mu #3</td><td>358</td>
+					</tr>
+					<tr>
+						<td>2</td><td>Expand</td><td>5</td><td>0</td><td>Xi #3</td><td>359</td>
+					</tr>
+				</table>
+			</li>
+		</ul>
+		<h3>Expand 5 (Xi) And Show 5.1 (Omicron)</h3>
+		<ul>
+			<li>Click on the expand button in the row 5 (Xi) and scroll down one row.</li>
+			<li><b>Check:</b> The table should have the following content:
+				<table border="1px" cellspacing="0" >
+					<tr>
+						<th>Level</th>
+						<th>(Icon's Tooltip)</th>
+						<th>ID</th>
+						<th>Manager's ID</th>
+						<th>Name</th>
+						<th>Age</th>
+					</tr>
+					<tr>
+						<td>2</td><td>Leaf</td><td>2</td><td>0</td><td>Kappa #3</td><td>356</td>
+					</tr>
+					<tr>
+						<td>2</td><td>Leaf</td><td>3</td><td>0</td><td>Lambda #3</td><td>357</td>
+					</tr>
+					<tr>
+						<td>2</td><td>Expand</td><td>4</td><td>0</td><td>Mu #3</td><td>358</td>
+					</tr>
+					<tr>
+						<td>2</td><td>Collapse</td><td>5</td><td>0</td><td>Xi #3</td><td>359</td>
+					</tr>
+					<tr>
+						<td>3</td><td>Collapse</td><td>5.1</td><td>5</td><td>Omicron #3</td><td>341</td>
+					</tr>
+				</table>
+			</li>
+		</ul>
+		<h3>PAGE DOWN</h3>
+		<ul>
+			<li>PAGE DOWN once to show the first page of children.</li>
+			<li><b>Check:</b> The table should have the following content:
+				<table border="1px" cellspacing="0" >
+					<tr>
+						<th>Level</th>
+						<th>(Icon's Tooltip)</th>
+						<th>ID</th>
+						<th>Manager's ID</th>
+						<th>Name</th>
+						<th>Age</th>
+					</tr>
+					<tr>
+						<td>4</td><td>Leaf</td><td>5.1.1</td><td>5.1</td><td>Pi #3</td><td>321</td>
+					</tr>
+					<tr>
+						<td>4</td><td>Leaf</td><td>5.1.2</td><td>5.1</td><td>Rho #3</td><td>322</td>
+					</tr>
+					<tr>
+						<td>4</td><td>Leaf</td><td>5.1.3</td><td>5.1</td><td>Sigma #3</td><td>323</td>
+					</tr>
+					<tr>
+						<td>4</td><td>Leaf</td><td>5.1.4</td><td>5.1</td><td>Tau #3</td><td>324</td>
+					</tr>
+					<tr>
+						<td>4</td><td>Leaf</td><td>5.1.5</td><td>5.1</td><td>Upsilon #3</td><td>325</td>
+					</tr>
+				</table>
+			</li>
+		</ul>
+		<h3>Scroll To The Bottom</h3>
+		<ul>
+			<li>Scroll to the bottom.</li>
+			<li><b>Check:</b> The table should have the following content:
+				<table border="1px" cellspacing="0" >
+					<tr>
+						<th>Level</th>
+						<th>(Icon's Tooltip)</th>
+						<th>ID</th>
+						<th>Manager's ID</th>
+						<th>Name</th>
+						<th>Age</th>
+					</tr>
+					<tr>
+						<td>4</td><td>Leaf</td><td>5.1.5</td><td>5.1</td><td>Upsilon #3</td><td>325</td>
+					</tr>
+					<tr>
+						<td>4</td><td>Leaf</td><td>5.1.6</td><td>5.1</td><td>Phi #3</td><td>326</td>
+					</tr>
+					<tr>
+						<td>4</td><td>Leaf</td><td>5.1.7</td><td>5.1</td><td>Chi #3</td><td>327</td>
+					</tr>
+					<tr>
+						<td>4</td><td>Leaf</td><td>5.1.8</td><td>5.1</td><td>Psi #3</td><td>328</td>
+					</tr>
+					<tr>
+						<td>4</td><td>Leaf</td><td>5.1.9</td><td>5.1</td><td>Omega #3</td><td>329</td>
+					</tr>
+				</table>
+			</li>
+		</ul>
+		<h3>Collapse 5.1 (Omicron)</h3>
+		<ul>
+			<li>Scroll up until the row 5.1 (Omicron) becomes visible, then click on its collapse
+				button.</li>
+			<li><b>Check:</b> The table should have the following content:
+				<table border="1px" cellspacing="0" >
+					<tr>
+						<th>Level</th>
+						<th>(Icon's Tooltip)</th>
+						<th>ID</th>
+						<th>Manager's ID</th>
+						<th>Name</th>
+						<th>Age</th>
+					</tr>
+					<tr>
+						<td>2</td><td>Leaf</td><td>2</td><td>0</td><td>Kappa #3</td><td>356</td>
+					</tr>
+					<tr>
+						<td>2</td><td>Leaf</td><td>3</td><td>0</td><td>Lambda #3</td><td>357</td>
+					</tr>
+					<tr>
+						<td>2</td><td>Expand</td><td>4</td><td>0</td><td>Mu #3</td><td>358</td>
+					</tr>
+					<tr>
+						<td>2</td><td>Collapse</td><td>5</td><td>0</td><td>Xi #3</td><td>359</td>
+					</tr>
+					<tr>
+						<td>3</td><td>Expand</td><td>5.1</td><td>5</td><td>Omicron #3</td><td>341</td>
+					</tr>
+				</table>
+			</li>
+		</ul>
+		<h3>Collapse 0 (Alpha)</h3>
+		<ul>
+			<li>Scroll to the top and click on the collapse button in the row 0 (Alpha).</li>
+			<li><b>Check:</b> The table should have the following content:
+				<table border="1px" cellspacing="0" >
+					<tr>
+						<th>Level</th>
+						<th>(Icon's Tooltip)</th>
+						<th>ID</th>
+						<th>Manager's ID</th>
+						<th>Name</th>
+						<th>Age</th>
+					</tr>
+					<tr>
+						<td>1</td><td>Expand</td><td>0</td><td></td><td>Alpha #3</td><td>360</td>
+					</tr>
+					<tr>
+						<td></td><td>&nbsp;</td><td></td><td></td><td></td><td></td>
+					</tr>
+					<tr>
+						<td></td><td>&nbsp;</td><td></td><td></td><td></td><td></td>
+					</tr>
+					<tr>
+						<td></td><td>&nbsp;</td><td></td><td></td><td></td><td></td>
+					</tr>
+					<tr>
+						<td></td><td>&nbsp;</td><td></td><td></td><td></td><td></td>
+					</tr>
+				</table>
+			</li>
+		</ul>
+		<h3>Expand 0 (Alpha)</h3>
+		<ul>
+			<li>Click on the expand button in the row 0 (Alpha).</li>
+			<li><b>Check:</b> The table should have the following content:
+				<table border="1px" cellspacing="0" >
+					<tr>
+						<th>Level</th>
+						<th>(Icon's Tooltip)</th>
+						<th>ID</th>
+						<th>Manager's ID</th>
+						<th>Name</th>
+						<th>Age</th>
+					</tr>
+					<tr>
+						<td>1</td><td>Collapse</td><td>0</td><td></td><td>Alpha #3</td><td>360</td>
+					</tr>
+					<tr>
+						<td>2</td><td>Expand</td><td>1</td><td>0</td><td>Beta #3</td><td>355</td>
+					</tr>
+					<tr>
+						<td>2</td><td>Leaf</td><td>2</td><td>0</td><td>Kappa #3</td><td>356</td>
+					</tr>
+					<tr>
+						<td>2</td><td>Leaf</td><td>3</td><td>0</td><td>Lambda #3</td><td>357</td>
+					</tr>
+					<tr>
+						<td>2</td><td>Expand</td><td>4</td><td>0</td><td>Mu #3</td><td>358</td>
+					</tr>
+				</table>
+			</li>
+		</ul>
+		<h3>Synchronize (4th Time)</h3>
+		<ul>
+			<li>Click on the "Synchronize" button in the top right corner.</li>
+			<li><b>Check:</b> The table should have the following content:
+				<table border="1px" cellspacing="0" >
+					<tr>
+						<th>Level</th>
+						<th>(Icon's Tooltip)</th>
+						<th>ID</th>
+						<th>Manager's ID</th>
+						<th>Name</th>
+						<th>Age</th>
+					</tr>
+					<tr>
+						<td>1</td><td>Collapse</td><td>0</td><td></td><td>Alpha #4</td><td>460</td>
+					</tr>
+					<tr>
+						<td>2</td><td>Expand</td><td>1</td><td>0</td><td>Beta #4</td><td>455</td>
+					</tr>
+					<tr>
+						<td>2</td><td>Leaf</td><td>2</td><td>0</td><td>Kappa #4</td><td>456</td>
+					</tr>
+					<tr>
+						<td>2</td><td>Leaf</td><td>3</td><td>0</td><td>Lambda #4</td><td>457</td>
+					</tr>
+					<tr>
+						<td>2</td><td>Expand</td><td>4</td><td>0</td><td>Mu #4</td><td>458</td>
+					</tr>
+				</table>
+			</li>
+		</ul>
+		<h3>Scroll To The Bottom</h3>
+		<ul>
+			<li>Scroll to the bottom.</li>
+			<li><b>Check:</b> The table should have the following content:
+				<table border="1px" cellspacing="0" >
+					<tr>
+						<th>Level</th>
+						<th>(Icon's Tooltip)</th>
+						<th>ID</th>
+						<th>Manager's ID</th>
+						<th>Name</th>
+						<th>Age</th>
+					</tr>
+					<tr>
+						<td>2</td><td>Leaf</td><td>2</td><td>0</td><td>Kappa #4</td><td>456</td>
+					</tr>
+					<tr>
+						<td>2</td><td>Leaf</td><td>3</td><td>0</td><td>Lambda #4</td><td>457</td>
+					</tr>
+					<tr>
+						<td>2</td><td>Expand</td><td>4</td><td>0</td><td>Mu #4</td><td>458</td>
+					</tr>
+						<td>2</td><td>Collapse</td><td>5</td><td>0</td><td>Xi #4</td><td>459</td>
+					</tr>
+					<tr>
+						<td>3</td><td>Expand</td><td>5.1</td><td>5</td><td>Omicron #4</td><td>441</td>
+					</tr>
+				</table>
+			</li>
+		</ul>
+	</body>
+</html>

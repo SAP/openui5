@@ -1,0 +1,30 @@
+{
+	"sap.app": {
+		"id": "sap.ui.core.sample.OpaAction",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"dependencies": {
+			"libs": {
+				"sap.ui.core": {},
+				"sap.ui.layout": {}
+			}
+		},
+		"config": {
+			"sample": {
+				"iframe": "Opa.html?opaExecutionDelay=700",
+				"stretch": true,
+				"files": [
+					"Opa.html",
+					"Opa.js",
+					"applicationUnderTest/view/Main.view.xml",
+					"applicationUnderTest/view/Main.controller.js",
+					"applicationUnderTest/Component.js",
+					"manifest.json"
+				]
+			}
+		}
+	}
+}

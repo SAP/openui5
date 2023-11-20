@@ -1,9 +1,19 @@
 ---
-specVersion: "0.1"
+specVersion: "3.0"
 type: library
 metadata:
   name: sap.ui.documentation
   copyright: |-
-   UI development toolkit for HTML5 (OpenUI5)
+   OpenUI5
     * (c) Copyright 2009-${currentYear} SAP SE or an SAP affiliate company.
     * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
+resources:
+  configuration:
+    propertiesFileSourceEncoding: ISO-8859-1
+builder:
+  jsdoc:
+    excludes:
+      - "sap/ui/documentation/sdk/thirdparty/**"
+  minification:
+    excludes:
+      - "sap/ui/documentation/sdk/thirdparty/highlight.js/*.js"

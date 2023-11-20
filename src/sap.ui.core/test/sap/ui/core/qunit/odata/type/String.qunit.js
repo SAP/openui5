@@ -1,15 +1,15 @@
 /*!
  * ${copyright}
  */
-sap.ui.require([
-	"jquery.sap.global",
+sap.ui.define([
+	"sap/base/Log",
 	"sap/ui/model/FormatException",
 	"sap/ui/model/ParseException",
 	"sap/ui/model/ValidateException",
 	"sap/ui/model/odata/type/ODataType",
 	"sap/ui/model/odata/type/String",
 	"sap/ui/test/TestUtils"
-], function (jQuery, FormatException, ParseException, ValidateException, ODataType, StringType,
+], function (Log, FormatException, ParseException, ValidateException, ODataType, StringType,
 		TestUtils) {
 	/*global QUnit */
 	/*eslint max-nested-callbacks: 0, no-warning-comments: 0 */
@@ -18,7 +18,7 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.odata.type.String", {
 		beforeEach : function () {
-			this.oLogMock = this.mock(jQuery.sap.log);
+			this.oLogMock = this.mock(Log);
 			this.oLogMock.expects("warning").never();
 			this.oLogMock.expects("error").never();
 		}
@@ -40,7 +40,7 @@ sap.ui.require([
 		function (assert) {
 			var oType = new StringType(null, null);
 
-			assert.deepEqual(oType.oFormatOptions, undefined, "no format options");
+			assert.deepEqual(oType.oFormatOptions, null, "no format options");
 			assert.deepEqual(oType.oConstraints, undefined, "default constraints");
 	});
 
@@ -59,6 +59,20 @@ sap.ui.require([
 		});
 
 		assert.deepEqual(oType.oConstraints, {maxLength : 12});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("w/ format options", function (assert) {
+		var oFormatOptions = {parseKeepsEmptyString : true},
+			oResultFormatOptions,
+			oType = new StringType(oFormatOptions, {});
+
+		// code under test
+		oResultFormatOptions = oType.getFormatOptions();
+
+		assert.strictEqual(oType.oFormatOptions, oFormatOptions);
+		assert.deepEqual(oResultFormatOptions, oFormatOptions);
+		assert.notStrictEqual(oResultFormatOptions, oFormatOptions);
 	});
 
 	//*********************************************************************************************
@@ -206,6 +220,53 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	[{
+		bParseKeepsEmptyString : true,
+		vParsedEmptyString: ""
+	}, {
+		bParseKeepsEmptyString : false,
+		vParsedEmptyString: null
+	}].forEach(function(oFixture) {
+		var sTitle = "parseKeepsEmptyString: Valid value - " + oFixture.bParseKeepsEmptyString;
+
+		QUnit.test(sTitle, function (assert) {
+			var oType = new StringType({parseKeepsEmptyString : oFixture.bParseKeepsEmptyString});
+
+			// code under test
+			assert.strictEqual(oType.parseValue(null, "string"), null);
+			assert.strictEqual(oType.parseValue("", "string"), oFixture.vParsedEmptyString);
+			assert.strictEqual(oType.parseValue(undefined, "string"), undefined);
+		});
+	});
+
+	//*********************************************************************************************
+	["foo", 1, 0, null, "true", "false"].forEach(function (vParseKeepsEmptyString) {
+		var sTitle = "parseKeepsEmptyString: Invalid value - " + vParseKeepsEmptyString;
+
+		QUnit.test(sTitle, function (assert) {
+			var oType;
+
+			this.oLogMock.expects("warning").withExactArgs(
+				"Illegal parseKeepsEmptyString: " + vParseKeepsEmptyString, null,
+				"sap.ui.model.odata.type.String");
+
+			// code under test
+			oType = new StringType({parseKeepsEmptyString: vParseKeepsEmptyString});//expect log
+			assert.strictEqual(oType.parseValue(null, "string"), null);
+			assert.strictEqual(oType.parseValue("", "string"), null);
+			assert.strictEqual(oType.parseValue(undefined, "string"), undefined);
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("parseKeepsEmptyString: parse (not-nullable)", function(assert) {
+		var oType = new StringType({parseKeepsEmptyString : true}, {nullable : "false"});
+
+		// code under test
+		assert.strictEqual(oType.parseValue("", "string"), "");
+	});
+
+	//*********************************************************************************************
 	QUnit.test("isDigitSequence: constructor", function (assert) {
 		var oType,
 			that = this;
@@ -246,8 +307,7 @@ sap.ui.require([
 		// the last digit
 		[
 			{ v : sValue, r : "12345" }, { v : "0103040", r : "103040" },
-			{ v : "0000000", r : "0" }, { v : "A003400", r : "A003400" },
-			{ v : "00A3400", r : "00A3400" }, { v : "", r : "" },
+			{ v : "A003400", r : "A003400" }, { v : "00A3400", r : "00A3400" }, { v : "", r : "" },
 			{ v : "7654321", r : "7654321" }, { v : null, r : "" }, { v : undefined, r : null }
 		].forEach(function (oFixture) {
 			assert.strictEqual(oType.formatValue(oFixture.v, "string"), oFixture.r,
@@ -261,6 +321,10 @@ sap.ui.require([
 		}, new FormatException("0 is not a valid boolean value"));
 		assert.strictEqual(oType.formatValue(sValue, "float"), 12345.0, "as float");
 		assert.strictEqual(oType.formatValue(sValue, "int"), 12345, "as int");
+		assert.strictEqual(oType.formatValue("0000000", "string"), "", "as string");
+		assert.strictEqual(oTypeNoLength.formatValue("0000000", "string"), "0", "as string");
+		assert.strictEqual(oType.formatValue("0000000", "int"), 0, "as int");
+		assert.strictEqual(oTypeNoLength.formatValue("0000000", "int"), 0,"as int");
 	});
 
 	//*********************************************************************************************
@@ -299,6 +363,24 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+[undefined, false, true].forEach(function (bNullable) {
+	QUnit.test("isDigitSequence: empty string, nullable=" + bNullable, function (assert) {
+		var oType = new StringType({}, {isDigitSequence : true, nullable : bNullable});
+
+		assert.strictEqual(oType.parseValue("", "string"), bNullable === false ? "0" : null);
+		assert.strictEqual(oType.formatValue(null, "string"), "");
+		assert.strictEqual(oType.formatValue("0", "string"), "0");
+
+		oType = new StringType({},
+			{isDigitSequence : true, maxLength : 7, nullable : bNullable});
+
+		assert.strictEqual(oType.parseValue("", "string"), bNullable === false ? "0000000" : null);
+		assert.strictEqual(oType.formatValue(null, "string"), "");
+		assert.strictEqual(oType.formatValue("0000000", "string"), "");
+	});
+});
+
+	//*********************************************************************************************
 	QUnit.test("isDigitSequence: validate", function (assert) {
 		TestUtils.withNormalizedMessages(function () {
 			var oType = new StringType({}, {isDigitSequence : true, maxLength : 7});
@@ -307,7 +389,9 @@ sap.ui.require([
 			oType.validateValue("0012345");
 			oType.validateValue("324"); // shorter values are OK
 
-			// errors
+			// errors - if the value is nullable and parseKeepsEmptyString is not set, then empty
+			// string is parsed as null, that means "" should never occur and is therefore not valid
+			// as a digit sequence.
 			["", "0123.45", "0003ABC"].forEach(function (vValue) {
 				assert.throws(function () {
 					oType.validateValue(vValue);
@@ -323,6 +407,29 @@ sap.ui.require([
 			oType.validateValue("4711");
 			oType.validateValue("0");
 			oType.validateValue("002345");
+
+			// with parseKeepsEmptyString true
+			oType = new StringType({parseKeepsEmptyString : true}, {isDigitSequence : true});
+
+			// success - if parseKeepsEmptyString is true empty user input stays an empty user input
+			// and if the property is nullable, it is allowed to clear the value so "" has to be
+			// allowed as a valid digit sequence.
+			oType.validateValue("");
+
+			// error
+			["0123.45", "0003ABC"].forEach(function (vValue) {
+				assert.throws(function () {
+					oType.validateValue(vValue);
+				}, new ValidateException("EnterDigitsOnly"), "Invalid value: " + vValue);
+			});
 		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("parseKeepsEmptyString: empty string is valid", function (assert) {
+		var oType = new StringType({parseKeepsEmptyString : true});
+
+		// success
+		oType.validateValue("");
 	});
 });

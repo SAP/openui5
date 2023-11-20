@@ -1,10 +1,6 @@
 /*!
  * ${copyright}
  */
-/*
- * IMPORTANT: This is a private module, its API must not be used and is subject to change.
- * Code other than the OpenUI5 libraries must not introduce dependencies to this module.
- */
 /*global performance */
 sap.ui.define([], function() {
 	"use strict";
@@ -19,8 +15,9 @@ sap.ui.define([], function() {
 	 * Converting to a <code>Date</code> is possible by using <code>require(["sap/base/util/now"], function(now){new Date(now());}</code>
 	 *
 	 * @function
-	 * @private
-	 * @exports sap/base/util/now
+	 * @since 1.58
+	 * @public
+	 * @alias module:sap/base/util/now
 	 * @returns {float} timestamp in microseconds if supported by the environment otherwise in milliseconds
 	 */
 	var fnNow = !(typeof window != "undefined" && window.performance && performance.now && performance.timing) ? Date.now : (function() {

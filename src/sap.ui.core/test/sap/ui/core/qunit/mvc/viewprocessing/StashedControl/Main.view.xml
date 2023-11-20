@@ -1,0 +1,9 @@
+<mvc:View xmlns="sap.m"  xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc">
+	<Page id="page">
+		<Panel id="panel" stashed="true">
+			<Button id="stashedButton" stashed="true" />
+			<Button id="normalButtonInStashedParent" />
+		</Panel>
+		<Button id="normalButton" />
+	</Page>
+</mvc:View>

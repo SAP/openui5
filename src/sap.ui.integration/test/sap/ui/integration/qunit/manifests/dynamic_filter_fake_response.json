@@ -1,0 +1,18 @@
+{
+	"d": {
+		"Availability": {
+			"Title": "Availability",
+			"DefaultKey": "available",
+			"Options": [
+				{
+					"OptionName": "In store",
+					"OptionKey": "available"
+				},
+				{
+					"OptionName": "Out of stock",
+					"OptionKey": "out_of_stock"
+				}
+			]
+		}
+	}
+}

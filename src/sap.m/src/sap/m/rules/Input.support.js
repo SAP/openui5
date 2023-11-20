@@ -4,8 +4,8 @@
 /**
  * Defines support rules of the List, Table and Tree controls of sap.m library.
  */
-sap.ui.define(["jquery.sap.global", "sap/ui/support/library"],
-	function(jQuery, SupportLib) {
+sap.ui.define(["sap/ui/support/library"],
+	function(SupportLib) {
 	"use strict";
 
 	// shortcuts
@@ -17,13 +17,36 @@ sap.ui.define(["jquery.sap.global", "sap/ui/support/library"],
 	// Rule Definitions
 	//**********************************************************
 
+	function isInsideFormOrTable(oControl) {
+		var oParent = oControl.getParent();
+
+		if (!oParent) {
+			return false;
+		}
+
+		return oParent.isA("sap.ui.layout.form.SimpleForm") || oParent.isA("sap.m.Table") || isInsideFormOrTable(oParent);
+	}
+
+	function isLabelled(oInput, aLabels) {
+		var bHasLabelForInput = aLabels.some(function (oLabel) {
+			return oLabel.getLabelFor() === oInput.getId();
+		});
+
+		if (bHasLabelForInput) {
+			return true;
+		}
+
+		// form and table manage the labelling automatically
+		return isInsideFormOrTable(oInput);
+	}
+
 	/**
 	 * Input field needs to have a label association
 	 */
 	var oInputNeedsLabelRule = {
 		id: "inputNeedsLabel",
 		audiences: [Audiences.Control],
-		categories: [Categories.Usability],
+		categories: [Categories.Accessibility],
 		enabled: true,
 		minversion: "1.28",
 		title: "Input field: Missing label",
@@ -34,32 +57,23 @@ sap.ui.define(["jquery.sap.global", "sap/ui/support/library"],
 			href:"https://experience.sap.com/fiori-design-web/input-field/#guidelines"
 		}],
 		check: function (issueManager, oCoreFacade, oScope) {
+			var aLabels = oScope.getElementsByClassName("sap.m.Label");
 
-			var aInputIds = oScope.getElementsByClassName("sap.m.Input")
-				.map(function(oInput) {
-					return oInput.getId();
-				});
-
-			oScope.getElementsByClassName("sap.m.Label")
-				.forEach(function (oLabel){
-					var sLabelFor = oLabel.getLabelFor();
-					if (aInputIds.indexOf(sLabelFor) > -1) {
-						var iIndex = aInputIds.indexOf(sLabelFor);
-						aInputIds.splice(iIndex, 1);
+			oScope.getElementsByClassName("sap.m.Input")
+				.filter(function (oInput) {
+					return oInput.getUIArea(); // filter aggregation binding templates
+				})
+				.forEach(function(oInput) {
+					if (!isLabelled(oInput, aLabels)) {
+						issueManager.addIssue({
+							severity: Severity.Medium,
+							details: "Input field" + " (" + oInput.getId() + ") is missing a label.",
+							context: {
+								id: oInput.getId()
+							}
+						});
 					}
 				});
-
-			if (aInputIds.length > 0) {
-				aInputIds.forEach(function(sInputId) {
-					issueManager.addIssue({
-						severity: Severity.Medium,
-						details: "Input field" + " (" + sInputId + ") is missing a label.",
-						context: {
-							id: sInputId
-						}
-					});
-				});
-			}
 		}
 	};
 

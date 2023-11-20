@@ -1,0 +1,31 @@
+{
+	"sap.app": {
+		"id": "sap.ui.core.sample.BasicThemeParameters",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "sap.ui.core.sample.BasicThemeParameters.BasicThemeParameters",
+			"type": "XML",
+			"async": true
+		},
+		"dependencies": {
+			"libs": {
+				"sap.ui.core": {}
+			}
+		},
+		"config": {
+			"sample": {
+				"stretch": false,
+				"files": [
+					"BasicThemeParameters.view.xml",
+					"BasicThemeParameters.controller.js",
+					"parameters.json",
+					"manifest.json"
+				]
+			}
+		}
+	}
+}

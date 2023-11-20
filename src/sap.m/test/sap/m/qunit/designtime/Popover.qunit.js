@@ -1,22 +1,28 @@
-(function () {
+sap.ui.define([
+	"sap/m/Button",
+	"sap/m/Popover",
+	"sap/m/Text",
+	"sap/ui/dt/enablement/elementDesigntimeTest",
+	"sap/ui/rta/enablement/elementActionTest"
+], function (
+	Button,
+	Popover,
+	Text,
+	elementDesigntimeTest,
+	elementActionTest
+) {
 	"use strict";
 
-	sap.ui.require([
-		"sap/ui/dt/test/report/QUnit",
-		"sap/ui/dt/test/ElementEnablementTest",
-		"sap/m/Popover",
-		"sap/m/Text",
-		"sap/ui/rta/test/controlEnablingCheck"
-	], function (QUnitReport, ElementEnablementTest, Popover, Text, rtaControlEnablingCheck) {
-
-		var oElementEnablementTest = new ElementEnablementTest({
+	return Promise.resolve()
+	.then(function () {
+		return elementDesigntimeTest({
 			type: "sap.m.Popover",
 			create: function () {
 				return new Popover({
-					subHeader: new sap.m.Text({ text: "subheader" }),
-					footer: new sap.m.Text({ text: "footer" }),
-					beginButton: new sap.m.Button({ text: "begin" }),
-					endButton: new sap.m.Button({ text: "end" }),
+					subHeader: new Text({ text: "subheader" }),
+					footer: new Text({ text: "footer" }),
+					beginButton: new Button({ text: "begin" }),
+					endButton: new Button({ text: "end" }),
 					contentWidth: "150px",
 					content: [
 						new Text({text: "Text"}),
@@ -25,12 +31,8 @@
 				});
 			}
 		});
-		oElementEnablementTest.run().then(function (oData) {
-			new QUnitReport({
-				data: oData
-			});
-		});
-
+	})
+	.then(function () {
 		// Move action
 		var fnConfirmElement1IsOn3rdPosition = function (oUiComponent, oViewAfterAction, assert) {
 			assert.strictEqual(oViewAfterAction.byId("text1").getId(),
@@ -43,7 +45,7 @@
 				"then the control has been moved to the previous position");
 		};
 
-		rtaControlEnablingCheck("Checking the move action for Popover control", {
+		elementActionTest("Checking the move action for Popover control", {
 			xmlView:
 			'<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m">' +
 				'<Popover id="popover">' +
@@ -96,7 +98,7 @@
 				"then the popover title has been renamed to the old value (Old Title)");
 		};
 
-		rtaControlEnablingCheck("Checking the rename action for a Popover title", {
+		elementActionTest("Checking the rename action for a Popover title", {
 			xmlView:
 				'<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m">' +
 					'<Popover id="popover" title="Old Title">' +
@@ -118,4 +120,4 @@
 			afterRedo: fnConfirmPopoverTextRenamedWithNewValue
 		});
 	});
-})();
+});

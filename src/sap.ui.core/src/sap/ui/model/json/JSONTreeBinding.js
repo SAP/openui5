@@ -1,10 +1,10 @@
 /*!
  * ${copyright}
  */
-
+/*eslint-disable max-len */
 // Provides the JSON model implementation of a list binding
-sap.ui.define(['jquery.sap.global', 'sap/ui/model/ClientTreeBinding'],
-	function(jQuery, ClientTreeBinding) {
+sap.ui.define(['sap/ui/model/ClientTreeBinding'],
+	function(ClientTreeBinding) {
 	"use strict";
 
 
@@ -28,8 +28,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ClientTreeBinding'],
 	 * 			Keys of arrays to be used for building the tree structure. If not specified, all arrays and objects in the bound data will be used.
 	 *			Note that for arrays nested inside differently named arrays, you need to add both to <code>arrayNames</code>. You always have to add the complete parent chain.
 	 *			If any array is ignored, its child arrays will be ignored as well even if they have been added to <code>arrayNames</code>.
-	 * @throws {Error} When one of the filters uses an operator that is not supported by the underlying model implementation
-	 *
+	 * @throws {Error} If one of the filters uses an operator that is not supported by the underlying model
+	 *   implementation or if the {@link sap.ui.model.Filter.NONE} filter instance is contained in <code>aFilters</code>
+	 *   together with other filters
 	 *
 	 * @class
 	 * Tree binding implementation for JSON format.
@@ -49,8 +50,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ClientTreeBinding'],
 		if (oNode && typeof oNode == "object") {
 			var oNodeContext = this.oModel.getContext(sContextPath + sName);
 			// check if there is a filter on this level applied
-			if (this.aAllFilters && !this.bIsFiltering) {
-				if (jQuery.inArray(oNodeContext, this.filterInfo.aFilteredContexts) != -1) {
+			if (this.oCombinedFilter && !this.bIsFiltering) {
+				if (this.filterInfo.aFilteredContexts && this.filterInfo.aFilteredContexts.indexOf(oNodeContext) != -1) {
 					aContexts.push(oNodeContext);
 				}
 			} else {

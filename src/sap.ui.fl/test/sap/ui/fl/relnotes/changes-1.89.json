@@ -1,0 +1,18 @@
+{
+  "1.89.0": {
+    "date": "April 2021",
+    "notes": [
+      {
+        "id": "bfe96e2e162433571fb90ef8607ac1c613e638de",
+        "type": "FIX",
+        "text": " sap.ui.fl: Disabled reset button although changes are present",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170024079"
+          }
+        ]
+      }
+    ]
+  }
+}

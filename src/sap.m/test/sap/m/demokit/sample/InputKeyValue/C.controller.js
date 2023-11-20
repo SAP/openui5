@@ -1,79 +1,71 @@
 sap.ui.define([
-		'jquery.sap.global',
-		'sap/ui/core/Fragment',
-		'sap/ui/core/mvc/Controller',
-		'sap/ui/model/Filter',
-		'sap/ui/model/json/JSONModel'
-	], function(jQuery, Fragment, Controller, Filter, JSONModel) {
+	"sap/ui/core/mvc/Controller",
+	"sap/ui/model/json/JSONModel",
+	"sap/ui/core/Fragment",
+	"sap/ui/model/Filter",
+	"sap/ui/model/FilterOperator"
+], function(Controller, JSONModel, Fragment, Filter, FilterOperator) {
 	"use strict";
 
-	var CController = Controller.extend("sap.m.sample.InputKeyValue.C", {
-		inputId: '',
+	return Controller.extend("sap.m.sample.InputKeyValue.C", {
 
 		onInit: function () {
-			// set explored app's demo model on this sample
-			var oModel = new JSONModel(sap.ui.require.toUrl("sap/ui/demo/mock") + "/products.json");
+			var oModel = new JSONModel(sap.ui.require.toUrl("sap/ui/demo/mock/products.json"));
 			// the default limit of the model is set to 100. We want to show all the entries.
-			oModel.setSizeLimit(1000000);
+			oModel.setSizeLimit(100000);
 			this.getView().setModel(oModel);
 		},
 
-		handleValueHelp : function (oEvent) {
-			var sInputValue = oEvent.getSource().getValue();
+		onValueHelpRequest: function (oEvent) {
+			var sInputValue = oEvent.getSource().getValue(),
+				oView = this.getView();
 
-			this.inputId = oEvent.getSource().getId();
-			// create value help dialog
-			if (!this._valueHelpDialog) {
-				this._valueHelpDialog = sap.ui.xmlfragment(
-					"sap.m.sample.InputKeyValue.Dialog",
-					this
-				);
-				this.getView().addDependent(this._valueHelpDialog);
+			if (!this._pValueHelpDialog) {
+				this._pValueHelpDialog = Fragment.load({
+					id: oView.getId(),
+					name: "sap.m.sample.InputKeyValue.ValueHelpDialog",
+					controller: this
+				}).then(function (oDialog) {
+					oView.addDependent(oDialog);
+					return oDialog;
+				});
+			}
+			this._pValueHelpDialog.then(function (oDialog) {
+				// Create a filter for the binding
+				oDialog.getBinding("items").filter([new Filter("Name", FilterOperator.Contains, sInputValue)]);
+				// Open ValueHelpDialog filtered by the input's value
+				oDialog.open(sInputValue);
+			});
+		},
+
+		onValueHelpDialogSearch: function (oEvent) {
+			var sValue = oEvent.getParameter("value");
+			var oFilter = new Filter("Name", FilterOperator.Contains, sValue);
+
+			oEvent.getSource().getBinding("items").filter([oFilter]);
+		},
+
+		onValueHelpDialogClose: function (oEvent) {
+			var sDescription,
+				oSelectedItem = oEvent.getParameter("selectedItem");
+			oEvent.getSource().getBinding("items").filter([]);
+
+			if (!oSelectedItem) {
+				return;
 			}
 
-			// create a filter for the binding
-			this._valueHelpDialog.getBinding("items").filter([new Filter(
-				"Name",
-				sap.ui.model.FilterOperator.Contains, sInputValue
-			)]);
+			sDescription = oSelectedItem.getDescription();
 
-			// open value help dialog filtered by the input value
-			this._valueHelpDialog.open(sInputValue);
+			this.byId("productInput").setSelectedKey(sDescription);
+			this.byId("selectedKeyIndicator").setText(sDescription);
+
 		},
 
-		_handleValueHelpSearch : function (evt) {
-			var sValue = evt.getParameter("value");
-			var oFilter = new Filter(
-				"Name",
-				sap.ui.model.FilterOperator.Contains, sValue
-			);
-			evt.getSource().getBinding("items").filter([oFilter]);
-		},
-
-		_handleValueHelpClose : function (evt) {
-			var oSelectedItem = evt.getParameter("selectedItem");
-			if (oSelectedItem) {
-				var productInput = this.byId(this.inputId),
-					oText = this.byId('selectedKey'),
-					sDescription = oSelectedItem.getDescription();
-
-				productInput.setSelectedKey(sDescription);
-				oText.setText(sDescription);
-			}
-			evt.getSource().getBinding("items").filter([]);
-		},
-
-		suggestionItemSelected: function (evt) {
-
-			var oItem = evt.getParameter('selectedItem'),
-				oText = this.byId('selectedKey'),
-				sKey = oItem ? oItem.getKey() : '';
-
-			oText.setText(sKey);
+		onSuggestionItemSelected: function (oEvent) {
+			var oItem = oEvent.getParameter("selectedItem");
+			var oText = oItem ? oItem.getKey() : "";
+			this.byId("selectedKeyIndicator").setText(oText);
 		}
+
 	});
-
-
-	return CController;
-
 });

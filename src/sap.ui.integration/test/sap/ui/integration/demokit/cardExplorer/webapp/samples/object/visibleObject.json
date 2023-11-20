@@ -1,0 +1,171 @@
+{
+	"_version": "1.15.0",
+	"sap.app": {
+		"id": "card.explorer.object.card",
+		"type": "card",
+		"title": "Sample of an Object Card",
+		"subTitle": "Sample of an Object Card",
+		"applicationVersion": {
+			"version": "1.0.0"
+		},
+		"shortTitle": "A short title for this Card",
+		"info": "Additional information about this Card",
+		"description": "A long description for this Card",
+		"tags": {
+			"keywords": [
+				"Object",
+				"Card",
+				"Sample"
+			]
+		}
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"icons": {
+			"icon": "sap-icon://switch-classes"
+		}
+	},
+	"sap.card": {
+		"type": "Object",
+		"configuration": {
+			"parameters": {
+				"visibleCompanyFields": {
+					"value": ["companyDetails", "companyName"]
+				}
+			}
+		},
+		"data": {
+			"json": {
+				"showContactDetails": false,
+				"firstName": "Donna",
+				"lastName": "Moore",
+				"position": "Sales Executive",
+				"phone": "+1 202 555 5555",
+				"email": "",
+				"photo": "./DonnaMoore.png",
+				"manager": {
+					"firstName": "",
+					"lastName": "Chevalier",
+					"photo": "./AlainChevalier.png"
+				},
+				"company": {
+					"name": "Robert Brown Entertainment",
+					"address": "481 West Street, Anytown OH 45066, USA",
+					"email": "mail@mycompany.com",
+					"emailSubject": "Subject",
+					"website": "",
+					"url": ""
+				}
+			}
+		},
+		"header": {
+			"icon": {
+				"src": "{photo}"
+			},
+			"title": "{firstName} {lastName}",
+			"subTitle": "{position}"
+		},
+		"content": {
+			"groups": [
+				{
+					"visible": "{showContactDetails}",
+					"title": "Contact Details",
+					"items": [
+						{
+							"visible": "{= !!${firstName}}",
+							"label": "First Name",
+							"value": "{firstName}"
+						},
+						{
+							"visible": "{= !!${lastName}}",
+							"label": "Last Name",
+							"value": "{lastName}"
+						},
+						{
+							"visible": "{= !!${phone}}",
+							"label": "Phone",
+							"value": "{phone}",
+							"actions": [
+								{
+									"type": "Navigation",
+									"parameters": {
+										"url": "tel:{phone}"
+									}
+								}
+							]
+						},
+						{
+							"visible": "{= !!${email}}",
+							"label": "Email",
+							"value": "{email}",
+							"actions": [
+								{
+									"type": "Navigation",
+									"parameters": {
+										"url": "mailto:{email}"
+									}
+								}
+							]
+						}
+					]
+				},
+				{
+					"visible": "{= ${parameters>/visibleCompanyFields/value}.indexOf('companyDetails')>-1}",
+					"title": "Company Details",
+					"items": [
+						{
+							"visible": "{= ${parameters>/visibleCompanyFields/value}.indexOf('companyName')>-1}",
+							"label": "Company Name",
+							"value": "{company/name}"
+						},
+						{
+							"visible": "{= ${parameters>/visibleCompanyFields/value}.indexOf('companyAddress')>-1}",
+							"label": "Address",
+							"value": "{company/address}"
+						},
+						{
+							"visible": true,
+							"label": "Email",
+							"value": "{company/email}",
+							"actions": [
+								{
+									"type": "Navigation",
+									"parameters": {
+										"url": "mailto:{company/email}?subject={company/emailSubject}"
+									}
+								}
+							]
+						},
+						{
+							"visible": "{= !!${company/website}}",
+							"label": "Website",
+							"value": "{company/website}",
+							"actions": [
+								{
+									"type": "Navigation",
+									"parameters": {
+										"url": "{company/url}"
+									}
+								}
+							]
+						}
+					]
+				},
+				{
+					"visible": "{= !!${manager/firstName} || !!${manager/lastName}}",
+					"title": "Organizational Details",
+					"items": [
+						{
+							"visible": "{= !!${manager/firstName} || !!${manager/lastName}}",
+							"label": "Direct Manager",
+							"value": "{manager/firstName} {manager/lastName}",
+							"icon": {
+								"src": "{manager/photo}"
+							}
+						}
+					]
+				}
+			]
+		}
+	}
+}

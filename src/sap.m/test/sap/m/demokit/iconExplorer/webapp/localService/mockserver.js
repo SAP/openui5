@@ -1,8 +1,8 @@
 sap.ui.define([
-	"jquery.sap.global",
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/thirdparty/sinon"
-], function (jQuery, JSONModel, sinon) {
+	"sap/ui/thirdparty/sinon",
+	"sap/base/Log"
+], function (JSONModel, sinon, Log) {
 	"use strict";
 
 	var iAutoRespondAfterDefault = 10;
@@ -13,7 +13,7 @@ sap.ui.define([
 		 * @public
 		 */
 		init: function () {
-			var oUriParameters = jQuery.sap.getUriParameters();
+			var oUriParameters = new URLSearchParams(window.location.search);
 			this._oMockModels = {
 
 			};
@@ -25,7 +25,7 @@ sap.ui.define([
 			// create a fake server with configurable delay
 			this.oServer = sinon.fakeServer.create();
 			this.oServer.autoRespond = true;
-			this.oServer.autoRespondAfter = parseInt(oUriParameters.get("serverDelay") || iAutoRespondAfterDefault, 10);
+			this.oServer.autoRespondAfter = parseInt(oUriParameters.get("serverDelay") || iAutoRespondAfterDefault);
 
 			// set up the filters for the mocked URLs
 			sinon.fakeServer.xhr.useFilters = true;
@@ -43,7 +43,7 @@ sap.ui.define([
 				);
 			}.bind(this));
 
-			jQuery.sap.log.info("Running the app with mock data");
+			Log.info("Running the app with mock data");
 		},
 
 		getMockServer: function () {
@@ -56,13 +56,13 @@ sap.ui.define([
 		 * @private
 		 */
 		_mockFont: function (sName) {
-			var sGroupsUrl = sap.ui.require.toUrl("sap/ui/demo/iconexplorer") + "/model/" + sName + "/groups.json";
-			var sTagsUrl = sap.ui.require.toUrl("sap/ui/demo/iconexplorer") + "/model/" + sName + "/tags.json";
+			var sGroupsUrl = sap.ui.require.toUrl("sap/ui/demo/iconexplorer/model/" + sName + "/groups.json");
+			var sTagsUrl = sap.ui.require.toUrl("sap/ui/demo/iconexplorer/model/" + sName + "/tags.json");
 
-			var sGroupsMockUrl = sap.ui.require.toUrl("sap/ui/demo/iconexplorer") + "/localService/mockdata/" + sName + "/groups.json";
-			var sTagsMockUrl = sap.ui.require.toUrl("sap/ui/demo/iconexplorer") + "/localService/mockdata/" + sName + "/tags.json";
+			var sGroupsMockUrl = sap.ui.require.toUrl("sap/ui/demo/iconexplorer/localService/mockdata/" + sName + "/groups.json");
+			var sTagsMockUrl = sap.ui.require.toUrl("sap/ui/demo/iconexplorer/localService/mockdata/" + sName + "/tags.json");
 
-			// we need to load the models before configuring the fakeserver
+			// we need to load the models before configuring the fake server
 			// faking the real call and load the real models (we just want to use a timer for opa tests)
 			// at the same time is just impossible
 			var oGroupsModel = this._loadModelFromDisk(sGroupsMockUrl);

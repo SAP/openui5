@@ -1,0 +1,24 @@
+div.des{
+	vertical-align: top;
+	-webkit-box-flex: 1;
+	display: block;
+	margin-left: 10px;
+}
+
+dev.uiArea{
+	-webkit-box-flex: 0;
+	margin-left: 5px;
+}
+div.row{
+	display: -webkit-box;
+	-webkit-box-orient: horizontal;
+	-webkit-box-pack: start;
+}
+
+.img1{
+	width: 50px;
+}
+
+.sapMImg {
+	margin-left: 1rem;
+}

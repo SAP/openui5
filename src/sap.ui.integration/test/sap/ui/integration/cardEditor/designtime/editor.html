@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="utf-8" />
+	<title>Editor Test Page with designtime files</title>
+	<script src="../sharedTest.js" localstoragekey="card-designtime-"></script>
+	<script src="../../../../../../resources/sap-ui-integration.js"
+		id="sap-ui-bootstrap"
+		data-sap-ui-theme="sap_horizon"
+		data-sap-ui-oninit="init"
+		data-sap-ui-resourceroots='{"testjs":"../","sap.ui.integration.cardEditor.test":"../"}'>
+	</script>
+	<link rel="stylesheet" href="../sharedTest.css" />
+</head>
+
+<body class="sapUiBody sapUiSizeCompact">
+	<h2>sap.ui.integration.cardEditor - Test pages</h2>
+	<div id="global">
+		<h3>Settings</h3>
+		<label>Page Language:</label>
+		<select id="languageSelect" onchange="switchLanguage(this)">
+		</select>
+		<label>Theme:</label>
+		<select onchange="switchTheme(this)">
+			<option value="sap_horizon">Morning Horizon</option>
+			<option value="sap_horizon_dark">Evening Horizon</option>
+			<option value="sap_horizon_hcb">High Contrast Black</option>
+			<option value="sap_horizon_hcw">High Contrast White</option>
+		</select>
+	</div>
+	<div id="editor">
+		<h3>Admin Mode (only)</h3>
+		<ui-integration-card-editor id="cardEditorAdmin" mode="admin" allow-dynamic-values="true" allow-settings="true">
+		</ui-integration-card-editor>
+		<div class="buttons">
+			<button onclick="showCurrentValues('cardEditorAdmin')">
+				Show Current Values (Admin Mode)
+			</button>
+			<button onclick="saveCurrentValues('cardEditorAdmin')">
+				Save Current Values (Admin Mode)
+			</button>
+			<button onclick="loadCurrentValues('cardEditorAdmin')">
+				Load Values (Admin Mode)
+			</button>
+			<button onclick="deleteCurrentValues('cardEditorAdmin')">
+				Delete Values (Admin Mode)
+			</button>
+		</div>
+		<h3>Content Mode (only)</h3>
+		<ui-integration-card-editor id="cardEditorContent" preview-position="left" mode="content" allow-dynamic-values="true"
+			allow-settings="true">
+		</ui-integration-card-editor>
+		<div class="buttons">
+			<button onclick="showCurrentValues('cardEditorContent')">
+				Show Current Values (Content Mode)
+			</button>
+			<button onclick="saveCurrentValues('cardEditorContent')">
+				Save Current Values (Content Mode)
+			</button>
+			<button onclick="loadCurrentValues('cardEditorContent')">
+				Load Values (Content Mode)
+			</button>
+			<button onclick="deleteCurrentValues('cardEditorContent')">
+				Delete Values (Content Mode)
+			</button>
+		</div>
+		<h3>Translation Mode (only)</h3>
+		<label>Translation Language:</label>
+		<select id="translationLanguageSelectForOnlyMode" onchange="switchTranslationLanguageForOnlyMode(this)">
+		</select>
+		<ui-integration-card-editor id="cardEditorTranslation" card='{
+			}' mode="translation" allow-dynamic-values="true" allow-settings="true">
+		</ui-integration-card-editor>
+		<div class="buttons">
+			<button onclick="showCurrentValues('cardEditorTranslation')">
+				Show Current Values (Translation Mode)
+			</button>
+			<button onclick="saveCurrentValues('cardEditorTranslation')">
+				Save Current Values (Translation Mode)
+			</button>
+			<button onclick="loadCurrentValues('cardEditorTranslation')">
+				Load Values (Translation Mode)
+			</button>
+			<button onclick="deleteCurrentValues('cardEditorTranslation')">
+				Delete Values (Translation Mode)
+			</button>
+		</div>
+		<h3>Content Mode (with admin layer)</h3>
+		<div id="admincontent">
+
+		</div>
+		<div class="buttons">
+			<button onclick="showCurrentValues('cardEditorAdminContent')">
+				Show Current Values (with admin layer)
+			</button>
+			<button onclick="saveCurrentValues('cardEditorAdminContent')">
+				Save Current Values (with admin layer)
+			</button>
+			<button onclick="loadCurrentValues('cardEditorAdminContent')">
+				Load Values (with admin layer)
+			</button>
+			<button onclick="deleteCurrentValues('cardEditorAdminContent')">
+				Delete Values (with admin layer)
+			</button>
+		</div>
+		<h3>All Merged Layers </h3>
+		<div id="all">
+
+		</div>
+		<h3>Translation Mode (with admin + content layer)</h3>
+		<label>Translation Language:</label>
+		<select id="translationLanguageSelectForAllMode" onchange="switchTranslationLanguageForAllMode(this)">
+		</select>
+		<div id="admincontenttranslation">
+
+		</div>
+	</div>
+</body>
+
+</html>

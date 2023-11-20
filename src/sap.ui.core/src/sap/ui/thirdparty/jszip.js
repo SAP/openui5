@@ -292,7 +292,13 @@ function JSZip(data, options) {
     //   "folder/" : {...},
     //   "folder/data.txt" : {...}
     // }
-    this.files = {};
+    // ##### BEGIN: MODIFIED BY SAP
+    // this.files = {};
+    // NOTE: we use a null prototype because we do not
+    // want filenames like "toString" coming from a zip file
+    // to overwrite methods and attributes in a normal Object.
+    this.files = Object.create(null);
+    // ##### END: MODIFIED BY SAP
 
     // Where we are in the hierarchy
     this.root = "";
@@ -905,9 +911,11 @@ var out = {
         var result = [],
             filename, relativePath, file, fileClone;
         for (filename in this.files) {
-            if (!this.files.hasOwnProperty(filename)) {
-                continue;
-            }
+            // ##### BEGIN: MODIFIED BY SAP
+            // if (!this.files.hasOwnProperty(filename)) {
+            //    continue;
+            // }
+            // ##### END: MODIFIED BY SAP
             file = this.files[filename];
             // return a new object, don't let the user mess with our internal objects :)
             fileClone = new ZipObject(file.name, file._data, extend(file.options));
@@ -1036,9 +1044,11 @@ var out = {
 
         // first, generate all the zip parts.
         for (var name in this.files) {
-            if (!this.files.hasOwnProperty(name)) {
-                continue;
-            }
+            // ##### BEGIN: MODIFIED BY SAP
+            // if (!this.files.hasOwnProperty(name)) {
+            //     continue;
+            // }
+            // ##### END: MODIFIED BY SAP
             var file = this.files[name];
 
             var compressionName = file.options.compression || options.compression.toUpperCase();

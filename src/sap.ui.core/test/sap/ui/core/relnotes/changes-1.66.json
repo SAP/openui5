@@ -1,0 +1,264 @@
+{
+  "1.66.0": {
+    "date": "April 2019",
+    "notes": [
+      {
+        "id": "bb9b2c58f20913fa9f392c99ebc95b08f38c5266",
+        "type": "FIX",
+        "text": "ODataMessageParser: Duplicate filtering",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980158171"
+          }
+        ]
+      },
+      {
+        "id": "155f09ca22a6312f4b1382ef76547b67aa03daca",
+        "type": "FEATURE",
+        "text": "Opa: add enabled option",
+        "references": []
+      },
+      {
+        "id": "81e564abab9c3fc901cacef0489f94cbd262d48e",
+        "type": "FEATURE",
+        "text": "Send FESR via Beacon API",
+        "references": []
+      },
+      {
+        "id": "4e1b86a8c1a479e11467389251dc419427253533",
+        "type": "FEATURE",
+        "text": "core.routing: use 'componentUsages' in component target",
+        "references": []
+      },
+      {
+        "id": "940b7439159fd7ac24db271e6ece467832789687",
+        "type": "FEATURE",
+        "text": "message.Message: add property technicalDetails",
+        "references": []
+      },
+      {
+        "id": "25c008dc816b245f8ea60f96f631bee70e658af3",
+        "type": "FEATURE",
+        "text": "sap.ui.core.Component: Propagate Cache Tokens to nested components",
+        "references": []
+      },
+      {
+        "id": "8c427982435ebab6017d5ff79d80b943a289172f",
+        "type": "FIX",
+        "text": "AppCacheBuster: ignore hash-only URLs for rewriting",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880532861"
+          }
+        ]
+      },
+      {
+        "id": "cc0d811051d27f39f590a723ce6bf907250c53d2",
+        "type": "FIX",
+        "text": "JSDoc: incorporate feedback from SDK feedback channel (2019/3)",
+        "references": []
+      },
+      {
+        "id": "361748c685b977fcb79d6c2652a2283b74ee18cc",
+        "type": "FIX",
+        "text": "ManagedObjectModel: Inform when parts of a property change",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980169334"
+          }
+        ]
+      },
+      {
+        "id": "45e077f96589b8856b0005c38981f4febd26e082",
+        "type": "FIX",
+        "text": "core.Popup: fix the immediate closed popup when of set to window",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980174195"
+          }
+        ]
+      },
+      {
+        "id": "5a6da02c9a04869bc7a1bf094f426f0171147558",
+        "type": "FEATURE",
+        "text": "CLDR: Upgrade to 35.1, support new Japanese era",
+        "references": []
+      },
+      {
+        "id": "07916ca5aa1a9fd4b17a825cc7f5cc47c77226a2",
+        "type": "FEATURE",
+        "text": "Opa: Descendant matcher implemented",
+        "references": []
+      },
+      {
+        "id": "ddf75d338a6d7bb9edff437c93ae0c33de316e9d",
+        "type": "FIX",
+        "text": "Core/Component: Respect \"final\" resourceRoot configuration",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002028376600000830292019"
+          }
+        ]
+      },
+      {
+        "id": "d08609c48bcd4570d84b6f5000ef2986d9cd19ea",
+        "type": "FIX",
+        "text": "ManagedObject: Fix regression in aggregation refresh",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980199077"
+          }
+        ]
+      },
+      {
+        "id": "422ff1826e9af6305d1ee5b925123534c58089bf",
+        "type": "FIX",
+        "text": "trace/FESR.qunit: Skip Beacon API test in IE11",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980197031"
+          }
+        ]
+      },
+      {
+        "id": "7e94864d1cbebce52781e063e73b9d2ce5bde2ba",
+        "type": "FIX",
+        "text": "BindingParser: detect complex binding that uses quoted properties",
+        "references": []
+      },
+      {
+        "id": "d6d8b63fe0d39e8ca485478db6ea69bf26af097e",
+        "type": "FIX",
+        "text": "date.Japanese: adapt unit test to era change",
+        "references": []
+      },
+      {
+        "id": "dea071281daedac278542bb8fb6a1bb42046cac4",
+        "type": "FIX",
+        "text": "sap/base/util/values: JSDoc visibility",
+        "references": []
+      },
+      {
+        "id": "b19bb8adc6491801add877c715cf874f6d72db33",
+        "type": "FIX",
+        "text": "trace/BeaconRequest.qunit: Improved test robustness",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980212852"
+          }
+        ]
+      },
+      {
+        "id": "d01ea07aa8d57842d84d7aaef8ce06168d052cf4",
+        "type": "FEATURE",
+        "text": "sap.m.ObjectStatus: now supports inverted state and indication colors",
+        "references": []
+      },
+      {
+        "id": "da34e0e96183e4797d80c34812319f28a56f1bf3",
+        "type": "FIX",
+        "text": "DateFormat: Fixed interval-format for dates within diferrent eras",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980215932"
+          }
+        ]
+      },
+      {
+        "id": "7a8505654d15d473c8a40d0f76a0eff7124fccad",
+        "type": "FIX",
+        "text": "DateFormat: Use Gannen instead of Ichinen for first year of era",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980215734"
+          }
+        ]
+      },
+      {
+        "id": "ebba6636b903f6bb126cfdd6687219052624d171",
+        "type": "FIX",
+        "text": "Japanese: Fix unit test for current era",
+        "references": []
+      },
+      {
+        "id": "f7298c79678073c8476e09fe78c1b8a6b860a47e",
+        "type": "FIX",
+        "text": "ManagedObject: Improve clone method documentation",
+        "references": [
+          {
+            "type": "GitHub",
+            "reference": "2496"
+          }
+        ]
+      },
+      {
+        "id": "d490ff5e1b5b8d6bcda07a3a14cf9aa91556a4ed",
+        "type": "FIX",
+        "text": "Revert upgrade CLDR to 35.1 and add new Japanese era name",
+        "references": []
+      },
+      {
+        "id": "c2657c32ec51d8a2f4bbae2e8682f226df9478de",
+        "type": "FIX",
+        "text": "mvc/View.Preprocessor: fixed getCacheKey documentation",
+        "references": []
+      },
+      {
+        "id": "1b35ae17d66ecdf4718231204134d1c57ee2d903",
+        "type": "FIX",
+        "text": "mvc/View: Deregister erroneous instances from the Core",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980108149"
+          }
+        ]
+      },
+      {
+        "id": "32e9b2238f6cb2b18dda3b53b332c0d9e21482a9",
+        "type": "FIX",
+        "text": "mvc/View: deprecate View.prototype.loaded",
+        "references": []
+      },
+      {
+        "id": "1265536f6a38a8da0259f57bf49c945c4b02e3dd",
+        "type": "FIX",
+        "text": "sap/base/util/deepClone: Do not clone __proto__",
+        "references": []
+      },
+      {
+        "id": "825cd19d5d515d9ceb837664c8b96a3ea4276c22",
+        "type": "FIX",
+        "text": "sap/base/util/merge: Avoid Object.prototype pollution",
+        "references": []
+      },
+      {
+        "id": "8b320a8e89fb804ea06c297031d500cdc0d88863",
+        "type": "FIX",
+        "text": "sap/ui/thirdparty/jQuery: Prevent Object.prototype pollution",
+        "references": []
+      },
+      {
+        "id": "51e97ec3b0b8609efbbf6c2126c1f6575066ef7b",
+        "type": "FIX",
+        "text": "v2/ODataModel: Prevent unexpected error handler calls",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980228703"
+          }
+        ]
+      }
+    ]
+  }
+}

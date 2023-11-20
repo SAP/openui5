@@ -8,13 +8,17 @@
 @_sap_ui_unified_Menu_ItmHeightCozy: 3rem;
 @_sap_ui_unified_Menu_ItmPaddingCozy: 1rem;
 
+.sapMMenu {
+	max-width: 100%;
+}
+
 .sapUiMnu {
 	/* initially hidden off the screen */
 	position: absolute;
 	top: -10000px;
 	display: block;
 	min-width: 80px;
-	background-color: @sapUiListBackground;
+	background-color: @sapUiGroupContentBackground;
 	cursor: default;
 	outline: none;
 	overflow: hidden;
@@ -24,8 +28,8 @@
 	padding: 0px;
 	min-width: 5rem;
 	color: @sapUiListTextColor;
-	box-shadow: @sapUiShadowLevel1;
-	border-radius: 0.25rem;
+	box-shadow: @sapUiContentShadow1;
+	border-radius: @sapUiElementBorderCornerRadius;
 }
 
 .sapUiMnu:focus {
@@ -50,11 +54,16 @@
 	position: relative;
 }
 
+.sapUiMnuItm:not(.sapUiMnuItmDsbl) {
+	cursor: pointer;
+}
+
 .sapUiMnuItm:focus {
-	outline: 1px dotted @sapUiContentFocusColor;
+	outline: @sapContent_FocusWidth @sapContent_FocusStyle @sapUiContentFocusColor;
 	outline-offset: -3px;
 }
 
+/* TODO remove after the end of support for Internet Explorer */
 html[data-sap-ui-browser*='ie'] {
 	.sapUiMnuItm:focus {
 		outline: none;
@@ -119,6 +128,14 @@ html[data-sap-ui-browser*='ie'] {
 
 .sapUiMnuItmIco > .sapUiIcon {
 	line-height: @_sap_ui_unified_Menu_ItmHeight;
+}
+
+.sapUiMnuItmIco > .sapUiIcon {
+	cursor: inherit;
+}
+
+.sapUiMnu .sapUiMnuItmIco .sapUiIcon {
+	font-size: 1rem;
 }
 
 .sapUiMnuItmIco > img{
@@ -232,6 +249,7 @@ html[data-sap-ui-browser*='ie'] {
 
 .sapUiMnuItmSbMnu > div:after {
 	content: "\e066";
+	color: @sapUiContentNonInteractiveIconColor;
 	font-family: 'SAP-icons';
 	outline: none;
 }
@@ -260,7 +278,7 @@ html[data-sap-ui-browser*='ie'] {
 	margin-top: 1px;
 	margin-bottom: 1px;
 	border-width: 0;
-	border-top: 1px solid @sapUiContentForegroundBorderColor;
+	border-top: 0.0625rem solid @sapUiGroupContentBorderColor;
 	height: 1px;
 	color: @sapUiToolbarSeparatorColor;
 }
@@ -367,11 +385,6 @@ html[data-sap-ui-browser*='ie'] {
 	margin-right: @_sap_ui_unified_Menu_ItmPadding;
 }
 
-.sapUiMnuItmSbMnu > div:after {
-	content: "\e1ed";
-	color: @sapUiContentNonInteractiveIconColor;
-}
-
 .sapUiMnuItm.sapUiMnuItmHov .sapUiMnuItmSbMnu > div:after {
 	color: @sapUiContentNonInteractiveIconColor;
 }
@@ -384,6 +397,14 @@ html[data-sap-ui-browser*='ie'] {
 	right: 1rem;
 }
 
+.sapUiMnuItm {
+	.sapUiMnuItmTxt {
+		padding-left: 0.5rem;
+	}
+	.sapUiMnuItmIco + .sapUiMnuItmTxt {
+		padding-left: 0;
+	}
+}
 
 /** Cozy Mode **/
 
@@ -405,11 +426,11 @@ html[data-sap-ui-browser*='ie'] {
 
 	.sapUiMnuItmIco {
 		width: @_sap_ui_unified_Menu_ItmHeightCozy;
-		font-size: @_sap_ui_unified_Menu_ItmHeightCozy / 2 - 0.125rem;
 	}
 
 	.sapUiMnuItmIco > .sapUiIcon {
 		line-height: @_sap_ui_unified_Menu_ItmHeightCozy;
+		font-size: @_sap_ui_unified_Menu_ItmHeightCozy / 2 - 0.125rem;
 	}
 
 	.sapUiMnuItmIco > img {
@@ -491,5 +512,30 @@ html.sap-phone, html.sap-tablet {
 		margin-top: 0;
 		margin-bottom: 0;
   }
+	.sapUiMnuLst > .sapUiMnuItm > .sapUiMnuItmTxt {
+		padding-left: 2rem;
+	}
 
+	.sapUiMnuLst > .sapUiMnuItm > .sapUiMnuItmIco + .sapUiMnuItmTxt {
+		padding-left: 0rem;
+	}
+
+	.sapUiMnuLst.sapUiMnuNoIco > .sapUiMnuItm > .sapUiMnuItmTxt,
+	.sapUiMnuLst.sapUiMnuNoIco > .sapUiMnuItm > .sapUiMnuItmIco + .sapUiMnuItmTxt{
+		padding-left: 0;
+	}
+
+}
+
+.sapUiSizeCozy{
+	.sapUiMnuLst > .sapUiMnuItm > .sapUiMnuItmTxt {
+		padding-left: 3rem;
+	}
+	.sapUiMnuLst > .sapUiMnuItm > .sapUiMnuItmIco + .sapUiMnuItmTxt {
+		padding-left: 0;
+	}
+	.sapUiMnuLst.sapUiMnuNoIco > .sapUiMnuItm > .sapUiMnuItmTxt,
+	.sapUiMnuLst.sapUiMnuNoIco > .sapUiMnuItm > .sapUiMnuItmIco + .sapUiMnuItmTxt {
+		padding-left: 0;
+	}
 }

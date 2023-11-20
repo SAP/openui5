@@ -1,0 +1,142 @@
+{
+	"items": [
+		{
+			"fileName": "Business Plan Agenda.doc",
+			"mediaType": "application/msword",
+			"mimeType" : "application/msword",
+			"url": "demokit/sample/UploadCollection/LinkedDocuments/Business Plan Agenda.doc",
+			"uploadState": "Complete",
+			"uploadedBy" : "Jane Burns",
+			"fileSize" : 100,
+			"markers": [
+				{
+					"type": "Draft"
+				},
+				{
+					"type": "Favorite"
+				},
+				{
+					"type": "Flagged"
+				},
+				{
+					"type": "Locked"
+				},
+				{
+					"type": "Unsaved"
+				}
+			],
+			"statuses": [
+				{
+					"title": "Uploaded By",
+					"text": "Jane Burns",
+					"active": true
+				},
+				{
+					"title": "Uploaded On",
+					"text": "2014-07-28",
+					"active": false
+				},
+				{
+					"title": "File Size",
+					"text": "25",
+					"active": false
+				},
+				{
+					"title":"Document Info Record",
+					"text":"SSP/101010101",
+					"state":"Information"
+				}
+			],
+			"selected": false
+		},
+		{
+			"fileName": "Picture of a woman.png",
+			"mediaType": "image/png",
+			"mimeType": "image/png",
+			"url": "test-resources/sap/m/images/Woman_04.png",
+			"uploadState": "Complete",
+			"uploadedBy" : "Jane Burns",
+			"fileSize" : 5000,
+			"thumbnailUrl": "test-resources/sap/m/images/Woman_04.png",
+			"selected": false,
+			"statuses": [
+				{
+					"title": "Uploaded By",
+					"text": "Jane Burns",
+					"active": true
+				},
+				{
+					"title": "Uploaded On",
+					"text": "2016-05-28",
+					"active": false
+				}
+			]
+		},
+		{
+			"fileName" : "Screenshot.jpg",
+			"mediaType": "image/jpg",
+			"mimeType" : "image/jpg",
+			"url" : "test-resources/sap/m/demokit/sample/UploadCollection/LinkedDocuments/Screenshot.jpg",
+			"uploadState": "Complete",
+			"uploadedBy" : "Susan Baker",
+			"fileSize" : 500,
+			"selected": false,
+			"statuses": [
+				{
+					"title": "Uploaded By",
+					"text": "Susan Baker",
+					"active": true
+				},
+				{
+					"title": "Uploaded On",
+					"text": "2016-05-28",
+					"active": false
+				}
+			]
+		},
+		{
+			"fileName" : "Instructions.pdf",
+			"mediaType": "application/pdf",
+			"mimeType" : "application/pdf",
+			"url" : "test-resources/sap/m/demokit/sample/UploadCollection/LinkedDocuments/Instructions.pdf",
+			"uploadState": "Complete",
+			"uploadedBy" : "Jeremy",
+			"fileSize" : 1248576,
+			"selected": false,
+			"statuses": [
+				{
+					"title": "Uploaded By",
+					"text": "Jeremy",
+					"active": true
+				},
+				{
+					"title": "Uploaded On",
+					"text": "2016-05-28",
+					"active": false
+				}
+			]
+		},
+		{
+			"fileName" : "Notes.txt",
+			"mediaType": "text/plain",
+			"mimeType" : "text/plain",
+			"url" : "test-resources/sap/m/demokit/sample/UploadCollection/LinkedDocuments/Notes.txt",
+			"uploadState": "Complete",
+			"uploadedBy" : "Jeremy",
+			"fileSize" : 300,
+			"selected": false,
+			"statuses": [
+				{
+					"title": "Uploaded By",
+					"text": "Jeremy",
+					"active": true
+				},
+				{
+					"title": "Uploaded On",
+					"text": "2016-05-28",
+					"active": false
+				}
+			]
+		}
+	]
+}

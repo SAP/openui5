@@ -3,9 +3,14 @@
  */
 
 // Provides control sap.ui.commons.layout.BorderLayoutArea.
-sap.ui.define(['jquery.sap.global', 'sap/ui/commons/library', 'sap/ui/core/CustomStyleClassSupport', 'sap/ui/core/Element'],
-	function(jQuery, library, CustomStyleClassSupport, Element) {
+sap.ui.define(['sap/ui/commons/library', 'sap/ui/core/CustomStyleClassSupport', 'sap/ui/core/Element'],
+	function(library, CustomStyleClassSupport, Element) {
 	"use strict";
+
+
+
+	 // shortcut for sap.ui.commons.layout.BorderLayoutAreaTypes
+	 var BorderLayoutAreaTypes = library.layout.BorderLayoutAreaTypes;
 
 
 
@@ -26,10 +31,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/library', 'sap/ui/core/Custo
 	 * @public
 	 * @deprecated Since version 1.38. Instead, use the <code>sap.m.Page</code> control.
 	 * @alias sap.ui.commons.layout.BorderLayoutArea
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var BorderLayoutArea = Element.extend("sap.ui.commons.layout.BorderLayoutArea", /** @lends sap.ui.commons.layout.BorderLayoutArea.prototype */ { metadata : {
 
+		deprecated: true,
 		library : "sap.ui.commons",
 		properties : {
 
@@ -38,7 +43,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/library', 'sap/ui/core/Custo
 			 * @deprecated Since version 1.3.3.
 			 * Redundant to the aggregation by the parent border layout.
 			 */
-			areaId : {type : "sap.ui.commons.layout.BorderLayoutAreaTypes", group : "Identification", defaultValue : sap.ui.commons.layout.BorderLayoutAreaTypes.top, deprecated: true},
+			areaId : {type : "sap.ui.commons.layout.BorderLayoutAreaTypes", group : "Identification", defaultValue : BorderLayoutAreaTypes.top, deprecated: true},
 
 			/**
 			 * The overflow mode of the area in horizontal direction as CSS value
@@ -103,4 +108,4 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/library', 'sap/ui/core/Custo
 
 	return BorderLayoutArea;
 
-}, /* bExport= */ true);
+});

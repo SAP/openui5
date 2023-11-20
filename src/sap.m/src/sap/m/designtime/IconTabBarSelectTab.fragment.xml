@@ -1,0 +1,17 @@
+<core:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core">
+	<Dialog title="{/titleText}">
+
+		<ComboBox id="targetCombo" class="sapUiSmallMargin" selectedKey="{/selectedKey}" items="{/items}">
+			<core:Item key="{key}" text="{text}" />
+		</ComboBox>
+
+		<endButton>
+			<Button text="{/cancelBtn}" />
+		</endButton>
+		<beginButton>
+			<Button text="{/okBtn}" type="Emphasized" />
+		</beginButton>
+	</Dialog>
+</core:FragmentDefinition>

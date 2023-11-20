@@ -2,40 +2,45 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/ui/Global', 'sap/ui/core/Core', 'sap/ui/core/ElementMetadata', "sap/base/util/LoaderExtensions"],
-	function (jQuery, library, Global, Core, ElementMetadata, LoaderExtensions) {
+sap.ui.define([
+	"sap/base/i18n/Formatting",
+	"sap/base/i18n/Localization",
+	"sap/ui/Global",
+	"sap/ui/VersionInfo",
+	"sap/ui/core/AnimationMode",
+	"sap/ui/core/Configuration",
+	"sap/ui/core/ControlBehavior",
+	"sap/ui/core/Element",
+	"sap/ui/core/ElementMetadata",
+	"sap/ui/core/Lib",
+	"sap/ui/core/Locale",
+	"sap/ui/core/Supportability",
+	"sap/ui/core/Theming",
+	"sap/base/util/LoaderExtensions",
+	"sap/ui/thirdparty/jquery"
+],
+	function(
+		Formatting,
+		Localization,
+		Global,
+		VersionInfo,
+		AnimationMode,
+		Configuration,
+		ControlBehavior,
+		Element,
+		ElementMetadata,
+		Lib,
+		Locale,
+		Supportability,
+		Theming,
+		LoaderExtensions,
+		jQuery
+	) {
 		'use strict';
-
-		var configurationInfo = sap.ui.getCore().getConfiguration();
 
 		// ================================================================================
 		// Technical Information
 		// ================================================================================
-
-		/**
-		 * Returns the framework name.
-		 * @returns {string}
-		 * @private
-		 */
-		function _getFrameworkName() {
-			var versionInfo;
-			var frameworkInfo;
-
-			try {
-				versionInfo = sap.ui.getVersionInfo();
-			} catch (e) {
-				versionInfo = undefined;
-			}
-
-			if (versionInfo) {
-				// Use group artifact version for maven builds or name for other builds (like SAPUI5-on-ABAP)
-				frameworkInfo = versionInfo.gav ? versionInfo.gav : versionInfo.name;
-
-				return frameworkInfo.indexOf('openui5') !== -1 ? 'OpenUI5' : 'SAPUI5';
-			} else {
-				return '';
-			}
-		}
 
 		/**
 		 * Creates an object with the libraries and their version from the version info file.
@@ -43,7 +48,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/ui/Global', 'sap
 		 * @private
 		 */
 		function _getLibraries() {
-			var libraries = Global.versioninfo ? Global.versioninfo.libraries : undefined;
+			var libraries = VersionInfo._content ? VersionInfo._content.libraries : undefined;
 			var formattedLibraries = Object.create(null);
 
 			if (libraries !== undefined) {
@@ -61,14 +66,26 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/ui/Global', 'sap
 		 * @private
 		 */
 		function _getLoadedLibraries() {
-			var libraries = sap.ui.getCore().getLoadedLibraries();
+			var libraries = Lib.all();
 			var formattedLibraries = Object.create(null);
 
-			Object.keys(sap.ui.getCore().getLoadedLibraries()).forEach(function (element, index, array) {
+			Object.keys(Lib.all()).forEach(function (element, index, array) {
 				formattedLibraries[element] = libraries[element].version;
 			});
 
 			return formattedLibraries;
+		}
+
+		/**
+		 * Creates a simple object with all URL parameters.
+		 * @returns {Object<string,string[]>} Map of parameter value arrays keyed by parameter names
+		 */
+		function getURLParameters() {
+			var oParams = new URLSearchParams(window.location.search);
+			return Array.from(oParams.keys()).reduce(function(oResult, sKey) {
+				oResult[sKey] = oParams.getAll(sKey);
+				return oResult;
+			}, {});
 		}
 
 		/**
@@ -79,7 +96,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/ui/Global', 'sap
 		function _getFrameworkInformation() {
 			return {
 				commonInformation: {
-					frameworkName: _getFrameworkName(),
 					version: Global.version,
 					buildTime: Global.buildinfo.buildtime,
 					lastChange: Global.buildinfo.lastchange,
@@ -88,32 +104,27 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/ui/Global', 'sap
 					applicationHREF: window.location.href,
 					documentTitle: document.title,
 					documentMode: document.documentMode || '',
-					debugMode: jQuery.sap.debug(),
-					statistics: jQuery.sap.statistics()
+					debugMode: Supportability.isDebugModeEnabled(),
+					statistics: Supportability.isStatisticsEnabled()
 				},
-
 				configurationBootstrap: window['sap-ui-config'] || Object.create(null),
-
 				configurationComputed: {
-					theme: configurationInfo.getTheme(),
-					language: configurationInfo.getLanguage(),
-					formatLocale: configurationInfo.getFormatLocale(),
-					accessibility: configurationInfo.getAccessibility(),
-					animation: configurationInfo.getAnimation(),
-					rtl: configurationInfo.getRTL(),
-					debug: configurationInfo.getDebug(),
-					inspect: configurationInfo.getInspect(),
-					originInfo: configurationInfo.getOriginInfo(),
-					noDuplicateIds: configurationInfo.getNoDuplicateIds()
+					theme: Theming.getTheme(),
+					language: Localization.getLanguage(),
+					formatLocale: new Locale(Formatting.getLanguageTag()),
+					accessibility: ControlBehavior.isAccessibilityEnabled(),
+					animation: (ControlBehavior.getAnimationMode() !== AnimationMode.minimal &&
+								ControlBehavior.getAnimationMode() !== AnimationMode.none),
+					rtl: Localization.getRTL(),
+					debug: Supportability.isDebugModeEnabled(),
+					inspect: Supportability.isControlInspectorEnabled(),
+					originInfo: Supportability.collectOriginInfo(),
+					noDuplicateIds: Configuration.getNoDuplicateIds()
 				},
-
 				libraries: _getLibraries(),
-
 				loadedLibraries: _getLoadedLibraries(),
-
 				loadedModules: LoaderExtensions.getAllRequiredModules().sort(),
-
-				URLParameters: jQuery.sap.getUriParameters().mParams
+				URLParameters: getURLParameters()
 			};
 		}
 
@@ -136,7 +147,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/ui/Global', 'sap
 				var childNode = node.firstElementChild;
 				var results = resultArray;
 				var subResult = results;
-				var control = sap.ui.getCore().byId(node.id);
+				var control = Element.getElementById(node.id);
 
 				if (node.getAttribute('data-sap-ui') && control) {
 					results.push({
@@ -249,7 +260,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/ui/Global', 'sap
 			 * @private
 			 */
 			_getProperties: function (controlId) {
-				var control = sap.ui.getCore().byId(controlId);
+				var control = Element.getElementById(controlId);
 				var properties = Object.create(null);
 
 				if (control) {
@@ -382,7 +393,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/ui/Global', 'sap
 			 */
 			getControlBindings: function (controlId) {
 				var result = Object.create(null);
-				var control = sap.ui.getCore().byId(controlId);
+				var control = Element.getElementById(controlId);
 				var bindingContext;
 
 				if (!control) {

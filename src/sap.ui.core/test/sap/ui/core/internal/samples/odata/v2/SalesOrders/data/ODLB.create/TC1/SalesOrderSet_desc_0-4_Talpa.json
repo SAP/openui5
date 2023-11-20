@@ -1,0 +1,19 @@
+{
+	"d": {
+		"__count" : "1",
+		"results": [
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SalesOrderSet('203')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SalesOrderSet('203')",
+					"type" : "GWSAMPLE_BASIC.SalesOrder"
+				},
+				"SalesOrderID" : "203",
+				"CustomerName" : "Talpa",
+				"Note" : "Inline Creation Rows 203",
+				"CurrencyCode" : "EUR",
+				"GrossAmount" : "98710.62"
+			}
+		]
+	}
+}

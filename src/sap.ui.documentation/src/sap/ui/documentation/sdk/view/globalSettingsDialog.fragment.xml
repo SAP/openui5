@@ -1,0 +1,34 @@
+<core:FragmentDefinition
+		xmlns="sap.m"
+		xmlns:core="sap.ui.core">
+	<Dialog
+			title="{i18n>APP_SETTINGS_DIALOG_TITLE}"
+			class="sapUiContentPadding"
+			contentWidth="350px"
+			id="GlobalSettingsDialog">
+		<content>
+			<VBox class="sapUiTinyMarginTop">
+					<MessageStrip
+							class="sapUiTinyMarginBottom"
+							showIcon="true"
+							text="{i18n>APP_SETTINGS_DIALOG_LANGUAGE_INFO}"/>
+					<Label text="{i18n>APP_SETTINGS_DIALOG_LANGUAGE}" labelFor="LanguageSelect" />
+					<Select id="LanguageSelect"
+							width="100%"
+							busy="{supportedLanguages>/selectBusy}"
+							class="sapUiSmallMarginBottom"
+							items="{
+								path: 'supportedLanguages>/langs'
+							}">
+						<core:Item key="{supportedLanguages>key}" text="{supportedLanguages>text}"/>
+					</Select>
+			</VBox>
+		</content>
+		<beginButton>
+			<Button text="{i18n>APP_SETTINGS_DIALOG_OK_BTN}" press="handleSaveAppSettings" type="Emphasized"/>
+		</beginButton>
+		<endButton>
+			<Button text="{i18n>APP_SETTINGS_DIALOG_CANCEL_BTN}" press="handleCloseAppSettings"/>
+		</endButton>
+	</Dialog>
+</core:FragmentDefinition>

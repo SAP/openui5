@@ -1,0 +1,19 @@
+<core:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core">
+	<ViewSettingsDialog
+		confirm="handleConfirm">
+		<sortItems>
+			<ViewSettingsItem text="Field 1" key="1" selected="true" />
+			<ViewSettingsItem text="Field 2" key="2" />
+			<ViewSettingsItem text="Field 3" key="3" />
+		</sortItems>
+		<groupItems>
+			<ViewSettingsItem text="Field 1" key="1" selected="true" />
+			<ViewSettingsItem text="Field 2" key="2" />
+			<ViewSettingsItem text="Field 3" key="3" />
+		</groupItems>
+		<filterItems>
+		</filterItems>
+	</ViewSettingsDialog>
+</core:FragmentDefinition>

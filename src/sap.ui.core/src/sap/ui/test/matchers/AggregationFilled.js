@@ -2,13 +2,24 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', './Matcher'], function ($, Matcher) {
+sap.ui.define([
+	"sap/ui/test/matchers/Matcher",
+	"sap/base/strings/capitalize"
+], function (Matcher, capitalize) {
 	"use strict";
 
 	/**
-	 * AggregationFilled - checks if an aggregation contains at least one entry.
+	 * @class
+	 * Checks if an aggregation contains at least one entry.
 	 *
-	 * @class AggregationFilled - checks if an aggregation contains at least one entry
+	 * As of version 1.72, it is available as a declarative matcher with the following syntax:
+	 * <code><pre>{
+	 *     aggregationFilled: {
+	 *         name: "string"
+	 *     }
+	 * }
+	 * </code></pre>
+	 *
 	 * @param {object} [mSettings] optional map/JSON-object with initial settings for the new AggregationFilledMatcher
 	 * @extends sap.ui.test.matchers.Matcher
 	 * @public
@@ -18,14 +29,14 @@ sap.ui.define(['jquery.sap.global', './Matcher'], function ($, Matcher) {
 	 */
 	return Matcher.extend("sap.ui.test.matchers.AggregationFilled", /** @lends sap.ui.test.matchers.AggregationFilled.prototype */ {
 
-		metadata : {
-			publicMethods : [ "isMatching" ],
-			properties : {
+		metadata: {
+			publicMethods: ["isMatching"],
+			properties: {
 				/**
 				 * The name of the aggregation that is used for matching.
 				 */
-				name : {
-					type : "string"
+				name: {
+					type: "string"
 				}
 			}
 		},
@@ -37,9 +48,9 @@ sap.ui.define(['jquery.sap.global', './Matcher'], function ($, Matcher) {
 		 * @return {boolean} true if the Aggregation set in the property aggregationName is filled, false if it is not.
 		 * @public
 		 */
-		isMatching : function (oControl) {
+		isMatching: function (oControl) {
 			var sAggregationName = this.getName(),
-				fnAggregation = oControl["get" + $.sap.charToUpperCase(sAggregationName, 0)];
+				fnAggregation = oControl["get" + capitalize(sAggregationName, 0)];
 
 			if (!fnAggregation) {
 				this._oLogger.error("Control '" + oControl + "' does not have an aggregation called '" + sAggregationName + "'");
@@ -47,7 +58,7 @@ sap.ui.define(['jquery.sap.global', './Matcher'], function ($, Matcher) {
 			}
 
 			var vAggregation = fnAggregation.call(oControl);
-			var aAggregation = $.isArray(vAggregation) ? vAggregation : [vAggregation];
+			var aAggregation = Array.isArray(vAggregation) ? vAggregation : [vAggregation];
 			var bFilled = !!aAggregation.length;
 			if (!bFilled) {
 				this._oLogger.debug("Control '" + oControl + "' aggregation '" + sAggregationName + "' is empty");
@@ -58,4 +69,4 @@ sap.ui.define(['jquery.sap.global', './Matcher'], function ($, Matcher) {
 
 	});
 
-}, /* bExport= */ true);
+});

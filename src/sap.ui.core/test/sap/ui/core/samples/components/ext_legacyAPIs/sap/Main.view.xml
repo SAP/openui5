@@ -1,0 +1,18 @@
+<mvc:View xmlns="sap.m" xmlns:l="sap.ui.layout"
+	xmlns:mvc="sap.ui.core.mvc" xmlns:core="sap.ui.core" xmlns:html="http://www.w3.org/1999/xhtml"
+	controllerName="samples.components.ext_legacyAPIs.sap.Main">
+	<l:VerticalLayout>
+		<Text text="SAP Component"></Text>
+		<mvc:XMLView viewName="samples.components.ext_legacyAPIs.sap.Sub1" />
+		<mvc:XMLView id="sub2View" viewName="samples.components.ext_legacyAPIs.sap.Sub2" />
+		<mvc:XMLView viewName="samples.components.ext_legacyAPIs.sap.Sub3" />
+		<html:h2>JSView Extension Tests start below:</html:h2>
+		<mvc:JSView viewName="samples.components.ext_legacyAPIs.sap.Sub4" />
+		<html:h2>HTMLView Modification Tests start below:</html:h2>
+		<mvc:HTMLView viewName="samples.components.ext_legacyAPIs.sap.Sub5" />
+		<core:Fragment fragmentName="samples.components.ext_legacyAPIs.sap.Frag1" type="XML" />
+		<Button text="Destroy Sub2 View (to check controller lifecycle method onExit)" press="destroySub2View" />
+		<Text text="{path:'/number', formatter:'.formatNumber'}" tooltip="formatted number in SAP MainView"></Text>
+	</l:VerticalLayout>
+
+</mvc:View>

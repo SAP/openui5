@@ -1,7 +1,6 @@
 <!DOCTYPE HTML>
 <html>
 <head>
-	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 	<title>PDFViewer - sap.m</title>
@@ -12,6 +11,21 @@
 	</script>
 	<script>
 		jQuery.sap.require("sap.m.MessageToast");
+
+        var aDisplayTypesCollection = [
+            {
+                key: 'Auto',
+                text: 'Auto'
+            },
+            {
+                key: 'Embedded',
+                text: 'Embedded'
+            },
+            {
+                key: 'Link',
+                text: 'Link'
+            }
+        ];
 
 		var aModesCollection = [
 			{
@@ -51,12 +65,14 @@
 		];
 
 		sap.ui.getCore().setModel(new sap.ui.model.json.JSONModel({
+            DisplayTypesCollection: aDisplayTypesCollection,
 			ModesCollection: aModesCollection,
 			SourcesCollection: aSourcesCollection,
 			EventReactionsCollection: aEventReactionsCollection
 		}), "settingsData");
 
 		function setupPDFViewer() {
+            oPDFViewer.setDisplayType(oDisplayTypeSelect.getSelectedKey());
 			oPDFViewer.setSource(oSourceSelect.getSelectedKey());
 			oPDFViewer.setTitle(oTitleTextInput.getValue());
 			oPDFViewer.setHeight(oHeightInput.getValue());
@@ -117,6 +133,15 @@
 					}
 				}
 			}),
+            oDisplayTypeSelect = new sap.m.Select({
+                items: {
+                    path: "settingsData>/DisplayTypesCollection",
+                    template: new sap.ui.core.Item({
+                        key: "{settingsData>key}",
+                        text: "{settingsData>text}"
+                    })
+                }
+            }),
 			oModeSelect = new sap.m.Select({
 				items: {
 					path: "settingsData>/ModesCollection",
@@ -190,6 +215,10 @@
 			oSettingsList = new sap.m.List({
 				items: [
 					// input list items
+                    new sap.m.InputListItem({
+                        label: "Display Type",
+                        content: oDisplayTypeSelect
+                    }),
 					new sap.m.InputListItem({
 						label: "Mode",
 						content: oModeSelect

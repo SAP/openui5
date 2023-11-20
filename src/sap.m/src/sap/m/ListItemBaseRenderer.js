@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(["./library", "sap/ui/Device", "sap/ui/core/InvisibleText"],
-	function(library, Device, InvisibleText) {
+sap.ui.define(["sap/ui/core/ControlBehavior", "./library", "sap/ui/Device", "sap/ui/core/InvisibleText", "sap/ui/core/InvisibleRenderer", "sap/ui/core/Configuration", "sap/ui/core/Lib"],
+	function(ControlBehavior, library, Device, InvisibleText, InvisibleRenderer, Configuration, Library) {
 	"use strict";
 
 
@@ -19,20 +19,19 @@ sap.ui.define(["./library", "sap/ui/Device", "sap/ui/core/InvisibleText"],
 	 *
 	 * @namespace
 	 */
-	var ListItemBaseRenderer = {};
+	var ListItemBaseRenderer = {
+		apiVersion: 2
+	};
 
 	ListItemBaseRenderer.renderInvisible = function(rm, oLI) {
-		this.openItemTag(rm, oLI);
-		rm.writeInvisiblePlaceholderData(oLI);
-		rm.write(">");
-		this.closeItemTag(rm, oLI);
+		InvisibleRenderer.render(rm, oLI, oLI.TagName);
 	};
 
 	/**
 	 * Renders the highlight state.
 	 *
 	 * @param {sap.ui.core.RenderManager} rm The RenderManager that can be used for writing to the Render-Output-Buffer.
-	 * @param {sap.ui.core.Control} oLI An object representation of the control that is rendered.
+	 * @param {sap.m.ListItemBase} oLI An object representation of the control that is rendered.
 	 * @protected
 	 */
 	ListItemBaseRenderer.renderHighlight = function(rm, oLI) {
@@ -41,11 +40,11 @@ sap.ui.define(["./library", "sap/ui/Device", "sap/ui/core/InvisibleText"],
 			return;
 		}
 
-		rm.write("<div");
-		rm.addClass("sapMLIBHighlight");
-		rm.addClass("sapMLIBHighlight" + sHighlight);
-		rm.writeClasses();
-		rm.write("></div>");
+		rm.openStart("div");
+		rm.class("sapMLIBHighlight");
+		rm.class("sapMLIBHighlight" + sHighlight);
+		rm.openEnd();
+		rm.close("div");
 	};
 
 	ListItemBaseRenderer.isModeMatched = function(sMode, iOrder) {
@@ -57,7 +56,7 @@ sap.ui.define(["./library", "sap/ui/Device", "sap/ui/core/InvisibleText"],
 	 * Renders the mode when item mode is in correct order
 	 *
 	 * @param {sap.ui.core.RenderManager} rm The RenderManager that can be used for writing to the Render-Output-Buffer.
-	 * @param {sap.ui.core.Control} oLI an object representation of the control that should be rendered.
+	 * @param {sap.m.ListItemBase} oLI an object representation of the control that should be rendered.
 	 * @param {int} [iOrder] expected order for the rendering
 	 * @protected
 	 */
@@ -84,8 +83,7 @@ sap.ui.define(["./library", "sap/ui/Device", "sap/ui/core/InvisibleText"],
 		oModeControl.removeStyleClass("sapMLIBSelectAnimation sapMLIBUnselectAnimation");
 
 		// determine whether animation is necessary or not
-		if (!sap.ui.getCore().getConfiguration().getAnimation() ||
-			!oLI.getListProperty("modeAnimationOn")) {
+		if (ControlBehavior.getAnimationMode() === Configuration.AnimationMode.none || !oLI.getListProperty("modeAnimationOn")) {
 			return;
 		}
 
@@ -108,7 +106,7 @@ sap.ui.define(["./library", "sap/ui/Device", "sap/ui/core/InvisibleText"],
 	 * Renders counter if it is not empty
 	 *
 	 * @param {sap.ui.core.RenderManager} rm The RenderManager that can be used for writing to the Render-Output-Buffer.
-	 * @param {sap.ui.core.Control} oLI An object representation of the control that is rendered.
+	 * @param {sap.m.ListItemBase} oLI An object representation of the control that is rendered.
 	 * @protected
 	 */
 	ListItemBaseRenderer.renderCounter = function(rm, oLI) {
@@ -119,22 +117,19 @@ sap.ui.define(["./library", "sap/ui/Device", "sap/ui/core/InvisibleText"],
 	};
 
 	ListItemBaseRenderer.renderCounterContent = function(rm, oLI, iCounter) {
-		rm.write("<div");
-		rm.writeAttribute("id", oLI.getId() + "-counter");
-		var sAriaLabel = sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("LIST_ITEM_COUNTER", iCounter);
-		rm.writeAttribute("aria-label", sAriaLabel);
-		rm.addClass("sapMLIBCounter");
-		rm.writeClasses();
-		rm.write(">");
-		rm.write(iCounter);
-		rm.write("</div>");
+		rm.openStart("div", oLI.getId() + "-counter");
+		rm.attr("aria-label", Library.getResourceBundleFor("sap.m").getText("LIST_ITEM_COUNTER", [iCounter]));
+		rm.class("sapMLIBCounter");
+		rm.openEnd();
+		rm.text(iCounter);
+		rm.close("div");
 	};
 
 	/**
 	 * Renders type for the list item
 	 *
 	 * @param {sap.ui.core.RenderManager} rm The RenderManager that can be used for writing to the Render-Output-Buffer.
-	 * @param {sap.ui.core.Control} oLI an object representation of the control that should be rendered.
+	 * @param {sap.m.ListItemBase} oLI an object representation of the control that should be rendered.
 	 * @protected
 	 */
 	ListItemBaseRenderer.renderType = function(rm, oLI) {
@@ -148,32 +143,32 @@ sap.ui.define(["./library", "sap/ui/Device", "sap/ui/core/InvisibleText"],
 	 * Renders list item HTML starting tag
 	 *
 	 * @param {sap.ui.core.RenderManager} rm The RenderManager that can be used for writing to the Render-Output-Buffer.
-	 * @param {sap.ui.core.Control} oLI an object representation of the control that should be rendered.
+	 * @param {sap.m.ListItemBase} oLI an object representation of the control that should be rendered.
 	 * @protected
 	 */
 	ListItemBaseRenderer.openItemTag = function(rm, oLI) {
-		rm.write("<" + oLI.TagName);
+		rm.openStart(oLI.TagName, oLI);
 	};
 
 	/**
 	 * Renders list item HTML closing tag
 	 *
 	 * @param {sap.ui.core.RenderManager} rm The RenderManager that can be used for writing to the Render-Output-Buffer.
-	 * @param {sap.ui.core.Control} oLI an object representation of the control that should be rendered.
+	 * @param {sap.m.ListItemBase} oLI an object representation of the control that should be rendered.
 	 * @protected
 	 */
 	ListItemBaseRenderer.closeItemTag = function(rm, oLI) {
-		rm.write("</" + oLI.TagName + ">");
+		rm.close(oLI.TagName);
 	};
 
 	ListItemBaseRenderer.renderTabIndex = function(rm, oLI) {
-		rm.writeAttribute("tabindex", "-1");
+		rm.attr("tabindex", "-1");
 	};
 
 	ListItemBaseRenderer.renderTooltip = function(rm, oLI) {
 		var sTooltip = oLI.getTooltip_AsString();
 		if (sTooltip) {
-			rm.writeAttributeEscaped("title", sTooltip);
+			rm.attr("title", sTooltip);
 		}
 	};
 
@@ -181,12 +176,12 @@ sap.ui.define(["./library", "sap/ui/Device", "sap/ui/core/InvisibleText"],
 	 * Adds the classes needed to recognize the element as focusable.
 	 *
 	 * @param {sap.ui.core.RenderManager} rm The RenderManager that can be used for writing to the Render-Output-Buffer
-	 * @param {sap.ui.core.Control} [oLI] an object representation of the control that should be rendered
+	 * @param {sap.m.ListItemBase} [oLI] an object representation of the control that should be rendered
 	 * @protected
 	 */
 	ListItemBaseRenderer.addFocusableClasses = function(rm, oLI) {
 		if (Device.system.desktop) {
-			rm.addClass("sapMLIBFocusable");
+			rm.class("sapMLIBFocusable");
 			this.addLegacyOutlineClass(rm, oLI);
 		}
 	};
@@ -195,14 +190,10 @@ sap.ui.define(["./library", "sap/ui/Device", "sap/ui/core/InvisibleText"],
 	 * Adds the classes for legacy browsers, which do not support normal outlines.
 	 *
 	 * @param {sap.ui.core.RenderManager} rm The RenderManager that can be used for writing to the Render-Output-Buffer
-	 * @param {sap.ui.core.Control} [oLI] an object representation of the control that should be rendered
+	 * @param {sap.m.ListItemBase} [oLI] an object representation of the control that should be rendered
 	 * @protected
 	 */
-	ListItemBaseRenderer.addLegacyOutlineClass = function(rm, oLI) {
-		if (Device.browser.msie || Device.browser.edge) {
-			rm.addClass("sapMLIBLegacyOutline");
-		}
-	};
+	ListItemBaseRenderer.addLegacyOutlineClass = function(rm, oLI) {};
 
 	/**
 	 * Creates an invisible aria node for the given message bundle text
@@ -210,9 +201,9 @@ sap.ui.define(["./library", "sap/ui/Device", "sap/ui/core/InvisibleText"],
 	 *
 	 * This method should be used when text is reached frequently.
 	 *
-	 * @param {String} sKey key of the announcement
-	 * @param {String} [sBundleText] key of the announcement
-	 * @returns {String} id of the generated invisible aria node
+	 * @param {string} sKey key of the announcement
+	 * @param {string} [sBundleText] key of the announcement
+	 * @returns {string} id of the generated invisible aria node
 	 * @protected
 	 */
 	ListItemBaseRenderer.getAriaAnnouncement = function(sKey, sBundleText) {
@@ -223,19 +214,24 @@ sap.ui.define(["./library", "sap/ui/Device", "sap/ui/core/InvisibleText"],
 	/**
 	 * Returns aria accessibility role
 	 *
-	 * @param {sap.ui.core.Control} oLI an object representation of the control
-	 * @returns {String}
+	 * @param {sap.m.ListItemBase} oLI an object representation of the control
+	 * @returns {string}
 	 * @protected
 	 */
 	ListItemBaseRenderer.getAriaRole = function(oLI) {
-		return "option";
+		if (oLI.isGroupHeader()) {
+			return "listitem";
+		}
+
+		var oList = oLI.getList();
+		return (oList && oList.getAriaRole() == "listbox") ? "option" : "listitem";
 	};
 
 	/**
 	 * Returns the inner aria labelledby ids for the accessibility
 	 *
-	 * @param {sap.ui.core.Control} oLI an object representation of the control
-	 * @returns {String|undefined}
+	 * @param {sap.m.ListItemBase} oLI an object representation of the control
+	 * @returns {string|undefined}
 	 * @protected
 	 */
 	ListItemBaseRenderer.getAriaLabelledBy = function(oLI) {
@@ -247,8 +243,8 @@ sap.ui.define(["./library", "sap/ui/Device", "sap/ui/core/InvisibleText"],
 	/**
 	 * Returns the inner aria describedby ids for the accessibility
 	 *
-	 * @param {sap.ui.core.Control} oLI an object representation of the control
-	 * @returns {String|undefined}
+	 * @param {sap.m.ListItemBase} oLI an object representation of the control
+	 * @returns {string|undefined}
 	 * @protected
 	 */
 	ListItemBaseRenderer.getAriaDescribedBy = function(oLI) {
@@ -264,7 +260,7 @@ sap.ui.define(["./library", "sap/ui/Device", "sap/ui/core/InvisibleText"],
 		}
 
 		if (oLI.getMode() == ListMode.Delete) {
-			aDescribedBy.push(this.getAriaAnnouncement("deletable"));
+			aDescribedBy.push(this.getAriaAnnouncement("delete"));
 		}
 
 		if (sType == ListItemType.Navigation) {
@@ -282,21 +278,30 @@ sap.ui.define(["./library", "sap/ui/Device", "sap/ui/core/InvisibleText"],
 	};
 
 	/**
+	 * Returns the accessibility position of the control
+	 *
+	 * @param {sap.m.ListItemBase} oLI an object representation of the control
+	 * @protected
+	 */
+	ListItemBaseRenderer.getAccessbilityPosition = function(oLI) {
+		var oList = oLI.getList();
+		return oList && oList.getAccessbilityPosition && oList.getAccessbilityPosition(oLI);
+	};
+
+	/**
 	 * Returns the accessibility state of the control
 	 *
-	 * @param {sap.ui.core.Control} oLI an object representation of the control
+	 * @param {sap.m.ListItemBase} oLI an object representation of the control
 	 * @protected
 	 */
 	ListItemBaseRenderer.getAccessibilityState = function(oLI) {
 		var sAriaLabelledBy = this.getAriaLabelledBy(oLI),
 			sAriaDescribedBy = this.getAriaDescribedBy(oLI),
+			sRole = this.getAriaRole(oLI),
+			bPositionNeeded = true,
 			mAccessibilityState = {
-				role: this.getAriaRole(oLI)
+				role: sRole
 			};
-
-		if (oLI.isSelectable()) {
-			mAccessibilityState.selected = oLI.getProperty("selected");
-		}
 
 		if (sAriaLabelledBy) {
 			mAccessibilityState.labelledby = {
@@ -312,6 +317,33 @@ sap.ui.define(["./library", "sap/ui/Device", "sap/ui/core/InvisibleText"],
 			};
 		}
 
+		if (oLI.getNavigated()) {
+			mAccessibilityState.current = true;
+		}
+
+		if (sRole === "listitem") {
+			mAccessibilityState.selected = null;
+			if (oLI.isGroupHeader()) {
+				bPositionNeeded = false;
+				mAccessibilityState.role = "group";
+				if (oLI.getTitle) {
+					mAccessibilityState.label = oLI.getTitle();
+				}
+				mAccessibilityState.roledescription = Library.getResourceBundleFor("sap.m").getText("LIST_ITEM_GROUP_HEADER");
+				var aGroupedItems = oLI.getGroupedItems();
+				if (aGroupedItems && aGroupedItems.length) {
+					mAccessibilityState.owns = aGroupedItems.join(" ");
+				}
+			}
+		} else if (oLI.isSelectable()) {
+			mAccessibilityState.selected = oLI.getSelected();
+		}
+
+		if (bPositionNeeded) {
+			var mPosition = this.getAccessbilityPosition(oLI);
+			Object.assign(mAccessibilityState, mPosition);
+		}
+
 		return mAccessibilityState;
 	};
 
@@ -319,7 +351,7 @@ sap.ui.define(["./library", "sap/ui/Device", "sap/ui/core/InvisibleText"],
 	 * Hook for rendering list item contents
 	 *
 	 * @param {sap.ui.core.RenderManager} rm The RenderManager that can be used for writing to the Render-Output-Buffer.
-	 * @param {sap.ui.core.Control} oLI an object representation of the control that should be rendered.
+	 * @param {sap.m.ListItemBase} oLI an object representation of the control that should be rendered.
 	 * @protected
 	 */
 	ListItemBaseRenderer.renderLIContent = function(rm, oLI) {
@@ -329,7 +361,7 @@ sap.ui.define(["./library", "sap/ui/Device", "sap/ui/core/InvisibleText"],
 	 * Hook for changing list item attributes
 	 *
 	 * @param {sap.ui.core.RenderManager} rm The RenderManager that can be used for writing to the Render-Output-Buffer.
-	 * @param {sap.ui.core.Control} oLI an object representation of the control that should be rendered.
+	 * @param {sap.m.ListItemBase} oLI an object representation of the control that should be rendered.
 	 * @protected
 	 */
 	ListItemBaseRenderer.renderLIAttributes = function(rm, oLI) {
@@ -339,7 +371,7 @@ sap.ui.define(["./library", "sap/ui/Device", "sap/ui/core/InvisibleText"],
 	 * Renders the former part of the item.
 	 *
 	 * @param {sap.ui.core.RenderManager} rm The RenderManager that can be used for writing to the Render-Output-Buffer.
-	 * @param {sap.ui.core.Control} oLI An object representation of the control that is rendered.
+	 * @param {sap.m.ListItemBase} oLI An object representation of the control that is rendered.
 	 * @protected
 	 */
 	ListItemBaseRenderer.renderContentFormer = function(rm, oLI) {
@@ -351,23 +383,32 @@ sap.ui.define(["./library", "sap/ui/Device", "sap/ui/core/InvisibleText"],
 	 * Renders the latter part of the item.
 	 *
 	 * @param {sap.ui.core.RenderManager} rm The RenderManager that can be used for writing to the Render-Output-Buffer.
-	 * @param {sap.ui.core.Control} oLI An object representation of the control that is rendered.
+	 * @param {sap.m.ListItemBase} oLI An object representation of the control that is rendered.
 	 * @protected
 	 */
 	ListItemBaseRenderer.renderContentLatter = function(rm, oLI) {
 		this.renderCounter(rm, oLI);
 		this.renderType(rm, oLI);
 		this.renderMode(rm, oLI, 1);
+		this.renderNavigated(rm, oLI);
 	};
 
 	ListItemBaseRenderer.renderLIContentWrapper = function(rm, oLI) {
-		rm.write('<div class="sapMLIBContent"');
-		rm.writeAttribute("id", oLI.getId() + "-content");
-		rm.write(">");
+		rm.openStart("div", oLI.getId() + "-content").class("sapMLIBContent").openEnd();
 		this.renderLIContent(rm, oLI);
-		rm.write('</div>');
+		rm.close("div");
 	};
 
+	ListItemBaseRenderer.renderNavigated = function(rm, oLI) {
+		if (!oLI.getNavigated()) {
+			return;
+		}
+
+		rm.openStart("div");
+		rm.class("sapMLIBNavigated");
+		rm.openEnd();
+		rm.close("div");
+	};
 
 	/**
 	 * Renders the HTML for the given control, using the provided.
@@ -375,11 +416,10 @@ sap.ui.define(["./library", "sap/ui/Device", "sap/ui/core/InvisibleText"],
 	 * {@link sap.ui.core.RenderManager}.
 	 *
 	 * @param {sap.ui.core.RenderManager} rm The RenderManager that can be used for writing to the Render-Output-Buffer.
-	 * @param {sap.ui.core.Control} oLI an object representation of the control that should be rendered.
+	 * @param {sap.m.ListItemBase} oLI an object representation of the control that should be rendered.
 	 * @public
 	 */
 	ListItemBaseRenderer.render = function(rm, oLI) {
-
 		// render invisible placeholder
 		if (!oLI.getVisible()) {
 			this.renderInvisible(rm, oLI);
@@ -388,25 +428,24 @@ sap.ui.define(["./library", "sap/ui/Device", "sap/ui/core/InvisibleText"],
 
 		// start
 		this.openItemTag(rm, oLI);
-		rm.writeControlData(oLI);
 
 		// classes
-		rm.addClass("sapMLIB");
-		rm.addClass("sapMLIB-CTX");
-		rm.addClass("sapMLIBShowSeparator");
-		rm.addClass("sapMLIBType" + oLI.getType());
+		rm.class("sapMLIB");
+		rm.class("sapMLIB-CTX");
+		rm.class("sapMLIBShowSeparator");
+		rm.class("sapMLIBType" + oLI.getType());
 
-		if (Device.system.desktop && oLI.isActionable()) {
-			rm.addClass("sapMLIBActionable");
-			rm.addClass("sapMLIBHoverable");
+		if (oLI.isActionable(true)) {
+			rm.class("sapMLIBActionable");
+			rm.class("sapMLIBHoverable");
 		}
 
 		if (oLI.getSelected()) {
-			rm.addClass("sapMLIBSelected");
+			rm.class("sapMLIBSelected");
 		}
 
 		if (oLI.getListProperty("showUnread") && oLI.getUnread()) {
-			rm.addClass("sapMLIBUnread");
+			rm.class("sapMLIBUnread");
 		}
 
 		this.addFocusableClasses(rm, oLI);
@@ -416,16 +455,14 @@ sap.ui.define(["./library", "sap/ui/Device", "sap/ui/core/InvisibleText"],
 		this.renderTabIndex(rm, oLI);
 
 		// handle accessibility states
-		if (sap.ui.getCore().getConfiguration().getAccessibility()) {
-			rm.writeAccessibilityState(oLI, this.getAccessibilityState(oLI));
+		if (ControlBehavior.isAccessibilityEnabled()) {
+			rm.accessibilityState(oLI, this.getAccessibilityState(oLI));
 		}
 
 		// item attributes hook
 		this.renderLIAttributes(rm, oLI);
 
-		rm.writeClasses();
-		rm.writeStyles();
-		rm.write(">");
+		rm.openEnd();
 
 		this.renderContentFormer(rm, oLI);
 		this.renderLIContentWrapper(rm, oLI);

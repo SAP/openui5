@@ -1,0 +1,29 @@
+{
+	"@odata.count": "3",
+	"value": [
+		{
+			"ID": 10,
+			"amount": "100",
+			"name": "Product 1",
+			"IsActiveEntity": false,
+			"HasActiveEntity": true,
+			"HasDraftEntity": false
+		},
+		{
+			"ID": 20,
+			"amount": "200",
+			"name": "Product 2",
+			"IsActiveEntity": false,
+			"HasActiveEntity": true,
+			"HasDraftEntity": false
+		},
+		{
+			"ID": 30,
+			"amount": "1000",
+			"name": "third product",
+			"IsActiveEntity": false,
+			"HasActiveEntity": true,
+			"HasDraftEntity": false
+		}
+	]
+}

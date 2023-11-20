@@ -1,0 +1,10 @@
+{
+	"_version": "1.21.0",
+	"sap.ui5": {
+		"library": {
+			"i18n": {
+				"bundleUrl": "i18n.properties"
+			}
+		}
+	}
+}

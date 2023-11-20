@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="utf-8" />
+	<title>Card Editor in Admin Mode</title>
+	<script src="../../../../../../../../../resources/sap-ui-integration.js" id="sap-ui-bootstrap"
+		data-sap-ui-compatVersion="edge"
+		data-sap-ui-theme="sap_horizon" data-sap-ui-oninit="init" data-sap-ui-resourceroots='{"testjs":"../"}'></script>
+	<script src="../editorOutput.js"></script>
+	<script>
+		function init() {
+			sap.ui.require(["testjs/genericHost", "sap-ui-integration-editor"], function () {
+				customElements.whenDefined("ui-integration-card").then(function () {
+					document.getElementById("card").setAttribute("host", "host");
+				});
+
+				sap.ui.require(["sap/m/Button", "sap/m/Dialog", "sap/m/Select", "sap/ui/core/ListItem", "sap/ui/integration/designtime/editor/CardEditor"], function (Button, Dialog, Select, ListItem, CardEditor) {
+					var oButton = new Button({
+						text: "Show Card Editor",
+						press: function () {
+							var oDialog = new Dialog({
+								title: "Field Settings for " + oSelect.getSelectedItem().getText(),
+								horizontalScrolling: false,
+								beginButton: new Button({
+									type: "Emphasized",
+									text: "OK",
+									press: function () {
+										sap.m.MessageToast.show("Apply settings");
+										document.getElementById("card")._getControl().setManifestChanges([oEditor.getCurrentSettings()]);
+										oDialog.close();
+									}
+								}),
+								endButton: new Button({
+									text: "Close",
+									press: function () {
+										oDialog.close();
+									}
+								})
+							});
+							var oEditor = new CardEditor({
+								card: document.getElementById("card")._getControl(),
+								mode: oSelect.getSelectedKey(),
+								allowSettings: true,
+								allowDynamicValues: true,
+								language: "fr-FR"
+							});
+							oDialog.addContent(oEditor);
+							oDialog.open();
+						}
+					});
+					var oSelect = new Select({
+						selectedKey: "admin",
+						items: [
+							new ListItem({
+								key: "admin",
+								text: "Administrator"
+
+							}), new ListItem({
+								key: "content",
+								text: "Page/Content Administrator"
+
+							}), new ListItem({
+								key: "translation",
+								text: "Translator"
+							})
+						]
+
+					});
+					oSelect.placeAt("buttons");
+					oButton.placeAt("buttons");
+				});
+			});
+		}
+
+	</script>
+</head>
+
+<body class="sapUiBody sapUiSizeCompact" style="margin:3rem;width:calc(100% - 6rem)">
+	<div id="content">
+		<ui-integration-card id="card" manifest="./manifest.json">
+		</ui-integration-card>
+
+	</div>
+	<div id="buttons" style="margin:1rem">
+
+	</div>
+</body>
+
+</html>

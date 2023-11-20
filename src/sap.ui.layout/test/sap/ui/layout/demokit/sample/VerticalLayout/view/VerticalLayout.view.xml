@@ -1,0 +1,23 @@
+<mvc:View
+	controllerName="sap.ui.layout.sample.VerticalLayout.controller.VerticalLayout"
+	xmlns:l="sap.ui.layout"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m">
+	<l:VerticalLayout class="sapUiContentPadding">
+		<Image
+			src="{img>/products/pic1}"
+			densityAware="true"
+			width="{/widthS}">
+		</Image>
+		<Image
+			src="{img>/products/pic1}"
+			densityAware="true"
+			width="{/widthM}">
+		</Image>
+		<Image
+			src="{img>/products/pic1}"
+			densityAware="true"
+			width="{/widthL}">
+		</Image>
+	</l:VerticalLayout>
+</mvc:View>

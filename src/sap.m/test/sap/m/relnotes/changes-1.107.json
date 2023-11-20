@@ -1,0 +1,479 @@
+{
+  "1.107.0": {
+    "date": "September 2022",
+    "notes": [
+      {
+        "id": "631e954f011da75af1479d242debb25ed2531e96",
+        "type": "FEATURE",
+        "text": " To support folder uploads, the UploadSet control is now enhanced"
+      },
+      {
+        "id": "8d4519d0cb2ccb777198b872842c185b920b6048",
+        "type": "FIX",
+        "text": " sap.m.Bar: Align resizing funcitons",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270121447"
+          }
+        ]
+      },
+      {
+        "id": "32e2e1769db10ea8d270cbdad28b2dcc438d7a15",
+        "type": "FIX",
+        "text": "sap.m.Input, sap.m.MessagePopover, sap.m.MessageView: Documentation fixes"
+      },
+      {
+        "id": "e1041575436e9466ad5e66b2ffb14fb8ee1f8648",
+        "type": "FIX",
+        "text": " sap.m.Page: Correct offset is applied to the content",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270111870"
+          }
+        ]
+      },
+      {
+        "id": "583720da1d6faa5d24b062987ee3fc7098faac88",
+        "type": "FIX",
+        "text": " sap.m.Input: suggestionItemSelected is now fired correctly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270121964"
+          },
+          {
+            "type": "BCP",
+            "reference": "2270121963"
+          }
+        ]
+      },
+      {
+        "id": "06ced3524842b3c5a6f968327295348d66c719d7",
+        "type": "FIX",
+        "text": " sap.m.Shell: update documentation",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280138262"
+          }
+        ]
+      },
+      {
+        "id": "e79b1fae2f07bee15689d60db12f76fb7a50e44f",
+        "type": "FEATURE",
+        "text": " To support folder uploads, the UploadSet control is now enhanced"
+      },
+      {
+        "id": "eec8e2dc35a4be8b6aca782fcb89c829b981b35c",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: Adjust failing QUnit test in Safari and FF",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270111932"
+          }
+        ]
+      },
+      {
+        "id": "418a650d6761a4393555d0e2de1f21c3430a1a64",
+        "type": "FIX",
+        "text": " sap.m.Link: adjust button role text",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270111933"
+          }
+        ]
+      },
+      {
+        "id": "0c4dc036fdb2dd6e344b84f59c3ab69faf21d236",
+        "type": "FIX",
+        "text": " sap.m.MenuButton: adjust menu opening via mouse",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270112697"
+          }
+        ]
+      },
+      {
+        "id": "c93e9962c000f4fcd4a1a05a18b41c7b4076c66f",
+        "type": "FIX",
+        "text": " sap.m.SelectDialog: All selected items are considered as selected",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270116285"
+          },
+          {
+            "type": "BCP",
+            "reference": "2280165471"
+          }
+        ]
+      },
+      {
+        "id": "1c3c4e72cac57544aa8235fb83ac7cf936f10501",
+        "type": "FIX",
+        "text": " sap.m.Link: disable pointer events",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280164461"
+          }
+        ]
+      },
+      {
+        "id": "463f63c56c2f1f0584435b33d4cd1aa752881741",
+        "type": "FIX",
+        "text": " sap.m.DynamicDateRange: fixed unwanted popup close on combi device",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280097708"
+          }
+        ]
+      },
+      {
+        "id": "8e8893588f83aabc392e901b5a2d9bbfd5454efa",
+        "type": "FIX",
+        "text": " sap.m.TabContainer: prevent itemSelect event",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980097573"
+          }
+        ]
+      },
+      {
+        "id": "7f767ec600fd98554ad4966e3efabe3ba1afc216",
+        "type": "FIX",
+        "text": " sap.m.Select: Fixed incorrect typing behavior",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280171879"
+          }
+        ]
+      },
+      {
+        "id": "9fbe1d5d23df4ccf1a34cb894fa51f48e6a39579",
+        "type": "FIX",
+        "text": " sap.m.Link: fixed typo in JSDoc",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      },
+      {
+        "id": "f705fb6c8cbfd997125a3e3471ea6c8ec35e0532",
+        "type": "FIX",
+        "text": " sap.m.ColorPalettePopover: fix JSDoc of method openBy"
+      },
+      {
+        "id": "ed071111a5c174326bcf1534a7351d56459ca2e3",
+        "type": "FIX",
+        "text": " sap.m.RadioButtonGroup: No preselection by default is now possible",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500005850722022"
+          }
+        ]
+      },
+      {
+        "id": "f76bb8ed15c54f7af4f6ff2af2620d04fe1621e2",
+        "type": "FIX",
+        "text": " sap.m.SinglePlanningCalendar: fire appointment select",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280116927"
+          }
+        ]
+      },
+      {
+        "id": "6fc5af02b53080b16bcdfdefb968f8d6f600fe0c",
+        "type": "FIX",
+        "text": " sap.m.NotificationListItem: Close button no longer disappears on S layout",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280169647"
+          }
+        ]
+      },
+      {
+        "id": "7c85bfde9509335d6dc026b275d8fe31c36dee8a",
+        "type": "FIX",
+        "text": "sap.m.SinglePlanningCalendar: alignment initial appointments in compact size",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280056366"
+          }
+        ]
+      },
+      {
+        "id": "e0da2202d65c6ab022ae10f3f24bdcfd6124ec14",
+        "type": "FIX",
+        "text": "sap.m.MultiComboBox: Single Excel cell is now pasted as text",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270084540"
+          }
+        ]
+      },
+      {
+        "id": "74d0258cbc4f17f2ebb0357c076995568166339a",
+        "type": "FIX",
+        "text": " sap.m.SplitContainer: Corrected instance type check",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280157279"
+          }
+        ]
+      },
+      {
+        "id": "6cd57e77584830ebe08d060830689a975dd24c64",
+        "type": "FIX",
+        "text": " sap.m.FormattedText: adjust link navigation",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280124825"
+          }
+        ]
+      },
+      {
+        "id": "cfa1fb9b0738f0d41c978b45c8ccdf39b06b5faa",
+        "type": "FIX",
+        "text": " sap.m.ViewSettingsDialog: reset the focus",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280105903"
+          }
+        ]
+      },
+      {
+        "id": "d699670b9d4aed15eb33f6e159ad67307f3f6f56",
+        "type": "FEATURE",
+        "text": " sap.m.IllustratedMessage: ariaLabelledBy association added"
+      },
+      {
+        "id": "50a644ee4948f57f8f8f55628455be34277d3708",
+        "type": "FIX",
+        "text": " sap.m.Input: Type-ahead with dynamic suggestions enabled",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400005963762022"
+          },
+          {
+            "type": "BCP",
+            "reference": "002075129500005849042022"
+          }
+        ]
+      },
+      {
+        "id": "8bbab74fba318b60d214c85eec6b1d9bd58e463e",
+        "type": "FIX",
+        "text": " sap.m.IconTabBar: Receiving focus on selected item is now correct",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280152633"
+          }
+        ]
+      },
+      {
+        "id": "3a19ea06bef2786e6bbaf9f989e88255e7c793ad",
+        "type": "FIX",
+        "text": " sap.m.OverflowToolbar: OverflowToolbarButton invalidation prevented",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280160553"
+          }
+        ]
+      },
+      {
+        "id": "29764c0f477636d112dcedbd15a6c399d846c432",
+        "type": "FIX",
+        "text": " sap.m.SearchField: Access Continuum issue is now fixed"
+      },
+      {
+        "id": "3fbd8e2e589a41f3d3e17df10f9a33c4da5c0fa0",
+        "type": "FIX",
+        "text": " sap.m.SinglePlanningCalendar: firstWeekDay now works in different locales",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400004751872022"
+          }
+        ]
+      },
+      {
+        "id": "0ae40fe105a30fcb19252881152a114a8320f83e",
+        "type": "FIX",
+        "text": " sap.m.Link: adjust link type announcement",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280119447"
+          },
+          {
+            "type": "BCP",
+            "reference": "2070055617"
+          }
+        ]
+      },
+      {
+        "id": "ec162e3f09b8358946abfbadc1fcad3b5aad5910",
+        "type": "FIX",
+        "text": " sap.m.DateTimePicker: adjust parsing for different calendar types",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280147918"
+          }
+        ]
+      },
+      {
+        "id": "0beb3dc80c6dff57f0f75400e7e61a7939d8eb23",
+        "type": "FIX",
+        "text": " sap.m.DateTimePicker: adjust timezone display",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280155919"
+          }
+        ]
+      },
+      {
+        "id": "2987b55203bd1ecd62b4368045b48118113c287e",
+        "type": "FIX",
+        "text": " sap.ui.core.ScrollEnablement: Scroll-end callback issue corrected",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500004009642022"
+          }
+        ]
+      },
+      {
+        "id": "df3533a5865cbfa5c34200f9a7e17bad2b143c4e",
+        "type": "FIX",
+        "text": " sap.m: Fix failing runtime build",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      },
+      {
+        "id": "c755333cfece87fc6a3da2df3c1fe34105069306",
+        "type": "FEATURE",
+        "text": " UploadSet - enable upload of documents from cloud"
+      },
+      {
+        "id": "fba46983ca8d438a50f3f1b1de62ae9afc719e89",
+        "type": "FIX",
+        "text": " sap.m.TimePicker: Selected correct time separators in binding",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280136834"
+          }
+        ]
+      },
+      {
+        "id": "83eb054e6ec0872d68440fa6b3ffc36edfc23155",
+        "type": "FIX",
+        "text": " sap.m.SplitContainer: Corrected use of instance type check",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280157279"
+          }
+        ]
+      },
+      {
+        "id": "dc8a1b40825dd9a6e810e809511703676772a2c9",
+        "type": "FIX",
+        "text": " sap.m.DateTimePicker: use of the dateValue property isn`t recommended",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      },
+      {
+        "id": "d9e57866a4e7ba106f67e2792c61e9da0048e0c6",
+        "type": "FIX",
+        "text": " sap.ui.core.Configuration: Disable timezone configuration"
+      },
+      {
+        "id": "ff7864ce629452fe6534a605b04165d0e3720244",
+        "type": "FIX",
+        "text": " sap.m.Dialog: Position inside custom within area is now correct in RTL",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280142500"
+          }
+        ]
+      },
+      {
+        "id": "44933b6700a8eceb1b89338de92b9bf86ebce318",
+        "type": "FIX",
+        "text": " sap.m.ObjectIdentifier: adjust association propagation",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280088360"
+          }
+        ]
+      },
+      {
+        "id": "d22ac93c9c7f9c0b451222eafad0fd537b0c3336",
+        "type": "FIX",
+        "text": " sap.m.Bar: qunit tests adaptation",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280120372"
+          }
+        ]
+      },
+      {
+        "id": "f066ae92beed86211d1f547ab5fb08f1eae1aec6",
+        "type": "FIX",
+        "text": " adapt return types to textual description"
+      },
+      {
+        "id": "52b706bfad5b35545b4e0c0bca7f28d7ddf74ed5",
+        "type": "FEATURE",
+        "text": " Table: Using the new ColumnMenu when the headerMenu association is set"
+      },
+      {
+        "id": "6b15a537270a0d181ef0bd782b470ff503aa65f5",
+        "type": "FEATURE",
+        "text": " You can now upload files from cloud using the UploadSet control"
+      },
+      {
+        "id": "d459de2f3a44e76d7f608cf58b10cfd646185c91",
+        "type": "FEATURE",
+        "text": " sap.m.Image: Enable inline svg rendering"
+      }
+    ]
+  }
+}

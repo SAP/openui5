@@ -1,0 +1,131 @@
+{
+	"_version": "1.34.0",
+	"sap.app": {
+		"id": "card.explorer.analytical.popover.card",
+		"type": "card",
+		"title": "Sample of a Stacked Column Chart with Popover",
+		"subTitle": "Sample of a Stacked Column Chart with Popover",
+		"applicationVersion": {
+			"version": "1.0.0"
+		},
+		"shortTitle": "A short title for this Card",
+		"info": "Additional information about this Card",
+		"description": "A long description for this Card",
+		"tags": {
+			"keywords": [
+				"Analytical",
+				"Card",
+				"Stacked Column",
+				"Sample"
+			]
+		}
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"icons": {
+			"icon": "sap-icon://full-stacked-column-chart"
+		}
+	},
+	"sap.card": {
+		"type": "Analytical",
+		"header": {
+			"type": "Numeric",
+			"data": {
+				"json": {
+					"n": "56",
+					"u": "%",
+					"trend": "Up",
+					"valueColor": "Good"
+				}
+			},
+			"title": "Project Cloud Transformation",
+			"mainIndicator": {
+				"number": "{n}",
+				"unit": "{u}",
+				"trend": "{trend}",
+				"state": "{valueColor}"
+			},
+			"sideIndicators": [
+				{
+					"title": "Target",
+					"number": "3252.234",
+					"unit": "K"
+				},
+				{
+					"title": "Deviation",
+					"number": "22.43",
+					"unit": "%"
+				}
+			]
+		},
+		"content": {
+			"chartType": "StackedColumn",
+			"chartProperties": {
+				"legendGroup": {
+					"position": "bottom",
+					"alignment": "topLeft"
+				},
+				"plotArea": {
+					"dataLabel": {
+						"visible": false,
+						"showTotal": true
+					}
+				},
+				"categoryAxis": {
+					"title": {
+						"visible": false
+					}
+				},
+				"valueAxis": {
+					"title": {
+						"visible": false
+					}
+				},
+				"title": {
+					"visible": false
+				}
+			},
+			"data": {
+				"request": {
+					"url": "./data.json"
+				}
+			},
+			"popover": {
+				"active": true
+			},
+			"dimensions": [
+				{
+					"name": "Weeks",
+					"value": "{Week}"
+				}
+			],
+			"measures": [
+				{
+					"name": "Revenue",
+					"value": "{Revenue}"
+				},
+				{
+					"name": "Cost",
+					"value": "{Cost}"
+				}
+			],
+			"feeds": [
+				{
+					"type": "Dimension",
+					"uid": "categoryAxis",
+					"values": [
+						"Weeks"
+					]
+				},
+				{
+					"type": "Measure",
+					"uid": "valueAxis",
+					"values": [
+						"Revenue",
+						"Cost"
+					]
+				}
+			]
+		}
+	}
+}

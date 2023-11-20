@@ -2,16 +2,15 @@
 	xmlns="sap.m"
 	xmlns:core="sap.ui.core">
 	<ResponsivePopover
+		id="myPopover"
 		title="Select Product"
 		placement="Bottom">
-		<content>
-			<List
-				mode="SingleSelectMaster"
-				includeItemInSelection="true"
-				select="handleItemSelect"
-				items="{/ProductCollection}">
-				<StandardListItem title="{Name}" />
-			</List>
-		</content>
+		<List
+			mode="SingleSelectMaster"
+			includeItemInSelection="true"
+			selectionChange="handleItemSelect"
+			items="{/ProductCollection}">
+			<StandardListItem title="{Name}" />
+		</List>
 	</ResponsivePopover>
 </core:FragmentDefinition>

@@ -1,0 +1,29 @@
+<mvc:View
+	controllerName="sap.m.sample.PopoverWithinArea.controller.PopoverWithinArea"
+	xmlns:l="sap.ui.layout"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m">
+		<l:HorizontalLayout class="sapUiMediumMargin">
+			<Button
+				text="Show Popover With Image"
+				press="handlePopoverPress"
+				class="sapUiLargeMargin"
+				ariaHasPopup="Dialog" />
+			<VBox id="withinArea" backgroundDesign="Solid" height="30rem" width="60rem" alignItems="Center" justifyContent="Center">
+				<Button
+					text="Show Inside Popover"
+					press="handleInnerPopoverPress"
+					ariaHasPopup="Dialog" />
+				<layoutData>
+					<FlexItemData backgroundDesign="Solid" />
+				</layoutData>
+			</VBox>
+			<FlexBox direction="Column" alignItems="End" justifyContent="End" height="30rem">
+				<Button
+					text="Show Popover with List"
+					press="handleListPopoverPress"
+					ariaHasPopup="Dialog"
+					class="sapUiLargeMargin" />
+			</FlexBox>
+		</l:HorizontalLayout>
+</mvc:View>

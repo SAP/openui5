@@ -1,0 +1,109 @@
+{
+  "1.92.0": {
+    "date": "June 2021",
+    "notes": [
+      {
+        "id": "04c465361d87ad603687cccdcedb4ddd094201a2",
+        "type": "FIX",
+        "text": " mvc/View.js: Don't override OwnerComponent with ExtensionComponent",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180257449"
+          }
+        ]
+      },
+      {
+        "id": "67cda13405d4028bd01c2ed29008be7364eef249",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.odata.v4.lib._MetadataConverter#resolveAlias: treat type name as optional"
+      },
+      {
+        "id": "f512cc902e0bd08ce370a13d9bbfe9b82dbfe33c",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.AnnotationParser: Aliases are properly resolved even if there is an alias which is an infix of another alias",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180241022"
+          }
+        ]
+      },
+      {
+        "id": "cca6f8cfdeada11710d1bc5ad14b8dcaa110bdbc",
+        "type": "FIX",
+        "text": " sap.ui.model.Binding#_checkDataStateMessages: Remove messages if binding is unresolved"
+      },
+      {
+        "id": "cf19dd3e22a3ec706f9cd79f1dd8cfa6a3ee090b",
+        "type": "FIX",
+        "text": " sap.ui.model.CompositeBinding#destroy: Ensure data state is updated",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180190002"
+          }
+        ]
+      },
+      {
+        "id": "d64636755c58f3e66f6c0ca7bc630f1b0b10ec4d",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v2.ODataListBinding#requestFilterForMessages: decode key predicate value before creating the filter object",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170093336"
+          }
+        ]
+      },
+      {
+        "id": "d411f805c6b40ea88e0de5876b750ffd07ee8135",
+        "type": "FIX",
+        "text": " core.routing: propagate 'routeRelevant' to parent target",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180218006"
+          }
+        ]
+      },
+      {
+        "id": "2b7586e8df13a1ad23606102283f1f1d5e71a40b",
+        "type": "FEATURE",
+        "text": " routing.History: extend replaceHash to accept direction information"
+      },
+      {
+        "id": "08d95c7669f09a824891c2f413ae93bb37c2c63b",
+        "type": "FEATURE",
+        "text": " Integrate @ui5/webcomponents in OpenUI5"
+      },
+      {
+        "id": "7259aff07fc48c77debe3bff8cadfc8b6c666532",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.ODataMetaModel#fetchCodeList: consider local annotations when loading code lists",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180201135"
+          }
+        ]
+      },
+      {
+        "id": "204841de28eb9254371283a7aa883711fe0e6ba4",
+        "type": "FEATURE",
+        "text": " core/routing: Introduce Placeholder"
+      },
+      {
+        "id": "c8a53c8d47939f441250bde96287ea578489aa57",
+        "type": "FIX",
+        "text": " sap.ui.core.routing.History: decode existing hash before using it to restore the history state",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180169665"
+          }
+        ]
+      }
+    ]
+  }
+}

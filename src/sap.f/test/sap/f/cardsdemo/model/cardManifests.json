@@ -1,0 +1,3417 @@
+{
+	"defaultHeader": {
+		"card1": {
+			"sap.app": {
+				"id": "cardsdemo.defaultHeader.card1",
+				"type": "card"
+			},
+			"sap.card": {
+				"header": {
+					"iconSrc": "sap-icon://accept",
+					"title": "Card Title",
+					"subTitle": "Card subtitle",
+					"status": {
+						"text": "Count"
+					},
+					"dataTimestamp": "{parameters>/NOW_ISO}",
+					"banner": [
+						{
+							"text": "APP SHORTCUT",
+							"diminished": true
+						},
+						{
+							"text": "SYSTEM INFO"
+						}
+					]
+				},
+				"type": "List"
+			}
+		},
+		"card2": {
+			"sap.app": {
+				"id": "cardsdemo.defaultHeader.card2",
+				"type": "card"
+			},
+			"sap.card": {
+				"header": {
+					"title": "This Line is a very very very very very very very very very very very very very very very very very very long one",
+					"subTitle": " Thi is a very very  very very very very very very very very very very very very very very very very very very long one",
+					"icon": {
+						"src": "./images/Woman_avatar_01.png",
+						"shape": "Square"
+					},
+					"status": {
+						"text": "100 of 200"
+					}
+				},
+				"type": "List"
+			}
+		},
+		"card3": {
+			"sap.app": {
+				"id": "cardsdemo.defaultHeader.card3",
+				"type": "card"
+			},
+			"sap.card": {
+				"type": "List",
+				"header": {
+					"title": "L3 Request List Content Card",
+					"subTitle": "Card subtitle",
+					"icon": {
+						"src": "sap-icon://activity-items"
+					},
+					"status": {
+						"text": "Count"
+					}
+				}
+			}
+		},
+		"card4": {
+			"sap.app": {
+				"id": "cardsdemo.defaultHeader.card4",
+				"type": "card"
+			},
+			"sap.card": {
+				"header": {
+					"title": "This Line is the Title of sap.f.Card and a very very very very very very very very very very very very very very very very very very long one",
+					"subTitle": " Thi is a sap.f.Card subtitle and a very very  very very very very very very very very very very very very very very very very  very very long one",
+					"icon": {
+						"text": "GK"
+					},
+					"status": {
+						"text": "Count"
+					}
+				},
+				"type": "List"
+			}
+		},
+		"card5": {
+			"sap.app": {
+				"id": "cardsdemo.defaultHeader.card5",
+				"type": "card"
+			},
+			"sap.card": {
+				"header": {
+					"title": "This Line is the Title of sap.f.Card and a very very very very very very very very very very very very very very very very very very long one",
+					"titleMaxLines": 1,
+					"subTitle": " Thi is a sap.f.Card subtitle and a very very  very very very very very very very very very very very very very very very very  very very long one",
+					"subTitleMaxLines": 1,
+					"icon": {
+						"text": "GK"
+					},
+					"status": {
+						"text": "Count"
+					}
+				},
+				"type": "List"
+			}
+		},
+		"defaultDataTimestamp": {
+			"sap.app": {
+				"id": "cardsdemo.defaultHeader.defaultDataTimestamp",
+				"type": "card"
+			},
+			"sap.card": {
+				"header": {
+					"title": "Card Title with dataTimestamp",
+					"dataTimestamp": "{parameters>/NOW_ISO}"
+				},
+				"type": "List"
+			}
+		},
+		"hiddenHeader": {
+			"sap.app": {
+				"id": "cardsdemo.defaultHeader.hiddenHeader",
+				"type": "card"
+			},
+			"sap.card": {
+				"data": {
+					"request": {
+						"url": "./cardcontent/someitems.json"
+					}
+				},
+				"header": {
+					"title": "Card Title (should be hidden)",
+					"visible": false
+				},
+				"type": "List",
+				"content": {
+					"item": {
+						"icon": {
+							"src": "{icon}"
+						},
+						"title": "{Name}",
+						"description": "{Description}",
+						"highlight": "{state}",
+						"info": {
+							"value": "{info}",
+							"state": "{infoState}"
+						}
+					},
+					"maxItems": 1
+				}
+			}
+		},
+		"hiddenStatus": {
+			"sap.app": {
+				"id": "cardsdemo.defaultHeader.hiddenStatus",
+				"type": "card"
+			},
+			"sap.card": {
+				"data": {
+					"request": {
+						"url": "./cardcontent/someitems.json"
+					}
+				},
+				"header": {
+					"title": "Card Status Should be Hidden",
+					"status": {
+						"text": "This text should be hidden",
+						"visible": false
+					}
+				},
+				"type": "List",
+				"content": {
+					"item": {
+						"title": "{Name}"
+					},
+					"maxItems": 1
+				}
+			}
+		},
+		"hiddenIconWithSrc": {
+			"sap.app": {
+				"id": "cardsdemo.defaultHeader.hiddenIconWithSrc",
+				"type": "card"
+			},
+			"sap.card": {
+				"type": "List",
+				"data": {
+					"json": {
+						"iconVisible": true
+					}
+				},
+				"configuration": {
+					"parameters": {
+						"iconSrc": {
+							"value": "SRC_FOR_HIDDEN_ICON"
+						}
+					}
+				},
+				"header": {
+					"title": "Card header icon should be hidden",
+					"icon": {
+						"src": "{parameters>/iconSrc/value}",
+						"visible": "{iconVisible}"
+					}
+				}
+			}
+		}
+	},
+	"splitter": {
+		"card1": {
+			"sap.app": {
+				"id": "cardsdemo.splitter.card1",
+				"type": "card"
+			},
+			"sap.card": {
+				"header": {
+					"icon": {
+						"src": "sap-icon://accept"
+					},
+					"title": "Card Title 2x2",
+					"subTitle": "Card subtitle",
+					"status": "Count",
+					"actions": [{
+						"type": "Navigation",
+						"parameters": {}
+					}]
+				},
+				"type": "List"
+			}
+		},
+		"card2": {
+			"sap.app": {
+				"id": "cardsdemo.splitter.card2",
+				"type": "card"
+			},
+			"sap.card": {
+				"header": {
+					"type": "Numeric",
+					"title": "Card Title 1x1",
+					"subTitle": "Card Subtitle",
+					"mainIndicator": {
+						"number": "99",
+						"unit": "Problems"
+					},
+					"actions": [{
+						"type": "Navigation",
+						"parameters": {}
+					}]
+				},
+				"type": "List"
+			}
+		},
+		"card3": {
+			"sap.app": {
+				"id": "cardsdemo.splitter.card3",
+				"type": "card"
+			},
+			"sap.card": {
+				"header": {
+					"icon": {
+						"src": "sap-icon://accept"
+					},
+					"title": "Card Title 2x1",
+					"subTitle": "Card subtitle",
+					"status": "Count"
+				},
+				"type": "List"
+			}
+		}
+	},
+	"listContent": {
+		"card13": {
+			"sap.app": {
+				"id": "cardsdemo.listContent.card13",
+				"type": "card"
+			},
+			"sap.card": {
+				"data": {
+					"request": {
+						"url": "./cardcontent/someitems.json"
+					}
+				},
+				"type": "List",
+				"header": {
+					"title": "Request List Content Card",
+					"subTitle": "Card subtitle",
+					"icon": {
+						"src": "sap-icon://accept"
+					},
+					"status": {
+						"text": "8 of 17"
+					},
+					"actions": [
+						{
+							"type": "Navigation",
+							"url": "https://www.sap.com"
+						}
+					]
+				},
+				"content": {
+					"item": {
+						"icon": {
+							"src": "{icon}"
+						},
+						"title": {
+							"label": "{{title_label}}",
+							"value": "{Name}"
+						},
+						"description": {
+							"label": "{{description_label}}",
+							"value": "{Description}"
+						},
+						"highlight": "{state}",
+						"info": {
+							"value": "{info}",
+							"state": "{infoState}"
+						}
+					}
+				}
+			}
+		},
+		"largeList": {
+			"sap.app": {
+				"id": "cardsdemo.listContent.largeList",
+				"type": "card"
+			},
+			"sap.card": {
+				"type": "List",
+				"header": {
+					"title": "Request List Content Card",
+					"subTitle": "Card subtitle",
+					"icon": {
+						"src": "sap-icon://accept"
+					},
+					"status": "100 of 200"
+				},
+				"content": {
+					"data": {
+						"request": {
+							"url": "./cardcontent/someitems.json"
+						}
+					},
+					"maxItems": 7,
+					"item": {
+						"icon": {
+							"src": "{icon}"
+						},
+						"title": {
+							"label": "{{title_label}}",
+							"value": "{Name}"
+						},
+						"description": {
+							"label": "{{description_label}}",
+							"value": "{Description}"
+						},
+						"highlight": "{state}",
+						"info": {
+							"value": "{info}",
+							"state": "{infoState}"
+						}
+					}
+				}
+			}
+		}
+	},
+	"tableManifests": {
+		"tablecard1": {
+			"sap.app": {
+				"id": "cardsdemo.tableManifests.tablecard1",
+				"type": "card"
+			},
+			"sap.card": {
+				"type": "Table",
+				"header": {
+					"title": "Table Card",
+					"subTitle": "Table Card subtitle"
+				},
+				"content": {
+					"data": {
+						"request": {
+							"url": "./cardcontent/tableitems.json"
+						},
+						"path": "/names"
+					},
+					"row": {
+						"columns": [
+							{
+								"label": "First Name",
+								"value": "{firstName}"
+							},
+							{
+								"label": "Last Name",
+								"value": "{lastName}"
+							},
+							{
+								"label": "Link",
+								"value": "{urlText}",
+								"url": "{url}"
+							},
+							{
+								"label": "Progress",
+								"progressIndicator": {
+									"percent": "{percent}",
+									"text": "{percentValue}",
+									"state": "{progressState}"
+								}
+							}
+						]
+					}
+				}
+			}
+		},
+		"tablecard2": {
+			"sap.app": {
+				"id": "cardsdemo.tableManifests.tablecard2",
+				"type": "card"
+			},
+			"sap.card": {
+				"type": "Table",
+				"header": {
+					"title": "New Purchase Orders"
+				},
+				"content": {
+					"data": {
+						"request": {
+							"url": "./cardcontent/tableitems.json"
+						},
+						"path": "/tableCard2"
+					},
+					"row": {
+						"columns": [
+							{
+								"label": "Order ID",
+								"value": "{orderId}",
+								"url": "{orderUrl}"
+							},
+							{
+								"label": "Created By",
+								"value": "{name}"
+							},
+							{
+								"label": "Status",
+								"value": "{status}",
+								"state": "{statusState}"
+							}
+						]
+					}
+				}
+			}
+		},
+		"tablecard3": {
+			"sap.app": {
+				"id": "cardsdemo.tableManifests.tablecard3",
+				"type": "card"
+			},
+			"sap.card": {
+				"type": "Table",
+				"header": {
+					"title": "Sales Orders for Key Accounts"
+				},
+				"content": {
+					"data": {
+						"request": {
+							"url": "./cardcontent/tableitems.json"
+						},
+						"path": "/tableCard3"
+					},
+					"row": {
+						"columns": [
+							{
+								"label": "Sales Order",
+								"value": "{salesOrder}",
+								"identifier": true
+							},
+							{
+								"label": "Customer",
+								"value": "{name}"
+							},
+							{
+								"label": "Net Amount",
+								"value": "{netAmount}"
+							},
+							{
+								"label": "Status",
+								"value": "{status}",
+								"state": "{statusState}"
+							}
+						]
+					}
+				}
+			}
+		}
+	},
+	"kpiManifests": {
+		"kpicard1": {
+			"sap.app": {
+				"id": "cardsdemo.kpiManifests.kpicard1",
+				"type": "card"
+			},
+			"sap.card": {
+				"type": "List",
+				"header": {
+					"type": "Numeric",
+					"actions": [
+						{
+							"type": "Navigation",
+							"url": "https://www.sap.com"
+						}
+					],
+					"data": {
+						"request": {
+							"url": "./cardcontent/kpi.json"
+						},
+						"path": "/kpiInfos/kpi"
+					},
+					"title": "Project Cloud Transformation",
+					"subTitle": "Revenue",
+					"unitOfMeasurement": "EUR",
+					"mainIndicator": {
+						"number": "{number}",
+						"unit": "{unit}",
+						"trend": "{trend}",
+						"state": "{state}"
+					},
+					"details": "{details}",
+					"dataTimestamp": "{parameters>/NOW_ISO}",
+					"sideIndicators": [
+						{
+							"title": "Target",
+							"number": "{target/number}",
+							"unit": "{target/unit}"
+						},
+						{
+							"title": "Deviation",
+							"number": "{deviation/number}",
+							"unit": "%"
+						}
+					],
+					"banner": [
+						{
+							"text": "{= ${appInfo}.toUpperCase()}",
+							"diminished": true
+						},
+						{
+							"text": "{= ${systemInfo}.toUpperCase()}"
+						}
+					]
+				}
+			}
+		},
+		"kpicard2": {
+			"sap.app": {
+				"id": "cardsdemo.kpiManifests.kpicard2",
+				"type": "card"
+			},
+			"sap.card": {
+				"type": "List",
+				"header": {
+					"type": "Numeric",
+					"data": {
+						"json": {
+							"n": 6547394.45496,
+							"u": "M $",
+							"trend": "Down",
+							"valueColor": "Critical"
+						}
+					},
+					"subTitle": "Success Rate",
+					"mainIndicator": {
+						"number": "{n}",
+						"unit": "{u}",
+						"trend": "{trend}",
+						"state": "{valueColor}"
+					},
+					"sideIndicators": [
+						{
+							"title": "Decrease",
+							"number": "245438095430954.4532423",
+							"unit": "%"
+						}
+					]
+				}
+			}
+		},
+		"kpicard3": {
+			"sap.app": {
+				"id": "cardsdemo.kpiManifests.kpicard3",
+				"type": "card"
+			},
+			"sap.card": {
+				"type": "List",
+				"header": {
+					"type": "Numeric",
+					"data": {
+						"json": {
+							"n": "56",
+							"u": "%",
+							"trend": "Up",
+							"valueColor": "Good"
+						}
+					},
+					"title": "Cloud Transformation Project Cloud Transformation Project Cloud Transformation Project Cloud Transformation Project Cloud Transformation Project Cloud Transformation Project Cloud Transformation ",
+					"subTitle": "Forecasted goal achievement depending on business logic and other important information Forecasted goal achievement depending on business logic and other important information",
+					"status": {
+						"text": "On Track"
+					},
+					"unitOfMeasurement": "EUR",
+					"mainIndicator": {
+						"number": "{n}",
+						"unit": "{u}",
+						"trend": "{trend}",
+						"state": "{valueColor}"
+					},
+					"details": "Details, additional information, will directly truncate after there is no more space.Details, additional information, will directly truncate after there is no more space.",
+					"sideIndicators": [
+						{
+							"title": "Target Long Target Long Target Long Target Long",
+							"number": "3252.234",
+							"unit": "K"
+						},
+						{
+							"title": "Deviation Long Deviation Deviation Long Deviation",
+							"number": "22.43",
+							"unit": "%"
+						}
+					]
+				}
+			}
+		},
+		"kpicard4": {
+			"sap.app": {
+				"id": "cardsdemo.kpiManifests.kpicard4",
+				"type": "card"
+			},
+			"sap.card": {
+				"type": "List",
+				"header": {
+					"icon": {
+						"src": "sap-icon://opportunity"
+					},
+					"title": "List card",
+					"status": {
+						"text": "8 of 346"
+					},
+					"subTitle": "Card to check that kpi changes don't brake other cards Card to check that kpi changes don't brake other cards Card to check that kpi changes don't brake other cards Card to check that kpi changes don't brake other cards "
+				},
+				"content": {
+					"data": {
+						"request": {
+							"url": "./cardcontent/someitems.json"
+						}
+					},
+					"item": {
+						"icon": {
+							"src": "{icon}"
+						},
+						"title": {
+							"label": "{{title_label}}",
+							"value": "{Name}"
+						},
+						"description": {
+							"label": "{{description_label}}",
+							"value": "{Description}"
+						}
+					}
+				}
+			}
+		},
+		"kpicard5": {
+			"sap.app": {
+				"id": "cardsdemo.kpiManifests.kpicard5",
+				"type": "card"
+			},
+			"sap.card": {
+				"type": "Numeric",
+				"header": {
+					"title": "Numeric card with data timestamp",
+					"dataTimestamp": "{parameters>/NOW_ISO}"
+				}
+			}
+		},
+		"kpicard6": {
+			"sap.app": {
+				"id": "cardsdemo.kpiManifests.kpicard3",
+				"type": "card"
+			},
+			"sap.card": {
+				"type": "List",
+				"header": {
+					"type": "Numeric",
+					"data": {
+						"json": {
+							"n": "56",
+							"u": "%",
+							"trend": "Up",
+							"valueColor": "Good"
+						}
+					},
+					"title": "Cloud Transformation Project Cloud Transformation Project Cloud Transformation Project Cloud Transformation Project Cloud Transformation Project Cloud Transformation Project Cloud Transformation ",
+					"titleMaxLines": 1,
+					"subTitle": "Forecasted goal achievement depending on business logic and other important information Forecasted goal achievement depending on business logic and other important information",
+					"subTitleMaxLines": 1,
+					"status": {
+						"text": "On Track"
+					},
+					"unitOfMeasurement": "EUR",
+					"mainIndicator": {
+						"number": "{n}",
+						"unit": "{u}",
+						"trend": "{trend}",
+						"state": "{valueColor}"
+					},
+					"details": "Details, additional information, will directly truncate after there is no more space.Details, additional information, will directly truncate after there is no more space.",
+					"detailsMaxLines": 1,
+					"sideIndicators": [
+						{
+							"title": "Target Long Target Long Target Long Target Long",
+							"number": "3252.234",
+							"unit": "K"
+						},
+						{
+							"title": "Deviation Long Deviation Deviation Long Deviation",
+							"number": "22.43",
+							"unit": "%"
+						}
+					]
+				}
+			}
+		},
+		"tablecard1": {
+			"sap.app": {
+				"id": "cardsdemo.kpiManifests.tablecard1",
+				"type": "card"
+			},
+			"sap.card": {
+				"headerPosition": "Bottom",
+				"header": {
+					"type": "Numeric",
+					"data": {
+						"request": {
+							"url": "./cardcontent/kpi.json"
+						},
+						"path": "/kpiInfos/kpi"
+					},
+					"title": "Project Cloud Transformation",
+					"status": {
+						"text": "5 of 344"
+					},
+					"subTitle": "Revenue",
+					"unitOfMeasurement": "EUR",
+					"mainIndicator": {
+						"number": "{number}",
+						"unit": "{unit}",
+						"trend": "{trend}",
+						"state": "{state}"
+					},
+					"details": "{details}",
+					"sideIndicators": [
+						{
+							"title": "Target",
+							"number": "{target/number}",
+							"unit": "{target/unit}"
+						},
+						{
+							"title": "Deviation",
+							"number": "{deviation/number}",
+							"unit": "%"
+						}
+					]
+				},
+				"type": "Table",
+				"content": {
+					"data": {
+						"request": {
+							"url": "./cardcontent/tableitems.json"
+						},
+						"path": "/names"
+					},
+					"row": {
+						"columns": [
+							{
+								"title": "First Name",
+								"value": "{firstName}"
+							},
+							{
+								"title": "Last Name",
+								"value": "{lastName}"
+							}
+						]
+					}
+				}
+			}
+		},
+		"tablecard123": {
+			"sap.app": {
+				"id": "cardsdemo.kpiManifests.tablecard123",
+				"type": "card"
+			},
+			"sap.card": {
+				"headerPosition": "Top",
+				"header": {
+					"type": "Numeric",
+					"data": {
+						"request": {
+							"url": "./cardcontent/kpi.json"
+						},
+						"path": "/kpiInfos/kpi"
+					},
+					"title": "Numeric Header with only Title and Subtitle",
+					"subTitle": "Some subtitle"
+				},
+				"type": "Table",
+				"content": {
+					"data": {
+						"request": {
+							"url": "./cardcontent/tableitems.json"
+						},
+						"path": "/names"
+					},
+					"row": {
+						"columns": [
+							{
+								"title": "First Name",
+								"value": "{firstName}"
+							},
+							{
+								"title": "Last Name",
+								"value": "{lastName}"
+							}
+						]
+					}
+				}
+			}
+		},
+		"unitOfMeasurementOnly": {
+			"sap.app": {
+				"id": "cardsdemo.kpiManifests.unitOfMeasurementOnly",
+				"type": "card"
+			},
+			"sap.card": {
+				"header": {
+					"type": "Numeric",
+					"title": "Numeric Header with title, mainindicator and unit of measurement",
+					"mainIndicator": {
+						"number": "15.6"
+					},
+					"unitOfMeasurement": "EUR"
+				},
+				"type": "List"
+			}
+		},
+		"hiddenHeader": {
+			"sap.app": {
+				"id": "cardsdemo.kpiManifests.hiddenHeader",
+				"type": "card"
+			},
+			"sap.card": {
+				"data": {
+					"request": {
+						"url": "./cardcontent/someitems.json"
+					}
+				},
+				"header": {
+					"visible": false,
+					"type": "Numeric",
+					"title": "Numeric Header (should be hidden)",
+					"mainIndicator": {
+						"number": "15.6"
+					},
+					"unitOfMeasurement": "EUR"
+				},
+				"type": "List",
+				"content": {
+					"item": {
+						"icon": {
+							"src": "{icon}"
+						},
+						"title": "{Name}",
+						"description": "{Description}",
+						"highlight": "{state}",
+						"info": {
+							"value": "{info}",
+							"state": "{infoState}"
+						}
+					},
+					"maxItems": 1
+				}
+			}
+		},
+		"indicatorsVisibility1": {
+			"sap.app": {
+				"id": "cardsdemo.kpiManifests.indicatorsVisibility",
+				"type": "card"
+			},
+			"sap.card": {
+				"type": "List",
+				"header": {
+					"type": "Numeric",
+					"data": {
+						"json": {
+							"visibility": true,
+							"n": "56",
+							"u": "%",
+							"trend": "Up",
+							"valueColor": "Good"
+						}
+					},
+					"title": "Main and Side Indicators Both Visible",
+					"subTitle": "Card subtitle",
+					"unitOfMeasurement": "EUR",
+					"mainIndicator": {
+						"visible": "{visibility}",
+						"number": "{n}",
+						"unit": "{u}",
+						"trend": "{trend}",
+						"state": "{valueColor}"
+					},
+					"details": "Card details",
+					"sideIndicators": [
+						{
+							"visible": "{visibility}",
+							"title": "Target",
+							"number": "420",
+							"unit": "K"
+						},
+						{
+							"visible": "{visibility}",
+							"title": "Deviation",
+							"number": "22.43",
+							"unit": "%"
+						}
+					]
+				}
+			}
+		},
+		"indicatorsVisibility2": {
+			"sap.app": {
+				"id": "cardsdemo.kpiManifests.indicatorsVisibility",
+				"type": "card"
+			},
+			"sap.card": {
+				"type": "List",
+				"header": {
+					"type": "Numeric",
+					"data": {
+						"json": {
+							"visibility": false,
+							"n": "56",
+							"u": "%",
+							"trend": "Up",
+							"valueColor": "Good"
+						}
+					},
+					"title": "Only Main Indicator Visible",
+					"subTitle": "Card subtitle",
+					"unitOfMeasurement": "EUR",
+					"mainIndicator": {
+						"visible": "{!visibility}",
+						"number": "{n}",
+						"unit": "{u}",
+						"trend": "{trend}",
+						"state": "{valueColor}"
+					},
+					"details": "Card details",
+					"sideIndicators": [
+						{
+							"visible": "{visibility}",
+							"title": "Target",
+							"number": "352",
+							"unit": "K"
+						},
+						{
+							"visible": "{visibility}",
+							"title": "Deviation",
+							"number": "22.43",
+							"unit": "%"
+						}
+					]
+				}
+			}
+		},
+		"indicatorsVisibility3": {
+			"sap.app": {
+				"id": "cardsdemo.kpiManifests.indicatorsVisibility",
+				"type": "card"
+			},
+			"sap.card": {
+				"type": "List",
+				"header": {
+					"type": "Numeric",
+					"data": {
+						"json": {
+							"visibility": false,
+							"n": "56",
+							"u": "%",
+							"trend": "Up",
+							"valueColor": "Good"
+						}
+					},
+					"title": "Neither Main nor Side Indicators Visible",
+					"subTitle": "Card subtitle",
+					"unitOfMeasurement": "EUR",
+					"mainIndicator": {
+						"visible": "{visibility}",
+						"number": "{n}",
+						"unit": "{u}",
+						"trend": "{trend}",
+						"state": "{valueColor}"
+					},
+					"details": "Card details",
+					"sideIndicators": [
+						{
+							"visible": "{visibility}",
+							"title": "Target",
+							"number": "352",
+							"unit": "K"
+						},
+						{
+							"visible": "{visibility}",
+							"title": "Deviation",
+							"number": "22.43",
+							"unit": "%"
+						}
+					]
+				}
+			}
+		},
+		"indicatorsVisibility4": {
+			"sap.app": {
+				"id": "cardsdemo.kpiManifests.indicatorsVisibility",
+				"type": "card"
+			},
+			"sap.card": {
+				"type": "List",
+				"header": {
+					"type": "Numeric",
+					"data": {
+						"json": {
+							"visibility": false,
+							"n": "56",
+							"u": "%",
+							"trend": "Up",
+							"valueColor": "Good"
+						}
+					},
+					"title": "Main and Only One Side Indicators Visible",
+					"subTitle": "Card subtitle",
+					"unitOfMeasurement": "EUR",
+					"mainIndicator": {
+						"visible": "{!visibility}",
+						"number": "{n}",
+						"unit": "{u}",
+						"trend": "{trend}",
+						"state": "{valueColor}"
+					},
+					"details": "Card details",
+					"sideIndicators": [
+						{
+							"visible": "{visibility}",
+							"title": "Target",
+							"number": "352",
+							"unit": "K"
+						},
+						{
+							"visible": "{!visibility}",
+							"title": "Deviation",
+							"number": "22.43",
+							"unit": "%"
+						}
+					]
+				}
+			}
+		},
+		"indicatorsVisibility5": {
+			"sap.app": {
+				"id": "cardsdemo.kpiManifests.indicatorsVisibility",
+				"type": "card"
+			},
+			"sap.card": {
+				"type": "List",
+				"header": {
+					"type": "Numeric",
+					"data": {
+						"json": {
+							"visibility": false,
+							"n": "56",
+							"u": "%",
+							"trend": "Up",
+							"valueColor": "Good"
+						}
+					},
+					"title": "Only Side Indicators Visible",
+					"subTitle": "Card subtitle",
+					"unitOfMeasurement": "EUR",
+					"mainIndicator": {
+						"visible": "{visibility}",
+						"number": "{n}",
+						"unit": "{u}",
+						"trend": "{trend}",
+						"state": "{valueColor}"
+					},
+					"details": "Card details",
+					"sideIndicators": [
+						{
+							"visible": "{!visibility}",
+							"title": "Target",
+							"number": "352",
+							"unit": "K"
+						},
+						{
+							"visible": "{!visibility}",
+							"title": "Deviation",
+							"number": "22.43",
+							"unit": "%"
+						}
+					]
+				}
+			}
+		},
+		"hiddenStatus": {
+			"sap.app": {
+				"id": "cardsdemo.numericHeader.hiddenStatus",
+				"type": "card"
+			},
+			"sap.card": {
+				"data": {
+					"request": {
+						"url": "./cardcontent/someitems.json"
+					}
+				},
+				"header": {
+					"type": "Numeric",
+					"title": "Card Status Should be Hidden",
+					"status": {
+						"text": "This text should be hidden",
+						"visible": false
+					}
+				},
+				"type": "List",
+				"content": {
+					"item": {
+						"title": "{Name}"
+					},
+					"maxItems": 1
+				}
+			}
+		}
+
+	},
+	"manifestTests": {
+		"manifest": {
+			"sap.app": {
+				"id": "cardsdemo.manifestTests.manifest",
+				"type": "card"
+			},
+			"sap.card": {
+				"type": "List",
+				"header": {
+					"title": "Request List Content Card",
+					"subTitle": "Card subtitle",
+					"icon": {
+						"src": "sap-icon://accept"
+					},
+					"status": "100 of 200"
+				},
+				"content": {
+					"data": {
+						"request": {
+							"url": "./cardcontent/someitems.json"
+						}
+					},
+					"item": {
+						"icon": {
+							"src": "{icon}"
+						},
+						"title": {
+							"label": "{{title_label}}",
+							"value": "{Name}"
+						},
+						"description": {
+							"label": "{{description_label}}",
+							"value": "{Description}"
+						}
+					}
+				}
+			}
+		}
+	},
+	"timelineContent": {
+		"card0": {
+			"sap.app": {
+				"id": "cardsdemo.timelineContent.card0",
+				"type": "card"
+			},
+			"sap.card": {
+				"type": "Timeline",
+				"header": {
+					"title": "New Team Members",
+					"icon": {
+						"src": "sap-icon://group"
+					}
+				},
+				"content": {
+					"maxItems": "4",
+					"data": {
+						"request": {
+							"url": "./cardcontent/employees.json"
+						},
+						"path": "/Employees"
+					},
+					"item": {
+						"dateTime": {
+							"label": "{{hireDate_label}}",
+							"value": "{HireDate}"
+						},
+						"description": {
+							"label": "{{jobResponsibilities_label}}",
+							"value": "{JobResponsibilities}"
+						},
+						"title": {
+							"label": "{{jobTitle_label}}",
+							"value": "{JobTitle}"
+						},
+						"owner": {
+							"label": "{{name_label}}",
+							"value": "{Name}"
+						},
+						"ownerImage": {
+							"label": "{{picture_label}}",
+							"value": "{Photo}"
+						},
+						"icon": {
+							"src": "{Icon}"
+						},
+						"actions": [
+							{
+								"type": "Navigation",
+								"parameters": {
+									"url": "{JobTitle}"
+								}
+							}
+						]
+					}
+				}
+			}
+		},
+		"card1": {
+			"sap.app": {
+				"id": "cardsdemo.timelineContent.card1",
+				"type": "card"
+			},
+			"sap.card": {
+				"type": "Timeline",
+				"header": {
+					"title": "Upcoming Activities",
+					"subTitle": "For Today"
+				},
+				"content": {
+					"maxItems": "3",
+					"data": {
+						"request": {
+							"url": "./cardcontent/employees.json"
+						},
+						"path": "/Activities"
+					},
+					"item": {
+						"dateTime": {
+							"label": "{{time_label}}",
+							"value": "{Time}"
+						},
+						"description": {
+							"label": "{{description_label}}",
+							"value": "{Description}"
+						},
+						"title": {
+							"label": "{{title_label}}",
+							"value": "{Title}"
+						},
+						"icon": {
+							"src": "{Icon}"
+						},
+						"actions": [
+							{
+								"type": "Navigation",
+								"enabled": "{= ${url}}",
+								"parameters": {
+									"url": "{url}"
+								}
+							}
+						]
+					}
+				}
+			}
+		},
+		"card2": {
+			"sap.app": {
+				"id": "cardsdemo.timelineContent.card2",
+				"type": "card"
+			},
+			"sap.card": {
+				"type": "Timeline",
+				"header": {
+					"title": "Timeline Card with minItems",
+					"subTitle": "For Today"
+				},
+				"content": {
+					"minItems": 1,
+					"maxItems": 8,
+					"data": {
+						"request": {
+							"url": "./cardcontent/employees.json"
+						},
+						"path": "/Activities"
+					},
+					"item": {
+						"dateTime": {
+							"label": "{{time_label}}",
+							"value": "{Time}"
+						},
+						"description": {
+							"label": "{{description_label}}",
+							"value": "{Description}"
+						},
+						"title": {
+							"label": "{{title_label}}",
+							"value": "{Title}"
+						},
+						"icon": {
+							"src": "{Icon}"
+						},
+						"actions": [
+							{
+								"type": "Navigation",
+								"enabled": "{= ${url}}",
+								"parameters": {
+									"url": "{url}"
+								}
+							}
+						]
+					}
+				}
+			}
+		}
+	},
+	"adaptiveCard": {
+		"adaptive1": {
+			"_version": "1.17.0",
+			"sap.app": {
+				"id": "adaptivecard.embedded",
+				"type": "card"
+			},
+			"sap.card": {
+				"type": "AdaptiveCard",
+				"content": {
+					"$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+					"type": "AdaptiveCard",
+					"version": "1.0",
+					"body": [
+						{
+							"type": "TextBlock",
+							"text": "Publish Adaptive Card schema",
+							"weight": "Bolder",
+							"size": "Medium"
+						},
+						{
+							"type": "ColumnSet",
+							"columns": [
+								{
+									"type": "Column",
+									"width": "auto",
+									"items": [
+										{
+											"type": "Image",
+											"url": "https://pbs.twimg.com/profile_images/3647943215/d7f12830b3c17a5a9e4afcc370e3a37e_400x400.jpeg",
+											"size": "Small",
+											"style": "Person"
+										}
+									]
+								},
+								{
+									"type": "Column",
+									"width": "stretch",
+									"items": [
+										{
+											"type": "TextBlock",
+											"text": "Matt Hidinger",
+											"weight": "Bolder",
+											"wrap": true
+										},
+										{
+											"type": "TextBlock",
+											"spacing": "None",
+											"text": "Created {{DATE(2017-02-14T06:08:39Z, SHORT)}}",
+											"isSubtle": true,
+											"wrap": true
+										}
+									]
+								}
+							]
+						},
+						{
+							"type": "TextBlock",
+							"text": "Now that we have defined the main rules and features of the format, we need to produce a schema and publish it to GitHub. The schema will be the starting point of our reference documentation.",
+							"wrap": true
+						},
+						{
+							"type": "FactSet",
+							"facts": [
+								{
+									"title": "Board:",
+									"value": "Adaptive Card"
+								},
+								{
+									"title": "List:",
+									"value": "Backlog"
+								},
+								{
+									"title": "Assigned to:",
+									"value": "Matt Hidinger"
+								},
+								{
+									"title": "Due date:",
+									"value": "Not set"
+								}
+							]
+						}
+					],
+					"actions": [
+						{
+							"type": "Action.ShowCard",
+							"title": "Set due date",
+							"card": {
+								"type": "AdaptiveCard",
+								"body": [
+									{
+										"type": "Input.Date",
+										"id": "dueDate"
+									}
+								],
+								"actions": [
+									{
+										"type": "Action.Submit",
+										"title": "OK"
+									}
+								]
+							}
+						},
+						{
+							"type": "Action.ShowCard",
+							"title": "Comment",
+							"card": {
+								"type": "AdaptiveCard",
+								"body": [
+									{
+										"type": "Input.Text",
+										"id": "comment",
+										"isMultiline": true,
+										"placeholder": "Enter your comment"
+									}
+								],
+								"actions": [
+									{
+										"type": "Action.Submit",
+										"title": "OK"
+									}
+								]
+							}
+						}
+					]
+				}
+			}
+		},
+		"adaptive2": {
+			"_version": "1.17.0",
+			"sap.app": {
+				"id": "adaptivecard.embedded",
+				"type": "card"
+			},
+			"sap.card": {
+				"type": "AdaptiveCard",
+				"content": {
+					"$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+					"type": "AdaptiveCard",
+					"version": "1.0",
+					"speak": "Your  meeting about \"Adaptive Card design session\" is starting at 12:30pmDo you want to snooze  or do you want to send a late notification to the attendees?",
+					"body": [
+						{
+							"type": "TextBlock",
+							"text": "Meeting",
+							"size": "Large",
+							"weight": "Bolder"
+						},
+						{
+							"type": "TextBlock",
+							"text": "Conf Room 112/3377 (10)",
+							"isSubtle": true
+						},
+						{
+							"type": "TextBlock",
+							"text": "22:30 - 23:30",
+							"isSubtle": true,
+							"spacing": "None"
+						},
+						{
+							"type": "TextBlock",
+							"text": "Snooze for"
+						},
+						{
+							"type": "Input.ChoiceSet",
+							"id": "snooze",
+							"value": "{reminders.overrides[0].minutes}",
+							"choices": [
+								{
+									"title": "5 minutes",
+									"value": "5"
+								},
+								{
+									"title": "15 minutes",
+									"value": "15"
+								},
+								{
+									"title": "30 minutes",
+									"value": "30"
+								}
+							]
+						}
+					],
+					"actions": [
+						{
+							"type": "Action.Submit",
+							"title": "Snooze",
+							"data": {
+								"x": "snooze"
+							}
+						},
+						{
+							"type": "Action.Submit",
+							"title": "I'll be late",
+							"data": {
+								"x": "late"
+							}
+						}
+					]
+				}
+			}
+		},
+		"adaptive3": {
+			"_version": "1.17.0",
+			"sap.app": {
+				"id": "adaptivecard.embedded",
+				"type": "card"
+			},
+			"sap.card": {
+				"type": "AdaptiveCard",
+				"content": {
+					"$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+					"type": "AdaptiveCard",
+					"version": "1.0",
+					"body": [
+						{
+							"type": "TextBlock",
+							"size": "medium",
+							"weight": "bolder",
+							"text": "Input.Text elements",
+							"horizontalAlignment": "center"
+						},
+						{
+							"type": "Input.Text",
+							"placeholder": "Name",
+							"style": "text",
+							"maxLength": 0,
+							"id": "SimpleVal"
+						},
+						{
+							"type": "Input.Text",
+							"placeholder": "Homepage",
+							"style": "url",
+							"maxLength": 0,
+							"id": "UrlVal"
+						},
+						{
+							"type": "Input.Text",
+							"placeholder": "Email",
+							"style": "email",
+							"maxLength": 0,
+							"id": "EmailVal"
+						},
+						{
+							"type": "Input.Text",
+							"placeholder": "Phone",
+							"style": "tel",
+							"maxLength": 0,
+							"id": "TelVal"
+						},
+						{
+							"type": "Input.Text",
+							"placeholder": "Comments",
+							"style": "text",
+							"isMultiline": true,
+							"maxLength": 0,
+							"id": "MultiLineVal"
+						},
+						{
+							"type": "Input.Number",
+							"placeholder": "Quantity",
+							"min": -5,
+							"max": 5,
+							"value": 1,
+							"id": "NumVal"
+						},
+						{
+							"type": "Input.Date",
+							"placeholder": "Due Date",
+							"id": "DateVal",
+							"value": "2017-09-20"
+						},
+						{
+							"type": "Input.Time",
+							"placeholder": "Start time",
+							"id": "TimeVal",
+							"value": "16:59"
+						},
+						{
+							"type": "TextBlock",
+							"size": "medium",
+							"weight": "bolder",
+							"text": "Input.ChoiceSet",
+							"horizontalAlignment": "center"
+						},
+						{
+							"type": "TextBlock",
+							"text": "What color do you want? (compact)"
+						},
+						{
+							"type": "Input.ChoiceSet",
+							"id": "CompactSelectVal",
+							"style": "compact",
+							"value": "1",
+							"choices": [
+								{
+									"title": "Red",
+									"value": "1"
+								},
+								{
+									"title": "Green",
+									"value": "2"
+								},
+								{
+									"title": "Blue",
+									"value": "3"
+								}
+							]
+						},
+						{
+							"type": "TextBlock",
+							"text": "What color do you want? (expanded)"
+						},
+						{
+							"type": "Input.ChoiceSet",
+							"id": "SingleSelectVal",
+							"style": "expanded",
+							"value": "1",
+							"choices": [
+								{
+									"title": "Red",
+									"value": "1"
+								},
+								{
+									"title": "Green",
+									"value": "2"
+								},
+								{
+									"title": "Blue",
+									"value": "3"
+								}
+							]
+						},
+						{
+							"type": "TextBlock",
+							"text": "What colors do you want? (multiselect)"
+						},
+						{
+							"type": "Input.ChoiceSet",
+							"id": "MultiSelectVal",
+							"isMultiSelect": true,
+							"value": "1,3",
+							"choices": [
+								{
+									"title": "Red",
+									"value": "1"
+								},
+								{
+									"title": "Green",
+									"value": "2"
+								},
+								{
+									"title": "Blue",
+									"value": "3"
+								}
+							]
+						},
+						{
+							"type": "TextBlock",
+							"size": "medium",
+							"weight": "bolder",
+							"text": "Input.Toggle",
+							"horizontalAlignment": "center"
+						},
+						{
+							"type": "Input.Toggle",
+							"title": "I accept the terms and conditions (True/False)",
+							"valueOn": "true",
+							"valueOff": "false",
+							"id": "AcceptsTerms"
+						},
+						{
+							"type": "Input.Toggle",
+							"title": "Red cars are better than other cars",
+							"valueOn": "RedCars",
+							"valueOff": "NotRedCars",
+							"id": "ColorPreference"
+						}
+					]
+				}
+			}
+		}
+	},
+	"calendarCard": {
+		"calendarCard": {
+			"_version": "1.14.0",
+			"sap.app": {
+				"id": "calendarcard",
+				"type": "card",
+				"title": "Calendar Card Sample",
+				"applicationVersion": {
+					"version": "1.0.0"
+				}
+			},
+			"sap.card": {
+				"type": "Calendar",
+				"data": {
+				"json": {
+					"item": [
+					{
+						"start": "2020-09-18T09:00",
+						"end": "2020-09-18T10:00",
+						"title": "Payment reminder",
+						"icon": "sap-icon://desktop-mobile",
+						"type": "Type06"
+					},
+					{
+						"start": "2020-09-18T17:00",
+						"end": "2020-09-18T17:30",
+						"title": "Private appointment",
+						"icon": "sap-icon://desktop-mobile",
+						"type": "Type07"
+					},
+					{
+						"start": "2020-09-18T12:00",
+						"end": "2020-09-18T13:00",
+						"title": "Lunch",
+						"text": "working",
+						"icon": "sap-icon://desktop-mobile",
+						"type": "Type03"
+					},
+					{
+						"start": "2020-09-16T08:30",
+						"end": "2020-09-18T17:30",
+						"title": "Workshop",
+						"text": "Out of office",
+						"icon": "sap-icon://sap-ui5",
+						"type": "Type07"
+					},
+					{
+						"start": "2020-09-18T14:00",
+						"end": "2020-09-18T16:30",
+						"title": "Discussion with clients",
+						"text": "working",
+						"icon": "sap-icon://desktop-mobile"
+					},
+					{
+						"start": "2020-09-18T01:00",
+						"end": "2020-09-18T02:00",
+						"title": "Team meeting",
+						"text": "online meeting",
+						"icon": "sap-icon://sap-ui5",
+						"type": "Type04"
+					},
+					{
+						"start": "2020-09-18T04:00",
+						"end": "2020-09-18T06:30",
+						"title": "Discussion with clients",
+						"text": "working",
+						"icon": "sap-icon://desktop-mobile"
+					},
+					{
+						"start": "2020-09-18T01:00",
+						"end": "2020-09-18T02:00",
+						"title": "Team meeting",
+						"text": "online meeting",
+						"icon": "sap-icon://sap-ui5",
+						"type": "Type04"
+					}
+					],
+					"specialDate": [
+					{
+						"start": "2020-09-13",
+						"end": "2020-09-14",
+						"type": "Type08"
+					},
+					{
+						"start": "2020-09-24",
+						"end": "2020-09-24",
+						"type": "Type13"
+					}
+					],
+					"legendItem": [
+					{
+						"category": "calendar",
+						"text": "Team building",
+						"type": "Type08"
+					},
+					{
+						"category": "calendar",
+						"text": "Public holliday",
+						"type": "Type13"
+					},
+					{
+						"category": "appointment",
+						"text": "Reminder",
+						"type": "Type06"
+					},
+					{
+						"category": "appointment",
+						"text": "Private appointment",
+						"type": "Type07"
+					},
+					{
+						"category": "appointment",
+						"text": "Out of office",
+						"type": "Type03"
+					},
+					{
+						"category": "appointment",
+						"text": "Collaboration with other team members",
+						"type": "Type07"
+					}
+					]
+				}
+				},
+				"header": {
+				"title": "My calendar",
+				"subTitle": "Team Balkan",
+				"status": {
+					"text":  {
+					"format": {
+						"translationKey": "i18n>CARD.COUNT_X_OF_Y",
+						"parts": [
+							"parameters>/visibleItems",
+							"parameters>/allItems"
+						]
+					}
+					}
+				}
+				},
+				"content": {
+				"date": "2020-09-18",
+				"maxItems": 5,
+				"maxLegendItems": 5,
+				"noItemsText": "You have nothing planned for that day",
+				"item": {
+					"template": {
+					"startDate": "{start}",
+					"endDate": "{end}",
+					"title": "{title}",
+					"text": "{text}",
+					"icon": {
+						"src": "{icon}"
+					},
+					"type": "{type}"
+					},
+					"path": "/item"
+				},
+				"specialDate": {
+					"template": {
+					"startDate": "{start}",
+					"endDate": "{end}",
+					"type": "{type}"
+					},
+					"path": "/specialDate"
+				},
+				"legendItem": {
+					"template": {
+					"category": "{category}",
+					"text": "{text}",
+					"type": "{type}"
+					},
+					"path": "/legendItem"
+				},
+				"moreItems": {
+					"actions": [
+					{
+						"type": "Navigation",
+						"enabled": true,
+						"url": "http://sap.com"
+					}
+					]
+				}
+				}
+			}
+		}
+	},
+	"noHeaderNoContent": {
+		"i1": {
+			"sap.app": {
+				"id": "cardsdemo.noHeaderNoContent.i1",
+				"type": "card"
+			},
+			"sap.card": {
+				"data": {
+					"request": {
+						"url": "./cardcontent/someitems.json"
+					}
+				},
+				"type": "List",
+				"content": {
+					"item": {
+						"icon": {
+							"src": "{icon}"
+						},
+						"title": {
+							"label": "{{title_label}}",
+							"value": "{Name}"
+						},
+						"description": {
+							"label": "{{description_label}}",
+							"value": "{Description}"
+						},
+						"highlight": "{state}",
+						"info": {
+							"value": "{info}",
+							"state": "{infoState}"
+						}
+					}
+				}
+			}
+		},
+		"i2": {
+			"sap.app": {
+				"id": "cardsdemo.noHeaderNoContent.i2",
+				"type": "card"
+			},
+			"sap.card": {
+				"type": "List",
+				"header": {
+					"title": "List Card",
+					"subTitle": "Without Content",
+					"icon": {
+						"src": "sap-icon://business-objects-experience"
+					},
+					"status": {
+						"text": "5 of 17"
+					}
+				}
+			}
+		},
+		"i4": {
+			"sap.app": {
+				"id": "cardsdemo.noHeaderNoContent.i4",
+				"type": "card"
+			},
+			"sap.card": {
+				"type": "List",
+				"content": {
+					"data": {
+						"json": [
+							{
+								"Name": "Notebook Basic 15",
+								"Description": "Notebook Basic 15 with 2,80 GHz quad core, 15\" LCD, 4 GB DDR3 RAM, 500 GB Hard Disc, Windows 8 Pro",
+								"Id": "HT-1000",
+								"icon": "sap-icon://laptop",
+								"state": "Information",
+								"info": "27.45 EUR",
+								"infoState": "Success"
+							},
+							{
+								"Name": "Notebook Basic 17",
+								"Description": "Notebook Basic 17 with 2,80 GHz quad core, 17\" LCD, 4 GB DDR3 RAM, 500 GB Hard Disc, Windows 8 Pro",
+								"Id": "HT-1001",
+								"icon": "sap-icon://laptop",
+								"state": "Success",
+								"info": "27.45 EUR",
+								"infoState": "Success"
+							}
+						]
+					},
+					"item": {
+						"icon": {
+							"src": "{icon}"
+						},
+						"title": {
+							"value": "{Name}"
+						},
+						"description": {
+							"value": "{Description}"
+						},
+						"highlight": "{state}",
+						"info": {
+							"value": "{info}",
+							"state": "{infoState}"
+						}
+					}
+				}
+			}
+		},
+		"i5": {
+			"sap.app": {
+				"id": "cardsdemo.noHeaderNoContent.i5",
+				"type": "card"
+			},
+			"sap.card": {
+				"type": "List",
+				"header": {
+					"type": "Numeric",
+					"title": "No Content and Custom Height",
+					"subTitle": "Tickets currently in escalation.",
+					"mainIndicator": {
+						"number": "10",
+						"unit": "Tickets"
+					},
+					"details": "",
+					"actions": [{
+						"type": "Navigation",
+						"parameters": {}
+					}]
+				}
+			}
+		},
+		"i6-error": {
+			"sap.app": {
+				"id": "cardsdemo.noHeaderNoContent.i6-error",
+				"type": "card"
+			},
+			"sap.card": {
+				"type": "List",
+				"header": {
+					"type": "Numeric",
+					"title": "Sales Report",
+					"mainIndicator": {
+						"number": "0",
+						"unit": "Items",
+						"state": "None"
+					},
+					"data": {
+						"request": {
+							"url": "fake-url"
+						}
+					}
+				}
+			}
+		},
+		"i7-error": {
+			"sap.app": {
+				"id": "cardsdemo.noHeaderNoContent.i7-error",
+				"type": "card"
+			},
+			"sap.card": {
+				"type": "Object",
+				"header": {
+					"data": {
+						"request": {
+							"url": "fake-url"
+						}
+					}
+				},
+			  "content": {
+				"data": {
+				  "request": {
+					"url": "fake-url"
+				  }
+				}
+			  }
+			}
+		},
+	  	"ListNodata-error": {
+		"sap.app": {
+		  "id": "cardsdemo.noHeaderNoContent.i7-error",
+		  "type": "card"
+		},
+		"sap.card": {
+		  "type": "List",
+		  "header": {
+			"title": "List Without Data in Response",
+			"subTitle": ""
+		  },
+		  "content": {
+			"data": {
+			  "json": []
+			},
+			"item": {
+			  "title": {
+				"value": "{Name}"
+			  },
+			  "description": {
+				"value": "{Description}"
+			  }
+			}
+		  }
+		}
+	  },
+	  	"TableNodata-error": {
+		"sap.app": {
+		  "id": "cardsdemo.noHeaderNoContent.i7-error",
+		  "type": "card"
+		},
+		"sap.card": {
+		  "type": "Table",
+		  "header": {
+			"title": "Table Without Data in Response",
+			"subTitle": ""
+		  },
+		  "content": {
+			"data": {
+			  "json": []
+			},
+			"row": {
+			  "columns": [{
+				"title": "Sales Order",
+				"value": "{salesOrder}",
+				"identifier": true
+			  },
+				{
+				  "title": "Customer",
+				  "value": "{customerName}"
+				},
+				{
+				  "title": "Net Amount",
+				  "value": "{netAmount}",
+				  "hAlign": "End"
+				},
+				{
+				  "title": "Status",
+				  "value": "{status}",
+				  "state": "{statusState}"
+				},
+				{
+				  "title": "Delivery Progress",
+				  "progressIndicator": {
+					"percent": "{deliveryProgress}",
+					"text": "{= format.percent(${deliveryProgress} / 100)}",
+					"state": "{statusState}"
+				  }
+				}
+			  ]
+			}
+		  }
+		}
+	  },
+	  	"Custom-error": {
+		"sap.app": {
+		  "id": "cardsdemo.noHeaderNoContent.custom-error",
+		  "type": "card"
+		},
+		"sap.card": {
+		  "configuration": {
+			"messages": {
+			  "error": {
+				"type": "NoMail",
+				"title": "No New Mail",
+				"description": "Unable to retrieve data from server. Check connection or contact administrator.",
+				"size": "Auto"
+			  }
+			}
+		  },
+		  "type": "List",
+		  "header": {
+			"title": "Inbox"
+		  },
+		  "content": {
+			"data": {
+			  "request": {
+				"url": "https://services.odata.org/V4/Northwind/Northwind.svc/Product",
+				"parameters": {
+				  "$format": "json"
+				}
+			  },
+			  "path": "/value"
+			},
+			"item": {
+			  "title": "{ProductName}",
+			  "description": "{UnitsInStock} units in stock",
+			  "highlight": "{= ${Discontinued} ? 'Error' : 'Success'}"
+			},
+			"maxItems": 5
+		  }
+		}
+	  },
+	  	"BadUrl-error": {
+		"sap.app": {
+		  "id": "cardsdemo.noHeaderNoContent.i7-error",
+		  "type": "card"
+		},
+		"sap.card": {
+		  "type": "List",
+		  "header": {
+			"title": "List with Bad Request",
+			"subTitle": ""
+		  },
+		  "content": {
+			"data": {
+			  "request": {
+				"url": "fake-url"
+			  }
+			},
+			"item": {
+			  "title": {
+				"value": "{Name}"
+			  },
+			  "description": {
+				"value": "{Description}"
+			  }
+			}
+		  }
+		}
+	  }
+	},
+	"minHeight": {
+		"donut": {
+			"sap.app": {
+				"id": "cardsdemo.minHeight.donut",
+				"type": "card"
+			},
+			"sap.card": {
+				"type": "Analytical",
+				"header": {
+					"type": "Numeric",
+					"data": {
+						"json": {
+							"n": 6547394.45496,
+							"u": "M $",
+							"trend": "Down",
+							"valueColor": "Critical"
+						}
+					},
+					"title": "No Height (Content min-height is 14rem)",
+					"subTitle": "Analytical Card",
+					"mainIndicator": {
+						"number": "{n}",
+						"unit": "{u}",
+						"trend": "{trend}",
+						"state": "{valueColor}"
+					},
+					"sideIndicators": [
+						{
+							"title": "Decrease",
+							"number": "24",
+							"unit": "weeks"
+						}
+					]
+				},
+				"content": {
+					"chartType": "Donut",
+					"legend": {
+						"visible": true,
+						"position": "Top",
+						"alignment": "Center"
+					},
+					"plotArea": {
+						"dataLabel": {
+							"visible": true,
+							"showTotal": true
+						}
+					},
+					"title": {
+						"text": "Donut chart",
+						"visible": true,
+						"alignment": "Bottom"
+					},
+					"measureAxis": "size",
+					"dimensionAxis": "color",
+					"data": {
+						"request": {
+							"url": "./cardcontent/cost.json"
+						},
+						"path": "/milk"
+					},
+					"dimensions": [
+						{
+							"label": "Store Name",
+							"value": "{Store Name}"
+						}
+					],
+					"measures": [
+						{
+							"label": "Revenue",
+							"value": "{Revenue}"
+						}
+					]
+				}
+			}
+		},
+		"largeList": {
+			"sap.app": {
+				"id": "cardsdemo.minHeight.largeList",
+				"type": "card"
+			},
+			"sap.card": {
+				"type": "List",
+				"header": {
+					"title": "No Height (Content min-height is calculated)",
+					"subTitle": "List Card",
+					"icon": {
+						"src": "sap-icon://accept"
+					},
+					"status": "100 of 200"
+				},
+				"content": {
+					"data": {
+						"request": {
+							"url": "./cardcontent/someitems.json"
+						}
+					},
+					"maxItems": 7,
+					"item": {
+						"icon": {
+							"src": "{icon}"
+						},
+						"title": {
+							"label": "{{title_label}}",
+							"value": "{Name}"
+						},
+						"description": {
+							"label": "{{description_label}}",
+							"value": "{Description}"
+						},
+						"highlight": "{state}",
+						"info": {
+							"value": "{info}",
+							"state": "{infoState}"
+						}
+					}
+				}
+			}
+		},
+		"noContent": {
+			"sap.app": {
+				"id": "cardsdemo.minHeight.noContentCard",
+				"type": "card"
+			},
+			"sap.card": {
+				"type": "List",
+				"header": {
+					"title": "No Content. Default min-height of Card is 5rem"
+				}
+			}
+		}
+	},
+	"preview": {
+		"list": {
+			"sap.app": {
+				"id": "cardsdemo.preview.list",
+				"type": "card"
+			},
+			"sap.card": {
+				"type": "List",
+				"data": {
+					"json": {
+						"title": "List Card",
+						"items": []
+					},
+					"mockData": {
+						"json": {
+							"title": "List Card with Mocked Data",
+							"items": [
+								{
+									"title": "item1"
+								},
+								{
+									"title": "item2"
+								}
+							]
+						}
+					}
+				},
+				"header": {
+					"title": "{title}",
+					"subTitle": "{subTitle}",
+					"status": "{subTitle}",
+					"icon": {
+						"src": "{subTitle}"
+					}
+				},
+				"content": {
+					"maxItems": 5,
+					"data": {
+						"path": "/items"
+					},
+					"item": {
+						"title": "{title}",
+						"icon": {
+							"src": "{icon}"
+						},
+						"highlight": "{state}",
+						"description": "{state}",
+						"info": {
+							"value": "{info}",
+							"state": "{infoState}"
+						}
+					}
+				}
+			}
+		},
+		"general": {
+			"sap.app": {
+				"id": "cardsdemo.preview.general",
+				"type": "card"
+			},
+			"sap.card": {
+				"type": "Component",
+				"configuration": {
+					"filters": {
+						"f": {}
+					}
+				},
+				"header": {
+					"title": "{title}",
+					"subTitle": "{subTitle}",
+					"status": "{subTitle}",
+					"icon": {
+						"src": "{subTitle}"
+					}
+				}
+			}
+		},
+		"listWithActionsStrip": {
+			"sap.app": {
+				"id": "cardsdemo.preview.listWithActionsStrip",
+				"type": "card"
+			},
+			"sap.card": {
+				"type": "List",
+				"data": {
+					"request": {
+						"url": "./cardcontent/cost.json"
+					}
+				},
+				"header": {
+					"type": "Numeric",
+					"data": {
+						"json": {
+							"title": "Numeric",
+							"subtitle": "Subtitle",
+							"n": "56",
+							"u": "%",
+							"trend": "Up",
+							"valueColor": "Good"
+						}
+					},
+					"title": "{title}",
+					"subTitle": "{subtitle}",
+					"unitOfMeasurement": "EUR",
+					"mainIndicator": {
+						"number": "{n}",
+						"unit": "{u}",
+						"trend": "{trend}",
+						"state": "{valueColor}"
+					},
+					"details": "{details}",
+					"sideIndicators": [
+						{
+							"title": "{trend}",
+							"number": "{n}",
+							"unit": "{unitOfMeasurement}"
+						},
+						{
+							"title": "{trend}",
+							"number": "{n}",
+							"unit": "{unitOfMeasurement}"
+						}
+					]
+				},
+				"content": {
+					"maxItems": 3,
+					"data": {
+						"path": "/milk"
+					},
+					"item": {
+						"title": "{Store Name}",
+						"icon": {
+							"src": "{icon}"
+						},
+						"highlight": "{state}",
+						"description": "{state}",
+						"actionsStrip": [{
+							"text": "{Revenue}"
+						}]
+					}
+				},
+				"footer": {
+					"actionsStrip": [{
+						"text": "{milk/0/Revenue}"
+					}]
+				}
+			}
+		},
+		"table": {
+			"sap.app": {
+				"id": "cardsdemo.preview.table",
+				"type": "card"
+			},
+			"sap.card": {
+				"type": "Table",
+				"data": {
+					"json": [{
+							"salesOrder": "5000010050",
+							"customerName": "Robert Brown Entertainment",
+							"netAmount": "2K USD",
+							"status": "Delivered",
+							"statusState": "Success",
+							"deliveryProgress": 100
+						},
+						{
+							"salesOrder": "5000010051",
+							"customerName": "Entertainment Argentinia",
+							"netAmount": "127k USD",
+							"status": "Canceled",
+							"statusState": "Error",
+							"deliveryProgress": 0
+						},
+						{
+							"salesOrder": "5000010052",
+							"customerName": "Brazil Technologies",
+							"netAmount": "8K USD",
+							"status": "In Progress",
+							"statusState": "Warning",
+							"deliveryProgress": 33
+						},
+						{
+							"salesOrder": "5000010053",
+							"customerName": "Quimica Madrilenos",
+							"netAmount": "25K USD",
+							"status": "Delivered",
+							"statusState": "Success",
+							"deliveryProgress": 100
+						},
+						{
+							"salesOrder": "5000010054",
+							"customerName": "Development Para O Governo",
+							"netAmount": "7K USD",
+							"status": "Delivered",
+							"statusState": "Success",
+							"deliveryProgress": 100
+						},
+						{
+							"salesOrder": "5000010050",
+							"customerName": "Robert Brown Entertainment",
+							"netAmount": "2K USD",
+							"status": "Delivered",
+							"statusState": "Success",
+							"deliveryProgress": 100
+						}
+					]
+				},
+				"header": {
+					"title": "Sales Orders for Key Accounts",
+					"subTitle": "Today"
+				},
+				"content": {
+					"maxItems": 6,
+					"row": {
+						"columns": [{
+								"title": "Sales Order",
+								"value": "{salesOrder}",
+								"identifier": true
+							},
+							{
+								"title": "Customer",
+								"value": "{customerName}"
+							},
+							{
+								"title": "Net Amount",
+								"value": "{netAmount}",
+								"hAlign": "End"
+							},
+							{
+								"title": "Status",
+								"value": "{status}",
+								"state": "{statusState}"
+							},
+							{
+								"title": "Delivery Progress",
+								"progressIndicator": {
+									"percent": "{deliveryProgress}",
+									"text": "{= format.percent(${deliveryProgress} / 100)}",
+									"state": "{statusState}"
+								}
+							}
+						]
+					}
+				}
+			}
+		},
+		"adaptive": {
+			"sap.app": {
+				"id": "cardsdemo.preview.adaptive",
+				"type": "card"
+			},
+			"sap.card": {
+				"type": "AdaptiveCard",
+				"data": {
+					"json": {
+						"title": "Adaptive Card",
+						"firstName": "Donna",
+						"lastName": "Moore",
+						"position": "Sales Executive",
+						"image": "./DonnaMoore.png",
+						"description": "Lorem ipsum dolor st amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua.",
+						"company": {
+							"name": "Robert Brown Entertainment",
+							"address": "481 West Street, Anytown OH 45066, USA"
+						}
+					},
+					"mockData": {
+						"json": {
+							"title": "Adaptive Card",
+							"description": "Mocked description",
+							"firstName": "Mocked name",
+							"lastName": "Mocked last name",
+							"company": {
+								"name": "Mocked company",
+								"address": "Mocked address"
+							}
+						}
+					}
+				},
+				"header": {
+					"title": "{title}",
+					"subTitle": "{position}",
+					"icon": {
+						"src": "{image}"
+					}
+				},
+				"configuration": {
+					"parameters": {
+						"title" : {
+							"value": "Employee ID card"
+						},
+						"subTitle": {
+							"value": "Obligations and Responsibilities"
+						}
+					}
+				},
+				"content": {
+					"$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+					"type": "AdaptiveCard",
+					"version": "1.0",
+					"body": [
+						{
+							"type": "TextBlock",
+							"text": "${description}",
+							"wrap": true
+						},
+						{
+							"type": "FactSet",
+							"facts": [
+								{
+									"title": "First Name:",
+									"value": "${firstName}"
+								},
+								{
+									"title": "Last Name:",
+									"value": "${lastName}"
+								},
+								{
+									"title": "Company:",
+									"value": "${company.name}"
+								},
+								{
+									"title": "Address:",
+									"value": "${company.address}"
+								}
+							]
+						}
+					],
+					"actions": [
+						{
+							"type": "Action.ShowCard",
+							"title": "Schedule a meeting",
+							"card": {
+								"type": "AdaptiveCard",
+								"body": [
+									{
+										"type": "Input.Date",
+										"id": "meetDate"
+									},
+									{
+										"type": "Input.Time",
+										"id": "meetTime"
+									}
+								],
+								"actions": [
+									{
+										"type": "Action.Submit",
+										"title": "OK"
+									}
+								]
+							}
+						},
+						{
+							"type": "Action.ShowCard",
+							"title": "Comment",
+							"card": {
+								"type": "AdaptiveCard",
+								"body": [
+									{
+										"type": "Input.Text",
+										"id": "comment",
+										"isMultiline": true,
+										"placeholder": "Enter your comment"
+									}
+								],
+								"actions": [
+									{
+										"type": "Action.Submit",
+										"title": "OK"
+									}
+								]
+							}
+						}
+					]
+				}
+			}
+		}
+	},
+	"filters": {
+		"filter": {
+			"sap.app": {
+				"id": "cardsdemo.filters.filter",
+				"type": "card"
+			},
+			"sap.card": {
+				"data": {
+					"request": {
+						"url": "./cardcontent/someitems.json"
+					}
+				},
+				"configuration": {
+					"filters": {
+						"f": {
+							"value": 1,
+							"items": [
+								{
+									"key": 1,
+									"title": "Option 1"
+								},
+								{
+									"key": 2,
+									"title": "Option 2"
+								},
+								{
+									"key": 3,
+									"title": "Option 3"
+								},
+								{
+									"key": 4,
+									"title": "Option 4"
+								}
+							]
+						}
+					}
+				},
+				"type": "List",
+				"header": {
+					"title": "Card with a Filter",
+					"icon": {
+						"src": "sap-icon://filter"
+					}
+				},
+				"content": {
+					"maxItems": 4,
+					"item": {
+						"icon": {
+							"src": "{icon}"
+						},
+						"title": "{Name}",
+						"description": "{Description}"
+					}
+				}
+			}
+		},
+		"dateRangeFilter": {
+			"sap.app": {
+				"id": "cardsdemo.filters.filter",
+				"type": "card"
+			},
+			"sap.card": {
+				"data": {
+					"request": {
+						"url": "./cardcontent/someitems.json"
+					}
+				},
+				"configuration": {
+					"filters": {
+						"f": {
+							"type": "DateRange",
+							"value": {
+								"option": "dateRange",
+								"values": ["1997-05-01", "1997-05-31"]
+							}
+						}
+					}
+				},
+				"type": "Object",
+				"header": {
+					"title": "Card with Date Range Filter",
+					"icon": {
+						"src": "sap-icon://filter"
+					}
+				},
+				"content": {
+					"groups": [
+						{
+							"title": "Values",
+							"items": [
+								{
+									"label": "range/start",
+									"value": "{filters>/f/range/start}"
+								},
+								{
+									"label": "range/end",
+									"value": "{filters>/f/range/end}"
+								},
+								{
+									"label": "rangeOData/start",
+									"value": "{filters>/f/rangeOData/start}"
+								},
+								{
+									"label": "rangeOData/end",
+									"value": "{filters>/f/rangeOData/end}"
+								},
+								{
+									"label": "value/option",
+									"value": "{filters>/f/value/option}"
+								},
+								{
+									"label": "value/values",
+									"value": "{filters>/f/value/values}"
+								}
+							]
+						}
+					]
+				}
+			}
+		},
+		"dateRangeFilterWithParameter": {
+			"sap.app": {
+				"id": "cardsdemo.filters.filter",
+				"type": "card"
+			},
+			"sap.card": {
+				"data": {
+					"request": {
+						"url": "./cardcontent/someitems.json"
+					}
+				},
+				"configuration": {
+					"filters": {
+						"f": {
+							"type": "DateRange",
+							"value": "{parameters>/range/value}"
+						}
+					},
+					"parameters": {
+						"range": {
+							"value": {
+								"option": "dateRange",
+								"values": ["1997-05-01", "1997-05-31"]
+							}
+						}
+					}
+				},
+				"type": "Object",
+				"header": {
+					"title": "Card with Date Range Filter with Parameter",
+					"icon": {
+						"src": "sap-icon://filter"
+					}
+				},
+				"content": {
+					"groups": [
+						{
+							"title": "Values",
+							"items": [
+								{
+									"label": "range/start",
+									"value": "{filters>/f/range/start}"
+								},
+								{
+									"label": "range/end",
+									"value": "{filters>/f/range/end}"
+								},
+								{
+									"label": "rangeOData/start",
+									"value": "{filters>/f/rangeOData/start}"
+								},
+								{
+									"label": "rangeOData/end",
+									"value": "{filters>/f/rangeOData/end}"
+								},
+								{
+									"label": "value/option",
+									"value": "{filters>/f/value/option}"
+								},
+								{
+									"label": "value/values",
+									"value": "{filters>/f/value/values}"
+								}
+							]
+						}
+					]
+				}
+			}
+		},
+		"dateRangeFilterWithParameter2": {
+			"sap.app": {
+				"id": "cardsdemo.filters.filter",
+				"type": "card"
+			},
+			"sap.card": {
+				"data": {
+					"request": {
+						"url": "./cardcontent/someitems.json"
+					}
+				},
+				"configuration": {
+					"filters": {
+						"f": {
+							"type": "DateRange",
+							"value": {
+								"option": "{parameters>/range/value}",
+								"values": ["1997-05-01", "1997-05-31"]
+							}
+						}
+					},
+					"parameters": {
+						"range": {
+							"value": "dateRange"
+						}
+					}
+				},
+				"type": "Object",
+				"header": {
+					"title": "Card with Date Range Filter with Parameter 2",
+					"icon": {
+						"src": "sap-icon://filter"
+					}
+				},
+				"content": {
+					"groups": [
+						{
+							"title": "Values",
+							"items": [
+								{
+									"label": "range/start",
+									"value": "{filters>/f/range/start}"
+								},
+								{
+									"label": "range/end",
+									"value": "{filters>/f/range/end}"
+								},
+								{
+									"label": "rangeOData/start",
+									"value": "{filters>/f/rangeOData/start}"
+								},
+								{
+									"label": "rangeOData/end",
+									"value": "{filters>/f/rangeOData/end}"
+								},
+								{
+									"label": "value/option",
+									"value": "{filters>/f/value/option}"
+								},
+								{
+									"label": "value/values",
+									"value": "{filters>/f/value/values}"
+								}
+							]
+						}
+					]
+				}
+			}
+		},
+		"filterVisibleFalse": {
+			"sap.app": {
+				"id": "cardsdemo.filters.filterVisibleFalse",
+				"type": "card"
+			},
+			"sap.card": {
+				"data": {
+					"request": {
+						"url": "./cardcontent/someitems.json"
+					}
+				},
+				"configuration": {
+					"parameters": {
+						"showFilters": {
+							"value": false,
+							"type": "boolean"
+						}
+					},
+					"filters": {
+						"f1": {
+							"visible": "{= Boolean(${filters>/f3/value}) }",
+							"type": "Select",
+							"value": 2,
+							"items": [
+								{ "key": 1, "title": "Option 1" },
+								{ "key": 2, "title": "Option 2" }
+							]
+						},
+						"f2": {
+							"visible": true,
+							"type": "DateRange",
+							"value": {
+								"option": "dateRange",
+								"values": ["1997-05-01", "1997-05-31"]
+							}
+						},
+						"f3": {
+							"visible": true,
+							"value": "some value",
+							"type": "Search"
+						}
+					}
+				},
+				"type": "List",
+				"header": {
+					"title": "Card with Hidden Filters"
+				},
+				"content": {
+					"maxItems": 2,
+					"item": {
+						"icon": {
+							"src": "{icon}"
+						},
+						"title": "{Name}",
+						"description": "{Description}"
+					}
+				}
+			}
+		},
+		"multipleFilters": {
+			"sap.app": {
+				"id": "cardsdemo.filters.multiplefilters",
+				"type": "card"
+			},
+			"sap.card": {
+				"data": {
+					"request": {
+						"url": "./cardcontent/someitems.json"
+					}
+				},
+				"configuration": {
+					"filters": {
+						"f1": {
+							"type": "DateRange",
+							"value": {
+								"option": "dateRange",
+								"values": ["1997-05-01", "1997-05-31"]
+							}
+						},
+						"f2": {
+							"type": "Search"
+						},
+						"f3": {
+							"type": "Select",
+							"value": 1,
+							"items": [
+								{
+									"key": 1,
+									"title": "Aaaaa"
+								},
+								{
+									"key": 2,
+									"title": "AaaaaBbbbbb"
+								},
+								{
+									"key": 3,
+									"title": "AaaaaBbbbbbCcccc"
+								},
+								{
+									"key": 4,
+									"title": "AaaaaBbbbbbCccccDdddd"
+								}
+							]
+						}
+					}
+				},
+				"type": "Object",
+				"header": {
+					"title": "Card with Multiple Filters",
+					"icon": {
+						"src": "sap-icon://filter"
+					}
+				},
+				"content": {
+					"groups": [
+						{
+							"title": "Values",
+							"items": [
+								{
+									"label": "Name",
+									"value": "Donna Moore"
+								}
+							]
+						}
+					]
+				}
+			}
+		}
+	},
+	"transparent": {
+		"list1": {
+			"sap.app": {
+				"id": "cardsdemo.transparent.list1",
+				"type": "card"
+			},
+			"sap.card": {
+				"data": {
+					"request": {
+						"url": "./cardcontent/someitems.json"
+					}
+				},
+				"type": "List",
+				"content": {
+					"item": {
+						"icon": {
+							"src": "{icon}"
+						},
+						"title": {
+							"label": "Title",
+							"value": "{Name}"
+						},
+						"description": {
+							"label": "Description",
+							"value": "{Description}"
+						},
+						"highlight": "{state}",
+						"info": {
+							"value": "{info}",
+							"state": "{infoState}"
+						}
+					}
+				}
+			}
+		},
+		"object1": {
+			"sap.app": {
+				"id": "cardsdemo.transparent.object1",
+				"type": "card"
+			},
+			"sap.card": {
+				"type": "Object",
+				"data": {
+					"json": {
+						"firstName": "Donna",
+						"lastName": "Moore",
+						"position": "Sales Executive",
+						"phone": "+1 202 555 5555",
+						"email": "my@mymail.com",
+						"agendaUrl": "/agenda",
+						"manager": {
+							"firstName": "Alain",
+							"lastName": "Chevalier"
+						},
+						"company": {
+							"name": "Robert Brown Entertainment",
+							"address": "481 West Street, Anytown OH 45066, USA",
+							"email": "mail@mycompany.com",
+							"emailSubject": "Subject",
+							"website": "www.company_a.example.com",
+							"url": "https://www.company_a.example.com"
+						}
+					}
+				},
+				"content": {
+					"groups": [
+						{
+							"title": "Contact Details",
+							"items": [
+								{
+									"label": "First Name",
+									"value": "{firstName}"
+								},
+								{
+									"label": "Last Name",
+									"value": "{lastName}"
+								},
+								{
+									"label": "Phone",
+									"value": "{phone}",
+									"actions": [
+										{
+											"type": "Navigation",
+											"parameters": {
+												"url": "tel:{phone}"
+											}
+										}
+									]
+								},
+								{
+									"label": "Email",
+									"value": "{email}",
+									"actions": [
+										{
+											"type": "Navigation",
+											"parameters": {
+												"url": "mailto:{email}"
+											}
+										}
+									]
+								},
+								{
+									"label": "Agenda",
+									"value": "Book a meeting",
+									"actions": [
+										{
+											"type": "Navigation",
+											"enabled": "{= ${agendaUrl}}",
+											"parameters": {
+												"url": "{agendaUrl}"
+											}
+										}
+									]
+								}
+							]
+						},
+						{
+							"title": "Company Details",
+							"items": [
+								{
+									"label": "Company Name",
+									"value": "{company/name}"
+								},
+								{
+									"label": "Address",
+									"value": "{company/address}"
+								},
+								{
+									"label": "Email",
+									"value": "{company/email}",
+									"actions": [
+										{
+											"type": "Navigation",
+											"parameters": {
+												"url": "mailto:{company/email}?subject={company/emailSubject}"
+											}
+										}
+									]
+								},
+								{
+									"label": "Website",
+									"value": "{company/website}",
+									"actions": [
+										{
+											"type": "Navigation",
+											"parameters": {
+												"url": "{company/url}"
+											}
+										}
+									]
+								}
+							]
+						},
+						{
+							"title": "Organizational Details",
+							"items": [
+								{
+									"label": "Direct Manager",
+									"value": "{manager/firstName} {manager/lastName}",
+									"icon": {
+										"text": "DM"
+									}
+								}
+							]
+						}
+					]
+				}
+			}
+		},
+		"todo1": {
+			"sap.app": {
+				"id": "card.explorer.object.todo1",
+				"type": "card"
+			},
+			"sap.card": {
+				"type": "Object",
+				"header": {
+					"icon": {
+						"text": "DM"
+					},
+					"title": "Donna Moore",
+					"subTitle": "Complete your time recording",
+					"actions": [
+						{
+							"type": "Navigation",
+							"parameters": {
+								"url": "#"
+							}
+						}
+					]
+				},
+				"configuration": {
+					"filters": {
+						"productCategory": {
+							"value": "Notebooks",
+							"type": "Select",
+							"label": "Category",
+							"items": [
+								{
+									"title": "All",
+									"key": "all"
+								},
+								{
+									"title": "Flat Screen Monitors",
+									"key": "Flat Screen Monitors"
+								},
+								{
+									"title": "Notebooks",
+									"key": "Notebooks"
+								}
+							]
+						}
+					}
+				},
+				"content": {
+					"groups": [
+						{
+							"alignment": "Stretch",
+							"items": [
+								{
+									"type": "NumericData",
+									"mainIndicator": {
+										"number": "35",
+										"unit": "h",
+										"state": "Error",
+										"size": "S"
+									},
+									"details": "Project Nanga Prabat (Ingo) 0 hours recorded. Please, record your time by the end of the month."
+								}
+							]
+						}
+					],
+					"actions": [
+						{
+							"type": "Navigation",
+							"parameters": {
+								"url": "#"
+							}
+						}
+					]
+				},
+				"footer": {
+					"actionsStrip": [
+						{
+							"text": "Send Reminder",
+							"buttonType": "Accept"
+						}
+					]
+				}
+			}
+		},
+		"tablecard1": {
+			"sap.app": {
+				"id": "cardsdemo.kpiManifests.tablecard123",
+				"type": "card"
+			},
+			"sap.card": {
+				"headerPosition": "Top",
+				"header": {
+					"type": "Numeric",
+					"data": {
+						"request": {
+							"url": "./cardcontent/kpi.json"
+						},
+						"path": "/kpiInfos/kpi"
+					},
+					"title": "Numeric Header with Only Title and Subtitle",
+					"subTitle": "Some subtitle"
+				},
+				"type": "Table",
+				"content": {
+					"data": {
+						"request": {
+							"url": "./cardcontent/tableitems.json"
+						},
+						"path": "/names"
+					},
+					"row": {
+						"columns": [
+							{
+								"title": "First Name",
+								"value": "{firstName}"
+							},
+							{
+								"title": "Last Name",
+								"value": "{lastName}"
+							}
+						]
+					}
+				}
+			}
+		}
+	}
+}

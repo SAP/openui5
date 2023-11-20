@@ -13,19 +13,19 @@ sap.ui.define([
 	 * @abstract
 	 * @extends sap.ui.base.ManagedObject
 	 * @public
-	 * @name sap.ui.test.matchers.Matcher
+	 * @alias sap.ui.test.matchers.Matcher
 	 * @author SAP SE
 	 * @since 1.23
 	 */
-	var Matcher = ManagedObject.extend("sap.ui.test.matchers.Matcher", {
+	var Matcher = ManagedObject.extend("sap.ui.test.matchers.Matcher", /** @lends sap.ui.test.matchers.Matcher.prototype */ {
 
 		metadata : {
 			publicMethods : [ "isMatching" ]
 		},
 
 		constructor: function () {
+			ManagedObject.prototype.constructor.apply(this, arguments);
 			this._oLogger = _OpaLogger.getLogger(this.getMetadata().getName());
-			return ManagedObject.prototype.constructor.apply(this, arguments);
 		},
 
 		/**
@@ -36,12 +36,28 @@ sap.ui.define([
 		 * @param {sap.ui.core.Control} oControl the control that is checked by the matcher
 		 * @return {boolean} true if the Control is matching the condition of the matcher
 		 * @protected
-		 * @name sap.ui.test.matchers.Matcher#isMatching
-		 * @function
 		 */
 		isMatching : function (oControl) {
 			return true;
+		},
+
+		/**
+		 * @returns {Window} window of the application under test, or the current window if Opa5 is not loaded
+		 * Note: declared matchers are instantiated in the app context (by MatcherFactory)
+		 * while users instantiate matchers in the test context (in a waitFor)
+		 * @private
+		 */
+		_getApplicationWindow: function () {
+			var Opa5 = sap.ui.require("sap/ui/test/Opa5");
+			if (Opa5) {
+				// matcher context === test context, because Opa5 is loaded
+				return Opa5.getWindow();
+			} else {
+				// matcher context === app context
+				return window;
+			}
 		}
+
 	});
 
 	return Matcher;

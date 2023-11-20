@@ -1,0 +1,30 @@
+{
+  "1.79.0": {
+    "date": "May 2020",
+    "notes": [
+      {
+        "id": "3216238d260c0895be4fcbb6be1215e14cffad4e",
+        "type": "FIX",
+        "text": " FilterField: clearing invalid input leads to error",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080102969"
+          }
+        ]
+      },
+      {
+        "id": "994b8a15e637e6f49ee108efb8da032a38e27f6b",
+        "type": "FIX",
+        "text": " FieldValueHelp: set BindingContext if updated",
+        "references": []
+      },
+      {
+        "id": "f088093d31be8f63caa3a82f5f5004161ba95730",
+        "type": "FIX",
+        "text": " mdc.FilterBar: fix for change creation with empty value array",
+        "references": []
+      }
+    ]
+  }
+}

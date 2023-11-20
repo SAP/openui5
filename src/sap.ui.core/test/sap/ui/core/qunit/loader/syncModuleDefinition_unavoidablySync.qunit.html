@@ -1,0 +1,36 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>QUnit tests: ui5loader synchronous module definition</title>
+
+	<!--
+		Tests a scenario where, during a bootstrap in async mode, multiple module definitions are executed synchronously
+		(typically in a bundle like sap-ui-core.js). In earlier versions of the ui5loader, those modules got mistakenly
+		registered as aliases of 'ui5loader.js' and therefore inherited its export (which is undefined).
+
+		The test creates the same scenario without a bundle (using sync loading) and tests the export of the modules
+		in question at a later point in time.
+	-->
+
+	<script src="../../shared-config.js"></script>
+
+	<script src="../../../../../../resources/ui5loader.js"
+		id="sap-ui-bootstrap"
+		data-sap-ui-async="true">
+	</script>
+	<script src="../../../../../../resources/ui5loader-autoconfig.js"></script>
+	<script src="fixture/syncModuleDefinition_legacyAPIs/syncModuleRequire_unavoidablySync.js"></script>
+
+	<link  href="../../../../../../resources/sap/ui/thirdparty/qunit-2.css" rel="stylesheet">
+	<script src="../../../../../../resources/sap/ui/thirdparty/qunit-2.js"></script>
+	<script src="../../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+	<script src="../../../../../../resources/sap/ui/thirdparty/sinon-4.js"></script>
+	<script src="../../../../../../resources/sap/ui/qunit/sinon-qunit-bridge.js"></script>
+
+	<script src="syncModuleDefinition_unavoidablySync.qunit.js"></script>
+</head>
+<body>
+	<div id="qunit"></div>
+</body>
+</html>

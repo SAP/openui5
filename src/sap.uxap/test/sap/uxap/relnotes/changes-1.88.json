@@ -1,0 +1,18 @@
+{
+  "1.88.0": {
+    "date": "March 2021",
+    "notes": [
+      {
+        "id": "16333552192568f43bd14648bf70041bf666e4de",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Unset selected section of hidden page",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180046524"
+          }
+        ]
+      }
+    ]
+  }
+}

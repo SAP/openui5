@@ -1,0 +1,43 @@
+{
+	"_version": "1.14.0",
+	"sap.app": {
+		"id": "card.explorer.extension.refreshData",
+		"type": "card",
+		"title": "Sample of a List",
+		"subTitle": "Sample of a list with random products",
+		"applicationVersion": {
+			"version": "1.0.0"
+		},
+		"shortTitle": "A short title for this Card",
+		"info": "Additional information about this Card",
+		"description": "A long description for this Card",
+		"tags": {
+			"keywords": [
+				"Card",
+				"Sample",
+				"Extension",
+				"Data",
+				"Refresh"
+			]
+		}
+	},
+	"sap.card": {
+		"type": "List",
+		"extension": "./DataExtension",
+		"header": {
+			"title": "Random Products"
+		},
+		"content": {
+			"data": {
+				"extension": {
+					"method": "getData"
+				},
+				"path": "/items"
+			},
+			"item": {
+				"title": "{name}"
+			},
+			"maxItems": 4
+		}
+	}
+}

@@ -1,0 +1,26 @@
+<mvc:View
+	controllerName="view.Main"
+	xmlns:l="sap.ui.layout"
+	xmlns="sap.m"
+	xmlns:mvc="sap.ui.core.mvc">
+	<Shell>
+		<App>
+			<Page title="Static Area Controls">
+				<content>
+					<l:VerticalLayout
+						class="sapUiContentPadding"
+						width="100%">
+						<l:content>
+							<Button
+								text="Show Message Toast"
+								press="showMessageToast" />
+							<Button
+								text="Show Dialog"
+								press="showDialog" />
+						</l:content>
+					</l:VerticalLayout>
+				</content>
+			</Page>
+		</App>
+	</Shell>
+</mvc:View>

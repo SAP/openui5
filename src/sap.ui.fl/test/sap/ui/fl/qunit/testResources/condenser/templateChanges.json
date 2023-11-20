@@ -1,0 +1,359 @@
+[
+	{
+		"fileName": "id_01_rename",
+		"changeType": "rename",
+		"reference": "sap.ui.rta.test",
+		"content": {
+			"boundAggregation": "items",
+			"originalControlType": "sap.m.Text"
+		},
+		"dependentSelector": {
+			"originalSelector": {
+				"id": "idMain1--idProductsTable-tableText",
+				"idIsLocal": true
+			}
+		},
+		"layer": "CUSTOMER",
+		"selector": {
+			"id": "idMain1--idProductsTable",
+			"idIsLocal": true
+		},
+		"texts": {
+			"newText": {
+				"value": "text1",
+				"type": "XTXT"
+			}
+		},
+		"creation": "2021-09-01T08:29:16.261Z"
+	},
+	{
+		"fileName": "id_02_rename",
+		"changeType": "rename",
+		"reference": "sap.ui.rta.test",
+		"content": {
+			"boundAggregation": "items",
+			"originalControlType": "sap.m.Text"
+		},
+		"dependentSelector": {
+			"originalSelector": {
+				"id": "idMain1--idProductsTable-tableText",
+				"idIsLocal": true
+			}
+		},
+		"layer": "CUSTOMER",
+		"selector": {
+			"id": "idMain1--idProductsTable",
+			"idIsLocal": true
+		},
+		"texts": {
+			"newText": {
+				"value": "text2",
+				"type": "XTXT"
+			}
+		},
+		"creation": "2021-09-02T08:29:16.261Z"
+	},
+	{
+		"fileName": "id_03_rename",
+		"changeType": "rename",
+		"reference": "sap.ui.rta.test",
+		"content": {
+			"boundAggregation": "items",
+			"originalControlType": "sap.m.Text"
+		},
+		"dependentSelector": {
+			"originalSelector": {
+				"id": "idMain1--idProductsTable-tableText",
+				"idIsLocal": true
+			}
+		},
+		"layer": "CUSTOMER",
+		"selector": {
+			"id": "idMain1--idProductsTable",
+			"idIsLocal": true
+		},
+		"texts": {
+			"newText": {
+				"value": "text3",
+				"type": "XTXT"
+			}
+		},
+		"creation": "2021-09-03T08:29:16.261Z"
+	},
+	{
+		"fileName": "id_04_rename",
+		"changeType": "rename",
+		"reference": "sap.ui.rta.test",
+		"content": {
+			"boundAggregation": "items",
+			"originalControlType": "sap.m.Text"
+		},
+		"dependentSelector": {
+			"originalSelector": {
+				"id": "idMain1--LayoutText01",
+				"idIsLocal": true
+			}
+		},
+		"layer": "CUSTOMER",
+		"selector": {
+			"id": "idMain1--idProductsTable",
+			"idIsLocal": true
+		},
+		"texts": {
+			"newText": {
+				"value": "layoutText1",
+				"type": "XTXT"
+			}
+		},
+		"creation": "2021-09-04T08:29:16.261Z"
+	},
+	{
+		"fileName": "id_05_rename",
+		"changeType": "rename",
+		"reference": "sap.ui.rta.test",
+		"content": {
+			"boundAggregation": "items",
+			"originalControlType": "sap.m.Text"
+		},
+		"dependentSelector": {
+			"originalSelector": {
+				"id": "idMain1--LayoutText01",
+				"idIsLocal": true
+			}
+		},
+		"layer": "CUSTOMER",
+		"selector": {
+			"id": "idMain1--idProductsTable",
+			"idIsLocal": true
+		},
+		"texts": {
+			"newText": {
+				"value": "layoutText2",
+				"type": "XTXT"
+			}
+		},
+		"creation": "2021-09-05T08:29:16.261Z"
+	},
+	{
+		"fileName": "id_06_rename",
+		"changeType": "rename",
+		"reference": "sap.ui.rta.test",
+		"content": {
+			"boundAggregation": "items",
+			"originalControlType": "sap.m.Text"
+		},
+		"dependentSelector": {
+			"originalSelector": {
+				"id": "idMain1--LayoutText01",
+				"idIsLocal": true
+			}
+		},
+		"layer": "CUSTOMER",
+		"selector": {
+			"id": "idMain1--idProductsTable",
+			"idIsLocal": true
+		},
+		"texts": {
+			"newText": {
+				"value": "layoutText3",
+				"type": "XTXT"
+			}
+		},
+		"creation": "2021-09-06T08:29:16.261Z"
+	},
+	{
+		"fileName": "id_01_hideControl",
+		"changeType": "hideControl",
+		"content": {
+			"boundAggregation": "items"
+		},
+		"layer": "CUSTOMER",
+		"reference": "sap.ui.rta.test",
+		"dependentSelector": {
+			"originalSelector": {
+				"id": "idMain1--idProductsTable-columnLayout02",
+				"idIsLocal": true
+			}
+		},
+		"selector": {
+			"id": "idMain1--idProductsTable",
+			"idIsLocal": true
+		},
+		"creation": "2021-09-07T08:29:16.261Z"
+	},
+	{
+		"fileName": "id_02_unhideControl",
+		"changeType": "unhideControl",
+		"content": {
+			"boundAggregation": "items"
+		},
+		"layer": "CUSTOMER",
+		"dependentSelector": {
+			"originalSelector": {
+				"id": "idMain1--idProductsTable-columnLayout02",
+				"idIsLocal": true
+			}
+		},
+		"reference": "sap.ui.rta.test",
+		"selector": {
+			"id": "idMain1--idProductsTable",
+			"idIsLocal": true
+		},
+		"creation": "2021-09-08T08:29:16.261Z"
+	},
+	{
+		"fileName": "id_03_hideControl",
+		"changeType": "hideControl",
+		"content": {
+			"boundAggregation": "items"
+		},
+		"layer": "CUSTOMER",
+		"reference": "sap.ui.rta.test",
+		"dependentSelector": {
+			"originalSelector": {
+				"id": "idMain1--idProductsTable-columnLayout02",
+				"idIsLocal": true
+			}
+		},
+		"selector": {
+			"id": "idMain1--idProductsTable",
+			"idIsLocal": true
+		},
+		"creation": "2021-09-09T08:29:16.261Z"
+	},
+	{
+		"fileName": "id_01_move",
+		"changeType": "moveControls",
+		"reference": "sap.ui.rta.test",
+		"content": {
+			"boundAggregation": "items",
+			"movedElements": [
+				{
+					"selector": {
+						"id": "idMain1--idProductsTable-layoutText02",
+						"idIsLocal": true
+					},
+					"sourceIndex": 0,
+					"targetIndex": 1
+				}
+			],
+			"source": {
+				"selector": {
+					"aggregation": "content",
+					"type": "sap.ui.layout.VerticalLayout",
+					"id": "idMain1--idProductsTable-columnLayout02",
+					"idIsLocal": true
+				}
+			},
+			"target": {
+				"selector": {
+					"aggregation": "content",
+					"type": "sap.ui.layout.VerticalLayout",
+					"id": "idMain1--idProductsTable-columnLayout02",
+					"idIsLocal": true
+				}
+			}
+		},
+		"dependentSelector": {
+			"originalSelector": {
+				"id": "idMain1--idProductsTable-columnLayout02",
+				"idIsLocal": true
+			}
+		},
+		"selector": {
+			"id": "idMain1--idProductsTable",
+			"idIsLocal": true
+		},
+		"creation": "2021-09-10T08:29:16.261Z"
+	},
+	{
+		"fileName": "id_02_move",
+		"changeType": "moveControls",
+		"reference": "sap.ui.rta.test",
+		"content": {
+			"boundAggregation": "items",
+			"movedElements": [
+				{
+					"selector": {
+						"id": "idMain1--idProductsTable-layoutText03",
+						"idIsLocal": true
+					},
+					"sourceIndex": 0,
+					"targetIndex": 1
+				}
+			],
+			"source": {
+				"selector": {
+					"aggregation": "content",
+					"type": "sap.ui.layout.VerticalLayout",
+					"id": "idMain1--idProductsTable-columnLayout02",
+					"idIsLocal": true
+				}
+			},
+			"target": {
+				"selector": {
+					"aggregation": "content",
+					"type": "sap.ui.layout.VerticalLayout",
+					"id": "idMain1--idProductsTable-columnLayout02",
+					"idIsLocal": true
+				}
+			}
+		},
+		"dependentSelector": {
+			"originalSelector": {
+				"id": "idMain1--idProductsTable-columnLayout02",
+				"idIsLocal": true
+			}
+		},
+		"selector": {
+			"id": "idMain1--idProductsTable",
+			"idIsLocal": true
+		},
+		"creation": "2021-09-11T08:29:16.261Z"
+	},
+	{
+		"fileName": "id_03_move",
+		"changeType": "moveControls",
+		"reference": "sap.ui.rta.test",
+		"content": {
+			"boundAggregation": "items",
+			"movedElements": [
+				{
+					"selector": {
+						"id": "idMain1--idProductsTable-layoutText02",
+						"idIsLocal": true
+					},
+					"sourceIndex": 0,
+					"targetIndex": 1
+				}
+			],
+			"source": {
+				"selector": {
+					"aggregation": "content",
+					"type": "sap.ui.layout.VerticalLayout",
+					"id": "idMain1--idProductsTable-columnLayout02",
+					"idIsLocal": true
+				}
+			},
+			"target": {
+				"selector": {
+					"aggregation": "content",
+					"type": "sap.ui.layout.VerticalLayout",
+					"id": "idMain1--idProductsTable-columnLayout02",
+					"idIsLocal": true
+				}
+			}
+		},
+		"dependentSelector": {
+			"originalSelector": {
+				"id": "idMain1--idProductsTable-columnLayout02",
+				"idIsLocal": true
+			}
+		},
+		"selector": {
+			"id": "idMain1--idProductsTable",
+			"idIsLocal": true
+		},
+		"creation": "2021-09-12T08:29:16.261Z"
+	}
+]

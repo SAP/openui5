@@ -1,0 +1,40 @@
+{
+	"sap.app": {
+		"id": "AppUnderTestTable",
+		"type": "application",
+		"version": "1.0",
+		"applicationVersion": {
+			"version": "1.0.0"
+		},
+		"dataSources": {}
+	},
+	"sap.ui": {
+		"technology": "UI5"
+	},
+	"sap.ui5": {
+		"rootView": {
+			"preprocessors": {
+				"xml": {
+					"models": {
+						"metaList": ""
+					},
+					"bindingContexts": {}
+				}
+			},
+			"type": "XML",
+			"viewName": "view.App",
+			"id": "IDViewTableOpaTest",
+			"height": "100%",
+			"async": true
+		},
+		"dependencies": {
+			"libs": {
+				"sap.m": {},
+				"sap.ui.core": {},
+				"sap.ui.mdc": {}
+			},
+			"components": {}
+		},
+		"models": {}
+	}
+}

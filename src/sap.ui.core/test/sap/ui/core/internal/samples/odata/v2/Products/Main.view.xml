@@ -1,0 +1,91 @@
+<mvc:View
+	class="sapUiSizeCompact"
+	controllerName="sap.ui.core.internal.samples.odata.v2.Products.Main"
+	xmlns="sap.m"
+	xmlns:form="sap.ui.layout.form"
+	xmlns:mvc="sap.ui.core.mvc">
+	<App>
+	<Page id="page" showHeader="false">
+		<Table id="ProductSet" growing="true" growingThreshold="5" items="{/ProductSet}">
+			<headerToolbar>
+				<Toolbar>
+					<Title level="H1" text="Products V2"/>
+					<ToolbarSpacer/>
+					<Button id="resetChanges" icon="sap-icon://sys-cancel-2"
+						press="onResetChanges" text="Reset Changes"
+						tooltip="Reset Products Changes"/>
+					<Link href="{ui>/unitsOfMeasureURL}" text="Unit Codes" target="unitCodes"/>
+					<Link href="{ui>/currenciesURL}" text="Currency Codes" target="currencyCodes"/>
+				</Toolbar>
+			</headerToolbar>
+			<columns>
+				<Column>
+					<Label text="Product ID"/>
+				</Column>
+				<Column>
+					<Label text="Product Name"/>
+				</Column>
+				<Column>
+					<Label text="Weight"/>
+				</Column>
+				<Column>
+					<Label text="Price"/>
+				</Column>
+			</columns>
+			<ColumnListItem>
+				<Input id="ProductID" editable="false" textAlign="Left"
+					value="{ProductID}"/>
+				<Input id="Name"
+					value="{
+						path : 'Name',
+						type : 'sap.ui.model.odata.type.String',
+						constraints : {'maxLength' : 255, 'nullable' : false},
+						formatOptions : {'parseKeepsEmptyString' : true}
+					}"/>
+				<Input id="WeightMeasure" textAlign="Right"
+					value="{
+						mode : 'TwoWay',
+						parts : [{
+							path : 'WeightMeasure',
+							type : 'sap.ui.model.odata.type.Decimal',
+							constraints : {
+								'precision' : 13,
+								'scale' : 3,
+								'nullable' : false
+							}
+						}, {
+							path : 'WeightUnit',
+							type : 'sap.ui.model.odata.type.String',
+							constraints : {'maxLength' : 3, 'nullable' : false},
+							formatOptions : {'parseKeepsEmptyString' : true}
+						}, {
+							mode : 'OneTime',
+							path : '/##@@requestUnitsOfMeasure',
+							targetType : 'any'
+						}],
+						type : 'sap.ui.model.odata.type.Unit'}"/>
+				<Input id="Price" textAlign="Right"
+					value="{
+						mode : 'TwoWay',
+						parts : [{
+							path : 'Price',
+							type : 'sap.ui.model.odata.type.Decimal',
+							constraints : {
+								'precision' : 15, 'scale' : 'variable', 'nullable' : false
+							}
+						}, {
+							path : 'CurrencyCode',
+							type : 'sap.ui.model.odata.type.String',
+							constraints : {'maxLength' : 5, 'nullable' : false},
+							formatOptions : {'parseKeepsEmptyString' : true}
+						}, {
+							mode : 'OneTime',
+							path : '/##@@requestCurrencyCodes',
+							targetType : 'any'
+						}],
+						type : 'sap.ui.model.odata.type.Currency'}"/>
+			</ColumnListItem>
+		</Table>
+	</Page>
+	</App>
+</mvc:View>

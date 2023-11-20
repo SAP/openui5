@@ -1,0 +1,249 @@
+{
+	"namespacesToInterfaces": {
+		"BusyIndicator": true,
+		"RuleEngineOpaAssertions": true
+	},
+
+	"badSymbols": [
+
+		/**
+		 * The followong namespaces don't exist at runtime. They're only documented
+		 * to document the relationship between module and implemented jQuery plugin.
+		 *
+		 * To avoid dtslint errors ('no-empty-interfaces'), they're suppressed
+		 * in the dtslint generation.
+		 */
+		"module:sap/ui/dom/jquery/Aria",
+		"module:sap/ui/dom/jquery/control",
+		"module:sap/ui/dom/jquery/cursorPos",
+		"module:sap/ui/dom/jquery/Focusable",
+		"module:sap/ui/dom/jquery/getSelectedText",
+		"module:sap/ui/dom/jquery/hasTabIndex",
+		"module:sap/ui/dom/jquery/parentByAttribute",
+		"module:sap/ui/dom/jquery/rect",
+		"module:sap/ui/dom/jquery/rectContains",
+		"module:sap/ui/dom/jquery/scrollLeftRTL",
+		"module:sap/ui/dom/jquery/scrollRightRTL",
+		"module:sap/ui/dom/jquery/Selection",
+		"module:sap/ui/dom/jquery/Selectors",
+		"module:sap/ui/dom/jquery/selectText",
+		"module:sap/ui/dom/jquery/zIndex"
+	],
+
+	"typeTyposMap": {
+		"jQuery": "Object",
+		"jQuery.Event": "Object",
+		"jQuery.promise": "Object",
+
+		"DomNode": "Element",
+		"DOMNode": "Element",
+		"DOMRef": "Element",
+		"DomRef": "Element",
+		"domRef": "Element",
+		"DOMElement": "Element",
+
+		"Generator": "any"
+	},
+
+	"overlays": {
+		"sap.ui.core": [
+			{
+				"name": "sap.ui.core.UIArea",
+				"methods": [
+					{
+						"name": "getId",
+						"returnValue": {
+							"type": "string"
+						}
+					}
+				]
+			},
+			{
+				"name": "sap.ui.core.format.DateFormat.DateTimeWithTimezone",
+				"methods": [
+					{
+						"name": "parse",
+						"static": true,
+						"returnValue": {
+							"type": {
+								"kind": "NativeTSTypeExpression",
+								"type": "[Date|import('sap/ui/core/date/UI5Date').default|undefined, string|undefined]|null"
+							}
+						}
+					}
+				]
+			},
+			{
+				"name": "sap.ui.core.ComponentContainer",
+				"ui5-metadata": {
+					"properties": [
+						/**
+						 * The following 4 empty objects are needed in order to correctly overwrite the 'type'
+						 * property of the 5th element within this array. This is due to the fact that arrays
+						 * are merged by merging the elements that appear at the same index and not handled as
+						 * a map.
+						 */
+						{},
+						{},
+						{},
+						{},
+						{
+							"name": "settings",
+							"type": "sap.ui.core.$ComponentSettings"
+						}
+					]
+				},
+				"methods": [
+					{
+						"name": "getSettings",
+						"returnValue": {
+							"type": "sap.ui.core.$ComponentSettings"
+						}
+					},
+					{
+						"name": "setSettings",
+						"parameters": [
+							{
+								"name": "oSettings",
+								"type": "sap.ui.core.$ComponentSettings"
+							}
+						]
+					}
+				]
+			},
+			{
+				"name": "sap.ui.core.Component",
+				"methods": [
+					{
+						"name": "create",
+						"static": true,
+						"parameters": [
+							{
+								"name": "mOptions",
+								"parameterProperties": {
+									"settings": {
+										"name": "settings",
+										"type": "sap.ui.core.$ComponentSettings"
+									}
+								}
+							}
+						]
+					},
+					{
+						"name": "createComponent",
+						"parameters": [
+							{
+								"name": "vUsage",
+								"parameterProperties": {
+									"settings": {
+										"name": "settings",
+										"type": "sap.ui.core.$ComponentSettings"
+									}
+								}
+							}
+						]
+					}
+				]
+			},
+			{
+				"name": "sap.ui.base.ManagedObject",
+				"methods": [
+					{
+						"name": "applySettings",
+						"parameters": [
+							{
+								"name": "mSettings",
+								"type": "sap.ui.base.$ManagedObjectSettings"
+							}
+						]
+					}
+				]
+			},
+			{
+				"name": "sap.ui.base.Object",
+				"methods": [
+					{
+						"name": "isA",
+						"returnValue": {
+							"type": {
+								"kind": "NativeTSTypeExpression",
+								"type": "this is T"
+							}
+						},
+						"typeParameters": [
+							{
+								"name": "T",
+								"type": "sap.ui.base.Object",
+								"default": "sap.ui.base.Object"
+							}
+						]
+					},
+					{
+						"name": "isA",
+						"static": true,
+						"returnValue": {
+							"type": {
+								"kind": "NativeTSTypeExpression",
+								"type": "oObject is T"
+							}
+						},
+						"typeParameters": [
+							{
+								"name": "T",
+								"type": "sap.ui.base.Object",
+								"default": "sap.ui.base.Object"
+							}
+						]
+					}
+				]
+			},
+			{
+				"name": "sap.ui.base.Event",
+				"methods": [
+					{
+						"name": "getParameter",
+						"typeParameters": [
+							{
+								"name": "ParamName",
+								"type": {
+									"kind": "NativeTSTypeExpression",
+									"type": "keyof ParamsType"
+								}
+							}
+						],
+						"returnValue": {
+							"type": {
+								"kind": "NativeTSTypeExpression",
+								"type": "ParamsType[ParamName]"
+							}
+						},
+						"parameters": [
+							{
+								"name": "sName",
+								"type": "ParamName"
+							}
+						]
+					}
+				]
+			},
+			{
+				"name": "sap.ui.test.Opa",
+				"properties": [
+					{
+						"name": "and",
+						"type": "Omit<this, \"and\">"
+					}
+				]
+			},
+			{
+				"name": "sap.ui.test.Opa5",
+				"properties": [
+					{
+						"name": "and",
+						"type": "Omit<this, \"and\">"
+					}
+				]
+			}
+		]
+	}
+}

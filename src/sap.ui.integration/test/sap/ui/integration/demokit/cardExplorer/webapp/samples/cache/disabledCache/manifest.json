@@ -1,0 +1,58 @@
+{
+	"_version": "1.14.0",
+	"sap.app": {
+		"id": "card.explorer.cache.disabledCache",
+		"type": "card",
+		"title": "Sample for Disabled Cache",
+		"subTitle": "Sample for Disabled Cache",
+		"applicationVersion": {
+			"version": "1.0.0"
+		},
+		"shortTitle": "A short title for this card",
+		"info": "Additional information about this card",
+		"description": "A long description for this card",
+		"tags": {
+			"keywords": [
+				"List",
+				"Numeric",
+				"Card",
+				"Sample"
+			]
+		}
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"icons": {
+			"icon": "sap-icon://list"
+		}
+	},
+	"sap.card": {
+		"type": "List",
+		"designtime": "dt/Configuration",
+		"data": {
+			"request": {
+				"url": "./data.json",
+				"cache": {
+					"enabled": false
+				}
+			}
+		},
+		"header": {
+			"title": "Cache is disabled",
+			"subTitle": "Data will not be stored in the browser's cache",
+			"icon": {
+				"src": "sap-icon://desktop-mobile"
+			}
+		},
+		"content": {
+			"data": {
+				"path": "/items"
+			},
+			"maxItems": 5,
+			"item": {
+				"title": "{Name}",
+				"description": "{Description}"
+			}
+		}
+	}
+}

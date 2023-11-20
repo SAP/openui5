@@ -4,7 +4,7 @@
 /* =================================== */
 
 .sapMTreeItemBase {
-	min-height: 2.5rem;
+	min-height: @sapUiElementHeight;
 	font-family: @sapUiFontFamily;
 	font-size: @sapMFontMediumSize;
 	padding-left: 0;
@@ -14,12 +14,17 @@
 }
 
 .sapMTreeItemBaseExpander {
-	width: 3rem;
-	height: 2.5rem;
-	line-height: 2.5rem;
+	width: @sapUiElementLineHeight;
+	height: @sapUiElementHeight;
+	line-height: @sapUiElementHeight;
 	font-size: 1rem;
 	color: @sapUiContentIconColor;
 	flex-shrink: 0;
+}
+
+.sapMTreeItemBaseLeaf > .sapMTreeItemBaseExpander {
+	opacity: 0;
+	pointer-events: none;
 }
 
 .sapMLIBActive .sapMTreeItemBaseExpander {
@@ -31,7 +36,7 @@
 }
 
 .sapMTreeItemBaseChildren {
-	background-color: darken(@sapUiListBackground,2);
+	background-color: @sapUiListAlternatingBackground;
 	border-bottom-color: transparent;
 }
 

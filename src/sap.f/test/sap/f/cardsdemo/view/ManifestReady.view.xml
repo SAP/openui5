@@ -1,0 +1,24 @@
+<mvc:View
+	xmlns="sap.m"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:w="sap.ui.integration.widgets"
+	displayBlock="true"
+	controllerName="sap.f.cardsdemo.controller.ManifestReady">
+	<Page title="{i18n>appTitle}">
+		<subHeader>
+			<Toolbar>
+				<ToolbarSpacer/>
+				<Title text="ManifestReady Event"/>
+				<ToolbarSpacer/>
+			</Toolbar>
+		</subHeader>
+
+		<Panel>
+			<w:Card
+				manifest="{cardsPlayground>/playgroundBaseUrl}/bundles/listbundle/manifest.json"
+				manifestReady=".onManifestReady"
+				width="400px"
+				class="sapUiSmallMargin" />
+		</Panel>
+	</Page>
+</mvc:View>

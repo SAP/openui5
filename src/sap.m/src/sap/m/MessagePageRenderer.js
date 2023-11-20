@@ -13,14 +13,15 @@ sap.ui.define(['sap/ui/core/library'],
 			 * MessagePage renderer.
 			 * @namespace
 			 */
-			var MessagePageRenderer = {};
+			var MessagePageRenderer = {
+				apiVersion: 2
+			};
 
 			/**
 			 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
 			 *
 			 * @param {sap.ui.core.RenderManager} oRm the RenderManager that can be used for writing to the Render-Output-Buffer
-			 * @param {sap.ui.core.Control} oMessagePage an object representation of the control that should be rendered
-			 * @returns {sap.m.MessagePageRenderer} this instance for chaining
+			 * @param {sap.m.MessagePage} oMessagePage an object representation of the control that should be rendered
 			 */
 			MessagePageRenderer.render = function(oRm, oMessagePage) {
 				this.startOpeningDiv(oRm, oMessagePage);
@@ -35,16 +36,15 @@ sap.ui.define(['sap/ui/core/library'],
 			};
 
 			MessagePageRenderer.startOpeningDiv = function(oRm, oMessagePage) {
-				oRm.write("<div");
-				oRm.writeControlData(oMessagePage);
-				oRm.addClass("sapMMessagePage");
-				oRm.writeClasses();
+				oRm.openStart("div", oMessagePage);
+				oRm.attr("aria-roledescription", oMessagePage._sAriaRoleDescription);
+				oRm.class("sapMMessagePage");
 
-				if (oMessagePage.getTextDirection() != TextDirection.Inherit) {
-					oRm.writeAttribute("dir", oMessagePage.getTextDirection().toLowerCase());
+				if (oMessagePage.getTextDirection() !== TextDirection.Inherit) {
+					oRm.attr("dir", oMessagePage.getTextDirection().toLowerCase());
 				}
 
-				oRm.write(">");
+				oRm.openEnd();
 			};
 
 			MessagePageRenderer.renderHeader = function(oRm, oMessagePage) {
@@ -54,15 +54,13 @@ sap.ui.define(['sap/ui/core/library'],
 			};
 
 			MessagePageRenderer.startInnerDivs = function(oRm) {
-				oRm.write("<div");
-				oRm.addClass("sapMMessagePageInner");
-				oRm.writeClasses();
-				oRm.write(">");
+				oRm.openStart("div");
+				oRm.class("sapMMessagePageInner");
+				oRm.openEnd();
 
-				oRm.write("<div");
-				oRm.addClass("sapMMessagePageContentWrapper");
-				oRm.writeClasses();
-				oRm.write(">");
+				oRm.openStart("div");
+				oRm.class("sapMMessagePageContentWrapper");
+				oRm.openEnd();
 			};
 
 			MessagePageRenderer.renderContent = function(oRm, oMessagePage) {
@@ -80,26 +78,25 @@ sap.ui.define(['sap/ui/core/library'],
 				var aButtons = oMessagePage.getButtons();
 
 				if (aButtons.length > 0) {
-					oRm.write("<div");
-					oRm.addClass("sapMMessagePageButtonsWrapper");
-					oRm.writeClasses();
-					oRm.write(">");
+					oRm.openStart("div");
+					oRm.class("sapMMessagePageButtonsWrapper");
+					oRm.openEnd();
 
 					for (var i = 0; i < aButtons.length; i++) {
 						oRm.renderControl(aButtons[i]);
 					}
 
-					oRm.write("</div>");
+					oRm.close("div");
 				}
 			};
 
 			MessagePageRenderer.endInnerDivs = function(oRm) {
-				oRm.write("</div>");
-				oRm.write("</div>");
+				oRm.close("div");
+				oRm.close("div");
 			};
 
 			MessagePageRenderer.endOpeningDiv = function(oRm) {
-				oRm.write("</div>");
+				oRm.close("div");
 			};
 
 			return MessagePageRenderer;

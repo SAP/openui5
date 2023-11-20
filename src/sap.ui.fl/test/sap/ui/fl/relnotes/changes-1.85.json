@@ -1,0 +1,23 @@
+{
+  "1.85.0": {
+    "date": "November 2020",
+    "notes": [
+      {
+        "id": "0a40f11b40348165518e76c3ecab7085f26bfb9f",
+        "type": "FIX",
+        "text": " sap.ui.fl: Extension point registry handles aggregations correctly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070448933"
+          }
+        ]
+      },
+      {
+        "id": "0a553ef507800c3cc494619178b53ddd815118f7",
+        "type": "FEATURE",
+        "text": " fl.VariantManagement: New checkbox text for standard variant"
+      }
+    ]
+  }
+}

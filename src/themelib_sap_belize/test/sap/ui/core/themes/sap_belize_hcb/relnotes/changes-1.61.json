@@ -1,0 +1,120 @@
+{
+  "1.61.0": {
+    "date": "November 2018",
+    "notes": [
+      {
+        "id": "a7a75bb64bf4204752c61f3ea973cd4b984e953a",
+        "type": "FEATURE",
+        "text": "sap.uxap.ObjectPageLayout: Breakpoints are now triggered",
+        "references": []
+      },
+      {
+        "id": "3e7dcf1b7ffc1b1c2ad9d2e36a9263eb6d9f36a3",
+        "type": "FIX",
+        "text": "sap.m.NotificationListGroup: Background color is now correct",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870335519"
+          }
+        ]
+      },
+      {
+        "id": "ac26e28085420435d78e2a8b5f84e4b5fe83f131",
+        "type": "FIX",
+        "text": "sap.f.DynamicPage: Title focus outline fixed in HC themes",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880705922"
+          }
+        ]
+      },
+      {
+        "id": "060444156f693244b726523af04f9849518652a6",
+        "type": "FIX",
+        "text": "sap.f.DynamicPageHeader: Fixed background in Shell",
+        "references": []
+      },
+      {
+        "id": "1a5e935cf986e67cbdbeed158dee9e501207fe59",
+        "type": "FIX",
+        "text": "sap.m.NotificationListGroup: Background colors are now correct",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870335519"
+          }
+        ]
+      },
+      {
+        "id": "8d81e5fe20c1a1e9c5c370283f5a5958f32d6baa",
+        "type": "FIX",
+        "text": "sap.m.NotificationListItem: Readability of focus outline improved",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880250415"
+          }
+        ]
+      },
+      {
+        "id": "42c5e990d992268743d1458c46e224e116d0002c",
+        "type": "FIX",
+        "text": "sap.m.Select: Fixed focus outline offset for contrast themes",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880654497"
+          }
+        ]
+      },
+      {
+        "id": "fd965eb86b0fcffc5ad127236d5a8a4470472a56",
+        "type": "FIX",
+        "text": "sap.ui.layout.ResponsiveSplitter: Improved focus outline",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880706499"
+          }
+        ]
+      },
+      {
+        "id": "9c833e3b0df4f7fa00a7d37c38d3c686b3cfd486",
+        "type": "FIX",
+        "text": "sap.m.WizardProgressNavigator: Circles background on hover adjusted",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880695188"
+          }
+        ]
+      },
+      {
+        "id": "03672d0230007db636eddd6562fb7255f49bb736",
+        "type": "FIX",
+        "text": "sap.m.GenericTile: fix border CSS for BC, HCB and HCW themes",
+        "references": []
+      },
+      {
+        "id": "bf890ed36239d151b6b256f08877a0088599c81a",
+        "type": "FEATURE",
+        "text": "Introduction of Indication less parameters",
+        "references": []
+      },
+      {
+        "id": "a324ce4e18dd7a2e17d4922642d0c97bd79f422d",
+        "type": "FEATURE",
+        "text": "sap.m.Column: enabling sort indicator",
+        "references": []
+      },
+      {
+        "id": "a6b8cd60cf66f2dbaa136c5c0d5feb9cf5a5d5d2",
+        "type": "FEATURE",
+        "text": "sap.m.Label: Color for displayOnly property is changed",
+        "references": []
+      }
+    ]
+  }
+}

@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html><head>
+	<meta http-equiv='Content-Type' content='text/html;charset=UTF-8'>
+	<title>Routing Example Page</title>
+
+	<script id='sap-ui-bootstrap'
+		src='../../../../../../../resources/sap-ui-core.js'
+		data-sap-ui-libs='sap.m'></script>
+		<!-- add 'sap.ui.table' and/or other libraries if required -->
+
+	<script>
+		// set application namespace. Views and controller are loaded relative to this page
+		sap.ui.loader.config({paths: {"sap/ui/core/samples/routing/mobile": "./"}});
+		jQuery.sap.require("sap.ui.core.routing.Router");
+
+		var oData = [
+			{
+				name: "Entry 1",
+				details: {
+					title: "Page 1"
+				}
+			},
+			{
+				name: "Entry 2",
+				details: {
+					title: "Page 2"
+				}
+			},
+			{
+				name: "Entry 3",
+				details: {
+					title: "Page 3"
+				}
+			},
+			{
+				name: "Entry 4",
+				details: {
+					title: "Page 4"
+				}
+			},
+			{
+				name: "Entry 5",
+				details: {
+					title: "Page 5"
+				}
+			},
+			{
+				name: "Entry 6",
+				details: {
+					title: "Page 6"
+				}
+			},
+			{
+				name: "Entry 7",
+				details: {
+					title: "Page 7"
+				}
+			},
+			{
+				name: "Entry 8",
+				details: {
+					title: "Page 8"
+				}
+			},
+			{
+				name: "Entry 9",
+				details: {
+					title: "Page 9"
+				}
+			},
+			{
+				name: "Entry 10",
+				details: {
+					title: "Page 10"
+				}
+			}
+		];
+
+		var oModel = new sap.ui.model.json.JSONModel();
+		oModel.setData(oData);
+		sap.ui.getCore().setModel(oModel);
+
+		var shell = new sap.m.Shell("shell", {
+			title:'SAPUI5 Routing Example',
+			showLogout: false
+		});
+		shell.placeAt('content');
+
+		var oRouter = new sap.ui.core.routing.Router();
+		oRouter.addRoute({
+			pattern: "",
+			name: "_index",
+			callback: function() {
+				shell.setApp(sap.ui.view({
+					type: sap.ui.core.mvc.ViewType.XML,
+					viewName: "sap.ui.core.samples.routing.mobile.Tiles"
+				}));
+			}
+		});
+		oRouter.addRoute({
+			pattern: "testapp1",
+			name: "_testapp1",
+			callback: function() {
+				shell.setApp(sap.ui.view({
+					type: sap.ui.core.mvc.ViewType.XML,
+					viewName:"sap.ui.core.samples.routing.mobile.App"
+				}));
+			},
+			subroutes: [
+				{
+					pattern: "{selectedIndex}",
+					name: "_testapp_detail",
+				}
+			]
+		});
+		oRouter.register("app");
+		oRouter.initialize();
+	</script>
+
+</head>
+<body class='sapUiBody'>
+	<div id='content'></div>
+</body>
+</html>

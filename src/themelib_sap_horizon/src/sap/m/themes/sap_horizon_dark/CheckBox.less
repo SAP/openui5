@@ -1,0 +1,230 @@
+/* =============================== */
+/* CSS for control sap.m/CheckBox  */
+/* Evening Horizon theme           */
+/* =============================== */
+
+.sapMCb {
+	height: 2.75rem;
+	padding-left: 2.75rem;
+	line-height: 2.7rem;
+}
+
+.sapMCbBg {
+	height: 1.375rem;
+	width: 1.375rem;
+	top: 0.6875rem;
+	left: 0.6875rem;
+	box-sizing: border-box;
+	border-radius: @sapUiFieldBorderCornerRadius;
+	background-color: @sapUiFieldBackground;
+	border: @sapUiFieldBorderWidth @sapUiFieldBorderColor solid;
+	display: flex;
+    align-items: center;
+    justify-content: center;
+	color: @sapUiContentSelectedForegroundColor;
+
+	&.sapMCbMarkChecked:before {
+		font-size: 1rem;
+		color: currentColor;
+	}
+
+	&.sapMCbMarkChecked.sapMCbMarkPartiallyChecked::before {
+		border-width: 0.25rem;
+	}
+}
+
+.sapMCbBgDis {
+	opacity: @sapUiContentDisabledOpacity;
+}
+
+.sapMCbRo .sapMCbBg {
+	background-color: @sapUiFieldReadOnlyBackground;
+	border: @sapUiElementBorderWidth dashed @sapUiFieldReadOnlyBorderColor;
+}
+
+.sapMCbRo > .sapMCbBg.sapMCbMarkChecked:before {
+	color: @sapUiFieldTextColor;
+}
+
+.sapMCb:not(.sapMCbErr):not(.sapMCbWarn):not(.sapMCbInfo):not(.sapMCbSucc):hover .sapMCbHoverable {
+	border: @sapUiFieldBorderWidth solid @sapUiFieldHoverBorderColor;
+	color: @sapUiContentSelectedForegroundColor;
+	background-color: @sapUiContentSelectedHoverBackground;
+}
+
+.sapMCb:hover .sapMCbHoverable {
+	background-color: @sapUiFieldHoverBackground;
+}
+
+// value state
+.sapMCbErr {
+	.sapMCbBg {
+		background-color: @sapUiFieldInvalidBackground;
+		border: @sapUiFieldInvalidBorderWidth solid  @sapUiFieldInvalidColor;
+		color: @sapUiFieldInvalidColor;
+
+		&.sapMCbMarkChecked.sapMCbMarkPartiallyChecked::before {
+			border-width: 0.1875rem;
+		}
+	}
+}
+
+.sapMCbWarn {
+	.sapMCbBg {
+		background-color: @sapUiFieldWarningBackground;
+		border: @sapUiFieldWarningBorderWidth solid @sapUiFieldWarningColor;
+		color: @sapUiFieldWarningColor;
+
+		&.sapMCbMarkChecked.sapMCbMarkPartiallyChecked::before {
+			border-width: 0.1875rem;
+		}
+	}
+}
+
+.sapMCbInfo {
+	.sapMCbBg {
+		background-color: @sapUiFieldInformationBackground;
+		border: @sapUiFieldInformationBorderWidth solid @sapUiFieldInformationColor;
+		color: @sapUiFieldInformationColor;
+
+		&.sapMCbMarkChecked.sapMCbMarkPartiallyChecked::before {
+			border-width: 0.1875rem;
+		}
+	}
+}
+
+.sapMCbSucc {
+	.sapMCbBg {
+		background-color: @sapUiFieldSuccessBackground;
+		border: @sapUiFieldSuccessBorderWidth solid @sapUiFieldSuccessColor;
+		color: @sapUiFieldSuccessColor;
+	}
+}
+
+.sapMCb.sapMCbDisplayOnly:not(.sapMCbBgDis) {
+	padding-left: 2.75rem;
+}
+
+.sapMCbDisplayOnly .sapMCbBg {
+	top: 0.5625rem;
+	left: 0.5625rem;
+	&:not(.sapMCbMarkPartiallyChecked).sapMCbMarkChecked:before {
+		color: @sapTextColor;
+		font-size: 1rem;
+	}
+
+	&:not(.sapMCbMarkPartiallyChecked):before {
+		color: @sapTextColor;
+		font-size: 1rem;
+	}
+
+	&.sapMCbMark.sapMCbMarkChecked.sapMCbMarkPartiallyChecked {
+		width: 0.875rem;
+		height: 0.875rem;
+		border-radius: 0.0675rem;
+		top: 0.9375rem;
+		left: 0.9375rem;
+
+		&::before {
+			border-width: 0.125rem;
+		}
+	}
+}
+
+// FOCUS
+.sapMCb {
+	outline: none;
+}
+
+.sapMCb:focus:before {
+	content: "";
+	border: @sapUiContentFocusColor @sapUiContentFocusStyle @sapUiContentFocusWidth;
+	inset: 0.3125rem;
+	position: absolute;
+	border-radius: @sapUiFieldBorderCornerRadius;
+}
+
+.sapMCb.sapMCbHasLabel {
+	padding-right: 0.3125rem;
+}
+
+.sapMCb.sapMCbHasLabel:focus:before {
+	content: "";
+	border: @sapUiContentFocusColor @sapUiContentFocusStyle @sapUiContentFocusWidth;
+	top: 0.3125rem;
+	left: 0.3125rem;
+	bottom: 0.3125rem;
+	right: 0;
+	position: absolute;
+	border-radius: 0.5rem;
+}
+
+/* In Form Checkbox needs to be left aligned to bi in line with other controls (as Form itself has a padding) */
+.sapUiForm {
+	.sapMCbBg {
+		left: 0;
+	}
+
+	.sapMCb {
+		padding-left: 2.0625rem; // to have right gap between checkbox and label
+	}
+
+	.sapMCb:not(.sapMCbBgDis).sapMCbHasLabel:focus:before,
+	.sapMCb:not(.sapMCbBgDis):not(.sapMCbHasLabel):focus:before {
+		left: -0.25rem; /* more is not possible as this would cut off the focus border */
+	}
+}
+
+.sapUiSizeCompact {
+	.sapMCb {
+		height: 2rem;
+		padding-left: 2rem;
+		line-height: 2rem;
+	}
+
+	.sapMCbBg {
+		height: 1rem;
+		width: 1rem;
+		top: 0.5rem;
+		left: 0.5rem;
+		border-radius: @sapUiFieldBorderCornerRadius;
+
+		&.sapMCbMarkChecked:before {
+			font-size: 0.75rem;
+		}
+
+		&.sapMCbMarkChecked.sapMCbMarkPartiallyChecked::before {
+			border-width: 0.1875rem;
+		}
+	}
+
+	.sapMCbErr .sapMCbBg.sapMCbMarkChecked.sapMCbMarkPartiallyChecked::before,
+	.sapMCbWarn .sapMCbBg.sapMCbMarkChecked.sapMCbMarkPartiallyChecked::before,
+	.sapMCbInfo .sapMCbBg.sapMCbMarkChecked.sapMCbMarkPartiallyChecked::before {
+		border-width: 0.125rem;
+	}
+
+	.sapMCbDisplayOnly .sapMCbBg:not(.sapMCbMarkPartiallyChecked) {
+		margin: 0;
+	}
+
+	.sapMCbDisplayOnly .sapMCbBg.sapMCbMark.sapMCbMarkChecked.sapMCbMarkPartiallyChecked {
+		top: 0.5625rem;
+		left: 0.5625rem;
+	}
+
+	/* In Form Checkbox needs to be left aligned to bi in line with other controls (as Form itself has a padding) */
+	.sapUiForm {
+		.sapMCbBg {
+			left: 0;
+		}
+
+		.sapMCb {
+			padding-left: 1.5rem; // to have right gap between checkbox and label
+		}
+
+		.sapMCb:not(.sapMCbBgDis).sapMCbHasLabel:focus:before {
+			left: -0.1875rem;
+		}
+	}
+}

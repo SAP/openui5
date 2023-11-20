@@ -1,0 +1,12 @@
+{
+  "1.88.0": {
+    "date": "March 2021",
+    "notes": [
+      {
+        "id": "699fda4f59c104210cf74c86e16075e8faa95cd5",
+        "type": "FEATURE",
+        "text": " sap.f.IllustratedMessage: New control implementation"
+      }
+    ]
+  }
+}

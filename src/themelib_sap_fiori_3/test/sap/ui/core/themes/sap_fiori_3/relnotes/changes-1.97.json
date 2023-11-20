@@ -1,0 +1,122 @@
+{
+  "1.97.0": {
+    "date": "November 2021",
+    "notes": [
+      {
+        "id": "05983d22507a341052aea987e18e7a986492d477",
+        "type": "FIX",
+        "text": " sap.ui.unified.FileUploader: busy state now properly applied",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170304073"
+          }
+        ]
+      },
+      {
+        "id": "c539b23534cde9e381220a509dcf8452afcdf004",
+        "type": "FIX",
+        "text": " sap.m.ObjectAttribute: focus in HCB/HCW themes has correct width",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170312696"
+          }
+        ]
+      },
+      {
+        "id": "89974ffe7666172eb5915e72e632e1bfa25a81ff",
+        "type": "FIX",
+        "text": " sap.m.ObjectAttribute: corret link color is used on high contrast themes",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170266520"
+          }
+        ]
+      },
+      {
+        "id": "7ff1ca9d175b7ac3c18d11ae571131c21254e2c9",
+        "type": "FIX",
+        "text": " sap.m.SinglePlanningCalendar: appointments render propelry with all font sizes",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170227747"
+          }
+        ]
+      },
+      {
+        "id": "cf04132a1c6af3ab532405dc63c35aca209e0386",
+        "type": "FIX",
+        "text": " sap.m.ColorPalette: Contrast on focus is now visible in high contrast",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170266512"
+          }
+        ]
+      },
+      {
+        "id": "82a402b694811471cf5852ba5b7358944edb5e70",
+        "type": "FIX",
+        "text": " sap.m.Switch: fixed handle misplacement on drag in Quartz themes",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170252080"
+          }
+        ]
+      },
+      {
+        "id": "972c55e20c8fd3b2868549b98102a85f8a085198",
+        "type": "FIX",
+        "text": " sap.m.Button: fixed visual focus issues in Emphasized Button",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170262270"
+          }
+        ]
+      },
+      {
+        "id": "202c08b54768574d6f2d64bc532c309175b3f1af",
+        "type": "FIX",
+        "text": " sap.m.ObjectStatus: Neutral Status Color is correct now in fiori 3 theme",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170249033"
+          }
+        ]
+      },
+      {
+        "id": "8f773d03e0a493263f1f38fcd86006ca4c0a9c3b",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Removed single section upper line",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170230576"
+          }
+        ]
+      },
+      {
+        "id": "b1d70159e925977f291e01360e64e963fcaed0da",
+        "type": "FIX",
+        "text": " sap.ui.unified.FileUploader: has correct hight in compact mode",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180339188"
+          }
+        ]
+      },
+      {
+        "id": "f9ab357aa3582c730fb545b0dcda4fe5c9f5e289",
+        "type": "FEATURE",
+        "text": " sap_horizon: initial commit of Horizon theme"
+      }
+    ]
+  }
+}

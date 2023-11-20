@@ -4,20 +4,22 @@
 
 // Provides control sap.m.ScrollContainer
 sap.ui.define([
-	"jquery.sap.global",
 	"./library",
+	"sap/base/i18n/Localization",
 	"sap/ui/core/Control",
 	"sap/ui/core/delegate/ScrollEnablement",
 	"sap/ui/core/Element",
-	"./ScrollContainerRenderer"
+	"./ScrollContainerRenderer",
+	"sap/ui/dom/denormalizeScrollBeginRTL"
 ],
 	function(
-		jQuery,
 		library,
+		Localization,
 		Control,
 		ScrollEnablement,
 		Element,
-		ScrollContainerRenderer
+		ScrollContainerRenderer,
+		denormalizeScrollBeginRTL
 	) {
 		"use strict";
 
@@ -40,7 +42,6 @@ sap.ui.define([
 		 * @constructor
 		 * @public
 		 * @alias sap.m.ScrollContainer
-		 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 		 */
 		var ScrollContainer = Control.extend("sap.m.ScrollContainer", /** @lends sap.m.ScrollContainer.prototype */ {
 			metadata: {
@@ -89,8 +90,11 @@ sap.ui.define([
 					 */
 					content: {type: "sap.ui.core.Control", multiple: true, singularName: "content"}
 				},
+				dnd: { draggable: false, droppable: true },
 				designtime: "sap/m/designtime/ScrollContainer.designtime"
-			}
+			},
+
+			renderer: ScrollContainerRenderer
 		});
 
 		ScrollContainer.prototype.init = function () {
@@ -119,8 +123,8 @@ sap.ui.define([
 		};
 
 		/**
-		 * Returns the sap.ui.core.ScrollEnablement delegate which is used with this control.
-		 * @rerurns {sap.ui.core.ScrollEnablementDelegate} The scroll delegate instance
+		 * Returns the sap.ui.core.delegate.ScrollEnablement delegate which is used with this control.
+		 * @rerurns {sap.ui.core.delegate.ScrollEnablementDelegate} The scroll delegate instance
 		 * @private
 		 */
 		ScrollContainer.prototype.getScrollDelegate = function () {
@@ -142,12 +146,11 @@ sap.ui.define([
 		 *         The vertical pixel position to scroll to.
 		 *         Scrolling down happens with positive values.
 		 *         If only horizontal scrolling is enabled, give 0 as value.
-		 * @param {int} time
-		 *         The duration of animated scrolling.
-		 *         To scroll immediately without animation, give 0 as value. 0 is also the default value, when this optional parameter is omitted.
-		 * @returns {sap.m.ScrollContainer} <code>this</code> to facilitate method chaining
+		 * @param {int} [time=0]
+		 *         The duration of animated scrolling in milliseconds.
+		 *         The value <code>0</code> results in immediate scrolling without animation.
+		 * @returns {this} <code>this</code> to facilitate method chaining
 		 * @public
-		 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 		 */
 		ScrollContainer.prototype.scrollTo = function (x, y, time) {
 			if (this._oScroller) {
@@ -155,8 +158,8 @@ sap.ui.define([
 				var oDomRef = this.getDomRef();
 				if (oDomRef) {
 					// only if rendered
-					if (sap.ui.getCore().getConfiguration().getRTL()) {
-						x = jQuery.sap.denormalizeScrollBeginRTL(x, oDomRef);
+					if (Localization.getRTL()) {
+						x = denormalizeScrollBeginRTL(x, oDomRef);
 					}
 					this._oScroller.scrollTo(x, y, time);
 				} else {
@@ -172,7 +175,7 @@ sap.ui.define([
 		 * Scrolls to an element(DOM or sap.ui.core.Element) within the page if the element is rendered.
 		 * @param {HTMLElement | sap.ui.core.Element} element The element to which should be scrolled.
 		 * @param {int} [time=0] The duration of animated scrolling. To scroll immediately without animation, give 0 as value or leave it default.
-		 * @returns {sap.m.ScrollContainer} <code>this</code> to facilitate method chaining.
+		 * @returns {this} <code>this</code> to facilitate method chaining.
 		 * @since 1.30
 		 * @public
 		 */
@@ -187,16 +190,5 @@ sap.ui.define([
 			return this;
 		};
 
-		ScrollContainer.prototype.setHorizontal = function (horizontal) {
-			this._oScroller.setHorizontal(horizontal);
-			return this.setProperty("horizontal", horizontal, true);
-		};
-
-		ScrollContainer.prototype.setVertical = function (vertical) {
-			this._oScroller.setVertical(vertical);
-			return this.setProperty("vertical", vertical, true);
-		};
-
 		return ScrollContainer;
-
 	});

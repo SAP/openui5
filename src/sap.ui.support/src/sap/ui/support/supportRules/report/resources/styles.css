@@ -1,3 +1,107 @@
+/* General */
+body {
+        font-family: "72-Web", Arial, Helvetica, sans-serif;
+}
+main > header > h1 {
+        font-size: 1.8em;
+}
+section h1 {
+        font-size: 1.2em;
+}
+table {
+        font-size: 0.9em;
+}
+.sapUiSupportTechInfoCntnt td:first-child {
+        width: 12%;
+}
+.sapUiSupportTechInfoCntnt .sapUiSupportTitle td {
+        padding-top: 10px;
+}
+.sapUiSupportTechInfoCntnt .sapUiSupportTitle label {
+        padding-left: 4px;
+        font-size: 18px;
+        font-weight: bold;
+}
+.sapUiIssueGroupContent {
+        margin-top: 8px;
+}
+.unchecked::before {
+        vertical-align: middle;
+        display: inline-block;
+        width: 16px;
+        height: 16px;
+        content: "";
+        background: url("./images/unchecked.svg") no-repeat;
+}
+.checked::before {
+        vertical-align: middle;
+        display: inline-block;
+        width: 16px;
+        height: 16px;
+        content: "";
+        background: url("./images/checked.svg") no-repeat;
+}
+td .unchecked::before,
+td .checked::before {
+        margin-right: 8px;
+}
+
+/* Filters functionality */
+ .filters {
+	margin: 10px;
+	font-size: 1em;
+}
+.filter {
+	padding: 5px;
+	display: inline-block;
+	cursor: pointer;
+	border-radius: 5px;
+}
+.filter-active {
+	background-color: #ddd;
+	box-shadow: 1px 1px 5px #888888;
+}
+.filtered {
+	display: none;
+}
+
+/* Expand/Collapse functionality */
+.expandable-control {
+        cursor: pointer;
+}
+.expanded {
+	padding-left: 30px;
+}
+.expanded > tr > td:first-child {
+	padding-left: 35px;
+}
+.collapsed {
+	display: none;
+}
+.expanded-content > .expandable-title::before {
+	margin-right: 8px;
+	vertical-align: middle;
+	display: inline-block;
+	width: 16px;
+	height: 16px;
+	content: "";
+	background: url("./images/expanded.svg") no-repeat;
+}
+.collapsed-content > .expandable-title::before {
+	margin-right: 8px;
+	vertical-align: middle;
+	display: inline-block;
+	width: 16px;
+	height: 16px;
+	content: "";
+	background: url("./images/collapsed.svg") no-repeat;
+}
+.expanded-content > h1.expandable-title::before,
+.collapsed-content > h1.expandable-title::before {
+	width: 22px;
+	height: 22px;
+}
+
 /* Table */
 table.sapUiTable {
         margin-top: 5px;

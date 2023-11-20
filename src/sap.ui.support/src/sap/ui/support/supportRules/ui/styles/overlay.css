@@ -1,16 +1,26 @@
 @import url("ControlTree.css");
 
+html {
+	height: 100%;
+}
+
 body {
-	background: #fff;
+	height: 100%;
+	background-color: #3f5161;
+	overflow: hidden;
 	content: "SupportTools loading...";
 }
 
-.sapUiSupportToolSettingsPopoverPadding {
-    padding-left: 1rem;
-    padding-bottom: 0.5rem;
+.sapUiSupportToolContent {
+	height: 100%;
 }
 
-.supportAnalyzeButton>span {
+.sapUiSupportToolSettingsPopoverPadding {
+	padding-left: 1rem;
+	padding-bottom: 0.5rem;
+}
+
+.supportAnalyzeButton > span {
 	border-radius: 4px 0px 0px 4px;
 }
 
@@ -18,7 +28,7 @@ body {
 	margin-left: 0 !important;
 }
 
-.supportSettingsButton>span {
+.supportSettingsButton > span {
 	border-radius: 0px 4px 4px 0px;
 }
 
@@ -66,17 +76,21 @@ body {
 	padding-bottom: 0.125rem;
 }
 
+.customHBox {
+	min-width: 0;
+	flex: 1;
+}
+
 .customIconTabHeader {
-	display: inline-block;
+	text-align: left;
 	height: 1.96rem;
 }
 
 .customIconTabHeader .sapMITBHead {
 	height: 1.95rem;
-	margin: 0;
 }
 
-.customIconTabHeader .sapMITBText {
+.customIconTabHeader .sapMITBHead .sapMITBText {
 	margin: 0 !important;
 	margin-top: 6px !important;
 }
@@ -85,14 +99,13 @@ body {
 	height: 0.55rem !important;
 }
 
+.customIconTabHeader.sapMITH .sapMITBHead {
+	padding-top: 0;
+}
+
 .customIconTabHeader {
 	border-bottom: none !important;
 	box-shadow: none !important;
-}
-
-.customIconTabHeader .sapMITBScrollContainer, .sapMITBHead {
-	padding: 0 !important;
-	padding-left: 1px !important;
 }
 
 .customMargin {
@@ -112,11 +125,7 @@ body {
 	max-width: 20rem;
 }
 
-.sapUiSizeCompact .sapMPageHeader.sapMIBar .sapMBarLeft, .sapUiSizeCompact .sapMPageFooter.sapMIBar .sapMBarLeft, .sapUiSizeCompact .sapMPageHeader.sapMIBar .sapMBarRight, .sapUiSizeCompact .sapMPageFooter.sapMIBar .sapMBarRight, .sapUiSizeCompact .sapMPageHeader.sapMIBar .sapMBarPH, .sapUiSizeCompact .sapMPageFooter.sapMIBar .sapMBarPH {
-	padding-top: 0rem !important;
-}
-
-.customSettingsPadding{
+.customSettingsPadding {
 	padding-left: 0.375rem;
 }
 
@@ -162,4 +171,64 @@ body {
 
 .sapUiSupportToolIssuesPage .sapUiSupportToolIssueHeader {
 	border-bottom: none;
+}
+
+.sapUiSupportToolVariantCont {
+	cursor: pointer;
+	margin-left: 0.25rem;
+}
+
+.sapUiSupportToolVariantCont .sapUiSupportToolVariantTxt {
+	color: #346187; /* @sapUiButtonTextColor */
+	text-decoration: none !important;
+}
+
+.sapUiSupportToolVariantCont  .sapMLnk.sapUiSupportToolVariantTxt:hover {
+	color: #427cac; /* @sapUiHighlight ?*/
+}
+
+.sapUiSupportToolVariantCont .sapUiSupportToolVariantBtn {
+	margin-left: 0.25rem;
+}
+
+.sapUiSupportToolVariantCont:hover .sapUiSupportToolVariantBtn>span {
+	background-image: none;
+	background-color: rgba(179,179,179,0.5) !important; /* @sapUiButtonLiteHoverBackground */
+	border-radius: 0.2rem;
+}
+
+.presetVariantLabel {
+	margin-left: 0.25rem;
+}
+
+.sapMText.sapUiSupportToolError {
+	color: #ee0000; /* @sapErrorCode */
+}
+
+.sapMScrollCont.sapUiSupportToolImportDescr {
+	max-height: 5rem;
+}
+
+.sapMGHLI.sapMLIB.sapMLIB-CTX.sapMLIBFocusable.sapMLIBShowSeparator.sapMLIBTypeInactive.sapUiSupportToolGHLI {
+	padding-left: 0.5rem;
+}
+
+.sapUiSupportToolVariantTxt.sapMFT {
+	overflow: hidden;
+	text-overflow: ellipsis;
+	padding-right: 0.2rem;
+}
+
+.sapMFT.sapUiSupportToolPresetTitle {
+	padding-right: 0.2rem;
+}
+
+.issueSeverityHigh {
+	color: #bb0000;
+}
+.issueSeverityMedium {
+	color: #e78c07;
+}
+.issueSeverityLow {
+	color:#5e696e;
 }

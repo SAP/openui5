@@ -1,0 +1,86 @@
+{
+	"sap.app": {
+		"id": "card.explorer.bitetosnack.approve.order",
+		"type": "card",
+		"title": "Sample of a Bite to Snack Card",
+		"subTitle": "Sample of Bite Card",
+		"applicationVersion": {
+			"version": "1.0.0"
+		},
+		"shortTitle": "A short title for this Card",
+		"info": "Additional information about this Card",
+		"description": "A long description for this Card",
+		"tags": {
+			"keywords": [
+				"Object",
+				"Card",
+				"Sample"
+			]
+		}
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"icons": {
+			"icon": "sap-icon://switch-classes"
+		}
+	},
+	"sap.card": {
+		"type": "Object",
+		"extension": "./ApproveCardExtension",
+		"header": {
+			"icon": {
+				"src": "./../../images/DonnaMoore.png"
+			},
+			"title": "Donna Moore",
+			"subTitle": "Purchase Requisition"
+		},
+		"content": {
+			"groups": [
+				{
+					"alignment": "Stretch",
+					"items": [
+						{
+							"value": "Approve or deny an expense for:"
+						},
+						{
+							"value": "Ultra Jet Super Highspeed"
+						},
+						{
+							"value": "15,000.00 EUR",
+							"type": "Status",
+							"state": "Information"
+						}
+					]
+				}
+			]
+		},
+		"footer": {
+			"actionsStrip": [
+				{
+					"text": "Approve",
+					"buttonType": "Accept",
+					"actions": [
+						{
+							"type": "Submit",
+							"parameters": {
+								"status": "approved"
+							}
+						}
+					]
+				},
+				{
+					"text": "Deny",
+					"buttonType": "Reject",
+					"actions": [
+						{
+							"type": "ShowCard",
+							"parameters": {
+								"manifest": "./detailsManifest.json"
+							}
+						}
+					]
+				}
+			]
+		}
+	}
+}

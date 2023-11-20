@@ -3,11 +3,33 @@
  */
 
 // Provides control sap.ui.layout.form.ResponsiveGridLayout.
-sap.ui.define(['jquery.sap.global', 'sap/ui/layout/Grid', 'sap/ui/layout/GridData',
-               './Form', './FormContainer', './FormElement', './FormLayout',
-               'sap/ui/layout/library', 'sap/ui/core/Control', 'sap/ui/core/ResizeHandler', './ResponsiveGridLayoutRenderer'],
-	function(jQuery, Grid, GridData, Form, FormContainer, FormElement, FormLayout,
-	         library, Control, ResizeHandler, ResponsiveGridLayoutRenderer) {
+sap.ui.define([
+	'sap/ui/core/Control',
+	"sap/ui/core/Element",
+	'sap/ui/core/ResizeHandler',
+	'sap/ui/layout/library',
+	'sap/ui/layout/Grid',
+	'sap/ui/layout/GridData',
+	'./Form',
+	'./FormContainer',
+	'./FormElement',
+	'./FormLayout',
+	'./ResponsiveGridLayoutRenderer',
+	"sap/ui/thirdparty/jquery"
+], function(
+	Control,
+	Element,
+	ResizeHandler,
+	library,
+	Grid,
+	GridData,
+	Form,
+	FormContainer,
+	FormElement,
+	FormLayout,
+	ResponsiveGridLayoutRenderer,
+	jQuery
+) {
 	"use strict";
 
 	/**
@@ -17,19 +39,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/Grid', 'sap/ui/layout/GridDat
 	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
-	 * The <code>ResponsiveGridLayout</code> control renders a <code>Form</code> using a responsive grid. Internally the <code>Grid</code> control is used for rendering.
-	 * Using this layout, the <code>Form</code> is rendered in a responsive way.
-	 * Depending on the available space, the <code>FormContainers</code> are rendered in one or different columns and the labels are rendered in the same row as the fields or above the fields.
+	 * The <code>ResponsiveGridLayout</code> control renders a {@link sap.ui.layout.form.Form Form} using a responsive grid. Internally the {@link sap.ui.layout.Grid Grid} control is used for rendering.
+	 * Using this layout, the {@link sap.ui.layout.form.Form Form} is rendered in a responsive way.
+	 * Depending on the available space, the {@link sap.ui.layout.form.FormContainer FormContainers} are rendered in one or different columns and the labels are rendered in the same row as the fields or above the fields.
 	 * This behavior can be influenced by the properties of this layout control.
 	 *
-	 * On the <code>FormContainers</code>, labels and content fields, <code>GridData</code> can be used to change the default rendering.
-	 * <code>GridData</code> is not supported for <code>FormElements</code>.
+	 * On the {@link sap.ui.layout.form.FormContainer FormContainers}, labels and content fields, {@link sap.ui.layout.GridGata GridData} can be used to change the default rendering.
+	 * {@link sap.ui.layout.GridGata GridData} is not supported for {@link sap.ui.layout.form.FormElement FormElements}.
 	 *
-	 * <b>Note:</b> If <code>GridData</code> is used, this may result in a much more complex layout than the default one.
+	 * <b>Note:</b> If {@link sap.ui.layout.GridGata GridData} is used, this may result in a much more complex layout than the default one.
 	 * This means that in some cases, the calculation for the other content may not bring the expected result.
-	 * In such cases, <code>GridData</code> should be used for all content controls to disable the default behavior.
+	 * In such cases, {@link sap.ui.layout.GridGata GridData} should be used for all content controls to disable the default behavior.
 	 *
-	 * This control cannot be used stand-alone, it just renders a <code>Form</code>, so it must be assigned to a <code>Form</code> using the <code>layout</code> aggregation.
+	 * This control cannot be used stand-alone, it just renders a {@link sap.ui.layout.form.Form Form}, so it must be assigned to a {@link sap.ui.layout.form.Form Form} using the <code>layout</code> aggregation.
 	 * @extends sap.ui.layout.form.FormLayout
 	 * @version ${version}
 	 *
@@ -37,134 +59,137 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/Grid', 'sap/ui/layout/GridDat
 	 * @public
 	 * @since 1.16.0
 	 * @alias sap.ui.layout.form.ResponsiveGridLayout
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
-	var ResponsiveGridLayout = FormLayout.extend("sap.ui.layout.form.ResponsiveGridLayout", /** @lends sap.ui.layout.form.ResponsiveGridLayout.prototype */ { metadata : {
+	var ResponsiveGridLayout = FormLayout.extend("sap.ui.layout.form.ResponsiveGridLayout", /** @lends sap.ui.layout.form.ResponsiveGridLayout.prototype */ {
+		metadata : {
 
-		library : "sap.ui.layout",
-		properties : {
+			library : "sap.ui.layout",
+			properties : {
 
-			/**
-			 * Default span for labels in extra large size.
-			 *
-			 * <b>Note:</b> If the default value -1 is not overwritten with the meaningful one then the <code>labelSpanL</code> value is used.
-			 * @since 1.34.0
-			 */
-			labelSpanXL : {type : "int", group : "Misc", defaultValue : -1},
+				/**
+				 * Default span for labels in extra large size.
+				 *
+				 * <b>Note:</b> If the default value -1 is not overwritten with the meaningful one then the <code>labelSpanL</code> value is used.
+				 * @since 1.34.0
+				 */
+				labelSpanXL : {type : "int", group : "Misc", defaultValue : -1},
 
-			/**
-			 * Default span for labels in large size.
-			 *
-			 * <b>Note:</b> If <code>adjustLabelSpanThis</code> is set, this property is only used if more than 1 <code>FormContainer</code> is in one line. If only 1 <code>FormContainer</code> is in the line, then the <code>labelSpanM</code> value is used.
-			 * @since 1.16.3
-			 */
-			labelSpanL : {type : "int", group : "Misc", defaultValue : 4},
+				/**
+				 * Default span for labels in large size.
+				 *
+				 * <b>Note:</b> If <code>adjustLabelSpan</code> is set, this property is only used if more than 1 {@link sap.ui.layout.form.FormContainer FormContainer} is in one line. If only 1 {@link sap.ui.layout.form.FormContainer FormContainer} is in the line, then the <code>labelSpanM</code> value is used.
+				 * @since 1.16.3
+				 */
+				labelSpanL : {type : "int", group : "Misc", defaultValue : 4},
 
-			/**
-			 * Default span for labels in medium size.
-			 *
-			 * <b>Note:</b> If <code>adjustLabelSpanThis</code> is set this property is used for full-size <code>FormContainers</code>. If more than one <code>FormContainer</code> is in one line, <code>labelSpanL</code> is used.
-			 * @since 1.16.3
-			 */
-			labelSpanM : {type : "int", group : "Misc", defaultValue : 2},
+				/**
+				 * Default span for labels in medium size.
+				 *
+				 * <b>Note:</b> If <code>adjustLabelSpan</code> is set this property is used for full-size {@link sap.ui.layout.form.FormContainer FormContainers}. If more than one {@link sap.ui.layout.form.FormContainer FormContainer} is in one line, <code>labelSpanL</code> is used.
+				 * @since 1.16.3
+				 */
+				labelSpanM : {type : "int", group : "Misc", defaultValue : 2},
 
-			/**
-			 * Default span for labels in small size.
-			 * @since 1.16.3
-			 */
-			labelSpanS : {type : "int", group : "Misc", defaultValue : 12},
+				/**
+				 * Default span for labels in small size.
+				 * @since 1.16.3
+				 */
+				labelSpanS : {type : "int", group : "Misc", defaultValue : 12},
 
-			/**
-			 * If set, the usage of <code>labelSpanL</code> and <code>labelSpanM</code> are dependent on the number of <code>FormContainers</code> in one row.
-			 * If only one <code>FormContainer</code> is displayed in one row, <code>labelSpanM</code> is used to define the size of the label.
-			 * This is the same for medium and large <code>Forms</code>.
-			 * This is done to align the labels on forms where full-size <code>FormContainers</code> and multiple-column rows are used in the same <code>Form</code>
-			 * (because every <code>FormContainer</code> has its own <code>Grid</code> inside).
-			 *
-			 * If not set, the usage of <code>labelSpanL</code> and <code>labelSpanM</code> are dependent on the <code>Form</code> size.
-			 * The number of <code>FormContainers</code> doesn't matter in this case.
-			 * @since 1.34.0
-			 */
-			adjustLabelSpan : {type : "boolean", group : "Misc", defaultValue : true},
+				/**
+				 * If set, the usage of <code>labelSpanL</code> and <code>labelSpanM</code> are dependent on the number of {@link sap.ui.layout.form.FormContainer FormContainers} in one row.
+				 * If only one {@link sap.ui.layout.form.FormContainer FormContainer} is displayed in one row, <code>labelSpanM</code> is used to define the size of the label.
+				 * This is the same for medium and large <code>Forms</code>.
+				 * This is done to align the labels on forms where full-size {@link sap.ui.layout.form.FormContainer FormContainers} and multiple-column rows are used in the same {@link sap.ui.layout.form.Form Form}
+				 * (because every {@link sap.ui.layout.form.FormContainer FormContainer} has its own {@link sap.ui.layout.Grid Grid} inside).
+				 *
+				 * If not set, the usage of <code>labelSpanL</code> and <code>labelSpanM</code> are dependent on the {@link sap.ui.layout.form.Form Form} size.
+				 * The number of {@link sap.ui.layout.form.FormContainer FormContainers} doesn't matter in this case.
+				 * @since 1.34.0
+				 */
+				adjustLabelSpan : {type : "boolean", group : "Misc", defaultValue : true},
 
-			/**
-			 * Number of grid cells that are empty at the end of each line on extra large size.
-			 *
-			 * <b>Note:</b> If the default value -1 is not overwritten with the meaningful one then the <code>emptySpanL</code> value is used.
-			 * @since 1.34.0
-			 */
-			emptySpanXL : {type : "int", group : "Misc", defaultValue : -1},
+				/**
+				 * Number of grid cells that are empty at the end of each line on extra large size.
+				 *
+				 * <b>Note:</b> If the default value -1 is not overwritten with the meaningful one then the <code>emptySpanL</code> value is used.
+				 * @since 1.34.0
+				 */
+				emptySpanXL : {type : "int", group : "Misc", defaultValue : -1},
 
-			/**
-			 * Number of grid cells that are empty at the end of each line on large size.
-			 * @since 1.16.3
-			 */
-			emptySpanL : {type : "int", group : "Misc", defaultValue : 0},
+				/**
+				 * Number of grid cells that are empty at the end of each line on large size.
+				 * @since 1.16.3
+				 */
+				emptySpanL : {type : "int", group : "Misc", defaultValue : 0},
 
-			/**
-			 * Number of grid cells that are empty at the end of each line on medium size.
-			 * @since 1.16.3
-			 */
-			emptySpanM : {type : "int", group : "Misc", defaultValue : 0},
+				/**
+				 * Number of grid cells that are empty at the end of each line on medium size.
+				 * @since 1.16.3
+				 */
+				emptySpanM : {type : "int", group : "Misc", defaultValue : 0},
 
-			/**
-			 * Number of grid cells that are empty at the end of each line on small size.
-			 * @since 1.16.3
-			 */
-			emptySpanS : {type : "int", group : "Misc", defaultValue : 0},
+				/**
+				 * Number of grid cells that are empty at the end of each line on small size.
+				 * @since 1.16.3
+				 */
+				emptySpanS : {type : "int", group : "Misc", defaultValue : 0},
 
-			/**
-			 * Number of columns for extra large size.
-			 *
-			 * The number of columns for extra large size must not be smaller than the number of columns for large size.
-			 * <b>Note:</b> If the default value -1 is not overwritten with the meaningful one then the <code>columnsL</code> value is used (from the backward compatibility reasons).
-			 * @since 1.34.0
-			 */
-			columnsXL : {type : "int", group : "Misc", defaultValue : -1},
+				/**
+				 * Number of columns for extra large size.
+				 *
+				 * The number of columns for extra large size must not be smaller than the number of columns for large size.
+				 * <b>Note:</b> If the default value -1 is not overwritten with the meaningful one then the <code>columnsL</code> value is used (from the backward compatibility reasons).
+				 * @since 1.34.0
+				 */
+				columnsXL : {type : "int", group : "Misc", defaultValue : -1},
 
-			/**
-			 * Number of columns for large size.
-			 *
-			 * The number of columns for large size must not be smaller than the number of columns for medium size.
-			 * @since 1.16.3
-			 */
-			columnsL : {type : "int", group : "Misc", defaultValue : 2},
+				/**
+				 * Number of columns for large size.
+				 *
+				 * The number of columns for large size must not be smaller than the number of columns for medium size.
+				 * @since 1.16.3
+				 */
+				columnsL : {type : "int", group : "Misc", defaultValue : 2},
 
-			/**
-			 * Number of columns for medium size.
-			 * @since 1.16.3
-			 */
-			columnsM : {type : "int", group : "Misc", defaultValue : 1},
+				/**
+				 * Number of columns for medium size.
+				 * @since 1.16.3
+				 */
+				columnsM : {type : "int", group : "Misc", defaultValue : 1},
 
-			/**
-			 * If the <code>Form</code> contains only one single <code>FormContainer</code> and this property is set,
-			 * the <code>FormContainer</code> is displayed using the full size of the <code>Form</code>.
-			 * In this case the properties <code>columnsXL</code>, <code>columnsL</code> and <code>columnsM</code> are ignored.
-			 *
-			 * In all other cases the <code>FormContainer</code> is displayed in the size of one column.
-			 * @since 1.34.0
-			 */
-			singleContainerFullSize : {type : "boolean", group : "Misc", defaultValue : true},
+				/**
+				 * If the {@link sap.ui.layout.form.Form Form} contains only one single {@link sap.ui.layout.form.FormContainer FormContainer} and this property is set,
+				 * the {@link sap.ui.layout.form.FormContainer FormContainer} is displayed using the full size of the {@link sap.ui.layout.form.Form Form}.
+				 * In this case the properties <code>columnsXL</code>, <code>columnsL</code> and <code>columnsM</code> are ignored.
+				 *
+				 * In all other cases the {@link sap.ui.layout.form.FormContainer FormContainer} is displayed in the size of one column.
+				 * @since 1.34.0
+				 */
+				singleContainerFullSize : {type : "boolean", group : "Misc", defaultValue : true},
 
-			/**
-			 * Breakpoint (in pixel) between large size and extra large (XL) size.
-			 * @since 1.34.0
-			 */
-			breakpointXL : {type : "int", group : "Misc", defaultValue : 1440},
+				/**
+				 * Breakpoint (in pixel) between large size and extra large (XL) size.
+				 * @since 1.34.0
+				 */
+				breakpointXL : {type : "int", group : "Misc", defaultValue : 1440},
 
-			/**
-			 * Breakpoint (in pixel) between Medium size and Large size.
-			 * @since 1.16.3
-			 */
-			breakpointL : {type : "int", group : "Misc", defaultValue : 1024},
+				/**
+				 * Breakpoint (in pixel) between Medium size and Large size.
+				 * @since 1.16.3
+				 */
+				breakpointL : {type : "int", group : "Misc", defaultValue : 1024},
 
-			/**
-			 * Breakpoint (in pixel) between Small size and Medium size.
-			 * @since 1.16.3
-			 */
-			breakpointM : {type : "int", group : "Misc", defaultValue : 600}
-		}
-	}});
+				/**
+				 * Breakpoint (in pixel) between Small size and Medium size.
+				 * @since 1.16.3
+				 */
+				breakpointM : {type : "int", group : "Misc", defaultValue : 600}
+			}
+		},
+
+		renderer: ResponsiveGridLayoutRenderer
+	});
 
 	/*
 	 * The ResponsiveGridLayout uses Grid controls to render the Form
@@ -186,6 +211,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/Grid', 'sap/ui/layout/GridDat
 	var Panel = Control.extend("sap.ui.layout.form.ResponsiveGridLayoutPanel", {
 
 		metadata : {
+			library: "sap.ui.layout",
 			aggregations: {
 				"content"   : {type: "sap.ui.layout.Grid", multiple: false}
 			},
@@ -198,8 +224,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/Grid', 'sap/ui/layout/GridDat
 		getLayoutData :  function(){
 
 			// only GridData are interesting
-			var oContainer = sap.ui.getCore().byId(this.getContainer());
-			var oLayout    = sap.ui.getCore().byId(this.getLayout());
+			var oContainer = Element.getElementById(this.getContainer());
+			var oLayout    = Element.getElementById(this.getLayout());
 			var oLD;
 			if (oLayout && oContainer) {
 				oLD = oLayout.getLayoutDataForElement(oContainer, "sap.ui.layout.GridData");
@@ -214,7 +240,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/Grid', 'sap/ui/layout/GridDat
 
 		getCustomData :  function(){
 
-			var oContainer = sap.ui.getCore().byId(this.getContainer());
+			var oContainer = Element.getElementById(this.getContainer());
 			if (oContainer) {
 				return oContainer.getCustomData();
 			}
@@ -223,7 +249,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/Grid', 'sap/ui/layout/GridDat
 
 		refreshExpanded :  function(){
 
-			var oContainer = sap.ui.getCore().byId(this.getContainer());
+			var oContainer = Element.getElementById(this.getContainer());
 			if (oContainer) {
 				if (oContainer.getExpanded()) {
 					this.$().removeClass("sapUiRGLContainerColl");
@@ -233,59 +259,60 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/Grid', 'sap/ui/layout/GridDat
 			}
 		},
 
-		renderer : function(oRm, oPanel) {
+		renderer : {
+			apiVersion: 2,
+			render: function(oRm, oPanel) {
 
-			var oContainer = sap.ui.getCore().byId(oPanel.getContainer());
-			var oLayout    = sap.ui.getCore().byId(oPanel.getLayout());
-			var oContent   = oPanel.getContent();
+				var oContainer = Element.getElementById(oPanel.getContainer());
+				var oLayout    = Element.getElementById(oPanel.getLayout());
+				var oContent   = oPanel.getContent();
 
-			var bExpandable = oContainer.getExpandable();
-			var sTooltip = oContainer.getTooltip_AsString();
-			var oToolbar = oContainer.getToolbar();
-			var oTitle = oContainer.getTitle();
+				var bExpandable = oContainer.getExpandable();
+				var sTooltip = oContainer.getTooltip_AsString();
+				var oToolbar = oContainer.getToolbar();
+				var oTitle = oContainer.getTitle();
 
-			oRm.write("<div");
-			oRm.writeControlData(oPanel);
-			oRm.addClass("sapUiRGLContainer");
-			if (bExpandable && !oContainer.getExpanded()) {
-				oRm.addClass("sapUiRGLContainerColl");
+				oRm.openStart("div", oPanel);
+				oRm.class("sapUiRGLContainer");
+				if (bExpandable && !oContainer.getExpanded()) {
+					oRm.class("sapUiRGLContainerColl");
+				}
+				if (oToolbar) {
+					oRm.class("sapUiFormContainerToolbar");
+				} else if (oTitle) {
+					oRm.class("sapUiFormContainerTitle");
+				}
+
+				if (sTooltip) {
+					oRm.attr('title', sTooltip);
+				}
+
+				oLayout.getRenderer().writeAccessibilityStateContainer(oRm, oContainer);
+
+				oRm.openEnd();
+
+				// container header
+				oLayout.getRenderer().renderHeader(oRm, oToolbar, oTitle, oContainer._oExpandButton, bExpandable, oLayout._sFormSubTitleSize, oContainer.getId());
+
+				if (oContent) {
+					oRm.openStart("div");
+					oRm.class("sapUiRGLContainerCont");
+					oRm.openEnd();
+					// container is not expandable or is expanded -> render elements
+					oRm.renderControl(oContent);
+					oRm.close("div");
+				}
+
+				oRm.close("div");
 			}
-			if (oToolbar) {
-				oRm.addClass("sapUiFormContainerToolbar");
-			} else if (oTitle) {
-				oRm.addClass("sapUiFormContainerTitle");
-			}
-
-			if (sTooltip) {
-				oRm.writeAttributeEscaped('title', sTooltip);
-			}
-			oRm.writeClasses();
-
-			oLayout.getRenderer().writeAccessibilityStateContainer(oRm, oContainer);
-
-			oRm.write(">");
-
-			// container header
-			oLayout.getRenderer().renderHeader(oRm, oToolbar, oTitle, oContainer._oExpandButton, bExpandable, false, oContainer.getId());
-
-			if (oContent) {
-				oRm.write("<div");
-				oRm.addClass("sapUiRGLContainerCont");
-				oRm.writeClasses();
-				oRm.write(">");
-				// container is not expandable or is expanded -> render elements
-				oRm.renderControl(oContent);
-				oRm.write("</div>");
-			}
-
-			oRm.write("</div>");
 		}
-
 	});
 
 	/* eslint-disable no-lonely-if */
 
 	ResponsiveGridLayout.prototype.init = function(){
+
+		FormLayout.prototype.init.apply(this, arguments);
 
 		this.mContainers = {}; //association of container to panel and Grid
 		this.oDummyLayoutData = new GridData(this.getId() + "--Dummy");
@@ -295,7 +322,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/Grid', 'sap/ui/layout/GridDat
 
 		// clear panels
 		for ( var sContainerId in this.mContainers) {
-			_cleanContainer.call(this, sContainerId);
+			_cleanContainer.call(this, sContainerId, true);
 		}
 
 		// clear main Grid
@@ -310,6 +337,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/Grid', 'sap/ui/layout/GridDat
 	};
 
 	ResponsiveGridLayout.prototype.onBeforeRendering = function( oEvent ){
+
+		FormLayout.prototype.onBeforeRendering.apply(this, arguments);
 
 		var oForm = this.getParent();
 		if (!oForm || !(oForm instanceof Form)) {
@@ -389,7 +418,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/Grid', 'sap/ui/layout/GridDat
 	 * In this case, the panel's DOM reference is returned, otherwise the DOM reference
 	 * of the <code>Grid</code> rendering the container's content.
 	 * @param {sap.ui.layout.form.FormContainer} oContainer <code>FormContainer</code>
-	 * @return {Element} The Element's DOM representation or null
+	 * @return {Element|null} The Element's DOM representation or null
 	 * @private
 	 */
 	ResponsiveGridLayout.prototype.getContainerRenderedDomRef = function(oContainer) {
@@ -400,7 +429,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/Grid', 'sap/ui/layout/GridDat
 				if (this.mContainers[sContainerId][0]) {
 					var oPanel = this.mContainers[sContainerId][0];
 					return oPanel.getDomRef();
-				}else if (this.mContainers[sContainerId][1]){
+				} else if (this.mContainers[sContainerId][1]){
 					// no panel used -> return Grid
 					var oGrid = this.mContainers[sContainerId][1];
 					return oGrid.getDomRef();
@@ -417,7 +446,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/Grid', 'sap/ui/layout/GridDat
 	 * In this Layout a <code>FormElement</code> has no DOM representation,
 	 * so null will always be returned
 	 * @param {sap.ui.layout.form.FormElement} oElement <code>FormElement</code>
-	 * @return {Element} The Element's DOM representation or null
+	 * @return {Element|null} The Element's DOM representation or null
 	 * @private
 	 */
 	ResponsiveGridLayout.prototype.getElementRenderedDomRef = function(oElement) {
@@ -513,12 +542,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/Grid', 'sap/ui/layout/GridDat
 	/*
 	 * clear content before delete panel
 	 */
-	function _deletePanel( oPanel ) {
+	function _deletePanel( oPanel, bDestroyLayout ) {
 
-		oPanel.setContent(null);
 		oPanel.setLayout(null);
 		oPanel.setContainer(null);
-		oPanel.destroy();
+
+		if (!bDestroyLayout || !oPanel.getParent()) {
+			// if in real control tree let the ManagedObject logic destroy the children
+			oPanel.setContent(null);
+			oPanel.destroy();
+		}
 
 	}
 
@@ -529,10 +562,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/Grid', 'sap/ui/layout/GridDat
 		var oGrid = new Grid(sId, {vSpacing: 0, hSpacing: 0, containerQuery: true});
 		oGrid.__myParentLayout = this;
 		oGrid.__myParentContainerId = oContainer.getId();
-		oGrid.addStyleClass("sapUiFormResGridCont");
+		oGrid.addStyleClass("sapUiFormResGridCont").addStyleClass("sapUiRespGridOverflowHidden");
 
 		oGrid.getContent = function(){
-			var oContainer = sap.ui.getCore().byId(this.__myParentContainerId);
+			var oContainer = Element.getElementById(this.__myParentContainerId);
 			if (oContainer) {
 				var aContent = [];
 				var aElements = oContainer.getVisibleFormElements();
@@ -544,7 +577,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/Grid', 'sap/ui/layout/GridDat
 					if (oLabel) {
 						aContent.push(oLabel);
 					}
-					aFields = oElement.getFields();
+					aFields = oElement.getFieldsForRendering();
 					for ( var j = 0; j < aFields.length; j++) {
 						aContent.push(aFields[j]);
 					}
@@ -556,7 +589,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/Grid', 'sap/ui/layout/GridDat
 		};
 
 		oGrid.getAriaLabelledBy = function(){
-			var oContainer = sap.ui.getCore().byId(this.__myParentContainerId);
+			var oContainer = Element.getElementById(this.__myParentContainerId);
 			if (oContainer && !oContainer.getToolbar() && !oContainer.getTitle() && !oContainer.getExpandable()) {
 				return oContainer.getAriaLabelledBy();
 			}
@@ -675,7 +708,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/Grid', 'sap/ui/layout/GridDat
 				return oLD;
 			} else {
 				// calculate Layout Data for control
-				var oContainer = sap.ui.getCore().byId(this.__myParentContainerId);
+				var oContainer = Element.getElementById(this.__myParentContainerId);
 				var oContainerLD = oLayout.getLayoutDataForElement(oContainer, "sap.ui.layout.GridData");
 				var oForm = oContainer.getParent();
 				var oSize;
@@ -724,7 +757,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/Grid', 'sap/ui/layout/GridDat
 					if (oLabel) {
 						oLabelLD = oLayout.getLayoutDataForElement(oLabel, "sap.ui.layout.GridData");
 					}
-					var aFields = oElement.getFields();
+					var aFields = oElement.getFieldsForRendering();
 					var iLength = aFields.length;
 					var oField;
 					var oFieldLD;
@@ -878,7 +911,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/Grid', 'sap/ui/layout/GridDat
 					return oLayout.oDummyLayoutData;
 				}
 
-				return oLD;
 			}
 		};
 
@@ -899,12 +931,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/Grid', 'sap/ui/layout/GridDat
 			var oLayout = this.__myParentLayout;
 			if (!oLayout._mainGrid || !oLayout._mainGrid.__bIsUsed ) {
 				// no main grid used -> only 1 container
-				var aContainers = oLayout.getParent().getVisibleFormContainers();
-				var oFirstContainer;
-				for (var i = 0; i < aContainers.length; i++) {
-					oFirstContainer = aContainers[i];
-					break;
-				}
+				var oFirstContainer = oLayout.getParent().getVisibleFormContainers()[0];
 				if (!oFirstContainer || !oLayout.mContainers[oFirstContainer.getId()] || oFirstContainer.getId() != this.__myParentContainerId) {
 					// Form seems to be invalidated (container changed) but rerendering still not done
 					// -> ignore resize, it will be rerendered soon
@@ -947,7 +974,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/Grid', 'sap/ui/layout/GridDat
 
 		oGrid._getAccessibleRole = function() {
 
-			var oContainer = sap.ui.getCore().byId(this.__myParentContainerId);
+			var oContainer = Element.getElementById(this.__myParentContainerId);
 			var oLayout = this.__myParentLayout;
 			if (oLayout._mainGrid && oLayout._mainGrid.__bIsUsed && !oContainer.getToolbar() &&
 					!oContainer.getTitle() && !oContainer.getExpandable() && oContainer.getAriaLabelledBy().length > 0) {
@@ -977,14 +1004,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/Grid', 'sap/ui/layout/GridDat
 	/*
 	 * clear internal variables before delete grid
 	 */
-	function _deleteGrid( oGrid ) {
+	function _deleteGrid( oGrid, bDestroyLayout ) {
 
 		if (oGrid.__myParentContainerId) {
 			oGrid.__myParentContainerId = undefined;
 		}
 		oGrid.__myParentLayout = undefined;
 
-		oGrid.destroy();
+		if (!bDestroyLayout || !oGrid.getParent()) {
+			// if in real control tree let the ManagedObject logic destroy the children
+			oGrid.destroy();
+		}
 
 	}
 
@@ -1000,7 +1030,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/Grid', 'sap/ui/layout/GridDat
 			oGrid.__originalGetLayoutData = oGrid.getLayoutData;
 			oGrid.getLayoutData = function(){
 				var oLayout = this.__myParentLayout;
-				var oContainer = sap.ui.getCore().byId(this.__myParentContainerId);
+				var oContainer = Element.getElementById(this.__myParentContainerId);
 
 				var oLD;
 				if (oContainer) {
@@ -1023,7 +1053,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/Grid', 'sap/ui/layout/GridDat
 
 		var oLayout;
 		if (oControl instanceof Panel) {
-			oLayout = sap.ui.getCore().byId(oControl.getLayout());
+			oLayout = Element.getElementById(oControl.getLayout());
 		} else {
 			oLayout = oControl.__myParentLayout;
 		}
@@ -1144,20 +1174,20 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/Grid', 'sap/ui/layout/GridDat
 
 	}
 
-	function _cleanContainer( sContainerId ) {
+	function _cleanContainer( sContainerId, bDestroyLayout ) {
 
 		var aContainerContent = this.mContainers[sContainerId];
 
 		//delete Grid
 		var oGrid = aContainerContent[1];
 		if (oGrid) {
-			_deleteGrid(oGrid);
+			_deleteGrid(oGrid, bDestroyLayout);
 		}
 
 		//delete panel
 		var oPanel = aContainerContent[0];
 		if (oPanel) {
-			_deletePanel(oPanel);
+			_deletePanel(oPanel, bDestroyLayout);
 		}
 
 		delete this.mContainers[sContainerId];
@@ -1168,8 +1198,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/Grid', 'sap/ui/layout/GridDat
 
 		var aVisibleContainers = oForm.getVisibleFormContainers();
 		var oContainer;
+		var sContainerId;
 		var iLength = aVisibleContainers.length;
-		var iContentLenght = 0;
+		var iContentLength = 0;
 		var i = 0;
 		var j = 0;
 
@@ -1196,7 +1227,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/Grid', 'sap/ui/layout/GridDat
 					vSpacing: 0,
 					containerQuery: true
 					}).setParent(this);
-				this._mainGrid.addStyleClass("sapUiFormResGridMain");
+				this._mainGrid.addStyleClass("sapUiFormResGridMain").addStyleClass("sapUiRespGridOverflowHidden");
 				// change resize handler so that the main grid triggers the resize of it's children
 				this._mainGrid._onParentResizeOrig = this._mainGrid._onParentResize;
 				this._mainGrid._onParentResize = function() {
@@ -1212,18 +1243,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/Grid', 'sap/ui/layout/GridDat
 				this._mainGrid.setDefaultSpan(sDefaultSpan);
 				// update containers
 				var aLayoutContent = this._mainGrid.getContent();
-				iContentLenght = aLayoutContent.length;
+				iContentLength = aLayoutContent.length;
 				var bExchangeContent = false;
 				// check if content has changed
-				for ( i = 0; i < iContentLenght; i++) {
+				for ( i = 0; i < iContentLength; i++) {
 					var oContentElement = aLayoutContent[i];
 					oContainer = undefined;
 					if (oContentElement.getContainer) {
 						// it's a panel
-						oContainer = sap.ui.getCore().byId(oContentElement.getContainer());
+						oContainer = Element.getElementById(oContentElement.getContainer());
 					} else {
 						// it's a Grid
-						oContainer = sap.ui.getCore().byId(oContentElement.__myParentContainerId);
+						oContainer = Element.getElementById(oContentElement.__myParentContainerId);
 					}
 					if (oContainer && oContainer.isVisible()) {
 						var oVisibleContainer = aVisibleContainers[j];
@@ -1253,7 +1284,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/Grid', 'sap/ui/layout/GridDat
 				if (bExchangeContent) {
 					// remove all content and add it new.
 					this._mainGrid.removeAllContent();
-					iContentLenght = 0;
+					iContentLength = 0;
 				}
 			}
 			this._mainGrid._setBreakPointTablet(this.getBreakpointM());
@@ -1261,15 +1292,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/Grid', 'sap/ui/layout/GridDat
 			this._mainGrid._setBreakPointLargeDesktop(this.getBreakpointXL());
 			this._mainGrid.__bIsUsed = true;
 
-			if (iContentLenght < iLength) {
+			if (iContentLength < iLength) {
 				// new containers added
 				var iStartIndex = 0;
-				if (iContentLenght > 0) {
-					iStartIndex = iContentLenght--;
+				if (iContentLength > 0) {
+					iStartIndex = iContentLength--;
 				}
 				for ( i = iStartIndex; i < iLength; i++) {
 					oContainer = aVisibleContainers[i];
-					var sContainerId = oContainer.getId();
+					sContainerId = oContainer.getId();
 					if (this.mContainers[sContainerId]) {
 						if (this.mContainers[sContainerId][0]) {
 							// panel used
@@ -1281,11 +1312,62 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/Grid', 'sap/ui/layout/GridDat
 					}
 				}
 			}
-		} else if ( this._mainGrid ) {
-			this._mainGrid.__bIsUsed = false;
+		} else {
+			if ( this._mainGrid ) {
+				this._mainGrid.__bIsUsed = false;
+			}
+			// set Layout as parent for panels and Grids to have them in control tree
+			for (i = 0; i < iLength; i++) {
+				oContainer = aVisibleContainers[i];
+				sContainerId = oContainer.getId();
+				if (this.mContainers[sContainerId]) {
+					if (this.mContainers[sContainerId][0]) {
+						// panel used
+						if (this.mContainers[sContainerId][0].getParent() !== this) {
+							this.addDependent(this.mContainers[sContainerId][0]);
+						}
+					} else if (this.mContainers[sContainerId][1]) {
+						// no panel - used Grid directly
+						if (this.mContainers[sContainerId][1].getParent() !== this) {
+							this.addDependent(this.mContainers[sContainerId][1]);
+						}
+					}
+				}
+			}
 		}
 
 	}
+
+	ResponsiveGridLayout.prototype.getLayoutDataForDelimiter = function() {
+
+		return new GridData({spanS: 1, spanM: 1, spanL: 1, spanXL: 1});
+
+	};
+
+	ResponsiveGridLayout.prototype.getLayoutDataForSemanticField = function(iFields, iIndex, oLayoutData) {
+
+		// on large size calculate the with to fill one row
+		// on small size use always 7 to align fields
+		var iCells = 8 - (iFields - 1); // number of available cells (remove delimiters)
+		iCells = Math.floor(iCells / iFields);
+		if (iFields === iIndex) {
+			// last field gets the remaining cells
+			iCells = iCells + 8 - ((iFields - 1) + iFields * iCells);
+		}
+
+		if (oLayoutData) {
+			if (oLayoutData.isA("sap.ui.layout.GridData")) {
+				oLayoutData.setSpanS(11).setSpanM(iCells).setSpanL(iCells).setSpanXL(iCells);
+				return oLayoutData;
+			} else {
+				// LayoutData from other Layout -> destroy and create new one
+				oLayoutData.destroy();
+			}
+		}
+
+		return new GridData({spanS: 11, spanM: iCells, spanL: iCells, spanXL: iCells});
+
+	};
 
 	return ResponsiveGridLayout;
 

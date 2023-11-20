@@ -1,0 +1,18 @@
+{
+  "1.81.0": {
+    "date": "July 2020",
+    "notes": [
+      {
+        "id": "be9fe1d44812c3128bde49794a02d83b08927626",
+        "type": "FIX",
+        "text": " sap.uxap.AnchorBar: CustomAnchorBarButtons no longer hidden",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080270787"
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,27 @@
+<mvc:View
+	controllerName="sap.f.sample.ShellBar.controller.ShellBar"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.f"
+	xmlns:m="sap.m"
+	xmlns:layout= "sap.ui.layout"
+	height="100%">
+	<ShellBar
+			title="Application Title"
+			secondTitle="Short description"
+			homeIcon="./resources/sap/ui/documentation/sdk/images/logo_ui5.png"
+			showCopilot="true"
+			showSearch="true"
+			showNotifications="true"
+			showProductSwitcher="true"
+			notificationsNumber="2">
+		<menu>
+			<m:Menu>
+				<m:MenuItem text="Flight booking" icon="sap-icon://flight" />
+				<m:MenuItem text="Car rental" icon="sap-icon://car-rental" />
+			</m:Menu>
+		</menu>
+		<profile>
+			<m:Avatar initials="UI"/>
+		</profile>
+	</ShellBar>
+</mvc:View>

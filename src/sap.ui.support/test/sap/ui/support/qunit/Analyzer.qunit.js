@@ -1,20 +1,20 @@
 /*global QUnit,sinon*/
 
-sap.ui.require([
+sap.ui.define([
+	"sap/base/Log",
 	"sap/ui/support/supportRules/Analyzer",
-	"sap/ui/support/supportRules/IssueManager"
-], function (Analyzer, IssueManager) {
+	"sap/ui/support/supportRules/IssueManager",
+	"sap/ui/core/date/UI5Date"
+], function (Log, Analyzer, IssueManager, UI5Date) {
 		"use strict";
 
 		QUnit.module("Analyzer", {
-			setup: function () {
+			beforeEach: function () {
 				this.oAnalyzer = new Analyzer();
-				this.clock = sinon.useFakeTimers();
 			},
-			teardown: function () {
+			afterEach: function () {
 				this.oAnalyzer.reset();
 				this.oAnalyzer = null;
-				this.clock.restore();
 			}
 		});
 
@@ -33,8 +33,8 @@ sap.ui.require([
 
 		QUnit.test("Reset state", function (assert) {
 			// Arrange
-			this.oAnalyzer.dStartedAt = new Date();
-			this.oAnalyzer.dFinishedAt = new Date();
+			this.oAnalyzer.dStartedAt = UI5Date.getInstance();
+			this.oAnalyzer.dFinishedAt = UI5Date.getInstance();
 			this.oAnalyzer.iElapsedTime = 35;
 			this.oAnalyzer._iAllowedTimeout = 5000;
 			this.oAnalyzer._iTotalProgress = 200;
@@ -108,7 +108,7 @@ sap.ui.require([
 		});
 
 		QUnit.module("Analyzer start", {
-			setup: function () {
+			beforeEach: function () {
 				this.oAnalyzer = new Analyzer();
 				this.oMockCoreFacade = {};
 				this.oMockExecutionScope = {};
@@ -117,7 +117,7 @@ sap.ui.require([
 					return {};
 				});
 			},
-			teardown: function () {
+			afterEach: function () {
 				this.oAnalyzer.reset();
 				this.oAnalyzer = null;
 				IssueManager.createIssueManagerFacade.restore();
@@ -126,7 +126,6 @@ sap.ui.require([
 
 		QUnit.test("start with synchronous rules and 2 errors thrown", function (assert) {
 			// Arrange
-			this.clock = sinon.useFakeTimers();
 
 			var done = assert.async(),
 				oSpy = sinon.spy(),
@@ -134,7 +133,7 @@ sap.ui.require([
 
 			sinon.spy(this.oAnalyzer, "_updateProgress");
 			sinon.spy(this.oAnalyzer, "reset");
-			sinon.spy(jQuery.sap.log, "error");
+			sinon.spy(Log, "error");
 
 			var aRules = [
 				{
@@ -168,13 +167,13 @@ sap.ui.require([
 
 				// Assert
 				assert.equal(oSpy.callCount, 2, "Two check functions should be executed successfully");
-				assert.equal(jQuery.sap.log.error.callCount, 2, "should have two errors logged");
+				assert.equal(Log.error.callCount, 2, "should have two errors logged");
 				assert.equal(that.oAnalyzer._updateProgress.callCount, 4, "_updateProgress should be called 4 times");
 				assert.equal(that.oAnalyzer.reset.callCount, 1, "reset should be called once");
 
 				that.oAnalyzer._updateProgress.restore();
 				that.oAnalyzer.reset.restore();
-				jQuery.sap.log.error.restore();
+				Log.error.restore();
 
 				done();
 			});
@@ -188,10 +187,12 @@ sap.ui.require([
 			var done = assert.async(),
 				that = this;
 
+			this.clock.restore(); // using real timeouts for this test
+
 			sinon.spy(this.oAnalyzer, "_updateProgress");
 			sinon.spy(this.oAnalyzer, "reset");
 			sinon.spy(this.oAnalyzer, "_handleException");
-			sinon.spy(jQuery.sap.log, "error");
+			sinon.spy(Log, "error");
 
 			this.oAnalyzer._iAllowedTimeout = 1500;
 
@@ -236,7 +237,7 @@ sap.ui.require([
 			this.oAnalyzer.start(aRules, this.oMockCoreFacade, this.oMockExecutionScope).then(function () {
 
 				// Assert
-				assert.equal(jQuery.sap.log.error.callCount, 3, "should have 3 errors logged");
+				assert.equal(Log.error.callCount, 3, "should have 3 errors logged");
 				assert.equal(that.oAnalyzer._handleException.callCount, 3, "should have 3 errors handled");
 				assert.equal(that.oAnalyzer._updateProgress.callCount, 4, "_updateProgress should be called 4 times");
 				assert.equal(that.oAnalyzer.reset.callCount, 1, "reset should be called once");
@@ -244,9 +245,10 @@ sap.ui.require([
 				that.oAnalyzer._updateProgress.restore();
 				that.oAnalyzer.reset.restore();
 				that.oAnalyzer._handleException.restore();
-				jQuery.sap.log.error.restore();
+				Log.error.restore();
 
 				done();
 			});
+
 		});
 });

@@ -2,19 +2,27 @@
  * ${copyright}
  */
 
- /*global Promise*/
-sap.ui.define(['jquery.sap.global', 'sap/m/InstanceManager', 'sap/f/FlexibleColumnLayout', 'sap/ui/base/Object', 'sap/ui/core/routing/History'],
-	function($, InstanceManager, FlexibleColumnLayout, BaseObject, History) {
+/*global Promise*/
+sap.ui.define(['sap/m/InstanceManager', 'sap/f/FlexibleColumnLayout', 'sap/ui/base/Object', 'sap/ui/core/routing/History', "sap/base/Log"],
+	function(InstanceManager, FlexibleColumnLayout, BaseObject, History, Log) {
 		"use strict";
 
-
 		/**
-		 * Instantiates a TargetHandler, a class used for closing dialogs and showing transitions in NavContainers when targets are displayed.<br/>
-		 * <b>You should not create an own instance of this class.</b> It will be created when using {@link sap.f.routing.Router} or {@link sap.f.routing.Targets}.
-		 * You may use the {@link #setCloseDialogs} function to specify if dialogs should be closed on displaying other views.
+		 * Constructor for a new <code>TargetHandler</code>.
 		 *
 		 * @class
-		 * @param {boolean} closeDialogs - the default is true - will close all open dialogs before navigating, if set to true. If set to false it will just navigate without closing dialogs.
+		 * Used for closing dialogs and showing transitions in <code>NavContainers</code> when
+		 * targets are displayed.
+		 *
+		 * <b>Note:</b> You should not create an own instance of this class. It is created
+		 * when using <code>{@link sap.f.routing.Router}</code> or <code>{@link sap.f.routing.Targets}</code>.
+		 *
+		 * <b>Note:</b> You may use the <code>{@link #setCloseDialogs}</code> function to specify if dialogs should be
+		 * closed on displaying other views. The dialogs are closed when a different target is displayed than the
+		 * previously displayed one, otherwise the dialogs are kept open.
+		 *
+		 * @param {boolean} closeDialogs Closes all open dialogs before navigating to a different target, if set to
+		 *  <code>true</code> (default). If set to <code>false</code>, it will just navigate without closing dialogs.
 		 * @public
 		 * @since 1.46
 		 * @alias sap.f.routing.TargetHandler
@@ -40,11 +48,14 @@ sap.ui.define(['jquery.sap.global', 'sap/m/InstanceManager', 'sap/f/FlexibleColu
 		 * =================================*/
 
 		/**
-		 * Sets if a navigation should close dialogs
+		 * Sets if a navigation should close dialogs.
 		 *
-		 * @param {boolean} bCloseDialogs close dialogs if true
+		 * <b>Note:</b> The dialogs are closed when a different target is displayed than the previous one,
+		 * otherwise the dialogs are kept open even when <code>bCloseDialogs</code> is <code>true</code>.
+		 *
+		 * @param {boolean} bCloseDialogs Close dialogs if <code>true</code>
 		 * @public
-		 * @returns {sap.f.routing.TargetHandler} for chaining
+		 * @returns {this} For chaining
 		 */
 		TargetHandler.prototype.setCloseDialogs = function (bCloseDialogs) {
 			this._bCloseDialogs = !!bCloseDialogs;
@@ -53,10 +64,10 @@ sap.ui.define(['jquery.sap.global', 'sap/m/InstanceManager', 'sap/f/FlexibleColu
 
 
 		/**
-		 * Gets if a navigation should close dialogs
+		 * Gets if a navigation should close dialogs.
 		 *
 		 * @public
-		 * @returns {boolean} a flag indication if dialogs will be closed
+		 * @returns {boolean} A flag indication if dialogs will be closed
 		 */
 		TargetHandler.prototype.getCloseDialogs = function () {
 			return this._bCloseDialogs;
@@ -77,7 +88,7 @@ sap.ui.define(['jquery.sap.global', 'sap/m/InstanceManager', 'sap/f/FlexibleColu
 				bCloseDialogs = bCloseDialogs || bNavigationOccurred;
 			}
 
-			if (bCloseDialogs) {
+			if (bCloseDialogs || bBack) {
 				this._closeDialogs();
 			}
 		};
@@ -91,30 +102,37 @@ sap.ui.define(['jquery.sap.global', 'sap/m/InstanceManager', 'sap/f/FlexibleColu
 		 * This method is used to chain navigations to be triggered in the correct order, only relevant for async
 		 * @private
 		 */
-		TargetHandler.prototype._chainNavigation = function(fnNavigation) {
-			this._oNavigationOrderPromise = this._oNavigationOrderPromise.then(fnNavigation);
-			return this._oNavigationOrderPromise;
+		TargetHandler.prototype._chainNavigation = function(fnNavigation, sNavigationIdentifier) {
+			var oPromiseChain = this._oNavigationOrderPromise.then(fnNavigation);
+
+			// navigation order promise should resolve even when the inner promise rejects to allow further navigation
+			// to be done. Therefore it's needed to catch the rejected inner promise
+			this._oNavigationOrderPromise = oPromiseChain.catch(function(oError) {
+				Log.error("The following error occurred while displaying routing target with name '" + sNavigationIdentifier + "': " + oError);
+			});
+
+			return oPromiseChain;
 		};
 
 		/**
 		 * @private
 		 */
 		TargetHandler.prototype._getDirection = function(oDirectionInfo) {
-			var iTargetViewLevel = oDirectionInfo.viewLevel,
+			var iTargetLevel = oDirectionInfo.level,
 				oHistory = History.getInstance(),
 				bBack = false;
 
 			if (oDirectionInfo.direction === "Backwards") {
 				bBack = true;
-			} else if (isNaN(iTargetViewLevel) || isNaN(this._iCurrentViewLevel) || iTargetViewLevel === this._iCurrentViewLevel) {
+			} else if (isNaN(iTargetLevel) || isNaN(this._iCurrentLevel) || iTargetLevel === this._iCurrentLevel) {
 				if (oDirectionInfo.askHistory) {
 					bBack = oHistory.getDirection() === "Backwards";
 				}
 			} else {
-				bBack = iTargetViewLevel < this._iCurrentViewLevel;
+				bBack = iTargetLevel < this._iCurrentLevel;
 			}
 
-			this._iCurrentViewLevel = iTargetViewLevel;
+			this._iCurrentLevel = iTargetLevel;
 
 			return bBack;
 		};
@@ -137,8 +155,13 @@ sap.ui.define(['jquery.sap.global', 'sap/m/InstanceManager', 'sap/f/FlexibleColu
 				oCurrentContainer = oCurrentParams.targetControl;
 				oCurrentNavigation = {
 					oContainer : oCurrentContainer,
-					oParams : oCurrentParams
+					oParams : oCurrentParams,
+					placeholderConfig: oCurrentParams.placeholderConfig
 				};
+
+				if (!isNavigationContainer(oCurrentContainer)) {
+					continue;
+				}
 
 				for (i = 0; i < aResults.length; i++) {
 					oResult = aResults[i];
@@ -169,12 +192,13 @@ sap.ui.define(['jquery.sap.global', 'sap/m/InstanceManager', 'sap/f/FlexibleColu
 			//Parameters for the nav Container
 				oArguments = oParams.eventData,
 			//Nav container does not work well if you pass undefined as transition
-				sTransition = oParams.transition || "",
+				sTransition = oParams.placeholderShown ? "show" : (oParams.transition || ""),
 				oTransitionParameters = oParams.transitionParameters,
 				sViewId = oParams.view.getId(),
 				aColumnsCurrentPages,
 				bIsFCL = oTargetControl instanceof FlexibleColumnLayout,
-				bSkipNavigation = false;
+				bSkipNavigation = false,
+				oPlaceholderConfig = oParams.placeholderConfig;
 
 			if (bIsFCL) {
 				aColumnsCurrentPages = [
@@ -191,16 +215,23 @@ sap.ui.define(['jquery.sap.global', 'sap/m/InstanceManager', 'sap/f/FlexibleColu
 			// If the page we are going to navigate is already displayed,
 			// we are skipping the navigation.
 			if (bSkipNavigation) {
-				$.sap.log.info("navigation to view with id: " + sViewId + " is skipped since it already is displayed by its targetControl", "sap.f.routing.TargetHandler");
+				if (oPlaceholderConfig.autoClose) {
+					oTargetControl.hidePlaceholder(oPlaceholderConfig);
+				}
+				Log.info("navigation to view with id: " + sViewId + " is skipped since it already is displayed by its targetControl", "sap.f.routing.TargetHandler");
 				return false;
 			}
 
-			$.sap.log.info("navigation to view with id: " + sViewId + " the targetControl is " + oTargetControl.getId() + " backwards is " + bBack);
+			Log.info("navigation to view with id: " + sViewId + " the targetControl is " + oTargetControl.getId() + " backwards is " + bBack);
 
 			if (bBack) {
 				oTargetControl._safeBackToPage(sViewId, sTransition, oArguments, oTransitionParameters);
 			} else {
 				oTargetControl.to(sViewId, sTransition, oArguments, oTransitionParameters);
+			}
+
+			if (oPlaceholderConfig.autoClose) {
+				oTargetControl.hidePlaceholder(oPlaceholderConfig);
 			}
 
 			return true;
@@ -230,6 +261,42 @@ sap.ui.define(['jquery.sap.global', 'sap/m/InstanceManager', 'sap/f/FlexibleColu
 			// close open LightBoxes
 			if (InstanceManager.hasOpenLightBox()) {
 				InstanceManager.closeAllLightBoxes();
+			}
+		};
+
+		function isNavigationContainer(oContainer) {
+			return oContainer && oContainer.isA(["sap.m.NavContainer", "sap.m.SplitContainer", "sap.f.FlexibleColumnLayout"]);
+		}
+
+		/**
+		 * Calls the 'showPlaceholder' method of the respective target container control depending on whether
+		 * a placeholder is needed or not.
+		 *
+		 * @param {object} mSettings Object containing the container control and the view object to display
+		 * @param {sap.ui.core.Control} mSettings.container The navigation target container
+		 * @param {sap.ui.core.Control|Promise} mSettings.object The component/view object
+		 * @return {Promise} Promise that resolves after the placeholder is loaded
+		 *
+		 * @private
+	 	 * @ui5-restricted sap.ui.core.routing
+		 */
+		TargetHandler.prototype.showPlaceholder = function(mSettings) {
+			var oContainer = mSettings.container,
+				bNeedsPlaceholder = true,
+				oObject;
+
+			if (mSettings.object && !(mSettings.object instanceof Promise)) {
+				oObject = mSettings.object;
+			}
+
+			if (mSettings.container && typeof mSettings.container.needPlaceholder === "function") {
+				bNeedsPlaceholder = mSettings.container.needPlaceholder(mSettings.aggregation, oObject);
+			}
+
+			if (bNeedsPlaceholder) {
+				return oContainer.showPlaceholder(mSettings);
+			} else {
+				return Promise.resolve();
 			}
 		};
 

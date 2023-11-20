@@ -1,0 +1,36 @@
+{
+	"d" : {
+		"__count" : "1",
+		"results" : [
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='110',ItemPosition='010')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='110',ItemPosition='010')",
+					"type" : "GWSAMPLE_BASIC.SalesOrderLineItem"
+				},
+				"SalesOrderID" : "110",
+				"ItemPosition" : "010",
+				"ProductID" : "HT-1501",
+				"Note" : "Info message for currency code",
+				"NoteLanguage" : "EN",
+				"CurrencyCode" : "JPY",
+				"GrossAmount" : "8925000",
+				"NetAmount" : "7500000",
+				"TaxAmount" : "1425000",
+				"DeliveryDate" : "\/Date(1593036000000)\/",
+				"Quantity" : "5",
+				"QuantityUnit" : "EA",
+				"ToHeader" : {
+					"__deferred" : {
+						"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='110',ItemPosition='010')/ToHeader"
+					}
+				},
+				"ToProduct" : {
+					"__deferred" : {
+						"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='110',ItemPosition='010')/ToProduct"
+					}
+				}
+			}
+		]
+	}
+}

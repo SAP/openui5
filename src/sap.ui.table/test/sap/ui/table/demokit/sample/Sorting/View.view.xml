@@ -15,12 +15,11 @@
 				id="table"
 				selectionMode="MultiToggle"
 				rows="{/ProductCollection}"
-				visibleRowCount="7"
 				sort="sortDeliveryDate"
 				ariaLabelledBy="title">
-				<toolbar>
-					<m:Toolbar>
-						<m:Title id="title" text="Products"></m:Title>
+				<extension>
+					<m:OverflowToolbar style="Clear">
+						<m:Title id="title" text="Products"/>
 						<m:ToolbarSpacer/>
 						<m:Button
 							icon="sap-icon://sorting-ranking"
@@ -28,14 +27,14 @@
 							press="sortCategoriesAndName"/>
 						<m:Button
 							icon="sap-icon://sort"
-							tooltip="Sort Categories"
+							tooltip="Sort Categories in addition to current sorting"
 							press="sortCategories"/>
 						<m:Button
 							icon="sap-icon://decline"
 							tooltip="Clear all sortings"
 							press="clearAllSortings"/>
-					</m:Toolbar>
-				</toolbar>
+					</m:OverflowToolbar>
+				</extension>
 				<columns>
 					<Column
 						id="name"
@@ -90,13 +89,7 @@
 					</Column>
 				</columns>
 				<footer>
-					<m:Toolbar>
-						<m:ToolbarSpacer/>
-						<m:Button
-							icon="sap-icon://hint"
-							tooltip="Show information"
-							press="showInfo"/>
-					</m:Toolbar>
+					<m:OverflowToolbar id="infobar"></m:OverflowToolbar>
 				</footer>
 			</Table>
 		</m:content>

@@ -4,16 +4,21 @@
 
 // Provides object sap.ui.core.util.XMLPreprocessor
 sap.ui.define([
-	'jquery.sap.global',
-	'sap/ui/base/BindingParser',
-	'sap/ui/base/ManagedObject',
-	'sap/ui/base/SyncPromise',
-	'sap/ui/core/XMLTemplateProcessor',
-	'sap/ui/model/BindingMode',
-	'sap/ui/model/CompositeBinding',
-	'sap/ui/model/Context'
-], function (jQuery, BindingParser, ManagedObject, SyncPromise, XMLTemplateProcessor, BindingMode,
-		CompositeBinding, Context) {
+	"sap/base/Log",
+	"sap/base/util/deepExtend",
+	"sap/base/util/JSTokenizer",
+	"sap/base/util/ObjectPath",
+	"sap/ui/base/BindingParser",
+	"sap/ui/base/ManagedObject",
+	"sap/ui/base/SyncPromise",
+	"sap/ui/core/Component",
+	"sap/ui/core/XMLTemplateProcessor",
+	"sap/ui/model/BindingMode",
+	"sap/ui/model/CompositeBinding",
+	"sap/ui/model/Context",
+	"sap/ui/performance/Measurement"
+], function (Log, deepExtend, JSTokenizer, ObjectPath, BindingParser, ManagedObject, SyncPromise,
+		Component, XMLTemplateProcessor, BindingMode, CompositeBinding, Context, Measurement) {
 	"use strict";
 
 	var sNAMESPACE = "http://schemas.sap.com/sapui5/extension/sap.ui.core.template/1",
@@ -23,8 +28,8 @@ sap.ui.define([
 		sPerformanceInsertFragment = sXMLPreprocessor + "/insertFragment",
 		sPerformanceProcess = sXMLPreprocessor + ".process",
 		oSyncPromiseResolved = SyncPromise.resolve(),
+		oSyncPromiseResolvedTrue = SyncPromise.resolve(true),
 		fnToString = Object.prototype.toString,
-		oUNBOUND = {}, // @see getAny
 		mVisitors = {}, // maps "<namespace URI> <local name>" to visitor function
 		/**
 		 * <template:with> control holding the models and the bindings. Also used as substitute for
@@ -33,12 +38,17 @@ sap.ui.define([
 		 */
 		With = ManagedObject.extend("sap.ui.core.util._with", {
 			metadata : {
+				library: "sap.ui.core",
 				properties : {
 					any : "any"
 				},
 				aggregations : {
 					child : {multiple : false, type : "sap.ui.core.util._with"}
 				}
+			},
+			updateProperty : function () {
+				// Avoid Promise processing in ManagedObject and set Promise as value directly
+				this.setAny(this.mBindingInfos.any.binding.getExternalValue());
 			}
 		}),
 		/**
@@ -47,6 +57,7 @@ sap.ui.define([
 		 */
 		Repeat = With.extend("sap.ui.core.util._repeat", {
 			metadata : {
+				library: "sap.ui.core",
 				aggregations : {
 					list : {multiple : true, type : "n/a", _doesNotRequireFactory : true}
 				}
@@ -165,10 +176,6 @@ sap.ui.define([
 		 * The function <code>foo</code> is called with arguments such that <code>
 		 * oInterface.getModel(i).getObject(oInterface.getPath(i)) === arguments[i + 1]</code>
 		 * holds.
-		 * This use is not supported within an expression binding, that is, <code>&lt;Text
-		 * text="{= ${parts: [{path: 'Label'}, {path: 'Value'}], formatter: 'foo'} }"/></code>
-		 * does not work as expected because the property <code>requiresIContext = true</code> is
-		 * ignored.
 		 *
 		 * To distinguish those two use cases, just check whether <code>oInterface.getModel() ===
 		 * undefined</code>, in which case the formatter is called on root level of a composite
@@ -184,6 +191,22 @@ sap.ui.define([
 		 * @since 1.27.1
 		 */
 		return /** @lends sap.ui.core.util.XMLPreprocessor.IContext */ {
+			/**
+			 * @param {number} iStart - Start index of slice
+			 * @param {number} iEnd - End index of slice
+			 * @returns {sap.ui.core.util.XMLPreprocessor.IContext}
+			 *   Sliced interface or <code>this</code> in case no slice is needed
+			 *
+			 * @private
+			 */
+			_slice : function (iStart, iEnd) {
+				getBindingOrContext(0); // just to trigger lazy init of vBindingOrContext
+				return !iStart && iEnd >= vBindingOrContext.length
+					? this // no slice needed
+					: createContextInterface(null, mSettings, undefined,
+						vBindingOrContext.slice(iStart, iEnd));
+			},
+
 			/**
 			 * Returns a context interface for the indicated part in case of the root formatter of a
 			 * composite binding. The new interface provides access to the original settings, but
@@ -211,6 +234,7 @@ sap.ui.define([
 			 *   index of part in case of the root formatter of a composite binding
 			 * @param {string} [sPath]
 			 *   a path, interpreted relative to <code>this.getPath(iPart)</code>
+			 * @ui5-omissible-params iPart
 			 * @returns {sap.ui.core.util.XMLPreprocessor.IContext}
 			 *   the context interface related to the indicated part
 			 * @throws {Error}
@@ -269,7 +293,7 @@ sap.ui.define([
 			 * @param {number} [iPart]
 			 *   index of part in case of the root formatter of a composite binding
 			 *   (since 1.31.0)
-			 * @returns {sap.ui.model.Model}
+			 * @returns {sap.ui.model.Model|undefined}
 			 *   the model related to the current formatter call, or (since 1.31.0)
 			 *   <code>undefined</code> in case of a root formatter if no <code>iPart</code> is
 			 *   given or if <code>iPart</code> is out of range
@@ -285,7 +309,7 @@ sap.ui.define([
 			 *
 			 * @param {number} [iPart]
 			 *   index of part in case of the root formatter of a composite binding (since 1.31.0)
-			 * @returns {string}
+			 * @returns {string|undefined}
 			 *   the absolute path related to the current formatter call, or (since 1.31.0)
 			 *   <code>undefined</code> in case of a root formatter if no <code>iPart</code> is
 			 *   given or if <code>iPart</code> is out of range
@@ -329,12 +353,11 @@ sap.ui.define([
 	 * @param {object} oScope
 	 *   map of currently known aliases
 	 * @param {boolean} bAsync
-	 *   whether async processing is allowed and a <code>Promise</code> may be returned
-	 * @returns {any}
-	 *   the property value or a <code>Promise</code> resolving with the property value (in case
-	 *   async processing is allowed and supported by the respective model) or <code>oUNBOUND</code>
-	 *   in case the binding is not ready (because it refers to a model which is not available)
-	 * @throws {Error}
+	 *   whether async processing is allowed
+	 * @returns {sap.ui.base.SyncPromise|null}
+	 *   a sync promise which resolves with the property value or is rejected with a corresponding
+	 *   error (for example, an error thrown by a formatter), or <code>null</code> in case the
+	 *   binding is not ready (because it refers to a model which is not available)
 	 */
 	function getAny(oWithControl, oBindingInfo, mSettings, oScope, bAsync) {
 		var bValueAsPromise = false;
@@ -371,7 +394,7 @@ sap.ui.define([
 					var that = this;
 					return SyncPromise.all(arguments).then(function (aArguments) {
 						return fnFormatter.apply(that, aArguments);
-					}).unwrap(); //TODO remove unwrap() as soon as getResolvedBinding becomes async
+					});
 				};
 				oInfo.formatter.textFragments = fnFormatter.textFragments;
 			}
@@ -391,68 +414,59 @@ sap.ui.define([
 
 			oWithControl.bindProperty("any", oBindingInfo);
 			return oWithControl.getBinding("any")
-				? oWithControl.getAny()
-				: oUNBOUND;
+				? SyncPromise.resolve(oWithControl.getAny())
+				: null;
+		} catch (e) {
+			return SyncPromise.reject(e);
 		} finally {
 			oWithControl.unbindProperty("any", true);
 		}
 	}
 
 	/**
-	 * Returns <code>true</code> if the given XML DOM element has the template namespace and the
-	 * given local name.
-	 *
-	 * @param {Element} oElement the XML DOM element
-	 * @param {string} sLocalName the local name
-	 * @returns {boolean} if the element has the given name
-	 */
-	function isTemplateElement(oElement, sLocalName) {
-		return oElement.namespaceURI === sNAMESPACE
-			&& oElement.localName === sLocalName;
-	}
-
-	/**
-	 * Load required modules for the given element synchronously, according to its
-	 * "template:require" attribute which may contain a space separated list.
-	 *
-	 * @param {Element} oElement
-	 *   any XML DOM element
-	 */
-	function requireFor(oElement) {
-		var sModuleNames = oElement.getAttribute("template:require");
-		if (sModuleNames) {
-			jQuery.sap.require.apply(jQuery.sap, sModuleNames.split(" "));
-		}
-	}
-
-	/**
 	 * Visits the given elements one-by-one, calls the given callback for each of them and stops
-	 * and waits for each thenable returned by the callback before going on to the next element.
+	 * and waits for each sync promise returned by the callback before going on to the next element.
+	 * If a sync promise resolves with a truthy value, iteration stops and the corresponding element
+	 * becomes the result of the returned sync promise.
 	 *
 	 * @param {any[]} aElements
 	 *   Whatever elements we want to visit
 	 * @param {function} fnCallback
 	 *   A function to be called with a single element and its index and the array (like
-	 *   {@link Array#forEach} does it), returning a thenable.
+	 *   {@link Array#find} does it), returning a {@link sap.ui.base.SyncPromise}.
 	 * @returns {sap.ui.base.SyncPromise}
-	 *   A sync promise which resolves with <code>undefined</code> as soon as the last callback's
-	 *   thenable has resolved, or is rejected with a corresponding error if any callback returns
-	 *   a rejected thenable or throws an error
+	 *   A sync promise which resolves with the first element where the callback's sync promise
+	 *   resolved with a truthy value, or resolves with <code>undefined</code> as soon as the last
+	 *   callback's sync promise has resolved, or is rejected with a corresponding error if any
+	 *   callback returns a rejected sync promise or throws an error
 	 * @throws {Error}
 	 *   If the first callback throws
 	 */
 	function stopAndGo(aElements, fnCallback) {
 		var i = -1;
 
-		function next() {
+		/*
+		 * Visits the next element, taking the result of the previous callback into account.
+		 *
+		 * @param {boolean} bFound
+		 *   Whether an element was approved by the corresponding callback
+		 * @returns {sap.ui.base.SyncPromise|any}
+		 *   First call returns a <code>sap.ui.base.SyncPromise</code> which resolves with a later
+		 *   call's result.
+		 */
+		function next(bFound) {
+			if (bFound) {
+				return aElements[i];
+			}
 			i += 1;
 			if (i < aElements.length) {
 				return fnCallback(aElements[i], i, aElements).then(next);
 			}
-			return oSyncPromiseResolved;
 		}
 
-		return next();
+		return aElements.length
+			? next()
+			: oSyncPromiseResolved;
 	}
 
 	/**
@@ -486,11 +500,14 @@ sap.ui.define([
 	 *   The XML DOM Element
 	 * @param {sap.ui.core.util.XMLPreprocessor.ICallback} oInterface
 	 *   The callback interface
+	 * @returns {sap.ui.base.SyncPromise}
+	 *   A thenable which resolves with <code>undefined</code> as soon as visiting is done, or is
+	 *   rejected with a corresponding error if visiting fails (since 1.57.0)
 	 *
 	 * @see sap.ui.core.util.XMLPreprocessor.visitNodeWrapper
 	 */
 	function visitNodeWrapper(oElement, oInterface) {
-		oInterface.visitNode(oElement);
+		return oInterface.visitNode(oElement);
 	}
 
 	/**
@@ -526,6 +543,7 @@ sap.ui.define([
 		 *   If visitor or namespace is invalid
 		 *
 		 * @private
+		 * @ui5-restricted sap.fe
 		 */
 		plugIn : function (fnVisitor, sNamespace, sLocalName) {
 			var fnOldVisitor = mVisitors[sNamespace];
@@ -538,8 +556,8 @@ sap.ui.define([
 					|| sNamespace.indexOf(" ") >= 0) {
 				throw new Error("Invalid namespace: " + sNamespace);
 			}
-			jQuery.sap.log.debug("Plug-in visitor for namespace '" + sNamespace
-				+ "', local name '" + sLocalName + "'", fnVisitor, sXMLPreprocessor);
+			Log.debug("Plug-in visitor for namespace '" + sNamespace + "', local name '"
+				+ sLocalName + "'", fnVisitor, sXMLPreprocessor);
 			if (sLocalName) {
 				sNamespace = sNamespace + " " + sLocalName;
 				fnOldVisitor = mVisitors[sNamespace] || fnOldVisitor;
@@ -567,26 +585,25 @@ sap.ui.define([
 		 *   ID of the owning component (since 1.31; needed for extension point support)
 		 * @param {string} oViewInfo.name
 		 *   the view name (since 1.31; needed for extension point support)
-		 * @param {boolean} [oViewInfo.sync=false]
-		 *   whether the view is synchronous (since 1.57; needed for asynchronous XML templating)
+		 * @param {boolean} [oViewInfo.sync]
+		 *   whether the view is synchronous (since 1.57.0; needed for asynchronous XML templating)
 		 * @param {object} [mSettings={}]
 		 *   map/JSON-object with initial property values, etc.
 		 * @param {object} mSettings.bindingContexts
 		 *   binding contexts relevant for template pre-processing
 		 * @param {object} mSettings.models
 		 *   models relevant for template pre-processing
-		 * @param {boolean} mSettings.X-async
-		 *   eXperimental async switch, to be removed soon
-		 * @returns {Element}
-		 *   <code>oRootElement</code>
+		 * @returns {Element|Promise}
+		 *   <code>oRootElement</code> or a promise which resolves with <code>oRootElement</code> as
+		 *   soon as processing is done, or is rejected with a corresponding error if processing
+		 *   fails; since 1.57.0, a promise is returned if and only if processing cannot complete
+		 *   synchronously
 		 *
 		 * @private
 		 */
 		process : function (oRootElement, oViewInfo, mSettings) {
-			var bAsync,
-				sCaller = oViewInfo.caller,
-				bDebug
-					= jQuery.sap.log.isLoggable(jQuery.sap.log.Level.DEBUG, sXMLPreprocessor),
+			var sCaller = oViewInfo.caller,
+				bDebug = Log.isLoggable(Log.Level.DEBUG, sXMLPreprocessor),
 				bCallerLoggedForWarnings = bDebug, // debug output already contains caller
 				sCurrentName = oViewInfo.name, // current view or fragment name
 				mFragmentCache = {},
@@ -594,8 +611,7 @@ sap.ui.define([
 				iNestingLevel = 0,
 				oScope = {}, // for BindingParser.complexParser()
 				fnSupportInfo = oViewInfo._supportInfo,
-				bWarning
-					= jQuery.sap.log.isLoggable(jQuery.sap.log.Level.WARNING, sXMLPreprocessor);
+				bWarning = Log.isLoggable(Log.Level.WARNING, sXMLPreprocessor);
 
 			/**
 			 * Returns a callback interface for visitor functions which provides access to private
@@ -622,6 +638,37 @@ sap.ui.define([
 				 * @see sap.ui.core.util.XMLPreprocessor.plugIn
 				 */
 				return /** @lends sap.ui.core.util.XMLPreprocessor.ICallback */ {
+					/**
+					 * Visits the given elements one-by-one, calls the given callback for each of
+					 * them and stops and waits for each thenable returned by the callback before
+					 * going on to the next element. If a thenable resolves with a truthy value,
+					 * iteration stops and the corresponding element becomes the result of the
+					 * returned thenable.
+					 *
+					 * <b>Note:</b> If the visitor function is used for synchronous XML Templating,
+					 * the callback must return a sync promise; in other cases, any thenable is OK.
+					 *
+					 * @param {any[]} aElements
+					 *   Whatever elements we want to visit
+					 * @param {function} fnCallback
+					 *   A function to be called with a single element and its index and the array
+					 *   (like {@link Array#find} does it), returning a thenable, preferrably a
+					 *   {@link sap.ui.base.SyncPromise}
+					 * @returns {sap.ui.base.SyncPromise}
+					 *   A sync promise which resolves with the first element where the callback's
+					 *   thenable resolved with a truthy value, or resolves with
+					 *   <code>undefined</code> as soon as the last callback's thenable has
+					 *   resolved, or is rejected with a corresponding error if any callback returns
+					 *   a rejected thenable or throws an error
+					 */
+					find : function (aElements, fnCallback) {
+						try {
+							return SyncPromise.resolve(stopAndGo(aElements, fnCallback));
+						} catch (e) {
+							return SyncPromise.reject(e);
+						}
+					},
+
 					/**
 					 * Returns the model's context which corresponds to the given simple binding
 					 * path. Uses the map of currently known variables.
@@ -670,24 +717,18 @@ sap.ui.define([
 					 * @param {Element} [oElement]
 					 *   The XML DOM element the attribute value belongs to (needed only for
 					 *   warnings which are logged to the console)
-					 * @returns {any}
-					 *   The resulting value
-					 * @throws {Error}
-					 *   If the binding is not ready (because it refers to a model which is not
-					 *   available) or for other reasons (for example, an error thrown by a
-					 *   formatter)
+					 * @returns {sap.ui.base.SyncPromise|null}
+					 *   A thenable which resolves with the resulting value, or is rejected with a
+					 *   corresponding error (for example, an error thrown by a formatter) or
+					 *   <code>null</code> in case the binding is not ready (because it refers to a
+					 *   model which is not available) (since 1.57.0)
 					 *
 					 * @function
 					 * @public
 					 * @since 1.39.0
 					 */
 					getResult : function (sValue, oElement) {
-						var vResult = getResolvedBinding(sValue, oElement, oWithControl, true);
-
-						if (vResult === oUNBOUND) {
-							throw new Error("Binding not ready: " + sValue);
-						}
-						return vResult;
+						return getResolvedBinding(sValue, oElement, oWithControl, true);
 					},
 
 					/**
@@ -717,7 +758,7 @@ sap.ui.define([
 					 * @since 1.41.0
 					 */
 					getViewInfo : function () {
-						return jQuery.extend(true, {}, oViewInfo);
+						return deepExtend({}, oViewInfo);
 					},
 
 					/**
@@ -730,16 +771,21 @@ sap.ui.define([
 					 *   The fragment's resolved name
 					 * @param {Element} oElement
 					 *   The XML DOM element to be replaced
+					 * @returns {sap.ui.base.SyncPromise}
+					 *   A thenable which resolves with <code>undefined</code> as soon as the
+					 *   fragment has been inserted, or is rejected with a corresponding error if
+					 *   loading or visiting fails (since 1.57.0)
 					 * @throws {Error}
 					 *   If a cycle is detected (same <code>sFragmentName</code> and
-					 *   <code>oControl</code>)
+					 *   {@link sap.ui.core.util.XMLPreprocessor.ICallback})
 					 *
 					 * @function
 					 * @public
+					 * @see #with
 					 * @since 1.39.0
 					 */
 					insertFragment : function (sFragmentName, oElement) {
-						insertFragment(sFragmentName, oElement, oWithControl);
+						return insertFragment(sFragmentName, oElement, oWithControl);
 					},
 
 					/**
@@ -751,6 +797,10 @@ sap.ui.define([
 					 *   The XML DOM element
 					 * @param {Attr} oAttribute
 					 *   One of the element's attribute nodes
+					 * @returns {sap.ui.base.SyncPromise}
+					 *   A thenable which resolves with <code>undefined</code> as soon as the
+					 *   attribute's value has been replaced, or is rejected with a corresponding
+					 *   error if getting the binding's value fails (since 1.57.0)
 					 *
 					 * @function
 					 * @public
@@ -758,7 +808,7 @@ sap.ui.define([
 					 * @since 1.51.0
 					 */
 					visitAttribute : function (oElement, oAttribute) {
-						visitAttribute(oElement, oAttribute, oWithControl);
+						return visitAttribute(oElement, oAttribute, oWithControl);
 					},
 
 					/**
@@ -768,6 +818,10 @@ sap.ui.define([
 					 *
 					 * @param {Element} oElement
 					 *   The XML DOM element
+					 * @returns {sap.ui.base.SyncPromise}
+					 *   A thenable which resolves with <code>undefined</code> as soon as all
+					 *   attributes' values have been replaced, or is rejected with a corresponding
+					 *   error if getting some binding's value fails (since 1.57.0)
 					 *
 					 * @function
 					 * @public
@@ -775,7 +829,7 @@ sap.ui.define([
 					 * @since 1.39.0
 					 */
 					visitAttributes : function (oElement) {
-						visitAttributes(oElement, oWithControl);
+						return visitAttributes(oElement, oWithControl);
 					},
 
 					/**
@@ -784,13 +838,17 @@ sap.ui.define([
 					 *
 					 * @param {Node} oNode
 					 *   The XML DOM node
+					 * @returns {sap.ui.base.SyncPromise}
+					 *   A thenable which resolves with <code>undefined</code> as soon as visiting
+					 *   is done, or is rejected with a corresponding error if visiting fails
+					 *   (since 1.57.0)
 					 *
 					 * @function
 					 * @public
 					 * @since 1.39.0
 					 */
 					visitChildNodes : function (oNode) {
-						visitChildNodes(oNode, oWithControl);
+						return visitChildNodes(oNode, oWithControl);
 					},
 
 					/**
@@ -802,13 +860,21 @@ sap.ui.define([
 					 *
 					 * @param {Node} oNode
 					 *   The XML DOM node
+					 * @returns {sap.ui.base.SyncPromise}
+					 *   A thenable which resolves with <code>undefined</code> as soon as visiting
+					 *   is done, or is rejected with a corresponding error if visiting fails
+					 *   (since 1.57.0)
 					 *
 					 * @function
 					 * @public
 					 * @since 1.39.0
 					 */
 					visitNode : function (oNode) {
-						visitNode(oNode, oWithControl);
+						try {
+							return visitNode(oNode, oWithControl);
+						} catch (e) {
+							return SyncPromise.reject(e);
+						}
 					},
 
 					/**
@@ -838,7 +904,7 @@ sap.ui.define([
 					 *
 					 * @param {object} [mVariables={}]
 					 *   Map from variable name (string) to value ({@link sap.ui.model.Context})
-					 * @param {boolean} [bReplace=false]
+					 * @param {boolean} [bReplace]
 					 *   Whether only the given variables are known in the new callback interface
 					 *   instance, no inherited ones
 					 * @returns {sap.ui.core.util.XMLPreprocessor.ICallback}
@@ -888,7 +954,7 @@ sap.ui.define([
 			 */
 			function debug(oElement) {
 				if (bDebug) {
-					jQuery.sap.log.debug(
+					Log.debug(
 						getNestingLevel() + Array.prototype.slice.call(arguments, 1).join(" "),
 						oElement && serializeSingleElement(oElement), sXMLPreprocessor);
 				}
@@ -903,8 +969,8 @@ sap.ui.define([
 			 */
 			function debugFinished(oElement) {
 				if (bDebug) {
-					jQuery.sap.log.debug(getNestingLevel() + "Finished",
-						"</" + oElement.nodeName + ">", sXMLPreprocessor);
+					Log.debug(getNestingLevel() + "Finished", "</" + oElement.nodeName + ">",
+						sXMLPreprocessor);
 				}
 			}
 
@@ -922,7 +988,7 @@ sap.ui.define([
 			 */
 			function error(sMessage, oElement) {
 				sMessage = sMessage + serializeSingleElement(oElement);
-				jQuery.sap.log.error(sMessage, sCaller, sXMLPreprocessor);
+				Log.error(sMessage, sCaller, sXMLPreprocessor);
 				throw new Error(sCaller + ": " + sMessage);
 			}
 
@@ -931,25 +997,41 @@ sap.ui.define([
 			 *
 			 * @param {Element} oIfElement
 			 *   the <template:if> XML DOM element
-			 * @returns {Element[]}
+			 * @returns {Element[]|null}
 			 *   the XML DOM element children (a <then>, zero or more <elseif> and possibly an
 			 *   <else>) or null if there is no <then>
 			 * @throws {Error}
 			 *   if there is an unexpected child element
 			 */
 			function getIfChildren(oIfElement) {
-				var oNodeList = oIfElement.childNodes,
-					oChild,
-					aChildren = [],
+				var oChild,
+					aChildren = Array.prototype.filter.call(oIfElement.childNodes, isElementNode),
 					i, n,
 					bFoundElse = false;
 
-				for (i = 0, n = oNodeList.length; i < n; i += 1) {
-					oChild = oNodeList.item(i);
-					if (oChild.nodeType === 1 /*ELEMENT_NODE*/) {
-						aChildren.push(oChild);
-					}
+				/*
+				 * Tells whether the given XML DOM node is an element node.
+				 *
+				 * @param {Node} oNode - an XML DOM node
+				 * @returns {boolean} whether the given node is an element node
+				 */
+				function isElementNode(oNode) {
+					return oNode.nodeType === 1;
 				}
+
+				/*
+				 * Tells whether the given XML DOM element has the template namespace and the given
+				 * local name.
+				 *
+				 * @param {Element} oElement - an XML DOM element
+				 * @param {string} sLocalName - a local name
+				 * @returns {boolean} whether the given element has the given name
+				 */
+				function isTemplateElement(oElement, sLocalName) {
+					return oElement.namespaceURI === sNAMESPACE
+						&& oElement.localName === sLocalName;
+				}
+
 				if (!aChildren.length || !isTemplateElement(aChildren[0], "then")) {
 					return null;
 				}
@@ -989,10 +1071,10 @@ sap.ui.define([
 			 *   a JavaScript object which is identified by a sequence of names
 			 */
 			function getObject(sName) {
-				// Note: jQuery.sap.getObject("", ...) === undefined
+				// Note: ObjectPath.get("", ...) === undefined
 				return sName && sName.charAt(0) === "."
-					? jQuery.sap.getObject(sName.slice(1), undefined, oScope)
-					: jQuery.sap.getObject(sName);
+					? ObjectPath.get(sName.slice(1), oScope)
+					: ObjectPath.get(sName || "", oScope) || ObjectPath.get(sName || "");
 			}
 
 			/**
@@ -1013,42 +1095,77 @@ sap.ui.define([
 			 * @param {function} [fnCallIfConstant]
 			 *   optional function to be called in case the return value is obviously a constant,
 			 *   not influenced by any binding
-			 * @returns {any}
-			 *   the resulting value or a <code>Promise</code> resolving with the property value (in
-			 *   case async processing is allowed and supported by the respective model) or
-			 *   <code>oUNBOUND</code> in case the binding is not ready (because it refers to a
-			 *   model which is not available)
+			 * @returns {sap.ui.base.SyncPromise|null}
+			 *   a sync promise which resolves with the property value or is rejected with a
+			 *   corresponding error (for example, an error thrown by a formatter), or
+			 *   <code>null</code> in case the binding is not ready (because it refers to a model
+			 *   which is not available)
 			 * @throws {Error}
+			 *   if a formatter returns a promise in sync mode
 			 */
 			function getResolvedBinding(sValue, oElement, oWithControl, bMandatory,
 					fnCallIfConstant) {
-				var vBindingInfo;
+				let vParseResult;
 
-				jQuery.sap.measure.average(sPerformanceGetResolvedBinding, "",
-					aPerformanceCategories);
-				vBindingInfo
-					= BindingParser.complexParser(sValue, oScope, bMandatory, true, true)
-					|| sValue; // in case there is no binding and nothing to unescape
+				function resolveBinding (vBindingInfo) {
+					let oPromise;
 
-				if (vBindingInfo.functionsNotFound) {
-					if (bMandatory) {
-						warn(oElement, 'Function name(s)',
-							vBindingInfo.functionsNotFound.join(", "), 'not found');
+					if (vBindingInfo.functionsNotFound) {
+						if (bMandatory) {
+							warn(oElement, 'Function name(s)',
+								vBindingInfo.functionsNotFound.join(", "), 'not found');
+						}
+						Measurement.end(sPerformanceGetResolvedBinding);
+						return null; // treat incomplete bindings as unrelated
 					}
-					jQuery.sap.measure.end(sPerformanceGetResolvedBinding);
-					return oUNBOUND; // treat incomplete bindings as unrelated
+
+					if (typeof vBindingInfo === "object") {
+						oPromise = getAny(oWithControl, vBindingInfo, mSettings, oScope,
+							!oViewInfo.sync);
+						if (bMandatory && !oPromise) {
+							warn(oElement, 'Binding not ready');
+						} else if (oViewInfo.sync && oPromise && oPromise.isPending()) {
+							error("Async formatter in sync view in " + sValue + " of ", oElement);
+						}
+					} else {
+						oPromise = SyncPromise.resolve(vBindingInfo);
+						if (fnCallIfConstant) { // string
+							fnCallIfConstant();
+						}
+					}
+					Measurement.end(sPerformanceGetResolvedBinding);
+
+					return oPromise;
 				}
 
-				if (typeof vBindingInfo === "object") {
-					vBindingInfo = getAny(oWithControl, vBindingInfo, mSettings, oScope, bAsync);
-					if (bMandatory && vBindingInfo === oUNBOUND) {
-						warn(oElement, 'Binding not ready');
+				Measurement.average(sPerformanceGetResolvedBinding, "", aPerformanceCategories);
+				if (oViewInfo.sync) {
+					try {
+						vParseResult
+						= BindingParser.complexParser(sValue, oScope, bMandatory, true, true, true)
+							|| sValue; // in case there is no binding and nothing to unescape
+					} catch (e) {
+						return SyncPromise.reject(e);
 					}
-				} else if (fnCallIfConstant) { // string
-					fnCallIfConstant();
+					return resolveBinding(vParseResult);
 				}
-				jQuery.sap.measure.end(sPerformanceGetResolvedBinding);
-				return vBindingInfo;
+
+				try {
+					vParseResult
+						= BindingParser.complexParser(sValue, oScope, bMandatory, true, true, true,
+							null, true);
+				} catch (e) {
+					return SyncPromise.reject(e);
+				}
+				if (!vParseResult) { // no binding and nothing to unescape
+					return resolveBinding(sValue);
+				}
+				if (!vParseResult.wait) { // nothing to wait for
+					return resolveBinding(vParseResult.bindingInfo);
+				}
+				return vParseResult.resolved.then(function (/*no results*/) {
+					return resolveBinding(vParseResult.bindingInfo);
+				});
 			}
 
 			/**
@@ -1074,9 +1191,9 @@ sap.ui.define([
 			 */
 			function insertFragment(sFragmentName, oElement, oWithControl) {
 				var oFragmentPromise,
-					fnLoad = bAsync
-						? XMLTemplateProcessor.loadTemplatePromise
-						: XMLTemplateProcessor.loadTemplate,
+					fnLoad = oViewInfo.sync
+						? XMLTemplateProcessor.loadTemplate
+						: XMLTemplateProcessor.loadTemplatePromise,
 					sPreviousName = sCurrentName;
 
 				// Note: It is perfectly valid to include the very same fragment again, as long as
@@ -1092,7 +1209,7 @@ sap.ui.define([
 				oWithControl.$mFragmentContexts[sFragmentName] = true;
 				sCurrentName = sFragmentName;
 
-				jQuery.sap.measure.average(sPerformanceInsertFragment, "", aPerformanceCategories);
+				Measurement.average(sPerformanceInsertFragment, "", aPerformanceCategories);
 				// take fragment promise from cache, then import fragment
 				oFragmentPromise = mFragmentCache[sFragmentName];
 				if (!oFragmentPromise) {
@@ -1101,21 +1218,22 @@ sap.ui.define([
 				}
 				return oFragmentPromise.then(function (oFragmentElement) {
 					oFragmentElement = oElement.ownerDocument.importNode(oFragmentElement, true);
-					jQuery.sap.measure.end(sPerformanceInsertFragment);
+					Measurement.end(sPerformanceInsertFragment);
 
-					requireFor(oFragmentElement);
-					if (oFragmentElement.namespaceURI === "sap.ui.core"
-						&& oFragmentElement.localName === "FragmentDefinition") {
-						return liftChildNodes(oFragmentElement, oWithControl, oElement);
-					}
-					oElement.parentNode.insertBefore(oFragmentElement, oElement);
-					return visitNode(oFragmentElement, oWithControl);
+					return requireFor(oFragmentElement).then(function () {
+						if (oFragmentElement.namespaceURI === "sap.ui.core"
+							&& oFragmentElement.localName === "FragmentDefinition") {
+							return liftChildNodes(oFragmentElement, oWithControl, oElement);
+						}
+						oElement.parentNode.insertBefore(oFragmentElement, oElement);
+						return visitNode(oFragmentElement, oWithControl);
+					});
 				}).then(function () {
 					oElement.parentNode.removeChild(oElement);
 					sCurrentName = sPreviousName;
 					oWithControl.$mFragmentContexts[sFragmentName] = false;
 					debugFinished(oElement);
-					iNestingLevel--;
+					iNestingLevel -= 1;
 				});
 			}
 
@@ -1148,38 +1266,106 @@ sap.ui.define([
 			 *   the (<if> or <elseif>) XML DOM element
 			 * @param {sap.ui.core.util._with} oWithControl
 			 *   the "with" control
-			 * @returns {boolean}
-			 *   the test result
+			 * @returns {sap.ui.base.SyncPromise}
+			 *   A sync promise which resolves with the test result
 			 */
 			function performTest(oElement, oWithControl) {
 				// constant test conditions are suspicious, but useful during development
 				var fnCallIfConstant = warn.bind(null, oElement, 'Constant test condition'),
-					bResult,
-					sTest = oElement.getAttribute("test"),
-					vTest;
+					oPromise
+						= getResolvedBinding(oElement.getAttribute("test"), oElement, oWithControl,
+								true, fnCallIfConstant)
+						|| SyncPromise.resolve(false);
 
-				try {
-					vTest = getResolvedBinding(sTest, oElement, oWithControl, true,
-						fnCallIfConstant);
-					if (vTest === oUNBOUND) {
-						vTest = false;
-					}
-				} catch (ex) {
+				return oPromise.catch(function (ex) {
 					warn(oElement, 'Error in formatter:', ex);
-					vTest = undefined; // "test == undefined --> false" in debug log
-				}
-				bResult = !!vTest && vTest !== "false";
-				if (bDebug) {
-					if (typeof vTest === "string") {
-						vTest = JSON.stringify(vTest);
-					} else if (vTest === undefined) {
-						vTest = "undefined";
-					} else if (Array.isArray(vTest)) {
-						vTest = "[object Array]";
+					// "test == undefined --> false" in debug log
+				}).then(function (vTest) {
+					var bResult = !!vTest && vTest !== "false";
+
+					if (bDebug) {
+						if (typeof vTest === "string") {
+							vTest = JSON.stringify(vTest);
+						} else if (vTest === undefined) {
+							vTest = "undefined";
+						} else if (Array.isArray(vTest)) {
+							vTest = "[object Array]";
+						}
+						debug(oElement, "test ==", vTest, "-->", bResult);
 					}
-					debug(oElement, "test ==", vTest, "-->", bResult);
+					return bResult;
+				});
+			}
+
+			/**
+			 * Load required modules for the given element (a)synchronously, according to its
+			 * "template:require" attribute which may contain either a space separated list of
+			 * dot-separated module names or a JSON representation of a map from alias to
+			 * slash-separated Unified Resource Names (URNs). In the first case, the resulting
+			 * modules must be accessed from the global namespace. In the second case, they are
+			 * available as local names (AMD style) similar to <template:alias> instructions.
+			 *
+			 * @param {Element} oElement
+			 *   any XML DOM element
+			 * @returns {sap.ui.base.SyncPromise}
+			 *   A sync promise which resolves with <code>undefined</code> as soon as all required
+			 *   modules have been loaded, or is rejected with a corresponding error if module
+			 *   loading fails.
+			 * @throws {Error}
+			 *   If loading fails in sync mode
+			 */
+			function requireFor(oElement) {
+				var mAlias2URN = {},
+					oAttribute = oElement.getAttributeNodeNS(sNAMESPACE, "require"),
+					sModuleNames,
+					aURNs;
+
+				function asyncRequire() {
+					return new SyncPromise(function (resolve, reject) {
+						var aModules = aURNs.map(sap.ui.require);
+
+						if (aModules.every(Boolean)) {
+							// if all modules have been loaded already, resolve sync
+							// Note: we do not care about edge cases where a module value is falsy
+							resolve(aModules);
+						} else {
+							sap.ui.require(aURNs, function (/*oModule,...*/) {
+								resolve(arguments); // Note: not exactly an Array, but good enough
+							}, reject);
+						}
+					}).then(function (aModules) {
+						Object.keys(mAlias2URN).forEach(function (sAlias, i) {
+							oScope[sAlias] = aModules[i];
+						});
+					});
 				}
-				return bResult;
+
+				if (oAttribute && oAttribute.value) {
+					sModuleNames = oAttribute.value;
+					// Note: remove the attribute because it might look like a binding and must not
+					// reach visitAttributes
+					oElement.removeAttributeNode(oAttribute);
+
+					if (sModuleNames[0] === "{") {
+						mAlias2URN = JSTokenizer.parseJS(sModuleNames);
+						aURNs = Object.keys(mAlias2URN).map(function (sAlias) {
+							return mAlias2URN[sAlias];
+						});
+						return asyncRequire();
+					}
+					// map dot-separated module names to slash-separated Unified Resource Names
+					aURNs = sModuleNames.split(" ").map(function (sModuleName) {
+						return sModuleName.replace(/\./g, "/");
+					});
+					if (!oViewInfo.sync) {
+						return asyncRequire();
+					}
+					/**
+					 * @deprecated As of version 1.120
+					 */
+					aURNs.forEach(sap.ui.requireSync); // legacy-relevant: Sync path
+				}
+				return oSyncPromiseResolved;
 			}
 
 			/**
@@ -1198,16 +1384,18 @@ sap.ui.define([
 			 *   binding's value fails.
 			 */
 			function resolveAttributeBinding(oElement, oAttribute, oWithControl) {
-				return new SyncPromise(function (resolve) {
-					resolve(getResolvedBinding(oAttribute.value, oElement, oWithControl, false));
-				}).then(function (vValue) {
-					if (vValue === oUNBOUND) {
-						debug(oElement, 'Binding not ready for attribute', oAttribute.name);
-					} else if (vValue === undefined) {
+				var oPromise = getResolvedBinding(oAttribute.value, oElement, oWithControl, false);
+
+				if (!oPromise) {
+					debug(oElement, 'Binding not ready for attribute', oAttribute.name);
+					return oSyncPromiseResolved;
+				}
+				return oPromise.then(function (vValue) {
+					if (vValue === undefined) {
 						// if the formatter returns null, the value becomes undefined
 						// (the default value of _With.any)
 						debug(oElement, "Removed attribute", oAttribute.name);
-						oElement.removeAttribute(oAttribute.name);
+						oElement.removeAttributeNode(oAttribute);
 					} else if (vValue !== oAttribute.value) {
 						switch (typeof vValue) {
 						case "boolean":
@@ -1249,10 +1437,12 @@ sap.ui.define([
 					oOldValue,
 					sValue = oElement.getAttribute("value");
 
-				if (!sName || sName.length <= 1 || sName.lastIndexOf(".") !== 0) {
+				if (sName && sName[0] === ".") {
+					sName = sName.slice(1);
+				}
+				if (!sName || sName.includes(".")) {
 					error("Missing proper relative name in ", oElement);
 				}
-				sName = sName.slice(1);
 
 				oNewValue = getObject(sValue);
 				if (!oNewValue) {
@@ -1278,36 +1468,41 @@ sap.ui.define([
 			 *   the <sap.ui.core:ExtensionPoint> XML DOM element
 			 * @param {sap.ui.core.util._with} oWithControl
 			 *   the parent's "with" control
-			 * @returns {boolean}
-			 *   whether the <sap.ui.core:ExtensionPoint> element has been replaced
+			 * @returns {sap.ui.base.SyncPromise}
+			 *   A sync promise which resolves with <code>undefined</code> as soon as the
+			 *   <sap.ui.core:ExtensionPoint> element has been replaced and with <code>true</code>
+			 *   if there was no replacement
 			 */
 			function templateExtensionPoint(oElement, oWithControl) {
-				var sName = oElement.getAttribute("name"),
-					vName = oUNBOUND,
-					oViewExtension;
-
-				try {
+				var sValue = oElement.getAttribute("name"),
 					// resolve name, no matter if CustomizingConfiguration is present!
-					vName = getResolvedBinding(sName, oElement, oWithControl, true);
-					if (vName !== oUNBOUND && vName !== sName) {
-						// debug trace for dynamic names only
-						debug(oElement, "name =", vName);
-					}
-				} catch (ex) {
-					warn(oElement, 'Error in formatter:', ex);
-				}
+					oPromise = getResolvedBinding(sValue, oElement, oWithControl, true);
 
-				var CustomizingConfiguration = sap.ui.require("sap/ui/core/CustomizingConfiguration");
-				if (vName !== oUNBOUND && CustomizingConfiguration) {
-					oViewExtension = CustomizingConfiguration.getViewExtension(sCurrentName, vName,
-						oViewInfo.componentId);
+				if (!oPromise) {
+					return oSyncPromiseResolvedTrue;
+				}
+				return oPromise.then(function (sName) {
+					var oViewExtension;
+
+					if (sName !== sValue) {
+						// debug trace for dynamic names only
+						debug(oElement, "name =", sName);
+					}
+					oViewExtension = Component.getCustomizing(oViewInfo.componentId, {
+						extensionName : sName,
+						name : sCurrentName,
+						type : "sap.ui.viewExtensions"
+					});
 					if (oViewExtension && oViewExtension.className === "sap.ui.core.Fragment"
 							&& oViewExtension.type === "XML") {
-						insertFragment(oViewExtension.fragmentName, oElement, oWithControl);
-						return true;
+						return insertFragment(oViewExtension.fragmentName, oElement, oWithControl);
 					}
-				}
-				return false;
+
+					return true;
+				}, function (ex) {
+					warn(oElement, 'Error in formatter:', ex);
+					return true;
+				});
 			}
 
 			/**
@@ -1324,21 +1519,21 @@ sap.ui.define([
 			 */
 			function templateFragment(oElement, oWithControl) {
 				var sFragmentName = oElement.getAttribute("fragmentName"),
-					vFragmentName;
+					oPromise = getResolvedBinding(sFragmentName, oElement, oWithControl, true);
 
-				try {
-					vFragmentName = getResolvedBinding(sFragmentName, oElement, oWithControl, true);
-				} catch (ex) {
-					warn(oElement, 'Error in formatter:', ex);
+				if (!oPromise) {
 					return oSyncPromiseResolved;
 				}
+				return oPromise.then(function (sFragmentName) {
+					var oOldScope = oScope;
 
-				if (vFragmentName !== oUNBOUND) {
-					return SyncPromise.resolve(vFragmentName).then(function (sFragmentName) {
-						return insertFragment(sFragmentName, oElement, oWithControl);
+					oScope = Object.create(oScope);
+					return insertFragment(sFragmentName, oElement, oWithControl).then(function () {
+						oScope = oOldScope;
 					});
-				}
-				return oSyncPromiseResolved;
+				}, function (ex) {
+					warn(oElement, 'Error in formatter:', ex);
+				});
 			}
 
 			/**
@@ -1354,35 +1549,25 @@ sap.ui.define([
 			 *   corresponding error if visiting child nodes fails.
 			 */
 			function templateIf(oIfElement, oWithControl) {
-				var aChildren = getIfChildren(oIfElement),
-					// the selected element; iterates over aChildren; it is chosen if
-					// oTestElement evaluates to true or if the <else> has been reached
-					oSelectedElement,
-					// the element to run the test on (may be <if> or <elseif>)
-					oTestElement;
-
 				iNestingLevel++;
-				if (aChildren) {
-					oTestElement = oIfElement; // initially the <if>
-					oSelectedElement = aChildren.shift(); // initially the <then>
-					do {
-						if (performTest(oTestElement, oWithControl)) {
-							break;
-						}
-						oTestElement = oSelectedElement = aChildren.shift();
-						// repeat as long as we're on an <elseif>
-					} while (oTestElement && oTestElement.localName === "elseif");
-				} else if (performTest(oIfElement, oWithControl)) {
-					// no <if>-specific children and <if> test is true -> select the <if>
-					oSelectedElement = oIfElement;
-				}
-				return (oSelectedElement
-					? liftChildNodes(oSelectedElement, oWithControl, oIfElement)
-					: oSyncPromiseResolved
-				).then(function () {
-					oIfElement.parentNode.removeChild(oIfElement);
-					debugFinished(oIfElement);
-					iNestingLevel--;
+				return stopAndGo(getIfChildren(oIfElement) || [oIfElement], function (oCandidate) {
+					if (oCandidate.localName === "else") {
+						return oSyncPromiseResolvedTrue;
+					}
+					if (oCandidate.localName === "then") {
+						oCandidate = oIfElement;
+					}
+					return performTest(oCandidate, oWithControl);
+				}).then(function (oSelectedElement) {
+					// the selected element: <if>, <then>, <elseif>, <else>, or none at all
+					return (oSelectedElement
+						? liftChildNodes(oSelectedElement, oWithControl, oIfElement)
+						: oSyncPromiseResolved
+					).then(function () {
+						oIfElement.parentNode.removeChild(oIfElement);
+						debugFinished(oIfElement);
+						iNestingLevel -= 1;
+					});
 				});
 			}
 
@@ -1402,11 +1587,13 @@ sap.ui.define([
 			 */
 			function templateRepeat(oElement, oWithControl) {
 				var sList = oElement.getAttribute("list") || "",
-					oBindingInfo = BindingParser.complexParser(sList, oScope, false, true, true),
+					oBindingInfo
+						= BindingParser.complexParser(sList, oScope, false, true, true, true),
 					aContexts,
 					oListBinding,
 					sModelName,
 					oNewWithControl,
+					oPromise,
 					sVar = oElement.getAttribute("var");
 
 				if (sVar === "") {
@@ -1433,7 +1620,19 @@ sap.ui.define([
 				if (!oListBinding) {
 					error("Missing model '" + sModelName + "' in ", oElement);
 				}
-				aContexts = oListBinding.getContexts(oBindingInfo.startIndex, oBindingInfo.length);
+				oListBinding.enableExtendedChangeDetection();
+				aContexts = oListBinding.getContexts(oBindingInfo.startIndex,
+					oBindingInfo.length || /*no Model#iSizeLimit*/Infinity);
+				if (!oViewInfo.sync && aContexts.dataRequested) {
+					oPromise = new SyncPromise(function (resolve) {
+						oListBinding.attachEventOnce("change", resolve);
+					}).then(function () {
+						return oListBinding.getContexts(oBindingInfo.startIndex,
+							oBindingInfo.length);
+					});
+				} else {
+					oPromise = SyncPromise.resolve(aContexts);
+				}
 
 				// set up the model for the loop variable
 				sVar = sVar || sModelName; // default loop variable is to keep the same model
@@ -1442,21 +1641,23 @@ sap.ui.define([
 				// the actual loop
 				iNestingLevel++;
 				debug(oElement, "Starting");
-				return stopAndGo(aContexts, function (oContext, i) {
-					var oSourceNode = (i === aContexts.length - 1)
-							? oElement
-							: oElement.cloneNode(true);
+				return oPromise.then(function (aContexts) {
+					return stopAndGo(aContexts, function (oContext, i) {
+						var oSourceNode = (i === aContexts.length - 1)
+								? oElement
+								: oElement.cloneNode(true);
 
-					// Note: because sVar and sModelName refer to the same model instance, it is OK
-					// to use sModelName's context for sVar as well (the name is not part of the
-					// context!)
-					oNewWithControl.setBindingContext(oContext, sVar);
-					debug(oElement, sVar, "=", oContext.getPath());
-					return liftChildNodes(oSourceNode, oNewWithControl, oElement);
-				}).then(function () {
-					debugFinished(oElement);
-					iNestingLevel--;
-					oElement.parentNode.removeChild(oElement);
+						// Note: because sVar and sModelName refer to the same model instance, it
+						// is OK to use sModelName's context for sVar as well (the name is not part
+						// of the context!)
+						oNewWithControl.setBindingContext(oContext, sVar);
+						debug(oElement, sVar, "=", oContext.getPath());
+						return liftChildNodes(oSourceNode, oNewWithControl, oElement);
+					}).then(function () {
+						debugFinished(oElement);
+						iNestingLevel -= 1;
+						oElement.parentNode.removeChild(oElement);
+					});
 				});
 			}
 
@@ -1485,6 +1686,7 @@ sap.ui.define([
 					sHelper = oElement.getAttribute("helper"),
 					vHelperResult,
 					sPath = oElement.getAttribute("path"),
+					oPromise,
 					sResolvedPath,
 					sVar = oElement.getAttribute("var");
 
@@ -1515,40 +1717,50 @@ sap.ui.define([
 						}
 						vHelperResult = fnHelper(vHelperResult);
 					}
-					if (vHelperResult instanceof Context) {
-						oModel = vHelperResult.getModel();
-						sResolvedPath = vHelperResult.getPath();
-					} else if (vHelperResult !== undefined) {
-						if (typeof vHelperResult !== "string" || vHelperResult === "") {
-							error("Illegal helper result '" + vHelperResult + "' in ", oElement);
-						}
-						sResolvedPath = vHelperResult;
+					oPromise = SyncPromise.resolve(vHelperResult);
+					if (oViewInfo.sync && oPromise.isPending()) {
+						error("Async helper in sync view in ", oElement);
 					}
-					oNewWithControl.setModel(oModel, sVar);
-					oNewWithControl.bindObject({
-						model : sVar,
-						path : sResolvedPath
+					oPromise = oPromise.then(function (vHelperResult) {
+						if (vHelperResult instanceof Context) {
+							oModel = vHelperResult.getModel();
+							sResolvedPath = vHelperResult.getPath();
+						} else if (vHelperResult !== undefined) {
+							if (typeof vHelperResult !== "string" || vHelperResult === "") {
+								error("Illegal helper result '" + vHelperResult + "' in ",
+									oElement);
+							}
+							sResolvedPath = vHelperResult;
+						}
+						oNewWithControl.setModel(oModel, sVar);
+						oNewWithControl.bindObject({
+							model : sVar,
+							path : sResolvedPath
+						});
 					});
 				} else {
 					sResolvedPath = sPath;
 					oNewWithControl.bindObject(sResolvedPath);
+					oPromise = oSyncPromiseResolved;
 				}
 
-				iNestingLevel++;
-				debug(oElement, sVar, "=", sResolvedPath);
-				if (oNewWithControl.getBindingContext(sVar)
-						=== oWithControl.getBindingContext(sVar)) {
-					// Warn and ignore the new "with" control when its binding context is
-					// the same as a previous one.
-					// We test identity because models cache and reuse binding contexts.
-					warn(oElement, 'Set unchanged path:', sResolvedPath);
-					oNewWithControl = oWithControl;
-				}
+				return oPromise.then(function () {
+					iNestingLevel++;
+					debug(oElement, sVar, "=", sResolvedPath);
+					if (oNewWithControl.getBindingContext(sVar)
+							=== oWithControl.getBindingContext(sVar)) {
+						// Warn and ignore the new "with" control when its binding context is
+						// the same as a previous one.
+						// We test identity because models cache and reuse binding contexts.
+						warn(oElement, 'Set unchanged path:', sResolvedPath);
+						oNewWithControl = oWithControl;
+					}
 
-				return liftChildNodes(oElement, oNewWithControl).then(function () {
-					oElement.parentNode.removeChild(oElement);
-					debugFinished(oElement);
-					iNestingLevel--;
+					return liftChildNodes(oElement, oNewWithControl).then(function () {
+						oElement.parentNode.removeChild(oElement);
+						debugFinished(oElement);
+						iNestingLevel -= 1;
+					});
 				});
 			}
 
@@ -1635,12 +1847,20 @@ sap.ui.define([
 			 *   A sync promise which resolves with <code>undefined</code> as soon as visiting is
 			 *   done, or is rejected with a corresponding error if visiting fails.
 			 * @throws {Error}
-			 *   If an unexpected tag in the template namespace is encountered, or if a plugged-in
-			 *   visitor returns a value.
+			 *   If an unexpected tag in the template namespace is encountered
 			 */
 			function visitNode(oNode, oWithControl) {
-				var fnVisitor,
-					vVisitorResult;
+				var fnVisitor;
+
+				function visitAttributesAndChildren() {
+					return visitAttributes(oNode, oWithControl).then(function () {
+						return visitChildNodes(oNode, oWithControl);
+					}).then(function () {
+						if (fnSupportInfo) {
+							fnSupportInfo({context:oNode, env:{caller:"visitNode", after: {name: oNode.tagName}}});
+						}
+					});
+				}
 
 				// process only ELEMENT_NODEs
 				if (oNode.nodeType !== 1 /* Node.ELEMENT_NODE */) {
@@ -1669,10 +1889,11 @@ sap.ui.define([
 				} else if (oNode.namespaceURI === "sap.ui.core") {
 					switch (oNode.localName) {
 					case "ExtensionPoint":
-						if (templateExtensionPoint(oNode, oWithControl)) {
-							return oSyncPromiseResolved;
-						}
-						break;
+						return templateExtensionPoint(oNode, oWithControl).then(function (bResult) {
+							if (bResult) {
+								return visitAttributesAndChildren();
+							}
+						});
 
 					case "Fragment":
 						if (oNode.getAttribute("type") === "XML") {
@@ -1689,24 +1910,19 @@ sap.ui.define([
 					if (fnVisitor) {
 						iNestingLevel++;
 						debug(oNode, "Calling visitor");
-						vVisitorResult = fnVisitor(oNode, createCallbackInterface(oWithControl));
-						if (vVisitorResult !== undefined) {
-							// prepare for later enhancements using return value
-							error("Unexpected return value from visitor for ", oNode);
-						}
-						debugFinished(oNode);
-						iNestingLevel--;
-						return oSyncPromiseResolved;
+						return fnVisitor(oNode, createCallbackInterface(oWithControl))
+							.then(function (vVisitorResult) {
+								if (vVisitorResult !== undefined) {
+									// prepare for later enhancements using return value
+									error("Unexpected return value from visitor for ", oNode);
+								}
+								debugFinished(oNode);
+								iNestingLevel -= 1;
+							});
 					}
 				}
 
-				return visitAttributes(oNode, oWithControl).then(function () {
-					return visitChildNodes(oNode, oWithControl);
-				}).then(function () {
-					if (fnSupportInfo) {
-						fnSupportInfo({context:oNode, env:{caller:"visitNode", after: {name: oNode.tagName}}});
-					}
-				});
+				return visitAttributesAndChildren();
 			}
 
 			/*
@@ -1723,18 +1939,17 @@ sap.ui.define([
 				if (bWarning) {
 					if (!bCallerLoggedForWarnings) {
 						bCallerLoggedForWarnings = true;
-						jQuery.sap.log.warning("Warning(s) during processing of " + sCaller, null,
+						Log.warning("Warning(s) during processing of " + sCaller, null,
 							sXMLPreprocessor);
 					}
-					jQuery.sap.log.warning(
+					Log.warning(
 						getNestingLevel() + Array.prototype.slice.call(arguments, 1).join(" "),
 						oElement && serializeSingleElement(oElement), sXMLPreprocessor);
 				}
 			}
 
-			jQuery.sap.measure.average(sPerformanceProcess, "", aPerformanceCategories);
+			Measurement.average(sPerformanceProcess, "", aPerformanceCategories);
 			mSettings = mSettings || {};
-			bAsync = !oViewInfo.sync && mSettings["X-async"];
 
 			if (bDebug) {
 				debug(undefined, "Start processing", sCaller);
@@ -1751,19 +1966,20 @@ sap.ui.define([
 						context: oRootElement,
 						env: {
 							caller:"view",
-							viewinfo: jQuery.extend(true, {}, oViewInfo),
-							settings: jQuery.extend(true, {}, mSettings),
+							viewinfo: deepExtend({}, oViewInfo),
+							settings: deepExtend({}, mSettings),
 							clone: oRootElement.cloneNode(true),
 							type: "template"}
 					});
 			}
-			requireFor(oRootElement);
-			return visitNode(oRootElement, new With({
-				models : mSettings.models,
-				bindingContexts : mSettings.bindingContexts
-			})).then(function () {
+			return requireFor(oRootElement).then(function () {
+				return visitNode(oRootElement, new With({
+					models : mSettings.models,
+					bindingContexts : mSettings.bindingContexts
+				}));
+			}).then(function () {
 				debug(undefined, "Finished processing", sCaller);
-				jQuery.sap.measure.end(sPerformanceProcess);
+				Measurement.end(sPerformanceProcess);
 				return oRootElement;
 			}).unwrap();
 		}

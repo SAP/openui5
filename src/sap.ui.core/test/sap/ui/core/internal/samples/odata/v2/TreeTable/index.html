@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>Example for OData V2 Tree Table (ZRH_ERHAORDERMANAGE)</title>
+
+	<!-- ensure that MockServer can load mock data in the explored app and standalone -->
+	<base href="../../../../../../../../../">
+
+	<script id="sap-ui-bootstrap" src="resources/sap-ui-core.js"
+		data-sap-ui-async="true"
+		data-sap-ui-compatVersion="edge"
+		data-sap-ui-libs="sap.m"
+		data-sap-ui-onInit="module:sap/ui/core/ComponentSupport"
+		data-sap-ui-resourceroots='{
+			"sap.ui.core.internal.samples.odata.v2.TreeTable" :
+				"test-resources/sap/ui/core/internal/samples/odata/v2/TreeTable"
+		}'
+		data-sap-ui-theme="sap_horizon">
+	</script>
+</head>
+<body class="sapUiBody">
+	<div data-sap-ui-component data-name="sap.ui.core.internal.samples.odata.v2.TreeTable"
+		data-id="container" data-settings='{"id" : "TreeTable"}'></div>
+</body>
+</html>

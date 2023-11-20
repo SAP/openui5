@@ -1,0 +1,90 @@
+{
+	"sap.app": {
+		"id": "card.explorer.filters.usingStaticItems",
+		"type": "card",
+		"title": "Sample of a Card with filters"
+	},
+	"sap.card": {
+		"configuration": {
+			"parameters": {
+				"numberOfProducts": {
+					"value": 4,
+					"type": "integer",
+					"label": "Number of products",
+					"description": "How many products to show in the list."
+				}
+			},
+			"destinations": {
+				"ProductsMockServer": {
+					"name": "ProductsMockServer",
+					"label": "Products Mock",
+					"defaultUrl": "/SEPMRA_PROD_MAN/"
+				}
+			},
+			"filters": {
+				"productCategory": {
+					"value": "Notebooks",
+					"type": "Select",
+					"label": "Category",
+					"items": [
+						{
+							"title": "All",
+							"key": "all"
+						},
+						{
+							"title": "Flat Screen Monitors",
+							"key": "Flat Screen Monitors"
+						},
+						{
+							"title": "Notebooks",
+							"key": "Notebooks"
+						}
+					]
+				}
+			}
+		},
+		"data": {
+			"request": {
+				"url": "{{destinations.ProductsMockServer}}/SEPMRA_C_PD_Product",
+				"parameters": {
+					"$filter": "{= ${filters>/productCategory/value} !== 'all' ? 'ProductCategory eq ' + ${filters>/productCategory/value} + ' and ' : ''}AverageRatingValue gt 3",
+					"$orderby": "AverageRatingValue desc",
+					"$inlinecount": "allpages"
+				}
+			}
+		},
+		"type": "List",
+		"header": {
+			"title": "Products by category",
+			"subTitle": "Category {filters>/productCategory/selectedItem/title}",
+			"icon": {
+				"src": "sap-icon://product"
+			},
+			"status": {
+				"text": {
+					"format": {
+						"translationKey": "i18n>CARD.COUNT_X_OF_Y",
+						"parts": [
+							"parameters>/visibleItems",
+							"/d/__count"
+						]
+					}
+				}
+			}
+		},
+		"content": {
+			"data": {
+				"path": "/d/results"
+			},
+			"item": {
+				"title": "{Name}",
+				"description": "{ProductCategory}",
+				"info": {
+					"value": "{AverageRatingValue}",
+					"state": "{= ${AverageRatingValue} > 4 ? 'Success' : 'Warning' }"
+				}
+			},
+			"maxItems": "{parameters>/numberOfProducts/value}"
+		}
+	}
+}

@@ -1,0 +1,33 @@
+<mvc:View
+	controllerName="sap.m.sample.DialogWithinArea.C"
+	xmlns:l="sap.ui.layout"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m">
+	<HBox>
+		<l:VerticalLayout class="sapUiContentPadding" width="100%">
+			<Button
+				text="Dialog"
+				width="230px"
+				press=".onDefaultDialogPress"
+				class="sapUiSmallMarginBottom"
+				ariaHasPopup="Dialog" />
+			<Button
+				text="Dialog (Resizable)"
+				width="230px"
+				press=".onResizableDialogPress"
+				class="sapUiSmallMarginBottom"
+				ariaHasPopup="Dialog" />
+			<Button
+				text="Dialog (Draggable)"
+				width="230px"
+				press=".onDraggableDialogPress"
+				class="sapUiSmallMarginBottom"
+				ariaHasPopup="Dialog" />
+		</l:VerticalLayout>
+		<HBox id="withinArea" backgroundDesign="Solid" height="30rem">
+			<layoutData>
+				<FlexItemData growFactor="1" backgroundDesign="Solid" styleClass="sapUiMediumMargin" />
+			</layoutData>
+		</HBox>
+	</HBox>
+</mvc:View>

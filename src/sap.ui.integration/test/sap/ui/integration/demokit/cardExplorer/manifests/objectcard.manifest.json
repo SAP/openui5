@@ -1,0 +1,96 @@
+{
+	"sap.app": {
+		"id": "card.explorer.landingPage"
+	},
+	"sap.card": {
+		"type": "Object",
+		"header": {
+			"icon": {
+				"src": "./images/Sabine_Mayer.png"
+			},
+			"title": "Sabine Mayer",
+			"subTitle": "Executive Assistant"
+		},
+		"content": {
+			"groups": [
+				{
+					"title": "Contact Details",
+					"items": [
+						{
+							"label": "Mobile",
+							"value": "+001 6101 34869-0",
+							"actions": [
+								{
+									"type": "Navigation",
+									"parameters": {
+										"url": "tel:+001 6101 34869-0"
+									}
+								}
+							]
+						},
+						{
+							"label": "Phone",
+							"value": "+001 4231 5424 0231",
+							"actions": [
+								{
+									"type": "Navigation",
+									"parameters": {
+										"url": "tel:+001 4231 5424 0231"
+									}
+								}
+							]
+						},
+						{
+							"label": "Email",
+							"value": "sabine@cardadventure.com",
+							"actions": [
+								{
+									"type": "Navigation",
+									"parameters": {
+										"url": "mailto:sabine@cardadventure.com"
+									}
+								}
+							]
+						}
+					]
+				},
+				{
+					"title": "Company Details",
+					"items": [
+						{
+							"label": "Direct Manager",
+							"value": "Michael Adams",
+							"icon": {
+								"src": "./images/Michael_Adams.png"
+							}
+						},
+						{
+							"label": "Phone",
+							"value": "+001 4242 4242 0873",
+							"actions": [
+								{
+									"type": "Navigation",
+									"parameters": {
+										"url": "tel:+001 4242 4242 0873"
+									}
+								}
+							]
+						},
+						{
+							"label": "Email",
+							"value": "madams@cardadventure.com",
+							"actions": [
+								{
+									"type": "Navigation",
+									"parameters": {
+										"url": "mailto:madams@cardadventure.com"
+									}
+								}
+							]
+						}
+					]
+				}
+			]
+		}
+	}
+}

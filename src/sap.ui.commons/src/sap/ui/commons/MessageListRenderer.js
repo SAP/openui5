@@ -3,8 +3,8 @@
  */
 
 // Provides default renderer for control sap.ui.commons.MessageList
-sap.ui.define(['jquery.sap.global'],
-	function(jQuery) {
+sap.ui.define([],
+	function() {
 	"use strict";
 
 
@@ -19,13 +19,10 @@ sap.ui.define(['jquery.sap.global'],
 	/**
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
 	 *
-	 * @param {sap.ui.core.RenderManager} oRenderManager the RenderManager that can be used for writing to the Render-Output-Buffer
+	 * @param {sap.ui.core.RenderManager} rm the RenderManager that can be used for writing to the Render-Output-Buffer
 	 * @param {sap.ui.core.Control} oControl an object representation of the control that should be rendered
 	 */
-	MessageListRenderer.render = function(oRenderManager, oControl){
-		// Convenience variable
-		var rm = oRenderManager;
-
+	MessageListRenderer.render = function(rm, oControl){
 		// Opening the outer container:
 	  rm.write('<ul class="sapUiMsgList"');
 	  rm.writeControlData(oControl);

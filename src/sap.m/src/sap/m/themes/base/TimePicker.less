@@ -7,46 +7,8 @@
 /* TimePicker Input Field                   */
 /* ======================================== */
 
-.sapMTimePicker {
-	.sapUiIcon {
-		cursor: pointer;
-		color: @sapUiContentIconColor;
-		&:hover {
-			background-color: @sapUiButtonLiteHoverBackground;
-		}
-		&:focus {
-			background-color: @sapUiButtonLiteHoverBackground;
-			outline: 1px dotted @sapUiContentFocusColor;
-			outline-offset: -1px;
-		}
-		&:active {
-			background-color: @sapUiButtonLiteActiveBackground;
-			color: @sapUiButtonActiveTextColor;
-			outline: 1px dotted @sapUiContentContrastFocusColor;
-		}
-	}
-	&.sapMTPInputActive {
-		.sapMInputBaseInner {
-			border: 1px solid @sapUiFieldActiveBorderColor;
-		}
-		.sapMInputValHelp .sapUiIcon {
-			background-color: @sapUiToggleButtonPressedBackground;
-			color: @sapUiToggleButtonPressedTextColor;
-			&:hover {
-				background-color: @sapUiToggleButtonPressedBackground;
-				color: @sapUiToggleButtonPressedTextColor;
-			}
-			&:focus {
-				background-color: @sapUiButtonLiteActiveBackground;
-			}
-		}
-	}
-}
-
-
-.sapMTimePicker .sapMInputVH:not(.sapMInputBaseReadonly) .sapMInputValHelp > .sapMInputValHelpInner:hover,
-.sapMTimePicker .sapMInputVH:not(.sapMInputBaseReadonly) .sapMInputValHelp > .sapMInputValHelpInner:focus {
-	background-color: @sapUiToggleButtonPressedBackground;
+.sapMInputBase.sapMTimePickerHiddenInput {
+	display: none;
 }
 
 /* ======================================== */
@@ -57,9 +19,7 @@
 	overflow: hidden !important;
 	-webkit-user-select: none;
 	-moz-user-select: none;
-	-ms-user-select: none;
 	user-select: none;
-	border-radius: 0 0 0.25rem 0.25rem !important; //Need to override this with important because of popover stronger selectors
 	box-shadow: @sapUiShadowLevel1 !important; //Need to override this with important because of popover stronger selectors
 }
 
@@ -74,41 +34,12 @@
 	/* ======================================== */
 
 	.sapMTimePickerDropDown {
-		border-radius: 0 0 0.25rem 0.25rem !important; //Need to override this with important because of popover stronger selectors
 		box-shadow: @sapUiShadowLevel1 !important; //Need to override this with important because of popover stronger selectors
 	}
 }
 
 /* PHONE STYLES */
 html.sap-phone {
-	/* ======================================== */
-	/* TimePicker Input Field                   */
-	/* ======================================== */
-
-	.sapMTimePicker {
-		.sapUiIcon {
-			color: @sapUiContentIconColor;
-			&:focus {
-				background-color: @sapUiButtonLiteHoverBackground;
-				outline: 1px dotted @sapUiContentFocusColor;
-				outline-offset: -1px;
-			}
-			&:active {
-				background-color: @sapUiButtonLiteActiveBackground;
-				color: @sapUiButtonActiveTextColor;
-				outline: 1px dotted @sapUiContentContrastFocusColor;
-			}
-		}
-		&.sapMTPInputActive {
-			.sapMInputBaseInner {
-				border: 1px solid @sapUiFieldActiveBorderColor;
-			}
-			.sapUiIcon {
-				background-color: @sapUiToggleButtonPressedBackground;
-				color: @sapUiToggleButtonPressedTextColor;
-			}
-		}
-	}
 
 	/* ======================================== */
 	/* TimePicker Dropdown                      */
@@ -117,9 +48,14 @@ html.sap-phone {
 	.sapMTimePickerDropDown {
 		/* This centers content in landscape & portrait mode */
 		.sapMDialogScrollCont {
-			display: flex;
 			height: 100%;
 			padding: 0;
 		}
 	}
+}
+
+/* DESKTOP STYLES */
+html.sap-desktop .sapMValueStateHeaderRoot {
+	margin-right: -12px; // fixing a right margin set from popover
+	max-width: 100%;
 }

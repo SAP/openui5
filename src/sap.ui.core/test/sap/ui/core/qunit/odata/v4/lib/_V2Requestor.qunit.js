@@ -1,27 +1,36 @@
 /*!
  * ${copyright}
  */
-sap.ui.require([
-	"jquery.sap.global",
+sap.ui.define([
+	"sap/base/Log",
+	"sap/base/i18n/Formatting",
 	"sap/ui/base/SyncPromise",
+	"sap/ui/core/CalendarType",
 	"sap/ui/core/format/DateFormat",
 	"sap/ui/model/odata/ODataUtils",
 	"sap/ui/model/odata/v4/lib/_Helper",
 	"sap/ui/model/odata/v4/lib/_Parser",
 	"sap/ui/model/odata/v4/lib/_Requestor",
 	"sap/ui/model/odata/v4/lib/_V2Requestor"
-], function (jQuery, SyncPromise, DateFormat, ODataUtils, _Helper, _Parser, _Requestor,
-		asV2Requestor) {
-	/*global QUnit, sinon */
-	/*eslint max-nested-callbacks: 0, no-warning-comments: 0 */
+], function (Log, Formatting, SyncPromise, CalendarType, DateFormat, ODataUtils, _Helper,
+		_Parser, _Requestor, asV2Requestor0) {
 	"use strict";
+
+	function asV2Requestor(oRequestor) {
+		oRequestor.oModelInterface = oRequestor.oModelInterface || {};
+		asV2Requestor0(oRequestor);
+	}
 
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.odata.v4.lib._V2Requestor", {
 		beforeEach : function () {
-			this.oLogMock = this.mock(jQuery.sap.log);
+			this.sDefaultCalendarType = Formatting.getCalendarType();
+			this.oLogMock = this.mock(Log);
 			this.oLogMock.expects("warning").never();
 			this.oLogMock.expects("error").never();
+		},
+		afterEach : function () {
+			Formatting.setCalendarType(this.sDefaultCalendarType);
 		}
 	});
 
@@ -32,30 +41,29 @@ sap.ui.require([
 			"Content-Type" : "foo"
 		},
 		mPredefinedPartHeaders : {
-			"Accept" : "foo"
+			Accept : "foo"
 		},
 		mPredefinedRequestHeaders : {
-			"Accept" : "foo",
-			"MaxDataServiceVersion" : "foo",
-			"DataServiceVersion" : "foo",
+			Accept : "foo",
+			MaxDataServiceVersion : "foo",
+			DataServiceVersion : "foo",
 			"X-CSRF-Token" : "foo"
 		}
 	}].forEach(function (oRequestor) {
 		QUnit.test("check headers (V2): ", function (assert) {
+			// code under test
 			asV2Requestor(oRequestor);
 
 			assert.deepEqual(oRequestor.mFinalHeaders, {
 				"Content-Type" : "application/json;charset=UTF-8"
 			});
-
 			assert.deepEqual(oRequestor.mPredefinedPartHeaders, {
-				"Accept" : "application/json"
+				Accept : "application/json"
 			});
-
 			assert.deepEqual(oRequestor.mPredefinedRequestHeaders, {
-				"Accept" : "application/json",
-				"MaxDataServiceVersion" : "2.0",
-				"DataServiceVersion" : "2.0",
+				Accept : "application/json",
+				MaxDataServiceVersion : "2.0",
+				DataServiceVersion : "2.0",
 				"X-CSRF-Token" : "Fetch"
 			});
 		});
@@ -65,61 +73,61 @@ sap.ui.require([
 	[{
 		bIsCollection : true,
 		oResponsePayload : {
-			"d" : {
-				"__count" : "3",
-				"__next" : "...?$skiptoken=12",
-				"results" : [{
-					"__metadata" : {},
-					"String" : "foo"
+			d : {
+				__count : "3",
+				__next : "...?$skiptoken=12",
+				results : [{
+					__metadata : {},
+					String : "foo"
 				}, {
-//					"__metadata" : {},
-					"Boolean" : true
+					// "__metadata" : {},
+					Boolean : true
 				}]
 			}
 		},
 		oExpectedResult : {
 			"@odata.count" : "3", // Note: v4.ODataModel uses IEEE754Compatible=true
 			"@odata.nextLink" : "...?$skiptoken=12",
-			"value" : [{"__metadata" : {}, "String" : "foo"}, {"Boolean" : true}]
+			value : [{__metadata : {}, String : "foo"}, {Boolean : true}]
 		}
 	}, {
 		bIsCollection : true,
 		oResponsePayload : {
-			"d" : {
-				"results" : [{
-					"__metadata" : {},
-					"String" : "foo"
+			d : {
+				results : [{
+					__metadata : {},
+					String : "foo"
 				}, {
-//					"__metadata" : {},
-					"Boolean" : true
+					// "__metadata" : {},
+					Boolean : true
 				}]
 			}
 		},
 		oExpectedResult : {
-			"value" : [{"__metadata" : {}, "String" : "foo"}, {"Boolean" : true}]
+			value : [{__metadata : {}, String : "foo"}, {Boolean : true}]
 		}
 	}, {
 		bIsCollection : false,
 		oResponsePayload : {
-			"d" : {
-				"__metadata" : {},
-				"String" : "foo"
+			d : {
+				__metadata : {},
+				String : "foo"
 			}
 		},
 		//TODO "__metadata" : {} is actually unexpected here, in real life
-		oExpectedResult : {"__metadata" : {}, "String" : "foo"}
+		oExpectedResult : {__metadata : {}, String : "foo"}
 	}, {
 		bIsCollection : false,
 		oResponsePayload : {
-			"d" : {
-				"__metadata" : {},
-				"results" : "foo"
+			d : {
+				__metadata : {},
+				results : "foo"
 			}
 		},
-		oExpectedResult : {"__metadata" : {}, "results" : "foo"}
+		oExpectedResult : {__metadata : {}, results : "foo"}
 	}].forEach(function (oFixture, i) {
 		QUnit.test("doConvertResponse, " + i, function (assert) {
-			var oRequestor = {fnFetchEntityContainer : function () {}},
+			var oRequestor = {fetchEntityContainer : function () {}},
 				oRequestorMock = this.mock(oRequestor);
 
 			asV2Requestor(oRequestor);
@@ -143,10 +151,10 @@ sap.ui.require([
 			oResponsePayload = {
 				// /sap/opu/odata/IWFND/RMTSAMPLEFLIGHT/
 				// FlightCollection(carrid='...',connid='...',fldate=datetime'...')/flightDetails
-				"d" : {
-					"flightDetails" : {
-						"__metadata" : {
-							"type" : "RMTSAMPLEFLIGHT.FlightDetails"
+				d : {
+					flightDetails : {
+						__metadata : {
+							type : "RMTSAMPLEFLIGHT.FlightDetails"
 						}
 					}
 				}
@@ -163,15 +171,15 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	[{
-		"d" : {
+		d : {
 			// "An optional "__metadata" name/value pair..."
-			"readMe1st" : {}
+			readMe1st : {}
 		}
 	}, {
-		"d" : {
+		d : {
 			// "An optional "__metadata" name/value pair..."
-			"ID" : 0,
-			"Name" : "Food"
+			ID : 0,
+			Name : "Food"
 		}
 	}].forEach(function (oResponsePayload, i) {
 		QUnit.test("doConvertResponse, not 2.2.7.2.3 RetrieveComplexType: " + i, function (assert) {
@@ -194,18 +202,18 @@ sap.ui.require([
 			sOutput = "2017-08-10T00:00:00Z",
 			oProperty = {},
 			oRequestor = {
-				oModelInterface : {fnFetchMetadata : function () {}}
+				oModelInterface : {fetchMetadata : function () {}}
 			},
 			oResponsePayload = {
 				// /sap/opu/odata/IWFND/RMTSAMPLEFLIGHT/
 				// FlightCollection(carrid='...',connid='...',fldate=datetime'...')/fldate
-				"d" : {
-					"fldate": "/Date(1502323200000)/"
+				d : {
+					fldate : "/Date(1502323200000)/"
 				}
 			};
 
 		asV2Requestor(oRequestor);
-		this.mock(oRequestor.oModelInterface).expects("fnFetchMetadata")
+		this.mock(oRequestor.oModelInterface).expects("fetchMetadata")
 			.withExactArgs(sMetaPath)
 			.returns(SyncPromise.resolve(oProperty));
 		this.mock(oRequestor).expects("convertPrimitive")
@@ -226,8 +234,8 @@ sap.ui.require([
 			oResponsePayload = {
 				// /sap/opu/odata/IWFND/RMTSAMPLEFLIGHT/
 				// FlightCollection(carrid='...',connid='...',fldate=datetime'...')/fldate
-				"d" : {
-					"fldate": null
+				d : {
+					fldate : null
 				}
 			};
 
@@ -247,12 +255,12 @@ sap.ui.require([
 			sOutput1 = "2017-08-10T00:00:01Z",
 			oProperty = {},
 			oRequestor = {
-				oModelInterface : {fnFetchMetadata : function () {}}
+				oModelInterface : {fetchMetadata : function () {}}
 			},
 			oRequestorMock = this.mock(oRequestor),
 			oResponsePayload = {
-				"d" : { // Note: DataServiceVersion : 2.0
-					"results" : [
+				d : { // Note: DataServiceVersion : 2.0
+					results : [
 						"/Date(1502323200000)/",
 						"/Date(1502323201000)/"
 					]
@@ -260,7 +268,7 @@ sap.ui.require([
 			};
 
 		asV2Requestor(oRequestor);
-		this.mock(oRequestor.oModelInterface).expects("fnFetchMetadata").withExactArgs(sMetaPath)
+		this.mock(oRequestor.oModelInterface).expects("fetchMetadata").withExactArgs(sMetaPath)
 			.returns(SyncPromise.resolve(oProperty));
 		oRequestorMock.expects("convertNonPrimitive").never();
 		oRequestorMock.expects("convertPrimitive").withExactArgs(oResponsePayload.d.results[0],
@@ -283,8 +291,8 @@ sap.ui.require([
 			oRequestor = {},
 			oRequestorMock = this.mock(oRequestor),
 			oResponsePayload = {
-				"d" : { // Note: DataServiceVersion : 2.0
-					"results" : []
+				d : { // Note: DataServiceVersion : 2.0
+					results : []
 				}
 			};
 
@@ -317,7 +325,7 @@ sap.ui.require([
 		// code under test
 		oRequestor.convertNonPrimitive(oObject);
 
-		assert.deepEqual(oObject, {"complex" : {"property" : 42}});
+		assert.deepEqual(oObject, {complex : {property : 42}});
 	});
 
 	//*********************************************************************************************
@@ -367,9 +375,9 @@ sap.ui.require([
 		oConvertedObject = oRequestor.convertNonPrimitive(oObject);
 
 		assert.deepEqual(oConvertedObject, {
-			"complexCollection" : [
-				{"property" : 42},
-				{"property" : 77}
+			complexCollection : [
+				{property : 42},
+				{property : 77}
 			]
 		});
 	});
@@ -382,7 +390,7 @@ sap.ui.require([
 				complex : {},
 				missing : null,
 				Products : {
-					__deferred: {}
+					__deferred : {}
 				},
 				property : "42"
 			},
@@ -497,7 +505,7 @@ sap.ui.require([
 		output : "A-A-"
 	}, {
 		input : "A/A/",
-		output :"A_A_"
+		output : "A_A_"
 	}].forEach(function (oFixture, i) {
 		QUnit.test("convertBinary, " + i, function (assert) {
 			var oRequestor = {};
@@ -515,6 +523,9 @@ sap.ui.require([
 
 		asV2Requestor(oRequestor);
 
+		Formatting.setCalendarType(CalendarType.Japanese);
+		asV2Requestor0._setDateTimeFormatter();
+
 		// code under test
 		assert.strictEqual(oRequestor.convertDate("\/Date(1395705600000)\/"), "2014-03-25");
 
@@ -525,8 +536,8 @@ sap.ui.require([
 	//*********************************************************************************************
 	[{
 		input : "/Date(1395705600001)/",
-		expectedError : "Cannot convert Edm.DateTime value '/Date(1395705600001)/' to Edm.Date" +
-			" because it contains a time of day"
+		expectedError : "Cannot convert Edm.DateTime value '/Date(1395705600001)/' to Edm.Date"
+			+ " because it contains a time of day"
 	}, {
 		input : "a/Date(0000000000000)/",
 		expectedError : "Not a valid Edm.DateTime value 'a/Date(0000000000000)/'"
@@ -575,7 +586,7 @@ sap.ui.require([
 		precision : 6
 	}, {
 		input : "/Date(1395752399000)/", // DateTime in V2
-		output : "2014-03-25T12:59:59Z"  // must be interpreted as UTC
+		output : "2014-03-25T12:59:59Z" // must be interpreted as UTC
 	}, {
 		input : "/Date(-327628800000)/", // DateTime in V2 before 1970
 		output : "1959-08-15T00:00:00Z"
@@ -584,6 +595,9 @@ sap.ui.require([
 			var oRequestor = {};
 
 			asV2Requestor(oRequestor);
+
+			Formatting.setCalendarType(CalendarType.Japanese);
+			asV2Requestor0._setDateTimeFormatter();
 
 			// code under test
 			assert.strictEqual(oRequestor.convertDateTimeOffset(oFixture.input,
@@ -613,7 +627,7 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	// This test assumes that the precisions in this test are not used in other tests
-	QUnit.test("convertDateTimeOffset, DateTimeInstance map callCount", function (assert) {
+	QUnit.test("convertDateTimeOffset, DateTimeInstance map callCount", function () {
 		var oDateFormatMock = this.mock(DateFormat),
 			oRequestor = {};
 
@@ -707,32 +721,32 @@ sap.ui.require([
 		dropSystemQueryOptions : true,
 		expectedResultHandlerCalls : [{key : "foo", value : "bar"}],
 		queryOptions : {
-			"$expand" : {"baz" : true, "nested" : {"$expand" : "xyz", "$select" : "uvw"}},
-			"$select" : "abc",
-			"$orderby" : "abc",
-			"foo" : "bar"
+			$expand : {baz : true, nested : {$expand : "xyz", $select : "uvw"}},
+			$select : "abc",
+			$orderby : "abc",
+			foo : "bar"
 		}
 	}, { // simple tests for $count
 		expectedResultHandlerCalls : [{key : "$inlinecount", value : "allpages"}],
 		expectedResultHandlerCallsSorted : [{key : "$inlinecount", value : "allpages"}],
-		queryOptions : {"$count" : true}
+		queryOptions : {$count : true}
 	}, {
 		expectedResultHandlerCalls : [{key : "$inlinecount", value : "none"}],
 		expectedResultHandlerCallsSorted : [{key : "$inlinecount", value : "none"}],
-		queryOptions : {"$count" : false}
+		queryOptions : {$count : false}
 	}, { // simple tests for $orderby
 		expectedResultHandlerCalls : [{key : "$orderby", value : "foo,bar"}],
 		expectedResultHandlerCallsSorted : [{key : "$orderby", value : "foo,bar"}],
-		queryOptions : {"$orderby" : "foo,bar"}
+		queryOptions : {$orderby : "foo,bar"}
 	}, { // simple tests for $select
 		expectedResultHandlerCalls : [{key : "$select", value : "foo,bar"}],
 		expectedResultHandlerCallsSorted : [{key : "$select", value : "bar,foo"}],
-		queryOptions : {"$select" : "foo,bar"} // $select as string
+		queryOptions : {$select : "foo,bar"} // $select as string
 	}, {
 		expectedResultHandlerCalls : [{key : "$select", value : "foo,bar"}],
 		expectedResultHandlerCallsSorted : [{key : "$select", value : "bar,foo"}],
 		queryOptions : {
-			"$select" : ["foo", "bar"]
+			$select : ["foo", "bar"]
 		}
 	}, { // simple $expand tests
 		expectedResultHandlerCalls : [
@@ -744,7 +758,7 @@ sap.ui.require([
 			{key : "$select", value : "*,bar/*,baz/*"}
 		],
 		queryOptions : {
-			"$expand" : {"baz" : true, "bar" : true}
+			$expand : {baz : true, bar : true}
 		}
 	}, {
 		expectedResultHandlerCalls : [
@@ -756,8 +770,8 @@ sap.ui.require([
 			{key : "$select", value : "bar/*,foo,xyz/*"}
 		],
 		queryOptions : {
-			"$select" : ["foo"],
-			"$expand" : {"xyz" : true, "bar" : true}
+			$select : ["foo"],
+			$expand : {xyz : true, bar : true}
 		}
 	}, {
 		expectedResultHandlerCalls : [
@@ -769,10 +783,10 @@ sap.ui.require([
 			{key : "$select", value : "*,bar/abc,bar/cde,baz/*"}
 		],
 		queryOptions : {
-			"$expand" : {
-				"baz" : true,
-				"bar" : {
-					"$select" : ["cde", "abc"]
+			$expand : {
+				baz : true,
+				bar : {
+					$select : ["cde", "abc"]
 				}
 			}
 		}
@@ -786,51 +800,54 @@ sap.ui.require([
 			{key : "$select", value : "*,bar/abc,bar/cde,baz/*"}
 		],
 		queryOptions : {
-			"$expand" : {
-				"baz" : true,
-				"bar" : {
-					"$select" : "cde,abc" // $select as string
+			$expand : {
+				baz : true,
+				bar : {
+					$select : "cde,abc" // $select as string
 				}
 			}
 		}
 	}, { // test nested $expand structure
 		// def at root and baz in foo are complex properties for which two nested simple properties
-		// are selected in V4  -> In V2 these complex properties have to be selected once
+		// are selected in V4 -> In V2 these complex properties have to be selected once
 		expectedResultHandlerCalls : [
 			{key : "$expand", value : "foo,foo/bar,baz"},
 			{key : "$orderby", value : "foo,bar"},
+			{key : "$search", value : "baz"},
 			{key : "$select", value : "foo/xyz,foo/baz,foo/bar/*,baz/*,abc,def"}
 		],
 		expectedResultHandlerCallsSorted : [
 			{key : "$expand", value : "baz,foo,foo/bar"},
 			{key : "$orderby", value : "foo,bar"},
+			{key : "$search", value : "baz"},
 			{key : "$select", value : "abc,baz/*,def,foo/bar/*,foo/baz,foo/xyz"}
 		],
 		queryOptions : {
-			"$expand" : {
-				"foo" : {
-					"$select" : ["xyz", "baz/qux", "baz/quux"],
-					"$expand" : {
-						"bar" : true
+			$expand : {
+				foo : {
+					$select : ["xyz", "baz/qux", "baz/quux"],
+					$expand : {
+						bar : true
 					}
 				},
-				"baz" : true
+				baz : true
 			},
-			"$select" : "abc,def/ghi,def/jkl",
-			"$orderby" : "foo,bar"
+			$select : "abc,def/ghi,def/jkl",
+			$orderby : "foo,bar",
+			$search : "baz"
 		}
 	}, { // garbage in, garbage out - do not touch if there is a type cast
 		expectedResultHandlerCalls : [
 			{key : "$select", value : "foo/name.space.OtherType"}
 		],
 		queryOptions : {
-			"$select" : "foo/name.space.OtherType"
+			$select : "foo/name.space.OtherType"
 		}
 	}].forEach(function (oFixture, i) {
-		var sTitle = "doConvertSystemQueryOptions (V2): " + i + ", mQueryOptions"
-				+ JSON.stringify(oFixture.queryOptions);
+		var sJSON = JSON.stringify(oFixture.queryOptions),
+			sTitle = "doConvertSystemQueryOptions (V2): " + i + ", mQueryOptions" + sJSON;
 
-		/**
+		/*
 		 * Executes the test for doConvertSystemQueryOptions.
 		 *
 		 * @param {string} sCurrentTitle The test title
@@ -849,6 +866,7 @@ sap.ui.require([
 				oRequestor.doConvertSystemQueryOptions("/Foo", oFixture.queryOptions,
 					fnResultHandlerSpy, oFixture.dropSystemQueryOptions, bSorted);
 
+				assert.strictEqual(JSON.stringify(oFixture.queryOptions), sJSON, "unchanged");
 				assert.strictEqual(fnResultHandlerSpy.callCount,
 					aExpectedResultHandlerCalls.length);
 				aExpectedResultHandlerCalls.forEach(function (oResult, i) {
@@ -858,7 +876,6 @@ sap.ui.require([
 					assert.strictEqual(sCurrentKey + "=" + sCurrentValue,
 							oResult.key + "=" + oResult.value);
 				});
-
 			});
 		}
 
@@ -880,47 +897,47 @@ sap.ui.require([
 
 			// code under test
 			assert.throws(function () {
-				oRequestor.doConvertSystemQueryOptions("/Foo", {"$expand" : vExpandOption});
+				oRequestor.doConvertSystemQueryOptions("/Foo", {$expand : vExpandOption});
 			}, new Error("$expand must be a valid object"));
 		});
 	});
 
 	//*********************************************************************************************
 	[{
-		queryOptions : {"$foo" : "bar"},
+		queryOptions : {$foo : "bar"},
 		error : "Unsupported system query option: $foo"
 	}, {
 		queryOptions : {
-			"$expand" : {
-				"foo" : {
-					"$orderby" : "bar"
+			$expand : {
+				foo : {
+					$orderby : "bar"
 				}
 			}
 		},
 		error : "Unsupported query option in $expand: $orderby"
 	}, {
 		queryOptions : {
-			"$expand" : {
-				"foo" : {
-					"$bar" : "baz"
+			$expand : {
+				foo : {
+					$bar : "baz"
 				}
 			}
 		},
 		error : "Unsupported query option in $expand: $bar"
 	}, {
 		queryOptions : {
-			"$expand" : {
-				"foo" : {
-					"$count" : true
+			$expand : {
+				foo : {
+					$count : true
 				}
 			}
 		},
 		error : "Unsupported query option in $expand: $count"
 	}, {
 		queryOptions : {
-			"$expand" : {
-				"foo" : {
-					"bar" : "baz"
+			$expand : {
+				foo : {
+					bar : "baz"
 				}
 			}
 		},
@@ -943,7 +960,7 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("doConvertSystemQueryOptions: $filter", function (assert) {
+	QUnit.test("doConvertSystemQueryOptions: $filter", function () {
 		var sFilter = "foo eq 'bar'",
 			oRequestor = {},
 			fnResultHandlerSpy = this.spy();
@@ -957,8 +974,7 @@ sap.ui.require([
 		oRequestor.doConvertSystemQueryOptions("/Foo", {$filter : sFilter},
 			fnResultHandlerSpy);
 
-		sinon.assert.calledOnce(fnResultHandlerSpy);
-		sinon.assert.calledWithExactly(fnResultHandlerSpy, "$filter", "~");
+		sinon.assert.calledOnceWithExactly(fnResultHandlerSpy, "$filter", "~");
 	});
 
 	//*********************************************************************************************
@@ -971,8 +987,8 @@ sap.ui.require([
 		QUnit.test("formatPropertyAsLiteral: " + sType, function (assert) {
 			var sKeyPredicate = "(~)",
 				oProperty = {
-					"$kind" : "Property",
-					"$Type" : sType
+					$kind : "Property",
+					$Type : sType
 				},
 				oRequestor = {},
 				sResult,
@@ -997,9 +1013,9 @@ sap.ui.require([
 			oFormatOptions,
 			sKeyPredicate = "(~)",
 			oProperty = {
-				"$kind" : "Property",
-				"$Type" : "Edm.Date",
-				"$v2Type" : "Edm.DateTime"
+				$kind : "Property",
+				$Type : "Edm.Date",
+				$v2Type : "Edm.DateTime"
 			},
 			oRequestor = {},
 			sResult,
@@ -1032,9 +1048,9 @@ sap.ui.require([
 				oFormatOptions,
 				sKeyPredicate = "(~)",
 				oProperty = {
-					"$kind" : "Property",
-					"$Type" : "Edm.DateTimeOffset",
-					"$v2Type" : sV2Type
+					$kind : "Property",
+					$Type : "Edm.DateTimeOffset",
+					$v2Type : sV2Type
 				},
 				oRequestor = {},
 				sResult,
@@ -1068,9 +1084,9 @@ sap.ui.require([
 			oFormatOptions,
 			sKeyPredicate = "(~)",
 			oProperty = {
-				"$kind" : "Property",
-				"$Type" : "Edm.TimeOfDay",
-				"$v2Type" : "Edm.Time"
+				$kind : "Property",
+				$Type : "Edm.TimeOfDay",
+				$v2Type : "Edm.Time"
 			},
 			oRequestor = {},
 			sResult,
@@ -1115,13 +1131,16 @@ sap.ui.require([
 			{value : "2015-05-23T18:47:26+0500", type : "Edm.DateTimeOffset",
 				result : "datetimeoffset'2015-05-23T13:47:26Z'"},
 			{value : "2015-05-23T13:47:26Z", type : "Edm.DateTimeOffset",
-				v2type: "Edm.DateTime", result : "datetime'2015-05-23T13:47:26'"},
-			{value : "13:47:26", type : "Edm.TimeOfDay", v2type: "Edm.Time",
+				v2type : "Edm.DateTime", result : "datetime'2015-05-23T13:47:26'"},
+			{value : "13:47:26", type : "Edm.TimeOfDay", v2type : "Edm.Time",
 				result : "time'PT13H47M26S'"}
 			// TODO V2 literal formatting does not support milliseconds
 			// {value : "13:47:26.123", type : "Edm.TimeOfDay", v2type: "Edm.Time",
-			// 	result : "time'PT13H47M26.123S'"},
+			//     result : "time'PT13H47M26.123S'"},
 		].forEach(function (oFixture) {
+			Formatting.setCalendarType(CalendarType.Japanese);
+			asV2Requestor0._setDateTimeFormatter();
+
 			assert.strictEqual(oRequestor.formatPropertyAsLiteral(oFixture.value, {
 					$Type : oFixture.type,
 					$v2Type : oFixture.v2type
@@ -1192,12 +1211,12 @@ sap.ui.require([
 				sMetaPath = "/MyEntitySet",
 				oProperty = {$Type : oFixture.type, $v2Type : oFixture.v2type},
 				oRequestor = {
-					oModelInterface : {fnFetchMetadata : function () {}}
+					oModelInterface : {fetchMetadata : function () {}}
 				};
 
 			asV2Requestor(oRequestor);
 
-			this.mock(oRequestor.oModelInterface).expects("fnFetchMetadata")
+			this.mock(oRequestor.oModelInterface).expects("fetchMetadata")
 				.withExactArgs(sMetaPath + "/foo/bar")
 				.returns(SyncPromise.resolve(oProperty));
 
@@ -1282,14 +1301,14 @@ sap.ui.require([
 		QUnit.test("convertFilter: " + oFixture.v4, function (assert) {
 			var oProperty = {$Type : "Edm.Double"},
 				oRequestor = {
-					oModelInterface : {fnFetchMetadata : function () {}}
+					oModelInterface : {fetchMetadata : function () {}}
 				},
 				sResourcePath = "MyEntitySet";
 
 			asV2Requestor(oRequestor);
 
 			// simply declare all properties to be Edm.Double so that a conversion is necessary
-			this.mock(oRequestor.oModelInterface).expects("fnFetchMetadata").atLeast(0)
+			this.mock(oRequestor.oModelInterface).expects("fetchMetadata").atLeast(0)
 				.returns(SyncPromise.resolve(oProperty));
 
 			// code under test
@@ -1318,12 +1337,12 @@ sap.ui.require([
 		QUnit.test("convertFilter: " + oFixture.error, function (assert) {
 			var sMetaPath = "/MyEntitySet",
 				oRequestor = {
-					oModelInterface : {fnFetchMetadata : function () {}}
+					oModelInterface : {fetchMetadata : function () {}}
 				};
 
 			asV2Requestor(oRequestor);
 
-			this.mock(oRequestor.oModelInterface).expects("fnFetchMetadata")
+			this.mock(oRequestor.oModelInterface).expects("fetchMetadata")
 				.withExactArgs(sMetaPath + "/foo/bar")
 				.returns(SyncPromise.resolve(oFixture.property));
 
@@ -1338,14 +1357,14 @@ sap.ui.require([
 	QUnit.test("ready()", function (assert) {
 		var oRequestor = {
 				oModelInterface : {
-					fnFetchEntityContainer : function () {}
+					fetchEntityContainer : function () {}
 				}
 			},
 			oSyncPromise;
 
 		asV2Requestor(oRequestor);
 
-		this.mock(oRequestor.oModelInterface).expects("fnFetchEntityContainer")
+		this.mock(oRequestor.oModelInterface).expects("fetchEntityContainer")
 			.returns(SyncPromise.resolve(Promise.resolve({})));
 
 		// code under test
@@ -1360,13 +1379,13 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("getTypeForName", function (assert) {
 		var oRequestor = {
-				oModelInterface : {fnFetchMetadata : function () {}}
+				oModelInterface : {fetchMetadata : function () {}}
 			},
 			oType = {};
 
 		asV2Requestor(oRequestor);
 
-		this.mock(oRequestor.oModelInterface).expects("fnFetchMetadata")
+		this.mock(oRequestor.oModelInterface).expects("fetchMetadata")
 			.withExactArgs("/my.Type").returns(SyncPromise.resolve(oType));
 
 		// code under test
@@ -1377,7 +1396,11 @@ sap.ui.require([
 	//*********************************************************************************************
 	[{
 		iCallCount : 1,
-		mHeaders : { "DataServiceVersion" : "2.0" },
+		mHeaders : {DataServiceVersion : "2.0"},
+		bVersionOptional : true
+	}, {
+		iCallCount : 1,
+		mHeaders : {DataServiceVersion : "2.0;fooBar"},
 		bVersionOptional : true
 	}, {
 		iCallCount : 2,
@@ -1389,11 +1412,15 @@ sap.ui.require([
 		bVersionOptional : false
 	}, {
 		iCallCount : 1,
-		mHeaders : { "DataServiceVersion" : "1.0" },
+		mHeaders : {DataServiceVersion : "1.0"},
+		bVersionOptional : true
+	}, {
+		iCallCount : 1,
+		mHeaders : {DataServiceVersion : "1.0;fooBar"},
 		bVersionOptional : true
 	}].forEach(function (oFixture, i) {
 		QUnit.test("doCheckVersionHeader, success cases - " + i, function (assert) {
-			var oRequestor = _Requestor.create("/", undefined, undefined, undefined, "2.0"),
+			var oRequestor = _Requestor.create("/", {}, undefined, undefined, "2.0"),
 				fnGetHeader = this.spy(function (sHeaderKey) {
 					return oFixture.mHeaders[sHeaderKey];
 				});
@@ -1414,14 +1441,18 @@ sap.ui.require([
 	[{
 		iCallCount : 1,
 		sError : "value 'foo' in response for /Foo('42')/Bar",
-		mHeaders : { "DataServiceVersion" : "foo" }
+		mHeaders : {DataServiceVersion : "foo"}
+	}, {
+		iCallCount : 1,
+		sError : "value '1.00' in response for /Foo('42')/Bar",
+		mHeaders : {DataServiceVersion : "1.00"}
 	}, {
 		iCallCount : 2,
 		sError : "'OData-Version' header with value 'baz' in response for /Foo('42')/Bar",
-		mHeaders : { "OData-Version" : "baz" }
+		mHeaders : {"OData-Version" : "baz"}
 	}].forEach(function (oFixture, i) {
 		QUnit.test("doCheckVersionHeader, error cases - " + i, function (assert) {
-			var oRequestor = _Requestor.create("/", undefined, undefined, undefined, "2.0"),
+			var oRequestor = _Requestor.create("/", {}, undefined, undefined, "2.0"),
 				fnGetHeader = this.spy(function (sHeaderKey) {
 					return oFixture.mHeaders[sHeaderKey];
 				});
@@ -1443,18 +1474,18 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("getPathAndAddQueryOptions: OperationImport", function (assert) {
 		var oModelInterface = {
-				fnFetchMetadata : null // do not call!
+				fetchMetadata : null // do not call!
 			},
 			oOperationMetadata = {
-				"$Parameter" : [{
-					"$Name" : "Foo",
-					"$Type" : "Edm.Int16"
+				$Parameter : [{
+					$Name : "Foo",
+					$Type : "Edm.Int16"
 				}, {
-					"$Name" : "ID",
-					"$Type" : "Edm.String"
+					$Name : "ID",
+					$Type : "Edm.String"
 				}]
 			},
-			mParameters = {"ID" : "1", "Foo" : 42, "n/a" : NaN},
+			mParameters = {ID : "1", Foo : 42, "n/a" : NaN},
 			mQueryOptions = {},
 			oRequestor = _Requestor.create("/", oModelInterface, undefined, undefined, "2.0"),
 			oRequestorMock = this.mock(oRequestor);
@@ -1469,7 +1500,7 @@ sap.ui.require([
 			oRequestor.getPathAndAddQueryOptions("/OperationImport(...)", oOperationMetadata,
 				mParameters, mQueryOptions),
 			"OperationImport");
-		assert.deepEqual(mQueryOptions, {"ID" : "'1'", "Foo" : "42"});
+		assert.deepEqual(mQueryOptions, {ID : "'1'", Foo : "42"});
 		assert.deepEqual(mParameters, {});
 	});
 
@@ -1478,33 +1509,33 @@ sap.ui.require([
 		var sTitle = "getPathAndAddQueryOptions: bound " + (bAction ? "action" : "function");
 
 		QUnit.test(sTitle, function (assert) {
-			var oEntity = {"Foo" : 42, "ID" : "1"},
-				oModelInterface = {fnFetchMetadata : function () {}},
+			var oEntity = {Foo : 42, ID : "1"},
+				oModelInterface = {fetchMetadata : function () {}},
 				oOperationMetadata = {
-					"$IsBound" : true,
-					"$Parameter" : [{ // "$Name" : null, "$Nullable" : false,
-						"$Type" : "com.sap.ui5.OData.EdmTypes"
+					$IsBound : true,
+					$Parameter : [{ // "$Name" : null, "$Nullable" : false,
+						$Type : "com.sap.ui5.OData.EdmTypes"
 					}, {
-						"$Name" : "Bar" //, "$Type" : "Edm.Boolean"
+						$Name : "Bar" //, "$Type" : "Edm.Boolean"
 					}]
 				},
-				mParameters = {"Bar" : true},
+				mParameters = {Bar : true},
 				mQueryOptions = {},
 				oRequestor = _Requestor.create("/", oModelInterface, undefined, undefined, "2.0"),
 				oRequestorMock = this.mock(oRequestor),
 				oTypeMetadata = { // "$kind" : "EntityType",
-					"$Key" : ["ID", "Foo"],
-					"Foo" : {
-						"$kind" : "Property",
-						"$Type" : "Edm.Int16"
+					$Key : ["ID", "Foo"],
+					Foo : {
+						$kind : "Property",
+						$Type : "Edm.Int16"
 					},
-					"ID" : {
-						"$kind" : "Property",
-						"$Type" : "Edm.String"
+					ID : {
+						$kind : "Property",
+						$Type : "Edm.String"
 					}
 				};
 
-			this.mock(oModelInterface).expects("fnFetchMetadata")
+			this.mock(oModelInterface).expects("fetchMetadata")
 				.withExactArgs("/com.sap.ui5.OData.EdmTypes")
 				.returns(SyncPromise.resolve(oTypeMetadata));
 			oRequestorMock.expects("formatPropertyAsLiteral").withExactArgs("1", oTypeMetadata.ID)
@@ -1521,7 +1552,7 @@ sap.ui.require([
 					oOperationMetadata, mParameters, mQueryOptions,
 					bAction ? oEntity : function () { return oEntity; }),
 				"ResetEdmTypes");
-			assert.deepEqual(mQueryOptions, {"Bar" : "true", "Foo" : "42", "ID" : "'1'"});
+			assert.deepEqual(mQueryOptions, {Bar : "true", Foo : "42", ID : "'1'"});
 			assert.deepEqual(mParameters, {});
 		});
 	});
@@ -1530,7 +1561,7 @@ sap.ui.require([
 	QUnit.test("getPathAndAddQueryOptions: Operation w/o parameters", function (assert) {
 		var oOperationMetadata = {},
 			mParameters = {foo : "bar"},
-			oRequestor = _Requestor.create("/", undefined, undefined, undefined, "2.0");
+			oRequestor = _Requestor.create("/", {}, undefined, undefined, "2.0");
 
 		this.mock(oRequestor).expects("formatPropertyAsLiteral").never();
 
@@ -1546,7 +1577,7 @@ sap.ui.require([
 	QUnit.test("getPathAndAddQueryOptions: $v2HttpMethod", function (assert) {
 		var oOperationMetadata = {$v2HttpMethod : "PUT"},
 			mParameters = {foo : "bar"},
-			oRequestor = _Requestor.create("/", undefined, undefined, undefined, "2.0");
+			oRequestor = _Requestor.create("/", {}, undefined, undefined, "2.0");
 
 		assert.strictEqual(
 			// code under test
@@ -1558,26 +1589,26 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("getPathAndAddQueryOptions: collection parameter", function (assert) {
-		var oOperationMetadata = {$Parameter : [{$Name : "foo", $IsCollection : true}]},
-			oRequestor = _Requestor.create("/", undefined, undefined, undefined, "2.0");
+		var oOperationMetadata = {$Parameter : [{$Name : "foo", $isCollection : true}]},
+			oRequestor = _Requestor.create("/", {}, undefined, undefined, "2.0");
 
 		assert.throws(function () {
 			// code under test
 			oRequestor.getPathAndAddQueryOptions("/ActionImport(...)", oOperationMetadata,
-				{"foo" : [42]});
+				{foo : [42]});
 		}, new Error("Unsupported collection-valued parameter: foo"));
 	});
 
 	//*****************************************************************************************
 	QUnit.test("isChangeSetOptional", function (assert) {
-		var oRequestor = _Requestor.create("/", undefined, undefined, undefined, "2.0");
+		var oRequestor = _Requestor.create("/", {}, undefined, undefined, "2.0");
 
 		assert.strictEqual(oRequestor.isChangeSetOptional(), false);
 	});
 
 	//*****************************************************************************************
 	QUnit.test("isActionBodyOptional", function (assert) {
-		var oRequestor = _Requestor.create("/", undefined, undefined, undefined, "2.0");
+		var oRequestor = _Requestor.create("/", {}, undefined, undefined, "2.0");
 
 		assert.strictEqual(oRequestor.isActionBodyOptional(), true);
 	});
@@ -1588,7 +1619,7 @@ sap.ui.require([
 				$Key : ["KeyProperty"],
 				KeyProperty : {$Type : "Edm.String"}
 			},
-			oRequestor = _Requestor.create("/", undefined, undefined, undefined, "2.0");
+			oRequestor = _Requestor.create("/", {}, undefined, undefined, "2.0");
 
 		this.mock(_Helper).expects("getMetaPath")
 			.withExactArgs("/my/path('foo')").returns("/my/path");
@@ -1606,7 +1637,7 @@ sap.ui.require([
 				$Key : ["KeyProperty"],
 				KeyProperty : {$Type : "Edm.Foo"}
 			},
-			oRequestor = _Requestor.create("/", undefined, undefined, undefined, "2.0");
+			oRequestor = _Requestor.create("/", {}, undefined, undefined, "2.0");
 
 		this.mock(_Helper).expects("getMetaPath")
 			.withExactArgs("/my/path(42)").returns("/my/path");
@@ -1625,16 +1656,16 @@ sap.ui.require([
 	QUnit.test("convertKeyPredicate: named non-string predicate, encoded", function (assert) {
 		var oEntityType = {
 				$Key : ["føø"],
-				"føø" : {$Type : "Edm.Foo"}
+				føø : {$Type : "Edm.Foo"}
 			},
-			oRequestor = _Requestor.create("/", undefined, undefined, undefined, "2.0");
+			oRequestor = _Requestor.create("/", {}, undefined, undefined, "2.0");
 
 		this.mock(_Helper).expects("getMetaPath")
 			.withExactArgs("/my/path(f%C3%B8%C3%B8=42)").returns("/my/path");
 		this.mock(oRequestor).expects("fetchTypeForPath").withExactArgs("/my/path")
 			.returns(SyncPromise.resolve(oEntityType));
 		this.mock(_Parser).expects("parseKeyPredicate").withExactArgs("(føø=42)")
-			.returns({"føø" : "42"});
+			.returns({føø : "42"});
 		this.mock(_Helper).expects("parseLiteral")
 			.withExactArgs("42", "Edm.Foo", "/my/path(f%C3%B8%C3%B8=42)")
 			.returns(42);
@@ -1656,7 +1687,7 @@ sap.ui.require([
 			},
 			oHelperMock = this.mock(_Helper),
 			oParserMock = this.mock(_Parser),
-			oRequestor = _Requestor.create("/", undefined, undefined, undefined, "2.0"),
+			oRequestor = _Requestor.create("/", {}, undefined, undefined, "2.0"),
 			oRequestorMock = this.mock(oRequestor);
 
 		this.mock(_Helper).expects("getMetaPath")
@@ -1664,7 +1695,7 @@ sap.ui.require([
 		oRequestorMock.expects("fetchTypeForPath").withExactArgs("/my/path")
 			.returns(SyncPromise.resolve(oEntityType));
 		oParserMock.expects("parseKeyPredicate").withExactArgs("(p1=1,p2='2',p3=3)")
-			.returns({"p1" : "1", "p2" : "'2'", "p3" : "3"});
+			.returns({p1 : "1", p2 : "'2'", p3 : "3"});
 		oHelperMock.expects("parseLiteral")
 			.withExactArgs("1", "Edm.Double", "/my/path(p1=1,p2='2',p3=3)").returns(1);
 		oRequestorMock.expects("formatPropertyAsLiteral")
@@ -1682,7 +1713,7 @@ sap.ui.require([
 	//*****************************************************************************************
 	["", "?$select=*"].forEach(function (sQuery) {
 		QUnit.test("convertResourcePath: query=" + sQuery, function (assert) {
-			var oRequestor = _Requestor.create("/", undefined, undefined, undefined, "2.0"),
+			var oRequestor = _Requestor.create("/", {}, undefined, undefined, "2.0"),
 				oRequestorMock = this.mock(oRequestor);
 
 			oRequestorMock.expects("convertKeyPredicate")
@@ -1694,6 +1725,83 @@ sap.ui.require([
 
 			assert.strictEqual(oRequestor.convertResourcePath("Foo/Bar(42)/Baz/Qux(23)" + sQuery),
 				"Foo/Bar(~42~)/Baz/Qux(~23~)" + sQuery);
+		});
+	});
+
+	//*****************************************************************************************
+	QUnit.test("reportTransitionMessages does not call model", function (assert) {
+		var fnreportTransitionMessages = this.spy(),
+			oModelInterface = {reportTransitionMessages : fnreportTransitionMessages},
+			oRequestor = _Requestor.create("/", oModelInterface, undefined, undefined, "2.0");
+
+		// code under test
+		oRequestor.reportHeaderMessages("resource/path", "[]");
+
+		assert.notOk(fnreportTransitionMessages.called);
+	});
+
+	//*****************************************************************************************
+	QUnit.test("reportStateMessages does not call model", function (assert) {
+		var fnreportStateMessages = this.spy(),
+			oModelInterface = {reportStateMessages : fnreportStateMessages},
+			oRequestor = _Requestor.create("/", oModelInterface, undefined, undefined, "2.0");
+
+		// code under test
+		oRequestor.getModelInterface().reportStateMessages("Teams('42')", {/*mPathToMessages*/});
+
+		assert.notOk(fnreportStateMessages.called);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_setDateTimeFormatter", function () {
+		var oDateFormatMock = this.mock(DateFormat);
+
+		oDateFormatMock.expects("getDateInstance")
+			.withExactArgs({
+				calendarType : CalendarType.Gregorian,
+				pattern : "yyyy-MM-dd",
+				UTC : true
+			})
+			.callThrough();
+		oDateFormatMock.expects("getDateTimeInstance")
+			.withExactArgs({
+				calendarType : CalendarType.Gregorian,
+				pattern : "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
+			})
+			.callThrough();
+		oDateFormatMock.expects("getTimeInstance")
+			.withExactArgs({
+				calendarType : CalendarType.Gregorian,
+				pattern : "HH:mm:ss",
+				UTC : true
+			})
+			.callThrough();
+
+		// code under test
+		asV2Requestor0._setDateTimeFormatter();
+	});
+
+	//*****************************************************************************************
+	QUnit.test("checkHeaderNames", function (assert) {
+		var oRequestor = _Requestor.create("/", {}, undefined, undefined, "2.0");
+
+		// code under test
+		oRequestor.checkHeaderNames({allowed : "123"});
+		oRequestor.checkHeaderNames({"OData-Version" : "123"}); // V4 specific headers are allowed
+
+		[
+			"Accept", "Content-ID", "Content-Transfer-Encoding", "Content-Type",
+			"DataServiceVersion", "If-Match", "If-None-Match", "MaxDataServiceVersion",
+			"SAP-ContextId", "X-HTTP-Method"
+		].forEach(function (sHeaderName) {
+			var mHeaders = {};
+
+			mHeaders[sHeaderName] = "123";
+
+			assert.throws(function () {
+				// code under test
+				oRequestor.checkHeaderNames(mHeaders);
+			}, new Error("Unsupported header: " + sHeaderName));
 		});
 	});
 });

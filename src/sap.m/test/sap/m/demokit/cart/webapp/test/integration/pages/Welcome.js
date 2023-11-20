@@ -1,17 +1,15 @@
 sap.ui.define([
-	'sap/ui/test/Opa5',
-	'sap/ui/test/actions/Press',
-	'sap/ui/test/matchers/BindingPath',
-	'sap/ui/test/matchers/AggregationLengthEquals',
-	'sap/ui/test/matchers/Properties',
-	'sap/ui/test/matchers/PropertyStrictEquals'
+	"sap/ui/test/Opa5",
+	"sap/ui/test/actions/Press",
+	"sap/ui/test/matchers/BindingPath",
+	"sap/ui/test/matchers/AggregationLengthEquals",
+	"sap/ui/test/matchers/Properties"
 ], function (
 	Opa5,
 	Press,
 	BindingPath,
 	AggregationLengthEquals,
-	Properties,
-	PropertyStrictEquals) {
+	Properties) {
 	"use strict";
 
 	Opa5.createPageObjects({
@@ -69,6 +67,15 @@ sap.ui.define([
 						actions: new Press(),
 						errorMessage: "The product image was not displayed"
 					});
+				},
+
+				iToggleTheCart: function () {
+					return this.waitFor({
+						controlType : "sap.m.Button",
+						matchers : new Properties({icon : "sap-icon://cart"}),
+						actions : new Press(),
+						errorMessage : "The cart button was not found and could not be pressed"
+					});
 				}
 			},
 
@@ -76,6 +83,7 @@ sap.ui.define([
 
 				iShouldSeeTheWelcomePage: function () {
 					return this.waitFor({
+						timeout: 30,
 						success: function () {
 							Opa5.assert.ok(true, "The welcome page was successfully displayed");
 						},

@@ -1,0 +1,58 @@
+{
+  "1.77.0": {
+    "date": "March 2020",
+    "notes": [
+      {
+        "id": "aac04638384c9c92a5ecf11aca8dc58da7aca588",
+        "type": "FEATURE",
+        "text": " sap.f.cards.AdaptiveContent: Support data on card level",
+        "references": []
+      },
+      {
+        "id": "982687a62a3ab303a3ae1738231331fa9ccae2f3",
+        "type": "FEATURE",
+        "text": " sap.ui.integration.widgets.Card: Added Markdown support for Adaptive type",
+        "references": []
+      },
+      {
+        "id": "668323e057934d38f994aefbde7bdd709282bceb",
+        "type": "FIX",
+        "text": " Integration Cards: Re-setting manifest is now working correctly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070014808"
+          }
+        ]
+      },
+      {
+        "id": "b939f6fc3004c1ad57330f1ff4977942174f0060",
+        "type": "FIX",
+        "text": " sap.f.cards.Header: Header roles are now correctly set",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070082181"
+          }
+        ]
+      },
+      {
+        "id": "cfc3ff3838e5808968e5a250b3f1239fff0581bb",
+        "type": "FIX",
+        "text": " sap.ui.integration.widgets.Card: Calendar card accepts only ISO-8601 date and time",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070086241"
+          }
+        ]
+      },
+      {
+        "id": "e986732831c5cb7d9686fe307710bd705aaa0d86",
+        "type": "FEATURE",
+        "text": " sap.ui.integration.widgets.Card: Handle Action.Submit",
+        "references": []
+      }
+    ]
+  }
+}

@@ -2,40 +2,81 @@
  * ${copyright}
  */
 
-sap.ui.define(['sap/ui/core/Renderer', 'sap/m/OverflowToolbarRenderer', 'sap/m/BarInPageEnabler'],
-	function(Renderer, OverflowToolbarRenderer, BarInPageEnabler) {
-		"use strict";
+sap.ui.define([
+	"sap/m/library",
+	"sap/ui/core/Renderer",
+	"sap/m/OverflowToolbarRenderer",
+	"sap/m/BarInPageEnabler"
+], function (library,
+			 Renderer,
+			 OverflowToolbarRenderer,
+			 BarInPageEnabler) {
+	"use strict";
 
+	// shortcut for sap.m.OverflowToolbarPriority
+	var OverflowToolbarPriority = library.OverflowToolbarPriority;
 
-		/**
-		 * ToolHeaderRenderer renderer.
-		 * @namespace
-		 */
-		var ToolHeaderRenderer = Renderer.extend(OverflowToolbarRenderer);
+	/**
+	 * ToolHeaderRenderer renderer.
+	 * @namespace
+	 */
+	var ToolHeaderRenderer = Renderer.extend(OverflowToolbarRenderer);
 
-		ToolHeaderRenderer.renderBarContent = function(rm, toolbar) {
+	ToolHeaderRenderer.apiVersion = 2;
 
-			var overflowToolbarRendered = false;
-			var isUtilitySeparator;
+	ToolHeaderRenderer.renderBarContent = function (oRM, oToolbar) {
+		var bOverflowButtonRendered = false,
+			oFirstVisibleControl = null,
+			bIsUtilitySeparator;
 
-			toolbar._getVisibleContent().forEach(function(control) {
+		if (oToolbar.getActive()) {
+			oRM.renderControl(oToolbar._getActiveButton());
+		}
 
-				isUtilitySeparator = control.getMetadata().getName() == 'sap.tnt.ToolHeaderUtilitySeparator';
+		oToolbar._getVisibleContent().forEach(function(oControl) {
+			BarInPageEnabler.addChildClassTo(oControl, oToolbar);
 
-				if (!overflowToolbarRendered && isUtilitySeparator && toolbar._getOverflowButtonNeeded()) {
-					ToolHeaderRenderer.renderOverflowButton(rm, toolbar);
-					overflowToolbarRendered = true;
+			bIsUtilitySeparator = oControl.isA("sap.tnt.ToolHeaderUtilitySeparator");
+
+			if (bIsUtilitySeparator && !bOverflowButtonRendered) {
+				this._renderOverflowButton(oRM, oToolbar);
+				bOverflowButtonRendered = true;
+			}
+
+			if (oToolbar._getControlPriority(oControl) !== OverflowToolbarPriority.AlwaysOverflow) {
+				if (!oFirstVisibleControl && oControl.getVisible()) {
+					oControl.addStyleClass("sapMBarChildFirstChild");
+					oFirstVisibleControl = oControl;
+				} else {
+					oControl.removeStyleClass("sapMBarChildFirstChild");
 				}
+				oRM.renderControl(oControl);
+			}
+		}.bind(this));
 
-				BarInPageEnabler.addChildClassTo(control, toolbar);
-				rm.renderControl(control);
+		if (bOverflowButtonRendered) {
+			return;
+		}
+
+		this._renderOverflowButton(oRM, oToolbar);
+	};
+
+	ToolHeaderRenderer._renderOverflowButton = function (oRM, oToolbar) {
+		var bHasAlwaysOverflowVisibleContent  = oToolbar.getContent().some(function (oControl) {
+				return oControl.getVisible() && oToolbar._getControlPriority(oControl) === OverflowToolbarPriority.AlwaysOverflow;
+			}),
+			bHasAnyVisibleContent = oToolbar.getContent().some(function (oControl) {
+				return oControl.getVisible();
 			});
 
-			if (!overflowToolbarRendered && toolbar._getOverflowButtonNeeded()) {
-				ToolHeaderRenderer.renderOverflowButton(rm, toolbar);
-			}
-		};
+		if (bHasAlwaysOverflowVisibleContent || oToolbar._getOverflowButtonNeeded()) {
+			OverflowToolbarRenderer.renderOverflowButton(oRM, oToolbar);
+		}
 
-		return ToolHeaderRenderer;
+		if (bHasAnyVisibleContent) {
+			OverflowToolbarRenderer.renderOverflowButtonClone(oRM, oToolbar);
+		}
+	};
 
-	}, /* bExport= */ true);
+	return ToolHeaderRenderer;
+}, /* bExport= */ true);

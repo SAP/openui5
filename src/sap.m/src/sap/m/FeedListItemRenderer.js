@@ -3,8 +3,8 @@
  */
 
 // Provides default renderer for the sap.m.FeedListItem
-sap.ui.define(["./ListItemBaseRenderer", "sap/ui/core/Renderer", "sap/ui/Device"],
-	function(ListItemBaseRenderer, Renderer, Device) {
+sap.ui.define(["./ListItemBaseRenderer", "sap/base/i18n/Localization", "sap/ui/core/Renderer", "sap/ui/Device"],
+	function(ListItemBaseRenderer, Localization, Renderer, Device) {
 	"use strict";
 
 
@@ -13,120 +13,125 @@ sap.ui.define(["./ListItemBaseRenderer", "sap/ui/core/Renderer", "sap/ui/Device"
 	 * @namespace
 	 */
 	var FeedListItemRenderer = Renderer.extend(ListItemBaseRenderer);
+	FeedListItemRenderer.apiVersion = 2;
 
 	/**
 	 * Make sure that parent li is displayed as a horizontal webkit-box.
 	 *
 	 * @param {sap.ui.core.RenderManager} oRm the RenderManager that can be used for writing to the Render-Output-Buffer
-	 * @param {sap.ui.core.Control} oControl an object representation of the feed list item that should be rendered
+	 * @param {sap.m.FeedListItem} oControl an object representation of the feed list item that should be rendered
 	 */
 	FeedListItemRenderer.renderLIAttributes = function(oRm, oControl) {
-		oRm.addClass("sapMFeedListItemTitleDiv");
-		oRm.addClass("sapMFeedListShowSeparatorsAll");
+		oRm.class("sapMFeedListItemTitleDiv");
+		oRm.class("sapMFeedListShowSeparatorsAll");
 	};
 
 	/**
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
 	 *
 	 * @param {sap.ui.core.RenderManager} oRm the RenderManager that can be used for writing to the Render-Output-Buffer
-	 * @param {sap.ui.core.Control} oControl an object representation of the feed list item that should be rendered
+	 * @param {sap.m.FeedListItem} oControl an object representation of the feed list item that should be rendered
 	 */
 	FeedListItemRenderer.renderLIContent = function(oRm, oControl) {
 		// convenience variable
 		var sMyId = oControl.getId(), bIsPhone = Device.system.phone;
 
-		oRm.write('<div');
-		oRm.addClass('sapMFeedListItem');
-		oRm.writeClasses();
-		oRm.write('>');
+		oRm.openStart('div');
+		oRm.class('sapMFeedListItem');
+		oRm.openEnd();
 
 		// icon
 		if (oControl.getShowIcon()) {
-			this._writeImageControl(oRm, oControl, sMyId);
+			this._writeAvatarControl(oRm, oControl, sMyId);
 		}
 
 		// action button
 		if (oControl.getActions().length > 0) {
-			oRm.write("<div");
-			oRm.writeAttributeEscaped("id", sMyId + "-action-button");
-			oRm.addClass('sapMFeedListItemActionButton');
-			oRm.writeClasses();
-			oRm.write(">");
-			oRm.renderControl(oControl.getAggregation("_actionButton"));
-			oRm.write("</div>");
+			var isAllActionsNotVisible = oControl.getActions().every(function (oAction) {
+				return oAction.getVisible() === false ;
+			});
+			if (!isAllActionsNotVisible) {
+				oRm.openStart("div", sMyId + "-action-button");
+				oRm.class('sapMFeedListItemActionButton');
+				oRm.openEnd();
+				oRm.renderControl(oControl.getAggregation("_actionButton"));
+				oRm.close("div");
+			}
 		}
 
 		// text (starting with sender)
 		if (bIsPhone) {
-			oRm.write('<div class= "sapMFeedListItemHeader sapUiSelectable ');
+			oRm.openStart('div').class("sapMFeedListItemHeader").class("sapUiSelectable");
 			if (oControl.getShowIcon()) {
-				oRm.write('sapMFeedListItemHasFigure ');
+				oRm.class("sapMFeedListItemHasFigure");
 			}
 			if (oControl.getSender() && oControl.getTimestamp()) {
-				oRm.write('sapMFeedListItemFullHeight');
+				oRm.class('sapMFeedListItemFullHeight');
 			}
-			oRm.write('" >');
+			oRm.openEnd();
 			if (oControl.getSender()) {
-				oRm.write('<p id="' + sMyId + '-name" class="sapMFeedListItemTextName sapUiSelectable">');
+				oRm.openStart('p', sMyId + '-name').class("sapMFeedListItemTextName").class("sapUiSelectable").openEnd();
 				oRm.renderControl(oControl._getLinkSender(false));
-				oRm.write('</p>');
+				oRm.close('p');
 			}
 			if (oControl.getTimestamp()) {
 				// write date
-				oRm.write('<p id="' + sMyId + '-timestamp" class="sapMFeedListItemTimestamp sapUiSelectable">');
-				oRm.writeEscaped(oControl.getTimestamp());
-				oRm.write('</p>');
+				oRm.openStart('p', sMyId + '-timestamp').class("sapMFeedListItemTimestamp").class("sapUiSelectable").openEnd();
+				oRm.text(oControl.getTimestamp());
+				oRm.close('p');
 			}
 
-			oRm.write('</div>');
-			oRm.write('<div class="sapMFeedListItemText sapUiSelectable">');
-			oRm.write('<span id="' + sMyId + '-realtext" class="sapMFeedListItemText sapUiSelectable">');
+			oRm.close('div');
+			oRm.openStart('div').class("sapMFeedListItemText").class("sapUiSelectable").openEnd();
+			this._writeText(oRm, oControl, sMyId, bIsPhone);
 			if (oControl._checkTextIsExpandable()) {
 				this._writeCollapsedText(oRm, oControl, sMyId);
 			} else {
-				oRm.write(oControl._sFullText);
-				oRm.write('</span>');
+				oRm.unsafeHtml(oControl._sFullText); // TODO consider to delegate to FormattedTextRenderer
+				oRm.close('span');
 			}
-			oRm.write('</div>');
+			oRm.close('div');
 			if (oControl.getInfo()) {
 				// info
-				oRm.write('<p class="sapMFeedListItemFooter sapUiSelectable">');
+				oRm.openStart('p').class("sapMFeedListItemFooter").class("sapUiSelectable").openEnd();
 				if (oControl.getInfo()) {
-					oRm.write('<span id="' + sMyId + '-info" class="sapMFeedListItemInfo sapUiSelectable">');
-					oRm.writeEscaped(oControl.getInfo());
-					oRm.write('</span>');
+					oRm.openStart('span', sMyId + '-info').class("sapMFeedListItemInfo").class("sapUiSelectable").openEnd();
+					oRm.text(oControl.getInfo());
+					oRm.close('span');
 				}
-				oRm.write('</p>');
+				oRm.close('p');
 			}
 		} else {
-			oRm.write('<div class= "sapMFeedListItemText ');
+			oRm.openStart('div').class("sapMFeedListItemText");
 			if (oControl.getShowIcon()) {
-				oRm.write('sapMFeedListItemHasFigure');
+				oRm.class('sapMFeedListItemHasFigure');
 			}
-			oRm.write('" >');
-			oRm.write('<div id="' + sMyId + '-text" class="sapMFeedListItemTextText sapUiSelectable">');
+			oRm.openEnd();
+			oRm.openStart('div', sMyId + '-text').class("sapMFeedListItemTextText").class("sapUiSelectable").openEnd();
 			if (oControl.getSender()) {
-				oRm.write('<span id="' + sMyId + '-name" class="sapMFeedListItemTextName sapUiSelectable">');
+				oRm.openStart('span', sMyId + '-name').class("sapMFeedListItemTextName").class("sapUiSelectable").openEnd();
 				oRm.renderControl(oControl._getLinkSender(true));
-				oRm.write('</span>');
+				oRm.close('span');
 			}
-			oRm.write('<span id="' + sMyId + '-realtext" class="sapMFeedListItemTextString sapUiSelectable">');
+			this._writeText(oRm, oControl, sMyId, bIsPhone);
 			if (oControl._checkTextIsExpandable()) {
 				this._writeCollapsedText(oRm, oControl, sMyId);
 			} else {
-				oRm.write(oControl._sFullText);
-				oRm.write('</span>');
+				oRm.unsafeHtml(oControl._sFullText); // TODO consider to delegate to FormattedTextRenderer
+				oRm.close('span');
 			}
-			oRm.write('</div>');
+			oRm.close('div');
 			if (oControl.getInfo() || oControl.getTimestamp()) {
 				// info and date
-				oRm.write('<p class="sapMFeedListItemFooter sapUiSelectable">');
-				if (!sap.ui.getCore().getConfiguration().getRTL()) {
+				oRm.openStart('p').class("sapMFeedListItemFooter").class("sapUiSelectable").openEnd();
+				if (!Localization.getRTL()) {
 					if (oControl.getInfo()) {
 						this._writeInfo(oRm, oControl, sMyId);
 						// Write Interpunct separator if necessary (with spaces before and after)
 						if (oControl.getTimestamp()) {
-							oRm.write("<span>&#160&#160&#x00B7&#160&#160</span>");
+							oRm.openStart("span").openEnd();
+							oRm.text("\u00a0\u00a0\u00B7\u00a0\u00a0");
+							oRm.close("span");
 						}
 					}
 					if (oControl.getTimestamp()) {
@@ -139,45 +144,46 @@ sap.ui.define(["./ListItemBaseRenderer", "sap/ui/core/Renderer", "sap/ui/Device"
 					if (oControl.getInfo()) {
 						// Write Interpunct separator if necessary (with spaces before and after)
 						if (oControl.getTimestamp()) {
-							oRm.write("<span>&#160&#160&#x00B7&#160&#160</span>");
+							oRm.openStart("span").openEnd();
+							oRm.text("\u00a0\u00a0\u00B7\u00a0\u00a0");
+							oRm.close("span");
 						}
 						this._writeInfo(oRm, oControl, sMyId);
 					}
 
 				}
-				oRm.write('</p>');
+				oRm.close('p');
 			}
-			oRm.write('</div>');
+			oRm.close('div');
 		}
-		oRm.write('</div>');
+		oRm.close('div');
 	};
 
-	FeedListItemRenderer._writeImageControl = function(oRm, oControl, sId) {
-		oRm.write('<figure id="' + sId + '-figure"');
-		oRm.addClass('sapMFeedListItemFigure');
+	FeedListItemRenderer._writeAvatarControl = function(oRm, oControl, sId) {
+		oRm.openStart('figure', sId + '-figure');
+		oRm.class('sapMFeedListItemFigure');
 		if (!oControl.getIcon()) {
-			oRm.addClass('sapMFeedListItemIsDefaultIcon');
+			oRm.class('sapMFeedListItemIsDefaultIcon');
 		}
-		oRm.writeClasses();
-		oRm.write('>');
-		oRm.renderControl(oControl._getImageControl());
-		oRm.write('</figure>');
+		oRm.openEnd();
+		oRm.renderControl(oControl._getAvatar());
+		oRm.close('figure');
 	};
 
 	FeedListItemRenderer._writeCollapsedText = function(oRm, oControl, sId) {
 		// 'oFeedListItem._bTextExpanded' is true if the text has been expanded and rendering needs to be done again.
 		if (oControl._bTextExpanded) {
-			oRm.write(oControl._sFullText);
-			oRm.write('</span>');
-			oRm.write('<span id="' + sId + '-threeDots" class ="sapMFeedListItemTextString">');
-			oRm.write("&#32"); // space
-			oRm.write('</span>');
+			oRm.unsafeHtml(oControl._sFullText); // TODO consider to delegate to FormattedTextRenderer
+			oRm.close('span');
+			oRm.openStart('span', sId + '-threeDots').class("sapMFeedListItemTextString").openEnd();
+			oRm.text(" "); // space
+			oRm.close('span');
 		} else {
-			oRm.write(oControl._sShortText);
-			oRm.write('</span>');
-			oRm.write('<span id="' + sId + '-threeDots" class ="sapMFeedListItemTextString">');
-			oRm.write("&#32&#46&#46&#46&#32"); // space + three dots + space
-			oRm.write('</span>');
+			oRm.unsafeHtml(oControl._sShortText); // TODO improve
+			oRm.close('span');
+			oRm.openStart('span', sId + '-threeDots').class("sapMFeedListItemTextString").openEnd();
+			oRm.text(" ... "); // space + three dots + space
+			oRm.close('span');
 		}
 		var oLinkExpandCollapse = oControl._getLinkExpandCollapse();
 		oLinkExpandCollapse.addStyleClass("sapMFeedListItemLinkExpandCollapse");
@@ -185,15 +191,38 @@ sap.ui.define(["./ListItemBaseRenderer", "sap/ui/core/Renderer", "sap/ui/Device"
 	};
 
 	FeedListItemRenderer._writeTimestamp = function(oRm, oControl, sId) {
-		oRm.write('<span id="' + sId + '-timestamp" class="sapMFeedListItemTimestampText sapUiSelectable">');
-		oRm.writeEscaped(oControl.getTimestamp());
-		oRm.write('</span>');
+		oRm.openStart('span', sId + '-timestamp');
+		oRm.class('sapMFeedListItemTimestampText');
+		oRm.class('sapUiSelectable');
+		if (oControl.getUnread()) {
+			oRm.class('sapMFeedListItem-Unread');
+		}
+		oRm.openEnd();
+		oRm.text(oControl.getTimestamp());
+		oRm.close('span');
 	};
 
 	FeedListItemRenderer._writeInfo = function(oRm, oControl, sId) {
-		oRm.write('<span id="' + sId + '-info" class="sapMFeedListItemInfoText sapUiSelectable">');
-		oRm.writeEscaped(oControl.getInfo());
-		oRm.write('</span>');
+		oRm.openStart('span', sId + '-info');
+		oRm.class('sapMFeedListItemInfoText');
+		oRm.class('sapUiSelectable');
+		if (oControl.getUnread()) {
+			oRm.class('sapMFeedListItem-Unread');
+		}
+		oRm.openEnd();
+		oRm.text(oControl.getInfo());
+		oRm.close('span');
+	};
+
+	FeedListItemRenderer._writeText = function(oRm, oControl, sId, bIsPhone) {
+		oRm.openStart('span', sId + '-realtext');
+		oRm.class(bIsPhone ? 'sapMFeedListItemText' : 'sapMFeedListItemTextString');
+		oRm.class('sapMFeedListItemText');
+		oRm.class('sapUiSelectable');
+		if (oControl.getUnread()) {
+			oRm.class('sapMFeedListItem-Unread');
+		}
+		oRm.openEnd();
 	};
 
 	return FeedListItemRenderer;

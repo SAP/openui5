@@ -1,0 +1,172 @@
+{
+	"explored": {
+		"entitiesDefaults": {
+			"formFactors": "SML"
+		},
+		"samplesRef": [
+			{
+				"namespace": "sap.ui.mdc.sample",
+				"ref": "test-resources/sap/ui/mdc/demokit/internal/sample"
+			},
+			{
+				"namespace": "delegates",
+				"ref": "test-resources/sap/ui/mdc/delegates"
+			},
+			{
+				"namespace": "sap.ui.mdc.demokit.sample",
+				"ref": "test-resources/sap/ui/mdc/demokit/sample"
+			}
+		],
+		"entities": [
+			{
+				"id": "sap.ui.mdc.sample.Table",
+				"name": "MDC",
+				"category": "_PRIVATE_",
+				"since": "1.82",
+				"samples": [
+					"sap.ui.mdc.sample.ResponsiveTable",
+					"sap.ui.mdc.sample.GridTable",
+					"sap.ui.mdc.sample.TableStateHandling",
+					"sap.ui.mdc.sample.TableFilter",
+					"sap.ui.mdc.sample.TableODataV4",
+					"sap.ui.mdc.sample.TreeTableODataV4",
+					"sap.ui.mdc.sample.TableODataV4PDFExport"
+				]
+			},
+			{
+				"id": "sap.ui.mdc.sample.Field",
+				"name": "MDC",
+				"category": "_PRIVATE_",
+				"since": "1.82",
+				"samples": [
+					"sap.ui.mdc.sample.FieldEditMode",
+					"sap.ui.mdc.sample.FieldTypes",
+					"sap.ui.mdc.sample.FieldDisplay",
+					"sap.ui.mdc.sample.FieldOtherFeature",
+					"sap.ui.mdc.sample.FieldValueHelp",
+					"sap.ui.mdc.sample.FilterFieldTypes",
+					"sap.ui.mdc.sample.FieldInOutParameter",
+					"sap.ui.mdc.sample.FieldCustomContent",
+					"sap.ui.mdc.sample.FilterFieldCustomContent"
+				]
+			},
+			{
+				"id": "sap.ui.mdc.sample.StateUtil",
+				"name": "MDC",
+				"category": "_PRIVATE_",
+				"since": "1.99",
+				"samples": [
+					"sap.ui.mdc.sample.StateUtil"
+				]
+			},
+			{
+				"id": "sap.ui.mdc",
+				"name": "MDC Samples",
+				"category": "Smart Controls",
+				"since": "1.116",
+				"samples": [
+					"sap.ui.mdc.demokit.sample.TableFilterBarJson",
+					"sap.ui.mdc.demokit.sample.FieldValueHelpJson"
+				]
+			}
+		],
+		"samples": [
+			{
+				"id": "sap.ui.mdc.sample.ResponsiveTable",
+				"name": "0.1 Table of type \"ResponsiveTable\"",
+				"description": "Basic example with table type \"ResponsiveTable\"."
+			}, {
+				"id": "sap.ui.mdc.sample.GridTable",
+				"name": "0.2 Table of type \"GridTable\"",
+				"description": "Basic example with table type \"GridTable\"."
+			}, {
+				"id": "sap.ui.mdc.sample.TableStateHandling",
+				"name": "0.3 Table state handling",
+				"description": "Basic example of state handling."
+			}, {
+				"id": "sap.ui.mdc.sample.TableFilter",
+				"name": "0.4 Table with FilterBar",
+				"description": "Basic example with a FilterBar."
+			}, {
+				"id": "sap.ui.mdc.sample.TableODataV4",
+				"name": "0.5 Table with OData V4",
+				"description": "OData V4 with analytical capabilities, e.g. grouping and totals."
+			}, {
+				"id": "sap.ui.mdc.sample.TreeTableODataV4",
+				"name": "0.6 TreeTable with OData V4",
+				"description": "OData V4 with hierarchies."
+			}, {
+
+				"id": "sap.ui.mdc.sample.TableODataV4PDFExport",
+				"name": "0.7 Table with OData V4 for PDF export (TODO: merge into 0.5)",
+				"description": "OData V4 with PDF export capabilities."
+			}, {
+				"id": "sap.ui.mdc.sample.FieldEditMode",
+				"name": "1.1 Fields with different EditModes",
+				"description": "shows some Fields with type String in edit and display mode"
+			}, {
+				"id": "sap.ui.mdc.sample.FieldTypes",
+				"name": "1.2 Fields with different Types",
+				"description": "shows some Fields with different types"
+			}, {
+				"id": "sap.ui.mdc.sample.FieldDisplay",
+				"name": "1.3 Fields with different Display formats",
+				"description": "shows some Fields with different display formats"
+			}, {
+				"id": "sap.ui.mdc.sample.FieldOtherFeature",
+				"name": "1.4 other Field feature",
+				"description": "shows some mandatory Fields..."
+			}, {
+				"id": "sap.ui.mdc.sample.FieldValueHelp",
+				"name": "1.5 Fields with different ValueHelp",
+				"description": "shows some Fields with different types of value help"
+			}, {
+				"id": "sap.ui.mdc.sample.FieldInOutParameter",
+				"name": "1.6 Fields with in/out parameter",
+				"description": "in/out parameter between fields and valuehelp"
+			}, {
+				"id": "sap.ui.mdc.sample.FieldCustomContent",
+				"name": "1.7 Fields with custom content",
+				"description": "custom content controls used to render Fields"
+			}, {
+				"id": "sap.ui.mdc.sample.FilterFieldTypes",
+				"name": "2.1  FilterFields with different Types",
+				"description": "shows some FilterFields with different types bound to a condition model"
+			}, {
+				"id": "sap.ui.mdc.sample.FilterFieldCustomContent",
+				"name": "2.2 FilterFields with custom content",
+				"description": "custom content controls used to render FilterFields"
+			}, {
+				"id": "sap.ui.mdc.sample.FilterBar",
+				"name": "3.1 FilterBar",
+				"description": "first FilterBar example"
+			}, {
+				"id": "sap.ui.mdc.sample.Table",
+				"name": "4.1 Table",
+				"description": "first Table example"
+			}, {
+				"id": "sap.ui.mdc.sample.Chart",
+				"name": "5.1 Chart",
+				"description": "first Chart example"
+			}, {
+				"id": "sap.ui.mdc.sample.TableWithFilterBar",
+				"name": "6.1 Table with FilterBar",
+				"description": "first Table and Filterbar example"
+			}, {
+				"id": "sap.ui.mdc.sample.StateUtil",
+				"name": "7.1 StateUtil overview",
+				"description": "example demonstrating StateUtil functionality"
+			}, {
+				"id": "sap.ui.mdc.demokit.sample.TableFilterBarJson",
+                "name": "Table with FilterBar and JSON model",
+                "description": "A basic delegate setup using a combination of a table with a filter bar including variant management, with a simplified metadata definition in a separate file."
+			},
+			{
+				"id": "sap.ui.mdc.demokit.sample.FieldValueHelpJson",
+				"name": "Field with ValueHelp and JSON model",
+				"description": "A field and value help setup including a sophisticated value help dialog with filter and search capabilities."
+			}
+
+		]
+	}
+}

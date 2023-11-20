@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(["sap/ui/core/Element"],
-	function(Element) {
+sap.ui.define(["sap/ui/core/Element", "sap/base/Log", "sap/base/util/isPlainObject"],
+	function(Element, Log, isPlainObject) {
 	"use strict";
 
 	/**
@@ -27,7 +27,6 @@ sap.ui.define(["sap/ui/core/Element"],
 	 * @protected
 	 * @alias sap.m.SelectionDetailsItemLine
 	 * @since 1.48.0
-	 * @ui5-metamodel This element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var SelectionDetailsItemLine = Element.extend("sap.m.SelectionDetailsItemLine", /** @lends sap.m.SelectionDetailsItemLine.prototype */ {
 		metadata: {
@@ -41,7 +40,7 @@ sap.ui.define(["sap/ui/core/Element"],
 
 				/**
 				 * The value of the line, for example the value of the currently selected measure.
-				 * Expected type is a string or a plain object, including date and time properties of type string.
+				 * Expected type is a string, number or a plain object, including date and time properties of type string.
 				 */
 				value: { type: "any", group: "Data" },
 
@@ -74,15 +73,19 @@ sap.ui.define(["sap/ui/core/Element"],
 	SelectionDetailsItemLine.prototype._getValueToRender = function() {
 		var sValue = "",
 			oValue = this.getValue();
-		if (jQuery.type(oValue) === "string") {
+		if (typeof oValue === "string" || oValue instanceof String) {
 			sValue = oValue;
-		} else if (jQuery.isPlainObject(oValue)) {
+		} else if (typeof oValue === "number") {
+			sValue = oValue.toString();
+		} else if (isPlainObject(oValue)) {
 			if (oValue.day && oValue.day.length > 0) {
 				sValue = oValue.day;
 			}
 			if (oValue.time && oValue.time.length > 0) {
 				sValue = (sValue.length > 0) ? oValue.time + " " + sValue : oValue.time;
 			}
+		} else {
+			Log.warning("Value '" + oValue + "' is not supported. Expected type is a string, number or a plain object, including date and time properties of type string.");
 		}
 		return sValue;
 	};

@@ -1,12 +1,16 @@
 /*global QUnit*/
 
-sap.ui.require([
-	'sap/ui/support/supportRules/util/RuleValidator'
-], function (RuleValidator) {
+sap.ui.define([
+	"sap/ui/support/supportRules/util/RuleValidator",
+	"sap/ui/support/library"
+], function (RuleValidator, supportLibrary) {
 		"use strict";
 
-		var Audiences = sap.ui.support.Audiences,
-			Categories = sap.ui.support.Categories;
+		// shortcut for sap.ui.support.Categories
+		var Categories = supportLibrary.Categories;
+
+		// shortcut for sap.ui.support.Audiences
+		var Audiences = supportLibrary.Audiences;
 
 		function fnCreateRule() {
 			return {
@@ -29,7 +33,7 @@ sap.ui.require([
 		}
 
 		QUnit.module("RuleValidator - positive case", {
-			setup: function () {
+			beforeEach: function () {
 				this.libs = [
 					'sap.m',
 					'sap.ui.table',
@@ -44,7 +48,7 @@ sap.ui.require([
 				];
 				this.oRuleValidator = RuleValidator;
 			},
-			teardown: function () {
+			afterEach: function () {
 				this.libs = null;
 				this.oRuleValidator = null;
 			}
@@ -54,29 +58,28 @@ sap.ui.require([
 			//arrange
 			var oRule = fnCreateRule();
 
-			//act - //assert
-
 			//must work with "-"
 			oRule.minversion = "-";
-
 			assert.equal(this.oRuleValidator.validateVersion(oRule.minversion), true, "should validate the following character : '-'");
 
 			//must work with "*"
 			oRule.minversion = "*";
-
 			assert.equal(this.oRuleValidator.validateVersion(oRule.minversion), true, "should validate the following character : '*' ");
 
-			//must work with valid version of UI5
-			oRule.minversion = sap.ui.getVersionInfo().version.match(/\d\.\d\d/)[0];
-
+			//must work with valid version of UI5 - <digit>.<digit> case
+			oRule.minversion = "1.0";
 			assert.equal(this.oRuleValidator.validateVersion(oRule.minversion), true, "should validate the following pattern of digits <digit>.<digit><digit>");
 
+			//must work with valid version of UI5 - <digit>.<digit><digit> case
+			oRule.minversion = "1.10";
+			assert.equal(this.oRuleValidator.validateVersion(oRule.minversion), true, "should validate the following pattern of digits <digit>.<digit><digit>");
 
-			oRule = null;
+			//must work with valid version of UI5 - <digit>.<digit><digit><digit> case
+			oRule.minversion = "1.100";
+			assert.equal(this.oRuleValidator.validateVersion(oRule.minversion), true, "should validate the following pattern of digits <digit>.<digit><digit><digit>");
 		});
 
 		QUnit.test("validateRuleCollection", function (assert) {
-
 			//arrange
 			var oRule = fnCreateRule(),
 				aAudiencesMock = Audiences,
@@ -105,7 +108,6 @@ sap.ui.require([
 		});
 
 		QUnit.test("validateStringLength", function (assert) {
-
 			var oRule = fnCreateRule();
 
 			assert.equal(this.oRuleValidator.validateStringLength(oRule.description, 1, 400), true, "should validate the description property if it has fewer than 400 characters");
@@ -116,7 +118,7 @@ sap.ui.require([
 		});
 
 		QUnit.module("RuleValidator - should fail", {
-			setup: function () {
+			beforeEach: function () {
 				this.libs = [
 					'sap.m',
 					'sap.ui.table',
@@ -131,14 +133,13 @@ sap.ui.require([
 				];
 				this.oRuleValidator = RuleValidator;
 			},
-			teardown: function () {
+			afterEach: function () {
 				this.libs = null;
 				this.oRuleValidator = null;
 			}
 		});
 
 		QUnit.test("validateVersion - invalidVersion", function (assert) {
-
 			//arrange
 			var oRule = fnCreateRule();
 
@@ -173,7 +174,6 @@ sap.ui.require([
 		});
 
 		QUnit.test("validateRuleCollection - invalidCollection", function (assert) {
-
 			//arrange
 			var oRule = fnCreateRule(),
 			aAudiencesMock = Audiences,

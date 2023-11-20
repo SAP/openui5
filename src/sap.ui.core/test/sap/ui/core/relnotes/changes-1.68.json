@@ -1,0 +1,137 @@
+{
+  "1.68.0": {
+    "date": "June 2019",
+    "notes": [
+      {
+        "id": "ffb6675736222dbe22da248a910e7d4f7634bc01",
+        "type": "FIX",
+        "text": "Do not preventDefault non-cancelable move events",
+        "references": [
+          {
+            "type": "GitHub",
+            "reference": "2461"
+          }
+        ]
+      },
+      {
+        "id": "b75437b4b33e238f646cb7d26a3d2c93b235f76c",
+        "type": "FIX",
+        "text": "ElementMetadata: a renderer w/o render function is incomplete",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970204888"
+          }
+        ]
+      },
+      {
+        "id": "1534ed4b5b61c9f127cf8bc5f872f91a192e7e65",
+        "type": "FIX",
+        "text": "v2.ODataModel: createCustomParams throws uncaught exception",
+        "references": []
+      },
+      {
+        "id": "d1db32f73096fe81b48e0d1908d2da816cc50d2b",
+        "type": "FIX",
+        "text": "v2.ODataModel: createCustomParams throws uncaught exception",
+        "references": []
+      },
+      {
+        "id": "7f7e1bff64860cd4757572d64308b9cc151c0f20",
+        "type": "FIX",
+        "text": "ManagedObjectModel: Only checkUpdate for resolved bindings",
+        "references": []
+      },
+      {
+        "id": "6cf23096b4f8368f7bc01cb7f873a4a5d0e1f1bb",
+        "type": "FIX",
+        "text": "Opa: iframe size and position in Chrome 75",
+        "references": []
+      },
+      {
+        "id": "7e4e20af29232c7e202c7e8e91adb6edce6bb681",
+        "type": "FIX",
+        "text": "core.Component: Services shall be inherited by child components",
+        "references": []
+      },
+      {
+        "id": "7f50ce16e7e2e788d381c59928180a40402be50d",
+        "type": "FIX",
+        "text": "sap/ui/model/odata/v2/ODataListBinding: ContextChange",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400003178992019"
+          }
+        ]
+      },
+      {
+        "id": "8b1910dd4a97ab0544ad52833e3f10fce95603b1",
+        "type": "FIX",
+        "text": "v2.ODataModel: Path cache invalidates too often",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970259015"
+          }
+        ]
+      },
+      {
+        "id": "8615e1f34e3b644ca9282f303f42c082032307d4",
+        "type": "FEATURE",
+        "text": "sap/base/util/UriParameters: expose as public API",
+        "references": [
+          {
+            "type": "GitHub",
+            "reference": "2567"
+          }
+        ]
+      },
+      {
+        "id": "d4aef5d676d132d2fd360cf7804ceee5f4c0fdc3",
+        "type": "FIX",
+        "text": "ODataMessageParser: Technical message lifecycle",
+        "references": []
+      },
+      {
+        "id": "136cd4078e08ec0ce5b904597a2388bb44e072a3",
+        "type": "FIX",
+        "text": "TreeBindingAdapter: correctly clear selectAllMode",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970285916"
+          }
+        ]
+      },
+      {
+        "id": "8579c0a1334a8b2745f10685bfc8423c70f9a216",
+        "type": "FIX",
+        "text": "core.routing: event parameters of routeMatched event",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970211166"
+          }
+        ]
+      },
+      {
+        "id": "5c800dbfc2a33f13423fcb1cfa24b44e2014ffa4",
+        "type": "FIX",
+        "text": "core:routing: correctly handle parent target which loads component",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970211062"
+          }
+        ]
+      },
+      {
+        "id": "7f6f744f50b5c83fbf038450fc80c6b788bda4f0",
+        "type": "FIX",
+        "text": "performance/trace/FESR: Beacon strategy adaptations",
+        "references": []
+      }
+    ]
+  }
+}

@@ -30,4 +30,4 @@ sap.ui.define([],
 				create: "sap/m/designtime/RatingIndicator.create.fragment.xml"
 			}
 		};
-	}, /* bExport= */ false);
+	});

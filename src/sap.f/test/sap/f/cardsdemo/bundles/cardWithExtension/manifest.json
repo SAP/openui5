@@ -1,0 +1,53 @@
+{
+	"sap.app": {
+		"type": "card",
+		"id": "cardWithExtension",
+		"dataSources": {
+			"products": {
+				"uri": "https://services.odata.org/V3/Northwind/Northwind.svc",
+				"type": "OData"
+			}
+		}
+	},
+	"sap.card": {
+		"extension": "./ListCardSampleExtension",
+		"configuration": {
+			"parameters": {
+				"city": {
+					"value": "Sofia"
+				}
+			},
+			"destinations": {
+				"myDestination": {
+					"name": "Northwind",
+					"defaultUrl": "https://services.odata.org/V3/Northwind/Northwind.svc"
+				}
+			}
+		},
+		"data": {
+			"extension": {
+				"method": "getData",
+				"args": ["{parameters>/city/value}", "arg2","arg3", "arg4"]
+			}
+		},
+		"type": "List",
+		"header": {
+			"title": "List Card",
+			"subTitle": "City {parameters>/city/value}"
+		},
+		"content": {
+			"item": {
+				"title": "{= extension.formatters.titleToUpperCase(${city})}",
+				"description": "{= extension.formatters.descriptionToUpperCase(${description})}",
+				"actions": [
+					{
+						"type": "Navigation",
+						"parameters": {
+							"city": "{city}"
+						}
+					}
+				]
+			}
+		}
+	}
+}

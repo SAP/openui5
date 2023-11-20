@@ -3,8 +3,12 @@
  */
 
 sap.ui.define([
-	'sap/uxap/changeHandler/RenameObjectPageSection'
-], function (RenameObjectPageSection) {
+	'sap/uxap/changeHandler/RenameObjectPageSection',
+	'sap/uxap/changeHandler/UnstashObjectPageSection'
+], function (
+	RenameObjectPageSection,
+	UnstashObjectPageSection
+) {
 	"use strict";
 
 	return {
@@ -29,7 +33,7 @@ sap.ui.define([
 			}
 		},
 		"unstashControl": {
-			"changeHandler": "default",
+			"changeHandler": UnstashObjectPageSection,
 			"layers": {
 				"USER": true
 			}

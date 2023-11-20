@@ -1,0 +1,77 @@
+{
+	"sap.app": {
+		"id": "analyticalCard1",
+		"type": "card"
+	},
+	"sap.card": {
+		"type": "Analytical",
+		"header": {
+			"title": "February"
+		},
+		"content": {
+			"chartType": "Donut",
+			"legend": {
+				"visible": false,
+				"position": "Top",
+				"alignment": "Center"
+			},
+			"plotArea": {
+				"dataLabel": {
+					"visible": true,
+					"showTotal": true
+				}
+			},
+			"title": {
+				"text": "Donut chart",
+				"visible": false,
+				"alignment": "Bottom"
+			},
+			"measureAxis": "size",
+			"dimensionAxis": "color",
+			"data": {
+				"json": {
+					"milk": [{
+							"Store Name": "24-Seven",
+							"Revenue": 545292.06,
+							"Fat Percentage": "2 Percent"
+						},
+						{
+							"Store Name": "A&A",
+							"Revenue": 2564235.29,
+							"Fat Percentage": "2 Percent"
+						},
+						{
+							"Store Name": "Alexei's Specialities",
+							"Revenue": 2085567.22,
+							"Fat Percentage": "2 Percent"
+						},
+						{
+							"Store Name": "24-Seven",
+							"Revenue": 82922.07,
+							"Fat Percentage": "1 Percent"
+						},
+						{
+							"Store Name": "A&A",
+							"Revenue": 157913.07,
+							"Fat Percentage": "1 Percent"
+						},
+						{
+							"Store Name": "Alexei's Specialities",
+							"Revenue": 245609.486884,
+							"Fat Percentage": "1 Percent"
+						}
+					]
+				},
+				"path": "/milk"
+			},
+			"dimensions": [{
+				"label": "Store Name",
+				"value": "{Store Name}"
+			}],
+			"measures": [{
+				"label": "Revenue",
+				"value": "{Revenue}"
+			}]
+		}
+	}
+}

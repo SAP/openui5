@@ -1,0 +1,37 @@
+{
+	"@odata.metadataEtag" : "W/\"20191022154832\"",
+	"@odata.count" : 50,
+	"value" : [{
+		"@odata.etag" : "W/\"20190321111935.0000000 \"",
+		"BusinessPartnerID" : "0100000042",
+		"CompanyName" : "Siwusha"
+	}, {
+		"@odata.etag" : "W/\"20190321111935.0000000 \"",
+		"BusinessPartnerID" : "0100000043",
+		"CompanyName" : "Danish Fish Trading Company"
+	}, {
+		"@odata.etag" : "W/\"20190321111935.0000000 \"",
+		"BusinessPartnerID" : "0100000044",
+		"CompanyName" : "Sorali"
+	}, {
+		"@odata.etag" : "W/\"20190321111935.0000000 \"",
+		"BusinessPartnerID" : "0100000045",
+		"CompanyName" : "Consumer"
+	}, {
+		"@odata.etag" : "W/\"20190321111935.0000000 \"",
+		"BusinessPartnerID" : "0100000046",
+		"CompanyName" : "SAP"
+	}, {
+		"@odata.etag" : "W/\"20190321111935.0000000 \"",
+		"BusinessPartnerID" : "0100000047",
+		"CompanyName" : "Becker Berlin"
+	}, {
+		"@odata.etag" : "W/\"20190321111935.0000000 \"",
+		"BusinessPartnerID" : "0100000048",
+		"CompanyName" : "DelBont Industries"
+	}, {
+		"@odata.etag" : "W/\"20190321111935.0000000 \"",
+		"BusinessPartnerID" : "0100000049",
+		"CompanyName" : "Talpa"
+	}]
+}

@@ -1,0 +1,89 @@
+<mvc:View
+		controllerName="sap.f.cardsdemo.controller.StateChangedEvent"
+		xmlns="sap.m"
+		xmlns:mvc="sap.ui.core.mvc"
+		xmlns:core="sap.ui.core"
+		xmlns:w="sap.ui.integration.widgets"
+		xmlns:editor="sap.ui.codeeditor"
+		displayBlock="true">
+	<Page title="{i18n>appTitle}" enableScrolling="false">
+		<subHeader>
+			<Toolbar>
+				<ToolbarSpacer />
+				<Title text="Resolve Manifest" />
+				<ToolbarSpacer />
+			</Toolbar>
+		</subHeader>
+		<VBox renderType="Bare" height="100%">
+			<OverflowToolbar>
+				<Select
+					width="200px"
+					selectedKey="{stateChangedEventPage>/selectedKey}"
+					items="{stateChangedEventPage>/manifests}"
+					change=".onChangeManifest">
+					<core:Item key="{stateChangedEventPage>key}" text="{stateChangedEventPage>text}" />
+				</Select>
+				<Button text="Refresh Card" press=".onRefresh" type="Emphasized" />
+				<Button text="Refresh Card Data" press=".onRefreshData" />
+				<Button text="Show Message" press=".onShowMessage"
+					visible="{= !${stateChangedEventPage>/messageStripVisible}}" />
+				<Button text="Hide Message" press=".onHideMessage"
+					visible="{= !!${stateChangedEventPage>/messageStripVisible}}" />
+
+				<Button text="Previous Page" press=".onPreviousPage"
+					visible="{= ${stateChangedEventPage>/selectedKey} === 'filter' }" />
+				<Button text="Next Page" press=".onNextPage"
+					visible="{= ${stateChangedEventPage>/selectedKey} === 'filter' }" />
+				<Button text="Change Filter" press=".onChangeSelectFilter"
+					visible="{= ${stateChangedEventPage>/selectedKey} === 'filter' }" />
+				<Button text="Initial Filter" press=".onInitialSelectFilter"
+					visible="{= ${stateChangedEventPage>/selectedKey} === 'filter' }" />
+
+				<Button text="Simulate live input" press=".onSimulateLiveInput"
+					visible="{= ${stateChangedEventPage>/selectedKey} === 'form' }" />
+				<Button text="Enter valid input" press=".onEnterValidInput"
+					visible="{= ${stateChangedEventPage>/selectedKey} === 'form' }" />
+				<Button text="Enter invalid input" press=".onEnterInvalidInput"
+					visible="{= ${stateChangedEventPage>/selectedKey} === 'form' }" />
+				<Button text="Submit" press=".onSimulateSubmit" type="Accept"
+					visible="{= ${stateChangedEventPage>/selectedKey} === 'form' }" />
+				<Button id="dateChangeButton" text="Change date to 13th" press=".onChangeDate" type="Accept"
+					visible="{= ${stateChangedEventPage>/selectedKey} === 'calendar' }" />
+				<Button id="cardsplayground---stateChangedEvent--monthChangeButton" text="Change Month to August" press=".onChangeMonth" type="Accept"
+					visible="{= ${stateChangedEventPage>/selectedKey} === 'calendar' }" />
+				<Button id="dateChangeButton2" text="Change date to 13th" press=".onChangeDate" type="Accept"
+					visible="{= ${stateChangedEventPage>/selectedKey} === 'calendarExtended' }" />
+				<Button id="cardsplayground---stateChangedEvent--monthChangeButton2" text="Change Month to August" press=".onChangeMonth" type="Accept"
+					visible="{= ${stateChangedEventPage>/selectedKey} === 'calendarExtended' }" />
+			</OverflowToolbar>
+			<HBox>
+				<layoutData>
+					<FlexItemData minHeight="0" growFactor="1"></FlexItemData>
+				</layoutData>
+				<VBox renderType="Bare">
+					<Title text="Card" class="sapUiTinyMargin" />
+					<ScrollContainer vertical="true">
+						<w:Card id="demoCard"
+								width="300px"
+								class="sapUiSmallMargin disabledCard"
+								manifest="{stateChangedEventPage>/selectedManifest}" />
+						<layoutData>
+							<FlexItemData growFactor="1"></FlexItemData>
+						</layoutData>
+					</ScrollContainer>
+				</VBox>
+				<VBox>
+					<Title text="Output" class="sapUiTinyMargin" />
+					<editor:CodeEditor id="output" type="json" editable="false">
+						<editor:layoutData>
+							<FlexItemData growFactor="1"></FlexItemData>
+						</editor:layoutData>
+					</editor:CodeEditor>
+					<layoutData>
+						<FlexItemData growFactor="1"></FlexItemData>
+					</layoutData>
+				</VBox>
+			</HBox>
+		</VBox>
+	</Page>
+</mvc:View>

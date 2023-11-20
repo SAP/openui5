@@ -1,0 +1,318 @@
+{
+  "1.121.0": {
+    "date": "November 2023",
+    "notes": [
+      {
+        "id": "83c9d999fd5c7fb361825f44571bf11dec477d61",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: Improve reverse selection precision.",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370071110"
+          }
+        ]
+      },
+      {
+        "id": "cf8627145abd030d1dc88f1f65088b9e8734280f",
+        "type": "FIX",
+        "text": " sap.m.ObjectStatus: remove extra spacing in table",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370138291"
+          }
+        ]
+      },
+      {
+        "id": "1c1c0ab7cc5cfded48f1af3cec0e88bb1017f419",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: fix access continuum issues"
+      },
+      {
+        "id": "771e12889679aa6b5c356c713660ca3ed3df2011",
+        "type": "FIX",
+        "text": " sap.m.DateTimePicker: fix date out of range errors",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380118714"
+          }
+        ]
+      },
+      {
+        "id": "a08755a292aaabc2cc8f5a4db7825ae80e0cd500",
+        "type": "FIX",
+        "text": " m.Table: Enter should fire selectionChange in SingleSelectMaster",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370133922"
+          }
+        ]
+      },
+      {
+        "id": "ff48633ed3c974b8b29f1b2ec3a10e3f466b9774",
+        "type": "FIX",
+        "text": " sap.m.MenuButton: Add reveal configuration in designtime",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380093723"
+          }
+        ]
+      },
+      {
+        "id": "07ce8256d4d4dd9d854e552b2eefc8c73cbf1c73",
+        "type": "FIX",
+        "text": " Rename sap/ui/core/Component.get to sap/ui/core/Component.getComponentById"
+      },
+      {
+        "id": "6602fdaa026949cf862940cd39a3cba4d8d3a3df",
+        "type": "FIX",
+        "text": " sap.m.ObjectStatus: add component description"
+      },
+      {
+        "id": "1c87cb623d5b9591458bda6e66f2df865999a896",
+        "type": "FIX",
+        "text": " sap.m.DatePicker: remove excess spacing in popover",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280175248"
+          }
+        ]
+      },
+      {
+        "id": "c6299f7c5a1d316ec0b226d6b10a13c651e421d0",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: Truncate one long token on rerendering",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370134050"
+          }
+        ]
+      },
+      {
+        "id": "bdfa50f428ddaf962314732b8579590f9415265c",
+        "type": "FIX",
+        "text": " sap.m.ObjectStatus: large images as icons don't break the control",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500004379492023"
+          }
+        ]
+      },
+      {
+        "id": "cbfc474488f5d176a1f0ec3baf614811311a0fe9",
+        "type": "FIX",
+        "text": " sap.m.Popover: Scroll overlapping is now fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380127693"
+          }
+        ]
+      },
+      {
+        "id": "7e01539f3fe3020413fe3ca1d359609e2881d918",
+        "type": "FIX",
+        "text": " sap.m.Input: Tabular suggestions are now always highlighted",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370106962"
+          }
+        ]
+      },
+      {
+        "id": "db27660cbbff99d90db82a87c0a043d1d5d4ef9d",
+        "type": "FIX",
+        "text": " sap.m.ObjectNumber: apply horizon theme updates",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370126403"
+          }
+        ]
+      },
+      {
+        "id": "f61c987c2e2f75d4bbcaf18594396a862de47afc",
+        "type": "FIX",
+        "text": " sap.m.WizardProgressNavigator: onsapspace handling corrected",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370126272"
+          }
+        ]
+      },
+      {
+        "id": "f8cbff5768e506c6316ca1c9847e63d54a3dde16",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: adjust accessibility semantics",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370129616"
+          }
+        ]
+      },
+      {
+        "id": "b210a3d9a5609a4942d90666a56e3d409df402a1",
+        "type": "FEATURE",
+        "text": " sap.m.SinglePlanningCalendar: Visualise overflowing appointments"
+      },
+      {
+        "id": "ec9f967440c83e73eb9cf479e7222d8f6c2a6374",
+        "type": "FIX",
+        "text": " sap.m.DateTimePicker: timezone is now correctly translated",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370129541"
+          }
+        ]
+      },
+      {
+        "id": "6c4c600d1301e5fef961333bf6aad130050bc262",
+        "type": "FIX",
+        "text": " sap.m.DateRangeSelection: using a stable date in a test scenario",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370125750"
+          }
+        ]
+      },
+      {
+        "id": "e20208ac2669d61b08d68c8d5d583ba5e4bba229",
+        "type": "FIX",
+        "text": " sap.m.FormattedText: Allow title attribute in link",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370018787"
+          }
+        ]
+      },
+      {
+        "id": "2e86d931342ac7a96a78b1bcd1ce916f7c91045c",
+        "type": "FIX",
+        "text": " sap.m.DynamicDateRange: improve documentation",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370107055"
+          }
+        ]
+      },
+      {
+        "id": "21d83244b1e6de9e2381e7fc40806719dc0b47c2",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: OPA tests in demo app are now running",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370127346"
+          }
+        ]
+      },
+      {
+        "id": "3b4a9eac2b6c181ca57e4a8e7c3e630035d3ed99",
+        "type": "FIX",
+        "text": " sap.ui.unified.calendar.CustomMonthPicker: fixed missing year in internal MonthPicker",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400009186302023"
+          }
+        ]
+      },
+      {
+        "id": "981ba4a2bc06f54be737da1521f75315061b96e0",
+        "type": "FIX",
+        "text": " sap.m.MultiComboBox: selectAll visualization adjusted",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370109539"
+          }
+        ]
+      },
+      {
+        "id": "0609b34dfa6de98857e0e843993417a7977892fc",
+        "type": "FIX",
+        "text": " sap.m.SearchField: Suggestions are correctly visualized",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370120906"
+          }
+        ]
+      },
+      {
+        "id": "eff0157b39addaec4846b1ec7b1678a86b36e384",
+        "type": "FIX",
+        "text": " sap.m.FacetFilter: adjust select all checkbox",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380124243"
+          }
+        ]
+      },
+      {
+        "id": "d7aced42b4e05df174d2c219586e91ddc8c463d3",
+        "type": "FIX",
+        "text": " sap.m.Avatar: Fix detailBox destroying",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380079125"
+          }
+        ]
+      },
+      {
+        "id": "158095eac8a9de79b954adf96672be3430d41802",
+        "type": "FIX",
+        "text": " sap.m Date & Time controls: improve documentation",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380097696"
+          }
+        ]
+      },
+      {
+        "id": "921c161e2b84e868d69e9a9e9c034d53d3ffb9e5",
+        "type": "FIX",
+        "text": " sap.m.Input: Reopen Suggestion Popover when new data is bound reverted"
+      },
+      {
+        "id": "de7738c04658d1f2cd88a0f4db46cb1714b344c0",
+        "type": "FIX",
+        "text": " sap.m.Input: Reopen Suggestion Popover when new data is bound",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370107738"
+          }
+        ]
+      },
+      {
+        "id": "70ff8fe4234dd8505d625ef25c3000a7a8751ca2",
+        "type": "FIX",
+        "text": " sap.m.Input: Reopen Suggestion Popover when new data is bound",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370122595"
+          }
+        ]
+      }
+    ]
+  }
+}

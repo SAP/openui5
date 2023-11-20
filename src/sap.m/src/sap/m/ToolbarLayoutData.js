@@ -18,7 +18,9 @@ sap.ui.define(['./library', 'sap/ui/core/LayoutData'],
 	 * @class
 	 * Defines layout data for the {@link sap.m.Toolbar} items.
 	 *
-	 * <b>Note:</b> <code>ToolbarLayoutData</code> should not be used together with {@link sap.m.ToolbarSpacer}.
+	 * <b>Note:</b> The {@link sap.m.ToolbarSpacer} is a flex control that is intended to
+	 * control its own behavior, thus <code>sap.m.ToolbarLayoutData</code> is not supported as value for the
+	 * <code>layoutData</code> aggregation of {@link sap.m.ToolbarSpacer} and if set it's ignored.
 	 *
 	 * @extends sap.ui.core.LayoutData
 	 * @version ${version}
@@ -27,7 +29,6 @@ sap.ui.define(['./library', 'sap/ui/core/LayoutData'],
 	 * @public
 	 * @since 1.20
 	 * @alias sap.m.ToolbarLayoutData
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var ToolbarLayoutData = LayoutData.extend("sap.m.ToolbarLayoutData", /** @lends sap.m.ToolbarLayoutData.prototype */ { metadata : {
 
@@ -37,7 +38,11 @@ sap.ui.define(['./library', 'sap/ui/core/LayoutData'],
 			/**
 			 * Determines whether the control, when in a toolbar, is shrinkable or not. For controls with fixed width (100px, 5rem, etc...) this property is ignored.
 			 *
-			 * Note: Nested layout controls should not be shrinkable.
+			 * <b>Notes:</b>
+			 * <ul>
+			 * <li>Nested layout controls should not be shrinkable.</li>
+			 * <li>This property has no effect on <code>sap.m.Breadcrumbs</code> as it is shrinkable by default.</li>
+			 * </ul>
 			 */
 			shrinkable : {type : "boolean", group : "Behavior", defaultValue : false},
 
@@ -74,7 +79,7 @@ sap.ui.define(['./library', 'sap/ui/core/LayoutData'],
 	 * If the control that is using ToolbarLayoutData has been already rendered,
 	 * then this function can be used to apply layout data properties to the related control
 	 *
-	 * @returns {sap.m.ToolbarLayoutData}
+	 * @returns {this}
 	 * @protected
 	 */
 	ToolbarLayoutData.prototype.applyProperties = function() {

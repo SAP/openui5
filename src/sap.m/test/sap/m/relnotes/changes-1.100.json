@@ -1,0 +1,578 @@
+{
+  "1.100.0": {
+    "date": "March 2022",
+    "notes": [
+      {
+        "id": "01503c649bc2c5d299c06329213fdacd0fbb3b60",
+        "type": "FIX",
+        "text": " Table: Column width calculation issue",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180413431"
+          },
+          {
+            "type": "BCP",
+            "reference": "2280016497"
+          }
+        ]
+      },
+      {
+        "id": "cd56e4dc5c5dbdc241fe6a1639684d1265c7388b",
+        "type": "FIX",
+        "text": " sap.m.ViewSettingsDialog: selectedSortItem value is retained",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400000397612022"
+          }
+        ]
+      },
+      {
+        "id": "bf3282f9b8bd3ee426dddf075e8d7d2d2f6aef42",
+        "type": "FEATURE",
+        "text": " sap.m.RadioButton: Horizon theme implemented"
+      },
+      {
+        "id": "60dd867baa9474e41e817811674a80ff36c5125b",
+        "type": "FEATURE",
+        "text": " SameFilenameAllowed property added to uploadSet"
+      },
+      {
+        "id": "a04bb13c8fb2a0b3f69ff5ceea0d04765ccbce50",
+        "type": "FEATURE",
+        "text": " Mode property added to upload set"
+      },
+      {
+        "id": "195f79e69799e3f3ee773f04c1d301dcf90cca59",
+        "type": "FIX",
+        "text": " sap.m.TimePicker: The autocompleted values update the model once",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400000146402022"
+          }
+        ]
+      },
+      {
+        "id": "32baaaf61034c3d17318ed952b98d2db5efa4742",
+        "type": "FIX",
+        "text": " core/m: fix viewport meta for iOS platform",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280037152"
+          }
+        ]
+      },
+      {
+        "id": "e44299cc0b5edb728519bb19659206360f022c1b",
+        "type": "FIX",
+        "text": " sap.m.ComboBox/MultiComboBox: Clear icon enhancements",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180419029"
+          }
+        ]
+      },
+      {
+        "id": "9c75a599c644cf5b70b84e52ac2cfcc1b5fe109e",
+        "type": "FIX",
+        "text": " sap.m.ViewSettingsDialog: selectedSortItem value is retained",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400000397612022"
+          }
+        ]
+      },
+      {
+        "id": "a9f0eca82e6d24a7012af3d12953eb925d454f93",
+        "type": "FIX",
+        "text": " sap.m.QuickViewCard: Sample fixed"
+      },
+      {
+        "id": "8a224c80a485fd91e2ff2ce18ece3506543b7883",
+        "type": "FIX",
+        "text": " sap.m.OverflowToolbar: Announcing of hidden button is fixed"
+      },
+      {
+        "id": "245925f3bedd97609f12df89057943cad36a5361",
+        "type": "FIX",
+        "text": " sap.m.ViewSettingsDialog: Associations can receive element ids",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400000397612022"
+          }
+        ]
+      },
+      {
+        "id": "74ce6762def8b7f7e22b2ac4e121babd9c6576bb",
+        "type": "FIX",
+        "text": " sap.m.DynamicDateRange: handle inner input focus behavior",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280043470"
+          }
+        ]
+      },
+      {
+        "id": "232b3d44d2b4d5f07e059e2293afba3bdea9d29d",
+        "type": "FEATURE",
+        "text": " sap.m.QuickView: Placeholder for empty texts added"
+      },
+      {
+        "id": "72486d078c9600b350e54e7bfd734d10cf7df68d",
+        "type": "FIX",
+        "text": " sap.m.DatePicker: position read only icon properly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280050197"
+          }
+        ]
+      },
+      {
+        "id": "d1f2348bc39fc655bbe3613415b047035270a5ce",
+        "type": "FIX",
+        "text": " sap.m.IconTabBar: Selecting sub item is now correct",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280041989"
+          }
+        ]
+      },
+      {
+        "id": "febe5b879625807628a92ba298cb01c867178a4e",
+        "type": "FIX",
+        "text": " sap.m.DynamicDateRange: Last/Next X options are now with correct limits",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280024045"
+          }
+        ]
+      },
+      {
+        "id": "983020e2b65f326b4dc4ebc924cbd6f427cdd5ea",
+        "type": "FIX",
+        "text": " sap.m.SearchField: Paddings fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280057765"
+          }
+        ]
+      },
+      {
+        "id": "7592607fb70b9827f86d9f0c03ce4623dbde5a98",
+        "type": "FEATURE",
+        "text": " Add property -multiple similar to upload collection"
+      },
+      {
+        "id": "42b9cc0579c2af510de23f66407df0a8c104a972",
+        "type": "FEATURE",
+        "text": " sap.m.Select: Introduced new 'liveChange' event",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170305445"
+          }
+        ]
+      },
+      {
+        "id": "b6d06443de6d5ef1fb7941727bc4b7ace41e9aec",
+        "type": "FIX",
+        "text": " sap.m.RadioButtonGroup: Tab indexes are now updated correctly on keyboard navigation",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280017689"
+          }
+        ]
+      },
+      {
+        "id": "afae324894b7de6c3f80a4c3cfff59ca3295ded6",
+        "type": "FIX",
+        "text": " sap.m.DateTimePicker: Some binding options take priority",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280055168"
+          }
+        ]
+      },
+      {
+        "id": "092f4756c44cb2297fbb46c3a1c72b49ed59711f",
+        "type": "FIX",
+        "text": " FeedListItem : FeedListItemActionButton visibility check",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170206153"
+          }
+        ]
+      },
+      {
+        "id": "1c2bd851e3ab6651a2a5a7c38246198990a7d74c",
+        "type": "FIX",
+        "text": " AbstractContainer - Change section's position to relative",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400000735512022"
+          }
+        ]
+      },
+      {
+        "id": "d986ba6664509a3216ba23b241df2a5f1f446714",
+        "type": "FEATURE",
+        "text": " sap.m.DynamicDateRange: Introduce new From and To options with time"
+      },
+      {
+        "id": "c5a30e5f80d672444736664bf0ea59a2997aa9cf",
+        "type": "FEATURE",
+        "text": " sap.m.Avatar: new API exposed to set aria-haspopup attribute"
+      },
+      {
+        "id": "d0f4f2d3e3d8b6589b6b7a76c038bd149ddfcf4f",
+        "type": "FEATURE",
+        "text": " sap.m.DateTimePicker: Support timezones"
+      },
+      {
+        "id": "4ae5e591a13d0add981febfaa680461a58d326f7",
+        "type": "FEATURE",
+        "text": " UploadButtonInvisible property has been added to Uploadset"
+      },
+      {
+        "id": "6223d6f964a7de45962e3dccef91b2faa3d58007",
+        "type": "FEATURE",
+        "text": " UploadSet: Drag and drop for UploadSetItems has been added"
+      },
+      {
+        "id": "4c00e900a3a77386e52748009868c6dcd6c2655b",
+        "type": "FIX",
+        "text": " PDFViewer - Handle sourceValidation error",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2240085710"
+          }
+        ]
+      },
+      {
+        "id": "3bb462d507d6b54517999c9182d5fae5426f1d30",
+        "type": "FIX",
+        "text": " sap.m.Carousel: Sample for Empty Carousel enhanced with slider"
+      },
+      {
+        "id": "ca70fae089df930e22d33e12c74b94612c469bc9",
+        "type": "FEATURE",
+        "text": " sap.ui.core.IconPool: Update icon font v5.01 and v4.13"
+      },
+      {
+        "id": "6dcc6b24f2f03b25cf37abfba5c3b1cd4c023baa",
+        "type": "FIX",
+        "text": " sap.m.FormattedText: apply focus on the first focusable element",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170287752"
+          }
+        ]
+      },
+      {
+        "id": "d3d890658e32237a3519cd2860765152c7f2d305",
+        "type": "FIX",
+        "text": " sap.m.DynamicDateRange: This Month is now parsed correct",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280042362"
+          }
+        ]
+      },
+      {
+        "id": "f1be3a35b414dd78b73e1a55c36425404ed835c0",
+        "type": "FEATURE",
+        "text": " sap.m.Carousel: IllustratedMessage used for empty carousel"
+      },
+      {
+        "id": "7dcbed900b55bbfcab66edd7c58e736e4c0ad097",
+        "type": "FIX",
+        "text": " sap.m.SinglePlanningCalendarGrid: proper year set in grid cells",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500000709492022"
+          }
+        ]
+      },
+      {
+        "id": "d0d64fb026dfea00a67191c717b47fe68892d5ae",
+        "type": "FIX",
+        "text": " sap.m.InputRenderer: Open up visibility to be 'protected'",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280038175"
+          }
+        ]
+      },
+      {
+        "id": "ea008e00986d518205ddd49c0173486a6336803a",
+        "type": "FEATURE",
+        "text": " sap.m.Breadcrumbs: Link role added to currentLocation"
+      },
+      {
+        "id": "2ad52039ae638c7d250c08111921c8cea4b0310f",
+        "type": "FIX",
+        "text": " sap.m.ObjectNumber: role group is removed for non interactive control instnaces",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180187431"
+          }
+        ]
+      },
+      {
+        "id": "7df97e8a6e60ce44dbe9d3bbf9fc9e14c3c1a35f",
+        "type": "FIX",
+        "text": " sap.m.SinglePlanningCalendar: appointmentSelect event is properly fired",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280035754"
+          }
+        ]
+      },
+      {
+        "id": "0851fe2f32907370ff9453a7a454c26b1a68a5c1",
+        "type": "FIX",
+        "text": " sap.m.Popover: Nested popovers close on inner click prevented",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280033839"
+          }
+        ]
+      },
+      {
+        "id": "60bf347349529229aa6e002010a98819df32419e",
+        "type": "FIX",
+        "text": " sap.m.Carousel: In nested carousels the inner carousel's active page content stays visible",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400000276432022"
+          }
+        ]
+      },
+      {
+        "id": "f6a962a86edc642f2cec20cd266299a75b68027e",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: since tag for getEndDate function added",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280033424"
+          }
+        ]
+      },
+      {
+        "id": "5462e5d4933af51f2fff73869b73ddd80ce39a65",
+        "type": "FEATURE",
+        "text": " sap.m.DynamicDateRange: New DateTimeRange option"
+      },
+      {
+        "id": "5bad3402de824d812953afc77e78068a0012c29f",
+        "type": "FIX",
+        "text": " DynamicDateRange: timestamp support for \"datetime\" operator",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280031911"
+          }
+        ]
+      },
+      {
+        "id": "aa682026f255543af0c8d456a70fb8fdd1ea9ff3",
+        "type": "FEATURE",
+        "text": " sap.m.SinglePlanningCalendar: Adjust row height to represent zoom in/out behavior"
+      },
+      {
+        "id": "ccc30eef21519e437addf607402a4ab96429cfd9",
+        "type": "FIX",
+        "text": " sap.m.MessagePopover: Item bindings are now cloned correctly and with bound model",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280014165"
+          },
+          {
+            "type": "BCP",
+            "reference": "2280016537"
+          },
+          {
+            "type": "BCP",
+            "reference": "2180409546"
+          },
+          {
+            "type": "BCP",
+            "reference": "1970404487"
+          }
+        ]
+      },
+      {
+        "id": "74580c369672c1e6d9c97b2479fd6aedfd7dff6e",
+        "type": "FIX",
+        "text": " FeedListItem : FeedListItemActionButton getting cutoff at right end.",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170206159"
+          }
+        ]
+      },
+      {
+        "id": "acadce2a0aab2be92c00e4379720e810e5ab33b5",
+        "type": "FIX",
+        "text": " sap.m.DatePicker: aria role and description adjustment",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280013612"
+          }
+        ]
+      },
+      {
+        "id": "d8e138c4c48f030acf0e7c464c5f203472676c1b",
+        "type": "FEATURE",
+        "text": " sap.m.DynamicDateRange: Adding new month option that allows picking year as well"
+      },
+      {
+        "id": "5ab58343088a1137cb60620acec045917a977369",
+        "type": "FIX",
+        "text": " sap.m.DynamicDateRange: Empty value can now be set",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280018792"
+          }
+        ]
+      },
+      {
+        "id": "dd9270ab8498f6cefa8f6c877eab1846d018737f",
+        "type": "FIX",
+        "text": " sap.m.ObjectHeader: initial icon alt property could be overridden",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500008606402021"
+          }
+        ]
+      },
+      {
+        "id": "cce0cc65c70cc86c786a47e13c78b3e0e9064ac7",
+        "type": "FEATURE",
+        "text": " sap.m.DynamicDateRange: added DateTimePicker option"
+      },
+      {
+        "id": "9fa403399e428dbf890693612278df75f89e56be",
+        "type": "FIX",
+        "text": " sap.m.MultiComboBox: Prevent scrolling to top on item selection",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500000373502022"
+          }
+        ]
+      },
+      {
+        "id": "86ee1ae74679d18f002e4fbb2bd608abab57aabb",
+        "type": "FIX",
+        "text": " sap.m.MultiComboBox: Fix focus on item selection",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180426976"
+          },
+          {
+            "type": "BCP",
+            "reference": "002075129500000372792022"
+          }
+        ]
+      },
+      {
+        "id": "7fd1c09699471e244a32cac95fff0b4564e667dd",
+        "type": "FIX",
+        "text": " Table: ToolTip added to the clearAll button",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280017742"
+          }
+        ]
+      },
+      {
+        "id": "3eb7398249ead50cb088322cf13a93df94b3f552",
+        "type": "FIX",
+        "text": " sap.m.MenuButton: Now has correct styling when disabled in horizon",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280016349"
+          }
+        ]
+      },
+      {
+        "id": "a5bbaf046fe6e78ad3a961308638e9a40b5109b7",
+        "type": "FIX",
+        "text": " sap.m.DateTimePicker: confirm state is properly updated",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280016136"
+          }
+        ]
+      },
+      {
+        "id": "1df8e6389efa26c7665d5943e7561170999e0f0a",
+        "type": "FIX",
+        "text": " sap.m.ObjectHeader: initial icon alt property could be overridden",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500008606402021"
+          }
+        ]
+      },
+      {
+        "id": "d37a8e742fd9f3058a4bcdd0d0b804b78a94938e",
+        "type": "FIX",
+        "text": " sap.f.DynamicPageTitle: set min-width of content/actions",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180408155"
+          }
+        ]
+      },
+      {
+        "id": "398e76705b7c4c6d3695132f8744fe9d1335e6a4",
+        "type": "FIX",
+        "text": " sap.m.MaskInput: screen reader announcments improvement",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180263864"
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -1,9 +1,10 @@
 sap.ui.define([
+	"sap/ui/core/Messaging",
 	"sap/ui/core/sample/MessageManager/ODataBackendMessagesComp/controller/BaseController",
 	"sap/ui/model/json/JSONModel",
 	"sap/m/MessageToast",
-	"sap/ui/model/Binding"
-], function (BaseController, JSONModel, MessageToast, Binding) {
+	"sap/ui/model/BindingMode"
+], function (Messaging, BaseController, JSONModel, MessageToast, BindingMode) {
 	"use strict";
 
 	return BaseController.extend("sap.ui.core.sample.MessageManager.ODataBackendMessagesComp.controller.Employee", {
@@ -12,10 +13,9 @@ sap.ui.define([
 
 			//create a view model
 			var oViewModel = new JSONModel({
-				busy : false,
-				dirty : false
+				busy : false
 			});
-			oViewModel.setDefaultBindingMode("TwoWay");
+			oViewModel.setDefaultBindingMode(BindingMode.TwoWay);
 			this.getView().setModel(oViewModel, "view");
 
 			this.getRouter().getRoute("employee").attachMatched(this._onRouteMatched, this);
@@ -26,25 +26,15 @@ sap.ui.define([
 				path : "/Employees(3)",		//hard coded in this demo
 				events : {
 					change: function(){
-						var oElementBinding, oModel;
+						var oElementBinding;
 
 						oElementBinding	= this.getView().getElementBinding();
 						if (oElementBinding && !oElementBinding.getBoundContext()) {
 							MessageToast.show("No data - do something here...");
-						} else {
-							oModel = this.getView().getModel();
-							oModel.attachPropertyChange(function(oEvent) {
-								this.setViewDirty(oModel.hasPendingChanges());
-							}.bind(this));
 						}
 					}.bind(this)
 				}
 			});
-		},
-
-		setViewDirty: function (bDirty) {
-			var oViewModel = this.getView().getModel("view");
-			oViewModel.setProperty("/dirty", bDirty);
 		},
 
 		onCheckHasPendingChanges : function (oEvent) {
@@ -54,17 +44,11 @@ sap.ui.define([
 		onRevertChanges : function (oEvent) {
 			var oModel = this.getView().getModel();
 			oModel.resetChanges();
-			this.setViewDirty(oModel.hasPendingChanges());
-			sap.ui.getCore().getMessageManager().removeAllMessages();
+			Messaging.removeAllMessages();
 		},
 
 		onSave : function (oEvent) {
-			this.getView().getModel().submitChanges({
-				success: function(oData, oResponse) {
-					var oModel = this.getView().getModel();
-					this.setViewDirty(oModel.hasPendingChanges());
-				}.bind(this)
-			});
+			this.getView().getModel().submitChanges();
 		}
 
 	});

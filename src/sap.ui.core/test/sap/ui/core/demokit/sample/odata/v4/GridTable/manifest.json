@@ -1,0 +1,74 @@
+{
+	"_version" : "1.42.0",
+	"sap.app" : {
+		"ach" : "CA-UI5-COR",
+		"applicationVersion" : {
+			"version" : "${version}"
+		},
+		"dataSources" : {
+			"default" : {
+				"uri" : "/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/",
+				"type" : "OData",
+				"settings" : {
+					"odataVersion" : "4.0"
+				}
+			}
+		},
+		"description" : "Example for OData V4 Grid Table",
+		"id" : "sap.ui.core.sample.odata.v4.GridTable",
+		"title" : "OData V4 Grid Table",
+		"type" : "application"
+	},
+	"sap.ui" : {
+		"deviceTypes" : {
+			"desktop" : true,
+			"phone" : true,
+			"tablet" : true
+		},
+		"technology" : "UI5"
+	},
+	"sap.ui5" : {
+		"config" : {
+			"sample" : {
+				"files" : [
+					"Component.js",
+					"GridTable.controller.js",
+					"GridTable.view.xml",
+					"manifest.json",
+					"SandboxModel.js",
+					"../../../common/SandboxModelHelper.js"
+				]
+			}
+		},
+		"contentDensities" : {
+			"compact" : true,
+			"cozy" : true
+		},
+		"dependencies" : {
+			"libs" : {
+				"sap.m" : {},
+				"sap.ui.table" : {}
+			},
+			"minUI5Version" : "1.105"
+		},
+		"handleValidation" : true,
+		"models" : {
+			"" : {
+				"dataSource" : "default",
+				"preload" : true,
+				"settings" : {
+					"autoExpandSelect" : true,
+					"earlyRequests": true,
+					"operationMode" : "Server"
+				},
+				"type" : "sap.ui.core.sample.odata.v4.GridTable.SandboxModel",
+				"uriSettingName" : "serviceUrl"
+			}
+		},
+		"rootView" : {
+			"async" : true,
+			"type" : "XML",
+			"viewName" : "sap.ui.core.sample.odata.v4.GridTable.GridTable"
+		}
+	}
+}

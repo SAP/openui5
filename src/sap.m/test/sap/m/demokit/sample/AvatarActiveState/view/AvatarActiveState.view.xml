@@ -1,0 +1,22 @@
+<mvc:View
+		controllerName="sap.m.sample.AvatarActiveState.controller.AvatarActiveState"
+		xmlns:mvc="sap.ui.core.mvc"
+		xmlns="sap.m"
+		xmlns:l="sap.ui.layout"
+		height="100%">
+
+		<MessageStrip 
+			text="Active state of Avatar is set, when the user clicks on the Avatar and the Popover menu is opened. When the menu is closed, Active state is removed."
+			showIcon="false"
+			showCloseButton="false"
+			class="sapUiTinyMargin"
+				/>
+		<Avatar
+			id="myAvatar"
+			src="{/Woman01}"
+			displaySize="L"
+			showBorder="true"
+			class="sapUiTinyMargin"
+			press="onPress"/>
+
+</mvc:View>

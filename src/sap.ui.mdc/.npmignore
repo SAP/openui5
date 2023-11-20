@@ -1,0 +1,12 @@
+target/
+
+#Exclude 'test'
+test/**
+
+# Reinclude 'test/sap/ui/mdc/integration/testlibrary/<>' relevant artifacts.
+# Note: Currently only the personalization objects are necessary.
+# To include future tests object the following line needs to be changed/enhanced, to minimize additional resources in packaging:
+!test/sap/ui/mdc/testutils/opa/**
+
+.eslintignore
+pom.xml

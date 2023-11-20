@@ -1,0 +1,51 @@
+{
+  "1.89.0": {
+    "date": "April 2021",
+    "notes": [
+      {
+        "id": "fc63d38c0323c8583c57de44c4e5bb6b2b508d13",
+        "type": "FIX",
+        "text": " sap.tnt.ToolHeader: sap.f.Breadcrumbs now look correct inside the header",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400001568732021"
+          }
+        ]
+      },
+      {
+        "id": "b59d2d130a004d1bebb62a9f4e7c2ef6af224340",
+        "type": "FIX",
+        "text": " sap.m.ObjectStatus, sap.m.ObjectNumber: vertical alignment fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180090916"
+          }
+        ]
+      },
+      {
+        "id": "6af8817abd28a264ee4f32630dd805e8cf1f4bfd",
+        "type": "FIX",
+        "text": " sap.uxap.HierarchicalSelect: Truncation on phone size fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180035341"
+          }
+        ]
+      },
+      {
+        "id": "7cef7c4e861db615a356b16aa6a0e5fffd317cc3",
+        "type": "FIX",
+        "text": " sap.f.AvatarGroup: Using less parameters",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180068783"
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -1,6 +1,7 @@
 sap.ui.define([
-	'sap/ui/test/Opa5'
-], function (Opa5) {
+	"sap/ui/test/Opa5",
+	"sap/ui/test/actions/Press"
+], function (Opa5, Press) {
 	"use strict";
 
 	Opa5.createPageObjects({
@@ -11,7 +12,7 @@ sap.ui.define([
 				iPressOnTheReturnToShopButton: function () {
 					return this.waitFor({
 						id: "returnToShopButton",
-						actions: new sap.ui.test.actions.Press()
+						actions: new Press()
 					});
 				}
 			},

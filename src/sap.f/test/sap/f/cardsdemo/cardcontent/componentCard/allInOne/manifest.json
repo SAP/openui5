@@ -1,0 +1,34 @@
+{
+	"_version": "1.12.0",
+	"sap.app": {
+		"id": "sap.f.cardsdemo.cardcontent.componentCard.allInOne",
+		"type": "card",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "sap.f.cardsdemo.cardcontent.componentCard.allInOne.View",
+			"type": "XML",
+			"async": true,
+			"id": "app"
+		},
+		"dependencies": {
+			"libs": {
+				"sap.m": {},
+				"sap.ui.core": {}
+			}
+		}
+	},
+	"sap.card": {
+		"type": "Component",
+		"headerPosition": "Bottom",
+		"header": {
+			"title": "Header Text - Bottom Position"
+		},
+		"content": {
+			"minHeight": "10rem"
+		}
+	}
+}

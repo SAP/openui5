@@ -1,0 +1,24 @@
+{
+  "1.68.0": {
+    "date": "June 2019",
+    "notes": [
+      {
+        "id": "eb71e101a82424d6e2a9f2f665ef92605b9847b6",
+        "type": "FIX",
+        "text": "TablePersoController: use hasGrouping property",
+        "references": []
+      },
+      {
+        "id": "136cd4078e08ec0ce5b904597a2388bb44e072a3",
+        "type": "FIX",
+        "text": "TreeBindingAdapter: correctly clear selectAllMode",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970285916"
+          }
+        ]
+      }
+    ]
+  }
+}

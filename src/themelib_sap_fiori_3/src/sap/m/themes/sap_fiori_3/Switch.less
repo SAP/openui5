@@ -1,0 +1,268 @@
+/* ============================= */
+/* CSS for control sap.m/Switch  */
+/* Fiori 3 theme                 */
+/* ============================= */
+
+@_sap_m_Switch_OffBackground: lighten(@sapUiButtonBackground, 3);
+@_sap_m_Switch_OffBorderColor: @sapUiButtonBorderColor;
+
+/* ------------------------------ */
+/* Switch container               */
+/* ------------------------------ */
+
+.sapMSwtCont {
+	overflow: hidden;
+	//in order to have a touchable area of 2.75rem
+	padding-top: 0.6875rem;
+	padding-bottom: 0.6875rem;
+	padding-left: 0.125rem;
+	width: 4.125rem;
+}
+
+/* focus */
+
+html.sap-desktop {
+	.sapMSwtCont:focus > .sapMSwt:before {
+		content: " ";
+		position: absolute;
+		display: block;
+		top: -0.375rem;
+		left: -0.125rem;
+		bottom: -0.375rem;
+		right: -0.125rem;
+		outline: 1px dotted @sapUiContentFocusColor;
+	}
+	.sapUiSizeCompact {
+		.sapMSwtCont:focus > .sapMSwt:not(.sapMSwtNoLabel):before {
+			top: -0.25rem;
+			bottom: -0.25rem;
+		}
+		.sapMSwtCont:focus > .sapMSwt.sapMSwtNoLabel:before {
+			top: -0.375rem;
+			bottom: -0.375rem;
+		}
+	}
+}
+
+/* ------------------------------ */
+/* Switch                         */
+/* ------------------------------ */
+
+.sapMSwt {
+	width: 3.75rem;
+	height: 1.25rem;
+	overflow: visible;
+	border: @sapUiButtonBorderWidth solid;
+	border-top-left-radius: 0.75rem;
+	border-top-right-radius: 0.75rem;
+	border-bottom-right-radius: 0.75rem;
+	border-bottom-left-radius: 0.75rem;
+	&.sapMSwtNoLabel {
+		width: 3.25rem;
+		height: 1.25rem;
+		outline-offset: -8px; // ON state handle movement limit correction in pixels for no-label switches, because of reduced width
+		&.sapMSwtOn .sapMSwtInner {
+			left: -0.5rem;
+		}
+	}
+}
+
+/* background */
+
+.sapMSwtOff:not(.sapMSwtAcceptReject) {
+	background: @_sap_m_Switch_OffBackground;
+	border-color: @sapUiContentForegroundBorderColor;
+}
+
+.sapMSwt.sapMSwtOff.sapMSwtHoverable:not(.sapMSwtAcceptReject):hover {
+	border-color: @sapUiContentForegroundBorderColor;
+}
+
+
+/* disabled */
+
+.sapMSwtDisabled {
+	opacity: @sapUiContentDisabledOpacity;
+}
+
+/* ------------------------------ */
+/* Text                           */
+/* ------------------------------ */
+.sapMSwtText {
+	line-height: 1.25rem;
+	width: 1.75rem;
+	&.sapMSwtTextOn {
+		margin: 0 0 0 0.125rem;
+		color: @sapUiButtonTrackSelectedTextColor;
+	}
+	&.sapMSwtTextOff {
+		margin: 0 0.125rem 0 0;
+		color: @sapUiButtonTrackTextColor;
+		left: 3.8rem;
+	}
+	.sapMSwtLabel {
+		height: 1.25rem;
+		padding: 0;
+	}
+}
+
+/* ------------------------------ */
+/* Switch handler                 */
+/* ------------------------------ */
+
+.sapMSwtOn .sapMSwtHandle,
+.sapMSwtOff .sapMSwtHandle {
+	height: 1.875rem;
+	width: 1.875rem;
+	border-top-left-radius: 1rem;
+	border-top-right-radius: 1rem;
+	border-bottom-right-radius: 1rem;
+	border-bottom-left-radius: 1rem;
+	border: @sapUiButtonBorderWidth solid;
+	left: 1.9375rem;
+}
+
+//on
+.sapMSwt.sapMSwtOn:not(.sapMSwtAcceptReject) {
+	background: @sapUiButtonTrackSelectedBackground;
+	border-color: @sapUiButtonSelectedBorderColor;
+	.sapMSwtHandle {
+		box-sizing: border-box;
+		background: @sapUiButtonSelectedBackground;
+		border-color: @sapUiButtonSelectedBorderColor;
+	}
+	&.sapMSwtHoverable:not(.sapMSwtAcceptReject):hover {
+	  background: @sapUiButtonTrackSelectedBackground;
+	  border-color: @sapUiButtonSelectedHoverBorderColor;
+		.sapMSwtHandle {
+			background: @sapUiButtonSelectedHoverBackground;
+			border-color: @sapUiButtonSelectedHoverBorderColor;
+		}
+	}
+}
+
+//off
+.sapMSwt.sapMSwtOff:not(.sapMSwtAcceptReject) {
+	background: @sapUiButtonTrackBackground;
+	border-color: @sapUiContentForegroundBorderColor;
+	.sapMSwtHandle {
+		background: @sapUiButtonBackground;
+		border-color: @sapUiContentForegroundBorderColor;
+	}
+	&.sapMSwtHoverable:not(.sapMSwtAcceptReject):hover {
+		border-color: @sapUiButtonHoverBorderColor;
+		.sapMSwtHandle {
+			background: @sapUiButtonHoverBackground;
+			border-color: @sapUiButtonHoverBorderColor;
+		}
+	}
+}
+
+/* ====================================================== */
+/* Switch type "AcceptReject"                             */
+/* ====================================================== */
+
+/* ------------------------------ */
+/* Switch                         */
+/* ------------------------------ */
+
+.sapMSwtAcceptReject.sapMSwt {
+	background: @_sap_m_Switch_OffBackground;
+	//on
+	&.sapMSwtOn {
+		background: @sapUiSuccessBG;
+		border-color: @sapUiSuccessBorder;
+		.sapMSwtHandle {
+			background: @sapUiButtonBackground;
+			border-color: @sapUiSuccessBorder;
+		}
+		&.sapMSwtHoverable:hover {
+			.sapMSwtHandle {
+				background: @sapUiSuccessBG;
+			}
+		}
+	}
+	//off
+	&.sapMSwtOff {
+		background: @sapUiErrorBG;
+		border-color: @sapUiErrorBorder;
+		.sapMSwtHandle {
+			background: @sapUiButtonBackground;
+			border-color: @sapUiErrorBorder;
+		}
+		&.sapMSwtHoverable:hover {
+			.sapMSwtHandle {
+				background: @sapUiErrorBG;
+			}
+		}
+	}
+}
+
+/* ------------------------------ */
+/* Switch handler                 */
+/* ------------------------------ */
+
+.sapMSwt.sapMSwtAcceptReject.sapMSwtOff.sapMSwtHoverable:hover {
+	background: @sapUiErrorBG;
+}
+
+.sapMSwt.sapMSwtAcceptReject.sapMSwtOn.sapMSwtHoverable:hover {
+	background: @sapUiSuccessBG;
+}
+
+.sapMSwt.sapMSwtAcceptReject.sapMSwtOn .sapMSwtLabel {
+	color: @sapUiPositiveElement;
+	font-size: 0.75rem;
+}
+
+.sapMSwt.sapMSwtAcceptReject.sapMSwtOff .sapMSwtLabel {
+	color: @sapUiNegativeElement;
+	font-size: 0.75rem;
+}
+
+/* ------------------------------ */
+/* Compact mode                   */
+/* ------------------------------ */
+
+.sapUiSizeCompact {
+	.sapMSwtCont {
+		width: 3.75rem;
+	  //in order to have a touchable area of 2rem
+		padding-top: 0.3125rem;
+		padding-bottom: 0.3125rem;
+		.sapMSwt {
+			width: 3.375rem;
+			height: 1.25rem;
+			&.sapMSwtNoLabel {
+				width: 2.5rem;
+				height: 1rem;
+				margin-top: 0.0625rem;
+				margin-bottom: 0.0625rem;
+				outline-offset: -14px; // ON state handle movement limit correction in pixels for no-label switches, because of reduced width
+				&.sapMSwtOn .sapMSwtInner {
+					left: -0.88rem;
+				}
+			}
+			.sapMSwtHandle {
+				height: 1.625rem;
+				width: 1.625rem;
+				left: 1.88rem;
+			}
+			.sapMSwtText {
+				line-height: 1.25rem;
+				&.sapMSwtTextOff {
+					left: 3.5rem;
+				}
+				.sapMSwtLabel {
+					width: 1.75rem;
+				}
+			}
+			&.sapMSwtOn .sapMSwtText.sapMSwtTextOff {
+				left: 3.75rem;
+			}
+			&.sapMSwtOff .sapMSwtText.sapMSwtTextOn {
+				left: -0.125rem;
+			}
+		}
+	}
+}

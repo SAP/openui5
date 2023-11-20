@@ -4,14 +4,10 @@
 
 // Provides control sap.ui.commons.ValueHelpField.
 sap.ui.define([
-    'jquery.sap.global',
     './TextField',
-    './library',
-    'sap/ui/core/IconPool',
-    'sap/ui/core/theming/Parameters',
-    "./ValueHelpFieldRenderer"
+    './ValueHelpFieldRenderer'
 ],
-	function(jQuery, TextField, library, IconPool, Parameters, ValueHelpFieldRenderer) {
+	function(TextField, ValueHelpFieldRenderer) {
 	"use strict";
 
 
@@ -33,11 +29,11 @@ sap.ui.define([
 	 * @public
 	 * @deprecated Since version 1.38. Instead, use the <code>sap.m.Input</code> control.
 	 * @alias sap.ui.commons.ValueHelpField
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var ValueHelpField = TextField.extend("sap.ui.commons.ValueHelpField", /** @lends sap.ui.commons.ValueHelpField.prototype */ { metadata : {
 
 		library : "sap.ui.commons",
+		deprecated: true,
 		properties : {
 
 			/**
@@ -84,15 +80,13 @@ sap.ui.define([
 			} else {
 				this.sIconHoverUrl = "sap-icon://value-help";
 			}
-			var oIcon = jQuery.sap.byId(oEvent.target.id);
-			oIcon.attr( 'src', this.sIconHoverUrl );
+			oEvent.target.setAttribute( 'src', this.sIconHoverUrl );
 		}
 	};
 
 	ValueHelpField.prototype.onmouseout = function (oEvent) {
 		if (oEvent.target.id == this.getId() + '-icon' && this.getEnabled() && this.getEditable() && !this.bIsIconURI) {
-			var oIcon = jQuery.sap.byId(oEvent.target.id);
-			oIcon.attr( 'src', this.sIconRegularUrl );
+			oEvent.target.setAttribute( 'src', this.sIconRegularUrl );
 		}
 	};
 
@@ -118,6 +112,7 @@ sap.ui.define([
 				oIcon.addClass('sapUiTfValueHelpDsblIcon');
 			}
 		}
+		return this;
 	};
 
 	ValueHelpField.prototype.setEditable = function(bEditable) {
@@ -134,6 +129,7 @@ sap.ui.define([
 				oIcon.addClass('sapUiTfValueHelpDsblIcon');
 			}
 		}
+		return this;
 	};
 
 	/**
@@ -184,4 +180,4 @@ sap.ui.define([
 
 	return ValueHelpField;
 
-}, /* bExport= */ true);
+});

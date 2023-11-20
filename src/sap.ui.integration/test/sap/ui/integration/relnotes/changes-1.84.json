@@ -1,0 +1,95 @@
+{
+  "1.84.0": {
+    "date": "October 2020",
+    "notes": [
+      {
+        "id": "f843e0efd36ab4edd23c385afb3f10858262e08f",
+        "type": "FIX",
+        "text": " sap.ui.integration.widgets.Card, sap.f.Card:Landmark regions have uniqe names now",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070367202"
+          }
+        ]
+      },
+      {
+        "id": "bc773dce27eb6e3d67543ea9aa1a29e23028703a",
+        "type": "FIX",
+        "text": " Card Explorer: Corrected link to sample",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070400297"
+          }
+        ]
+      },
+      {
+        "id": "f27ef21b248214f1099d88604e678762fd76ceeb",
+        "type": "FIX",
+        "text": " Calendar Card: bottom border of the Toolbar in Calendar header doesn't break other Toolbars",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070351088"
+          }
+        ]
+      },
+      {
+        "id": "b88831cd42168b9658d7c5b2faf697698e664984",
+        "type": "FEATURE",
+        "text": " integration/Card: application/json is now supported in requests"
+      },
+      {
+        "id": "560f8632f469e327f9a5f6167b9e66e7ae604dd1",
+        "type": "FEATURE",
+        "text": " Card Explorer: Added Troubleshooting page"
+      },
+      {
+        "id": "3756bbc6d233e79d4029530b78260fae2403a994",
+        "type": "FEATURE",
+        "text": " Calendar Card: Experimental tag removed"
+      },
+      {
+        "id": "c6ce9d4ca81738c55f08de8d9c1cd674f197bcad",
+        "type": "FEATURE",
+        "text": " Card Design-time Documentation"
+      },
+      {
+        "id": "a5657a1670229fb2d1c2e7b28fb830c9a365cb85",
+        "type": "FIX",
+        "text": " Card Editor languages and card instance support"
+      },
+      {
+        "id": "fd120f81b0d03997b8eea7c78941e0667f6f35e2",
+        "type": "FEATURE",
+        "text": " Adding string array support"
+      },
+      {
+        "id": "a3802c58e55d5e099cf594f61d347099cf77c575",
+        "type": "FIX",
+        "text": " Card Editor"
+      },
+      {
+        "id": "0986a2dfca3f96794989d5adbd5714242749ae8c",
+        "type": "FIX",
+        "text": " Visibility of groups and default of visible corrected"
+      },
+      {
+        "id": "4b2823acae912ad6ae9c39d0d4eaf03562f09c11",
+        "type": "FEATURE",
+        "text": " Allow to provide/request data for string field"
+      },
+      {
+        "id": "e02b6dd6ee52d9ffca8964c89cfae90c64950eed",
+        "type": "FEATURE",
+        "text": " Card Editor for Work Zone"
+      },
+      {
+        "id": "d7b8cc16daa7d99bcac326401ba48e6084158b24",
+        "type": "FEATURE",
+        "text": " sap.ui.integration.widgets.Card: Filters can be defined in a dynamic manner"
+      }
+    ]
+  }
+}

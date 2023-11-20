@@ -1,0 +1,34 @@
+/* ================================== */
+/* CSS for control sap.m/MessagePage  */
+/* Horizon High Contrast Black theme  */
+/* ================================== */
+
+/* MessagePage inner controls styles*/
+.sapMMessagePage {
+	.sapMMessagePageInner {
+		.sapMMessagePageIcon.sapUiIcon::before {
+			color: fade(@sapUiContentNonInteractiveIconColor,50);
+		}
+	}
+
+	.sapMMessagePageMainText {
+		margin: 1rem 0;
+	}
+
+	.sapMMessagePageDescription {
+		margin-top: 0;
+		margin-bottom: 2rem;
+
+		&:empty {
+			margin-bottom: 0;
+		}
+
+		.sapMLnk {
+			font-size: @sapMFontHeader5Size;
+		}
+	}
+
+	.sapMMessagePageButtonsWrapper {
+		margin: 0;
+	}
+}

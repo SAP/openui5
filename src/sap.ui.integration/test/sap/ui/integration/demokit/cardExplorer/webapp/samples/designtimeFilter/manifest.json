@@ -1,0 +1,68 @@
+{
+	"sap.app": {
+		"type": "card",
+		"id": "card.explorer.designtime.filter"
+	},
+	"sap.card": {
+		"configuration": {
+			"editor": "dt/Configuration",
+			"destinations": {
+				"northwind": {
+					"name": "Northwind_V4",
+					"label": "Northwind V4 Service URL",
+					"defaultUrl": "https://services.odata.org/V4/Northwind/Northwind.svc"
+				}
+			},
+			"parameters": {
+				"Country": {
+					"value": "Germany"
+				},
+				"CustomersWithMultiKeys": {
+					"value": []
+				},
+				"CustomersWithMultiKeysAndSeperator": {
+					"value": []
+				},
+				"CustomersWithFilterParameter": {
+					"value": ["ALFKI"]
+				},
+				"CustomersWithFilterInURL": {
+					"value": []
+				},
+				"CustomerWithFilterParameter": {
+					"value": ""
+				},
+				"CustomerWithFilterInURL": {
+					"value": ""
+				}
+			}
+		},
+		"type": "List",
+		"header": {
+			"title": "Customers",
+			"icon": {
+				"src": "sap-icon://customer"
+			}
+		},
+		"data": {
+			"request": {
+				"url": "{{destinations.northwind}}/Customers",
+				"parameters": {
+					"$select": "CustomerID, CompanyName, Country, City, Address",
+					"$filter": "Country eq '{parameters>/Country/value}'"
+				}
+			},
+			"path": "/value"
+		},
+		"content": {
+			"item": {
+				"title": "{CustomerID}",
+				"description": "{CompanyName}",
+				"info": {
+					"value": "{Country} - {City} - {Address}"
+				}
+			},
+			"maxItems": 4
+		}
+	}
+}

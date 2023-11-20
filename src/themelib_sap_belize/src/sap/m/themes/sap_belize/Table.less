@@ -22,3 +22,32 @@
 .sapMSticky .sapMLIBShowSeparator:first-child > td {
 	border-top-color: transparent;
 }
+
+/* moved due to new default vertical-align regardless of density */
+.sapMListTblSelCol,
+.sapMListTblNavCol,
+.sapMListTblCell {
+  vertical-align: top;
+}
+
+/* vertical alignment is middle for the compact */
+.sapUiSizeCompact{
+	.sapMListTblSelCol,
+	.sapMListTblNavCol,
+	.sapMListTblCell {
+		vertical-align: middle;
+	}
+}
+
+/* default padding of the data cells */
+.sapMListTblCell {
+	padding-top: .875rem;
+	padding-bottom: .875rem;
+}
+
+/* reduced padding for compact and vAlign=Middle */
+.sapUiSizeCompact .sapMListTblCell,
+.sapMListTblRowMiddle > .sapMListTblCell {
+	padding-top: .25rem;
+	padding-bottom: .25rem;
+}

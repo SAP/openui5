@@ -1,0 +1,71 @@
+{
+  "1.116.0": {
+    "date": "June 2023",
+    "notes": [
+      {
+        "id": "667f1b33bc3c450b72df9355741f1e1f9609eb40",
+        "type": "FIX",
+        "text": " Core.attachInitEvent not working",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380078824"
+          },
+          {
+            "type": "BCP",
+            "reference": "2380078825"
+          }
+        ]
+      },
+      {
+        "id": "e9e77d4026a172f48246c219ea789b6093dc4ae7",
+        "type": "FEATURE",
+        "text": " sap.ui.core.IconPool: Update icon font v5.05 and v4.17"
+      },
+      {
+        "id": "f65f3a1b525fa9eb6960303f5ec67f5e93ef4d2b",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.type.DateTimeBase: fix formatting and parsing of dates",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380066657"
+          }
+        ]
+      },
+      {
+        "id": "3021cc8c6a8f4e3fcd553b8710fe25b95dfaf522",
+        "type": "FIX",
+        "text": " ManagedObjectModel: getEntryKey fall back to getEntryData",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380067347"
+          }
+        ]
+      },
+      {
+        "id": "e8833e66b92fd5bcedf9d8fbe601799e41d25eff",
+        "type": "FIX",
+        "text": " caja-html-sanitizer: properly handle fixed numeric font weights",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380058937"
+          }
+        ]
+      },
+      {
+        "id": "f34d28d3cbe41cc04e13bc106a462637d3c02963",
+        "type": "FIX",
+        "text": " sap/ui/util/Mobile: Prevent overwriting existing meta tag",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370034490"
+          }
+        ]
+      }
+    ]
+  }
+}

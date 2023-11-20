@@ -1,0 +1,127 @@
+{
+	"_version": "1.15.0",
+	"sap.app": {
+		"id": "card.explorer.footer.cardWithDialog.card",
+		"type": "card",
+		"title": "Sample of an Object Card",
+		"subTitle": "Sample of an Object Card",
+		"applicationVersion": {
+			"version": "1.0.0"
+		},
+		"shortTitle": "A short title for this Card",
+		"info": "Additional information about this Card",
+		"description": "A long description for this Card",
+		"tags": {
+			"keywords": [
+				"Object",
+				"Card",
+				"Sample"
+			]
+		}
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"icons": {
+			"icon": "sap-icon://switch-classes"
+		}
+	},
+	"sap.card": {
+		"type": "AdaptiveCard",
+		"data": {
+			"json": {
+				"firstName": "Donna",
+				"lastName": "Moore",
+				"position": "Sales Executive",
+				"phone": "+1 202 555 5555",
+				"email": "my@mymail.com",
+				"photo": "./DonnaMoore.png",
+				"agendaUrl": "/agenda",
+				"manager": {
+					"firstName": "Alain",
+					"lastName": "Chevalier",
+					"photo": "./AlainChevalier.png"
+				},
+				"company": {
+					"name": "Robert Brown Entertainment",
+					"address": "481 West Street, Anytown OH 45066, USA",
+					"email": "mail@mycompany.com",
+					"emailSubject": "Subject",
+					"website": "www.company_a.example.com",
+					"url": "https://www.company_a.example.com"
+				}
+			}
+		},
+		"configuration": {
+			"enableMarkdown": true
+		},
+		"header": {
+			"title": "Meeting Details"
+		},
+		"content": {
+			"$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+			"type": "AdaptiveCard",
+			"version": "1.0",
+			"body": [
+				{
+					"type": "TextBlock",
+					"text": "Engineering Meeting - Show & Tell 1",
+					"wrap": true,
+					"size": "large"
+				},
+				{
+					"type": "TextBlock",
+					"text": "Apr 13, 2021 6:00 PM - 7:00 PM",
+					"wrap": true,
+					"size": "large"
+				},
+				{
+					"type": "TextBlock",
+					"text": "Agenda details will be provided later.",
+					"wrap": true,
+					"isSubtle": true
+				},
+				{
+					"type": "FactSet",
+					"facts": [
+						{
+							"title": "Location",
+							"value": "Microsoft Teams Meeting"
+						},
+						{
+							"title": "Organizer",
+							"value": "Donna Moore"
+						}
+					]
+				}
+			]
+		},
+		"footer": {
+			"actionsStrip": [
+				{
+					"text": "Join",
+					"buttonType": "Emphasized",
+					"actions": [
+						{
+							"type": "Navigation",
+							"parameters": {
+								"url": "msteams:/l/meetup-join/19:meeting_YWUyY2I3NDUtYWFhZi00YmZjLWE0YzEtMTNkYjBjZWEzMTg3@thread.v2/0?context=%7b%22Tid%22%3a%2242f7676c-f455-423c-82f6-dc2d99791af7%22%2c%22Oid%22%3a%2254995cbb-44a1-4a68-b6f5-e7d561a44433%22%7d&anon=true&deeplinkId=b2899f17-5ce3-4a55-9741-65be6ad26bb5&launchAgent=join_launcher&type=meetup-join&directDl=true&msLaunch=true&enableMobilePage=true&fqdn=teams.microsoft.com"
+							}
+						}
+					]
+				},
+				{
+					"buttonType": "Transparent",
+					"text": "Close",
+					"actions": [
+						{
+							"type": "Custom",
+							"parameters": {
+								"method": "CloseDetailsDialog"
+							}
+						}
+					]
+				}
+			]
+		}
+	}
+}

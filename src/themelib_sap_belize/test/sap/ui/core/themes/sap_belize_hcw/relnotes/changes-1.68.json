@@ -1,0 +1,51 @@
+{
+  "1.68.0": {
+    "date": "June 2019",
+    "notes": [
+      {
+        "id": "2630777d95d1e98dc224ffb86b5a9d3a64e6ff66",
+        "type": "FIX",
+        "text": "sap.m.WizardStep: Text and icon color changed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980231537"
+          }
+        ]
+      },
+      {
+        "id": "aafd07c55c8af56f1bd551c6ba6982e890b2f0bd",
+        "type": "FIX",
+        "text": "sap.m.InputBase: Text selection in Firefox is fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400003079562019"
+          }
+        ]
+      },
+      {
+        "id": "3d64334e6bc7e0cbd40b8a9c31b791c79daaa65a",
+        "type": "FIX",
+        "text": "sap.m.NotificationListBase: Focus contrast ratio is now sufficient",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970268292"
+          }
+        ]
+      },
+      {
+        "id": "d7b7f94339a9d0e50e075424995baf77ca51fbe5",
+        "type": "FIX",
+        "text": "sap.m.SinglePlanningCalendar: focus outline color adjusted",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970268417"
+          }
+        ]
+      }
+    ]
+  }
+}

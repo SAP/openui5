@@ -1,0 +1,15 @@
+<mvc:View
+	controllerName="sap.m.sample.MessageToast.controller.MessageToast"
+	xmlns:l="sap.ui.layout"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m">
+	<l:VerticalLayout
+		class="sapUiContentPadding"
+		width="100%">
+		<l:content>
+			<Button
+				text="Show Message Toast"
+				press="handleMessageToastPress" />
+		</l:content>
+	</l:VerticalLayout>
+</mvc:View>

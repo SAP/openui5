@@ -1,0 +1,12 @@
+{
+  "1.109.0": {
+    "date": "October 2022",
+    "notes": [
+      {
+        "id": "97630fdbd6ff50a9b59677d06833d46366cd4fbd",
+        "type": "FEATURE",
+        "text": " sap.ui.suite: deprecate library and all its APIs"
+      }
+    ]
+  }
+}

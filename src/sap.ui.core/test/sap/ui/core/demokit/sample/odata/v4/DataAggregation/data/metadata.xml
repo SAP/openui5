@@ -1,132 +1,1505 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<edmx:Edmx xmlns="http://docs.oasis-open.org/odata/ns/edm" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx" Version="4.0">
-	<edmx:Reference Uri="http://docs.oasis-open.org/odata/odata/v4.0/errata03/os/complete/vocabularies/Org.OData.Measures.V1.xml">
-		<edmx:Include Namespace="Org.OData.Measures.V1" Alias="Measures"/>
+<edmx:Edmx
+	xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx" Version="4.0">
+	<edmx:Reference
+		Uri="https://oasis-tcs.github.io/odata-vocabularies/vocabularies/Org.OData.Aggregation.V1.xml">
+		<edmx:Include Namespace="Org.OData.Aggregation.V1"
+			Alias="Aggregation" />
 	</edmx:Reference>
-	<edmx:Reference Uri="http://docs.oasis-open.org/odata/odata-data-aggregation-ext/v4.0/cs02/vocabularies/Org.OData.Aggregation.V1.xml">
-		<edmx:Include Namespace="Org.OData.Aggregation.V1" Alias="Aggregation"/>
+	<edmx:Reference
+		Uri="https://sap.github.io/odata-vocabularies/vocabularies/Analytics.xml">
+		<edmx:Include
+			Namespace="com.sap.vocabularies.Analytics.v1" Alias="Analytics" />
+	</edmx:Reference>
+	<edmx:Reference
+		Uri="https://oasis-tcs.github.io/odata-vocabularies/vocabularies/Org.OData.Capabilities.V1.xml">
+		<edmx:Include Namespace="Org.OData.Capabilities.V1"
+			Alias="Capabilities" />
+	</edmx:Reference>
+	<edmx:Reference
+		Uri="https://sap.github.io/odata-vocabularies/vocabularies/Common.xml">
+		<edmx:Include Namespace="com.sap.vocabularies.Common.v1"
+			Alias="Common" />
+	</edmx:Reference>
+	<edmx:Reference
+		Uri="https://oasis-tcs.github.io/odata-vocabularies/vocabularies/Org.OData.Core.V1.xml">
+		<edmx:Include Namespace="Org.OData.Core.V1" Alias="Core" />
+	</edmx:Reference>
+	<edmx:Reference
+		Uri="https://oasis-tcs.github.io/odata-vocabularies/vocabularies/Org.OData.Measures.V1.xml">
+		<edmx:Include Namespace="Org.OData.Measures.V1"
+			Alias="Measures" />
+	</edmx:Reference>
+	<edmx:Reference
+		Uri="https://sap.github.io/odata-vocabularies/vocabularies/UI.xml">
+		<edmx:Include Namespace="com.sap.vocabularies.UI.v1"
+			Alias="UI" />
 	</edmx:Reference>
 	<edmx:DataServices>
-		<Schema Namespace="com.odata.v4.mathias.BusinessPartnerTest" Alias="Self">
-			<EntityType Name="BusinessPartnerType">
+		<Schema xmlns="http://docs.oasis-open.org/odata/ns/edm"
+			Namespace="sap.fe.managepartners.ManagePartnersService">
+			<EntityType Name="BusinessPartners">
 				<Key>
-					<PropertyRef Name="Id"/>
+					<PropertyRef Name="Id" />
+					<PropertyRef Name="ValuationDate" />
 				</Key>
-				<Property Name="Id" Type="Edm.Int16" Nullable="false"/>
-				<Property Name="Name" Type="Edm.String" Nullable="false">
-					<Annotation Term="Aggregation.Groupable">
-						<Bool>true</Bool>
-					</Annotation>
-				</Property>
-				<Property Name="Country" Type="Edm.String" Nullable="false">
-					<Annotation Term="Aggregation.Groupable">
-						<Bool>true</Bool>
-					</Annotation>
-				</Property>
-				<Property Name="Region" Type="Edm.String" Nullable="false">
-					<Annotation Term="Aggregation.Groupable">
-						<Bool>true</Bool>
-					</Annotation>
-				</Property>
-				<Property Name="Segment" Type="Edm.String" Nullable="false">
-					<Annotation Term="Aggregation.Groupable">
-						<Bool>true</Bool>
-					</Annotation>
-				</Property>
-				<Property Name="AccountResponsible" Type="Edm.String" Nullable="false">
-					<Annotation Term="Aggregation.Groupable">
-						<Bool>true</Bool>
-					</Annotation>
-				</Property>
-				<Property Name="SalesNumber" Type="Edm.Int32" Nullable="false">
-					<Annotation Term="Aggregation.Aggregatable">
-						<Bool>true</Bool>
-					</Annotation>
-				</Property>
-				<Property Name="SalesAmount" Type="Edm.Decimal" Precision="16">
-					<Annotation Term="Measures.ISOCurrency">
-						<PropertyPath>Currency</PropertyPath>
-					</Annotation>
-					<Annotation Term="Aggregation.Aggregatable">
-						<Bool>true</Bool>
-					</Annotation>
-					<Annotation Term="Aggregation.ContextDefiningProperties">
-						<Collection>
-							<PropertyPath>Currency</PropertyPath>
-						</Collection>
-					</Annotation>
-				</Property>
-				<Property Name="AmountPerSale" Type="Edm.Decimal" Precision="16">
-					<Annotation Term="Measures.ISOCurrency">
-						<PropertyPath>Currency</PropertyPath>
-					</Annotation>
-					<Annotation Term="Aggregation.Aggregatable">
-						<Bool>true</Bool>
-					</Annotation>
-					<Annotation Term="Aggregation.ContextDefiningProperties">
-						<Collection>
-							<PropertyPath>Currency</PropertyPath>
-						</Collection>
-					</Annotation>
-				</Property>
-				<Property Name="Currency" Type="Edm.String" Nullable="false">
-					<Annotation Term="Aggregation.Groupable">
-						<Bool>true</Bool>
-					</Annotation>
-				</Property>
+				<Property Name="Id" Type="Edm.Int32" Nullable="false" />
+				<Property Name="ValuationDate" Type="Edm.DateTimeOffset"
+					Nullable="false" />
+				<Property Name="Name" Type="Edm.String" />
+				<Property Name="Country" Type="Edm.String" />
+				<Property Name="Country_Code" Type="Edm.String" />
+				<Property Name="Region" Type="Edm.String" />
+				<Property Name="Region_Code" Type="Edm.String" />
+				<Property Name="Segment" Type="Edm.String" />
+				<Property Name="Industry" Type="Edm.String" />
+				<Property Name="AccountResponsible" Type="Edm.String" />
+				<Property Name="Currency" Type="Edm.String" />
+				<Property Name="LocalCurrency" Type="Edm.String" />
+				<Property Name="QuantityUnit" Type="Edm.String" />
+				<Property Name="LocalQuantityUnit" Type="Edm.String" />
+				<Property Name="Rating" Type="Edm.Decimal" Precision="4"
+					Scale="2" />
+				<Property Name="SalesNumber" Type="Edm.Decimal"
+					Precision="15" Scale="3" />
+				<Property Name="SalesAmount" Type="Edm.Decimal"
+					Precision="15" Scale="3" />
+				<Property Name="SalesAmountLocalCurrency"
+					Type="Edm.Decimal" Precision="15" Scale="3" />
+				<Property Name="RequestedQuantity" Type="Edm.Decimal"
+					Precision="15" Scale="3" />
+				<Property Name="RequestedQuantityLocalUnit"
+					Type="Edm.Decimal" Precision="15" Scale="3" />
+				<NavigationProperty Name="_Customers"
+					Type="Collection(sap.fe.managepartners.ManagePartnersService.Customers)">
+					<OnDelete Action="Cascade" />
+				</NavigationProperty>
 			</EntityType>
-			<EntityContainer Name="Container">
-				<EntitySet Name="BusinessPartners" EntityType="Self.BusinessPartnerType"/>
+			<EntityType Name="Customers">
+				<Key>
+					<PropertyRef Name="CustomerId" />
+				</Key>
+				<Property Name="CustomerId" Type="Edm.Int32"
+					Nullable="false" />
+				<Property Name="Id" Type="Edm.Int32" />
+				<Property Name="CustomerRegion" Type="Edm.String" />
+				<Property Name="IndustryName" Type="Edm.String" />
+				<Property Name="SalesValue" Type="Edm.Decimal"
+					Precision="15" Scale="3" />
+				<Property Name="TotalSalesAmount" Type="Edm.Decimal"
+					Precision="15" Scale="3" />
+			</EntityType>
+			<EntityContainer Name="EntityContainer">
+				<EntitySet Name="BusinessPartners"
+					EntityType="sap.fe.managepartners.ManagePartnersService.BusinessPartners">
+					<NavigationPropertyBinding
+						Path="_Customers" Target="Customers" />
+				</EntitySet>
+				<EntitySet Name="Customers"
+					EntityType="sap.fe.managepartners.ManagePartnersService.Customers" />
+			</EntityContainer>
+			<Annotations
+				Target="sap.fe.managepartners.ManagePartnersService.EntityContainer">
+				<Annotation Term="Aggregation.CustomAggregate"
+					Qualifier="Rating">
+					<String>Edm.Decimal</String>
+				</Annotation>
+			</Annotations>
+			<Annotations
+				Target="sap.fe.managepartners.ManagePartnersService.BusinessPartners">
+				<Annotation Term="UI.Chart" Qualifier="BarChartPV">
+					<Record Type="UI.ChartDefinitionType">
+						<PropertyValue Property="ChartType">
+							<EnumMember>UI.ChartType/Bar</EnumMember>
+						</PropertyValue>
+						<PropertyValue Property="Description">
+							<String>Testing Line Chart</String>
+						</PropertyValue>
+						<PropertyValue Property="DimensionAttributes">
+							<Collection>
+								<Record Type="UI.ChartDimensionAttributeType">
+									<PropertyValue Property="Dimension">
+										<PropertyPath>Region</PropertyPath>
+									</PropertyValue>
+									<PropertyValue Property="Role">
+										<EnumMember>UI.ChartDimensionRoleType/Category</EnumMember>
+									</PropertyValue>
+								</Record>
+							</Collection>
+						</PropertyValue>
+						<PropertyValue Property="Dimensions">
+							<Collection>
+								<PropertyPath>Country</PropertyPath>
+							</Collection>
+						</PropertyValue>
+						<PropertyValue Property="MeasureAttributes">
+							<Collection>
+								<Record Type="UI.ChartMeasureAttributeType">
+									<PropertyValue Property="Measure">
+										<PropertyPath>SalesAmount</PropertyPath>
+									</PropertyValue>
+									<PropertyValue Property="Role">
+										<EnumMember>UI.ChartMeasureRoleType/Axis1</EnumMember>
+									</PropertyValue>
+								</Record>
+							</Collection>
+						</PropertyValue>
+						<PropertyValue Property="Measures">
+							<Collection>
+								<PropertyPath>SalesAmount</PropertyPath>
+							</Collection>
+						</PropertyValue>
+						<PropertyValue Property="Title">
+							<String>Height Line Chart</String>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+				<Annotation Term="UI.Chart"
+					Qualifier="BulletChartLocalCurrency">
+					<Record Type="UI.ChartDefinitionType">
+						<PropertyValue Property="ChartType">
+							<EnumMember>UI.ChartType/Bullet</EnumMember>
+						</PropertyValue>
+						<PropertyValue Property="MeasureAttributes">
+							<Collection>
+								<Record Type="UI.ChartMeasureAttributeType">
+									<PropertyValue Property="Measure">
+										<PropertyPath>SalesAmountLocalCurrency</PropertyPath>
+									</PropertyValue>
+									<PropertyValue Property="Role">
+										<EnumMember>UI.ChartMeasureRoleType/Axis1</EnumMember>
+									</PropertyValue>
+									<PropertyValue Property="DataPoint">
+										<AnnotationPath>@UI.DataPoint#BulletPath2</AnnotationPath>
+									</PropertyValue>
+								</Record>
+							</Collection>
+						</PropertyValue>
+						<PropertyValue Property="Measures">
+							<Collection>
+								<PropertyPath>SalesAmountLocalCurrency</PropertyPath>
+							</Collection>
+						</PropertyValue>
+						<PropertyValue Property="Title">
+							<String>MicroChart</String>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+				<Annotation Term="UI.Chart" Qualifier="DonutChartPV">
+					<Record Type="UI.ChartDefinitionType">
+						<PropertyValue Property="ChartType">
+							<EnumMember>UI.ChartType/Donut</EnumMember>
+						</PropertyValue>
+						<PropertyValue Property="Description">
+							<String>Testing Line Chart</String>
+						</PropertyValue>
+						<PropertyValue Property="DimensionAttributes">
+							<Collection>
+								<Record Type="UI.ChartDimensionAttributeType">
+									<PropertyValue Property="Dimension">
+										<PropertyPath>Region</PropertyPath>
+									</PropertyValue>
+									<PropertyValue Property="Role">
+										<EnumMember>UI.ChartDimensionRoleType/Category</EnumMember>
+									</PropertyValue>
+								</Record>
+							</Collection>
+						</PropertyValue>
+						<PropertyValue Property="Dimensions">
+							<Collection>
+								<PropertyPath>Region</PropertyPath>
+							</Collection>
+						</PropertyValue>
+						<PropertyValue Property="MeasureAttributes">
+							<Collection>
+								<Record Type="UI.ChartMeasureAttributeType">
+									<PropertyValue Property="Measure">
+										<PropertyPath>SalesAmount</PropertyPath>
+									</PropertyValue>
+									<PropertyValue Property="Role">
+										<EnumMember>UI.ChartMeasureRoleType/Axis1</EnumMember>
+									</PropertyValue>
+								</Record>
+							</Collection>
+						</PropertyValue>
+						<PropertyValue Property="Measures">
+							<Collection>
+								<PropertyPath>SalesAmount</PropertyPath>
+							</Collection>
+						</PropertyValue>
+						<PropertyValue Property="Title">
+							<String>Height Line Chart</String>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+				<Annotation Term="UI.Chart" Qualifier="LineChartPV">
+					<Record Type="UI.ChartDefinitionType">
+						<PropertyValue Property="ChartType">
+							<EnumMember>UI.ChartType/Line</EnumMember>
+						</PropertyValue>
+						<PropertyValue Property="Description">
+							<String>Testing Line Chart</String>
+						</PropertyValue>
+						<PropertyValue Property="DimensionAttributes">
+							<Collection>
+								<Record Type="UI.ChartDimensionAttributeType">
+									<PropertyValue Property="Dimension">
+										<PropertyPath>Region</PropertyPath>
+									</PropertyValue>
+									<PropertyValue Property="Role">
+										<EnumMember>UI.ChartDimensionRoleType/Category</EnumMember>
+									</PropertyValue>
+								</Record>
+							</Collection>
+						</PropertyValue>
+						<PropertyValue Property="Dimensions">
+							<Collection>
+								<PropertyPath>Industry</PropertyPath>
+							</Collection>
+						</PropertyValue>
+						<PropertyValue Property="MeasureAttributes">
+							<Collection>
+								<Record Type="UI.ChartMeasureAttributeType">
+									<PropertyValue Property="Measure">
+										<PropertyPath>SalesAmount</PropertyPath>
+									</PropertyValue>
+									<PropertyValue Property="Role">
+										<EnumMember>UI.ChartMeasureRoleType/Axis1</EnumMember>
+									</PropertyValue>
+								</Record>
+							</Collection>
+						</PropertyValue>
+						<PropertyValue Property="Measures">
+							<Collection>
+								<PropertyPath>SalesAmount</PropertyPath>
+							</Collection>
+						</PropertyValue>
+						<PropertyValue Property="Title">
+							<String>Height Line Chart</String>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+				<Annotation Term="UI.Chart">
+					<Record Type="UI.ChartDefinitionType">
+						<PropertyValue Property="ChartType">
+							<EnumMember>UI.ChartType/Column</EnumMember>
+						</PropertyValue>
+						<PropertyValue Property="Description">
+							<String>Testing Line Chart</String>
+						</PropertyValue>
+						<PropertyValue Property="DimensionAttributes">
+							<Collection>
+								<Record Type="UI.ChartDimensionAttributeType">
+									<PropertyValue Property="Dimension">
+										<PropertyPath>Industry</PropertyPath>
+									</PropertyValue>
+									<PropertyValue Property="Role">
+										<EnumMember>UI.ChartDimensionRoleType/Category</EnumMember>
+									</PropertyValue>
+								</Record>
+								<Record Type="UI.ChartDimensionAttributeType">
+									<PropertyValue Property="Dimension">
+										<PropertyPath>Region</PropertyPath>
+									</PropertyValue>
+									<PropertyValue Property="Role">
+										<EnumMember>UI.ChartDimensionRoleType/Category</EnumMember>
+									</PropertyValue>
+								</Record>
+							</Collection>
+						</PropertyValue>
+						<PropertyValue Property="Dimensions">
+							<Collection>
+								<PropertyPath>Industry</PropertyPath>
+								<PropertyPath>Region</PropertyPath>
+							</Collection>
+						</PropertyValue>
+						<PropertyValue Property="MeasureAttributes">
+							<Collection>
+								<Record Type="UI.ChartMeasureAttributeType">
+									<PropertyValue Property="Measure">
+										<PropertyPath>SalesAmount</PropertyPath>
+									</PropertyValue>
+									<PropertyValue Property="Role">
+										<EnumMember>UI.ChartMeasureRoleType/Axis1</EnumMember>
+									</PropertyValue>
+								</Record>
+							</Collection>
+						</PropertyValue>
+						<PropertyValue Property="Measures">
+							<Collection>
+								<PropertyPath>SalesAmount</PropertyPath>
+							</Collection>
+						</PropertyValue>
+						<PropertyValue Property="Title">
+							<String>Height Line Chart</String>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+				<Annotation Term="UI.DataPoint" Qualifier="BulletPath2">
+					<Record Type="UI.DataPointType">
+						<PropertyValue Property="Title">
+							<String>Sales Amount with Local Currency</String>
+						</PropertyValue>
+						<PropertyValue Property="Value">
+							<Path>SalesAmountLocalCurrency</Path>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+				<Annotation Term="UI.DataPoint" Qualifier="DP1">
+					<Record Type="UI.DataPointType">
+						<PropertyValue Property="Value">
+							<Path>RequestedQuantity</Path>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+				<Annotation Term="UI.DataPoint" Qualifier="DP2Local">
+					<Record Type="UI.DataPointType">
+						<PropertyValue Property="Value">
+							<Path>RequestedQuantityLocalUnit</Path>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+				<Annotation Term="UI.DataPoint" Qualifier="Rating">
+					<Record Type="UI.DataPointType">
+						<PropertyValue Property="MaximumValue">
+							<Decimal>5</Decimal>
+						</PropertyValue>
+						<PropertyValue Property="Value">
+							<Path>Rating</Path>
+						</PropertyValue>
+						<PropertyValue Property="Visualization">
+							<EnumMember>UI.VisualizationType/Rating</EnumMember>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+				<Annotation Term="UI.Facets">
+					<Collection>
+						<Record Type="UI.ReferenceFacet">
+							<PropertyValue Property="Target">
+								<AnnotationPath>@UI.FieldGroup#OPFacet1</AnnotationPath>
+							</PropertyValue>
+							<PropertyValue Property="Label">
+								<String>General Info</String>
+							</PropertyValue>
+						</Record>
+						<Record Type="UI.ReferenceFacet">
+							<PropertyValue Property="Target">
+								<AnnotationPath>_Customers/@UI.Chart</AnnotationPath>
+							</PropertyValue>
+							<PropertyValue Property="Label">
+								<String>Business Partner Chart</String>
+							</PropertyValue>
+						</Record>
+						<Record Type="UI.ReferenceFacet">
+							<PropertyValue Property="Target">
+								<AnnotationPath>_Customers/@UI.LineItem</AnnotationPath>
+							</PropertyValue>
+							<PropertyValue Property="Label">
+								<String>Business Partner List</String>
+							</PropertyValue>
+						</Record>
+					</Collection>
+				</Annotation>
+				<Annotation Term="UI.FieldGroup" Qualifier="Location">
+					<Record Type="UI.FieldGroupType">
+						<PropertyValue Property="Data">
+							<Collection>
+								<Record Type="UI.DataField">
+									<PropertyValue Property="Value">
+										<Path>Country</Path>
+									</PropertyValue>
+								</Record>
+								<Record Type="UI.DataField">
+									<PropertyValue Property="Value">
+										<Path>Region</Path>
+									</PropertyValue>
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+				<Annotation Term="UI.FieldGroup" Qualifier="OPFacet1">
+					<Record Type="UI.FieldGroupType">
+						<PropertyValue Property="Data">
+							<Collection>
+								<Record Type="UI.DataField">
+									<PropertyValue Property="Value">
+										<Path>Country</Path>
+									</PropertyValue>
+								</Record>
+								<Record Type="UI.DataField">
+									<PropertyValue Property="Value">
+										<Path>Region</Path>
+									</PropertyValue>
+								</Record>
+								<Record Type="UI.DataField">
+									<PropertyValue Property="Value">
+										<Path>Segment</Path>
+									</PropertyValue>
+								</Record>
+								<Record Type="UI.DataField">
+									<PropertyValue Property="Value">
+										<Path>Industry</Path>
+									</PropertyValue>
+								</Record>
+								<Record Type="UI.DataField">
+									<PropertyValue Property="Value">
+										<Path>AccountResponsible</Path>
+									</PropertyValue>
+								</Record>
+								<Record Type="UI.DataField">
+									<PropertyValue Property="Value">
+										<Path>SalesAmount</Path>
+									</PropertyValue>
+								</Record>
+								<Record Type="UI.DataField">
+									<PropertyValue Property="Value">
+										<Path>SalesAmountLocalCurrency</Path>
+									</PropertyValue>
+								</Record>
+								<Record Type="UI.DataField">
+									<PropertyValue Property="Value">
+										<Path>SalesNumber</Path>
+									</PropertyValue>
+								</Record>
+								<Record Type="UI.DataField">
+									<PropertyValue Property="Value">
+										<Path>RequestedQuantity</Path>
+									</PropertyValue>
+								</Record>
+								<Record Type="UI.DataField">
+									<PropertyValue Property="Value">
+										<Path>RequestedQuantityLocalUnit</Path>
+									</PropertyValue>
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+				<Annotation Term="UI.HeaderInfo">
+					<Record Type="UI.HeaderInfoType">
+						<PropertyValue Property="Description">
+							<Record Type="UI.DataField">
+								<PropertyValue Property="Value">
+									<Path>Id</Path>
+								</PropertyValue>
+							</Record>
+						</PropertyValue>
+						<PropertyValue Property="Title">
+							<Record Type="UI.DataField">
+								<PropertyValue Property="Value">
+									<Path>Name</Path>
+								</PropertyValue>
+							</Record>
+						</PropertyValue>
+						<PropertyValue Property="TypeName">
+							<String>Business partner</String>
+						</PropertyValue>
+						<PropertyValue Property="TypeNamePlural">
+							<String>Business partners</String>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+				<Annotation Term="UI.LineItem">
+					<Collection>
+						<Record Type="UI.DataField">
+							<PropertyValue Property="Value">
+								<Path>Name</Path>
+							</PropertyValue>
+						</Record>
+						<Record Type="UI.DataField">
+							<PropertyValue Property="Value">
+								<Path>Country_Code</Path>
+							</PropertyValue>
+						</Record>
+						<Record Type="UI.DataField">
+							<PropertyValue Property="Value">
+								<Path>Region</Path>
+							</PropertyValue>
+						</Record>
+						<Record Type="UI.DataField">
+							<PropertyValue Property="Value">
+								<Path>Segment</Path>
+							</PropertyValue>
+						</Record>
+						<Record Type="UI.DataField">
+							<PropertyValue Property="Value">
+								<Path>SalesAmount</Path>
+							</PropertyValue>
+						</Record>
+						<Record Type="UI.DataField">
+							<PropertyValue Property="Value">
+								<Path>SalesAmountLocalCurrency</Path>
+							</PropertyValue>
+						</Record>
+						<Record Type="UI.DataFieldForAnnotation">
+							<PropertyValue Property="Target">
+								<AnnotationPath>@UI.Chart#BulletChartLocalCurrency
+								</AnnotationPath>
+							</PropertyValue>
+							<PropertyValue Property="Label">
+								<String>Sales Amount Limit Details (Local Currency)</String>
+							</PropertyValue>
+						</Record>
+						<Record Type="UI.DataFieldForAnnotation">
+							<PropertyValue Property="Label">
+								<String>Partner rating</String>
+							</PropertyValue>
+							<PropertyValue Property="Target">
+								<AnnotationPath>@UI.DataPoint#Rating</AnnotationPath>
+							</PropertyValue>
+						</Record>
+						<Record Type="UI.DataFieldForAnnotation">
+							<PropertyValue Property="Label">
+								<String>Requested Quantity DataPoint</String>
+							</PropertyValue>
+							<PropertyValue Property="Target">
+								<AnnotationPath>@UI.DataPoint#DP1</AnnotationPath>
+							</PropertyValue>
+						</Record>
+						<Record Type="UI.DataFieldForAnnotation">
+							<PropertyValue Property="Label">
+								<String>Requested Quantity (Local Unit) DataPoint</String>
+							</PropertyValue>
+							<PropertyValue Property="Target">
+								<AnnotationPath>@UI.DataPoint#DP2Local</AnnotationPath>
+							</PropertyValue>
+						</Record>
+						<Record Type="UI.DataFieldForIntentBasedNavigation">
+							<PropertyValue Property="SemanticObject">
+								<String>v4Freestyle</String>
+							</PropertyValue>
+							<PropertyValue Property="Action">
+								<String>Inbound</String>
+							</PropertyValue>
+							<PropertyValue Property="Label">
+								<String>IBN</String>
+							</PropertyValue>
+							<PropertyValue Property="NavigationAvailable">
+								<Bool>false</Bool>
+							</PropertyValue>
+						</Record>
+					</Collection>
+				</Annotation>
+				<Annotation Term="UI.LineItem" Qualifier="Duplicated">
+					<Collection>
+						<Record Type="UI.DataField">
+							<PropertyValue Property="Value">
+								<Path>Name</Path>
+							</PropertyValue>
+						</Record>
+						<Record Type="UI.DataField">
+							<PropertyValue Property="Value">
+								<Path>Country_Code</Path>
+							</PropertyValue>
+						</Record>
+						<Record Type="UI.DataField">
+							<PropertyValue Property="Value">
+								<Path>Region</Path>
+							</PropertyValue>
+						</Record>
+						<Record Type="UI.DataField">
+							<PropertyValue Property="Value">
+								<Path>Segment</Path>
+							</PropertyValue>
+						</Record>
+						<Record Type="UI.DataField">
+							<PropertyValue Property="Value">
+								<Path>SalesAmount</Path>
+							</PropertyValue>
+						</Record>
+						<Record Type="UI.DataField">
+							<PropertyValue Property="Value">
+								<Path>SalesAmountLocalCurrency</Path>
+							</PropertyValue>
+						</Record>
+						<Record Type="UI.DataFieldForAnnotation">
+							<PropertyValue Property="Label">
+								<String>Partner rating</String>
+							</PropertyValue>
+							<PropertyValue Property="Target">
+								<AnnotationPath>@UI.DataPoint#Rating</AnnotationPath>
+							</PropertyValue>
+						</Record>
+					</Collection>
+				</Annotation>
+				<Annotation Term="UI.PresentationVariant"
+					Qualifier="BarChartPV">
+					<Record Type="UI.PresentationVariantType">
+						<PropertyValue Property="Visualizations">
+							<Collection>
+								<AnnotationPath>@UI.Chart#BarChartPV</AnnotationPath>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+				<Annotation Term="UI.PresentationVariant"
+					Qualifier="LineChartPV">
+					<Record Type="UI.PresentationVariantType">
+						<PropertyValue Property="Visualizations">
+							<Collection>
+								<AnnotationPath>@UI.Chart#LineChartPV</AnnotationPath>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+				<Annotation Term="UI.PresentationVariant">
+					<Record Type="UI.PresentationVariantType">
+						<PropertyValue Property="GroupBy">
+							<Collection>
+								<PropertyPath>Country_Code</PropertyPath>
+							</Collection>
+						</PropertyValue>
+						<PropertyValue Property="Total">
+							<Collection>
+								<PropertyPath>SalesAmount</PropertyPath>
+								<PropertyPath>SalesAmountLocalCurrency</PropertyPath>
+								<PropertyPath>RequestedQuantity</PropertyPath>
+								<PropertyPath>RequestedQuantityLocalUnit</PropertyPath>
+								<PropertyPath>Rating</PropertyPath>
+							</Collection>
+						</PropertyValue>
+						<PropertyValue Property="Visualizations">
+							<Collection>
+								<AnnotationPath>@UI.Chart</AnnotationPath>
+								<AnnotationPath>@UI.LineItem</AnnotationPath>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+				<Annotation Term="UI.SelectionFields">
+					<Collection>
+						<PropertyPath>Name</PropertyPath>
+						<PropertyPath>Country</PropertyPath>
+						<PropertyPath>Region</PropertyPath>
+						<PropertyPath>Segment</PropertyPath>
+						<PropertyPath>SalesNumber</PropertyPath>
+					</Collection>
+				</Annotation>
+				<Annotation Term="UI.SelectionPresentationVariant"
+					Qualifier="All">
+					<Record Type="UI.SelectionPresentationVariantType">
+						<PropertyValue Property="PresentationVariant">
+							<Path>@UI.PresentationVariant</Path>
+						</PropertyValue>
+						<PropertyValue Property="SelectionVariant">
+							<Record Type="UI.SelectionVariantType">
+								<PropertyValue Property="Text">
+									<String>All</String>
+								</PropertyValue>
+							</Record>
+						</PropertyValue>
+						<PropertyValue Property="Text">
+							<String>All</String>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+				<Annotation Term="UI.SelectionPresentationVariant"
+					Qualifier="AllDuplicated">
+					<Record Type="UI.SelectionPresentationVariantType">
+						<PropertyValue Property="PresentationVariant">
+							<Record Type="UI.PresentationVariantType">
+								<PropertyValue Property="Visualizations">
+									<Collection>
+										<AnnotationPath>@UI.LineItem#Duplicated</AnnotationPath>
+									</Collection>
+								</PropertyValue>
+							</Record>
+						</PropertyValue>
+						<PropertyValue Property="SelectionVariant">
+							<Record Type="UI.SelectionVariantType">
+								<PropertyValue Property="Text">
+									<String>All Duplicated</String>
+								</PropertyValue>
+							</Record>
+						</PropertyValue>
+						<PropertyValue Property="Text">
+							<String>All Duplicated</String>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+				<Annotation Term="UI.SelectionVariant"
+					Qualifier="LargeSegment">
+					<Record Type="UI.SelectionVariantType">
+						<PropertyValue Property="SelectOptions">
+							<Collection>
+								<Record Type="UI.SelectOptionType">
+									<PropertyValue Property="PropertyName">
+										<PropertyPath>Segment</PropertyPath>
+									</PropertyValue>
+									<PropertyValue Property="Ranges">
+										<Collection>
+											<Record Type="UI.SelectionRangeType">
+												<PropertyValue Property="Sign">
+													<EnumMember>UI.SelectionRangeSignType/I</EnumMember>
+												</PropertyValue>
+												<PropertyValue Property="Option">
+													<EnumMember>UI.SelectionRangeOptionType/EQ</EnumMember>
+												</PropertyValue>
+												<PropertyValue Property="Low">
+													<String>Large</String>
+												</PropertyValue>
+											</Record>
+										</Collection>
+									</PropertyValue>
+								</Record>
+							</Collection>
+						</PropertyValue>
+						<PropertyValue Property="Text">
+							<String>Large Segment</String>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+				<Annotation Term="UI.SelectionVariant"
+					Qualifier="MidSizeSegment">
+					<Record Type="UI.SelectionVariantType">
+						<PropertyValue Property="SelectOptions">
+							<Collection>
+								<Record Type="UI.SelectOptionType">
+									<PropertyValue Property="PropertyName">
+										<PropertyPath>Segment</PropertyPath>
+									</PropertyValue>
+									<PropertyValue Property="Ranges">
+										<Collection>
+											<Record Type="UI.SelectionRangeType">
+												<PropertyValue Property="Sign">
+													<EnumMember>UI.SelectionRangeSignType/I</EnumMember>
+												</PropertyValue>
+												<PropertyValue Property="Option">
+													<EnumMember>UI.SelectionRangeOptionType/EQ</EnumMember>
+												</PropertyValue>
+												<PropertyValue Property="Low">
+													<String>Mid-size</String>
+												</PropertyValue>
+											</Record>
+										</Collection>
+									</PropertyValue>
+								</Record>
+							</Collection>
+						</PropertyValue>
+						<PropertyValue Property="Text">
+							<String>Mid-size Segment</String>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+				<Annotation Term="UI.SelectionVariant"
+					Qualifier="SmallSegment">
+					<Record Type="UI.SelectionVariantType">
+						<PropertyValue Property="SelectOptions">
+							<Collection>
+								<Record Type="UI.SelectOptionType">
+									<PropertyValue Property="PropertyName">
+										<PropertyPath>Segment</PropertyPath>
+									</PropertyValue>
+									<PropertyValue Property="Ranges">
+										<Collection>
+											<Record Type="UI.SelectionRangeType">
+												<PropertyValue Property="Sign">
+													<EnumMember>UI.SelectionRangeSignType/I</EnumMember>
+												</PropertyValue>
+												<PropertyValue Property="Option">
+													<EnumMember>UI.SelectionRangeOptionType/EQ</EnumMember>
+												</PropertyValue>
+												<PropertyValue Property="Low">
+													<String>Small</String>
+												</PropertyValue>
+											</Record>
+										</Collection>
+									</PropertyValue>
+								</Record>
+							</Collection>
+						</PropertyValue>
+						<PropertyValue Property="Text">
+							<String>Small Segment</String>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+			</Annotations>
+			<Annotations
+				Target="sap.fe.managepartners.ManagePartnersService.EntityContainer/BusinessPartners">
 				<Annotation Term="Aggregation.ApplySupported">
-					<Record>
-						<PropertyValue Property="Transformations">
+					<Record Type="Aggregation.ApplySupportedType">
+						<PropertyValue Property="AggregatableProperties">
 							<Collection>
-								<String>aggregate</String>
-								<String>topcount</String>
-								<String>bottomcount</String>
-								<String>identity</String>
-								<String>concat</String>
-								<String>groupby</String>
-								<String>filter</String>
-								<String>expand</String>
+								<Record Type="Aggregation.AggregatablePropertyType">
+									<PropertyValue Property="Property">
+										<PropertyPath>SalesAmount</PropertyPath>
+									</PropertyValue>
+								</Record>
+								<Record Type="Aggregation.AggregatablePropertyType">
+									<PropertyValue Property="Property">
+										<PropertyPath>SalesAmountLocalCurrency</PropertyPath>
+									</PropertyValue>
+								</Record>
+								<Record Type="Aggregation.AggregatablePropertyType">
+									<PropertyValue Property="Property">
+										<PropertyPath>SalesNumber</PropertyPath>
+									</PropertyValue>
+								</Record>
+								<Record Type="Aggregation.AggregatablePropertyType">
+									<PropertyValue Property="Property">
+										<PropertyPath>RequestedQuantity</PropertyPath>
+									</PropertyValue>
+								</Record>
+								<Record Type="Aggregation.AggregatablePropertyType">
+									<PropertyValue Property="Property">
+										<PropertyPath>RequestedQuantityLocalUnit</PropertyPath>
+									</PropertyValue>
+								</Record>
 							</Collection>
 						</PropertyValue>
-						<PropertyValue Property="CustomAggregationMethods">
+						<PropertyValue Property="GroupableProperties">
 							<Collection>
-								<String>Custom.concat</String>
+								<PropertyPath>AccountResponsible</PropertyPath>
+								<PropertyPath>Country</PropertyPath>
+								<PropertyPath>Country_Code</PropertyPath>
+								<PropertyPath>Currency</PropertyPath>
+								<PropertyPath>Industry</PropertyPath>
+								<PropertyPath>LocalCurrency</PropertyPath>
+								<PropertyPath>QuantityUnit</PropertyPath>
+								<PropertyPath>LocalQuantityUnit</PropertyPath>
+								<PropertyPath>Name</PropertyPath>
+								<PropertyPath>Region</PropertyPath>
+								<PropertyPath>Segment</PropertyPath>
 							</Collection>
-						</PropertyValue>
-						<PropertyValue Property="Rollup">
-							<EnumMember>Aggregation.RollupType/None</EnumMember>
 						</PropertyValue>
 						<PropertyValue Property="PropertyRestrictions">
 							<Bool>true</Bool>
 						</PropertyValue>
 					</Record>
 				</Annotation>
-			</EntityContainer>
-			<Annotations Target="Self.BusinessPartnerType">
-				<Annotation Term="Aggregation.CustomAggregate" Qualifier="SalesAmount">
-					<Annotation Term="Aggregation.ContextDefiningProperties">
-						<Collection>
-							<PropertyPath>Currency</PropertyPath>
-						</Collection>
-					</Annotation>
+				<Annotation Term="Aggregation.CustomAggregate"
+					Qualifier="RequestedQuantity">
 					<String>Edm.Decimal</String>
 				</Annotation>
-				<Annotation Term="Aggregation.CustomAggregate" Qualifier="AmountPerSale">
-					<Annotation Term="Aggregation.ContextDefiningProperties">
-						<Collection>
-							<PropertyPath>Currency</PropertyPath>
-						</Collection>
-					</Annotation>
+				<Annotation Term="Aggregation.CustomAggregate"
+					Qualifier="RequestedQuantityLocalUnit">
 					<String>Edm.Decimal</String>
 				</Annotation>
-				<Annotation Term="Aggregation.CustomAggregate" Qualifier="SalesNumber">
-					<String>Edm.Int32</String>
+				<Annotation Term="Aggregation.CustomAggregate"
+					Qualifier="SalesAmount">
+					<String>Edm.Decimal</String>
 				</Annotation>
-				<Annotation Term="Aggregation.CustomAggregate" Qualifier="NumberOfCustomers">
-					<String>Edm.Int32</String>
+				<Annotation Term="Aggregation.CustomAggregate"
+					Qualifier="SalesAmountLocalCurrency">
+					<String>Edm.Decimal</String>
+				</Annotation>
+				<Annotation Term="Aggregation.CustomAggregate"
+					Qualifier="SalesNumber">
+					<String>Edm.Decimal</String>
+				</Annotation>
+				<Annotation Term="Aggregation.CustomAggregate"
+					Qualifier="TotalSalesAmount">
+					<String>Edm.Decimal</String>
+				</Annotation>
+				<Annotation Term="Capabilities.DeleteRestrictions">
+					<Record Type="Capabilities.DeleteRestrictionsType">
+						<PropertyValue Property="Deletable">
+							<Bool>false</Bool>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+				<Annotation Term="Capabilities.InsertRestrictions">
+					<Record Type="Capabilities.InsertRestrictionsType">
+						<PropertyValue Property="Insertable">
+							<Bool>false</Bool>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+				<Annotation Term="Capabilities.UpdateRestrictions">
+					<Record Type="Capabilities.UpdateRestrictionsType">
+						<PropertyValue Property="Updatable">
+							<Bool>false</Bool>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+				<Annotation Term="UI.PresentationVariant"
+					Qualifier="BarChartPV">
+					<Record Type="UI.PresentationVariantType">
+						<PropertyValue Property="Visualizations">
+							<Collection>
+								<AnnotationPath>@UI.Chart#BarChartPV</AnnotationPath>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+				<Annotation Term="UI.PresentationVariant"
+					Qualifier="LineChartPV">
+					<Record Type="UI.PresentationVariantType">
+						<PropertyValue Property="Visualizations">
+							<Collection>
+								<AnnotationPath>@UI.Chart#LineChartPV</AnnotationPath>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+				<Annotation Term="UI.PresentationVariant">
+					<Record Type="UI.PresentationVariantType">
+						<PropertyValue Property="GroupBy">
+							<Collection>
+								<PropertyPath>Country_Code</PropertyPath>
+							</Collection>
+						</PropertyValue>
+						<PropertyValue Property="Total">
+							<Collection>
+								<PropertyPath>SalesAmount</PropertyPath>
+								<PropertyPath>SalesAmountLocalCurrency</PropertyPath>
+								<PropertyPath>RequestedQuantity</PropertyPath>
+								<PropertyPath>RequestedQuantityLocalUnit</PropertyPath>
+								<PropertyPath>Rating</PropertyPath>
+							</Collection>
+						</PropertyValue>
+						<PropertyValue Property="Visualizations">
+							<Collection>
+								<AnnotationPath>@UI.Chart</AnnotationPath>
+								<AnnotationPath>@UI.LineItem</AnnotationPath>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+				<Annotation Term="UI.SelectionPresentationVariant"
+					Qualifier="All">
+					<Record Type="UI.SelectionPresentationVariantType">
+						<PropertyValue Property="PresentationVariant">
+							<Path>@UI.PresentationVariant</Path>
+						</PropertyValue>
+						<PropertyValue Property="SelectionVariant">
+							<Record Type="UI.SelectionVariantType">
+								<PropertyValue Property="Text">
+									<String>All</String>
+								</PropertyValue>
+							</Record>
+						</PropertyValue>
+						<PropertyValue Property="Text">
+							<String>All</String>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+				<Annotation Term="UI.SelectionPresentationVariant"
+					Qualifier="AllDuplicated">
+					<Record Type="UI.SelectionPresentationVariantType">
+						<PropertyValue Property="PresentationVariant">
+							<Record Type="UI.PresentationVariantType">
+								<PropertyValue Property="Visualizations">
+									<Collection>
+										<AnnotationPath>@UI.LineItem#Duplicated</AnnotationPath>
+									</Collection>
+								</PropertyValue>
+							</Record>
+						</PropertyValue>
+						<PropertyValue Property="SelectionVariant">
+							<Record Type="UI.SelectionVariantType">
+								<PropertyValue Property="Text">
+									<String>All Duplicated</String>
+								</PropertyValue>
+							</Record>
+						</PropertyValue>
+						<PropertyValue Property="Text">
+							<String>All Duplicated</String>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+				<Annotation Term="UI.SelectionVariant"
+					Qualifier="LargeSegment">
+					<Record Type="UI.SelectionVariantType">
+						<PropertyValue Property="SelectOptions">
+							<Collection>
+								<Record Type="UI.SelectOptionType">
+									<PropertyValue Property="PropertyName">
+										<PropertyPath>Segment</PropertyPath>
+									</PropertyValue>
+									<PropertyValue Property="Ranges">
+										<Collection>
+											<Record Type="UI.SelectionRangeType">
+												<PropertyValue Property="Sign">
+													<EnumMember>UI.SelectionRangeSignType/I</EnumMember>
+												</PropertyValue>
+												<PropertyValue Property="Option">
+													<EnumMember>UI.SelectionRangeOptionType/EQ</EnumMember>
+												</PropertyValue>
+												<PropertyValue Property="Low">
+													<String>Large</String>
+												</PropertyValue>
+											</Record>
+										</Collection>
+									</PropertyValue>
+								</Record>
+							</Collection>
+						</PropertyValue>
+						<PropertyValue Property="Text">
+							<String>Large Segment</String>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+				<Annotation Term="UI.SelectionVariant"
+					Qualifier="MidSizeSegment">
+					<Record Type="UI.SelectionVariantType">
+						<PropertyValue Property="SelectOptions">
+							<Collection>
+								<Record Type="UI.SelectOptionType">
+									<PropertyValue Property="PropertyName">
+										<PropertyPath>Segment</PropertyPath>
+									</PropertyValue>
+									<PropertyValue Property="Ranges">
+										<Collection>
+											<Record Type="UI.SelectionRangeType">
+												<PropertyValue Property="Sign">
+													<EnumMember>UI.SelectionRangeSignType/I</EnumMember>
+												</PropertyValue>
+												<PropertyValue Property="Option">
+													<EnumMember>UI.SelectionRangeOptionType/EQ</EnumMember>
+												</PropertyValue>
+												<PropertyValue Property="Low">
+													<String>Mid-size</String>
+												</PropertyValue>
+											</Record>
+										</Collection>
+									</PropertyValue>
+								</Record>
+							</Collection>
+						</PropertyValue>
+						<PropertyValue Property="Text">
+							<String>Mid-size Segment</String>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+				<Annotation Term="UI.SelectionVariant"
+					Qualifier="SmallSegment">
+					<Record Type="UI.SelectionVariantType">
+						<PropertyValue Property="SelectOptions">
+							<Collection>
+								<Record Type="UI.SelectOptionType">
+									<PropertyValue Property="PropertyName">
+										<PropertyPath>Segment</PropertyPath>
+									</PropertyValue>
+									<PropertyValue Property="Ranges">
+										<Collection>
+											<Record Type="UI.SelectionRangeType">
+												<PropertyValue Property="Sign">
+													<EnumMember>UI.SelectionRangeSignType/I</EnumMember>
+												</PropertyValue>
+												<PropertyValue Property="Option">
+													<EnumMember>UI.SelectionRangeOptionType/EQ</EnumMember>
+												</PropertyValue>
+												<PropertyValue Property="Low">
+													<String>Small</String>
+												</PropertyValue>
+											</Record>
+										</Collection>
+									</PropertyValue>
+								</Record>
+							</Collection>
+						</PropertyValue>
+						<PropertyValue Property="Text">
+							<String>Small Segment</String>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+			</Annotations>
+			<Annotations
+				Target="sap.fe.managepartners.ManagePartnersService.BusinessPartners/Name">
+				<Annotation Term="Aggregation.Groupable">
+					<Bool>true</Bool>
+				</Annotation>
+				<Annotation Term="Common.Label">
+					<String>Partner Name</String>
+				</Annotation>
+			</Annotations>
+			<Annotations
+				Target="sap.fe.managepartners.ManagePartnersService.BusinessPartners/Country">
+				<Annotation Term="Aggregation.Groupable">
+					<Bool>true</Bool>
+				</Annotation>
+				<Annotation Term="Common.Label">
+					<String>Country Name</String>
+				</Annotation>
+				<Annotation Term="Common.ValueList"
+					Qualifier="LineChartPV">
+					<Record Type="Common.ValueListType">
+						<PropertyValue Property="CollectionPath">
+							<String>BusinessPartners</String>
+						</PropertyValue>
+						<PropertyValue
+							Property="PresentationVariantQualifier">
+							<String>LineChartPV</String>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+			</Annotations>
+			<Annotations
+				Target="sap.fe.managepartners.ManagePartnersService.BusinessPartners/Country_Code">
+				<Annotation Term="Aggregation.Groupable">
+					<Bool>true</Bool>
+				</Annotation>
+				<Annotation Term="Common.Label">
+					<String>Country</String>
+				</Annotation>
+				<Annotation Term="Common.Text">
+					<Path>Country</Path>
+					<Annotation Term="UI.TextArrangement">
+						<EnumMember>UI.TextArrangementType/TextLast</EnumMember>
+					</Annotation>
+				</Annotation>
+			</Annotations>
+			<Annotations
+				Target="sap.fe.managepartners.ManagePartnersService.BusinessPartners/Region">
+				<Annotation Term="Aggregation.Groupable">
+					<Bool>true</Bool>
+				</Annotation>
+				<Annotation Term="Common.Label">
+					<String>Region</String>
+				</Annotation>
+				<Annotation Term="Common.ValueList"
+					Qualifier="DonutChartPV">
+					<Record Type="Common.ValueListType">
+						<PropertyValue Property="CollectionPath">
+							<String>BusinessPartners</String>
+						</PropertyValue>
+						<PropertyValue Property="Parameters">
+							<Collection>
+								<Record Type="Common.ValueListParameterInOut">
+									<PropertyValue Property="LocalDataProperty">
+										<PropertyPath>Region</PropertyPath>
+									</PropertyValue>
+									<PropertyValue Property="ValueListProperty">
+										<String>Region</String>
+									</PropertyValue>
+									<Annotation Term="UI.Importance">
+										<EnumMember>UI.ImportanceType/High</EnumMember>
+									</Annotation>
+								</Record>
+							</Collection>
+						</PropertyValue>
+						<PropertyValue
+							Property="PresentationVariantQualifier">
+							<String>DonutChartPV</String>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+			</Annotations>
+			<Annotations
+				Target="sap.fe.managepartners.ManagePartnersService.BusinessPartners/Region_Code">
+				<Annotation Term="Common.Label">
+					<String>Region</String>
+				</Annotation>
+				<Annotation Term="Common.Text">
+					<Path>Region</Path>
+					<Annotation Term="UI.TextArrangement">
+						<EnumMember>UI.TextArrangementType/TextLast</EnumMember>
+					</Annotation>
+				</Annotation>
+			</Annotations>
+			<Annotations
+				Target="sap.fe.managepartners.ManagePartnersService.BusinessPartners/Segment">
+				<Annotation Term="Aggregation.Groupable">
+					<Bool>true</Bool>
+				</Annotation>
+				<Annotation Term="Common.Label">
+					<String>Segment</String>
+				</Annotation>
+				<Annotation Term="Common.ValueList"
+					Qualifier="BarChartPV">
+					<Record Type="Common.ValueListType">
+						<PropertyValue Property="CollectionPath">
+							<String>BusinessPartners</String>
+						</PropertyValue>
+						<PropertyValue
+							Property="PresentationVariantQualifier">
+							<String>BarChartPV</String>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+			</Annotations>
+			<Annotations
+				Target="sap.fe.managepartners.ManagePartnersService.BusinessPartners/Industry">
+				<Annotation Term="Aggregation.Groupable">
+					<Bool>true</Bool>
+				</Annotation>
+				<Annotation Term="Common.Label">
+					<String>Industry</String>
+				</Annotation>
+			</Annotations>
+			<Annotations
+				Target="sap.fe.managepartners.ManagePartnersService.BusinessPartners/AccountResponsible">
+				<Annotation Term="Aggregation.Groupable">
+					<Bool>true</Bool>
+				</Annotation>
+				<Annotation Term="Common.Label">
+					<String>Account Responsible</String>
+				</Annotation>
+			</Annotations>
+			<Annotations
+				Target="sap.fe.managepartners.ManagePartnersService.BusinessPartners/Currency">
+				<Annotation Term="Aggregation.Groupable">
+					<Bool>true</Bool>
+				</Annotation>
+				<Annotation Term="Common.Label">
+					<String>Currency</String>
+				</Annotation>
+			</Annotations>
+			<Annotations
+				Target="sap.fe.managepartners.ManagePartnersService.BusinessPartners/LocalCurrency">
+				<Annotation Term="Aggregation.Groupable">
+					<Bool>true</Bool>
+				</Annotation>
+				<Annotation Term="Common.Label">
+					<String>Local Currency</String>
+				</Annotation>
+			</Annotations>
+			<Annotations
+				Target="sap.fe.managepartners.ManagePartnersService.BusinessPartners/QuantityUnit">
+				<Annotation Term="Aggregation.Groupable">
+					<Bool>true</Bool>
+				</Annotation>
+				<Annotation Term="Common.Label">
+					<String>Requested Qty Unit</String>
+				</Annotation>
+			</Annotations>
+			<Annotations
+				Target="sap.fe.managepartners.ManagePartnersService.BusinessPartners/LocalQuantityUnit">
+				<Annotation Term="Aggregation.Groupable">
+					<Bool>true</Bool>
+				</Annotation>
+				<Annotation Term="Common.Label">
+					<String>Local Requested Qty Unit</String>
+				</Annotation>
+			</Annotations>
+			<Annotations
+				Target="sap.fe.managepartners.ManagePartnersService.BusinessPartners/Rating">
+				<Annotation Term="Aggregation.default">
+					<EnumMember>Aggregation.defaultType/MAX</EnumMember>
+				</Annotation>
+				<Annotation Term="Analytics.Measure">
+					<Bool>true</Bool>
+				</Annotation>
+				<Annotation Term="Common.Label">
+					<String>Partner Rating</String>
+				</Annotation>
+			</Annotations>
+			<Annotations
+				Target="sap.fe.managepartners.ManagePartnersService.BusinessPartners/SalesNumber">
+				<Annotation Term="Aggregation.default">
+					<EnumMember>Aggregation.defaultType/SUM</EnumMember>
+				</Annotation>
+				<Annotation Term="Analytics.Measure">
+					<Bool>true</Bool>
+				</Annotation>
+				<Annotation Term="Common.Label">
+					<String>Sales Number</String>
+				</Annotation>
+			</Annotations>
+			<Annotations
+				Target="sap.fe.managepartners.ManagePartnersService.BusinessPartners/SalesAmount">
+				<Annotation Term="Aggregation.default">
+					<EnumMember>Aggregation.defaultType/SUM</EnumMember>
+				</Annotation>
+				<Annotation Term="Analytics.Measure">
+					<Bool>true</Bool>
+				</Annotation>
+				<Annotation Term="Common.Label">
+					<String>Sales Amount</String>
+				</Annotation>
+				<Annotation Term="Measures.ISOCurrency">
+					<Path>Currency</Path>
+				</Annotation>
+			</Annotations>
+			<Annotations
+				Target="sap.fe.managepartners.ManagePartnersService.BusinessPartners/SalesAmountLocalCurrency">
+				<Annotation Term="Aggregation.default">
+					<EnumMember>Aggregation.defaultType/SUM</EnumMember>
+				</Annotation>
+				<Annotation Term="Analytics.Measure">
+					<Bool>true</Bool>
+				</Annotation>
+				<Annotation Term="Common.Label">
+					<String>Sales Amount (local currency)</String>
+				</Annotation>
+				<Annotation Term="Measures.ISOCurrency">
+					<Path>LocalCurrency</Path>
+				</Annotation>
+			</Annotations>
+			<Annotations
+				Target="sap.fe.managepartners.ManagePartnersService.BusinessPartners/RequestedQuantity">
+				<Annotation Term="Aggregation.default">
+					<EnumMember>Aggregation.defaultType/SUM</EnumMember>
+				</Annotation>
+				<Annotation Term="Analytics.Measure">
+					<Bool>true</Bool>
+				</Annotation>
+				<Annotation Term="Common.Label">
+					<String>Requested Quantity</String>
+				</Annotation>
+				<Annotation Term="Measures.Unit">
+					<Path>QuantityUnit</Path>
+				</Annotation>
+			</Annotations>
+			<Annotations
+				Target="sap.fe.managepartners.ManagePartnersService.BusinessPartners/RequestedQuantityLocalUnit">
+				<Annotation Term="Aggregation.default">
+					<EnumMember>Aggregation.defaultType/SUM</EnumMember>
+				</Annotation>
+				<Annotation Term="Analytics.Measure">
+					<Bool>true</Bool>
+				</Annotation>
+				<Annotation Term="Common.Label">
+					<String>Requested Quantity (local Unit)</String>
+				</Annotation>
+				<Annotation Term="Measures.Unit">
+					<Path>LocalQuantityUnit</Path>
+				</Annotation>
+			</Annotations>
+			<Annotations
+				Target="sap.fe.managepartners.ManagePartnersService.Customers">
+				<Annotation Term="UI.Chart">
+					<Record Type="UI.ChartDefinitionType">
+						<PropertyValue Property="ChartType">
+							<EnumMember>UI.ChartType/Column</EnumMember>
+						</PropertyValue>
+						<PropertyValue Property="Description">
+							<String>Testing Line Chart</String>
+						</PropertyValue>
+						<PropertyValue Property="DimensionAttributes">
+							<Collection>
+								<Record Type="UI.ChartDimensionAttributeType">
+									<PropertyValue Property="Dimension">
+										<PropertyPath>IndustryName</PropertyPath>
+									</PropertyValue>
+									<PropertyValue Property="Role">
+										<EnumMember>UI.ChartDimensionRoleType/Category</EnumMember>
+									</PropertyValue>
+								</Record>
+							</Collection>
+						</PropertyValue>
+						<PropertyValue Property="Dimensions">
+							<Collection>
+								<PropertyPath>IndustryName</PropertyPath>
+							</Collection>
+						</PropertyValue>
+						<PropertyValue Property="MeasureAttributes">
+							<Collection>
+								<Record Type="UI.ChartMeasureAttributeType">
+									<PropertyValue Property="Measure">
+										<PropertyPath>TotalSalesAmount</PropertyPath>
+									</PropertyValue>
+									<PropertyValue Property="Role">
+										<EnumMember>UI.ChartMeasureRoleType/Axis1</EnumMember>
+									</PropertyValue>
+								</Record>
+							</Collection>
+						</PropertyValue>
+						<PropertyValue Property="Measures">
+							<Collection>
+								<PropertyPath>TotalSalesAmount</PropertyPath>
+							</Collection>
+						</PropertyValue>
+						<PropertyValue Property="Title">
+							<String>Height Line Chart</String>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+				<Annotation Term="UI.LineItem">
+					<Collection>
+						<Record Type="UI.DataField">
+							<PropertyValue Property="Value">
+								<Path>CustomerRegion</Path>
+							</PropertyValue>
+						</Record>
+						<Record Type="UI.DataField">
+							<PropertyValue Property="Value">
+								<Path>IndustryName</Path>
+							</PropertyValue>
+						</Record>
+						<Record Type="UI.DataField">
+							<PropertyValue Property="Value">
+								<Path>SalesValue</Path>
+							</PropertyValue>
+						</Record>
+						<Record Type="UI.DataField">
+							<PropertyValue Property="Value">
+								<Path>TotalSalesAmount</Path>
+							</PropertyValue>
+						</Record>
+					</Collection>
+				</Annotation>
+			</Annotations>
+			<Annotations
+				Target="sap.fe.managepartners.ManagePartnersService.EntityContainer/Customers">
+				<Annotation Term="Aggregation.ApplySupported">
+					<Record Type="Aggregation.ApplySupportedType">
+						<PropertyValue Property="PropertyRestrictions">
+							<Bool>false</Bool>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+				<Annotation Term="Aggregation.CustomAggregate"
+					Qualifier="SalesValue">
+					<String>Edm.Decimal</String>
+				</Annotation>
+				<Annotation Term="Aggregation.CustomAggregate"
+					Qualifier="TotalSalesAmount">
+					<String>Edm.Decimal</String>
+				</Annotation>
+				<Annotation Term="Capabilities.DeleteRestrictions">
+					<Record Type="Capabilities.DeleteRestrictionsType">
+						<PropertyValue Property="Deletable">
+							<Bool>false</Bool>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+				<Annotation Term="Capabilities.InsertRestrictions">
+					<Record Type="Capabilities.InsertRestrictionsType">
+						<PropertyValue Property="Insertable">
+							<Bool>false</Bool>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+				<Annotation Term="Capabilities.UpdateRestrictions">
+					<Record Type="Capabilities.UpdateRestrictionsType">
+						<PropertyValue Property="Updatable">
+							<Bool>false</Bool>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+			</Annotations>
+			<Annotations
+				Target="sap.fe.managepartners.ManagePartnersService.Customers/CustomerRegion">
+				<Annotation Term="Aggregation.Groupable">
+					<Bool>true</Bool>
+				</Annotation>
+				<Annotation Term="Common.Label">
+					<String>Region</String>
+				</Annotation>
+			</Annotations>
+			<Annotations
+				Target="sap.fe.managepartners.ManagePartnersService.Customers/IndustryName">
+				<Annotation Term="Aggregation.Groupable">
+					<Bool>true</Bool>
+				</Annotation>
+				<Annotation Term="Common.Label">
+					<String>Industry</String>
+				</Annotation>
+			</Annotations>
+			<Annotations
+				Target="sap.fe.managepartners.ManagePartnersService.Customers/SalesValue">
+				<Annotation Term="Aggregation.default">
+					<EnumMember>Aggregation.defaultType/SUM</EnumMember>
+				</Annotation>
+				<Annotation Term="Analytics.Measure">
+					<Bool>true</Bool>
+				</Annotation>
+				<Annotation Term="Common.Label">
+					<String>Sales Number</String>
+				</Annotation>
+			</Annotations>
+			<Annotations
+				Target="sap.fe.managepartners.ManagePartnersService.Customers/TotalSalesAmount">
+				<Annotation Term="Aggregation.default">
+					<EnumMember>Aggregation.defaultType/SUM</EnumMember>
+				</Annotation>
+				<Annotation Term="Analytics.Measure">
+					<Bool>true</Bool>
+				</Annotation>
+				<Annotation Term="Common.Label">
+					<String>Total Sales Amount</String>
 				</Annotation>
 			</Annotations>
 		</Schema>

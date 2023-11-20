@@ -1,0 +1,44 @@
+<mvc:View controllerName="sap.ui.core.sample.RoutingNestedComponent.reuse.categories.controller.List"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m"
+	displayBlock="true">
+	<Page id="page"
+		showHeader="false"
+		enableScrolling="true"
+		class="sapUiContentPadding categoriesPage">
+		<Table id="table" inset="false"
+			busyIndicatorDelay="0"
+			items="{/Categories}">
+			<headerToolbar>
+				<OverflowToolbar>
+					<content>
+						<Title text="{i18n>listViewTitle}"
+							level="H2" />
+						<ToolbarSpacer />
+					</content>
+				</OverflowToolbar>
+			</headerToolbar>
+			<columns>
+				<Column width="12em">
+					<Text text="ID" />
+				</Column>
+				<Column>
+					<Text text="Name" />
+				</Column>
+				<Column>
+					<Text text="Description" />
+				</Column>
+			</columns>
+			<items>
+				<ColumnListItem type="Navigation"
+					press="onPressListItem">
+					<cells>
+						<Text text="{CategoryID}" />
+						<Text text="{CategoryName}" />
+						<Text text="{Description}" />
+					</cells>
+				</ColumnListItem>
+			</items>
+		</Table>
+	</Page>
+</mvc:View>

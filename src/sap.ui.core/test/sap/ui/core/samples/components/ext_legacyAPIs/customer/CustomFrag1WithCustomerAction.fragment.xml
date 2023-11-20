@@ -1,0 +1,1 @@
+<Button xmlns="sap.m" text="This Button is in an Extension Fragment" press="customerAction" />

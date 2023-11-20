@@ -1,0 +1,31 @@
+{
+	"sap.app": {
+		"id": "sap.m.sample.MessageViewInsideResponsivePopover",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "sap.m.sample.MessageViewInsideResponsivePopover.view.MessageViewInsideResponsivePopover",
+			"type": "XML",
+			"async": true
+		},
+		"dependencies": {
+			"libs": {
+				"sap.m": {},
+				"sap.ui.core": {}
+			}
+		},
+		"config": {
+			"sample": {
+				"stretch": true,
+				"files": [
+					"view/MessageViewInsideResponsivePopover.view.xml",
+					"controller/MessageViewInsideResponsivePopover.controller.js",
+					"manifest.json"
+				]
+			}
+		}
+	}
+}

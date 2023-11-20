@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<title>Troubleshooting</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<script src="../../scripts/boot.js"></script>
+</head>
+
+<body class="sapUiBody topicBody">
+	<div class="topic">
+		<div class="content">
+
+			<h1 id="overview">Troubleshooting</h1>
+
+			<h2 id="cors">Card Fails to Load Data Due to CORS Issues</h2>
+			<p>
+				<b>Description:</b>
+				Card, embedded in your hosting environment fails to load data, due to CORS error.
+			</p>
+			<p>
+				<b>Root Cause:</b>
+				If the card uses a remote URL, such as the publicly available Northwind OData service, the browser may
+				refuse to connect to it.
+				Due to the same-origin policy, browsers deny AJAX requests to service endpoints in case the service
+				endpoint has a different domain/subdomain, protocol, or port than the app.
+			</p>
+			<p>
+				<b>Resolution: </b>
+				In this case the card should not request the data service directly, but should use destination instead.
+			</p>
+			<ol>
+				<li>Configure a destination in the card manifest (<a
+						href="../../index.html#/learn/configuration/destinations" target="_parent">see card destinations</a>)
+				</li>
+				<li>Make sure that the host environment resolves the destination correctly (<a
+						href="../../index.html#/integrate/destinations" target="_parent">see resolving destinations</a>)
+					or that you have a <code>defaultUrl</code> in the manifest which works in your testing environment
+				</li>
+				<li>Check the request made (for example using the browser's Network tab) and ensure it is requesting the
+					correct resource</li>
+			</ol>
+			<p><b>Useful Links:</b></p>
+			<ul>
+				<li><a data-demokit-href="#/topic/672301f4f47640a8b2bc817d2ce0f512" target="_blank">Request Fails Due to
+						Same-Origin Policy (Cross-Origin Resource Sharing - CORS)</a></li>
+				<li><a href="../../index.html#/explore/destinations/scp" target="_parent">Sample how to test a card in
+						cloud platform application</a></li>
+			</ul>
+
+			<h2 id="webPageCardErrors">WebPage Card Fails to Load</h2>
+			<p>
+				<b>Description:</b>
+				The content of a WebPage card doesn't show up. Instead, there is an error message, saying that the origin you have
+				pointed to refused to connect.
+			</p>
+			<p>
+				<b>Root Cause:</b>
+				The <code>src</code> of the WebPage card is subject to the same-origin policy, which means that cross-origin request
+				are restricted, in order to prevent security vulnerabilities.
+			</p>
+			<p>
+				<b>Resolution: </b>
+				In case <b>it does not violate security policies</b>, the server can enable Cross-Origin Resource Sharing for the origin
+				where the card resides.
+			</p>
+			<ul>
+				<li><a href="https://developer.mozilla.org/en-US/docs/Web/Security/Same-origin_policy" target="_blank">Same-origin policy</a></li>
+				<li><a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP" target="_blank">CSP</a></li>
+			</ul>
+
+		</div>
+	</div>
+
+
+</body>
+
+</html>

@@ -4,12 +4,16 @@
 
 // Provides control sap.ui.ux3.NotificationBar.
 sap.ui.define([
-    'jquery.sap.global',
+    "sap/ui/thirdparty/jquery",
     'sap/ui/core/Control',
     'sap/ui/core/delegate/ItemNavigation',
     'sap/ui/core/theming/Parameters',
     './library',
-    "./NotificationBarRenderer"
+    "./NotificationBarRenderer",
+    "sap/ui/core/Message",
+    "sap/ui/core/library",
+    "sap/ui/Device",
+    "sap/base/Log"
 ],
 	function(
 	    jQuery,
@@ -17,9 +21,21 @@ sap.ui.define([
 		ItemNavigation,
 		Parameters,
 		library,
-		NotificationBarRenderer
+		NotificationBarRenderer,
+		Message,
+		coreLibrary,
+		Device,
+		Log
 	) {
-	"use strict";
+    "use strict";
+
+
+
+	// shortcut for sap.ui.core.MessageType
+	var MessageType = coreLibrary.MessageType;
+
+	// shortcut for sap.ui.ux3.NotificationBarStatus
+	var NotificationBarStatus = library.NotificationBarStatus;
 
 
 
@@ -45,17 +61,17 @@ sap.ui.define([
 	 * @since 1.7.0
 	 * @deprecated Since version 1.38. Instead, use the <code>sap.m.MessagePopover</code> control.
 	 * @alias sap.ui.ux3.NotificationBar
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var NotificationBar = Control.extend("sap.ui.ux3.NotificationBar", /** @lends sap.ui.ux3.NotificationBar.prototype */ { metadata : {
 
+		deprecated: true,
 		library : "sap.ui.ux3",
 		properties : {
 
 			/**
 			 * This property displays the bar corresponding to given status
 			 */
-			visibleStatus : {type : "sap.ui.ux3.NotificationBarStatus", group : "Misc", defaultValue : sap.ui.ux3.NotificationBarStatus.Default},
+			visibleStatus : {type : "sap.ui.ux3.NotificationBarStatus", group : "Misc", defaultValue : NotificationBarStatus.Default},
 
 			/**
 			 * This property enables the bar to be resized by the user.
@@ -64,11 +80,12 @@ sap.ui.define([
 
 			/**
 			 * This property defines if the toggler should be displayed the whole time when the NotificationBar is shown.
+			 *
+			 * @since 1.24.5
 			 */
 			alwaysShowToggler : {
 				type : "boolean",
-				defaultValue : false,
-				since : "1.24.5"
+				defaultValue : false
 			}
 		},
 		aggregations : {
@@ -115,9 +132,6 @@ sap.ui.define([
 	}});
 
 
-	/**
-	 * This file defines behavior for the control
-	 */
 	Control.extend("sap.ui.ux3.NotificationBar.NotifierView", {
 		renderMessages : function(oRm) {
 			oRm.write("<div");
@@ -171,6 +185,7 @@ sap.ui.define([
 		},
 
 		metadata : {
+			library: "sap.ui.ux3",
 			properties : {
 				"title" : "string",
 				"visibleItems" : "int",
@@ -251,7 +266,7 @@ sap.ui.define([
 				iVisibleItems = this.getVisibleItems();
 
 			if (iChildrenMessagesCount > iVisibleItems) {
-				jQuery.sap.delayedCall(0, this, this._fnAfterRenderingCallback, [$aChildrenMessages, $viewContent, iVisibleItems]);
+				setTimeout(this._fnAfterRenderingCallback.bind(this, $aChildrenMessages, $viewContent, iVisibleItems), 0);
 			}
 		},
 
@@ -275,6 +290,7 @@ sap.ui.define([
 	 */
 	Control.extend("sap.ui.ux3.NotificationBar.MessageView", {
 		metadata : {
+			library: "sap.ui.ux3",
 			properties : {
 				"text" : "string",
 				"timestamp" : "string",
@@ -302,7 +318,7 @@ sap.ui.define([
 
 				oRm.write("<img");
 				oRm.writeAttributeEscaped("src", oControl.getIcon());
-				oRm.write("/>");
+				oRm.write(">");
 
 				oRm.write("</div>");
 			}
@@ -349,7 +365,6 @@ sap.ui.define([
 		}
 	});
 
-	(function() {
 		var fnChangeVisibility = function(that) {
 			var bShouldBeVisible = that.hasItems();
 			var sStatus = that.getVisibleStatus();
@@ -370,7 +385,7 @@ sap.ui.define([
 			var aSortMessages = oNotifier.getMessages().concat([]);
 			if (aSortMessages.length > 0) {
 				// sort ascending the messages via their level
-				aSortMessages.sort(sap.ui.core.Message.compareByType);
+				aSortMessages.sort(Message.compareByType);
 
 				var iIndex = aSortMessages.length - 1;
 				that._sSeverestMessageLevel = aSortMessages[iIndex].getLevel();
@@ -516,8 +531,8 @@ sap.ui.define([
 			this._oItemNavigation.setCycling(true);
 			this.addDelegate(this._oItemNavigation);
 
-			this._iCalloutWidth = parseInt(250, 10);
-			this._iCalloutHeight = parseInt(200, 10);
+			this._iCalloutWidth = parseInt(250);
+			this._iCalloutHeight = parseInt(200);
 
 			this._visibleItems = 5;
 
@@ -529,7 +544,7 @@ sap.ui.define([
 			this._togglerPosition = "50%";
 			this._gapMessageArea = "5";
 
-			this._sSeverestMessageLevel = sap.ui.core.MessageType.None;
+			this._sSeverestMessageLevel = MessageType.None;
 
 			// TODO maybe the ResizeHandler should be used
 			/*
@@ -541,7 +556,7 @@ sap.ui.define([
 			 * ResizeHandler, but this might need more discussion about the Pros and
 			 * Cons (ResizeHandler does some kind of polling which is nasty...)
 			 */
-			jQuery(window).bind("resize", jQuery.proxy(fnOnResize, this));
+			jQuery(window).on("resize", jQuery.proxy(fnOnResize, this));
 
 			this._proxyEnableMessageSelect = jQuery.proxy(fnEnableMessageSelect, this);
 
@@ -584,7 +599,7 @@ sap.ui.define([
 
 			delete this._sSeverestMessageLevel;
 
-			jQuery(window).unbind("resize", fnOnResize);
+			jQuery(window).off("resize", fnOnResize);
 
 			delete this._proxyEnableMessageSelect;
 		};
@@ -605,7 +620,7 @@ sap.ui.define([
 			oMessageView._message = oMessage;
 
 			if (oNotifier.sParentAggregationName == "messageNotifier") {
-				if (oNotiBar.getVisibleStatus() == sap.ui.ux3.NotificationBarStatus.Max) {
+				if (oNotiBar.getVisibleStatus() == NotificationBarStatus.Max) {
 					oMessageView.setIcon(oMessage.getIcon() || oMessage.getDefaultIcon("32x32"));
 				} else {
 					oMessageView.setIcon(oMessage.getIcon() || oMessage.getDefaultIcon());
@@ -650,7 +665,7 @@ sap.ui.define([
 		 */
 		NotificationBar.prototype.addNotifier = function(oNotifier) {
 			if (oNotifier) {
-				var bSuppress = (this.getVisibleStatus() == sap.ui.ux3.NotificationBarStatus.None) ? true : false;
+				var bSuppress = (this.getVisibleStatus() == NotificationBarStatus.None) ? true : false;
 				this.addAggregation("notifiers", oNotifier, bSuppress);
 				fnRegisterNotifierToEvents(this, oNotifier);
 			}
@@ -754,11 +769,11 @@ sap.ui.define([
 			var $That = that.$();
 
 			switch (sStatus) {
-			case sap.ui.ux3.NotificationBarStatus.Min:
+			case NotificationBarStatus.Min:
 				$That.addClass("sapUiNotificationBarMinimized");
 				break;
 
-			case sap.ui.ux3.NotificationBarStatus.Max:
+			case NotificationBarStatus.Max:
 				var sHeight = that.getHeightOfStatus(that.getVisibleStatus());
 
 				$That.addClass("sapUiNotificationBarMaximized");
@@ -768,13 +783,13 @@ sap.ui.define([
 				$containers.css("max-height", sHeight);
 				break;
 
-			case sap.ui.ux3.NotificationBarStatus.None:
+			case NotificationBarStatus.None:
 				if (!that._resizeTo) {
 					$That.css("display", "none");
 				}
 				break;
 
-			case sap.ui.ux3.NotificationBarStatus.Default:
+			case NotificationBarStatus.Default:
 			default:
 				$That.removeClass("sapUiNotificationBarMaximized");
 				$That.removeClass("sapUiNotificationBarMinimized");
@@ -835,9 +850,9 @@ sap.ui.define([
 			if (that.getMessageNotifier() && that.getMessageNotifier().hasItems()) {
 				var $messageArea;
 				var sId = that.getId() + "-notifiers";
-				var $domRef = jQuery.sap.byId(sId);
+				var $domRef = jQuery(document.getElementById(sId));
 				if ($domRef.length > 0) {
-					var iTotalWidth = parseInt($domRef.width(), 10);
+					var iTotalWidth = parseInt($domRef.width());
 
 					var $children = $domRef.children();
 
@@ -870,7 +885,7 @@ sap.ui.define([
 			this._oItemNavigation.setRootDomRef(this.getDomRef());
 
 			var aItemDomRefs = [];
-			var bIsMaximized = this.getVisibleStatus() === sap.ui.ux3.NotificationBarStatus.Max;
+			var bIsMaximized = this.getVisibleStatus() === NotificationBarStatus.Max;
 
 			// use different elements for navigation in maximized-mode
 			if (bIsMaximized) {
@@ -883,7 +898,7 @@ sap.ui.define([
 					var sId = oMessageNotifier.getId() + "-messageNotifierView-messageView-";
 
 					for (var i = aMessages.length - 1; i >= 0; i--) {
-						var oDomRef = jQuery.sap.domById(sId + aMessages[i].getId());
+						var oDomRef = document.getElementById(sId + aMessages[i].getId());
 						if (oDomRef) {
 							aItemDomRefs.push(oDomRef);
 						}
@@ -896,7 +911,7 @@ sap.ui.define([
 					var sId = aNotifiers[i].getId() + "-notifierView-messageView-";
 
 					for (var j = aMessages.length - 1; j >= 0; j--) {
-						var oDomRef = jQuery.sap.domById(sId + aMessages[j].getId());
+						var oDomRef = document.getElementById(sId + aMessages[j].getId());
 						if (oDomRef) {
 							aItemDomRefs.push(oDomRef);
 						}
@@ -950,10 +965,10 @@ sap.ui.define([
 			fnSetItemsDescription(this);
 
 			// set toggler always to visible if running on a mobile device
-			if (sap.ui.Device.browser.mobile) {
+			if (Device.browser.mobile) {
 				var $toggler = this.$("toggler");
 
-				if (this.getVisibleStatus() !== sap.ui.ux3.NotificationBarStatus.None) {
+				if (this.getVisibleStatus() !== NotificationBarStatus.None) {
 					$toggler.css("display", "block");
 				} else {
 					$toggler.css("display", "none");
@@ -1045,7 +1060,6 @@ sap.ui.define([
 		 *
 		 * @type boolean
 		 * @public
-		 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 		 */
 		NotificationBar.prototype.hasItems = function() {
 			// Checking all notifiers if any has items
@@ -1077,11 +1091,11 @@ sap.ui.define([
 			/*
 			 * These cases are only mentioned to prevent running into default
 			 */
-			case sap.ui.ux3.NotificationBarStatus.Max:
-			case sap.ui.ux3.NotificationBarStatus.None:
+			case NotificationBarStatus.Max:
+			case NotificationBarStatus.None:
 				break;
 
-			case sap.ui.ux3.NotificationBarStatus.Min:
+			case NotificationBarStatus.Min:
 				/*
 				 * Since minimizing doesn't need any re-rendering all necessary
 				 * stuff can be done here
@@ -1100,8 +1114,8 @@ sap.ui.define([
 				display = "block";
 				break;
 
+			case NotificationBarStatus.Default:
 			default:
-			case sap.ui.ux3.NotificationBarStatus.Default:
 				/*
 				 * If bar should be resized from maximized to default a re-rendering
 				 * is needed. Otherwise a simple animation and CSS exchange is
@@ -1148,7 +1162,7 @@ sap.ui.define([
 			 * Prevent that the NotificationBar itselft gets the focus and causes a
 			 * (dotted) border around the hover item and/or the bar iteslef
 			 */
-			this.$().blur();
+			this.$().trigger("blur");
 			var $activeElement = jQuery(document.activeElement);
 
 			fnCloseAllCallouts(this);
@@ -1193,22 +1207,22 @@ sap.ui.define([
 					this._formerVisibleStatus = sVisibleStatus;
 					this.setVisibleStatus("Min");
 
-					$activeElement.blur();
+					$activeElement.trigger("blur");
 					break;
 
 				default:
 					if ($activeElement.hasClass("sapUiNotifier")) {
-						$activeElement.focus();
+						$activeElement.trigger("focus");
 					} else {
 						if (this.hasItems()) {
 							var aNotifiers = this.getNotifiers();
 							if (aNotifiers.length > 0) {
 								var $firstNoti = jQuery(aNotifiers[0]);
-								$firstNoti.focus();
+								$firstNoti.trigger("focus");
 							} else {
 								var messageNoti = this.getMessageNotifier();
 								if (messageNoti) {
-									jQuery(messageNoti).focus();
+									jQuery(messageNoti).trigger("focus");
 								}
 							}
 						}
@@ -1242,44 +1256,55 @@ sap.ui.define([
 		};
 
 		NotificationBar.prototype.getHeightOfStatus = function(sStatus) {
-			var sParam = "";
-
-			if (sStatus == sap.ui.ux3.NotificationBarStatus.Min) {
-				sParam = "sapUiNotificationBarHeightMinimized";
-			} else if (sStatus == sap.ui.ux3.NotificationBarStatus.Default) {
-				sParam = "sapUiNotificationBarHeight";
-			} else if (sStatus == sap.ui.ux3.NotificationBarStatus.Max) {
-				sParam = "sapUiNotificationBarHeightMaximized";
-				sParam = Parameters.get(sParam);
-
-				var iIndex = sParam.indexOf("%");
-				if (iIndex != -1) {
-					var iPercentage = sParam.substring(0, iIndex);
-					var iHeight = jQuery(window).height();
-					iHeight = parseInt(iHeight / 100 * iPercentage, 10);
-
-					// Ensure that the MaxHeight is at least 1 px larger than the
-					// Default
-					// Maybe disabling the resize feature would be the better
-					// approach in this case
-					var _iHeight = parseInt(this.getHeightOfStatus(sap.ui.ux3.NotificationBarStatus.Default), 10);
-					if (iHeight < _iHeight) {
-						iHeight = _iHeight + 1;
-					}
-				} else {
-					var sMessage = "No valid percantage value given for maximized size. 400px is used";
-					jQuery.sap.log.warning(sMessage);
-
-					iHeight = 400;
-				}
-				return iHeight + "px";
-			} else {
-				// sStatus == sap.ui.ux3.NotificationBarStatus.None
+			if (sStatus == NotificationBarStatus.None) {
 				return "0px";
 			}
 
-			sParam = Parameters.get(sParam);
-			return sParam;
+			var mParamеters = Object.assign({
+				// add base styles as default
+				"sapUiNotificationBarHeightMinimized": "0px",
+				"sapUiNotificationBarHeight": "40px",
+				"sapUiNotificationBarHeightMaximized": "40%"
+			}, Parameters.get({
+				name: ["sapUiNotificationBarHeightMinimized", "sapUiNotificationBarHeight", "sapUiNotificationBarHeightMaximized"],
+				callback: this.invalidate.bind(this)
+			}));
+
+			switch (sStatus) {
+				case NotificationBarStatus.Min:
+					return mParamеters["sapUiNotificationBarHeightMinimized"];
+
+				case NotificationBarStatus.Max:
+					return this.calculateStatusHeightMax(mParamеters["sapUiNotificationBarHeightMaximized"]);
+
+				case NotificationBarStatus.Default:
+				default:
+					return mParamеters["sapUiNotificationBarHeight"];
+			}
+		};
+
+		NotificationBar.prototype.calculateStatusHeightMax = function(sParam) {
+			var iIndex = sParam.indexOf("%");
+			if (iIndex !== -1) {
+				var iPercentage = parseInt(sParam),
+					iHeight = jQuery(window).height();
+
+				iHeight = parseInt(iHeight / 100 * iPercentage);
+
+				// Ensure that the MaxHeight is at least 1 px larger than the
+				// Default
+				// Maybe disabling the resize feature would be the better
+				// approach in this case
+				var _iHeight = parseInt(this.getHeightOfStatus(NotificationBarStatus.Default));
+				if (iHeight < _iHeight) {
+					iHeight = _iHeight + 1;
+				}
+			} else {
+				Log.warning("No valid percantage value given for maximized size. 400px is used");
+
+				iHeight = 400;
+			}
+			return iHeight + "px";
 		};
 
 		NotificationBar.prototype.setVisibleStatus = function(toStatus) {
@@ -1288,7 +1313,7 @@ sap.ui.define([
 
 			// skip setting the property if 'toStatus' equals the current status
 			if (this._resizeFrom !== this._resizeTo) {
-				if (toStatus === sap.ui.ux3.NotificationBarStatus.None) {
+				if (toStatus === NotificationBarStatus.None) {
 					fnCloseAllCallouts(this);
 
 					if (this.getDomRef()) {
@@ -1307,6 +1332,7 @@ sap.ui.define([
 					status : toStatus
 				});
 			}
+			return this;
 		};
 
 		/**
@@ -1318,7 +1344,7 @@ sap.ui.define([
 		 */
 		NotificationBar.prototype.setAlwaysShowToggler = function(bAlwaysShow) {
 			// set toggler always to visible if running on a mobile device
-			if (sap.ui.Device.browser.mobile) {
+			if (Device.browser.mobile) {
 				bAlwaysShow = true;
 			}
 
@@ -1330,9 +1356,9 @@ sap.ui.define([
 			} else {
 				$toggler.css("display", "none");
 			}
+			return this;
 		};
-	}());
 
 	return NotificationBar;
 
-}, /* bExport= */ true);
+});

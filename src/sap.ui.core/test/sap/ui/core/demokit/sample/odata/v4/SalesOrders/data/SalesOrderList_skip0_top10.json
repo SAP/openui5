@@ -1,5 +1,4 @@
 {
-	"@odata.context" : "$metadata#SalesOrderList(CurrencyCode,GrossAmount,Note,SalesOrderID)",
 	"@odata.count" : 10,
 	"value" : [{
 		"@odata.etag" : "W/\"20160619220000.0000000\"",
@@ -8,6 +7,7 @@
 		"GrossAmount" : "25867.03",
 		"LifecycleStatus" : "N",
 		"LifecycleStatusDesc" : "New",
+		"Messages" : [],
 		"Note" : "EPM DG: SO ID 0500000000 Deliver as fast as possible",
 		"SalesOrderID" : "0500000000",
 		"SO_2_BP" : {
@@ -43,7 +43,28 @@
 		"GrossAmount" : "5631.08",
 		"LifecycleStatus" : "N",
 		"LifecycleStatusDesc" : "New",
-		"Note" : "EPM DG: SO ID 0500000001 Deliver as fast as possible",
+		"Messages" : [{
+			"code" : "CODE/1234",
+			"@Common.Application" : {
+				"ComponentId" : "OPU-GW-COR",
+				"ServiceRepository" : "DEFAULT"
+			},
+			"@Common.TransactionId" : "A9DFB82A2D7B0240E0058CB109CEBFBC",
+			"@Common.Timestamp" : "20170320071538.918157",
+			"longtextUrl" : "SalesOrderList('0500000001')/Messages(1)",
+			"message" : "Enter customer reference if available",
+			"numericSeverity" : 3,
+			"target" : "Note",
+			"transition" : false
+		},{
+			"code" : "STATE/4713",
+			"longtextUrl" : "/sap/opu/odata4/sap/zui5_testv4/default/sap/zui5_epm_sample/0002/Messages(2)",
+			"message" : "Minimum order quantity is 2",
+			"numericSeverity" : 4,
+			"target" : "SO_2_SOITEM(SalesOrderID='0500000001',ItemPosition='0000000020')/Quantity",
+			"transition" : false
+		}],
+		"Note" : "Note with message",
 		"SalesOrderID" : "0500000001",
 		"SO_2_BP" : {
 			"@odata.etag" : "W/\"20160613065313.0000000\"",
@@ -78,7 +99,8 @@
 		"GrossAmount" : "250.73",
 		"LifecycleStatus" : "N",
 		"LifecycleStatusDesc" : "New",
-		"Note" : "EPM DG: SO ID 0500000006 Deliver as fast as possible",
+		"Messages" : [],
+		"Note" : "EPM DG: SO ID 0500000002 Deliver as fast as possible",
 		"SalesOrderID" : "0500000002",
 		"SO_2_BP" : {
 			"@odata.etag" : "W/\"20160613065313.0000000\"",
@@ -113,7 +135,8 @@
 		"GrossAmount" : "10311.35",
 		"LifecycleStatus" : "N",
 		"LifecycleStatusDesc" : "New",
-		"Note" : "EPM DG: SO ID 0500000007 Deliver as fast as possible",
+		"Messages" : [],
+		"Note" : "EPM DG: SO ID 0500000003 Deliver as fast as possible",
 		"SalesOrderID" : "0500000003",
 		"SO_2_BP" : null
 	}, {
@@ -123,7 +146,8 @@
 		"GrossAmount" : "195.16",
 		"LifecycleStatus" : "N",
 		"LifecycleStatusDesc" : "New",
-		"Note" : "EPM DG: SO ID 0500000008 Deliver as fast as possible",
+		"Messages" : [],
+		"Note" : "EPM DG: SO ID 0500000004 Deliver as fast as possible",
 		"SalesOrderID" : "0500000004",
 		"SO_2_BP" : {
 			"@odata.etag" : "W/\"20160613065313.0000000\"",
@@ -159,6 +183,7 @@
 		"GrossAmount" : "25867.03",
 		"LifecycleStatus" : "N",
 		"LifecycleStatusDesc" : "New",
+		"Messages" : [],
 		"Note" : "EPM DG: SO ID 0500000005 Deliver as fast as possible",
 		"SalesOrderID" : "0500000005",
 		"SO_2_BP" : {
@@ -194,6 +219,7 @@
 		"GrossAmount" : "5631.08",
 		"LifecycleStatus" : "N",
 		"LifecycleStatusDesc" : "New",
+		"Messages" : [],
 		"Note" : "EPM DG: SO ID 0500000006 Deliver as fast as possible",
 		"SalesOrderID" : "0500000006",
 		"SO_2_BP" : {
@@ -229,7 +255,8 @@
 		"GrossAmount" : "250.73",
 		"LifecycleStatus" : "N",
 		"LifecycleStatusDesc" : "New",
-		"Note" : "EPM DG: SO ID 0500000006 Deliver as fast as possible",
+		"Messages" : [],
+		"Note" : "EPM DG: SO ID 0500000007 Deliver as fast as possible",
 		"SalesOrderID" : "0500000007",
 		"SO_2_BP" : {
 			"@odata.etag" : "W/\"20160613065313.0000000\"",
@@ -264,7 +291,8 @@
 		"GrossAmount" : "10311.35",
 		"LifecycleStatus" : "N",
 		"LifecycleStatusDesc" : "New",
-		"Note" : "EPM DG: SO ID 0500000007 Deliver as fast as possible",
+		"Messages" : [],
+		"Note" : "EPM DG: SO ID 0500000008 Deliver as fast as possible",
 		"SalesOrderID" : "0500000008",
 		"SO_2_BP" : {
 			"@odata.etag" : "W/\"20160613065313.0000000\"",
@@ -299,7 +327,8 @@
 		"GrossAmount" : "195.16",
 		"LifecycleStatus" : "N",
 		"LifecycleStatusDesc" : "New",
-		"Note" : "EPM DG: SO ID 0500000008 Deliver as fast as possible",
+		"Messages" : [],
+		"Note" : "EPM DG: SO ID 0500000009 Deliver as fast as possible",
 		"SalesOrderID" : "0500000009",
 		"SO_2_BP" : {
 			"@odata.etag" : "W/\"20160613065313.0000000\"",

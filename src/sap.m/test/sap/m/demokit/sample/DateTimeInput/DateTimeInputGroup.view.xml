@@ -1,5 +1,4 @@
 <mvc:View
-	xmlns:l="sap.ui.layout"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.m">
 	<VBox class="sapUiSmallMargin">
@@ -12,19 +11,19 @@
 		<DateTimeInput
 			id="DTI1"
 			type="Date"
-			placeholder="Enter Date ..."
+			placeholder="Enter Date"
 			class="sapUiSmallMarginBottom" />
 		<Label text="Time" labelFor="DTI2"/>
 		<DateTimeInput
 			id="DTI2"
 			type="Time"
-			placeholder="Enter Time ..."
+			placeholder="Enter Time"
 			class="sapUiSmallMarginBottom" />
 		<Label text="Date &amp; Time" labelFor="DTI3"/>
 		<DateTimeInput
 			id="DTI3"
 			type="DateTime"
-			placeholder="Enter Date &amp; Time ..."
+			placeholder="Enter Date &amp; Time"
 			class="sapUiSmallMarginBottom" />
 	</VBox>
 
@@ -37,19 +36,19 @@
 		<Label text="Date" labelFor="DP1"/>
 		<DatePicker
 			id="DP1"
-			placeholder="Enter Date ..."
+			placeholder="Enter Date"
 			class="sapUiSmallMarginBottom" />
 		<Label text="Time" labelFor="TP1"/>
 		<TimePicker
 			id="TP1"
 			width="100%"
-			placeholder="Enter Time ..."
+			placeholder="Enter Time"
 			class="sapUiSmallMarginBottom" />
 		<Label text="Date &amp; Time" labelFor="DTP1"/>
 		<DateTimePicker
 			id="DTP1"
 			width="100%"
-			placeholder="Enter Date &amp; Time ..."
+			placeholder="Enter Date &amp; Time"
 			class="sapUiSmallMarginBottom" />
 	</VBox>
 </mvc:View>

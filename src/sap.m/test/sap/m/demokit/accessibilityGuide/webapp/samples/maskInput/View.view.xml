@@ -1,0 +1,39 @@
+<mvc:View
+		xmlns:mvc="sap.ui.core.mvc"
+		xmlns:form="sap.ui.layout.form"
+		xmlns="sap.m"
+		xmlns:core="sap.ui.core"
+		height="100%">
+		<App>
+			<Page
+				showHeader="false"
+				id="page"
+				backgroundDesign="Solid">
+				<VBox class="sapUiSmallMargin">
+					<Text text="Descriptive placeholder property text should be added,
+	 					in order to guide users what input is expected based on the particular control configuration." />
+
+					<form:SimpleForm>
+
+						<Label text="Serial number" />
+						<MaskInput mask="CCCC-CCCC-CCCC-CCCC-CCCC" placeholderSymbol="_" placeholder="Enter digits and capital letters" showClearIcon="{/showClearIcon}">
+							<rules>
+								<MaskInputRule maskFormatSymbol="C" regex="[A-Z0-9]"/>
+							</rules>
+						</MaskInput>
+
+						<Label text="Product activation key"/>
+						<MaskInput mask="SAP-CCCCC-CCCCC" placeholderSymbol="_" placeholder="Starts with 'SAP' followed by digits and capital letters" showClearIcon="{/showClearIcon}">
+							<rules>
+								<MaskInputRule maskFormatSymbol="C" regex="[A-Z0-9]"/>
+							</rules>
+						</MaskInput>
+
+						<Label text="ISBN" />
+						<MaskInput mask="999-99-999-9999-9" placeholderSymbol="_" placeholder="Enter thirteen-digit number" showClearIcon="{/showClearIcon}" />
+
+					</form:SimpleForm>
+				</VBox>
+			</Page>
+		</App>
+</mvc:View>

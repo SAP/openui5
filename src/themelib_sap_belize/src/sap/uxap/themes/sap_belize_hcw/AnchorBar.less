@@ -8,12 +8,12 @@
 }
 
 .sapUxAPAnchorBar.sapMTB {
-	border-bottom: none;
+	border-bottom: 0.125rem solid @sapUiObjectHeaderBorderColor;
+	box-shadow: none;
 }
 
 /* L fullscreen paddings */
-html.sapUiMedia-Std-Desktop .sapUxAPAnchorBar.sapMTB,
-html.sapUiMedia-Std-Desktop .sapMSplitContainer.sapMSplitContainerHideMode .sapMSplitContainerDetail .sapUxAPAnchorBar.sapMTB /* overriding selector for desktop in split-container */
+html .sapUxAPObjectPageLayout-Std-Desktop .sapUxAPAnchorBar.sapMTB
 {
 	padding-left: 2rem;
 }
@@ -40,27 +40,15 @@ html.sapUiMedia-Std-Desktop .sapMSplitContainer.sapMSplitContainerHideMode .sapM
 	border-radius: 0;
 }
 
-.sapUxAPAnchorBarPopover .sapUxAPAnchorBarButton .sapMBtnInner.sapMBtnHoverable:hover,
-.sapUxAPAnchorBarPopover .sapUxAPAnchorBarButton.sapMBtn:hover > .sapMBtnHoverable,
 .sapUxAPObjectPageNavigation > .sapMTB.sapMTB-Transparent-CTX > .anchorBarArrow .sapMBtn:hover > .sapMBtnHoverable {
 	background: @sapUiButtonHoverBackground;
-}
-
-.sapMPopover.sapUxAPAnchorBarPopover .sapMBtn.sapUxAPAnchorBarButton:hover > .sapMBtnActive:hover {
-	background-color: @sapUiListActiveBackground;
-}
-
-.sapMTB-Transparent-CTX .sapUxAPAnchorBarButton.sapMBtn:not(.sapMBtnDisabled) > .sapMBtnInner:not(.sapMToggleBtnPressed):not(.sapMBtnEmphasized):not(.sapMBtnAccept):not(.sapMBtnReject):not(.sapMBtnActive),
-.sapUxAPAnchorBar .sapUxAPAnchorBarButton .sapMBtnInner.sapMBtnTransparent.sapMBtnHoverable:hover,
-.sapUxAPAnchorBar .sapUxAPAnchorBarButton.sapMBtn:hover > .sapMBtnHoverable {
-	background: none;
 }
 
 .sapUxAPAnchorBar .sapUxAPAnchorBarButton .sapMBtnIcon,
 .sapUxAPAnchorBar .sapUxAPAnchorBarButton .sapMBtnInner,
 .sapUxAPAnchorBar .sapUxAPAnchorBarButton .sapMBtnInner .sapMBtnContent {
-	height: 1.875rem;
-	line-height: 1.875rem;
+	height: 2.8rem;
+	line-height: 2.8rem;
 }
 
 .sapUiSizeCompact {
@@ -72,25 +60,34 @@ html.sapUiMedia-Std-Desktop .sapMSplitContainer.sapMSplitContainerHideMode .sapM
 	}
 }
 
-.sapUxAPAnchorBarButton.sapUxAPAnchorBarButtonSelected::after {
+.sapUxAPAnchorBarButton.sapUxAPAnchorBarButtonSelected:not(.sapMMenuBtn)::after,
+.sapUxAPAnchorBarButton.sapUxAPAnchorBarButtonSelected.sapMMenuBtn .sapMSBText::after {
 	display: block;
 	content: "";
 	position: absolute;
 	background-color: @sapUiObjectHeaderBorderColor;
-	height: 0.25rem;
+	height: 0.1875rem;
 	bottom: 0;
 	left: 1rem;
 	right: 1rem;
 }
 
-// overriding to center the text of the popover buttons in compact mode
-.sapUiSizeCompact.sapUxAPAnchorBarPopover.sapMPopover .sapMBtn.sapUxAPAnchorBarButton .sapMBtnInner .sapMBtnContent {
-	line-height: 1.8rem;
+.sapUxAPAnchorBarButton.sapUxAPAnchorBarButtonSelected.sapMMenuBtn .sapMSBText::after {
+	left: 1rem;
+	right: 1.25rem;
 }
 
-.sapUxAPAnchorBar .sapUxAPAnchorBarButton .sapMBtnInner .sapMBtnContent,
+.sapUiSizeCompact .sapUxAPAnchorBarButton.sapUxAPAnchorBarButtonSelected.sapMMenuBtn .sapMSBText::after {
+	right: 0.75rem;
+}
+
+.sapUxAPAnchorBarButton.sapUxAPAnchorBarButtonSelected.sapMMenuBtn .sapMSBText.sapMSBTextIE::after,
+.sapUiSizeCompact .sapUxAPAnchorBarButton.sapUxAPAnchorBarButtonSelected.sapMMenuBtn .sapMSBText.sapMSBTextIE::after {
+	right: 0rem;
+}
+
 .sapUxAPAnchorBar .sapUxAPAnchorBarButton .sapMBtnInner .sapMBtnIcon {
-	line-height: 2rem;
+	line-height: 2.8rem;
 }
 
 /***********************/
@@ -130,6 +127,7 @@ html[dir=rtl] .sapUxAPAnchorBar.sapUxAPAnchorBarScrollLeft .anchorBarArrowLeft {
 }
 
 /* OVERVIEW BUTTON IE, Edge focus fix */
+/* TODO remove after the end of support for Internet Explorer */
 html[data-sap-ui-browser^="ie"],
 html[data-sap-ui-browser^="ed"] {
 	.sapUxAPAnchorBar.sapUxAPAnchorBarOverflow .sapUxAPHierarchicalSelect.sapMSltIconOnly:not(.sapMSltPressed):focus,
@@ -143,8 +141,9 @@ html[data-sap-ui-browser^="ed"] {
 	}
 }
 
-html[data-sap-ui-browser^="ie"].sapUiMedia-Std-Tablet .sapUiSizeCompact,
-html[data-sap-ui-browser^="ed"].sapUiMedia-Std-Tablet .sapUiSizeCompact {
+/* TODO remove after the end of support for Internet Explorer */
+html[data-sap-ui-browser^="ie"] .sapUiSizeCompact .sapUxAPObjectPageLayout-Std-Tablet,
+html[data-sap-ui-browser^="ed"] .sapUiSizeCompact .sapUxAPObjectPageLayout-Std-Tablet{
 	.sapUxAPAnchorBar.sapUxAPAnchorBarOverflow .sapUxAPHierarchicalSelect.sapMSltIconOnly:not(.sapMSltPressed):focus .sapMSltIcon,
 	.sapUxAPAnchorBar.sapUxAPAnchorBarOverflow .sapUxAPHierarchicalSelect.sapMSltIconOnly:not(.sapMSltExpanded):active .sapMSltIcon,
 	.sapUxAPAnchorBar.sapUxAPAnchorBarOverflow .sapUxAPHierarchicalSelect.sapMSltIconOnly.sapMSltPressed:not(.sapMSltExpanded) .sapMSltIcon {

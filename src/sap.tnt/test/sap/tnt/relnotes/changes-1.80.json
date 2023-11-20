@@ -1,0 +1,24 @@
+{
+  "1.80.0": {
+    "date": "June 2020",
+    "notes": [
+      {
+        "id": "abe23ce1df82c802969ee4a23990707c3754fbc3",
+        "type": "FEATURE",
+        "text": " sap.tnt.NavigationListItem: Add new properties href and target",
+        "references": []
+      },
+      {
+        "id": "bd652224743091c100b7194ef321c13ca7662a25",
+        "type": "FIX",
+        "text": " sap.tnt.NavigationList: ARIA roles are now correct",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070219317"
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -6,14 +6,16 @@
 .sapMObjectIdentifierIcons {
 	overflow: hidden;
     text-align: right;
-    vertical-align: top-text;
-    float: right;
     font-size: 1rem;
 	color: @sapUiContentNonInteractiveIconColor;
+	display: inline-block;
+	vertical-align: middle;
 }
 
 .sapMObjectIdentifierIconSpan {
-    padding:0 0.5rem;
+	padding-top: 0;
+	padding-bottom: 0;
+	padding-left: 0.5rem;
 }
 
 .sapMObjectIdentifierTitle .sapMLnk,
@@ -21,9 +23,17 @@
 	overflow: visible;
 	font-weight: bold;
 	font-size: 1rem;
-	display: inline-block;
+	display: inline;
 	word-wrap: break-word;
+	word-break: break-word;
 	white-space: normal;
+}
+
+html[data-sap-ui-browser^="ff"] {
+	.sapMObjectIdentifierTitle .sapMLnk,
+	.sapMObjectIdentifierTitle .sapMText {
+		display: inline-block;
+	}
 }
 
 .sapMObjectIdentifierTitle .sapMText {
@@ -51,7 +61,7 @@
 }
 
 .sapMLIBActive .sapMObjectIdentifier {
-		color: @sapUiListActiveTextColor;
+	color: @sapUiListActiveTextColor;
 }
 
 /* ObjectIdentifier inside a table */
@@ -69,4 +79,16 @@
 .sapMListTbl .sapMObjectIdentifierText .sapMText {
 	line-height: 1.4;
 	padding-top: 0;
+}
+
+.sapMObjectIdentifierTitle {
+	display: inline;
+}
+
+.sapMObjectIdentifier .sapMEmptyIndicator.sapMEmptyIndicatorAuto {
+	display: none;
+}
+
+.sapMShowEmpty-CTX .sapMObjectIdentifier .sapMEmptyIndicator.sapMEmptyIndicatorAuto {
+	display: inline-block;
 }

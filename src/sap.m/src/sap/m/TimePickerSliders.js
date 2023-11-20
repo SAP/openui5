@@ -3,34 +3,40 @@
  */
 
 sap.ui.define([
-	'jquery.sap.global',
+	"sap/base/i18n/Formatting",
+	"sap/ui/core/Element",
+	"sap/ui/core/Lib",
 	'sap/ui/core/library',
 	'sap/ui/core/Control',
 	'sap/ui/model/type/Date',
 	'sap/ui/model/odata/type/ODataType',
 	'sap/ui/core/format/DateFormat',
-	'./TimePickerSlidersRenderer',
 	'./TimePickerSlider',
+	'./TimePickerSlidersRenderer',
 	'./VisibleItem',
 	'sap/ui/core/LocaleData',
 	'sap/ui/Device',
 	'sap/ui/core/Locale',
-	'./TimePickerSlidersRenderer'
+	"sap/ui/thirdparty/jquery",
+	'sap/ui/core/date/UI5Date'
 ],
 	function(
-		jQuery,
+		Formatting,
+		Element,
+		Library,
 		coreLibrary,
 		Control,
 		SimpleDateType,
 		ODataType,
 		DateFormat,
-		SlidersRenderer,
 		TimePickerSlider,
+		TimePickerSlidersRenderer,
 		VisibleItem,
 		LocaleData,
 		Device,
 		Locale,
-		TimePickerSlidersRenderer
+		jQuery,
+		UI5Date
 	) {
 		"use strict";
 
@@ -77,14 +83,14 @@ sap.ui.define([
 					 * The <code>displayFormat</code> comes from the browser language settings if not set explicitly.
 					 *
 					 */
-					displayFormat: {name: "displayFormat", type: "string", group: "Appearance"},
+					displayFormat: {type: "string", group: "Appearance"},
 
 					/**
 					 * Defines the text of the picker label.
 					 *
 					 * It is read by screen readers. It is visible only on phone.
 					 */
-					labelText: {name: "labelText", type: "string"},
+					labelText: {type: "string"},
 
 					/**
 					 * Sets the minutes slider step. If step is less than 1, it will be automatically converted back to 1.
@@ -147,7 +153,9 @@ sap.ui.define([
 						}
 					}
 				}
-			}
+			},
+
+			renderer: TimePickerSlidersRenderer
 		});
 
 		/**
@@ -156,7 +164,7 @@ sap.ui.define([
 		 * @private
 		 */
 		TimePickerSliders.prototype.init = function () {
-			var oLocale = sap.ui.getCore().getConfiguration().getFormatSettings().getFormatLocale(),
+			var oLocale = new Locale(Formatting.getLanguageTag()),
 				oLocaleData = LocaleData.getInstance(oLocale),
 				aPeriods = oLocaleData.getDayPeriods("abbreviated"),
 				sDefaultDisplayFormat = oLocaleData.getTimePattern("medium");
@@ -183,7 +191,7 @@ sap.ui.define([
 		 * @private
 		 */
 		TimePickerSliders.prototype.exit = function () {
-			this.$().off(!!Device.browser.firefox ? "DOMMouseScroll" : "mousewheel", this._onmousewheel);
+			this.$().off(Device.browser.firefox ? "DOMMouseScroll" : "mousewheel", this._onmousewheel);
 			Device.resize.detachHandler(this._fnOrientationChanged);
 		};
 
@@ -192,10 +200,12 @@ sap.ui.define([
 		 * @private
 		 */
 		TimePickerSliders.prototype.onAfterRendering = function() {
-			this.$().off(!!Device.browser.firefox ? "DOMMouseScroll" : "mousewheel", this._onmousewheel);
-			this.$().on(!!Device.browser.firefox ? "DOMMouseScroll" : "mousewheel", jQuery.proxy(this._onmousewheel, this));
+			this.$().off(Device.browser.firefox ? "DOMMouseScroll" : "mousewheel", this._onmousewheel);
+			this.$().on(Device.browser.firefox ? "DOMMouseScroll" : "mousewheel", jQuery.proxy(this._onmousewheel, this));
 
-			if (!Device.browser.msie && this._getShouldOpenSliderAfterRendering()) {
+			this.$().on('selectstart', fnFalse);
+
+			if (this._getShouldOpenSliderAfterRendering()) {
 				/* This method is called here prematurely to ensure slider loading on time.
 				 * Make sure _the browser native focus_ is not actually set on the early call (the "true" param)
 				 * because that fires events and results in unexpected behaviors */
@@ -213,7 +223,7 @@ sap.ui.define([
 		 * Sets the <code>localeId</code> property.
 		 *
 		 * @param {string} sLocaleId The ID of the Locale
-		 * @returns {sap.m.TimePickerSliders} this instance, used for chaining
+		 * @returns {this} this instance, used for chaining
 		 * @public
 		 */
 		TimePickerSliders.prototype.setLocaleId = function(sLocaleId) {
@@ -242,7 +252,7 @@ sap.ui.define([
 		 * Sets <code>support2400</code>.
 		 *
 		 * @param {boolean} bSupport2400
-		 * @returns {sap.m.TimePickerSliders} this instance, used for chaining
+		 * @returns {this} this instance, used for chaining
 		 * @public
 		 */
 		TimePickerSliders.prototype.setSupport2400 = function (bSupport2400) {
@@ -259,7 +269,7 @@ sap.ui.define([
 		 * Sets the time <code>displayFormat</code>.
 		 *
 		 * @param {string} sFormat New display format
-		 * @returns {sap.m.TimePickerSliders} this instance, used for chaining
+		 * @returns {this} this instance, used for chaining
 		 * @public
 		 */
 		TimePickerSliders.prototype.setDisplayFormat = function (sFormat) {
@@ -272,31 +282,9 @@ sap.ui.define([
 		};
 
 		/**
-		 * Sets the text for the picker label.
-		 *
-		 * @param {string} sLabelText A text for the label
-		 * @returns {sap.m.TimePickerSliders} this instance, used for chaining
-		 * @public
-		 */
-		TimePickerSliders.prototype.setLabelText = function(sLabelText) {
-			var $ContainerLabel;
-
-			this.setProperty("labelText", sLabelText, true);
-
-			if (!Device.system.desktop) {
-				$ContainerLabel = jQuery(this.getDomRef("label"));
-				if ($ContainerLabel) {
-					$ContainerLabel.html(sLabelText);
-				}
-			}
-
-			return this;
-		};
-
-		/**
 		 * Sets the minutes slider step.
 		 * @param {int} value The step used to generate values for the minutes slider
-		 * @returns {sap.m.TimePickerSliders} <code>this</code> to allow method chaining
+		 * @returns {this} <code>this</code> to allow method chaining
 		 * @public
 		 */
 		TimePickerSliders.prototype.setMinutesStep = function(value) {
@@ -312,7 +300,7 @@ sap.ui.define([
 		/**
 		 * Sets the seconds slider step.
 		 * @param {int} value The step used to generate values for the seconds slider
-		 * @returns {sap.m.TimePickerSliders} <code>this</code> to allow method chaining
+		 * @returns {this} <code>this</code> to allow method chaining
 		 * @public
 		 */
 		TimePickerSliders.prototype.setSecondsStep = function(value) {
@@ -326,37 +314,9 @@ sap.ui.define([
 		};
 
 		/**
-		 * Sets the width of the <code>TimepickerSliders</code> container.
-		 * @param {sap.ui.core.CSSSize} sWidth The width of the <code>TimepickerSliders</code< as CSS size
-		 * @returns {sap.m.TimePickerSliders} Pointer to the control instance to allow method chaining
-		 * @public
-		 */
-		TimePickerSliders.prototype.setWidth = function (sWidth) {
-			this.setProperty("width", sWidth, true);
-
-			this.$().css("width", sWidth);
-
-			return this;
-		};
-
-		/**
-		 * Sets the height of the <code>TimepickerSliders</code> container.
-		 * @param {sap.ui.core.CSSSize} sHeight The height of the <code>TimepickerSliders</code> as CSS size
-		 * @returns {sap.m.TimePickerSliders} Pointer to the control instance to allow method chaining
-		 * @public
-		 */
-		TimePickerSliders.prototype.setHeight = function (sHeight) {
-			this.setProperty("height", sHeight, true);
-
-			this.$().css("height", sHeight);
-
-			return this;
-		};
-
-		/**
 		 * Sets the value of the <code>TimepickerSliders</code> container.
 		 * @param {string} sValue The value of the <code>TimepickerSliders</code>
-		 * @returns {sap.m.TimePickerSliders} Pointer to the control instance to allow method chaining
+		 * @returns {this} Pointer to the control instance to allow method chaining
 		 * @public
 		 */
 		TimePickerSliders.prototype.setValue = function (sValue) {
@@ -390,7 +350,7 @@ sap.ui.define([
 		/**
 		 * Gets the time values from the sliders, as a date object.
 		 *
-		 * @returns {Object} A JavaScript date object
+		 * @returns {Date} A JavaScript date object
 		 * @public
 		 */
 		TimePickerSliders.prototype.getTimeValues = function () {
@@ -400,10 +360,10 @@ sap.ui.define([
 				oFormatSlider = this._getFormatSlider(),
 				iHours = null,
 				sAmpm = null,
-				oDateValue = new Date();
+				oDateValue = UI5Date.getInstance();
 
 			if (oHoursSlider) {
-				iHours = parseInt(oHoursSlider.getSelectedValue(), 10);
+				iHours = parseInt(oHoursSlider.getSelectedValue());
 			}
 
 			if (oFormatSlider) {
@@ -434,7 +394,7 @@ sap.ui.define([
 		/**
 		 * Collapses all the slider controls.
 		 *
-		 * @returns {sap.m.TimePickerSliders} Pointer to the control instance to allow method chaining
+		 * @returns {this} Pointer to the control instance to allow method chaining
 		 * @public
 		 *
 		 */
@@ -456,7 +416,7 @@ sap.ui.define([
 		/**
 		 * Opens first slider.
 		 *
-		 * @returns {sap.m.TimePickerSliders} Pointer to the control instance to allow method chaining
+		 * @returns {this} Pointer to the control instance to allow method chaining
 		 *
 		 * @public
 		 */
@@ -486,15 +446,11 @@ sap.ui.define([
 				iHours,
 				sAmPm = null;
 
-			oDate = oDate || new Date();
+			oDate = oDate || UI5Date.getInstance();
 
 			// Cross frame check for a date should be performed here otherwise setDateValue would fail in OPA tests
 			// because Date object in the test is different than the Date object in the application (due to the iframe).
-			// We can use jQuery.type or this method:
-			// function isValidDate (date) {
-			//	return date && Object.prototype.toString.call(date) === "[object Date]" && !isNaN(date);
-			//}
-			if (oDate && jQuery.type(oDate) !== "date") {
+			if (Object.prototype.toString.call(oDate) !== "[object Date]" || isNaN(oDate)) {
 				throw new Error("Date must be a JavaScript date object; " + this);
 			}
 
@@ -735,7 +691,7 @@ sap.ui.define([
 		 */
 		TimePickerSliders.prototype._getLocaleBasedPattern = function (sPlaceholder) {
 			return LocaleData.getInstance(
-				sap.ui.getCore().getConfiguration().getFormatSettings().getFormatLocale()
+				new Locale(Formatting.getLanguageTag())
 			).getTimePattern(sPlaceholder);
 		};
 
@@ -757,7 +713,7 @@ sap.ui.define([
 		 * @private
 		 */
 		TimePickerSliders.prototype._setupLists = function () {
-			var oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m"),
+			var oRb = Library.getResourceBundleFor("sap.m"),
 				sLabelHours = oRb.getText("TIMEPICKER_LBL_HOURS"),
 				sLabelMinutes = oRb.getText("TIMEPICKER_LBL_MINUTES"),
 				sLabelSeconds = oRb.getText("TIMEPICKER_LBL_SECONDS"),
@@ -826,8 +782,8 @@ sap.ui.define([
 			if (sFormat.indexOf("a") !== -1) {
 				this.addAggregation("_columns", new TimePickerSlider(this.getId() + "-listFormat", {
 					items: [
-						{ key: "am", text: this._sAM },
-						{ key: "pm", text: this._sPM }
+						new VisibleItem({ key: "am", text: this._sAM }),
+						new VisibleItem({ key: "pm", text: this._sPM })
 					],
 					expanded: this._onSliderExpanded,
 					collapsed: this._onSliderCollapsed,
@@ -874,7 +830,7 @@ sap.ui.define([
 		 * @private
 		 */
 		TimePickerSliders.prototype._getHoursSlider = function () {
-			return sap.ui.getCore().byId(this.getId() + "-listHours") || null;
+			return Element.getElementById(this.getId() + "-listHours") || null;
 		};
 
 		/**
@@ -883,7 +839,7 @@ sap.ui.define([
 		 * @private
 		 */
 		TimePickerSliders.prototype._getMinutesSlider = function () {
-			return sap.ui.getCore().byId(this.getId() + "-listMins") || null;
+			return Element.getElementById(this.getId() + "-listMins") || null;
 		};
 
 		/**
@@ -892,7 +848,7 @@ sap.ui.define([
 		 * @private
 		 */
 		TimePickerSliders.prototype._getSecondsSlider = function () {
-			return sap.ui.getCore().byId(this.getId() + "-listSecs") || null;
+			return Element.getElementById(this.getId() + "-listSecs") || null;
 		};
 
 		/**
@@ -901,7 +857,7 @@ sap.ui.define([
 		 * @private
 		 */
 		TimePickerSliders.prototype._getFormatSlider = function () {
-			return sap.ui.getCore().byId(this.getId() + "-listFormat") || null;
+			return Element.getElementById(this.getId() + "-listFormat") || null;
 		};
 
 		/**
@@ -959,7 +915,7 @@ sap.ui.define([
 			}
 
 			if (!sCalendarType) {
-				sCalendarType = sap.ui.getCore().getConfiguration().getCalendarType();
+				sCalendarType = Formatting.getCalendarType();
 			}
 
 			return this._getFormatterInstance(sPattern, bRelative, sCalendarType);
@@ -1139,8 +1095,9 @@ sap.ui.define([
 		 *  00:00:00 with displayFormat "mm:HH:ss" -> 00:24:00
 		 *  0:00:00 with displayFormat "H:mm:ss" -> 24:00:00
 		 *  00:0:00 with displayFormat "mm:H:ss" -> 00:24:00
-		 * @param iIndexHH index of the HH in the displayFormat
-		 * @param iIndexH index of the H in the displayFormat
+		 * @param {string} sValue Value to replace the zeroes in
+		 * @param {int} iIndexOfHH index of the HH in the displayFormat
+		 * @param {int} iIndexOfH index of the H in the displayFormat
 		 * @private
 		 */
 		TimePickerSliders._replaceZeroHoursWith24 = function (sValue, iIndexOfHH, iIndexOfH) {
@@ -1163,8 +1120,9 @@ sap.ui.define([
 		 *  00:24:00 with displayFormat "mm:HH:ss" -> 00:00:00
 		 *  24:00:00 with displayFormat "H:mm:ss" -> 0:00:00
 		 *  00:24:00 with displayFormat "mm:H:ss" -> 00:0:00
-		 * @param iIndexHH index of the HH in the displayFormat
-		 * @param iIndexH index of the H in the displayFormat
+		 * @param {string} sValue Value to replace the 24 with zeroes in
+		 * @param {int} iIndexOfHH index of the HH in the displayFormat
+		 * @param {int} iIndexOfH index of the H in the displayFormat
 		 * @private
 		 */
 		TimePickerSliders._replace24HoursWithZero = function (sValue, iIndexOfHH, iIndexOfH) {
@@ -1206,6 +1164,10 @@ sap.ui.define([
 			}
 
 			return sResult;
+		}
+
+		function fnFalse() {
+			return false;
 		}
 
 		return TimePickerSliders;

@@ -1,15 +1,9 @@
-/*global QUnit*/
-
-sap.ui.define("sap.m.qunit.PDFViewerAccessibility", [
-	"test/sap/m/qunit/PDFViewerTestUtils",
-	"sap/ui/Device",
-	"sap/m/PDFViewer",
-	'sap/m/PDFViewerRenderer',
-	"jquery.sap.global",
-	"sap/ui/thirdparty/sinon",
-	"sap/ui/thirdparty/sinon-qunit"
-	// QUnit dependency cannot be defined here because test requires the instance specified in *.html file
-], function (TestUtils, Device, PDFViewer, PDFViewerRenderer, $, sinon) {
+/*global QUnit */
+sap.ui.define([
+	"./PDFViewerTestUtils",
+	"sap/m/PDFViewerRenderer",
+	"sap/ui/core/Element"
+], function (TestUtils, PDFViewerRenderer, Element) {
 	"use strict";
 
 	var oPDFViewer;
@@ -20,20 +14,23 @@ sap.ui.define("sap.m.qunit.PDFViewerAccessibility", [
 	});
 
 	// if the environment does not have pdf plugin, then it is not possible to run standard test suite
-	if (!PDFViewerRenderer._isPdfPluginEnabled()) {
+	if (!PDFViewerRenderer._isPdfPluginEnabled() || /HeadlessChrome/.test(window.navigator.userAgent)) {
 		return;
 	}
 
 	QUnit.test("Is toolbar rendered in embedded mode", function (assert) {
 		var sExpectedTitleText = "My Cool Title";
 
-		assert.expect(4);
+		assert.expect(5);
 		var done = assert.async(),
 			oOptions = {
 			"title": sExpectedTitleText,
-			"source": "./pdfviewer/sample-file.pdf",
+			"source": "test-resources/sap/m/qunit/pdfviewer/sample-file.pdf",
 			"loaded": function () {
 				assert.ok(true, "'Load' event fired");
+				assert.equal(oPDFViewer.getDomRef().querySelector("#" + oPDFViewer.getId() + "-iframe").getAttribute("aria-label"),
+								oPDFViewer._getLibraryResourceBundle().getText("PDF_VIEWER_CONTENT_ACCESSIBILITY_LABEL"),
+								"AriaLabel is set correctly.");
 				checkToolbar();
 			},
 			"error": function () {
@@ -44,7 +41,7 @@ sap.ui.define("sap.m.qunit.PDFViewerAccessibility", [
 				var oToolbar = oPDFViewer.$("overflowToolbar");
 				assert.ok(oToolbar.length === 1, "PDF Viewer have to contain one overflow toolbar");
 
-				var oToolbarTitleSapUi5 =  sap.ui.getCore().byId(oPDFViewer.getId() + "-overflowToolbar-title");
+				var oToolbarTitleSapUi5 =  Element.getElementById(oPDFViewer.getId() + "-overflowToolbar-title");
 				assert.ok(oToolbarTitleSapUi5.getText() === sExpectedTitleText, "Title text in toolbar is shown");
 
 				var oButton = oPDFViewer.$("toolbarDownloadButton");
@@ -61,7 +58,7 @@ sap.ui.define("sap.m.qunit.PDFViewerAccessibility", [
 		var done = assert.async();
 
 		var oOptions = {
-			"source": "./pdfviewer/sample-file.pdf",
+			"source": "test-resources/sap/m/qunit/pdfviewer/sample-file.pdf",
 			"loaded": function () {
 				assert.ok(true, "'Load' event fired");
 				checkPopupContent();

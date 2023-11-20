@@ -4,28 +4,28 @@
 	xmlns:template="http://schemas.sap.com/sapui5/extension/sap.ui.core.template/1">
 	<template:with path="entityType>com.sap.vocabularies.UI.v1.Chart#Dimensions" var="chart">
 		<template:if test="{chart>}">
-			<Table headerText="{path: 'chart>Title', formatter: 'sap.ui.model.odata.AnnotationHelper.format'}"
+			<Table headerText="{path: 'chart>Title', formatter: 'AH.format'}"
 				items="{:= '{path:\'/' + ${meta>name} + '\', length: 3}' }">
 				<columns>
 					<Column>
-						<template:with path="chart>Dimensions/0" helper="sap.ui.model.odata.AnnotationHelper.resolvePath" var="idcolumn">
-							<Text text="{path: 'idcolumn>com.sap.vocabularies.Common.v1.Label', formatter: 'sap.ui.model.odata.AnnotationHelper.format'}"/>
+						<template:with path="chart>Dimensions/0" helper="AH.resolvePath" var="idcolumn">
+							<Text text="{path: 'idcolumn>com.sap.vocabularies.Common.v1.Label', formatter: 'AH.format'}"/>
 						</template:with>
 					</Column>
 					<template:repeat list="{chart>Measures}" var="column">
 						<Column>
 							<template:with path="column>"
-								helper="sap.ui.model.odata.AnnotationHelper.resolvePath"
+								helper="AH.resolvePath"
 								var="property">
-								<Text text="{path: 'property>com.sap.vocabularies.Common.v1.Label', formatter: 'sap.ui.model.odata.AnnotationHelper.format'}"/>
+								<Text text="{path: 'property>com.sap.vocabularies.Common.v1.Label', formatter: 'AH.format'}"/>
 							</template:with>
 						</Column>
 					</template:repeat>
 				</columns>
 				<ColumnListItem>
-					<Text text="{path: 'chart>Dimensions/0', formatter: 'sap.ui.model.odata.AnnotationHelper.simplePath'}" />
+					<Text text="{path: 'chart>Dimensions/0', formatter: 'AH.simplePath'}" />
 					<template:repeat list="{chart>Measures}" var="column">
-						<Text text="{path: 'column>', formatter: 'sap.ui.model.odata.AnnotationHelper.format'}" />
+						<Text text="{path: 'column>', formatter: 'AH.format'}" />
 					</template:repeat>
 				</ColumnListItem>
 			</Table>

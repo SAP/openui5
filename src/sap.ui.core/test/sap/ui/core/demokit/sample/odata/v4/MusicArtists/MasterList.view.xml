@@ -1,0 +1,41 @@
+<mvc:View
+	controllerName="sap.ui.core.sample.odata.v4.MusicArtists.MasterList"
+	xmlns="sap.m"
+	xmlns:mvc="sap.ui.core.mvc">
+	<Page id="masterList" title="Artist List">
+		<List class="sapUiResponsiveMargin" growing="true" growingThreshold="10" id="Artists"
+			items="{
+				filters : {
+					path : 'IsActiveEntity',
+					operator : 'EQ',
+					value1 : 'true'
+				},
+				sorter : {
+					path : 'CreatedAt'
+				},
+				path : '/Artists'
+			}"
+			width="auto">
+			<headerToolbar>
+				<Toolbar>
+					<ToolbarSpacer/>
+					<Button press="onCreate" text="Create"/>
+					<ToolbarSeparator/>
+					<Button press="onRefresh" text="Refresh"/>
+				</Toolbar>
+			</headerToolbar>
+			<items>
+				<ObjectListItem number="{FoundingYear}" press="onSelect" title="{Name}"
+					type="Active">
+				<firstStatus>
+					<ObjectStatus state="None"
+						text="{= %{HasDraftEntity} === true ? 'Draft' : ''}"/>
+				</firstStatus>
+				<attributes>
+					<ObjectAttribute text="{CountryOfOrigin_Text}"/>
+				</attributes>
+			</ObjectListItem>
+			</items>
+		</List>
+	</Page>
+</mvc:View>

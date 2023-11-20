@@ -1,0 +1,121 @@
+<mvc:View
+	xmlns="sap.m"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:core="sap.ui.core" controllerName="testdata.customizing.customer.ext.Main">
+
+	<!--
+		Top level EP0:
+		Not known to Flex, default content should be created
+		Initial-Insert-Index: _0_
+	-->
+	<core:ExtensionPoint name="EP0">
+		<core:Fragment id="zero" fragmentName="testdata.customizing.customer.ext.Default" type="XML" />
+	</core:ExtensionPoint>
+
+	<Button id="button0"></Button>
+
+	<Panel id="Panel">
+		<!-- Nested level EP -->
+		<core:ExtensionPoint name="EP1" />
+		<Button id="button1"></Button>
+		<Button id="button2"></Button>
+		<Button id="button3"></Button>
+		<!-- Nested level EP -->
+		<core:ExtensionPoint name="EP2">
+			<core:Fragment id="defaultFragment" fragmentName="testdata.customizing.customer.ext.Default" type="XML" />
+		</core:ExtensionPoint>
+		<Button id="button4"></Button>
+	</Panel>
+
+	<Button id="button5"></Button>
+	<Button id="button6"></Button>
+
+	<!--
+		Top level EP99:
+		Known to Flex, special content should be created.
+		Initial-Insert-Index: _4_
+	-->
+	<core:ExtensionPoint name="EP99">
+		<core:Fragment id="nine_nine" fragmentName="testdata.customizing.customer.ext.Default" type="XML" />
+	</core:ExtensionPoint>
+
+	<!--
+		Top level Fragment:
+		Should result in a correct index-shifting of following ExtensionPoints
+	-->
+	<core:Fragment id="shifty" fragmentName="testdata.customizing.customer.ext.Custom" type="XML" />
+
+	<Button id="button7"></Button>
+
+	<!--
+		Top level EP23:
+		Not known to Flex, default content should be created.
+		Initial-Insert-Index: _7_
+	-->
+	<core:ExtensionPoint name="EP23">
+		<core:Fragment id="tn1" fragmentName="testdata.customizing.customer.ext.Custom" type="XML" />
+	</core:ExtensionPoint>
+
+	<!--
+		Table binding will be created during Controller onInit
+		The column template is taken from the default content of an extension point.
+	-->
+	<Table id="myTable"
+		inset="false">
+		<columns>
+			<Column
+				width="12em">
+				<Text text="Product" />
+			</Column>
+		</columns>
+	</Table>
+
+	<!-- Top Level EP -->
+	<core:ExtensionPoint name="EPTable">
+		<ColumnListItem id="myListItem">
+			<cells>
+				<Text text="{ProductName}" />
+			</cells>
+		</ColumnListItem>
+	</core:ExtensionPoint>
+
+	<!-- EP contains EP -->
+	<core:ExtensionPoint name="EPinEPRoot">
+		<Button id="ButtonInRootEP"></Button>
+		<!-- Nested level EP -->
+		<core:ExtensionPoint name="EPinEPChild">
+			<Button id="EPinEPButton"></Button>
+			<Button id="EPinEPButton2"></Button>
+			<Button id="EPinEPButton3"></Button>
+			<!-- Nested level EP -->
+			<core:ExtensionPoint name="EPinEPChild3">
+				<Button id="EPinEPButtonDeepNesting"></Button>
+				<Button id="EPinEPButtonDeepNesting2"></Button>
+			</core:ExtensionPoint>
+		</core:ExtensionPoint>
+		<Button id="ButtonInRootEP2"></Button>
+		<Button id="ButtonInRootEP3"></Button>
+		<!-- Nested level EP -->
+		<core:ExtensionPoint name="EPinEPChild2">
+			<Button id="EPinEPButton4"></Button>
+		</core:ExtensionPoint>
+		<Button id="ButtonInRootEP4"></Button>
+	</core:ExtensionPoint>
+
+	<!-- Top Level EP: Fragment contains an ExtensionPoint as root node in EP -->
+	<core:ExtensionPoint name="EPinRootFragment">
+		<core:Fragment id="EPinEPRootFragment" fragmentName="testdata.customizing.customer.ext.EPRoot" type="XML" />
+	</core:ExtensionPoint>
+
+	<!-- Fragment contains an ExtensionPoint as root node -->
+	<core:Fragment id="EPRootFragment" fragmentName="testdata.customizing.customer.ext.EPRoot" type="XML" />
+
+	<!-- Fragment contains another Fragment with an ExtensionPoint -->
+	<core:Fragment id="NestingFragment" fragmentName="testdata.customizing.customer.ext.NestingFragment" type="XML" />
+
+	<!-- Fragment with EP in binding template-->
+	<core:Fragment id="EPinBinding" fragmentName="testdata.customizing.customer.ext.EPinBinding" type="XML" />
+
+	<!-- nested View containing EPs in binding template -->
+	<mvc:XMLView id="EPinBinding_in_nestedView" viewName="testdata.customizing.customer.ext.EPinBinding" />
+</mvc:View>

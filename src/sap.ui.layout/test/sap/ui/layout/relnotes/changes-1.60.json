@@ -1,0 +1,123 @@
+{
+  "1.60.0": {
+    "date": "August 2018",
+    "notes": [
+      {
+        "id": "7e8495a25b1f7193b05f054301e55c934d63a3b2",
+        "type": "FIX",
+        "text": "sap.ui.layout.HorizontalLayout: visual tests fixed for mobile device",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880469539"
+          }
+        ]
+      },
+      {
+        "id": "45890356f8b98112aa79ec67fed796a100754507",
+        "type": "FIX",
+        "text": "ResponsiveGridLayout: Form cells must have overflow hidden",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880503047"
+          }
+        ]
+      },
+      {
+        "id": "cea62422cec6680c6501c6c4211eff10054e2f21",
+        "type": "FIX",
+        "text": "sap.ui.layout - Flexibility: Check actions based on form layout",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880536682"
+          }
+        ]
+      },
+      {
+        "id": "d4e6ac9540c723ddf158f017a8093ee6ecb4599f",
+        "type": "FIX",
+        "text": "HideSimpleForm change handler doesn't perform revert after restart",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880498309"
+          }
+        ]
+      },
+      {
+        "id": "48b6b61f57a02d0c06249f662ebf80dc3cb7ee7c",
+        "type": "FIX",
+        "text": "AlignedFlowLayout: Accessiblity issue fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870364846"
+          }
+        ]
+      },
+      {
+        "id": "90f927dab31c501f883e6aaac3d31fba91d226ef",
+        "type": "FIX",
+        "text": "sap.ui.layout.ResponsiveSplitter minSize property is now working correctly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870320649"
+          }
+        ]
+      },
+      {
+        "id": "318026eb4982f11bda3add5fcfdef998ea124519",
+        "type": "FEATURE",
+        "text": "sap.ui.layout.cssgrid.CSSGrid: New Grid control implemented",
+        "references": []
+      },
+      {
+        "id": "0f26881ed1a05db416564b658b2e37ca0fa71f8d",
+        "type": "FIX",
+        "text": "sap.ui.layout.Grid: Samples CSS affecting the whole DemoKit",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880458601"
+          }
+        ]
+      },
+      {
+        "id": "0c9562ed2ffa050124dc143c1dec7074e87d8381",
+        "type": "FIX",
+        "text": "ColumnLayout: Fields not wrapped",
+        "references": []
+      },
+      {
+        "id": "a404956296368f8c94ec7720877c959cdccb5f4b",
+        "type": "FIX",
+        "text": "sap.ui.layout.SplitPane: order of layoutData and content no longer matters",
+        "references": [
+          {
+            "type": "GitHub",
+            "reference": "2226"
+          },
+          {
+            "type": "BCP",
+            "reference": "1880578498"
+          }
+        ]
+      },
+      {
+        "id": "b15e8812bbee73d997634db223f33c8ca7a18c7b",
+        "type": "FIX",
+        "text": "sap.ui.layout.cssgrid.GridItemLayoutData: Now works with attribute bindings",
+        "references": []
+      },
+      {
+        "id": "0bab94f364c2be988f941c017081874626cba9ce",
+        "type": "FIX",
+        "text": "sap.ui.layout.VerticalLayout: Minor QUnit fix",
+        "references": []
+      }
+    ]
+  }
+}

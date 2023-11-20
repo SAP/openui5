@@ -1,0 +1,15 @@
+<core:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core"
+>
+	<MultiComboBox
+		selectedKeys="{value}"
+		width="100%"
+		selectionFinish="_onSelectionFinish"
+		items="{config/items}"
+	>
+		<items>
+			<core:ListItem key="{key}" text="{= ${title} || ${key}}" additionalText="{description}"/>
+		</items>
+	</MultiComboBox>
+</core:FragmentDefinition>

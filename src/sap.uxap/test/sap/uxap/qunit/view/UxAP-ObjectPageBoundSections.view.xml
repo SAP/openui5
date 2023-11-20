@@ -1,0 +1,76 @@
+<mvc:View
+	xmlns="sap.m"
+	xmlns:u="sap.uxap"
+	xmlns:l="sap.ui.layout"
+	xmlns:f="sap.ui.layout.form"
+	xmlns:mvc="sap.ui.core.mvc">
+	<u:ObjectPageLayout 
+		id="PartProfileObjectPage" 
+		enableLazyLoading="false" 
+		showAnchorBarPopover="false" 
+		alwaysShowContentHeader="true"
+		flexEnabled="true"
+		upperCaseAnchorBar="false"
+		selectedSection="testSection1">
+		
+		<u:sections>
+			<u:ObjectPageSection 
+				id="testSection1"
+				title="{
+					path : 'ProjectCount',
+					formatter : '.formatProjectSectionTitle'
+				}"
+				subSections="{PartProfileProjectSet}"
+				titleUppercase="false">
+				
+				<u:subSections>
+					
+
+
+					<u:ObjectPageSubSection>
+						<u:blocks>
+							<l:Grid defaultSpan="XL12 L12 M12 S12">
+								<Title
+									level="H1"
+									text="{ProjectName}"
+									class="sapUiTinyMarginBottom"/>
+								<f:SimpleForm
+										editable="false"
+										layout="ResponsiveGridLayout"
+										labelSpanXL="12"
+										labelSpanL="12"
+										labelSpanM="12"
+										labelSpanS="12">
+										<Label text="{i18n>TXT_PART_OBJECT_PAGE_DEGREE_OF_MATURITY}"/>
+									</f:SimpleForm>
+							</l:Grid>
+						</u:blocks>
+					</u:ObjectPageSubSection>
+
+
+
+				</u:subSections>
+			</u:ObjectPageSection>
+
+			<u:ObjectPageSection
+				id="testSection2"
+				titleUppercase="false">
+				<u:subSections>
+					
+					<u:ObjectPageSubSection>
+						<u:blocks>
+							<l:Grid defaultSpan="XL12 L12 M12 S12">
+								<Title
+									level="H1"
+									text="test"
+									class="sapUiTinyMarginBottom"/>
+							</l:Grid>
+						</u:blocks>
+					</u:ObjectPageSubSection>
+
+				</u:subSections>
+			</u:ObjectPageSection>
+			
+		</u:sections>
+	</u:ObjectPageLayout>
+</mvc:View>

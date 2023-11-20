@@ -1,0 +1,83 @@
+<core:FragmentDefinition
+		xmlns="sap.m"
+		xmlns:form="sap.ui.layout.form"
+		xmlns:core="sap.ui.core"
+>
+	<Dialog title="{i18n>BASE_EDITOR.ICON.SETTINGS_DIALOG_TITLE}"
+		verticalScrolling="true"
+		resizable="false"
+		contentHeight="8rem"
+		contentWidth="25rem"
+		titleAlignment="Center"
+	>
+		<content>
+			<VBox>
+				<form:SimpleForm
+					editable="true" layout="ResponsiveGridLayout" adjustLabelSpan="false" singleContainerFullSize="true"
+					labelSpanXL="4" labelSpanL="4" labelSpanM="4" labelSpanS="4"
+					emptySpanXL="0" emptySpanL="0" emptySpanM="0" emptySpanS="0"
+				>
+					<form:content>
+						<Label
+							text="{i18n>BASE_EDITOR.ICON.SETTINGS_DIALOG_SHAPE_LABEL}">
+						</Label>
+						<Select
+							selectedKey="{data>/shape}"
+							tooltip="{i18n>BASE_EDITOR.ICON.SELECTION_SHAPE}"
+							items="{settings>/shapes}"
+						>
+							<core:Item key="{settings>key}" text="{settings>text}" />
+						</Select>
+						<Label
+							text="Alt"
+							visible="{settings>/altVisible}">
+						</Label>
+						<Input
+							value="{data>/alt}"
+							visible="{settings>/altVisible}"
+							tooltip="{i18n>BASE_EDITOR.ICON.INPUT_ALT}"/>
+						<Label
+							text="{i18n>BASE_EDITOR.ICON.SETTINGS_DIALOG_BACKGROUNDCOLOR_LABEL}"
+							visible="{settings>/backgroundColorVisible}"
+						/>
+						<Input
+							type="Text"
+							tooltip="{i18n>BASE_EDITOR.ICON.INPUT_BACKGROUNDCOLOR}"
+							value="{data>/backgroundColor}"
+							visible="{settings>/backgroundColorVisible}"
+							showValueHelp="true"
+							valueHelpRequest="_openColorPickerPopup"
+						/>
+						<Label
+							text="{i18n>BASE_EDITOR.ICON.SETTINGS_DIALOG_COLOR_LABEL}"
+							visible="{settings>/colorVisible}"
+						/>
+						<Input
+							type="Text"
+							tooltip="{i18n>BASE_EDITOR.ICON.INPUT_COLOR}"
+							value="{data>/color}"
+							visible="{settings>/colorVisible}"
+							showValueHelp="true"
+							valueHelpRequest="_openColorPickerPopup"
+						/>
+					</form:content>
+				</form:SimpleForm>
+			</VBox>
+		</content>
+
+		<beginButton>
+			<Button
+				text="{i18n>BASE_EDITOR.JSON.SAVE}"
+				press="_onSettingsSave"
+				type="Emphasized"
+			/>
+		</beginButton>
+		<endButton>
+			<Button
+				text="{i18n>BASE_EDITOR.JSON.CANCEL}"
+				type="Transparent"
+				press="_onSettingsCancel"
+			/>
+		</endButton>
+	</Dialog>
+</core:FragmentDefinition>

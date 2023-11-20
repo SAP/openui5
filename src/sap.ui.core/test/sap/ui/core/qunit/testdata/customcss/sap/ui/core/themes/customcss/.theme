@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<theme xmlns="http://www.sap.com/sap.ui.library.xsd" >
+
+	<name>customcss</name>
+	<vendor>SAP SE</vendor>
+	<copyright>Insert Copyright here</copyright>
+	<version>3.2.1</version>
+
+	<documentation>SAPUI5 customcss test theme library</documentation>
+
+</theme>

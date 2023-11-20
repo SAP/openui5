@@ -4,6 +4,8 @@
 
 /**
  * FEATURE TO INCREASE DEVELOPMENT EXPERIENCE! NO PRODUCTIVE USAGE ALLOWED!
+ * @fileoverview
+ * @deprecated As of version 1.120
  */
 (function() {
 	"use strict";
@@ -15,11 +17,21 @@
 	function defineLessSupport() {
 
 		// Provides class sap.ui.core.plugin.LessSupport
-		sap.ui.define('sap/ui/core/plugin/LessSupport', ['jquery.sap.global', 'sap/ui/core/Core', 'sap/ui/core/ThemeCheck'],
-			function(jQuery, Core, ThemeCheck) {
+		sap.ui.define('sap/ui/core/plugin/LessSupport', [
+			'sap/ui/thirdparty/jquery',
+			'sap/ui/core/theming/ThemeManager',
+			'sap/ui/core/theming/ThemeHelper',
+			'sap/ui/core/Theming',
+			'sap/base/config',
+			'sap/base/Log',
+			'sap/base/util/syncFetch',
+			'sap/ui/core/Core' // provides sap.ui.getCore()
+		], function(jQuery, ThemeManager, ThemeHelper, Theming, BaseConfig, Log, syncFetch) {
 
 			var LESS_FILENAME = "library.source";
 			var CSS_FILENAME = "library";
+			var fnOrigIncludeLibraryTheme;
+			var fnOrigApplyTheme;
 
 			/**
 			 * Creates an instance of the class <code>sap.ui.core.plugin.LessSupport</code>
@@ -46,20 +58,18 @@
 			 */
 			LessSupport.prototype.startPlugin = function(oCore, bOnInit) {
 
-				jQuery.sap.log.info("Starting LessSupport plugin.");
-				jQuery.sap.log.warning("  NOT FOR PRODUCTIVE USAGE! LessSupport is an experimental feature which might change in future!");
+				Log.info("Starting LessSupport plugin.");
+				Log.warning("  NOT FOR PRODUCTIVE USAGE! LessSupport is an experimental feature which might change in future!");
 
 				// get the URI parameters
-				var oUriParams = jQuery.sap.getUriParameters();
-				var sNoLess = oUriParams.get("sap-ui-xx-noless");
-				if (sNoLess) {
-					sNoLess = sNoLess.toLowerCase();
-				}
+				var bNoLess = BaseConfig.get({name: "sapUiXxNoless", type: BaseConfig.Type.Boolean, defaultValue: true, external: true});
+
+				this.oCore = oCore;
 
 				// LessSupport is disabled for the testrunner
 				try {
-					if (sNoLess !== "false" && (window.top.JsUnit || (window.sap.ui.test && window.sap.ui.test.qunit))) {
-						jQuery.sap.log.info("  LessSupport has been deactivated for JSUnit Testrunner or QUnit.");
+					if (!bNoLess && (window.top.JsUnit || (window.sap.ui.test && window.sap.ui.test.qunit))) {
+						Log.info("  LessSupport has been deactivated for JSUnit Testrunner or QUnit.");
 						return;
 					}
 				} catch (oExp) {
@@ -68,11 +78,11 @@
 				}
 
 				// check the URI parameters to disable LessSupport
-				if (sNoLess && sNoLess !== "false") {
-					jQuery.sap.log.info("  LessSupport has been deactivated by URL parameter.");
+				if (bNoLess) {
+					Log.info("  LessSupport has been deactivated by URL parameter.");
 					return;
 				} else {
-					jQuery.sap.log.info("  LessSupport can be deactivated by adding the following parameter to your URL: \"sap-ui-xx-noless=X\".");
+					Log.info("  LessSupport can be deactivated by adding the following parameter to your URL: \"sap-ui-xx-noless=X\".");
 				}
 
 				// configure LESS (development mode + error handling)
@@ -88,15 +98,16 @@
 					}
 				};
 
-				// include LESS (AMD fix is done in jQuery.sap.global)
-				jQuery.sap.require("sap.ui.thirdparty.less");
+				// include LESS
+				sap.ui.requireSync("sap/ui/thirdparty/less");
 
-				this.oCore = oCore;
 				this.bActive = true;
 
 				// overwrite the includeLibraryTheme/applyTheme function to inject LESS
-				this.oCore.includeLibraryTheme = jQuery.proxy(this.includeLibraryTheme, this);
-				this.oCore.applyTheme = jQuery.proxy(this.applyTheme, this);
+				fnOrigIncludeLibraryTheme = ThemeManager.includeLibraryTheme;
+				fnOrigApplyTheme = oCore.applyTheme;
+				ThemeManager.includeLibraryTheme = this.includeLibraryTheme.bind(this);
+				oCore.applyTheme = this.applyTheme.bind(this);
 
 				// update the themes (only when LESS files are newer than the CSS files)
 				var that = this, bUseLess = false;
@@ -120,9 +131,9 @@
 					var ok = true;
 					var check;
 					for (var i = 0; i < aLibs.length; i++) {
-						check = ThemeCheck.checkStyle("less:" + aLibs[i], true);
+						check = ThemeHelper.checkAndRemoveStyle({ prefix: "less:", id: aLibs[i] });
 						if (check) {
-							jQuery.sap.byId("sap-ui-theme-" + aLibs[i]).attr("data-sap-ui-ready", "true");
+							jQuery(document.getElementById("sap-ui-theme-" + aLibs[i])).attr("data-sap-ui-ready", "true");
 						}
 						ok = ok && check;
 					}
@@ -130,19 +141,21 @@
 					counter++;
 					if (counter > 100) {
 						ok = true;
-						jQuery.sap.log.warning("LessSupport: Max theme check cycles reached.");
+						Log.warning("LessSupport: Max theme check cycles reached.");
 					}
 
 					if (ok) {
-						ThemeCheck.themeLoaded = true;
-						jQuery.sap.delayedCall(0, oCore, "fireThemeChanged", [{theme: oCore.sTheme}]);
+						ThemeManager.themeLoaded = true;
+						setTimeout(function () {
+							ThemeManager.fireThemeApplied({theme: Theming.getTheme()});
+						}, 0);
 					} else {
-						that.iCheckThemeAppliedTimeout = jQuery.sap.delayedCall(100, null, checkThemeApplied);
+						that.iCheckThemeAppliedTimeout = setTimeout(checkThemeApplied, 100);
 					}
 				}
 
 				if (bUseLess) {
-					this.iCheckThemeAppliedTimeout = jQuery.sap.delayedCall(100, null, checkThemeApplied);
+					this.iCheckThemeAppliedTimeout = setTimeout(checkThemeApplied, 100);
 				}
 
 			};
@@ -152,21 +165,19 @@
 			 * @public
 			 */
 			LessSupport.prototype.stopPlugin = function() {
-				jQuery.sap.log.info("Stopping LessSupport plugin.");
+				Log.info("Stopping LessSupport plugin.");
 				if (this.bActive) {
 					// clear delayed call for theme-check
-					jQuery.sap.delayedCall(this.iCheckThemeAppliedTimeout);
+					clearTimeout(this.iCheckThemeAppliedTimeout);
 					delete this.iCheckThemeAppliedTimeout;
 					// remove the content of the LESS style element
 					jQuery("link[id^=sap-ui-theme-]").each(function() {
 						var sLibName = this.id.substr(13); // length of "sap-ui-theme-"
-						jQuery.sap.byId("less:" + sLibName).remove();
+						jQuery(document.getElementById("less:" + sLibName)).remove();
 					});
 					// remove the hooks from the Core
-					delete this.oCore.includeLibraryTheme;
-					delete this.oCore.applyTheme;
-					// release the Core
-					this.oCore = null;
+					ThemeManager.includeLibraryTheme = fnOrigIncludeLibraryTheme;
+					this.oCore.applyTheme = fnOrigApplyTheme;
 				}
 			};
 
@@ -210,7 +221,7 @@
 				if ((pos = sLibName.indexOf("-[")) > 0) { // assumes that "-[" does not occur as part of a library name
 					sLibName = sLibName.substr(0, pos);
 				}
-				var sBaseUrl = this.oCore._getThemePath(sLibName, this.oCore.sTheme);
+				var sBaseUrl = ThemeManager._getThemePath(sLibName, Theming.getTheme());
 
 				// check if the less file of the current theme is more up-to-date than the css file
 				// or if the last modified of the less file is 0 (no last modified) we assume that it is newer
@@ -219,7 +230,7 @@
 				var bUseLess = (iLessLastModified == 0 && iCssLastModified > 0) || iLessLastModified > iCssLastModified;
 
 				if (!bUseLess) {
-					var sBaseThemeUrl = this.oCore._getThemePath(sLibName, "base");
+					var sBaseThemeUrl = ThemeManager._getThemePath(sLibName, "base");
 
 					// also check if the less file of the base theme is more up-to-date than the css file
 					// or if the last modified of the less file is 0 (no last modified) we assume that it is newer
@@ -231,7 +242,7 @@
 				var sFileName = (bUseLess) ? LESS_FILENAME : CSS_FILENAME;
 
 				// info log
-				jQuery.sap.log.debug("LessSupport.updateLink: " + sBaseUrl + sFileName + ": " + (bUseLess ? "LESS" : "CSS"));
+				Log.debug("LessSupport.updateLink: " + sBaseUrl + sFileName + ": " + (bUseLess ? "LESS" : "CSS"));
 
 				// use the CSS file when the CSS file is newer or equal!
 				if (!bUseLess) {
@@ -272,23 +283,24 @@
 			 * @private
 			 */
 			LessSupport.prototype.getLastModified = function(sUrl) {
-
 				// HEAD request to retrieve the last modified header
 				var iLastModified;
-				jQuery.ajax({
-					url: sUrl,
-					type: "HEAD",
-					async: false,
-					success : function(data, textStatus, xhr) {
-						var sLastModified = xhr.getResponseHeader("Last-Modified");
-						iLastModified = sLastModified ? Date.parse(sLastModified) : 0;
-					},
-					error : function(xhr, textStatus, error) {
-						iLastModified = -1;
+				try {
+					var response = syncFetch(sUrl, {
+						method: "HEAD"
+					});
+
+					if (response.ok) {
+						var sLastModified = response.headers.get("Last-Modified");
+							iLastModified = sLastModified ? Date.parse(sLastModified) : 0;
+					} else {
+						throw Error("HTTP status error: " + response.status);
 					}
-				});
+				} catch (error) {
+					iLastModified = -1;
+				}
 				// convert the string into a timestamp or return the -1 value
-				jQuery.sap.log.debug("CSS/LESS head-check: " + sUrl + "; last-modified: " + iLastModified);
+				Log.debug("CSS/LESS head-check: " + sUrl + "; last-modified: " + iLastModified);
 				return iLastModified;
 
 			};
@@ -302,7 +314,7 @@
 			 */
 			LessSupport.prototype.applyTheme = function(sThemeName, sThemeBaseUrl) {
 				// execute the default behavior (referenced via global name as the local 'Core' only exposes the public API)
-				sap.ui.core.Core.prototype.applyTheme.apply(this.oCore, arguments);
+				fnOrigApplyTheme.call(ThemeManager, sThemeName, sThemeBaseUrl);
 				// update the created links for less support
 				var that = this, bUseLess = false;
 				jQuery("link[id^=sap-ui-theme-]").each(function() {
@@ -320,7 +332,7 @@
 			 */
 			LessSupport.prototype.includeLibraryTheme = function(sLibName) {
 				// execute the default behavior (referenced via global name as the local 'Core' only exposes the public API)
-				sap.ui.core.Core.prototype.includeLibraryTheme.apply(this.oCore, arguments);
+				fnOrigIncludeLibraryTheme.apply(ThemeManager, arguments);
 				// initialize the created link for less support
 				var that = this, bUseLess = false;
 				jQuery("link[id='sap-ui-theme-" + sLibName + "']").each(function() {
@@ -356,7 +368,7 @@
 					if (iIndex >= 0) {
 						window.less.sheets.splice(iIndex, 1);
 						// clear the content of the LESS style element
-						jQuery.sap.byId("less:" + sLibName).html("");
+						jQuery(document.getElementById("less:" + sLibName)).html("");
 					}
 				}
 			};
@@ -461,7 +473,7 @@
 							// this.currentFileInfo.rootFilename is one of the stylesheets in less.sheets
 							var sLibName = mLessHrefToLib[this.currentFileInfo.rootFilename]; // get lib name from map
 							if (!sLibName) {
-								jQuery.sap.log.warning("LessSupport: could not find libary (" + this.currentFileInfo.rootFilename + ")");
+								Log.warning("LessSupport: could not find libary (" + this.currentFileInfo.rootFilename + ")");
 							}
 							var mVariables = mLibVariables[sLibName]; // get library-parameters map
 							if (!mVariables) {
@@ -503,9 +515,7 @@
 			 */
 			LessSupport.refresh = function() {
 				oThis.refreshLess(true);
-				if (oThis.oCore.oThemeCheck) {
-					oThis.oCore.oThemeCheck.fireThemeChangedEvent(false);
-				}
+				ThemeManager.checkThemeApplied();
 			};
 
 			return LessSupport;

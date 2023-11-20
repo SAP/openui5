@@ -20,18 +20,18 @@
 }
 
 /* Carousel controls: HUD */
-.sapMCrslHud a {
+.sapMCrslHud .sapMCrslArrow {
 	opacity: 0.5;
 	box-shadow: @sapUiShadowLevel1;
 }
 
-.sapMCrsl .sapMCrslHud a:hover,
-.sapMCrsl .sapMCrslHud a:focus {
+.sapMCrsl .sapMCrslHud .sapMCrslArrow:hover,
+.sapMCrsl .sapMCrslHud .sapMCrslArrow:focus {
 	box-shadow: @sapUiShadowLevel1;
 	border: 1px solid @sapUiButtonBorderColor;
 }
 
-.sapMCrsl .sapMCrslHud a:active {
+.sapMCrsl .sapMCrslHud .sapMCrslArrow:active {
 	box-shadow: @sapUiShadowLevel1;
 }
 
@@ -67,31 +67,6 @@ html.sap-desktop .sapMCrslHud .sapMCrslNext:focus {
 		bottom: -0.125rem;
 		left: -0.125rem;
 		pointer-events: none;
-		border: 1px dotted @sapUiContentFocusColor;
-	}
-}
-
-html[data-sap-ui-browser^='ie'].sap-desktop .sapMCrslPrev:focus .sapUiIcon,
-html[data-sap-ui-browser^='ie'].sap-desktop .sapMCrslNext:focus .sapUiIcon,
-html[data-sap-ui-browser^='ie'].sap-desktop .sapMCrslPrev .sapUiIcon:focus,
-html[data-sap-ui-browser^='ie'].sap-desktop .sapMCrslNext .sapUiIcon:focus {
-  	&::before {
-		position: absolute;
-		padding-top: 0.425rem;
-		top: -0.125rem;
-		right: -0.125rem;
-		bottom: -0.125rem;
-		left: -0.125rem;
-		border: 1px solid @sapUiContentContrastFocusColor;
-	}
-
-  	&::after {
-		content: "";
-		position: absolute;
-		top: -0.125rem;
-		right: -0.125rem;
-		bottom: -0.125rem;
-		left: -0.125rem;
 		border: 1px dotted @sapUiContentFocusColor;
 	}
 }

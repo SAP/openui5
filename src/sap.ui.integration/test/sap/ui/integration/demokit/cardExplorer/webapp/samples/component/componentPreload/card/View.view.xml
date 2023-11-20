@@ -1,0 +1,9 @@
+<mvc:View
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m"
+	width="100%"
+	displayBlock="true"
+	controllerName="my.component.sample.componentPreload.Main">
+
+	<Image id="img" width="100%"></Image>
+</mvc:View>

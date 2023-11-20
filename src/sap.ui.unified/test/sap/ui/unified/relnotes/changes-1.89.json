@@ -1,0 +1,67 @@
+{
+  "1.89.0": {
+    "date": "April 2021",
+    "notes": [
+      {
+        "id": "c9c3fa93474688dea473fb09668a8d211f2c899b",
+        "type": "FEATURE",
+        "text": " Implementation of empty-field indicator behavior"
+      },
+      {
+        "id": "f8f0de363d5c0fcaf3331faad37def633627c790",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: displayDate shows the given date always in the first rendered month",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170072313"
+          }
+        ]
+      },
+      {
+        "id": "054a1ee92b6f126b3d3d39a9b1dac2b475aedf13",
+        "type": "FIX",
+        "text": " sap.ui.unified.calendar.Month: does not apply focus when start date is chosen",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400002126972021"
+          }
+        ]
+      },
+      {
+        "id": "cb1ad571b623f56687b694632d172eccec555f9d",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: Remove label in the year Button",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180120741"
+          }
+        ]
+      },
+      {
+        "id": "b872fe28334ce49bf7cb85dff99dc30e85a7dc7c",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: appointments are properly visualized",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500001398012021"
+          }
+        ]
+      },
+      {
+        "id": "4a80930e724af826083d85434bb536203e3ce56d",
+        "type": "FIX",
+        "text": " sap.ui.unified.YearPicker: We now render correct years in all timezones",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500001447892021"
+          }
+        ]
+      }
+    ]
+  }
+}

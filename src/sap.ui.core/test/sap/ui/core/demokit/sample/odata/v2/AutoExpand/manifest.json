@@ -1,0 +1,69 @@
+{
+	"_version" : "1.15.0",
+	"sap.app" : {
+		"ach" : "CA-UI5-COR",
+		"applicationVersion" : {
+			"version" : "${version}"
+		},
+		"dataSources" : {
+			"default" : {
+				"uri" : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/",
+				"type" : "OData",
+				"settings" : {
+					"odataVersion" : "2.0"
+				}
+			}
+		},
+		"description" : "{{sap.app.description}}",
+		"id" : "sap.ui.core.sample.odata.v2.AutoExpand",
+		"i18n" : "i18n/i18n.properties",
+		"title" : "{{sap.app.title}}",
+		"type" : "application"
+	},
+	"sap.ui" : {
+		"deviceTypes" : {
+			"desktop" : true,
+			"phone" : true,
+			"tablet" : true
+		},
+		"technology" : "UI5"
+	},
+	"sap.ui5" : {
+		"config" : {
+			"sample" : {
+				"files" : [
+					"Component.js",
+					"AutoExpand.view.xml",
+					"manifest.json"
+				]
+			}
+		},
+		"contentDensities" : {
+			"compact" : true,
+			"cozy" : true
+		},
+		"dependencies" : {
+			"libs" : {
+				"sap.m" : {}
+			},
+			"minUI5Version" : "1.67"
+		},
+		"handleValidation" : true,
+		"models" : {
+			"" : {
+				"dataSource" : "default",
+				"settings" : {}
+			}
+		},
+		"resources": {
+			"js": [{
+				"uri": "Sandbox.js"
+			}]
+		},
+		"rootView" : {
+			"async" : true,
+			"type" : "XML",
+			"viewName" : "sap.ui.core.sample.odata.v2.AutoExpand.AutoExpand"
+		}
+	}
+}

@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<title>UI Integration with Cards</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+	<script data-require-ui5-noinit src="webapp/scripts/boot.js"></script>
+
+	<link rel="stylesheet" href="./css/index.css">
+	<link rel="shortcut icon" type="image/x-icon" href="images/favicon.ico">
+	<link rel="icon" type="image/x-icon" href="images/favicon.ico">
+</head>
+
+<body>
+	<div class="page-wrapper">
+		<header class="header header-padding">
+			<div class="large-box-center">
+				<img src="images/icons/Logo/SAP.svg" class="logo" alt="UI5 logo">
+				<h2 class="h2-header dark-grey">UI Integration with Cards</h2>
+				<div class="sub-header light-grey">The new way for developers, key users, and end users to create and
+					share
+					business content in an easy, declarative, and consistent way.
+				</div>
+				<div class="buttons-wrapper">
+					<a href="./webapp/index.html" target="_self" class="button emphasized">Open Card Explorer</a>
+				</div>
+			</div>
+			<div class="blob-container">
+				<img src="images/big_blob-01.svg" class="blob" alt="">
+				<img src="images/big_blob-02.svg" class="blob" alt="">
+				<img src="images/big_blob-03.svg" class="blob" alt="">
+				<img src="images/big_blob-04.svg" class="blob" alt="">
+				<div class="image-background"></div>
+			</div>
+			<div class="section-divider"></div>
+		</header>
+
+		<section class="flex-center card-section">
+			<div class="flex-center  max-width flex-wrap space-between cards-content">
+				<div class="icon-box">
+					<div class="icon-wrapper pink">
+						<img class="icon" src="./images/icons/icon-code.svg" alt="Consistent">
+					</div>
+					<h2>Declarative</h2>
+					<p>Based on JSON schema. Design-time and runtime tooling support. Portable to any device and host
+						environment.
+						Rich feature set.</p>
+				</div>
+				<div class="icon-box">
+					<div class="icon-wrapper purple">
+						<img class="icon" src="./images/icons/icon-devices.svg" alt="Consistent">
+					</div>
+					<h2>Consistent</h2>
+					<p>SAP Fiori design language and customer theming. Accessible. All enterprise product
+						standards included.</p>
+				</div>
+				<div class="icon-box">
+					<div class="icon-wrapper dark-purple">
+						<img class="icon" src="./images/icons/icon-check.svg" alt="Consistent">
+					</div>
+					<h2>Easy To Consume</h2>
+					<p>UI5, Custom Element and Web Component support. Included JSON-based data consumption. Configurable
+						styling.
+						Speech and bot support.</p>
+				</div>
+			</div>
+		</section>
+		<section class="example-section">
+			<div>
+				<div class="coderows">
+					<div class="center">
+						<h2 class="example-title">Easy card integration in just two steps...</h2>
+						<div class="flex-center">
+							<div class="small-margin-right">
+								<div class="code-card">
+									<div class="step first">1</div>
+									<h3>Define a cards manifest.json file</h3>
+									<div class="description small">
+										With the manifest.json you define the cards header and content.
+										You can use static data to be displayed, or define a request object for your
+										data endpoint.
+										Translations for static texts on the card, such as the title and subtitle, can
+										be provided in separate files.
+									</div>
+								</div>
+								<div>
+									<!-- Code snippet indentation should be with spaces -->
+									<pre class="small fontWeightSmall">
+{
+  "sap.card": {
+    "type": "Object",
+    "header": {
+      "icon": {
+        "src": "../images/Sabine_Mayer.png"
+      },
+      "title": "Sabine Mayer",
+      "subTitle": "Executive Assistant"
+    },
+    "content": {
+      "groups": [
+        {
+          "title": "Contact Details",
+          "items": [
+            {
+              "label": "Mobile",
+              "value": "+001 6101 34869-0",
+              "actions": [
+                {
+                  "type": "Navigation",
+                  "parameters": {
+                    "url": "tel:+001 6101 34869-0"
+                  }
+                }
+              ]
+            },
+            {
+              "label": "Phone",
+              "value": "+001 4231 5424 0231",
+              "actions": [
+                {
+                  "type": "Navigation",
+                  "parameters": {
+                    "url": "tel:+001 4231 5424 0231"
+                  }
+                }
+              ]
+            },
+            {
+              "label": "Email",
+              "value": "sabine@cardadventure.com",
+              "actions": [
+                {
+                  "type": "Navigation",
+                  "parameters": {
+                    "url": "mailto:sabine@cardadventure.com"
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Company Details",
+          "items": [
+            {
+              "label": "Direct Manager",
+              "value": "Michael Adams",
+              "icon": {
+                "src": "../images/Michael_Adams.png"
+              }
+            },
+            {
+              "label": "Phone",
+              "value": "+001 4242 4242 0873",
+              "actions": [
+                {
+                  "type": "Navigation",
+                  "parameters": {
+                    "url": "tel:+001 4242 4242 0873"
+                  }
+                }
+              ]
+            },
+            {
+              "label": "Email",
+              "value": "madams@cardadventure.com",
+              "actions": [
+                {
+                  "type": "Navigation",
+                  "parameters": {
+                    "url": "mailto:madams@cardadventure.com"
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  }
+}
+</pre>
+								</div>
+							</div>
+							<div>
+								<div class="code-card">
+									<div class="step second">2</div>
+									<h3>Consume the card in your site</h3>
+									<div class="description small">
+										To enable any html page to consume cards, just use <br>
+										&lt;ui-integration-card&gt; tag which will be served from the provided
+										minimalistic sap-ui-integration.js bundle.
+									</div>
+								</div>
+								<div>
+									<!-- Code snippet indentation should be with spaces -->
+									<pre class="small fontWeightSmall">
+&lt;html&gt;
+  &lt;head&gt;
+    &lt;script
+      id="sap-ui-bootstrap"
+      src="https://ui5.sap.com/resources/sap-ui-integration.js"
+      data-sap-ui-compatVersion="edge"&gt;
+    &lt;/script&gt;
+  &lt;/head&gt;
+  &lt;body&gt;
+    ...
+    &lt;ui-integration-card
+       manifest="../manifest.json"&gt;
+    &lt;/ui-integration-card&gt;
+  &lt;/body&gt;
+&lt;/html&gt;
+</pre>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="center centered">
+						<img class="done big-top-margin" src="images/icons/icon-check-green.svg">
+						<h3 class="done-title">Done</h3>
+						<div class="description small big-bottom-margin">
+							<div>
+								Launch your page and see the result.
+							</div>
+						</div>
+						<div class="blob-container-small">
+							<img src="images/blob-01.svg" class="blob-small" alt="">
+							<img src="images/blob-02.svg" class="blob-small" alt="">
+							<img src="images/blob-03.svg" class="blob-small" alt="">
+						</div>
+						<div class="rendered-card">
+							<ui-integration-card style="text-align: left;"
+								manifest="./manifests/objectcard.manifest.json"></ui-integration-card>
+						</div>
+					</div>
+				</div>
+			</div>
+		</section>
+		<section class="compatibility-section">
+			<div class="compatibility medium-padding">
+				<div class="wrapper compatibility-flex-wrapper flex-wrap space-around-responsive">
+					<div class="compatibility-wrapper">
+						<div class="fixed-height light">
+							<h3 class="compatibility-h3">Get the insights</h3>
+							<h4 class="compatibility-h4">Learn. Explore. Design. Integrate.</h4>
+						</div>
+						<div class="description small" style="height:50px">
+							<a href="./webapp/index.html" target="_self" class="button emphasized"
+								style="width:200px;margin-top:1rem">
+								Card Explorer
+							</a>
+						</div>
+					</div>
+					<div class="compatibility-wrapper">
+						<div class="fixed-height light">
+							<h3 class="compatibility-h3">Get involved</h3>
+							<h4 class="compatibility-h4">Explore the source code and samples. Contribute. Report
+								issues.</h4>
+						</div>
+						<div class="description small" style="height:50px">
+							<a href="https://github.com/SAP/openui5/tree/master/src/sap.ui.integration" target="_blank"
+								class="button" style="width:200px;margin-top:1rem">OpenUI5
+								Project</a>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="compatibility-line"></div>
+			<div class="compatibility medium-padding">
+				<div class="wrapper compatibility-flex-wrapper flex-wrap space-around-responsive light">
+					<div class="compatibility-wrapper">
+						<span class="compatibility-header">Framework Compatibility</span>
+						<p>UI Integration Cards are framework-agnostic and can run with arbitrary HTML framework or page
+						</p>
+						<div class="image-wrapper">
+							<img class="icon-small" src="./images/icons/icon-html5.svg" alt="Vue Logo">
+							<img class="icon-small" src="./images/icons/icon-ui5.svg" alt="UI5 Logo">
+							<img class="icon-small" src="./images/icons/icon-angular.svg" alt="Angular Logo">
+							<img class="icon-small" src="./images/icons/icon-react.svg" alt="React Logo">
+							<img class="icon-small" src="./images/icons/icon-vue.svg" alt="Vue Logo">
+						</div>
+					</div>
+					<div class="compatibility-wrapper">
+						<span class="compatibility-header">Browser Compatibility</span>
+						<p>UI Integration Cards are supported on all modern browsers out of the box</p>
+						<div class="image-wrapper">
+							<img class="icon-small" src="./images/icons/icon-chrome.svg" alt="Chrome Logo">
+							<img class="icon-small" src="./images/icons/icon-firefox.svg" alt="Firefox Logo">
+							<img class="icon-small" src="./images/icons/icon-safari.svg" alt="Safari Logo">
+							<img class="icon-small" src="./images/icons/icon-opera.svg" alt="Opera Logo">
+						</div>
+					</div>
+				</div>
+			</div>
+		</section>
+		<footer class="large-padding footer">
+			<div class="footer-logo">
+				<img class="logo-small margin-bottom" src="./images/sap-logo.svg" alt="SAP Logo">
+			</div>
+			<div class="flex-center max-width flex-wrap space-around center-margin">
+				<div class="footer-content">
+					<h2>Community</h2>
+					<div class="links">
+						<a href="https://twitter.com/openui5" target="_blank">Twitter</a>
+						<a href="https://www.youtube.com/channel/UCOlLpeus2uAJhmxjKHHGTgA" target="_blank">YouTube</a>
+						<a href="https://openui5.slack.com/" target="_blank">Slack Channel</a>
+						<a href="https://github.com/SAP/openui5/tree/master/src/sap.ui.integration"
+							target="_blank">GitHub</a>
+					</div>
+				</div>
+				<div class="footer-content">
+					<h2>Docs</h2>
+					<div class="links">
+						<a href="./webapp/index.html#learn/overview">Documentation</a>
+						<a href="./webapp/index.html#exploreOverview/typesDeclarative">Explorer</a>
+						<a href="./webapp/index.html">FAQ</a>
+					</div>
+				</div>
+				<div class="footer-content">
+					<h2>Legal &amp; Privacy</h2>
+					<div class="links">
+						<a href="https://www.sap.com/about/legal/impressum.html" target="_blank">Legal Disclosure</a>
+						<a href="https://www.sap.com/about/legal/privacy.html" target="_blank">Privacy</a>
+					</div>
+				</div>
+				<div class="footer-content">
+					<h2>Contact Us</h2>
+					<div class="links">
+						<a href="https://github.com/SAP/openui5/issues" target="_blank">Report Issue</a>
+						<a href="mailto:openui5@sap.com">Contact Us</a>
+					</div>
+				</div>
+			</div>
+		</footer>
+	</div>
+</body>
+
+</html>

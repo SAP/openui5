@@ -3,47 +3,60 @@
 	xmlns:l="sap.ui.layout"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns:core="sap.ui.core"
-	xmlns:m="sap.m"
+	xmlns="sap.m"
 	height="100%">
-
 	<l:ResponsiveSplitter defaultPane="default">
-		<l:PaneContainer>
+		<l:PaneContainer resize=".onRootContainerResize">
 			<l:SplitPane requiredParentWidth="400" id="default">
-				<m:Panel headerText="Minimum parent width 400" height="100%">
-					<m:List headerText="Products" items="{ path: '/ProductCollection' }">
-						<m:StandardListItem title="{Name}" counter="{Quantity}"/>
-					</m:List>
-				</m:Panel>
+				<l:layoutData>
+					<l:SplitterLayoutData size="{sizes>/pane1}" />
+				</l:layoutData>
+				<Panel headerText="Minimum parent width 400" height="100%">
+					<Text text="LayoutData.size={sizes>/pane1}" />
+					<List headerText="Products" items="{ path: '/ProductCollection' }">
+						<StandardListItem title="{Name}" counter="{Quantity}" />
+					</List>
+				</Panel>
 			</l:SplitPane>
-			<l:PaneContainer orientation="Vertical">
-				<l:SplitPane  requiredParentWidth="600">
-					<m:Panel headerText="Minimum parent width 600">
-						<m:Select forceSelection="false" selectedKey="1239102" 
-							items="{
-								path: '/ProductCollection',
-								sorter: { path: 'Name' }
-							}">
-							<core:Item key="{ProductId}" text="{Name}" />
-						</m:Select>
-					</m:Panel>
+			<l:PaneContainer orientation="Vertical" resize=".onInnerContainerResize">
+				<l:SplitPane requiredParentWidth="600">
+					<l:layoutData>
+						<l:SplitterLayoutData size="{sizes>/pane2}" />
+					</l:layoutData>
+					<Panel headerText="Minimum parent width 600">
+						<VBox>
+							<Text text="LayoutData.size={sizes>/pane2}" />
+							<Select forceSelection="false" selectedKey="1239102"
+								items="{
+									path: '/ProductCollection',
+									sorter: { path: 'Name' }
+								}">
+								<core:Item key="{ProductId}" text="{Name}" />
+							</Select>
+						</VBox>
+					</Panel>
 				</l:SplitPane>
-				<l:SplitPane  requiredParentWidth="800">
-					<m:Page title="Minimum parent width 800">
-						<m:footer>
-							<m:OverflowToolbar id="otb3">
-								<m:Label text="Buttons:" />
-								<m:ToolbarSpacer />
-								<m:Button text="New" type="Transparent"/>
-								<m:Button text="Open" type="Transparent"/>
-								<m:Button text="Save" type="Transparent"/>
-								<m:Button text="Save as" type="Transparent"/>
-								<m:Button text="Cut" type="Transparent"/>
-								<m:Button text="Copy" type="Transparent"/>
-								<m:Button text="Paste" type="Transparent"/>
-								<m:Button text="Undo" type="Transparent"/>
-							</m:OverflowToolbar>
-						</m:footer>
-					</m:Page>
+				<l:SplitPane requiredParentWidth="800">
+					<l:layoutData>
+						<l:SplitterLayoutData size="{sizes>/pane3}" />
+					</l:layoutData>
+					<Page title="Minimum parent width 800">
+						<Text text="LayoutData.size={sizes>/pane3}" />
+						<footer>
+							<OverflowToolbar id="otb3">
+								<Label text="Buttons:" />
+								<ToolbarSpacer />
+								<Button text="New" type="Transparent" />
+								<Button text="Open" type="Transparent" />
+								<Button text="Save" type="Transparent" />
+								<Button text="Save as" type="Transparent" />
+								<Button text="Cut" type="Transparent" />
+								<Button text="Copy" type="Transparent" />
+								<Button text="Paste" type="Transparent" />
+								<Button text="Undo" type="Transparent" />
+							</OverflowToolbar>
+						</footer>
+					</Page>
 				</l:SplitPane>
 			</l:PaneContainer>
 		</l:PaneContainer>

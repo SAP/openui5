@@ -3,15 +3,19 @@
  */
 
 sap.ui.define([
-	"jquery.sap.global",
+	"sap/base/util/extend",
 	"sap/ui/test/_OpaLogger",
 	"sap/ui/test/_ParameterValidator",
 	"sap/ui/test/autowaiter/_autoWaiter",
-	"sap/ui/test/autowaiter/_autoWaiterLogCollector"
-], function ($, _OpaLogger, _ParameterValidator, _autoWaiter, _autoWaiterLogCollector) {
+	"sap/ui/test/_LogCollector"
+], function(extend, _OpaLogger, _ParameterValidator, _autoWaiter, _LogCollector) {
 	"use strict";
 
 	var oLogger = _OpaLogger.getLogger("sap.ui.test.autowaiter._autoWaiterAsync");
+	// collects logs created when _autoWaiter hasPending is called
+	// this includes only the final pending result logs without any intermediate advanced logs
+	// final result logs are recognized by a component name suffix "#hasPending"
+	var oLogCollector = _LogCollector.getInstance("^sap.ui.test.autowaiter.*#hasPending$");
 	var oConfigValidator = new _ParameterValidator({
 		errorPrefix: "sap.ui.test.autowaiter._autoWaiterAsync#extendConfig"
 	});
@@ -22,9 +26,9 @@ sap.ui.define([
 		timeout: 15000 // milliseconds
 	};
 
-	function extendConfig(oConfig) {
-		validateConfig(oConfig);
-		$.extend(config, oConfig);
+	function extendConfig(oNewConfig) {
+		validateConfig(oNewConfig);
+		extend(config, oNewConfig);
 		_autoWaiter.extendConfig(config);
 	}
 
@@ -38,7 +42,7 @@ sap.ui.define([
 		var pollStartTime = Date.now();
 		bWaitStarted = true;
 		oLogger.debug("Start polling to check for pending asynchronous work");
-		_autoWaiterLogCollector.start();
+		oLogCollector.start();
 		fnCheck();
 
 		function fnCheck() {
@@ -46,7 +50,7 @@ sap.ui.define([
 			if (pollTimeElapsed <= config.timeout) {
 				setTimeout(function() {
 					if (_autoWaiter.hasToWait()) {
-						sLastAutoWaiterLog = _autoWaiterLogCollector.getAndClearLog();
+						sLastAutoWaiterLog = oLogCollector.getAndClearLog();
 						fnCheck();
 					} else {
 						notifyCallback({log: "Polling finished successfully. There is no more pending asynchronous work for the moment"});
@@ -66,22 +70,19 @@ sap.ui.define([
 				fnCallback(mResult.error);
 			}
 			oLogger.debug(mResult.error || mResult.log);
-			_autoWaiterLogCollector.stop();
+			oLogCollector.destroy();
 		}
 	}
 
 	function validateConfig(oConfig) {
 		oConfigValidator.validate({
+			allowUnknownProperties: true,
 			inputToValidate: oConfig,
 			validationInfo: {
-				interval: "numeric",
-				timeout: "numeric"
+				interval: "positivenumeric",
+				timeout: "positivenumeric"
 			}
 		});
-
-		if (oConfig.timeout <= 0 || oConfig.interval <= 0) {
-			throw new Error("Invalid polling config: Timeout and interval should be greater than 0");
-		}
 	}
 
 	return {

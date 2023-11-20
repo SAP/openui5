@@ -1,0 +1,26 @@
+{
+	"sap.app": {
+		"id": "sap.ui.core.sample.gherkin.GherkinWithOPA5",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"config": {
+			"sample": {
+				"iframe": "GherkinTestRunner.html",
+				"stretch": true,
+				"files": [
+					"GherkinTestRunner.html",
+					"GherkinTestRunner.js",
+					"Requirements1.feature",
+					"Requirements2.feature",
+					"Steps.js",
+					"Website.html",
+					"WebsiteCode.js",
+					"manifest.json"
+				]
+			}
+		}
+	}
+}

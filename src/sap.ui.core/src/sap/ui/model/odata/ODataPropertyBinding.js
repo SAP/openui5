@@ -1,17 +1,25 @@
 /*!
  * ${copyright}
  */
-
+/*eslint-disable max-len */
 // Provides class sap.ui.model.odata.ODataPropertyBinding
-sap.ui.define(['jquery.sap.global', 'sap/ui/model/Context', 'sap/ui/model/ChangeReason', 'sap/ui/model/PropertyBinding', 'sap/ui/model/ChangeReason'],
-	function(jQuery, Context, ChangeReason, PropertyBinding) {
+sap.ui.define([
+	'./ODataMetaModel',
+	'sap/ui/model/Context',
+	'sap/ui/model/ChangeReason',
+	'sap/ui/model/PropertyBinding',
+	"sap/base/util/deepEqual",
+	'sap/ui/model/ChangeReason'
+],
+	function(ODataMetaModel, Context, ChangeReason, PropertyBinding, deepEqual) {
 	"use strict";
 
 
 	/**
-	 *
+	 * Do <strong>NOT</strong> call this private constructor, but rather use
+	 * {@link sap.ui.model.odata.v2.ODataModel#bindProperty} instead!
 	 * @class
-	 * Property binding implementation for oData format
+	 * Property binding implementation for OData format
 	 *
 	 * @param {sap.ui.model.Model} oModel
 	 * @param {string} sPath
@@ -28,8 +36,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Context', 'sap/ui/model/Change
 			PropertyBinding.apply(this, arguments);
 			this.bInitial = true;
 			this.oValue = this._getValue();
-			this.vOriginalValue;
+			this.vOriginalValue = undefined;
 			this.getDataState().setValue(this.oValue);
+			this.setIgnoreMessages(mParameters && mParameters.ignoreMessages);
+			this.bUseUndefinedIfUnresolved = mParameters && mParameters.useUndefinedIfUnresolved;
 		}
 
 	});
@@ -62,10 +72,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Context', 'sap/ui/model/Change
 	 * @return {object} the current value of the bound target
 	 */
 	ODataPropertyBinding.prototype._getValue = function(){
-		return this.oModel._getObject(this.sPath, this.oContext);
+		return this.oModel._getObject(this.sPath, this.oContext, /*bOriginalValue*/undefined,
+			this.bUseUndefinedIfUnresolved);
 	};
 
-	/**
+	/*
 	 * @see sap.ui.model.PropertyBinding.prototype.setValue
 	 */
 	ODataPropertyBinding.prototype.setValue = function(oValue){
@@ -73,7 +84,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Context', 'sap/ui/model/Change
 			return;
 		}
 
-		if (!jQuery.sap.equal(oValue, this.oValue) && this.oModel.setProperty(this.sPath, oValue, this.oContext, true)) {
+		if (!deepEqual(oValue, this.oValue) && this.oModel.setProperty(this.sPath, oValue, this.oContext, true)) {
 			this.oValue = oValue;
 
 			var oDataState = this.getDataState();
@@ -84,18 +95,23 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Context', 'sap/ui/model/Change
 
 
 	/**
-	 * Setter for context
+	 * Setter for context.
+	 *
+	 * @param {sap.ui.model.Context} oContext The context
 	 */
 	ODataPropertyBinding.prototype.setContext = function(oContext) {
-		if (oContext && oContext.isPreliminary()) {
+		var bForceUpdate,
+			oOldContext = this.oContext;
+
+		if (oContext && oContext.isPreliminary && oContext.isPreliminary()) {
 			return;
 		}
 
 		if (Context.hasChanged(this.oContext, oContext)) {
-			sap.ui.getCore().getMessageManager().removeMessages(this.getDataState().getControlMessages(), true);
 			this.oContext = oContext;
 			if (this.isRelative()) {
-				this.checkUpdate();
+				bForceUpdate = !!(oOldContext !== oContext && this.getDataState().getMessages().length);
+				this.checkUpdate(bForceUpdate);
 			}
 		}
 	};
@@ -104,11 +120,28 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Context', 'sap/ui/model/Change
 	 * Check whether this Binding would provide new values and in case it changed,
 	 * inform interested parties about this.
 	 *
-	 * @param {boolean} force no cache true/false: Default = false
-	 *
+	 * @param {boolean} [bForceUpdate=false]
+	 *   Whether an update should be forced regardless of the bindings state
 	 */
 	ODataPropertyBinding.prototype.checkUpdate = function(bForceUpdate){
+		var sCodeListTerm,
+			that = this;
+
 		if (this.bSuspended && !bForceUpdate) {
+			return;
+		}
+
+		sCodeListTerm = ODataMetaModel.getCodeListTerm(this.sPath);
+		if (sCodeListTerm) {
+			if (this.bInitial) {
+				this.oModel.getMetaModel().fetchCodeList(sCodeListTerm).then(function (mCodeList) {
+					that.oValue = mCodeList;
+					that._fireChange({reason: ChangeReason.Change});
+				}, function () {
+					// if the code list promise rejects the binding's value remains undefined; we
+					// rely on error logging in ODataMetaModel#fetchCodeList
+				});
+			}
 			return;
 		}
 
@@ -116,7 +149,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Context', 'sap/ui/model/Change
 		var bChanged = false;
 
 		var vOriginalValue = this.oModel.getOriginalProperty(this.sPath, this.oContext);
-		if (bForceUpdate || !jQuery.sap.equal(vOriginalValue, this.vOriginalValue)) {
+		if (bForceUpdate || !deepEqual(vOriginalValue, this.vOriginalValue)) {
 			this.vOriginalValue = vOriginalValue;
 
 			oDataState.setOriginalValue(vOriginalValue);
@@ -124,7 +157,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Context', 'sap/ui/model/Change
 		}
 
 		var oValue = this._getValue();
-		if (bForceUpdate || !jQuery.sap.equal(oValue, this.oValue)) {
+		if (bForceUpdate || !deepEqual(oValue, this.oValue)) {
 			this.oValue = oValue;
 
 			oDataState.setValue(this.oValue);
@@ -143,14 +176,27 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Context', 'sap/ui/model/Change
 	 * @private
 	 */
 	ODataPropertyBinding.prototype.checkDataState = function(mPaths) {
-		var sCanonicalPath = this.oModel.resolve(this.sPath, this.oContext, true);
+		var sCanonicalPath = this.oModel.resolve(this.sPath, this.oContext, true)
+			|| this.getResolvedPath();
 
-		if (!mPaths || sCanonicalPath && sCanonicalPath in mPaths) {
-			var oDataState = this.getDataState();
-			oDataState.setLaundering(!!mPaths && !!(sCanonicalPath in mPaths));
-			PropertyBinding.prototype.checkDataState.apply(this, arguments);
-			oDataState.setModelMessages(this.oModel.getMessagesByPath(sCanonicalPath));
-		}
+		this.getDataState().setLaundering(!!mPaths && !!(sCanonicalPath in mPaths));
+		PropertyBinding.prototype._checkDataState.call(this, sCanonicalPath, mPaths);
+	};
+
+	/**
+	 * Returns <code>true</code>, as this binding supports the feature of not propagating model
+	 * messages to the control.
+	 *
+	 * @returns {boolean} <code>true</code>
+	 *
+	 * @public
+	 * @see sap.ui.model.Binding#getIgnoreMessages
+	 * @see sap.ui.model.Binding#setIgnoreMessages
+	 * @since 1.82.0
+	 */
+	// @override sap.ui.model.Binding#supportsIgnoreMessages
+	ODataPropertyBinding.prototype.supportsIgnoreMessages = function () {
+		return true;
 	};
 
 	return ODataPropertyBinding;

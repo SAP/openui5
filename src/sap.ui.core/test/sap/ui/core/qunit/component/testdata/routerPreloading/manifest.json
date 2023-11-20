@@ -1,0 +1,34 @@
+{
+	"sap.app": {
+		"id": "sap.ui.test.routerPreloading"
+	},
+	"sap.ui5": {
+		"dependencies": {
+			"libs": {
+				"sap.ui.core": {},
+				"sap.m": {}
+			}
+		},
+		"rootView": {
+			"viewName": "sap.ui.test.routerPreloading.Main",
+			"type": "XML"
+		},
+		"routing": {
+			"config": {
+				"routerClass": "sap.m.routing.Router",
+				"async": true
+			},
+			"routes": [
+				{
+					"name": "firstRoute",
+					"pattern": "first/{firstMandatoryParameter}"
+				}
+			],
+			"targets": {
+				"myTarget": {
+					"viewType": "XML"
+				}
+			}
+		}
+	}
+}

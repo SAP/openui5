@@ -2,8 +2,10 @@
  * ${copyright}
  */
 sap.ui.define([
-	'sap/ui/rta/command/FlexCommand'
-], function(FlexCommand) {
+	"sap/ui/rta/command/FlexCommand"
+], function(
+	FlexCommand
+) {
 	"use strict";
 
 	/**
@@ -17,22 +19,23 @@ sap.ui.define([
 	 * @private
 	 * @since 1.46
 	 * @alias sap.ui.rta.command.Combine
-	 * @experimental Since 1.46. This class is experimental and provides only limited functionality. Also the API might be
-	 *							 changed in future.
 	 */
 	var Combine = FlexCommand.extend("sap.ui.rta.command.Combine", {
-		metadata : {
-			library : "sap.ui.rta",
-			properties : {
-				source : {
-					type : "any"
+		metadata: {
+			library: "sap.ui.rta",
+			properties: {
+				newElementId: {
+					type: "string"
 				},
-				combineFields : {
-					type : "any[]"
+				source: {
+					type: "any"
+				},
+				combineElements: {
+					type: "any[]"
 				}
 			},
-			associations : {},
-			events : {}
+			associations: {},
+			events: {}
 		}
 	});
 
@@ -41,17 +44,17 @@ sap.ui.define([
 	 */
 	Combine.prototype._getChangeSpecificData = function() {
 		var aFieldIds = [];
-		this.getCombineFields().forEach(function(oField) {
+		this.getCombineElements().forEach(function(oField) {
 			aFieldIds.push(oField.getId());
 		});
 		var mSpecificInfo = {
-				changeType : this.getChangeType(),
-				sourceControlId : this.getSource().getId(),
-				combineFieldIds : aFieldIds
+			newElementId: this.getNewElementId(),
+			changeType: this.getChangeType(),
+			sourceControlId: this.getSource().getId(),
+			combineElementIds: aFieldIds
 		};
 		return mSpecificInfo;
 	};
 
 	return Combine;
-
-}, /* bExport= */true);
+});

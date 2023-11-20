@@ -1,0 +1,64 @@
+<mvc:View
+		controllerName="sap.m.sample.inputs.Controller"
+		xmlns:mvc="sap.ui.core.mvc"
+		xmlns="sap.m"
+		xmlns:core="sap.ui.core"
+		height="100%">
+		<App>
+			<Page
+				showHeader="false"
+				id="page"
+				backgroundDesign="Solid">
+				<content>
+					<VBox>
+						<HBox alignItems="Center">
+							<Label width="150px" class="sapUiSmallMarginBeginEnd" labelFor="input" text="Input:"/>
+							<Input id="input" value="Some input" description="with description"/>
+						</HBox>
+						<HBox alignItems="Center">
+							<!-- The control below is labeled from within the controller -->
+							<Label id="labelMultiInput" width="150px" class="sapUiSmallMarginBeginEnd" text="MultiInput:"/>
+							<MultiInput id="multiInput" >
+								<tokens>
+									<Token text="Token 1" />
+									<Token text="Token 2" />
+								</tokens>
+							</MultiInput>
+						</HBox>
+						<HBox alignItems="Center">
+							<Label width="150px" class="sapUiSmallMarginBeginEnd" labelFor="comboBox" text="ComboBox:"/>
+							<ComboBox id="comboBox" selectedKey="key1">
+								<core:Item text="Item 1" key="key1" />
+								<core:Item text="Item 2" key="key2" />
+								<core:Item text="Item 3" key="key3" />
+							</ComboBox>
+						</HBox>
+						<HBox alignItems="Center">
+							<Label width="150px" class="sapUiSmallMarginBeginEnd" labelFor="multiComboBox" text="MultiComboBox:"/>
+							<MultiComboBox id="multiComboBox" selectedKeys="key1,key2">
+								<core:Item text="Item 1" key="key1" />
+								<core:Item text="Item 2" key="key2" />
+								<core:Item text="Item 3" key="key3" />
+							</MultiComboBox>
+						</HBox>
+						<HBox alignItems="Center">
+							<Label width="150px" class="sapUiSmallMarginBeginEnd" labelFor="slider" text="Slider:"/>
+							<Slider width="500px" id="slider" value="50" min="0" max="100" enableTickmarks="true"/>
+						</HBox>
+						<HBox alignItems="Center">
+							<Label width="150px" class="sapUiSmallMarginBeginEnd" labelFor="rangeSlider" text="RangeSlider:"/>
+							<RangeSlider width="500px" id="rangeSlider" value="20" value2="80" min="0" max="100" enableTickmarks="true"/>
+						</HBox>
+						<HBox alignItems="Center">
+							<Label width="150px" class="sapUiSmallMarginBeginEnd" labelFor="ratingIndicator" text="RatingIndicator:"/>
+							<RatingIndicator id="ratingIndicator" value="5" maxValue="10"/>
+						</HBox>
+						<HBox alignItems="Center">
+							<Label width="150px" class="sapUiSmallMarginBeginEnd" labelFor="textArea" text="TextArea:"/>
+							<TextArea id="textArea"/>
+						</HBox>
+					</VBox>
+				</content>
+			</Page>
+		</App>
+</mvc:View>

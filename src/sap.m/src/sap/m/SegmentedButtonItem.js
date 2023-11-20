@@ -27,7 +27,6 @@ sap.ui.define(['./library', 'sap/ui/core/Item', 'sap/m/Button', 'sap/ui/core/Cus
 		 * @public
 		 * @since 1.28
 		 * @alias sap.m.SegmentedButtonItem
-		 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 		 */
 		var SegmentedButtonItem = Item.extend("sap.m.SegmentedButtonItem", /** @lends sap.m.SegmentedButtonItem.prototype */ { metadata : {
 

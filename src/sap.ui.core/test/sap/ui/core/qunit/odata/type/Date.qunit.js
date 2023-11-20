@@ -1,13 +1,21 @@
 /*!
  *{copyright}
  */
-sap.ui.require([
-	"jquery.sap.global",
+sap.ui.define([
+	"sap/base/Log",
+	"sap/base/i18n/Formatting",
+	"sap/base/i18n/Localization",
+	"sap/ui/core/CalendarType",
+	"sap/ui/core/Control",
+	"sap/ui/core/date/UI5Date",
 	"sap/ui/core/format/DateFormat",
+	"sap/ui/model/FormatException",
+	"sap/ui/model/ParseException",
+	"sap/ui/model/ValidateException",
 	"sap/ui/model/odata/type/Date",
 	"sap/ui/model/odata/type/ODataType",
 	"sap/ui/test/TestUtils"
-], function (jQuery, DateFormat, DateType, ODataType, TestUtils) {
+], function(Log, Formatting, Localization, CalendarType, Control, UI5Date, DateFormat, FormatException, ParseException, ValidateException, DateType, ODataType, TestUtils) {
 	/*global QUnit */
 	/*eslint no-warning-comments: 0 */ //no ESLint warning for TODO list
 	"use strict";
@@ -21,19 +29,21 @@ sap.ui.require([
 	 */
 	function checkError(assert, oType, oValue, sReason, sAction) {
 		var fnExpectedException;
+
 		TestUtils.withNormalizedMessages(function () {
 			try {
 				if (sAction === "parseValue") {
-					fnExpectedException = sap.ui.model.ParseException;
+					fnExpectedException = ParseException;
 					oType[sAction](oValue, "string");
 				} else if (sAction === "validateValue") {
-					fnExpectedException = sap.ui.model.ValidateException;
+					fnExpectedException = ValidateException;
 					oType[sAction](oValue);
 				}
 				assert.ok(false);
 			} catch (e) {
 				assert.ok(e instanceof fnExpectedException, sReason + ": exception");
-				assert.strictEqual(e.message, "EnterDate Nov 27, 2014", sReason + ": message");
+				assert.strictEqual(e.message, "EnterDate Dec 31, " + UI5Date.getInstance().getFullYear(),
+					sReason + ": message");
 			}
 		});
 	}
@@ -41,17 +51,18 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.odata.type.Date", {
 		beforeEach : function () {
-			this.oLogMock = this.mock(jQuery.sap.log);
+			this.sDefaultCalendarType = Formatting.getCalendarType();
+			this.sDefaultLanguage = Localization.getLanguage();
+			this.oLogMock = this.mock(Log);
 			this.oLogMock.expects("warning").never();
 			this.oLogMock.expects("error").never();
-			sap.ui.getCore().getConfiguration().setLanguage("en-US");
+			Formatting.setCalendarType(CalendarType.Gregorian);
+			Localization.setLanguage("en-US");
 		},
 		afterEach : function () {
-			sap.ui.getCore().getConfiguration().setLanguage(this.sDefaultLanguage);
-		},
-
-		sDefaultLanguage : sap.ui.getCore().getConfiguration().getLanguage()
-
+			Formatting.setCalendarType(this.sDefaultCalendarType);
+			Localization.setLanguage(this.sDefaultLanguage);
+		}
 	});
 
 	//*********************************************************************************************
@@ -101,18 +112,30 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	[
-		{i : undefined, o : null},
-		{i : null, o : null},
-		{i : "foo", t : "any", o : "foo"},
-		{i : "2014-11-27", t : "string", o : "Nov 27, 2014"},
-		{i : "2014-11-34", t : "string", o : "2014-11-34"},
-		{i : new Date(Date.UTC(2014, 10, 27)), t : "string", o : "Nov 27, 2014"}
-	].forEach(function (oFixture) {
-		QUnit.test("format value", function (assert) {
+	QUnit.test("format value", function (assert) {
+		[
+			{i : undefined, o : null},
+			{i : null, o : null},
+			{i : "foo", t : "any", o : "foo"},
+			{i : "2014-11-27", t : "string", o : "Nov 27, 2014"},
+			{i : "2014-11-34", t : "string", o : "2014-11-34"},
+			{i : UI5Date.getInstance(Date.UTC(2014, 10, 27)), t : "string", o : "Nov 27, 2014"},
+			{i : "2014-11-27", t : "object", o : UI5Date.getInstance(2014, 10, 27)},
+			{i : UI5Date.getInstance(Date.UTC(2014, 10, 27)), t : "object", o : UI5Date.getInstance(2014, 10, 27)}
+		].forEach(function (oFixture) {
 			var oType = new DateType();
 			assert.deepEqual(oType.formatValue(oFixture.i, oFixture.t), oFixture.o, oFixture.i);
 		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("format value uses UI5Date", function (assert) {
+		var oDate = UI5Date.getInstance(Date.UTC(2014, 10, 27)),
+			oType = new DateType();
+
+		this.mock(UI5Date).expects("getInstance").withExactArgs(2014, 10, 27).returns("~ui5Date");
+
+		assert.strictEqual(oType.formatValue(oDate, "object"), "~ui5Date");
 	});
 
 	//*********************************************************************************************
@@ -133,13 +156,12 @@ sap.ui.require([
 				oType.formatValue("2015-12-24", sType);
 				assert.ok(false);
 			} catch (e) {
-				assert.ok(e instanceof sap.ui.model.FormatException);
+				assert.ok(e instanceof FormatException);
 				assert.strictEqual(e.message,
 					"Don't know how to format sap.ui.model.odata.type.Date to " + sType);
 			}
 		});
 	});
-
 
 	//*********************************************************************************************
 	[
@@ -153,38 +175,48 @@ sap.ui.require([
 			oExpected : {strictParsing : false, UTC : true}}
 	].forEach(function (oFixture) {
 		QUnit.test("formatOptions=" + JSON.stringify(oFixture.oOptions), function (assert) {
-			var oSpy = this.spy(DateFormat, "getDateInstance"),
+			var oDateFormatMock = this.mock(DateFormat),
 				oType = new DateType(oFixture.oOptions);
 
-			assert.strictEqual(oSpy.callCount, 0, "no formatter yet");
 			assert.deepEqual(oType.oFormatOptions, oFixture.oOptions,
-					"format options: " + JSON.stringify(oFixture.oOptions) + " set");
+				"format options: " + JSON.stringify(oFixture.oOptions) + " set");
+
+			DateType._resetModelFormatter();
+			oDateFormatMock.expects("getDateInstance") // getModelFormatter
+				.withExactArgs({
+					calendarType : CalendarType.Gregorian,
+					pattern : 'yyyy-MM-dd',
+					strictParsing : true,
+					UTC : true
+				})
+				.callThrough();
+			oDateFormatMock.expects("getDateInstance") // getFormatter
+				.withExactArgs(oFixture.oExpected)
+				.callThrough();
 
 			// first call
 			oType.formatValue("2015-12-24", "string");
-			assert.strictEqual(oSpy.callCount, 1, "first format causes creation of the formatter");
-			assert.ok(oSpy.calledWithExactly(oFixture.oExpected));
 
-			// second call
+			// second call - reuse formatters
 			oType.formatValue("2015-12-25", "string");
-			assert.strictEqual(oSpy.callCount, 1, "no further creation of a formatter");
 		});
 	});
 
 	//*********************************************************************************************
-	QUnit.test("parse Date", function (assert) {
+	QUnit.test("parse value", function (assert) {
 		var oType = new DateType();
 
 		assert.strictEqual(oType.parseValue(null, "foo"), null, "null is always accepted");
 		assert.strictEqual(oType.parseValue("", "string"), null, "empty string becomes null");
 		assert.deepEqual(oType.parseValue("Nov 1, 715", "string"), "0715-11-01", "valid date");
+		assert.deepEqual(oType.parseValue(UI5Date.getInstance(2014, 9, 27), "object"), "2014-10-27");
 
 		["int", "float", "boolean"].forEach(function (sType) {
 			try {
 				oType.parseValue("foo", sType);
 				assert.ok(false);
 			} catch (e) {
-				assert.ok(e instanceof sap.ui.model.ParseException, sType + ": exception");
+				assert.ok(e instanceof ParseException, sType + ": exception");
 				assert.strictEqual(e.message,
 					"Don't know how to parse " + oType.getName() + " from " + sType,
 					sType + ": message");
@@ -215,7 +247,7 @@ sap.ui.require([
 			oType.validateValue("foo");
 			assert.ok(false);
 		} catch (e) {
-			assert.ok(e instanceof sap.ui.model.ValidateException);
+			assert.ok(e instanceof ValidateException);
 			assert.strictEqual(e.message, "Illegal " + oType.getName() + " value: foo");
 		}
 
@@ -223,7 +255,7 @@ sap.ui.require([
 			oType.validateValue(["0715-11-01"]);
 			assert.ok(false);
 		} catch (e) {
-			assert.ok(e instanceof sap.ui.model.ValidateException);
+			assert.ok(e instanceof ValidateException);
 			assert.strictEqual(e.message, "Illegal " + oType.getName() + " value: 0715-11-01");
 		}
 
@@ -233,34 +265,204 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("format, parse, validate", function (assert) {
 		var oType = new DateType({pattern : "dd.MMM.yyyy"}),
-		sFormattedDate = oType.formatValue("0715-11-01", "string"),
-		sResultingDate = oType.parseValue(sFormattedDate, "string");
+			sFormattedDate = oType.formatValue("0715-11-01", "string"),
+			sResultingDate = oType.parseValue(sFormattedDate, "string");
 
 		oType.validateValue(sResultingDate);
 		assert.deepEqual(sResultingDate, "0715-11-01", "format and parse did not change the date");
 	});
 
 	//*********************************************************************************************
-	QUnit.test("getModelFormat()", function (assert) {
-		var oType = new DateType(),
-			sModelValue = "2015-11-27",
-			oFormat = oType.getModelFormat(),
-			oParsedDate = oFormat.parse(sModelValue);
+	QUnit.test("format, parse, validate with target type object", function (assert) {
+		var oType = new DateType({pattern : "dd.MMM.yyyy"}),
+			sFormattedDate = oType.formatValue("0715-11-01", "object"),
+			sResultingDate = oType.parseValue(sFormattedDate, "object");
 
+		oType.validateValue(sResultingDate);
+		assert.deepEqual(sResultingDate, "0715-11-01", "format and parse did not change the date");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getModelFormat() uses Gregorian calendar type", function (assert) {
+		var oFormat,
+			sModelValue = "2015-11-27",
+			oParsedDate;
+
+		Formatting.setCalendarType(CalendarType.Japanese);
+		DateType._resetModelFormatter();
+
+		// code under test
+		oFormat = new DateType().getModelFormat();
+
+		oParsedDate = oFormat.parse(sModelValue);
 		assert.ok(oParsedDate instanceof Date, "parse delivers a Date");
 		assert.strictEqual(oParsedDate.getTime(), Date.UTC(2015, 10, 27), "parse value");
 		assert.strictEqual(oFormat.format(oParsedDate), sModelValue, "format");
+		assert.strictEqual(oFormat.oFormatOptions.calendarType, CalendarType.Gregorian);
 	});
 
 	//*********************************************************************************************
 	QUnit.test("localization change", function (assert) {
-		var oControl = new sap.ui.core.Control(),
+		var oControl = new Control(),
 			oType = new DateType();
 
 		oControl.bindProperty("tooltip", {path : "/unused", type : oType});
 		assert.strictEqual(oType.formatValue("0715-11-01", "string"), "Nov 1, 715");
-		sap.ui.getCore().getConfiguration().setLanguage("de-DE");
+		Localization.setLanguage("de-DE");
 		assert.strictEqual(oType.formatValue("0715-11-01", "string"), "01.11.715",
 			"adjusted to changed language");
 	});
+
+	//*********************************************************************************************
+	QUnit.test("_resetModelFormatter", function (assert) {
+		var oType = new DateType(),
+			oFormat = oType.getModelFormat();
+
+		assert.strictEqual(oFormat, oType.getModelFormat());
+
+		// code under test
+		DateType._resetModelFormatter();
+
+		assert.notStrictEqual(oFormat, oType.getModelFormat());
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_getErrorMessage", function (assert) {
+		var oDate = {getFullYear : function () {}},
+			oType = new DateType();
+
+		this.mock(UI5Date).expects("getInstance").withExactArgs().returns(oDate);
+		this.mock(oDate).expects("getFullYear").withExactArgs().returns(2022);
+		this.mock(oType).expects("formatValue").withExactArgs("2022-12-31", "string").returns("~formattedDate");
+
+		TestUtils.withNormalizedMessages(function () {
+			// code under test
+			assert.strictEqual(oType._getErrorMessage(), "EnterDate ~formattedDate");
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getModelValue", function (assert) {
+		var oType = new DateType(),
+			oTypeMock = this.mock(oType);
+
+		oTypeMock.expects("validateValue").withExactArgs("0099-12-31");
+
+		// code under test
+		assert.strictEqual(oType.getModelValue(UI5Date.getInstance("0099-12-31T08:07:06")), "0099-12-31");
+
+		oTypeMock.expects("validateValue").withExactArgs(null);
+
+		// code under test
+		assert.strictEqual(oType.getModelValue(null), null);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getModelValue: checkDate fails", function (assert) {
+		var oType = new DateType();
+
+		this.mock(UI5Date).expects("checkDate").withExactArgs("~oDate").throws(new Error("~error"));
+
+		// code under test
+		assert.throws(function () {
+			oType.getModelValue("~oDate");
+		}, new Error("~error"));
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getModelValue: validateValue fails", function (assert) {
+		var oFormat = {format : function () {}},
+			oType = new DateType();
+
+		this.mock(oType).expects("getModelFormat").withExactArgs().returns(oFormat);
+		this.mock(oFormat).expects("format")
+			.withExactArgs(UI5Date.getInstance("0099-12-31T00:00:00Z"))
+			.returns("~result");
+		this.mock(oType).expects("validateValue").withExactArgs("~result").throws(new ValidateException("~error"));
+
+		// code under test
+		assert.throws(function () {
+			oType.getModelValue(UI5Date.getInstance("0099-12-31T08:07:06"));
+		}, new ValidateException("~error"));
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getDateValue", function (assert) {
+		var oType = new DateType();
+
+		this.mock(UI5Date).expects("getInstance").withExactArgs("~modelValueT00:00").returns("~result");
+
+		// code under test
+		assert.strictEqual(oType.getDateValue("~modelValue"), "~result");
+
+		// code under test
+		assert.strictEqual(oType.getDateValue(null), null);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("Integrative test getModelValue/getDateValue", function (assert) {
+		var oDateValue, sModelValue,
+			oType = new DateType();
+
+		// code under test, the time added to the constructor, makes sure the created date is a local date
+		sModelValue = oType.getModelValue(UI5Date.getInstance("0099-12-31T08:07:06"));
+
+		assert.strictEqual(sModelValue, "0099-12-31");
+
+		// code under test
+		oDateValue = oType.getDateValue(sModelValue);
+
+		// The time added to the constructor, makes sure the created date is a local date
+		assert.deepEqual(oDateValue, UI5Date.getInstance("0099-12-31T00:00:00"));
+
+		// code under test
+		sModelValue = oType.getModelValue(oDateValue);
+
+		assert.strictEqual(sModelValue, "0099-12-31");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getPlaceholderText", function (assert) {
+		var oType = new DateType();
+
+		this.mock(DateFormat.prototype).expects("getPlaceholderText").withExactArgs().callsFake(function () {
+			assert.strictEqual(this, oType.oFormat);
+			return "~placeholder";
+		});
+
+		// code under test
+		assert.strictEqual(oType.getPlaceholderText(), "~placeholder");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getFormat", function (assert) {
+		var oType = new DateType();
+
+		assert.strictEqual(oType.oFormat, undefined);
+
+		// code under test
+		var oResult = oType.getFormat();
+
+		assert.ok(oResult instanceof DateFormat);
+		assert.strictEqual(oType.oFormat, oResult);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getISOStringFromModelValue/getModelValueFromISOString", function (assert) {
+		var oType = new DateType();
+
+		assert.strictEqual(oType.getISOStringFromModelValue("~Date"), "~Date");
+		assert.strictEqual(oType.getModelValueFromISOString("~Date"), "~Date");
+	});
+
+	//*********************************************************************************************
+["getISOStringFromModelValue", "getModelValueFromISOString"].forEach(function (sMethod) {
+	QUnit.test(sMethod + ": falsy values", function (assert) {
+		var oType = new DateType();
+
+		assert.strictEqual(oType[sMethod](null), null);
+		assert.strictEqual(oType[sMethod](undefined), null);
+		assert.strictEqual(oType[sMethod](""), null);
+	});
+});
 });

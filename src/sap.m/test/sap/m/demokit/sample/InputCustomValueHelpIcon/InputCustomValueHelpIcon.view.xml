@@ -1,0 +1,21 @@
+<mvc:View
+	controllerName="sap.m.sample.InputCustomValueHelpIcon.InputCustomValueHelpIcon"
+	xmlns:l="sap.ui.layout"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m">
+	<l:VerticalLayout
+		class="sapUiContentPadding"
+		width="100%">
+		<l:content>
+			<Label text="Select a product" labelFor="inputValueHelpCustomIcon"/>
+			<Input
+				id="inputValueHelpCustomIcon"
+				class="sapUiSmallMarginBottom"
+				type="Text"
+				placeholder="Enter product"
+				showValueHelp="true"
+				valueHelpIconSrc="sap-icon://arrow-left"
+				valueHelpRequest="handleValueHelp"/>
+		</l:content>
+	</l:VerticalLayout>
+</mvc:View>

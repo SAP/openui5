@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.ui.commons.Image.
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', "./ImageRenderer"],
-	function(jQuery, library, Control, ImageRenderer) {
+sap.ui.define(['./library', 'sap/ui/core/Control', './ImageRenderer'],
+	function(library, Control, ImageRenderer) {
 	"use strict";
 
 
@@ -28,7 +28,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', "./Image
 	 * @public
 	 * @deprecated as of version 1.38, replaced by {@link sap.m.Image}
 	 * @alias sap.ui.commons.Image
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var Image = Control.extend("sap.ui.commons.Image", /** @lends sap.ui.commons.Image.prototype */ { metadata : {
 
@@ -38,6 +37,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', "./Image
 			"sap.ui.core.IFormContent"
 		],
 		library : "sap.ui.commons",
+		deprecated: true,
 		properties : {
 
 			/**
@@ -107,4 +107,4 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', "./Image
 
 	return Image;
 
-}, /* bExport= */ true);
+});

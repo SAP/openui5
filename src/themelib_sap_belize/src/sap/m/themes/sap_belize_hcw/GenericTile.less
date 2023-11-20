@@ -96,9 +96,6 @@
 }
 
 .sap-desktop.sapUiMedia-GenericTileDeviceSet-large .sapMGT.sapMGTLineMode {
-	&:hover {
-		box-shadow: none !important;
-	}
 
 	&:not(.sapMGTDisabled):not(.sapMGTFailed):hover .sapMGTLineStyleHelperInner {
 		box-shadow: 0 0 0 0.1875rem @sapUiContentShadowColor;
@@ -126,10 +123,7 @@
 	color: @sapUiTileTextColor;
 }
 
-.sapMGTBackgroundImage {
-	border: none;
-}
-
+html.sap-desktop .sapFGridContainer .sapFGridContainerItemWrapperNoVisualFocus:focus .sapMGTFocusDiv, // focus inside GridContainer
 html.sap-desktop .sapMGT:focus .sapMGTFocusDiv,
 html.sap-desktop .sapMGT:active .sapMGTFocusDiv {
 	border: 0.125rem dotted @sapUiContentFocusColor;

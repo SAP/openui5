@@ -1,0 +1,29 @@
+{
+  "1.85.0": {
+    "date": "November 2020",
+    "notes": [
+      {
+        "id": "aaad1ff360447051bf63bc51b8facfc6abde6ecc",
+        "type": "FIX",
+        "text": " sap.tnt.NavigationListItem: Context menu is now opened on items with 'href' set",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070355555"
+          }
+        ]
+      },
+      {
+        "id": "792a6c0024a0b9d510586bc91a4691907cd33af2",
+        "type": "FIX",
+        "text": " sap.tnt.NavigationList: Item count is read only once",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080337425"
+          }
+        ]
+      }
+    ]
+  }
+}

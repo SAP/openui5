@@ -4,18 +4,18 @@
 
 // Provides class sap.ui.dt.AggregationOverlay.
 sap.ui.define([
-	'jquery.sap.global',
-	'sap/ui/dt/Overlay',
-	'sap/ui/dt/OverlayRegistry',
-	'sap/ui/dt/ElementUtil',
-	'sap/ui/dt/Util'
+	"sap/ui/dt/Overlay",
+	"sap/ui/dt/ElementUtil",
+	"sap/ui/dt/OverlayUtil",
+	"sap/ui/dt/Util",
+	"sap/base/util/merge"
 ],
 function(
-	jQuery,
 	Overlay,
-	OverlayRegistry,
 	ElementUtil,
-	Util
+	OverlayUtil,
+	Util,
+	merge
 ) {
 	"use strict";
 
@@ -37,36 +37,35 @@ function(
 	 * @private
 	 * @since 1.30
 	 * @alias sap.ui.dt.AggregationOverlay
-	 * @experimental Since 1.30. This class is experimental and provides only limited functionality. Also the API might be changed in future.
 	 */
 	var AggregationOverlay = Overlay.extend("sap.ui.dt.AggregationOverlay", /** @lends sap.ui.dt.AggregationOverlay.prototype */ {
-		metadata : {
-			library : "sap.ui.dt",
-			properties : {
+		metadata: {
+			library: "sap.ui.dt",
+			properties: {
 				/**
 				 * Name of aggregation to create the AggregationOverlay for
 				 */
-				aggregationName : {
-					type : "string"
+				aggregationName: {
+					type: "string"
 				},
 				/**
 				 * Whether the AggregationOverlay is e.g. a drop target
 				 */
-				targetZone : {
-					type : "boolean",
-					defaultValue : false
+				targetZone: {
+					type: "boolean",
+					defaultValue: false
 				},
 				scrollContainerId: {
 					type: "int"
 				}
 			},
-			events : {
+			events: {
 				/**
 				 * Event fired when the property "targetZone" was changed
 				 */
-				targetZoneChange : {
-					parameters : {
-						targetZone : { type : "boolean" }
+				targetZoneChange: {
+					parameters: {
+						targetZone: { type: "boolean" }
 					}
 				}
 			}
@@ -76,11 +75,10 @@ function(
 	/**
 	 * @override
 	 */
-	AggregationOverlay.prototype._getAttributes = function () {
-		return jQuery.extend(
-			true,
+	AggregationOverlay.prototype._getAttributes = function(...aArgs) {
+		return merge(
 			{},
-			Overlay.prototype._getAttributes.apply(this, arguments),
+			Overlay.prototype._getAttributes.apply(this, aArgs),
 			{
 				"data-sap-ui-dt-aggregation": this.getAggregationName()
 			}
@@ -92,7 +90,7 @@ function(
 	 * @param {sap.ui.dt.ElementOverlay} oChild - Lookup ElementOverlay
 	 * @return {number} - position index in DOM
 	 */
-	AggregationOverlay.prototype._getChildIndex = function (oChild) {
+	AggregationOverlay.prototype._getChildIndex = function(oChild) {
 		var aChildren = this.getChildren();
 
 		var oPreviousSibling;
@@ -114,7 +112,7 @@ function(
 	/**
 	 * @override
 	 */
-	AggregationOverlay.prototype.insertChild = function (iPosition, oChild) {
+	AggregationOverlay.prototype.insertChild = function(iPosition, oChild) {
 		/**
 		 * Legend:
 		 * iPosition - position in aggregation/association
@@ -123,52 +121,64 @@ function(
 		 * iCurrentPosition - previous position in DOM
 		 */
 		if (!(Util.isInteger(iPosition))) {
-			iPosition = ElementUtil[this.isAssociation() ? 'getIndexInAssociation' : 'getIndexInAggregation'](
+			iPosition = this.isAssociation() ? ElementUtil.getIndexInAssociation : OverlayUtil.getIndexInAggregation(
 				oChild.getElement(),
 				this.getElement(),
 				this.getAggregationName()
 			);
 		}
 
-		var iPreviousPosition = this.indexOfAggregation('children', oChild);
+		var iPreviousPosition = this.indexOfAggregation("children", oChild);
 
 		if (iPreviousPosition !== iPosition) {
 			// when child is already inside the aggregation but on different position, we need to remove it first
 			if (iPreviousPosition > -1) {
-				this.removeAggregation('children', oChild);
+				this.removeAggregation("children", oChild);
 			}
-			this.insertAggregation('children', oChild, iPosition);
+			this.insertAggregation("children", oChild, iPosition);
 
 			if (this.isRendered()) {
 				var iPositionInDom = this._getChildIndex(oChild);
-				var $Child = oChild.isRendered() ? oChild.$() : oChild.render(true);
-				var $Children = jQuery(this.getChildrenDomRef());
-				var iCurrentPosition = $Children.find('>').index($Child);
+				var bChildRendered = oChild.isRendered();
+
+				if (!bChildRendered) {
+					var oRenderResult = oChild.render(true);
+					// TODO: change when renderer does not return jquery object any more!
+					oRenderResult = oRenderResult.jquery ? oRenderResult.get(0) : oRenderResult;
+				}
+
+				var oChildDOM = bChildRendered ? oChild.getDomRef() : oRenderResult;
+				var aChildren = this.getChildrenDomRef().children;
+				var iCurrentPosition = [].indexOf.call(aChildren, oChildDOM);
 				var iInsertIndex;
 
 				if (iCurrentPosition !== iPositionInDom) {
 					if (iPositionInDom > 0) {
 						iInsertIndex = iCurrentPosition > -1 && iCurrentPosition < iPositionInDom ? iPositionInDom : iPositionInDom - 1;
-						$Children.find('>').eq(iInsertIndex).after($Child);
+						aChildren[iInsertIndex].after(oChildDOM);
 					} else {
 						iInsertIndex = iPositionInDom; // === 0
-						$Children.prepend($Child);
+						this.getChildrenDomRef().prepend(oChildDOM);
 					}
 				}
 
-				oChild.fireAfterRendering({
-					domRef: $Child.get(0)
-				});
+				if (!bChildRendered) {
+					oChild.fireAfterRendering({
+						domRef: oChildDOM
+					});
+				}
 			}
 
 			this.fireChildAdded();
+			return true;
 		}
+		return false;
 	};
 
 	/**
 	 * @override
 	 */
-	AggregationOverlay.prototype.addChild = function (oChild, bSuppressedEvent) {
+	AggregationOverlay.prototype.addChild = function(oChild, bSuppressedEvent) {
 		this.insertChild(this.getChildren().length, oChild);
 
 		if (!bSuppressedEvent) {
@@ -179,21 +189,34 @@ function(
 	/**
 	 * @override
 	 */
-	AggregationOverlay.prototype.render = function () {
+	AggregationOverlay.prototype.render = function(...aArgs) {
 		if (this.getChildren().length > 0 || this.getDesignTimeMetadata().getDomRef()) {
-			this.addStyleClass('sapUiDtAggregationOverlay');
-			return Overlay.prototype.render.apply(this, arguments);
+			this.addStyleClass("sapUiDtAggregationOverlay");
+			return Overlay.prototype.render.apply(this, aArgs);
 		}
+		return undefined;
 	};
 
 	/**
 	 * @override
 	 */
-	AggregationOverlay.prototype._getRenderingParent = function () {
+	AggregationOverlay.prototype._getRenderingParent = function(...aArgs) {
 		if (Util.isInteger(this.getScrollContainerId())) {
 			return this.getParent().getScrollContainerById(this.getScrollContainerId());
-		} else {
-			return Overlay.prototype._getRenderingParent.apply(this, arguments);
+		}
+		return Overlay.prototype._getRenderingParent.apply(this, aArgs);
+	};
+
+	/**
+	 * @override
+	 */
+	AggregationOverlay.prototype._setPosition = function(...aArgs) {
+		const [, oGeometry, , bForceScrollbarSync] = aArgs;
+		// Apply Overlay position first, then extra logic based on this new position
+		Overlay.prototype._setPosition.apply(this, aArgs);
+
+		if (oGeometry.domRef && !Util.isInteger(this.getScrollContainerId())) {
+			this._handleOverflowScroll(oGeometry, this.$(), this.getParent(), bForceScrollbarSync);
 		}
 	};
 
@@ -226,7 +249,7 @@ function(
 			this.setProperty("targetZone", bTargetZone);
 			this.toggleStyleClass("sapUiDtOverlayTargetZone", bTargetZone);
 
-			this.fireTargetZoneChange({targetZone : bTargetZone});
+			this.fireTargetZoneChange({targetZone: bTargetZone});
 		}
 
 		return this;
@@ -251,4 +274,4 @@ function(
 	};
 
 	return AggregationOverlay;
-}, /* bExport= */ true);
+});

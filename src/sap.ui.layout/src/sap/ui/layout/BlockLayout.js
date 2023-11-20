@@ -3,13 +3,12 @@
  */
 
 sap.ui.define([
-    'sap/ui/core/Control',
-    './library',
-    'jquery.sap.global',
-    'sap/ui/core/ResizeHandler',
-    "./BlockLayoutRenderer"
+	'sap/ui/core/Control',
+	'./library',
+	'sap/ui/core/ResizeHandler',
+	"./BlockLayoutRenderer"
 ],
-	function(Control, library, jQuery, ResizeHandler, BlockLayoutRenderer) {
+	function(Control, library, ResizeHandler, BlockLayoutRenderer) {
 		"use strict";
 
 		/**
@@ -26,23 +25,23 @@ sap.ui.define([
 		 * <h3>Structure</h3>
 		 * The BlockLayout contains BlockLayout cells. Every cell consists of a title and content. The title can be text or a link.
 		 *
+		 * Special full-width sections of the BlockLayout allow horizontal scrolling through a set of blocks.
+		 *
 		 * The BlockLayout comes in five predefined types for background colors:
 		 * <ul>
 		 * <li>Layout only (default) - a layout scheme and no background colors</li>
-		 * <li>Bright - a layout scheme with bright colors</li>
-		 * <li>Accent - a layout scheme with four pre-defined color sets</li>
+		 * <li>Light - a layout scheme with light colors</li>
+		 * <li>Accent - a layout scheme with 11 pre-defined color sets</li>
 		 * <li>Dashboard - a layout scheme with additional borders and no background colors</li>
-		 * <li>Mixed - a layout scheme with a mix of light and dark colors</li>
 		 * </ul>
 		 * Background colors are attached directly to the blocks of the layout.
 		 *
-		 * Special full-width sections of the BlockLayout allow horizontal scrolling through a set of blocks.
-		 *
-		 * <b>Note:</b> With version 1.48 colors can be set for each individual {@link sap.ui.layout.BlockLayoutCell cell}. There are 10 pre-defined color sets, each with 4 different shades.
-		 * The main colors of the sets can be changed in Theme Designer. To change the background of a particular cell, set <code>backgroundColorSet</code> (main color)
+		 * <b>Note:</b> With version 1.48 colors can be set for each individual {@link sap.ui.layout.BlockLayoutCell cell}.
+		 * There are 11 pre-defined color sets, each with 4 different shades for the SAP Belize theme and 6 different shades for the Quartz and Horizon themes.
+		 * To change the background of a particular cell, set <code>backgroundColorSet</code> (main color)
 		 * and <code>backgroundColorShade</code> (shade).
 		 *
-		 * <b>Note:</b> Usage of disabled, emphasized or subtle links as titles is not recommended. Dark background designs, for example Accent, are not fully supported with regards to Аccessibility when used with links as titles.
+		 * <b>Note:</b> Usage of disabled, emphasized or subtle links as titles is not recommended. Dark background designs, for example Accent, are not fully supported with regards to Accessibility when used with links as titles.
 		 *
 		 * <h3>Usage</h3>
 		 * <h4>When to use</h4>
@@ -69,33 +68,36 @@ sap.ui.define([
 		 * @since 1.34
 		 * @alias sap.ui.layout.BlockLayout
 		 * @see {@link fiori:https://experience.sap.com/fiori-design-web/block-layout/ Block Layout}
-		 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 		 */
-		var BlockLayout = Control.extend("sap.ui.layout.BlockLayout", { metadata : {
+		var BlockLayout = Control.extend("sap.ui.layout.BlockLayout", {
+			metadata : {
 
-			library : "sap.ui.layout",
-			properties : {
-				/**
-				 * Determines the background used for the Layout
-				 * @since 1.42
-				 */
-				background: { type: "sap.ui.layout.BlockBackgroundType", group: "Appearance", defaultValue: "Default" },
+				library : "sap.ui.layout",
+				properties : {
+					/**
+					 * Determines the background used for the Layout
+					 * @since 1.42
+					 */
+					background: { type: "sap.ui.layout.BlockBackgroundType", group: "Appearance", defaultValue: "Default" },
 
-				/**
-				 * Keeps the font-size of the contents as is, independent from the screen size.
-				 * @since 1.52
-				 */
-				keepFontSize: { type: "boolean", group:"Behavior", defaultValue: false}
+					/**
+					 * Keeps the font-size of the contents as is, independent from the screen size.
+					 * @since 1.52
+					 */
+					keepFontSize: { type: "boolean", group:"Behavior", defaultValue: false}
+				},
+				defaultAggregation : "content",
+				aggregations : {
+					/**
+					 * The Rows to be included in the content of the control
+					 */
+					content: { type: "sap.ui.layout.BlockLayoutRow", multiple: true }
+				},
+				designtime: "sap/ui/layout/designtime/BlockLayout.designtime"
 			},
-			defaultAggregation : "content",
-			aggregations : {
-				/**
-				 * The Rows to be included in the content of the control
-				 */
-				content: { type: "sap.ui.layout.BlockLayoutRow", multiple: true }
-			},
-			designtime: "sap/ui/layout/designtime/BlockLayout.designtime"
-		}});
+
+			renderer: BlockLayoutRenderer
+		});
 
 		/**
 		 * Breakpoints used for the parent container of the Layout, to determine the inner representation of the rows.
@@ -124,30 +126,6 @@ sap.ui.define([
 		BlockLayout.prototype.onAfterRendering = function () {
 			this._onParentResize();
 			this._notifySizeListeners();
-		};
-		/**
-		 * Changes background type
-		 *
-		 * @public
-		 * @param {string} sNewBackground Background's style of type sap.ui.layout.BlockBackgroundType
-		 * @returns {sap.ui.layout.BlockLayout} BlockLayout instance. Allows method chaining
-		 */
-		BlockLayout.prototype.setBackground = function (sNewBackground) {
-			var sCurBackground = this.getBackground(),
-			// Apply here so if there's an exception the code bellow won't be executed
-				oObject = Control.prototype.setProperty.apply(this, ["background"].concat(Array.prototype.slice.call(arguments)));
-
-			if (this.hasStyleClass("sapUiBlockLayoutBackground" + sCurBackground)) {
-				this.removeStyleClass("sapUiBlockLayoutBackground" + sCurBackground, true);
-			}
-
-			sNewBackground = sNewBackground ? sNewBackground : "Default";
-			this.addStyleClass("sapUiBlockLayoutBackground" + sNewBackground, true);
-
-			// Invalidate the whole block layout as the background dependencies, row color sets and accent cells should be resolved properly
-			this.invalidate();
-
-			return oObject;
 		};
 
 		/**

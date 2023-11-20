@@ -2,15 +2,13 @@
  * ${copyright}
  */
 
-/*global history */
 sap.ui.define([
-		"jquery.sap.global",
 		"sap/ui/documentation/sdk/controller/BaseController",
-		"sap/m/library",
 		"sap/ui/Device",
+		"sap/ui/VersionInfo",
 		"sap/ui/model/json/JSONModel",
-		"sap/ui/model/resource/ResourceModel"
-	], function (jQuery, BaseController, mobileLibrary, Device, JSONModel, ResourceModel) {
+		"sap/base/Log"
+	], function (BaseController, Device, VersionInfo, JSONModel, Log) {
 		"use strict";
 
 		return BaseController.extend("sap.ui.documentation.sdk.controller.Welcome", {
@@ -20,16 +18,9 @@ sap.ui.define([
 			 * @public
 			 */
 			onInit: function () {
-				// set i18n model on view
-				var	i18nModel = new ResourceModel({
-						bundleName: "sap.ui.documentation.sdk.i18n.i18n"
-					});
-
-				this.getView().setModel(i18nModel, "i18n");
-
 				this.getRouter().getRoute("welcome").attachPatternMatched(this._onMatched, this);
 
-				sap.ui.getVersionInfo({async: true}).then(function (oVersionInfo) {
+				VersionInfo.load().then(function (oVersionInfo) {
 					var oModel = new JSONModel({
 						isOpenUI5: oVersionInfo && oVersionInfo.gav && /openui5/i.test(oVersionInfo.gav)
 					});
@@ -86,7 +77,7 @@ sap.ui.define([
 			 * Navigates to the tutorial overview
 			 */
 			onGetStarted: function () {
-				mobileLibrary.URLHelper.redirect("#/topic/8b49fc198bf04b2d9800fc37fecbb218");
+				this.getRouter().parse("topic/8b49fc198bf04b2d9800fc37fecbb218");
 			},
 
 			/**
@@ -96,7 +87,7 @@ sap.ui.define([
 			 */
 			onDownloadButtonPress: function (oEvent) {
 				var isOpenUI5 = this.getView().getModel("welcomeView").getProperty("/isOpenUI5"),
-					sUrl = isOpenUI5 ? "http://openui5.org/download.html" : "https://tools.hana.ondemand.com/#sapui5";
+					sUrl = isOpenUI5 ? "https://openui5.org/releases/" : "https://tools.hana.ondemand.com/#sapui5";
 				window.open(sUrl, "_blank");
 			},
 
@@ -110,7 +101,7 @@ sap.ui.define([
 					this.hideMasterSide();
 				} catch (e) {
 					// try-catch due to a bug in UI5 SplitApp, CL 1898264 should fix it
-					jQuery.sap.log.error(e);
+					Log.error(e);
 				}
 			}
 		});

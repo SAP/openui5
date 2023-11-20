@@ -1,22 +1,17 @@
 /* global QUnit */
 
-QUnit.config.autostart = false;
-
-sap.ui.require([
+sap.ui.define([
 	"sap/ui/dt/MetadataPropagationUtil",
 	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/dt/DesignTime",
 	"qunit/MetadataTestUtil",
-	// controls
 	"sap/m/Button",
 	"sap/m/Page",
 	"sap/m/Text",
 	"sap/m/Toolbar",
 	"sap/ui/layout/VerticalLayout",
-	// should be last
-	"sap/ui/thirdparty/sinon",
-	"sap/ui/thirdparty/sinon-ie",
-	"sap/ui/thirdparty/sinon-qunit"
+	"sap/ui/thirdparty/sinon-4",
+	"sap/ui/qunit/utils/nextUIUpdate"
 ], function(
 	MetadataPropagationUtil,
 	OverlayRegistry,
@@ -27,25 +22,25 @@ sap.ui.require([
 	Text,
 	Toolbar,
 	VerticalLayout,
-	sinon
+	sinon,
+	nextUIUpdate
 ) {
 	"use strict";
 
-	var sandbox = sinon.sandbox.create();
+	var sandbox = sinon.createSandbox();
 
 	QUnit.module("Given empty propagation map (without 'propagateRelevantContainer' designTimeMetadata and without parent propagationInfos)", {
-		beforeEach : function(assert) {
+		beforeEach() {
 			this.oVerticalLayout = new VerticalLayout("layout");
 			this.oPage = new Page("test-page");
 			this.mAggregationData = {};
 		},
-		afterEach : function() {
+		afterEach() {
 			this.oVerticalLayout.destroy();
 			this.oPage.destroy();
 			sandbox.restore();
 		}
 	}, function() {
-
 		QUnit.test("when propagateMetadataToAggregationOverlay is called", function(assert) {
 			var fnParentPropagationInfoSpy = sandbox.spy(MetadataPropagationUtil, "_getParentPropagationInfo");
 			var fnPropagateRelevantContainerSpy = sandbox.spy(MetadataPropagationUtil, "_setPropagationInfo");
@@ -54,7 +49,7 @@ sap.ui.require([
 			assert.notOk(mResultData.propagationInfos, "then no propagation infos are generated");
 			assert.equal(fnParentPropagationInfoSpy.callCount, 1, "then _getParentPropagationInfo method should be called");
 			assert.strictEqual(fnPropagateRelevantContainerSpy.withArgs({}, null).callCount, 0,
-			"then '_setPropagationInfo' shouldn't be called");
+				"then '_setPropagationInfo' shouldn't be called");
 		});
 
 		QUnit.test("when '_setPropagationInfo' is called without attributes", function(assert) {
@@ -72,7 +67,7 @@ sap.ui.require([
 		});
 
 		QUnit.test("when '_setPropagationInfo' is called with new relevantContainerPropagation object and with parentPropagation object", function(assert) {
-			var aParentRelevantContainerPropagation = [ MetadataTestUtil.createPropagationInfoObject(true, this.oPage, null) ];
+			var aParentRelevantContainerPropagation = [MetadataTestUtil.createPropagationInfoObject(true, this.oPage, null)];
 			var oNewPropagationInfo = MetadataTestUtil.createPropagationInfoObject(true, this.oVerticalLayout, null);
 			var oResult = MetadataPropagationUtil._setPropagationInfo(this.mAggregationData, oNewPropagationInfo, aParentRelevantContainerPropagation);
 			assert.strictEqual(oResult, this.mAggregationData,
@@ -86,7 +81,7 @@ sap.ui.require([
 		});
 
 		QUnit.test("when '_setPropagationInfo' is called without new relevantContainerPropagation object and with parentPropagation object", function(assert) {
-			var aParentRelevantContainerPropagation = [ MetadataTestUtil.createPropagationInfoObject(true, this.oPage, null) ];
+			var aParentRelevantContainerPropagation = [MetadataTestUtil.createPropagationInfoObject(true, this.oPage, null)];
 			var oResult = MetadataPropagationUtil._setPropagationInfo(this.mAggregationData, null, aParentRelevantContainerPropagation);
 			assert.strictEqual(oResult, this.mAggregationData,
 				"then '_setPropagationInfo' should return designTimeMetadata");
@@ -98,16 +93,15 @@ sap.ui.require([
 	});
 
 	QUnit.module("Given propagation map with 'propagateRelevantContainer' as boolean and without parent propagationInfos", {
-		beforeEach : function(assert) {
+		beforeEach() {
 			this.oPropObject = { propagateRelevantContainer: true };
 			this.oButton = new Button("test-button2");
 		},
-		afterEach : function() {
+		afterEach() {
 			this.oButton.destroy();
 			sandbox.restore();
 		}
 	}, function() {
-
 		QUnit.test("when 'propagateMetadataToAggregationOverlay' is called", function(assert) {
 			var fnPropagateRelevantContainerSpy = sandbox.spy(MetadataPropagationUtil, "_setPropagationInfo");
 			var fnCurrentRelevantContainerPropagationSpy = sandbox.spy(MetadataPropagationUtil, "_getCurrentRelevantContainerPropagation");
@@ -132,19 +126,18 @@ sap.ui.require([
 	});
 
 	QUnit.module("Given propagation map with 'propagateRelevantContainer' as function and without parent propagationInfos", {
-		beforeEach : function(assert) {
+		beforeEach() {
 			this.fnPropagateRelevantContainer = function() {
 				return true;
 			};
 			this.oButton = new Button("test-button3");
 			this.oPropObject = { propagateRelevantContainer: this.fnPropagateRelevantContainer };
 		},
-		afterEach : function() {
+		afterEach() {
 			this.oButton.destroy();
 			sandbox.restore();
 		}
 	}, function() {
-
 		QUnit.test("when 'propagateMetadataToAggregationOverlay' is called", function(assert) {
 			var fnPropagateRelevantContainerSpy = sandbox.spy(MetadataPropagationUtil, "_setPropagationInfo");
 			var mResultData = MetadataPropagationUtil.propagateMetadataToAggregationOverlay(this.oPropObject, this.oButton);
@@ -161,34 +154,32 @@ sap.ui.require([
 	});
 
 	QUnit.module("Given propagation map with 'propagateRelevantContainer' as object and without parent propagationInfo", {
-		beforeEach : function(assert) {
+		beforeEach() {
 			this.oPropObject = { propagateRelevantContainer: {} };
 			this.oButton = new Button("test-button4");
 		},
-		afterEach : function() {
+		afterEach() {
 			this.oButton.destroy();
 		}
 	}, function() {
-
 		QUnit.test("when 'propagateMetadataToAggregationOverlay' is called", function(assert) {
 			assert.throws(function() {
-					MetadataPropagationUtil.propagateMetadataToAggregationOverlay(this.oPropObject, this.oButton);
-				}, /Wrong type: it should be either a function or a boolean value/,
-				"then '_setPropagationInfo' should throw an exception");
+				MetadataPropagationUtil.propagateMetadataToAggregationOverlay(this.oPropObject, this.oButton);
+			}, /Wrong type: it should be either a function or a boolean value/,
+			"then '_setPropagationInfo' should throw an exception");
 		});
 	});
 
 	QUnit.module("Given propagation map with 'propagateMetadata' as function", {
-		beforeEach : function(assert) {
+		beforeEach() {
 			this.oElement = new VerticalLayout("layout");
 			this.oMetadataFunction = MetadataTestUtil.createPropagateMetadataObject("sap.m.Button");
 		},
-		afterEach : function(assert) {
+		afterEach() {
 			this.oElement.destroy();
 			sandbox.restore();
 		}
 	}, function() {
-
 		QUnit.test("when 'propagateMetadataToAggregationOverlay' is called", function(assert) {
 			var fnPropagateRelevantContainerSpy = sandbox.spy(MetadataPropagationUtil, "_setPropagationInfo");
 			var mResultData = MetadataPropagationUtil.propagateMetadataToAggregationOverlay(this.oMetadataFunction, this.oElement);
@@ -202,35 +193,32 @@ sap.ui.require([
 	});
 
 	QUnit.module("Given propagation map with 'propagateMetadata' as string", {
-		beforeEach : function(assert) {
+		beforeEach() {
 			this.oElement = new VerticalLayout("layout");
 			this.oMetadataFunction = { propagateMetadata: "propagateMatadata" };
 		},
-		afterEach : function(assert) {
+		afterEach() {
 			this.oElement.destroy();
 		}
 	}, function() {
-
 		QUnit.test("when 'propagateMetadataToAggregationOverlay' is called", function(assert) {
 			assert.throws(function() {
 				MetadataPropagationUtil.propagateMetadataToAggregationOverlay(this.oMetadataFunction, this.oElement);
 			}, /Wrong type: it should be a function and it is:/,
 			"then '_setPropagationInfo' should throw the following exception: wrong type: it should be a function...");
 		});
-
 	});
 
 	QUnit.module("Given aggregationMetadata map without propagationInfos", {
-		beforeEach : function(assert) {
+		beforeEach() {
 			this.oButton = new Button("test-button8");
 			this.mAggregationData = { test: "test" };
 			this.mElementData = {};
 		},
-		afterEach : function() {
+		afterEach() {
 			this.oButton.destroy();
 		}
 	}, function() {
-
 		QUnit.test("when 'propagateMetadataToElementOverlay' is called without AggregationMetadata map", function(assert) {
 			assert.strictEqual(MetadataPropagationUtil.propagateMetadataToElementOverlay(this.mElementData, undefined, this.oButton), this.mElementData,
 				"then no relevant container added to the element");
@@ -243,8 +231,7 @@ sap.ui.require([
 	});
 
 	QUnit.module("Given aggregationMetadata map with valid propagation information for relevantContainer propagation", {
-		beforeEach : function(assert) {
-
+		beforeEach() {
 			this.oVerticalLayout = new VerticalLayout("layout1");
 			this.oButton = new Button("test-button1");
 
@@ -252,7 +239,7 @@ sap.ui.require([
 				propagationInfos: [
 					{
 						relevantContainerElement: this.oVerticalLayout,
-						relevantContainerFunction: function (oElement) {
+						relevantContainerFunction() {
 							return true;
 						}
 					}
@@ -260,12 +247,11 @@ sap.ui.require([
 			};
 			this.mElementData = {};
 		},
-		afterEach : function() {
+		afterEach() {
 			this.oButton.destroy();
 			this.oVerticalLayout.destroy();
 		}
 	}, function() {
-
 		QUnit.test("when 'propagateMetadataToElementOverlay' is called", function(assert) {
 			var mResultData = MetadataPropagationUtil.propagateMetadataToElementOverlay(this.mElementData, this.mAggregationData, this.oButton);
 			assert.strictEqual(mResultData.relevantContainer.getId(), this.oVerticalLayout.getId(), "then the returned data map contains the relevantContainer element");
@@ -281,7 +267,7 @@ sap.ui.require([
 	});
 
 	QUnit.module("Given aggregationMetadata map for metadata propagation", {
-		beforeEach: function(assert){
+		beforeEach() {
 			this.oButton = new Button("button");
 			this.oElement = new VerticalLayout("vertlay", {
 				content: [this.oButton]
@@ -289,16 +275,15 @@ sap.ui.require([
 
 			this.oMetadataFunction = MetadataTestUtil.createPropagateMetadataObject("sap.m.Button");
 			this.mAggregationData = {
-					propagationInfos: [MetadataTestUtil.createPropagationInfoObject(null, this.oElement, this.oMetadataFunction.propagateMetadata)]
-				};
+				propagationInfos: [MetadataTestUtil.createPropagationInfoObject(null, this.oElement, this.oMetadataFunction.propagateMetadata)]
+			};
 			this.mElementData = MetadataTestUtil.buildMetadataObject("contentValue", "testValue").data;
 		},
-		afterEach: function(assert){
+		afterEach() {
 			this.oElement.destroy();
 			this.oButton.destroy();
 		}
 	}, function() {
-
 		QUnit.test("when propagateMetadataToElementOverlay is called for button", function(assert) {
 			var oAggregations = this.oMetadataFunction.propagateMetadata(this.oButton).aggregations;
 			var mResultData = MetadataPropagationUtil.propagateMetadataToElementOverlay(this.mElementData, this.mAggregationData, this.oButton);
@@ -310,7 +295,7 @@ sap.ui.require([
 	});
 
 	QUnit.module("Given aggregationMetadata map with actions delete for metadata propagation", {
-		beforeEach: function(assert){
+		beforeEach() {
 			this.oButton = new Button("button");
 			this.oElement = new VerticalLayout("vertlay", {
 				content: [this.oButton]
@@ -320,14 +305,13 @@ sap.ui.require([
 			this.mAggregationData = {
 				propagationInfos: [MetadataTestUtil.createPropagationInfoObject(null, this.oElement, this.mPropagateMetadata.propagateMetadata)]
 			};
-			this.mElementData = MetadataTestUtil.buildMetadataObject({ actions: { myAction : "testAction" }}).data;
+			this.mElementData = MetadataTestUtil.buildMetadataObject({ actions: { myAction: "testAction" }}).data;
 		},
-		afterEach: function(assert){
+		afterEach() {
 			this.oElement.destroy();
 			this.oButton.destroy();
 		}
 	}, function() {
-
 		QUnit.test("when 'propagateMetadataToElementOverlay' is called", function(assert) {
 			var mExtendedDesigntime = MetadataPropagationUtil.propagateMetadataToElementOverlay(this.mElementData, this.mAggregationData, this.oButton);
 			assert.equal(mExtendedDesigntime.actions, null, "then element actions in designtime were replaced with null value");
@@ -342,8 +326,41 @@ sap.ui.require([
 		});
 	});
 
+	QUnit.module("Given aggregationMetadata map with actions 'not-adaptable' for metadata propagation", {
+		beforeEach() {
+			this.sNotAdaptable = "not-adaptable";
+			this.oButton = new Button("button");
+			this.oElement = new VerticalLayout("vertlay", {
+				content: [this.oButton]
+			});
+
+			this.mPropagateMetadata = MetadataTestUtil.createPropagateMetadataObject("sap.m.Button", undefined, this.sNotAdaptable);
+			this.mAggregationData = {
+				propagationInfos: [MetadataTestUtil.createPropagationInfoObject(null, this.oElement, this.mPropagateMetadata.propagateMetadata)]
+			};
+			this.mElementData = MetadataTestUtil.buildMetadataObject({ actions: { myAction: "testAction" }}).data;
+		},
+		afterEach() {
+			this.oElement.destroy();
+			this.oButton.destroy();
+		}
+	}, function() {
+		QUnit.test("when 'propagateMetadataToElementOverlay' is called", function(assert) {
+			var mExtendedDesigntime = MetadataPropagationUtil.propagateMetadataToElementOverlay(this.mElementData, this.mAggregationData, this.oButton);
+			assert.equal(mExtendedDesigntime.actions, this.sNotAdaptable, "then element actions in designtime were replaced with 'not-adaptable' value");
+			assert.equal(mExtendedDesigntime.aggregations.content.actions, this.sNotAdaptable, "then all element aggregation actions were replaced with 'not-adaptable' value");
+		});
+
+		QUnit.test("when 'propagateMetadataToElementOverlay' is called without aggregations defined", function(assert) {
+			delete this.mElementData.aggregations;
+			var mExtendedDesigntime = MetadataPropagationUtil.propagateMetadataToElementOverlay(this.mElementData, this.mAggregationData, this.oButton);
+			var mExpectedAggregationData = this.mPropagateMetadata.propagateMetadata(this.oButton);
+			assert.deepEqual(mExtendedDesigntime.aggregations, mExpectedAggregationData.aggregations, "then element designtime was extended empty aggregations object");
+		});
+	});
+
 	QUnit.module("Given complex test with only 'propagateRelevantContainer' as function in the designTimeMetadata", {
-		beforeEach : function(assert) {
+		async beforeEach(assert) {
 			var done = assert.async();
 			this.fnPropagateRelevantContainer = function() {
 				return true;
@@ -352,13 +369,13 @@ sap.ui.require([
 			this.oButton = new Button("test-button7");
 			this.oPage = new Page({
 				content: [this.oButton]
-			}).placeAt("content");
+			}).placeAt("qunit-fixture");
 
-			sap.ui.getCore().applyChanges();
+			await nextUIUpdate();
 
 			this.oDesignTime = new DesignTime({
 				rootElements: [this.oPage],
-				designTimeMetadata : { "sap.m.Page": this.oMetadata.data }
+				designTimeMetadata: { "sap.m.Page": this.oMetadata.data }
 			});
 
 			this.oDesignTime.attachEventOnce("synced", function() {
@@ -366,12 +383,11 @@ sap.ui.require([
 				done();
 			}.bind(this));
 		},
-		afterEach : function() {
+		afterEach() {
 			this.oDesignTime.destroy();
 			this.oPage.destroy();
 		}
 	}, function() {
-
 		QUnit.test("when overlay is created", function(assert) {
 			var oContentAggregation = this.oPageOverlay.getAggregationOverlay("content");
 			var mContentData = oContentAggregation.getDesignTimeMetadata().getData();
@@ -385,8 +401,7 @@ sap.ui.require([
 	});
 
 	QUnit.module("Given that a complex test has been created with different relevantContainer and metadata propagations", {
-		beforeEach : function(assert) {
-
+		async beforeEach(assert) {
 			// page				--> propagate relevant container for toolbar
 			//					--> propagate metadata for toolbar
 			//	verticalLayout 	--> propagate relevant container for buttons
@@ -399,8 +414,8 @@ sap.ui.require([
 
 			this.oMetadataForToolbar = MetadataTestUtil.createPropagateRelevantContainerObject("sap.m.Toolbar");
 			this.oMetadataForButton = MetadataTestUtil.createPropagateRelevantContainerObject("sap.m.Button");
-			jQuery.extend(this.oMetadataForToolbar, MetadataTestUtil.createPropagateMetadataObject("sap.m.Toolbar"));
-			jQuery.extend(this.oMetadataForButton, MetadataTestUtil.createPropagateMetadataObject("sap.m.Button"));
+			Object.assign(this.oMetadataForToolbar, MetadataTestUtil.createPropagateMetadataObject("sap.m.Toolbar"));
+			Object.assign(this.oMetadataForButton, MetadataTestUtil.createPropagateMetadataObject("sap.m.Button"));
 
 			var oPageMetadata = MetadataTestUtil.buildMetadataObject(this.oMetadataForToolbar);
 			var oVerticalLayoutMetadata = MetadataTestUtil.buildMetadataObject(this.oMetadataForButton);
@@ -417,14 +432,16 @@ sap.ui.require([
 			});
 			this.oPage = new Page({
 				content: [this.oVerticalLayout, this.oButton3]
-			}).placeAt("content");
+			}).placeAt("qunit-fixture");
 
-			sap.ui.getCore().applyChanges();
+			await nextUIUpdate();
 
 			this.oDesignTime = new DesignTime({
-				rootElements : [this.oPage],
-				designTimeMetadata : {	"sap.m.Page": oPageMetadata.data,
-										"sap.ui.layout.VerticalLayout": oVerticalLayoutMetadata.data }
+				rootElements: [this.oPage],
+				designTimeMetadata: {
+					"sap.m.Page": oPageMetadata.data,
+					"sap.ui.layout.VerticalLayout": oVerticalLayoutMetadata.data
+				}
 			});
 
 			var done = assert.async();
@@ -440,7 +457,7 @@ sap.ui.require([
 				done();
 			}.bind(this));
 		},
-		afterEach : function() {
+		afterEach() {
 			this.oButton1Overlay.destroy();
 			this.oButton2Overlay.destroy();
 			this.oButton3Overlay.destroy();
@@ -451,7 +468,6 @@ sap.ui.require([
 			this.oDesignTime.destroy();
 		}
 	}, function() {
-
 		QUnit.test("when page overlay is created", function(assert) {
 			var oContentAggregationOverlay = this.oPageOverlay.getAggregationOverlay("content");
 			var oContentDesignTimeMetadata = oContentAggregationOverlay.getDesignTimeMetadata();
@@ -530,21 +546,20 @@ sap.ui.require([
 	});
 
 	QUnit.module("Given a page with a vertical layout with toolbar, all containing propagateMetadata for button...", {
-		beforeEach : function(assert) {
-
+		async beforeEach(assert) {
 			// page				--> propagate metadata for buttons
 			//	verticalLayout 	--> propagate metadata for buttons
 			//		toolbar     --> propagate metadata for buttons
 			//			button1
 
 			this.oMetadataForButtonInPage = MetadataTestUtil.createPropagateRelevantContainerObject("sap.m.Button");
-			jQuery.extend(this.oMetadataForButtonInPage,
+			Object.assign(this.oMetadataForButtonInPage,
 				MetadataTestUtil.createPropagateMetadataObject("sap.m.Button", "valueForPage", undefined, "propertyFromPage"));
 			this.oMetadataForButtonInLayout = MetadataTestUtil.createPropagateRelevantContainerObject("sap.m.Button");
-			jQuery.extend(this.oMetadataForButtonInLayout,
+			Object.assign(this.oMetadataForButtonInLayout,
 				MetadataTestUtil.createPropagateMetadataObject("sap.m.Button", "valueForLayout", undefined, "propertyFromLayout"));
 			this.oMetadataForButtonInToolbar = MetadataTestUtil.createPropagateRelevantContainerObject("sap.m.Button");
-			jQuery.extend(this.oMetadataForButtonInToolbar,
+			Object.assign(this.oMetadataForButtonInToolbar,
 				MetadataTestUtil.createPropagateMetadataObject("sap.m.Button", "valueForToolbar", undefined, "propertyFromToolbar"));
 
 			var oPageMetadata = MetadataTestUtil.buildMetadataObject(this.oMetadataForButtonInPage);
@@ -560,15 +575,17 @@ sap.ui.require([
 			});
 			this.oPage = new Page({
 				content: [this.oVerticalLayout]
-			}).placeAt("content");
+			}).placeAt("qunit-fixture");
 
-			sap.ui.getCore().applyChanges();
+			await nextUIUpdate();
 
 			this.oDesignTime = new DesignTime({
-				rootElements : [this.oPage],
-				designTimeMetadata : {	"sap.m.Page": oPageMetadata.data,
-										"sap.ui.layout.VerticalLayout": oVerticalLayoutMetadata.data,
-										"sap.m.Toolbar": oToolbarMetadata.data }
+				rootElements: [this.oPage],
+				designTimeMetadata: {
+					"sap.m.Page": oPageMetadata.data,
+					"sap.ui.layout.VerticalLayout": oVerticalLayoutMetadata.data,
+					"sap.m.Toolbar": oToolbarMetadata.data
+				}
 			});
 
 			var done = assert.async();
@@ -581,7 +598,7 @@ sap.ui.require([
 				done();
 			}.bind(this));
 		},
-		afterEach : function() {
+		afterEach() {
 			this.oButton1Overlay.destroy();
 			this.oToolbarOverlay.destroy();
 			this.oVerticalLayoutOverlay.destroy();
@@ -589,7 +606,6 @@ sap.ui.require([
 			this.oDesignTime.destroy();
 		}
 	}, function() {
-
 		QUnit.test("when button overlay is created", function(assert) {
 			assert.deepEqual(this.oButton1Overlay.getDesignTimeMetadata().getAggregation("content").testProp,
 				"valueForPage",
@@ -606,5 +622,7 @@ sap.ui.require([
 		});
 	});
 
-	QUnit.start();
+	QUnit.done(function() {
+		document.getElementById("qunit-fixture").style.display = "none";
+	});
 });

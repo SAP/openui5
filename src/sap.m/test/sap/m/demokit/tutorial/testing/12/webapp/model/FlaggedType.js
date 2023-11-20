@@ -34,7 +34,7 @@ sap.ui.define([
 		 * Validates the value to be parsed
 		 *
 		 * @public
-		 * Since there is only true and false, no client side validation is required
+		 * Since there is only true and false, no client side validation is defined
 		 * @returns {boolean} true
 		 */
 		validateValue: function () {

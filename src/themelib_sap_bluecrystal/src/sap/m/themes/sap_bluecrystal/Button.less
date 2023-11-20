@@ -5,7 +5,6 @@
 
 .sapMBtnGradient(@color) {
 	background-color: @color;
-	background: -ms-linear-gradient(top, @color 0%, darken(@color, 2) 100%);
 	background: -webkit-gradient(linear, left top, left bottom, color-stop(0, @color), color-stop(1, darken(@color, 2)));
 	background: -webkit-linear-gradient(top, @color 0%, darken(@color, 2) 100%);
 	background: linear-gradient(top, @color 0%, darken(@color, 2) 100%);
@@ -83,8 +82,8 @@ html.sap-desktop .sapMBtnTransparent > .sapMBtnIcon {
 /* ---------------------------------------------------------------------*/
 
 html.sap-desktop .sapMBtn:focus > .sapMFocusable {
-	outline:          1px dotted @sapUiContentFocusColor;
-	outline-offset:   -3px; /* see the global focus specification */
+	outline:          0.0625rem dotted @sapUiContentFocusColor;
+	outline-offset:   -0.1875rem; /* see the global focus specification */
 }
 
 html.sap-desktop .sapMFooter-CTX .sapMBtn:focus > .sapMFocusable,
@@ -102,39 +101,6 @@ html.sap-desktop .sapMBtn:focus > .sapMBtnEmphasized.sapMFocusable {
 }
 
 /* ---------------------------------------------------------------------*/
-/* Custom focus outline for IE and Edge:                                */
-/* ---------------------------------------------------------------------*/
-
-.sapMBtn:focus > .sapMBtnInner.sapMFocusable.sapMIE {
-	outline:          none;
-	position:         relative;
-}
-
-.sapMBtnFocusDiv {
-	box-sizing:       border-box;
-	position:         absolute;
-	left:             1px;
-	top:              1px;
-	right:            1px;
-	bottom:           1px;
-	border-radius:    0;
-}
-
-.sapMBtn:focus .sapMBtnFocusDiv {
-	border:           1px dashed @sapUiContentFocusColor;
-}
-
-html.sap-desktop .sapMFooter-CTX .sapMBtn:focus .sapMBtnFocusDiv,
-html.sap-desktop .sapMBtn.sapMBtnInverted:focus .sapMBtnFocusDiv,
-html.sap-desktop .sapMBtn:focus > .sapMBtnActive > .sapMBtnFocusDiv {
-	border-color:    @sapUiContentContrastFocusColor;
-}
-
-.sapMBtn:focus > .sapMBtnEmphasized > .sapMBtnFocusDiv {
-	border-color:    @sapUiContentFocusColor;
-}
-
-/* ---------------------------------------------------------------------*/
 /* Disabled and active states:                                          */
 /* ---------------------------------------------------------------------*/
 
@@ -148,7 +114,7 @@ html.sap-desktop .sapMBtn:focus > .sapMBtnActive > .sapMBtnFocusDiv {
 /* ------------------------------------------------ */
 
 .sapMFooter-CTX .sapMBtn:hover > .sapMBtnHoverable:not(.sapMBtnActive) {
-	text-shadow:      0 1px 0 fade(@sapUiContentShadowColor, 50);
+	text-shadow:      0 0.0625rem 0 fade(@sapUiContentShadowColor, 50);
 	border-color:     transparent;
 }
 
@@ -170,16 +136,11 @@ html.sap-desktop .sapMBtn:focus > .sapMBtnActive > .sapMBtnFocusDiv {
 	text-shadow:      none;
 }
 
-/* Separators between buttons in a footer */
-.sapMTB-Info-CTX > .sapUiIcon:focus {
-	outline: 1px dotted @sapUiContentContrastFocusColor;
-}
-
 /* Background and text colors for different states */
 .sapMFooter-CTX span.sapMBtnInner,
 .sapMIBar-CTX.sapMFooter-CTX .sapMBtnInner > .sapMBtnIcon {
 	color:            @sapUiButtonFooterTextColor;
-	text-shadow:      0 1px 0 fade(@sapUiContentShadowColor, 50);
+	text-shadow:      0 0.0625rem 0 fade(@sapUiContentShadowColor, 50);
 }
 
 .sapMBar-CTX :not(.sapMBtnDisabled) > span.sapMBtnInner.sapMBtnTransparent.sapMBtnActive > .sapMBtnContent {

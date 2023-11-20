@@ -1,0 +1,50 @@
+{
+  "1.85.0": {
+    "date": "November 2020",
+    "notes": [
+      {
+        "id": "63d8858df633c430b67432fa47f0b9810e47b867",
+        "type": "FIX",
+        "text": " sap.ui.unified.ColorPickerPopover: fixed Demokit liveChange sample",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      },
+      {
+        "id": "9d9792a731ed9ecd843fed4a1b1dc2a020a0cc85",
+        "type": "FIX",
+        "text": " sap.ui.unified.Month: Runtime error on click on week",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070447053"
+          }
+        ]
+      },
+      {
+        "id": "b8d1411ca17a94d84a0ceb2df984eac74f265b6d",
+        "type": "FEATURE",
+        "text": " sap.ui.unified.FileUploader: Value state enhanced"
+      },
+      {
+        "id": "9272b567d66c661b1fd46bf8e6c97fac308ec70c",
+        "type": "FIX",
+        "text": " sap.ui.unified.FileUploader: event is now fired when upload starts",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070458872"
+          }
+        ]
+      },
+      {
+        "id": "db088a68c1aeaeb6ffaee92d39c7d7f4ecd116f5",
+        "type": "FEATURE",
+        "text": " sap.ui.unified.ColorPickerPopover: 'liveChange' event exposed"
+      }
+    ]
+  }
+}

@@ -5,24 +5,22 @@
 		xmlns:mvc="sap.ui.core.mvc"
 		xmlns="sap.m"
 		class="viewPadding">
-	<l:VerticalLayout>
-		<l:content>
-			<u:Calendar
-					id="calendar"
-					months="2"
-					select="handleCalendarSelect" />
-			<l:HorizontalLayout>
-				<Button
-						press="handleSelectToday"
-						text="Select Today" />
-				<Label
-						text="Selected Date (yyyy-mm-dd):"
-						class="labelMarginLeft" />
-				<Text
-						id="selectedDate"
-						text="No Date Selected"
-						class="labelMarginLeft"/>
-			</l:HorizontalLayout>
-		</l:content>
+	<l:VerticalLayout class="sapUiContentPadding">
+		<u:Calendar
+			id="calendar"
+			months="2"
+			select="handleCalendarSelect" />
+		<l:HorizontalLayout allowWrapping="true">
+			<Button
+				press="handleSelectToday"
+				text="Select Today"
+				class="sapUiSmallMarginEnd" />
+			<Label
+				text="Selected Date (yyyy-mm-dd):"
+				class="sapUiSmallMarginEnd" />
+			<Text
+				id="selectedDate"
+				text="No Date Selected" />
+		</l:HorizontalLayout>
 	</l:VerticalLayout>
 </mvc:View>

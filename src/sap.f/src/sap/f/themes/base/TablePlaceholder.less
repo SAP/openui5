@@ -1,0 +1,34 @@
+/* ==================================================== */
+/* CSS for control sap.f.cards.loading/TablePlaceholder  */
+/* Base theme                                           */
+/* ==================================================== */
+
+.sapFCardTablePlaceholderItem {
+	height: 2.75rem;
+	padding: 0 1rem 0 1rem;
+	box-sizing: border-box;
+	display: flex;
+	position: relative;
+	align-items: center;
+	flex: 1 1 auto;
+
+	.sapFCardTablePlaceholderRows {
+		flex-grow: 1;
+		display: flex;
+		gap: 0.75rem;
+	}
+
+	.sapFCardTablePlaceholderColumns {
+		height: 0.75rem;
+		width: 100%;
+		display: inline-block;
+	}
+}
+
+.sapFCardTablePlaceholderItem:first-of-type .sapFCardTablePlaceholderColumns {
+	height: 1.5rem;
+}
+
+.sapUiSizeCompact .sapFCardTablePlaceholderItem {
+	height: 2rem;
+}

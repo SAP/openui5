@@ -4,11 +4,11 @@
 
 // Provides control sap.ui.unified.ContentSwitcher.
 sap.ui.define([
-	'jquery.sap.global',
 	'sap/ui/core/Control',
 	'./library',
-	"./ContentSwitcherRenderer"
-], function(jQuery, Control, library, ContentSwitcherRenderer) {
+	"./ContentSwitcherRenderer",
+	"sap/base/Log"
+], function(Control, library, ContentSwitcherRenderer, Log) {
 	"use strict";
 
 
@@ -38,7 +38,6 @@ sap.ui.define([
 	 * API is not yet finished and might change completely
 	 * @deprecated Since version 1.44.0.
 	 * @alias sap.ui.unified.ContentSwitcher
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var ContentSwitcher = Control.extend("sap.ui.unified.ContentSwitcher", /** @lends sap.ui.unified.ContentSwitcher.prototype */ { metadata : {
 
@@ -69,15 +68,12 @@ sap.ui.define([
 			 */
 			content2 : {type : "sap.ui.core.Control", multiple : true, singularName : "content2"}
 		}
-	}});
+	}, renderer: ContentSwitcherRenderer});
 
 	(function(window) {
 
 	////////////////////////////////////////// Public Methods //////////////////////////////////////////
 
-	/**
-	 * This file defines behavior for the control,
-	 */
 	ContentSwitcher.prototype.init = function(){
 	};
 
@@ -123,18 +119,18 @@ sap.ui.define([
 		///////////////////////////////// Property "activeContent" /////////////////////////////////
 
 	ContentSwitcher.prototype.setActiveContent = function(iNumber) {
-		iNumber = parseInt(iNumber, 10);
+		iNumber = parseInt(iNumber);
 
 		if (isNaN(iNumber) || iNumber < 1) {
 			iNumber = 1;
 
-			jQuery.sap.log.warning(
+			Log.warning(
 				"setActiveContent argument must be either 1 or 2. Active content set to 1."
 			);
 		} else if (iNumber > 2) {
 			iNumber = 2;
 
-			jQuery.sap.log.warning(
+			Log.warning(
 				"setActiveContent argument must be either 1 or 2. Active content set to 2."
 			);
 		}
@@ -152,7 +148,7 @@ sap.ui.define([
 	ContentSwitcher.prototype.setAnimation = function(sAnimation, bSuppressInvalidate){
 		if (typeof (sAnimation) !== "string") {
 			sAnimation = ContentSwitcherAnimation.None;
-			jQuery.sap.log.warning(
+			Log.warning(
 				"setAnimation argument must be a string. Animation was set to \"" +
 				ContentSwitcherAnimation.None + "\"."
 			);

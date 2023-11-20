@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<library xmlns="http://www.sap.com/sap.ui.library.xsd">
+
+	  <name>sap.ui.mdc</name>
+	<vendor>SAP SE</vendor>
+	<copyright>${copyright}</copyright>
+	<version>${version}</version>
+
+	<documentation>UI5 library: sap.ui.mdc</documentation>
+
+	<dependencies>
+		<dependency>
+			<libraryName>sap.ui.core</libraryName>
+		</dependency>
+		<dependency>
+			<libraryName>sap.m</libraryName>
+		</dependency>
+		<dependency>
+			<libraryName>sap.ui.layout</libraryName>
+			<lazy>true</lazy>
+		</dependency>
+	</dependencies>
+
+	<appData>
+		<!-- excludes for the JSDoc -->
+		<jsdoc xmlns="http://www.sap.com/ui5/buildext/jsdoc">
+			<exclude name="sap.ui.mdc.js." />
+		</jsdoc>
+		<!-- excludes for the JSCoverage -->
+		<jscoverage xmlns="http://www.sap.com/ui5/buildext/jscoverage">
+			<exclude name="sap.ui.mdc.js." />
+		</jscoverage>
+		<documentation xmlns="http://www.sap.com/ui5/buildext/documentation" indexUrl="../../../../test-resources/sap/ui/mdc/demokit/docuindex.json" resolve="lib" />
+		<releasenotes xmlns="http://www.sap.com/ui5/buildext/releasenotes" url="../../../../test-resources/sap/ui/mdc/relnotes/changes-{major}.{minor}.json" resolve="lib" />
+		<ownership xmlns="http://www.sap.com/ui5/buildext/ownership">
+			<component>CA-UI5-MDC</component>
+			<component>
+				<name>CA-UI5-TBL</name>
+				<modules>
+					<module>sap/ui/mdc/Table</module>
+				</modules>
+			</component>
+		</ownership>
+	</appData>
+</library>

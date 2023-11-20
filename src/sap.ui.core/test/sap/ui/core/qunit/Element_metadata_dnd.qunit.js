@@ -1,9 +1,9 @@
+/*global QUnit*/
 sap.ui.define([
 	'sap/ui/core/Element'
 ], function(Element) {
 
 	"use strict";
-	/*global QUnit*/
 
 	QUnit.module("DragAndDrop");
 
@@ -20,11 +20,11 @@ sap.ui.define([
 		});
 		var TestElementMetadata = TestElement.getMetadata();
 
-		assert.deepEqual(TestElementMetadata.getDragDropInfo(), {draggable: true, droppable: true});
+		assert.deepEqual(TestElementMetadata.getDragDropInfo(), {draggable: false, droppable: false});
 		assert.deepEqual(TestElementMetadata.getDragDropInfo("items"), {draggable: false, droppable: false, layout: "Vertical"});
-		assert.deepEqual(TestElementMetadata.getDragDropInfo("header"), {draggable: true, droppable: true, layout: "Vertical"});
+		assert.deepEqual(TestElementMetadata.getDragDropInfo("header"), {draggable: false, droppable: false, layout: "Vertical"});
 		assert.deepEqual(TestElementMetadata.getDragDropInfo("_hiddenM"), {draggable: false, droppable: false, layout: "Vertical"});
-		assert.deepEqual(TestElementMetadata.getDragDropInfo("_hiddenS"), {draggable: true, droppable: true, layout: "Vertical"});
+		assert.deepEqual(TestElementMetadata.getDragDropInfo("_hiddenS"), {draggable: false, droppable: false, layout: "Vertical"});
 		assert.deepEqual(TestElementMetadata.getDragDropInfo("nonexisting"), {});
 	});
 

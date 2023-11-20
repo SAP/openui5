@@ -1,0 +1,40 @@
+<mvc:View
+	controllerName="sap.ui.fl.variants.context.controller.ContextVisibility"
+	xmlns:mvc="sap.ui.core.mvc"
+	displayBlock="true"
+	xmlns="sap.m">
+	<Panel id="visibilityPanel">
+		<headerToolbar>
+			<Toolbar id="visibilityToolbar">
+				<Label id="visibilityToolbarLabel" labelFor="visibilityRadioButtonGroup" text="{i18n>RADIO_BUTTON_GROUP_LABEL}" design="Bold"  />
+			</Toolbar>
+		</headerToolbar>
+		<content>
+			<MessageStrip
+				id="visibilityMessageStrip"
+				text="{i18n>VISIBILITY}"
+				visible="{parts: [{path: 'selectedContexts>/selected'}, {path: 'selectedContexts>/showMessageStrip'} ], formatter: '.isMessageStripVisible'}"
+				type="Information"
+				showIcon="true"/>
+			<List
+				id="selectedContextsList"
+				noDataText="{selectedContexts>/noDataText}"
+				mode="Delete"
+				delete=".onDeleteContext"
+				growing="true"
+				items="{selectedContexts>/selected}">
+				<headerToolbar>
+					<Toolbar style="Clear" id="restrictedToolbar">
+						<Label labelFor="selectedContextsList" text="{i18n>SELECTED_CONTEXT_LIST_TITLE}" design="Bold" wrapping="true"/>
+						<ToolbarSpacer />
+						<Button id="removeAllButton" text="{i18n>REMOVE_ALL_BUTTON}" press=".removeAll" enabled="{path: 'selectedContexts>/selected', formatter: '.isRemoveAllEnabled'}"/>
+						<Button id="addContextsButton" ariaHasPopup="Dialog" text="{i18n>ADD_CONTEXTS_BUTTON}" press=".onAddContextsHandler"/>
+					</Toolbar>
+				</headerToolbar>
+				<StandardListItem
+					title="{selectedContexts>id}"
+					tooltip="{path: 'selectedContexts>description', formatter: '.formatTooltip'}"/>
+			</List>
+		</content>
+	</Panel>
+</mvc:View>

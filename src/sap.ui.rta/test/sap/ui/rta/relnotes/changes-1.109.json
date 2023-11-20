@@ -1,0 +1,12 @@
+{
+  "1.109.0": {
+    "date": "October 2022",
+    "notes": [
+      {
+        "id": "707d2ba9b3cbfb699df4b11df5a4ce378035627d",
+        "type": "FIX",
+        "text": " RTA Toolbar: Disable app variants for home pages"
+      }
+    ]
+  }
+}

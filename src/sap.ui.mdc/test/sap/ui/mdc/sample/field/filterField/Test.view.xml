@@ -1,0 +1,979 @@
+<mvc:View height="100%" controllerName="sap.ui.mdc.sample.field.filterField.Test"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:m="sap.m"
+	xmlns:mdc="sap.ui.mdc"
+	xmlns:mdcField="sap.ui.mdc.field"
+	xmlns:mdcValueHelp="sap.ui.mdc.valuehelp"
+	xmlns:mdcValueHelpContent="sap.ui.mdc.valuehelp.content"
+	xmlns:vhfb="sap.ui.mdc.filterbar.vh"
+	xmlns:l="sap.ui.layout"
+	xmlns:form="sap.ui.layout.form"
+	xmlns:c="sap.ui.core"
+	xmlns:legend="sap.ui.core.feature.legend"
+	xmlns:custom="sap.ui.mdc.sample.field.lib">
+
+	<m:App id="MyApp" defaultTransitionName="show">
+		<m:Page id="P0" title="FilterField" titleLevel="H1">
+			<m:ScrollContainer vertical="true" height="67%">
+				<form:SimpleForm id="Form1" layout="ColumnLayout" editable="true"
+					columnsXL="4" columnsL="3" columnsM="2">
+					<c:Title text="FilterFields"/>
+
+					<m:Label text="single value field (ProductId)"/>
+					<mdc:FilterField id="FF1"
+						conditions="{cm>/conditions/ProductId}"
+						propertyKey="ProductId"
+						display="Description"
+						maxConditions="1"
+						placeholder="{/#Product/ProductId/@sap:label}"
+						label="{/#Product/ProductId/@sap:label}"
+						change="handleChange"
+						liveChange="handleLiveChange"
+						valueHelp="VH1">
+						<mdc:dependents>
+							<mdc:ValueHelp id="VH1" delegate='\{"name": "sap/ui/mdc/sample/field/ValueHelpODataV2.delegate", "payload": \{"searchKeys":["ProductId","Name"]\}\}'>
+								<mdc:typeahead>
+									<mdcValueHelp:Popover id="VH1-Pop">
+										<mdcValueHelpContent:MTable id="VH1-Pop-MTable"
+											keyPath="ProductId"
+											descriptionPath="Name"
+											caseSensitive="true"
+											useAsValueHelp="false">
+											<m:Table id="VH1-Pop-Table" items="{path: '/ProductCollection'}" width="26rem">
+												<m:columns>
+													<m:Column>
+														<m:Label text="{/#Product/ProductId/@sap:label}"/>
+													</m:Column>
+													<m:Column width="10rem">
+														<m:Label text="{/#Product/Name/@sap:label}"/>
+													</m:Column>
+													<m:Column width="2rem">
+														<m:Label text="Icon"/>
+													</m:Column>
+												</m:columns>
+												<m:items>
+													<m:ColumnListItem type="Active">
+														<m:Text text="{ProductId}"/>
+														<m:Text text="{Name}"/>
+														<m:Image src="{= '../../../../../../' + ${ProductPicUrl}}" height="1rem"/>
+													</m:ColumnListItem>
+												</m:items>
+											</m:Table>
+										</mdcValueHelpContent:MTable>
+									</mdcValueHelp:Popover>
+								</mdc:typeahead>
+								<mdc:dialog>
+									<mdcValueHelp:Dialog id="VH1-Dialog" title="Product">
+										<mdcValueHelpContent:MTable id="VH1-Dialog-MTable"
+											keyPath="ProductId"
+											descriptionPath="Name"
+											caseSensitive="true"
+											useAsValueHelp="false">
+											<m:Table id="VH1-Dialog-Table" items="{path: '/ProductCollection'}">
+												<m:columns>
+													<m:Column>
+														<m:Label text="{/#Product/ProductId/@sap:label}"/>
+													</m:Column>
+													<m:Column width="10rem">
+														<m:Label text="{/#Product/Name/@sap:label}"/>
+													</m:Column>
+													<m:Column width="2rem">
+														<m:Label text="Icon"/>
+													</m:Column>
+												</m:columns>
+												<m:items>
+													<m:ColumnListItem type="Active">
+														<m:Text text="{ProductId}"/>
+														<m:Text text="{Name}"/>
+														<m:Image src="{= '../../../../../../' + ${ProductPicUrl}}" height="1rem"/>
+													</m:ColumnListItem>
+												</m:items>
+											</m:Table>
+										</mdcValueHelpContent:MTable>
+									</mdcValueHelp:Dialog>
+								</mdc:dialog>
+							</mdc:ValueHelp>
+						</mdc:dependents>
+					</mdc:FilterField>
+
+					<m:Label text="single value field in display mode (ProductId)"/>
+					<mdc:FilterField id="FF2"
+						conditions="{cm>/conditions/ProductId}"
+						propertyKey="ProductId"
+						display="Description"
+						maxConditions="1"
+						editMode="Display"
+						placeholder="{/#Product/ProductId/@sap:label}"
+						label="{/#Product/ProductId/@sap:label}"
+						change="handleChange"
+						liveChange="handleLiveChange"
+						valueHelp="VH1">
+					</mdc:FilterField>
+
+					<m:Label text="multi value field (Name)"/>
+					<mdc:FilterField
+						id="FF3"
+						conditions="{cm>/conditions/Name}"
+						propertyKey="Name"
+						maxConditions="10"
+						placeholder="{/#Product/Name/@sap:label}"
+						label="{/#Product/Name/@sap:label}"
+						change="handleChange"
+						liveChange="handleLiveChange"
+						valueHelp="VH1">
+					</mdc:FilterField>
+
+					<m:Label text="multi value field in display mode (Name)"/>
+					<mdc:FilterField id="FF4"
+						conditions="{cm>/conditions/Name}"
+						propertyKey="Name"
+						maxConditions="10"
+						editMode="Display"
+						placeholder="{/#Product/Name/@sap:label}"
+						label="{/#Product/Name/@sap:label}"
+						change="handleChange"
+						liveChange="handleLiveChange">
+					</mdc:FilterField>
+
+					<m:Label text="multi value field (Description)"/>
+					<mdc:FilterField id="FF5"
+						conditions="{cm>/conditions/Description}"
+						propertyKey="Description"
+						dataType="sap.ui.model.odata.type.String"
+						dataTypeConstraints='\{"nullable": false\}'
+						delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate"\}'
+						maxConditions="3"
+						placeholder="{/#Product/Description/@sap:label}"
+						label="{/#Product/Description/@sap:label}"
+						change="handleChange"
+						liveChange="handleLiveChange">
+					</mdc:FilterField>
+
+					<m:Label text="multi value field in display mode (Description)"/>
+					<mdc:FilterField id="FF6"
+						conditions="{cm>/conditions/Description}"
+						propertyKey="Description"
+						maxConditions="3"
+						editMode="Display"
+						placeholder="{/#Product/Description/@sap:label}"
+						label="{/#Product/Description/@sap:label}"
+						change="handleChange"
+						liveChange="handleLiveChange">
+					</mdc:FilterField>
+
+					<m:Label text="single value field (DateTime) only equals"/>
+					<mdc:FilterField id="FF7"
+						conditions="{cm>/conditions/DateTime}"
+						propertyKey="DateTime"
+						dataType="sap.ui.model.odata.type.DateTime"
+						dataTypeFormatOptions='\{"style": "long"\}'
+						delegate='\{"name": "sap/ui/mdc/sample/field/FieldBaseODataV2.delegate"\}'
+						display="Value"
+						maxConditions="1"
+						operators="EQ"
+						placeholder="{/#Product/DateTime/@sap:label}"
+						label="{/#Product/DateTime/@sap:label}"
+						change="handleChange"
+						liveChange="handleLiveChange">
+					</mdc:FilterField>
+
+					<m:Label text="single value field (DateTime) with DynamicDateRange"/>
+					<mdc:FilterField id="FF7d"
+						conditions="{cm>/conditions/DateTime}"
+						propertyKey="DateTime"
+						dataType="sap.ui.model.odata.type.DateTime"
+						dataTypeFormatOptions='\{"style": "short"\}'
+						delegate='\{"name": "sap/ui/mdc/sample/field/FieldBaseODataV2.delegate"\}'
+						display="Value"
+						maxConditions="1"
+						placeholder="{/#Product/DateTime/@sap:label}"
+						label="{/#Product/DateTime/@sap:label}"
+						change="handleChange"
+						liveChange="handleLiveChange">
+					</mdc:FilterField>
+
+					<m:Label text="single value field in display mode (DateTime)"/>
+					<mdc:FilterField id="FF8"
+						conditions="{cm>/conditions/DateTime}"
+						propertyKey="DateTime"
+						dataType="sap.ui.model.odata.type.DateTime"
+						dataTypeFormatOptions='\{"style": "medium"\}'
+						delegate='\{"name": "sap/ui/mdc/sample/field/FieldBaseODataV2.delegate"\}'
+						maxConditions="1"
+						editMode="Display"
+						placeholder="{/#Product/DateTime/@sap:label}"
+						label="{/#Product/DateTime/@sap:label}"
+						change="handleChange"
+						liveChange="handleLiveChange">
+					</mdc:FilterField>
+
+					<m:Label text="single value field (Date) all operators"/>
+					<mdc:FilterField id="FF7a"
+						conditions="{cm>/conditions/Date}"
+						propertyKey="Date"
+						dataType="sap.ui.model.odata.type.DateTime"
+						dataTypeFormatOptions='\{"style": "long"\}'
+						dataTypeConstraints='\{"displayFormat": "Date"\}'
+						delegate='\{"name": "sap/ui/mdc/sample/field/FieldBaseODataV2.delegate"\}'
+						display="Value"
+						maxConditions="1"
+						placeholder="{/#Product/Date/@sap:label}"
+						label="{/#Product/Date/@sap:label}"
+						change="handleChange"
+						liveChange="handleLiveChange"
+						valueHelp="VH-Conditions">
+					</mdc:FilterField>
+
+					<m:Label text="single value field (Date) using DynamicDateRange"/>
+					<mdc:FilterField id="FF7a-DDR"
+						conditions="{cm>/conditions/Date}"
+						propertyKey="Date"
+						dataType="sap.ui.model.odata.type.DateTime"
+						dataTypeFormatOptions='\{"style": "long"\}'
+						dataTypeConstraints='\{"displayFormat": "Date"\}'
+						delegate='\{"name": "sap/ui/mdc/sample/field/FieldBaseODataV2.delegate"\}'
+						display="Value"
+						maxConditions="1"
+						placeholder="{/#Product/Date/@sap:label}"
+						label="{/#Product/Date/@sap:label}"
+						change="handleChange"
+						liveChange="handleLiveChange">
+					</mdc:FilterField>
+
+					<m:Label text="single value field (Date) only between"/>
+					<mdc:FilterField id="FF7b"
+						conditions="{cm>/conditions/Date}"
+						propertyKey="Date"
+						dataType="sap.ui.model.odata.type.DateTime"
+						dataTypeFormatOptions='\{"style": "short"\}'
+						dataTypeConstraints='\{"displayFormat": "Date"\}'
+						delegate='\{"name": "sap/ui/mdc/sample/field/FieldBaseODataV2.delegate"\}'
+						display="Value"
+						maxConditions="1"
+						operators="BT"
+						placeholder="{/#Product/Date/@sap:label}"
+						label="{/#Product/Date/@sap:label}"
+						change="handleChange"
+						liveChange="handleLiveChange">
+					</mdc:FilterField>
+
+					<m:Label text="multi value field (Date) only equal"/>
+					<mdc:FilterField id="FF7c"
+						conditions="{cm>/conditions/Date}"
+						propertyKey="Date"
+						dataType="sap.ui.model.odata.type.DateTime"
+						dataTypeFormatOptions='\{"style": "short"\}'
+						dataTypeConstraints='\{"displayFormat": "Date"\}'
+						delegate='\{"name": "sap/ui/mdc/sample/field/FieldBaseODataV2.delegate"\}'
+						display="Value"
+						maxConditions="-1"
+						operators="EQ"
+						placeholder="{/#Product/Date/@sap:label}"
+						label="{/#Product/Date/@sap:label}"
+						change="handleChange"
+						liveChange="handleLiveChange"
+						valueHelp="VH-Conditions">
+					</mdc:FilterField>
+
+					<m:Label text="single value field (Status)"/>
+					<mdc:FilterField id="FF9"
+						conditions="{cm>/conditions/Status}"
+						propertyKey="Status"
+						display="Description"
+						maxConditions="1"
+						placeholder="{/#Product/Status/@sap:label}"
+						label="{/#Product/Status/@sap:label}"
+						change="handleChange"
+						liveChange="handleLiveChange"
+						valueHelp="VH-Status">
+						<mdc:dependents>
+							<mdc:ValueHelp id="VH-Status" delegate='\{"name": "sap/ui/mdc/sample/field/ValueHelpODataV2.delegate"\}'>
+								<mdc:typeahead>
+									<mdcValueHelp:Popover id="VH-Status-Pop">
+										<mdcValueHelpContent:FixedList id="VH-Status-FL" useFirstMatch="false" items="{path: '/StatusCollection'}">
+											<mdcValueHelpContent:FixedListItem key="{StatusId}" text="{Name}"/>
+										</mdcValueHelpContent:FixedList>
+									</mdcValueHelp:Popover>
+								</mdc:typeahead>
+							</mdc:ValueHelp>
+						</mdc:dependents>
+					</mdc:FilterField>
+
+					<m:Label text="Select-like single value field (Status)"/>
+					<mdc:FilterField id="FF17"
+						conditions="{cm>/conditions/Status}"
+						propertyKey="Status"
+						display="Description"
+						maxConditions="1"
+						placeholder="{/#Product/Status/@sap:label}"
+						label="{/#Product/Status/@sap:label}"
+						change="handleChange"
+						liveChange="handleLiveChange"
+						valueHelp="VH-Status2">
+						<mdc:dependents>
+							<mdc:ValueHelp id="VH-Status2" delegate='\{"name": "sap/ui/mdc/sample/field/ValueHelpODataV2.delegate"\}'>
+								<mdc:typeahead>
+									<mdcValueHelp:Popover id="VH-Status2-Pop">
+										<mdcValueHelpContent:FixedList id="VH-Status2-FL" useFirstMatch="true" filterList="false" items="{path: '/StatusCollection'}">
+											<mdcValueHelpContent:FixedListItem key="{StatusId}" text="{Name}"/>
+										</mdcValueHelpContent:FixedList>
+									</mdcValueHelp:Popover>
+								</mdc:typeahead>
+							</mdc:ValueHelp>
+						</mdc:dependents>
+					</mdc:FilterField>
+
+					<m:Label text="single value field in display mode  (Status)"/>
+					<mdc:FilterField id="FF10"
+						conditions="{cm>/conditions/Status}"
+						propertyKey="Status"
+						maxConditions="1"
+						editMode="Display"
+						placeholder="{/#Product/Status/@sap:label}"
+						label="{/#Product/Status/@sap:label}"
+						change="handleChange"
+						liveChange="handleLiveChange">
+					</mdc:FilterField>
+
+					<m:Label text="multi (2) value field (Quantity)"/>
+					<mdc:FilterField id="FF11"
+						conditions="{cm>/conditions/Quantity}"
+						propertyKey="Quantity"
+						dataType="Edm.Int32"
+						dataTypeConstraints='\{"nullable": false\}'
+						delegate='\{"name": "sap/ui/mdc/sample/field/FieldBaseODataV2.delegate"\}'
+						display="Value"
+						maxConditions="2"
+						placeholder="{/#Product/Quantity/@sap:label}"
+						label="{/#Product/Quantity/@sap:label}"
+						change="handleChange"
+						liveChange="handleLiveChange"
+						valueHelp="VH-Conditions">
+					</mdc:FilterField>
+
+					<m:Label text="multi value field in display mode (Quantity)"/>
+					<mdc:FilterField id="FF12"
+						conditions="{cm>/conditions/Quantity}"
+						propertyKey="Quantity"
+						dataType="Edm.Int32"
+						delegate='\{"name": "sap/ui/mdc/sample/field/FieldBaseODataV2.delegate"\}'
+						maxConditions="2"
+						editMode="Display"
+						placeholder="{/#Product/Quantity/@sap:label}"
+						label="{/#Product/Quantity/@sap:label}"
+						change="handleChange"
+						liveChange="handleLiveChange">
+					</mdc:FilterField>
+
+					<m:Label text="Custom field"/>
+					<mdc:FilterField id="FF13"
+						conditions="{cm>/conditions/Status}"
+						propertyKey="Status"
+						display="Description"
+						maxConditions="1"
+						placeholder="{/#Product/Status/@sap:label}"
+						label="{/#Product/Status/@sap:label}"
+						change="handleChange"
+						liveChange="handleLiveChange">
+						<custom:CustomFilter id="FF13-Custom"
+							conditions="{$field>/conditions}"
+							maxConditions="{$field>/maxConditions}"
+						/>
+					</mdc:FilterField>
+
+					<m:Label text="A UoM field"/>
+					<mdc:FilterField id="FF15"
+						conditions="{cm>/conditions/WeightMeasure,WeightUnit}"
+						propertyKey="WeightMeasure,WeightUnit"
+						dataType="sap.ui.model.type.Unit"
+						dataTypeConstraints='\{"minimum": 0\}'
+						display="Description"
+						editMode="Editable"
+						placeholder="{/#Product/WeightMeasure/@sap:label}"
+						label="{/#Product/WeightMeasure/@sap:label}"
+						change="handleChange"
+						liveChange="handleLiveChange"
+						valueHelp="VH-WeightUnit">
+						<mdc:dependents>
+							<mdc:ValueHelp id="VH-WeightUnit" delegate='\{"name": "sap/ui/mdc/sample/field/ValueHelpODataV2.delegate"\}'>
+								<mdc:typeahead>
+									<mdcValueHelp:Popover id="VH-WeightUnit-Pop">
+										<mdcValueHelpContent:FixedList id="VH-WeightUnit-FL" useFirstMatch="false" items="{/weightUnits}">
+											<mdcValueHelpContent:FixedListItem key="{id}" text="{unit}" additionalText="{text}"/>
+										</mdcValueHelpContent:FixedList>
+									</mdcValueHelp:Popover>
+								</mdc:typeahead>
+							</mdc:ValueHelp>
+						</mdc:dependents>
+					</mdc:FilterField>
+
+					<m:Label text="A UoM field in display mode"/>
+					<mdc:FilterField id="FF16"
+						conditions="{cm>/conditions/WeightMeasure,WeightUnit}"
+						propertyKey="WeightMeasure,WeightUnit"
+						dataType="sap.ui.model.type.Unit"
+						display="Value"
+						editMode="Display"
+						placeholder="{/#Product/WeightMeasure/@sap:label}"
+						label="{/#Product/WeightMeasure/@sap:label}"
+						change="handleChange"
+						liveChange="handleLiveChange">
+					</mdc:FilterField>
+
+					<m:Label text="Material (empty key)"/>
+					<mdc:FilterField id="FF_Material"
+						conditions="{cm>/conditions/MatrId}"
+						propertyKey="MatrId"
+						dataType="sap.ui.model.type.String"
+						dataTypeConstraints='\{"maxLength": 10, "search": "^(|[0-9])+$", "nullable": false\}'
+						dataTypeFormatOptions='\{"parseKeepsEmptyString": true\}'
+						display="ValueDescription"
+						placeholder="{/#Product/MatrId/@sap:label}"
+						label="{/#Product/MatrId/@sap:label}"
+						change="handleChange"
+						liveChange="handleLiveChange"
+						valueHelp="VH-Material">
+						<mdc:dependents>
+							<mdc:ValueHelp id="VH-Material" delegate='\{"name": "sap/ui/mdc/sample/field/ValueHelpODataV2.delegate", "payload": \{"searchKeys":["MatrId","Text"]\}\}'>
+								<mdc:typeahead>
+									<mdcValueHelp:Popover id="VH-Material-Pop">
+										<mdcValueHelpContent:MTable id="VH-Material-Pop-MTable"
+											keyPath="MatrId"
+											descriptionPath="Text"
+											caseSensitive="true"
+											useAsValueHelp="false">
+											<m:Table id="VH-Material-Pop-Table" items="{path: '/MaterialCollection'}" width="26rem">
+												<m:columns>
+													<m:Column>
+														<m:Label text="id"/>
+													</m:Column>
+													<m:Column>
+														<m:Label text="Desciption"/>
+													</m:Column>
+												</m:columns>
+												<m:items>
+													<m:ColumnListItem type="Active">
+														<m:Text text="{MatrId}"/>
+														<m:Text text="{Text}"/>
+													</m:ColumnListItem>
+												</m:items>
+											</m:Table>
+										</mdcValueHelpContent:MTable>
+									</mdcValueHelp:Popover>
+								</mdc:typeahead>
+								<mdc:dialog>
+									<mdcValueHelp:Dialog id="VH-Material-Dialog" title="Material">
+										<mdcValueHelpContent:MTable id="VH-Material-Dialog-MTable"
+											keyPath="MatrId"
+											descriptionPath="Text"
+											caseSensitive="true"
+											useAsValueHelp="false">
+											<m:Table id="VH-Material-Dialog-Table" items="{path: '/MaterialCollection'}">
+												<m:columns>
+													<m:Column>
+														<m:Label text="id"/>
+													</m:Column>
+													<m:Column>
+														<m:Label text="Desciption"/>
+													</m:Column>
+												</m:columns>
+												<m:items>
+													<m:ColumnListItem type="Active">
+														<m:Text text="{MatrId}"/>
+														<m:Text text="{Text}"/>
+													</m:ColumnListItem>
+												</m:items>
+											</m:Table>
+										</mdcValueHelpContent:MTable>
+									</mdcValueHelp:Dialog>
+								</mdc:dialog>
+							</mdc:ValueHelp>
+						</mdc:dependents>
+					</mdc:FilterField>
+
+					<m:Label text="Search"/>
+					<mdc:FilterField id="FF-Search"
+						conditions="{cm>/conditions/$search}"
+						propertyKey="$search"
+						maxConditions="1"
+						dataType="sap.ui.model.type.String"
+						display="Value"
+						editMode="Editable"
+						placeholder="My Search"
+						label="My Search"
+						change="handleChange"
+						liveChange="handleLiveChange">
+					</mdc:FilterField>
+
+					<m:Label text="type date as additionalValue"/>
+					<mdc:FilterField id="FF-DateDescription"
+						conditions="{cm>/conditions/Name}"
+						delegate='\{"name": "sap/ui/mdc/sample/field/FieldBaseODataV2.delegate"\}'
+						dataType="sap.ui.model.type.String"
+						dataTypeConstraints='\{"maxLength": 30\}'
+						additionalDataType='\{"name": "sap.ui.model.odata.type.DateTime", "formatOptions": \{"style": "long"\}, "constraints": \{"displayFormat": "Date"\}\}'
+						propertyKey="Name"
+						display="ValueDescription"
+						maxConditions="-1"
+						placeholder="{/#Product/Name/@sap:label}"
+						label="{/#Product/Name/@sap:label}"
+						change="handleChange"
+						liveChange="handleLiveChange"
+						valueHelp="VH-DateDescription">
+						<mdc:dependents>
+							<mdc:ValueHelp id="VH-DateDescription" delegate='\{"name": "sap/ui/mdc/sample/field/ValueHelpODataV2.delegate"\}'>
+								<mdc:typeahead>
+									<mdcValueHelp:Popover id="VH-DateDescription-Pop">
+										<mdcValueHelpContent:FixedList id="VH-DateDescription-FL" useFirstMatch="true" items="{path: '/ProductCollection'}" >
+											<mdcValueHelpContent:FixedListItem 
+												text="{path: 'Date', type:'sap.ui.model.odata.type.DateTime', formatOptions: {style: 'long'}, constraints: {displayFormat: 'Date'}}" 
+												additionalText="{path: 'Name', type: 'sap.ui.model.type.String', constraints: {maxLength: 30}}" 
+												key="{path: 'Name', type: 'sap.ui.model.type.String', constraints: {maxLength: 30}}"/>
+										</mdcValueHelpContent:FixedList>
+									</mdcValueHelp:Popover>
+								</mdc:typeahead>
+							</mdc:ValueHelp>
+						</mdc:dependents>
+					</mdc:FilterField>
+
+					<c:Title text="In/Out Example"/>
+					<m:Label text="{/#Product/CountryId/@sap:label}"/>
+					<mdc:FilterField
+						id="IOFFCountry"
+						conditions="{cm>/conditions/CountryId}"
+						propertyKey="CountryId"
+						operators="EQ,NE,EUROPE"
+						dataType="sap.ui.model.type.String"
+						dataTypeConstraints='\{"maxLength": 3\}'
+						display="ValueDescription"
+						label="{/#Product/CountryId/@sap:label}"
+						change="handleChange"
+						liveChange="handleLiveChange"
+						valueHelp="VH-Country">
+						<mdc:dependents>
+							<mdc:ValueHelp id="VH-Country" delegate='\{"name": "sap/ui/mdc/sample/field/ValueHelpODataV2.delegate", "payload": \{"searchKeys":["countryId","text"]\}\}'>
+								<mdc:typeahead>
+									<mdcValueHelp:Popover id="VH-Country-Pop">
+										<mdcValueHelpContent:MTable id="VH-Country-Pop-MTable"
+											keyPath="countryId"
+											descriptionPath="text"
+											caseSensitive="true"
+											useAsValueHelp="false">
+											<m:Table id="VH-Country-Pop-Table" items="{path: '/CountryCollection', suspended: true}" width="26rem">
+												<m:columns>
+													<m:Column>
+														<m:Label text="{/#Country/countryId/@sap:label}"/>
+													</m:Column>
+													<m:Column>
+														<m:Label text="{/#Country/text/@sap:label}"/>
+													</m:Column>
+												</m:columns>
+												<m:items>
+													<m:ColumnListItem type="Active">
+														<m:Text text="{path: 'countryId', type:'sap.ui.model.type.String', constraints: {maxLength: 3}}"/>
+														<m:Text text="{text}"/>
+													</m:ColumnListItem>
+												</m:items>
+											</m:Table>
+										</mdcValueHelpContent:MTable>
+									</mdcValueHelp:Popover>
+								</mdc:typeahead>
+								<mdc:dialog>
+									<mdcValueHelp:Dialog id="VH-Country-Dialog" title="Countries">
+										<mdcValueHelpContent:MTable id="VH-Country-Dialog-MTable"
+											keyPath="countryId"
+											descriptionPath="text"
+											caseSensitive="true"
+											useAsValueHelp="false">
+											<m:Table id="VH-Country-Dialog-Table" items="{path: '/CountryCollection', suspended: true}">
+												<m:columns>
+													<m:Column>
+														<m:Label text="{/#Country/countryId/@sap:label}"/>
+													</m:Column>
+													<m:Column>
+														<m:Label text="{/#Country/text/@sap:label}"/>
+													</m:Column>
+												</m:columns>
+												<m:items>
+													<m:ColumnListItem type="Active">
+														<m:Text text="{path: 'countryId', type:'sap.ui.model.type.String', constraints: {maxLength: 3}}"/>
+														<m:Text text="{text}"/>
+													</m:ColumnListItem>
+												</m:items>
+											</m:Table>
+										</mdcValueHelpContent:MTable>
+										<mdcValueHelpContent:Conditions id="VH-Country-Dialog-Conditions"/>
+									</mdcValueHelp:Dialog>
+								</mdc:dialog>
+							</mdc:ValueHelp>
+						</mdc:dependents>
+					</mdc:FilterField>
+
+					<m:Label text="{/#Product/RegionId/@sap:label}"/>
+					<mdc:FilterField
+						id="IOFFRegion"
+						conditions="{cm>/conditions/RegionId}"
+						propertyKey="RegionId"
+						dataType="sap.ui.model.type.String"
+						dataTypeConstraints='\{"maxLength": 2, "search": "^[0-9]+$"\}'
+						display="ValueDescription"
+						label="{/#Product/RegionId/@sap:label}"
+						change="handleChange"
+						liveChange="handleLiveChange"
+						valueHelp="VH-Region">
+						<mdc:dependents>
+							<mdc:ValueHelp id="VH-Region"
+								delegate='\{"name": "sap/ui/mdc/sample/field/ValueHelp.delegate", "payload": \{"searchKeys":["regionId","text"], "in": [\{"path": "countryId", "source": "conditions/CountryId"\}], "out": [\{"path": "countryId", "target": "conditions/CountryId"\}]\}\}'>
+								<mdc:typeahead>
+									<mdcValueHelp:Popover id="VH-Region-Pop">
+										<mdcValueHelpContent:MTable id="VH-Region-Pop-MTable"
+											keyPath="regionId"
+											descriptionPath="text"
+											caseSensitive="true"
+											useAsValueHelp="false">
+											<m:Table id="VH-Region-Pop-Table" items="{path: '/RegionCollection', suspended: true}" width="26rem">
+												<m:columns>
+													<m:Column>
+														<m:Label text="{/#Region/regionId/@sap:label}"/>
+													</m:Column>
+													<m:Column>
+														<m:Label text="{/#Region/text/@sap:label}"/>
+													</m:Column>
+													<m:Column>
+														<m:Label text="{/#Region/countryId/@sap:label}"/>
+													</m:Column>
+												</m:columns>
+												<m:items>
+													<m:ColumnListItem type="Active">
+														<m:Text text="{path: 'regionId', type:'sap.ui.model.type.String', constraints: {maxLength: 2, search: '^(|[0-9])+$'}}"/>
+														<m:Text text="{text}"/>
+														<m:Text text="{path: 'countryId', type:'sap.ui.model.type.String', constraints: {maxLength: 3}}"/>
+													</m:ColumnListItem>
+												</m:items>
+											</m:Table>
+										</mdcValueHelpContent:MTable>
+									</mdcValueHelp:Popover>
+								</mdc:typeahead>
+								<mdc:dialog>
+									<mdcValueHelp:Dialog id="VH-Region-Dialog" title="Regions">
+										<mdcValueHelpContent:MTable id="VH-Region-Dialog-MTable"
+											keyPath="regionId"
+											descriptionPath="text"
+											caseSensitive="true"
+											useAsValueHelp="false">
+											<mdcValueHelpContent:filterBar>
+												<vhfb:FilterBar id="VH-Region-FB" liveMode= "true" delegate='\{"name": "delegates/GenericVhFilterBarDelegate", "payload": \{"collectionName": ""\}\}'>
+													<mdc:FilterField
+														id="VH-Region-FF-countryId"
+														label= "{/#Region/countryId/@sap:label}"
+														editMode= "Editable"
+														display= "ValueDescription"
+														dataType="sap.ui.model.type.String"
+														dataTypeConstraints='\{"maxLength": 3\}'
+														width="100%"
+														conditions="{$filters>/conditions/countryId}"
+														propertyKey="countryId"
+														operators="EQ,NE,EUROPE"
+														valueHelp="VH-Country"/>
+												</vhfb:FilterBar>
+											</mdcValueHelpContent:filterBar>
+											<m:Table id="VH-Region-Dialog-Table" items="{path: '/RegionCollection', suspended: true}">
+												<m:columns>
+													<m:Column>
+														<m:Label text="{/#Region/regionId/@sap:label}"/>
+													</m:Column>
+													<m:Column>
+														<m:Label text="{/#Region/text/@sap:label}"/>
+													</m:Column>
+													<m:Column>
+														<m:Label text="{/#Region/countryId/@sap:label}"/>
+													</m:Column>
+												</m:columns>
+												<m:items>
+													<m:ColumnListItem type="Active">
+														<m:Text text="{path: 'regionId', type:'sap.ui.model.type.String', constraints: {maxLength: 2, search: '^(|[0-9])+$'}}"/>
+														<m:Text text="{text}"/>
+														<m:Text text="{path: 'countryId', type:'sap.ui.model.type.String', constraints: {maxLength: 3}}"/>
+													</m:ColumnListItem>
+												</m:items>
+											</m:Table>
+										</mdcValueHelpContent:MTable>
+										<mdcValueHelpContent:Conditions id="VH-Region-Dialog-Conditions"/>
+									</mdcValueHelp:Dialog>
+								</mdc:dialog>
+							</mdc:ValueHelp>
+						</mdc:dependents>
+					</mdc:FilterField>
+
+					<m:Label text="{/#Product/CityId/@sap:label}"/>
+					<mdc:FilterField
+						id="IOFFCity"
+						conditions="{cm>/conditions/CityId}"
+						propertyKey="CityId"
+						dataType="sap.ui.model.odata.type.String"
+						dataTypeConstraints='\{"maxLength": 2, "isDigitSequence": true, "nullable": false\}'
+						delegate='\{"name": "sap/ui/mdc/sample/field/FieldBaseODataV2.delegate"\}'
+						display="ValueDescription"
+						label="{/#Product/CityId/@sap:label}"
+						change="handleChange"
+						liveChange="handleLiveChange"
+						valueHelp="VH-City">
+					</mdc:FilterField>
+
+					<m:Label text="Info (not bound to ConditionModel)"/>
+					<m:Input id="Info" value="{path: 'view>/info', type:'sap.ui.model.odata.type.String', constraints: {maxLength: 100, nullable: false}, formatOptions: {parseKeepsEmptyString: true}}"/>
+
+					<c:Title text="Condition Model"></c:Title>
+
+					<m:Label text="Conditions"/>
+					<m:TextArea id="Cond" editable="false" rows="10"></m:TextArea>
+					<m:Button id="clear" icon="sap-icon://clear-filter" press="clearFilters">
+						<m:layoutData>
+							<form:ColumnElementData cellsLarge="1" cellsSmall="1"></form:ColumnElementData>
+						</m:layoutData>
+					</m:Button>
+
+					<form:dependents>
+						<mdc:ValueHelp id="VH-Conditions" validateInput="false" delegate='\{"name": "sap/ui/mdc/sample/field/ValueHelpODataV2.delegate"\}'>
+							<mdc:dialog>
+								<mdcValueHelp:Popover id="VH-Conditions-Pop" title="Conditions">
+									<mdcValueHelpContent:Conditions id="VH-Conditions-Pop-Conditions"/>
+								</mdcValueHelp:Popover>
+							</mdc:dialog>
+						</mdc:ValueHelp>
+					</form:dependents>
+				</form:SimpleForm>
+				<m:dependents> <!-- To have outside of control tree of ConditionModel -->
+					<mdc:ValueHelp id="VH-City"
+						delegate='\{"name": "sap/ui/mdc/sample/field/ValueHelp.delegate", "payload": \{
+							"searchKeys":["countryId","regionId","cityId","text"],
+							"in": [\{"path": "countryId", "source": "conditions/CountryId"\}, \{"path": "regionId", "source": "conditions/RegionId"\}, \{"path": "info", "source": "view>/info", "initialValueFilterEmpty": false\}],
+							"out": [\{"path": "countryId", "target": "conditions/CountryId"\}, \{"path": "regionId", "target": "conditions/RegionId"\}]\}\}'>
+						<mdc:typeahead>
+							<mdcValueHelp:Popover id="VH-City-Pop">
+								<mdcValueHelpContent:MTable id="VH-City-Pop-MTable"
+									keyPath="cityId"
+									descriptionPath="text"
+									caseSensitive="true"
+									useAsValueHelp="false">
+									<m:Table id="VH-City-Pop-Table" items="{path: '/CityCollection', suspended: true}" width="26rem">
+										<m:columns>
+											<m:Column>
+												<m:Label text="{/#City/cityId/@sap:label}"/>
+											</m:Column>
+											<m:Column>
+												<m:Label text="{/#City/text/@sap:label}"/>
+											</m:Column>
+											<m:Column>
+												<m:Label text="{/#City/countryId/@sap:label}"/>
+											</m:Column>
+											<m:Column>
+												<m:Label text="{/#City/regionId/@sap:label}"/>
+											</m:Column>
+										</m:columns>
+										<m:items>
+											<m:ColumnListItem type="Active">
+												<m:Text text="{path:'cityId', type: 'sap.ui.model.odata.type.String', constraints: {maxLength: 2, isDigitSequence: true, nullable: false}}"/>
+												<m:Text text="{text}"/>
+												<m:Text text="{path: 'countryId', type:'sap.ui.model.type.String', constraints: {maxLength: 3}}"/>
+												<m:Text text="{path: 'regionId', type:'sap.ui.model.type.String', constraints: {maxLength: 2, search: '^(|[0-9])+$'}}"/>
+											</m:ColumnListItem>
+										</m:items>
+									</m:Table>
+								</mdcValueHelpContent:MTable>
+							</mdcValueHelp:Popover>
+						</mdc:typeahead>
+						<mdc:dialog>
+							<mdcValueHelp:Dialog id="VH-City-Dialog" title="Cities">
+								<mdcValueHelpContent:MTable id="VH-City-Dialog-MTable"
+									keyPath="cityId"
+									descriptionPath="text"
+									caseSensitive="true"
+									useAsValueHelp="false">
+									<mdcValueHelpContent:filterBar>
+										<vhfb:FilterBar id="VH-City-FB" liveMode= "true" delegate='\{"name": "delegates/GenericVhFilterBarDelegate", "payload": \{"collectionName": ""\}\}'>
+											<mdc:FilterField
+												id="VH-City-FF-countryId"
+												label= "{/#Region/countryId/@sap:label}"
+												editMode= "Editable"
+												display= "ValueDescription"
+												dataType="sap.ui.model.type.String"
+												dataTypeConstraints='\{"maxLength": 3\}'
+												delegate='\{"name": "sap/ui/mdc/sample/field/FieldBaseODataV2.delegate"\}'
+												width="100%"
+												conditions="{$filters>/conditions/countryId}"
+												propertyKey="countryId"
+												operators="EQ,NE,EUROPE"
+												valueHelp="VH-Country"/>
+											<mdc:FilterField
+												id="VH-City-FF-regionId"
+												label= "{/#City/regionId/@sap:label}"
+												editMode= "Editable"
+												display= "ValueDescription"
+												dataType="sap.ui.model.type.String"
+												dataTypeConstraints='\{"maxLength": 2, "search": "^[0-9]+$"\}'
+												delegate='\{"name": "sap/ui/mdc/sample/field/FieldBaseODataV2.delegate"\}'
+												width="100%"
+												conditions="{$filters>/conditions/regionId}"
+												propertyKey="regionId"
+												valueHelp="VH-Region2">
+											</mdc:FilterField>
+											<mdc:FilterField
+												id="VH-City-FF-info"
+												label= "{/#City/info/@sap:label}"
+												editMode= "Editable"
+												display= "Value"
+												dataType="sap.ui.model.odata.type.String"
+												dataTypeFormatOptions='\{"parseKeepsEmptyString": true\}'
+												dataTypeConstraints='\{"maxLength": 100, "nullable": false\}'
+												delegate='\{"name": "sap/ui/mdc/sample/field/FieldBaseODataV2.delegate"\}'
+												width="100%"
+												conditions="{$filters>/conditions/info}"
+												propertyKey="info"/>
+											<vhfb:dependents>
+												<mdc:ValueHelp id="VH-Region2"
+													delegate='\{"name": "sap/ui/mdc/sample/field/ValueHelp.delegate", "payload": \{"searchKeys":["regionId","countryId","text"],
+"in": [\{"path": "countryId", "source": "conditions/countryId"\}], "out": [\{"path": "countryId", "target": "conditions/countryId"\}]\}\}'>
+													<mdc:typeahead>
+														<mdcValueHelp:Popover id="VH-Region2-Pop">
+															<mdcValueHelpContent:MTable id="VH-Region2-Pop-MTable"
+																keyPath="regionId"
+																descriptionPath="text"
+																caseSensitive="true"
+																useAsValueHelp="false">
+																<m:Table id="VH-Region2-Pop-Table" items="{path: '/RegionCollection', suspended: true}" width="26rem">
+																	<m:columns>
+																		<m:Column>
+																			<m:Label text="{/#Region/regionId/@sap:label}"/>
+																		</m:Column>
+																		<m:Column>
+																			<m:Label text="{/#Region/text/@sap:label}"/>
+																		</m:Column>
+																		<m:Column>
+																			<m:Label text="{/#Region/countryId/@sap:label}"/>
+																		</m:Column>
+																	</m:columns>
+																	<m:items>
+																		<m:ColumnListItem type="Active">
+																			<m:Text text="{path: 'regionId', type:'sap.ui.model.type.String', constraints: {maxLength: 2, search: '^(|[0-9])+$'}}"/>
+																			<m:Text text="{text}"/>
+																			<m:Text text="{path: 'countryId', type:'sap.ui.model.type.String', constraints: {maxLength: 3}}"/>
+																		</m:ColumnListItem>
+																	</m:items>
+																</m:Table>
+															</mdcValueHelpContent:MTable>
+														</mdcValueHelp:Popover>
+													</mdc:typeahead>
+												</mdc:ValueHelp>
+											</vhfb:dependents>
+										</vhfb:FilterBar>
+									</mdcValueHelpContent:filterBar>
+									<m:Table id="VH-City-Dialog-Table" items="{path: '/CityCollection', suspended: true}">
+										<m:columns>
+											<m:Column>
+												<m:Label text="{/#City/cityId/@sap:label}"/>
+											</m:Column>
+											<m:Column>
+												<m:Label text="{/#City/text/@sap:label}"/>
+											</m:Column>
+											<m:Column>
+												<m:Label text="{/#City/countryId/@sap:label}"/>
+											</m:Column>
+											<m:Column>
+												<m:Label text="{/#City/regionId/@sap:label}"/>
+											</m:Column>
+											<m:Column>
+												<m:Label text="{/#City/info/@sap:label}"/>
+											</m:Column>
+										</m:columns>
+										<m:items>
+											<m:ColumnListItem type="Active">
+												<m:Text text="{path:'cityId', type: 'sap.ui.model.odata.type.String', constraints: {maxLength: 2, isDigitSequence: true, nullable: false}}"/>
+												<m:Text text="{text}"/>
+												<m:Text text="{path: 'countryId', type:'sap.ui.model.type.String', constraints: {maxLength: 3}}"/>
+												<m:Text text="{path: 'regionId', type:'sap.ui.model.type.String', constraints: {maxLength: 2, search: '^(|[0-9])+$'}}"/>
+												<m:Text text="{path: 'info', type:'sap.ui.model.odata.type.String', constraints: {maxLength: 100, nullable: false}, formatOptions: {parseKeepsEmptyString: true}}"/>
+											</m:ColumnListItem>
+										</m:items>
+									</m:Table>
+								</mdcValueHelpContent:MTable>
+								<mdcValueHelpContent:Conditions id="VH-City-Dialog-Conditions"/>
+							</mdcValueHelp:Dialog>
+						</mdc:dialog>
+					</mdc:ValueHelp>
+				</m:dependents>
+			</m:ScrollContainer>
+			<m:ScrollContainer vertical="true" height="33%">
+				<m:Table id="myTable" items="{path: '/ProductCollection'}" width="100%">
+					<m:columns>
+						<m:Column width="8rem">
+							<m:Label text="{/#Product/ProductId/@sap:label}"/>
+						</m:Column>
+						<m:Column width="12rem">
+							<m:Label text="{/#Product/Name/@sap:label}"/>
+						</m:Column>
+						<m:Column minScreenWidth="Desktop" demandPopin="true">
+							<m:Label text="{/#Product/Description/@sap:label}"/>
+						</m:Column>
+						<m:Column width="12rem" minScreenWidth="Desktop" demandPopin="true">
+							<m:Label text="{/#Product/DateTime/@sap:label}"/>
+						</m:Column>
+						<m:Column width="8rem" minScreenWidth="Desktop" demandPopin="true">
+							<m:Label text="{/#Product/Date/@sap:label}"/>
+						</m:Column>
+						<m:Column width="8rem" minScreenWidth="Desktop" demandPopin="true">
+							<m:Label text="{/#Product/Status/@sap:label}"/>
+						</m:Column>
+						<m:Column width="2rem" minScreenWidth="Desktop" demandPopin="true">
+							<m:Label text="{/#Product/Quantity/@sap:label}"/>
+						</m:Column>
+						<m:Column width="2rem" minScreenWidth="Desktop" demandPopin="true">
+							<m:Label text="{/#Product/MatrId/@sap:label}"/>
+						</m:Column>
+						<m:Column width="3rem" minScreenWidth="Desktop" demandPopin="true">
+							<m:Label text="{/#Product/CountryId/@sap:label}"/>
+						</m:Column>
+						<m:Column width="2rem" minScreenWidth="Desktop" demandPopin="true">
+							<m:Label text="{/#Product/RegionId/@sap:label}"/>
+						</m:Column>
+						<m:Column width="2rem" minScreenWidth="Desktop" demandPopin="true">
+							<m:Label text="{/#Product/CityId/@sap:label}"/>
+						</m:Column>
+						<m:Column width="4rem" minScreenWidth="Desktop" demandPopin="true">
+							<m:Label text="{/#Product/WeightMeasure/@sap:label}"/>
+						</m:Column>
+					</m:columns>
+					<m:items>
+						<m:ColumnListItem type="Active">
+							<m:Text id="T-F1" text="{ProductId}" />
+							<m:Text id="T-F2" text="{Name}"/>
+							<m:Text id="T-F3" text="{Description}"/>
+							<m:Text id="T-F5" text="{path:'DateTime', type:'sap.ui.model.odata.type.DateTime'}"/>
+							<m:Text id="T-F6" text="{path:'Date', type:'sap.ui.model.odata.type.DateTime', constraints: {displayFormat: 'Date'}}"/>
+							<m:Text id="T-F7" text="{Status}"/>
+							<m:Text id="T-F8" text="{Quantity}"/>
+							<m:Text id="T-F9" text="{MatrId}"/>
+							<m:Text id="T-F10" text="{path: 'CountryId', type:'sap.ui.model.type.String', constraints: {maxLength: 3}}"/>
+							<m:Text id="T-F11" text="{path: 'RegionId', type:'sap.ui.model.type.String', constraints: {maxLength: 2, search: '^(|[0-9])+$'}}"/>
+							<m:Text id="T-F12" text="{path:'CityId', type: 'sap.ui.model.odata.type.String', constraints: {maxLength: 2, isDigitSequence: true, nullable: false}}"/>
+							<m:Text id="T-F13" text="{parts: ['WeightMeasure', 'WeightUnit'], type: 'sap.ui.model.type.Unit'}"/>
+						</m:ColumnListItem>
+					</m:items>
+				</m:Table>
+			</m:ScrollContainer>
+			<m:footer>
+				<m:Bar>
+					<m:contentLeft>
+						<c:Icon id="MyIcon"></c:Icon>
+						<m:Text id="MyText" text="Event" width="400px" wrapping="false"/>
+					</m:contentLeft>
+					<m:contentRight>
+						<c:Icon id="MyIconRight"></c:Icon>
+						<m:Text id="MyTextRight" text="LiveChange" width="400px" wrapping="false"/>
+					</m:contentRight>
+				</m:Bar>
+			</m:footer>
+		</m:Page>
+	</m:App>
+
+</mvc:View>

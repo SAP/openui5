@@ -1,12 +1,20 @@
 /*!
  * ${copyright}
  */
-
+/*eslint-disable max-len */
 // Provides the base implementation for all model implementations
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/DateFormat', 'sap/ui/model/SimpleType', 'sap/ui/model/FormatException', 'sap/ui/model/ParseException', 'sap/ui/model/ValidateException'],
-	function(jQuery, DateFormat, SimpleType, FormatException, ParseException, ValidateException) {
+sap.ui.define([
+	"sap/base/util/each",
+	"sap/base/util/isEmptyObject",
+	"sap/ui/core/Lib",
+	"sap/ui/core/date/UI5Date",
+	"sap/ui/core/format/DateFormat",
+	"sap/ui/model/FormatException",
+	"sap/ui/model/ParseException",
+	"sap/ui/model/SimpleType",
+	"sap/ui/model/ValidateException"
+], function(each, isEmptyObject, Library, UI5Date, DateFormat, FormatException, ParseException, SimpleType, ValidateException) {
 	"use strict";
-
 
 	/**
 	 * Constructor for a Date type.
@@ -71,9 +79,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/DateFormat', 'sap/ui/mod
 				if (oValue === "") {
 					return null;
 				}
-				var oResult = this.oOutputFormat.parse(oValue);
+				oResult = this.oOutputFormat.parse(oValue);
 				if (!oResult) {
-					oBundle = sap.ui.getCore().getLibraryResourceBundle();
+					oBundle = Library.getResourceBundleFor("sap.ui.core");
 					throw new ParseException(oBundle.getText(this.sName + ".Invalid"));
 				}
 				if (this.oInputFormat) {
@@ -91,10 +99,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/DateFormat', 'sap/ui/mod
 
 	Date1.prototype.validateValue = function(oValue) {
 		if (this.oConstraints) {
-			var oBundle = sap.ui.getCore().getLibraryResourceBundle(),
+			var oBundle = Library.getResourceBundleFor("sap.ui.core"),
 				aViolatedConstraints = [],
 				aMessages = [],
 				oInputFormat = this.oInputFormat,
+				sContent,
 				that = this;
 
 			// convert date into date object to compare
@@ -102,22 +111,26 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/DateFormat', 'sap/ui/mod
 				oValue = oInputFormat.parse(oValue);
 			}
 
-			jQuery.each(this.oConstraints, function(sName, oContent) {
+			each(this.oConstraints, function(sName, oContent) {
 				if (oInputFormat) {
 					oContent = oInputFormat.parse(oContent);
 				}
+				sContent = that.oOutputFormat.format(oContent);
+
 				switch (sName) {
 					case "minimum":
 						if (oValue < oContent) {
 							aViolatedConstraints.push("minimum");
-							aMessages.push(oBundle.getText(that.sName + ".Minimum", [oContent]));
+							aMessages.push(oBundle.getText(that.sName + ".Minimum", [sContent]));
 						}
 						break;
 					case "maximum":
 						if (oValue > oContent) {
 							aViolatedConstraints.push("maximum");
-							aMessages.push(oBundle.getText(that.sName + ".Maximum", [oContent]));
+							aMessages.push(oBundle.getText(that.sName + ".Maximum", [sContent]));
 						}
+						break;
+					default: break;
 				}
 			});
 			if (aViolatedConstraints.length > 0) {
@@ -138,10 +151,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/DateFormat', 'sap/ui/mod
 				if (isNaN(oValue)) {
 					throw new FormatException("Cannot format date: " + oValue + " is not a valid Timestamp");
 				} else {
-					oValue = parseInt(oValue, 10);
+					oValue = parseInt(oValue);
 				}
 			}
-			oValue = new Date(oValue);
+			oValue = UI5Date.getInstance(oValue);
 			return oValue;
 		}
 	};
@@ -163,6 +176,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/DateFormat', 'sap/ui/mod
 	};
 
 	/**
+	 * Returns the output pattern.
+	 *
+	 * @returns {string} The output pattern
+	 *
+	 * @see sap.ui.core.format.DateFormat.getDateInstance
 	 * @protected
 	 */
 	Date1.prototype.getOutputPattern = function() {
@@ -188,11 +206,24 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/DateFormat', 'sap/ui/mod
 		var oSourceOptions = this.oFormatOptions.source;
 		this.oOutputFormat = DateFormat.getInstance(this.oFormatOptions);
 		if (oSourceOptions) {
-			if (jQuery.isEmptyObject(oSourceOptions)) {
+			if (isEmptyObject(oSourceOptions)) {
 				oSourceOptions = {pattern: "yyyy-MM-dd"};
 			}
 			this.oInputFormat = DateFormat.getInstance(oSourceOptions);
 		}
+	};
+
+	/**
+	 * Returns a language-dependent placeholder text such as "e.g. <sample value>" where <sample value> is formatted
+	 * using this type.
+	 *
+	 * @returns {string|undefined}
+	 *   The language-dependent placeholder text or <code>undefined</code> if the type does not offer a placeholder
+	 *
+	 * @public
+	 */
+	Date1.prototype.getPlaceholderText = function () {
+		return this.oOutputFormat.getPlaceholderText();
 	};
 
 	return Date1;

@@ -1,0 +1,17 @@
+<core:FragmentDefinition
+		xmlns="sap.m"
+		xmlns:core="sap.ui.core"
+		xmlns:l="sap.ui.layout">
+	<Popover
+			title="{i18n>SAMPLE_INFO_TOOLTIP}"
+			placement="Bottom">
+		<content>
+			<l:VerticalLayout>
+				<l:content>
+					<FormattedText visible="{=${/description} !== undefined}" htmlText="{/description}" class="sapUiTinyMargin" />
+					<FormattedText visible="{=${/details} !== undefined}" htmlText="{/details}" class="sapUiTinyMargin" />
+				</l:content>
+			</l:VerticalLayout>
+		</content>
+	</Popover>
+</core:FragmentDefinition>

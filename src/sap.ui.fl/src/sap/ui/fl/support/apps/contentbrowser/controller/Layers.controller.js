@@ -4,8 +4,9 @@
 
 sap.ui.define([
 	"sap/ui/core/mvc/Controller",
-	"sap/ui/fl/support/apps/contentbrowser/utils/ErrorUtils"
-], function (Controller, ErrorUtils) {
+	"sap/ui/fl/support/apps/contentbrowser/utils/ErrorUtils",
+	"sap/ui/core/UIComponent"
+], function(Controller, ErrorUtils, UIComponent) {
 	"use strict";
 
 	/**
@@ -15,30 +16,31 @@ sap.ui.define([
 	 * @alias sap.ui.fl.support.apps.contentbrowser.controller.Layers
 	 * @author SAP SE
 	 * @version ${version}
-	 * @experimental Since 1.45
+	 * @since 1.45
+	 * @private
 	 */
 	return Controller.extend("sap.ui.fl.support.apps.contentbrowser.controller.Layers", {
 		/**
 		 * Handler for triggering the navigation to a selected layer.
-		 * @param {Object} oEvent
+		 * @param {object} oEvent - Event object
 		 * @public
 		 */
-		onLayerSelected: function (oEvent) {
+		onLayerSelected(oEvent) {
 			var oSource = oEvent.getSource();
 			var sLayerBindingPath = oSource.getBindingContextPath().substring(1);
 			var oLayerModelData = this.getView().getModel("layers").getData();
 			var sLayerName = oLayerModelData[sLayerBindingPath].name;
 
-			var oRouter = sap.ui.core.UIComponent.getRouterFor(this);
-			oRouter.navTo("LayerContentMaster", {"layer": sLayerName});
+			var oRouter = UIComponent.getRouterFor(this);
+			oRouter.navTo("LayerContentMaster", {layer: sLayerName});
 		},
 
 		/**
 		 * Handler for displaying the stored error messages.
-		 * @param {Object} oEvent
+		 * @param {object} oEvent - Event object
 		 * @public
 		 */
-		handleMessagePopoverPress: function (oEvent) {
+		handleMessagePopoverPress(oEvent) {
 			var oSource = oEvent.getSource();
 			ErrorUtils.handleMessagePopoverPress(oSource);
 		}

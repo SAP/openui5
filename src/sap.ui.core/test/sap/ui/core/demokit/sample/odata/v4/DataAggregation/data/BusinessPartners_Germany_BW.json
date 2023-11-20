@@ -1,0 +1,22 @@
+{
+	"@odata.count" : 3,
+	"value" : [{
+		"@odata.id" : null,
+		"LocalCurrency" : "EUR",
+		"Segment" : "Large",
+		"SalesAmountLocalCurrency@odata.type" : "#Decimal",
+		"SalesAmountLocalCurrency" : 3765323
+	}, {
+		"@odata.id" : null,
+		"LocalCurrency" : "EUR",
+		"Segment" : "Mid-size",
+		"SalesAmountLocalCurrency@odata.type" : "#Decimal",
+		"SalesAmountLocalCurrency" : 526122
+	}, {
+		"@odata.id" : null,
+		"LocalCurrency" : "EUR",
+		"Segment" : "Small",
+		"SalesAmountLocalCurrency@odata.type" : "#Decimal",
+		"SalesAmountLocalCurrency" : 125093
+	}]
+}

@@ -45,17 +45,13 @@
 		} else if ( sSrc.indexOf("require:") === 0 ) {
 			sSrc = sSrc.slice(8);
 			bCoreRequired = bCoreRequired || sSrc === "sap/ui/core/Core";
-			document.write("<script>sap.ui.requireSync(\"" + sSrc + "\");</script>");
+			document.write("<script>sap.ui.requireSync(\"" + sSrc + "\");</script>"); // legacy-relevant
 		}
 	}
 	if ( bCoreRequired ) {
 		document.write("<script>sap.ui.getCore().boot && sap.ui.getCore().boot();</script>");
 	}
 }([
-	"raw:sap/ui/thirdparty/baseuri.js",
-	"raw:sap/ui/thirdparty/es6-promise.js",
-	"raw:sap/ui/thirdparty/es6-string-methods.js",
-	"raw:sap/ui/thirdparty/es6-object-assign.js",
 	"raw:ui5loader.js",
 	"raw:ui5loader-autoconfig.js",
 	"require:sap/ui/core/Core"

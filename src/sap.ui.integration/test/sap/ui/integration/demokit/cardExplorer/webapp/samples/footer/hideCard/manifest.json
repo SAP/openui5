@@ -1,0 +1,141 @@
+{
+	"_version": "1.15.0",
+	"sap.app": {
+		"id": "card.explorer.footer.hideCard",
+		"type": "card",
+		"title": "Sample of an Object Card",
+		"subTitle": "Sample of an Object Card",
+		"applicationVersion": {
+			"version": "1.0.0"
+		},
+		"shortTitle": "A short title for this Card",
+		"info": "Additional information about this Card",
+		"description": "A long description for this Card",
+		"tags": {
+			"keywords": [
+				"Object",
+				"Card",
+				"Sample"
+			]
+		}
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"icons": {
+			"icon": "sap-icon://switch-classes"
+		}
+	},
+	"sap.card": {
+		"type": "Object",
+		"extension": "./HideCardExtension",
+		"data": {
+			"json": {
+				"firstName": "Donna",
+				"lastName": "Moore",
+				"position": "Sales Executive",
+				"phone": "+1 202 555 5555",
+				"email": "my@mymail.com",
+				"photo": "./DonnaMoore.png",
+				"agendaUrl": "/agenda",
+				"company": {
+					"name": "Robert Brown Entertainment",
+					"address": "481 West Street, Anytown OH 45066, USA",
+					"email": "mail@mycompany.com",
+					"emailSubject": "Subject",
+					"website": "www.company_a.example.com",
+					"url": "https://www.company_a.example.com"
+				}
+			}
+		},
+		"header": {
+			"icon": {
+				"src": ""
+			},
+			"title": "Request from {firstName} {lastName}",
+			"subTitle": "{position}"
+		},
+		"content": {
+			"groups": [
+				{
+					"title": "Contact Details",
+					"items": [
+						{
+							"label": "First Name",
+							"value": "{firstName}"
+						},
+						{
+							"label": "Last Name",
+							"value": "{lastName}"
+						},
+						{
+							"label": "Phone",
+							"value": "{phone}",
+							"actions": [
+								{
+									"type": "Navigation",
+									"parameters": {
+										"url": "tel:{phone}"
+									}
+								}
+							]
+						}
+					]
+				},
+				{
+					"title": "Company Details",
+					"items": [
+						{
+							"label": "Company Name",
+							"value": "{company/name}"
+						},
+						{
+							"label": "Website",
+							"value": "{company/website}",
+							"actions": [
+								{
+									"type": "Navigation",
+									"parameters": {
+										"url": "{company/url}"
+									}
+								}
+							]
+						},
+						{
+							"label": "Address",
+							"value": "{company/address}"
+						}
+					]
+				}
+			]
+		},
+		"footer": {
+			"actionsStrip": [
+				{
+					"text": "Accept",
+					"overflowPriority": "High",
+					"actions": [
+						{
+							"type": "Custom",
+							"parameters": {
+								"method": "accept"
+							}
+						}
+					]
+				},
+				{
+					"buttonType": "Reject",
+					"text": "Reject",
+					"overflowPriority": "High",
+					"actions": [
+						{
+							"type": "Custom",
+							"parameters": {
+								"method": "reject"
+							}
+						}
+					]
+				}
+			]
+		}
+	}
+}

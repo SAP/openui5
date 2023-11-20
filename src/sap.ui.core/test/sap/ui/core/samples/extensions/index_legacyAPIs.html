@@ -1,0 +1,48 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<title>Layered Controller Extension</title>
+
+	<script src="../../shared-config.js"></script>
+	<script id="sap-ui-bootstrap"
+		src="../../../../../../resources/sap-ui-core.js"
+		data-sap-ui-theme="sap_belize"
+		data-sap-ui-xx-bindingSyntax="complex"
+		data-sap-ui-libs="sap.m"
+		data-sap-ui-resourceRoots='{"sample":"./"}'
+		>
+
+	</script>
+
+	<script>
+		// load and start the customized application
+		sap.ui.require(["sap/ui/core/Core"], function(Core) {
+			Core.ready().then(function() {
+				sap.ui.require(["sap/ui/core/mvc/Controller"], function(Controller) {
+					//register an extension provider to simulate a real extension coming from flex
+					Controller.registerExtensionProvider("sample.ExtensionProvider_legacyAPIs");
+
+					//add an async view
+					var oView = sap.ui.xmlview({viewName: "sample.Main", async:true});
+					oView.placeAt("content1");
+
+					//add an sync view
+					var oView = sap.ui.xmlview({viewName: "sample.Main", async:false});
+					oView.placeAt("content2");
+				});
+			});
+		});
+
+	</script>
+</head>
+<body class="sapUiBody">
+	<h1>Layered Controller Extensions Sample Page</h1>
+
+	<h2>Async View with com.sap.industry.oil, com.sap.industry.retail extension</h2>
+	<div id="content1" style="border:1px solid green"></div>
+
+	<h2>Sync View with com.sap.industry.oil, com.sap.industry.retail extension</h2>
+	<div id="content2" style="border:1px solid blue"></div>
+
+</body>
+</html>

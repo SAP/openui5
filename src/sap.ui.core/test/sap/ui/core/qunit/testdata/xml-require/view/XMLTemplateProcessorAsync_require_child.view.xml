@@ -1,0 +1,3 @@
+<mvc:XMLView height="100%" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m">
+	<Button press="Box.show('MessageBox')"></Button>
+</mvc:XMLView>

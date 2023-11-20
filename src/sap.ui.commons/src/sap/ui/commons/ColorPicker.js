@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.ui.commons.ColorPicker.
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/unified/ColorPicker'],
-	function(jQuery, library, Control, UnifiedColorPicker) {
+sap.ui.define(['./library', 'sap/ui/unified/ColorPicker', "sap/base/Log"],
+	function(library, UnifiedColorPicker, Log) {
 	"use strict";
 
 
@@ -26,7 +26,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @public
 	 * @deprecated as of version 1.38, replaced by {@link sap.ui.unified.ColorPicker}
 	 * @alias sap.ui.commons.ColorPicker
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var ColorPicker = UnifiedColorPicker.extend("sap.ui.commons.ColorPicker", /** @lends sap.ui.commons.ColorPicker.prototype */ {
 		metadata : {
@@ -39,10 +38,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	try {
 		sap.ui.getCore().loadLibrary("sap.ui.unified");
 	} catch (e) {
-		jQuery.sap.log.error("The control 'sap.ui.commons.ColorPicker' needs library 'sap.ui.unified'.");
+		Log.error("The control 'sap.ui.commons.ColorPicker' needs library 'sap.ui.unified'.");
 		throw (e);
 	}
 
 	return ColorPicker;
 
-}, /* bExport= */ true);
+});

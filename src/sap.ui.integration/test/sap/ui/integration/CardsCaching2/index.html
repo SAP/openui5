@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<title>Cards caching</title>
+
+		<script src="../../../../../resources/sap-ui-integration.js"
+			id="sap-ui-bootstrap"
+			data-sap-ui-libs="sap.m"
+			data-sap-ui-theme="sap_horizon"
+			data-sap-ui-compatVersion="edge"></script>
+
+		<script>
+
+			if ('serviceWorker' in navigator) {
+				navigator.serviceWorker.register('./service-worker.js');
+			}
+
+			customElements.whenDefined("ui-integration-card").then(function () {
+				createHost();
+			});
+
+			function createHost() {
+				let host = new sap.ui.integration.Host(),
+					cards = document.getElementsByTagName("ui-integration-card");
+
+				host.useExperimentalCaching();
+
+				for (let i = 0; i < cards.length; i++) {
+					cards[i]._getControl().setHost(host);
+				}
+
+				return host;
+			}
+
+		</script>
+
+		<style>
+			ui-integration-card {
+				margin: 1rem;
+				width: 500px!important;
+				min-height: 480px;
+			}
+		</style>
+	</head>
+
+
+	<body>
+		<div id="main">
+			<ui-integration-card manifest="./cards/sample1.json"></ui-integration-card>
+			<ui-integration-card manifest="./cards/sample2.json"></ui-integration-card>
+			<ui-integration-card manifest="./cards/sample3.json"></ui-integration-card>
+			<ui-integration-card manifest="./cards/sample4.json"></ui-integration-card>
+			<ui-integration-card manifest="./cards/sample5.json"></ui-integration-card>
+		</div>
+	</body>
+
+</html>

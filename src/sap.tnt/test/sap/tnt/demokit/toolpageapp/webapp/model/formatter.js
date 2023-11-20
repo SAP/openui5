@@ -1,22 +1,24 @@
 sap.ui.define([
-	], function () {
-		"use strict";
+	"sap/base/strings/formatMessage"
+], function (formatMessage) {
+	"use strict";
 
-		return {
-			/**
-			 * @public
-			 * @param {boolean} bIsPhone the value to be checked
-			 * @returns {string} path to image
-			 */
-			srcImageValue : function (bIsPhone) {
-				var sImageSrc = "";
-				if (bIsPhone === false) {
-					sImageSrc = "./images/homeImage.jpg";
-				} else {
-					sImageSrc = "./images/homeImage_small.jpg";
-				}
-				return sImageSrc;
+	return {
+		formatMessage: formatMessage,
+
+		/**
+		 * Determines the path of the image depending if its a phone or not the smaller or larger image version is loaded
+		 *
+		 * @public
+		 * @param {boolean} bIsPhone the value to be checked
+		 * @param {string} sImagePath The path of the image
+		 * @returns {string} path to image
+		 */
+		srcImageValue : function (bIsPhone, sImagePath) {
+			if (bIsPhone) {
+				sImagePath += "_small";
 			}
-		};
-	}
-);
+			return sImagePath + ".jpg";
+		}
+	};
+});

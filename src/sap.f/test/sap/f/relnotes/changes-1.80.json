@@ -1,0 +1,114 @@
+{
+  "1.80.0": {
+    "date": "June 2020",
+    "notes": [
+      {
+        "id": "f3375216a813747ed466fe9804f99c9dc89174cd",
+        "type": "FIX",
+        "text": " sap.f.DynamicPage: Now sap.m.FacetFilter properly aligned",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070261586"
+          }
+        ]
+      },
+      {
+        "id": "26f354e9a8f2e232fae220adf2d71cbd9470d9f4",
+        "type": "FIX",
+        "text": " sap.f.ShellBar: Allowed usage of sap.m.Avatar",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080144970"
+          }
+        ]
+      },
+      {
+        "id": "1c8d653a1ddfabfcfba02125a6640b503c839734",
+        "type": "FIX",
+        "text": " sap.f.DynamicPage: Expand button text correctly conveyed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070171844"
+          }
+        ]
+      },
+      {
+        "id": "3ed13e0a3dcfdc1b90b8fd0858398820e2e585f8",
+        "type": "FIX",
+        "text": " sap.f.PlanningCalendarInCard: fixed appointments misalignment",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080185880"
+          }
+        ]
+      },
+      {
+        "id": "aa968a2202180b93bc0b86a4296bbbce03beeadc",
+        "type": "FEATURE",
+        "text": " Demo Kit: Additional info visualization to samples shown",
+        "references": []
+      },
+      {
+        "id": "ec9c8232316735228fba9bc67f601d685991c236",
+        "type": "FEATURE",
+        "text": " sap.m.BadgeEnabler: New Badge API introduced",
+        "references": []
+      },
+      {
+        "id": "636832c64939b0c5243ed8bae61aac17510ee26b",
+        "type": "FIX",
+        "text": " GridContainer: Drag and Drop between two containers is enhanced",
+        "references": []
+      },
+      {
+        "id": "57da5d5011e89c1027d22d835146a1f5e0db4c0a",
+        "type": "FIX",
+        "text": " sap.f.DynamicPage: Corrected header value check",
+        "references": []
+      },
+      {
+        "id": "cc28d67106471dbcbab81d0041ba86f1edb6aafe",
+        "type": "FIX",
+        "text": " sap.f.GridContainer: Drag and Drop between two containers enhanced for IE11",
+        "references": []
+      },
+      {
+        "id": "cf1202d5f52872a96d8ccf92bfaf94762dfb0f45",
+        "type": "FIX",
+        "text": " sap.f.DynamicPage: Fixed hiding of footer when animations are disabled",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080206356"
+          }
+        ]
+      },
+      {
+        "id": "1b8e2841632164c27d72a1f3ea0dab8e62e87374",
+        "type": "FIX",
+        "text": " sap.f.DynamicPage: Prevented unwanted scroll",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400002536912020"
+          }
+        ]
+      },
+      {
+        "id": "803313e0c7653d6d9ed90e021fc859c9c9329af4",
+        "type": "FIX",
+        "text": " sap.f.ShellBar: Configurating title without menu now possible",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070227114"
+          }
+        ]
+      }
+    ]
+  }
+}

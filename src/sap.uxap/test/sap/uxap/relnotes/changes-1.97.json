@@ -1,0 +1,62 @@
+{
+  "1.97.0": {
+    "date": "November 2021",
+    "notes": [
+      {
+        "id": "f68776618c2b4e182adc2338b141bfdb7fe1e301",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Fix tab-stops under Anchor bar",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170211846"
+          }
+        ]
+      },
+      {
+        "id": "d3a99c18202aa6fb24bdd59d42e1c17c9be26050",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Corrected media update",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170272703"
+          }
+        ]
+      },
+      {
+        "id": "86cdf33bc2b940a60af725221f5906cef7dea62b",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageSubSection: Fix focus issue",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170200164"
+          }
+        ]
+      },
+      {
+        "id": "633ed5e0242a6fc1ee8c80e676960d13c9f05994",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Fix pin behavior",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180244489"
+          }
+        ]
+      },
+      {
+        "id": "4c7fffecac0e81485aca9fbb97f6ae7a82521bc8",
+        "type": "FIX",
+        "text": " sap.m.Select: Fixed wrong height when used in sap.uxap.ObjectPageHeaderContent",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170215532"
+          }
+        ]
+      }
+    ]
+  }
+}

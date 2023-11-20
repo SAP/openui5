@@ -1,7 +1,6 @@
 <!DOCTYPE HTML>
 <html>
 	<head>
-		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 
 		<title>sap.m.BusyIndicator - Playground</title>
 
@@ -22,10 +21,11 @@
 		<style>
 			#content .sapMBusyIndicator {
 				width: 100%;
-				margin: 1.5rem;
+				margin: 1.5rem 0 1.5rem 0;
 			}
 
 			#content .sapMPageHeader .sapMBusyIndicator {
+				padding-left: 2px;
 				margin: 0;
 			}
 		</style>
@@ -66,10 +66,7 @@
 				size:'90px',
 				text:'90px sized busy indicator ...'
 			});
-
-			var busyCSS = new sap.m.BusyIndicator({
-				size: '30px'
-			});
+			var busyCSS = new sap.m.BusyIndicator(); // no value for "size" - we are using ths default one (16px)
 
 			var busyDialog1 = (busyDialog3) ? busyDialog3 : new sap.m.BusyDialog('busy1',{customIcon: 'images/synchronise_48.png'});
 

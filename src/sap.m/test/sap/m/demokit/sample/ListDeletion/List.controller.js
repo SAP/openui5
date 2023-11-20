@@ -1,5 +1,5 @@
 // require mock server implementation
-sap.ui.define(['./MockServer','sap/ui/core/mvc/Controller','sap/ui/model/odata/ODataModel'],
+sap.ui.define(['./MockServer','sap/ui/core/mvc/Controller','sap/ui/model/odata/v2/ODataModel'],
 	function(MockServer, Controller, ODataModel) {
 	"use strict";
 
@@ -12,7 +12,7 @@ sap.ui.define(['./MockServer','sap/ui/core/mvc/Controller','sap/ui/model/odata/O
 			MockServer.start();
 
 			// create and set ODATA Model
-			this.oProductModel = new ODataModel("/mockserver", true);
+			this.oProductModel = new ODataModel("/mockserver");
 			this.getView().setModel(this.oProductModel);
 		},
 

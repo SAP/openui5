@@ -1,41 +1,45 @@
-/* global QUnit, sinon, qutils */
+/* global QUnit */
 
 // Test only the things relevant for ColumnLayout. The basic Form functionality
 // is tested in Form, FormContainer and FormElement qUnit tests.
 // via qUnit only the DOM structure and classes can be tested, so the real
 // layout must be tested in some visual test.
 
-QUnit.config.autostart = false;
-
-sap.ui.require([
-	"jquery.sap.global",
+sap.ui.define([
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/layout/form/ColumnLayout",
 	"sap/ui/layout/form/Form",
 	"sap/ui/layout/form/FormContainer",
 	"sap/ui/layout/form/FormElement",
+	"sap/ui/layout/form/SemanticFormElement",
 	"sap/ui/layout/form/ColumnElementData",
 	"sap/ui/layout/form/ColumnContainerData",
 	"sap/ui/core/Title",
 	"sap/m/Toolbar",
 	"sap/m/Label",
-	"sap/m/Text"
-	],
+	"sap/m/Text",
+	"sap/m/Link",
+	"sap/ui/core/Core"
+],
 	function(
 		jQuery,
+		qutils,
 		ColumnLayout,
 		Form,
 		FormContainer,
 		FormElement,
+		SemanticFormElement,
 		ColumnElementData,
 		ColumnContainerData,
 		Title,
 		Toolbar,
 		Label,
-		Text
+		Text,
+		Link,
+		oCore
 	) {
 	"use strict";
-
-	QUnit.start();
 
 	var oForm;
 	var oColumnLayout;
@@ -81,8 +85,8 @@ sap.ui.require([
 			layout: oColumnLayout,
 			editable: false,
 			formContainers: aFormContainers
-		}).placeAt("content");
-		sap.ui.getCore().applyChanges();
+		}).placeAt("qunit-fixture");
+		oCore.applyChanges();
 	}
 
 	function afterTest() {
@@ -120,7 +124,7 @@ sap.ui.require([
 		});
 
 		oForm.addFormContainer(oFormContainer);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		return oFormContainer;
 	}
@@ -134,7 +138,7 @@ sap.ui.require([
 		});
 
 		oFormContainer.addFormElement(oFormElement);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		return oFormElement;
 	}
@@ -198,56 +202,102 @@ sap.ui.require([
 		assert.equal(oColumnLayout.getEmptyCellsLarge(), 0, "emptyCellsLarge");
 	});
 
-	QUnit.test("Responsiveness", function(assert) {
+	QUnit.test("Responsiveness (test case 1)", function(assert) {
+
+		// arrange
+		var done = assert.async();
+
+		// act
 		oForm.setWidth("500px");
-		sap.ui.getCore().applyChanges();
-		var $Layout = jQuery("#CL1");
-		assert.ok($Layout.hasClass("sapUiFormCLMedia-Std-Phone"), "Layout has Phone size");
-		assert.notOk($Layout.hasClass("sapUiFormCLMedia-Std-Tablet"), "Layout has not Tablet size");
-		assert.notOk($Layout.hasClass("sapUiFormCLMedia-Std-Desktop"), "Layout has not Desktop size");
-		assert.notOk($Layout.hasClass("sapUiFormCLMedia-Std-LargeDesktop"), "Layout has not LargeDesktop size");
-		assert.ok($Layout.hasClass("sapUiFormCLSmallColumns"), "Layout has small columns");
-		assert.notOk($Layout.hasClass("sapUiFormCLWideColumns"), "Layout has not large columns");
+		oCore.applyChanges();
 
+		// assert
+		window.requestAnimationFrame(function() {
+			var $Layout = jQuery("#CL1");
+			assert.ok($Layout.hasClass("sapUiFormCLMedia-Std-Phone"), "Layout has Phone size");
+			assert.notOk($Layout.hasClass("sapUiFormCLMedia-Std-Tablet"), "Layout has not Tablet size");
+			assert.notOk($Layout.hasClass("sapUiFormCLMedia-Std-Desktop"), "Layout has not Desktop size");
+			assert.notOk($Layout.hasClass("sapUiFormCLMedia-Std-LargeDesktop"), "Layout has not LargeDesktop size");
+			assert.ok($Layout.hasClass("sapUiFormCLSmallColumns"), "Layout has small columns");
+			assert.notOk($Layout.hasClass("sapUiFormCLWideColumns"), "Layout has not large columns");
+			done();
+		});
+	});
+
+	QUnit.test("Responsiveness (test case 2)", function(assert) {
+
+		// arrange
+		var done = assert.async();
+
+		// act
 		oForm.setWidth("1000px");
-		sap.ui.getCore().applyChanges();
-		$Layout = jQuery("#CL1");
-		assert.notOk($Layout.hasClass("sapUiFormCLMedia-Std-Phone"), "Layout has not Phone size");
-		assert.ok($Layout.hasClass("sapUiFormCLMedia-Std-Tablet"), "Layout has Tablet size");
-		assert.notOk($Layout.hasClass("sapUiFormCLMedia-Std-Desktop"), "Layout has not Desktop size");
-		assert.notOk($Layout.hasClass("sapUiFormCLMedia-Std-LargeDesktop"), "Layout has not LargeDesktop size");
-		assert.notOk($Layout.hasClass("sapUiFormCLSmallColumns"), "Layout has not small columns");
-		assert.ok($Layout.hasClass("sapUiFormCLWideColumns"), "Layout has large columns");
+		oCore.applyChanges();
 
+		// assert
+		window.requestAnimationFrame(function() {
+			var $Layout = jQuery("#CL1");
+			assert.notOk($Layout.hasClass("sapUiFormCLMedia-Std-Phone"), "Layout has not Phone size");
+			assert.ok($Layout.hasClass("sapUiFormCLMedia-Std-Tablet"), "Layout has Tablet size");
+			assert.notOk($Layout.hasClass("sapUiFormCLMedia-Std-Desktop"), "Layout has not Desktop size");
+			assert.notOk($Layout.hasClass("sapUiFormCLMedia-Std-LargeDesktop"), "Layout has not LargeDesktop size");
+			assert.notOk($Layout.hasClass("sapUiFormCLSmallColumns"), "Layout has not small columns");
+			assert.ok($Layout.hasClass("sapUiFormCLWideColumns"), "Layout has large columns");
+			done();
+		});
+	});
+
+	QUnit.test("Responsiveness (test case 3)", function(assert) {
+
+		// arrange
+		var done = assert.async();
+
+		// act
 		oForm.setWidth("1300px");
-		sap.ui.getCore().applyChanges();
-		$Layout = jQuery("#CL1");
-		assert.notOk($Layout.hasClass("sapUiFormCLMedia-Std-Phone"), "Layout has not Phone size");
-		assert.notOk($Layout.hasClass("sapUiFormCLMedia-Std-Tablet"), "Layout has not Tablet size");
-		assert.ok($Layout.hasClass("sapUiFormCLMedia-Std-Desktop"), "Layout has Desktop size");
-		assert.notOk($Layout.hasClass("sapUiFormCLMedia-Std-LargeDesktop"), "Layout has not LargeDesktop size");
-		assert.notOk($Layout.hasClass("sapUiFormCLSmallColumns"), "Layout has not small columns");
-		assert.ok($Layout.hasClass("sapUiFormCLWideColumns"), "Layout has large columns");
+		oCore.applyChanges();
 
+		// assert
+		window.requestAnimationFrame(function() {
+			var $Layout = jQuery("#CL1");
+			assert.notOk($Layout.hasClass("sapUiFormCLMedia-Std-Phone"), "Layout has not Phone size");
+			assert.notOk($Layout.hasClass("sapUiFormCLMedia-Std-Tablet"), "Layout has not Tablet size");
+			assert.ok($Layout.hasClass("sapUiFormCLMedia-Std-Desktop"), "Layout has Desktop size");
+			assert.notOk($Layout.hasClass("sapUiFormCLMedia-Std-LargeDesktop"), "Layout has not LargeDesktop size");
+			assert.notOk($Layout.hasClass("sapUiFormCLSmallColumns"), "Layout has not small columns");
+			assert.ok($Layout.hasClass("sapUiFormCLWideColumns"), "Layout has large columns");
+			done();
+		});
+	});
+
+	QUnit.test("Responsiveness (test case 4)", function(assert) {
+
+		// arrange
+		var done = assert.async();
+
+		// act
 		oForm.setWidth("1500px");
-		sap.ui.getCore().applyChanges();
-		$Layout = jQuery("#CL1");
-		assert.notOk($Layout.hasClass("sapUiFormCLMedia-Std-Phone"), "Layout has not Phone size");
-		assert.notOk($Layout.hasClass("sapUiFormCLMedia-Std-Tablet"), "Layout has not Tablet size");
-		assert.notOk($Layout.hasClass("sapUiFormCLMedia-Std-Desktop"), "Layout has not Desktop size");
-		assert.ok($Layout.hasClass("sapUiFormCLMedia-Std-LargeDesktop"), "Layout has LargeDesktop size");
-		assert.notOk($Layout.hasClass("sapUiFormCLSmallColumns"), "Layout has not small columns");
-		assert.ok($Layout.hasClass("sapUiFormCLWideColumns"), "Layout has large columns");
+		oCore.applyChanges();
+
+		// assert
+		window.requestAnimationFrame(function() {
+			var $Layout = jQuery("#CL1");
+			assert.notOk($Layout.hasClass("sapUiFormCLMedia-Std-Phone"), "Layout has not Phone size");
+			assert.notOk($Layout.hasClass("sapUiFormCLMedia-Std-Tablet"), "Layout has not Tablet size");
+			assert.notOk($Layout.hasClass("sapUiFormCLMedia-Std-Desktop"), "Layout has not Desktop size");
+			assert.ok($Layout.hasClass("sapUiFormCLMedia-Std-LargeDesktop"), "Layout has LargeDesktop size");
+			assert.notOk($Layout.hasClass("sapUiFormCLSmallColumns"), "Layout has not small columns");
+			assert.ok($Layout.hasClass("sapUiFormCLWideColumns"), "Layout has large columns");
+			done();
+		});
 	});
 
 	QUnit.test("keyboard", function(assert) {
-		sinon.spy(oColumnLayout, "onsapright");
-		sinon.spy(oColumnLayout, "onsapleft");
+		this.spy(oColumnLayout, "onsapright");
+		this.spy(oColumnLayout, "onsapleft");
 
-		qutils.triggerKeyboardEvent("CL1", "ARROW_DOWN");
+		qutils.triggerKeydown("CL1", "ARROW_DOWN");
 		assert.ok(oColumnLayout.onsapright.called, "sapright called");
 
-		qutils.triggerKeyboardEvent("CL1", "ARROW_UP");
+		qutils.triggerKeydown("CL1", "ARROW_UP");
 		assert.ok(oColumnLayout.onsapright.called, "sapleft called");
 	});
 
@@ -256,7 +306,7 @@ sap.ui.require([
 
 		try {
 			oColumnLayout.setColumnsM(2).setColumnsL(3).setColumnsXL(1);
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		} catch (e) {
 			oException = e;
 		}
@@ -270,17 +320,17 @@ sap.ui.require([
 	});
 
 	QUnit.test("One container - default columns", function(assert) {
-		var oDomRef = jQuery.sap.domById("CL1");
+		var oDomRef = window.document.getElementById("CL1");
 		assert.ok(oDomRef, "Layout rendered");
 
-		oDomRef = jQuery.sap.domById("FC1");
+		oDomRef = window.document.getElementById("FC1");
 		assert.ok(oDomRef, "Container rendered");
 		var $Container = jQuery("#FC1");
 		assert.equal($Container.parent().attr("id"), "CL1", "not content DOM element rendered");
 		assert.equal($Container.children().length, 1, "only one DOM node in Container");
 		assert.equal($Container.children()[0].id, "FC1-content", "content node for Container rendered");
 
-		oDomRef = jQuery.sap.domById("FE1");
+		oDomRef = window.document.getElementById("FE1");
 		assert.ok(oDomRef, "Element rendered");
 		assert.equal(jQuery("#FE1").parent().attr("id"), "FC1-content", "Container content node is parent of Element");
 
@@ -289,7 +339,7 @@ sap.ui.require([
 
 	QUnit.test("One container - set columns", function(assert) {
 		oColumnLayout.setColumnsM(2).setColumnsL(3).setColumnsXL(4);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var $Container = jQuery("#FC1");
 		checkContainerClasses(assert, $Container, 1, 1, true, false, 2, true, false, 3, true, false, 4, true, false);
@@ -298,7 +348,7 @@ sap.ui.require([
 	QUnit.test("Title", function(assert) {
 		var oTitle = new Title("Title1", {text: "Title"});
 		oFormContainer1.setTitle(oTitle);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var $Container = jQuery("#FC1");
 		assert.equal($Container.children().length, 2, "two DOM nodes in Container");
@@ -311,7 +361,7 @@ sap.ui.require([
 		var oToolbar = new Toolbar("TB1");
 		oFormContainer1.setTitle(oTitle);
 		oFormContainer1.setToolbar(oToolbar);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var $Container = jQuery("#FC1");
 		assert.equal($Container.children().length, 2, "two DOM nodes in Container");
@@ -331,7 +381,7 @@ sap.ui.require([
 
 		oFormContainer1.setExpanded(false);
 		oFormContainer1.invalidate(); // to test in renderer
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		$Container = jQuery("#FC1");
 		assert.ok($Container.hasClass("sapUiFormCLContainerColl"), "container collapsed");
 	});
@@ -341,7 +391,7 @@ sap.ui.require([
 		assert.notOk($Container.attr("title"), "container has no tooltip");
 
 		oFormContainer1.setTooltip("Test");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		$Container = jQuery("#FC1");
 		assert.equal($Container.attr("title"), "Test", "container has tooltip");
 	});
@@ -349,7 +399,7 @@ sap.ui.require([
 	QUnit.test("Two containers - default columns", function(assert) {
 		oFormContainer2 = addContainer("FC2");
 
-		var oDomRef = jQuery.sap.domById("FC1");
+		var oDomRef = window.document.getElementById("FC1");
 		assert.ok(oDomRef, "Container1 rendered");
 		var $Container = jQuery("#FC1");
 		assert.ok($Container.parent().hasClass("sapUiFormCLContent"), "content DOM element rendered");
@@ -358,7 +408,7 @@ sap.ui.require([
 		assert.ok($Container.parent().hasClass("sapUiFormCLColumnsXL2"), "XL: Layout has 2 columns");
 		checkContainerClasses(assert, $Container, 1, 1, true, false, 1, true, false, 1, true, false, 1, true, false);
 
-		oDomRef = jQuery.sap.domById("FC2");
+		oDomRef = window.document.getElementById("FC2");
 		assert.ok(oDomRef, "Container2 rendered");
 		$Container = jQuery("#FC2");
 		checkContainerClasses(assert, $Container, 2, 1, false, false, 1, false, false, 1, true, false, 1, true, false);
@@ -389,9 +439,9 @@ sap.ui.require([
 		oFormContainer1.setVisible(false);
 		oFormContainer2 = addContainer("FC2");
 
-		var oDomRef = jQuery.sap.domById("FC1");
+		var oDomRef = window.document.getElementById("FC1");
 		assert.notOk(oDomRef, "Container1 not rendered");
-		oDomRef = jQuery.sap.domById("FC2");
+		oDomRef = window.document.getElementById("FC2");
 		assert.ok(oDomRef, "Container2 rendered");
 		var $Container = jQuery("#FC2");
 		assert.equal($Container.parent().attr("id"), "CL1", "not content DOM element rendered");
@@ -402,18 +452,18 @@ sap.ui.require([
 		addContainer("FC2");
 		addContainer("FC3");
 
-		var oDomRef = jQuery.sap.domById("FC1");
+		var oDomRef = window.document.getElementById("FC1");
 		assert.ok(oDomRef, "Container1 rendered");
 		var $Container = jQuery("#FC1");
 		assert.ok($Container.parent().hasClass("sapUiFormCLContent"), "content DOM element rendered");
 		checkContainerClasses(assert, $Container, 1, 1, true, false, 1, true, false, 1, true, false, 1, true, false);
 
-		oDomRef = jQuery.sap.domById("FC2");
+		oDomRef = window.document.getElementById("FC2");
 		assert.ok(oDomRef, "Container2 rendered");
 		$Container = jQuery("#FC2");
 		checkContainerClasses(assert, $Container, 2, 1, false, false, 1, false, false, 1, true, false, 1, true, false);
 
-		oDomRef = jQuery.sap.domById("FC3");
+		oDomRef = window.document.getElementById("FC3");
 		assert.ok(oDomRef, "Container3 rendered");
 		$Container = jQuery("#FC3");
 		checkContainerClasses(assert, $Container, 3, 1, false, false, 1, false, false, 1, false, true, 1, false, true);
@@ -439,23 +489,23 @@ sap.ui.require([
 		addContainer("FC3");
 		addContainer("FC4");
 
-		var oDomRef = jQuery.sap.domById("FC1");
+		var oDomRef = window.document.getElementById("FC1");
 		assert.ok(oDomRef, "Container1 rendered");
 		var $Container = jQuery("#FC1");
 		assert.ok($Container.parent().hasClass("sapUiFormCLContent"), "content DOM element rendered");
 		checkContainerClasses(assert, $Container, 1, 1, true, false, 1, true, false, 1, true, false, 1, true, false);
 
-		oDomRef = jQuery.sap.domById("FC2");
+		oDomRef = window.document.getElementById("FC2");
 		assert.ok(oDomRef, "Container2 rendered");
 		$Container = jQuery("#FC2");
 		checkContainerClasses(assert, $Container, 2, 1, false, false, 1, false, false, 1, true, false, 1, true, false);
 
-		oDomRef = jQuery.sap.domById("FC3");
+		oDomRef = window.document.getElementById("FC3");
 		assert.ok(oDomRef, "Container3 rendered");
 		$Container = jQuery("#FC3");
 		checkContainerClasses(assert, $Container, 3, 1, false, false, 1, false, false, 1, false, true, 1, false, true);
 
-		oDomRef = jQuery.sap.domById("FC4");
+		oDomRef = window.document.getElementById("FC4");
 		assert.ok(oDomRef, "Container4 rendered");
 		$Container = jQuery("#FC4");
 		checkContainerClasses(assert, $Container, 4, 1, false, false, 1, false, false, 1, false, false, 1, false, false);
@@ -488,28 +538,28 @@ sap.ui.require([
 		addContainer("FC4");
 		addContainer("FC5");
 
-		var oDomRef = jQuery.sap.domById("FC1");
+		var oDomRef = window.document.getElementById("FC1");
 		assert.ok(oDomRef, "Container1 rendered");
 		var $Container = jQuery("#FC1");
 		assert.ok($Container.parent().hasClass("sapUiFormCLContent"), "content DOM element rendered");
 		checkContainerClasses(assert, $Container, 1, 1, true, false, 1, true, false, 1, true, false, 1, true, false);
 
-		oDomRef = jQuery.sap.domById("FC2");
+		oDomRef = window.document.getElementById("FC2");
 		assert.ok(oDomRef, "Container2 rendered");
 		$Container = jQuery("#FC2");
 		checkContainerClasses(assert, $Container, 2, 1, false, false, 1, false, false, 1, true, false, 1, true, false);
 
-		oDomRef = jQuery.sap.domById("FC3");
+		oDomRef = window.document.getElementById("FC3");
 		assert.ok(oDomRef, "Container3 rendered");
 		$Container = jQuery("#FC3");
 		checkContainerClasses(assert, $Container, 3, 1, false, false, 1, false, false, 1, false, true, 1, false, true);
 
-		oDomRef = jQuery.sap.domById("FC4");
+		oDomRef = window.document.getElementById("FC4");
 		assert.ok(oDomRef, "Container4 rendered");
 		$Container = jQuery("#FC4");
 		checkContainerClasses(assert, $Container, 4, 1, false, false, 1, false, false, 1, false, false, 1, false, false);
 
-		oDomRef = jQuery.sap.domById("FC5");
+		oDomRef = window.document.getElementById("FC5");
 		assert.ok(oDomRef, "Container5 rendered");
 		$Container = jQuery("#FC5");
 		checkContainerClasses(assert, $Container, 5, 1, false, false, 1, false, false, 1, false, true, 1, false, true);
@@ -539,10 +589,34 @@ sap.ui.require([
 		checkContainerClasses(assert, $Container, 5, 1, false, false, 1, false, true, 1, false, false, 1, false, true);
 	});
 
+	QUnit.test("Five containers - set columns (XL 6 columns)", function(assert) {
+		oColumnLayout.setColumnsM(2).setColumnsL(3).setColumnsXL(6);
+		addContainer("FC2");
+		addContainer("FC3");
+		addContainer("FC4");
+		addContainer("FC5");
+
+		var $Container = jQuery("#FC1");
+		assert.ok($Container.parent().hasClass("sapUiFormCLContent"), "content DOM element rendered");
+		checkContainerClasses(assert, $Container, 1, 1, true, false, 1, true, false, 1, true, false, 2, true, false);
+
+		$Container = jQuery("#FC2");
+		checkContainerClasses(assert, $Container, 2, 1, false, false, 1, true, false, 1, true, false, 1, true, false);
+
+		$Container = jQuery("#FC3");
+		checkContainerClasses(assert, $Container, 3, 1, false, false, 1, false, true, 1, true, false, 1, true, false);
+
+		$Container = jQuery("#FC4");
+		checkContainerClasses(assert, $Container, 4, 1, false, false, 1, false, false, 1, false, true, 1, true, false);
+
+		$Container = jQuery("#FC5");
+		checkContainerClasses(assert, $Container, 5, 1, false, false, 1, false, true, 1, false, false, 1, true, false);
+	});
+
 	QUnit.test("ColumnContainerData - One container", function(assert) {
 		var oLayoutData = new ColumnContainerData({columnsM: 1, columnsL: 1, columnsXL: 1});
 		oFormContainer1.setLayoutData(oLayoutData);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var $Container = jQuery("#FC1");
 		assert.ok($Container.parent().hasClass("sapUiFormCLContent"), "content DOM element rendered");
@@ -554,7 +628,7 @@ sap.ui.require([
 		var oFormContainer2 = addContainer("FC2");
 		var oLayoutData = new ColumnContainerData({columnsM: 2, columnsL: 2, columnsXL: 3});
 		oFormContainer2.setLayoutData(oLayoutData);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var $Container = jQuery("#FC1");
 		checkContainerClasses(assert, $Container, 1, 1, true, false, 1, true, false, 1, true, false, 1, true, false);
@@ -562,7 +636,7 @@ sap.ui.require([
 		checkContainerClasses(assert, $Container, 2, 1, false, false, 2, false, true, 2, true, false, 3, true, false);
 
 		oLayoutData.setColumnsM(1).setColumnsL(1).setColumnsXL(1);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		$Container = jQuery("#FC1");
 		checkContainerClasses(assert, $Container, 1, 1, true, false, 1, true, false, 2, true, false, 3, true, false);
 		$Container = jQuery("#FC2");
@@ -571,11 +645,20 @@ sap.ui.require([
 		oFormContainer2.setLayoutData();
 		oLayoutData.setColumnsM(2).setColumnsL(3).setColumnsXL(4);
 		oFormContainer1.setLayoutData(oLayoutData);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		$Container = jQuery("#FC1");
 		checkContainerClasses(assert, $Container, 1, 1, true, false, 2, true, false, 3, true, false, 4, true, false);
 		$Container = jQuery("#FC2");
 		checkContainerClasses(assert, $Container, 2, 1, false, false, 1, false, true, 1, false, true, 1, false, true);
+
+		oColumnLayout.setColumnsXL(6);
+		oLayoutData.setColumnsM(2).setColumnsL(3).setColumnsXL(6);
+		oCore.applyChanges();
+		$Container = jQuery("#FC1");
+		checkContainerClasses(assert, $Container, 1, 1, true, false, 2, true, false, 3, true, false, 6, true, false);
+		$Container = jQuery("#FC2");
+		checkContainerClasses(assert, $Container, 2, 1, false, false, 1, false, true, 1, false, true, 1, false, true);
+
 	});
 
 	QUnit.test("ColumnContainerData - invalid cells", function(assert) {
@@ -584,7 +667,7 @@ sap.ui.require([
 		try {
 			var oLayoutData = new ColumnContainerData({columnsM: 2, columnsL: 3, columnsXL: 4});
 			oFormContainer1.setLayoutData(oLayoutData);
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		} catch (e) {
 			oException = e;
 		}
@@ -637,7 +720,7 @@ sap.ui.require([
 
 	QUnit.test("One field without label", function(assert) {
 		oFormElement1.destroyLabel();
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		var $Element = jQuery("#FE1");
 		var aChildren = $Element.children();
 		assert.equal(aChildren.length, 1, "Element has 1 child nodes");
@@ -646,7 +729,7 @@ sap.ui.require([
 
 	QUnit.test("Label with two fields", function(assert) {
 		oFormElement1.addField(new Text("T2", {text: "Text2"}));
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var $Element = jQuery("#FE1");
 		var aChildren = $Element.children();
@@ -659,7 +742,7 @@ sap.ui.require([
 	QUnit.test("Label with three fields", function(assert) {
 		oFormElement1.addField(new Text("T2", {text: "Text2"}));
 		oFormElement1.addField(new Text("T3", {text: "Text3"}));
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var $Element = jQuery("#FE1");
 		var aChildren = $Element.children();
@@ -680,7 +763,7 @@ sap.ui.require([
 		oFormElement1.addField(new Text("T8", {text: "Text8"}));
 		oFormElement1.addField(new Text("T9", {text: "Text9"}));
 		oFormElement1.addField(new Text("T10", {text: "Text10"}));
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var $Element = jQuery("#FE1");
 		var aChildren = $Element.children();
@@ -713,7 +796,7 @@ sap.ui.require([
 		oFormElement1.addField(new Text("T13", {text: "Text13"}));
 		oFormElement1.addField(new Text("T14", {text: "Text14"}));
 		oFormElement1.addField(new Text("T15", {text: "Text15"}));
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var $Element = jQuery("#FE1");
 		var aChildren = $Element.children();
@@ -739,7 +822,7 @@ sap.ui.require([
 	QUnit.test("ColumnElementData on label", function(assert) {
 		var oLayoutData = new ColumnElementData({cellsLarge: 12, cellsSmall: 5});
 		oLabel1.setLayoutData(oLayoutData);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var $Element = jQuery("#FE1");
 		var aChildren = $Element.children();
@@ -747,11 +830,22 @@ sap.ui.require([
 		checkElementClasses(assert, jQuery(aChildren[1]), 2, false, "T1", 7, false, 0, 12, false, 0);
 	});
 
+	QUnit.test("ColumnElementData on label with -1", function(assert) {
+		var oLayoutData = new ColumnElementData({cellsLarge: -1, cellsSmall: -1});
+		oLabel1.setLayoutData(oLayoutData);
+		oCore.applyChanges();
+
+		var $Element = jQuery("#FE1");
+		var aChildren = $Element.children();
+		checkElementClasses(assert, jQuery(aChildren[0]), 1, true, "L1", 12, false, 0, 4, false, 0);
+		checkElementClasses(assert, jQuery(aChildren[1]), 2, false, "T1", 12, false, 0, 8, false, 0);
+	});
+
 	QUnit.test("ColumnElementData on field", function(assert) {
-		oFormElement1.addField(new Text("T2", {text: "Text2"}));
+		oFormElement1.addField(new Text("T2", {text: "Text2", layoutData: new ColumnElementData({cellsLarge: -1, cellsSmall: -1})}));
 		var oLayoutData = new ColumnElementData({cellsLarge: 1, cellsSmall: 1});
 		oField1.setLayoutData(oLayoutData);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var $Element = jQuery("#FE1");
 		var aChildren = $Element.children();
@@ -765,7 +859,7 @@ sap.ui.require([
 		oLabel1.setLayoutData(oLayoutData);
 		oLayoutData = new ColumnElementData({cellsLarge: 5, cellsSmall: 5});
 		oField1.setLayoutData(oLayoutData);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var $Element = jQuery("#FE1");
 		var aChildren = $Element.children();
@@ -773,7 +867,7 @@ sap.ui.require([
 		checkElementClasses(assert, jQuery(aChildren[1]), 2, false, "T1", 5, false, 0, 5, false, 0);
 
 		oLayoutData.setCellsLarge(10).setCellsSmall(10);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		$Element = jQuery("#FE1");
 		aChildren = $Element.children();
 		checkElementClasses(assert, jQuery(aChildren[1]), 2, false, "T1", 10, true, 0, 10, true, 0);
@@ -790,7 +884,7 @@ sap.ui.require([
 		oField1.setLayoutData(oLayoutData);
 		oLayoutData = new ColumnElementData({cellsLarge: 5, cellsSmall: 5});
 		oField3.setLayoutData(oLayoutData);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var $Element = jQuery("#FE1");
 		var aChildren = $Element.children();
@@ -802,7 +896,7 @@ sap.ui.require([
 		oLayoutData.setCellsLarge(10).setCellsSmall(5);
 		oLayoutData = oLabel1.getLayoutData();
 		oLayoutData.setCellsLarge(3).setCellsSmall(2);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		$Element = jQuery("#FE1");
 		aChildren = $Element.children();
 		checkElementClasses(assert, jQuery(aChildren[1]), 2, false, "T1", 11, false, 0, 8, false, 0);
@@ -815,7 +909,7 @@ sap.ui.require([
 		assert.notOk($Element.attr("title"), "Element has no tooltip");
 
 		oFormElement1.setTooltip("Test");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		$Element = jQuery("#FE1");
 		assert.equal($Element.attr("title"), "Test", "element has tooltip");
 	});
@@ -832,12 +926,141 @@ sap.ui.require([
 
 		try {
 			oFormElement1.addField(oToolbar);
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		} catch (e) {
 			oException = e;
 		}
 
 		assert.ok(oException, "exception fired");
+		oToolbar.destroy();
+	});
+
+	QUnit.test("getLayoutDataForDelimiter", function(assert) {
+		var oLayoutData = oColumnLayout.getLayoutDataForDelimiter();
+		assert.ok(oLayoutData, "LayoutData returned");
+		assert.ok(oLayoutData && oLayoutData.isA("sap.ui.layout.form.ColumnElementData"), "ColumnElementData returned");
+		assert.equal(oLayoutData && oLayoutData.getCellsLarge(), 1, "cellsLarge");
+		assert.equal(oLayoutData && oLayoutData.getCellsSmall(), 1, "cellsSmall");
+
+		// test for promise
+		var oStub = this.stub(sap.ui, "require");
+		oStub.withArgs("sap/ui/layout/form/ColumnElementData").onFirstCall().returns(undefined);
+		oStub.callThrough();
+
+		oLayoutData = oColumnLayout.getLayoutDataForDelimiter();
+		assert.ok(oLayoutData instanceof Promise, "Promise returned");
+		if (oLayoutData instanceof Promise) {
+			var fnDone = assert.async();
+			oLayoutData.then(function(oLayoutData) {
+				assert.ok(oLayoutData, "LayoutData returned");
+				assert.ok(oLayoutData && oLayoutData.isA("sap.ui.layout.form.ColumnElementData"), "ColumnElementData returned");
+				assert.equal(oLayoutData && oLayoutData.getCellsLarge(), 1, "cellsLarge");
+				assert.equal(oLayoutData && oLayoutData.getCellsSmall(), 1, "cellsSmall");
+				fnDone();
+			});
+		}
+
+		oStub.restore();
+	});
+
+	QUnit.test("getLayoutDataForSemanticField", function(assert) {
+		var oLayoutData = oColumnLayout.getLayoutDataForSemanticField(2, 1);
+		assert.ok(oLayoutData, "LayoutData returned");
+		assert.ok(oLayoutData && oLayoutData.isA("sap.ui.layout.form.ColumnElementData"), "ColumnElementData returned");
+		assert.equal(oLayoutData && oLayoutData.getCellsLarge(), -1, "cellsLarge");
+		assert.equal(oLayoutData && oLayoutData.getCellsSmall(), 11, "cellsSmall");
+
+		var oLayoutData2 = oColumnLayout.getLayoutDataForSemanticField(2, 1, oLayoutData);
+		assert.ok(oLayoutData, "LayoutData returned");
+		assert.ok(oLayoutData && oLayoutData.isA("sap.ui.layout.form.ColumnElementData"), "ColumnElementData returned");
+		assert.equal(oLayoutData && oLayoutData.getCellsLarge(), -1, "cellsLarge");
+		assert.equal(oLayoutData && oLayoutData.getCellsSmall(), 11, "cellsSmall");
+		assert.equal(oLayoutData, oLayoutData2, "LayoutData just updated, no new instance");
+
+		oLayoutData.destroy();
+		oLayoutData2.destroy();
+
+		// test for promise
+		var oStub = this.stub(sap.ui, "require");
+		oStub.withArgs("sap/ui/layout/form/ColumnElementData").onFirstCall().returns(undefined);
+		oStub.callThrough();
+
+		oLayoutData = oColumnLayout.getLayoutDataForSemanticField(3, 3);
+		assert.ok(oLayoutData instanceof Promise, "Promise returned");
+		if (oLayoutData instanceof Promise) {
+			var fnDone = assert.async();
+			oLayoutData.then(function(oLayoutData) {
+				assert.ok(oLayoutData, "LayoutData returned");
+				assert.ok(oLayoutData && oLayoutData.isA("sap.ui.layout.form.ColumnElementData"), "ColumnElementData returned");
+				assert.equal(oLayoutData && oLayoutData.getCellsLarge(), -1, "cellsLarge");
+				assert.equal(oLayoutData && oLayoutData.getCellsSmall(), 11, "cellsSmall");
+				oLayoutData.destroy();
+				fnDone();
+			});
+		}
+
+		oStub.restore();
+	});
+
+	var myTypeCheck = function(vTypeName) {
+		if (vTypeName === "sap.ui.core.ISemanticFormContent") {
+			return true;
+		} else {
+			return this.getMetadata().isA(vTypeName);
+		}
+	};
+	Link.prototype.isA = myTypeCheck;
+
+	QUnit.module("semantic element rendering", {
+		beforeEach: function() {
+			Link.prototype.getFormRenderAsControl = function() {return true;}; // TODO: remove after Link supports this
+			Link.prototype.getFormObservingProperties = function() {return ["text"];};
+			oColumnLayout = new ColumnLayout("CL1");
+			oLabel1 = new Label("L1", {text: "Label 1"});
+			oField1 = new Link("Link1", {text: "Text 1"});
+			oField2 = new Link("Link2", {text: "Text2"});
+			oFormElement1 = new SemanticFormElement("FE1",{
+				label: oLabel1,
+				fields: [oField1, oField2]
+			});
+			oFormContainer1 = new FormContainer("FC1",{
+				formElements: [ oFormElement1 ]
+			});
+			var aFormContainers = [oFormContainer1];
+
+			oForm = new Form("F1", {
+				layout: oColumnLayout,
+				editable: false,
+				formContainers: aFormContainers
+			}).placeAt("qunit-fixture");
+			oCore.applyChanges();
+		},
+		afterEach: function() {
+			delete Link.prototype.getFormRenderAsControl;
+			delete Link.prototype.getFormObservingProperties;
+			afterTest();
+		}
+	});
+
+	QUnit.test("renderControlsForSemanticElement", function(assert) {
+		assert.ok(oColumnLayout.renderControlsForSemanticElement(), "control rendering supported");
+	});
+
+	QUnit.test("rendering", function(assert) {
+		var $Element = jQuery("#FE1");
+		var aChildren = $Element.children();
+		assert.equal(aChildren.length, 2, "Element has 2 child nodes");
+		checkElementClasses(assert, jQuery(aChildren[0]), 1, true, "L1", 12, false, 0, 4, false, 0);
+		checkElementClasses(assert, jQuery(aChildren[1]), 2, false, "Link1", 12, false, 0, 8, false, 0);
+
+		var aContent = jQuery(aChildren[1]).children();
+		assert.equal(aContent.length, 3, "Cell has 3 content nodes");
+		assert.equal(aContent[0].id, "Link1", "Link is first content");
+		assert.equal(aContent[1].id, "FE1-delimiter-0", "Delemiter is second content");
+		assert.equal(aContent[2].id, "Link2", "Link is third content");
+
+		assert.ok(jQuery("#Link1").attr("style").indexOf("100%") > 0 && jQuery("#Link1").attr("style").indexOf("max-width") >= 0, "Control max-width set to 100%");
+		assert.ok(jQuery("#Link2").attr("style").indexOf("100%") > 0 && jQuery("#Link2").attr("style").indexOf("max-width") >= 0, "Control max-width set to 100%");
 	});
 
 });

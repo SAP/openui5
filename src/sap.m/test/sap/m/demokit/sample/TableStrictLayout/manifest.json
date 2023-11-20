@@ -1,0 +1,24 @@
+{
+	"sap.app": {
+		"id": "sap.m.sample.TableStrictLayout",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "sap.m.sample.TableStrictLayout.Table",
+			"type": "XML",
+			"async": true
+		},
+		"config": {
+			"sample": {
+				"files": [
+					"Table.view.xml",
+					"Table.controller.js",
+					"manifest.json"
+				]
+			}
+		}
+	}
+}

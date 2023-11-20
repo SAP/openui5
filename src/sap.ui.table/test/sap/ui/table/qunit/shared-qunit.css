@@ -1,23 +1,48 @@
 #content { /* Same as #qunit-fixture */
-    position: absolute;
-    top: -10000px;
-    left: -10000px;
-    width: 1000px;
-    height: 1000px;
+	position: absolute;
+	top: -10000px;
+	left: -10000px;
+	width: 1000px;
+	height: 1000px;
 }
 
 #content.visible { /* Dock it to the top right corner */
-    top: 0;
-    left: auto;
-    right: 0;
-    background-color: white;
+	position: fixed;
+	top: 0;
+	left: auto;
+	right: 250px;
+	background-color: white;
+	opacity: 0.6;
 }
 
-#qunit-fixture.visible { /* Dock it to the bottom left corner */
-    top: auto;
-    left: 0;
-    bottom: 0;
-    background-color: white;
+#content.visible:hover {
+	opacity: 1;
+}
+
+#qunit-fixture.visible { /* Dock it to the bottom right corner */
+	position: fixed;
+	top: auto;
+	bottom: 0;
+	left: auto;
+	right: 250px;
+	background-color: white;
+	opacity: 0.6;
+}
+
+#qunit-fixture.visible:hover {
+	opacity: 1;
+}
+
+@media all and (max-width: 1100px) {
+	#content.visible {
+		left: 0;
+		right: auto;
+	}
+
+	#qunit-fixture.visible {
+		left: 0;
+		right: auto;
+	}
 }
 
 #content.visible:empty,

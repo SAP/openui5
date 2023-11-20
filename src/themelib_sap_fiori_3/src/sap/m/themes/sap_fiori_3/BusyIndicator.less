@@ -1,0 +1,15 @@
+/* ==================================== */
+/* CSS for control sap.m/BusyIndicator  */
+/* Fiori 3 theme                        */
+/* ==================================== */
+
+/* Background animation element */
+.sapUiLocalBusyIndicatorAnimation > div::before {
+	background: @sapUiContentIconColor;
+	animation-duration: 0ms;
+}
+
+/* Shadow animation element */
+.sapUiLocalBusyIndicatorAnimation > div::after {
+	box-shadow: inset 0px 0px 0px 0px @sapUiContentIconColor;
+}

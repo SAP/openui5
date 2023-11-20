@@ -1,0 +1,441 @@
+/* ================================== */
+/* CSS for control sap.f/ShellBar     */
+/* Horizon High Contrast Black theme  */
+/* ================================== */
+
+.alwaysCozyOverrideByParent(~"sapFShellBar");
+
+.sapFShellBar {
+	box-shadow: inset 0 -0.0625rem 0 0 @sapUiShellBorderColor;
+	.sapFShellBarOTB {
+		background-color: transparent;
+	}
+}
+.sapFButtonNotifications[data-notifications],
+.sapFShellBarOverflowButton[data-notifications] {
+	&:after {
+        line-height: 1rem;
+        background: @sapUiGroupContentBackground;
+        border: solid 1px @sapUiGroupContentBorderColor;
+        color: @sapUiContentForegroundTextColor;
+    }
+}
+
+.sapFShellBar .CPImage,
+ .sapFShellBar .sapMIBar.sapMTB .CPImage {
+	.color1 {
+		stop-color: @sapUiContentIconColor;
+	}
+	.color2 {
+		stop-color: @sapUiContentIconColor;
+	}
+}
+
+html.sap-desktop .sapMTB-Transparent-CTX .sapMBtnInner.sapMToggleBtnPressed{
+	background-color: @sapUiButtonAttentionActiveBackground;
+}
+
+.sapFShellBarSizeLargeDesktop {
+	padding: 0 3rem;
+}
+
+.sapFShellBarSizeDesktop {
+	padding: 0 2rem;
+}
+
+.sapFShellBar {
+	background: @sapUiShellColor;
+	height: 3.25rem;
+	box-shadow: inset 0 -0.0625rem 0 0 @sapUiShellBorderColor;
+
+	.sapFShellBarOTB.sapMIBar.sapMTB {
+		height: 3.25rem;
+	}
+
+	// Copilot
+	.CPImage,
+	& .sapMIBar.sapMTB .CPImage {
+		&:after {
+			position: absolute;
+			content: "";
+			left: 3px;
+			right: 3px;
+			top: 3px;
+			bottom: 3px;
+			outline: none;
+			pointer-events: none;
+			border-radius: 0.5rem;
+		}
+		&:focus {
+			border-radius: 0.5rem;
+			outline: none;
+			background-color: @sapUiShellActiveBackground;
+			color: @sapUiShellActiveTextColor;
+			&:after {
+				box-shadow: @sapUiContentSelectedShadow;
+			}
+		}
+		&:hover:not(:focus) {
+			background: @sapUiShellHoverBackground;
+			border-radius: 0.5rem;
+			&:after {
+				box-shadow: @sapUiContentInteractionShadow;
+			}
+		}
+		html[data-sap-ui-browser^="ie"] &:focus:before {
+			border-color: @sapUiContentContrastFocusColor;
+		}
+	}
+
+	&.sapMPageHeader .sapMIBar,
+	.sapMIBar {
+		height: 3.25rem;
+	}
+	.sapMBtn:hover > .sapMBtnHoverable.sapMToggleBtnPressed:not(.sapMBtnActive) {
+		border-color: @sapUiShellHoverBackground;
+	}
+	.sapMToggleBtnPressed:not(.sapMBtnDisabled),
+	.sapMTB-Transparent-CTX .sapMBtnInner.sapMToggleBtnPressed:not(.sapMBtnDisabled) {
+		background-color: @sapUiShellActiveBackground;
+		border-color: @sapUiShellActiveBackground;
+	}
+
+	// Avatar
+	.sapFShellBarProfile:focus {
+		border: none;
+	}
+	.sapFShellBarProfile:not(:focus):hover {
+		box-shadow: 0 0 0.125rem 0 fade(@sapContent_ShadowColor, 72);
+		background-color: none;
+	}
+
+	// Mega Menu
+	.sapFSHMegaMenu {
+		color: @sapUiShellTextColor;
+		overflow: visible;
+		font-size: @sapMFontHeader5Size;
+		font-weight: bold;
+
+		.sapMBtn:hover > .sapMBtnHoverable.sapMToggleBtnPressed:not(.sapMBtnActive) {
+			background: @sapUiShellHoverBackground;
+			box-shadow: @sapUiContentInteractionShadow;
+		}
+
+		.sapMBtn:hover > .sapMBtnHoverable.sapMToggleBtnPressed.sapMBtnActive {
+			background: @sapUiShellActiveBackground;
+			color: @sapUiShellActiveTextColor;
+			box-shadow: @sapUiContentSelectedShadow;
+		}
+
+		.sapMBtnInner,
+		.sapMBtnInner::after {
+			font-weight: normal;
+			font-size: 1rem;
+		}
+
+		.sapMBtnInner::after {
+			content: '\e1ef';
+			font-family: 'SAP-icons';
+		}
+	}
+
+	// Home Icon
+	.sapFShellBarHomeIcon {
+		max-height: 2rem;
+
+		&:hover {
+			background: @sapUiShellHoverBackground;
+			box-shadow: @sapUiContentInteractionShadow;
+			border-radius: 0.5rem;
+		}
+
+		&.sapMImgFocusable:focus {
+			border-radius: 0.5rem;
+		}
+	}
+
+	//Second Title
+	.sapFShellBarSecondTitle {
+		font-size: @sapMFontSmallSize;
+		color: @sapUiShellTextColor;
+		text-overflow: ellipsis;
+	}
+
+	// Search
+	.sapFShellBarSearch {
+		max-width: 35rem; // max width of searchField + button width
+
+		.sapMSF {
+			max-width: 35rem;
+		}
+
+		// Reflection: styles overwritten
+		.sapMBtn {
+			padding: 0;
+			margin-left: 0.25rem;
+			position: absolute;
+			right: 0;
+		}
+
+		.sapMSFVal + .sapMBtn .sapMBtnInner {
+			background-color: @sapUiShellActiveBackground;
+
+			.sapMBtnIcon {
+				color: @sapUiShellInteractiveTextColor;
+			}
+		}
+	}
+
+	.sapFShellBarSearch.sapFShellBarSearchFullWidth .sapMBtn:not(.sapFShellBarSearchCancelButton) {
+		right: 3.875rem;
+	}
+
+	.sapFShellBarSearch.sapFShellBarSearchFullWidth .sapFShellBarSearchWrap .sapMSFF .sapMSFB {
+		margin-right: 5.5rem;
+	}
+
+	.sapFShellBarSearch.sapFShellBarSearchFullWidth .sapFShellBarSearchWrap {
+		max-width: 35rem;
+		padding: 0;
+	}
+
+	.sapFShellBarSearch.sapFShellBarSearchFullWidth .sapFShellBarSearchWrap .sapMSF.sapMSFVal form.sapMSFNS:not(.sapMSFReload) {
+		padding-right: 0.5rem;
+	}
+
+	.sapFShellBarSearchWrap {
+		position: relative;
+		.sapMSFF {
+			background: @sapUiUx3ShellHeaderColor;
+			border: 0.0625rem solid @sapUiShellInteractiveBorderColor;
+			border-radius: 0;
+			color: @sapUiShellInteractiveTextColor;
+			height: 2.25rem;
+			font-weight: normal;
+
+			// Clear icon
+			.sapMSFB {
+				border: 1px solid transparent; // prevent jumping when hovering
+				width: 2.125rem;
+				height: 2.125rem;
+				line-height: 2.125rem;
+				font-size: 1rem;
+				text-align: center;
+				padding: 0;
+				right: 0;
+				top: 0;
+				margin-right: 2.125rem;
+			}
+
+			.sapMSFB:hover {
+				box-shadow: none;
+				border: 0.0625rem solid @sapUiShellInteractiveBorderColor;
+				border-radius: 0;
+				height: 2.125rem;
+				color: @sapUiShellInteractiveTextColor;
+			}
+
+			.sapMSFB:active,
+			.sapMSFB.sapMSFBA {
+				background: @sapUiShellActiveBackground;
+				border: 0.0625rem solid @sapUiShellInteractiveBorderColor;
+				box-shadow: none;
+				border-radius: 0;
+				color: @sapUiShellActiveTextColor;
+			}
+		}
+
+		.sapMSF {
+			max-width: 35rem;
+			margin-right: 0;
+		}
+
+		.sapMSF:not(.sapMSFVal) form.sapMSFNS:not(.sapMSFReload) {
+			padding-right: 0.5rem;
+		}
+
+		.sapMSF:not(.sapMSFDisabled):hover .sapMSFF {
+			background-color: @sapUiShellHoverBackground;
+			box-shadow: @sapUiContentInteractionShadow;
+		}
+
+		.sapMBtn .sapMBtnInner {
+			border: 0.0625rem solid @sapUiShellInteractiveBorderColor;
+			border-radius: 0;
+			color: @sapUiShellInteractiveTextColor;
+		}
+
+		.sapMSFI {
+			color: @sapUiFieldPlaceholderTextColor;
+			font-weight: italic;
+		}
+	}
+}
+
+// Overriding styles comming from other controls
+html.sap-desktop .sapFShellBarSearchWrap .sapMBtn:focus > .sapMFocusable:not(.sapMBadgeIndicator):before {
+	border-radius: 1.125rem;
+}
+
+// Resets of sizes for "Compact" mode - controls should remain in cozy mode
+.alwaysCozyOverrideByParent(@controlClass) {
+	.sapUiSizeCompact {
+		.@{controlClass} {
+			height: 3.25rem;
+
+			&.sapMPageHeader .sapMIBar,
+			.sapMIBar {
+				height: 3.25rem;
+			}
+
+			// Reflection: styles overwritten
+			// sap.m.MegaMenu
+			.sapFSHMegaMenu {
+				height: 2.75rem;
+			}
+			// sap.m.Button
+			.sapMBtn {
+				height: 2.75rem;
+				padding: 0.250rem 0;
+			}
+
+			.sapMBtnInner {
+				height: 2.25rem;
+				min-width: 2.25rem;
+			}
+
+			.sapMBtnInner.sapMBtnText {
+				padding-left: 0.625rem;
+				padding-right: 0.625rem;
+			}
+
+			.sapMBtnContent {
+				line-height: 2.125rem;
+			}
+
+			.sapMBtnIcon {
+				width: 2.125rem;
+				font-size: 1rem;
+				line-height: 2.125rem;
+				max-height: 2.375rem;
+				margin: 0;
+				padding: 0;
+			}
+			.sapMBtnIconLeft + .sapMBtnIconLeft {
+				left: 0;
+			}
+			.sapMBtnText {
+				.sapMBtnIconLeft + .sapMBtnIconLeft {
+					left: 2.875rem;
+				}
+			}
+			.sapMBtnInner > img {
+				width: 2.5rem;
+				margin-top: 0.2rem;
+				margin-left: 0.2rem;
+			}
+
+		  	html.sap-desktop & .sapMTB-Transparent-CTX .sapMBtnInner.sapMToggleBtnPressed, .sapMTB-Transparent-CTX .sapMBtnInner.sapMToggleBtnPressed:not(.sapMBtnDisabled) {
+				background-color: @sapUiShellActiveBackground;
+			}
+
+			// sap.m.MenuButton
+			.sapMMenuBtn.sapMMenuBtnRegular .sapMBtnInner::after {
+				height: 38px; //ie does not accept rem for height in pseudo elements, but it works with px when you zoom
+				line-height: 2.2rem;
+				padding-right: 0.75rem;
+				padding-left: 0.5625rem;
+			}
+			.sapMMenuBtn.sapMMenuBtnRegular .sapMBtnInner:not(.sapMBtnText) {
+				padding-right: 1.625rem;
+			}
+			.sapMMenuBtn.sapMMenuBtnRegular .sapMBtnInner {
+				padding-right: 2rem;
+			}
+			.sapMMenuBtn .sapMBtnIconFirst .sapMBtnIcon {
+				padding-right: 0.75rem;
+			}
+
+			// sap.m.SearchField
+			.sapFShellBarSearch {
+				max-width: 35rem;
+				.sapMSF {
+					max-width: 35rem;
+					margin-right: 0;
+				}
+			}
+
+			.sapFShellBarSearch.sapFShellBarSearchFullWidth .sapMBtn:not(.sapFShellBarSearchCancelButton) {
+				right: 4rem;
+			}
+
+			.sapFShellBarSearch.sapFShellBarSearchFullWidth .sapFShellBarSearchWrap .sapMSFF .sapMSFB {
+				margin-right: 5.625rem;
+			}
+
+			.sapFShellBarSearch.sapFShellBarSearchFullWidth .sapFShellBarSearchWrap {
+				max-width: 35rem;
+				padding: 0;
+			}
+
+			.sapFShellBarSearch.sapFShellBarSearchFullWidth .sapFShellBarSearchWrap .sapMSF.sapMSFVal form.sapMSFNS:not(.sapMSFReload) {
+				padding-right: 0.5rem;
+			}
+
+			.sapFShellBarSearchWrap {
+				.sapMBtn .sapMBtnInner {
+					border-radius: 0;
+				}
+			}
+			.sapMSF {
+				min-width: 7rem;
+				height: 2.75rem;
+				padding: 0.25rem 0;
+				.sapMSFI {
+					height: 2.125rem
+				}
+				.sapMSFF {
+					height: 2.25rem;
+					line-height: 2.125rem;
+					padding-left: 0.625rem;
+				}
+				.sapMSFR:not(.sapMSFNS) {
+					right: 2.375rem;
+				}
+				.sapMSFB {
+					border: 1px solid transparent; // prevent jumping when hovering
+					width: 2.125rem;
+					height: 2.125rem;
+					line-height: 2.125rem;
+					font-size: 1rem;
+					padding: 0;
+					right: 0;
+					top: 0;
+				}
+				.sapMSFB:hover {
+					height: 2.125rem;
+				}
+			}
+			// sap.m.Select
+
+			// Reflection: styles overwritten
+			.sapMSlt {
+				height: 2.5rem;
+				.sapMSltArrow {
+					line-height: 2.5rem;
+					width: 2.5rem;
+				}
+				.sapMSltLabel {
+					line-height: 2.375rem;
+					padding: 0 3rem 0 0.625rem;
+				}
+				.sapMSelectListItem {
+					line-height: 2.5rem;
+				}
+				.sapMSelectListItemBase {
+					height: 2.5rem;
+				}
+			}
+		}
+	}
+}

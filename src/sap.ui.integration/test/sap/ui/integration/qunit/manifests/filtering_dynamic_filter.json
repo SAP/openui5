@@ -1,0 +1,71 @@
+{
+	"sap.app": {
+		"id": "card.explorer.dataSources.topProducts",
+		"type": "card"
+	},
+	"sap.card": {
+		"configuration": {
+			"parameters": {
+				"numberOfProducts": {
+					"value": 2,
+					"type": "integer"
+				}
+			},
+			"filters": {
+				"availability": {
+					"data": {
+						"request": {
+							"url": "./dynamic_filter_fake_response.json"
+						},
+						"path": "/d/Availability"
+					},
+					"value": "{DefaultKey}",
+					"type": "string",
+					"label": "{Title}",
+					"description": "Filter the products by their availability in-store.",
+					"item": {
+						"template": {
+							"title": "{OptionName}",
+							"key": "{OptionKey}"
+						},
+						"path": "/d/Availability/Options"
+					}
+				}
+			}
+		},
+		"data": {
+			"request": {
+				"url": "./items_{filters>/availability/value}.json"
+			}
+		},
+		"type": "List",
+		"header": {
+			"title": "Products by availability",
+			"subTitle": "{filters>/availability/selectedItem/title}",
+			"icon": {
+				"src": "sap-icon://product"
+			},
+			"status": {
+				"text": {
+					"format": {
+						"translationKey": "i18n>CARD.COUNT_X_OF_Y",
+						"parts": [
+							"parameters>/visibleItems",
+							"/count"
+						]
+					}
+				}
+			}
+		},
+		"content": {
+			"data": {
+				"path": "/items"
+			},
+			"item": {
+				"title": "{Name}",
+				"description": "{ProductCategory}"
+			},
+			"maxItems": "{{parameters.numberOfProducts}}"
+		}
+	}
+}

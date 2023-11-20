@@ -1,0 +1,22 @@
+{
+	"sap.app": {
+		"id": "sap.m.uploadSetTableDemo",
+		"applicationVersion": {
+			"version": "1.0.0"
+		},
+		"type": "application"
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "sap.m.uploadSetTableDemo.Page",
+			"type": "XML",
+			"async": true,
+			"id": "app"
+		},
+		"dependencies": {
+			"libs": {
+				"sap.ui.unified": {}
+			}
+		}
+	}
+}

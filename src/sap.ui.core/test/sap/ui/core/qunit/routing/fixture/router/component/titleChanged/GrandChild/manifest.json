@@ -1,0 +1,47 @@
+{
+	"sap.app": {
+		"id": "qunit.router.component.titleChanged.GrandChild",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "qunit.router.component.titleChanged.GrandChild.view.RootView",
+			"type": "XML",
+			"async": true
+		},
+		"routing": {
+			"config": {
+				"async": true,
+				"controlAggregation": "content",
+				"controlId": "rootPanel",
+				"viewType": "XML",
+				"type": "View",
+				"path": "qunit.router.component.titleChanged.GrandChild.view"
+			},
+			"routes": [
+				{
+					"pattern": "",
+					"name": "view1",
+					"target": "view1"
+				},
+				{
+					"pattern": "view2",
+					"name": "view2",
+					"target": "view2"
+				}
+			],
+			"targets": {
+				"view1": {
+					"name": "MyView1",
+					"title": "{/GrandChildComponentViewTitle}"
+				},
+				"view2": {
+					"name": "MyView2",
+					"title": "MyGrandChildView2Title"
+				}
+			}
+		}
+	}
+}

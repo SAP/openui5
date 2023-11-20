@@ -1,0 +1,32 @@
+{
+	"sap.app": {
+		"id": "sap.tnt.sample.InfoLabel",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "sap.tnt.sample.InfoLabel.V",
+			"type": "XML",
+			"async": true
+		},
+		"dependencies": {
+			"libs": {
+				"sap.ui.core": {},
+				"sap.ui.layout": {},
+				"sap.m": {},
+				"sap.tnt": {}
+			}
+		},
+		"config": {
+			"sample": {
+				"stretch": true,
+				"files": [
+					"V.view.xml",
+					"manifest.json"
+				]
+			}
+		}
+	}
+}

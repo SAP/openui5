@@ -15,4 +15,4 @@ sap.ui.define([
 		}),
 		"unhideControl": "default"
 	};
-}, /* bExport= */false);
+});

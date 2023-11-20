@@ -1,5 +1,7 @@
 {
 	"__license": "This file has been derived from Unicode Common Locale Data Repository (CLDR) files (http://cldr.unicode.org). See the copyright and permission notice in the Unicode-Data-Files-LICENSE.txt available at the same location as this file or visit http://www.unicode.org/copyright.html",
+	"__version": "43.0.0",
+	"__buildtime": "2023-09-28T11:39:07.908Z",
 	"languages": {
 		"aa": "아파르어",
 		"ab": "압카즈어",
@@ -20,19 +22,22 @@
 		"am": "암하라어",
 		"an": "아라곤어",
 		"ang": "고대 영어",
+		"ann": "오볼로어",
 		"anp": "앙가어",
 		"ar": "아랍어",
 		"ar_001": "현대 표준 아랍어",
 		"arc": "아람어",
-		"arn": "마푸둔군어",
+		"arn": "마푸둥군어",
 		"arp": "아라파호어",
 		"arq": "알제리 아랍어",
+		"ars": "아랍어(나즈디)",
 		"arw": "아라와크어",
 		"ary": "모로코 아랍어",
 		"arz": "이집트 아랍어",
 		"as": "아삼어",
 		"asa": "아수어",
 		"ast": "아스투리아어",
+		"atj": "아티카메쿠어",
 		"av": "아바릭어",
 		"awa": "아와히어",
 		"ay": "아이마라어",
@@ -76,6 +81,7 @@
 		"car": "카리브어",
 		"cay": "카유가어",
 		"cch": "앗삼어",
+		"ccp": "차크마어",
 		"ce": "체첸어",
 		"ceb": "세부아노어",
 		"cgg": "치가어",
@@ -90,13 +96,23 @@
 		"chr": "체로키어",
 		"chy": "샤이엔어",
 		"ckb": "소라니 쿠르드어",
+		"ckb_alt-menu": "쿠르드어(소라니)",
+		"ckb_alt-variant": "쿠르드어(소라니)",
+		"clc": "칠코틴어",
 		"co": "코르시카어",
 		"cop": "콥트어",
 		"cr": "크리어",
+		"crg": "미치프어",
 		"crh": "크리민 터키어; 크리민 타타르어",
+		"crj": "남동부 크리어",
+		"crk": "평원 크리어",
+		"crl": "북동부 크리어",
+		"crm": "무스크리어",
+		"crr": "캐롤라이나 알곤킨어",
 		"crs": "세이셸 크리올 프랑스어",
 		"cs": "체코어",
 		"csb": "카슈비아어",
+		"csw": "습지 크리어",
 		"cu": "교회 슬라브어",
 		"cv": "추바시어",
 		"cy": "웨일스어",
@@ -105,7 +121,6 @@
 		"dar": "다르그와어",
 		"dav": "타이타어",
 		"de": "독일어",
-		"de_AT": "독일어(오스트리아)",
 		"de_CH": "고지 독일어(스위스)",
 		"del": "델라웨어어",
 		"den": "슬라브어",
@@ -129,22 +144,15 @@
 		"el": "그리스어",
 		"elx": "엘람어",
 		"en": "영어",
-		"en_AU": "영어(호주)",
-		"en_CA": "영어(캐나다)",
-		"en_GB": "영어(영국)",
-		"en_GB-alt-short": "영어(영국)",
-		"en_US": "영어(미국)",
-		"en_US-alt-short": "영어(미국)",
 		"enm": "중세 영어",
 		"eo": "에스페란토어",
 		"es": "스페인어",
-		"es_419": "스페인어(라틴 아메리카)",
-		"es_ES": "스페인어(스페인)",
-		"es_MX": "스페인어(멕시코)",
+		"es_ES": "스페인어(유럽)",
 		"et": "에스토니아어",
 		"eu": "바스크어",
 		"ewo": "이원도어",
 		"fa": "페르시아어",
+		"fa_AF": "다리어",
 		"fan": "팡그어",
 		"fat": "판티어",
 		"ff": "풀라어",
@@ -154,8 +162,6 @@
 		"fo": "페로어",
 		"fon": "폰어",
 		"fr": "프랑스어",
-		"fr_CA": "프랑스어(캐나다)",
-		"fr_CH": "프랑스어(스위스)",
 		"frc": "케이준 프랑스어",
 		"frm": "중세 프랑스어",
 		"fro": "고대 프랑스어",
@@ -193,8 +199,10 @@
 		"hai": "하이다어",
 		"hak": "하카어",
 		"haw": "하와이어",
+		"hax": "남부 하이다어",
 		"he": "히브리어",
 		"hi": "힌디어",
+		"hi_Latn-alt-variant": "힝글리시",
 		"hif": "피지 힌디어",
 		"hil": "헤리가뇬어",
 		"hit": "하타이트어",
@@ -206,6 +214,7 @@
 		"ht": "아이티어",
 		"hu": "헝가리어",
 		"hup": "후파어",
+		"hur": "할코멜렘어",
 		"hy": "아르메니아어",
 		"hz": "헤레로어",
 		"ia": "인터링구아",
@@ -216,6 +225,7 @@
 		"ig": "이그보어",
 		"ii": "쓰촨 이어",
 		"ik": "이누피아크어",
+		"ikt": "캐나다 서부 이누크티투트어",
 		"ilo": "이로코어",
 		"inh": "인귀시어",
 		"io": "이도어",
@@ -243,6 +253,7 @@
 		"kea": "크리올어",
 		"kfo": "코로어",
 		"kg": "콩고어",
+		"kgp": "카잉강어",
 		"kha": "카시어",
 		"kho": "호탄어",
 		"khq": "코이라 친니어",
@@ -274,6 +285,7 @@
 		"kut": "쿠테네어",
 		"kv": "코미어",
 		"kw": "콘월어",
+		"kwk": "곽왈라어",
 		"ky": "키르기스어",
 		"la": "라틴어",
 		"lad": "라디노어",
@@ -285,6 +297,7 @@
 		"lfn": "링구아 프랑카 노바",
 		"lg": "간다어",
 		"li": "림버거어",
+		"lil": "릴루엣어",
 		"lkt": "라코타어",
 		"ln": "링갈라어",
 		"lo": "라오어",
@@ -292,6 +305,7 @@
 		"lou": "루이지애나 크리올어",
 		"loz": "로지어",
 		"lrc": "북부 루리어",
+		"lsm": "사미아어",
 		"lt": "리투아니아어",
 		"lu": "루바-카탄가어",
 		"lua": "루바-룰루아어",
@@ -327,6 +341,7 @@
 		"mn": "몽골어",
 		"mnc": "만주어",
 		"mni": "마니푸리어",
+		"moe": "이누아문",
 		"moh": "모호크어",
 		"mos": "모시어",
 		"mr": "마라티어",
@@ -376,6 +391,11 @@
 		"nzi": "느지마어",
 		"oc": "오크어",
 		"oj": "오지브와어",
+		"ojb": "북서부 오지브와어",
+		"ojc": "중앙 오지브와어",
+		"ojs": "오지 크리어",
+		"ojw": "서부 오지브와어",
+		"oka": "오카나간어",
 		"om": "오로모어",
 		"or": "오리야어",
 		"os": "오세트어",
@@ -391,27 +411,28 @@
 		"peo": "고대 페르시아어",
 		"phn": "페니키아어",
 		"pi": "팔리어",
+		"pis": "피진어",
 		"pl": "폴란드어",
 		"pnt": "폰틱어",
 		"pon": "폼페이어",
+		"pqm": "말리시트 파사마쿼디어",
 		"prg": "프러시아어",
 		"pro": "고대 프로방스어",
 		"ps": "파슈토어",
 		"pt": "포르투갈어",
-		"pt_BR": "포르투갈어(브라질)",
-		"pt_PT": "포르투갈어(포르투갈)",
+		"pt_PT": "포르투갈어(유럽)",
 		"qu": "케추아어",
 		"quc": "키체어",
 		"raj": "라자스탄어",
 		"rap": "라파뉴이",
 		"rar": "라로통가어",
+		"rhg": "로힝야어",
 		"rm": "로만시어",
 		"rn": "룬디어",
 		"ro": "루마니아어",
 		"ro_MD": "몰도바어",
 		"rof": "롬보어",
 		"rom": "집시어",
-		"root": "어근",
 		"ru": "러시아어",
 		"rue": "루신어",
 		"rup": "아로마니아어",
@@ -442,10 +463,11 @@
 		"shi": "타셸히트어",
 		"shn": "샨어",
 		"shu": "차디언 아라비아어",
-		"si": "스리랑카어",
+		"si": "싱할라어",
 		"sid": "시다모어",
 		"sk": "슬로바키아어",
 		"sl": "슬로베니아어",
+		"slh": "남부 루슈트시드어",
 		"sm": "사모아어",
 		"sma": "남부 사미어",
 		"smj": "룰레 사미어",
@@ -462,6 +484,7 @@
 		"ss": "시스와티어",
 		"ssy": "사호어",
 		"st": "남부 소토어",
+		"str": "해안 살리시어",
 		"su": "순다어",
 		"suk": "수쿠마어",
 		"sus": "수수어",
@@ -473,13 +496,16 @@
 		"syc": "고전 시리아어",
 		"syr": "시리아어",
 		"ta": "타밀어",
+		"tce": "남부 투톤어",
 		"te": "텔루구어",
 		"tem": "팀니어",
 		"teo": "테조어",
 		"ter": "테레노어",
 		"tet": "테툼어",
 		"tg": "타지크어",
+		"tgx": "타기시어",
 		"th": "태국어",
+		"tht": "탈탄어",
 		"ti": "티그리냐어",
 		"tig": "티그레어",
 		"tiv": "티브어",
@@ -494,12 +520,14 @@
 		"tn": "츠와나어",
 		"to": "통가어",
 		"tog": "니아사 통가어",
+		"tok": "도기 보나",
 		"tpi": "토크 피신어",
 		"tr": "터키어",
 		"trv": "타로코어",
 		"ts": "총가어",
 		"tsi": "트심시안어",
 		"tt": "타타르어",
+		"ttm": "북부 투톤어",
 		"tum": "툼부카어",
 		"tvl": "투발루어",
 		"tw": "트위어",
@@ -538,27 +566,30 @@
 		"ybb": "옘바어",
 		"yi": "이디시어",
 		"yo": "요루바어",
+		"yrl": "넨가투어",
 		"yue": "광둥어",
+		"yue_alt-menu": "중국어(광둥어)",
 		"za": "주앙어",
 		"zap": "사포테크어",
 		"zbl": "블리스 심볼",
 		"zen": "제나가어",
 		"zgh": "표준 모로코 타마지트어",
 		"zh": "중국어",
-		"zh_Hans": "중국어(간체)",
-		"zh_Hant": "중국어(번체)",
+		"zh_alt-menu": "중국어(만다린)",
+		"zh_Hans-alt-long": "중국어(만다린, 간체)",
+		"zh_Hant-alt-long": "중국어(만다린, 번체)",
 		"zu": "줄루어",
 		"zun": "주니어",
 		"zxx": "언어 관련 내용 없음",
 		"zza": "자자어"
 	},
 	"scripts": {
-		"Adlm": "Adlm",
+		"Adlm": "아들람 문자",
 		"Afak": "아파카 문자",
 		"Aghb": "코카시안 알바니아 문자",
-		"Ahom": "Ahom",
 		"Arab": "아랍 문자",
 		"Arab-alt-variant": "페르소-아라비아 문자",
+		"Aran": "나스탈리크체",
 		"Armi": "아랍제국 문자",
 		"Armn": "아르메니아 문자",
 		"Avst": "아베스타 문자",
@@ -567,7 +598,6 @@
 		"Bass": "바사바흐 문자",
 		"Batk": "바타크 문자",
 		"Beng": "벵골 문자",
-		"Bhks": "Bhks",
 		"Blis": "블리스기호 문자",
 		"Bopo": "주음부호",
 		"Brah": "브라미",
@@ -575,7 +605,7 @@
 		"Bugi": "부기 문자",
 		"Buhd": "부히드 문자",
 		"Cakm": "차크마 문자",
-		"Cans": "통합 캐나다 토착어",
+		"Cans": "통합 캐나다 원주민 음절문자",
 		"Cari": "카리 문자",
 		"Cham": "칸 고어",
 		"Cher": "체로키 문자",
@@ -595,7 +625,6 @@
 		"Geok": "그루지야 쿠츠리 문자",
 		"Geor": "조지아 문자",
 		"Glag": "글라골 문자",
-		"Gonm": "Gonm",
 		"Goth": "고트 문자",
 		"Gran": "그란타 문자",
 		"Grek": "그리스 문자",
@@ -609,7 +638,6 @@
 		"Hans-alt-stand-alone": "한자 간체",
 		"Hant": "번체",
 		"Hant-alt-stand-alone": "한자 번체",
-		"Hatr": "Hatr",
 		"Hebr": "히브리 문자",
 		"Hira": "히라가나",
 		"Hluw": "아나톨리아 상형문자",
@@ -628,7 +656,7 @@
 		"Khmr": "크메르 문자",
 		"Khoj": "코즈키 문자",
 		"Knda": "칸나다 문자",
-		"Kore": "한국어",
+		"Kore": "한국 문자",
 		"Kpel": "크펠레 문자",
 		"Kthi": "카이시 문자",
 		"Lana": "란나 문자",
@@ -647,22 +675,18 @@
 		"Mahj": "마하자니 문자",
 		"Mand": "만다이아 문자",
 		"Mani": "마니교 문자",
-		"Marc": "Marc",
 		"Maya": "마야 상형 문자",
 		"Mend": "멘데 문자",
 		"Merc": "메로에 필기체",
 		"Mero": "메로에 문자",
 		"Mlym": "말라얄람 문자",
-		"Modi": "Modi",
 		"Mong": "몽골 문자",
 		"Moon": "문 문자",
 		"Mroo": "므로 문자",
 		"Mtei": "메이테이 마옉 문자",
-		"Mult": "Mult",
 		"Mymr": "미얀마 문자",
 		"Narb": "옛 북부 아라비아 문자",
 		"Nbat": "나바테아 문자",
-		"Newa": "Newa",
 		"Nkgb": "나시 게바 문자",
 		"Nkoo": "응코 문자",
 		"Nshu": "누슈 문자",
@@ -670,10 +694,8 @@
 		"Olck": "올 치키 문자",
 		"Orkh": "오르혼어",
 		"Orya": "오리야 문자",
-		"Osge": "Osge",
 		"Osma": "오스마니아 문자",
 		"Palm": "팔미라 문자",
-		"Pauc": "Pauc",
 		"Perm": "고대 페름 문자",
 		"Phag": "파스파 문자",
 		"Phli": "명문 팔라비 문자",
@@ -682,7 +704,9 @@
 		"Phnx": "페니키아 문자",
 		"Plrd": "폴라드 표음 문자",
 		"Prti": "명문 파라티아 문자",
+		"Qaag": "저지 문자",
 		"Rjng": "레장 문자",
+		"Rohg": "하니피 문자",
 		"Roro": "롱고롱고",
 		"Runr": "룬 문자",
 		"Samr": "사마리아 문자",
@@ -696,7 +720,6 @@
 		"Sind": "쿠다와디 문자",
 		"Sinh": "신할라 문자",
 		"Sora": "소라 솜펭 문자",
-		"Soyo": "Soyo",
 		"Sund": "순다 문자",
 		"Sylo": "실헤티 나가리",
 		"Syrc": "시리아 문자",
@@ -726,7 +749,6 @@
 		"Xpeo": "고대 페르시아 문자",
 		"Xsux": "수메르-아카드어 설형문자",
 		"Yiii": "이 문자",
-		"Zanb": "Zanb",
 		"Zinh": "구전 문자",
 		"Zmth": "수학 기호",
 		"Zsye": "이모티콘",
@@ -743,12 +765,12 @@
 		"151": "동유럽",
 		"154": "북유럽",
 		"155": "서유럽",
-		"202": "202",
+		"202": "사하라 사막 이남 아프리카",
 		"419": "라틴 아메리카",
 		"001": "세계",
 		"002": "아프리카",
 		"003": "북아메리카",
-		"005": "남아메리카(남미)",
+		"005": "남아메리카",
 		"009": "오세아니아",
 		"011": "서부 아프리카",
 		"013": "중앙 아메리카",
@@ -767,7 +789,7 @@
 		"054": "멜라네시아",
 		"057": "미크로네시아 지역",
 		"061": "폴리네시아",
-		"AC": "어센션 섬",
+		"AC": "어센션섬",
 		"AD": "안도라",
 		"AE": "아랍에미리트",
 		"AF": "아프가니스탄",
@@ -820,7 +842,7 @@
 		"CM": "카메룬",
 		"CN": "중국",
 		"CO": "콜롬비아",
-		"CP": "클립퍼튼 섬",
+		"CP": "클리퍼턴섬",
 		"CR": "코스타리카",
 		"CU": "쿠바",
 		"CV": "카보베르데",
@@ -828,7 +850,7 @@
 		"CX": "크리스마스섬",
 		"CY": "키프로스",
 		"CZ": "체코",
-		"CZ-alt-variant": "CZ",
+		"CZ-alt-variant": "체코 공화국",
 		"DE": "독일",
 		"DG": "디에고 가르시아",
 		"DJ": "지부티",
@@ -873,7 +895,7 @@
 		"GU": "괌",
 		"GW": "기니비사우",
 		"GY": "가이아나",
-		"HK": "홍콩(중국 특별행정구)",
+		"HK": "홍콩",
 		"HK-alt-short": "홍콩",
 		"HM": "허드 맥도널드 제도",
 		"HN": "온두라스",
@@ -884,7 +906,7 @@
 		"ID": "인도네시아",
 		"IE": "아일랜드",
 		"IL": "이스라엘",
-		"IM": "맨 섬",
+		"IM": "맨섬",
 		"IN": "인도",
 		"IO": "영국령 인도양 식민지",
 		"IQ": "이라크",
@@ -924,12 +946,11 @@
 		"MF": "생마르탱",
 		"MG": "마다가스카르",
 		"MH": "마셜 제도",
-		"MK": "마케도니아",
-		"MK-alt-variant": "마케도니아(FYROM)",
+		"MK": "북마케도니아",
 		"ML": "말리",
 		"MM": "미얀마",
 		"MN": "몽골",
-		"MO": "마카오(중국 특별행정구)",
+		"MO": "마카오",
 		"MO-alt-short": "마카오",
 		"MP": "북마리아나제도",
 		"MQ": "마르티니크",
@@ -954,6 +975,7 @@
 		"NR": "나우루",
 		"NU": "니우에",
 		"NZ": "뉴질랜드",
+		"NZ-alt-variant": "뉴질랜드",
 		"OM": "오만",
 		"PA": "파나마",
 		"PE": "페루",
@@ -963,7 +985,7 @@
 		"PK": "파키스탄",
 		"PL": "폴란드",
 		"PM": "생피에르 미클롱",
-		"PN": "핏케언 섬",
+		"PN": "핏케언 제도",
 		"PR": "푸에르토리코",
 		"PS": "팔레스타인 지구",
 		"PS-alt-short": "팔레스타인",
@@ -972,7 +994,7 @@
 		"PY": "파라과이",
 		"QA": "카타르",
 		"QO": "오세아니아 외곽",
-		"RE": "리유니온",
+		"RE": "레위니옹",
 		"RO": "루마니아",
 		"RS": "세르비아",
 		"RU": "러시아",
@@ -997,21 +1019,23 @@
 		"SV": "엘살바도르",
 		"SX": "신트마르턴",
 		"SY": "시리아",
-		"SZ": "스와질란드",
+		"SZ": "에스와티니",
+		"SZ-alt-variant": "스와질란드",
 		"TA": "트리스탄다쿠나",
 		"TC": "터크스 케이커스 제도",
 		"TD": "차드",
-		"TF": "프랑스 남부 지방",
+		"TF": "프랑스령 남방 지역",
 		"TG": "토고",
 		"TH": "태국",
 		"TJ": "타지키스탄",
 		"TK": "토켈라우",
 		"TL": "동티모르",
-		"TL-alt-variant": "TL",
+		"TL-alt-variant": "티모르레스테",
 		"TM": "투르크메니스탄",
 		"TN": "튀니지",
 		"TO": "통가",
-		"TR": "터키",
+		"TR": "튀르키예",
+		"TR-alt-variant": "튀르키예",
 		"TT": "트리니다드 토바고",
 		"TV": "투발루",
 		"TW": "대만",
@@ -1019,7 +1043,7 @@
 		"UA": "우크라이나",
 		"UG": "우간다",
 		"UM": "미국령 해외 제도",
-		"UN": "유엔",
+		"UN": "국제연합",
 		"UN-alt-short": "유엔",
 		"US": "미국",
 		"US-alt-short": "미국",
@@ -1034,6 +1058,8 @@
 		"VU": "바누아투",
 		"WF": "왈리스-푸투나 제도",
 		"WS": "사모아",
+		"XA": "유사 억양",
+		"XB": "유사 양방향",
 		"XK": "코소보",
 		"YE": "예멘",
 		"YT": "마요트",
@@ -1076,6 +1102,7 @@
 				"Ehms": "(E) a h:mm:ss",
 				"EHms": "(E) HH:mm:ss",
 				"Gy": "G y년",
+				"GyMd": "GGGGG y/M/d",
 				"GyMMM": "G y년 MMM",
 				"GyMMMd": "G y년 MMM d일",
 				"GyMMMEd": "G y년 MMM d일 (E)",
@@ -1115,7 +1142,7 @@
 				"yMMMM": "y년 MMMM",
 				"yQQQ": "y년 QQQ",
 				"yQQQQ": "y년 QQQQ",
-				"MMMMW": "MMM W번째 주",
+				"MMMMW": "MMMM W번째 주",
 				"yw": "Y년 w번째 주"
 			},
 			"appendItems": {
@@ -1133,8 +1160,55 @@
 			},
 			"intervalFormats": {
 				"intervalFormatFallback": "{0} ~ {1}",
+				"Bh": {
+					"B": "B h시 ~ B h시",
+					"h": "B h시~h시"
+				},
+				"Bhm": {
+					"B": "B h:mm~B h:mm",
+					"h": "B h:mm ~ h:mm",
+					"m": "B h:mm ~ h:mm"
+				},
 				"d": {
 					"d": "d일~d일"
+				},
+				"Gy": {
+					"G": "G y년 ~ G y년",
+					"y": "G y년~y년"
+				},
+				"GyM": {
+					"G": "GGGGG y년 M월 ~ GGGGG y년 M월",
+					"M": "GGGGG y년 M월 ~ GGGGG y년 M월",
+					"y": "GGGGG y년 M월 ~ y년 M월"
+				},
+				"GyMd": {
+					"d": "GGGGG y년 M월 d일 ~ y년 M월 d일",
+					"G": "GGGGG y년 M월 d일 ~ GGGGG y년 M월 d일",
+					"M": "GGGGG y년 M월 d일 ~ y년 M월 d일",
+					"y": "GGGGG y년 M월 d일 ~ y년 M월 d일"
+				},
+				"GyMEd": {
+					"d": "GGGGG y년 M월 d일 E요일 ~ y년 M월 d일 E요일",
+					"G": "GGGGG y년 M월 d일 E요일 ~ GGGGG y년 M월 d일 E요일",
+					"M": "GGGGG y년 M월 d일 E요일 ~ y년 M월 d일 E요일",
+					"y": "GGGGG y년 M월 d일 E요일 ~ y년 M월 d일 E요일"
+				},
+				"GyMMM": {
+					"G": "G y년 MMM ~ G y년 MMM",
+					"M": "G y년 MMM ~ MMM",
+					"y": "G y년 MMM ~ y년 MMM"
+				},
+				"GyMMMd": {
+					"d": "G y년 MMM d일 ~ d일",
+					"G": "G y년 MMM d일 ~ G y년 MMM d일",
+					"M": "G y년 MMM d일 ~ MMM d일",
+					"y": "G y년 MMM d일 ~ y년 MMM d일"
+				},
+				"GyMMMEd": {
+					"d": "G y년 MMM d일 E요일 ~ MMM d일 E요일",
+					"G": "G y년 MMM d일 E요일 ~ G y년 MMM d일 E요일",
+					"M": "G y년 MMM d일 E요일 ~ MMM d일 E요일",
+					"y": "G y년 MMM d일 E요일 ~ y년 MMM d일 E요일"
 				},
 				"h": {
 					"a": "a h시 ~ a h시",
@@ -1475,6 +1549,66 @@
 				]
 			}
 		},
+		"flexibleDayPeriods": {
+			"format": {
+				"abbreviated": {
+					"midnight": "자정",
+					"noon": "정오",
+					"morning1": "새벽",
+					"morning2": "오전",
+					"afternoon1": "오후",
+					"evening1": "저녁",
+					"night1": "밤"
+				},
+				"narrow": {
+					"midnight": "자정",
+					"noon": "정오",
+					"morning1": "새벽",
+					"morning2": "오전",
+					"afternoon1": "오후",
+					"evening1": "저녁",
+					"night1": "밤"
+				},
+				"wide": {
+					"midnight": "자정",
+					"noon": "정오",
+					"morning1": "새벽",
+					"morning2": "오전",
+					"afternoon1": "오후",
+					"evening1": "저녁",
+					"night1": "밤"
+				}
+			},
+			"stand-alone": {
+				"abbreviated": {
+					"midnight": "자정",
+					"noon": "정오",
+					"morning1": "새벽",
+					"morning2": "오전",
+					"afternoon1": "오후",
+					"evening1": "저녁",
+					"night1": "밤"
+				},
+				"narrow": {
+					"midnight": "자정",
+					"noon": "정오",
+					"morning1": "새벽",
+					"morning2": "오전",
+					"afternoon1": "오후",
+					"evening1": "저녁",
+					"night1": "밤"
+				},
+				"wide": {
+					"midnight": "자정",
+					"noon": "정오",
+					"morning1": "새벽",
+					"morning2": "오전",
+					"afternoon1": "오후",
+					"evening1": "저녁",
+					"night1": "밤"
+				}
+			}
+		},
 		"era-wide": {
 			"0": "기원전",
 			"1": "서기"
@@ -1521,10 +1655,11 @@
 				"Ehms": "E a h:mm:ss",
 				"EHms": "E HH:mm:ss",
 				"Gy": "G y년",
-				"GyMMM": "G y년 MMM월",
-				"GyMMMd": "G y년 MMM월 d일",
-				"GyMMMEd": "G y년 MMM월 d일 (E)",
-				"GyMMMEEEEd": "G y년 MMM월 d일 EEEE",
+				"GyMd": "GGGGG y/M/d",
+				"GyMMM": "G y년 M월",
+				"GyMMMd": "G y년 M월 d일",
+				"GyMMMEd": "G y년 M월 d일 (E)",
+				"GyMMMEEEEd": "G y년 M월 d일 EEEE",
 				"h": "a h시",
 				"H": "H시",
 				"HHmmss": "HH:mm:ss",
@@ -1537,9 +1672,9 @@
 				"MEd": "M. d. (E)",
 				"MEEEEd": "M. d. EEEE",
 				"MMM": "LLL",
-				"MMMd": "MMM월 d일",
-				"MMMEd": "MMM월 d일 (E)",
-				"MMMEEEEd": "MMM월 d일 EEEE",
+				"MMMd": "M월 d일",
+				"MMMEd": "M월 d일 (E)",
+				"MMMEEEEd": "M월 d일 EEEE",
 				"MMMMd": "MMMM d일",
 				"ms": "mm:ss",
 				"y": "G y년",
@@ -1548,10 +1683,10 @@
 				"yyyyMd": "G y. M. d.",
 				"yyyyMEd": "G y. M. d. (E)",
 				"yyyyMEEEEd": "G y. M. d. EEEE",
-				"yyyyMMM": "G y년 MMM월",
-				"yyyyMMMd": "G y년 MMM월 d일",
-				"yyyyMMMEd": "G y년 MMM월 d일 (E)",
-				"yyyyMMMEEEEd": "G y년 MMM월 d일 EEEE",
+				"yyyyMMM": "G y년 M월",
+				"yyyyMMMd": "G y년 M월 d일",
+				"yyyyMMMEd": "G y년 M월 d일 (E)",
+				"yyyyMMMEEEEd": "G y년 M월 d일 EEEE",
 				"yyyyMMMM": "G y년 MMMM",
 				"yyyyQQQ": "G y년 QQQ",
 				"yyyyQQQQ": "G y년 QQQQ"
@@ -1571,8 +1706,55 @@
 			},
 			"intervalFormats": {
 				"intervalFormatFallback": "{0} ~ {1}",
+				"Bh": {
+					"B": "B h시 ~ B h시",
+					"h": "B h시 ~ h시"
+				},
+				"Bhm": {
+					"B": "B h:mm ~ B h:mm",
+					"h": "B h:mm ~ h:mm",
+					"m": "B h:mm ~ h:mm"
+				},
 				"d": {
 					"d": "d일 ~ d일"
+				},
+				"Gy": {
+					"G": "G y년 ~ G y년",
+					"y": "G y년~y년"
+				},
+				"GyM": {
+					"G": "GGGGG y년 M월 ~ GGGGG y년 M월",
+					"M": "GGGGG y년 M월 ~ y년 M월",
+					"y": "GGGGG y년 M월 ~ y년 M월"
+				},
+				"GyMd": {
+					"d": "GGGGG y년 M월 d일 ~ y년 M월 d일",
+					"G": "GGGGG y년 M월 d일 ~ GGGGG y년 M월 d일",
+					"M": "GGGGG y년 M월 d일 ~ y년 M월 d일",
+					"y": "GGGGG y년 M월 d일 ~ y년 M월 d일"
+				},
+				"GyMEd": {
+					"d": "GGGGG y년 M월 d일 E요일 ~ y년 M월 d일 E요일",
+					"G": "GGGGG y년 M월 d일 E요일 ~ GGGGG y년 M월 d일 E요일",
+					"M": "GGGGG y년 M월 d일 E요일 ~ y년 M월 d일 E요일",
+					"y": "GGGGG y년 M월 d일 E요일 ~ y년 M월 d일 E요일"
+				},
+				"GyMMM": {
+					"G": "G y년 M월 ~ G y년 M월",
+					"M": "G y년 M월 ~ y년 M월",
+					"y": "G y년 M월 ~ y년 M월"
+				},
+				"GyMMMd": {
+					"d": "G y년 M월 d일 ~ d일",
+					"G": "G y년 M월 d일 ~ y년 M월 d일",
+					"M": "G y년 M월 d일 ~ M월 d일",
+					"y": "G y년 M월 d일 ~ y년 M월 d일"
+				},
+				"GyMMMEd": {
+					"d": "G y년 M월 d일 e요일 – M월 d일 e요일",
+					"G": "G y년 M월 d일 E요일 ~ G y년 M월 d일 E요일",
+					"M": "G y년 M월 d일 E요일 ~ M월 d일 E요일",
+					"y": "G y년 M월 d일 E요일 ~ y년 M월 d일 E요일"
 				},
 				"h": {
 					"a": "a h시 ~ a h시",
@@ -1618,7 +1800,7 @@
 					"M": "M. d (E) ~ M. d (E)"
 				},
 				"MMM": {
-					"M": "MMM ~ MMM"
+					"M": "M월 ~ M월"
 				},
 				"MMMd": {
 					"d": "M월 d일 ~ d일",
@@ -1915,6 +2097,66 @@
 					"오전",
 					"오후"
 				]
+			}
+		},
+		"flexibleDayPeriods": {
+			"format": {
+				"abbreviated": {
+					"midnight": "자정",
+					"noon": "정오",
+					"morning1": "새벽",
+					"morning2": "오전",
+					"afternoon1": "오후",
+					"evening1": "저녁",
+					"night1": "밤"
+				},
+				"narrow": {
+					"midnight": "자정",
+					"noon": "정오",
+					"morning1": "새벽",
+					"morning2": "오전",
+					"afternoon1": "오후",
+					"evening1": "저녁",
+					"night1": "밤"
+				},
+				"wide": {
+					"midnight": "자정",
+					"noon": "정오",
+					"morning1": "새벽",
+					"morning2": "오전",
+					"afternoon1": "오후",
+					"evening1": "저녁",
+					"night1": "밤"
+				}
+			},
+			"stand-alone": {
+				"abbreviated": {
+					"midnight": "자정",
+					"noon": "정오",
+					"morning1": "새벽",
+					"morning2": "오전",
+					"afternoon1": "오후",
+					"evening1": "저녁",
+					"night1": "밤"
+				},
+				"narrow": {
+					"midnight": "자정",
+					"noon": "정오",
+					"morning1": "새벽",
+					"morning2": "오전",
+					"afternoon1": "오후",
+					"evening1": "저녁",
+					"night1": "밤"
+				},
+				"wide": {
+					"midnight": "자정",
+					"noon": "정오",
+					"morning1": "새벽",
+					"morning2": "오전",
+					"afternoon1": "오후",
+					"evening1": "저녁",
+					"night1": "밤"
+				}
 			}
 		},
 		"era-wide": {
@@ -1960,10 +2202,11 @@
 				"Ehms": "E a h:mm:ss",
 				"EHms": "E HH:mm:ss",
 				"Gy": "G y년",
-				"GyMMM": "G y년 MMM월",
-				"GyMMMd": "G y년 MMM월 d일",
-				"GyMMMEd": "G y년 MMM월 d일 (E)",
-				"GyMMMEEEEd": "G y년 MMM월 d일 EEEE",
+				"GyMd": "GGGGG y/M/d",
+				"GyMMM": "G y년 MMM",
+				"GyMMMd": "G y년 MMM d일",
+				"GyMMMEd": "G y년 MMM d일 (E)",
+				"GyMMMEEEEd": "G y년 MMM d일 EEEE",
 				"h": "a h시",
 				"H": "H시",
 				"HHmmss": "HH:mm:ss",
@@ -1976,10 +2219,10 @@
 				"MEd": "M. d. (E)",
 				"MEEEEd": "M. d. EEEE",
 				"MMM": "LLL",
-				"MMMd": "MMM월 d일",
-				"MMMEd": "MMM월 d일 (E)",
-				"MMMEEEEd": "MMM월 d일 EEEE",
-				"MMMMd": "MMMM월 d일",
+				"MMMd": "MMM d일",
+				"MMMEd": "MMM d일 (E)",
+				"MMMEEEEd": "MMM d일 EEEE",
+				"MMMMd": "MMMM d일",
 				"ms": "mm:ss",
 				"y": "G y년",
 				"yyyy": "G y년",
@@ -1987,11 +2230,11 @@
 				"yyyyMd": "G y. M. d.",
 				"yyyyMEd": "G y. M. d. (E)",
 				"yyyyMEEEEd": "G y. M. d. EEEE",
-				"yyyyMMM": "G y년 MMM월",
-				"yyyyMMMd": "G y년 MMM월 d일",
-				"yyyyMMMEd": "G y년 MMM월 d일 (E)",
-				"yyyyMMMEEEEd": "G y년 MMM월 d일 EEEE",
-				"yyyyMMMM": "G y년 MMMM월",
+				"yyyyMMM": "G y년 MMM",
+				"yyyyMMMd": "G y년 MMM d일",
+				"yyyyMMMEd": "G y년 MMM d일 (E)",
+				"yyyyMMMEEEEd": "G y년 MMM d일 EEEE",
+				"yyyyMMMM": "G y년 MMMM",
 				"yyyyQQQ": "G y년 QQQ",
 				"yyyyQQQQ": "G y년 QQQQ"
 			},
@@ -2010,8 +2253,55 @@
 			},
 			"intervalFormats": {
 				"intervalFormatFallback": "{0} ~ {1}",
+				"Bh": {
+					"B": "B h시 ~ B h시",
+					"h": "B h시 ~ h시"
+				},
+				"Bhm": {
+					"B": "B h:mm ~ B h:mm",
+					"h": "B h:mm ~ h:mm",
+					"m": "B h:mm ~ h:mm"
+				},
 				"d": {
 					"d": "d일 ~ d일"
+				},
+				"Gy": {
+					"G": "G y년 ~ G y년",
+					"y": "G y년~y년"
+				},
+				"GyM": {
+					"G": "GGGGG y년 M월 ~ GGGGG y년 M월",
+					"M": "GGGGG y년 M월 ~ y년 M월",
+					"y": "GGGGG y년 M월 ~ y년 M월"
+				},
+				"GyMd": {
+					"d": "GGGGG y년 M월 d일 ~ y년 M월 d일",
+					"G": "GGGGG y년 M월 d일 ~ GGGGG y년 M월 d일",
+					"M": "GGGGG y년 M월 d일 ~ y년 M월 d일",
+					"y": "GGGGG y년 M월 d일 ~ y년 M월 d일"
+				},
+				"GyMEd": {
+					"d": "GGGGG y년 M월 d일 E요일 ~ y년 M월 d일 E요일",
+					"G": "GGGGG y년 M월 d일 E요일 ~ GGGGG y년 M월 d일 E요일",
+					"M": "GGGGG y년 M월 d일 E요일 ~ y년 M월 d일 E요일",
+					"y": "GGGGG y년 M월 d일 E요일 ~ y년 M월 d일 E요일"
+				},
+				"GyMMM": {
+					"G": "G y년 M월 ~ G y년 M월",
+					"M": "G y년 M월 ~ y년 M월",
+					"y": "G y년 M월 ~ y년 M월"
+				},
+				"GyMMMd": {
+					"d": "G y년 M월 d일 ~ d일",
+					"G": "G y년 M월 d일 ~ y년 M월 d일",
+					"M": "G y년 M월 d일 ~ M월 d일",
+					"y": "G y년 M월 d일 ~ y년 M월 d일"
+				},
+				"GyMMMEd": {
+					"d": "G y년 M월 d일 e요일 – M월 d일 e요일",
+					"G": "G y년 M월 d일 E요일 ~ G y년 M월 d일 E요일",
+					"M": "G y년 M월 d일 E요일 ~ M월 d일 E요일",
+					"y": "G y년 M월 d일 E요일 ~ y년 M월 d일 E요일"
 				},
 				"h": {
 					"a": "a h시 ~ a h시",
@@ -2057,7 +2347,7 @@
 					"M": "M. d (E) ~ M. d (E)"
 				},
 				"MMM": {
-					"M": "MMM ~ MMM"
+					"M": "M월 ~ M월"
 				},
 				"MMMd": {
 					"d": "M월 d일 ~ d일",
@@ -2075,44 +2365,53 @@
 					"M": "LLLL ~ LLLL"
 				},
 				"y": {
-					"y": "G y년 ~ y년"
+					"y": "G y년 ~ y년",
+					"G": "G y년 ~ G y년"
 				},
 				"yM": {
 					"M": "G y. M ~ y. M",
-					"y": "G y. M ~ y. M"
+					"y": "G y. M ~ y. M",
+					"G": "G y. M ~ G y. M"
 				},
 				"yMd": {
 					"d": "G y. M. d. ~ y. M. d.",
 					"M": "G y. M. d. ~ y. M. d.",
-					"y": "G y. M. d. ~ y. M. d."
+					"y": "G y. M. d. ~ y. M. d.",
+					"G": "G y. M. d. ~ G y. M. d."
 				},
 				"yMEd": {
 					"d": "G y. M. d. (E) ~ y. M. d. (E)",
 					"M": "G y. M. d. (E) ~ y. M. d. (E)",
-					"y": "G y. M. d. (E) ~ y. M. d. (E)"
+					"y": "G y. M. d. (E) ~ y. M. d. (E)",
+					"G": "G y. M. d. (E) ~ G y. M. d. (E)"
 				},
 				"yMMM": {
 					"M": "G y년 M월~M월",
-					"y": "G y년 M월 ~ y년 M월"
+					"y": "G y년 M월 ~ y년 M월",
+					"G": "G y년 M월 ~ G y년 M월"
 				},
 				"yMMMd": {
 					"d": "G y년 M월 d일~d일",
 					"M": "G y년 M월 d일 ~ M월 d일",
-					"y": "G y년 M월 d일 ~ y년 M월 d일"
+					"y": "G y년 M월 d일 ~ y년 M월 d일",
+					"G": "G y년 M월 d일 ~ G y년 M월 d일"
 				},
 				"yMMMEd": {
 					"d": "G y년 M월 d일 (E) ~ d일 (E)",
 					"M": "G y년 M월 d일 (E) ~ M월 d일 (E)",
-					"y": "G y년 M월 d일 (E) ~ y년 M월 d일 (E)"
+					"y": "G y년 M월 d일 (E) ~ y년 M월 d일 (E)",
+					"G": "G y년 M월 d일 (E) ~ G y년 M월 d일 (E)"
 				},
 				"yMMMEEEEd": {
 					"d": "G y년 M월 d일 EEEE ~ d일 EEEE",
 					"M": "G y년 M월 d일 EEEE ~ M월 d일 EEEE",
-					"y": "G y년 M월 d일 EEEE ~ y년 M월 d일 EEEE"
+					"y": "G y년 M월 d일 EEEE ~ y년 M월 d일 EEEE",
+					"G": "G y년 M월 d일 EEEE ~ G y년 M월 d일 EEEE"
 				},
 				"yMMMM": {
 					"M": "G y년 MM월 ~ MM월",
-					"y": "G y년 MM월 ~ y년 MM월"
+					"y": "G y년 MM월 ~ y년 MM월",
+					"G": "G y년 MM월 ~ G y년 MM월"
 				}
 			}
 		},
@@ -2356,23 +2655,86 @@
 				]
 			}
 		},
+		"flexibleDayPeriods": {
+			"format": {
+				"abbreviated": {
+					"midnight": "자정",
+					"noon": "정오",
+					"morning1": "새벽",
+					"morning2": "오전",
+					"afternoon1": "오후",
+					"evening1": "저녁",
+					"night1": "밤"
+				},
+				"narrow": {
+					"midnight": "자정",
+					"noon": "정오",
+					"morning1": "새벽",
+					"morning2": "오전",
+					"afternoon1": "오후",
+					"evening1": "저녁",
+					"night1": "밤"
+				},
+				"wide": {
+					"midnight": "자정",
+					"noon": "정오",
+					"morning1": "새벽",
+					"morning2": "오전",
+					"afternoon1": "오후",
+					"evening1": "저녁",
+					"night1": "밤"
+				}
+			},
+			"stand-alone": {
+				"abbreviated": {
+					"midnight": "자정",
+					"noon": "정오",
+					"morning1": "새벽",
+					"morning2": "오전",
+					"afternoon1": "오후",
+					"evening1": "저녁",
+					"night1": "밤"
+				},
+				"narrow": {
+					"midnight": "자정",
+					"noon": "정오",
+					"morning1": "새벽",
+					"morning2": "오전",
+					"afternoon1": "오후",
+					"evening1": "저녁",
+					"night1": "밤"
+				},
+				"wide": {
+					"midnight": "자정",
+					"noon": "정오",
+					"morning1": "새벽",
+					"morning2": "오전",
+					"afternoon1": "오후",
+					"evening1": "저녁",
+					"night1": "밤"
+				}
+			}
+		},
 		"era-wide": {
 			"232": "메이지",
 			"233": "다이쇼",
 			"234": "쇼와",
-			"235": "헤이세이"
+			"235": "헤이세이",
+			"236": "레이와"
 		},
 		"era-abbreviated": {
 			"232": "메이지",
 			"233": "다이쇼",
 			"234": "쇼와",
-			"235": "헤이세이"
+			"235": "헤이세이",
+			"236": "레이와"
 		},
 		"era-narrow": {
 			"232": "M",
 			"233": "T",
 			"234": "S",
-			"235": "H"
+			"235": "H",
+			"236": "R"
 		}
 	},
 	"ca-persian": {
@@ -2408,10 +2770,11 @@
 				"Ehms": "E a h:mm:ss",
 				"EHms": "E HH:mm:ss",
 				"Gy": "G y년",
-				"GyMMM": "G y년 MMM월",
-				"GyMMMd": "G y년 MMM월 d일",
-				"GyMMMEd": "G y년 MMM월 d일 (E)",
-				"GyMMMEEEEd": "G y년 MMM월 d일 EEEE",
+				"GyMd": "GGGGG y/M/d",
+				"GyMMM": "G y년 M월",
+				"GyMMMd": "G y년 M월 d일",
+				"GyMMMEd": "G y년 M월 d일 (E)",
+				"GyMMMEEEEd": "G y년 M월 d일 EEEE",
 				"h": "a h시",
 				"H": "H시",
 				"HHmmss": "HH:mm:ss",
@@ -2424,10 +2787,10 @@
 				"MEd": "M. d. (E)",
 				"MEEEEd": "M. d. EEEE",
 				"MMM": "LLL",
-				"MMMd": "MMM월 d일",
-				"MMMEd": "MMM월 d일 (E)",
-				"MMMEEEEd": "MMM월 d일 EEEE",
-				"MMMMd": "MMMM월 d일",
+				"MMMd": "M월 d일",
+				"MMMEd": "M월 d일 (E)",
+				"MMMEEEEd": "M월 d일 EEEE",
+				"MMMMd": "M월 d일",
 				"ms": "mm:ss",
 				"y": "G y년",
 				"yyyy": "G y년",
@@ -2435,11 +2798,11 @@
 				"yyyyMd": "G y. M. d.",
 				"yyyyMEd": "G y. M. d. (E)",
 				"yyyyMEEEEd": "G y. M. d. EEEE",
-				"yyyyMMM": "G y년 MMM월",
-				"yyyyMMMd": "G y년 MMM월 d일",
-				"yyyyMMMEd": "G y년 MMM월 d일 (E)",
-				"yyyyMMMEEEEd": "G y년 MMM월 d일 EEEE",
-				"yyyyMMMM": "G y년 MMMM월",
+				"yyyyMMM": "G y년 M월",
+				"yyyyMMMd": "G y년 M월 d일",
+				"yyyyMMMEd": "G y년 M월 d일 (E)",
+				"yyyyMMMEEEEd": "G y년 M월 d일 EEEE",
+				"yyyyMMMM": "G y년 M월",
 				"yyyyQQQ": "G y년 QQQ",
 				"yyyyQQQQ": "G y년 QQQQ"
 			},
@@ -2458,8 +2821,55 @@
 			},
 			"intervalFormats": {
 				"intervalFormatFallback": "{0} ~ {1}",
+				"Bh": {
+					"B": "B h시 ~ B h시",
+					"h": "B h시 ~ h시"
+				},
+				"Bhm": {
+					"B": "B h:mm ~ B h:mm",
+					"h": "B h:mm ~ h:mm",
+					"m": "B h:mm ~ h:mm"
+				},
 				"d": {
 					"d": "d일 ~ d일"
+				},
+				"Gy": {
+					"G": "G y년 ~ G y년",
+					"y": "G y년~y년"
+				},
+				"GyM": {
+					"G": "GGGGG y년 M월 ~ GGGGG y년 M월",
+					"M": "GGGGG y년 M월 ~ y년 M월",
+					"y": "GGGGG y년 M월 ~ y년 M월"
+				},
+				"GyMd": {
+					"d": "GGGGG y년 M월 d일 ~ y년 M월 d일",
+					"G": "GGGGG y년 M월 d일 ~ GGGGG y년 M월 d일",
+					"M": "GGGGG y년 M월 d일 ~ y년 M월 d일",
+					"y": "GGGGG y년 M월 d일 ~ y년 M월 d일"
+				},
+				"GyMEd": {
+					"d": "GGGGG y년 M월 d일 E요일 ~ y년 M월 d일 E요일",
+					"G": "GGGGG y년 M월 d일 E요일 ~ GGGGG y년 M월 d일 E요일",
+					"M": "GGGGG y년 M월 d일 E요일 ~ y년 M월 d일 E요일",
+					"y": "GGGGG y년 M월 d일 E요일 ~ y년 M월 d일 E요일"
+				},
+				"GyMMM": {
+					"G": "G y년 M월 ~ G y년 M월",
+					"M": "G y년 M월 ~ y년 M월",
+					"y": "G y년 M월 ~ y년 M월"
+				},
+				"GyMMMd": {
+					"d": "G y년 M월 d일 ~ d일",
+					"G": "G y년 M월 d일 ~ y년 M월 d일",
+					"M": "G y년 M월 d일 ~ M월 d일",
+					"y": "G y년 M월 d일 ~ y년 M월 d일"
+				},
+				"GyMMMEd": {
+					"d": "G y년 M월 d일 e요일 – M월 d일 e요일",
+					"G": "G y년 M월 d일 E요일 ~ G y년 M월 d일 E요일",
+					"M": "G y년 M월 d일 E요일 ~ M월 d일 E요일",
+					"y": "G y년 M월 d일 E요일 ~ y년 M월 d일 E요일"
 				},
 				"h": {
 					"a": "a h시 ~ a h시",
@@ -2505,7 +2915,7 @@
 					"M": "M. d (E) ~ M. d (E)"
 				},
 				"MMM": {
-					"M": "MMM ~ MMM"
+					"M": "M월 ~ M월"
 				},
 				"MMMd": {
 					"d": "M월 d일 ~ d일",
@@ -2804,6 +3214,66 @@
 				]
 			}
 		},
+		"flexibleDayPeriods": {
+			"format": {
+				"abbreviated": {
+					"midnight": "자정",
+					"noon": "정오",
+					"morning1": "새벽",
+					"morning2": "오전",
+					"afternoon1": "오후",
+					"evening1": "저녁",
+					"night1": "밤"
+				},
+				"narrow": {
+					"midnight": "자정",
+					"noon": "정오",
+					"morning1": "새벽",
+					"morning2": "오전",
+					"afternoon1": "오후",
+					"evening1": "저녁",
+					"night1": "밤"
+				},
+				"wide": {
+					"midnight": "자정",
+					"noon": "정오",
+					"morning1": "새벽",
+					"morning2": "오전",
+					"afternoon1": "오후",
+					"evening1": "저녁",
+					"night1": "밤"
+				}
+			},
+			"stand-alone": {
+				"abbreviated": {
+					"midnight": "자정",
+					"noon": "정오",
+					"morning1": "새벽",
+					"morning2": "오전",
+					"afternoon1": "오후",
+					"evening1": "저녁",
+					"night1": "밤"
+				},
+				"narrow": {
+					"midnight": "자정",
+					"noon": "정오",
+					"morning1": "새벽",
+					"morning2": "오전",
+					"afternoon1": "오후",
+					"evening1": "저녁",
+					"night1": "밤"
+				},
+				"wide": {
+					"midnight": "자정",
+					"noon": "정오",
+					"morning1": "새벽",
+					"morning2": "오전",
+					"afternoon1": "오후",
+					"evening1": "저녁",
+					"night1": "밤"
+				}
+			}
+		},
 		"era-wide": {
 			"0": "AP"
 		},
@@ -2812,6 +3282,553 @@
 		},
 		"era-narrow": {
 			"0": "AP"
+		}
+	},
+	"ca-buddhist": {
+		"dateFormats": {
+			"full": "G y년 M월 d일 EEEE",
+			"long": "G y년 M월 d일",
+			"medium": "G y. M. d.",
+			"short": "G y. M. d."
+		},
+		"timeFormats": {
+			"full": "a h시 m분 s초 zzzz",
+			"long": "a h시 m분 s초 z",
+			"medium": "a h:mm:ss",
+			"short": "a h:mm"
+		},
+		"dateTimeFormats": {
+			"full": "{1} {0}",
+			"long": "{1} {0}",
+			"medium": "{1} {0}",
+			"short": "{1} {0}",
+			"availableFormats": {
+				"Bh": "B h시",
+				"Bhm": "B h:mm",
+				"Bhms": "B h:mm:ss",
+				"d": "d일",
+				"E": "ccc",
+				"EBhm": "E B h:mm",
+				"EBhms": "E B h:mm:ss",
+				"Ed": "d일 (E)",
+				"EEEEd": "d일 EEEE",
+				"Ehm": "E a h:mm",
+				"EHm": "E HH:mm",
+				"Ehms": "E a h:mm:ss",
+				"EHms": "E HH:mm:ss",
+				"Gy": "G y년",
+				"GyMd": "GGGGG y/M/d",
+				"GyMMM": "G y년 MMM",
+				"GyMMMd": "G y년 MMM d일",
+				"GyMMMEd": "G y년 MMM d일 (E)",
+				"GyMMMEEEEd": "G y년 MMM d일 EEEE",
+				"h": "a h시",
+				"H": "H시",
+				"HHmmss": "HH:mm:ss",
+				"hm": "a h:mm",
+				"Hm": "HH:mm",
+				"hms": "a h:mm:ss",
+				"Hms": "HH:mm:ss",
+				"M": "M월",
+				"Md": "M. d.",
+				"MEd": "M. d. (E)",
+				"MEEEEd": "M. d. EEEE",
+				"MMM": "LLL",
+				"MMMd": "MMM d일",
+				"MMMEd": "MMM d일 (E)",
+				"MMMEEEEd": "MMM d일 EEEE",
+				"MMMMd": "MMMM d일",
+				"ms": "mm:ss",
+				"y": "G y년",
+				"yyyy": "G y년",
+				"yyyyM": "G y. M.",
+				"yyyyMd": "G y. M. d.",
+				"yyyyMEd": "G y. M. d. (E)",
+				"yyyyMEEEEd": "G y. M. d. EEEE",
+				"yyyyMMM": "G y년 MMM",
+				"yyyyMMMd": "G y년 MMM d일",
+				"yyyyMMMEd": "G y년 MMM d일 (E)",
+				"yyyyMMMEEEEd": "G y년 MMM d일 EEEE",
+				"yyyyMMMM": "G y년 MMMM",
+				"yyyyQQQ": "G y년 QQQ",
+				"yyyyQQQQ": "G y년 QQQQ"
+			},
+			"appendItems": {
+				"Day": "{0} ({2}: {1})",
+				"Day-Of-Week": "{0} {1}",
+				"Era": "{1} {0}",
+				"Hour": "{0} ({2}: {1})",
+				"Minute": "{0} ({2}: {1})",
+				"Month": "{0} ({2}: {1})",
+				"Quarter": "{0} ({2}: {1})",
+				"Second": "{0} ({2}: {1})",
+				"Timezone": "{0} {1}",
+				"Week": "{0} ({2}: {1})",
+				"Year": "{1} {0}"
+			},
+			"intervalFormats": {
+				"intervalFormatFallback": "{0} ~ {1}",
+				"Bh": {
+					"B": "B h시 ~ B h시",
+					"h": "B h시 ~ h시"
+				},
+				"Bhm": {
+					"B": "B h:mm ~ B h:mm",
+					"h": "B h:mm ~ h:mm",
+					"m": "B h:mm ~ h:mm"
+				},
+				"d": {
+					"d": "d일 ~ d일"
+				},
+				"Gy": {
+					"G": "G y년 ~ G y년",
+					"y": "G y년~y년"
+				},
+				"GyM": {
+					"G": "GGGGG y년 M월 ~ GGGGG y년 M월",
+					"M": "GGGGG y년 M월 ~ y년 M월",
+					"y": "GGGGG y년 M월 ~ y년 M월"
+				},
+				"GyMd": {
+					"d": "GGGGG y년 M월 d일 ~ y년 M월 d일",
+					"G": "GGGGG y년 M월 d일 ~ GGGGG y년 M월 d일",
+					"M": "GGGGG y년 M월 d일 ~ y년 M월 d일",
+					"y": "GGGGG y년 M월 d일 ~ y년 M월 d일"
+				},
+				"GyMEd": {
+					"d": "GGGGG y년 M월 d일 E요일 ~ y년 M월 d일 E요일",
+					"G": "GGGGG y년 M월 d일 E요일 ~ GGGGG y년 M월 d일 E요일",
+					"M": "GGGGG y년 M월 d일 E요일 ~ y년 M월 d일 E요일",
+					"y": "GGGGG y년 M월 d일 E요일 ~ y년 M월 d일 E요일"
+				},
+				"GyMMM": {
+					"G": "G y년 M월 ~ G y년 M월",
+					"M": "G y년 M월 ~ y년 M월",
+					"y": "G y년 M월 ~ y년 M월"
+				},
+				"GyMMMd": {
+					"d": "G y년 M월 d일 ~ d일",
+					"G": "G y년 M월 d일 ~ y년 M월 d일",
+					"M": "G y년 M월 d일 ~ M월 d일",
+					"y": "G y년 M월 d일 ~ y년 M월 d일"
+				},
+				"GyMMMEd": {
+					"d": "G y년 M월 d일 e요일 – M월 d일 e요일",
+					"G": "G y년 M월 d일 E요일 ~ G y년 M월 d일 E요일",
+					"M": "G y년 M월 d일 E요일 ~ M월 d일 E요일",
+					"y": "G y년 M월 d일 E요일 ~ y년 M월 d일 E요일"
+				},
+				"h": {
+					"a": "a h시 ~ a h시",
+					"h": "a h시 ~ h시"
+				},
+				"H": {
+					"H": "HH ~ HH시"
+				},
+				"hm": {
+					"a": "a h:mm ~ a h:mm",
+					"h": "a h:mm~h:mm",
+					"m": "a h:mm~h:mm"
+				},
+				"Hm": {
+					"H": "HH:mm ~ HH:mm",
+					"m": "HH:mm ~ HH:mm"
+				},
+				"hmv": {
+					"a": "a h:mm ~ a h:mm v",
+					"h": "a h:mm~h:mm v",
+					"m": "a h:mm~h:mm v"
+				},
+				"Hmv": {
+					"H": "HH:mm ~ HH:mm v",
+					"m": "HH:mm ~ HH:mm v"
+				},
+				"hv": {
+					"a": "a h시 ~ a h시(v)",
+					"h": "a h시 ~ h시(v)"
+				},
+				"Hv": {
+					"H": "HH ~ HH시 v"
+				},
+				"M": {
+					"M": "M월 ~ M월"
+				},
+				"Md": {
+					"d": "M. d ~ M. d",
+					"M": "M. d ~ M. d"
+				},
+				"MEd": {
+					"d": "M. d (E) ~ M. d (E)",
+					"M": "M. d (E) ~ M. d (E)"
+				},
+				"MMM": {
+					"M": "M월 ~ M월"
+				},
+				"MMMd": {
+					"d": "M월 d일 ~ d일",
+					"M": "M월 d일 ~ M월 d일"
+				},
+				"MMMEd": {
+					"d": "M월 d일 (E) ~ d일 (E)",
+					"M": "M월 d일 (E) ~ M월 d일 (E)"
+				},
+				"MMMEEEEd": {
+					"d": "M월 d일 EEEE ~ d일 EEEE",
+					"M": "M월 d일 EEEE ~ M월 d일 EEEE"
+				},
+				"MMMM": {
+					"M": "LLLL ~ LLLL"
+				},
+				"y": {
+					"y": "G y년 ~ y년"
+				},
+				"yM": {
+					"M": "G y. M ~ y. M",
+					"y": "G y. M ~ y. M"
+				},
+				"yMd": {
+					"d": "G y. M. d. ~ y. M. d.",
+					"M": "G y. M. d. ~ y. M. d.",
+					"y": "G y. M. d. ~ y. M. d."
+				},
+				"yMEd": {
+					"d": "G y. M. d. (E) ~ y. M. d. (E)",
+					"M": "G y. M. d. (E) ~ y. M. d. (E)",
+					"y": "G y. M. d. (E) ~ y. M. d. (E)"
+				},
+				"yMMM": {
+					"M": "G y년 M월~M월",
+					"y": "G y년 M월 ~ y년 M월"
+				},
+				"yMMMd": {
+					"d": "G y년 M월 d일~d일",
+					"M": "G y년 M월 d일 ~ M월 d일",
+					"y": "G y년 M월 d일 ~ y년 M월 d일"
+				},
+				"yMMMEd": {
+					"d": "G y년 M월 d일 (E) ~ d일 (E)",
+					"M": "G y년 M월 d일 (E) ~ M월 d일 (E)",
+					"y": "G y년 M월 d일 (E) ~ y년 M월 d일 (E)"
+				},
+				"yMMMEEEEd": {
+					"d": "G y년 M월 d일 EEEE ~ d일 EEEE",
+					"M": "G y년 M월 d일 EEEE ~ M월 d일 EEEE",
+					"y": "G y년 M월 d일 EEEE ~ y년 M월 d일 EEEE"
+				},
+				"yMMMM": {
+					"M": "G y년 MM월 ~ MM월",
+					"y": "G y년 MM월 ~ y년 MM월"
+				}
+			}
+		},
+		"months": {
+			"format": {
+				"abbreviated": [
+					"1월",
+					"2월",
+					"3월",
+					"4월",
+					"5월",
+					"6월",
+					"7월",
+					"8월",
+					"9월",
+					"10월",
+					"11월",
+					"12월"
+				],
+				"narrow": [
+					"1월",
+					"2월",
+					"3월",
+					"4월",
+					"5월",
+					"6월",
+					"7월",
+					"8월",
+					"9월",
+					"10월",
+					"11월",
+					"12월"
+				],
+				"wide": [
+					"1월",
+					"2월",
+					"3월",
+					"4월",
+					"5월",
+					"6월",
+					"7월",
+					"8월",
+					"9월",
+					"10월",
+					"11월",
+					"12월"
+				]
+			},
+			"stand-alone": {
+				"abbreviated": [
+					"1월",
+					"2월",
+					"3월",
+					"4월",
+					"5월",
+					"6월",
+					"7월",
+					"8월",
+					"9월",
+					"10월",
+					"11월",
+					"12월"
+				],
+				"narrow": [
+					"1월",
+					"2월",
+					"3월",
+					"4월",
+					"5월",
+					"6월",
+					"7월",
+					"8월",
+					"9월",
+					"10월",
+					"11월",
+					"12월"
+				],
+				"wide": [
+					"1월",
+					"2월",
+					"3월",
+					"4월",
+					"5월",
+					"6월",
+					"7월",
+					"8월",
+					"9월",
+					"10월",
+					"11월",
+					"12월"
+				]
+			}
+		},
+		"days": {
+			"format": {
+				"abbreviated": [
+					"일",
+					"월",
+					"화",
+					"수",
+					"목",
+					"금",
+					"토"
+				],
+				"narrow": [
+					"일",
+					"월",
+					"화",
+					"수",
+					"목",
+					"금",
+					"토"
+				],
+				"short": [
+					"일",
+					"월",
+					"화",
+					"수",
+					"목",
+					"금",
+					"토"
+				],
+				"wide": [
+					"일요일",
+					"월요일",
+					"화요일",
+					"수요일",
+					"목요일",
+					"금요일",
+					"토요일"
+				]
+			},
+			"stand-alone": {
+				"abbreviated": [
+					"일",
+					"월",
+					"화",
+					"수",
+					"목",
+					"금",
+					"토"
+				],
+				"narrow": [
+					"일",
+					"월",
+					"화",
+					"수",
+					"목",
+					"금",
+					"토"
+				],
+				"short": [
+					"일",
+					"월",
+					"화",
+					"수",
+					"목",
+					"금",
+					"토"
+				],
+				"wide": [
+					"일요일",
+					"월요일",
+					"화요일",
+					"수요일",
+					"목요일",
+					"금요일",
+					"토요일"
+				]
+			}
+		},
+		"quarters": {
+			"format": {
+				"abbreviated": [
+					"1분기",
+					"2분기",
+					"3분기",
+					"4분기"
+				],
+				"narrow": [
+					"1",
+					"2",
+					"3",
+					"4"
+				],
+				"wide": [
+					"제 1/4분기",
+					"제 2/4분기",
+					"제 3/4분기",
+					"제 4/4분기"
+				]
+			},
+			"stand-alone": {
+				"abbreviated": [
+					"1분기",
+					"2분기",
+					"3분기",
+					"4분기"
+				],
+				"narrow": [
+					"1",
+					"2",
+					"3",
+					"4"
+				],
+				"wide": [
+					"제 1/4분기",
+					"제 2/4분기",
+					"제 3/4분기",
+					"제 4/4분기"
+				]
+			}
+		},
+		"dayPeriods": {
+			"format": {
+				"abbreviated": [
+					"AM",
+					"PM"
+				],
+				"narrow": [
+					"AM",
+					"PM"
+				],
+				"wide": [
+					"오전",
+					"오후"
+				]
+			},
+			"stand-alone": {
+				"abbreviated": [
+					"AM",
+					"PM"
+				],
+				"narrow": [
+					"AM",
+					"PM"
+				],
+				"wide": [
+					"오전",
+					"오후"
+				]
+			}
+		},
+		"flexibleDayPeriods": {
+			"format": {
+				"abbreviated": {
+					"midnight": "자정",
+					"noon": "정오",
+					"morning1": "새벽",
+					"morning2": "오전",
+					"afternoon1": "오후",
+					"evening1": "저녁",
+					"night1": "밤"
+				},
+				"narrow": {
+					"midnight": "자정",
+					"noon": "정오",
+					"morning1": "새벽",
+					"morning2": "오전",
+					"afternoon1": "오후",
+					"evening1": "저녁",
+					"night1": "밤"
+				},
+				"wide": {
+					"midnight": "자정",
+					"noon": "정오",
+					"morning1": "새벽",
+					"morning2": "오전",
+					"afternoon1": "오후",
+					"evening1": "저녁",
+					"night1": "밤"
+				}
+			},
+			"stand-alone": {
+				"abbreviated": {
+					"midnight": "자정",
+					"noon": "정오",
+					"morning1": "새벽",
+					"morning2": "오전",
+					"afternoon1": "오후",
+					"evening1": "저녁",
+					"night1": "밤"
+				},
+				"narrow": {
+					"midnight": "자정",
+					"noon": "정오",
+					"morning1": "새벽",
+					"morning2": "오전",
+					"afternoon1": "오후",
+					"evening1": "저녁",
+					"night1": "밤"
+				},
+				"wide": {
+					"midnight": "자정",
+					"noon": "정오",
+					"morning1": "새벽",
+					"morning2": "오전",
+					"afternoon1": "오후",
+					"evening1": "저녁",
+					"night1": "밤"
+				}
+			}
+		},
+		"era-wide": {
+			"0": "불기"
+		},
+		"era-abbreviated": {
+			"0": "불기"
+		},
+		"era-narrow": {
+			"0": "불기"
 		}
 	},
 	"dateFields": {
@@ -3104,6 +4121,476 @@
 			"displayName": "시간대"
 		}
 	},
+	"timezoneNames": {
+		"Africa": {
+			"Abidjan": "아비장",
+			"Accra": "아크라",
+			"Addis_Ababa": "아디스아바바",
+			"Algiers": "알제",
+			"Asmara": "아스메라",
+			"Bamako": "바마코",
+			"Bangui": "방기",
+			"Banjul": "반줄",
+			"Bissau": "비사우",
+			"Blantyre": "블랜타이어",
+			"Brazzaville": "브라자빌",
+			"Bujumbura": "부줌부라",
+			"Cairo": "카이로",
+			"Casablanca": "카사블랑카",
+			"Ceuta": "세우타",
+			"Conakry": "코나크리",
+			"Dakar": "다카르",
+			"Dar_es_Salaam": "다르에스살람",
+			"Djibouti": "지부티",
+			"Douala": "두알라",
+			"El_Aaiun": "엘아이운",
+			"Freetown": "프리타운",
+			"Gaborone": "가보로네",
+			"Harare": "하라레",
+			"Johannesburg": "요하네스버그",
+			"Juba": "주바",
+			"Kampala": "캄팔라",
+			"Khartoum": "카르툼",
+			"Kigali": "키갈리",
+			"Kinshasa": "킨샤사",
+			"Lagos": "라고스",
+			"Libreville": "리브르빌",
+			"Lome": "로메",
+			"Luanda": "루안다",
+			"Lubumbashi": "루붐바시",
+			"Lusaka": "루사카",
+			"Malabo": "말라보",
+			"Maputo": "마푸토",
+			"Maseru": "마세루",
+			"Mbabane": "음바바네",
+			"Mogadishu": "모가디슈",
+			"Monrovia": "몬로비아",
+			"Nairobi": "나이로비",
+			"Ndjamena": "엔자메나",
+			"Niamey": "니아메",
+			"Nouakchott": "누악쇼트",
+			"Ouagadougou": "와가두구",
+			"Porto-Novo": "포르토노보",
+			"Sao_Tome": "상투메",
+			"Tripoli": "트리폴리",
+			"Tunis": "튀니스",
+			"Windhoek": "빈트후크",
+			"_parent": "아프리카"
+		},
+		"America": {
+			"Adak": "에이닥",
+			"Anchorage": "앵커리지",
+			"Anguilla": "앙귈라",
+			"Antigua": "안티과",
+			"Araguaina": "아라과이나",
+			"Argentina": {
+				"Buenos_Aires": "부에노스 아이레스",
+				"Catamarca": "카타마르카",
+				"Cordoba": "코르도바",
+				"Jujuy": "후후이",
+				"La_Rioja": "라 리오하",
+				"Mendoza": "멘도사",
+				"Rio_Gallegos": "리오 가예고스",
+				"Salta": "살타",
+				"San_Juan": "산후안",
+				"San_Luis": "산루이스",
+				"Tucuman": "투쿠만",
+				"Ushuaia": "우수아이아",
+				"_parent": "아르헨티나"
+			},
+			"Aruba": "아루바",
+			"Asuncion": "아순시온",
+			"Atikokan": "코랄하버",
+			"Bahia": "바히아",
+			"Bahia_Banderas": "바이아 반데라스",
+			"Barbados": "바베이도스",
+			"Belem": "벨렘",
+			"Belize": "벨리즈",
+			"Blanc-Sablon": "블랑 사블롱",
+			"Boa_Vista": "보아 비스타",
+			"Bogota": "보고타",
+			"Boise": "보이시",
+			"Cambridge_Bay": "케임브리지 베이",
+			"Campo_Grande": "캄포 그란데",
+			"Cancun": "칸쿤",
+			"Caracas": "카라카스",
+			"Cayenne": "카옌",
+			"Cayman": "케이맨",
+			"Chicago": "시카고",
+			"Chihuahua": "치와와",
+			"Ciudad_Juarez": "시우다드후아레스",
+			"Costa_Rica": "코스타리카",
+			"Creston": "크레스톤",
+			"Cuiaba": "쿠이아바",
+			"Curacao": "퀴라소",
+			"Danmarkshavn": "덴마크샤븐",
+			"Dawson": "도슨",
+			"Dawson_Creek": "도슨크릭",
+			"Denver": "덴버",
+			"Detroit": "디트로이트",
+			"Dominica": "도미니카",
+			"Edmonton": "에드먼턴",
+			"Eirunepe": "아이루네페",
+			"El_Salvador": "엘살바도르",
+			"Fort_Nelson": "포트 넬슨",
+			"Fortaleza": "포르탈레자",
+			"Glace_Bay": "글라스베이",
+			"Goose_Bay": "구즈베이",
+			"Grand_Turk": "그랜드 터크",
+			"Grenada": "그레나다",
+			"Guadeloupe": "과들루프",
+			"Guatemala": "과테말라",
+			"Guayaquil": "과야킬",
+			"Guyana": "가이아나",
+			"Halifax": "핼리팩스",
+			"Havana": "하바나",
+			"Hermosillo": "에르모시요",
+			"Indiana": {
+				"Indianapolis": "인디애나폴리스",
+				"Knox": "인디애나주, 녹스",
+				"Marengo": "인디애나주, 머렝고",
+				"Petersburg": "인디애나주, 피츠버그",
+				"Tell_City": "인디애나주, 텔시티",
+				"Vevay": "인디애나주, 비비",
+				"Vincennes": "인디애나주, 빈센스",
+				"Winamac": "인디애나주, 위너맥"
+			},
+			"Inuvik": "이누빅",
+			"Iqaluit": "이칼루이트",
+			"Jamaica": "자메이카",
+			"Juneau": "주노",
+			"Kentucky": {
+				"Louisville": "루이빌",
+				"Monticello": "켄터키주, 몬티첼로"
+			},
+			"Kralendijk": "크라렌디즈크",
+			"La_Paz": "라파스",
+			"Lima": "리마",
+			"Los_Angeles": "로스앤젤레스",
+			"Lower_Princes": "로워 프린스 쿼터",
+			"Maceio": "마세이오",
+			"Managua": "마나과",
+			"Manaus": "마나우스",
+			"Marigot": "마리곳",
+			"Martinique": "마티니크",
+			"Matamoros": "마타모로스",
+			"Mazatlan": "마사틀란",
+			"Menominee": "메노미니",
+			"Merida": "메리다",
+			"Metlakatla": "메틀라카틀라",
+			"Mexico_City": "멕시코 시티",
+			"Miquelon": "미클롱",
+			"Moncton": "몽턴",
+			"Monterrey": "몬테레이",
+			"Montevideo": "몬테비데오",
+			"Montserrat": "몬세라트",
+			"Nassau": "나소",
+			"New_York": "뉴욕",
+			"Nipigon": "니피곤",
+			"Nome": "놈",
+			"Noronha": "노롱야",
+			"North_Dakota": {
+				"Beulah": "노스다코타주, 베라",
+				"Center": "중부, 노스다코타",
+				"New_Salem": "노스다코타주, 뉴살렘"
+			},
+			"Nuuk": "고드호프",
+			"Ojinaga": "오히나가",
+			"Panama": "파나마",
+			"Pangnirtung": "팡니르퉁",
+			"Paramaribo": "파라마리보",
+			"Phoenix": "피닉스",
+			"Port-au-Prince": "포르토프랭스",
+			"Port_of_Spain": "포트오브스페인",
+			"Porto_Velho": "포르토벨료",
+			"Puerto_Rico": "푸에르토리코",
+			"Punta_Arenas": "푼타아레나스",
+			"Rainy_River": "레이니강",
+			"Rankin_Inlet": "랭킹 인렛",
+			"Recife": "레시페",
+			"Regina": "리자이나",
+			"Resolute": "리졸루트",
+			"Rio_Branco": "히우 브랑쿠",
+			"Santa_Isabel": "산타 이사벨",
+			"Santarem": "산타렘",
+			"Santiago": "산티아고",
+			"Santo_Domingo": "산토도밍고",
+			"Sao_Paulo": "상파울루",
+			"Scoresbysund": "스코레스바이선드",
+			"Sitka": "싯카",
+			"St_Barthelemy": "생바르텔레미",
+			"St_Johns": "세인트존스",
+			"St_Kitts": "세인트키츠",
+			"St_Lucia": "세인트루시아",
+			"St_Thomas": "세인트토마스",
+			"St_Vincent": "세인트빈센트",
+			"Swift_Current": "스위프트커런트",
+			"Tegucigalpa": "테구시갈파",
+			"Thule": "툴레",
+			"Thunder_Bay": "선더베이",
+			"Tijuana": "티후아나",
+			"Toronto": "토론토",
+			"Tortola": "토르톨라",
+			"Vancouver": "벤쿠버",
+			"Whitehorse": "화이트호스",
+			"Winnipeg": "위니펙",
+			"Yakutat": "야쿠타트",
+			"Yellowknife": "옐로나이프",
+			"_parent": "아메리카 대륙"
+		},
+		"Antarctica": {
+			"Casey": "케이시",
+			"Davis": "데이비스",
+			"DumontDUrville": "뒤몽 뒤르빌",
+			"Macquarie": "맥쿼리",
+			"Mawson": "모슨",
+			"McMurdo": "맥머도",
+			"Palmer": "파머",
+			"Rothera": "로데라",
+			"Syowa": "쇼와",
+			"Troll": "트롤",
+			"Vostok": "보스토크",
+			"_parent": "남극 대륙"
+		},
+		"Arctic": {
+			"Longyearbyen": "롱이어비엔"
+		},
+		"Asia": {
+			"Aden": "아덴",
+			"Almaty": "알마티",
+			"Amman": "암만",
+			"Anadyr": "아나디리",
+			"Aqtau": "아크타우",
+			"Aqtobe": "악토브",
+			"Ashgabat": "아슈하바트",
+			"Atyrau": "아티라우",
+			"Baghdad": "바그다드",
+			"Bahrain": "바레인",
+			"Baku": "바쿠",
+			"Bangkok": "방콕",
+			"Barnaul": "바르나울",
+			"Beirut": "베이루트",
+			"Bishkek": "비슈케크",
+			"Brunei": "브루나이",
+			"Chita": "치타",
+			"Choibalsan": "초이발산",
+			"Colombo": "콜롬보",
+			"Damascus": "다마스쿠스",
+			"Dhaka": "다카",
+			"Dili": "딜리",
+			"Dubai": "두바이",
+			"Dushanbe": "두샨베",
+			"Famagusta": "파마구스타",
+			"Gaza": "가자",
+			"Hebron": "헤브론",
+			"Ho_Chi_Minh": "사이공",
+			"Hong_Kong": "홍콩",
+			"Hovd": "호브드",
+			"Irkutsk": "이르쿠츠크",
+			"Jakarta": "자카르타",
+			"Jayapura": "자야푸라",
+			"Jerusalem": "예루살렘",
+			"Kabul": "카불",
+			"Kamchatka": "캄차카",
+			"Karachi": "카라치",
+			"Kathmandu": "카트만두",
+			"Khandyga": "한디가",
+			"Kolkata": "콜카타",
+			"Krasnoyarsk": "크라스노야르스크",
+			"Kuala_Lumpur": "쿠알라룸푸르",
+			"Kuching": "쿠칭",
+			"Kuwait": "쿠웨이트",
+			"Macau": "마카오",
+			"Magadan": "마가단",
+			"Makassar": "마카사르",
+			"Manila": "마닐라",
+			"Muscat": "무스카트",
+			"Nicosia": "니코시아",
+			"Novokuznetsk": "노보쿠즈네츠크",
+			"Novosibirsk": "노보시비르스크",
+			"Omsk": "옴스크",
+			"Oral": "오랄",
+			"Phnom_Penh": "프놈펜",
+			"Pontianak": "폰티아나크",
+			"Pyongyang": "평양",
+			"Qatar": "카타르",
+			"Qostanay": "코스타나이",
+			"Qyzylorda": "키질로르다",
+			"Riyadh": "리야드",
+			"Sakhalin": "사할린",
+			"Samarkand": "사마르칸트",
+			"Seoul": "서울",
+			"Shanghai": "상하이",
+			"Singapore": "싱가포르",
+			"Srednekolymsk": "스레드네콜림스크",
+			"Taipei": "타이베이",
+			"Tashkent": "타슈켄트",
+			"Tbilisi": "트빌리시",
+			"Tehran": "테헤란",
+			"Thimphu": "팀부",
+			"Tokyo": "도쿄",
+			"Tomsk": "톰스크",
+			"Ulaanbaatar": "울란바토르",
+			"Urumqi": "우루무치",
+			"Ust-Nera": "우스티네라",
+			"Vientiane": "비엔티안",
+			"Vladivostok": "블라디보스토크",
+			"Yakutsk": "야쿠츠크",
+			"Yangon": "랑군",
+			"Yekaterinburg": "예카테린부르크",
+			"Yerevan": "예레반",
+			"_parent": "아시아"
+		},
+		"Atlantic": {
+			"Azores": "아조레스",
+			"Bermuda": "버뮤다",
+			"Canary": "카나리아 제도",
+			"Cape_Verde": "카보 베르데",
+			"Faroe": "페로 제도",
+			"Madeira": "마데이라",
+			"Reykjavik": "레이캬비크",
+			"South_Georgia": "사우스조지아",
+			"St_Helena": "세인트 헬레나",
+			"Stanley": "스탠리"
+		},
+		"Australia": {
+			"Adelaide": "애들레이드",
+			"Brisbane": "브리스베인",
+			"Broken_Hill": "브로컨힐",
+			"Darwin": "다윈",
+			"Eucla": "유클라",
+			"Hobart": "호바트",
+			"Lindeman": "린데만",
+			"Lord_Howe": "로드 하우",
+			"Melbourne": "멜버른",
+			"Perth": "퍼스",
+			"Sydney": "시드니",
+			"_parent": "오스트레일리아"
+		},
+		"Etc": {
+			"UTC": "UTC",
+			"Universal": "협정 세계시"
+		},
+		"Europe": {
+			"Amsterdam": "암스테르담",
+			"Andorra": "안도라",
+			"Astrakhan": "아스트라한",
+			"Athens": "아테네",
+			"Belgrade": "베오그라드",
+			"Berlin": "베를린",
+			"Bratislava": "브라티슬라바",
+			"Brussels": "브뤼셀",
+			"Bucharest": "부쿠레슈티",
+			"Budapest": "부다페스트",
+			"Busingen": "뷔지겐",
+			"Chisinau": "키시나우",
+			"Copenhagen": "코펜하겐",
+			"Dublin": "더블린",
+			"Gibraltar": "지브롤터",
+			"Guernsey": "건지",
+			"Helsinki": "헬싱키",
+			"Isle_of_Man": "맨섬",
+			"Istanbul": "이스탄불",
+			"Jersey": "저지",
+			"Kaliningrad": "칼리닌그라드",
+			"Kiev": "키예프",
+			"Kirov": "키로프",
+			"Lisbon": "리스본",
+			"Ljubljana": "류블랴나",
+			"London": "런던",
+			"Luxembourg": "룩셈부르크",
+			"Madrid": "마드리드",
+			"Malta": "몰타",
+			"Mariehamn": "마리에함",
+			"Minsk": "민스크",
+			"Monaco": "모나코",
+			"Moscow": "모스크바",
+			"Oslo": "오슬로",
+			"Paris": "파리",
+			"Podgorica": "포드고리차",
+			"Prague": "프라하",
+			"Riga": "리가",
+			"Rome": "로마",
+			"Samara": "사마라",
+			"San_Marino": "산마리노",
+			"Sarajevo": "사라예보",
+			"Saratov": "사라토프",
+			"Simferopol": "심페로폴",
+			"Skopje": "스코페",
+			"Sofia": "소피아",
+			"Stockholm": "스톡홀름",
+			"Tallinn": "탈린",
+			"Tirane": "티라나",
+			"Ulyanovsk": "울리야노프스크",
+			"Uzhgorod": "우주고로트",
+			"Vaduz": "파두츠",
+			"Vatican": "바티칸",
+			"Vienna": "비엔나",
+			"Vilnius": "빌니우스",
+			"Volgograd": "볼고그라트",
+			"Warsaw": "바르샤바",
+			"Zagreb": "자그레브",
+			"Zaporozhye": "자포로지예",
+			"Zurich": "취리히",
+			"_parent": "유럽"
+		},
+		"Indian": {
+			"Antananarivo": "안타나나리보",
+			"Chagos": "차고스",
+			"Christmas": "크리스마스",
+			"Cocos": "코코스",
+			"Comoro": "코모로",
+			"Kerguelen": "케르켈렌",
+			"Mahe": "마헤",
+			"Maldives": "몰디브",
+			"Mauritius": "모리셔스",
+			"Mayotte": "메요트",
+			"Reunion": "레위니옹"
+		},
+		"Pacific": {
+			"Apia": "아피아",
+			"Auckland": "오클랜드",
+			"Bougainville": "부갱빌",
+			"Chatham": "채텀",
+			"Chuuk": "트루크",
+			"Easter": "이스터 섬",
+			"Efate": "에파테",
+			"Fakaofo": "파카오푸",
+			"Fiji": "피지",
+			"Funafuti": "푸나푸티",
+			"Galapagos": "갈라파고스",
+			"Gambier": "감비어",
+			"Guadalcanal": "과달카날",
+			"Guam": "괌",
+			"Honolulu": "호놀룰루",
+			"Kanton": "칸톤",
+			"Kiritimati": "키리티마티",
+			"Kosrae": "코스레",
+			"Kwajalein": "콰잘렌",
+			"Majuro": "마주로",
+			"Marquesas": "마퀘사스",
+			"Midway": "미드웨이",
+			"Nauru": "나우루",
+			"Niue": "니우에",
+			"Norfolk": "노퍽",
+			"Noumea": "누메아",
+			"Pago_Pago": "파고파고",
+			"Palau": "팔라우",
+			"Pitcairn": "핏케언",
+			"Pohnpei": "포나페",
+			"Port_Moresby": "포트모르즈비",
+			"Rarotonga": "라로통가",
+			"Saipan": "사이판",
+			"Tahiti": "타히티",
+			"Tarawa": "타라와",
+			"Tongatapu": "통가타푸",
+			"Wake": "웨이크",
+			"Wallis": "월리스"
+		}
+	},
+	"timezoneNamesFormats": {
+		"gmtFormat": "GMT{0}"
+	},
 	"decimalFormat": {
 		"standard": "#,##0.###"
 	},
@@ -3146,30 +4633,38 @@
 		"accounting": "¤#,##0.00;(¤#,##0.00)",
 		"currencySpacing": {
 			"beforeCurrency": {
-				"currencyMatch": "[:^S:]",
+				"currencyMatch": "[[:^S:]&[:^Z:]]",
 				"surroundingMatch": "[:digit:]",
 				"insertBetween": " "
 			},
 			"afterCurrency": {
-				"currencyMatch": "[:^S:]",
+				"currencyMatch": "[[:^S:]&[:^Z:]]",
 				"surroundingMatch": "[:digit:]",
 				"insertBetween": " "
 			}
-		}
+		},
+		"sap-standard": "#,##0.00¤",
+		"sap-accounting": "#,##0.00¤;(#,##0.00¤)"
+	},
+	"miscPattern": {
+		"approximately": "~{0}",
+		"atLeast": "{0}+",
+		"atMost": "≤{0}",
+		"range": "{0}~{1}"
 	},
 	"currencyFormat-short": {
-		"1000-other": "¤0천",
-		"10000-other": "¤0만",
-		"100000-other": "¤00만",
-		"1000000-other": "¤000만",
-		"10000000-other": "¤0000만",
-		"100000000-other": "¤0억",
-		"1000000000-other": "¤00억",
-		"10000000000-other": "¤000억",
-		"100000000000-other": "¤0000억",
-		"1000000000000-other": "¤0조",
-		"10000000000000-other": "¤00조",
-		"100000000000000-other": "¤000조"
+		"1000-other": "¤ 0천",
+		"10000-other": "¤ 0만",
+		"100000-other": "¤ 00만",
+		"1000000-other": "¤ 000만",
+		"10000000-other": "¤ 0000만",
+		"100000000-other": "¤ 0억",
+		"1000000000-other": "¤ 00억",
+		"10000000000-other": "¤ 000억",
+		"100000000000-other": "¤ 0000억",
+		"1000000000000-other": "¤ 0조",
+		"10000000000000-other": "¤ 00조",
+		"100000000000000-other": "¤ 000조"
 	},
 	"symbols-latn-decimal": ".",
 	"symbols-latn-group": ",",
@@ -3177,6 +4672,7 @@
 	"symbols-latn-percentSign": "%",
 	"symbols-latn-plusSign": "+",
 	"symbols-latn-minusSign": "-",
+	"symbols-latn-approximatelySign": "~",
 	"symbols-latn-exponential": "E",
 	"symbols-latn-superscriptingExponent": "×",
 	"symbols-latn-perMille": "‰",
@@ -3202,8 +4698,9 @@
 		"VND": "₫",
 		"XAF": "FCFA",
 		"XCD": "EC$",
-		"XOF": "CFA",
-		"XPF": "CFPF"
+		"XOF": "F CFA",
+		"XPF": "CFPF",
+		"XXX": "¤"
 	},
 	"rtl": false,
 	"listPattern-standard-wide": {
@@ -3232,14 +4729,109 @@
 	},
 	"units": {
 		"short": {
+			"10p-1": {
+				"unitPrefixPattern": "d{0}"
+			},
+			"10p-2": {
+				"unitPrefixPattern": "c{0}"
+			},
+			"10p-3": {
+				"unitPrefixPattern": "m{0}"
+			},
+			"10p-6": {
+				"unitPrefixPattern": "μ{0}"
+			},
+			"10p-9": {
+				"unitPrefixPattern": "n{0}"
+			},
+			"10p-12": {
+				"unitPrefixPattern": "p{0}"
+			},
+			"10p-15": {
+				"unitPrefixPattern": "f{0}"
+			},
+			"10p-18": {
+				"unitPrefixPattern": "a{0}"
+			},
+			"10p-21": {
+				"unitPrefixPattern": "z{0}"
+			},
+			"10p-24": {
+				"unitPrefixPattern": "y{0}"
+			},
+			"10p1": {
+				"unitPrefixPattern": "da{0}"
+			},
+			"10p2": {
+				"unitPrefixPattern": "h{0}"
+			},
+			"10p3": {
+				"unitPrefixPattern": "k{0}"
+			},
+			"10p6": {
+				"unitPrefixPattern": "M{0}"
+			},
+			"10p9": {
+				"unitPrefixPattern": "G{0}"
+			},
+			"10p12": {
+				"unitPrefixPattern": "T{0}"
+			},
+			"10p15": {
+				"unitPrefixPattern": "P{0}"
+			},
+			"10p18": {
+				"unitPrefixPattern": "E{0}"
+			},
+			"10p21": {
+				"unitPrefixPattern": "Z{0}"
+			},
+			"10p24": {
+				"unitPrefixPattern": "Y{0}"
+			},
+			"1024p1": {
+				"unitPrefixPattern": "Ki{0}"
+			},
+			"1024p2": {
+				"unitPrefixPattern": "Mi{0}"
+			},
+			"1024p3": {
+				"unitPrefixPattern": "Gi{0}"
+			},
+			"1024p4": {
+				"unitPrefixPattern": "Ti{0}"
+			},
+			"1024p5": {
+				"unitPrefixPattern": "Pi{0}"
+			},
+			"1024p6": {
+				"unitPrefixPattern": "Ei{0}"
+			},
+			"1024p7": {
+				"unitPrefixPattern": "Zi{0}"
+			},
+			"1024p8": {
+				"unitPrefixPattern": "Yi{0}"
+			},
 			"per": {
 				"compoundUnitPattern": "{0}/{1}"
+			},
+			"power2": {
+				"compoundUnitPattern1": "{0}²",
+				"compoundUnitPattern1-count-other": "{0}²"
+			},
+			"power3": {
+				"compoundUnitPattern1": "{0}³",
+				"compoundUnitPattern1-count-other": "{0}³"
+			},
+			"times": {
+				"compoundUnitPattern": "{0}⋅{1}"
 			},
 			"acceleration-g-force": {
 				"displayName": "g-force",
 				"unitPattern-count-other": "{0}G"
 			},
-			"acceleration-meter-per-second-squared": {
+			"acceleration-meter-per-square-second": {
 				"displayName": "m/s²",
 				"unitPattern-count-other": "{0}m/s²"
 			},
@@ -3304,11 +4896,15 @@
 				"unitPattern-count-other": "{0}in²",
 				"perUnitPattern": "{0}/in²"
 			},
+			"area-dunam": {
+				"displayName": "두남",
+				"unitPattern-count-other": "{0}두남"
+			},
 			"concentr-karat": {
 				"displayName": "kt",
 				"unitPattern-count-other": "{0}kt"
 			},
-			"concentr-milligram-per-deciliter": {
+			"concentr-milligram-ofglucose-per-deciliter": {
 				"displayName": "mg/dL",
 				"unitPattern-count-other": "{0}mg/dL"
 			},
@@ -3316,15 +4912,35 @@
 				"displayName": "mmol/L",
 				"unitPattern-count-other": "{0}mmol/L"
 			},
-			"concentr-part-per-million": {
+			"concentr-item": {
+				"displayName": "항목",
+				"unitPattern-count-other": "{0}개 항목"
+			},
+			"concentr-permillion": {
 				"displayName": "ppm",
 				"unitPattern-count-other": "{0}ppm"
+			},
+			"concentr-percent": {
+				"displayName": "%",
+				"unitPattern-count-other": "{0}%"
+			},
+			"concentr-permille": {
+				"displayName": "‰",
+				"unitPattern-count-other": "{0}‰"
+			},
+			"concentr-permyriad": {
+				"displayName": "‱",
+				"unitPattern-count-other": "{0}‱"
+			},
+			"concentr-mole": {
+				"displayName": "mol",
+				"unitPattern-count-other": "{0}mol"
 			},
 			"consumption-liter-per-kilometer": {
 				"displayName": "L/km",
 				"unitPattern-count-other": "{0}L/km"
 			},
-			"consumption-liter-per-100kilometers": {
+			"consumption-liter-per-100-kilometer": {
 				"displayName": "L/100km",
 				"unitPattern-count-other": "{0}L/100km"
 			},
@@ -3335,6 +4951,10 @@
 			"consumption-mile-per-gallon-imperial": {
 				"displayName": "mpg Imp.",
 				"unitPattern-count-other": "{0}mpg Imp."
+			},
+			"digital-petabyte": {
+				"displayName": "PB",
+				"unitPattern-count-other": "{0}PB"
 			},
 			"digital-terabyte": {
 				"displayName": "TB",
@@ -3380,10 +5000,19 @@
 				"displayName": "C",
 				"unitPattern-count-other": "{0}C"
 			},
+			"duration-decade": {
+				"displayName": "dec",
+				"unitPattern-count-other": "{0}dec"
+			},
 			"duration-year": {
 				"displayName": "년",
 				"unitPattern-count-other": "{0}년",
 				"perUnitPattern": "{0}/년"
+			},
+			"duration-quarter": {
+				"displayName": "분기",
+				"unitPattern-count-other": "{0}분기",
+				"perUnitPattern": "{0}/분기"
 			},
 			"duration-month": {
 				"displayName": "개월",
@@ -3467,6 +5096,30 @@
 				"displayName": "kWh",
 				"unitPattern-count-other": "{0}kWh"
 			},
+			"energy-electronvolt": {
+				"displayName": "eV",
+				"unitPattern-count-other": "{0}eV"
+			},
+			"energy-british-thermal-unit": {
+				"displayName": "Btu",
+				"unitPattern-count-other": "{0}Btu"
+			},
+			"energy-therm-us": {
+				"displayName": "미국 섬",
+				"unitPattern-count-other": "{0}섬"
+			},
+			"force-pound-force": {
+				"displayName": "lbf",
+				"unitPattern-count-other": "{0}lbf"
+			},
+			"force-newton": {
+				"displayName": "N",
+				"unitPattern-count-other": "{0}N"
+			},
+			"force-kilowatt-hour-per-100-kilometer": {
+				"displayName": "kWh/100km",
+				"unitPattern-count-other": "{0}kWh/100km"
+			},
 			"frequency-gigahertz": {
 				"displayName": "GHz",
 				"unitPattern-count-other": "{0}GHz"
@@ -3482,6 +5135,42 @@
 			"frequency-hertz": {
 				"displayName": "Hz",
 				"unitPattern-count-other": "{0}Hz"
+			},
+			"graphics-em": {
+				"displayName": "em",
+				"unitPattern-count-other": "{0}em"
+			},
+			"graphics-pixel": {
+				"displayName": "px",
+				"unitPattern-count-other": "{0}px"
+			},
+			"graphics-megapixel": {
+				"displayName": "MP",
+				"unitPattern-count-other": "{0}MP"
+			},
+			"graphics-pixel-per-centimeter": {
+				"displayName": "ppcm",
+				"unitPattern-count-other": "{0}ppcm"
+			},
+			"graphics-pixel-per-inch": {
+				"displayName": "ppi",
+				"unitPattern-count-other": "{0}ppi"
+			},
+			"graphics-dot-per-centimeter": {
+				"displayName": "dpcm",
+				"unitPattern-count-other": "{0}dpcm"
+			},
+			"graphics-dot-per-inch": {
+				"displayName": "dpi",
+				"unitPattern-count-other": "{0}dpi"
+			},
+			"graphics-dot": {
+				"displayName": "px",
+				"unitPattern-count-other": "{0}dot"
+			},
+			"length-earth-radius": {
+				"displayName": "R⊕",
+				"unitPattern-count-other": "{0}R⊕"
 			},
 			"length-kilometer": {
 				"displayName": "km",
@@ -3507,8 +5196,8 @@
 				"unitPattern-count-other": "{0}mm"
 			},
 			"length-micrometer": {
-				"displayName": "µm",
-				"unitPattern-count-other": "{0}µm"
+				"displayName": "μm",
+				"unitPattern-count-other": "{0}μm"
 			},
 			"length-nanometer": {
 				"displayName": "nm",
@@ -3524,7 +5213,7 @@
 			},
 			"length-yard": {
 				"displayName": "yd",
-				"unitPattern-count-other": "{0}야드"
+				"unitPattern-count-other": "{0}yd"
 			},
 			"length-foot": {
 				"displayName": "ft",
@@ -3554,7 +5243,7 @@
 			},
 			"length-fathom": {
 				"displayName": "fm",
-				"unitPattern-count-other": "{0}fm"
+				"unitPattern-count-other": "{0}fth"
 			},
 			"length-nautical-mile": {
 				"displayName": "nmi",
@@ -3568,11 +5257,27 @@
 				"displayName": "pt",
 				"unitPattern-count-other": "{0}pt"
 			},
+			"length-solar-radius": {
+				"displayName": "R☉",
+				"unitPattern-count-other": "{0}R☉"
+			},
 			"light-lux": {
 				"displayName": "lx",
 				"unitPattern-count-other": "{0}lx"
 			},
-			"mass-metric-ton": {
+			"light-candela": {
+				"displayName": "cd",
+				"unitPattern-count-other": "{0}cd"
+			},
+			"light-lumen": {
+				"displayName": "lm",
+				"unitPattern-count-other": "{0}lm"
+			},
+			"light-solar-luminosity": {
+				"displayName": "L☉",
+				"unitPattern-count-other": "{0}L☉"
+			},
+			"mass-tonne": {
 				"displayName": "t",
 				"unitPattern-count-other": "{0}t"
 			},
@@ -3591,8 +5296,8 @@
 				"unitPattern-count-other": "{0}mg"
 			},
 			"mass-microgram": {
-				"displayName": "µg",
-				"unitPattern-count-other": "{0}µg"
+				"displayName": "μg",
+				"unitPattern-count-other": "{0}μg"
 			},
 			"mass-ton": {
 				"displayName": "tn",
@@ -3620,6 +5325,22 @@
 				"displayName": "CD",
 				"unitPattern-count-other": "{0}CD"
 			},
+			"mass-dalton": {
+				"displayName": "Da",
+				"unitPattern-count-other": "{0}Da"
+			},
+			"mass-earth-mass": {
+				"displayName": "M⊕",
+				"unitPattern-count-other": "{0}M⊕"
+			},
+			"mass-solar-mass": {
+				"displayName": "M☉",
+				"unitPattern-count-other": "{0}M☉"
+			},
+			"mass-grain": {
+				"displayName": "grain",
+				"unitPattern-count-other": "{0}grain"
+			},
 			"power-gigawatt": {
 				"displayName": "GW",
 				"unitPattern-count-other": "{0}GW"
@@ -3644,25 +5365,45 @@
 				"displayName": "hp",
 				"unitPattern-count-other": "{0}hp"
 			},
-			"pressure-hectopascal": {
-				"displayName": "hPa",
-				"unitPattern-count-other": "{0}hPa"
-			},
-			"pressure-millimeter-of-mercury": {
+			"pressure-millimeter-ofhg": {
 				"displayName": "mmHg",
 				"unitPattern-count-other": "{0}mmHg"
 			},
-			"pressure-pound-per-square-inch": {
+			"pressure-pound-force-per-square-inch": {
 				"displayName": "psi",
 				"unitPattern-count-other": "{0}psi"
 			},
-			"pressure-inch-hg": {
+			"pressure-inch-ofhg": {
 				"displayName": "inHg",
 				"unitPattern-count-other": "{0}inHg"
+			},
+			"pressure-bar": {
+				"displayName": "bar",
+				"unitPattern-count-other": "{0}bar"
 			},
 			"pressure-millibar": {
 				"displayName": "mbar",
 				"unitPattern-count-other": "{0}mb"
+			},
+			"pressure-atmosphere": {
+				"displayName": "atm",
+				"unitPattern-count-other": "{0}atm"
+			},
+			"pressure-pascal": {
+				"displayName": "Pa",
+				"unitPattern-count-other": "{0}Pa"
+			},
+			"pressure-hectopascal": {
+				"displayName": "hPa",
+				"unitPattern-count-other": "{0}hPa"
+			},
+			"pressure-kilopascal": {
+				"displayName": "kPa",
+				"unitPattern-count-other": "{0}kPa"
+			},
+			"pressure-megapascal": {
+				"displayName": "MPa",
+				"unitPattern-count-other": "{0}MPa"
 			},
 			"speed-kilometer-per-hour": {
 				"displayName": "km/h",
@@ -3695,6 +5436,14 @@
 			"temperature-kelvin": {
 				"displayName": "K",
 				"unitPattern-count-other": "{0}K"
+			},
+			"torque-pound-force-foot": {
+				"displayName": "lbf⋅ft",
+				"unitPattern-count-other": "{0}lbf⋅ft"
+			},
+			"torque-newton-meter": {
+				"displayName": "N⋅m",
+				"unitPattern-count-other": "{0}N⋅m"
 			},
 			"volume-cubic-kilometer": {
 				"displayName": "km³",
@@ -3765,7 +5514,7 @@
 			},
 			"volume-bushel": {
 				"displayName": "bu",
-				"unitPattern-count-other": "{0} bu"
+				"unitPattern-count-other": "{0}bu"
 			},
 			"volume-gallon": {
 				"displayName": "gal",
@@ -3793,6 +5542,10 @@
 				"displayName": "fl oz",
 				"unitPattern-count-other": "{0}fl oz"
 			},
+			"volume-fluid-ounce-imperial": {
+				"displayName": "Imp. fl oz",
+				"unitPattern-count-other": "{0}fl oz Imp."
+			},
 			"volume-tablespoon": {
 				"displayName": "tbsp",
 				"unitPattern-count-other": "{0}tbsp"
@@ -3801,7 +5554,40 @@
 				"displayName": "tsp",
 				"unitPattern-count-other": "{0}tsp"
 			},
+			"volume-barrel": {
+				"displayName": "bbl",
+				"unitPattern-count-other": "{0}bbl"
+			},
+			"volume-dessert-spoon": {
+				"displayName": "dstspn",
+				"unitPattern-count-other": "{0}dstspn"
+			},
+			"volume-dessert-spoon-imperial": {
+				"displayName": "dstspn Imp",
+				"unitPattern-count-other": "{0}dstspn Imp"
+			},
+			"volume-drop": {
+				"displayName": "drop",
+				"unitPattern-count-other": "{0}drop"
+			},
+			"volume-dram": {
+				"displayName": "dram fluid",
+				"unitPattern-count-other": "{0}dram fl"
+			},
+			"volume-jigger": {
+				"displayName": "jigger",
+				"unitPattern-count-other": "{0}jigger"
+			},
+			"volume-pinch": {
+				"displayName": "pinch",
+				"unitPattern-count-other": "{0}pinch"
+			},
+			"volume-quart-imperial": {
+				"displayName": "qt Imp",
+				"unitPattern-count-other": "{0}qt Imp."
+			},
 			"coordinateUnit": {
+				"displayName": "쪽",
 				"east": "{0}E",
 				"north": "{0}N",
 				"south": "{0}S",
@@ -3809,24 +5595,39 @@
 			}
 		}
 	},
+	"lenient-scope-number": {
+		"minusSign": "-‒⁻₋−➖﹣－",
+		"commaSign": ",،٫、︐︑﹐﹑，､",
+		"plusSign": "+⁺₊➕﬩﹢＋"
+	},
+	"currencyFormat-sap-short": {
+		"1000-other": "0천 ¤",
+		"10000-other": "0만 ¤",
+		"100000-other": "00만 ¤",
+		"1000000-other": "000만 ¤",
+		"10000000-other": "0000만 ¤",
+		"100000000-other": "0억 ¤",
+		"1000000000-other": "00억 ¤",
+		"10000000000-other": "000억 ¤",
+		"100000000000-other": "0000억 ¤",
+		"1000000000000-other": "0조 ¤",
+		"10000000000000-other": "00조 ¤",
+		"100000000000000-other": "000조 ¤"
+	},
 	"currencyDigits": {
 		"ADP": 0,
 		"AFN": 0,
 		"ALL": 0,
-		"AMD": 0,
 		"BHD": 3,
 		"BIF": 0,
 		"BYR": 0,
 		"CLF": 4,
 		"CLP": 0,
-		"COP": 0,
 		"DEFAULT": 2,
 		"DJF": 0,
 		"ESP": 0,
 		"GNF": 0,
-		"GYD": 0,
 		"HUF": 0,
-		"IDR": 0,
 		"IQD": 0,
 		"IRR": 0,
 		"ISK": 0,
@@ -3844,11 +5645,8 @@
 		"MGA": 0,
 		"MGF": 0,
 		"MMK": 0,
-		"MNT": 0,
 		"MRO": 0,
-		"MUR": 0,
 		"OMR": 3,
-		"PKR": 0,
 		"PYG": 0,
 		"RSD": 0,
 		"RWF": 0,
@@ -3860,10 +5658,9 @@
 		"TND": 3,
 		"TRL": 0,
 		"TWD": 0,
-		"TZS": 0,
 		"UGX": 0,
 		"UYI": 0,
-		"UZS": 0,
+		"UYW": 4,
 		"VND": 0,
 		"VUV": 0,
 		"XAF": 0,
@@ -3884,35 +5681,89 @@
 	},
 	"eras-gregorian": {
 		"0": {
+			"_code": "gregory-inverse",
+			"_aliases": "bc bce",
 			"_end": "0-12-31"
 		},
 		"1": {
+			"_code": "gregory",
+			"_aliases": "ad ce",
 			"_start": "1-01-01"
 		}
 	},
 	"eras-islamic": {
 		"0": {
+			"_code": "islamic",
+			"_aliases": "ah",
 			"_start": "622-7-15"
 		}
 	},
 	"eras-persian": {
 		"0": {
+			"_code": "persian",
+			"_aliases": "ap",
 			"_start": "622-01-01"
+		}
+	},
+	"eras-buddhist": {
+		"0": {
+			"_code": "buddhist",
+			"_aliases": "be",
+			"_start": "-542-01-01"
 		}
 	},
 	"eras-japanese": {
 		"232": {
+			"_code": "meiji",
 			"_start": "1868-9-8"
 		},
 		"233": {
+			"_code": "taisho",
 			"_start": "1912-7-30"
 		},
 		"234": {
+			"_code": "showa",
 			"_start": "1926-12-25"
 		},
 		"235": {
+			"_code": "heisei",
 			"_start": "1989-1-8"
+		},
+		"236": {
+			"_code": "reiwa",
+			"_start": "2019-5-1"
 		}
 	},
-	"calendarPreference": "gregorian dangi"
+	"dayPeriodRules": {
+		"afternoon1": {
+			"_before": "18:00",
+			"_from": "12:00"
+		},
+		"evening1": {
+			"_before": "21:00",
+			"_from": "18:00"
+		},
+		"midnight": {
+			"_at": "00:00"
+		},
+		"morning1": {
+			"_before": "06:00",
+			"_from": "03:00"
+		},
+		"morning2": {
+			"_before": "12:00",
+			"_from": "06:00"
+		},
+		"night1": {
+			"_before": "03:00",
+			"_from": "21:00"
+		},
+		"noon": {
+			"_at": "12:00"
+		}
+	},
+	"calendarPreference": [
+		"gregorian",
+		"dangi"
+	]
 }

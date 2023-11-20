@@ -1,0 +1,134 @@
+{
+  "1.89.0": {
+    "date": "April 2021",
+    "notes": [
+      {
+        "id": "fcd5b2ab384e4ffdcb228f245a752b6b78cefd38",
+        "type": "FIX",
+        "text": " ManagedObject: fix cloning of associations to root object"
+      },
+      {
+        "id": "6e26ef18d94e546128e3714887c40b5f19c09c30",
+        "type": "FIX",
+        "text": " ManagedObject.findAggregatedObjects: add possibility to include binding templates into the search",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170077221"
+          }
+        ]
+      },
+      {
+        "id": "5fabdc3e510d670545f88e8c83c092dc830b35fc",
+        "type": "FIX",
+        "text": " sap.ui.core.XMLTemplateProcessor: in case of synchronous view creation also nested views are created synchrounously"
+      },
+      {
+        "id": "d899c6d3bc38a3f8f958ef01d350ff25136d80ec",
+        "type": "FIX",
+        "text": " Configuration: getSAPLogonLanguage uppercase",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500001602922021"
+          }
+        ]
+      },
+      {
+        "id": "5810feee263ecd239534edf4903e44bcb08c56b8",
+        "type": "FIX",
+        "text": " ItemNavigation: prevent scrolling when setting focus in mousedown handler",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880360586"
+          }
+        ]
+      },
+      {
+        "id": "758a85a5072b5ff1657a69e356f92b5273fbefc9",
+        "type": "FIX",
+        "text": " ManagedObject: Add documentation for StaticBinding"
+      },
+      {
+        "id": "20d6b5cb910dca94018f7f13192b6d2052d57685",
+        "type": "FIX",
+        "text": " jquery-mobile-custom: clear the block list after processing click event",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170064743"
+          }
+        ]
+      },
+      {
+        "id": "e26cd334454927d2d1466afa0c9b0375e8c47b73",
+        "type": "FEATURE",
+        "text": " UIComponent: support async createContent implementation"
+      },
+      {
+        "id": "069c54a0d0b8ac3da8e5c890124d7815bdaf11a6",
+        "type": "FIX",
+        "text": " mvc.XMLView: Provide better logging for processing errors",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080425463"
+          },
+          {
+            "type": "BCP",
+            "reference": "2080321485"
+          }
+        ]
+      },
+      {
+        "id": "9e56d9c08c8561be588ce0767f299268a49cc1da",
+        "type": "FIX",
+        "text": " core.EnabledPropagator: move the focus to parent when focused control is disabled",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180025505"
+          }
+        ]
+      },
+      {
+        "id": "fc4bf50fa4be038d123f97a1e3898680cbf4dc14",
+        "type": "FIX",
+        "text": " IconPool: involve AppCacheBuster to resolve the font url",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180065336"
+          }
+        ]
+      },
+      {
+        "id": "e134aaf3eb3ff9c86223e0b901d3a3fcb2d8e113",
+        "type": "FIX",
+        "text": " IntervalTrigger: call clearTimeout only once per timer"
+      },
+      {
+        "id": "6c0d97858507e698e30eaa1f2d666a595610eb29",
+        "type": "FEATURE",
+        "text": " sap.ui.core.Popup: enables the setting of a 'within' area for popups"
+      },
+      {
+        "id": "b8ffb7e111591f1a60d7fb6a541566c24dd4a50b",
+        "type": "FEATURE",
+        "text": " ControllerExtensions: Support for instance-specific extensions"
+      },
+      {
+        "id": "eb2fd4ac275fb9731db11bdbd9963450de9f5305",
+        "type": "FIX",
+        "text": " sap.f.DynamicPageTitle: Delete less variable",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      }
+    ]
+  }
+}

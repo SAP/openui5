@@ -1,0 +1,69 @@
+<mvc:View xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.uxap"
+	xmlns:m="sap.m"
+	xmlns:blockcolor="sap.uxap.sample.SharedBlocks"
+	height="100%">
+	<ObjectPageLayout id="ObjectPageLayout" upperCaseAnchorBar="false">
+		<headerTitle>
+			<ObjectPageHeader objectTitle="Section sample">
+			</ObjectPageHeader>
+		</headerTitle>
+
+		<headerContent>
+			<m:ObjectAttribute title="" text="This example explains the rules for the rendering of sections"/>
+		</headerContent>
+
+		<sections>
+			<ObjectPageSection titleUppercase="false" title="Section 1">
+				<subSections>
+					<ObjectPageSubSection title="Subsection 1.1" titleUppercase="false">
+						<blocks>
+							<blockcolor:BlockBlueT1 id="bbt1"/>
+						</blocks>
+					</ObjectPageSubSection>
+					<ObjectPageSubSection title="Subsection 1.2" titleUppercase="false">
+						<blocks>
+							<blockcolor:BlockBlueT2 id="bbt2"/>
+						</blocks>
+					</ObjectPageSubSection>
+				</subSections>
+			</ObjectPageSection>
+
+			<ObjectPageSection titleUppercase="false" title="Section 2">
+			</ObjectPageSection>
+
+			<ObjectPageSection titleUppercase="false" title="Section 3">
+				<subSections>
+					<ObjectPageSubSection titleUppercase="false">
+						<blocks>
+							<blockcolor:BlockBlueT3 id="bbt3"/>
+						</blocks>
+					</ObjectPageSubSection>
+				</subSections>
+			</ObjectPageSection>
+
+			<ObjectPageSection>
+				<subSections>
+					<ObjectPageSubSection titleUppercase="false">
+						<blocks>
+							<blockcolor:BlockBlueT4 id="bbt4"/>
+						</blocks>
+					</ObjectPageSubSection>
+				</subSections>
+			</ObjectPageSection>
+
+			<ObjectPageSection titleUppercase="false" title="Section 5">
+				<subSections>
+					<ObjectPageSubSection titleUppercase="false">
+						<blocks>
+							<blockcolor:BlockBlueT5 id="bbt5"/>
+						</blocks>
+					</ObjectPageSubSection>
+				</subSections>
+			</ObjectPageSection>
+
+
+		</sections>
+
+	</ObjectPageLayout>
+</mvc:View>

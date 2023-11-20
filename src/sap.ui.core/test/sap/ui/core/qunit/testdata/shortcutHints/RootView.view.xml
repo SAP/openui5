@@ -1,0 +1,16 @@
+<mvc:View xmlns:my="my.hints.lib" xmlns:mvc="sap.ui.core.mvc" xmlns:core="sap.ui.core" xmlns="sap.m" controllerName="my.hints.RootView" displayBlock="true">
+	<App id="commands">
+		<Page id="page" title="Commands">
+			<dependents>
+				<core:CommandExecution id="CE_SAVE" command="Save" enabled="true" execute=".onSave" />
+			</dependents>
+			<Panel id="myPanel">
+				<my:MyControl id="myControl" myEvent="cmd:MyCommand" />
+				<my:MyControl id="myControl2" myEvent="cmd:Save" />
+				<Button id="b1" icon="sap-icon://save" press="cmd:Save" />
+				<Button id="b2" text="Save" tooltip="User Tooltip" press="cmd:Save" />
+				<Button id="b3" icon="sap-icon://save" tooltip="User Tooltip" press="cmd:Save" />
+			</Panel>
+		</Page>
+	</App>
+</mvc:View>

@@ -1,0 +1,95 @@
+{
+	"_version": "1.15.0",
+	"sap.app": {
+		"id": "card.explorer.quick.links.list.card",
+		"type": "card",
+		"title": "Sample of a List with Quick Links",
+		"subTitle": "Sample of a List with Quick Links",
+		"applicationVersion": {
+			"version": "1.0.0"
+		},
+		"shortTitle": "A short title for this Card",
+		"info": "Additional information about this Card",
+		"description": "A long description for this Card",
+		"tags": {
+			"keywords": [
+				"List",
+				"Link",
+				"Card",
+				"Sample"
+			]
+		}
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"icons": {
+			"icon": "sap-icon://list"
+		}
+	},
+	"sap.card": {
+		"type": "List",
+		"header": {
+			"title": "Quick Links",
+			"actions": [
+				{
+					"type": "Navigation",
+					"parameters": {
+						"url": "/quickLinks"
+					}
+				}
+			]
+		},
+		"content": {
+			"data": {
+				"json": [
+					{
+						"Name": "Career",
+						"icon": "sap-icon://leads",
+						"url": "/careers"
+					},
+					{
+						"Name": "Company Directory",
+						"icon": "sap-icon://address-book",
+						"url": "/companyDirectory"
+					},
+					{
+						"Name": "Development Plan",
+						"icon": "sap-icon://activity-items",
+						"url": "/developmentPlan"
+					},
+					{
+						"Name": "Business Goals",
+						"icon": "sap-icon://target-group",
+						"url": "/businessGoals"
+					},
+					{
+						"Name": "Travel and Expenses",
+						"icon": "sap-icon://travel-expense",
+						"url": "/travelAndExpenses"
+					},
+					{
+						"Name": "Time off",
+						"icon": "sap-icon://general-leave-request",
+						"url": "/timeOff"
+					}
+				]
+			},
+			"maxItems": 6,
+			"item": {
+				"icon": {
+					"src": "{icon}"
+				},
+				"title": "{Name}",
+				"actions": [
+					{
+						"type": "Navigation",
+						"enabled": "{= ${url}}",
+						"parameters": {
+							"url": "{url}"
+						}
+					}
+				]
+			}
+		}
+	}
+}

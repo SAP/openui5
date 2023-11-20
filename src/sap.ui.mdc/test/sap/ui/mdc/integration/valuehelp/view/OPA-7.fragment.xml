@@ -1,0 +1,125 @@
+<layout:VerticalLayout id="typeaheadLayout"
+	xmlns:layout="sap.ui.layout"
+	width="100%"
+	xmlns="sap.m"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:core="sap.ui.core"
+	xmlns:f="sap.ui.layout.form"
+	xmlns:f2="sap.f"
+	xmlns:mdc="sap.ui.mdc"
+	xmlns:table="sap.ui.mdc"
+
+	xmlns:vhfb="sap.ui.mdc.filterbar.vh"
+	xmlns:mdcv="sap.ui.mdc.valuehelp"
+	xmlns:mdcvc="sap.ui.mdc.valuehelp.content"
+	xmlns:mdcf="sap.ui.mdc.field"
+	xmlns:mdct="sap.ui.mdc.table"
+	xmlns:ui="sap.ui"
+	xmlns:uit="sap.ui.table"
+	xmlns:variants="sap.ui.fl.variants"
+	xmlns:types="sap.ui.v4demo.types"
+	xmlns:demo="sap.ui.v4demo.controls"
+	xmlns:ce="sap.ui.codeeditor"
+	>
+	
+
+		<mdc:FilterBar id="FB0" p13nMode="Value" liveMode="false" delegate='\{"name": "delegates/odata/v4/FilterBarDelegate", "payload": \{"collectionName": "Books"\}\}'>
+		<mdc:dependents>
+			<mdc:ValueHelp
+				id="FH1"
+				validateInput="false"
+				delegate='\{"name": "sap/ui/v4demo/delegate/openson/ValueHelp.delegate", "payload": \{\}\}'>
+				<mdc:typeahead>
+					<mdcv:Popover title="Popover1" opensOnFocus="true">
+						<mdcvc:MTable keyPath="ID" descriptionPath="name" >
+							<Table items='{path : "/Authors", length: 10}' mode="{= ${settings>/maxConditions} === -1 ? 'MultiSelect' : 'SingleSelectMaster'}" width="30rem">
+								<columns>
+									<Column width="5rem">
+										<header>
+											<Text text="ID" />
+										</header>
+									</Column>
+									<Column>
+										<header>
+											<Text text="Name" />
+										</header>
+									</Column>
+								</columns>
+								<items>
+									<ColumnListItem type="Active">
+										<cells>
+											<Text text="{ID}" />
+											<Text text="{name}" />
+										</cells>
+									</ColumnListItem>
+								</items>
+							</Table>
+						</mdcvc:MTable>
+					</mdcv:Popover>
+				</mdc:typeahead>
+			</mdc:ValueHelp>
+			<mdc:ValueHelp
+				id="FH2"
+				validateInput="false"
+				delegate='\{"name": "sap/ui/v4demo/delegate/openson/ValueHelp.delegate", "payload": \{\}\}'>
+				<mdc:typeahead>
+					<mdcv:Popover title="Popover2" opensOnFocus="true">
+						<mdcvc:MTable keyPath="ID" descriptionPath="name"  useAsValueHelp="false">
+							<Table items='{path : "/Authors", length: 10}' mode="{= ${settings>/maxConditions} === -1 ? 'MultiSelect' : 'SingleSelectMaster'}" width="30rem">
+								<columns>
+									<Column width="5rem">
+										<header>
+											<Text text="ID" />
+										</header>
+									</Column>
+									<Column>
+										<header>
+											<Text text="Name" />
+										</header>
+									</Column>
+								</columns>
+								<items>
+									<ColumnListItem type="Active">
+										<cells>
+											<Text text="{ID}" />
+											<Text text="{name}" />
+										</cells>
+									</ColumnListItem>
+								</items>
+							</Table>
+						</mdcvc:MTable>
+					</mdcv:Popover>
+				</mdc:typeahead>
+				<mdc:dialog>
+					<mdcv:Dialog>
+						<mdcvc:Conditions/>
+					</mdcv:Dialog>
+				</mdc:dialog>
+			</mdc:ValueHelp>
+		</mdc:dependents>
+		<mdc:filterItems>
+
+			<mdc:FilterField delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}'
+				id="FF0"
+				label="TestField1"
+				conditions="{$filters>/conditions/author_ID}"
+				propertyKey="author_ID"
+				dataType="Edm.Int32"
+				required="false"
+				valueHelp="FH1"
+				display="DescriptionValue"
+				maxConditions="{settings>/maxConditions}" />
+			<mdc:FilterField delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}'
+				id="FF1"
+				label="TestField2"
+				conditions="{$filters>/conditions/author_ID}"
+				propertyKey="author_ID"
+				dataType="Edm.Int32"
+				required="false"
+				valueHelp="FH2"
+				display="DescriptionValue"
+				maxConditions="{settings>/maxConditions}" />
+		</mdc:filterItems>
+	</mdc:FilterBar>
+
+</layout:VerticalLayout>

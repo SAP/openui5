@@ -1,13 +1,16 @@
 /*global QUnit */
 
-sap.ui.require([
+sap.ui.define([
+	"sap/ui/core/Element",
+	"sap/ui/table/qunit/TableQUnitUtils",
+	"sap/ui/table/TablePersoController",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/table/Table",
 	"sap/ui/table/Column",
-	"sap/ui/table/TablePersoController",
 	"sap/ui/model/json/JSONModel",
-	"sap/m/Label"
-], function(qutils, Table, Column, TablePersoController, JSONModel, Label) {
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/core/Core"
+], function(Element, TableQUnitUtils, TablePersoController, qutils, Table, Column, JSONModel, jQuery, oCore) {
 	"use strict";
 
 	var oController = null, oTable = null;
@@ -28,17 +31,27 @@ sap.ui.require([
 		};
 
 		// Table settings
+		/**
+		 * @deprecated As of Version 1.117
+		 */
 		mTableSettings.showColumnVisibilityMenu = true;
 		mTableSettings.columns = jQuery.map(oData.cols, function(colname) {
-			return new Column(colname, {
-				label: new Label({text: colname}),
+			var oAggregations = {
+				label: new TableQUnitUtils.TestControl({text: colname}),
 				visible: colname === "Color" ? false : true, // Color column should be invisible by default
-				template: new Label({
+				template: new TableQUnitUtils.TestControl({
 					text: {
 						path: colname.toLowerCase()
 					}
 				})
-			});
+			};
+			if (colname !== "Number") {
+				oAggregations.multiLabels = [
+					new TableQUnitUtils.TestControl({text: "First level header"}),
+					new TableQUnitUtils.TestControl({text: colname + " - Second level header"})
+				];
+			}
+			return new Column(colname, oAggregations);
 		});
 
 		// Controller settings
@@ -46,7 +59,7 @@ sap.ui.require([
 		oTable.setModel(new JSONModel(oData));
 		oTable.bindRows("/items");
 		oTable.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		mControllerSettings.table = oTable;
 
 		oController = new TablePersoController(mControllerSettings);
@@ -181,7 +194,11 @@ sap.ui.require([
 		}
 	});
 
-	QUnit.test("Column visibility (autoSave)", 16, function(assert) {
+	/**
+	 * @deprecated As of version 1.117
+	 */
+	QUnit.test("Column visibility (autoSave)", function(assert) {
+		assert.expect(16);
 		var done = assert.async();
 		var getPersDataCalls = 0;
 
@@ -203,7 +220,7 @@ sap.ui.require([
 								visible: true,
 								width: "",
 								sorted: false,
-								sortOrder: "Ascending", /*filtered: false, filterValue: "",*/
+								sortOrder: "None", /*filtered: false, filterValue: "",*/
 								grouped: false
 							},
 							{
@@ -212,7 +229,7 @@ sap.ui.require([
 								visible: false,
 								width: "",
 								sorted: false,
-								sortOrder: "Ascending", /*filtered: false, filterValue: "",*/
+								sortOrder: "None", /*filtered: false, filterValue: "",*/
 								grouped: false
 							},
 							{
@@ -221,7 +238,7 @@ sap.ui.require([
 								visible: false,
 								width: "",
 								sorted: false,
-								sortOrder: "Ascending", /*filtered: false, filterValue: "",*/
+								sortOrder: "None", /*filtered: false, filterValue: "",*/
 								grouped: false
 							}
 						]
@@ -240,52 +257,61 @@ sap.ui.require([
 
 		assert.equal(getPersDataCalls, 1, "getPersData of service should be called 1 time.");
 
-		var oNumberColumn = sap.ui.getCore().byId("Number");
-		var oColorColumn = sap.ui.getCore().byId("Color");
-		var oNameColumn = sap.ui.getCore().byId("Name");
-		var oNameMenu = oNameColumn.getMenu();
-		var sVisibilityMenuItemId = oNameMenu.getId() + "-column-visibilty";
+		var oNumberColumn = Element.getElementById("Number");
+		var oColorColumn = Element.getElementById("Color");
+		var oNameColumn = Element.getElementById("Name");
 
 		assert.equal(oNameColumn.getVisible(), true, "Name column should be visible.");
 		assert.equal(oColorColumn.getVisible(), false, "Color column should be invisible.");
 		assert.equal(oNumberColumn.getVisible(), true, "Number column should be invisible.");
 
-		// set "Number" column to invisible
-		oNameMenu.open();
-		qutils.triggerMouseEvent(sVisibilityMenuItemId, "click");
-		qutils.triggerMouseEvent(sVisibilityMenuItemId + "-menu-item-2", "click");
+		oNameColumn.attachEventOnce("columnMenuOpen", function() {
+			TableQUnitUtils.wait(0).then(function() {
+				var oNameMenu = oNameColumn.getMenu();
+				var sVisibilityMenuItemId = oNameMenu.getId() + "-column-visibilty";
+				var aSubmenuItems = oTable._oColumnVisibilityMenuItem.getSubmenu().getItems();
+				qutils.triggerMouseEvent(sVisibilityMenuItemId, "click");
+				qutils.triggerMouseEvent(aSubmenuItems[2].$(), "click");
 
-		// delay execution to wait for visibility change
-		setTimeout(function() {
+				// delay execution to wait for visibility change
+				setTimeout(function() {
 
-			assert.equal(oNameColumn.getVisible(), true, "Name column should be visible.");
-			assert.equal(oColorColumn.getVisible(), false, "Color column should be invisible.");
-			assert.equal(oNumberColumn.getVisible(), false, "Number column should be invisible.");
+					assert.equal(oNameColumn.getVisible(), true, "Name column should be visible.");
+					assert.equal(oColorColumn.getVisible(), false, "Color column should be invisible.");
+					assert.equal(oNumberColumn.getVisible(), false, "Number column should be invisible.");
 
-			// refreshing the data should lead to the same visiblility states
-			oController.refresh();
+					// refreshing the data should lead to the same visiblility states
+					oController.refresh();
 
-			assert.equal(getPersDataCalls, 2, "getPersData of service should be called 2 times.");
+					assert.equal(getPersDataCalls, 2, "getPersData of service should be called 2 times.");
 
-			assert.equal(oNameColumn.getVisible(), true, "Name column should be visible.");
-			assert.equal(oColorColumn.getVisible(), false, "Color column should be invisible.");
-			assert.equal(oNumberColumn.getVisible(), false, "Number column should be invisible.");
+					assert.equal(oNameColumn.getVisible(), true, "Name column should be visible.");
+					assert.equal(oColorColumn.getVisible(), false, "Color column should be invisible.");
+					assert.equal(oNumberColumn.getVisible(), false, "Number column should be invisible.");
 
-			// clearing and refreshing the data should put the columns in the initial state (time when the table was set as association)
-			oController.getPersoService().delPersData();
-			oController.refresh();
+					// clearing and refreshing the data should put the columns in the initial state (time when the table was set as association)
+					oController.getPersoService().delPersData();
+					oController.refresh();
 
-			assert.equal(getPersDataCalls, 3, "getPersData of service should be called 3 times.");
+					assert.equal(getPersDataCalls, 3, "getPersData of service should be called 3 times.");
 
-			assert.equal(oNameColumn.getVisible(), true, "Name column should be visible.");
-			assert.equal(oColorColumn.getVisible(), false, "Color column should be invisible.");
-			assert.equal(oNumberColumn.getVisible(), true, "Number column should be invisible.");
+					assert.equal(oNameColumn.getVisible(), true, "Name column should be visible.");
+					assert.equal(oColorColumn.getVisible(), false, "Color column should be invisible.");
+					assert.equal(oNumberColumn.getVisible(), true, "Number column should be invisible.");
 
-			done();
-		}, 0);
+					done();
+				}, 0);
+			});
+		});
+
+		oNameColumn._openHeaderMenu(oNameColumn.getDomRef());
 	});
 
-	QUnit.test("Column visibility (no autoSave)", 19, function(assert) {
+	/**
+	 * @deprecated As of version 1.117
+	 */
+	QUnit.test("Column visibility (no autoSave)", function(assert) {
+		assert.expect(19);
 		var done = assert.async();
 		var getPersDataCalls = 0;
 
@@ -308,7 +334,7 @@ sap.ui.require([
 								visible: true,
 								width: "",
 								sorted: false,
-								sortOrder: "Ascending", /*filtered: false, filterValue: "",*/
+								sortOrder: "None", /*filtered: false, filterValue: "",*/
 								grouped: false
 							},
 							{
@@ -317,7 +343,7 @@ sap.ui.require([
 								visible: true,
 								width: "",
 								sorted: false,
-								sortOrder: "Ascending", /*filtered: false, filterValue: "",*/
+								sortOrder: "None", /*filtered: false, filterValue: "",*/
 								grouped: false
 							},
 							{
@@ -326,7 +352,7 @@ sap.ui.require([
 								visible: true,
 								width: "",
 								sorted: false,
-								sortOrder: "Ascending", /*filtered: false, filterValue: "",*/
+								sortOrder: "None", /*filtered: false, filterValue: "",*/
 								grouped: false
 							}
 						]
@@ -345,57 +371,63 @@ sap.ui.require([
 
 		assert.equal(getPersDataCalls, 1, "getPersData of service should be called 1 time.");
 
-		var oNumberColumn = sap.ui.getCore().byId("Number");
-		var oColorColumn = sap.ui.getCore().byId("Color");
-		var oNameColumn = sap.ui.getCore().byId("Name");
-		var oNameMenu = oNameColumn.getMenu();
-		var sVisibilityMenuItemId = oNameMenu.getId() + "-column-visibilty";
+		var oNumberColumn = Element.getElementById("Number");
+		var oColorColumn = Element.getElementById("Color");
+		var oNameColumn = Element.getElementById("Name");
 
 		assert.equal(oNameColumn.getVisible(), true, "Name column should be visible.");
 		assert.equal(oColorColumn.getVisible(), false, "Color column should be invisible.");
 		assert.equal(oNumberColumn.getVisible(), true, "Number column should be invisible.");
 
-		// set "Number" column to invisible
-		oNameMenu.open();
-		qutils.triggerMouseEvent(sVisibilityMenuItemId, "click");
-		qutils.triggerMouseEvent(sVisibilityMenuItemId + "-menu-item-2", "click");
+		oNameColumn.attachEventOnce("columnMenuOpen", function() {
+			TableQUnitUtils.wait(0).then(function() {
+				var oNameMenu = oNameColumn.getMenu();
+				var sVisibilityMenuItemId = oNameMenu.getId() + "-column-visibilty";
 
-		// delay execution to wait for visibility change
-		setTimeout(function() {
+				var aSubmenuItems = oTable._oColumnVisibilityMenuItem.getSubmenu().getItems();
+				qutils.triggerMouseEvent(sVisibilityMenuItemId, "click");
+				qutils.triggerMouseEvent(aSubmenuItems[2].$(), "click");
 
-			assert.equal(oNameColumn.getVisible(), true, "Name column should be visible.");
-			assert.equal(oColorColumn.getVisible(), false, "Color column should be invisible.");
-			assert.equal(oNumberColumn.getVisible(), false, "Number column should be invisible.");
+				// delay execution to wait for visibility change
+				setTimeout(function() {
 
-			// refreshing the data should bring back the old state as nothing has been saved
-			oController.refresh();
+					assert.equal(oNameColumn.getVisible(), true, "Name column should be visible.");
+					assert.equal(oColorColumn.getVisible(), false, "Color column should be invisible.");
+					assert.equal(oNumberColumn.getVisible(), false, "Number column should be invisible.");
 
-			assert.equal(getPersDataCalls, 2, "getPersData of service should be called 2 times.");
+					// refreshing the data should bring back the old state as nothing has been saved
+					oController.refresh();
 
-			assert.equal(oNameColumn.getVisible(), true, "Name column should be visible.");
-			assert.equal(oColorColumn.getVisible(), false, "Color column should be invisible.");
-			assert.equal(oNumberColumn.getVisible(), true, "Number column should be visible again.");
+					assert.equal(getPersDataCalls, 2, "getPersData of service should be called 2 times.");
 
-			// modifications via API should also work when manually triggering save
-			oColorColumn.setVisible(true);
-			oController.savePersonalizations();
+					assert.equal(oNameColumn.getVisible(), true, "Name column should be visible.");
+					assert.equal(oColorColumn.getVisible(), false, "Color column should be invisible.");
+					assert.equal(oNumberColumn.getVisible(), true, "Number column should be visible again.");
 
-			assert.equal(oNameColumn.getVisible(), true, "Name column should be visible.");
-			assert.equal(oColorColumn.getVisible(), true, "Color column should be invisible.");
-			assert.equal(oNumberColumn.getVisible(), true, "Number column should be visible again.");
+					// modifications via API should also work when manually triggering save
+					oColorColumn.setVisible(true);
+					oController.savePersonalizations();
 
-			// clearing and refreshing the data should put the columns in the initial state (time when the table was set as association)
-			oController.getPersoService().delPersData();
-			oController.refresh();
+					assert.equal(oNameColumn.getVisible(), true, "Name column should be visible.");
+					assert.equal(oColorColumn.getVisible(), true, "Color column should be visible again.");
+					assert.equal(oNumberColumn.getVisible(), true, "Number column should be visible.");
 
-			assert.equal(getPersDataCalls, 3, "getPersData of service should be called 3 times.");
+					// clearing and refreshing the data should put the columns in the initial state (time when the table was set as association)
+					oController.getPersoService().delPersData();
+					oController.refresh();
 
-			assert.equal(oNameColumn.getVisible(), true, "Name column should be visible.");
-			assert.equal(oColorColumn.getVisible(), false, "Color column should be invisible.");
-			assert.equal(oNumberColumn.getVisible(), true, "Number column should be visible.");
+					assert.equal(getPersDataCalls, 3, "getPersData of service should be called 3 times.");
 
-			done();
-		}, 0);
+					assert.equal(oNameColumn.getVisible(), true, "Name column should be visible.");
+					assert.equal(oColorColumn.getVisible(), false, "Color column should be invisible.");
+					assert.equal(oNumberColumn.getVisible(), true, "Number column should be visible.");
+
+					done();
+				}, 0);
+			});
+		});
+
+		oNameColumn._openHeaderMenu(oNameColumn.getDomRef());
 	});
 
 	QUnit.test("Manual table changes via API", function(assert) {
@@ -420,7 +452,7 @@ sap.ui.require([
 								visible: true,
 								width: "",
 								sorted: false,
-								sortOrder: "Ascending", /*filtered: false, filterValue: "",*/
+								sortOrder: "None", /*filtered: false, filterValue: "",*/
 								grouped: false
 							},
 							{
@@ -429,7 +461,7 @@ sap.ui.require([
 								visible: true,
 								width: "",
 								sorted: false,
-								sortOrder: "Ascending", /*filtered: false, filterValue: "",*/
+								sortOrder: "None", /*filtered: false, filterValue: "",*/
 								grouped: false
 							},
 							{
@@ -438,7 +470,7 @@ sap.ui.require([
 								visible: true,
 								width: "",
 								sorted: false,
-								sortOrder: "Ascending", /*filtered: false, filterValue: "",*/
+								sortOrder: "None", /*filtered: false, filterValue: "",*/
 								grouped: false
 							}
 
@@ -458,9 +490,9 @@ sap.ui.require([
 
 		assert.equal(getPersDataCalls, 1, "getPersData of service should be called 1 time.");
 
-		var oNumberColumn = sap.ui.getCore().byId("Number"),
-			oColorColumn = sap.ui.getCore().byId("Color"),
-			oNameColumn = sap.ui.getCore().byId("Name");
+		var oNumberColumn = Element.getElementById("Number"),
+			oColorColumn = Element.getElementById("Color"),
+			oNameColumn = Element.getElementById("Name");
 
 		assert.equal(oNameColumn.getVisible(), true, "Name column should be visible.");
 		assert.equal(oColorColumn.getVisible(), false, "Color column should be invisible.");
@@ -491,6 +523,15 @@ sap.ui.require([
 		assert.equal(oTable.indexOfColumn(oColorColumn), 2, "Color column should be on index 2.");
 	});
 
+	QUnit.test("Column multiLabels", function(assert) {
+		createController();
+
+		var oTablePersoData = oController._getCurrentTablePersoData(true);
+		assert.equal(oTablePersoData.aColumns[0].text, "Name - Second level header", "Name column has the correct label in TablePersoDialog");
+		assert.equal(oTablePersoData.aColumns[1].text, "Color - Second level header", "Color column has the correct label in TablePersoDialog");
+		assert.equal(oTablePersoData.aColumns[2].text, "Number", "Number column has the correct label in TablePersoDialog");
+	});
+
 	QUnit.module("Personalization via CustomDataKey", {
 		afterEach: function() {
 			destroyController();
@@ -519,7 +560,7 @@ sap.ui.require([
 								visible: true,
 								width: "",
 								sorted: false,
-								sortOrder: "Ascending", /*filtered: false, filterValue: "",*/
+								sortOrder: "None", /*filtered: false, filterValue: "",*/
 								grouped: false
 							},
 							{
@@ -528,7 +569,7 @@ sap.ui.require([
 								visible: true,
 								width: "",
 								sorted: false,
-								sortOrder: "Ascending", /*filtered: false, filterValue: "",*/
+								sortOrder: "None", /*filtered: false, filterValue: "",*/
 								grouped: false
 							},
 							{
@@ -537,7 +578,7 @@ sap.ui.require([
 								visible: true,
 								width: "",
 								sorted: false,
-								sortOrder: "Ascending", /*filtered: false, filterValue: "",*/
+								sortOrder: "None", /*filtered: false, filterValue: "",*/
 								grouped: false
 							}
 
@@ -564,9 +605,9 @@ sap.ui.require([
 
 		assert.equal(getPersDataCalls, 1, "getPersData of service should be called 1 time.");
 
-		var oNumberColumn = sap.ui.getCore().byId("Number");
-		var oColorColumn = sap.ui.getCore().byId("Color");
-		var oNameColumn = sap.ui.getCore().byId("Name");
+		var oNumberColumn = Element.getElementById("Number");
+		var oColorColumn = Element.getElementById("Color");
+		var oNameColumn = Element.getElementById("Name");
 
 		assert.equal(oNameColumn.getVisible(), true, "Name column should be visible.");
 		assert.equal(oColorColumn.getVisible(), false, "Color column should be invisible.");

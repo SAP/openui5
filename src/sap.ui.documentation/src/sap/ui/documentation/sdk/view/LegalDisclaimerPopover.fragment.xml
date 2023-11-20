@@ -1,0 +1,23 @@
+<core:FragmentDefinition
+		xmlns="sap.m"
+		xmlns:core="sap.ui.core">
+	<ResponsivePopover placement="Auto" title="{i18n>LEGAL_DISCLAIMER_TITLE}" horizontalScrolling="false" contentWidth="30%" class="sapUiContentPadding">
+		<Label text="{i18n>LEGAL_DISCLAIMER_LABEL_1}" design="Bold"/>
+		<Image
+			src="./resources/sap/ui/documentation/sdk/images/link-external.png"
+			tooltip="{i18n>LEGAL_DISCLAIMER_EXTERNAL_TOOLTIP}"
+			width="1.25rem"
+			class="sapUiTinyMarginBegin"/>
+		<Text text="{i18n>LEGAL_DISCLAIMER_TEXT_1}"/>
+		<Text text="{i18n>LEGAL_DISCLAIMER_TEXT_2}"/>
+		<Text text="{i18n>LEGAL_DISCLAIMER_TEXT_3}"/>
+
+		<Label text="{i18n>LEGAL_DISCLAIMER_LABEL_2}" design="Bold" class="sapUiTinyMarginTop"/>
+		<Image
+			src="./resources/sap/ui/documentation/sdk/images/link-sap.png"
+			tooltip="{i18n>LEGAL_DISCLAIMER_INTERNAL_TOOLTIP}"
+			width="1.25rem"
+			class="sapUiTinyMarginBegin"/>
+		<Text text="{i18n>LEGAL_DISCLAIMER_TEXT_4}"/>
+	</ResponsivePopover>
+</core:FragmentDefinition>

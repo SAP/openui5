@@ -1,0 +1,11 @@
+#qunit-fixture.sapUiFlQUnitFixture {
+	position: fixed;
+	top: auto;
+	right: 0;
+	bottom: 0;
+	left: auto;
+	width: 600px;
+	height: 600px;
+	box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.7);
+	background-color: #fff;
+}

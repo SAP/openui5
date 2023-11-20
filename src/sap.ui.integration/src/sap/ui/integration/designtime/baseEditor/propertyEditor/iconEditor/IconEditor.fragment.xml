@@ -1,0 +1,13 @@
+<core:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core"
+>
+	<Input
+		value="{value}"
+		change="_onChange"
+		suggestionItemSelected="_onSuggestionItemSelected"
+		showSuggestion="true"
+		showValueHelp="true"
+		valueHelpRequest="_handleValueHelp"
+	/>
+</core:FragmentDefinition>

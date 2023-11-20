@@ -1,0 +1,51 @@
+{
+  "1.84.0": {
+    "date": "October 2020",
+    "notes": [
+      {
+        "id": "0e38884cc3ab1bb377985726937395dafceff104",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageHeader: Corrected sample",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070137528"
+          }
+        ]
+      },
+      {
+        "id": "d4ee38f3a87e6b41858cbe2c0e2dacf34f8c07b3",
+        "type": "FIX",
+        "text": " sap.uxap.AnchorBar: Corrected scroll direction in RTL",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070319529"
+          }
+        ]
+      },
+      {
+        "id": "3c97e97e528da45222afca65d087ded7c59da807",
+        "type": "FIX",
+        "text": " sap.uxap.BlockBase: Fixed update of bindings on initial rendering",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080349614"
+          }
+        ]
+      },
+      {
+        "id": "ed353c1d213a876ddeaf4b170b5827ffa1221ddf",
+        "type": "FIX",
+        "text": " sap.f.FlexibleColumnLayout: Contextual settings is passed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070331833"
+          }
+        ]
+      }
+    ]
+  }
+}

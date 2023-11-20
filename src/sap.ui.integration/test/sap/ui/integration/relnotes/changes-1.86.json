@@ -1,0 +1,66 @@
+{
+  "1.86.0": {
+    "date": "January 2021",
+    "notes": [
+      {
+        "id": "647bf0478adc453d9c962c9f9dd5872414358a15",
+        "type": "FIX",
+        "text": " sap.ui.integration.widgets.Card: Hidden items do not cause recursion anymore",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080464599"
+          }
+        ]
+      },
+      {
+        "id": "0ffce80db1b52e39c247a36f2e6e507ae0a27032",
+        "type": "FEATURE",
+        "text": " Integration cards: Provide API that shows/hides the loading placeholders"
+      },
+      {
+        "id": "2b00992308a04c526b90814c96346b576d6e058c",
+        "type": "FIX",
+        "text": " sap.ui.integration.CalendarContent: IDs are now rendered with each calendar section"
+      },
+      {
+        "id": "78c3f3b52934bb9fbaae22685801a4b89ecfde3b",
+        "type": "FIX",
+        "text": " sap.ui.integration.widgets.Card: Icon src is now properly resolved",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080453980"
+          }
+        ]
+      },
+      {
+        "id": "35cf131bfeb7f805cac99ea1d316ecc570def598",
+        "type": "FEATURE",
+        "text": " sap.ui.integration.widgets.Card: Add formatter for texts with placeholders"
+      },
+      {
+        "id": "5e11bb46871e49c111d0878e18fe1eef26c4d86b",
+        "type": "FIX",
+        "text": " sap.m.ObjectAttribute, sap.m.Text: Improve RTL support",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400007952042020"
+          }
+        ]
+      },
+      {
+        "id": "d95cb2446b03095ced0d5c51b4a275eada0a60a6",
+        "type": "FIX",
+        "text": " Integration Card: Empty header is no longer created",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070502593"
+          }
+        ]
+      }
+    ]
+  }
+}

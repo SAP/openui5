@@ -1,9 +1,50 @@
-/* global QUnit,sinon,SemanticUtil*/
-
-(function ($, QUnit, sinon, SemanticPage) {
+/*global QUnit, sinon*/
+sap.ui.define([
+	"./SemanticUtil",
+	"sap/m/Button",
+	"sap/ui/core/Lib",
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/model/resource/ResourceModel",
+	"sap/ui/core/Core",
+	"sap/f/DynamicPageAccessibleLandmarkInfo",
+	"sap/f/library",
+	"sap/f/semantic/DiscussInJamAction",
+	"sap/f/semantic/MessagesIndicator",
+	"sap/f/semantic/ShareInJamAction",
+	"sap/f/semantic/PrintAction",
+	"sap/ui/core/InvisibleText",
+	"sap/m/Text",
+	"sap/m/VBox",
+	"sap/ui/Device",
+	"sap/f/semantic/SemanticPage"
+],
+function(
+	SemanticUtil,
+	Button,
+	Library,
+	$,
+	ResourceModel,
+	Core,
+	DynamicPageAccessibleLandmarkInfo,
+	fioriLibrary,
+	DiscussInJamAction,
+	MessagesIndicator,
+	ShareInJamAction,
+	PrintAction,
+	InvisibleText,
+	Text,
+	VBox,
+	Device,
+	SemanticPage
+) {
 	"use strict";
 
 	sinon.config.useFakeTimers = false;
+
+	/**
+	 * @deprecated As of version 1.54
+	 */
+	var DynamicPageTitleArea = fioriLibrary.DynamicPageTitleArea;
 
 	var oFactory = SemanticUtil.oFactory,
 		oUtil = SemanticUtil.oUtil,
@@ -51,6 +92,24 @@
 			"SemanticPage showFooter set to false and retrieved successfully.");
 	});
 
+	QUnit.test("test SemanticPage fitContent setter and getter", function (assert) {
+		// Assert default
+		assert.equal(this.oSemanticPage.getFitContent(), false,
+			"SemanticPage fitContent is false by default.");
+
+		assert.equal(this.oSemanticPage._getPage().getFitContent(), false,
+			"DynamicPage fitContent is false by default.");
+
+		// Act
+		this.oSemanticPage.setFitContent(true);
+
+		// Assert
+		assert.equal(this.oSemanticPage.getFitContent(), true,
+			"SemanticPage fitContent is successfully set to true.");
+
+		assert.equal(this.oSemanticPage._getPage().getFitContent(), true,
+			"DynamicPage fitContent is successfully set to true.");
+	});
 
 	QUnit.test("test SemanticPage headerExpanded setter and getter", function (assert) {
 		// Assert default
@@ -114,6 +173,20 @@
 			"SemanticPage preserveHeaderStateOnScroll set to true and retrieved successfully.");
 	});
 
+	QUnit.test("test SemanticPage clone", function(assert) {
+		//Arrange
+		var oStub = this.stub(SemanticPage.prototype, "setContent"),
+			oText = new Text({ text: "yo"});
+
+		this.oSemanticPage._getPage().setContent(oText);
+
+		//Act
+		this.oSemanticPage.clone();
+
+		//Assert
+		assert.equal(oStub.callCount, 1, "Function 'setContent' was called once");
+		assert.strictEqual(oStub.args[0][0].getText(), oText.getText(), "SemanticPage's content is properly set to the DynamicPage's content clone");
+	});
 
 	QUnit.test("test SemanticPage toggleHeaderOnTitleClick setter and getter", function (assert) {
 		// Assert default
@@ -135,9 +208,12 @@
 			"SemanticPage toggleHeaderOnTitleClick set to true and retrieved successfully.");
 	});
 
+	/**
+	 * @deprecated as of version 1.58
+	 */
 	QUnit.test("test SemanticPage titlePrimaryArea setter and getter", function (assert) {
-		var sBeginArea = sap.f.DynamicPageTitleArea.Begin,
-			sMiddleArea = sap.f.DynamicPageTitleArea.Middle;
+		var sBeginArea = DynamicPageTitleArea.Begin,
+			sMiddleArea = DynamicPageTitleArea.Middle;
 
 		// Assert default
 		assert.strictEqual(this.oSemanticPage.getTitlePrimaryArea(), sBeginArea,
@@ -180,6 +256,26 @@
 		this.oSemanticPage2 = null;
 	});
 
+	QUnit.test("test SemanticPage titleAreaShrinkRatio setter and getter", function (assert) {
+		var sDefaultRatio = "1:1.6:1.6",
+			sNewRatio = "3:5:8";
+
+		// Assert default
+		assert.strictEqual(this.oSemanticPage.getTitleAreaShrinkRatio(), sDefaultRatio,
+			"SemanticPage titleAreaShrinkRatio is " + sDefaultRatio + " in by default.");
+		assert.strictEqual(this.oSemanticPage._getTitle().getAreaShrinkRatio(), sDefaultRatio,
+			"DynamicPageTitle areaShrinkRatio is " + sDefaultRatio + " in by default.");
+
+		// Act
+		this.oSemanticPage.setTitleAreaShrinkRatio(sNewRatio);
+
+		// Assert
+		assert.strictEqual(this.oSemanticPage.getTitleAreaShrinkRatio(), sNewRatio,
+			"SemanticPage titleAreaShrinkRatio is " + sNewRatio + ".");
+		assert.strictEqual(this.oSemanticPage._getTitle().getAreaShrinkRatio(), sNewRatio,
+			"DynamicPageTitle areaShrinkRatio is " + sNewRatio + ".");
+	});
+
 	QUnit.test("test SemanticPage titleHeading aggregation methods", function (assert) {
 		var oTitle = oFactory.getTitle(),
 			vResult;
@@ -188,7 +284,7 @@
 		assert.equal(this.oSemanticPage.getTitleHeading(), null,
 			"SemanticPage titleHeading is null by default.");
 
-		// Аct: set titleHeading
+		// Act: set titleHeading
 		vResult = this.oSemanticPage.setTitleHeading(oTitle);
 
 		// Assert
@@ -197,13 +293,76 @@
 		assert.equal(this.oSemanticPage, vResult,
 			"SemanticPage setTitleHeading returns the SemanticPage instance.");
 
-		// Аct: destroy titleHeading
+		// Act: destroy titleHeading
 		vResult = this.oSemanticPage.destroyTitleHeading();
 
 		// Assert
 		assert.equal(this.oSemanticPage, vResult,
 			"SemanticPage destroyTitleHeading returns the SemanticPage instance.");
 		assert.equal(this.oSemanticPage.getTitleHeading(), null,
+			"SemanticPage content is destroyed successfully.");
+	});
+
+	QUnit.test("test SemanticPage titleSnappedOnMobile is successfully forwarded", function (assert) {
+		// Arrange
+		var sForwardedAggregationName = this.oSemanticPage.getMetadata().getAggregationForwarder("titleSnappedOnMobile").targetAggregationName;
+
+		// Assert
+		assert.strictEqual(sForwardedAggregationName, "snappedTitleOnMobile",
+				"DynamicPageTitle has successfully forwarded its snappedTitleOnMobile aggregation.");
+	});
+
+	QUnit.test("test SemanticPage titleExpandedHeading aggregation methods", function (assert) {
+		var oTitle = oFactory.getTitle(),
+			vResult;
+
+		// Assert default
+		assert.equal(this.oSemanticPage.getTitleExpandedHeading(), null,
+			"SemanticPage titleExpandedHeading is null by default.");
+
+		// Act: set titleExpandedHeading
+		vResult = this.oSemanticPage.setTitleExpandedHeading(oTitle);
+
+		// Assert
+		assert.equal(this.oSemanticPage.getTitleExpandedHeading(), oTitle,
+			"SemanticPage titleExpandedHeading is set and retrieved successfully.");
+		assert.equal(this.oSemanticPage, vResult,
+			"SemanticPage setTitleExpandedHeading returns the SemanticPage instance.");
+
+		// Act: destroy titleExpandedHeading
+		vResult = this.oSemanticPage.destroyTitleExpandedHeading();
+
+		// Assert
+		assert.equal(this.oSemanticPage, vResult,
+			"SemanticPage destroyTitleExpandedHeading returns the SemanticPage instance.");
+		assert.equal(this.oSemanticPage.getTitleExpandedHeading(), null,
+			"SemanticPage content is destroyed successfully.");
+	});
+
+	QUnit.test("test SemanticPage titleSnappedHeading aggregation methods", function (assert) {
+		var oTitle = oFactory.getTitle(),
+			vResult;
+
+		// Assert default
+		assert.equal(this.oSemanticPage.getTitleSnappedHeading(), null,
+			"SemanticPage titleSnappedHeading is null by default.");
+
+		// Act: set titleSnappedHeading
+		vResult = this.oSemanticPage.setTitleSnappedHeading(oTitle);
+
+		// Assert
+		assert.equal(this.oSemanticPage.getTitleSnappedHeading(), oTitle,
+			"SemanticPage titleSnappedHeading is set and retrieved successfully.");
+		assert.equal(this.oSemanticPage, vResult,
+			"SemanticPage setTitleSnappedHeading returns the SemanticPage instance.");
+
+		// Act: destroy titleSnappedHeading
+		vResult = this.oSemanticPage.destroyTitleSnappedHeading();
+
+		// Assert
+		assert.equal(this.oSemanticPage, vResult,
+			"SemanticPage destroyTitleSnappedHeading returns the SemanticPage instance.");
+		assert.equal(this.oSemanticPage.getTitleSnappedHeading(), null,
 			"SemanticPage content is destroyed successfully.");
 	});
 
@@ -215,7 +374,7 @@
 		assert.equal(this.oSemanticPage.getTitleBreadcrumbs(), null,
 			"SemanticPage titleBreadcrumbs is null by default.");
 
-		// Аct: set titleHeading
+		// Act: set titleHeading
 		vResult = this.oSemanticPage.setTitleBreadcrumbs(oBreadcrumbs);
 
 		// Assert
@@ -224,7 +383,7 @@
 		assert.equal(this.oSemanticPage, vResult,
 			"SemanticPage setTitleBreadcrumbs returns the SemanticPage instance.");
 
-		// Аct: destroy titleHeading
+		// Act: destroy titleHeading
 		vResult = this.oSemanticPage.destroyTitleBreadcrumbs();
 
 		// Assert
@@ -438,14 +597,14 @@
 		assert.equal(this.oSemanticPage.getContent(), null,
 			"SemanticPage content is null by default.");
 
-		// Аct - add content
+		// Act - add content
 		this.oSemanticPage.setContent(oMessageStrip);
 
 		// Assert
 		assert.equal(this.oSemanticPage.getContent(), oMessageStrip,
 			"SemanticPage content aggregation is set and retrieved successfully.");
 
-		// Аct - destroy content
+		// Act - destroy content
 		this.oSemanticPage.destroyContent();
 
 		// Assert
@@ -650,6 +809,126 @@
 		assert.ok(oButton2.bIsDestroyed, "SemanticPage item has been destroyed.");
 	});
 
+	// This test is needed to ensure that the buttons added to customShareActions can be bound
+	// the same way as other buttons
+	// Due to the buttons being shown in the static UI area there might be issues with bindings
+	QUnit.test("test SemanticPage customShareActions content bindings", function (assert) {
+		var sButtonText = "Action 1";
+		var aTexts = [];
+		aTexts["action1"] = sButtonText;
+
+		var oMockResourceBundle = {
+			getText: function(sKey, aArgs, bIgnoreKeyFallback) {
+				return aTexts[sKey];
+			}
+		};
+
+		var i18n = new ResourceModel({
+			bundle: oMockResourceBundle
+		});
+
+		this.oSemanticPage.setModel(i18n, "i18n");
+
+
+		var oCustomShareButton = new Button({
+			icon: "sap-icon://excel-attachment",
+			text: "{i18n>action1}"
+		});
+
+		this.oSemanticPage.addCustomShareAction(oCustomShareButton);
+
+		Core.applyChanges();
+
+		assert.strictEqual(oCustomShareButton.getText(), sButtonText, "Expected text from binding in button is there");
+	});
+
+	QUnit.test("test SemanticPage customShareActions *delayed* content bindings", function (assert) {
+		var sButtonText = "Action 1";
+		var aTexts = [];
+		aTexts["action1"] = sButtonText;
+
+		var oMockResourceBundle = {
+			getText: function(sKey, aArgs, bIgnoreKeyFallback) {
+				return aTexts[sKey];
+			}
+		};
+
+		var i18n = new ResourceModel({
+			bundle: oMockResourceBundle
+		});
+
+
+		var oCustomShareButton = new Button({
+			icon: "sap-icon://excel-attachment",
+			text: "{i18n>action1}"
+		});
+
+		this.oSemanticPage.addCustomShareAction(oCustomShareButton);
+
+		this.oSemanticPage.setModel(i18n, "i18n");
+
+		Core.applyChanges();
+
+		assert.strictEqual(oCustomShareButton.getText(), sButtonText, "Expected text from binding in button is there");
+	});
+
+	QUnit.test("test adding of CSS SemanticPage class not mentioned in CONTENT_PADDING_CLASSES_TO_FORWARD," +
+			" to its _dynamicPage aggregation", function (assert) {
+
+		// Arrange
+		var oDynamicPage = this.oSemanticPage.getAggregation("_dynamicPage");
+
+		// Act
+		this.oSemanticPage.addStyleClass("NOT_EXISTING_CSS_CLASS");
+
+		// Assert
+		assert.strictEqual(oDynamicPage.aCustomStyleClasses.indexOf("NOT_EXISTING_CSS_CLASS"), -1,
+				"NOT_EXISTING_CSS_CLASS CSS class not added to _dynamicPage aggregation.");
+	});
+
+	QUnit.test("test adding of CSS SemanticPage classes mentioned in CONTENT_PADDING_CLASSES_TO_FORWARD," +
+			" to its _dynamicPage aggregation", function (assert) {
+
+		// Arrange
+		var oDynamicPage = this.oSemanticPage.getAggregation("_dynamicPage");
+
+		// Act
+		this.oSemanticPage.addStyleClass("sapUiNoContentPadding");
+		this.oSemanticPage.addStyleClass("sapUiContentPadding");
+		this.oSemanticPage.addStyleClass("sapUiResponsiveContentPadding");
+
+		// Assert
+		assert.ok(oDynamicPage.aCustomStyleClasses.indexOf("sapUiNoContentPadding"),
+				"sapUiNoContentPadding CSS class applied to _dynamicPage aggregation.");
+		assert.ok(oDynamicPage.aCustomStyleClasses.indexOf("sapUiContentPadding"),
+				"sapUiContentPadding CSS class applied to _dynamicPage aggregation.");
+		assert.ok(oDynamicPage.aCustomStyleClasses.indexOf("sapUiResponsiveContentPadding"),
+				"sapUiResponsiveContentPadding CSS class applied to _dynamicPage aggregation.");
+	});
+
+	QUnit.test("test removing of CSS SemanticPage classes mentioned in CONTENT_PADDING_CLASSES_TO_FORWARD," +
+			" to its _dynamicPage aggregation", function (assert) {
+
+		// Arrange
+		var oDynamicPage = this.oSemanticPage.getAggregation("_dynamicPage");
+
+		// Act
+		this.oSemanticPage.addStyleClass("sapUiNoContentPadding");
+		this.oSemanticPage.addStyleClass("sapUiContentPadding");
+		this.oSemanticPage.addStyleClass("sapUiResponsiveContentPadding");
+		this.oSemanticPage.removeStyleClass("sapUiNoContentPadding");
+		this.oSemanticPage.removeStyleClass("sapUiContentPadding");
+		this.oSemanticPage.removeStyleClass("sapUiResponsiveContentPadding");
+
+		// Assert
+		assert.strictEqual(oDynamicPage.aCustomStyleClasses.indexOf("sapUiNoContentPadding"), -1,
+				"sapUiNoContentPadding CSS class removed from _dynamicPage aggregation.");
+		assert.strictEqual(oDynamicPage.aCustomStyleClasses.indexOf("sapUiContentPadding"), -1,
+				"sapUiContentPadding CSS class removed from _dynamicPage aggregation.");
+		assert.strictEqual(oDynamicPage.aCustomStyleClasses.indexOf("sapUiResponsiveContentPadding"), -1,
+				"sapUiResponsiveContentPadding CSS class removed from _dynamicPage aggregation.");
+	});
+
 	QUnit.test("test SemanticPage destroy method", function (assert) {
 		var oPage = this.oSemanticPage._getPage(),
 			oTitle = this.oSemanticPage._getTitle(),
@@ -707,6 +986,71 @@
 		// Assert
 		assert.equal(this.oSemanticPage.getSaveAsTileAction(), null, "saveAsTileAction aggregation does not exist anymore");
 		assert.ok(oSaveAsTileAction.bIsDestroyed, "oSaveAsTileAction button has been destroyed.");
+	});
+
+	QUnit.test("SemanticPage landmark info is set correctly", function (assert) {
+		var oLandmarkInfo = new DynamicPageAccessibleLandmarkInfo({
+			rootRole: "Region",
+			rootLabel: "Root",
+			contentRole: "Main",
+			contentLabel: "Content",
+			headerRole: "Banner",
+			headerLabel: "Header",
+			footerRole: "Region",
+			footerLabel: "Footer"
+		});
+
+		this.oSemanticPage.setLandmarkInfo(oLandmarkInfo);
+		Core.applyChanges();
+
+		assert.strictEqual(this.oSemanticPage.$("page").attr("role"), "region", "Root role is set correctly.");
+		assert.strictEqual(this.oSemanticPage.$("page").attr("aria-label"), "Root", "Root label is set correctly.");
+		assert.strictEqual(this.oSemanticPage.$("page-content").attr("role"), "main", "Content role is set correctly.");
+		assert.strictEqual(this.oSemanticPage.$("page-content").attr("aria-label"), "Content", "Content label is set correctly.");
+		assert.strictEqual(this.oSemanticPage.$("page-header").attr("role"), "banner", "Header role is set correctly.");
+		assert.strictEqual(this.oSemanticPage.$("page-header").attr("aria-label"), "Header", "Header label is set correctly.");
+		assert.strictEqual(this.oSemanticPage.$("page-footerWrapper").attr("role"), "region", "Footer role is set correctly.");
+		assert.strictEqual(this.oSemanticPage.$("page-footerWrapper").attr("aria-label"), "Footer", "Footer label is set correctly.");
+	});
+
+
+	QUnit.test("test SemanticPage snapping and expanding of header", function (assert) {
+		//Arrange
+		var oSnappedTitle = oFactory.getTitle(),
+			oExpandedTitle = oFactory.getDynamicPageTitle(),
+			oPage = this.oSemanticPage._getPage(),
+			done = assert.async();
+
+		this.oSemanticPage.setHeaderExpanded(false);
+		this.oSemanticPage.addTitleSnappedContent(oSnappedTitle);
+		this.oSemanticPage.addTitleExpandedContent(oExpandedTitle);
+
+		this.oSemanticPage.setContent(new VBox({
+			height: "2000px",
+			// width: "1000px",
+			items: [new Text({text: "ELEMENTE DEFINITORII Aspecte generale Magazinul online www"})]
+		}));
+		Core.applyChanges();
+
+		//Act
+			oPage.getScrollDelegate().scrollTo(0, 2000);
+
+			//Assert
+			assert.equal(oPage.getTitle().$expandWrapper.hasClass("sapUiHidden"), true, "Header is snapped on scroll bottom");
+			assert.equal(oPage.getTitle()._bExpandedState, false, "Header is in snapped state on scroll bottom");
+			//Act
+			oPage.getScrollDelegate().scrollTo(0, 0);
+			setTimeout(function () {
+				//Assert
+				assert.equal(oPage.getTitle().$expandWrapper.hasClass("sapUiHidden"), false, "Header is expanded on scroll top");
+				assert.equal(oPage.getTitle()._bExpandedState, true, "Header is in expanded state on scroll top");
+				done();
+			});
+
+
+		//Clean
+		this.oSemanticPage.setHeaderExpanded(true);
+
 	});
 
 	/* --------------------------- SemanticPage Rendering ---------------------------------- */
@@ -816,4 +1160,239 @@
 			sSemanticAddType + " should not be preprocessed");
 	});
 
-})(jQuery, QUnit, sinon, sap.f.semantic.SemanticPage);
+	QUnit.test("test if a Share menu button is hidden when there are no visible actions in it", function (assert) {
+		// Arrange
+		var oPrintAction = new PrintAction({visible: false}),
+			oDiscussInJamAction = new DiscussInJamAction({visible: false}),
+			oShareMenuButton;
+
+		this.oSemanticPage = oFactory.getSemanticPage({
+			discussInJamAction: oDiscussInJamAction,
+			shareInJamAction: new ShareInJamAction({visible: false}),
+			printAction: oPrintAction
+		});
+		oUtil.renderObject(this.oSemanticPage);
+		oShareMenuButton = this.oSemanticPage._getShareMenu()._getShareMenuButton();
+
+		// Assert
+		assert.strictEqual(oShareMenuButton.getVisible(), false, "Share menu button is hidden");
+
+		// Act
+		oPrintAction.setVisible(true);
+		oDiscussInJamAction.setVisible(true);
+
+		// Assert
+		assert.strictEqual(oShareMenuButton.getVisible(), true, "Share menu button is shown");
+
+		// Clean up
+		this.oSemanticPage.destroy();
+	});
+
+	QUnit.test("test if a Share menu button is hidden when there are no actions in it", function (assert) {
+		// Arrange
+		var done = assert.async(),
+			oShareMenuButton;
+
+		this.oSemanticPage = oFactory.getSemanticPage();
+		oUtil.renderObject(this.oSemanticPage);
+		oShareMenuButton = this.oSemanticPage._getShareMenu()._getShareMenuButton();
+
+		// Assert
+		assert.strictEqual(oShareMenuButton.getVisible(), false, "Share menu button is hidden");
+
+		// Act
+		this.oSemanticPage.setPrintAction(new PrintAction());
+		this.oSemanticPage.setDiscussInJamAction(new DiscussInJamAction());
+
+		this.oSemanticPage.addDelegate({"onAfterRendering": function () {
+			// Assert
+			assert.strictEqual(oShareMenuButton.getVisible(), true, "Share menu button is shown");
+
+			// Clean up
+			this.oSemanticPage.destroy();
+			done();
+		}.bind(this)});
+	});
+
+	QUnit.test("test if a single default Share menu action is displayed in Title Toolbar", function (assert) {
+		// Arrange
+		var oPrintAction = new PrintAction(),
+			oDiscussInJamAction = new DiscussInJamAction({visible: false}),
+			oSemanticTitle,
+			oTitleContainer,
+			oToolbar;
+
+		this.oSemanticPage = oFactory.getSemanticPage({
+			discussInJamAction: oDiscussInJamAction,
+			printAction: oPrintAction
+		});
+		oUtil.renderObject(this.oSemanticPage);
+		oSemanticTitle = this.oSemanticPage._getSemanticTitle();
+		oTitleContainer = oSemanticTitle._getContainer();
+		oToolbar = oTitleContainer._getActionsToolbar();
+
+		// Assert
+		assert.strictEqual(oToolbar.getContent().indexOf(oPrintAction._getControl()) > -1, true, "Single Print action is in the SemanticTitle");
+
+		// Act
+		oDiscussInJamAction.setVisible(true);
+
+		// Assert
+		assert.strictEqual(oToolbar.getContent().indexOf(oPrintAction._getControl()) === -1, true,
+			"Print action is not in the SemanticTitle, when there are more than one actions");
+
+		// Clean up
+		this.oSemanticPage.destroy();
+	});
+
+	QUnit.test("test if a single custom Share menu action is displayed in Title Toolbar", function (assert) {
+		// Arrange
+		var oCustomShareButton = new Button(),
+			oPrintAction = new PrintAction({visible: false}),
+			oSemanticTitle,
+			oTitleContainer,
+			oToolbar;
+
+		this.oSemanticPage = oFactory.getSemanticPage({
+			customShareActions: [oCustomShareButton],
+			printAction: oPrintAction
+		});
+
+		oUtil.renderObject(this.oSemanticPage);
+		oSemanticTitle = this.oSemanticPage._getSemanticTitle();
+		oTitleContainer = oSemanticTitle._getContainer();
+		oToolbar = oTitleContainer._getActionsToolbar();
+
+		// Assert
+		assert.strictEqual(oToolbar.getContent().indexOf(oCustomShareButton) > -1, true, "Single custom action is in the SemanticTitle");
+
+		// Act
+		oPrintAction.setVisible(true);
+
+		// Assert
+		assert.strictEqual(oToolbar.getContent().indexOf(oCustomShareButton) === -1, true,
+			"Custom action is not in the SemanticTitle, when there are more than one actions");
+
+		// Clean up
+		this.oSemanticPage.destroy();
+	});
+
+	/* --------------------------- Accessibility -------------------------------------- */
+	QUnit.module("Accessibility");
+
+	QUnit.test("ARIA attributes", function(assert) {
+		// Arrange
+		var oSemanticPage = oFactory.getSemanticPage(),
+			oDynamicPage = oSemanticPage._getPage(),
+			sExpectedRoleDescription = Library.getResourceBundleFor("sap.f")
+				.getText(oSemanticPage.constructor.ARIA_ROLE_DESCRIPTION);
+
+		// Act
+		oUtil.renderObject(oSemanticPage);
+
+		// Assert
+		assert.strictEqual(oDynamicPage.$().attr('aria-roledescription'), sExpectedRoleDescription, "aria-roledescription is set");
+
+		// Clean
+		oSemanticPage.destroy();
+	});
+
+	QUnit.test("AriaLabelledBy attribute on actions toolbar is set correctly", function(assert) {
+		// Arrange
+		var oSemanticPage = oFactory.getSemanticPage(),
+			oSemanticTitle = oSemanticPage._getSemanticTitle(),
+			oTitleContainer = oSemanticTitle._getContainer(),
+			oActionsToolbar = oTitleContainer._getActionsToolbar();
+
+		// Act
+		oUtil.renderObject(oSemanticPage);
+
+		// Assert
+		var $InvisibleTextDomRef = $('#' + oActionsToolbar.getId() + "-InvisibleText");
+		assert.strictEqual($InvisibleTextDomRef.length, 1, "InvisibleText DOM element exists - actionsToolbar");
+		assert.equal(oActionsToolbar.getAriaLabelledBy()[0], $InvisibleTextDomRef.attr("id"), "aria-labelledby is set correctly - actionsToolbar");
+
+		// Clean
+		oSemanticPage.destroy();
+	});
+
+	QUnit.test("AriaLabelledBy attribute on navigation actions toolbar is set correctly", function(assert) {
+		// Arrange
+		var oSemanticPage = oFactory.getSemanticPage(),
+			oSemanticTitle = oSemanticPage._getSemanticTitle(),
+			oTitleContainer = oSemanticTitle._getContainer(),
+			oNavigationActionsToolbar = oTitleContainer._getNavigationActionsToolbar();
+
+		// Act
+		oUtil.renderObject(oSemanticPage);
+
+		// Assert
+		var $InvisibleTextDomRef = $('#' + oNavigationActionsToolbar.getId() + "-InvisibleText");
+		assert.strictEqual($InvisibleTextDomRef.length, 1, "InvisibleText DOM element exists - navigation actions toolbar");
+		assert.equal(oNavigationActionsToolbar.getAriaLabelledBy()[0], $InvisibleTextDomRef.attr("id"), "aria-labelledby is set correctly - navigation actions toolbar");
+
+		// Clean
+		oSemanticPage.destroy();
+	});
+
+	QUnit.test("AriaLabelledBy attribute on footer actions toolbar is set correctly", function(assert) {
+		// Arrange
+		var oSemanticPage = oFactory.getSemanticPage(),
+			oFooterToolbar = oSemanticPage._getFooter();
+		// Act
+		oUtil.renderObject(oSemanticPage);
+
+		// Assert
+		var $InvisibleTextDomRef = $('#' + oFooterToolbar.getId() + "-FooterActions-InvisibleText");
+		assert.strictEqual($InvisibleTextDomRef.length, 1, "InvisibleText DOM element exists - footer actions");
+		assert.equal(oFooterToolbar.getAriaLabelledBy()[0], $InvisibleTextDomRef.attr("id"), "aria-labelledby is set correctly - footer actions");
+
+		// Clean
+		oSemanticPage.destroy();
+	});
+
+	QUnit.test("Share menu action button has correct tooltip", function(assert) {
+		// Arrange
+		var oSemanticPage = oFactory.getSemanticPage(),
+			oShareMenuButton = oSemanticPage._getShareMenu()._getShareMenuButton();
+
+		// Act
+		oUtil.renderObject(oSemanticPage);
+
+		// Assert
+		assert.strictEqual(oShareMenuButton._getTooltip(), "Share", "Share menu button has correct tooltip");
+
+		// Clean
+		oSemanticPage.destroy();
+	});
+
+	QUnit.test("Ctrl+Shift+S to open share action sheet", function(assert) {
+		var done = assert.async(),
+			oSemanticPageTitle,
+			oActionSheet,
+			bMacOS = Device.os.macintosh;
+
+		// Arrange
+		this.oSemanticPage = oFactory.getSemanticPage();
+		oUtil.renderObject(this.oSemanticPage);
+		oSemanticPageTitle = this.oSemanticPage._getTitle();
+		oActionSheet = this.oSemanticPage._getActionSheet();
+
+		// Act
+		this.oSemanticPage.setPrintAction(new PrintAction());
+		this.oSemanticPage.setDiscussInJamAction(new DiscussInJamAction());
+
+		this.oSemanticPage.addDelegate({"onAfterRendering": function () {
+			oActionSheet.attachAfterOpen(function() {
+				assert.strictEqual(oActionSheet.isOpen(), true, "Share menu is shown");
+				this.oSemanticPage.destroy();
+				done();
+			}, this);
+
+			// Act - QUtils.triggerKeyEvent does not dispatch this
+			oSemanticPageTitle.getDomRef().dispatchEvent(new KeyboardEvent("keydown", {
+				bubbles: true, key: "S", shiftKey: true, ctrlKey: !bMacOS, metaKey: bMacOS
+			}));
+		}.bind(this)});
+	});
+});

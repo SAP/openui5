@@ -1,5 +1,5 @@
 <mvc:View height="100%" controllerName="sap.ui.core.internal.samples.composite.xmlcomposite.exTable.Test" 
-	xmlns:mvc="sap.ui.core.mvc" 	
+	xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.m">
 	<Table>
 		<columns>

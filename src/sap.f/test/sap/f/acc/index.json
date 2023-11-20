@@ -1,19 +1,39 @@
 {
 	"tests": [
 		{
-			"control": "sap.f.Avatar",
-			"url": "../Avatar.html",
-			"appComponent": "CA-UI5-CTR-PIR"
-		},
-		{
 			"control": "sap.f.DynamicPage",
 			"url": "DynamicPage.html",
-			"appComponent": "CA-UI5-CTR-PIR"
+			"appComponent": "CA-UI5-CTR-PIR",
+			"accTest": {
+				"name": "sap.f.DynamicPage",
+				"title": "ACC test for sap.f.DynamicPage",
+				"module": "./dynamicpage.qunit"
+			}
 		},
 		{
 			"control": "sap.f.FlexibleColumnLayout",
-			"url": "../FlexibleColumnLayout.html",
+			"url": "FlexibleColumnLayout.html#/detailDetail/ThreeColumnsMidExpanded",
 			"appComponent": "CA-UI5-CTR-PIR"
+		},
+		{
+			"control": "sap.f.SemanticPage",
+			"url": "../SemanticPage.html",
+			"appComponent": "CA-UI5-CTR-PIR"
+		},
+		{
+			"control": "sap.f.ShellBar",
+			"url": "ShellBar.html",
+			"appComponent": "CA-UI5-CTR-PIR"
+		},
+		{
+		  "control": "sap.f.GridContainer",
+		  "url": "GridContainer.html",
+		  "appComponent": "CA-UI5-CTR-ROD"
+		},
+		{
+		  "control": "sap.f.ProductSwitch",
+		  "url": "ProductSwitch.html",
+		  "appComponent": "CA-UI5-CTR-PIR"
 		}
 	]
 }

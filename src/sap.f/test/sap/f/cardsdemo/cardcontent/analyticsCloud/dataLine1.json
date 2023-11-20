@@ -1,0 +1,470 @@
+{
+    "chart": {
+        "chart": {
+            "polar": false,
+            "type": "line",
+            "animation": false,
+            "backgroundColor": "rgba(0,0,0,0)",
+            "style": {
+                "fontFamily": "LatoWeb, 'Open Sans', 'Helvetica Neue', Helvetica, Arial, 'sans serif'",
+                "spacingBottom": 10
+            }
+        },
+        "lang": {},
+        "boost": {
+            "useGPUTranslations": true
+        },
+        "credits": {
+            "enabled": false
+        },
+        "legend": {
+            "itemStyle": {
+                "fontSize": "12px",
+                "fontWeight": "normal"
+            },
+            "verticalAlign": "top",
+            "squareSymbol": true,
+            "symbolRadius": 0,
+            "layout": "horizontal",
+            "align": "center",
+            "y": 20,
+            "enabled": true
+        },
+        "title": {
+            "text": "Discount, Gross Margin per Location, Product for Actual",
+            "align": "left"
+        },
+        "subtitle": {
+            "text": "in Million USD",
+            "align": "left"
+        },
+        "plotOptions": {
+            "line": {
+                "dataLabels": {
+                    "enabled": true,
+                    "hideWhenOverlap": true,
+                    "style": {
+                        "fill": "black",
+                        "color": "black",
+                        "fontFamily": "LatoWeb, 'Open Sans', 'Helvetica Neue', Helvetica, Arial, 'sans serif'",
+                        "fontSize": "12px",
+                        "fontWeight": "normal",
+                        "textOutline": "0px"
+                    },
+                    "format": "{point.yFormatted} "
+                },
+                "yAxis": 0,
+                "colorByPoint": false,
+                "pointPadding": 0,
+                "showInLegend": true
+            },
+            "series": {
+                "borderColor": "transparent",
+                "dataLabels": {
+                    "format": "{point.yFormatted}"
+                }
+            }
+        },
+        "responsive": {
+            "rules": [
+                {
+                    "condition": {
+                        "maxHeight": 176
+                    },
+                    "chartOptions": {
+                        "legend": {
+                            "enabled": false
+                        },
+                        "yAxis": {
+                            "labels": {
+                                "rotation": 344,
+                                "x": 10
+                            }
+                        }
+                    }
+                },
+                {
+                    "condition": {
+                        "maxWidth": 359,
+                        "minHeight": 70
+                    },
+                    "chartOptions": {
+                        "chart": {
+                            "animation": false,
+                            "marginTop": 50
+                        },
+                        "plotOptions": {
+                            "series": {
+                                "dataLabels": {
+                                    "style": {
+                                        "fontSize": "9px"
+                                    }
+                                }
+                            }
+                        },
+                        "title": {
+                            "style": {
+                                "fontSize": "13px",
+                                "floating": true
+                            }
+                        },
+                        "subtitle": {
+                            "text": ""
+                        },
+                        "xAxis": {
+                            "labels": {
+                                "style": {
+                                    "fontSize": "10px"
+                                }
+                            }
+                        },
+                        "yAxis": {
+                            "labels": {
+                                "style": {
+                                    "fontSize": "10px"
+                                }
+                            }
+                        }
+                    }
+                },
+                {
+                    "condition": {
+                        "maxWidth": 176
+                    },
+                    "chartOptions": {
+                        "chart": {
+                            "animation": false,
+                            "marginTop": 40
+                        },
+                        "legend": {
+                            "enabled": false,
+                            "y": 25
+                        },
+                        "plotOptions": {
+                            "series": {
+                                "minSize": 100,
+                                "dataLabels": {
+                                    "connectorWidth": 0,
+                                    "distance": -25,
+                                    "style": {
+                                        "fontSize": "8px"
+                                    }
+                                }
+                            }
+                        },
+                        "title": {
+                            "style": {
+                                "fontSize": "10px"
+                            }
+                        },
+                        "subtitle": {
+                            "text": ""
+                        },
+                        "xAxis": {
+                            "labels": {
+                                "style": {
+                                    "fontSize": "9px"
+                                }
+                            }
+                        },
+                        "yAxis": {
+                            "labels": {
+                                "style": {
+                                    "fontSize": "9px"
+                                }
+                            }
+                        }
+                    }
+                }
+            ]
+        },
+        "xAxis": [
+            {
+                "categories": [
+                    "<b>California<\/b>\/<b>Alcohol<\/b>",
+                    "<b>California<\/b>\/<b>Carbonated Drinks<\/b>",
+                    "<b>California<\/b>\/<b>Juices<\/b>",
+                    "<b>California<\/b>\/<b>Others<\/b>",
+                    "<b>Nevada<\/b>\/<b>Alcohol<\/b>",
+                    "<b>Nevada<\/b>\/<b>Carbonated Drinks<\/b>",
+                    "<b>Nevada<\/b>\/<b>Juices<\/b>",
+                    "<b>Nevada<\/b>\/<b>Others<\/b>",
+                    "<b>Oregon<\/b>\/<b>Alcohol<\/b>",
+                    "<b>Oregon<\/b>\/<b>Carbonated Drinks<\/b>",
+                    "<b>Oregon<\/b>\/<b>Juices<\/b>",
+                    "<b>Oregon<\/b>\/<b>Others<\/b>"
+                ],
+                "lineWidth": 3,
+                "lineColor": "rgb(0, 0, 0)",
+                "labels": {
+                    "x": -5,
+                    "style": {
+                        "fontSize": "13px",
+                        "fill": "rgb(166, 168, 171)",
+                        "fontFamily": "'72-Web', Arial, Helvetica, sans-serif"
+                    },
+                    "enabled": true
+                },
+                "gridLineWidth": 0,
+                "tickColor": "rgb(166, 168, 171)",
+                "tickWidth": 0
+            }
+        ],
+        "series": [
+            {
+                "name": "Gross Margin",
+                "type": "line",
+                "yAxis": 0,
+                "axis": "valueAxis",
+                "data": [
+                    {
+                        "y": 25.38848178,
+                        "yFormatted": "25.39",
+                        "color": "rgb(197, 56, 128)",
+                        "name": "Gross Margin",
+                        "category": "California\/Alcohol"
+                    },
+                    {
+                        "y": 44.26056076,
+                        "yFormatted": "44.26",
+                        "color": "rgb(197, 56, 128)",
+                        "name": "Gross Margin",
+                        "category": "California\/Carbonated Drinks"
+                    },
+                    {
+                        "y": 102.77938493,
+                        "yFormatted": "102.78",
+                        "color": "rgb(197, 56, 128)",
+                        "name": "Gross Margin",
+                        "category": "California\/Juices"
+                    },
+                    {
+                        "y": 1.0531655,
+                        "yFormatted": "1.05",
+                        "color": "rgb(197, 56, 128)",
+                        "name": "Gross Margin",
+                        "category": "California\/Others"
+                    },
+                    {
+                        "y": 1.5307982299999998,
+                        "yFormatted": "1.53",
+                        "color": "rgb(197, 56, 128)",
+                        "name": "Gross Margin",
+                        "category": "Nevada\/Alcohol"
+                    },
+                    {
+                        "y": 4.62453839,
+                        "yFormatted": "4.62",
+                        "color": "rgb(197, 56, 128)",
+                        "name": "Gross Margin",
+                        "category": "Nevada\/Carbonated Drinks"
+                    },
+                    {
+                        "y": 7.041067889999999,
+                        "yFormatted": "7.04",
+                        "color": "rgb(197, 56, 128)",
+                        "name": "Gross Margin",
+                        "category": "Nevada\/Juices"
+                    },
+                    {
+                        "y": 0.05723058999999999,
+                        "yFormatted": "0.06",
+                        "color": "rgb(197, 56, 128)",
+                        "name": "Gross Margin",
+                        "category": "Nevada\/Others"
+                    },
+                    {
+                        "y": 7.11365248,
+                        "yFormatted": "7.11",
+                        "color": "rgb(197, 56, 128)",
+                        "name": "Gross Margin",
+                        "category": "Oregon\/Alcohol"
+                    },
+                    {
+                        "y": 13.197622619999999,
+                        "yFormatted": "13.20",
+                        "color": "rgb(197, 56, 128)",
+                        "name": "Gross Margin",
+                        "category": "Oregon\/Carbonated Drinks"
+                    },
+                    {
+                        "y": 27.684673399999998,
+                        "yFormatted": "27.68",
+                        "color": "rgb(197, 56, 128)",
+                        "name": "Gross Margin",
+                        "category": "Oregon\/Juices"
+                    },
+                    {
+                        "y": 0.30577278999999996,
+                        "yFormatted": "0.31",
+                        "color": "rgb(197, 56, 128)",
+                        "name": "Gross Margin",
+                        "category": "Oregon\/Others"
+                    }
+                ],
+                "color": "rgb(197, 56, 128)"
+            },
+            {
+                "name": "Discount",
+                "type": "line",
+                "yAxis": 0,
+                "axis": "valueAxis",
+                "data": [
+                    {
+                        "y": 30.720120729999998,
+                        "yFormatted": "30.72",
+                        "color": "#b2d235",
+                        "name": "Discount",
+                        "category": "California\/Alcohol"
+                    },
+                    {
+                        "y": 15.64673681,
+                        "yFormatted": "15.65",
+                        "color": "#b2d235",
+                        "name": "Discount",
+                        "category": "California\/Carbonated Drinks"
+                    },
+                    {
+                        "y": 130.30431837999998,
+                        "yFormatted": "130.30",
+                        "color": "#b2d235",
+                        "name": "Discount",
+                        "category": "California\/Juices"
+                    },
+                    {
+                        "y": 1.06187762,
+                        "yFormatted": "1.06",
+                        "color": "#b2d235",
+                        "name": "Discount",
+                        "category": "California\/Others"
+                    },
+                    {
+                        "y": 6.540315269999999,
+                        "yFormatted": "6.54",
+                        "color": "#b2d235",
+                        "name": "Discount",
+                        "category": "Nevada\/Alcohol"
+                    },
+                    {
+                        "y": 3.7653881399999998,
+                        "yFormatted": "3.77",
+                        "color": "#b2d235",
+                        "name": "Discount",
+                        "category": "Nevada\/Carbonated Drinks"
+                    },
+                    {
+                        "y": 32.11434368,
+                        "yFormatted": "32.11",
+                        "color": "#b2d235",
+                        "name": "Discount",
+                        "category": "Nevada\/Juices"
+                    },
+                    {
+                        "y": 0.20784879,
+                        "yFormatted": "0.21",
+                        "color": "#b2d235",
+                        "name": "Discount",
+                        "category": "Nevada\/Others"
+                    },
+                    {
+                        "y": 15.0465775,
+                        "yFormatted": "15.05",
+                        "color": "#b2d235",
+                        "name": "Discount",
+                        "category": "Oregon\/Alcohol"
+                    },
+                    {
+                        "y": 7.4797173699999995,
+                        "yFormatted": "7.48",
+                        "color": "#b2d235",
+                        "name": "Discount",
+                        "category": "Oregon\/Carbonated Drinks"
+                    },
+                    {
+                        "y": 59.71431077,
+                        "yFormatted": "59.71",
+                        "color": "#b2d235",
+                        "name": "Discount",
+                        "category": "Oregon\/Juices"
+                    },
+                    {
+                        "y": 0.52971061,
+                        "yFormatted": "0.53",
+                        "color": "#b2d235",
+                        "name": "Discount",
+                        "category": "Oregon\/Others"
+                    }
+                ],
+                "color": "#b2d235"
+            }
+        ],
+        "tooltip": {
+            "pointFormat": "<b>{series.name}<\/b> \/ {point.category}<br\/><b>{point.name}<\/b>  {point.yFormatted}<br\/>{point.errorRange}",
+            "headerFormat": ""
+        },
+        "yAxis": [
+            {
+                "lineColor": "#FFFFFF",
+                "labels": {
+                    "x": -5,
+                    "style": {
+                        "fontSize": "13px",
+                        "fill": "rgb(166, 168, 171)",
+                        "fontFamily": "'72-Web', Arial, Helvetica, sans-serif"
+                    },
+                    "enabled": true
+                },
+                "gridLineWidth": 0,
+                "tickColor": "rgb(166, 168, 171)",
+                "tickWidth": 0,
+                "title": {
+                    "text": ""
+                },
+                "stackLabels": {
+                    "enabled": false,
+                    "format": "{total:,.2f}",
+                    "align": "center",
+                    "y": -20
+                }
+            }
+        ],
+        "colors": [
+            "#9674ae",
+            "#b2d235",
+            "#c2b39c",
+            "#ffcf01",
+            "#f26d6e",
+            "#590056",
+            "#005942",
+            "#aeb57e",
+            "#d773aa",
+            "#833880",
+            "#8aa500",
+            "#9d9f90",
+            "#f9be00",
+            "#f05b82",
+            "#474270",
+            "#a8c046",
+            "#8d8263",
+            "#c53880"
+        ],
+        "palette": {
+            "gradientKeys": []
+        }
+    },
+    "kpi": {
+        "type": "Numeric",
+        "title": "Quantity sold for Actual",
+        "subTitle": "Quantity sold",
+        "sideIndicators": [],
+        "unitOfMeasurement": null,
+        "mainIndicator": {
+            "unit": "M",
+            "number": "204.31"
+        }
+    },
+    "header": {
+        "title": "ServiceTestStory",
+        "description": "ServiceTestStory"
+    }
+}

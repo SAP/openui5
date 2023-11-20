@@ -1,0 +1,67 @@
+<mvc:View
+		height="100%"
+		controllerName="sap.m.sample.UploadSet.Page"
+		xmlns:mvc="sap.ui.core.mvc"
+		xmlns="sap.m"
+		xmlns:upload="sap.m.upload">
+	<Page showHeader="false">
+		<upload:UploadSet
+				id="UploadSet"
+				instantUpload="true"
+				showIcons="true"
+				uploadEnabled="true"
+				terminationEnabled="true"
+				fileTypes="txt,doc,png"
+				maxFileNameLength="30"
+				maxFileSize="200"
+				mediaTypes="text/plain,application/msword,image/png"
+				uploadUrl="../../../../upload"
+				items="{path: '/items', templateShareable: false}"
+				mode="MultiSelect"
+				selectionChanged="onSelectionChange">
+			<upload:toolbar>
+				<OverflowToolbar>
+					<ToolbarSpacer/>
+					<Button
+							id="uploadSelectedButton"
+							text="Upload selected"
+							press="onUploadSelectedButton"/>
+					<Button
+							id="downloadSelectedButton"
+							text="Download selected"
+							press="onDownloadSelectedButton"/>
+					<Button
+							id="versionButton"
+							enabled="false"
+							text="Upload a new version"
+							press="onVersionUpload"/>
+					<upload:UploadSetToolbarPlaceholder />
+				</OverflowToolbar>
+			</upload:toolbar>
+			<upload:items>
+				<upload:UploadSetItem
+						fileName="{fileName}"
+						mediaType="{mediaType}"
+						url="{url}"
+						thumbnailUrl="{thumbnailUrl}"
+						markers="{path: 'markers', templateShareable: false}"
+						statuses="{path: 'statuses', templateShareable: false}"
+						uploadState="{uploadState}">
+					<upload:markers>
+						<ObjectMarker
+								type="{type}"
+								visibility="{visibility}"/>
+					</upload:markers>
+					<upload:statuses>
+						<ObjectStatus
+								title="{title}"
+								text="{text}"
+								state="{state}"
+								icon="{icon}"
+								active="{active}"/>
+					</upload:statuses>
+				</upload:UploadSetItem>
+			</upload:items>
+		</upload:UploadSet>
+	</Page>
+</mvc:View>

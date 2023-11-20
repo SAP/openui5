@@ -1,0 +1,121 @@
+/* =========================================== */
+/* CSS for control sap.ui.unified/ShellHeader  */
+/* Horizon High Contrast White theme           */
+/* =========================================== */
+
+@_sap_ui_unified_ShellHeader_ButtonBorderRadius: 6px;
+@_sap_ui_unified_ShellHeader_ButtonHeight: 40px;
+@_sap_ui_unified_ShellHeader_ButtonBorderWidth: 1px;
+
+.sapUiUfdShellHeadBegin .sapUiUfdShellHeadItm.sapUiUfdShellHeadItmSep:after {
+	border-left: @_sap_ui_unified_ShellHeader_ButtonBorderWidth solid @sapUiShellBorderColor;
+	right: -@_sap_ui_unified_ShellHeader_ButtonOuterSpace;
+	top: @_sap_ui_unified_ShellHeader_ButtonOuterSpace/2;
+}
+
+.sapUiUfdShellHeadUsrItm:before,
+.sapUiUfdShellHeadEnd .sapUiUfdShellHeadItm.sapUiUfdShellHeadItmSep:before {
+	border-right: @_sap_ui_unified_ShellHeader_ButtonBorderWidth solid @sapUiShellBorderColor;
+	top: @_sap_ui_unified_ShellHeader_ButtonOuterSpace/2;
+}
+
+html.sapUiMedia-Std-Desktop .sapUiUfdShellHeadItm:hover > span {
+	background-color: @sapUiHighlight;
+}
+
+.sapUiUfdShellHeadItm {
+	margin-right: @_sap_ui_unified_ShellHeader_ButtonOuterSpace;
+}
+
+.sapUiUfdShellHeadItm > span {
+	border: @_sap_ui_unified_ShellHeader_ButtonBorderWidth solid @sapUiShellBorderColor;
+	border-radius: @_sap_ui_unified_ShellHeader_ButtonBorderRadius;
+	color: @sapUiBaseText;
+	height: @_sap_ui_unified_ShellHeader_ButtonHeight;
+	line-height: @_sap_ui_unified_ShellHeader_ButtonHeight - 2*@_sap_ui_unified_ShellHeader_ButtonOutlineWidth;
+	margin-right: 2*@_sap_ui_unified_ShellHeader_ButtonOuterSpace;
+	margin-top: 0;
+	padding: @_sap_ui_unified_ShellHeader_ButtonBorderWidth;
+	width: @_sap_ui_unified_ShellHeader_ButtonHeight;
+	-webkit-font-smoothing: antialiased;
+}
+
+.sapUiUfdShellHeadUsrItmImg,
+.sapUiUfdShellHeadUsrItmName,
+.sapUiUfdShellHeadUsrItmExp {
+	border: @_sap_ui_unified_ShellHeader_ButtonBorderWidth solid @sapUiShellBorderColor;
+	height: @_sap_ui_unified_ShellHeader_ButtonHeight;
+	line-height: @_sap_ui_unified_ShellHeader_ButtonHeight - 2*@_sap_ui_unified_ShellHeader_ButtonOutlineWidth;;
+	margin-top: 0;
+	padding-top: @_sap_ui_unified_ShellHeader_ButtonBorderWidth;
+}
+
+html.sapUiMedia-Std-Desktop .sapUiUfdShellHeadUsrItmImg,
+html.sapUiMedia-Std-Tablet .sapUiUfdShellHeadUsrItmImg {
+	border-bottom-left-radius: @_sap_ui_unified_ShellHeader_ButtonBorderRadius;
+	border-right: none;
+	border-top-left-radius: @_sap_ui_unified_ShellHeader_ButtonBorderRadius;
+}
+
+html.sapUiMedia-Std-Desktop .sapUiUfdShellHeadUsrItmImg > img,
+html.sapUiMedia-Std-Tablet .sapUiUfdShellHeadUsrItmImg > img {
+	margin: 0;
+}
+
+.sapUiUfdShellHeadUsrItmName {
+	border-left: none;
+	border-right: none;
+}
+
+.sapUiUfdShellHeadUsrItmExp {
+	border-bottom-right-radius: @_sap_ui_unified_ShellHeader_ButtonBorderRadius;
+	border-left: none;
+	border-top-right-radius: @_sap_ui_unified_ShellHeader_ButtonBorderRadius;
+}
+
+.sapUiUfdShellHeadUsrItm:focus .sapUiUfdShellHeadUsrItmImg,
+.sapUiUfdShellHeadUsrItm:focus .sapUiUfdShellHeadUsrItmName,
+.sapUiUfdShellHeadUsrItm:focus .sapUiUfdShellHeadUsrItmExp {
+	border-radius: 0;
+	border-style: dotted;
+	border-width: 2*@_sap_ui_unified_ShellHeader_ButtonBorderWidth;
+	padding-top: 0;
+}
+
+.sapUiUfdShellHeadUsrItm:focus .sapUiUfdShellHeadUsrItmImg {
+	border-right: none;
+	padding-bottom: 0;
+	padding-left: @_sap_ui_unified_ShellHeader_ButtonInnerSpace - @_sap_ui_unified_ShellHeader_ButtonBorderWidth;
+	padding-top: 0;
+}
+
+.sapUiUfdShellHeadUsrItm:focus .sapUiUfdShellHeadUsrItmName {
+	border-left: none;
+	border-right: none;
+}
+
+.sapUiUfdShellHeadUsrItm:focus .sapUiUfdShellHeadUsrItmExp {
+	border-left: none;
+	padding-bottom: 0;
+	padding-right: @_sap_ui_unified_ShellHeader_ButtonInnerSpace - @_sap_ui_unified_ShellHeader_ButtonBorderWidth;
+	padding-top: 0;
+}
+
+html.sapUiMedia-Std-Phone .sapUiUfdShellHeadUsrItmImg {
+	border-radius: @_sap_ui_unified_ShellHeader_ButtonBorderRadius;
+}
+
+html.sapUiMedia-Std-Phone .sapUiUfdShellHeadUsrItm:focus .sapUiUfdShellHeadUsrItmImg {
+	border-right: 2*@_sap_ui_unified_ShellHeader_ButtonBorderWidth dotted @sapUiContentFocusColor;
+	padding-right: @_sap_ui_unified_ShellHeader_ButtonInnerSpace - @_sap_ui_unified_ShellHeader_ButtonBorderWidth;
+}
+
+.sapUiUfdShellHeadItm:focus > span {
+	border: 2*@_sap_ui_unified_ShellHeader_ButtonBorderWidth dotted @sapUiContentFocusColor;
+	border-radius: 0;
+	padding: 0;
+}
+
+.sapUiUfdShellHeadUsrItmWithoutPopup .sapUiUfdShellHeadUsrItmExp {
+	padding-right: @_sap_ui_unified_ShellHeader_ButtonBorderRadius;
+}

@@ -1,0 +1,13 @@
+{
+  "1.60.0": {
+    "date": "October 2018",
+    "notes": [
+      {
+        "id": "ca546c11afa44571bad2f48333424719467dcb7b",
+        "type": "FEATURE",
+        "text": "FieldBase: Text arrangement partial supported",
+        "references": []
+      }
+    ]
+  }
+}

@@ -3,62 +3,63 @@
  */
 
 // Provides default renderer for control sap.m.Text
-sap.ui.define([],
-	function() {
+sap.ui.define([
+	"sap/ui/core/Lib"
+],
+	function(Library) {
 	"use strict";
-
 
 	/**
 	 * Text renderer.
 	 * @author SAP SE
 	 * @namespace
 	 */
-	var TileRenderer = {};
+	var TileRenderer = {
+		apiVersion: 2
+	};
 
 	/**
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
 	 * @param {sap.ui.core.RenderManager} rm The RenderManager that can be used for writing to the render output buffer
-	 * @param {sap.ui.core.Control} oControl An object representation of the control that should be rendered
+	 * @param {sap.m.Tile} oControl An object representation of the control that should be rendered
 	 */
 	TileRenderer.render = function(rm, oControl) {
-		var oTileContainer,
+		var oRB = Library.getResourceBundleFor("sap.m"),
+			oTileContainer,
 			aVisibleTiles;
 
-		rm.write("<div tabindex=\"0\"");
-		rm.writeControlData(oControl);
-		rm.addClass("sapMTile");
-		rm.addClass("sapMPointer");
-		rm.writeClasses();
+		rm.openStart("div", oControl);
+		rm.attr("tabindex", "0");
+		rm.class("sapMTile");
+		rm.class("sapMPointer");
 		if (oControl._invisible) {
-			rm.addStyle("visibility", "hidden");
-			rm.writeStyles();
+			rm.style("visibility", "hidden");
 		}
 		var sTooltip = oControl.getTooltip_AsString();
 		if (sTooltip) {
-			rm.writeAttributeEscaped("title", sTooltip);
+			rm.attr("title", sTooltip);
 		}
 
 		/* WAI ARIA if in TileContainer context */
-		if (oControl.getParent() instanceof sap.m.TileContainer) {
+		if (oControl.getParent() && oControl.getParent().isA("sap.m.TileContainer")) {
 			oTileContainer = oControl.getParent();
 			aVisibleTiles = oTileContainer._getVisibleTiles();
 
-			rm.writeAccessibilityState(oControl, {
+			rm.accessibilityState(oControl, {
 				role: "option",
 				posinset: oTileContainer._indexOfVisibleTile(oControl, aVisibleTiles) + 1,
 				setsize: aVisibleTiles.length
 			});
 		}
 
-		rm.write(">");
-		if (oControl.getRemovable()) {
-			rm.write("<div id=\"" + oControl.getId() + "-remove\" class=\"sapMTCRemove\"></div>");
-		} else {
-			rm.write("<div id=\"" + oControl.getId() + "-remove\" class=\"sapMTCNoRemove\"></div>");
-		}
-		rm.write("<div class=\"sapMTileContent\">");
-		this._renderContent(rm,oControl);
-		rm.write("</div></div>");
+		rm.openEnd();
+		rm.openStart("div", oControl.getId() + "-remove");
+		rm.class(oControl.getRemovable() ? "sapMTCRemove" : "sapMTCNoRemove");
+		rm.attr("title", oRB.getText("GENERICTILE_REMOVEBUTTON_TEXT"));
+		rm.openEnd().close("div");
+		rm.openStart("div").class("sapMTileContent").openEnd();
+		this._renderContent(rm, oControl);
+		rm.close("div").close("div");
 	};
 
 	TileRenderer._renderContent = function(rm, oControl) {};

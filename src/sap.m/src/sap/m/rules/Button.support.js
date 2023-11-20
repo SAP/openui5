@@ -4,8 +4,8 @@
 /**
  * Defines support rules of the Button control of sap.m library.
  */
-sap.ui.define(["jquery.sap.global", "sap/ui/support/library"],
-	function(jQuery, SupportLib) {
+sap.ui.define(["sap/ui/support/library"],
+	function(SupportLib) {
 	"use strict";
 
 	// shortcuts
@@ -13,17 +13,51 @@ sap.ui.define(["jquery.sap.global", "sap/ui/support/library"],
 		Severity = SupportLib.Severity,	// Hint, Warning, Error
 		Audiences = SupportLib.Audiences; // Control, Internal, Application
 
+	// Controls that internally have sap.m.Button instances.
+	var aExcludeListControls = [
+		"sap.ui.comp.smartvariants.SmartVariantManagement",
+		"sap.m.SplitButton"
+	];
+
+	function isControlExcludeListed(oControl) {
+		if (oControl) {
+			for (var i = 0; i < aExcludeListControls.length; i++) {
+				if (oControl.isA(aExcludeListControls[i])) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
+	function isInsideExcludeListedControl(oButton) {
+		if (!oButton) {
+			return false;
+		}
+
+		// Check one level up.
+		if (isControlExcludeListed(oButton.getParent())) {
+			return true;
+		}
+		// Check two levels up.
+		if (oButton.getParent() && isControlExcludeListed(oButton.getParent().getParent())) {
+			return true;
+		}
+
+		return false;
+	}
+
 	//**********************************************************
 	// Rule Definitions
 	//**********************************************************
 
 	/**
-	 *Checks, if a button consisting of only an icon has a tooltip (design guideline)
+	 * Checks, if a button consisting of only an icon has a tooltip (design guideline)
 	 */
 	var oButtonRule = {
 		id : "onlyIconButtonNeedsTooltip",
 		audiences: [Audiences.Control],
-		categories: [Categories.Usability],
+		categories: [Categories.Accessibility],
 		enabled: true,
 		minversion: "1.28",
 		title: "Button: Consists of only an icon, needs a tooltip",
@@ -43,13 +77,15 @@ sap.ui.define(["jquery.sap.global", "sap/ui/support/library"],
 						var sElementId = oElement.getId(),
 							sElementName = oElement.getMetadata().getElementName();
 
-						oIssueManager.addIssue({
-							severity: Severity.Medium,
-							details: "Button '" + sElementName + "' (" + sElementId + ") consists of only an icon but has no tooltip",
-							context: {
-								id: sElementId
-							}
-						});
+						if (!isInsideExcludeListedControl(oElement)) {
+							oIssueManager.addIssue({
+								severity: Severity.Medium,
+								details: "Button '" + sElementName + "' (" + sElementId + ") consists of only an icon but has no tooltip",
+								context: {
+									id: sElementId
+								}
+							});
+						}
 					}
 				});
 		}

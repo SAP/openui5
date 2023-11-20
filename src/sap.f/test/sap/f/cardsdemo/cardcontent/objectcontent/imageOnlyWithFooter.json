@@ -1,0 +1,31 @@
+{
+	"sap.app": {
+		"id": "cardsdemo.object.imageOnlyWithFooter",
+		"type": "card"
+	},
+	"sap.card": {
+		"type": "Object",
+		"content": {
+			"groups": [
+				{
+					"alignment": "Stretch",
+					"items": [
+						{
+							"type": "Image",
+							"src": "../../images/grass.jpg",
+							"fullWidth" : true
+						}
+					]
+				}
+			]
+		},
+		"footer": {
+			"actionsStrip": [
+				{
+					"text": "Send Reminder",
+					"buttonType": "Accept"
+				}
+			]
+		}
+	}
+}

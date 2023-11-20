@@ -1,0 +1,1032 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="1.0" xmlns:edmx="http://schemas.microsoft.com/ado/2007/06/edmx" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" xmlns:sap="http://www.sap.com/Protocols/SAPData">
+    <edmx:Reference Uri="https://server/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_COMMON',Version='0001',SAP__Origin='YI3CLNT000')/$value" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
+        <edmx:Include Namespace="com.sap.vocabularies.Common.v1" Alias="Common"/>
+    </edmx:Reference>
+    <edmx:Reference Uri="https://server/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_CAPABILITIES',Version='0001',SAP__Origin='YI3CLNT000')/$value" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
+        <edmx:Include Namespace="Org.OData.Capabilities.V1" Alias="Capabilities"/>
+    </edmx:Reference>
+    <edmx:Reference Uri="https://server/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_COMMUNICATION',Version='0001',SAP__Origin='YI3CLNT000')/$value" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
+        <edmx:Include Namespace="com.sap.vocabularies.Communication.v1" Alias="Communication"/>
+    </edmx:Reference>
+    <edmx:Reference Uri="https://server/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_AGGREGATION',Version='0001',SAP__Origin='YI3CLNT000')/$value" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
+        <edmx:Include Namespace="Org.OData.Aggregation.V1" Alias="Aggregation"/>
+    </edmx:Reference>
+    <edmx:Reference Uri="https://server/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_PERSONALDATA',Version='0001',SAP__Origin='YI3CLNT000')/$value" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
+        <edmx:Include Namespace="com.sap.vocabularies.PersonalData.v1" Alias="PersonalData"/>
+    </edmx:Reference>
+    <edmx:Reference Uri="https://server/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_VALIDATION',Version='0001',SAP__Origin='YI3CLNT000')/$value" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
+        <edmx:Include Namespace="Org.OData.Validation.V1" Alias="Validation"/>
+    </edmx:Reference>
+    <edmx:Reference Uri="https://server/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_ANALYTICS',Version='0001',SAP__Origin='YI3CLNT000')/$value" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
+        <edmx:Include Namespace="com.sap.vocabularies.Analytics.v1" Alias="Analytics"/>
+    </edmx:Reference>
+    <edmx:Reference Uri="https://server/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_MEASURES',Version='0001',SAP__Origin='YI3CLNT000')/$value" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
+        <edmx:Include Namespace="Org.OData.Measures.V1" Alias="Measures"/>
+    </edmx:Reference>
+    <edmx:Reference Uri="https://server/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_UI',Version='0001',SAP__Origin='YI3CLNT000')/$value" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
+        <edmx:Include Namespace="com.sap.vocabularies.UI.v1" Alias="UI"/>
+    </edmx:Reference>
+    <edmx:DataServices m:DataServiceVersion="2.0">
+        <Schema Namespace="cds_c_cfdtsm_bupa" xml:lang="en" sap:schema-version="1" xmlns="http://schemas.microsoft.com/ado/2008/09/edm">
+            <EntityType Name="CustomFieldsVHType" sap:label="Custom Fields: Value Help View Of Custom Fields" sap:value-list="true" sap:content-version="1">
+                <Key>
+                    <PropertyRef Name="ExternalName"/>
+                    <PropertyRef Name="BusinessContext"/>
+                </Key>
+                <Property Name="ExternalName" Type="Edm.String" Nullable="false" MaxLength="30" sap:text="Description" sap:label="External Field Name"/>
+                <Property Name="BusinessContext" Type="Edm.String" Nullable="false" MaxLength="30" sap:label="Business Context"/>
+                <Property Name="Description" Type="Edm.String" MaxLength="60" sap:label="Description"/>
+                <Property Name="Origin" Type="Edm.String" MaxLength="5" sap:display-format="UpperCase" sap:label="Origin"/>
+            </EntityType>
+            <EntityType Name="BusinessPartnerType" sap:label="TSM Business Partner Transact. UI View" sap:content-version="1">
+                <Key>
+                    <PropertyRef Name="Id"/>
+                    <PropertyRef Name="DraftUUID"/>
+                    <PropertyRef Name="IsActiveEntity"/>
+                </Key>
+                <Property Name="Activation_ac" Type="Edm.Boolean" sap:label="Dyn. Action Control" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="Edit_ac" Type="Edm.Boolean" sap:label="Dyn. Action Control" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="Preparation_ac" Type="Edm.Boolean" sap:label="Dyn. Action Control" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="Validation_ac" Type="Edm.Boolean" sap:label="Dyn. Action Control" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="TaxPercentage_fc" Type="Edm.Byte" sap:label="Dyn. Field Control" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="Id" Type="Edm.String" Nullable="false" MaxLength="10" sap:label="Business Partner ID"/>
+                <Property Name="Gender" Type="Edm.String" MaxLength="1" sap:display-format="UpperCase" sap:label="Gender" sap:value-list="standard"/>
+                <Property Name="Title" Type="Edm.String" MaxLength="10" sap:label="Title"/>
+                <Property Name="GivenName" Type="Edm.String" MaxLength="40" sap:label="Given Name"/>
+                <Property Name="MiddleName" Type="Edm.String" MaxLength="40" sap:label="Middle Name"/>
+                <Property Name="FamilyName" Type="Edm.String" MaxLength="40" sap:label="Family Name"/>
+                <Property Name="BirthName" Type="Edm.String" MaxLength="40" sap:label="Birth Name"/>
+                <Property Name="TaxClassification" Type="Edm.String" MaxLength="10" sap:display-format="UpperCase" sap:label="Tax Class Code"/>
+                <Property Name="TaxPercentage" Type="Edm.Byte" sap:field-control="TaxPercentage_fc" sap:label="Tax Percentage"/>
+                <Property Name="PreferredCurrency" Type="Edm.String" MaxLength="5" sap:label="Preferred Currency" sap:semantics="currency-code"/>
+                <Property Name="CorrespondenceLanguage" Type="Edm.String" MaxLength="2" sap:label="Language for AUnit"/>
+                <Property Name="AcademicTitle" Type="Edm.String" MaxLength="20" sap:display-format="UpperCase" sap:label="Academic Title"/>
+                <Property Name="Birthday" Type="Edm.DateTime" Precision="0" sap:display-format="Date" sap:label="Birthday"/>
+                <Property Name="MaximumLoanAmount" Type="Edm.Decimal" Precision="15" Scale="3" sap:unit="PreferredCurrency" sap:variable-scale="true" sap:label="Maximum Loan Amount"/>
+                <Property Name="MinimumOrderQuantity" Type="Edm.Decimal" Precision="13" Scale="4" sap:unit="MinimumOrderUnitOfMeasure" sap:label="Minimum Order Quantity"/>
+                <Property Name="MinimumOrderUnitOfMeasure" Type="Edm.String" MaxLength="3" sap:label="Minimum Order Quantity Unit" sap:semantics="unit-of-measure"/>
+                <Property Name="CreatedAt" Type="Edm.Time" Precision="0" sap:label="Field of type TIMS"/>
+                <Property Name="CreatedBy" Type="Edm.String" MaxLength="12" sap:label="Created By"/>
+                <Property Name="CreatedOn" Type="Edm.DateTime" Precision="0" sap:display-format="Date" sap:label="Date"/>
+                <Property Name="LastChangedAt" Type="Edm.Time" Precision="0" sap:label="Field of type TIMS"/>
+                <Property Name="LastChangedBy" Type="Edm.String" MaxLength="12" sap:label="Changed By"/>
+                <Property Name="LastChangedOn" Type="Edm.DateTime" Precision="0" sap:display-format="Date" sap:label="Date"/>
+                <Property Name="CostCenterID" Type="Edm.String" MaxLength="10" sap:display-format="UpperCase" sap:label="Cost Center ID"/>
+                <Property Name="BusinessPartnerCategory" Type="Edm.String" MaxLength="3" sap:label="Category"/>
+                <Property Name="FavoriteProduct" Type="Edm.String" MaxLength="10" sap:display-format="UpperCase" sap:label="Favorite Product"/>
+                <Property Name="ZX1_TDLF_LGCD_GNBP" Type="Edm.String" MaxLength="2" sap:text="ZX1_TD_LgCd_GnBp_TbhT" sap:label="Language for AUnit" sap:value-list="standard"/>
+                <Property Name="ZX1_TD_LgCd_GnBp_TbhT" Type="Edm.String" MaxLength="16" sap:label="Name" sap:creatable="false" sap:updatable="false"/>
+                <Property Name="ZX1_RapText_Tbh" Type="Edm.String" MaxLength="20" sap:label="RapText"/>
+                <Property Name="ZX1_TD_RF_BPh_Am_Tbh" Type="Edm.Decimal" Precision="15" Scale="3" sap:unit="ZX1_TD_RF_BPh_Am_TbhC" sap:variable-scale="true" sap:label="RF_BPh_Am (do not modify!)"/>
+                <Property Name="ZX1_TD_RF_BPh_Am_TbhC" Type="Edm.String" MaxLength="5" sap:text="ZX1_TD_RF_BPh_Am_TbhT" sap:label="RF_BPh_Am (do not modify!) (Cur.)" sap:value-list="standard" sap:semantics="currency-code"/>
+                <Property Name="ZX1_TD_RF_BPh_Am_TbhT" Type="Edm.String" MaxLength="40" sap:label="Description" sap:creatable="false" sap:updatable="false"/>
+                <Property Name="ZX1_TD_AIMP_QUAN_Tbh" Type="Edm.Decimal" Precision="15" Scale="3" sap:unit="ZX1_TD_AIMP_QUAN_TbhU" sap:label="(EN) After Imp (QUANTITY)"/>
+                <Property Name="ZX1_TD_AIMP_QUAN_TbhU" Type="Edm.String" MaxLength="3" sap:text="ZX1_TD_AIMP_QUAN_TbhT" sap:label="(EN) After Imp (QUANTITY) (Unit)" sap:value-list="standard" sap:semantics="unit-of-measure"/>
+                <Property Name="ZX1_TD_AIMP_QUAN_TbhT" Type="Edm.String" MaxLength="10" sap:label="(EN) After Imp (QUANTITY) (Desc.)" sap:creatable="false" sap:updatable="false"/>
+                <Property Name="ZX1_TD_Ass_Txt_Tbh" Type="Edm.String" MaxLength="20" sap:text="ZX1_TD_Ass_Txt_TbhT" sap:label="Ass_Txt (do not modify!)" sap:value-list="standard"/>
+                <Property Name="ZX1_TD_Ass_Txt_TbhT" Type="Edm.String" MaxLength="80" sap:label="Description" sap:creatable="false" sap:updatable="false"/>
+                <Property Name="ZX1_TD_BEXP_EM_Tbh" Type="Edm.String" MaxLength="30" sap:label="(EN) Before Exp Hndl (EMAIL)" sap:semantics="email"/>
+                <Property Name="ZX1_RapPhone_Tbh" Type="Edm.String" MaxLength="30" sap:label="RapPhone" sap:semantics="tel"/>
+                <Property Name="ZX1_TD_Ass_NumB_Tbh" Type="Edm.String" MaxLength="10" sap:display-format="NonNegative" sap:text="ZX1_TD_Ass_NumB_TbhT" sap:label="Ass_NumB (do not modify!)" sap:value-list="standard"/>
+                <Property Name="ZX1_TD_Ass_NumB_TbhT" Type="Edm.String" MaxLength="80" sap:label="Ass_NumB (do not modify!) (Desc.)" sap:creatable="false" sap:updatable="false"/>
+                <Property Name="ZX1_TDEFxCfdSboCtxt" Type="Edm.String" MaxLength="30" sap:display-format="UpperCase" sap:label="AsHid (do not modify!) Buss Ctxt" sap:creatable="false" sap:updatable="false" sap:value-list="standard"/>
+                <Property Name="ZX1_TDEFxCfdSboName" Type="Edm.String" MaxLength="30" sap:label="AsHid (do not modify!) Name" sap:creatable="false" sap:updatable="false" sap:value-list="standard"/>
+                <Property Name="ZX1_TDEFxCfdList" Type="Edm.String" MaxLength="1" sap:label="FD_Pdm_Li (do not modify!)" sap:creatable="false" sap:updatable="false" sap:value-list="standard"/>
+                <Property Name="ZX1_RapTimestamp_Tbh" Type="Edm.DateTimeOffset" Precision="7" sap:label="RapTimestamp"/>
+                <Property Name="ZX1_TD_AsCDoId_Tbh" Type="Edm.String" MaxLength="10" sap:display-format="UpperCase" sap:label="AsCDo (do not modify!) CostCenter" sap:value-list="standard"/>
+                <Property Name="ZX1_TD_AsCDoNode_Tbh" Type="Edm.String" MaxLength="10" sap:display-format="UpperCase" sap:label="AsCDo (do not modify!) Hierarchy" sap:value-list="standard"/>
+                <Property Name="ZX1_TD_AsCDVId_Tbh" Type="Edm.String" MaxLength="10" sap:display-format="UpperCase" sap:text="ZX1_TD_AsCDVId_TbhT" sap:label="AsCDV (do not modify!) CostCenter" sap:value-list="standard"/>
+                <Property Name="ZX1_TD_AsCDVId_TbhT" Type="Edm.String" MaxLength="60" sap:label="AsCDV (do not modify!) (Desc.)" sap:creatable="false" sap:updatable="false"/>
+                <Property Name="ZX1_TD_AsCDVNode_Tbh" Type="Edm.String" MaxLength="10" sap:display-format="UpperCase" sap:text="ZX1_TD_AsCDVNode_TbhT" sap:label="AsCDV (do not modify!) Hierarchy" sap:value-list="standard"/>
+                <Property Name="ZX1_TD_AsCDVNode_TbhT" Type="Edm.String" MaxLength="60" sap:label="AsCDV (do not modify!) (Desc.)" sap:creatable="false" sap:updatable="false"/>
+                <Property Name="ZX1_TD_Denorm_Li_Tbh" Type="Edm.String" MaxLength="1" sap:text="ZX1_TD_Denorm_Li_TbhT" sap:label="Denorm_Li (do not modify!)" sap:value-list="standard"/>
+                <Property Name="ZX1_TD_Denorm_Li_TbhT" Type="Edm.String" MaxLength="60" sap:label="Denorm_Li (do not modify!) (Desc.)" sap:creatable="false" sap:updatable="false"/>
+                <Property Name="ZX1_RapTime_Tbh" Type="Edm.Time" Precision="0" sap:label="RapTime"/>
+                <Property Name="ZX1_TD_AIMP_LI_Tbh" Type="Edm.String" MaxLength="1" sap:text="ZX1_TD_AIMP_LI_TbhT" sap:label="(EN) After Imp Hndl (LIST)" sap:value-list="fixed-values"/>
+                <Property Name="ZX1_TD_AIMP_LI_TbhT" Type="Edm.String" MaxLength="60" sap:label="(EN) After Imp Hndl (LIST) (Desc.)" sap:creatable="false" sap:updatable="false"/>
+                <Property Name="ZX1_TD_AsCVhId_Tbh" Type="Edm.String" MaxLength="10" sap:display-format="UpperCase" sap:text="ZX1_TD_AsCVhId_TbhT" sap:label="AsCVh (do not modify!) CostCenter" sap:value-list="standard"/>
+                <Property Name="ZX1_TD_AsCVhId_TbhT" Type="Edm.String" MaxLength="60" sap:label="Description" sap:creatable="false" sap:updatable="false"/>
+                <Property Name="ZX1_TD_AsCVhNode_Tbh" Type="Edm.String" MaxLength="10" sap:display-format="UpperCase" sap:label="AsCVh (do not modify!) Hierarchy" sap:value-list="standard"/>
+                <Property Name="HasDraftEntity" Type="Edm.Boolean" sap:display-format="UpperCase" sap:label="Has Draft" sap:creatable="false" sap:updatable="false"/>
+                <Property Name="DraftUUID" Type="Edm.Guid" Nullable="false" sap:label="Key" sap:creatable="false" sap:updatable="false"/>
+                <Property Name="DraftEntityCreationDateTime" Type="Edm.DateTimeOffset" Precision="7" sap:label="Draft Created On" sap:creatable="false" sap:updatable="false"/>
+                <Property Name="DraftEntityLastChangeDateTime" Type="Edm.DateTimeOffset" Precision="7" sap:label="Draft Last Changed On" sap:creatable="false" sap:updatable="false"/>
+                <Property Name="HasActiveEntity" Type="Edm.Boolean" sap:display-format="UpperCase" sap:label="Has active" sap:creatable="false" sap:updatable="false"/>
+                <Property Name="IsActiveEntity" Type="Edm.Boolean" Nullable="false" sap:display-format="UpperCase" sap:label="Is active" sap:creatable="false" sap:updatable="false"/>
+                <NavigationProperty Name="DraftAdministrativeData" Relationship="cds_c_cfdtsm_bupa.assoc_D02835C8F2DCC9B1F28A8D3EE3E8649A" FromRole="FromRole_assoc_D02835C8F2DCC9B1F28A8D3EE3E8649A" ToRole="ToRole_assoc_D02835C8F2DCC9B1F28A8D3EE3E8649A"/>
+                <NavigationProperty Name="SiblingEntity" Relationship="cds_c_cfdtsm_bupa.assoc_BA75A8B5294760E39702B760ECF7535B" FromRole="FromRole_assoc_BA75A8B5294760E39702B760ECF7535B" ToRole="ToRole_assoc_BA75A8B5294760E39702B760ECF7535B"/>
+            </EntityType>
+            <EntityType Name="C_CFD_TSM_COST_CENTERType" sap:label="Custom Fields: Cost Center" sap:value-list="true" sap:content-version="1">
+                <Key>
+                    <PropertyRef Name="ID"/>
+                    <PropertyRef Name="HierarchyId"/>
+                </Key>
+                <Property Name="ID" Type="Edm.String" Nullable="false" MaxLength="10" sap:display-format="UpperCase" sap:text="Description" sap:label="Cost Center ID"/>
+                <Property Name="HierarchyId" Type="Edm.String" Nullable="false" MaxLength="10" sap:display-format="UpperCase" sap:label="Hierarchy Id"/>
+                <Property Name="CompanyCode" Type="Edm.String" MaxLength="4" sap:display-format="UpperCase" sap:label="Company Code"/>
+                <Property Name="Name" Type="Edm.String" MaxLength="30" sap:label="Cost Center"/>
+                <Property Name="CreatedBy" Type="Edm.String" MaxLength="12" sap:label="Created By"/>
+                <Property Name="CreatedOn" Type="Edm.DateTime" Precision="0" sap:display-format="Date" sap:label="Created On"/>
+                <Property Name="CreatedAt" Type="Edm.Time" Precision="0" sap:label="Created At"/>
+                <Property Name="LastChangedBy" Type="Edm.String" MaxLength="12" sap:label="Last Modified By"/>
+                <Property Name="LastChangedOn" Type="Edm.DateTime" Precision="0" sap:display-format="Date" sap:label="Last Modified On"/>
+                <Property Name="Description" Type="Edm.String" MaxLength="60" sap:label="Description"/>
+            </EntityType>
+            <EntityType Name="I_CFD_TSM_COST_CENTER_DIMType" sap:label="Custom Fields: TSM Cost Center DIM" sap:value-list="true" sap:content-version="1">
+                <Key>
+                    <PropertyRef Name="CostCenterId"/>
+                    <PropertyRef Name="HierarchyId"/>
+                </Key>
+                <Property Name="CostCenterId" Type="Edm.String" Nullable="false" MaxLength="10" sap:display-format="UpperCase" sap:text="CostCenterId_Text" sap:label="Cost Center ID"/>
+                <Property Name="CostCenterId_Text" Type="Edm.String" MaxLength="60" sap:label="Description" sap:creatable="false" sap:updatable="false"/>
+                <Property Name="HierarchyId" Type="Edm.String" Nullable="false" MaxLength="10" sap:display-format="UpperCase" sap:label="Hierarchy Id"/>
+                <Property Name="CompanyCode" Type="Edm.String" MaxLength="4" sap:display-format="UpperCase" sap:label="Company Code"/>
+                <Property Name="Name" Type="Edm.String" MaxLength="30" sap:label="Cost Center"/>
+                <Property Name="CreatedBy" Type="Edm.String" MaxLength="12" sap:label="Created By"/>
+                <Property Name="CreatedOn" Type="Edm.DateTime" Precision="0" sap:display-format="Date" sap:label="Created On"/>
+                <Property Name="CreatedAt" Type="Edm.Time" Precision="0" sap:label="Created At"/>
+                <Property Name="LastChangedBy" Type="Edm.String" MaxLength="12" sap:label="Last Modified By"/>
+                <Property Name="LastChangedOn" Type="Edm.DateTime" Precision="0" sap:display-format="Date" sap:label="Last Modified On"/>
+            </EntityType>
+            <EntityType Name="I_CFD_TSM_COST_CENTER_VHType" sap:label="Custom Fields: TSM Cost Center VH" sap:value-list="true" sap:content-version="1">
+                <Key>
+                    <PropertyRef Name="CostCenterID"/>
+                    <PropertyRef Name="HierarchyID"/>
+                </Key>
+                <Property Name="CostCenterID" Type="Edm.String" Nullable="false" MaxLength="10" sap:display-format="UpperCase" sap:text="CostCenterID_Text" sap:label="Cost Center ID"/>
+                <Property Name="CostCenterID_Text" Type="Edm.String" MaxLength="60" sap:label="Description" sap:creatable="false" sap:updatable="false"/>
+                <Property Name="HierarchyID" Type="Edm.String" Nullable="false" MaxLength="10" sap:display-format="UpperCase" sap:text="HierarchyDescription" sap:label="Hierarchy Id"/>
+                <Property Name="CompanyCode" Type="Edm.String" MaxLength="4" sap:display-format="UpperCase" sap:label="Company Code"/>
+                <Property Name="Name" Type="Edm.String" MaxLength="30" sap:label="Cost Center"/>
+                <Property Name="CreatedBy" Type="Edm.String" MaxLength="12" sap:label="Created By"/>
+                <Property Name="CreatedOn" Type="Edm.DateTime" Precision="0" sap:display-format="Date" sap:label="Created On"/>
+                <Property Name="CreatedAt" Type="Edm.Time" Precision="0" sap:label="Created At"/>
+                <Property Name="LastChangedBy" Type="Edm.String" MaxLength="12" sap:label="Last Modified By"/>
+                <Property Name="LastChangedOn" Type="Edm.DateTime" Precision="0" sap:display-format="Date" sap:label="Last Modified On"/>
+                <Property Name="HierarchyDescription" Type="Edm.String" MaxLength="60" sap:label="Description"/>
+            </EntityType>
+            <EntityType Name="I_CFD_TSM_GENDER_VHType" sap:label="Custom Fields: Gender Value Help" sap:value-list="true" sap:content-version="1">
+                <Key>
+                    <PropertyRef Name="Value"/>
+                </Key>
+                <Property Name="Value" Type="Edm.String" Nullable="false" MaxLength="1" sap:display-format="UpperCase" sap:text="Value_Text" sap:label="Gender"/>
+                <Property Name="Value_Text" Type="Edm.String" MaxLength="60" sap:label="Short Descript." sap:creatable="false" sap:updatable="false"/>
+            </EntityType>
+            <EntityType Name="I_CurrencyType" sap:label="Currency" sap:value-list="true" sap:content-version="1">
+                <Key>
+                    <PropertyRef Name="Currency"/>
+                </Key>
+                <Property Name="Currency" Type="Edm.String" Nullable="false" MaxLength="5" sap:text="Currency_Text" sap:label="Currency" sap:semantics="currency-code"/>
+                <Property Name="Currency_Text" Type="Edm.String" MaxLength="40" sap:label="Description" sap:creatable="false" sap:updatable="false"/>
+                <Property Name="Decimals" Type="Edm.Byte" sap:label="Decimal Places"/>
+                <Property Name="CurrencyISOCode" Type="Edm.String" MaxLength="3" sap:display-format="UpperCase" sap:label="ISO Code"/>
+                <Property Name="AlternativeCurrencyKey" Type="Edm.String" MaxLength="3" sap:display-format="UpperCase" sap:label="Alternative Key"/>
+                <Property Name="IsPrimaryCurrencyForISOCrcy" Type="Edm.Boolean" sap:display-format="UpperCase" sap:label="Primary"/>
+            </EntityType>
+            <EntityType Name="I_DraftAdministrativeDataType" sap:label="Draft Administration Data" sap:content-version="1">
+                <Key>
+                    <PropertyRef Name="DraftUUID"/>
+                    <PropertyRef Name="DraftEntityType"/>
+                </Key>
+                <Property Name="DraftUUID" Type="Edm.Guid" Nullable="false" sap:label="Draft (Technical ID)"/>
+                <Property Name="DraftEntityType" Type="Edm.String" Nullable="false" MaxLength="30" sap:display-format="UpperCase" sap:label="Draft Entity ID"/>
+                <Property Name="CreationDateTime" Type="Edm.DateTimeOffset" Precision="7" sap:label="Draft Created On"/>
+                <Property Name="CreatedByUser" Type="Edm.String" MaxLength="12" sap:display-format="UpperCase" sap:text="CreatedByUserDescription" sap:label="Draft Created By"/>
+                <Property Name="LastChangeDateTime" Type="Edm.DateTimeOffset" Precision="7" sap:label="Draft Last Changed On"/>
+                <Property Name="LastChangedByUser" Type="Edm.String" MaxLength="12" sap:display-format="UpperCase" sap:text="LastChangedByUserDescription" sap:label="Draft Last Changed By"/>
+                <Property Name="DraftAccessType" Type="Edm.String" MaxLength="1" sap:display-format="UpperCase" sap:label="Draft Access Type"/>
+                <Property Name="ProcessingStartDateTime" Type="Edm.DateTimeOffset" Precision="7" sap:label="Draft In Process Since"/>
+                <Property Name="InProcessByUser" Type="Edm.String" MaxLength="12" sap:display-format="UpperCase" sap:text="InProcessByUserDescription" sap:label="Draft In Process By"/>
+                <Property Name="DraftIsKeptByUser" Type="Edm.Boolean" sap:display-format="UpperCase" sap:label="Draft Is Kept By User"/>
+                <Property Name="EnqueueStartDateTime" Type="Edm.DateTimeOffset" Precision="7" sap:label="Draft Locked Since"/>
+                <Property Name="DraftIsCreatedByMe" Type="Edm.Boolean" sap:display-format="UpperCase" sap:label="Draft Created By Me"/>
+                <Property Name="DraftIsLastChangedByMe" Type="Edm.Boolean" sap:display-format="UpperCase" sap:label="Draft Last Changed By Me"/>
+                <Property Name="DraftIsProcessedByMe" Type="Edm.Boolean" sap:display-format="UpperCase" sap:label="Draft In Process By Me"/>
+                <Property Name="CreatedByUserDescription" Type="Edm.String" MaxLength="80" sap:label="Draft Created By (Description)"/>
+                <Property Name="LastChangedByUserDescription" Type="Edm.String" MaxLength="80" sap:label="Draft Last Changed By (Description)"/>
+                <Property Name="InProcessByUserDescription" Type="Edm.String" MaxLength="80" sap:label="Draft In Process By (Description)"/>
+            </EntityType>
+            <EntityType Name="I_LanguageType" sap:label="Language" sap:value-list="true" sap:content-version="1">
+                <Key>
+                    <PropertyRef Name="Language"/>
+                </Key>
+                <Property Name="Language" Type="Edm.String" Nullable="false" MaxLength="2" sap:text="Language_Text" sap:label="Language Key"/>
+                <Property Name="Language_Text" Type="Edm.String" MaxLength="16" sap:label="Name" sap:creatable="false" sap:updatable="false"/>
+                <Property Name="LanguageISOCode" Type="Edm.String" MaxLength="2" sap:display-format="UpperCase" sap:label="Language Code"/>
+            </EntityType>
+            <EntityType Name="I_UnitOfMeasureType" sap:label="Unit of Measure" sap:value-list="true" sap:content-version="1">
+                <Key>
+                    <PropertyRef Name="UnitOfMeasure"/>
+                </Key>
+                <Property Name="UnitOfMeasure" Type="Edm.String" Nullable="false" MaxLength="3" sap:text="UnitOfMeasure_Text" sap:label="Unit of Measure" sap:semantics="unit-of-measure"/>
+                <Property Name="UnitOfMeasure_Text" Type="Edm.String" MaxLength="30" sap:label="UoM Text" sap:creatable="false" sap:updatable="false"/>
+                <Property Name="UnitOfMeasureSAPCode" Type="Edm.String" MaxLength="3" sap:label="Internal SAP Code"/>
+                <Property Name="UnitOfMeasureISOCode" Type="Edm.String" MaxLength="3" sap:display-format="UpperCase" sap:label="ISO Code"/>
+                <Property Name="IsPrimaryUnitForISOCode" Type="Edm.Boolean" sap:display-format="UpperCase" sap:label="Primary code"/>
+                <Property Name="UnitOfMeasureNumberOfDecimals" Type="Edm.Int16" sap:label="Decimal Rounding"/>
+                <Property Name="UnitOfMeasureIsCommercial" Type="Edm.Boolean" sap:display-format="UpperCase" sap:label="Commercial meas.unit"/>
+                <Property Name="UnitOfMeasureDimension" Type="Edm.String" MaxLength="6" sap:display-format="UpperCase" sap:label="Dimension"/>
+                <Property Name="SIUnitCnvrsnRateNumerator" Type="Edm.Int32" sap:label="Numerator"/>
+                <Property Name="SIUnitCnvrsnRateDenominator" Type="Edm.Int32" sap:label="Denominator"/>
+                <Property Name="SIUnitCnvrsnRateExponent" Type="Edm.Int16" sap:label="Exponent"/>
+                <Property Name="SIUnitCnvrsnAdditiveValue" Type="Edm.Decimal" Precision="9" Scale="6" sap:label="Additive constant"/>
+                <Property Name="UnitOfMeasureDspExponent" Type="Edm.Int16" sap:label="Exp. 10 Floating Pt"/>
+                <Property Name="UnitOfMeasureDspNmbrOfDcmls" Type="Edm.Int16" sap:label="Decimal Places"/>
+                <Property Name="UnitOfMeasureTemperature" Type="Edm.Double" sap:unit="UnitOfMeasureTemperatureUnit" sap:label="Temperature"/>
+                <Property Name="UnitOfMeasureTemperatureUnit" Type="Edm.String" MaxLength="3" sap:label="Temperature unit" sap:semantics="unit-of-measure"/>
+                <Property Name="UnitOfMeasurePressure" Type="Edm.Double" sap:unit="UnitOfMeasurePressureUnit" sap:label="Pressure Value"/>
+                <Property Name="UnitOfMeasurePressureUnit" Type="Edm.String" MaxLength="3" sap:label="Unit of Pressure" sap:semantics="unit-of-measure"/>
+            </EntityType>
+            <EntityType Name="ZZ1_TD_AIMP_LI_VType" sap:label="ZX1_TD_AIMP_LI" sap:value-list="true" sap:content-version="1">
+                <Key>
+                    <PropertyRef Name="Code"/>
+                </Key>
+                <Property Name="Code" Type="Edm.String" Nullable="false" MaxLength="1" sap:text="Code_Text" sap:label="(EN) After Imp Hndl (LIST)"/>
+                <Property Name="Code_Text" Type="Edm.String" MaxLength="60" sap:label="(EN) After Imp Hndl (LIST) (Desc.)" sap:creatable="false" sap:updatable="false"/>
+                <Property Name="IsDisabled" Type="Edm.Boolean" sap:display-format="UpperCase" sap:label="Is Disabled"/>
+            </EntityType>
+            <EntityType Name="ZZ1_TD_DENORM_LI_VType" sap:label="ZX1_TD_Denorm_Li" sap:value-list="true" sap:content-version="1">
+                <Key>
+                    <PropertyRef Name="Code"/>
+                </Key>
+                <Property Name="Code" Type="Edm.String" Nullable="false" MaxLength="1" sap:text="Code_Text" sap:label="Denorm_Li (do not modify!)"/>
+                <Property Name="Code_Text" Type="Edm.String" MaxLength="60" sap:label="Denorm_Li (do not modify!) (Desc.)" sap:creatable="false" sap:updatable="false"/>
+            </EntityType>
+            <EntityType Name="ZZ1_TD_FD_PDM_LI_VType" sap:label="ZX1_TD_FD_Pdm_Li" sap:value-list="true" sap:content-version="1">
+                <Key>
+                    <PropertyRef Name="Code"/>
+                </Key>
+                <Property Name="Code" Type="Edm.String" Nullable="false" MaxLength="1" sap:text="Code_Text" sap:label="FD_Pdm_Li (do not modify!)"/>
+                <Property Name="Code_Text" Type="Edm.String" MaxLength="60" sap:label="FD_Pdm_Li (do not modify!) (Desc.)" sap:creatable="false" sap:updatable="false"/>
+            </EntityType>
+            <EntityType Name="ZZ1_VH_TDBO_NUMType" sap:label="Num (do not modify!)" sap:value-list="true" sap:content-version="1">
+                <Key>
+                    <PropertyRef Name="CFD_KEY"/>
+                </Key>
+                <Property Name="CFD_KEY" Type="Edm.String" Nullable="false" MaxLength="10" sap:display-format="NonNegative" sap:text="SAP_Description" sap:label="Numeric Key" sap:quickinfo="Numeric Key (ToolTip)"/>
+                <Property Name="SAP_Description" Type="Edm.String" MaxLength="80" sap:label="Description"/>
+                <Property Name="sap_uuid" Type="Edm.Guid" sap:label="UUID"/>
+            </EntityType>
+            <EntityType Name="ZZ1_VH_TDBO_TXTType" sap:label="Txt (do not modify!)" sap:value-list="true" sap:content-version="1">
+                <Key>
+                    <PropertyRef Name="CFD_KEY"/>
+                </Key>
+                <Property Name="CFD_KEY" Type="Edm.String" Nullable="false" MaxLength="20" sap:text="SAP_Description" sap:label="Text Key" sap:quickinfo="Text Key (ToolTip)"/>
+                <Property Name="SAP_Description" Type="Edm.String" MaxLength="80" sap:label="Description"/>
+                <Property Name="sap_uuid" Type="Edm.Guid" sap:label="UUID"/>
+            </EntityType>
+            <ComplexType Name="ValidationFunctionResult">
+                <Property Name="IsValid" Type="Edm.Boolean" sap:label="Is valid"/>
+            </ComplexType>
+            <Association Name="assoc_BA75A8B5294760E39702B760ECF7535B" sap:content-version="1">
+                <End Type="cds_c_cfdtsm_bupa.BusinessPartnerType" Multiplicity="1" Role="FromRole_assoc_BA75A8B5294760E39702B760ECF7535B"/>
+                <End Type="cds_c_cfdtsm_bupa.BusinessPartnerType" Multiplicity="0..1" Role="ToRole_assoc_BA75A8B5294760E39702B760ECF7535B"/>
+            </Association>
+            <Association Name="assoc_D02835C8F2DCC9B1F28A8D3EE3E8649A" sap:content-version="1">
+                <End Type="cds_c_cfdtsm_bupa.BusinessPartnerType" Multiplicity="1" Role="FromRole_assoc_D02835C8F2DCC9B1F28A8D3EE3E8649A"/>
+                <End Type="cds_c_cfdtsm_bupa.I_DraftAdministrativeDataType" Multiplicity="0..1" Role="ToRole_assoc_D02835C8F2DCC9B1F28A8D3EE3E8649A"/>
+            </Association>
+            <EntityContainer Name="cds_c_cfdtsm_bupa_Entities" m:IsDefaultEntityContainer="true" sap:message-scope-supported="true" sap:supported-formats="atom json xlsx">
+                <EntitySet Name="CustomFieldsVH" EntityType="cds_c_cfdtsm_bupa.CustomFieldsVHType" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:searchable="true" sap:content-version="1"/>
+                <EntitySet Name="BusinessPartner" EntityType="cds_c_cfdtsm_bupa.BusinessPartnerType" sap:content-version="1"/>
+                <EntitySet Name="C_CFD_TSM_COST_CENTER" EntityType="cds_c_cfdtsm_bupa.C_CFD_TSM_COST_CENTERType" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:searchable="true" sap:content-version="1"/>
+                <EntitySet Name="I_CFD_TSM_COST_CENTER_DIM" EntityType="cds_c_cfdtsm_bupa.I_CFD_TSM_COST_CENTER_DIMType" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:searchable="true" sap:content-version="1"/>
+                <EntitySet Name="I_CFD_TSM_COST_CENTER_VH" EntityType="cds_c_cfdtsm_bupa.I_CFD_TSM_COST_CENTER_VHType" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:searchable="true" sap:content-version="1"/>
+                <EntitySet Name="I_CFD_TSM_GENDER_VH" EntityType="cds_c_cfdtsm_bupa.I_CFD_TSM_GENDER_VHType" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:content-version="1"/>
+                <EntitySet Name="I_Currency" EntityType="cds_c_cfdtsm_bupa.I_CurrencyType" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:searchable="true" sap:content-version="1"/>
+                <EntitySet Name="I_DraftAdministrativeData" EntityType="cds_c_cfdtsm_bupa.I_DraftAdministrativeDataType" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:searchable="true" sap:addressable="false" sap:content-version="1"/>
+                <EntitySet Name="I_Language" EntityType="cds_c_cfdtsm_bupa.I_LanguageType" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:searchable="true" sap:content-version="1"/>
+                <EntitySet Name="I_UnitOfMeasure" EntityType="cds_c_cfdtsm_bupa.I_UnitOfMeasureType" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:searchable="true" sap:content-version="1"/>
+                <EntitySet Name="ZZ1_TD_AIMP_LI_V" EntityType="cds_c_cfdtsm_bupa.ZZ1_TD_AIMP_LI_VType" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:searchable="true" sap:content-version="1"/>
+                <EntitySet Name="ZZ1_TD_DENORM_LI_V" EntityType="cds_c_cfdtsm_bupa.ZZ1_TD_DENORM_LI_VType" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:searchable="true" sap:content-version="1"/>
+                <EntitySet Name="ZZ1_TD_FD_PDM_LI_V" EntityType="cds_c_cfdtsm_bupa.ZZ1_TD_FD_PDM_LI_VType" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:searchable="true" sap:content-version="1"/>
+                <EntitySet Name="ZZ1_VH_TDBO_NUM" EntityType="cds_c_cfdtsm_bupa.ZZ1_VH_TDBO_NUMType" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:searchable="true" sap:content-version="1"/>
+                <EntitySet Name="ZZ1_VH_TDBO_TXT" EntityType="cds_c_cfdtsm_bupa.ZZ1_VH_TDBO_TXTType" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:searchable="true" sap:content-version="1"/>
+                <AssociationSet Name="assoc_D02835C8F2DCC9B1F28A8D3EE3E8649A" Association="cds_c_cfdtsm_bupa.assoc_D02835C8F2DCC9B1F28A8D3EE3E8649A" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:content-version="1">
+                    <End EntitySet="BusinessPartner" Role="FromRole_assoc_D02835C8F2DCC9B1F28A8D3EE3E8649A"/>
+                    <End EntitySet="I_DraftAdministrativeData" Role="ToRole_assoc_D02835C8F2DCC9B1F28A8D3EE3E8649A"/>
+                </AssociationSet>
+                <AssociationSet Name="assoc_BA75A8B5294760E39702B760ECF7535B" Association="cds_c_cfdtsm_bupa.assoc_BA75A8B5294760E39702B760ECF7535B" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:content-version="1">
+                    <End EntitySet="BusinessPartner" Role="FromRole_assoc_BA75A8B5294760E39702B760ECF7535B"/>
+                    <End EntitySet="BusinessPartner" Role="ToRole_assoc_BA75A8B5294760E39702B760ECF7535B"/>
+                </AssociationSet>
+                <FunctionImport Name="BusinessPartnerActivation" ReturnType="cds_c_cfdtsm_bupa.BusinessPartnerType" EntitySet="BusinessPartner" m:HttpMethod="POST" sap:action-for="cds_c_cfdtsm_bupa.BusinessPartnerType" sap:applicable-path="Activation_ac">
+                    <Parameter Name="Id" Type="Edm.String" Mode="In" MaxLength="10"/>
+                    <Parameter Name="DraftUUID" Type="Edm.Guid" Mode="In"/>
+                    <Parameter Name="IsActiveEntity" Type="Edm.Boolean" Mode="In"/>
+                </FunctionImport>
+                <FunctionImport Name="BusinessPartnerEdit" ReturnType="cds_c_cfdtsm_bupa.BusinessPartnerType" EntitySet="BusinessPartner" m:HttpMethod="POST" sap:action-for="cds_c_cfdtsm_bupa.BusinessPartnerType" sap:applicable-path="Edit_ac">
+                    <Parameter Name="Id" Type="Edm.String" Mode="In" MaxLength="10"/>
+                    <Parameter Name="DraftUUID" Type="Edm.Guid" Mode="In"/>
+                    <Parameter Name="IsActiveEntity" Type="Edm.Boolean" Mode="In"/>
+                    <Parameter Name="PreserveChanges" Type="Edm.Boolean" Mode="In" Nullable="true"/>
+                </FunctionImport>
+                <FunctionImport Name="BusinessPartnerPreparation" ReturnType="cds_c_cfdtsm_bupa.BusinessPartnerType" EntitySet="BusinessPartner" m:HttpMethod="POST" sap:action-for="cds_c_cfdtsm_bupa.BusinessPartnerType" sap:applicable-path="Preparation_ac">
+                    <Parameter Name="Id" Type="Edm.String" Mode="In" MaxLength="10"/>
+                    <Parameter Name="DraftUUID" Type="Edm.Guid" Mode="In"/>
+                    <Parameter Name="IsActiveEntity" Type="Edm.Boolean" Mode="In"/>
+                    <Parameter Name="SideEffectsQualifier" Type="Edm.String" Mode="In" Nullable="true"/>
+                </FunctionImport>
+                <FunctionImport Name="BusinessPartnerValidation" ReturnType="cds_c_cfdtsm_bupa.ValidationFunctionResult" m:HttpMethod="GET" sap:action-for="cds_c_cfdtsm_bupa.BusinessPartnerType" sap:applicable-path="Validation_ac">
+                    <Parameter Name="Id" Type="Edm.String" Mode="In" MaxLength="10"/>
+                    <Parameter Name="DraftUUID" Type="Edm.Guid" Mode="In"/>
+                    <Parameter Name="IsActiveEntity" Type="Edm.Boolean" Mode="In"/>
+                    <Parameter Name="SideEffectsQualifier" Type="Edm.String" Mode="In" Nullable="true"/>
+                </FunctionImport>
+            </EntityContainer>
+            <Annotations Target="cds_c_cfdtsm_bupa.cds_c_cfdtsm_bupa_Entities/BusinessPartner" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+                <Annotation Term="Common.DraftRoot">
+                    <Record>
+                        <PropertyValue Property="ActivationAction" String="cds_c_cfdtsm_bupa.cds_c_cfdtsm_bupa_Entities/BusinessPartnerActivation"/>
+                        <PropertyValue Property="EditAction" String="cds_c_cfdtsm_bupa.cds_c_cfdtsm_bupa_Entities/BusinessPartnerEdit"/>
+                        <PropertyValue Property="PreparationAction" String="cds_c_cfdtsm_bupa.cds_c_cfdtsm_bupa_Entities/BusinessPartnerPreparation"/>
+                        <PropertyValue Property="ValidationFunction" String="cds_c_cfdtsm_bupa.cds_c_cfdtsm_bupa_Entities/BusinessPartnerValidation"/>
+                    </Record>
+                </Annotation>
+                <Annotation Term="Capabilities.FilterRestrictions">
+                    <Record>
+                        <PropertyValue Property="NonFilterableProperties">
+                            <Collection>
+                                <PropertyPath>Activation_ac</PropertyPath>
+                                <PropertyPath>Edit_ac</PropertyPath>
+                                <PropertyPath>Preparation_ac</PropertyPath>
+                                <PropertyPath>Validation_ac</PropertyPath>
+                                <PropertyPath>TaxPercentage_fc</PropertyPath>
+                            </Collection>
+                        </PropertyValue>
+                    </Record>
+                </Annotation>
+                <Annotation Term="Capabilities.SortRestrictions">
+                    <Record>
+                        <PropertyValue Property="NonSortableProperties">
+                            <Collection>
+                                <PropertyPath>Activation_ac</PropertyPath>
+                                <PropertyPath>Edit_ac</PropertyPath>
+                                <PropertyPath>Preparation_ac</PropertyPath>
+                                <PropertyPath>Validation_ac</PropertyPath>
+                                <PropertyPath>TaxPercentage_fc</PropertyPath>
+                            </Collection>
+                        </PropertyValue>
+                    </Record>
+                </Annotation>
+            </Annotations>
+            <Annotations Target="cds_c_cfdtsm_bupa.BusinessPartnerType/Gender" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+                <Annotation Term="Common.ValueList">
+                    <Record>
+                        <PropertyValue Property="Label" String="Gender"/>
+                        <PropertyValue Property="CollectionPath" String="I_CFD_TSM_GENDER_VH"/>
+                        <PropertyValue Property="SearchSupported" Bool="false"/>
+                        <PropertyValue Property="Parameters">
+                            <Collection>
+                                <Record Type="Common.ValueListParameterInOut">
+                                    <PropertyValue Property="LocalDataProperty" PropertyPath="Gender"/>
+                                    <PropertyValue Property="ValueListProperty" String="Value"/>
+                                </Record>
+                                <Record Type="Common.ValueListParameterDisplayOnly">
+                                    <PropertyValue Property="ValueListProperty" String="Value_Text"/>
+                                </Record>
+                            </Collection>
+                        </PropertyValue>
+                    </Record>
+                </Annotation>
+            </Annotations>
+            <Annotations Target="cds_c_cfdtsm_bupa.BusinessPartnerType/ZX1_TDLF_LGCD_GNBP" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+                <Annotation Term="Common.ValueList">
+                    <Record>
+                        <PropertyValue Property="Label" String="Language for AUnit"/>
+                        <PropertyValue Property="CollectionPath" String="I_Language"/>
+                        <PropertyValue Property="SearchSupported" Bool="true"/>
+                        <PropertyValue Property="Parameters">
+                            <Collection>
+                                <Record Type="Common.ValueListParameterInOut">
+                                    <PropertyValue Property="LocalDataProperty" PropertyPath="ZX1_TDLF_LGCD_GNBP"/>
+                                    <PropertyValue Property="ValueListProperty" String="Language"/>
+                                </Record>
+                                <Record Type="Common.ValueListParameterOut">
+                                    <PropertyValue Property="LocalDataProperty" PropertyPath="ZX1_TD_LgCd_GnBp_TbhT"/>
+                                    <PropertyValue Property="ValueListProperty" String="Language_Text"/>
+                                </Record>
+                                <Record Type="Common.ValueListParameterDisplayOnly">
+                                    <PropertyValue Property="ValueListProperty" String="LanguageISOCode"/>
+                                </Record>
+                            </Collection>
+                        </PropertyValue>
+                    </Record>
+                </Annotation>
+            </Annotations>
+            <Annotations Target="cds_c_cfdtsm_bupa.BusinessPartnerType/ZX1_TD_RF_BPh_Am_TbhC" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+                <Annotation Term="Common.ValueList">
+                    <Record>
+                        <PropertyValue Property="Label" String="RF_BPh_Am (do not modify!) (Cur.)"/>
+                        <PropertyValue Property="CollectionPath" String="I_Currency"/>
+                        <PropertyValue Property="SearchSupported" Bool="true"/>
+                        <PropertyValue Property="Parameters">
+                            <Collection>
+                                <Record Type="Common.ValueListParameterInOut">
+                                    <PropertyValue Property="LocalDataProperty" PropertyPath="ZX1_TD_RF_BPh_Am_TbhC"/>
+                                    <PropertyValue Property="ValueListProperty" String="Currency"/>
+                                </Record>
+                                <Record Type="Common.ValueListParameterOut">
+                                    <PropertyValue Property="LocalDataProperty" PropertyPath="ZX1_TD_RF_BPh_Am_TbhT"/>
+                                    <PropertyValue Property="ValueListProperty" String="Currency_Text"/>
+                                </Record>
+                                <Record Type="Common.ValueListParameterDisplayOnly">
+                                    <PropertyValue Property="ValueListProperty" String="Decimals"/>
+                                </Record>
+                                <Record Type="Common.ValueListParameterDisplayOnly">
+                                    <PropertyValue Property="ValueListProperty" String="CurrencyISOCode"/>
+                                </Record>
+                                <Record Type="Common.ValueListParameterDisplayOnly">
+                                    <PropertyValue Property="ValueListProperty" String="AlternativeCurrencyKey"/>
+                                </Record>
+                                <Record Type="Common.ValueListParameterDisplayOnly">
+                                    <PropertyValue Property="ValueListProperty" String="IsPrimaryCurrencyForISOCrcy"/>
+                                </Record>
+                            </Collection>
+                        </PropertyValue>
+                    </Record>
+                </Annotation>
+            </Annotations>
+            <Annotations Target="cds_c_cfdtsm_bupa.BusinessPartnerType/ZX1_TD_AIMP_QUAN_TbhU" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+                <Annotation Term="Common.ValueList">
+                    <Record>
+                        <PropertyValue Property="Label" String="(EN) After Imp (QUANTITY) (Unit)"/>
+                        <PropertyValue Property="CollectionPath" String="I_UnitOfMeasure"/>
+                        <PropertyValue Property="SearchSupported" Bool="false"/>
+                        <PropertyValue Property="Parameters">
+                            <Collection>
+                                <Record Type="Common.ValueListParameterInOut">
+                                    <PropertyValue Property="LocalDataProperty" PropertyPath="ZX1_TD_AIMP_QUAN_TbhU"/>
+                                    <PropertyValue Property="ValueListProperty" String="UnitOfMeasure"/>
+                                </Record>
+                                <Record Type="Common.ValueListParameterOut">
+                                    <PropertyValue Property="LocalDataProperty" PropertyPath="ZX1_TD_AIMP_QUAN_TbhT"/>
+                                    <PropertyValue Property="ValueListProperty" String="UnitOfMeasure_Text"/>
+                                </Record>
+                                <Record Type="Common.ValueListParameterDisplayOnly">
+                                    <PropertyValue Property="ValueListProperty" String="UnitOfMeasureSAPCode"/>
+                                </Record>
+                                <Record Type="Common.ValueListParameterDisplayOnly">
+                                    <PropertyValue Property="ValueListProperty" String="UnitOfMeasureISOCode"/>
+                                </Record>
+                                <Record Type="Common.ValueListParameterDisplayOnly">
+                                    <PropertyValue Property="ValueListProperty" String="IsPrimaryUnitForISOCode"/>
+                                </Record>
+                                <Record Type="Common.ValueListParameterDisplayOnly">
+                                    <PropertyValue Property="ValueListProperty" String="UnitOfMeasureNumberOfDecimals"/>
+                                </Record>
+                                <Record Type="Common.ValueListParameterDisplayOnly">
+                                    <PropertyValue Property="ValueListProperty" String="UnitOfMeasureIsCommercial"/>
+                                </Record>
+                                <Record Type="Common.ValueListParameterDisplayOnly">
+                                    <PropertyValue Property="ValueListProperty" String="UnitOfMeasureDimension"/>
+                                </Record>
+                                <Record Type="Common.ValueListParameterDisplayOnly">
+                                    <PropertyValue Property="ValueListProperty" String="SIUnitCnvrsnRateNumerator"/>
+                                </Record>
+                                <Record Type="Common.ValueListParameterDisplayOnly">
+                                    <PropertyValue Property="ValueListProperty" String="SIUnitCnvrsnRateDenominator"/>
+                                </Record>
+                                <Record Type="Common.ValueListParameterDisplayOnly">
+                                    <PropertyValue Property="ValueListProperty" String="SIUnitCnvrsnRateExponent"/>
+                                </Record>
+                                <Record Type="Common.ValueListParameterDisplayOnly">
+                                    <PropertyValue Property="ValueListProperty" String="SIUnitCnvrsnAdditiveValue"/>
+                                </Record>
+                                <Record Type="Common.ValueListParameterDisplayOnly">
+                                    <PropertyValue Property="ValueListProperty" String="UnitOfMeasureDspExponent"/>
+                                </Record>
+                                <Record Type="Common.ValueListParameterDisplayOnly">
+                                    <PropertyValue Property="ValueListProperty" String="UnitOfMeasureDspNmbrOfDcmls"/>
+                                </Record>
+                                <Record Type="Common.ValueListParameterDisplayOnly">
+                                    <PropertyValue Property="ValueListProperty" String="UnitOfMeasureTemperature"/>
+                                </Record>
+                                <Record Type="Common.ValueListParameterDisplayOnly">
+                                    <PropertyValue Property="ValueListProperty" String="UnitOfMeasureTemperatureUnit"/>
+                                </Record>
+                                <Record Type="Common.ValueListParameterDisplayOnly">
+                                    <PropertyValue Property="ValueListProperty" String="UnitOfMeasurePressure"/>
+                                </Record>
+                                <Record Type="Common.ValueListParameterDisplayOnly">
+                                    <PropertyValue Property="ValueListProperty" String="UnitOfMeasurePressureUnit"/>
+                                </Record>
+                            </Collection>
+                        </PropertyValue>
+                    </Record>
+                </Annotation>
+            </Annotations>
+            <Annotations Target="cds_c_cfdtsm_bupa.BusinessPartnerType/ZX1_TD_Ass_Txt_Tbh" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+                <Annotation Term="Common.ValueList">
+                    <Record>
+                        <PropertyValue Property="Label" String="Ass_Txt (do not modify!)"/>
+                        <PropertyValue Property="CollectionPath" String="ZZ1_VH_TDBO_TXT"/>
+                        <PropertyValue Property="SearchSupported" Bool="true"/>
+                        <PropertyValue Property="Parameters">
+                            <Collection>
+                                <Record Type="Common.ValueListParameterInOut">
+                                    <PropertyValue Property="LocalDataProperty" PropertyPath="ZX1_TD_Ass_Txt_Tbh"/>
+                                    <PropertyValue Property="ValueListProperty" String="CFD_KEY"/>
+                                </Record>
+                                <Record Type="Common.ValueListParameterOut">
+                                    <PropertyValue Property="LocalDataProperty" PropertyPath="ZX1_TD_Ass_Txt_TbhT"/>
+                                    <PropertyValue Property="ValueListProperty" String="SAP_Description"/>
+                                </Record>
+                            </Collection>
+                        </PropertyValue>
+                    </Record>
+                </Annotation>
+                <Annotation Term="Common.SemanticObject" String="ZZ1_TDBO_TXT"/>
+            </Annotations>
+            <Annotations Target="cds_c_cfdtsm_bupa.BusinessPartnerType/ZX1_TD_Ass_NumB_Tbh" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+                <Annotation Term="Common.ValueList">
+                    <Record>
+                        <PropertyValue Property="Label" String="Ass_NumB (do not modify!)"/>
+                        <PropertyValue Property="CollectionPath" String="ZZ1_VH_TDBO_NUM"/>
+                        <PropertyValue Property="SearchSupported" Bool="true"/>
+                        <PropertyValue Property="Parameters">
+                            <Collection>
+                                <Record Type="Common.ValueListParameterInOut">
+                                    <PropertyValue Property="LocalDataProperty" PropertyPath="ZX1_TD_Ass_NumB_Tbh"/>
+                                    <PropertyValue Property="ValueListProperty" String="CFD_KEY"/>
+                                </Record>
+                                <Record Type="Common.ValueListParameterOut">
+                                    <PropertyValue Property="LocalDataProperty" PropertyPath="ZX1_TD_Ass_NumB_TbhT"/>
+                                    <PropertyValue Property="ValueListProperty" String="SAP_Description"/>
+                                </Record>
+                            </Collection>
+                        </PropertyValue>
+                    </Record>
+                </Annotation>
+                <Annotation Term="Common.SemanticObject" String="ZZ1_TDBO_NUM"/>
+            </Annotations>
+            <Annotations Target="cds_c_cfdtsm_bupa.BusinessPartnerType/ZX1_TDEFxCfdSboCtxt" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+                <Annotation Term="Common.ValueList">
+                    <Record>
+                        <PropertyValue Property="Label" String="AsHid (do not modify!) Buss Ctxt"/>
+                        <PropertyValue Property="CollectionPath" String="CustomFieldsVH"/>
+                        <PropertyValue Property="SearchSupported" Bool="true"/>
+                        <PropertyValue Property="Parameters">
+                            <Collection>
+                                <Record Type="Common.ValueListParameterInOut">
+                                    <PropertyValue Property="LocalDataProperty" PropertyPath="ZX1_TDEFxCfdSboName"/>
+                                    <PropertyValue Property="ValueListProperty" String="ExternalName"/>
+                                </Record>
+                                <Record Type="Common.ValueListParameterInOut">
+                                    <PropertyValue Property="LocalDataProperty" PropertyPath="ZX1_TDEFxCfdSboCtxt"/>
+                                    <PropertyValue Property="ValueListProperty" String="BusinessContext"/>
+                                </Record>
+                                <Record Type="Common.ValueListParameterDisplayOnly">
+                                    <PropertyValue Property="ValueListProperty" String="Description"/>
+                                </Record>
+                            </Collection>
+                        </PropertyValue>
+                    </Record>
+                </Annotation>
+                <Annotation Term="Common.SemanticObject" String="CustomField"/>
+            </Annotations>
+            <Annotations Target="cds_c_cfdtsm_bupa.BusinessPartnerType/ZX1_TDEFxCfdSboName" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+                <Annotation Term="Common.ValueList">
+                    <Record>
+                        <PropertyValue Property="Label" String="AsHid (do not modify!) Name"/>
+                        <PropertyValue Property="CollectionPath" String="CustomFieldsVH"/>
+                        <PropertyValue Property="SearchSupported" Bool="true"/>
+                        <PropertyValue Property="Parameters">
+                            <Collection>
+                                <Record Type="Common.ValueListParameterInOut">
+                                    <PropertyValue Property="LocalDataProperty" PropertyPath="ZX1_TDEFxCfdSboName"/>
+                                    <PropertyValue Property="ValueListProperty" String="ExternalName"/>
+                                </Record>
+                                <Record Type="Common.ValueListParameterInOut">
+                                    <PropertyValue Property="LocalDataProperty" PropertyPath="ZX1_TDEFxCfdSboCtxt"/>
+                                    <PropertyValue Property="ValueListProperty" String="BusinessContext"/>
+                                </Record>
+                                <Record Type="Common.ValueListParameterDisplayOnly">
+                                    <PropertyValue Property="ValueListProperty" String="Description"/>
+                                </Record>
+                            </Collection>
+                        </PropertyValue>
+                    </Record>
+                </Annotation>
+                <Annotation Term="Common.SemanticObject" String="CustomField"/>
+            </Annotations>
+            <Annotations Target="cds_c_cfdtsm_bupa.BusinessPartnerType/ZX1_TDEFxCfdList" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+                <Annotation Term="Common.ValueList">
+                    <Record>
+                        <PropertyValue Property="Label" String="FD_Pdm_Li (do not modify!)"/>
+                        <PropertyValue Property="CollectionPath" String="ZZ1_TD_FD_PDM_LI_V"/>
+                        <PropertyValue Property="SearchSupported" Bool="true"/>
+                        <PropertyValue Property="Parameters">
+                            <Collection>
+                                <Record Type="Common.ValueListParameterInOut">
+                                    <PropertyValue Property="LocalDataProperty" PropertyPath="ZX1_TDEFxCfdList"/>
+                                    <PropertyValue Property="ValueListProperty" String="Code"/>
+                                </Record>
+                                <Record Type="Common.ValueListParameterDisplayOnly">
+                                    <PropertyValue Property="ValueListProperty" String="Code_Text"/>
+                                </Record>
+                            </Collection>
+                        </PropertyValue>
+                    </Record>
+                </Annotation>
+            </Annotations>
+            <Annotations Target="cds_c_cfdtsm_bupa.BusinessPartnerType/ZX1_TD_AsCDoId_Tbh" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+                <Annotation Term="Common.ValueList">
+                    <Record>
+                        <PropertyValue Property="Label" String="AsCDo (do not modify!) CostCenter"/>
+                        <PropertyValue Property="CollectionPath" String="I_CFD_TSM_COST_CENTER_DIM"/>
+                        <PropertyValue Property="SearchSupported" Bool="true"/>
+                        <PropertyValue Property="Parameters">
+                            <Collection>
+                                <Record Type="Common.ValueListParameterInOut">
+                                    <PropertyValue Property="LocalDataProperty" PropertyPath="ZX1_TD_AsCDoId_Tbh"/>
+                                    <PropertyValue Property="ValueListProperty" String="CostCenterId"/>
+                                </Record>
+                                <Record Type="Common.ValueListParameterInOut">
+                                    <PropertyValue Property="LocalDataProperty" PropertyPath="ZX1_TD_AsCDoNode_Tbh"/>
+                                    <PropertyValue Property="ValueListProperty" String="HierarchyId"/>
+                                </Record>
+                                <Record Type="Common.ValueListParameterDisplayOnly">
+                                    <PropertyValue Property="ValueListProperty" String="CostCenterId_Text"/>
+                                </Record>
+                                <Record Type="Common.ValueListParameterDisplayOnly">
+                                    <PropertyValue Property="ValueListProperty" String="CompanyCode"/>
+                                </Record>
+                                <Record Type="Common.ValueListParameterDisplayOnly">
+                                    <PropertyValue Property="ValueListProperty" String="Name"/>
+                                </Record>
+                                <Record Type="Common.ValueListParameterDisplayOnly">
+                                    <PropertyValue Property="ValueListProperty" String="CreatedBy"/>
+                                </Record>
+                                <Record Type="Common.ValueListParameterDisplayOnly">
+                                    <PropertyValue Property="ValueListProperty" String="CreatedOn"/>
+                                </Record>
+                                <Record Type="Common.ValueListParameterDisplayOnly">
+                                    <PropertyValue Property="ValueListProperty" String="CreatedAt"/>
+                                </Record>
+                                <Record Type="Common.ValueListParameterDisplayOnly">
+                                    <PropertyValue Property="ValueListProperty" String="LastChangedBy"/>
+                                </Record>
+                                <Record Type="Common.ValueListParameterDisplayOnly">
+                                    <PropertyValue Property="ValueListProperty" String="LastChangedOn"/>
+                                </Record>
+                            </Collection>
+                        </PropertyValue>
+                    </Record>
+                </Annotation>
+                <Annotation Term="Common.SemanticObject" String="CostCenter"/>
+            </Annotations>
+            <Annotations Target="cds_c_cfdtsm_bupa.BusinessPartnerType/ZX1_TD_AsCDoNode_Tbh" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+                <Annotation Term="Common.ValueList">
+                    <Record>
+                        <PropertyValue Property="Label" String="AsCDo (do not modify!) Hierarchy"/>
+                        <PropertyValue Property="CollectionPath" String="I_CFD_TSM_COST_CENTER_DIM"/>
+                        <PropertyValue Property="SearchSupported" Bool="true"/>
+                        <PropertyValue Property="Parameters">
+                            <Collection>
+                                <Record Type="Common.ValueListParameterInOut">
+                                    <PropertyValue Property="LocalDataProperty" PropertyPath="ZX1_TD_AsCDoId_Tbh"/>
+                                    <PropertyValue Property="ValueListProperty" String="CostCenterId"/>
+                                </Record>
+                                <Record Type="Common.ValueListParameterInOut">
+                                    <PropertyValue Property="LocalDataProperty" PropertyPath="ZX1_TD_AsCDoNode_Tbh"/>
+                                    <PropertyValue Property="ValueListProperty" String="HierarchyId"/>
+                                </Record>
+                                <Record Type="Common.ValueListParameterDisplayOnly">
+                                    <PropertyValue Property="ValueListProperty" String="CostCenterId_Text"/>
+                                </Record>
+                                <Record Type="Common.ValueListParameterDisplayOnly">
+                                    <PropertyValue Property="ValueListProperty" String="CompanyCode"/>
+                                </Record>
+                                <Record Type="Common.ValueListParameterDisplayOnly">
+                                    <PropertyValue Property="ValueListProperty" String="Name"/>
+                                </Record>
+                                <Record Type="Common.ValueListParameterDisplayOnly">
+                                    <PropertyValue Property="ValueListProperty" String="CreatedBy"/>
+                                </Record>
+                                <Record Type="Common.ValueListParameterDisplayOnly">
+                                    <PropertyValue Property="ValueListProperty" String="CreatedOn"/>
+                                </Record>
+                                <Record Type="Common.ValueListParameterDisplayOnly">
+                                    <PropertyValue Property="ValueListProperty" String="CreatedAt"/>
+                                </Record>
+                                <Record Type="Common.ValueListParameterDisplayOnly">
+                                    <PropertyValue Property="ValueListProperty" String="LastChangedBy"/>
+                                </Record>
+                                <Record Type="Common.ValueListParameterDisplayOnly">
+                                    <PropertyValue Property="ValueListProperty" String="LastChangedOn"/>
+                                </Record>
+                            </Collection>
+                        </PropertyValue>
+                    </Record>
+                </Annotation>
+                <Annotation Term="Common.SemanticObject" String="CostCenter"/>
+            </Annotations>
+            <Annotations Target="cds_c_cfdtsm_bupa.BusinessPartnerType/ZX1_TD_AsCDVId_Tbh" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+                <Annotation Term="Common.ValueList">
+                    <Record>
+                        <PropertyValue Property="Label" String="AsCDV (do not modify!) CostCenter"/>
+                        <PropertyValue Property="CollectionPath" String="I_CFD_TSM_COST_CENTER_VH"/>
+                        <PropertyValue Property="SearchSupported" Bool="true"/>
+                        <PropertyValue Property="Parameters">
+                            <Collection>
+                                <Record Type="Common.ValueListParameterInOut">
+                                    <PropertyValue Property="LocalDataProperty" PropertyPath="ZX1_TD_AsCDVId_Tbh"/>
+                                    <PropertyValue Property="ValueListProperty" String="CostCenterID"/>
+                                </Record>
+                                <Record Type="Common.ValueListParameterInOut">
+                                    <PropertyValue Property="LocalDataProperty" PropertyPath="ZX1_TD_AsCDVNode_Tbh"/>
+                                    <PropertyValue Property="ValueListProperty" String="HierarchyID"/>
+                                </Record>
+                                <Record Type="Common.ValueListParameterOut">
+                                    <PropertyValue Property="LocalDataProperty" PropertyPath="ZX1_TD_AsCDVNode_TbhT"/>
+                                    <PropertyValue Property="ValueListProperty" String="HierarchyDescription"/>
+                                </Record>
+                                <Record Type="Common.ValueListParameterOut">
+                                    <PropertyValue Property="LocalDataProperty" PropertyPath="ZX1_TD_AsCDVId_TbhT"/>
+                                    <PropertyValue Property="ValueListProperty" String="CostCenterID_Text"/>
+                                </Record>
+                                <Record Type="Common.ValueListParameterDisplayOnly">
+                                    <PropertyValue Property="ValueListProperty" String="CompanyCode"/>
+                                </Record>
+                                <Record Type="Common.ValueListParameterDisplayOnly">
+                                    <PropertyValue Property="ValueListProperty" String="Name"/>
+                                </Record>
+                                <Record Type="Common.ValueListParameterDisplayOnly">
+                                    <PropertyValue Property="ValueListProperty" String="CreatedBy"/>
+                                </Record>
+                                <Record Type="Common.ValueListParameterDisplayOnly">
+                                    <PropertyValue Property="ValueListProperty" String="CreatedOn"/>
+                                </Record>
+                                <Record Type="Common.ValueListParameterDisplayOnly">
+                                    <PropertyValue Property="ValueListProperty" String="CreatedAt"/>
+                                </Record>
+                                <Record Type="Common.ValueListParameterDisplayOnly">
+                                    <PropertyValue Property="ValueListProperty" String="LastChangedBy"/>
+                                </Record>
+                                <Record Type="Common.ValueListParameterDisplayOnly">
+                                    <PropertyValue Property="ValueListProperty" String="LastChangedOn"/>
+                                </Record>
+                            </Collection>
+                        </PropertyValue>
+                    </Record>
+                </Annotation>
+                <Annotation Term="Common.SemanticObject" String="CostCenter"/>
+            </Annotations>
+            <Annotations Target="cds_c_cfdtsm_bupa.BusinessPartnerType/ZX1_TD_AsCDVNode_Tbh" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+                <Annotation Term="Common.ValueList">
+                    <Record>
+                        <PropertyValue Property="Label" String="AsCDV (do not modify!) Hierarchy"/>
+                        <PropertyValue Property="CollectionPath" String="I_CFD_TSM_COST_CENTER_VH"/>
+                        <PropertyValue Property="SearchSupported" Bool="true"/>
+                        <PropertyValue Property="Parameters">
+                            <Collection>
+                                <Record Type="Common.ValueListParameterInOut">
+                                    <PropertyValue Property="LocalDataProperty" PropertyPath="ZX1_TD_AsCDVId_Tbh"/>
+                                    <PropertyValue Property="ValueListProperty" String="CostCenterID"/>
+                                </Record>
+                                <Record Type="Common.ValueListParameterInOut">
+                                    <PropertyValue Property="LocalDataProperty" PropertyPath="ZX1_TD_AsCDVNode_Tbh"/>
+                                    <PropertyValue Property="ValueListProperty" String="HierarchyID"/>
+                                </Record>
+                                <Record Type="Common.ValueListParameterOut">
+                                    <PropertyValue Property="LocalDataProperty" PropertyPath="ZX1_TD_AsCDVNode_TbhT"/>
+                                    <PropertyValue Property="ValueListProperty" String="HierarchyDescription"/>
+                                </Record>
+                                <Record Type="Common.ValueListParameterOut">
+                                    <PropertyValue Property="LocalDataProperty" PropertyPath="ZX1_TD_AsCDVId_TbhT"/>
+                                    <PropertyValue Property="ValueListProperty" String="CostCenterID_Text"/>
+                                </Record>
+                                <Record Type="Common.ValueListParameterDisplayOnly">
+                                    <PropertyValue Property="ValueListProperty" String="CompanyCode"/>
+                                </Record>
+                                <Record Type="Common.ValueListParameterDisplayOnly">
+                                    <PropertyValue Property="ValueListProperty" String="Name"/>
+                                </Record>
+                                <Record Type="Common.ValueListParameterDisplayOnly">
+                                    <PropertyValue Property="ValueListProperty" String="CreatedBy"/>
+                                </Record>
+                                <Record Type="Common.ValueListParameterDisplayOnly">
+                                    <PropertyValue Property="ValueListProperty" String="CreatedOn"/>
+                                </Record>
+                                <Record Type="Common.ValueListParameterDisplayOnly">
+                                    <PropertyValue Property="ValueListProperty" String="CreatedAt"/>
+                                </Record>
+                                <Record Type="Common.ValueListParameterDisplayOnly">
+                                    <PropertyValue Property="ValueListProperty" String="LastChangedBy"/>
+                                </Record>
+                                <Record Type="Common.ValueListParameterDisplayOnly">
+                                    <PropertyValue Property="ValueListProperty" String="LastChangedOn"/>
+                                </Record>
+                            </Collection>
+                        </PropertyValue>
+                    </Record>
+                </Annotation>
+                <Annotation Term="Common.SemanticObject" String="CostCenter"/>
+            </Annotations>
+            <Annotations Target="cds_c_cfdtsm_bupa.BusinessPartnerType/ZX1_TD_Denorm_Li_Tbh" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+                <Annotation Term="Common.ValueList">
+                    <Record>
+                        <PropertyValue Property="Label" String="Denorm_Li (do not modify!)"/>
+                        <PropertyValue Property="CollectionPath" String="ZZ1_TD_DENORM_LI_V"/>
+                        <PropertyValue Property="SearchSupported" Bool="true"/>
+                        <PropertyValue Property="Parameters">
+                            <Collection>
+                                <Record Type="Common.ValueListParameterInOut">
+                                    <PropertyValue Property="LocalDataProperty" PropertyPath="ZX1_TD_Denorm_Li_Tbh"/>
+                                    <PropertyValue Property="ValueListProperty" String="Code"/>
+                                </Record>
+                                <Record Type="Common.ValueListParameterOut">
+                                    <PropertyValue Property="LocalDataProperty" PropertyPath="ZX1_TD_Denorm_Li_TbhT"/>
+                                    <PropertyValue Property="ValueListProperty" String="Code_Text"/>
+                                </Record>
+                            </Collection>
+                        </PropertyValue>
+                    </Record>
+                </Annotation>
+            </Annotations>
+            <Annotations Target="cds_c_cfdtsm_bupa.BusinessPartnerType/ZX1_TD_AIMP_LI_Tbh" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+                <Annotation Term="Common.ValueList">
+                    <Record>
+                        <PropertyValue Property="Label" String="(EN) After Imp Hndl (LIST)"/>
+                        <PropertyValue Property="CollectionPath" String="ZZ1_TD_AIMP_LI_V"/>
+                        <PropertyValue Property="SearchSupported" Bool="true"/>
+                        <PropertyValue Property="Parameters">
+                            <Collection>
+                                <Record Type="Common.ValueListParameterInOut">
+                                    <PropertyValue Property="LocalDataProperty" PropertyPath="ZX1_TD_AIMP_LI_Tbh"/>
+                                    <PropertyValue Property="ValueListProperty" String="Code"/>
+                                </Record>
+                                <Record Type="Common.ValueListParameterOut">
+                                    <PropertyValue Property="LocalDataProperty" PropertyPath="ZX1_TD_AIMP_LI_TbhT"/>
+                                    <PropertyValue Property="ValueListProperty" String="Code_Text"/>
+                                </Record>
+                                <Record Type="Common.ValueListParameterDisplayOnly">
+                                    <PropertyValue Property="ValueListProperty" String="IsDisabled"/>
+                                </Record>
+                            </Collection>
+                        </PropertyValue>
+                    </Record>
+                </Annotation>
+                <Annotation Term="Common.ValueListWithFixedValues"/>
+            </Annotations>
+            <Annotations Target="cds_c_cfdtsm_bupa.BusinessPartnerType/ZX1_TD_AsCVhId_Tbh" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+                <Annotation Term="Common.ValueList">
+                    <Record>
+                        <PropertyValue Property="Label" String="AsCVh (do not modify!) CostCenter"/>
+                        <PropertyValue Property="CollectionPath" String="C_CFD_TSM_COST_CENTER"/>
+                        <PropertyValue Property="SearchSupported" Bool="true"/>
+                        <PropertyValue Property="Parameters">
+                            <Collection>
+                                <Record Type="Common.ValueListParameterInOut">
+                                    <PropertyValue Property="LocalDataProperty" PropertyPath="ZX1_TD_AsCVhId_Tbh"/>
+                                    <PropertyValue Property="ValueListProperty" String="ID"/>
+                                </Record>
+                                <Record Type="Common.ValueListParameterInOut">
+                                    <PropertyValue Property="LocalDataProperty" PropertyPath="ZX1_TD_AsCVhNode_Tbh"/>
+                                    <PropertyValue Property="ValueListProperty" String="HierarchyId"/>
+                                </Record>
+                                <Record Type="Common.ValueListParameterOut">
+                                    <PropertyValue Property="LocalDataProperty" PropertyPath="ZX1_TD_AsCVhId_TbhT"/>
+                                    <PropertyValue Property="ValueListProperty" String="Description"/>
+                                </Record>
+                                <Record Type="Common.ValueListParameterDisplayOnly">
+                                    <PropertyValue Property="ValueListProperty" String="CompanyCode"/>
+                                </Record>
+                                <Record Type="Common.ValueListParameterDisplayOnly">
+                                    <PropertyValue Property="ValueListProperty" String="Name"/>
+                                </Record>
+                                <Record Type="Common.ValueListParameterDisplayOnly">
+                                    <PropertyValue Property="ValueListProperty" String="CreatedBy"/>
+                                </Record>
+                                <Record Type="Common.ValueListParameterDisplayOnly">
+                                    <PropertyValue Property="ValueListProperty" String="CreatedOn"/>
+                                </Record>
+                                <Record Type="Common.ValueListParameterDisplayOnly">
+                                    <PropertyValue Property="ValueListProperty" String="CreatedAt"/>
+                                </Record>
+                                <Record Type="Common.ValueListParameterDisplayOnly">
+                                    <PropertyValue Property="ValueListProperty" String="LastChangedBy"/>
+                                </Record>
+                                <Record Type="Common.ValueListParameterDisplayOnly">
+                                    <PropertyValue Property="ValueListProperty" String="LastChangedOn"/>
+                                </Record>
+                            </Collection>
+                        </PropertyValue>
+                    </Record>
+                </Annotation>
+                <Annotation Term="Common.SemanticObject" String="CostCenter"/>
+            </Annotations>
+            <Annotations Target="cds_c_cfdtsm_bupa.BusinessPartnerType/ZX1_TD_AsCVhNode_Tbh" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+                <Annotation Term="Common.ValueList">
+                    <Record>
+                        <PropertyValue Property="Label" String="AsCVh (do not modify!) Hierarchy"/>
+                        <PropertyValue Property="CollectionPath" String="C_CFD_TSM_COST_CENTER"/>
+                        <PropertyValue Property="SearchSupported" Bool="true"/>
+                        <PropertyValue Property="Parameters">
+                            <Collection>
+                                <Record Type="Common.ValueListParameterInOut">
+                                    <PropertyValue Property="LocalDataProperty" PropertyPath="ZX1_TD_AsCVhId_Tbh"/>
+                                    <PropertyValue Property="ValueListProperty" String="ID"/>
+                                </Record>
+                                <Record Type="Common.ValueListParameterInOut">
+                                    <PropertyValue Property="LocalDataProperty" PropertyPath="ZX1_TD_AsCVhNode_Tbh"/>
+                                    <PropertyValue Property="ValueListProperty" String="HierarchyId"/>
+                                </Record>
+                                <Record Type="Common.ValueListParameterOut">
+                                    <PropertyValue Property="LocalDataProperty" PropertyPath="ZX1_TD_AsCVhId_TbhT"/>
+                                    <PropertyValue Property="ValueListProperty" String="Description"/>
+                                </Record>
+                                <Record Type="Common.ValueListParameterDisplayOnly">
+                                    <PropertyValue Property="ValueListProperty" String="CompanyCode"/>
+                                </Record>
+                                <Record Type="Common.ValueListParameterDisplayOnly">
+                                    <PropertyValue Property="ValueListProperty" String="Name"/>
+                                </Record>
+                                <Record Type="Common.ValueListParameterDisplayOnly">
+                                    <PropertyValue Property="ValueListProperty" String="CreatedBy"/>
+                                </Record>
+                                <Record Type="Common.ValueListParameterDisplayOnly">
+                                    <PropertyValue Property="ValueListProperty" String="CreatedOn"/>
+                                </Record>
+                                <Record Type="Common.ValueListParameterDisplayOnly">
+                                    <PropertyValue Property="ValueListProperty" String="CreatedAt"/>
+                                </Record>
+                                <Record Type="Common.ValueListParameterDisplayOnly">
+                                    <PropertyValue Property="ValueListProperty" String="LastChangedBy"/>
+                                </Record>
+                                <Record Type="Common.ValueListParameterDisplayOnly">
+                                    <PropertyValue Property="ValueListProperty" String="LastChangedOn"/>
+                                </Record>
+                            </Collection>
+                        </PropertyValue>
+                    </Record>
+                </Annotation>
+                <Annotation Term="Common.SemanticObject" String="CostCenter"/>
+            </Annotations>
+            <Annotations Target="cds_c_cfdtsm_bupa.cds_c_cfdtsm_bupa_Entities" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+                <Annotation Term="Common.ApplyMultiUnitBehaviorForSortingAndFiltering" Bool="true"/>
+                <Annotation Term="Aggregation.ApplySupported">
+                    <Record>
+                        <PropertyValue Property="Transformations">
+                            <Collection>
+                                <String>aggregate</String>
+                                <String>groupby</String>
+                                <String>filter</String>
+                            </Collection>
+                        </PropertyValue>
+                        <PropertyValue Property="Rollup" EnumMember="None"/>
+                    </Record>
+                </Annotation>
+            </Annotations>
+            <Annotations Target="cds_c_cfdtsm_bupa.BusinessPartnerType/MinimumOrderUnitOfMeasure" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+                <Annotation Term="Common.FieldControl" EnumMember="Common.FieldControlType/Mandatory"/>
+            </Annotations>
+            <Annotations Target="cds_c_cfdtsm_bupa.BusinessPartnerType/PreferredCurrency" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+                <Annotation Term="Common.FieldControl" EnumMember="Common.FieldControlType/Mandatory"/>
+            </Annotations>
+            <Annotations Target="cds_c_cfdtsm_bupa.ZZ1_VH_TDBO_NUMType/CFD_KEY" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+                <Annotation Term="Common.FieldControl" EnumMember="Common.FieldControlType/Mandatory"/>
+            </Annotations>
+            <Annotations Target="cds_c_cfdtsm_bupa.ZZ1_VH_TDBO_TXTType/CFD_KEY" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+                <Annotation Term="Common.FieldControl" EnumMember="Common.FieldControlType/Mandatory"/>
+            </Annotations>
+            <Annotations Target="cds_c_cfdtsm_bupa.I_CurrencyType/Currency" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+                <Annotation Term="Common.UnitSpecificScale" Path="Decimals"/>
+            </Annotations>
+            <Annotations Target="cds_c_cfdtsm_bupa.I_UnitOfMeasureType/UnitOfMeasure" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+                <Annotation Term="Common.UnitSpecificScale" Path="UnitOfMeasureDspNmbrOfDcmls"/>
+            </Annotations>
+            <Annotations Target="cds_c_cfdtsm_bupa.BusinessPartnerType" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+                <Annotation Term="Communication.Contact">
+                    <Record>
+                        <PropertyValue Property="tel">
+                            <Collection>
+                                <Record>
+                                    <PropertyValue Property="type" EnumMember="Communication.PhoneType/preferred"/>
+                                    <PropertyValue Property="uri" Path="ZX1_RapPhone_Tbh"/>
+                                </Record>
+                            </Collection>
+                        </PropertyValue>
+                        <PropertyValue Property="email">
+                            <Collection>
+                                <Record>
+                                    <PropertyValue Property="address" Path="ZX1_TD_BEXP_EM_Tbh"/>
+                                </Record>
+                            </Collection>
+                        </PropertyValue>
+                    </Record>
+                </Annotation>
+            </Annotations>
+            <Annotations Target="cds_c_cfdtsm_bupa.BusinessPartnerType/ZX1_TD_BEXP_EM_Tbh" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+                <Annotation Term="Communication.IsEmailAddress"/>
+            </Annotations>
+            <Annotations Target="cds_c_cfdtsm_bupa.BusinessPartnerType/ZX1_RapPhone_Tbh" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+                <Annotation Term="Communication.IsPhoneNumber"/>
+            </Annotations>
+            <atom:link rel="self" href="https://server/sap/opu/odata/sap/C_CFDTSM_BUPA/$metadata" xmlns:atom="http://www.w3.org/2005/Atom"/>
+            <atom:link rel="latest-version" href="https://server/sap/opu/odata/sap/C_CFDTSM_BUPA/$metadata" xmlns:atom="http://www.w3.org/2005/Atom"/>
+        </Schema>
+    </edmx:DataServices>
+</edmx:Edmx>

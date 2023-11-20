@@ -1,0 +1,56 @@
+{
+  "1.87.0": {
+    "date": "February 2021",
+    "notes": [
+      {
+        "id": "29c065c0ea436af1b56816548d2af27782c215ba",
+        "type": "FIX",
+        "text": " sap.f.AvatarGroup: Focuses in HCB and HCW aligned with spec",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180068783"
+          }
+        ]
+      },
+      {
+        "id": "aa3d1669709762a6d90bd6ca33c93c3e2f0c1efe",
+        "type": "FIX",
+        "text": " sap.f.GridContainer: Focus of items is now visualized correctly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180033672"
+          }
+        ]
+      },
+      {
+        "id": "7139164479592f3519c95e38758c27f833c848f8",
+        "type": "FEATURE",
+        "text": " Updated visualization of Line Mode in generic tiles"
+      },
+      {
+        "id": "8c1494d30c4a4e7c87e302eee1143b7532019349",
+        "type": "FIX",
+        "text": " sap.m.ObjectStatus, sap.m.ObjectNumber: fixed vertical alignment",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080465490"
+          }
+        ]
+      },
+      {
+        "id": "3543df46a4a35eb41ecc4bf3cdff5927f9c81c4b",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: ObjectPageHeader`s padding is fixed for Large Desktop",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080405153"
+          }
+        ]
+      }
+    ]
+  }
+}

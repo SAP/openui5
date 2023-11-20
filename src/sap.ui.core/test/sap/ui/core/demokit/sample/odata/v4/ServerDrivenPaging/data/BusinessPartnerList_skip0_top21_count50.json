@@ -1,0 +1,107 @@
+{
+	"@odata.metadataEtag" : "W/\"20190924145600\"",
+	"@odata.count" : "50",
+	"value" : [
+		{
+			"@odata.etag" : "W/\"20190930102339.3029120 \"",
+			"BusinessPartnerID" : "0100000000",
+			"CompanyName" : "SAP"
+		},
+		{
+			"@odata.etag" : "W/\"20190321111935.0000000 \"",
+			"BusinessPartnerID" : "0100000001",
+			"CompanyName" : "Becker Berlin"
+		},
+		{
+			"@odata.etag" : "W/\"20190321111935.0000000 \"",
+			"BusinessPartnerID" : "0100000002",
+			"CompanyName" : "DelBont Industries"
+		},
+		{
+			"@odata.etag" : "W/\"20190524115810.7071360 \"",
+			"BusinessPartnerID" : "0100000003",
+			"CompanyName" : "Talpa"
+		},
+		{
+			"@odata.etag" : "W/\"20190321111935.0000000 \"",
+			"BusinessPartnerID" : "0100000004",
+			"CompanyName" : "Panorama Studios"
+		},
+		{
+			"@odata.etag" : "W/\"20190321111935.0000000 \"",
+			"BusinessPartnerID" : "0100000005",
+			"CompanyName" : "TECUM"
+		},
+		{
+			"@odata.etag" : "W/\"20190321111935.0000000 \"",
+			"BusinessPartnerID" : "0100000006",
+			"CompanyName" : "Asia High tech"
+		},
+		{
+			"@odata.etag" : "W/\"20190321111935.0000000 \"",
+			"BusinessPartnerID" : "0100000007",
+			"CompanyName" : "Laurent"
+		},
+		{
+			"@odata.etag" : "W/\"20190321111935.0000000 \"",
+			"BusinessPartnerID" : "0100000008",
+			"CompanyName" : "AVANTEL"
+		},
+		{
+			"@odata.etag" : "W/\"20190321111935.0000000 \"",
+			"BusinessPartnerID" : "0100000009",
+			"CompanyName" : "Telecomunicaciones Star"
+		},
+		{
+			"@odata.etag" : "W/\"20190321111935.0000000 \"",
+			"BusinessPartnerID" : "0100000010",
+			"CompanyName" : "Pear Computing Services"
+		},
+		{
+			"@odata.etag" : "W/\"20190321111935.0000000 \"",
+			"BusinessPartnerID" : "0100000011",
+			"CompanyName" : "Alpine Systems"
+		},
+		{
+			"@odata.etag" : "W/\"20190321111935.0000000 \"",
+			"BusinessPartnerID" : "0100000012",
+			"CompanyName" : "New Line Design"
+		},
+		{
+			"@odata.etag" : "W/\"20190321111935.0000000 \"",
+			"BusinessPartnerID" : "0100000013",
+			"CompanyName" : "HEPA Tec"
+		},
+		{
+			"@odata.etag" : "W/\"20190321111935.0000000 \"",
+			"BusinessPartnerID" : "0100000014",
+			"CompanyName" : "Anav Ideon"
+		},
+		{
+			"@odata.etag" : "W/\"20190321111935.0000000 \"",
+			"BusinessPartnerID" : "0100000015",
+			"CompanyName" : "Robert Brown Entertainment"
+		},
+		{
+			"@odata.etag" : "W/\"20190321111935.0000000 \"",
+			"BusinessPartnerID" : "0100000016",
+			"CompanyName" : "Mexican Oil Trading Company"
+		},
+		{
+			"@odata.etag" : "W/\"20190321111935.0000000 \"",
+			"BusinessPartnerID" : "0100000017",
+			"CompanyName" : "Meliva"
+		},
+		{
+			"@odata.etag" : "W/\"20190321111935.0000000 \"",
+			"BusinessPartnerID" : "0100000018",
+			"CompanyName" : "Compostela"
+		},
+		{
+			"@odata.etag" : "W/\"20190321111935.0000000 \"",
+			"BusinessPartnerID" : "0100000019",
+			"CompanyName" : "Pateu"
+		}
+	],
+	"@odata.nextLink": "/sap/opu/odata4/sap/zui5_testv4/default/sap/zui5_epm_sample/0002/BusinessPartnerList?$skip=0&$top=21&$filter=BusinessPartnerID%20lt%20%270100000030%27&$count=true&custom-option=value&$skiptoken=20"
+}

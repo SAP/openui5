@@ -1,0 +1,54 @@
+/* ====================================== */
+/* CSS for control sap.m/ObjectAttribute  */
+/* Fiori 3 theme                          */
+/* ====================================== */
+
+@_sap_m_ObjectAttribute_ListTextShadowColor: none;
+
+.sapMObjectAttributeActive .sapMObjectAttributeText:focus {
+	position: relative;
+}
+
+.sapMObjectAttributeActive .sapMObjectAttributeText:focus::after {
+	pointer-events: none;
+	display: block;
+	content: "";
+	position: absolute;
+	top: 1px;
+	left: 1px;
+	bottom: 1px;
+	right: 1px;
+	outline: 1px dotted @sapUiContentFocusColor;
+}
+
+.sapMObjectAttributeActive .sapMObjectAttributeText:active,
+.sapMObjectAttributeActive .sapMObjectAttributeText:hover {
+	text-decoration: underline;
+	color: @sapUiLinkHover;
+}
+
+/*=========================================== */
+/* Custom design for Responsive Object Header */
+/*=========================================== */
+
+.sapMOHR .sapMObjectAttributeActive .sapMObjectAttributeText:active,
+.sapMOHR .sapMObjectAttributeActive .sapMObjectAttributeText:hover,
+.sapMOHR .sapMObjectAttributeActive .sapMObjectAttributeText:focus {
+	text-decoration: underline;
+	color: @sapUiLinkHover;
+}
+
+/*=========================================== */
+/* Custom design for Static Object Header     */
+/*=========================================== */
+
+.sapMOH .sapMObjectAttributeActive .sapMObjectAttributeText:active,
+.sapMOH .sapMObjectAttributeActive .sapMObjectAttributeText:hover {
+	text-decoration: underline;
+	color: @sapUiLinkHover;
+}
+
+.sapMOHR .sapMObjectAttributeActive .sapMObjectAttributeText,
+.sapMOH .sapMObjectAttributeActive .sapMObjectAttributeText {
+	text-shadow: @_sap_m_ObjectAttribute_ListTextShadowColor;
+}

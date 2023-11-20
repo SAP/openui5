@@ -1,0 +1,18 @@
+{
+  "1.89.0": {
+    "date": "April 2021",
+    "notes": [
+      {
+        "id": "b90792bc7a0ae15188671a00c0871437febb4917",
+        "type": "FIX",
+        "text": " sap.m.Popover: Nexted popovers KH close fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180132292"
+          }
+        ]
+      }
+    ]
+  }
+}

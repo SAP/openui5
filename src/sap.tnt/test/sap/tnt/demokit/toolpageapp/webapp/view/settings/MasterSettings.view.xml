@@ -2,7 +2,6 @@
 	controllerName="sap.ui.demo.toolpageapp.controller.settings.MasterSettings"
 	xmlns="sap.m"
 	xmlns:mvc="sap.ui.core.mvc">
-
 	<Page id="masterSettingsPage"
 		showHeader="false">
 		<landmarkInfo>
@@ -16,9 +15,9 @@
 			id="masterSettingsList"
 			items="{side>/masterSettings}"
 			mode="SingleSelectMaster"
-			selectionChange="onMasterPressed">
+			selectionChange=".onMasterPressed">
 			<StandardListItem
-				title="{side>title}"
+				title="{path: 'side>titleI18nKey', formatter: '.getBundleText'}"
 				type="Navigation"
 				selected="{= ${device>/system/phone} ? false : ${side>selected}}"/>
 		</List>

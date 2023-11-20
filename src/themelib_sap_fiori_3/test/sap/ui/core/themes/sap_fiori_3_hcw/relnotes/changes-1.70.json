@@ -1,0 +1,130 @@
+{
+  "1.70.0": {
+    "date": "August 2019",
+    "notes": [
+      {
+        "id": "2d8a09b8817e9c2c6edeb4200f53fbb008771e3a",
+        "type": "FIX",
+        "text": "sap.m.TextArea: Paddings are corrected",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970397572"
+          }
+        ]
+      },
+      {
+        "id": "b96ec6c41ecb66bf9e01a5473b7b84e2d74534b1",
+        "type": "FEATURE",
+        "text": "sap.f.GridListItem: New control implemented",
+        "references": []
+      },
+      {
+        "id": "f6e1a5396a11088b4ecb81c9bdbe11129dccb15d",
+        "type": "FIX",
+        "text": "sap.m.Button: Active border and background is corrected in Quartz theme",
+        "references": []
+      },
+      {
+        "id": "597ccff3908324543d64530e8095526fce9ce1e5",
+        "type": "FIX",
+        "text": "sap.m.OverflowToolbar: Fixed calculation of overflow button",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970354710"
+          }
+        ]
+      },
+      {
+        "id": "65cc42ebc8dedd4d2aac6108831f887ad3030988",
+        "type": "FIX",
+        "text": "sap.uxap.HierarchicalSelect: Fixed incorrect alignment in FCL",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970422781"
+          }
+        ]
+      },
+      {
+        "id": "67a34d85abc53a800e2b45917adefb1c4c066c31",
+        "type": "FEATURE",
+        "text": "sap.m.Bar: Visual Enhacement",
+        "references": []
+      },
+      {
+        "id": "967daf83e483c984270f2425b560d7a3540c81cc",
+        "type": "FIX",
+        "text": " @sapList_TableGroupHeaderBackground for HC themes corrected",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970362383"
+          }
+        ]
+      },
+      {
+        "id": "89be48cb34c1030de9fce2d4be6a5f453da5f46e",
+        "type": "FIX",
+        "text": " sap.m.Button: border parameter changed in context of bar and toolbar",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980324066"
+          }
+        ]
+      },
+      {
+        "id": "1ada323a7488247583ff6702740c38e2a8b7fc6f",
+        "type": "FIX",
+        "text": " sap.m.GenericTag: Fixed incorrect icon color",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970423590"
+          }
+        ]
+      },
+      {
+        "id": "bf668139a6102777aba64801ba7883511fcb9400",
+        "type": "FIX",
+        "text": " sap.m.MultiInput,MultiComboBox: Tooltips in disabled state now shown",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980173700"
+          }
+        ]
+      },
+      {
+        "id": "b6c1cb399add27e71dfefc7cd5b5f26bdcd6d559",
+        "type": "FIX",
+        "text": " sap.m.Page: Subheader padding fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970365105"
+          }
+        ]
+      },
+      {
+        "id": "7026a31e146960d7262bce970c43e77bd94d0a93",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Corrected sections spacing for Fiori3",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970420265"
+          }
+        ]
+      },
+      {
+        "id": "7618d0980272735dadde67bf869b4184da67c716",
+        "type": "FIX",
+        "text": " sap.m.Bar: Items in bar now displayed with correct distance",
+        "references": []
+      }
+    ]
+  }
+}

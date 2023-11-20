@@ -1,0 +1,41 @@
+<mvc:View
+	xmlns:core="sap.ui.core"
+	xmlns="sap.m"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:f="sap.f"
+	xmlns:w="sap.ui.integration.widgets"
+	controllerName="sap.f.cardsdemo.controller.DelayedLoading"
+	xmlns:form="sap.ui.layout.form"
+	displayBlock="true">
+
+	<Page title="{i18n>appTitle}">
+
+		<subHeader>
+			<Toolbar>
+				<ToolbarSpacer/>
+				<Title text="Loading behavior with Grid Container"/>
+				<ToolbarSpacer/>
+			</Toolbar>
+		</subHeader>
+
+		<content>
+			<form:SimpleForm editable="true" width="40rem" layout="ColumnLayout">
+				<core:Title text="Cards loading will take random time in the given interval." />
+				<Label text="Minimum loading time" />
+				<Input id="loadingMinSeconds" width="8rem" type="Number" description="seconds" />
+				<Label text="Maximum loading time" />
+				<Input id="loadingMaxSeconds" width="8rem" type="Number" description="seconds" />
+				<Label text="Preload manifests" />
+				<CheckBox id="preloadManifests" selected="true" />
+				<Label text="Number of cards" />
+				<Input id="numberOfCards" width="4rem" type="Number" value="{/numberOfCards}" />
+				<Label text="dataMode to 'Active'"/>
+				<CheckBox id="dataMode"></CheckBox>
+				<Button text="Start loading" type="Emphasized" press=".onFormSubmit" />
+			</form:SimpleForm>
+
+			<f:GridContainer id="cardsContainer" class="sapUiSmallMargin">
+			</f:GridContainer>
+		</content>
+	</Page>
+</mvc:View>

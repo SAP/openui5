@@ -1,0 +1,78 @@
+{
+	"Type": "sap.ui.core.mvc.JSONView",
+	"controllerName": "testdata.mvc_legacyAPIs.Async",
+	"content": [
+		{
+			"Type": "sap.m.Image",
+			"width": "150px",
+			"height": "110px",
+			"src": "./testdata/images/screw.jpg"
+		},
+		{
+			"Type": "sap.ui.layout.form.SimpleForm",
+			"id": "Layout",
+			"content": [
+				{
+					"Type": "sap.m.Label",
+					"text": "Product: "
+				},
+				{
+					"Type": "sap.m.Input",
+					"id": "Product",
+					"value": "Deluxe Async Screw"
+				},
+				{
+					"Type": "sap.m.Label",
+					"text": "Material: "
+				},
+				{
+					"Type": "sap.m.Input",
+					"id": "Material",
+					"value": "Asynchronium"
+				},
+				{
+					"Type": "sap.m.Label",
+					"id": "More1",
+					"text": "Diameter: "
+				},
+				{
+					"Type": "sap.m.Input",
+					"id": "TFMore1",
+					"value": "2/4 inch"
+				},
+				{
+					"Type": "sap.m.Label",
+					"id": "More2",
+					"text": "Length: "
+				},
+				{
+					"Type": "sap.m.Input",
+					"id": "TFMore2",
+					"value": "2 inch"
+				},
+				{
+					"Type": "sap.m.Label",
+					"id": "More3",
+					"text": "Package Quantity: "
+				},
+				{
+					"Type": "sap.m.Input",
+					"id": "TFMore3",
+					"value": "500"
+				},
+				{
+					"Type": "sap.m.Link",
+					"id": "showMore",
+					"text": "show details...",
+					"press": "showMore"
+				},
+				{
+					"Type": "sap.m.Link",
+					"id": "hideMore",
+					"text": "hide details...",
+					"press": "hideMore"
+				}
+			]
+		}
+	]
+}

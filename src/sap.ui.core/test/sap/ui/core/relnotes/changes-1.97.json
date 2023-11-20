@@ -1,0 +1,170 @@
+{
+  "1.97.0": {
+    "date": "November 2021",
+    "notes": [
+      {
+        "id": "bf351f5887ee940076e2cfc5242fbf570e667084",
+        "type": "FIX",
+        "text": " sap.ui.core: remove irreg. whitespace, make testrunner use utf8",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170321198"
+          }
+        ]
+      },
+      {
+        "id": "f4e0a5fb6472a92c849d11156d92d514e4f07401",
+        "type": "FEATURE",
+        "text": " sap.m.DynamicDateRange: Add new option for Date to Year"
+      },
+      {
+        "id": "fef0810a2037f4e45e55ff294adef19e86f299b1",
+        "type": "FEATURE",
+        "text": " Integration cards: Implemented support for requesting CSRF tokens"
+      },
+      {
+        "id": "434ef5430f658cf809ef1e69e0c81facd696057e",
+        "type": "FIX",
+        "text": " Remove/adjust usage of sap.ui.Device.os.ios indicator"
+      },
+      {
+        "id": "98219cc211fb4821cf24519f4f6b930b0a2d2002",
+        "type": "FEATURE",
+        "text": " PressAction: support key modifiers"
+      },
+      {
+        "id": "4c0c42818a5150343a7b02128cc5af77a42b629b",
+        "type": "FIX",
+        "text": " XMLView: Rendering of style attributes",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170281098"
+          },
+          {
+            "type": "BCP",
+            "reference": "2170290345"
+          }
+        ]
+      },
+      {
+        "id": "ee3ba4b56d163982f3f2f8465de6c2f576385030",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v4.Context: setKeepAlive is not supported on bindings with $$sharedRequest"
+      },
+      {
+        "id": "ed2937dc7a1fc7a3c8ecd728e5b011aa933a8660",
+        "type": "FIX",
+        "text": " core.IconPool: Fix JSDoc, @function annotation for static functions",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170285536"
+          }
+        ]
+      },
+      {
+        "id": "15876ecb000fb27fa9b524ad6a7edec08daf041f",
+        "type": "FIX",
+        "text": " Core: avoid feeding lazy dependencies into VersionInfo",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170272029"
+          }
+        ]
+      },
+      {
+        "id": "0d3010eb9101d95e31046832861b49983a3526ed",
+        "type": "FIX",
+        "text": " NumberFormat: Currency symbols should not be affected by trailingCurrencyCode option",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500006756752021"
+          }
+        ]
+      },
+      {
+        "id": "6ae30d23e5baacc913c68830bddcc0c5efb98af7",
+        "type": "FIX",
+        "text": " core/m: remove restriction meta tag of disabling user scalability",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1780061368"
+          }
+        ]
+      },
+      {
+        "id": "8741943b0410edc904317b9c45c95bdeee0d34aa",
+        "type": "FIX",
+        "text": " base/ManagedObjectMetadata: #addAPIParentInfoEnd",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400006162002021"
+          }
+        ]
+      },
+      {
+        "id": "a0900e36fb4c7c53656e9f9df655e978ec676b6b",
+        "type": "FEATURE",
+        "text": " SAP-icons font v5.0 / v4.12"
+      },
+      {
+        "id": "26e3fc7089426e321e6a93d8b4a289d92d32abed",
+        "type": "FIX",
+        "text": " sap.ui.model.analytics.AnalyticalBinding#_processLevelMembersQueryResponse: trigger update in case of no data",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170218821"
+          }
+        ]
+      },
+      {
+        "id": "9da943b5ac9752bdb3e7e989e7e36c7541b33e4d",
+        "type": "FIX",
+        "text": " core/Router: Add typedef for RouteInfo",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170235589"
+          }
+        ]
+      },
+      {
+        "id": "43814d948ad158a08d8af67e7f5c85025f0c34d1",
+        "type": "FIX",
+        "text": " core.Icon: support screen reader in VPC mode",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180128712"
+          },
+          {
+            "type": "BCP",
+            "reference": "1670565585"
+          }
+        ]
+      },
+      {
+        "id": "0d7754afca99e0b274840d68ebd776301fc95a81",
+        "type": "FEATURE",
+        "text": " sap.ui.model.odata.v4.ODataContextBinding: allow $$inheritExpandSelect with $select for operations"
+      },
+      {
+        "id": "f9ab357aa3582c730fb545b0dcda4fe5c9f5e289",
+        "type": "FEATURE",
+        "text": " sap_horizon: initial commit of Horizon theme"
+      },
+      {
+        "id": "1891a80f952a5c84b293f0a11bc7f463105df1fb",
+        "type": "FEATURE",
+        "text": " sap.ui.core.IconPool: Update icon font v4.11"
+      }
+    ]
+  }
+}

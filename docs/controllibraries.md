@@ -60,7 +60,7 @@ some.lib/
                     SomeControl.spec.js
 ```
 
-At runtime (and after the Grunt build) all libraries are merged into one directory tree, but during development libraries are separated, hence the duplication of the library name, once as folder containing the complete library and twice inside as folder structure for the runtime sources as well as for the test pages.
+At runtime (and after a build) all libraries are merged into one directory tree, but during development libraries are separated, hence the duplication of the library name, once as folder containing the complete library and twice inside as folder structure for the runtime sources as well as for the test pages.
 
 Below the "themes" folder, there is one directory for each supported theme, with sub-folders for image resources if required (including the right-to-left version). Inside the folders for the themes, there can be any CSS files. The convention is to have one CSS file per control and one "shared.css" file for styles that are not specific to one control, but rather valid for the entire library. The library.source.less files are responsible for making LESS aware of all files that should be combined and how parts of the theme are connected. All CSS files should reside at the same directory level to avoid changing image paths when they are combined to one file in the build step.
  Note: themes can also be in separate theme libraries. For the standard UI5 controls sap\_bluecrystal and sap\_belize are such separate theme libraries. Their internal file structure is identical to control libraries, but when they support several control libraries, all their paths are contained.
@@ -130,14 +130,13 @@ sap.ui.define(['jquery.sap.global',
 	 * Suite controls library.
 	 *
 	 * @namespace
-	 * @name sap.ui.suite
+	 * @alias sap.ui.suite
 	 * @author SAP SE
 	 * @version ${version}
 	 * @public
 	 */
 	
-	// delegate further initialization of this library to the Core
-	sap.ui.getCore().initLibrary({
+	var thisLib = sap.ui.getCore().initLibrary({
 		name : "sap.ui.suite",
 		version: "${version}",
 		dependencies : ["sap.ui.core"],
@@ -159,9 +158,8 @@ sap.ui.define(['jquery.sap.global',
 	 * @version ${version}
 	 * @enum {string}
 	 * @public
-	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
-	sap.ui.suite.TaskCircleColor = {
+	thisLib.TaskCircleColor = {
 	
 		/**
 		 * Red
@@ -189,9 +187,9 @@ sap.ui.define(['jquery.sap.global',
 	
 	};
 
-	return sap.ui.suite;
+	return thisLib;
 
-}, /* bExport= */ false);
+});
 ```
 
 ### Translation file (messagebundle.properties) and translation
@@ -246,7 +244,13 @@ Note that the relative paths, which are going up four levels and then descending
 
 `shared.less` is by convention the name of a CSS file for library-level styles. It is handled and imported just like normal control CSS files, the separation is purely for better maintainability.
 
-The `img` folder contains any image resources and the same-name images are automatically loaded from the `img-RTL` folder when UI5 runs in right-to-left mode, so images can be either just copied, or mirrored, or otherwise modified to fit the desired RTL visuals and then put into this folder.
+The `img` folder contains any image resources required by your control.
+If an image should be displayed differently (e.g. mirrored) in right-to-left mode, it additionally needs to be stored in the `img-RTL` folder under the same path and name.
+When UI5 runs in right-to-left mode, both the mirrored images from `img-RTL` and the non-mirrored images from `img` are loaded.
+Whether your image is displayed differently in right-to-left mode depends on the presence of an image with the same name and path in the `img-RTL` folder.
+- Image resources which **should not** be mirrored **must not** have a same-name image inside the `img-RTL` folder.
+- Image resources which **should** be mirrored **must** have a same-name image inside the `img-RTL` folder.
+  To achieve this, simply modify your image resources to fit the desired RTL visuals, and then put them into the `img-RTL` folder using the same name and path..
 
 Developing a Control inside a Library
 -------------------------------------
@@ -259,11 +263,11 @@ At development time a control consists of three parts:
 
 ### The Control API and Behavior
 
-The main JavaScript file of a control contains the metadata object describing the API (properties, aggregations, events,...) as well as all method implementations reacting to browser events. This is explained in the main [control development documentation](https://openui5.hana.ondemand.com/#docs/guide/91f1703b6f4d1014b6dd926db0e91070.html). However, there are three significant differences when a control is developed within a control library:
+The main JavaScript file of a control contains the metadata object describing the API (properties, aggregations, events,...) as well as all method implementations reacting to browser events. This is explained in the main [control development documentation](https://sdk.openui5.org/topic/91f1703b6f4d1014b6dd926db0e91070). However, there are three significant differences when a control is developed within a control library:
 
 1.  By convention, the overall control is implemented in an [AMD structure](http://requirejs.org/docs/whyamd.html) ("Asynchronous Module Definition"), so there is a `sap.ui.define` function call wrapping the implementation and passing in all dependencies. Inside the implementation only the passed objects are used, not fully-namespaced global objects. E.g. if a `sap.ui.commons.Button` is required, it is added to the `define` function and the inner code only refers to a local `Button` object. This is to allow asynchronous usage and to conform with many tools depending on this structure.
 2.  Usually [the renderer](#the-control-renderer) is not just a static function in the behavior JS file, but a separate JS file. This is technically not mandatory, but a way to keep files smaller and more maintainable.
-3.  The documentation written for the API definition and any public methods is significant because it can be automatically extracted and converted into JSDoc documentation pages (this build step is not yet re-implemented with the Grunt build, though).
+3.  The documentation written for the API definition and any public methods is significant because it can be automatically extracted and converted into JSDoc documentation pages (this build step is not yet re-implemented with the UI5 Tooling build, though).
 4.  To be built and packaged with the library, controls need to be registered in [the library.js file](#libraryjs-file).
 
 #### The AMD syntax
@@ -341,7 +345,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	 * @public
 	 * @since 1.12
 	 * @alias sap.m.ObjectNumber
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var ObjectNumber = Control.extend("sap.m.ObjectNumber", /** @lends sap.m.ObjectNumber.prototype */ { metadata : {
 	
@@ -414,9 +417,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 
 });
 ```
-
-The ´@ui5-metamodel´ annotation relates to the "old" Maven build, which is internally still used. It means that the legacy `*.control` files should be re-generated for this control, for potential other users in upper layers. This annotation is planned to be removed.
-
 
 ### The Control Renderer
 

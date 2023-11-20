@@ -1,106 +1,120 @@
 sap.ui.define([
-    "sap/ui/core/mvc/Controller",
-    "sap/ui/model/json/JSONModel",
-    "sap/ui/model/BindingMode",
-    "sap/ui/core/message/Message",
-    "sap/ui/core/MessageType",
-    "sap/ui/core/ValueState",
-    "sap/m/MessageToast"
-], function(Controller, JSONModel, BindingMode, Message, MessageType, ValueState, MessageToast) {
-    "use strict";
+	"sap/ui/core/mvc/Controller",
+	"sap/ui/model/json/JSONModel",
+	"sap/ui/model/BindingMode",
+	"sap/ui/core/Messaging",
+	"sap/ui/core/message/Message",
+	"sap/ui/core/library",
+	"sap/ui/core/Fragment"
+], function(Controller, JSONModel, BindingMode, Messaging, Message, library, Fragment) {
+	"use strict";
 
-    return Controller.extend("sap.ui.core.sample.MessageManager.BasicMessages.Controller", {
+	// shortcut for sap.ui.core.ValueState
+	var ValueState = library.ValueState;
 
-        onInit : function () {
-            var oMessageManager, oModel, oView;
+	// shortcut for sap.ui.core.MessageType
+	var MessageType = library.MessageType;
 
-            oView = this.getView();
+	return Controller.extend("sap.ui.core.sample.MessageManager.BasicMessages.Controller", {
 
-            // set message model
-            oMessageManager = sap.ui.getCore().getMessageManager();
-            oView.setModel(oMessageManager.getMessageModel(), "message");
+		onInit : function () {
+			var oModel, oView;
 
-            // or just do it for the whole view
-            oMessageManager.registerObject(oView, true);
+			oView = this.getView();
 
-            // create a default model with somde demo data
-            oModel = new JSONModel({
-                MandatoryInputValue: "",
-                DateValue: null,
-                IntegerValue: undefined,
-                Dummy: ""
-            });
-            oModel.setDefaultBindingMode(BindingMode.TwoWay);
-            oView.setModel(oModel);
+			// set message model
+			oView.setModel(Messaging.getMessageModel(), "message");
 
-        },
+			// or just do it for the whole view
+			Messaging.registerObject(oView, true);
 
-        onMessagePopoverPress : function (oEvent) {
-            this._getMessagePopover().openBy(oEvent.getSource());
-        },
+			// create a default model with somde demo data
+			oModel = new JSONModel({
+				MandatoryInputValue: "",
+				DateValue: null,
+				IntegerValue: undefined,
+				Dummy: ""
+			});
+			oModel.setDefaultBindingMode(BindingMode.TwoWay);
+			oView.setModel(oModel);
 
-        onSuccessPress : function(){
-            var oMessage = new Message({
-                message: "My generated success message",
-                type: MessageType.Success,
-                target: "/Dummy",
-                processor: this.getView().getModel()
-            });
-            sap.ui.getCore().getMessageManager().addMessages(oMessage);
-        },
+		},
 
-        onErrorPress : function(){
-            var oMessage = new Message({
-                message: "My generated error message",
-                type: MessageType.Error,
-                target: "/Dummy",
-                processor: this.getView().getModel()
-            });
-            sap.ui.getCore().getMessageManager().addMessages(oMessage);
-        },
+		onMessagePopoverPress : function (oEvent) {
+			var oSourceControl = oEvent.getSource();
+			this._getMessagePopover().then(function(oMessagePopover){
+				oMessagePopover.openBy(oSourceControl);
+			});
+		},
 
-        onWarningPress : function(){
-            var oMessage = new Message({
-                message: "My generated warning message",
-                type: MessageType.Warning,
-                target: "/Dummy",
-                processor: this.getView().getModel()
-            });
-            sap.ui.getCore().getMessageManager().addMessages(oMessage);
-        },
+		onSuccessPress : function(){
+			var oMessage = new Message({
+				message: "My generated success message",
+				type: MessageType.Success,
+				target: "/Dummy",
+				processor: this.getView().getModel()
+			});
+			Messaging.addMessages(oMessage);
+		},
 
-        onInfoPress : function(){
-            var oMessage = new Message({
-                message: "My generated info message",
-                type: MessageType.Information,
-                target: "/Dummy",
-                processor: this.getView().getModel()
-            });
-            sap.ui.getCore().getMessageManager().addMessages(oMessage);
-        },
+		onErrorPress : function(){
+			var oMessage = new Message({
+				message: "My generated error message",
+				type: MessageType.Error,
+				target: "/Dummy",
+				processor: this.getView().getModel()
+			});
+			Messaging.addMessages(oMessage);
+		},
 
-        onValueStatePress : function(){
-            var oInput = this.getView().byId("valuesStateOnly");
-            oInput.setValueState(ValueState.Error);
-            oInput.setValueStateText("My ValueState text for Error");
-        },
+		onWarningPress : function(){
+			var oMessage = new Message({
+				message: "My generated warning message",
+				type: MessageType.Warning,
+				target: "/Dummy",
+				processor: this.getView().getModel()
+			});
+			Messaging.addMessages(oMessage);
+		},
 
-        onClearPress : function(){
-            // does not remove the manually set ValueStateText we set in onValueStatePress():
-            sap.ui.getCore().getMessageManager().removeAllMessages();
-        },
+		onInfoPress : function(){
+			var oMessage = new Message({
+				message: "My generated info message",
+				type: MessageType.Information,
+				target: "/Dummy",
+				processor: this.getView().getModel()
+			});
+			Messaging.addMessages(oMessage);
+		},
 
-        //################ Private APIs ###################
+		onValueStatePress : function(){
+			var oInput = this.getView().byId("valuesStateOnly");
+			oInput.setValueState(ValueState.Error);
+			oInput.setValueStateText("My ValueState text for Error");
+		},
 
-        _getMessagePopover : function () {
-            // create popover lazily (singleton)
-            if (!this._oMessagePopover) {
-                this._oMessagePopover = sap.ui.xmlfragment(this.getView().getId(),"sap.ui.core.sample.MessageManager.BasicODataMessages.MessagePopover", this);
-                this.getView().addDependent(this._oMessagePopover);
-            }
-            return this._oMessagePopover;
-        }
+		onClearPress : function(){
+			// does not remove the manually set ValueStateText we set in onValueStatePress():
+			Messaging.removeAllMessages();
+		},
 
-    });
+		//################ Private APIs ###################
+
+		_getMessagePopover: function () {
+			var oView = this.getView();
+
+			// create popover lazily (singleton)
+			if (!this._pMessagePopover) {
+				this._pMessagePopover = Fragment.load({
+					id: oView.getId(),
+					name: "sap.ui.core.sample.MessageManager.BasicMessages.MessagePopover"
+				}).then(function (oMessagePopover) {
+					oView.addDependent(oMessagePopover);
+					return oMessagePopover;
+				});
+			}
+			return this._pMessagePopover;
+		}
+	});
 
 });

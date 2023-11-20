@@ -1,0 +1,52 @@
+
+{
+	"sap.app": {
+		"id": "cardsdemo.samples.delayedLoading.footer",
+		"type": "card"
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"icons": {
+			"icon": "sap-icon://switch-classes"
+		}
+	},
+	"sap.card": {
+		"type": "Object",
+		"data": {
+			"request": {
+				"url": "./listData1.json"
+			}
+		},
+		"header": {
+			"title": "{/header/title}",
+			"subTitle": "{/header/subTitle}"
+		},
+		"content": {
+			"groups": [
+				{
+					"alignment": "Stretch",
+					"items": [
+						{
+							"type": "NumericData",
+							"mainIndicator": {
+								"number": "{/header/mainIndicator/number}",
+								"unit": "h",
+								"state": "Good",
+								"size": "S"
+							},
+							"details": "{/header/subTitle}"
+						}
+					]
+				}
+			]
+		},
+		"footer": {
+			"actionsStrip": [
+				{
+					"text": "{/filter/items/0/title}",
+					"buttonType": "Accept"
+				}
+			]
+		}
+	}
+}

@@ -1,0 +1,37 @@
+/* ======================================== */
+/* CSS for control sap.ui.mdc/TokenDisplay  */
+/* Horizon theme              				*/
+/* ======================================== */
+
+.sapUiMdcTokenizerDisplay .sapMToken {
+	background: transparent;
+	border: 0px;
+
+	padding-left: 0.3125rem;
+}
+
+.sapUiMdcTokenizerDisplay .sapMTokenSelected:not(:focus),
+.sapUiMdcTokenizerDisplay .sapMToken.sapMTokenReadOnly.sapMTokenSelected {
+	background: transparent;
+	border: 0px;
+	box-shadow: none;
+}
+
+html.sap-desktop .sapUiMdcTokenizerDisplay .sapMToken:not(.sapMTokenSelected):not(:focus):hover,
+html.sap-desktop .sapUiMdcTokenizerDisplay .sapMToken:not(.sapMTokenSelected):not(.sapMTokenReadOnly):focus:hover {
+	background: transparent;
+	border: 0px;
+	box-shadow: none;
+}
+
+html.sap-desktop .sapUiMdcTokenizerDisplay .sapMToken.sapMTokenSelected:hover {
+	background: transparent;
+	border: 0px;
+}
+
+html.sap-desktop .sapUiMdcTokenizerDisplay .sapMToken:focus,
+html.sap-desktop .sapUiMdcTokenizerDisplay .sapMToken:focus:after {
+	border: 0px;
+	box-shadow: none;
+}
+

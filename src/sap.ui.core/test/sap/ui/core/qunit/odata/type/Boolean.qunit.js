@@ -1,33 +1,34 @@
 /*!
  * ${copyright}
  */
-sap.ui.require([
-	"jquery.sap.global",
+sap.ui.define([
+	"sap/base/Log",
+	"sap/base/i18n/Localization",
 	"sap/ui/base/ManagedObject",
 	"sap/ui/model/FormatException",
-	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/ParseException",
 	"sap/ui/model/ValidateException",
+	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/odata/type/Boolean",
 	"sap/ui/model/odata/type/ODataType",
 	"sap/ui/test/TestUtils"
-], function (jQuery, ManagedObject, FormatException, JSONModel, ParseException, ValidateException,
-		BooleanType, ODataType, TestUtils) {
+], function (Log, Localization, ManagedObject, FormatException, ParseException, ValidateException,
+		JSONModel, BooleanType, ODataType, TestUtils) {
 	/*global QUnit */
 	"use strict";
 
-	var sDefaultLanguage = sap.ui.getCore().getConfiguration().getLanguage();
+	var sDefaultLanguage = Localization.getLanguage();
 
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.odata.type.Boolean", {
 		beforeEach : function () {
-			this.oLogMock = this.mock(jQuery.sap.log);
+			this.oLogMock = this.mock(Log);
 			this.oLogMock.expects("warning").never();
 			this.oLogMock.expects("error").never();
-			sap.ui.getCore().getConfiguration().setLanguage("en-US");
+			Localization.setLanguage("en-US");
 		},
 		afterEach : function () {
-			sap.ui.getCore().getConfiguration().setLanguage(sDefaultLanguage);
+			Localization.setLanguage(sDefaultLanguage);
 		}
 	});
 

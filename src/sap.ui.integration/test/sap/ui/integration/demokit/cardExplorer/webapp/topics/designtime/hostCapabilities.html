@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<title>Host Configuration Capabilities</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<script src="../../scripts/boot.js"></script>
+</head>
+
+<body class="sapUiBody topicBody">
+	<div class="topic">
+		<div class="content">
+
+			<h1 id="overview">
+				Host Configuration Capabilities
+			</h1>
+
+			<p>
+				The host environment needs to add support the editing of cards. It is responsible to
+			</p>
+			<ul>
+				<li>Provide Host implementation providing functionality
+					<ul>
+						<li>to resolve destinations during runtime</li>
+						<li>get a list of destinations during configuration</li>
+						<li>to resolve available contexts during runtime</li>
+						<li>get a context information during configuration</li>
+					</ul>
+				</li>
+
+				<li>Embed the Configuration Editor into its configuration UI for the different personas</li>
+				<li>Allow the administrator to use the Configuration Editor to configure connectivity</li>
+				<li>Allow the page/content administrator to use the Configuration Editor to configure card instances on pages</li>
+				<li>Allow the translator to use the Configuration Editor to translate text</li>
+				<li>Store the changes that were made from each persona</li>
+				<li>Apply the changes of each persona during runtime and configuration</li>
+			</ul>
+			<h2 id="provideHostImplementation">Provide Host Implementation</h2>
+			<pre class="lang-js">
+sap.ui.require(["sap/ui/integration/Host"], function(Host) {
+	// Create a new host environment with id "host"
+	var host = new Host("host");
+
+	// define a list of known destinations
+	host.destinationList = [
+		{"name": "destination1"},
+		{"name": "destination2"},
+	];
+
+	// define the current context structure with configuration information
+	host.context = {
+		"sap.workzone": {
+			"currentUser": {
+				"id": {
+					"label": "Id of the Work Zone user",
+					"placeholder": "Work Zone user id",
+					"description": "The value will change based on the logged on user",
+					"value": "MyCurrentUserId"
+				}
+			}
+		}
+	};
+
+	// called by runtime to resolve the destination to a real URL
+	host.resolveDestination = function(name) {
+		return this.getDestinations().then(function(destinationList) {
+			return "https://.../dynamic_dest/" + name;
+		})
+		return destination.realUrl
+	};
+
+	// called by the configuration to show a list of available destinations
+	host.getDestinations = function(name) {
+		return Promise.resolve(this.destinationList);
+	}
+
+	// called by runtime to resolve a context value by path. example: "/sap.workzone/currentUser/id/value"
+	host.getContextValue = function(path) {
+		return this.getContext().then(function (node) {
+			var parts = path.split("/"),
+				i = 0;
+			while (node && parts[iIndex]) {
+				node = node[parts[iIndex]];
+				i++;
+			}
+			return node;
+		});
+	};
+
+	// called by the configuration to show a selection of available contexts
+	host.getContext = function() {
+		return Promise.resolve(host.context);
+	};</pre>
+
+			<h2 id="embeddingConfigurationEditor">Embedding a Configuration Editor in a Host Environment</h2>
+			<p>
+				A host environment can embed the Configuration Editor in different modes depending on the logged in
+				persona.
+			</p>
+			<strong>HTML Embedding</strong>
+			<pre class="lang-html">
+&lt;!-- Administrator Configuration Editor --&gt;
+&lt;ui-integration-card-editor
+	id="adminEditor"
+	mode="admin"
+	card='{"manifest":"manifest.json", "baseUrl":"..","manifestChanges":[...]}'&gt;
+&lt;/ui-integration-card-editor&gt;
+
+
+&lt;!-- Content Configuration Editor --&gt;
+&lt;ui-integration-card-editor
+	id="contentEditor"
+	mode="content"
+	card='{"manifest":"manifest.json","baseUrl":"..","manifestChanges":[...]}'&gt;
+&lt;/ui-integration-card-editor&gt;
+
+
+&lt;!-- Translator Configuration Editor --&gt;
+&lt;ui-integration-card-editor
+	id="translationEditor"
+	mode="translation"
+	card='{"manifest":"manifest.json","baseUrl":"..","manifestChanges":[...]}'
+	language="de"&gt;
+&lt;/ui-integration-card-editor&gt;</pre>
+			<strong>Embedding in UI5 environments</strong>
+			<p>
+				Samples for the different personas can be found here:
+			</p>
+			<ul>
+				<li>
+					<a href="../../index.html#/explore/designtimeAdmin" target="_parent">Administrator Editor</a>
+				</li>
+				<li>
+					<a href="../../index.html#/explore/designtimeContent" target="_parent">Content/Page Administrator Editor</a>
+				</li>
+				<li>
+					<a href="../../index.html#/explore/designtimeTranslation" target="_parent">Translation Editor</a>
+				</li>
+			</ul>
+			<pre class="lang-js">
+// if no card instance is available, pass the settings of the card in the part property
+var oEditor = new CardEditor({
+	card: {manifest:"url", baseUrl:"baseUrl", manifestChanges:[]},
+	mode: "admin"
+});
+
+// create a new card instance or use an existing one. Often the card is already on the page
+var oEditor = new CardEditor({
+	card: new Card({manifest:"url", baseUrl:"baseUrl", manifestChanges:[]}),
+	mode: "translation",
+	language: "fr"
+});
+
+// for the translation mode a language is needed
+var oEditor = new CardEditor({
+	card: {manifest:"url", baseUrl:"baseUrl", manifestChanges:[]},
+	mode: "translation",
+	language: "fr"
+});</pre>
+			<h2 id="changehandling">Handling of Changes</h2>
+			<p>
+				After the user made changes to the card configuration, those need to be stored by the host
+				environment.
+				Normally the Configuration Editor is embedded into a UI of the host environment. Here the host should
+				define
+				an action
+				for the user to save his changes.<br>
+				To retrieve the changes the host can ask the Configuration Editor.
+			</p>
+			<h3 id="gettingChanges">Getting changes from the Configuration Editor</h3>
+			<pre class="lang-js">
+// Administrator Configuration Editor
+var editor = document.getElementById("adminEditor");
+var adminSettings = editor.getCurrentSettings();
+// store the settings adminSettings in the host. These settings should be applied during runtime for all card instances
+// based on this Card template
+
+
+// Content Configuration Editor
+var editor = document.getElementById("contentEditor");
+var contentSettings = editor.getCurrentSettings();
+// store the settings contentSettings in the host for the edited instance
+
+// Translator Configuration Editor
+var editor = document.getElementById("translationEditor");
+var language = editor.getAttribute("language");
+var translationSettings = editor.getCurrentSettings();
+// store the settings translationSettings in the host for the language given in the language attribute during editor creation</pre>
+			<h3 id="applyingChanges">Apply changes to the card instance at runtime</h3>
+			<pre class="lang-js">
+// read the changes
+var adminChanges = myHostEnvImplementation.getChanges(cardid, "admin"); // stringified JSON
+var contentChanges = myHostEnvImplementation.getChanges(cardid, "content");// stringified JSON
+var translationChanges = myHostEnvImplementation.getChanges(cardid, "translation", currentuserslanguage); // stringifiedJSON
+
+var el = document.createElement("div");
+el.innerHTML = `
+&lt;ui-integration-card
+   id="cardInstance"
+   manifest="manifest.json"
+   baseUrl="..."
+   manifestChanges='[` + adminChanges + `, ` + contentChanges + `, ` + translationChanges + `]'&gt;
+&lt;/ui-integration-card&gt;`;
+
+document.getElementById("contentarea").appendChild(el.firstChild);</pre>
+		</div>
+	</div>
+</body>
+
+</html>

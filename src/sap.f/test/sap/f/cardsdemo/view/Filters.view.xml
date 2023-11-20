@@ -1,0 +1,56 @@
+<mvc:View
+	xmlns="sap.m"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:f="sap.f"
+	xmlns:w="sap.ui.integration.widgets"
+	displayBlock="true"
+	controllerName="sap.f.cardsdemo.controller.Filters">
+	<Page id="filtersPage" title="{i18n>appTitle}">
+		<subHeader>
+			<Toolbar>
+				<ToolbarSpacer />
+				<Title text="Filters" />
+				<ToolbarSpacer />
+			</Toolbar>
+		</subHeader>
+
+		<f:GridContainer id="grid1" class="sapUiSmallMargin">
+			<w:Card id="card" manifest="{manifests>/filters/filter}" baseUrl="{cardsPlayground>/playgroundBaseUrl}">
+				<w:layoutData>
+					<f:GridContainerItemLayoutData columns="4" />
+				</w:layoutData>
+			</w:Card>
+			<w:Card id="cardDateRange" manifest="{manifests>/filters/dateRangeFilter}" baseUrl="{cardsPlayground>/playgroundBaseUrl}">
+				<w:layoutData>
+					<f:GridContainerItemLayoutData columns="4" />
+				</w:layoutData>
+			</w:Card>
+			<w:Card id="cardDateRangeParam" manifest="{manifests>/filters/dateRangeFilterWithParameter}" baseUrl="{cardsPlayground>/playgroundBaseUrl}">
+				<w:layoutData>
+					<f:GridContainerItemLayoutData columns="4" />
+				</w:layoutData>
+			</w:Card>
+			<w:Card id="cardDateRangeParam2" manifest="{manifests>/filters/dateRangeFilterWithParameter2}" baseUrl="{cardsPlayground>/playgroundBaseUrl}">
+				<w:layoutData>
+					<f:GridContainerItemLayoutData columns="4" />
+				</w:layoutData>
+			</w:Card>
+			<w:Card id="filterVisibleFalse" manifest="{manifests>/filters/filterVisibleFalse}" baseUrl="{cardsPlayground>/playgroundBaseUrl}">
+				<w:layoutData>
+					<f:GridContainerItemLayoutData columns="4" />
+				</w:layoutData>
+			</w:Card>
+		</f:GridContainer>
+		<Panel>
+			<Slider value="{settings>/cardWidth}"></Slider>
+			<w:Card
+				width="{settings>/cardWidth}%"
+				manifest="{manifests>/filters/multipleFilters}"
+				baseUrl="{cardsPlayground>/playgroundBaseUrl}">
+				<w:layoutData>
+					<f:GridContainerItemLayoutData columns="4" />
+				</w:layoutData>
+			</w:Card>
+		</Panel>
+	</Page>
+</mvc:View>

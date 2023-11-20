@@ -1,0 +1,89 @@
+{
+  "1.85.0": {
+    "date": "November 2020",
+    "notes": [
+      {
+        "id": "aa3d211df814220db2ad5d4fb5f5ac69dac7aac6",
+        "type": "FEATURE",
+        "text": " sap.ui.integration.widgets.Card: Introduced new actionDefinitions aggregation",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070393761"
+          }
+        ]
+      },
+      {
+        "id": "22fd4e99867d7af2dda07439922cf3a2b3ec30cd",
+        "type": "FIX",
+        "text": " CalendarContent: Manifest dates parsed as in ISO 8601 format",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070466809"
+          }
+        ]
+      },
+      {
+        "id": "d33295415493d7f233fb0b52f012a4158905652d",
+        "type": "FIX",
+        "text": " sap.ui.integration Editor"
+      },
+      {
+        "id": "155d00436c74acc5750db665fcb6821b6a2a7dae",
+        "type": "FIX",
+        "text": " sap.ui.integration.widgets.Card: Content now shrinks when needed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002028376500004032812020"
+          }
+        ]
+      },
+      {
+        "id": "39bfc8419a338642daebb31ef655aec7d56ae502",
+        "type": "FIX",
+        "text": " sap.ui.integration.cards.AdaptiveContent: ES bundle loading is now fixed in older Edge versions",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070373876"
+          }
+        ]
+      },
+      {
+        "id": "981f06b9704e671c0d160be4bcd5802dd7a14709",
+        "type": "FIX",
+        "text": " sap.ui.integration Editor: Lists reloaded on dependency change",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070425097"
+          }
+        ]
+      },
+      {
+        "id": "e22804bf1d56c05ef73ce750a51300d09b0a2958",
+        "type": "FIX",
+        "text": " integration/Card: Visible property now works with binding in Object content",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070427102"
+          }
+        ]
+      },
+      {
+        "id": "ef8b7e0dbbc5ae0b94b8c1bb186e187db34c7d8c",
+        "type": "FIX",
+        "text": " sap.ui.integration Editor: Lists reloaded on dependency change",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070425097"
+          }
+        ]
+      }
+    ]
+  }
+}

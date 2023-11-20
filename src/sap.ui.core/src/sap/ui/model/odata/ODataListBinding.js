@@ -1,18 +1,31 @@
 /*!
  * ${copyright}
  */
-
+/*eslint-disable max-len */
 // Provides class sap.ui.model.odata.ODataListBinding
 sap.ui.define([
-		'jquery.sap.global',
-		'sap/ui/model/ChangeReason', 'sap/ui/model/Filter', 'sap/ui/model/FilterType', 'sap/ui/model/ListBinding', 'sap/ui/model/Sorter',
-		'./ODataUtils', './CountMode'
-	], function(jQuery, ChangeReason, Filter, FilterType, ListBinding, Sorter, ODataUtils, CountMode) {
+	"./CountMode",
+	"./ODataUtils",
+	"sap/base/assert",
+	"sap/base/Log",
+	"sap/base/util/deepEqual",
+	"sap/base/util/each",
+	"sap/base/util/merge",
+	"sap/base/util/array/diff",
+	"sap/ui/model/ChangeReason",
+	"sap/ui/model/Filter",
+	"sap/ui/model/FilterProcessor",
+	"sap/ui/model/FilterType",
+	"sap/ui/model/ListBinding",
+	"sap/ui/model/Sorter",
+	"sap/ui/model/odata/Filter"
+], function(CountMode, ODataUtils, assert, Log, deepEqual, each, merge, arrayDiff, ChangeReason,
+	Filter, FilterProcessor, FilterType, ListBinding, Sorter, ODataFilter) {
 	"use strict";
 
 	/**
 	 * @class
-	 * List binding implementation for oData format.
+	 * List binding implementation for OData format.
 	 *
 	 * @param {sap.ui.model.odata.ODataModel} oModel Model that this list binding belongs to
 	 * @param {string} sPath Path into the model data, relative to the given <code>oContext</code>
@@ -22,11 +35,15 @@ sap.ui.define([
 	 * @param {object} [mParameters] A map which contains additional parameters for the binding
 	 * @param {string} [mParameters.expand] Value for the OData <code>$expand</code> query parameter which should be included in the request
 	 * @param {string} [mParameters.select] Value for the OData <code>$select</code> query parameter which should be included in the request
-	 * @param {map} [mParameters.custom] An optional map of custom query parameters. Custom parameters must not start with <code>$</code>
+	 * @param {Object<string,string>} [mParameters.custom] An optional map of custom query parameters. Custom parameters must not start with <code>$</code>
 	 * @param {sap.ui.model.odata.CountMode} [mParameters.countMode] Defines the count mode of this binding;
 	 *           if not specified, the default count mode of the <code>oModel</code> is applied
+	 * @throws {Error} If one of the filters uses an operator that is not supported by the underlying model
+	 *   implementation or if the {@link sap.ui.model.Filter.NONE} filter instance is contained in
+	 *   <code>aFilters</code> together with other filters
 	 *
 	 * @public
+	 * @deprecated As of version 1.66, please use {@link sap.ui.model.odata.v2.ODataListBinding} instead.
 	 * @alias sap.ui.model.odata.ODataListBinding
 	 * @extends sap.ui.model.ListBinding
 	 */
@@ -47,9 +64,10 @@ sap.ui.define([
 			this.bNeedsUpdate = false;
 			this.bDataAvailable = false;
 			this.bIgnoreSuspend = false;
+			this.oCombinedFilter = null;
 
 			// check filter integrity
-			this.oModel.checkFilterOperation(this.aApplicationFilters);
+			this.oModel.checkFilter(this.aApplicationFilters);
 
 			// load the entity type for the collection only once and not e.g. every time when filtering
 			if (!this.oModel.getServiceMetadata()) {
@@ -67,7 +85,6 @@ sap.ui.define([
 
 			// if nested list is already available and no filters or sorters are set,
 			// use the data and don't send additional requests
-			// TODO: what if nested list is not complete, because it was too large?
 			var oRef = this.oModel._getObject(this.sPath, this.oContext);
 			this.aExpandRefs = oRef;
 			if (Array.isArray(oRef) && !aSorters && !aFilters) {
@@ -80,25 +97,51 @@ sap.ui.define([
 				this.iLength = 0;
 				this.bLengthFinal = true;
 				this.bDataAvailable = true;
-			}	else {
+			} else if (this.oModel.getServiceMetadata()) {
 				// call getLength when metadata is already loaded or don't do anything
 				// if the metadata gets loaded it will call a refresh on all bindings
-				if (this.oModel.getServiceMetadata()) {
-					this.resetData();
-				}
+				this.resetData();
 			}
-
 		}
-
 	});
+
+	/**
+	 * Returns all current contexts of this list binding in no special order. Just like
+	 * {@link #getCurrentContexts}, this method does not request any data from a back end and does
+	 * not change the binding's state. In contrast to {@link #getCurrentContexts}, it does not only
+	 * return those contexts that were last requested by a control, but all contexts that are
+	 * currently available in the binding.
+	 *
+	 * @returns {sap.ui.model.odata.v2.Context[]}
+	 *   All current contexts of this list binding, in no special order
+	 *
+	 * @public
+	 * @since 1.98.0
+	 */
+	ODataListBinding.prototype.getAllCurrentContexts = function () {
+		var aContexts = [],
+			that = this;
+
+		this.aKeys.forEach(function (sKey) {
+			aContexts.push(that.oModel.getContext("/" + sKey));
+		});
+
+		return aContexts;
+	};
 
 	/**
 	 * Return contexts for the list
 	 *
-	 * @param {int} [iStartIndex=0] the start index of the requested contexts
-	 * @param {int} [iLength] the requested amount of contexts
+	 * @param {int} [iStartIndex=0]
+	 *   The start index of the requested contexts
+	 * @param {int} [iLength]
+	 *   The requested amount of contexts
 	 * @param {int} [iThreshold=0]
-	 * @return {sap.ui.model.Context[]} the array of contexts for each row of the bound list
+	 *   The maximum number of contexts to read before and after the given range; with this,
+	 *   controls can prefetch data that is likely to be needed soon, e.g. when scrolling down in a
+	 *   table
+	 * @return {sap.ui.model.Context[]}
+	 *   The array of contexts for each row of the bound list
 	 * @protected
 	 */
 	ODataListBinding.prototype.getContexts = function(iStartIndex, iLength, iThreshold) {
@@ -161,19 +204,19 @@ sap.ui.define([
 				//Check diff
 				if (this.aLastContexts && iStartIndex < this.iLastEndIndex) {
 					var that = this;
-					var aDiff = jQuery.sap.arrayDiff(this.aLastContexts, aContexts, function(oOldContext, oNewContext) {
-						return jQuery.sap.equal(
+					var aDiff = arrayDiff(this.aLastContexts, aContexts, function(oOldContext, oNewContext) {
+						return deepEqual(
 								oOldContext && that.oLastContextData && that.oLastContextData[oOldContext.getPath()],
 								oNewContext && oContextData && oContextData[oNewContext.getPath()]
 							);
-					}, true);
+					});
 					aContexts.diff = aDiff;
 				}
 			}
 
 			this.iLastEndIndex = iStartIndex + iLength;
 			this.aLastContexts = aContexts.slice(0);
-			this.oLastContextData = jQuery.sap.extend(true, {}, oContextData);
+			this.oLastContextData = merge({}, oContextData);
 		}
 
 		return aContexts;
@@ -316,9 +359,9 @@ sap.ui.define([
 
 				if (!this.bInitial) {
 					// if nested list is already available, use the data and don't send additional requests
-					// TODO: what if nested list is not complete, because it was too large?
 					var oRef = this.oModel._getObject(this.sPath, this.oContext);
 					this.aExpandRefs = oRef;
+					// eslint-disable-next-line no-unsafe-negation
 					if (Array.isArray(oRef) && !this.aSorters.length > 0 && !this.aFilters.length > 0) {
 						this.aKeys = oRef;
 						this.iLength = oRef.length;
@@ -366,13 +409,15 @@ sap.ui.define([
 
 		sPath = this.oModel.resolve(this.sPath,this.oContext);
 
-		if (sPath) {
-			return this.oModel._createRequestUrl(sPath, null, aParams);
-		}
+		return sPath && this.oModel._createRequestUrl(sPath, null, aParams);
 	};
 
 	/**
-	 * Load list data from the server
+	 * Load list data from the server.
+	 *
+	 * @param {number} iStartIndex The first index to load
+	 * @param {number} iLength The number of entries to load
+	 * @param {boolean} bPretend Whether the request should be pretended
 	 */
 	ODataListBinding.prototype.loadData = function(iStartIndex, iLength, bPretend) {
 
@@ -411,13 +456,13 @@ sap.ui.define([
 		function fnSuccess(oData) {
 
 			// Collecting contexts
-			jQuery.each(oData.results, function(i, entry) {
+			each(oData.results, function(i, entry) {
 				that.aKeys[iStartIndex + i] = that.oModel._getKey(entry);
 			});
 
 			// update iLength (only when the inline count was requested and is available)
 			if (bInlineCountRequested && oData.__count) {
-				that.iLength = parseInt(oData.__count, 10);
+				that.iLength = parseInt(oData.__count);
 				that.bLengthFinal = true;
 			}
 
@@ -518,9 +563,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Return the length of the list
-	 *
-	 * @return {int} the length
+	 * Request the length of the list from the backend and cache it.
 	 */
 	ODataListBinding.prototype._getLength = function() {
 
@@ -535,14 +578,14 @@ sap.ui.define([
 		// use only custom params for count and not expand,select params
 		if (this.mParameters && this.mParameters.custom) {
 			var oCust = { custom: {}};
-			jQuery.each(this.mParameters.custom, function (sParam, oValue){
+			each(this.mParameters.custom, function (sParam, oValue){
 				oCust.custom[sParam] = oValue;
 			});
 			aParams.push(this.oModel.createCustomParams(oCust));
 		}
 
 		function _handleSuccess(oData) {
-			that.iLength = parseInt(oData, 10);
+			that.iLength = parseInt(oData);
 			that.bLengthFinal = true;
 		}
 
@@ -551,7 +594,7 @@ sap.ui.define([
 			if (oError.response) {
 				sErrorMsg += ", " + oError.response.statusCode + ", " + oError.response.statusText + ", " + oError.response.body;
 			}
-			jQuery.sap.log.warning(sErrorMsg);
+			Log.warning(sErrorMsg);
 		}
 
 		// Use context and check for relative binding
@@ -571,12 +614,14 @@ sap.ui.define([
 	};
 
 	/**
-	 * Refreshes the binding, check whether the model data has been changed and fire change event
-	 * if this is the case. For server side models this should refetch the data from the server.
-	 * To update a control, even if no data has been changed, e.g. to reset a control after failed
-	 * validation, please use the parameter bForceUpdate.
+	 * Refreshes the binding, checks whether the model data has been changed and fires a change
+	 * event if this is the case. For server side models this should refetch the data from the
+	 * server. To update a control, even if no data has been changed, e.g. to reset a control after
+	 * failed validation, use the parameter <code>bForceUpdate</code>.
 	 *
 	 * @param {boolean} [bForceUpdate] Update the bound control even if no data has been changed
+	 * @param {object} [mChangedEntities] A map of changed entities
+	 * @param {object} [mEntityTypes] A map of entity types
 	 * @public
 	 */
 	ODataListBinding.prototype.refresh = function(bForceUpdate, mChangedEntities, mEntityTypes) {
@@ -591,11 +636,13 @@ sap.ui.define([
 				}
 			}
 			if (mChangedEntities && !bChangeDetected) {
-				jQuery.each(this.aKeys, function(i, sKey) {
+				each(this.aKeys, function(i, sKey) {
 					if (sKey in mChangedEntities) {
 						bChangeDetected = true;
 						return false;
 					}
+
+					return true;
 				});
 			}
 			if (!mChangedEntities && !mEntityTypes) { // default
@@ -610,12 +657,14 @@ sap.ui.define([
 	};
 
 	/**
-	 * fireRefresh
+	 * Fires a <code>refresh</code> event.
+	 *
+	 * @param {object} oParameters Parameters for the event
 	 */
-	ODataListBinding.prototype._fireRefresh = function(mArguments) {
+	ODataListBinding.prototype._fireRefresh = function(oParameters) {
 		 if (this.oModel.resolve(this.sPath, this.oContext)) {
 			 this.bRefresh = true;
-			 this.fireEvent("refresh", mArguments);
+			 this.fireEvent("refresh", oParameters);
 		 }
 	};
 
@@ -637,14 +686,16 @@ sap.ui.define([
 	};
 
 	/**
-	 * Check whether this Binding would provide new values and in case it changed,
-	 * inform interested parties about this.
+	 * Checks whether this Binding would provide new values and in case it changed, fires a change
+	 * event.
 	 *
-	 * @param {boolean} bForceUpdate
+	 * @param {boolean} [bForceUpdate]
+	 *   Whether the event should be fired regardless of the bindings state
 	 * @param {object} mChangedEntities
+	 *   A map of changed entities
 	 */
 	ODataListBinding.prototype.checkUpdate = function(bForceUpdate, mChangedEntities) {
-		var bChangeReason = this.sChangeReason ? this.sChangeReason : ChangeReason.Change,
+		var sChangeReason = this.sChangeReason ? this.sChangeReason : ChangeReason.Change,
 			bChangeDetected = false,
 			oLastData, oCurrentData,
 			that = this,
@@ -662,7 +713,7 @@ sap.ui.define([
 			// - set the new keys if there are no sortes/filters set
 			// - trigger a refresh if there are sorters/filters set
 			oRef = this.oModel._getObject(this.sPath, this.oContext);
-			bRefChanged = Array.isArray(oRef) && !jQuery.sap.equal(oRef,this.aExpandRefs);
+			bRefChanged = Array.isArray(oRef) && !deepEqual(oRef,this.aExpandRefs);
 			this.aExpandRefs = oRef;
 			if (bRefChanged) {
 				if (this.aSorters.length > 0 || this.aFilters.length > 0) {
@@ -675,11 +726,13 @@ sap.ui.define([
 					bChangeDetected = true;
 				}
 			} else if (mChangedEntities) {
-				jQuery.each(this.aKeys, function(i, sKey) {
+				each(this.aKeys, function(i, sKey) {
 					if (sKey in mChangedEntities) {
 						bChangeDetected = true;
 						return false;
 					}
+
+					return true;
 				});
 			} else {
 				bChangeDetected = true;
@@ -693,21 +746,23 @@ sap.ui.define([
 				if (this.aLastContexts.length != aContexts.length) {
 					bChangeDetected = true;
 				} else {
-					jQuery.each(this.aLastContexts, function(iIndex, oContext) {
+					each(this.aLastContexts, function(iIndex, oContext) {
 						oLastData = that.oLastContextData[oContext.getPath()];
 						oCurrentData = aContexts[iIndex].getObject();
 						// Compare whether last data is completely contained in current data
-						if (!jQuery.sap.equal(oLastData, oCurrentData, true)) {
+						if (!deepEqual(oLastData, oCurrentData, true)) {
 							bChangeDetected = true;
 							return false;
 						}
+
+						return true;
 					});
 				}
 			}
 		}
 		if (bForceUpdate || bChangeDetected || this.bNeedsUpdate) {
 			this.bNeedsUpdate = false;
-			this._fireChange({reason: bChangeReason});
+			this._fireChange({reason: sChangeReason});
 		}
 		this.sChangeReason = undefined;
 		this.bIgnoreSuspend = false;
@@ -750,8 +805,14 @@ sap.ui.define([
 	/**
 	 * Sorts the list.
 	 *
-	 * @param {sap.ui.model.Sorter|Array} aSorters the Sorter or an array of sorter objects object which define the sort order
-	 * @return {sap.ui.model.ListBinding} returns <code>this</code> to facilitate method chaining
+	 * @param {sap.ui.model.Sorter|sap.ui.model.Sorter[]} aSorters
+	 *   The Sorter or an array of sorter objects which define the sort order
+	 * @param {boolean} [bReturnSuccess=false]
+	 *   Whether to return <code>true</code> or <code>false</code>, instead of <code>this</code>,
+	 *   depending on whether the sorting has been done
+	 * @return {this}
+	 *   Returns <code>this</code> to facilitate method chaining or the success state
+	 *
 	 * @public
 	 */
 	ODataListBinding.prototype.sort = function(aSorters, bReturnSuccess) {
@@ -775,7 +836,6 @@ sap.ui.define([
 			this.abortPendingRequest();
 			this.sChangeReason = ChangeReason.Sort;
 			this._fireRefresh({reason : this.sChangeReason});
-			// TODO remove this if the sort event gets removed which is now deprecated
 			this._fireSort({sorter: aSorters});
 			bSuccess = true;
 		}
@@ -794,16 +854,26 @@ sap.ui.define([
 	 *
 	 * Filters the list.
 	 *
-	 * When using sap.ui.model.Filter the filters are first grouped according to their binding path.
-	 * All filters belonging to a group are combined with OR and after that the
+	 * When using <code>sap.ui.model.Filter</code> the filters are first grouped according to their
+	 * binding path. All filters belonging to a group are combined with OR and after that the
 	 * results of all groups are combined with AND.
-	 * Usually this means, all filters applied to a single table column
-	 * are combined with OR, while filters on different table columns are combined with AND.
+	 * Usually this means, all filters applied to a single table column are combined with OR, while
+	 * filters on different table columns are combined with AND.
 	 * Please note that a custom filter function is not supported.
 	 *
-	 * @param {sap.ui.model.Filter[]|sap.ui.model.odata.Filter[]} aFilters Array of filter objects
-	 * @param {sap.ui.model.FilterType} sFilterType Type of the filter which should be adjusted, if it is not given, the standard behaviour applies
-	 * @return {sap.ui.model.ListBinding} returns <code>this</code> to facilitate method chaining
+	 * @param {sap.ui.model.Filter|sap.ui.model.Filter[]} aFilters
+	 *   Single filter object or an array of filter objects
+	 * @param {sap.ui.model.FilterType} sFilterType
+	 *   Type of the filter which should be adjusted, if it is not given, the standard behaviour
+	 *   applies
+	 * @param {boolean} [bReturnSuccess=false]
+	 *   Whether to return <code>true</code> or <code>false</code>, instead of <code>this</code>,
+	 *   depending on whether the filtering has been done
+	 * @return {this}
+	 *   Returns <code>this</code> to facilitate method chaining or the success state
+	 * @throws {Error} If one of the filters uses an operator that is not supported by the underlying model
+	 *   implementation or if the {@link sap.ui.model.Filter.NONE} filter instance is contained in
+	 *   <code>aFilters</code> together with other filters
 	 *
 	 * @public
 	 */
@@ -820,7 +890,7 @@ sap.ui.define([
 		}
 
 		// check filter integrity
-		this.oModel.checkFilterOperation(aFilters);
+		this.oModel.checkFilter(aFilters);
 
 		if (sFilterType == FilterType.Application) {
 			this.aApplicationFilters = aFilters;
@@ -837,14 +907,15 @@ sap.ui.define([
 		}
 
 		//if we have some Application Filters, they will ANDed to the Control-Filters
-		this.createFilterParams(this.aFilters, this.aApplicationFilters);
+		this.convertFilters();
+		this.oCombinedFilter = FilterProcessor.combineFilters(this.aFilters, this.aApplicationFilters);
+		this.createFilterParams(this.oCombinedFilter);
 
 		if (!this.bInitial) {
 			this.resetData();
 			this.abortPendingRequest();
 			this.sChangeReason = ChangeReason.Filter;
 			this._fireRefresh({reason : this.sChangeReason});
-			// TODO remove this if the filter event gets removed which is now deprecated
 			if (sFilterType == FilterType.Application) {
 				this._fireFilter({filters: this.aApplicationFilters});
 			} else {
@@ -861,45 +932,28 @@ sap.ui.define([
 	};
 
 	/**
-	 * Creates a $filter query option string, which will be used
-	 * as part of URL for OData-Requests. If an Array of Application Filters is given as the second
-	 * If an array of application filters is given as second argument, the control filters and application filters are combined with AND.
-	 * @param {sap.ui.model.Filter[]|sap.ui.model.odata.Filter[]} aControlFilters An Array of control filters
-	 * @param {sap.ui.model.Filter[]|sap.ui.model.odata.Filter[]} [aApplicationFilters] An Array of application filters
+	 * Convert sap.ui.model.odata.Filter to sap.ui.model.Filter
+	 *
 	 * @private
 	 */
-	ODataListBinding.prototype.createFilterParams = function(aControlFilters, aApplicationFilters) {
-		// create URL Parameters for the Control- and Application-Filters
-		// either one or both may return undefined if the arrays given are wrong somehow
-		var sFilterParams,
-			sControlParams = ODataUtils._createFilterParams(aControlFilters, this.oModel.oMetadata, this.oEntityType),
-			sApplicationParams = ODataUtils._createFilterParams(aApplicationFilters, this.oModel.oMetadata, this.oEntityType);
-
-		if (sControlParams) {
-			sFilterParams = sControlParams;
-		}
-
-		if (sApplicationParams) {
-			//if there are control-filtes, AND the application filters
-			if (sControlParams) {
-				//Apply braces to the ANDed parts
-				sFilterParams = "(" + sFilterParams + ")" + "%20and%20" + "(" + sApplicationParams + ")";
-			} else {
-				//if the control-filters are undefined, we just use the application filter as a fallback
-				sFilterParams = sApplicationParams;
-			}
-		}
-
-		//prepend the system query option "$filter=" to the parameters (if parameters are given...)
-		if (sFilterParams) {
-			this.sFilterParams = "$filter=" + sFilterParams;
-		} else {
-			// no filter params could be constructed, since no control/application filter are given
-			// reset the filter params to 'undefined', so following requests exclude the filter query
-			this.sFilterParams = undefined;
-		}
+	ODataListBinding.prototype.convertFilters = function() {
+		this.aFilters = this.aFilters.map(function(oFilter) {
+			return oFilter instanceof ODataFilter ? oFilter.convert() : oFilter;
+		});
+		this.aApplicationFilters = this.aApplicationFilters.map(function(oFilter) {
+			return oFilter instanceof ODataFilter ? oFilter.convert() : oFilter;
+		});
 	};
 
+	/**
+	 * Creates a $filter query option string, which will be used
+	 * as part of URL for OData-Requests.
+	 * @param {sap.ui.model.Filter} oFilter The root filter object of the filter tree
+	 * @private
+	 */
+	ODataListBinding.prototype.createFilterParams = function(oFilter) {
+		this.sFilterParams = ODataUtils.createFilterParams(oFilter, this.oModel.oMetadata, this.oEntityType);
+	};
 
 	ODataListBinding.prototype._initSortersFilters = function() {
 		// if path could not be resolved entity type cannot be retrieved and
@@ -909,8 +963,10 @@ sap.ui.define([
 			return;
 		}
 		this.oEntityType = this._getEntityType();
+		this.convertFilters();
+		this.oCombinedFilter = FilterProcessor.combineFilters(this.aFilters, this.aApplicationFilters);
 		this.createSortParams(this.aSorters);
-		this.createFilterParams(this.aFilters.concat(this.aApplicationFilters));
+		this.createFilterParams(this.oCombinedFilter);
 	};
 
 	ODataListBinding.prototype._getEntityType = function(){
@@ -918,7 +974,7 @@ sap.ui.define([
 
 		if (sResolvedPath) {
 			var oEntityType = this.oModel.oMetadata._getEntityTypeByPath(sResolvedPath);
-			jQuery.sap.assert(oEntityType, "EntityType for path " + sResolvedPath + " could not be found!");
+			assert(oEntityType, "EntityType for path " + sResolvedPath + " could not be found!");
 			return oEntityType;
 
 		}

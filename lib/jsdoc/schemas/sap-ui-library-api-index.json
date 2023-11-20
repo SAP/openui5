@@ -1,0 +1,113 @@
+{
+	"$schema": "http://json-schema.org/draft-04/schema#",
+	"id": "http://schemas.sap.com/sapui5/designtime/api-index.json/1.0",
+	"title": "Schema for api-index.json files",
+	"description": "Schema that describes the structure of the api-index.json files that the documentation build can create for the Demo Kit",
+	"definitions": {
+		"version": {
+			"type": "string",
+			"pattern": "^\\d+(\\.\\d+(\\.\\d+([.-][a-zA-Z0-9_-]+)?)?)?$"
+		},
+		"symbol": {
+			"type": "object",
+			"properties": {
+				"name": {
+					"type": "string",
+					"minLength": 1
+				},
+				"displayName": {
+					"type": "string",
+					"minLength": 1,
+					"description": "Short name used for visualizing the symbol in a hierarchical structure. For example for symbol with a name 'sap.ui.core.Control' would be only 'Control'."
+				},
+				"lib": {
+					"type": "string",
+					"minLength": 1,
+					"description": "Full library name"
+				},
+				"kind": {
+					"type": "string",
+					"enum": [
+						"namespace",
+						"class",
+						"interface",
+						"enum",
+						"typedef",
+						"function"
+					]
+				},
+				"deprecated": {
+					"type": "boolean"
+				},
+				"visibility": {
+					"type": "string",
+					"enum": [
+						"public",
+						"protected",
+						"private",
+						"restricted"
+					],
+					"defaultValue": "public"
+				},
+				"extends": {
+					"type": "string"
+				},
+				"extendedBy": {
+					"type": "array",
+					"items": {
+						"type": "string"
+					}
+				},
+				"implementedBy": {
+					"type": "array",
+					"items": {
+						"type": "string"
+					}
+				},
+				"children": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/symbol"
+					}
+				}
+			},
+			"additionalProperties": false,
+			"required": [
+				"name",
+				"kind",
+				"lib",
+				"visibility"
+			]
+		}
+	},
+	"type": "object",
+	"properties": {
+		"$schema-ref": {
+			"description": "A reference to this schema to make the structure of the file obvious.",
+			"type": "string",
+			"enum": [
+				"http://schemas.sap.com/sapui5/designtime/api-index.json/1.0"
+			]
+		},
+		"version": {
+			"$ref": "#/definitions/version"
+		},
+		"name": {
+			"description": "Name representing the scope of libraries from which symbols are listed in this file",
+			"type": "string"
+		},
+		"symbols": {
+			"type": "array",
+			"items": {
+				"$ref": "#/definitions/symbol"
+			}
+		}
+	},
+	"additionalProperties": false,
+	"required": [
+		"$schema-ref",
+		"version",
+		"name",
+		"symbols"
+	]
+}

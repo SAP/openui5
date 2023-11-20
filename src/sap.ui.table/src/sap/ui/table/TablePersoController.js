@@ -3,13 +3,26 @@
  */
 
 // Provides TablePersoController
-sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject'],
-	function(jQuery, ManagedObject) {
+sap.ui.define([
+	"./library",
+	'sap/ui/base/ManagedObject',
+	"sap/ui/base/ManagedObjectMetadata",
+	"sap/ui/core/Element",
+	"sap/ui/core/syncStyleClass",
+	"sap/base/Log",
+	"sap/ui/thirdparty/jquery",
+	'./utils/TableUtils'
+],
+	function(Library, ManagedObject, ManagedObjectMetadata, Element, syncStyleClass, Log, jQuery, TableUtils) {
 	"use strict";
 
+	// shortcut for sap.ui.table.ResetAllMode
+	var ResetAllMode = Library.ResetAllMode;
 
 	/**
 	 * Constructor for a new TablePersoController.
+	 *
+	 * @deprecated since 1.115. Please use the {@link sap.m.p13n.Engine Engine} for personalization instead.
 	 *
 	 * @param {string} [sId] id for the new control, generated automatically if no id is given
 	 * @param {object} [mSettings] initial settings for the new control
@@ -33,6 +46,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject'],
 		},
 
 		metadata: {
+			deprecated: true,
 			properties: {
 
 				/**
@@ -65,7 +79,22 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject'],
 				"customDataKey": {
 					type: "string",
 					defaultValue: "persoKey"
-				}
+				},
+
+				/**
+				 * Controls the visibility of the Reset button of the <code>TablePersoDialog</code>.<br>
+				**/
+				"showResetAll": {type: "boolean", defaultValue: true, since: "1.88"},
+
+				/**
+				 * Controls the behavior of the Reset button of the <code>TablePersoDialog</code>.<br>
+				 * The value must be specified in the constructor and cannot be set or modified later.<br>
+				 * If set to <code>Default</code>, the Reset button sets the table back to the initial state of the attached table when the controller is activated.<br>
+				 * If set to <code>ServiceDefault</code>, the Reset button goes back to the initial settings of <code>persoService</code>.<br>
+				 * If set to <code>ServiceReset</code>, the Reset button calls the <code>getResetPersData</code> of the attached <code>persoService</code> and uses it to reset the table.<br>
+				 */
+				"resetAllMode": {type: "sap.ui.table.ResetAllMode", defaultValue: ResetAllMode.Default, since: "1.88"}
+
 			},
 			associations: {
 				/**
@@ -104,6 +133,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject'],
 
 	};
 
+	TablePersoController.prototype.setResetAllMode = function(resetAllMode) {
+		if (!this._resetAllModeSet) {
+			this.setProperty("resetAllMode", resetAllMode);
+			this._resetAllModeSet = true;
+		} else {
+			Log.warning("resetAllMode of the TablePersoController can only be set once.");
+		}
+	};
+
 	/**
 	 * @private
 	 */
@@ -129,9 +167,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject'],
 	TablePersoController.prototype.setPersoService = function(oService) {
 		oService = this.validateProperty("persoService", oService);
 		if (oService &&
-			(!jQuery.isFunction(oService.getPersData) ||
-			!jQuery.isFunction(oService.setPersData) ||
-			!jQuery.isFunction(oService.delPersData))) {
+			(typeof oService.getPersData !== "function" ||
+			typeof oService.setPersData !== "function" ||
+			typeof oService.delPersData !== "function")) {
 			throw new Error("Value of property \"persoService\" needs to be null/undefined or an object that has the methods " +
 					"\"getPersData\", \"setPersData\" and \"delPersData\".");
 		}
@@ -141,7 +179,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject'],
 		var oNewService = this.getPersoService();
 
 		// refresh data using new service if there was a new service set and a table was set
-		if (oNewService && oNewService !== oOldService && this._getTable() && (this.getAutoSave() || !oOldService )) {
+		if (oNewService && oNewService !== oOldService && this._getTable() && (this.getAutoSave() || !oOldService)) {
 			this.refresh();
 		}
 
@@ -180,13 +218,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject'],
 		if (oNewTable && oNewTable !== oOldTable) {
 
 			// save initial table configuration (incl. text for perso dialog)
-			this._oInitialPersoData = this._getCurrentTablePersoData(true);
+			//TODO If the table will be set before the customerDataKey property, the map has the wrong keys.
+			if (this.getResetAllMode() === ResetAllMode.Default) {
+				this._oInitialPersoData = this._getCurrentTablePersoData(true);
+			}
 
 			// attach handlers to new table
 			this._manageTableEventHandlers(oNewTable, true);
 
 			// only refresh if there is a service set and autoSave is on or no table was set before
-			if (this.getPersoService() && (this.getAutoSave() || !oOldTable )) {
+			if (this.getPersoService() && (this.getAutoSave() || !oOldTable)) {
 				this.refresh();
 			}
 		} else if (!oNewTable) {
@@ -201,6 +242,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject'],
 		var sOldValue = this.getCustomDataKey();
 		this.setProperty("customDataKey", sCustomDataKey, true);
 		var sNewValue = this.getCustomDataKey();
+
+		if (this.getResetAllMode() === ResetAllMode.Default && this._getTable()) {
+			this._oInitialPersoData = this._getCurrentTablePersoData(true);
+		}
 
 		// save data if the autosave is on and the perso key has been changed
 		if (sOldValue !== sNewValue && this.getAutoSave()) {
@@ -230,15 +275,20 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject'],
 		var oService = this.getPersoService();
 		if (oService) {
 			return oService.getPersData().done(function(oServiceData) {
-				var oData = (oServiceData && jQuery.isArray(oServiceData.aColumns))
+				var oData = (oServiceData && Array.isArray(oServiceData.aColumns))
 						? oServiceData
 						: that._oInitialPersoData; // use initial column definitions
 				that._adjustTable(oData);
+
+				if (that.getResetAllMode() === ResetAllMode.ServiceDefault) {
+					that._oInitialPersoData = that._getCurrentTablePersoData(true);
+				}
+
 			}).fail(function() {
-				jQuery.sap.log.error("Problem reading persisted personalization data.");
+				Log.error("Problem reading persisted personalization data.");
 			});
 		} else {
-			jQuery.sap.log.error("The Personalization Service is not available!");
+			Log.error("The Personalization Service is not available!");
 			// return a dummy promise and reject it immediately
 			var oDeferred = jQuery.Deferred();
 			oDeferred.reject();
@@ -260,11 +310,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject'],
 			oData[this._schemaProperty] = this._schemaVersion;
 
 			return oService.setPersData(oData).fail(function() {
-				jQuery.sap.log.error("Problem persisting personalization data.");
+				Log.error("Problem persisting personalization data.");
 			});
 
 		} else {
-			jQuery.sap.log.error("The Personalization Service is not available!");
+			Log.error("The Personalization Service is not available!");
 			// return a dummy promise and reject it immediately
 			var oDeferred = jQuery.Deferred();
 			oDeferred.reject();
@@ -274,7 +324,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject'],
 
 	TablePersoController.prototype._adjustTable = function(oData) {
 		var oTable = this._getTable();
-		if (!oTable || !oData || !jQuery.isArray(oData.aColumns)) {
+		if (!oTable || !oData || !Array.isArray(oData.aColumns)) {
 			return;
 		}
 
@@ -309,7 +359,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject'],
 								oColumn.setProperty(sProperty, oColumnInfo[sProperty]);
 							}
 						} catch (ex) {
-							jQuery.sap.log.error("sap.ui.table.TablePersoController: failed to apply the value \"" + oColumn[sProperty] + "\" for the property + \"" + sProperty + "\".");
+							Log.error("sap.ui.table.TablePersoController: failed to apply the value \"" + oColumn[sProperty] + "\" for the property + \"" + sProperty + "\".");
 						}
 					}
 				}
@@ -357,7 +407,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject'],
 				}
 			}
 			if (bForDialog) {
-				oColumnInfo.text = oColumn.getLabel() && oColumn.getLabel().getText() || sPersoKey;
+				oColumnInfo.text = TableUtils.Column.getHeaderText(oColumn) || sPersoKey;
 			}
 			oData.aColumns.push(oColumnInfo);
 		}
@@ -366,7 +416,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject'],
 	};
 
 	TablePersoController.prototype._getTable = function() {
-		return sap.ui.getCore().byId(this.getTable());
+		return Element.getElementById(this.getTable());
 	};
 
 	TablePersoController.prototype._getColumnPersoKey = function(oColumn) {
@@ -377,8 +427,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject'],
 		var sPersoKey = oControl.data(this.getCustomDataKey());
 		if (!sPersoKey) {
 			sPersoKey = oControl.getId();
-			if (sPersoKey.indexOf(sap.ui.getCore().getConfiguration().getUIDPrefix()) === 0) {
-				jQuery.sap.log.warning("Generated IDs should not be used as personalization keys! The stability cannot be ensured! (Control: \"" + oControl.getId() + "\")");
+			if (sPersoKey.indexOf(ManagedObjectMetadata.getUIDPrefix()) === 0) {
+				Log.warning("Generated IDs should not be used as personalization keys! The stability cannot be ensured! (Control: \"" + oControl.getId() + "\")");
 			}
 		}
 		return sPersoKey;
@@ -400,7 +450,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject'],
 
 		function _open() {
 			if (that._oDialog) {
-				jQuery.sap.syncStyleClass("sapUiSizeCompact", that._getTable(), that._oDialog._oDialog);
+				syncStyleClass("sapUiSizeCompact", that._getTable(), that._oDialog._oDialog);
 				that._oDialog.open();
 			}
 		}
@@ -413,8 +463,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject'],
 					that._oDialog = new TablePersoDialog(that._getTable().getId() + "-PersoDialog", {
 						persoService: that.getPersoService(),
 						showSelectAll: true,
-						showResetAll: true,
-						grouping: false,
+						showResetAll: (mSettings && mSettings.showResetAll) || that.getShowResetAll(),
+						hasGrouping: false,
 						contentWidth: mSettings && mSettings.contentWidth,
 						contentHeight: mSettings && mSettings.contentHeight || "20rem",
 						initialColumnState: that._oInitialPersoData.aColumns,
@@ -428,7 +478,25 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject'],
 							}
 						}
 					});
-					that._oDialog._oDialog.removeStyleClass("sapUiPopupWithPadding"); // otherwise height calculation doesn't work properly!
+
+					that._oDialog._oDialog.addStyleClass("sapUiNoContentPadding"); // otherwise height calculation doesn't work properly!
+
+					if (that.getResetAllMode() === ResetAllMode.ServiceReset && that.getPersoService().getResetPersData) {
+						that._oDialog.setShowResetAll(false);
+
+						that.getPersoService().getResetPersData().done(
+							function(oResetData) {
+								if (this._bIsBeingDestroyed) {
+									return;
+								}
+
+								if (oResetData) {
+									that._oDialog.setInitialColumnState(oResetData.aColumns);
+									that._oDialog.setShowResetAll(that.getShowResetAll());
+								}
+							}
+						);
+					}
 
 					_open();
 				});
@@ -437,7 +505,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject'],
 			_open();
 		}
 	};
-
 
 	return TablePersoController;
 

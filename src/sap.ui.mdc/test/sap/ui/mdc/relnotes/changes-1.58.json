@@ -1,0 +1,30 @@
+{
+  "1.58.0": {
+    "date": "May 2018",
+    "notes": [
+      {
+        "id": "c314b69f1ee9eff58debeca04b100919fd3ceecd",
+        "type": "FIX",
+        "text": "ValueHelpPanel: Only use the template namespace when needed",
+        "references": []
+      },
+      {
+        "id": "541ea51979695d355b53dda44632de24653a08c0",
+        "type": "FEATURE",
+        "text": "sap.ui.mdc.Table: MDC control for table scenarios created",
+        "references": []
+      },
+      {
+        "id": "7427b91a83132044164a598c2b92e8a3e55a1e8f",
+        "type": "FIX",
+        "text": "MDC: Set QUnit.config.autostart to false",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880382291"
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,3 @@
+<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m" width="100%">
+	<Text class="sapUiMediumMargin" text="Hello, this is a card with one manifest describing the card and the component" />
+</mvc:View>

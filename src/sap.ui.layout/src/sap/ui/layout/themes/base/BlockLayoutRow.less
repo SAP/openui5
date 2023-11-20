@@ -4,15 +4,12 @@
 /* ============================================= */
 
 .sapUiBlockScrollingRow {
-	display: -webkit-box;
-	display: -webkit-flex;
 	display: flex;
-	-webkit-flex-wrap: nowrap;
 	flex-wrap: nowrap;
-	overflow: auto;
+	overflow-x: auto;
+	overflow-y: hidden;
 
 	.sapUiBlockScrollableCell {
-		-webkit-flex-shrink: 0;
 		flex-shrink: 0;
 		width: 40%;
 	}

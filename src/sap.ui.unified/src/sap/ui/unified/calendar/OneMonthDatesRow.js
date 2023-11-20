@@ -42,7 +42,8 @@ sap.ui.define([
 	var OneMonthDatesRow = DatesRow.extend("sap.ui.unified.calendar.OneMonthDatesRow", /** @lends sap.ui.unified.calendar.OneMonthDatesRow.prototype */ {
 		metadata : {
 			library : "sap.ui.unified"
-		}
+		},
+		renderer: OneMonthDatesRowRenderer
 	});
 
 	OneMonthDatesRow.prototype.init = function() {
@@ -64,8 +65,10 @@ sap.ui.define([
 			}
 
 			//clear or set to first of the month
-			oSelectedDates[0].setProperty('startDate', oStartDate, true);
+			oSelectedDates[0].setProperty('startDate', oStartDate);
 		}
+
+		this.iMode < 2 ? this._bAlwaysShowSpecialDates = false : this._bAlwaysShowSpecialDates = true;
 
 		return this;
 	};
@@ -80,8 +83,8 @@ sap.ui.define([
 
 	/**
 	 * Selects a given date.
-	 * @param {Date} oDate a JavaScript date
-	 * @return {sap.ui.unified.calendar.OneMonthDatesRow} <code>this</code> for method chaining
+	 * @param {Date|module:sap/ui/core/date/UI5Date} oDate a date instance
+	 * @return {this} <code>this</code> for method chaining
 	 */
 	OneMonthDatesRow.prototype.selectDate = function(oDate) {
 		if (this.iMode < 2 && this.getSelectedDates().length) {
@@ -92,8 +95,8 @@ sap.ui.define([
 
 	/**
 	 * Sets a given date.
-	 * @param {Date} oDate a JavaScript date
-	 * @return {sap.ui.unified.calendar.OneMonthDatesRow} <code>this</code> for method chaining
+	 * @param {Date|module:sap/ui/core/date/UI5Date} oDate a date instance
+	 * @return {this} <code>this</code> for method chaining
 	 */
 	OneMonthDatesRow.prototype.setDate = function(oDate) {
 		// check if in visible date range
@@ -106,11 +109,18 @@ sap.ui.define([
 		return this;
 	};
 
+	OneMonthDatesRow.prototype.getDays = function() {
+		if (this.iMode === 2) {
+			return 31;
+		} else {
+			return CalendarUtils._daysInMonth(CalendarDate.fromLocalJSDate(this.getStartDate(), this.getPrimaryCalendarType()));
+		}
+	};
 
 	/**
 	 * Displays a given date.
-	 * @param {Date} oDate a JavaScript date
-	 * @return {sap.ui.unified.calendar.OneMonthDatesRow} <code>this</code> for method chaining
+	 * @param {Date|module:sap/ui/core/date/UI5Date} oDate a date instance
+	 * @return {this} <code>this</code> for method chaining
 	 */
 	OneMonthDatesRow.prototype.displayDate = function(oDate){
 		// check if in visible date range
@@ -134,7 +144,7 @@ sap.ui.define([
 		//prevent item navigation to focus the 1st visible item, because this item may correspond to an item from other month
 		interruptEvent(oEvent);
 
-		this._setDate(oCalStartDate);//Can we reuse setDate (see checkDateFocusable that prevents setting the date).
+		this.setDate(oCalStartDate.toLocalJSDate());//Can we reuse setDate (see checkDateFocusable that prevents setting the date).
 		this._focusDate(oCalStartDate);
 
 		this.fireFocus({date: oCalStartDate.toLocalJSDate(), otherMonth: false});
@@ -154,7 +164,7 @@ sap.ui.define([
 		//prevent item navigation to focus the last visible item, because this item may correspond to an item from other month
 		interruptEvent(oEvent);
 
-		this._setDate(oLastDay); //Can we reuse setDate (see checkDateFocusable that prevents setting the date).
+		this.setDate(oLastDay.toLocalJSDate()); //Can we reuse setDate (see checkDateFocusable that prevents setting the date).
 		this._focusDate(oLastDay);
 
 		this.fireFocus({date: oLastDay.toLocalJSDate(), otherMonth: false});

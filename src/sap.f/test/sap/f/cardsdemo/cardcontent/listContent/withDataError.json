@@ -1,0 +1,22 @@
+{
+	"sap.app": {
+		"id": "card.list.withDataError",
+		"type": "card"
+	},
+	"sap.card": {
+		"type": "List",
+		"header": {
+			"title": "Card with Data Error"
+		},
+		"data": {
+			"request": {
+				"url": "./wrong_path"
+			}
+		},
+		"content": {
+			"item": {
+				"title": "{Title}"
+			}
+		}
+	}
+}

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<library xmlns="http://www.sap.com/sap.ui.library.xsd" >
+
+  <name>sap.ui.testlib</name>
+  <vendor>SAP SE</vendor>
+  <copyright>Insert Copyright here</copyright>
+  <version>1.2.3</version>
+
+  <documentation>SAPUI5 Test library</documentation>
+
+  <dependencies>
+    <dependency>
+      <libraryName>sap.ui.core</libraryName>
+    </dependency>
+  </dependencies>
+
+  <appData>
+
+    <thirdparty xmlns="http://www.sap.com/ui5/buildext/thirdparty" >
+      <lib name="foo" displayName="foo, BAR" npmName="n/a" version="unknown" homepage="http://exmaple.com">
+        <license url="http://example.com/license" type="FOO License" file="path/to/LICENSE.txt" />
+      </lib>
+    </thirdparty>
+
+    <documentation xmlns="http://www.sap.com/ui5/buildext/documentation"
+        indexUrl="demokit/docuindex.json"
+        resolve="lib" />
+
+    <releasenotes xmlns="http://www.sap.com/ui5/buildext/releasenotes"
+        url="changes.json"
+        resolve="lib" />
+
+    <ownership xmlns="http://www.sap.com/ui5/buildext/ownership">
+        <component>DE-FAU-LT</component><!-- default component for library, embedded text as a shortcut for <name>text</name> -->
+
+        <component>
+            <name>SP-EC-IF-IC</name>
+            <modules>
+                <module>sap/ui/testlib/foo/*</module>
+                <module>sap/ui/testlib/bar/baz/*</module>
+            </modules>
+        </component>
+
+    </ownership>
+
+  </appData>
+
+</library>

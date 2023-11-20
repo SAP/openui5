@@ -13,8 +13,8 @@ sap.ui.define([
 			var oMediaModel = new JSONModel();
 			this.getView().setModel(oMediaModel, "range");
 
-			var sRange = Device.media.getCurrentRange("Std");
-			this._setRangeModel(sRange);
+			var oRange = Device.media.getCurrentRange("Std");
+			this._setRangeModel(oRange.name);
 
 			Device.media.attachHandler(function (mParams) {
 				this._setRangeModel(mParams.name);
@@ -36,24 +36,29 @@ sap.ui.define([
 		},
 
 		onOpen: function (oEvent) {
-			var oButton = oEvent.oSource;
+			var oButton = oEvent.getSource(),
+				oView = this.getView();
 
-			if (!this._actionSheet) {
-				this._actionSheet = sap.ui.xmlfragment("sap.m.sample.ToolbarResponsive.ActionSheet", this);
-				this.getView().addDependent(this._actionSheet);
+			if (!this._pActionSheet) {
+				this._pActionSheet = Fragment.load({
+					id: oView.getId(),
+					name: "sap.m.sample.ToolbarResponsive.ActionSheet",
+					controller: this
+				}).then(function(oActionSheet){
+					oView.addDependent(oActionSheet);
+					return oActionSheet;
+				});
 			}
 
-			//delay because addDependent will do a async rerendering and the actionSheet will immediately close without it.
-			jQuery.sap.delayedCall(0, this, function () {
-				this._actionSheet.openBy(oButton);
+			this._pActionSheet.then(function(oActionSheet){
+				oActionSheet.openBy(oButton);
 			});
 		},
 
 		onPress: function (oEvent) {
-			MessageToast.show(oEvent.oSource.getText());
+			MessageToast.show(oEvent.getSource().getText());
 		}
 	});
-
 
 	return PageController;
 

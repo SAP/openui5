@@ -1,0 +1,277 @@
+<mvc:View xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc" displayBlock="true" controllerName="flexiblecolumnlayout.List" height="100%">
+	<Page id="listPage" title="List page">
+
+		<Table id="idProductsTable"
+			   inset="false"
+		>
+			<headerToolbar>
+				<Toolbar>
+					<Title text="Products" level="H2"/>
+				</Toolbar>
+			</headerToolbar>
+			<columns>
+				<Column
+						width="12em">
+					<Text text="Product" />
+				</Column>
+				<Column
+						minScreenWidth="Phone"
+						demandPopin="true">
+					<Text text="Supplier" />
+				</Column>
+				<Column
+						minScreenWidth="Tablet"
+						demandPopin="true"
+						hAlign="Right">
+					<Text text="Dimensions" />
+				</Column>
+				<Column
+						minScreenWidth="Desktop"
+						demandPopin="true"
+						hAlign="Center">
+					<Text text="Weight" />
+				</Column>
+				<Column
+						hAlign="Right">
+					<Text text="Price" />
+				</Column>
+			</columns>
+			<items>
+				<ColumnListItem type="Navigation" vAlign="Middle" press="handleListPress">
+					<cells>
+						<ObjectIdentifier
+								title="Name"
+								text="ProductId"/>
+						<Text
+								text="SupplierName" />
+						<Text
+								text="Width x Depth x Height DimUnit" />
+						<ObjectNumber
+								number="123"
+								unit="WeightUnit"
+								state="Error" />
+						<ObjectNumber
+								number="0"
+								unit="EUR" />
+					</cells>
+				</ColumnListItem>
+				<ColumnListItem type="Navigation" vAlign="Middle" press="handleListPress">
+					<cells>
+						<ObjectIdentifier
+								title="Name"
+								text="ProductId"/>
+						<Text
+								text="SupplierName" />
+						<Text
+								text="Width x Depth x Height DimUnit" />
+						<ObjectNumber
+								number="123"
+								unit="WeightUnit"
+								state="Success" />
+						<ObjectNumber
+								number="123"
+								unit="USD" />
+					</cells>
+				</ColumnListItem>
+				<ColumnListItem type="Navigation" vAlign="Middle" press="handleListPress">
+					<cells>
+						<ObjectIdentifier
+								title="Name"
+								text="ProductId"/>
+						<Text
+								text="SupplierName" />
+						<Text
+								text="Width x Depth x Height DimUnit" />
+						<ObjectNumber
+								number="123"
+								unit="WeightUnit"
+								state="Success" />
+						<ObjectNumber
+								number="445"
+								unit="USD" />
+					</cells>
+				</ColumnListItem>
+				<ColumnListItem type="Navigation" vAlign="Middle" press="handleListPress">
+					<cells>
+						<ObjectIdentifier
+								title="Name"
+								text="ProductId"/>
+						<Text
+								text="SupplierName" />
+						<Text
+								text="Width x Depth x Height DimUnit" />
+						<ObjectNumber
+								number="123"
+								unit="WeightUnit"
+								state="Success" />
+						<ObjectNumber
+								number="445"
+								unit="USD" />
+					</cells>
+				</ColumnListItem>
+				<ColumnListItem type="Navigation" vAlign="Middle" press="handleListPress">
+					<cells>
+						<ObjectIdentifier
+								title="Name"
+								text="ProductId"/>
+						<Text
+								text="SupplierName" />
+						<Text
+								text="Width x Depth x Height DimUnit" />
+						<ObjectNumber
+								number="123"
+								unit="WeightUnit"
+								state="Success" />
+						<ObjectNumber
+								number="445"
+								unit="USD" />
+					</cells>
+				</ColumnListItem>
+				<ColumnListItem type="Navigation" vAlign="Middle" press="handleListPress">
+					<cells>
+						<ObjectIdentifier
+								title="Name"
+								text="ProductId"/>
+						<Text
+								text="SupplierName" />
+						<Text
+								text="Width x Depth x Height DimUnit" />
+						<ObjectNumber
+								number="123"
+								unit="WeightUnit"
+								state="Success" />
+						<ObjectNumber
+								number="445"
+								unit="USD" />
+					</cells>
+				</ColumnListItem>
+				<ColumnListItem type="Navigation" vAlign="Middle" press="handleListPress">
+					<cells>
+						<ObjectIdentifier
+								title="Name"
+								text="ProductId"/>
+						<Text
+								text="SupplierName" />
+						<Text
+								text="Width x Depth x Height DimUnit" />
+						<ObjectNumber
+								number="123"
+								unit="WeightUnit"
+								state="Success" />
+						<ObjectNumber
+								number="445"
+								unit="USD" />
+					</cells>
+				</ColumnListItem>
+				<ColumnListItem type="Navigation" vAlign="Middle" press="handleListPress">
+					<cells>
+						<ObjectIdentifier
+								title="Name"
+								text="ProductId"/>
+						<Text
+								text="SupplierName" />
+						<Text
+								text="Width x Depth x Height DimUnit" />
+						<ObjectNumber
+								number="123"
+								unit="WeightUnit"
+								state="Success" />
+						<ObjectNumber
+								number="445"
+								unit="USD" />
+					</cells>
+				</ColumnListItem>
+				<ColumnListItem type="Navigation" vAlign="Middle" press="handleListPress">
+					<cells>
+						<ObjectIdentifier
+								title="Name"
+								text="ProductId"/>
+						<Text
+								text="SupplierName" />
+						<Text
+								text="Width x Depth x Height DimUnit" />
+						<ObjectNumber
+								number="123"
+								unit="WeightUnit"
+								state="Success" />
+						<ObjectNumber
+								number="445"
+								unit="USD" />
+					</cells>
+				</ColumnListItem>
+				<ColumnListItem type="Navigation" vAlign="Middle" press="handleListPress">
+					<cells>
+						<ObjectIdentifier
+								title="Name"
+								text="ProductId"/>
+						<Text
+								text="SupplierName" />
+						<Text
+								text="Width x Depth x Height DimUnit" />
+						<ObjectNumber
+								number="123"
+								unit="WeightUnit"
+								state="Success" />
+						<ObjectNumber
+								number="445"
+								unit="USD" />
+					</cells>
+				</ColumnListItem>
+				<ColumnListItem type="Navigation" vAlign="Middle" press="handleListPress">
+					<cells>
+						<ObjectIdentifier
+								title="Name"
+								text="ProductId"/>
+						<Text
+								text="SupplierName" />
+						<Text
+								text="Width x Depth x Height DimUnit" />
+						<ObjectNumber
+								number="123"
+								unit="WeightUnit"
+								state="Success" />
+						<ObjectNumber
+								number="445"
+								unit="USD" />
+					</cells>
+				</ColumnListItem>
+				<ColumnListItem type="Navigation" vAlign="Middle" press="handleListPress">
+					<cells>
+						<ObjectIdentifier
+								title="Name"
+								text="ProductId"/>
+						<Text
+								text="SupplierName" />
+						<Text
+								text="Width x Depth x Height DimUnit" />
+						<ObjectNumber
+								number="123"
+								unit="WeightUnit"
+								state="Success" />
+						<ObjectNumber
+								number="445"
+								unit="USD" />
+					</cells>
+				</ColumnListItem>
+				<ColumnListItem type="Navigation" vAlign="Middle" press="handleListPress">
+					<cells>
+						<ObjectIdentifier
+								title="Name"
+								text="ProductId"/>
+						<Text
+								text="SupplierName" />
+						<Text
+								text="Width x Depth x Height DimUnit" />
+						<ObjectNumber
+								number="123"
+								unit="WeightUnit"
+								state="Success" />
+						<ObjectNumber
+								number="445"
+								unit="USD" />
+					</cells>
+				</ColumnListItem>
+			</items>
+		</Table>
+	</Page>
+</mvc:View>

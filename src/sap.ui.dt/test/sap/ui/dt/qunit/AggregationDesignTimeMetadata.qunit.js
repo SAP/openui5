@@ -1,27 +1,25 @@
-/*global QUnit*/
-QUnit.config.autostart = false;
+/* global QUnit */
 
-sap.ui.require([
+sap.ui.define([
 	"sap/ui/dt/AggregationDesignTimeMetadata",
 	"sap/ui/dt/DesignTimeMetadata",
 	"sap/ui/thirdparty/sinon-4"
-
-],function(
+], function(
 	AggregationDesignTimeMetadata,
 	DesignTimeMetadata,
 	sinon
-){
+) {
 	"use strict";
 
-	var sandbox = sinon.sandbox.create();
+	var sandbox = sinon.createSandbox();
 
 	QUnit.module("Given that an AggregationDesignTimeMetadata is created", {
-		before : function() {
+		before() {
 			this.oAggreationDesignTimeMetadata = new AggregationDesignTimeMetadata({
 				data: {}
 			});
 		},
-		after : function() {
+		after() {
 			this.oAggreationDesignTimeMetadata.destroy();
 			sandbox.restore();
 		}
@@ -35,5 +33,7 @@ sap.ui.require([
 		assert.strictEqual(sReturnValue, aMockArguments[1], "then the second argument (aggregation name) is returned as a fallback");
 	});
 
-	QUnit.start();
+	QUnit.done(function() {
+		document.getElementById("qunit-fixture").style.display = "none";
+	});
 });

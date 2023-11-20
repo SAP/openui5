@@ -1,0 +1,299 @@
+<mvc:View xmlns:mvc="sap.ui.core.mvc"
+		   xmlns="sap.uxap"
+		   xmlns:m="sap.m"
+		   xmlns:employment="sap.uxap.sample.SharedBlocks.employment"
+		   controllerName="sap.uxap.sample.ObjectPageOnJSONWithLazyLoading.controller.ObjectPageOnJSONWithLazyLoading"
+		   height="100%"
+		>
+
+	<ObjectPageLayout id="ObjectPageLayout" enableLazyLoading="true" upperCaseAnchorBar="false"
+	headerContentPinned="true">
+		<headerTitle>
+			<ObjectPageDynamicHeaderTitle>
+				<heading>
+					<m:Title text="ObjectPage with LazyLoading"/>
+				</heading>
+
+				<snappedTitleOnMobile>
+					<m:Title text="ObjectPage with LazyLoading"/>
+				</snappedTitleOnMobile>
+
+				<actions>
+					<m:Button text="Edit" type="Emphasized"/>
+					<m:Button type="Transparent" text="Delete"/>
+					<m:Button type="Transparent" text="Copy"/>
+					<m:OverflowToolbarButton icon="sap-icon://action" type="Transparent" text="Share" tooltip="action"/>
+				</actions>
+			</ObjectPageDynamicHeaderTitle>
+		</headerTitle>
+
+		<sections>
+			<ObjectPageSection titleUppercase="false" title="my section">
+				<subSections>
+					<ObjectPageSubSection title="Section 1" mode="Expanded" titleUppercase="false">
+						<blocks>
+							<employment:EmploymentBlockJob id="employmentblockjob1">
+								<employment:mappings>
+									<ModelMapping externalModelName="ObjectPageModel" internalModelName="emp1"
+												  externalPath="/Employee/0"/>
+									<ModelMapping externalModelName="ObjectPageModel" internalModelName="emp2"
+												  externalPath="/Employee/1"/>
+									<ModelMapping externalModelName="ObjectPageModel" internalModelName="emp3"
+												  externalPath="/Employee/2"/>
+									<ModelMapping externalModelName="ObjectPageModel" internalModelName="emp4"
+												  externalPath="/Employee/3"/>
+									<ModelMapping externalModelName="ObjectPageModel" internalModelName="emp5"
+												  externalPath="/Employee/4"/>
+									<ModelMapping externalModelName="ObjectPageModel" internalModelName="emp6"
+												  externalPath="/Employee/5"/>
+								</employment:mappings>
+							</employment:EmploymentBlockJob>
+						</blocks>
+					</ObjectPageSubSection>
+				</subSections>
+			</ObjectPageSection>
+			<ObjectPageSection titleUppercase="false" title="my section">
+				<subSections>
+					<ObjectPageSubSection title="Section 2" mode="Expanded" titleUppercase="false">
+						<blocks>
+							<employment:EmploymentBlockJob id="employmentblockjob2">
+								<employment:mappings>
+									<ModelMapping externalModelName="ObjectPageModel" internalModelName="emp1"
+												  externalPath="/Employee/0"/>
+									<ModelMapping externalModelName="ObjectPageModel" internalModelName="emp2"
+												  externalPath="/Employee/1"/>
+									<ModelMapping externalModelName="ObjectPageModel" internalModelName="emp3"
+												  externalPath="/Employee/2"/>
+									<ModelMapping externalModelName="ObjectPageModel" internalModelName="emp4"
+												  externalPath="/Employee/3"/>
+									<ModelMapping externalModelName="ObjectPageModel" internalModelName="emp5"
+												  externalPath="/Employee/4"/>
+									<ModelMapping externalModelName="ObjectPageModel" internalModelName="emp6"
+												  externalPath="/Employee/5"/>
+								</employment:mappings>
+							</employment:EmploymentBlockJob>
+						</blocks>
+					</ObjectPageSubSection>
+				</subSections>
+			</ObjectPageSection>
+			<ObjectPageSection titleUppercase="false" title="my section">
+				<subSections>
+					<ObjectPageSubSection title="Section 3" mode="Expanded" titleUppercase="false">
+						<blocks>
+							<employment:EmploymentBlockJob id="employmentblockjob4">
+								<employment:mappings>
+									<ModelMapping externalModelName="ObjectPageModel" internalModelName="emp1"
+												  externalPath="/Employee/0"/>
+									<ModelMapping externalModelName="ObjectPageModel" internalModelName="emp2"
+												  externalPath="/Employee/1"/>
+									<ModelMapping externalModelName="ObjectPageModel" internalModelName="emp3"
+												  externalPath="/Employee/2"/>
+									<ModelMapping externalModelName="ObjectPageModel" internalModelName="emp4"
+												  externalPath="/Employee/3"/>
+									<ModelMapping externalModelName="ObjectPageModel" internalModelName="emp5"
+												  externalPath="/Employee/4"/>
+									<ModelMapping externalModelName="ObjectPageModel" internalModelName="emp6"
+												  externalPath="/Employee/5"/>
+								</employment:mappings>
+							</employment:EmploymentBlockJob>
+						</blocks>
+					</ObjectPageSubSection>
+				</subSections>
+			</ObjectPageSection>
+			<ObjectPageSection titleUppercase="false" title="my section">
+				<subSections>
+					<ObjectPageSubSection title="Section 4" mode="Expanded" titleUppercase="false">
+						<blocks>
+							<employment:EmploymentBlockJob id="employmentblockjob5">
+								<employment:mappings>
+									<ModelMapping externalModelName="ObjectPageModel" internalModelName="emp1"
+												  externalPath="/Employee/0"/>
+									<ModelMapping externalModelName="ObjectPageModel" internalModelName="emp2"
+												  externalPath="/Employee/1"/>
+									<ModelMapping externalModelName="ObjectPageModel" internalModelName="emp3"
+												  externalPath="/Employee/2"/>
+									<ModelMapping externalModelName="ObjectPageModel" internalModelName="emp4"
+												  externalPath="/Employee/3"/>
+									<ModelMapping externalModelName="ObjectPageModel" internalModelName="emp5"
+												  externalPath="/Employee/4"/>
+									<ModelMapping externalModelName="ObjectPageModel" internalModelName="emp6"
+												  externalPath="/Employee/5"/>
+								</employment:mappings>
+							</employment:EmploymentBlockJob>
+						</blocks>
+					</ObjectPageSubSection>
+				</subSections>
+			</ObjectPageSection>
+			<ObjectPageSection titleUppercase="false" title="my section">
+				<subSections>
+					<ObjectPageSubSection title="Section 5" mode="Expanded" titleUppercase="false">
+						<blocks>
+							<employment:EmploymentBlockJob id="employmentblockjob6">
+								<employment:mappings>
+									<ModelMapping externalModelName="ObjectPageModel" internalModelName="emp1"
+												  externalPath="/Employee/0"/>
+									<ModelMapping externalModelName="ObjectPageModel" internalModelName="emp2"
+												  externalPath="/Employee/1"/>
+									<ModelMapping externalModelName="ObjectPageModel" internalModelName="emp3"
+												  externalPath="/Employee/2"/>
+									<ModelMapping externalModelName="ObjectPageModel" internalModelName="emp4"
+												  externalPath="/Employee/3"/>
+									<ModelMapping externalModelName="ObjectPageModel" internalModelName="emp5"
+												  externalPath="/Employee/4"/>
+									<ModelMapping externalModelName="ObjectPageModel" internalModelName="emp6"
+												  externalPath="/Employee/5"/>
+								</employment:mappings>
+							</employment:EmploymentBlockJob>
+						</blocks>
+					</ObjectPageSubSection>
+				</subSections>
+			</ObjectPageSection>
+			<ObjectPageSection titleUppercase="false" title="my section">
+				<subSections>
+					<ObjectPageSubSection title="Section 6" mode="Expanded" titleUppercase="false">
+						<blocks>
+							<employment:EmploymentBlockJob id="employmentblockjob7">
+								<employment:mappings>
+									<ModelMapping externalModelName="ObjectPageModel" internalModelName="emp1"
+												  externalPath="/Employee/0"/>
+									<ModelMapping externalModelName="ObjectPageModel" internalModelName="emp2"
+												  externalPath="/Employee/1"/>
+									<ModelMapping externalModelName="ObjectPageModel" internalModelName="emp3"
+												  externalPath="/Employee/2"/>
+									<ModelMapping externalModelName="ObjectPageModel" internalModelName="emp4"
+												  externalPath="/Employee/3"/>
+									<ModelMapping externalModelName="ObjectPageModel" internalModelName="emp5"
+												  externalPath="/Employee/4"/>
+									<ModelMapping externalModelName="ObjectPageModel" internalModelName="emp6"
+												  externalPath="/Employee/5"/>
+								</employment:mappings>
+							</employment:EmploymentBlockJob>
+						</blocks>
+					</ObjectPageSubSection>
+				</subSections>
+			</ObjectPageSection>
+			<ObjectPageSection titleUppercase="false" title="my section">
+				<subSections>
+					<ObjectPageSubSection title="Section 7" mode="Expanded" titleUppercase="false">
+						<blocks>
+							<employment:EmploymentBlockJob id="employmentblockjob8">
+								<employment:mappings>
+									<ModelMapping externalModelName="ObjectPageModel" internalModelName="emp1"
+												  externalPath="/Employee/0"/>
+									<ModelMapping externalModelName="ObjectPageModel" internalModelName="emp2"
+												  externalPath="/Employee/1"/>
+									<ModelMapping externalModelName="ObjectPageModel" internalModelName="emp3"
+												  externalPath="/Employee/2"/>
+									<ModelMapping externalModelName="ObjectPageModel" internalModelName="emp4"
+												  externalPath="/Employee/3"/>
+									<ModelMapping externalModelName="ObjectPageModel" internalModelName="emp5"
+												  externalPath="/Employee/4"/>
+									<ModelMapping externalModelName="ObjectPageModel" internalModelName="emp6"
+												  externalPath="/Employee/5"/>
+								</employment:mappings>
+							</employment:EmploymentBlockJob>
+						</blocks>
+					</ObjectPageSubSection>
+				</subSections>
+			</ObjectPageSection>
+			<ObjectPageSection titleUppercase="false" title="my section">
+				<subSections>
+					<ObjectPageSubSection title="Section 8" mode="Expanded" titleUppercase="false">
+						<blocks>
+							<employment:EmploymentBlockJob id="employmentblockjob9">
+								<employment:mappings>
+									<ModelMapping externalModelName="ObjectPageModel" internalModelName="emp1"
+												  externalPath="/Employee/0"/>
+									<ModelMapping externalModelName="ObjectPageModel" internalModelName="emp2"
+												  externalPath="/Employee/1"/>
+									<ModelMapping externalModelName="ObjectPageModel" internalModelName="emp3"
+												  externalPath="/Employee/2"/>
+									<ModelMapping externalModelName="ObjectPageModel" internalModelName="emp4"
+												  externalPath="/Employee/3"/>
+									<ModelMapping externalModelName="ObjectPageModel" internalModelName="emp5"
+												  externalPath="/Employee/4"/>
+									<ModelMapping externalModelName="ObjectPageModel" internalModelName="emp6"
+												  externalPath="/Employee/5"/>
+								</employment:mappings>
+							</employment:EmploymentBlockJob>
+						</blocks>
+					</ObjectPageSubSection>
+				</subSections>
+			</ObjectPageSection>
+			<ObjectPageSection titleUppercase="false" title="my section">
+				<subSections>
+					<ObjectPageSubSection title="Section 9" mode="Expanded" titleUppercase="false">
+						<blocks>
+							<employment:EmploymentBlockJob id="employmentblockjob10">
+								<employment:mappings>
+									<ModelMapping externalModelName="ObjectPageModel" internalModelName="emp1"
+												  externalPath="/Employee/0"/>
+									<ModelMapping externalModelName="ObjectPageModel" internalModelName="emp2"
+												  externalPath="/Employee/1"/>
+									<ModelMapping externalModelName="ObjectPageModel" internalModelName="emp3"
+												  externalPath="/Employee/2"/>
+									<ModelMapping externalModelName="ObjectPageModel" internalModelName="emp4"
+												  externalPath="/Employee/3"/>
+									<ModelMapping externalModelName="ObjectPageModel" internalModelName="emp5"
+												  externalPath="/Employee/4"/>
+									<ModelMapping externalModelName="ObjectPageModel" internalModelName="emp6"
+												  externalPath="/Employee/5"/>
+								</employment:mappings>
+							</employment:EmploymentBlockJob>
+						</blocks>
+					</ObjectPageSubSection>
+				</subSections>
+			</ObjectPageSection>
+			<ObjectPageSection titleUppercase="false" title="my section">
+				<subSections>
+					<ObjectPageSubSection title="Section 10" mode="Expanded" titleUppercase="false">
+						<blocks>
+							<employment:EmploymentBlockJob id="employmentblockjob11">
+								<employment:mappings>
+									<ModelMapping externalModelName="ObjectPageModel" internalModelName="emp1"
+												  externalPath="/Employee/0"/>
+									<ModelMapping externalModelName="ObjectPageModel" internalModelName="emp2"
+												  externalPath="/Employee/1"/>
+									<ModelMapping externalModelName="ObjectPageModel" internalModelName="emp3"
+												  externalPath="/Employee/2"/>
+									<ModelMapping externalModelName="ObjectPageModel" internalModelName="emp4"
+												  externalPath="/Employee/3"/>
+									<ModelMapping externalModelName="ObjectPageModel" internalModelName="emp5"
+												  externalPath="/Employee/4"/>
+									<ModelMapping externalModelName="ObjectPageModel" internalModelName="emp6"
+												  externalPath="/Employee/5"/>
+								</employment:mappings>
+							</employment:EmploymentBlockJob>
+						</blocks>
+					</ObjectPageSubSection>
+				</subSections>
+			</ObjectPageSection>
+			<ObjectPageSection titleUppercase="false" title="my section">
+				<subSections>
+					<ObjectPageSubSection title="Section 11" mode="Expanded" titleUppercase="false">
+						<blocks>
+							<employment:EmploymentBlockJob id="employmentblockjob3">
+								<employment:mappings>
+									<ModelMapping externalModelName="ObjectPageModel" internalModelName="emp1"
+												  externalPath="/Employee/0"/>
+									<ModelMapping externalModelName="ObjectPageModel" internalModelName="emp2"
+												  externalPath="/Employee/1"/>
+									<ModelMapping externalModelName="ObjectPageModel" internalModelName="emp3"
+												  externalPath="/Employee/2"/>
+									<ModelMapping externalModelName="ObjectPageModel" internalModelName="emp4"
+												  externalPath="/Employee/3"/>
+									<ModelMapping externalModelName="ObjectPageModel" internalModelName="emp5"
+												  externalPath="/Employee/4"/>
+									<ModelMapping externalModelName="ObjectPageModel" internalModelName="emp6"
+												  externalPath="/Employee/5"/>
+								</employment:mappings>
+							</employment:EmploymentBlockJob>
+						</blocks>
+					</ObjectPageSubSection>
+				</subSections>
+			</ObjectPageSection>
+
+
+		</sections>
+	</ObjectPageLayout>
+</mvc:View>

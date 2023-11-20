@@ -1,0 +1,6 @@
+<core:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core"
+>
+	<CheckBox select="_onChange" />
+</core:FragmentDefinition>

@@ -1,0 +1,60 @@
+{
+	"@odata.metadataEtag" : "W/\"20200721151616\"",
+	"@odata.count" : "7",
+	"value" : [{
+		"@odata.etag" : "W/\"20200723170835.9682750 \"",
+		"SalesOrderID" : "0500000000",
+		"Note" : "Test (BEFORE refresh)",
+		"CurrencyCode" : "EUR",
+		"GrossAmount" : "29558.41",
+		"SO_2_BP" : {
+			"@odata.etag" : "W/\"20200722155503.1802100 \"",
+			"BusinessPartnerID" : "0100000000",
+			"CompanyName" : "SAP"
+		}
+	}, {
+		"@odata.etag" : "W/\"20200723131804.2736810 \"",
+		"SalesOrderID" : "0500000001",
+		"Note" : "EPM DG: SO ID 0500000001 Deliver as fast as possible",
+		"CurrencyCode" : "EUR",
+		"GrossAmount" : "14941.64",
+		"SO_2_BP" : {
+			"@odata.etag" : "W/\"20200702154409.0000000 \"",
+			"BusinessPartnerID" : "0100000002",
+			"CompanyName" : "DelBont Industries"
+		}
+	}, {
+		"@odata.etag" : "W/\"20200701220000.0000000 \"",
+		"SalesOrderID" : "0500000002",
+		"Note" : "EPM DG: SO ID 0500000002 Deliver as fast as possible",
+		"CurrencyCode" : "EUR",
+		"GrossAmount" : "5631.08",
+		"SO_2_BP" : {
+			"@odata.etag" : "W/\"20200702154409.0000000 \"",
+			"BusinessPartnerID" : "0100000005",
+			"CompanyName" : "TECUM"
+		}
+	}, {
+		"@odata.etag" : "W/\"20200722155712.6635190 \"",
+		"SalesOrderID" : "0500000003",
+		"Note" : "EPM DG: SO ID 0500000003 Deliver as fast as possible",
+		"CurrencyCode" : "EUR",
+		"GrossAmount" : "1704.04",
+		"SO_2_BP" : {
+			"@odata.etag" : "W/\"20200702154409.0000000 \"",
+			"BusinessPartnerID" : "0100000006",
+			"CompanyName" : "Asia High tech"
+		}
+	}, {
+		"@odata.etag" : "W/\"20200708120434.6460980 \"",
+		"SalesOrderID" : "0500000005",
+		"Note" : "EPM DG: SO ID 0500000005 Deliver as fast as possible",
+		"CurrencyCode" : "EUR",
+		"GrossAmount" : "1023.75",
+		"SO_2_BP" : {
+			"@odata.etag" : "W/\"20200722155503.1802100 \"",
+			"BusinessPartnerID" : "0100000000",
+			"CompanyName" : "SAP"
+		}
+	}]
+}

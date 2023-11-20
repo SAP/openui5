@@ -1,0 +1,21 @@
+<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core">
+	<Table id="customTable" items="{path: '/ProductCollection'}">
+		<columns>
+			<Column hAlign="Left" width="50%">
+				<Text text="firstColumn"/>
+			</Column>
+			<Column hAlign="Left" width="50%">
+				<Text text="secondColumn"/>
+			</Column>
+		</columns>
+		<items>
+			<ColumnListItem id="customListItemTemplate">
+				<cells>
+					<Text id="customListCellContent" text="{ProductId}" />
+					<!-- Extends the table with extra cell -->
+					<core:ExtensionPoint name="EP5" />
+				</cells>
+			</ColumnListItem>
+		</items>
+	</Table>
+</core:FragmentDefinition>

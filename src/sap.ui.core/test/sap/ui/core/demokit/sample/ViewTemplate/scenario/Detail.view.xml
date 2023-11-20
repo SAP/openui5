@@ -1,6 +1,7 @@
 <mvc:View
 	controllerName="sap.ui.core.sample.ViewTemplate.scenario.Detail"
-	template:require="sap.ui.core.sample.ViewTemplate.scenario.Helper"
+	template:require="{AH: 'sap/ui/model/odata/AnnotationHelper',
+		Helper: 'sap/ui/core/sample/ViewTemplate/scenario/Helper'}"
 	xmlns="sap.m"
 	xmlns:core="sap.ui.core"
 	xmlns:layout="sap.ui.layout"
@@ -9,11 +10,10 @@
 	xmlns:template="http://schemas.sap.com/sapui5/extension/sap.ui.core.template/1">
 	<layout:VerticalLayout class="sapUiSmallMarginBottom">
 		<!-- Note: "meta>" MUST point to an entity set! -->
-		<template:alias name=".AH" value="sap.ui.model.odata.AnnotationHelper">
-		<template:alias name=".formatParts" value="sap.ui.core.sample.ViewTemplate.scenario.Helper.formatParts">
-		<template:alias name=".id" value="sap.ui.core.sample.ViewTemplate.scenario.Helper.id">
+		<template:alias name=".formatParts" value="Helper.formatParts">
+		<template:alias name=".id" value="Helper.id">
 			<template:with path="meta>/" var="fieldGroup"><!-- default value needed for IDs -->
-			<template:with path="meta>entityType" helper=".AH.gotoEntityType" var="entityType">
+			<template:with path="meta>entityType" helper="AH.gotoEntityType" var="entityType">
 
 				<template:if test="{entityType>com.sap.vocabularies.UI.v1.LineItem}">
 					<!-- Note: this limits the data shown to 5 rows! -->
@@ -32,11 +32,11 @@
 					<scenario:Form title="HeaderInfo">
 						<template:with path="entityType>com.sap.vocabularies.UI.v1.HeaderInfo">
 							<!-- Note: composite bindings instead of separate labels for testing only! -->
-							<Text text="[Type Name] {path: 'entityType>TypeName', formatter: '.AH.format'}"/>
-							<!-- Text text="[{path: 'entityType>Title/Label', formatter: '.AH.format'}] {path: 'entityType>Title/Value', formatter: '.AH.format'}" / -->
+							<Text text="[Type Name] {path: 'entityType>TypeName', formatter: 'AH.format'}"/>
+							<!-- Text text="[{path: 'entityType>Title/Label', formatter: 'AH.format'}] {path: 'entityType>Title/Value', formatter: 'AH.format'}" / -->
 							<Text text="{parts: [{path: 'entityType>Title/Label'}, {path: 'entityType>Title/Value'}], formatter: '.formatParts'}"/>
 							<template:if test="{entityType>Description}"> <!-- HeaderInfo Description is Nullable -->
-								<Text text="[{path: 'entityType>Description/Label', formatter: '.AH.format'}] {path: 'entityType>Description/Value', formatter: '.AH.format'}"/>
+								<Text text="[{path: 'entityType>Description/Label', formatter: 'AH.format'}] {path: 'entityType>Description/Value', formatter: 'AH.format'}"/>
 							</template:if>
 						</template:with>
 					</scenario:Form>
@@ -45,7 +45,7 @@
 				<core:Fragment fragmentName="sap.ui.core.sample.ViewTemplate.scenario.Identification" type="XML"/>
 
 				<template:repeat list="{path:'entityType>', filters: {path: '@sapui.name', operator: 'StartsWith', value1: 'com.sap.vocabularies.UI.v1.FieldGroup'}}" var="fieldGroup">
-					<scenario:Form title="{path: 'fieldGroup>Label', formatter: '.AH.format'}">
+					<scenario:Form title="{path: 'fieldGroup>Label', formatter: 'AH.format'}">
 						<template:repeat list="{fieldGroup>Data}" var="field">
 							<core:Fragment fragmentName="sap.ui.core.sample.ViewTemplate.scenario.LabeledField" type="XML"/>
 						</template:repeat>
@@ -61,15 +61,14 @@
 
 			<template:with path="meta>com.sap.vocabularies.UI.v1.DataPoint" var="dataPoint">
 				<template:if test="{dataPoint>}">
-					<scenario:Form title="DataPoint@EntitySet - {path: 'dataPoint>Title', formatter: '.AH.format'}">
+					<scenario:Form title="DataPoint@EntitySet - {path: 'dataPoint>Title', formatter: 'AH.format'}">
 						<Label labelFor="dataPoint"
-							text="{path: 'dataPoint>Description', formatter: '.AH.format'}"/>
-						<Text id="dataPoint" text="{path: 'dataPoint>Value', formatter: '.AH.format'}"/>
+							text="{path: 'dataPoint>Description', formatter: 'AH.format'}"/>
+						<Text id="dataPoint" text="{path: 'dataPoint>Value', formatter: 'AH.format'}"/>
 					</scenario:Form>
 				</template:if>
 			</template:with>
 			</template:with>
-		</template:alias>
 		</template:alias>
 		</template:alias>
 	</layout:VerticalLayout>

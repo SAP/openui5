@@ -1,0 +1,5 @@
+<mvc:View controllerName="testdata.customizing.async.controllerReplacements.sap.controller.Main"
+	xmlns="sap.m"
+	xmlns:mvc="sap.ui.core.mvc">
+	<Button id="buttonXMLView1" text="My XMLView1 Button" press="onButtonPress" />
+</mvc:View>

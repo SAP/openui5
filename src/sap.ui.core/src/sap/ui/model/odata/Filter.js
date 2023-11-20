@@ -1,10 +1,13 @@
 /*!
  * ${copyright}
  */
-
+/*eslint-disable max-len */
 // Provides a filter for list bindings
-sap.ui.define(['sap/ui/base/Object', 'sap/ui/model/Filter', 'sap/ui/model/FilterOperator'],
-	function(BaseObject, Filter, FilterOperator) {
+sap.ui.define([
+	'sap/ui/base/Object',
+	'sap/ui/model/Filter'
+],
+	function(BaseObject, Filter) {
 	"use strict";
 
 

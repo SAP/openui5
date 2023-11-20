@@ -1,0 +1,135 @@
+{
+  "1.69.0": {
+    "date": "July 2019",
+    "notes": [
+      {
+        "id": "d4e72f0ab6056b4a876bd9129f0ad18460bccbb9",
+        "type": "FIX",
+        "text": "MDCLink: Navigation misses parameters",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970177679"
+          }
+        ]
+      },
+      {
+        "id": "9f9da7510d220ab073a1949eceeb24d92352c311",
+        "type": "FIX",
+        "text": "MDCLink: Navigation misses parameters",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970177679"
+          }
+        ]
+      },
+      {
+        "id": "96ff9a6ebb107ac0b7cd34652cee5aeb43eda2d6",
+        "type": "FEATURE",
+        "text": "ValueHelpPanel: show number of items on titles",
+        "references": []
+      },
+      {
+        "id": "6bf04b3bbdcfaea7c7464c527759a461c770af53",
+        "type": "FIX",
+        "text": "MDCLink: Semantic ObjectMapping not correctly applied",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970177679"
+          }
+        ]
+      },
+      {
+        "id": "03b46697fe7b03878691bfbe34f9abd2583bc6a8",
+        "type": "FEATURE",
+        "text": "ValueHelpPanel: add close button to filterbar section",
+        "references": []
+      },
+      {
+        "id": "ce1fafde7fd2f92700ed353e184515dd0e5fc281",
+        "type": "FIX",
+        "text": "Field: Currency/unit update breaks",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970340771"
+          }
+        ]
+      },
+      {
+        "id": "35710d269773046bd55c35a26572f1100c060dfa",
+        "type": "FIX",
+        "text": "Field: suggestion with wrong content opened",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970307187"
+          }
+        ]
+      },
+      {
+        "id": "9e1b7d07421db8c2aca2ab395dac1b931803a84b",
+        "type": "FIX",
+        "text": "FieldValueHelp: filter text stays after open dialog",
+        "references": []
+      },
+      {
+        "id": "ad4607a2b4049095035d74ce14590d2cb44b6233",
+        "type": "FIX",
+        "text": "FieldValueHelp: filterbar filters used in suggestion",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970345544"
+          }
+        ]
+      },
+      {
+        "id": "844cd063b154fbae4161c682d6af380763f9c243",
+        "type": "FIX",
+        "text": "ValueHelpPanel: no delete icon on long token",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980168519"
+          }
+        ]
+      },
+      {
+        "id": "cb2f3601fc3ad80eede9ed25e0aeaca981680564",
+        "type": "FIX",
+        "text": "FieldValueHelp: do not use default in/out parameters to read text",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970328442"
+          }
+        ]
+      },
+      {
+        "id": "6225e78ebf7ef27600f431246a02faf54944a0cb",
+        "type": "FIX",
+        "text": "Field: allow to enter invalid values",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970235124"
+          }
+        ]
+      },
+      {
+        "id": "75594a61d76ee9c88c0c56bcb7dea50c4f8c0d8d",
+        "type": "FIX",
+        "text": "FieldHelp: determine key/description no path in filter",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970387739"
+          }
+        ]
+      }
+    ]
+  }
+}

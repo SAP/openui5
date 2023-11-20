@@ -1,0 +1,28 @@
+{
+	"@odata.metadataEtag" : "W/\"20191008145915\"",
+	"value" : [{
+		"ScheduleKey" : "005056A71E3D1ED68DDA8C9967D08B27",
+		"DeliveryDate" : "2016-06-26T22:00:00Z"
+	}, {
+		"ScheduleKey" : "005056A71E3D1ED68DDA8C9967D0AB27",
+		"DeliveryDate" : "2016-06-26T22:00:00Z"
+	}, {
+		"ScheduleKey" : "005056A71E3D1ED68DDA8C9967D0CB27",
+		"DeliveryDate" : "2016-06-26T22:00:00Z"
+	}, {
+		"ScheduleKey" : "005056A71E3D1ED68DDA8C9967D0EB27",
+		"DeliveryDate" : "2016-06-26T22:00:00Z"
+	}, {
+		"ScheduleKey" : "005056A71E3D1ED68DDA8C9967D10B27",
+		"DeliveryDate" : "2016-06-26T22:00:00Z"
+	}, {
+		"ScheduleKey" : "005056A71E3D1ED68DDA8C9967D12B27",
+		"DeliveryDate" : "2016-06-26T22:00:00Z"
+	}, {
+		"ScheduleKey" : "005056A71E3D1ED68DDA8CB5CA18CB46",
+		"DeliveryDate" : "2016-06-26T22:00:00Z"
+	}, {
+		"ScheduleKey" : "005056A71E3D1ED68DDA8CB5CA18EB46",
+		"DeliveryDate" : "2016-06-26T22:00:00Z"
+	}]
+}

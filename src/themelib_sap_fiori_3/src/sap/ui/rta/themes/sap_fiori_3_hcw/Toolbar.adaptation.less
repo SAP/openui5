@@ -1,0 +1,45 @@
+/***********************************************************************
+	Style of the RTA Toolbar (type: adaptation) - sap_fiori_3_hcw Theme
+************************************************************************/
+@_sap_ui_rta_Toolbar_Adaptation_BaseColor: @sapUiNeutralBG; //#fff
+@_sap_ui_rta_Toolbar_Adaptation_TextColor: @sapUiNeutralElement; //#000
+@_sap_ui_rta_Toolbar_Adaptation_BtnFocusBorder: @sapUiNeutralElement; //#000
+@_sap_ui_rta_Toolbar_Adaptation_FocusOutlineCol: @sapUiNeutralBorder; //#000
+@_sap_ui_rta_Toolbar_Adaptation_SegBBtnHoverTextColor: @sapUiNeutralElement; //000
+@_sap_ui_rta_Toolbar_Adaptation_DraftVersionColor: darken(@sapUiActive, 19%); //#be5a13
+@_sap_ui_rta_Toolbar_Adaptation_ActiveVersionColor: @sapUiContentHelpColor; //#b7ffb7
+@_sap_ui_rta_Toolbar_Adaptation_BoxShadow_DarkColor: fade(@sapUiContentShadowColor, 60%); //rgba(0, 0, 0, 0.6)
+@_sap_ui_rta_Toolbar_Adaptation_BoxShadow_LightColor: @sapUiNeutralBorder; //#000
+@_sap_ui_rta_Toolbar_Adaptation_VersionHistoryHover: @sapUiSelected; //#ec8b46
+@_sap_ui_rta_Toolbar_Adaptation_BaseColorLight: @sapUiFieldReadOnlyBackground; //#b3b3b3
+
+.sapUiRtaMode {
+	.sapUiRtaToolbar.sapUiRtaToolbarAdaptation {
+		.sapMBtn {
+			&:focus .sapMFocusable {
+				outline: 0.125rem dotted @_sap_ui_rta_Toolbar_Adaptation_FocusOutlineCol;
+				outline-offset: -0.125rem; //2px
+				border-color: transparent;
+			}
+		}
+
+		.sapMSegB {
+			.sapMSegBBtn {
+				&.sapMSegBBtnFocusable {
+					&:focus .sapMSegBBtnInner {
+						outline-width: 0.125rem; //2px
+						outline-offset: -0.125rem; //2px
+					}
+				}
+			}
+		}
+	}
+	.sapUiRtaVersionHistory {
+		.sapUiRtaVersionsList {
+			.sapMListUl .sapMLIB.sapMGHLI {
+				color: @sapUiNeutralBG;
+				box-shadow: none;
+			}
+		}
+	}
+}

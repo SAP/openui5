@@ -1,0 +1,13 @@
+<mvc:View
+	controllerName="sap.ui.integration.sample.AdaptiveCustomizedActions.AdaptiveCustomizedActions"
+	xmlns:w="sap.ui.integration.widgets"
+	xmlns:f="sap.f"
+	xmlns:mvc="sap.ui.core.mvc">
+	<f:GridContainer>
+		<w:Card id="adaptiveCard" action=".onCardAction" manifest="./cardManifest.json">
+			<w:layoutData>
+				<f:GridContainerItemLayoutData columns="4" />
+			</w:layoutData>
+		</w:Card>
+	</f:GridContainer>
+</mvc:View>

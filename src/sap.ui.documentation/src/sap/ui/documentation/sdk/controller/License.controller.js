@@ -2,7 +2,6 @@
  * ${copyright}
  */
 
-/*global location */
 sap.ui.define([
 		"sap/ui/documentation/sdk/controller/BaseController",
 		"sap/ui/documentation/library"
@@ -22,11 +21,11 @@ sap.ui.define([
 						if (sLicense !== "") {
 							this.getView().byId("licenseText").setText(sLicense);
 						} else {
-							this.getRouter().myNavToWithoutHash("sap.ui.documentation.sdk.view.NotFound", "XML", false);
+							this.onRouteNotFound();
 						}
 					}.bind(this))
 					.fail(function () {
-						this.getRouter().myNavToWithoutHash("sap.ui.documentation.sdk.view.NotFound", "XML", false);
+						this.onRouteNotFound();
 					}.bind(this));
 			}
 		});

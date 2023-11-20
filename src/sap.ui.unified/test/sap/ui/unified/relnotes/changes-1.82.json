@@ -1,0 +1,88 @@
+{
+  "1.82.0": {
+    "date": "August 2020",
+    "notes": [
+      {
+        "id": "88ffa08f6962851cdf768757c7651004ab9e9f59",
+        "type": "FIX",
+        "text": " Revert for \"sap.ui.unified.FileUploader: input field is now only one\"",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080318120"
+          }
+        ]
+      },
+      {
+        "id": "d6a863c51463999926ae424ea253b73054dad855",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: focuses the correct date",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400003137362020"
+          }
+        ]
+      },
+      {
+        "id": "8be4b920e98e6c6957863cdfadbec7c70fdf7286",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: Non-working days are announced",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400004609422020"
+          },
+          {
+            "type": "BCP",
+            "reference": "002075129400002920202020"
+          }
+        ]
+      },
+      {
+        "id": "143a73f3611695953bdd5f6588a9e18bf8a4a8f8",
+        "type": "FIX",
+        "text": " sap.ui.unified.Currency: updates its value if the currency code changes",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080352633"
+          }
+        ]
+      },
+      {
+        "id": "f097cea4766975074bc721651e5f075695ae3e41",
+        "type": "FIX",
+        "text": " sap.ui.unified.FileUploader: Fix the unit tests for IE",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080379176"
+          }
+        ]
+      },
+      {
+        "id": "84941a14c4bfa366f4e9c127339e3c692e73d7b2",
+        "type": "FIX",
+        "text": " sap.ui.unified.FileUploader: IE adds content-type only once",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400003497602020"
+          }
+        ]
+      },
+      {
+        "id": "50ce82195cc89de16cb71f6ef3cb4e69bb149c53",
+        "type": "FIX",
+        "text": " sap.ui.unified.FileUploader: input field is now only one",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970467587"
+          }
+        ]
+      }
+    ]
+  }
+}

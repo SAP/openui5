@@ -9,60 +9,43 @@
 		inset="false"
 		growing="true"
 		growingThreshold="500"
+		sticky="ColumnHeaders"
 		items="{/appVariants}">
 		<columns>
 			<Column
-				width="6em"
+				width="8rem"
 				hAlign="Left">
-				<core:InvisibleText text="{i18n>MAA_DIALOG_APP_TYPE}" />
+				<Text text="{i18n>MAA_DIALOG_APP_TYPE}" />
 			</Column>
 			<Column
-				width="2em"
+				width="4rem"
 				minScreenWidth="tablet"
 				demandPopin="true"
-				popinDisplay="WithoutHeader"
+				popinDisplay="Inline"
 				hAlign="Left">
 				<core:InvisibleText text="{i18n>MAA_DIALOG_ICON}" />
 			</Column>
 			<Column
-				width="12em"
 				minScreenWidth="tablet"
 				demandPopin="true"
-				popinDisplay="WithoutHeader"
+				popinDisplay="Inline"
 				hAlign="Left">
-				<core:InvisibleText text="{i18n>MAA_DIALOG_TITLE_SUBTITLE}" />
+				<Text text="{i18n>MAA_DIALOG_TITLE}" />
 			</Column>
 			<Column
-				width="12em"
 				minScreenWidth="tablet"
 				demandPopin="true"
-				popinDisplay="WithoutHeader"
+				popinDisplay="Inline"
 				hAlign="Left">
-				<core:InvisibleText text="{i18n>MAA_DIALOG_DESCRIPTION}" />
+				<Text text="{i18n>MAA_DIALOG_DESCRIPTION}" />
 			</Column>
 			<Column
-				width="4em"
+				width="8rem"
 				minScreenWidth="Desktop"
 				demandPopin="true"
-				popinDisplay="WithoutHeader"
-				hAlign="Center">
-				<core:InvisibleText text="{i18n>MAA_DIALOG_COPY_ID_ACTION}" />
-			</Column>
-			<Column
-				width="4em"
-				minScreenWidth="Desktop"
-				demandPopin="true"
-				popinDisplay="WithoutHeader"
-				hAlign="Center">
-				<core:InvisibleText text="{i18n>MAA_DIALOG_ADAPT_UI_ACTION}" />
-			</Column>
-			<Column
-				width="4em"
-				minScreenWidth="Desktop"
-				demandPopin="true"
-				popinDisplay="WithoutHeader"
-				hAlign="Center">
-				<core:InvisibleText text="{i18n>MAA_DIALOG_SAVE_AS_ACTION}" />
+				popinDisplay="Inline"
+				hAlign="End">
+				<core:InvisibleText text="{i18n>MAA_DIALOG_ACTIONS_HEADER}" />
 			</Column>
 		</columns>
 		<items>
@@ -71,16 +54,31 @@
 					<ObjectIdentifier
 						title="{typeOfApp}"
 						text="{currentStatus}" />
-					<core:Icon src="{icon}" class="sapUiListTableIconSize" />
+					<core:Icon src="{icon}" tooltip="{iconText}" class="sapUiListTableIconSize" />
 					<ObjectIdentifier
 						title="{title}"
 						text="{subTitle}" />
 					<Text text="{description}" />
 
-					<Button text="{i18n>MAA_DIALOG_COPY_ID}" press="copyId"/>
-					<Button text="{i18n>MAA_DIALOG_ADAPT_UI}" enabled="{adaptUIButtonVisibility}" press="handleUiAdaptation" visible="{isKeyUser}" />
-					<Button text="{i18n>MAA_DIALOG_SAVE_AS_APP}" tooltip="{i18n>TOOLTIP_MAA_DIALOG_SAVE_AS_APP}" press="saveAsAppVariant" visible="{isKeyUser}" />
-
+					<MenuButton text="{i18n>MAA_DIALOG_ACTIONS}">
+						<menu>
+							<Menu itemSelected="onMenuAction">
+								<items>
+									<MenuItem text="{i18n>MAA_DIALOG_ADAPT_UI}"
+										visible="{parts: [{path: 'adaptUIButtonVisibility'}, {path: 'isKeyUser'}], formatter:'.formatAdaptUIButtonVisibility'}"
+										enabled="{adaptUIButtonEnabled}"
+										tooltip="{parts: [{path: 'adaptUIButtonEnabled'}, {path: 'appVarStatus'}], formatter:'.formatAdaptUIButtonTooltip'}"
+										icon="sap-icon://wrench"/>
+									<MenuItem text="{i18n>MAA_DIALOG_COPY_ID}" tooltip="{i18n>TOOLTIP_MAA_DIALOG_COPY_ID}" icon="sap-icon://copy" />
+									<MenuItem text="{i18n>MAA_DIALOG_DELETE_APPVAR}"
+										enabled="{delAppVarButtonEnabled}"
+										visible="{delAppVarButtonVisibility}"
+										tooltip="{parts: [{path: 'delAppVarButtonEnabled'}, {path: 'isS4HanaCloud'}], formatter:'.formatDelButtonTooltip'}"
+										icon="sap-icon://delete" />
+								</items>
+							</Menu>
+						</menu>
+					</MenuButton>
 				</cells>
 			</ColumnListItem>
 		</items>

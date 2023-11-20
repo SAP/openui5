@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html>
 	<head>
-		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 
 		<title>RadioButtonGroup - sap.m</title>
 
@@ -18,13 +17,13 @@
 			var iIndex = 100;
 
 			function toggleReadonly() {
-				var oButton = oCore.getControl("c1");
+				var oButton = oCore.byId("c1");
 				oButton.setEditable(!oButton.getEditable());
 			}
 
 			function handleTextChange(oEvent) {
 				var oText = oEvent.oSource;
-				var oRBGroup = oCore.getControl("RBG5");
+				var oRBGroup = oCore.byId("RBG5");
 
 				if(isNaN(oText.getValue())){
 					alert('Please enter a number');
@@ -40,7 +39,7 @@
 
 			function handleTextChangeID(oEvent) {
 				var oText = oEvent.oSource;
-				var oRBGroup = oCore.getControl("RBG5");
+				var oRBGroup = oCore.byId("RBG5");
 
 				for (var i = 0; i < oRBGroup.getButtons().length; i++){
 					if(oText.getValue() == oRBGroup.getButtons()[i].getId()){
@@ -62,7 +61,7 @@
 
 			function handleTextChangeText(oEvent) {
 				var oText = oEvent.oSource;
-				var oRBGroup = oCore.getControl("RBG5");
+				var oRBGroup = oCore.byId("RBG5");
 
 				if (oRBGroup.getSelectedButton()) {
 					oRBGroup.getSelectedButton().setText(oText.getValue());
@@ -77,7 +76,7 @@
 
 			function handlePressAdd(oEvent) {
 				var oButton = oEvent.oSource;
-				var oRBGroup = oCore.getControl("RBG5");
+				var oRBGroup = oCore.byId("RBG5");
 
 				iIndex++;
 				var oButton = new sap.m.RadioButton("RB5-" + iIndex);
@@ -89,7 +88,7 @@
 
 			function handlePressInsertBefore(oEvent) {
 				var oButton = oEvent.oSource;
-				var oRBGroup = oCore.getControl("RBG5");
+				var oRBGroup = oCore.byId("RBG5");
 
 				iIndex++;
 				var oButton = new sap.m.RadioButton("RB5-" + iIndex);
@@ -106,7 +105,7 @@
 
 			function handlePressInsertAfter(oEvent) {
 				var oButton = oEvent.oSource;
-				var oRBGroup = oCore.getControl("RBG5");
+				var oRBGroup = oCore.byId("RBG5");
 
 				iIndex++;
 				var oButton = new sap.m.RadioButton("RB5-" + iIndex);
@@ -123,7 +122,7 @@
 
 			function handlePressRemove(oEvent) {
 				var oButton = oEvent.oSource;
-				var oRBGroup = oCore.getControl("RBG5");
+				var oRBGroup = oCore.byId("RBG5");
 
 				if (oRBGroup.getButtons().length > 0) {
 					oRBGroup.removeButton(0);
@@ -134,7 +133,7 @@
 
 			function handlePressRemoveAll(oEvent) {
 				var oButton = oEvent.oSource;
-				var oRBGroup = oCore.getControl("RBG5");
+				var oRBGroup = oCore.byId("RBG5");
 
 				oRBGroup.removeAllButtons();
 
@@ -143,18 +142,16 @@
 
 			function handlePressDestroy(oEvent) {
 				var oButton = oEvent.oSource;
-				var oRBGroup = oCore.getControl("RBG5");
+				var oRBGroup = oCore.byId("RBG5");
 
 				oRBGroup.destroyButtons();
-
-				iIndex = 0;
 
 				updateInfo();
 			}
 
 			function handlePressEditable(oEvent) {
 				var oButton = oEvent.oSource;
-				var oRBGroup = oCore.getControl("RBG5");
+				var oRBGroup = oCore.byId("RBG5");
 
 				oRBGroup.setEditable(!oRBGroup.getEditable());
 				if(oRBGroup.getEditable()){
@@ -168,7 +165,7 @@
 
 			function handlePressEnabled(oEvent) {
 				var oButton = oEvent.oSource;
-				var oRBGroup = oCore.getControl("RBG5");
+				var oRBGroup = oCore.byId("RBG5");
 
 				oRBGroup.setEnabled(!oRBGroup.getEnabled());
 				if(oRBGroup.getEnabled()){
@@ -182,7 +179,7 @@
 
 			function handleToggleEnabled(oEvent) {
 				var oCB = oEvent.oSource;
-				var oRBGroup = oCore.getControl("RBG5");
+				var oRBGroup = oCore.byId("RBG5");
 
 				if (oRBGroup.getSelectedButton()) {
 					oRBGroup.getSelectedButton().setEnabled(oCB.getSelected());
@@ -192,11 +189,11 @@
 			}
 
 			function updateInfo(){
-				var oRBGroup = oCore.getControl("RBG5");
-				var oText2 = oCore.getControl("TF2");
-				var oText3 = oCore.getControl("TF4");
-				var oText5 = oCore.getControl("TF5");
-				var oCB = oCore.getControl("CB1");
+				var oRBGroup = oCore.byId("RBG5");
+				var oText2 = oCore.byId("TF2");
+				var oText3 = oCore.byId("TF4");
+				var oText5 = oCore.byId("TF5");
+				var oCB = oCore.byId("CB1");
 				if(oRBGroup.getButtons().length > 0){
 					oText2.setValue(oRBGroup.getSelectedIndex());
 					if (oRBGroup.getSelectedButton()) {
@@ -216,7 +213,7 @@
 				}
 			}
 
-			oCore.attachInitEvent(function () {
+			oCore.attachInit(function () {
 				jQuery.sap.log.info("Listener of Loaded Event called - Application Code");
 
 				// Simple RadioButtonGroup
@@ -609,7 +606,6 @@
 					content: [
 						new sap.m.IconTabBar("itb1", {
 							expandable: false,
-							showOverflowSelectList: true,
 							items: [
 								new sap.m.IconTabFilter("sample1", {
 									key: "key1",
@@ -651,7 +647,7 @@
 		</script>
 	</head>
 
-	<body class="sapUiBody" role="application" id="body" >
+	<body class="sapUiBody" id="body" >
 		<div id="content"></div>
 	</body>
 </html>

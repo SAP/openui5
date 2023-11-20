@@ -1,5 +1,5 @@
-<core:View
-		xmlns:core="sap.ui.core"
+<mvc:View
+		xmlns:mvc="sap.ui.core.mvc"
 		xmlns="sap.uxap"
 		xmlns:opblock="sap.uxap.testblocks.objectpageblock"
 		height="100%">
@@ -47,4 +47,4 @@
 		</sections>
 	</ObjectPageLayout>
 
-</core:View>
+</mvc:View>

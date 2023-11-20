@@ -4089,6 +4089,12 @@ var parseAndModify = (inBrowser ? window.falafel : require("falafel"));
                         (node.parent.type === "ForStatement" || node.parent.type === "ForInStatement")){
                         return;
                     }
+                    // ##### BEGIN: MODIFIED BY SAP
+                    if (node.type === "ExpressionStatement" && node.expression.type === "Literal" &&
+                        node.expression.value === "use strict") {
+                        return; // do not instrument "use strict"; it would break it!
+                    }
+                    // ##### END: MODIFIED BY SAP
                     if (node.loc && node.loc.start){
                         node.update(covVar+"['"+filename+"']["+node.loc.start.line+"]++;\n"+node.source());
                         _blanket._trackingArraySetup.push(node.loc.start.line);

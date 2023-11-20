@@ -1,0 +1,89 @@
+/* ========================================= */
+/* CSS for control sap.ui.commons/TextField  */
+/* Horizon theme                             */
+/* ========================================= */
+
+.sapUiTf{
+	font-family: @sapUiDesktopFontFamily;
+	font-size: @sapUiDesktopFontSize;
+}
+
+.sapUiTfMono{
+	font-family: @sapUiFontMonospaceFamily;
+}
+
+.sapUiTfBrd {
+	padding: 2px 5px 3px 5px;
+	height: 22px;
+	box-sizing: border-box;
+	border-width: 1px;
+}
+
+.sapUiTfBrd.sapUiTfStd:hover {
+	border-color: @sapUiFieldHoverBorderColor;
+}
+
+html[data-sap-ui-os^='iOS'] .sapUiTfBrd.sapUiTfStd:not(.sapUiTfFoc):hover {
+	border-color: @sapUiFieldBorderColor; /* disable hover effect on iPad */
+}
+
+html[data-sap-ui-os^='iOS'] .sapUiTfBrd.sapUiTfErr:not(.sapUiTfFoc):hover {
+	border-color: @sapUiFieldInvalidColor; /* disable hover effect on iPad */
+}
+
+html[data-sap-ui-os^='iOS'] .sapUiTfBrd.sapUiTfWarn:not(.sapUiTfFoc):hover {
+	border-color: @sapUiFieldWarningColor; /* disable hover effect on iPad */
+}
+
+.sapUiTfBrd > .sapUiTfInner {
+	padding: 0 2px 0 5px;
+}
+
+html[data-sap-ui-browser^="ff"] .sapUiTfBrd > .sapUiTfInner,
+html[data-sap-ui-browser^="cr"] .sapUiTfBrd > .sapUiTfInner{
+	padding-bottom: 1px;
+}
+
+.sapUiTfDsbl{
+	background-color: mix(@sapUiFieldBackground, @sapUiBaseBG, (@sapUiContentDisabledOpacity * 100));
+}
+
+.sapUiTfRo{
+	border-color: @sapUiFieldReadOnlyBorderColor;
+}
+
+.sapUiTfRo.sapUiTfBrd.sapUiTfErr{
+	border-color: @sapUiFieldReadOnlyBorderColor;
+	color: darken(@sapUiFieldInvalidColor, 8);
+}
+
+.sapUiTfRo.sapUiTfBrd.sapUiTfWarn {
+	border-color: @sapUiFieldReadOnlyBorderColor;
+	color: @sapUiCriticalText; /*looks more like yellow: darken(@sapUiFieldWarningColor, 17);*/
+}
+
+/* need to be separate statements for each browser, otherwise it will not work */
+.sapUiTfPlace{
+	color: @sapUiFieldPlaceholderTextColor;
+}
+.sapUiTf::-webkit-input-placeholder{
+	color: @sapUiFieldPlaceholderTextColor;
+}
+.sapUiTf::-moz-placeholder{
+	color: @sapUiFieldPlaceholderTextColor;
+}
+.sapUiTf:-ms-input-placeholder{
+	color: @sapUiFieldPlaceholderTextColor;
+}
+
+/* ================= */
+/* Alignment in Form */
+/* ================= */
+
+/* ResponsiveGridLayout */
+html[data-sap-ui-browser^="ie"].sapUiRespGridMedia-Std-Phone.sapUiFormResGridCont > div > .sapUiTf,
+html[data-sap-ui-browser^="ie"].sapUiRespGridMedia-Std-Tablet.sapUiFormResGridCont > div > .sapUiTf,
+html[data-sap-ui-browser^="ie"].sapUiRespGridMedia-Std-Desktop.sapUiFormResGridCont > div > .sapUiTf,
+html[data-sap-ui-browser^="ie"].sapUiRespGridMedia-Std-LargeDesktop.sapUiFormResGridCont > div > .sapUiTf {
+	line-height: 16px;
+}

@@ -1,0 +1,12 @@
+{
+	"sap.app": {
+		"id": "test.sample"
+	},
+	"sap.card": {
+		"type": "List",
+		"configuration": {
+			"destination": {},
+			"parameters": {}
+		}
+	}
+}

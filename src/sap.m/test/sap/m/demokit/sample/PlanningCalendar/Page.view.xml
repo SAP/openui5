@@ -11,18 +11,34 @@
 			rows="{path: '/people'}"
 			appointmentsVisualization="Filled"
 			appointmentSelect="handleAppointmentSelect"
+			rowHeaderPress="handleRowHeaderPress"
 			showEmptyIntervalHeaders="false"
 			showWeekNumbers="true">
 			<toolbarContent>
 				<Title text="Title" titleStyle="H4"/>
+				<Select id="primaryCalendarTypeSelect" change="onCalendarTypeSelect" selectedKey="None">
+					<core:Item key="Gregorian" text="Gregorian" />
+					<core:Item key="Islamic" text="Islamic" />
+					<core:Item key="Japanese" text="Japanese" />
+					<core:Item key="Persian" text="Persian" />
+					<core:Item key="Buddhist" text="Buddhist" />
+				</Select>
+				<Select id="secondaryCalendarTypeSelect" change="onCalendarSecondaryTypeSelect" selectedKey="None">
+					<core:Item text="Select secondary calendar type" key="None" />
+					<core:Item key="Gregorian" text="Gregorian" />
+					<core:Item key="Islamic" text="Islamic" />
+					<core:Item key="Japanese" text="Japanese" />
+					<core:Item key="Persian" text="Persian" />
+					<core:Item key="Buddhist" text="Buddhist" />
+				</Select>
 			</toolbarContent>
 			<rows>
 				<PlanningCalendarRow
 					icon="{pic}"
 					title="{name}"
 					text="{role}"
-					appointments="{path : 'appointments', templateShareable: 'true'}"
-					intervalHeaders="{path: 'headers', templateShareable: 'true'}">
+					appointments="{path : 'appointments', templateShareable: false}"
+					intervalHeaders="{path: 'headers', templateShareable: false}">
 					<customData>
 						<core:CustomData key="emp-name" value="{name}" writeToDom="true"/>
 					</customData>

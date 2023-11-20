@@ -1,0 +1,72 @@
+{
+  "1.98.0": {
+    "date": "January 2022",
+    "notes": [
+      {
+        "id": "c3563cab634aefe1e878700e24315f85236213f0",
+        "type": "FEATURE",
+        "text": " sap.ui.integration.widgets.Card: Payload of submit action handler now supports bindings"
+      },
+      {
+        "id": "a5c602d2ffad403cbd70bc1b5779da9f481bb7e3",
+        "type": "FEATURE",
+        "text": " sap.ui.integration.widgets.Card: Object card is enhanced with new experimental item types"
+      },
+      {
+        "id": "eb2a30935451f914475090df1e4d496b8d22198e",
+        "type": "FIX",
+        "text": " sap.f.DynamicPage: Fix scroll issue with sticky subHeader",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170326966"
+          }
+        ]
+      },
+      {
+        "id": "e6b18b98ead4284435de135edb3721bb5eb75a68",
+        "type": "FIX",
+        "text": " sap.f.cards.NumericHeader: Setting of the number now trigers rerendering",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170284337"
+          }
+        ]
+      },
+      {
+        "id": "1253e469f54bc563e6547b766a11352f068900f7",
+        "type": "FIX",
+        "text": " sap.f.DynamicPageTitle: Qunit test fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170305939"
+          }
+        ]
+      },
+      {
+        "id": "63ec0bc7930c3b44f9f98b5acd66f72a8215a0e1",
+        "type": "FIX",
+        "text": " sap.f.CalendarCard: focus is proprly handled on today button press",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170266528"
+          }
+        ]
+      },
+      {
+        "id": "a51b9b1f9ad4bcd7bde43dd3133d95e63e884bb1",
+        "type": "FIX",
+        "text": " sap.f.ShellBar: Overflow toolbar button is no longer overlapped",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170270199"
+          }
+        ]
+      }
+    ]
+  }
+}

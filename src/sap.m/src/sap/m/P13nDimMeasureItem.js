@@ -1,5 +1,5 @@
-/*
- * ! ${copyright}
+/*!
+ * ${copyright}
  */
 
 sap.ui.define([
@@ -20,7 +20,7 @@ sap.ui.define([
 	 * @public
 	 * @since 1.34.0
 	 * @alias sap.m.P13nDimMeasureItem
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
+     * @deprecated since 1.120
 	 */
 	var P13nDimMeasureItem = Item.extend("sap.m.P13nDimMeasureItem", /** @lends sap.m.P13nDimMeasureItem.prototype */
 	{

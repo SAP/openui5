@@ -1,5 +1,4 @@
 {
-	"@odata.context" : "$metadata#SalesOrderList(BuyerID,ChangedAt,CurrencyCode,GrossAmount,LifecycleStatus,LifecycleStatusDesc,Note,SalesOrderID,SO_2_BP(BusinessPartnerID,CompanyName))",
 	"@odata.count" : "10",
 	"value" : [{
 		"@odata.etag" : "W/\"20170620220000.0000000\"",

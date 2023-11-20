@@ -1,14 +1,16 @@
 <!DOCTYPE HTML>
 <html>
 <head>
-	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 
 	<title>PagingButton - sap.m</title>
 
 	<script src="shared-config.js"></script>
 	<script src="../../../resources/sap-ui-core.js"
 			id="sap-ui-bootstrap"
-			data-sap-ui-libs="sap.m">
+			data-sap-ui-libs="sap.m"
+			data-sap-ui-resourceroots='{
+				"qunit.internal.acc": "../../../test-resources/sap/ui/core/qunit/internal/acc"
+			}'>
 	</script>
 	<script>
 		jQuery.sap.require("sap.m.PagingButton");
@@ -64,6 +66,7 @@
 				}),
 				page1 = new sap.m.Page("page1", {
 					title: "PagingButton",
+					titleLevel: "H1",
 					headerContent: [
 						getButtons(),
 						oPagingButton,
@@ -92,6 +95,6 @@
 	</script>
 
 </head>
-<body id="body" class="sapUiBody" role="application">
+<body id="body" class="sapUiBody">
 </body>
 </html>

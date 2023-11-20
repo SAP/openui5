@@ -1,0 +1,32 @@
+{
+	"sap.app": {
+		"id": "sap.ui.core.sample.FieldGroup",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "sap.ui.core.sample.FieldGroup.Page",
+			"type": "XML",
+			"async": true
+		},
+		"dependencies": {
+			"libs": {
+				"sap.ui.core": {},
+				"sap.ui.layout": {}
+			}
+		},
+		"config": {
+			"sample": {
+				"stretch": true,
+				"files": [
+					"Page.view.xml",
+					"Page.controller.js",
+					"SampleData.json",
+					"manifest.json"
+				]
+			}
+		}
+	}
+}

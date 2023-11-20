@@ -4,12 +4,11 @@
 
 // Provides control sap.ui.commons.form.Form.
 sap.ui.define([
- 'jquery.sap.global',
  'sap/ui/commons/library',
  'sap/ui/layout/form/Form',
- "./FormRenderer"
+ './FormRenderer'
 ],
-	function(jQuery, library, Form1, FormRenderer) {
+	function(library, LayoutForm, FormRenderer) {
 	"use strict";
 
 
@@ -35,17 +34,12 @@ sap.ui.define([
 	 * @deprecated Since version 1.16.0.
 	 * moved to sap.ui.layout library. Please use this one.
 	 * @alias sap.ui.commons.form.Form
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
-	var Form = Form1.extend("sap.ui.commons.form.Form", /** @lends sap.ui.commons.form.Form.prototype */ { metadata : {
+	var Form = LayoutForm.extend("sap.ui.commons.form.Form", /** @lends sap.ui.commons.form.Form.prototype */ { metadata : {
 
 		deprecated : true,
 		library : "sap.ui.commons"
 	}});
-
-	/**
-	 * This file defines behavior for the control,
-	 */
 
 	/* Overwrite to have right "since" in there */
 
@@ -68,7 +62,7 @@ sap.ui.define([
 	* Default value is <code>true</code>
 	*
 	* @param {boolean} bVisible new value for property <code>visible</code>
-	* @return {sap.ui.commons.form.Form} <code>this</code> to allow method chaining
+	* @return {this} <code>this</code> to allow method chaining
 	* @public
 	* @since 1.12.0
 	* @name sap.ui.commons.form.Form#setVisible
@@ -77,4 +71,4 @@ sap.ui.define([
 
 	return Form;
 
-}, /* bExport= */ true);
+});

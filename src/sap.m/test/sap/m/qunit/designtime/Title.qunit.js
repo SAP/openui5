@@ -1,25 +1,24 @@
-(function () {
+sap.ui.define([
+	"sap/m/Title",
+	"sap/ui/dt/enablement/elementDesigntimeTest",
+	"sap/ui/rta/enablement/elementActionTest"
+], function (
+	Title,
+	elementDesigntimeTest,
+	elementActionTest
+) {
 	"use strict";
 
-	sap.ui.require([
-		"sap/ui/dt/test/report/QUnit",
-		"sap/ui/dt/test/ElementEnablementTest",
-		"sap/m/Title",
-		"sap/ui/rta/test/controlEnablingCheck"
-	], function (QUnitReport, ElementEnablementTest, Title, rtaControlEnablingCheck) {
-
-		var oElementEnablementTest = new ElementEnablementTest({
+	return Promise.resolve()
+	.then(function () {
+		return elementDesigntimeTest({
 			type: "sap.m.Title",
 			create: function () {
 				return new Title();
 			}
 		});
-		oElementEnablementTest.run().then(function (oData) {
-			new QUnitReport({
-				data: oData
-			});
-		});
-
+	})
+	.then(function() {
 		// Rename action
 		var fnConfirmTitleIsRenamedWithNewValue = function (oUiComponent, oViewAfterAction, assert) {
 			assert.strictEqual(oViewAfterAction.byId("myTitle").getText(),
@@ -33,7 +32,7 @@
 				"then the control has been renamed to the old value (Test Title)");
 		};
 
-		rtaControlEnablingCheck("Checking the rename action for a Title", {
+		elementActionTest("Checking the rename action for a Title", {
 			xmlView: '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m">"' +
 				'<Title id="myTitle" text="Test Title" />' +
 			'</mvc:View>'
@@ -62,7 +61,7 @@
 			assert.strictEqual(oViewAfterAction.byId("myTitle").getVisible(), true, "then the Title element is visible");
 		};
 
-		rtaControlEnablingCheck("Checking the remove action for Title", {
+		elementActionTest("Checking the remove action for Title", {
 			xmlView: '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m">"' +
 				'<Title id="myTitle" text="Test Title" />' +
 			'</mvc:View>'
@@ -76,7 +75,7 @@
 			afterRedo: fnConfirmTitleIsInvisible
 		});
 
-		rtaControlEnablingCheck("Checking the reveal action for a Title", {
+		elementActionTest("Checking the reveal action for a Title", {
 			xmlView: '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m">"' +
 				'<Title id="myTitle" text="Test Title" visible="false"/>' +
 			'</mvc:View>'
@@ -90,4 +89,4 @@
 			afterRedo: fnConfirmTitleIsVisible
 		});
 	});
-})();
+});

@@ -1,0 +1,95 @@
+{
+  "1.99.0": {
+    "date": "February 2022",
+    "notes": [
+      {
+        "id": "6843eafce1489a7c97cfd23bd8ac14648a162a98",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: ObjectPageState tests fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280011569"
+          }
+        ]
+      },
+      {
+        "id": "f1f26ea6b91c06817e4b6d581e368bb71cd2ca80",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Fix hiding of footer without animations",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180414804"
+          }
+        ]
+      },
+      {
+        "id": "b6993a9891a1983f9a093f8b543ce162630f8300",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Corrected check for closest section",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180393065"
+          }
+        ]
+      },
+      {
+        "id": "4c800f1f9db8b83964587eab3731b2b44d800084",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Removed redundant accessibility readout",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002028376700022310422021"
+          }
+        ]
+      },
+      {
+        "id": "5e210bb5746638f2a8b638c599a53248c9032238",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Fix aligment of large ObjectStatus",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180402579"
+          }
+        ]
+      },
+      {
+        "id": "f4cbab9e34fc5fdf8957a8c1f1b5b934eb92d203",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageSubSection: Fixed width of subsections in phone size",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170323095"
+          }
+        ]
+      },
+      {
+        "id": "7d5937065ca58e8454ae8cd429366077c9b936f3",
+        "type": "FIX",
+        "text": " sap.uxap.HierarchicalSelect: Fixed lost of hierarchy",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170316918"
+          }
+        ]
+      },
+      {
+        "id": "0fa2c5e035189ef977d87b8be9d7862854e4c913",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Corrected alignment in header content",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170322525"
+          }
+        ]
+      }
+    ]
+  }
+}

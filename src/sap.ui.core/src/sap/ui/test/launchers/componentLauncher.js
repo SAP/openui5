@@ -2,15 +2,15 @@
  * ${copyright}
  */
 sap.ui.define([
-	'jquery.sap.global',
-	'sap/ui/core/ComponentContainer',
-	'sap/ui/core/Component' // sap.ui.component
-], function ($, ComponentContainer/*, Component */) {
+	"sap/base/util/uid",
+	"sap/ui/core/Component",
+	"sap/ui/core/ComponentContainer"
+], function(uid, Component, ComponentContainer) {
 	"use strict";
 
 	var _loadingStarted = false,
 		_oComponentContainer = null,
-		_$Component = null;
+		_oComponentDOM = null;
 
 	/**
 	 * By using start launcher will instantiate and place the component into html.
@@ -28,20 +28,26 @@ sap.ui.define([
 				throw new Error("sap.ui.test.launchers.componentLauncher: Start was called twice without teardown. Only one component can be started at a time.");
 			}
 
-			mComponentConfig.async = true;
-			var oPromise = sap.ui.component(mComponentConfig);
+			var oPromise = Component.create(mComponentConfig);
 
 			_loadingStarted = true;
 
 			return oPromise.then(function (oComponent) {
-				var sId = $.sap.uid();
+				var sId = uid();
 
 				// create and add div to html
-				_$Component = $('<div id="' + sId + '" class="sapUiOpaComponent"></div>');
-				$("body").append(_$Component).addClass("sapUiOpaBodyComponent");
+				_oComponentDOM = document.createElement("div");
+				_oComponentDOM.id = sId;
+				_oComponentDOM.className = "sapUiOpaComponent";
+				document.body.appendChild(_oComponentDOM);
+				document.body.classList.add("sapUiOpaBodyComponent");
 
 				// create and place the component into html
-				_oComponentContainer = new ComponentContainer({component: oComponent});
+				_oComponentContainer = new ComponentContainer({
+					component: oComponent,
+					height: "100%",
+					width: "100%"
+				});
 
 				_oComponentContainer.placeAt(sId);
 			});
@@ -58,9 +64,9 @@ sap.ui.define([
 				throw new Error("sap.ui.test.launchers.componentLauncher: Teardown was called before start. No component was started.");
 			}
 			_oComponentContainer.destroy();
-			_$Component.remove();
+			_oComponentDOM.remove();
 			_loadingStarted = false;
-			$("body").removeClass("sapUiOpaBodyComponent");
+			document.body.classList.remove("sapUiOpaBodyComponent");
 		}
 	};
 

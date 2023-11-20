@@ -1,0 +1,129 @@
+{
+  "1.101.0": {
+    "date": "April 2022",
+    "notes": [
+      {
+        "id": "7a5f1475b2550f1b3b635b4ca107738958940fd9",
+        "type": "FIX",
+        "text": " sap.f.DynamicPageTitle: Fix elements overlapping",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280073506"
+          },
+          {
+            "type": "BCP",
+            "reference": "2270025164"
+          }
+        ]
+      },
+      {
+        "id": "6d96e013cea11380aa2ff829a81884bde5ea2b51",
+        "type": "FIX",
+        "text": " sap.f.cards.NumericHeader: Browser no longer crashes",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270027920"
+          }
+        ]
+      },
+      {
+        "id": "94e5cfa3e710dce059d2ef747b15878c565f1b92",
+        "type": "FIX",
+        "text": " sap.f.DynamicPage: Fix unnecessary scrollbar when footer is shown",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270030291"
+          }
+        ]
+      },
+      {
+        "id": "0aa66d4694a4774a7d44d1be5af30b58723e7cc6",
+        "type": "FEATURE",
+        "text": " sap.f.AvatarGroupItem: AvatarGroupItem tooltip activated"
+      },
+      {
+        "id": "13b32005937846f03522ae289558ffd55b52e679",
+        "type": "FIX",
+        "text": " sap.f.DynamicPage: Restore automatic fitContent management",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270032047"
+          },
+          {
+            "type": "BCP",
+            "reference": "2270031933"
+          }
+        ]
+      },
+      {
+        "id": "af17db5801fce2d4ca282e0ef90bcd90d765c597",
+        "type": "FIX",
+        "text": " sap.f.Card: Custom headers no longer need to implement private _getTitle method",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280078533"
+          }
+        ]
+      },
+      {
+        "id": "400877b1f20634854246daf5ed279ab6097a5d84",
+        "type": "FEATURE",
+        "text": " Integration cards: Object card now has a new experimental IconGroup item type"
+      },
+      {
+        "id": "3322e5761b564d3350acd1f8785ea5ffdafda712",
+        "type": "FIX",
+        "text": " sap.f.DynamicPage: Wizard button on mobile correctly positioned",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280067783"
+          }
+        ]
+      },
+      {
+        "id": "c89915c67cb7b870ba5f6e4ccf4e2a4e197725c1",
+        "type": "FIX",
+        "text": " sap.f.AvatarGroup: Prevent infinite invalidation",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280062549"
+          }
+        ]
+      },
+      {
+        "id": "157064ec6fdc02f383fb618c32b8d6b6cafca880",
+        "type": "FIX",
+        "text": " CardExplorer: Remove older {{parameters.xxx}} syntax from samples"
+      },
+      {
+        "id": "49e2640730b4a20ae55b633af8f3f2936f1d10b3",
+        "type": "FIX",
+        "text": " sap.ui.integration.widgets.Card: Image name in visual tests edited to be valid",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280053987"
+          }
+        ]
+      },
+      {
+        "id": "67844bb85e69f81a1acb59d04da7902de728ba02",
+        "type": "FIX",
+        "text": " sap.m.AvatarGroup: Correct items to render count",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280056755"
+          }
+        ]
+      }
+    ]
+  }
+}

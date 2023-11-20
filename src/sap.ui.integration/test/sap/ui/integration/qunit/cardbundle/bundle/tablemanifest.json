@@ -1,0 +1,53 @@
+{
+	"sap.app": {
+		"id": "my.test.card.table",
+		"type": "card",
+		"i18n": "i18n/i18n.properties"
+	},
+	"sap.card": {
+		"type": "Table",
+		"header": {
+			"title": "{{appTitle}}"
+		},
+		"content": {
+			"data": {
+				"json": [
+					{
+						"Title": "Elena Petrova",
+						"Position": "Sales Consultant",
+						"Icon": "./icons/edit.png"
+					},
+					{
+						"Title": "John Miller",
+						"Position": "Sales Consultant",
+						"Icon": "./icons/edit.png"
+					},
+					{
+						"Title": "Julie Armstrong",
+						"Position": "Manager",
+						"Icon": "./icons/edit.png"
+					}
+				]
+			},
+			"row": {
+				"columns": [
+					{
+						"title": "Image",
+						"width": "18%",
+						"icon": {
+							"src": "{Icon}"
+						}
+					},
+					{
+						"title": "Name",
+						"value": "{Title}"
+					},
+					{
+						"title": "Position",
+						"value": "{Position}"
+					}
+				]
+			}
+		}
+	}
+}

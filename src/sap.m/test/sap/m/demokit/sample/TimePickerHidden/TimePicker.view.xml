@@ -1,0 +1,37 @@
+<mvc:View
+	xmlns:mvc="sap.ui.core.mvc"
+	controllerName="sap.m.sample.TimePickerHidden.TimePicker"
+	xmlns="sap.m">
+
+	<Title
+		class="sapUiSmallMargin"
+		text="Open Time Picker by Another Control" />
+
+	<VBox class="sapUiSmallMargin" >
+		<Label text="By Button with text" />
+		<Button
+			ariaHasPopup="Dialog"
+			text="Open Time Picker"
+			press=".openTimePicker" />
+	</VBox>
+	<VBox class="sapUiSmallMargin" >
+		<Label text="By Button with icon" />
+		<Button
+			ariaHasPopup="Dialog"
+			tooltip="Open Time Picker"
+			icon="sap-icon://time-entry-request"
+			press=".openTimePicker" />
+	</VBox>
+	<VBox class="sapUiSmallMargin" >
+		<Label text="By Link" />
+		<Link
+			ariaHasPopup="Dialog"
+			text="Open Time Picker"
+			press=".openTimePicker" />
+	</VBox>
+	<TimePicker
+		id="HiddenTP"
+		hideInput="true"
+		change=".changeTimeHandler" />
+
+</mvc:View>

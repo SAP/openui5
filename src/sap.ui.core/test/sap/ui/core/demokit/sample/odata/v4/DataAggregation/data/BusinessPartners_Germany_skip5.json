@@ -1,0 +1,15 @@
+{
+	"value" : [{
+		"@odata.id" : null,
+		"LocalCurrency" : "EUR",
+		"Region" : "Bavaria",
+		"SalesAmountLocalCurrency@odata.type" : "#Decimal",
+		"SalesAmountLocalCurrency" : 5857115
+	}, {
+		"@odata.id" : null,
+		"LocalCurrency" : "EUR",
+		"Region" : "Baden-Württemberg",
+		"SalesAmountLocalCurrency@odata.type" : "#Decimal",
+		"SalesAmountLocalCurrency" : 4416538
+	}]
+}

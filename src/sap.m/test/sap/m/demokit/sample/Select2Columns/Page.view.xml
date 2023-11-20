@@ -4,16 +4,38 @@
 	xmlns:core="sap.ui.core"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.m">
-	<Page showHeader="false">
+	<Page showHeader="false" class="sapUiResponsivePadding--content">
 		<content>
-			<Select
-				showSecondaryValues= "true"
-				items="{
-					path: '/ProductCollection',
-					sorter: { path: 'Name' }
-				}">
-				<core:ListItem key="{ProductId}" text="{Name}" additionalText= "{Price} {CurrencyCode}"/>
-			</Select>
+			<VBox width="300px" class="sapUiSmallMarginTop">
+				<Title text="Configuration:" />
+				<HBox alignItems="Center">
+					<Label text="First column ratio:" class="sapUiTinyMarginEnd"/>
+					<Slider width="200px" id="firstSlider" value="3" change="fnFirstSliderChange"/>
+				</HBox>
+				<HBox alignItems="Center">
+					<Label text="Second column ratio:" class="sapUiTinyMarginEnd"/>
+					<Slider width="200px" id="secondSlider" value="2" change="fnSecondSliderChange"/>
+				</HBox>
+				<HBox alignItems="Center">
+					<Label text="Wrap items text:" class="sapUiTinyMarginEnd"/>
+					<Switch type="AcceptReject" change="fnSwitch"/>
+				</HBox>
+				<Title text="Result:" class="sapUiSmallMarginTop"/>
+				<HBox>
+					<Label class="sapUiTinyMarginEnd" text="Current column ratio:" />
+					<Text id="text1" text="3:2" />
+				</HBox>
+				<HBox>
+					<Label class="sapUiTinyMarginEnd" text="Current column ratio in percentages:" />
+					<Text id="text2" text="60%:40%" />
+				</HBox>
+				<Select
+					id="select"
+					showSecondaryValues= "true"
+					items="{ path: '/items' }">
+					<core:ListItem text="{firstColumnText}" additionalText="{secondColumnText}"/>
+				</Select>
+			</VBox>
 		</content>
 	</Page>
 </mvc:View>

@@ -1,0 +1,73 @@
+{
+  "1.82.0": {
+    "date": "August 2020",
+    "notes": [
+      {
+        "id": "70794ee1418a09fa8d2d5a276a34cc3098b78324",
+        "type": "FIX",
+        "text": " ColumnLayout: ResizeObserver loop limit exceeded error fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080323528"
+          }
+        ]
+      },
+      {
+        "id": "23d03c1e458200f7f2d388e06939323bb1cfc3db",
+        "type": "FIX",
+        "text": " sap.ui.layout.DynamicSideContent: calculated span sizes are always applied to the DOM",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080287167"
+          }
+        ]
+      },
+      {
+        "id": "116545b281782f1e6efb05a544a48997a3af116e",
+        "type": "FIX",
+        "text": " sap.ui.layout.DynamicSideContent: has correct initial rendering",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080296687"
+          }
+        ]
+      },
+      {
+        "id": "618fcec13de2dd9da27da2951892e8f4aefd30f9",
+        "type": "FIX",
+        "text": " sap.ui.layout.DynamicSideContent: correct internal property types set",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080356220"
+          }
+        ]
+      },
+      {
+        "id": "adcf893244de2cdd3b388e85a31c5aca97c79295",
+        "type": "FIX",
+        "text": " sap.ui.layout.BlockLayout: Items are now correctly aligned",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080339128"
+          }
+        ]
+      },
+      {
+        "id": "fdedaf7a3903730b5866c3618bc9f196e2e2fec8",
+        "type": "FIX",
+        "text": " sap.ui.layout.ResponsiveSplitter: DefaultPane is now working",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500005373682020"
+          }
+        ]
+      }
+    ]
+  }
+}

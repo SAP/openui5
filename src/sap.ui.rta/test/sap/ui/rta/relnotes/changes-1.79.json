@@ -1,0 +1,24 @@
+{
+  "1.79.0": {
+    "date": "June 2020",
+    "notes": [
+      {
+        "id": "25c43dbb5b1144124ae152ee509c4f7d20bb9352",
+        "type": "FIX",
+        "text": " sap.ui.rta: SaveAs button from RTA toolbar did not work.",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400002855222020"
+          }
+        ]
+      },
+      {
+        "id": "d876dd98ecfaea6bcd0a578afbfe010a7b4135d8",
+        "type": "FIX",
+        "text": ": RTA Add Iframe Cozymode layout",
+        "references": []
+      }
+    ]
+  }
+}

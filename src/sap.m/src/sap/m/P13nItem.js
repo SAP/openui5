@@ -1,5 +1,5 @@
-/*
- * ! ${copyright}
+/*!
+ * ${copyright}
  */
 
 // Provides control sap.m.P13nItem.
@@ -20,7 +20,6 @@ sap.ui.define([
 	 * @public
 	 * @since 1.26.0
 	 * @alias sap.m.P13nItem
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var P13nItem = Element.extend("sap.m.P13nItem", /** @lends sap.m.P13nItem.prototype */
 	{
@@ -65,12 +64,13 @@ sap.ui.define([
 
 				/**
 				 * data type instance of the column. Can be used instead of the type, precision, scale and formatSettings properties
+				 *
+				 * @since 1.56
 				 */
 				typeInstance: {
 					type: "object",
 					group: "Misc",
-					defaultValue: null,
-					since: "1.56"
+					defaultValue: null
 				},
 
 				/**
@@ -94,12 +94,13 @@ sap.ui.define([
 				 * 		style: "medium" //"short" or "long"
 				 * }
 				 * </code></pre>
+				 *
+				 * @since 1.52
 				 */
 				formatSettings: {
 					type: "object",
 					group: "Misc",
-					defaultValue: null,
-					since: "1.52"
+					defaultValue: null
 				},
 
 				/**
@@ -205,6 +206,15 @@ sap.ui.define([
 				description: {
 					type: "string",
 					defaultValue: null
+				},
+
+				/**
+				 * Defines if the item is nullable
+				 */
+				nullable: {
+					type: "boolean",
+					group: "Misc",
+					defaultValue: false
 				}
 			}
 		}

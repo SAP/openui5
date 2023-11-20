@@ -3,6 +3,27 @@
 /* Base theme                               */
 /* ======================================== */
 
+@_sap_ui_unified_Calendar_sapUiCalItemType01: @sapLegendColor1;
+@_sap_ui_unified_Calendar_sapUiCalItemType02: @sapLegendColor2;
+@_sap_ui_unified_Calendar_sapUiCalItemType03: @sapLegendColor3;
+@_sap_ui_unified_Calendar_sapUiCalItemType04: @sapLegendColor4;
+@_sap_ui_unified_Calendar_sapUiCalItemType05: @sapLegendColor5;
+@_sap_ui_unified_Calendar_sapUiCalItemType06: @sapLegendColor6;
+@_sap_ui_unified_Calendar_sapUiCalItemType07: @sapLegendColor7;
+@_sap_ui_unified_Calendar_sapUiCalItemType08: @sapLegendColor8;
+@_sap_ui_unified_Calendar_sapUiCalItemType09: @sapLegendColor9;
+@_sap_ui_unified_Calendar_sapUiCalItemType10: @sapLegendColor10;
+@_sap_ui_unified_Calendar_sapUiCalItemType11: @sapLegendColor11;
+@_sap_ui_unified_Calendar_sapUiCalItemType12: @sapLegendColor12;
+@_sap_ui_unified_Calendar_sapUiCalItemType13: @sapLegendColor13;
+@_sap_ui_unified_Calendar_sapUiCalItemType14: @sapLegendColor14;
+@_sap_ui_unified_Calendar_sapUiCalItemType15: @sapLegendColor15;
+@_sap_ui_unified_Calendar_sapUiCalItemType16: @sapLegendColor16;
+@_sap_ui_unified_Calendar_sapUiCalItemType17: @sapLegendColor17;
+@_sap_ui_unified_Calendar_sapUiCalItemType18: @sapLegendColor18;
+@_sap_ui_unified_Calendar_sapUiCalItemType19: @sapLegendColor19;
+@_sap_ui_unified_Calendar_sapUiCalItemType20: @sapLegendColor20;
+
 .sapUiCal {
 	background: none repeat scroll 0 0 @sapUiListBackground;
 	overflow: hidden;
@@ -29,25 +50,21 @@
 .sapUiCalHead {
 	width: 100%;
 	position: relative;
-	text-align:center;
-	display: inline-block;
+	text-align: center;
+	display: block;
 	height: 2.5rem;
 	padding-top: 0.25rem;
 	padding-bottom: 0.25rem;
 	background-color: @sapUiListBackground;
 }
 
-.sapUiCal:not(.sapUiCalInt) > .sapUiCalHead {
-	max-width: 40rem;
-}
-
+.sapUiCalTwoMonthsTwoColumnsJaZh:not(.sapUiCalInt) > .sapUiCalHead,
 .sapUiCalTwoMonthsTwoColumns:not(.sapUiCalInt) > .sapUiCalHead {
 	max-width: 100%;
-	box-sizing: border-box;
 	text-align: left;
 }
 
- .sapUiCalHead > button,
+.sapUiCalHead > button,
 .sapUiCalCancel {
 	background-color: @sapUiButtonLiteBackground;
 	border: none;
@@ -69,21 +86,56 @@
 	width: 100%;
 	float: left;
 	color: @sapUiContentLabelColor;
-	font-size: 0.625rem;
+	font-size: @sapMFontSmallSize;
 }
 
-.sapUiCalHeadPrev,
-.sapUiCalHeadNext {
-	position: absolute;
-	width: 2.5rem;
+.sapUiCalHead {
+	.sapUiCalHeadPrev,
+	.sapUiCalHeadNext,
+	 .sapUiCalHeadToday {
+		position: absolute;
+		width: 2.5rem;
+	}
+	.sapUiCalHeadNext {
+		right: 0.5rem;
+	}
+}
+
+.sapUiCalHead.sapUiCalHeaderWithTodayButton {
+	.sapUiCalHeadPrev,
+	.sapUiCalHeadNext,
+	.sapUiCalHeadToday {
+		position: initial;
+		width: 2rem;
+	}
+}
+
+.sapUiSizeCompact .sapUiCalHead {
+	.sapUiCalHeadPrev,
+	.sapUiCalHeadNext,
+	.sapUiCalHeadToday {
+		width: 2rem;
+	}
+	.sapUiCalHeadNext {
+		right: 0.25rem;
+	}
+}
+
+.sapUiSizeCompact .sapUiCalHead.sapUiCalHeaderWithTodayButton {
+	.sapUiCalHeadPrev,
+	.sapUiCalHeadNext,
+	.sapUiCalHeadToday {
+		width: 1.5rem;
+	}
 }
 
 .sapUiCalHeadPrev {
 	left: 0.5rem;
 }
 
-.sapUiCalHeadNext {
-	right: 0.5rem;
+.sapUiCalHead.sapUiCalHeaderWithTodayButton {
+	display: flex;
+	justify-content: space-evenly;
 }
 
 /* no default (browser) outline, if device needs focus visualization its defined later */
@@ -134,11 +186,15 @@ html.sap-desktop .sapUiCalHead > button.sapUiCalDsbl:focus,
 }
 
 .sapUiCalMonthView,
+.sapUiCalDatesRow {
+	white-space: nowrap;
+}
+
+.sapUiCalMonthView,
 .sapUiCalMonthPicker,
 .sapUiCalYearPicker {
-	width: 14em;
 	display: inline-block;
-	width: 18rem; /* +1rem padding left and right = 320 px*/
+	width: 19rem; /* +1rem padding left and right = 320 px*/
 }
 
 .sapUiCalMonthView,
@@ -158,7 +214,7 @@ html.sap-desktop .sapUiCalHead > button.sapUiCalDsbl:focus,
 
 .sapUiCalInt > .sapUiCalContent > .sapUiCalMonthPicker,
 .sapUiCalInt > .sapUiCalContent > .sapUiCalYearPicker {
-	width: auto;
+	width: inherit;
 }
 
 .sapUiCalHeadText {
@@ -183,12 +239,6 @@ html.sap-desktop .sapUiCalHead > button.sapUiCalDsbl:focus,
 
 .sapUiCalRow div > .sapUiCalHeadText:last-child {
 	float: none; /* if not set, in IE the item line is displayed in the same line */
-}
-
-.sapUiCalItems{
-	display: inline-block;
-	width: 100%;
-	white-space: nowrap;
 }
 
 .sapUiCalWH,
@@ -224,68 +274,69 @@ html.sap-desktop .sapUiCalHead > button.sapUiCalDsbl:focus,
 }
 
 .sapUiCalItem,
-.sapUiCalWeekNum{
+.sapUiCalWeekNum {
 	height: 3rem;
 	line-height: 2.875rem;
 	font-size: @sapMFontMediumSize;
 }
 
-.sapUiCalWeekNum{
-	position: absolute;
-	right: 100%;
-	width: 100%;
-	color: @sapUiContentLabelColor;
-	font-size: @sapUiFontSmallSize;
+.sapUiCalWeekNum {
+	width: 12.5%;
+	color: @sapUiBaseText;
+	font-size: @sapMFontSmallSize;
 	cursor: default;
-	top: -0.0625rem;
 }
 
-.sapUiCalWH{
-	color: @sapUiContentLabelColor;
+.sapUiCalWH {
+	color: @sapUiBaseText;
 	white-space: nowrap;
 	height: 2rem;
 	line-height: 1.875rem;
 	font-size: @sapMFontSmallSize;
 }
 
-.sapUiCalItem{
+.sapUiCalItem {
 	color: @sapUiBaseText;
 	background-color: lighten(@sapUiContentForegroundColor,7);
 }
 
-.sapUiCalItemDsbl{
-	color: fade(@sapUiBaseText, 50);
+.sapUiCalItemDsbl {
+	pointer-events: none;
+	color: fade(@sapUiBaseText, (@sapUiContentDisabledOpacity * 100));
 	background-color: fade(lighten(@sapUiContentForegroundColor,5), 50);
 }
 
-html.sap-desktop .sapUiCalItem:focus{
-	background-color: darken(@sapUiContentForegroundColor,5);
+.sapUiCalWeekNum {
+	clear: left;
+	float: left;
+	text-align: center;
 }
 
-.sapUiCalMonthView .sapUiCalFirstWDay{
-	clear: both;
-	margin-left: 12.5%;
-	position: relative;
-	overflow: visible;
+.sapUiCalMonthView.sapUiCalNoWeekNum .sapUiCalFirstWDay {
+	clear: left;
 }
 
-.sapUiCalMonthView.sapUiCalNoWeekNum .sapUiCalFirstWDay{
+.sapUiCalMonthView.sapUiCalNoWeekNum .sapUiCalWH.sapUiCalFirstWDay {
 	margin-left: 0;
 }
 
-.sapUiCalItemOtherMonth{
+.sapUiCalItemOtherMonth {
 	color: @sapUiContentDisabledTextColor;
 }
 
-.sapUiCalMulti .sapUiCalItemOtherMonth{
+.sapUiCalMulti .sapUiCalItemOtherMonth {
 	visibility: hidden;
 }
 
-.sapUiCalItemNow{
+.sapUiCalItemNow {
 	color: @sapUiHighlight;
 }
 
-.sapUiCalItemWeekEnd{
+.sapUiCalItemNow.sapUiCalItemDsbl {
+	color: fade(@sapUiBaseText, 50);
+}
+
+.sapUiCalItemWeekEnd {
 	background-color: darken(@sapUiContentForegroundColor, 3);
 }
 
@@ -293,13 +344,22 @@ html.sap-desktop .sapUiCalItem:focus{
 	background-color: fade(@sapUiContentForegroundColor, 50);
 }
 
+.sapUiCalItemOtherMonth.sapUiCalItemWeekEnd {
+	background-color: @sapUiListBackground;
+}
+
 .sapUiCalItemSel{
 	background-color: @sapUiSelected;
 }
 
-.sapUiCalContent{
+.sapUiCalContent {
 	position: relative;
 	text-align: center;
+	min-height: 17rem;
+}
+
+.sapUiCalInt .sapUiCalContent {
+	min-height: 8.875rem;
 }
 
 .sapUiCalContentOver{
@@ -330,20 +390,29 @@ html.sap-desktop .sapUiCalItem:focus{
 }
 
 /* Day names inside day */
-.sapUiCalNoNameLine > .sapUiCalItems > .sapUiCalItem {
-	position: relative;
+.sapUiCalNoNameLine.sapUiCalMonthView,
+.sapUiCalNoNameLine.sapUiCalDatesRow {
+	.sapUiCalItem {
+		height: 3rem;
+		position: relative;
+	}
 }
 
-.sapUiCalNoNameLine > .sapUiCalItems > .sapUiCalItem > .sapUiCalDayName{
+
+.sapUiCalNoNameLine .sapUiCalItem > .sapUiCalDayName {
 	position: absolute;
 	top: 0;
 	right: 0;
 	height: 33%;
 	width: 100%;
-	color: @sapUiContentLabelColor;
+	color:  @sapUiBaseText;
 	overflow: hidden;
 	white-space: nowrap;
 	line-height: 100%;
+}
+
+.sapUiCalNoNameLine .sapUiCalItem > .sapUiCalDayName {
+	color: inherit;
 }
 
 .sapUiCalItemTextAmPm{
@@ -357,20 +426,80 @@ html.sap-desktop .sapUiCalItem:focus{
 }
 
 /* 2 calendar types */
-.sapUiCalMonthSecType > .sapUiCalItems .sapUiCalItem {
+.sapUiCalMonthSecType .sapUiCalItem {
 	position: relative;
 }
 
-.sapUiCalMonthSecType > .sapUiCalItems .sapUiCalItem > .sapUiCalItemSecText{
+.sapUiCalMonthSecType .sapUiCalItem > .sapUiCalItemSecText{
 	position: absolute;
 	bottom: 0;
 	right: 0;
 	height: 33%;
 	width: 50%;
-	color: @sapUiContentLabelColor;
+	color: @sapUiBaseText;
 	overflow: hidden;
 	white-space: nowrap;
 	line-height: 100%;
+	pointer-events: none;
+}
+
+.sapUiCalMonthPicker.sapUiCalMonthSecType,
+.sapUiCalYearPicker.sapUiCalMonthSecType {
+	.sapUiCalItem {
+		line-height: 1.875rem;
+		&:focus {
+			line-height: 1.75rem;
+		}
+		& > .sapUiCalItemSecText{
+			width: 100%;
+			display: flex;
+			justify-content: center;
+		}
+	}
+}
+
+.sapUiSizeCozy {
+	.sapUiCal:not(.sapUiCalDateInt) {
+		min-width: 19.9rem;
+		padding-top: 0.5rem;
+		.sapUiCalMonthView .sapUiCalWH,
+		.sapUiCalMonthView .sapUiCalItem,
+		.sapUiCalMonthView .sapUiCalWeekNum{
+			max-width: 2.25rem;
+		}
+
+		div[role=row] {
+			display: flex;
+			justify-content: space-between;
+		}
+		.sapUiCalHeadNext {
+			right: 0;
+		}
+		.sapUiCalHeadPrev {
+			left: 0;
+		}
+	}
+	.sapUiCal .sapUiCalMonthView,
+	.sapUiCal .sapUiCalRow {
+		padding-left: 0rem;
+		padding-right: 0rem;
+	}
+	.sapUiCal .sapUiCalMonthView {
+		padding-bottom: 0.5rem;
+	}
+}
+
+.sapUiSizeCompact .sapUiCalMonthPicker.sapUiCalMonthSecType,
+.sapUiSizeCompact .sapUiCalYearPicker.sapUiCalMonthSecType {
+	.sapUiCalItem {
+		line-height: 1rem;
+		&:focus {
+			line-height: 0.875rem;
+			.sapUiCalItemSecText {
+				line-height: 0.875rem;
+			}
+		}
+	}
 }
 
 /* Day, Month and YearPicker on popup */
@@ -384,7 +513,7 @@ html.sap-desktop .sapUiCalItem:focus{
 
 .sapUiCal:not(.sapUiCalInt){
 	width: 20rem;
-	min-width: 20rem;
+	min-width: 19.9rem;
 }
 
 .sapUiCalMulti:not(.sapUiCalInt){
@@ -409,14 +538,23 @@ html.sapUiMedia-Std-Phone .sapUiCalHeadB0{
 }
 
 .sapUiCalMulti .sapUiCalHeadB1,
-.sapUiCalIntLarge .sapUiCalHeadB1,
 .sapUiCalMonthInt .sapUiCalHeadB2,
 .sapUiCalMulti .sapUiCalHeadB3,
 .sapUiCalIntLarge .sapUiCalHeadB3,
 .sapUiCalMonthInt .sapUiCalHeadB4 {
 	width: 12.5rem;
+	margin-right: 0.5rem
 }
 
+.sapUiCalIntLarge .sapUiCalHeadB1 {
+	width: auto;
+	width: 12.5rem;
+}
+
+.sapUiCalTwoMonthsTwoColumnsJaZh .sapUiCalHeadB1,
+.sapUiCalTwoMonthsTwoColumnsJaZh .sapUiCalHeadB2,
+.sapUiCalTwoMonthsTwoColumnsJaZh .sapUiCalHeadB3,
+.sapUiCalTwoMonthsTwoColumnsJaZh .sapUiCalHeadB4,
 .sapUiCalTwoMonthsTwoColumns .sapUiCalHeadB1,
 .sapUiCalTwoMonthsTwoColumns .sapUiCalHeadB2,
 .sapUiCalTwoMonthsTwoColumns .sapUiCalHeadB3,
@@ -424,12 +562,60 @@ html.sapUiMedia-Std-Phone .sapUiCalHeadB0{
 	width: 5.75rem;
 }
 
-.sapUiCalTwoMonthsTwoColumns .sapUiCalHeadB1 {
-	margin-left: calc(~"25% - 5.75rem");
+.sapUiCal {
+	//for cases when B2 shows an year range
+	&.sapUiCalMulti:not(.sapUiCalTwoMonthsTwoColumnsJaZh) {
+		.sapUiCalHead .sapUiCalHeadPrev + .sapUiCalHeadB2 {
+			width: 12.5rem;
+		}
+	}
+	.sapUiCalHead {
+		.sapUiCalHeadB2.sapUiCalSingleYearButton,
+		.sapUiCalHeadB4.sapUiCalSingleYearButton {
+			width: 12rem;
+		}
+
+		.sapUiCalHeadB3 + .sapUiCalHeadB4.sapUiCalSingleYearButton {
+			width: 5.75rem;
+		}
+	}
+	.sapUiCalHead.sapUiCalHeaderWithTodayButton {
+		.sapUiCalHeadB2.sapUiCalSingleYearButton,
+		.sapUiCalHeadB4.sapUiCalSingleYearButton {
+			width: 11.5rem;
+		}
+
+		.sapUiCalHeadBPlaceholder {
+			width: 12rem;
+		}
+	}
+
+	&.sapUiCalTwoMonthsTwoColumns,
+	&.sapUiCalTwoMonthsTwoColumnsJaZh {
+		.sapUiCalHeadB2.sapUiCalSingleYearButton{
+			margin-left: calc(~"25% - 5.75rem");
+		}
+
+		.sapUiCalHeadB2 + .sapUiCalHeadB4 {
+			margin-left: 6.25rem;
+		}
+	}
 }
 
+.sapUiCalHeadBPlaceholder {
+	width: inherit;
+}
+
+.sapUiCalTwoMonthsTwoColumnsJaZh .sapUiCalHeadB2,
+.sapUiCalTwoMonthsTwoColumns .sapUiCalHeadB1 {
+	margin-left: calc(~"25% - 6rem");
+}
+
+.sapUiSizeCompact .sapUiCalTwoMonthsTwoColumnsJaZh .sapUiCalHeadB4,
+.sapUiSizeCompact .sapUiCalTwoMonthsTwoColumns .sapUiCalHeadB3,
+.sapUiCalTwoMonthsTwoColumnsJaZh .sapUiCalHeadB4:not(.sapUiCalSingleYearButton),
 .sapUiCalTwoMonthsTwoColumns .sapUiCalHeadB3 {
-	margin-left: calc(~"50% - 2 * 5.75rem");
+	margin-left: 6.25rem;
 }
 
 .sapUiCalItemNow > .sapUiCalItemText{
@@ -439,10 +625,8 @@ html.sapUiMedia-Std-Phone .sapUiCalHeadB0{
 .sapUiCalContent > .sapUiCalMonthPicker,
 .sapUiCalContent > .sapUiCalYearPicker{
 	top: 0;
-	padding: 2rem 0.5rem 1rem 0.5rem;
+	padding: 2rem 0 1rem 0;
 	background-color: @sapUiListBackground;
-	left: 50%;
-	margin-left: -9.5rem; /* to position in the middle (for multi-month) */
 }
 
 .sapUiCalInt > .sapUiCalContent > .sapUiCalMonthPicker,
@@ -476,8 +660,6 @@ html.sapUiMedia-Std-Phone .sapUiCalHeadB0{
 	padding-top: 2rem;
 }
 
-.sapUiCalWidth:not(.sapUiCalInt) > .sapUiCalContent > .sapUiCalMonthPicker,
-.sapUiCalWidth:not(.sapUiCalInt) > .sapUiCalContent > .sapUiCalYearPicker,
 .sapUiCalMulti > .sapUiCalContent > .sapUiCalMonthPicker,
 .sapUiCalMulti > .sapUiCalContent > .sapUiCalYearPicker{
 	top: 1rem;
@@ -486,33 +668,44 @@ html.sapUiMedia-Std-Phone .sapUiCalHeadB0{
 	margin-left: -10rem;
 }
 
-.sapUiCalContent > .sapUiCalYearPicker.sapUiCalYearNoTop{
-	padding-top: 0;
-}
-
-.sapUiCalWidth:not(.sapUiCalInt) > .sapUiCalContent > .sapUiCalYearPicker.sapUiCalYearNoTop{
-	top: 0;
+.sapUiCalWidth:not(.sapUiCalInt):not(.sapUiCalMulti) > .sapUiCalContent > .sapUiCalMonthPicker,
+.sapUiCalWidth:not(.sapUiCalInt):not(.sapUiCalMulti) > .sapUiCalContent > .sapUiCalYearPicker,
+.sapUiSizeCompact .sapUiCalWidth:not(.sapUiCalInt):not(.sapUiCalMulti) > .sapUiCalContent > .sapUiCalMonthPicker,
+.sapUiSizeCompact.sapUiCalWidth:not(.sapUiCalInt):not(.sapUiCalMulti) > .sapUiCalContent > .sapUiCalMonthPicker,
+.sapUiSizeCompact .sapUiCalWidth:not(.sapUiCalInt):not(.sapUiCalMulti) > .sapUiCalContent > .sapUiCalYearPicker,
+.sapUiSizeCompact.sapUiCalWidth:not(.sapUiCalInt):not(.sapUiCalMulti) > .sapUiCalContent > .sapUiCalYearPicker {
+	box-sizing: border-box;
+	width: 100%;
+	margin-left: 0;
 }
 
 /* Day names inside day */
-.sapUiCalNoNameLine > .sapUiCalItems > .sapUiCalItem > .sapUiCalItemText{
+.sapUiCalNoNameLine .sapUiCalItem > .sapUiCalItemText{
 	padding-top: 1rem;
 	line-height: 2rem;
 }
 
-.sapUiCalNoNameLine > .sapUiCalItems > .sapUiCalItem.sapUiCalItemNow > .sapUiCalItemText{
+.sapUiCalNoNameLine .sapUiCalItem.sapUiRelativeCalItem > .sapUiCalItemText {
+	line-height: 3rem;
+	padding-top: 0;
+}
+
+.sapUiSizeCompact .sapMPlanCal .sapUiCalNoNameLine .sapUiCalItem.sapUiRelativeCalItem > .sapUiCalItemText {
+	padding-left: 25%;
+}
+
+.sapUiCalNoNameLine .sapUiCalItem.sapUiCalItemNow > .sapUiCalItemText{
 	line-height: 1.85rem;
 }
 
-.sapUiCalNoNameLine > .sapUiCalItems > .sapUiCalItem > .sapUiCalDayName{
+.sapUiCalNoNameLine .sapUiCalItem > .sapUiCalDayName{
 	line-height: 1rem;
 	height: 1rem;
 	font-size: 0.75rem;
-	color: @sapUiContentLabelColor;
 	padding-top: 0.375rem;
 }
 
-.sapUiCalNoNameLine > .sapUiCalItems > .sapUiCalItem.sapUiCalItemSel:not(.sapUiCalItemSelBetween) > .sapUiCalDayName{
+.sapUiCalNoNameLine .sapUiCalItem.sapUiCalItemSel:not(.sapUiCalItemSelBetween) > .sapUiCalDayName{
 	color: @sapUiContentContrastTextColor;
 }
 
@@ -522,22 +715,34 @@ html.sapUiMedia-Std-Phone .sapUiCalHeadB0{
 }
 
 /* 2 calendar types */
-.sapUiCalMonthSecType > .sapUiCalItems .sapUiCalItem  > .sapUiCalItemText{
+.sapUiCalMonthSecType .sapUiCalItem  > .sapUiCalItemText{
 	line-height: 2.125rem;
 	vertical-align: top;
 }
 
-.sapUiCalMonthSecType > .sapUiCalItems .sapUiCalItem > .sapUiCalItemSecText{
-	font-size: 0.625rem;
+.sapUiCalMonthSecType .sapUiCalItem > .sapUiCalItemSecText{
+	font-size: @sapMFontSmallSize;
 	height: 1rem;
-	line-height: 1rem;
+	line-height: 0.625rem;
 	padding-right: 0.313rem;
 	padding-bottom: 0.313rem;
 	box-sizing: border-box;
 }
 
-.sapUiCalMonthSecType > .sapUiCalItems .sapUiCalItem.sapUiCalItemSel:not(.sapUiCalItemSelBetween) > .sapUiCalItemSecText{
+.sapUiCalMonthSecType .sapUiCalItem:focus > .sapUiCalItemSecText{
+	line-height: 0.75rem;
+}
+
+.sapUiSizeCompact .sapUiCalMonthSecType .sapUiCalItem.sapUiCalItemNow.sapUiCalItemSel > .sapUiCalItemText {
+	line-height: 1.25rem;
+}
+
+.sapUiCalMonthSecType .sapUiCalItem.sapUiCalItemSel:not(.sapUiCalItemSelBetween) > .sapUiCalItemSecText{
 	color: @sapUiContentContrastTextColor;
+}
+
+.sapPCRelative .sapUiCalRowWeekNumbers {
+	margin-top: 0;
 }
 
 .sapUiCalRowWeekNumbers {
@@ -559,6 +764,10 @@ html.sapUiMedia-Std-Phone .sapUiCalHeadB0{
 	overflow: hidden;
 	user-select: none;
 	cursor: default;
+}
+
+.sapPCRelative .sapUiCalRowWeekNumber {
+	border-bottom-width: 0;
 }
 
 .sapUiCalHeadSecondMonth {
@@ -615,19 +824,9 @@ html.sapUiMedia-Std-Phone .sapUiCalHeadB0{
 	padding-bottom: 0.5rem;
 }
 
-.sapUiSizeCompact .sapUiCalHeadPrev,
-.sapUiSizeCompact .sapUiCalHeadNext{
-	width: 2rem;
-}
-
 .sapUiSizeCompact .sapUiCal .sapUiCalHeadPrev,
 .sapUiSizeCompact.sapUiCal .sapUiCalHeadPrev{
 	left: 0.25rem;
-}
-
-.sapUiSizeCompact .sapUiCal .sapUiCalHeadNext,
-.sapUiSizeCompact.sapUiCal .sapUiCalHeadNext{
-	right: 0.25rem;
 }
 
 .sapUiSizeCompact .sapUiCalHeadB{
@@ -647,12 +846,6 @@ html.sapUiMedia-Std-Phone .sapUiCalHeadB0{
 	width: 6.25rem;
 }
 
-.sapUiSizeCompact .sapUiCalMulti .sapUiCalHeadB1,
-.sapUiSizeCompact.sapUiCalMulti .sapUiCalHeadB1,
-.sapUiSizeCompact .sapUiCalIntLarge .sapUiCalHeadB1,
-.sapUiSizeCompact.sapUiCalIntLarge .sapUiCalHeadB1,
-.sapUiSizeCompact .sapUiCalMonthInt .sapUiCalHeadB2,
-.sapUiSizeCompact.sapUiCalMonthInt .sapUiCalHeadB2,
 .sapUiSizeCompact .sapUiCalMulti .sapUiCalHeadB3,
 .sapUiSizeCompact.sapUiCalMulti .sapUiCalHeadB3,
 .sapUiSizeCompact .sapUiCalIntLarge .sapUiCalHeadB3,
@@ -661,7 +854,20 @@ html.sapUiMedia-Std-Phone .sapUiCalHeadB0{
 .sapUiSizeCompact.sapUiCalMonthInt .sapUiCalHeadB4 {
 	width: 12.5rem;
 }
+.sapUiSizeCompact .sapUiCalIntLarge .sapUiCalHeadB1,
+.sapUiSizeCompact.sapUiCalIntLarge .sapUiCalHeadB1 {
+		width: auto;
+		min-width: 12.5rem;
+}
 
+.sapUiSizeCompact .sapUiCalTwoMonthsTwoColumnsJaZh .sapUiCalHeadB1,
+.sapUiSizeCompact.sapUiCalTwoMonthsTwoColumnsJaZh .sapUiCalHeadB1,
+.sapUiSizeCompact .sapUiCalTwoMonthsTwoColumnsJaZh .sapUiCalHeadB2,
+.sapUiSizeCompact.sapUiCalTwoMonthsTwoColumnsJaZh .sapUiCalHeadB2,
+.sapUiSizeCompact .sapUiCalTwoMonthsTwoColumnsJaZh .sapUiCalHeadB3,
+.sapUiSizeCompact.sapUiCalTwoMonthsTwoColumnsJaZh .sapUiCalHeadB3,
+.sapUiSizeCompact .sapUiCalTwoMonthsTwoColumnsJaZh .sapUiCalHeadB4,
+.sapUiSizeCompact.sapUiCalTwoMonthsTwoColumnsJaZh .sapUiCalHeadB4,
 .sapUiSizeCompact .sapUiCalTwoMonthsTwoColumns .sapUiCalHeadB1,
 .sapUiSizeCompact.sapUiCalTwoMonthsTwoColumns .sapUiCalHeadB1,
 .sapUiSizeCompact .sapUiCalTwoMonthsTwoColumns .sapUiCalHeadB2,
@@ -688,7 +894,6 @@ html.sapUiMedia-Std-Phone .sapUiCalHeadB0{
 .sapUiSizeCompact .sapUiCalContent > .sapUiCalYearPicker{
 	top: 0;
 	padding: 2rem 0.25rem 0.5rem 0.25rem;
-	margin-left: -8.25rem; /* to position in the middle (for multi-month) */
 }
 
 .sapUiSizeCompact .sapUiCalTimeInt > .sapUiCalContent > .sapUiCalDatesRow{
@@ -706,10 +911,6 @@ html.sapUiMedia-Std-Phone .sapUiCalHeadB0{
 	margin-left: 0;
 }
 
-.sapUiSizeCompact .sapUiCalWidth:not(.sapUiCalInt) > .sapUiCalContent > .sapUiCalMonthPicker,
-.sapUiSizeCompact.sapUiCalWidth:not(.sapUiCalInt) > .sapUiCalContent > .sapUiCalMonthPicker,
-.sapUiSizeCompact .sapUiCalWidth:not(.sapUiCalInt) > .sapUiCalContent > .sapUiCalYearPicker,
-.sapUiSizeCompact.sapUiCalWidth:not(.sapUiCalInt) > .sapUiCalContent > .sapUiCalYearPicker,
 .sapUiSizeCompact .sapUiCalMulti > .sapUiCalContent > .sapUiCalMonthPicker,
 .sapUiSizeCompact.sapUiCalMulti > .sapUiCalContent > .sapUiCalMonthPicker,
 .sapUiSizeCompact .sapUiCalMulti > .sapUiCalContent > .sapUiCalYearPicker,
@@ -720,19 +921,21 @@ html.sapUiMedia-Std-Phone .sapUiCalHeadB0{
 }
 
 /* Day names inside day */
-.sapUiSizeCompact .sapUiCalInt:not(.sapUiCalOneMonthInt) .sapUiCalNoNameLine > .sapUiCalItems > .sapUiCalItem > .sapUiCalItemText{
+.sapUiSizeCompact .sapUiCalInt:not(.sapUiCalOneMonthInt) .sapUiCalNoNameLine .sapUiCalItem > .sapUiCalItemText{
 	padding-top: 0;
 	padding-left: 50%;
 	line-height: inherit;
 	text-align: start;
 }
 
-.sapUiSizeCompact.sapUiCalNoNameLine > .sapUiCalItems > .sapUiCalItem.sapUiCalItemNow > .sapUiCalItemText,
-.sapUiSizeCompact .sapUiCalNoNameLine > .sapUiCalItems > .sapUiCalItem.sapUiCalItemNow > .sapUiCalItemText{
-	line-height: 1.6875rem;
+.sapUiSizeCompact .sapUiCalItemNow > .sapUiCalItemText,
+.sapUiSizeCompact .sapUiCalInt:not(.sapUiCalOneMonthInt) .sapUiCalNoNameLine .sapUiCalItem.sapUiCalItemNow > .sapUiCalItemText,
+.sapUiSizeCompact.sapUiCalNoNameLine .sapUiCalItem.sapUiCalItemNow > .sapUiCalItemText,
+.sapUiSizeCompact .sapUiCalNoNameLine .sapUiCalItem.sapUiCalItemNow > .sapUiCalItemText{
+	line-height: 1.625rem;
 }
 
-.sapUiSizeCompact .sapUiCalInt:not(.sapUiCalOneMonthInt) .sapUiCalNoNameLine > .sapUiCalItems > .sapUiCalItem > .sapUiCalDayName{
+.sapUiSizeCompact .sapUiCalInt:not(.sapUiCalOneMonthInt) .sapUiCalNoNameLine .sapUiCalItem > .sapUiCalDayName{
 	left: 0;
 	height: 100%;
 	width: 50%;
@@ -743,41 +946,21 @@ html.sapUiMedia-Std-Phone .sapUiCalHeadB0{
 	box-sizing: border-box;
 }
 
-html[data-sap-ui-browser ^= "ie"], html[data-sap-ui-browser^="ed"] {
-	.sapUiSizeCompact .sapUiCalInt:not(.sapUiCalOneMonthInt) .sapUiCalNoNameLine > .sapUiCalItems > .sapUiCalItem > .sapUiCalItemText{
-		text-align: left;
-	}
-
-	.sapUiSizeCompact .sapUiCalInt:not(.sapUiCalOneMonthInt) .sapUiCalNoNameLine > .sapUiCalItems > .sapUiCalItem > .sapUiCalDayName{
-		text-align: right;
-	}
-}
-
-html[dir=rtl][data-sap-ui-browser ^= "ie"], html[dir=rtl][data-sap-ui-browser^="ed"] {
-	.sapUiSizeCompact .sapUiCalInt:not(.sapUiCalOneMonthInt) .sapUiCalNoNameLine > .sapUiCalItems > .sapUiCalItem > .sapUiCalItemText{
-		text-align: right;
-	}
-
-	.sapUiSizeCompact .sapUiCalInt:not(.sapUiCalOneMonthInt) .sapUiCalNoNameLine > .sapUiCalItems > .sapUiCalItem > .sapUiCalDayName{
-		text-align: left;
-	}
-}
-
 .sapUiSizeCompact .sapUiCalItemTextAmPm{
 	line-height: 1.8rem;
 }
 
 /* 2 calendar types */
-.sapUiSizeCompact .sapUiCalMonthSecType > .sapUiCalItems .sapUiCalItem  > .sapUiCalItemText{
+.sapUiSizeCompact .sapUiCalMonthSecType .sapUiCalItem  > .sapUiCalItemText{
 	line-height: 1rem;
 	padding-right: 0.375rem;
 }
 
-.sapUiSizeCompact .sapUiCalMonthSecType > .sapUiCalItems .sapUiCalItem.sapUiCalItemNow  > .sapUiCalItemText{
+.sapUiSizeCompact .sapUiCalMonthSecType .sapUiCalItem.sapUiCalItemNow  > .sapUiCalItemText{
 	line-height: 1rem;
 }
 
-.sapUiSizeCompact .sapUiCalMonthSecType > .sapUiCalItems .sapUiCalItem > .sapUiCalItemSecText{
+.sapUiSizeCompact .sapUiCalMonthSecType .sapUiCalItem > .sapUiCalItemSecText{
 	height: 0.75rem;
 	line-height: 0.75rem;
 	padding-right: 0.25rem;
@@ -793,21 +976,18 @@ html[dir=rtl][data-sap-ui-browser ^= "ie"], html[dir=rtl][data-sap-ui-browser^="
 	height: 2rem;
 }
 
-/*** Phone ***/
-/* make calendar full-screen if on popup (DatePicker), but not if stand alone */
-
-html.sap-phone .sapUiCal[data-sap-ui-popup]{
-	position: absolute;
-	top: 0 !important;
-	bottom: 0 !important;
-	left: 0 !important;
-	right: 0 !important;
-	width: auto;
-	border: none;
+.sapUiSizeCompact .sapUiCal:not(.sapUiCalInt) .sapUiCalContent {
+	min-height: 13rem;
 }
 
-html.sap-phone .sapUiCal[data-sap-ui-popup] > .sapUiCalContent > .sapUiCalMonthPicker,
-html.sap-phone .sapUiCal[data-sap-ui-popup] > .sapUiCalContent > .sapUiCalYearPicker{
+.sapUiSizeCompact .sapUiCalInt .sapUiCalContent {
+	min-height: 6.5rem;
+}
+
+/*** Phone ***/
+/* make calendar full-screen if on popup (DatePicker), but not if stand alone */
+html.sap-phone [data-sap-ui-popup] .sapUiCal > .sapUiCalContent > .sapUiCalMonthPicker,
+html.sap-phone [data-sap-ui-popup] .sapUiCal > .sapUiCalContent > .sapUiCalYearPicker{
 	width: 100%;
 	box-sizing: border-box;
 	margin: 0;
@@ -816,11 +996,64 @@ html.sap-phone .sapUiCal[data-sap-ui-popup] > .sapUiCalContent > .sapUiCalYearPi
 	padding-bottom: 1rem;
 }
 
-html.sap-phone .sapUiCal[data-sap-ui-popup] > .sapUiCalCancel{
-	display: block;
+html.sap-phone [data-sap-ui-popup] .sapUiCal > .sapUiCalContent > .sapUiCalMonthPicker,
+html.sap-phone [data-sap-ui-popup] .sapUiCal > .sapUiCalContent > .sapUiCalYearPicker{
+	left: 0;
 }
 
-html.sap-phone .sapUiCal[data-sap-ui-popup] > .sapUiCalContent > .sapUiCalMonthPicker,
-html.sap-phone .sapUiCal[data-sap-ui-popup] > .sapUiCalContent > .sapUiCalYearPicker{
-	left: 0;
+.sapUiCal.sapUiCalMulti.sapUiCalTwoMonthsTwoColumns {
+	.sapUiCalHead.sapUiCalHeaderWithTodayButton {
+		justify-content: space-evenly;
+	}
+	.sapUiCalHead.sapUiCalHeaderWithTodayButton .sapUiCalHeadBPlaceholder {
+		width:100%;
+	}
+	& .sapUiCalHeadB.sapUiCalHeadB1 {
+		margin-right: 0.25rem;
+	}
+	& .sapUiCalHeadB.sapUiCalHeadB4 {
+		margin-left: 0.25rem;
+	}
+	& .sapUiCalHeadB.sapUiCalHeadB2.sapUiCalHeadBFirst {
+		margin-left: 0.25rem;
+		margin-right: calc(~"25% - 6rem");
+	}
+	& .sapUiCalHeadB.sapUiCalHeadB3.sapUiCalHeadBLast {
+		margin-right: 0.25rem;
+		margin-left: calc(~"25% - 6rem");
+	}
+	.sapUiCalHeadB.sapUiCalHeadB2.sapUiCalSingleYearButton,
+	.sapUiCalHeadB.sapUiCalHeadB4.sapUiCalSingleYearButton {
+		width: 12rem;
+		margin-left: calc(~"25% - 6rem");
+	}
+
+	.sapUiCalContent > .sapUiCalMonthPicker, .sapUiCalContent > .sapUiCalYearPicker {
+		left: 50%;
+	}
+}
+
+.sapUiCal.sapUiCalMulti .sapUiCalContent > .sapUiCalMonthPicker,
+.sapUiCal.sapUiCalMulti .sapUiCalContent > .sapUiCalYearPicker {
+	left: 50%;
+}
+
+.sapUiSizeCompact {
+	.sapUiCal {
+		.sapUiCalHead {
+			.sapUiCalHeadB2.sapUiCalSingleYearButton,
+			.sapUiCalHeadB4.sapUiCalSingleYearButton {
+				width: 11rem;
+			}
+		}
+		.sapUiCalHead.sapUiCalHeaderWithTodayButton {
+			.sapUiCalHeadB2.sapUiCalSingleYearButton,
+			.sapUiCalHeadB4.sapUiCalSingleYearButton {
+				width: 10.5rem;
+			}
+			.sapUiCalHeadBPlaceholder {
+				width: 11rem;
+			}
+		}
+	}
 }

@@ -3,115 +3,253 @@
 describe("sap.m.Label", function() {
 	"use strict";
 
-	// initial loading
+	function changeLanguage(sLang) {
+		return browser.executeScript(function(sLang) {
+			var oSelect = sap.ui.getCore().byId('localeSelect');
+				oSelect.setSelectedKey(sLang);
+
+			var oSelectedItem = oSelect.getSelectedItem();
+				oSelect.fireChange({ selectedItem: oSelectedItem});
+		}, sLang);
+	}
+
 	it("should load test page", function () {
 		expect(takeScreenshot()).toLookAs("0_initial");
 	});
 
-	// standard
-	it("should visualize standard label", function () {
-		var lbl1 = element(by.id('lbl1'));
-		expect(takeScreenshot(lbl1)).toLookAs("1_standard");
+	it("should visualize the simple form", function(){
+
+		var simpleForm = element(by.id("simpleForm"));
+		browser.executeScript("document.getElementById('simpleForm').scrollIntoView()").then(function() {
+			expect(takeScreenshot(simpleForm)).toLookAs('01_simple_form_compact');
+			element(by.id('requiredSwitch')).click();
+			expect(takeScreenshot(simpleForm)).toLookAs('02_simple_form_compact_required_all');
+		});
+
+		element(by.id('requiredSwitch')).click();
+		browser.executeScript("document.getElementById('simpleForm').scrollIntoView()").then(function() {
+			element(by.id('cozySwitch')).click();
+			expect(takeScreenshot(simpleForm)).toLookAs('03_simple_form_cozy');
+			element(by.id('requiredSwitch')).click();
+			expect(takeScreenshot(simpleForm)).toLookAs('04_simple_form_cozy_required_all');
+		});
+		element(by.id('requiredSwitch')).click();
+		element(by.id('cozySwitch')).click();
 	});
 
-	// required
-	it("should visualize required label", function () {
-		var lbl2 = element(by.id('lbl2'));
-		expect(takeScreenshot(lbl2)).toLookAs("2_required");
+	it("should visualize the second simple form with fixed width", function(){
+
+		var simpleForm = element(by.id("simpleForm2"));
+		browser.executeScript("document.getElementById('simpleForm2').scrollIntoView()").then(function() {
+			expect(takeScreenshot(simpleForm)).toLookAs('05_simple_form2_compact');
+			element(by.id('requiredSwitch')).click();
+			expect(takeScreenshot(simpleForm)).toLookAs('06_simple_form2_compact_required_all');
+		});
+
+		element(by.id('requiredSwitch')).click();
+		browser.executeScript("document.getElementById('simpleForm').scrollIntoView()").then(function() {
+			element(by.id('cozySwitch')).click();
+			expect(takeScreenshot(simpleForm)).toLookAs('07_simple_form2_cozy');
+			element(by.id('requiredSwitch')).click();
+			expect(takeScreenshot(simpleForm)).toLookAs('08_simple_form2_cozy_required_all');
+		});
+		element(by.id('requiredSwitch')).click();
+		element(by.id('cozySwitch')).click();
 	});
 
-	// bold
-	it("should visualize bold label", function () {
-		var lbl3 = element(by.id('lbl3'));
-		expect(takeScreenshot(lbl3)).toLookAs("3_bold");
+	it("should visualize basic use", function(){
+
+		var oVL = element(by.id("oVL"));
+		browser.executeScript("document.getElementById('oVL').scrollIntoView()").then(function() {
+			expect(takeScreenshot(oVL)).toLookAs('09_oVL_compact');
+			element(by.id('requiredSwitch')).click();
+			expect(takeScreenshot(oVL)).toLookAs('10_oVL_compact_required_all');
+		});
+
+		element(by.id('requiredSwitch')).click();
+		browser.executeScript("document.getElementById('oVL').scrollIntoView()").then(function() {
+			element(by.id('cozySwitch')).click();
+			expect(takeScreenshot(oVL)).toLookAs('11_oVL_cozy');
+			element(by.id('requiredSwitch')).click();
+			expect(takeScreenshot(oVL)).toLookAs('12_oVL_cozy_required_all');
+		});
+		element(by.id('requiredSwitch')).click();
+		element(by.id('cozySwitch')).click();
 	});
 
-	// direction LTR
-	it("should visualize label with text direction LTR", function () {
-		var lbl4 = element(by.id('lbl4'));
-		expect(takeScreenshot(lbl4)).toLookAs("4_direction_LTR");
+	it("should visualize the special right-to-left cases", function(){
+
+		var oVL2 = element(by.id("oVL2"));
+		browser.executeScript("document.getElementById('oVL2').scrollIntoView()").then(function() {
+			expect(takeScreenshot(oVL2)).toLookAs('13_oVL2_compact');
+			element(by.id('requiredSwitch')).click();
+			expect(takeScreenshot(oVL2)).toLookAs('14_oVL2_compact_required_all');
+		});
+
+		element(by.id('requiredSwitch')).click();
+		browser.executeScript("document.getElementById('oVL2').scrollIntoView()").then(function() {
+			element(by.id('cozySwitch')).click();
+			expect(takeScreenshot(oVL2)).toLookAs('15_oVL2_cozy');
+			element(by.id('requiredSwitch')).click();
+			expect(takeScreenshot(oVL2)).toLookAs('16_oVL2_cozy_required_all');
+		});
+		element(by.id('requiredSwitch')).click();
+		element(by.id('cozySwitch')).click();
 	});
 
-	// direction RTL
-	it("should visualize label with text direction RTL", function () {
-		var lbl5 = element(by.id('lbl5'));
-		expect(takeScreenshot(lbl5)).toLookAs("5_direction_RTL");
+	it("should visualize textDirection property", function(){
+
+		var oVL3 = element(by.id("oVL3"));
+		browser.executeScript("document.getElementById('oVL3').scrollIntoView()").then(function() {
+			expect(takeScreenshot(oVL3)).toLookAs('17_oVL3_compact');
+			element(by.id('requiredSwitch')).click();
+			expect(takeScreenshot(oVL3)).toLookAs('18_oVL3_compact_required_all');
+		});
+
+		element(by.id('requiredSwitch')).click();
+		browser.executeScript("document.getElementById('oVL3').scrollIntoView()").then(function() {
+			element(by.id('cozySwitch')).click();
+			expect(takeScreenshot(oVL3)).toLookAs('19_oVL3_cozy');
+			element(by.id('requiredSwitch')).click();
+			expect(takeScreenshot(oVL3)).toLookAs('20_oVL3_cozy_required_all');
+		});
+		element(by.id('requiredSwitch')).click();
 	});
 
-	// direction Inherit
-	it("should visualize label with text direction Inherit", function () {
-		var lbl6 = element(by.id('lbl6'));
-		expect(takeScreenshot(lbl6)).toLookAs("6_direction_Inherit");
-	});
+	it("should visualize truncation + colon", function(){
+		var oVL4 = element(by.id("oVL4"));
+		browser.executeScript("document.getElementById('oVL4').scrollIntoView()").then(function() {
+			// form factors
+			expect(takeScreenshot(oVL4)).toLookAs('truncation_colon_compact');
+			element(by.id('cozySwitch')).click();
+			expect(takeScreenshot(oVL4)).toLookAs('truncation_colon_cozy');
+			element(by.id('cozySwitch')).click();
 
-	// text align Begin
-	it("should visualize label with text align Begin", function () {
-		var lbl7 = element(by.id('lbl7'));
-		lbl7.click();
-		expect(takeScreenshot(lbl7)).toLookAs("7_align_Begin");
-	});
+			// resize
+			element(by.id('resizeBtn')).click();
+			expect(takeScreenshot(oVL4)).toLookAs('truncation_colon_resized');
 
-	// text align Center
-	it("should visualize label with text align Center", function () {
-		var lbl8 = element(by.id('lbl8'));
-		lbl8.click();
-		expect(takeScreenshot(lbl8)).toLookAs("8_align_Center");
-	});
-
-	// text align End
-	it("should visualize label with text align End", function () {
-		var lbl9 = element(by.id('lbl9'));
-		lbl9.click();
-		expect(takeScreenshot(lbl9)).toLookAs("9_align_End");
-	});
-
-	// text align Left
-	it("should visualize label with text align Left", function () {
-		var lbl10 = element(by.id('lbl10'));
-		lbl10.click();
-		expect(takeScreenshot(lbl10)).toLookAs("10_align_Left");
-	});
-
-	// text align Right
-	it("should visualize label with text align Right", function () {
-		var lbl11 = element(by.id('lbl11'));
-		lbl11.click();
-		expect(takeScreenshot(lbl11)).toLookAs("11_align_Right");
-	});
-
-	// width
-	it("should visualize label with fixed width", function () {
-		var lbl13 = element(by.id('lbl13'));
-		lbl13.click();
-		expect(takeScreenshot(lbl13)).toLookAs("13_width");
-	});
-
-	// required truncated label
-	it("should visualize required label Form", function () {
-		var lbl14 = element(by.id('truncatedRequiredLabel'));
-		browser.executeScript('document.getElementById("truncatedRequiredLabel").scrollIntoView()').then(function() {
-			expect(takeScreenshot(lbl14)).toLookAs("14__truncated_required");
+			// languages
+			changeLanguage("fr");
+			expect(takeScreenshot(oVL4)).toLookAs('truncation_colon_fr');
+			changeLanguage("zh-CN");
+			expect(takeScreenshot(oVL4)).toLookAs('truncation_colon_zh-CN');
+			changeLanguage("zh-TW");
+			expect(takeScreenshot(oVL4)).toLookAs('truncation_colon_zh-TW');
+			changeLanguage("zh-Hans");
+			expect(takeScreenshot(oVL4)).toLookAs('truncation_colon_zh-Hans');
+			changeLanguage("zh-Hant");
+			expect(takeScreenshot(oVL4)).toLookAs('truncation_colon_zh-Hant');
+			changeLanguage("en");
 		});
 	});
 
-	// required truncated label in form
-	it("should visualize truncated required label in Form", function () {
-		var lbl15 = element(by.id('requiredTruncated'));
-		browser.executeScript('document.getElementById("simpleForm").scrollIntoView()').then(function() {
-			expect(takeScreenshot(lbl15)).toLookAs("15__truncated_required_form");
+	it("should visualize the French language", function(){
+
+		var simpleForm = element(by.id("simpleForm"));
+		browser.executeScript("document.getElementById('simpleForm').scrollIntoView()").then(function() {
+			changeLanguage("fr");
+			expect(takeScreenshot(simpleForm)).toLookAs('21_simpleForm_compact_French');
+		});
+
+		browser.executeScript("document.getElementById('simpleForm').scrollIntoView()").then(function() {
+			element(by.id('cozySwitch')).click();
+			changeLanguage("fr");
+			expect(takeScreenshot(simpleForm)).toLookAs('22_simpleForm_cozy_French');
+		});
+		element(by.id('cozySwitch')).click();
+	});
+
+	it("should visualize the Chinese language (zh_CN)", function(){
+
+		var simpleForm = element(by.id("simpleForm"));
+		browser.executeScript("document.getElementById('simpleForm').scrollIntoView()").then(function() {
+			changeLanguage("zh-CN");
+			expect(takeScreenshot(simpleForm)).toLookAs('23_simpleForm_compact_zh_CN');
+		});
+
+		browser.executeScript("document.getElementById('simpleForm').scrollIntoView()").then(function() {
+			element(by.id('cozySwitch')).click();
+			changeLanguage("zh-CN");
+			expect(takeScreenshot(simpleForm)).toLookAs('24_simpleForm_cozy_zh_CN');
+		});
+		element(by.id('cozySwitch')).click();
+	});
+
+	it("should visualize the Chinese language (zh_TW)", function(){
+
+		var simpleForm = element(by.id("simpleForm"));
+		browser.executeScript("document.getElementById('simpleForm').scrollIntoView()").then(function() {
+			changeLanguage("zh-TW");
+			expect(takeScreenshot(simpleForm)).toLookAs('25_simpleForm_compact_zh_TW');
+		});
+
+		browser.executeScript("document.getElementById('simpleForm').scrollIntoView()").then(function() {
+			element(by.id('cozySwitch')).click();
+			changeLanguage("zh-TW");
+			expect(takeScreenshot(simpleForm)).toLookAs('26_simpleForm_cozy_zh_TW');
+		});
+
+		element(by.id('cozySwitch')).click();
+	});
+
+	it("required label in French language", function() {
+		var oRequiredLabel = element(by.id("lbl2"));
+
+		browser.executeScript("document.getElementById('lbl2').scrollIntoView()").then(function() {
+			changeLanguage("fr");
+			expect(takeScreenshot(oRequiredLabel)).toLookAs('27_required_label_French');
+
+			// clean up - reset language
+			changeLanguage("en");
 		});
 	});
 
-	// required  label in form
-	it("should visualize truncated label in Form", function () {
-		var lbl16 = element(by.id('truncated'));
-			expect(takeScreenshot(lbl16)).toLookAs("16__truncated_form");
+	it("should visualize the Chinese language (Simplified Chinese zh-Hans)", function () {
+
+		var simpleForm = element(by.id("simpleForm"));
+		browser.executeScript("document.getElementById('simpleForm').scrollIntoView()").then(function () {
+			changeLanguage("zh-Hans");
+			expect(takeScreenshot(simpleForm)).toLookAs('28_simpleForm_compact_zh_Hans');
+		});
+
+		browser.executeScript("document.getElementById('simpleForm').scrollIntoView()").then(function () {
+			element(by.id('cozySwitch')).click();
+			changeLanguage("zh-Hans");
+			expect(takeScreenshot(simpleForm)).toLookAs('29_simpleForm_cozy_zh_Hans');
+		});
+
+		element(by.id('cozySwitch')).click();
+
+		// clean up - reset language
+		changeLanguage("en");
 	});
 
-	// required  label in form
-	it("should visualize required label Form", function () {
-		var lbl17 = element(by.id('requiredOnly'));
-			expect(takeScreenshot(lbl17)).toLookAs("17__required_form");
+	it("should visualize the Chinese language (Traditional Chinese zh-Hant)", function () {
+
+		var simpleForm = element(by.id("simpleForm"));
+		browser.executeScript("document.getElementById('simpleForm').scrollIntoView()").then(function () {
+			changeLanguage("zh-Hant");
+			expect(takeScreenshot(simpleForm)).toLookAs('30_simpleForm_compact_zh_Hant');
+		});
+
+		browser.executeScript("document.getElementById('simpleForm').scrollIntoView()").then(function () {
+			element(by.id('cozySwitch')).click();
+			changeLanguage("zh-Hant");
+			expect(takeScreenshot(simpleForm)).toLookAs('31_simpleForm_cozy_zh_Hant');
+		});
+
+		element(by.id('cozySwitch')).click();
+
+		// clean up - reset language
+		changeLanguage("en");
 	});
 
+	it("should visualize label with fixed width, asterisk and colon", function () {
+		var lbl = element(by.id('lblcolonrequired'));
+
+		browser.executeScript("document.getElementById('lblcolonrequired').scrollIntoView()").then(function () {
+			expect(takeScreenshot(lbl)).toLookAs("32_label_required_colon");
+		});
+	});
 });

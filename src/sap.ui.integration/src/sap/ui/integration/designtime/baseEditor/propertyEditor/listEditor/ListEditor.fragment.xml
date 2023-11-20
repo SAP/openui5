@@ -1,0 +1,16 @@
+<core:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core"
+>
+	<MultiInput
+		tokenUpdate="_onTokenUpdate"
+		submit="_onTokenSubmission"
+		liveChange="_onLiveChange"
+		tokens="{value}"
+		showValueHelp="false"
+	>
+		<tokens>
+			<Token key="{}" text="{}" />
+		</tokens>
+	</MultiInput>
+</core:FragmentDefinition>

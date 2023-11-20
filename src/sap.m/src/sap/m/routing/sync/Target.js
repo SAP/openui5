@@ -20,11 +20,12 @@ sap.ui.define([], function() {
 
 				this._oTargetHandler.addNavigation({
 
-					navigationIdentifier : this._oOptions.name,
+					navigationIdentifier : this._oOptions._name,
 					transition: this._oOptions.transition,
 					transitionParameters: this._oOptions.transitionParameters,
 					eventData: vData,
 					targetControl: oReturnValue.oTargetControl,
+					aggregationName: this._oOptions.controlAggregation,
 					view: oReturnValue.oTargetParent,
 					preservePageInSplitContainer: this._oOptions.preservePageInSplitContainer
 				});

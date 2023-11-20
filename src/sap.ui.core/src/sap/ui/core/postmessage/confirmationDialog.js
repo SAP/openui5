@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
-sap.ui.define(function () {
+sap.ui.define(["sap/ui/core/Lib"], function(Library) {
 	"use strict";
 
 	/**
@@ -20,7 +20,7 @@ sap.ui.define(function () {
 	 */
 	return function (sMessage) {
 		return new Promise(function (fnResolve, fnReject) {
-			var bMessageBoxAvailable = sap.ui.getCore().getLoadedLibraries().hasOwnProperty('sap.m');
+			var bMessageBoxAvailable = Library.isLoaded('sap.m');
 
 			if (bMessageBoxAvailable) {
 				sap.ui.require(['sap/m/MessageBox'], function (MessageBox) {
@@ -36,7 +36,7 @@ sap.ui.define(function () {
 							}
 						}
 					);
-				});
+				}, fnReject);
 			} else {
 				var bConfirmed = window.confirm(sMessage); // eslint-disable-line no-alert
 

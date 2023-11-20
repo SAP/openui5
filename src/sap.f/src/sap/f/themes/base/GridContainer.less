@@ -1,0 +1,58 @@
+/* =================================== */
+/* CSS for control sap.f/GridContainer */
+/* Base theme                          */
+/* =================================== */
+
+@_sap_f_GridContainer_FocusBorderOffset: 0;
+
+.sapFGridContainer {
+	position: relative;
+	display: grid;
+	outline: none;
+
+	&.sapFGridContainerDenseFill {
+		grid-auto-flow: row dense;
+	}
+
+	&.sapFGridContainerSnapToRow .sapFGridContainerItemWrapper > * {
+		min-height: 100%;
+	}
+
+	.sapFGridContainerItemWrapper.sapFGridContainerItemFixedRows > * {
+		max-height: 100%;
+	}
+
+	.sapFGridContainerItemWrapper {
+		min-width: 0;
+		outline: none;
+
+		&.sapFGridContainerInvisiblePlaceholder {
+			display: none;
+		}
+	}
+
+	.sapFGridContainerItemWrapper:not(.sapFGridContainerItemWrapperNoVisualFocus):focus::before {
+		content: '';
+		position: absolute;
+		left: @_sap_f_GridContainer_FocusBorderOffset;
+		bottom: @_sap_f_GridContainer_FocusBorderOffset;
+		right: @_sap_f_GridContainer_FocusBorderOffset;
+		top: @_sap_f_GridContainer_FocusBorderOffset;
+		z-index: 1;
+		border: @sapUiContentFocusWidth @sapUiContentFocusStyle @sapUiContentFocusColor;
+		pointer-events: none;
+
+	}
+
+	.sapFGridContainerItemWrapper {
+		position: relative;
+	}
+
+  	.sapFGridContainerDummyArea {
+	  	position: fixed;
+	}
+
+	.sapUiIntCard.sapUiIntCardAnalytical {
+		min-height: 100%;
+	}
+}

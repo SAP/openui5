@@ -1,19 +1,25 @@
-sap.ui.define([], function() {
+/*global sinon */
+sap.ui.define([
+	"sap/ui/thirdparty/jquery"
+], function(jQuery) {
+	"use strict";
+
 	var aViews = [{
-		path: "../../testdata/routing/Async1.view.xml",
+		path: sap.ui.require.toUrl("qunit/view/Async1.view.xml"),
 		content: undefined // content will be set later
 	}, {
-		path: "../../testdata/routing/Async2.view.xml"
+		path: sap.ui.require.toUrl("qunit/view/Async2.view.xml")
 	}, {
-		path: "../../testdata/routing/Async3.view.xml"
+		path: sap.ui.require.toUrl("qunit/view/Async3.view.xml")
 	}];
 
-	aViews.forEach(function(oViewSetting, iIndex) {
+	aViews.forEach(function(oViewSetting) {
 		// preload the view source
 		jQuery.ajax({
+			dataType: 'text',
 			url : oViewSetting.path,
 			success : function(data) {
-				oViewSetting.content = new XMLSerializer().serializeToString(data);
+				oViewSetting.content = data;
 			},
 			async : false
 		});
@@ -26,7 +32,7 @@ sap.ui.define([], function() {
 					var xhr = this.xhr = sinon.useFakeXMLHttpRequest();
 					xhr.useFilters = true;
 					xhr.addFilter(function(method, url) {
-						return url.indexOf("testdata/routing") === -1;
+						return url.indexOf("routing/fixture") === -1;
 					});
 
 					xhr.onCreate = function(request) {
@@ -56,6 +62,7 @@ sap.ui.define([], function() {
 					if (oSetting && oSetting.afterEach) {
 						oSetting.afterEach.apply(this);
 					}
+					this.xhr.restore();
 				}
 			};
 		}

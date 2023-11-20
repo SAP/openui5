@@ -1,0 +1,74 @@
+/* ======================================= */
+/* CSS for control sap.m/PlanningCalendar  */
+/* Fiori 3 theme                           */
+/* ======================================= */
+
+/* show every second row in an other color */
+.sapMPlanCal:not(.sapMPlanCalSuppressAlternatingRowColors) > .sapMList > table > tbody > tr.sapMLIB:nth-child(even):not(.sapMListTblSubRow),
+.sapMSize0.sapMPlanCal:not(.sapMPlanCalSuppressAlternatingRowColors) > .sapMList > table > tbody > tr.sapMLIB:nth-child(4n+3),
+.sapMSize1.sapMPlanCal:not(.sapMPlanCalSuppressAlternatingRowColors) > .sapMList > table > tbody > tr.sapMLIB:nth-child(4n+3),
+.sapMPlanCal:not(.sapMPlanCalSuppressAlternatingRowColors) > .sapMList > table > tbody > tr.sapMListTblSubRow:nth-child(4n){
+	background-color:  @sapUiListAlternatingBackground;
+}
+
+.sapMPlanCal:not(.sapMPlanCalSuppressAlternatingRowColors) > .sapMList > table > tbody > tr:nth-child(even):not(.sapMListTblSubRow).sapMLIBHoverable:hover,
+.sapMSize0.sapMPlanCal:not(.sapMPlanCalSuppressAlternatingRowColors) > .sapMList > table > tbody > tr:nth-child(4n+3).sapMLIBHoverable:hover,
+.sapMSize0.sapMPlanCal:not(.sapMPlanCalSuppressAlternatingRowColors) > .sapMList > table > tbody > tr:nth-child(4n+3).sapMLIBHoverable:hover + .sapMListTblSubRow,
+.sapMSize1.sapMPlanCal:not(.sapMPlanCalSuppressAlternatingRowColors) > .sapMList > table > tbody > tr:nth-child(4n+3).sapMLIBHoverable:hover,
+.sapMSize1.sapMPlanCal:not(.sapMPlanCalSuppressAlternatingRowColors) > .sapMList > table > tbody > tr:nth-child(4n+3).sapMLIBHoverable:hover + .sapMListTblSubRow,
+.sapMPlanCal:not(.sapMPlanCalSuppressAlternatingRowColors) > .sapMList > table > tbody > tr.sapMListTblSubRow:nth-child(4n).sapMLIBHoverable:hover{
+	background-color: @sapUiListHoverBackground;
+}
+
+.sapMPlanCal:not(.sapMPlanCalSuppressAlternatingRowColors) > .sapMList > table > tbody > tr:nth-child(even):not(.sapMListTblSubRow).sapMLIBSelected,
+.sapMPlanCal:not(.sapMPlanCalSuppressAlternatingRowColors) > .sapMList > table > tbody > tr:not(.sapMListTblSubRow).sapMLIBSelected,
+.sapMSize0.sapMPlanCal:not(.sapMPlanCalSuppressAlternatingRowColors) > .sapMList > table > tbody > tr:nth-child(4n+3).sapMLIBSelected,
+.sapMSize0.sapMPlanCal:not(.sapMPlanCalSuppressAlternatingRowColors) > .sapMList > table > tbody > tr:nth-child(4n+3).sapMLIBSelected + .sapMListTblSubRow,
+.sapMSize1.sapMPlanCal:not(.sapMPlanCalSuppressAlternatingRowColors) > .sapMList > table > tbody > tr:nth-child(4n+3).sapMLIBSelected,
+.sapMSize1.sapMPlanCal:not(.sapMPlanCalSuppressAlternatingRowColors) > .sapMList > table > tbody > tr:nth-child(4n+3).sapMLIBSelected + .sapMListTblSubRow,
+.sapMPlanCal:not(.sapMPlanCalSuppressAlternatingRowColors) > .sapMList > table > tbody > tr.sapMListTblSubRow:nth-child(4n).sapMLIBSelected{
+	background-color: @sapUiListSelectionBackgroundColor;
+}
+
+.sapMPlanCal:not(.sapMPlanCalSuppressAlternatingRowColors) > .sapMList > table > tbody > tr:nth-child(even):not(.sapMListTblSubRow).sapMLIBSelected.sapMLIBHoverable:hover,
+.sapMPlanCal:not(.sapMPlanCalSuppressAlternatingRowColors) > .sapMList > table > tbody > tr:not(.sapMListTblSubRow).sapMLIBSelected.sapMLIBHoverable:hover,
+.sapMSize0.sapMPlanCal:not(.sapMPlanCalSuppressAlternatingRowColors) > .sapMList > table > tbody > tr:nth-child(4n+3).sapMLIBSelected.sapMLIBHoverable:hover,
+.sapMSize0.sapMPlanCal:not(.sapMPlanCalSuppressAlternatingRowColors) > .sapMList > table > tbody > tr:nth-child(4n+3).sapMLIBSelected.sapMLIBHoverable:hover + .sapMListTblSubRow,
+.sapMSize1.sapMPlanCal:not(.sapMPlanCalSuppressAlternatingRowColors) > .sapMList > table > tbody > tr:nth-child(4n+3).sapMLIBSelected.sapMLIBHoverable:hover,
+.sapMSize1.sapMPlanCal:not(.sapMPlanCalSuppressAlternatingRowColors) > .sapMList > table > tbody > tr:nth-child(4n+3).sapMLIBSelected.sapMLIBHoverable:hover + .sapMListTblSubRow,
+.sapMPlanCal:not(.sapMPlanCalSuppressAlternatingRowColors) > .sapMList > table > tbody > tr.sapMListTblSubRow:nth-child(4n).sapMLIBSelected.sapMLIBHoverable:hover{
+	background-color: @sapUiListSelectionHoverBackground;
+}
+
+/* Calendar overstyling */
+
+html.sap-desktop .sapMPlanCal .sapUiCalItem:not(.sapUiCalItemSel):hover {
+	background-color:  @sapUiListHoverBackground;
+}
+
+html.sap-desktop .sapMPlanCal .sapUiCalItemWeekEnd:not(.sapUiCalItemSel):hover {
+	background-color: @sapUiListHoverBackground;
+}
+
+html.sap-desktop .sapMPlanCal .sapUiCalItemOtherMonth:not(.sapUiCalItemSel):hover {
+	background-color: @sapUiListAlternatingBackground;
+}
+
+.sapMPlanCal .sapMPlanCalRowHead .sapMSLIImg {
+	border-radius: 0.25rem;
+	height: auto;
+	width: 3rem;
+	line-height: 3rem;
+}
+
+.sapMPlanCal .sapMListTbl .sapMSLIImgIcon.sapUiIcon:not(.sapMLIBImgNav):not(.sapMBtnIcon) {
+	border-radius: 0.25rem;
+	background-color: @sapUiAccent7;
+	color: @sapUiContentContrastTextColor;
+	font-size: @sapMFontHeader4Size;
+}
+
+.sapMPlanCalRowHead .sapMSLI,
+.sapUiSizeCompact .sapMPlanCalRowHead .sapMSLI {
+	height: auto;
+}

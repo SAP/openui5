@@ -1,0 +1,16 @@
+<mvc:View
+	controllerName="sap.f.sample.ProductSwitchNavigation.controller.ProductSwitchNavigation"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m"
+	xmlns:layout= "sap.ui.layout"
+	height="100%">
+		<layout:VerticalLayout class="sapUiContentPadding">
+			<Button
+				id="pSwitchBtn"
+				icon="sap-icon://menu"
+				text="Open Product Switch"
+				press="fnOpen" />
+			<Text text="Note: Redirection logic should be handled by the app developer." />
+			<Text text="You can use sap.m.URLHelper, as shown in the fnChange method of the ProductSwitchNavigation controller." />
+		</layout:VerticalLayout>
+</mvc:View>

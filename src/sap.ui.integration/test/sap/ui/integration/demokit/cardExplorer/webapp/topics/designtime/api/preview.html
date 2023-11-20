@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<title>Preview</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<script src="../../../scripts/boot.js"></script>
+	<style>
+		.tableWrapper td {
+			vertical-align: top;
+			line-height: 1.4rem !important;
+		}
+
+		.tableWrapper caption {
+			text-align: left;
+			padding: 0.5rem 1rem;
+			font-weight: bold;
+		}
+
+		.tableWrapper span {
+			color: red;
+		}
+
+		table,
+		td {
+			font-weight: normal !important;
+		}
+
+		pre[caption]::before {
+			width: 800px !important;
+		}
+	</style>
+</head>
+
+<body class="sapUiBody topicBody">
+	<div class="topic">
+		<div class="content">
+
+			<h1 id="overview">Preview</h1>
+			<h2 id="configure">Configure the Editor's Preview</h2>
+			<p>An additional section in the configuration allows to influence the preview shown in the Configuration Editor
+			</p>
+			<div class="tableWrapper">
+				<table style="background-color: transparent; border:none;">
+					<tr>
+						<td style="vertical-align: top;background-color: transparent; border:none; padding-left: 0;">
+							<pre class="lang-js">
+sap.ui.define(["sap/ui/integration/Designtime"], function (
+	Designtime
+) {
+	"use strict";
+	return function () {
+		return new Designtime({
+			"form": {
+				"items": {
+
+				}
+			},<mark>
+			"preview": {
+
+			}</mark>
+		});
+	};
+});</pre>
+						</td>
+						<td style="vertical-align: top;background-color: transparent; border:none;">
+							<img src="../img/ConfigurationEditorForm.png" alt="" style="margin:2rem;width:400px;border:1px solid #f5f5f5">
+						</td>
+					</tr>
+				</table>
+			</div>
+			<div class="tableWrapper">
+				<table>
+					<caption>Field Type items</caption>
+					<tr>
+						<th>Property</th>
+						<th>Type</th>
+						<th>Required</th>
+						<th>Default</th>
+						<th>Description</th>
+						<th>Since</th>
+					</tr>
+					<tr>
+						<td>modes</td>
+						<td>string</td>
+						<td>No</td>
+						<td>"Abstract"</td>
+						<td>Possible values are : <br>
+							<code>"None"</code> : No preview is shown.<br>
+							<code>"Abstract"</code> : An abstract preview is shown with placeholders for the possible result.<br>
+							<code>"Live"</code> : A small scaled preview of the real Card is shown.<br>
+							<code>"AbstractLive"</code> : The user will be able to toggle between abstract and live preview, starting with the abstract
+							preview.<br>
+							<code>"LiveAbstract"</code> : The user will be able to toggle between live and abstract
+							preview, starting with the live preview.<br>
+							<code>"MockData"</code> <span>(Component Card)</span>: A small scaled preview of the real Card with mock data is shown.<br>
+							<code>"AbstractMockData"</code> <span>(Component Card)</span>: The user will be able to toggle between abstract and mockdata preview, starting with the abstract
+							preview.<br>
+							<code>"MockDataAbstract"</code> <span>(Component Card)</span>: The user will be able to toggle between mockdata and abstract
+							preview, starting with the mockdata preview.<br>
+							<pre class="lang-js">modes : "AbstractLive"</pre>
+						</td>
+						<td>1.83</td>
+					</tr>
+					<tr>
+						<td>src</td>
+						<td>string</td>
+						<td>No</td>
+						<td>""</td>
+						<td>Relative path to an image (png, gif, jpeg) within the card bundle. Is image will be used as
+							the abstract view and can replace the card internal preview. If omitted the abstract preview
+							is created based on the card type and settings in the card manifest. The path to the image
+							is relative to the baseUrl of the card. To support
+							theming options on the customer side, the image should use transparency settings and gray
+							shades explained
+							<a href="#previewimage">here</a>.<br>
+							<pre class="lang-js">src : "dt/preview.png"</pre>
+						</td>
+						<td>1.83</td>
+					</tr>
+					<tr>
+						<td>interactive</td>
+						<td>boolean</td>
+						<td>No</td>
+						<td>false</td>
+						<td>If it's set to true, the card in preview is interactive.
+							If it's not set or set to false, the card in preview is not interactive.<br>
+							<pre class="lang-js">interactive : true</pre>
+						</td>
+						<td>1.109</td>
+					</tr>
+				</table>
+
+			</div>
+
+			<h2 id="preview">Preview of the Card in Configuration Editor</h2>
+			<h3 id="previewModes">Preview Modes</h3>
+			<ul>
+				<li>
+					None: No preview<br><br>
+				</li>
+				<li>Abstract: (default) Only an abstract preview is available. If an own image is provided in the src
+					property, it will be used for the abstract preview.
+					<br><br><img src="../../images/CardDTAbstractPreview.png" alt="">
+					<img src="../../images/CardDTAbstractOwnPreview.png" alt=""><br><br>
+				</li>
+				<li>AbstractLive: The user is able to switch from an abstract preview to a live preview and back. If an
+					own image is provided in the src property, it will be used for the abstract preview.
+					<br><br><img src="../../images/CardDTAbstractPreview.png" alt="">
+					<img src="../../images/CardDTLivePreview.png" alt=""><br><br>
+				</li>
+				<li>LiveAbstract: The user is able to switch from an abstract preview to a live preview and back. If an
+					own image is provided in the src property, it will be used for the abstract preview.
+					<br><br><img src="../../images/CardDTLivePreview.png" alt="">
+					<img src="../../images/CardDTAbstractPreview.png" alt=""><br><br>
+				</li>
+				<li>Live: The user is able to switch from an abstract preview to a live preview and back. If an own
+					image is provided in the src property, it will be used for the abstract preview.
+					<br><br><img src="../../images/CardDTLivePreview.png" alt=""><br>
+				</li>
+			</ul>
+
+			<h3 id="createThemablePreview">Create a Themeable Preview for a Card</h3>
+			<p>
+				Preview images for card should present an abstract preview to give the user an impression of look of the final
+				card. As a card developer, you should create the picture for such abstract in case you want to override
+				the default representation that is created based
+				on the card type you chose. To avoid additional overhead the preview image should be created in a
+				themeable fashion. Working with gray shades and transparency this is easily possible. The image should
+				work with these sizes and colors.
+			<p>
+			<ul>
+				<li>Width: 250px</li>
+				<li>Height: 300px</li>
+				<li>Background: transparent</li>
+				<li>Foreground: rgb(225,225,225) opacity 50%, rgba(225,225,225,0.5)</li>
+			</ul>
+			<img src="../../images/CardDTOwnPreviewTransparency.png" alt="">
+			<img src="../../images/CardDTOwnPreviewLight.png" alt="">
+			<img src="../../images/CardDTOwnPreviewDark.png" alt="">
+
+			<p>
+				After creation of the image save it with the card sources, ideally in the configuration folder, and refer to
+				the image in the preview section's src property.
+			</p>
+			<pre class="lang-js collapsed" data-caption="Custom image within preview section designtime.js">
+sap.ui.define(["sap/ui/integration/Designtime"], function (
+	Designtime
+) {
+	"use strict";
+	return function () {
+		return new Designtime({
+			"form": {
+				"items": {
+
+				}
+			},<mark>
+			"preview": {
+				"src": "dt/preview.png"
+			}</mark>
+		});
+	};
+});</pre>
+
+			<h3 id="previewPosition">Preview Position</h3>
+			<p>
+				When creating the Card Editor, we can set the preview position via parameter "previewPosition".
+			</p>
+			<ul>
+				<li>left: Align the preview at the left of Card Editor.
+					<br><br><img src="../img/ConfigurationEditorPreviewAlignmentLeft.png" alt="" style="width:400px;border:1px solid #f5f5f5"><br><br>
+				</li>
+				<li>right: (default) Align the preview at the right of Card Editor.
+					<br><br><img src="../img/ConfigurationEditorPreviewAlignmentRight.png" alt="" style="width:400px;border:1px solid #f5f5f5"><br><br>
+				</li>
+				<li>top: Align the preview above Card Editor.
+					<br><br><img src="../img/ConfigurationEditorPreviewAlignmentTop.png" alt="" style="width:400px;border:1px solid #f5f5f5"><br><br>
+				</li>
+				<li>bottom: Align the preview under Card Editor.
+					<br><br><img src="../img/ConfigurationEditorPreviewAlignmentBottom.png" alt="" style="width:400px;border:1px solid #f5f5f5"><br><br>
+				</li>
+			</ul>
+
+			<pre class="lang-js collapsed" data-caption="Define the preview position">
+var oEditor = new CardEditor({<mark>
+	previewPosition: "right",</mark>
+	card: document.getElementById("card")._getControl(),
+	mode: "admin"
+});</pre>
+			<br><br>
+			<a class="try-button" href="../../../index.html#/explore/designtimePreview" target="_parent">Try it Out</a>
+			<br>
+		</div>
+	</div>
+
+</body>
+
+</html>

@@ -1,0 +1,43 @@
+{
+  "_version": "1.12.0",
+  "sap.app": {
+	"id": "sap.ui.mdc.filterbar.sample",
+	"type": "application",
+	"applicationVersion": {
+	  "version": "1.0.0"
+	},
+	"ach": "CA-UI5-MDC"
+  },
+  "sap.ui": {
+	"technology": "UI5"
+  },
+  "sap.ui5": {
+	"rootView": {
+	  "id": "IDView",
+	  "viewName": "sap.ui.mdc.filterbar.sample.FilterBarTest",
+	  "type": "XML",
+	  "height": "100%",
+	  "async": true
+	},
+	"handleValidation": true,
+	"dependencies": {
+	   "minUI5Version": "${project.version}",
+				"libs": {
+					"sap.m": {
+						"lazy": true
+					},
+					"sap.ui.layout": {
+						"lazy": true
+					},"sap.ui.fl": {
+						"lazy": false
+					}
+				}
+	   },
+	  "models": {
+	     "i18n": {
+                "type": "sap.ui.model.resource.ResourceModel",
+                "uri": "i18n/i18n.properties"
+          }
+      }
+   }
+}

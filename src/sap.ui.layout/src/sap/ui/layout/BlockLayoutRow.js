@@ -2,18 +2,14 @@
  * ${copyright}
  */
 
- /**
-  * @typedef {Object} sap.ui.layout.BlockRowColorSets
-  * @typedef {Object} sap.ui.layout.BlockLayoutRow
-  */
 sap.ui.define([
-    'jquery.sap.global',
     'sap/ui/core/Control',
     './library',
     'sap/ui/layout/BlockLayoutCellData',
-    "./BlockLayoutRowRenderer"
+    "./BlockLayoutRowRenderer",
+    "sap/base/Log"
 ],
-	function(jQuery, Control, library, BlockLayoutCellData, BlockLayoutRowRenderer) {
+	function(Control, library, BlockLayoutCellData, BlockLayoutRowRenderer, Log) {
 		"use strict";
 
 		// shortcut for sap.ui.layout.BlockBackgroundType
@@ -40,7 +36,6 @@ sap.ui.define([
 		 * @public
 		 * @since 1.34
 		 * @alias sap.ui.layout.BlockLayoutRow
-		 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 		 */
 		var BlockLayoutRow = Control.extend("sap.ui.layout.BlockLayoutRow", {
 			metadata: {
@@ -82,7 +77,9 @@ sap.ui.define([
 					accentCells: {type: "sap.ui.layout.BlockLayoutCell", multiple: true, singularName: "accentCell"}
 				},
 				designtime: "sap/ui/layout/designtime/BlockLayoutRow.designtime"
-			}
+			},
+
+			renderer: BlockLayoutRowRenderer
 		});
 
 		BlockLayoutRow.prototype.init = function () {
@@ -107,6 +104,7 @@ sap.ui.define([
 				that = this;
 
 			aCells.forEach(function (oCell, index) {
+				that._ensureLayoutData(oCell);
 				oCell._setParentRowScrollable(that.getScrollable());
 			});
 
@@ -120,7 +118,7 @@ sap.ui.define([
 		 * @method
 		 * @param {sap.ui.layout.BlockRowColorSets} sType
 		 * @since 1.42
-		 * @returns {sap.ui.layout.BlockLayoutRow}
+		 * @returns {this}
 		 */
 		BlockLayoutRow.prototype.setRowColorSet = function (sType) {
 			// Apply here so if there's an exception the code bellow won't be executed
@@ -133,9 +131,8 @@ sap.ui.define([
 				aParentContent = oBlockLayout && oBlockLayout.getContent(),
 				oPrevBlockRow = (iThisIndexInParent && aParentContent[iThisIndexInParent - 1]) || null,
 				oNextBlockRow = (aParentContent && aParentContent[iThisIndexInParent + 1]) || null,
-				oBlockRowColorSets = BlockRowColorSets,
-				aColorSets = Object.keys(oBlockRowColorSets).map(function (sKey) {
-					return oBlockRowColorSets[sKey];
+				aColorSets = Object.keys(BlockRowColorSets).map(function (sKey) {
+					return BlockRowColorSets[sKey];
 				}),
 				bInvertedColorSet = false;
 
@@ -158,7 +155,7 @@ sap.ui.define([
 
 			// If the next row is of the same type and has the same CSS class, recalculate it and cascade
 			if (oNextBlockRow && oNextBlockRow._hasStyleClass(sClassName, sBackground, bInvertedColorSet, sType)) {
-				oNextBlockRow.setRowColorSet.apply(oNextBlockRow, aArgs);
+				oNextBlockRow.setRowColorSet(sType);
 			}
 
 			// Invalidate the whole row as the background dependencies, row color sets and accent cells should be resolved properly
@@ -170,26 +167,18 @@ sap.ui.define([
 		BlockLayoutRow.prototype.addAccentCell = function (vId) {
 			var oObject,
 				sId = vId && vId.getId ? vId.getId() : vId,
-				args = Array.prototype.slice.call(arguments),
-				oBackgrounds = BlockBackgroundType,
 				oBlockLayout = this.getParent(),
 				sLayoutBackground = oBlockLayout && (oBlockLayout.getBackground() || "");
 
-			oObject = this.addAssociation.apply(this, ["accentCells"].concat(args));
+			oObject = this.addAssociation("accentCells", vId);
 
 			if (!oBlockLayout) {
 				return this;
 			}
 
-			if ([oBackgrounds.Accent, oBackgrounds.Mixed].indexOf(sLayoutBackground) === -1) {
-				jQuery.sap.log.warning(sId + " was not se as accent cell. Accent cells could be set only for 'Accent' and 'Mixed' layout backgrounds.");
+			if ([BlockBackgroundType.Accent, BlockBackgroundType.Mixed].indexOf(sLayoutBackground) === -1) {
+				Log.warning(sId + " was not set as accent cell. Accent cells could be set only for 'Accent' and 'Mixed' layout backgrounds.");
 				return this;
-			}
-
-			if (oBackgrounds.Mixed === sLayoutBackground) {
-				this._processMixedCellStyles(sId, this.getContent());
-			} else if (oBackgrounds.Accent === sLayoutBackground) {
-				this._processAccentCellStyles(this.getAccentCells(), this.getContent());
 			}
 
 			return oObject;
@@ -308,7 +297,8 @@ sap.ui.define([
 		 * @method
 		 * @param {string} sId The ID of the row that will be processed
 		 * @param {Array} aCells Cells in the current row
-		 * @returns {sap.ui.layout.BlockLayoutRow}
+		 * @returns {this}
+		 * @deprecated since 1.50, together with BlockBackgroundType.Mixed
 		 */
 		BlockLayoutRow.prototype._processMixedCellStyles = function (sId, aCells) {
 			var oBlockLayout, bProcessAccentCells;
@@ -339,7 +329,7 @@ sap.ui.define([
 
 					this.removeAssociation("accentCells", oCell);
 
-					jQuery.sap.log.warning(sId + " was removed as accent cell. Only one cell at a time could be accented for Mixed layout background");
+					Log.warning(sId + " was removed as accent cell. Only one cell at a time could be accented for Mixed layout background");
 				}
 			}, this);
 
@@ -352,7 +342,7 @@ sap.ui.define([
 		 * @method
 		 * @param {Array} aAccentCells Cells with accent contrast
 		 * @param {Array} aRowCells All cells in the row
-		 * @returns {sap.ui.layout.BlockLayoutRow}
+		 * @returns {this}
 		 */
 		BlockLayoutRow.prototype._processAccentCellStyles = function (aAccentCells, aRowCells) {
 			var oCell, sCellId, sCalculatedStyleClass,

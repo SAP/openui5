@@ -1,54 +1,40 @@
 sap.ui.define([
-		'sap/m/MessageBox',
-		'sap/ui/core/Fragment',
-		'sap/ui/core/mvc/Controller',
-		'sap/ui/model/json/JSONModel'
-	], function(MessageBox, Fragment, Controller, JSONModel) {
+	"sap/ui/core/mvc/Controller",
+	"sap/m/MessageBox"
+], function (Controller, MessageBox) {
 	"use strict";
 
-	var CController = Controller.extend("sap.m.sample.MessageBoxInitialFocus.C", {
+	var sResponsivePaddingClasses = "sapUiResponsivePadding--header sapUiResponsivePadding--content sapUiResponsivePadding--footer";
 
-		onInit : function() {
-			// create any data and a model and set it to the view
-			var oData = {
-				checkBox1Text : "CheckBox",
-				checkBox2Text : "CheckBox - focused"
-			};
-			var oModel = new JSONModel(oData);
-			var oView = this.getView();
-			oView.setModel(oModel);
-		},
+	return Controller.extend("sap.m.sample.MessageBoxInitialFocus.C", {
 
-		handleConfirmMessageBoxPressInitialFocus: function(oEvent) {
-			var bCompact = !!this.getView().$().closest(".sapUiSizeCompact").length;
+		onInitialFocusOnAction: function () {
 			MessageBox.warning(
-					"Initial button focus is set by attribute \n initialFocus: sap.m.MessageBox.Action.CANCEL",
-					{
-						icon: MessageBox.Icon.WARNING,
-						title: "Focus on a Button",
-						actions: [sap.m.MessageBox.Action.OK, sap.m.MessageBox.Action.CANCEL],
-						styleClass: bCompact ? "sapUiSizeCompact" : "",
-						initialFocus: MessageBox.Action.CANCEL
-					}
+				"Initial button focus is set by attribute \n initialFocus: sap.m.MessageBox.Action.CANCEL",
+				{
+					icon: MessageBox.Icon.WARNING,
+					title: "Focus on a Button",
+					actions: [MessageBox.Action.OK, MessageBox.Action.CANCEL],
+					emphasizedAction: MessageBox.Action.OK,
+					initialFocus: MessageBox.Action.CANCEL,
+					styleClass: sResponsivePaddingClasses
+				}
 			);
 		},
 
-		handleShowMessageBoxPressInitialFocus: function(oEvent) {
-			var bCompact = !!this.getView().$().closest(".sapUiSizeCompact").length;
+		onInitialFocusOnCustomAction: function () {
 			MessageBox.show(
-					'Initial button focus is set by attribute \n initialFocus: \"Custom button\" \n Note: The name is not case sensitive',
-					{
-						icon: MessageBox.Icon.WARNING,
-						title: "Focus on a Custom Button",
-						actions: [MessageBox.Action.YES, MessageBox.Action.NO, "Custom Button"],
-						styleClass: bCompact ? "sapUiSizeCompact" : "",
-						initialFocus: "Custom Button"
-					}
+				'Initial button focus is set by attribute \n initialFocus: \"Custom button\" \n Note: The name is not case sensitive',
+				{
+					icon: MessageBox.Icon.WARNING,
+					title: "Focus on a Custom Action",
+					actions: [MessageBox.Action.YES, MessageBox.Action.NO, "Custom Action"],
+					emphasizedAction: "Custom Action",
+					initialFocus: "Custom Action",
+					styleClass: sResponsivePaddingClasses
+				}
 			);
 		}
+
 	});
-
-
-	return CController;
-
 });

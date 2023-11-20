@@ -1,32 +1,36 @@
 <!DOCTYPE html>
 <html>
-<head>
-    <title>Application under test</title>
-    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
-    <meta charset="utf-8">
-    <script
-            id='sap-ui-bootstrap'
-            src='../../../../../../../../resources/sap-ui-core.js'
-            data-sap-ui-theme='sap_belize'
-            data-sap-ui-libs='sap.m'
-            data-sap-ui-resourceroots='{
+	<head>
+		<meta charset="utf-8">
+
+		<title>Application under test</title>
+
+		<script
+			id='sap-ui-bootstrap'
+			src='../../../../../../../../resources/sap-ui-core.js'
+			data-sap-ui-theme='sap_belize'
+			data-sap-ui-libs='sap.m'
+			data-sap-ui-resourceroots='{
 				"appUnderTest" : "./"
 			}'
-            data-sap-ui-preload='async'>
-    </script>
-    <script>
-		sap.ui.getCore().attachInit(function () {
-			new sap.m.Shell('Shell', {
-				title: 'Application under test',
-				app: new sap.ui.core.ComponentContainer({
-					name: 'appUnderTest',
-					settings : {
-						id : "appUnderTest"
-					}
-				})
-			}).placeAt('content');
-		});
-    </script>
-</head>
-<body class="sapUiBody" id="content"></body>
+			data-sap-ui-preload='async'>
+		</script>
+		<script>
+			sap.ui.require(["sap/ui/core/Core"], function (Core) {
+				"use strict";
+				Core.ready().then(function () {
+					new sap.m.Shell('Shell', {
+						title: 'Application under test',
+						app: new sap.ui.core.ComponentContainer({
+							name: 'appUnderTest',
+							settings : {
+								id : "appUnderTest"
+							}
+						})
+					}).placeAt('content');
+				});
+			});
+		</script>
+	</head>
+	<body class="sapUiBody" id="content"></body>
 </html>

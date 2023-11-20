@@ -1,0 +1,18 @@
+{
+  "1.85.0": {
+    "date": "November 2020",
+    "notes": [
+      {
+        "id": "3d7e614dd7872c56ddde89b8eb4783c3a6f0566e",
+        "type": "FIX",
+        "text": ": RTA Context Menu button layouting",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080331570"
+          }
+        ]
+      }
+    ]
+  }
+}

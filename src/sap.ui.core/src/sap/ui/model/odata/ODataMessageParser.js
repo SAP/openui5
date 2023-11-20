@@ -1,25 +1,33 @@
 /*!
  * ${copyright}
  */
-
-sap.ui.define(["jquery.sap.global", "sap/ui/model/odata/ODataUtils", "sap/ui/core/library", "sap/ui/thirdparty/URI", "sap/ui/core/message/MessageParser", "sap/ui/core/message/Message"],
-	function(jQuery, ODataUtils, coreLibrary, URI, MessageParser, Message) {
+/*eslint-disable max-len */
+sap.ui.define([
+	"sap/ui/core/Lib",
+	"sap/ui/model/odata/ODataMetadata",
+	"sap/ui/model/odata/ODataUtils",
+	"sap/ui/core/library",
+	"sap/ui/thirdparty/URI",
+	"sap/ui/core/Messaging",
+	"sap/ui/core/message/MessageParser",
+	"sap/ui/core/message/Message",
+	"sap/base/Log"
+],
+	function(Library, ODataMetadata, ODataUtils, coreLibrary, URI, Messaging, MessageParser, Message, Log) {
 	"use strict";
 
-// shortcuts for enums
-var MessageType = coreLibrary.MessageType;
-
-/**
- * This map is used to translate back-end response severity values to the values defined in the
- * enumeration sap.ui.core.MessageType
- * @see sap.ui.core.ValueState
- */
-var mSeverityMap = {
-	"error":   MessageType.Error,
-	"warning": MessageType.Warning,
-	"success": MessageType.Success,
-	"info":    MessageType.Information
-};
+var sClassName = "sap.ui.model.odata.ODataMessageParser",
+	rEnclosingSlashes = /^\/+|\/$/g,
+	// shortcuts for enums
+	MessageType = coreLibrary.MessageType,
+	// This map is used to translate back-end response severity values to the values defined in the
+	// enumeration sap.ui.core.message.MessageType
+	mSeverity2MessageType = {
+		"error" : MessageType.Error,
+		"info" : MessageType.Information,
+		"success" : MessageType.Success,
+		"warning" : MessageType.Warning
+	};
 
 /**
  * A plain error object as returned by the server. Either "@sap-severity"- or "severity"-property
@@ -36,7 +44,7 @@ var mSeverityMap = {
 /**
  * A map containing the relevant request-URL and (if available) the request and response objects
  *
- * @typedef {map} ODataMessageParser~RequestInfo
+ * @typedef {object} ODataMessageParser~RequestInfo
  * @property {string} url - The URL of the request
  * @property {object} request - The request object
  * @property {object} response - The response object
@@ -45,9 +53,9 @@ var mSeverityMap = {
 /**
  * A map containing a parsed URL
  *
- * @typedef {map} ODataMessageParser~UrlInfo
+ * @typedef {object} ODataMessageParser~UrlInfo
  * @property {string} url - The URL, stripped of query and hash
- * @property {map} parameters - A map of the query parameters
+ * @property {Object<string,string>} parameters - A map of the query parameters
  * @property {string} hash - The hash value of the URL
  */
 
@@ -60,17 +68,24 @@ var mSeverityMap = {
  */
 
 /**
- * OData implementation of the sap.ui.core.message.MessageParser class. Parses message responses from the back-end.
+ * OData implementation of the sap.ui.core.message.MessageParser class. Parses message responses
+ * from the back end.
+ *
+ * @param {string} sServiceUrl
+ *   Base URI of the service used for the calculation of message targets
+ * @param {sap.ui.model.odata.ODataMetadata} oMetadata
+ *   The ODataMetadata object
+ * @param {boolean} bPersistTechnicalMessages
+ *   Whether technical messages should always be treated as persistent, since 1.83.0
  *
  * @class
- * @classdesc
- *   OData implementation of the sap.ui.core.message.MessageParser class. Parses message responses from the back-end.
+ *   OData implementation of the sap.ui.core.message.MessageParser class. Parses message responses
+ *   from the back end.
  * @extends sap.ui.core.message.MessageParser
  *
  * @author SAP SE
  * @version ${version}
  * @public
- * @abstract
  * @alias sap.ui.model.odata.ODataMessageParser
  */
 var ODataMessageParser = MessageParser.extend("sap.ui.model.odata.ODataMessageParser", {
@@ -78,13 +93,13 @@ var ODataMessageParser = MessageParser.extend("sap.ui.model.odata.ODataMessagePa
 		publicMethods: [ "parse", "setProcessor", "getHeaderField", "setHeaderField" ]
 	},
 
-	constructor: function(sServiceUrl, oMetadata) {
+	constructor: function(sServiceUrl, oMetadata, bPersistTechnicalMessages) {
 		MessageParser.apply(this);
 		this._serviceUrl = getRelativeServerUrl(this._parseUrl(sServiceUrl).url);
 		this._metadata = oMetadata;
-		this._processor = null;
 		this._headerField = "sap-message"; // Default header field
 		this._lastMessages = [];
+		this._bPersistTechnicalMessages = bPersistTechnicalMessages;
 	}
 });
 
@@ -105,7 +120,7 @@ ODataMessageParser.prototype.getHeaderField = function() {
  * Sets the header field name that should be used for parsing the JSON messages
  *
  * @param {string} sFieldName - The name of the header field that should be used as source of the message object
- * @return {sap.ui.model.odata.ODataMessageParser} Instance reference for method chaining
+ * @return {this} Instance reference for method chaining
  * @public
  */
 ODataMessageParser.prototype.setHeaderField = function(sFieldName) {
@@ -116,46 +131,66 @@ ODataMessageParser.prototype.setHeaderField = function(sFieldName) {
 
 /**
  * Parses the given response for messages, calculates the delta and fires the messageChange-event
- * on the MessageProcessor if messages are found.
+ * on the MessageProcessor if messages are found. Messages of responses to GET requests with status
+ * codes 204 or 424 are ignored.
  *
- * @param {object} oResponse - The response from the server containing body and headers
- * @param {object} oRequest - The original request that lead to this response
- * @param {map} mGetEntities - A map containing the entities requested from the back-end as keys
- * @param {map} mChangeEntities - A map containing the entities changed on the back-end as keys
- * @return {void}
+ * @param {object} oResponse
+ *   The response from the server containing body and headers
+ * @param {object} oRequest
+ *   The original request that lead to this response
+ * @param {object} [mGetEntities]
+ *   A map with the keys of the entities requested from the back-end mapped to true
+ * @param {object} [mChangeEntities]
+ *   A map with the keys of the entities changed in the back-end mapped to true
+ * @param {boolean} [bMessageScopeSupported]
+ *   Whether the used OData service supports the message scope
+ *   {@link sap.ui.model.odata.MessageScope.BusinessObject}
  * @public
  */
-ODataMessageParser.prototype.parse = function(oResponse, oRequest, mGetEntities, mChangeEntities) {
-	// TODO: Implement filter function
-	var aMessages = [];
+ODataMessageParser.prototype.parse = function(oResponse, oRequest, mGetEntities, mChangeEntities,
+		bMessageScopeSupported) {
+	var aMessages,
+		mRequestInfo,
+		sStatusCode = String(oResponse.statusCode);
 
-	var mRequestInfo = {
-		url: oRequest ? oRequest.requestUri : oResponse.requestUri,
+	if (oRequest.method === "GET" && sStatusCode === "204") {
+		return;
+	}
+
+	mRequestInfo = {
 		request: oRequest,
-		response: oResponse
+		response: oResponse,
+		url: oRequest.requestUri
 	};
 
 	if (oResponse.statusCode >= 200 && oResponse.statusCode < 300) {
 		// Status is 2XX - parse headers
-		this._parseHeader(/* ref: */ aMessages, oResponse, mRequestInfo);
+		aMessages = this._parseHeader(oResponse, mRequestInfo);
 	} else if (oResponse.statusCode >= 400 && oResponse.statusCode < 600) {
 		// Status us 4XX or 5XX - parse body
-		this._parseBody(/* ref: */ aMessages, oResponse, mRequestInfo);
+		try {
+			aMessages = this._parseBody(oResponse, mRequestInfo);
+		} catch (ex) {
+			aMessages = this._createGenericError(mRequestInfo);
+			Log.debug("Failed to parse error messages from the response body", ex, sClassName);
+		} finally {
+			this._logErrorMessages(aMessages, oRequest, sStatusCode);
+		}
 	} else {
-		// Status neither ok nor error - I don't know what to do
-		// TODO: Maybe this is ok and should be silently ignored...?
-		jQuery.sap.log.warning(
-			"No rule to parse OData response with status " + oResponse.statusCode + " for messages"
-		);
+		// Status neither ok nor error, may happen if no network connection is available (some
+		// browsers use status code 0 in that case)
+		aMessages = this._createGenericError(mRequestInfo);
+		Log.error("Request failed with unsupported status code " + sStatusCode + ": "
+			+ oRequest.method + " " + oRequest.requestUri, undefined, sClassName);
 	}
 
-	if (this._processor) {
-		this._propagateMessages(aMessages, mRequestInfo, mGetEntities, mChangeEntities);
-	} else {
-		// In case no message processor is attached, at least log to console.
-		// TODO: Maybe we should just output an error and do nothing, since this is not how messages are meant to be used like?
-		this._outputMesages(aMessages);
+	if (oRequest.method === "GET" && sStatusCode === "424") {
+		// Failed dependency: End user message already created for superordinate request
+		return;
 	}
+
+	this._propagateMessages(aMessages, mRequestInfo, mGetEntities, mChangeEntities,
+		!bMessageScopeSupported);
 };
 
 
@@ -165,375 +200,405 @@ ODataMessageParser.prototype.parse = function(oResponse, oRequest, mGetEntities,
 ////////////////////////////////////////// Private Methods /////////////////////////////////////////
 
 /**
- * Checks whether the property with the given name on the parent entity referenced by thegiven path is a
- * NavigationProperty.
+ * Computes the affected targets from the given messages contained in the response for the given
+ * request, the request and entities read from or changed in the back-end.
+ * These "affected targets" are used to check which currently available messages should be replaced
+ * with the new ones.
  *
- * @param {string} sParentEntity - The path of the parent entity in which to search for the NavigationProperty
- * @param {string} sPropertyName - The name of the property which should be checked whether it is a NavigationProperty
- * @returns {boolean} Returns true if the given property is a NavigationProperty
- * @private
+ * @param {sap.ui.core.message.Message[]} aMessages
+ *   All messages returned from the back-end in this request
+ * @param {object} mRequestInfo
+ *   The request info
+ * @param {object} mGetEntities
+ *   A map with the keys of the entities requested from the back-end mapped to true
+ * @param {object} mChangeEntities
+ *   A map with the keys of the entities changed in the back-end mapped to true
+ * @returns {object}
+ *   A map of affected targets as keys mapped to true
  */
-ODataMessageParser.prototype._isNavigationProperty = function(sParentEntity, sPropertyName) {
-	var mEntityType = this._metadata._getEntityTypeByPath(sParentEntity);
-	if (mEntityType) {
-		var aNavigationProperties = this._metadata._getNavigationPropertyNames(mEntityType);
-		return aNavigationProperties.indexOf(sPropertyName) > -1;
+ODataMessageParser.prototype._getAffectedTargets = function (aMessages, mRequestInfo, mGetEntities,
+		mChangeEntities) {
+	// unbound messages are always affected => add target ""
+	var mAffectedTargets = Object.assign({"" : true}, mGetEntities, mChangeEntities),
+		oEntitySet,
+		sRequestTarget = this._parseUrl(mRequestInfo.url).url;
+
+	if (mRequestInfo.request.key && mRequestInfo.request.created){
+		mAffectedTargets[mRequestInfo.request.key] = true;
 	}
 
-	return false;
-};
-
-/**
- * Parses the request URL as well as all message targets for paths that are affected, i.e. which have messages meaning
- * that currently available messages for that path will be replaced with the new ones
- *
- * @param {sap.ui.core.message.Message[]} aMessages - All messaged returned from the back-end in this request
- * @param {string} sRequestUri - The request URL
- * @param {map} mGetEntities - A map containing the entities requested from the back-end as keys
- * @param {map} mChangeEntities - A map containing the entities changed on the back-end as keys
- * @returns {map} A map of affected targets where every affected target
- */
-ODataMessageParser.prototype._getAffectedTargets = function(aMessages, sRequestUri, mGetEntities, mChangeEntities) {
-	var mAffectedTargets = jQuery.extend({
-		"": true // Allow global messages by default
-	}, mGetEntities, mChangeEntities);
-
-	// Get EntitySet for Requested resource
-	var sRequestTarget = this._parseUrl(sRequestUri).url;
-	if (sRequestTarget.indexOf(this._serviceUrl) === 0) {
-		// This is an absolute URL, remove the service part at the front
-		sRequestTarget = sRequestTarget.substr(this._serviceUrl.length + 1);
+	if (sRequestTarget.startsWith(this._serviceUrl)) {
+		sRequestTarget = sRequestTarget.slice(this._serviceUrl.length + 1);
+	}
+	oEntitySet = this._metadata._getEntitySetByPath(sRequestTarget);
+	if (oEntitySet) {
+		mAffectedTargets[oEntitySet.name] = true;
 	}
 
-	var mEntitySet = this._metadata._getEntitySetByPath(sRequestTarget);
-	if (mEntitySet) {
-		mAffectedTargets[mEntitySet.name] = true;
-	}
+	aMessages.forEach(function (oMessage) {
+		oMessage.getTargets().forEach(function (sTarget) {
+			var sParentEntity,
+				iSlashPos,
+				sTrimmedTarget;
 
-
-	// Get the EntitySet for every single target
-	for (var i = 0; i < aMessages.length; ++i) {
-		var sTarget = aMessages[i].getTarget();
-
-		if (sTarget) {
-			var sTrimmedTarget = sTarget.replace(/^\/+|\/$/g, "");
-			mAffectedTargets[sTrimmedTarget] = true;
-
-			var iSlashPos = sTrimmedTarget.lastIndexOf("/");
-			if (iSlashPos > 0) {
-				// This seems to be a property...
-				// But is it a NavigationProperty?
-				var sParentEntity = sTrimmedTarget.substr(0, iSlashPos);
-				var sProperty = sTrimmedTarget.substr(iSlashPos);
-
-				// If this is a property (but no NavigationProperty!), also remove the messages for the entity containing it
-				var bIsNavigationProperty = this._isNavigationProperty(sParentEntity, sProperty);
-				if (!bIsNavigationProperty) {
-					// It isn't a NavigationProperty, which means that the messages for this target belong to the
-					// entity. The entity must be added to the affected targets.
-					mAffectedTargets[sParentEntity] = true;
-				}
+			if (!sTarget) {
+				return;
 			}
 
-			// Info: As of 2015-11-12 the "parent" EntitySet should not be part of the affected targets, meaning that
-			//       messages for the entire collection should not be deleted just because one entry of that selection
-			//       has been requested.
-			//       Before this all messages for the parent collection were deleted when an entry returned anything.
-			//       This only concerns messages for the EntitySet itself, not for its entities.
-			//       Example:
-			//         GET /Products(1) used to delete all messages for /Products(1) and /Products
-			//         now it only deletes all messages for the single entity /Products(1)
-		}
-	}
+			sTrimmedTarget = sTarget.replace(rEnclosingSlashes, "");
+			mAffectedTargets[sTrimmedTarget] = true;
+			iSlashPos = sTrimmedTarget.lastIndexOf("/");
+			if (iSlashPos > 0) {
+				// this may be no entity, but we keep the existing logic to avoid regressions
+				sParentEntity = sTrimmedTarget.slice(0, iSlashPos);
+				mAffectedTargets[sParentEntity] = true;
+			}
+		});
+	});
 
 	return mAffectedTargets;
 };
 
 /**
  * This method calculates the message delta and gives it to the MessageProcessor (fires the
- * messageChange-event) based on the entities belonging to this request.
+ * messageChange-event) based on the entities belonging to this request. By using the request header
+ * "sap-messages" with the value <code>transientOnly</code> all existing messages are kept with the
+ * expectation to only receive transition messages from the back end.
  *
- * @param {sap.ui.core.message.Message[]} aMessages - All messaged returned from the back-end in this request
- * @param {ODataMessageParser~RequestInfo} mRequestInfo - Info object about the request URL
- * @param {map} mGetEntities - A map containing the entities requested from the back-end as keys
- * @param {map} mChangeEntities - A map containing the entities changed on the back-end as keys
- * @return {void}
+ * @param {sap.ui.core.message.Message[]} aMessages
+ *   All messaged returned from the back-end in this request
+ * @param {ODataMessageParser~RequestInfo} mRequestInfo
+ *   Info object about the request URL. If the "request" property of "mRequestInfo" is flagged with
+ *   "updateAggregatedMessages=true", all aggregated messages for the entities in the response are
+ *   updated. Aggregated messages are messages of child entities of these entities which belong to
+ *   the same business object.
+ * @param {map} [mGetEntities] - A map containing the entities requested from the back-end as keys
+ * @param {map} [mChangeEntities] - A map containing the entities changed on the back-end as keys
+ * @param {boolean} bSimpleMessageLifecycle
+ *   This flag is set to false, if the used OData Model v2 supports message scopes
  */
-ODataMessageParser.prototype._propagateMessages = function(aMessages, mRequestInfo, mGetEntities, mChangeEntities) {
-	var i, sTarget;
+ODataMessageParser.prototype._propagateMessages = function(aMessages, mRequestInfo, mGetEntities,
+		mChangeEntities, bSimpleMessageLifecycle) {
+	var mAffectedTargets,
+		sDeepPath = mRequestInfo.request.deepPath,
+		aKeptMessages = [],
+		aCanonicalPathsOfReturnedEntities,
+		bPrefixMatch = sDeepPath && mRequestInfo.request.updateAggregatedMessages,
+		bTransitionMessagesOnly = mRequestInfo.request.headers
+			&& mRequestInfo.request.headers["sap-messages"] === "transientOnly",
+		aRemovedMessages = [],
+		bReturnsCollection
+			= ODataMetadata._returnsCollection(mRequestInfo.request.functionMetadata),
+		bStateMessages,
+		iStatusCode,
+		bSuccess;
 
-	var mAffectedTargets = this._getAffectedTargets(aMessages, mRequestInfo.url, mGetEntities, mChangeEntities);
-
-	var aRemovedMessages = [];
-	var aKeptMessages = [];
-	for (i = 0; i < this._lastMessages.length; ++i) {
-		// Note: mGetEntities and mChangeEntities contain the keys without leading or trailing "/", so all targets must
-		// be trimmed here
-		sTarget = this._lastMessages[i].getTarget().replace(/^\/+|\/$/g, "");
-
-		// Get entity for given target (properties are not affected targets as all messages must be sent for affected entity)
-		var iPropertyPos = sTarget.lastIndexOf(")/");
-		if (iPropertyPos > 0) {
-			sTarget = sTarget.substr(0, iPropertyPos + 1);
-		}
-
-		if (mAffectedTargets[sTarget] && !this._lastMessages[i].getPersistent()) {
-			// Message belongs to targets handled/requested by this request
-			aRemovedMessages.push(this._lastMessages[i]);
-		} else {
-			// Message is not affected, i.e. should stay
-			aKeptMessages.push(this._lastMessages[i]);
-		}
+	function isTargetMatching(oMessage, aTargets) {
+		return aTargets.some(function (sTarget) { return mAffectedTargets[sTarget]; })
+			|| bPrefixMatch && oMessage.aFullTargets.some(function (sFullTarget) {
+				if (bReturnsCollection) {
+					return aCanonicalPathsOfReturnedEntities.some(function (sKey) {
+						var sKeyPredicate = sKey.slice(sKey.indexOf("("));
+						return sFullTarget.startsWith(sDeepPath + sKeyPredicate);
+					});
+				} else {
+					return sFullTarget.startsWith(sDeepPath);
+				}
+			});
 	}
 
-	this.getProcessor().fireMessageChange({
-		oldMessages: aRemovedMessages,
-		newMessages: aMessages
-	});
+	mGetEntities = mGetEntities || {};
 
+	if (bTransitionMessagesOnly) {
+		aKeptMessages = this._lastMessages;
+		bStateMessages = aMessages.some(function (oMessage) {
+			return !oMessage.getPersistent() && !oMessage.getTechnical();
+		});
+		if (bStateMessages) {
+			Log.error("Unexpected non-persistent message in response, but requested only "
+				+ "transition messages", undefined, sClassName);
+		}
+	} else {
+		mAffectedTargets = this._getAffectedTargets(aMessages, mRequestInfo, mGetEntities,
+			mChangeEntities);
+		// only the mGetEntities are relevant for function imports; mChangeEntities are used for
+		// DELETE and MERGE requests
+		aCanonicalPathsOfReturnedEntities = Object.keys(mGetEntities);
+		iStatusCode = mRequestInfo.response.statusCode;
+		bSuccess = (iStatusCode >= 200 && iStatusCode < 300);
+		this._lastMessages.forEach(function (oCurrentMessage) {
+			var aTargets = oCurrentMessage.getTargets().map(function (sTarget) {
+				// Note: mGetEntities and mChangeEntities contain the keys without leading or
+				// trailing "/", so all targets must be trimmed here
+				sTarget = sTarget.replace(rEnclosingSlashes, "");
+				// Get entity for given target (properties are not affected targets as all messages
+				// must be sent for affected entity)
+				var iPropertyPos = sTarget.lastIndexOf(")/");
+				if (iPropertyPos > 0) {
+					sTarget = sTarget.substr(0, iPropertyPos + 1);
+				}
+
+				return sTarget;
+			});
+
+			if (bSuccess || bSimpleMessageLifecycle){
+				if (!oCurrentMessage.getPersistent()
+						&& isTargetMatching(oCurrentMessage, aTargets)) {
+					aRemovedMessages.push(oCurrentMessage);
+				} else {
+					aKeptMessages.push(oCurrentMessage);
+				}
+			} else if (!oCurrentMessage.getPersistent() && oCurrentMessage.getTechnical()
+					&& isTargetMatching(oCurrentMessage, aTargets)) {
+				aRemovedMessages.push(oCurrentMessage);
+			} else {
+				aKeptMessages.push(oCurrentMessage);
+			}
+		});
+	}
+	Messaging.updateMessages(aRemovedMessages, aMessages);
 	this._lastMessages = aKeptMessages.concat(aMessages);
 };
 
 /**
- * Creates an sap.ui.core.message.Message from the given JavaScript object
+ * Creates a <code>sap.ui.core.message.Message</code> from the given JavaScript object parsed from a
+ * server response. Since 1.78.0 unbound non-technical messages are supported if the message scope
+ * for the request is <code>BusinessObject</code>.
  *
- * @param {ODataMessageParser~ServerError} oMessageObject - The object containing the message data
- * @param {ODataMessageParser~RequestInfo} mRequestInfo - Info object about the request URL
- * @param {boolean} bIsTechnical - Whether this is a technical error (like 404 - not found)
- * @return {sap.ui.core.message.Message} The message for the given error
+ * @param {ODataMessageParser~ServerError} oMessageObject
+ *   The object containing the message data
+ * @param {ODataMessageParser~RequestInfo} mRequestInfo
+ *   Info object about the request and the response; both properties <code>request</code> and
+ *   <code>response</code> of <code>mRequestInfo</code> are mandatory
+ * @param {boolean} bIsTechnical
+ *   Whether the given message object is a technical error (like 404 - not found)
+ * @return {sap.ui.core.message.Message}
+ *   The message for the given error
  */
-ODataMessageParser.prototype._createMessage = function(oMessageObject, mRequestInfo, bIsTechnical) {
-	var sType = oMessageObject["@sap.severity"]
-		? oMessageObject["@sap.severity"]
-		: oMessageObject["severity"];
-	// Map severity value to value defined in sap.ui.core.ValueState, use actual value if not found
-	sType = mSeverityMap[sType] ? mSeverityMap[sType] : sType;
+ODataMessageParser.prototype._createMessage = function (oMessageObject, mRequestInfo,
+		bIsTechnical) {
+	var bPersistent = oMessageObject.target && oMessageObject.target.indexOf("/#TRANSIENT#") === 0
+			|| oMessageObject.transient
+			|| oMessageObject.transition
+			|| bIsTechnical && this._bPersistTechnicalMessages,
+		oTargetInfos,
+		sText = typeof oMessageObject.message === "object"
+			? oMessageObject.message.value
+			: oMessageObject.message,
+		sType = oMessageObject["@sap.severity"] || oMessageObject.severity;
 
-	var sCode = oMessageObject.code ? oMessageObject.code : "";
-
-	var sText = typeof oMessageObject["message"] === "object" && oMessageObject["message"]["value"]
-		? oMessageObject["message"]["value"]
-		: oMessageObject["message"];
-
-	var sDescriptionUrl = oMessageObject.longtext_url ? oMessageObject.longtext_url : "";
-
-	var bPersistent = false;
-	if (!oMessageObject.target && oMessageObject.propertyref) {
-		oMessageObject.target = oMessageObject.propertyref;
-	}
-	// propertyRef is deprecated and should not be used if a target is specified
-	if (typeof oMessageObject.target === "undefined") {
-		oMessageObject.target = "";
-	}
-
-	if (oMessageObject.target.indexOf("/#TRANSIENT#") === 0) {
-		bPersistent = true;
-		oMessageObject.target = oMessageObject.target.substr(12);
-	} else if (oMessageObject.transient) {
-		bPersistent = true;
-	}
-
-	var sTarget = this._createTarget(oMessageObject, mRequestInfo);
+	oMessageObject.transition = !!bPersistent;
+	oTargetInfos = this._createTargets(oMessageObject, mRequestInfo, bIsTechnical);
 
 	return new Message({
-		type:      sType,
-		code:      sCode,
-		message:   sText,
-		descriptionUrl: sDescriptionUrl,
-		target:    ODataUtils._normalizeKey(sTarget),
-		processor: this._processor,
-		technical: bIsTechnical,
-		persistent: bPersistent
+		code : oMessageObject.code || "",
+		description : oMessageObject.description,
+		descriptionUrl : oMessageObject.longtext_url || "",
+		fullTarget : oTargetInfos.aDeepPaths,
+		message : sText,
+		persistent : !!bPersistent,
+		processor : this._processor,
+		target : oTargetInfos.aTargets,
+		technical : bIsTechnical,
+		technicalDetails : {
+			headers : mRequestInfo.response.headers,
+			statusCode : mRequestInfo.response.statusCode
+		},
+		type : mSeverity2MessageType[sType] || sType
 	});
 };
 
 /**
- * Returns the path of the Entity affected by the given FunctionImport. It either uses the location header sent by the
- * back-end or if none is sent tries to construct the correct URL from the metadata information about the function.
- * In case the URL of the target is built using only one key, the parameter-name is removed from the URL.
- * Example, if there are two keys "A" and "B", the URL mitgt look like this: "/List(A=1,B=2)" in case there is only one
- * key named "A", the URL would be "/List(1)"
+ * Whether the given response is the response for a successful entity creation.
  *
- * @param {map} mFunctionInfo - Function information map as returned by sap.ui.model.odata.ODataMetadata._getFunctionImportMetadata
- * @param {ODataMessageParser~RequestInfo} mRequestInfo - Map containing information about the current request
- * @param {ODataMessageParser~UrlInfo} mUrlData - Map containing parsed URL information as returned by sap.ui.mode.odata.ODataMessageParser._parseUrl
- * @returns {string} The Path to the affected entity
- */
-ODataMessageParser.prototype._getFunctionTarget = function(mFunctionInfo, mRequestInfo, mUrlData) {
-	var sTarget = "";
-
-	var i;
-
-	// In case of a function import the location header may point to the correct entry in the service.
-	// This should be the case for writing/changing operations using POST
-	if (mRequestInfo.response && mRequestInfo.response.headers && mRequestInfo.response.headers["location"]) {
-		sTarget = mRequestInfo.response.headers["location"];
-
-		var iPos = sTarget.lastIndexOf(this._serviceUrl);
-		if (iPos > -1) {
-			sTarget = sTarget.substr(iPos + this._serviceUrl.length);
-		}
-	} else {
-
-		// Search for "action-for" annotation
-		var sActionFor = null;
-		if (mFunctionInfo.extensions) {
-			for (i = 0; i < mFunctionInfo.extensions.length; ++i) {
-				if (mFunctionInfo.extensions[i].name === "action-for") {
-					sActionFor = mFunctionInfo.extensions[i].value;
-					break;
-				}
-			}
-		}
-
-		var mEntityType;
-		if (sActionFor) {
-			mEntityType = this._metadata._getEntityTypeByName(sActionFor);
-		} else if (mFunctionInfo.entitySet) {
-			mEntityType = this._metadata._getEntityTypeByPath(mFunctionInfo.entitySet);
-		} else if (mFunctionInfo.returnType) {
-			mEntityType = this._metadata._getEntityTypeByName(mFunctionInfo.returnType);
-		}
-		if (mEntityType){
-			var mEntitySet = this._metadata._getEntitySetByType(mEntityType);
-
-			if (mEntitySet && mEntityType && mEntityType.key && mEntityType.key.propertyRef) {
-
-				var sId = "";
-				var sParam;
-
-				if (mEntityType.key.propertyRef.length === 1) {
-					// Just the ID in brackets
-					sParam = mEntityType.key.propertyRef[0].name;
-					if (mUrlData.parameters[sParam]) {
-						sId = mUrlData.parameters[sParam];
-					}
-				} else {
-					// Build ID string from keys
-					var aKeys = [];
-					for (i = 0; i < mEntityType.key.propertyRef.length; ++i) {
-						sParam = mEntityType.key.propertyRef[i].name;
-						if (mUrlData.parameters[sParam]) {
-							aKeys.push(sParam + "=" + mUrlData.parameters[sParam]);
-						}
-					}
-					sId = aKeys.join(",");
-				}
-
-				sTarget = "/" + mEntitySet.name + "(" + sId + ")";
-			} else if (!mEntitySet) {
-				jQuery.sap.log.error("Could not determine path of EntitySet for function call: " + mUrlData.url);
-			} else {
-				jQuery.sap.log.error("Could not determine keys of EntityType for function call: " + mUrlData.url);
-			}
-		}
-	}
-
-	return sTarget;
-};
-
-
-/**
- * Creates an absolute target URL (relative to the service URL) from the given message-object and
- * the Response. It uses the service-URL to extract the base URI of the message from the response-
- * URI and appends the target if the target was not specified as absolute path (with leading "/")
+ * @param {ODataMessageParser~RequestInfo} mRequestInfo
+ *   A map containing information about the current request
+ * @return {boolean|undefined}
+ *   <code>true</code> if the response is for a successful creation and the response header has a
+ *   "location" property, <code>false</code> if the response is an error response for a failed
+ *   creation, and <code>undefined</code> otherwise.
  *
- * @param {ODataMessageParser~ServerError} oMessageObject - The object containing the message data
- * @param {ODataMessageParser~RequestInfo} mRequestInfo - Map containing information about the current request
- * @return {string} The actual target string
  * @private
  */
-ODataMessageParser.prototype._createTarget = function(oMessageObject, mRequestInfo) {
-	var sTarget = oMessageObject.target;
+ODataMessageParser._isResponseForCreate = function (mRequestInfo) {
+	var oRequest = mRequestInfo.request,
+		oResponse = mRequestInfo.response;
 
-	if (sTarget.substr(0, 1) !== "/") {
-		var sRequestTarget = "";
+	if (oRequest.method === "POST" && oResponse.statusCode == 201
+			&& oResponse.headers["location"]) {
+		return true;
+	}
+	if (oRequest.key && oRequest.created && oResponse.statusCode >= 400) {
+		return false;
+	}
+	return undefined;
+};
 
-		// special case for 201 POST requests which create a resource
-		// The target is a relative resource path segment that can be appended to the Location response header (for POST requests that create a new entity)
-		var sMethod = (mRequestInfo.request && mRequestInfo.request.method) ? mRequestInfo.request.method : "GET";
-		var bRequestCreatePost = (sMethod === "POST"
-			&& mRequestInfo.response
-			&& mRequestInfo.response.statusCode == 201
-			&& mRequestInfo.response.headers
-			&& mRequestInfo.response.headers["location"]);
+/**
+ * Determines the absolute target URL (relative to the service URL) from the given
+ * <code>sODataTarget</code> and from the given request info and calculates <code>target</code> and
+ * <code>deepPath</code> used for the creation of a UI5 message object.
+ * If the given <code>sODataTarget</code> is not absolute, it uses the location header of the
+ * response (in case of a successful creation of an entity), the internal entity key (in case of a
+ * failed creation of an entity) or the request URL to determine the <code>target</code> and
+ * <code>deepPath</code>.
+ * The <code>deepPath</code> is always reduced, that means all adjacent partner attributes have been
+ * removed from the target path.
+ * If given <code>sODataTarget</code> is for a technical transition message, or if no
+ * <code>sODataTarget</code> is given, the request used the message scope
+ * <code>BusinessObject</code> and the response is no technical error, then the <code>target</code>
+ * and <code>deepPath</code> are set to empty string.
+ *
+ * @param {string} sODataTarget
+ *   The target
+ * @param {ODataMessageParser~RequestInfo} mRequestInfo
+ *   A map containing information about the current request
+ * @param {boolean} bIsTechnical
+ *   Whether this is a technical error (like 404 - not found)
+ * @param {boolean} bODataTransition
+ *   Whether this is a transition error
+ * @returns {object}
+ *   An object with the target info for the creation of a UI5 message object with the properties
+ *   <code>deepPath</code> and <code>target</code>
+ * @private
+ */
+ODataMessageParser.prototype._createTarget = function (sODataTarget, mRequestInfo, bIsTechnical,
+		bODataTransition) {
+	var sCanonicalTarget, bCreate, sDeepPath, iPos, sPreviousCanonicalTarget, sRequestTarget, sUrl,
+		mUrlData, sUrlForTargetCalculation,
+		oRequest = mRequestInfo.request,
+		oResponse = mRequestInfo.response;
 
-		var sUrlForTargetCalculation;
-		if (bRequestCreatePost) {
-			sUrlForTargetCalculation = mRequestInfo.response.headers["location"];
-		} else if (mRequestInfo.request && mRequestInfo.request.key && mRequestInfo.request.created && mRequestInfo.response && mRequestInfo.response.statusCode >= 400) {
-			// If a create request returns an error the target should be set to the internal entity key
-			sUrlForTargetCalculation = mRequestInfo.request.key;
+	if (sODataTarget === undefined
+			&& (!bIsTechnical && oRequest.headers["sap-message-scope"] === "BusinessObject"
+			|| bIsTechnical && bODataTransition)) {
+		return {deepPath : "", target : ""};
+	}
+	sODataTarget = sODataTarget || "";
+	sODataTarget = sODataTarget.startsWith("/#TRANSIENT#") ? sODataTarget.slice(12) : sODataTarget;
+
+	if (sODataTarget[0] !== "/") {
+		bCreate = ODataMessageParser._isResponseForCreate(mRequestInfo);
+		sDeepPath = oRequest.deepPath || "";
+
+		if (bCreate === true) { // successful create
+			// special case for 201 POST requests which create a resource;
+			// the target is a relative resource path segment that can be appended to the location
+			// response header (for POST requests that create a new entity)
+			sUrlForTargetCalculation = oResponse.headers["location"];
+		} else if (bCreate === false) { // failed create
+			sUrlForTargetCalculation = oRequest.key;
 		} else {
 			sUrlForTargetCalculation = mRequestInfo.url;
 		}
-
-		//parsing
-		var mUrlData = this._parseUrl(sUrlForTargetCalculation);
-		var sUrl = mUrlData.url;
-
-		var iPos = sUrl.lastIndexOf(this._serviceUrl);
+		mUrlData = this._parseUrl(sUrlForTargetCalculation);
+		sUrl = mUrlData.url;
+		iPos = sUrl.indexOf(this._serviceUrl);
 		if (iPos > -1) {
-			sRequestTarget = sUrl.substr(iPos + this._serviceUrl.length + 1);
-		} else {
-			sRequestTarget = sUrl;
+			sRequestTarget = sUrl.slice(iPos + this._serviceUrl.length);
+		} else { // e.g. within $batch responses
+			sRequestTarget = "/" + sUrl;
 		}
 
-		// function import case
-		if (!bRequestCreatePost) {
-			var mFunctionInfo = this._metadata._getFunctionImportMetadata(sRequestTarget, sMethod);
-
-			if (mFunctionInfo) {
-				sRequestTarget = this._getFunctionTarget(mFunctionInfo, mRequestInfo, mUrlData);
-
-				if (sTarget) {
-					sTarget = sRequestTarget + "/" + sTarget;
-				} else {
-					sTarget = sRequestTarget;
-				}
-				return sTarget;
-			}
+		// bCreate === false might be a failed function import
+		if (!bCreate && oRequest.functionMetadata) {
+			sRequestTarget = oRequest.functionTarget;
 		}
-
-		sRequestTarget = "/" + sRequestTarget;
-
 		// If sRequestTarget is a collection, we have to add the target without a "/". In this case
 		// a target would start with the specific product (like "(23)"), but the request itself
 		// would not have the brackets
-		var iSlashPos = sRequestTarget.lastIndexOf("/");
-		var sRequestTargetName = iSlashPos > -1 ? sRequestTarget.substr(iSlashPos) : sRequestTarget;
-		if (sRequestTargetName.indexOf("(") > -1) {
-			// It is an entity
-			sTarget = sRequestTarget + "/" + sTarget;
-		} else {
-			// It's a collection
-			sTarget = sRequestTarget + sTarget;
+		if (sRequestTarget.slice(sRequestTarget.lastIndexOf("/")).indexOf("(") > -1
+				|| !this._metadata._isCollection(sRequestTarget)) {// references a single entity
+			sDeepPath = sODataTarget ? sDeepPath + "/" + sODataTarget : sDeepPath;
+			sODataTarget = sODataTarget ? sRequestTarget + "/" + sODataTarget : sRequestTarget;
+		} else { // references a collection or the complete $batch
+			sDeepPath = sDeepPath + sODataTarget;
+			sODataTarget = sRequestTarget + sODataTarget;
 		}
+	}
 
+	sCanonicalTarget = this._processor.resolve(sODataTarget, undefined, true);
+	// Multiple resolve steps are necessary for paths containing multiple navigation properties
+	// with to n relation, e.g. /SalesOrder(1)/toItem(2)/toSubItem(3)
+	while (sCanonicalTarget && sCanonicalTarget.lastIndexOf("/") > 0
+			&& sCanonicalTarget !== sPreviousCanonicalTarget) {
+		sPreviousCanonicalTarget = sCanonicalTarget;
+		sCanonicalTarget = this._processor.resolve(sCanonicalTarget, undefined, true)
+			// if canonical path cannot be determined, take the previous
+			|| sPreviousCanonicalTarget;
+	}
+	sODataTarget = sCanonicalTarget || sODataTarget;
 
-	} /* else {
-		// Absolute target path, do not use base URL
-	} */
+	return {
+		deepPath : ODataUtils._normalizeKey(this._metadata._getReducedPath(sDeepPath || sODataTarget)),
+		target : ODataUtils._normalizeKey(sODataTarget)
+	};
+};
 
-	return sTarget;
+/**
+ * Computes arrays of targets and deep paths from an OData message object for the creation of a UI5
+ * message object see {@link sap.ui.core.message.Message}.
+ *
+ * @param {ODataMessageParser~ServerError} oMessageObject
+ *   The object containing the message data
+ * @param {ODataMessageParser~RequestInfo} mRequestInfo
+ *   A map containing information about the current request
+ * @param {boolean} bIsTechnical
+ *   Whether this is a technical error (like 404 - not found)
+ * @returns {object}
+ *   An object with the target info for the creation of a UI5 message object with the properties
+ *   <code>aDeepPaths</code>, an array containing the deep paths and <code>aTargets</code>, an array
+ *   containing the targets
+ * @private
+ */
+ODataMessageParser.prototype._createTargets = function(oMessageObject, mRequestInfo, bIsTechnical) {
+	var aDeepPaths = [],
+		aMessageObjectTargets = Array.isArray(oMessageObject.additionalTargets)
+			? [oMessageObject.target].concat(oMessageObject.additionalTargets)
+			: [oMessageObject.target],
+		oTargetInfo,
+		aTargets = [],
+		that = this;
+
+	if (oMessageObject.propertyref !== undefined && aMessageObjectTargets[0] !== undefined) {
+		Log.warning("Used the message's 'target' property for target calculation; the property"
+			+ " 'propertyref' is deprecated and must not be used together with 'target'",
+			mRequestInfo.url, sClassName);
+	} else if (aMessageObjectTargets[0] === undefined) {
+		aMessageObjectTargets[0] = oMessageObject.propertyref;
+	}
+
+	aMessageObjectTargets.forEach(function (sAdditionalTarget) {
+		oTargetInfo = that._createTarget(sAdditionalTarget, mRequestInfo, bIsTechnical,
+			oMessageObject.transition);
+		aDeepPaths.push(oTargetInfo.deepPath);
+		aTargets.push(oTargetInfo.target);
+	});
+
+	return {
+		aDeepPaths : aDeepPaths,
+		aTargets : aTargets
+	};
 };
 
 /**
  * Parses the header with the set headerField and tries to extract the messages from it.
  *
- * @param {sap.ui.core.message.Message[]} aMessages - The Array into which the new messages are added
  * @param {object} oResponse - The response object from which the headers property map will be used
  * @param {ODataMessageParser~RequestInfo} mRequestInfo - Info object about the request URL
- *
+ * @returns {sap.ui.core.message.Message[]} An array with messages contained in the header
  */
-ODataMessageParser.prototype._parseHeader = function(/* ref: */ aMessages, oResponse, mRequestInfo) {
-	var sField = this.getHeaderField();
+ODataMessageParser.prototype._parseHeader = function (oResponse, mRequestInfo) {
+	var i, sKey, sMessages, oServerMessage,
+		sField = this.getHeaderField(),
+		aMessages = [];
+
 	if (!oResponse.headers) {
 		// No header set, nothing to process
-		return;
+		return aMessages;
 	}
 
-	for (var sKey in oResponse.headers) {
+	for (sKey in oResponse.headers) {
 		if (sKey.toLowerCase() === sField.toLowerCase()) {
 			sField = sKey;
 		}
@@ -541,11 +606,10 @@ ODataMessageParser.prototype._parseHeader = function(/* ref: */ aMessages, oResp
 
 	if (!oResponse.headers[sField]) {
 		// No header set, nothing to process
-		return;
+		return aMessages;
 	}
 
-	var sMessages = oResponse.headers[sField];
-	var oServerMessage = null;
+	sMessages = oResponse.headers[sField];
 
 	try {
 		oServerMessage = JSON.parse(sMessages);
@@ -553,149 +617,218 @@ ODataMessageParser.prototype._parseHeader = function(/* ref: */ aMessages, oResp
 		aMessages.push(this._createMessage(oServerMessage, mRequestInfo));
 
 		if (Array.isArray(oServerMessage.details)) {
-			for (var i = 0; i < oServerMessage.details.length; ++i) {
+			for (i = 0; i < oServerMessage.details.length; i += 1) {
 				aMessages.push(this._createMessage(oServerMessage.details[i], mRequestInfo));
 			}
 		}
-
 	} catch (ex) {
-		jQuery.sap.log.error("The message string returned by the back-end could not be parsed");
-		return;
+		Log.error("The message string returned by the back-end could not be parsed: '" + ex.message + "'");
+
+		return aMessages;
 	}
+
+	return aMessages;
 };
 
 /**
  * Parses the body of the request and tries to extract the messages from it.
  *
- * @param {sap.ui.core.message.Message[]} aMessages - The Array into which the new messages are added
  * @param {object} oResponse - The response object from which the body property will be used
  * @param {ODataMessageParser~RequestInfo} mRequestInfo - Info object about the request URL
+ * @returns {sap.ui.core.message.Message[]} An array with messages contained in the body
+ * @throws {Error} If the body cannot be parsed
  */
-ODataMessageParser.prototype._parseBody = function(/* ref: */ aMessages, oResponse, mRequestInfo) {
-	// TODO: The main error object does not support "target". Find out how to proceed with the main error information (ignore/add without target/add to all other errors)
-
+ODataMessageParser.prototype._parseBody = function (oResponse, mRequestInfo) {
 	var sContentType = getContentType(oResponse);
-	if (sContentType && sContentType.indexOf("xml") > -1) {
-		// XML response
-		this._parseBodyXML(/* ref: */ aMessages, oResponse, mRequestInfo, sContentType);
-	} else {
-		// JSON response
-		this._parseBodyJSON(/* ref: */ aMessages, oResponse, mRequestInfo);
-	}
 
-	// Messages from an error response should contain duplicate messages - the main error should be the
-	// same as the first errordetail error. If this is the case, remove the first one.
-	if (aMessages.length > 1) {
-		for (var iIndex = 1; iIndex < aMessages.length; iIndex++) {
-			if (aMessages[0].getCode() == aMessages[iIndex].getCode() && aMessages[0].getMessage() == aMessages[iIndex].getMessage()) {
-				aMessages.shift(); // Remove outer error, since inner error is more detailed
-				break;
-			}
-		}
-	}
+	return (sContentType && sContentType.indexOf("xml") > -1)
+		? this._parseBodyXML(oResponse, mRequestInfo, sContentType)
+		: this._parseBodyJSON(oResponse, mRequestInfo);
 };
 
 
 /**
+ * Creates a technical generic error message and returns it in an array containing only this error
+ * message. The <code>description</code> of the error message is the response body.
+ *
+ * @param {ODataMessageParser~RequestInfo} mRequestInfo
+ *   Info object about the request and the response
+ * @returns {sap.ui.core.message.Message[]}
+ *   The array with the generic error message
+ */
+ODataMessageParser.prototype._createGenericError = function (mRequestInfo) {
+	return [this._createMessage({
+			description : mRequestInfo.response.body,
+			message : Library.getResourceBundleFor("sap.ui.core").getText("CommunicationError"),
+			severity : MessageType.Error,
+			transition : true
+		}, mRequestInfo, true)];
+};
+
+/**
+ * Gets the body messages from the given outer and inner messages. If there is a message in the
+ * inner messages with the same code and message as the outer message, the outer message is filtered
+ * out. If the request given in "mRequestInfo" has a "Content-ID" header only messages without a
+ * "ContentID" or with the same "ContentID" are returned.
+ *
+ * @param {object} oOuterError
+ *   The outer error message as parsed by "_parseBodyJSON" or "_parseBodyXML"; outer message differs
+ *   in the "message" property, in JSON it is an object like {value : "foo"} and in XML it is a
+ *   string; "_createMessage" takes care of this difference
+ * @param {object[]} aInnerErrors
+ *   The inner error messages as parsed by "_parseBodyJSON" or "_parseBodyXML"
+ * @param {ODataMessageParser~RequestInfo} mRequestInfo
+ *   Info object about the request URL
+ * @returns {sap.ui.core.message.Message[]}
+ *   An array with messages contained in the body
+ */
+ODataMessageParser.prototype._getBodyMessages = function (oOuterError, aInnerErrors, mRequestInfo) {
+	var sContentID = mRequestInfo.request.headers["Content-ID"],
+		aMessages = [],
+		oOuterMessage = this._createMessage(oOuterError, mRequestInfo, true),
+		that = this;
+
+	aInnerErrors.forEach(function (oInnerError) {
+		var oMessage = that._createMessage(oInnerError, mRequestInfo, true);
+
+		if (oOuterMessage && oOuterMessage.getCode() === oMessage.getCode()
+				&& oOuterMessage.getMessage() === oMessage.getMessage()) {
+			oOuterMessage = undefined;
+		}
+
+		if (!sContentID || !oInnerError.ContentID || sContentID === oInnerError.ContentID) {
+			aMessages.push(oMessage);
+		}
+	});
+
+	if (oOuterMessage) {
+		aMessages.unshift(oOuterMessage);
+	}
+
+	return aMessages;
+};
+
+/**
+ * Logs the given messages as an error.
+ *
+ * @param {sap.ui.core.message.Message[]} aMessages Messages to be logged
+ * @param {object} oRequest The request object which caused the given messages
+ * @param {string} sStatusCode The status code of the error response
+ */
+ODataMessageParser.prototype._logErrorMessages = function (aMessages, oRequest, sStatusCode) {
+	var sErrorDetails = aMessages.length
+			? JSON.stringify(aMessages.map(function (oMessage) {
+				return {
+					code : oMessage.getCode(),
+					message : oMessage.getMessage(),
+					persistent : oMessage.getPersistent(),
+					targets : oMessage.getTargets(),
+					type : oMessage.getType()
+				};
+			}))
+			: "Another request in the same change set failed";
+
+	Log.error("Request failed with status code " + sStatusCode + ": " + oRequest.method + " "
+		+ oRequest.requestUri, sErrorDetails, sClassName);
+};
+
+/**
  * Parses the body of a JSON request and tries to extract the messages from it.
  *
- * @param {sap.ui.core.message.Message[]} aMessages - The Array into which the new messages are added
  * @param {object} oResponse - The response object from which the body property will be used
  * @param {ODataMessageParser~RequestInfo} mRequestInfo - Info object about the request URL
  * @param {string} sContentType - The content type of the response (for the XML parser)
- * @return {void}
+ * @returns {sap.ui.core.message.Message[]} An array with messages contained in the body
+ * @throws {Error} If the body cannot be parsed
  */
-ODataMessageParser.prototype._parseBodyXML = function(/* ref: */ aMessages, oResponse, mRequestInfo, sContentType) {
-	try {
-		// TODO: I do not have a V4 service to test this with.
+ODataMessageParser.prototype._parseBodyXML = function(oResponse, mRequestInfo, sContentType) {
+	var oChildNode, sChildName, oError, i, m, n, oNode,
+		oDoc = new DOMParser().parseFromString(oResponse.body, sContentType),
+		aElements = getAllElements(oDoc, [ "error", "errordetail" ]),
+		aErrors = [];
 
-		var oDoc = new DOMParser().parseFromString(oResponse.body, sContentType);
-		var aElements = getAllElements(oDoc, [ "error", "errordetail" ]);
-		for (var i = 0; i < aElements.length; ++i) {
-			var oNode = aElements[i];
+	if (!aElements.length) {
+		return this._createGenericError(mRequestInfo);
+	}
+	for (i = 0; i < aElements.length; i += 1) {
+		oNode = aElements[i];
 
-			var oError = {};
-			// Manually set severity in case we get an error response
-			oError["severity"] = MessageType.Error;
+		oError = {};
+		// Manually set severity in case we get an error response
+		oError.severity = MessageType.Error;
 
-			for (var n = 0; n < oNode.childNodes.length; ++n) {
-				var oChildNode = oNode.childNodes[n];
-				var sChildName = oChildNode.nodeName;
+		for (n = 0; n < oNode.childNodes.length; n += 1) {
+			oChildNode = oNode.childNodes[n];
+			sChildName = oChildNode.nodeName;
 
-				if (sChildName === "errordetails" || sChildName === "details" || sChildName === "innererror" || sChildName === "#text") {
-					// Ignore known children that contain other errors
-					continue;
-				}
-
-				if (sChildName === "message" && oChildNode.hasChildNodes() && oChildNode.firstChild.nodeType !== window.Node.TEXT_NODE) {
-					// Special case for V2 error message - the message is in the child node "value"
-					for (var m = 0; m < oChildNode.childNodes.length; ++m) {
-						if (oChildNode.childNodes[m].nodeName === "value") {
-							oError["message"] = oChildNode.childNodes[m].text || oChildNode.childNodes[m].textContent;
-						}
-					}
-				} else {
-					oError[oChildNode.nodeName] = oChildNode.text || oChildNode.textContent;
-				}
+			if (sChildName === "errordetails" || sChildName === "details"
+					|| sChildName === "innererror" || sChildName === "#text") {
+				// Ignore known children that contain other errors
+				continue;
 			}
 
-			aMessages.push(this._createMessage(oError, mRequestInfo, true));
+			if (sChildName === "message" && oChildNode.hasChildNodes()
+					&& oChildNode.firstChild.nodeType !== window.Node.TEXT_NODE) {
+				// Special case for V2 error message - the message is in the child node "value"
+				for (m = 0; m < oChildNode.childNodes.length; m += 1) {
+					if (oChildNode.childNodes[m].nodeName === "value") {
+						oError.message = oChildNode.childNodes[m].text
+							|| oChildNode.childNodes[m].textContent;
+					}
+				}
+			} else {
+				oError[oChildNode.nodeName] = oChildNode.text || oChildNode.textContent;
+			}
 		}
-	} catch (ex) {
-		jQuery.sap.log.error("Error message returned by server could not be parsed");
+
+		aErrors.push(oError);
 	}
+
+	return this._getBodyMessages(aErrors[0], aErrors.slice(1), mRequestInfo);
 };
 
 /**
  * Parses the body of a JSON request and tries to extract the messages from it.
  *
- * @param {sap.ui.core.message.Message[]} aMessages - The Array into which the new messages are added
  * @param {object} oResponse - The response object from which the body property will be used
  * @param {ODataMessageParser~RequestInfo} mRequestInfo - Info object about the request URL
- * @return {void}
+ * @returns {sap.ui.core.message.Message[]} An array with messages contained in the body
+ * @throws {Error} If the body cannot be parsed
  */
-ODataMessageParser.prototype._parseBodyJSON = function(/* ref: */ aMessages, oResponse, mRequestInfo) {
-	try {
-		var oErrorResponse = JSON.parse(oResponse.body);
+ODataMessageParser.prototype._parseBodyJSON = function(oResponse, mRequestInfo) {
+	var aInnerErrors, oOuterError,
+		oErrorResponse = JSON.parse(oResponse.body);
 
-		var oError;
-		if (oErrorResponse["error"]) {
-			// V4 response according to OData specification or V2 response according to MS specification and SAP message specification
-			oError = oErrorResponse["error"];
-		} else {
-			// Actual V2 response in some tested services
-			oError = oErrorResponse["odata.error"];
-		}
-
-		if (!oError) {
-			jQuery.sap.log.error("Error message returned by server did not contain error-field");
-			return;
-		}
-
-		// Manually set severity in case we get an error response
-		oError["severity"] = MessageType.Error;
-
-		aMessages.push(this._createMessage(oError, mRequestInfo, true));
-
-		// Check if more than one error has been returned from the back-end
-		var aFurtherErrors = null;
-		if (Array.isArray(oError.details)) {
-			// V4 errors
-			aFurtherErrors = oError.details;
-		} else if (oError.innererror && Array.isArray(oError.innererror.errordetails)) {
-			// V2 errors
-			aFurtherErrors = oError.innererror.errordetails;
-		} else {
-			// No further errors
-			aFurtherErrors = [];
-		}
-
-		for (var i = 0; i < aFurtherErrors.length; ++i) {
-			aMessages.push(this._createMessage(aFurtherErrors[i], mRequestInfo, true));
-		}
-	} catch (ex) {
-		jQuery.sap.log.error("Error message returned by server could not be parsed");
+	if (oErrorResponse.error) {
+		// V4 response according to OData specification or V2 response according to MS specification
+		// and SAP message specification
+		oOuterError = oErrorResponse.error;
+	} else {
+		// Actual V2 response in some tested services
+		oOuterError = oErrorResponse["odata.error"];
 	}
+
+	if (!oOuterError) {
+		Log.error("Error message returned by server did not contain error-field");
+		return this._createGenericError(mRequestInfo);
+	}
+
+	// Manually set severity in case we get an error response
+	oOuterError.severity = MessageType.Error;
+
+	// Check if more than one error has been returned from the back-end
+	if (Array.isArray(oOuterError.details)) {
+		// V4 errors
+		aInnerErrors = oOuterError.details;
+	} else if (oOuterError.innererror && Array.isArray(oOuterError.innererror.errordetails)) {
+		// V2 errors
+		aInnerErrors = oOuterError.innererror.errordetails;
+	} else {
+		// No further errors
+		aInnerErrors = [];
+	}
+
+	return this._getBodyMessages(oOuterError, aInnerErrors, mRequestInfo);
 };
 
 /**
@@ -731,38 +864,14 @@ ODataMessageParser.prototype._parseUrl = function(sUrl) {
 };
 
 /**
- * Outputs messages to the browser console. This is a fallback for when there is no MessageProcessor
- * attached to this parser. This should not happen in standard cases, as the ODataModel registers
- * itself as MessageProcessor. Only if used stand-alone, this can at least prevent the messages
- * from being ignored completely.
+ * Sets whether technical messages should always be treated as persistent.
  *
- * @param {sap.ui.message.Message[]} aMessages - The messages to be displayed on the console
+ * @param {boolean} bPersistTechnicalMessages
+ *   Whether technical messages should always be treated as persistent
  * @private
  */
-ODataMessageParser.prototype._outputMesages = function(aMessages) {
-	for (var i = 0; i < aMessages.length; ++i) {
-		var oMessage = aMessages[i];
-		var sOutput = "[OData Message] " + oMessage.getMessage() + " - " + oMessage.getDescription() + " (" + oMessage.getTarget() + ")";
-		switch (aMessages[i].getType()) {
-			case MessageType.Error:
-				jQuery.sap.log.error(sOutput);
-				break;
-
-			case MessageType.Warning:
-				jQuery.sap.log.warning(sOutput);
-				break;
-
-			case MessageType.Success:
-				jQuery.sap.log.debug(sOutput);
-				break;
-
-			case MessageType.Information:
-			case MessageType.None:
-			default:
-				jQuery.sap.log.info(sOutput);
-				break;
-		}
-	}
+ODataMessageParser.prototype._setPersistTechnicalMessages = function (bPersistTechnicalMessages) {
+	this._bPersistTechnicalMessages = bPersistTechnicalMessages;
 };
 
 ///////////////////////////////////////// Hidden Functions /////////////////////////////////////////
@@ -816,7 +925,7 @@ function getAllElements(oDocument, aElementNames) {
 	var aElements = [];
 
 	var mElementNames = {};
-	for (var i = 0; i < aElementNames.length; ++i) {
+	for (var i = 0; i < aElementNames.length; i += 1) {
 		mElementNames[aElementNames[i]] = true;
 	}
 

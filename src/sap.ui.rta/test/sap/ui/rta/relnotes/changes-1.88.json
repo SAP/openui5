@@ -1,0 +1,18 @@
+{
+  "1.88.0": {
+    "date": "March 2021",
+    "notes": [
+      {
+        "id": "2650b7418ca60c3ea0d73fca1501188b34ecd1dc",
+        "type": "FIX",
+        "text": " sap.ui.fl: reload when dirty higher layer changes are available",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180117681"
+          }
+        ]
+      }
+    ]
+  }
+}

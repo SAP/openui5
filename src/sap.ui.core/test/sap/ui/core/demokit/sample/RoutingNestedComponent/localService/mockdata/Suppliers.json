@@ -1,0 +1,45 @@
+[
+    {
+        "SupplierID": 1,
+        "CompanyName": "UI5 Awesome Manufactor Company Inc.",
+        "ContactName": "Amanda Miller",
+        "ContactTitle": "Purchasing Manager",
+        "Address": "Westminster",
+        "City": "London",
+        "Region": "City of London",
+        "PostalCode": "SW1A 0AA",
+        "Country": "United Kingdom of Great Britain and Northern Ireland (the)",
+        "Phone": "(171) 555-2222",
+        "Fax": null,
+        "HomePage": null
+    },
+    {
+        "SupplierID": 2,
+        "CompanyName": "UI5 Amazing Manufactor SE",
+        "ContactName": "Peter Schmidt",
+        "ContactTitle": "Purchasing Manager",
+        "Address": "Unter den Linden 1",
+        "City": "Berlin",
+        "Region": "Berlin",
+        "PostalCode": "10243",
+        "Country": "Germany",
+        "Phone": "(171) 555-2222",
+        "Fax": null,
+        "HomePage": null
+    },
+    {
+        "SupplierID": 3,
+        "CompanyName": "UI5 Wonderful Manufactor Limited",
+        "ContactName": "Jasneet Kumar",
+        "ContactTitle": "Purchasing Manager",
+        "Address": "#138, EPIP Zone",
+        "City": "Bengaluru",
+        "Region": "Bayaluseemé",
+        "PostalCode": "560 066 ",
+        "Country": "India",
+        "Phone": "(171) 555-2222",
+        "Fax": null,
+        "HomePage": null
+    }
+]
+

@@ -1,0 +1,77 @@
+{
+	"_version": "1.36.0",
+	"sap.app": {
+		"id": "card.explorer.data.csrf.card",
+		"type": "card",
+		"title": "Sample for Data usage in Cards",
+		"subTitle": "Sample for Data usage in Cards",
+		"applicationVersion": {
+			"version": "1.0.0"
+		},
+		"shortTitle": "A short title for this Card",
+		"info": "Additional information about this Card",
+		"description": "A long description for this Card",
+		"tags": {
+			"keywords": [
+				"Data",
+				"Card",
+				"Sample"
+			]
+		}
+	},
+	"sap.card": {
+		"type": "List",
+		"configuration": {
+			"destinations": {
+				"ProductsMockServerWithCSRF": {
+					"name": "ProductsMockServerWithCSRF",
+					"label": "Products Mock CSRF",
+					"defaultUrl": "/getDataWithCSRF"
+				}
+			},
+			"csrfTokens": {
+				"token1": {
+					"data": {
+						"request": {
+							"url": "{{destinations.ProductsMockServerWithCSRF}}/Token",
+							"method": "HEAD",
+							"headers": {
+								"X-CSRF-Token": "Fetch"
+							}
+						}
+					}
+				}
+			}
+		},
+		"data": {
+			"request": {
+				"url": "{{destinations.ProductsMockServerWithCSRF}}/Products",
+				"parameters": {
+					"$format": "json",
+					"$top": 4
+				},
+				"method": "GET",
+				"headers": {
+					"X-CSRF-Token": "{csrfTokens>/token1/value}"
+				}
+			},
+			"path": "/data"
+		},
+		"header": {
+			"title": "Products",
+			"subTitle": "Weight Information",
+			"icon": {
+				"src": "sap-icon://product"
+			}
+		},
+		"content": {
+			"item": {
+				"title": "{Name}",
+				"info": {
+					"value": "{= format.unit(${Weight}, ${WeightUnit})}"
+				}
+			},
+			"maxItems": 4
+		}
+	}
+}

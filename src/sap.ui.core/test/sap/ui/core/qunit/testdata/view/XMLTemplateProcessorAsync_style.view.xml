@@ -1,0 +1,21 @@
+<mvc:View height="100%" xmlns:mvc="sap.ui.core.mvc" xmlns:html="http://www.w3.org/1999/xhtml" xmlns:core="sap.ui.core" xmlns="sap.m">
+	<html:style id="styleOne" media="all" type="text/css">
+		.small {
+			width: 100px;
+			height: 100px;
+		}
+	</html:style>
+	<Panel id="panel">
+		<content>
+			<Button text="Button" id="button"></Button>
+			<html:style id="styleTwo" media="all" type="text/css">
+				.big {
+					width: 200px;
+					height: 200px;
+				}
+			</html:style>
+			<html:div id="innerBox" class="small"/>
+		</content>
+	</Panel>
+	<html:div id="outerBox" class="big"/>
+</mvc:View>

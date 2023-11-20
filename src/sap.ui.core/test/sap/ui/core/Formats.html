@@ -2,7 +2,6 @@
 <html>
 <head>
 
-	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta charset="utf-8">
 
 	<title>Localization/Formatting - sap.ui.core</title>
@@ -213,8 +212,10 @@
 
 		oLabel.placeAt("settings");
 		oSelect.placeAt("settings");
-		sap.ui.getCore().attachInitEvent(function() {
-			oSelect.setSelectedKey(sInitialValue);
+		sap.ui.require(["sap/ui/core/Core"], function(Core) {
+			Core.ready().then(function() {
+				oSelect.setSelectedKey(sInitialValue);
+			});
 		});
 		return oSelect;
 	}
@@ -362,7 +363,7 @@
 	</script>
 
 </head>
-<body class="sapUiBody" role="application">
+<body class="sapUiBody">
 
 	<h1>CLDR - Test Page</h1>
 	<h2>Locale and Format settings:</h2>

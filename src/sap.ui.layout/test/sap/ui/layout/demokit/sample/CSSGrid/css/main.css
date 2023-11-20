@@ -1,0 +1,9 @@
+
+.sapUiLayoutCSSGrid .stylePageLayout {
+	background-color: #3b6f9a;
+	color: #ffffff;
+	border-radius: 10px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}

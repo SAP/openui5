@@ -3,10 +3,34 @@
  */
 
 // Provides controller extension class (part of MVC concept)
-sap.ui.define(['sap/ui/base/Object', 'sap/ui/core/mvc/ControllerExtensionMetadata', 'sap/ui/core/mvc/OverrideExecution'],
-	function(BaseObject, ControllerExtensionMetadata, OverrideExecution) {
+sap.ui.define([
+	'sap/ui/base/Object',
+	'sap/ui/base/Metadata',
+	'sap/ui/core/mvc/ControllerMetadata',
+	'sap/ui/core/mvc/OverrideExecution',
+	'sap/base/util/uid',
+	"sap/base/Log"
+],
+	function(BaseObject, Metadata, ControllerMetadata, OverrideExecution, uid, Log) {
 	"use strict";
-		var ControllerExtension = BaseObject.extend("sap.ui.core.mvc.ControllerExtension", {
+
+		/**
+		 * @class Base class for controller extensions.
+		 *
+		 * All controller extensions must {@link #.extend extend} from this base class.
+		 * It provides access to the {@link #getView view} of the extended controller as well as
+		 * to the view's {@link #byId controls}.
+		 *
+		 * For a more detailed description how to develop controller extensions, see section
+		 * {@link topic:21515f09c0324218bb705b27407f5d61 Using Controller Extension} in the documentation.
+		 *
+		 * @hideconstructor
+		 * @alias sap.ui.core.mvc.ControllerExtension
+		 * @public
+		 * @extends sap.ui.base.Object
+		 */
+		var ControllerExtension = BaseObject.extend("sap.ui.core.mvc.ControllerExtension",
+			/** @lends sap.ui.core.mvc.ControllerExtension.prototype */ {
 			metadata: {
 				stereotype: "controllerextension",
 				methods: {
@@ -19,7 +43,7 @@ sap.ui.define(['sap/ui/base/Object', 'sap/ui/core/mvc/ControllerExtensionMetadat
 			/**
 			 * Sets the controller for this extension. Accessible by the base member.
 			 *
-			 * @param {sap.ui.core.mvcController} oController The controller
+			 * @param {sap.ui.core.mvc.Controller} oController The controller
 			 * @private
 			 */
 			_setController: function(oController) {
@@ -31,12 +55,12 @@ sap.ui.define(['sap/ui/base/Object', 'sap/ui/core/mvc/ControllerExtensionMetadat
 			 *
 			 * Views automatically prepend their own ID as a prefix to created Elements
 			 * to make the IDs unique even in the case of multiple view instances.
-			 * For Controller extension the namespace of the control id gets also
+			 * For a controller extension, the namespace of the control ID gets also
 			 * prefixed with the namespace of the extension.
 			 * This method helps to find an element by its local ID only.
 			 *
 			 * If no view is connected or if the view doesn't contain an element with
-			 * the given local ID, undefined is returned.
+			 * the given local ID, <code>undefined</code> is returned.
 			 *
 			 * @param {string} sId View-local ID
 			 * @return {sap.ui.core.Element} Element by its (view local) ID
@@ -49,16 +73,17 @@ sap.ui.define(['sap/ui/base/Object', 'sap/ui/core/mvc/ControllerExtensionMetadat
 			},
 
 			/**
-			 * Returns the View from the corresponding controller
+			 * Returns the View from the corresponding controller.
 			 *
 			 * @return {sap.ui.core.mvc.View} oView The corresponding view instance
+			 * @public
 			 */
 			getView: function() {
 				return this.base.getView();
 			},
 
 			/**
-			 * Returns the public interface for this exetension
+			 * Returns the public interface for this extension.
 			 *
 			 * @returns {object} oInterface The public interface for this extension
 			 * @private
@@ -66,45 +91,57 @@ sap.ui.define(['sap/ui/base/Object', 'sap/ui/core/mvc/ControllerExtensionMetadat
 			getInterface: function() {
 				var mMethods = {};
 				var oMetadata = this.getMetadata();
-				var aPublicMethods = oMetadata.getAllPublicMethods();
+				var aPublicMethods = oMetadata._aAllPublicMethods;
 
 				aPublicMethods.forEach(function(sMethod) {
-					if (typeof this[sMethod] === 'function' && oMetadata.isMethodPublic(sMethod)) {
-						var fnFunction = this[sMethod];
+					var fnFunction = this[sMethod];
+					if (typeof fnFunction === 'function') {
 						mMethods[sMethod] = function() {
 							var tmp = fnFunction.apply(this, arguments);
 							return (tmp instanceof ControllerExtension) ? tmp.getInterface() : tmp;
 						}.bind(this);
 					}
+					//}
 				}.bind(this));
-
+				this.getInterface = function() {
+					return mMethods;
+				};
 				return mMethods;
 			}
-		}, ControllerExtensionMetadata);
+		}, ControllerMetadata);
 
 		/**
-		 * Override the ControllerExtension class with the given custom extension
-		 * definition. Only public methods that are not final could be overridden.
-		 * The lifecycle methods <code>onInit</code>, <code>onExit</code>,
-		 * <code>onBeforeRendering</code> and <code>onAfterRendering</code>
-		 * are added before or after the lifecycle functions of the original
-		 * extension:
+		 * Override the ControllerExtension class with the given custom extension definition.
 		 *
-		 * Example for oExtension:
+		 * Only public methods that are not final could be overridden. The lifecycle methods
+		 * <code>onInit</code>, <code>onExit</code>, <code>onBeforeRendering</code> and
+		 * <code>onAfterRendering</code> are added before or after the lifecycle functions
+		 * of the original extension.
+		 *
+		 * Example for <code>oExtension</code>:
+		 * <pre>
 		 * {
-		 *		onInit: function() {
-		 *	 		...
-		 *	 	},
-		 *      ...
+		 *     onInit: function() {
+		 *         ...
+		 *     },
+		 *     ...
 		 * }
+		 * </pre>
 		 *
-		 * @param {object} oExtension The custom extension definition
+		 * <b>Note:</b> This static method is automatically propagated to subclasses of
+		 * <code>ControllerExtension</code>.
+		 *
+		 * @param {Object<string, function>} oExtension The custom extension definition
+		 * @return {function} A controller extension class
 		 * @public
 		 */
 		ControllerExtension.override = function(oExtension) {
-			var oMetadata = this.getMetadata();
-			oMetadata._staticOverride = oExtension;
-			return this;
+			// create an anonymous subclass in each call to keep metadata (and static overrides)
+			// separated even when override() is called multiple times on the same extension class
+			var oClass = Metadata.createClass(this, "anonymousExtension~" + uid(), {}, ControllerMetadata);
+			oClass.getMetadata()._staticOverride = oExtension;
+			oClass.getMetadata()._override = this.getMetadata()._override;
+			return oClass;
 		};
 
 
@@ -119,11 +156,10 @@ sap.ui.define(['sap/ui/base/Object', 'sap/ui/core/mvc/ControllerExtensionMetadat
 		 * @private
 		 */
 		ControllerExtension.overrideMethod = function(sMemberName, oOrigDef, oCustomDef, oContext, sOverrideExecution) {
-			var mControllerLifecycleMethods = this.getMetadata().getLifecycleConfiguration();
 			var fnOri = oOrigDef[sMemberName];
 			var fnCust = oCustomDef[sMemberName];
 
-			sOverrideExecution = sOverrideExecution || mControllerLifecycleMethods[sMemberName] || OverrideExecution.Instead;
+			sOverrideExecution = sOverrideExecution || OverrideExecution.Instead;
 
 			function wrapMethod(bBefore) {
 				(function(fnCust, fnOri, oContext, bBefore){
@@ -148,7 +184,7 @@ sap.ui.define(['sap/ui/base/Object', 'sap/ui/core/mvc/ControllerExtensionMetadat
 					} else if (typeof fnCust === "function") {
 						oOrigDef[sMemberName] = fnCust;
 					} else {
-						jQuery.sap.log.error("Controller extension failed: lifecycleMethod '" + sMemberName + "', is not a function");
+						Log.error("Controller extension failed: lifecycleMethod '" + sMemberName + "', is not a function");
 					}
 					break;
 				case OverrideExecution.After:
@@ -157,17 +193,17 @@ sap.ui.define(['sap/ui/base/Object', 'sap/ui/core/mvc/ControllerExtensionMetadat
 					} else if (typeof fnCust === "function") {
 						oOrigDef[sMemberName] = fnCust;
 					} else {
-						jQuery.sap.log.error("Controller extension failed: lifecycleMethod '" + sMemberName + "', is not a function");
+						Log.error("Controller extension failed: lifecycleMethod '" + sMemberName + "', is not a function");
 					}
 					break;
 				case OverrideExecution.Instead:
 				default:
 					if (sMemberName in oOrigDef) {
-						jQuery.sap.log.debug("Overriding  member '" + sMemberName + "' of extension " + this.getMetadata().getName());
+						Log.debug("Overriding  member '" + sMemberName + "' of extension " + this.getMetadata().getName());
 						if (!this.getMetadata().isMethodFinal(sMemberName)) {
 							oOrigDef[sMemberName] = fnCust;
 						}  else {
-							jQuery.sap.log.error("Error in ControllerExtension.override: Method '" + sMemberName + "' of extension '" + this.getMetadata().getName() + "' is flagged final and cannot be overridden!");
+							Log.error("Error in ControllerExtension.override: Method '" + sMemberName + "' of extension '" + this.getMetadata().getName() + "' is flagged final and cannot be overridden!");
 						}
 					} else {
 						oOrigDef[sMemberName] = fnCust;

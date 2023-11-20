@@ -1,0 +1,34 @@
+{
+  "1.87.0": {
+    "date": "February 2021",
+    "notes": [
+      {
+        "id": "8db1ac9dd00e22f71c65e2ba39b9e4310db67d12",
+        "type": "FIX",
+        "text": " sap.ui.fl: Personalization changes not filtered on \"Adapt UI\"",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180021032"
+          }
+        ]
+      },
+      {
+        "id": "6e4ce8533c3246c5b685f44dbf17ff2da218e8de",
+        "type": "FIX",
+        "text": " sap.ui.fl: Standard Variant needs an empty variantReference string",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180021083"
+          }
+        ]
+      },
+      {
+        "id": "66b7e9bbaf28368f42f7666e88e5b04107b5722a",
+        "type": "FEATURE",
+        "text": " VariantManagement: Manage Views Dialog - Change \"OK\" to \"Save\""
+      }
+    ]
+  }
+}

@@ -1,0 +1,130 @@
+<mvc:View xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.uxap"
+	xmlns:m="sap.m"
+	xmlns:core="sap.ui.core"
+	xmlns:goals="sap.uxap.sample.SharedBlocks.goals"
+	xmlns:personal="sap.uxap.sample.SharedBlocks.personal"
+	xmlns:employment="sap.uxap.sample.SharedBlocks.employment"
+	height="100%">
+
+	<ObjectPageLayout id="ObjectPageLayout" upperCaseAnchorBar="false">
+		<headerTitle>
+			<ObjectPageDynamicHeaderTitle>
+				<expandedHeading>
+					<m:Title text="Object Page Header with Progress Indicator and Rating Indicator" wrapping="true" />
+				</expandedHeading>
+
+				<snappedHeading>
+					<m:HBox>
+						<m:VBox>
+							<m:Avatar class="sapUiSmallMarginEnd" displayShape="Square" initials="HF"/>
+						</m:VBox>
+
+						<m:VBox>
+							<m:Title text="Object Page Header with Progress Indicator and Rating Indicator" wrapping="true"/>
+							<m:Label text="Example of an ObjectPage with header facet"/>
+						</m:VBox>
+					</m:HBox>
+				</snappedHeading>
+
+				<expandedContent>
+					<m:Label text="Example of an ObjectPage with header facet"/>
+				</expandedContent>
+
+				<snappedTitleOnMobile>
+					<m:Title text="Object Page Header with Progress Indicator and Rating Indicator"/>
+				</snappedTitleOnMobile>
+
+				<actions>
+					<m:Button text="Edit" type="Emphasized"/>
+					<m:Button text="Delete"/>
+					<m:Button text="Copy"/>
+					<m:OverflowToolbarButton icon="sap-icon://action" type="Transparent" text="Share" tooltip="action"/>
+				</actions>
+			</ObjectPageDynamicHeaderTitle>
+		</headerTitle>
+
+		<headerContent>
+			<m:FlexBox wrap="Wrap" fitContainer="true">
+				<m:Avatar class="sapUiMediumMarginEnd sapUiSmallMarginBottom" displayShape="Square" initials="HF" displaySize="L"/>
+
+				<m:VBox class="sapUiLargeMarginEnd sapUiSmallMarginBottom">
+					<m:Title class="sapUiTinyMarginBottom">
+						<m:Link text="Profile"/>
+					</m:Title>
+					<m:Label text="Personal Information"/>
+					<m:ProgressIndicator displayValue="42%" percentValue="42%"  state="Information"/>
+				</m:VBox>
+
+				 <m:VBox class="sapUiSmallMarginBottom sapUiLargeMarginEnd">
+					<m:Title text="Reliability" class="sapUiTinyMarginBottom" />
+					<m:Label text="Based on fulfiled contracts"/>
+					<m:RatingIndicator value="4" iconSize="16px"/>
+				</m:VBox>
+
+				 <m:VBox width="448px" class="sapUiSmallMarginBottom">
+					<m:Title class="sapUiTinyMarginBottom">
+						<m:Link text="Product Description"/>
+					</m:Title>
+					<m:Text text="Top-design high-quality coffee mug - ideal for a comforting moment; Pack: 6; material: Porcelain - durable dishwasher and microwave-safe porcelain that cleans easily and is ideal for everyday service. Comes in two bright colors."/>
+				</m:VBox>
+			</m:FlexBox>
+		</headerContent>
+
+		<sections>
+			<ObjectPageSection titleUppercase="false" id="goalsSection" title="2014 Goals Plan">
+				<subSections>
+					<ObjectPageSubSection id="goalsSectionSS1" titleUppercase="false">
+						<blocks>
+							<goals:GoalsBlock id="goalsblock" class="sapUxAPObjectPageSubSectionAlignContent"/>
+						</blocks>
+					</ObjectPageSubSection>
+				</subSections>
+			</ObjectPageSection>
+
+			<ObjectPageSection titleUppercase="false" id="personalSection" title="Personal">
+				<subSections>
+					<ObjectPageSubSection id="personalSectionSS1" title="Connect" titleUppercase="false">
+						<blocks>
+							<personal:BlockPhoneNumber id="phone" class="sapUxAPObjectPageSubSectionAlignContent"/>
+							<personal:BlockSocial id="social" class="sapUxAPObjectPageSubSectionAlignContent"/>
+							<personal:BlockAdresses id="adresses" class="sapUxAPObjectPageSubSectionAlignContent"/>
+							<personal:BlockMailing id="mailing" columnLayout="1" class="sapUxAPObjectPageSubSectionAlignContent"/>
+						</blocks>
+					</ObjectPageSubSection>
+
+					<ObjectPageSubSection id="personalSectionSS2" title="Payment information" titleUppercase="false">
+						<blocks>
+							<personal:PersonalBlockPart1 id="part1" columnLayout="1" class="sapUxAPObjectPageSubSectionAlignContent"/>
+						</blocks>
+						<moreBlocks>
+							<personal:PersonalBlockPart2 id="part2" columnLayout="1" class="sapUxAPObjectPageSubSectionAlignContent"/>
+						</moreBlocks>
+					</ObjectPageSubSection>
+				</subSections>
+			</ObjectPageSection>
+
+			<ObjectPageSection titleUppercase="false" id="employmentSection" title="Employment">
+				<subSections>
+					<ObjectPageSubSection id="employmentSectionSS1" title="Job information" titleUppercase="false">
+						<blocks >
+							<employment:BlockJobInfoPart1 id="jobinfopart1" class="sapUxAPObjectPageSubSectionAlignContent"/>
+							<employment:BlockJobInfoPart2 id="jobinfopart2" class="sapUxAPObjectPageSubSectionAlignContent"/>
+							<employment:BlockJobInfoPart3 id="jobinfopart3"/>
+						</blocks>
+					</ObjectPageSubSection>
+
+					<ObjectPageSubSection id="employmentSectionSS2" title="Employee Details" titleUppercase="false">
+						<blocks>
+							<employment:BlockEmpDetailPart1 id="empdetailpart1" columnLayout="1" class="sapUxAPObjectPageSubSectionAlignContent"/>
+						</blocks>
+						<moreBlocks>
+							<employment:BlockEmpDetailPart2 id="empdetailpart2" columnLayout="1" class="sapUxAPObjectPageSubSectionAlignContent"/>
+							<employment:BlockEmpDetailPart3 id="empdetailpart3" columnLayout="1" class="sapUxAPObjectPageSubSectionAlignContent"/>
+						</moreBlocks>
+					</ObjectPageSubSection>
+				</subSections>
+			</ObjectPageSection>
+		</sections>
+	</ObjectPageLayout>
+</mvc:View>

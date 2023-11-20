@@ -1,35 +1,23 @@
 <!DOCTYPE html>
 <html>
-<head>
-	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<meta charset="utf-8">
-	<title>Feed Input Test Page</title>
-	<script src="shared-config.js"></script>
-	<script
-		id='sap-ui-bootstrap'
-		src='../../../resources/sap-ui-core.js'
-		data-sap-ui-libs='sap.m'
-		data-sap-ui-xx-bindingSyntax="complex"
-		data-sap-ui-resourceroots='{ "sap.m.test" : "./" }' >
-	</script>
-	<style type="text/css">
-		.caption {
-			font-weight: bold;
-			font-size: 1rem;
-			margin-top: 0.25rem;
-		}
-		.container {
-			margin: 0 1rem 1rem 1rem;
-		}
-	</style>
-	<script>
-		var app = new sap.m.App("myApp");
-		var page = new sap.m.Page();
-		page.addContent(sap.ui.xmlview('FeedInputView', 'sap.m.test.FeedInput'));
-		app.addPage(page);
-		app.placeAt("content");
-	</script>
-</head>
-<body class="sapUiBody" id="content">
-</body>
+	<head>
+		<meta charset="utf-8">
+		<title>Feed Input Test Page</title>
+		<link href="FeedInput.css" rel="stylesheet">
+		<script src="shared-config.js"></script>
+		<script id="sap-ui-bootstrap"
+				src="../../../resources/sap-ui-core.js"
+				data-sap-ui-async="true"
+				data-sap-ui-compatVersion="edge"
+				data-sap-ui-libs="sap.m"
+				data-sap-ui-onInit="module:local/FeedInput"
+				data-sap-ui-resourceRoots='{
+					"local": "./",
+					"sap.m.test": "./",
+					"qunit.internal.acc": "../../../test-resources/sap/ui/core/qunit/internal/acc"
+				}'>
+		</script>
+	</head>
+	<body class="sapUiBody" id="content">
+	</body>
 </html>

@@ -1,57 +1,176 @@
 sap.ui.define([
-	'jquery.sap.global',
+	'sap/base/Log',
 	'sap/ui/core/library',
 	'sap/ui/core/Component',
 	'sap/ui/core/ComponentContainer'
-], function(jQuery, sapUiCore, Component, ComponentContainer) {
+], function(Log, sapUiCore, Component, ComponentContainer) {
 
 	"use strict";
 	/*global QUnit, sinon */
 
 	var ComponentLifecycle = sapUiCore.ComponentLifecycle;
 
+	sap.ui.loader.config({
+		paths:{
+			"sap/ui/test":"test-resources/sap/ui/core/qunit/component/testdata/",
+			"sap/ui/test/qunitPause": "resources/sap/ui/test/qunitPause",
+			"sap/ui/test/RecorderHotkeyListener": "resources/sap/ui/test/RecorderHotkeyListener"
+		}
+	});
+
+	/*
+	 * Helper to create a ComponentContainer with the given settings,
+	 * triggering component creation and waiting for it.
+	 *
+	 * The returned promise resolves with the container.
+	 */
+	function createContainerAndWait(oSettings) {
+		return new Promise(function(resolve) {
+			var oComponentContainer;
+			Object.assign(oSettings, {
+				componentCreated: function(e) {
+					resolve(oComponentContainer);
+				}
+			});
+			oComponentContainer = new ComponentContainer(oSettings);
+			// simulate onBeforeRendering to force to create the component
+			oComponentContainer.onBeforeRendering();
+		});
+	}
+
 	QUnit.module("General");
+
+	QUnit.test("Should be able to set a component", function (assert) {
+		var oComponentContainer = new ComponentContainer();
+
+		return Component.create({
+			name: "samples.components.button"
+		}).then(function (oComponent) {
+			oComponentContainer.setComponent(oComponent);
+
+			assert.strictEqual(oComponent.getId(), oComponentContainer.getComponent(), "Was able to set component");
+		});
+
+	});
+
+	QUnit.test("Create component async - componentCreated", function (assert) {
+		var done = assert.async();
+		var oComponentContainer = new ComponentContainer({
+			name: "samples.components.button",
+			async: true,
+			componentCreated: function(oEvent) {
+				var oComponent = oEvent.getParameter("component");
+				assert.strictEqual(oComponent.getId(), oComponentContainer.getComponent(), "Was able to create component, componentCreated fired");
+				done();
+			}
+		});
+		oComponentContainer.onBeforeRendering();
+	});
+
+	QUnit.test("Create component async - componentFailed (default)", function (assert) {
+		var done = assert.async();
+		var oComponentContainer = new ComponentContainer({
+			name: "samples.components.unkown",
+			async: true,
+			componentFailed: function(oEvent) {
+				// Create Log spy within componentFailed and ignore 404 error for /samples/components/unkown/Component.js
+				var oLogErrorSpy = this.spy(Log, "error");
+				var oReason = oEvent.getParameter("reason");
+				assert.ok(true, "Was not able to create component, componentFailed fired");
+				assert.ok(oReason.message.indexOf("failed to load") === 0, "Error object is passed as reason");
+				Promise.resolve().then(function() {
+					assert.ok(oLogErrorSpy.calledWith(sinon.match(/^Failed to load component for container/)));
+					assert.strictEqual(oLogErrorSpy.callCount, 1, "One error should have been logged");
+					done();
+				});
+			}.bind(this)
+		});
+		oComponentContainer.onBeforeRendering();
+	});
+
+	QUnit.test("Create component async - componentFailed (prevent Default)", function (assert) {
+		var done = assert.async();
+		var oComponentContainer = new ComponentContainer({
+			name: "samples.components.unkown",
+			async: true,
+			componentFailed: function(oEvent) {
+				// Create Log spy within componentFailed and ignore 404 error for /samples/components/unkown/Component.js
+				var oLogErrorSpy = this.spy(Log, "error");
+				var oReason = oEvent.getParameter("reason");
+				assert.ok(true, "Was not able to create component, componentFailed fired");
+				assert.ok(oReason.message.indexOf("failed to load") === 0, "Error object is passed as reason");
+				Promise.resolve().then(function() {
+					assert.strictEqual(oLogErrorSpy.callCount, 0, "no error should have been logged");
+					done();
+				});
+				oEvent.preventDefault();
+			}.bind(this)
+		});
+		oComponentContainer.onBeforeRendering();
+	});
+
+	QUnit.test("Should be able to create a component with URL", function (assert) {
+		var done = assert.async();
+		var oComponentContainer = new ComponentContainer({
+			name: "samples.components.button",
+			url: "test-resources/sap/ui/core/samples/components/button",
+			async: true,
+			componentCreated: function () {
+				assert.ok(oComponentContainer.getComponent(), "Was able to create component");
+				done();
+			}
+		});
+		oComponentContainer.onBeforeRendering();
+	});
 
 	QUnit.test("Should be able to chain setComponent", function (assert) {
 		var oComponentContainer = new ComponentContainer();
 
-		var oComponent = sap.ui.component({
-			name: "samples.components.button"
+		return Component.create({
+			name: "samples.components.button",
+			manifest: false
+		}).then(function(oComponent) {
+
+			oComponentContainer.setComponent(oComponent).setComponent(oComponent);
+
+			assert.strictEqual(oComponent.getId(), oComponentContainer.getComponent(), "Was able to chain the setter");
 		});
-
-		oComponentContainer.setComponent(oComponent).setComponent(oComponent);
-
-		assert.strictEqual(oComponent.getId(), oComponentContainer.getComponent(), "Was able to chain the setter");
 	});
 
-	QUnit.test("Should call lifecycle methods of nested Component", function (assert) {
+	QUnit.test("Should call lifecycle methods of nested Component (app created)", function (assert) {
 		var oComponentContainer = new ComponentContainer();
 
-		var oComponent = sap.ui.component({
-			name: "samples.components.button"
+		return Component.create({
+			name: "samples.components.button",
+			manifest: false
+		}).then(function(oComponent) {
+			var onBeforeRenderingSpy = oComponent.onBeforeRendering = sinon.spy();
+			var onAfterRenderingSpy = oComponent.onAfterRendering = sinon.spy();
+
+			oComponentContainer.setComponent(oComponent);
+
+			assert.ok(onBeforeRenderingSpy.notCalled, "onBeforeRendering was not called");
+			assert.ok(onAfterRenderingSpy.notCalled, "onAfterRendering was not called");
+
+			oComponentContainer.onBeforeRendering();
+
+			assert.ok(onBeforeRenderingSpy.calledOnce, "onBeforeRendering was called");
+			assert.ok(onAfterRenderingSpy.notCalled, "onAfterRendering was not called");
+
+			oComponentContainer.onAfterRendering();
+
+			assert.ok(onBeforeRenderingSpy.calledOnce, "onBeforeRendering was called");
+			assert.ok(onAfterRenderingSpy.calledOnce, "onAfterRendering was called");
+
+			oComponentContainer.destroy();
 		});
-		var onBeforeRenderingSpy = oComponent.onBeforeRendering = sinon.spy();
-		var onAfterRenderingSpy = oComponent.onAfterRendering = sinon.spy();
 
-		oComponentContainer.setComponent(oComponent);
-
-		assert.ok(onBeforeRenderingSpy.notCalled, "onBeforeRendering was not called");
-		assert.ok(onAfterRenderingSpy.notCalled, "onAfterRendering was not called");
-
-		oComponentContainer.onBeforeRendering();
-
-		assert.ok(onBeforeRenderingSpy.calledOnce, "onBeforeRendering was called");
-		assert.ok(onAfterRenderingSpy.notCalled, "onAfterRendering was not called");
-
-		oComponentContainer.onAfterRendering();
-
-		assert.ok(onBeforeRenderingSpy.calledOnce, "onBeforeRendering was called");
-		assert.ok(onAfterRenderingSpy.calledOnce, "onAfterRendering was called");
 	});
 
-	QUnit.test("Should call lifecycle methods of nested Component (created by Container)", function (assert) {
+	QUnit.test("Should call lifecycle methods of nested Component (created by Container, async)", function (assert) {
 		var oComponentContainer = new ComponentContainer({
-			name: "samples.components.button"
+			name: "samples.components.button",
+			async: true
 		});
 		var fnSetComponent = oComponentContainer.setComponent;
 		var onBeforeRenderingSpy = sinon.spy();
@@ -65,137 +184,207 @@ sap.ui.define([
 		assert.ok(onBeforeRenderingSpy.notCalled, "onBeforeRendering was not called");
 		assert.ok(onAfterRenderingSpy.notCalled, "onAfterRendering was not called");
 
-		oComponentContainer.onBeforeRendering();
+		var done = assert.async();
+		oComponentContainer.attachComponentCreated(function() {
+			oComponentContainer.onBeforeRendering();
+			assert.ok(onBeforeRenderingSpy.calledOnce, "onBeforeRendering was called");
+			assert.ok(onAfterRenderingSpy.notCalled, "onAfterRendering was not called");
 
-		assert.ok(onBeforeRenderingSpy.calledOnce, "onBeforeRendering was called");
+			oComponentContainer.onAfterRendering();
+
+			assert.ok(onBeforeRenderingSpy.calledOnce, "onBeforeRendering was called");
+			assert.ok(onAfterRenderingSpy.calledOnce, "onAfterRendering was called");
+
+			oComponentContainer.destroy();
+			done();
+		});
+
+		// first call to onBeforeRendering will trigger async component creaetion,
+		// componentCreated listener will trigger onBeforeRendering again
+		oComponentContainer.onBeforeRendering();
+		assert.ok(onBeforeRenderingSpy.notCalled, "onBeforeRendering was not called");
 		assert.ok(onAfterRenderingSpy.notCalled, "onAfterRendering was not called");
 
-		oComponentContainer.onAfterRendering();
-
-		assert.ok(onBeforeRenderingSpy.calledOnce, "onBeforeRendering was called");
-		assert.ok(onAfterRenderingSpy.calledOnce, "onAfterRendering was called");
 	});
 
-	QUnit.test("Should delegate the owner component", function (assert) {
+	QUnit.test("Should propagate the owner component (async)", function (assert) {
 		var oOwnerComponent = new Component("owner");
 		var oComponentContainer;
 
+		var done = assert.async();
+		function fnAsserts() {
+			assert.strictEqual(Component.getOwnerComponentFor(oComponentContainer).getId(), oOwnerComponent.getId(), "owner of ComponentContainer should be the expected component");
+			assert.strictEqual(Component.getOwnerComponentFor(oComponentContainer.getComponentInstance()).getId(), oOwnerComponent.getId(), "owner of created component should be the expected component");
+			done();
+			oComponentContainer.destroy();
+			oOwnerComponent.destroy();
+		}
+
 		oOwnerComponent.runAsOwner(function() {
 			oComponentContainer = new ComponentContainer({
-				name: "samples.components.button"
+				name: "samples.components.button",
+				async: true,
+				componentCreated: fnAsserts
 			});
 		});
 
 		// simulate rendering
 		oComponentContainer.onBeforeRendering();
-
-		assert.strictEqual(oOwnerComponent.getId(), Component.getOwnerComponentFor(oComponentContainer).getId(), "ComponentContainer created by owner Component");
-		assert.strictEqual(oOwnerComponent.getId(), Component.getOwnerComponentFor(oComponentContainer.getComponentInstance()).getId(), "ComponentContainers Component created by owner Component");
 	});
 
-	QUnit.test("Should prefix Component ID when a ID preprocessor is defined", function (assert) {
-
+	QUnit.test("Should prefix Component ID when an ID preprocessor is defined", function (assert) {
+		var done = assert.async(2);
 		// simulates the usage in a declarative view
 		var oComponentContainerNotPrefixed = new ComponentContainer({
 			name: "samples.components.button",
 			settings: { id: "componentId" },
-			lifecycle: ComponentLifecycle.Container
+			lifecycle: ComponentLifecycle.Container,
+			async: true,
+			componentCreated: function (oEvent) {
+				assert.equal(oEvent.getParameter("component").getId(), "componentId", "Component ID is not prefixed!");
+				oComponentContainerNotPrefixed.destroy();
+				done();
+			}
 		});
 		var oComponentContainerPrefixed = new ComponentContainer({
 			name: "samples.components.button",
 			settings: { id: "componentId" },
 			lifecycle: ComponentLifecycle.Container,
-			autoPrefixId: true
+			autoPrefixId: true,
+			async: true,
+			componentCreated: function (oEvent) {
+				assert.equal(oEvent.getParameter("component").getId(), oComponentContainerPrefixed.getId() + "-componentId", "Component ID is prefixed!");
+				oComponentContainerPrefixed.destroy();
+				done();
+			}
 		});
 
 		// simulate onBeforeRendering to force to create the component
 		oComponentContainerNotPrefixed.onBeforeRendering();
 		oComponentContainerPrefixed.onBeforeRendering();
-
-		var oComponentNotPrefixed = oComponentContainerNotPrefixed.getComponentInstance();
-		var oComponentPrefixed = oComponentContainerPrefixed.getComponentInstance();
-
-		assert.equal(oComponentNotPrefixed.getId(), "componentId", "Component ID is not prefixed!");
-		assert.equal(oComponentPrefixed.getId(), oComponentContainerPrefixed.getId() + "-componentId", "Component ID is prefixed!");
-
-		oComponentContainerNotPrefixed.destroy();
-		oComponentContainerPrefixed.destroy();
-
 	});
 
 
 	QUnit.module("Lifecycle");
 
 	QUnit.test("Legacy should destroy Component onExit but not when replaced", function (assert) {
+		var done = assert.async();
 		var oComponentContainer = new ComponentContainer({
-			name: "samples.components.button"
+			name: "samples.components.button",
+			async: true,
+			componentCreated: function (oEvent) {
+				var oComponent = oEvent.getParameter("component");
+
+				Component.create({
+					name: "samples.components.button"
+				}).then(function (oNewComponent) {
+					oComponentContainer.setComponent(oNewComponent);
+
+					assert.notOk(oComponent.bIsDestroyed, "Component is not destroyed");
+
+					oComponentContainer.destroy();
+
+					assert.strictEqual(oComponentContainer.getLifecycle(), ComponentLifecycle.Legacy, "Default Component lifecycle should be Legacy");
+					assert.ok(oComponentContainer.bIsDestroyed, "Component Container is destroyed");
+					assert.ok(oNewComponent.bIsDestroyed, "New Component is destroyed");
+
+					done();
+				});
+			}
 		});
 		// simulate onBeforeRendering to force to create the component
 		oComponentContainer.onBeforeRendering();
-
-		var oComponent = oComponentContainer.getComponentInstance();
-
-		var oNewComponent = sap.ui.component({
-			name: "samples.components.button"
-		});
-		oComponentContainer.setComponent(oNewComponent);
-
-		assert.ok(!oComponent.bIsDestroyed, "Component is not destroyed because it not was created by the ComponentContainer");
-
-		oComponentContainer.destroy();
-
-		assert.strictEqual(oComponentContainer.getLifecycle(), ComponentLifecycle.Legacy, "Default Component lifecycle should be Legacy");
-		assert.ok(oComponentContainer.bIsDestroyed, "Component Container is destroyed");
-		assert.ok(oNewComponent.bIsDestroyed, "New Component is not destroyed");
 	});
 
 	QUnit.test("Application managed should not destroy Component", function (assert) {
-		var oComponentContainer = new ComponentContainer({
-			name: "samples.components.button",
-			lifecycle: ComponentLifecycle.Application
+
+		return Promise.all([
+			// Promise 1: create a component container, trigger async component creation and wait for it to complete
+			createContainerAndWait({
+				name: "samples.components.button",
+				manifest: false, // because samples.components.button has no manifest but static metadata
+				lifecycle: ComponentLifecycle.Application,
+				async: true
+			}),
+			// Promise 2: another component instance
+			Component.create({
+				name: "samples.components.button",
+				manifest: false
+			})
+		]).then(function(aResults) {
+
+			var oComponentContainer = aResults[0];
+			var oNewComponent = aResults[1];
+
+			var oComponent = oComponentContainer.getComponentInstance();
+
+			oComponentContainer.setComponent(oNewComponent);
+			assert.ok(!oComponent.bIsDestroyed, "Component should not have been destroyed because of lifecyle Application");
+
+			oComponentContainer.destroy();
+
+			assert.ok(oComponentContainer.bIsDestroyed, "Component Container should be destroyed");
+			assert.ok(!oComponent.bIsDestroyed, "Old Component should not have been destroyed due to lifecyle 'Application'");
+			assert.ok(!oNewComponent.bIsDestroyed, "New Component should not have destroyed due to lifecycle 'Application'");
+
+			oComponent.destroy();
+			oNewComponent.destroy();
 		});
-		// simulate onBeforeRendering to force to create the component
-		oComponentContainer.onBeforeRendering();
-
-		var oComponent = oComponentContainer.getComponentInstance();
-
-		var oNewComponent = sap.ui.component({
-			name: "samples.components.button"
-		});
-		oComponentContainer.setComponent(oNewComponent);
-
-		oComponentContainer.destroy();
-
-		assert.ok(oComponentContainer.bIsDestroyed, "Component Container is destroyed");
-		assert.ok(!oComponent.bIsDestroyed, "Component is not destroyed because it not was created by the ComponentContainer");
-		assert.ok(!oNewComponent.bIsDestroyed, "New Component is not destroyed because it was not created by the ComponentContainer");
 	});
 
 	QUnit.test("Container managed should destroy Component", function (assert) {
-		var oComponentContainer = new ComponentContainer({
-			name: "samples.components.button",
-			lifecycle: ComponentLifecycle.Container
+		return Promise.all([
+			createContainerAndWait({
+				name: "samples.components.button",
+				manifest: false,
+				lifecycle: ComponentLifecycle.Container,
+				async: true
+			}),
+			// Promise 2: another component instance
+			Component.create({
+				name: "samples.components.button",
+				manifest: false
+			})
+		]).then(function(aResults) {
+
+			var oComponentContainer = aResults[0];
+			var oNewComponent = aResults[1];
+
+			var oComponent = oComponentContainer.getComponentInstance();
+
+			oComponentContainer.setComponent(oNewComponent);
+
+			assert.ok(oComponent.bIsDestroyed, "Component is destroyed because it was created by the ComponentContainer");
+
+			oComponentContainer.destroy();
+
+			assert.ok(oComponentContainer.bIsDestroyed, "Component Container is destroyed");
+			assert.ok(oNewComponent.bIsDestroyed, "New Component is destroyed because the lifecycle is managed by the Component");
 		});
-		// simulate onBeforeRendering to force to create the component
-		oComponentContainer.onBeforeRendering();
-
-		var oComponent = oComponentContainer.getComponentInstance();
-
-		var oNewComponent = sap.ui.component({
-			name: "samples.components.button"
-		});
-		oComponentContainer.setComponent(oNewComponent);
-
-		assert.ok(oComponent.bIsDestroyed, "Component is destroyed because it was created by the ComponentContainer");
-
-		oComponentContainer.destroy();
-
-		assert.ok(oComponentContainer.bIsDestroyed, "Component Container is destroyed");
-		assert.ok(oNewComponent.bIsDestroyed, "New Component is destroyed because the lifecycle is managed by the Component");
 	});
 
 
-	QUnit.module("Usage");
+	QUnit.module("Usage", {
+		beforeEach: function() {
+			return Promise.all([
+				Component.create({
+					name: "my.usage",
+					manifest: false
+				}).then(function(oComponent){
+					this.oOwnerComponent = oComponent;
+				}.bind(this)),
+				Component.create({
+					name: "sap.ui.test.v2empty",
+					manifest: false
+				}).then(function(oComponent) {
+					this.oNewComponent = oComponent;
+				}.bind(this))
+			]);
+		}, afterEach: function() {
+			this.oNewComponent.destroy();
+			this.oOwnerComponent.destroy();
+		}
+	});
 
 	sap.ui.define("my/usage/Component", ["sap/ui/core/UIComponent"], function(UIComponent) {
 		return UIComponent.extend("my.usage.Component", {
@@ -205,14 +394,18 @@ sap.ui.define([
 						"id" : "my.usage"
 					},
 					"sap.ui5" : {
+						/*
 						"dependencies": {
 							"components": {
 								"samples.components.button": {}
 							}
-						},
+						},*/
 						"componentUsages": {
 							"myUsage": {
-								"name": "samples.components.button"
+								"name": "samples.components.button",
+								"settings": {
+									"id": "myUsage"
+								}
 							}
 						}
 					}
@@ -222,187 +415,92 @@ sap.ui.define([
 	});
 
 
-	QUnit.test("Container should create the component usage (sync)", function (assert) {
-
-		var oOwnerComponent = sap.ui.component({
-			name: "my.usage"
-		});
+	QUnit.test("Container should create the component usage (async)", function (assert) {
 
 		// create the container within the context of the owner component
-		var oComponentContainer = oOwnerComponent.runAsOwner(function() {
-			return new ComponentContainer({
-				usage: "myUsage"
+		return this.oOwnerComponent.runAsOwner(function() {
+			return createContainerAndWait({
+				usage: "myUsage",
+				async: true
 			});
-		});
-
-		// simulate onBeforeRendering to force to create the component
-		oComponentContainer.onBeforeRendering();
-
-		var done = (function() {
-			var asyncDone = assert.async();
-			return function cleanup() {
-				var oNestedComponent = oComponentContainer.getComponentInstance();
-				oComponentContainer.destroy();
-				assert.ok(oNestedComponent.bIsDestroyed, "Nested Component must be destroyed");
-				oOwnerComponent.destroy();
-				asyncDone();
-			};
-		})();
-
-		sap.ui.require([
-			"samples/components/button/Component"
-		], function(UsedComponent) {
+		}).then(function(oComponentContainer) {
 
 			var oComponentUsage = oComponentContainer.getComponentInstance();
-
-			var oNewComponent = sap.ui.component({
-				name: "samples.components.button"
-			});
+			var UsedComponent = sap.ui.require("samples/components/button/Component");
 
 			assert.equal(oComponentContainer.getLifecycle(), ComponentLifecycle.Legacy, "ComponentLifecycle is Legacy by default");
 			assert.ok(oComponentUsage instanceof Component, "ComponentUsage must be type of sap.ui.core.Component");
 			assert.ok(oComponentUsage instanceof UsedComponent, "ComponentUsage must be type of samples.components.button.Component");
-			assert.equal(oOwnerComponent.getId(), Component.getOwnerIdFor(oComponentUsage), "ComponentUsage must be created with the creator Component as owner");
+			assert.equal(Component.getOwnerIdFor(oComponentUsage), this.oOwnerComponent.getId(), "ComponentUsage must be created with the creator Component as owner");
 
 			// Overwrite nested component
-			oComponentContainer.setComponent(oNewComponent);
+			oComponentContainer.setComponent(this.oNewComponent);
 			assert.ok(oComponentUsage.bIsDestroyed, "Old component should be destroyed");
 
-			done();
+			// cleanup
+			var oNestedComponent = oComponentContainer.getComponentInstance();
+			oComponentContainer.destroy();
+			assert.ok(oNestedComponent.bIsDestroyed, "Nested Component must be destroyed");
 
-		});
-
-	});
-
-	QUnit.test("Container should create the component usage (async)", function (assert) {
-
-		var oOwnerComponent = sap.ui.component({
-			name: "my.usage"
-		});
-
-		// create the container with in the context of the owner component
-		var oComponentContainer = oOwnerComponent.runAsOwner(function() {
-			return new ComponentContainer({
-				usage: "myUsage",
-				async: true
-			});
-		});
-
-		// intercept first call to setComponent to know when the async loading has finished
-		// TODO provide an API in ComponentContainer for that
-		var oWhenComponentCreated = jQuery.Deferred();
-		oComponentContainer.setComponent = function() {
-			var result = ComponentContainer.prototype.setComponent.apply(this, arguments);
-			oWhenComponentCreated.resolve();
-			return result;
-		};
-
-		// simulate onBeforeRendering to force to create the component
-		oComponentContainer.onBeforeRendering();
-
-		var done = (function() {
-			var asyncDone = assert.async();
-			return function cleanup() {
-				var oNestedComponent = oComponentContainer.getComponentInstance();
-				oComponentContainer.destroy();
-				assert.ok(oNestedComponent.bIsDestroyed, "Nested Component must be destroyed");
-				oOwnerComponent.destroy();
-				asyncDone();
-			};
-		})();
-
-		oWhenComponentCreated.then(function() {
-			sap.ui.require([
-				"samples/components/button/Component"
-			], function(UsedComponent) {
-
-				var oComponentUsage = oComponentContainer.getComponentInstance();
-
-				var oNewComponent = sap.ui.component({
-					name: "samples.components.button"
-				});
-
-				assert.equal(oComponentContainer.getLifecycle(), ComponentLifecycle.Legacy, "ComponentLifecycle is Legacy by default");
-				assert.ok(oComponentUsage instanceof Component, "ComponentUsage must be type of sap.ui.core.Component");
-				assert.ok(oComponentUsage instanceof UsedComponent, "ComponentUsage must be type of samples.components.button.Component");
-				assert.equal(oOwnerComponent.getId(), Component.getOwnerIdFor(oComponentUsage), "ComponentUsage must be created with the creator Component as owner");
-
-				// Overwrite nested component
-				oComponentContainer.setComponent(oNewComponent);
-				assert.ok(oComponentUsage.bIsDestroyed, "Old component should be destroyed");
-
-				done();
-
-			});
-		});
+		}.bind(this));
 
 	});
 
 	QUnit.test("Container with ComponentLifecycle=Application", function (assert) {
 
-		var oOwnerComponent = sap.ui.component({
-			name: "my.usage"
-		});
-
 		// create the container within the context of the owner component
-		var oComponentContainer = oOwnerComponent.runAsOwner(function() {
-			return new ComponentContainer({
+		return this.oOwnerComponent.runAsOwner(function() {
+			return createContainerAndWait({
 				usage: "myUsage",
-				lifecycle: ComponentLifecycle.Application
+				lifecycle: ComponentLifecycle.Application,
+				async: true
 			});
-		});
-
-		// simulate onBeforeRendering to force to create the component
-		oComponentContainer.onBeforeRendering();
-
-		var done = (function() {
-			var asyncDone = assert.async();
-			return function cleanup() {
-				var oNestedComponent = oComponentContainer.getComponentInstance();
-				oComponentContainer.destroy();
-				assert.ok(!oNestedComponent.bIsDestroyed, "Nested Component must not be destroyed");
-				oNestedComponent.destroy();
-				oOwnerComponent.destroy();
-				asyncDone();
-			};
-		})();
-
-		sap.ui.require([
-			"samples/components/button/Component"
-		], function(UsedComponent) {
+		}).then(function(oComponentContainer) {
 
 			var oComponentUsage = oComponentContainer.getComponentInstance();
+			var UsedComponent = sap.ui.require("samples/components/button/Component");
 
 			assert.equal(oComponentContainer.getLifecycle(), ComponentLifecycle.Application, "ComponentLifecycle is Application!");
 			assert.ok(oComponentUsage instanceof Component, "ComponentUsage must be type of sap.ui.core.Component");
 			assert.ok(oComponentUsage instanceof UsedComponent, "ComponentUsage must be type of samples.components.button.Component");
-			assert.equal(oOwnerComponent.getId(), Component.getOwnerIdFor(oComponentUsage), "ComponentUsage must be created with the creator Component as owner");
-			done();
+			assert.equal(Component.getOwnerIdFor(oComponentUsage), this.oOwnerComponent.getId(), "ComponentUsage must be created with the creator Component as owner");
+
+			var oNestedComponent = oComponentContainer.getComponentInstance();
+			oComponentContainer.destroy();
+			assert.ok(!oNestedComponent.bIsDestroyed, "Nested Component must not be destroyed");
+
+			oNestedComponent.destroy();
+
+		}.bind(this));
+
+	});
+
+	QUnit.test("Container with autoPrefixId=true", function (assert) {
+
+		// create the container within the context of the owner component
+		return this.oOwnerComponent.runAsOwner(function() {
+			return createContainerAndWait({
+				id: "container",
+				usage: "myUsage",
+				lifecycle: ComponentLifecycle.Container,
+				autoPrefixId: true,
+				async: true
+			});
+		}).then(function(oComponentContainer) {
+
+			var oUsageComponent = oComponentContainer.getComponentInstance();
+
+			// assert
+			assert.equal(oUsageComponent.getId(), "container-myUsage", "The id of the Component instance created for the component usage must be prefixed with the ComponentContainer id");
+
+			// cleanup
+			oComponentContainer.destroy();
 
 		});
 
 	});
 
 	QUnit.module("Callback");
-
-	QUnit.test("Synchronous componentCreated callback", function (assert) {
-
-		var done = assert.async();
-
-		var oComponentContainer = new ComponentContainer({
-			name: "samples.components.button",
-			componentCreated: function(oEvent) {
-				assert.ok(true, "ComponentContainer notified that the Component has been created");
-				assert.ok(oEvent.getParameter("component") instanceof Component, "Component instance has been passed as event parameter");
-				assert.strictEqual(oEvent.getParameter("component"), this.getComponentInstance(), "Component instance has been passed as event parameter");
-				done();
-			}
-		});
-
-		// simulate rendering
-		oComponentContainer.onBeforeRendering();
-
-	});
 
 	QUnit.test("Asynchronous componentCreated callback", function (assert) {
 
@@ -429,13 +527,15 @@ sap.ui.define([
 
 	});
 
+
+
 	QUnit.module("Manifest First", {
 		beforeEach : function() {
 
 			// setup fake server
 			var oManifest = this.oManifest = {
 				"sap.app" : {
-					"id" : "samples.components.sample"
+					"id" : "sap.ui.test.v2empty"
 				}
 			};
 
@@ -460,27 +560,6 @@ sap.ui.define([
 		afterEach : function() {}
 	});
 
-
-	QUnit.test("Manifest delegation to component instance (sync)", function(assert) {
-
-		var oServer = this.oServer, oManifest = this.oManifest;
-
-		// start test
-		var oComponentContainer = new ComponentContainer({
-			manifest: "/anylocation/manifest.json",
-			async: false
-		});
-
-		// simulate rendering
-		oComponentContainer.onBeforeRendering();
-
-		// check the manifest being available properly
-		var oComponent = oComponentContainer.getComponentInstance();
-		assert.ok(oComponent.getManifest(), "Manifest is available");
-		assert.deepEqual(oComponent.getManifest(), oManifest, "Manifest matches the manifest behind manifestUrl");
-
-	});
-
 	QUnit.test("Manifest delegation to component instance (async)", function(assert) {
 
 		var done = assert.async();
@@ -489,7 +568,7 @@ sap.ui.define([
 			done();
 		}, 2000);
 
-		var oServer = this.oServer, oManifest = this.oManifest;
+		var oManifest = this.oManifest;
 
 		// start test
 		var oComponentContainer = new ComponentContainer({
@@ -508,6 +587,8 @@ sap.ui.define([
 
 	});
 
+
+
 	QUnit.module("Race conditions");
 
 	QUnit.test("Component created event must be fired only once", function (assert) {
@@ -520,26 +601,24 @@ sap.ui.define([
 			done();
 		}, 2000);
 
-		sap.ui.require(["sap/ui/core/Component", "sap/ui/core/ComponentContainer"], function(Component, ComponentContainer) {
-
-			var oComponentContainer = new ComponentContainer({
-				name: "samples.components.button",
-				async: true,
-				componentCreated: function(oEvent) {
-					assert.ok(true, "ComponentContainer notified that the Component has been created");
-					clearTimeout(iTimeout);
-					done();
-				}
-			});
-
-			// simulate rendering
-			oComponentContainer.onBeforeRendering();
-			// simulate a property update during load of component which causes re-rendering
-			oComponentContainer.onBeforeRendering();
-
+		var oComponentContainer = new ComponentContainer({
+			name: "samples.components.button",
+			async: true,
+			componentCreated: function(oEvent) {
+				assert.ok(true, "ComponentContainer notified that the Component has been created");
+				clearTimeout(iTimeout);
+				done();
+			}
 		});
 
+		// simulate rendering
+		oComponentContainer.onBeforeRendering();
+		// simulate a property update during load of component which causes re-rendering
+		oComponentContainer.onBeforeRendering();
+
 	});
+
+
 
 	QUnit.module("Special handling of manifest property");
 
@@ -547,40 +626,32 @@ sap.ui.define([
 
 		assert.expect(4);
 
-		var done = assert.async();
+		var fnFactory = Component.create;
+		var oComponentContainer;
 
-		sap.ui.require(["sap/ui/core/Component", "sap/ui/core/ComponentContainer"], function(Component, ComponentContainer) {
-
-			var fnFactoryOld = sap.ui.component;
-			var fnFactory = Component.create;
-			var oComponentContainer;
-
-			sap.ui.component = Component.create = function(mConfig) {
-				assert.strictEqual(mConfig.manifest, true, "sap.ui.component is called with boolean true");
-			};
-			oComponentContainer = new ComponentContainer({
-				manifest: "true"
-			});
-			assert.strictEqual(oComponentContainer.getManifest(), true, "Property manifest is converted to boolean true");
-			oComponentContainer._createComponent();
-			oComponentContainer.destroy();
-
-			sap.ui.component = Component.create = function(mConfig) {
-				assert.strictEqual(mConfig.manifest, false, "sap.ui.component is called with boolean false");
-			};
-			oComponentContainer = new ComponentContainer({
-				manifest: "false"
-			});
-			assert.strictEqual(oComponentContainer.getManifest(), false, "Property manifest is converted to boolean false");
-			oComponentContainer._createComponent();
-			oComponentContainer.destroy();
-
-			sap.ui.component = fnFactoryOld;
-			Component.create = fnFactory;
-
-			done();
-
+		Component.create = function(mConfig) {
+			assert.strictEqual(mConfig.manifest, true, "sap.ui.component is called with boolean true");
+		};
+		oComponentContainer = new ComponentContainer({
+			manifest: "true",
+			async: true
 		});
+		assert.strictEqual(oComponentContainer.getManifest(), true, "Property manifest is converted to boolean true");
+		oComponentContainer._createComponent();
+		oComponentContainer.destroy();
+
+		Component.create = function(mConfig) {
+			assert.strictEqual(mConfig.manifest, false, "sap.ui.component is called with boolean false");
+		};
+		oComponentContainer = new ComponentContainer({
+			manifest: "false",
+			async: true
+		});
+		assert.strictEqual(oComponentContainer.getManifest(), false, "Property manifest is converted to boolean false");
+		oComponentContainer._createComponent();
+		oComponentContainer.destroy();
+
+		Component.create = fnFactory;
 
 	});
 
@@ -588,38 +659,28 @@ sap.ui.define([
 
 		assert.expect(4);
 
-		var done = assert.async();
+		var fnFactory = Component.create;
+		var oComponentContainer;
 
-		sap.ui.require(["sap/ui/core/Component", "sap/ui/core/ComponentContainer"], function(Component, ComponentContainer) {
+		Component.create = function(mConfig) {
+			assert.strictEqual(mConfig.manifest, "true", "sap.ui.component is called with string true");
+		};
+		oComponentContainer = new ComponentContainer({ async: true });
+		oComponentContainer.setManifest("true");
+		assert.strictEqual(oComponentContainer.getManifest(), "true", "Property manifest is not converted to boolean");
+		oComponentContainer._createComponent();
+		oComponentContainer.destroy();
 
-			var fnFactoryOld = sap.ui.component;
-			var fnFactory = Component.create;
-			var oComponentContainer;
+		Component.create = function(mConfig) {
+			assert.strictEqual(mConfig.manifest, "false", "sap.ui.component is called with string false");
+		};
+		oComponentContainer = new ComponentContainer({ async: true });
+		oComponentContainer.setManifest("false");
+		assert.strictEqual(oComponentContainer.getManifest(), "false", "Property manifest is not converted to boolean");
+		oComponentContainer._createComponent();
+		oComponentContainer.destroy();
 
-			sap.ui.component = Component.create = function(mConfig) {
-				assert.strictEqual(mConfig.manifest, "true", "sap.ui.component is called with string true");
-			};
-			oComponentContainer = new ComponentContainer();
-			oComponentContainer.setManifest("true");
-			assert.strictEqual(oComponentContainer.getManifest(), "true", "Property manifest is not converted to boolean");
-			oComponentContainer._createComponent();
-			oComponentContainer.destroy();
-
-			sap.ui.component = Component.create = function(mConfig) {
-				assert.strictEqual(mConfig.manifest, "false", "sap.ui.component is called with string false");
-			};
-			oComponentContainer = new ComponentContainer();
-			oComponentContainer.setManifest("false");
-			assert.strictEqual(oComponentContainer.getManifest(), "false", "Property manifest is not converted to boolean");
-			oComponentContainer._createComponent();
-			oComponentContainer.destroy();
-
-			sap.ui.component = fnFactoryOld;
-			Component.create = fnFactory;
-
-			done();
-
-		});
+		Component.create = fnFactory;
 
 	});
 

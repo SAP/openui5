@@ -1,0 +1,36 @@
+{
+    "sap.app": {
+        "id": "card.demo.withExtension",
+        "type": "card"
+    },
+    "sap.card": {
+        "type": "List",
+        "extension": "./extensions/Extension1",
+        "data": {
+            "extension": {
+                "method": "getData"
+            }
+        },
+        "configuration": {
+            "parameters": {
+                "state": {
+                    "value": "{\"presentationVariant\":{\"SortOrder\":[{\"Property\":\"BillingDocDateYearMonth\",\"Descending\":false}]},\"sensitiveProps\":{}}"
+                }
+            }
+        },
+        "content": {
+            "item": {
+                "title": "{= extension.formatters.toUpperCase(${city})}",
+                "actions": [
+                    {
+                        "type": "Navigation",
+                        "parameters": {
+                            "value1": "{parameters>/state/value}",
+                            "value2": "{= extension.formatters.stringifiedJsonSample(${city})}"
+                        }
+                    }
+                ]
+            }
+        }
+    }
+}

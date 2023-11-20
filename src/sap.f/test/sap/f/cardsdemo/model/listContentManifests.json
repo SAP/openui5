@@ -1,0 +1,1008 @@
+{
+	"tasksContent": {
+		"sap.app": {
+			"id": "tasksContent",
+			"type": "card"
+		},
+		"sap.card": {
+			"type": "List",
+			"header": {
+				"title": "Department Budget State",
+				"subTitle": "2019",
+				"icon": {
+					"src": "sap-icon://collections-insight"
+				}
+			},
+			"content": {
+				"data": {
+					"request": {
+						"url": "./cardcontent/listContent/tasks.json"
+					},
+					"path": "/"
+				},
+				"item": {
+					"icon": {
+						"src": "{icon}"
+					},
+					"title": {
+						"value": "{Name}"
+					},
+					"info": {
+						"value": "{= ${departmentBudget}  > ${departmentBudgetThreshold} ? 'Exceeded' : 'In Range' }",
+						"state": "{= ${departmentBudget}  > ${departmentBudgetThreshold} ? 'Error' : 'Success' }"
+					}
+				},
+				"maxItems": 3
+			}
+		}
+	},
+	"listCardWithProducts": {
+		"sap.app": {
+			"type": "card",
+			"id": "listCardWithProducts"
+		},
+		"sap.card": {
+			"type": "List",
+			"data": {
+				"json": {
+					"products": [
+						{
+							"Id": "HT-1000",
+							"Name": "Notebook Basic 15",
+							"Description": "Notebook Basic 15 with 2,80 GHz quad core, 15\" LCD, 4 GB DDR3 RAM, 500 GB Hard Disc, Windows 8 Pro",
+							"CurrencyCode": "USD",
+							"Price": "956.00"
+						},
+						{
+							"Id": "HT-1001",
+							"Name": "Notebook Basic 17",
+							"Description": "Notebook Basic 17 with 2,80 GHz quad core, 17\" LCD, 4 GB DDR3 RAM, 500 GB Hard Disc, Windows 8 Pro",
+							"CurrencyCode": "USD",
+							"Price": "1249.00"
+						},
+						{
+							"Id": "HT-1002",
+							"Name": "Notebook Basic 18",
+							"Description": "Notebook Basic 18 with 2,80 GHz quad core, 18\" LCD, 8 GB DDR3 RAM, 1000 GB Hard Disc, Windows 8 Pro",
+							"CurrencyCode": "USD",
+							"Price": "1570.00"
+						},
+						{
+							"Id": "HT-1003",
+							"Name": "Notebook Basic 19",
+							"Description": "Notebook Basic 19 with 2,80 GHz quad core, 19\" LCD, 8 GB DDR3 RAM, 1000 GB Hard Disc, Windows 8 Pro",
+							"CurrencyCode": "USD",
+							"Price": "1650.00"
+						},
+						{
+							"Id": "HT-1004",
+							"Name": "ITelO Vault",
+							"Description": "Digital Organizer with State-of-the-Art Storage Encryption",
+							"CurrencyCode": "USD",
+							"Price": "299.00"
+						},
+						{
+							"Id": "HT-1005",
+							"Name": "Notebook Professional 15",
+							"Description": "Notebook Professional 15 with 2,80 GHz quad core, 15\" Multitouch LCD, 8 GB DDR3 RAM, 500 GB SSD - DVD-Writer (DVD-R/+R/-RW/-RAM),Windows 8 Pro",
+							"CurrencyCode": "USD",
+							"Price": "1999.00"
+						},
+						{
+							"Id": "HT-1006",
+							"Name": "Notebook Professional 17",
+							"Description": "Notebook Professional 17 with 2,80 GHz quad core, 17\" Multitouch LCD, 8 GB DDR3 RAM, 500 GB SSD - DVD-Writer (DVD-R/+R/-RW/-RAM),Windows 8 Pro",
+							"CurrencyCode": "USD",
+							"Price": "2299.00"
+						}
+					],
+					"count": 7
+				}
+			},
+			"header": {
+				"title": "List Card with Products",
+				"subTitle": "Products and Prices"
+			},
+			"content": {
+				"data": {
+					"path": "/products"
+				},
+				"item": {
+					"title": "{Name}",
+					"description": "",
+					"info": {
+						"value": "{Price}"
+					},
+					"actions": [
+						{
+							"type": "Navigation",
+							"parameters": {
+								"url": ""
+							}
+						}
+					]
+				},
+				"maxItems": 7
+			}
+		}
+	},
+	"listAttributesActions": {
+		"sap.app": {
+			"type": "card",
+			"id": "list.attributes.actions"
+		},
+		"sap.card": {
+			"type": "List",
+			"header": {
+				"title": "List Card",
+				"subTitle": "City"
+			},
+			"content": {
+				"data": {
+					"json": [
+						{
+							"name": "Teico Inc.",
+							"description": "Sun Valley, Idaho",
+							"info": "Error 2456",
+							"infoState": "Error",
+							"showInfoStateIcon": true,
+							"attributes": [
+								{
+									"name": "Attribute 1",
+									"state": "Error"
+								},
+								{
+									"name": "Info 1",
+									"state": "Error"
+								},
+								{
+									"name": "Attribute 2",
+									"state": "Success"
+								},
+								{
+									"name": "Info 2",
+									"state": "Success"
+								},
+								{
+									"name": "Attribute 3",
+									"state": "None"
+								},
+								{
+									"name": "Info 3",
+									"state": "None"
+								}
+							]
+						},
+						{
+							"name": "Freshhh LTD.",
+							"info": "Warning 1264",
+							"infoState": "Warning",
+							"showInfoStateIcon": true,
+							"attributes": [
+								{
+									"name": "Attribute 1",
+									"state": "Error"
+								},
+								{
+									"name": "Attribute 2",
+									"state": "Success"
+								},
+								{
+									"name": "Attribute 3",
+									"state": "None"
+								}
+							]
+						},
+						{
+							"name": "Lean Pulp",
+							"description": "Raymond, California",
+							"info": "Success 236",
+							"infoState": "Success",
+							"showInfoStateIcon": true,
+							"attributesLayoutType": "OneColumn",
+							"attributes": [
+								{
+									"name": "Attribute 1 Attribute 1 Attribute 1 Attribute 1",
+									"state": "Error"
+								},
+								{
+									"name": "Attribute 2 Attribute 2 Attribute 2 Attribute 2",
+									"state": "Success"
+								},
+								{
+									"name": "Attribute 3",
+									"state": "None"
+								}
+							]
+						},
+						{
+							"name": "Lean Pulp",
+							"description": "Raymond, California",
+							"info": "Information 23627483928",
+							"infoState": "Information",
+							"showInfoStateIcon": true,
+							"attributesLayoutType": "OneColumn"
+						},
+						{
+							"name": "Lean Pulp",
+							"description": "Raymond, California",
+							"info": "Warning 236 (Custom Icon)",
+							"infoState": "Warning",
+							"showInfoStateIcon": true,
+							"customStateIcon": "sap-icon://quality-issue",
+							"attributesLayoutType": "OneColumn"
+						}
+					]
+				},
+				"maxItems": 5,
+				"item": {
+					"title": {
+						"value": "{name}"
+					},
+					"description": {
+						"value": "{description}"
+					},
+					"info": {
+						"value": "{info}",
+						"state": "{infoState}",
+						"showStateIcon": "{showInfoStateIcon}",
+						"customStateIcon": "{customStateIcon}"
+					},
+					"highlight": "{infoState}",
+					"attributesLayoutType": "{attributesLayoutType}",
+					"attributes": [
+						{
+							"value": "{attributes/0/name}",
+							"state": "{attributes/0/state}"
+						},
+						{
+							"value": "{attributes/1/name}",
+							"state": "{attributes/1/state}"
+						},
+						{
+							"value": "{attributes/2/name}",
+							"state": "{attributes/2/state}"
+						},
+						{
+							"value": "{attributes/3/name}",
+							"state": "{attributes/3/state}"
+						},
+						{
+							"value": "{attributes/4/name}",
+							"state": "{attributes/4/state}"
+						},
+						{
+							"value": "{attributes/5/name}",
+							"state": "{attributes/5/state}"
+						}
+					],
+					"actionsStrip": [
+						{
+							"type": "Link",
+							"text": "Link to Meal",
+							"icon": "sap-icon://action",
+							"actions": [
+								{
+									"type": "Navigation",
+									"parameters": {
+										"url": "http://sap.com"
+									}
+								}
+							]
+						},
+						{
+							"type": "ToolbarSpacer"
+						},
+						{
+							"text": "Add",
+							"actions": [
+								{
+									"type": "Custom",
+									"parameters": {
+										"item": "{}"
+									}
+								}
+							]
+						},
+						{
+							"text": "Delete",
+							"actions": [
+								{
+									"type": "Custom",
+									"parameters": {
+										"item": "{}"
+									}
+								}
+							]
+						}
+					]
+				}
+			}
+		}
+	},
+	"listTitleAndChart": {
+		"sap.app": {
+			"id": "list.titleAndChart",
+			"type": "card"
+		},
+		"sap.card": {
+			"type": "List",
+			"header": {
+				"title": "Actual Income from Products",
+				"icon": {
+					"src": "sap-icon://product"
+				},
+				"status": {
+					"text": "5 of 20"
+				}
+			},
+			"content": {
+				"data": {
+					"json": [
+						{
+							"Name": "Comfort Easy",
+							"Description": "32 GB Digital Assistant",
+							"Highlight": "Success",
+							"Expected": 300000,
+							"Actual": 330000,
+							"Target": 280000,
+							"ChartColor": "Good"
+						},
+						{
+							"Name": "ITelO Vault",
+							"Description": "Digital Organizer",
+							"Highlight": "Success",
+							"Expected": 230000,
+							"Actual": 225000,
+							"Target": 210000,
+							"ChartColor": "Good"
+						},
+						{
+							"Name": "Notebook Professional 15",
+							"Description": "Multitouch LCD",
+							"Highlight": "Success",
+							"Expected": 170000,
+							"Actual": 150000,
+							"Target": 149000,
+							"ChartColor": "Good"
+						},
+						{
+							"Name": "Ergo Screen E-I",
+							"Description": "Optimum Hi-Resolution max.",
+							"Highlight": "Warning",
+							"Expected": 120000,
+							"Actual": 100000,
+							"Target": 100000,
+							"ChartColor": "Neutral"
+						},
+						{
+							"Name": "Laser Professional Eco",
+							"Description": "Powerful 500 MHz processor",
+							"Highlight": "Error",
+							"Expected": 90000,
+							"Actual": 60000,
+							"Target": 75000,
+							"ChartColor": "Error"
+						}
+					]
+				},
+				"maxItems": 5,
+				"item": {
+					"title": "{Name}",
+					"chart": {
+						"type": "Bullet",
+						"minValue": 0,
+						"maxValue": "{Expected}",
+						"value": "{Actual}",
+						"scale": "€",
+						"displayValue": "{= format.currency(${Actual}, 'EUR', {currencyCode:false})}",
+						"color": "{ChartColor}"
+					}
+				}
+			}
+		}
+	},
+	"listAttributesIconChart": {
+		"sap.app": {
+			"type": "card",
+			"id": "list.attributes.icon.chart"
+		},
+		"sap.card": {
+			"type": "List",
+			"header": {
+				"title": "List Card",
+				"subTitle": "City"
+			},
+			"content": {
+				"data": {
+					"json": [
+						{
+							"name": "Freshhh LTD.",
+							"info": "1264",
+							"infoState": "Warning",
+							"chartValue": 60,
+							"attributes": [
+								{
+									"name": "Attribute 1",
+									"state": "Error"
+								},
+								{
+									"name": ""
+								},
+								{
+									"name": "Attribute 2",
+									"state": "Success"
+								},
+								{
+									"name": "Info 2",
+									"state": "Success"
+								},
+								{
+									"name": "Attribute 3",
+									"state": "None"
+								},
+								{
+									"name": "Info 3",
+									"state": "None"
+								}
+							]
+						},
+						{
+							"name": "Lean Pulp",
+							"description": "Raymond, Callifornia",
+							"info": "236",
+							"infoState": "None",
+							"chartValue": 80,
+							"attributesLayoutType": "OneColumn",
+							"attributes": [
+								{
+									"name": "Attribute 1 Attribute 1 Attribute 1 Attribute 1",
+									"state": "Error"
+								},
+								{
+									"name": "Attribute 2 Attribute 2 Attribute 2 Attribute 2",
+									"state": "Success"
+								},
+								{
+									"name": "Attribute 3",
+									"state": "None"
+								}
+							]
+						},
+						{
+							"name": "Lean Pulp",
+							"description": "Raymond, Callifornia",
+							"info": "236",
+							"infoState": "None",
+							"chartValue": 623240,
+							"attributesLayoutType": "OneColumn",
+							"attributes": [
+								{
+									"name": "Attribute 1 Attribute 1 Attribute",
+									"state": "Error"
+								},
+								{
+									"name": "Attribute 2 Attribute 2 Attribute",
+									"state": "Success"
+								},
+								{
+									"name": "Attribute 3",
+									"state": "None"
+								}
+							]
+						}
+					]
+				},
+				"maxItems": 3,
+				"item": {
+					"icon": {
+						"src": "sap-icon://address-book"
+					},
+					"title": {
+						"value": "{name}"
+					},
+					"description": {
+						"value": "{description}"
+					},
+					"info": {
+						"value": "{infoState}",
+						"state": "{infoState}"
+					},
+					"attributesLayoutType": "{attributesLayoutType}",
+					"attributes": [
+						{
+							"value": "{attributes/0/name}",
+							"state": "{attributes/0/state}"
+						},
+						{
+							"value": "{attributes/1/name}",
+							"state": "{attributes/1/state}"
+						},
+						{
+							"value": "{attributes/2/name}",
+							"state": "{attributes/2/state}"
+						},
+						{
+							"value": "{attributes/3/name}",
+							"state": "{attributes/3/state}"
+						},
+						{
+							"value": "{attributes/4/name}",
+							"state": "{attributes/4/state}"
+						},
+						{
+							"value": "{attributes/5/name}",
+							"state": "{attributes/5/state}"
+						}
+					],
+					"chart": {
+						"type": "Bullet",
+						"minValue": 0,
+						"maxValue": 100,
+						"target": 60,
+						"value": "{chartValue}",
+						"scale": "€",
+						"displayValue": "{chartValue} EUR",
+						"color": "Good"
+					}
+				}
+			}
+		}
+	},
+	"listStackedBar": {
+		"sap.app": {
+			"id": "card.explorer.stackedBar.list.card",
+			"type": "card"
+		},
+		"sap.card": {
+			"type": "List",
+			"header": {
+				"title": "Notebooks Distribution",
+				"subTitle": "By Years",
+				"status": {
+					"text": "3 of 11"
+				}
+			},
+			"content": {
+				"data": {
+					"json": {
+						"legend": {
+							"items": {
+								"Notebook13": "Notebook 13",
+								"Notebook17": "Notebook 17"
+							}
+						},
+						"maxOverYears": 1000,
+						"Notebooks": [
+							{
+								"Year": 2017,
+								"Category": "Computer system accessories",
+								"Notebook13": 10000000,
+								"Notebook17": 1000000
+							},
+							{
+								"Year": 2018,
+								"Category": "Computer system accessories",
+								"Notebook13": 996,
+								"Notebook17": 1
+							},
+							{
+								"Year": 2019,
+								"Category": "Computer system accessories",
+								"Notebook13": 996,
+								"Notebook17": 1
+							}
+						]
+					},
+					"path": "/Notebooks"
+				},
+				"maxItems": 3,
+				"item": {
+					"title": "{Year}",
+					"description": "{Category}",
+					"chart": {
+						"type": "StackedBar",
+						"displayValue": "{= ${Notebook13} + ${Notebook17}}K",
+						"maxValue": "{/maxOverYears}",
+						"bars": [
+							{
+								"value": "{Notebook13}",
+								"displayValue": "{/legend/items/Notebook13}: {Notebook13}K",
+								"legendTitle": "{/legend/items/Notebook13}"
+							},
+							{
+								"value": "{Notebook17}",
+								"displayValue": "{/legend/items/Notebook17}: {Notebook17}K",
+								"legendTitle": "{/legend/items/Notebook17}"
+							}
+						]
+					}
+				}
+			}
+		}
+	},
+	"listAttributes": {
+		"sap.app": {
+			"type": "card",
+			"id": "list.attributes"
+		},
+		"sap.card": {
+			"type": "List",
+			"header": {
+				"title": "List Card",
+				"subTitle": "City"
+			},
+			"content": {
+				"data": {
+					"json": [
+						{
+							"name": "Teico Inc.",
+							"description": "Sun Valley, Idaho",
+							"info": "2456",
+							"infoState": "Error",
+							"attributesLayoutType": "TwoColumns",
+							"attributes": [
+								{
+									"name": "Error",
+									"state": "Error",
+									"showStateIcon": true
+								},
+								{
+									"name": "Warning - very very very very very very long status that should stay on the same line with the icon",
+									"state": "Warning",
+									"showStateIcon": true
+								},
+								{
+									"name": "Success",
+									"state": "Success",
+									"showStateIcon": true
+								},
+								{
+									"name": "Success (Custom Icon)",
+									"state": "Success",
+									"showStateIcon": true,
+									"customStateIcon": "sap-icon://activity-2"
+								},
+								{
+									"name": "Information",
+									"state": "Information",
+									"showStateIcon": true
+								},
+								{
+									"name": "Attribute 3",
+									"state": "None",
+									"showStateIcon": true
+								},
+								{
+									"name": "Info 3",
+									"state": "None",
+									"showStateIcon": true
+								}
+							]
+						},
+						{
+							"name": "Freshhh LTD.",
+							"info": "1264",
+							"infoState": "Warning",
+							"attributes": [
+								{
+									"name": "Attribute 1 Attribute 1 Attribute 1 Attribute 1 Attribute 1",
+									"state": "Error"
+								},
+								{
+									"name": "Info 1 Info 1 Info 1 Info 1 Info 1 Info 1 Info 1 Info 1 Info 1 Info 1 Info 1 Info 1",
+									"state": "Error"
+								},
+								{
+									"name": "Attribute 2 Attribute 2 Attribute 2 Attribute 2 Attribute 2 Attribute 2 Attribute 2 Attribute 2",
+									"state": "Success"
+								},
+								{
+									"name": "Info 2",
+									"state": "Success"
+								},
+								{
+									"name": "Attribute 3",
+									"state": "None"
+								},
+								{
+									"name": "Info 3 Info 3 Info 3 Info 3 Info 3 Info 3 Info 3 Info 3 Info 3 Info 3 Info 3 Info 3",
+									"state": "None"
+								}
+							]
+						},
+						{
+							"name": "Lean Pulp",
+							"description": "Raymond, Callifornia",
+							"info": "236",
+							"infoState": "None",
+							"attributesLayoutType": "OneColumn",
+							"attributes": [
+								{
+									"name": "Attribute 1 Attribute 1 Attribute 1 Attribute 1",
+									"state": "Error"
+								},
+								{
+									"name": "Attribute 2 Attribute 2 Attribute 2 Attribute 2",
+									"state": "Success"
+								},
+								{
+									"name": "Attribute 3",
+									"state": "None"
+								}
+							]
+						}
+					]
+				},
+				"maxItems": 3,
+				"item": {
+					"title": {
+						"value": "{name}"
+					},
+					"description": {
+						"value": "{description}"
+					},
+					"info": {
+						"value": "{infoState}",
+						"state": "{infoState}"
+					},
+					"attributesLayoutType": "{attributesLayoutType}",
+					"attributes": [
+						{
+							"value": "{attributes/0/name}",
+							"state": "{attributes/0/state}",
+							"showStateIcon": "{attributes/0/showStateIcon}"
+						},
+						{
+							"value": "{attributes/1/name}",
+							"state": "{attributes/1/state}",
+							"showStateIcon": "{attributes/1/showStateIcon}"
+						},
+						{
+							"value": "{attributes/2/name}",
+							"state": "{attributes/2/state}",
+							"showStateIcon": "{attributes/2/showStateIcon}"
+						},
+						{
+							"value": "{attributes/3/name}",
+							"state": "{attributes/3/state}",
+							"showStateIcon": "{attributes/3/showStateIcon}",
+							"customStateIcon": "{attributes/3/customStateIcon}"
+						},
+						{
+							"value": "{attributes/4/name}",
+							"state": "{attributes/4/state}",
+							"showStateIcon": "{attributes/4/showStateIcon}"
+						},
+						{
+							"value": "{attributes/5/name}",
+							"state": "{attributes/5/state}",
+							"showStateIcon": "{attributes/5/showStateIcon}"
+						},
+						{
+							"value": "{attributes/6/name}",
+							"state": "{attributes/6/state}",
+							"showStateIcon": "{attributes/6/showStateIcon}"
+						}
+					]
+				}
+			}
+		}
+	},
+	"listWithAvatars": {
+		"sap.app": {
+			"id": "cardsdemo.listContent.listWithAvatars",
+			"type": "card"
+		},
+		"sap.card": {
+			"data": {
+				"request": {
+					"url": "./cardcontent/someitems.json"
+				}
+			},
+			"type": "List",
+			"header": {
+				"title": "List with Avatars"
+			},
+			"content": {
+				"item": {
+					"icon": {
+						"src": "{icon}",
+						"shape": "Circle"
+					},
+					"title": "{Name}"
+				},
+				"maxItems": 4
+			}
+		}
+	},
+	"listWithMinItems": {
+		"sap.app": {
+			"id": "listWithMinItems",
+			"type": "card"
+		},
+		"sap.card": {
+			"type": "List",
+			"header": {
+				"title": "List with minItems"
+			},
+			"content": {
+				"data": {
+					"request": {
+						"url": "./cardcontent/listContent/tasks.json"
+					},
+					"path": "/"
+				},
+				"item": {
+					"icon": {
+						"src": "{icon}"
+					},
+					"title": {
+						"value": "{Name}"
+					},
+					"info": {
+						"value": "{= ${departmentBudget}  > ${departmentBudgetThreshold} ? 'Exceeded' : 'In Range' }",
+						"state": "{= ${departmentBudget}  > ${departmentBudgetThreshold} ? 'Error' : 'Success' }"
+					}
+				},
+				"minItems": 1,
+				"maxItems": 8
+			}
+		}
+	},
+	"listDefaultIcons": {
+		"sap.app": {
+			"id": "cardsdemo.listContent.listDefaultIcons",
+			"type": "card"
+		},
+		"sap.card": {
+			"data": {
+				"request": {
+					"url": "./cardcontent/someitems.json"
+				}
+			},
+			"type": "List",
+			"header": {
+				"title": "List with Default Icons",
+				"icon": {
+					"src": "",
+					"shape": "Square"
+				}
+			},
+			"content": {
+				"item": {
+					"icon": {
+						"src": "",
+						"shape": "Circle"
+					},
+					"title": "{Name}"
+				},
+				"maxItems": 4
+			}
+		}
+	},
+	"listInvisibleDescription": {
+		"sap.app": {
+			"type": "card",
+			"id": "listCardWithInvisibleDescription"
+		},
+		"sap.card": {
+			"type": "List",
+			"data": {
+				"json": {
+					"products": [
+						{
+							"Id": "HT-1000",
+							"Name": "Notebook Basic 15",
+							"descriptionVisible": true
+						},
+						{
+							"Id": "HT-1001",
+							"Name": "Notebook Basic 17",
+							"descriptionVisible": true
+						},
+						{
+							"Id": "HT-1002",
+							"Name": "Notebook Basic 18",
+							"descriptionVisible": false
+						},
+						{
+							"Id": "HT-1003",
+							"Name": "Notebook Basic 19",
+							"descriptionVisible": false
+						}
+					]
+				}
+			},
+			"header": {
+				"title": "List Items with Invisible Descriptions and Infos"
+			},
+			"content": {
+				"data": {
+					"path": "/products"
+				},
+				"item": {
+					"title": "{Name}",
+					"description": {
+						"value": "{Id}",
+						"visible": "{descriptionVisible}"
+					},
+					"info": {
+						"value": "Info",
+						"visible": false
+					}
+				},
+				"maxItems": 4
+			}
+		}
+	},
+	"listInvisibleCharts": {
+		"sap.app": {
+			"type": "card",
+			"id": "listCardWithInvisibleCharts"
+		},
+		"sap.card": {
+			"type": "List",
+			"header": {
+				"title": "List Items with Invisible Charts"
+			},
+			"content": {
+				"data": {
+					"json": [
+						{
+							"Name": "ITelO Vault",
+							"Description": "Digital Organizer",
+							"Highlight": "Success",
+							"Expected": 230000,
+							"Actual": 225000,
+							"Target": 210000,
+							"ChartColor": "Good",
+							"ChartVisible": false
+						},
+						{
+							"Name": "Notebook Professional 15",
+							"Description": "Multitouch LCD",
+							"Highlight": "Success",
+							"Expected": 170000,
+							"Actual": 150000,
+							"Target": 149000,
+							"ChartColor": "Good",
+							"ChartVisible": true
+						},
+						{
+							"Name": "Ergo Screen E-I",
+							"Description": "Optimum Hi-Resolution max.",
+							"Highlight": "Warning",
+							"Expected": 120000,
+							"Actual": 100000,
+							"Target": 100000,
+							"ChartColor": "Neutral",
+							"ChartVisible": false
+						},
+						{
+							"Name": "Laser Professional Eco",
+							"Description": "Powerful 500 MHz processor",
+							"Highlight": "Error",
+							"Expected": 90000,
+							"Actual": 60000,
+							"Target": 75000,
+							"ChartColor": "Error",
+							"ChartVisible": true
+						}
+					]
+				},
+				"maxItems": 5,
+				"item": {
+					"title": "{Name}",
+					"chart": {
+						"visible": "{ChartVisible}",
+						"type": "Bullet",
+						"minValue": 0,
+						"maxValue": "{Expected}",
+						"value": "{Actual}"
+					}
+				}
+			}
+		}
+	}
+}

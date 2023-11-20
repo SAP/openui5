@@ -1,0 +1,11 @@
+{
+	"_version": "1.12.0",
+	"sap.app": {
+		"id": "testlibs.scenario15.lib1.comp",
+		"type": "application",
+		"title": "comp",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	}
+}

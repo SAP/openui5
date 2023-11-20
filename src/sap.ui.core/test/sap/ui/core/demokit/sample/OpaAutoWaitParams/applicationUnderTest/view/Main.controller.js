@@ -1,7 +1,8 @@
 sap.ui.define([
+	'sap/base/Log',
 	'sap/m/MessageBox',
 	"sap/ui/core/mvc/Controller"
-], function (MessageBox, Controller) {
+], function (Log, MessageBox, Controller) {
 	"use strict";
 
 	var bIsPolling = false;
@@ -13,15 +14,15 @@ sap.ui.define([
 			oEvent.getSource().setText(bIsPolling ? "Stop" : "Start");
 
 			if (bIsPolling) {
-				console.debug("Start pressed");
+				Log.debug("Start pressed");
 				(function poll() {
 					iPollTimeout = setTimeout(function () {
-						console.debug("Polling");
+						Log.debug("Polling");
 						poll();
 					}, 500);
 				}());
 			} else {
-				console.debug("Stop pressed");
+				Log.debug("Stop pressed");
 				clearTimeout(iPollTimeout);
 			}
 		}

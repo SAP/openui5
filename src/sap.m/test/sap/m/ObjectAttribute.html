@@ -1,7 +1,6 @@
 <!DOCTYPE HTML>
 <html>
 <head>
-<meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta charset="utf-8">
 <title>Object Attribute - sap.m</title>
 
@@ -31,6 +30,12 @@
 			oAttrs[0].setText("Ñagçyfox Contract #D1234567890");
 		}
 	}), new sap.m.ObjectAttribute({
+		title: "Custom content",
+		customContent: new sap.m.Link ({
+			text:"test",
+			press: function() {alert("you press me")}
+		})
+	}), new sap.m.ObjectAttribute({
 		text : "John Doe Ñagçyfox"
 	}), new sap.m.ObjectAttribute({
 		title: "Created by",
@@ -50,6 +55,12 @@
 		press : function() {
 			oAttrs2[0].setText("Ñagçyfox Contract #D1234567890");
 		}
+	}), new sap.m.ObjectAttribute({
+		title: "Custom content",
+		customContent: new sap.m.Link ({
+			text:"test",
+			press: function() {alert("you press me")}
+		})
 	}), new sap.m.ObjectAttribute({
 		text : "John Doe Ñagçyfox"
 	}), new sap.m.ObjectAttribute({
@@ -87,6 +98,12 @@
 			oAttrs3[0].setText("Ñagçyfox Contract #D1234567890");
 		}
 	}), new sap.m.ObjectAttribute({
+		title: "Custom content",
+		customContent: new sap.m.Link ({
+			text:"test",
+			press: function() {alert("you press me")}
+		})
+	}), new sap.m.ObjectAttribute({
 		text : "John Doe Ñagçyfox"
 	}), new sap.m.ObjectAttribute({
 		title: "Created by",
@@ -115,7 +132,6 @@
 		showHeaderContent:true,
 		showTitleInHeaderContent:true,
 		headerTitle: new sap.uxap.ObjectPageHeader({
-			headerDesign:"Light",
 			isActionAreaAlwaysVisible:true,
 			isObjectSubtitleAlwaysVisible:false,
 			isObjectTitleAlwaysVisible:false,
@@ -137,6 +153,12 @@
 					new sap.m.MessageToast.show("you click me");
 				}
 			}), new sap.m.ObjectAttribute({
+				title: "Custom content",
+				customContent: new sap.m.Link ({
+					text:"test",
+					press: function() {alert("you press me")}
+				})
+			}), new sap.m.ObjectAttribute({
 				text : "John Doe Ñagçyfox"
 			}), new sap.m.ObjectAttribute({
 				title: "Created by",
@@ -155,6 +177,12 @@
 								press : function() {
 									new sap.m.MessageToast.show("you click me");
 								}
+							}), new sap.m.ObjectAttribute({
+								title: "Custom content",
+								customContent: new sap.m.Link ({
+									text:"test",
+									press: function() {alert("you press me")}
+								})
 							}), new sap.m.ObjectAttribute({
 								text : "John Doe Ñagçyfox",
 								active : true,
@@ -226,7 +254,13 @@
 							new sap.m.MessageToast.show("you click me");
 						}
 					}), new sap.m.ObjectAttribute({
-						text : "John Doe Ñagçyfox",
+						title: "Custom content",
+						customContent: new sap.m.Link ({
+							text:"test link",
+							press: function() {alert("you press me")}
+						})
+					}), new sap.m.ObjectAttribute({
+						text : "JohnDoeÑagçyfox@JohnDoeÑagçyfox.com",
 						active : true,
 						press : function() {
 							new sap.m.MessageToast.show("you click me");
@@ -264,7 +298,15 @@
 	}), oPage);
 
 	addToPage(new sap.m.ObjectAttribute({
-		text : "Very long not active attribute containing only text Ñagçyfox Created by: John Doe Ñagçyfox Created by: John Doe Ñagçyfox Created by: John Doe Ñagçyfox Created by: John Doe Ñagçyfox Created by: John Doe Ñagçyfox Created by: John Doe Ñagçyfox Created by: John Doe Ñagçyfox Created by: John Doe Ñagçyfox Created by: John Doe Ñagçyfox Created by: John Doe Ñagçyfox Created by: John Doe Ñagçyfox Created by: John DoeÑagçyfox Created by: John Doe Ñagçyfox Created by: John Doe Ñagçyfox Created by: John Doe Ñagçyfox Created by: John Doe"
+		title: "Custom content",
+		customContent: new sap.m.Link ({
+			text:"test",
+			press: function() {alert("you press me")}
+		})
+	}), oPage);
+
+	addToPage(new sap.m.ObjectAttribute({
+		text : "Very long not active attribute containing only text Ñagçyfox Created by John Doe Ñagçyfox Created by John Doe Ñagçyfox Created by John Doe Ñagçyfox Created by: John Doe Ñagçyfox Created by John Doe Ñagçyfox Created by John Doe Ñagçyfox Created by John Doe Ñagçyfox Created by John Doe Ñagçyfox Created by John Doe Ñagçyfox Created by John Doe Ñagçyfox Created by John Doe Ñagçyfox Created by John DoeÑagçyfox Created by John Doe Ñagçyfox Created by John Doe Ñagçyfox Created by John Doe Ñagçyfox Created by John Doe"
 	}), oPage);
 
 	addToPage(new sap.m.ObjectAttribute({
@@ -314,9 +356,35 @@
 
 	addToPage(oVBox, oPage);
 
+	addToPage(new sap.m.ObjectAttribute({
+		title: "רכיבים",
+		text: "מים, קמח, (Additive) תרכיז 2% חלב"
+	}), oPage);
+
+	addToPage(new sap.m.ObjectAttribute({
+		textDirection: "RTL",
+		title: "רכיבים",
+		text: "מים, קמח, (Additive) תרכיז 2% חלב"
+	}), oPage);
+
+	addToPage(new sap.m.ObjectAttribute({
+		active: true,
+		textDirection: "RTL",
+		title: "רכיבים",
+		text: "מים, קמח, (Additive) תרכיז 2% חלב"
+	}), oPage);
+
+	addToPage(new sap.m.Text({ text: "===== not OK, explicit textDirection is required =====" }), oPage);
+
+	addToPage(new sap.m.ObjectAttribute({
+		active: true,
+		title: "רכיבים",
+		text: "מים, קמח, (Additive) תרכיז 2% חלב"
+	}), oPage);
+
 </script>
 
 </head>
-<body id="body" class="sapUiBody" role="application">
+<body id="body" class="sapUiBody">
 </body>
 </html>

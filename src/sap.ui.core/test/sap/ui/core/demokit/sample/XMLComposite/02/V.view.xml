@@ -1,6 +1,6 @@
 <mvc:View height="100%" controllerName="sap.ui.core.sample.XMLComposite.02.C" 
 	xmlns:core="sap.ui.core" 
-	xmlns:mvc="sap.ui.core.mvc" 
+	xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.m"
 	xmlns:fc="sap.ui.core.sample.XMLComposite.02.comp">
 	<fc:Table class="heigth100percent" press="onPress">

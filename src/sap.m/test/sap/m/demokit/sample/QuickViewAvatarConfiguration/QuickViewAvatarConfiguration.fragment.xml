@@ -1,0 +1,50 @@
+<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core">
+	<QuickView
+		id="quickView"
+		pages="{
+			path: '/pages',
+			templateShareable: false
+			}"
+		navigate=".onNavigate">
+		<QuickViewPage
+			pageId="{pageId}"
+			header="{header}"
+			title="{title}"
+			titleUrl="{titleUrl}"
+			groups="{
+				path: 'groups',
+				templateShareable: false
+			}"
+			description="{description}">
+			<avatar>
+				<Avatar
+					src="{icon}"
+					displayShape="{displayShape}"
+					fallbackIcon="{fallbackIcon}"
+					initials="{initials}"
+					backgroundColor="{backgroundColor}"
+					badgeIcon="{
+						path: 'pageId',
+						formatter: '.formatBadgeIcon'
+					}"
+					press=".handleAvatarPress"
+				/>
+			</avatar>
+			<QuickViewGroup
+				heading="{heading}"
+				elements="{
+					path: 'elements',
+					templateShareable: false
+				}">
+				<QuickViewGroupElement
+					label="{label}"
+					value="{value}"
+					url="{url}"
+					type="{elementType}"
+					pageLinkId="{pageLinkId}"
+					emailSubject="{emailSubject}"
+					target="{target}" />
+			</QuickViewGroup>
+		</QuickViewPage>
+	</QuickView>
+</core:FragmentDefinition>

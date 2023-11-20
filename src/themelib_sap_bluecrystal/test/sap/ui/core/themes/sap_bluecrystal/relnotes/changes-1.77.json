@@ -1,0 +1,18 @@
+{
+  "1.77.0": {
+    "date": "March 2020",
+    "notes": [
+      {
+        "id": "c4bd65362ef387b4417d7b39d29891a7c7d05b72",
+        "type": "FIX",
+        "text": " sap.f.DynamicPage: Fix styles for bluecrystal theme",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070094041"
+          }
+        ]
+      }
+    ]
+  }
+}

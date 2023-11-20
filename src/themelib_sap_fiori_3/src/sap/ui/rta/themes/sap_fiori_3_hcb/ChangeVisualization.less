@@ -1,0 +1,15 @@
+/******************************************************************
+	Style of the RTA Change Visualization - Quartz hcb theme
+*******************************************************************/
+@_sap_ui_rta_ChangeVisualization_ChangeIndicatorColorLight: lighten(@sapUiPositiveText, 10%); //#bbddbb
+@_sap_ui_rta_ChangeVisualization_ChangeIndicatorColorMedium: @sapUiCriticalText; //#ffab1d
+@_sap_ui_rta_ChangeVisualization_ChangeIndicatorColorDark: lighten(@sapUiChart8, 20%); //#dd8ec9
+@_sap_ui_rta_ChangeVisualization_OverlayOutline: @sapUiContentHelpColor; // #03b803
+
+.sapUiDtOverlay {
+	.sapUiRtaChangeIndicatorHovered {
+		&:after {
+			box-shadow: none;
+		}
+	}
+}

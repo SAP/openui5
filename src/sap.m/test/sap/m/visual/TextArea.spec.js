@@ -4,98 +4,107 @@ describe("sap.m.TextArea", function() {
 
 	// initial loading
 	it("should load test page", function () {
+		element(by.id("customCssButton")).click();
 		expect(takeScreenshot()).toLookAs("initial");
 	});
 
 	//TextArea with 50% width
 	it("should vizualize a text area with 50% width", function(){
-		var fiftyPercentTextArea = element(by.id("__area1"));
+		var fiftyPercentTextArea = element(by.id("textAreaFiftyPercentWidth"));
+		fiftyPercentTextArea.click();
 		expect(takeScreenshot(fiftyPercentTextArea)).toLookAs("fifty_percent_width");
 	});
 
 	//TextArea - Default
 	it("should vizualize a simple text area", function(){
-		var defaultTextArea = element(by.id("__area2"));
+		var defaultTextArea = element(by.id("textAreaOverLimit"));
+		defaultTextArea.click();
 		expect(takeScreenshot(defaultTextArea)).toLookAs("default_textarea");
 	});
 
-	//TextArea - Disabled growing
+	//TextArea - Growing
+	it("should vizualize a growing text area", function(){
+		var growingTextArea = element(by.id("textAreaGrowing"));
+		growingTextArea.click();
+		expect(takeScreenshot(growingTextArea)).toLookAs("growing_textarea");
+	});
+
+	//TextArea - Without growing
 	it("should vizualize a text area without growing", function(){
-		var notGrowingTextArea = element(by.id("__area4"));
+		var notGrowingTextArea = element(by.id("textAreaWithoutGrowing"));
+		notGrowingTextArea.click();
 		expect(takeScreenshot(notGrowingTextArea)).toLookAs("not_growing_textarea");
 	});
 
 	//TextArea with 2 rows, 20 cols - Warning State
 	it("should vizualize a text area with 2 rows and 20 cols in warning state", function(){
-		var warningResizedTextArea = element(by.id("__area7"));
-		browser.executeScript('document.getElementById("__area7").scrollIntoView()').then(function() {
-			expect(takeScreenshot(warningResizedTextArea)).toLookAs("twoRows_twentyCols_warning_state");
-		});
-	});
-
-	//Textarea with 90% width
-	it("should vizualize a text area with 90% width", function(){
-		var nintyPercentWidthTextArea = element(by.id("__area8"));
-		browser.executeScript('document.getElementById("__area8").scrollIntoView()').then(function() {
-			expect(takeScreenshot(nintyPercentWidthTextArea)).toLookAs("ninty_percent_width");
-		});
-	});
-
-	//Textarea - Disabled
-	it("should vizualize a disabled text area", function(){
-		var disabledTextArea = element(by.id("__area9"));
-		browser.executeScript('document.getElementById("__area9").scrollIntoView()').then(function() {
-			disabledTextArea.click();
-			expect(takeScreenshot(disabledTextArea)).toLookAs("disabled_state");
-		});
-	});
-
-	//TextArea - Warning State
-	it("should vizualize a text area with warning state", function(){
-		var warningStateTextArea = element(by.id("__area10"));
-		browser.executeScript('document.getElementById("__area10").scrollIntoView()').then(function() {
-			expect(takeScreenshot(warningStateTextArea)).toLookAs("warning_state");
+		var warningResizedTextArea = element(by.id("textAreaWarningState"));
+		browser.executeScript('document.getElementById("textAreaWarningState").scrollIntoView()').then(function() {
+			warningResizedTextArea.click();
+			expect(takeScreenshot()).toLookAs("twoRows_twentyCols_warning_state");
 		});
 	});
 
 	//TextArea - Error State
 	it("should vizualize a text area with error state", function(){
-		var errorStateTextArea = element(by.id("__area11"));
-		browser.executeScript('document.getElementById("__area11").scrollIntoView()').then(function() {
-			expect(takeScreenshot(errorStateTextArea)).toLookAs("error_state");
+		var errorStateTextArea = element(by.id("textAreaErrorState"));
+		browser.executeScript('document.getElementById("textAreaErrorState").scrollIntoView()').then(function() {
+			errorStateTextArea.click();
+			expect(takeScreenshot()).toLookAs("error_state");
 		});
 	});
 
-	//TextArea - Wrapping Off
-	it("should vizualize a text area without wrapping ", function(){
-		var offWrappingTextArea = element(by.id("__area12"));
-		browser.executeScript('document.getElementById("__area12").scrollIntoView()').then(function() {
-			expect(takeScreenshot(offWrappingTextArea)).toLookAs("wrapping_off");
+	//TextArea - Success State
+	it("should vizualize a text area with success state", function(){
+		var successStateTextArea = element(by.id("textAreaSuccessState"));
+		browser.executeScript('document.getElementById("textAreaSuccessState").scrollIntoView()').then(function() {
+			successStateTextArea.click();
+			expect(takeScreenshot(successStateTextArea)).toLookAs("success_state");
+		});
+	});
+
+	//TextArea - Information State
+	it("should vizualize a text area with information state", function(){
+		var informationStateTextArea = element(by.id("textAreaInformationState"));
+		browser.executeScript('document.getElementById("textAreaInformationState").scrollIntoView()').then(function() {
+			informationStateTextArea.click();
+			expect(takeScreenshot()).toLookAs("information_state");
 		});
 	});
 
 	//TextArea - Not Editable
-	it("should vizualize a not editable text area ", function(){
-		var notEditableTextArea = element(by.id("__area13"));
-		browser.executeScript('document.getElementById("__area13").scrollIntoView()').then(function() {
+	it("should vizualize a not editable text area", function(){
+		var notEditableTextArea = element(by.id("textAreaReadOnly"));
+		browser.executeScript('document.getElementById("textAreaReadOnly").scrollIntoView()').then(function() {
 			notEditableTextArea.click();
 			expect(takeScreenshot(notEditableTextArea)).toLookAs("not_editable_textarea");
 		});
 	});
 
-	//TextArea with placeholder
-	it("should vizualize a text area with placeholder", function(){
-		var textAreaWithPlaceholder = element(by.id("__area14"));
-		browser.executeScript('document.getElementById("__area14").scrollIntoView()').then(function() {
-			expect(takeScreenshot(textAreaWithPlaceholder)).toLookAs("textarea_with_placeholder");
+	//Textarea - Disabled
+	it("should vizualize a disabled text area", function(){
+		var disabledTextArea = element(by.id("textAreaDisabled"));
+		browser.executeScript('document.getElementById("textAreaDisabled").scrollIntoView()').then(function() {
+			disabledTextArea.click();
+			expect(takeScreenshot(disabledTextArea)).toLookAs("disabled_state");
 		});
 	});
 
-	//TextArea - Growing
-	it("should vizualize a growing text area", function(){
-		var growingTextArea = element(by.id("__area15"));
-		browser.executeScript('document.getElementById("__area15").scrollIntoView()').then(function() {
-			expect(takeScreenshot(growingTextArea)).toLookAs("growing_textarea");
+	//TextArea - Wrapping Off
+	it("should vizualize a text area without wrapping ", function(){
+		var offWrappingTextArea = element(by.id("textAreaWithoutWrapping"));
+		browser.executeScript('document.getElementById("textAreaWithoutWrapping").scrollIntoView()').then(function() {
+			offWrappingTextArea.click();
+			expect(takeScreenshot(offWrappingTextArea)).toLookAs("wrapping_off");
+		});
+	});
+
+	//TextArea - Set height and showExceededText=true
+	it("TextArea and Label total height should be the set height", function(){
+		browser.executeScript('document.getElementById("showExceededTextWithHeight").scrollIntoView()').then(function() {
+			var textAreaWithHeight = element(by.id("showExceededTextWithHeight"));
+			textAreaWithHeight.click();
+			expect(takeScreenshot(textAreaWithHeight)).toLookAs("showExceededText_with_height");
 		});
 	});
 });

@@ -1,0 +1,54 @@
+{
+	"_version": "1.52.0",
+	"sap.app": {
+		"id": "card.explorer.previewMode.list.card",
+		"type": "card",
+		"title": "Sample for Data usage in Cards",
+		"subTitle": "Sample for Data usage in Cards",
+		"applicationVersion": {
+			"version": "1.0.0"
+		},
+		"shortTitle": "A short title for this Card",
+		"info": "Additional information about this Card",
+		"description": "A long description for this Card",
+		"tags": {
+			"keywords": [
+				"Data",
+				"Card",
+				"Sample"
+			]
+		}
+	},
+	"sap.card": {
+		"data": {
+			"request": {
+				"url": "https://services.odata.org/V4/Northwind/Northwind.svc/Products",
+				"method": "GET",
+				"parameters": {
+					"$format": "json"
+				}
+			},
+			"path": "/value",
+			"mockData": {
+				"request": {
+					"url": "./mockData.json"
+				}
+			}
+		},
+		"type": "List",
+		"header": {
+			"title": "Products",
+			"subTitle": "In Stock Information",
+			"icon": {
+				"src": "sap-icon://product"
+			}
+		},
+		"content": {
+			"item": {
+				"title": "{ProductName}",
+				"description": "{UnitsInStock} units in stock"
+			},
+			"maxItems": 5
+		}
+	}
+}

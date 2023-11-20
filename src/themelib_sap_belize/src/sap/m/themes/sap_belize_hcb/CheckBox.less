@@ -13,7 +13,16 @@
 	border: 0.125rem dashed @sapUiFieldInvalidColor;
 }
 
+.sapMCb.sapMCbInfo .sapMCbBg {
+	background-color: @sapUiFieldBackground;
+	border: 0.125rem dashed @sapUiFieldWarningColor;
+}
+
 .sapMCb.sapMCbBgDis.sapMCbWarn .sapMCbBg.sapMCbMarkChecked:before {
+	color: @sapUiFieldWarningColor;
+}
+
+.sapMCb.sapMCbBgDis.sapMCbInfo .sapMCbBg.sapMCbMarkChecked:before {
 	color: @sapUiFieldWarningColor;
 }
 
@@ -63,21 +72,11 @@ html.sap-desktop {
 	}
 
 	.sapUiForm .sapMCb:not(.sapMCbBgDis):focus:before {
-		left: -1px; /* Cb in SimpleForm: left border adjustment */
+		left: 0px; /* Cb in SimpleForm: left border adjustment */
 	}
 }
 
-html[data-sap-ui-browser^="ie"].sap-desktop,
-html[data-sap-ui-browser^="ed"].sap-desktop {
-	.sapMCb:not(.sapMCbBgDis):not(.sapMCbHasLabel):focus > .sapMCbBg {
-		outline-style: dashed;
-	}
-	.sapMCb:not(.sapMCbBgDis).sapMCbHasLabel:focus:before {
-		border: 0.125rem dashed @sapUiContentFocusColor;
-	}
-}
-
-.sapMCb:not(.sapMCbWarn):not(.sapMCbErr) .sapMCbBg.sapMCbHoverable:hover {
+.sapMCb:not(.sapMCbWarn):not(.sapMCbErr):not(.sapMCbInfo) .sapMCbBg.sapMCbHoverable:hover {
 	background-color: @sapUiSelected;
 }
 
@@ -115,7 +114,7 @@ html.sap-desktop {
 			left: 0.365rem;
 		}
 
-		.sapUiSimpleForm .sapMCb:not(.sapMCbBgDis):focus:before {
+		.sapUiForm .sapMCb:not(.sapMCbBgDis):focus:before {
 			left: 0;
 		}
 	}

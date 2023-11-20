@@ -1,22 +1,29 @@
 /*global QUnit*/
 
 sap.ui.define(
-	[ 'sap/ui/support/supportRules/RuleSetLoader', 'sap/ui/support/supportRules/util/RuleValidator' ],
-	function(RuleSetLoader, RuleValidator) {
+	[ 'sap/ui/support/library', 'sap/ui/support/supportRules/RuleSetLoader', 'sap/ui/support/supportRules/util/RuleValidator' ],
+	function(supportLibrary, RuleSetLoader, RuleValidator) {
 		'use strict';
+
+		// shortcut for sap.ui.support.Categories
+		var Categories = supportLibrary.Categories;
+
+		// shortcut for sap.ui.support.Audiences
+		var Audiences = supportLibrary.Audiences;
+
 		// Constants
-		var aLibrariesToLoad = [
-				'sap.m',
-				'sap.ui.table',
-				'sap.ui.core',
-				'sap.ui.layout',
-				'sap.uxap',
-				'sap.f',
-				'sap.viz',
-				'sap.ui.fl',
-				'sap.ui.comp',
-				'sap.ui.unified'
-			],
+		var mLibrariesToLoad = {
+				'sap.ui.core': 0,
+				'sap.m': 1,
+				'sap.ui.table': 2,
+				'sap.ui.layout': 3,
+				'sap.uxap': 4,
+				'sap.f': 5,
+				'sap.viz': 6,
+				'sap.ui.fl': 7,
+				'sap.ui.comp': 8,
+				'sap.ui.unified': 9
+			},
 			oLibraries = {};
 
 		function test(sLibraryName) {
@@ -57,13 +64,13 @@ sap.ui.define(
 					);
 
 					assert.equal(
-						RuleValidator.validateRuleCollection(oRule.audiences, sap.ui.support.Audiences),
+						RuleValidator.validateRuleCollection(oRule.audiences, Audiences),
 						true,
 						'audiences should be filled with data of type string'
 					);
 
 					assert.equal(
-						RuleValidator.validateRuleCollection(oRule.categories, sap.ui.support.Categories),
+						RuleValidator.validateRuleCollection(oRule.categories, Categories),
 						true,
 						'categories should be filled with data of type string'
 					);
@@ -91,11 +98,20 @@ sap.ui.define(
 			});
 		}
 
-		RuleSetLoader._fetchSupportRuleSets(aLibrariesToLoad).then(function() {
-			Object.keys(RuleSetLoader._mRuleSets).map(function(sKey) {
-				var oLibrary = RuleSetLoader._mRuleSets[sKey];
+		RuleSetLoader._fetchSupportRuleSets(null, mLibrariesToLoad).then(function() {
+			QUnit.start();
 
-				oLibraries[oLibrary.lib.name] = Object.values(oLibrary.ruleset._mRules);
+			Object.keys(RuleSetLoader._mRuleLibs).map(function(sKey) {
+				var oLibrary = RuleSetLoader._mRuleLibs[sKey];
+
+				var arr = [];
+
+				for (var property in oLibrary.ruleset._mRules) {
+					if (oLibrary.ruleset._mRules.hasOwnProperty(property)) {
+						arr.push(oLibrary.ruleset._mRules[property]);
+					}
+				}
+				oLibraries[oLibrary.lib.name] = arr;
 			});
 
 			for (var sLibraryName in oLibraries) {

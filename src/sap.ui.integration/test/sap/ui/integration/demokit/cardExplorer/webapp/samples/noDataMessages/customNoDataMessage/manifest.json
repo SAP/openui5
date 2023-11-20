@@ -1,0 +1,56 @@
+{
+  "_version": "1.14.0",
+  "sap.app": {
+	"id": "card.explorer.data.list.card",
+	"type": "card",
+	"title": "Sample for Illustrated Message in Cards",
+	"subTitle": "Sample for Illustrated Message in Cards",
+	"applicationVersion": {
+	  "version": "1.0.0"
+	},
+	"shortTitle": "A short title for this Card",
+	"info": "Additional information about this Card",
+	"description": "A long description for this Card",
+	"tags": {
+	  "keywords": [
+		"Data",
+		"Card",
+		"Sample"
+	  ]
+	}
+  },
+  "sap.card": {
+	"configuration": {
+	  "messages": {
+		"noData": {
+		  "type": "NoSearchResults",
+		  "title": "No products found",
+		  "description": "There were no products matching your inquiry",
+		  "size": "Auto"
+		}
+	  }
+	},
+	"type": "List",
+	"header": {
+	  "title": "Products"
+	},
+	"content": {
+	  "data": {
+		"request": {
+		  "url": "https://services.odata.org/V4/Northwind/Northwind.svc/Products",
+		  "parameters": {
+			"$format": "json",
+			"$filter": "UnitPrice eq 0"
+		  }
+		},
+		"path": "/value"
+	  },
+	  "item": {
+		"title": "{ProductName}",
+		"description": "{UnitsInStock} units in stock",
+		"highlight": "{= ${Discontinued} ? 'Error' : 'Success'}"
+	  },
+	  "maxItems": 5
+	}
+  }
+}

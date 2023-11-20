@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.ui.commons.Callout.
-sap.ui.define(['jquery.sap.global', './CalloutBase', './library', "./CalloutRenderer"],
-	function(jQuery, CalloutBase, library, CalloutRenderer) {
+sap.ui.define(['./CalloutBase', './library', './CalloutRenderer'],
+	function(CalloutBase, library, CalloutRenderer) {
 	"use strict";
 
 
@@ -24,13 +24,13 @@ sap.ui.define(['jquery.sap.global', './CalloutBase', './library', "./CalloutRend
 	 *
 	 * @constructor
 	 * @public
-	 * @deprecated Since version 1.38. Tf you want to achieve a similar behavior, use a <code>sap.m.Popover</code> control and open it next to your control.
+	 * @deprecated Since version 1.38. If you want to achieve a similar behavior, use a <code>sap.m.Popover</code> control and open it next to your control.
 	 * @alias sap.ui.commons.Callout
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var Callout = CalloutBase.extend("sap.ui.commons.Callout", /** @lends sap.ui.commons.Callout.prototype */ { metadata : {
 
 		library : "sap.ui.commons",
+		deprecated: true,
 		aggregations : {
 
 			/**
@@ -40,10 +40,6 @@ sap.ui.define(['jquery.sap.global', './CalloutBase', './library', "./CalloutRend
 		}
 	}});
 
-	///**
-	// * This file defines behavior for the Callout control
-	// */
-
 	return Callout;
 
-}, /* bExport= */ true);
+});

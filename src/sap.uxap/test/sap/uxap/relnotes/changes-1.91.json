@@ -1,0 +1,12 @@
+{
+  "1.91.0": {
+    "date": "June 2021",
+    "notes": [
+      {
+        "id": "678d99681854f5c095d125fa126a74680836f034",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Correct contentLength rounding"
+      }
+    ]
+  }
+}

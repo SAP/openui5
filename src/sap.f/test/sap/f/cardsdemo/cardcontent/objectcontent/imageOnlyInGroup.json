@@ -1,0 +1,45 @@
+{
+	"sap.app": {
+		"id": "cardsdemo.object.imageOnlyInGroup",
+		"type": "card"
+	},
+	"sap.card": {
+		"type": "Object",
+		"header": {
+			"title": "Object Card",
+			"subTitle": "With Full Width Image"
+		},
+		"content": {
+			"groups": [
+				{
+					"alignment": "Stretch",
+					"items": [
+						{
+							"type": "Image",
+							"src": "../../images/grass.jpg",
+							"fullWidth" : true
+						}
+					]
+				},
+				{
+					"title": "Company Details",
+					"items": [
+						{
+							"label": "Company Name",
+							"value": "SAP",
+							"icon": {
+								"src": "../../images/Woman_avatar_02.png"
+							}
+						},
+						{
+							"label": "Rating",
+							"type": "RatingIndicator",
+							"maxValue": 5,
+							"value": 4.5
+						}
+					]
+				}
+			]
+		}
+	}
+}

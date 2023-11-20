@@ -28,11 +28,13 @@
 	color: @sapUiContentIconColor;
 }
 
+html.sap-desktop .sapMFocus > .sapMSFF::before {
+	border: 0.125rem dotted @sapUiContentFocusColor;
+}
+
 /* button highlight on hover/press */
 html.sap-desktop .sapMSFB:hover,
 .sapMSFB:active {
-	/* Needs repeating statements because of IE interpretation of :focus */
-	border-width: 0 0 0 1px;
 	background-color: @sapUiButtonHoverBackground;
 	border-left-color: @sapUiButtonHoverBorderColor;
 	border-left-style: solid;
@@ -66,15 +68,6 @@ html.sap-desktop .sapMSFB:hover,
 	font-style:	   normal;
 }
 
-.sapMSFI:-ms-input-placeholder {
-	font-style:	   normal;
-}
-
 .sapMSFI::-moz-placeholder {
 	font-style:	   normal;
-}
-
-/* custom placeholder if not natively supported (IE9) */
-.sapMSF>.sapMSFF>.sapMSFPlaceholder {
-	font-style: normal;
 }

@@ -1,0 +1,154 @@
+/* =========================================================== */
+/* CSS for control sap.ui.integration.controls/ListContentItem */
+/* Base theme                                                  */
+/* =========================================================== */
+
+@_sap_ui_integration_ListContentItem_BottomBorderHeight: 1px;
+
+.sapUiIntLCI {
+	padding: unset;
+
+	// apply the padding to the contents, to prevent clipping when buttons are hovered for example, due to overflow
+	.sapUiIntLCIContent > * {
+		padding: 0 1rem;
+	}
+
+	&.sapUiIntLCIOneLine .sapUiIntLCIIconAndLines {
+		height: calc(2.75rem ~"-" @_sap_ui_integration_ListContentItem_BottomBorderHeight);
+		align-items: center
+	}
+
+	&.sapUiIntLCIOneLine.sapUiIntLCIWithActionsStrip .sapUiIntLCIIconAndLines {
+		height: 2.75rem;
+	}
+
+	&.sapUiIntLCITwoLines .sapUiIntLCIIconAndLines,
+	&.sapUiIntLCIOneLine.sapUiIntLCIThumbnail .sapUiIntLCIIconAndLines {
+		height: calc(5rem ~"-" @_sap_ui_integration_ListContentItem_BottomBorderHeight);
+		align-items: center
+	}
+
+	&.sapUiIntLCITwoLines.sapUiIntLCIWithActionsStrip .sapUiIntLCIIconAndLines,
+	&.sapUiIntLCIOneLine.sapUiIntLCIThumbnail.sapUiIntLCIWithActionsStrip .sapUiIntLCIIconAndLines {
+		height: 5rem;
+	}
+
+	&.sapUiIntLCIMultipleLines {
+		padding-top: 1rem;
+		padding-bottom: calc(1rem ~"-" @_sap_ui_integration_ListContentItem_BottomBorderHeight);
+
+		.sapUiIntActionsStrip {
+			margin-top: 0.5rem;
+		}
+	}
+
+	&.sapUiIntLCIWithActionsStrip {
+		padding-bottom: calc(0.5rem ~"-" @_sap_ui_integration_ListContentItem_BottomBorderHeight);
+	}
+
+	.sapUiIntLCIIconAndLines {
+		display: flex;
+
+		> .sapFCardIcon {
+			flex-shrink: 0;
+		}
+
+		.sapUiIntLCILines {
+			flex: 1;
+			overflow: hidden;
+			display: flex;
+			flex-direction: column;
+			row-gap: 0.5rem;
+			justify-content: center;
+
+			.sapUiIntLCIAttrRow {
+				display: flex;
+				align-items: center;
+			}
+
+			.sapUiIntLCIAttrSecondCell {
+				justify-content: flex-end;
+
+				.sapMObjStatus {
+					text-align: end;
+				}
+			}
+
+			.sapUiIntLCIAttrCell {
+				flex: 1;
+				display: flex;
+				align-items: center;
+			}
+		}
+	}
+
+	.sapUiIntLCITitleWrapper,
+	.sapUiIntLCIDescriptionWrapper {
+		display: flex;
+	}
+
+	&.sapMLIBShowSeparator:last-child {
+		border-bottom: 1px solid transparent;
+	}
+}
+
+.sapUiIntLCITitle {
+	color: @sapUiListTextColor;
+	font-size: @sapMFontLargeSize;
+	flex: 1;
+}
+
+.sapUiIntLCIDescription {
+	color: @sapUiContentLabelColor;
+	font-size: @sapMFontMediumSize;
+	flex: 1;
+}
+
+.sapUiIntLCIInfo {
+	display: flex;
+	font-size: @sapMFontMediumSize;
+	text-align: right;
+	margin-left: 1rem;
+	max-width: 40%;
+}
+
+.sapUiIntLCITitle,
+.sapUiIntLCIDescription,
+.sapUiIntLCIInfo {
+	line-height: 1rem;
+	font-family: @sapUiFontFamily;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.sapUiIntLCIContent .sapUiIntLCIInfo {
+	white-space: normal;
+}
+
+// Interactive states
+.sapUiIntLCI.sapMLIBActive {
+	.sapFCardIcon.sapFAvatar .sapUiIcon,
+	.sapUiIntLCIInfo {
+		color: @sapUiListActiveTextColor;
+	}
+}
+
+// Styles for compact mode only
+.sapUiSizeCompact .sapUiIntLCI {
+	&.sapUiIntLCIOneLine .sapUiIntLCIIconAndLines {
+		height: calc(2rem ~"-" @_sap_ui_integration_ListContentItem_BottomBorderHeight);
+	}
+
+	&.sapUiIntLCIOneLine.sapUiIntLCIWithActionsStrip .sapUiIntLCIIconAndLines {
+		height: 2rem;
+	}
+
+	&.sapUiIntLCIOneLine.sapUiIntLCIThumbnail .sapUiIntLCIIconAndLines {
+		height: 5rem;
+	}
+
+	.sapUiIntLCITitle {
+		font-size: @sapMFontMediumSize;
+	}
+}

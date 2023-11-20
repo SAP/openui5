@@ -1,0 +1,72 @@
+{
+	"sap.app": {
+		"id": "testdata.keepAlive.parent"
+	},
+	"sap.ui5": {
+		"keepAlive": {
+			"supported": true
+		},
+		"dependencies": {
+			"libs": {},
+			"components": {
+				"testdata.keepAlive.child1": {}
+			}
+		},
+		"componentUsages": {
+			"child1": {
+				"name": "testdata.keepAlive.child1",
+				"settings": {},
+				"componentData": {}
+			},
+			"noKeepAlive": {
+				"name": "testdata.keepAlive.noKeepAlive",
+				"settings": {},
+				"componentData": {}
+			}
+		},
+		"rootView": {
+			"viewName": "testdata.keepAlive.parent.App",
+			"type": "XML",
+			"async": true,
+			"id": "appView"
+		},
+		"routing": {
+			"config": {
+				"routerClass": "sap.m.routing.Router",
+				"viewType": "XML",
+				"path": "testdata.keepAlive.parent",
+				"controlId": "app",
+				"controlAggregation": "pages",
+				"transition": "slide",
+				"async": true
+			},
+			"routes": [
+				{
+					"name": "home",
+					"pattern": "",
+					"target": {
+						"name": "homeTarget",
+						"prefix": "c1"
+					}
+				},
+				{
+					"name": "other",
+					"pattern": "other",
+					"target": "otherTarget"
+				}
+			],
+			"targets": {
+				"homeTarget": {
+					"type": "Component",
+					"usage": "child1",
+					"id": "child1Component"
+				},
+				"otherTarget": {
+					"type": "View",
+					"id": "otherView",
+					"name": "Other"
+				}
+			}
+		}
+	}
+}

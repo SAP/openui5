@@ -112,7 +112,7 @@
 					right: 2px;
 					bottom: 2px;
 					border-radius: 0;
-					border: 1px dotted @sapUiContentFocusColor;
+					border: 0.0625rem dotted @sapUiContentFocusColor;
 					pointer-events: none;
 				}
 				&:active:after {
@@ -122,13 +122,14 @@
 		}
 	}
 
+	.sapMColorPaletteContent .sapMRecentColorSquareDisabled {
+		pointer-events: none;
+		opacity: 0.5;
+	}
+
 	.sapMColorPaletteSeparator {
 		position: relative;
 		height: 0.0625rem;
-		html[data-sap-ui-browser^="ie"] &,
-		html[data-sap-ui-browser^="ed"] & {
-			height: 1px; //needed since IE would round the 0.0625rem to 0.06
-		}
 		// overstyling the hr to look like menu separator line
 		> hr {
 			display: inline-block;
@@ -144,19 +145,9 @@
 	:focus {
 		outline: none;
 	}
-	.sapMColorPaletteSquare:focus {
+	.sapMColorPaletteSquare:focus{
 		outline: none
 	}
-}
-
-//Generate focus related pseudo dom elements for Edge here, 'cause if they were created on :focus, tap event is suppressed each 1st click
-html[data-sap-ui-browser^="ed"] .sapMColorPalette .sapMBtn:after {
-	content: " ";
-	position: absolute;
-	left: 0;
-	top: 0;
-	right: 0;
-	bottom: 0;
 }
 
 html:not(.sap-phone) {
@@ -184,7 +175,7 @@ html:not(.sap-phone) {
 		.sapMColorPaletteSquare {
 			box-sizing: border-box;
 			position: relative;
-			border: 1px solid @sapUiContentForegroundBorderColor;
+			border: 0.0625rem solid @sapUiContentForegroundBorderColor;
 			border-radius: 0.125rem;
 			width: @_sap_m_ColorPalette_SwatchWidthCozy;
 			height: @_sap_m_ColorPalette_SwatchWidthCozy;
@@ -256,12 +247,6 @@ html:not(.sap-phone) {
 	}
 }
 
-html:not(.sap-phone)[data-sap-ui-browser^="ie"], html:not(.sap-phone)[data-sap-ui-browser^="ed"] {
-	.sapMColorPalette .sapMColorPaletteSquare:focus:after {
-		border-style: dashed; // IE, Edge does not display well dotted light(white) border (border looks darker)
-	}
-}
-
 .sap-phone {
 	.sapMColorPalette {
 		&html:not(.sap-phone) .sapMBtnInner {
@@ -316,3 +301,18 @@ html:not(.sap-phone)[data-sap-ui-browser^="ie"], html:not(.sap-phone)[data-sap-u
 		}
 	}
 }
+
+html.sap-desktop .sapMDialog.CPDialog{
+	min-width: 18rem; //override the  Dialog's min-width for desktop
+	.sapUiColorPicker-ColorPickerMatrix {
+		&.sapUiRespGrid.sapUiRespGridHSpace1 {
+			padding-bottom: 0.5rem;
+		}
+		//in a dialog ColorPicker doesn't have padding-top in order to be as compact as possible
+		&.sapUnifiedColorPicker.sapUiRespGrid.sapUiRespGridHSpace1 > div:first-child {
+			height: auto;
+			padding-top: 0;
+		}
+	}
+}
+

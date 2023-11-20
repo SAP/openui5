@@ -1,0 +1,17 @@
+body {
+	margin: 10px !important;
+}
+.sapUiIcon {
+	text-shadow: 1px 1px rgba(0, 0, 0, 0.3);
+}
+
+.sapCoreSampleControl {
+	background: #FFFFFF;
+	margin: 5px;
+	padding: 5px;
+	text-align: center;
+}
+
+.sapCoreSampleControl .sapUiBlockLayerOnly {
+	background: rgba(255, 0, 132, 0.214);
+}

@@ -1,0 +1,62 @@
+{
+  "1.78.0": {
+    "date": "April 2020",
+    "notes": [
+      {
+        "id": "f65c37172ee255404df82e3febb61beadfb02bea",
+        "type": "FIX",
+        "text": " sap.ui.unified.Month: doesn\u0027t throw error on theme changed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070141480"
+          }
+        ]
+      },
+      {
+        "id": "39baa496e6409fd74d56c58a71e874b011008751",
+        "type": "FIX",
+        "text": " sap.ui.unified.FileUploader: setFileType and setMimeType are now working after initial rendering",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070139852"
+          }
+        ]
+      },
+      {
+        "id": "8ebfad4bca2781dfa271a18cca1d28d5a4e20a42",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: align the implementation to the current VD specs",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070131385"
+          }
+        ]
+      },
+      {
+        "id": "461039e134c5a9cc246b7d316ef190e74a611308",
+        "type": "FIX",
+        "text": " sap.ui.unified.FileUploader: Button is now focused after canceling file upload",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070151490"
+          }
+        ]
+      },
+      {
+        "id": "04c181e13ce74d28eb6662e7ff81143899acc5b6",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar, sap.m.PlanningCalendar, sap.m.SinglePlanningCalendar - visual issues fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070040553"
+          }
+        ]
+      }
+    ]
+  }
+}

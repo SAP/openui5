@@ -3,7 +3,7 @@
  */
 
 // provides default renderer for sap.ui.suite.VerticalProgressIndicator
-sap.ui.define(function() {
+sap.ui.define(["sap/ui/core/ControlBehavior"], function(ControlBehavior) {
 	"use strict";
 
 
@@ -12,63 +12,56 @@ sap.ui.define(function() {
 	 * @namespace
 	 */
 	var VerticalProgressIndicatorRenderer = {
+		apiVersion: 2
 	};
 
 
 	/**
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
 	 *
-	 * @param {sap.ui.core.RenderManager} oRenderManager the RenderManager that can be used for writing to the Render-Output-Buffer
-	 * @param {sap.ui.core.Control} oControl an object representation of the control that should be rendered
+	 * @param {sap.ui.core.RenderManager} rm the RenderManager that can be used for writing to the Render-Output-Buffer
+	 * @param {sap.ui.suite.VerticalProgressIndicator} oControl an object representation of the control that should be rendered
 	 */
-	VerticalProgressIndicatorRenderer.render = function(oRenderManager, oControl){
-	    // convenience variable
-		var rm = oRenderManager;
-
+	VerticalProgressIndicatorRenderer.render = function(rm, oControl){
 		//calculate percentage
-	    var VerticalPercent = oControl.getPercentage();
-	    if (VerticalPercent < 0 || VerticalPercent == Number.NaN) {
-				VerticalPercent = 0;
-	    }
-	    if (VerticalPercent > 100) {
-				VerticalPercent = 100;
-	    }
-	    var PixelDown = Math.round(VerticalPercent * 58 / 100);
-	    var PixelUp   = 58 - PixelDown;
-	    var PercentageString = VerticalPercent.toString();
+		var VerticalPercent = oControl.getPercentage();
+		if (VerticalPercent < 0) {
+			VerticalPercent = 0;
+		}
+		if (VerticalPercent > 100) {
+			VerticalPercent = 100;
+		}
+		var PixelDown = Math.round(VerticalPercent * 58 / 100);
+		var PixelUp	 = 58 - PixelDown;
+		var PercentageString = VerticalPercent.toString();
 
 		// write the HTML into the render manager
-	    rm.write("<DIV");
-	    rm.writeControlData(oControl);
-	    rm.writeAttribute('tabIndex', '0');
+		rm.openStart("div", oControl);
+		rm.attr('tabindex', '0');
 
 		if (oControl.getTooltip_AsString()) {
-			rm.writeAttributeEscaped("title", oControl.getTooltip_AsString());
+			rm.attr("title", oControl.getTooltip_AsString());
 		} else {
-			rm.writeAttributeEscaped("title", PercentageString);
+			rm.attr("title", PercentageString);
 		}
 
-	    //ARIA
-	    if ( sap.ui.getCore().getConfiguration().getAccessibility()) {
-		  rm.writeAttribute('role', 'progressbar');
-	      rm.writeAccessibilityState(oControl, {valuemin: '0%'});
-		  rm.writeAccessibilityState(oControl, {valuemax: '100%'});
-		  rm.writeAccessibilityState(oControl, {valuenow: VerticalPercent + '%'});
+		//ARIA
+		if ( ControlBehavior.isAccessibilityEnabled()) {
+			rm.attr('role', 'progressbar');
+			rm.accessibilityState(oControl, {valuemin: '0%'});
+			rm.accessibilityState(oControl, {valuemax: '100%'});
+			rm.accessibilityState(oControl, {valuenow: VerticalPercent + '%'});
 		}
 
-	    rm.writeAttribute("class","sapUiVerticalProgressOuterContainer");
-	    rm.write(">"); // Outer DIV element
-	    rm.write("<DIV");
-	    rm.writeAttribute('id', oControl.getId() + '-bar');
-	    rm.writeAttribute("class","sapUiVerticalProgressInnerContainer");
-	    rm.addStyle("top", PixelUp + "px");
-	    rm.addStyle("height", PixelDown + "px");
-	    rm.writeClasses();
-	    rm.writeStyles();
-	    rm.write(">"); // Inner DIV element
-	    rm.write("</DIV>");
-	    rm.write("</DIV>");
-
+		rm.class("sapUiVerticalProgressOuterContainer");
+		rm.openEnd(); // Outer DIV element
+		rm.openStart("div", oControl.getId() + "-bar");
+		rm.class("sapUiVerticalProgressInnerContainer");
+		rm.style("top", PixelUp + "px");
+		rm.style("height", PixelDown + "px");
+		rm.openEnd(); // Inner DIV element
+		rm.close("div");
+		rm.close("div");
 	};
 
 

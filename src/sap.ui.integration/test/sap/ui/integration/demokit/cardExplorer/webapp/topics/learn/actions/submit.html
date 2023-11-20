@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<title>Card Submit Action</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<script src="../../../scripts/boot.js"></script>
+</head>
+
+<body class="sapUiBody topicBody">
+
+	<div class="topic">
+		<div class="content">
+			<h1 id="overview">Submit</h1>
+			Submit action type is used for submitting forms. Currently forms are available for <a href="../../../index.html#/learn/typesDeclarative/object" target="_parent">Object Cards</a> and for <a href="../../../index.html#/learn/typesOther/adaptive" target="_parent">Adaptive Cards</a>.
+			<p>Default behavior: submits the form if <code>"sap.card"/configuration/actionHandlers/submit</code> is provided. See the <a href="../../../index.html#/explore/object/form" target="_parent">Object Card Form Inputs</a> sample and the <a href="../../../index.html#/learn/configuration/actionHandlers" target="_parent">Actions Handlers</a> documentation.</p>
+			<p>Additionally the form can be submitted through an <a href="../../../index.html#/learn/features/extension" target="_parent">Extension</a>. See the <a href="../../../index.html#/explore/object/formWithExtension" target="_parent">Object Card Form Inputs With Extension</a> sample.</p>
+
+			<h2 id="relatedInformation">Related Information</h2>
+			<ul>
+				<li><a href="../../../index.html#/learn/typesDeclarative/object" target="_parent">Object Cards</a></li>
+				<li><a href="../../../index.html#/learn/typesOther/adaptive" target="_parent">Adaptive Cards</a></li>
+				<li><a href="../../../index.html#/learn/configuration/actionHandlers" target="_parent">Actions Handlers</a></li>
+			</ul>
+
+			<h2 id="examples">Examples</h2>
+			<ul>
+				<li><a href="../../../index.html#/explore/object/form" target="_parent">Object Card Form Inputs</a></li>
+				<li><a href="../../../index.html#/explore/object/formWithExtension" target="_parent">Object Card Form Inputs with Extension</a></li>
+				<li><a href="../../../index.html#/explore/adaptive/adaptive-action-submit" target="_parent">Adaptive Card Submit Action</a></li>
+				<li><a href="../../../index.html#/explore/adaptive/adaptive-action-submit-custom-payload" target="_parent">Adaptive Card Submit Action with Custom Payload</a></li>
+				<li><a href="../../../index.html#/explore/adaptive/extension" target="_parent">Adaptive Card Submit with Extension</a></li>
+			</ul>
+			<p>Example how to trigger Submit action from Object Card</p>
+			<pre class="lang-json">
+"sap.card": {
+	"type": "Object",
+	"header": {
+		...
+	},
+	"configuration": {
+		"actionHandlers": {
+			"submit": {
+				"url": "./MOCK.json",
+				"method": "GET",
+				"parameters": {
+					"status": "approved",
+					"reason": "{form>/reason/key}",
+					"reasonText": "{form>/reason/value}",
+					"comment": "{form>/comment}"
+				}
+			}
+		}
+	},
+	"data": {
+		"json": {
+			"reasons": [
+				{
+					"id": "reason1",
+					"title": "Reason 1"
+				},
+				{
+					"id": "reason2",
+					"title": "Reason 2"
+				}
+			]
+		}
+	},
+	"content": {
+		"groups": [
+			{
+				"alignment": "Stretch",
+				"items": [
+					{
+						"id": "reason",
+						"label": "Reason",
+						"type": "ComboBox",
+						"placeholder": "Select",
+						"item": {
+							"path": "/reasons",
+							"template": {
+								"key": "{id}",
+								"title": "{title}"
+							}
+						}
+					},
+					{
+						"id": "comment",
+						"label": "Comment",
+						"type": "TextArea",
+						"rows": 4,
+						"placeholder": "Comment"
+					}
+				]
+			}
+		]
+	},
+	"footer": {
+		"actionsStrip": [
+			{
+				"text": "Submit",
+				"buttonType": "Accept",
+				"actions": [
+					{
+						"type": "Submit"
+					}
+				]
+			}
+		]
+	}
+}
+</pre>
+			<a class="try-button" href="../../../index.html#/explore/object/form" target="_parent">Try it Out</a>
+		</div>
+	</div>
+</body>
+
+</html>

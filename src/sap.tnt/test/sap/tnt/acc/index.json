@@ -3,11 +3,16 @@
 		{
 			"control" : "sap.tnt.ToolPage",
 			"url" : "ToolPage.html",
-			"appComponent" : "CA-UI5-CTR-ROD"
+			"appComponent" : "CA-UI5-CTR-ROD",
+			"accTest": {
+				"name": "sap.tnt.ToolPage",
+				"title": "ACC test for sap.tnt.ToolPage",
+				"module": "./toolpage.qunit"
+			}
 		},
 		{
 			"control" : "sap.tnt.InfoLabel",
-			"url" : "../InfoLabel.html",
+			"url" : "InfoLabel.html",
 			"appComponent" : "CA-UI5-CTR-ROD"
 		}
 	]

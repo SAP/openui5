@@ -1,0 +1,85 @@
+{
+  "1.76.0": {
+    "date": "February 2020",
+    "notes": [
+      {
+        "id": "656bcd3a28cd67a5a01d94aed884d4aa4fe39442",
+        "type": "FEATURE",
+        "text": " Field: in multiline-edit mode create TextArea with 4 rows",
+        "references": []
+      },
+      {
+        "id": "0fe85730dc5ff0ea0c43345da4e0ffade15e3e3c",
+        "type": "FIX",
+        "text": " FieldValueHelp: clear FilterBar Filters on open",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080105670"
+          }
+        ]
+      },
+      {
+        "id": "0f873ca540fdbe9999999e7a1d03b3bf1e7bc1c6",
+        "type": "FIX",
+        "text": ": Field with FieldValueHelp: cursor at wrong position after Dialog",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080014441"
+          }
+        ]
+      },
+      {
+        "id": "84af1ec2373860e8a62d5f0382fdc3a19a189dac",
+        "type": "FIX",
+        "text": " FilterField: Label points to wrong ID if rendered before",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080126498"
+          }
+        ]
+      },
+      {
+        "id": "fdb2f8ce489cc6b0e25e1fa071711d366bd87d0c",
+        "type": "FIX",
+        "text": " Field: cursor position wrong after navigate and select in help",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070025683"
+          }
+        ]
+      },
+      {
+        "id": "b4aae5f65d4835b034b853a4e1259ade81c55cd1",
+        "type": "FEATURE",
+        "text": " FilterField: change default operator to EQ",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080102969"
+          }
+        ]
+      },
+      {
+        "id": "e039374864db09f5c43eaf00db6bad07ef47f1fd",
+        "type": "FIX",
+        "text": " Field: [object Promise] shown after value help",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070005795"
+          }
+        ]
+      },
+      {
+        "id": "2f0934b56f845d9c5d8b50f065c20871e181cacb",
+        "type": "FEATURE",
+        "text": " FieldHelp: allow multiple selection in type-ahead",
+        "references": []
+      }
+    ]
+  }
+}

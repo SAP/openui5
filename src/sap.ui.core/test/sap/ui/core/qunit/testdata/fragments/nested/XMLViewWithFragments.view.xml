@@ -1,0 +1,11 @@
+<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:core="sap.ui.core" controllerName="testdata.fragments.XMLViewController" >
+
+	<core:Fragment fragmentName="testdata.fragments.XMLTestFragment" type="XML" />
+	<core:Fragment id="xmlInXml" fragmentName="testdata.fragments.XMLTestFragment" type="XML" />
+
+	<core:Fragment fragmentName="testdata.fragments.JSTestFragment" type="JS" />
+	<core:Fragment id="jsInXml" fragmentName="testdata.fragments.JSTestFragment" type="JS" />
+
+	<core:Fragment fragmentName="testdata.fragments.nested.JSFragment_Level0" type="JS" />
+
+</mvc:View>

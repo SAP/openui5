@@ -1,0 +1,12 @@
+specVersion: "3.0"
+type: application
+metadata:
+  name: component-card-preload-sample
+resources:
+  configuration:
+    paths:
+      webapp: card
+builder:
+  componentPreload:
+    excludes:
+      - "my/component/sample/componentPreload/dt/*"

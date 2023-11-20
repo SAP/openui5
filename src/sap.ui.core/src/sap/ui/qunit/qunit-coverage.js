@@ -3,6 +3,12 @@
  */
 
 /*global jQuery, QUnit, URI, XMLHttpRequest, blanket, sap */// declare unusual global vars for JSLint/SAPUI5 validation
+/**
+ * @fileoverview
+ * @deprecated As of version 1.120, support for blanket-based instrumentation has been deprecated. As an alternative,
+ *    you might use the {@link https://github.com/SAP/ui5-tooling-extensions/tree/main/packages/middleware-code-coverage
+ *    @ui5/middleware-code-coverage}.
+ */
 (function() {
 	"use strict";
 
@@ -103,6 +109,7 @@
 					if (typeof URI !== "undefined") {
 						sScript += "\n//# sourceURL=" + URI(sFullUrl).absoluteTo(sDocumentLocation);
 					}
+					// eslint-disable-next-line no-eval
 					window.eval(sScript);
 				}
 			};
@@ -129,12 +136,17 @@
 		// add a QUnit configuration option in the Toolbar to enable/disable
 		// client-side instrumentation via blanket (done manually because in
 		// this case blanket will not be loaded and executed)
-		QUnit.config.urlConfig.push({
-			id: "coverage",
-			label: "Enable coverage",
-			tooltip: "Enable code coverage."
+		var bHasCoverageCheckbox = QUnit.config.urlConfig.some(function (oConf) {
+			return oConf.id === "coverage";
 		});
 
+		if (!bHasCoverageCheckbox) {
+			QUnit.config.urlConfig.push({
+				id: "coverage",
+				label: "Enable coverage",
+				tooltip: "Enable code coverage."
+			});
+		}
 	}
 
 })();

@@ -1,0 +1,208 @@
+{
+  "comp": {
+    "standardVariants": [{
+      "fileName":"id_1607667712160_48_standardVariant",
+      "fileType":"change",
+      "changeType":"standardVariant",
+      "layer":"USER",
+      "reference":"sap.ui.demoapps.rta.fiorielements",
+      "selector":  {
+        "persistencyKey":"variantManagement1"
+      },
+      "support": {
+        "generator": "Change.createInitialFileContent",
+        "service": "",
+        "user": "some.user@sap.com",
+        "sapui5Version": "1.82.2",
+        "sourceChangeFileName": "",
+        "compositeCommand": ""
+      },
+      "content": {
+        "executeOnSelect": false
+      },
+      "creation":"2020-12-11T06:21:52.183Z"
+    }],
+    "variants": [{
+      "fileName": "variant_1",
+      "fileType": "variant",
+      "selector": {
+        "persistencyKey": "variantManagement1"
+      },
+      "content": {},
+      "texts": {
+        "variantName": {
+          "value": "B Variant"
+        }
+      }
+    },{
+      "fileName": "variant_standard1",
+      "fileType": "variant",
+      "selector": {
+        "persistencyKey": "variantManagement1"
+      },
+      "content": {
+        "standardvariant": true,
+        "executeOnSelect": true
+      },
+      "favorite": true,
+      "texts": {
+        "variantName": {
+          "value": "This my very own standard variant text"
+        }
+      }
+    },{
+      "fileName": "variant_2",
+      "fileType": "variant",
+      "selector": {
+        "persistencyKey": "variantManagement1"
+      },
+      "content": {
+        "executeOnSelect": true
+      },
+      "favorite": true,
+      "texts": {
+        "variantName": {
+          "value": "B Variant2"
+        }
+      }
+    },{
+      "fileName": "variant_standard2",
+      "fileType": "variant",
+      "selector": {
+        "persistencyKey": "variantManagement1"
+      },
+      "content": {
+        "standardvariant": true,
+        "executeOnSelect": true
+      },
+      "favorite": true,
+      "texts": {
+        "variantName": {
+          "value": "This another of my very own standard variant text"
+        }
+      }
+    }],
+    "changes": [{
+      "fileName":"id_1607667712160_48_standardVariant",
+      "fileType":"change",
+      "changeType":"updateVariant",
+      "layer":"USER",
+      "reference":"sap.ui.demoapps.rta.fiorielements",
+      "selector":  {
+        "persistencyKey":"variantManagement1"
+      },
+      "support": {
+        "generator": "Change.createInitialFileContent",
+        "service": "",
+        "user": "some.user@sap.com",
+        "sapui5Version": "1.82.2",
+        "sourceChangeFileName": "",
+        "compositeCommand": ""
+      },
+      "content": {
+        "executeOnSelection": true,
+        "key": "variant_standard2"
+      },
+      "creation":"2020-12-12T06:21:52.183Z"
+    }, {
+      "fileName": "id_1606828544793_204_addFavorite",
+      "fileType": "change",
+      "changeType": "addFavorite",
+      "moduleName": "",
+      "reference": "sap.ui.demoapps.rta.fiorielements",
+      "packageName": "",
+      "content": {
+        "key": "variant_1",
+        "visible": true
+      },
+      "selector": {
+        "persistencyKey": "variantManagement1"
+      },
+      "layer": "USER",
+      "texts": {},
+      "namespace": "apps/sap.ui.demoapps.rta.fiorielements/changes/",
+      "projectId": "sap.ui.demoapps.rta.fiorielements",
+      "creation": "2020-12-01T12:15:45.208Z",
+      "originalLanguage": "EN",
+      "support": {
+        "generator": "Change.createInitialFileContent",
+        "service": "",
+        "user": "some.user@sap.com",
+        "sapui5Version": "1.82.2",
+        "sourceChangeFileName": "",
+        "compositeCommand": ""
+      },
+      "oDataInformation": {},
+      "dependentSelector": {},
+      "jsOnly": false,
+      "variantReference": "",
+      "appDescriptorChange": false
+    }, {
+      "fileName": "id_1606828544793_204_removeFavorite",
+      "fileType": "change",
+      "changeType": "removeFavorite",
+      "moduleName": "",
+      "reference": "sap.ui.demoapps.rta.fiorielements",
+      "packageName": "",
+      "content": {
+        "key": "variant_1",
+        "visible": false
+      },
+      "selector": {
+        "persistencyKey": "variantManagement1"
+      },
+      "layer": "USER",
+      "texts": {},
+      "namespace": "apps/sap.ui.demoapps.rta.fiorielements/changes/",
+      "projectId": "sap.ui.demoapps.rta.fiorielements",
+      "creation": "2020-12-01T13:15:45.208Z",
+      "originalLanguage": "EN",
+      "support": {
+        "generator": "Change.createInitialFileContent",
+        "service": "",
+        "user": "some.user@sap.com",
+        "sapui5Version": "1.82.2",
+        "sourceChangeFileName": "",
+        "compositeCommand": ""
+      },
+      "oDataInformation": {},
+      "dependentSelector": {},
+      "jsOnly": false,
+      "variantReference": "",
+      "appDescriptorChange": false
+    }, {
+      "fileName": "id_1606828544793_205_addFavorite",
+      "fileType": "change",
+      "changeType": "updateVariant",
+      "moduleName": "",
+      "reference": "sap.ui.demoapps.rta.fiorielements",
+      "packageName": "",
+      "content": {
+        "key": "variant_3",
+        "favorite": true
+      },
+      "selector": {
+        "persistencyKey": "variantManagement1"
+      },
+      "layer": "USER",
+      "texts": {},
+      "namespace": "apps/sap.ui.demoapps.rta.fiorielements/changes/",
+      "projectId": "sap.ui.demoapps.rta.fiorielements",
+      "creation": "2020-12-02T13:15:45.208Z",
+      "originalLanguage": "EN",
+      "support": {
+        "generator": "Change.createInitialFileContent",
+        "service": "",
+        "user": "some.user@sap.com",
+        "sapui5Version": "1.82.2",
+        "sourceChangeFileName": "",
+        "compositeCommand": ""
+      },
+      "oDataInformation": {},
+      "dependentSelector": {},
+      "jsOnly": false,
+      "variantReference": "",
+      "appDescriptorChange": false
+    }]
+  }
+}

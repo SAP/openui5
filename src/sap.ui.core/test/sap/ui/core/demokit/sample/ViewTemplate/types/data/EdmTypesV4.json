@@ -18,5 +18,6 @@
 	"Single" : 1.234567E3,
 	"String" : "String Expression",
 	"String40" : "String Maxlength 40",
-	"TimeOfDay" : "07:25:21"
+	"TimeOfDay" : "07:25:21",
+	"TimezoneID" : "America/New_York"
 }

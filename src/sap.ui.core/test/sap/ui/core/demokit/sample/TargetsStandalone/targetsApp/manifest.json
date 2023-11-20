@@ -1,0 +1,39 @@
+{
+	"sap.app": {
+		"id": "sap.ui.core.sample.TargetsStandalone.targetsApp",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"dependencies": {
+			"minUI5Version": "1.98.0"
+		},
+		"rootView": {
+			"viewName": "sap.ui.core.sample.TargetsStandalone.targetsApp.view.App",
+			"type": "XML",
+			"async": true
+		},
+		"routing": {
+			"config": {
+				"targetsClass": "sap.m.routing.Targets",
+				"path": "sap.ui.core.sample.TargetsStandalone.targetsApp.view",
+				"controlId": "rootControl",
+				"controlAggregation": "pages",
+				"type": "View",
+				"viewType": "XML",
+				"async": true
+			},
+			"targets": {
+				"page1": {
+					"name": "View1",
+					"level": 0
+				},
+				"page2": {
+					"name": "View2",
+					"level": 1
+				}
+			}
+		}
+	}
+}

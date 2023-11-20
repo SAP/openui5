@@ -1,0 +1,25 @@
+{
+  "1.65.0": {
+    "date": "April 2019",
+    "notes": [
+      {
+        "id": "0f6aaeb528c9a758fe23ef12c17aae725eb4f120",
+        "type": "FEATURE",
+        "text": "sap.ui.integration.widgets.Card: Table Card implemented",
+        "references": []
+      },
+      {
+        "id": "5b3debb5235240a568ea215037ad1b54567bfb92",
+        "type": "FEATURE",
+        "text": "sap.f.GridContainer: Added control sample",
+        "references": []
+      },
+      {
+        "id": "1e5da3dedaf2b37deb74c1cddbe62ef26e999aca",
+        "type": "FEATURE",
+        "text": "sap.ui.integration.widgets.Card: Component Card implemented - experimental",
+        "references": []
+      }
+    ]
+  }
+}

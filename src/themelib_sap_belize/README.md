@@ -3,11 +3,15 @@
 # @openui5/themelib_sap_belize
 Runtime resources of the [OpenUI5](https://github.com/SAP/openui5) Theme Library **sap_belize**.
 
-## Install
+## Usage
+Add this library as a dependency to your UI5 project by using [UI5 Tooling](https://sap.github.io/ui5-tooling/):
+
 ```
-npm install @openui5/themelib_sap_belize
+ui5 add themelib_sap_belize
 ```
 
+For more information, please refer to our documentation on [Consuming OpenUI5 Libraries](https://sap.github.io/ui5-tooling/pages/OpenUI5/).
+
 ## License
-OpenUI5 is licensed under [Apache License 2.0](https://www.apache.org/licenses/LICENSE-2.0).  
-Subcomponents may have different licenses, see [LICENSE.txt](LICENSE.txt).
+OpenUI5 is licensed under [Apache License 2.0](https://www.apache.org/licenses/LICENSE-2.0), see [LICENSE.txt](LICENSE.txt).
+Subcomponents may have different licenses, see [THIRDPARTY.txt](THIRDPARTY.txt).

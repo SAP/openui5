@@ -1,8 +1,8 @@
 sap.ui.define([
-	'jquery.sap.global', 'sap/ui/core/XMLComposite'],
-	function (jQuery, XMLComposite) {
+	'sap/ui/core/XMLComposite'],
+	function (XMLComposite) {
 		"use strict";
-		var DeepBinding = sap.ui.core.XMLComposite.extend("composites.DeepBinding2", {
+		var DeepBinding = XMLComposite.extend("composites.DeepBinding2", {
 			metadata: {
 				properties: {
 					text: {
@@ -22,4 +22,4 @@ sap.ui.define([
 		});
 
 		return DeepBinding;
-	}, /* bExport= */true);
+	});

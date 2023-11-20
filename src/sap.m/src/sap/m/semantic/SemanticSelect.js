@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
-sap.ui.define(['sap/m/semantic/SemanticControl', 'sap/m/Select', 'jquery.sap.global'], function(SemanticControl, Select, jQuery) {
+sap.ui.define(['sap/m/semantic/SemanticControl', 'sap/m/Select', "sap/base/Log"], function(SemanticControl, Select, Log) {
 	"use strict";
 
 	/**
@@ -23,7 +23,6 @@ sap.ui.define(['sap/m/semantic/SemanticControl', 'sap/m/Select', 'jquery.sap.glo
 	 * @public
 	 * @since 1.30
 	 * @alias sap.m.semantic.SemanticSelect
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 
 	var SemanticSelect = SemanticControl.extend("sap.m.semantic.SemanticSelect", /** @lends sap.m.semantic.SemanticSelect.prototype */ {
@@ -87,7 +86,7 @@ sap.ui.define(['sap/m/semantic/SemanticControl', 'sap/m/Select', 'jquery.sap.glo
 				&& !SemanticSelect.getMetadata().getProperties()[sPropertyName]
 				&& !SemanticControl.getMetadata().getProperties()[sPropertyName]) {
 
-			jQuery.sap.log.error("unknown property: " + sPropertyName, this);
+			Log.error("unknown property: " + sPropertyName, this);
 			return this;
 		}
 		SemanticControl.prototype.setProperty.call(this, sPropertyName, oValue, bSuppressInvalidate);

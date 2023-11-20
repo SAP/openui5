@@ -1,50 +1,53 @@
 sap.ui.define([
-		'jquery.sap.global',
-		'sap/ui/core/Fragment',
 		'sap/ui/core/mvc/Controller',
-		'sap/ui/model/json/JSONModel'
-	], function(jQuery, Fragment, Controller, JSONModel) {
+		'sap/ui/model/json/JSONModel',
+		"sap/ui/core/Fragment"
+	], function(Controller, JSONModel, Fragment) {
 	"use strict";
 
-	var CController = Controller.extend("sap.m.sample.ObjectHeaderTitleSel.C", {
+	return Controller.extend("sap.m.sample.ObjectHeaderTitleSel.C", {
 
-		onInit : function (evt) {
+		onInit : function () {
 			// set explored app's demo model on this sample
-			var oModel = new JSONModel(sap.ui.require.toUrl("sap/ui/demo/mock") + "/products.json");
+			var oModel = new JSONModel(sap.ui.require.toUrl("sap/ui/demo/mock/products.json"));
 			oModel.setDefaultBindingMode("OneWay");
 			this.getView().setModel(oModel);
 		},
 
-		onExit : function () {
-			if (this._oPopover) {
-				this._oPopover.destroy();
-			}
-		},
-
-		_getResponsivePopover: function () {
-			if (!this._oPopover) {
-				this._oPopover = sap.ui.xmlfragment("sap.m.sample.ObjectHeaderTitleSel.Popover", this);
-			}
-			return this._oPopover;
-		},
-
 		handleItemSelect: function (oEvent) {
-			var oItem = oEvent.getParameter("listItem");
-			var oObjectHeader = this.byId("idObjectHeader");
+			var oItem = oEvent.getParameter("listItem"),
+				oObjectHeader = this.byId("idObjectHeader");
+
 			oObjectHeader.setTitle(oItem.getTitle());
 			oObjectHeader.setBindingContext(oItem.getBindingContext());
-			this._oPopover.close();
+
+			// note: We don't need to chain to the _pPopover promise, since this event-handler
+			// is only called from within the loaded dialog itself.
+			this.byId("myPopover").close();
 		},
 
 		handleTitleSelectorPress: function (oEvent) {
-			var _oPopover = this._getResponsivePopover();
-			_oPopover.setModel(oEvent.getSource().getModel());
-			_oPopover.openBy(oEvent.getParameter("domRef"));
+			var oSourceControl = oEvent.getSource(),
+				oControlDomRef = oEvent.getParameter("domRef"),
+				oView = this.getView();
+
+			if (!this._pPopover) {
+				this._pPopover = Fragment.load({
+					id: oView.getId(),
+					type: "XML",
+					name: "sap.m.sample.ObjectHeaderTitleSel.Popover",
+					controller: this
+				}).then(function(oPopover) {
+					oView.addDependent(oPopover);
+					return oPopover;
+				});
+			}
+			this._pPopover.then(function(oPopover) {
+				oPopover.setModel(oSourceControl.getModel());
+				oPopover.openBy(oControlDomRef);
+			});
 		}
 
 	});
-
-
-	return CController;
 
 });

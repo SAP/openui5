@@ -1,0 +1,25 @@
+<template data-controller-name="example.mvc_legacyAPIs.test">
+	<div id="htmlRoot">THIS IS A TEST</div>
+
+	<div>
+		<div id="htmlNested">NESTED WORKS AS WELL</div>
+
+		<div class="test test2 test3" data-sap-ui-type="sap.m.Panel" id="myPanel">
+			<div class="test test2 test3" data-sap-ui-type="sap.m.Button" id="Button1" data-text="Hello World" data-press="doIt"></div>
+			<div data-sap-ui-type="sap.m.Button" id="Button2" data-text="Hello" data-custom-data:my-data1="myvalue1" data-custom-data:my-data2="{path:'/key', formatter:'.valueFormatter'}" ></div>
+			<div data-sap-ui-type="sap.m.Button" id="ButtonX" data-text="Another Hello" data-press=".sap.doIt"></div>
+			<div data-sap-ui-type="sap.ui.core.mvc.HTMLView" id="MyHTMLView" data-view-name="example.mvc_legacyAPIs.test2"></div>
+			<div data-sap-ui-type="sap.ui.core.mvc.JSView" id="MyJSView" data-view-name="example.mvc_legacyAPIs.test2"></div>
+			<div data-sap-ui-type="sap.ui.core.mvc.JSONView" id="MyJSONView" data-view-name="example.mvc_legacyAPIs.test2"></div>
+			<div data-sap-ui-type="sap.ui.core.mvc.XMLView" id="MyXMLView" data-view-name="example.mvc_legacyAPIs.test2"></div>
+			<div data-sap-ui-type="sap.m.Label" id="MyLabel" data-text="Message:" data-label-for="message"></div>
+			<div data-sap-ui-type="sap.m.Input" id="message"></div>
+			<div data-sap-ui-type="sap.m.MultiComboBox" id="MyComboBox" id="navbar" data-selected-items="item1, item2 item3">
+				<div data-sap-ui-type="sap.ui.core.Item" id="item1" data-text="Item 1" ></div>
+				<div data-sap-ui-type="sap.ui.core.Item" id="item2" data-text="Item 2" ></div>
+				<div data-sap-ui-type="sap.ui.core.Item" id="item3" data-text="Item 3" ></div>
+			</div>
+		</div>
+	</div>
+
+</template>

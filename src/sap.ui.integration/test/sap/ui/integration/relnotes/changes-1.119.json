@@ -1,0 +1,48 @@
+{
+  "1.119.0": {
+    "date": "September 2023",
+    "notes": [
+      {
+        "id": "f96cf1b4c4c40c5060052bea397dc34cef26e7ea",
+        "type": "FIX",
+        "text": " Integration Cards: Avoid 'parameters>/visibleItems' being undefined"
+      },
+      {
+        "id": "3a9b8d0f9245bb24ef8b43633fe81459218eb364",
+        "type": "FEATURE",
+        "text": " Table: Add rowMode aggregation"
+      },
+      {
+        "id": "3371a30649a55f7b8a9bbbaa673d38aa51f64706",
+        "type": "FEATURE",
+        "text": " Integration Cards: Enable binding to paginator model for client-side pagination"
+      },
+      {
+        "id": "e41694ccbbd58f582b06e316602e84c3a05ed749",
+        "type": "FEATURE",
+        "text": " Integration cards: Close button visibility from ShowCard action can be configured"
+      },
+      {
+        "id": "de86ff82072e8271295519c180ed5bfc81fa6499",
+        "type": "FIX",
+        "text": " Integration Cards: Background of Actions strip set to \"Transparent\"",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370079886"
+          }
+        ]
+      },
+      {
+        "id": "aabe3489f27aeb059c98104985cb2c85e8b1ba0d",
+        "type": "FEATURE",
+        "text": " Table: Add rowMode aggregation"
+      },
+      {
+        "id": "9658ade2bf1c727f0527190dadf0ba095e9aed71",
+        "type": "FEATURE",
+        "text": " Table: Add rowMode aggregation"
+      }
+    ]
+  }
+}

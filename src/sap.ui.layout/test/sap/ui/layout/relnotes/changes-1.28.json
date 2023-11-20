@@ -54,7 +54,12 @@
 				"id": "b426e42648571f632b171e1f0bbe887c387d0acb",
 				"type": "FIX",
 				"text": "FormContainer: JSDoc written",
-				"references": []
+				"references": [
+					{
+						"type": "GitHub",
+						"reference": "241"
+					}
+				]
 			},
 			{
 				"id": "2c350c0aff6bb260f4a4a14ebea58d7896a0dcd0",
@@ -66,7 +71,12 @@
 				"id": "943d48a69324643d9af054440baacb0eeb3ac84a",
 				"type": "FIX",
 				"text": "layout.Splitter: Corrected resizing in Right-To-Left mode",
-				"references": []
+				"references": [
+					{
+						"type": "GitHub",
+						"reference": "267"
+					}
+				]
 			},
 			{
 				"id": "90e58e4dcbfab7fdbf4ccca4d6776307e9dead22",
@@ -84,7 +94,16 @@
 				"id": "21111c4462f02d57faac143eb25935c077a0a0cf",
 				"type": "FIX",
 				"text": "SimpleForm: Fixed Explored examples",
-				"references": []
+				"references": [
+					{
+						"type": "GitHub",
+						"reference": "285"
+					},
+					{
+						"type": "BCP",
+						"reference": "1570021308"
+					}
+				]
 			}
 		]
 	},
@@ -112,7 +131,12 @@
 				"id": "33dfd9f1c887d16e777239c52417ed03533146be",
 				"type": "FIX",
 				"text": "Splitter: Enable autoresize on bar move end",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1570022300"
+					}
+				]
 			}
 		]
 	},
@@ -123,7 +147,12 @@
 				"id": "f70be3f80172a5c42347b36634a034929cac1e09",
 				"type": "FIX",
 				"text": "Form: RadioButton in compact mode corrected",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1570150393"
+					}
+				]
 			}
 		]
 	},
@@ -134,13 +163,23 @@
 				"id": "9f895fb08971121030ed1f1524a006b37419735b",
 				"type": "FIX",
 				"text": "Existence of namespace ensured during Core.initLibrary()",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1570295165"
+					}
+				]
 			},
 			{
 				"id": "a76be7b0f219286863a17df2d40cd31f981f7aa5",
 				"type": "FIX",
 				"text": "sap.ui.layout.form.Form: Changing order of FormContainer fixed",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1570306723"
+					}
+				]
 			}
 		]
 	},
@@ -151,7 +190,12 @@
 				"id": "fcd53c5de409f0c47a80b9202519c07b8674a772",
 				"type": "FIX",
 				"text": "sap.ui.layout.VerticalLayout: Vertical alignment issue in Safari fixed",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1570153584"
+					}
+				]
 			}
 		]
 	},
@@ -162,7 +206,12 @@
 				"id": "40a0c2acdc83b9106a481cd7e52b871800a6abf9",
 				"type": "FIX",
 				"text": "layout.Splitter: Correctly resize Splitter bars",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1570532117"
+					}
+				]
 			}
 		]
 	}

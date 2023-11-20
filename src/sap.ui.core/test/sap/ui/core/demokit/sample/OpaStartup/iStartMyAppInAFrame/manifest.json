@@ -1,0 +1,32 @@
+{
+	"sap.app": {
+		"id": "sap.ui.core.sample.OpaStartup.iStartMyAppInAFrame",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"dependencies": {
+			"libs": {
+				"sap.m": {},
+				"sap.ui.core": {}
+			}
+		},
+		"config": {
+			"sample": {
+				"iframe": "iStartMyAppInAFrame.html?opaExecutionDelay=700",
+				"stretch": true,
+				"files": [
+					"iStartMyAppInAFrame.html",
+					"iStartMyAppInAFrame.js",
+					"applicationUnderTest/index.html",
+					"applicationUnderTest/view/Main.view.xml",
+					"applicationUnderTest/controller/Main.controller.js",
+					"applicationUnderTest/Component.js",
+					"applicationUnderTest/manifest.json",
+					"manifest.json"
+				]
+			}
+		}
+	}
+}

@@ -34,4 +34,4 @@ sap.ui.define([], function() {
 			create: "sap/m/designtime/Image.create.fragment.xml"
 		}
 	};
-}, /* bExport= */false);
+});

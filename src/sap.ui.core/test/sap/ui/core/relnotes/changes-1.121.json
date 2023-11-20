@@ -1,0 +1,207 @@
+{
+  "1.121.0": {
+    "date": "November 2023",
+    "notes": [
+      {
+        "id": "942178703f0b4af406b086f0d03699aedf6c86d2",
+        "type": "FIX",
+        "text": " sap.ui.test.action.EnterText: Revert restriction",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370143073"
+          }
+        ]
+      },
+      {
+        "id": "692e7c386e9a92a7b85448660e6c98eadff09e0e",
+        "type": "FIX",
+        "text": " core/Shortcut: trigger \"blur\" within a timeout",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500007245922023"
+          }
+        ]
+      },
+      {
+        "id": "f32a4e1b35a2e78db341f3bb17ba9ff64e5328cc",
+        "type": "FIX",
+        "text": " Lib/ui5loader: Provide deprecation message for pseudo-modules",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370138723"
+          }
+        ]
+      },
+      {
+        "id": "ba254de5fa24d26e7e18f4c662961d248de1b655",
+        "type": "FIX",
+        "text": " Interaction: Fix start time determination",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370140056"
+          }
+        ]
+      },
+      {
+        "id": "1743ae8028c12030e1ce534bb6230d4919abdb5a",
+        "type": "FIX",
+        "text": " Revert \"sap.base.util.now: Migrate performance.timing\"",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370137732"
+          }
+        ]
+      },
+      {
+        "id": "07ce8256d4d4dd9d854e552b2eefc8c73cbf1c73",
+        "type": "FIX",
+        "text": " Rename sap/ui/core/Component.get to sap/ui/core/Component.getComponentById"
+      },
+      {
+        "id": "35c2e0470ef71c90f767e5d51184240a63cb31eb",
+        "type": "FEATURE",
+        "text": " sap.tnt.SideNavigation: Enabled support for grouping items"
+      },
+      {
+        "id": "10069c7654902dfb252f268ef1b3b35452a2aa74",
+        "type": "FIX",
+        "text": " sap.base.util.now: Migrate performance.timing"
+      },
+      {
+        "id": "fc8a68c5ddd9f990ae6fc6b461b0ad3c43f18a01",
+        "type": "FIX",
+        "text": " core/Shortcut: trigger \"blur\" after the current call stack finishes",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500007245922023"
+          }
+        ]
+      },
+      {
+        "id": "00dd177503c5f23fb4e4bfc7f79785e829fda9a2",
+        "type": "FIX",
+        "text": " sap.ui.core - MockSever Head Request not catched on ABAP",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370120554"
+          }
+        ]
+      },
+      {
+        "id": "ac04fe2e25020135c0da04c2bfcb47ff08b25640",
+        "type": "FEATURE",
+        "text": " Rename sap/ui/base/Formatting.(get|set)LegacyDateCalendarCustomizing to sap/ui/base/Formatting.(get|set)CustomIslamicCalendarData"
+      },
+      {
+        "id": "42ad51dbdf02c768e3cf034720e82a4ce2377ee8",
+        "type": "FEATURE",
+        "text": " Deprecation of sap/ui/core/search classes"
+      },
+      {
+        "id": "cb218ef35e4c8e59d4f9c045813b55b3c79f08ea",
+        "type": "FIX",
+        "text": " ManagedObjectMetadata: Introduce missing 'defaultClass' setting for aggregations",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      },
+      {
+        "id": "5033f63bc90b221699dfbf7ed86bd07f15853ead",
+        "type": "FIX",
+        "text": " onlocalizationEvent not fired",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370127742"
+          }
+        ]
+      },
+      {
+        "id": "07a257d45941e60bfb65fe424c00183c7938b7b8",
+        "type": "FIX",
+        "text": " Remove legacy onInit definitions (global,function,eval)"
+      },
+      {
+        "id": "e26abbaae4fa3c9b76d59c1bd228381523129929",
+        "type": "FIX",
+        "text": " Flexibility tests must wait for Core to be ready"
+      },
+      {
+        "id": "238c8c29dbd4b2761366fa885a1e26ffbef6583c",
+        "type": "FIX",
+        "text": " core/Component: skip the sync processing of i18n before resources are loaded",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400007495122023"
+          }
+        ]
+      },
+      {
+        "id": "bc876ac37dc32d2714e6ceea39320877e0903437",
+        "type": "FIX",
+        "text": " sap.ui.core.qunit.i18n.helper._timezones: Set CLDR version to 43 for aCLDRTimezoneIDs",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370122403"
+          }
+        ]
+      },
+      {
+        "id": "19a82313a26a326b9938776617e1451bea69782f",
+        "type": "FIX",
+        "text": " sap/base/config: Harmonize logging and only log sap params",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370118877"
+          }
+        ]
+      },
+      {
+        "id": "31398b6fa7d0ba50ed7ab91da0eed2915db870d0",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v2.ODataModel#bindTree: document transitionMessagesOnly parameter",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370122405"
+          }
+        ]
+      },
+      {
+        "id": "8fea65c79c29f88bac64620076e88d2fa819490f",
+        "type": "FIX",
+        "text": " core/support/plugins/Selector: Fix missing Element dependency",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370117058"
+          }
+        ]
+      },
+      {
+        "id": "d1bd65ae4dd1bf34489a54fae835f824fd6e17be",
+        "type": "FIX",
+        "text": " Stabilize QUnit test for BeaconRequest",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370118287"
+          }
+        ]
+      }
+    ]
+  }
+}

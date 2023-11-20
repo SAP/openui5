@@ -1,0 +1,5 @@
+<mvc:XMLView xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m">
+	<Page>
+		<Text text="Home" />
+	</Page>
+</mvc:XMLView>

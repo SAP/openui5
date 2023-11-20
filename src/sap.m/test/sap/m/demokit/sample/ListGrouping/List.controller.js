@@ -1,26 +1,25 @@
 sap.ui.define([
-		'jquery.sap.global',
 		'sap/m/GroupHeaderListItem',
 		'sap/ui/core/mvc/Controller',
 		'sap/ui/model/json/JSONModel',
 		'sap/m/Menu',
 		'sap/m/MenuItem'
-	], function(jQuery, GroupHeaderListItem, Controller, JSONModel, Menu, MenuItem) {
+	], function(GroupHeaderListItem, Controller, JSONModel, Menu, MenuItem) {
 	"use strict";
 
 	var ListController = Controller.extend("sap.m.sample.ListGrouping.List", {
 
 		onInit : function (evt) {
 			// set explored app's demo model on this sample
-			var oModel = new JSONModel(sap.ui.require.toUrl("sap/ui/demo/mock") + "/products.json");
+			var oModel = new JSONModel(sap.ui.require.toUrl("sap/ui/demo/mock/products.json"));
 			this.getView().setModel(oModel);
 		},
 
 		getGroupHeader: function (oGroup){
-			return new GroupHeaderListItem( {
+			return new GroupHeaderListItem({
 				title: oGroup.key,
 				upperCase: false
-			} );
+			});
 		},
 
 		onToggleContextMenu: function(oEvent) {

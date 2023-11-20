@@ -1,0 +1,73 @@
+{
+	"sap.app": {
+		"type": "card",
+		"id": "quickActionsExtension"
+	},
+	"sap.card": {
+		"extension": "./QuickActionsExtension",
+		"type": "List",
+		"header": {
+			"title": "List Card - Data from Extension",
+			"subTitle": "City"
+		},
+		"content": {
+			"data": {
+				"extension": {
+					"method": "getData"
+				}
+			},
+			"item": {
+				"icon": {
+					"src": "{icon}"
+				},
+				"title": {
+					"value": "{Name}"
+				},
+				"description": {
+					"value": "Description"
+				},
+				"info": {
+					"value": "{= ${departmentBudget}  > ${departmentBudgetThreshold} ? 'Exceeded' : 'In Range' }",
+					"state": "{= ${departmentBudget}  > ${departmentBudgetThreshold} ? 'Error' : 'Success' }"
+				},
+				"actionsStrip": [
+					{
+						"buttonType": "Reject",
+						"overflowPriority": "High",
+						"overflowGroup": 1,
+						"text": "Delete",
+						"actions": [
+							{
+								"type": "Custom",
+								"parameters": {
+									"item": "{}"
+								}
+							}
+						]
+					}
+				]
+			},
+			"maxItems": 3
+		},
+		"footer": {
+			"actionsStrip": [
+				{
+					"buttonType": "Accept",
+					"text": "Add",
+					"actions": [
+						{
+							"type": "Custom",
+							"parameters": {
+								"add": true
+							}
+						}
+					]
+				},
+				{
+					"buttonType": "Accept",
+					"text": "{someBindingPath}"
+				}
+			]
+		}
+	}
+}

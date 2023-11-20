@@ -1,0 +1,142 @@
+{
+	"_version": "1.15.0",
+	"sap.app": {
+		"id": "card.explorer.highlight.table.card",
+		"type": "card",
+		"title": "Sample of a Table Card with Highlight",
+		"subTitle": "Sample of a Table Card with Highlight",
+		"applicationVersion": {
+			"version": "1.0.0"
+		},
+		"shortTitle": "A short title for this Card",
+		"info": "Additional information about this Card",
+		"description": "A long description for this Card",
+		"tags": {
+			"keywords": [
+				"Table",
+				"Highlight",
+				"Card",
+				"Sample"
+			]
+		}
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"icons": {
+			"icon": "sap-icon://table-view"
+		}
+	},
+	"sap.card": {
+		"type": "Table",
+		"data": {
+			"json": [{
+					"product": "DVD player",
+					"salesOrder": "5000010050",
+					"customerName": "Robert Brown Entertainment",
+					"netAmount": "2K USD",
+					"status": "Delivered",
+					"statusState": "Success",
+					"deliveryProgress": 100
+				},
+				{
+					"product": "Astro Laptop 1516",
+					"salesOrder": "5000010051",
+					"customerName": "Entertainment Argentina",
+					"netAmount": "127k USD",
+					"status": "Canceled",
+					"statusState": "Error",
+					"deliveryProgress": 0
+				},
+				{
+					"product": "Astro Phone 6",
+					"salesOrder": "5000010052",
+					"customerName": "Brazil Technologies",
+					"netAmount": "8K USD",
+					"status": "In Progress",
+					"statusState": "Warning",
+					"deliveryProgress": 33
+				},
+				{
+					"product": "Beam Breaker B-1",
+					"salesOrder": "5000010053",
+					"customerName": "Quimica Madrilenos",
+					"netAmount": "25K USD",
+					"status": "Delivered",
+					"statusState": "Success",
+					"deliveryProgress": 100
+				},
+				{
+					"product": "Beam Breaker B-2",
+					"salesOrder": "5000010054",
+					"customerName": "Development Para O Governo",
+					"netAmount": "7K USD",
+					"status": "Delivered",
+					"statusState": "Success",
+					"deliveryProgress": 100
+				},
+				{
+					"product": "Beam Breaker B-3",
+					"salesOrder": "5000010050",
+					"customerName": "Robert Brown Entertainment",
+					"netAmount": "2K USD",
+					"status": "Delivered",
+					"statusState": "Success",
+					"deliveryProgress": 100
+				},
+				{
+					"product": "Benda Laptop 1408",
+					"salesOrder": "5000010051",
+					"customerName": "Entertainment Argentina",
+					"netAmount": "127k USD",
+					"status": "Canceled",
+					"statusState": "Error",
+					"deliveryProgress": 0
+				},
+				{
+					"product": "Bending Screen 21HD",
+					"salesOrder": "5000010052",
+					"customerName": "Brazil Technologies",
+					"netAmount": "8K USD",
+					"status": "In Progress",
+					"statusState": "Warning",
+					"deliveryProgress": 27
+				},
+				{
+					"product": "Blaster Extreme",
+					"salesOrder": "5000010052",
+					"customerName": "Brazil Technologies",
+					"netAmount": "8K USD",
+					"status": "In Progress",
+					"statusState": "Warning",
+					"deliveryProgress": 51
+				}
+			]
+		},
+		"header": {
+			"title": "Sales Orders for Key Accounts",
+			"subTitle": "Today"
+		},
+		"content": {
+			"maxItems": 9,
+			"row": {
+				"highlight": "{statusState}",
+				"columns": [{
+						"title": "Product",
+						"value": "{product}",
+						"additionalText": "{salesOrder}",
+						"identifier": true
+					},
+					{
+						"title": "Customer",
+						"value": "{customerName}"
+					},
+					{
+						"title": "Net Amount",
+						"value": "{netAmount}",
+						"hAlign": "End"
+					}
+				]
+			}
+		}
+	}
+}

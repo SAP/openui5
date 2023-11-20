@@ -6,7 +6,7 @@
 sap.ui.define(["sap/ui/core/UIComponent"], function(UIComponent) {
 	"use strict";
 
-	return sap.ui.core.UIComponent.extend("sap.ui.test.v2models.parent.Component", {
+	return UIComponent.extend("sap.ui.test.v2models.parent.Component", {
 
 		metadata: {
 
@@ -53,6 +53,13 @@ sap.ui.define(["sap/ui/core/UIComponent"], function(UIComponent) {
 							"type": "OData",
 							"settings": {
 								"odataVersion": "4.0"
+							}
+						},
+
+						"unknown-odataVersion": {
+							"uri": "/path/to/unknown/odataVersion",
+							"settings": {
+								"odataVersion": "3.0"
 							}
 						},
 
@@ -250,6 +257,10 @@ sap.ui.define(["sap/ui/core/UIComponent"], function(UIComponent) {
 							"dataSource": "ODataWithSAPClient"
 						},
 
+						"v2-ODataModel-unknown-odataVersion": {
+							"dataSource": "unknown-odataVersion"
+						},
+
 						"json": "json",
 						"json-relative": "json-relative",
 						"json-relative-2": "json-relative-2",
@@ -326,9 +337,11 @@ sap.ui.define(["sap/ui/core/UIComponent"], function(UIComponent) {
 							"type": "sap.ui.test.v2models.parent.ModelNotDefined"
 						},
 						"dataSource-not-found": {
+							"type": "sap.ui.model.odata.v2.ODataModel",
 							"dataSource": "does-not-exist"
 						},
 						"dataSource-invalid": {
+							"type": "sap.ui.model.odata.v2.ODataModel",
 							"dataSource": "invalid"
 						}
 

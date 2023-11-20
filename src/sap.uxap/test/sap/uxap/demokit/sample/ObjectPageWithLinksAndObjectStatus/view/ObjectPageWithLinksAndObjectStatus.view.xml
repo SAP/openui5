@@ -1,0 +1,264 @@
+<mvc:View xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.uxap"
+	xmlns:m="sap.m"
+	xmlns:forms="sap.ui.layout.form"
+	xmlns:core="sap.ui.core"
+	xmlns:goals="sap.uxap.sample.SharedBlocks.goals"
+	xmlns:personal="sap.uxap.sample.SharedBlocks.personal"
+	xmlns:employment="sap.uxap.sample.SharedBlocks.employment"
+	controllerName="sap.uxap.sample.ObjectPageWithLinksAndObjectStatus.controller.ObjectPageWithLinksAndObjectStatus"
+	height="100%">
+
+	<ObjectPageLayout id="ObjectPageLayout"
+		showTitleInHeaderContent="true"
+		upperCaseAnchorBar="false">
+		<headerTitle>
+			<ObjectPageDynamicHeaderTitle>
+				<expandedHeading>
+					<m:Title text="Object Page Header with Links, Rating Indicator, and Object Status" wrapping="true" />
+				</expandedHeading>
+
+				<snappedHeading>
+					<m:HBox>
+						<m:VBox>
+							<m:Avatar src="./test-resources/sap/uxap/images/imageID_275314.png" class="sapUiSmallMarginEnd" />
+						</m:VBox>
+
+						<m:VBox>
+							<m:Title text="Object Page Header with Links, Rating Indicator, and Object Status" wrapping="true"/>
+							<m:Label text="Example of an ObjectPage with header facet"/>
+						</m:VBox>
+					</m:HBox>
+				</snappedHeading>
+
+				<expandedContent>
+					<m:Label text="Example of an ObjectPage with header facet"/>
+				</expandedContent>
+
+				<snappedTitleOnMobile>
+					<m:Title text="Object Page Header with Links, Rating Indicator, and Object Status"/>
+				</snappedTitleOnMobile>
+
+				<actions>
+					<m:Button text="Edit" type="Emphasized"/>
+					<m:Button text="Delete"/>
+					<m:Button text="Copy"/>
+					<m:OverflowToolbarButton icon="sap-icon://action" type="Transparent" text="Share" tooltip="action"/>
+				</actions>
+			</ObjectPageDynamicHeaderTitle>
+		</headerTitle>
+
+		<headerContent>
+			<m:FlexBox wrap="Wrap" fitContainer="true">
+				<m:Avatar src="./test-resources/sap/uxap/images/imageID_275314.png" class="sapUiMediumMarginEnd sapUiSmallMarginBottom" displaySize="L"/>
+
+				<m:VBox class="sapUiLargeMarginEnd sapUiSmallMarginBottom">
+					<m:Title class="sapUiTinyMarginBottom">
+						<m:Link text="Order Details" press="onOrderDetailsPress"/>
+					</m:Title>
+
+					<m:HBox class="sapUiTinyMarginBottom" renderType="Bare">
+						<m:Label text="Manufacturer:" class="sapUiTinyMarginEnd"/>
+						<m:Text text=" Robotech"/>
+					</m:HBox>
+
+					<m:HBox class="sapUiTinyMarginBottom" renderType="Bare">
+						<m:Label text="Factory:" class="sapUiTinyMarginEnd"/>
+						<m:Text text=" Florida, OL"/>
+					</m:HBox>
+
+					<m:HBox>
+						<m:Label text="Supplier:" class="sapUiTinyMarginEnd"/>
+						<m:Link text="Robotech (234242343)" press="onExternalApplicationLinkPress"/>
+					</m:HBox>
+				</m:VBox>
+
+				<m:VBox class="sapUiLargeMarginEnd sapUiSmallMarginBottom">
+					<m:Title text="Contact Information" class="sapUiTinyMarginBottom" />
+
+					<m:HBox class="sapUiTinyMarginBottom">
+						<core:Icon src="sap-icon://account"/>
+						<m:Link text=" John Miller" class="sapUiSmallMarginBegin"/>
+					</m:HBox>
+
+					<m:HBox class="sapUiTinyMarginBottom">
+						<core:Icon src="sap-icon://outgoing-call"/>
+						<m:Link text=" +1 234 5678" class="sapUiSmallMarginBegin"/>
+					</m:HBox>
+
+					<m:HBox>
+						<core:Icon src="sap-icon://email"/>
+						<m:Link text="john.miller@company.com" class="sapUiSmallMarginBegin"/>
+					</m:HBox>
+				</m:VBox>
+
+				<m:VBox class="sapUiLargeMarginEnd sapUiSmallMarginBottom">
+					<m:HBox class="sapUiTinyMarginBottom">
+						<m:Label text="Created By:" class="sapUiSmallMarginEnd"/>
+						<m:Link text="Julie Armstrong" press="handleTitleSelectorPress"/>
+					</m:HBox>
+
+					<m:HBox class="sapUiTinyMarginBottom" renderType="Bare">
+						<m:Label text="Created On:" class="sapUiSmallMarginEnd"/>
+						<m:Text text=" February 20, 2020"/>
+					</m:HBox>
+
+					<m:HBox class="sapUiTinyMarginBottom">
+						<m:Label text="Changed By:" class="sapUiSmallMarginEnd"/>
+						<m:Link text="John Miller" press="handleTitleSelectorPress"/>
+					</m:HBox>
+
+					<m:HBox renderType="Bare">
+						<m:Label text="Changed On:" class="sapUiSmallMarginEnd"/>
+						<m:Text text=" February 20, 2020"/>
+					</m:HBox>
+				</m:VBox>
+
+				<m:VBox class="sapUiLargeMarginEnd sapUiSmallMarginBottom">
+					<m:Title  text="Product Description" class="sapUiTinyMarginBottom" />
+					<m:Text  width="320px" text="Top-design high-quality coffee mug - ideal for a comforting moment; Pack: 6; material: Porcelain - durable dishwasher and microwave-safe porcelain that cleans easily and is ideal for everyday service. Comes in two bright colors."/>
+				</m:VBox>
+
+				<m:VBox class="sapUiLargeMarginEnd sapUiSmallMarginBottom">
+					<m:Title class="sapUiTinyMarginBottom">
+						<m:Link text="Status" press="onAnotherPageLinkPress"/>
+					</m:Title>
+					<m:ObjectStatus text="Delivery" state="Success" class="sapMObjectStatusLarge"/>
+				</m:VBox>
+
+				<m:VBox class="sapUiLargeMarginEnd sapUiSmallMarginBottom">
+					<m:Title text="Delivery Time" class="sapUiTinyMarginBottom" />
+					<m:ObjectStatus text="12 Days" icon="sap-icon://shipping-status" class="sapMObjectStatusLarge"/>
+				</m:VBox>
+
+				<m:VBox class="sapUiLargeMarginEnd sapUiSmallMarginBottom">
+					<m:Title text="Assembly Option" class="sapUiTinyMarginBottom" />
+					<m:ObjectStatus text="To Be Selected" state="Error" class="sapMObjectStatusLarge"/>
+				</m:VBox>
+
+				<m:VBox class="sapUiLargeMarginEnd">
+					<m:Title text="Price" class="sapUiTinyMarginBottom" />
+					<m:ObjectStatus text="579 EUR" class="sapMObjectStatusLarge"/>
+				</m:VBox>
+
+				<m:VBox class="sapUiMediumMarginEnd sapUiSmallMarginBottom">
+					<m:Title class="sapUiTinyMarginBottom">
+						<m:Link text="Average User Rating" press="onExternalApplicationLinkPress"/>
+					</m:Title>
+					<m:Label text="6 Reviews"/>
+					<m:RatingIndicator value="4" iconSize="16px" />
+					<m:VBox alignItems="End">
+						<m:Text text="4.1 out of 5"/>
+					</m:VBox>
+				</m:VBox>
+			</m:FlexBox>
+		</headerContent>
+
+		<sections>
+			<ObjectPageSection titleUppercase="false" id="goalsSection" title="2014 Goals Plan">
+				<subSections>
+					<ObjectPageSubSection id="goalsSectionSS1" titleUppercase="false">
+						<blocks>
+							<goals:GoalsBlock id="goalsblock" class="sapUxAPObjectPageSubSectionAlignContent"/>
+						</blocks>
+					</ObjectPageSubSection>
+				</subSections>
+			</ObjectPageSection>
+
+			<ObjectPageSection titleUppercase="false" id="personalSection" title="Personal" importance="Medium">
+				<subSections>
+					<ObjectPageSubSection id="personalSectionSS1" title="Connect" titleUppercase="false">
+						<blocks>
+							<personal:BlockPhoneNumber id="phone" class="sapUxAPObjectPageSubSectionAlignContent"/>
+							<personal:BlockSocial id="social" class="sapUxAPObjectPageSubSectionAlignContent"/>
+							<personal:BlockAdresses id="adresses" class="sapUxAPObjectPageSubSectionAlignContent"/>
+							<personal:BlockMailing id="mailing" columnLayout="1" class="sapUxAPObjectPageSubSectionAlignContent"/>
+						</blocks>
+					</ObjectPageSubSection>
+
+					<ObjectPageSubSection id="personalSectionSS2" title="Payment information" titleUppercase="false">
+						<blocks>
+							<personal:PersonalBlockPart1 id="part1" columnLayout="1" class="sapUxAPObjectPageSubSectionAlignContent"/>
+						</blocks>
+						<moreBlocks>
+							<personal:PersonalBlockPart2 id="part2" columnLayout="1" class="sapUxAPObjectPageSubSectionAlignContent"/>
+						</moreBlocks>
+					</ObjectPageSubSection>
+				</subSections>
+			</ObjectPageSection>
+
+			<ObjectPageSection titleUppercase="false" id="employmentSection" title="Employment">
+				<subSections>
+					<ObjectPageSubSection id="employmentSectionSS1" title="Job information" titleUppercase="false">
+						<blocks>
+							<employment:BlockJobInfoPart1 id="jobinfopart1" class="sapUxAPObjectPageSubSectionAlignContent"/>
+							<employment:BlockJobInfoPart2 id="jobinfopart2" class="sapUxAPObjectPageSubSectionAlignContent"/>
+							<employment:BlockJobInfoPart3 id="jobinfopart3"/>
+						</blocks>
+					</ObjectPageSubSection>
+
+					<ObjectPageSubSection id="employmentSectionSS2" title="Employee Details" importance="Medium" titleUppercase="false">
+						<blocks>
+							<employment:BlockEmpDetailPart1 id="empdetailpart1" columnLayout="1" class="sapUxAPObjectPageSubSectionAlignContent"/>
+						</blocks>
+						<moreBlocks>
+							<employment:BlockEmpDetailPart2 id="empdetailpart2" columnLayout="1" class="sapUxAPObjectPageSubSectionAlignContent"/>
+							<employment:BlockEmpDetailPart3 id="empdetailpart3" columnLayout="1" class="sapUxAPObjectPageSubSectionAlignContent"/>
+						</moreBlocks>
+					</ObjectPageSubSection>
+				</subSections>
+			</ObjectPageSection>
+
+			<ObjectPageSection titleUppercase="false" id="orderDetailsSection" title="Order Details">
+				<subSections>
+					<ObjectPageSubSection title="Order Details" showTitle="false">
+						<blocks>
+							<forms:SimpleForm class="sapUxAPObjectPageSubSectionAlignContent"
+											  layout="ColumnLayout"
+											  columnsM="2"
+											  columnsL="3"
+											  columnsXL="4">
+								<core:Title text="Order Details" />
+
+								<m:Label text="Order ID" />
+								<m:Text text="589946637" />
+
+								<m:Label text="Cotract" />
+								<m:Link text="10045876" />
+
+								<m:Label text="Transaction Date:" />
+								<m:Text text="May 6, 2018" />
+
+								<m:Label text="Expected Delivery Date" />
+								<m:Text text="June 23, 2018" />
+
+								<m:Label text="Factory" />
+								<m:Text text="Orlando, FL" />
+
+								<m:Label text="Supplier" />
+								<m:Text text="Robotech" />
+
+								<core:Title text="Configuration Accounts" />
+
+								<m:Label text="Model" />
+								<m:Text text="Robot Arm Series 9" />
+
+								<m:Label text="Color" />
+								<m:Text text="White (default)" />
+
+								<m:Label text="Socket" />
+								<m:Text text="Default Socket 10" />
+
+								<m:Label text="Leasing Instalment" />
+								<m:Text text="379.99 USD per month" />
+
+								<m:Label text="Axis" />
+								<m:Text text="6 Axis" />
+							</forms:SimpleForm>
+						</blocks>
+					</ObjectPageSubSection>
+				</subSections>
+			</ObjectPageSection>
+		</sections>
+	</ObjectPageLayout>
+</mvc:View>

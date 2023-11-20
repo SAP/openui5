@@ -1,0 +1,57 @@
+/* ========================================== */
+/* CSS for control sap.ui.commons/MessageBar  */
+/* Quartz High Contrast White theme           */
+/* ========================================== */
+
+.sapUiMsgBar {
+	background-color: @sapUiGroupContentBackground;
+	font-size: @sapUiDesktopFontSize;
+	padding: 2px;
+}
+
+/* Styling the left Open-Hide arrow: */
+.sapUiMsgBarToggle {
+	width: 14px;
+}
+
+.sapUiMsgBarToggle {
+	background-image: url("img/messagebar/collapsed.gif");
+}
+.sapUiRtl .sapUiMsgBarToggle {
+	background-image: url("img/messagebar/collapsedRTL.gif");
+}
+
+.sapUiMsgBarOpen .sapUiMsgBarToggle,
+.sapUiRtl .sapUiMsgBarOpen .sapUiMsgBarToggle {
+	background-image: url("img/messagebar/expanded.gif");
+}
+
+/* Styling the Icons-Counters container: */
+.sapUiMsgBarSums {
+	background-image: none;
+	background-color: @sapUiGroupContentBackground;
+	border: 1px solid transparent;
+	padding: 0px;
+}
+
+.sapUiMsgBarOpen .sapUiMsgBarSums,
+.sapUiMsgBarSums:hover {
+	background-color: @sapUiHighlight;
+}
+
+/* Styling the re-dock container: */
+.sapUiMsgBarHome {
+	background-color: @sapUiGroupContentBackground;
+	border: 0px solid transparent;
+	height: 21px;
+	margin: 0 0 0 3px;
+}
+
+.sapUiRtl .sapUiMsgBarHome {
+	margin: 0 3px 0 0;
+}
+
+.sapUiMsgBarHome:hover {
+	background-color: @sapUiHighlight;
+	border: 0px solid transparent;
+}

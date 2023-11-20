@@ -1,166 +1,24 @@
-<!DOCTYPE HTML>
+<!DOCTYPE html>
 <html>
 	<head>
-		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 		<meta charset="utf-8">
 		<title>ObjectNumber - sap.m</title>
 		<script src="shared-config.js"></script>
-		<script src="../../../resources/sap-ui-core.js"
-			id="sap-ui-bootstrap"
-			data-sap-ui-libs="sap.m">
+		<script id="sap-ui-bootstrap"
+				src="../../../resources/sap-ui-core.js"
+				data-sap-ui-async="true"
+				data-sap-ui-compatVersion="edge"
+				data-sap-ui-libs="sap.m"
+				data-sap-ui-onInit="module:local/ObjectNumber"
+				data-sap-ui-resourceRoots='{
+					"local": "./",
+					"qunit.internal.acc": "../../../test-resources/sap/ui/core/qunit/internal/acc"
+				}'>
 		</script>
-		<script>
-
-			var txt1 = new sap.m.Label({text:"ObjectNumber (emphasized by default):"});
-
-			var on1 = new sap.m.ObjectNumber("on1", {
-				number: "300,000,000",
-				unit: "Euro"
-			});
-
-			var txt2 = new sap.m.Label({text:"Non-emphasized ObjectNumber:"});
-
-			var on2 = new sap.m.ObjectNumber("on2", {
-				number: "1.50",
-				unit: "Euro",
-				emphasized: false
-			});
-
-
-			//Object Number control to demonstrate state changes
-			var txt3 = new sap.m.Label({
-				text:"ObjectNumber value state: ",
-				labelFor: "select"
-			});
-
-			var on3 = new sap.m.ObjectNumber("on3", {
-				number: "1.50",
-				unit: "Euro",
-				emphasized: false
-			});
-
-			var txt4 = new sap.m.Label({text: "textDirection: LTR, textAlign: Begin"});
-
-			var on4 = new sap.m.ObjectNumber("on4", {
-				number: "1.50",
-				unit: "Euro",
-				emphasized: true,
-				textDirection: sap.ui.core.TextDirection.LTR,
-				textAlign: sap.ui.core.TextAlign.Begin
-			});
-
-			var txt5 = new sap.m.Label({text: "textDirection: LTR, textAlign: End"});
-
-			var on5 = new sap.m.ObjectNumber("on5", {
-				number: "1.50",
-				unit: "Euro",
-				emphasized: true,
-				textDirection: sap.ui.core.TextDirection.LTR,
-				textAlign: sap.ui.core.TextAlign.End
-			});
-
-			var txt6 = new sap.m.Label({text: "textDirection: RTL, textAlign: Begin"});
-
-			var on6 = new sap.m.ObjectNumber("on6", {
-				number: "1.50",
-				unit: "וְהָיוּ הַדְּבָרִים",
-				emphasized: true,
-				textDirection: sap.ui.core.TextDirection.RTL,
-				textAlign: sap.ui.core.TextAlign.Begin
-			});
-
-			var txt7 = new sap.m.Label({text: "textDirection: RTL, textAlign: End"});
-
-			var on7 = new sap.m.ObjectNumber("on7", {
-				number: "1.50",
-				unit: "וְהָיוּ הַדְּבָרִים",
-				emphasized: true,
-				textDirection: sap.ui.core.TextDirection.RTL,
-				textAlign: sap.ui.core.TextAlign.End
-			});
-
-			var txt8 = new sap.m.Label({text: "textDirection: RTL, textAlign: Left"});
-
-			var on8 = new sap.m.ObjectNumber("on8", {
-				number: "1.50",
-				unit: "וְהָיוּ הַדְּבָרִים",
-				emphasized: true,
-				textDirection: sap.ui.core.TextDirection.RTL,
-				textAlign: sap.ui.core.TextAlign.Left
-			});
-
-			var txt9 = new sap.m.Label({text: "textDirection: RTL, textAlign: Right"});
-
-			var on9 = new sap.m.ObjectNumber("on9", {
-				number: "1.50",
-				unit: "וְהָיוּ הַדְּבָרִים",
-				emphasized: true,
-				textDirection: sap.ui.core.TextDirection.RTL,
-				textAlign: sap.ui.core.TextAlign.Right
-			});
-
-			// items
-			var oItemNone = new sap.ui.core.Item({
-				key: sap.ui.core.ValueState.None,
-				text: "None"
-			}),
-
-			oItemWarning = new sap.ui.core.Item({
-				key: sap.ui.core.ValueState.Warning,
-				text: "Warning"
-			}),
-
-			oItemError = new sap.ui.core.Item({
-				key: sap.ui.core.ValueState.Error,
-				text: "Error"
-			}),
-
-			oItemSuccess = new sap.ui.core.Item({
-				key: sap.ui.core.ValueState.Success,
-				text: "Success"
-			}),
-
-			oStateSelect = new sap.m.Select("select", {
-				name: "select-object-state",
-				title: "Object Number state",
-				items: [oItemNone, oItemWarning, oItemError, oItemSuccess],
-				change: function(oControlEvent) {
-					on3.setState(oControlEvent.getParameter("selectedItem").getKey());
-				}
-			});
-
-			var app = new sap.m.App();
-			var page = new sap.m.Page({
-				showHeader : false,
-				enableScrolling : true,
-				content: [
-					txt1,
-					on1,
-					txt2,
-					on2,
-					txt3,
-					oStateSelect,
-					on3,
-					txt4,
-					on4,
-					txt5,
-					on5,
-					txt6,
-					on6,
-					txt7,
-					on7,
-					txt8,
-					on8,
-					txt9,
-					on9
-				]
-			});
-			app.setInitialPage(page.getId());
-			app.addPage(page);
-
-			app.placeAt('body');
-		</script>
+		
 	</head>
 	<body id="body" class="sapUiBody">
+	
+
 	</body>
 </html>

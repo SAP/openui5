@@ -1,0 +1,77 @@
+{
+	"sap.app": {
+		"id": "qunit.router.component.titlePropagation.scenario5.Parent",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "qunit.router.component.titlePropagation.scenario5.Parent.view.RootView",
+			"type": "XML",
+			"async": true
+		},
+		"routing": {
+			"config": {
+				"async": true,
+				"controlId": "shell",
+				"controlAggregation": "content",
+				"propagateTitle": true
+			},
+			"routes": [
+				{
+					"pattern": "",
+					"name": "home",
+					"target": {
+						"name": "home",
+						"prefix": "child"
+					}
+				},
+				{
+					"pattern": "second",
+					"name": "second",
+					"target": {
+						"name": "second",
+						"prefix": "child"
+					}
+				},
+				{
+					"pattern": "third",
+					"name": "third",
+					"target": {
+						"name": "home",
+						"prefix": "child",
+						"propagateTitle": false
+					}
+				},
+				{
+					"pattern": "view1",
+					"name": "parentView1",
+					"target": "parentView1"
+				}
+			],
+			"targets": {
+				"home": {
+					"path": "qunit.router.component.titlePropagation.scenario5",
+					"name": "Child",
+					"type": "Component",
+					"id": "component8"
+				},
+				"second": {
+					"path": "qunit.router.component.titlePropagation.scenario5",
+					"name": "Child",
+					"type": "Component",
+					"id": "component9",
+					"title": "MyTargetTitle"
+				},
+				"parentView1": {
+					"path": "qunit.router.component.titlePropagation.scenario5.Parent.view",
+					"name": "View1",
+					"title": "TitleParentView1",
+					"type": "View",
+					"viewType": "XML"
+				}
+			}
+		}
+	}
+}

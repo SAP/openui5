@@ -1,0 +1,35 @@
+{
+  "1.82.0": {
+    "date": "August 2020",
+    "notes": [
+      {
+        "id": "056fc53e693bf9725dd93b47bbb331b416e73627",
+        "type": "FEATURE",
+        "text": " sap.m.Button: Badge implemented",
+        "references": []
+      },
+      {
+        "id": "102aa64dc8884d35e5da00b22d18a05973e55f33",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: has no min row height in Quartz",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500005015552020"
+          }
+        ]
+      },
+      {
+        "id": "1547a4836fb3fe95fa0c576c8f95403c297b897d",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageHeader: Fixed visual misalignment",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070233100"
+          }
+        ]
+      }
+    ]
+  }
+}

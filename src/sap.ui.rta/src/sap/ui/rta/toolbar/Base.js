@@ -3,20 +3,23 @@
  */
 
 sap.ui.define([
-	'jquery.sap.global',
-	'sap/ui/rta/library',
-	'sap/ui/core/Popup',
-	'sap/m/Toolbar',
-	'sap/ui/core/BusyIndicator',
-	'sap/ui/rta/util/Animation'
-],
-function(
-	jQuery,
-	library,
-	Popup,
-	Toolbar,
-	BusyIndicator,
-	Animation
+	"sap/m/HBox",
+	"sap/ui/core/Element",
+	"sap/ui/core/StaticArea",
+	"sap/ui/core/Lib",
+	"sap/ui/dt/util/ZIndexManager",
+	"sap/ui/model/resource/ResourceModel",
+	"sap/ui/rta/util/Animation",
+	"./BaseRenderer"
+], function(
+	HBox,
+	Element,
+	StaticArea,
+	Lib,
+	ZIndexManager,
+	ResourceModel,
+	Animation,
+	BaseRenderer
 ) {
 	"use strict";
 
@@ -25,7 +28,7 @@ function(
 	 *
 	 * @class
 	 * Base class for Toolbar control
-	 * @extends sap.m.Toolbar
+	 * @extends sap.m.HBox
 	 *
 	 * @author SAP SE
 	 * @version ${version}
@@ -34,35 +37,47 @@ function(
 	 * @private
 	 * @since 1.48
 	 * @alias sap.ui.rta.toolbar.Base
-	 * @experimental Since 1.48. This class is experimental. The API might be changed in future.
 	 */
 
-	var Base = Toolbar.extend("sap.ui.rta.toolbar.Base", {
+	var Base = HBox.extend("sap.ui.rta.toolbar.Base", {
 		metadata: {
 			library: "sap.ui.rta",
 			properties: {
 				/** Color in the toolbar */
-				"color": {
+				color: {
 					type: "string",
 					defaultValue: "default"
 				},
 
 				/** z-index of the toolbar on the page. Please consider of using bringToFront() function */
-				"zIndex": {
+				zIndex: {
 					type: "int"
 				},
 
+				/**
+				 * information from the rta instance needed for some Toolbar extensions.
+				 * Includes the flexSettings, command stack and the root control from the RuntimeAuthoring instance
+				 */
+				rtaInformation: {
+					type: "object",
+					defaultValue: {
+						flexSettings: {}
+					}
+				},
+
 				/** i18n bundle */
-				"textResources": "object"
+				textResources: "object"
 			}
 		},
-		constructor: function() {
+		// eslint-disable-next-line object-shorthand
+		constructor: function(...aArgs) {
 			// call parent constructor
-			Toolbar.apply(this, arguments);
+			HBox.apply(this, aArgs);
 
+			this._oExtensions = {};
+			this.setAlignItems("Center");
 			this.setVisible(false);
 			this.placeToContainer();
-			this.buildContent();
 		},
 
 		/**
@@ -76,30 +91,63 @@ function(
 		 * added/removed during show/hide calls.
 		 * @type {boolean}
 		 */
-		animation: false
+		animation: false,
+
+		renderer: BaseRenderer
 	});
 
 	/**
 	 * @override
 	 */
-	Base.prototype.init = function() {
-		Toolbar.prototype.init.apply(this, arguments);
+	Base.prototype.init = function(...aArgs) {
+		this._oResourceModel = new ResourceModel({
+			bundle: Lib.getResourceBundleFor("sap.ui.rta")
+		});
+		HBox.prototype.init.apply(this, aArgs);
+		// Assign the model object to the SAPUI5 core using the name "i18n"
+		this.setModel(this._oResourceModel, "i18n");
+		this._fnOnScrollBound = this._onScroll.bind(this);
+		window.addEventListener("scroll", this._fnOnScrollBound, true);
+		return this.buildContent();
+	};
+
+	Base.prototype.exit = function(...aArgs) {
+		Object.values(this._oExtensions).forEach(function(oExtension) {
+			oExtension.destroy();
+		});
+		this._oExtensions = {};
+		window.removeEventListener("scroll", this._fnOnScrollBound, true);
+
+		HBox.prototype.exit.apply(this, aArgs);
 	};
 
 	/**
-	 * Event handler for onBeforeRendering
-	 * @protected
+	 * Adds and returns an extension to the toolbar, if it is not already registered.
+	 * The new extension gets created with the toolbar itself as property 'toolbar'.
+	 *
+	 * @param {string} sName - Name of the extension
+	 * @param {sap.ui.base.ManagedObject} Extension - Extension Class to be instantiated
+	 * @returns {sap.ui.base.ManagedObject|undefined} Returns the extension or undefined if it does not exist
 	 */
-	Base.prototype.onBeforeRendering = function () {
-		Toolbar.prototype.onBeforeRendering.apply(this, arguments);
+	Base.prototype.getExtension = function(sName, Extension) {
+		if (!Object.keys(this._oExtensions).includes(sName)) {
+			this._oExtensions[sName] = new Extension({toolbar: this});
+		}
+		return this._oExtensions[sName];
 	};
 
 	/**
-	 * Event handler for onAfterRendering
-	 * @protected
+	 * @override
 	 */
-	Base.prototype.onAfterRendering = function () {
-		Toolbar.prototype.onAfterRendering.apply(this, arguments);
+	Base.prototype.setTextResources = function(oTextResource) {
+		this.setProperty("textResources", oTextResource);
+		this._oResourceModel = new ResourceModel({
+			bundle: Lib.getResourceBundleFor("sap.ui.rta")
+		});
+	};
+
+	Base.prototype.onFragmentLoaded = function() {
+		return Promise.resolve();
 	};
 
 	/**
@@ -107,47 +155,51 @@ function(
 	 * @param {string} sEventName - Name of the event
 	 * @param {sap.ui.base.Event} oEvent - Event object
 	 */
-	Base.prototype.eventHandler = function (sEventName, oEvent) {
-		this['fire' + sEventName](oEvent.getParameters());
+	Base.prototype.eventHandler = function(sEventName, oEvent) {
+		this[`fire${sEventName}`](oEvent.getParameters());
 	};
 
 	/**
 	 * Function provides controls which should be rendered into the Toolbar. Controls are going to be rendered
 	 * in the same order as provided in returned array.
-	 * @return {Array.<sap.ui.core.Control>} - returns an array of controls
+	 * @returns {Promise<sap.ui.core.Control[]>} A Promise that resolves with an array of controls
 	 * @protected
 	 */
-	Base.prototype.buildControls = function () {
-		return [];
+	Base.prototype.buildControls = function() {
+		return Promise.resolve([]);
 	};
 
 	/**
 	 * Function renders the Toolbar into the page
 	 * @protected
 	 */
-	Base.prototype.placeToContainer = function () {
+	Base.prototype.placeToContainer = function() {
 		// Render toolbar
-		this.placeAt(sap.ui.getCore().getStaticAreaRef());
+		this.placeAt(StaticArea.getDomRef());
 	};
 
 	/**
 	 * Adds content into the Toolbar
 	 * @protected
+	 * @returns {Promise} An empty Promise
 	 */
-	Base.prototype.buildContent = function () {
-		this.buildControls().forEach(this.addContent, this);
+	Base.prototype.buildContent = function() {
+		return this.buildControls().then(function(aControls) {
+			aControls.forEach(this.addItem, this);
+		}.bind(this));
 	};
 
 	/**
 	 * Makes the Toolbar visible
-	 * @return {Promise} - returns Promise which resolves after animation has been completed
+	 * @param {function} fnAdjustToolbarCallback - Called before the animation is triggered, e.g. for initial width calculations
+	 * @returns {Promise} A Promise which resolves after animation has been completed
 	 * @public
 	 */
-	Base.prototype.show = function() {
+	Base.prototype.show = function(fnAdjustToolbarCallback) {
 		// 1) create Promise and wait until DomRef is available
-		return new Promise(function (fnResolve) {
+		return new Promise(function(fnResolve) {
 			var oDelegate = {
-				onAfterRendering: function () {
+				onAfterRendering() {
 					this.removeEventDelegate(oDelegate);
 					fnResolve();
 				}
@@ -157,75 +209,72 @@ function(
 			this.setVisible(true); // show DomRef
 		}.bind(this))
 		// 2) animate DomRef
-		.then(function () {
+		.then(function() {
+			if (fnAdjustToolbarCallback && typeof fnAdjustToolbarCallback === "function") {
+				fnAdjustToolbarCallback();
+			}
 			return this.animation
-				? Animation.waitTransition(this.$(), this.addStyleClass.bind(this, 'is_visible'))
+				? Animation.waitTransition(this.getDomRef(), this.addStyleClass.bind(this, "is_visible"))
 				: Promise.resolve();
 		}.bind(this))
 		// 3) focus on Toolbar
-		.then(function () {
+		.then(function() {
 			this.focus();
 		}.bind(this));
 	};
 
 	/**
 	 * Makes the Toolbar invisible
-	 * @return {Promise} - returns Promise which resolves after animation has been completed
+	 * @param {boolean} bSkipTransition - skips the transition for cases like page reloads - where the animation won't be visible and can cause timing issues
+	 * @returns {Promise} A Promise which resolves after animation has been completed
 	 * @public
 	 */
-	Base.prototype.hide = function() {
+	Base.prototype.hide = function(bSkipTransition) {
+		var oPromise = Promise.resolve();
 		// 1) animate DomRef
-		return (
-			this.animation
-			? Animation.waitTransition(this.$(), this.removeStyleClass.bind(this, 'is_visible'))
-			: Promise.resolve()
-		)
+		if (this.animation) {
+			if (bSkipTransition) {
+				this.removeStyleClass("is_visible");
+			} else {
+				oPromise = Animation.waitTransition(this.getDomRef(), this.removeStyleClass.bind(this, "is_visible"));
+			}
+		}
+		return oPromise
 		// 2) hide DomRef
-		.then(function () {
+		.then(function() {
 			this.setVisible(false);
 		}.bind(this));
 	};
 
 	/**
 	 * Getter for inner controls
+	 *
 	 * @param {string} sName - Name of the control
-	 * @return {sap.ui.core.Control|undefined} - returns control or undefined if there is no control with provided name
+	 * @returns {sap.ui.core.Control|undefined} A control or undefined if there is no control with provided name
 	 * @public
 	 */
 	Base.prototype.getControl = function(sName) {
-		return this
-			.getAggregation('content')
-			.filter(function (oControl) {
-				return oControl.data('name') === sName;
-			})
-			.pop();
+		return Element.getElementById(`sapUiRta_${sName}`);
 	};
 
 	/**
 	 * Place the Toolbar above everything on the page
 	 * @public
 	 */
-	Base.prototype.bringToFront = function () {
-		var iNextZIndex;
-		var oBusyIndicatorPopup = BusyIndicator.oPopup;
-
-		if (oBusyIndicatorPopup && oBusyIndicatorPopup.isOpen() && oBusyIndicatorPopup.getModal()) {
-			// '-3' because overlay is on the '-2' level, see implementation of the sap.ui.core.Popup
-			iNextZIndex = oBusyIndicatorPopup._iZIndex - 3;
-		} else {
-			iNextZIndex = Popup.getNextZIndex();
-		}
-
-		this.setZIndex(iNextZIndex);
+	Base.prototype.bringToFront = function() {
+		this.setZIndex(ZIndexManager.getNextZIndex());
 	};
 
-	/**
-	 * Backwards compatibility
-	 */
-	Base.prototype.setUndoRedoEnabled = function () {};
-	Base.prototype.setPublishEnabled = function () {};
-	Base.prototype.setRestoreEnabled = function () {};
+	Base.prototype._onScroll = function() {
+		var oDomElement = this.getDomRef();
+		// In some cases, there is a scroll event before
+		// the DOM Element is created
+		if (!oDomElement) {
+			return;
+		}
+		var sScrollClass = "sapUiRtaToolbar_scrolling";
+		oDomElement.classList.toggle(sScrollClass, window.scrollY > 0);
+	};
 
 	return Base;
-
-}, true);
+});

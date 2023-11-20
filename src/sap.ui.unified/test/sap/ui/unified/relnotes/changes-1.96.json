@@ -1,0 +1,78 @@
+{
+  "1.96.0": {
+    "date": "October 2021",
+    "notes": [
+      {
+        "id": "bb143f3e31ddbb3adfd55ac317dd8d6e09099b8a",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: uses correct less parameter for week number font size",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170251078"
+          }
+        ]
+      },
+      {
+        "id": "47bc26ce765066d74e86e6f4a3efdf82a6cfb86b",
+        "type": "FIX",
+        "text": " sap.ui.unified.FileUploader: cached input field element is now cleared on destroy",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170197001"
+          }
+        ]
+      },
+      {
+        "id": "7f0b176e37795729656b5b99b30e0baf3a57b39d",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: Appointments levels are re-calculated on grow",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170211815"
+          }
+        ]
+      },
+      {
+        "id": "dd3aeaa06b4118d18a77e59d93262b0fdc3c7a35",
+        "type": "FEATURE",
+        "text": " sap.ui.unified.Calendar: can fast-forward to Today view"
+      },
+      {
+        "id": "3bbf78c4e5519222f01e0b7f421a9d013e904194",
+        "type": "FIX",
+        "text": " sap.ui.unified.ColorPicker: Alpha slider background is correct",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170206276"
+          }
+        ]
+      },
+      {
+        "id": "08bd96dc884f39083407c95396b94fcbdc5567e6",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: Month view correctly shows non-working days in subintervals",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170175300"
+          }
+        ]
+      },
+      {
+        "id": "610837f686ab128babc3507c522e7a3e14fdb1d3",
+        "type": "FIX",
+        "text": " sap.ui.unidied.CalendarDateInterval: shows special dates outside start date's month",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180369369"
+          }
+        ]
+      }
+    ]
+  }
+}

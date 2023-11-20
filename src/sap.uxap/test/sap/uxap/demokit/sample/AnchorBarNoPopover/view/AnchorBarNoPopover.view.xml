@@ -1,0 +1,63 @@
+<mvc:View xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.uxap"
+	xmlns:m="sap.m"
+	xmlns:blockcolor="sap.uxap.sample.SharedBlocks"
+	height="100%">
+	<ObjectPageLayout id="ObjectPageLayout" showAnchorBarPopover="false" upperCaseAnchorBar="false">
+		<headerTitle>
+			<ObjectPageDynamicHeaderTitle>
+				<heading>
+					<m:Title text="Navigation to sections"/>
+				</heading>
+
+				<snappedTitleOnMobile>
+					<m:Title text="Navigation to sections" />
+				</snappedTitleOnMobile>
+
+				<actions>
+					<m:Button text="Edit" type="Emphasized"/>
+					<m:Button type="Transparent" text="Delete"/>
+					<m:Button type="Transparent" text="Copy"/>
+					<m:OverflowToolbarButton icon="sap-icon://action" type="Transparent" text="Share" tooltip="action"/>
+				</actions>
+			</ObjectPageDynamicHeaderTitle>
+		</headerTitle>
+
+		<headerContent>
+			<m:Title text="This example shows how to change the default behavior in order to be able to navigate to sections instead of subsections, using the Anchor Bar" titleStyle="H6"/>
+		</headerContent>
+
+		<sections>
+			<ObjectPageSection titleUppercase="false" title="Section 1">
+				<subSections>
+					<ObjectPageSubSection title="Subsection 1.1" titleUppercase="false">
+						<blocks>
+							<blockcolor:BlockBlue id="bbt1"/>
+						</blocks>
+					</ObjectPageSubSection>
+					<ObjectPageSubSection title="Subsection 1.2" titleUppercase="false">
+						<blocks>
+							<blockcolor:BlockBlue id="bbt2"/>
+						</blocks>
+					</ObjectPageSubSection>
+				</subSections>
+			</ObjectPageSection>
+
+			<ObjectPageSection titleUppercase="false" title="Section 2">
+				<subSections>
+					<ObjectPageSubSection title="Subsection 2.1" titleUppercase="false">
+						<blocks>
+							<blockcolor:BlockBlue id="bbt3"/>
+						</blocks>
+					</ObjectPageSubSection>
+					<ObjectPageSubSection title="Subsection 2.2" titleUppercase="false">
+						<blocks>
+							<blockcolor:BlockBlue id="bbt4"/>
+						</blocks>
+					</ObjectPageSubSection>
+				</subSections>
+			</ObjectPageSection>
+		</sections>
+
+	</ObjectPageLayout>
+</mvc:View>

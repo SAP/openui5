@@ -1,0 +1,60 @@
+<core:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core"
+	xmlns:uxap="sap.uxap">
+	<uxap:ObjectPageSection title="Products" visible="{= !!${/selectedPurchase} }">
+		<uxap:subSections>
+			<uxap:ObjectPageSubSection>
+				<Table
+					id="idProductsTable"
+					items="{
+						path: '/selectedPurchase/ProductCollection'
+					}"
+					class="sapUxAPObjectPageSubSectionAlignContent"
+					width="auto">
+					<headerToolbar>
+						<Toolbar>
+							<Title text="{i18n>Products}" level="H2"/>
+						</Toolbar>
+					</headerToolbar>
+					<columns>
+						<Column width="12rem">
+							<Text text="{i18n>Product}" />
+						</Column>
+						<Column
+							minScreenWidth="Tablet"
+							demandPopin="true"
+							hAlign="End">
+							<Text text="{i18n>Dimensions}" />
+						</Column>
+						<Column
+							minScreenWidth="Tablet"
+							demandPopin="true"
+							hAlign="End">
+							<Text text="{i18n>Quantity}" />
+						</Column>
+						<Column hAlign="End">
+							<Text text="{i18n>Price}" />
+						</Column>
+					</columns>
+					<items>
+						<ColumnListItem>
+							<cells>
+								<ObjectIdentifier title="{Name}" text="{ProductId}"/>
+								<Text text="{Width} x {Depth} x {Height} {DimUnit}" />
+								<Text text="{Quantity} each" />
+								<ObjectNumber
+									number="{
+										parts:[{path:'Price'},{path:'CurrencyCode'}],
+										type: 'sap.ui.model.type.Currency',
+										formatOptions: {showMeasure: false}
+									}"
+									unit="{CurrencyCode}" />
+							</cells>
+						</ColumnListItem>
+					</items>
+				</Table>
+			</uxap:ObjectPageSubSection>
+		</uxap:subSections>
+	</uxap:ObjectPageSection>
+</core:FragmentDefinition>

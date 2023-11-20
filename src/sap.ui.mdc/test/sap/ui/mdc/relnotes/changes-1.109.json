@@ -1,0 +1,73 @@
+{
+  "1.109.0": {
+    "date": "November 2022",
+    "notes": [
+      {
+        "id": "0e8b1bfbc27d9fcc18e94106454e28658f1229ae",
+        "type": "FIX",
+        "text": " mdc.FilterBar: clear inner wrong values from filter fields",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270165598"
+          }
+        ]
+      },
+      {
+        "id": "f7620a2ba7022f850e0beb169a8a2a59bd4efe4d",
+        "type": "FIX",
+        "text": " Field: aria-expanded used even if no role",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270153249"
+          }
+        ]
+      },
+      {
+        "id": "c03b9ed4ebd9096219fcccc84848586468b84446",
+        "type": "FIX",
+        "text": " Field: Unit part cut off on small screen",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280141540"
+          }
+        ]
+      },
+      {
+        "id": "6dc9f710c8cbeb2da5908aa31e7d0db9db873375",
+        "type": "FIX",
+        "text": " MultiValueField: text not anounced in display mode",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270142055"
+          }
+        ]
+      },
+      {
+        "id": "18c5cc8bfdc9e193cd8d0e57354d2e3dbbdc66c6",
+        "type": "FIX",
+        "text": " Field: Change-Promise pending if validation error on unit",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270123293"
+          }
+        ]
+      },
+      {
+        "id": "6c8f12d81441271b40db09bfd6494acc2f5cee31",
+        "type": "FIX",
+        "text": " FilterField: wrong anouncement",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270097410"
+          }
+        ]
+      }
+    ]
+  }
+}

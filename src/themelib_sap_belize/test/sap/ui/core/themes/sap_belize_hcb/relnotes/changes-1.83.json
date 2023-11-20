@@ -1,0 +1,23 @@
+{
+  "1.83.0": {
+    "date": "August 2020",
+    "notes": [
+      {
+        "id": "056fc53e693bf9725dd93b47bbb331b416e73627",
+        "type": "FEATURE",
+        "text": " sap.m.Button: Badge implemented"
+      },
+      {
+        "id": "c81085bf982a3fc71df0337cfd9bb1bf05b85ea9",
+        "type": "FIX",
+        "text": " sap.m.Button: Icon-only buttons now have proper padding in case of overflow",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080298219"
+          }
+        ]
+      }
+    ]
+  }
+}

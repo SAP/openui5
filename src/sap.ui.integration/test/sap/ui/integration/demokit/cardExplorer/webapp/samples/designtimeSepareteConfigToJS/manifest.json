@@ -1,0 +1,56 @@
+{
+	"_version": "1.18.0",
+	"sap.app": {
+		"id": "sap.ui5.test.editor.listcard.separateconfigtojs",
+		"type": "card",
+		"i18n": "i18n/i18n.properties",
+		"title": "Test Card for Separate Configuration to JS files",
+		"subTitle": "Test Card for Separate Configuration to JS files",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"icons": {
+			"icon": "sap-icon://accept"
+		}
+	},
+	"sap.card": {
+		"type": "List",
+		"extension": "DataExtensionImpl",
+		"configuration": {
+			"editor": "./dt/Configuration",
+			"parameters": {
+			},
+			"destinations": {
+				"northwind": {
+					"name": "Northwind_V4"
+				}
+			}
+		},
+		"header": {
+			"title": "Invoice",
+			"subTitle": "Invoice Details",
+			"icon": {
+				"src": "sap-icon://sales-quote"
+			}
+		},
+		"data": {
+			"extension": {
+				"method": "getData"
+			},
+			"path": "/values"
+		},
+		"content": {
+			"item": {
+				"title": "{title}",
+				"description": "Trainer: {trainer}",
+				"info": {
+					"value": "Location: {location}"
+				}
+			},
+			"maxItems": 4
+		}
+	}
+}

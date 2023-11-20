@@ -32,6 +32,21 @@ sap.ui.define(['sap/ui/core/mvc/Controller', 'sap/ui/model/json/JSONModel'],
 			}
 
 			oTree.collapse(aSelectedIndices);
+		},
+
+		onSelectionFinish: function(oEvent) {
+			var aSelectedItems = oEvent.getParameter("selectedItems");
+			var oTree = this.byId("Tree");
+			var aSticky = aSelectedItems.map(function(oItem) {
+				return oItem.getKey();
+			});
+
+			oTree.setSticky(aSticky);
+		},
+
+		onToggleInfoToolbar: function(oEvent) {
+			var oTree = this.byId("Tree");
+			oTree.getInfoToolbar().setVisible(!oEvent.getParameter("pressed"));
 		}
 	});
 

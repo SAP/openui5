@@ -1,15 +1,19 @@
-/*global QUnit,sinon*/
+/*global QUnit */
 
 sap.ui.define("sap.m.qunit.UploadCollectionOpenFileDialog", [
-	"jquery.sap.global",
+	"sap/ui/thirdparty/jquery",
 	"sap/m/UploadCollection",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/base/Event",
 	"sap/ui/Device",
 	"sap/m/UploadCollectionItem",
-	"sap/m/ObjectMarker"
-], function (jQuery, UploadCollection, JSONModel, Event, Device, UploadCollectionItem, ObjectMarker) {
+	"sap/m/ObjectMarker",
+	"sap/base/Log",
+	"sap/ui/core/Core"
+], function (jQuery, UploadCollection, JSONModel, Event, Device, UploadCollectionItem, ObjectMarker, Log, oCore) {
 	"use strict";
+
+	var IMAGE_PATH = "test-resources/sap/m/images/";
 
 	var oData = {
 		"items": [
@@ -65,7 +69,7 @@ sap.ui.define("sap.m.qunit.UploadCollectionOpenFileDialog", [
 				"fileName": "Picture of a woman.png",
 				"fileSize": 70,
 				"mimeType": "image/png",
-				"thumbnailUrl": "../images/Woman_04.png",
+				"thumbnailUrl": IMAGE_PATH + "Woman_04.png",
 				"uploadedDate": "2014-07-25",
 				"url": "/pathToTheFile/Woman_04.png",
 				"ariaLabelForPicture": "textForImageOfItemKateBrown"
@@ -112,11 +116,10 @@ sap.ui.define("sap.m.qunit.UploadCollectionOpenFileDialog", [
 				}
 			}).setModel(new JSONModel(oData));
 			this.oUploadCollection.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
-			sinon.stub(jQuery.prototype, "trigger");
+			oCore.applyChanges();
+			this.stub(jQuery.prototype, "trigger");
 		},
 		afterEach: function () {
-			jQuery.prototype.trigger.restore();
 			this.oUploadCollection.destroy();
 			this.oUploadCollection = null;
 		}
@@ -126,18 +129,15 @@ sap.ui.define("sap.m.qunit.UploadCollectionOpenFileDialog", [
 		// Arrange
 		this.oUploadCollection.setMultiple(true);
 		var oItem = this.oUploadCollection.getItems()[0];
-		sinon.spy(jQuery.sap.log, "warning");
+		this.spy(Log, "warning");
 
 		// Act
 		var oReturnValue = this.oUploadCollection.openFileDialog(oItem);
 
 		// Assert
 		assert.ok(oReturnValue instanceof UploadCollection, "Function returns an instance of UploadCollection");
-		assert.equal(jQuery.sap.log.warning.callCount, 1, "Warning log was generated correctly");
-		assert.ok(jQuery.sap.log.warning.calledWith("Version Upload cannot be used in multiple upload mode"), "Warning log was generated with the correct message");
-
-		// Restore
-		jQuery.sap.log.warning.restore();
+		assert.equal(Log.warning.callCount, 1, "Warning log was generated correctly");
+		assert.ok(Log.warning.calledWith("Version Upload cannot be used in multiple upload mode"), "Warning log was generated with the correct message");
 	});
 
 	QUnit.test("Check trigger click event on FileUploader input element with item passed to openFileDialog", function (assert) {
@@ -200,7 +200,7 @@ sap.ui.define("sap.m.qunit.UploadCollectionOpenFileDialog", [
 				}
 			}).setModel(new JSONModel(oData));
 			this.oUploadCollection.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 			this.aFile = [{
 				name: "file",
 				size: 1,
@@ -225,7 +225,7 @@ sap.ui.define("sap.m.qunit.UploadCollectionOpenFileDialog", [
 			newValue: this.aFile[0].name
 		});
 		this.oUploadCollection.invalidate();
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		// Assert
 		assert.deepEqual(this.oUploadCollection.aItems.length, 5, "The new file is in the UploadCollection.aItems");
 		assert.deepEqual(this.oUploadCollection._oList.getItems().length, 4, "The new file is not in the aggregated list");
@@ -242,7 +242,7 @@ sap.ui.define("sap.m.qunit.UploadCollectionOpenFileDialog", [
 			newValue: this.aFile[0].name
 		});
 		this.oUploadCollection.invalidate();
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		// Assert
 		assert.ok(this.oUploadCollection._oNumberOfAttachmentsTitle.getText().indexOf("4") > -1, "Number of attachments is reduced in case of uploadingNewVersion");
 	});

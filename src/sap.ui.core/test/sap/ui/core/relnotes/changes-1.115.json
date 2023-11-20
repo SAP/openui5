@@ -1,0 +1,73 @@
+{
+  "1.115.0": {
+    "date": "May 2023",
+    "notes": [
+      {
+        "id": "ee4f07bdcb8f6f0aaeca54c9195059cff86fa7c2",
+        "type": "FIX",
+        "text": " base/util/fetch: Allow empty response header fields",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370067548"
+          }
+        ]
+      },
+      {
+        "id": "14599a96b376eeb44a96599aa57749c272bf6e49",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v2.ODataModel: Avoid sending contradictory headers",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370065797"
+          }
+        ]
+      },
+      {
+        "id": "b4aea640d15fc595b25ad596f3d6bc4c7be2aee5",
+        "type": "FIX",
+        "text": " core/routing: log error when new options used in sync target",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370060506"
+          }
+        ]
+      },
+      {
+        "id": "a001435a513aede901b6a9b5d61343c898967820",
+        "type": "FIX",
+        "text": " core.Configuration: Restore getDisableCustomizing",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370065486"
+          }
+        ]
+      },
+      {
+        "id": "9f01b52b05dfa9c4b9efda7770b7f09f3b40b34f",
+        "type": "FIX",
+        "text": " ResourceModel: Fix bundle reload after localizationChange",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002028376700051991612023"
+          }
+        ]
+      },
+      {
+        "id": "0d6fe28e27c4d6d15ebcd53d00ea14f7e88e9116",
+        "type": "FIX",
+        "text": " core/routing/RouterHashChanger: 'InvalidHash' should have string type",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400002497212023"
+          }
+        ]
+      }
+    ]
+  }
+}

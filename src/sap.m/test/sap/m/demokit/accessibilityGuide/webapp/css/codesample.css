@@ -1,0 +1,127 @@
+pre {
+	background: #fff;
+	font-family: Menlo, Monaco, Consolas, "Courier New", monospace;
+	tab-size: 4;
+	font-size: 0.85rem;
+	transition: height 0.3s ease-out;
+}
+
+pre[data-caption] {
+	margin-top: 2.8rem;
+	box-sizing: border-box;
+	max-width: 950px;
+}
+
+pre[data-caption]::before {
+	background: #e4e4e4;
+	content: attr(data-caption);
+	position: absolute;
+	font-family: '72' !important;
+	z-index: 1;
+	font-size: 0.9rem;
+	padding: 0.2rem 1rem;
+	border-radius: 3px 3px 0 0;
+	max-width: 948px;
+	box-sizing: border-box;
+	margin: -2.6rem -1.1rem;
+}
+
+.hljs.collapsed[data-caption] {
+	height: 0rem;
+	padding: 0;
+}
+
+.hljs.collapsed[data-caption]::before,
+.hljs.expanded[data-caption]::before {
+	color: rgb(32, 88, 155);
+}
+
+.hljs.collapsed[data-caption]:hover::before,
+.hljs.expanded[data-caption]:hover::before  {
+	color: rgb(60, 121, 196);
+}
+
+.hljs.expanded[data-caption]:hover::before {
+	color: rgb(60, 121, 196);
+}
+
+.hljs.collapsed[data-caption]::before {
+	margin: -1.8rem -1px 0rem !important;
+}
+
+.hljs:not(.collapsed) {
+	padding: 0.8rem 1.1rem!important
+}
+
+.hljs::-webkit-scrollbar {
+	width: 5px !important;
+	background-color: transparent !important;
+	transition: all 0.5s ease-in;
+}
+
+.hljs::-webkit-scrollbar-thumb {
+	background-color: transparent !important;
+	border-radius: 3px;
+}
+
+.hljs:hover::-webkit-scrollbar-thumb {
+	background-color: var(--sapUiChartScrollbarBorderColor, rgba(148, 148, 148, 0.4))!important;
+	outline: 1px solid white;
+}
+
+.hljs mark {
+	background-color: rgb(233, 243, 252);
+}
+
+pre.hljs {
+	color: #4d4d4c;
+}
+
+pre.hljs .hljs-attr,
+pre.hljs .hljs-string,
+pre.hljs.properties .hljs-string,
+pre.hljs.lang-properties .hljs-string {
+	color: #4a1283;
+}
+
+pre.hljs .hljs-literal,
+pre.hljs.javascript .hljs-keyword,
+pre.hljs.lang-js .hljs-keyword {
+	color: #2b64ae;
+}
+
+pre.hljs.xml .hljs-attr,
+pre.hljs.lang-xml .hljs-attr {
+	color: #718c00;
+}
+
+pre.hljs.xml .hljs-string,
+pre.hljs.lang-xml .hljs-string {
+	color: #8959a8;
+}
+
+pre.hljs.xml .hljs-name,
+pre.hljs.xml .hljs-tag,
+pre.hljs.lang-xml .hljs-name,
+pre.hljs.lang-xml .hljs-tag {
+	color: #243cc5;
+}
+
+pre.hljs.javascript .hljs-built_in,
+pre.hljs.lang-js .hljs-built_in,
+pre.hljs.xml .javascript .hljs-built_in,
+pre.hljs.lang-xml .javascript .hljs-built_in,
+pre.hljs.properties .hljs-string,
+pre.hljs.lang-properties .hljs-string {
+	color: #88760b;
+}
+
+pre.hljs.javascript .hljs-comment,
+pre.hljs.lang-js .hljs-comment {
+	color: #92b019;
+}
+
+pre.hljs.properties .hljs-attr,
+pre.hljs.lang-properties .hljs-attr {
+	color: #6c6c5b;
+}

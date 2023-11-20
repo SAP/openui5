@@ -1,0 +1,31 @@
+/* ================================== */
+/* CSS for control sap.m/Shell        */
+/* Horizon High Contrast White theme  */
+/* ================================== */
+
+/* background color class for Shell header */
+.sapMShellBackgroundColorOnlyIfDefault {
+	background-color: @sapUiGlobalBackgroundColor;
+}
+
+html.sap-desktop {
+	.sapMShellCentralBox {
+		box-shadow: 0 0 2.5rem 0.125rem @sapUiContentShadowColor;
+		border-right: 1px solid @sapUiHcReducedAltForeground;
+		border-left: 1px solid @sapUiHcReducedAltForeground;
+	}
+}
+
+.sapMShellBrandingBar {
+	background: none;
+}
+
+@media (min-width: @_sap_m_Shell_AppWidthLimit) {
+	html.sap-desktop {
+		.sapMShellAppWidthLimited {
+			.sapMShellCentralBox {
+				background-color: @sapUiBaseBG;
+			}
+		}
+	}
+}

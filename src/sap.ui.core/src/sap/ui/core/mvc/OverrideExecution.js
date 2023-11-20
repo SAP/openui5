@@ -2,20 +2,20 @@
  * ${copyright}
  */
 
-// Provides enumeration sap.ui.model.CountMode
+// Provides enumeration sap.ui.core.mvc.OverrideExecution
 sap.ui.define(function() {
 	"use strict";
 
 
 	/**
-	 * Execution option for overrides defined by a ControllerExtension
-     *
+	 * Execution option for overrides defined by a <code>ControllerExtension</code>.
+	 *
 	 * @enum {string}
 	 * @public
-	 * @alias sap.ui.core.mvc.OverrideExcecution
+	 * @alias sap.ui.core.mvc.OverrideExecution
 	 * @see sap.ui.core.mvc.ControllerExtension
 	 */
-	var OverrideExcecution = {
+	var OverrideExecution = {
 		/**
 		 * The override function gets executed after the original function
 		 *
@@ -31,13 +31,13 @@ sap.ui.define(function() {
 
 		/**
 		 * The override function is called instead of the original function
-         *
-         * This is the default option for ControllerExtension overrides
+		 *
+		 * This is the default option for ControllerExtension overrides
 		 * @public
 		 */
 		Instead: "Instead"
-    };
+	};
 
-	return OverrideExcecution;
+	return OverrideExecution;
 
 }, /* bExport= */ true);

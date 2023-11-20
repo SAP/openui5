@@ -20,12 +20,12 @@
 						}
 					}"
 					busyIndicatorDelay="{worklistView>/tableBusyDelay}"
-					updateFinished="onUpdateFinished">
+					updateFinished=".onUpdateFinished">
 				<headerToolbar>
 					<Toolbar>
 						<Label id="tableHeader" text="{worklistView>/worklistTableTitle}"/>
 						<ToolbarSpacer />
-						<SearchField id="searchField" width="auto" search="onFilterPosts" />
+						<SearchField id="searchField" width="auto" search=".onFilterPosts" />
 					</Toolbar>
 				</headerToolbar>
 				<columns>
@@ -44,7 +44,7 @@
 					<ColumnListItem
 							vAlign="Middle"
 							type="Navigation"
-							press="onPress">
+							press=".onPress">
 						<cells>
 							<ObjectIdentifier
 									title="{Title}"/>
@@ -75,7 +75,7 @@
 			</Table>
 		</semantic:content>
 		<semantic:sendEmailAction>
-			<semantic:SendEmailAction id="shareEmail" press="onShareEmailPress"/>
+			<semantic:SendEmailAction id="shareEmail" press=".onShareEmailPress"/>
 		</semantic:sendEmailAction>
 	</semantic:FullscreenPage>
 </mvc:View>

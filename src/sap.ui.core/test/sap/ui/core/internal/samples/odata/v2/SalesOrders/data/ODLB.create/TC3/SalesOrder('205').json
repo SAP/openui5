@@ -1,0 +1,26 @@
+{
+	"d" : {
+		"__metadata" : {
+			"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SalesOrderSet('205')",
+			"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SalesOrderSet('205')",
+			"type" : "GWSAMPLE_BASIC.SalesOrder"
+		},
+		"SalesOrderID" : "205",
+		"Note" : "Inline Creation Rows 205",
+		"NoteLanguage" : "EN",
+		"CustomerID" : "0100000000",
+		"CustomerName" : "SAP",
+		"CurrencyCode" : "EUR",
+		"GrossAmount" : "1137.64",
+		"NetAmount" : "956.00",
+		"TaxAmount" : "181.64",
+		"LifecycleStatus" : "N",
+		"LifecycleStatusDescription" : "New",
+		"BillingStatus" : "",
+		"BillingStatusDescription" : "Initial",
+		"DeliveryStatus" : "",
+		"DeliveryStatusDescription" : "Initial",
+		"CreatedAt" : "\/Date(1647262444011)\/",
+		"ChangedAt" : "\/Date(1647523286853)\/"
+	}
+}

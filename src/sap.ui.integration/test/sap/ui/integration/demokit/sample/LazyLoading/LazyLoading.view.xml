@@ -1,0 +1,21 @@
+<mvc:View
+		xmlns="sap.m"
+		xmlns:mvc="sap.ui.core.mvc"
+		xmlns:f="sap.f"
+		xmlns:w="sap.ui.integration.widgets"
+		controllerName="sap.ui.integration.sample.LazyLoading.LazyLoading"
+		xmlns:form="sap.ui.layout.form">
+
+	<form:SimpleForm editable="true" width="40rem">
+		<Label text="Time for requesting the card data" />
+		<Input id="loadingSeconds" width="8rem" type="Number" description="seconds" />
+		<Label text="Number of cards" />
+		<Input id="numberOfCards" width="4rem" type="Number" value="10" />
+		<Label text="dataMode to 'Active'"/>
+		<CheckBox id="dataMode" selected="true"></CheckBox>
+		<Button text="Start loading" type="Emphasized" press="onFormSubmit"/>
+	</form:SimpleForm>
+
+	<f:GridContainer id="cardsContainer" class="sapUiSmallMargin">
+	</f:GridContainer>
+</mvc:View>

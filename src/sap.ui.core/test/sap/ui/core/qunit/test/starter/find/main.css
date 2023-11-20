@@ -1,0 +1,9 @@
+html, body, #content {
+	height: 100%;
+}
+
+a.decorator {
+	margin-left: 0.5ex;
+	font-style: italic;
+	font-size: 0.7rem;
+}

@@ -1,0 +1,217 @@
+{
+	"_version": "1.18.0",
+	"sap.app": {
+		"id": "sap.ui5.test.editor.listcard.content",
+		"type": "card",
+		"i18n": "i18n/i18n.properties",
+		"title": "Test Card for Parameters",
+		"subTitle": "Test Card for Parameters",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"icons": {
+			"icon": "sap-icon://accept"
+		}
+	},
+	"sap.card": {
+		"type": "List",
+		"configuration": {
+			"editor": "./dt/Configuration",
+			"parameters": {
+				"cardTitle": {
+					"value": "Card Title Default"
+				},
+				"string": {
+					"value": "StringValue"
+				},
+				"stringWithTranslatedValue": {
+					"value": "{{TRANSLATED_STRING_VALUE}}"
+				},
+				"stringWithTranslatedValueIni18nFormat": {
+					"value": "{i18n>TRANSLATED_STRING_VALUE}"
+				},
+				"stringInCols1": {
+					"value": "stringInCols1 long long long long long long long long long long long long value"
+				},
+				"stringInCols2": {
+					"value": ""
+				},
+				"integer": {
+					"value": 1
+				},
+				"integerLabel": {
+					"value": 1
+				},
+				"number": {
+					"value": 1.5
+				},
+				"boolean": {
+					"value": false
+				},
+				"booleanLabel": {
+					"value": true
+				},
+				"date": {
+					"value": "2020-09-02"
+				},
+				"dateTime": {
+					"value": "2020-09-02T11:21:51.470Z"
+				},
+				"enum": {
+					"value": "Option B"
+				},
+				"stringWithStaticList": {
+					"value": "key1"
+				},
+				"stringWithRequestList": {
+					"value": "key1"
+				},
+				"stringWithRequestDestinationList": {
+					"value": ""
+				},
+				"string_Select": {
+					"value": "key2"
+				},
+				"stringArray": {
+					"value": [
+						"key1",
+						"key2"
+					]
+				},
+				"stringArrayNoValues": {
+					"value": [
+						"key1",
+						"key2"
+					]
+				},
+				"Customers": {
+					"value": [
+						"ALFKI"
+					]
+				},
+				"iconNotAllowFile": {
+					"value": "sap-icon://account"
+				},
+				"iconWithImageNotAllowNone": {
+					"value": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAgCKr4qjAAD//gAQTGF2YzU4LjM1LjEwMAD/2wBDAAgQEBMQExYWFhYWFhoYGhsbGxoaGhobGxsdHR0iIiIdHR0bGx0dICAiIiUmJSMjIiMmJigoKDAwLi44ODpFRVP/xACFAAACAgMBAAAAAAAAAAAAAAAAAwIBBQQGBwEBAQEBAQEAAAAAAAAAAAAAAAEDAgQFEAACAQICBgUHCwUBAQAAAAAAAQIDERIEcTFBIVEFgaFhkbFSQnLRIjIT4dKCwfAVBkNTIzNj4pKToxSiEQEBAQEBAQAAAAAAAAAAAAAAEQESMVH/wAARCAB4AJUDASIAAhEAAxEA/9oADAMBAAIRAxEAPwDWGERh9SslkgJCgJgSFFEiyQoiWTAUQAmAoWUNKJQoiOsRsKFANsUShYEwFGmhhSGIyrVZIsmKKJlkxURLJ2JWFEAsMsXYULsFhtgFCbANCwoTYLDQJQmxVhpEUJsFiZQGmMQtDUZtUxhFDAJEgJhIomWSBFWLsW2krt20nD57ndOg8FG1WW1+aulaxR2VScKUXOclGK1t6kYWfMcvGpSpxl8WVVxSULOyltbv1azxzM5yvm3+7NtbI6oroN7lMqcM7Sc9yu0vSasjjpHuZQwo7WFlEyDYIiLJtiHK2zp2AWAjHfZ3hj7OtAIQ1CENRw0PQqpXpUI4qk4wXa/Ba2YrOZ2GThd75P3Y8fkR49WrVMxNzqSxN9y7F2Erndepz55lY6lUnojbxaNCX4gh5tCT0yS8EzzICVzXdT5/mH7lOnHTeXqMRPm2dn+bh9FJHOARGQq5vMV/5Ks5Lhfd3LcY8AIgC9nda1vQ6nTnVmoQWKUnZI9GX4ejgV6zU7b/AGU437NTC+u3yeap5ulGcHfclJbYy2p/beZI43l/KnkqjqOs5O1sMVhi/S37+w7A0aIsQ3wJvea7iKqDm72w2enXo2PxNf4jT1Jdl9z0cHpJSW7zl/8AS+3cYipOaXlLirYlpVxRvOdnulhvsav3cO0Piv8AUj/iYVVVLz8D7MGF8GrpksX9Z/8AP5oRmEybkoRcnqSv3Gumc1zTNKFF04tYp7nZ70tpw18cFmK88zVlUlte5cFsSNMCg8qwKO2yPKP/AE0lUqSlC79lJa48eki5lcUB6kuRUNs6j7vUcfzLKQydWEYYrSjffxuHW5uOdN3L5epmaip01dvW9iXFmtCDqTjBa5NRWls92ymUp5SGCC3+dLbJhMytbIcvp5KPlVHrn9S4I6EiRuV6JE7kSFyiEDFk2zUlIC39uJpTUGt9n2rdLqEVK8Ye9KMdMkvFHM1ea0Yt2bm+yPs+KvpCa2KtGli9521r2b+r5TW+DR8p/wCv+4xEuaKbu6fRua6xf3jD9PqidM7jEVc9mK2ubS4R9ldRiywIyUWAEAZrL8wzOWWGE7x8mXtJaOBhQCu9p8+ml+5SUnxi8PU7mG5jn4Z34eGDjgvraevQc2QsFutuhV+DVhUtiwSUrXte3aegR/EEfOoNejK/ikea2KsUzdx6n9/0LfxVL/R9Zrvn8NlGXTNeo80sFiL1r0J8/lsoLpm/mmjPnmZl7sacOhvxZxpYOt+ugnzXOT/MtojFfUYueazE/eq1H9JmmAc1Hey7FgEUWAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAFXC4sCIZcLiwAZcLiwAZcLiwAZcLiwAZcLiwAZcLiwAZcLiwAZcLiwAZcLiwA//Z"
+				},
+				"stringDependent": {
+					"value": "visible"
+				},
+				"dependentString1": {
+					"value": "Editable changes depend on string1"
+				},
+				"integerDependent": {
+					"value": 3
+				},
+				"dependentInteger1": {
+					"value": "Editable changes depend on integer1"
+				},
+				"booleanDependent": {
+					"value": true
+				},
+				"dependentBoolean1": {
+					"value": "Editable changes depend on boolean1"
+				},
+				"object": {},
+				"objectWithPropertiesDefined": {},
+				"objectWithPropertiesDefinedAndValueFromJsonList": {},
+				"objectWithPropertiesDefinedAndValueFromRequestedFile": {},
+				"objectWithPropertiesDefinedAndValueFromODataRequest": {},
+				"objects": {},
+				"objectsWithPropertiesDefined": {},
+				"objectsWithPropertiesDefinedAndValueFromJsonList": {},
+				"objectsWithPropertiesDefinedAndValueFromRequestedFile": {},
+				"objectsWithPropertiesDefinedAndValueFromODataRequest": {}
+			},
+			"destinations": {
+				"local": {
+					"name": "local",
+					"defaultUrl": "./"
+				},
+				"northwind": {
+					"name": "Northwind_V4",
+					"defaultUrl": "https://services.odata.org/V4/Northwind/Northwind.svc"
+				},
+				"Northwind_V3": {
+					"name": "Northwind_V3",
+					"defaultUrl": "https://services.odata.org/V4/Northwind/Northwind.svc"
+				}
+			}
+		},
+		"header": {
+			"title": "{{parameters.cardTitle}}",
+			"subTitle": "Card Sub Title",
+			"icon": {
+				"src": "sap-icon://accept",
+				"shape": "Circle",
+				"backgroundColor": ""
+			}
+		},
+		"content": {
+			"data": {
+				"json": [
+					{
+						"Name": "Comfort Easy",
+						"Description": "32 GB Digital Assistant with high-resolution color screen",
+						"Highlight": "Error"
+					},
+					{
+						"Name": "ITelO Vault",
+						"Description": "Digital Organizer with State-of-the-Art Storage Encryption",
+						"Highlight": "Warning"
+					},
+					{
+						"Name": "Notebook Professional 15",
+						"Description": "Notebook Professional 15 with 2,80 GHz quad core, 15\" Multitouch LCD, 8 GB DDR3 RAM, 500 GB SSD - DVD-Writer (DVD-R/+R/-RW/-RAM),Windows 8 Pro",
+						"Highlight": "Success"
+					},
+					{
+						"Name": "Ergo Screen E-I",
+						"Description": "Optimum Hi-Resolution max. 1920 x 1080 @ 85Hz, Dot Pitch: 0.27mm",
+						"Highlight": "Information"
+					},
+					{
+						"Name": "Laser Professional Eco",
+						"Description": "Print 2400 dpi image quality color documents at speeds of up to 32 ppm (color) or 36 ppm (monochrome), letter/A4. Powerful 500 MHz processor, 512MB of memory",
+						"Highlight": "None"
+					},
+					{
+						"Name": "Comfort Easy",
+						"Description": "32 GB Digital Assistant with high-resolution color screen",
+						"Highlight": "Error"
+					},
+					{
+						"Name": "ITelO Vault",
+						"Description": "Digital Organizer with State-of-the-Art Storage Encryption",
+						"Highlight": "Warning"
+					},
+					{
+						"Name": "Notebook Professional 15",
+						"Description": "Notebook Professional 15 with 2,80 GHz quad core, 15\" Multitouch LCD, 8 GB DDR3 RAM, 500 GB SSD - DVD-Writer (DVD-R/+R/-RW/-RAM),Windows 8 Pro",
+						"Highlight": "Success"
+					},
+					{
+						"Name": "Ergo Screen E-I",
+						"Description": "Optimum Hi-Resolution max. 1920 x 1080 @ 85Hz, Dot Pitch: 0.27mm",
+						"Highlight": "Information"
+					},
+					{
+						"Name": "Laser Professional Eco",
+						"Description": "Print 2400 dpi image quality color documents at speeds of up to 32 ppm (color) or 36 ppm (monochrome), letter/A4. Powerful 500 MHz processor, 512MB of memory",
+						"Highlight": "None"
+					}
+				],
+				"path": "/"
+			},
+			"item": {
+				"title": "{Name}",
+				"description": "{Description}"
+			},
+			"maxItems": 3
+		}
+	}
+}

@@ -1,64 +1,136 @@
 <mvc:View
-		controllerName="sap.m.sample.InputAssistedTabularSuggestions.C"
-		xmlns:l="sap.ui.layout"
-		xmlns:mvc="sap.ui.core.mvc"
-		xmlns="sap.m">
-	<l:VerticalLayout
-		class="sapUiContentPadding"
-		width="100%">
-		<l:content>
-			<Label text="Product" labelFor="productInput"/>
-			<Input
-				id="productInput"
-				type="Text"
-				placeholder="Enter Product ..."
-				showSuggestion="true"
-				showTableSuggestionValueHelp="false"
-				suggestionRows="{/ProductCollection}">
-				<suggestionColumns>
-					<Column
-						hAlign="Begin"
-						popinDisplay="Inline"
-						demandPopin="true">
-						<Label text="Name"/>
-					</Column>
-					<Column
-						hAlign="Center"
-						popinDisplay="Inline"
-						demandPopin="true"
-						minScreenWidth="Tablet">
-						<Label text="Product ID"/>
-					</Column>
-					<Column
-						hAlign="Center"
-						popinDisplay="Inline"
-						demandPopin="false"
-						minScreenWidth="Tablet">
-						<Label text="Supplier Name"/>
-					</Column>
-					<Column
-						hAlign="End"
-						popinDisplay="Inline"
-						demandPopin="true">
-						<Label text="Price"/>
-					</Column>
-				</suggestionColumns>
-				<suggestionRows>
-					<ColumnListItem>
-					<cells>
-						<Label text="{Name}"/>
-						<Label text="{ProductId}"/>
-						<Label text="{SupplierName}"/>
-						<Label
-							text="{
- 		 						parts:[{path:'Price'},{path:'CurrencyCode'}],
-								type: 'sap.ui.model.type.Currency',
-		 						formatOptions: {showMeasure: true}
-							}"/>
-					</cells>
-					</ColumnListItem>
-				</suggestionRows>
-			</Input>
-		</l:content>
+	controllerName="sap.m.sample.InputAssistedTabularSuggestions.C"
+	xmlns="sap.m"
+	xmlns:l="sap.ui.layout"
+	xmlns:mvc="sap.ui.core.mvc">
+	<l:VerticalLayout class="sapUiContentPadding" width="100%">
+		<Label text="Tabular suggestions with default configuration." labelFor="productInput" />
+		<Input
+			id="productInput"
+			placeholder="Enter product"
+			showSuggestion="true"
+			showTableSuggestionValueHelp="false"
+			suggestionRows="{/ProductCollection}">
+			<suggestionColumns>
+				<Column>
+					<Label text="Name" />
+				</Column>
+				<Column
+					hAlign="Center">
+					<Label text="Product ID" />
+				</Column>
+				<Column
+					hAlign="Center">
+					<Label text="Supplier Name" />
+				</Column>
+				<Column
+					hAlign="End">
+					<Label text="Price" />
+				</Column>
+			</suggestionColumns>
+
+			<suggestionRows>
+				<ColumnListItem>
+					<Label text="{Name}" />
+					<Label text="{ProductId}" />
+					<Label text="{SupplierName}" />
+					<Label text="{
+						parts:[{path:'Price'}, {path:'CurrencyCode'}],
+						type: 'sap.ui.model.type.Currency',
+						formatOptions: {showMeasure: true}
+					}" />
+				</ColumnListItem>
+			</suggestionRows>
+		</Input>
+
+		<Label text='Tabular suggestions with enableTableAutoPopinMode="true"' labelFor="popinTableInput" />
+		<Input
+			id="popinTableInput"
+			placeholder="Enter product"
+			enableTableAutoPopinMode="true"
+			showSuggestion="true"
+			showTableSuggestionValueHelp="false"
+			suggestionRows="{/ProductCollection}">
+			<suggestionColumns>
+				<Column
+					width="20rem">
+					<Label text="Name" />
+				</Column>
+				<Column
+					width="10rem"
+					hAlign="Center">
+					<Label text="Product ID" />
+				</Column>
+				<Column
+					width="10rem"
+					hAlign="Center">
+					<Label text="Supplier Name" />
+				</Column>
+				<Column
+					width="10rem"
+					hAlign="End">
+					<Label text="Price" />
+				</Column>
+			</suggestionColumns>
+
+			<suggestionRows>
+				<ColumnListItem>
+					<Label text="{Name}" />
+					<Label text="{ProductId}" />
+					<Label text="{SupplierName}" />
+					<Label text="{
+						parts:[{path:'Price'}, {path:'CurrencyCode'}],
+						type: 'sap.ui.model.type.Currency',
+						formatOptions: {showMeasure: true}
+					}" />
+				</ColumnListItem>
+			</suggestionRows>
+		</Input>
+
+		<Label text="Tabular suggestions with custom column popin configuration" labelFor="customPopinTableInput" />
+		<Input
+			id="customPopinTableInput"
+			placeholder="Enter product"
+			showSuggestion="true"
+			showTableSuggestionValueHelp="false"
+			suggestionRows="{/ProductCollection}">
+			<suggestionColumns>
+				<Column
+					width="20rem">
+					<Label text="Name" />
+				</Column>
+				<Column
+					width="10rem">
+					<Label text="Product ID" />
+				</Column>
+				<Column
+					width="10rem"
+					popinDisplay="Inline"
+					minScreenWidth="Large"
+					demandPopin="true">
+					<Label text="Supplier Name" />
+				</Column>
+				<Column
+					width="10rem"
+					popinDisplay="Inline"
+					minScreenWidth="Large"
+					demandPopin="true">
+					<Label text="Price" />
+				</Column>
+			</suggestionColumns>
+
+			<suggestionRows>
+				<ColumnListItem>
+					<Label text="{Name}" />
+					<Label text="{ProductId}" />
+					<Label text="{SupplierName}" />
+					<Label text="{
+						parts:[{path:'Price'}, {path:'CurrencyCode'}],
+						type: 'sap.ui.model.type.Currency',
+						formatOptions: {showMeasure: true}
+					}" />
+				</ColumnListItem>
+			</suggestionRows>
+		</Input>
 	</l:VerticalLayout>
 </mvc:View>

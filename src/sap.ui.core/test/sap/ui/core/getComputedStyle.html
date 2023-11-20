@@ -1,0 +1,26 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta charset="utf-8">
+
+		<title>Just a Button</title>
+
+		<script src="../../../../resources/sap-ui-core.js"
+			id="sap-ui-bootstrap"
+			data-sap-ui-libs="sap.m"
+			data-sap-ui-theme="sap_belize"></script>
+			<!-- only load the main library "sap.m" and the Belize theme -->
+
+			<script>
+				var style = window.getComputedStyle(document.documentElement);
+				console.log("style >> "+style);
+				var oCarousel = new sap.m.Carousel();
+				oCarousel.placeAt("content");
+				oCarousel.setHeight("300px");
+				oCarousel.setWidth("300px");
+			</script>
+	</head>
+	<body id="content" class="sapUiBody">
+		invisible body content
+	</body>
+</html>

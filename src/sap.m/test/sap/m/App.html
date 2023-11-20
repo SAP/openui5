@@ -1,98 +1,22 @@
-<!DOCTYPE HTML>
+<!DOCTYPE html>
 <html>
 	<head>
-		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta charset="utf-8">
 
 		<title>App - sap.m</title>
 
 		<script src="shared-config.js"></script>
-		<script src="../../../resources/sap-ui-core.js"
-			id="sap-ui-bootstrap"
-			data-sap-ui-libs="sap.m">
+		<script id="sap-ui-bootstrap"
+				src="../../../resources/sap-ui-core.js"
+				data-sap-ui-async="true"
+				data-sap-ui-compatVersion="edge"
+				data-sap-ui-libs="sap.m"
+				data-sap-ui-onInit="module:local/App"
+				data-sap-ui-resourceRoots='{
+					"local": "./",
+					"qunit.internal.acc": "../../../test-resources/sap/ui/core/qunit/internal/acc"
+				}'>
 		</script>
-
-		<script>
-			var app = new sap.m.App("myApp", {initialPage:"page1"});
-
-			var page1 = new sap.m.Page("page1", {
-				title:"Page 1",
-				content : [
-					new sap.m.Button({
-						id : "show-footer-btn",
-						text : "Show footer",
-						press : function() {
-							page1.setShowFooter(true);
-						}
-					}),
-					new sap.m.Button({
-						id : "hide-footer-btn",
-						text : "Hide footer",
-						press : function() {
-							page1.setShowFooter(false);
-						}
-					}),
-					new sap.m.Button({
-						id : "go-to-page-2-btn",
-						text : "To Page 2",
-						press : function() {
-							app.to("page2");
-						}
-					}),
-					new sap.m.Button({
-						id : "show-nav-btn",
-						text : "show Nav Button",
-						press : function() {
-							page1.setShowNavButton(true);
-						}
-					}),
-					new sap.m.Button({
-						id : "hide-nav-btn",
-						text : "hide Nav Button",
-						press : function() {
-							page1.setShowNavButton(false);
-						}
-					})
-				],
-				subHeader: new sap.m.Bar({
-					contentMiddle: [new sap.m.SearchField("SFB1", {placeholder: "search for...", width: "100%"})]
-				}),
-				footer: new sap.m.Bar({
-					id: 'page1-footer',
-					contentMiddle: [new sap.m.Button({icon:"images/iconCompetitors.png", tooltip: "Trophy"} ),
-									new sap.m.Button({icon:"images/iconCompetitors.png", tooltip: "Trophy"} ),
-									new sap.m.Button({icon:"images/iconCompetitors.png", tooltip: "Trophy"} ),
-									new sap.m.Button({icon:"images/iconCompetitors.png", tooltip: "Trophy"} )]
-				})
-
-			});
-
-			var page2 = new sap.m.Page("page2", {
-				title:"Page 2",
-				backgroundDesign:"Standard",
-				showNavButton: true,
-				navButtonText: "Page 1",
-				navButtonPress: function(){ app.back(); },
-				icon: "sap-icon://favorite",
-				enableScrolling: false,
-				headerContent: new sap.m.Button({
-					text : "Options",
-					press : function() {
-						alert("Options would open now.");
-					}
-				}),
-				content : [ new sap.m.Button({
-					text : "Back to Page 1",
-					press : function() {
-						app.back();
-					}
-				}), new sap.ui.core.HTML({content:"<div>This page does not scroll.</div>"}) ]
-			});
-			page2.setBackgroundDesign("List");
-			app.addPage(page1).addPage(page2);
-
-			app.placeAt("body");
-		</script>
-
 	</head>
 	<body id="body" class="sapUiBody">
 	</body>

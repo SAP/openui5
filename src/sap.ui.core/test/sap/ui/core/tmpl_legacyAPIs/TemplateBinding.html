@@ -1,0 +1,68 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+
+		<title>Template with Binding - sap.ui.core.tmpl</title>
+
+		<script src="../shared-config.js"></script>
+		<script
+		id='sap-ui-bootstrap'
+		src='../../../../../resources/sap-ui-core.js'
+		data-sap-ui-xx-bindingSyntax="complex"
+		data-sap-ui-libs='sap.m, sap.ui.commons, sap.ui.core, sap.ui.layout, sap.ui.ux3'
+		data-sap-ui-modules="sap.ui.core.plugin.DeclarativeSupport"
+		data-sap-ui-compatVersion="1.16">
+	</script>
+
+	<script>
+		sap.ui.controller("test.myController", {
+			model: new sap.ui.model.json.JSONModel({
+				title: "Hallo123"
+			}),
+
+			onInit: function(){
+				sap.ui.getCore().setModel(this.model, "navigation");
+				//this.getView().setModel(this.model);
+			},
+
+			onAfterRendering: function() {
+				/* sap.ui.template({
+					id: "myTemplate",
+				}); */
+			},
+		});
+
+		var html = '' +
+			'<template data-controller-name="test.myController">' +
+				'<div id="myTemplate" data-type="text/x-handlebars-template">' +
+					'<div>Binding in Template:</div>' +
+					'{{text path="navigation>/title"}}' +
+				'</div>' +
+
+				'<br>' +
+				'<br>' +
+				'<div>Binding in Control:</div>' +
+				'<div data-sap-ui-type="sap.m.Text" data-text="{path: \'navigation>/title\'}">' +
+				'</div>' +
+			'</template>';
+
+		var myView = sap.ui.htmlview({viewContent:html});
+		myView.placeAt("content");
+		//sap.ui.template({
+		//});
+		sap.ui.loader.config({paths: {'test': './'}});
+
+		setTimeout(function(){
+			sap.ui.template({
+				id: "myTemplate"
+			});
+		}, 1000);
+	</script>
+
+	</head>
+	<body class="sapUiBody">
+		<h1>Test Page for sap.ui.core.Template</h1>
+
+		<div id="content"></div>
+	</body>
+</html>

@@ -2,91 +2,104 @@
  * ${copyright}
  */
 
-sap.ui.define(['sap/ui/core/IconPool'],
-	function (IconPool) {
+sap.ui.define([
+	"sap/ui/core/IconPool",
+	"sap/ui/core/Lib"
+], function (IconPool, Library) {
 	"use strict";
+
+	var oResourceBundle = Library.getResourceBundleFor("sap.ui.layout");
 
 	/**
 	 * ResponsiveSplitter renderer.
 	 * @namespace
 	 */
-	var ResponsiveSplitterRenderer = {};
-	IconPool.insertFontFaceStyle();
-
-	ResponsiveSplitterRenderer.render = function (oRm, oControl) {
-		oRm.write("<div ");
-		oRm.addClass("sapUiResponsiveSplitter");
-		oRm.writeControlData(oControl);
-		oRm.addStyle("width", oControl.getWidth());
-		oRm.addStyle("height", oControl.getHeight());
-		oRm.writeStyles();
-		oRm.writeClasses();
-		oRm.write(">");
-
-		var aPages = oControl.getAggregation("_pages");
-
-		if (aPages) {
-			oControl.getAggregation("_pages").forEach(oRm.renderControl);
-			this.renderPaginator(oRm, oControl);
-		}
-
-		oRm.write("</div>");
+	var ResponsiveSplitterRenderer = {
+		apiVersion: 2
 	};
 
-	ResponsiveSplitterRenderer.renderPaginator = function (oRm, oControl) {
-		var bpCount = oControl._getMaxPageCount(),
-			aPages = oControl.getAggregation("_pages") || [],
-			oBundle = sap.ui.getCore().getLibraryResourceBundle('sap.ui.layout');
+	IconPool.insertFontFaceStyle();
 
-		oRm.write("<div ");
-		oRm.writeAttribute("role", "navigation");
-		oRm.addClass("sapUiResponsiveSplitterPaginator");
-		oRm.writeClasses();
-		oRm.write(">");
+	ResponsiveSplitterRenderer.render = function (oRm, oRespSplitter) {
+		oRm.openStart("div", oRespSplitter)
+			.class("sapUiResponsiveSplitter")
+			.style("width", oRespSplitter.getWidth())
+			.style("height", oRespSplitter.getHeight())
+			.openEnd();
 
-		oRm.write("<div ");
-		oRm.addClass("sapUiResponsiveSplitterPaginatorNavButton");
-		oRm.addClass("sapUiResponsiveSplitterHiddenPaginatorButton");
-		oRm.addClass("sapUiResponsiveSplitterPaginatorButtonBack");
-		oRm.writeClasses();
-		oRm.write("></div>");
+		var aPages = oRespSplitter.getAggregation("_pages");
 
-		oRm.write("<div ");
-		oRm.addClass("sapUiResponsiveSplitterPaginatorButtons");
-		oRm.writeClasses();
-		oRm.writeAttribute("role", "radiogroup");
-		oRm.writeAttributeEscaped("aria-label", oBundle.getText("RESPONSIVE_SPLITTER_ARIA_PAGINATOR_LABEL"));
+		if (aPages) {
+			aPages.forEach(oRm.renderControl, oRm);
+			this.renderPaginator(oRm, oRespSplitter);
+		}
+
+		oRm.close("div");
+	};
+
+	ResponsiveSplitterRenderer.renderPaginator = function (oRm, oRespSplitter) {
+		var iMaxPageCount = oRespSplitter._getMaxPageCount(),
+			aPages = oRespSplitter.getAggregation("_pages") || [];
+
+		// Render paginator when there are more than one pages.
+		if (iMaxPageCount <= 1) {
+			return;
+		}
+
+		oRm.openStart("div")
+			.attr("role", "navigation")
+			.class("sapUiResponsiveSplitterPaginator")
+			.openEnd();
+
+		// Paginator Button Back
+		oRm.openStart("div")
+			.class("sapUiResponsiveSplitterPaginatorNavButton")
+			.class("sapUiResponsiveSplitterHiddenPaginatorButton")
+			.class("sapUiResponsiveSplitterPaginatorButtonBack")
+			.openEnd()
+			.close("div");
+
+		oRm.openStart("div")
+			.class("sapUiResponsiveSplitterPaginatorButtons")
+			.attr("role", "listbox")
+			.attr("aria-multiselectable", true)	// Still, only one item at a time can be selected. Set to 'true', as JAWS won't announce selection and root's descriptions otherwise.
+			.attr("aria-label", oResourceBundle.getText("RESPONSIVE_SPLITTER_ARIA_PAGINATOR_LABEL"));
+
 		if (aPages.length > 0) {
-			oRm.writeAttribute("aria-controls", aPages[0].getParent().getId());
+			oRm.attr("aria-controls", aPages[0].getParent().getId());
 		}
-		oRm.write(">");
 
-		for (var i = 0; i < bpCount; i++) {
-			oRm.write("<div tabindex='0' ");
-			oRm.write("page-index='" + i + "'");
+		oRm.openEnd();
+
+		for (var i = 0; i < iMaxPageCount; i++) {
+			oRm.openStart("div")
+				.attr("tabindex", 0)
+				.attr("page-index", i);
+
 			if (i === 0) {
-				oRm.addClass("sapUiResponsiveSplitterPaginatorSelectedButton");
+				oRm.class("sapUiResponsiveSplitterPaginatorSelectedButton");
 			}
-			oRm.addClass("sapUiResponsiveSplitterHiddenElement");
-			oRm.addClass("sapUiResponsiveSplitterPaginatorButton");
-			oRm.writeClasses();
-			oRm.writeAttribute("role", "radio");
-			oRm.writeAttribute("aria-checked", false);
-			oRm.write("></div>");
+
+			oRm.class("sapUiResponsiveSplitterHiddenElement")
+				.class("sapUiResponsiveSplitterPaginatorButton")
+				.attr("role", "option")
+				.attr("aria-selected", false)
+				.openEnd()
+				.close("div");
 		}
 
-		oRm.write("</div>");
+		oRm.close("div");
 
-		oRm.write("<div ");
-		oRm.addClass("sapUiResponsiveSplitterPaginatorNavButton");
-		oRm.addClass("sapUiResponsiveSplitterHiddenPaginatorButton");
-		oRm.addClass("sapUiResponsiveSplitterPaginatorButtonForward");
-		oRm.writeClasses();
-		oRm.write("></div>");
+		// Paginator Button Forward
+		oRm.openStart("div")
+			.class("sapUiResponsiveSplitterPaginatorNavButton")
+			.class("sapUiResponsiveSplitterHiddenPaginatorButton")
+			.class("sapUiResponsiveSplitterPaginatorButtonForward")
+			.openEnd()
+			.close("div");
 
-		oRm.write("</div>");
+		oRm.close("div");
 	};
 
 	return ResponsiveSplitterRenderer;
-
 }, /* bExport= */ true);

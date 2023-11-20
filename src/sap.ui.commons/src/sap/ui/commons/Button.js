@@ -4,15 +4,20 @@
 
 // Provides control sap.ui.commons.Button.
 sap.ui.define([
-    'jquery.sap.global',
     './library',
     'sap/ui/core/Control',
     'sap/ui/core/EnabledPropagator',
     'sap/ui/core/IconPool',
-    "./ButtonRenderer"
+    './ButtonRenderer',
+    'sap/ui/Device'
 ],
-	function(jQuery, library, Control, EnabledPropagator, IconPool, ButtonRenderer) {
+	function(library, Control, EnabledPropagator, IconPool, ButtonRenderer, Device) {
 	"use strict";
+
+
+
+	// shortcut for sap.ui.commons.ButtonStyle
+	var ButtonStyle = library.ButtonStyle;
 
 
 
@@ -34,7 +39,6 @@ sap.ui.define([
 	 * @public
 	 * @deprecated as of version 1.38, replaced by {@link sap.m.Button}
 	 * @alias sap.ui.commons.Button
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var Button = Control.extend("sap.ui.commons.Button", /** @lends sap.ui.commons.Button.prototype */ { metadata : {
 
@@ -43,6 +47,7 @@ sap.ui.define([
 			"sap.ui.core.IFormContent"
 		],
 		library : "sap.ui.commons",
+		deprecated: true,
 		properties : {
 
 			/**
@@ -112,7 +117,7 @@ sap.ui.define([
 			 * Style of the button.
 			 * (e.g. emphasized)
 			 */
-			style : {type : "sap.ui.commons.ButtonStyle", group : "Appearance", defaultValue : sap.ui.commons.ButtonStyle.Default}
+			style : {type : "sap.ui.commons.ButtonStyle", group : "Appearance", defaultValue : ButtonStyle.Default}
 		},
 		associations : {
 
@@ -144,7 +149,6 @@ sap.ui.define([
 	 * @function
 	 * @type void
 	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 
 
@@ -198,15 +202,15 @@ sap.ui.define([
 			this.getRenderer().onactive(this);
 		}
 		// webkit && firefox on mac does not focus a Button on click, it even unfocuses it onmousedown!
-		if (bFocus && (!!sap.ui.Device.browser.webkit || (!!sap.ui.Device.browser.firefox && navigator.platform.indexOf("Mac") === 0))) {
-			if (sap.ui.Device.browser.mobile && !!sap.ui.Device.browser.webkit) {
+		if (bFocus && (Device.browser.webkit || (Device.browser.firefox && navigator.platform.indexOf("Mac") === 0))) {
+			if (Device.browser.mobile && Device.browser.webkit) {
 				//In mobile Webkit Browsers (IPad) the focus must be set immediately to ensure that a focusout happens wherever the
 				//focus currently is. The deleayedCall below is still needed due to the reason described above. (CSN 2536817 2012)
 				this.focus();
 			}
-			jQuery.sap.delayedCall(0, this, function(){
+			setTimeout(function(){
 				this.focus();
-			});
+			}.bind(this), 0);
 		}
 	};
 
@@ -335,13 +339,13 @@ sap.ui.define([
 
 	/**
 	 * @see sap.ui.core.Control#getAccessibilityInfo
-	 * @returns {Object} Current accessibility state of the control.
+	 * @returns {sap.ui.core.AccessibilityInfo} Current accessibility state of the control.
 	 * @protected
 	 */
 	Button.prototype.getAccessibilityInfo = function() {
 		var sDesc = this.getText() || this.getTooltip_AsString();
 		if (!sDesc && this.getIcon()) {
-			var oIconInfo = sap.ui.core.IconPool.getIconInfo(this.getIcon());
+			var oIconInfo = IconPool.getIconInfo(this.getIcon());
 			if (oIconInfo) {
 				sDesc = oIconInfo.text || oIconInfo.name;
 			}
@@ -359,4 +363,4 @@ sap.ui.define([
 
 	return Button;
 
-}, /* bExport= */ true);
+});

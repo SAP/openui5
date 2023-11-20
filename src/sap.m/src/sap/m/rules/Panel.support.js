@@ -5,8 +5,11 @@
 /**
  * Defines support rules of the Panel control of sap.m library.
  */
-sap.ui.define(["jquery.sap.global", "sap/ui/support/library"],
-	function(jQuery, SupportLib) {
+sap.ui.define([
+	"sap/ui/support/library",
+	"sap/base/util/isEmptyObject"
+],
+	function(SupportLib, isEmptyObject) {
 		"use strict";
 		// shortcuts
 		var Categories = SupportLib.Categories, // Accessibility, Performance, Memory, ...
@@ -33,13 +36,13 @@ sap.ui.define(["jquery.sap.global", "sap/ui/support/library"],
 				text: "SAP Fiori Design Guidelines: Panel",
 				href: "https://experience.sap.com/fiori-design-web/panel/#components",
 				text2: "Explored Sample",
-				href2: "https://openui5beta.hana.ondemand.com/#/sample/sap.m.sample.Panel/preview"
+				href2: "https://sdk.openui5.org/entity/sap.m.Panel/sample/sap.m.sample.Panel"
 			}],
 			check: function (oIssueManager, oCoreFacade, oScope) {
 				oScope.getElementsByClassName("sap.m.Panel")
 					.forEach(function(oElement) {
-						if (!jQuery.isEmptyObject(oElement.getAggregation("Title text"))
-							|| !jQuery.isEmptyObject(oElement.getAggregation("Toolbar"))) {
+						if (!isEmptyObject(oElement.getAggregation("Title text"))
+							|| !isEmptyObject(oElement.getAggregation("Toolbar"))) {
 
 							var sElementId = oElement.getId(),
 								sElementName = oElement.getMetadata().getElementName();

@@ -1,0 +1,50 @@
+{
+  "1.91.0": {
+    "date": "June 2021",
+    "notes": [
+      {
+        "id": "b6f04848db1b27f01897227d1e6ee7d96fcb0077",
+        "type": "FIX",
+        "text": " Field: clear invalid input and error for unit/currency",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180165885"
+          }
+        ]
+      },
+      {
+        "id": "20cd130c506b04b4d0e6b499cee4f00d7a3a905d",
+        "type": "FIX",
+        "text": " TableDelegate: suspend/resume on the root binding",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      },
+      {
+        "id": "091b1e97404d7068ef3299adb05064d409fbb064",
+        "type": "FIX",
+        "text": " FilterField: no title on default value help",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170165674"
+          }
+        ]
+      },
+      {
+        "id": "176c54c31fe6b217f0b5f275ea9e58d6bbfab07a",
+        "type": "FEATURE",
+        "text": " PasteProvider plugin added"
+      },
+      {
+        "id": "eeead9c82c22b1ac6677ee75d6a9b581407ad3d1",
+        "type": "FEATURE",
+        "text": " Field: use ExpandableText in display mode for multiline"
+      }
+    ]
+  }
+}

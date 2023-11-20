@@ -1,0 +1,109 @@
+{
+	"@odata.count" : 10,
+	"value" : [{
+		"@odata.etag" : "W/\"20160619220000.0000000\"",
+		"ChangedAt" : "2016-06-13T06:53:13.000000Z",
+		"CurrencyCode" : "EUR",
+		"GrossAmount" : "25867.03",
+		"LifecycleStatus" : "N",
+		"LifecycleStatusDesc" : "New",
+		"Note" : "EPM DG: SO ID 0500000005 Deliver as fast as possible",
+		"SalesOrderID" : "0500000005",
+		"SO_2_BP" : {
+			"@odata.etag" : "W/\"20160613143341.1548870\"",
+			"BusinessPartnerID" : "0100000000",
+			"BusinessPartnerRole" : "01",
+			"CompanyName" : "SAP",
+			"WebAddress" : "http://www.sap.com",
+			"EmailAddress" : "do.not.reply@sap.com",
+			"PhoneNumber" : "0622734567",
+			"FaxNumber" : "0622734004",
+			"LegalForm" : "SE",
+			"CurrencyCode" : "EUR",
+			"CreatedAt" : "2016-06-13T06:53:13.000000Z",
+			"ChangedAt" : "2016-06-13T14:33:41.154887Z",
+			"Address" : {
+				"City" : "Walldorf",
+				"PostalCode" : "69190",
+				"Street" : "Dietmar-Hopp-Allee",
+				"Building" : "16",
+				"Country" : "DE",
+				"AddressType" : "02",
+				"GeoLocation" : {
+					"Longitude" : "8.641701933686",
+					"Latitude" : "49.293673600000"
+				}
+			}
+		}
+	}, {
+		"@odata.etag" : "W/\"20160619220000.0000000\"",
+		"ChangedAt" : "2016-06-13T06:53:13.000000Z",
+		"CurrencyCode" : "EUR",
+		"GrossAmount" : "5631.08",
+		"LifecycleStatus" : "N",
+		"LifecycleStatusDesc" : "New",
+		"Note" : "EPM DG: SO ID 0500000006 Deliver as fast as possible",
+		"SalesOrderID" : "0500000006",
+		"SO_2_BP" : {
+			"@odata.etag" : "W/\"20160613065313.0000000\"",
+			"BusinessPartnerID" : "0100000005",
+			"BusinessPartnerRole" : "01",
+			"CompanyName" : "TECUM",
+			"WebAddress" : "http://www.tecum-ag.de",
+			"EmailAddress" : "bart.koenig@tecum-ag.de",
+			"PhoneNumber" : "2511415",
+			"FaxNumber" : "2511004",
+			"LegalForm" : "AG",
+			"CurrencyCode" : "EUR",
+			"CreatedAt" : "2016-06-13T06:53:13.000000Z",
+			"ChangedAt" : "2016-06-13T06:53:13.000000Z",
+			"Address" : {
+				"City" : "Münster",
+				"PostalCode" : "48155",
+				"Street" : "Albersloher Weg",
+				"Building" : "24",
+				"Country" : "DE",
+				"AddressType" : "02",
+				"GeoLocation" : {
+					"Longitude" : "7.651731300000",
+					"Latitude" : "51.940081800000"
+				}
+			}
+		}
+	}, {
+		"@odata.etag" : "W/\"20160619220000.0000000\"",
+		"ChangedAt" : "2016-06-13T06:53:13.000000Z",
+		"CurrencyCode" : "EUR",
+		"GrossAmount" : "250.73",
+		"LifecycleStatus" : "N",
+		"LifecycleStatusDesc" : "New",
+		"Note" : "EPM DG: SO ID 0500000007 Deliver as fast as possible",
+		"SalesOrderID" : "0500000007",
+		"SO_2_BP" : {
+			"@odata.etag" : "W/\"20160613065313.0000000\"",
+			"BusinessPartnerID" : "0100000003",
+			"BusinessPartnerRole" : "01",
+			"CompanyName" : "Talpa",
+			"WebAddress" : "http://www.talpa-hannover.de",
+			"EmailAddress" : "saskia.sommer@talpa-hannover.de",
+			"PhoneNumber" : "511403266",
+			"FaxNumber" : "511403004",
+			"LegalForm" : "GmbH",
+			"CurrencyCode" : "EUR",
+			"CreatedAt" : "2016-06-13T06:53:13.000000Z",
+			"ChangedAt" : "2016-06-13T06:53:13.000000Z",
+			"Address" : {
+				"City" : "Hannover",
+				"PostalCode" : "30625",
+				"Street" : "An der Breiten Wiese",
+				"Building" : "422",
+				"Country" : "DE",
+				"AddressType" : "02",
+				"GeoLocation" : {
+					"Longitude" : "9.823618171812",
+					"Latitude" : "52.382990802599"
+				}
+			}
+		}
+	}]
+}

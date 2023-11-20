@@ -1,0 +1,31 @@
+{
+	"sap.app": {
+		"id": "sap.m.sample.ActionSelect",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "sap.m.sample.ActionSelect.view.ActionSelect",
+			"type": "XML",
+			"async": true
+		},
+		"dependencies": {
+			"libs": {
+				"sap.m": {},
+				"sap.ui.core": {},
+				"sap.ui.layout": {}
+			}
+		},
+		"config": {
+			"sample": {
+				"files": [
+					"view/ActionSelect.view.xml",
+					"controller/ActionSelect.controller.js",
+					"manifest.json"
+				]
+			}
+		}
+	}
+}

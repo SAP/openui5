@@ -1,0 +1,94 @@
+{
+	"_version": "1.17.0",
+	"sap.app": {
+		"id": "adaptivecard.submit.custom.payload",
+		"type": "card",
+		"title": "Sample of an Adaptive Card with Submit Action",
+		"subTitle": "Sample of an Adaptive Card with Submit Action",
+		"applicationVersion": {
+			"version": "1.0.0"
+		},
+		"shortTitle": "A short title for this Card",
+		"info": "Additional information about this Card",
+		"description": "A long description for this Card",
+		"tags": {
+			"keywords": [
+				"Adaptive",
+				"Card",
+				"Form",
+				"Sample",
+				"Submit",
+				"Actions"
+			]
+		}
+	},
+	"sap.card": {
+		"configuration": {
+			"actionHandlers": {
+				"submit": {
+					"url": "./action-submit.json",
+					"method": "GET",
+					"parameters": {
+						"user": {
+							"name": "{form>/NameVal}",
+							"email": "{form>/EmailVal}",
+							"id": "{form>/TelVal}"
+						},
+						"company": "{form>/CompanyVal}"
+					}
+				}
+			}
+		},
+		"type": "AdaptiveCard",
+		"header": {
+			"title": "Submit Details",
+			"subTitle": "Provide more details",
+			"icon": {
+				"src": "sap-icon://account"
+			}
+		},
+		"content": {
+			"$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+			"type": "AdaptiveCard",
+			"version": "1.0",
+			"body": [
+				{
+					"type": "Input.Text",
+					"placeholder": "Last, First",
+					"label": "Your Name",
+					"isRequired": true,
+					"style": "text",
+					"id": "NameVal"
+				},
+				{
+					"type": "Input.Text",
+					"placeholder": "youremail@example.com",
+					"label": "Email address",
+					"isRequired": true,
+					"style": "email",
+					"id": "EmailVal"
+				},
+				{
+					"type": "Input.Text",
+					"placeholder": "xxx.xxx.xxxx",
+					"label": "Phone Number",
+					"isRequired": true,
+					"style": "tel",
+					"id": "TelVal",
+					"maxLength": 10
+				},
+				{
+					"type": "Input.Text",
+					"label": "Company",
+					"id": "CompanyVal"
+				}
+			],
+			"actions": [
+				{
+					"type": "Action.Submit",
+					"title": "Send to backend"
+				}
+			]
+		}
+	}
+}

@@ -17,20 +17,16 @@
 					<Text text="Status (active)" />
 				</Column>
 			</columns>
-			<items>
-				<ColumnListItem>
-					<cells>
-						<ObjectIdentifier
-							text="{product}"/>
-						<ObjectMarker
-								type="{type}"
-								additionalInfo="{additionalInfo}"/>
-						<ObjectMarker
-								type="{type}"
-								additionalInfo="{additionalInfo}"
-								press="onPress"/>
-					</cells>
-				</ColumnListItem>
-			</items>
+			<ColumnListItem>
+				<ObjectIdentifier
+					text="{product}"/>
+				<ObjectMarker
+					type="{type}"
+					additionalInfo="{additionalInfo}"/>
+				<ObjectMarker
+					type="{type}"
+					additionalInfo="{additionalInfo}"
+					press="onPress"/>
+			</ColumnListItem>
 		</Table>
 </mvc:View>

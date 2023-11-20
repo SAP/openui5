@@ -1,0 +1,24 @@
+<mvc:View
+	height="100%"
+	controllerName="sap.m.sample.SelectChangeEvents.Page"
+	xmlns:core="sap.ui.core"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m">
+	<Page
+		showHeader="false"
+		class="sapUiContentPadding">
+		<content>
+				<Select
+					forceSelection="false"
+					selectedKey="{/SelectedProduct}"
+					items="{
+						path: '/ProductCollection',
+						sorter: { path: 'Name' }
+					}"
+					change="onChange"
+					liveChange="onLiveChange">
+					<core:ListItem key="{ProductId}" text="{Name}" />
+				</Select>
+		</content>
+	</Page>
+</mvc:View>

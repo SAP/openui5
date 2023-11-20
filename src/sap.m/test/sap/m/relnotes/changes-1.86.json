@@ -1,0 +1,545 @@
+{
+  "1.86.0": {
+    "date": "January 2021",
+    "notes": [
+      {
+        "id": "0973173ebe16de198ab79e239aad91cfb04606d2",
+        "type": "FIX",
+        "text": " sap.m.ComboBox: Disabled Items are now not shown as suggestions",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180014639"
+          }
+        ]
+      },
+      {
+        "id": "760b89a2aef2260e34b7d07c27784ea4126ee14a",
+        "type": "FIX",
+        "text": " sap.m.ValueStateHeader: Default width is now fixed on mobile devices"
+      },
+      {
+        "id": "2d4e3bd618aa07468cc3ce3a12312b081d5c84e6",
+        "type": "FIX",
+        "text": " sap.m.Table: Dummy column handling is fixed for pop-in columns",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      },
+      {
+        "id": "d3a85e3a9f7ae2786dd3b3e82ef0c6fc3ba922bb",
+        "type": "FIX",
+        "text": " sap.m.SuggestionsPopover: max width is now not restricted on mobile"
+      },
+      {
+        "id": "95231a729fb07e1c887286c15ea59e76aee29eb9",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: change across the views works properly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180004150"
+          }
+        ]
+      },
+      {
+        "id": "faaf59634dfe39b58e59a50eef44cff1c79c4598",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: The deselection of group appointments work",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180007784"
+          }
+        ]
+      },
+      {
+        "id": "202edbfc761790862c54b764d0b9b37b4f992a37",
+        "type": "FIX",
+        "text": " sap.m.RadioButtonGroup: selectedIndex property is no longer modified",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080441618"
+          }
+        ]
+      },
+      {
+        "id": "0e4d4dab2973bb638464ba7bc7e91a785ed2fc77",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: Failing tests in IE are now fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080447663"
+          }
+        ]
+      },
+      {
+        "id": "661e5610e2a6198c65c09616818b1a3b67fbdebc",
+        "type": "FIX",
+        "text": " sap.m.ValueStateHeader: Default width is now correctly set",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180005941"
+          }
+        ]
+      },
+      {
+        "id": "79319d4cb00b3a784b82a51fbda06415e5453fb7",
+        "type": "FEATURE",
+        "text": " sap.m.Select: Introduced new columRatio property"
+      },
+      {
+        "id": "d3d3d32d9eeed5cebbbb65f892d564e30b8072dc",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: picker selection now updates properly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080459095"
+          }
+        ]
+      },
+      {
+        "id": "518e13bf69e0e904a6697ab55492ed67cb728069",
+        "type": "FIX",
+        "text": " sap.m.ObjectAttribute, sap.m.Text: Improve RTL support for the default case",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400007952042020"
+          }
+        ]
+      },
+      {
+        "id": "2697cdbffb2ed2c4936bd75a222eb25c10f78072",
+        "type": "FEATURE",
+        "text": " sap.m.Title: Introduce textDirection property"
+      },
+      {
+        "id": "19a0adc6e0989e65cf369583e3c6861f167e0537",
+        "type": "FEATURE",
+        "text": " sap.m.FormattedText: text alignment and direction introduced"
+      },
+      {
+        "id": "deab4995fc833b4dea0dceccaf69f88275338252",
+        "type": "FIX",
+        "text": " sap.m.Label: textDirection works correctly now",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400008484092020"
+          }
+        ]
+      },
+      {
+        "id": "bedbd4f4e46fff809af3d167fbb97cb880a7e63b",
+        "type": "FIX",
+        "text": " sap.m.DateRangeSelection: can select a range in month with 4 weeks",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080437818"
+          }
+        ]
+      },
+      {
+        "id": "c103857ffa990a8a329c40177994ec845e124b4a",
+        "type": "FIX",
+        "text": " sap.m.ObjectAttribute: press event now fired properly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080431826"
+          }
+        ]
+      },
+      {
+        "id": "e8b20856d67feb5b44fdb63eacda0fcda00a044c",
+        "type": "FEATURE",
+        "text": " SemanticFormElement: Semantically connected fields supported"
+      },
+      {
+        "id": "640e60e62077452a5466b8551db8d751568f775c",
+        "type": "FEATURE",
+        "text": " sap.ui.core.IconPool: Update icon font"
+      },
+      {
+        "id": "0f6c45c5ade6239923146c90123f43f7e8f1d157",
+        "type": "FEATURE",
+        "text": " sap.m.ObjectNumber: Inverted states and interactivity are added"
+      },
+      {
+        "id": "bdc51fb9dd8434d2f3f92475f8124bdd7338db8a",
+        "type": "FIX",
+        "text": " sap.m.ObjectStatus: icon isn't clipped in a table cell now",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080400658"
+          }
+        ]
+      },
+      {
+        "id": "47c3cca9250dae80036dd6e1bf4b8583341f28bb",
+        "type": "FIX",
+        "text": " sap.m.TimePicker: second hour number now properly typed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500007998632020"
+          }
+        ]
+      },
+      {
+        "id": "3bea8ccbf49b473ac5cc7c3d9f9c43958aa46059",
+        "type": "FIX",
+        "text": " ObjectAttribute: No error during rendering in french",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080429647"
+          }
+        ]
+      },
+      {
+        "id": "27bc621934763192d039d6420efe150e15c5200a",
+        "type": "FIX",
+        "text": " sap.m.SinglePlanningCalendar: Drag and drop now creates correct appointments",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080428852"
+          }
+        ]
+      },
+      {
+        "id": "85ed09c1bd89b12b0fde98030bc408d8987fa2ae",
+        "type": "FIX",
+        "text": " sap.m.OverflowToolbar: Overlapping of buttons is fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080433034"
+          }
+        ]
+      },
+      {
+        "id": "ffb209904d95bb043baf56ddbe347bfdc88d6618",
+        "type": "FIX",
+        "text": " sap.m.SinglePlanningCalendar: all day events are now properly displayed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080419463"
+          }
+        ]
+      },
+      {
+        "id": "75bf48f9e22affec1c533bda30155fa0452f1e9b",
+        "type": "FIX",
+        "text": " sap.m.OverflowToolbarLayoutData: Documentation typo is fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080415460"
+          }
+        ]
+      },
+      {
+        "id": "608081a39dd2cfaaba0c4503e95c781faa98f507",
+        "type": "FIX",
+        "text": " sap.m.inputUtils.ListHelpers: Enable textDirection prop mapping",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400007952042020"
+          }
+        ]
+      },
+      {
+        "id": "b6d44ceb896915087ef19e69a4d6612a61f25f25",
+        "type": "FIX",
+        "text": " sap.m.SegmentedButton: aria-label and tooltip placement fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070449923"
+          }
+        ]
+      },
+      {
+        "id": "6319a79f41c1ec627822d77335d00ead91b3398b",
+        "type": "FIX",
+        "text": " sap.m.SplitButton: Styling is now correct in transparent OverflowToolbar",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070474574"
+          }
+        ]
+      },
+      {
+        "id": "abe10ff73c98b10b83ad001ca1026431c8ee38a3",
+        "type": "FIX",
+        "text": " sap.m.Button: ARIA attributes adjustment",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080354744"
+          }
+        ]
+      },
+      {
+        "id": "a116a682a3218d96901553084cf043b6a9d1f05b",
+        "type": "FIX",
+        "text": " sap.m.MultiComboBox: Aria-describedby qUnit test now fixed for IE",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080404878"
+          }
+        ]
+      },
+      {
+        "id": "46c2056d99bc3bfaa6d87f790a4f58cf4122df64",
+        "type": "FIX",
+        "text": " sap.m.ComboBox: Autocapitalization rendering tests are now fixed in FF",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080404811"
+          }
+        ]
+      },
+      {
+        "id": "2bba4f02e203b120a89432e289efcb09741b0c3d",
+        "type": "FIX",
+        "text": " sap.m.Tokenizer: Proper interaction for NMore popover",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080400946"
+          }
+        ]
+      },
+      {
+        "id": "5e11bb46871e49c111d0878e18fe1eef26c4d86b",
+        "type": "FIX",
+        "text": " sap.m.ObjectAttribute, sap.m.Text: Improve RTL support",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400007952042020"
+          }
+        ]
+      },
+      {
+        "id": "defcab544d57222964b8c0b4c0d4a68ee1bb5ea3",
+        "type": "FIX",
+        "text": " sap.m.MessagePopover: Check for Popover in isOpen method added",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070279878"
+          }
+        ]
+      },
+      {
+        "id": "9dca4711f6187beba7ff9f94b63be5f9a8f88877",
+        "type": "FIX",
+        "text": " sap.m.Text: Improve copying of text",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500003962412020"
+          }
+        ]
+      },
+      {
+        "id": "e45640d6f74a9355ee84fb4a17c72f855c7ea6dd",
+        "type": "FIX",
+        "text": " sap.m.SplitButton: Styles are now more exact",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080411777"
+          }
+        ]
+      },
+      {
+        "id": "054592b20f390d99e5e4274139536134350c9cca",
+        "type": "FEATURE",
+        "text": " sap.m.Link: new API exposed to set aria-haspopup according to ARIA 1.1"
+      },
+      {
+        "id": "26289a6049a15b42dde827e19da7592559ba8b83",
+        "type": "FEATURE",
+        "text": " sap.m.Table: \"Strict\" option added to the fixedLayout property"
+      },
+      {
+        "id": "38a64dfcfcd4711e42264699c7369ee627ddcd7d",
+        "type": "FIX",
+        "text": "SmartLink: wrap text in P13nSelectionPanel",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080158941"
+          }
+        ]
+      },
+      {
+        "id": "cb07f8379db1c6ea553c620371115e63fa14b351",
+        "type": "FIX",
+        "text": " sap.m.Input: Tabular suggestions proper highlighting",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080380468"
+          }
+        ]
+      },
+      {
+        "id": "5591f0e49bc17da175d91c5f780c7cb34eede5d9",
+        "type": "FIX",
+        "text": " sap.m.Shell: No logo flickering on theme changed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070492181"
+          }
+        ]
+      },
+      {
+        "id": "6c0992bd7d20ee55bbedc94685e97a1d9d0a172b",
+        "type": "FIX",
+        "text": " sap.m.ObjectStatus: Text in cell is now aligned",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070478357"
+          },
+          {
+            "type": "BCP",
+            "reference": "2070474983"
+          }
+        ]
+      },
+      {
+        "id": "34a2ac41d3afc102cf767d00ed48a636de51fcf9",
+        "type": "FIX",
+        "text": " sap.m.TabContainer: Restores focus after deleting an item with DEL",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070360483"
+          }
+        ]
+      },
+      {
+        "id": "bf488e6e957b7c402db2e1b8dcc50d835ed3ecd4",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: Deletion of tokens when not editable prevented",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070502155"
+          }
+        ]
+      },
+      {
+        "id": "d3fdb0d021a9b097a96017930cb352e04040b7a8",
+        "type": "FIX",
+        "text": " sap.m.Select: Fixed behavior in InputListItem",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070482964"
+          }
+        ]
+      },
+      {
+        "id": "ed48adadbcdbf8a082d84ab85760a680884826ca",
+        "type": "FIX",
+        "text": " sap.m.MultiComboBox: Prevent browser navigation when pressing backspace",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080383855"
+          }
+        ]
+      },
+      {
+        "id": "a38d677d3f5de522dcef37c3831a5998093a3c9f",
+        "type": "FIX",
+        "text": " sap.m.RadioButton: Fixed RadioButton position in table cell",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080386246"
+          }
+        ]
+      },
+      {
+        "id": "3546b385df0d6dba7269d5b09042cc3be75dbb5b",
+        "type": "FIX",
+        "text": " sap.m.ListBase: Unnecessary scrolling on tab",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070285377"
+          }
+        ]
+      },
+      {
+        "id": "40daf03599d22137e551e5ab5277ba78d033cc48",
+        "type": "FIX",
+        "text": " sap.m.ProgressIndicator: Failing QUnit on IE is fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070469581"
+          }
+        ]
+      },
+      {
+        "id": "bc66d79098cb7893d21a196588e3c1f5b377dd4c",
+        "type": "FEATURE",
+        "text": " ResponsiveTable: Enable Screenreader announcement for \"Not Selected\"",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500007410172020"
+          }
+        ]
+      },
+      {
+        "id": "9582f8efbe6d1fea4cb7dc6a3e8a5661e932d4e8",
+        "type": "FIX",
+        "text": " sap.m.MultiComboBox: Adding & removing the hasToken class now fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070473470"
+          }
+        ]
+      },
+      {
+        "id": "16fad20e89b7beaf7a4cbe88831f9bea0ea9eabe",
+        "type": "FIX",
+        "text": " sap.m.Dialog: escapeHandler property can now be set in XML view",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070448455"
+          }
+        ]
+      }
+    ]
+  }
+}

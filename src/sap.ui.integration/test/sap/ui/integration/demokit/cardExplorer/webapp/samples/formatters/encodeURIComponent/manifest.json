@@ -1,0 +1,79 @@
+{
+  "_version": "1.15.0",
+  "sap.app": {
+	"id": "card.explorer.parameters.table.card",
+	"type": "card",
+	"title": "Sample of a Card with encodeURIComponent",
+	"subTitle": "Sample of a Card with encodeURIComponent",
+	"applicationVersion": {
+	  "version": "1.0.0"
+	},
+	"shortTitle": "A short title for this Card",
+	"info": "Additional information about this Card",
+	"description": "A long description for this Card",
+	"tags": {
+	  "keywords": [
+		"Parameter",
+		"Card",
+		"Sample"
+	  ]
+	}
+  },
+  "sap.ui": {
+	"technology": "UI5",
+	"icons": {
+	  "icon": "sap-icon://switch-classes"
+	}
+  },
+  "sap.card": {
+	"type": "Table",
+	"configuration": {
+	  "parameters": {
+		"toDate": {
+		  "value": "{parameters>/TODAY_ISO}",
+		  "type": "date",
+		  "label": "To",
+		  "description": "End date for the searched period."
+		}
+	  }
+	},
+	"header": {
+	  "title": "Orders update",
+	  "icon": {
+		"src": "sap-icon://choropleth-chart"
+	  }
+	},
+	"content": {
+	  "data": {
+		"request": {
+		  "url": "https://services.odata.org/V4/Northwind/Northwind.svc/Orders?filter={=encodeURIComponent('OrderDate gt  ' + ${parameters>/toDate/value})}",
+		  "parameters": {
+			"$format": "json",
+			"$orderby": "CustomerID"
+		  }
+		},
+		"path": "/value/"
+	  },
+	  "maxItems": "5",
+
+	  "row": {
+		"columns": [{
+		  "title": "City",
+		  "value": "{ShipCity}",
+		  "identifier": true
+		},
+		  {
+			"title": "Company",
+			"value": "{CustomerID}"
+		  },
+		  {
+			"title": "Freight",
+			"value": "{Freight}",
+			"hAlign": "End",
+			"state": "{= ${Freight} < ${parameters>/freightLimit/value} ? 'Success' : 'Error'}"
+		  }
+		]
+	  }
+	}
+  }
+}

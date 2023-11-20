@@ -1,0 +1,52 @@
+/* ======================================== */
+/* CSS for control sap.m/WheelSlider        */
+/* Quartz High Contrast White theme         */
+/* ======================================== */
+
+.sapMWS {
+	.sapMWSInner {
+		.sapMWSItem {
+			&:focus {
+				outline: 0.125rem dotted @sapUiContentContrastFocusColor;
+			}
+		}
+	}
+	&.sapMWSExpanded {
+		.sapMWSInner {
+			.sapMWSItem {
+				&:focus {
+					outline: 0.125rem dotted @sapUiContentFocusColor;
+				}
+			}
+		}
+	}
+}
+
+.sapUiSizeCompact {
+	.sapMWS:not(.sapMWSShort) {
+		.sapMWSInner {
+			box-shadow: 0 0 0 1px @sapUiListBorderColor;
+		}
+	}
+}
+
+.sap-phone {
+	.sapMWS {
+		.sapMWSInner {
+			.sapMWSItem {
+				&:focus {
+					outline: 0.125rem dotted @sapUiContentContrastFocusColor;
+				}
+			}
+		}
+		&.sapMWSExpanded {
+			.sapMWSInner {
+				.sapMWSItem {
+					&:focus {
+						outline: 0.125rem dotted @sapUiContentFocusColor;
+					}
+				}
+			}
+		}
+	}
+}

@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.ui.ux3.ThingGroup.
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', './library'],
-	function(jQuery, Element) {
+sap.ui.define(['sap/ui/core/Element', './library'],
+	function(Element) {
 	"use strict";
 
 
@@ -24,10 +24,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', './library'],
 	 * @public
 	 * @deprecated Since version 1.38.
 	 * @alias sap.ui.ux3.ThingGroup
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var ThingGroup = Element.extend("sap.ui.ux3.ThingGroup", /** @lends sap.ui.ux3.ThingGroup.prototype */ { metadata : {
 
+		deprecated: true,
 		library : "sap.ui.ux3",
 		properties : {
 
@@ -58,4 +58,4 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', './library'],
 
 	return ThingGroup;
 
-}, /* bExport= */ true);
+});

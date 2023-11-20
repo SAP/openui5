@@ -1,0 +1,16 @@
+.header {
+	margin: 5px;
+	margin-bottom: 15px;
+}
+
+.subheader {
+	margin: 5px;
+}
+
+.uiarea {
+	padding: 1rem;
+}
+
+.separator {
+	border-bottom: 1px solid black;
+}

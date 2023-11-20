@@ -1,0 +1,78 @@
+<mvc:View controllerName="sap.ui.core.sample.RoutingNestedComponent.reuse.suppliers.controller.Detail"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m"
+	xmlns:l="sap.ui.layout"
+	xmlns:f="sap.ui.layout.form"
+	xmlns:core="sap.ui.core"
+	displayBlock="true"
+	busyIndicatorDelay="0"
+	busy="true">
+	<Page id="page"
+		showHeader="false"
+		showNavButton="false"
+		enableScrolling="true"
+		class="sapUiContentPadding suppliersPage">
+		<VBox id="box">
+			<f:Form id="FormDisplay354"
+				editable="false">
+				<f:title>
+					<core:Title text="{i18n>detailViewTitle}" />
+				</f:title>
+				<f:layout>
+					<f:ResponsiveGridLayout labelSpanXL="3"
+						labelSpanL="3"
+						labelSpanM="3"
+						labelSpanS="12"
+						adjustLabelSpan="false"
+						emptySpanXL="4"
+						emptySpanL="4"
+						emptySpanM="4"
+						emptySpanS="0"
+						columnsXL="1"
+						columnsL="1"
+						columnsM="1"
+						singleContainerFullSize="false" />
+				</f:layout>
+				<f:formContainers>
+					<f:FormContainer>
+						<f:FormElement label="ID">
+							<f:fields>
+								<Text text="{SupplierID}" />
+							</f:fields>
+						</f:FormElement>
+						<f:FormElement label="Name">
+							<f:fields>
+								<Text text="{CompanyName}" />
+							</f:fields>
+						</f:FormElement>
+						<f:FormElement label="Address">
+							<f:fields>
+								<Text text="{Address}" />
+							</f:fields>
+						</f:FormElement>
+						<f:FormElement label="ZIP Code/City">
+							<f:fields>
+								<Text text="{PostalCode} {City}" />
+							</f:fields>
+						</f:FormElement>
+						<f:FormElement label="State">
+							<f:fields>
+								<Text text="{Region}" />
+							</f:fields>
+						</f:FormElement>
+						<f:FormElement label="Country">
+							<f:fields>
+								<Text text="{Country}" />
+							</f:fields>
+						</f:FormElement>
+						<f:FormElement label="Phone">
+							<f:fields>
+								<Text text="{Phone}" />
+							</f:fields>
+						</f:FormElement>
+					</f:FormContainer>
+				</f:formContainers>
+			</f:Form>
+		</VBox>
+	</Page>
+</mvc:View>

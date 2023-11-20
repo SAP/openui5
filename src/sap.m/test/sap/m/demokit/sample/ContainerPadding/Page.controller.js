@@ -1,43 +1,40 @@
 sap.ui.define([
-		'jquery.sap.global',
+		'sap/ui/core/syncStyleClass',
 		'sap/ui/core/Fragment',
-		'sap/ui/core/mvc/Controller',
-		'sap/ui/model/json/JSONModel'
-	], function(jQuery, Fragment, Controller, JSONModel) {
+		'sap/ui/core/mvc/Controller'
+	], function(syncStyleClass, Fragment, Controller) {
 	"use strict";
 
 	var PageController = Controller.extend("sap.m.sample.ContainerPadding.Page", {
 
 		dialog: null,
 
-		onInit: function () {
-			// set explored app's demo model on this sample
-			var oModel = new JSONModel(sap.ui.require.toUrl("sap/ui/demo/mock") + "/products.json");
-			this.getView().setModel(oModel);
-		},
-
 		onDialogOpen: function (oEvent) {
-			if (!this.dialog) {
-				this.dialog = sap.ui.xmlfragment(
-					"sap.m.sample.ContainerPadding.Dialog",
-					this // associate controller with the fragment
-				);
-				this.getView().addDependent(this.dialog);
+			var oView = this.getView();
+			if (!this._pDialog) {
+				this._pDialog = Fragment.load({
+					id: oView.getId(),
+					name: "sap.m.sample.ContainerPadding.Dialog",
+					controller: this
+				}).then(function(oDialog){
+					oView.addDependent(oDialog);
+					return oDialog;
+				});
 			}
 
-			// bind product data
-			this.dialog.bindElement("/ProductCollection/0");
-
-			// toggle compact style
-			jQuery.sap.syncStyleClass("sapUiSizeCompact", this.getView(), this.dialog);
-			this.dialog.open();
+			this._pDialog.then(function(oDialog){
+				// toggle compact style
+				syncStyleClass("sapUiSizeCompact", oView, oDialog);
+				oDialog.open();
+			});
 		},
 
 		onDialogCloseButton: function (oEvent) {
-			this.dialog.close();
+			this._pDialog.then(function(oDialog){
+				oDialog.close();
+			});
 		}
 	});
-
 
 	return PageController;
 

@@ -8,17 +8,15 @@
  * @version @version@
  */
 sap.ui.define([
-		'jquery.sap.global',
-		'sap/ui/core/mvc/View', // sap.ui.view()
-		'sap/ui/core/mvc/ViewType',
-		'sap/ui/core/sample/common/Component',
-		'sap/ui/core/util/MockServer',
-		'sap/ui/core/util/XMLPreprocessor',
-		'sap/ui/model/odata/ODataModel',
-		'sap/ui/model/odata/v2/ODataModel',
-		'jquery.sap.script'
-	], function (jQuery, View, ViewType, BaseComponent, MockServer, XMLPreprocessor, ODataModel,
-		ODataModel2/*, jQuerySapScript*/) {
+	"sap/ui/core/mvc/XMLView",
+	"sap/ui/core/sample/common/Component",
+	"sap/ui/core/util/MockServer",
+	"sap/ui/core/util/XMLPreprocessor",
+	"sap/ui/model/json/JSONModel",
+	"sap/ui/model/odata/ODataModel",
+	"sap/ui/model/odata/v2/ODataModel"
+], function (XMLView, BaseComponent, MockServer, XMLPreprocessor, JSONModel,
+		ODataModel, ODataModel2) {
 	"use strict";
 
 	/*
@@ -36,6 +34,9 @@ sap.ui.define([
 	 *   The <sap.ui.core.sample.ViewTemplate.scenario:Form> element
 	 * @param {object} oInterface
 	 *   Visitor callbacks
+	 * @returns {sap.ui.base.SyncPromise}
+	 *   A sync promise which resolves with <code>undefined</code> as soon as visiting is done, or
+	 *   is rejected with a corresponding error if visiting fails.
 	 */
 	XMLPreprocessor.plugIn(function (oForm, oInterface) {
 		var sBinding = oForm.getAttribute("binding"),
@@ -60,23 +61,25 @@ sap.ui.define([
 		oForm.parentNode.insertBefore(oSimpleForm, oForm);
 		oForm.parentNode.removeChild(oForm);
 
-		oInterface.visitNode(oSimpleForm);
+		return oInterface.visitNode(oSimpleForm);
 	}, "sap.ui.core.sample.ViewTemplate.scenario", "Form");
 
 	var Component = BaseComponent.extend("sap.ui.core.sample.ViewTemplate.scenario.Component", {
 		metadata : {
+			interfaces: ["sap.ui.core.IAsyncContentCreation"],
 			manifest : "json"
 		},
 
 		createContent : function () {
 			var sAnnotationUri,
 				sAnnotationUri2,
-				sServiceUri,
 				sMockServerBaseUri
 					= "test-resources/sap/ui/core/demokit/sample/ViewTemplate/scenario/data/",
-				oUriParameters = jQuery.sap.getUriParameters(),
-				fnModel = oUriParameters.get("oldOData") === "true" ? ODataModel : ODataModel2,
-				oModel;
+				oModel,
+				sServiceUri,
+				oUriParameters = new URLSearchParams(window.location.search),
+				bRealOData = oUriParameters.get("realOData") === "true",
+				fnModel = oUriParameters.get("oldOData") === "true" ? ODataModel : ODataModel2;
 
 			// GWSAMPLE_BASIC with external annotations
 			sAnnotationUri = "/sap/opu/odata/IWFND/CATALOGSERVICE;v=2"
@@ -84,9 +87,7 @@ sap.ui.define([
 			sAnnotationUri2 = "/sap(====)/bc/bsp/sap/zanno_gwsample/annotations.xml";
 			sServiceUri = "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/";
 
-			if (oUriParameters.get("realOData") === "true") {
-				sServiceUri = this.proxy(sServiceUri);
-			} else {
+			if (!bRealOData) {
 				this.aMockServers.push(new MockServer({rootUri : sServiceUri}));
 				this.aMockServers[0].simulate(/*TODO sServiceUri?!*/sMockServerBaseUri
 					+ "metadata.xml", {
@@ -123,11 +124,20 @@ sap.ui.define([
 				skipMetadataAnnotationParsing : true
 			});
 
-			return sap.ui.view({
-					async : true,
-					type : ViewType.XML,
-					viewName : "sap.ui.core.sample.ViewTemplate.scenario.Main",
-					models : oModel
+			return XMLView.create({
+					models : {
+						undefined : oModel,
+						ui : new JSONModel({
+							bindTexts : false,
+							sCode : "",
+							bCodeVisible : false,
+							entitySet : [],
+							icon : bRealOData ? "sap-icon://building" : "sap-icon://record",
+							iconTooltip : bRealOData ? "real OData service" : "mock OData service",
+							selectedEntitySet : ""
+						})
+					},
+					viewName : "sap.ui.core.sample.ViewTemplate.scenario.Main"
 				});
 		}
 	});

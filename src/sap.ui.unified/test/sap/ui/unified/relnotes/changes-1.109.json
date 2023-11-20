@@ -1,0 +1,61 @@
+{
+  "1.109.0": {
+    "date": "November 2022",
+    "notes": [
+      {
+        "id": "e4de53e8602ce295b7931f7d92ce7d99fc9dc67b",
+        "type": "FEATURE",
+        "text": " sap.m.PlanningCalendar: secondaryCalendarType property introduced"
+      },
+      {
+        "id": "590d019f7b84136c6aa23d6d515df4c10c2a44cf",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: adjust role attributes",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280154897"
+          }
+        ]
+      },
+      {
+        "id": "02d46e6e1679b610bde24ebf633bb7494053e7c6",
+        "type": "FIX",
+        "text": "sap.m.TimesRow: getting a correct instance of a DateFormat",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400007162242022"
+          }
+        ]
+      },
+      {
+        "id": "abe80984fe7d0df602b62fcec44f7bd2e9c5b88e",
+        "type": "FIX",
+        "text": " sap.m.Menu: removed max-width of the menu",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270039241"
+          }
+        ]
+      },
+      {
+        "id": "f7034d6d8b4ab1c7127b563daa5ee414ccc653f8",
+        "type": "FEATURE",
+        "text": " sap.m.PlanningCalendar: primaryCalendarType property introduced"
+      },
+      {
+        "id": "45109b020b66c55edd009cdc973a29ffd663f8a0",
+        "type": "FIX",
+        "text": " sap.ui.unified.FileUploader: adjust property setters",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270125938"
+          }
+        ]
+      }
+    ]
+  }
+}

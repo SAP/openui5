@@ -1,0 +1,15 @@
+<mvc:View xmlns:core="sap.ui.core"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m"
+	xmlns:helper="testdata.xml-require.helper"
+	displayBlock="true"
+	content="{path: '/names', templateShareable: false}"
+	core:require="{
+		Box:'sap/ui/core/BusyIndicator',
+		OwnHelper:'testdata/xml-require/helper/Formatter'
+	}">
+		<Button id="template" text="{path:'name', formatter: 'OwnHelper.groupA.upperCase'}" press="Box.show(100)" />
+		<mvc:dependents>
+			<Button id="dependent" text="Dependent Button" />
+		</mvc:dependents>
+</mvc:View>

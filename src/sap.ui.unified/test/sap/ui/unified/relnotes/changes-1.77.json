@@ -1,0 +1,83 @@
+{
+  "1.77.0": {
+    "date": "March 2020",
+    "notes": [
+      {
+        "id": "633c20cc2fa6d39c8bc993a95c6976e1512e5682",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: month button shown in all languages",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070078306"
+          }
+        ]
+      },
+      {
+        "id": "29ec1991702f65170d56091f82c6dac96c4edd02",
+        "type": "FIX",
+        "text": " sap.m.DatePicker: does not close on opened picker and F4 pressed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980266388"
+          }
+        ]
+      },
+      {
+        "id": "1896b33593ee14361de91ecaccc3e9eb7ef66011",
+        "type": "FIX",
+        "text": " sap.ui.unified.DatePicker: picker buttons adjusted",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070082435"
+          }
+        ]
+      },
+      {
+        "id": "976b3c43d21199ceee62bfd5bc7c09e011fbbb6b",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: rendering of a style class fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070103144"
+          }
+        ]
+      },
+      {
+        "id": "99732b1f1332d3d81edda59f57597b68461253c5",
+        "type": "FIX",
+        "text": " ui.unified.CalendarDateInterval: error not thrown now",
+        "references": []
+      },
+      {
+        "id": "65981c9cc6f521a4faa74788ca3fe53c0a099dc4",
+        "type": "FIX",
+        "text": " sap.ui.unified.FileUploader: dependency between submit and rendering fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "0020751294 0000177577 2020"
+          },
+          {
+            "type": "BCP",
+            "reference": "2070117649"
+          }
+        ]
+      },
+      {
+        "id": "47e88006ef7ace3caadaa113cd339f3b03ce6b9c",
+        "type": "FIX",
+        "text": " sap.m.MenuButton: pressing F4 to close the popup doesn\u0027t cause lose of focus",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070112392"
+          }
+        ]
+      }
+    ]
+  }
+}

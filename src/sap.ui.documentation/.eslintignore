@@ -1,4 +1,6 @@
 # Note: Changes to this file also must be applied to the top level .eslintignore file.
+dist
+target
+
 src/sap/ui/documentation/sdk/model/data/guide
 src/sap/ui/documentation/sdk/thirdparty
-target

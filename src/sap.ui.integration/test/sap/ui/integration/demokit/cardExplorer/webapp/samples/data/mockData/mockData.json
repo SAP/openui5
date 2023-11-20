@@ -1,0 +1,29 @@
+{
+	"value": [
+		{
+			"ProductID": 1,
+			"ProductName": "Product 1",
+			"UnitsInStock": 39
+		},
+		{
+			"ProductID": 2,
+			"ProductName": "Product 2",
+			"UnitsInStock": 17
+		},
+		{
+			"ProductID": 3,
+			"ProductName": "Product 3",
+			"UnitsInStock": 13
+		},
+		{
+			"ProductID": 4,
+			"ProductName": "Product 4",
+			"UnitsInStock": 53
+		},
+		{
+			"ProductID": 5,
+			"ProductName": "Product 5",
+			"UnitsInStock": 0
+		}
+	]
+}

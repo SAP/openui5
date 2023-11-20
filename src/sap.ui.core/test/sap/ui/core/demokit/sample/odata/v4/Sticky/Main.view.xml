@@ -1,0 +1,53 @@
+<mvc:View
+	class="sapUiSizeCompact"
+	controllerName="sap.ui.core.sample.odata.v4.Sticky.Main"
+	xmlns="sap.m"
+	xmlns:form="sap.ui.layout.form"
+	xmlns:mvc="sap.ui.core.mvc">
+	<VBox>
+		<Table growing="true" growingThreshold="5" id="Sticky"
+			items="{
+				path : '/Sticky',
+				parameters : {$count : true}}"
+			mode="SingleSelectMaster">
+			<headerToolbar>
+				<Toolbar>
+				<Title id="Sticky::Title" level="H1" text="Sticky Types"/>
+				<ToolbarSpacer/>
+				<Button enabled="{= !${ui>/bSticky}}" id="prepare" press="onPrepare" text="Edit"
+					tooltip="Edit selected entry"/>
+				<Button enabled="{= ${ui>/bSticky}}" id="save" press="onSave" text="Save"
+					tooltip="Save Changes"/>
+				<Button enabled="{= ${ui>/bSticky}}" id="discard" press="onDiscard" text="Discard"
+					tooltip="Discard Session"/>
+				<Button id="messagesButton" icon="sap-icon://message-popup" tooltip="Show messages"
+					press="onToggleMessagePopover" text="{ui>/iMessages}"
+					type="{= ${ui>/iMessages} ? 'Emphasized' : 'Default' }"/>
+			</Toolbar>
+			</headerToolbar>
+			<columns>
+				<Column>
+					<Text text="Id"/>
+				</Column>
+				<Column>
+					<Text text="Content"/>
+				</Column>
+			</columns>
+			<ColumnListItem>
+				<Text text="{Id}"/>
+				<Text id="Content" text="{Content}"/>
+			</ColumnListItem>
+		</Table>
+		<form:SimpleForm ariaLabelledBy="detailsTitle" backgroundDesign="Transparent"
+				editable="true" id="Sticky::details" labelSpanM="4" layout="ResponsiveGridLayout"
+				visible="{= ${ui>/bSticky}}">
+			<Toolbar design="Transparent">
+				<Title id="detailsTitle" level="H2" text="Sticky Type Details"/>
+			</Toolbar>
+			<Label labelFor="Id::details" text="Id"/>
+			<Text id="Id::details" text="{Id}"/>
+			<Label labelFor="Content::details" text="Content"/>
+			<Input id="Content::details" value="{Content}"/>
+		</form:SimpleForm>
+	</VBox>
+</mvc:View>

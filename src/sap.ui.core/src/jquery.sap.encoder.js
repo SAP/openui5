@@ -4,15 +4,16 @@
 
 // Provides encoding functions for JavaScript.
 sap.ui.define(['jquery.sap.global',
-		'sap/base/encoding/encodeXML',
-		'sap/base/encoding/encodeJS',
-		'sap/base/encoding/encodeURL',
-		'sap/base/encoding/encodeURLParameters',
-		'sap/base/encoding/encodeCSS',
-		'sap/base/util/URLWhiteList',
-		'sap/base/encoding/sanitizeHTML'
+		'sap/base/security/encodeXML',
+		'sap/base/security/encodeJS',
+		'sap/base/security/encodeURL',
+		'sap/base/security/encodeURLParameters',
+		'sap/base/security/encodeCSS',
+		'sap/base/security/URLListValidator',
+		'sap/base/security/URLWhitelist',
+		'sap/base/security/sanitizeHTML'
 	],
-	function(jQuery, encodeXML, encodeJS, encodeURL, encodeURLParameters, encodeCSS, URLWhiteList, sanitizeHTML) {
+	function(jQuery, encodeXML, encodeJS, encodeURL, encodeURLParameters, encodeCSS, URLListValidator, URLWhitelist, sanitizeHTML) {
 	"use strict";
 
 	/**
@@ -24,6 +25,7 @@ sap.ui.define(['jquery.sap.global',
 	 * @public
 	 * @SecValidate {0|return|XSS} validates the given string for HTML contexts
 	 * @function
+	 * @deprecated since 1.58 use {@link module:sap/base/security/encodeXML} instead
 	 */
 	jQuery.sap.encodeHTML = encodeXML;
 
@@ -36,6 +38,7 @@ sap.ui.define(['jquery.sap.global',
 	 * @public
 	 * @SecValidate {0|return|XSS} validates the given string for XML contexts
 	 * @function
+	 * @deprecated since 1.58 use {@link module:sap/base/security/encodeXML} instead
 	 */
 	jQuery.sap.encodeXML = encodeXML;
 
@@ -49,6 +52,7 @@ sap.ui.define(['jquery.sap.global',
 	 * @public
 	 * @deprecated As of version 1.4.0, has been renamed, use {@link jQuery.sap.encodeHTML} instead.
 	 * @function
+	 * @deprecated since 1.58 use {@link module:sap/base/security/encodeXML} instead
 	 */
 	jQuery.sap.escapeHTML = encodeXML;
 
@@ -61,6 +65,7 @@ sap.ui.define(['jquery.sap.global',
 	 * @public
 	 * @SecValidate {0|return|XSS} validates the given string for a JavaScript contexts
 	 * @function
+	 * @deprecated since 1.58 use {@link module:sap/base/security/encodeJS} instead
 	 */
 	jQuery.sap.encodeJS = encodeJS;
 
@@ -72,8 +77,8 @@ sap.ui.define(['jquery.sap.global',
 	 * @return The escaped string
 	 * @type {string}
 	 * @public
-	 * @deprecated Since 1.3.0. Has been renamed, use {@link jQuery.sap.encodeJS} instead.
 	 * @function
+	 * @deprecated since 1.58 use {@link module:sap/base/security/encodeJS} instead
 	 */
 	jQuery.sap.escapeJS = encodeJS;
 
@@ -86,6 +91,7 @@ sap.ui.define(['jquery.sap.global',
 	 * @public
 	 * @SecValidate {0|return|XSS} validates the given string for a URL context
 	 * @function
+	 * @deprecated since 1.58 use {@link module:sap/base/security/encodeURL} instead
 	 */
 	jQuery.sap.encodeURL = encodeURL;
 
@@ -98,6 +104,7 @@ sap.ui.define(['jquery.sap.global',
 	 * @public
 	 * @SecValidate {0|return|XSS} validates the given string for a CSS context
 	 * @function
+	 * @deprecated since 1.58 use {@link module:sap/base/security/encodeURLParameters} instead
 	 */
 	jQuery.sap.encodeURLParameters =  encodeURLParameters;
 
@@ -111,55 +118,68 @@ sap.ui.define(['jquery.sap.global',
 	 * @public
 	 * @SecValidate {0|return|XSS} validates the given string for a CSS context
 	 * @function
+	 * @deprecated since 1.58 use {@link module:sap/base/security/encodeCSS} instead
 	 */
 	jQuery.sap.encodeCSS = encodeCSS;
 
 
 	/**
-	 * Clears the whitelist for URL validation
+	 * Clears the allowlist for URL validation.
 	 *
 	 * @public
 	 * @function
+	 * @deprecated since 1.58 use {@link module:sap/base/security/URLListValidator.clear} instead.
+	 * SAP strives to replace insensitive terms with inclusive language,
+	 * but APIs cannot be renamed or immediately removed for compatibility reasons.
 	 */
-	jQuery.sap.clearUrlWhitelist = URLWhiteList.clear;
+	jQuery.sap.clearUrlWhitelist = URLListValidator.clear;
 
 	/**
-	 * Adds a whitelist entry for URL validation.
+	 * Adds an allowlist entry for URL validation.
 	 *
-	 * @param {string} protocol The protocol of the URL
-	 * @param {string} host The host of the URL
-	 * @param {string} port The port of the URL
-	 * @param {string} path the path of the URL
+	 * @param {string} [protocol] The protocol of the URL, can be falsy to allow all protocols for an entry e.g. "", "http", "mailto"
+	 * @param {string} [host] The host of the URL, can be falsy to allow all hosts. A wildcard asterisk can be set at the beginning, e.g. "examples.com", "*.example.com"
+	 * @param {string} [port] The port of the URL, can be falsy to allow all ports, e.g. "", "8080"
+	 * @param {string} [path] the path of the URL, path of the url, can be falsy to allow all paths. A wildcard asterisk can be set at the end, e.g. "/my-example*", "/my-news"
 	 * @public
 	 * @function
+	 * @deprecated since 1.58 use {@link module:sap/base/security/URLListValidator.add} instead.
+	 * SAP strives to replace insensitive terms with inclusive language,
+	 * but APIs cannot be renamed or immediately removed for compatibility reasons.
 	 */
-	jQuery.sap.addUrlWhitelist = URLWhiteList.add;
+	jQuery.sap.addUrlWhitelist = URLListValidator.add.bind(URLWhitelist);
 
 	/**
-	 * Removes a whitelist entry for URL validation.
+	 * Removes an allowlist entry for URL validation.
 	 *
 	 * @param {int} iIndex index of entry
 	 * @public
 	 * @function
+	 * @deprecated since 1.58 use {@link module:sap/base/security/URLListValidator.clear} and {@link module:sap/base/security/URLListValidator.add} instead.
+	 * SAP strives to replace insensitive terms with inclusive language,
+	 * but APIs cannot be renamed or immediately removed for compatibility reasons.
 	 */
 	jQuery.sap.removeUrlWhitelist = function(iIndex) {
-		URLWhiteList.delete(URLWhiteList.entries()[iIndex]);
+		URLListValidator._delete(URLListValidator.entries()[iIndex]);
 	};
 
 	/**
-	 * Gets the whitelist for URL validation.
+	 * Gets the allowlist for URL validation.
 	 *
-	 * @return {object[]} A copy of the whitelist
+	 * @return {object[]} A copy of the allowlist
 	 * @public
 	 * @function
+	 * @deprecated since 1.58 use {@link module:sap/base/security/URLListValidator.entries} instead.
+	 * SAP strives to replace insensitive terms with inclusive language,
+	 * but APIs cannot be renamed or immediately removed for compatibility reasons.
 	 */
-	jQuery.sap.getUrlWhitelist = URLWhiteList.entries;
+	jQuery.sap.getUrlWhitelist = URLListValidator.entries;
 
 	/**
 	 * Validates a URL. Check if it's not a script or other security issue.
 	 *
 	 * By default the URL validation does only allow the http, https and ftp protocol. If
-	 * other protocols are required, a whitelist of all allowed protocols needs to be defined.
+	 * other protocols are required, an allowlist of all allowed protocols needs to be defined.
 	 *
 	 * Split URL into components and check for allowed characters according to RFC 3986:
 	 *
@@ -263,16 +283,17 @@ sap.ui.define(['jquery.sap.global',
 	 *
 	 * </pre>
 	 *
-	 * When a whitelist has been configured using {@link #.addUrlWhitelist addUrlWhitelist},
+	 * When an allowlist has been configured using {@link module:sap/base/security/URLListValidator.add add},
 	 * any URL that passes the syntactic checks above, additionally will be tested against
-	 * the content of the whitelist.
+	 * the content of the allowlist.
 	 *
 	 * @param {string} sUrl
 	 * @return true if valid, false if not valid
 	 * @public
 	 * @function
+	 * @deprecated since 1.58 use {@link module:sap/base/security/URLListValidator.validate} instead.
 	 */
-	jQuery.sap.validateUrl = URLWhiteList.validate;
+	jQuery.sap.validateUrl = URLListValidator.validate;
 
 	/**
 	 * Strips unsafe tags and attributes from HTML.
@@ -283,21 +304,9 @@ sap.ui.define(['jquery.sap.global',
 	 * @private
 	 * @name jQuery.sap._sanitizeHTML
 	 * @function
+	 * @deprecated since 1.58 use {@link module:sap/base/security/sanitizeHTML} instead
 	 */
-	Object.defineProperty(jQuery.sap, "_sanitizeHTML", {
-		get: function() {
-			var _sanitizeHTML = sap.ui.requireSync('sap/base/encoding/sanitizeHTML');
-
-			Object.defineProperty(this, "_sanitizeHTML", {
-				value: _sanitizeHTML,
-				writable: true, // TODO re-evaluate
-				configurable: false
-			});
-
-			return _sanitizeHTML;
-		},
-		configurable: true
-	});
+	jQuery.sap._sanitizeHTML = sanitizeHTML;
 
 	return jQuery;
 

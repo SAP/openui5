@@ -1,0 +1,19 @@
+.sapMFlexBox.demoBox {
+	border-radius: 10px;
+	background-color: #427cac;
+	text-align: center;
+}
+.demoBox .sapMTitle,
+.demoBox .sapMText {
+	color: #ffffff;
+}
+
+.sapMFlexBox.sapMFlexBoxWrapNoWrap.sapMVBox .demoInnerBox {
+	background: lightblue;
+	border-radius: 10px;
+}
+
+.sapMFlexBox.sapMFlexBoxWrapNoWrap.sapMVBox .demoInnerBox .sapMTitle,
+.sapMFlexBox.sapMFlexBoxWrapNoWrap.sapMVBox .demoInnerBox .sapMText {
+	color: #333333;
+}

@@ -1,0 +1,87 @@
+/* ============================== */
+/* CSS for control sap.m/Toolbar  */
+/* Evening Horizon theme          */
+/* ============================== */
+
+html.sap-desktop .sapMTBActive.sapMTBFocused {
+	outline: 0.0625rem dotted @sapUiContentFocusColor;
+	outline-offset: -0.1875rem;
+}
+
+.sapMTB {
+	height: 2.75rem;
+	padding: 0 0.5rem;
+}
+
+.sapMIBar.sapMTB-Info-CTX.sapMTB {
+	padding: 0 0.5rem 0 1rem;
+}
+
+/* Info Toolbar Context */
+.sapMTB-Info-CTX.sapMTB {
+	background: @sapUiInfobarNonInteractiveBackground;
+	color: @sapUiListTextColor;
+	height: 2rem;
+
+	> .sapUiIcon {
+		width: 1rem;
+		height: 1rem;
+		color: @sapUiListTextColor;
+	}
+
+	> .sapUiIcon:focus {
+		color: @sapUiContentFocusWidth @sapUiContentFocusStyle @sapUiContentFocusColor;
+	}
+
+	&.sapMTBActive {
+		background: @sapUiInfobarBackground;
+		color: @sapUiInfobarTextColor;
+
+		&:active {
+			background: @sapUiInfobarActiveBackground;
+		}
+
+		&:hover {
+			background: @sapUiInfobarHoverBackground;
+		}
+
+		.sapMText,
+		.sapMLabel,
+		> .sapMTitle {
+			color: inherit;
+		}
+	}
+}
+
+html.sap-desktop .sapMTB-Info-CTX.sapMTBActive.sapMTBFocused {
+	outline-color: @sapUiContentContrastFocusColor;
+}
+
+.sapMTB.sapMTBStandard {
+	border-bottom: solid 0.0625rem @sapUiGroupTitleBorderColor;
+}
+
+// =====================================
+// solid toolbar context
+// =====================================
+.sapMTB-Solid-CTX.sapMTB {
+	background-color: @sapUiToolbarBackground;
+}
+
+html.sap-desktop .sapMTBActive.sapMTBFocused {
+	outline: none;
+	box-shadow: inset 0px 0px 0px @sapUiContentFocusWidth  @sapUiContentFocusColor;
+}
+
+.sapMTB .sapMTBSeparator {
+	background: @sapUiToolbarSeparatorColor;
+}
+
+// Styles suporting Table inside ObjectPageSubSection scenario
+.sapUiTableOnObjectPageAdjustmentsForSection .sapMIBar.sapMTB {
+	padding: 0;
+}
+
+.sapUiTableOnObjectPageAdjustmentsForSection .sapMIBar.sapMTB .sapMBarChild {
+	margin: 0;
+}

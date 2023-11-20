@@ -1,0 +1,63 @@
+<mvc:View
+	xmlns="sap.m"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:w="sap.ui.integration.widgets"
+	xmlns:f="sap.f"
+	xmlns:editor="sap.ui.codeeditor"
+	displayBlock="true"
+	controllerName="sap.f.cardsdemo.controller.ExtensionAndHost">
+	<Page title="{i18n>appTitle}">
+		<subHeader>
+			<Toolbar>
+				<ToolbarSpacer />
+				<Title text="Extension and Host Usages" />
+				<ToolbarSpacer />
+			</Toolbar>
+		</subHeader>
+
+		<VBox>
+			<Title text="General Extension and Host usage" class="sapUiSmallMargin"/>
+			<HBox>
+				<Button text="Set new actions" press="onSetNewActionsPress"/>
+				<Button text="Set new extension formatters" press="onSetNewFormattersPress"/>
+			</HBox>
+			<f:GridContainer >
+				<w:Card id="card1" manifest="{cardsPlayground>/playgroundBaseUrl}/bundles/cardWithExtension/manifest.json" action="onCardAction">
+					<w:layoutData>
+						<f:GridContainerItemLayoutData columns="4"/>
+					</w:layoutData>
+				</w:Card>
+				<w:Card id="card2" manifest="{cardsPlayground>/playgroundBaseUrl}/bundles/cardWithExtensionLegacyActions/manifest.json" action="onCardAction">
+					<w:layoutData>
+						<f:GridContainerItemLayoutData columns="4"/>
+					</w:layoutData>
+				</w:Card>
+				<w:Card id="card21" manifest="{cardsPlayground>/playgroundBaseUrl}/cardWithDestinations/manifest.json" action="onCardAction">
+					<w:layoutData>
+						<f:GridContainerItemLayoutData columns="4"/>
+					</w:layoutData>
+				</w:Card>
+			</f:GridContainer>
+
+			<Title text="Shared Extension" class="sapUiSmallMargin"/>
+			<f:GridContainer >
+				<w:Card id="card3" manifest="{cardsPlayground>/playgroundBaseUrl}/bundles/cardWithSharedExtension/manifest1.json">
+					<w:layoutData>
+						<f:GridContainerItemLayoutData columns="4"/>
+					</w:layoutData>
+				</w:Card>
+				<w:Card id="card4" manifest="{cardsPlayground>/playgroundBaseUrl}/bundles/cardWithSharedExtension/manifest2.json">
+					<w:layoutData>
+						<f:GridContainerItemLayoutData columns="4"/>
+					</w:layoutData>
+				</w:Card>
+				<w:Card id="card5" manifest="{cardsPlayground>/playgroundBaseUrl}/bundles/cardWithSharedExtension/manifest3.json">
+					<w:layoutData>
+						<f:GridContainerItemLayoutData columns="6"/>
+					</w:layoutData>
+				</w:Card>
+			</f:GridContainer>
+		</VBox>
+	</Page>
+
+</mvc:View>

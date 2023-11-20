@@ -1,0 +1,109 @@
+<mvc:View
+xmlns="sap.m"
+xmlns:mvc="sap.ui.core.mvc"
+xmlns:grid="sap.ui.layout.cssgrid"
+xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"
+controllerName="sap.ui.layout.cssgrid.gridplayground.controller.Main">
+
+<Slider value="100" app:mydata="breakContainer"  liveChange="onSliderMoved" />
+<Panel id="breakContainer" width="100%" class="sapUiResponsiveMargin">
+	<headerToolbar>
+		<Toolbar height="3rem">
+			<Title text=" Breakpoints"/>
+		</Toolbar>
+	</headerToolbar>
+	<content>
+		<Panel  width="100%" class="sapUiResponsiveMargin">
+			<headerToolbar>
+				<Toolbar height="3rem">
+					<Title text=" Breakpoint exmpl 1"/>
+				</Toolbar>
+			</headerToolbar>
+			<content>
+				<grid:CSSGrid id="grid1" items="{ path: '/' }">
+					<grid:customLayout>
+						<grid:GridResponsiveLayout containerQuery="true"  layoutChange="onLayoutChange">
+							<grid:layoutS>
+								<grid:GridSettings
+										gridTemplateColumns="repeat(auto-fit, 8rem)"
+										gridAutoRows="1fr"
+										gridGap="0.25rem 0.25rem">
+								</grid:GridSettings>
+							</grid:layoutS>
+							<grid:layoutM>
+								<grid:GridSettings
+										gridTemplateColumns="repeat(auto-fit, 12rem)"
+										gridAutoRows="1fr"
+										gridGap="0.5rem 0.5rem">
+								</grid:GridSettings>
+							</grid:layoutM>
+							<grid:layoutL>
+								<grid:GridSettings
+										gridTemplateColumns="repeat(auto-fit, 16rem)"
+										gridAutoRows="1fr"
+										gridGap="0.75rem 0.75rem">
+								</grid:GridSettings>
+							</grid:layoutL>
+							<grid:layoutXL>
+								<grid:GridSettings
+										gridTemplateColumns="repeat(auto-fit, 20rem)"
+										gridAutoRows="1fr"
+										gridGap="1rem 1rem">
+								</grid:GridSettings>
+							</grid:layoutXL>
+						</grid:GridResponsiveLayout>
+					</grid:customLayout>
+
+					<VBox height="100%">
+						<VBox class="sapUiSmallMargin demoBox">
+							<layoutData>
+								<FlexItemData growFactor="1" shrinkFactor="0" />
+							</layoutData>
+							<Title text="{title} (Click me)" wrapping="true" />
+							<Label text="{subtitle}" wrapping="true" />
+						</VBox>
+					</VBox>
+				</grid:CSSGrid>
+			</content>
+		</Panel>
+		<Panel width="100%" class="sapUiResponsiveMargin">
+			<headerToolbar>
+				<Toolbar height="3rem">
+					<Title text="BreakPoint exmpl2"/>
+				</Toolbar>
+			</headerToolbar>
+			<content>
+				<grid:CSSGrid items="{ path: '/' }">
+					<grid:customLayout>
+						<grid:GridResponsiveLayout layoutChange="onLayoutChange">
+							<grid:layoutS>
+								<grid:GridSettings
+										gridTemplateColumns="repeat(auto-fit, 8rem)"
+										gridAutoRows="1fr"
+										gridGap="0.25rem 0.25rem">
+								</grid:GridSettings>
+							</grid:layoutS>
+							<grid:layout>
+								<grid:GridSettings
+										gridTemplateColumns="repeat(auto-fit, 20rem)"
+										gridAutoRows="1fr"
+										gridGap="1rem 1rem">
+								</grid:GridSettings>
+							</grid:layout>
+						</grid:GridResponsiveLayout>
+					</grid:customLayout>
+					<VBox height="100%">
+						<VBox class="sapUiSmallMargin demoBox">
+							<layoutData>
+								<FlexItemData growFactor="1" shrinkFactor="0" /><!-- Don't shrink below minimum size. Fill space if available. -->
+							</layoutData>
+							<Title text="{title} (Click me)" wrapping="true" />
+							<Label text="{subtitle}" wrapping="true" />
+						</VBox>
+					</VBox>
+				</grid:CSSGrid>
+			</content>
+		</Panel>
+	</content>
+</Panel>
+</mvc:View>

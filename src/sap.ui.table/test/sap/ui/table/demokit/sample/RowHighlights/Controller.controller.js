@@ -1,8 +1,10 @@
 sap.ui.define([
+	"sap/base/Log",
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/table/RowSettings"
-], function(Controller, JSONModel, RowSettings) {
+	"sap/ui/table/RowSettings",
+	"sap/ui/thirdparty/jquery"
+], function(Log, Controller, JSONModel, RowSettings, jQuery) {
 	"use strict";
 
 	return Controller.extend("sap.ui.table.sample.RowHighlights.Controller", {
@@ -16,7 +18,7 @@ sap.ui.define([
 		initSampleDataModel: function() {
 			var oModel = new JSONModel();
 
-			jQuery.ajax(sap.ui.require.toUrl("sap/ui/demo/mock") + "/products.json", {
+			jQuery.ajax(sap.ui.require.toUrl("sap/ui/demo/mock/products.json"), {
 				dataType: "json",
 				success: function(oData) {
 					for (var i = 0; i < oData.ProductCollection.length; i++) {
@@ -34,12 +36,19 @@ sap.ui.define([
 							oProduct.Status = "None";
 						} else if (oProduct.Price < 300) {
 							oProduct.Status = "Success";
+							oProduct.StatusText = "Custom success highlight text";
 						} else if (oProduct.Price < 600) {
 							oProduct.Status = "Warning";
+							oProduct.StatusText = "Custom warning highlight text";
 						} else if (oProduct.Price < 900) {
 							oProduct.Status = "Error";
+							oProduct.StatusText = "Custom error highlight text";
 						} else if (oProduct.Price < 1200) {
 							oProduct.Status = "Information";
+							oProduct.StatusText = "Custom information highlight text";
+						} else if (oProduct.Price < 1500) {
+							oProduct.Status = "Indication01";
+							oProduct.StatusText = "Custom indication highlight text";
 						} else {
 							oProduct.Status = "None";
 						}
@@ -47,7 +56,7 @@ sap.ui.define([
 					oModel.setData(oData);
 				},
 				error: function() {
-					jQuery.sap.log.error("failed to load json");
+					Log.error("failed to load json");
 				}
 			});
 

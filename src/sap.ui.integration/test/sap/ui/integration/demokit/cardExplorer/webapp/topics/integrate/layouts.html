@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<title>Layouts</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<script src="../../scripts/boot.js"></script>
+</head>
+
+<body class="sapUiBody topicBody">
+	<div class="topic">
+		<div class="content">
+			<h1 id="layouts">
+				Layouts
+			</h1>
+			<p>Cards have responsive behavior and could be used in different layouts, homepages and dashboards.
+			</p>
+			<h2 id="layoutRequirements">
+				Layout Requirements
+			</h2>
+			<p>
+				The layout that the cards are placed in shouldn't limit their height growth, otherwise their content might be truncated.
+				Use "min-height" or GridContainer's "minRows" options if a minimum height is needed in the layout.
+			</p>
+			<h2 id="recommendendLayouts">
+				Recommended Layouts
+			</h2>
+			<p>Although the cards can be placed in any container or layout control,
+				we recommend sap.f.GridContainer as main layout container for cards.
+				<br />
+				<br />
+				sap.f.GridContainer is a layout container control used for aligning items with various sizes in a simple
+				grid.
+				It is usually used for a home page or a dashboard.
+				<br />
+				<br />
+				It represents a grid layout with specific row and column sizes, in which the items can take any number
+				of rows and columns.
+				<br />
+				<br />
+				The number of columns and rows each item takes can be configured with the use of the
+				<a data-demokit-href="#/api/sap.f.GridContainerItemLayoutData"
+					target="_blank"><code>sap.f.GridContainerItemLayoutData</code></a>
+				<br />
+				<br />
+				Sample:
+				<a data-demokit-href="#/entity/sap.f.GridContainer/sample/sap.f.sample.GridContainer"
+					target="_blank">sap.f.GridContainer</a>
+				<br />
+				<br />
+				API Documentation:
+				<a data-demokit-href="#/api/sap.f.GridContainer" target="_blank"><code>sap.f.GridContainer</code></a>
+			</p>
+			<h2 id="usage">
+				Create a Dashboard
+			</h2>
+			<p>
+				To create a home page or a dashboard, you can place your cards into the sap.f.GridContainer.
+				You need to specify the number of columns, which the card will take.
+				The card's height (number of rows) is automatically calculated, depending on the card content.
+				An exception is the Analytical Card, where you can specify also the "minRows" property and
+				the card will stretch to any given dimension.
+				The sap.f.GridContainer will arrange the cards in the best possible way.
+			</p>
+			<pre class="lang-xml">
+&lt;mvc:View xmlns:w="sap.ui.integration.widgets" xmlns:f="sap.f"&gt;
+	&lt;f:GridContainer&gt;
+		&lt;w:Card manifest="./manifest.json"&gt;
+			&lt;w:layoutData&gt;
+				&lt;f:GridContainerItemLayoutData columns="4" /&gt;
+			&lt;/w:layoutData&gt;
+		&lt;/w:Card&gt;
+		&lt;w:Card manifest="./analyticalManifest.json"&gt;
+			&lt;w:layoutData&gt;
+				&lt;f:GridContainerItemLayoutData columns="4" minRows="3" /&gt;
+			&lt;/w:layoutData&gt;
+		&lt;/w:Card&gt;
+	&lt;/f:GridContainer&gt;
+&lt;/mvc:View&gt;</pre>
+		</div>
+	</div>
+</body>
+
+</html>

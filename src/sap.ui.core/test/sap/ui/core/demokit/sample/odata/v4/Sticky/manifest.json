@@ -1,0 +1,76 @@
+{
+	"_version" : "1.12.0",
+	"sap.app" : {
+		"ach" : "CA-UI5-COR",
+		"applicationVersion" : {
+			"version" : "${version}"
+		},
+		"description" : "Example for consuming a stateful OData V4 Service",
+		"dataSources" : {
+			"default" : {
+				"uri" : "/sap/opu/odata4/sap/zrc_rap_sticky/srvd/sap/zrc_rap_sticky/0001/",
+				"type" : "OData",
+				"settings" : {
+					"odataVersion" : "4.0"
+				}
+			}
+		},
+		"id" : "sap.ui.core.sample.odata.v4.Sticky",
+		"title" : "Sticky Service App",
+		"type" : "application"
+	},
+	"sap.ui" : {
+		"deviceTypes" : {
+			"desktop" : true,
+			"phone" : true,
+			"tablet" : true
+		},
+		"technology" : "UI5"
+	},
+	"sap.ui5" : {
+		"config" : {
+			"sample" : {
+				"files" : [
+					"Component.js",
+					"Main.controller.js",
+					"Main.view.xml",
+					"manifest.json",
+					"SandboxModel.js",
+					"../../../common/Controller.js",
+					"../../../common/SandboxModelHelper.js"
+				]
+			}
+		},
+		"contentDensities" : {
+			"compact" : true,
+			"cozy" : true
+		},
+		"dependencies" : {
+			"minUI5Version" : "1.61",
+			"libs" : {
+				"sap.m" : {}
+			}
+		},
+		"handleValidation" : true,
+		"models" : {
+			"" : {
+				"dataSource" : "default",
+				"preload" : true,
+				"settings" : {
+					"autoExpandSelect" : true,
+					"earlyRequests" : true,
+					"groupId" : "$direct",
+					"operationMode" : "Server",
+					"updateGroupId" : "$direct"
+				},
+				"type" : "sap.ui.core.sample.odata.v4.Sticky.SandboxModel",
+				"uriSettingName" : "serviceUrl"
+			}
+		},
+		"rootView" : {
+			"async" : true,
+			"type" : "XML",
+			"viewName" : "Main.view.xml"
+		}
+	}
+}

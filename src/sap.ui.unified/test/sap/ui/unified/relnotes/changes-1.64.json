@@ -1,0 +1,96 @@
+{
+  "1.64.0": {
+    "date": "February 2019",
+    "notes": [
+      {
+        "id": "446fef22bd12fa22f52f6578c763eb41c24883a2",
+        "type": "FIX",
+        "text": "ui.unified.Calendar: Information for secondary type provided",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870534995"
+          }
+        ]
+      },
+      {
+        "id": "6fb017fef26e5c12d21dcb4bb5ec2ed1570d66bd",
+        "type": "FIX",
+        "text": "sap.m.DatePicker: year picker now properly honors minDate.",
+        "references": [
+          {
+            "type": "GitHub",
+            "reference": "2424"
+          },
+          {
+            "type": "BCP",
+            "reference": "1970162005"
+          }
+        ]
+      },
+      {
+        "id": "c0d6ebb728852da3c5bb7021e0a1740003b473ff",
+        "type": "FIX",
+        "text": "sap.ui.unified.Calendar: preventDefault is called only if the Event is cancelable",
+        "references": [
+          {
+            "type": "GitHub",
+            "reference": "2434"
+          },
+          {
+            "type": "BCP",
+            "reference": "1980007654"
+          }
+        ]
+      },
+      {
+        "id": "a440f1005119c782300ab6ea3ff35087ed49c325",
+        "type": "FIX",
+        "text": "sap.ui.unified.Menu: Closes when the opener disappears",
+        "references": [
+          {
+            "type": "GitHub",
+            "reference": "2416"
+          },
+          {
+            "type": "BCP",
+            "reference": "1970135560"
+          }
+        ]
+      },
+      {
+        "id": "d454b348fd21d66b568962646bed420fb2791814",
+        "type": "FIX",
+        "text": "ui.unified.FileUploader: mimeType is not supported in Edge and IE",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970177063"
+          }
+        ]
+      },
+      {
+        "id": "4787552d0b22cb755581a39d89489854caffe23e",
+        "type": "FIX",
+        "text": "sap.m.PlanningCalendar: stop showing appointments on OneMonth view if no date is selected on small screen",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970068322"
+          }
+        ]
+      },
+      {
+        "id": "fbf7dbd003d714da7fd8340cc72f76c2864ad051",
+        "type": "FIX",
+        "text": "sap.ui.unified.CalendarTimeInterval: Navigates to the correct date",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500000617722019"
+          }
+        ]
+      }
+    ]
+  }
+}

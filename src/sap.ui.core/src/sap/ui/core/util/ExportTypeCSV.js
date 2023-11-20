@@ -31,6 +31,8 @@ sap.ui.define(['./ExportType'],
 	 * Potential formulas (cell data starts with one of = + - @) will be escaped by prepending a single quote.
 	 * As the export functionality is intended to be used with actual (user) data there is no reason to allow formulas.
 	 *
+	 * The maximum cell length is limited to 32,760 characters. In case any string exceeds this limit, it will be cut off.
+	 *
 	 * @extends sap.ui.core.util.ExportType
 	 *
 	 * @author SAP SE
@@ -38,6 +40,7 @@ sap.ui.define(['./ExportType'],
 	 * @since 1.22.0
 	 *
 	 * @public
+	 * @deprecated Since version 1.73
 	 * @alias sap.ui.core.util.ExportTypeCSV
 	 */
 	var CSV = ExportType.extend('sap.ui.core.util.ExportTypeCSV', {
@@ -61,13 +64,22 @@ sap.ui.define(['./ExportType'],
 
 	});
 
+	/*
+	 * Excel officially allows up to 32,767 characters per cell but any
+	 * content that that overflows 32,760 characters will be put into a
+	 * new cell. In case the overflow is a formula, Excel will evaluate
+	 * this formula. To prevent this automatic execution we have to cut
+	 * of the cell content after 32,760 characters.
+	 */
+	CSV.MAX_CELL_LENGTH = 32760;
+
 	/**
 	 * Setter for property <code>separatorChar</code>.
 	 *
 	 * Value needs to be exactly one character or empty for default. Default value is ','.
 	 *
 	 * @param {string} sSeparatorChar  new value for property <code>separatorChar</code>
-	 * @return {sap.ui.core.util.ExportTypeCSV} <code>this</code> to allow method chaining
+	 * @return {this} <code>this</code> to allow method chaining
 	 * @public
 	 */
 	CSV.prototype.setSeparatorChar = function(sSeparatorChar) {
@@ -104,8 +116,13 @@ sap.ui.define(['./ExportType'],
 			return sVal;
 		}
 
+		/* Prevent cell overflow */
+		if (sVal.length > CSV.MAX_CELL_LENGTH) {
+			sVal = sVal.slice(0, CSV.MAX_CELL_LENGTH);
+		}
+
 		// Prepend single quote in case cell content is a formula.
-		// This will prevent it from beeing evaluated by other programs.
+		// This will prevent it from being evaluated by other programs.
 		// As the export functionality is intended to be used with actual (user) data
 		// there is no reason to allow formulas in here.
 		if (rFormula.test(sVal)) {

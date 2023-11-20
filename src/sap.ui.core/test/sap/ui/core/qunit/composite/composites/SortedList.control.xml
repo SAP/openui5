@@ -1,0 +1,7 @@
+<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core">
+	<List id="sorted" items="{ path : '$this>/sortedItems', sorter : [{path : 'text'}]}">
+		<items>
+			<StandardListItem title="{$this>text}"/>
+		</items>
+	</List>
+</core:FragmentDefinition>

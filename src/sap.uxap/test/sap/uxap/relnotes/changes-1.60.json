@@ -1,0 +1,240 @@
+{
+  "1.60.0": {
+    "date": "August 2018",
+    "notes": [
+      {
+        "id": "f4497e9e1361f272a4f788b010feecb16965260e",
+        "type": "FIX",
+        "text": "ObjectPageHeader - Fixed styles of navigationBar",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880457387"
+          }
+        ]
+      },
+      {
+        "id": "30d40f00c74a5cdd33d5e4ef76eac1260bb7ed67",
+        "type": "FIX",
+        "text": "sap.uxap.ObjectImageHelper: Setting image alt via property setter",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880425578"
+          }
+        ]
+      },
+      {
+        "id": "9b23babc9e99562d8edb6cc6c411a153a6189f47",
+        "type": "FIX",
+        "text": "AnchorBar: Overlapping MenuButton's text is fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880465502"
+          }
+        ]
+      },
+      {
+        "id": "0fca36349b6718e55e7756ddf93d034c6c92df3a",
+        "type": "FIX",
+        "text": "uxap.AnchorBar: Custom button in sub-section behavior fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880524015"
+          }
+        ]
+      },
+      {
+        "id": "7df352392078ea3867249f2031ea72f6d0a6ecf8",
+        "type": "FEATURE",
+        "text": "ObjectPageSubSection: Added CSS class for content alignment",
+        "references": []
+      },
+      {
+        "id": "4768b98ba0b97c76d4921c69db29657402a01626",
+        "type": "FIX",
+        "text": "AnchorBar: QUnit test failure is fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870331740"
+          }
+        ]
+      },
+      {
+        "id": "5ebfd0d3f28a116d7d35b9e8ece8c56cbb9362e5",
+        "type": "FIX",
+        "text": "ObjectPage: QUnit test failure in ObjectPageKeyboardHandling is fixed",
+        "references": []
+      },
+      {
+        "id": "24760325e5f5d8f4ccdebdb8e2b081f3cafbe65f",
+        "type": "FIX",
+        "text": "SDK: ObjectPage with Forms examples updated",
+        "references": []
+      },
+      {
+        "id": "dcd917c815710b4c99f218aec67e9e566146e79d",
+        "type": "FIX",
+        "text": "ObjectPage: QUnit tests failure on Firefox is fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870392368"
+          }
+        ]
+      },
+      {
+        "id": "c51f5f07b6261fadc799620075ff6ee0a090a67d",
+        "type": "FIX",
+        "text": "sap.uxap: sap.ui.core._StashedControl change handler registration",
+        "references": []
+      },
+      {
+        "id": "013679f4c20bd8ac9ef6f8897f12cec2ce8388cd",
+        "type": "FIX",
+        "text": "ObjectPageSubSection: Aligned SimpleForm Toolbar",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870425815"
+          }
+        ]
+      },
+      {
+        "id": "b312068472e76c5d46256a4367e2126e44e1b31a",
+        "type": "FIX",
+        "text": "sap.m.MenuButton: Labelling improved",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880270561"
+          }
+        ]
+      },
+      {
+        "id": "b54ffddd6d656291c15e54017f65f13e60c29aee",
+        "type": "FIX",
+        "text": "sap.uxap.ObjectPageLayout: Corrected content height calculation",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880555126"
+          }
+        ]
+      },
+      {
+        "id": "0d85f4b0668faee4c070e5f5d9b2b1c849aea7fe",
+        "type": "FIX",
+        "text": "sap.f.DynamicPage: Header without content title issues fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880566620"
+          }
+        ]
+      },
+      {
+        "id": "79091dd544661faa123ba13c7c79b0ebf1eb823c",
+        "type": "FIX",
+        "text": "sap.uxap.AnchorBar: Fixed tab focusable state",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870391330"
+          }
+        ]
+      },
+      {
+        "id": "f54194f8bbafa644eda56d9c8b380f624f238a89",
+        "type": "FIX",
+        "text": "sap.uxap.ObjectPageLayout: Corrected calculationn",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880602140"
+          }
+        ]
+      },
+      {
+        "id": "fc4d27e01c55f5ec5e402199982a9d80ef7e063b",
+        "type": "FIX",
+        "text": "sap.uxap.ObjectPageLayout: Corrected qunit timing",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880602140"
+          }
+        ]
+      },
+      {
+        "id": "144de4da41c82f08811f5c613b1c82beed16c496",
+        "type": "FIX",
+        "text": "sap.uxap.ObjectPageLayout: Truncation of ObjectAttribute is fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880467540"
+          }
+        ]
+      },
+      {
+        "id": "19160d07f9da9d34ce91d7bbed71a62d7f450cd7",
+        "type": "FIX",
+        "text": "sap.uxap.ObjectPageSubSection: Changed header rendering",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870437348"
+          }
+        ]
+      },
+      {
+        "id": "6d67fc01e82b806399829c38db46181d9f1ef573",
+        "type": "FIX",
+        "text": "API Documentation: Documentation is improved",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880546926"
+          }
+        ]
+      },
+      {
+        "id": "8df1dabe2eed012686d0356eba3cfef83528ed32",
+        "type": "FIX",
+        "text": "sap.uxap.ObjectPage: Actions and content are now aligned",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870158382"
+          }
+        ]
+      },
+      {
+        "id": "ead0763cd9b9a8bb3f52e4825bf08233c5202f6c",
+        "type": "FIX",
+        "text": "sap.uxap.ObjectPageHeader: Rectangle header image layout fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880620769"
+          }
+        ]
+      },
+      {
+        "id": "5e3c8ed73d7627bbd439dcc1dba5a016df5d0ed1",
+        "type": "FIX",
+        "text": "sap.uxap.ObjectPageLayout: Corrected qunit timing",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880602140"
+          }
+        ]
+      }
+    ]
+  }
+}

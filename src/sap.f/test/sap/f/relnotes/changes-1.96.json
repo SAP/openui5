@@ -1,0 +1,132 @@
+{
+  "1.96.0": {
+    "date": "October 2021",
+    "notes": [
+      {
+        "id": "61645af3223ea8bba83f3a05857de704040a45d3",
+        "type": "FIX",
+        "text": " m/f.TargetHandler: improve API doc for setCloseDialogs with navigation",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170181925"
+          }
+        ]
+      },
+      {
+        "id": "65b009f828a670a9331107eb1195af27a36b6507",
+        "type": "FEATURE",
+        "text": " sap.f.cards.NumericHeader: New property \"sideIndicatorsAlignment\" implemented"
+      },
+      {
+        "id": "61b4a9a63a8bce7a5c9dc164da9cd7fc6383428b",
+        "type": "FIX",
+        "text": " sap.ui.integration.widgets.Card: minHeight of Analytical content now works in GridContainer",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170234802"
+          }
+        ]
+      },
+      {
+        "id": "6cff48f635fcbd6259c687de1ef792f3edec0a17",
+        "type": "FIX",
+        "text": " sap.f.Card: The color of the Side Indicator number is fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170226646"
+          }
+        ]
+      },
+      {
+        "id": "4dde31733995464c5984f0be7980c87d154fb3ca",
+        "type": "FIX",
+        "text": " Integration cards: Fixed header alignment in a card with no content",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170226671"
+          }
+        ]
+      },
+      {
+        "id": "7aace0cd389b31f2bf9de64f79bbcb28287a793e",
+        "type": "FIX",
+        "text": " Demo Kit: Fix autoFocus logic in FCL sample",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170162405"
+          }
+        ]
+      },
+      {
+        "id": "b2ee5525063bd8df702723fd9e685afcbb45e410",
+        "type": "FIX",
+        "text": " Integration cards: Card type is now announced upon focus",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170188036"
+          }
+        ]
+      },
+      {
+        "id": "736748b0a87a763a44df4ee15cb12441eb36cacf",
+        "type": "FEATURE",
+        "text": " sap.f.Card: New property \"state\" for the SideIndicators implemented"
+      },
+      {
+        "id": "94d48d2d0f442eb8cca3f759b1dfb29ec60aae90",
+        "type": "FIX",
+        "text": " sap.f.Card: Header now grows to take available space when no content is set",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170188328"
+          }
+        ]
+      },
+      {
+        "id": "4ce07c7db2e71a5513961d9deccb95ed4a87f4b5",
+        "type": "FIX",
+        "text": " sap.f.IllustrationPool: Removed redundant file request",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500005735492021"
+          }
+        ]
+      },
+      {
+        "id": "8227bef0b6f00535241387ec3f6952fb50f155f8",
+        "type": "FIX",
+        "text": " sap.f.GridContainer: Header role description is now correctly read by JAWS",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170128520"
+          }
+        ]
+      },
+      {
+        "id": "29b73d92789fa35da499366793a9b03fc3c163c0",
+        "type": "FEATURE",
+        "text": " Integration cards: Added \"refreshData\" method"
+      },
+      {
+        "id": "90ba5f880bd24c0d9bb89ee3414442fedffb592a",
+        "type": "FIX",
+        "text": " Integration cards: List card compact sizes are now correct",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180363992"
+          }
+        ]
+      }
+    ]
+  }
+}

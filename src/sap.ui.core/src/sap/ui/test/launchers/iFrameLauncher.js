@@ -2,17 +2,23 @@
  * ${copyright}
  */
 sap.ui.define([
-		'jquery.sap.global',
-		'sap/ui/thirdparty/URI',
+		"sap/base/Log",
+		"sap/base/util/ObjectPath",
 		'sap/ui/Device',
-		'sap/ui/test/_LogCollector'
-	], function ($, URI, Device, _LogCollector) {
+		'sap/ui/test/_LogCollector',
+		"sap/ui/thirdparty/jquery"
+	], function (Log, ObjectPath, Device, _LogCollector, jQuery) {
 	"use strict";
 
 	/*global CollectGarbage */
 
+	// after CSS transform - scale down by 0.6: width=768, height=614.4
+	var DEFAULT_WIDTH = 1280;
+	var DEFAULT_HEIGHT = 1024;
+
 	var oFrameWindow = null,
 		$Frame = null,
+		$FrameContainer = null,
 		oFramePlugin = null,
 		oFrameUtils = null,
 		oFrameJQuery = null,
@@ -20,7 +26,8 @@ sap.ui.define([
 		bUi5Loaded = false,
 		oAutoWaiter = null,
 		FrameHashChanger = null,
-		sOpaLogLevel;
+		sOpaLogLevel,
+		bDisableHistoryOverride;
 
 	/*
 	 * INTERNALS
@@ -35,16 +42,19 @@ sap.ui.define([
 	}
 
 	function setFrameSize(sWidth, sHeight) {
-		// by default the frame is scaled down from 100% of the page in both dimensions
+		// by default the frame is scaled down to 60% of a fixed page size: 1280x1024
 		// user-defined dimensions should not be scaled
 		if (sWidth) {
 			$Frame.css("width", sWidth);
+			$FrameContainer.css("padding-left", sWidth);
 		} else {
+			$Frame.css("width", DEFAULT_WIDTH);
 			$Frame.addClass("default-scale-x");
 		}
 		if (sHeight) {
 			$Frame.css("height", sHeight);
 		} else {
+			$Frame.css("height", DEFAULT_HEIGHT);
 			$Frame.addClass("default-scale-y");
 		}
 		if (!sWidth && !sHeight) {
@@ -82,12 +92,21 @@ sap.ui.define([
 			return true;
 		}
 
-		if (oFrameWindow && oFrameWindow.sap && oFrameWindow.sap.ui && oFrameWindow.sap.ui.getCore) {
-			if (!bRegisteredToUI5Init) {
-				oFrameWindow.sap.ui.getCore().attachInit(handleUi5Loaded);
+		if (!bRegisteredToUI5Init && oFrameWindow?.sap?.ui) {
+			if ( oFrameWindow.sap.ui.require ) {
+				// use the more modern Core.ready, if available
+				const oFrameCore = oFrameWindow.sap.ui.require("sap/ui/core/Core");
+				if (typeof oFrameCore?.ready === "function") {
+					oFrameCore.ready(handleUi5Loaded);
+					bRegisteredToUI5Init = true;
+					return bUi5Loaded;
+				}
 			}
-
-			bRegisteredToUI5Init = true;
+			// otherwise, fall back to the older sap.ui.getCore().attachInit
+			if (oFrameWindow.sap.ui.getCore) {
+				oFrameWindow.sap.ui.getCore().attachInit(handleUi5Loaded);
+				bRegisteredToUI5Init = true;
+			}
 		}
 
 		return bUi5Loaded;
@@ -123,9 +142,10 @@ sap.ui.define([
 		}
 	}
 
-	function afterModulesLoaded () {
+	function afterModulesLoaded (oFrameLog) {
 		// forward OPA log messages from the inner iframe to the Log listener of the outer frame
-		oFrameJQuery.sap.log.addLogListener(_LogCollector.getInstance()._oListener);
+		// the listener should already be created and started by OPA
+		oFrameLog.addLogListener(_LogCollector.getInstance()._oListener);
 
 		bUi5Loaded = true;
 	}
@@ -224,7 +244,7 @@ sap.ui.define([
 				sNewPreviousHash = oHistory.aHistory[oHistory.iHistoryPosition];
 
 			if (sNewCurrentHash === undefined) {
-				$.sap.log.error("Could not navigate forwards, there is no history entry in the forwards direction", this);
+				Log.error("Could not navigate forwards, there is no history entry in the forwards direction", this);
 				return;
 			}
 
@@ -244,13 +264,14 @@ sap.ui.define([
 				return;
 			}
 
-			$.sap.log.error("Using history.go with a number greater than 1 is not supported by OPA5", this);
+			Log.error("Using history.go with a number greater than 1 is not supported by OPA5", this);
 			return fnOriginalGo.apply(oFrameWindow.history, arguments);
 		};
 	}
 
 	function loadFrameModules() {
 		oFrameWindow.sap.ui.require([
+			"sap/base/Log",
 			"sap/ui/test/OpaPlugin",
 			"sap/ui/test/autowaiter/_autoWaiter",
 			"sap/ui/test/_OpaLogger",
@@ -259,6 +280,7 @@ sap.ui.define([
 			"sap/ui/core/routing/History",
 			"sap/ui/core/routing/HashChanger"
 		], function (
+			Log,
 			OpaPlugin,
 			_autoWaiter,
 			_OpaLogger,
@@ -271,27 +293,42 @@ sap.ui.define([
 			oFramePlugin = new OpaPlugin();
 			oAutoWaiter = _autoWaiter;
 			oFrameUtils = QUnitUtils;
-			modifyIFrameNavigation(hasher, History, HashChanger);
+			if (!bDisableHistoryOverride) {
+				modifyIFrameNavigation(hasher, History, HashChanger);
+			}
 			FrameHashChanger = HashChanger;
-			afterModulesLoaded();
+			afterModulesLoaded(Log);
 		});
 	}
 
+	function getAbsolutePath(sResource) {
+		var sResourceURL = sap.ui.require.toUrl(sResource);
+		var oURL = new URL(sResourceURL, document.baseURI);
+		oURL.search = oURL.hash = "";
+		return oURL.href;
+	}
+
 	function registerAbsoluteResourcePathInIframe(sResource) {
-		var sOpaLocation = sap.ui.require.toUrl(sResource);
-		var sAbsoluteOpaPath = new URI(sOpaLocation).absoluteTo(document.baseURI).search("").toString();
-		var fnConfig = oFrameWindow.sap.ui._ui5loader || oFrameWindow.sap.ui.loader.config;
+		var sAbsoluteOpaPath = getAbsolutePath(sResource);
+		var fnConfig = ObjectPath.get("sap.ui.loader.config", oFrameWindow);
 		if (fnConfig) {
 			var paths = {};
 			paths[sResource] = sAbsoluteOpaPath;
 			fnConfig({
 				paths: paths
 			});
-		} else if (oFrameJQuery && oFrameJQuery.sap && oFrameJQuery.sap.registerResourcePath) {
-			oFrameJQuery.sap.registerResourcePath(sResource, sAbsoluteOpaPath);
-		} else {
-			throw new Error("iFrameLauncher.js: UI5 module system not found.");
+			return;
 		}
+
+		/**
+		 * @deprecated since 1.58 as jQuery.sap.registerResourcePath has been deprecated.
+		 */
+		if (oFrameJQuery && oFrameJQuery.sap && oFrameJQuery.sap.registerResourcePath) {
+			oFrameJQuery.sap.registerResourcePath(sResource, sAbsoluteOpaPath);
+			return;
+		}
+
+		throw new Error("iFrameLauncher.js: UI5 module system not found.");
 	}
 
 	function destroyFrame () {
@@ -299,7 +336,7 @@ sap.ui.define([
 			throw new Error("sap.ui.test.launchers.iFrameLauncher: Teardown was called before launch. No iFrame was loaded.");
 		}
 		// Workaround for IE - there are errors even after removing the frame so setting the onerror to noop again seems to be fine
-		oFrameWindow.onerror = $.noop;
+		oFrameWindow.onerror = jQuery.noop;
 		for (var i = 0; i < $Frame.length; i++) {
 			$Frame[0].src = "about:blank";
 			$Frame[0].contentWindow.document.write('');
@@ -309,6 +346,7 @@ sap.ui.define([
 			CollectGarbage(); // eslint-disable-line
 		}
 		$Frame.remove();
+		$FrameContainer.remove();
 		oFrameJQuery = null;
 		oFramePlugin = null;
 		oFrameUtils = null;
@@ -332,15 +370,19 @@ sap.ui.define([
 			}
 
 			//invalidate the cache
-			$Frame = $("#" + options.frameId);
+			$Frame = jQuery("#" + options.frameId);
 
-			if (!$Frame.length) {
+			if ($Frame.length) {
+				$FrameContainer = jQuery(".opaFrameContainer");
+			} else {
 				if (!options.source) {
-					$.sap.log.error("No source was given to launch the IFrame", this);
+					Log.error("No source was given to launch the IFrame", this);
 				}
 				//invalidate other caches
-				$Frame = $('<IFrame id="' + options.frameId + '" class="opaFrame" src="' + options.source + '"></IFrame>');
-				$("body").append($Frame);
+				$FrameContainer = jQuery("<div class='opaFrameContainer'></div>");
+				$Frame = jQuery('<IFrame id="' + options.frameId + '" class="opaFrame" src="' + options.source + '"></IFrame>');
+				$FrameContainer.append($Frame);
+				jQuery("body").append($FrameContainer);
 				setFrameSize(options.width, options.height);
 			}
 
@@ -350,6 +392,7 @@ sap.ui.define([
 				$Frame.on("load", handleFrameLoad);
 			}
 			sOpaLogLevel = options.opaLogLevel;
+			bDisableHistoryOverride = options.disableHistoryOverride;
 			return checkForUI5ScriptLoaded();
 		},
 		hasLaunched: function () {

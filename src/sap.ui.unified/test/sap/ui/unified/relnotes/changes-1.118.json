@@ -1,0 +1,84 @@
+{
+  "1.118.0": {
+    "date": "August 2023",
+    "notes": [
+      {
+        "id": "34da7add092e917a243bedd5b169eac96c8dd1f0",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: Remove horizontal scrollbar",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370011657"
+          }
+        ]
+      },
+      {
+        "id": "c381b090a5392ed4676971f90e7044f2b1ca0a14",
+        "type": "FIX",
+        "text": " sap.ui.unified.FileUploader: enable drop over the browse button",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400006011772023"
+          }
+        ]
+      },
+      {
+        "id": "ea13864b7b1e79c5d258a9c192c4b4bcd581fb25",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: getVisibleIntervalsCount now returns the correct value ignoring daylight saving",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380087494"
+          }
+        ]
+      },
+      {
+        "id": "437897ee52b0dce55c4fdf739657b9860e1629eb",
+        "type": "FIX",
+        "text": " sap.ui.unified.CalendarTimeInterval: add accessibility information",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370011587"
+          }
+        ]
+      },
+      {
+        "id": "ffb904eea7b87083d6a8ec7a177336196755a754",
+        "type": "FIX",
+        "text": " sap.ui.unified.CalendarLegend: Nest list items in list",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370011635"
+          }
+        ]
+      },
+      {
+        "id": "55a6b4f80fb46557c26ac6f3b637ba1eddbe64d1",
+        "type": "FIX",
+        "text": " sap.ui.unified.MenuTextFieldItem: Add aria role to input",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370011636"
+          }
+        ]
+      },
+      {
+        "id": "348bf3ca0508b8769d127429cb09e80bdc0b4e2b",
+        "type": "FIX",
+        "text": " sap.ui.unified.Menu: skip invalidation",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500005658702023"
+          }
+        ]
+      }
+    ]
+  }
+}

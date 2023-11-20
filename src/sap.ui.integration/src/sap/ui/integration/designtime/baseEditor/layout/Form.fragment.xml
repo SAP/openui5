@@ -1,0 +1,48 @@
+<core:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:baseEditor="sap.ui.integration.designtime.baseEditor"
+	xmlns:form="sap.ui.layout.form"
+	xmlns:core="sap.ui.core"
+>
+	<form:Form
+		editable="true"
+		formContainers="{path: '/groups', templateShareable: false}"
+		class="sapUiIntegrationBaseEditorFormLayout"
+	>
+		<form:layout>
+			<form:ResponsiveGridLayout
+				labelSpanXL="{/responsiveGridLayout/labelSpanXL}"
+				labelSpanL="{/responsiveGridLayout/labelSpanL}"
+				labelSpanM="{/responsiveGridLayout/labelSpanM}"
+				labelSpanS="{/responsiveGridLayout/labelSpanS}"
+				adjustLabelSpan="{/responsiveGridLayout/adjustLabelSpan}"
+				emptySpanXL="{/responsiveGridLayout/emptySpanXL}"
+				emptySpanL="{/responsiveGridLayout/emptySpanL}"
+				emptySpanM="{/responsiveGridLayout/emptySpanM}"
+				emptySpanS="{/responsiveGridLayout/emptySpanS}"
+				columnsXL="{/responsiveGridLayout/columnsXL}"
+				columnsL="{/responsiveGridLayout/columnsL}"
+				columnsM="{/responsiveGridLayout/columnsM}"
+				singleContainerFullSize="{/responsiveGridLayout/singleContainerFullSize}"
+				breakpointXL="{/responsiveGridLayout/breakpointXL}"
+				breakpointL="{/responsiveGridLayout/breakpointL}"
+				breakpointM="{/responsiveGridLayout/breakpointM}"
+			/>
+		</form:layout>
+		<form:formContainers>
+			<form:FormContainer
+				title="{label}"
+				formElements="{path: 'items', templateShareable: false}"
+				visible="{visible}"
+			>
+				<form:formElements>
+					<form:FormElement label="{label}" visible="{config/visible}">
+						<form:fields>
+							<baseEditor:PropertyEditor init="wrapperInit" config="{config}" value="{value}" renderLabel="false" />
+						</form:fields>
+					</form:FormElement>
+				</form:formElements>
+			</form:FormContainer>
+		</form:formContainers>
+	</form:Form>
+</core:FragmentDefinition>

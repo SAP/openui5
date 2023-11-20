@@ -1,0 +1,114 @@
+// add your copyright here
+
+sap.ui.define(["sap/ui/integration/Designtime"], function (
+	Designtime
+) {
+	"use strict";
+	return function () {
+		return new Designtime({
+			"form": {
+				"items": {
+					"Customer": {
+						"manifestpath": "/temp/configuration/parameters/Customer/value",
+						"type": "string",
+						"values": {
+							"data": {
+								"request": {
+									"url": "{{destinations.mock_request}}/Customers"
+								},
+								"path": "/value/"
+							},
+							"item": {
+								"text": "{CompanyName}",
+								"key": "{CustomerID}",
+								"additionalText": "{= ${CustomerID} !== undefind ? ${Country} + ', ' +  ${City} + ', ' + ${Address}: ''}"
+							}
+						}
+					},
+					"Employee": {
+						"manifestpath": "/temp/configuration/parameters/Employee/value",
+						"type": "string",
+						"values": {
+							"data": {
+								"request": {
+									"url": "{{destinations.mock_request}}/Employees"
+								},
+								"path": "/value/"
+							},
+							"item": {
+								"text": "{FirstName} {LastName}",
+								"key": "{EmployeeID}",
+								"additionalText": "{= ${EmployeeID} !== undefind ? ${Country} + ', ' +  ${Title} + ', ' + ${HomePhone}: ''}"
+							}
+						}
+					},
+					"Order": {
+						"manifestpath": "/temp/configuration/parameters/Order/value",
+						"type": "string",
+						"required": true,
+						"values": {
+							"data": {
+								"request": {
+									"url": "{{destinations.mock_request}}/Orders",
+									"parameters": {
+										"$filter": "(CustomerID eq '{items>Customer/value}') and (EmployeeID eq {items>Employee/value})"
+									}
+								},
+								"path": "/value/"
+							},
+							"item": {
+								"text": "{= ${OrderID} !== undefind ? ${OrderID} + '-' +  ${CustomerID} + '-' + ${EmployeeID}: ''}",
+								"key": "{OrderID}",
+								"additionalText": "{OrderDate}"
+							}
+						}
+					},
+					"Product": {
+						"manifestpath": "/temp/configuration/parameters/Product/value",
+						"type": "string",
+						"values": {
+							"data": {
+								"request": {
+									"url": "{{destinations.mock_request}}/Order_Details",
+									"parameters": {
+										"$filter": "OrderID eq {items>Order/value}"
+									}
+								},
+								"path": "/value/"
+							},
+							"item": {
+								"text": "{= ${OrderID} !== undefind ? ${OrderID} + '-' +  ${ProductID} + ':' + ${Product/ProductName}: ''}",
+								"key": "{ProductID}",
+								"additionalText": "{= ${OrderID} !== undefind ? ${UnitPrice} + ' USD, count: '+ ${Quantity}: ''}"
+							}
+						}
+					},
+					"CustomerWithTopAndSkipOption": {
+						"manifestpath": "/temp/configuration/parameters/CustomerWithTopAndSkipOption/value",
+						"type": "string",
+						"values": {
+							"data": {
+								"request": {
+									"url": "{{destinations.mock_request}}/Customers",
+									"parameters": {
+										"$skip": "1",
+										"$top": "2"
+									}
+								},
+								"path": "/value/"
+							},
+							"item": {
+								"text": "{CompanyName}",
+								"key": "{CustomerID}",
+								"additionalText": "{= ${CustomerID} !== undefind ? ${Country} + ', ' +  ${City} + ', ' + ${Address}: ''}"
+							}
+						}
+					}
+				}
+			},
+			"preview": {
+				"modes": "LiveAbstract"
+			}
+		});
+	};
+});

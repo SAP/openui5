@@ -1,12 +1,12 @@
 /*!
  * ${copyright}
  */
+
 /*
  * IMPORTANT: This is a private module, its API must not be used and is subject to change.
  * Code other than the OpenUI5 libraries must not introduce dependencies to this module.
  */
 (function() {
-
 	/*
 	 * This module tries to detect a bootstrap script tag in the current page and
 	 * to derive the path for 'resources/' from it. For that purpose it checks for a
@@ -17,42 +17,773 @@
 	 *  - ui5loader-autoconfig.js
 	 */
 
-	/*global console, document, jQuery, sap, window */
+	/*global define */
 	"use strict";
 
-	var ui5loader = window.sap && window.sap.ui && window.sap.ui.loader,
-		oCfg = window['sap-ui-config'] || {},
-		sBaseUrl, bNojQuery,
+	/** BaseConfiguration */
+	var ui5loader = globalThis.sap && globalThis.sap.ui && globalThis.sap.ui.loader;
+
+	if (ui5loader == null) {
+		throw new Error("ui5loader-autoconfig.js: ui5loader is needed, but could not be found");
+	}
+
+	const origDefine = globalThis.define;
+	globalThis.define = function define(moduleId, dependencies, callback) {
+		const imports = dependencies.map((dep) => sap.ui.require(dep));
+		const moduleExport = callback(...imports);
+		ui5loader._.defineModuleSync(`${moduleId}.js`, moduleExport);
+	};
+
+	define("sap/base/strings/_camelize", [], function () {
+		var rCamelCase = /[-\.]([a-z0-9])/ig;
+		var fnCamelize = function (sString) {
+			var sNormalizedString = sString.replace( rCamelCase, function( sMatch, sChar ) {
+				return sChar.toUpperCase();
+			});
+			if (/^[a-z][A-Za-z0-9]*$/.test(sNormalizedString)) {
+				return sNormalizedString;
+			}
+			return undefined;
+		};
+
+		return fnCamelize;
+	});
+
+	/* helper for finding the bootstrap tag */
+	function getBootstrapTag() {
+		var oResult;
+		function check(oScript, rUrlPattern) {
+			var sUrl = oScript && oScript.getAttribute("src");
+			var oMatch = rUrlPattern.exec(sUrl);
+			var oTagInfo;
+			if (oMatch) {
+				oTagInfo = {
+					tag: oScript,
+					url: sUrl,
+					resourceRoot: oMatch[1] || ""
+				};
+			}
+			return oTagInfo;
+		}
+
+		if (globalThis.document) {
+			var rResources = /^((?:.*\/)?resources\/)/,
+				rBootScripts, aScripts, i;
+			// Prefer script tags which have the sap-ui-bootstrap ID
+			// This prevents issues when multiple script tags point to files named
+			// "sap-ui-core.js", for example when using the cache buster for UI5 resources
+			oResult = check(globalThis.document.querySelector('SCRIPT[src][id=sap-ui-bootstrap]'), rResources);
+			if (!oResult) {
+				aScripts = globalThis.document.querySelectorAll('SCRIPT[src]');
+				rBootScripts = /^([^?#]*\/)?(?:sap-ui-(?:core|custom|boot|merged)(?:-[^?#/]*)?|jquery.sap.global|ui5loader(?:-autoconfig)?)\.js(?:[?#]|$)/;
+				for (i = 0; i < aScripts.length; i++) {
+					oResult = check(aScripts[i], rBootScripts);
+					if (oResult) {
+						break;
+					}
+				}
+			}
+		}
+		return oResult || {};
+	}
+
+	/**
+	 * @deprecated As of Version 1.120
+	 */
+	function _createGlobalConfig() {
+		var sCfgFile = "sap-ui-config.json",
+			url = globalThis["sap-ui-config"];
+
+		if (typeof url === "string") {
+			if (globalThis.XMLHttpRequest) {
+				ui5loader._.logger.warning("Loading external bootstrap configuration from \"" + url + "\". This is a design time feature and not for productive usage!");
+				if (url !== sCfgFile) {
+					ui5loader._.logger.warning("The external bootstrap configuration file should be named \"" + sCfgFile + "\"!");
+				}
+				try {
+
+					var xhr = new XMLHttpRequest();
+					xhr.open("GET", url, false);
+					xhr.setRequestHeader("Accept", "application/json, text/javascript");
+
+					xhr.addEventListener("load", function() {
+						try {
+							if (xhr.responseType === "json") {
+								globalThis["sap-ui-config"] = xhr.response;
+							} else {
+								globalThis["sap-ui-config"] = JSON.parse(xhr.responseText);
+							}
+						} catch (error) {
+							ui5loader._.logger.error("Parsing externalized bootstrap configuration from \"" + url + "\" failed! Reason: " + error + "!");
+						}
+					});
+					xhr.addEventListener("error", function() {
+						ui5loader._.logger.error("Loading externalized bootstrap configuration from \"" + url + "\" failed! Response: " + xhr.status + "!");
+					});
+
+					xhr.send(null);
+					globalThis["sap-ui-config"].__loaded = true;
+
+				} catch (error) {
+					ui5loader._.logger.error("Loading externalized bootstrap configuration from \"" + url + "\" failed! Reason: " + error + "!");
+				}
+			}
+		}
+		var bootstrap = getBootstrapTag();
+		if (bootstrap.tag) {
+			var dataset = bootstrap.tag.dataset;
+			if (dataset["sapUiConfig"]) {
+				var sConfig = dataset["sapUiConfig"];
+				var oParsedConfig;
+				try {
+					oParsedConfig = JSON.parse("{" + sConfig + "}");
+				} catch (exc) {
+					ui5loader._.logger.error("JSON.parse on the data-sap-ui-config attribute failed. Please check the config for JSON syntax violations.");
+					/*eslint-disable no-new-func */
+					oParsedConfig = (new Function("return {" + sConfig + "};"))();
+					/*eslint-enable no-new-func */
+				}
+
+				if (oParsedConfig) {
+					if (!globalThis["sap-ui-config"]) {
+						globalThis["sap-ui-config"] = {};
+					}
+					Object.assign(globalThis["sap-ui-config"], oParsedConfig);
+				}
+			 }
+		}
+	}
+
+	/**
+	 * @deprecated As of Version 1.120
+	 */
+	_createGlobalConfig();
+
+	define("sap/base/config/GlobalConfigurationProvider", [
+		"sap/base/strings/_camelize"
+	], function (camelize) {
+		var oConfig;
+		var oWriteableConfig = Object.create(null);
+		var rAlias = /^(sapUiXx|sapUi|sap)((?:[A-Z0-9][a-z]*)+)$/; //for getter
+		var mFrozenProperties = Object.create(null);
+		var bFrozen = false;
+		var Configuration;
+
+		function createConfig() {
+			oConfig = Object.create(null);
+			globalThis["sap-ui-config"] ??= {};
+			var mOriginalGlobalParams = {};
+			var oGlobalConfig = globalThis["sap-ui-config"];
+			if (typeof oGlobalConfig === "object")  {
+				for (var sKey in oGlobalConfig) {
+					var sNormalizedKey = camelize("sapUi-" + sKey);
+					var vFrozenValue = mFrozenProperties[sNormalizedKey];
+					if (!sNormalizedKey) {
+						ui5loader._.logger.error("Invalid configuration option '" + sKey + "' in global['sap-ui-config']!");
+					} else if (Object.hasOwn(oConfig, sNormalizedKey)) {
+						ui5loader._.logger.error("Configuration option '" + sKey + "' was already set by '" + mOriginalGlobalParams[sNormalizedKey] + "' and will be ignored!");
+					} else if (Object.hasOwn(mFrozenProperties, sNormalizedKey) && oGlobalConfig[sKey] !== vFrozenValue) {
+						oConfig[sNormalizedKey] = vFrozenValue;
+						ui5loader._.logger.error("Configuration option '" + sNormalizedKey + "' was frozen and cannot be changed to " + oGlobalConfig[sKey] + "!");
+					} else {
+						oConfig[sNormalizedKey] = oGlobalConfig[sKey];
+						mOriginalGlobalParams[sNormalizedKey] = sKey;
+					}
+				}
+			}
+			mOriginalGlobalParams = undefined;
+		}
+		function freeze() {
+			if (!bFrozen) {
+				createConfig();
+				Configuration._.invalidate();
+				bFrozen = true;
+			}
+		}
+
+		function get(sKey, bFreeze) {
+			if (Object.hasOwn(mFrozenProperties,sKey)) {
+				return mFrozenProperties[sKey];
+			}
+			var vValue = oWriteableConfig[sKey] || oConfig[sKey];
+			if (!Object.hasOwn(oConfig, sKey) && !Object.hasOwn(oWriteableConfig, sKey)) {
+				var vMatch = sKey.match(rAlias);
+				var sLowerCaseAlias = vMatch ? vMatch[1] + vMatch[2][0] + vMatch[2].slice(1).toLowerCase() : undefined;
+				if (sLowerCaseAlias) {
+					vValue = oWriteableConfig[sLowerCaseAlias] || oConfig[sLowerCaseAlias];
+				}
+			}
+			if (bFreeze) {
+				mFrozenProperties[sKey] = vValue;
+			}
+			return vValue;
+		}
+
+		function set(sKey, vValue) {
+			if (Object.hasOwn(mFrozenProperties, sKey) || bFrozen) {
+				ui5loader._.logger.error("Configuration option '" + sKey + "' was frozen and cannot be changed to " + vValue + "!");
+			} else {
+				oWriteableConfig[sKey] = vValue;
+			}
+		}
+
+		function setConfiguration(Config) {
+			Configuration = Config;
+		}
+
+		var GlobalConfigurationProvider = {
+			get: get,
+			set: set,
+			freeze: freeze,
+			setConfiguration: setConfiguration,
+			/**
+			 * @deprecated As of Version 1.120
+			 */
+			_: {
+				configLoaded() {
+					return !!globalThis["sap-ui-config"].__loaded;
+				}
+			}
+		};
+
+		createConfig();
+
+		return GlobalConfigurationProvider;
+	});
+
+	define("sap/ui/core/config/BootstrapConfigurationProvider", [
+		"sap/base/strings/_camelize"
+	], function(camelize) {
+		var oConfig = Object.create(null);
+		var rAlias = /^(sapUiXx|sapUi|sap)((?:[A-Z0-9][a-z]*)+)$/; //for getter
+
+		var bootstrap = getBootstrapTag();
+		if (bootstrap.tag) {
+			var dataset = bootstrap.tag.dataset;
+			if (dataset) {
+				for (var sKey in dataset) {
+					var sNormalizedKey = camelize(sKey);
+					if (!sNormalizedKey) {
+						ui5loader._.logger.error("Invalid configuration option '" + sKey + "' in bootstrap!");
+					} else if (Object.hasOwn(oConfig, sNormalizedKey)) {
+						ui5loader._.logger.error("Configuration option '" + sKey + "' already exists and will be ignored!");
+					} else {
+						oConfig[sNormalizedKey] = dataset[sKey];
+					}
+				}
+			}
+		}
+
+		function get(sKey) {
+			var vValue = oConfig[sKey];
+			if (vValue === undefined) {
+				var vMatch = sKey.match(rAlias);
+				var sLowerCaseAlias = vMatch ? vMatch[1] + vMatch[2][0] + vMatch[2].slice(1).toLowerCase() : undefined;
+				if (sLowerCaseAlias) {
+					vValue = oConfig[sLowerCaseAlias];
+				}
+			}
+			return vValue;
+		}
+
+		var BootstrapConfigurationProvider = {
+			get: get
+		};
+
+		return BootstrapConfigurationProvider;
+	});
+
+	define("sap/ui/base/config/URLConfigurationProvider", [
+		"sap/base/strings/_camelize"
+	], function(camelize) {
+		var oConfig = Object.create(null);
+
+		if (globalThis.location) {
+			oConfig = Object.create(null);
+			var mOriginalUrlParams = {};
+			var sLocation = globalThis.location.search;
+			var urlParams = new URLSearchParams(sLocation);
+			urlParams.forEach(function(value, key) {
+				const bSapParam = /sap\-?([Uu]?i\-?)?/.test(key);
+				var sNormalizedKey = camelize(key);
+				if (sNormalizedKey) {
+					if (Object.hasOwn(oConfig, sNormalizedKey)) {
+						ui5loader._.logger.error("Configuration option '" + key + "' was already set by '" + mOriginalUrlParams[sNormalizedKey] + "' and will be ignored!");
+					} else {
+						oConfig[sNormalizedKey] = value;
+						mOriginalUrlParams[sNormalizedKey] = key;
+					}
+				} else if (bSapParam) {
+					ui5loader._.logger.error("Invalid configuration option '" + key + "' in url!");
+				}
+			});
+			mOriginalUrlParams = undefined;
+		}
+
+		function get(sKey) {
+			return oConfig[sKey];
+		}
+
+		var URLConfigurationProvider = {
+			external: true,
+			get: get
+		};
+
+		return URLConfigurationProvider;
+	});
+
+	define("sap/ui/base/config/MetaConfigurationProvider", [
+		"sap/base/strings/_camelize"
+	], function (camelize) {
+		var oConfig = Object.create(null);
+
+		if (globalThis.document) {
+			oConfig = Object.create(null);
+			var mOriginalTagNames = {};
+			var allMetaTags = globalThis.document.querySelectorAll("meta");
+			allMetaTags.forEach(function(tag) {
+				var sNormalizedKey = camelize(tag.name);
+				const bSapParam = /sap\-?([Uu]?i\-?)?/.test(tag.name);
+				if (sNormalizedKey) {
+					if (Object.hasOwn(oConfig, sNormalizedKey)) {
+						ui5loader._.logger.error("Configuration option '" + tag.name + "' was already set by '" + mOriginalTagNames[sNormalizedKey] + "' and will be ignored!");
+					} else {
+						oConfig[sNormalizedKey] = tag.content;
+						mOriginalTagNames[sNormalizedKey] = tag.name;
+					}
+				} else if (tag.name && bSapParam) { // tags without explicit name (tag.name === "") are ignored silently
+					ui5loader._.logger.error("Invalid configuration option '" + tag.name + "' in meta tag!");
+				}
+			});
+			mOriginalTagNames = undefined;
+		}
+
+		function get(sKey) {
+			return oConfig[sKey];
+		}
+
+		var MetaConfigurationProvider = {
+			get: get
+		};
+
+		return MetaConfigurationProvider;
+	});
+
+	define("sap/base/config/_Configuration", [
+		"sap/base/config/GlobalConfigurationProvider"
+	], function _Configuration(GlobalConfigurationProvider) {
+		var rValidKey = /^[a-z][A-Za-z0-9]*$/;
+		var rXXAlias = /^(sapUi(?!Xx))(.*)$/;
+		var mCache = Object.create(null);
+		var aProvider = [GlobalConfigurationProvider];
+		var mUrlParamOptions = {
+			name: "sapUiIgnoreUrlParams",
+			type: "boolean"
+		};
+		var mInternalDefaultValues = {
+			"boolean": false,
+			"code": undefined,
+			"integer": 0,
+			"string": "",
+			"string[]": [],
+			"function[]": [],
+			"function": undefined,
+			"object": {},
+			"mergedObject": {}
+		};
+
+		/**
+		 * Enum for available types of configuration entries.
+		 *
+		 * @enum {string}
+		 * @alias module:sap/base/config.Type
+		 * @private
+		 * @ui5-restricted sap.ui.core, sap.fl, sap.ui.intergration, sap.ui.export
+		 */
+		var TypeEnum = {
+			/**
+			 * defaultValue: false
+			 * @private
+			 * @ui5-restricted sap.ui.core, sap.fl, sap.ui.intergration, sap.ui.export
+			 */
+			"Boolean": "boolean",
+			/**
+			 * defaultValue: undefined
+			 * @private
+			 * @ui5-restricted sap.ui.core, sap.fl, sap.ui.intergration, sap.ui.export
+			 * @deprecated As of Version 1.120
+			 */
+			"Code": "code",
+			/**
+			 * defaultValue: 0
+			 * @private
+			 * @ui5-restricted sap.ui.core, sap.fl, sap.ui.intergration, sap.ui.export
+			 */
+			"Integer": "integer",
+			/**
+			 * defaultValue: ""
+			 * @private
+			 * @ui5-restricted sap.ui.core, sap.fl, sap.ui.intergration, sap.ui.export
+			 */
+			"String": "string",
+			/**
+			 * defaultValue: []
+			 * @private
+			 * @ui5-restricted sap.ui.core, sap.fl, sap.ui.intergration, sap.ui.export
+			 */
+			"StringArray": "string[]",
+			/**
+			 * defaultValue: []
+			 * @private
+			 * @ui5-restricted sap.ui.core, sap.fl, sap.ui.intergration, sap.ui.export
+			 */
+			"FunctionArray": "function[]",
+			/**
+			 * defaultValue: undefined
+			 * @private
+			 * @ui5-restricted sap.ui.core, sap.fl, sap.ui.intergration, sap.ui.export
+			 */
+			"Function": "function",
+			/**
+			 * defaultValue: {}
+			 * @private
+			 * @ui5-restricted sap.ui.core, sap.fl, sap.ui.intergration, sap.ui.export
+			 */
+			"Object":  "object",
+			/**
+			 * defaultValue: {}
+			 * @private
+			 * @ui5-restricted sap.ui.core, sap.fl, sap.ui.intergration, sap.ui.export
+			 */
+			"MergedObject":  "mergedObject"
+		};
+
+		var bGlobalIgnoreExternal = get(mUrlParamOptions);
+
+		function deepClone(src) {
+			if (src == null) {
+				return src;
+			} else if (Array.isArray(src)) {
+				return cloneArray(src);
+			} else if (typeof src === "object") {
+				return cloneObject(src);
+			} else {
+				return src;
+			}
+		}
+
+		function cloneArray(src) {
+			var aClone = [];
+			for (var i = 0; i < src.length; i++) {
+				aClone.push(deepClone(src[i]));
+			}
+
+			return aClone;
+		}
+
+		function cloneObject(src) {
+			var oClone = {};
+
+			for (var key in src) {
+				if (key === "__proto__") {
+					continue;
+				}
+				oClone[key] = deepClone(src[key]);
+			}
+
+			return oClone;
+		}
+
+		/** Register a new Configuration provider
+		 *
+		 * @name module:sap/base/config.registerProvider
+		 * @function
+		 * @param {object} oProvider The provider instance
+		 * @private
+		 * @ui5-restricted sap.ui.core
+		 */
+		function registerProvider(oProvider) {
+			if (aProvider.indexOf(oProvider) === -1) {
+				aProvider.push(oProvider);
+				invalidate();
+				bGlobalIgnoreExternal = get(mUrlParamOptions);
+			}
+		}
+
+		/**
+		 * Converts a given value to the given type.
+		 *
+		 * @name module:sap/base/config.convertToType
+		 * @function
+		 * @param {any} vValue The value to be converted
+		 * @param {string} vType The resulting type
+		 * @param {string} [sName] The property name of the enumeration to check
+		 * @returns {any} The converted value
+		 * @throws {TypeError} Throws an TypeError if the given value could not be converted to the requested type
+		 *
+		 * @private
+		 */
+		function convertToType(vValue, vType, sName) {
+			if (vValue === undefined || vValue === null) {
+				return vValue;
+			}
+
+			if (typeof vType === "string") {
+				switch (vType) {
+					case TypeEnum.Boolean:
+						if (typeof vValue === "string") {
+							return vValue.toLowerCase() === "true" || vValue.toLowerCase() === "x";
+						} else {
+							vValue = !!vValue;
+						}
+						break;
+					/**
+					 * @deprecated As of Version 1.120
+					 */
+					case TypeEnum.Code:
+						vValue = typeof vValue === "function" ? vValue : String(vValue);
+						break;
+					case TypeEnum.Integer:
+						if (typeof vValue === "string") {
+							vValue = parseInt(vValue);
+						}
+						if (typeof vValue !== 'number' && isNaN(vValue)) {
+							throw new TypeError("unsupported value");
+						}
+						break;
+					case TypeEnum.String:
+						vValue = '' + vValue; // enforce string
+						break;
+					case TypeEnum.StringArray:
+						if (Array.isArray(vValue)) {
+							return vValue;
+						} else if (typeof vValue === "string") {
+							// enforce array
+							vValue = vValue ? vValue.split(/[,;]/).map(function(s) {
+								return s.trim();
+							}) : [];
+							return vValue;
+						} else {
+							throw new TypeError("unsupported value");
+						}
+					case TypeEnum.FunctionArray:
+						vValue.forEach(function(fnFunction) {
+							if ( typeof fnFunction !== "function" ) {
+								throw new TypeError("Not a function: " + fnFunction);
+							}
+						});
+						break;
+					case TypeEnum.Function:
+						if (typeof vValue !== "function") {
+							throw new TypeError("unsupported value");
+						}
+						break;
+					case TypeEnum.Object:
+					case TypeEnum.MergedObject:
+						if (typeof vValue === "string") {
+							vValue = JSON.parse(vValue);
+						}
+						if (typeof vValue !== "object") {
+							throw new TypeError("unsupported value");
+						}
+						break;
+					default:
+						throw new TypeError("unsupported type");
+				}
+			} else if (typeof vType === "object" && !Array.isArray(vType)) {
+				vValue = checkEnum(vType, vValue, sName);
+			} else if (typeof vType === "function") {
+				vValue = vType(vValue);
+			} else {
+				throw new TypeError("unsupported type");
+			}
+
+			return vValue;
+		}
+
+		/**
+		 * Checks if a value exists within an enumerable list.
+		 *
+		 * @name module:sap/base/config._.checkEnum
+		 * @function
+		 * @param {object} oEnum Enumeration object with values for validation
+		 * @param {string} sValue Value to check against enumerable list
+		 * @param {string} sPropertyName Name of the property which is checked
+		 * @returns {string} Value passed to the function for check
+		 * @throws {TypeError} If the value could not be found, an TypeError is thrown
+		 *
+		 * @private
+		 */
+		function checkEnum(oEnum, sValue, sPropertyName) {
+			var aValidValues = [];
+			for (var sKey in oEnum) {
+				if (oEnum.hasOwnProperty(sKey)) {
+					if (oEnum[sKey] === sValue) {
+						return sValue;
+					}
+					aValidValues.push(oEnum[sKey]);
+				}
+			}
+			throw new TypeError("Unsupported Enumeration value for " + sPropertyName + ", valid values are: " + aValidValues.join(", "));
+		}
+
+		/**
+		 * Generic getter for configuration options that are not explicitly exposed via a dedicated own getter.
+		 *
+		 * @name module:sap/base/config.get
+		 * @function
+		 * @param {object} mOptions The options object that contains the following properties
+		 * @param {string} mOptions.name Name of the configuration parameter. Must start with 'sapUi/sapUiXx' prefix followed by letters only. The name must be camel-case
+		 * @param {module:sap/base/config.Type|object<string, string>|function} mOptions.type Type of the configuration parameter. This argument can be a <code>module:sap/base/config.Type</code>, object or function.
+		 * @param {any} [mOptions.defaultValue=undefined] Default value of the configuration parameter corresponding to the given type or a function returning the default value.
+		 * @param {boolean} [mOptions.external=false] Whether external (e.g. url-) parameters should be included or not
+		 * @param {boolean} [mOptions.freeze=false] Freezes parameter and parameter can't be changed afterwards.
+		 * @returns {any} Value of the configuration parameter
+		 * @throws {TypeError} Throws an error if the given parameter name does not match the definition.
+		 * @private
+		 * @ui5-restricted sap.ui.core, sap.fl, sap.ui.intergration, sap.ui.export
+		 */
+		function get(mOptions) {
+			if (typeof mOptions.name !== "string" || !rValidKey.test(mOptions.name)) {
+				throw new TypeError(
+					"Invalid configuration key '" + mOptions.name + "'!"
+				);
+			}
+			var sCacheKey = mOptions.name;
+			if (mOptions.provider) {
+				sCacheKey += "-" + mOptions.provider.getId();
+			}
+			if (!(sCacheKey in mCache)) {
+				mOptions = Object.assign({}, mOptions);
+				var vValue;
+
+				var bIgnoreExternal = bGlobalIgnoreExternal || !mOptions.external;
+				var sName = mOptions.name;
+				var vMatch = sName.match(rXXAlias);
+				var vDefaultValue = mOptions.hasOwnProperty("defaultValue") ? mOptions.defaultValue : mInternalDefaultValues[mOptions.type];
+
+				const aAllProvider = [...aProvider, ...(mOptions.provider ? [mOptions.provider] : [])];
+
+				for (var i = aAllProvider.length - 1; i >= 0; i--) {
+					if (!aAllProvider[i].external || !bIgnoreExternal) {
+						const vProviderValue = convertToType(aAllProvider[i].get(sName, mOptions.freeze), mOptions.type, mOptions.name);
+						if (vProviderValue !== undefined) {
+							if (mOptions.type === TypeEnum.MergedObject) {
+								vValue = Object.assign({}, vProviderValue, vValue);
+							} else {
+								vValue = vProviderValue;
+								break;
+							}
+						}
+					}
+				}
+				if (vValue === undefined && (vMatch && vMatch[1] === "sapUi")) {
+					mOptions.name = vMatch[1] + "Xx" + vMatch[2];
+					vValue = get(mOptions);
+				}
+				if (vValue === undefined) {
+					if (typeof vDefaultValue === 'function') {
+						vDefaultValue = vDefaultValue();
+					}
+					vValue = vDefaultValue;
+				}
+				mCache[sCacheKey] = vValue;
+			}
+			var vCachedValue = mCache[sCacheKey];
+			if (typeof mOptions.type !== 'function' && (mOptions.type === TypeEnum.StringArray || mOptions.type === TypeEnum.Object || mOptions.type === TypeEnum.MergedObject)) {
+				vCachedValue = deepClone(vCachedValue);
+			}
+			return vCachedValue;
+		}
+
+		function invalidate() {
+			mCache = Object.create(null);
+		}
+
+		/**
+		 * Returns a writable base configuration instance
+		 * @returns {module:sap/base/config/_Configuration} The writable base configuration
+		 */
+		function getWritableBootInstance() {
+			var oProvider = aProvider[0];
+
+			return {
+				set: function(sName, vValue) {
+					var rValidKey = /^[a-z][A-Za-z0-9]*$/;
+					if (rValidKey.test(sName)) {
+						oProvider.set(sName, vValue);
+						invalidate();
+					} else {
+						throw new TypeError(
+							"Invalid configuration key '" + sName + "'!"
+						);
+					}
+				},
+				get: get,
+				Type: TypeEnum
+			};
+		}
+
+		var Configuration = {
+			get: get,
+			getWritableBootInstance: getWritableBootInstance,
+			registerProvider: registerProvider,
+			Type: TypeEnum,
+			_: {
+				checkEnum: checkEnum,
+				invalidate: invalidate
+			}
+		};
+
+		//forward Configuration to Global provider to invalidate the cache when freezing
+		GlobalConfigurationProvider.setConfiguration(Configuration);
+
+		return Configuration;
+	});
+
+	globalThis.define = origDefine;
+
+	function _setupConfiguration() {
+		var BaseConfiguration = sap.ui.require('sap/base/config/_Configuration');
+		//register config provider
+		BaseConfiguration.registerProvider(sap.ui.require("sap/ui/core/config/BootstrapConfigurationProvider"));
+		BaseConfiguration.registerProvider(sap.ui.require("sap/ui/base/config/MetaConfigurationProvider"));
+		BaseConfiguration.registerProvider(sap.ui.require("sap/ui/base/config/URLConfigurationProvider"));
+	}
+
+	/** init configuration */
+	_setupConfiguration();
+
+	var BaseConfig = sap.ui.require("sap/base/config/_Configuration");
+
+	/** autoconfig */
+	var sBaseUrl, bNojQuery,
 		aScripts, rBootScripts, i,
-		oBootstrapScript, sBootstrapUrl, bExposeAsAMDLoader = false;
+		sBootstrapUrl, bExposeAsAMDLoader = false;
 
 	function findBaseUrl(oScript, rUrlPattern) {
 		var sUrl = oScript && oScript.getAttribute("src"),
 			oMatch = rUrlPattern.exec(sUrl);
 		if ( oMatch ) {
 			sBaseUrl = oMatch[1] || "";
-			oBootstrapScript = oScript;
 			sBootstrapUrl = sUrl;
-			bNojQuery = /sap-ui-core-nojQuery\.js(?:\?|#|$)/.test(sUrl);
+			bNojQuery = /sap-ui-core-nojQuery\.js(?:[?#]|$)/.test(sUrl);
 			return true;
 		}
+		return false;
 	}
 
 	function ensureSlash(path) {
 		return path && path[path.length - 1] !== '/' ? path + '/' : path;
 	}
 
-	if (ui5loader == null) {
-		throw new Error("ui5loader-autoconfig.js: ui5loader is needed, but could not be found");
-	}
-
 	// Prefer script tags which have the sap-ui-bootstrap ID
 	// This prevents issues when multiple script tags point to files named
 	// "sap-ui-core.js", for example when using the cache buster for UI5 resources
-	if ( !findBaseUrl(document.querySelector('SCRIPT[src][id=sap-ui-bootstrap]'), /^((?:.*\/)?resources\/)/ ) ) {
+	if ( !findBaseUrl(document.querySelector('SCRIPT[src][id=sap-ui-bootstrap]'), /^((?:[^?#]*\/)?resources\/)/ ) ) {
 
 		// only when there's no such script tag, check all script tags
-		rBootScripts = /^(.*\/)?(?:sap-ui-(?:core|custom|boot|merged)(?:-\w*)?|jquery.sap.global|ui5loader(?:-autoconfig)?)\.js(?:[?#]|$)/;
+		rBootScripts = /^([^?#]*\/)?(?:sap-ui-(?:core|custom|boot|merged)(?:-[^?#/]*)?|jquery.sap.global|ui5loader(?:-autoconfig)?)\.js(?:[?#]|$)/;
 		aScripts = document.scripts;
 		for ( i = 0; i < aScripts.length; i++ ) {
 			if ( findBaseUrl(aScripts[i], rBootScripts) ) {
@@ -62,10 +793,12 @@
 	}
 
 	// configuration via window['sap-ui-config'] always overrides an auto detected base URL
-	if ( typeof oCfg === 'object'
-		 && typeof oCfg.resourceRoots === 'object'
-		 && typeof oCfg.resourceRoots[''] === 'string' ) {
-		sBaseUrl = oCfg.resourceRoots[''];
+	var mResourceRoots = BaseConfig.get({
+		name: "sapUiResourceRoots",
+		type: BaseConfig.Type.MergedObject
+	});
+	if (typeof mResourceRoots[''] === 'string' ) {
+		sBaseUrl = mResourceRoots[''];
 	}
 
 	if (sBaseUrl == null) {
@@ -82,10 +815,16 @@
 		} catch (e) { /* no warning, as this will happen on every startup, depending on browser settings */ }
 
 		/*
-		* Determine whether sap-bootstrap-debug is set, run debugger statement
-		* to allow early debugging in browsers with broken dev tools
-		*/
-		if (/sap-bootstrap-debug=(true|x|X)/.test(location.search)) {
+		 * Determine whether sap-bootstrap-debug is set, run debugger statement
+		 * to allow early debugging in browsers with broken dev tools
+		 */
+		var bDebugBootstrap = BaseConfig.get({
+			name: "sapBootstrapDebug",
+			type: BaseConfig.Type.Boolean,
+			external: true,
+			freeze: true
+		});
+		if (bDebugBootstrap) {
 			/*eslint-disable no-debugger */
 			debugger;
 			/*eslint-enable no-debugger */
@@ -111,8 +850,13 @@
 	 */
 	(function() {
 		// check URI param
-		var mUrlMatch = /(?:^|\?|&)sap-ui-debug=([^&]*)(?:&|$)/.exec(window.location.search),
-			vDebugInfo = mUrlMatch && decodeURIComponent(mUrlMatch[1]);
+		var vDebugInfo = BaseConfig.get({
+			name: "sapUiDebug",
+			type: BaseConfig.Type.String,
+			defaultValue: false,
+			external: true,
+			freeze: true
+		});
 
 		// check local storage
 		try {
@@ -120,9 +864,6 @@
 		} catch (e) {
 			// access to localStorage might be disallowed
 		}
-
-		// check bootstrapScript attribute
-		vDebugInfo = vDebugInfo || (oBootstrapScript && oBootstrapScript.getAttribute("data-sap-ui-debug"));
 
 		// normalize vDebugInfo; afterwards, it either is a boolean or a string not representing a boolean
 		if ( typeof vDebugInfo === 'string' ) {
@@ -142,11 +883,16 @@
 		// export resulting debug mode under legacy property
 		window["sap-ui-debug"] = vDebugInfo;
 
+		// check for optimized sources by testing variable names in a local function
+		// (check for native API ".getAttribute" to make sure that the function's source can be retrieved)
+		window["sap-ui-optimized"] = window["sap-ui-optimized"] ||
+			(/\.getAttribute/.test(findBaseUrl) && !/oScript/.test(findBaseUrl));
+
 		if ( window["sap-ui-optimized"] && vDebugInfo ) {
 			// if current sources are optimized and any debug sources should be used, enable the "-dbg" suffix
 			window['sap-ui-loaddbg'] = true;
-			// if debug sources should be used in general, restart with debug URL
-			if ( vDebugInfo === true ) {
+			// if debug sources should be used in general, restart with debug URL (if not disabled, e.g. by test runner)
+			if ( vDebugInfo === true && !window["sap-ui-debug-no-reboot"] ) {
 				var sDebugUrl;
 				if ( sBootstrapUrl != null ) {
 					sDebugUrl = sBootstrapUrl.replace(/\/(?:sap-ui-cachebuster\/)?([^\/]+)\.js/, "/$1-dbg.js");
@@ -157,7 +903,7 @@
 				}
 				// revert changes to global names
 				ui5loader.config({
-					exposeAsAMDLoader:false
+					amd:false
 				});
 				window["sap-ui-optimized"] = false;
 
@@ -217,37 +963,69 @@
 
 	})();
 
-	function _getOption(name, defaultValue, pattern) {
-		// check for an URL parameter ...
-		var match = window.location.search.match(new RegExp("(?:^\\??|&)sap-ui-" + name + "=([^&]*)(?:&|$)"));
-		if ( match && (pattern == null || pattern.test(match[1])) ) {
-			return match[1];
-		}
-		// ... or an attribute of the bootstrap tag
-		var attrValue = oBootstrapScript && oBootstrapScript.getAttribute("data-sap-ui-" + name.toLowerCase());
-		if ( attrValue != null && (pattern == null || pattern.test(attrValue)) ) {
-			return attrValue;
-		}
-		// ... or an entry in the global config object
-		if ( Object.prototype.hasOwnProperty.call(oCfg, name) && (pattern == null || pattern.test(oCfg[name])) ) {
-			return oCfg[name];
-		}
-		// if no valid config value is found, fall back to a system default value
-		return defaultValue;
-	}
-
-	function _getBooleanOption(name, defaultValue) {
-		return /^(?:true|x|X)$/.test( _getOption(name, defaultValue, /^(?:true|x|X|false)$/) );
-	}
-
-	if ( _getBooleanOption("xx-async", false) ) {
+	if (BaseConfig.get({
+		name: "sapUiAsync",
+		type: BaseConfig.Type.Boolean,
+		external: true,
+		freeze: true
+	})) {
 		ui5loader.config({
 			async: true
 		});
 	}
 
+	// Note: loader converts any NaN value to a default value
+	ui5loader._.maxTaskDuration = BaseConfig.get({
+		name: "sapUiXxMaxLoaderTaskDuration",
+		type: BaseConfig.Type.Integer,
+		defaultValue: undefined,
+		external: true,
+		freeze: true
+	});
+
 	// support legacy switch 'noLoaderConflict', but 'amdLoader' has higher precedence
-	var bExposeAsAMDLoader = _getBooleanOption("amd", !_getBooleanOption("noLoaderConflict", true));
+	bExposeAsAMDLoader = BaseConfig.get({
+		name: "sapUiAmd",
+		type: BaseConfig.Type.Boolean,
+		defaultValue: !BaseConfig.get({
+			name: "sapUiNoLoaderConflict",
+			type: BaseConfig.Type.Boolean,
+			defaultValue: true,
+			external: true,
+			freeze: true
+		}),
+		external: true,
+		freeze: true
+	});
+
+	//calculate syncCallBehavior
+	let syncCallBehavior = 0; // ignore
+	const sNoSync = BaseConfig.get({
+		name: "sapUiXxNoSync",
+		type: BaseConfig.Type.String,
+		external: true,
+		freeze: true
+	});
+	if (sNoSync === 'warn') {
+		syncCallBehavior = 1;
+	} else if (/^(true|x)$/i.test(sNoSync)) {
+		syncCallBehavior = 2;
+	}
+
+	/**
+	 * @deprectaed As of Version 1.120
+	 */
+	(() => {
+		const GlobalConfigurationProvider = sap.ui.require("sap/base/config/GlobalConfigurationProvider");
+		if ( syncCallBehavior && GlobalConfigurationProvider._.configLoaded()) {
+			const sMessage = "[nosync]: configuration loaded via sync XHR";
+			if (syncCallBehavior === 1) {
+				ui5loader._.logger.warning(sMessage);
+			} else {
+				ui5loader._.logger.error(sMessage);
+			}
+		}
+	})();
 
 	ui5loader.config({
 		baseUrl: sBaseUrl,
@@ -272,11 +1050,17 @@
 				'signals': 'sap/ui/thirdparty/signals',
 				'URI': 'sap/ui/thirdparty/URI',
 				'URITemplate': 'sap/ui/thirdparty/URITemplate',
-				'esprima': 'sap/ui/demokit/js/esprima'
+				'esprima': 'sap/ui/documentation/sdk/thirdparty/esprima'
 			}
 		},
 
+		reportSyncCalls: syncCallBehavior,
+
 		shim: {
+			'sap/ui/thirdparty/bignumber': {
+				amd: true,
+				exports: 'BigNumber'
+			},
 			'sap/ui/thirdparty/blanket': {
 				amd: true,
 				exports: 'blanket' // '_blanket', 'esprima', 'falafel', 'inBrowser', 'parseAndModify'
@@ -297,14 +1081,6 @@
 			'sap/ui/thirdparty/datajs': {
 				amd: true,
 				exports: 'OData' // 'datajs'
-			},
-			'sap/ui/thirdparty/es6-promise': {
-				amd: true,
-				exports: 'ES6Promise'
-			},
-			'sap/ui/thirdparty/flexie': {
-				amd: false,
-				exports: 'Flexie'
 			},
 			'sap/ui/thirdparty/handlebars': {
 				amd: true,
@@ -329,16 +1105,52 @@
 			},
 			'sap/ui/thirdparty/jquery': {
 				amd: true,
+				exports: 'jQuery',
+				deps: ['sap/ui/thirdparty/jquery-compat']
+			},
+			'sap/ui/thirdparty/jqueryui/jquery-ui-datepicker': {
+				deps: ['sap/ui/thirdparty/jqueryui/jquery-ui-core'],
+				exports: 'jQuery'
+			},
+			'sap/ui/thirdparty/jqueryui/jquery-ui-draggable': {
+				deps: ['sap/ui/thirdparty/jqueryui/jquery-ui-mouse'],
+				exports: 'jQuery'
+			},
+			'sap/ui/thirdparty/jqueryui/jquery-ui-droppable': {
+				deps: ['sap/ui/thirdparty/jqueryui/jquery-ui-mouse', 'sap/ui/thirdparty/jqueryui/jquery-ui-draggable'],
+				exports: 'jQuery'
+			},
+			'sap/ui/thirdparty/jqueryui/jquery-ui-effect': {
+				deps: ['sap/ui/thirdparty/jquery'],
+				exports: 'jQuery'
+			},
+			'sap/ui/thirdparty/jqueryui/jquery-ui-mouse': {
+				deps: ['sap/ui/thirdparty/jqueryui/jquery-ui-core', 'sap/ui/thirdparty/jqueryui/jquery-ui-widget'],
 				exports: 'jQuery'
 			},
 			'sap/ui/thirdparty/jqueryui/jquery-ui-position': {
-				amd: true,
+				deps: ['sap/ui/thirdparty/jquery'],
+				exports: 'jQuery'
+			},
+			'sap/ui/thirdparty/jqueryui/jquery-ui-resizable': {
+				deps: ['sap/ui/thirdparty/jqueryui/jquery-ui-mouse'],
+				exports: 'jQuery'
+			},
+			'sap/ui/thirdparty/jqueryui/jquery-ui-selectable': {
+				deps: ['sap/ui/thirdparty/jqueryui/jquery-ui-mouse'],
+				exports: 'jQuery'
+			},
+			'sap/ui/thirdparty/jqueryui/jquery-ui-sortable': {
+				deps: ['sap/ui/thirdparty/jqueryui/jquery-ui-mouse'],
+				exports: 'jQuery'
+			},
+			'sap/ui/thirdparty/jqueryui/jquery-ui-widget': {
 				deps: ['sap/ui/thirdparty/jquery'],
 				exports: 'jQuery'
 			},
 			'sap/ui/thirdparty/jquery-mobile-custom': {
 				amd: true,
-				deps: ['sap/ui/thirdparty/jquery'],
+				deps: ['sap/ui/thirdparty/jquery', 'sap/ui/Device'],
 				exports: 'jQuery.mobile'
 			},
 			'sap/ui/thirdparty/jszip': {
@@ -349,10 +1161,6 @@
 				amd: true,
 				exports: 'less'
 			},
-			'sap/ui/thirdparty/mobify-carousel': {
-				amd: false,
-				exports: 'Mobify' // or Mobify.UI.Carousel?
-			},
 			'sap/ui/thirdparty/qunit-2': {
 				amd: false,
 				exports: 'QUnit'
@@ -360,6 +1168,11 @@
 			'sap/ui/thirdparty/punycode': {
 				amd: true,
 				exports: 'punycode'
+			},
+			'sap/ui/thirdparty/RequestRecorder': {
+				amd: true,
+				exports: 'RequestRecorder',
+				deps: ['sap/ui/thirdparty/URI', 'sap/ui/thirdparty/sinon']
 			},
 			'sap/ui/thirdparty/require': {
 				exports: 'define' // 'require', 'requirejs'
@@ -384,14 +1197,6 @@
 				amd: true,
 				exports: 'sinon' // really sinon! sinon-server is a subset of server and uses the same global for export
 			},
-			'sap/ui/thirdparty/unorm': {
-				amd: false,
-				exports: 'UNorm'
-			},
-			'sap/ui/thirdparty/unormdata': {
-				exports: 'UNorm', // really 'UNorm'! module extends UNorm
-				deps: ['sap/ui/thirdparty/unorm']
-			},
 			'sap/ui/thirdparty/URI': {
 				amd: true,
 				exports: 'URI'
@@ -413,62 +1218,58 @@
 				amd: true,
 				exports: 'esprima'
 			},
-			'sap/ui/thirdparty/RequestRecorder': {
+			'sap/ui/documentation/sdk/thirdparty/esprima': {
 				amd: true,
-				exports: 'RequestRecorder',
-				deps: ['sap/ui/thirdparty/URI', 'sap/ui/thirdparty/sinon.js']
+				exports: 'esprima'
+			},
+			'sap/viz/libs/canvg': {
+				deps: ['sap/viz/libs/rgbcolor']
+			},
+			'sap/viz/libs/rgbcolor': {
 			},
 			'sap/viz/libs/sap-viz': {
-				amd: true
-			},
-			'sap/viz/libs/sap-viz-info-framework': {
-				amd: true
+				deps: ['sap/viz/library', 'sap/ui/thirdparty/jquery', 'sap/ui/thirdparty/d3', 'sap/viz/libs/canvg']
 			},
 			'sap/viz/libs/sap-viz-info-charts': {
-				amd: true
+				deps: ['sap/viz/libs/sap-viz-info-framework']
 			},
-			'sap/viz/container/libs/sap-viz-controls-vizcontainer': {
-				amd: true
+			'sap/viz/libs/sap-viz-info-framework': {
+				deps: ['sap/ui/thirdparty/jquery', 'sap/ui/thirdparty/d3']
 			},
-			'sap/viz/controls/libs/sap-viz-vizframe': {
-				amd: true
+			'sap/viz/ui5/container/libs/sap-viz-controls-vizcontainer': {
+				deps: ['sap/viz/libs/sap-viz', 'sap/viz/ui5/container/libs/common/libs/rgbcolor/rgbcolor_static']
 			},
-			'sap/viz/controls/libs/sap-viz-vizservices': {
-				amd: true
+			'sap/viz/ui5/controls/libs/sap-viz-vizframe/sap-viz-vizframe': {
+				deps: ['sap/viz/libs/sap-viz-info-charts']
 			},
-			'sap/ui/thirdparty/bignumber': {
-				amd: true,
-				exports: 'BigNumber'
+			'sap/viz/ui5/controls/libs/sap-viz-vizservices/sap-viz-vizservices': {
+				deps: ['sap/viz/libs/sap-viz-info-charts']
+			},
+			'sap/viz/resources/chart/templates/standard_fiori/template': {
+				deps: ['sap/viz/libs/sap-viz-info-charts']
 			}
 		}
 	});
 
-	// hide sap.ui.define calls from dependency analyzers
-	var _define = sap['ui']['define'];
+	var defineModuleSync = ui5loader._.defineModuleSync;
 
-	// @evo-todo introduce an internal API for these registrations as the declarations should be synchronous
-	_define('ui5loader', function() {
-		return undefined;
-	});
-
-	_define('ui5loader-autoconfig', function() {
-		return undefined;
-	});
+	defineModuleSync('ui5loader.js', null);
+	defineModuleSync('ui5loader-autoconfig.js', null);
 
 	if (bNojQuery && typeof jQuery === 'function') {
 		// when we're executed in the context of the sap-ui-core-noJQuery file,
 		// we try to detect an existing jQuery / jQuery position plugin and register them as modules
-		_define('sap/ui/thirdparty/jquery', function() {
-			return jQuery;
-		});
-		if (jQuery.prototype.position) {
-			_define('sap/ui/thirdparty/jqueryui/jquery-ui-position', function() {
-				return jQuery;
-			});
+		defineModuleSync('sap/ui/thirdparty/jquery.js', jQuery);
+		if (jQuery.ui && jQuery.ui.position) {
+			defineModuleSync('sap/ui/thirdparty/jqueryui/jquery-ui-position.js', jQuery);
 		}
 	}
 
-	var sMainModule = oBootstrapScript && oBootstrapScript.getAttribute('data-sap-ui-main');
+	var sMainModule = BaseConfig.get({
+		name: "sapUiMain",
+		type: BaseConfig.Type.String,
+		freeze: true
+	});
 	if ( sMainModule ) {
 		sap.ui.require(sMainModule.trim().split(/\s*,\s*/));
 	}

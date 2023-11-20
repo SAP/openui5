@@ -1,0 +1,11 @@
+#text1, #text2, #text3, #text4, #text5, #text6, #text7, #text8 {
+	margin: 0.4375em 0.4375em 0em 0.4375em;
+}
+#text4 {
+	font-weight: bold;
+}
+
+#heading {
+	font-size: 1rem;
+	font-weight: bold;
+}

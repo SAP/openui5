@@ -1,0 +1,50 @@
+<mvc:View
+	xmlns:core="sap.ui.core"
+	xmlns="sap.m"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:w="sap.ui.integration.widgets"
+	xmlns:f="sap.f"
+	displayBlock="true"
+	controllerName="sap.f.cardsdemo.controller.Preview">
+	<Page id="previewPage" title="{i18n>appTitle}">
+		<subHeader>
+			<Toolbar>
+				<ToolbarSpacer />
+				<Title text="Preview" />
+				<ToolbarSpacer/>
+			</Toolbar>
+		</subHeader>
+
+		<Select items="{previewModes>/allModes}" selectedKey="{previewModes>/selectedMode}">
+			<core:Item text="{previewModes>}" key="{previewModes>}" />
+		</Select>
+
+		<f:GridContainer class="sapUiSmallMargin">
+			<w:Card manifest="{manifests>/preview/list}" baseUrl="{cardsPlayground>/playgroundBaseUrl}" previewMode="{previewModes>/selectedMode}">
+				<w:layoutData>
+					<f:GridContainerItemLayoutData columns="4" />
+				</w:layoutData>
+			</w:Card>
+			<w:Card manifest="{cardsPlayground>/playgroundBaseUrl}/bundles/componentWithPreview/manifest.json" previewMode="{previewModes>/selectedMode}">
+				<w:layoutData>
+					<f:GridContainerItemLayoutData columns="4" />
+				</w:layoutData>
+			</w:Card>
+			<w:Card manifest="{manifests>/preview/listWithActionsStrip}" baseUrl="{cardsPlayground>/playgroundBaseUrl}" previewMode="{previewModes>/selectedMode}">
+				<w:layoutData>
+					<f:GridContainerItemLayoutData columns="3" />
+				</w:layoutData>
+			</w:Card>
+			<w:Card manifest="{manifests>/preview/table}" baseUrl="{cardsPlayground>/playgroundBaseUrl}" previewMode="{previewModes>/selectedMode}">
+				<w:layoutData>
+					<f:GridContainerItemLayoutData columns="5" />
+				</w:layoutData>
+			</w:Card>
+			<w:Card manifest="{manifests>/preview/adaptive}" baseUrl="{cardsPlayground>/playgroundBaseUrl}" previewMode="{previewModes>/selectedMode}">
+				<w:layoutData>
+					<f:GridContainerItemLayoutData columns="4" />
+				</w:layoutData>
+			</w:Card>
+		</f:GridContainer>
+	</Page>
+</mvc:View>

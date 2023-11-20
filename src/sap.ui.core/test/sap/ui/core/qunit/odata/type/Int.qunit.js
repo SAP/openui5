@@ -1,29 +1,30 @@
 /*!
  * ${copyright}
  */
-sap.ui.require([
-	"jquery.sap.global",
+sap.ui.define([
+	"sap/base/Log",
+	"sap/base/i18n/Localization",
 	"sap/ui/core/Control",
 	"sap/ui/core/format/NumberFormat",
 	"sap/ui/model/FormatException",
 	"sap/ui/model/ParseException",
 	"sap/ui/model/ValidateException",
+	"sap/ui/model/odata/type/Byte",
 	"sap/ui/model/odata/type/Int",
+	"sap/ui/model/odata/type/Int16",
+	"sap/ui/model/odata/type/Int32",
 	"sap/ui/model/odata/type/ODataType",
+	"sap/ui/model/odata/type/SByte",
 	"sap/ui/test/TestUtils"
-], function (jQuery, Control, NumberFormat, FormatException, ParseException, ValidateException, Int,
-		ODataType, TestUtils) {
+], function (Log, Localization, Control, NumberFormat, FormatException,
+		ParseException, ValidateException, Byte, Int, Int16, Int32, ODataType, SByte, TestUtils) {
 	/*global QUnit, sinon */
 	"use strict";
 
-	var sDefaultLanguage = sap.ui.getCore().getConfiguration().getLanguage();
+	var sDefaultLanguage = Localization.getLanguage();
 
-	function anyInt(sName, iMin, iMax) {
+	function anyInt(TypeClass, sName, iMin, iMax) {
 		var oType;
-
-		function createType(oFormatOptions, oConstraints) {
-			return new (jQuery.sap.getObject(sName))(oFormatOptions, oConstraints);
-		}
 
 		function testRange(assert, iValue, sExpectedMessage) {
 			TestUtils.withNormalizedMessages(function () {
@@ -40,14 +41,14 @@ sap.ui.require([
 		//*****************************************************************************************
 		QUnit.module(sName, {
 			beforeEach : function () {
-				this.oLogMock = this.mock(jQuery.sap.log);
+				this.oLogMock = this.mock(Log);
 				this.oLogMock.expects("warning").never();
 				this.oLogMock.expects("error").never();
-				sap.ui.getCore().getConfiguration().setLanguage("en-US");
-				oType = createType();
+				Localization.setLanguage("en-US");
+				oType = new TypeClass();
 			},
 			afterEach : function () {
-				sap.ui.getCore().getConfiguration().setLanguage(sDefaultLanguage);
+				Localization.setLanguage(sDefaultLanguage);
 			}
 		});
 
@@ -61,9 +62,29 @@ sap.ui.require([
 			assert.strictEqual(oType.oFormat, null, "no formatter preload");
 		});
 
+		//*****************************************************************************************
+		QUnit.test("constructor calls checkParseEmptyValueToZero", function (assert) {
+			var oConstraints = {nullable : false}; // otherwise there are no constraints set to the type
+			var oFormatOptions = {"~formatOption" : "foo"};
+
+			var oExpectation = this.mock(ODataType.prototype).expects("checkParseEmptyValueToZero")
+					.withExactArgs()
+					.callsFake(function () {
+						assert.deepEqual(this.oConstraints, oConstraints);
+						assert.strictEqual(this.oFormatOptions, oFormatOptions);
+					});
+
+			// code under test
+			var oType = new TypeClass(oFormatOptions, oConstraints);
+
+			assert.ok(oExpectation.calledOn(oType));
+			assert.deepEqual(oType.oConstraints, oConstraints);
+			assert.strictEqual(oType.oFormatOptions, oFormatOptions);
+		});
+
 		QUnit.test("construct with null values for 'oFormatOptions' and 'oConstraints",
 			function (assert) {
-				var oType = createType(null, null);
+				var oType = new TypeClass(null, null);
 
 				assert.deepEqual(oType.oFormatOptions, null, "no format options");
 				assert.deepEqual(oType.oConstraints, undefined, "default constraints");
@@ -74,7 +95,7 @@ sap.ui.require([
 
 			oType.formatValue(1234, "string"); // ensure that there is a formatter to remove
 			oControl.bindProperty("tooltip", {path : "/unused", type : oType});
-			sap.ui.getCore().getConfiguration().setLanguage("de-CH");
+			Localization.setLanguage("de-CH");
 			assert.strictEqual(oType.oFormat, null, "localization change resets formatter");
 			oType.formatValue(1234, "int");
 			assert.strictEqual(oType.oFormat, null, "no formatter for int");
@@ -127,17 +148,27 @@ sap.ui.require([
 			assert.strictEqual(oType.parseValue(1234, "int"), 1234, "number parsed from int");
 
 			assert.strictEqual(oType.parseValue(null, "foo"), null, "null accepted for any type");
-			assert.strictEqual(oType.parseValue("", "foo"), null,
-				"empty string becomes null for any type");
 
-			sap.ui.getCore().getConfiguration().setLanguage("de-DE");
-			oType = new (jQuery.sap.getObject(sName))();
+			Localization.setLanguage("de-DE");
+			oType = new TypeClass();
 			assert.strictEqual(oType.parseValue(1234.001, "float"), 1234,
 				"don't parse float as string");
 
 			this.mock(oType).expects("getPrimitiveType").withExactArgs("sap.ui.core.CSSSize")
 				.returns("string");
 			assert.strictEqual(oType.parseValue("1234", "sap.ui.core.CSSSize"), 1234);
+		});
+
+		//*****************************************************************************************
+		QUnit.test("parseValue calls getEmptyValue", function (assert) {
+			var oType = new TypeClass();
+
+			this.mock(oType).expects("getEmptyValue")
+				.withExactArgs("~emptyString", /*bNumeric*/ true)
+				.returns("~emptyValue");
+
+			// code under test
+			assert.strictEqual(oType.parseValue("~emptyString", "foo"), "~emptyValue");
 		});
 
 		["foo", "123.809"].forEach(function (oValue) {
@@ -172,7 +203,7 @@ sap.ui.require([
 			QUnit.test("setConstraints: nullable=" + bNullable, function (assert) {
 				var oExpectedConstraints = bNullable === false ? {nullable : false} : undefined;
 
-				oType = new (jQuery.sap.getObject(sName))({},
+				oType = new TypeClass({},
 					{minimum : -100, maximum : 100, nullable : bNullable});
 				assert.deepEqual(oType.oConstraints, oExpectedConstraints,
 					"only nullable accepted");
@@ -186,13 +217,15 @@ sap.ui.require([
 		});
 
 		QUnit.test("validate w/ decimal", function (assert) {
-			try {
-				oType.validateValue(123.456);
-				assert.ok(false, "Expected ValidateException not thrown");
-			} catch (e) {
-				assert.ok(e instanceof ValidateException);
-				assert.strictEqual(e.message, "Enter a number with no decimal places");
-			}
+			TestUtils.withNormalizedMessages(function () {
+				try {
+					oType.validateValue(123.456);
+					assert.ok(false, "Expected ValidateException not thrown");
+				} catch (e) {
+					assert.ok(e instanceof ValidateException);
+					assert.strictEqual(e.message, "EnterInt");
+				}
+			});
 		});
 
 		QUnit.test("range tests", function (assert) {
@@ -215,29 +248,29 @@ sap.ui.require([
 			this.oLogMock.expects("warning")
 				.withExactArgs("Illegal nullable: 42", null, sName);
 
-			oType = new (jQuery.sap.getObject(sName))({});
+			oType = new TypeClass({});
 			assert.strictEqual(oType.oConstraints, undefined);
 
-			oType = new (jQuery.sap.getObject(sName))({}, {nullable : true});
+			oType = new TypeClass({}, {nullable : true});
 			assert.strictEqual(oType.oConstraints, undefined);
 
-			oType = new (jQuery.sap.getObject(sName))({}, {nullable : "true"});
+			oType = new TypeClass({}, {nullable : "true"});
 			assert.strictEqual(oType.oConstraints, undefined);
 
-			oType = new (jQuery.sap.getObject(sName))({}, {nullable : undefined});
+			oType = new TypeClass({}, {nullable : undefined});
 			assert.strictEqual(oType.oConstraints, undefined);
 
-			oType = new (jQuery.sap.getObject(sName))({}, {nullable : 42});
+			oType = new TypeClass({}, {nullable : 42});
 			assert.strictEqual(oType.oConstraints, undefined);
 
-			oType = new (jQuery.sap.getObject(sName))({}, {nullable : false});
+			oType = new TypeClass({}, {nullable : false});
 			assert.strictEqual(oType.oConstraints.nullable, false);
 
-			oType = new (jQuery.sap.getObject(sName))({}, {nullable : "false"});
+			oType = new TypeClass({}, {nullable : "false"});
 			assert.strictEqual(oType.oConstraints.nullable, false);
 
 			TestUtils.withNormalizedMessages(function () {
-				oType = createType({}, {nullable : false});
+				oType = new TypeClass({}, {nullable : false});
 				try {
 					oType.validateValue(null);
 					assert.ok(false);
@@ -257,7 +290,7 @@ sap.ui.require([
 		}].forEach(function (oFixture) {
 			QUnit.test("formatOptions: " + JSON.stringify(oFixture.set), function (assert) {
 				var oSpy,
-					oType = createType(oFixture.set);
+					oType = new TypeClass(oFixture.set);
 
 				assert.deepEqual(oType.oFormatOptions, oFixture.set);
 
@@ -268,8 +301,9 @@ sap.ui.require([
 		});
 
 		QUnit.test("format: bad input type", function (assert) {
+			// no need to use UI5Date.getInstance as date value doesn't matter
 			var oBadModelValue = new Date(),
-				oType = createType();
+				oType = new TypeClass();
 
 			["string", "int", "float"].forEach(function (sTargetType) {
 				assert.throws(function () {
@@ -278,13 +312,27 @@ sap.ui.require([
 			});
 			assert.strictEqual(oType.formatValue(oBadModelValue, "any"), oBadModelValue);
 		});
+
+		//*********************************************************************************************
+		QUnit.test("getFormat", function (assert) {
+			var oType = new TypeClass({parseEmptyValueToZero : true}, {nullable : false});
+
+			assert.strictEqual(oType.oFormat, null);
+
+			this.mock(NumberFormat).expects("getIntegerInstance")
+				.withExactArgs({groupingEnabled : true})
+				.returns("~integerInstance");
+
+			// code under test
+			assert.strictEqual(oType.getFormat(), "~integerInstance");
+		});
 	}
 
-	anyInt("sap.ui.model.odata.type.Int16", -32768, 32767);
+	anyInt(Int16, "sap.ui.model.odata.type.Int16", -32768, 32767);
 
-	anyInt("sap.ui.model.odata.type.Int32", -2147483648, 2147483647);
+	anyInt(Int32, "sap.ui.model.odata.type.Int32", -2147483648, 2147483647);
 
-	anyInt("sap.ui.model.odata.type.SByte", -128, 127);
+	anyInt(SByte, "sap.ui.model.odata.type.SByte", -128, 127);
 
-	anyInt("sap.ui.model.odata.type.Byte", 0, 255);
+	anyInt(Byte, "sap.ui.model.odata.type.Byte", 0, 255);
 });

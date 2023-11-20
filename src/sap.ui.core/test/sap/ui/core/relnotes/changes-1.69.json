@@ -1,0 +1,207 @@
+{
+  "1.69.0": {
+    "date": "July 2019",
+    "notes": [
+      {
+        "id": "77577a877e328cd9a0bb5ceec9bf00f1f6a1aedd",
+        "type": "FEATURE",
+        "text": "ui5loader: support UMD shim also in async mode",
+        "references": []
+      },
+      {
+        "id": "aa3660ae51c08206fe7f22ddde93d986fddee90e",
+        "type": "FIX",
+        "text": "v2/ODataModel: Path cache invalidation",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970244814"
+          }
+        ]
+      },
+      {
+        "id": "c903c6f8e72a448035aaf33b9f5491665b9e8289",
+        "type": "FIX",
+        "text": "Improve jQuery.parseHTML implementation",
+        "references": []
+      },
+      {
+        "id": "4e78cd2485f46a4b17c101c580e953495886148f",
+        "type": "FIX",
+        "text": "core.routing: fix fullscreen and master detail samples",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970321567"
+          }
+        ]
+      },
+      {
+        "id": "c74719f5c8f30de9570212b6f2ed4ce5db2027d9",
+        "type": "FIX",
+        "text": "performance/trace/BeaconRequest: do not send empty beacon",
+        "references": []
+      },
+      {
+        "id": "c782ce9be8cbd71201e19ba3cb4c0e81e439b71f",
+        "type": "FIX",
+        "text": "All libraries: apply migration tooling again",
+        "references": [
+          {
+            "type": "GitHub",
+            "reference": "2584"
+          },
+          {
+            "type": "GitHub",
+            "reference": "2585"
+          }
+        ]
+      },
+      {
+        "id": "06393c2eaec7c8717ef276baeaef43f86738fcdc",
+        "type": "FIX",
+        "text": "v2/ODataModel: Invalidated data path invalidation",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970275436"
+          }
+        ]
+      },
+      {
+        "id": "fae5d108aeb3d82096b30026a81d0dd52bc1dd19",
+        "type": "FEATURE",
+        "text": "Theme Origin Whitelist via <meta> tag",
+        "references": []
+      },
+      {
+        "id": "2dab48e8c3604099f7d2bd56741f5635d3357639",
+        "type": "FEATURE",
+        "text": "mvc/XMLView: support core:require tag",
+        "references": []
+      },
+      {
+        "id": "750f099bb6e1a598b79333d6bf8a6efed5b80fb4",
+        "type": "FEATURE",
+        "text": "sap.f.Avatar: Added option to change the background color",
+        "references": []
+      },
+      {
+        "id": "71d638bee3f0453f42e5fe4813dc45057b7d44dc",
+        "type": "FEATURE",
+        "text": "sap.m.SinglePlanningCalendar: Added one month view",
+        "references": []
+      },
+      {
+        "id": "aedfff73d43cd402175e885d60c5ff087c5f2d65",
+        "type": "FIX",
+        "text": "LocaleData: Fix wrong field expansion for custom patterns in Japanese and Chinese",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970346792"
+          }
+        ]
+      },
+      {
+        "id": "d2adfc3e72579d4fb38e4aeff643106b36faf3a1",
+        "type": "FIX",
+        "text": "ODataModel: Preserve deep path information",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970290872"
+          },
+          {
+            "type": "BCP",
+            "reference": "1970340544"
+          },
+          {
+            "type": "BCP",
+            "reference": "1970310537"
+          },
+          {
+            "type": "BCP",
+            "reference": "1970259259"
+          }
+        ]
+      },
+      {
+        "id": "1b2216d708d9e29686e8b9c6bd040acba6e31d2a",
+        "type": "FIX",
+        "text": "ODataTreeBindingAdapter: Prefer $count value as initial binding length",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970312273"
+          }
+        ]
+      },
+      {
+        "id": "ae475e9c8ba546ada2427fc9687b2e3f8ea75c72",
+        "type": "FIX",
+        "text": "RenderManager: Wrong rendering when visible property is changed in onBeforeRendering",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980301954"
+          }
+        ]
+      },
+      {
+        "id": "20ef47a70b12411b42ea9753a81711621b0ef75c",
+        "type": "FIX",
+        "text": "v2.ODataListBinding: correct calculation for missing sections",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880473575"
+          }
+        ]
+      },
+      {
+        "id": "7573f9818de534c4c6db2d115b5fd305f7ade1c3",
+        "type": "FIX",
+        "text": "v2/ODataModel: Deep resolve with empty path",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980287335"
+          }
+        ]
+      },
+      {
+        "id": "ff6203240f54d07743f98bab4459a02b14c31c3d",
+        "type": "FIX",
+        "text": "v2/ODataModel: Make processChange method more robust",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970379474"
+          }
+        ]
+      },
+      {
+        "id": "99abbf3ad741ba662fa5e1a5888f60d1f7bcffe9",
+        "type": "FEATURE",
+        "text": "SAP Icons v4.4 update",
+        "references": []
+      },
+      {
+        "id": "7a42d6ff06918de0ff881521b0bfd36fe6cee909",
+        "type": "FIX",
+        "text": "v2.ODataModel: Cannot import result properties",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970387814"
+          },
+          {
+            "type": "GitHub",
+            "reference": "2604"
+          }
+        ]
+      }
+    ]
+  }
+}

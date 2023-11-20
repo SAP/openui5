@@ -1,0 +1,71 @@
+<mvc:View
+	controllerName="sap.m.sample.TableStrictLayout.Table"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:core="sap.ui.core"
+	xmlns:plugins="sap.m.plugins"
+	xmlns="sap.m">
+	<Table id="idProductsTable"
+		fixedLayout="Strict"
+		autoPopinMode="true"
+		contextualWidth="Auto"
+		growing="true"
+		items="{
+			path: '/ProductCollection',
+			sorter: {
+				path: 'Name'
+			}
+		}">
+		<dependents>
+			<plugins:ColumnResizer/>
+		</dependents>
+		<columns>
+			<Column
+				width="12em">
+				<Text text="Product" />
+			</Column>
+			<Column
+				width="150px">
+				<Text text="Supplier" />
+			</Column>
+			<Column
+				width="25%"
+				hAlign="End">
+				<Text text="Dimensions" />
+			</Column>
+			<Column
+				width="10rem"
+				hAlign="Center">
+				<Text text="Weight" />
+			</Column>
+			<Column
+				width="100px"
+				hAlign="End">
+				<Text text="Price" />
+			</Column>
+		</columns>
+		<items>
+			<ColumnListItem vAlign="Middle">
+				<cells>
+					<ObjectIdentifier
+						title="{Name}"
+						text="{ProductId}"
+						class="sapUiTinyMarginTopBottom"/>
+					<Text
+						text="{SupplierName}" />
+					<Text
+						text="{Width} x {Depth} x {Height} {DimUnit}" />
+					<ObjectNumber
+						number="{WeightMeasure}"
+						unit="{WeightUnit}" />
+					<ObjectNumber
+						number="{
+							parts:[{path:'Price'},{path:'CurrencyCode'}],
+							type: 'sap.ui.model.type.Currency',
+							formatOptions: {showMeasure: false}
+						}"
+						unit="{CurrencyCode}" />
+				</cells>
+			</ColumnListItem>
+		</items>
+	</Table>
+</mvc:View>

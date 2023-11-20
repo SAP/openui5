@@ -2,12 +2,10 @@
 	xmlns:mvc="sap.ui.core.mvc"
 	controllerName="sap.m.sample.StepInput.StepInput"
 	xmlns="sap.m">
-
 	<List id="idTable"
 		items="{
 			path: '/modelData'
 			}">
-
 		<CustomListItem>
 			<HBox class="sapUiTinyMargin" justifyContent="SpaceBetween" alignItems="Center">
 				<VBox class="sapUiSmallMarginEnd">
@@ -35,5 +33,4 @@
 			</HBox>
 		</CustomListItem>
 	</List>
-
 </mvc:View>

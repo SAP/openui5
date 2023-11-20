@@ -3,11 +3,18 @@
  */
 
 //Provides default renderer for the sap.ui.ux3.Shell
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
-	function(jQuery, IconPool) {
+sap.ui.define([
+    'sap/ui/core/IconPool',
+    'sap/ui/core/theming/Parameters',
+    'sap/base/security/encodeXML',
+    'sap/ui/core/Configuration'
+],
+	function(IconPool, Parameters, encodeXML, Configuration) {
 	"use strict";
 
 
+	// lazy dependency
+	var Shell;
 
 	/**
 	 * GoldReflectionPageLayout renderer.
@@ -20,18 +27,20 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 	/**
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
 	 *
-	 * @param {sap.ui.core.RenderManager} oRenderManager the RenderManager that can be used for writing to the Render-Output-Buffer
+	 * @param {sap.ui.core.RenderManager} rm the RenderManager that can be used for writing to the Render-Output-Buffer
 	 * @param {sap.ui.core.Control} oControl an object representation of the control that should be rendered
 	 */
-	ShellRenderer.render = function(oRenderManager, oControl) {
+	ShellRenderer.render = function(rm, oControl) {
+		// resolve lazy dependency
+		Shell = Shell || sap.ui.require("sap/ui/ux3/Shell");
+
 		// convenience variable
-		var rm = oRenderManager;
 		var bPaneOpen = oControl.isPaneOpen();
-		var iPaneWidthPlus = oControl.getPaneWidth() + sap.ui.ux3.Shell.SIDE_BAR_BASE_WIDTH; // width of pane plus how far it is from the edge
-		var bRtl = sap.ui.getCore().getConfiguration().getRTL();
+		var iPaneWidthPlus = oControl.getPaneWidth() + Shell.SIDE_BAR_BASE_WIDTH; // width of pane plus how far it is from the edge
+		var bRtl = Configuration.getRTL();
 		var sId = oControl.getId();
 
-		if (sap.ui.ux3.Shell.FIRST_RENDERING) {
+		if (Shell.FIRST_RENDERING) {
 			document.body.style.margin = "0"; // does not seem to work in initial onBeforeRendering
 		}
 
@@ -67,9 +76,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 
 		// write header
 		rm.write("<img id='" + sId + "-hdrImg' class='sapUiUx3ShellHeaderImg' src='");
-		var sImage = sap.ui.core.theming.Parameters._getThemeImage('sapUiUx3ShellHeaderImageURL', true);
+		var sImage = Parameters._getThemeImage('sapUiUx3ShellHeaderImageURL', true);
 		rm.writeEscaped(sImage);
-		rm.write("' />");
+		rm.write("'>");
 		rm.write("<header id='" + sId + "-hdr' class='sapUiUx3ShellHeader' role='banner'>");
 		var tabIndex = oControl._topSyncRefId ? " tabindex='0'" : "";
 		rm.write("<span class='sapUiUx3ShellFocusDummy' id='" + sId + "-focusDummyHdrStart'" + tabIndex + "></span>");
@@ -82,9 +91,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 		// write page background
 		rm.write("<div id='", sId, "-bg' class='sapUiUx3ShellBg'></div>");
 		rm.write("<img id='", sId, "-bgImg' class='sapUiUx3ShellBgImg' src='");
-		sImage = sap.ui.core.theming.Parameters._getThemeImage('sapUiUx3ShellBackgroundImageURL', true);
+		sImage = Parameters._getThemeImage('sapUiUx3ShellBackgroundImageURL', true);
 		rm.writeEscaped(sImage);
-		rm.write("'/>");
+		rm.write("'>");
 
 
 		// write workset items
@@ -174,7 +183,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 		var rb = sap.ui.getCore().getLibraryResourceBundle("sap.ui.ux3");
 
 		var appIcon = oControl.getAppIcon();
-		rm.write("<hr id='" + oControl.getId() + "-hdrLine'/>");
+		rm.write("<hr id='" + oControl.getId() + "-hdrLine'>");
 
 		//right part
 		rm.write("<span id='" + oControl.getId() + "-hdr-items' class='sapUiUx3ShellHeaderTitleRight'>");
@@ -200,7 +209,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 		// logout button
 		if (oControl.getShowLogoutButton()) {
 			rm.write("<a id='" + oControl.getId() + "-logout' title='");
-			rm.write(oControl.getLogoutButtonTooltip() ? jQuery.sap.encodeHTML(oControl.getLogoutButtonTooltip()) : rb.getText("SHELL_LOGOUT"));
+			rm.write(oControl.getLogoutButtonTooltip() ? encodeXML(oControl.getLogoutButtonTooltip()) : rb.getText("SHELL_LOGOUT"));
 			rm.write("' tabindex='0' role='button' class='sapUiUx3ShellHeaderButton sapUiUx3ShellHeader-logout'></a>");
 		}
 		rm.write("</span>");
@@ -215,7 +224,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 		if (appIcon) {
 			rm.writeEscaped(oControl.getAppIcon());
 		} else {
-			var sImage = sap.ui.core.theming.Parameters._getThemeImage('sapUiUx3ShellApplicationImageURL', true);
+			var sImage = Parameters._getThemeImage('sapUiUx3ShellApplicationImageURL', true);
 			rm.writeEscaped(sImage);
 		}
 		rm.write("'");
@@ -257,7 +266,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 			sStandardToolsHtml = "";
 		if (oControl.getShowSearchTool()) {
 			bStandardToolPresent = true;
-			sStandardToolsHtml += "<a id='" + sId + sap.ui.ux3.Shell.TOOL_PREFIX + sId + "-searchTool' title='" + rb.getText("SHELL_SEARCH") + "' class='sapUiUx3ShellTool sapUiUx3ShellTool-search' tabindex='0' role='button' aria-pressed='false'></a>";
+			sStandardToolsHtml += "<a id='" + sId + Shell.TOOL_PREFIX + sId + "-searchTool' title='" + rb.getText("SHELL_SEARCH") + "' class='sapUiUx3ShellTool sapUiUx3ShellTool-search' tabindex='0' role='button' aria-pressed='false'></a>";
 			if (bFirstTool) {
 				bFirstTool = false;
 			} else {
@@ -267,7 +276,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 		}
 		if (oControl.getShowFeederTool()) {
 			bStandardToolPresent = true;
-			sStandardToolsHtml += "<a id='" + sId + sap.ui.ux3.Shell.TOOL_PREFIX + sId + "-feederTool' title='" + rb.getText("SHELL_FEEDER") + "' class='sapUiUx3ShellTool sapUiUx3ShellTool-feeder' tabindex='0' role='button' aria-pressed='false'></a>";
+			sStandardToolsHtml += "<a id='" + sId + Shell.TOOL_PREFIX + sId + "-feederTool' title='" + rb.getText("SHELL_FEEDER") + "' class='sapUiUx3ShellTool sapUiUx3ShellTool-feeder' tabindex='0' role='button' aria-pressed='false'></a>";
 			if (bFirstTool) {
 				bFirstTool = false;
 			} else {
@@ -286,7 +295,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 
 		// write separator between standard tools and app tools, if required
 		if (bStandardToolPresent && (aToolItems.length > 0)) {
-			rm.write("<hr id='" + sId + "-tp-separator' class='sapUiUx3ShellToolSep'/>");
+			rm.write("<hr id='" + sId + "-tp-separator' class='sapUiUx3ShellToolSep'>");
 		}
 
 		// write app tools
@@ -296,7 +305,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 			for (var i = 0; i < aToolItems.length; i++) {
 				var oToolItem = aToolItems[i];
 				if (oToolItem instanceof sap.ui.core.SeparatorItem) { // TODO: not possible
-					rm.write("<hr class='sapUiUx3ShellToolSep'/>");
+					rm.write("<hr class='sapUiUx3ShellToolSep'>");
 				} else {
 					// regular item
 					rm.write("<a id='" + sId + "-tool-" + oToolItem.getId() + "' class='sapUiUx3ShellTool'");
@@ -321,7 +330,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 					} else {
 						rm.write("<img src='");
 						rm.writeEscaped(sIconUrl);
-						rm.write("' alt='' role='presentation'/>");
+						rm.write("' alt='' role='presentation'>");
 					}
 					rm.write("</a>");
 				}

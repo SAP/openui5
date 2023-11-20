@@ -1,0 +1,12 @@
+<core:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core">
+	<Popover
+		id="myPopover"
+		title="{Name}"
+		contentHeight="20em"
+		placement="Right"
+		afterClose="handleAfterClose">
+		<Image src="{ProductPicUrl}" width="18em" densityAware="false" />
+	</Popover>
+</core:FragmentDefinition>

@@ -5,5 +5,5 @@
 	xmlns="sap.m">
 	<List
 		headerText="Products"
-		noDataText="No products found" />
+		noDataText="No products found!&#xA;Please change your filter settings." />
 </mvc:View>

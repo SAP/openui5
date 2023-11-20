@@ -10,7 +10,9 @@ sap.ui.define([],
 	 * ResponsiveFlowLayout renderer.
 	 * @namespace
 	 */
-	var ResponsiveFlowLayoutRenderer = {};
+	var ResponsiveFlowLayoutRenderer = {
+		apiVersion: 2
+	};
 
 	/**
 	 * Renders the HTML for the given control, using the provided
@@ -19,16 +21,14 @@ sap.ui.define([],
 	 * @param {sap.ui.core.RenderManager}
 	 *            oRm The RenderManager that can be used for writing to the render
 	 *            output buffer
-	 * @param {sap.ui.core.Control}
+	 * @param {sap.ui.layout.ResponsiveFlowLayout}
 	 *            oControl An object representation of the control that should be
 	 *            rendered
 	 */
 	(function() {
 		ResponsiveFlowLayoutRenderer.render = function(oRm, oControl) {
-			oRm.write("<div");
-			oRm.writeControlData(oControl);
-			oRm.addClass("sapUiRFL");
-			oRm.writeClasses();
+			oRm.openStart("div", oControl);
+			oRm.class("sapUiRFL");
 
 			var sRole = oControl._getAccessibleRole();
 			var mAriaProps;
@@ -36,13 +36,13 @@ sap.ui.define([],
 				mAriaProps = {role: sRole};
 			}
 
-			oRm.writeAccessibilityState(oControl, mAriaProps);
+			oRm.accessibilityState(oControl, mAriaProps);
 
-			oRm.write(">"); // div element
+			oRm.openEnd(); // div element
 
 			// rendering of content happens in oControl.fnRenderContent
 
-			oRm.write("</div>");
+			oRm.close("div");
 		};
 	}());
 

@@ -14,7 +14,7 @@ html.sap-desktop .sapUxAPHierarchicalSelect {
 			background: transparent;
 		}
 
-		&.sapMSltIconOnly.sapMSlt:focus  {
+		&.sapMSltIconOnly.sapMSlt.sapMSltFocused  {
 			outline: none;
 			> .sapMSltIcon {
 					outline: 1px dotted @sapUiContentFocusColor;
@@ -22,7 +22,7 @@ html.sap-desktop .sapUxAPHierarchicalSelect {
 				}
 		}
 
-		&.sapMSltIconOnly.sapMSltPressed.sapMSlt:focus > .sapMSltIcon {
+		&.sapMSltIconOnly.sapMSltPressed.sapMSlt.sapMSltFocused > .sapMSltIcon {
 			outline: none;
 		}
 
@@ -72,10 +72,6 @@ html.sap-desktop .sapUxAPHierarchicalSelect {
 	border-top: 1px solid @sapUiListBorderColor;
 }
 
-.sapUxAPHierarchicalSelectFirstLevel.sapMSelectListItem {
-	color: @sapUiListTextColor;
-}
-
 .sapUxAPHierarchicalSelectSecondLevel.sapMSelectListItem {
 	color: @sapUiContentLabelColor;
 }
@@ -89,19 +85,13 @@ html.sap-desktop .sapUxAPHierarchicalSelect {
 	border: 1px solid darken(@sapUiContentForegroundBorderColor, 15);
 }
 
-/* active */
-.sapUxAPHierarchicalSelectFirstLevel.sapMSelectListItem:active,
-.sapUxAPHierarchicalSelectSecondLevel.sapMSelectListItem:active {
-	color: @sapUiListActiveTextColor;
-}
-
 /* hover */
 .sapUxAPHierarchicalSelect .sapMSelectListItemSelected:hover {
 	background: @sapUiListSelectionHoverBackground;
 }
 
 /* styling needed to achieve underline of the select label on phone */
-html.sapUiMedia-Std-Phone, html.sap-phone {
+html .sapUxAPObjectPageLayout-Std-Phone, html.sap-phone {
 	.sapMSltPressed > .sapMSltArrow {
 		background: @sapUiFieldActiveBackground;
 	}
@@ -118,7 +108,7 @@ html.sapUiMedia-Std-Phone, html.sap-phone {
 		box-shadow: inset 0 -0.125rem @sapUiObjectHeaderBorderColor, 0 0.125rem 0 0 @sapUiObjectHeaderBackground;
 	}
 
-	.sapMSlt.sapUxAPHierarchicalSelect {
+	.sapMSlt.sapUxAPHierarchicalSelect.sapMBarChild {
 		box-shadow: inset 0 -0.125rem @sapUiObjectHeaderBorderColor, 0 0.125rem 0 0 @sapUiObjectHeaderBackground;
 		background-color: transparent;
 	}
@@ -126,9 +116,22 @@ html.sapUiMedia-Std-Phone, html.sap-phone {
 
 /* styling needed to achieve underline of the select label on phone on Android 4.4.2
 (this is specific for webview (Fiori client) and Chrome browser) */
-html[data-sap-ui-browser^="cr4"].sapUiMedia-Std-Phone,
+html[data-sap-ui-browser^="cr4"] .sapUxAPObjectPageLayout-Std-Phone,
 html[data-sap-ui-browser^="cr4"].sap-phone {
 	.sapUxAPHierarchicalSelect .sapMSltLabel {
 		box-shadow: inset 0 -0.125rem @sapUiSelected;
+	}
+}
+
+html[data-sap-ui-browser^="ie"].sap-desktop,
+html[data-sap-ui-browser^="ed"].sap-desktop {
+	.sapUxAPHierarchicalSelect.sapMSltHoverable.sapMSltIconOnly.sapMSlt.sapMSltFocused:not(.sapMSltPressed) {
+		&::before {
+			border: none;
+		}
+		&> .sapMSltIcon {
+			outline: none;
+			border: 0.0625rem dashed @sapUiContentFocusColor;
+		}
 	}
 }

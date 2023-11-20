@@ -1,0 +1,53 @@
+/* ================================== */
+/* CSS for control sap.m/TextArea     */
+/* Horizon High Contrast White theme  */
+/* ================================== */
+
+@_sapMTextAreaPadding: 0.375rem 0.5rem 0.3125rem;
+@_sapMTextAreaPadding_Compact: 0.0625rem 0.375rem 0;
+@_sapMTextAreaReadonlyPadding: 0.375rem 0.625rem 0.3125rem;
+@_sapMTextAreaReadonlyPadding_Compact: 0.0625rem 0.375rem 0;
+@_sapMTextAreaValueStateSuccessPadding: 0.375rem 0.5rem 0.3125rem;
+@_sapMTextAreaValueStateSuccessPadding_Compact: 0.0625rem 0.375rem 0;
+@_sapMTextAreaValueStateInformationPadding: 0.4375rem 0.5625rem 0.375rem;
+@_sapMTextAreaValueStateInformationPadding_Compact: 0.125rem 0.4375rem 0.0625rem;
+@_sapMTextAreaValueStateErrorWarningPadding: 0.375rem 0.5rem 0.3125rem;
+@_sapMTextAreaValueStateErrorWarningPadding_Compact: 0.0625rem 0.375rem 0;
+
+.sapMFocus.sapMTextArea {
+	& .sapMInputBaseContentWrapper {
+		.sapMInputBaseInner {
+			outline-offset: -3px;
+		}
+	}
+}
+
+.sapMInputBase.sapMTextArea .sapMTextAreaInner {
+	line-height: 1.5;
+}
+
+.sapMTextAreaMirror {
+	line-height: 1.5;
+}
+
+html.sap-desktop:not(.sapUiNativeScrollbars) .sapMTextArea {
+	.sapMInputBaseContentWrapperWarning ::-webkit-scrollbar {
+		background: @sapUiFieldWarningBackgroundStyle;
+		background-color: @sapUiScrollBarTrackColor;
+	}
+
+	.sapMInputBaseContentWrapperError ::-webkit-scrollbar {
+		background: @sapUiFieldInvalidBackgroundStyle;
+		background-color: @sapUiScrollBarTrackColor;
+	}
+
+	.sapMInputBaseContentWrapperInformation ::-webkit-scrollbar {
+		background: @sapUiFieldInformationBackgroundStyle;
+		background-color: @sapUiScrollBarTrackColor;
+	}
+
+	.sapMInputBaseContentWrapperSuccess ::-webkit-scrollbar {
+		background: @sapUiFieldSuccessBackgroundStyle;
+		background-color: @sapUiScrollBarTrackColor;
+	}
+}

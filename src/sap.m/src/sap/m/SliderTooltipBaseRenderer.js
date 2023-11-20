@@ -3,8 +3,8 @@
  */
 
 // Provides the default renderer for control sap.m.SliderTooltip
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer'],
-	function (jQuery, Renderer) {
+sap.ui.define([],
+	function() {
 		"use strict";
 
 		/**
@@ -13,7 +13,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer'],
 		 * @author SAP SE
 		 * @namespace
 		 */
-		var SliderTooltipBaseRenderer = {};
+		var SliderTooltipBaseRenderer = {
+			apiVersion: 2
+		};
 
 		SliderTooltipBaseRenderer.CSS_CLASS = "sapMSliderTooltip";
 
@@ -21,18 +23,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer'],
 		 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
 		 *
 		 * @param {sap.ui.core.RenderManager} oRM The RenderManager that can be used for writing to the renderer output buffer
-		 * @param {sap.ui.core.Control} oControl An object representation of the control that should be rendered
+		 * @param {sap.m.SliderTooltipBase} oControl An object representation of the control that should be rendered
 		 */
 		SliderTooltipBaseRenderer.render = function (oRM, oControl) {
-			oRM.write("<div");
-			oRM.writeControlData(oControl);
-			oRM.writeClasses();
-
-			oRM.write(">");
+			oRM.openStart("div", oControl)
+				.openEnd();
 
 			this.renderTooltipContent(oRM, oControl);
 
-			oRM.write("</div>");
+			oRM.close("div");
 		};
 
 		/**
@@ -40,7 +39,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer'],
 		 * To be overwritten by subclasses.
 		 *
 		 * @param {sap.ui.core.RenderManager} oRM The RenderManager that can be used for writing to the render output buffer.
-		 * @param {sap.ui.core.Control} oControl An object representation of the control that should be rendered.
+		 * @param {sap.m.SliderTooltipBase} oControl An object representation of the control that should be rendered.
 		 */
 		SliderTooltipBaseRenderer.renderTooltipContent = function (oRM, oControl) {};
 

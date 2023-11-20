@@ -8,6 +8,13 @@ sap.ui.define([
 
 		onTheItemPage: {
 			viewName: "Main",
+			actions: {
+				iSelectItem: function (sKey) {
+					// use test library utilities to create a more complex action
+					this.sampleLibrary.iOpenTheSelectList();
+					this.sampleLibrary.iSelectItem(sKey);
+				}
+			},
 			assertions: {
 				theTitleIsCorrect: function (sTitle) {
 					return this.waitFor({

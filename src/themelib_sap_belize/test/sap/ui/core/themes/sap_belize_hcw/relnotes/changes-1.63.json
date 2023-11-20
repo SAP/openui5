@@ -1,0 +1,93 @@
+{
+  "1.63.0": {
+    "date": "January 2019",
+    "notes": [
+      {
+        "id": "a13f2a8e999d0dfcb20ad9f46899988db6db7801",
+        "type": "FEATURE",
+        "text": "sap.f.Avatar: Fallback image behavior added",
+        "references": []
+      },
+      {
+        "id": "9e5d11154afb05c7c7566b1d874de27618f1d900",
+        "type": "FEATURE",
+        "text": "Introduction of Metric Less Parameters",
+        "references": []
+      },
+      {
+        "id": "10ae8ed63c7c172d2b77a2964579290c983deea6",
+        "type": "FEATURE",
+        "text": "sap.f.DynamicPageTitle: Added snappedTitleOnMobile aggregation",
+        "references": []
+      },
+      {
+        "id": "96ec9014b2163b2cc820fd3e11458a7222a3fdab",
+        "type": "FIX",
+        "text": "Belize Theme: add full \"72\" font for special character fallback",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500000146942019"
+          }
+        ]
+      },
+      {
+        "id": "087fd49d2df7ef2d9e9d7028ef2b9b92e5eda886",
+        "type": "FIX",
+        "text": "sap.m.DatePicker: Icon has correct disabled hover/active colors",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970059430"
+          }
+        ]
+      },
+      {
+        "id": "93f1ec03cb488e21841643d0b1e79ae9e4f7ebc4",
+        "type": "FIX",
+        "text": "sap.m.GenericTag: Fixed focus outline",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970057610"
+          }
+        ]
+      },
+      {
+        "id": "1e03630dc4e2c519b3295d38b017561fe6f4c994",
+        "type": "FEATURE",
+        "text": "sap.m.Select: Display valueStateText when dropdown is opened",
+        "references": []
+      },
+      {
+        "id": "7eee29364572d4f68e13afe477c968565d01c0c7",
+        "type": "FEATURE",
+        "text": "sap.m.TabContainer: Now tabs support icon and additional text.",
+        "references": []
+      },
+      {
+        "id": "6900fdff91e674bd1ce633c2e4a60b7f230eefb2",
+        "type": "FIX",
+        "text": "Missing @sapInformationColor for sap_belize",
+        "references": []
+      },
+      {
+        "id": "770eb100b4a20ab79e520af5a23c69ff4992f7ce",
+        "type": "FIX",
+        "text": "sap.m.ComboBox: Focus outline in IE corrected",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970061695"
+          }
+        ]
+      },
+      {
+        "id": "9f69408332fb352f20d4164d162a154570f342a8",
+        "type": "FIX",
+        "text": "sap.f.DynamicPage: Fixed hover effect in Shell",
+        "references": []
+      }
+    ]
+  }
+}

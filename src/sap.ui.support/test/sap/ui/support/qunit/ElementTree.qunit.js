@@ -1,12 +1,13 @@
 /*global sinon, QUnit*/
 
-sap.ui.require(['sap/ui/support/supportRules/ui/external/ElementTree'],
-	function (ElementTree) {
+sap.ui.define([
+	'sap/base/Log',
+	'sap/base/util/deepExtend',
+	'sap/base/util/isEmptyObject',
+	'sap/ui/support/supportRules/ui/external/ElementTree'
+],
+	function (Log, deepExtend, isEmptyObject, ElementTree) {
 		'use strict';
-
-		jQuery.sap.require('sap/ui/thirdparty/sinon');
-		jQuery.sap.require('sap/ui/thirdparty/sinon-qunit');
-		jQuery.sap.require("sap.ui.qunit.qunit-coverage");
 
 		var CONTAINER_LOCATION = 'qunit-fixture';
 
@@ -55,7 +56,7 @@ sap.ui.require(['sap/ui/support/supportRules/ui/external/ElementTree'],
 			issuesIds: mockProblematicControls
 		};
 
-		var htmlControlTree = '<filter><end><label><input type="checkbox" issues="" checked="">Issues</label><label><input type="checkbox" namespaces="" checked="">Namespaces</label><label><input type="checkbox" attributes="">Attributes</label></end></filter><tree show-namespaces="" show-problematic-elements=""><ul expanded="true"><li data-id="WEBPAGE" issue=""><offset style="padding-left:10px"><arrow down="true"></arrow></offset><tag data-search="WEBPAGEWEBPAGE">&lt;<namespace></namespace>WEBPAGE<attribute> id="<attribute-value>WEBPAGE</attribute-value>"</attribute>&gt;</tag><span class="showNumbOfIssues">[3  issue(s)] </span></li><ul expanded="true"><li data-id="body"><offset style="padding-left:20px"><arrow down="true"></arrow></offset><tag data-search="sap-ui-areabody">&lt;<namespace></namespace>sap-ui-area<attribute> id="<attribute-value>body</attribute-value>"</attribute>&gt;</tag><span class="hideNumbOfIssues">[0  issue(s)] </span></li><ul expanded="true"><li data-id="__panel0"><offset style="padding-left:30px"><arrow down="true"></arrow></offset><tag data-search="sap.m.Panel__panel0">&lt;<namespace>sap.m.</namespace>Panel<attribute> id="<attribute-value>__panel0</attribute-value>"</attribute>&gt;</tag><span class="hideNumbOfIssues">[0  issue(s)] </span></li><ul expanded="true"><li data-id="heading" issue=""><offset style="padding-left:40px"><place-holder></place-holder></offset><tag data-search="sap.m.Textheading">&lt;<namespace>sap.m.</namespace>Text<attribute> id="<attribute-value>heading</attribute-value>"</attribute>&gt;</tag><span class="showNumbOfIssues">[1  issue(s)] </span></li></ul><ul expanded="true"><li data-id="__label0"><offset style="padding-left:40px"><place-holder></place-holder></offset><tag data-search="sap.m.Label__label0">&lt;<namespace>sap.m.</namespace>Label<attribute> id="<attribute-value>__label0</attribute-value>"</attribute>&gt;</tag><span class="hideNumbOfIssues">[0  issue(s)] </span></li></ul><ul expanded="true"><li data-id="__text0"><offset style="padding-left:40px"><place-holder></place-holder></offset><tag data-search="sap.m.Text__text0">&lt;<namespace>sap.m.</namespace>Text<attribute> id="<attribute-value>__text0</attribute-value>"</attribute>&gt;</tag><span class="hideNumbOfIssues">[0  issue(s)] </span></li></ul><ul expanded="true"><li data-id="__data0"><offset style="padding-left:40px"><place-holder></place-holder></offset><tag data-search="sap.ui.core.CustomData__data0">&lt;<namespace>sap.ui.core.</namespace>CustomData<attribute> id="<attribute-value>__data0</attribute-value>"</attribute>&gt;</tag><span class="hideNumbOfIssues">[0  issue(s)] </span></li></ul></ul></ul></ul></tree>';
+		var htmlControlTree = '<filter><end><label><input type="checkbox" issues="" checked="">Issues</label><label><input type="checkbox" namespaces="" checked="">Namespaces</label><label><input type="checkbox" attributes="">Attributes</label></end></filter><tree show-namespaces="" show-problematic-elements=""><ul expanded="true"><li data-id="WEBPAGE" issue=""><offset data-indent="10"><arrow down="true"></arrow></offset><tag data-search="WEBPAGEWEBPAGE">&lt;<namespace></namespace>WEBPAGE<attribute> id="<attribute-value>WEBPAGE</attribute-value>"</attribute>&gt;</tag><span class="showNumbOfIssues">[3  issue(s)] </span></li><ul expanded="true"><li data-id="body"><offset data-indent="20"><arrow down="true"></arrow></offset><tag data-search="sap-ui-areabody">&lt;<namespace></namespace>sap-ui-area<attribute> id="<attribute-value>body</attribute-value>"</attribute>&gt;</tag><span class="hideNumbOfIssues">[0  issue(s)] </span></li><ul expanded="true"><li data-id="__panel0"><offset data-indent="30"><arrow down="true"></arrow></offset><tag data-search="sap.m.Panel__panel0">&lt;<namespace>sap.m.</namespace>Panel<attribute> id="<attribute-value>__panel0</attribute-value>"</attribute>&gt;</tag><span class="hideNumbOfIssues">[0  issue(s)] </span></li><ul expanded="true"><li data-id="heading" issue=""><offset data-indent="40"><place-holder></place-holder></offset><tag data-search="sap.m.Textheading">&lt;<namespace>sap.m.</namespace>Text<attribute> id="<attribute-value>heading</attribute-value>"</attribute>&gt;</tag><span class="showNumbOfIssues">[1  issue(s)] </span></li></ul><ul expanded="true"><li data-id="__label0"><offset data-indent="40"><place-holder></place-holder></offset><tag data-search="sap.m.Label__label0">&lt;<namespace>sap.m.</namespace>Label<attribute> id="<attribute-value>__label0</attribute-value>"</attribute>&gt;</tag><span class="hideNumbOfIssues">[0  issue(s)] </span></li></ul><ul expanded="true"><li data-id="__text0"><offset data-indent="40"><place-holder></place-holder></offset><tag data-search="sap.m.Text__text0">&lt;<namespace>sap.m.</namespace>Text<attribute> id="<attribute-value>__text0</attribute-value>"</attribute>&gt;</tag><span class="hideNumbOfIssues">[0  issue(s)] </span></li></ul><ul expanded="true"><li data-id="__data0"><offset data-indent="40"><place-holder></place-holder></offset><tag data-search="sap.ui.core.CustomData__data0">&lt;<namespace>sap.ui.core.</namespace>CustomData<attribute> id="<attribute-value>__data0</attribute-value>"</attribute>&gt;</tag><span class="hideNumbOfIssues">[0  issue(s)] </span></li></ul></ul></ul></ul></tree>';
 
 		/**
 		 * Returns an object to mimic the set/get/remove attribute behavior
@@ -103,7 +104,7 @@ sap.ui.require(['sap/ui/support/supportRules/ui/external/ElementTree'],
 		QUnit.test('Creating element tree without data', function (assert) {
 			// arrange
 			var functionSpy = sinon.spy(ElementTree.prototype, 'setData');
-			var warningFunctionSpy = sinon.spy(jQuery.sap.log, 'warning');
+			var warningFunctionSpy = sinon.spy(Log, 'warning');
 			var elementTree = new ElementTree(null, {});
 
 			// assert
@@ -112,7 +113,7 @@ sap.ui.require(['sap/ui/support/supportRules/ui/external/ElementTree'],
 			assert.strictEqual(warningFunctionSpy.callCount, 1, 'A warning should be raised when element tree is instantiated without data');
 
 			// clean
-			jQuery.sap.log.warning.restore();
+			Log.warning.restore();
 			ElementTree.prototype.setData.restore();
 		});
 
@@ -196,7 +197,7 @@ sap.ui.require(['sap/ui/support/supportRules/ui/external/ElementTree'],
 			this.elementTree.setData(mockSettingsObject);
 
 			// assert
-			assert.strictEqual(jQuery.isEmptyObject(this.elementTree._data), false, 'The _data private property should not be empty');
+			assert.strictEqual(isEmptyObject(this.elementTree._data), false, 'The _data private property should not be empty');
 			assert.strictEqual(JSON.stringify(mockElementTree) === JSON.stringify(this.elementTree._data.controls), true, 'The _data property should be set correctly');
 		});
 
@@ -292,7 +293,7 @@ sap.ui.require(['sap/ui/support/supportRules/ui/external/ElementTree'],
 			var _createTreeSpy = sinon.stub(ElementTree.prototype, '_createTree', function () {
 				return 'createTee';
 			});
-			var mockSetting = jQuery.extend(true, {}, mockSettingsObject);
+			var mockSetting = deepExtend({}, mockSettingsObject);
 			mockSetting.controls[0].name = 'Page';
 
 			// act
@@ -308,7 +309,7 @@ sap.ui.require(['sap/ui/support/supportRules/ui/external/ElementTree'],
 
 		QUnit.test('Setting data with incorrect values', function (assert) {
 			// arrange
-			var warningFunctionSpy = sinon.spy(jQuery.sap.log, 'warning');
+			var warningFunctionSpy = sinon.spy(Log, 'warning');
 
 			// act
 			this.elementTree.setData('Something');
@@ -325,7 +326,7 @@ sap.ui.require(['sap/ui/support/supportRules/ui/external/ElementTree'],
 			assert.strictEqual(warningFunctionSpy.callCount, 2, 'A warning should be logged when passing an array');
 
 			// clean
-			jQuery.sap.log.warning.restore();
+			Log.warning.restore();
 		});
 
 		QUnit.module('Method getData', {
@@ -394,7 +395,7 @@ sap.ui.require(['sap/ui/support/supportRules/ui/external/ElementTree'],
 
 		QUnit.test('Passing incorrect parameter', function (assert) {
 			// arrange
-			var logSpy = sinon.spy(jQuery.sap.log, 'warning');
+			var logSpy = sinon.spy(Log, 'warning');
 			var parameter;
 
 			// act
@@ -440,13 +441,13 @@ sap.ui.require(['sap/ui/support/supportRules/ui/external/ElementTree'],
 			assert.strictEqual(logSpy.callCount, 5, 'A warning should be issued');
 
 			// clean
-			jQuery.sap.log.warning.restore();
+			Log.warning.restore();
 		});
 
 		QUnit.test('Passing non-existing element id', function (assert) {
 			// arrange
 			var controlId = 'not-existing';
-			var warningSpy = sinon.spy(jQuery.sap.log, 'warning');
+			var warningSpy = sinon.spy(Log, 'warning');
 			var _selectTreeElementSpy = sinon.spy(this.elementTree, '_selectTreeElement');
 
 			// act
@@ -458,7 +459,7 @@ sap.ui.require(['sap/ui/support/supportRules/ui/external/ElementTree'],
 			assert.strictEqual(_selectTreeElementSpy.callCount, 0, 'Method _selectTreeElement() should not be called');
 
 			// clean
-			jQuery.sap.log.warning.restore();
+			Log.warning.restore();
 			this.elementTree._selectTreeElement.restore();
 		});
 
@@ -466,8 +467,8 @@ sap.ui.require(['sap/ui/support/supportRules/ui/external/ElementTree'],
 			// arrange
 			var controlId = '__label0';
 			var _selectTreeElementSpy = sinon.spy(this.elementTree, '_selectTreeElement');
-			var warningSpy = sinon.spy(jQuery.sap.log, 'warning');
-			var errorSpy = sinon.spy(jQuery.sap.log, 'error');
+			var warningSpy = sinon.spy(Log, 'warning');
+			var errorSpy = sinon.spy(Log, 'error');
 
 			// act
 			var returnValue = this.elementTree.setSelectedElement(controlId);
@@ -477,7 +478,7 @@ sap.ui.require(['sap/ui/support/supportRules/ui/external/ElementTree'],
 			assert.strictEqual(this.elementTree._selectedElement.getAttribute('data-id'), '__label0', 'sap.m.Label control should be selected');
 			assert.strictEqual(document.getElementById('control-tree').querySelector("[data-id=__label0]"), this.elementTree._selectedElement, 'The correct element should be selected');
 
-			assert.strictEqual(jQuery.isEmptyObject(this.elementTree._selectedElement), false, 'The selected item should be set');
+			assert.strictEqual(isEmptyObject(this.elementTree._selectedElement), false, 'The selected item should be set');
 			assert.strictEqual(_selectTreeElementSpy.callCount, 1, 'Method _selectTreeElement() should be called');
 			assert.strictEqual(returnValue, this.elementTree, 'The element tree instance should be returned');
 			assert.strictEqual(warningSpy.notCalled, true, 'No warnings should be raised');
@@ -485,8 +486,8 @@ sap.ui.require(['sap/ui/support/supportRules/ui/external/ElementTree'],
 
 			// clean
 			this.elementTree._selectTreeElement.restore();
-			jQuery.sap.log.warning.restore();
-			jQuery.sap.log.error.restore();
+			Log.warning.restore();
+			Log.error.restore();
 		});
 
 		QUnit.module('Method _selectTreeElement', {
@@ -626,9 +627,9 @@ sap.ui.require(['sap/ui/support/supportRules/ui/external/ElementTree'],
 			// arrange
 			var generatedHTML = '<filter>' +
 				'<end>' +
-				'<label><input type="checkbox" issues checked/>Issues</label>' +
-				'<label><input type="checkbox" namespaces checked/>Namespaces</label>' +
-				'<label><input type="checkbox" attributes/>Attributes</label>' +
+				'<label><input type="checkbox" issues checked>Issues</label>' +
+				'<label><input type="checkbox" namespaces checked>Namespaces</label>' +
+				'<label><input type="checkbox" attributes>Attributes</label>' +
 				'</end>' +
 				'</filter>';
 			generatedHTML += '<tree show-namespaces show-problematic-elements></tree>';
@@ -682,9 +683,9 @@ sap.ui.require(['sap/ui/support/supportRules/ui/external/ElementTree'],
 			// arrange
 			var filterHTML = '<filter>' +
 				'<end>' +
-				'<label><input type="checkbox" issues checked/>Issues</label>' +
-				'<label><input type="checkbox" namespaces checked/>Namespaces</label>' +
-				'<label><input type="checkbox" attributes/>Attributes</label>' +
+				'<label><input type="checkbox" issues checked>Issues</label>' +
+				'<label><input type="checkbox" namespaces checked>Namespaces</label>' +
+				'<label><input type="checkbox" attributes>Attributes</label>' +
 				'</end>' +
 				'</filter>';
 
@@ -756,7 +757,7 @@ sap.ui.require(['sap/ui/support/supportRules/ui/external/ElementTree'],
 
 		QUnit.test('Generated HMTL output', function (assert) {
 			// arrange
-			var expectedHTML = '<ul expanded="true"><li data-id="WEBPAGE" issue><offset style="padding-left:10px" ><arrow down="true"></arrow></offset><tag data-search="WEBPAGEWEBPAGE">&#60;<namespace></namespace>WEBPAGE<attribute>&#32;id="<attribute-value>WEBPAGE</attribute-value>"</attribute>&#62;</tag><span class = showNumbOfIssues>[3  issue(s)] </span></li><ul expanded="true"><li data-id="body" ><offset style="padding-left:20px" ><arrow down="true"></arrow></offset><tag data-search="sap-ui-areabody">&#60;<namespace></namespace>sap-ui-area<attribute>&#32;id="<attribute-value>body</attribute-value>"</attribute>&#62;</tag><span class = hideNumbOfIssues>[0  issue(s)] </span></li><ul expanded="true"><li data-id="__panel0" ><offset style="padding-left:30px" ><arrow down="true"></arrow></offset><tag data-search="sap.m.Panel__panel0">&#60;<namespace>sap.m.</namespace>Panel<attribute>&#32;id="<attribute-value>__panel0</attribute-value>"</attribute>&#62;</tag><span class = hideNumbOfIssues>[0  issue(s)] </span></li><ul expanded="true"><li data-id="heading" issue><offset style="padding-left:40px" ><place-holder></place-holder></offset><tag data-search="sap.m.Textheading">&#60;<namespace>sap.m.</namespace>Text<attribute>&#32;id="<attribute-value>heading</attribute-value>"</attribute>&#62;</tag><span class = showNumbOfIssues>[1  issue(s)] </span></li></ul><ul expanded="true"><li data-id="__label0" ><offset style="padding-left:40px" ><place-holder></place-holder></offset><tag data-search="sap.m.Label__label0">&#60;<namespace>sap.m.</namespace>Label<attribute>&#32;id="<attribute-value>__label0</attribute-value>"</attribute>&#62;</tag><span class = hideNumbOfIssues>[0  issue(s)] </span></li></ul><ul expanded="true"><li data-id="__text0" ><offset style="padding-left:40px" ><place-holder></place-holder></offset><tag data-search="sap.m.Text__text0">&#60;<namespace>sap.m.</namespace>Text<attribute>&#32;id="<attribute-value>__text0</attribute-value>"</attribute>&#62;</tag><span class = hideNumbOfIssues>[0  issue(s)] </span></li></ul><ul expanded="true"><li data-id="__data0" ><offset style="padding-left:40px" ><place-holder></place-holder></offset><tag data-search="sap.ui.core.CustomData__data0">&#60;<namespace>sap.ui.core.</namespace>CustomData<attribute>&#32;id="<attribute-value>__data0</attribute-value>"</attribute>&#62;</tag><span class = hideNumbOfIssues>[0  issue(s)] </span></li></ul></ul></ul></ul>';
+			var expectedHTML = '<ul expanded="true"><li data-id="WEBPAGE" issue><offset data-indent="10" ><arrow down="true"></arrow></offset><tag data-search="WEBPAGEWEBPAGE">&#60;<namespace></namespace>WEBPAGE<attribute>&#32;id="<attribute-value>WEBPAGE</attribute-value>"</attribute>&#62;</tag><span class = showNumbOfIssues>[3  issue(s)] </span></li><ul expanded="true"><li data-id="body" ><offset data-indent="20" ><arrow down="true"></arrow></offset><tag data-search="sap-ui-areabody">&#60;<namespace></namespace>sap-ui-area<attribute>&#32;id="<attribute-value>body</attribute-value>"</attribute>&#62;</tag><span class = hideNumbOfIssues>[0  issue(s)] </span></li><ul expanded="true"><li data-id="__panel0" ><offset data-indent="30" ><arrow down="true"></arrow></offset><tag data-search="sap.m.Panel__panel0">&#60;<namespace>sap.m.</namespace>Panel<attribute>&#32;id="<attribute-value>__panel0</attribute-value>"</attribute>&#62;</tag><span class = hideNumbOfIssues>[0  issue(s)] </span></li><ul expanded="true"><li data-id="heading" issue><offset data-indent="40" ><place-holder></place-holder></offset><tag data-search="sap.m.Textheading">&#60;<namespace>sap.m.</namespace>Text<attribute>&#32;id="<attribute-value>heading</attribute-value>"</attribute>&#62;</tag><span class = showNumbOfIssues>[1  issue(s)] </span></li></ul><ul expanded="true"><li data-id="__label0" ><offset data-indent="40" ><place-holder></place-holder></offset><tag data-search="sap.m.Label__label0">&#60;<namespace>sap.m.</namespace>Label<attribute>&#32;id="<attribute-value>__label0</attribute-value>"</attribute>&#62;</tag><span class = hideNumbOfIssues>[0  issue(s)] </span></li></ul><ul expanded="true"><li data-id="__text0" ><offset data-indent="40" ><place-holder></place-holder></offset><tag data-search="sap.m.Text__text0">&#60;<namespace>sap.m.</namespace>Text<attribute>&#32;id="<attribute-value>__text0</attribute-value>"</attribute>&#62;</tag><span class = hideNumbOfIssues>[0  issue(s)] </span></li></ul><ul expanded="true"><li data-id="__data0" ><offset data-indent="40" ><place-holder></place-holder></offset><tag data-search="sap.ui.core.CustomData__data0">&#60;<namespace>sap.ui.core.</namespace>CustomData<attribute>&#32;id="<attribute-value>__data0</attribute-value>"</attribute>&#62;</tag><span class = hideNumbOfIssues>[0  issue(s)] </span></li></ul></ul></ul></ul>';
 
 			// act
 			this.elementTree.setData(mockSettingsObject);
@@ -783,7 +784,7 @@ sap.ui.require(['sap/ui/support/supportRules/ui/external/ElementTree'],
 			this.elementTree._toggleCollapse(this.target);
 
 			// assert
-			assert.strictEqual(jQuery.isEmptyObject(this.target.attributes), true, 'No attributes should be set');
+			assert.strictEqual(isEmptyObject(this.target.attributes), true, 'No attributes should be set');
 		});
 
 		QUnit.test('Calling _toggleCollapse on an object with "right" attribute set', function (assert) {

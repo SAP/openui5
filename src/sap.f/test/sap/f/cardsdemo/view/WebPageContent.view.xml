@@ -1,0 +1,37 @@
+<mvc:View
+	xmlns="sap.m"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:f="sap.f"
+	xmlns:w="sap.ui.integration.widgets"
+	displayBlock="true"
+	controllerName="sap.f.cardsdemo.controller.WebPageContent">
+	<Page title="{i18n>appTitle}">
+		<subHeader>
+			<Toolbar>
+				<ToolbarSpacer/>
+				<Title text="WebPage Content Card"/>
+				<ToolbarSpacer/>
+			</Toolbar>
+		</subHeader>
+		<mvc:View viewName="sap.f.cardsdemo.view.common.CommonCardSettings" type="XML" async="true"></mvc:View>
+		<f:GridContainer class="sapUiSmallMargin">
+			<w:Card
+				id="webPageCardLocal"
+				manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/webPageError/manifest.json"
+				height="auto"
+				class="sapUiMediumMarginEnd">
+				<w:layoutData>
+					<f:GridContainerItemLayoutData columns="6" />
+				</w:layoutData>
+			</w:Card>
+			<w:Card
+				manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/webPage/manifest.json"
+				height="auto"
+				class="sapUiMediumMarginEnd">
+				<w:layoutData>
+					<f:GridContainerItemLayoutData columns="6" />
+				</w:layoutData>
+			</w:Card>
+		</f:GridContainer>
+	</Page>
+</mvc:View>

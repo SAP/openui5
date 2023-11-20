@@ -1,0 +1,102 @@
+<layout:VerticalLayout id="valuehelpBehaviorsLayout"
+	xmlns:layout="sap.ui.layout"
+	width="100%"
+	xmlns="sap.m"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:core="sap.ui.core"
+	xmlns:f="sap.ui.layout.form"
+	xmlns:f2="sap.f"
+	xmlns:mdc="sap.ui.mdc"
+	xmlns:table="sap.ui.mdc"
+
+	xmlns:vhfb="sap.ui.mdc.filterbar.vh"
+	xmlns:mdcv="sap.ui.mdc.valuehelp"
+	xmlns:mdcvc="sap.ui.mdc.valuehelp.content"
+	xmlns:mdcf="sap.ui.mdc.field"
+	xmlns:mdct="sap.ui.mdc.table"
+	xmlns:ui="sap.ui"
+	xmlns:uit="sap.ui.table"
+	xmlns:variants="sap.ui.fl.variants"
+	xmlns:types="sap.ui.v4demo.types"
+	xmlns:demo="sap.ui.v4demo.controls"
+	xmlns:ce="sap.ui.codeeditor"
+	>
+	<layout:dependents>
+			<mdc:ValueHelp
+				id="FH1"
+				delegate='\{"name": "sap/ui/v4demo/delegate/typeahead/ValueHelp.delegate", "payload": \{\}\}'>
+				<mdc:typeahead>
+					<mdcv:Popover title="Test1" opensOnClick="{settings>/opensOnClick}">
+						<mdcvc:MTable keyPath="ID" descriptionPath="name" >
+							<Table items='{path : "/Authors", length: 10}' mode="{= ${settings>/maxConditions} === -1 ? 'MultiSelect' : 'SingleSelectMaster'}" width="30rem">
+								<columns>
+									<Column width="5rem">
+										<header>
+											<Text text="ID" />
+										</header>
+									</Column>
+									<Column>
+										<header>
+											<Text text="Name" />
+										</header>
+									</Column>
+								</columns>
+								<items>
+									<ColumnListItem type="Active">
+										<cells>
+											<Text text="{ID}" />
+											<Text text="{name}" />
+										</cells>
+									</ColumnListItem>
+								</items>
+							</Table>
+						</mdcvc:MTable>
+					</mdcv:Popover>
+				</mdc:typeahead>
+			</mdc:ValueHelp>			
+
+		</layout:dependents>
+
+	<Title class="sapUiSmallMarginBottom" level="H3" text="How to control the Typeahead via Delegate" />
+	<Toolbar>
+		<Label text="Field with Typeahead-ValueHelp:" labelFor="fAuthor" />
+
+		<mdc:Field delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' 
+		id="fAuthor" 
+		value="{path: 'author_ID', type: 'sap.ui.model.odata.type.Int32', formatOptions: {groupingEnabled: false}}" 
+		valueHelp="FH1" 
+		display="ValueDescription" 
+		editMode="Editable"  
+		multipleLines="false"/>
+	</Toolbar>
+	
+	<FormattedText class="sapUiSmallMarginTopBottom" htmlText="
+	&lt;br/&gt;	
+	&lt;strong&gt;
+		By default, opening a ValueHelp typeahead is only triggered when a user enters some text into the Field.&lt;br/&gt;
+		You can change this behavior by setting the 'opensOnClick' property on a configured popover in the ValueHelp composition.
+		&lt;/strong&gt;
+		&lt;br/&gt;&lt;br/&gt;
+		Try modifying the given Popover's configuration via the switch below:
+	"/>
+
+	<Toolbar>
+			<Label text="sap.ui.mdc.valuehelp.Popover.opensOnClick:" labelFor="switchOpensOnClick"/>
+			<Switch id="switchOpensOnClick" state="{settings>/opensOnClick}" change=".onOpensOnClickChange" customTextOn="true" customTextOff="false"/>
+	</Toolbar>
+	
+
+	
+	<FormattedText class="sapUiSmallMarginTopBottom" htmlText="
+	&lt;strong&gt;
+		Regardless of the opening trigger, a ValueHelp will always consult ValueHelpDelegate.showTypeahead for a final decision on actually showing the typeahead.&lt;br/&gt;
+		The delegate will also be consulted again after filterValue updates to eventually close an open typeahead.
+		&lt;/strong&gt;
+		&lt;br/&gt;&lt;br/&gt;
+		Try modifying the ValueHelpDelegate.showTypeahead method for the field on top of the page:
+"/>
+	<ce:CodeEditor id="areashowTypeahead" value="{settings>/showTypeahead}" width="100%" height="230px"/>
+	
+	
+
+</layout:VerticalLayout>

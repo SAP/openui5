@@ -19,7 +19,7 @@
 						}
 					}"
 					busyIndicatorDelay="{worklistView>/tableBusyDelay}"
-					updateFinished="onUpdateFinished">
+					updateFinished=".onUpdateFinished">
 				<headerToolbar>
 					<Toolbar>
 						<Label id="tableHeader" text="{worklistView>/worklistTableTitle}"/>
@@ -59,7 +59,7 @@
 			</Table>
 		</semantic:content>
 		<semantic:sendEmailAction>
-			<semantic:SendEmailAction id="shareEmail" press="onShareEmailPress"/>
+			<semantic:SendEmailAction id="shareEmail" press=".onShareEmailPress"/>
 		</semantic:sendEmailAction>
 	</semantic:FullscreenPage>
 </mvc:View>

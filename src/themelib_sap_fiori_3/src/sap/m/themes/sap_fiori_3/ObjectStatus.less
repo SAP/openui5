@@ -1,0 +1,132 @@
+/* =================================== */
+/* CSS for control sap.m/ObjectStatus  */
+/* Fiori 3 theme                       */
+/* =================================== */
+
+.sapMObjStatusInverted .sapMObjStatusText,
+.sapMObjStatusInverted .sapMObjStatusIcon {
+	min-height: 1rem;
+}
+
+.sapMObjectStatusLarge {
+	.sapMObjStatusTitle,
+	.sapMObjStatusText,
+	.sapMObjStatusIcon {
+		font-size: 1.5rem;
+		line-height: 2rem;
+		min-height: 2rem;
+	}
+	.sapMObjStatusIcon > .sapUiIcon {
+		font-size: 1.5rem;
+	}
+}
+
+.sapMObjectStatusLarge.sapMObjStatusInverted {
+	.sapMObjStatusIcon > .sapUiIcon {
+		vertical-align: bottom;
+		font-size: 1.25rem;
+		padding-left: 0;
+		padding-right: 0;
+	}
+	.sapMObjStatusIcon:not(.sapMObjStatusIconOnly) {
+		padding-left: 0;
+		padding-right: 0;
+	}
+}
+
+.sapMObjStatusInverted {
+	min-width: 1.25rem;
+	& .sapMObjStatusText,
+	& .sapMObjStatusIcon.sapMObjStatusIconOnly,
+	& .sapMObjStatusIcon .sapMObjStatusIconOnly,
+	& .sapMObjStatusLink .sapMObjStatusIcon.sapMObjStatusIconOnly,
+	& .sapMObjStatusLink .sapMObjStatusText {
+		border-radius: @sapUiElementBorderCornerRadius;
+	}
+	& .sapMObjStatusIcon {
+		border-radius: @sapUiElementBorderCornerRadius 0 0 @sapUiElementBorderCornerRadius;
+	}
+	& .sapMObjStatusIcon + .sapMObjStatusText {
+		border-radius: 0 @sapUiElementBorderCornerRadius @sapUiElementBorderCornerRadius 0;
+	}
+}
+
+.sapMObjStatusInverted .sapMObjStatusText,
+.sapMObjStatusInverted .sapMObjStatusIcon {
+	color: @sapUiContentContrastTextColor;
+}
+
+.sapMObjStatusNone:not(.sapMObjStatusInverted) {
+	.sapUxAPObjectPageContainer &,
+	.sapUxAPObjectPageHeaderContentItem &,
+	&.sapUxAPObjectPageHeaderContentItem,
+	.sapUxAPObjectPageHeaderDetails .sapFDynamicPageHeaderContent & {
+		.sapMObjStatusText,
+		.sapMObjStatusIcon {
+			color: @sapNeutralTextColor;
+		}
+
+	}
+}
+
+.sapMListTblCell {
+	.sapMObjStatus.sapMObjStatusInverted {
+		.sapMObjStatusIcon{
+			vertical-align: middle;
+		}
+	}
+}
+
+.sapMObjStatusInverted .sapMObjStatusText,
+.sapMObjStatusInverted .sapMObjStatusIcon,
+.sapMObjStatusInverted .sapMObjStatusLink:active .sapMObjStatusText,
+.sapMObjStatusInverted .sapMObjStatusLink:active .sapMObjStatusIcon {
+	text-shadow: @sapUiContentContrastTextShadow;
+}
+
+/*  Second set of inverted indication colors regular state */
+.sapMObjStatusInverted.sapMObjStatusIndication11 .sapMObjStatusText,
+.sapMObjStatusInverted.sapMObjStatusIndication11 .sapMObjStatusIcon,
+.sapMObjStatusInverted.sapMObjStatusIndication12 .sapMObjStatusText,
+.sapMObjStatusInverted.sapMObjStatusIndication12 .sapMObjStatusIcon,
+.sapMObjStatusInverted.sapMObjStatusIndication13 .sapMObjStatusText,
+.sapMObjStatusInverted.sapMObjStatusIndication13 .sapMObjStatusIcon,
+.sapMObjStatusInverted.sapMObjStatusIndication14 .sapMObjStatusText,
+.sapMObjStatusInverted.sapMObjStatusIndication14 .sapMObjStatusIcon,
+.sapMObjStatusInverted.sapMObjStatusIndication15 .sapMObjStatusText,
+.sapMObjStatusInverted.sapMObjStatusIndication15 .sapMObjStatusIcon,
+.sapMObjStatusInverted.sapMObjStatusIndication16 .sapMObjStatusText,
+.sapMObjStatusInverted.sapMObjStatusIndication16 .sapMObjStatusIcon,
+.sapMObjStatusInverted.sapMObjStatusIndication17 .sapMObjStatusText,
+.sapMObjStatusInverted.sapMObjStatusIndication17 .sapMObjStatusIcon,
+.sapMObjStatusInverted.sapMObjStatusIndication18 .sapMObjStatusText,
+.sapMObjStatusInverted.sapMObjStatusIndication18 .sapMObjStatusIcon,
+.sapMObjStatusInverted.sapMObjStatusIndication19 .sapMObjStatusText,
+.sapMObjStatusInverted.sapMObjStatusIndication19 .sapMObjStatusIcon,
+.sapMObjStatusInverted.sapMObjStatusIndication20 .sapMObjStatusText,
+.sapMObjStatusInverted.sapMObjStatusIndication20 .sapMObjStatusIcon {
+	text-shadow: @sapUiContentTextShadow;
+}
+
+.sapMObjStatusInverted.sapMObjStatusIndication11 .sapMObjStatusLink:active .sapMObjStatusText,
+.sapMObjStatusInverted.sapMObjStatusIndication11 .sapMObjStatusLink:active .sapMObjStatusIcon,
+.sapMObjStatusInverted.sapMObjStatusIndication12 .sapMObjStatusLink:active .sapMObjStatusText,
+.sapMObjStatusInverted.sapMObjStatusIndication12 .sapMObjStatusLink:active .sapMObjStatusIcon,
+.sapMObjStatusInverted.sapMObjStatusIndication13 .sapMObjStatusLink:active .sapMObjStatusText,
+.sapMObjStatusInverted.sapMObjStatusIndication13 .sapMObjStatusLink:active .sapMObjStatusIcon,
+.sapMObjStatusInverted.sapMObjStatusIndication14 .sapMObjStatusLink:active .sapMObjStatusText,
+.sapMObjStatusInverted.sapMObjStatusIndication14 .sapMObjStatusLink:active .sapMObjStatusIcon,
+.sapMObjStatusInverted.sapMObjStatusIndication15 .sapMObjStatusLink:active .sapMObjStatusText,
+.sapMObjStatusInverted.sapMObjStatusIndication15 .sapMObjStatusLink:active .sapMObjStatusIcon,
+.sapMObjStatusInverted.sapMObjStatusIndication16 .sapMObjStatusLink:active .sapMObjStatusText,
+.sapMObjStatusInverted.sapMObjStatusIndication16 .sapMObjStatusLink:active .sapMObjStatusIcon,
+.sapMObjStatusInverted.sapMObjStatusIndication17 .sapMObjStatusLink:active .sapMObjStatusText,
+.sapMObjStatusInverted.sapMObjStatusIndication17 .sapMObjStatusLink:active .sapMObjStatusIcon,
+.sapMObjStatusInverted.sapMObjStatusIndication18 .sapMObjStatusLink:active .sapMObjStatusText,
+.sapMObjStatusInverted.sapMObjStatusIndication18 .sapMObjStatusLink:active .sapMObjStatusIcon,
+.sapMObjStatusInverted.sapMObjStatusIndication19 .sapMObjStatusLink:active .sapMObjStatusText,
+.sapMObjStatusInverted.sapMObjStatusIndication19 .sapMObjStatusLink:active .sapMObjStatusIcon,
+.sapMObjStatusInverted.sapMObjStatusIndication20 .sapMObjStatusLink:active .sapMObjStatusText,
+.sapMObjStatusInverted.sapMObjStatusIndication20 .sapMObjStatusLink:active .sapMObjStatusIcon {
+	text-shadow: @sapUiContentContrastTextShadow;
+}

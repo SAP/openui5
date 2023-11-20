@@ -1,0 +1,51 @@
+<mvc:View
+	controllerName="sap.m.sample.TableMultiSelectMode.Table"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core">
+	<Table id="idProductsTable"
+		inset="false"
+		mode="MultiSelect"
+		items="{
+			path: '/ProductCollection',
+			sorter: {
+				path: 'Name'
+			}
+		}">
+		<headerToolbar>
+			<OverflowToolbar>
+				<Title text="Products" level="H2"/>
+				<ToolbarSpacer/>
+				<Label text="Multi selection modes" labelFor="idComboBoxSuccess"></Label>
+				<ComboBox id="idComboBoxSuccess" selectedKey="Default" selectionChange=".onSelectionChange">
+					<core:Item text="Default" key="Default"></core:Item>
+					<core:Item text="ClearAll" key="ClearAll"></core:Item>
+				</ComboBox>
+			</OverflowToolbar>
+		</headerToolbar>
+		<columns>
+			<Column width="12em">
+				<Text text="Product" />
+			</Column>
+			<Column minScreenWidth="Tablet" demandPopin="true">
+				<Text text="Supplier" />
+			</Column>
+			<Column minScreenWidth="Tablet" demandPopin="true" hAlign="End">
+				<Text text="Dimensions" />
+			</Column>
+		</columns>
+		<items>
+			<ColumnListItem vAlign="Middle">
+				<cells>
+					<ObjectIdentifier
+						title="{Name}"
+						text="{ProductId}"/>
+					<Text
+						text="{SupplierName}" />
+					<Text
+						text="{Width} x {Depth} x {Height} {DimUnit}" />
+				</cells>
+			</ColumnListItem>
+		</items>
+	</Table>
+</mvc:View>

@@ -64,4 +64,4 @@ sap.ui.define([],
 	};
 
 	return StringAnalyzer;
-}, false);
+});

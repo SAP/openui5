@@ -1,12 +1,17 @@
+/*global QUnit*/
+
 sap.ui.define([
-	"jquery.sap.global",
-	'test/TestControl',
+	"sap/ui/thirdparty/jquery",
+	'./TestControl',
 	"sap/ui/core/dnd/DragInfo",
-	"sap/ui/base/ManagedObject"
-], function(jQuery, TestControl, DragInfo, ManagedObject) {
+	"sap/ui/base/ManagedObject",
+	"sap/ui/core/ElementMetadata",
+	"sap/base/Log",
+	"sap/ui/qunit/utils/nextUIUpdate"
+], function(jQuery, TestControl, DragInfo, ManagedObject, ElementMetadata, Log, nextUIUpdate) {
 	"use strict";
 
-	/*global QUnit,sinon*/
+	QUnit.module("");
 
 	QUnit.test("Default values", function(assert) {
 		var oDragInfo = new DragInfo();
@@ -19,7 +24,7 @@ sap.ui.define([
 
 	QUnit.test("invalidation", function(assert) {
 		var oDragInfo = new DragInfo();
-		var fnInvalidateSpy = sinon.spy(oDragInfo, "invalidate");
+		var fnInvalidateSpy = this.spy(oDragInfo, "invalidate");
 
 		oDragInfo.setGroupName("abc");
 		assert.strictEqual(fnInvalidateSpy.callCount, 0, "Invalidation has not happened for groupName property");
@@ -59,13 +64,17 @@ sap.ui.define([
 
 		assert.ok(oDragInfo.isDraggable(oControl), "Draggable: The drag source is the control itself");
 
+		oControl.isDragAllowed = function() { assert.equal(arguments[0], oDragInfo); return false; };
+		assert.notOk(oDragInfo.isDraggable(oControl), "Not Draggable: oControl.isDragAllowed method did not permit");
+		delete oControl.isDragAllowed;
+
 		oDragInfo.setSourceAggregation("children");
 		assert.notOk(oDragInfo.isDraggable(oControl), "Not Draggable: sourceAggregation is defined");
 
 		oControl.destroy();
 	});
 
-	QUnit.test("isDraggable - Aggregated child element", function(assert) {
+	QUnit.test("isDraggable - Aggregated child element", async function(assert) {
 		var oDragInfo = new DragInfo({
 			sourceAggregation: "children"
 		});
@@ -75,15 +84,55 @@ sap.ui.define([
 			children: oControl
 		});
 
+		oParent.placeAt("qunit-fixture");
+		await nextUIUpdate();
+
 		assert.ok(oDragInfo.isDraggable(oControl), "Draggable: Child control is in the defined sourceAggregation");
+		assert.ok(oControl.getDomRef().draggable, "Dom Draggable: Child control is in the defined sourceAggregation");
+
+		oControl.isDragAllowed = function() { assert.equal(arguments[0], oDragInfo); return false; };
+		assert.notOk(oDragInfo.isDraggable(oControl), "Not Draggable: oControl.isDragAllowed method did not permit");
+		oControl.invalidate();
+		await nextUIUpdate();
+		assert.notOk(oControl.getDomRef().draggable, "Dom Not Draggable: oControl.isDragAllowed method did not permit");
+		delete oControl.isDragAllowed;
 
 		oDragInfo.setSourceAggregation("thereIsNoSuchAnAggregationName");
+		await nextUIUpdate();
+
 		assert.notOk(oDragInfo.isDraggable(oControl), "Not Draggable: Child control is not in the defined sourceAggregation");
+		assert.notOk(oControl.getDomRef().draggable, "Dom Not Draggable: Child control is not in the defined sourceAggregation");
+
+		oDragInfo.setSourceAggregation("children");
+		await nextUIUpdate();
+
+		assert.ok(oDragInfo.isDraggable(oControl), "Draggable Again: Child control is in the defined sourceAggregation");
+		assert.ok(oControl.getDomRef().draggable, "Dom Draggable Again: Child control is in the defined sourceAggregation");
+
+		oDragInfo.setEnabled(false);
+		await nextUIUpdate();
+
+		assert.notOk(oDragInfo.isDraggable(oControl), "Not Draggable: DragInfo is disabled");
+		assert.notOk(oControl.getDomRef().draggable, "Dom Not Draggable: DragInfo is disabled");
+
+		oDragInfo.setEnabled(true);
+		await nextUIUpdate();
+
+		assert.ok(oDragInfo.isDraggable(oControl), "Draggable: DragInfo is enabled");
+		assert.ok(oControl.getDomRef().draggable, "Dom Draggable: DragInfo is enabled");
+
+		oDragInfo.setSourceAggregation();
+		await nextUIUpdate();
+
+		assert.notOk(oDragInfo.isDraggable(oControl), "Not Draggable: sourceAggregation is empty");
+		assert.notOk(oControl.getDomRef().draggable, "Dom Not Draggable: sourceAggregation is empty");
+		assert.ok(oDragInfo.isDraggable(oParent), "Parent Draggable: sourceAggregation is empty");
+		assert.ok(oParent.getDomRef().draggable, "Parent Dom Draggable: sourceAggregation is empty");
 
 		oParent.destroy();
 	});
 
-	QUnit.test("isDraggable - Enabled", function(assert) {
+	QUnit.test("isDraggable - Enabled", async function(assert) {
 		var oDragInfo = new DragInfo({
 			enabled: false
 		});
@@ -91,10 +140,17 @@ sap.ui.define([
 			dragDropConfig: oDragInfo
 		});
 
+		oControl.placeAt("qunit-fixture");
+		await nextUIUpdate();
+
 		assert.notOk(oDragInfo.isDraggable(oControl), "Not draggable: DragInfo is not enabled");
+		assert.notOk(oControl.getDomRef().draggable, "Dom Not draggable: DragInfo is not enabled");
 
 		oDragInfo.setEnabled(true);
+		await nextUIUpdate();
+
 		assert.ok(oDragInfo.isDraggable(oControl), "Draggable: DragInfo is enabled and drag source is the control itself");
+		assert.ok(oControl.getDomRef().draggable, "Dom Draggable: DragInfo is enabled and drag source is the control itself");
 
 		oControl.destroy();
 	});
@@ -107,8 +163,8 @@ sap.ui.define([
 			children: oChild
 		});
 
-		var fnLogSpy = this.spy(jQuery.sap.log, "warning");
-		this.stub(sap.ui.core.ElementMetadata.prototype, "getDragDropInfo").returns({draggable: false});
+		var fnLogSpy = this.spy(Log, "warning");
+		this.stub(ElementMetadata.prototype, "getDragDropInfo").returns({draggable: false});
 		assert.notOk(oDragInfo.isDraggable(oParent), "Not draggable: Element metadata does not allow dragging");
 		assert.strictEqual(fnLogSpy.callCount, 1, "Not draggable is logged");
 
@@ -116,12 +172,15 @@ sap.ui.define([
 		assert.notOk(oDragInfo.isDraggable(oChild), "Not draggable: Aggregation metadata does not allow dragging");
 		assert.strictEqual(fnLogSpy.callCount, 2, "Not draggable is logged again");
 
+		oDragInfo.bIgnoreMetadataCheck = true;
+		assert.ok(oDragInfo.isDraggable(oChild), "Draggable: private flag ignores metadata check");
+
 		oParent.destroy();
 	});
 
 	QUnit.test("fireDragStart - invalid parameters", function(assert) {
 		var oDragStartEvent = new jQuery.Event("dragstart");
-		var fnDragStartSpy = sinon.spy();
+		var fnDragStartSpy = this.spy();
 		var oDragInfo = new DragInfo({
 			dragStart: fnDragStartSpy
 		});
@@ -133,10 +192,10 @@ sap.ui.define([
 		assert.ok(fnDragStartSpy.notCalled, "dragStart event is not fired, dragSession does not exist");
 
 		oDragInfo.destroy();
-	})
+	});
 
 	QUnit.test("fireDragStart - event parameters", function(assert) {
-		var fnDragStartSpy = sinon.spy(function(oEvent) {
+		var fnDragStartSpy = this.spy(function(oEvent) {
 			var mParameters = oEvent.getParameters();
 			assert.ok(mParameters.dragSession, "dragSession exists");
 			assert.strictEqual(mParameters.target, oControl, "target is valid");
@@ -173,7 +232,7 @@ sap.ui.define([
 
 	QUnit.test("fireDragEnd - invalid parameters", function(assert) {
 		var oDragEndEvent = new jQuery.Event("dragstart");
-		var fnDragEndSpy = sinon.spy();
+		var fnDragEndSpy = this.spy();
 		var oDragInfo = new DragInfo({
 			dragEnd: fnDragEndSpy
 		});
@@ -185,10 +244,10 @@ sap.ui.define([
 		assert.ok(fnDragEndSpy.notCalled, "dragEnd event is not fired, dragSession does not exist");
 
 		oDragInfo.destroy();
-	})
+	});
 
 	QUnit.test("fireDragEnd - event parameters", function(assert) {
-		var fnDragEndSpy = sinon.spy(function(oEvent) {
+		var fnDragEndSpy = this.spy(function(oEvent) {
 			var mParameters = oEvent.getParameters();
 			assert.ok(mParameters.dragSession, "dragSession exists");
 			assert.strictEqual(mParameters.target, oControl, "target is valid");

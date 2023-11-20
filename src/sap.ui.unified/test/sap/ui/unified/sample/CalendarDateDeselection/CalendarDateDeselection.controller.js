@@ -1,16 +1,23 @@
-sap.ui.define(['sap/ui/core/mvc/Controller','sap/ui/unified/DateRange'],
-	function(Controller, DateRange) {
+sap.ui.define([
+		'sap/ui/core/mvc/Controller',
+		'sap/ui/core/format/DateFormat',
+		'sap/ui/core/library',
+		'sap/ui/core/date/UI5Date'
+	], function(Controller, DateFormat, coreLibrary, UI5Date) {
 	"use strict";
 
-	var CalendarDateDeselectionController = Controller.extend("sap.ui.unified.sample.CalendarDateDeselection.CalendarDateDeselection", {
+	var CalendarType = coreLibrary.CalendarType;
+
+	return Controller.extend("sap.ui.unified.sample.CalendarDateDeselection.CalendarDateDeselection", {
 		oFormatYyyymmdd: null,
 
 		onInit: function() {
-			this.oFormatYyyymmdd = sap.ui.core.format.DateFormat.getInstance({pattern: "yyyy-MM-dd", calendarType: sap.ui.core.CalendarType.Gregorian});
+			this.oFormatYyyymmdd = DateFormat.getInstance({pattern: "yyyy-MM-dd", calendarType: CalendarType.Gregorian});
+			this.getView().byId("calendar").displayDate(UI5Date.getInstance(2021, 6, 1));
 		},
 
 		handleCalendarSelect: function(oEvent) {
-			var oCalendar = oEvent.oSource,
+			var oCalendar = oEvent.getSource(),
 				oSelectedDate = oCalendar.getSelectedDates()[0],
 				oStartDate = oSelectedDate.getStartDate();
 			if (this.oLastSelectedJSDate && oStartDate.getTime() === this.oLastSelectedJSDate.getTime()) {
@@ -34,7 +41,5 @@ sap.ui.define(['sap/ui/core/mvc/Controller','sap/ui/unified/DateRange'],
 			}
 		}
 	});
-
-	return CalendarDateDeselectionController;
 
 });

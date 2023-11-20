@@ -1,0 +1,1 @@
+window.jQueryBeforeCoreBoot = window.jQuery;

@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>Application Level</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<script src="../../scripts/boot.js"></script>
+</head>
+<body class="sapUiBody topicBody">
+	<div class="topic">
+		<div class="content">
+			<h1>Accessibility at Application Level</h1>
+			<p>Many requirements are already covered by the <a href="" id="linkToAccessibilityAppDeveloper" target="_blank">SAPUI5 framework</a>.
+				However, design aspects that are related to the individual purpose of the application still need to be implemented by the application design team.
+				Here are some examples:
+			</p>
+			<h2 id="keyboard">Keyboard Operation</h2>
+			<ul>
+				<li>
+					<p>
+						<b>Initial focus position:</b> To enable users to work through a task efficiently, always set an initial focus.
+						It should be set to either the first logical interaction element or the first element in the task.
+					</p>
+				</li>
+				<li>
+					<p>
+						<b>Structure and fast navigation:</b> Ensure that the keyboard navigation within your application is logical and follows the task structure for the intended purpose.
+						When designing apps with a large set of functions or information blocks, always form logical groups to help users navigate efficiently.
+						You can achieve this by using containers, toolbars, or other grouping elements. To enable faster navigation,
+						SAPUI5 allows users to skip groups (with <code>F6</code> or <code>Shift + F6</code>).
+						You should also, enable direct keyboard navigation to logical groups, such as working areas or navigation areas.
+					</p>
+				</li>
+				<li>
+					<p>
+						<b>Keyboard shortcuts (hot keys):</b> While some keyboard shortcuts are supported at the framework level (such as <code>Ctrl + A</code> to select all items),
+						others must be defined at the application level (a common one is <code>Ctrl + S</code> to save the current object).
+						Support for keyboard shortcuts in SAPUI5 differs from the default browser behavior: all keyboard shortcut commands are captured by the application except <code>Ctrl + L</code>,
+						which is used to jump to the browser address bar.
+						From there, all browser keyboard shortcuts are available. Follow industry standards and best practices.
+					</p>
+				</li>
+			</ul>
+			<h2 id="screenReader">Screen Reader Support</h2>
+			<p>
+				Although screen reader support is technically implemented at the framework level,
+				it is still the developer’s task to arrange the individual UI elements in relationships that are needed for the screen readers. This is done by using appropriate floorplans, layouts, and controls for the respective use cases.
+			</p>
+			<ul>
+				<li>
+					<p>
+						<b>Landmarks:</b> Landmarks are used by assistive technologies (such as screen readers) to provide a meaningful overview of the content.
+						Define landmarks when you use an object page, dynamic page, or panel, for example.
+					</p>
+				</li>
+				<li>
+					<p>
+						<b>Labels, tooltips, and placeholders:</b> Define meaningful labels.
+						Use tooltips according to the guideline, and ensure that they are relevant.
+						Define clear placeholders in input fields where appropriate.
+						For more information on placeholders, see Mask Input and Input Field.
+					</p>
+				</li>
+				<li>
+					<p>
+						<b>Alternative texts:</b> Images need alternative texts and descriptions, unless they are purely decorative.
+						Also, the default texts for icons, image placeholders, and other graphical elements may not be available or suitable for your application use case.
+						Always review these texts, and replace or redefine them where necessary.
+					</p>
+				</li>
+				<li>
+					<p>
+						<b>Status updates, messages, error handling:</b> Although the shape and appearance of system messages is predefined,
+						ensure that the message content is clear and easy to understand.
+						For error messages, indicate the location of the error and how to fix it.
+					</p>
+				</li>
+			</ul>
+		</div>
+		<div class="navigation">
+			<h4>Table of Contents</h4>
+			<div><a href="#keyboard">Keyboard operations</a></div>
+			<div><a href="#screenReader">Screen Reader support</a></div>
+		</div>
+	</div>
+	<script>
+		var sPathToDemoKitLocal = "../../../../../../../../documentation.html#";
+		var sPathToDemoKit = "../../../../../../../../../#";
+
+		if (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1") {
+			document.getElementById("linkToAccessibilityAppDeveloper").href = sPathToDemoKitLocal + "/topic/03b914b46e624b138a6fb1b7cf2049ae";
+		} else {
+			document.getElementById("linkToAccessibilityAppDeveloper").href = sPathToDemoKit + "/topic/03b914b46e624b138a6fb1b7cf2049ae";
+		}
+	</script>
+</body>
+</html>

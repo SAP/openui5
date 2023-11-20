@@ -8,11 +8,17 @@ sap.ui.define([
 	"use strict";
 
 	/**
-	 * @class HeaderContent renderer.
-	 * @static
+	 * HeaderContent renderer.
+	 * @namespace
 	 */
-	var ObjectPageHeaderContentRenderer = {};
+	var ObjectPageHeaderContentRenderer = {
+		apiVersion: 2
+	};
 
+	/**
+	 * @param {sap.ui.core.RenderManager} oRm RenderManager
+	 * @param {sap.uxap.ObjectPageHeaderContent} oControl Control
+	 */
 	ObjectPageHeaderContentRenderer.render = function (oRm, oControl) {
 		var oParent = oControl.getParent(),
 			bParentLayout = oParent && oParent.isA("sap.uxap.ObjectPageLayout"),
@@ -22,50 +28,58 @@ sap.ui.define([
 			bRenderEditBtn = bParentLayout && oParent.getShowEditHeaderButton() && oControl.getContent() && oControl.getContent().length > 0;
 
 		if (bRenderEditBtn) {
-			oRm.write("<div ");
-			oRm.writeControlData(oControl);
-			oRm.addClass("sapUxAPObjectPageHeaderContentFlexBox");
-			oRm.addClass("sapUxAPObjectPageHeaderContentDesign-" + oControl.getContentDesign());
+			oRm.openStart("div", oControl)
+				.class("sapUxAPObjectPageHeaderContentFlexBox")
+				/**
+				 * @deprecated As of version 1.40.1
+				 */
+				.class("sapUxAPObjectPageHeaderContentDesign-" + oControl.getContentDesign());
+
 			if (oHeader) {
-				oRm.addClass('sapUxAPObjectPageContentObjectImage-' + oHeader.getObjectImageShape());
+				oRm.class('sapUxAPObjectPageContentObjectImage-' + oHeader.getObjectImageShape());
 			}
-			oRm.writeClasses();
-			oRm.write(">");
+			oRm.openEnd();
 		}
-		oRm.write("<div ");
+
+		oRm.openStart("div", bRenderEditBtn ? undefined : oControl);
+
 		if (bRenderEditBtn) {
-			oRm.addClass("sapUxAPObjectPageHeaderContentCellLeft");
+			oRm.class("sapUxAPObjectPageHeaderContentCellLeft");
 		} else {
-			oRm.writeControlData(oControl);
-			oRm.addClass("sapUxAPObjectPageHeaderContentDesign-" + oControl.getContentDesign());
+			/**
+			 * @deprecated As of version 1.40.1
+			 */
+			oRm.class("sapUxAPObjectPageHeaderContentDesign-" + oControl.getContentDesign());
 			if (oHeader) {
-				oRm.addClass('sapUxAPObjectPageContentObjectImage-' + oHeader.getObjectImageShape());
+				oRm.class('sapUxAPObjectPageContentObjectImage-' + oHeader.getObjectImageShape());
 			}
 		}
-		oRm.addClass("sapContrastPlus");
-		oRm.addClass("ui-helper-clearfix");
-		oRm.addClass("sapUxAPObjectPageHeaderContent");
+
+		oRm.class("sapContrastPlus")
+			.class("ui-helper-clearfix")
+			.class("sapUxAPObjectPageHeaderContent");
 
 		if (!oControl.getVisible()) {
-			oRm.addClass("sapUxAPObjectPageHeaderContentHidden");
+			oRm.class("sapUxAPObjectPageHeaderContentHidden");
 		}
-		oRm.writeClasses();
-		oRm.write(">");
+		oRm.openEnd();
 
 		if (bParentLayout && oParent.getIsChildPage()) {
-			oRm.write("<div");
-			oRm.addClass('sapUxAPObjectChildPage');
-			oRm.writeClasses();
-			oRm.write("></div>");
+			oRm.openStart("div")
+				.class("sapUxAPObjectChildPage")
+				.openEnd()
+				.close("div");
 		}
 
 		if (bRenderTitle) {
 			this._renderTitleImage(oRm, oControl, oHeader);
 
 			if (oControl.getContent().length == 0) {
-				oRm.write("<span class=\"sapUxAPObjectPageHeaderContentItem\">");
+				oRm.openStart("span")
+					.class("sapUxAPObjectPageHeaderContentItem")
+					.openEnd();
 				this._renderTitle(oRm, oHeader);
-				oRm.write("</span>");
+				oRm.close("span");
 			}
 		}
 
@@ -73,12 +87,12 @@ sap.ui.define([
 			this._renderHeaderContentItem(oItem, iIndex, oRm, bRenderTitle, oHeader, oControl);
 		}, this);
 
-		oRm.write("</div>");
+		oRm.close("div");
 
 		if (bRenderEditBtn) {
 			this._renderEditButton(oRm, oControl);
 
-			oRm.write("</div>"); // end of "sapUxAPObjectPageHeaderContentFlexBox" div
+			oRm.close("div"); // end of "sapUxAPObjectPageHeaderContentFlexBox" div
 		}
 	};
 
@@ -89,7 +103,7 @@ sap.ui.define([
 	 * @param {sap.ui.core.RenderManager} oRm oRm
 	 * @param {boolean} bRenderTitle render title
 	 * @param {sap.uxap.ObjectPageHeader} oTitle header title
-	 * @param {sap.ui.core.Control} oControl control
+	 * @param {sap.uxap.ObjectPageHeaderContent} oControl control
 	 */
 	ObjectPageHeaderContentRenderer._renderHeaderContentItem = function (oHeaderContentItem, iIndex, oRm, bRenderTitle, oTitle, oControl) {
 		var bHasSeparatorBefore = false,
@@ -101,31 +115,32 @@ sap.ui.define([
 			bHasSeparatorBefore = oLayoutData.getShowSeparatorBefore();
 			bHasSeparatorAfter = oLayoutData.getShowSeparatorAfter();
 
-			oRm.write("<span ");
-			oRm.addClass("sapUxAPObjectPageHeaderWidthContainer");
-			oRm.addClass("sapUxAPObjectPageHeaderContentItem");
-			oRm.addStyle("width", oLayoutData.getWidth());
-			oRm.writeStyles();
+			oRm.openStart("span")
+				.class("sapUxAPObjectPageHeaderWidthContainer")
+				.class("sapUxAPObjectPageHeaderContentItem")
+				.style("width", oLayoutData.getWidth());
 
 			if (bHasSeparatorAfter || bHasSeparatorBefore) {
-				oRm.addClass("sapUxAPObjectPageHeaderSeparatorContainer");
+				oRm.class("sapUxAPObjectPageHeaderSeparatorContainer");
 			}
 
 			if (!oLayoutData.getVisibleL()) {
-				oRm.addClass("sapUxAPObjectPageHeaderLayoutHiddenL");
+				oRm.class("sapUxAPObjectPageHeaderLayoutHiddenL");
 			}
 			if (!oLayoutData.getVisibleM()) {
-				oRm.addClass("sapUxAPObjectPageHeaderLayoutHiddenM");
+				oRm.class("sapUxAPObjectPageHeaderLayoutHiddenM");
 			}
 			if (!oLayoutData.getVisibleS()) {
-				oRm.addClass("sapUxAPObjectPageHeaderLayoutHiddenS");
+				oRm.class("sapUxAPObjectPageHeaderLayoutHiddenS");
 			}
 
-			oRm.writeClasses();
-			oRm.write(">");
+			oRm.openEnd();
 
 			if (bHasSeparatorBefore) {
-				oRm.write("<span class=\"sapUxAPObjectPageHeaderSeparatorBefore\"/>");
+				oRm.openStart("span")
+					.class("sapUxAPObjectPageHeaderSeparatorBefore")
+					.openEnd()
+					.close("span");
 			}
 
 			if (bIsFirstControl && bRenderTitle) { // render title inside the first contentItem
@@ -133,7 +148,9 @@ sap.ui.define([
 			}
 		} else {
 			if (bIsFirstControl && bRenderTitle) { // render title inside the first contentItem
-				oRm.write("<span class=\"sapUxAPObjectPageHeaderContentItem\">");
+				oRm.openStart("span")
+					.class("sapUxAPObjectPageHeaderContentItem")
+					.openEnd();
 				this._renderTitle(oRm, oTitle);
 			} else {
 				oHeaderContentItem.addStyleClass("sapUxAPObjectPageHeaderContentItem");
@@ -143,11 +160,14 @@ sap.ui.define([
 		oRm.renderControl(oHeaderContentItem);
 
 		if (bHasSeparatorAfter) {
-			oRm.write("<span class=\"sapUxAPObjectPageHeaderSeparatorAfter\"/>");
+			oRm.openStart("span")
+				.class("sapUxAPObjectPageHeaderSeparatorAfter")
+				.openEnd()
+				.close("span");
 		}
 
 		if (oLayoutData || (bIsFirstControl && bRenderTitle)) {
-			oRm.write("</span>");
+			oRm.close("span");
 		}
 	};
 
@@ -155,7 +175,7 @@ sap.ui.define([
 	 * This method is called to render title and all it's parts if the property showTitleInHeaderContent is set to true
 	 *
 	 * @param {sap.ui.core.RenderManager} oRm the RenderManager that can be used for writing to the render output buffer
-	 * @param {sap.ui.core.Control} oControl an object representation of the control that should be rendered
+	 * @param {sap.uxap.ObjectPageHeaderContent} oControl an object representation of the control that should be rendered
 	 * @param {sap.ui.core.Control} oHeader an object representation of the titleHeader that should be rendered
 	 */
 	ObjectPageHeaderContentRenderer._renderTitleImage = function (oRm, oControl, oHeader) {
@@ -184,12 +204,15 @@ sap.ui.define([
 	 * This method is called to render the Edit button when the property showEditHeaderButton is set to true
 	 *
 	 * @param {sap.ui.core.RenderManager} oRm the RenderManager that can be used for writing to the render output buffer
-	 * @param {sap.ui.core.Control} oHeader an object representation of the control that should be rendered
+	 * @param {sap.uxap.ObjectPageHeaderContent} oHeader an object representation of the control that should be rendered
 	 */
 	ObjectPageHeaderContentRenderer._renderEditButton = function (oRm, oHeader) {
-		oRm.write("<div class=\"sapUxAPObjectPageHeaderContentCellRight\">");
+		oRm.openStart("div")
+			.class("sapUxAPObjectPageHeaderContentCellRight")
+			.openEnd();
+
 		oRm.renderControl(oHeader.getAggregation("_editHeaderButton"));
-		oRm.write("</div>");
+		oRm.close("div");
 	};
 
 	return ObjectPageHeaderContentRenderer;

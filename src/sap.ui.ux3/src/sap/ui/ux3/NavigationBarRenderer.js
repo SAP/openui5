@@ -3,8 +3,8 @@
  */
 
 // Provides default renderer for the sap.ui.ux3.NavigationBar
-sap.ui.define(['jquery.sap.global'],
-	function(jQuery) {
+sap.ui.define(["sap/base/security/encodeXML"],
+	function(encodeXML) {
 	"use strict";
 
 
@@ -19,12 +19,11 @@ sap.ui.define(['jquery.sap.global'],
 	/**
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
 	 *
-	 * @param {sap.ui.core.RenderManager} oRenderManager the RenderManager that can be used for writing to the Render-Output-Buffer
+	 * @param {sap.ui.core.RenderManager} rm the RenderManager that can be used for writing to the Render-Output-Buffer
 	 * @param {sap.ui.core.Control} oControl an object representation of the control that should be rendered
 	 */
-	NavigationBarRenderer.render = function(oRenderManager, oControl) {
+	NavigationBarRenderer.render = function(rm, oControl) {
 		// convenience variable
-		var rm = oRenderManager;
 		var sId = oControl.getId();
 
 		// write the HTML into the render manager
@@ -103,11 +102,11 @@ sap.ui.define(['jquery.sap.global'],
 
 				var tooltip = item.getTooltip_AsString();
 				if (tooltip) {
-					oRm.write(" title='" + jQuery.sap.encodeHTML(tooltip) + "'");
+					oRm.write(" title='" + encodeXML(tooltip) + "'");
 				}
 
 				oRm.write(">");
-				oRm.write(jQuery.sap.encodeHTML(item.getText()));
+				oRm.write(encodeXML(item.getText()));
 				oRm.write("</a></li>");
 			}
 		}

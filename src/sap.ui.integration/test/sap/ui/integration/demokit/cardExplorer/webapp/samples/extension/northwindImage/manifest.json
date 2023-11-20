@@ -1,0 +1,76 @@
+{
+	"sap.app": {
+		"type": "card",
+		"id": "card.explorer.extension.northwindImage",
+		"title":"Employee From Norhtwind DB",
+		"subTitle": "Demonstrates conversion for Northwind images",
+		"applicationVersion": {
+			"version": "1.0.0"
+		},
+		"shortTitle": "A short title for this Card",
+		"info": "Additional information about this Card",
+		"description": "A long description for this Card",
+		"tags": {
+			"keywords": [
+				"Object",
+				"Card",
+				"Extension",
+				"Sample"
+			]
+		}
+	},
+	"sap.card": {
+		"type": "Object",
+		"extension": "./NorthwindImageExtension",
+		"configuration": {
+			"destinations": {
+				"Northwind_V3": {
+					"name": "Northwind_V3",
+					"label": "Northwind V3 Service URL",
+					"defaultUrl": "https://services.odata.org/V3/Northwind/Northwind.svc"
+				}
+			},
+			"parameters": {
+				"employeeId": {
+					"value": 1,
+					"type": "integer",
+					"label": "Employee ID",
+					"description": "The ID of an employee from the Northwind database"
+				}
+			}
+		},
+		"data": {
+			"request": {
+				"url": "{{destinations.Northwind_V3}}/Employees({parameters>/employeeId/value})",
+				"parameters": {
+					"$format": "json"
+				}
+			},
+			"path": "/"
+		},
+		"header": {
+			"title": "{FirstName} {LastName}",
+			"subTitle": "{Title}",
+			"icon": {
+				"src": "{= extension.formatters.convertNorthwindImage(${Photo})}"
+			}
+		},
+		"content": {
+			"groups": [
+				{
+					"title": "Contact Details",
+					"items": [
+						{
+							"label": "Address",
+							"value": "{Address}"
+						},
+						{
+							"label": "Country",
+							"value": "{Country}"
+						}
+					]
+				}
+			]
+		}
+	}
+}

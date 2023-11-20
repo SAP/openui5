@@ -1,0 +1,18 @@
+{
+  "1.82.0": {
+    "date": "August 2020",
+    "notes": [
+      {
+        "id": "281aa4412794d43bb4e860faff27d993b3b3056f",
+        "type": "FIX",
+        "text": ": RTA Contextmenu Item positioning",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080331570"
+          }
+        ]
+      }
+    ]
+  }
+}

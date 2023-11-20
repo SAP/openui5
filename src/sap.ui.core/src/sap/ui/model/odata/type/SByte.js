@@ -2,8 +2,9 @@
  * ${copyright}
  */
 
-sap.ui.define(['sap/ui/model/odata/type/Int'],
-	function(Int) {
+sap.ui.define([
+	"sap/ui/model/odata/type/Int"
+], function (Int) {
 	"use strict";
 
 	var oRange = {minimum : -128, maximum : 127};
@@ -25,7 +26,11 @@ sap.ui.define(['sap/ui/model/odata/type/Int'],
 	 *
 	 * @alias sap.ui.model.odata.type.SByte
 	 * @param {object} [oFormatOptions]
-	 *   format options as defined in {@link sap.ui.core.format.NumberFormat}
+	 *   Format options as defined in {@link sap.ui.core.format.NumberFormat.getIntegerInstance}
+	 * @param {boolean} [oFormatOptions.parseEmptyValueToZero=false]
+	 *   Whether the empty string and <code>null</code> are parsed to <code>0</code> if the <code>nullable</code>
+	 *   constraint is set to <code>false</code>; see {@link sap.ui.model.odata.type.Int#parseValue parseValue};
+	 *   since 1.115.0
 	 * @param {object} [oConstraints]
 	 *   constraints; {@link sap.ui.model.odata.type.Int#validateValue validateValue} throws an
 	 *   error if any constraint is violated

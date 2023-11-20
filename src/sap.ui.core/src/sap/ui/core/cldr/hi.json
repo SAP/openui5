@@ -1,5 +1,7 @@
 {
 	"__license": "This file has been derived from Unicode Common Locale Data Repository (CLDR) files (http://cldr.unicode.org). See the copyright and permission notice in the Unicode-Data-Files-LICENSE.txt available at the same location as this file or visit http://www.unicode.org/copyright.html",
+	"__version": "43.0.0",
+	"__buildtime": "2023-09-28T11:39:07.908Z",
 	"languages": {
 		"aa": "अफ़ार",
 		"ab": "अब्ख़ाज़ियन",
@@ -19,16 +21,20 @@
 		"am": "अम्हेरी",
 		"an": "अर्गोनी",
 		"ang": "पुरानी अंग्रेज़ी",
+		"ann": "ओबोलो",
 		"anp": "अंगिका",
 		"ar": "अरबी",
 		"ar_001": "आधुनिक मानक अरबी",
 		"arc": "ऐरेमेक",
 		"arn": "मापूचे",
 		"arp": "अरापाहो",
+		"ars": "नज्दी अरबी",
+		"ars_alt-menu": "अरबी, नज्दी",
 		"arw": "अरावक",
 		"as": "असमिया",
 		"asa": "असु",
 		"ast": "अस्तुरियन",
+		"atj": "अतिकामेक्व",
 		"av": "अवेरिक",
 		"awa": "अवधी",
 		"ay": "आयमारा",
@@ -62,7 +68,9 @@
 		"ca": "कातालान",
 		"cad": "कैड्डो",
 		"car": "कैरिब",
+		"cay": "कायुगा",
 		"cch": "अत्सम",
+		"ccp": "चकमा",
 		"ce": "चेचन",
 		"ceb": "सिबुआनो",
 		"cgg": "शिगा",
@@ -77,13 +85,23 @@
 		"chr": "चेरोकी",
 		"chy": "शेयेन्न",
 		"ckb": "सोरानी कुर्दिश",
+		"ckb_alt-menu": "कुर्दी, सोरानी",
+		"ckb_alt-variant": "सोरानी कुर्दिश",
+		"clc": "चिलकोटिन",
 		"co": "कोर्सीकन",
 		"cop": "कॉप्टिक",
 		"cr": "क्री",
+		"crg": "मिचिफ़",
 		"crh": "क्रीमीन तुर्की",
+		"crj": "दक्षिण पूर्वी क्री",
+		"crk": "प्लेन्स क्री",
+		"crl": "नॉर्दन ईस्ट क्री",
+		"crm": "मूस क्री",
+		"crr": "कैरोलाइना एल्गोंक्वीयन",
 		"crs": "सेसेल्वा क्रिओल फ्रेंच",
 		"cs": "चेक",
 		"csb": "काशुबियन",
+		"csw": "स्वॉम्पी क्री",
 		"cu": "चर्च साल्विक",
 		"cv": "चूवाश",
 		"cy": "वेल्श",
@@ -99,7 +117,7 @@
 		"dgr": "डोग्रिब",
 		"din": "दिन्का",
 		"dje": "झार्मा",
-		"doi": "डोग्री",
+		"doi": "डोगरी",
 		"dsb": "निचला सॉर्बियन",
 		"dua": "दुआला",
 		"dum": "मध्यकालीन पुर्तगाली",
@@ -124,7 +142,7 @@
 		"en_US-alt-short": "अमेरिकी अंग्रेज़ी",
 		"enm": "मध्यकालीन अंग्रेज़ी",
 		"eo": "एस्पेरेंतो",
-		"es": "स्पेनी",
+		"es": "स्पेनिश",
 		"es_419": "लैटिन अमेरिकी स्पेनिश",
 		"es_ES": "यूरोपीय स्पेनिश",
 		"es_MX": "मैक्सिकन स्पेनिश",
@@ -132,6 +150,7 @@
 		"eu": "बास्क",
 		"ewo": "इवोन्डो",
 		"fa": "फ़ारसी",
+		"fa_AF": "दारी",
 		"fan": "फैन्ग",
 		"fat": "फन्टी",
 		"ff": "फुलाह",
@@ -150,10 +169,9 @@
 		"frs": "पूर्वी फ़्रीसियाई",
 		"fur": "फ्रीयुलीयान",
 		"fy": "पश्चिमी फ़्रिसियाई",
-		"ga": "आइरिश",
+		"ga": "आयरिश",
 		"gaa": "गा",
 		"gag": "गागौज़",
-		"gan": "gan",
 		"gay": "गायो",
 		"gba": "ग्बाया",
 		"gd": "स्कॉटिश गाएलिक",
@@ -175,20 +193,22 @@
 		"gwi": "ग्विचइन",
 		"ha": "हौसा",
 		"hai": "हैडा",
-		"hak": "hak",
 		"haw": "हवाई",
+		"hax": "दक्षिणी हाइदा",
 		"he": "हिब्रू",
 		"hi": "हिन्दी",
+		"hi_Latn": "हिन्दी (लैटिन)",
+		"hi_Latn-alt-variant": "हिंग्लिश",
 		"hil": "हिलिगेनन",
 		"hit": "हिताइत",
 		"hmn": "ह्मॉंग",
 		"ho": "हिरी मोटू",
 		"hr": "क्रोएशियाई",
 		"hsb": "ऊपरी सॉर्बियन",
-		"hsn": "hsn",
 		"ht": "हैतियाई",
 		"hu": "हंगेरियाई",
 		"hup": "हूपा",
+		"hur": "हल्कोमेलम",
 		"hy": "आर्मेनियाई",
 		"hz": "हरैरो",
 		"ia": "इंटरलिंगुआ",
@@ -199,12 +219,13 @@
 		"ig": "ईग्बो",
 		"ii": "सिचुआन यी",
 		"ik": "इनुपियाक्",
+		"ikt": "पश्चिमी कनाडाई इनुक्टिटुट",
 		"ilo": "इलोको",
 		"inh": "इंगुश",
 		"io": "इडौ",
 		"is": "आइसलैंडिक",
 		"it": "इतालवी",
-		"iu": "इनूकीटूत्",
+		"iu": "इनुक्टिटुट",
 		"ja": "जापानी",
 		"jbo": "लोज्बान",
 		"jgo": "नगोंबा",
@@ -225,6 +246,7 @@
 		"kea": "काबुवेर्दियानु",
 		"kfo": "कोरो",
 		"kg": "कोंगो",
+		"kgp": "काइंगांग",
 		"kha": "खासी",
 		"kho": "खोतानीस",
 		"khq": "कोयरा चीनी",
@@ -255,6 +277,7 @@
 		"kut": "क्यूतनाई",
 		"kv": "कोमी",
 		"kw": "कोर्निश",
+		"kwk": "क्वॉकवाला",
 		"ky": "किर्गीज़",
 		"la": "लैटिन",
 		"lad": "लादीनो",
@@ -265,13 +288,16 @@
 		"lez": "लेज़्घीयन",
 		"lg": "गांडा",
 		"li": "लिंबर्गिश",
+		"lil": "लिलोएट",
 		"lkt": "लैकोटा",
+		"lmo": "लॉमबर्ड",
 		"ln": "लिंगाला",
 		"lo": "लाओ",
 		"lol": "मोंगो",
 		"lou": "लुईज़ियाना क्रियोल",
 		"loz": "लोज़ी",
 		"lrc": "उत्तरी लूरी",
+		"lsm": "सामिया",
 		"lt": "लिथुआनियाई",
 		"lu": "ल्यूबा-कटांगा",
 		"lua": "ल्यूबा-लुलुआ",
@@ -305,6 +331,7 @@
 		"mn": "मंगोलियाई",
 		"mnc": "मन्चु",
 		"mni": "मणिपुरी",
+		"moe": "इन्नु-एईमन",
 		"moh": "मोहौक",
 		"mos": "मोस्सी",
 		"mr": "मराठी",
@@ -319,7 +346,7 @@
 		"myv": "एर्ज़या",
 		"mzn": "माज़न्देरानी",
 		"na": "नाउरू",
-		"nan": "nan",
+		"nan": "मिन नान",
 		"nap": "नीपोलिटन",
 		"naq": "नामा",
 		"nb": "नॉर्वेजियाई बोकमाल",
@@ -352,8 +379,13 @@
 		"nzi": "न्ज़ीमा",
 		"oc": "ओसीटान",
 		"oj": "ओजिब्वा",
+		"ojb": "उत्तरपश्चिमी ओजिब्वे",
+		"ojc": "सेंट्रल ओजीब्वे",
+		"ojs": "ओजी-क्री",
+		"ojw": "पश्चिमी ओजिब्वा",
+		"oka": "ओकनागन",
 		"om": "ओरोमो",
-		"or": "उड़िया",
+		"or": "ओड़िया",
 		"os": "ओस्सेटिक",
 		"osa": "ओसेज",
 		"ota": "ओटोमान तुर्किश",
@@ -367,8 +399,10 @@
 		"peo": "पुरानी फारसी",
 		"phn": "फोएनिशियन",
 		"pi": "पाली",
+		"pis": "पाईजिन",
 		"pl": "पोलिश",
 		"pon": "पोह्नपिएन",
+		"pqm": "मलेसीट-पासेमेक्वोडी",
 		"prg": "प्रुशियाई",
 		"pro": "पुरानी प्रोवेन्सल",
 		"ps": "पश्तो",
@@ -381,13 +415,13 @@
 		"raj": "राजस्थानी",
 		"rap": "रापानुई",
 		"rar": "रारोतोंगन",
+		"rhg": "रोहिंग्या",
 		"rm": "रोमान्श",
 		"rn": "रुन्दी",
 		"ro": "रोमानियाई",
 		"ro_MD": "मोलडावियन",
 		"rof": "रोम्बो",
 		"rom": "रोमानी",
-		"root": "रूट",
 		"ru": "रूसी",
 		"rup": "अरोमानियन",
 		"rw": "किन्यारवांडा",
@@ -419,6 +453,7 @@
 		"sid": "सिदामो",
 		"sk": "स्लोवाक",
 		"sl": "स्लोवेनियाई",
+		"slh": "दक्षिणी लशूटसीड",
 		"sm": "सामोन",
 		"sma": "दक्षिणी सामी",
 		"smj": "ल्युल सामी",
@@ -435,6 +470,7 @@
 		"ss": "स्वाती",
 		"ssy": "साहो",
 		"st": "दक्षिणी सेसेथो",
+		"str": "स्ट्रेट्स सैलिश",
 		"su": "सुंडानी",
 		"suk": "सुकुमा",
 		"sus": "सुसु",
@@ -446,13 +482,16 @@
 		"syc": "क्लासिकल सिरिएक",
 		"syr": "सिरिएक",
 		"ta": "तमिल",
+		"tce": "दक्षिणी टशोनी",
 		"te": "तेलुगू",
 		"tem": "टिम्ने",
 		"teo": "टेसो",
 		"ter": "तेरेनो",
 		"tet": "तेतुम",
 		"tg": "ताजिक",
+		"tgx": "टैगिश",
 		"th": "थाई",
+		"tht": "टैल्हटन",
 		"ti": "तिग्रीन्या",
 		"tig": "टाइग्रे",
 		"tiv": "तिव",
@@ -465,12 +504,14 @@
 		"tn": "सेत्स्वाना",
 		"to": "टोंगन",
 		"tog": "न्यासा टोन्गा",
+		"tok": "टोकी पोना",
 		"tpi": "टोक पिसिन",
 		"tr": "तुर्की",
 		"trv": "तारोको",
 		"ts": "सोंगा",
 		"tsi": "त्सिमीशियन",
 		"tt": "तातार",
+		"ttm": "उत्तरी टुशोनी",
 		"tum": "तम्बूका",
 		"tvl": "तुवालु",
 		"tw": "ट्वी",
@@ -479,7 +520,7 @@
 		"tyv": "तुवीनियन",
 		"tzm": "मध्य एटलस तमाज़ित",
 		"udm": "उदमुर्त",
-		"ug": "विघुर",
+		"ug": "उइगर",
 		"uga": "युगैरिटिक",
 		"uk": "यूक्रेनियाई",
 		"umb": "उम्बुन्डु",
@@ -499,7 +540,7 @@
 		"was": "वाशो",
 		"wbp": "वॉल्पेरी",
 		"wo": "वोलोफ़",
-		"wuu": "wuu",
+		"wuu": "वू चीनी",
 		"xal": "काल्मिक",
 		"xh": "ख़ोसा",
 		"xog": "सोगा",
@@ -509,35 +550,36 @@
 		"ybb": "येंबा",
 		"yi": "यहूदी",
 		"yo": "योरूबा",
+		"yrl": "नेइंगातू",
 		"yue": "कैंटोनीज़",
+		"yue_alt-menu": "चीनी, कैंटोनीज़",
 		"za": "ज़ुआंग",
 		"zap": "ज़ेपोटेक",
 		"zbl": "ब्लिसिम्बॉल्स",
 		"zen": "ज़ेनान्गा",
 		"zgh": "मानक मोरक्कन तामाज़ाइट",
 		"zh": "चीनी",
+		"zh_alt-menu": "चीनी, मैंडेरिन",
 		"zh_Hans": "सरलीकृत चीनी",
+		"zh_Hans-alt-long": "सरलीकृत मैंडेरिन चीनी",
 		"zh_Hant": "पारंपरिक चीनी",
+		"zh_Hant-alt-long": "पारंपरिक मैंडेरिन चीनी",
 		"zu": "ज़ुलू",
 		"zun": "ज़ूनी",
 		"zxx": "कोई भाषा सामग्री नहीं",
 		"zza": "ज़ाज़ा"
 	},
 	"scripts": {
-		"Adlm": "Adlm",
-		"Aghb": "Aghb",
-		"Ahom": "Ahom",
+		"Adlm": "ऐडलम",
 		"Arab": "अरबी",
 		"Arab-alt-variant": "फ़ारसी-अरबी",
+		"Aran": "नस्तालीक़",
 		"Armi": "इम्पिरियल आर्मेनिक",
 		"Armn": "आर्मेनियाई",
 		"Avst": "अवेस्तन",
 		"Bali": "बाली",
-		"Bamu": "Bamu",
-		"Bass": "Bass",
 		"Batk": "बटकी",
 		"Beng": "बंगाली",
-		"Bhks": "Bhks",
 		"Blis": "ब्लिसिम्बॉल्स",
 		"Bopo": "बोपोमोफ़ो",
 		"Brah": "ब्रह्मी",
@@ -545,7 +587,7 @@
 		"Bugi": "बगिनीस",
 		"Buhd": "बुहिद",
 		"Cakm": "चकमा",
-		"Cans": "युनिफाइड कैनेडियन एबोरिजनल सिलेबिक्स",
+		"Cans": "यूनिफ़ाइड कैनेडियन एबोरिजनल सिलेबिक्स",
 		"Cari": "करैन",
 		"Cham": "चाम",
 		"Cher": "चेरोकी",
@@ -556,16 +598,13 @@
 		"Cyrs": "ओल्ड चर्च स्लावोनिक सिरिलिक",
 		"Deva": "देवनागरी",
 		"Dsrt": "डेसरेट",
-		"Dupl": "Dupl",
 		"Egyd": "इजिप्शियन डेमोटिक",
 		"Egyh": "इजिप्शियन हाइरेटिक",
 		"Egyp": "इजिप्शियन हाइरोग्लिफ्स",
-		"Elba": "Elba",
 		"Ethi": "इथियोपियाई",
 		"Geok": "जॉर्जियन खुतसुरी",
 		"Geor": "जॉर्जियन",
 		"Glag": "ग्लेगोलिटिक",
-		"Gonm": "Gonm",
 		"Goth": "गोथिक",
 		"Gran": "ग्रन्थ",
 		"Grek": "यूनानी",
@@ -579,10 +618,8 @@
 		"Hans-alt-stand-alone": "सरलीकृत हान",
 		"Hant": "पारंपरिक",
 		"Hant-alt-stand-alone": "पारंपरिक हान",
-		"Hatr": "Hatr",
 		"Hebr": "हिब्रू",
 		"Hira": "हिरागाना",
-		"Hluw": "Hluw",
 		"Hmng": "पाहो ह्मोन्ग",
 		"Hrkt": "जापानी सिलेबरीज़",
 		"Hung": "ऑल्ड हंगेरियन",
@@ -595,7 +632,6 @@
 		"Kana": "काताकाना",
 		"Khar": "खारोशथी",
 		"Khmr": "खमेर",
-		"Khoj": "Khoj",
 		"Knda": "कन्नड़",
 		"Kore": "कोरियाई",
 		"Kthi": "कैथी",
@@ -608,38 +644,23 @@
 		"Limb": "लिम्बू",
 		"Lina": "लीनियर A",
 		"Linb": "लीनियर बी",
-		"Lisu": "Lisu",
 		"Lyci": "लिशियन",
 		"Lydi": "लिडियन",
-		"Mahj": "Mahj",
 		"Mand": "मनडेन",
 		"Mani": "मनीशीन",
-		"Marc": "Marc",
 		"Maya": "मयान हाइरोग्लिफ्स",
-		"Mend": "Mend",
-		"Merc": "Merc",
 		"Mero": "मेरोइटिक",
 		"Mlym": "मलयालम",
-		"Modi": "Modi",
 		"Mong": "मंगोलियाई",
 		"Moon": "मून",
-		"Mroo": "Mroo",
 		"Mtei": "मेइतेइ मायेक",
-		"Mult": "Mult",
 		"Mymr": "म्यांमार",
-		"Narb": "Narb",
-		"Nbat": "Nbat",
-		"Newa": "Newa",
 		"Nkoo": "एन्‘को",
-		"Nshu": "Nshu",
 		"Ogam": "ओगम",
-		"Olck": "ऑल चिकी",
+		"Olck": "ओल चिकी",
 		"Orkh": "ओरखोन",
-		"Orya": "उड़िया",
-		"Osge": "Osge",
+		"Orya": "ओड़िया",
 		"Osma": "ओस्मान्या",
-		"Palm": "Palm",
-		"Pauc": "Pauc",
 		"Perm": "ओल्ड परमिक",
 		"Phag": "फाग्स-पा",
 		"Phli": "इंस्क्रिपश्नल पाहलवी",
@@ -648,50 +669,41 @@
 		"Phnx": "फोनिशियन",
 		"Plrd": "पॉलार्ड फोनेटिक",
 		"Prti": "इंस्क्रिपश्नल पार्थियन",
+		"Qaag": "ज़ौजी",
 		"Rjng": "रीजांग",
+		"Rohg": "हनिफ़ि",
 		"Roro": "रोन्गोरोन्गो",
 		"Runr": "रूनिक",
 		"Samr": "समरिटन",
 		"Sara": "सराती",
-		"Sarb": "Sarb",
 		"Saur": "सौराष्ट्र",
 		"Sgnw": "सांकेतिक लेख",
 		"Shaw": "शावियान",
-		"Shrd": "Shrd",
-		"Sidd": "Sidd",
-		"Sind": "Sind",
 		"Sinh": "सिंहली",
-		"Sora": "Sora",
-		"Soyo": "Soyo",
 		"Sund": "सूडानी",
 		"Sylo": "सिलोती नागरी",
-		"Syrc": "सिरियेक",
+		"Syrc": "सिरिएक",
 		"Syre": "एस्त्रेन्जेलो सिरिएक",
 		"Syrj": "पश्चिम सिरिएक",
 		"Syrn": "पूर्व सिरिएक",
 		"Tagb": "तगबन्वा",
-		"Takr": "Takr",
 		"Tale": "ताई ली",
 		"Talu": "नया ताई लु",
 		"Taml": "तमिल",
-		"Tang": "Tang",
 		"Tavt": "ताई विएत",
 		"Telu": "तेलुगू",
 		"Teng": "तेन्गवार",
-		"Tfng": "तिफिनाघ",
+		"Tfng": "तिफ़िनाघ",
 		"Tglg": "टैगालोग",
 		"Thaa": "थाना",
 		"Thai": "थाई",
 		"Tibt": "तिब्बती",
-		"Tirh": "Tirh",
 		"Ugar": "युगारिटिक",
 		"Vaii": "वाई",
 		"Visp": "विसिबल स्पीच",
-		"Wara": "Wara",
 		"Xpeo": "पुरानी फारसी",
 		"Xsux": "सुमेरो अक्कादियन सुनिफॉर्म",
 		"Yiii": "यी",
-		"Zanb": "Zanb",
 		"Zinh": "विरासत",
 		"Zmth": "गणितीय संकेतन",
 		"Zsye": "ईमोजी",
@@ -708,7 +720,7 @@
 		"151": "पूर्वी यूरोप",
 		"154": "उत्तरी यूरोप",
 		"155": "पश्चिमी यूरोप",
-		"202": "202",
+		"202": "उप-सहारा अफ़्रीका",
 		"419": "लैटिन अमेरिका",
 		"001": "विश्व",
 		"002": "अफ़्रीका",
@@ -778,7 +790,7 @@
 		"CG": "कांगो – ब्राज़ाविल",
 		"CG-alt-variant": "कांगो (गणराज्य)",
 		"CH": "स्विट्ज़रलैंड",
-		"CI": "कोट डी आइवर",
+		"CI": "कोत दिवुआर",
 		"CI-alt-variant": "आइवरी कोस्ट",
 		"CK": "कुक द्वीपसमूह",
 		"CL": "चिली",
@@ -789,7 +801,7 @@
 		"CR": "कोस्टारिका",
 		"CU": "क्यूबा",
 		"CV": "केप वर्ड",
-		"CW": "क्यूरासाओ",
+		"CW": "कुरासाओ",
 		"CX": "क्रिसमस द्वीप",
 		"CY": "साइप्रस",
 		"CZ": "चेकिया",
@@ -838,7 +850,7 @@
 		"GU": "गुआम",
 		"GW": "गिनी-बिसाउ",
 		"GY": "गुयाना",
-		"HK": "हाँग काँग (चीन विशेष प्रशासनिक क्षेत्र)",
+		"HK": "हांग कांग",
 		"HK-alt-short": "हाँग काँग",
 		"HM": "हर्ड द्वीप और मैकडोनॉल्ड द्वीपसमूह",
 		"HN": "होंडूरास",
@@ -889,12 +901,11 @@
 		"MF": "सेंट मार्टिन",
 		"MG": "मेडागास्कर",
 		"MH": "मार्शल द्वीपसमूह",
-		"MK": "मकदूनिया",
-		"MK-alt-variant": "मकदूनिया (FYROM)",
+		"MK": "उत्तरी मकदूनिया",
 		"ML": "माली",
 		"MM": "म्यांमार (बर्मा)",
 		"MN": "मंगोलिया",
-		"MO": "मकाऊ (विशेष प्रशासनिक क्षेत्र चीन)",
+		"MO": "मकाओ",
 		"MO-alt-short": "मकाऊ",
 		"MP": "उत्तरी मारियाना द्वीपसमूह",
 		"MQ": "मार्टीनिक",
@@ -919,6 +930,7 @@
 		"NR": "नाउरु",
 		"NU": "नीयू",
 		"NZ": "न्यूज़ीलैंड",
+		"NZ-alt-variant": "औटेआरोआ न्यूज़ीलैंड",
 		"OM": "ओमान",
 		"PA": "पनामा",
 		"PE": "पेरू",
@@ -962,30 +974,31 @@
 		"SV": "अल सल्वाडोर",
 		"SX": "सिंट मार्टिन",
 		"SY": "सीरिया",
-		"SZ": "स्वाज़ीलैंड",
-		"TA": "त्रिस्टान डा कुना",
+		"SZ": "एस्वाटिनी",
+		"SZ-alt-variant": "स्वाज़ीलैंड",
+		"TA": "ट्रिस्टन दा कुना",
 		"TC": "तुर्क और कैकोज़ द्वीपसमूह",
 		"TD": "चाड",
 		"TF": "फ़्रांसीसी दक्षिणी क्षेत्र",
 		"TG": "टोगो",
 		"TH": "थाईलैंड",
-		"TJ": "ताज़िकिस्तान",
+		"TJ": "ताजिकिस्तान",
 		"TK": "तोकेलाउ",
 		"TL": "तिमोर-लेस्त",
 		"TL-alt-variant": "पूर्वी तिमोर",
 		"TM": "तुर्कमेनिस्तान",
 		"TN": "ट्यूनीशिया",
 		"TO": "टोंगा",
-		"TR": "तुर्की",
+		"TR": "तुर्किये",
+		"TR-alt-variant": "तुर्किये",
 		"TT": "त्रिनिदाद और टोबैगो",
 		"TV": "तुवालू",
-		"TW": "ताइवान",
+		"TW": "ताईवान",
 		"TZ": "तंज़ानिया",
 		"UA": "यूक्रेन",
 		"UG": "युगांडा",
 		"UM": "यू॰एस॰ आउटलाइंग द्वीपसमूह",
 		"UN": "संयुक्त राष्ट्र",
-		"UN-alt-short": "संयुक्त राष्ट्र",
 		"US": "संयुक्त राज्य",
 		"US-alt-short": "अमेरिका",
 		"UY": "उरूग्वे",
@@ -999,6 +1012,8 @@
 		"VU": "वनुआतू",
 		"WF": "वालिस और फ़्यूचूना",
 		"WS": "समोआ",
+		"XA": "सूडो-एक्सेंट",
+		"XB": "सूडो-बायडायरेक्शनल",
 		"XK": "कोसोवो",
 		"YE": "यमन",
 		"YT": "मायोते",
@@ -1022,8 +1037,8 @@
 			"short": "h:mm a"
 		},
 		"dateTimeFormats": {
-			"full": "{1} को {0}",
-			"long": "{1} को {0}",
+			"full": "{1}, {0}",
+			"long": "{1}, {0}",
 			"medium": "{1}, {0}",
 			"short": "{1}, {0}",
 			"availableFormats": {
@@ -1040,6 +1055,7 @@
 				"Ehms": "E h:mm:ss a",
 				"EHms": "E HH:mm:ss",
 				"Gy": "y G",
+				"GyMd": "GGGGG d/M/y",
 				"GyMMM": "MMM G y",
 				"GyMMMd": "d MMM y G",
 				"GyMMMEd": "E, d MMM y G",
@@ -1075,7 +1091,7 @@
 				"yMMMM": "MMMM y",
 				"yQQQ": "QQQ y",
 				"yQQQQ": "QQQQ y",
-				"MMMMW": "MMM का सप्ताह W",
+				"MMMMW": "MMMM का सप्ताह W",
 				"yw": "Y का सप्ताह w"
 			},
 			"appendItems": {
@@ -1093,8 +1109,55 @@
 			},
 			"intervalFormats": {
 				"intervalFormatFallback": "{0} – {1}",
+				"Bh": {
+					"B": "B h – B h",
+					"h": "B h–h"
+				},
+				"Bhm": {
+					"B": "B h:mm – B h:mm",
+					"h": "B h:mm–h:mm",
+					"m": "B h:mm–h:mm"
+				},
 				"d": {
 					"d": "d–d"
+				},
+				"Gy": {
+					"G": "G y – G y",
+					"y": "G y–y"
+				},
+				"GyM": {
+					"G": "GGGGG y-MM – GGGGG y-MM",
+					"M": "GGGGG y-MM – y-MM",
+					"y": "GGGGG y-MM – y-MM"
+				},
+				"GyMd": {
+					"d": "GGGGG y-MM-dd – y-MM-dd",
+					"G": "GGGGG y-MM-dd – GGGGG y-MM-dd",
+					"M": "GGGGG y-MM-dd – y-MM-dd",
+					"y": "GGGGG y-MM-dd – y-MM-dd"
+				},
+				"GyMEd": {
+					"d": "GGGGG y-MM-dd, E – y-MM-dd, E",
+					"G": "GGGGG y-MM-dd, E – GGGGG y-MM-dd, E",
+					"M": "GGGGG y-MM-dd, E – y-MM-dd, E",
+					"y": "GGGGG y-MM-dd, E – y-MM-dd, E"
+				},
+				"GyMMM": {
+					"G": "G y MMM – G y MMM",
+					"M": "G y MMM–MMM",
+					"y": "G y MMM – y MMM"
+				},
+				"GyMMMd": {
+					"d": "G y MMM d–d",
+					"G": "G y MMM d – G y MMM d",
+					"M": "G y MMM d – MMM d",
+					"y": "G y MMM d – y MMM d"
+				},
+				"GyMMMEd": {
+					"d": "G y MMM d, E – MMM d, E",
+					"G": "G y MMM d, E – G y MMM d, E",
+					"M": "G y MMM d, E – MMM d, E",
+					"y": "G y MMM d, E – y MMM d, E"
 				},
 				"h": {
 					"a": "h a – h a",
@@ -1143,7 +1206,7 @@
 					"M": "MMM–MMM"
 				},
 				"MMMd": {
-					"d": "d MMM–d",
+					"d": "d – d MMM",
 					"M": "d MMM – d MMM"
 				},
 				"MMMEd": {
@@ -1400,31 +1463,79 @@
 		"dayPeriods": {
 			"format": {
 				"abbreviated": [
-					"पूर्वाह्न",
-					"अपराह्न"
+					"am",
+					"pm"
 				],
 				"narrow": [
-					"पू",
-					"अ"
+					"am",
+					"pm"
 				],
 				"wide": [
-					"पूर्वाह्न",
-					"अपराह्न"
+					"am",
+					"pm"
 				]
 			},
 			"stand-alone": {
 				"abbreviated": [
-					"पूर्वाह्न",
-					"अपराह्न"
+					"am",
+					"pm"
 				],
 				"narrow": [
-					"पू",
-					"अ"
+					"am",
+					"pm"
 				],
 				"wide": [
-					"पूर्वाह्न",
-					"अपराह्न"
+					"am",
+					"pm"
 				]
+			}
+		},
+		"flexibleDayPeriods": {
+			"format": {
+				"abbreviated": {
+					"midnight": "मध्यरात्रि",
+					"morning1": "सुबह",
+					"afternoon1": "दोपहर",
+					"evening1": "शाम",
+					"night1": "रात"
+				},
+				"narrow": {
+					"midnight": "मध्यरात्रि",
+					"morning1": "सुबह",
+					"afternoon1": "दोपहर",
+					"evening1": "शाम",
+					"night1": "रात"
+				},
+				"wide": {
+					"midnight": "मध्यरात्रि",
+					"morning1": "सुबह",
+					"afternoon1": "दोपहर",
+					"evening1": "शाम",
+					"night1": "रात"
+				}
+			},
+			"stand-alone": {
+				"abbreviated": {
+					"midnight": "मध्यरात्रि",
+					"morning1": "सुबह",
+					"afternoon1": "दोपहर",
+					"evening1": "शाम",
+					"night1": "रात"
+				},
+				"narrow": {
+					"midnight": "आधी रात",
+					"morning1": "सुबह",
+					"afternoon1": "दोपहर",
+					"evening1": "शाम",
+					"night1": "रात"
+				},
+				"wide": {
+					"midnight": "मध्यरात्रि",
+					"morning1": "सुबह",
+					"afternoon1": "दोपहर",
+					"evening1": "शाम",
+					"night1": "रात"
+				}
 			}
 		},
 		"era-wide": {
@@ -1454,24 +1565,25 @@
 			"short": "h:mm a"
 		},
 		"dateTimeFormats": {
-			"full": "{1} को {0}",
-			"long": "{1} को {0}",
+			"full": "{1}, {0}",
+			"long": "{1}, {0}",
 			"medium": "{1}, {0}",
 			"short": "{1}, {0}",
 			"availableFormats": {
-				"Bh": "h B",
-				"Bhm": "h:mm B",
-				"Bhms": "h:mm:ss B",
+				"Bh": "B h",
+				"Bhm": "B h:mm",
+				"Bhms": "B h:mm:ss",
 				"d": "d",
 				"E": "ccc",
-				"EBhm": "E h:mm B",
-				"EBhms": "E h:mm:ss B",
+				"EBhm": "E B h:mm",
+				"EBhms": "E B h:mm:ss",
 				"Ed": "d E",
 				"Ehm": "E h:mm a",
 				"EHm": "E HH:mm",
 				"Ehms": "E h:mm:ss a",
 				"EHms": "E HH:mm:ss",
 				"Gy": "G y",
+				"GyMd": "GGGGG d/M/y",
 				"GyMMM": "G y MMM",
 				"GyMMMd": "G d MMM y",
 				"GyMMMEd": "G E, d MMM y",
@@ -1518,8 +1630,55 @@
 			},
 			"intervalFormats": {
 				"intervalFormatFallback": "{0} – {1}",
+				"Bh": {
+					"B": "B h – B h",
+					"h": "B h–h"
+				},
+				"Bhm": {
+					"B": "B h:mm – B h:mm",
+					"h": "B h:mm–h:mm",
+					"m": "B h:mm–h:mm"
+				},
 				"d": {
 					"d": "d–d"
+				},
+				"Gy": {
+					"G": "G y – G y",
+					"y": "G y–y"
+				},
+				"GyM": {
+					"G": "GGGGG y-MM – GGGGG y-MM",
+					"M": "GGGGG y-MM – y-MM",
+					"y": "GGGGG y-MM – y-MM"
+				},
+				"GyMd": {
+					"d": "GGGGG y-MM-dd – y-MM-dd",
+					"G": "GGGGG y-MM-dd – GGGGG y-MM-dd",
+					"M": "GGGGG y-MM-dd – y-MM-dd",
+					"y": "GGGGG y-MM-dd – y-MM-dd"
+				},
+				"GyMEd": {
+					"d": "GGGGG y-MM-dd, E – y-MM-dd, E",
+					"G": "GGGGG y-MM-dd, E – GGGGG y-MM-dd, E",
+					"M": "GGGGG y-MM-dd, E – y-MM-dd, E",
+					"y": "GGGGG y-MM-dd, E – y-MM-dd, E"
+				},
+				"GyMMM": {
+					"G": "G y MMM – G y MMM",
+					"M": "G y MMM–MMM",
+					"y": "G y MMM – y MMM"
+				},
+				"GyMMMd": {
+					"d": "G y MMM d–d",
+					"G": "G y MMM d – G y MMM d",
+					"M": "G y MMM d – MMM d",
+					"y": "G y MMM d – y MMM d"
+				},
+				"GyMMMEd": {
+					"d": "G y MMM d, E – MMM d, E",
+					"G": "G y MMM d, E – G y MMM d, E",
+					"M": "G y MMM d, E – MMM d, E",
+					"y": "G y MMM d, E – y MMM d, E"
 				},
 				"h": {
 					"a": "h a – h a",
@@ -1825,31 +1984,79 @@
 		"dayPeriods": {
 			"format": {
 				"abbreviated": [
-					"पूर्वाह्न",
-					"अपराह्न"
+					"am",
+					"pm"
 				],
 				"narrow": [
-					"पू",
-					"अ"
+					"am",
+					"pm"
 				],
 				"wide": [
-					"पूर्वाह्न",
-					"अपराह्न"
+					"am",
+					"pm"
 				]
 			},
 			"stand-alone": {
 				"abbreviated": [
-					"पूर्वाह्न",
-					"अपराह्न"
+					"am",
+					"pm"
 				],
 				"narrow": [
-					"पू",
-					"अ"
+					"am",
+					"pm"
 				],
 				"wide": [
-					"पूर्वाह्न",
-					"अपराह्न"
+					"am",
+					"pm"
 				]
+			}
+		},
+		"flexibleDayPeriods": {
+			"format": {
+				"abbreviated": {
+					"midnight": "मध्यरात्रि",
+					"morning1": "सुबह",
+					"afternoon1": "दोपहर",
+					"evening1": "शाम",
+					"night1": "रात"
+				},
+				"narrow": {
+					"midnight": "मध्यरात्रि",
+					"morning1": "सुबह",
+					"afternoon1": "दोपहर",
+					"evening1": "शाम",
+					"night1": "रात"
+				},
+				"wide": {
+					"midnight": "मध्यरात्रि",
+					"morning1": "सुबह",
+					"afternoon1": "दोपहर",
+					"evening1": "शाम",
+					"night1": "रात"
+				}
+			},
+			"stand-alone": {
+				"abbreviated": {
+					"midnight": "मध्यरात्रि",
+					"morning1": "सुबह",
+					"afternoon1": "दोपहर",
+					"evening1": "शाम",
+					"night1": "रात"
+				},
+				"narrow": {
+					"midnight": "आधी रात",
+					"morning1": "सुबह",
+					"afternoon1": "दोपहर",
+					"evening1": "शाम",
+					"night1": "रात"
+				},
+				"wide": {
+					"midnight": "मध्यरात्रि",
+					"morning1": "सुबह",
+					"afternoon1": "दोपहर",
+					"evening1": "शाम",
+					"night1": "रात"
+				}
 			}
 		},
 		"era-wide": {
@@ -1876,24 +2083,25 @@
 			"short": "h:mm a"
 		},
 		"dateTimeFormats": {
-			"full": "{1} को {0}",
-			"long": "{1} को {0}",
+			"full": "{1}, {0}",
+			"long": "{1}, {0}",
 			"medium": "{1}, {0}",
 			"short": "{1}, {0}",
 			"availableFormats": {
-				"Bh": "h B",
-				"Bhm": "h:mm B",
-				"Bhms": "h:mm:ss B",
+				"Bh": "B h",
+				"Bhm": "B h:mm",
+				"Bhms": "B h:mm:ss",
 				"d": "d",
 				"E": "ccc",
-				"EBhm": "E h:mm B",
-				"EBhms": "E h:mm:ss B",
+				"EBhm": "E B h:mm",
+				"EBhms": "E B h:mm:ss",
 				"Ed": "d E",
 				"Ehm": "E h:mm a",
 				"EHm": "E HH:mm",
 				"Ehms": "E h:mm:ss a",
 				"EHms": "E HH:mm:ss",
 				"Gy": "G y",
+				"GyMd": "GGGGG d/M/y",
 				"GyMMM": "G y MMM",
 				"GyMMMd": "G d MMM y",
 				"GyMMMEd": "G E, d MMM y",
@@ -1940,8 +2148,55 @@
 			},
 			"intervalFormats": {
 				"intervalFormatFallback": "{0} – {1}",
+				"Bh": {
+					"B": "B h – B h",
+					"h": "B h–h"
+				},
+				"Bhm": {
+					"B": "B h:mm – B h:mm",
+					"h": "B h:mm–h:mm",
+					"m": "B h:mm–h:mm"
+				},
 				"d": {
 					"d": "d–d"
+				},
+				"Gy": {
+					"G": "G y – G y",
+					"y": "G y–y"
+				},
+				"GyM": {
+					"G": "GGGGG y-MM – GGGGG y-MM",
+					"M": "GGGGG y-MM – y-MM",
+					"y": "GGGGG y-MM – y-MM"
+				},
+				"GyMd": {
+					"d": "GGGGG y-MM-dd – y-MM-dd",
+					"G": "GGGGG y-MM-dd – GGGGG y-MM-dd",
+					"M": "GGGGG y-MM-dd – y-MM-dd",
+					"y": "GGGGG y-MM-dd – y-MM-dd"
+				},
+				"GyMEd": {
+					"d": "GGGGG y-MM-dd, E – y-MM-dd, E",
+					"G": "GGGGG y-MM-dd, E – GGGGG y-MM-dd, E",
+					"M": "GGGGG y-MM-dd, E – y-MM-dd, E",
+					"y": "GGGGG y-MM-dd, E – y-MM-dd, E"
+				},
+				"GyMMM": {
+					"G": "G y MMM – G y MMM",
+					"M": "G y MMM–MMM",
+					"y": "G y MMM – y MMM"
+				},
+				"GyMMMd": {
+					"d": "G y MMM d–d",
+					"G": "G y MMM d – G y MMM d",
+					"M": "G y MMM d – MMM d",
+					"y": "G y MMM d – y MMM d"
+				},
+				"GyMMMEd": {
+					"d": "G y MMM d, E – MMM d, E",
+					"G": "G y MMM d, E – G y MMM d, E",
+					"M": "G y MMM d, E – MMM d, E",
+					"y": "G y MMM d, E – y MMM d, E"
 				},
 				"h": {
 					"a": "h a – h a",
@@ -1998,39 +2253,47 @@
 					"M": "E, d MMM – E, d MMM"
 				},
 				"y": {
-					"y": "y–y G"
+					"y": "y–y G",
+					"G": "y G–y G"
 				},
 				"yM": {
 					"M": "M/y – M/y G",
-					"y": "M/y – M/y G"
+					"y": "M/y – M/y G",
+					"G": "M/y G – M/y G"
 				},
 				"yMd": {
 					"d": "d/M/y – d/M/y G",
 					"M": "d/M/y – d/M/y G",
-					"y": "d/M/y – d/M/y G"
+					"y": "d/M/y – d/M/y G",
+					"G": "d/M/y G – d/M/y G"
 				},
 				"yMEd": {
 					"d": "E, d/M/y – E, d/M/y G",
 					"M": "E, d/M/y – E, d/M/y G",
-					"y": "E, d/M/y – E, d/M/y G"
+					"y": "E, d/M/y – E, d/M/y G",
+					"G": "E, d/M/y G – E, d/M/y G"
 				},
 				"yMMM": {
 					"M": "MMM–MMM y G",
-					"y": "MMM y – MMM y G"
+					"y": "MMM y – MMM y G",
+					"G": "MMM y G – MMM y G"
 				},
 				"yMMMd": {
 					"d": "d – d MMM y G",
 					"M": "d MMM – d MMM y G",
-					"y": "d MMM y – d MMM y G"
+					"y": "d MMM y – d MMM y G",
+					"G": "d MMM y G – d MMM y G"
 				},
 				"yMMMEd": {
 					"d": "E, d MMM – E, d MMM y G",
 					"M": "E, d MMM – E, d MMM y G",
-					"y": "E, d MMM y – E, d MMM y G"
+					"y": "E, d MMM y – E, d MMM y G",
+					"G": "E, d MMM y G – E, d MMM y G"
 				},
 				"yMMMM": {
 					"M": "MMMM–MMMM y G",
-					"y": "MMMM y – MMMM y G"
+					"y": "MMMM y – MMMM y G",
+					"G": "MMMM y G – MMMM y G"
 				}
 			}
 		},
@@ -2247,50 +2510,101 @@
 		"dayPeriods": {
 			"format": {
 				"abbreviated": [
-					"पूर्वाह्न",
-					"अपराह्न"
+					"am",
+					"pm"
 				],
 				"narrow": [
-					"पू",
-					"अ"
+					"am",
+					"pm"
 				],
 				"wide": [
-					"पूर्वाह्न",
-					"अपराह्न"
+					"am",
+					"pm"
 				]
 			},
 			"stand-alone": {
 				"abbreviated": [
-					"पूर्वाह्न",
-					"अपराह्न"
+					"am",
+					"pm"
 				],
 				"narrow": [
-					"पू",
-					"अ"
+					"am",
+					"pm"
 				],
 				"wide": [
-					"पूर्वाह्न",
-					"अपराह्न"
+					"am",
+					"pm"
 				]
+			}
+		},
+		"flexibleDayPeriods": {
+			"format": {
+				"abbreviated": {
+					"midnight": "मध्यरात्रि",
+					"morning1": "सुबह",
+					"afternoon1": "दोपहर",
+					"evening1": "शाम",
+					"night1": "रात"
+				},
+				"narrow": {
+					"midnight": "मध्यरात्रि",
+					"morning1": "सुबह",
+					"afternoon1": "दोपहर",
+					"evening1": "शाम",
+					"night1": "रात"
+				},
+				"wide": {
+					"midnight": "मध्यरात्रि",
+					"morning1": "सुबह",
+					"afternoon1": "दोपहर",
+					"evening1": "शाम",
+					"night1": "रात"
+				}
+			},
+			"stand-alone": {
+				"abbreviated": {
+					"midnight": "मध्यरात्रि",
+					"morning1": "सुबह",
+					"afternoon1": "दोपहर",
+					"evening1": "शाम",
+					"night1": "रात"
+				},
+				"narrow": {
+					"midnight": "आधी रात",
+					"morning1": "सुबह",
+					"afternoon1": "दोपहर",
+					"evening1": "शाम",
+					"night1": "रात"
+				},
+				"wide": {
+					"midnight": "मध्यरात्रि",
+					"morning1": "सुबह",
+					"afternoon1": "दोपहर",
+					"evening1": "शाम",
+					"night1": "रात"
+				}
 			}
 		},
 		"era-wide": {
 			"232": "मेजी",
 			"233": "ताईशो",
 			"234": "शोवा",
-			"235": "हेईसेई"
+			"235": "हेईसेई",
+			"236": "रेइवा"
 		},
 		"era-abbreviated": {
 			"232": "मेजी",
 			"233": "ताईशो",
 			"234": "शोवा",
-			"235": "हेईसेई"
+			"235": "हेईसेई",
+			"236": "रेइवा"
 		},
 		"era-narrow": {
 			"232": "M",
 			"233": "T",
 			"234": "S",
-			"235": "H"
+			"235": "H",
+			"236": "R"
 		}
 	},
 	"ca-persian": {
@@ -2307,24 +2621,25 @@
 			"short": "h:mm a"
 		},
 		"dateTimeFormats": {
-			"full": "{1} को {0}",
-			"long": "{1} को {0}",
+			"full": "{1}, {0}",
+			"long": "{1}, {0}",
 			"medium": "{1}, {0}",
 			"short": "{1}, {0}",
 			"availableFormats": {
-				"Bh": "h B",
-				"Bhm": "h:mm B",
-				"Bhms": "h:mm:ss B",
+				"Bh": "B h",
+				"Bhm": "B h:mm",
+				"Bhms": "B h:mm:ss",
 				"d": "d",
 				"E": "ccc",
-				"EBhm": "E h:mm B",
-				"EBhms": "E h:mm:ss B",
+				"EBhm": "E B h:mm",
+				"EBhms": "E B h:mm:ss",
 				"Ed": "d E",
 				"Ehm": "E h:mm a",
 				"EHm": "E HH:mm",
 				"Ehms": "E h:mm:ss a",
 				"EHms": "E HH:mm:ss",
 				"Gy": "G y",
+				"GyMd": "GGGGG d/M/y",
 				"GyMMM": "G y MMM",
 				"GyMMMd": "G d MMM y",
 				"GyMMMEd": "G E, d MMM y",
@@ -2371,8 +2686,55 @@
 			},
 			"intervalFormats": {
 				"intervalFormatFallback": "{0} – {1}",
+				"Bh": {
+					"B": "B h – B h",
+					"h": "B h–h"
+				},
+				"Bhm": {
+					"B": "B h:mm – B h:mm",
+					"h": "B h:mm–h:mm",
+					"m": "B h:mm–h:mm"
+				},
 				"d": {
 					"d": "d–d"
+				},
+				"Gy": {
+					"G": "G y – G y",
+					"y": "G y–y"
+				},
+				"GyM": {
+					"G": "GGGGG y-MM – GGGGG y-MM",
+					"M": "GGGGG y-MM – y-MM",
+					"y": "GGGGG y-MM – y-MM"
+				},
+				"GyMd": {
+					"d": "GGGGG y-MM-dd – y-MM-dd",
+					"G": "GGGGG y-MM-dd – GGGGG y-MM-dd",
+					"M": "GGGGG y-MM-dd – y-MM-dd",
+					"y": "GGGGG y-MM-dd – y-MM-dd"
+				},
+				"GyMEd": {
+					"d": "GGGGG y-MM-dd, E – y-MM-dd, E",
+					"G": "GGGGG y-MM-dd, E – GGGGG y-MM-dd, E",
+					"M": "GGGGG y-MM-dd, E – y-MM-dd, E",
+					"y": "GGGGG y-MM-dd, E – y-MM-dd, E"
+				},
+				"GyMMM": {
+					"G": "G y MMM – G y MMM",
+					"M": "G y MMM–MMM",
+					"y": "G y MMM – y MMM"
+				},
+				"GyMMMd": {
+					"d": "G y MMM d–d",
+					"G": "G y MMM d – G y MMM d",
+					"M": "G y MMM d – MMM d",
+					"y": "G y MMM d – y MMM d"
+				},
+				"GyMMMEd": {
+					"d": "G y MMM d, E – MMM d, E",
+					"G": "G y MMM d, E – G y MMM d, E",
+					"M": "G y MMM d, E – MMM d, E",
+					"y": "G y MMM d, E – y MMM d, E"
 				},
 				"h": {
 					"a": "h a – h a",
@@ -2678,31 +3040,79 @@
 		"dayPeriods": {
 			"format": {
 				"abbreviated": [
-					"पूर्वाह्न",
-					"अपराह्न"
+					"am",
+					"pm"
 				],
 				"narrow": [
-					"पू",
-					"अ"
+					"am",
+					"pm"
 				],
 				"wide": [
-					"पूर्वाह्न",
-					"अपराह्न"
+					"am",
+					"pm"
 				]
 			},
 			"stand-alone": {
 				"abbreviated": [
-					"पूर्वाह्न",
-					"अपराह्न"
+					"am",
+					"pm"
 				],
 				"narrow": [
-					"पू",
-					"अ"
+					"am",
+					"pm"
 				],
 				"wide": [
-					"पूर्वाह्न",
-					"अपराह्न"
+					"am",
+					"pm"
 				]
+			}
+		},
+		"flexibleDayPeriods": {
+			"format": {
+				"abbreviated": {
+					"midnight": "मध्यरात्रि",
+					"morning1": "सुबह",
+					"afternoon1": "दोपहर",
+					"evening1": "शाम",
+					"night1": "रात"
+				},
+				"narrow": {
+					"midnight": "मध्यरात्रि",
+					"morning1": "सुबह",
+					"afternoon1": "दोपहर",
+					"evening1": "शाम",
+					"night1": "रात"
+				},
+				"wide": {
+					"midnight": "मध्यरात्रि",
+					"morning1": "सुबह",
+					"afternoon1": "दोपहर",
+					"evening1": "शाम",
+					"night1": "रात"
+				}
+			},
+			"stand-alone": {
+				"abbreviated": {
+					"midnight": "मध्यरात्रि",
+					"morning1": "सुबह",
+					"afternoon1": "दोपहर",
+					"evening1": "शाम",
+					"night1": "रात"
+				},
+				"narrow": {
+					"midnight": "आधी रात",
+					"morning1": "सुबह",
+					"afternoon1": "दोपहर",
+					"evening1": "शाम",
+					"night1": "रात"
+				},
+				"wide": {
+					"midnight": "मध्यरात्रि",
+					"morning1": "सुबह",
+					"afternoon1": "दोपहर",
+					"evening1": "शाम",
+					"night1": "रात"
+				}
 			}
 		},
 		"era-wide": {
@@ -2713,6 +3123,524 @@
 		},
 		"era-narrow": {
 			"0": "AP"
+		}
+	},
+	"ca-buddhist": {
+		"dateFormats": {
+			"full": "G EEEE, d MMMM y",
+			"long": "G d MMMM y",
+			"medium": "G d MMM y",
+			"short": "G d/M/y"
+		},
+		"timeFormats": {
+			"full": "h:mm:ss a zzzz",
+			"long": "h:mm:ss a z",
+			"medium": "h:mm:ss a",
+			"short": "h:mm a"
+		},
+		"dateTimeFormats": {
+			"full": "{1}, {0}",
+			"long": "{1}, {0}",
+			"medium": "{1}, {0}",
+			"short": "{1}, {0}",
+			"availableFormats": {
+				"Bh": "B h",
+				"Bhm": "B h:mm",
+				"Bhms": "B h:mm:ss",
+				"d": "d",
+				"E": "ccc",
+				"EBhm": "E B h:mm",
+				"EBhms": "E B h:mm:ss",
+				"Ed": "d E",
+				"Ehm": "E h:mm a",
+				"EHm": "E HH:mm",
+				"Ehms": "E h:mm:ss a",
+				"EHms": "E HH:mm:ss",
+				"Gy": "y G",
+				"GyMd": "GGGGG d/M/y",
+				"GyMMM": "MMM y G",
+				"GyMMMd": "d MMM y G",
+				"GyMMMEd": "E, d MMM y G",
+				"h": "h a",
+				"H": "HH",
+				"hm": "h:mm a",
+				"Hm": "HH:mm",
+				"hms": "h:mm:ss a",
+				"Hms": "HH:mm:ss",
+				"M": "M",
+				"Md": "d/M",
+				"MEd": "E, d/M",
+				"MMdd": "dd-MM",
+				"MMM": "MMM",
+				"MMMd": "d MMM",
+				"MMMEd": "E, d MMM",
+				"MMMMd": "d MMMM",
+				"ms": "mm:ss",
+				"y": "y G",
+				"yyyy": "y G",
+				"yyyyM": "M/y GGGGG",
+				"yyyyMd": "d/M`/y GGGGG",
+				"yyyyMEd": "E, d/M/y GGGGG",
+				"yyyyMMdd": "dd-MM-y G",
+				"yyyyMMM": "G MMM y",
+				"yyyyMMMd": "G d MMM y",
+				"yyyyMMMEd": "E, d MMM y G",
+				"yyyyMMMM": "MMMM y G",
+				"yyyyQQQ": "QQQ G y",
+				"yyyyQQQQ": "QQQQ G y"
+			},
+			"appendItems": {
+				"Day": "{0} ({2}: {1})",
+				"Day-Of-Week": "{0} {1}",
+				"Era": "{1} {0}",
+				"Hour": "{0} ({2}: {1})",
+				"Minute": "{0} ({2}: {1})",
+				"Month": "{0} ({2}: {1})",
+				"Quarter": "{0} ({2}: {1})",
+				"Second": "{0} ({2}: {1})",
+				"Timezone": "{0} {1}",
+				"Week": "{0} ({2}: {1})",
+				"Year": "{1} {0}"
+			},
+			"intervalFormats": {
+				"intervalFormatFallback": "{0} – {1}",
+				"Bh": {
+					"B": "B h – B h",
+					"h": "B h–h"
+				},
+				"Bhm": {
+					"B": "B h:mm – B h:mm",
+					"h": "B h:mm–h:mm",
+					"m": "B h:mm–h:mm"
+				},
+				"d": {
+					"d": "d–d"
+				},
+				"Gy": {
+					"G": "G y – G y",
+					"y": "y – y G"
+				},
+				"GyM": {
+					"G": "M/y GGGGG – M/y GGGGG",
+					"M": "M/y – M/y GGGGG",
+					"y": "M/y – M/y GGGGG"
+				},
+				"GyMd": {
+					"d": "d/M/y – d/M/y GGGGG",
+					"G": "d/M/y GGGGG – d/M/y GGGGG",
+					"M": "d/M/y – d/M/y GGGGG",
+					"y": "d/M/y – d/M/y GGGGG"
+				},
+				"GyMEd": {
+					"d": "E, d/M/y – E, d/M/y GGGGG",
+					"G": "E, d/M/y GGGGG – E, d/M/y GGGGG",
+					"M": "E, d/M/y – E, d/M/y GGGGG",
+					"y": "E, d/M/y – E, d/M/y GGGGG"
+				},
+				"GyMMM": {
+					"G": "MMM y G – MMM y G",
+					"M": "MMM – MMM y G",
+					"y": "MMM y – MMM y G"
+				},
+				"GyMMMd": {
+					"d": "d – d MMM y G",
+					"G": "d MMM y G – d MMM y G",
+					"M": "d MMM – d MMM y G",
+					"y": "d MMM y – d MMM y G"
+				},
+				"GyMMMEd": {
+					"d": "E, d MMM – E, d MMM y G",
+					"G": "E, d MMM y G – E, d MMM y G",
+					"M": "E, d MMM – E, d MMM y G",
+					"y": "E, d MMM y – E, d MMM y G"
+				},
+				"h": {
+					"a": "h a – h a",
+					"h": "h–h a"
+				},
+				"H": {
+					"H": "HH–HH"
+				},
+				"hm": {
+					"a": "h:mm a – h:mm a",
+					"h": "h:mm–h:mm a",
+					"m": "h:mm–h:mm a"
+				},
+				"Hm": {
+					"H": "HH:mm–HH:mm",
+					"m": "HH:mm–HH:mm"
+				},
+				"hmv": {
+					"a": "h:mm a – h:mm a v",
+					"h": "h:mm–h:mm a v",
+					"m": "h:mm–h:mm a v"
+				},
+				"Hmv": {
+					"H": "HH:mm–HH:mm v",
+					"m": "HH:mm–HH:mm v"
+				},
+				"hv": {
+					"a": "h a – h a v",
+					"h": "h–h a v"
+				},
+				"Hv": {
+					"H": "HH–HH v"
+				},
+				"M": {
+					"M": "M–M"
+				},
+				"Md": {
+					"d": "d/M – d/M",
+					"M": "d/M – d/M"
+				},
+				"MEd": {
+					"d": "E, d/M – E, d/M",
+					"M": "E, d/M – E, d/M"
+				},
+				"MMM": {
+					"M": "MMM–MMM"
+				},
+				"MMMd": {
+					"d": "d–d MMM",
+					"M": "d MMM – d MMM"
+				},
+				"MMMEd": {
+					"d": "E, d MMM – E, d MMM",
+					"M": "E, d MMM – E, d MMM"
+				},
+				"y": {
+					"y": "y–y G"
+				},
+				"yM": {
+					"M": "M/y – M/y G",
+					"y": "M/y – M/y G"
+				},
+				"yMd": {
+					"d": "d/M/y – d/M/y G",
+					"M": "d/M/y – d/M/y G",
+					"y": "d/M/y – d/M/y G"
+				},
+				"yMEd": {
+					"d": "E, d/M/y – E, d/M/y G",
+					"M": "E, d/M/y – E, d/M/y G",
+					"y": "E, d/M/y – E, d/M/y G"
+				},
+				"yMMM": {
+					"M": "MMM–MMM y G",
+					"y": "MMM y – MMM y G"
+				},
+				"yMMMd": {
+					"d": "d – d MMM y G",
+					"M": "d MMM – d MMM y G",
+					"y": "d MMM y – d MMM y G"
+				},
+				"yMMMEd": {
+					"d": "E, d MMM – E, d MMM y G",
+					"M": "E, d MMM – E, d MMM y G",
+					"y": "E, d MMM y – E, d MMM y G"
+				},
+				"yMMMM": {
+					"M": "MMMM–MMMM y G",
+					"y": "MMMM y – MMMM y G"
+				}
+			}
+		},
+		"months": {
+			"format": {
+				"abbreviated": [
+					"जन॰",
+					"फ़र॰",
+					"मार्च",
+					"अप्रैल",
+					"मई",
+					"जून",
+					"जुल॰",
+					"अग॰",
+					"सित॰",
+					"अक्तू॰",
+					"नव॰",
+					"दिस॰"
+				],
+				"narrow": [
+					"ज",
+					"फ़",
+					"मा",
+					"अ",
+					"म",
+					"जू",
+					"जु",
+					"अ",
+					"सि",
+					"अ",
+					"न",
+					"दि"
+				],
+				"wide": [
+					"जनवरी",
+					"फ़रवरी",
+					"मार्च",
+					"अप्रैल",
+					"मई",
+					"जून",
+					"जुलाई",
+					"अगस्त",
+					"सितंबर",
+					"अक्तूबर",
+					"नवंबर",
+					"दिसंबर"
+				]
+			},
+			"stand-alone": {
+				"abbreviated": [
+					"जन॰",
+					"फ़र॰",
+					"मार्च",
+					"अप्रैल",
+					"मई",
+					"जून",
+					"जुल॰",
+					"अग॰",
+					"सित॰",
+					"अक्तू॰",
+					"नव॰",
+					"दिस॰"
+				],
+				"narrow": [
+					"ज",
+					"फ़",
+					"मा",
+					"अ",
+					"म",
+					"जू",
+					"जु",
+					"अ",
+					"सि",
+					"अ",
+					"न",
+					"दि"
+				],
+				"wide": [
+					"जनवरी",
+					"फ़रवरी",
+					"मार्च",
+					"अप्रैल",
+					"मई",
+					"जून",
+					"जुलाई",
+					"अगस्त",
+					"सितंबर",
+					"अक्तूबर",
+					"नवंबर",
+					"दिसंबर"
+				]
+			}
+		},
+		"days": {
+			"format": {
+				"abbreviated": [
+					"रवि",
+					"सोम",
+					"मंगल",
+					"बुध",
+					"गुरु",
+					"शुक्र",
+					"शनि"
+				],
+				"narrow": [
+					"र",
+					"सो",
+					"मं",
+					"बु",
+					"गु",
+					"शु",
+					"श"
+				],
+				"short": [
+					"र",
+					"सो",
+					"मं",
+					"बु",
+					"गु",
+					"शु",
+					"श"
+				],
+				"wide": [
+					"रविवार",
+					"सोमवार",
+					"मंगलवार",
+					"बुधवार",
+					"गुरुवार",
+					"शुक्रवार",
+					"शनिवार"
+				]
+			},
+			"stand-alone": {
+				"abbreviated": [
+					"रवि",
+					"सोम",
+					"मंगल",
+					"बुध",
+					"गुरु",
+					"शुक्र",
+					"शनि"
+				],
+				"narrow": [
+					"र",
+					"सो",
+					"मं",
+					"बु",
+					"गु",
+					"शु",
+					"श"
+				],
+				"short": [
+					"र",
+					"सो",
+					"मं",
+					"बु",
+					"गु",
+					"शु",
+					"श"
+				],
+				"wide": [
+					"रविवार",
+					"सोमवार",
+					"मंगलवार",
+					"बुधवार",
+					"गुरुवार",
+					"शुक्रवार",
+					"शनिवार"
+				]
+			}
+		},
+		"quarters": {
+			"format": {
+				"abbreviated": [
+					"ति1",
+					"ति2",
+					"ति3",
+					"ति4"
+				],
+				"narrow": [
+					"1",
+					"2",
+					"3",
+					"4"
+				],
+				"wide": [
+					"पहली तिमाही",
+					"दूसरी तिमाही",
+					"तीसरी तिमाही",
+					"चौथी तिमाही"
+				]
+			},
+			"stand-alone": {
+				"abbreviated": [
+					"ति1",
+					"ति2",
+					"ति3",
+					"ति4"
+				],
+				"narrow": [
+					"1",
+					"2",
+					"3",
+					"4"
+				],
+				"wide": [
+					"पहली तिमाही",
+					"दूसरी तिमाही",
+					"तीसरी तिमाही",
+					"चौथी तिमाही"
+				]
+			}
+		},
+		"dayPeriods": {
+			"format": {
+				"abbreviated": [
+					"am",
+					"pm"
+				],
+				"narrow": [
+					"am",
+					"pm"
+				],
+				"wide": [
+					"am",
+					"pm"
+				]
+			},
+			"stand-alone": {
+				"abbreviated": [
+					"am",
+					"pm"
+				],
+				"narrow": [
+					"am",
+					"pm"
+				],
+				"wide": [
+					"am",
+					"pm"
+				]
+			}
+		},
+		"flexibleDayPeriods": {
+			"format": {
+				"abbreviated": {
+					"midnight": "मध्यरात्रि",
+					"morning1": "सुबह",
+					"afternoon1": "दोपहर",
+					"evening1": "शाम",
+					"night1": "रात"
+				},
+				"narrow": {
+					"midnight": "मध्यरात्रि",
+					"morning1": "सुबह",
+					"afternoon1": "दोपहर",
+					"evening1": "शाम",
+					"night1": "रात"
+				},
+				"wide": {
+					"midnight": "मध्यरात्रि",
+					"morning1": "सुबह",
+					"afternoon1": "दोपहर",
+					"evening1": "शाम",
+					"night1": "रात"
+				}
+			},
+			"stand-alone": {
+				"abbreviated": {
+					"midnight": "मध्यरात्रि",
+					"morning1": "सुबह",
+					"afternoon1": "दोपहर",
+					"evening1": "शाम",
+					"night1": "रात"
+				},
+				"narrow": {
+					"midnight": "आधी रात",
+					"morning1": "सुबह",
+					"afternoon1": "दोपहर",
+					"evening1": "शाम",
+					"night1": "रात"
+				},
+				"wide": {
+					"midnight": "मध्यरात्रि",
+					"morning1": "सुबह",
+					"afternoon1": "दोपहर",
+					"evening1": "शाम",
+					"night1": "रात"
+				}
+			}
+		},
+		"era-wide": {
+			"0": "बौद्ध संवत"
+		},
+		"era-abbreviated": {
+			"0": "बौद्ध संवत"
+		},
+		"era-narrow": {
+			"0": "बौद्ध संवत"
 		}
 	},
 	"dateFields": {
@@ -2749,9 +3677,9 @@
 		},
 		"year-narrow": {
 			"displayName": "वर्ष",
-			"relative-type--1": "पिछला वर्ष",
-			"relative-type-0": "इस वर्ष",
-			"relative-type-1": "अगला वर्ष",
+			"relative-type--1": "पिछले साल",
+			"relative-type-0": "इस साल",
+			"relative-type-1": "अगले साल",
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-one": "{0} वर्ष में",
 				"relativeTimePattern-count-other": "{0} वर्ष में"
@@ -2909,9 +3837,9 @@
 		"day-short": {
 			"displayName": "दिन",
 			"relative-type--2": "परसों",
-			"relative-type--1": "कल",
+			"relative-type--1": "बीता कल",
 			"relative-type-0": "आज",
-			"relative-type-1": "कल",
+			"relative-type-1": "आने वाला कल",
 			"relative-type-2": "परसों",
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-one": "{0} दिन में",
@@ -2925,9 +3853,9 @@
 		"day-narrow": {
 			"displayName": "दिन",
 			"relative-type--2": "परसों",
-			"relative-type--1": "कल",
+			"relative-type--1": "बीता कल",
 			"relative-type-0": "आज",
-			"relative-type-1": "कल",
+			"relative-type-1": "आने वाला कल",
 			"relative-type-2": "परसों",
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-one": "{0} दिन में",
@@ -3053,6 +3981,476 @@
 			"displayName": "समय क्षेत्र"
 		}
 	},
+	"timezoneNames": {
+		"Africa": {
+			"Abidjan": "अबिदजान",
+			"Accra": "एक्रा",
+			"Addis_Ababa": "अदीस अबाबा",
+			"Algiers": "अल्जीयर्स",
+			"Asmara": "अस्मारा",
+			"Bamako": "बामाको",
+			"Bangui": "बांगुइ",
+			"Banjul": "बैंजुल",
+			"Bissau": "बिसाऊ",
+			"Blantyre": "ब्लांटायर",
+			"Brazzaville": "ब्राज़ाविले",
+			"Bujumbura": "बुजुंबूरा",
+			"Cairo": "कायरो",
+			"Casablanca": "कासाब्लांका",
+			"Ceuta": "सेउटा",
+			"Conakry": "कोनाक्री",
+			"Dakar": "डकार",
+			"Dar_es_Salaam": "दार अस सलाम",
+			"Djibouti": "जिबूती",
+			"Douala": "डूआला",
+			"El_Aaiun": "अल आइयून",
+			"Freetown": "फ़्रीटाउन",
+			"Gaborone": "गाबोरोन",
+			"Harare": "हरारे",
+			"Johannesburg": "जोहांसबर्ग",
+			"Juba": "जुबा",
+			"Kampala": "कंपाला",
+			"Khartoum": "खार्तूम",
+			"Kigali": "किगाली",
+			"Kinshasa": "किंशासा",
+			"Lagos": "लागोस",
+			"Libreville": "लिब्रेविले",
+			"Lome": "लोम",
+			"Luanda": "लुआंडा",
+			"Lubumbashi": "लुबुमबाशी",
+			"Lusaka": "लुसाका",
+			"Malabo": "मलाबो",
+			"Maputo": "मापुटो",
+			"Maseru": "मासेरू",
+			"Mbabane": "एमबाबेन",
+			"Mogadishu": "मोगादिशु",
+			"Monrovia": "मोनरोविया",
+			"Nairobi": "नैरोबी",
+			"Ndjamena": "नेद्जामीना",
+			"Niamey": "नियामी",
+			"Nouakchott": "नौआकशॉट",
+			"Ouagadougou": "औगाडोगू",
+			"Porto-Novo": "पोर्टो-नोवो",
+			"Sao_Tome": "साओ टोम",
+			"Tripoli": "त्रिपोली",
+			"Tunis": "ट्यूनिस",
+			"Windhoek": "विंडहोक",
+			"_parent": "अफ़्रीका"
+		},
+		"America": {
+			"Adak": "अडक",
+			"Anchorage": "एंकरेज",
+			"Anguilla": "एंग्विला",
+			"Antigua": "एंटीगुआ",
+			"Araguaina": "आराग्वेना",
+			"Argentina": {
+				"Buenos_Aires": "ब्यूनस आयरस",
+				"Catamarca": "काटामार्का",
+				"Cordoba": "कोर्डोबा",
+				"Jujuy": "जुजोए",
+				"La_Rioja": "ला रिओजा",
+				"Mendoza": "मेंडोज़ा",
+				"Rio_Gallegos": "रियो गालेगोस",
+				"Salta": "साल्टा",
+				"San_Juan": "सैन ह्वान",
+				"San_Luis": "सैन लूई",
+				"Tucuman": "टोकूमन",
+				"Ushuaia": "उशुआइया",
+				"_parent": "अर्जेंटीना"
+			},
+			"Aruba": "अरूबा",
+			"Asuncion": "एसनशियॉन",
+			"Atikokan": "अटिकोकान",
+			"Bahia": "बहिया",
+			"Bahia_Banderas": "बेहिया बांडेरास",
+			"Barbados": "बारबाडोस",
+			"Belem": "बेलेम",
+			"Belize": "बेलीज़",
+			"Blanc-Sablon": "ब्लांक-सेबलोन",
+			"Boa_Vista": "बोआ विस्ता",
+			"Bogota": "बोगोटा",
+			"Boise": "बॉइसी",
+			"Cambridge_Bay": "कैम्ब्रिज खाड़ी",
+			"Campo_Grande": "कैंपो ग्रांडे",
+			"Cancun": "कैनकुन",
+			"Caracas": "काराकस",
+			"Cayenne": "कायेन",
+			"Cayman": "कैमेन",
+			"Chicago": "शिकागो",
+			"Chihuahua": "चिहुआहुआ",
+			"Ciudad_Juarez": "स्युदाद ह्वारेज़",
+			"Costa_Rica": "कोस्टा रिका",
+			"Creston": "क्रेस्टन",
+			"Cuiaba": "क्यूआबा",
+			"Curacao": "कुराकाओ",
+			"Danmarkshavn": "डेनमार्कशॉन",
+			"Dawson": "डॉसन",
+			"Dawson_Creek": "डॉसन क्रीक",
+			"Denver": "डेनवर",
+			"Detroit": "डेट्रॉयट",
+			"Dominica": "डोमिनिका",
+			"Edmonton": "एडमंटन",
+			"Eirunepe": "ईरुनेपे",
+			"El_Salvador": "अल सल्वाडोर",
+			"Fort_Nelson": "फ़ोर्ट नेल्सन",
+			"Fortaleza": "फ़ोर्टालेज़ा",
+			"Glace_Bay": "ग्लेस खाड़ी",
+			"Goose_Bay": "गूस खाड़ी",
+			"Grand_Turk": "ग्रांड टर्क",
+			"Grenada": "ग्रेनाडा",
+			"Guadeloupe": "ग्वाडेलोप",
+			"Guatemala": "ग्वाटेमाला",
+			"Guayaquil": "ग्वायाकील",
+			"Guyana": "गयाना",
+			"Halifax": "हेलिफ़ैक्स",
+			"Havana": "हवाना",
+			"Hermosillo": "हर्मोसिल्लो",
+			"Indiana": {
+				"Indianapolis": "इंडियानापोलिस",
+				"Knox": "नौक्स, इंडियाना",
+				"Marengo": "मारेंगो, इंडियाना",
+				"Petersburg": "पीटर्सबर्ग, इंडियाना",
+				"Tell_City": "टेल सिटी, इंडियाना",
+				"Vevay": "वेवे, इंडियाना",
+				"Vincennes": "विंसेनेस, इंडियाना",
+				"Winamac": "विनामेक, इंडियाना"
+			},
+			"Inuvik": "इनूविक",
+			"Iqaluit": "इकालुईट",
+			"Jamaica": "जमैका",
+			"Juneau": "ज्यूनाउ",
+			"Kentucky": {
+				"Louisville": "लुइसविले",
+				"Monticello": "मोंटीसेलो, केंटकी"
+			},
+			"Kralendijk": "क्रालैंडिजिक",
+			"La_Paz": "ला पाज़",
+			"Lima": "लीमा",
+			"Los_Angeles": "लॉस एंजिल्स",
+			"Lower_Princes": "लोअर प्रिंसेस क्वार्टर",
+			"Maceio": "मेसीओ",
+			"Managua": "मानागुआ",
+			"Manaus": "मनौस",
+			"Marigot": "मैरीगोट",
+			"Martinique": "मार्टिनिक",
+			"Matamoros": "माटामोरोस",
+			"Mazatlan": "माज़ाटलान",
+			"Menominee": "मेनोमिनी",
+			"Merida": "मेरिडा",
+			"Metlakatla": "मेट्लेकाट्ला",
+			"Mexico_City": "मेक्सिको सिटी",
+			"Miquelon": "मिकेलॉन",
+			"Moncton": "मोंकटन",
+			"Monterrey": "मोंटेरेरी",
+			"Montevideo": "मोंटेवीडियो",
+			"Montserrat": "मोंटसेरात",
+			"Nassau": "नासाउ",
+			"New_York": "न्यूयॉर्क",
+			"Nipigon": "निपिगन",
+			"Nome": "नोम",
+			"Noronha": "नोरोन्हा",
+			"North_Dakota": {
+				"Beulah": "ब्यूला, उत्तरी डकोटा",
+				"Center": "मध्य, उत्तरी दाकोता",
+				"New_Salem": "न्यू सालेम, उत्तरी डकोटा"
+			},
+			"Nuuk": "नुक",
+			"Ojinaga": "ओखाजीनागा",
+			"Panama": "पनामा",
+			"Pangnirtung": "पांगनिर्टंग",
+			"Paramaribo": "पारामारिबो",
+			"Phoenix": "फ़ीनिक्स",
+			"Port-au-Prince": "पोर्ट-ऑ-प्रिंस",
+			"Port_of_Spain": "पोर्ट ऑफ़ स्पेन",
+			"Porto_Velho": "पोर्टो वेल्हो",
+			"Puerto_Rico": "पोर्टो रिको",
+			"Punta_Arenas": "पुंटा एरिनास",
+			"Rainy_River": "रेनी नदी",
+			"Rankin_Inlet": "रेंकिन इनलेट",
+			"Recife": "रेसाइफ़",
+			"Regina": "रेजिना",
+			"Resolute": "रिसोल्यूट",
+			"Rio_Branco": "रियो ब्रांको",
+			"Santa_Isabel": "सांता इसाबेल",
+			"Santarem": "सैंटारेम",
+			"Santiago": "सैंटियागो",
+			"Santo_Domingo": "सेंटो डोमिंगो",
+			"Sao_Paulo": "साओ पाउलो",
+			"Scoresbysund": "इटोकोर्टोरमिट",
+			"Sitka": "सिट्का",
+			"St_Barthelemy": "सेंट बार्थेलेमी",
+			"St_Johns": "सेंट जोंस",
+			"St_Kitts": "सेंट किट्स",
+			"St_Lucia": "सेंट लूसिया",
+			"St_Thomas": "सेंट थॉमस",
+			"St_Vincent": "सेंट विंसेंट",
+			"Swift_Current": "स्विफ़्ट करंट",
+			"Tegucigalpa": "टेगुसिगल्पा",
+			"Thule": "थ्यूले",
+			"Thunder_Bay": "थंडर खाड़ी",
+			"Tijuana": "तिजुआना",
+			"Toronto": "टोरंटो",
+			"Tortola": "टोर्टोला",
+			"Vancouver": "वैंकूवर",
+			"Whitehorse": "व्हाइटहोर्स",
+			"Winnipeg": "विनीपेग",
+			"Yakutat": "याकूटाट",
+			"Yellowknife": "येलोनाइफ़",
+			"_parent": "अमेरिकाज़"
+		},
+		"Antarctica": {
+			"Casey": "केसी",
+			"Davis": "डेविस",
+			"DumontDUrville": "ड्यूमोंट डी अर्विले",
+			"Macquarie": "मक्वारी",
+			"Mawson": "मॉसन",
+			"McMurdo": "मैकमुर्डो",
+			"Palmer": "पॉमर",
+			"Rothera": "रोथेरा",
+			"Syowa": "स्योवा",
+			"Troll": "ट्रोल",
+			"Vostok": "वोस्तोक",
+			"_parent": "अंटार्कटिका"
+		},
+		"Arctic": {
+			"Longyearbyen": "लॉन्गईयरबायेन"
+		},
+		"Asia": {
+			"Aden": "आदेन",
+			"Almaty": "अल्माटी",
+			"Amman": "अम्मान",
+			"Anadyr": "अनाडिर",
+			"Aqtau": "अक्ताउ",
+			"Aqtobe": "अक्तोब",
+			"Ashgabat": "अश्गाबात",
+			"Atyrau": "एतराउ",
+			"Baghdad": "बगदाद",
+			"Bahrain": "बहरीन",
+			"Baku": "बाकु",
+			"Bangkok": "बैंकॉक",
+			"Barnaul": "बर्नोल",
+			"Beirut": "बेरुत",
+			"Bishkek": "बिश्केक",
+			"Brunei": "ब्रूनेई",
+			"Chita": "त्शिता",
+			"Choibalsan": "चोइबालसन",
+			"Colombo": "कोलंबो",
+			"Damascus": "दमास्कस",
+			"Dhaka": "ढाका",
+			"Dili": "डिलि",
+			"Dubai": "दुबई",
+			"Dushanbe": "दुशांबे",
+			"Famagusta": "फ़ामागुस्ता",
+			"Gaza": "गाज़ा",
+			"Hebron": "हेब्रोन",
+			"Ho_Chi_Minh": "हो ची मिन्ह सिटी",
+			"Hong_Kong": "हाँग काँग",
+			"Hovd": "होव्ड",
+			"Irkutsk": "इर्कुत्स्क",
+			"Jakarta": "जकार्ता",
+			"Jayapura": "जयापुरा",
+			"Jerusalem": "यरूशलम",
+			"Kabul": "काबुल",
+			"Kamchatka": "कमचत्का",
+			"Karachi": "कराची",
+			"Kathmandu": "काठमांडू",
+			"Khandyga": "खांडिगा",
+			"Kolkata": "कोलकाता",
+			"Krasnoyarsk": "क्रास्नोयार्स्क",
+			"Kuala_Lumpur": "कुआलालंपुर",
+			"Kuching": "कूचिंग",
+			"Kuwait": "कुवैत",
+			"Macau": "मकाऊ",
+			"Magadan": "मागादान",
+			"Makassar": "मकस्सर",
+			"Manila": "मनीला",
+			"Muscat": "मस्कट",
+			"Nicosia": "निकोसिया",
+			"Novokuznetsk": "नोवोकुज़्नेत्स्क",
+			"Novosibirsk": "नोवोसिबिर्स्क",
+			"Omsk": "ओम्स्क",
+			"Oral": "ओरल",
+			"Phnom_Penh": "नॉम पेन्ह",
+			"Pontianak": "पोंटीयांक",
+			"Pyongyang": "प्योंगयांग",
+			"Qatar": "कतर",
+			"Qostanay": "कोस्टाने",
+			"Qyzylorda": "केज़ेलोर्डा",
+			"Riyadh": "रियाद",
+			"Sakhalin": "सखालिन",
+			"Samarkand": "समरकंद",
+			"Seoul": "सिओल",
+			"Shanghai": "शंघाई",
+			"Singapore": "सिंगापुर",
+			"Srednekolymsk": "स्रेद्निकोलिमस्क",
+			"Taipei": "ताईपेई",
+			"Tashkent": "ताशकंद",
+			"Tbilisi": "टबिलिसी",
+			"Tehran": "तेहरान",
+			"Thimphu": "थिंपू",
+			"Tokyo": "टोक्यो",
+			"Tomsk": "तोम्स्क",
+			"Ulaanbaatar": "उलानबातर",
+			"Urumqi": "उरूम्की",
+			"Ust-Nera": "यूस्ट–नेरा",
+			"Vientiane": "विएनतियान",
+			"Vladivostok": "व्लादिवोस्तोक",
+			"Yakutsk": "याकूत्स्क",
+			"Yangon": "रंगून",
+			"Yekaterinburg": "येकातेरिनबर्ग",
+			"Yerevan": "येरेवान",
+			"_parent": "एशिया"
+		},
+		"Atlantic": {
+			"Azores": "अज़ोरेस",
+			"Bermuda": "बरमूडा",
+			"Canary": "कैनेरी",
+			"Cape_Verde": "केप वर्ड",
+			"Faroe": "फ़ैरो",
+			"Madeira": "मडेरा",
+			"Reykjavik": "रेक्याविक",
+			"South_Georgia": "दक्षिण जॉर्जिया",
+			"St_Helena": "सेंट हेलेना",
+			"Stanley": "स्टैनली"
+		},
+		"Australia": {
+			"Adelaide": "एडिलेड",
+			"Brisbane": "ब्रिस्बन",
+			"Broken_Hill": "ब्रोकन हिल",
+			"Darwin": "डार्विन",
+			"Eucla": "यूक्ला",
+			"Hobart": "होबार्ट",
+			"Lindeman": "लिंडेमान",
+			"Lord_Howe": "लॉर्ड होवे",
+			"Melbourne": "मेलबोर्न",
+			"Perth": "पर्थ",
+			"Sydney": "सिडनी",
+			"_parent": "ऑस्ट्रेलिया"
+		},
+		"Etc": {
+			"UTC": "UTC",
+			"Universal": "समन्वित वैश्विक समय"
+		},
+		"Europe": {
+			"Amsterdam": "एम्स्टर्डम",
+			"Andorra": "अंडोरा",
+			"Astrakhan": "आस्ट्राखान",
+			"Athens": "एथेंस",
+			"Belgrade": "बेलग्रेड",
+			"Berlin": "बर्लिन",
+			"Bratislava": "ब्रातिस्लावा",
+			"Brussels": "ब्रूसेल्स",
+			"Bucharest": "बुख़ारेस्ट",
+			"Budapest": "बुडापेस्ट",
+			"Busingen": "ब्यूसिनजेन",
+			"Chisinau": "चिसीनाउ",
+			"Copenhagen": "कोपेनहेगन",
+			"Dublin": "डबलिन",
+			"Gibraltar": "जिब्राल्टर",
+			"Guernsey": "गर्नसी",
+			"Helsinki": "हेलसिंकी",
+			"Isle_of_Man": "आइल ऑफ़ मैन",
+			"Istanbul": "इस्तांबुल",
+			"Jersey": "जर्सी",
+			"Kaliningrad": "कालीनिनग्राड",
+			"Kiev": "कीव",
+			"Kirov": "किरोव",
+			"Lisbon": "लिस्बन",
+			"Ljubljana": "ल्यूबेलजाना",
+			"London": "लंदन",
+			"Luxembourg": "लक्ज़मबर्ग",
+			"Madrid": "मैड्रिड",
+			"Malta": "माल्टा",
+			"Mariehamn": "मारियाहैम",
+			"Minsk": "मिंस्क",
+			"Monaco": "मोनाको",
+			"Moscow": "मॉस्को",
+			"Oslo": "ओस्लो",
+			"Paris": "पेरिस",
+			"Podgorica": "पोड्गोरिका",
+			"Prague": "प्राग",
+			"Riga": "रीगा",
+			"Rome": "रोम",
+			"Samara": "समारा",
+			"San_Marino": "सैन मारीनो",
+			"Sarajevo": "साराजेवो",
+			"Saratov": "सारातोव",
+			"Simferopol": "सिम्फ़ेरोपोल",
+			"Skopje": "स्कोप्जे",
+			"Sofia": "सोफ़िया",
+			"Stockholm": "स्टॉकहोम",
+			"Tallinn": "तेलिन",
+			"Tirane": "टाइरेन",
+			"Ulyanovsk": "उल्यानोव्स्क",
+			"Uzhgorod": "अज़्गोरोद",
+			"Vaduz": "वादुज़",
+			"Vatican": "वेटिकन",
+			"Vienna": "विएना",
+			"Vilnius": "विल्नियस",
+			"Volgograd": "वोल्गोग्राड",
+			"Warsaw": "वॉरसॉ",
+			"Zagreb": "ज़ाग्रेब",
+			"Zaporozhye": "ज़ैपोरोज़ाई",
+			"Zurich": "ज़्यूरिख़",
+			"_parent": "यूरोप"
+		},
+		"Indian": {
+			"Antananarivo": "एंटानानरीवो",
+			"Chagos": "शागोस",
+			"Christmas": "क्रिसमस",
+			"Cocos": "कोकोस",
+			"Comoro": "कोमोरो",
+			"Kerguelen": "करगुलेन",
+			"Mahe": "माहे",
+			"Maldives": "मालदीव",
+			"Mauritius": "मॉरीशस",
+			"Mayotte": "मायोत्ते",
+			"Reunion": "रीयूनियन"
+		},
+		"Pacific": {
+			"Apia": "एपिया",
+			"Auckland": "ऑकलैंड",
+			"Bougainville": "बोगनविले",
+			"Chatham": "चैथम",
+			"Chuuk": "चक",
+			"Easter": "ईस्टर",
+			"Efate": "एफ़ेट",
+			"Fakaofo": "फ़ाकाओफ़ो",
+			"Fiji": "फ़िजी",
+			"Funafuti": "फ़्यूनाफ़ुटी",
+			"Galapagos": "गेलापागोस",
+			"Gambier": "गैंबियर",
+			"Guadalcanal": "ग्वाडलकनाल",
+			"Guam": "गुआम",
+			"Honolulu": "होनोलुलु",
+			"Kanton": "कैंटन",
+			"Kiritimati": "किरीतिमाति",
+			"Kosrae": "कोसराए",
+			"Kwajalein": "क्वाज़ालीन",
+			"Majuro": "माजुरो",
+			"Marquesas": "मार्केसस",
+			"Midway": "मिडवे",
+			"Nauru": "नौरु",
+			"Niue": "नीयू",
+			"Norfolk": "नॉरफ़ॉक",
+			"Noumea": "नौमिया",
+			"Pago_Pago": "पागो पागो",
+			"Palau": "पलाऊ",
+			"Pitcairn": "पिटकैर्न",
+			"Pohnpei": "पोनपेई",
+			"Port_Moresby": "पोर्ट मोरेस्बी",
+			"Rarotonga": "रारोटोंगा",
+			"Saipan": "सायपान",
+			"Tahiti": "ताहिती",
+			"Tarawa": "टारावा",
+			"Tongatapu": "टोंगाटापू",
+			"Wake": "वेक",
+			"Wallis": "वालिस"
+		}
+	},
+	"timezoneNamesFormats": {
+		"gmtFormat": "GMT{0}"
+	},
 	"decimalFormat": {
 		"standard": "#,##,##0.###"
 	},
@@ -3119,42 +4517,50 @@
 		"accounting": "¤#,##,##0.00",
 		"currencySpacing": {
 			"beforeCurrency": {
-				"currencyMatch": "[:^S:]",
+				"currencyMatch": "[[:^S:]&[:^Z:]]",
 				"surroundingMatch": "[:digit:]",
 				"insertBetween": " "
 			},
 			"afterCurrency": {
-				"currencyMatch": "[:^S:]",
+				"currencyMatch": "[[:^S:]&[:^Z:]]",
 				"surroundingMatch": "[:digit:]",
 				"insertBetween": " "
 			}
-		}
+		},
+		"sap-standard": "#,##,##0.00¤",
+		"sap-accounting": "#,##,##0.00¤"
+	},
+	"miscPattern": {
+		"approximately": "~{0}",
+		"atLeast": "{0}+",
+		"atMost": "≤{0}",
+		"range": "{0}–{1}"
 	},
 	"currencyFormat-short": {
-		"1000-one": "¤0 हज़ार",
-		"1000-other": "¤0 हज़ार",
-		"10000-one": "¤00 हज़ार",
-		"10000-other": "¤00 हज़ार",
-		"100000-one": "¤0 लाख",
-		"100000-other": "¤0 लाख",
-		"1000000-one": "¤00 लाख",
-		"1000000-other": "¤00 लाख",
+		"1000-one": "¤ 0 हज़ार",
+		"1000-other": "¤ 0 हज़ार",
+		"10000-one": "¤ 00 हज़ार",
+		"10000-other": "¤ 00 हज़ार",
+		"100000-one": "¤ 0 लाख",
+		"100000-other": "¤ 0 लाख",
+		"1000000-one": "¤ 00 लाख",
+		"1000000-other": "¤ 00 लाख",
 		"10000000-one": "¤0 क॰",
-		"10000000-other": "¤0 क॰",
-		"100000000-one": "¤00 क॰",
-		"100000000-other": "¤00 क॰",
-		"1000000000-one": "¤0 अ॰",
-		"1000000000-other": "¤0 अ॰",
-		"10000000000-one": "¤00 अ॰",
-		"10000000000-other": "¤00 अ॰",
-		"100000000000-one": "¤0 ख॰",
-		"100000000000-other": "¤0 ख॰",
-		"1000000000000-one": "¤00 ख॰",
-		"1000000000000-other": "¤00 ख॰",
-		"10000000000000-one": "¤0 नील",
-		"10000000000000-other": "¤0 नील",
-		"100000000000000-one": "¤00 नील",
-		"100000000000000-other": "¤00 नील"
+		"10000000-other": "¤ 0 क॰",
+		"100000000-one": "¤ 00 क॰",
+		"100000000-other": "¤ 00 क॰",
+		"1000000000-one": "¤ 0 अ॰",
+		"1000000000-other": "¤ 0 अ॰",
+		"10000000000-one": "¤ 00 अ॰",
+		"10000000000-other": "¤ 00 अ॰",
+		"100000000000-one": "¤ 0 ख॰",
+		"100000000000-other": "¤ 0 ख॰",
+		"1000000000000-one": "¤ 00 ख॰",
+		"1000000000000-other": "¤ 00 ख॰",
+		"10000000000000-one": "¤ 0 नील",
+		"10000000000000-other": "¤ 0 नील",
+		"100000000000000-one": "¤ 00 नील",
+		"100000000000000-other": "¤ 00 नील"
 	},
 	"symbols-latn-decimal": ".",
 	"symbols-latn-group": ",",
@@ -3162,6 +4568,7 @@
 	"symbols-latn-percentSign": "%",
 	"symbols-latn-plusSign": "+",
 	"symbols-latn-minusSign": "-",
+	"symbols-latn-approximatelySign": "~",
 	"symbols-latn-exponential": "E",
 	"symbols-latn-superscriptingExponent": "×",
 	"symbols-latn-perMille": "‰",
@@ -3188,8 +4595,9 @@
 		"VND": "₫",
 		"XAF": "FCFA",
 		"XCD": "EC$",
-		"XOF": "CFA",
-		"XPF": "CFPF"
+		"XOF": "F CFA",
+		"XPF": "CFPF",
+		"XXX": "¤"
 	},
 	"rtl": false,
 	"listPattern-standard-wide": {
@@ -3218,15 +4626,112 @@
 	},
 	"units": {
 		"short": {
+			"10p-1": {
+				"unitPrefixPattern": "डे.{0}"
+			},
+			"10p-2": {
+				"unitPrefixPattern": "से.{0}"
+			},
+			"10p-3": {
+				"unitPrefixPattern": "मि.{0}"
+			},
+			"10p-6": {
+				"unitPrefixPattern": "μ{0}"
+			},
+			"10p-9": {
+				"unitPrefixPattern": "नै.{0}"
+			},
+			"10p-12": {
+				"unitPrefixPattern": "पि.{0}"
+			},
+			"10p-15": {
+				"unitPrefixPattern": "फ़े.{0}"
+			},
+			"10p-18": {
+				"unitPrefixPattern": "अ.{0}"
+			},
+			"10p-21": {
+				"unitPrefixPattern": "ज़ेे.{0}"
+			},
+			"10p-24": {
+				"unitPrefixPattern": "यो.{0}"
+			},
+			"10p1": {
+				"unitPrefixPattern": "डेका {0}"
+			},
+			"10p2": {
+				"unitPrefixPattern": "हे.{0}"
+			},
+			"10p3": {
+				"unitPrefixPattern": "कि.{0}"
+			},
+			"10p6": {
+				"unitPrefixPattern": "मे.{0}"
+			},
+			"10p9": {
+				"unitPrefixPattern": "गी.{0}"
+			},
+			"10p12": {
+				"unitPrefixPattern": "टे.{0}"
+			},
+			"10p15": {
+				"unitPrefixPattern": "पे.{0}"
+			},
+			"10p18": {
+				"unitPrefixPattern": "ए.{0}"
+			},
+			"10p21": {
+				"unitPrefixPattern": "ज़े.{0}"
+			},
+			"10p24": {
+				"unitPrefixPattern": "योटा {0}"
+			},
+			"1024p1": {
+				"unitPrefixPattern": "कि.बी.{0}"
+			},
+			"1024p2": {
+				"unitPrefixPattern": "मे.बी.{0}"
+			},
+			"1024p3": {
+				"unitPrefixPattern": "जी.बी.{0}"
+			},
+			"1024p4": {
+				"unitPrefixPattern": "टे.बी.{0}"
+			},
+			"1024p5": {
+				"unitPrefixPattern": "पे.बी.{0}"
+			},
+			"1024p6": {
+				"unitPrefixPattern": "एक्ज़.बी.{0}"
+			},
+			"1024p7": {
+				"unitPrefixPattern": "ज़े.बी.{0}"
+			},
+			"1024p8": {
+				"unitPrefixPattern": "यो.बी.{0}"
+			},
 			"per": {
 				"compoundUnitPattern": "{0}/{1}"
 			},
+			"power2": {
+				"compoundUnitPattern1": "{0}²",
+				"compoundUnitPattern1-count-one": "{0}²",
+				"compoundUnitPattern1-count-other": "{0}²"
+			},
+			"power3": {
+				"compoundUnitPattern1": "{0}³",
+				"compoundUnitPattern1-count-one": "{0}³",
+				"compoundUnitPattern1-count-other": "{0}³"
+			},
+			"times": {
+				"compoundUnitPattern": "{0}⋅{1}"
+			},
 			"acceleration-g-force": {
-				"displayName": "गु–बल",
+				"displayName": "गुरुत्व बल",
 				"unitPattern-count-one": "{0} गु॰",
 				"unitPattern-count-other": "{0} गु॰"
 			},
-			"acceleration-meter-per-second-squared": {
+			"acceleration-meter-per-square-second": {
 				"displayName": "मीटर/से²",
 				"unitPattern-count-one": "{0} मी॰/व॰से॰",
 				"unitPattern-count-other": "{0} मी॰/व॰से॰"
@@ -3306,12 +4811,17 @@
 				"unitPattern-count-other": "{0} व॰ इं॰",
 				"perUnitPattern": "{0}/वर्ग इंच"
 			},
+			"area-dunam": {
+				"displayName": "डोनम",
+				"unitPattern-count-one": "{0} डोनम",
+				"unitPattern-count-other": "{0} डोनम"
+			},
 			"concentr-karat": {
 				"displayName": "कैरट",
 				"unitPattern-count-one": "{0} kt",
 				"unitPattern-count-other": "{0} kt"
 			},
-			"concentr-milligram-per-deciliter": {
+			"concentr-milligram-ofglucose-per-deciliter": {
 				"displayName": "मि॰ग्रा॰/डे॰ली॰",
 				"unitPattern-count-one": "{0} मि॰ग्रा॰/डे॰ली॰",
 				"unitPattern-count-other": "{0} मि॰ग्रा॰/डे॰ली॰"
@@ -3321,17 +4831,42 @@
 				"unitPattern-count-one": "{0} मिलीमोल/ली॰",
 				"unitPattern-count-other": "{0} मिलीमोल/ली॰"
 			},
-			"concentr-part-per-million": {
+			"concentr-item": {
+				"displayName": "item",
+				"unitPattern-count-one": "{0} item",
+				"unitPattern-count-other": "{0} item"
+			},
+			"concentr-permillion": {
 				"displayName": "ppm",
 				"unitPattern-count-one": "{0} ppm",
 				"unitPattern-count-other": "{0} ppm"
+			},
+			"concentr-percent": {
+				"displayName": "प्रतिशत",
+				"unitPattern-count-one": "{0}%",
+				"unitPattern-count-other": "{0}%"
+			},
+			"concentr-permille": {
+				"displayName": "प्रति हज़ार",
+				"unitPattern-count-one": "{0}‰",
+				"unitPattern-count-other": "{0}‰"
+			},
+			"concentr-permyriad": {
+				"displayName": "‱",
+				"unitPattern-count-one": "{0}‱",
+				"unitPattern-count-other": "{0}‱"
+			},
+			"concentr-mole": {
+				"displayName": "मोल",
+				"unitPattern-count-one": "{0} मोल",
+				"unitPattern-count-other": "{0} मोल"
 			},
 			"consumption-liter-per-kilometer": {
 				"displayName": "लीटर/किमी",
 				"unitPattern-count-one": "{0} ली/किमी",
 				"unitPattern-count-other": "{0} ली/किमी"
 			},
-			"consumption-liter-per-100kilometers": {
+			"consumption-liter-per-100-kilometer": {
 				"displayName": "ली॰/100 कि॰मी॰",
 				"unitPattern-count-one": "{0} ली॰/100 कि॰मी॰",
 				"unitPattern-count-other": "{0} ली॰/100 कि॰मी॰"
@@ -3345,6 +4880,11 @@
 				"displayName": "mpg इंपीरियल",
 				"unitPattern-count-one": "{0} mpg इंपीरियल",
 				"unitPattern-count-other": "{0} mpg इंपीरियल"
+			},
+			"digital-petabyte": {
+				"displayName": "पेटाबाइट",
+				"unitPattern-count-one": "{0} PB",
+				"unitPattern-count-other": "{0} PB"
 			},
 			"digital-terabyte": {
 				"displayName": "TB",
@@ -3401,11 +4941,22 @@
 				"unitPattern-count-one": "{0} शता",
 				"unitPattern-count-other": "{0} शता"
 			},
+			"duration-decade": {
+				"displayName": "दश.",
+				"unitPattern-count-one": "{0} दश.",
+				"unitPattern-count-other": "{0} दश."
+			},
 			"duration-year": {
 				"displayName": "वर्ष",
 				"unitPattern-count-one": "{0} वर्ष",
 				"unitPattern-count-other": "{0} वर्ष",
 				"perUnitPattern": "{0}/वर्ष"
+			},
+			"duration-quarter": {
+				"displayName": "तिमा",
+				"unitPattern-count-one": "{0} तिमा",
+				"unitPattern-count-other": "{0} तिमा",
+				"perUnitPattern": "{0}/ति"
 			},
 			"duration-month": {
 				"displayName": "माह",
@@ -3489,24 +5040,54 @@
 				"unitPattern-count-other": "{0} cal"
 			},
 			"energy-foodcalorie": {
-				"displayName": "Cal",
+				"displayName": "कैलोरी",
 				"unitPattern-count-one": "{0} Cal",
 				"unitPattern-count-other": "{0} Cal"
 			},
 			"energy-kilojoule": {
 				"displayName": "किलो जूल",
-				"unitPattern-count-one": "{0} kJ",
-				"unitPattern-count-other": "{0} kJ"
+				"unitPattern-count-one": "{0} कि॰जू॰",
+				"unitPattern-count-other": "{0} कि॰जू॰"
 			},
 			"energy-joule": {
 				"displayName": "जूल",
-				"unitPattern-count-one": "{0} J",
-				"unitPattern-count-other": "{0} J"
+				"unitPattern-count-one": "{0} जू॰",
+				"unitPattern-count-other": "{0} जू॰"
 			},
 			"energy-kilowatt-hour": {
 				"displayName": "kWh",
 				"unitPattern-count-one": "{0} kWh",
 				"unitPattern-count-other": "{0} kWh"
+			},
+			"energy-electronvolt": {
+				"displayName": "eV",
+				"unitPattern-count-one": "{0} eV",
+				"unitPattern-count-other": "{0} eV"
+			},
+			"energy-british-thermal-unit": {
+				"displayName": "Btu",
+				"unitPattern-count-one": "{0} Btu",
+				"unitPattern-count-other": "{0} Btu"
+			},
+			"energy-therm-us": {
+				"displayName": "यूएस थेर्म",
+				"unitPattern-count-one": "{0} यूएस थेर्म",
+				"unitPattern-count-other": "{0} यूएस थेर्म"
+			},
+			"force-pound-force": {
+				"displayName": "lbf",
+				"unitPattern-count-one": "{0} lbf",
+				"unitPattern-count-other": "{0} lbf"
+			},
+			"force-newton": {
+				"displayName": "न्यू॰",
+				"unitPattern-count-one": "{0} न्यू॰",
+				"unitPattern-count-other": "{0} न्यू॰"
+			},
+			"force-kilowatt-hour-per-100-kilometer": {
+				"displayName": "kWh/100km",
+				"unitPattern-count-one": "{0} kWh/100km",
+				"unitPattern-count-other": "{0} kWh/100km"
 			},
 			"frequency-gigahertz": {
 				"displayName": "GHz",
@@ -3527,6 +5108,51 @@
 				"displayName": "Hz",
 				"unitPattern-count-one": "{0} Hz",
 				"unitPattern-count-other": "{0} Hz"
+			},
+			"graphics-em": {
+				"displayName": "em",
+				"unitPattern-count-one": "{0} em",
+				"unitPattern-count-other": "{0} em"
+			},
+			"graphics-pixel": {
+				"displayName": "पिक्सेल",
+				"unitPattern-count-one": "{0} px",
+				"unitPattern-count-other": "{0} px"
+			},
+			"graphics-megapixel": {
+				"displayName": "मेगापिक्सेल",
+				"unitPattern-count-one": "{0} MP",
+				"unitPattern-count-other": "{0} MP"
+			},
+			"graphics-pixel-per-centimeter": {
+				"displayName": "ppcm",
+				"unitPattern-count-one": "{0} ppcm",
+				"unitPattern-count-other": "{0} ppcm"
+			},
+			"graphics-pixel-per-inch": {
+				"displayName": "ppi",
+				"unitPattern-count-one": "{0} ppi",
+				"unitPattern-count-other": "{0} ppi"
+			},
+			"graphics-dot-per-centimeter": {
+				"displayName": "ppcm",
+				"unitPattern-count-one": "{0} ppcm",
+				"unitPattern-count-other": "{0} ppcm"
+			},
+			"graphics-dot-per-inch": {
+				"displayName": "ppi",
+				"unitPattern-count-one": "{0} ppi",
+				"unitPattern-count-other": "{0} ppi"
+			},
+			"graphics-dot": {
+				"displayName": "बिंदु",
+				"unitPattern-count-one": "{0} बिंदु",
+				"unitPattern-count-other": "{0} बिंदु"
+			},
+			"length-earth-radius": {
+				"displayName": "R⊕",
+				"unitPattern-count-one": "{0} R⊕",
+				"unitPattern-count-other": "{0} R⊕"
 			},
 			"length-kilometer": {
 				"displayName": "कि॰मी॰",
@@ -3557,9 +5183,9 @@
 				"unitPattern-count-other": "{0} मि॰मी॰"
 			},
 			"length-micrometer": {
-				"displayName": "µ मा॰मी॰",
-				"unitPattern-count-one": "{0} µ मा॰मी॰",
-				"unitPattern-count-other": "{0} µ मा॰मी॰"
+				"displayName": "μ मा॰मी॰",
+				"unitPattern-count-one": "{0} μ मा॰मी॰",
+				"unitPattern-count-other": "{0} μ मा॰मी॰"
 			},
 			"length-nanometer": {
 				"displayName": "नै॰मी॰",
@@ -3609,12 +5235,14 @@
 				"unitPattern-count-other": "{0} खगो॰ इका॰"
 			},
 			"length-furlong": {
-				"displayName": "fur",
-				"unitPattern-count-other": "{0} fur"
+				"displayName": "फ़र्लांग",
+				"unitPattern-count-one": "{0} फ़र्लांग",
+				"unitPattern-count-other": "{0} फ़र्लांग"
 			},
 			"length-fathom": {
-				"displayName": "fm",
-				"unitPattern-count-other": "{0} fm"
+				"displayName": "फ़ैदम",
+				"unitPattern-count-one": "{0} फ़ैदम",
+				"unitPattern-count-other": "{0} फ़ैदम"
 			},
 			"length-nautical-mile": {
 				"displayName": "नॉ॰ मी॰",
@@ -3631,15 +5259,35 @@
 				"unitPattern-count-one": "{0} pt",
 				"unitPattern-count-other": "{0} pt"
 			},
+			"length-solar-radius": {
+				"displayName": "R☉",
+				"unitPattern-count-one": "{0} R☉",
+				"unitPattern-count-other": "{0} R☉"
+			},
 			"light-lux": {
 				"displayName": "लक्स",
 				"unitPattern-count-one": "{0} lx",
 				"unitPattern-count-other": "{0} lx"
 			},
-			"mass-metric-ton": {
+			"light-candela": {
+				"displayName": "cd",
+				"unitPattern-count-one": "{0} cd",
+				"unitPattern-count-other": "{0} cd"
+			},
+			"light-lumen": {
+				"displayName": "lm",
+				"unitPattern-count-one": "{0} lm",
+				"unitPattern-count-other": "{0} lm"
+			},
+			"light-solar-luminosity": {
+				"displayName": "L☉",
+				"unitPattern-count-one": "{0} L☉",
+				"unitPattern-count-other": "{0} L☉"
+			},
+			"mass-tonne": {
 				"displayName": "मीट्रिक टन",
 				"unitPattern-count-one": "{0} मीट्रिक टन",
-				"unitPattern-count-other": "{0} मीट्रिक टन"
+				"unitPattern-count-other": "{0} मी टन"
 			},
 			"mass-kilogram": {
 				"displayName": "कि॰ग्रा॰",
@@ -3669,7 +5317,8 @@
 				"unitPattern-count-other": "{0} टन"
 			},
 			"mass-stone": {
-				"displayName": "st",
+				"displayName": "14 पौ. का बट्टा",
+				"unitPattern-count-one": "{0} st",
 				"unitPattern-count-other": "{0} st"
 			},
 			"mass-pound": {
@@ -3680,8 +5329,8 @@
 			},
 			"mass-ounce": {
 				"displayName": "औंस",
-				"unitPattern-count-one": "{0} औं॰",
-				"unitPattern-count-other": "{0} औं॰",
+				"unitPattern-count-one": "{0} औंस",
+				"unitPattern-count-other": "{0} औंस",
 				"perUnitPattern": "{0}/औंस"
 			},
 			"mass-ounce-troy": {
@@ -3693,6 +5342,26 @@
 				"displayName": "कै॰",
 				"unitPattern-count-one": "{0} कै॰",
 				"unitPattern-count-other": "{0} कै॰"
+			},
+			"mass-dalton": {
+				"displayName": "डाल्टन",
+				"unitPattern-count-one": "{0} डाल्टन",
+				"unitPattern-count-other": "{0} डाल्टन"
+			},
+			"mass-earth-mass": {
+				"displayName": "M⊕",
+				"unitPattern-count-one": "{0} M⊕",
+				"unitPattern-count-other": "{0} M⊕"
+			},
+			"mass-solar-mass": {
+				"displayName": "M☉",
+				"unitPattern-count-one": "{0} M☉",
+				"unitPattern-count-other": "{0} M☉"
+			},
+			"mass-grain": {
+				"displayName": "डे. रत्ती",
+				"unitPattern-count-one": "{0} डे. रत्ती",
+				"unitPattern-count-other": "{0} डेढ़ रत्ती"
 			},
 			"power-gigawatt": {
 				"displayName": "GW",
@@ -3724,38 +5393,63 @@
 				"unitPattern-count-one": "{0} hp",
 				"unitPattern-count-other": "{0} hp"
 			},
-			"pressure-hectopascal": {
-				"displayName": "hPa",
-				"unitPattern-count-one": "{0} hPa",
-				"unitPattern-count-other": "{0} hPa"
-			},
-			"pressure-millimeter-of-mercury": {
+			"pressure-millimeter-ofhg": {
 				"displayName": "mm Hg",
 				"unitPattern-count-one": "{0} mm Hg",
 				"unitPattern-count-other": "{0} mm Hg"
 			},
-			"pressure-pound-per-square-inch": {
+			"pressure-pound-force-per-square-inch": {
 				"displayName": "psi",
 				"unitPattern-count-one": "{0} psi",
 				"unitPattern-count-other": "{0} psi"
 			},
-			"pressure-inch-hg": {
+			"pressure-inch-ofhg": {
 				"displayName": "inHg",
 				"unitPattern-count-one": "{0} inHg",
 				"unitPattern-count-other": "{0} inHg"
+			},
+			"pressure-bar": {
+				"displayName": "बार",
+				"unitPattern-count-one": "{0} बार",
+				"unitPattern-count-other": "{0} बार"
 			},
 			"pressure-millibar": {
 				"displayName": "mbar",
 				"unitPattern-count-one": "{0} mbar",
 				"unitPattern-count-other": "{0} mbar"
 			},
+			"pressure-atmosphere": {
+				"displayName": "atm",
+				"unitPattern-count-one": "{0} atm",
+				"unitPattern-count-other": "{0} atm"
+			},
+			"pressure-pascal": {
+				"displayName": "पा॰",
+				"unitPattern-count-one": "{0} पा॰",
+				"unitPattern-count-other": "{0} पा॰"
+			},
+			"pressure-hectopascal": {
+				"displayName": "hPa",
+				"unitPattern-count-one": "{0} hPa",
+				"unitPattern-count-other": "{0} hPa"
+			},
+			"pressure-kilopascal": {
+				"displayName": "किपा॰",
+				"unitPattern-count-one": "{0} किपा॰",
+				"unitPattern-count-other": "{0} किपा॰"
+			},
+			"pressure-megapascal": {
+				"displayName": "मेपा॰",
+				"unitPattern-count-one": "{0} मेपा॰",
+				"unitPattern-count-other": "{0} मेपा॰"
+			},
 			"speed-kilometer-per-hour": {
 				"displayName": "कि॰मी॰/घं॰",
-				"unitPattern-count-one": "{0} कि॰मी॰ प्रति घं॰",
-				"unitPattern-count-other": "{0} कि॰मी॰ प्रति घं॰"
+				"unitPattern-count-one": "{0} कि॰मी॰/घं॰",
+				"unitPattern-count-other": "{0} कि॰मी॰/घं॰"
 			},
 			"speed-meter-per-second": {
-				"displayName": "मी॰/से॰",
+				"displayName": "मीटर/से॰",
 				"unitPattern-count-one": "{0} मी॰/से॰",
 				"unitPattern-count-other": "{0} मी॰/से॰"
 			},
@@ -3781,13 +5475,23 @@
 			},
 			"temperature-fahrenheit": {
 				"displayName": "डिग्री फ़ेरनहाइट",
-				"unitPattern-count-one": "{0}°फेरन॰",
-				"unitPattern-count-other": "{0}°फेरन॰"
+				"unitPattern-count-one": "{0}°फ़ेरन",
+				"unitPattern-count-other": "{0}°फ़ेरन"
 			},
 			"temperature-kelvin": {
 				"displayName": "K",
 				"unitPattern-count-one": "{0} K",
 				"unitPattern-count-other": "{0} K"
+			},
+			"torque-pound-force-foot": {
+				"displayName": "lbf⋅ft",
+				"unitPattern-count-one": "{0} lbf⋅ft",
+				"unitPattern-count-other": "{0} lbf⋅ft"
+			},
+			"torque-newton-meter": {
+				"displayName": "न्यू॰मी॰",
+				"unitPattern-count-one": "{0} न्यू॰मी॰",
+				"unitPattern-count-other": "{0} न्यू॰मी॰"
 			},
 			"volume-cubic-kilometer": {
 				"displayName": "घन कि॰मी॰",
@@ -3833,8 +5537,8 @@
 			},
 			"volume-hectoliter": {
 				"displayName": "है॰ली॰",
-				"unitPattern-count-one": "{0} है॰ली॰",
-				"unitPattern-count-other": "{0} है॰ली॰"
+				"unitPattern-count-one": "{0} हे॰ली॰",
+				"unitPattern-count-other": "{0} हे॰ली॰"
 			},
 			"volume-liter": {
 				"displayName": "लीटर",
@@ -3873,8 +5577,9 @@
 				"unitPattern-count-other": "{0} ए॰फ़ी॰"
 			},
 			"volume-bushel": {
-				"displayName": "bu",
-				"unitPattern-count-other": "{0} bu"
+				"displayName": "बुशल",
+				"unitPattern-count-one": "{0} बुश॰",
+				"unitPattern-count-other": "{0} बुश॰"
 			},
 			"volume-gallon": {
 				"displayName": "गैलन",
@@ -3894,9 +5599,9 @@
 				"unitPattern-count-other": "{0} क्वार्ट"
 			},
 			"volume-pint": {
-				"displayName": "पिंट",
-				"unitPattern-count-one": "{0} पिंट",
-				"unitPattern-count-other": "{0} पिंट"
+				"displayName": "पाइंट",
+				"unitPattern-count-one": "{0} पाइंट",
+				"unitPattern-count-other": "{0} पाइंट"
 			},
 			"volume-cup": {
 				"displayName": "कप",
@@ -3908,6 +5613,11 @@
 				"unitPattern-count-one": "{0} फ़्लूइड आउंस",
 				"unitPattern-count-other": "{0} फ़्लूइड आउंस"
 			},
+			"volume-fluid-ounce-imperial": {
+				"displayName": "Imp. fl oz",
+				"unitPattern-count-one": "{0} fl oz Imp.",
+				"unitPattern-count-other": "{0} fl oz Imp."
+			},
 			"volume-tablespoon": {
 				"displayName": "टे॰ स्पून",
 				"unitPattern-count-one": "{0} टे॰ स्पून",
@@ -3918,7 +5628,48 @@
 				"unitPattern-count-one": "{0} टी स्पून",
 				"unitPattern-count-other": "{0} टी स्पून"
 			},
+			"volume-barrel": {
+				"displayName": "बैरल",
+				"unitPattern-count-one": "{0} बैरल",
+				"unitPattern-count-other": "{0} बैरल"
+			},
+			"volume-dessert-spoon": {
+				"displayName": "डे. स्पून",
+				"unitPattern-count-one": "{0} डे. स्पून",
+				"unitPattern-count-other": "{0} डे. स्पून"
+			},
+			"volume-dessert-spoon-imperial": {
+				"displayName": "इम्पी. डेज़र्टस्पून",
+				"unitPattern-count-one": "{0} इम्पी. डेज़र्टस्पून",
+				"unitPattern-count-other": "{0} इम्पी. डेज़र्टस्पून"
+			},
+			"volume-drop": {
+				"displayName": "बूंद",
+				"unitPattern-count-one": "{0} बूंद",
+				"unitPattern-count-other": "{0} बूंद"
+			},
+			"volume-dram": {
+				"displayName": "ड्रम फ्लूइड",
+				"unitPattern-count-one": "{0} ड्रम फ्लू.",
+				"unitPattern-count-other": "{0} ड्रम फ्लू."
+			},
+			"volume-jigger": {
+				"displayName": "जिगर",
+				"unitPattern-count-one": "{0} जिगर",
+				"unitPattern-count-other": "{0} जिगर"
+			},
+			"volume-pinch": {
+				"displayName": "चुटकी",
+				"unitPattern-count-one": "{0} चुटकी",
+				"unitPattern-count-other": "{0} चुटकी"
+			},
+			"volume-quart-imperial": {
+				"displayName": "क्वार्ट इम्पी.",
+				"unitPattern-count-one": "{0} क. इम्पी.",
+				"unitPattern-count-other": "{0} क. इम्पी."
+			},
 			"coordinateUnit": {
+				"displayName": "दिशा",
 				"east": "{0}E",
 				"north": "{0}N",
 				"south": "{0}S",
@@ -3926,24 +5677,51 @@
 			}
 		}
 	},
+	"lenient-scope-number": {
+		"minusSign": "-‒⁻₋−➖﹣－",
+		"commaSign": ",،٫、︐︑﹐﹑，､",
+		"plusSign": "+⁺₊➕﬩﹢＋"
+	},
+	"currencyFormat-sap-short": {
+		"1000-one": "0 हज़ार ¤",
+		"1000-other": "0 हज़ार ¤",
+		"10000-one": "00 हज़ार ¤",
+		"10000-other": "00 हज़ार ¤",
+		"100000-one": "0 लाख ¤",
+		"100000-other": "0 लाख ¤",
+		"1000000-one": "00 लाख ¤",
+		"1000000-other": "00 लाख ¤",
+		"10000000-one": "0 क॰ ¤",
+		"10000000-other": "0 क॰ ¤",
+		"100000000-one": "00 क॰ ¤",
+		"100000000-other": "00 क॰ ¤",
+		"1000000000-one": "0 अ॰ ¤",
+		"1000000000-other": "0 अ॰ ¤",
+		"10000000000-one": "00 अ॰ ¤",
+		"10000000000-other": "00 अ॰ ¤",
+		"100000000000-one": "0 ख॰ ¤",
+		"100000000000-other": "0 ख॰ ¤",
+		"1000000000000-one": "00 ख॰ ¤",
+		"1000000000000-other": "00 ख॰ ¤",
+		"10000000000000-one": "0 नील ¤",
+		"10000000000000-other": "0 नील ¤",
+		"100000000000000-one": "00 नील ¤",
+		"100000000000000-other": "00 नील ¤"
+	},
 	"currencyDigits": {
 		"ADP": 0,
 		"AFN": 0,
 		"ALL": 0,
-		"AMD": 0,
 		"BHD": 3,
 		"BIF": 0,
 		"BYR": 0,
 		"CLF": 4,
 		"CLP": 0,
-		"COP": 0,
 		"DEFAULT": 2,
 		"DJF": 0,
 		"ESP": 0,
 		"GNF": 0,
-		"GYD": 0,
 		"HUF": 0,
-		"IDR": 0,
 		"IQD": 0,
 		"IRR": 0,
 		"ISK": 0,
@@ -3961,11 +5739,8 @@
 		"MGA": 0,
 		"MGF": 0,
 		"MMK": 0,
-		"MNT": 0,
 		"MRO": 0,
-		"MUR": 0,
 		"OMR": 3,
-		"PKR": 0,
 		"PYG": 0,
 		"RSD": 0,
 		"RWF": 0,
@@ -3977,10 +5752,9 @@
 		"TND": 3,
 		"TRL": 0,
 		"TWD": 0,
-		"TZS": 0,
 		"UGX": 0,
 		"UYI": 0,
-		"UZS": 0,
+		"UYW": 4,
 		"VND": 0,
 		"VUV": 0,
 		"XAF": 0,
@@ -4003,35 +5777,82 @@
 	},
 	"eras-gregorian": {
 		"0": {
+			"_code": "gregory-inverse",
+			"_aliases": "bc bce",
 			"_end": "0-12-31"
 		},
 		"1": {
+			"_code": "gregory",
+			"_aliases": "ad ce",
 			"_start": "1-01-01"
 		}
 	},
 	"eras-islamic": {
 		"0": {
+			"_code": "islamic",
+			"_aliases": "ah",
 			"_start": "622-7-15"
 		}
 	},
 	"eras-persian": {
 		"0": {
+			"_code": "persian",
+			"_aliases": "ap",
 			"_start": "622-01-01"
+		}
+	},
+	"eras-buddhist": {
+		"0": {
+			"_code": "buddhist",
+			"_aliases": "be",
+			"_start": "-542-01-01"
 		}
 	},
 	"eras-japanese": {
 		"232": {
+			"_code": "meiji",
 			"_start": "1868-9-8"
 		},
 		"233": {
+			"_code": "taisho",
 			"_start": "1912-7-30"
 		},
 		"234": {
+			"_code": "showa",
 			"_start": "1926-12-25"
 		},
 		"235": {
+			"_code": "heisei",
 			"_start": "1989-1-8"
+		},
+		"236": {
+			"_code": "reiwa",
+			"_start": "2019-5-1"
 		}
 	},
-	"calendarPreference": "gregorian indian"
+	"dayPeriodRules": {
+		"afternoon1": {
+			"_before": "16:00",
+			"_from": "12:00"
+		},
+		"evening1": {
+			"_before": "20:00",
+			"_from": "16:00"
+		},
+		"midnight": {
+			"_at": "00:00"
+		},
+		"morning1": {
+			"_before": "12:00",
+			"_from": "04:00"
+		},
+		"night1": {
+			"_before": "04:00",
+			"_from": "20:00"
+		}
+	},
+	"calendarPreference": [
+		"gregorian",
+		"indian"
+	]
 }

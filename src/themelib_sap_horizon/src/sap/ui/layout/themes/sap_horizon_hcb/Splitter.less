@@ -1,0 +1,22 @@
+/* ======================================= */
+/* CSS for control sap.ui.layout/Splitter  */
+/* Horizon High Contrast Black theme       */
+/* ======================================= */
+
+@_sap_ui_layout_Splitter_BarActiveDecorationColors: @sapUiObjectHeaderBorderColor, @sapUiObjectHeaderBorderColor;
+@_sap_ui_layout_Splitter_BarDecorationColors: @sapUiObjectHeaderBorderColor, fade(@sapUiObjectHeaderBorderColor, 0);
+@_sap_ui_layout_Splitter_BarHoverIconBorderColor: @sapUiButtonLiteHoverBorderColor;
+@_sap_ui_layout_Splitter_BarHoverIconBackground: @sapUiButtonLiteHoverBackground;
+
+.sapUiLoSplitter {
+	background-color: @sapUiHcStandardBackground;
+}
+
+/*********************************** Focus outline**********************************/
+
+.sapUiLoSplitter > .sapUiLoSplitterBar,
+.sapUiLoSplitter > .sapUiLoSplitterOverlay .sapUiLoSplitterOverlayBar {
+	&:focus::after {
+		border-width: 2px;
+	}
+}

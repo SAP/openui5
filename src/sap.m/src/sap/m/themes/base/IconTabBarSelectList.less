@@ -3,19 +3,25 @@
 /* Base theme                                  */
 /* =========================================== */
 
-.sapMITBPopover ul,
-.sapMITBPopover li {
+@_sap_m_IconTabBar_SelectListItem_PaddingLeft: 0.5rem;
+@_sap_m_IconTabBar_SelectListItem_PaddingLeftAdditional: 0;
+@_sap_m_IconTabBar_ListBorderRadius: 0px;
+@_sap_m_IconTabBar_List_Focus_Offset: 1px;
+
+.sapMITBSelectList {
 	margin: 0;
 	padding: 0;
 	list-style: none;
+
+	&:focus {
+		outline: none;
+	}
 }
 
 .sapMITBSelectList .sapMITBSelectItem {
-
 	position: relative;
 
 	width : 100%;
-	height: 3rem;
 
 	box-sizing: border-box;
 
@@ -29,8 +35,52 @@
 
 	cursor: pointer;
 
-	& > span {
+	.sapUiIcon {
 		cursor: pointer;
+	}
+
+	&.sapMITHUnselectable {
+		cursor: default;
+	}
+}
+
+.sapMITBSelectList .sapMITBSelectItem:not(.sapMITBSep) {
+	padding: 0.75rem 0 0.75rem;
+}
+
+.sapMITBSelectList .sapMITBSep {
+	margin: 0;
+	height: 1rem;
+	justify-content: center;
+	padding-right: 0;
+
+	&:first-child {
+		margin-top: 0.5rem;
+	}
+
+	&.sapMITBSepLine {
+		margin-left: 0;
+		border: 0;
+		position: relative;
+		height: 0.25rem;
+		padding-right: 17px; // big enough to cover the case when a scrollbar appears
+
+		&::before {
+			width: 1rem;
+			content: "";
+		}
+
+		&::after {
+			content: "";
+			width: 100%;
+			border-top: 0.0625rem solid @sapUiGroupTitleBorderColor;
+		}
+	}
+
+	.sapMITBSepIcon {
+		height: 1rem;
+		line-height: 1rem;
+		overflow: hidden;
 	}
 }
 
@@ -38,70 +88,90 @@
 	outline: none;
 	-webkit-user-select: none; /* Chrome all / Safari all */
 	-moz-user-select: none; /* Firefox all */
-	-ms-user-select: none; /* IE 10+ */
 	user-select: none;
 }
 
-.sapMITBSelectItem .sapMText {
-	width: 100%;
+.sapMITBSelectItem .sapMITBText {
 	display: block;
 	padding: 0 1rem 0 0;
 	pointer-events: none;
+	min-width: 0;  // chrome flex overflow issue
+	overflow: visible;
+	white-space: normal;
+	font-size: @sapMFontMediumSize;
 }
 
-.sapMITBSelectListTextOnly .sapMITBSelectItem .sapMText {
+.sapMITBSelectListTextOnly .sapMITBSelectItem .sapMITBText {
 	padding-left: 1rem;
 }
 
-.sapMITBSelectItem .sapUiIcon {
-	font-size: 1.375rem;
-	width: 1.375rem;
-	height: 1.375rem;
-	padding: 0.8125rem 1rem;
+.sapMITBSelectItem:not(.sapMITBSep) .sapUiIcon {
+	font-size: 1.125rem;
+	min-width: 2.75rem;
 }
 
 /* Compact size */
 .sapUiSizeCompact {
-	.sapMITBSelectList .sapMITBSelectItem {
-		height: 2rem;
+	.sapMITBSelectList .sapMITBSelectItem:not(.sapMITBSep) {
+		padding: 0.5rem 0 0.5rem;
 	}
 
-	.sapMITBSelectItem .sapMText {
-		padding: 0 0.5rem 0 0;
-		font-size: @sapMFontSmallSize;
-	}
-
-	.sapMITBSelectListTextOnly .sapMITBSelectItem .sapMText {
-		padding-left: 0.5rem;
-	}
-
-	.sapMITBSelectItem .sapUiIcon {
+	.sapMITBSelectItem:not(.sapMITBSep) .sapUiIcon {
 		font-size: 1rem;
-		width: 1rem;
-		height: 1rem;
-		padding: 0.5rem;
+		min-width: 2rem;
+	}
+
+	.sapMITBSelectList .sapMITBSep {
+		&.sapMITBSepLine {
+			padding-right: 0.5rem;
+
+			&::before {
+				width: 0.5rem;
+			}
+		}
 	}
 }
 
 .sapMITBSelectItem {
-	border-bottom: 1px solid @sapUiListBorderColor;
 	background-color: @sapUiListBackground;
 }
 
-.sapMITBSelectItem:hover {
+.sapMITBSelectItem {
+	&.sapMITBFilterNeutral,
+	&.sapMITBFilterNegative,
+	&.sapMITBFilterPositive,
+	&.sapMITBFilterCritical {
+		.sapMITBText {
+			color: inherit;
+		}
+	}
+}
+
+.sapMITBSelectItem {
+	&.sapMITBFilterDefault {
+		.sapMITBInlineIcon {
+			color: @sapUiListTextColor
+		}
+	}
+}
+
+.sapMITBSelectItem:not(.sapMITHUnselectable):hover {
 	background-color: @sapUiListHoverBackground;
 }
 
-.sapMITBSelectList .sapMITBSelectItem:active,
-.sapMITBSelectList .sapMITBSelectItem.sapMITBSelectItemSelected:active {
-	background-color: @sapUiListActiveBackground;
+.sapMITBSelectList .sapMITBSelectItem:not(.sapMITHUnselectable) {
 
-	& > .sapMText {
-		color: @sapUiListActiveTextColor;
-	}
+	&:not(.sapUiDnDDragging):active,
+	&.sapMITBSelectItemSelected:not(.sapUiDnDDragging):active {
+		background-color: @sapUiListActiveBackground;
 
-	& > .sapUiIcon {
-		color: @sapUiListActiveTextColor;
+		& > .sapMITBText {
+			color: @sapUiListActiveTextColor;
+		}
+
+		& > .sapUiIcon {
+			color: @sapUiListActiveTextColor;
+		}
 	}
 }
 
@@ -110,14 +180,15 @@
 }
 
 .sapMITBSelectItem:focus::before {
-	border: 1px dotted @sapUiContentFocusColor;
+	border: @sapUiContentFocusWidth @sapUiContentFocusStyle @sapUiContentFocusColor;
 	position: absolute;
 	content: " ";
-	top: 1px;
-	right: 1px;
-	bottom: 1px;
-	left: 1px;
+	top: @_sap_m_IconTabBar_List_Focus_Offset;
+	right:  @_sap_m_IconTabBar_List_Focus_Offset;
+	bottom:  @_sap_m_IconTabBar_List_Focus_Offset;
+	left:  @_sap_m_IconTabBar_List_Focus_Offset;
 	z-index: 2;
+	border-radius: @_sap_m_IconTabBar_ListBorderRadius;
 	pointer-events: none;
 }
 
@@ -130,5 +201,5 @@
 }
 
 .sapUiDnDIndicator {
-  z-index: 100;
+	z-index: 100;
 }

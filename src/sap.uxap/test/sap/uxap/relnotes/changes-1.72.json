@@ -1,0 +1,51 @@
+{
+  "1.72.0": {
+    "date": "September 2019",
+    "notes": [
+      {
+        "id": "ad37f7f2598ac248e14869fd010697062b88557e",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Ensured correct scroll position",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980365632"
+          }
+        ]
+      },
+      {
+        "id": "fd901bb875796908a14682f1b30165aada8790e7",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Prevented iOS scroll issue on overflow change",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "587571"
+          }
+        ]
+      },
+      {
+        "id": "b10165c0840c47cd2a55cf04fae3c0a8e21381eb",
+        "type": "FEATURE",
+        "text": " sap.uxap.BlockBase: Added viewInit event",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "410797"
+          }
+        ]
+      },
+      {
+        "id": "075b1621cb9e994ab009016ac34cf52d64107623",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Prevented iOS scroll issue upon snap",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "587571"
+          }
+        ]
+      }
+    ]
+  }
+}

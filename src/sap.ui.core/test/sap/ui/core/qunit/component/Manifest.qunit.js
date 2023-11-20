@@ -1,7 +1,8 @@
 sap.ui.define([
+	"sap/base/i18n/Localization",
 	'sap/ui/core/Manifest',
 	'sap/ui/thirdparty/URI'
-], function(Manifest, URI) {
+], function(Localization, Manifest, URI) {
 
 	"use strict";
 	/*global QUnit */
@@ -64,11 +65,11 @@ sap.ui.define([
 				"title": "Foo"
 			},
 			"unit.test1": {
-				boolean: false,
-				string: "buz",
-				null: null,
-				object: {
-					value: true
+				"boolean": false,
+				"string": "buz",
+				"null": null,
+				"object": {
+					"value": true
 				}
 			},
 			"unit.test2": "invalid"
@@ -111,11 +112,121 @@ sap.ui.define([
 			url: "manifest/uri/manifest.json"
 		});
 
-		var sBaseURI = new URI("./").absoluteTo(new URI(document.baseURI).search(""));
-		assert.strictEqual(this.oManifest.resolveUri(new URI("my/uri")).toString(), "testdata/foo/bar/my/uri", "URL should resolve relative to the Component");
-		assert.strictEqual(this.oManifest.resolveUri(new URI("my/uri"), "component").toString(), "testdata/foo/bar/my/uri", "URL should resolve relative to the Component");
-		assert.strictEqual(this.oManifest.resolveUri(new URI("my/uri"), "manifest").toString(), "manifest/uri/my/uri", "URL should resolve relative to the Manifest");
+		assert.strictEqual(this.oManifest.resolveUri("my/uri"), "test-resources/sap/ui/core/qunit/component/testdata/foo/bar/my/uri", "URL should resolve relative to the Component");
+		assert.strictEqual(this.oManifest.resolveUri("my/uri", "component"), "test-resources/sap/ui/core/qunit/component/testdata/foo/bar/my/uri", "URL should resolve relative to the Component");
+		assert.strictEqual(this.oManifest.resolveUri("my/uri", "manifest"), "manifest/uri/my/uri", "URL should resolve relative to the Manifest");
 
 	});
 
+	QUnit.test("Manifest.load ASYNC", function(assert) {
+		var that = this;
+		var done = assert.async();
+		Manifest.load({
+			componentName: "sap.ui.test.manifestload",
+			manifestUrl: "test-resources/sap/ui/core/qunit/component/testdata/manifestload/manifest.json",
+			async: true
+		}).then(function(oManifest) {
+			that.oManifest = oManifest; // Save for cleanup in afterEach
+			assert.strictEqual(that.oManifest.getEntry("sap.ui5").someValue, "someValue456", "Manifest data was loaded ASYNC");
+			assert.strictEqual(that.oManifest.resolveUri(
+				"test-resources/sap/ui/core/qunit/component/testdata/manifestload", "manifest"),
+				"test-resources/sap/ui/core/qunit/component/testdata/manifestload/test-resources/sap/ui/core/qunit/component/testdata/manifestload",
+				"URL should resolve relative to the Manifest"
+			);
+			done();
+		});
+	});
+
+	QUnit.test("Manifest from Object", function(assert) {
+		this.oManifest = new Manifest({
+			"sap.app": {
+				"id": "sap.ui.test.manifestload"
+			},
+			"sap.ui5": {
+				"someValue": "someValue456",
+				"dependencies": {
+					"libs": {
+					},
+					"components": {
+						"sap.ui.test.manifestload": {}
+					}
+				}
+			}
+		}, {
+			url: "test-resources/sap/ui/core/qunit/component/testdata/manifestload/manifest.json"
+		});
+
+		assert.strictEqual(this.oManifest.getEntry("sap.ui5").someValue, "someValue456", "Manifest data was loaded ASYNC");
+
+		assert.strictEqual(this.oManifest.resolveUri(
+			"test-resources/sap/ui/core/qunit/component/testdata/manifestload", "manifest"),
+			"test-resources/sap/ui/core/qunit/component/testdata/manifestload/test-resources/sap/ui/core/qunit/component/testdata/manifestload",
+			"URL should resolve relative to the Manifest"
+		);
+	});
+
+	QUnit.test("Replace text placeholders in Manifest", function (assert) {
+		this.oManifest = new Manifest({
+			"sap.app": {
+				"id": "sap.ui.test.terminologies",
+				"type": "application",
+				"i18n": "i18n.properties",
+				"title": "{{appTitle}}",
+				"description": "{{appDescription}}",
+				"applicationVersion": {
+					"version": "1.0.0"
+				}
+			},
+			"sap.ui5": {}
+		}, {
+			url: "test-resources/sap/ui/core/qunit/component/testdata/terminologies/textReplacement/manifest.json"
+		});
+		var oJson = this.oManifest.getJson();
+		assert.equal(oJson["sap.app"].title, "Some Application Title", "Title should be correct");
+		assert.equal(oJson["sap.app"].description, "Some application description", "App description should be correct");
+	});
+
+	QUnit.test("Replace text placeholders with content from Terminologies", function (assert) {
+
+		var sOldLanguage = Localization.getLanguage();
+		Localization.setLanguage("en");
+
+		this.oManifest = new Manifest({
+			"sap.app": {
+				"id": "sap.ui.test.terminologies",
+				"type": "application",
+				"i18n": {
+					"bundleUrl": "i18n.properties",
+					"fallbackLocale": "en",
+					"supportedLocales": ["en"],
+					"terminologies": {
+						"oil": {
+							"bundleUrl": "i18n.terminologies.oil.properties",
+							"bundleUrlRelativeTo": "manifest",
+							"supportedLocales": ["en"]
+						},
+						"retail": {
+							"bundleUrl": "i18n.terminologies.retail.properties",
+							"bundleUrlRelativeTo": "manifest",
+							"supportedLocales": ["en"]
+						}
+					}
+				},
+				"title": "{{appTitle}}",
+				"description": "{{appDescription}}",
+				"applicationVersion": {
+					"version": "1.0.0"
+				}
+			},
+			"sap.ui5": {}
+		}, {
+			activeTerminologies: ["oil", "retail"],
+			url: "test-resources/sap/ui/core/qunit/component/testdata/terminologies/textReplacement/manifest.json"
+		});
+		var oJson = this.oManifest.getJson();
+		assert.equal(oJson["sap.app"].title, "Octane Fuel Station", "Title should be correct");
+		assert.equal(oJson["sap.app"].description, "Cheap oil prices guaranteed", "App description should be correct");
+
+		Localization.setLanguage(sOldLanguage);
+	});
 });

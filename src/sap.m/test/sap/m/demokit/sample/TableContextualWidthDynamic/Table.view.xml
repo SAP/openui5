@@ -1,0 +1,128 @@
+<mvc:View
+	controllerName="sap.m.sample.TableContextualWidthDynamic.Table"
+	xmlns:l="sap.ui.layout"
+	xmlns:core="sap.ui.core"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m">
+	<MessageStrip
+			id="idMessageStrip"
+			text="Move the splitter to see the container based popin behaviour with dynamic width."
+			type="Success"
+			showIcon="true"
+			showCloseButton="true"
+			class="sapUiMediumMarginBottom">
+	</MessageStrip>
+
+	<l:ResponsiveSplitter height="100%">
+		<l:PaneContainer>
+			<l:SplitPane requiredParentWidth="500">
+						<Table id="idProductsTableleft"
+								contextualWidth="Auto"
+								popinLayout="GridSmall"
+								headerText="Products"
+								items="{
+								path: '/ProductCollection'
+							}">
+							<columns>
+								<Column>
+									<header>
+										<Text text="Product" />
+									</header>
+								</Column>
+								<Column
+									minScreenWidth="phone"
+									demandPopin="true">
+									<header>
+										<Text text="Supplier" />
+									</header>
+								</Column>
+								<Column
+									minScreenWidth="tablet"
+									demandPopin="true"
+									hAlign="Center">
+									<header>
+										<Text text="Status" />
+									</header>
+								</Column>
+								<Column
+									minScreenWidth="Phone"
+									demandPopin="true"
+									hAlign="End">
+									<header>
+										<Text text="Quantity" />
+									</header>
+								</Column>
+							</columns>
+							<items>
+								<ColumnListItem>
+									<cells>
+										<Label
+											text="{Name}"/>
+										<Label
+											text="{SupplierName}" />
+										<Label
+											text="{Status}" />
+										<Label
+											text="{Quantity}"/>
+									</cells>
+								</ColumnListItem>
+							</items>
+						</Table>
+			</l:SplitPane>
+			<l:SplitPane requiredParentWidth="400">
+					<Table id="idProductsTableright"
+								contextualWidth="Auto"
+								popinLayout="GridSmall"
+								headerText="Products"
+								items="{
+								path: '/ProductCollection'
+							}">
+							<columns>
+								<Column>
+									<header>
+										<Text text="Product" />
+									</header>
+								</Column>
+								<Column
+									minScreenWidth="phone"
+									demandPopin="true">
+									<header>
+										<Text text="Supplier" />
+									</header>
+								</Column>
+								<Column
+									minScreenWidth="tablet"
+									demandPopin="true"
+									hAlign="Center">
+									<header>
+										<Text text="Status" />
+									</header>
+								</Column>
+								<Column
+									minScreenWidth="Phone"
+									demandPopin="true"
+									hAlign="End">
+									<header>
+										<Text text="Quantity" />
+									</header>
+								</Column>
+							</columns>
+							<items>
+								<ColumnListItem>
+									<cells>
+										<Label
+											text="{Name}"/>
+										<Label
+											text="{SupplierName}" />
+										<Label
+											text="{Status}" />
+										<Label
+											text="{Quantity}"/>
+									</cells>
+								</ColumnListItem>
+							</items>
+						</Table>
+			</l:SplitPane>
+		</l:PaneContainer>
+	</l:ResponsiveSplitter>
+</mvc:View>

@@ -1,0 +1,102 @@
+{
+  "1.82.0": {
+    "date": "August 2020",
+    "notes": [
+      {
+        "id": "07d41485fe3d87c7456ce80a663c96eddccaeae4",
+        "type": "FIX",
+        "text": " mdc.Chart: Custom actions are now displayed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080249537"
+          }
+        ]
+      },
+      {
+        "id": "4e74ca121513b763dc2b23e6e35659dd5ba14137",
+        "type": "FIX",
+        "text": " Field: error for wrong input remains after BindingContext change",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080233654"
+          }
+        ]
+      },
+      {
+        "id": "58375ed7b365f1ab9311f718f979edb0b506c106",
+        "type": "FEATURE",
+        "text": " Field/FilterField: new submit event",
+        "references": []
+      },
+      {
+        "id": "52f1c93aa1613bb51da644d3a5eb001a854d8ef1",
+        "type": "FEATURE",
+        "text": " FilterBar: ENTER triggers search",
+        "references": []
+      },
+      {
+        "id": "d9a53cbfa29b174d9477d0aaca5c39d30a5a3480",
+        "type": "FIX",
+        "text": " ValuHelpPanel: no search event on press on search icon",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080352672"
+          }
+        ]
+      },
+      {
+        "id": "a2271ff6919a57d5c676a41998968fc6ca147420",
+        "type": "FEATURE",
+        "text": " ConditionFieldHelp. New field help to enter conditions",
+        "references": []
+      },
+      {
+        "id": "423f7779c56cbc159a8a10cf29272f2f6c4623b6",
+        "type": "FIX",
+        "text": " ConditionType: error if empty string parsed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080362761"
+          }
+        ]
+      },
+      {
+        "id": "c2a03f148f3311e619d940828cb7739bed826e2e",
+        "type": "FIX",
+        "text": " FieldHelp: no request if InParameter is set to null",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080357396"
+          }
+        ]
+      },
+      {
+        "id": "3347e0d3a3a5d9bf79f283a0af65003ca754c9c9",
+        "type": "FIX",
+        "text": " FieldValueHelp: selected item not selected in table",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080372980"
+          }
+        ]
+      },
+      {
+        "id": "fb4959769f801c2c421e0b109917512100a3a786",
+        "type": "FIX",
+        "text": " FieldValueHelpMTableWrapper: create no request if no fieldPath",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080254861"
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,33 @@
+/* ======================================= */
+/* CSS for control sap.ui.table/RowAction  */
+/* Horizon theme                              */
+/* ======================================= */
+
+/*TBD: Adjustments for sapUiTableActionIcon might be obsolete when Icon is adjusted*/
+
+.sapUiTableActionIcon {
+	border-radius: @sapUiButtonBorderCornerRadius;
+	box-sizing: border-box;
+	color: @sapUiButtonLiteTextColor;
+}
+
+.sapUiTableActionIcon:hover {
+	border: 1px solid @sapUiButtonHoverBorderColor;
+	background: @sapUiButtonHoverBackground;
+}
+
+.sapUiTableActionIcon:active {
+	color: @sapUiButtonActiveTextColor;
+	border: 1px solid @sapUiButtonActiveBorderColor;
+}
+
+.sapUiTableActionIcon.sapUiIcon:focus {
+	outline-width: @sapUiContentFocusWidth;
+	outline-style: @sapUiContentFocusStyle;
+	outline-color: @sapUiContentFocusColor;
+	outline-offset: -@sapUiContentFocusWidth;
+}
+
+.sapUiTableActionIcon:active:focus {
+	outline: none;
+}

@@ -1,0 +1,264 @@
+/* ===================================== */
+/* CSS for control sap.ui.ux3/ActionBar  */
+/* Evening Horizon theme                 */
+/* ===================================== */
+
+.sapUiUx3ActionBar {
+	font-family: @sapUiDesktopFontFamily;
+	font-size: @sapUiDesktopFontSize;
+	position:relative;
+	background-color: darken(@sapUiContentForegroundColor, 70); // @sapUiExtraDarkBG = #333333
+	height: 40px;
+	margin: 0;
+	white-space:nowrap;
+}
+
+.sapUiUx3ActionBarSocialActions {
+	margin: 0;
+	padding: 0px 6px 0px 0px;
+	list-style: none;
+	display: inline-block;
+	float: left;
+}
+
+.sapUiUx3ActionBarBusinessActions {
+	position: absolute;
+	right: 6px;
+	top: 9px;
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+.sapUiUx3ActionBarBusinessActions .sapUiUx3ActionBarLiteMoreButton .sapUiMenuButtonIco {
+	color: @sapUiContentContrastTextColor; // @sapUiTextInverted = #ffffff
+	background-image: url("img/menubutton/Menu_Hover.png");
+}
+
+.sapUiUx3ActionBarBusinessActions .sapUiUx3ActionBarLiteMoreButton .sapUiBtnTxt {
+	color: @sapUiContentContrastTextColor; // @sapUiTextInverted = #ffffff
+}
+
+.sapUiUx3ActionBarItem {
+	position: relative;
+	display: inline-block;
+	cursor: pointer;
+	padding: 0px 0px 0px 0px;
+	height: 40px;
+	border-right: 1px solid @sapUiContentFocusColor; // @sapUiDarkestBorder = #000000;
+}
+
+.sapUiUx3ActionBarMoreButton {
+	padding: 0px 0px 0px 0px;
+}
+
+.sapUiUx3ActionBarItem:focus {
+	outline: none;
+}
+
+.sapUiUx3ActionBarItemRight {
+	display: inline;
+	color: @sapUiContentForegroundTextColor; // @@sapUiText = #000000
+	font-weight: normal;
+	padding: 0px 0px 0px 6px;
+}
+
+.sapUiUx3ActionBarAction:focus {
+	outline: none;
+}
+
+.sapUiUx3ActionBarAction:hover {
+	border: 1px solid @sapUiHighlight;
+}
+
+.sapUiUx3ActionBarAction {
+	display: inline-block;
+	width: 38px;
+	height: 38px;
+	padding: 0px;
+}
+
+button.sapUiUx3ActionBarLiteMoreButton>span.sapUiBtnTxt  {
+	color: @sapUiContentForegroundTextColor; // @sapUiBaseText = #000000
+	font-weight: normal;
+}
+
+button.sapUiUx3ActionBarLiteMoreButton:hover>span.sapUiBtnTxt  {
+	color: @sapUiContentContrastTextColor; // @sapUiTextInverted = #ffffff
+	font-weight: normal;
+}
+
+button.sapUiUx3ActionBarLiteMoreButton:focus>span.sapUiBtnTxt  {
+	color: @sapUiContentContrastTextColor; // @sapUiTextInverted = #ffffff
+	font-weight: normal;
+}
+
+/* ============================================= */
+/* Update                                        */
+.sapUiUx3ActionBarUpdateAction {
+	background-image: url("../base/img/update_hover.png");
+}
+
+.sapUiUx3ActionBarUpdateAction:focus {
+	border: 1px solid @sapUiHighlight;
+}
+.sapUiUx3ActionBarUpdateAction:active {
+	background-image: url("../base/img/update_hover.png");
+	background-color: @sapUiHighlight;
+}
+
+.sapUiUx3ActionBarUpdateAction.Selected {
+	background-color: @sapUiToggleButtonPressedBackground;
+}
+
+.sapUiUx3ActionBarUpdateAction.Selected:focus,
+.sapUiUx3ActionBarUpdateAction.Selected:hover {
+	background-color: darken(@sapUiToggleButtonPressedBackground, 6);
+	border: 1px solid transparent;
+}
+
+.sapUiUx3ActionBarUpdateAction.Selected:active {
+	background-color: @sapUiToggleButtonPressedBackground;
+}
+
+.sapUiUx3ActionBarUpdatePopup.sapUiUx3TP {
+	color: @sapUiContentForegroundTextColor; // @sapUiBaseText = #000000
+	padding: 5px;
+}
+
+.sapUiUx3ActionBarUpdatePopup > .sapUiUx3TPContent {
+	 margin: 0;
+}
+
+.sapUiUx3ActionBarFeeder {
+	width:300px;
+}
+
+/* ============================================= */
+/* Follow (Feed)                                 */
+.sapUiUx3ActionBarFollowAction.Default {
+	background-image: url("../base/img/not_following_hover.png");
+}
+
+.sapUiUx3ActionBarFollowAction.Default:focus,
+.sapUiUx3ActionBarFollowAction.Default:hover {
+	background-color: @sapUiHighlight;
+	border: 1px solid transparent;
+}
+
+.sapUiUx3ActionBarFollowAction.Default:active {
+	background-color: @sapUiHighlight;
+}
+
+
+.sapUiUx3ActionBarFollowAction.Default:disabled {
+	opacity: 0.25;
+}
+
+.sapUiUx3ActionBarFollowAction.Follow {
+	background-color: @sapUiToggleButtonPressedBackground;
+	border: 1px solid transparent;
+}
+.sapUiUx3ActionBarFollowAction.Hold:hover,
+.sapUiUx3ActionBarFollowAction.Hold:focus,
+.sapUiUx3ActionBarFollowAction.Follow:focus,
+.sapUiUx3ActionBarFollowAction.Follow:hover {
+	background-color: darken(@sapUiToggleButtonPressedBackground, 6);
+	border: 1px solid transparent;
+}
+
+.sapUiUx3ActionBarFollowAction.Hold:active,
+.sapUiUx3ActionBarFollowAction.Follow:active {
+	background-color: @sapUiToggleButtonPressedBackground;
+}
+
+.sapUiUx3ActionBarFollowAction.Hold {
+	background-color: @sapUiToggleButtonPressedBackground;
+	border: 1px solid transparent;
+}
+
+/* ============================================= */
+/* Flag                                     */
+.sapUiUx3ActionBarFlagAction {
+	background-image: url("../base/img/flag_hover.png");
+}
+
+.sapUiUx3ActionBarFlagAction:hover,
+.sapUiUx3ActionBarFlagAction:focus {
+	background-image: url("../base/img/flag_hover.png");
+	background-color: @sapUiHighlight;
+	border: 1px solid transparent;
+}
+
+.sapUiUx3ActionBarFlagAction:active {
+	background-color: @sapUiHighlight;
+}
+
+.sapUiUx3ActionBarFlagAction.Selected {
+	background-color: @sapUiToggleButtonPressedBackground;
+}
+
+.sapUiUx3ActionBarFlagAction.Selected:focus,
+.sapUiUx3ActionBarFlagAction.Selected:hover {
+	background-color: darken(@sapUiToggleButtonPressedBackground, 6);
+	border: 1px solid transparent;
+}
+
+.sapUiUx3ActionBarFlagAction.Selected:active {
+	background-color: @sapUiToggleButtonPressedBackground;
+}
+
+
+/* ============================================= */
+/* Favorite                                     */
+.sapUiUx3ActionBarFavoriteAction {
+	background-image: url("../base/img/favorite_hover.png");
+}
+
+.sapUiUx3ActionBarFavoriteAction:hover,
+.sapUiUx3ActionBarFavoriteAction:focus {
+	background-image: url("../base/img/favorite_hover.png");
+	background-color: @sapUiHighlight;
+	border: 1px solid transparent;
+}
+
+
+.sapUiUx3ActionBarFavoriteAction:active {
+	background-color: @sapUiHighlight;
+}
+
+.sapUiUx3ActionBarFavoriteAction.Selected {
+	background-color: @sapUiToggleButtonPressedBackground;
+	border: 1px solid transparent;
+}
+
+.sapUiUx3ActionBarFavoriteAction.Selected:focus,
+.sapUiUx3ActionBarFavoriteAction.Selected:hover {
+	background-color: darken(@sapUiToggleButtonPressedBackground, 6);
+	border: 1px solid transparent;
+}
+
+.sapUiUx3ActionBarFavoriteAction.Selected:active {
+	background-color: @sapUiToggleButtonPressedBackground;
+}
+
+
+
+/* ============================================= */
+/* Open Thing                                    */
+.sapUiUx3ActionBarOpenThingAction {
+	background-image: url("../base/img/inspect_hover.png");
+}
+
+.sapUiUx3ActionBarOpenThingAction:focus {
+	border: 1px solid @sapUiHighlight;
+}
+
+/*
+ * Inside QuickView: make sure the action bar fits exactly
+ * into the surrounding CallOut.
+ */
+.sapUiCltBaseCont .sapUiUx3ActionBar {
+	margin: -6px -4px 0px -4px;
+	top: 7px;
+}

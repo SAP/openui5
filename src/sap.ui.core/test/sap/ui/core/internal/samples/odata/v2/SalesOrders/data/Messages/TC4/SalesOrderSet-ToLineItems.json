@@ -1,0 +1,152 @@
+{
+	"d" : {
+		"__count" : "5",
+		"results" : [
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='104',ItemPosition='010')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='104',ItemPosition='010')",
+					"type" : "GWSAMPLE_BASIC.SalesOrderLineItem"
+				},
+				"SalesOrderID" : "104",
+				"ItemPosition" : "010",
+				"ProductID" : "HT-1000",
+				"Note" : "1",
+				"NoteLanguage" : "EN",
+				"CurrencyCode" : "EUR",
+				"GrossAmount" : "23800.00",
+				"NetAmount" : "20000.00",
+				"TaxAmount" : "3800.00",
+				"DeliveryDate" : "\/Date(1568239200000)\/",
+				"Quantity" : "4",
+				"QuantityUnit" : "EA",
+				"ToHeader" : {
+					"__deferred" : {
+						"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='104',ItemPosition='010')/ToHeader"
+					}
+				},
+				"ToProduct" : {
+					"__deferred" : {
+						"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='104',ItemPosition='010')/ToProduct"
+					}
+				}
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='104',ItemPosition='020')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='104',ItemPosition='020')",
+					"type" : "GWSAMPLE_BASIC.SalesOrderLineItem"
+				},
+				"SalesOrderID" : "104",
+				"ItemPosition" : "020",
+				"ProductID" : "HT-1000",
+				"Note" : "2",
+				"NoteLanguage" : "EN",
+				"CurrencyCode" : "JPY",
+				"GrossAmount" : "7140000",
+				"NetAmount" : "6000000",
+				"TaxAmount" : "1140000",
+				"DeliveryDate" : "\/Date(1568239200000)\/",
+				"Quantity" : "4",
+				"QuantityUnit" : "EA",
+				"ToHeader" : {
+					"__deferred" : {
+						"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='104',ItemPosition='020')/ToHeader"
+					}
+				},
+				"ToProduct" : {
+					"__deferred" : {
+						"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='104',ItemPosition='020')/ToProduct"
+					}
+				}
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='104',ItemPosition='030')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='104',ItemPosition='030')",
+					"type" : "GWSAMPLE_BASIC.SalesOrderLineItem"
+				},
+				"SalesOrderID" : "104",
+				"ItemPosition" : "030",
+				"ProductID" : "HT-1000",
+				"Note" : "3",
+				"NoteLanguage" : "EN",
+				"CurrencyCode" : "USD",
+				"GrossAmount" : "21.18",
+				"NetAmount" : "17.80",
+				"TaxAmount" : "3.38",
+				"DeliveryDate" : "\/Date(1568239200000)\/",
+				"Quantity" : "2",
+				"QuantityUnit" : "EA",
+				"ToHeader" : {
+					"__deferred" : {
+						"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='104',ItemPosition='030')/ToHeader"
+					}
+				},
+				"ToProduct" : {
+					"__deferred" : {
+						"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='104',ItemPosition='030')/ToProduct"
+					}
+				}
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='104',ItemPosition='040')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='104',ItemPosition='040')",
+					"type" : "GWSAMPLE_BASIC.SalesOrderLineItem"
+				},
+				"SalesOrderID" : "104",
+				"ItemPosition" : "040",
+				"ProductID" : "HT-1000",
+				"Note" : "4",
+				"NoteLanguage" : "EN",
+				"CurrencyCode" : "EUR",
+				"GrossAmount" : "16.42",
+				"NetAmount" : "13.80",
+				"TaxAmount" : "2.62",
+				"DeliveryDate" : "\/Date(1568239200000)\/",
+				"Quantity" : "2",
+				"QuantityUnit" : "EA",
+				"ToHeader" : {
+					"__deferred" : {
+						"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='104',ItemPosition='040')/ToHeader"
+					}
+				},
+				"ToProduct" : {
+					"__deferred" : {
+						"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='104',ItemPosition='040')/ToProduct"
+					}
+				}
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='104',ItemPosition='050')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='104',ItemPosition='050')",
+					"type" : "GWSAMPLE_BASIC.SalesOrderLineItem"
+				},
+				"SalesOrderID" : "104",
+				"ItemPosition" : "050",
+				"ProductID" : "HT-1000",
+				"Note" : "5",
+				"NoteLanguage" : "",
+				"CurrencyCode" : "EUR",
+				"GrossAmount" : "2275.28",
+				"NetAmount" : "1912.00",
+				"TaxAmount" : "363.28",
+				"DeliveryDate" : "\/Date(1612685235000)\/",
+				"Quantity" : "1",
+				"QuantityUnit" : "EA",
+				"ToHeader" : {
+					"__deferred" : {
+						"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='104',ItemPosition='050')/ToHeader"
+					}
+				},
+				"ToProduct" : {
+					"__deferred" : {
+						"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='104',ItemPosition='050')/ToProduct"
+					}
+				}
+			}
+		]
+	}
+}

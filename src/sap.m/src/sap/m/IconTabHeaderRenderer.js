@@ -2,148 +2,157 @@
  * ${copyright}
  */
 
-sap.ui.define(['sap/m/library'],
-	function(library) {
+sap.ui.define([
+	'./library',
+	'sap/ui/core/InvisibleText',
+	"sap/ui/core/Lib"],
+		function (
+			library,
+			InvisibleText,
+			Library) {
 	"use strict";
 
-	// shortcut for sap.m.IconTabFilterDesign
-	var IconTabFilterDesign = library.IconTabFilterDesign;
-
 	/**
-		 * HBox renderer.
-		 * @namespace
-		 */
+	 * IconTabHeader renderer.
+	 * @namespace
+	 */
 	var IconTabHeaderRenderer = {
+		apiVersion: 2
+	};
+
+	// shortcut for sap.m.TabsOverflowMode
+	var TabsOverflowMode = library.TabsOverflowMode;
+
+	IconTabHeaderRenderer.getInvisibleSplitTabDescriptionText = function() {
+		if (!this.oInvisibleSplitTabDescriptionText) {
+			this.oInvisibleSplitTabDescriptionText = new InvisibleText({
+				text: Library.getResourceBundleFor("sap.m").getText("ICONTABHEADER_SPLIT_TAB_DESCRIPTION")
+			}).toStatic();
+		}
+
+		return this.oInvisibleSplitTabDescriptionText;
 	};
 
 	/**
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
 	 *
-	 * @param {sap.ui.core.RenderManager} oRm the RenderManager that can be used for writing to the render output buffer
-	 * @param {sap.ui.core.Control} oControl an object representation of the control that should be rendered
+	 * @param {sap.ui.core.RenderManager} oRM the RenderManager that can be used for writing to the render output buffer
+	 * @param {sap.m.IconTabHeader} oControl an object representation of the control that should be rendered
 	 */
-	IconTabHeaderRenderer.render = function(oRM, oControl){
-		// return immediately if control is not visible
+	IconTabHeaderRenderer.render = function (oRM, oControl) {
 		if (!oControl.getVisible()) {
 			return;
 		}
 
-		var aItems = oControl.getItems(),
-			iItemsCount = aItems.length,
-			aVisibleTabFilters = oControl.getVisibleTabFilters(),
-			iVisibleTabFiltersCount = aVisibleTabFilters.length,
+		var sId = oControl.getId(),
+			aItems = oControl.getItems(),
+			iVisibleTabFiltersCount = oControl.getVisibleTabFilters().length,
 			iVisibleTabFilterIndex = 0,
-			bTextOnly = oControl._checkTextOnly(aItems),
+			bTextOnly = oControl._checkTextOnly(),
 			bNoText = oControl._checkNoText(aItems),
-			bInLine = oControl._checkInLine(aItems) || oControl.isInlineMode(),
-			bShowOverflowSelectList = oControl.getShowOverflowSelectList(),
-			oItem,
-			bIsHorizontalDesign,
-			bHasHorizontalDesign;
+			bInLine = oControl._checkInLine(aItems) || oControl.isInlineMode();
 
-		var oIconTabBar = oControl.getParent();
-		var bUpperCase = oIconTabBar && oIconTabBar instanceof sap.m.IconTabBar && oIconTabBar.getUpperCase();
+		var oIconTabBar = oControl.getParent(),
+			bUpperCase = oIconTabBar && oIconTabBar.isA('sap.m.IconTabBar') && oIconTabBar.getUpperCase(),
+			mAriaTexts = oControl.getAriaTexts() || {};
 
 		// render wrapper div
-		oRM.write("<div role='tablist' ");
-		oRM.addClass("sapMITH");
-		oRM.addClass("sapContrastPlus");
-		oRM.addClass("sapMITHBackgroundDesign" + oControl.getBackgroundDesign());
+		oRM.openStart("div", oControl)
+			.class("sapMITH")
+			.class("sapContrastPlus")
+			.class("sapMITHBackgroundDesign" + oControl.getBackgroundDesign());
 
-		if (bShowOverflowSelectList) {
-			oRM.addClass("sapMITHOverflowList");
-		}
-
-		if (oControl._scrollable) {
-			oRM.addClass("sapMITBScrollable");
-			if (oControl._bPreviousScrollForward) {
-				oRM.addClass("sapMITBScrollForward");
-			} else {
-				oRM.addClass("sapMITBNoScrollForward");
-			}
-			if (oControl._bPreviousScrollBack) {
-				oRM.addClass("sapMITBScrollBack");
-			} else {
-				oRM.addClass("sapMITBNoScrollBack");
-			}
-		} else {
-			oRM.addClass("sapMITBNotScrollable");
-		}
 		// Check for upperCase property on IconTabBar
 		if (bUpperCase) {
-			oRM.addClass("sapMITBTextUpperCase");
+			oRM.class("sapMITBTextUpperCase");
 		}
-		oRM.writeControlData(oControl);
-		oRM.writeClasses();
-		oRM.write(">");
-
-		// render left scroll arrow
-		oRM.renderControl(oControl._getScrollingArrow("left"));
-
-		// render scroll container on touch devices
-		oRM.write("<div id='" + oControl.getId() + "-scrollContainer' aria-hidden='true' class='sapMITBScrollContainer'>");
-
-		oRM.write("<div id='" + oControl.getId() + "-head' aria-hidden='true' ");
-		oRM.addClass("sapMITBHead");
 
 		if (bTextOnly) {
-			oRM.addClass("sapMITBTextOnly");
+			oRM.class("sapMITBTextOnly");
 		}
 
 		if (bNoText) {
-			oRM.addClass("sapMITBNoText");
+			oRM.class("sapMITBNoText");
 		}
 
 		if (bInLine) {
-			oRM.addClass("sapMITBInLine");
+			oRM.class("sapMITBInLine");
+			oRM.class("sapMITBTextOnly");
 		}
 
-		oRM.writeClasses();
-		oRM.write(">");
+		oRM.accessibilityState(oControl, {
+			role: "navigation"
+		});
 
-		for (var i = 0; i < iItemsCount; i++) {
-			oItem = aItems[i];
+		if (mAriaTexts.headerLabel) {
+			oRM.accessibilityState(oControl, {
+				label: mAriaTexts.headerLabel
+			});
+		}
 
+		oRM.openEnd();
+
+		if (aItems.length && oControl.getTabsOverflowMode() === TabsOverflowMode.StartAndEnd) {
+			oRM.openStart("div")
+				.class("sapMITHStartOverflow")
+				.openEnd();
+
+			oControl._getStartOverflow().render(oRM);
+
+			oRM.close("div");
+		}
+
+		if (mAriaTexts.headerDescription) {
+			oRM.renderControl(oControl._getInvisibleHeadText());
+		}
+
+		oRM.openStart("div", sId + "-head")
+			.class("sapMITBHead");
+
+		oRM.accessibilityState({
+			role: "tablist",
+			orientation: "horizontal"
+		});
+
+		if (mAriaTexts.headerDescription) {
+			oRM.accessibilityState({
+				describedby: {value: oControl._getInvisibleHeadText().getId(), append: true}
+			});
+		}
+
+		if (oControl._hasSubItems()) {
+			oRM.accessibilityState({
+				describedby: {value: IconTabHeaderRenderer.getInvisibleSplitTabDescriptionText().getId(), append: true}
+			});
+		}
+
+		oRM.openEnd();
+
+		for (var i = 0; i < aItems.length; i++) {
+			var oItem = aItems[i];
 			oItem.render(oRM, iVisibleTabFilterIndex, iVisibleTabFiltersCount);
 
-			if (oItem instanceof sap.m.IconTabFilter) {
-				bIsHorizontalDesign = oItem.getDesign() === IconTabFilterDesign.Horizontal;
-				if (bIsHorizontalDesign) {
-					bHasHorizontalDesign = true;
-				}
-
+			if (oItem.isA("sap.m.IconTabFilter")) {
 				if (oItem.getVisible()) {
 					iVisibleTabFilterIndex++;
 				}
 			}
 		}
 
-		oRM.write("</div>");
+		oRM.close("div");
 
-		oRM.write("</div>"); //scrollContainer
+		if (aItems.length) {
+			oRM.openStart("div")
+				.class("sapMITHEndOverflow")
+				.openEnd();
 
-		// render right scroll arrow
-		oRM.renderControl(oControl._getScrollingArrow("right"));
+			oControl._getOverflow().render(oRM);
 
-		// render overflow button
-		if (bShowOverflowSelectList) {
-			var oOverflowButton = oControl._getOverflowButton();
-			if (bInLine) {
-				oOverflowButton.addStyleClass('sapMBtnInline');
-			} else if (bTextOnly) {
-				oOverflowButton.addStyleClass('sapMBtnTextOnly');
-			} else if (bNoText || bHasHorizontalDesign) {
-				oOverflowButton.addStyleClass('sapMBtnNoText');
-			}
-
-			oRM.renderControl(oOverflowButton);
+			oRM.close("div");
 		}
 
-		// end wrapper div
-		oRM.write("</div>");
+		oRM.close("div");
 	};
 
-
 	return IconTabHeaderRenderer;
-
 }, /* bExport= */ true);

@@ -1,12 +1,12 @@
-sap.ui.define(['sap/ui/core/mvc/Controller'],
-function(Controller) {
+sap.ui.define(['sap/ui/thirdparty/jquery', 'sap/ui/core/mvc/Controller'],
+function(jQuery, Controller) {
 	"use strict";
 
 	return Controller.extend("appUnderTest.view.Main", {
 
 		onButtonPress : function () {
 			this.byId("myPage").setBusy(true);
-			$.ajax({
+			jQuery.ajax({
 				url: "/some/remote/service/"
 			}).done(
 				function (sResult) {

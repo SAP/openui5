@@ -6,7 +6,7 @@ describe("sap.uxap.ObjectPageIconTabBar", function() {
 	browser.testrunner.currentSuite.meta.controlName = 'sap.uxap.ObjectPageLayout';
 
 	it("Should load test page",function(){
-		expect(takeScreenshot()).toLookAs("initial");
+		expect(takeScreenshot(element(by.id("__xmlview0--ObjectPageLayout-anchorBar")))).toLookAs("initial");
 	});
 
 	it("Should collapse header", function() {

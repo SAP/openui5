@@ -1,4 +1,4 @@
-<View xmlns="sap.m" displayBlock="true" xmlns:f="sap.f" controllerName="sap.f.FlexibleColumnLayoutWithOneColumnStart.controller.AboutPage" height="100%">
+<mvc:View xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc" displayBlock="true" xmlns:f="sap.f" controllerName="sap.f.FlexibleColumnLayoutWithOneColumnStart.controller.AboutPage" height="100%">
 	<f:DynamicPage toggleHeaderOnTitleClick="false">
 		<!-- DynamicPage Title -->
 		<f:title>
@@ -6,7 +6,12 @@
 				<f:heading>
 					<Title text="About supplier"/>
 				</f:heading>
+
+				<!-- DynamicPage Actions -->
+				<f:navigationActions>
+					<OverflowToolbarButton type="Transparent" icon="sap-icon://decline" press="handleClose"  tooltip="Close about page" />
+				</f:navigationActions>
 			</f:DynamicPageTitle>
 		</f:title>
 	</f:DynamicPage>
-</View>
+</mvc:View>

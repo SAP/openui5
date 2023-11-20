@@ -1,0 +1,535 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<title>Manual Integration Test: Message Handling in Sales Orders Application (V2)</title>
+		<link rel="stylesheet" type="text/css" href="style.css">
+	</head>
+	<body>
+		<h1>Manual Integration Test: Message Handling in Sales Orders Application (V2)</h1>
+		<h2>DESCRIPTION</h2>
+		Test message handling in the OData V2 Model with the Sales Orders application.
+		<h2>PREPARATION</h2>
+		To check console errors open the developer tools before starting the application and check
+		for each step that there are no errors and warnings.
+
+		<h3>Testing with back end</h3>
+		Configure your IDE to be able to execute the Sales Orders application against an ABAP
+		back-end system.<br />
+		Depending on your installation, you might have to replace Port 8080 in all following links
+		with the port of your local server hosting the Sales Orders application.<br />
+		It might be necessary to add a URL segment <code>/testsuite</code> directly after the port
+		to the following URLs depending on your development setup.<br /><br />
+		Start the Sales Orders V2 application with the English locale:
+		<ul>
+			<li><a href="http://localhost:8080/test-resources/sap/ui/core/internal/samples/odata/v2/SalesOrders/index.html?sap-language=en&realOData=true">
+			http://localhost:8080/test-resources/sap/ui/core/internal/samples/odata/v2/SalesOrders/index.html?sap-language=en&amp;realOData=true
+			</a></li>
+		</ul>
+		<h3>Testing with mock data</h3>
+		Configure your IDE to be able to execute the Sales Orders application locally or use a
+		centrally deployed version of the Sales Orders application as provided by the test
+		coordinator.<br />
+		Depending on your installation, you might have to replace Port 8080 in all following links
+		with the port of your local server hosting the Sales Orders application.<br />
+		It might be necessary to add a URL segment <code>/testsuite</code> directly after the port
+		to the following URLs depending on your development setup.<br /><br />
+		Start the Sales Orders V2 application with the English locale:
+		<ul>
+			<li><a href="http://localhost:8080/test-resources/sap/ui/core/internal/samples/odata/v2/SalesOrders/index.html?sap-language=en">
+			http://localhost:8080/test-resources/sap/ui/core/internal/samples/odata/v2/SalesOrders/index.html?sap-language=en
+			</a></li>
+		</ul>
+		The service implementation does some checks which produce messages.
+		<h4>Checks for a Sales Order</h4>
+		<ul>
+			<li>If the <strong>note</strong> of the sales order is empty the service returns a
+				warning message for that sales order note to enter a note.
+			</li>
+			<li>If the <strong>note</strong> of the sales order has a prefix "Error:", "Warning:",
+				"Info:" or "Success:" then the service returns a message for that note with the
+				corresponding message severity and the message text as given in the note after the
+				":".
+			</li>
+		</ul>
+		<h4>Checks for a Sales Order Item</h4>
+		<ul>
+			<li>If the <strong>note</strong> of the sales order item is empty the service returns a
+				warning message for that sales order item note to enter a note.
+			</li>
+			<li>If the <strong>note</strong> of the sales order item has a prefix "Error:",
+				"Warning:", "Info:" or "Success:" then the service returns a message for that sales
+				order item note with the corresponding message severity and the message text as
+				given in the note after the ":".
+			</li>
+			<li>If the <strong>quantity</strong> of the sales order item is <strong>0</strong> then
+				the service returns an error message for that quantity indicating that the quantity
+				must not be 0.
+			</li>
+			<li>If the <strong>quantity</strong> of the sales order item is <strong>1</strong> for
+				the <strong>product</strong> <strong>HT-1000</strong> then the service returns a
+				warning message for that quantity indicating that the quantity must be at least 2.
+			</li>
+			<li>If the <strong>quantity</strong> of the sales order item is greater than
+				<strong>1</strong> for the <strong>product</strong> <strong>HT-1022</strong> then
+				the service returns a multi target warning message which points simultaneously to
+				the quantity and the note field until the note has a "Reason:" prefix.
+			</li>
+			<li>If the <strong>product</strong> of the sales order item is <strong>HT-1110</strong>
+				then the service returns a warning message for the product ID of the associated
+				product (using the target <code>ToProduct/ProductID</code>) indicating that the
+				product is out of maintenance.
+			</li>
+			<li>If the <strong>product</strong> of the sales order item is <strong>HT-1501</strong>,
+				the service returns an information message for the currency of that sales order item
+				indicating that the currency 'JPY' should be avoided.
+			</li>
+		</ul>
+		<h3>Finding a Sales Order</h3>
+		To find a sales order that can be used for testing, you can either use the OData V4 Sales
+		Orders application or you can trigger a service request.
+		<h4>Via OData V4 Application</h4>
+		Start the OData V4 Sales Orders application:
+		<ul>
+			<li><a href="http://localhost:8080/test-resources/sap/ui/core/internal/samples/odata/v2/SalesOrders/index.html?sap-language=en">
+			http://localhost:8080/test-resources/sap/ui/core/internal/samples/odata/v2/SalesOrders/index.html?sap-language=en
+			</a></li>
+		</ul>
+		In that application you can search for a sales order or you can create your own one that is
+		matching the requirements for the test.
+		<h4>Via OData Service Calls</h4>
+		Execute for example following URL:
+		<ul>
+			<li><a href="http://localhost:8080/test-resources/sap/ui/core/internal/samples/odata/v2/SalesOrders/index.html?sap-language=en">
+			http://localhost:8080/test-resources/sap/ui/core/internal/samples/odata/v2/SalesOrders/index.html?sap-language=en
+			</a></li>
+		</ul>
+		You get a JSON for the first 20 sales orders.<br />
+		Copy the resulting JSON and paste it into the console of the Chrome Developer Tools and
+		press enter. You can drill down into the data to find a Sales Order that is matching the
+		requirements for the test.<br />
+		If there is no matching sales order you can add <code>&amp;$skip=</code> followed
+		by a start index, e.g. <code>&amp;$skip=40</code>, to the URL to get another set of sales
+		orders.<br />
+		<br />
+		<h2>REALIZE and CHECK</h2>
+		<h3 id="MessagesForNoteFields">(I) Messages for Note Fields</h3>
+		Search for a sales order with at least 1 item and note down the sales order ID. In case of
+		mock data: Use sales order <code>101</code>.
+		<ol>
+			<li>Enter that sales order ID into the <code>Sales Order</code> input field and press
+				<code>Enter</code> or click the <code>Show Sales Order</code> button.<br />
+				<b>Check:</b> The sales order and the sales order items are loaded and displayed in
+					the <code>Sales Order Details</code> section.
+			</li>
+			<li>Remember the number of messages displayed on the <code>Show Messages</code> button
+				in the footer of the application.
+			</li>
+			<li>Repeat the next steps with following values for the note: <br />
+				<ul type="square">
+					<li><code>Error: My error message</code></li>
+					<li><code>Warning: My warning message</code></li>
+					<li><code>Info: My information message</code></li>
+					<li><code>Success: My success message</code></li>
+				</ul>
+				<ol type="a">
+					<li>Go to a sales order item without messages and change the <code>Note</code>
+						to the value above and press the <code>Save</code> button in the footer.
+						<br />
+						<b>Check:</b> The number of messages has been increased by 1.<br />
+						<b>Check:</b> The border of the sales order item's note field has a border
+							indicating the corresponding severity of the message.<br />
+						<b>Check:</b> When clicking into the sales order item's note field, the
+							message text (i.e. the text as entered after the ":") is shown.<br />
+						<b>Check:</b> The table row is highlighted with the same color as the border
+							of the sales order item's note input field.
+					</li>
+					<li>Click the <code>Show Messages</code> button.<br />
+						<b>Check:</b> A popover is displayed with the current messages.<br />
+						<b>Check:</b> The message popover contains an entry with the message text as
+							described above.
+					</li>
+					<li>Click into the modified sales order item's note input field, change the text
+						to <code>No message</code> and press the <code>Save</code> button.<br />
+						<b>Check:</b> The number of messages has been decreased by 1.<br />
+						<b>Check:</b> The message has been removed from the message popover.
+					</li>
+				</ol>
+			</li>
+		</ol>
+		<h3>(II) Message Strip and Aggregated Table Row Highlighting</h3>
+		Search for a sales order with at least 2 items and with at least one item for the product
+		<code>HT-1000</code> and note down the sales order ID. An item for the product
+		<code>HT-1110</code> should not be contained. In case of mock data: Use sales order
+		<code>102</code>.
+		<ol>
+			<li>Enter that sales order ID into the <code>Sales Order</code> input field and press
+				<code>Enter</code> or click the <code>Show Sales Order</code> button.<br />
+				<b>Check:</b> The sales order and the sales order items are loaded and displayed in
+					the <code>Sales Order Details</code> section.
+			</li>
+			<li>Change the note value of the items in a way that the service returns a message for
+				that note (see <a href="#MessagesForNoteFields">(I) Messages for Note Fields</a>)
+				and save the changes.<br />
+				<b>Check:</b> If there is at least one message for an item, a message strip is
+					displayed above the table indicating that there are messages for items.<br />
+				<b>Check:</b> Depending on the severity of the messages (<code>Error</code>,
+					<code>Warning</code>, <code>Success</code> or <code>Information</code>) the
+					message strip of the table changes its text, icon and color.
+			</li>
+			<li>If there is more than one message for a sales order item the highest severity is
+				used for the row highlighting. Change the quantity of a sales order item with the
+				product <code>HT-1000</code> to the value <code>1</code> and save it.<br />
+				<b>Check:</b> There is a message for the quantity of the item that at least 2 have
+					to be ordered.<br />
+				<b>Check:</b> If the corresponding note field does not start with
+					<code>Error:</code> the row highlighter indicates a warning.
+			</li>
+			<li>Change the note of that sales order item to <code>Error: My error message</code>
+				and save.<br />
+				<b>Check:</b> There is an error message for the note field and the row highlighter
+					indicates an error.
+			</li>
+		</ol>
+		Search for a sales order with an item for the product <code>HT-1110</code> and note down
+		the sales order ID. In case of mock data: Use sales order <code>102.2</code>.
+		<ol>
+			<li>Enter that sales order ID into the <code>Sales Order</code> input field and press
+				<code>Enter</code> or click the <code>Show Sales Order</code> button.<br />
+				<b>Check:</b> The sales order and the sales order items are loaded and displayed in
+					the <code>Sales Order Details</code> section.
+			</li>
+			<li>If the item shows an error for the note, remove the prefix <code>Error:</code>,
+				<code>Warning:</code>, <code>Info:</code> or <code>Success:</code> and save.<br />
+				<b>Check:</b> The table row is still marked with a warning because the associated
+					product is out of maintenance.
+			</li>
+		</ol>
+		<h3>(III) Message Lifecycle - Side-Effects</h3>
+		Search for a sales order with more than 4 items and with three items for the product
+		<code>HT-1000</code> with a quantity less than 2. Two of these items are in the visible area
+		an the third is at the 5th (or later) position in the sales order. Note down the sales order
+		ID. In case of mock data: Use sales order <code>103</code>.
+		<ol>
+			<li>Enter that sales order ID into the <code>Sales Order</code> input field and press
+				<code>Enter</code> or click the <code>Show Sales Order</code> button.<br />
+				<b>Check:</b> The sales order and the sales order items are loaded and displayed in
+					the <code>Sales Order Details</code> section.<br />
+				<b>Check:</b> For all three items for product <code>HT-1000</code> with a quantity
+					less than 2, there are warnings that at least <code>2 EA</code> of that product
+					has to be ordered.<br />
+				<b>Check:</b> The visible table rows with product <code>HT-1000</code> are marked
+					with a warning because the quantity is less than 2.<br />
+				<b>Check:</b> Remember the number of messages.
+			</li>
+			<li>Press the <code>Fix Quantities</code> button.<br />
+				<b>Check:</b> The number of messages has not changed.<br />
+				<b>Check:</b> The <code>Quantity</code> value of the table rows with product
+					<code>HT-1000</code> has been changed to the value <code>2</code>.<br />
+				<b>Check:</b> The visible table rows with product <code>HT-1000</code> are marked
+					with a success because the quantity is updated to 2.
+			</li>
+			<li>Scroll to the end of the sales order line items table.<br />
+				<b>Check:</b> All items for <code>HT-1000</code> have at least a quantity of 2.
+					<br />
+				<b>Check:</b> The visible table rows with product <code>HT-1000</code> are marked
+					with a success because the quantity is updated to 2.
+			</li>
+			<li>Open the message popover.<br />
+				<b>Check:</b> The previous warning messages have disappeared.<br />
+				<b>Check:</b> There are three messages that the quantity has been successfully
+				updated.
+			</li>
+			<li>Close the message popover.<br />
+				<b>Check:</b> The number of messages has not been decreased.
+			</li>
+		</ol>
+		<h3>(IV) Transition Messages Only</h3>
+		If a table is embedded into an object page, all messages for the table need to be displayed.
+		If the application starts with a table, only the messages for the table rows which are on
+		the client have to be displayed. The framework is not able to detect these scenarios
+		automatically, so the application has to set the <code>transitionMessagesOnly</code>
+		parameter at the list binding:
+		<ul>
+			<li><code>transitionMessagesOnly=true</code>:<br />
+				The root entity of the object page handles messages and the list binding for the
+				table does not take care of messages. This scenario has been tested above.
+			</li>
+			<li><code>transitionMessagesOnly=false</code>:<br />
+				The binding for the table takes care of messages. This scenario is tested with this
+				test.
+			</li>
+		</ul>
+		Search for a sales order with at least 5 items and note down the sales order ID. In case of
+		mock data: Use sales order <code>104</code>.<br />
+		<ol>
+			<li>Enter that sales order ID into the <code>Sales Order</code> input field and press
+				<code>Enter</code> or click the <code>Show Sales Order</code> button.<br />
+				<b>Check:</b> The sales order and the sales order items are loaded and displayed in
+					the <code>Sales Order Details</code> section.
+			</li>
+			<li>Change the note value of the first item in a way that the service returns a message
+				for that note (see
+				<a href="#MessagesForNoteFields">(I) Messages for Note Fields</a>) and save the
+				changes.
+			</li>
+			<li>Change the note value of the 5th item in a way that the service returns a message
+				for that note (see
+				<a href="#MessagesForNoteFields">(I) Messages for Note Fields</a>) and save the
+				changes.
+			</li>
+			<li>Remember the number of messages for that sales order.</li>
+			<li>Scroll to the top of the table and press the <code>Transition Messages Only</code>
+				button to disable that feature.
+				<br />
+				<b>Check:</b> The sales order and the sales order items are reloaded and the number
+					of messages is less than before.<br />
+				<b>Check:</b> The message for the 5th item is not contained in the message popover.
+			</li>
+			<li>Scroll in the table that the 5th item is requested.<br />
+				<b>Check:</b> The number of messages increases.<br />
+				<b>Check:</b> The message for the 5th item is contained in the message popover.
+			</li>
+		</ol>
+		<h3>(V) Filter Sales Order Items by Items with Messages</h3>
+		Search for a sales order with items with and without messages. The messages should have a
+		different message severity. In case of mock data: Use sales order <code>105</code>.
+		<ol>
+			<li>Enter that sales order ID into the <code>Sales Order</code> input field and press
+				<code>Enter</code> or click the <code>Show Sales Order</code> button.<br />
+				<b>Check:</b> The sales order and the sales order items are loaded and displayed in
+					the <code>Sales Order Details</code> section.<br />
+				<b>Check:</b> There are items with and without messages.
+			</li>
+			<li>Change the <code>Filter</code> value in the <code>Sales Order Items</code> table
+				from <code>Show all</code> to any other value.<br />
+				<b>Check:</b> Only items that match the selected filter are displayed.<br />
+				<b>Check:</b> If there is no item matching the selected filter, you get a message
+					box with the information, that no item matches. The filter for the table has
+					been changed back to <code>Show all</code>.
+			</li>
+			<li>Repeat the steps above with different filter values.</li>
+		</ol>
+		<h3>(VI) Create and Delete Sales Order Items</h3>
+		Search for a sales order with at most two items. In case of mock data: Use sales order
+		<code>106</code>.
+		<ol>
+			<li>Enter that sales order ID into the <code>Sales Order</code> input field and press
+				<code>Enter</code> or click the <code>Show Sales Order</code> button.<br />
+				<b>Check:</b> The sales order and the sales order items are loaded and displayed in
+					the <code>Sales Order Details</code> section.<br />
+				<b>Check:</b> Remember the number of messages.
+			</li>
+			<li>In the <code>Sales Order Items</code> table click on the
+				<code>Create a sales order item</code> button.<br />
+				<b>Check:</b> A <code>Create a New Sales Order Item</code> dialog opens.
+			</li>
+			<li>In the <code>Create a New Sales Order Item</code> dialog remove the value of the
+				<code>Product ID</code> field and press the <code>Save</code> button.<br />
+				<b>Check:</b> A message box is displayed indicating that the mandatory field
+					'PRODUCT_GUID' is empty.
+			</li>
+			<li>Close the error message box.<br />
+				<b>Check:</b> The <code>Create a New Sales Order Item</code> dialog is still open.
+			</li>
+			<li>In the <code>Create a New Sales Order Item</code> dialog click the
+				<code>Discard</code> button.<br />
+				<b>Check:</b> The <code>Create a New Sales Order Item</code> dialog is closed.
+			</li>
+			<li>Remember the <code>Gross Amount</code> and the <code>Changed At</code> data from the
+				<code>Sales Order</code> section.</li>
+			<li>Repeat the steps (2) - (4).</li>
+			<li>In the <code>Create a New Sales Order Item</code> dialog enter <code>HT-1000</code>
+				in the <code>Product ID</code> field, remove the content of the <code>Note</code>
+				field and press the <code>Save</code> button.<br />
+				<b>Check:</b> A success message box is displayed with the information, that the item
+					has been created. Confirm that message box.<br />
+				<b>Check:</b> The newly created item is displayed in the
+					<code>Sales Order Items</code> table.<br />
+				<b>Check:</b> The <code>Gross Amount</code> and the <code>Changed At</code> values
+					are updated.<br />
+				<b>Check:</b> There are two new messages in the message popover, one for the
+					quantity which has to be at least 2 and one for the missing note of the new
+					sales order item.
+			</li>
+			<li><span class="backendOnly">Only with back end:</span> Open the developer tools,
+				navigate to the network tab, clear the requests and filter for <code>$batch</code>
+				requests.</li>
+			<li>In the <code>Sales Order Items</code> table click on the <code>&gt;</code> at the
+				end of the row for the newly created entity to open the product details.<br />
+				<b>Check:</b> A <code>Product Details</code> dialog is opened showing the
+					<code>Product ID</code> and the corresponding product <code>Name</code>.<br />
+				<span class="backendOnly">Only with back end:</span> <b>Check:</b> There is no
+					<code>$batch</code> request.
+			</li>
+			<li>Close the <code>Product Details</code> dialog.</li>
+			<li>In the <code>Sales Order Items</code> table select the newly created item and press
+				the <code>Delete the selected sales order item</code> button.<br />
+				<b>Check:</b> A <code>Sales Order Item Deletion</code> dialog opens.
+			</li>
+			<li>In the <code>Sales Order Item Deletion</code> dialog click on the <code>OK</code>
+				button.<br />
+				<b>Check:</b> The <code>Sales Order Item Deletion</code> dialog is closed and a
+					message toast is displayed with the information, that the deletion was
+					successful.<br />
+				<b>Check:</b> The deleted item has been removed from the
+					<code>Sales Order Items</code> table.<br />
+				<b>Check:</b> The <code>Gross Amount</code> and the <code>Changed At</code> values
+					are updated.<br />
+				<b>Check:</b> The messages for the deleted item have been removed from the message
+					popover.
+			</li>
+		</ol>
+		<h3>(VII) Unbound Messages</h3>
+		Search for a sales order with an ID less than <code>0500000010</code>. In case of mock data:
+		Use sales order <code>107</code>.
+		<ol>
+			<li>Enter that sales order ID into the <code>Sales Order</code> input field and press
+				<code>Enter</code> or click the <code>Show Sales Order</code> button.<br />
+				<b>Check:</b> A warning message box is displayed with the text <code>System
+					maintenance starts in 2 hours</code>.
+			</li>
+			<li>Close the warning message box.<br />
+				<b>Check:</b> The sales order and the sales order items are loaded and displayed in
+					the <code>Sales Order Details</code> section.
+			</li>
+			<li>Open the message popover.<br />
+				<b>Check:</b> There is a message <code>System maintenance starts in 2 hours</code>.
+			</li>
+			<li>Navigate to the message details and click on <code>Technical Details</code> link
+				to open the <code>Message Details</code> dialog.<br />
+				<b>Check:</b> The values for <code>Target</code> and <code>Full Target</code> are
+					empty.
+			</li>
+			<li>Close the <code>Message Details</code> dialog and close the message popover.<br />
+				<b>Check:</b> The number of messages has been decreased and the message is no longer
+					listed in the message popover.
+			</li>
+		</ol>
+		<h3>(VIII) Messages with multiple Targets</h3>
+		Search for a sales order with an item for the product <code>HT-1022</code>. In case of mock
+		data: Use sales order <code>108</code>.
+		<ol>
+			<li>Enter that sales order ID into the <code>Sales Order</code> input field and press
+				<code>Enter</code> or click the <code>Show Sales Order</code> button.<br />
+				<b>Check:</b> The sales order and the sales order items are loaded and displayed in
+					the <code>Sales Order Details</code> section.
+			</li>
+			<li>Change the <code>Quantity</code> value of the item with product <code>HT-1022</code>
+				to the value <code>1</code>, set its <code>Note</code> to <code>No message</code>
+				and save it.<br />
+				<b>Check:</b> There are no messages for the modified sales order item.<br />
+				<b>Check:</b> Remember the number of messages.
+			</li>
+			<li>Change the modified sales order item's <code>Quantity</code> value to <code>2</code>
+				and save it.<br />
+				<b>Check:</b> The number of messages has been increased by 1.<br />
+				<b>Check:</b> The fields of the sales order item's <code>Quantity</code> and also
+					the <code>Note</code> have borders indicating the warning <code>For a quantity
+					greater than 1 you need an approval reason</code>.
+			</li>
+			<li>Open the message popover.<br />
+				<b>Check:</b> There is exactly one warning with the message <code>For a quantity
+					greater than 1 you need an approval reason</code> for that item.
+			</li>
+			<li>Navigate to the message details and click on <code>Technical Details</code> link
+				to open the <code>Message Details</code> dialog.<br />
+				<b>Check:</b> The values for <code>Target</code> and <code>Full Target</code>
+					contain each two different paths.
+			</li>
+			<li>Close the <code>Message Details</code> dialog and close the message popover. Change
+				the modified sales order item's <code>Note</code> value by adding the prefix
+				<code>"Reason:"</code> and save it.<br />
+				<b>Check:</b> The <code>Quantity</code> and the <code>Note</code> fields do not have
+					a warning border indicator anymore.<br />
+				<b>Check:</b> The number of messages has been decreased by 1.<br />
+				<b>Check:</b> The message has been removed from the message popover.
+			</li>
+		</ol>
+		<h3>(IX) Messages returned from a function import</h3>
+		Search for a sales order with an item for the product <code>HT-1000</code>. In case of mock
+		data: Use sales order <code>109</code>.
+		<ol>
+			<li>Enter that sales order ID into the <code>Sales Order</code> input field and press
+				<code>Enter</code> or click the <code>Show Sales Order</code> button.<br />
+				<b>Check:</b> The sales order and the sales order items are loaded and displayed in
+					the <code>Sales Order Details</code> section.<br />
+				<b>Check:</b> Remember the number of messages.
+			</li>
+			<li>Change the <code>Quantity</code> value of the item with product <code>HT-1000</code>
+				to the value <code>1</code> and save it.<br />
+				<b>Check:</b> The number of messages has been increased by 1.<br />
+				<b>Check:</b> There is a warning message for the quantity of the item that at least
+					2 have to be ordered.
+			</li>
+			<li>Make sure that the message popover is closed and press the <code>Fix</code> button
+				in the item's row.<br />
+				<b>Check:</b> The <code>Quantity</code> value has been changed to the value
+					<code>2</code>.<br />
+				<b>Check:</b> The number of messages has not changed.<br />
+				<b>Check:</b> The previous warning message has disappeared.<br />
+				<b>Check:</b> There is a new message that the quantity has been successfully
+					updated.
+			</li>
+			<li>Close the message popover.<br />
+				<b>Check:</b> The number of messages has not been decreased.<br />
+			</li>
+		</ol>
+		<h3>(X) Suppress messages for the currency code if the code is not displayed by the control
+			</h3>
+		Search for a sales order with an item for the product <code>HT-1501</code>. In case of mock
+		data: Use sales order <code>110</code>.
+		<ol>
+			<li>Enter that sales order ID into the <code>Sales Order</code> input field and press
+				<code>Enter</code> or click the <code>Show Sales Order</code> button.<br />
+				<b>Check:</b> The sales order and the sales order items are loaded and displayed in
+					the <code>Sales Order Details</code> section.<br />
+				<b>Check:</b> In the message popover you see an information message
+					<code>Avoid currency 'JPY'</code>.<br />
+				<b>Check:</b> The border of the <code>Currency</code> field of the sales order item
+					with the product <code>HT-1501</code> indicates an information message.<br />
+				<b>Check:</b> When clicking into the sales order item's <code>Currency</code> field,
+					the message text <code>Avoid currency 'JPY'</code> is shown.<br />
+				<b>Check:</b> There is no border around the <code>Gross Amount</code> field of that
+					sales order item.<br />
+				<b>Check:</b> When clicking into the sales order item's <code>Gross Amount</code>
+					field, no info message is shown.
+			</li>
+		</ol>
+		<h3>(XI) Clone a sales order item and expand product information</h3>
+		Search for a sales order with an item that has exactly one message for its
+		<code>Quantity</code>. In case of mock data: Use sales order <code>111</code>.
+		<ol>
+			<li>Enter that sales order ID into the <code>Sales Order</code> input field and press
+				<code>Enter</code> or click the <code>Show Sales Order</code> button.<br />
+				<b>Check:</b> The sales order and the sales order items are loaded and displayed in
+					the <code>Sales Order Details</code> section.
+			</li>
+			<li>Remember the number of messages.</li>
+			<li>Remember the <code>Gross Amount</code> and the <code>Changed At</code> data from the
+				<code>Sales Order</code> section.</li>
+			<li>In the <code>Sales Order Items</code> table select the item with a message for its
+				<code>Quantity</code>.</li>
+			<li>Click on the <code>Clone Item</code> button of the <code>Sales Order Items</code>
+				table.<br />
+				<b>Check:</b> The item is cloned, that means an additional item is added to the
+					<code>Sales Order Items</code> table with the same data as the selected item,
+					except the <code>Item Position</code> and the <code>Note</code>.<br />
+				<b>Check:</b> The number of massages has been increased by 1.<br />
+				<b>Check:</b> The cloned item has the same message as the selected item.<br />
+				<b>Check:</b> The <code>Gross Amount</code> and the <code>Changed At</code> values
+					are updated.
+			</li>
+			<li><span class="backendOnly">Only with back end:</span> Open the developer tools,
+				navigate to the network tab, clear the requests and filter for <code>$batch</code>
+				requests.</li>
+			<li>In the <code>Sales Order Items</code> table click on the <code>&gt;</code> at the
+				end of the row for the cloned item to open the product details.<br />
+				<b>Check:</b> A <code>Product Details</code> dialog is opened showing the
+					<code>Product ID</code> and the corresponding product <code>Name</code>.<br />
+				<span class="backendOnly">Only with back end:</span> <b>Check:</b> There is no
+					<code>$batch</code> request.
+			</li>
+			<li>Close the <code>Product Details</code> dialog.</li>
+		</ol>
+	</body>
+</html>

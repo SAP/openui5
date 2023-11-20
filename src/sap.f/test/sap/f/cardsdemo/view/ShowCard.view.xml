@@ -1,0 +1,41 @@
+<mvc:View
+	xmlns="sap.m"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:f="sap.f"
+	xmlns:w="sap.ui.integration.widgets"
+	displayBlock="true"
+	controllerName="sap.f.cardsdemo.controller.ShowCard">
+	<Page title="{i18n>appTitle}">
+		<f:GridContainer class="sapUiSmallMargin">
+			<w:Card
+				id="showCard1"
+				manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/showCard/order/manifest.json"
+				referenceId="67d1ee24-2225-11ed-861d-0242ac120002">
+				<w:layoutData>
+					<f:GridContainerItemLayoutData columns="4" />
+				</w:layoutData>
+			</w:Card>
+			<w:Card
+				id="showCard2"
+				manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/showCard/shareData/manifest.json">
+				<w:layoutData>
+					<f:GridContainerItemLayoutData columns="4" />
+				</w:layoutData>
+			</w:Card>
+			<w:Card
+				id="showCard3"
+				manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/showCard/task/manifest.json">
+				<w:layoutData>
+					<f:GridContainerItemLayoutData columns="4" />
+				</w:layoutData>
+			</w:Card>
+			<w:Card
+				id="showCard4"
+				manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/showCard/approve/biteManifest.json">
+				<w:layoutData>
+					<f:GridContainerItemLayoutData columns="4" />
+				</w:layoutData>
+			</w:Card>
+		</f:GridContainer>
+	</Page>
+</mvc:View>

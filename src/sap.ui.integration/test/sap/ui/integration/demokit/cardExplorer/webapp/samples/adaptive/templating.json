@@ -1,0 +1,19 @@
+{
+	"_version": "1.17.0",
+	"sap.app": {
+		"id": "adaptivecard.embedded",
+		"type": "card"
+	},
+	"sap.card": {
+		"header": {
+			"title": "Inline Templating",
+			"subTitle": "This is a sample of the inline templating feature of MS Adaptive Cards."
+		},
+		"type": "AdaptiveCard",
+		"content": {
+			"request": {
+				"url": "samples/adaptive/templating-content.json"
+			}
+		}
+	}
+}

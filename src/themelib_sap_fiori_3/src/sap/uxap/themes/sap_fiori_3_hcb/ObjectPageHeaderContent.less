@@ -1,0 +1,99 @@
+/* ================================================= */
+/* CSS for control sap.uxap/ObjectPageHeaderContent  */
+/* Quartz High Contrast Black theme                  */
+/* ================================================= */
+
+@sapUiFiori3AnchorBarBottomShadow: inset 0 -0.0625rem @sapUiObjectHeaderBorderColor;
+@sapUiFiori3AnchorBarTopShadow: inset 0 0.0625rem @sapUiObjectHeaderBorderColor;
+@sapUiFiori3AnchorBarShadow: @sapUiFiori3AnchorBarBottomShadow, 0 0.125rem 0.25rem 0 fade(@sapUiContentShadowColor, 7.5);
+
+.sapUxAPObjectPageHeaderContent .sapMObjStatus, .sapUxAPObjectPageContainer .sapMObjStatus {
+	font-size: @sapMFontMediumSize;
+}
+
+.sapUxAPObjectPageHeaderIdentifierTitleInContent,
+.sapUxAPObjectPageHeaderIdentifierSubTitleInContent {
+	color: @sapUiGroupTitleTextColor;
+}
+
+.sapUxAPObjectPageHeaderIdentifier .sapUxAPObjectPageHeaderObjectImageForce .sapUxAPObjectPageHeaderObjectImage,
+.sapUxAPObjectPageHeaderStickied .sapUxAPObjectPageHeaderIdentifier .sapUxAPObjectPageHeaderObjectImage {
+	padding: 0;
+}
+
+html .sapUxAPObjectPageLayout-Std-Desktop, html .sapUxAPObjectPageLayout-Std-Tablet {
+	.sapUxAPObjectPageHeaderContent .sapUxAPObjectPageHeaderObjectImage-Circle .sapUxAPObjectPageHeaderObjectImage {
+		margin-right: 2rem;
+		margin-bottom: 1rem;
+		width: 5rem;
+		height: 5rem;
+	}
+	.sapUxAPObjectPageHeaderIdentifier .sapUxAPObjectPageHeaderObjectImageForce .sapUxAPObjectPageHeaderObjectImage,
+	.sapUxAPObjectPageHeaderStickied .sapUxAPObjectPageHeaderIdentifier .sapUxAPObjectPageHeaderObjectImage {
+		margin: 0.25rem 1rem 0.25rem 0;
+	}
+}
+
+.sapUxAPObjectPageHeaderContentImageContainer.sapUxAPObjectPageHeaderObjectImage-Square .sapUxAPObjectPageHeaderObjectImage,
+.sapUxAPObjectPageHeaderObjectImageContainer.sapUxAPObjectPageHeaderObjectImage-Square .sapUxAPObjectPageHeaderObjectImage {
+	border-radius: 0.25rem;
+}
+
+.sapUxAPObjectPageLayout-Std-Tablet,
+.sapUxAPObjectPageLayout-Std-Desktop {
+	.sapUxAPObjectPageHeaderContentCellRight {
+		padding-right: 2rem;
+	}
+	.sapUxAPObjectPageHeaderContent:only-child {
+		padding: 1rem 2rem;
+	}
+}
+
+.sapUxAPObjectPageLayout-Std-Phone  {
+	.sapUxAPObjectPageHeaderContent:only-child {
+		padding: 1rem;
+	}
+}
+
+.sapUxAPObjectPageHeaderIdentifierSubTitleInContent {
+	font-size: @sapMFontMediumSize;
+}
+
+.sapUxAPObjectPageHeaderContent {
+	padding-top: 1rem;
+	padding-bottom: 1rem;
+
+	.sapUxAPObjectChildPage {
+		margin-top: -1rem;
+	}
+
+	> .sapUiSimpleForm {
+		.sapMText, .sapMLabel, .sapMLnk {
+			font-size: @sapMFontMediumSize;
+		}
+	}
+}
+
+.sapUxAPObjectPageLayout:not(.sapUxAPObjectPageLayoutNoAnchorBar) {
+	.sapFDynamicPageHeader.sapFDynamicPageHeaderWithContent {
+		box-shadow: none;
+	}
+	.sapUxAPObjectPageNavigation:not(:empty):after {
+		content: "";
+		box-shadow: @sapUiFiori3AnchorBarShadow;
+		pointer-events: none;
+		position: absolute;
+		height: 0.25rem;
+		bottom: 0;
+		left: 0;
+		width: 100%;
+		z-index: 10;
+		&.sapUxAPObjectPageHeaderStickied {
+			box-shadow: none;
+		}
+	}
+}
+
+.sapUxAPObjectPageLayoutNoAnchorBar .sapUxAPObjectPageHeaderContent {
+	box-shadow: @sapUiShadowHeader;
+}

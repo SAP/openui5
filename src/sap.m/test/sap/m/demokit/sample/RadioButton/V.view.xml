@@ -1,12 +1,46 @@
-<mvc:View
-	xmlns:l="sap.ui.layout"
-	xmlns:mvc="sap.ui.core.mvc"
-	xmlns="sap.m">
-		<VBox binding="{/ProductCollection}" class="sapUiSmallMargin">
-			<RadioButton groupName="GroupA" text="Option 1" selected="true" />
-			<RadioButton groupName="GroupA" text="Option 2" />
-			<RadioButton groupName="GroupA" text="Option 3" />
-			<RadioButton groupName="GroupA" text="Option 4" />
-			<RadioButton groupName="GroupA" text="Option 5" />
-		</VBox>
+<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m">
+	<VBox class="sapUiSmallMargin">
+		<Label text="Default RadioButton use" labelFor="GroupA" />
+		<RadioButtonGroup id="GroupA">
+			<RadioButton text="Option 1" selected="true" />
+			<RadioButton text="Option 2" />
+			<RadioButton text="Option 3" />
+			<RadioButton text="Option 4" />
+			<RadioButton text="Option 5" />
+		</RadioButtonGroup>
+	</VBox>
+
+	<VBox class="sapUiSmallMargin">
+		<Label text="RadioButton in various ValueState variants" />
+		<HBox class="sapUiTinyMarginTopBottom">
+			<VBox class="sapUiMediumMarginEnd">
+				<Label text="Success" labelFor="groupB" />
+				<RadioButtonGroup id="groupB" valueState="Success">
+					<RadioButton text="Option 1" selected="true" />
+					<RadioButton text="Option 2" />
+				</RadioButtonGroup>
+			</VBox>
+			<VBox class="sapUiMediumMarginEnd">
+				<Label text="Error" labelFor="groupC" />
+				<RadioButtonGroup id="groupC" valueState="Error">
+					<RadioButton text="Option 1" selected="true" />
+					<RadioButton text="Option 2" />
+				</RadioButtonGroup>
+			</VBox>
+			<VBox class="sapUiMediumMarginEnd">
+				<Label text="Warning" labelFor="groupD" />
+				<RadioButtonGroup id="groupD" valueState="Warning">
+					<RadioButton text="Option 1" selected="true" />
+					<RadioButton text="Option 2" />
+				</RadioButtonGroup>
+			</VBox>
+			<VBox class="sapUiMediumMarginEnd">
+				<Label text="Information" labelFor="groupE" />
+				<RadioButtonGroup id="groupE" valueState="Information">
+					<RadioButton text="Option 1" selected="true" />
+					<RadioButton text="Option 2" />
+				</RadioButtonGroup>
+			</VBox>
+		</HBox>
+	</VBox>
 </mvc:View>

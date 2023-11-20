@@ -30,11 +30,11 @@ sap.ui.define(['./ShellHeader', './ShellLayout', './library', './ShellRenderer']
 	 * @since 1.15.1
 	 * @alias sap.ui.unified.Shell
 	 * @deprecated Since version 1.44.0.
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var Shell = ShellLayout.extend("sap.ui.unified.Shell", /** @lends sap.ui.unified.Shell.prototype */ { metadata : {
 
 		library : "sap.ui.unified",
+		deprecated : true,
 		properties : {
 
 			/**
@@ -95,7 +95,7 @@ sap.ui.define(['./ShellHeader', './ShellLayout', './library', './ShellRenderer']
 			 */
 			user : {type : "sap.ui.unified.ShellHeadUserItem", multiple : false, forwarding: {idSuffix: "-header", aggregation: "user"}}
 		}
-	}});
+	}, renderer: ShellRenderer});
 
 
 	Shell.prototype.init = function(){
@@ -148,7 +148,7 @@ sap.ui.define(['./ShellHeader', './ShellLayout', './library', './ShellRenderer']
 	 * Setter for the aggregated <code>header</code>.
 	 *
 	 * @param {sap.ui.core.Control} oHeader The Control which should be rendered within the Shell header or <code>null</code> to render the default Shell header.
-	 * @return {sap.ui.unified.Shell} <code>this</code> to allow method chaining
+	 * @return {this} <code>this</code> to allow method chaining
 	 * @public
 	 */
 	Shell.prototype.setHeader = function(oHeader) {
@@ -159,7 +159,7 @@ sap.ui.define(['./ShellHeader', './ShellLayout', './library', './ShellRenderer']
 	 * Destroys the header in the aggregation named <code>header</code>, but only if a custom header is set.
 	 * The default header can not be destroyed.
 	 *
-	 * @return {sap.ui.unified.Shell} <code>this</code> to allow method chaining
+	 * @return {this} <code>this</code> to allow method chaining
 	 * @public
 	 */
 	Shell.prototype.destroyHeader = function() {

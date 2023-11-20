@@ -1,0 +1,74 @@
+{
+	"milk": [
+	{
+	  "Store Name": "BC Market",
+	  "Profit": 28939.91,
+	  "Revenue": 330030.97,
+	  "Revenue Growth": -21091.06,
+	  "Target": 20939.91
+	},
+	{
+	  "Store Name": "A&A",
+	  "Profit": 114037.59,
+	  "Revenue": 222148.36,
+	  "Revenue Growth": 8110.77,
+	  "Target": 84037.59
+	},
+	{
+	  "Store Name": "24-Seven",
+	  "Profit": 335829.62,
+	  "Revenue": 428214.13,
+	  "Revenue Growth": 102384.51,
+	  "Target": 235829
+	},
+	{
+	  "Store Name": "Alexei's Specialities",
+	  "Profit": -62037.49,
+	  "Revenue": 131176.71,
+	  "Revenue Growth": -33214.2,
+	  "Target": 74037.59
+	},
+	{
+	  "Store Name": "All-you-need Store",
+	  "Profit": -22709.36,
+	  "Revenue": 178466.82,
+	  "Revenue Growth": -52176.18,
+	  "Target": 12939.91
+	},
+	{
+	  "Store Name": "Choices Franchise 1",
+	  "Profit": 28939.91,
+	  "Revenue": 330030.97,
+	  "Revenue Growth": -21091.06,
+	  "Target": 20939.91
+	},
+	{
+	  "Store Name": "Choices Franchise 2",
+	  "Profit": 202604.65,
+	  "Revenue": 442991.59,
+	  "Revenue Growth": 20386.94,
+	  "Target": 160939.91
+	},
+	{
+	  "Store Name": "Choices Franchise 3",
+	  "Profit": 160645.61,
+	  "Revenue": 352565.16,
+	  "Revenue Growth": 21919.55,
+	  "Target": 128939.91
+	},
+	{
+	  "Store Name": "Choices Franchise 4",
+	  "Profit": 292761.02,
+	  "Revenue": 504072.66,
+	  "Revenue Growth": 11311.64,
+	  "Target": 45039.91
+	},
+	{
+	  "Store Name": "Choices Franchise 5",
+	  "Profit": 273611.54,
+	  "Revenue": 308333.87,
+	  "Revenue Growth": 54722.33,
+	  "Target": 31939.91
+	}
+  ]
+}

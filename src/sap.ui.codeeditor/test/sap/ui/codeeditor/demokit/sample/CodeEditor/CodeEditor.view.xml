@@ -2,7 +2,9 @@
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.ui.codeeditor"
 	height="100%">
-	<CodeEditor value='\{
+	<CodeEditor
+		type="json"
+		value='\{
 		"Chinese" : "你好世界",
 		"Dutch" : "Hallo wereld",
 		"English" : "Hello world",
@@ -15,6 +17,6 @@
 		"Portuguese" : "Olá mundo",
 		"Russian" : "Здравствуй мир",
 		"Spanish" : "Hola mundo"
-	}' height="300px" type="json"/>
-
+	}'
+	height="300px" />
 </mvc:View>

@@ -1,7 +1,6 @@
 sap.ui.define([
-	"sap/ui/model/json/JSONModel",
 	"sap/ui/core/mvc/Controller"
-], function (JSONModel, Controller) {
+], function (Controller) {
 	"use strict";
 
 	return Controller.extend("flexiblecolumnlayout.Detail", {
@@ -23,7 +22,7 @@ sap.ui.define([
 		},
 		handleClose: function () {
 			var sNextLayout = this.oModel.getProperty("/actionButtonsInfo/midColumn/closeColumn");
-			this.oRouter.navTo("master", {layout: sNextLayout});
+			this.oRouter.navTo("list", {layout: sNextLayout});
 		}
 	});
-}, true);
+});

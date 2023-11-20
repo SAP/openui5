@@ -8,30 +8,25 @@
 	border-color: @sapUiGroupContentBorderColor;
 }
 
-.sapMWizardProgressNavStep:hover .sapMWizardProgressNavAnchorCircle {
+.sapMWizardProgressNavStep:hover .sapMWizardProgressNavStepCircle {
 	background: @sapUiButtonHoverBackground;
 }
 
-.sapMWizardProgressNavStep[data-sap-ui-wpn-step-active="true"]:hover .sapMWizardProgressNavAnchorCircle {
+.sapMWizardProgressNavStep[data-sap-ui-wpn-step-active="true"]:hover .sapMWizardProgressNavStepCircle {
 	background: @sapUiHighlight;
 }
 
-.sapMWizardProgressNavAnchor:focus {
-	outline: 1px dotted @sapUiContentFocusColor;
-	outline-offset: 1px;
-}
-
-.sapMWizardProgressNavAnchorCircle {
+.sapMWizardProgressNavStepCircle {
 	color: @sapUiButtonTextColor;
 	background: @sapUiSegmentedButtonBackground;
 	border-color: @sapUiSegmentedButtonSelectedBackground;
 }
 
-.sapMWizardProgressNavAnchorTitle {
+.sapMWizardProgressNavStepTitle {
 	background: @sapUiGroupContentBackground;
 }
 
-.sapMWizardProgressNavAnchorTitle:hover {
+.sapMWizardProgressNavStepTitle:hover {
 	color: darken(@sapUiGroupTitleTextColor, 10);
 }
 
@@ -41,8 +36,8 @@
 
 .sapMWizardProgressNavStep[data-sap-ui-wpn-step-active="true"] {
 
-	/* anchors in all steps after the active one have inactive style */
-	& ~ .sapMWizardProgressNavStep .sapMWizardProgressNavAnchorCircle {
+	/* all steps after the active one have inactive style */
+	& ~ .sapMWizardProgressNavStep .sapMWizardProgressNavStepCircle {
 		color: @sapUiSegmentedButtonIconColor;
 		background: @sapUiButtonBackground;
 		border-color: @sapUiSegmentedButtonBorderColor;

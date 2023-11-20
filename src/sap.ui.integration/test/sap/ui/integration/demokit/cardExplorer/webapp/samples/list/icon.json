@@ -1,0 +1,81 @@
+{
+	"_version": "1.14.0",
+	"sap.app": {
+		"id": "card.explorer.icon.list.card",
+		"type": "card",
+		"title": "Sample of a List with Icon",
+		"subTitle": "Sample of a List with Icon",
+		"applicationVersion": {
+			"version": "1.0.0"
+		},
+		"shortTitle": "A short title for this Card",
+		"info": "Additional information about this Card",
+		"description": "A long description for this Card",
+		"tags": {
+			"keywords": [
+				"List",
+				"Icon",
+				"Card",
+				"Sample"
+			]
+		}
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"icons": {
+			"icon": "sap-icon://list"
+		}
+	},
+	"sap.card": {
+		"type": "List",
+		"header": {
+			"title": "List Card with Top 5 Products",
+			"subTitle": "These are the top sellers this month",
+			"icon": {
+				"src": "sap-icon://desktop-mobile",
+				"visible": true
+			},
+			"status": {
+				"text": "5 of 20"
+			}
+		},
+		"content": {
+			"data": {
+				"json": [{
+						"Name": "Comfort Easy",
+						"Description": "32 GB Digital Assistant with high-resolution color screen",
+						"Icon": "sap-icon://iphone"
+					},
+					{
+						"Name": "ITelO Vault",
+						"Description": "Digital Organizer with State-of-the-Art Storage Encryption",
+						"Icon": "sap-icon://iphone"
+					},
+					{
+						"Name": "Notebook Professional 15",
+						"Description": "Notebook Professional 15 with 2,80 GHz quad core, 15\" Multitouch LCD, 8 GB DDR3 RAM, 500 GB SSD - DVD-Writer (DVD-R/+R/-RW/-RAM),Windows 8 Pro",
+						"Icon": "sap-icon://laptop"
+					},
+					{
+						"Name": "Ergo Screen E-I",
+						"Description": "Optimum Hi-Resolution max. 1920 x 1080 @ 85Hz, Dot Pitch: 0.27mm",
+						"Icon": "sap-icon://sys-monitor"
+					},
+					{
+						"Name": "Laser Professional Eco",
+						"Description": "Print 2400 dpi image quality color documents at speeds of up to 32 ppm (color) or 36 ppm (monochrome), letter/A4. Powerful 500 MHz processor, 512MB of memory",
+						"Icon": "sap-icon://print"
+					}
+				]
+			},
+			"maxItems": 5,
+			"item": {
+				"title": "{Name}",
+				"description": "{Description}",
+				"icon": {
+					"src": "{Icon}"
+				}
+			}
+		}
+	}
+}

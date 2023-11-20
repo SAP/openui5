@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="4.0" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx"
+		   xmlns="http://docs.oasis-open.org/odata/ns/edm">
+	<edmx:Reference
+			Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_XJG',Version='0001',SAP__Origin='LOCAL')/$value">
+		<edmx:Include Namespace="com.sap.vocabularies.UI.v1" Alias="Z__UI"/>
+		<edmx:Include Namespace="com.sap.vocabularies.Communication.v1" Alias="Z__COM"/>
+	</edmx:Reference>
+	<edmx:Reference
+			Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_COMMON',Version='0001',SAP__Origin='LOCAL')/$value">
+		<edmx:Include Namespace="com.sap.vocabularies.Common.v1" Alias="SAP__common"/>
+	</edmx:Reference>
+	<edmx:Reference
+			Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_MEASURES',Version='0001',SAP__Origin='LOCAL')/$value">
+		<edmx:Include Namespace="Org.OData.Measures.V1" Alias="Measures"/>
+	</edmx:Reference>
+	<edmx:DataServices>
+		<Schema Namespace="com.sap.gateway.default.iwbep.v4_gw_sample_basic.v0001" Alias="SAP__self">
+			<EntityType Name="Type">
+				<Key>
+					<PropertyRef Name="ProductID"/>
+				</Key>
+				<Property Name="String" Type="Edm.String" Nullable="false" MaxLength="10"/>
+				<Property Name="Boolean" Type="Edm.Boolean" Nullable="false"/>
+				<Property Name="Byte" Type="Edm.Byte"/>
+				<Property Name="SByte" Type="Edm.SByte"/>
+				<Property Name="Int16" Type="Edm.Int16"/>
+				<Property Name="Int32" Type="Edm.Int32"/>
+				<Property Name="Int64" Type="Edm.Int64"/>
+				<Property Name="Decimal" Type="Edm.Decimal" Precision="5" Scale="3"/>
+				<Property Name="Single" Type="Edm.Single" Precision="5" Scale="2"/>
+				<Property Name="Double" Type="Edm.Double" Precision="5" Scale="3"/>
+				<Property Name="Date" Type="Edm.Date"/>
+				<Property Name="TimeOfDay" Type="Edm.TimeOfDay" />
+				<Property Name="DateTimeOffset" Type="Edm.DateTimeOffset" />
+				<Property Name="Guid" Type="Edm.Guid" />
+				<Property Name="Complex" Type="Collection(sample)" Nullable="false"/>
+
+				<Property Name="StringMulti" Type="Edm.String" Nullable="false" MaxLength="10"/>
+				<Property Name="ByteMulti" Type="Edm.Byte"/>
+				<Property Name="SByteMulti" Type="Edm.SByte"/>
+				<Property Name="Int16Multi" Type="Edm.Int16"/>
+				<Property Name="Int32Multi" Type="Edm.Int32"/>
+				<Property Name="Int64Multi" Type="Edm.Int64"/>
+				<Property Name="DecimalMulti" Type="Edm.Decimal" Precision="5" Scale="3"/>
+				<Property Name="SingleMulti" Type="Edm.Single" Precision="5" Scale="2"/>
+				<Property Name="DoubleMulti" Type="Edm.Double" Precision="5" Scale="3"/>
+				<Property Name="DateMulti" Type="Edm.Date"/>
+				<Property Name="TimeOfDayMulti" Type="Edm.TimeOfDay" />
+				<Property Name="DateTimeOffsetMulti" Type="Edm.DateTimeOffset" />
+				<Property Name="GuidMulti" Type="Edm.Guid" />
+			</EntityType>
+
+
+			<EntityContainer Name="Container">
+				<EntitySet Name="TypeList"
+						   EntityType="com.sap.gateway.default.iwbep.v4_gw_sample_basic.v0001.Type">
+				</EntitySet>
+
+			</EntityContainer>
+
+			<Annotations Target="SAP__self.Container/TypeList">
+				<Annotation Term="com.sap.vocabularies.Common.v1.Label" String="Base" />
+
+				<Annotation Term="Org.OData.Capabilities.V1.FilterRestrictions">
+					<Record>
+						<PropertyValue Property="Filterable" Bool="true" />
+						<PropertyValue Property="FilterExpressionRestrictions">
+							<Collection>
+								<Record>
+									<PropertyValue Property="Property" PropertyPath="String" />
+									<PropertyValue Property="AllowedExpressions" String="SingleValue" />
+								</Record>
+								<Record>
+									<PropertyValue Property="Property" PropertyPath="Boolean" />
+									<PropertyValue Property="AllowedExpressions" String="SingleValue" />
+								</Record>
+								<Record>
+									<PropertyValue Property="Property" PropertyPath="Byte" />
+									<PropertyValue Property="AllowedExpressions" String="SingleValue" />
+								</Record>
+								<Record>
+									<PropertyValue Property="Property" PropertyPath="SByte" />
+									<PropertyValue Property="AllowedExpressions" String="SingleValue" />
+								</Record>
+								<Record>
+									<PropertyValue Property="Property" PropertyPath="Int16" />
+									<PropertyValue Property="AllowedExpressions" String="SingleValue" />
+								</Record>
+								<Record>
+									<PropertyValue Property="Property" PropertyPath="Int32" />
+									<PropertyValue Property="AllowedExpressions" String="SingleValue" />
+								</Record>
+								<Record>
+									<PropertyValue Property="Property" PropertyPath="Int64" />
+									<PropertyValue Property="AllowedExpressions" String="SingleValue" />
+								</Record>
+								<Record>
+									<PropertyValue Property="Property" PropertyPath="Single" />
+									<PropertyValue Property="AllowedExpressions" String="SingleValue" />
+								</Record>
+								<Record>
+									<PropertyValue Property="Property" PropertyPath="Double" />
+									<PropertyValue Property="AllowedExpressions" String="SingleValue" />
+								</Record>
+								<Record>
+									<PropertyValue Property="Property" PropertyPath="Decimal" Precision="5" Scale="2"/>
+									<PropertyValue Property="AllowedExpressions" String="SingleValue" />
+								</Record>
+								<Record>
+									<PropertyValue Property="Property" PropertyPath="Date" />
+									<PropertyValue Property="AllowedExpressions" String="SingleValue" />
+								</Record>
+								<Record>
+									<PropertyValue Property="Property" PropertyPath="TimeOfDay" />
+									<PropertyValue Property="AllowedExpressions" String="SingleValue" />
+								</Record>
+								<Record>
+									<PropertyValue Property="Property" PropertyPath="DateTimeOffset" />
+									<PropertyValue Property="AllowedExpressions" String="SingleValue" />
+								</Record>
+								<Record>
+									<PropertyValue Property="Property" PropertyPath="Guid" />
+									<PropertyValue Property="AllowedExpressions" String="SingleValue" />
+								</Record>
+							</Collection>
+						</PropertyValue>
+
+						<PropertyValue Property="RequiredProperties">
+							<Collection>
+								<PropertyPath>Category</PropertyPath>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+			</Annotations>
+
+
+		</Schema>
+	</edmx:DataServices>
+</edmx:Edmx>

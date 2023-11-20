@@ -1,0 +1,141 @@
+/*!
+ * ${copyright}
+ */
+
+/**
+ * @fileOverview Application component to display information on entities from the TEA_BUSI OData service.
+ * @version
+ * ${version}
+ */
+sap.ui.define([
+	'sap/ui/core/UIComponent', 'sap/ui/model/odata/v2/ODataModel', 'sap/ui/core/util/MockServer', 'testutils/link/FakeUShellConnector'
+], function(UIComponent, ODataModel, MockServer, FakeUShellConnector) {
+	"use strict";
+
+	return UIComponent.extend("appUnderTest.Component", {
+		metadata: {
+			manifest: "json"
+		},
+		constructor: function() {
+			UIComponent.call(this, "applicationUnderTest");
+		},
+		init: function() {
+			this.enableFakeFLP();
+			this.startMockServer();
+
+			UIComponent.prototype.init.apply(this, arguments);
+		},
+		destroy: function() {
+			this.oMockServer.stop();
+			this.oMockServer.destroy();
+			FakeUShellConnector.disableFakeConnector();
+			// call the base component's destroy function
+			UIComponent.prototype.destroy.apply(this, arguments);
+		},
+		exit: function() {
+			FakeUShellConnector.disableFakeConnector();
+		},
+		startMockServer: function() {
+			const sMockServerUrl = "/odata/";
+
+			this.oMockServer = new MockServer({
+				rootUri: sMockServerUrl
+			});
+
+			const sPath = sap.ui.require.toUrl("appUnderTest/localService");
+
+			// load local mock data
+			this.oMockServer.simulate(sPath + "/metadata.xml", {
+				sMockdataBaseUrl: sPath + "/mockdata",
+				bGenerateMissingMockData: true
+			});
+
+			// start
+			this.oMockServer.start();
+
+			this.setModel(new ODataModel(sMockServerUrl, {
+				defaultBindingMode: "TwoWay"
+			}));
+		},
+		enableFakeFLP: function() {
+			FakeUShellConnector.enableFakeConnector({
+				'appUnderTest_SemanticObjectName': {
+					links: [
+						{
+							action: "displayFactSheet",
+							intent: "?applicationUnderTest_SemanticObjectName_01#link",
+							text: "FactSheet of Name"
+						}, {
+							action: "action_02",
+							intent: "?applicationUnderTest_SemanticObjectName_02#link",
+							text: "Name Link2 (Superior)",
+							tags: [
+								"superiorAction"
+							]
+						}, {
+							action: "action_03",
+							intent: "?applicationUnderTest_SemanticObjectName_03#link",
+							text: "Name Link3"
+						}
+					]
+				},
+				'appUnderTest_SemanticObjectCategory': {
+					links: [
+						{
+							action: "displayFactSheet",
+							intent: "?applicationUnderTest_SemanticObjectCategory_01#link",
+							text: "FactSheet of Category"
+						}, {
+							action: "action_02",
+							intent: "?applicationUnderTest_SemanticObjectCategory_02#link",
+							text: "Category Link2 (Superior)",
+							tags: [
+								"superiorAction"
+							]
+						}, {
+							action: "action_03",
+							intent: "?applicationUnderTest_SemanticObjectCategory_03#link",
+							text: "Category Link3"
+						}, {
+							action: "action_04",
+							intent: "?applicationUnderTest_SemanticObjectCategory_04#link",
+							text: "Category Link4"
+						}, {
+							action: "action_05",
+							intent: "?applicationUnderTest_SemanticObjectCategory_05#link",
+							text: "Category Link5"
+						}, {
+							action: "action_06",
+							intent: "?applicationUnderTest_SemanticObjectCategory_06#link",
+							text: "Category Link6"
+						}, {
+							action: "action_07",
+							intent: "?applicationUnderTest_SemanticObjectCategory_07#link",
+							text: "Category Link7"
+						}, {
+							action: "action_08",
+							intent: "?applicationUnderTest_SemanticObjectCategory_08#link",
+							text: "Category Link8"
+						}, {
+							action: "action_09",
+							intent: "?applicationUnderTest_SemanticObjectCategory_09#link",
+							text: "Category Link9"
+						}, {
+							action: "action_10",
+							intent: "?applicationUnderTest_SemanticObjectCategory_10#link",
+							text: "Category Link10"
+						}, {
+							action: "action_11",
+							intent: "?applicationUnderTest_SemanticObjectCategory_11#link",
+							text: "Category Link11"
+						}, {
+							action: "action_12",
+							intent: "?applicationUnderTest_SemanticObjectCategory_12#link",
+							text: "Category Link12"
+						}
+					]
+				}
+			});
+		}
+	});
+});

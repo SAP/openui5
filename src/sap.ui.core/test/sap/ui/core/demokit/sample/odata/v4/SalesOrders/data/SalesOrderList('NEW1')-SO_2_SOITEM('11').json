@@ -1,0 +1,44 @@
+{
+	"@odata.metadataEtag" : "W/\"20210310161755\"",
+	"SalesOrderID" : "NEW1",
+	"ItemPosition" : "11",
+	"Note" : "",
+	"GrossAmount" : "5890.5",
+	"DeliveryDate" : "2022-03-12T10:07:56Z",
+	"Quantity" : "3.000",
+	"QuantityUnit" : "EA",
+	"ProductID" : "HT-1003",
+	"SOITEM_2_PRODUCT" : {
+		"@odata.etag" : "W/\"20210219080913.0000000 \"",
+		"ProductID" : "HT-1003",
+		"TypeCode" : "PR",
+		"Category" : "Notebooks",
+		"Name" : "Notebook Basic 19",
+		"SupplierName" : "Talpa",
+		"PRODUCT_2_BP" : {
+			"@odata.etag" : "W/\"20210219080913.0000000 \"",
+			"BusinessPartnerID" : "0100000049",
+			"CompanyName" : "Talpa",
+			"PhoneNumber" : "511403266",
+			"LegalForm" : "GmbH",
+			"BP_2_CONTACT" : [
+				{
+					"ContactGUID" : "42010aee-2874-1eeb-9cd1-3818ecc46be5",
+					"FirstName" : "Julia",
+					"LastName" : "Pfeffer",
+					"PhoneNumber" : "03848362558616",
+					"EmailAddress" : "julia.pfeffer@talpa-hannover.de",
+					"DateOfBirth" : null
+				},
+				{
+					"ContactGUID" : "42010aee-2874-1eeb-9cd1-3818ecc44be5",
+					"FirstName" : "Saskia",
+					"LastName" : "Sommer",
+					"PhoneNumber" : "511403266",
+					"EmailAddress" : "supplier-saskia.sommer@talpa-hannover.de",
+					"DateOfBirth" : null
+				}
+			]
+		}
+	}
+}

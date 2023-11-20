@@ -1,0 +1,18 @@
+{
+  "1.86.0": {
+    "date": "December 2020",
+    "notes": [
+      {
+        "id": "ef25a4c310d8c97a4e64ad4e9f12cd760b3b26ef",
+        "type": "FIX",
+        "text": " sap.m.ActionSheet: Overlaping when not enough space prevented",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080382626"
+          }
+        ]
+      }
+    ]
+  }
+}

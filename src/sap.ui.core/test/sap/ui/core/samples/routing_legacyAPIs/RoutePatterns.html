@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html><head>
+	<meta http-equiv='Content-Type' content='text/html;charset=UTF-8'>
+
+	<title>Table Example</title>
+
+
+	<script id='sap-ui-bootstrap'
+		src='../../../../../../resources/sap-ui-core.js'
+		data-sap-ui-libs='sap.ui.commons, sap.ui.table'></script>
+
+
+	<script>
+		jQuery.sap.require("sap.ui.core.routing.Router");
+
+
+		// create the Table control
+		var oTable = new sap.ui.table.Table({editable:true});
+
+		// define the Table columns
+		var oControl = new sap.ui.commons.TextView({text:"{pattern}"}); // short binding notation
+		oTable.addColumn(new sap.ui.table.Column({label: new sap.ui.commons.Label({text: "Pattern"}), template: oControl, sortProperty: "lastName", filterProperty: "lastName"}));
+		oControl = new sap.ui.commons.CheckBox({checked:"{matched}"});
+		oTable.addColumn(new sap.ui.table.Column({label: new sap.ui.commons.Label({text: "Matched"}), template: oControl, sortProperty: "checked", filterProperty: "checked",width : "80px" , hAlign: "Center"}));
+		oControl = oControl = new sap.ui.commons.TextView({text:"{params}"}); // more verbose binding notation
+		oTable.addColumn(new sap.ui.table.Column({label: new sap.ui.commons.Label({text: "Params"}), template: oControl, sortProperty: "name", filterProperty: "name"}));
+
+		var aData = [];
+
+		// create a JSONModel, fill in the data and bind the Table to this model
+		var oModel = new sap.ui.model.json.JSONModel();
+		oTable.setModel(oModel);
+		oTable.bindRows("/modelData");
+
+		// finally place the Table into the UI
+		oTable.placeAt("content");
+
+		var addPattern = function(pattern) {
+				var position = aData.length,
+					name = jQuery.sap.uid();
+
+				aData.push({pattern : pattern, matched : false, parameters: ""});
+
+				oRouter.addRoute({ pattern: pattern, name : name});
+
+			    oRouter.attachRouteMatched(function(evt) {
+			    	if(evt.getParameter("name") !== name) {
+			    		return;
+			    	}
+
+					aData[position].matched = true;
+					aData[position].params = window.JSON.stringify(evt.getParameter("arguments"));
+				});
+
+				oModel.setData({modelData: aData});
+			};
+
+	    var oRouter = new sap.ui.core.routing.Router();
+
+
+		// create some local data
+		addPattern("product/{ProductId}/detail/{DetailId}");
+		addPattern("product/{ProductId}/detail/:optionalDetailId:");
+		addPattern("product/{ProductId}");
+		addPattern("product:?keyValue:");
+		addPattern(":*all:");
+		oModel.setData({modelData: aData});
+
+		new sap.ui.commons.Button({text : "Add Pattern" , press: function() {
+			 addPattern(patternField.getValue());
+		}}).placeAt("content");
+		var patternField = new sap.ui.commons.TextField({width : "400px"}).placeAt("content");
+
+
+		new sap.ui.commons.Button({text : "Change Hash" , press: function() {
+				for(var i = 0; i < aData.length; i++) {
+					aData[i].matched = false;
+					aData[i].params = "";
+				}
+				hasher.setHash(hashField.getValue());
+				oModel.setData({modelData: aData});
+			}
+		}).placeAt("content2");
+
+		var hashField =	new sap.ui.commons.TextField({width : "400px"}).placeAt("content2");
+
+		//change the default behavior - every route gets matched now not only the first one
+		crossroads.greedy = true;
+
+
+	    oRouter.initialize();
+	</script>
+
+	</head>
+	<body class='sapUiBody'>
+		<div id='content'></div>
+		<div id="content2"></div>
+	</body>
+</html>

@@ -3,12 +3,14 @@
  */
 
 sap.ui.define([
-	'sap/ui/base/ManagedObject',
-	'sap/ui/dt/DOMUtil'
+	"sap/ui/base/ManagedObject",
+	"sap/ui/dt/DOMUtil",
+	"sap/ui/thirdparty/jquery"
 ],
 function(
 	ManagedObject,
-	DOMUtil
+	DOMUtil,
+	jQuery
 ) {
 	"use strict";
 
@@ -26,31 +28,32 @@ function(
 	 * @private
 	 * @since 1.54
 	 * @alias sap.ui.dt.ScrollbarSynchronizer
-	 * @experimental Since 1.54. This class is experimental and provides only limited functionality. Also the API might be changed in future.
 	 */
 	var ScrollbarSynchronizer = ManagedObject.extend("sap.ui.dt.ScrollbarSynchronizer", {
 		metadata: {
 			library: "sap.ui.dt",
 			properties: {
-				"scrollTop": {
+				scrollTop: {
 					type: "float"	// replaced 'int' with 'float'. In some special cases (chrome on a retina mac) jquery returns a float value instead of int
 				},
-				"scrollLeft": {
+				scrollLeft: {
 					type: "float"	// replaced 'int' with 'float'. In some special cases (chrome on a retina mac) jquery returns a float value instead of int
 				},
-				"targets": {
+				targets: {
 					type: "any[]",
 					defaultValue: []
 				}
 			},
 			events: {
-				synced: {}
+				synced: {},
+				destroyed: {}
 			}
 		},
 		_bSyncing: false,
-		constructor: function () {
+		// eslint-disable-next-line object-shorthand
+		constructor: function(...aArgs) {
 			this._scrollEventHandler = this._scrollEventHandler.bind(this);
-			ManagedObject.apply(this, arguments);
+			ManagedObject.apply(this, aArgs);
 		}
 	});
 
@@ -58,33 +61,33 @@ function(
 	 * Returns a copy of the targets array
 	 * @return {Element[]} Returns an array with the target elements
 	 */
-	ScrollbarSynchronizer.prototype.getTargets = function () {
-		return this.getProperty('targets').slice(0);
+	ScrollbarSynchronizer.prototype.getTargets = function() {
+		return this.getProperty("targets").slice(0);
 	};
 
 	/**
 	 * Removes previous target(s) and set new target(s)
 	 * @param {Element|Element[]} vTarget Target element or array of target elements
 	 */
-	ScrollbarSynchronizer.prototype.setTargets = function (vTarget) {
+	ScrollbarSynchronizer.prototype.setTargets = function(vTarget) {
 		var aTargets = Array.isArray(vTarget) ? vTarget : [vTarget];
 
 		// 1. detach scroll events from old targets
 		this.getTargets().forEach(this.removeTarget.bind(this));
 
 		// 2. attach scroll events to new targets
-		this.addTarget.apply(this, aTargets);
+		this.addTarget(...aTargets);
 	};
 
 	/**
 	 * Remove a target
 	 * @param  {Element} oDomNode Target to be removed
 	 */
-	ScrollbarSynchronizer.prototype.removeTarget = function (oDomNode) {
+	ScrollbarSynchronizer.prototype.removeTarget = function(oDomNode) {
 		this._detachScrollEvent(oDomNode);
 		this.setProperty(
-			'targets',
-			this.getTargets().filter(function (oTarget) {
+			"targets",
+			this.getTargets().filter(function(oTarget) {
 				return oTarget !== oDomNode;
 			})
 		);
@@ -94,8 +97,8 @@ function(
 	 * Add an arbitrary number of elements as targets
 	 * Pass any number of elements to this function to add them as targets
 	 */
-	ScrollbarSynchronizer.prototype.addTarget = function () {
-		var aTargets = Array.prototype.slice.call(arguments);
+	ScrollbarSynchronizer.prototype.addTarget = function(...aArgs) {
+		var aTargets = Array.prototype.slice.call(aArgs);
 
 		if (!aTargets.length) {
 			return;
@@ -104,78 +107,100 @@ function(
 		this._removeDeadNodes();
 		aTargets.forEach(this._attachScrollEvent, this);
 		var aNextTargets = this.getTargets().concat(aTargets);
-		this.setProperty('targets', aNextTargets);
-		this._sync(aNextTargets[0]);
+		this.setProperty("targets", aNextTargets);
+		this.sync(aNextTargets[0]);
 	};
 
 	/**
 	 * Check if a Dom Node is a target for this Scrollbar Synchronizer
 	 * @param  {Element}  oDomNode Element to be checked
-	 * @return {Boolean}          Returns true if the node is a target
+	 * @return {boolean}          Returns true if the node is a target
 	 */
-	ScrollbarSynchronizer.prototype.hasTarget = function (oDomNode) {
+	ScrollbarSynchronizer.prototype.hasTarget = function(oDomNode) {
 		return this.getTargets().indexOf(oDomNode) > -1;
 	};
 
-	ScrollbarSynchronizer.prototype._removeDeadNodes = function () {
-		this.getTargets().forEach(function (oDomNode) {
+	ScrollbarSynchronizer.prototype._removeDeadNodes = function() {
+		this.getTargets().forEach(function(oDomNode) {
 			if (!document.body.contains(oDomNode)) {
 				this.removeTarget(oDomNode);
 			}
 		}, this);
 	};
 
-	ScrollbarSynchronizer.prototype._attachScrollEvent = function (oDomNode) {
+	ScrollbarSynchronizer.prototype._attachScrollEvent = function(oDomNode) {
 		jQuery(oDomNode).on("scroll", this._scrollEventHandler);
 	};
 
-	ScrollbarSynchronizer.prototype._detachScrollEvent = function (oDomNode) {
+	ScrollbarSynchronizer.prototype._detachScrollEvent = function(oDomNode) {
 		jQuery(oDomNode).off("scroll", this._scrollEventHandler);
 	};
 
-	ScrollbarSynchronizer.prototype._scrollEventHandler = function (oEvent) {
-		this._sync(oEvent.target);
+	ScrollbarSynchronizer.prototype._scrollEventHandler = function(oEvent) {
+		this.sync(oEvent.target);
 	};
 
-	ScrollbarSynchronizer.prototype._sync = function (oSourceDomNode) {
+	/**
+	 * Triggers the synchronization between two scroll target elements.
+	 * @param {Element} oSourceDomNode Element that needs to be synchronized with its pair.
+	 * @param {boolean} bForce Executes the synchronization even if the scroll values in both elements are the same.
+	 */
+	ScrollbarSynchronizer.prototype.sync = function(oSourceDomNode, bForce) {
 		if (
-			this.getScrollTop() !== oSourceDomNode.scrollTop
-			|| this.getScrollLeft() !== oSourceDomNode.scrollLeft
+			bForce
+			|| this.getScrollTop() !== oSourceDomNode.scrollTop
+			|| this.getScrollLeft() !== jQuery(oSourceDomNode).scrollLeft()
 		) {
 			this.setScrollTop(oSourceDomNode.scrollTop);
-			this.setScrollLeft(oSourceDomNode.scrollLeft);
+			this.setScrollLeft(jQuery(oSourceDomNode).scrollLeft());
 
-			if (!this._bSyncing) {
-				this._bSyncing = true;
-				this.animationFrame = window.requestAnimationFrame(function () {
-					this.getTargets()
-						.filter(function (oDomNode) {
-							return oSourceDomNode !== oDomNode;
-						})
-						.forEach(function (oDomNode) {
-							DOMUtil.syncScroll(oSourceDomNode, oDomNode);
-						});
-					this.fireSynced();
-					this._bSyncing = false;
-				}.bind(this));
+			if (this._bSyncing) {
+				this._abortSync();
 			}
+
+			this._bSyncing = true;
+			this.animationFrame = window.requestAnimationFrame(function() {
+				this.getTargets()
+				.filter(function(oDomNode) {
+					return oSourceDomNode !== oDomNode;
+				})
+				.forEach(function(oDomNode) {
+					DOMUtil.syncScroll(oSourceDomNode, oDomNode);
+				});
+				this._bSyncing = false;
+				this.fireSynced();
+			}.bind(this));
 		}
+	};
+
+	ScrollbarSynchronizer.prototype._abortSync = function() {
+		window.cancelAnimationFrame(this.animationFrame);
+		this._bSyncing = false;
 	};
 
 	/**
 	 * Destroys the Scrollbar Synchronizer
 	 */
-	ScrollbarSynchronizer.prototype.destroy = function () {
-		this.getTargets().forEach(function (oDomNode) {
+	ScrollbarSynchronizer.prototype.destroy = function(...aArgs) {
+		this.getTargets().forEach(function(oDomNode) {
 			this.removeTarget(oDomNode);
 		}, this);
+		this._abortSync();
+		this.fireDestroyed();
 
-		ManagedObject.prototype.destroy.apply(this, arguments);
+		ManagedObject.prototype.destroy.apply(this, aArgs);
 	};
 
-	ScrollbarSynchronizer.prototype.isSyncing = function () {
+	ScrollbarSynchronizer.prototype.isSyncing = function() {
 		return this._bSyncing;
 	};
 
+	ScrollbarSynchronizer.prototype.refreshListeners = function() {
+		this.getTargets().forEach(function(oDomNode) {
+			this._detachScrollEvent(oDomNode);
+			this._attachScrollEvent(oDomNode);
+		}, this);
+	};
+
 	return ScrollbarSynchronizer;
-}, true);
+});

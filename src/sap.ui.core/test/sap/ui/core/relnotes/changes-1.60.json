@@ -1,0 +1,639 @@
+{
+  "1.60.0": {
+    "date": "August 2018",
+    "notes": [
+      {
+        "id": "a01458ed3abe8cf92c7b2a6e2d206bba141528f6",
+        "type": "FIX",
+        "text": "Manifest: Manifest.load should keep manifest URL in async case",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880503434"
+          }
+        ]
+      },
+      {
+        "id": "ca9f4106a84edc5e5a259e33ac89fa724081cea1",
+        "type": "FIX",
+        "text": "Manifest: set component base URL",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880503434"
+          }
+        ]
+      },
+      {
+        "id": "a7a0009e1e5305ea4ad084746dd289a3acd5180b",
+        "type": "FIX",
+        "text": "v2.ODataAnnotations: don't cache invalid annotations",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880485001"
+          }
+        ]
+      },
+      {
+        "id": "93d2c0b3deb45a420d3f37dafd5a8df2c761e025",
+        "type": "FEATURE",
+        "text": "Fragment: Fragment.load API",
+        "references": []
+      },
+      {
+        "id": "52f4ee4441ebb01f3df8fa70fd135346647360e2",
+        "type": "FEATURE",
+        "text": "ManagedObject: support hidden properties and associations",
+        "references": []
+      },
+      {
+        "id": "a08675d8c87fb70c39f5e03e980b81aada06d737",
+        "type": "FIX",
+        "text": "ODataTreeBindingAdapter.expandNodeToLevel: Only expand nodes above given level",
+        "references": []
+      },
+      {
+        "id": "e6d5a41f0574a672aaa075357c364c7105cb53d2",
+        "type": "FIX",
+        "text": "Register ui5loader modules synchronously",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880536215"
+          },
+          {
+            "type": "BCP",
+            "reference": "1880536782"
+          },
+          {
+            "type": "BCP",
+            "reference": "1880535979"
+          },
+          {
+            "type": "BCP",
+            "reference": "1880534003"
+          }
+        ]
+      },
+      {
+        "id": "fd676efe8c0d10edc705db8e848e7b02d5e325ac",
+        "type": "FIX",
+        "text": "routing.HashChanager: reset the initialized flag after destroy",
+        "references": [
+          {
+            "type": "GitHub",
+            "reference": "2097"
+          },
+          {
+            "type": "BCP",
+            "reference": "1880404261"
+          }
+        ]
+      },
+      {
+        "id": "a52cf4e9d217c128eaf807f40e367fe0bf32fb19",
+        "type": "FEATURE",
+        "text": "sap.ui.core: Rules to support jquery.sap deprecation",
+        "references": []
+      },
+      {
+        "id": "c92f0995694004a2a6e1ebd883b7841dc0a2e360",
+        "type": "FIX",
+        "text": "Controller: controllerFactory resolves wrong controller class",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870341066"
+          }
+        ]
+      },
+      {
+        "id": "5bd2762c3a844c512f662ea02c89db0c25ba669a",
+        "type": "FIX",
+        "text": "core/routing/Target: make _updateOptions agnostic",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870335099"
+          }
+        ]
+      },
+      {
+        "id": "5f5a64897cde3453c703633f289b7d9c8307fd7f",
+        "type": "FIX",
+        "text": "performance/trace/Interaction: accept valid setRequestHeader parameters",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500003553622018"
+          }
+        ]
+      },
+      {
+        "id": "bb1435f7c941d941c5dea0346c1df3be2217b658",
+        "type": "FEATURE",
+        "text": "Core: Added rule for sync factory loading",
+        "references": []
+      },
+      {
+        "id": "1a7ff4f5659e4b22a0de6135e61aeeae7972d6c5",
+        "type": "FIX",
+        "text": "Aggregation Forwarding: also clone forwarded children",
+        "references": []
+      },
+      {
+        "id": "99a95b6d471239ab0d27438aa341c96c54c127da",
+        "type": "FIX",
+        "text": "Core: Fixed message of sync factory loading rule",
+        "references": []
+      },
+      {
+        "id": "47f5d8dcacf7b5032730bbfa0e8128e34dfd2faf",
+        "type": "FIX",
+        "text": "Manifest: always process entries with placeholders",
+        "references": []
+      },
+      {
+        "id": "3446e2f211f3c004fdeac075ec2f336d46024f08",
+        "type": "FIX",
+        "text": "XMLView: fix re-rendering of directly nested XMLViews",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880410030"
+          },
+          {
+            "type": "BCP",
+            "reference": "1880495226"
+          }
+        ]
+      },
+      {
+        "id": "cd553e45a0c0e08fd2a5a8d346ec399cca8c794e",
+        "type": "FIX",
+        "text": "format/DateFormat: Multiple instances shouldn't share fallback formats",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870290668"
+          }
+        ]
+      },
+      {
+        "id": "11f40f9899aa237ad3b6af43acdfd1238ce91223",
+        "type": "FIX",
+        "text": "model/ODataUtils: Fix brackets for MultiFilter objects",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870350543"
+          }
+        ]
+      },
+      {
+        "id": "ddeb321f0e1746a92c9076c26ad6bf76578ea1fe",
+        "type": "FEATURE",
+        "text": "Message.js: array of control IDs",
+        "references": []
+      },
+      {
+        "id": "f07a5592fce0f599378f1e5ba24408e490569a0c",
+        "type": "FEATURE",
+        "text": "sap.ui.support: Use presets to filter rules",
+        "references": []
+      },
+      {
+        "id": "6b443e715f574f7e031c3fae9eba31b1a31b9bf0",
+        "type": "FIX",
+        "text": "Fragment: remove new property names before calling legacy API",
+        "references": [
+          {
+            "type": "GitHub",
+            "reference": "2193"
+          }
+        ]
+      },
+      {
+        "id": "e38a64583f5f311cc10aac7bb27cfda105bc8da4",
+        "type": "FIX",
+        "text": "Opa: do not track guarding timeouts",
+        "references": []
+      },
+      {
+        "id": "3bf796275009fc66ec629fa1de2383b487574d7f",
+        "type": "FIX",
+        "text": "Rules Tests: Set fixed Log Level",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870382122"
+          }
+        ]
+      },
+      {
+        "id": "d0c37add7a484fc06f20254988e4bbfc5264d56f",
+        "type": "FIX",
+        "text": "search/SearchProvider: make class abstract",
+        "references": [
+          {
+            "type": "GitHub",
+            "reference": "1730"
+          },
+          {
+            "type": "GitHub",
+            "reference": "2177"
+          },
+          {
+            "type": "BCP",
+            "reference": "1870382802"
+          }
+        ]
+      },
+      {
+        "id": "82b06705af364a958e7bebed76dee1c44e28197b",
+        "type": "FIX",
+        "text": "types/NumberFormat: Currency with RTL locale format/parse",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870355235"
+          }
+        ]
+      },
+      {
+        "id": "34ddcd973d878c753c564dc16e708daf6aedaff1",
+        "type": "FIX",
+        "text": "v2.ODataListBinding: 0 count in result now correctly processed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870370604"
+          }
+        ]
+      },
+      {
+        "id": "11153e368d5dc5ca52aa6195a3f88ad9e21adf07",
+        "type": "FIX",
+        "text": "Element: Experimental note added to drag-and-drop metadata",
+        "references": []
+      },
+      {
+        "id": "6ef708e55291ce5f49126c2cf35c049d2c551104",
+        "type": "FIX",
+        "text": "TableUtils: Update OpenSource usage documentation",
+        "references": []
+      },
+      {
+        "id": "d22d3f315e6880a8bcd2ecead42083bb4f00efa4",
+        "type": "FIX",
+        "text": "core.routing: convert route config for internal target",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870335099"
+          }
+        ]
+      },
+      {
+        "id": "1c078cf28f65adebc2e17f1f4ad89d02d7ccc2d2",
+        "type": "FIX",
+        "text": "query.sap.storage: fixed missing static methods",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870410042"
+          }
+        ]
+      },
+      {
+        "id": "ec82c6d4b8de91d886e01e89bd114fbd6a735c5d",
+        "type": "FIX",
+        "text": "v2/ODataListBinding: Set oCombinedFilters before applyFilter() is called",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870341629"
+          }
+        ]
+      },
+      {
+        "id": "be6feb5196869fff54a00353a4c19f5644f67f76",
+        "type": "FIX",
+        "text": "Theming Parameters: Prevent timing issues in Safari/Edge",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500004413932018"
+          }
+        ]
+      },
+      {
+        "id": "5b19125732a96d461422148f9e51f8d4cebc6f78",
+        "type": "FIX",
+        "text": "sap.ui.core.util.reflection - UA cleanup",
+        "references": []
+      },
+      {
+        "id": "16553b086737025c9cd0c8d327b796b97e68f234",
+        "type": "FIX",
+        "text": "sap.ui.fl - Fixed switching variants with stashed controls",
+        "references": []
+      },
+      {
+        "id": "62d7673a085745d7f8f355ace614bd98b48bb700",
+        "type": "FEATURE",
+        "text": "Opa5: RecordReplay API introduction",
+        "references": []
+      },
+      {
+        "id": "3e39ef0edb3a8f7bc4e4ae8cdb5e6647a0808777",
+        "type": "FEATURE",
+        "text": "sap.ui.core.AccessibleLandmarkRole: New roles added",
+        "references": []
+      },
+      {
+        "id": "d309143dac0e2a14dd45c6080413129b93d39fe0",
+        "type": "FIX",
+        "text": "Component: Propagate module loading errors",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870443288"
+          }
+        ]
+      },
+      {
+        "id": "ca35299d6edaa7024322b212481a6e99c2fe4e58",
+        "type": "FIX",
+        "text": "NumberFormat: Fix private API _shiftDecimalPoint for negative values",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870172198"
+          }
+        ]
+      },
+      {
+        "id": "5c95d1579a05a1da1b9af0772b1bec3df582862b",
+        "type": "FIX",
+        "text": "core.Popup: autoclose is done by using focus event on combi device",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870406886"
+          },
+          {
+            "type": "BCP",
+            "reference": "1770586122"
+          }
+        ]
+      },
+      {
+        "id": "9ec00c36c7b982716235eef86f78a405d25a1456",
+        "type": "FIX",
+        "text": "core.RenderManager: writeIcon should put font family in quotes",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870410309"
+          }
+        ]
+      },
+      {
+        "id": "10a063692ff7f04e723ba7697ad1aec2baad4ef8",
+        "type": "FIX",
+        "text": "m/TextArea: do not trigger FieldGroupValidation on enter",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870406549"
+          }
+        ]
+      },
+      {
+        "id": "822b1b8114f026b1fd5193d12f1d6fa8a6019aa9",
+        "type": "FEATURE",
+        "text": "Flexibility services requests can be disabled in the bootstrap",
+        "references": []
+      },
+      {
+        "id": "d06b98c0e9bf1d33f37ead0f74a7308cebd2ce1c",
+        "type": "FEATURE",
+        "text": "Opa5: expose iWaitForPromise",
+        "references": []
+      },
+      {
+        "id": "ace6887fc40474dd756a383b61fd2fc1c4cb31c3",
+        "type": "FIX",
+        "text": "core.Icon: reset to hover color on mouseup only when there is",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870355276"
+          }
+        ]
+      },
+      {
+        "id": "af8005558dccd8585f35f8954d8f9d7065b5422d",
+        "type": "FIX",
+        "text": "core.Popup: avoid element shifting when resetting focus",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880522407"
+          }
+        ]
+      },
+      {
+        "id": "2ddf2f70887bd7089e96c5b18c54a6eb03dfd9de",
+        "type": "FIX",
+        "text": "v2/ODataModel: createEntry context path fix",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880561023"
+          }
+        ]
+      },
+      {
+        "id": "869e1a4eb0460e76a540ffae0dcd7e02684fed23",
+        "type": "FIX",
+        "text": "v2/ODataModel: createEntry warning logs",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880561023"
+          }
+        ]
+      },
+      {
+        "id": "c7435515efeabd613c961d771b77489cbe0af9f3",
+        "type": "FEATURE",
+        "text": "Hyphenation: Hyphenation for text controls is enabled",
+        "references": []
+      },
+      {
+        "id": "3bff9313da5330f4300f746461d2b90686362548",
+        "type": "FIX",
+        "text": "ManagedObjectModel: Problem in handling of altType",
+        "references": []
+      },
+      {
+        "id": "71166214cbc88cbcd7d74b909aef13fecd2e4812",
+        "type": "FIX",
+        "text": "v2/ODataModel: function import context overwrite",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880577344"
+          }
+        ]
+      },
+      {
+        "id": "00a158e54e0ede657c7b0d19ac133bca24e3eeec",
+        "type": "FEATURE",
+        "text": "CLDR: Update to CLDR version 34",
+        "references": []
+      },
+      {
+        "id": "c4ed3b67c550ed33c5327de5e7c306d4513cc57c",
+        "type": "FEATURE",
+        "text": "ComponentContainer: Add \"componentFailed\" event",
+        "references": [
+          {
+            "type": "GitHub",
+            "reference": "2228"
+          },
+          {
+            "type": "BCP",
+            "reference": "1880573714"
+          }
+        ]
+      },
+      {
+        "id": "4dacc66020fb863fa232a2473da046950fa02053",
+        "type": "FEATURE",
+        "text": "Flexibility services routes can be defined",
+        "references": []
+      },
+      {
+        "id": "90c38aa62ca3432c5e70f24585a5cf1defd404cd",
+        "type": "FEATURE",
+        "text": "Opa: BindingPath matcher - add property path",
+        "references": []
+      },
+      {
+        "id": "9610fe719d4549a1b918a0bba09f7ce494815050",
+        "type": "FEATURE",
+        "text": "PasteHelper.js Paste Helper Utility",
+        "references": []
+      },
+      {
+        "id": "7371695ce3800e61dab88be68f547a9a3924e9c6",
+        "type": "FEATURE",
+        "text": "sap.ui.core.ValueState: 5th semantic highlight color added",
+        "references": []
+      },
+      {
+        "id": "3c299510b815dfb307260a782aefd24857acca75",
+        "type": "FIX",
+        "text": "Component: Register correct resource path for manifest object",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870412735"
+          }
+        ]
+      },
+      {
+        "id": "51bde8f6de273655e853fff5292cd0cbd85709de",
+        "type": "FIX",
+        "text": "ComponentContainer: support autoPrefixId for usages",
+        "references": [
+          {
+            "type": "GitHub",
+            "reference": "2223"
+          },
+          {
+            "type": "BCP",
+            "reference": "1880573204"
+          }
+        ]
+      },
+      {
+        "id": "948cf00ef16f0dfbb52d93954d20277a3379f26b",
+        "type": "FIX",
+        "text": "ODataUtils: Use gregorian calendar for filter values",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880584846"
+          }
+        ]
+      },
+      {
+        "id": "27bba351d72a5de083e768529d3c6b249a4b4662",
+        "type": "FIX",
+        "text": "core/Element: reapplying focus on an Element requires delay",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880609623"
+          }
+        ]
+      },
+      {
+        "id": "a4feca22c7294076332e67cae8408d4d9a8a4a79",
+        "type": "FIX",
+        "text": "performance/trace/Interaction: bind context for XHR handler",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500004272782018"
+          }
+        ]
+      },
+      {
+        "id": "371eba8f7d5c1d4fd4f092d0932e5beff66b3252",
+        "type": "FIX",
+        "text": "sap.ui.core.util.MockServer: Minor documentation fix for requests",
+        "references": []
+      },
+      {
+        "id": "1a93574a0da6843e0a5b1f2f2aca3e1902bc6876",
+        "type": "FIX",
+        "text": "sap.ui.model.odata.v4.ODataMetaModel#fetchUpdateData: entity set w/o navigation property bindings",
+        "references": []
+      },
+      {
+        "id": "35573130b481a03d874ee301d567b9668ff52cd0",
+        "type": "FIX",
+        "text": "synxXHRFix: Improve compatbility of setTimeout/setInterval",
+        "references": []
+      },
+      {
+        "id": "a8b70200e4f5fa9e89a6d402f53f437c5dbf41b0",
+        "type": "FIX",
+        "text": "v2/ODataListBinding: function import fix list type",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880587294"
+          }
+        ]
+      },
+      {
+        "id": "6f12cd28e3b7f66e1e79a06dff11a2dff04629a2",
+        "type": "FIX",
+        "text": "routing.History: return Unknown if hashChanged fired without browser involvement",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880642900"
+          }
+        ]
+      }
+    ]
+  }
+}

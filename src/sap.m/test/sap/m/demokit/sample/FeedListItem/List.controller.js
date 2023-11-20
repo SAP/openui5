@@ -1,16 +1,15 @@
 sap.ui.define([
-	'jquery.sap.global',
 	'sap/m/MessageToast',
 	'sap/ui/core/mvc/Controller',
 	'sap/ui/model/json/JSONModel'
-], function(jQuery, MessageToast, Controller, JSONModel) {
+], function(MessageToast, Controller, JSONModel) {
 	"use strict";
 
 	var ListController = Controller.extend("sap.m.sample.FeedListItem.List", {
 
 		onInit: function() {
 			// set mock model
-			var sPath = sap.ui.require.toUrl("sap/m/sample/FeedListItem") + "/feed.json";
+			var sPath = sap.ui.require.toUrl("sap/m/sample/FeedListItem/feed.json");
 			var oModel = new JSONModel(sPath);
 			this.getView().setModel(oModel);
 		},

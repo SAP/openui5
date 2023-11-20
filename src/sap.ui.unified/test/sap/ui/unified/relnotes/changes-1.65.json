@@ -1,0 +1,50 @@
+{
+  "1.65.0": {
+    "date": "April 2019",
+    "notes": [
+      {
+        "id": "d5613db1cd829b3d314b5b73f7990c800a1e3dfa",
+        "type": "FIX",
+        "text": "Calendar: specialDates performance improved",
+        "references": [
+          {
+            "type": "GitHub",
+            "reference": "2212"
+          },
+          {
+            "type": "BCP",
+            "reference": "1880578705"
+          }
+        ]
+      },
+      {
+        "id": "7bac2dc19ae028cd6f88ae2f8b7485f5c3fc1d4c",
+        "type": "FIX",
+        "text": "sap.ui.unified.CalendarMonthInterval: destroyed correctly now",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980090627"
+          }
+        ]
+      },
+      {
+        "id": "866fe7bc82cbee1d7a61307143d394ea4c96f60a",
+        "type": "FEATURE",
+        "text": "sap.m.SinglePlanningCalendar: New \"legend\" association added",
+        "references": []
+      },
+      {
+        "id": "e576ab105d6bc4bb7650d049d91378cfd3ad429b",
+        "type": "FIX",
+        "text": "sap.ui.unified.ColorPicker: Alpha field is properly updated now",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980045701"
+          }
+        ]
+      }
+    ]
+  }
+}

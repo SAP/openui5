@@ -4,32 +4,34 @@
 
 // Provides control sap.ui.core.mvc.HTMLView.
 sap.ui.define([
-    'jquery.sap.global',
-    './View',
-    './HTMLViewRenderer',
-	'sap/base/util/extend',
-    'sap/ui/base/ManagedObject',
-    'sap/ui/core/DeclarativeSupport',
-    'sap/ui/core/library',
-    'sap/ui/model/resource/ResourceModel'
+	'./View',
+	'./HTMLViewRenderer',
+	'./ViewType',
+	'sap/base/util/merge',
+	'sap/ui/base/ManagedObject',
+	'sap/ui/core/DeclarativeSupport',
+	'sap/ui/model/resource/ResourceModel',
+	'sap/base/util/LoaderExtensions'
 ],
 	function(
-	    jQuery,
 		View,
 		HTMLViewRenderer,
-		extend,
+		ViewType,
+		merge,
 		ManagedObject,
 		DeclarativeSupport,
-		library,
-		ResourceModel
+		ResourceModel,
+		LoaderExtensions
 	) {
 	"use strict";
 
-	// shortcut for enum(s)
-	var ViewType = library.mvc.ViewType;
-
 	/**
-	 * Constructor for a new mvc/HTMLView.
+	 * Constructor for a new <code>HTMLView</code>.
+	 *
+	 * <strong>Note:</strong> Application code shouldn't call the constructor directly, but rather use the factory
+	 * {@link sap.ui.core.mvc.HTMLView.create HTMLView.create} or {@link sap.ui.core.mvc.View.create View.create}
+	 * with type {@link sap.ui.core.mvc.ViewType.HTML HTML}. The factory simplifies asynchronous loading of a view
+	 * and future features might be added to the factory only.
 	 *
 	 * @param {string} [sId] id for the new control, generated automatically if no id is given
 	 * @param {object} [mSettings] initial settings for the new control
@@ -44,32 +46,41 @@ sap.ui.define([
 	 * @public
 	 * @since 1.9.2
 	 * @alias sap.ui.core.mvc.HTMLView
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
+	 * @deprecated Since version 1.108, as there are no more known usages of <code>HTMLViews</code>,
+	 *    and as the use of HTML as syntax does not bring any advantages over XML. The HTML necessary for
+	 *    the <code>HTMLView</code> is not re-used for the HTML of the controls, but is fully replaced.
+	 *
+	 *    Consider using {@link sap.ui.core.mvc.XMLView XMLViews} or "typed views" (view classes
+	 *    written in JavaScript) instead. For more information, see the documentation on
+	 *    {@link topic:91f27e3e6f4d1014b6dd926db0e91070 View types}.
 	 */
-	var HTMLView = View.extend("sap.ui.core.mvc.HTMLView", /** @lends sap.ui.core.mvc.HTMLView.prototype */ { metadata : {
-
-		library : "sap.ui.core"
-	}});
+	var HTMLView = View.extend("sap.ui.core.mvc.HTMLView", /** @lends sap.ui.core.mvc.HTMLView.prototype */ {
+		metadata : {
+			library : "sap.ui.core",
+			deprecated: true
+		},
+		renderer: HTMLViewRenderer
+	});
 
 
 
 	/**
 	 * Creates an instance of a declarative HTML view.
 	 *
-	 * @param {map} mOptions A map containig the view configuration options.
-	 * @param {string} [mOptions.id] Specifies an ID for the View instance. If no ID is given, an ID will be generated.
-	 * @param {string} [mOptions.viewName] Name of the view resource in module name notation (without suffix)
-	 * @param {string} [mOptions.definition] The view definition.
-	 * @param {sap.ui.core.mvc.Controller} [mOptions.controller] Controller instance to be used for this view.
+	 * @param {object} oOptions An object containing the view configuration options.
+	 * @param {string} [oOptions.id] Specifies an ID for the view instance. If no ID is given, an ID will be generated.
+	 * @param {string} [oOptions.viewName] Name of the view resource in module name notation (without suffix)
+	 * @param {string} [oOptions.definition] The view definition.
+	 * @param {sap.ui.core.mvc.Controller} [oOptions.controller] Controller instance to be used for this view.
 	 * The given controller instance overrides the controller defined in the view definition. Sharing a controller instance
 	 * between multiple views is not supported.
 	 * @public
 	 * @static
 	 * @since 1.56.0
-	 * @return {Promise} A Promise which resolves with the created HTMLView instance
+	 * @return {Promise<sap.ui.core.mvc.HTMLView>} A promise which resolves with the created <code>HTMLView</code> instance
 	 */
-	HTMLView.create = function(mOptions) {
-		var mParameters = extend(true, {}, mOptions);
+	HTMLView.create = function(oOptions) {
+		var mParameters = merge({}, oOptions);
 		mParameters.type = ViewType.HTML;
 		return View.create(mParameters);
 	};
@@ -91,14 +102,15 @@ sap.ui.define([
 	 *
 	 * @param {string} [sId] id of the newly created view, only allowed for instance creation
 	 * @param {string | object} vView name or implementation of the view.
-	 * @param {boolean} [vView.async] defines how the view source is loaded and rendered later on
+	 * @param {boolean} [vView.async] whether the view source is loaded asynchronously
 	 * @public
 	 * @static
-	 * @deprecated since 1.56: Use HTMLView.create instead
+	 * @deprecated Since 1.56. Use {@link sap.ui.core.mvc.HTMLView.create HTMLView.create} to create view instances
 	 * @return {sap.ui.core.mvc.HTMLView | undefined} the created HTMLView instance in the creation case, otherwise undefined
+	 * @ui5-global-only
 	 */
 	sap.ui.htmlview = function(sId, vView) {
-		return sap.ui.view(sId, vView, ViewType.HTML);
+		return sap.ui.view(sId, vView, ViewType.HTML); // legacy-relevant
 	};
 
 	/**
@@ -112,6 +124,8 @@ sap.ui.define([
 	/**
 	 * Flag for feature detection of asynchronous loading/rendering
 	 * @public
+	 * @readonly
+	 * @type {boolean}
 	 * @since 1.30
 	 */
 	HTMLView.asyncSupport = true;
@@ -146,6 +160,7 @@ sap.ui.define([
 	 * Loads and returns a template for the given template name. Templates are only loaded once {@link sap.ui.core.mvc.HTMLView._mTemplates}.
 	 *
 	 * @param {string} sTemplateName The name of the template
+	 * @param {object} mOptions configuration options
 	 * @param {boolean} [mOptions.async=false] whether the action should be performed asynchronously
 	 * @return {string|Promise} the template data, or a Promise resolving with it when async
 	 * @private
@@ -198,14 +213,15 @@ sap.ui.define([
 	 * Loads and returns the template from a given URL.
 	 *
 	 * @param {string} sTemplateName The name of the template
+	 * @param {object} [mOptions] configuration options
 	 * @param {boolean} [mOptions.async=false] whether the action should be performed asynchronously
 	 * @return {string|Promise} the template data, or a Promise resolving with it when async
 	 * @private
 	 * @static
 	 */
 	HTMLView._loadTemplate = function(sTemplateName, mOptions) {
-		var sResourceName = jQuery.sap.getResourceName(sTemplateName, ".view.html");
-		return jQuery.sap.loadResource(sResourceName, mOptions);
+		var sResourceName = sTemplateName.replace(/\./g, "/") + ".view.html";
+		return LoaderExtensions.loadResource(sResourceName, mOptions);
 	};
 
 	/**
@@ -246,18 +262,20 @@ sap.ui.define([
 			var oProperties = that.getMetadata().getAllProperties();
 
 			if (oMetaElement) {
-				jQuery.each(oMetaElement.attributes, function(iIndex, oAttr) {
-					var sName = DeclarativeSupport.convertAttributeToSettingName(oAttr.name, that.getId());
-					var sValue = oAttr.value;
-					var oProperty = oProperties[sName];
-					if (!mSettings[sName]) {
+				var aAttributes = oMetaElement.getAttributeNames();
+				for (var j = 0; j < aAttributes.length; j++) {
+					var sAttributeName = aAttributes[j];
+					var sSettingName = DeclarativeSupport.convertAttributeToSettingName(sAttributeName, that.getId());
+					var sValue = oMetaElement.getAttribute(sAttributeName);
+					var oProperty = oProperties[sSettingName];
+					if (!mSettings[sSettingName]) {
 						if (oProperty) {
-							mSettings[sName] = DeclarativeSupport.convertValueToType(DeclarativeSupport.getPropertyDataType(oProperty),sValue);
-						} else if (HTMLView._mAllowedSettings[sName]) {
-							mSettings[sName] = sValue;
+							mSettings[sSettingName] = DeclarativeSupport.convertValueToType(DeclarativeSupport.getPropertyDataType(oProperty),sValue);
+						} else if (HTMLView._mAllowedSettings[sSettingName]) {
+							mSettings[sSettingName] = sValue;
 						}
 					}
-				});
+				}
 				that._oTemplate = oMetaElement;
 			}
 
@@ -274,8 +292,20 @@ sap.ui.define([
 				that._controllerName = mSettings.controllerName;
 			}
 			if ((mSettings.resourceBundleName || mSettings.resourceBundleUrl) && (!mSettings.models || !mSettings.models[mSettings.resourceBundleAlias])) {
-				var model = new ResourceModel({bundleName:mSettings.resourceBundleName, bundleUrl:mSettings.resourceBundleUrl, bundleLocale:mSettings.resourceBundleLocale});
-				that.setModel(model, mSettings.resourceBundleAlias);
+				var oModel = new ResourceModel({
+					bundleName: mSettings.resourceBundleName,
+					bundleUrl: mSettings.resourceBundleUrl,
+					bundleLocale: mSettings.resourceBundleLocale,
+					async: mSettings.async
+				});
+				var vBundle = oModel.getResourceBundle();
+				// if ResourceBundle was created with async flag vBundle will be a Promise
+				if (vBundle instanceof Promise) {
+					return vBundle.then(function() {
+						that.setModel(oModel, mSettings.resourceBundleAlias);
+					});
+				}
+				that.setModel(oModel, mSettings.resourceBundleAlias);
 			}
 		}
 
@@ -289,9 +319,9 @@ sap.ui.define([
 		if (mSettings.async) {
 			// return the promise
 			return vHTML.then(function(_vHTML) {
-					vHTML = _vHTML;
-					fnInitViewSettings();
-				});
+				vHTML = _vHTML;
+				return fnInitViewSettings();
+			});
 		}
 
 		fnInitViewSettings();
@@ -335,7 +365,7 @@ sap.ui.define([
 	 * @param {sap.ui.core.Control} oControl reference to a Control
 	 * @private
 	 */
-		HTMLView.prototype.connectControl = function(oControl) {
+	HTMLView.prototype.connectControl = function(oControl) {
 		this._connectedControls = this._connectedControls || [];
 		this._connectedControls.push(oControl);
 	};

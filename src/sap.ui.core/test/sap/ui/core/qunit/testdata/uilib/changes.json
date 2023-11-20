@@ -1,0 +1,358 @@
+{
+	"1.2.3": {
+		"date": "December 9999",
+		"notes": [
+			{
+				"id": "abc123",
+				"type": "FEATURE",
+				"text": "Super new feature",
+				"references": []
+			},
+			{
+				"id": "def456",
+				"type": "FIX",
+				"text": "Important fix",
+				"references": []
+			}
+		]
+	},
+	"1.1.2": {
+		"date": "July 2019",
+		"notes": [
+			{
+				"id": "fae5d108aeb3d82096b30026a81d0dd52bc1dd19",
+				"type": "FEATURE",
+				"text": " Theme Origin Allowlist via \u003cmeta\u003e tag",
+				"references": []
+			},
+			{
+				"id": "2dab48e8c3604099f7d2bd56741f5635d3357639",
+				"type": "FEATURE",
+				"text": " mvc/XMLView: support core:require tag",
+				"references": []
+			},
+			{
+				"id": "750f099bb6e1a598b79333d6bf8a6efed5b80fb4",
+				"type": "FEATURE",
+				"text": " sap.f.Avatar: Added option to change the background color",
+				"references": []
+			},
+			{
+				"id": "fcd8bedee36f9d962938bf8291217e1843356e27",
+				"type": "FEATURE",
+				"text": " sap.m.Breadcrumbs: Customisable separator option added",
+				"references": []
+			},
+			{
+				"id": "3439a89d0df38d5b66d933772219ee80fd6f77d7",
+				"type": "FEATURE",
+				"text": " sap.m.Input: Matching suggestion items appear selected",
+				"references": []
+			},
+			{
+				"id": "71d638bee3f0453f42e5fe4813dc45057b7d44dc",
+				"type": "FEATURE",
+				"text": " sap.m.SinglePlanningCalendar: Added one month view",
+				"references": []
+			},
+			{
+				"id": "f0b3a41e27ddfaa6f460d85692d634b5041ebf48",
+				"type": "FIX",
+				"text": " Demo Kit: Improved navigation from Samples to API Reference",
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1980281215"
+					}
+				]
+			},
+			{
+				"id": "b3fd722d43f36522538f750ec4a4f743978b624c",
+				"type": "FIX",
+				"text": " Fixing includes",
+				"references": []
+			},
+			{
+				"id": "aedfff73d43cd402175e885d60c5ff087c5f2d65",
+				"type": "FIX",
+				"text": " LocaleData: Fix wrong field expansion for custom patterns in Japanese and Chinese",
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1970346792"
+					}
+				]
+			},
+			{
+				"id": "d2adfc3e72579d4fb38e4aeff643106b36faf3a1",
+				"type": "FIX",
+				"text": " ODataModel: Preserve deep path information",
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1970290872"
+					},
+					{
+						"type": "BCP",
+						"reference": "1970340544"
+					},
+					{
+						"type": "BCP",
+						"reference": "1970310537"
+					},
+					{
+						"type": "BCP",
+						"reference": "1970259259"
+					}
+				]
+			},
+			{
+				"id": "1b2216d708d9e29686e8b9c6bd040acba6e31d2a",
+				"type": "FIX",
+				"text": " ODataTreeBindingAdapter: Prefer $count value as initial binding length",
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1970312273"
+					}
+				]
+			},
+			{
+				"id": "ae475e9c8ba546ada2427fc9687b2e3f8ea75c72",
+				"type": "FIX",
+				"text": " RenderManager: Wrong rendering when visible property is changed in onBeforeRendering",
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1980301954"
+					}
+				]
+			},
+			{
+				"id": "d6ac114c36ba84712a5577a4c71c076a1911f3ef",
+				"type": "FIX",
+				"text": " sap.f.Avatar: Fixed tooltip",
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1970322086"
+					}
+				]
+			},
+			{
+				"id": "1effdb7704149adf5b36d27d33bb5b4a6dcaba9a",
+				"type": "FIX",
+				"text": " sap.m.ActionSelect: Fixed incorrect scroll behavior",
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1980194996"
+					}
+				]
+			},
+			{
+				"id": "1c148cb064d181face45d3ed4dc0c7a978b1ce31",
+				"type": "FIX",
+				"text": " sap.m.Button: doesn\u0027t get active on drag over",
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1970231584"
+					}
+				]
+			},
+			{
+				"id": "716c18073da4b86c78e892d1cb1060ed9b64d8af",
+				"type": "FIX",
+				"text": " sap.m.CheckBox: DisplayOnly icon size aligned with specification",
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1970369576"
+					}
+				]
+			},
+			{
+				"id": "6bcbe593762750ba56ed78db551e59c200de5cc2",
+				"type": "FIX",
+				"text": " sap.m.DateTimeField: string notation pattern works correctly",
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1970280504"
+					},
+					{
+						"type": "BCP",
+						"reference": "1970192284"
+					}
+				]
+			},
+			{
+				"id": "4b8e7dfdd76fce194e56c644ca8296530fcfcf0c",
+				"type": "FIX",
+				"text": " sap.m.Input: Autocomplete set to false is now working",
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1930420658"
+					}
+				]
+			},
+			{
+				"id": "70120c408bb6872a2ea99cdac950f177b6cdc2fa",
+				"type": "FIX",
+				"text": " sap.m.MenuItem: now handles its customData correctly",
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1970286297"
+					}
+				]
+			},
+			{
+				"id": "e61e72696fda6cc526ae858abe731d260a0ccc67",
+				"type": "FIX",
+				"text": " sap.m.ObjectStatus: State is now always read",
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1980289246"
+					}
+				]
+			},
+			{
+				"id": "d628671d7be05c8de1d98a9ece804ea0e247ce83",
+				"type": "FIX",
+				"text": " sap.m.ObjectStatus: inner icon is now considered clickable",
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1970365051"
+					}
+				]
+			},
+			{
+				"id": "ae17fbeb435361bd4df78972aa1451697ae87023",
+				"type": "FIX",
+				"text": " sap.m.PlanningCalendar: Appointment selection now properly indicated",
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1970332529"
+					}
+				]
+			},
+			{
+				"id": "9375d005f0b629e2f4fd8415745e448fd3de85a0",
+				"type": "FIX",
+				"text": " sap.m.PlanningCalendar: appointments with start date later that end date are not rendered",
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "376892"
+					}
+				]
+			},
+			{
+				"id": "6bbb15baf541804673f751076fb9acb39bf9961c",
+				"type": "FIX",
+				"text": " sap.m.PullToRefresh: Focus aligned with Global Focus Concept",
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1970274638"
+					}
+				]
+			},
+			{
+				"id": "17c43d58472134da12588e023fd2db1017b4a8bf",
+				"type": "FIX",
+				"text": " sap.m.ScrollContainer: Default focus outline removed",
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1970244909"
+					}
+				]
+			},
+			{
+				"id": "176ca4d911cba1b17924353d54d50a09cd590def",
+				"type": "FIX",
+				"text": " sap.m.SegmentedButton: Clickable area is wider",
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1980014241"
+					}
+				]
+			},
+			{
+				"id": "c21316f3c46ed502c2fd68bf6ecb14e41f0e6734",
+				"type": "FIX",
+				"text": " sap.m.Select: Focusout firefox behavior fixed",
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1970364518"
+					}
+				]
+			},
+			{
+				"id": "6fa0df5c62229522042749954a06c968c8eb2850",
+				"type": "FIX",
+				"text": " sap.m.Select: aria-activedescendant is not set for IconOnly type revert",
+				"references": []
+			},
+			{
+				"id": "73c7857c3d86d3f3ccc0205478d61015a6d012f4",
+				"type": "FIX",
+				"text": " sap.m.ViewSettingsDialog: null can now be set to selectedPresetFilterItem",
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "371479"
+					}
+				]
+			},
+			{
+				"id": "5c3a8aef6e8764f8b48238ecb2aeb9ab26c853ed",
+				"type": "FIX",
+				"text": " sap.ui.rta - rta toolbar not visible after restart without pers",
+				"references": []
+			},
+			{
+				"id": "20ef47a70b12411b42ea9753a81711621b0ef75c",
+				"type": "FIX",
+				"text": " v2.ODataListBinding: correct calculation for missing sections",
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1880473575"
+					}
+				]
+			},
+			{
+				"id": "7573f9818de534c4c6db2d115b5fd305f7ade1c3",
+				"type": "FIX",
+				"text": " v2/ODataModel: Deep resolve with empty path",
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1980287335"
+					}
+				]
+			},
+			{
+				"id": "ff6203240f54d07743f98bab4459a02b14c31c3d",
+				"type": "FIX",
+				"text": " v2/ODataModel: Make processChange method more robust",
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1970379474"
+					}
+				]
+			}
+		]
+	}
+}

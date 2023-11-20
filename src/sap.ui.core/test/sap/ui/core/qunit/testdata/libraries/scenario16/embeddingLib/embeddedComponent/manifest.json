@@ -1,0 +1,12 @@
+{
+	"_version": "1.12.0",
+	"sap.app": {
+		"id": "testlibs.scenario16.embeddingLib.embeddedComponent",
+		"type": "application",
+		"title": "embeddedComponent",
+		"applicationVersion": {
+			"version": "1.0.0"
+		},
+		"embeddedBy": "../"
+	}
+}

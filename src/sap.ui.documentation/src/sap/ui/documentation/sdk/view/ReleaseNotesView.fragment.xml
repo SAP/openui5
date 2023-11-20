@@ -1,0 +1,7 @@
+<core:FragmentDefinition xmlns="sap.m"
+	xmlns:l="sap.ui.layout"
+	xmlns:core="sap.ui.core">
+	<List items="{/notes}">
+		<StandardListItem title="{type}" description="{text}" />
+	</List>
+</core:FragmentDefinition>

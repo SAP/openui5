@@ -1,0 +1,17 @@
+{
+	"@odata.metadataEtag" : "W/\"20190827145402\"",
+	"@odata.etag" : "W/\"20160619220000.0000000\"",
+	"ChangedAt" : "2016-06-26T22:00:00.000000Z",
+	"Note" : "new 3",
+	"SalesOrderID" : "NEW3",
+	"SO_2_SCHDL" : [{
+		"ScheduleKey" : "005056A71E3D1ED68DDA8CB5CA1C8B46",
+		"DeliveryDate" : "2016-06-26T22:00:00Z"
+	}, {
+		"ScheduleKey" : "005056A71E3D1ED68DDA8CB5CA1CAB46",
+		"DeliveryDate" : "2016-06-26T22:00:00Z"
+	}, {
+		"ScheduleKey" : "005056A71E3D1ED68DDA8CB5CA1CCB46",
+		"DeliveryDate" : "2016-06-26T22:00:00Z"
+	}]
+}

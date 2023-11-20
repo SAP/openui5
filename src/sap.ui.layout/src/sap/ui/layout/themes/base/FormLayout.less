@@ -42,6 +42,17 @@
 	line-height: 2rem;
 }
 
+.sapUiFormContainerTitle > .sapUiFormTitle.sapUiFormTitleExpandable{
+	overflow: visible; /* to allow to put expander outside */
+	padding-left: 2.5rem;
+}
+
+.sapUiFormContainerTitle > .sapUiFormTitle.sapUiFormTitleExpandable > button{
+	position: absolute;
+	left: -0.25rem;
+	padding-right: 0.5rem;
+}
+
 .sapUiFormTitle.sapUiFormTitleEmph {
 	border-color: @sapUiGroupTitleBorderColor;
 }
@@ -84,6 +95,14 @@
 	margin-bottom: 0.5rem;
 }
 
+.sapUiFormToolbar > div:first-child >.sapMTitle.sapMTitleStyleAuto{
+	font-size: @sapMFontHeader4Size;
+}
+
+.sapUiFormContainerToolbar > div:first-child >.sapMTitle.sapMTitleStyleAuto{
+	font-size: @sapMFontHeader5Size;
+}
+
 .sapUiFormM .sapUiFormContainerTitle > .sapUiFormTitle {
 	height: 3rem;
 	line-height: 3rem;
@@ -92,4 +111,9 @@
 .sapUiSizeCompact .sapUiFormContainerTitle > .sapUiFormTitle {
 	height: 2rem;
 	line-height: 2rem;
+}
+
+/* SemanticFormElement */
+.sapUiForm .sapUiFormDelimiter { /* add Form class to make sure to overwrite sapMText setting */
+	white-space: pre-wrap; /* To render whitespaces in display mode if controls are rendered */
 }

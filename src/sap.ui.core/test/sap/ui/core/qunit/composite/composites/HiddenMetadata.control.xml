@@ -1,0 +1,5 @@
+<FragmentDefinition xmlns:m="sap.m" xmlns="sap.ui.core">
+	<m:HBox id="focus">
+		<m:Text text="{$this>_text}"/>
+	</m:HBox>
+</FragmentDefinition>

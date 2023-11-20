@@ -1,27 +1,22 @@
 <mvc:View
-	controllerName="sap.m.sample.Title.V"
-	xmlns:mvc="sap.ui.core.mvc"
+	controllerName="sap.m.sample.Title.C"
 	xmlns="sap.m"
-	xmlns:c="sap.ui.core"
+	xmlns:mvc="sap.ui.core.mvc"
 	height="100%">
-	<Page enableScrolling="true" title="Page Header Title" titleLevel="H2" showFooter="false">
-		<content>
-			<List items="{/ProductCollection}" >
-				<items>
-					<StandardListItem
-						title="{Name}"
-						description="{ProductId}"/>
-				</items>
-				<headerToolbar>
-					<Toolbar>
-						<Title level="H3" text="Products" />
-						<ToolbarSpacer />
-						<Button
-							icon="sap-icon://settings"
-							press="handleButtonPress" />
-					</Toolbar>
-				</headerToolbar>
-			</List>
-		</content>
+	<Page
+		enableScrolling="true"
+		title="Page Header Title"
+		titleLevel="H2"
+		showFooter="false">
+		<List items="{/ProductCollection}">
+			<headerToolbar>
+				<Toolbar>
+					<Title level="H3" text="Products" />
+					<ToolbarSpacer />
+					<Button icon="sap-icon://settings" press=".handleButtonPress" />
+				</Toolbar>
+			</headerToolbar>
+			<StandardListItem title="{Name}" description="{ProductId}" />
+		</List>
 	</Page>
 </mvc:View>

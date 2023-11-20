@@ -1,7 +1,9 @@
 /*global QUnit*/
 
 sap.ui.define([
-	"sap/ui/test/opaQunit"
+	"sap/ui/test/opaQunit",
+	"./pages/NotFound",
+	"./pages/Master"
 ], function (opaTest) {
 	"use strict";
 
@@ -9,10 +11,7 @@ sap.ui.define([
 
 	opaTest("Should see the not found page if the hash is something that matches no route", function (Given, When, Then) {
 		// Arrangements
-		Given.iStartTheApp({ hash : "somethingThatDoesNotExist" });
-
-		// Actions
-		When.onTheNotFoundPage.iLookAtTheScreen();
+		Given.iStartMyApp({hash: "somethingThatDoesNotExist"});
 
 		// Assertions
 		Then.onTheNotFoundPage.iShouldSeeTheNotFoundPage().
@@ -24,16 +23,15 @@ sap.ui.define([
 		When.onTheNotFoundPage.iPressTheBackButton("NotFound");
 
 		// Assertions
-		Then.onTheMasterPage.iShouldSeeTheList().
-			and.iTeardownMyAppFrame();
+		Then.onTheMasterPage.iShouldSeeTheList();
+
+		// Cleanup
+		Then.iTeardownMyApp();
 	});
 
-	opaTest("Should see the not found master and detail page if an invalid object id has been called", function (Given, When, Then) {
+	opaTest("Should see the not found detail page if an invalid object id has been called", function (Given, When, Then) {
 		// Arrangements
-		Given.iStartTheApp({ hash : "/Objects/SomeInvalidObjectId" });
-
-		// Actions
-		When.onTheNotFoundPage.iLookAtTheScreen();
+		Given.iStartMyApp({hash: "/Objects/SomeInvalidObjectId"});
 
 		// Assertions
 		Then.onTheNotFoundPage.iShouldSeeTheObjectNotFoundPage().
@@ -45,20 +43,25 @@ sap.ui.define([
 		When.onTheNotFoundPage.iPressTheBackButton("DetailObjectNotFound");
 
 		// Assertions
-		Then.onTheMasterPage.iShouldSeeTheList().
-			and.iTeardownMyAppFrame();
+		Then.onTheMasterPage.iShouldSeeTheList();
+
+		// Cleanup
+		Then.iTeardownMyApp();
 	});
+
 
 	opaTest("Should see the not found text for no search results", function (Given, When, Then) {
 		// Arrangements
-		Given.iStartTheApp();
+		Given.iStartMyApp();
 
 		// Actions
-		When.onTheMasterPage.iSearchForSomethingWithNoResults();
+		When.onTheMasterPage.iSearchForNotFound();
 
 		// Assertions
-		Then.onTheMasterPage.iShouldSeeTheNoDataTextForNoSearchResults().
-			and.iTeardownMyAppFrame();
+		Then.onTheMasterPage.iShouldSeeTheNoDataText();
+
+		// Cleanup
+		Then.iTeardownMyApp();
 	});
 
 });

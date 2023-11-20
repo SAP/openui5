@@ -1,0 +1,78 @@
+{
+	"sap.app": {
+		"id": "cardsdemo.object.card12",
+		"type": "card",
+		"i18n": "i18n/i18n.properties"
+	},
+	"sap.card": {
+		"type": "Object",
+		"data": {
+			"request": {
+				"url": "./employee.json"
+			}
+		},
+		"header": {
+			"icon": {
+				"src": "{photo}"
+			},
+			"title": "{firstName} {lastName}",
+			"subTitle": "{position}"
+		},
+		"content": {
+			"groups": [
+				{
+					"items": [
+						{
+							"label": "{{firstName}}",
+							"value": "{firstName}"
+						},
+						{
+							"label": "{{lastName}}",
+							"value": "{lastName}"
+						},
+						{
+							"label": "{{phone}}",
+							"value": "{phone}"
+						}
+					]
+				},
+				{
+					"title": "{{organizationalDetails}}",
+					"items": [
+						{
+							"label": "Very long label that shouldn't hide the avatar.",
+							"value": "{manager/firstName} {manager/lastName}",
+							"icon": {
+								"src": "{manager/photo}"
+							}
+						},
+						{
+							"label": "{= ${assistant/firstName} !== 'Donna' ? 'Assistant' : ''}",
+							"value": "{assistant/firstName} {assistant/lastName}",
+							"icon": {
+								"src": "{assistant/photo}"
+							}
+						}
+					]
+				},
+				{
+					"title": "{{companyDetails}}",
+					"items": [
+						{
+							"label": "{{companyName}}",
+							"value": "{company/name}"
+						},
+						{
+							"label": "{{address}}",
+							"value": "{company/address}"
+						},
+						{
+							"label": "{{website}}",
+							"value": "{company/website}"
+						}
+					]
+				}
+			]
+		}
+	}
+}

@@ -1,2 +1,4 @@
 target/
 test/
+.eslintignore
+pom.xml

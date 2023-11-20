@@ -1,0 +1,69 @@
+{
+	"_version": "1.15.0",
+	"sap.app": {
+		"id": "card.explorer.table.card",
+		"type": "card",
+		"title": "Sample of a Table Card",
+		"subTitle": "Sample of a Table Card",
+		"applicationVersion": {
+			"version": "1.0.0"
+		},
+		"shortTitle": "A short title for this Card",
+		"info": "Additional information about this Card",
+		"description": "A long description for this Card",
+		"tags": {
+			"keywords": [
+				"Table",
+				"Card",
+				"Sample"
+			]
+		}
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"icons": {
+			"icon": "sap-icon://table-view"
+		}
+	},
+	"sap.card": {
+		"type": "Table",
+		"designtime": "dt/Configuration",
+		"data": {
+			"request": {
+				"url": "../mock/data2.json",
+				"cache": {
+					"maxAge": 0,
+					"staleWhileRevalidate": true
+				}
+			}
+		},
+		"header": {
+			"title": "Stale while revalidate",
+			"subTitle": "Data is not changed"
+		},
+		"content": {
+			"row": {
+				"columns": [{
+						"title": "Sales Order",
+						"value": "{salesOrder}",
+						"identifier": true
+					},
+					{
+						"title": "Customer",
+						"value": "{customerName}"
+					},
+					{
+						"title": "Net Amount",
+						"value": "{netAmount}",
+						"hAlign": "End"
+					},
+					{
+						"title": "Status",
+						"value": "{status}",
+						"state": "{statusState}"
+					}
+				]
+			}
+		}
+	}
+}

@@ -1,0 +1,35 @@
+<mvc:View
+	controllerName="sap.m.sample.QuickView.C"
+	xmlns="sap.m"
+	xmlns:mvc="sap.ui.core.mvc">
+	<VBox class="sapUiSmallMargin">
+		<Button
+			id="employeeQuickView"
+			text="Employee QuickView"
+			width="200px"
+			press=".handleEmployeeQuickViewPress"
+			class="sapUiSmallMarginBottom"
+			ariaHasPopup="Dialog" />
+		<Button
+			id="showQuickView"
+			text="Company QuickView"
+			width="200px"
+			press=".handleCompanyQuickViewPress"
+			class="sapUiSmallMarginBottom"
+			ariaHasPopup="Dialog" />
+		<Button
+			id="genericQuickView"
+			text="Generic QuickView"
+			width="200px"
+			press=".handleGenericQuickViewPress"
+			class="sapUiSmallMarginBottom"
+			ariaHasPopup="Dialog" />
+		<Button
+			id="genericQuickViewNoHeader"
+			text="Generic QuickView No Header Set"
+			width="250px"
+			press=".handleGenericNoHeaderQuickViewPress"
+			class="sapUiSmallMarginBottom"
+			ariaHasPopup="Dialog" />
+	</VBox>
+</mvc:View>

@@ -1,0 +1,360 @@
+/* ============================= */
+/* CSS for control sap.m/Select  */
+/* Evening Horizon theme         */
+/* ============================= */
+
+/* IconOnly */
+
+.sapMSlt.sapMSltIconOnly:not(.sapMSltDisabled) {
+	border-color: @sapUiButtonLiteBorderColor;
+	background: @sapUiButtonLiteBackground;
+	border-radius: 0.2rem;
+}
+
+/* IconOnly Hover */
+
+.sapMSlt.sapMSltIconOnly.sapMSltHoverable:hover:not(.sapMSltState) {
+	background: @sapUiFieldHoverBackground;
+    border: none;
+
+	&.sapMSltWithIcon {
+        box-shadow: inset 0px 0px 0px @sapUiContentFocusWidth @sapUiFieldActiveBorderColor;
+	}
+}
+
+/* ------------------------------------------------ */
+/* IconOnly Select in a Bar                                 */
+/* ------------------------------------------------ */
+.sapMIBar .sapMSltIconOnly:not(.sapMSltDisabled) .sapMSltIcon {
+	color: @sapUiButtonLiteTextColor;
+}
+
+/*IconOnly Pressed */
+.sapMSltPressed.sapMSltIconOnly:not(.sapMSltDisabled) {
+	background: @sapUiToggleButtonPressedBackground;
+    .sapMSltIcon {
+        color: @sapUiFieldTextColor;;
+    }
+}
+
+.sapMSlt:not(.sapMSltIconOnly) {
+	border-radius: @sapUiFieldBorderCornerRadius;
+}
+
+.sapMSlt {
+    font-family: @sapFontFamily;
+    font-size: @sapFontSize;
+	height: @sapUiElementHeight;
+    border: none;
+    background-image: linear-gradient(0deg, @sapUiFieldBorderColor 0, @sapUiFieldBorderColor 100%);
+    background-size: 100% @sapUiFieldBorderWidth;
+    background-repeat: repeat-x;
+    background-position: bottom;
+    box-shadow: @sapUiFieldShadow;
+}
+
+.sapUiSizeCompact .sapMSlt {
+	height: @sapUiElementCompactHeight;
+}
+
+.sapMSlt > .sapMSltArrow {
+	line-height: 2.25rem;
+    background-color: transparent !important;
+}
+
+.sapMSlt:not(.sapMSltState).sapMSltPressed > .sapMSltArrow::before {
+	color: @sapUiButtonSelectedTextColor;
+}
+
+.sapMSlt.sapMSltPressed,
+.sapMSltPressed > .sapMSltArrow {
+	background: @sapUiFieldHoverBackground;
+}
+
+html.sap-desktop .sapMSlt.sapMSltFocused:not(.sapMSltExpanded):not(.sapMSltDisabled):not(.sapMSltState):before {
+	outline-offset: -2px;
+}
+
+html.sap-desktop .sapMSlt.sapMSltFocused:not(.sapMSltExpanded):not(.sapMSltDisabled).sapMSltState:before {
+	outline-offset: -2px;
+}
+
+
+html.sap-desktop .sapMSltIconOnly.focus:not(.sapMSltExpanded):not(.sapMSltDisabled).sapMSltPressed {
+	outline-color: @sapUiContentContrastFocusColor;
+}
+
+.sapMSltHoverable:not(.sapMSltState):not(.sapMSltIconOnly):hover {
+	background: @sapUiFieldHoverBackground;
+    border-color: @sapUiFieldHoverBorderColor;
+    box-shadow: @sapUiFieldHoverShadow;
+
+	.sapMSltArrow {
+		border-radius: @sapUiFieldBorderCornerRadius;
+	}
+}
+
+.sapMSltHoverable.sapMSltPressed:not(.sapMSltState):not(.sapMSltIconOnly):hover .sapMSltArrow {
+	border-radius: 0.125rem;
+}
+
+/* pressed and hover */
+
+.sapMSltIconOnly.sapMSltPressed.sapMSltHoverable:not(.sapMSltState):hover {
+	background: @sapUiToggleButtonPressedHoverBackground;
+	border-color: @sapUiFieldActiveBorderColor;
+}
+
+/* value state */
+
+.sapMSltState {
+	border-width: 2px;
+}
+
+/* disabled */
+
+.sapMSltDisabled {
+	opacity: @sapUiContentDisabledOpacity;
+}
+
+.sapMSlt.sapMSltReadonly {
+    border-color: @sapUiFieldReadOnlyBorderColor;
+    background:@sapUiFieldReadOnlyBackgroundStyle;
+    background-color: @sapUiFieldReadOnlyBackground;
+    box-shadow: none;
+}
+
+div.sapMSltPicker .sapMSltPickerValueState {
+	box-shadow: inset 0 -0.0625rem @_sap_m_Dialog_HeaderShadowColor;
+}
+
+.sapUiSizeCompact .sapMSlt > .sapMSltArrow {
+	line-height: 1.625rem;
+}
+
+.sapMSltMinWidth {
+    min-width: 2.75rem;
+}
+
+.sapUiSizeCompact .sapMSltMinWidth {
+    min-width: 2rem;
+}
+
+.sapMSltHoverable:not(.sapMSltState):not(.sapMSltIconOnly):hover {
+    border:none;
+    box-shadow: @sapUiFieldHoverShadow;
+	border: none;
+    background-image: linear-gradient(0deg, @sapUiFieldBorderColor 0, @sapUiFieldBorderColor 100%);
+    background-size: 100% @sapUiFieldBorderWidth;
+    background-repeat: repeat-x;
+    background-position: bottom;
+}
+
+.sapMSltPressed:not(.sapMSltDisabled):not(.sapMSltState),
+.sapMSlt.sapMSltFocused:not(.sapMSltDisabled):not(.sapMSltState) {
+	background: @sapUiFieldBackground;
+    border: none;
+    &:not(.sapMSltExpanded) {
+        box-shadow: inset 0px 0px 0px @sapUiContentFocusWidth @sapUiFieldActiveBorderColor;
+    }
+}
+
+.sapMSltHoverable:not(.sapMSltState):not(.sapMSltIconOnly):active {
+    border:none;
+}
+
+.sapMSltArrow {
+    width: 2.25rem;
+    height: 2.25rem;
+
+	&:hover {
+		box-shadow: @sapUiFieldHoverShadow;
+	}
+}
+
+.sapUiSizeCompact .sapMSltArrow {
+    width: 2rem;
+    height: 1.625rem;
+}
+
+.sapMSltPressed >.sapMSltArrow,
+.sapMSlt:hover > .sapMSltArrow {
+    background-color: @sapUiButtonActiveBackground;
+    overflow: none;
+    border-radius: 0.125rem;
+}
+
+
+/* focus */
+html.sap-desktop .sapMSlt.sapMSltFocused:not(.sapMSltExpanded):not(.sapMSltDisabled) {
+    &:before {
+        box-shadow: inset 0px 0px 0px 2px @sapUiFieldFocusBorderColor;
+    }
+}
+
+// =====================================
+// Input Information state
+// =====================================
+.sapMSltInformation {
+    border: none;
+    background-image: linear-gradient(0deg, @sapUiFieldInformationColor 0, @sapUiFieldInformationColor 100%);
+    background-size: 100% @sapUiFieldInformationBorderWidth;
+    background-repeat: repeat-x;
+    background-position: bottom;
+    background-color: @sapUiFieldInformationBackground;
+    box-shadow: @sapUiFieldInformationShadow;
+}
+
+.sapMSltInformation.sapMSltHoverable:not(.sapMSltIconOnly):not(.sapMSltDisabled):not(.sapMSltPressed):hover {
+    border-color: @sapUiFieldInformationColor;
+    box-shadow: @sapUiFieldHoverInformationShadow;
+    background-color: @sapUiFieldHoverBackground;
+
+    &:not(.sapMSltFocused) {
+        box-shadow: @sapUiFieldHoverInformationShadow; // NEW Parameter
+    }
+}
+
+.sapMSltHoverable.sapMSltInformation:not(.sapMSltIconOnly):active,
+.sapMSltFocused.sapMSltInformation {
+    border-bottom: none;
+    box-shadow: inset 0px 0px 0px 2px @sapUiFieldInformationColor;
+    background-color: @sapUiFieldFocusBackground;
+}
+
+.sapMSltInformation.sapMSltPressed {
+    .sapMSltArrow {
+        color: @sapUiButtonSelectedTextColor;
+        box-shadow: @sapUiFieldHoverInformationShadow;
+    }
+    > .sapMSltArrow::before {
+        color: inherit;
+    }
+}
+
+// =====================================
+// Input Success state
+// =====================================
+
+.sapMSltSuccess {
+    border: none;
+    background-image: linear-gradient(0deg, @sapUiFieldSuccessColor 0, @sapUiFieldSuccessColor 100%);
+    background-size: 100% @sapUiFieldSuccessBorderWidth;
+    background-repeat: repeat-x;
+    background-position: bottom;
+    background-color: @sapUiFieldSuccessBackground;
+    box-shadow: @sapUiFieldSuccessShadow;
+}
+
+.sapMSltSuccess.sapMSltHoverable:not(.sapMSltIconOnly):not(.sapMSltDisabled):not(.sapMSltPressed):hover  {
+    border-color: @sapUiFieldSuccessColor;
+    box-shadow: @sapUiFieldHoverSuccessShadow;
+    background-color: @sapUiFieldHoverBackground;
+
+    &:not(.sapMSltFocused) {
+        box-shadow: @sapUiFieldHoverSuccessShadow; // New Parameter
+    }
+}
+
+// Field Success Focus - Experimental
+.sapMSltHoverable.sapMSltSuccess:not(.sapMSltIconOnly):active,
+.sapMSltFocused.sapMSltSuccess {
+    border-bottom: none;
+    box-shadow: inset 0px 0px 0px 2px @sapUiFieldSuccessColor;
+    border-radius: @sapUiFieldBorderCornerRadius;
+    background-color: @sapUiFieldFocusBackground;
+}
+
+.sapMSltSuccess.sapMSltPressed {
+    .sapMSltArrow {
+        color: @sapUiButtonAcceptSelectedTextColor;
+        box-shadow: @sapUiFieldHoverSuccessShadow;
+    }
+    > .sapMSltArrow::before {
+        color: inherit;
+    }
+}
+
+// =====================================
+// Input Warning state
+// =====================================
+
+.sapMSltWarning {
+    border: none;
+    background-image: linear-gradient(0deg, @sapUiFieldWarningColor 0, @sapUiFieldWarningColor 100%);
+    background-size: 100% @sapUiFieldWarningBorderWidth;
+    background-repeat: repeat-x;
+    background-position: bottom;
+    background-color: @sapUiFieldWarningBackground;
+    box-shadow: @sapUiFieldWarningShadow;
+}
+
+.sapMSltWarning.sapMSltHoverable:not(.sapMSltIconOnly):not(.sapMSltDisabled):not(.sapMSltPressed):hover {
+    border-color: @sapUiFieldWarningColor;
+    box-shadow: @sapUiFieldHoverWarningShadow;
+    background-color: @sapUiFieldHoverBackground;
+
+    &:not(.sapMSltFocused) {
+        box-shadow: @sapUiFieldHoverWarningShadow; // NEW Parameter
+    }
+}
+
+// Field Warning Focus - Experimental
+.sapMSltHoverable.sapMSltWarning:not(.sapMSltIconOnly):active,
+.sapMSltFocused.sapMSltWarning {
+    border-bottom: none;
+    box-shadow: inset 0px 0px 0px 2px @sapUiFieldWarningColor; // Experimental
+    background-color: @sapUiFieldFocusBackground;
+}
+
+.sapMSltWarning.sapMSltPressed {
+    .sapMSltArrow {
+        color: @sapUiButtonAttentionSelectedTextColor;
+        box-shadow: @sapUiFieldHoverWarningShadow;
+    }
+    > .sapMSltArrow::before {
+        color: inherit;
+    }
+}
+
+// =====================================
+// Input Error state
+// =====================================
+
+.sapMSltError {
+    border: none;
+    background-image: linear-gradient(0deg, @sapUiFieldInvalidColor 0, @sapUiFieldInvalidColor 100%);
+    background-size: 100% @sapField_InvalidBorderWidth;
+    background-repeat: repeat-x;
+    background-position: bottom;
+    background-color: @sapUiFieldInvalidBackgroundStyle;
+    box-shadow: @sapUiFieldInvalidShadow;
+}
+
+.sapMSltError.sapMSltHoverable:not(.sapMSltIconOnly):not(.sapMSltDisabled):not(.sapMSltPressed):hover {
+    border-color: @sapUiFieldInvalidColor;
+    box-shadow: @sapUiFieldHoverInvalidShadow;
+    background-color: @sapUiFieldHoverBackground;
+
+    &:not(.sapMSltFocused) {
+        box-shadow: @sapUiFieldHoverInvalidShadow; // NEW Parameter
+    }
+}
+
+// Field Error Focus - Experimental
+.sapMSltHoverable.sapMSltError:not(.sapMSltIconOnly):active,
+.sapMSltFocused.sapMSltError {
+    border-bottom: none;
+    box-shadow: inset 0px 0px 0px 2px @sapUiFieldInvalidColor;
+    background-color: @sapUiFieldFocusBackground;
+}
+
+.sapMSltError.sapMSltPressed {
+    .sapMSltArrow {
+        color: @sapUiFieldInvalidColor;
+        box-shadow: @sapUiFieldHoverInvalidShadow;
+    }
+    > .sapMSltArrow::before {
+        color: inherit;
+    }
+}

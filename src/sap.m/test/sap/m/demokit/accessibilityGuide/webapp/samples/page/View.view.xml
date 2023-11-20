@@ -1,0 +1,94 @@
+<mvc:View
+		xmlns="sap.m"
+		xmlns:mvc="sap.ui.core.mvc">
+	<App>
+		<Page
+				id="page"
+				backgroundDesign="Solid">
+			<landmarkInfo>
+				<PageAccessibleLandmarkInfo
+						rootRole="Region"
+						rootLabel="Product Details"
+						contentRole="Main"
+						contentLabel="Product Description"
+						headerRole="Region"
+						headerLabel="Product Header"
+						subHeaderRole="Region"
+						subHeaderLabel="Category Description"
+						footerRole="Region"
+						footerLabel="Product Footer"/>
+			</landmarkInfo>
+			<customHeader>
+				<Bar>
+					<contentMiddle>
+						<Title
+								level="H2"
+								text="Flat Watch HD37"/>
+					</contentMiddle>
+					<contentRight>
+						<Button
+								icon="sap-icon://customer"
+						/>
+						<ToggleButton
+								icon="sap-icon://cart">
+						</ToggleButton>
+					</contentRight>
+				</Bar>
+			</customHeader>
+			<subHeader>
+				<Toolbar>
+					<Text class="sapUiTinyMarginBegin" text="Category: LCD screens"/>
+					<ToolbarSpacer/>
+				</Toolbar>
+			</subHeader>
+			<footer>
+				<Toolbar>
+					<ToolbarSpacer/>
+					<Button
+							text="Add to cart"
+							type="Emphasized"
+					/>
+				</Toolbar>
+			</footer>
+			<content>
+				<ObjectHeader
+						title="Flat Watch HD37"
+						titleLevel="H3"
+						numberUnit="EUR">
+					<attributes>
+						<ObjectAttribute
+								title="Supplier"
+								text="Very Best Screens"/>
+						<ObjectAttribute
+								title="Description"
+								text="37-inch, 1366x768 Pixel, 16:9, HDTV ready"/>
+						<ObjectAttribute
+								title="Weight"
+								text="2.2 KG"/>
+						<ObjectAttribute
+								title="Measures"
+								text="99.1 cm, 26 cm, 61 cm"/>
+					</attributes>
+					<statuses>
+						<ObjectStatus
+								text="ScreensAvailable"
+								state="Success"/>
+					</statuses>
+				</ObjectHeader>
+				<VBox
+						alignItems="Center"
+						renderType="Div">
+					<Image
+							id="productImage"
+							src="./Measures.jpeg"
+							decorative="true"
+							densityAware="false"
+							class="sapUiSmallMargin"
+							width="100%"
+							height="100%">
+					</Image>
+				</VBox>
+			</content>
+		</Page>
+	</App>
+</mvc:View>

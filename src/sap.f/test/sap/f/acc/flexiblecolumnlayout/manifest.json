@@ -1,0 +1,97 @@
+{
+	"sap.ui5": {
+		"dependencies": {
+			"minUI5Version": "1.98.0",
+			"libs": {
+				"sap.f": {},
+				"sap.m": {},
+				"sap.ui.core": {}
+			}
+		},
+		"config": {
+			"fullWidth": true
+		},
+		"rootView": {
+			"async": true,
+			"type": "XML",
+			"viewName": "flexiblecolumnlayout.FlexibleColumnLayout"
+		},
+		"routing": {
+			"config": {
+				"routerClass": "sap.f.routing.Router",
+				"type": "View",
+				"viewType": "XML",
+				"path": "flexiblecolumnlayout",
+				"controlId": "fcl",
+				"transition": "slide",
+				"bypassed": {
+				},
+				"async": true
+			},
+			"routes": [
+				{
+					"pattern": "page2",
+					"name": "page2",
+					"target": "page2",
+					"layout": "EndColumnFullScreen"
+				},
+				{
+					"pattern": "page3",
+					"name": "page3",
+					"target": "page3",
+					"layout": "EndColumnFullScreen"
+				},
+				{
+					"pattern": ":layout:",
+					"name": "list",
+					"target": [
+						"list"
+					]
+				},
+				{
+					"pattern": "detail/{layout}",
+					"name": "detail",
+					"target": [
+						"list",
+						"detail"
+					]
+				},
+				{
+					"pattern": "detailDetail/{layout}",
+					"name": "detailDetail",
+					"target": [
+						"list",
+						"detail",
+						"detailDetail"
+					]
+				}
+			],
+			"targets": {
+				"list": {
+					"name": "List",
+					"controlAggregation": "beginColumnPages"
+				},
+				"detail": {
+					"name": "Detail",
+					"controlAggregation": "midColumnPages"
+				},
+				"detailDetail": {
+					"name": "DetailDetail",
+					"controlAggregation": "endColumnPages"
+				},
+				"page2": {
+					"name": "Page2",
+					"controlAggregation": "endColumnPages"
+				},
+				"page3": {
+					"name": "Page3",
+					"controlAggregation": "endColumnPages"
+				},
+				"detailEmpty": {
+					"name": "DetailEmpty",
+					"controlAggregation": "midColumnPages"
+				}
+			}
+		}
+	}
+}

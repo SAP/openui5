@@ -4,20 +4,32 @@
 
 // Provides control sap.m.ProgressIndicator.
 sap.ui.define([
-	'jquery.sap.global',
 	'./library',
 	'sap/ui/core/Control',
+	"sap/ui/Device",
+	'sap/ui/core/Icon',
+	"sap/ui/core/Lib",
+	'sap/ui/core/ResizeHandler',
 	'sap/ui/core/ValueStateSupport',
 	'sap/ui/core/library',
-	'./ProgressIndicatorRenderer'
+	'./ProgressIndicatorRenderer',
+	"sap/base/Log",
+	"sap/m/Popover",
+	"sap/m/Text"
 ],
 	function(
-	jQuery,
-	library,
-	Control,
-	ValueStateSupport,
-	coreLibrary,
-	ProgressIndicatorRenderer
+		library,
+		Control,
+		Device,
+		Icon,
+		Library,
+		ResizeHandler,
+		ValueStateSupport,
+		coreLibrary,
+		ProgressIndicatorRenderer,
+		Log,
+		Popover,
+		Text
 	) {
 	"use strict";
 
@@ -29,7 +41,8 @@ sap.ui.define([
 	// shortcut for sap.ui.core.ValueState
 	var ValueState = coreLibrary.ValueState;
 
-
+	// shortcut for sap.m.PlacementType
+	var PlacementType = library.PlacementType;
 
 	/**
 	 * Constructor for a new ProgressIndicator.
@@ -52,167 +65,329 @@ sap.ui.define([
 	 * @public
 	 * @since 1.13.1
 	 * @alias sap.m.ProgressIndicator
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
-	var ProgressIndicator = Control.extend("sap.m.ProgressIndicator", /** @lends sap.m.ProgressIndicator.prototype */ { metadata : {
+	var ProgressIndicator = Control.extend("sap.m.ProgressIndicator", /** @lends sap.m.ProgressIndicator.prototype */ {
+		metadata : {
 
-		interfaces : ["sap.ui.core.IFormContent"],
-		library : "sap.m",
-		properties : {
-			/**
-			 * Switches enabled state of the control. Disabled fields have different colors, and cannot be focused.
-			 */
-			enabled : {type : "boolean", group : "Behavior", defaultValue : true},
+			interfaces : ["sap.ui.core.IFormContent"],
+			library : "sap.m",
+			properties : {
+				/**
+				 * Switches enabled state of the control. Disabled fields have different colors, and cannot be focused.
+				 */
+				enabled : {type : "boolean", group : "Behavior", defaultValue : true},
 
-			/**
-			 * Specifies the state of the bar. Enumeration sap.ui.core.ValueState provides Error (red), Warning (yellow), Success (green), None (blue) (default value).
-			 */
-			state : {type : "sap.ui.core.ValueState", group : "Appearance", defaultValue : ValueState.None},
+				/**
+				 * Specifies the state of the bar. Enumeration sap.ui.core.ValueState provides Error, Warning, Success, Information, None (default value).
+				 * The color for each state depends on the theme.
+				 */
+				state : {type : "sap.ui.core.ValueState", group : "Appearance", defaultValue : ValueState.None},
 
-			/**
-			 * Specifies the text value to be displayed in the bar.
-			 */
-			displayValue : {type : "string", group : "Appearance", defaultValue : null},
+				/**
+				 * Specifies the text value to be displayed in the bar.
+				 */
+				displayValue : {type : "string", group : "Appearance", defaultValue : null},
 
-			/**
-			 * Specifies the numerical value in percent for the length of the progress bar.
-			 *
-			 * <b>Note:</b> If a value greater than 100 is provided, the <code>percentValue</code> is set to 100.
-			 * In other cases of invalid value, <code>percentValue</code> is set to its default of 0.
-			 */
-			percentValue : {type : "float", group : "Data", defaultValue : 0},
+				/**
+				 * Specifies the numerical value in percent for the length of the progress bar.
+				 *
+				 * <b>Note:</b> If a value greater than 100 is provided, the <code>percentValue</code> is set to 100.
+				 * In other cases of invalid value, <code>percentValue</code> is set to its default of 0.
+				 */
+				percentValue : {type : "float", group : "Data", defaultValue : 0},
 
-			/**
-			 * Indicates whether the displayValue should be shown in the ProgressIndicator.
-			 */
-			showValue : {type : "boolean", group : "Appearance", defaultValue : true},
+				/**
+				 * Indicates whether the displayValue should be shown in the ProgressIndicator.
+				 */
+				showValue : {type : "boolean", group : "Appearance", defaultValue : true},
 
-			/**
-			 * Specifies the width of the control.
-			 */
-			width : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : '100%'},
+				/**
+				 * Specifies the width of the control.
+				 */
+				width : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : '100%'},
 
-			/**
-			 * Specifies the height of the control. The default value depends on the theme. Suggested size for normal use is 2.5rem (40px). Suggested size for small size (like for use in ObjectHeader) is 1.375rem (22px).
-			 * @since 1.15.0
-			 */
-			height : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : null},
+				/**
+				 * Specifies the height of the control. The default value depends on the theme. Suggested size for normal use is 2.5rem (40px). Suggested size for small size (like for use in ObjectHeader) is 1.375rem (22px).
+				 * @since 1.15.0
+				 */
+				height : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : null},
 
-			/**
-			 * Specifies the element's text directionality with enumerated options (RTL or LTR). By default, the control inherits text direction from the DOM.
-			 * @since 1.28.0
-			 */
-			textDirection : {type : "sap.ui.core.TextDirection", group : "Appearance", defaultValue : TextDirection.Inherit},
+				/**
+				 * Specifies the element's text directionality with enumerated options (RTL or LTR). By default, the control inherits text direction from the DOM.
+				 * @since 1.28.0
+				 */
+				textDirection : {type : "sap.ui.core.TextDirection", group : "Appearance", defaultValue : TextDirection.Inherit},
 
-			/**
-			 * Determines whether the control is in display-only state where the control has different visualization and cannot be focused.
-			 * @since 1.50
-			 */
-			displayOnly : {type : "boolean", group : "Behavior", defaultValue : false}
+				/**
+				 * Determines whether the control is in display-only state where the control has different visualization and cannot be focused.
+				 * @since 1.50
+				 */
+				displayOnly : {type : "boolean", group : "Behavior", defaultValue : false},
+
+				/**
+				 * Determines whether a percentage change is displayed with animation.
+				 * @since 1.73
+				 */
+				displayAnimation : {type : "boolean", group : "Behavior", defaultValue : true}
+			},
+			aggregations: {
+				_popover: {type: "sap.m.Popover", multiple: false, visibility: "hidden"}
+			},
+			associations : {
+				/**
+				 * Association to controls / IDs which describe this control (see WAI-ARIA attribute aria-describedby).
+				 * @since 1.69
+				 */
+				ariaDescribedBy : {type : "sap.ui.core.Control", multiple : true, singularName : "ariaDescribedBy"},
+
+				/**
+				 * Association to controls / IDs which label this control (see WAI-ARIA attribute aria-labelledBy).
+				 * @since 1.69
+				 */
+				ariaLabelledBy: {type : "sap.ui.core.Control", multiple : true, singularName : "ariaLabelledBy"}
+			},
+			designtime: "sap/m/designtime/ProgressIndicator.designtime"
 		},
-		designtime: "sap/m/designtime/ProgressIndicator.designtime"
-	}});
 
-	var bUseAnimations = sap.ui.getCore().getConfiguration().getAnimation();
+		renderer: ProgressIndicatorRenderer
+	});
+
+	ProgressIndicator.RESIZE_HANDLER_ID = {
+		SELF: "_sResizeHandlerId"
+	};
+
+	ProgressIndicator.prototype.init = function () {
+		this._bIEBrowser = Device.browser.internet_explorer;
+
+		// The difference between the old and new values, used to calulate the animation duration
+		this._fPercentValueDiff = 0;
+	};
+
+	ProgressIndicator.prototype.onBeforeRendering = function () {
+		this._deRegisterResizeHandler(ProgressIndicator.RESIZE_HANDLER_ID.SELF);
+	};
+
+	ProgressIndicator.prototype.onAfterRendering = function () {
+		this._updateHoverableScenario();
+		this._registerResizeHandler(ProgressIndicator.RESIZE_HANDLER_ID.SELF, this, this._onResize.bind(this));
+	};
+
+	ProgressIndicator.prototype.exit = function () {
+		if (this._oPopoverText) {
+			this._oPopoverText.destroy();
+			this._oPopoverText = null;
+		}
+
+		this._deRegisterResizeHandler(ProgressIndicator.RESIZE_HANDLER_ID.SELF);
+	};
+
+	/**
+	 * Registers resize handler.
+	 * @param {string} sHandler the handler ID
+	 * @param {Object} oObject
+	 * @param {Function} fnHandler
+	 * @private
+	 */
+	ProgressIndicator.prototype._registerResizeHandler = function (sHandler, oObject, fnHandler) {
+		if (!this[sHandler]) {
+			this[sHandler] = ResizeHandler.register(oObject, fnHandler);
+		}
+	};
+
+	/**
+	 * De-registers resize handler.
+	 * @param {string} sHandler the handler ID
+	 * @private
+	 */
+	ProgressIndicator.prototype._deRegisterResizeHandler = function (sHandler) {
+		if (this[sHandler]) {
+			ResizeHandler.deregister(this[sHandler]);
+			this[sHandler] = null;
+		}
+	};
+
+	/**
+	 * Handles the resize event of the <code>ProgressIndicator</code>.
+	 * @param {jQuery.Event} oEvent
+	 * @private
+	 */
+	ProgressIndicator.prototype._onResize = function (oEvent) {
+		this._updateHoverableScenario();
+	};
+
+	/**
+	 * Handles the start of <code>ProgressIndicator</code> press event and marks the event as handled
+	 * by <code>ProgressIndicator</code> to prevent event bubbling when the information popover should be opened.
+	 * @param {jQuery.Event} oEvent The <code>tap</code> event object
+	 * @private
+	 */
+	ProgressIndicator.prototype.ontouchstart = function (oEvent) {
+		if (this._isHoverable()) {
+			oEvent.setMarked();
+		}
+	};
+
+	/**
+	 * Handles the <code>ProgressIndicator</code> press event.
+	 * @param {jQuery.Event} oEvent The <code>tap</code> event object
+	 */
+	ProgressIndicator.prototype.ontap = function (oEvent) {
+		var oPopover;
+
+		// By UX in ordeer to open the helper popover, we should have
+		// displayValue text and the text should be truncated (hoverable scenario).
+		if (this._isHoverable()) {
+			oPopover = this._getPopover();
+			if (oPopover.isOpen()) {
+				oPopover.close();
+			} else {
+				oPopover.openBy(this);
+			}
+		}
+	};
+
+	/**
+	 * Updates the hoverable scenario.
+	 * If we have a hoverable scenario we toggle on the "sapMPIHoverable" CSS class and vice-versa.
+	 * @private
+	 */
+	ProgressIndicator.prototype._updateHoverableScenario = function () {
+		var oDOMPIDisplayValueText = this.$(this.getPercentValue() > 50 ? "textLeft" : "textRight")[0],
+			iOffsetWidth = oDOMPIDisplayValueText && oDOMPIDisplayValueText.offsetWidth,
+			iScrollWidth = oDOMPIDisplayValueText && oDOMPIDisplayValueText.scrollWidth;
+
+		// TODO: IE specific code - adding 1px tolerance, because of a know issue with difference b/w offsetWidth and scrollWidth
+		if (this._bIEBrowser) {
+			iOffsetWidth += 1;
+		}
+
+		// By VD if we have displayValue text and the text is truncated, we
+		// need to change the cursor of the ProgressIndicator to "pointer" on hover.
+		this.toggleStyleClass("sapMPIHoverable", this.getDisplayValue() !== "" && iOffsetWidth < iScrollWidth);
+	};
+
+	/**
+	 * Whether or not the ProgressIndicator is hoverable.
+	 * @returns {boolean} True if ProgressIndicator has "sapMPIHoverable" CSS class.
+	 * @private
+	 */
+	ProgressIndicator.prototype._isHoverable = function () {
+		return this.hasStyleClass("sapMPIHoverable");
+	};
+
+	/**
+	 * Lazy loader for the popover.
+	 * @returns {sap.m.Popover}
+	 * @private
+	 */
+	ProgressIndicator.prototype._getPopover = function () {
+		var oPopover;
+
+		if (!this.getAggregation("_popover")) {
+			this._oPopoverText = new Text({
+				text: this.getDisplayValue()
+			});
+			// Create the Popover
+			oPopover = new Popover(this.getId() + "-popover", {
+				showHeader: false,
+				placement: PlacementType.Bottom,
+				content: [this._oPopoverText,
+					new Icon({
+						src: "sap-icon://decline",
+						press: this._onPopoverCloseIconPress.bind(this)
+					})
+				]
+			}).addStyleClass('sapMPIPopover');
+
+			this.setAggregation("_popover", oPopover, true);
+		}
+
+		return this.getAggregation("_popover");
+	};
+
+	ProgressIndicator.prototype._onPopoverCloseIconPress = function() {
+		this._getPopover().close();
+	};
+
+	ProgressIndicator.prototype.setDisplayValue = function(sDisplayValue) {
+		this.setProperty("displayValue", sDisplayValue);
+
+		if (this._oPopoverText) {
+			this._oPopoverText.setText(sDisplayValue);
+		}
+
+		return this;
+	};
 
 	ProgressIndicator.prototype.setPercentValue = function(fPercentValue) {
 		var that = this,
-			$progressBar,
-			fPercentDiff,
-			$progressIndicator = this.$(),
-			fAnimationDuration,
-			fNotValidValue;
+			oProgressIndicatorDomRef = this.getDomRef(),
+			fOriginalValue = fPercentValue;
 
-		fPercentValue = this.validateProperty("percentValue", fPercentValue);
+		fPercentValue = parseFloat(fPercentValue);
 
 		if (!isValidPercentValue(fPercentValue)) {
-			fNotValidValue = fPercentValue;
-			fPercentValue = fPercentValue > 100 ? 100 : 0;
-			jQuery.sap.log.warning(this + ": percentValue (" + fNotValidValue + ") is not correct! Setting the percentValue to " + fPercentValue);
+			if (fPercentValue > 100) {
+				fPercentValue = 100;
+			} else if (fPercentValue < 0) {
+				fPercentValue = 0;
+			} else {
+				Log.warning(this + ": percentValue (" + fOriginalValue + ") is not a valid number! The provided value will not be set!");
+				return this;
+			}
+			Log.warning(this + ": percentValue (" + fOriginalValue + ") is not correct! Setting the percentValue to " + fPercentValue);
 		}
 
 		if (this.getPercentValue() !== fPercentValue) {
-			fPercentDiff = this.getPercentValue() - fPercentValue;
-			this.setProperty("percentValue", fPercentValue, true);
+			this._fPercentValueDiff = this.getPercentValue() - fPercentValue;
+			this.setProperty("percentValue", fPercentValue);
 
-			if (!$progressIndicator.length) {
+			["sapMPIValueMax", "sapMPIValueMin", "sapMPIValueNormal", "sapMPIValueGreaterHalf"].forEach(function (sClass){
+				that.removeStyleClass(sClass);
+			});
+
+			this.addStyleClass(this._getCSSClassByPercentValue(fPercentValue).join(" "));
+
+			if (!oProgressIndicatorDomRef) {
 				return this;
 			}
 
-			["sapMPIValueMax", "sapMPIValueMin", "sapMPIValueNormal", "sapMPIValueGreaterHalf"].forEach(function (sClass){
-				$progressIndicator.removeClass(sClass);
-			});
+			oProgressIndicatorDomRef.setAttribute("aria-valuenow", fPercentValue);
+			oProgressIndicatorDomRef.setAttribute("aria-valuetext", this._getAriaValueText({fPercent: fPercentValue}));
 
-			$progressIndicator.addClass(this._getCSSClassByPercentValue(fPercentValue));
-			$progressIndicator.addClass("sapMPIAnimate")
-				.attr("aria-valuenow", fPercentValue)
-				.attr("aria-valuetext", this._getAriaValueText({fPercent: fPercentValue}));
-
-			fAnimationDuration = bUseAnimations ? Math.abs(fPercentDiff) * 20 : 0;
-			$progressBar = this.$("bar");
-			// Stop currently running animation and start new one.
-			// In case of multiple setPercentValue calls all animations will run and it will take some time until the last value is animated,
-			// which is the one, actually valuable.
-			$progressBar.stop();
-			$progressBar.animate({
-				"flex-basis" : fPercentValue + "%"
-			}, fAnimationDuration, "linear", function() {
-				that._setText.apply(that);
-				that.$().removeClass("sapMPIAnimate");
-			});
+			this._setText();
 		}
 
 		return this;
 	};
 
 	ProgressIndicator.prototype._setText = function() {
-		this.$().toggleClass("sapMPIValueGreaterHalf", this.getPercentValue() > 50);
-		return this;
-	};
-
-	ProgressIndicator.prototype.setDisplayValue = function(sDisplayValue) {
-		// change of value without rerendering
-		this.setProperty("displayValue", sDisplayValue, true);
-		var $textLeft = this.$("textLeft");
-		var $textRight = this.$("textRight");
-		$textLeft.text(sDisplayValue);
-		$textRight.text(sDisplayValue);
-		this.$().attr("aria-valuetext", this._getAriaValueText({sText: sDisplayValue}));
-
-		return this;
-	};
-
-	ProgressIndicator.prototype.setDisplayOnly = function(bDisplayOnly) {
-		// change of value without re-rendering
-		this.setProperty("displayOnly", bDisplayOnly, true);
-		if (this.getDomRef()) {
-			this.$().toggleClass("sapMPIDisplayOnly", bDisplayOnly);
-		}
+		this.toggleStyleClass("sapMPIValueGreaterHalf", this.getPercentValue() > 50);
 		return this;
 	};
 
 	/**
 	 * Determines the CSS class, which should be applied to the <code>ProgressIndicator</code>
 	 * for the given <code>percentValue</code>.
-	 * @param {Number} fPercentValue
-	 * @return {String} the CSS class
+	 * @param {number} fPercentValue
+	 * @return {string} the CSS class
 	 * @since 1.44
 	 * @private
 	 */
 	ProgressIndicator.prototype._getCSSClassByPercentValue = function(fPercentValue) {
 		if (fPercentValue === 100) {
-			return "sapMPIValueMax sapMPIValueGreaterHalf";
+			return ["sapMPIValueMax", "sapMPIValueGreaterHalf"];
 		}
 
 		if (fPercentValue === 0) {
-			return "sapMPIValueMin";
+			return ["sapMPIValueMin"];
 		}
 
 		if (fPercentValue <= 50) {
-			return "sapMPIValueNormal";
+			return ["sapMPIValueNormal"];
 		}
 
-		return "sapMPIValueNormal sapMPIValueGreaterHalf";
+		return ["sapMPIValueNormal", "sapMPIValueGreaterHalf"];
 	};
 
 	ProgressIndicator.prototype._getAriaValueText = function (oParams) {
@@ -229,29 +404,33 @@ sap.ui.define([
 	};
 
 	ProgressIndicator.prototype._getStateText = function () {
-		return ValueStateSupport.getAdditionalText(this.getState());
+		return this.getEnabled() ? ValueStateSupport.getAdditionalText(this.getState()) : "";
 	};
 
 	/**
-	 * Returns the <code>sap.m.ProgressIndicator</code>  accessibility information.
+	 * Returns the <code>sap.m.ProgressIndicator</code> accessibility information.
 	 *
 	 * @see sap.ui.core.Control#getAccessibilityInfo
 	 * @protected
-	 * @returns {object} The <code>sap.m.ProgressIndicator</code> accessibility information
+	 * @returns {sap.ui.core.AccessibilityInfo}
+	 * The object contains the accessibility information of <code>sap.m.ProgressIndicator</code>
 	 */
 	ProgressIndicator.prototype.getAccessibilityInfo = function() {
-		var oBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+		var oBundle = Library.getResourceBundleFor("sap.m"),
+			sDisplayValue = this.getDisplayValue(),
+			sDescription = sDisplayValue ? sDisplayValue : oBundle.getText("ACC_CTR_STATE_PROGRESS", [this.getPercentValue()]);
+
 		return {
 			role: "progressbar",
 			type: oBundle.getText("ACC_CTR_TYPE_PROGRESS"),
-			description: oBundle.getText("ACC_CTR_STATE_PROGRESS", [this.getPercentValue()]),
+			description: sDescription,
 			focusable: this.getEnabled(),
 			enabled: this.getEnabled()
 		};
 	};
 
 	function isValidPercentValue(value) {
-		return value >= 0 && value <= 100;
+		return !isNaN(value) && value >= 0 && value <= 100;
 	}
 
 	return ProgressIndicator;

@@ -1,0 +1,10 @@
+<mvc:View
+		class="sapUiSizeCompact"
+		controllerName="sap.ui.core.sample.odata.v4.Draft.Main"
+		xmlns="sap.m"
+		xmlns:f="sap.f"
+		xmlns:mvc="sap.ui.core.mvc">
+	<App>
+		<f:FlexibleColumnLayout id="layout"/>
+	</App>
+</mvc:View>

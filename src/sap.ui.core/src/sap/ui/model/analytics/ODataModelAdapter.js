@@ -1,7 +1,7 @@
 /*!
  * ${copyright}
  */
-
+/*eslint-disable max-len */
 /**
  * Analytical Adapter for ODataModels
  *
@@ -11,10 +11,9 @@
  */
 
 // Provides class ODataModelAdapter
-sap.ui.define(['jquery.sap.global', './AnalyticalBinding', "./AnalyticalTreeBindingAdapter", './odata4analytics', './AnalyticalVersionInfo'],
-	function(jQuery, AnalyticalBinding, AnalyticalTreeBindingAdapter, odata4analytics, AnalyticalVersionInfo) {
+sap.ui.define(['./AnalyticalBinding', "./AnalyticalTreeBindingAdapter", './odata4analytics', "sap/base/Log"],
+	function(AnalyticalBinding, AnalyticalTreeBindingAdapter, odata4analytics, Log) {
 	"use strict";
-
 
 	/**
 	 * If called on an instance of an (v1/v2) ODataModel it will enrich it with analytics capabilities.
@@ -28,10 +27,9 @@ sap.ui.define(['jquery.sap.global', './AnalyticalBinding', "./AnalyticalTreeBind
 		// "this" is the prototype now when called with apply()
 
 		// make sure the version is set correctly, depending on the used ODataModel
-		var iModelVersion = AnalyticalVersionInfo.getVersion(this);
-
+		const iModelVersion = AnalyticalBinding._getModelVersion(this);
 		// ensure only ODataModel are enhanced which have not been enhanced yet
-		if (iModelVersion === AnalyticalVersionInfo.NONE || this.getAnalyticalExtensions) {
+		if (iModelVersion === null || this.getAnalyticalExtensions) {
 			return;
 		}
 
@@ -49,25 +47,15 @@ sap.ui.define(['jquery.sap.global', './AnalyticalBinding', "./AnalyticalTreeBind
 				this[fn] = ODataModelAdapter.prototype[fn];
 			}
 		}
-
-		//initialise the Analytical Extension during the metadata loaded Event of the v2.ODataModel
-		/*if (iModelVersion === AnalyticalVersionInfo.V2 && !(this.oMetadata && this.oMetadata.isLoaded())) {
-			var that = this;
-			this.attachMetadataLoaded(function () {
-				jQuery.sap.log.info("ODataModelAdapter: Running on ODataModel V2, Metadata was loaded; initialising analytics model.");
-				that.getAnalyticalExtensions();
-			});
-		}*/
-
-		// disable the count support (inline count is required for AnalyticalBinding)
-		if (iModelVersion === AnalyticalVersionInfo.V1 && this.isCountSupported()) {
-			jQuery.sap.log.info("ODataModelAdapter: switched ODataModel to use inlinecount (mandatory for the AnalyticalBinding)");
+		/** @deprecated As of version 1.48.0 */
+		if (iModelVersion === 1 && this.isCountSupported()) {
+			// disable the count support (inline count is required for AnalyticalBinding)
+			Log.info("ODataModelAdapter: switched ODataModel to use inlinecount (mandatory for the AnalyticalBinding)");
 			this.setCountSupported(false);
 		}
-
 	};
 
-	/**
+	/*
 	 * @see sap.ui.model.odata.ODataModel#bindList
 	 * @see sap.ui.model.odata.v2.ODataModel#bindList
 	 */
@@ -83,7 +71,7 @@ sap.ui.define(['jquery.sap.global', './AnalyticalBinding', "./AnalyticalTreeBind
 		}
 	};
 
-	/**
+	/*
 	 * @see sap.ui.model.odata.ODataModel#bindTree
 	 * @see sap.ui.model.odata.v2.ODataModel#bindTree
 	 */
@@ -110,32 +98,21 @@ sap.ui.define(['jquery.sap.global', './AnalyticalBinding', "./AnalyticalTreeBind
 			return this.oOData4SAPAnalyticsModel;
 		}
 
-		var iModelVersion = AnalyticalVersionInfo.getVersion(this);
-
+		const iModelVersion = AnalyticalBinding._getModelVersion(this);
 		// Throw Error if metadata was not loaded
-		if (iModelVersion === AnalyticalVersionInfo.V2 && !(this.oMetadata && this.oMetadata.isLoaded())) {
-			throw "Failed to get the analytical extensions. The metadata have not been loaded by the model yet." +
-					"Register for the 'metadataLoaded' event of the ODataModel(v2) to know when the analytical extensions can be retrieved.";
-		}
-
-		var sAnnotationDoc = null;
-
-		if (arguments.length == 1) {
-			// hidden feature: load resource with additional analytical metadata
-			// defined in a JSON format
-			var sAnnotationDocURI = arguments[0];
-
-			var oResult = jQuery.sap.syncGetText(sAnnotationDocURI);
-			if (oResult.success) {
-				sAnnotationDoc = oResult.data;
-			}
+		if (iModelVersion === 2 && !(this.oMetadata && this.oMetadata.isLoaded())) {
+			throw new Error("Failed to get the analytical extensions. The metadata have not been loaded by the model"
+				+ " yet. Register for the 'metadataLoaded' event of the ODataModel(v2) to know when the analytical"
+				+ " extensions can be retrieved.");
 		}
 
 		// initialize API by loading the analytical OData model
 		try {
-			this.oOData4SAPAnalyticsModel = new odata4analytics.Model(new odata4analytics.Model.ReferenceByModel(this), {sAnnotationJSONDoc: sAnnotationDoc});
+			this.oOData4SAPAnalyticsModel = new odata4analytics.Model(
+				new odata4analytics.Model.ReferenceByModel(this));
 		} catch (exception) {
-			throw "Failed to instantiate analytical extensions for given OData model: " + exception.message;
+			throw new Error("Failed to instantiate analytical extensions for given OData model: "
+				+ (exception.message || exception));
 		}
 		return this.oOData4SAPAnalyticsModel;
 	};
@@ -152,5 +129,4 @@ sap.ui.define(['jquery.sap.global', './AnalyticalBinding', "./AnalyticalTreeBind
 	};
 
 	return ODataModelAdapter;
-
 }, /* bExport= */ true);

@@ -2,5 +2,5 @@
 		controllerName="sap.ui.documentation.sdk.controller.Downloads"
 		xmlns:mvc="sap.ui.core.mvc"
 		xmlns="sap.m">
-	<Label text="Downloads" />
+	<Label text="{i18n>DOWNLOADS_TEXT}" />
 </mvc:View>

@@ -1,0 +1,65 @@
+{
+	"sap.app": {
+		"id": "sap.ui.layout.sample.card.logonRequests",
+		"type": "card",
+		"applicationVersion": {
+			"version": "1.0.0"
+		},
+		"shortTitle": "A short title for this Card",
+		"info": "Additional information about this Card",
+		"description": "A long description for this Card",
+		"tags": {
+			"keywords": [
+				"List",
+				"Chart",
+				"Card",
+				"Sample"
+			]
+		}
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"icons": {
+			"icon": "sap-icon://list"
+		}
+	},
+	"sap.card": {
+		"type": "List",
+		"header": {
+			"title": "Logon Requests (MTD)"
+		},
+		"content": {
+			"data": {
+				"json": [
+					{
+						"title": "SAP Applications",
+						"actual": 2350000,
+						"target": 2350000,
+						"max": 10000000,
+						"status": "Neutral"
+					},
+					{
+						"title": "Non-SAP Applications",
+						"actual": 1750000,
+						"target": 1750000,
+						"max": 5700000,
+						"status": "Error"
+					}
+				]
+			},
+			"maxItems": 2,
+			"item": {
+				"title": "{title}",
+				"chart": {
+					"type": "Bullet",
+					"minValue": 0,
+					"maxValue": "{max}",
+					"target": "{target}",
+					"value": "{actual}",
+					"color": "{status}",
+					"displayValue": "{= format.integer(${max}, { currencyCode: false, style: 'short'}) }"
+				}
+			}
+		}
+	}
+}

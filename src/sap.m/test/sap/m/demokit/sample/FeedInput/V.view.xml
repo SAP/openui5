@@ -24,4 +24,20 @@
 		enabled="false"
 		showIcon="true"
 		icon="test-resources/sap/m/images/george_washington.jpg" />
+
+	<Label text="Rows Set to 5" class="sapUiSmallMarginTop sapUiTinyMarginBottom" />
+	<FeedInput
+		post="onPost"
+		rows="5" />
+
+	<Label text="With Exceeded Text" class="sapUiSmallMarginTop sapUiTinyMarginBottom" />
+	<FeedInput
+		post="onPost"
+		maxLength="20"
+		showExceededText="true" />
+
+	<Label text="With Growing" class="sapUiSmallMarginTop sapUiTinyMarginBottom" />
+	<FeedInput
+		post="onPost"
+		growing="true" />
 </mvc:View>

@@ -18,7 +18,8 @@ sap.ui.define(['sap/ui/test/Opa5'], function (Opa5) {
 		iStartMyApp : function () {
 			return this.iStartMyUIComponent({
 				componentConfig: {
-					name: "sap.ui.documentation.sdk"
+					name: "sap.ui.documentation.sdk",
+					manifest: true
 				},
 				hash: ""
 			});
@@ -26,7 +27,7 @@ sap.ui.define(['sap/ui/test/Opa5'], function (Opa5) {
 
 		// feature toggle tests
 		iStartMyAppSafeForLaterActivated: function () {
-			if (!jQuery.sap.getUriParameters().get("safeForLater")) {
+			if (!new URLSearchParams(window.location.search).has("safeForLater")) {
 				addSaveForLater();
 			}
 			return this.iStartMyApp();

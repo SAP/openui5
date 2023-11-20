@@ -1,0 +1,50 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+
+	<meta charset="utf-8">
+
+	<title>Template - sap.ui.core.tmpl (Aggregation)</title>
+
+	<script src="../shared-config.js"></script>
+	<script id="sap-ui-bootstrap"
+			src="../../../../../resources/sap-ui-core.js"
+			data-sap-ui-libs="sap.m"
+			>
+	</script>
+
+	<script>
+		jQuery(function() {
+			sap.ui.getCore().setModel(new sap.ui.model.json.JSONModel({
+				items: [{
+					name: "Entry 1"
+				}, {
+					name: "Entry 2"
+				}, {
+					name: "Entry 3"
+				}]
+			}));
+			sap.ui.template();
+		});
+	</script>
+
+</head>
+<body class="sapUiBody">
+
+	<h1><code>sap.ui.core.tmpl.Template</code> - Test Page</h1>
+
+	<div id="mySimpleTemplate" data-type="text/x-handlebars-template">
+		{{#control id="event-table" sap-ui-type="sap.m.Table" inset="false" items="{/items}"}}
+			{{#aggregation name="columns"}}
+				{{#control sap-ui-type="sap.m.Column"}}
+					{{control sap-ui-type="sap.m.Text" text="Column"}}
+				{{/control}}
+			{{/aggregation}}
+			{{#control sap-ui-type="sap.m.ColumnListItem"}}
+				{{control sap-ui-type="sap.m.Text" text="{name}"}}
+			{{/control}}
+		{{/control}}
+	</div>
+
+</body>
+</html>

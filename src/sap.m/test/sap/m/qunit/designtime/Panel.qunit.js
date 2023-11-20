@@ -1,16 +1,20 @@
 /* global QUnit */
-(function () {
+sap.ui.define([
+	"sap/m/Panel",
+	"sap/m/Toolbar",
+	"sap/ui/dt/enablement/elementDesigntimeTest",
+	"sap/ui/rta/enablement/elementActionTest"
+], function (
+	Panel,
+	Toolbar,
+	elementDesigntimeTest,
+	elementActionTest
+) {
 	"use strict";
 
-	sap.ui.require([
-		"sap/ui/dt/test/report/QUnit",
-		"sap/ui/dt/test/ElementEnablementTest",
-		"sap/m/Panel",
-		"sap/m/Toolbar",
-		"sap/ui/rta/test/controlEnablingCheck"
-	], function (QUnitReport, ElementEnablementTest, Panel, Toolbar, rtaControlEnablingCheck) {
-
-		var oElementEnablementTest = new ElementEnablementTest({
+	return Promise.resolve()
+	.then(function () {
+		return elementDesigntimeTest({
 			type: "sap.m.Panel",
 			create: function () {
 				return new Panel({
@@ -20,12 +24,8 @@
 				});
 			}
 		});
-		oElementEnablementTest.run().then(function (oData) {
-			new QUnitReport({
-				data: oData
-			});
-		});
-
+	})
+	.then(function() {
 		// Rename title action module
 		var fnConfirmPanelHeaderTextRenamedWithNewValue = function (oUiComponent, oViewAfterAction, assert) {
 			assert.strictEqual(oViewAfterAction.byId("myPanelId").getHeaderText(),
@@ -39,7 +39,7 @@
 				"then the panel header text has been renamed to the old value (Old Header Text)");
 		};
 
-		rtaControlEnablingCheck("Checking the rename action for a Panel header text", {
+		elementActionTest("Checking the rename action for a Panel header text", {
 			xmlView: '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m">"' +
 				'<Panel headerText="Old Header Text" id="myPanelId" />' +
 			'</mvc:View>'
@@ -61,9 +61,9 @@
 
 		QUnit.test("Rename Action for Panel with header text and header toolbar", function (assert) {
 			var done = assert.async(),
-				oPanel = new sap.m.Panel("myPanel", {
+				oPanel = new Panel("myPanel", {
 					headerText: "Test",
-					headerToolbar: new sap.m.Toolbar()
+					headerToolbar: new Toolbar()
 				});
 
 			return oPanel.getMetadata().loadDesignTime().then(function (oDesignTime) {
@@ -91,7 +91,7 @@
 				"then the control has been moved to the previous position");
 		};
 
-		rtaControlEnablingCheck("Checking the move action for Panel content", {
+		elementActionTest("Checking the move action for Panel content", {
 			xmlView: '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m">"' +
 				'<Panel id="myPanelId">' +
 					'<content>' +
@@ -141,7 +141,7 @@
 			assert.strictEqual(oViewAfterAction.byId("myPanelId").getVisible(), true, "then the Panel element is visible");
 		};
 
-		rtaControlEnablingCheck("Checking the remove action for Panel", {
+		elementActionTest("Checking the remove action for Panel", {
 			xmlView: '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m">"' +
 				'<Panel headerText="Simple Text" id="myPanelId" />' +
 			'</mvc:View>'
@@ -155,7 +155,7 @@
 			afterRedo: fnConfirmPanelIsInvisible
 		});
 
-		rtaControlEnablingCheck("Checking the reveal action for a Panel", {
+		elementActionTest("Checking the reveal action for a Panel", {
 			xmlView: '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m">"' +
 				'<Panel headerText="Simple Text" id="myPanelId" visible="false"/>' +
 			'</mvc:View>'
@@ -169,4 +169,4 @@
 			afterRedo: fnConfirmPanelIsVisible
 		});
 	});
-})();
+});

@@ -1,0 +1,31 @@
+/****************************************************************************
+	Style of the RTA Add Fields Dialog  - Horizon High Contrast Black theme
+*****************************************************************************/
+@_sap_ui_rta_FieldRepository_ListSelect: @sapUiChartPaletteSequentialHue1Dark2; //#0979e8
+@_sap_ui_rta_FieldRepository_BtnHoverOutline: @sapUiButtonActiveBorderColor; //#fff
+@_sap_ui_rta_FieldRepository_ListItmBorderRadius: @sapUiButtonBorderCornerRadius; //0.375rem
+
+.sapUiRtaMode {
+
+	.sapUIRtaFieldRepositoryDialog {
+
+		.sapMLIBHoverable {
+			&.sapMLIBSelected:hover {
+				background: @_sap_ui_rta_FieldRepository_ListSelect;
+			}
+
+			&.sapMLIB.sapMLIBSelected {
+				border-bottom: 0.0625rem solid transparent;
+			}
+		}
+
+		.sapUIRtaListItem {
+			border-radius: @_sap_ui_rta_FieldRepository_ListItmBorderRadius;
+		}
+
+		// Search field
+		.sapMSF.sapMFocus:hover .sapMSFF {
+			outline: 0.0625rem solid @_sap_ui_rta_FieldRepository_BtnHoverOutline; //1px
+		}
+	}
+}

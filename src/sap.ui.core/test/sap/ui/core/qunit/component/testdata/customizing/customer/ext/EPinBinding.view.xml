@@ -1,0 +1,27 @@
+<mvc:View dependents="{path: 'Supplier', templateShareable:false}"
+	xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc">
+	<!-- template for the list binding to 'dependents' aggregation -->
+	<mvc:dependents>
+		<Panel>
+			<Table id="product_table" items="{path: 'Products>', templateShareable:false}">
+				<columns>
+					<!-- Extends the Promotion table with extra columns -->
+					<core:ExtensionPoint name="Product_Table_Column_Ext_In_View"/>
+				</columns>
+				<items>
+					<ColumnListItem>
+						<cells>
+							<!-- Extends the Promotion table with extra cells -->
+							<core:ExtensionPoint name="Product_Table_Cell_Ext_In_View">
+								<Button id="TableRowButton" xmlns="sap.m" text="Table row Button from EP" />
+							</core:ExtensionPoint>
+						</cells>
+					</ColumnListItem>
+				</items>
+			</Table>
+			<core:ExtensionPoint name="Panel_Button_Ext_In_View">
+				<Button id="PanelButton" xmlns="sap.m" text="Panel Button from EP" />
+			</core:ExtensionPoint>
+		</Panel>
+	</mvc:dependents>
+</mvc:View>

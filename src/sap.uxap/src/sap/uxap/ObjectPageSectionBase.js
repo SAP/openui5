@@ -3,7 +3,21 @@
  */
 
 // Provides control sap.uxap.ObjectPageSectionBase.
-sap.ui.define(["jquery.sap.global", "sap/ui/core/Control", "sap/ui/core/library", "./library", "jquery.sap.keycodes"], function (jQuery, Control, coreLibrary, library) {
+sap.ui.define([
+	"sap/base/i18n/Localization",
+	"sap/ui/core/Element",
+	"sap/ui/core/InvisibleText",
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/core/Control",
+	"sap/ui/core/library",
+	"./library",
+	"sap/base/Log",
+	"sap/ui/events/KeyCodes",
+	"sap/ui/layout/Grid",
+	"sap/ui/layout/GridData",
+	// jQuery Plugin "firstFocusableDomRef"
+	"sap/ui/dom/jquery/Focusable"
+], function(Localization, Element, InvisibleText, jQuery, Control, coreLibrary, library, Log, KeyCodes, Grid, GridData) {
 	"use strict";
 
 	// shortcut for sap.ui.core.TitleLevel
@@ -24,7 +38,6 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Control", "sap/ui/core/library"
 	 * @public
 	 * @alias sap.uxap.ObjectPageSectionBase
 	 * @since 1.26
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var ObjectPageSectionBase = Control.extend("sap.uxap.ObjectPageSectionBase", /** @lends sap.uxap.ObjectPageSectionBase.prototype */ {
 		metadata: {
@@ -34,7 +47,11 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Control", "sap/ui/core/library"
 			properties: {
 
 				/**
-				 * Section Title
+				 * Defines the title of the respective section/subsection.
+				 *
+				 * <b>Note:</b> If a subsection is the only one (or the only one visible) within a section, its title is
+				 * displayed instead of the section title. This behavior is true even if the <code>showTitle</code>
+				 * propeprty of {@link sap.uxap.ObjectPageSubSection} is set to <code>false</code>.
 				 */
 				title: {type: "string", group: "Appearance", defaultValue: null},
 
@@ -66,16 +83,24 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Control", "sap/ui/core/library"
 				}
 			},
 			aggregations: {
-
+				/**
+				 * Screen Reader ariaLabelledBy
+				 */
+				ariaLabelledBy: {type: "sap.ui.core.InvisibleText", multiple: false, visibility: "hidden"},
 				/**
 				 * The custom button that will provide a link to the section in the ObjectPageLayout anchor bar.
 				 * This button will be used as a custom template to be into the ObjectPageLayout anchorBar area, therefore property changes happening on this button template after the first rendering won't affect the actual button copy used in the anchorBar.
 				 *
 				 * If you want to change some of the button properties, you would need to bind them to a model.
 				 */
-				customAnchorBarButton: {type: "sap.m.Button", multiple: false}
+				customAnchorBarButton: {type: "sap.m.Button", multiple: false},
+				/**
+				 * Internal grid aggregation
+				 */
+				_grid: {type: "sap.ui.core.Control", multiple: false, visibility: "hidden"}
 			}
-		}
+		},
+		renderer: null // control has no renderer (it is an abstract class)
 	});
 
 	/**
@@ -85,7 +110,6 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Control", "sap/ui/core/library"
 	 * @function
 	 * @type void
 	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 
 	ObjectPageSectionBase.prototype.init = function () {
@@ -97,18 +121,228 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Control", "sap/ui/core/library"
 		this._sInternalTitleLevel = TitleLevel.Auto;
 		//hidden status
 		this._isHidden = false;
+		this._oGridContentObserver = null;
 
-		this._bRtl = sap.ui.getCore().getConfiguration().getRTL();
+		this._bRtl = Localization.getRTL();
 	};
 
 	ObjectPageSectionBase.prototype.onAfterRendering = function () {
 		if (this._getObjectPageLayout()) {
 			this._getObjectPageLayout()._requestAdjustLayout().catch(function () {
-				jQuery.sap.log.debug("ObjectPageSectionBase :: cannot adjustLayout", this);
+				Log.debug("ObjectPageSectionBase :: cannot adjustLayout", this);
 			});
 			this._getObjectPageLayout()._setSectionsFocusValues();
 		}
 	};
+
+	ObjectPageSectionBase.prototype.onBeforeRendering = function () {
+		var sAriaLabeledBy = "ariaLabelledBy";
+
+		if (!this.getAggregation(sAriaLabeledBy)) {
+			this.setAggregation(sAriaLabeledBy, this._getAriaLabelledBy(), true); // this is called onBeforeRendering, so suppress invalidate
+		} else {
+			this.updateInvisibleTextLabelValue();
+		}
+	};
+
+
+	ObjectPageSectionBase.prototype.exit = function () {
+		if (this._oInvisibleText) {
+			this._oInvisibleText.destroy();
+			this._oInvisibleText = null;
+		}
+	};
+
+	ObjectPageSectionBase.prototype._getGrid = function () {
+		if (!this.getAggregation("_grid") && !this._bIsBeingDestroyed) {
+			this.setAggregation("_grid", new Grid({
+				id: this.getId() + "-innerGrid",
+				defaultSpan: "XL12 L12 M12 S12",
+				hSpacing: 1,
+				vSpacing: 1,
+				width: "100%",
+				containerQuery: true
+			}), true); // this is always called onBeforeRendering so suppress invalidate
+
+			if (this._oGridContentObserver) {
+				this._oGridContentObserver.observe(this.getAggregation("_grid"), {
+					aggregations: [
+					 // both aggregation names are required
+					 // because the first ("content") is the actual
+					 // and the second ("subSections") is the publicly visible
+					 // due to aggregation forwarding
+					"content", "subSections"
+				]});
+			}
+		}
+
+		return this.getAggregation("_grid");
+	};
+
+	/**
+	 * Remove any existing layout data of grid-items
+	 * prior to running built-in mechanism to calculate the column layout of these items
+	 * @param aGridItems
+	 * @private
+	 */
+	ObjectPageSectionBase.prototype._resetLayoutData = function (aGridItems) {
+		aGridItems.forEach(function (oItem) {
+			if (oItem.getLayoutData()) {
+				oItem.destroyLayoutData();
+			}
+		}, this);
+	};
+
+	/**
+	 * Calculate the layout data to use for grid items
+	 * Aligned with PUX specifications as of Oct 14, 2014
+	 * @private
+	 */
+	ObjectPageSectionBase.prototype._assignLayoutData = function (aGridItems, oColumnConfig) {
+		var iGridSize = 12,
+			aVisibleItems = [],
+			aInvisibleItems = [],
+			M, L, XL,
+			aDisplaySizes;
+
+		M = {
+			iRemaining: oColumnConfig.M,
+			iColumnConfig: oColumnConfig.M
+		};
+
+		L = {
+			iRemaining: oColumnConfig.L,
+			iColumnConfig: oColumnConfig.L
+		};
+
+		XL = {
+			iRemaining: oColumnConfig.XL,
+			iColumnConfig: oColumnConfig.XL
+		};
+
+		aDisplaySizes = [XL, L, M];
+
+		//step 1: the visible blocks should be separated
+		// as only they should take space inside the grid
+		aGridItems.forEach(function(oItem) {
+			if (oItem.getVisible && oItem.getVisible()) {
+				aVisibleItems.push(oItem);
+			} else {
+				aInvisibleItems.push(oItem);
+			}
+		});
+
+		//step 2: set layout for each blocks based on their columnLayout configuration
+		//As of Oct 14, 2014, the default behavior is:
+		//on phone, blocks take always the full line
+		//on tablet, desktop:
+		//1 block on the line: takes 3/3 columns
+		//2 blocks on the line: takes 1/3 columns then 2/3 columns
+		//3 blocks on the line: takes 1/3 columns then 1/3 columns and last 1/3 columns
+
+		aVisibleItems.forEach(function (oItem, iIndex) {
+
+			aDisplaySizes.forEach(function (oConfig) {
+				oConfig.iCalculatedSize = this._getEffectiveColspanForGridItem(oItem, oConfig.iRemaining,
+					aVisibleItems, iIndex, oConfig.iColumnConfig);
+			}, this);
+
+			//set block layout based on resolution and break to a new line if necessary
+			oItem.setLayoutData(new GridData({
+				spanS: iGridSize,
+				spanM: M.iCalculatedSize * (iGridSize / M.iColumnConfig),
+				spanL: L.iCalculatedSize * (iGridSize / L.iColumnConfig),
+				spanXL: XL.iCalculatedSize * (iGridSize / XL.iColumnConfig),
+				linebreakM: (iIndex > 0 && M.iRemaining === M.iColumnConfig),
+				linebreakL: (iIndex > 0 && L.iRemaining === L.iColumnConfig),
+				linebreakXL: (iIndex > 0 && XL.iRemaining === XL.iColumnConfig)
+			}));
+
+			if (oItem.isA("sap.uxap.ObjectPageSubSection")) {
+				oItem._oLayoutConfig = {
+					M: M.iCalculatedSize,
+					L: L.iCalculatedSize,
+					XL: XL.iCalculatedSize
+				};
+			}
+
+			aDisplaySizes.forEach(function (oConfig) {
+				oConfig.iRemaining -= oConfig.iCalculatedSize;
+				if (oConfig.iRemaining < 1) {
+					oConfig.iRemaining = oConfig.iColumnConfig;
+				}
+			});
+
+		}, this);
+
+		aInvisibleItems.forEach(function(oItem) {
+			// ensure invisible blocks do not take space at all
+			oItem.setLayoutData(new GridData({
+				visibleS: false,
+				visibleM: false,
+				visibleL: false,
+				visibleXL: false
+			}));
+		});
+
+		return aVisibleItems;
+	};
+
+	/**
+	 * Obtains the optimal number of columns a grid item should span accross,
+	 * given the available columns count and the content of the item.
+	 *
+	 * The obtained value is the same or bigger than the minimal required colspan
+	 * for a grid item. It will be bigger if extra unused columns remained on the side
+	 * and the child is allowed to extend to span accross that extra unused space.
+	 *
+	 * @param {*} oGridItem , the grid-item
+	 * @param {*} iFreeColumnsCount , the current unused columns count
+	 * @param {*} aGridItems , all grid items
+	 * @param {*} iCurrentIndex , the index of the item among its sibling items
+	 * @param {*} iTotalColumnsCount , the total available column count in the current device size
+	 * @return {number} the count of columns the item should span accross
+	 * @private
+	 */
+	ObjectPageSectionBase.prototype._getEffectiveColspanForGridItem = function (oGridItem, iFreeColumnsCount, aGridItems, iCurrentIndex, iTotalColumnsCount) {
+		var iNextItemColspan,
+			iForewordItemsToCheck = iTotalColumnsCount,
+			indexOffset,
+			iMinColspan = this._getMinRequiredColspanForChild(oGridItem);
+
+		if (!this._allowAutoextendColspanForChild(oGridItem)) {
+			return Math.min(iTotalColumnsCount, iMinColspan);
+		}
+
+		for (indexOffset = 1; indexOffset <= iForewordItemsToCheck; indexOffset++) {
+			iNextItemColspan = this._getMinRequiredColspanForChild(aGridItems[iCurrentIndex + indexOffset]);
+			if (iNextItemColspan <= (iFreeColumnsCount - iMinColspan)) {
+				iFreeColumnsCount -= iNextItemColspan;
+			} else {
+				break;
+			}
+		}
+
+		return iFreeColumnsCount;
+	};
+
+	/**
+	 * To override in subclasses:
+	 * Determines the minimal required number of columns that a child item
+	 * should take, based on the child content and own colspan
+	 * @param {object} oChild
+	 * @return {number}
+	 */
+	ObjectPageSectionBase.prototype._getMinRequiredColspanForChild = function (oChild) {};
+
+	/**
+	 * To override in subclasses
+	 * Determines if allowed to automatically extend the number of columns to span accross
+	 * (in case of unused columns on the side, in order to utilize that unused space
+	 * @param {object} oChild
+	 * @return {boolean}
+	 */
+	ObjectPageSectionBase.prototype._allowAutoextendColspanForChild = function (oChild) {};
 
 	ObjectPageSectionBase.prototype.setCustomAnchorBarButton = function (oButton) {
 		var vResult = this.setAggregation("customAnchorBarButton", oButton, true);
@@ -118,6 +352,79 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Control", "sap/ui/core/library"
 		}
 
 		return vResult;
+	};
+
+	/**
+	 * Returns the control name text.
+	 *
+	 * To be overwritten by the specific control method.
+	 *
+	 * @return {string} control name text
+	 * @protected
+	 */
+	ObjectPageSectionBase.prototype.getSectionText = function () {
+		return "";
+	};
+
+	/**
+	 * Performs the update of the invisible text label.
+	 * This method is called for example when the section title is changed.
+	 *
+	 * @return {this} this for chaining
+	 * @protected
+	 */
+	ObjectPageSectionBase.prototype.updateInvisibleTextLabelValue = function () {
+		var oAriaLabelledBy = this.getAggregation("ariaLabelledBy"),
+			sLabel = this._getAriaLabelledByText();
+
+		if (oAriaLabelledBy) {
+			Element.getElementById(oAriaLabelledBy.getId()).setText(sLabel);
+		}
+
+		return this;
+	};
+
+	/**
+	 * Returns the invisible text control with the label already set to be for to the ariaLabelledBy aggregation.
+	 * @private
+	 * @returns {*} sap.ui.core.InvisibleText
+	 */
+	ObjectPageSectionBase.prototype._getAriaLabelledBy = function () {
+		var sLabel = this._getAriaLabelledByText();
+		return this._getInvisibleText().setText(sLabel);
+	};
+
+	/**
+	 * Returns the label string for the section.
+	 * @private
+	 * @returns {string} aria-labeled by text
+	 */
+	ObjectPageSectionBase.prototype._getAriaLabelledByText = function () {
+		// Each section should be labelled as:
+		// 'titleName' - if the section has a title
+		// 'Section' - if it does not have a title or its hidden (for example, showTitle=false)
+		var sTitle = this._getShouldLabelTitle() && this._getTitle();
+		return sTitle || this.getSectionText();
+	};
+
+	ObjectPageSectionBase.prototype._getInvisibleText = function () {
+		if (!this._oInvisibleText) {
+			this._oInvisibleText = new InvisibleText();
+			this._oInvisibleText.toStatic();
+		}
+
+		return this._oInvisibleText;
+	};
+
+	/**
+	 * Returns a boolean value indicating whether the title should be added to the section's aria label.
+	 * Aware of whether the subsection is promoted or not.
+	 *
+	 * @returns {boolean} true if title should be part of the label
+	 * @private
+	 */
+	ObjectPageSectionBase.prototype._getShouldLabelTitle = function () {
+		return this.getShowTitle ? this.getShowTitle() : true;
 	};
 
 	/**
@@ -178,7 +485,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Control", "sap/ui/core/library"
 	 * Returns the <code>ObjectPageSectionBase</code> internal title if present,
 	 * otherwise - the public title.
 	 * @private
-	 * @returns {String} the title
+	 * @returns {string} the title
 	 */
 	ObjectPageSectionBase.prototype._getTitle = function () {
 		return this._getInternalTitle() || this.getTitle();
@@ -194,19 +501,30 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Control", "sap/ui/core/library"
 	 * If the <code>titleLevel</code> is <code>TitleLevel.Auto</code>,
 	 * the result would be "3" for <code>ObjectPageSection</code> and "4" for <code>ObjectPageSubSection</code>.
 	 * The method is used by <code>ObjectPageSectionRenderer</code> and <code>ObjectPageSubSectionRenderer</code>.
-	 * @returns {String} the <code>aria-level</code>
+	 *
+	 * If there is a case where a TitleLevel.Auto is returned from _getTitleLevel in order to prevent a wrong
+	 * value to be se to the aria-level attribute title level fallbacks to TitleLevel.H2 as this is the default
+	 * aria-level according to aria specification
+	 *
+	 * @returns {string} the <code>aria-level</code>
 	 * @since 1.44
 	 * @private
 	 */
 	ObjectPageSectionBase.prototype._getARIALevel = function () {
-		return this._getTitleLevel().slice(-1);
+		var sTitleLevel = this._getTitleLevel();
+
+		if (sTitleLevel === TitleLevel.Auto) {
+			sTitleLevel = TitleLevel.H2;
+		}
+
+		return sTitleLevel.slice(-1);
 	};
 
 	/**
 	 * Returns the <code>ObjectPageSectionBase</code> <code>titleLevel</code>
 	 * if explicitly defined and different from <code>sap.ui.core.TitleLevel.Auto</code>.
 	 * Otherwise, the <code>ObjectPageSectionBase</code> internal <code>titleLevel</code> is returned.
-	 * @returns {String}
+	 * @returns {string}
 	 * @since 1.44
 	 * @private
 	 */
@@ -218,18 +536,23 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Control", "sap/ui/core/library"
 	/**
 	 * Sets the <code>ObjectPageSectionBase</code> internal <code>titleLevel</code>.
 	 * The method is used by the <code>ObjectPageLayout</code> to apply the <code>sectionTitleLevel</code> property.
-	 * @param {String} sTitleLevel
+	 * @param {string} sTitleLevel
 	 * @since 1.44
 	 * @private
 	 */
-	ObjectPageSectionBase.prototype._setInternalTitleLevel = function (sTitleLevel) {
-		this._sInternalTitleLevel = sTitleLevel;
+	ObjectPageSectionBase.prototype._setInternalTitleLevel = function (sTitleLevel, bInvalidate) {
+		if (sTitleLevel !== this._sInternalTitleLevel) {
+			this._sInternalTitleLevel = sTitleLevel;
+			if (bInvalidate) {
+				this.invalidate();
+			}
+		}
 	};
 
 	/**
 	 * Returns the <code>ObjectPageSectionBase</code> internal <code>titleLevel</code>.
 	 * The internal <code>titleLevel</code> is set by the <code>ObjectPageLayout</code>.
-	 * @returns {String}
+	 * @returns {string}
 	 * @since 1.44
 	 * @private
 	 */
@@ -276,6 +599,10 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Control", "sap/ui/core/library"
 	});
 
 	ObjectPageSectionBase.prototype.setVisible = function (bValue, bSuppressInvalidate) {
+		if (this.getVisible() === bValue) {
+			return this;
+		}
+
 		if (!this._getObjectPageLayout()) {
 			return this.setProperty("visible", bValue, bSuppressInvalidate);
 		}
@@ -292,6 +619,8 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Control", "sap/ui/core/library"
 
 		this.setProperty("title", sValue, bSuppressInvalidate);
 		this._notifyObjectPageLayout();
+
+		this.updateInvisibleTextLabelValue();
 
 		return this;
 	};
@@ -317,6 +646,16 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Control", "sap/ui/core/library"
 		return this;
 	};
 
+	/**
+	 * Determines if the <code>ObjectPageSection</code> content is visible.
+	 *
+	 * The content is not visible if the <code>ObjectPageSection</code> is
+	 * given a lower <code>importance</code> than allowed to be rendered
+	 * for the current screen size.
+	 *
+	 * @private
+	 * @returns {boolean}
+	 */
 	ObjectPageSectionBase.prototype._getIsHidden = function () {
 		return this._isHidden;
 	};
@@ -357,8 +696,13 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Control", "sap/ui/core/library"
 	 */
 
 	ObjectPageSectionBase.prototype.onkeydown = function (oEvent) {
+		// Prevent browser scrolling in case of SPACE key
+		if (oEvent.keyCode === KeyCodes.SPACE && oEvent.srcControl.isA("sap.uxap.ObjectPageSection")) {
+			oEvent.preventDefault();
+		}
+
 		// Filter F7 key down
-		if (oEvent.keyCode === jQuery.sap.KeyCodes.F7) {
+		if (oEvent.keyCode === KeyCodes.F7) {
 			var aSubSections = this.getSubSections(),
 				oFirstSubSection = aSubSections[0],
 				oLastFocusedEl;
@@ -366,13 +710,13 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Control", "sap/ui/core/library"
 			if (aSubSections.length === 1) {
 				oLastFocusedEl = oFirstSubSection._oLastFocusedControlF7;
 				if (oLastFocusedEl) {
-					oLastFocusedEl.$().focus();
+					oLastFocusedEl.$().trigger("focus");
 				} else {
 					oFirstSubSection.$().firstFocusableDomRef().focus();
 				}
 			} else {
 				if (oFirstSubSection.getActions().length) {
-					oFirstSubSection.getActions()[0].$().focus();
+					oFirstSubSection.getActions()[0].$().trigger("focus");
 				}
 			}
 		}
@@ -383,14 +727,29 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Control", "sap/ui/core/library"
 	 * @param {jQuery.Event} oEvent The AROW-DOWN keyboard key event object
 	 */
 	ObjectPageSectionBase.prototype.onsapdown = function (oEvent) {
-		this._handleFocusing(oEvent, oEvent.currentTarget.nextSibling);
+		var oTarget = oEvent.currentTarget,
+			oNextSibling = oTarget.nextSibling;
+
+		if (oTarget.classList.contains('sapUxAPObjectPageSubSection')) {
+			// each subsection is wrapped in a div, so we need the subsection inside the sibling wrapper
+			var oParent = oTarget.parentElement;
+			if (oParent.nextElementSibling) {
+				oNextSibling = oParent.nextElementSibling.querySelector(".sapUxAPObjectPageSubSection");
+			}
+		}
+		this._handleFocusing(oEvent, oNextSibling);
 	};
 
 	ObjectPageSectionBase.prototype._handleFocusing = function (oEvent, oElementToReceiveFocus) {
+		var aSections;
+
 		if (this._targetIsCorrect(oEvent) && oElementToReceiveFocus) {
+			aSections = jQuery(oEvent.currentTarget).parent().children();
 			oEvent.preventDefault();
 			oElementToReceiveFocus.focus();
-			this._scrollParent(jQuery(oElementToReceiveFocus).attr("id"));
+			if (aSections.length > 1) {
+				this._scrollParent(jQuery(oElementToReceiveFocus).attr("id"));
+			}
 		}
 	};
 
@@ -412,7 +771,17 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Control", "sap/ui/core/library"
 	 * @param {jQuery.Event} oEvent The AROW-UP keyboard key event object
 	 */
 	ObjectPageSectionBase.prototype.onsapup = function (oEvent) {
-		this._handleFocusing(oEvent, oEvent.currentTarget.previousSibling);
+		var oTarget = oEvent.currentTarget,
+			oPreviousSibling = oTarget.previousSibling;
+
+		if (oTarget.classList.contains('sapUxAPObjectPageSubSection')) {
+			// each subsection is wrapped in a div, so we need the subsection inside the sibling wrapper
+			var oParent = oTarget.parentElement;
+			if (oParent.previousElementSibling) {
+				oPreviousSibling = oParent.previousElementSibling.querySelector(".sapUxAPObjectPageSubSection");
+			}
+		}
+		this._handleFocusing(oEvent, oPreviousSibling);
 	};
 
 	/**
@@ -429,7 +798,13 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Control", "sap/ui/core/library"
 	 * @param {jQuery.Event} oEvent The HOME keyboard key event object
 	 */
 	ObjectPageSectionBase.prototype.onsaphome = function (oEvent) {
-		this._handleFocusing(oEvent, oEvent.currentTarget.parentElement.firstChild);
+		var oTarget = oEvent.currentTarget,
+			oFirstChild = oTarget.parentElement.firstChild;
+		if (oTarget.classList.contains('sapUxAPObjectPageSubSection')) {
+			// each subsection is wrapped in a div, so we need the subsection inside the first wrapper
+			oFirstChild = oTarget.closest(".sapUxAPObjectPageSection").querySelector(".sapUxAPObjectPageSubSection");
+		}
+		this._handleFocusing(oEvent, oFirstChild);
 	};
 
 	/**
@@ -437,7 +812,15 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Control", "sap/ui/core/library"
 	 * @param {jQuery.Event} oEvent The END keyboard key event object
 	 */
 	ObjectPageSectionBase.prototype.onsapend = function (oEvent) {
-		this._handleFocusing(oEvent, oEvent.currentTarget.parentElement.lastChild);
+		var oTarget = oEvent.currentTarget,
+			oLastChild = oTarget.parentElement.lastChild,
+			aChildren;
+		if (oTarget.classList.contains('sapUxAPObjectPageSubSection')) {
+			// each subsection is wrapped in a div, so we need the subsection inside the last wrapper
+			aChildren = oTarget.closest(".sapUxAPObjectPageSection").querySelectorAll(".sapUxAPObjectPageSubSection");
+			oLastChild = aChildren[aChildren.length - 1];
+		}
+		this._handleFocusing(oEvent, oLastChild);
 	};
 
 	/**
@@ -452,9 +835,13 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Control", "sap/ui/core/library"
 
 		oEvent.preventDefault();
 
-		var iNextIndex;
-		var aSections = jQuery(oEvent.currentTarget).parent().children();
+		var iNextIndex, oTarget = oEvent.currentTarget;
+		var aSections = jQuery(oTarget).parent().children();
 		var focusedSectionId;
+
+		if (oTarget.classList.contains("sapUxAPObjectPageSubSection")) {
+			aSections = jQuery(oTarget.closest(".sapUxAPObjectPageSection")).find(".sapUxAPObjectPageSubSection");
+		}
 
 		aSections.each(function (iSectionIndex, oSection) {
 			if (jQuery(oSection).attr("id") === oEvent.currentTarget.id) {
@@ -471,7 +858,9 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Control", "sap/ui/core/library"
 			focusedSectionId = jQuery(aSections[0]).attr("id");
 		}
 
-		this._scrollParent(focusedSectionId);
+		if (aSections.length > 1) {
+			this._scrollParent(focusedSectionId);
+		}
 	};
 
 	/**
@@ -487,9 +876,13 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Control", "sap/ui/core/library"
 
 		oEvent.preventDefault();
 
-		var iNextIndex;
-		var aSections = jQuery(oEvent.currentTarget).parent().children();
+		var iNextIndex, oTarget = oEvent.currentTarget;
+		var aSections = jQuery(oTarget).parent().children();
 		var focusedSectionId;
+
+		if (oTarget.classList.contains("sapUxAPObjectPageSubSection")) {
+			aSections = jQuery(oTarget.closest(".sapUxAPObjectPageSection")).find(".sapUxAPObjectPageSubSection");
+		}
 
 		aSections.each(function (iSectionIndex, oSection) {
 			if (jQuery(oSection).attr("id") === oEvent.currentTarget.id) {
@@ -506,7 +899,9 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Control", "sap/ui/core/library"
 			focusedSectionId = jQuery(aSections[aSections.length - 1]).attr("id");
 		}
 
-		this._scrollParent(focusedSectionId);
+		if (aSections.length > 1) {
+			this._scrollParent(focusedSectionId);
+		}
 	};
 
 	/**

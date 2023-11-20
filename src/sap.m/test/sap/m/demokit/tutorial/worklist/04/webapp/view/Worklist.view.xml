@@ -13,12 +13,11 @@
 			<Title text="{i18n>worklistTitle}" />
 		</semantic:titleHeading>
 
-		<semantic:content>
+		<semantic:headerContent>
 			<IconTabBar
 				id="iconTabBar"
-				select="onQuickFilter"
-				expandable="false"
-				headerBackgroundDesign="Transparent">
+				select=".onQuickFilter"
+				expandable="false">
 				<items>
 					<IconTabFilter
 						key="all"
@@ -52,7 +51,7 @@
 						growing="true"
 						growingScrollToLoad="true"
 						noDataText="{worklistView>/tableNoDataText}"
-						updateFinished="onUpdateFinished"
+						updateFinished=".onUpdateFinished"
 						width="auto"
 						items="{
 							path: '/Products',
@@ -73,7 +72,7 @@
 							<SearchField
 								id="searchField"
 								tooltip="{i18n>worklistSearchTooltip}"
-								search="onSearch"
+								search=".onSearch"
 								width="auto">
 							</SearchField>
 						</Toolbar>
@@ -113,7 +112,7 @@
 					<items>
 						<ColumnListItem
 							type="Navigation"
-							press="onPress">
+							press=".onPress">
 							<cells>
 								<ObjectIdentifier
 									title="{ProductName}"/>
@@ -142,9 +141,9 @@
 					</Table>
 				</content>
 			</IconTabBar>
-		</semantic:content>
+		</semantic:headerContent>
 		<semantic:sendEmailAction>
-			<semantic:SendEmailAction id="shareEmail" press="onShareEmailPress"/>
+			<semantic:SendEmailAction id="shareEmail" press=".onShareEmailPress"/>
 		</semantic:sendEmailAction>
 	</semantic:SemanticPage>
 </mvc:View>

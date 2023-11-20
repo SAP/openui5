@@ -1,0 +1,37 @@
+{
+	"value" : [{
+		"@odata.id" : null,
+		"UI5__leaves@odata.type" : "#Decimal",
+		"UI5__leaves" : "90"
+	}, {
+		"@odata.id" : null,
+		"LocalCurrency" : null,
+		"SalesAmountLocalCurrency@odata.type" : "#Decimal",
+		"SalesAmountLocalCurrency" : "79443315"
+	}, {
+		"@odata.id" : null,
+		"UI5__count@odata.type" : "#Decimal",
+		"UI5__count" : "3"
+	}, {
+		"@odata.id" : null,
+		"Country_Code" : "1",
+		"Country" : "USA",
+		"LocalCurrency" : "USD",
+		"SalesAmountLocalCurrency@odata.type" : "#Decimal",
+		"SalesAmountLocalCurrency" : "40405175"
+	}, {
+		"@odata.id" : null,
+		"Country_Code" : "2",
+		"Country" : "United Kingdom",
+		"LocalCurrency" : "GBP",
+		"SalesAmountLocalCurrency@odata.type" : "#Decimal",
+		"SalesAmountLocalCurrency" : "14548502"
+	}, {
+		"@odata.id" : null,
+		"Country_Code" : "3",
+		"Country" : "Germany",
+		"LocalCurrency" : "EUR",
+		"SalesAmountLocalCurrency@odata.type" : "#Decimal",
+		"SalesAmountLocalCurrency" : "24489638"
+	}]
+}

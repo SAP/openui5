@@ -1,0 +1,98 @@
+/* Make the iframe transparent so that the content in it will use the theme's background */
+.sapUiTopicsIframe {
+	width: 100%;
+	height: 99%;
+	background: transparent;
+	border: none;
+}
+
+.sapUiCardExplorerSampleFrame {
+	display: block;
+	height: 100%;
+	width: 100%;
+	border: none;
+}
+
+/*This is fixes broken wrapping of the timeline card. The problem is caused by splitter's styles when its in Horizontal mode.*/
+.sapUiLoSplitterH.sapUiLoSplitter .sapUiLoSplitterContent {
+    white-space: normal;
+}
+
+.topicPage .sapMBarPH {
+	text-align: left;
+	padding-left: 2rem;
+}
+
+/* rotate icon of splitter orientation button to mimic correct position */
+.sapUiLoSplitterH .orientationBtn .sapUiIcon {
+	transform: rotate(180deg);
+}
+.sapUiLoSplitterV .orientationBtn .sapUiIcon {
+	transform: rotate(90deg);
+}
+
+a.appTitle {
+	display: flex;
+	align-items: center;
+	margin: 0 0.25rem;
+	text-decoration: none;
+}
+
+a.appTitle .sapMTitle {
+	cursor: pointer;
+}
+
+ .sapFGridContainer { /* in "Explore" section */
+	padding: 3rem;
+}
+
+/* on Phone */
+
+html.sap-phone .sapFGridContainer { /* in "Explore" section */
+	padding: 0.25rem;
+}
+
+.StyleMessageIcon {
+	margin-right: 0.3rem !important;
+	margin-top: 0.2rem !important;
+	margin-bottom: 0.1rem !important;
+	font-size: 0.8rem !important;
+	height: 1rem !important;
+	color:dimgray !important;
+}
+
+.StyleMessageIcon:focus-visible {
+	outline: none !important;
+}
+
+.styleManifestChangesVBox {
+	margin-right: 1.5rem !important;
+	margin-left: 1.5rem !important;
+	margin-top: 1rem !important;
+	margin-bottom: 1rem !important;
+}
+
+.styleCardConfiguration {
+	margin-left: 1rem !important;
+}
+
+.styleCardEditorLanguageLabel {
+	margin-top: 0.5rem;
+}
+
+.styleCardEditorLanguageSelect {
+	margin-left: 0.5rem;
+}
+
+.styleManifestChangesTextArea {
+	margin-top: 0 !important;
+	margin-bottom: 0 !important;
+}
+
+.manifestChangesTextArea .sapMInputBaseContentWrapper {
+	border: none !important;
+}
+
+.styleSeparatePreviewContainer.sapMPopover .sapMPopoverScroll {
+    display: block;
+}

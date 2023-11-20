@@ -1,0 +1,128 @@
+{
+  "1.102.0": {
+    "date": "May 2022",
+    "notes": [
+      {
+        "id": "c7244b9de84aadef10d12e21b40889dbdeede640",
+        "type": "FIX",
+        "text": " DragAndDrop: Android browser support",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270084085"
+          }
+        ]
+      },
+      {
+        "id": "7967e2a59923a3a40cbd1f9b6a7572513174f817",
+        "type": "FEATURE",
+        "text": " sap.ui.core.format.DateFormat: IANA timezone translation"
+      },
+      {
+        "id": "2da0dcf402da031c8670148a7d8ddfdffa1044cf",
+        "type": "FEATURE",
+        "text": " mvc.XMLView: make \"content\" aggregation of XMLView bindable"
+      },
+      {
+        "id": "6a909df8efdc9eef3eec755aa415cf54e5fd5ed0",
+        "type": "FEATURE",
+        "text": " mvc.XMLView: declarative usage of aggregation, association and event handler"
+      },
+      {
+        "id": "775eaf765f9a3bdde8896c3e8152f452760b8924",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v4.ODLB#getAllCurrentContexts: mPreviousContextsByPath & kept-alive contexts",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270081950"
+          }
+        ]
+      },
+      {
+        "id": "7f91501309efc848858c0611599b6b59747ddeb1",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v4.lib._Helper.updateSelected: handle instance annotations",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270023075"
+          }
+        ]
+      },
+      {
+        "id": "ba8d0d0aaf9074d31ce2bcc4d8a788c715f7fbf0",
+        "type": "FEATURE",
+        "text": " sap.ui.core.CacheManager: Support last usage time per key"
+      },
+      {
+        "id": "f002cc56adadc25b135773ad0a32a4489f131577",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v2.ODataListBinding#createEntry: proper handling of property changes while POST is running",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270069046"
+          }
+        ]
+      },
+      {
+        "id": "6f5698834bd151f45554547ad66ca8399d3e438f",
+        "type": "FIX",
+        "text": " sap.ui.test.actions.Action: Allow scroll to top"
+      },
+      {
+        "id": "0df85379fee13c67d3c7ffa759c592cd3f0323b9",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.OperationMode.Auto: deprecation"
+      },
+      {
+        "id": "abfd4f563569dcf7d00c979ddff918ffd1871190",
+        "type": "FIX",
+        "text": " sap.m.DateTimePicker: Picker time is correct when the app timezone is different",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270040747"
+          }
+        ]
+      },
+      {
+        "id": "d7fee916b74393b2319ab7ab1c390a9ac4505ac3",
+        "type": "FEATURE",
+        "text": " Prevent overwrite SAP themes from OS high contrast settings"
+      },
+      {
+        "id": "f20db76e5f0ebec69137c3c9c7c86cdf1228798f",
+        "type": "FEATURE",
+        "text": " sap.ui.core.format.DateFormat.DateTimeWithTimezone: Format Date only and Time only"
+      },
+      {
+        "id": "a1cf9f4f69f59df95dd4601f07eb95413b0147f6",
+        "type": "FIX",
+        "text": " routing.qunit.History: wait for History state API throttling",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      },
+      {
+        "id": "2361eb5dbdb2923a81c550b7547858c135ffecb1",
+        "type": "FEATURE",
+        "text": " sap.ui.model.odata.v2.Context#delete: API to delete a context"
+      },
+      {
+        "id": "e5913b4a6fed968db1f30b512937deb820050839",
+        "type": "FEATURE",
+        "text": " DragAndDrop: The mobile support is now enabled"
+      },
+      {
+        "id": "7b24f779299c6475b3ad34d34beeca787477b3f3",
+        "type": "FIX",
+        "text": " XMLTemplateProcessor: Enable ExtensionPoint rendering on top-level"
+      }
+    ]
+  }
+}

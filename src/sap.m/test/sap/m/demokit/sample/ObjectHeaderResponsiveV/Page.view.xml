@@ -14,15 +14,14 @@
 		showMarkers="false"
 		markFlagged="true"
 		markFavorite="true"
-		backgroundDesign="Translucent">
-		<attributes>
-			<ObjectAttribute
-				title="Manufacturer"
-				text="{SupplierName}"/>
-			<ObjectAttribute
-				title="Dimension per unit"
-				text="{Width} x {Depth} x {Height} {DimUnit}"/>
-		</attributes>
+		backgroundDesign="Translucent"
+		class="sapUiResponsivePadding--header" >
+		<ObjectAttribute
+			title="Manufacturer"
+			text="{SupplierName}"/>
+		<ObjectAttribute
+			title="Dimension per unit"
+			text="{Width} x {Depth} x {Height} {DimUnit}"/>
 		<statuses>
 			<ObjectStatus
 				title="Approval"

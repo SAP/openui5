@@ -1,7 +1,7 @@
 /*!
  * ${copyright}
  */
-
+/*eslint-disable max-len */
 // Provides an abstraction for list bindings
 sap.ui.define(['./Binding', './Filter', './Sorter'],
 	function(Binding, Filter, Sorter) {
@@ -29,8 +29,10 @@ sap.ui.define(['./Binding', './Filter', './Sorter'],
 	 *         [aFilters=null] Predefined filter or an array of filters (optional)
 	 * @param {string}
 	 *         [mParameters=null] Additional model specific parameters (optional)
-	 * @param {sap.ui.model.Sorter|sap.ui.model.Sorter}
+	 * @param {sap.ui.model.Sorter|sap.ui.model.Sorter[]}
 	 *         [aSorters=null] Predefined sorter or an array of sorters (optional)
+	 * @throws {Error} If the {@link sap.ui.model.Filter.NONE} filter instance is contained in
+	 *   <code>aFilters</code> together with other filters
 	 * @public
 	 * @alias sap.ui.model.TreeBinding
 	 * @extends sap.ui.model.Binding
@@ -42,7 +44,9 @@ sap.ui.define(['./Binding', './Filter', './Sorter'],
 			this.aFilters = [];
 
 			this.aSorters = makeArray(aSorters, Sorter);
+			Filter.checkFilterNone(aFilters);
 			this.aApplicationFilters = makeArray(aFilters, Filter);
+			this.oCombinedFilter = null;
 
 			this.bDisplayRootNode = mParameters && mParameters.displayRootNode === true;
 		},
@@ -81,10 +85,10 @@ sap.ui.define(['./Binding', './Filter', './Sorter'],
 	 *
 	 * @function
 	 * @name sap.ui.model.TreeBinding.prototype.getNodeContexts
-	 * @param {Object} oContext the context element of the node
+	 * @param {sap.ui.model.Context} oContext the context element of the node
 	 * @param {int} iStartIndex the startIndex where to start the retrieval of contexts
 	 * @param {int} iLength determines how many contexts to retrieve beginning from the start index.
-	 * @return {Array} the array of child contexts for the given node
+	 * @return {sap.ui.model.Context[]} the array of child contexts for the given node
 	 *
 	 * @public
 	 */
@@ -116,11 +120,29 @@ sap.ui.define(['./Binding', './Filter', './Sorter'],
 	};
 
 	/**
+	 * Returns the count of entries in the tree, or <code>undefined</code> if it is unknown. If the
+	 * tree is filtered, the count of all entries matching the filter conditions is returned. The
+	 * entries required only for the tree structure are not counted.
+	 *
+	 * <b>Note:</b> The default implementation returns <code>undefined</code> and has to be
+	 * overwritten by subclasses.
+	 *
+	 * @returns {number|undefined} The count of entries in the tree, or <code>undefined</code> if it
+	 *   is unknown, for example because the binding is not resolved or because this feature is not
+	 *   supported.
+	 * @public
+	 * @since 1.108.0
+	 */
+	TreeBinding.prototype.getCount = function () {
+		return undefined;
+	};
+
+	/**
 	 * Filters the tree according to the filter definitions.
 	 *
 	 * @function
 	 * @name sap.ui.model.TreeBinding.prototype.filter
-	 * @param {sap.ui.model.Filter[]} aFilters Array of sap.ui.model.Filter objects
+	 * @param {sap.ui.model.Filter|sap.ui.model.Filter[]} aFilters Single sap.ui.model.Filter object or an array of filter objects
 	 * @param {sap.ui.model.FilterType} sFilterType Type of the filter which should be adjusted, if it is not given, the standard behaviour applies
 	 *
 	 * @public
@@ -137,38 +159,67 @@ sap.ui.define(['./Binding', './Filter', './Sorter'],
 	 */
 
 	/**
-	 * Attach event-handler <code>fnFunction</code> to the '_filter' event of this <code>sap.ui.model.TreeBinding</code>.<br/>
-	 * @param {function} fnFunction The function to call, when the event occurs.
-	 * @param {object} [oListener] object on which to call the given function.
+	 * Attaches event handler <code>fnFunction</code> to the {@link #event:_filter _filter} event of this
+	 * <code>sap.ui.model.TreeBinding</code>.
+	 *
+	 * When called, the context of the event handler (its <code>this</code>) will be bound to <code>oListener</code> if specified,
+	 * otherwise it will be bound to this <code>sap.ui.model.TreeBinding</code> itself.
+	 *
+	 * @param {function} fnFunction The function to be called, when the event occurs
+	 * @param {object} [oListener] Context object to call the event handler with,
+	 *            defaults to this <code>TreeBinding</code> itself
 	 * @protected
-	 * @deprecated As of version 1.11, use the change event. It now contains a parameter (reason : "filter") when a filter event is fired.
+	 * @deprecated As of version 1.11, use the <code>change</code> event. It now contains a parameter
+	 *             <code>(reason : "filter")</code> when a filter event is fired.
 	 */
 	TreeBinding.prototype.attachFilter = function(fnFunction, oListener) {
 		this.attachEvent("_filter", fnFunction, oListener);
 	};
 
 	/**
-	 * Detach event-handler <code>fnFunction</code> from the '_filter' event of this <code>sap.ui.model.TreeBinding</code>.<br/>
-	 * @param {function} fnFunction The function to call, when the event occurs.
-	 * @param {object} [oListener] object on which to call the given function.
+	 * Detaches event handler <code>fnFunction</code> from the {@link #event:_filter _filter} event of this
+	 * <code>sap.ui.model.TreeBinding</code>.
+	 *
+	 * The passed function and listener object must match the ones used for event registration.
+	 *
+	 * @param {function} fnFunction The function to be called, when the event occurs
+	 * @param {object} [oListener] Context object on which the given function had to be called
 	 * @protected
-	 * @deprecated As of version 1.11, use the change event.
+	 * @deprecated As of version 1.11, use the <code>change</code> event.
 	 */
 	TreeBinding.prototype.detachFilter = function(fnFunction, oListener) {
 		this.detachEvent("_filter", fnFunction, oListener);
 	};
 
 	/**
-	 * Fire event _filter to attached listeners.
-	 * @param {Map} [mArguments] the arguments to pass along with the event.
+	 * Fires event {@link #event:_filter _filter} to attached listeners.
+	 *
+	 * @param {object} [oParameters] Parameters to pass along with the event
 	 * @private
-	 * @deprecated As of version 1.11, use the change event. It now contains a parameter (reason : "filter") when a filter event is fired.
+	 * @deprecated As of version 1.11, use the <code>change</code> event. It now contains a parameter
+	 *             <code>(reason : "filter")</code> when a filter event is fired.
 	 */
-	TreeBinding.prototype._fireFilter = function(mArguments) {
-		this.fireEvent("_filter", mArguments);
+	TreeBinding.prototype._fireFilter = function(oParameters) {
+		this.fireEvent("_filter", oParameters);
 	};
 
-
+	/**
+	 * Return the filter information as an AST. The default implementation checks for this.oCombinedFilter,
+	 * models not using this member may override the method.
+	 * Consumers must not rely on the origin information to be available, future filter implementations will
+	 * not provide this information.
+	 *
+	 * @param {boolean} bIncludeOrigin include information about the filter objects the tree has been created from
+	 * @returns {object} The AST of the filter tree
+	 * @private
+	 * @ui5-restricted sap.ui.table, sap.ui.export
+	 */
+	TreeBinding.prototype.getFilterInfo = function(bIncludeOrigin) {
+		if (this.oCombinedFilter) {
+			return this.oCombinedFilter.getAST(bIncludeOrigin);
+		}
+		return null;
+	};
 	return TreeBinding;
 
 });

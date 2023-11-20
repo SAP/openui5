@@ -1,22 +1,25 @@
 /*!
  * ${copyright}
  */
-sap.ui.require([
+sap.ui.define([
+	"sap/ui/core/sample/common/Helper",
 	"sap/ui/core/sample/odata/v4/SalesOrders/tests/WriteNonDeferredGroup",
-	"sap/ui/test/opaQunit"
-], function (WriteNonDeferredGroupTest, opaTest) {
-	/*global QUnit */
+	"sap/ui/test/opaQunit",
+	"sap/ui/test/TestUtils"
+], function (Helper, WriteNonDeferredGroupTest, opaTest, TestUtils) {
 	"use strict";
 
-	QUnit.module("sap.ui.core.sample.odata.v4.SalesOrders - " +
-		"Write via application groups with SubmitMode.Auto/.Direct");
+	Helper.qUnitModule("sap.ui.core.sample.odata.v4.SalesOrders - "
+		+ "Write via application groups with SubmitMode.Auto/.Direct");
+
+	if (!TestUtils.isRealOData()) {
+		QUnit.skip("Test runs only with realOData=true");
+		return;
+	}
 
 	//*****************************************************************************
-	["myAutoGroup", "$auto", "myDirectGroup", "$direct"].forEach(function (sGroupId) {
-		opaTest("POST/PATCH SalesOrder via group: " + sGroupId, function (Given, When, Then) {
-
-			WriteNonDeferredGroupTest.writeNonDeferredGroup(Given, When, Then, sGroupId);
-
-		});
+	["myAutoGroup", "myDirectGroup"].forEach(function (sGroupId) {
+		opaTest("POST/PATCH SalesOrder via group: " + sGroupId,
+			WriteNonDeferredGroupTest.writeNonDeferredGroup.bind(null, sGroupId, ""));
 	});
 });

@@ -27,6 +27,8 @@ sap.ui.define(["sap/ui/core/library", "./library", "./ListItemBase", "./GroupHea
 	 *
 	 * @extends sap.m.ListItemBase
 	 *
+	 * @implements sap.m.ITableItem
+
 	 * @author SAP SE
 	 * @version ${version}
 	 *
@@ -34,38 +36,43 @@ sap.ui.define(["sap/ui/core/library", "./library", "./ListItemBase", "./GroupHea
 	 * @public
 	 * @since 1.12
 	 * @alias sap.m.GroupHeaderListItem
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
-	var GroupHeaderListItem = ListItemBase.extend("sap.m.GroupHeaderListItem", /** @lends sap.m.GroupHeaderListItem.prototype */ { metadata : {
+	var GroupHeaderListItem = ListItemBase.extend("sap.m.GroupHeaderListItem", /** @lends sap.m.GroupHeaderListItem.prototype */ {
+		metadata : {
+			interfaces : [
+				"sap.m.ITableItem"
+			],
+			library : "sap.m",
+			properties : {
 
-		library : "sap.m",
-		properties : {
+				/**
+				 * Defines the title of the group header.
+				 */
+				title : {type : "string", group : "Data", defaultValue : null},
 
-			/**
-			 * Defines the title of the group header.
-			 */
-			title : {type : "string", group : "Data", defaultValue : null},
+				/**
+				 * Defines the count of items in the group, but it could also be an amount which represents the sum of all amounts in the group.
+				 * <b>Note:</b> Will not be displayed if not set.
+				 */
+				count : {type : "string", group : "Data", defaultValue : null},
 
-			/**
-			 * Defines the count of items in the group, but it could also be an amount which represents the sum of all amounts in the group.
-			 * <b>Note:</b> Will not be displayed if not set.
-			 */
-			count : {type : "string", group : "Data", defaultValue : null},
+				/**
+				 * Allows to uppercase the group title.
+				 * @since 1.13.2
+				 * @deprecated Since version 1.40.10
+				 */
+				upperCase : {type : "boolean", group : "Appearance", defaultValue : false, deprecated: true},
 
-			/**
-			 * Allows to uppercase the group title.
-			 * @since 1.13.2
-			 * @deprecated Since version 1.40.10
-			 */
-			upperCase : {type : "boolean", group : "Appearance", defaultValue : false},
+				/**
+				 * Defines the title text directionality with enumerated options. By default, the control inherits text direction from the DOM.
+				 * @since 1.28.0
+				 */
+				titleTextDirection : {type : "sap.ui.core.TextDirection", group : "Appearance", defaultValue : TextDirection.Inherit}
+			}
+		},
 
-			/**
-			 * Defines the title text directionality with enumerated options. By default, the control inherits text direction from the DOM.
-			 * @since 1.28.0
-			 */
-			titleTextDirection : {type : "sap.ui.core.TextDirection", group : "Appearance", defaultValue : TextDirection.Inherit}
-		}
-	}});
+		renderer: GroupHeaderListItemRenderer
+	});
 
 	// GroupHeaderListItem does not respect the list mode
 	GroupHeaderListItem.prototype.getMode = function() {
@@ -94,12 +101,11 @@ sap.ui.define(["sap/ui/core/library", "./library", "./ListItemBase", "./GroupHea
 
 			// defines the tag name
 			this.TagName = "tr";
+			this.aAriaOwns = [];
 		}
 	};
 
 	GroupHeaderListItem.prototype.getAccessibilityType = function(oBundle) {
-		var sType = this.getTable() ? "ROW" : "OPTION";
-		return oBundle.getText("LIST_ITEM_GROUP_HEADER") + " " + oBundle.getText("ACC_CTR_TYPE_" + sType);
 	};
 
 	GroupHeaderListItem.prototype.getContentAnnouncement = function() {

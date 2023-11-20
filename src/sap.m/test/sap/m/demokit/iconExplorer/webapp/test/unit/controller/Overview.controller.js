@@ -5,11 +5,10 @@ sap.ui.define([
 	"sap/ui/demo/iconexplorer/controller/BaseController",
 	"sap/ui/base/ManagedObject",
 	"sap/ui/model/json/JSONModel",
-	"test/unit/helper/FakeI18nModel",
+	"sap/ui/demo/iconexplorer/test/unit/helper/FakeI18nModel",
 	"sap/ui/demo/iconexplorer/model/formatter",
-	"sap/ui/thirdparty/sinon",
-	"sap/ui/thirdparty/sinon-qunit"
-], function(OverviewController, BaseController, ManagedObject, JSONModel, FakeI18n, formatter) {
+	"sap/m/Input"
+], function(OverviewController, BaseController, ManagedObject, JSONModel, FakeI18n, formatter, Input) {
 	"use strict";
 
 	QUnit.module("Overview controller tests", {
@@ -175,7 +174,7 @@ sap.ui.define([
 		this.oOverviewController.onCopyUnicodeToClipboard();
 
 		// Assert
-		assert.strictEqual(this.oOverviewController._copyStringToClipboard.callCount, 1, "String copied to clipbiard exaclty once");
+		assert.strictEqual(this.oOverviewController._copyStringToClipboard.callCount, 1, "String copied to clipbiard exactly once");
 		assert.strictEqual(this.oOverviewController._copyStringToClipboard.getCalls()[0].args[0], "xe034", "Correct string copied to clipboard");
 	});
 
@@ -183,7 +182,7 @@ sap.ui.define([
 		// Arrange
 		var sTestString = "sap-icon://excel-attachment",
 			sInputId = "previewCopyCode",
-			oInput = new sap.m.Input(sInputId, {
+			oInput = new Input(sInputId, {
 				value: sTestString
 			});
 		sinon.stub(this.oOverviewController, "_copyStringToClipboard");
@@ -198,7 +197,7 @@ sap.ui.define([
 		this.oOverviewController.onCopyCodeToClipboard();
 
 		// Assert
-		assert.strictEqual(this.oOverviewController._copyStringToClipboard.callCount, 1, "String copied to clipbiard exaclty once");
+		assert.strictEqual(this.oOverviewController._copyStringToClipboard.callCount, 1, "String copied to clipbiard exactly once");
 		assert.strictEqual(this.oOverviewController._copyStringToClipboard.getCalls()[0].args[0], sTestString, "Correct string copied to clipboard");
 
 		// Clean up
@@ -210,7 +209,7 @@ sap.ui.define([
 		var sTestString = "sap-icon://excel-attachment",
 			sInputId = "previewCopyCode",
 			sIcon = "icon",
-			oInput = new sap.m.Input(sInputId, {
+			oInput = new Input(sInputId, {
 				value: sTestString
 			});
 
@@ -227,7 +226,7 @@ sap.ui.define([
 		this.oOverviewController.onCopyIconToClipboard();
 
 		// Assert
-		assert.strictEqual(this.oOverviewController._copyStringToClipboard.callCount, 1, "String copied to clipbiard exaclty once");
+		assert.strictEqual(this.oOverviewController._copyStringToClipboard.callCount, 1, "String copied to clipboard exactly once");
 		assert.strictEqual(this.oOverviewController._copyStringToClipboard.getCalls()[0].args[0], sIcon, "Correct string copied to clipboard");
 
 		// Clean up
@@ -236,7 +235,7 @@ sap.ui.define([
 		this.oOverviewController._copyStringToClipboard.restore();
 	});
 
-	QUnit.test("The formatter for the unicode copy field cuts off the unnessesary characters", function (assert) {
+	QUnit.test("The formatter for the unicode copy field cuts off the unnecessary characters", function (assert) {
 		// Arrange
 		var sRawUnicodeString = "&#xe000;",
 			sCleanUnicodeString = "xe000",
@@ -244,7 +243,7 @@ sap.ui.define([
 				getText: function(bundleName, bundleParameters) {
 					// Assert
 					assert.strictEqual(bundleName, "previewInfoUnicodeWithParams", "Resource bundle called with correct i18n key");
-					assert.strictEqual(bundleParameters[0], sCleanUnicodeString, "Raw unicode haas been transformed correctly");
+					assert.strictEqual(bundleParameters[0], sCleanUnicodeString, "Raw unicode has been transformed correctly");
 				}
 			});
 
@@ -276,7 +275,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("The filter produced by the factory function returns true if the model returns unicode string that cotnains query string", function (assert) {
+	QUnit.test("The filter produced by the factory function returns true if the model returns unicode string that contains query string", function (assert) {
 		// Arrange
 		var fnFilter = this.oOverviewController._unicodeFilterFactory("xe000"),
 			sResult;

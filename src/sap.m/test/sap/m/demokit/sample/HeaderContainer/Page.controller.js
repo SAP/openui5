@@ -1,5 +1,5 @@
-sap.ui.define(['jquery.sap.global', 'sap/m/MessageToast', 'sap/ui/core/mvc/Controller'],
-	function (jQuery, MessageToast, Controller, JSONModel) {
+sap.ui.define(['sap/m/MessageToast', 'sap/ui/core/mvc/Controller'],
+	function (MessageToast, Controller) {
 		"use strict";
 
 		var PageController = Controller.extend("sap.m.sample.HeaderContainer.Page", {
@@ -7,7 +7,7 @@ sap.ui.define(['jquery.sap.global', 'sap/m/MessageToast', 'sap/ui/core/mvc/Contr
 				MessageToast.show("Fire press");
 			},
 			scrollChanged: function (oEvent) {
-				var sKey = oEvent.mParameters.selectedItem.getProperty("key");
+				var sKey = oEvent.getParameter("selectedItem").getKey();
 				if (sKey === "px") {
 					this.getView().byId("container1").setScrollStepByItem(0);
 					this.getView().byId("container2").setScrollStepByItem(0);

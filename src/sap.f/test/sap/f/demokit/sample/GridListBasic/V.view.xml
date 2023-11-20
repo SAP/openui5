@@ -1,0 +1,31 @@
+<mvc:View
+	controllerName="sap.f.sample.GridListBasic.C"
+	xmlns="sap.m"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:grid="sap.ui.layout.cssgrid"
+	xmlns:f="sap.f">
+	<Slider value="100" liveChange="onSliderMoved" />
+	<Panel id="panelForGridList" backgroundDesign="Transparent">
+		<headerToolbar>
+			<Toolbar height="3rem">
+				<Title text="GridList with default grid layout" />
+			</Toolbar>
+		</headerToolbar>
+
+		<f:GridList
+			id="gridList"
+			headerText="GridList header"
+			items="{/items}">
+			<f:GridListItem>
+				<VBox class="sapUiSmallMargin">
+					<layoutData>
+						<FlexItemData growFactor="1" shrinkFactor="0" /> <!-- Don't shrink below minimum size. Fill space if available. -->
+					</layoutData>
+
+					<Title text="{title}" wrapping="true" />
+					<Label text="{subtitle}" wrapping="true" />
+				</VBox>
+			</f:GridListItem>
+		</f:GridList>
+	</Panel>
+</mvc:View>

@@ -3,38 +3,59 @@
  */
 
 sap.ui.define([
-		"jquery.sap.global",
-		"sap/ui/Device",
-		"sap/ui/documentation/sdk/controller/BaseController",
-		"sap/ui/model/json/JSONModel",
-		"sap/ui/documentation/sdk/controller/util/ControlsInfo",
-		"sap/m/GroupHeaderListItem",
-		"sap/ui/model/Filter",
-		"sap/ui/model/Sorter",
-		"jquery.sap.storage"
-	], function (jQuery, Device, BaseController, JSONModel, ControlsInfo, GroupHeaderListItem,
-				 Filter, Sorter, jQueryStorage) {
+	"sap/ui/core/EventBus",
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/Device",
+	"sap/ui/documentation/sdk/controller/BaseController",
+	"sap/ui/model/json/JSONModel",
+	"sap/ui/documentation/sdk/controller/util/ControlsInfo",
+	"sap/m/GroupHeaderListItem",
+	"sap/ui/model/Filter",
+	"sap/ui/model/FilterOperator",
+	"sap/ui/model/Sorter",
+	"sap/ui/util/Storage",
+	"sap/ui/documentation/sdk/controller/util/Highlighter",
+	"sap/ui/core/Fragment"
+], function(
+	EventBus,
+	jQuery,
+	Device,
+	BaseController,
+	JSONModel,
+	ControlsInfo,
+	GroupHeaderListItem,
+	Filter,
+	FilterOperator,
+	Sorter,
+	Storage,
+	Highlighter,
+	Fragment
+) {
 		"use strict";
+
+		var COZY = "cozy",
+			COMPACT = "compact",
+			CONDENSED = "condensed";
 
 		return BaseController.extend("sap.ui.documentation.sdk.controller.ControlsMaster", {
 
-			_oStorage: jQueryStorage.sap.storage(jQueryStorage.sap.storage.Type.local),
+			_oStorage: new Storage(Storage.Type.local),
 			_sStorageKey: "UI5_EXPLORED_LIST_SETTINGS_FROM_1_48",
 			_oViewSettings: {
-				compactOn: false,
-				themeActive: "sap_belize",
+				densityMode: COMPACT,
+				themeActive: "sap_horizon",
 				rtl: false
 			},
 			_oDefaultSettings: {
-				compactOn: false,
-				themeActive: "sap_belize",
+				densityMode: COMPACT,
+				themeActive: "sap_horizon",
 				rtl: false
 			},
 			_oListSettings: {
 				filter: {},
 				groupProperty: "category",
 				groupDescending: false,
-				version: jQuery.sap.Version(sap.ui.version).getMajor() + "." + jQuery.sap.Version(sap.ui.version).getMinor()
+				version: ''
 			},
 			_mGroupFunctions: {
 				"name": function (oContext) {
@@ -61,6 +82,8 @@ sap.ui.define([
 			 * @public
 			 */
 			onInit : function () {
+				this._oList = this.byId("exploredMasterList");
+
 				var oEntityModel, oDeviceModel, oFilterModel,
 					fnOnDataReady = function (oControlsData) {
 						this._oView.getModel().setData({
@@ -105,6 +128,7 @@ sap.ui.define([
 				this._oRouter.getRoute("entity").attachPatternMatched(this._onEntityMatched, this);
 				this._oRouter.getRoute("sample").attachPatternMatched(this._onSampleMatched, this);
 				this._oRouter.getRoute("code").attachPatternMatched(this._onSampleMatched, this);
+				this._oRouter.getRoute("codeFile").attachPatternMatched(this._onSampleMatched, this);
 				this._oRouter.getRoute("controls").attachPatternMatched(this._onControlsMatched, this);
 				this._oRouter.getRoute("controlsMaster").attachPatternMatched(this._onControlsMasterMatched, this);
 
@@ -116,7 +140,7 @@ sap.ui.define([
 				this._iDomRenderingDelay = 0; // (ms)
 				this._getList().addEventDelegate({
 					onAfterRendering : function() {
-						jQuery.sap.delayedCall(this._iDomRenderingDelay, this, this._scrollToSelectedListItem);
+						setTimeout(this._scrollToSelectedListItem.bind(this), this._iDomRenderingDelay);
 					}}, this);
 				this._oCore.attachThemeChanged(this._scrollToSelectedListItem, this); // theme change requires us to restore scroll position
 				this._oCore.attachLocalizationChanged(this._onLocalizationChange, this);
@@ -130,27 +154,39 @@ sap.ui.define([
 				this._oComponent = this.getOwnerComponent();
 				this._oRootView = this.getRootView();
 
-				this._oViewSettings.compactOn = this._oComponent.getContentDensityClass() === "sapUiSizeCompact";
+				switch (this._oComponent.getContentDensityClass()) {
+					case "sapUiSizeCompact":
+						this._oViewSettings.densityMode = COMPACT;
+						break;
+					case "sapUiSizeCondensed":
+						this._oViewSettings.densityMode = CONDENSED;
+						break;
+					default:
+						this._oViewSettings.densityMode = COZY;
+				}
+
 				this._oViewSettings.rtl = this._oCore.getConfiguration().getRTL();
 
-				// Keep default settings for compact mode up to date
-				this._oDefaultSettings.compactOn = this._oViewSettings.compactOn;
+				// Keep default settings for density mode up to date
+				this._oDefaultSettings.densityMode = this._oViewSettings.densityMode;
 				this._oDefaultSettings.rtl = this._oViewSettings.rtl;
 
 				this._initListSettings();
+
+				this.bus = EventBus.getInstance();
+				this.bus.subscribe("themeChanged", "onDemoKitThemeChanged", this.onDemoKitThemeChanged, this);
 			},
 
-			_viewSettingsResetOnNavigation: function (oEvent) {
-				var sRouteName = oEvent.getParameter("name");
-				if (["group", "entity", "sample", "code", "code_file", "controls", "controlsMaster", "listFilter"].indexOf(sRouteName) === -1) {
-					// Reset view settings
-					this._applyAppConfiguration(this._oDefaultSettings.themeActive,
-						this._oDefaultSettings.compactOn,
-						this._oDefaultSettings.rtl);
-
-					// When we restore the default settings we don't need the event any more
-					this.getRouter().detachBeforeRouteMatched(this._viewSettingsResetOnNavigation, this);
+			onAfterRendering: function () {
+				if (!this.highlighter) {
+					this.highlighter = new Highlighter(this._oList.getDomRef(), {
+						shouldBeObserved: true
+					});
 				}
+			},
+
+			onDemoKitThemeChanged: function (sChannelId, sEventId, oData) {
+				this._oDefaultSettings.themeActive = oData.sThemeActive;
 			},
 
 			/**
@@ -162,82 +198,6 @@ sap.ui.define([
 				if (sJson) {
 					this._oListSettings = JSON.parse(sJson);
 				}
-			},
-
-			/**
-			 * Apply content configuration
-			 * @param {string} sThemeActive name of the theme
-			 * @param {boolean} bCompactOn compact mode
-			 * @param {boolean} bRTL right to left mode
-			 * @private
-			 */
-			_applyAppConfiguration: function(sThemeActive, bCompactOn, bRTL){
-				var oSampleFrameContent,
-					oSampleFrameCore,
-					$SampleFrame,
-					bRTLChanged,
-					bThemeChanged,
-					bContentDensityChanged;
-
-				// Handle content density change
-				if (this._oViewSettings.compactOn !== bCompactOn) {
-					jQuery(document.body).toggleClass("sapUiSizeCompact", bCompactOn)
-						.toggleClass("sapUiSizeCozy", !bCompactOn);
-
-					this._oViewSettings.compactOn = bCompactOn;
-					bContentDensityChanged = true;
-				}
-
-				// Handle RTL mode change
-				if (this._oViewSettings.rtl !== bRTL) {
-					this._oCore.getConfiguration().setRTL(bRTL);
-
-					this._oViewSettings.rtl = bRTL;
-					bRTLChanged = true;
-				}
-
-				// Handle theme change
-				if (this._oViewSettings.themeActive !== sThemeActive) {
-					this._oCore.applyTheme(sThemeActive);
-
-					this._oViewSettings.themeActive = sThemeActive;
-					bThemeChanged = true;
-				} else if (bContentDensityChanged) {
-					// NOTE: We notify for content density change only if no theme change is applied because both
-					// methods fire the same event which may lead to unpredictable result.
-					this._oCore.notifyContentDensityChanged();
-				}
-
-				// Apply theme and compact mode also to iframe samples if there is actually a change
-				if (bRTLChanged || bContentDensityChanged || bThemeChanged) {
-
-					$SampleFrame = jQuery("#sampleFrame");
-					if ($SampleFrame.length > 0) {
-						oSampleFrameContent = $SampleFrame[0].contentWindow;
-						if (oSampleFrameContent) {
-							oSampleFrameCore = oSampleFrameContent.sap.ui.getCore();
-
-							if (bContentDensityChanged) {
-								oSampleFrameContent.jQuery('body').toggleClass("sapUiSizeCompact", bCompactOn)
-									.toggleClass("sapUiSizeCozy", !bCompactOn);
-							}
-
-							if (bRTLChanged) {
-								oSampleFrameCore.getConfiguration().setRTL(bRTL);
-							}
-
-							if (bThemeChanged) {
-								oSampleFrameCore.applyTheme(sThemeActive);
-							} else if (bContentDensityChanged) {
-								// Notify Core for content density change only if no theme change happened
-								oSampleFrameCore.notifyContentDensityChanged();
-							}
-
-						}
-					}
-
-				}
-
 			},
 
 			_onGroupMatched: function (event) {
@@ -254,7 +214,7 @@ sap.ui.define([
 
 			_onMatched: function(sName, oEvent) {
 				var oEntityModel = this._getList().getModel(),
-					sEntityId = oEvent.getParameter("arguments").id;
+					sEntityId = oEvent.getParameter("arguments").entityId;
 
 				this.showMasterSide();
 				this._topicId = sName + sEntityId;
@@ -278,15 +238,16 @@ sap.ui.define([
 
 				if (sFilterValue) {
 					// Get the search control, apply the value and fire a live change event so the list will be filtered
+					sFilterValue = decodeURI(sFilterValue);
 					oSearchField = this.byId("searchField");
 					oSearchField.setValue(sFilterValue).fireLiveChange({
 						newValue: sFilterValue
 					});
 
 					// Show master page: this call will show the master page only on small screen sizes but not on phone
-					jQuery.sap.delayedCall(0, this, function () {
+					setTimeout(function () {
 						this.getSplitApp().showMaster();
-					});
+					}.bind(this), 0);
 
 					// On phone: navigation is needed so the user will see the master list
 					if (Device.system.phone) {
@@ -303,9 +264,9 @@ sap.ui.define([
 				this._resetListSelection();
 
 				if (Device.system.desktop) {
-					jQuery.sap.delayedCall(0, this, function () {
+					setTimeout(function () {
 						this.getView().byId("searchField").getFocusDomRef().focus();
-					});
+					}.bind(this), 0);
 				}
 			},
 
@@ -315,26 +276,24 @@ sap.ui.define([
 
 			_onLocalizationChange: function(oEvent) {
 				this._iDomRenderingDelay = 3000; //RTL change requires longer DOM computations as new CSS is requested and applied on the entire DOM
-				jQuery.sap.delayedCall(this._iDomRenderingDelay, this, function() {
+				setTimeout(function() {
 					this._iDomRenderingDelay = 0;
-				});
+				}.bind(this), this._iDomRenderingDelay);
 			},
 
 			onNavToEntity : function (oEvt) {
 				var oItemParam = oEvt.getParameter("listItem"),
 					oItem = (oItemParam) ? oItemParam : oEvt.getSource(),
 					sPath = oItem.getBindingContext().getPath(),
-					oEntity = this.getView().getModel().getProperty(sPath),
-					bReplace = !Device.system.phone;
+					oEntity = this.getView().getModel().getProperty(sPath);
 
 				this._bNavToEntityViaList = true;
-				this.getRouter().navTo("entity", {id: oEntity.id, part: "samples"}, bReplace);
+				this.getRouter().navTo("entity", {id: oEntity.id, part: "samples"});
 			},
 
 			getGroupHeader: function (oGroup) {
 				return new GroupHeaderListItem({
-					title: oGroup.key,
-					upperCase: false
+					title: oGroup.key
 				});
 			},
 
@@ -356,7 +315,7 @@ sap.ui.define([
 				this._toggleListItem(oItemToSelect, true);
 
 				if (!this._bNavToEntityViaList) {
-					jQuery.sap.delayedCall(0, this, this._scrollToSelectedListItem);
+					setTimeout(this._scrollToSelectedListItem.bind(this), 0);
 				}
 				this._bNavToEntityViaList = false;
 			},
@@ -370,7 +329,7 @@ sap.ui.define([
 
 				if (oSelectedItem) {
 					this._toggleListItem(oSelectedItem, false);
-					jQuery.sap.delayedCall(0, this, this._scrollPageTo, [0, 0]);
+					setTimeout(this._scrollPageTo.bind(this, 0, 0), 0);
 				}
 			},
 
@@ -473,6 +432,7 @@ sap.ui.define([
 			onExit: function() {
 				this._oCore.detachThemeChanged(this._scrollToSelectedListItem, this);
 				this._oCore.detachLocalizationChanged(this._onLocalizationChange, this);
+				this.highlighter.destroy();
 			},
 
 			onConfirmViewSettings: function (oEvent) {
@@ -492,24 +452,40 @@ sap.ui.define([
 				this._updateView();
 			},
 
+			getViewSettingsDialog: function () {
+				return new Promise(function (fnResolve) {
+					if (!this._oVSDialog) {
+						Fragment.load({
+							id: this.getView().getId(),
+							name: "sap.ui.documentation.sdk.view.viewSettingsDialog",
+							controller: this
+						}).then(function (oDialog) {
+							this._oVSDialog = oDialog;
+							this.getView().addDependent(this._oVSDialog);
+							fnResolve(this._oVSDialog);
+						}.bind(this));
+					} else {
+						fnResolve(this._oVSDialog);
+					}
+				}.bind(this));
+			},
+
 			handleListSettings: function () {
-				// create dialog on demand
-				if (!this._oVSDialog) {
-					this._oVSDialog = sap.ui.xmlfragment(this.getView().getId(), "sap.ui.documentation.sdk.view.viewSettingsDialog", this);
-					this.getView().addDependent(this._oVSDialog);
-				}
+				this.getViewSettingsDialog().then(function (oDialog) {
+					oDialog.setSelectedFilterCompoundKeys(this._oListSettings.filter);
+					oDialog.setSelectedGroupItem(this._oListSettings.groupProperty);
+					oDialog.setGroupDescending(this._oListSettings.groupDescending);
 
-				this._oVSDialog.setSelectedFilterCompoundKeys(this._oListSettings.filter);
-				this._oVSDialog.setSelectedGroupItem(this._oListSettings.groupProperty);
-				this._oVSDialog.setGroupDescending(this._oListSettings.groupDescending);
-
-				// open
-				this._oVSDialog.open();
-
+					// open
+					oDialog.open();
+				}.bind(this));
 			},
 
 			handleListFilter: function (oEvent) {
 				this._sFilterValue = oEvent.getParameter("newValue").trim();
+				if (this.highlighter) {
+					this.highlighter.highlight(this._sFilterValue);
+				}
 				this._updateView();
 			},
 
@@ -522,17 +498,39 @@ sap.ui.define([
 					bFilterChanged = false,
 					bGroupChanged = false,
 					oList = this._oView.byId("exploredMasterList"),
-					oBinding = oList.getBinding("items");
+					oBinding = oList.getBinding("items"),
+					fnNumericSort;
 
+					// fnNumericSort is needed to sort the entities only if the numeric sorter is requiered -
+					// it is selected the items to be sorted by release
+					if (this._oListSettings.groupProperty === "since") {
+						fnNumericSort = function(a,b) {
+							const aVersionA = a.split('.').map(Number);
+							const aVersionB = b.split('.').map(Number);
+
+							for (let i = 0; i < Math.max(aVersionA.length, aVersionB.length); i++) {
+								const iPartA = aVersionA[i] || 0;
+								const iPartB = aVersionB[i] || 0;
+
+								if (iPartA < iPartB) {
+									return -1;
+								} else if (iPartA > iPartB) {
+									return 1;
+								}
+							}
+
+							return 0;
+						};
+					}
 				bFilterChanged = true;
-				aFilters.push(new Filter("searchTags", "Contains", this._sFilterValue));
+				aFilters.push(new Filter("searchTags", FilterOperator.Contains, this._sFilterValue));
 
 				// add filters for view settings
 				jQuery.each(this._oListSettings.filter, function (sProperty, oValues) {
 					var aPropertyFilters = [];
 
 					jQuery.each(oValues, function (sKey, bValue) {
-						var sOperator = (sProperty === "formFactors") ? "Contains" : "EQ";
+						var sOperator = (sProperty === "formFactors") ? FilterOperator.Contains : FilterOperator.EQ;
 						aPropertyFilters.push(new Filter(sProperty, sOperator, sKey));
 					});
 
@@ -559,7 +557,8 @@ sap.ui.define([
 					oSorter = new Sorter(
 						this._oListSettings.groupProperty,
 						this._oListSettings.groupDescending,
-						this._mGroupFunctions[this._oListSettings.groupProperty]);
+						this._mGroupFunctions[this._oListSettings.groupProperty],
+						fnNumericSort);
 					aSorters.push(oSorter);
 					aSorters.push(new Sorter("name", false));
 					oBinding.sort(aSorters);
@@ -597,75 +596,6 @@ sap.ui.define([
 				} else {
 					this._vsFilterBar.setVisible(false);
 				}
-			},
-
-			/**
-			 * Opens the View settings dialog
-			 * @public
-			 */
-			handleSettings: function () {
-				if (!this._oSettingsDialog) {
-					this._oSettingsDialog = new sap.ui.xmlfragment("sap.ui.documentation.sdk.view.appSettingsDialog", this);
-					this._oView.addDependent(this._oSettingsDialog);
-				}
-
-				jQuery.sap.delayedCall(0, this, function () {
-					var oAppSettings = this._oCore.getConfiguration(),
-						oThemeSelect = this._oCore.byId("ThemeSelect"),
-						sUriParamTheme = jQuery.sap.getUriParameters().get("sap-theme"),
-						bCompactMode = this._oViewSettings.compactOn;
-
-					// Theme select
-					oThemeSelect.setSelectedKey(sUriParamTheme ? sUriParamTheme : oAppSettings.getTheme());
-
-					// RTL
-					this._oCore.byId("RTLSwitch").setState(oAppSettings.getRTL());
-
-					// Compact mode select
-					this._oCore.byId("CompactModeSwitch").setState(bCompactMode);
-					this._oSettingsDialog.open();
-				});
-			},
-
-			/**
-			 * Closes the View settings dialog
-			 * @public
-			 */
-			handleCloseAppSettings: function () {
-				this._oSettingsDialog.close();
-			},
-
-			/**
-			 * Saves settings from the view settings dialog
-			 * @public
-			 */
-			handleSaveAppSettings: function () {
-				var BusyDialog,
-					bCompact = this._oCore.byId('CompactModeSwitch').getState(),
-					sTheme = this._oCore.byId('ThemeSelect').getSelectedKey(),
-					bRTL = this._oCore.byId('RTLSwitch').getState();
-
-				this._oSettingsDialog.close();
-
-				// Lazy loading of busy dialog
-				if (!this._oBusyDialog) {
-					jQuery.sap.require("sap.m.BusyDialog");
-					BusyDialog = sap.ui.require("sap/m/BusyDialog");
-					this._oBusyDialog = new BusyDialog();
-					this.getView().addDependent(this._oBusyDialog);
-				}
-
-				// Handle busy dialog
-				this._oBusyDialog.open();
-				jQuery.sap.delayedCall(1000, this, function () {
-					this._oBusyDialog.close();
-				});
-
-				// handle settings change
-				this._applyAppConfiguration(sTheme, bCompact, bRTL);
-
-				// If we are navigating outside the Explored App section: view settings should be reset
-				this.getRouter().attachBeforeRouteMatched(this._viewSettingsResetOnNavigation, this);
 			}
 		});
 	}

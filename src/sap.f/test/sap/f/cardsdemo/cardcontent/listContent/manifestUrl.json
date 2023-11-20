@@ -1,0 +1,42 @@
+{
+	"sap.app": {
+		"id": "defaultManifestParameters",
+		"type": "card"
+	},
+	"sap.card": {
+		"configuration": {
+			"parameters": {
+				"city": {
+					"value": "Vratza"
+				},
+				"country": {
+					"value": "Bulgaria"
+				}
+			}
+		},
+		"type": "List",
+		"header": {
+			"title": "Default Manifest Parameters",
+			"subTitle": "Default parameter from manifest"
+		},
+		"content": {
+			"data": {
+				"request": {
+					"url": "./someitems.json"
+				}
+			},
+			"item": {
+				"icon": {
+					"src": "{icon}"
+				},
+				"title": {
+					"value": "{Name}, {parameters>/TODAY_ISO}"
+				},
+				"description": {
+					"value": "Stationed in: {parameters>/city/value}, {parameters>/country/value}"
+				},
+				"highlight": "{state}"
+			}
+		}
+	}
+}

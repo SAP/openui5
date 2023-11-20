@@ -1,0 +1,71 @@
+/* ============================= */
+/* CSS for control sap.m/Avatar  */
+/* Horizon theme                 */
+/* ============================= */
+
+@_sap_m_Avatar_Font_Size_XL: 3rem;
+@_sap_m_Avatar_Font_Size_L: 2.25rem;
+@_sap_m_Avatar_Font_Size_M: 1.5rem;
+@_sap_m_Avatar_Font_Size_S: 1.125rem;
+@_sap_m_Avatar_Font_Size_XS: 1rem;
+
+.sapFAvatarSquare {
+	border-radius: @sapUiElementBorderCornerRadius;
+
+	.sapFAvatarImageHolder {
+		border-radius: @sapUiElementBorderCornerRadius;
+	}
+}
+
+.sapFAvatar.sapFAvatarInitials > .sapFAvatarInitialsHolder {
+	font-size: inherit;
+}
+
+.sapFAvatarFocusable.sapMAvatarPressed {
+	box-shadow: 0px 0px 0px @sapUiButtonBorderWidth @sapUiButtonSelectedBorderColor;
+
+	&:hover {
+		box-shadow: 0px 0px 0px @sapUiButtonBorderWidth @sapUiButtonSelectedHoverBorderColor;
+	}
+}
+
+.sapFAvatarFocusable:focus {
+	outline-offset: .125rem;
+	&.sapFAvatarSquare {
+		outline-offset: .125rem;
+	}
+}
+
+.sapFAvatarColorTileIcon {
+	background-color: @sapUiTileBackground;
+	color: @sapUiTileIconColor;
+
+	.sapFAvatarInitialsHolder {
+		color: currentColor;
+	}
+}
+
+.sapFAvatarColorPlaceholder {
+	background-color: @sapUiContentImagePlaceholderBackground;
+	color: @sapUiContentImagePlaceholderForegroundColor;;
+	.sapFAvatarInitialsHolder {
+		color: currentColor;
+	}
+}
+
+.generateColor (@accentIndex) {
+	@css-selector: ~"sapFAvatarColorAccent@{accentIndex}"; // Create the css selector string
+	@background-param: ~"sapUiAvatar@{accentIndex}Background"; // Build the color param which is a sapUiAccent
+	@color-param: ~"sapUiAvatar@{accentIndex}TextColor";
+
+	// Build the real CSS selector.
+	// The output would be something like this: .sapFAvatar.sapFAvatarColorAccent6 {background-color: #0092d1;}
+	.@{css-selector} {
+		background-color: @@background-param;
+	}
+
+	.@{css-selector}.sapFAvatarIcon,
+	.@{css-selector} .sapFAvatarInitialsHolder {
+		color: contrast(@@background-param, @@color-param, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
+	}
+}

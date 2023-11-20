@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<title>Routing Example Page</title>
+
+	<script id="sap-ui-bootstrap" src="../../../../../../resources/sap-ui-core.js" data-sap-ui-libs="sap.m"></script>
+
+	<!-- view template which gets loaded asyncly -->
+	<script id="viewTemplate" type="sapui5/xmlview">
+		<mvc:View xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m" controllerName="sample.controller">
+			<Panel id="panel">
+				<Label text="{/labelText}" class="sapUiSmallMarginTop sapUiSmallMarginEnd sapMH4FontSize"></Label>
+				<Label text="{/loadingTime}" class="sapUiSmallMarginTop sapMH4FontSize"></Label>
+				<Label text=" ms" class="sapUiSmallMarginTop sapMH4FontSize"></Label>
+			</Panel>
+		</mvc:View>
+	</script>
+
+	<script>
+		sap.ui.require(["sap/ui/core/Element", "sap.ui.thirdparty.sinon"], function(Element) {
+			// these models are used for defining loading times and displaying them on the corresponding view
+			var aModels;
+
+			function generateData(sMode) {
+				var iDelay, op;
+				aModels = [];
+				switch (sMode) {
+					case "asc":
+						iDelay = 1000;
+						op = 1000;
+						break;
+					case "desc":
+						iDelay = 5000;
+						op = -1000;
+						break;
+					default:
+						iDelay = 5000;
+						op = 0;
+						break;
+				}
+				for (var i = 0; i < 4; i++) {
+					aModels.push({
+						labelText: "View " + (i + 1),
+						loadingTime: sMode ? (iDelay += op) : Math.floor(Math.random() * 5000)
+					});
+				}
+			};
+
+			// fake an asynchronous resource request to have control over the delay
+			xhr = sinon.useFakeXMLHttpRequest();
+			xhr.useFilters = true;
+			xhr.addFilter(function(method, url) {
+				return url.indexOf("/resources/view") == -1;
+			});
+
+			xhr.onCreate = function(request) {
+				request.onSend = function() {
+					var iDelay = aModels[parseInt(request.url.slice(-10, -9)) - 1].loadingTime;
+					setTimeout(function() {
+						request.respond(200, {
+							"Content-Type": "application/xml",
+							"Cache-Control": "no-cache, no-store, must-revalidate",
+							"Pragma": "no-cache",
+							"Expires": "0"
+						}, jQuery("#viewTemplate").html());
+					}, iDelay);
+				};
+			};
+
+			// reuse components
+			sap.ui.controller("sample.controller", {
+				onInit: function() {
+					var oView = this.getView();
+					var oModel = new sap.ui.model.json.JSONModel(aModels[parseInt(oView.sViewName.slice(-1)) - 1]);
+					oView.setModel(oModel);
+				}
+			});
+
+			var Component = sap.ui.core.UIComponent.extend("sample.component", {
+				metadata: {
+					routing: {
+						config: {
+							viewType: "XML",
+							controlId: "page",
+							controlAggregation: "content",
+							async: true
+						},
+						targets: {
+							view1: {
+								viewName: "view1"
+							},
+							view2: {
+								viewName: "view2"
+							},
+							view3: {
+								viewName: "view3"
+							},
+							view4: {
+								viewName: "view4"
+							}
+						}
+					}
+				},
+				init: function() {
+					sap.ui.core.UIComponent.prototype.init.apply(this, arguments);
+					this.getTargets().attachDisplay(function(oEvent) {
+						this.getViews().setView(oEvent.getParameter("name"), null);
+					});
+				},
+				createContent: function() {
+					var that = this;
+
+					function press(sCase) {
+						Element.getElementById("page").destroyContent();
+						generateData(sCase);
+						that.getTargets().display(["view1", "view2", "view3", "view4"]).then(function() {
+							setTimeout(function() {
+								sap.m.MessageToast.show("Routing completed!");
+							}, 250);
+						});
+					}
+					return new sap.m.App({
+						pages: new sap.m.Page({
+							title: "Async views in routing",
+							id: "page",
+							subHeader: new sap.m.Toolbar({
+								content: [
+									new sap.m.Button({
+										text: "ascending",
+										press: function() {
+											press("asc");
+										}
+									}),
+									new sap.m.Button({
+										text: "descending",
+										press: function() {
+											press("desc");
+										}
+									}),
+									new sap.m.Button({
+										text: "random",
+										press: function() {
+											press();
+										}
+									})
+								]
+							})
+						})
+					});
+				}
+			});
+
+			new sap.ui.core.ComponentContainer({
+				component: new Component()
+			}).placeAt("content");
+		});
+	</script>
+</head>
+
+<body class="sapUiBody">
+	<div id="content"></div>
+</body>
+
+</html>

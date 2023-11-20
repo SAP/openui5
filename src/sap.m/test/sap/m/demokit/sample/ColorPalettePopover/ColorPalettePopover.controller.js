@@ -1,12 +1,12 @@
 sap.ui.define([
-	'jquery.sap.global',
 	'sap/ui/core/mvc/Controller',
 	'sap/m/ColorPalettePopover',
-	'sap/m/MessageToast'
-], function (jQuery, Controller, ColorPalettePopover, MessageToast) {
+	'sap/m/MessageToast',
+	'sap/ui/unified/ColorPickerDisplayMode'
+], function (Controller, ColorPalettePopover, MessageToast, ColorPickerDisplayMode) {
 	"use strict";
 
-	var ColorPaletteController = Controller.extend("sap.m.sample.ColorPalettePopover.ColorPalettePopover", {
+	return Controller.extend("sap.m.sample.ColorPalettePopover.ColorPalettePopover", {
 
 		onExit: function () {
 			// Destroy popovers if any
@@ -25,6 +25,10 @@ sap.ui.define([
 
 			if (this.oColorPalettePopoverMin) {
 				this.oColorPalettePopoverMin.destroy();
+			}
+
+			if (this.oColorPaletteDisplayMode) {
+				this.oColorPaletteDisplayMode.destroy();
 			}
 		},
 
@@ -97,12 +101,58 @@ sap.ui.define([
 			this.oColorPalettePopoverMin.openBy(oEvent.getSource());
 		},
 
+		/**
+		 * Opens a <code>ColorPalette</code> in a responsive popover, where:
+		 *  - "More Colors.." button is visible
+		 *  - "displayMode" is set to 'Simplified'
+		 * @param oEvent
+		 */
+		openSampleWithDisplayModeSet: function (oEvent) {
+			if (!this.oColorPaletteDisplayMode) {
+				this.oColorPaletteDisplayMode = new ColorPalettePopover("oColorPaletteDisplayMode", {
+					showDefaultColorButton: false,
+					displayMode: ColorPickerDisplayMode.Simplified,
+					colorSelect: this.handleColorSelect
+				});
+			}
+
+			this.oColorPaletteDisplayMode.openBy(oEvent.getSource());
+		},
+
+		/**
+		 * Opens a <code>ColorPalette</code> in a responsive popover, where:
+		 *  - "More Colors.." button is visible
+		 *  - "displayMode" is set to 'Simplified'
+		 *  - "liveChange" event is handled
+		 * @param oEvent
+		 */
+		openSampleWithDisplayModeSetLiveChange: function (oEvent) {
+			this.oButton = this.byId("liveChangeButton");
+			if (!this.oColorPaletteDisplayMode) {
+				this.oColorPaletteDisplayMode = new ColorPalettePopover("oColorPaletteDisplayMode", {
+					showDefaultColorButton: false,
+					displayMode: ColorPickerDisplayMode.Simplified,
+					colorSelect: this.handleColorSelect,
+					liveChange: this.handleLiveChange.bind(this)
+				});
+			}
+
+			this.oColorPaletteDisplayMode.openBy(oEvent.getSource());
+		},
+
 		handleColorSelect: function (oEvent) {
 			MessageToast.show("Color Selected: value - " + oEvent.getParameter("value") +
 				", \n defaultAction - " + oEvent.getParameter("defaultAction"));
+		},
+
+		handleLiveChange: function (oEvent) {
+			this.oButton.getDomRef().firstChild.firstChild.style.color = "rgba(" + [
+				oEvent.getParameter("r"),
+				oEvent.getParameter("g"),
+				oEvent.getParameter("b"),
+				oEvent.getParameter("alpha")
+			].join(", ") + ")";
 		}
 	});
-
-	return ColorPaletteController;
 
 });

@@ -1,0 +1,61 @@
+{
+  "1.95.0": {
+    "date": "September 2021",
+    "notes": [
+      {
+        "id": "be872e83320a4f1372207d95960c9c3872bb5b02",
+        "type": "FEATURE",
+        "text": " sap.tnt.InfoLabel: Redesign"
+      },
+      {
+        "id": "bfeface4b6a81a4392cece609d7191a017793fa5",
+        "type": "FIX",
+        "text": "sap.m.ObjectStatus: underline in HCB/HCW themes alignment by spec",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180123396"
+          }
+        ]
+      },
+      {
+        "id": "d8e807530727b0bf28017e05c9866512843e2b61",
+        "type": "FIX",
+        "text": " sap.m.ObjectStatus: inverted state on multiple lines has full background",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180376452"
+          }
+        ]
+      },
+      {
+        "id": "02412ae4ad9dadb9066728bf117413ee0bff1f98",
+        "type": "FIX",
+        "text": " sap.ui.commons.Tree: has all needed images",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400005744622021"
+          }
+        ]
+      },
+      {
+        "id": "dec73d300d982360dd13c5bfcb6907e47ed3d58a",
+        "type": "FIX",
+        "text": " sap.m.ViewSettingsDialog: control is aligned to visual specifications",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180317779"
+          }
+        ]
+      },
+      {
+        "id": "d90fbe7ef235b41f63c7517b642f1182c7e64999",
+        "type": "FIX",
+        "text": " sap.m.MessagePage: increase CSS specificity of main icon"
+      }
+    ]
+  }
+}

@@ -1,0 +1,11 @@
+{
+	"Type": "sap.ui.core.mvc.JSONView",
+	"resourceBundleName":"testdata.mvc.text",
+	"resourceBundleAlias": "i18n",
+	"content": [{
+		"Type": "sap.m.Image",
+		"width": "150px",
+		"height": "110px",
+		"src": "./testdata/images/screw.jpg"
+	}]
+}

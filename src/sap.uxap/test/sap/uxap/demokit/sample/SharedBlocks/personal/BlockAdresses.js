@@ -5,4 +5,4 @@ sap.ui.define(["sap/uxap/BlockBase"], function (BlockBase) {
 		metadata: {}
 	});
 	return BlockAdresses;
-}, true);
+});

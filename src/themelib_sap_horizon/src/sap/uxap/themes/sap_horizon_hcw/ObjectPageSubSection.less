@@ -1,0 +1,52 @@
+/* ============================================== */
+/* CSS for control sap.uxap/ObjectPageSubSection  */
+/* Horizon High Contrast White theme              */
+/* ============================================== */
+
+.sapUxAPObjectPageSubSectionHeaderTitle {
+	font-size: @sapMFontHeader5Size;
+	color: @sapUiGroupTitleTextColor;
+	padding-bottom: 0.5rem;
+	line-height: normal;
+}
+
+.sapUxAPObjectPageSubSectionHeaderTitleUppercase {
+	text-transform: uppercase;
+}
+
+.sapUxAPObjectPageSubSection:focus {
+	outline: @sapUiContentFocusWidth @sapUiContentFocusStyle @sapUiContentFocusColor;
+	outline-offset: -0.1875rem;
+}
+
+.sapUxAPObjectPageLayout-Std-Desktop .sapUxAPBlockContainer {
+	padding: 1rem 1rem 2rem 1rem;
+}
+
+.sapUxAPObjectPageLayout-Std-Tablet .sapUxAPBlockContainer {
+	padding-bottom: 1rem;
+}
+
+/* responsive paddings */
+.sapUxAPObjectPageLayout.sapUiResponsiveContentPadding {
+	&.sapUxAPObjectPageLayout-Std-Tablet .sapUxAPBlockContainer,
+	&.sapUxAPObjectPageLayout-Std-Desktop .sapUxAPBlockContainer {
+		padding-left: 2rem;
+		padding-right: 2rem;
+	}
+	&.sapUxAPObjectPageLayout-Std-Desktop-XL .sapUxAPBlockContainer {
+		padding-left: 3rem;
+		padding-right: 3rem;
+	}
+}
+
+/* compact size */
+.sapUiSizeCompact {
+	.sapUxAPObjectPageLayout-Std-Desktop .sapUxAPBlockContainer {
+		padding: 1rem 1rem 2rem 1rem;
+	}
+	.sapUxAPObjectPageLayout-Std-Tablet .sapUxAPBlockContainer,
+	.sapUxAPObjectPageLayout-Std-Phone .sapUxAPBlockContainer{
+		padding-bottom: 1rem;
+	}
+}

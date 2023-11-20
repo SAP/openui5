@@ -1,0 +1,12 @@
+{
+  "1.91.0": {
+    "date": "May 2021",
+    "notes": [
+      {
+        "id": "8b2963f4aec5d66affc6f29d08f4817586115c69",
+        "type": "FIX",
+        "text": " sap.ui.fl StorageUtils orders comp changes by time"
+      }
+    ]
+  }
+}

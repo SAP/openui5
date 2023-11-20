@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<title>Getting Started</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<script src="../../scripts/boot.js"></script>
+</head>
+
+<body class="sapUiBody topicBody">
+	<div class="topic">
+		<div class="content">
+
+			<h1 id="overview">
+				Getting Started
+			</h1>
+
+			<p>
+				Creating a card is as simple as creating a new manifest.json file.
+				The manifest holds all configurations necessary to render a card.
+			</p>
+
+			<h2 id="step1">
+				Step 1: Add the manifest skeleton
+			</h2>
+
+			<p>
+				Add sap.app namespace, set the type to "card" and set an id. Add the sap.card namespace where all card
+				configurations will be added.
+				Set the type of the card to "List".
+			</p>
+
+			<pre class="lang-json">{
+	"sap.app": {
+		"id": "my.new.card",
+		"type": "card",
+		"applicationVersion": {
+		  "version": "1.0.0"
+		}
+	},
+	"sap.card": {
+		"type": "List"
+	}
+}</pre>
+
+			<h2 id="step2">
+				Step 2: Add a header
+			</h2>
+
+			<p>
+				Add a header property with title, subTitle, and icon.
+			</p>
+
+			<pre class="lang-json">{
+	"sap.app": {
+		"id": "my.new.card",
+		"type": "card",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.card": {
+		"type": "List",<mark>
+		"header": {
+			"title": "My Sales Orders",
+			"subTitle": "New sales orders",
+			"icon": {
+				"src": "sap-icon://sales-order"
+			}
+		}</mark>
+	}
+}</pre>
+
+			<h2 id="step3">
+				Step 3: Add a navigation action
+			</h2>
+
+			<p>
+				Add an actions property with an action of type "Navigation". Set a URL to navigate to, when the header
+				is clicked.
+			</p>
+
+			<pre class="lang-json">{
+	"sap.app": {
+		"id": "my.new.card",
+		"type": "card",
+		"applicationVersion": {
+		  "version": "1.0.0"
+		}
+	},
+	"sap.card": {
+		"type": "List",
+		"header": {
+			"title": "My Sales Orders",
+			"subTitle": "New sales orders",
+			"icon": {
+				"src": "sap-icon://sales-order"
+			},<mark>
+			"actions": [
+				{
+					"type": "Navigation",
+					"url": "http://www.sap.com"
+				}
+			]</mark>
+		}
+	}
+}</pre>
+
+			<h2 id="step4">
+				Step 4: Add a content
+			</h2>
+
+			<p>
+				Add a content property to the card. Inside it add a data section with static JSON with an array of 3
+				sales orders.
+				After that add an item template that will be used for all items in the data section.
+				To bind the item title and description you can use UI5's binding syntax.
+				The binding also allows <a data-demokit-href="#/topic/daf6852a04b44d118963968a1239d2c0" target="_blank">expression binding</a>.
+			</p>
+
+			<pre class="lang-json">{
+	"sap.app": {
+		"id": "my.new.card",
+		"type": "card",
+		"applicationVersion": {
+		  "version": "1.0.0"
+		}
+	},
+	"sap.card": {
+		"type": "List",
+		"header": {
+			"title": "My Sales Orders",
+			"subTitle": "New sales orders",
+			"icon": {
+				"src": "sap-icon://sales-order"
+			},
+			"actions": [
+				{
+					"type": "Navigation",
+					"url": "http://www.sap.com"
+				}
+			]
+		},<mark>
+		"content": {
+			"data": {
+				"json": [
+					{
+						"Name": "Sales order 1",
+						"Description": "The description of sales order 1"
+					},
+					{
+						"Name": "Sales order 2",
+						"Description": "The description of sales order 2"
+					},
+					{
+						"Name": "Sales order 3",
+						"Description": "The description of sales order 3"
+					}
+				]
+			},
+			"item": {
+				"title": {
+					"value": "{Name}"
+				},
+				"description": {
+					"value": "{Description}"
+				}
+			}
+		}
+	}</mark>
+}</pre>
+
+			<h2 id="step5">
+				Step 5: Integrate the card in a host environment
+			</h2>
+			<p>The following are possible ways to integrate a card. For more information about integrating read the <a
+					href="../../index.html#/integrate/overview" target="_parent">Integrate</a> section.</p>
+			<h3 id="usageInHtmlPage">
+				Use the card in an HTML Page
+			</h3>
+			<p>Create a UI Integration Card inside an HTML Page that points to the created manifest:</p>
+
+			<pre class="lang-html">
+&lt;html&gt;
+	&lt;head&gt;<mark>
+		&lt;script
+			id="sap-ui-bootstrap"
+			src="https://ui5.sap.com/resources/sap-ui-integration.js"
+			data-sap-ui-compatVersion="edge"&gt;
+		&lt;/script&gt;</mark>
+	&lt;/head&gt;
+	&lt;body&gt;<mark>
+		&lt;ui-integration-card manifest="./manifest.json"&gt;&lt;/ui-integration-card&gt;</mark>
+	&lt;/body&gt;
+&lt;/html&gt;
+</pre>
+
+			<h3 id="usageInXMLView">
+				Use the card in an XML View
+			</h3>
+			<p>Create a UI Integration Card inside an XML View that points to the created manifest:</p>
+
+			<pre class="lang-xml">
+&lt;mvc:View xmlns:ui-integration="sap.ui.integration.widgets"&gt;
+	&lt;ui-integration:Card manifest="./manifest.json" width="400px" height="auto"/&gt;
+&lt;/mvc:View&gt;
+</pre>
+
+		</div>
+	</div>
+
+
+</body>
+
+</html>

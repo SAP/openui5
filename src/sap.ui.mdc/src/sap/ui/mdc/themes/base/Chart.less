@@ -1,0 +1,44 @@
+.sapUiMDCChart {
+    background: @sapUiChartBackgroundColor;
+    border-radius: @sapUiElementBorderCornerRadius;
+    padding-bottom: 1rem;
+    display: grid;
+}
+
+.sapUiMDCChartTempTextOuter{
+    grid-template-rows: auto 1fr;
+}
+
+.sapUiMDCChartTempText {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.sapUiMDCChartGrid{
+    grid-template-rows: auto auto 1fr;
+    grid-template-columns: minmax(0, 1fr);
+}
+
+.sapUiMDCChartGridNoBreadcrumbs{
+    grid-template-rows: auto 1fr;
+    grid-template-columns: minmax(0, 1fr);
+}
+
+
+
+.sapUiMDCChart .sapUiMDCChartBreadcrumbs {
+    margin-left: 1rem;
+    margin-top: 0.5rem;
+    max-width: 85%;
+}
+
+.sapUiMDCChart .sapMIBar.sapMTBHeader-CTX {
+    border-top-right-radius: @sapUiElementBorderCornerRadius;
+    border-top-left-radius: @sapUiElementBorderCornerRadius;
+}
+
+.sapUiMDCChart .sapUiMDCChartTempInnerText {
+    justify-content: center;
+    align-content: center;
+}

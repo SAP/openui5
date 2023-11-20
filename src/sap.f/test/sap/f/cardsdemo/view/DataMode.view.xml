@@ -1,0 +1,51 @@
+<mvc:View
+	controllerName="sap.f.cardsdemo.controller.DataMode"
+	xmlns="sap.m"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:f="sap.f"
+	xmlns:w="sap.ui.integration.widgets"
+	displayBlock="true">
+	<Page title="List Card with Active/Inactive data mode">
+		<HBox class="sapUiSmallMargin sapUiSizeCompact">
+			<VBox>
+				<Label text="Data Mode:" vAlign="Middle" />
+				<SegmentedButton
+					width="12rem"
+					selectionChange=".onSelectionChange"
+					selectedKey="Inactive">
+					<items>
+						<SegmentedButtonItem key="Active" text="Active" />
+						<SegmentedButtonItem key="Inactive" text="Inactive" />
+					</items>
+				</SegmentedButton>
+			</VBox>
+			<VBox class="sapUiLargeMarginBegin">
+				<Label text="Update Interval" />
+				<Input
+					submit=".onSubmit"
+					width="8rem"
+					description="seconds" />
+			</VBox>
+			<Button
+				type="Emphasized"
+				text="Try to refresh"
+				press=".onTryToRefresh"
+				class="sapUiSmallMarginBegin">
+				<layoutData>
+					<FlexItemData alignSelf="End" />
+				</layoutData>
+			</Button>
+		</HBox>
+
+		<f:GridContainer class="sapUiSmallMargin">
+			<w:Card
+				id="card"
+				dataMode="Inactive"
+				class="sapUiMediumMarginEnd">
+				<w:layoutData>
+					<f:GridContainerItemLayoutData columns="6" />
+				</w:layoutData>
+			</w:Card>
+		</f:GridContainer>
+	</Page>
+</mvc:View>

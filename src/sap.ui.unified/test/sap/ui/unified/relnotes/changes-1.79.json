@@ -1,0 +1,73 @@
+{
+  "1.79.0": {
+    "date": "May 2020",
+    "notes": [
+      {
+        "id": "b44afb9cd8bcb6c57e3fe60bf26f5e5ec8faa65c",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar - proper year is selected in multiple month calendar",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070232933"
+          }
+        ]
+      },
+      {
+        "id": "b48dc2152f4a50d141b68f01ec229aaf43f2d986",
+        "type": "FIX",
+        "text": " sap.ui.integration.cards.CalendarContent: correct date is selected after resize",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070197035"
+          }
+        ]
+      },
+      {
+        "id": "79e2438253c181516e82daf2dd6f1bcf85cf1c50",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: Proper color parameter is set for all icons",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070244743"
+          }
+        ]
+      },
+      {
+        "id": "2dd63769f483020a8620f8ba90cc8db45a879593",
+        "type": "FIX",
+        "text": " sap.ui.unified.Menu: focus is now correctly set on the opener button",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070235043"
+          }
+        ]
+      },
+      {
+        "id": "a1763501587af9715a73d86a4c0d1ff61cdf79d4",
+        "type": "FIX",
+        "text": " sap.ui.unified.Month: correct day name is now read for each grid cell",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070244746"
+          }
+        ]
+      },
+      {
+        "id": "8b7a6cad8d7a3a51178d6a5f79708c687561c971",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: Accessibility test page refactored",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070244785"
+          }
+        ]
+      }
+    ]
+  }
+}

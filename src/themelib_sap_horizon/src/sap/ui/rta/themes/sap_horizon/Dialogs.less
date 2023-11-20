@@ -1,0 +1,29 @@
+/******************************************************************
+	Style of the RTA Dialogs - Horizon Theme
+*******************************************************************/
+@_sap_ui_rta_Dialogs_BorderLightColor: @sapUiShellBorderColor; //#fff
+@_sap_ui_rta_Dialogs_BorderRadius: @sapUiElementBorderCornerRadius; //0.75rem
+@_sap_ui_rta_Dialogs_BorderDarkColor: @sapUiButtonEmphasizedBorderColor; //#0070f2
+
+.sapMDialog.sapUiRTABorder {
+	border-image: none;
+	border-radius: @_sap_ui_rta_Dialogs_BorderRadius;
+	outline: 0.188rem dashed @_sap_ui_rta_Dialogs_BorderDarkColor; //3px
+	outline-offset: -0.188rem;
+}
+
+.sapUiRtaPopover {
+
+	&.sapMPopover, .sapMPopover {
+		border: 0.188rem dashed @_sap_ui_rta_Dialogs_BorderDarkColor; //3px
+		border-image: none;
+		border-radius: @_sap_ui_rta_Dialogs_BorderRadius;
+	}
+
+	&.sapMPopoverArr, .sapMPopoverArr {
+		&:after {
+			border: 0.188rem dashed @_sap_ui_rta_Dialogs_BorderDarkColor; //3px
+			border-image: none;
+		}
+	}
+}

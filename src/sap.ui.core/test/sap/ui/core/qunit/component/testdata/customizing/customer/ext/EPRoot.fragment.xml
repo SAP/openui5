@@ -1,0 +1,10 @@
+<core:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core">
+	<core:ExtensionPoint name="EPRoot">
+		<Button id="extEPButton" text="This Button is default of EP as root in fragment" />
+		 <core:ExtensionPoint name="EPChild">
+			<Button id="extEPButtonChild" text="This Button is default of EP as root in child fragment" />
+		</core:ExtensionPoint>
+	</core:ExtensionPoint>
+</core:FragmentDefinition>

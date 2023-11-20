@@ -1,0 +1,86 @@
+{
+  "1.99.0": {
+    "date": "February 2022",
+    "notes": [
+      {
+        "id": "aee22437cef1a488ebd8e51888de0b35320828f4",
+        "type": "FIX",
+        "text": " sap.f.PlanningCalendarInCardLegend: hardcoded text replaced",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280038183"
+          }
+        ]
+      },
+      {
+        "id": "487b76c4e4b53eef261f65de6e3a01854f12e6c1",
+        "type": "FEATURE",
+        "text": " sap.ui.integration.widgets.Card: Custom error message is introduced"
+      },
+      {
+        "id": "7946dd117269e2be4a4a7522f362f0a5d596c971",
+        "type": "FEATURE",
+        "text": " sap.ui.integration.widgets.Card: showMessage method is now available for all card types"
+      },
+      {
+        "id": "89e8b348a0556f7c0e30d3f6e709b2f90b953f04",
+        "type": "FEATURE",
+        "text": " sap.ui.integration.widgets.Card: Loading placeholder is now available for Calendar card"
+      },
+      {
+        "id": "30860607c899f4a6d5e88fcc8c261b783f847993",
+        "type": "FEATURE",
+        "text": " Integration card: Implemented pagination functionality"
+      },
+      {
+        "id": "d37a8e742fd9f3058a4bcdd0d0b804b78a94938e",
+        "type": "FIX",
+        "text": " sap.f.DynamicPageTitle: set min-width of content/actions",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180408155"
+          }
+        ]
+      },
+      {
+        "id": "bd9a4118208e8677b2e2fa116ee4e02ec083f6f1",
+        "type": "FEATURE",
+        "text": " sap.ui.integration.cards.AdaptiveContent: Style property for actions enabled"
+      },
+      {
+        "id": "9a6ab4f6798a2c858ea92a5d33737a62bf425bdf",
+        "type": "FIX",
+        "text": " sap.f.DynamicPage: Fix failing QUnit on Firefox",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280003769"
+          }
+        ]
+      },
+      {
+        "id": "c3563cab634aefe1e878700e24315f85236213f0",
+        "type": "FEATURE",
+        "text": " sap.ui.integration.widgets.Card: Payload of submit action handler now supports bindings"
+      },
+      {
+        "id": "a5c602d2ffad403cbd70bc1b5779da9f481bb7e3",
+        "type": "FEATURE",
+        "text": " sap.ui.integration.widgets.Card: Object card is enhanced with new experimental item types"
+      },
+      {
+        "id": "eb2a30935451f914475090df1e4d496b8d22198e",
+        "type": "FIX",
+        "text": " sap.f.DynamicPage: Fix scroll issue with sticky subHeader",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170326966"
+          }
+        ]
+      }
+    ]
+  }
+}

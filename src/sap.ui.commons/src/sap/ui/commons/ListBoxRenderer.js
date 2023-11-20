@@ -3,8 +3,8 @@
  */
 
 // Provides default renderer for control sap.ui.commons.ListBox
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'sap/ui/core/IconPool', 'jquery.sap.strings'],
-	function(jQuery, Renderer, IconPool /* , jQuerySap */) {
+sap.ui.define(['sap/ui/thirdparty/jquery', 'sap/base/security/encodeXML', 'sap/ui/core/Renderer', 'sap/ui/core/IconPool'],
+	function(jQuery, encodeXML, Renderer, IconPool) {
 	"use strict";
 
 
@@ -25,26 +25,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'sap/ui/core/IconPoo
 	 * @param {sap.ui.commons.ListBox} oListBox The ListBox control that should be rendered.
 	 */
 	ListBoxRenderer.render = function(rm, oListBox) {
-		var r = ListBoxRenderer;
 
 		// TODO: this is a prototype experimenting with an alternative to onAfterRendering for size calculations and corrections
 		// Do not copy this approach for now!
 		// Main problem: renderers are supposed to create a string, not DOM elements, e.g. so they could also run on the server. At least that was the idea in former times.
-		if (r.borderWidths === undefined) {
-			if (sap.ui.Device.browser.internet_explorer) { // all known IE versions have this issue (min-width does not include borders)  TODO: update
-				var oFakeLbx = document.createElement("div");
-				var oStaticArea = sap.ui.getCore().getStaticAreaRef();
-				oStaticArea.appendChild(oFakeLbx);
-				oFakeLbx.className = "sapUiLbx";
-				var $fakeLbx = jQuery(oFakeLbx);
-				$fakeLbx.css("width", "50px");
-				$fakeLbx.css("min-width", "100px");
-				r.borderWidths = oFakeLbx.offsetWidth - 100;
-				oStaticArea.removeChild(oFakeLbx);
-			} else {
-				// all other browsers are fine
-				r.borderWidths = 0;
-			}
+		if (ListBoxRenderer.borderWidths === undefined) {
+			ListBoxRenderer.borderWidths = 0;
 		}
 
 		rm.addClass("sapUiLbx");
@@ -88,10 +74,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'sap/ui/core/IconPoo
 		// min/max-widths need fixes in IE
 		var sMinWidth = oListBox.getMinWidth();
 		var sMaxWidth = oListBox.getMaxWidth();
-		if (sap.ui.Device.browser.internet_explorer) {
-			sMinWidth = r.fixWidth(sMinWidth);
-			sMaxWidth = r.fixWidth(sMaxWidth);
-		}
 		if (sMinWidth) {
 			rm.addStyle("min-width", sMinWidth);
 		}
@@ -160,14 +142,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'sap/ui/core/IconPoo
 
 			if (item instanceof sap.ui.core.SeparatorItem) {
 				// draw a separator
-				rm.write("<div id='", item.getId(), "' class='sapUiLbxSep' role='separator'><hr/>");
+				rm.write("<div id='", item.getId(), "' class='sapUiLbxSep' role='separator'><hr>");
 
 				// colspan is not available, so add more separator cells
 				if (oListBox.getDisplayIcons()) {
-					rm.write("<hr/>");
+					rm.write("<hr>");
 				}
 				if (bDisplaySecondaryValues) {
-					rm.write("<hr/>");
+					rm.write("<hr>");
 				}
 				rm.write("</div>");
 
@@ -220,7 +202,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'sap/ui/core/IconPoo
 						rm.addClass("sapUiLbxIIco");
 						rm.addClass("sapUiLbxIIcoFont");
 						var oIconInfo = IconPool.getIconInfo(sIcon);
-						rm.addStyle("font-family", "'" + jQuery.sap.encodeHTML(oIconInfo.fontFamily) + "'");
+						rm.addStyle("font-family", "'" + encodeXML(oIconInfo.fontFamily) + "'");
 						if (oIconInfo && !oIconInfo.skipMirroring) {
 							rm.addClass("sapUiIconMirrorInRTL");
 						}
@@ -236,7 +218,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'sap/ui/core/IconPoo
 						} else {
 							rm.write(sap.ui.resource('sap.ui.commons', 'img/1x1.gif'));
 						}
-						rm.write("'/>");
+						rm.write("'>");
 					}
 					rm.write("</span>");
 				}
@@ -288,8 +270,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'sap/ui/core/IconPoo
 	 */
 	ListBoxRenderer.fixWidth = function(sCssWidth) {
 		if (ListBoxRenderer.borderWidths > 0) {
-			if (sCssWidth && jQuery.sap.endsWithIgnoreCase(sCssWidth, "px")) {
-				var iWidth = parseInt(sCssWidth.substr(0, sCssWidth.length - 2), 10);
+			if (/px$/i.test(sCssWidth)) {
+				var iWidth = parseInt(sCssWidth.substr(0, sCssWidth.length - 2));
 				var newWidth = iWidth - ListBoxRenderer.borderWidths;
 				if (newWidth >= 0) {
 					return newWidth + "px";

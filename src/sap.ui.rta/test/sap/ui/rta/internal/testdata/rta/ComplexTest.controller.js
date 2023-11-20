@@ -1,22 +1,59 @@
-(function(){
+sap.ui.define([
+	"sap/base/Log",
+	"sap/m/MessageToast",
+	"sap/ui/core/mvc/Controller",
+	"sap/ui/core/util/MockServer",
+	"sap/ui/core/Fragment",
+	"sap/ui/model/BindingMode",
+	"sap/ui/model/json/JSONModel",
+	"sap/ui/model/odata/v2/ODataModel",
+	"sap/ui/model/odata/CountMode",
+	"sap/ui/fl/Utils",
+	"sap/ui/core/Element"
+], function(
+	Log,
+	MessageToast,
+	Controller,
+	MockServer,
+	Fragment,
+	BindingMode,
+	JSONModel,
+	ODataModel,
+	CountMode,
+	FlUtils,
+	Element
+) {
 	"use strict";
+	function setTableModelData(oModel, sResourcePath) {
+		var xhr = new XMLHttpRequest();
+		xhr.open("GET", `${sResourcePath}/TableData.json`, true);
+		xhr.onload = function() {
+			if (xhr.readyState === 4) {
+				if (xhr.status >= 200 && xhr.status < 400) {
+					var oTableData = JSON.parse(xhr.responseText);
+					oModel.setData(oTableData.ProductCollection);
+				}
+			}
+		};
+		xhr.send();
+	}
 
-	sap.ui.controller("sap.ui.rta.test.ComplexTest", {
+	return Controller.extend("sap.ui.rta.test.ComplexTest", {
 
-		onInit : function () {
+		onInit() {
+			this._sResourcePath = sap.ui.require.toUrl("sap/ui/rta/test");
+			var oManifest = FlUtils.getAppComponentForControl(this.getView()).getManifest();
+			var iServerDelay = new URLSearchParams(window.location.search).get("serverDelay");
 
-			jQuery.sap.require("sap.ui.core.util.MockServer");
-			this._sResourcePath = jQuery.sap.getResourcePath("sap/ui/rta/test/");
-			var sManifestUrl = this._sResourcePath + "/manifest.json",
-				oManifest = jQuery.sap.syncGetJSON(sManifestUrl).data,
-				oUriParameters = jQuery.sap.getUriParameters();
+			var iAutoRespond = iServerDelay || 1000;
+			var oMockServer;
+			var dataSource;
+			var sMockServerPath;
+			var sMetadataUrl;
+			var aEntities = [];
+			var oDataSources = oManifest["sap.app"].dataSources;
 
-			var iAutoRespond = (oUriParameters.get("serverDelay") || 1000),
-				oMockServer, dataSource, sMockServerPath, sMetadataUrl, aEntities = [],
-				oDataSources = oManifest["sap.app"]["dataSources"],
-				MockServer = sap.ui.core.util.MockServer;
-
-			sap.ui.core.util.MockServer.config({
+			MockServer.config({
 				autoRespond: true,
 				autoRespondAfter: iAutoRespond
 			});
@@ -25,7 +62,7 @@
 				if (oDataSources.hasOwnProperty(property)) {
 					dataSource = oDataSources[property];
 
-					//do we have a mock url in the app descriptor
+					// do we have a mock url in the app descriptor
 					if (dataSource.settings && dataSource.settings.localUri) {
 						if (typeof dataSource.type === "undefined" || dataSource.type === "OData") {
 							oMockServer = new MockServer({
@@ -34,30 +71,30 @@
 							sMetadataUrl = this._sResourcePath + dataSource.settings.localUri;
 							sMockServerPath = sMetadataUrl.slice(0, sMetadataUrl.lastIndexOf("/") + 1);
 							aEntities = dataSource.settings.aEntitySetsNames ? dataSource.settings.aEntitySetsNames : [];
-							oMockServer.simulate(sMetadataUrl , {
+							oMockServer.simulate(sMetadataUrl, {
 								sMockdataBaseUrl: sMockServerPath,
 								bGenerateMissingMockData: true,
-								aEntitySetsNames : aEntities
+								aEntitySetsNames: aEntities
 							});
 						}
-						//else if *Other types can be inserted here, like Annotations*
+						// else if *Other types can be inserted here, like Annotations*
 						oMockServer.start();
-						jQuery.sap.log.info("Running the app with mock data for " + property);
+						Log.info(`Running the app with mock data for ${property}`);
 
 						if (property === "mainService") {
-							var oModel, oView;
+							var oModel;
 
-							oModel = new sap.ui.model.odata.ODataModel(dataSource.uri, {
+							oModel = new ODataModel(dataSource.uri, {
 								json: true,
 								loadMetadataAsync: true
 							});
 
-							oModel.setDefaultBindingMode(sap.ui.model.BindingMode.TwoWay);
-							oModel.setCountSupported(false);
+							oModel.setDefaultBindingMode(BindingMode.TwoWay);
+							oModel.setDefaultCountMode(CountMode.None);
 							this._oModel = oModel;
 
-							oView = this.getView();
-							oView.setModel(oModel);
+							this.oView = this.getView();
+							this.oView.setModel(oModel);
 
 							var data = {
 								readonly: false,
@@ -66,15 +103,26 @@
 								enabled: true
 							};
 
-							var oStateModel = new sap.ui.model.json.JSONModel();
-							oStateModel.setData(data);
-							oView.setModel(oStateModel, "state");
-							oView.bindElement("/Headers(AccountingDocument='100015012',CompanyCode='0001',FiscalYear='2015')");
+							var oTableModel = new JSONModel();
+							this.oView.setModel(oTableModel, "ProductCollection");
+							setTableModelData(oTableModel, this._sResourcePath);
 
+							var oStateModel = new JSONModel(data);
+							this.oView.setModel(oStateModel, "state");
+							this.oView.bindElement("/Headers(AccountingDocument='100015012',CompanyCode='0001',FiscalYear='2015')");
+
+							return fetch(`${this._sResourcePath}/countriesExtendedCollection.json`)
+							.then(function(oResponse) {
+								return oResponse.json();
+							}).then(function(oJson) {
+								var oComboBox = this.byId("ComboBox0");
+								var oCountriesModel = new JSONModel(oJson);
+								oComboBox.setModel(oCountriesModel);
+							}.bind(this));
 						} else if (property === "smartFilterService") {
-							//smartfilterbar bind
-							var oSmartFilterModel = new sap.ui.model.odata.ODataModel("/foo", true);
-							oSmartFilterModel.setCountSupported(false);
+							// smartfilterbar bind
+							var oSmartFilterModel = new ODataModel("/foo", true);
+							oSmartFilterModel.setDefaultCountMode(CountMode.None);
 							var oSmartFilterLayout = this.byId("smartFilterLayout");
 							if (oSmartFilterLayout) {
 								oSmartFilterLayout.unbindElement();
@@ -82,14 +130,13 @@
 							}
 						}
 					} else {
-						jQuery.sap.log.error("Running the app with mock data for " + property);
+						Log.error(`Running the app with mock data for ${property}`);
 					}
 				}
 			}
-
 		},
 
-		toggleUpdateMode: function() {
+		toggleUpdateMode() {
 			var oSmartFilterbar = this.byId("smartFilterBar");
 			var oButton = this.byId("toggleUpdateMode");
 
@@ -107,8 +154,7 @@
 			oSmartFilterbar.setLiveMode(!bLiveMode);
 		},
 
-		_setButtonText: function() {
-
+		_setButtonText() {
 			var oSmartFilterbar = this.byId("smartFilterBar");
 			var oButton = this.byId("toggleUpdateMode");
 
@@ -122,145 +168,204 @@
 			} else {
 				oButton.setText("Change to 'ManualMode'");
 			}
-
 		},
 
-		_getUrlParameter : function(sParam){
-			var sReturn = "";
-			var sPageURL = window.location.search.substring(1);
-			var sURLVariables = sPageURL.split('&');
-			for (var i = 0; i < sURLVariables.length; i++) {
-				var sParameterName = sURLVariables[i].split('=');
-				if (sParameterName[0] == sParam) {
-					sReturn = sParameterName[1];
+		_undoRedoStack(oStack) {
+			function undo(oStack) {
+				if (oStack.canUndo()) {
+					return oStack.undo().then(function() {
+						return undo(oStack);
+					});
 				}
+				return Promise.resolve();
 			}
-			return sReturn;
+			function redo(oStack) {
+				if (oStack.canRedo()) {
+					return oStack.redo().then(function() {
+						return redo(oStack);
+					});
+				}
+				return Promise.resolve();
+			}
+
+			undo(oStack)
+			.then(function() {
+				MessageToast.show("All changes undone", {duration: 1000});
+
+				return redo(oStack);
+			})
+			.then(function() {
+				MessageToast.show("All changes redone", {duration: 1000});
+			});
 		},
 
-		switchToAdaptionMode : function() {
+		switchToAdaptionMode() {
+			sap.ui.require([
+				"sap/ui/rta/api/startAdaptation",
+				"sap/ui/rta/command/Stack"
+			], function(
+				startAdaptation,
+				Stack
+			) {
+				var aFileNames = [];
 
-			jQuery.sap.require("sap.ui.rta.RuntimeAuthoring");
-			jQuery.sap.require("sap.m.MessageToast");
-			var aFileNames = [];
-			sap.ui.fl.FakeLrepLocalStorage.getChanges().forEach(function(oChange) {
-				if (
-					oChange.fileType !== "ctrl_variant_change" &&
-					oChange.fileType !== "ctrl_variant" &&
-					oChange.fileType !== "ctrl_variant_management_change" &&
-					oChange.projectId === "sap.ui.rta.test"
-				) {
-					aFileNames.push(oChange.fileName);
-				}
-			});
-
-			sap.ui.rta.command.Stack.initializeWithChanges(sap.ui.getCore().byId("Comp1---idMain1"), aFileNames)
-			.then(function(oStack) {
-				var oRta = new sap.ui.rta.RuntimeAuthoring({
-					rootControl : sap.ui.getCore().byId("Comp1---idMain1"),
-					commandStack: oStack,
-					flexSettings: {
-						developerMode: false
+				Object.keys(window.localStorage).map(function(sKey) {
+					if (sKey.startsWith("sap.ui.fl")) {
+						var oChange = JSON.parse(window.localStorage.getItem(sKey));
+						if (
+							oChange.projectId === "sap.ui.rta.test"
+						) {
+							aFileNames.push(oChange.fileName);
+						}
 					}
 				});
-				oRta.attachEvent('stop', function() {
-					oRta.destroy();
-				});
-				oRta.attachEvent('start', function() {
-					sap.m.MessageToast.show("Rta is started with all changes from local storage added to the command stack. Undo might already by enabled.", {duration : 10000});
-				});
 
-				oRta.start();
-			});
-		},
+				Stack.initializeWithChanges(Element.getElementById("Comp1---idMain1"), aFileNames).then(function(oStack) {
+					// expose undo/redo test function to console
+					window.undoRedoStack = this._undoRedoStack.bind(this, oStack);
 
-		openSmartFormDialog : function() {
-			var oComponent = this.getOwnerComponent();
-			oComponent.runAsOwner(function() {
-				if (!this._oDialog || !sap.ui.getCore().byId(this._oDialog.getId())) {
-					this._oDialogForm = sap.ui.xmlfragment(this.getView().createId("SmartFormDialog"), "sap.ui.rta.test.fragment.Popup", {});
-
-					this._oDialog = new sap.m.Dialog({
-						id: oComponent.createId("SmartFormDialog"),
-						showHeader: false,
-						content: this._oDialogForm
+					startAdaptation({
+						rootControl: this.getOwnerComponent(),
+						commandStack: oStack,
+						stop() {
+							this.destroy();
+						}
+					}).then(function() {
+						MessageToast.show("Rta is started with all changes from local storage added to the command stack. Undo might already by enabled.\n To test the visual editor usage of our stack, there is a undoRedoStack() function in console available", {duration: 10000});
 					});
-					this.getView().addDependent(this._oDialog);
-
-					this._oDialog.removeStyleClass("sapUiPopupWithPadding");
-					this._oDialog.addStyleClass("sapUiSizeCompact");
-				}
-				this._oDialog.open();
+				}.bind(this));
 			}.bind(this));
 		},
 
-		createOrDeleteContent : function(oEvent) {
-			if (this.byId("newForm")) {
-				this.byId("newForm").destroy();
-			} else {
-				var oLayout = oEvent.getSource().getParent();
-				var oSmartForm = new sap.ui.comp.smartform.SmartForm(this.getView().createId("newForm"), {
-					groups: [
-						new sap.ui.comp.smartform.Group("newGroup", {
-							groupElements: [
-								new sap.ui.comp.smartform.GroupElement("newGroupElement0", {
-									elements: [
-										new sap.ui.comp.smartfield.SmartField("smartField0", {
-											value: "{CreatedByUserName}"
-										})
-									]
-								}),
-								new sap.ui.comp.smartform.GroupElement("newGroupElement1", {
-									elements: [
-										new sap.ui.comp.smartfield.SmartField("smartField1", {
-											value: "{CompanyAdress}"
-										})
-									],
-									visible: false
-								}),
-								new sap.ui.comp.smartform.GroupElement("newGroupElement2", {
-									elements: [
-										new sap.ui.comp.smartfield.SmartField("smartField2", {
-											value: "{ExpirationDate}"
-										})
-									],
-									visible: false
-								}),
-								new sap.ui.comp.smartform.GroupElement("newGroupElement3", {
-									elements: [
-										new sap.ui.comp.smartfield.SmartField("smartField3", {
-											value: "{ValidityFrom}"
-										})
-									],
-									visible: false
-								})
-							]
-						})
-					]
-				});
-				oLayout.insertContent(oSmartForm, 3);
-			}
+		openSmartFormDialog() {
+			sap.ui.require([
+				"sap/m/Dialog"
+			], function(
+				Dialog
+			) {
+				var oComponent = this.getOwnerComponent();
+				oComponent.runAsOwner(function() {
+					if (!this._oDialog || !Element.getElementById(this._oDialog.getId())) {
+						Fragment.load({
+							id: this.getView().createId("SmartFormDialog"),
+							name: "sap.ui.rta.test.fragment.Popup"
+						}).then(function(oDialogForm) {
+							this._oDialogForm = oDialogForm;
+
+							this._oDialog = new Dialog({
+								id: oComponent.createId("SmartFormDialog"),
+								showHeader: false,
+								content: this._oDialogForm,
+								contentHeight: "85%"
+							});
+							this.getView().addDependent(this._oDialog);
+
+							this._oDialog.addStyleClass("sapUiNoContentPadding");
+							this._oDialog.addStyleClass("sapUiSizeCompact");
+							this._oDialog.open();
+						}.bind(this));
+					} else {
+						this._oDialog.open();
+					}
+				}.bind(this));
+			}.bind(this));
 		},
 
-		openSmartFormPopover : function(oEvent) {
-			var oComponent = this.getOwnerComponent();
-			oComponent.runAsOwner(function() {
-				if (!this._oPopover || !sap.ui.getCore().byId(this._oPopover.getId())) {
-					this._oPopoverForm = sap.ui.xmlfragment(this.getView().createId("FormPopover"), "sap.ui.rta.test.fragment.Popup", {});
-
-					this._oPopover = new sap.m.Popover({
-						id: oComponent.createId("SmartFormPopover"),
-						showHeader: false,
-						content: this._oPopoverForm
+		createOrDeleteContent(oEvent) {
+			var oTargetControl = oEvent.getSource();
+			sap.ui.require([
+				"sap/ui/comp/smartform/SmartForm",
+				"sap/ui/comp/smartform/Group",
+				"sap/ui/comp/smartform/GroupElement",
+				"sap/ui/comp/smartfield/SmartField"
+			], function(
+				SmartForm,
+				Group,
+				GroupElement,
+				SmartField
+			) {
+				if (this.byId("newForm")) {
+					this.byId("newForm").destroy();
+				} else {
+					var oLayout = oTargetControl.getParent();
+					var oSmartForm = new SmartForm(this.getView().createId("newForm"), {
+						groups: [
+							new Group("newGroup", {
+								groupElements: [
+									new GroupElement("newGroupElement0", {
+										elements: [
+											new SmartField("smartField0", {
+												value: "{CreatedByUserName}"
+											})
+										]
+									}),
+									new GroupElement("newGroupElement1", {
+										elements: [
+											new SmartField("smartField1", {
+												value: "{CompanyAdress}"
+											})
+										],
+										visible: false
+									}),
+									new GroupElement("newGroupElement2", {
+										elements: [
+											new SmartField("smartField2", {
+												value: "{ExpirationDate}"
+											})
+										],
+										visible: false
+									}),
+									new GroupElement("newGroupElement3", {
+										elements: [
+											new SmartField("smartField3", {
+												value: "{ValidityFrom}"
+											})
+										],
+										visible: false
+									})
+								]
+							})
+						]
 					});
-					this.getView().addDependent(this._oPopover);
-
-					this._oPopover.removeStyleClass("sapUiPopupWithPadding");
-					this._oPopover.addStyleClass("sapUiSizeCompact");
+					oLayout.insertContent(oSmartForm, 3);
 				}
-				this._oPopover.openBy(oEvent.getSource());
 			}.bind(this));
+		},
+
+		openSmartFormPopover(oEvent) {
+			var oTargetButton = oEvent.getSource();
+			return sap.ui.require([
+				"sap/m/Popover"
+			], function(Popover) {
+				var oComponent = this.getOwnerComponent();
+				oComponent.runAsOwner(function() {
+					if (!this._oPopover || !Element.getElementById(this._oPopover.getId())) {
+						Fragment.load({
+							id: this.getView().createId("FormPopover"),
+							name: "sap.ui.rta.test.fragment.Popup"
+						}).then(function(oPopoverForm) {
+							this._oPopoverForm = oPopoverForm;
+
+							this._oPopover = new Popover({
+								id: oComponent.createId("SmartFormPopover"),
+								showHeader: false,
+								content: this._oPopoverForm
+							});
+							this.getView().addDependent(this._oPopover);
+
+							this._oPopover.addStyleClass("sapUiNoContentPadding");
+							this._oPopover.addStyleClass("sapUiSizeCompact");
+						}.bind(this));
+					} else {
+						this._oPopover.openBy(oTargetButton);
+					}
+				}.bind(this));
+			}.bind(this));
+		},
+
+		sampleFormatter(sValue) {
+			return `This text was changed by a formatter: ${sValue && sValue.toUpperCase()}`;
 		}
 	});
-})();
+});
 

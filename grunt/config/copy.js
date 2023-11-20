@@ -100,6 +100,16 @@ module.exports = function(grunt, config) {
 			};
 		}
 
+		copy['faq-target-' + library.name] = {
+			files: [ {
+				expand: true,
+				dot: true,
+				cwd: library.test,
+				src: '**/faq/*.md',
+				dest: 'target/openui5-sdk/test-resources'
+			} ]
+		};
+
 		if (library.bower !== false && grunt.option('publish')) {
 			copy['bower-' + library.name] = {
 				files: [
@@ -111,14 +121,14 @@ module.exports = function(grunt, config) {
 						src: '**',
 						dest: 'tmp/packaged-' + library.name
 					},
-					// license and notice file should also be present in each bower repo
+					// license and thirdparty file should also be present in each bower repo
 					{
 						src: 'LICENSE.txt',
 						dest: 'tmp/packaged-' + library.name + '/LICENSE.txt'
 					},
 					{
-						src: 'NOTICE.txt',
-						dest: 'tmp/packaged-' + library.name + '/NOTICE.txt'
+						src: 'THIRDPARTY.txt',
+						dest: 'tmp/packaged-' + library.name + '/THIRDPARTY.txt'
 					}
 				]
 			};

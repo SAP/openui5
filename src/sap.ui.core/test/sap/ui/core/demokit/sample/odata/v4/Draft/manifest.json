@@ -1,0 +1,149 @@
+{
+	"_version" : "1.97.0",
+	"sap.app" : {
+		"ach" : "CA-UI5-COR",
+		"applicationVersion" : {
+			"version" : "${version}"
+		},
+		"description" : "Demo Application for Flexible Column Layout Draft Support",
+		"dataSources" : {
+			"default" : {
+				"uri" : "/MyProducts/",
+				"type" : "OData",
+				"settings" : {}
+			}
+		},
+		"id" : "sap.ui.core.sample.odata.v4.Draft",
+		"title" : "Flexible Column Layout Draft application",
+		"type" : "application"
+	},
+	"sap.ui" : {
+		"deviceTypes" : {
+			"desktop" : true,
+			"phone" : true,
+			"tablet" : true
+		},
+		"technology" : "UI5"
+	},
+	"sap.ui5" : {
+		"config" : {
+			"sample" : {
+				"files" : [
+					"Component.js",
+					"Empty.view.xml",
+					"ListReport.controller.js",
+					"ListReport.view.xml",
+					"Main.controller.js",
+					"Main.view.xml",
+					"manifest.json",
+					"ObjectPage.controller.js",
+					"ObjectPage.view.xml",
+					"README.html",
+					"SandboxModel.js",
+					"data/metadata.xml",
+					"data/Products.json",
+					"data/Products_10_false.json",
+					"data/Products_10_false_Parts.json",
+					"data/Products_10_true.json",
+					"data/Products_10_true_full.json",
+					"data/Products_10_true_Parts.json",
+					"data/Products_10_true_Parts_PATCHed.json",
+					"data/Products_10_true_PATCHed.json",
+					"data/Products_20_false.json",
+					"data/Products_20_false_Parts.json",
+					"data/Products_20_true.json",
+					"data/Products_20_true_Parts.json",
+					"data/Products_30_true.json",
+					"../../../common/Controller.js",
+					"../../../common/SandboxModelHelper.js"
+				]
+			}
+		},
+		"contentDensities" : {
+			"compact" : true,
+			"cozy" : true
+		},
+		"dependencies" : {
+			"minUI5Version" : "1.97",
+			"libs" : {
+				"sap.f" : {},
+				"sap.m" : {},
+				"sap.ui.layout" : {}
+			}
+		},
+		"handleValidation" : true,
+		"models" : {
+			"" : {
+				"dataSource" : "default",
+				"preload" : true,
+				"settings" : {
+					"autoExpandSelect" : true,
+					"earlyRequests" : true,
+					"operationMode" : "Server"
+				},
+				"type" : "sap.ui.core.sample.odata.v4.Draft.SandboxModel",
+				"uriSettingName" : "serviceUrl"
+			}
+		},
+		"rootView" : {
+			"async" : true,
+			"type" : "XML",
+			"viewName" : "sap.ui.core.sample.odata.v4.Draft.Main"
+		},
+		"routing" : {
+			"config" : {
+				"routerClass" : "sap.f.routing.Router",
+				"type" : "View",
+				"viewType" : "XML",
+				"path" : "sap.ui.core.sample.odata.v4.Draft",
+				"controlId" : "layout",
+				"controlAggregation" : "beginColumnPages",
+				"async" : true
+			},
+			"routes" : [{
+				"layout" : "OneColumn",
+				"name" : "listReport",
+				"pattern" : "",
+				"target" : ["listReport"]
+			}, {
+				"layout" : "TwoColumnsMidExpanded",
+				"name" : "objectPage",
+				"pattern" : "Products{key}",
+				"target" : ["listReport", "objectPage"]
+			}, {
+				"layout" : "MidColumnFullScreen",
+				"name" : "objectPageNoList",
+				"pattern" : "Products{key}?noList",
+				"target" : ["empty", "objectPage"]
+			}, {
+				"layout" : "OneColumn",
+				"name" : "error",
+				"pattern" : "Error",
+				"target" : ["error"]
+			}],
+			"targets" : {
+				"empty" : {
+					"id" : "empty",
+					"level" : 1,
+					"name" : "Empty"
+				},
+				"error" : {
+					"id" : "error",
+					"level" : 1,
+					"name" : "Error"
+				},
+				"listReport" : {
+					"id" : "listReport",
+					"level" : 1,
+					"name" : "ListReport"
+				},
+				"objectPage" : {
+					"controlAggregation" : "midColumnPages",
+					"id" : "objectPage",
+					"level" : 1,
+					"name" : "ObjectPage"
+				}
+			}
+		}
+	}
+}

@@ -3,9 +3,48 @@
 /* Belize theme                        */
 /* =================================== */
 
-@_sap_m_ObjectStatus_TextShadowColor: none;
+.sapMObjStatusInverted {
+	.sapMObjStatusIcon > .sapUiIcon {
+		line-height: 1rem;
+		vertical-align: baseline;
+	}
+}
 
-.sapMObjStatus .sapMObjStatusText,
-.sapMObjStatus .sapMObjStatusIcon {
-	text-shadow: @_sap_m_ObjectStatus_TextShadowColor;
+.sapMObjStatusInverted .sapMObjStatusText,
+.sapMObjStatusInverted .sapMObjStatusIcon {
+	color: @sapUiContentContrastTextColor;
+	min-height: 1rem;
+	vertical-align: bottom;
+}
+
+.sapMObjStatusInverted .sapMObjStatusIcon {
+}
+
+.sapMObjStatusInverted .sapMObjStatusText {
+}
+
+.sapMObjectStatusLarge {
+	.sapMObjStatusTitle,
+	.sapMObjStatusText,
+	.sapMObjStatusIcon {
+		font-size: 1.5rem;
+		line-height: 2rem;
+		min-height: 2rem;
+		& > .sapUiIcon {
+			vertical-align: baseline;
+			line-height: 2rem;
+		}
+	}
+	.sapMObjStatusIcon > .sapUiIcon {
+		font-size: 1.5rem;
+	}
+}
+
+.sapMListTblCell {
+	.sapMObjStatus.sapMObjStatusInverted {
+
+		.sapMObjStatusIcon{
+			vertical-align: middle;
+		}
+	}
 }

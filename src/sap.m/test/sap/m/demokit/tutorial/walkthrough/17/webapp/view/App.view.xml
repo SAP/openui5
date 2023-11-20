@@ -1,15 +1,20 @@
 <mvc:View
-	controllerName="sap.ui.demo.walkthrough.controller.App"
+	controllerName="ui5.walkthrough.controller.App"
 	xmlns="sap.m"
 	xmlns:mvc="sap.ui.core.mvc"
-	displayBlock="true">
-	<App class="myAppDemoWT">
-		<pages>
-			<Page title="{i18n>homePageTitle}">
-				<content>
-					<mvc:XMLView viewName="sap.ui.demo.walkthrough.view.HelloPanel"/>
-				</content>
-			</Page>
-		</pages>
-	</App>
+	displayBlock="true"
+>
+	<Shell>
+		<App class="myAppDemoWT">
+			<pages>
+				<Page title="{i18n>homePageTitle}">
+					<content>
+						<mvc:XMLView
+							viewName="ui5.walkthrough.view.HelloPanel"
+						/>
+					</content>
+				</Page>
+			</pages>
+		</App>
+	</Shell>
 </mvc:View>

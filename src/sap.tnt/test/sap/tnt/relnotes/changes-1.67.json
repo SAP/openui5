@@ -1,0 +1,29 @@
+{
+  "1.67.0": {
+    "date": "May 2019",
+    "notes": [
+      {
+        "id": "119f916ffad49405aca5e853b77a498bc902c4fb",
+        "type": "FIX",
+        "text": "sap.tnt.InfoLabel: Font weight adjusted",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980250350"
+          }
+        ]
+      },
+      {
+        "id": "af5855d9583a4d84060227a77962f2d8d552e672",
+        "type": "FIX",
+        "text": "sap.m.SideNavigation: Items information is now read correctly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980211095"
+          }
+        ]
+      }
+    ]
+  }
+}

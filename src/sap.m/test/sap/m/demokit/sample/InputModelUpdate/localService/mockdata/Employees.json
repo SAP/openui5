@@ -1,0 +1,14 @@
+[
+	{
+		"EmployeeID": 1,
+		"LastName": "Davolio",
+		"FirstName": "Nancy",
+		"Address": "507 - 20th Ave. E. Apt. 2A",
+		"City": "Seattle",
+		"Region": "WA",
+		"PostalCode": "98122",
+		"Country": "USA",
+		"HomePhone": "(206) 555-9857",
+		"ManagerID": null
+	}
+]

@@ -4,23 +4,29 @@
 
 // Provides control sap.m.Switch.
 sap.ui.define([
-	'jquery.sap.global',
 	'./library',
+	"sap/base/i18n/Localization",
 	'sap/ui/core/Control',
 	'sap/ui/core/EnabledPropagator',
 	'sap/ui/core/IconPool',
+	"sap/ui/core/Lib",
 	'sap/ui/core/theming/Parameters',
-	'./SwitchRenderer'
+	'sap/ui/events/KeyCodes',
+	'./SwitchRenderer',
+	"sap/base/assert"
 ],
 function(
-	jQuery,
 	library,
+	Localization,
 	Control,
 	EnabledPropagator,
 	IconPool,
+	Library,
 	Parameters,
-	SwitchRenderer
-	) {
+	KeyCodes,
+	SwitchRenderer,
+	assert
+) {
 		"use strict";
 
 		// shortcut for sap.m.touch
@@ -49,74 +55,82 @@ function(
 		 * @constructor
 		 * @public
 		 * @alias sap.m.Switch
-		 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 		 */
-		var Switch = Control.extend("sap.m.Switch", /** @lends sap.m.Switch.prototype */ { metadata: {
+		var Switch = Control.extend("sap.m.Switch", /** @lends sap.m.Switch.prototype */ {
+			metadata: {
 
-			library: "sap.m",
-			properties: {
+				interfaces: [
+					"sap.ui.core.IFormContent",
+					"sap.m.IOverflowToolbarContent",
+					"sap.m.IToolbarInteractiveControl"
+				],
+				library: "sap.m",
+				properties: {
 
-				/**
-				 * A boolean value indicating whether the switch is on or off.
-				 */
-				state: { type: "boolean", group: "Misc", defaultValue: false },
+					/**
+					 * A boolean value indicating whether the switch is on or off.
+					 */
+					state: { type: "boolean", group: "Misc", defaultValue: false },
 
-				/**
-				 * Custom text for the "ON" state.
-				 *
-				 * "ON" translated to the current language is the default value.
-				 * Beware that the given text will be cut off if available space is exceeded.
-				 */
-				customTextOn: { type: "string", group: "Misc", defaultValue: "" },
+					/**
+					 * Custom text for the "ON" state.
+					 *
+					 * "ON" translated to the current language is the default value.
+					 * Beware that the given text will be cut off if available space is exceeded.
+					 */
+					customTextOn: { type: "string", group: "Misc", defaultValue: "" },
 
-				/**
-				 * Custom text for the "OFF" state.
-				 *
-				 * "OFF" translated to the current language is the default value.
-				 * Beware that the given text will be cut off if available space is exceeded.
-				 */
-				customTextOff: { type: "string", group: "Misc", defaultValue: "" },
+					/**
+					 * Custom text for the "OFF" state.
+					 *
+					 * "OFF" translated to the current language is the default value.
+					 * Beware that the given text will be cut off if available space is exceeded.
+					 */
+					customTextOff: { type: "string", group: "Misc", defaultValue: "" },
 
-				/**
-				 * Whether the switch is enabled.
-				 */
-				enabled: { type: "boolean", group: "Data", defaultValue: true },
+					/**
+					 * Whether the switch is enabled.
+					 */
+					enabled: { type: "boolean", group: "Data", defaultValue: true },
 
-				/**
-				 * The name to be used in the HTML code for the switch (e.g. for HTML forms that send data to the server via submit).
-				 */
-				name: { type: "string", group: "Misc", defaultValue: "" },
+					/**
+					 * The name to be used in the HTML code for the switch (e.g. for HTML forms that send data to the server via submit).
+					 */
+					name: { type: "string", group: "Misc", defaultValue: "" },
 
-				/**
-				 * Type of a Switch. Possibles values "Default", "AcceptReject".
-				 */
-				type: { type : "sap.m.SwitchType", group: "Appearance", defaultValue: SwitchType.Default }
-			},
-			associations: {
+					/**
+					 * Type of a Switch. Possibles values "Default", "AcceptReject".
+					 */
+					type: { type : "sap.m.SwitchType", group: "Appearance", defaultValue: SwitchType.Default }
+				},
+				associations: {
 
-				/**
-				 * Association to controls / ids which label this control (see WAI-ARIA attribute aria-labelledby).
-				 * @since 1.27.0
-				 */
-				ariaLabelledBy: { type: "sap.ui.core.Control", multiple: true, singularName: "ariaLabelledBy" }
-			},
-			events: {
+					/**
+					 * Association to controls / ids which label this control (see WAI-ARIA attribute aria-labelledby).
+					 * @since 1.27.0
+					 */
+					ariaLabelledBy: { type: "sap.ui.core.Control", multiple: true, singularName: "ariaLabelledBy" }
+				},
+				events: {
 
-				/**
-				 * Triggered when a switch changes the state.
-				 */
-				change: {
-					parameters: {
+					/**
+					 * Triggered when a switch changes the state.
+					 */
+					change: {
+						parameters: {
 
-						/**
-						 * The new state of the switch.
-						 */
-						state: { type: "boolean" }
+							/**
+							 * The new state of the switch.
+							 */
+							state: { type: "boolean" }
+						}
 					}
-				}
+				},
+				designtime: "sap/m/designtime/Switch.designtime"
 			},
-			designtime: "sap/m/designtime/Switch.designtime"
-		}});
+
+			renderer: SwitchRenderer
+		});
 
 		IconPool.insertFontFaceStyle();
 		EnabledPropagator.apply(Switch.prototype, [true]);
@@ -137,13 +151,22 @@ function(
 				iPosition = Switch._ONPOSITION;
 			}
 
+			// fix handle movement when the switch is shorter (no label) in some themes | BCP: 2170252080
+			if (iPosition > this._iNoLabelFix) {
+				iPosition = this._iNoLabelFix;
+			}
+
 			if (this._iCurrentPosition === iPosition) {
 				return;
 			}
 
 			this._iCurrentPosition = iPosition;
-			this.getDomRef("inner").style[sap.ui.getCore().getConfiguration().getRTL() ? "right" : "left"] = iPosition + "px";
+			this.getDomRef("inner").style[Localization.getRTL() ? "right" : "left"] = iPosition + "px";
 			this._setTempState(Math.abs(iPosition) < Switch._SWAPPOINT);
+		};
+
+		Switch.prototype._resetSlide = function() {
+			this.getDomRef("inner").style.cssText = "";
 		};
 
 		Switch.prototype._setTempState = function(b) {
@@ -155,46 +178,6 @@ function(
 			this.getDomRef("handle").setAttribute("data-sap-ui-swt", b ? this._sOn : this._sOff);
 		};
 
-		Switch.prototype._setDomState = function(bState) {
-			var CSS_CLASS = this.getRenderer().CSS_CLASS,
-				sState = bState ? this._sOn : this._sOff,
-				oDomRef = this.getDomRef();
-
-			if (!oDomRef) {
-				return;
-			}
-
-			var $Switch = this.$("switch"),
-				oSwitchInnerDomRef = this.getDomRef("inner"),
-				oHandleDomRef = this.getDomRef("handle"),
-				oCheckboxDomRef = null;
-
-			if (this.getName()) {
-				oCheckboxDomRef = this.getDomRef("input");
-				oCheckboxDomRef.setAttribute("checked", bState);
-				oCheckboxDomRef.setAttribute("value", sState);
-			}
-
-			oHandleDomRef.setAttribute("data-sap-ui-swt", sState);
-
-			this._getInvisibleElement().text(this.getInvisibleElementText(bState));
-
-			if (bState) {
-				$Switch.removeClass(CSS_CLASS + "Off").addClass(CSS_CLASS + "On");
-				oDomRef.setAttribute("aria-checked", "true");
-			} else {
-				$Switch.removeClass(CSS_CLASS + "On").addClass(CSS_CLASS + "Off");
-				oDomRef.setAttribute("aria-checked", "false");
-			}
-
-			if (sap.ui.getCore().getConfiguration().getAnimation()) {
-				$Switch.addClass(CSS_CLASS + "Trans");
-			}
-
-			// remove inline styles
-			oSwitchInnerDomRef.style.cssText = "";
-		};
-
 		Switch.prototype._getInvisibleElement = function(){
 			return this.$("invisible");
 		};
@@ -204,7 +187,7 @@ function(
 		};
 
 		Switch.prototype.getInvisibleElementText = function(bState) {
-			var oBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+			var oBundle = Library.getResourceBundleFor("sap.m");
 			var sText = "";
 
 			switch (this.getType()) {
@@ -231,14 +214,24 @@ function(
 			return sText;
 		};
 
-		// the milliseconds takes the transition from one state to another
-		Switch._TRANSITIONTIME = Number(Parameters.get("_sap_m_Switch_TransitionTime")) || 0;
+		var mParams = Object.assign({
+			// add base styles as default
+			"_sap_m_Switch_OnPosition": -32,
+			"_sap_m_Switch_OffPosition": 0
+		}, Parameters.get({
+			name: ["_sap_m_Switch_OnPosition", "_sap_m_Switch_OffPosition"],
+			callback: function (_mParams) {
+				Switch._ONPOSITION = Number(_mParams["_sap_m_Switch_OnPosition"]);
+				Switch._OFFPOSITION = Number(_mParams["_sap_m_Switch_OffPosition"]);
+				Switch._SWAPPOINT = Math.abs((Switch._ONPOSITION - Switch._OFFPOSITION) / 2);
+			}
+		}));
 
 		// the position of the inner HTML element whether the switch is "ON"
-		Switch._ONPOSITION = Number(Parameters.get("_sap_m_Switch_OnPosition"));
+		Switch._ONPOSITION = Number(mParams["_sap_m_Switch_OnPosition"]);
 
 		// the position of the inner HTML element whether the switch is "OFF"
-		Switch._OFFPOSITION = Number(Parameters.get("_sap_m_Switch_OffPosition"));
+		Switch._OFFPOSITION = Number(mParams["_sap_m_Switch_OffPosition"]);
 
 		// swap point
 		Switch._SWAPPOINT = Math.abs((Switch._ONPOSITION - Switch._OFFPOSITION) / 2);
@@ -248,7 +241,7 @@ function(
 		/* =========================================================== */
 
 		Switch.prototype.onBeforeRendering = function() {
-			var oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+			var oRb = Library.getResourceBundleFor("sap.m");
 			this._sOn = this.getCustomTextOn() || oRb.getText("SWITCH_ON");
 			this._sOff = this.getCustomTextOff() || oRb.getText("SWITCH_OFF");
 		};
@@ -294,11 +287,13 @@ function(
 			this._bDragging = false;
 
 			// note: force ie browsers to set the focus to switch
-			jQuery.sap.delayedCall(0, this, "focus");
+			setTimeout(this["focus"].bind(this), 0);
 
 			// add active state
-			this.$("switch").addClass(CSS_CLASS + "Pressed")
-							.removeClass(CSS_CLASS + "Trans");
+			this.$("switch").addClass(CSS_CLASS + "Pressed");
+
+			// necessary for fixing handle movement when the switch is shorter (no label) in some themes | BCP: 2170252080
+			this._iNoLabelFix = parseInt(getComputedStyle(this.getDomRef("switch")).outlineOffset);
 		};
 
 		/**
@@ -331,7 +326,7 @@ function(
 
 			// only process single touches (only the first active touch point),
 			// the active touch has to be in the list of touches
-			jQuery.sap.assert(fnTouch.find(oEvent.touches, this._iActiveTouchId), "missing touchend");
+			assert(fnTouch.find(oEvent.touches, this._iActiveTouchId), "missing touchend");
 
 			// find the active touch point
 			oTouch = fnTouch.find(oEvent.changedTouches, this._iActiveTouchId);
@@ -353,7 +348,7 @@ function(
 			iPosition = ((this._iStartPressPosX - oTouch.pageX) * -1) + this._iPosition;
 
 			// RTL mirror
-			if (sap.ui.getCore().getConfiguration().getRTL()) {
+			if (Localization.getRTL()) {
 				iPosition = -iPosition;
 			}
 
@@ -372,8 +367,7 @@ function(
 			oEvent.setMarked();
 
 			var oTouch,
-				fnTouch = touch,
-				assert = jQuery.sap.assert;
+				fnTouch = touch;
 
 			if (!this.getEnabled() ||
 
@@ -397,23 +391,10 @@ function(
 				// the touchend for the touch we're monitoring
 				assert(!fnTouch.find(oEvent.touches, this._iActiveTouchId), "touchend still active");
 
-				// remove active state
-				this.$("switch").removeClass(this.getRenderer().CSS_CLASS + "Pressed");
-
-				// note: update the DOM before the change event is fired for better user experience
-				this._setDomState(this._bDragging ? this._bTempState : !this.getState());
-
-				// fire the change event after the CSS transition is completed
-				jQuery.sap.delayedCall(Switch._TRANSITIONTIME, this, function() {
-					var bState = this.getState();
-
-					// change the state
-					this.setState(this._bDragging ? this._bTempState : !bState);
-
-					if (bState !== this.getState()) {
-						this.fireChange({ state: this.getState() });
-					}
-				});
+				if (!this._updateStateAndNotify()) {
+					this.$("switch").removeClass(this.getRenderer().CSS_CLASS + "Pressed");
+					this._resetSlide();
+				}
 			}
 		};
 
@@ -431,58 +412,106 @@ function(
 		 * @param {jQuery.Event} oEvent The event object.
 		 * @private
 		 */
-		Switch.prototype.onsapselect = function(oEvent) {
-			var bState;
-
+		Switch.prototype._handleSpaceOrEnter = function(oEvent) {
 			if (this.getEnabled()) {
 
 				// mark the event for components that needs to know if the event was handled by the Switch
 				oEvent.setMarked();
 
-				// note: prevent document scrolling when space keys is pressed
-				oEvent.preventDefault();
-
-				this.setState(!this.getState());
-
-				bState = this.getState();
-
-				// fire the change event after the CSS transition is completed
-				jQuery.sap.delayedCall(Switch._TRANSITIONTIME, this, function() {
-					this.fireChange({ state: bState });
-				});
+				if (!this._bDragging) {
+					this._updateStateAndNotify();
+				}
 			}
+		};
+
+		/**
+		 * @private
+		 * @param {object} oEvent The fired event
+		 */
+		Switch.prototype.onsapspace = function(oEvent) {
+			// prevent scrolling on SAPCE
+			oEvent.preventDefault();
+		};
+
+		/**
+		 * Handles space key on kye up
+		 *
+		 * @private
+		*/
+		Switch.prototype.onkeyup = function (oEvent) {
+			if (oEvent.which === KeyCodes.SPACE) {
+				this._handleSpaceOrEnter(oEvent);
+			}
+		};
+
+		/**
+		 * Handles enter key
+		 *
+		 * @private
+		 */
+		Switch.prototype.onsapenter = Switch.prototype._handleSpaceOrEnter;
+
+
+		Switch.prototype._updateStateAndNotify = function() {
+			var bState = this.getState(),
+				bChanged;
+
+			this.setState(this._bDragging ? this._bTempState : !bState);
+
+			bChanged = bState !== this.getState();
+
+			if (bChanged) {
+				this.fireChange({ state: this.getState() });
+			}
+			this._bDragging = false;
+
+			return bChanged;
 		};
 
 		/* =========================================================== */
 		/* API method                                                  */
 		/* =========================================================== */
 
-		/**
-		 * Change the switch state between on and off.
-		 *
-		 * @param {boolean} bState The new state - true for 'on' and false for 'off'
-		 * @public
-		 * @returns {sap.m.Switch} <code>this</code> to allow method chaining.
-		 */
-		Switch.prototype.setState = function(bState) {
-			this.setProperty("state", bState, true);
-			this._setDomState(this.getState());
-			return this;
-		};
-
 		Switch.prototype.getAccessibilityInfo = function() {
-			var oBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m"),
+			var oBundle = Library.getResourceBundleFor("sap.m"),
 				bState = this.getState(),
-				sDesc = oBundle.getText("ACC_CTR_STATE_CHECKED") + " " + this.getInvisibleElementText(bState);
+				sDesc = this.getInvisibleElementText(bState);
 
 			return {
-				role: "checkbox",
-				type: oBundle.getText("ACC_CTR_TYPE_CHECKBOX"),
-				description: sDesc.trim(),
+				role: "switch",
+				type: oBundle.getText("ACC_CTR_TYPE_SWITCH"),
+				description: sDesc,
 				focusable: this.getEnabled(),
 				enabled: this.getEnabled()
 			};
 		};
 
-		return Switch;
-	});
+	/**
+	 * Required by the {@link sap.m.IOverflowToolbarContent} interface.
+	 *
+	 * @returns {object} Configuration information for the <code>sap.m.IOverflowToolbarContent</code> interface.
+	 *
+	 * @private
+	 * @ui5-restricted sap.m.OverflowToolBar
+	 */
+	Switch.prototype.getOverflowToolbarConfig = function() {
+		return {
+			propsUnrelatedToSize: ["enabled", "state"]
+		};
+	};
+
+	/**
+	 * Required by the {@link sap.m.IToolbarInteractiveControl} interface.
+	 * Determines if the Control is interactive.
+	 *
+	 * @returns {boolean} If it is an interactive Control
+	 *
+	 * @private
+	 * @ui5-restricted sap.m.OverflowToolBar, sap.m.Toolbar
+	 */
+	 Switch.prototype._getToolbarInteractive = function () {
+		return true;
+	};
+
+	return Switch;
+});

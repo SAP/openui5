@@ -1,0 +1,130 @@
+/* ============================= */
+/* CSS for control sap.m/Dialog  */
+/* Horizon theme                 */
+/* ============================= */
+
+// ==========================================================================
+// Variables
+// ==========================================================================
+
+@_sap_m_Dialog_VerticalMargin: 3%;
+@_sap_m_Dialog_BarHeight: 2.75rem;
+@_sap_m_Dialog_SubHeaderCompactHeight: 2.25rem;
+
+@_sap_m_Dialog_NoStateHeaderShadow: @sapUiContentHeaderShadow;
+@_sap_m_Dialog_SuccessHeaderShadow: inset 0 -0.0625rem @sapUiSuccessBorder, @sapUiContentHeaderShadow;
+@_sap_m_Dialog_ErrorHeaderShadow: inset 0 -0.0625rem @sapUiErrorBorder, @sapUiContentHeaderShadow;
+@_sap_m_Dialog_WarningHeaderShadow: inset 0 -0.0625rem @sapUiWarningBorder, @sapUiContentHeaderShadow;
+@_sap_m_Dialog_InformationHeaderShadow: inset 0 -0.0625rem @sapUiInformationBorder, @sapUiContentHeaderShadow;
+
+@_sap_m_Dialog_HeaderFocusBorderBottomOffset: 0.125rem;
+@_sap_m_Dialog_HeaderFocusBorderTopOffset: 0.0625rem;
+@_sap_m_Dialog_HeaderFocusBorderLeftOffset: 0.0625rem;
+@_sap_m_Dialog_HeaderFocusBorderRightOffset: 0.0625rem;
+@_sap_m_Dialog_HeaderFocusBorderRadius: @sapUiElementBorderCornerRadius;
+
+// This parameter is used in sap.m.Select. TODO: remove it when it is removed from there.
+@_sap_m_Dialog_HeaderShadowColor: darken(@sapUiGroupContentBackground, 8);
+
+.sapMDialogSubHeader .sapMIBar {
+	height: 100%;
+	padding-bottom: 0.25rem;
+	box-sizing: border-box;
+}
+
+.sapMDialog > header .sapMDialogTitleGroup .sapMDialogIcon.sapUiIcon {
+	font-size: 1rem;
+}
+
+.sapMDialogResizeHandler {
+	right: 6px;
+	bottom: 3px;
+
+	&::before {
+		content: attr(data-sap-ui-icon-content);
+		color: @sapUiButtonLiteTextColor;
+	}
+}
+
+.sapMDialogBeginButton, .sapMDialogEndButton {
+	min-width: 4rem;
+}
+
+.sapMDialogTitleGroup {
+	z-index: 3; // to hide the shadow from the header when there is sub-header
+}
+
+// buttons on phone must be to the right side (in LTR mode)
+html.sap-phone .sapMDialog {
+	& > footer .sapMFooter-CTX {
+		justify-content: flex-end;
+	}
+}
+
+// ==========================================================================
+// header, sub-header, footer
+// ==========================================================================
+
+.sapMDialog {
+	header .sapMBarLeft,
+	header .sapMBarPH {
+		padding-left: 1rem;
+	}
+
+	header .sapMBarRight,
+	header .sapMBarPH {
+		padding-right: 1rem;
+	}
+
+	header .sapMTB,
+	footer .sapMTB {
+		padding: 0 1rem;
+	}
+}
+
+// Responsive paddings
+.sapMDialogTitleGroup, .sapMDialogSubHeader {
+	.sapUi-Std-PaddingS, .sapUi-Std-PaddingM,
+	.sapUi-Std-PaddingL, .sapUi-Std-PaddingXL {
+		&.sapMIBar {
+			.sapMBarMiddle .sapMBarPH {
+				padding-left: 0;
+				padding-right: 0;
+			}
+
+			.sapMBarLeft {
+				padding-left: inherit;
+
+				.sapMBarChild {
+					padding-right: 0.5rem;
+				}
+			}
+
+			.sapMBarRight {
+				padding-right: inherit;
+
+				.sapMBarChild {
+					padding-left: 0.5rem;
+				}
+			}
+		}
+	}
+}
+
+.sapMDialog:not(.sapUiResponsiveContentPadding):not(.sapUiContentPadding) {
+	&.sapMDialog-NoHeader .sapMDialogScroll {
+		padding-top: 0.25rem;
+
+		html.sap-phone .sapMDialogStretched& {
+			padding-top: 0;
+		}
+	}
+
+	&.sapMDialog-NoFooter .sapMDialogScroll {
+		padding-bottom: 0.25rem;
+
+		html.sap-phone .sapMDialogStretched& {
+			padding-bottom: 0;
+		}
+	}
+}

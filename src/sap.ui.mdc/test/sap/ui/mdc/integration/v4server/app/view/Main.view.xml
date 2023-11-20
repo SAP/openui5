@@ -1,0 +1,40 @@
+<mvc:View
+	displayBlock="true"
+	xmlns="sap.m"
+	xmlns:mvc="sap.ui.core.mvc">
+	<Shell>
+		<App id="app">
+			<Page title="!! THIS TEST PAGE ONLY WORKS WHEN STARTED VIA V4 TEST SERVER !!">
+
+				<Table
+						id="table"
+						width="auto"
+						growing="true"
+						class="sapUiResponsiveMargin"
+						items="{
+							path: '/Books'
+						}"
+						busyIndicatorDelay="{worklistView>/tableBusyDelay}"
+						updateFinished=".onUpdateFinished">
+					<columns>
+						<Column width="50%" id="titleColumn">
+							<Text text="Title" id="titleColumnTitle"/>
+						</Column>
+						<Column width="50%" id="descrColumn">
+							<Text text="Description" id="descrColumnTitle"/>
+						</Column>
+					</columns>
+					<items>
+						<ColumnListItem>
+							<cells>
+								<Text text="{title}"/>
+								<Text text="{descr}"/>
+							</cells>
+						</ColumnListItem>
+					</items>
+				</Table>
+
+			</Page>
+		</App>
+	</Shell>
+</mvc:View>

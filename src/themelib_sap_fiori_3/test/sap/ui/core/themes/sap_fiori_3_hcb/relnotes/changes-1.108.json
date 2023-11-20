@@ -1,0 +1,34 @@
+{
+  "1.108.0": {
+    "date": "October 2022",
+    "notes": [
+      {
+        "id": "f51928b77ecf5c033213e00be633f619a154fa69",
+        "type": "FIX",
+        "text": " \"72\" Font: redirect C with Caron and R with Caron to \"72-full\"",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280091635"
+          }
+        ]
+      },
+      {
+        "id": "b108d6b6b530eec11146786be4d8092c341526bd",
+        "type": "FEATURE",
+        "text": " sap.f.SidePanel: new control (initial implementation)"
+      },
+      {
+        "id": "e1041575436e9466ad5e66b2ffb14fb8ee1f8648",
+        "type": "FIX",
+        "text": " sap.m.Page: Correct offset is applied to the content",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270111870"
+          }
+        ]
+      }
+    ]
+  }
+}

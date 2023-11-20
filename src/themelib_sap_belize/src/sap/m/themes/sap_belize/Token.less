@@ -7,10 +7,14 @@
 @_sap_m_Token_HoverBorderColor: darken(@sapUiButtonHoverBackground, 5);
 
 .sapMToken {
-	border: 1px solid @_sap_m_Token_BorderColor;
+	border-radius: 0.125rem;
+
+	.sapMTokenIcon {
+		font-size: @sapMFontMediumSize;
+	}
 }
 
-html.sap-desktop .sapMToken:hover {
+html.sap-desktop .sapMToken:not(.sapMTokenReadOnly):hover {
 	border: 1px solid @_sap_m_Token_HoverBorderColor;
 }
 
@@ -21,19 +25,4 @@ html.sap-desktop .sapMToken:focus {
 
 html.sap-desktop .sapMToken.sapMTokenSelected:focus {
 	outline: 1px dotted @sapUiContentContrastFocusColor;
-}
-
-html[data-sap-ui-browser^="ie"].sap-desktop,
-html[data-sap-ui-browser^="ed"].sap-desktop {
-	.sapMToken:focus {
-		.sapMTokenText:before {
-			border: 1px dashed @sapUiContentFocusColor; //dashed only in IE due to visual issues with dotted - ticket 1670468323
-		}
-	}
-
-	.sapMToken.sapMTokenSelected:focus {
-		.sapMTokenText:before {
-			border: 1px dashed @sapUiContentContrastFocusColor; //dashed only in IE due to visual issues with dotted - ticket 1670468323
-		}
-	}
 }

@@ -1,0 +1,27 @@
+/* ======================================== */
+/* CSS for control sap.f/DynamicPageHeader  */
+/* Horizon High Contrast White theme        */
+/* ======================================== */
+
+// Specific icon for the pin button for the horizon theme
+@_sap_f_DynamicPageHeader_PinButton_Icon: pushpin-on;
+
+.sapFDynamicPageHeader {
+    &.sapFDynamicPageHeaderSolid,
+    &.sapFDynamicPageHeaderTransparent,
+    &.sapFDynamicPageHeaderTranslucent {
+        background: @sapUiObjectHeaderBackground;
+    }
+}
+
+.sapFDynamicPageNavigation .sapFDynamicPageHeader.sapFDynamicPageHeaderWithContent {
+	box-shadow: none;
+}
+
+.sapFDynamicPageToggleHeaderIndicator:not(.sapUiHidden) + .sapFDynamicPageHeaderPinButton:before {
+	display: none;
+}
+
+.sapFDynamicPage-Std-Desktop .sapFDynamicPageHeader.sapFDynamicPageHeaderWithContent {
+	padding: 1rem 2rem;
+}

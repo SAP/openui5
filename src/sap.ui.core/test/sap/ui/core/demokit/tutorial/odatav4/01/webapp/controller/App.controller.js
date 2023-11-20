@@ -11,9 +11,10 @@ sap.ui.define([
 		 */
 		onInit : function () {
 			var oJSONData = {
-				busy : false
-			};
-			var oModel = new JSONModel(oJSONData);
+					busy : false
+				},
+				oModel = new JSONModel(oJSONData);
+
 			this.getView().setModel(oModel, "appView");
 		}
 	});

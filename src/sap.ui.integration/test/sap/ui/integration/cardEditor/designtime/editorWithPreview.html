@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="utf-8" />
+	<title>Editor Test Page for Preview capabilities</title>
+	<script src="../sharedTest.js" localstoragekey="card-designtime-">
+	</script>
+	<script src="../../../../../../resources/sap-ui-integration.js" id="sap-ui-bootstrap"
+		data-sap-ui-theme="sap_horizon" data-sap-ui-oninit="init" data-sap-ui-resourceroots='{"testjs":"../"}'></script>
+	<link rel="stylesheet" href="../sharedTest.css" />
+</head>
+
+<body class="sapUiBody sapUiSizeCompact">
+	<div id="global">
+		<h2>Settings</h2>
+		<label>Language:</label>
+		<select id="languageSelect" onchange="switchLanguage(this)">
+		</select>
+		<label>Theme:</label>
+		<select onchange="switchTheme(this)">
+			<option value="sap_horizon">Morning Horizon</option>
+			<option value="sap_horizon_dark">Evening Horizon</option>
+			<option value="sap_horizon_hcb">High Contrast Black</option>
+			<option value="sap_horizon_hcw">High Contrast White</option>
+		</select>
+	</div>
+	<div id="editor">
+		<h2>Separate Preview</h2>
+		<div class="buttons">
+			<button onclick="showSeparatePreview('separatePreview', this)">
+				Show Separate Preview in Popup
+			</button>
+			<button onclick="showSeparatePreview('separatePreview', this, 'Dialog')">
+				Show Separate Preview in Dialog
+			</button>
+		</div>
+		<ui-integration-card-editor id="separatePreview" mode="admin" preview-position="separate" designtime="previewLive">
+		</ui-integration-card-editor>
+		<h2>Abstract Mode</h2>
+		<ui-integration-card-editor id="previewAbstract" mode="admin" designtime="previewAbstract">
+		</ui-integration-card-editor>
+		<h2>AbstractLive Mode</h2>
+		<ui-integration-card-editor id="previewAbstractLive" mode="admin" designtime="previewAbstractLive">
+		</ui-integration-card-editor>
+		<h2>Live Mode</h2>
+		<ui-integration-card-editor id="previewLive" mode="admin" designtime="previewLive">
+		</ui-integration-card-editor>
+		<h2>LiveAbstract Mode</h2>
+		<ui-integration-card-editor id="previewLiveAbstract" mode="admin" designtime="previewLiveAbstract">
+		</ui-integration-card-editor>
+		<h2>LiveOwnImage Mode</h2>
+		<ui-integration-card-editor id="previewLiveOwnImage" mode="admin" designtime="previewLiveOwnImage">
+		</ui-integration-card-editor>
+		<h2>OwnImageLive Mode</h2>
+		<ui-integration-card-editor id="previewOwnImageLive" mode="admin" designtime="previewOwnImageLive">
+		</ui-integration-card-editor>
+		<h2>None Mode</h2>
+		<ui-integration-card-editor id="previewNone" mode="admin" designtime="previewNone">
+		</ui-integration-card-editor>
+		<h2>NoScale Mode</h2>
+		<ui-integration-card-editor id="previewNoScale" mode="admin" designtime="previewNoScale">
+		</ui-integration-card-editor>
+	</div>
+</body>
+
+</html>

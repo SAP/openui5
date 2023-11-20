@@ -1,0 +1,69 @@
+<mvc:View
+	class="sapUiSizeCompact"
+	controllerName="sap.ui.core.sample.odata.v4.LateProperties.Main"
+	xmlns="sap.m"
+	xmlns:mvc="sap.ui.core.mvc">
+	<VBox>
+		<Table id="SalesOrderList" growing="true" growingThreshold="5"
+				items="{path : '/SalesOrderList', suspended : true}"
+				mode="SingleSelectMaster" selectionChange="onSalesOrderSelect">
+			<headerToolbar>
+				<Toolbar>
+					<Title text="Sales Order" level="H1"/>
+					<ToolbarSpacer/>
+					<MenuButton icon="sap-icon://reset" tooltip="Cleanup Optimistic Batch Cache">
+						<Menu>
+							<MenuItem id="days0" text="All" press=".onCleanUpOptimisticBatchCache"
+								tooltip="All Optimistic Batch Cache Entries"/>
+							<MenuItem id="days30" text="One Month Ago"
+								press=".onCleanUpOptimisticBatchCache"
+								tooltip="Optimistic Batch Cache Entries One Month Ago"/>
+							<MenuItem id="days365" text="One Year Ago"
+								press=".onCleanUpOptimisticBatchCache"
+								tooltip="Optimistic Batch Cache Entries One Year Ago"/>
+						</Menu>
+					</MenuButton>
+				</Toolbar>
+			</headerToolbar>
+			<columns>
+				<Column>
+					<Label text="SalesOrderID"/>
+				</Column>
+				<Column>
+					<Label text="Buyer ID"/>
+				</Column>
+				<Column>
+					<Label text="Buyer Name"/>
+				</Column>
+			</columns>
+			<ColumnListItem>
+				<Text text="{SalesOrderID}" id="SalesOrderID"/>
+				<Text text="{BuyerID}"/>
+				<Text text="{SO_2_BP/CompanyName}"/>
+			</ColumnListItem>
+		</Table>
+		<Table id="SO_2_SCHDL" items="{SO_2_SCHDL}">
+			<headerToolbar>
+				<Toolbar>
+					<Title text="Sales Order Schedules" level="H2"/>
+				</Toolbar>
+			</headerToolbar>
+			<columns>
+				<Column>
+					<Text text="Schedule Key"/>
+				</Column>
+				<Column>
+					<Text text="Item Key"/>
+				</Column>
+				<Column>
+					<Text text="Edit Delivery Date"/>
+				</Column>
+			</columns>
+			<ColumnListItem>
+				<Text text="{ScheduleKey}"/>
+				<Text text="{ItemKey}"/>
+				<Button id="openEditDeliveryDate" text="edit" press=".onOpenEditDeliveryDate"/>
+			</ColumnListItem>
+		</Table>
+	</VBox>
+</mvc:View>

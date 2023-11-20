@@ -15,12 +15,11 @@
 					id="table"
 					rows="{/ProductCollection}"
 					selectionMode="MultiToggle"
-					visibleRowCount="7"
 					setEnableGrouping="true"
 					ariaLabelledBy="title">
-				<toolbar>
-					<m:Toolbar>
-						<m:Title id="title" text="Products" height="100%"/>
+				<extension>
+					<m:OverflowToolbar style="Clear">
+						<m:Title id="title" text="Products"/>
 						<m:ToolbarSpacer/>
 						<m:Label text="SelectionMode:"/>
 						<m:Select id="select" selectedKey="MultiToggle" change="onSelectionModeChange">
@@ -32,10 +31,10 @@
 						</m:Select>
 						<m:ToggleButton text="Toggle Highlights" pressed="true" press="onHighlightToggle"/>
 						<m:ToggleButton text="Toggle Alternate Row Colors" press="onAlternateToggle"/>
-					</m:Toolbar>
-				</toolbar>
+					</m:OverflowToolbar>
+				</extension>
 				<rowSettingsTemplate>
-					<RowSettings highlight="{Status}"/>
+					<RowSettings highlight="{Status}" highlightText="{StatusText}"/>
 				</rowSettingsTemplate>
 				<columns>
 					<Column sortProperty="Status" filterProperty="Status">

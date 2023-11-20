@@ -1,0 +1,23 @@
+{
+  "1.90.0": {
+    "date": "May 2021",
+    "notes": [
+      {
+        "id": "95135b87d19ecc81b913238b82e0d973b2240751",
+        "type": "FIX",
+        "text": " sap.ui.rta: hideFromReveal also for deeper structures",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170030560"
+          }
+        ]
+      },
+      {
+        "id": "f2004bd274e08330b3383525535e8074c4cc2ec4",
+        "type": "FEATURE",
+        "text": " SmartField: setter editable/mandatory optimization"
+      }
+    ]
+  }
+}

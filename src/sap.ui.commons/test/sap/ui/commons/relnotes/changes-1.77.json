@@ -1,0 +1,40 @@
+{
+  "1.77.0": {
+    "date": "March 2020",
+    "notes": [
+      {
+        "id": "82bd37444fb01be79ee8a57c6975874cde1ed5d8",
+        "type": "FIX",
+        "text": " RenderManager: preserve the DOM for no-longer rendered controls",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070060501"
+          }
+        ]
+      },
+      {
+        "id": "e370637bb12d3160280634f5a1a4630a56f59f97",
+        "type": "FIX",
+        "text": " sap.ui.commons.Image: Karma Runner test stabilized",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070056366"
+          }
+        ]
+      },
+      {
+        "id": "1c52315c7e0ad3a39948f7bd5c4058860038edbd",
+        "type": "FIX",
+        "text": " sap.ui.commons.ToolbarRightItems: Karma Runner test stabilized.",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070056369"
+          }
+        ]
+      }
+    ]
+  }
+}

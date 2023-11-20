@@ -1,49 +1,24 @@
-<!DOCTYPE HTML>
+<!DOCTYPE html>
 <html>
 	<head>
-		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta charset="utf-8">
 		<title>sap.m.BusyIndicator - Accessibility</title>
 
+		<link href="BusyIndicator.css" rel="stylesheet">
 		<script src="../shared-config.js"></script>
-		<script src="../../../../resources/sap-ui-core.js"
-			id="sap-ui-bootstrap"
-			data-sap-ui-libs="sap.m">
-		</script>
-
-		<style>
-			#content .sapMBusyIndicator {
-				display: block;
-				margin: 3rem;
-			}
-		</style>
-
-		<script>
-			var app = new sap.m.App("myApp", {
-				initialPage: "page1"
-			});
-
-			var busyImage = new sap.m.BusyIndicator({
-				text: 'this is an image busy indicator',
-				customIcon: '../images/synchronise_48.png',
-				customIconRotationSpeed: 5000
-			});
-
-			var busyCSSText = new sap.m.BusyIndicator({
-				text: 'default sized busy indicator',
-			});
-
-			var page1 = new sap.m.Page("page1", {
-				title: "Mobile Busy Indicator Controls",
-				content:[
-					busyImage,
-					busyCSSText
-				]
-			});
-
-			app.addPage(page1).placeAt("content");
+		<script id="sap-ui-bootstrap"
+				src="../../../../resources/sap-ui-core.js"
+				data-sap-ui-async="true"
+				data-sap-ui-compatVersion="edge"
+				data-sap-ui-libs="sap.m"
+				data-sap-ui-onInit="module:local/BusyIndicator"
+				data-sap-ui-resourceRoots='{
+					"local": "./",
+					"qunit.internal.acc": "../../../../test-resources/sap/ui/core/qunit/internal/acc"
+				}'>
 		</script>
 	</head>
-	<body class="sapUiBody" style="overflow: hidden">
+	<body class="sapUiBody">
 		<div id="content"></div>
 	</body>
 </html>

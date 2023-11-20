@@ -4,14 +4,15 @@
 /**
  * Defines support rules of the SelectDialog control of sap.m library.
  */
-sap.ui.define(["jquery.sap.global", "sap/ui/support/library"],
-	function(jQuery, SupportLib) {
+sap.ui.define(["sap/ui/support/library", "sap/m/library"],
+	function(SupportLib, mobileLibrary) {
 		"use strict";
 
 		// shortcuts
 		var Categories = SupportLib.Categories, // Accessibility, Performance, Memory, ...
 			Severity = SupportLib.Severity,	// Hint, Warning, Error
-			Audiences = SupportLib.Audiences; // Control, Internal, Application
+			Audiences = SupportLib.Audiences, // Control, Internal, Application
+			ListType = mobileLibrary.ListType;
 
 		//**********************************************************
 		// Rule Definitions
@@ -40,7 +41,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/support/library"],
 							sListOfInactiveItems = "";
 
 						aListItems.forEach(function(oListItem){
-							if (oListItem.getType() === sap.m.ListType.Inactive) {
+							if (oListItem.getType() === ListType.Inactive) {
 								var sListItemId = oListItem.getId(),
 									sListItemName = oListItem.getMetadata().getElementName();
 

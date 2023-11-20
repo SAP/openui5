@@ -1,0 +1,25 @@
+/* ================================== */
+/* CSS for control sap.m/ActionTile  */
+/* Quartz Dark theme                  */
+/* ================================== */
+
+.sapMAT:hover {
+    box-shadow: 0 0 0 1px fade(@sapUiContentContrastShadowColor, 30);
+    transition: background 0.2s;
+    background: @sapUiTileHoverBackground;
+}
+
+.sapMAT:focus {
+    .sapMATFocusDiv {
+        border: 0.125rem dotted @sapUiContentFocusColor !important;
+    }
+    .sapMGTFocusDiv {
+        border: 0.125rem dotted @sapUiContentFocusColor !important;
+    }
+}
+
+.sapMAT:active {
+    .sapMATFocusDiv {
+        border: none;
+    }
+}

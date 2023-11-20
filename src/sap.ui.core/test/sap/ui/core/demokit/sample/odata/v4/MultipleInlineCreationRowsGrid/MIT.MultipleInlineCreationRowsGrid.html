@@ -1,0 +1,197 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<style>
+			body {font-family: Arial, "Helvetica Neue", Helvetica, sans-serif;}
+		</style>
+		<title>Manual Integration Test: Multiple Inline Creation Rows Grid</title>
+	</head>
+	<body>
+		<h1>Manual Integration Test: Multiple Inline Creation Rows Grid</h1>
+		<h2>DESCRIPTION</h2>
+		Test of the Multiple Inline Creation Rows Grid application.
+		<h2>PREPARATION</h2>
+		To check console errors open the developer tools before starting the application and check
+		with each step, that there are no errors and warnings.
+
+		<h3>Testing with mock data</h3>
+		Start the Multiple Inline Creation Rows Grid application with following URL (adjust host and
+		port if necessary):
+		<a href="http://localhost:8080/test-resources/sap/ui/core/demokit/sample/common/index.html?component=odata.v4.MultipleInlineCreationRowsGrid">http://&lt;host>:&lt;port>/test-resources/sap/ui/core/demokit/sample/common/index.html?component=odata.v4.MultipleInlineCreationRowsGrid</a>
+
+		<h2>REALIZE and CHECK</h2>
+		<h3>Test the app within draft mode and non-draft mode.</h3>
+		<a>To start the app in non-draft mode simply add URL parameter "&updateGroupId=update" to
+			the above URL</a>
+		<a href="http://localhost:8080/test-resources/sap/ui/core/demokit/sample/common/index.html?component=odata.v4.MultipleInlineCreationRowsGrid&updateGroupId=update">http://&lt;host>:&lt;port>/test-resources/sap/ui/core/demokit/sample/common/index.html?component=odata.v4.MultipleInlineCreationRowsGrid&updateGroupId=update</a>
+		<a>For non-draft mode the app has additional <code>Save</code> and <code>Cancel</code>
+			buttons and the test description differs a little.</a>
+		<ol>
+			<li><b>Check</b>: A list with two empty rows, followed by three products appears.</li>
+			<li>Select the first product with ID "10".</li>
+			<li><b>Check</b>: A table with title "Product 10, 3 Parts" appears. It contains three
+				product parts, followed by two empty rows.</li>
+			<li><b>Check</b>: The <code>Delete part</code> button is active for the persisted parts
+				and inactive for the empty rows.</li>
+			<li>Enter "Part 99" into the <code>Description</code> field of the first empty row and
+				press "Enter" key.</li>
+			<li><b>Check</b>: A warning message "ID must not be empty" appears.</li>
+			<li><b>Check</b>: The <code>ID</code> field has a colored border indicating the warning.
+				</li>
+			<li>Click on the <code>Reset part</code> button of the first row.</li>
+			<li><b>Check</b>: The first row is empty again and the <code>Description</code>
+				<code>Part 99</code> disappeared.</li>
+			<li>Again, enter "Part 99" into the <code>Description</code> field of the first empty
+				row and press "Enter" key.</li>
+			<li><b>Check</b>: A warning message "ID must not be empty" appears.</li>
+			<li><b>Check</b>: The <code>ID</code> field has a colored border indicating the warning.
+			</li>
+			<li>Enter "99" into the <code>ID</code> field of the first empty row and press
+				"Enter" key.</li>
+			<li><b>Check</b>: The warning message and the colored border of the <code>ID</code>
+				field disappear.</li>
+			<li><b>Check</b>: The <code>Delete part</code> button of the row becomes active.</li>
+			<li><b>Check</b>: The table title changes to "Product 10, 4 Parts".</li>
+			<li><b>Check</b>: A new empty row appears.</li>
+			<li>Within non-draft mode:
+				<ol>
+					<li><b>Check</b>: The part with ID "99" now has the state "Transient".</li>
+					<li>Press <code>Save</code>.</li>
+					<li><b>Check</b>: The part with ID "99" now has the state "Persisted".</li>
+				</ol>
+			</li>
+			<li>Within draft mode:
+				<ol>
+					<li><b>Check</b>: The part with ID "99" now has the state "Persisted".</li>
+				</ol>
+			</li>
+			<li>Enter "100" into the <code>ID</code> field of the first empty row and press
+				"Enter" key, within non-draft press <code>Save</code>.</li>
+			<li><b>Check</b>: An error message "Key exists already" appears.</li>
+			<li><b>Check:</b> The <code>ID</code> field has a colored border indicating the error.
+				</li>
+			<li><b>Check</b>: The <code>Delete part</code> button of the row becomes active.</li>
+			<li><b>Check</b>: The table title changes to "Product 10, 5 Parts".</li>
+			<li><b>Check</b>: A new empty row appears.</li>
+			<li>Within non-draft mode:
+				<ol>
+					<li>Press <code>Cancel</code>.</li>
+					<li><b>Check</b>: The table title changes to "Product 10, 4 Parts".</li>
+					<li><b>Check</b>: The row with <code>ID</code> "100" disappears.</li>
+					<li>Enter "101" into the <code>ID</code> field of the first empty row and press
+						"Enter" key.</li>
+					<li><b>Check</b>: The <code>Delete part</code> button of the row becomes
+						active.</li>
+					<li><b>Check</b>: The table title changes to "Product 10, 5 Parts".</li>
+					<li><b>Check</b>: A new empty row appears.</li>
+					<li>Press <code>Save</code>.</li>
+					<li><b>Check</b>: The product with <code>ID</code> "101" now has the state
+						"Persisted".</li>
+					<li>Click on The <code>Delete part</code> button of the fourth row with the ID
+						"101".</li>
+					<li>Confirm the dialog with clicking on <code>Ok</code>.</li>
+					<li><b>Check</b>: The table title changes to "Product 10, 4 Parts".</li>
+					<li><b>Check</b>: The row disappears.</li>
+					<li>Select the second product with ID "20".</li>
+					<li><b>Check</b>: The table title changes to "Product 20, 3 Parts".</li>
+					<li><b>Check</b>: You see 3 "Persisted" and 2 "Inactive" parts.</li>
+					<li>Enter "222" into the <code>ID</code> field of the first empty row and press
+						"Enter" key</li>
+					<li><b>Check</b>: The product with ID "222" now has the state "Transient".</li>
+					<li>Select the first product with ID "10".</li>
+					<li>Select the second product with ID "20".</li>
+					<li><b>Check</b>: The product with ID "222" is visible again and has the state
+						"Transient" and again there are 2 empty rows.</li>
+				</ol>
+			</li>
+			<li>Within draft mode:
+				<ol>
+					<li>Enter "101" into the <code>ID</code> field of the first empty row and press
+						"Enter" key.</li>
+					<li><b>Check</b>: The <code>Delete part</code> button of the row becomes
+						active.</li>
+					<li><b>Check</b>: The table title changes to "Product 10, 6 Parts".</li>
+					<li><b>Check</b>: A new empty row appears.</li>
+					<li>Click on The <code>Delete part</code> button of the fifth row with the ID
+						"100".</li>
+					<li>Confirm the dialog with clicking on <code>Ok</code>.</li>
+					<li><b>Check</b>: The table title changes to "Product 10, 5 Parts".</li>
+					<li><b>Check</b>: The row disappears.</li>
+					<li>Select the second product with ID "20".</li>
+					<li><b>Check</b>: The table title changes to "Product 20, 3 Parts".</li>
+					<li>Select the first product with ID "10".</li>
+					<li><b>Check</b>: The table title changes to "Product 10, 5 Parts".</li>
+					<li><b>Check</b>: You see 5 rows with state "From Server" and 2 empty rows.
+						</li>
+					<li><b>Check</b>: The 5 rows with state "From Server" have now a different
+						description than before because they are reread again.</li>
+					<li>Select the second product with ID "20".</li>
+					<li><b>Check</b>: The table title changes to "Product 20, 3 Parts".</li>
+					<li><b>Check</b>: You see 3 "Persisted" and 2 "Inactive" parts.</li>
+				</ol>
+			</li>
+			<li>Press <code>Quantity</code> button in parts table header.</li>
+			<li><b>Check</b>: The parts table is sorted by quantity ascending and the empty
+				rows are still at the end.</li>
+			<li>Press <code>Refresh</code>.</li>
+			<li><b>Check</b>: The parts table did not change.</li>
+
+			<li>Enter "100" into the <code>ID</code> field of the last empty row of the
+				<b>Products</b> list and press Enter</li>
+			<li><b>Check</b>: The list title changes to "4 Products".
+			<li><b>Check</b>: A new empty row appears below.
+		</ol>
+		<h3>Test the app with legacy placement of inline creation rows</h3>
+		<a>To start the app with legacy placement add URL parameter "&legacy=true" to the above
+			URL</a>
+		<a href="http://localhost:8080/test-resources/sap/ui/core/demokit/sample/common/index.html?component=odata.v4.MultipleInlineCreationRowsGrid&legacy=true">http://&lt;host>:&lt;port>/test-resources/sap/ui/core/demokit/sample/common/index.html?component=odata.v4.MultipleInlineCreationRowsGrid&legacy=true</a>
+		<ol>
+			<li><b>Check</b>: A list with two empty rows, followed by three products appears.</li>
+			<li>Select the first product with ID "10".</li>
+			<li><b>Check</b>: A table with title "Product 10, 3 Parts" appears. It contains two
+				empty rows, followed by three product parts.</li>
+			<li><b>Check</b>: The <code>Delete part</code> button is active for the persisted parts
+				and inactive for the empty rows.</li>
+			<li>Enter "99" into the <code>ID</code> field of the last empty row and press
+				"Enter" key.</li>
+			<li><b>Check</b>: The <code>Delete part</code> button of the row becomes active.</li>
+			<li><b>Check</b>: The table title changes to "Product 10, 4 Parts".</li>
+			<li><b>Check</b>: A new empty row appears above.</li>
+			<li><b>Check</b>: The product with ID "99" now has the state "Persisted".</li>
+			<li>Enter "100" into the <code>ID</code> field of the last empty row and press
+				"Enter" key.</li>
+			<li><b>Check</b>: An error message "Key exists already" appears.</li>
+			<li><b>Check:</b> The <code>ID</code> field has a colored border indicating the error.
+				</li>
+			<li><b>Check</b>: The <code>Delete part</code> button of the row becomes active.</li>
+			<li><b>Check</b>: The table title changes to "Product 10, 5 Parts".</li>
+			<li><b>Check</b>: A new empty row appears above.</li>
+			<li>Enter "101" into the <code>ID</code> field of the last empty row and press
+				"Enter" key.</li>
+			<li><b>Check</b>: The <code>Delete part</code> button of the row becomes
+				active.</li>
+			<li><b>Check</b>: The table title changes to "Product 10, 6 Parts".</li>
+			<li><b>Check</b>: A new empty row appears.</li>
+			<li>Click on The <code>Delete part</code> button of the fourth row with the ID
+				"100".</li>
+			<li>Confirm the dialog with clicking on <code>Ok</code>.</li>
+			<li><b>Check</b>: The table title changes to "Product 10, 5 Parts".</li>
+			<li><b>Check</b>: The row disappears.</li>
+			<li>Select the second product with ID "20".</li>
+			<li><b>Check</b>: The table title changes to "Product 20, 3 Parts".</li>
+			<li>Select the first product with ID "10".</li>
+			<li><b>Check</b>: The table title changes to "Product 10, 5 Parts".</li>
+			<li><b>Check</b>: You see 5 rows with state "From Server" and 2 empty rows.</li>
+			<li><b>Check</b>: The 5 rows with state "From Server" have now a different
+				description than before because they are reread again.</li>
+			<li>Select the second product with ID "20".</li>
+			<li><b>Check</b>: The table title changes to "Product 20, 3 Parts".</li>
+			<li><b>Check</b>: You see 2 "Inactive" empty rows and 3 "From Server" parts.</li>
+			<li>Press <code>Quantity</code> button in parts table header.</li>
+			<li><b>Check</b>: The parts table is sorted by quantity ascending and the empty
+				rows are still at the top.</li>
+			<li>Press <code>Refresh</code>.</li>
+			<li><b>Check</b>: The parts table did not change.</li>
+		</ol>
+	</body>
+</html>

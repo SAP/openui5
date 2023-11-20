@@ -1,0 +1,69 @@
+<mvc:View
+		height="100%"
+		xmlns:mvc="sap.ui.core.mvc"
+		xmlns="sap.uxap"
+		xmlns:sample="sap.uxap.sample.ObjectPageSubSectionMultiView.controller.blocks"
+		controllerName="sap.uxap.sample.ObjectPageSubSectionMultiView.controller.ObjectPageSubSectionMultiView"
+		>
+	<ObjectPageLayout id="ObjectPageLayout" upperCaseAnchorBar="false">
+		<headerTitle>
+			<ObjectPageHeader
+					objectTitle="Automatic layout of blocks"
+					objectSubtitle="This example shows how blocks can be laid out automatically by the Object Page when their size is not specified"/>
+
+		</headerTitle>
+
+		<sections>
+			<ObjectPageSection titleUppercase="false" showTitle="false">
+				<subSections>
+					<ObjectPageSubSection title="1 block" titleUppercase="false">
+						<blocks>
+							<sample:BlockEmpty id="multiview11"/>
+						</blocks>
+					</ObjectPageSubSection>
+					<ObjectPageSubSection title="2 blocks" titleUppercase="false">
+						<blocks>
+							<sample:BlockEmpty id="multiview21"/>
+							<sample:BlockEmpty id="multiview22"/>
+
+						</blocks>
+					</ObjectPageSubSection>
+					<ObjectPageSubSection title="3 blocks" titleUppercase="false">
+						<blocks>
+							<sample:BlockEmpty id="multiview41"/>
+							<sample:BlockEmpty id="multiview42"/>
+							<sample:BlockEmpty id="multiview43"/>
+						</blocks>
+					</ObjectPageSubSection>
+					<ObjectPageSubSection title="4 blocks" titleUppercase="false">
+						<blocks>
+							<sample:BlockEmpty id="multiview51"/>
+							<sample:BlockEmpty id="multiview52"/>
+							<sample:BlockEmpty id="multiview53"/>
+							<sample:BlockEmpty id="multiview54"/>
+						</blocks>
+					</ObjectPageSubSection>
+					<ObjectPageSubSection title="5 blocks" titleUppercase="false">
+						<blocks>
+							<sample:BlockEmpty id="multiview61"/>
+							<sample:BlockEmpty id="multiview62"/>
+							<sample:BlockEmpty id="multiview63"/>
+							<sample:BlockEmpty id="multiview64"/>
+							<sample:BlockEmpty id="multiview65"/>
+						</blocks>
+					</ObjectPageSubSection>
+					<ObjectPageSubSection title="6 blocks" titleUppercase="false">
+						<blocks>
+							<sample:BlockEmpty id="multiview71"/>
+							<sample:BlockEmpty id="multiview72"/>
+							<sample:BlockEmpty id="multiview73"/>
+							<sample:BlockEmpty id="multiview74"/>
+							<sample:BlockEmpty id="multiview75"/>
+							<sample:BlockEmpty id="multiview76"/>
+						</blocks>
+					</ObjectPageSubSection>
+				</subSections>
+			</ObjectPageSection>
+		</sections>
+	</ObjectPageLayout>
+</mvc:View>

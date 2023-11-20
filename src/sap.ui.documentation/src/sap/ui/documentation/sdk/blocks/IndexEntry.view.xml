@@ -1,0 +1,30 @@
+<mvc:View
+        controllerName="sap.ui.documentation.sdk.blocks.IndexEntry"
+		xmlns:mvc="sap.ui.core.mvc"
+		xmlns="sap.uxap"
+		xmlns:m="sap.m"
+		xmlns:custom="sap.ui.documentation"
+		xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1">
+	<m:List items="{ path: 'apis', templateShareable: false}"
+			showSeparators="Inner"
+			class="sapUxAPObjectPageSubSectionAlignContent"
+			width="auto">
+			<m:items>
+				<m:CustomListItem
+						class="indexEntry">
+					<custom:JSDocText text="{parts : [
+						{path : 'control'},
+						{path : 'entityName'},
+						{path: 'type'},
+						{path: 'static'},
+						 {path: 'text'}],
+						formatter : '.formatText'}"
+						app:control="{control}"
+						app:entity="{entityName}"
+						app:type="{type}"
+						app:static="{static}"
+						app:text="{text}"/>
+				</m:CustomListItem>
+			</m:items>
+	</m:List>
+</mvc:View>

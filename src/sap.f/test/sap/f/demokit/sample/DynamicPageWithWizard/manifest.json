@@ -1,0 +1,33 @@
+{
+	"sap.app": {
+		"id": "sap.f.sample.DynamicPageWithWizard",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "sap.f.sample.DynamicPageWithWizard.view.DynamicPageWithWizard",
+			"type": "XML",
+			"async": true
+		},
+		"dependencies": {
+			"libs": {
+				"sap.f": {},
+				"sap.m": {},
+				"sap.ui.core": {},
+				"sap.ui.unified": {}
+			}
+		},
+		"config": {
+			"sample": {
+				"stretch": true,
+				"files": [
+					"controller/DynamicPageWithWizard.controller.js",
+					"view/DynamicPageWithWizard.view.xml",
+					"manifest.json"
+				]
+			}
+		}
+	}
+}

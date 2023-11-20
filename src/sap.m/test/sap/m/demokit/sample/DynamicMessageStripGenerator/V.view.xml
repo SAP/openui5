@@ -2,7 +2,6 @@
 	controllerName="sap.m.sample.DynamicMessageStripGenerator.C"
 	xmlns:l="sap.ui.layout"
 	xmlns:mvc="sap.ui.core.mvc"
-	xmlns:html="http://www.w3.org/1999/xhtml"
 	xmlns="sap.m">
 
 	<l:VerticalLayout

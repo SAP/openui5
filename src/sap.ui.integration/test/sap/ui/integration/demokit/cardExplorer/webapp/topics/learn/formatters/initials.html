@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<title>Initials Formatter</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<script src="../../../scripts/boot.js"></script>
+</head>
+
+<body class="sapUiBody topicBody">
+
+<div class="topic">
+	<div class="content">
+
+		<h2 id="initialsFormatter">
+			Initials Formatter
+		</h2>
+
+		<p>
+			The <code>initials</code> formatter takes as a parameter any string and gets the first letter of each word.
+			This can be used for getting initials from a name to be used in an avatar icon.
+			The only restriction is that the Avatar control supports up to two letters inside the control.
+		</p>
+
+		<p><code>format.initials(value, length?)</code></p>
+		<div class="tableWrapper">
+			<table>
+				<tbody>
+				<tr>
+					<th>Param</th>
+					<th>Type</th>
+					<th>Required</th>
+					<th>Description</th>
+					<th>Since</th>
+				</tr>
+				<tr>
+					<td>value</td>
+					<td>string</td>
+					<td>Yes</td>
+					<td>Any valid string with spaces between the words.</td>
+					<td>1.100</td>
+				</tr>
+				<tr>
+					<td>length</td>
+					<td>number</td>
+					<td>No</td>
+					<td>Any valid number will represent how many characters will be visible.
+						<b>Note:</b> The default length of visualized characters is 2.</td>
+						<b>Note:</b> If length is 2, first and last initial of a name will be shown.</td>
+					<td>1.100</td>
+				</tr>
+				</tbody>
+
+				<tbody>
+				<tr>
+					<th>Returns</th>
+					<th></th>
+					<th></th>
+					<th></th>
+					<th></th>
+				</tr>
+				<tr>
+					<td></td>
+					<td>string</td>
+					<td></td>
+					<td>The first letter of every word in upper case.</td>
+					<td>1.100</td>
+				</tr>
+				</tbody>
+			</table>
+		</div>
+
+		<h2 id="examples">
+			Examples
+		</h2>
+
+		<pre class="lang-json">
+"sap.card": {
+	"type": "List",
+	"header": {
+		"title": "Order status",
+		"icon": {
+			"initials": {
+				"{= format.initials('John Doe')}"
+			}
+		}
+	}
+}
+</pre>
+
+		<a class="try-button" href="../../../index.html#/explore/initials" target="_parent">Try it Out</a>
+	</div>
+</div>
+</body>
+
+</html>

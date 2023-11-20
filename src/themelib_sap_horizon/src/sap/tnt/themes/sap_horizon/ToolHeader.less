@@ -1,0 +1,363 @@
+/* =================================== */
+/* CSS for control sap.tnt/ToolHeader  */
+/* Horizon theme                       */
+/* =================================== */
+
+@_sap_tnt_ToolHeader_Height: 3.25rem;
+@_sap_tnt_ToolHeader_BorderRadius: 0.5rem;
+@_sap_tnt_ToolHeader_BoxShadow: @_sap_tnt_ToolHeader_Shadow;
+@_sap_tnt_ToolHeader_IconHeight: 0.75rem;
+@_sap_tnt_ToolHeader_DisabledOpacity: @sapUiContentDisabledOpacity;
+@_sap_tnt_ToolHeader_ArrowHeight: 0.125rem;
+@_sap_tnt_ToolHeader_ArrowMargin: 0 -0.25rem;
+@_sap_tnt_ToolHeader_Padding: 0 0.75rem;
+@_sap_tnt_ToolHeader_ArrowMarginBottom: 0.25rem;
+@_sap_tnt_ToolHeader_IconTabHeader_Height: auto;
+@_sap_tnt_ToolHeader_Shadow: 0 0 0.125rem 0 fade(@sapUiContentShadowColor,16), 0 0.5rem 1rem 0 fade(@sapUiContentShadowColor, 16);
+
+// ==========================================================================
+// sap.m.Toolbar overriding
+// ==========================================================================
+
+.sapTntToolHeader {
+	&.sapMTB {
+		background-color: @sapUiShellColor;
+		padding: 0 1.25rem 0 0.75rem ;
+	}
+
+	&.sapMTBStandard {
+		border-bottom: none;
+	}
+
+	&.sapMIBar.sapMTB .sapMBarChild ~ .sapMBarChild {
+		margin: 0 0 0 0.375rem
+	}
+
+	&.sapMIBar.sapMTB .sapMBarChild.sapMTBSeparator {
+		background: none;
+		width: 0.75rem;
+	}
+}
+
+// Styling for the cases when we have Header and SubHeader
+.sapTntToolPageHeaderWithSubHeaderWrapper .sapTntToolPageHeader:first-of-type .sapTntToolHeader {
+	border-bottom-right-radius: 0;
+	border-bottom-left-radius: 0;
+	box-shadow: none;
+}
+
+.sapTntToolPageHeaderWithSubHeaderWrapper .sapTntToolPageHeader:nth-of-type(2) .sapTntToolHeader {
+	border-top-right-radius: 0;
+	border-top-left-radius: 0;
+	box-shadow: none;
+}
+
+.sapTntToolPageHeaderWrapper.sapTntToolPageHeaderWithSubHeaderWrapper {
+	box-shadow: @_sap_tnt_ToolHeader_BoxShadow;
+	border-radius: @_sap_tnt_ToolHeader_BorderRadius;
+}
+
+// ==========================================================================
+// sap.m.Button overriding
+// ==========================================================================
+
+.sapTntToolHeader {
+	.sapMBarChild:not(.sapMMenuBtn) {
+		&.sapMBtn {
+			padding: 0.125rem 0;
+			min-width: 2.5rem;
+		}
+
+		&.sapMBtn .sapMBtnTransparent,
+		&.sapMBtn .sapMBtnDefault,
+		&.sapMBtn .sapMBtnBack,
+		&.sapMBtn .sapMBtnUp {
+			color: @sapUiContentIconColor;
+			background-color: @sapUiButtonLiteBackground;
+			height: 2.5rem;
+
+			.sapUiIcon {
+				color: @sapUiContentIconColor;
+				line-height: 2.5rem;
+			}
+
+			.sapMBtnContent {
+				line-height: 2.5rem;
+			}
+		}
+
+		&.sapMBtn:focus .sapMBtnTransparent.sapMFocusable,
+		&.sapMBtn:focus .sapMBtnEmphasized.sapMFocusable,
+		&.sapMBtn:focus .sapMBtnDefault.sapMFocusable,
+		&.sapMBtn:focus .sapMBtnBack.sapMFocusable,
+		&.sapMBtn:focus .sapMBtnUp.sapMFocusable {
+			&::before {
+				outline: @sapUiContentFocusStyle @sapUiContentFocusWidth @sapUiContentFocusColor;
+				border: none !important;
+			}
+		}
+
+		&.sapMBtn:hover:not(.sapMBtnDisabled) .sapMBtnTransparent,
+		&.sapMBtn:hover:not(.sapMBtnDisabled) .sapMBtnDefault,
+		&.sapMBtn:hover:not(.sapMBtnDisabled) .sapMBtnBack,
+		&.sapMBtn:hover:not(.sapMBtnDisabled) .sapMBtnUp {
+			background: @sapUiButtonLiteHoverBackground;
+			color: @sapUiContentIconColor;
+			box-shadow: none;
+		}
+
+		&.sapMBtn:active:not(.sapMBtnDisabled) .sapMBtnTransparent,
+		&.sapMBtn:active:not(.sapMBtnDisabled) .sapMBtnDefault,
+		&.sapMBtn:active:not(.sapMBtnDisabled) .sapMBtnBack,
+		&.sapMBtn:active:not(.sapMBtnDisabled) .sapMBtnUp {
+			background:  @sapUiActive;
+			color: @sapUiContentIconColor;
+			box-shadow: none;
+		}
+
+		&.sapMBtn:hover:not(.sapMBtnDisabled) > .sapMBtnTransparent.sapMBtnHoverable:not(.sapMBtnActive):not(.sapMToggleBtnPressed):not(.sapMBtnEmphasized) .sapUiIcon {
+			color: @sapUiContentIconColor;
+		}
+	}
+}
+
+.sapUiSizeCompact {
+	.sapTntToolHeader {
+		.sapMBarChild:not(.sapMMenuBtn) {
+			&.sapMBtn {
+				padding: 0;
+				min-width: 2rem;
+
+				.sapMBadgeTopRight.sapMBadge .sapMBadgeIndicator {
+					position: absolute;
+					top: -0.3125rem;
+					right: -0.4375rem;
+					padding-right: 0.125rem;
+				}
+
+				.sapMBadgeTopRight.sapMBadge.sapMBtnIconFirst:not(.sapMBtnText) {
+					padding: 0;
+				}
+			}
+
+			&.sapMBtn .sapMBtnTransparent,
+			&.sapMBtn .sapMBtnDefault,
+			&.sapMBtn .sapMBtnBack,
+			&.sapMBtn .sapMBtnUp {
+				height: 2rem;
+
+				.sapUiIcon {
+					line-height: 2rem;
+				}
+
+				.sapMBtnContent {
+					line-height: 2rem;
+				}
+			}
+		}
+	}
+}
+
+// ==========================================================================
+// sap.m.Text, sap.m.Title and sap.m.Label overriding
+// ==========================================================================
+
+.sapTntToolHeader {
+	.sapMTitle {
+		text-shadow: none;
+		font-family: @sapUiFontBlackFamily;
+		font-size: 1.125rem;
+		line-height: 1.625rem;
+	}
+
+	.sapMText,
+	.sapMLabel {
+		line-height: @sapUiContentLineHeight;
+		color: @sapUiContentLabelColor;
+	}
+
+	&.sapMIBar.sapMTB .sapMBarChild.sapMText,
+	&.sapMIBar.sapMTB .sapMBarChild.sapMLabel {
+		margin-top: 2px; // to align the text/label with the title
+		margin-left: 0.75rem;
+	}
+}
+
+.sapUiSizeCompact {
+	.sapTntToolHeader {
+		&.sapMIBar.sapMTB .sapMBarChild.sapMText,
+		&.sapMIBar.sapMTB .sapMBarChild.sapMLabel {
+			margin-top: 3px; // to align the text/label with the title
+		}
+	}
+}
+
+// ==========================================================================
+// sap.m.SearchField overriding
+// ==========================================================================
+
+.sapTntToolHeader {
+	.sapMSF {
+		height: 2.5rem;
+		padding-top: 0px;
+
+		&:not(.sapMSFVal) .sapMSFS {
+			pointer-events: none;
+		}
+	}
+
+	.sapMSF .sapMSFF {
+		border-radius: 2rem;
+		height: 2.5rem;
+		background-color: @sapUiShellInteractiveBackground;
+
+		&:hover {
+			background: @sapUiShellHoverBackground;
+			box-shadow: 0 0 0.125rem 0 fade(@sapUiContentShadowColor, 16), 0 0.5rem 1rem 0 fade(@sapUiContentShadowColor, 16);
+		}
+
+		.sapMSFI {
+			color: @sapUiShellTextColor;
+		}
+	}
+
+	.sapMSF.sapMFocus .sapMSFF {
+		background: @sapUiShellActiveBackground;
+	}
+
+	.sapMSFB {
+		width: 2rem;
+		height: 2rem;
+		margin-top: 0.25rem;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
+
+	.sapMSFB.sapMSFBA {
+		background: none;
+		box-shadow: none;
+	}
+
+	.sapMSFSSI {
+		display: inline;
+	}
+
+	.sapMSFF .sapMSFSSI:before {
+		content: "\e00d";
+		color: @sapUiContentNonInteractiveIconColor;
+		display: block;
+		font-style: normal;
+		width: 1rem;
+		height: 1rem;
+		font-family: 'SAP-icons';
+		margin-right: 0.375rem;
+		margin-top: 0.75rem;
+	}
+
+	.sapMSFS::after {
+		content: "\e1ed";
+	}
+
+	.sapMSFR::after,
+	.sapMSFS::after  {
+		display: block;
+		width: 1.25rem;
+		height: 1.25rem;
+		border-radius: 0.75rem;
+		font-size: 0.75rem;
+		line-height: 1.25rem;
+	}
+
+	.sapMSFS {
+		margin-right: 0.25rem;
+		border: none;
+	}
+
+	.sapMSFS:active,
+	.sapMSFS:hover,
+	.sapMSFR:active,
+	.sapMSFR:hover {
+		background: none;
+		box-shadow: none;
+		line-height: 1.25rem;
+	}
+
+	.sapMSFS:active::after,
+	.sapMSFS.sapMSFBA::after,
+	.sapMSFR:active::after {
+		background: @sapUiActive;
+		color: @sapUiContentIconColor;
+	}
+
+	.sapMSFS:hover::after,
+	.sapMSFR:hover::after {
+		background: @sapUiHover;
+		color: @sapUiContentIconColor;
+	}
+
+	.sapMSFVal.sapMFocus .sapMSFF {
+		box-shadow: 0 0 0.125rem 0 fade(@sapUiContentShadowColor, 16), 0 0.5rem 1rem 0 fade(@sapUiContentShadowColor, 16);
+
+		&::before {
+			display: none;
+		}
+
+		.sapMSFS.sapMSFB::after {
+			outline: @sapUiContentFocusWidth @sapUiContentFocusStyle @sapUiContentFocusColor;
+		}
+	}
+}
+
+.sapUiSizeCompact {
+	.sapTntToolHeader {
+		.sapMSF {
+			height: 2rem;
+		}
+
+		.sapMSF .sapMSFF {
+			height: 2rem;
+		}
+
+		.sapMSFB {
+			margin-top: 0.1875rem;
+			width: 1.625rem;
+			height: 1.625rem;
+		}
+
+		.sapMSFS {
+			margin-right: 0.1875rem;
+		}
+
+		.sapMSFF .sapMSFSSI:before {
+			margin-top: 0.5rem;
+		}
+	}
+}
+
+// ==========================================================================
+// sap.m.IconTabHeader overriding
+// ==========================================================================
+
+.sapTntToolHeader {
+	.sapUshellShellTabBar .sapMITH,
+	.sapUshellShellTabBar.sapMITH {
+		box-shadow: none;
+	}
+}
+
+// ==========================================================================
+// sap.m.Image overriding
+// ==========================================================================
+
+.sapTntToolHeader {
+	.sapMImg {
+		height: 1.625rem;
+	}
+
+	.sapMImgFocusable:focus {
+		outline: @sapUiContentFocusStyle @sapUiContentFocusWidth @sapUiContentFocusColor;
+		outline-offset: 0.125rem;
+		border-radius: 0.25rem;
+	}
+}

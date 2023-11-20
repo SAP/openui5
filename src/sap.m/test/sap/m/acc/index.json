@@ -2,17 +2,32 @@
 	"tests" : [
 		{
 			"control": "sap.m.ActionSelect",
-			"url": "../ActionSelect.html",
-			"appComponent": "CA-UI5-CTR-RIL"
+			"url": "ActionSelect.html",
+			"appComponent": "CA-UI5-CTR-RIL",
+			"accTest": {
+				"name": "sap.m.ActionSelect",
+				"title": "ACC test for sap.m.ActionSelect",
+				"module": "./actionselect.qunit"
+			}
 		},
 		{
 			"control": "sap.m.ActionSheet",
 			"url": "ActionSheet.html",
-			"appComponent": "CA-UI5-CTR-RIL"
+			"appComponent": "CA-UI5-CTR-RIL",
+			"accTest": {
+				"name": "sap.m.ActionSheet",
+				"title": "ACC test for sap.m.ActionSheet",
+				"module": "./actionsheet.qunit"
+			}
 		},
 		{
 			"control": "sap.m.App",
 			"url": "../App.html",
+			"appComponent": "CA-UI5-CTR-PIR"
+		},
+		{
+			"control": "sap.m.Avatar",
+			"url": "../Avatar.html",
 			"appComponent": "CA-UI5-CTR-PIR"
 		},
 		{
@@ -23,12 +38,17 @@
 		{
 			"control": "sap.m.BusyDialog",
 			"url": "BusyDialog.html",
-			"appComponent": "CA-UI5-CTR-ROD"
+			"appComponent": "CA-UI5-CTR-ROD",
+			"accTest": {
+				"name": "sap.m.BusyDialog",
+				"title": "ACC test for sap.m.BusyDialog",
+				"module": "./busydialog.qunit"
+			}
 		},
 		{
 			"control": "sap.m.BusyIndicator",
 			"url": "BusyIndicator.html",
-			"appComponent": "CA-UI5-CTR-RIL"
+			"appComponent": "CA-UI5-CTR-ROD"
 		},
 		{
 			"control": "sap.m.Button",
@@ -47,13 +67,18 @@
 		},
 		{
 			"control": "sap.m.CheckBox",
-			"url": "../CheckBox.html",
+			"url": "CheckBox.html",
 			"appComponent": "CA-UI5-CTR-PIR"
 		},
 		{
 			"control": "sap.m.ComboBox",
 			"url": "ComboBox.html",
-			"appComponent": "CA-UI5-CTR-RIL"
+			"appComponent": "CA-UI5-CTR-RIL",
+			"accTest": {
+				"name": "sap.m.ComboBox",
+				"title": "ACC test for sap.m.ComboBox",
+				"module": "./combobox.qunit"
+			}
 		},
 		{
 			"control": "sap.m.ColorPalette",
@@ -77,12 +102,27 @@
 		},
 		{
 			"control": "sap.m.DateTimePicker",
-			"url": "../DateTimePicker.html",
+			"url": "DateTimePicker.html",
 			"appComponent": "CA-UI5-CTR-BAL"
 		},
 		{
 			"control": "sap.m.Dialog",
 			"url": "Dialog.html",
+			"appComponent": "CA-UI5-CTR-ROD",
+			"accTest": {
+				"name": "sap.m.Dialog",
+				"title": "ACC test for sap.m.Dialog",
+				"module": "./dialog.qunit"
+			}
+		},
+		{
+			"control": "sap.m.DynamicDateRange",
+			"url": "../DynamicDateRange.html",
+			"appComponent": "CA-UI5-CTR-BAL"
+		},
+		{
+			"control": "sap.m.ExpandableText",
+			"url": "../ExpandableText.html",
 			"appComponent": "CA-UI5-CTR-ROD"
 		},
 		{
@@ -108,7 +148,12 @@
 		{
 			"control": "sap.m.FormattedText",
 			"url": "FormattedText.html",
-			"appComponent": "CA-UI5-CTR-PIR"
+			"appComponent": "CA-UI5-CTR-BAL"
+		},
+		{
+			"control": "sap.m.GenericTag",
+			"url": "GenericTag.html",
+			"appComponent" : "CA-UI5-CTR-PIR"
 		},
 		{
 			"control": "sap.m.GenericTile",
@@ -132,18 +177,23 @@
 		},
 		{
 			"control": "sap.m.Image",
-			"url": "../Image.html",
+			"url": "Image.html",
 			"appComponent": "CA-UI5-CTR-PIR"
 		},
 		{
-			"control": "sap.m.InputBase",
-			"url": "../InputBase.html",
-			"appComponent": "CA-UI5-CTR-ROD"
+			"control": "sap.m.IllustratedMessage",
+			"url": "IllustratedMessage.html",
+			"appComponent": "CA-UI5-CTR-PIR"
 		},
 		{
 			"control": "sap.m.Input",
 			"url": "Input.html",
-			"appComponent": "CA-UI5-CTR-ROD"
+			"appComponent": "CA-UI5-CTR-RIL",
+			"accTest": {
+				"name": "sap.m.Input",
+				"title": "ACC test for sap.m.Input",
+				"module": "./input.qunit"
+			}
 		},
 		{
 			"control": "sap.m.Label",
@@ -152,13 +202,18 @@
 		},
 		{
 			"control": "sap.m.LightBox",
-			"url": "../LightBox.html",
-			"appComponent": "CA-UI5-CTR-ROD"
+			"url": "LightBox.html",
+			"appComponent": "CA-UI5-CTR-ROD",
+			"accTest": {
+				"name": "sap.m.LightBox",
+				"title": "ACC test for sap.m.LightBox",
+				"module": "./lightbox.qunit"
+			}
 		},
 		{
 			"control": "sap.m.Link",
-			"url": "../Link.html",
-			"appComponent": "CA-UI5-CTR-PIR"
+			"url": "Link.html",
+			"appComponent": "CA-UI5-CTR-BAL"
 		},
 		{
 			"control": "sap.m.List",
@@ -194,40 +249,65 @@
 		{
 			"control": "sap.m.MessageBox",
 			"url": "MessageBox.html",
-			"appComponent": "CA-UI5-CTR-RIL"
+			"appComponent": "CA-UI5-CTR-ROD",
+			"accTest": {
+				"name": "sap.m.MessageBox",
+				"title": "ACC test for sap.m.MessageBox",
+				"module": "./messagebox.qunit"
+			}
 		},
 		{
 			"control": "sap.m.MessagePopover",
 			"url": "MessagePopover.html",
-			"appComponent": "CA-UI5-CTR-RIL"
+			"appComponent": "CA-UI5-CTR-RIL",
+			"accTest": {
+				"name": "sap.m.MessagePopover",
+				"title": "ACC test for sap.m.MessagePopover",
+				"module": "./messagepopover.qunit"
+			}
 		},
 		{
 			"control": "sap.m.MessageToast",
 			"url": "MessageToast.html",
-			"appComponent": "CA-UI5-CTR-RIL"
+			"appComponent": "CA-UI5-CTR-RIL",
+			"accTest": {
+				"name": "sap.m.MessageToast",
+				"title": "ACC test for sap.m.MessageToast",
+				"module": "./messagetoast.qunit"
+			}
 		},
 		{
 			"control": "sap.m.MessageStrip",
-			"url": "../MessageStrip.html",
+			"url": "MessageStrip.html",
 			"appComponent": "CA-UI5-CTR-RIL"
 		},
 		{
 			"control": "sap.m.MessageView",
 			"url": "MessageView.html",
-			"appComponent": "CA-UI5-CTR-RIL"
+			"appComponent": "CA-UI5-CTR-RIL",
+			"accTest": {
+				"name": "sap.m.MessageView",
+				"title": "ACC test for sap.m.MessageView",
+				"module": "./messageview.qunit"
+			}
 		},
 		{
 			"control": "sap.m.MultiInput",
-			"url": "../MultiInput.html",
-			"appComponent": "CA-UI5-CTR-ROD"
-		},
-		{
-			"control": "sap.m.MultiComboBox",
-			"url": "../MultiComboBox.html",
+			"url": "MultiInput.html",
 			"appComponent": "CA-UI5-CTR-RIL"
 		},
 		{
-			"control": "sap.m.sap.m.NavContainer",
+			"control": "sap.m.MultiComboBox",
+			"url": "MultiComboBox.html",
+			"appComponent": "CA-UI5-CTR-RIL",
+			"accTest": {
+				"name": "sap.m.MultiComboBox",
+				"title": "ACC test for sap.m.MultiComboBox",
+				"module": "./multicombobox.qunit"
+			}
+		},
+		{
+			"control": "sap.m.NavContainer",
 			"url": "../NavContainer.html",
 			"appComponent" : "CA-UI5-CTR-PIR"
 		},
@@ -238,12 +318,12 @@
 		},
 		{
 			"control": "sap.m.NotificationListGroup",
-			"url": "../NotificationListGroup.html",
+			"url": "NotificationListGroup.html",
 			"appComponent" : "CA-UI5-CTR-ROD"
 		},
 		{
 			"control": "sap.m.NotificationListItem",
-			"url": "../NotificationListItem.html",
+			"url": "NotificationListItem.html",
 			"appComponent" : "CA-UI5-CTR-ROD"
 		},
 		{
@@ -253,17 +333,17 @@
 		},
 		{
 			"control": "sap.m.ObjectAttribute",
-			"url": "../ObjectHeader.html",
+			"url": "ObjectHeader.html",
 			"appComponent": "CA-UI5-CTR-BAL"
 		},
 		{
 			"control": "sap.m.ObjectHeader",
-			"url": "../ObjectHeader.html",
+			"url": "ObjectHeader.html",
 			"appComponent": "CA-UI5-CTR-BAL"
 		},
 		{
 			"control": "sap.m.ObjectIdentifier",
-			"url": "../ObjectIdentifier.html",
+			"url": "ObjectIdentifier.html",
 			"appComponent": "CA-UI5-CTR-BAL"
 		},
 		{
@@ -288,7 +368,7 @@
 		},
 		{
 			"control": "sap.m.ObjectStatus",
-			"url": "../ObjectHeader.html",
+			"url": "ObjectHeader.html",
 			"appComponent": "CA-UI5-CTR-BAL"
 		},
 		{
@@ -298,13 +378,18 @@
 		},
 		{
 			"control": "sap.m.PagingButton",
-			"url": "../PagingButton.html",
+			"url": "PagingButton.html",
 			"appComponent": "CA-UI5-CTR-PIR"
 		},
 		{
 			"control": "sap.m.Panel",
 			"url": "Panel.html",
-			"appComponent": "CA-UI5-CTR-RIL"
+			"appComponent": "CA-UI5-CTR-RIL",
+			"accTest": {
+				"name": "sap.m.Panel",
+				"title": "ACC test for sap.m.Panel",
+				"module": "./panel.qunit"
+			}
 		},
 		{
 			"control": "sap.m.PlanningCalendar",
@@ -314,7 +399,12 @@
 		{
 			"control": "sap.m.Popover",
 			"url": "Popover.html",
-			"appComponent": "CA-UI5-CTR-RIL"
+			"appComponent": "CA-UI5-CTR-RIL",
+			"accTest": {
+				"name": "sap.m.Popover",
+				"title": "ACC test for sap.m.Popover",
+				"module": "./popover.qunit"
+			}
 		},
 		{
 			"control": "sap.m.ProgressIndicator",
@@ -324,12 +414,22 @@
 		{
 			"control": "sap.m.PullToRefresh",
 			"url": "../PullToRefresh.html",
-			"appComponent": "CA-UI5-CTR-PIR"
+			"appComponent": "CA-UI5-CTR-PIR",
+			"accTest": {
+				"name": "sap.m.PullToRefresh",
+				"title": "ACC test for sap.m.PullToRefresh",
+				"module": "./pulltorefresh.qunit"
+			}
 		},
 		{
 			"control": "sap.m.QuickView",
 			"url": "QuickView.html",
-			"appComponent": "CA-UI5-CTR-ROD"
+			"appComponent": "CA-UI5-CTR-ROD",
+			"accTest": {
+				"name": "sap.m.QuickView",
+				"title": "ACC test for sap.m.QuickView",
+				"module": "./quickview.qunit"
+			}
 		},
 		{
 			"control": "sap.m.QuickViewCard",
@@ -339,7 +439,7 @@
 		{
 			"control": "sap.m.RadioButton",
 			"url": "RadioButton.html",
-			"appComponent": "CA-UI5-CTR-RIL"
+			"appComponent": "CA-UI5-CTR-ROD"
 		},
 		{
 			"control": "sap.m.RadioButtonGroup",
@@ -348,8 +448,13 @@
 		},
 		{
 			"control": "sap.m.RangeSlider",
-			"url": "../RangeSlider.html",
-			"appComponent": "CA-UI5-CTR-RIL"
+			"url": "RangeSlider.html",
+			"appComponent": "CA-UI5-CTR-RIL",
+			"accTest": {
+				"name": "sap.m.RangeSlider",
+				"title": "ACC test for sap.m.RangeSlider",
+				"module": "./rangeslider.qunit"
+			}
 		},
 		{
 			"control": "sap.m.RatingIndicator",
@@ -358,28 +463,43 @@
 		},
 		{
 			"control": "sap.m.ResponsivePopover",
-			"url": "../ResponsivePopover.html",
-			"appComponent": "CA-UI5-CTR-RIL"
+			"url": "ResponsivePopover.html",
+			"appComponent": "CA-UI5-CTR-RIL",
+			"accTest": {
+				"name": "sap.m.ResponsivePopover",
+				"title": "ACC test for sap.m.ResponsivePopover",
+				"module": "./responsivepopover.qunit"
+			}
 		},
 		{
 			"control": "sap.m.SearchField",
-			"url": "../SearchField.html",
+			"url": "SearchField.html",
 			"appComponent": "CA-UI5-CTR-ROD"
 		},
 		{
 			"control": "sap.m.SegmentedButton",
-			"url": "../SegmentedButton.html",
+			"url": "SegmentedButton.html",
 			"appComponent": "CA-UI5-CTR-BAL"
 		},
 		{
 			"control": "sap.m.Select",
 			"url": "Select.html",
-			"appComponent": "CA-UI5-CTR-PIR"
+			"appComponent": "CA-UI5-CTR-PIR",
+			"accTest": {
+				"name": "sap.m.Select",
+				"title": "ACC test for sap.m.Select",
+				"module": "./select.qunit"
+			}
 		},
 		{
 			"control": "sap.m.SelectDialog",
 			"url": "SelectDialog.html",
-			"appComponent": "CA-UI5-CTR-RIL"
+			"appComponent": "CA-UI5-CTR-ROD",
+			"accTest": {
+				"name": "sap.m.SelectDialog",
+				"title": "ACC test for sap.m.SelectDialog",
+				"module": "./selectdialog.qunit"
+			}
 		},
 		{
 			"control": "sap.m.SelectList",
@@ -387,13 +507,13 @@
 			"appComponent": "CA-UI5-CTR-PIR"
 		},
 		{
-			"control": "sap.m.Shell",
-			"url": "../Shell.html",
+			"control": "sap.m.SinglePlanningCalendar",
+			"url": "../SinglePlanningCalendar.html",
 			"appComponent": "CA-UI5-CTR-BAL"
 		},
 		{
 			"control": "sap.m.Slider",
-			"url": "../Slider.html",
+			"url": "Slider.html",
 			"appComponent": "CA-UI5-CTR-RIL"
 		},
 		{
@@ -404,7 +524,12 @@
 		{
 			"control": "sap.m.SplitApp",
 			"url": "../SplitApp.html",
-			"appComponent": "CA-UI5-CTR-ROD"
+			"appComponent": "CA-UI5-CTR-ROD",
+			"accTest": {
+				"name": "sap.m.SplitApp",
+				"title": "ACC test for sap.m.SplitApp",
+				"module": "./splitapp.qunit"
+			}
 		},
 		{
 			"control": "sap.m.StandardTile",
@@ -420,12 +545,17 @@
 			"control": "sap.m.SuggestionsList",
 			"url": "../SearchField_Suggestions.html",
 			"desc" : "Suggestions list of the Search Field",
-			"appComponent": "CA-UI5-CTR-ROD"
+			"appComponent": "CA-UI5-CTR-ROD",
+			"accTest": {
+				"name": "sap.m.SuggestionsList",
+				"title": "ACC test for sap.m.SuggestionsList",
+				"module": "./suggestionslist.qunit"
+			}
 		},
 		{
 			"control": "sap.m.Switch",
-			"url": "../Switch.html",
-			"appComponent": "CA-UI5-CTR-PIR"
+			"url": "Switch.html",
+			"appComponent": "CA-UI5-CTR-BAL"
 		},
 		{
 			"control": "sap.m.TabContainer",
@@ -440,7 +570,12 @@
 		{
 			"control": "sap.m.TableSelectDialog",
 			"url": "TableSelectDialog.html",
-			"appComponent": "CA-UI5-CTR-ROD"
+			"appComponent": "CA-UI5-CTR-ROD",
+			"accTest": {
+				"name": "sap.m.TableSelectDialog",
+				"title": "ACC test for sap.m.TableSelectDialog",
+				"module": "./tableselectdialog.qunit"
+			}
 		},
 		{
 			"control": "sap.m.TimePicker",
@@ -459,18 +594,18 @@
 		},
 		{
 			"control": "sap.m.TextArea",
-			"url": "../TextArea.html",
+			"url": "TextArea.html",
 			"appComponent": "CA-UI5-CTR-RIL"
 		},
 		{
 			"control": "sap.m.Tokenizer",
-			"url": "../Tokenizer.html",
-			"appComponent": "CA-UI5-CTR-ROD"
-		},
-		{
-			"control": "sap.m.TileContainer",
-			"url": "../TileContainer.html",
-			"appComponent": "CA-UI5-CTR-BAL"
+			"url": "Tokenizer.html",
+			"appComponent": "CA-UI5-CTR-RIL",
+			"accTest": {
+				"name": "sap.m.Tokenizer",
+				"title": "ACC test for sap.m.Tokenizer",
+				"module": "./tokenizer.qunit"
+			}
 		},
 		{
 			"control": "sap.m.TileContent",
@@ -480,7 +615,7 @@
 		{
 			"control": "sap.m.Title",
 			"url": "Title.html",
-			"appComponent": "CA-UI5-CTR"
+			"appComponent": "CA-UI5-CTR-ROD"
 		},
 		{
 			"control": "sap.m.ToggleButton",
@@ -509,18 +644,18 @@
 		},
 		{
 			"control": "sap.m.ViewSettingsDialog",
-			"url": "../ViewSettingsDialog.html",
-			"appComponent": "CA-UI5-CTR-BAL"
-		},
-		{
-			"control": "sap.m.ViewSettingsPopover",
-			"url": "../ViewSettingsPopover.html",
+			"url": "ViewSettingsDialog.html",
 			"appComponent": "CA-UI5-CTR-BAL"
 		},
 		{
 			"control": "sap.m.Wizard",
 			"url": "Wizard.html",
-			"appComponent": "CA-UI5-CTR-RIL"
+			"appComponent": "CA-UI5-CTR-RIL",
+			"accTest": {
+				"name": "sap.m.Wizard",
+				"title": "ACC test for sap.m.Wizard",
+				"module": "./wizard.qunit"
+			}
 		},
 		{
 			"control": "sap.m.PDFViewer",

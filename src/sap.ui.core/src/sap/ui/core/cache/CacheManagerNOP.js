@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define([],
-	function () {
+sap.ui.define(["sap/base/Log"],
+	function (Log) {
 		"use strict";
 
 		/**
@@ -11,13 +11,15 @@ sap.ui.define([],
 		 * A dummy implementation that does not really utilize the cache. Can be used when one wants to switch-off
 		 * the cache without changing its code
 		 * @private
-		 * @experimental
 		 * @since 1.37.0
 		 * @namespace
 		 * @alias sap.ui.core.cache.CacheManagerNOP
 		 */
 		var CacheManagerNOP = {
 			name: "CacheManagerNOP",
+			logResolved: function(sFnName) {
+				Log.debug("Cache Manager is not supported on this environment.");
+			},
 			set: function () {
 				return Promise.resolve();
 			},
@@ -28,6 +30,9 @@ sap.ui.define([],
 				return Promise.resolve(false);
 			},
 			del: function () {
+				return Promise.resolve();
+			},
+			delWithFilters: function() {
 				return Promise.resolve();
 			},
 			reset: function () {
@@ -48,5 +53,4 @@ sap.ui.define([],
 		};
 
 		return CacheManagerNOP;
-	}, /* bExport= */ false);
-
+	});

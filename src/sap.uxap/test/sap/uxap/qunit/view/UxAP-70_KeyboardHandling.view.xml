@@ -1,7 +1,8 @@
-<core:View
-		xmlns:core="sap.ui.core"
+<mvc:View
+		xmlns:mvc="sap.ui.core.mvc"
 		xmlns="sap.uxap"
 		xmlns:m="sap.m"
+		xmlns:forms="sap.ui.layout.form"
 		xmlns:html="http://www.w3.org/1999/xhtml"
 		height="100%">
 
@@ -15,100 +16,134 @@
 			<ObjectPageSection title="2014 Goals Plan">
 				<subSections>
 					<ObjectPageSubSection title="Goal summary">
-						<html:div style="height:300px; background-color: #DFF0FA;"></html:div>
+						<html:div class="dummyBlockContentA"></html:div>
 					</ObjectPageSubSection>
 				</subSections>
 			</ObjectPageSection>
 
 			<ObjectPageSection title="Anchor1">
 				<ObjectPageSubSection title="Anchor summary">
-					<html:div style="height:300px; background-color: #DFF0FA;"></html:div>
+					<html:div class="dummyBlockContentA"></html:div>
 				</ObjectPageSubSection>
 			</ObjectPageSection>
 
 			<ObjectPageSection title="Anchor2">
 				<ObjectPageSubSection title="Anchor summary">
-					<html:div style="height:300px; background-color: #DFF0FA;"></html:div>
+					<html:div class="dummyBlockContentA"></html:div>
 				</ObjectPageSubSection>
 			</ObjectPageSection>
 
 			<ObjectPageSection title="Anchor3">
 				<ObjectPageSubSection title="Anchor summary">
-					<html:div style="height:300px; background-color: #DFF0FA;"></html:div>
+					<html:div class="dummyBlockContentA"></html:div>
 				</ObjectPageSubSection>
 			</ObjectPageSection>
 
 
 			<ObjectPageSection title="Anchor4">
 				<ObjectPageSubSection title="Anchor summary">
-					<html:div style="height:300px; background-color: #DFF0FA;"></html:div>
+					<html:div class="dummyBlockContentA"></html:div>
 				</ObjectPageSubSection>
 			</ObjectPageSection>
 
 			<ObjectPageSection title="Anchor5">
 				<ObjectPageSubSection title="Anchor summary">
-					<html:div style="height:300px; background-color: #DFF0FA;"></html:div>
+					<html:div class="dummyBlockContentA"></html:div>
 				</ObjectPageSubSection>
 			</ObjectPageSection>
 
 			<ObjectPageSection title="Anchor6">
 				<ObjectPageSubSection title="Anchor summary">
-					<html:div style="height:300px; background-color: #DFF0FA;"></html:div>
+					<html:div class="dummyBlockContentA"></html:div>
 				</ObjectPageSubSection>
 			</ObjectPageSection>
 
 			<ObjectPageSection title="Personal">
 				<subSections>
 					<ObjectPageSubSection title="Connect">
-						<html:div style="height:300px; background-color: #DFF0FA;"></html:div>
+						<html:div class="dummyBlockContentA"></html:div>
 					</ObjectPageSubSection>
 
 					<ObjectPageSubSection title="Payment information">
-						<html:div style="height:300px; background-color: #DFF0FA;"></html:div>
+						<html:div class="dummyBlockContentA"></html:div>
 					</ObjectPageSubSection>
 				</subSections>
 			</ObjectPageSection>
 
 			<ObjectPageSection title="Employment">
 				<subSections>
+
+					<ObjectPageSubSection title="SubSection3 (single form inside)">
+						<blocks>
+							<forms:SimpleForm editable="false" layout="ColumnLayout">
+
+								<m:Label text="Evangelize the UI framework across the company" />
+								<m:Text text="4 days overdue Cascaded"/>
+
+								<m:Label text="Get trained in development management direction" />
+								<m:Text text="Due Nov 21"/>
+
+								<m:Label text="Mentor junior developers" />
+								<m:Text text="Due Dec 31 Cascaded"/>
+
+							</forms:SimpleForm>
+						</blocks>
+					</ObjectPageSubSection>
+					<ObjectPageSubSection title="SubSection4 (single form inside)">
+						<blocks>
+							<forms:SimpleForm editable="false" layout="ColumnLayout">
+
+								<m:Label text="Evangelize the UI framework across the company" />
+								<m:Text text="4 days overdue Cascaded"/>
+
+								<m:Label text="Get trained in development management direction" />
+								<m:Text text="Due Nov 21"/>
+
+								<m:Label text="Mentor junior developers" />
+								<m:Text text="Due Dec 31 Cascaded"/>
+
+							</forms:SimpleForm>
+						</blocks>
+					</ObjectPageSubSection>
+
 					<ObjectPageSubSection title="Job information">
-						<html:div style="height:300px; background-color: #DFF0FA;"></html:div>
+						<html:div class="dummyBlockContentA"></html:div>
 					</ObjectPageSubSection>
 
 					<ObjectPageSubSection title="SubSection1">
-						<html:div style="height:300px; background-color: #DFF0FA;"></html:div>
+						<html:div class="dummyBlockContentA"></html:div>
 					</ObjectPageSubSection>
 
 					<ObjectPageSubSection title="SubSection2">
-						<html:div style="height:300px; background-color: #DFF0FA;"></html:div>
+						<html:div class="dummyBlockContentA"></html:div>
 					</ObjectPageSubSection>
 
 					<ObjectPageSubSection title="SubSection3">
-						<html:div style="height:300px; background-color: #DFF0FA;"></html:div>
+						<html:div class="dummyBlockContentA"></html:div>
 					</ObjectPageSubSection>
 
 					<ObjectPageSubSection title="SubSection4">
-						<html:div style="height:300px; background-color: #DFF0FA;"></html:div>
+						<html:div class="dummyBlockContentA"></html:div>
 					</ObjectPageSubSection>
 
 					<ObjectPageSubSection title="SubSection5">
-						<html:div style="height:300px; background-color: #DFF0FA;"></html:div>
+						<html:div class="dummyBlockContentA"></html:div>
 					</ObjectPageSubSection>
 
 					<ObjectPageSubSection title="SubSection6">
-						<html:div style="height:300px; background-color: #DFF0FA;"></html:div>
+						<html:div class="dummyBlockContentA"></html:div>
 					</ObjectPageSubSection>
 
 					<ObjectPageSubSection title="SubSection7">
-						<html:div style="height:300px; background-color: #DFF0FA;"></html:div>
+						<html:div class="dummyBlockContentA"></html:div>
 					</ObjectPageSubSection>
 
 					<ObjectPageSubSection title="Employee Details" mode="Collapsed">
-						<html:div style="height:300px; background-color: #DFF0FA;"></html:div>
+						<html:div class="dummyBlockContentA"></html:div>
 					</ObjectPageSubSection>
 
 					<ObjectPageSubSection title="Job Relationship" mode="Collapsed">
-						<html:div style="height:300px; background-color: #DFF0FA;"></html:div>
+						<html:div class="dummyBlockContentA"></html:div>
 					</ObjectPageSubSection>
 				</subSections>
 			</ObjectPageSection>
@@ -125,6 +160,7 @@
 							<m:Link text="lbl with other txt"/>
 							<m:Button id="interactive-el-single-sub-section" icon="sap-icon://pull-down"
 									  text="Interactive Element"/>
+							<m:Input id="input-single-sub-section"/>
 						</blocks>
 					</ObjectPageSubSection>
 				</subSections>
@@ -141,6 +177,7 @@
 							<m:Link text="denise-smith"/>
 							<m:Link text="lbl with other txt"/>
 							<m:Button icon="sap-icon://pull-down" text="Interactive Element"/>
+							<m:Input id="input-multiple-sub-section"/>
 						</blocks>
 					</ObjectPageSubSection>
 					<ObjectPageSubSection id="multiple-sub-section-2" title="Goal 1">
@@ -156,4 +193,4 @@
 			</ObjectPageSection>
 		</sections>
 	</ObjectPageLayout>
-</core:View>
+</mvc:View>

@@ -1,0 +1,53 @@
+{
+	"sap.app": {
+		"id": "cardsdemo.object.cardStaticData",
+		"type": "card"
+	},
+	"sap.card": {
+		"type": "Object",
+		"header": {
+			"icon": {
+				"src": "sap-icon://business-objects-experience"
+			},
+			"title": "Object Card",
+			"subTitle": "With Static content and without Group titles"
+		},
+		"content": {
+			"groups": [
+				{
+					"items": [
+						{
+							"label": "Name",
+							"value": "Ivan"
+						},
+						{
+							"label": "Surname",
+							"value": "Petrov"
+						},
+						{
+							"label": "Phone",
+							"value": "+1 1234 1234555"
+						}
+					]
+				},
+				{
+					"items": [
+						{
+							"label": "Company Name",
+							"value": "SAP",
+							"icon": {
+								"src": "../../images/Woman_avatar_02.png"
+							}
+						},
+						{
+							"label": "Rating",
+							"type": "RatingIndicator",
+							"maxValue": 5,
+							"value": 4.5
+						}
+					]
+				}
+			]
+		}
+	}
+}

@@ -1,0 +1,15 @@
+#container-v4demo---app--app {
+	height: calc(100% - 44px);
+}
+
+.pageBox > .sapMFlexItem {
+	height: 100%;
+}
+
+.sapMRangeSlider {
+	max-height: 43px;
+}
+
+.sapMRangeSlider .sapMSliderLabel {
+	display: none;
+}

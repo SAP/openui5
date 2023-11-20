@@ -1,0 +1,146 @@
+{
+  "1.101.0": {
+    "date": "April 2022",
+    "notes": [
+      {
+        "id": "abfd4f563569dcf7d00c979ddff918ffd1871190",
+        "type": "FIX",
+        "text": " sap.m.DateTimePicker: Picker time is correct when the app timezone is different",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270040747"
+          }
+        ]
+      },
+      {
+        "id": "d7fee916b74393b2319ab7ab1c390a9ac4505ac3",
+        "type": "FEATURE",
+        "text": " Prevent overwrite SAP themes from OS high contrast settings"
+      },
+      {
+        "id": "f20db76e5f0ebec69137c3c9c7c86cdf1228798f",
+        "type": "FEATURE",
+        "text": " sap.ui.core.format.DateFormat.DateTimeWithTimezone: Format Date only and Time only"
+      },
+      {
+        "id": "a1cf9f4f69f59df95dd4601f07eb95413b0147f6",
+        "type": "FIX",
+        "text": " routing.qunit.History: wait for History state API throttling",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      },
+      {
+        "id": "2361eb5dbdb2923a81c550b7547858c135ffecb1",
+        "type": "FEATURE",
+        "text": " sap.ui.model.odata.v2.Context#delete: API to delete a context"
+      },
+      {
+        "id": "e5913b4a6fed968db1f30b512937deb820050839",
+        "type": "FEATURE",
+        "text": " DragAndDrop: The mobile support is now enabled"
+      },
+      {
+        "id": "7b24f779299c6475b3ad34d34beeca787477b3f3",
+        "type": "FIX",
+        "text": " XMLTemplateProcessor: Enable ExtensionPoint rendering on top-level"
+      },
+      {
+        "id": "77e9201893374bf4f45ac5059c71a789ec253c03",
+        "type": "FEATURE",
+        "text": " sap.ui.model.odata.v2.ODataModel: Support instance annotations \"@$ui5.context.isInactive\" and \"@$ui5.context.isTransient\""
+      },
+      {
+        "id": "959221613e7c57bdcff9be32cecb44edfca692eb",
+        "type": "FIX",
+        "text": " sap.ui.core.demokit.tutorial.odatav4 fix mockserver $batch detection"
+      },
+      {
+        "id": "413817186d9fb40c096051837973dd959460d544",
+        "type": "FIX",
+        "text": " sap.ui.core.format.DateFormat: Allow case-insensitive inputs",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180419798"
+          }
+        ]
+      },
+      {
+        "id": "8a56b51c3988b963de37b41843e31bc9c0617aa2",
+        "type": "FIX",
+        "text": " sap.ui.core.format.DateFormat: Australian calendar change first day of week to Monday",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400009303182021"
+          }
+        ]
+      },
+      {
+        "id": "32baaaf61034c3d17318ed952b98d2db5efa4742",
+        "type": "FIX",
+        "text": " core/m: fix viewport meta for iOS platform",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280037152"
+          }
+        ]
+      },
+      {
+        "id": "f450f247191e6344e818741d328412209ea36115",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v2.ODataListBinding#refresh: must not reset pending refresh flag as long as binding is suspended",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280074593"
+          }
+        ]
+      },
+      {
+        "id": "a25f4ad7b4935ec46b15289f133ba869d2cb2325",
+        "type": "FIX",
+        "text": " DateFormat#format: date parameter check",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170331920"
+          }
+        ]
+      },
+      {
+        "id": "a1e67dba803414d3e2ca8047de1eae9465d1f3d9",
+        "type": "FIX",
+        "text": " sap.ui.core.date.UniversalDate: invalid date (endless loop)"
+      },
+      {
+        "id": "9d0322af482fe9587710722274897ce6f489f00c",
+        "type": "FIX",
+        "text": " sap.ui.core.format.NumberFormat: Fix invalid groupingSize configuration",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180410670"
+          }
+        ]
+      },
+      {
+        "id": "3bc74395d2984156159d90106a4fbbc2ce9e8f93",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v2.ODataListBinding#setContext: Do not fire change event if unresolved",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280055052"
+          }
+        ]
+      }
+    ]
+  }
+}

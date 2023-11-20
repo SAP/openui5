@@ -6,10 +6,8 @@
 	<l:VerticalLayout
 		class="sapUiContentPadding"
 		width="100%">
-		<l:content>
-			<Button
-				text="Open with Custom Filter"
-				press="handleViewSettingsDialogPress" />
-		</l:content>
+		<Button
+			text="Open with Custom Filter"
+			press="handleViewSettingsDialogPress" />
 	</l:VerticalLayout>
 </mvc:View>

@@ -3,30 +3,65 @@
 /* Base theme                          */
 /* =================================== */
 
+.sapMComboBoxBase.sapMInputBaseHasEndIcons .sapMInputBaseInner {
+	flex: 1;
+}
+
+.sapMComboBoxBase .sapMInputBaseContentWrapper {
+	display: inline-flex;
+}
+
 /* ------------------------------ */
 /* arrow                          */
 /* ------------------------------ */
 
-/* hover */
-html.sap-desktop .sapMComboBoxBaseArrow:not(.sapMComboBoxBasePressed):hover {
-	background: @sapUiButtonLiteHoverBackground;
+.sapMComboBoxBase.sapMInputBaseReadonly .sapMInputBaseIcon {
+	opacity: 0;
+	cursor: default;
 }
 
-/* pressed */
-/* note: do not optimize this selector, the sap.m.MulticomboBox DOM structure differ from sap.m.ComboBox */
-.sapMComboBoxBasePressed .sapMComboBoxBaseArrow,
-html.sap-desktop .sapMComboBoxBasePressed .sapMComboBoxBaseArrow:hover {
-	background: @sapUiToggleButtonPressedBackground;
+.sapMInputBaseIconPressed .sapMComboBoxBaseClearIcon {
+	color: @sapUiContentIconColor;
+	background: transparent;
+
+	&:hover {
+		background: @sapUiButtonLiteHoverBackground;
+	}
+
+	&:active {
+		background-color: @sapUiButtonLiteActiveBackground;
+		color: @sapUiButtonActiveTextColor;
+
+		&::before {
+			color: @sapUiButtonActiveTextColor;
+		}
+	}
 }
 
-/* note: do not optimize this selector, the sap.m.MulticomboBox DOM structure differ from sap.m.ComboBox */
-.sapMComboBoxBasePressed .sapMComboBoxBaseArrow::before {
-	color: @sapUiToggleButtonPressedTextColor;
+.sapMInputBaseIconPressed .sapMComboBoxBaseClearIcon::before {
+	color: @sapUiContentIconColor;
 }
-	/* ------------------------------ */
+
+/* ------------------------------ */
 /* dialog                         */
 /* ------------------------------ */
 
 div.sapMComboBoxBasePicker .sapMDialogScrollCont {
 	padding: 0;
+}
+
+/* ------------------------------ */
+/* list                           */
+/* ------------------------------ */
+
+.sapMComboBoxBaseList.sapUiLocalBusy {
+	min-height: 2rem;
+}
+
+.sapMComboBoxBaseList .sapMSLITitleOnly {
+	font-size: 0.875rem;
+}
+
+.sapMComboBoxBaseList .sapMSLI {
+	height: 2.5rem;
 }

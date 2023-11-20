@@ -2,14 +2,28 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
-	function (jQuery, Device) {
+sap.ui.define([
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/Device",
+	"sap/base/security/encodeXML",
+	"sap/base/util/isPlainObject"
+],
+	function(
+		jQuery,
+		Device,
+		encodeXML,
+		isPlainObject
+	) {
 		"use strict";
+
+		// Load these dependencies later to avoid circular dependencies of type
+		// library -> Support -> Button -> library
+		var Button, Dialog, Label, Panel, Toolbar, MessageToast, HTML, mLibrary;
 
 		/**
 		 * <pre>
 		 * <code>sap.m.Support</code> shows the technical information for SAPUI5 Mobile Applications.
-		 * This technical information includes
+		 * This technical information includes:
 		 *    * SAPUI5 Version
 		 *    * User Agent
 		 *    * Configurations (Bootstrap and Computed)
@@ -17,26 +31,24 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
 		 *    * All loaded module names
 		 *
 		 * In order to show the device information, the user must follow the following gestures.
-		 *    1 - Hold two finger for 3 seconds minimum.
+		 *    1 - Hold two fingers for 3 seconds minimum.
 		 *    2 - Tab with a third finger while holding the first two fingers.
 		 *
 		 * NOTE: This class is internal and all its functions must not be used by an application
 		 *
-		 * As <code>sap.m.Support</code> is a static class, a <code>jQuery.sap.require("sap.m.Support");</code>
-		 * statement must be implicitly executed before the class is used.
-		 *
-		 *
 		 * Enable Support:
 		 * --------------------------------------------------
-		 * //import library
-		 * jQuery.sap.require("sap.m.Support");
+		 * //import
+		 * sap.ui.require("sap/m/Support", function (Support) {
+		 *   // Support is initialized and is listening for fingers gestures combination
+		 * });
 		 *
 		 * //By default after require, support is enabled but implicitly we can call
-		 * sap.m.Support.on();
+		 * Support.on();
 		 *
 		 * Disable Support:
 		 * --------------------------------------------------
-		 * sap.m.Support.off();
+		 * Support.off();
 		 * </pre>
 		 *
 		 * @author SAP SE
@@ -67,17 +79,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
 				controlIDs = {
 					dvLoadedLibs: "LoadedLibs",
 					dvLoadedModules: "LoadedModules"
-				},
-				windowsPhoneTouches; // variable used to open the support dialog on windows phone
+				};
 
 			// copied from core
 			function line(buffer, right, border, label, content) {
-				buffer.push("<tr class='sapUiSelectable'><td class='sapUiSupportTechInfoBorder sapUiSelectable'><label class='sapUiSupportLabel sapUiSelectable'>", jQuery.sap.encodeHTML(label), "</label><br>");
+				buffer.push("<tr class='sapUiSelectable'><td class='sapUiSupportTechInfoBorder sapUiSelectable'><label class='sapUiSupportLabel sapUiSelectable'>", encodeXML(label), "</label><br>");
 				var ctnt = content;
-				if ($.isFunction(content)) {
+				if (typeof content === "function") {
 					ctnt = content(buffer) || "";
 				}
-				buffer.push($.sap.encodeHTML(ctnt));
+				buffer.push(encodeXML(ctnt));
 				buffer.push("</td></tr>");
 			}
 
@@ -85,13 +96,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
 			function multiline(buffer, right, border, label, content) {
 				line(buffer, right, border, label, function (buffer) {
 					buffer.push("<table class='sapMSupportTable' border='0' cellspacing='5' cellpadding='5' width='100%'><tbody>");
-					$.each(content, function (i, v) {
+					jQuery.each(content, function (i, v) {
 						var val = "";
 						if (v !== undefined && v !== null) {
-							if (typeof (v) == "string" || typeof (v) == "boolean" || ($.isArray(v) && v.length == 1)) {
+							if (typeof (v) == "string" || typeof (v) == "boolean" || (Array.isArray(v) && v.length == 1)) {
 								val = v;
-							} else if (($.isArray(v) || $.isPlainObject(v)) && window.JSON) {
-								val = window.JSON.stringify(v);
+							} else if (Array.isArray(v) || isPlainObject(v)) {
+								val = JSON.stringify(v);
 							}
 						}
 						line(buffer, false, false, i, "" + val);
@@ -149,7 +160,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
 
 				line(html, true, true, "Loaded Libraries", function (buffer) {
 					buffer.push("<ul class='sapUiSelectable'>");
-					$.each(oData.loadedlibs, function (i, v) {
+					jQuery.each(oData.loadedlibs, function (i, v) {
 						if (v && (typeof (v) === "string" || typeof (v) === "boolean")) {
 							buffer.push("<li class='sapUiSelectable'>", i + " " + v, "</li>");
 						}
@@ -163,7 +174,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
 
 				html.push("</tbody></table>");
 
-				return new sap.ui.core.HTML({
+				return new HTML({
 					content: html.join("").replace(/\{/g, "&#123;").replace(/\}/g, "&#125;")
 				});
 			}
@@ -178,19 +189,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
 				var libsCount = 0, arDivContent = [];
 
 				libsCount = arContent.length;
-				$.each(arContent.sort(), function (i, module) {
-					arDivContent.push(new sap.m.Label({text: " - " + module}).addStyleClass("sapUiSupportPnlLbl"));
+				jQuery.each(arContent.sort(), function (i, module) {
+					arDivContent.push(new Label({text: " - " + module}).addStyleClass("sapUiSupportPnlLbl"));
 				});
 
 				// insert content into div placeholders
-				var objPanel = new sap.m.Panel({
+				var objPanel = new Panel({
 					expandable: true,
 					expanded: false,
-					headerToolbar: new sap.m.Toolbar({
-						design: sap.m.ToolbarDesign.Transparent,
-						content: [new sap.m.Label({
+					headerToolbar: new Toolbar({
+						design: mLibrary.ToolbarDesign.Transparent,
+						content: [new Label({
 							text: panelHeader + " (" + libsCount + ")",
-							design: sap.m.LabelDesign.Bold
+							design: mLibrary.LabelDesign.Bold
 						})]
 					}),
 					content: arDivContent
@@ -200,7 +211,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
 			}
 
 			// setup dialog elements and bind some events
-			function setupDialog() {
+			function setupDialog(E2eTraceLib) {
 				// setup e2e values as log level and content
 				if (dialog.traceXml) {
 					dialog.$(e2eTraceConst.taContent).text(dialog.traceXml);
@@ -220,12 +231,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
 					dialog.traceXml = "";
 					dialog.$(e2eTraceConst.taContent).text("");
 
-					sap.ui.core.support.trace.E2eTraceLib.start(dialog.e2eLogLevel, function (traceXml) {
+					E2eTraceLib.start(dialog.e2eLogLevel, function (traceXml) {
 						dialog.traceXml = traceXml;
 					});
 
 					// show info message about the E2E trace activation
-					sap.m.MessageToast.show(e2eTraceConst.infoText, {duration: e2eTraceConst.infoDuration});
+					MessageToast.show(e2eTraceConst.infoText, {duration: e2eTraceConst.infoDuration});
 
 					//close the dialog, but keep it for later use
 					dialog.close();
@@ -238,19 +249,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
 					return dialog;
 				}
 
-				$.sap.require("sap.m.Dialog");
-				$.sap.require("sap.m.Button");
-				$.sap.require("sap.ui.core.HTML");
-				$.sap.require("sap.m.MessageToast");
-				$.sap.require("sap.ui.core.support.trace.E2eTraceLib");
-
-				dialog = new sap.m.Dialog({
+				dialog = new Dialog({
 					title: "Technical Information",
 					horizontalScrolling: true,
 					verticalScrolling: true,
 					stretch: Device.system.phone,
 					buttons: [
-						new sap.m.Button({
+						new Button({
 							text: "Close",
 							press: function () {
 								dialog.close();
@@ -272,13 +277,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
 			function onTouchStart(oEvent) {
 				if (oEvent.touches) {
 					var currentTouches = oEvent.touches.length;
-
-					if (Device.browser.mobile &&
-						(Device.browser.name === Device.browser.BROWSER.INTERNET_EXPLORER ||
-						Device.browser.name === Device.browser.BROWSER.EDGE)) {
-						windowsPhoneTouches = currentTouches;
-					}
-
 
 					if (currentTouches > maxFingersAllowed) {
 						document.removeEventListener('touchend', onTouchEnd);
@@ -304,16 +302,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
 
 			//function is triggered when a touch is removed e.g. the user’s finger is removed from the touchscreen.
 			function onTouchEnd(oEvent) {
-				var windowsPhoneTouchCondition = Device.browser.mobile &&
-					(Device.browser.name === Device.browser.BROWSER.INTERNET_EXPLORER ||
-					Device.browser.name === Device.browser.BROWSER.EDGE) &&
-					windowsPhoneTouches == maxFingersAllowed;
-
 				document.removeEventListener('touchend', onTouchEnd);
 
 				// Check if two fingers are holded for 3 seconds or more and after that it`s tapped with a third finger
 				if (timeDiff > minHoldTime
-					&& (oEvent.touches.length === holdFingersNumber || windowsPhoneTouchCondition) // on Windows Phone oEvent.touches.lenght is 0 instead of 2
+					&& (oEvent.touches.length === holdFingersNumber)
 					&& oEvent.changedTouches.length === releasedFingersNumber
 					&& oEvent.changedTouches[0].identifier === lastTouchUID) {
 
@@ -324,13 +317,33 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
 			}
 
 			function show() {
-				sap.ui.require(['sap/ui/core/support/ToolsAPI'], function (ToolsAPI) {
+				sap.ui.require([
+					"sap/ui/core/support/ToolsAPI",
+					"sap/ui/core/support/trace/E2eTraceLib",
+					"sap/ui/core/HTML",
+					"sap/m/library",
+					"sap/m/Button",
+					"sap/m/Dialog",
+					"sap/m/Label",
+					"sap/m/Panel",
+					"sap/m/Toolbar",
+					"sap/m/MessageToast"
+				], function (ToolsAPI, E2eTraceLib, _HTML, _mLibrary, _Button, _Dialog, _Label, _Panel, _Toolbar, _MessageToast) {
+					HTML = _HTML;
+					mLibrary = _mLibrary;
+					Button = _Button;
+					Dialog = _Dialog;
+					Label = _Label;
+					Panel = _Panel;
+					Toolbar = _Toolbar;
+					MessageToast = _MessageToast;
+
 					var container = getDialog();
 					container.removeAllAggregation("content");
 					container.addAggregation("content", getTechnicalContent(ToolsAPI.getFrameworkInformation()));
 
 					dialog.open();
-					setupDialog();
+					setupDialog(E2eTraceLib);
 				});
 			}
 
@@ -338,7 +351,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
 				/**
 				 * Enables support.
 				 *
-				 * @returns {sap.m.Support} this to allow method chaining
+				 * @returns {this} this to allow method chaining
 				 * @protected
 				 * @name sap.m.Support.on
 				 * @function
@@ -354,7 +367,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
 				/**
 				 * Disables support.
 				 *
-				 * @returns {sap.m.Support} this to allow method chaining
+				 * @returns {this} this to allow method chaining
 				 * @protected
 				 * @name sap.m.Support.off
 				 * @function

@@ -10,6 +10,7 @@ sap.ui.define(['sap/ui/core/Element', './library', 'sap/ui/unified/library'],
 	// shortcut for sap.ui.unified.CalendarIntervalType
 	var CalendarIntervalType = unifiedLibrary.CalendarIntervalType;
 
+	var CalendarAppointmentHeight = unifiedLibrary.CalendarAppointmentHeight;
 	/**
 	 * Constructor for a new <code>PlanningCalendarView</code>.
 	 *
@@ -28,7 +29,6 @@ sap.ui.define(['sap/ui/core/Element', './library', 'sap/ui/unified/library'],
 	 * @public
 	 * @since 1.34.0
 	 * @alias sap.m.PlanningCalendarView
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var PlanningCalendarView = Element.extend("sap.m.PlanningCalendarView", /** @lends sap.m.PlanningCalendarView.prototype */ { metadata : {
 
@@ -50,12 +50,36 @@ sap.ui.define(['sap/ui/core/Element', './library', 'sap/ui/unified/library'],
 			intervalType : {type : "sap.ui.unified.CalendarIntervalType", group : "Appearance", defaultValue : CalendarIntervalType.Hour},
 
 			/**
+			 *  An integer that defines the period size.
+			 *
+	 		 * @since 1.93
+			 * */
+			intervalSize: {type: "int", group: "Appearance", defaultValue: 1},
+
+			/**
+			 * A function that formats the interval.
+			 *
+	 		 * @since 1.93
+			 *
+			 */
+			intervalLabelFormatter: {type: "object", group: "Appearance"},
+
+			/**
+			 *  Defines if the view will be relative.
+			 *  NOTE: Relative views, can be only used with intervalType - Day and when used they need intervalSize and intervalLabelFormatter defined.
+	 		 * @since 1.93
+			 */
+			relative: {type: "boolean", group: "Appearance", defaultValue: false},
+
+			/**
 			 * Defines the description of the <code>PlanningCalendarView</code>.
 			 */
 			description : {type : "string", group : "Data"},
 
 			/**
 			 * Defines the number of intervals that are displayed for a {@link sap.m.PlanningCalendar} that is less than 600 pixels wide.
+
+			 * <b>Note:</b> On a phone the maximum visible intervals are 8.
 			 */
 			intervalsS : {type : "int", group : "Appearance", defaultValue : 6},
 
@@ -78,11 +102,16 @@ sap.ui.define(['sap/ui/core/Element', './library', 'sap/ui/unified/library'],
 			 * <li>Day subintervals for interval type <code>Month</code>.</li>
 			 * </ul>
 			 */
-			showSubIntervals : {type : "boolean", group : "Appearance", defaultValue : false}
+			showSubIntervals: { type: "boolean", group: "Appearance", defaultValue: false },
+
+			/**
+			 * Determines the different possible sizes for appointments.
+			 * @since 1.81.0
+			 */
+			appointmentHeight: { type: "sap.ui.unified.CalendarAppointmentHeight", group: "Appearance", defaultValue: CalendarAppointmentHeight.Regular }
 
 		}
 	}});
-
 	return PlanningCalendarView;
 
 });

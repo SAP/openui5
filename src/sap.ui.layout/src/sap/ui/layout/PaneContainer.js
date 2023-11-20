@@ -2,7 +2,6 @@
  * ${copyright}
  */
 
-// Provides control sap.ui.layout.PaneContainer.
 sap.ui.define(['./library', 'sap/ui/core/Element', './AssociativeSplitter', 'sap/ui/core/library'],
 	function(library, Element, AssociativeSplitter, coreLibrary) {
 	"use strict";
@@ -19,7 +18,7 @@ sap.ui.define(['./library', 'sap/ui/core/Element', './AssociativeSplitter', 'sap
 	 * @class
 	 * PaneContainer is an abstraction of Splitter.
 	 *
-	 * Could be used as an aggregation of ResponsiveSplitter or other PaneContainers.
+	 * Could be used as an aggregation of ResponsiveSplitter or nested in other PaneContainers.
 	 * @extends sap.ui.core.Element
 	 *
 	 * @author SAP SE
@@ -41,19 +40,51 @@ sap.ui.define(['./library', 'sap/ui/core/Element', './AssociativeSplitter', 'sap
 		defaultAggregation : "panes",
 		aggregations : {
 			/**
-			 The Pane that will be shown when there is no suitable pane for ResponsiveSplitter's current width.
+			 * The panes to be split. The control will show n-1 splitter bars between n controls in this aggregation.
 			 */
 			panes: { type: "sap.ui.core.Element", multiple: true, singularName: "pane" }
+		},
+		events: {
+			/**
+			 * Fired when contents are resized.
+			 */
+			resize : {
+				parameters : {
+
+					/**
+					 * An array of values representing the old (pixel)sizes of the split panes,
+					 * which are inside the pane container.
+					 */
+					oldSizes : {type : "float[]"},
+
+					/**
+					 * An array of values representing the new (pixel)sizes of the split panes,
+					 * which are inside the pane container.
+					 */
+					newSizes : {type : "float[]"}
+				}
+			}
 		}
 	}});
 
 	PaneContainer.prototype.init = function () {
 		this._oSplitter = new AssociativeSplitter({
 			orientation: this.getOrientation(),
-			height: "100%"
+			height: "100%",
+			resize: this._onSplitterResize.bind(this)
 		});
+	};
 
-		this._oSplitter._bUseIconForSeparator = false;
+	PaneContainer.prototype.exit = function () {
+		this._oSplitter.destroy();
+		this._oSplitter = null;
+	};
+
+	PaneContainer.prototype._onSplitterResize = function (oEvent) {
+		this.fireResize({
+			oldSizes: oEvent.getParameter("oldSizes"),
+			newSizes: oEvent.getParameter("newSizes")
+		});
 	};
 
 	/**
@@ -61,17 +92,16 @@ sap.ui.define(['./library', 'sap/ui/core/Element', './AssociativeSplitter', 'sap
 	 * Default value is sap.ui.core.Orientation.Horizontal
 	 * @public
 	 * @param {sap.ui.core.Orientation} sOrientation The Orientation type.
-	 * @returns {sap.ui.layout.PaneContainer} this to allow method chaining.
+	 * @returns {this} this to allow method chaining.
 	 */
 	PaneContainer.prototype.setOrientation = function(sOrientation) {
 		this._oSplitter.setOrientation(sOrientation);
-		return this.setProperty("orientation", sOrientation, true);
+		return this.setProperty("orientation", sOrientation);
 	};
-
 
 	PaneContainer.prototype._getPanesInInterval = function (iFrom) {
 		return this.getPanes().filter(function(oPane) {
-			return oPane instanceof sap.ui.layout.SplitPane && oPane._isInInterval(iFrom);
+			return oPane && oPane.isA("sap.ui.layout.SplitPane") && oPane._isInInterval(iFrom);
 		});
 	};
 
@@ -79,10 +109,20 @@ sap.ui.define(['./library', 'sap/ui/core/Element', './AssociativeSplitter', 'sap
 	 * Setter for property layoutData.
 	 * @public
 	 * @param {sap.ui.core.LayoutData} oLayoutData The LayoutData object.
-	 * @returns {sap.ui.layout.PaneContainer} this to allow method chaining.
+	 * @returns {this} this to allow method chaining.
 	 */
 	PaneContainer.prototype.setLayoutData = function(oLayoutData) {
-		return this._oSplitter.setLayoutData(oLayoutData);
+		this._oSplitter.setLayoutData(oLayoutData);
+		return this;
+	};
+
+	/**
+	 * Getter for property layoutData.
+	 * @public
+	 * @returns {sap.ui.core.LayoutData} The LayoutData object.
+	 */
+	PaneContainer.prototype.getLayoutData = function() {
+		return this._oSplitter.getLayoutData();
 	};
 
 	/**
@@ -141,5 +181,4 @@ sap.ui.define(['./library', 'sap/ui/core/Element', './AssociativeSplitter', 'sap
 	};
 
 	return PaneContainer;
-
 });

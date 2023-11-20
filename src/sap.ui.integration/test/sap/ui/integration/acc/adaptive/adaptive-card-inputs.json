@@ -1,0 +1,123 @@
+{
+		"sap.card": {
+		"header": {
+			"title": "Adaptive Card with Forms",
+			"subTitle": "Card with forms and actions"
+		},
+		"type": "AdaptiveCard",
+		"content": {
+			"$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+			"version": "1.2",
+			"body": [
+				{
+					"type": "Input.Text",
+					"label": "Your Name",
+					"placeholder": "Last, First",
+					"style": "text",
+					"id": "SimpleVal"
+				},
+				{
+					"type": "Input.Text",
+					"label": "Email address",
+					"placeholder": "youremail@example.com",
+					"style": "email",
+					"id": "EmailVal"
+				},
+				{
+					"type": "Input.Number",
+					"label": "Age",
+					"id": "NumVal",
+					"min": 0,
+					"max": 110,
+					"placeholder": "Age"
+				}
+			],
+			"actions": [
+				{
+					"type": "Action.ShowCard",
+					"title": "Additional Information",
+					"card": {
+						"type": "AdaptiveCard",
+						"body": [
+							{
+								"type": "Input.Text",
+								"label": "Website",
+								"placeholder": "Website Url",
+								"style": "url",
+								"id": "UrlVal"
+							},
+							{
+								"type": "Input.Text",
+								"label": "Description",
+								"style": "text",
+								"isMultiline": true,
+								"id": "MultiLineVal"
+							},
+							{
+								"type": "Input.ChoiceSet",
+								"id": "SingleSelectVal",
+								"label": "Gender",
+								"style": "compact",
+								"value": "2",
+								"choices": [
+									{
+										"title": "Male",
+										"value": "1"
+									},
+									{
+										"title": "Female",
+										"value": "2"
+									},
+									{
+										"title": "Not sure",
+										"value": "3"
+									}
+								]
+							},
+							{
+								"type": "Input.ChoiceSet",
+								"id": "SingleSelectVal",
+								"label": "Do you have a driver's license?",
+								"style": "expanded",
+								"choices": [
+									{
+										"title": "Yes",
+										"value": "1"
+									},
+									{
+										"title": "No",
+										"value": "2"
+									}
+								]
+							},
+							{
+								"type": "Input.ChoiceSet",
+								"id": "MultiSelectVal",
+								"label": "How do you want to be notified?",
+								"isMultiSelect": true,
+								"choices": [
+									{
+										"title": "Via mail",
+										"value": "1"
+									},
+									{
+										"title": "Via text message",
+										"value": "2"
+									},
+									{
+										"title": "Via Phone call",
+										"value": "3"
+									}
+								]
+							}
+						]
+					}
+				},
+				{
+					"type": "Action.Submit",
+					"title": "Submit"
+				}
+			]
+		}
+	}
+	}

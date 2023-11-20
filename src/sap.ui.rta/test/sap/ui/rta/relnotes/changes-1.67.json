@@ -1,0 +1,25 @@
+{
+  "1.67.0": {
+    "date": "May 2019",
+    "notes": [
+      {
+        "id": "3b50760bdc3246d86e7ec41cf4fff2214b75e501",
+        "type": "FIX",
+        "text": ": RTA Minimenu Fixes",
+        "references": []
+      },
+      {
+        "id": "8dd576a5fb741790d5ff5e5c097e7c5ad0d48bbe",
+        "type": "FIX",
+        "text": ": RTA Toolbar-Buttons fix",
+        "references": []
+      },
+      {
+        "id": "dc6cf6f5965ecafa29acb1c1f9accee37cdf1891",
+        "type": "FIX",
+        "text": ": RTA Context Menu Remove Icon replacement",
+        "references": []
+      }
+    ]
+  }
+}

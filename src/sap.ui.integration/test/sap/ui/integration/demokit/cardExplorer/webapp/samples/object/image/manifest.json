@@ -1,0 +1,64 @@
+
+{
+	"sap.app": {
+		"id": "card.explorer.object.image",
+		"type": "card",
+		"title": "Sample of an Object Card with Image",
+		"applicationVersion": {
+			"version": "1.0.0"
+		},
+		"tags": {
+			"keywords": [
+				"Object",
+				"Card",
+				"Sample"
+			]
+		}
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"icons": {
+			"icon": "sap-icon://switch-classes"
+		}
+	},
+	"sap.card": {
+		"type": "Object",
+		"header": {
+			"title": "Donna Moore",
+			"subTitle": "Complete your time recording",
+			"visible": false
+		},
+		"content": {
+			"groups": [
+				{
+					"alignment": "Stretch",
+					"items": [
+						{
+							"type": "Image",
+							"src": "./images/workingWithTablet.jpg",
+							"fullWidth" : true
+						},
+						{
+							"type": "NumericData",
+							"mainIndicator": {
+								"number": "35",
+								"unit": "h",
+								"state": "Error",
+								"size": "S"
+							},
+							"details": "Project Nanga Prabat (Ingo) 0 hours recorded. Please, record your time by the end of the month."
+						}
+					]
+				}
+			]
+		},
+		"footer": {
+			"actionsStrip": [
+				{
+					"text": "Send Reminder",
+					"buttonType": "Accept"
+				}
+			]
+		}
+	}
+}

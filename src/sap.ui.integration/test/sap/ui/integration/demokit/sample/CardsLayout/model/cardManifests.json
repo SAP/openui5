@@ -1,0 +1,771 @@
+{
+	"stackedColumn": {
+		"sap.app": {
+			"id": "sample.CardsLayout.model.Analytical",
+			"type": "card"
+		},
+		"sap.card": {
+			"type": "Analytical",
+			"header": {
+				"type": "Numeric",
+				"data": {
+					"json": {
+						"n": "43.2",
+						"u": "%",
+						"trend": "Down",
+						"valueColor": "Good"
+					}
+				},
+				"title": "Failure Breakdown - Q1, 2019",
+				"mainIndicator": {
+					"number": "{n}",
+					"unit": "{u}",
+					"trend": "{trend}",
+					"state": "{valueColor}"
+				}
+			},
+			"content": {
+				"chartType": "StackedColumn",
+				"legend": {
+					"visible": true,
+					"position": "Bottom",
+					"alignment": "Left"
+				},
+				"plotArea": {
+					"dataLabel": {
+						"visible": false,
+						"showTotal": false
+					},
+					"categoryAxisText": {
+						"visible": false
+					},
+					"valueAxisText": {
+						"visible": false
+					}
+				},
+				"title": {
+					"visible": false
+				},
+				"measureAxis": "valueAxis",
+				"dimensionAxis": "categoryAxis",
+				"data": {
+					"json": {
+						"list": [
+							{
+								"Category": "Weather",
+								"Revenue": 431000.22,
+								"Cost": 230000.00,
+								"Target": 500000.00,
+								"Budget": 210000.00
+							},
+							{
+								"Category": "Mechanics",
+								"Revenue": 494000.30,
+								"Cost": 238000.00,
+								"Target": 500000.00,
+								"Budget": 224000.00
+							},
+							{
+								"Category": "Software",
+								"Revenue": 491000.17,
+								"Cost": 221000.00,
+								"Target": 500000.00,
+								"Budget": 238000.00
+							}
+						]
+					},
+					"path": "/list"
+				},
+				"dimensions": [
+					{
+						"label": "Categories",
+						"value": "{Category}"
+					}
+				],
+				"measures": [
+					{
+						"label": "Revenue",
+						"value": "{Revenue}"
+					},
+					{
+						"label": "Cost",
+						"value": "{Cost}"
+					},
+					{
+						"label": "Target",
+						"value": "{Target}"
+					}
+				]
+			}
+		}
+	},
+	"donut": {
+		"sap.app": {
+			"id": "sample.CardsLayout.model.donut",
+			"type": "card"
+		},
+		"sap.card": {
+			"type": "Analytical",
+			"header": {
+				"title": "Weather Failures"
+			},
+			"content": {
+				"chartType": "Donut",
+				"legend": {
+					"visible": true,
+					"position": "Bottom",
+					"alignment": "Left"
+				},
+				"plotArea": {
+					"dataLabel": {
+						"visible": true,
+						"showTotal": true
+					}
+				},
+				"title": {
+					"visible": false
+				},
+				"measureAxis": "size",
+				"dimensionAxis": "color",
+				"data": {
+					"json": {
+						"measures": [
+							{
+								"measureName": "Storm Wind",
+								"value": 1564235.29
+							},
+							{
+								"measureName": "Storm Wind",
+								"value": 157913.07
+							},
+							{
+								"measureName": "Rain",
+								"value": 1085567.22
+							},
+							{
+								"measureName": "Rain",
+								"value": 245609.486884
+							},
+							{
+								"measureName": "Temperature",
+								"value": 345292.06
+							},
+							{
+								"measureName": "Temperature",
+								"value": 82922.07
+							}
+						]
+					},
+					"path": "/measures"
+				},
+				"dimensions": [{
+					"label": "Measure Name",
+					"value": "{measureName}"
+				}],
+				"measures": [{
+					"label": "Value",
+					"value": "{value}"
+				}]
+			}
+		}
+	},
+	"object": {
+		"sap.app": {
+			"id": "sample.CardsLayout.model.object",
+			"type": "card"
+		},
+		"sap.card": {
+			"type": "Object",
+			"data": {
+				"json": {
+					"firstName": "Donna",
+					"lastName": "Mendez",
+					"position": "Managing Partner",
+					"mobile": "+1 202 34869-0",
+					"phone": "+1 202 555 5555",
+					"email": "donna@peachvalley.com"
+				}
+			},
+			"header": {
+				"icon": {
+					"text": "DM"
+				},
+				"title": "{firstName} {lastName}",
+				"subTitle": "{position}",
+				"actions": [
+					{
+						"type": "Navigation",
+						"parameters": {
+							"url": "users/donnaMendez"
+						}
+					}
+				]
+			},
+			"content": {
+				"groups": [
+					{
+						"title": "Peach Valley Inc.",
+						"items": [
+							{
+								"label": "Mobile",
+								"value": "{mobile}",
+								"actions": [
+									{
+										"type": "Navigation",
+										"parameters": {
+											"url": "tel:{mobile}"
+										}
+									}
+								]
+							},
+							{
+								"label": "Phone",
+								"value": "{phone}",
+								"actions": [
+									{
+										"type": "Navigation",
+										"parameters": {
+											"url": "tel:{phone}"
+										}
+									}
+								]
+							},
+							{
+								"label": "Email",
+								"value": "{email}",
+								"actions": [
+									{
+										"type": "Navigation",
+										"parameters": {
+											"url": "mailto:{email}"
+										}
+									}
+								]
+							}
+						]
+					}
+				],
+				"actions": [
+					{
+						"type": "Navigation",
+						"parameters": {
+							"url": "users/donnaMendez"
+						}
+					}
+				]
+			}
+		}
+	},
+	"list1": {
+		"sap.app": {
+			"id": "sample.CardsLayout.model.list",
+			"type": "card"
+		},
+		"sap.card": {
+			"type": "List",
+			"header": {
+				"title": "Incidents in the last 24 hours",
+				"status": {
+					"text": "3 of 3"
+				}
+			},
+			"content": {
+				"data": {
+					"json": [
+						{
+							"name": "Teico Inc.",
+							"icon": "./test-resources/sap/ui/integration/demokit/sample/CardsLayout/images/Case1.png",
+							"description": "Sun Valley, Idaho",
+							"info": "2456",
+							"infoState": "Error"
+						},
+						{
+							"name": "Freshhh LTD.",
+							"icon": "./test-resources/sap/ui/integration/demokit/sample/CardsLayout/images/Case2.png",
+							"description": "Dayville, Oregon",
+							"info": "1264",
+							"infoState": "Warning"
+						},
+						{
+							"name": "Lean Pulp",
+							"icon": "./test-resources/sap/ui/integration/demokit/sample/CardsLayout/images/Case3.png",
+							"description": "Raymond, Callifornia",
+							"info": "236",
+							"infoState": "None"
+						}
+					]
+				},
+				"item": {
+					"icon": {
+						"src": "{icon}"
+					},
+					"title": {
+						"value": "{name}"
+					},
+					"description": {
+						"value": "{description}"
+					},
+					"info": {
+						"value": "{info}",
+						"state": "{infoState}"
+					}
+				}
+			}
+		}
+	},
+	"component": "./componentCard/manifest.json",
+	"list2": {
+		"sap.app": {
+			"id": "sample.CardsLayout.model.list2",
+			"type": "card"
+		},
+		"sap.card": {
+			"type": "List",
+			"header": {
+				"title": "Incidents in the last 24 hours",
+				"subTitle": "Suddent storm wind damaged 3 polinating hives",
+				"icon": {
+					"src": "./test-resources/sap/ui/integration/demokit/sample/CardsLayout/images/CompanyLogo.png"
+				}
+			},
+			"content": {
+				"data": {
+					"json": [
+						{
+							"name": "Alain Chevalier",
+							"icon": "./test-resources/sap/ui/integration/demokit/sample/CardsLayout/images/Avatar_1.png",
+							"description": "On Site"
+						},
+						{
+							"name": "Yolanda Barrueco",
+							"icon": "./test-resources/sap/ui/integration/demokit/sample/CardsLayout/images/Avatar_2.png",
+							"description": "Travelling to Idaho"
+						},
+						{
+							"name": "Arend Pellewever",
+							"icon": "./test-resources/sap/ui/integration/demokit/sample/CardsLayout/images/Avatar_3.png",
+							"description": "Travelling to Idaho"
+						},
+						{
+							"name": "Lean Pulp",
+							"icon": "./test-resources/sap/ui/integration/demokit/sample/CardsLayout/images/Avatar_4.png",
+							"description": "Headquaters Support"
+						}
+					]
+				},
+				"item": {
+					"icon": {
+						"src": "{icon}"
+					},
+					"title": {
+						"value": "{name}"
+					},
+					"description": {
+						"value": "{description}"
+					},
+					"actions": [
+						{
+							"type": "Navigation",
+							"parameters": {
+								"url": "/users/{name}"
+							}
+						}
+					]
+				}
+			}
+		}
+	},
+	"table": {
+		"sap.app": {
+			"id": "sample.CardsLayout.model.table",
+			"type": "card"
+		},
+		"sap.card": {
+			"type": "Table",
+			"data": {
+				"json": [
+					{
+						"salesOrder": "5000010050",
+						"customerName": "Robert Brown Entertainment",
+						"netAmount": "2K USD",
+						"status": "Delivered",
+						"statusState": "Success"
+					},
+					{
+						"salesOrder": "5000010051",
+						"customerName": "Entertainment Argentinia",
+						"netAmount": "127k USD",
+						"status": "Canceled",
+						"statusState": "Error"
+					},
+					{
+						"salesOrder": "5000010052",
+						"customerName": "Brazil Technologies",
+						"netAmount": "8K USD",
+						"status": "In Progress",
+						"statusState": "Warning"
+					},
+					{
+						"salesOrder": "5000010053",
+						"customerName": "Quimica Madrilenos",
+						"netAmount": "25K USD",
+						"status": "Delivered",
+						"statusState": "Success"
+					},
+					{
+						"salesOrder": "5000010054",
+						"customerName": "Development Para O Governo",
+						"netAmount": "7K USD",
+						"status": "Delivered",
+						"statusState": "Success"
+					},
+					{
+						"salesOrder": "5000010050",
+						"customerName": "Robert Brown Entertainment",
+						"netAmount": "2K USD",
+						"status": "Delivered",
+						"statusState": "Success"
+					},
+					{
+						"salesOrder": "5000010051",
+						"customerName": "Entertainment Argentinia",
+						"netAmount": "127k USD",
+						"status": "Canceled",
+						"statusState": "Error"
+					},
+					{
+						"salesOrder": "5000010052",
+						"customerName": "Brazil Technologies",
+						"netAmount": "8K USD",
+						"status": "In Progress",
+						"statusState": "Warning"
+					},
+					{
+						"salesOrder": "5000010052",
+						"customerName": "Brazil Technologies",
+						"netAmount": "8K USD",
+						"status": "In Progress",
+						"statusState": "Warning"
+					}
+				]
+			},
+			"header": {
+				"title": "Sales Orders for Key Accounts",
+				"subTitle": "Today",
+				"status": {
+					"text": "{headerData/statusText}"
+				}
+			},
+			"content": {
+				"row": {
+					"columns": [
+						{
+							"title": "Sales Order",
+							"value": "{salesOrder}",
+							"identifier": true
+						},
+						{
+							"title": "Customer",
+							"value": "{customerName}"
+						},
+						{
+							"title": "Net Amount",
+							"value": "{netAmount}"
+						},
+						{
+							"title": "Status",
+							"value": "{status}",
+							"state": "{statusState}"
+						}
+					]
+				}
+			}
+		}
+	},
+	"timeline": {
+		"sap.app": {
+			"id": "sample.CardsLayout.model.timeline",
+			"type": "card"
+		},
+		"sap.card": {
+			"type": "Timeline",
+			"header": {
+				"title": "Schedule for today",
+				"subTitle": "9:32 AM",
+				"status": {
+					"text": "3 of 3"
+				},
+				"actions": [
+					{
+						"type": "Navigation",
+						"parameters": {
+							"url": "/quickLinks"
+						}
+					}
+				]
+			},
+			"content": {
+				"data": {
+					"json": [
+						{
+							"Title": "Call Donna Mendez",
+							"Icon": "sap-icon://outgoing-call",
+							"Time":  "9:15 AM"
+						},
+						{
+							"Title": "Incidents Status - Online",
+							"Icon": "sap-icon://my-view",
+							"Time": "10:00 - 11:00"
+						},
+						{
+							"Title": "Site Visit - Peach Valley",
+							"Description": "San Joaquin valley",
+							"Icon": "sap-icon://appointment-2",
+							"Time": "12:00 - 17:00"
+						}
+					]
+				},
+				"item": {
+					"dateTime": {
+						"value": "{Time}"
+					},
+					"description": {
+						"value": "{Description}"
+					},
+					"title": {
+						"value": "{Title}"
+					},
+					"icon": {
+						"src": "{Icon}"
+					}
+				}
+			}
+		}
+	},
+	"calendar": {
+		"sap.app": {
+			"id": "sample.CardsLayout.model.calendar",
+			"type": "card"
+		},
+		"sap.card": {
+			"type": "Calendar",
+			"data": {
+				"json": {
+					"item": [
+						{
+							"visualization": "blocker",
+							"start": "2019-09-02T09:00",
+							"end": "2019-09-02T10:00",
+							"title": "Payment reminder",
+							"icon": "sap-icon://desktop-mobile",
+							"type": "Type06"
+						},
+						{
+							"visualization": "blocker",
+							"start": "2019-09-02T17:00",
+							"end": "2019-09-02T17:30",
+							"title": "Private appointment",
+							"icon": "sap-icon://desktop-mobile",
+							"type": "Type07"
+						},
+						{
+							"visualization": "appointment",
+							"start": "2019-09-02T12:00",
+							"end": "2019-09-02T13:00",
+							"title": "Lunch",
+							"text": "working",
+							"icon": "sap-icon://desktop-mobile",
+							"type": "Type03"
+						},
+						{
+							"visualization": "appointment",
+							"start": "2019-09-01T08:30",
+							"end": "2019-09-03T17:30",
+							"title": "Workshop",
+							"text": "Out of office",
+							"icon": "sap-icon://sap-ui5",
+							"type": "Type07"
+						},
+						{
+							"visualization": "appointment",
+							"start": "2019-09-02T14:00",
+							"end": "2019-09-02T16:30",
+							"title": "Discussion with clients",
+							"text": "working",
+							"icon": "sap-icon://desktop-mobile"
+						},
+						{
+							"visualization": "appointment",
+							"start": "2019-09-02T11:00",
+							"end": "2019-09-02T12:00",
+							"title": "Team meeting",
+							"text": "online meeting",
+							"icon": "sap-icon://sap-ui5",
+							"type": "Type04"
+						},
+                        {
+                            "visualization": "blocker",
+                            "start": "2019-09-03T17:00",
+                            "end": "2019-09-03T17:30",
+                            "title": "Private appointment",
+                            "icon": "sap-icon://desktop-mobile",
+                            "type": "Type07"
+                        },
+                        {
+                            "visualization": "appointment",
+                            "start": "2019-09-03T12:00",
+                            "end": "2019-09-03T13:00",
+                            "title": "Lunch",
+                            "text": "working",
+                            "icon": "sap-icon://desktop-mobile",
+                            "type": "Type03"
+                        },
+                        {
+                            "visualization": "appointment",
+                            "start": "2019-09-03T10:00",
+                            "end": "2019-09-03T12:30",
+                            "title": "Board meeting",
+                            "icon": "sap-icon://desktop-mobile"
+                        },
+                        {
+                            "visualization": "appointment",
+                            "start": "2019-09-04T12:00",
+                            "end": "2019-09-04T13:00",
+                            "title": "Lunch",
+                            "text": "working",
+                            "icon": "sap-icon://desktop-mobile",
+                            "type": "Type03"
+                        },
+                        {
+                            "visualization": "blocker",
+                            "start": "2019-09-04T17:00",
+                            "end": "2019-09-04T17:30",
+                            "title": "Private appointment",
+                            "icon": "sap-icon://desktop-mobile",
+                            "type": "Type07"
+                        },
+                        {
+                            "visualization": "appointment",
+                            "start": "2019-09-05T11:00",
+                            "end": "2019-09-05T12:00",
+                            "title": "Team meeting",
+                            "text": "online meeting",
+                            "icon": "sap-icon://sap-ui5",
+                            "type": "Type04"
+                        },
+                        {
+                            "visualization": "blocker",
+                            "start": "2019-09-06T09:00",
+                            "end": "2019-09-06T10:00",
+                            "title": "Payment reminder",
+                            "icon": "sap-icon://desktop-mobile",
+                            "type": "Type06"
+                        }
+					],
+					"specialDate": [
+						{
+							"start": "2019-09-13",
+							"end": "2019-09-14",
+							"type": "Type08"
+						},
+						{
+							"start": "2019-09-24",
+							"end": "2019-09-24",
+							"type": "Type13"
+						}
+					],
+					"legendItem": [
+						{
+							"category": "calendar",
+							"text": "Team building",
+							"type": "Type08"
+						},
+						{
+							"category": "calendar",
+							"text": "Public holliday",
+							"type": "Type13"
+						},
+						{
+							"category": "appointment",
+							"text": "Reminder",
+							"type": "Type06"
+						},
+						{
+							"category": "appointment",
+							"text": "Private appointment",
+							"type": "Type07"
+						},
+						{
+							"category": "appointment",
+							"text": "Out of office",
+							"type": "Type03"
+						},
+						{
+							"category": "appointment",
+							"text": "Collaboration with other team members",
+							"type": "Type07"
+						}
+					]
+				}
+			},
+			"header": {
+				"title": "My calendar",
+				"subTitle": "Team Balkan",
+				"status": {
+					"text":  {
+						"format": {
+							"translationKey": "i18n>CARD.COUNT_X_OF_Y",
+							"parts": [
+								"parameters>/visibleItems",
+								"parameters>/allItems"
+							]
+						}
+					}
+				}
+			},
+			"content": {
+				"date": "2019-09-02",
+				"maxItems": 5,
+				"maxLegendItems": 3,
+				"noItemsText": "You have nothing planned for that day",
+				"item": {
+					"template": {
+						"visualization": "{visualization}",
+						"startDate": "{start}",
+						"endDate": "{end}",
+						"title": "{title}",
+						"text": "{text}",
+						"icon": "{icon}",
+						"type": "{type}"
+					},
+					"path": "/item"
+				},
+				"specialDate": {
+					"template": {
+						"startDate": "{start}",
+						"endDate": "{end}",
+						"type": "{type}"
+					},
+					"path": "/specialDate"
+				},
+				"legendItem": {
+					"template": {
+						"category": "{category}",
+						"text": "{text}",
+						"type": "{type}"
+					},
+					"path": "/legendItem"
+				},
+				"moreItems": {
+					"actions": [
+						{
+							"type": "Navigation",
+							"enabled": true,
+							"url": "http://sap.com"
+						}
+					]
+				}
+			}
+		}
+	  }
+}

@@ -1,0 +1,67 @@
+<mvc:View xmlns:mvc="sap.ui.core.mvc"
+	xmlns:core="sap.ui.core"
+	xmlns="sap.uxap"
+	xmlns:some="testdata.mvc.stashed"
+	xmlns:m="sap.m"
+	height="100%"
+	xmlns:template="http://schemas.sap.com/sapui5/extension/sap.ui.core.template/1"
+	controllerName="testdata.mvc.stashed.OP">
+
+	<m:Page>
+	<ObjectPageLayout id="ObjectPageLayout">
+		<headerTitle>
+			<ObjectPageHeader objectTitle="Section sample">
+			</ObjectPageHeader>
+		</headerTitle>
+
+		<sections>
+
+			<ObjectPageSection id="section0" stashed="true" visible="true" title="{/title}" subSections="{/subSections}">
+				<subSections>
+					<ObjectPageSubSection title="{foo}">
+						<blocks>
+							<some:SomeBlock />
+							<m:Text text="A not Templated vintage style stashed section" />
+						</blocks>
+					</ObjectPageSubSection>
+				</subSections>
+			</ObjectPageSection>
+
+			<ObjectPageSection id="section1" stashed="false" title="A not Templated vintage style stashed section">
+				<subSections>
+					<ObjectPageSubSection>
+						<blocks>
+							<some:SomeBlock />
+							<m:Text text="A not Templated vintage style stashed section" />
+						</blocks>
+					</ObjectPageSubSection>
+				</subSections>
+			</ObjectPageSection>
+
+			<ObjectPageSection id="section2" stashed="true" title="A section that is imma there">
+				<subSections>
+					<ObjectPageSubSection>
+						<blocks>
+							<some:SomeBlock />
+							<m:Text text="A section that is imma there" />
+						</blocks>
+					</ObjectPageSubSection>
+				</subSections>
+			</ObjectPageSection>
+
+			<ObjectPageSection id="section3" stashed="true" title="A not Templated vintage style stashed section">
+				<subSections>
+					<ObjectPageSubSection>
+						<blocks>
+							<some:SomeBlock />
+							<m:Text text="A not Templated vintage style stashed section" />
+						</blocks>
+					</ObjectPageSubSection>
+				</subSections>
+			</ObjectPageSection>
+		</sections>
+
+	</ObjectPageLayout>
+	</m:Page>
+
+</mvc:View>

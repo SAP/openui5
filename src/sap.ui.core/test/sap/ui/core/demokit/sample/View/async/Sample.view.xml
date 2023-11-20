@@ -1,5 +1,9 @@
 <mvc:View controllerName="sap.ui.core.sample.View.async.Sample"
-	xmlns:core="sap.ui.core" xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc" xmlns:html="http://www.w3.org/1999/xhtml">
+	xmlns:core="sap.ui.core"
+	xmlns="sap.m"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:myapp="sap.ui.core.sample.View.async"
+	xmlns:html="http://www.w3.org/1999/xhtml">
 
 	<Panel>
 		<mvc:XMLView viewName="sap.ui.core.sample.View.async.Async" id="xml_sample" async="true"></mvc:XMLView>
@@ -11,7 +15,7 @@
 		<mvc:HTMLView viewName="sap.ui.core.sample.View.async.Async" id="html_sample" async="true"></mvc:HTMLView>
 	</Panel>
 	<Panel>
-		<mvc:JSView viewName="sap.ui.core.sample.View.async.Async" id="js_sample" async="true"></mvc:JSView>
+		<myapp:AsyncView id="typed_sample" async="true"></myapp:AsyncView>
 	</Panel>
 
 </mvc:View>

@@ -1,0 +1,113 @@
+{
+	"_version": "1.33.0",
+	"sap.app": {
+		"id": "card.explorer.actions.chartActions",
+		"type": "card",
+		"title": "Sample of Chart Actions",
+		"subTitle": "Sample of Chart Actions",
+		"applicationVersion": {
+			"version": "1.0.0"
+		},
+		"shortTitle": "A short title for this Card",
+		"info": "Additional information about this Card",
+		"description": "A long description for this Card",
+		"tags": {
+			"keywords": [
+				"Analytical",
+				"Card",
+				"Line",
+				"Sample"
+			]
+		}
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"icons": {
+			"icon": "sap-icon://line-chart"
+		}
+	},
+	"sap.card": {
+		"type": "Analytical",
+		"header": {
+			"title": "Sales by Stores"
+		},
+		"content": {
+			"chartType": "Donut",
+			"chartProperties": {
+				"legendGroup": {
+					"layout": {
+						"position": "top",
+						"alignment": "center"
+					}
+				},
+				"plotArea": {
+					"dataLabel": {
+						"visible": true
+					}
+				},
+				"title": {
+					"visible": false
+				}
+			},
+			"data": {
+				"json": {
+					"milk": [
+						{
+							"id": "1",
+							"storeName": "24-Seven",
+							"revenue": 345292.06
+						},
+						{
+							"id": "2",
+							"storeName": "A&A",
+							"revenue": 1564235.29
+						},
+						{
+							"id": "3",
+							"storeName": "Alexei's Specialities",
+							"revenue": 1085567.22
+						}
+					]
+				},
+				"path": "/milk"
+			},
+			"dimensions": [
+				{
+					"name": "Store Name",
+					"value": "{storeName}"
+				}
+			],
+			"measures": [
+				{
+					"name": "Revenue",
+					"value": "{revenue}"
+				}
+			],
+			"feeds": [
+				{
+					"type": "Dimension",
+					"uid": "color",
+					"values": [
+						"Store Name"
+					]
+				},
+				{
+					"type": "Measure",
+					"uid": "size",
+					"values": [
+						"Revenue"
+					]
+				}
+			],
+			"actionableArea": "Chart",
+			"actions": [
+				{
+					"type": "Navigation",
+					"parameters": {
+						"url": "https://sap.com?id={id}&revenue={revenue}&storeName={storeName}"
+					}
+				}
+			]
+		}
+	}
+}

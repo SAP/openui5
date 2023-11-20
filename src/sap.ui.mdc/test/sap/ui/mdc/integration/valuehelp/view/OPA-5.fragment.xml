@@ -1,0 +1,285 @@
+<layout:VerticalLayout id="notSuspendedLayout"
+	xmlns:layout="sap.ui.layout"
+	width="100%"
+	xmlns="sap.m"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:core="sap.ui.core"
+	xmlns:f="sap.ui.layout.form"
+	xmlns:f2="sap.f"
+	xmlns:mdc="sap.ui.mdc"
+	xmlns:vhfb="sap.ui.mdc.filterbar.vh"
+	xmlns:mdcv="sap.ui.mdc.valuehelp"
+	xmlns:mdcvc="sap.ui.mdc.valuehelp.content"
+	xmlns:mdcf="sap.ui.mdc.field"
+	xmlns:mdct="sap.ui.mdc.table"
+	xmlns:ui="sap.ui"
+	xmlns:uit="sap.ui.table"
+	xmlns:variants="sap.ui.fl.variants"
+	xmlns:types="sap.ui.v4demo.types"
+	xmlns:demo="sap.ui.v4demo.controls">
+
+	<Title class="sapUiSmallMarginBottom" level="H3" text="Sales Organization Example" />
+
+	<mdc:FilterBar id="FB0" p13nMode="Item,Value" liveMode="false" delegate='\{"name": "sap/ui/v4demo/delegate/salesorganization/FilterBar.delegate", "payload": \{"collectionName": "divisions", "modelName": "settings"\}\}'>
+		<mdc:dependents>
+
+			<mdc:ValueHelp id="FB0-FH-SO" delegate='\{"name": "sap/ui/v4demo/delegate/salesorganization/ValueHelp.delegate", "payload": \{"searchKeys":["text","key"]\}\}'>
+				<mdc:typeahead>
+					<mdcv:Popover id="FB0-FH-SO-Popover" title="City">
+						<mdcvc:MTable  id="FB0-FH-SO-Popover-MTable" keyPath="key" descriptionPath="text" title="Sales Organization">
+							<Table id="FB0-FH-SO-Popover-MTable-mTable" items="{path: 'settings>/salesOrganisations', length: 10}" width="30rem">
+								<columns>
+									<Column>
+										<Label text="Key"/>
+									</Column>
+									<Column>
+										<Label text="Text"/>
+									</Column>
+								</columns>
+								<items>
+									<ColumnListItem type="Active">
+										<Text text="{path: 'settings>key', type: 'sap.ui.model.type.String'}"/>
+										<Text text="{path: 'settings>text', type: 'sap.ui.model.type.String'}"/>
+									</ColumnListItem>
+								</items>
+							</Table>
+						</mdcvc:MTable>
+					</mdcv:Popover>
+				</mdc:typeahead>
+			</mdc:ValueHelp>
+
+			<mdc:ValueHelp id="FB0-FH-DC" delegate='\{"name": "sap/ui/v4demo/delegate/salesorganization/ValueHelp.delegate", "payload": \{"searchKeys":["text","key"]\}\}'>
+				<mdc:typeahead>
+					<mdcv:Popover id="FB0-FH-DC-Popover" title="City">
+						<mdcvc:MTable  id="FB0-FH-DC-Popover-MTable" keyPath="key" descriptionPath="text"  title="Sales Organization">
+							<Table id="FB0-FH-DC-Popover-MTable-mTable" items="{path: 'settings>/distributionChannels', length: 10}" width="30rem">
+								<columns>
+									<Column>
+										<Label text="Key"/>
+									</Column>
+									<Column>
+										<Label text="Text"/>
+									</Column>
+									<Column>
+										<Label text="SalesOrganization"/>
+									</Column>
+								</columns>
+								<items>
+									<ColumnListItem type="Active">
+										<Text text="{path: 'settings>key', type: 'sap.ui.model.type.String'}"/>
+										<Text text="{path: 'settings>text', type: 'sap.ui.model.type.String'}"/>
+										<Text text="{settings>salesOrganization}"/>
+									</ColumnListItem>
+								</items>
+							</Table>
+						</mdcvc:MTable>
+					</mdcv:Popover>
+				</mdc:typeahead>
+			</mdc:ValueHelp>
+
+			<mdc:ValueHelp id="FB0-FH-D" delegate='\{"name": "sap/ui/v4demo/delegate/salesorganization/ValueHelp.delegate", "payload": \{"searchKeys":["text","key"]\}\}'>
+				<mdc:typeahead>
+					<mdcv:Popover id="FB0-FH-D-Popover" title="Divisions">
+						<mdcvc:MTable  id="FB0-FH-D-Popover-MTable" keyPath="key" descriptionPath="text"  title="Divisions" useAsValueHelp="false">
+							<Table id="FB0-FH-D-Popover-MTable-mTable" items="{path: 'settings>/divisions', length: 10}" width="30rem">
+								<columns>
+									<Column>
+										<Label text="Key"/>
+									</Column>
+									<Column>
+										<Label text="Text"/>
+									</Column>
+									<Column>
+										<Label text="SalesOrganization"/>
+									</Column>
+									<Column>
+										<Label text="DistributionChannel"/>
+									</Column>
+								</columns>
+								<items>
+									<ColumnListItem type="Active">
+										<Text text="{path: 'settings>key', type: 'sap.ui.model.type.String'}"/>
+										<Text text="{path: 'settings>text', type: 'sap.ui.model.type.String'}"/>
+										<Text text="{path: 'settings>salesOrganization', type: 'sap.ui.model.type.String'}"/>
+										<Text text="{path: 'settings>distributionChannel', type: 'sap.ui.model.type.String'}"/>
+									</ColumnListItem>
+								</items>
+							</Table>
+						</mdcvc:MTable>
+					</mdcv:Popover>
+				</mdc:typeahead>
+
+				<mdc:dialog>
+					<mdcv:Dialog title="Divisions" groupConfig="{
+						divA: {
+							label: 'Regular Divisions ({0})',
+							nnLabel: 'Regular Divisions'
+						}, divB: {
+						label: 'Cool Divisions ({0})',
+						nnLabel: 'Cool Divisions'
+					}}">
+
+
+						<mdcvc:MDCTable title="Divisions" keyPath="key" descriptionPath="text"  group="divA" forceBind="true">
+
+							<mdc:Table autoBindOnInit="false"
+								id="mdcTable-Divisions-1"
+								type="ResponsiveTable"
+								width="100%"
+								headerVisible="true"
+								selectionMode="{= ${settings>/maxConditions} === -1 ? 'Multi' : 'SingleMaster'}"
+								p13nMode="Column,Sort"
+								delegate='\{"name": "sap/ui/v4demo/delegate/salesorganization/Table.delegate", "payload": \{"collectionName": "divisions", "model": "settings"\}\}'
+								threshold="50">
+								<mdc:type>
+									<mdc:table.ResponsiveTableType growingMode="Scroll" />
+								</mdc:type>
+								<mdc:columns>
+									<mdc:table.Column id="mdcTable-Divisions-1-col-1" header="key" propertyKey="key">
+										<Text text="{path: 'settings>key', type: 'sap.ui.model.type.String'}"/>
+									</mdc:table.Column>
+									<mdc:table.Column id="mdcTable-Divisions-1-col-2" header="text" propertyKey="text">
+										<Text text="{path: 'settings>text', type: 'sap.ui.model.type.String'}"/>
+									</mdc:table.Column>
+								</mdc:columns>
+							</mdc:Table>
+						</mdcvc:MDCTable>
+
+						<mdcvc:MDCTable title="Divisions (salesOrganization)" keyPath="key" descriptionPath="text"  group="divA" forceBind="true">
+							<mdcvc:filterBar>
+								<vhfb:FilterBar id="fb1" liveMode="false" delegate='\{"name": "sap/ui/v4demo/delegate/salesorganization/FilterBar.delegate", "payload": \{"modelName": "settings", "collectionName": "divisions"\}\}'>
+									<vhfb:filterItems>
+										<mdc:FilterField delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' label="SalesOrganization" conditions="{$filters>/conditions/salesOrganization}" propertyKey="salesOrganization"/>
+									</vhfb:filterItems>
+								</vhfb:FilterBar>
+							</mdcvc:filterBar>
+
+
+						<mdc:Table autoBindOnInit="false"
+								id="mdcTable-Divisions-2"
+								type="ResponsiveTable"
+								width="100%"
+								headerVisible="true"
+								selectionMode="{= ${settings>/maxConditions} === -1 ? 'Multi' : 'SingleMaster'}"
+								p13nMode="Column,Sort"
+								delegate='\{"name": "sap/ui/v4demo/delegate/salesorganization/Table.delegate", "payload": \{"collectionName": "divisions", "model": "settings"\}\}'
+								threshold="50">
+								<mdc:type>
+									<mdc:table.ResponsiveTableType growingMode="Scroll" />
+								</mdc:type>
+								<mdc:columns>
+									<mdc:table.Column id="mdcTable-Divisions-2-col-1" header="key" propertyKey="key">
+										<Text text="{path: 'settings>key', type: 'sap.ui.model.type.String'}"/>
+									</mdc:table.Column>
+									<mdc:table.Column id="mdcTable-Divisions-2-col-2" header="text" propertyKey="text">
+										<Text text="{path: 'settings>text', type: 'sap.ui.model.type.String'}"/>
+									</mdc:table.Column>
+									<mdc:table.Column id="mdcTable-Divisions-2-col-3" header="salesOrganization" propertyKey="salesOrganization">
+										<Text text="{settings>salesOrganization}"/>
+									</mdc:table.Column>
+								</mdc:columns>
+							</mdc:Table>
+						</mdcvc:MDCTable>
+
+						<mdcvc:MDCTable title="Divisions" keyPath="key" descriptionPath="text"  group="divB">
+
+							<mdc:Table autoBindOnInit="false"
+								id="mdcTable-Divisions-3"
+								type="ResponsiveTable"
+								width="100%"
+								headerVisible="true"
+								selectionMode="{= ${settings>/maxConditions} === -1 ? 'Multi' : 'SingleMaster'}"
+								p13nMode="Column,Sort"
+								delegate='\{"name": "sap/ui/v4demo/delegate/salesorganization/Table.delegate", "payload": \{"collectionName": "divisions", "model": "settings"\}\}'
+								threshold="50">
+								<mdc:type>
+									<mdc:table.ResponsiveTableType growingMode="Scroll" />
+								</mdc:type>
+								<mdc:columns>
+									<mdc:table.Column id="mdcTable-Divisions-3-col-1" header="key" propertyKey="key">
+										<Text text="{path: 'settings>key', type: 'sap.ui.model.type.String'}"/>
+									</mdc:table.Column>
+									<mdc:table.Column id="mdcTable-Divisions-3-col-2" header="text" propertyKey="text">
+										<Text text="{path: 'settings>text', type: 'sap.ui.model.type.String'}"/>
+									</mdc:table.Column>
+								</mdc:columns>
+							</mdc:Table>
+						</mdcvc:MDCTable>
+
+						<mdcvc:MDCTable title="Divisions (distributionChannel)" keyPath="key" descriptionPath="text"  group="divB">
+							<mdcvc:filterBar>
+								<vhfb:FilterBar id="fb2" liveMode="false" delegate='\{"name": "sap/ui/v4demo/delegate/salesorganization/FilterBar.delegate", "payload": \{"modelName": "settings", "collectionName": "divisions"\}\}'>
+									<vhfb:filterItems>
+										<mdc:FilterField delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' label="SalesOrganization" conditions="{$filters>/conditions/salesOrganization}" propertyKey="salesOrganization"/>
+									</vhfb:filterItems>
+								</vhfb:FilterBar>
+							</mdcvc:filterBar>
+
+
+							<mdc:Table autoBindOnInit="false"
+									id="mdcTable-Divisions-4"
+									type="ResponsiveTable"
+									width="100%"
+									headerVisible="true"
+									selectionMode="{= ${settings>/maxConditions} === -1 ? 'Multi' : 'SingleMaster'}"
+									p13nMode="Column,Sort"
+									delegate='\{"name": "sap/ui/v4demo/delegate/salesorganization/Table.delegate", "payload": \{"collectionName": "divisions", "model": "settings"\}\}'
+									threshold="50">
+									<mdc:type>
+										<mdc:table.ResponsiveTableType growingMode="Scroll" />
+									</mdc:type>
+									<mdc:columns>
+										<mdc:table.Column id="mdcTable-Divisions-4-col-1" header="key" propertyKey="key">
+											<Text text="{path: 'settings>key', type: 'sap.ui.model.type.String'}"/>
+										</mdc:table.Column>
+										<mdc:table.Column id="mdcTable-Divisions-4-col-2" header="text" propertyKey="text">
+											<Text text="{path: 'settings>text', type: 'sap.ui.model.type.String'}"/>
+										</mdc:table.Column>
+										<mdc:table.Column id="mdcTable-Divisions-4-col-3" header="distributionChannel" propertyKey="distributionChannel">
+											<Text text="{settings>distributionChannel}"/>
+										</mdc:table.Column>
+									</mdc:columns>
+								</mdc:Table>
+						</mdcvc:MDCTable>
+						<mdcvc:Conditions label="Label of Field"></mdcvc:Conditions>
+
+					</mdcv:Dialog>
+				</mdc:dialog>
+
+			</mdc:ValueHelp>
+
+		</mdc:dependents>
+
+		<mdc:filterItems>
+			<mdc:FilterField delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}'
+				id="FB0-SO"
+				label="Sales Organization"
+				conditions="{$filters>/conditions/salesOrganization}"
+				propertyKey="salesOrganization"
+				valueHelp="FB0-FH-SO"
+				maxConditions="{settings>/maxConditions}"
+				display="DescriptionValue"
+				/>
+			<mdc:FilterField delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}'
+				id="FB0-DC"
+				label="Distribution Channel"
+				conditions="{$filters>/conditions/distributionChannel}"
+				propertyKey="distributionChannel"
+				valueHelp="FB0-FH-DC"
+				maxConditions="{settings>/maxConditions}"
+				display="DescriptionValue"
+				/>
+			<mdc:FilterField delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}'
+				id="FB0-D"
+				label="Division"
+				conditions="{$filters>/conditions/division}"
+				propertyKey="division"
+				valueHelp="FB0-FH-D"
+				maxConditions="{settings>/maxConditions}"
+				display="DescriptionValue"
+				/>
+		</mdc:filterItems>
+	</mdc:FilterBar>
+
+
+</layout:VerticalLayout>

@@ -20,9 +20,6 @@
 				<Property Name="DRILLDOWN_STATE" Type="Edm.String" MaxLength="16" sap:hierarchy-drill-state-for="HIERARCHY_NODE" />
 				<Property Name="MAGNITUDE" Type="Edm.Int32" sap:hierarchy-node-descendant-count-for="HIERARCHY_NODE" />
 				<Property Name="SERVER_INDEX" Type="Edm.Int32" />
-				<NavigationProperty Name="toChildren"
-					Relationship="HierarchyTestservice.odata.tree.orgHierarchyChildrenType"
-					FromRole="orgHierarchyPrincipal" ToRole="orgHierarchyDependent" />
 			</EntityType>
 			<EntityContainer Name="tree"
 				m:IsDefaultEntityContainer="true">

@@ -1,15 +1,14 @@
 sap.ui.define([
-	"jquery.sap.global",
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/model/json/JSONModel"
-], function(jQuery, Controller, JSONModel) {
+], function(Controller, JSONModel) {
 	"use strict";
 
 	var PageController = Controller.extend("sap.m.sample.PDFViewerEmbedded.Page", {
 
 		onInit : function () {
-			this._sValidPath = sap.ui.require.toUrl("sap/m/sample/PDFViewerEmbedded") + "/sample.pdf";
-			this._sInvalidPath = sap.ui.require.toUrl("sap/m/sample/PDFViewerEmbedded") + "/sample_nonexisting.pdf";
+			this._sValidPath = sap.ui.require.toUrl("sap/m/sample/PDFViewerEmbedded/sample.pdf");
+			this._sInvalidPath = sap.ui.require.toUrl("sap/m/sample/PDFViewerEmbedded/sample_nonexisting.pdf");
 			this._oModel = new JSONModel({
 				Source: this._sValidPath,
 				Title: "My Custom Title",

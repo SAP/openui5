@@ -1,0 +1,106 @@
+{
+  "1.87.0": {
+    "date": "February 2021",
+    "notes": [
+      {
+        "id": "30d21cd923662b6c1dc29d788fe69a5fca9e12c5",
+        "type": "FEATURE",
+        "text": " sap.m.Title: new 'content' aggregation added"
+      },
+      {
+        "id": "aabded3b9351745d1198cc2d51b981c816c84864",
+        "type": "FEATURE",
+        "text": " theming/Parameters: Add async option to  Parameters.get"
+      },
+      {
+        "id": "8b2b39b06ed9e71b504ca9996a4f7857856740e9",
+        "type": "FEATURE",
+        "text": " sap.ui.core.IconPool: Update icon font"
+      },
+      {
+        "id": "0ab31bfcc0e7b3a33c6941a7a856609bd329246a",
+        "type": "FEATURE",
+        "text": " Locale: add cy (Welsh) CLDR data"
+      },
+      {
+        "id": "a4278564024a12997c5119a72c162d6f14695680",
+        "type": "FEATURE",
+        "text": " NumberFormat: Add preserveDecimals format option"
+      },
+      {
+        "id": "7cbbd850b6194f3691ef02178f4a653abb8edb5d",
+        "type": "FEATURE",
+        "text": " ExtensionPoints: add closest binding info for flex"
+      },
+      {
+        "id": "a791a0a2108aae01232fcd93170582930b1b1cd5",
+        "type": "FEATURE",
+        "text": " Opa: add resource waiter"
+      },
+      {
+        "id": "2011a09813bb4d8e63452e69e57885b4b8ea62dd",
+        "type": "FIX",
+        "text": " core.Popup: avoid setting focus to static UIArea when runs on mobile",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400000087592021"
+          }
+        ]
+      },
+      {
+        "id": "bfe56568cc4bb668f88d5dd42a71b5071e3d4d8c",
+        "type": "FIX",
+        "text": " core.routing: allow reset hash only for the current active router",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      },
+      {
+        "id": "63490236cc9b4e4ba8725e9f55f10638f2123cf8",
+        "type": "FIX",
+        "text": " DragDrop: Drop indicator is not visible always in scrollable pages",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500008089962020"
+          },
+          {
+            "type": "BCP",
+            "reference": "002075129500000091392020"
+          }
+        ]
+      },
+      {
+        "id": "c98e22f4d54f55fc2d57d49bc3af6dd5e9a696a6",
+        "type": "FIX",
+        "text": " Fragment: Reject promise in case Fragment could not be loaded",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180024521"
+          }
+        ]
+      },
+      {
+        "id": "7094b6e2f886fb5db5568feb0d584aec5c9d0100",
+        "type": "FIX",
+        "text": " sap.ui.core.util.MockServer: destroy all server instances correctly when using method destroyAll"
+      },
+      {
+        "id": "b7fdfcd6983c8c3020eb9d7bc8d1116f9f9571f3",
+        "type": "FIX",
+        "text": " Patcher: unsafeHtml method is now supported between text calls",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      }
+    ]
+  }
+}

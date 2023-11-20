@@ -30,23 +30,26 @@ sap.ui.define([
 	 * @public
 	 * @since 1.42.0
 	 * @alias sap.m.StandardTreeItem
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
-	var StandardTreeItem = TreeItemBase.extend("sap.m.StandardTreeItem", /** @lends sap.m.StandardTreeItem.prototype */ { metadata : {
+	var StandardTreeItem = TreeItemBase.extend("sap.m.StandardTreeItem", /** @lends sap.m.StandardTreeItem.prototype */ {
+		metadata : {
 
-		library : "sap.m",
-		properties : {
-			/**
-			 * Defines the title of the item.
-			 */
-			title : {type : "string", group : "Misc", defaultValue : ""},
+			library : "sap.m",
+			properties : {
+				/**
+				 * Defines the title of the item.
+				 */
+				title : {type : "string", group : "Misc", defaultValue : ""},
 
-			/**
-			 * Defines the tree item icon.
-			 */
-			icon : {type : "sap.ui.core.URI", group : "Misc", defaultValue : null}
-		}
-	}});
+				/**
+				 * Defines the tree item icon.
+				 */
+				icon : {type : "sap.ui.core.URI", group : "Misc", defaultValue : null}
+			}
+		},
+
+		renderer: StandardTreeItemRenderer
+	});
 
 	/**
 	 * Gets the image control to be rendered as Icon.
@@ -73,13 +76,7 @@ sap.ui.define([
 	};
 
 	StandardTreeItem.prototype.getContentAnnouncement = function() {
-		var sAnnouncement = "",
-		oIconInfo = IconPool.getIconInfo(this.getIcon()) || {};
-
-		sAnnouncement += (oIconInfo.text || oIconInfo.name || "") + " ";
-		sAnnouncement += this.getTitle() + " ";
-
-		return sAnnouncement;
+		return this.getTitle();
 	};
 
 	StandardTreeItem.prototype.exit = function() {

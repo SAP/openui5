@@ -1,0 +1,24 @@
+/* ===================================================== */
+/* CSS for control sap.ui.integration.cards/TableContent */
+/* Evening Horizon theme                                 */
+/* ===================================================== */
+
+.sapUiIntCard {
+	&.sapFCardNoHeader,
+	&.sapFCardBottomHeader {
+		& > .sapFCardContent > .sapFCardTableContent .sapMListTblHeader.sapMLIBFocusable:focus { // header of the table
+			> .sapMTblFirstVisibleCell::before {
+				border-top-left-radius: 1rem;
+			}
+			> .sapMTblLastVisibleCell::before {
+				border-top-right-radius: 1rem;
+			}
+		}
+	}
+
+	&:not(.sapUiIntCardWithFooter):not(.sapFCardBottomHeader):not(.sapFCardTransparent) {
+		& > .sapFCardContent > .sapFCardTableContent .sapMTableTBody .sapUiIntTCIRoundedCorners.sapMLIBFocusable:last-child:focus { // last row in the table
+			border-radius: 0 0 1rem 1rem;
+		}
+	}
+}

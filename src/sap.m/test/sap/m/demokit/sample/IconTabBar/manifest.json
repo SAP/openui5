@@ -1,0 +1,31 @@
+{
+	"sap.app": {
+		"id": "sap.m.sample.IconTabBar",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "sap.m.sample.IconTabBar.V",
+			"type": "XML",
+			"async": true
+		},
+		"dependencies": {
+			"libs": {
+				"sap.m": {},
+				"sap.ui.core": {}
+			}
+		},
+		"config": {
+			"sample": {
+				"files": [
+					"C.controller.js",
+					"manifest.json",
+					"V.view.xml",
+					"model/formatter.js"
+				]
+			}
+		}
+	}
+}

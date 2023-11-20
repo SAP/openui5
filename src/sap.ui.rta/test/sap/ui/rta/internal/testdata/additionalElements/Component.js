@@ -1,25 +1,34 @@
 sap.ui.define([
 	"sap/ui/core/UIComponent",
-	"sap/ui/fl/FakeLrepConnectorLocalStorage",
-	"sap/ui/rta/util/UrlParser"
+	"sap/ui/fl/write/_internal/fieldExtensibility/ABAPAccess",
+	"sap/ui/fl/write/_internal/fieldExtensibility/ABAPExtensibilityVariant",
+	"sap/ui/model/json/JSONModel",
+	"sap/m/App",
+	"sap/m/MessageBox",
+	"sap/ui/core/mvc/XMLView",
+	"sap/ui/core/EventBus"
 ], function(
 	UIComponent,
-	FakeLrepConnectorLocalStorage,
-	UrlParser
+	ABAPAccess,
+	ABAPExtensibilityVariant,
+	JSONModel,
+	App,
+	MessageBox,
+	XMLView,
+	EventBus
 ) {
-
 	"use strict";
 
 	return UIComponent.extend("sap.ui.rta.test.additionalElements.Component", {
-
 		metadata: {
 			manifest: "json"
 		},
 
+		init(...aArgs) {
+			this._enableExtensibility();
 
-		init : function() {
-			this._bShowAdaptButton = this.getComponentData().showAdaptButton ? this.getComponentData().showAdaptButton : false;
-			sap.ui.core.UIComponent.prototype.init.apply(this, arguments);
+			this._bShowAdaptButton = !!this.getComponentData().showAdaptButton;
+			UIComponent.prototype.init.apply(this, aArgs);
 		},
 
 		/**
@@ -27,40 +36,54 @@ sap.ui.define([
 		 *
 		 * @returns {sap.ui.core.Control} the content
 		 */
-		createContent : function() {
+		createContent() {
+			var oApp = new App();
 
-			// app specific setup
-			this._createFakeLrep();
-
-			var oApp = new sap.m.App();
-
-			var oModel = new sap.ui.model.json.JSONModel({
-				showAdaptButton : this._bShowAdaptButton
+			var oModel = new JSONModel({
+				showAdaptButton: this._bShowAdaptButton
 			});
-
-			var oPage = sap.ui.view(this.createId("idMain1"), {
-				viewName : "sap.ui.rta.test.additionalElements.ComplexTest",
-				type : sap.ui.core.mvc.ViewType.XML,
-				async: true
+			this.oView = XMLView.create({
+				id: this.createId("idMain1"),
+				viewName: "sap.ui.rta.test.additionalElements.ComplexTest"
+			}).then(function(oPage) {
+				oPage.setModel(oModel, "view");
+				oApp.addPage(oPage);
+				return oPage;
 			});
-
-			oPage.setModel(oModel, "view");
-
-			oApp.addPage(oPage);
 
 			return oApp;
-
 		},
 
 		/**
-		 * Create the FakeLrep with localStorage
+		 * Create stub answers from extensibility service
 		 * @private
 		 */
-		_createFakeLrep: function () {
-			if (UrlParser.getParam('sap-rta-mock-lrep') !== false) {
-				FakeLrepConnectorLocalStorage.enableFakeConnector();
-			}
-		}
+		_enableExtensibility() {
+			var aExtensionData;
+			ABAPAccess.getExtensionData = function(sServiceUri, sEntityTypeName, sEntitySetName) {
+				aExtensionData = [{ businessContext: `${sEntityTypeName} EntityTypeContext`, description: "Other BusinessContext description" }, { businessContext: `${sEntitySetName} EntitySetContext`, description: "Some BusinessContext description"}];
+				return Promise.resolve({
+					extensionData: aExtensionData,
+					entityType: sEntityTypeName,
+					serviceVersion: "some dummy ServiceVersion 0.0.1",
+					serviceName: sServiceUri
+				});
+			};
 
+			ABAPExtensibilityVariant.prototype.getNavigationUri = function() {
+				return Promise.resolve("./extensibilityTool.html");
+			};
+
+			var oUshellContainer = sap.ui.require("sap/ushell/Container");
+			if (oUshellContainer) {
+				ABAPAccess.isExtensibilityEnabled = function() {
+					return Promise.resolve(true);
+				};
+			}
+
+			EventBus.getInstance().subscribe("sap.ui.core.UnrecoverableClientStateCorruption", "RequestReload", function() {
+				MessageBox.warning("Service Outdated, Please restart the UI - In real world other dialog will come up, that can restart the UI");
+			});
+		}
 	});
 });

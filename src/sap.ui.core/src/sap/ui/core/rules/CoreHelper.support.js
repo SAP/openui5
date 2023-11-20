@@ -4,23 +4,25 @@
 /**
  * Helper for core functionality in Support Tool infrastructure.
  */
-sap.ui.define(["jquery.sap.global"],
-	function (jQuery) {
+sap.ui.define(["sap/ui/core/Element", "sap/ui/core/Theming", "sap/ui/thirdparty/jquery"],
+	function(Element, Theming, jQuery) {
 		"use strict";
 
 		var CoreHelper = {
-			/***
-			 * Checks of passed node has parent control of type UI5.
+			/**
+			 * Checks if passed node has parent control of type UI5.
+			 *
 			 * @param node HTML element that will be checked.
-			 * @param oScope Scope in witch checking will be executed.
+			 * @param oScope Scope in which checking will be executed.
 			 * @returns {boolean} If node has parent of type UI5 control it will return true, otherwise false.
 			 */
 			nodeHasUI5ParentControl : function (node, oScope) {
 				/**
-				 * Here we white list all controls that can contain DOM elements with style different than the framework style
+				 * Here we list all controls that can contain DOM elements with style different than the framework style
 				 */
+				// jQuery Plugin "control"
 				var skipParents = ["sap.ui.core.HTML"],
-					parentNode = jQuery(node).control()[0];
+					parentNode = Element.closestTo(node);
 
 				if (!parentNode) {
 					return false;
@@ -40,7 +42,7 @@ sap.ui.define(["jquery.sap.global"],
 			 */
 			getExternalStyleSheets : function () {
 				return Array.from(document.styleSheets).filter(function (styleSheet) {
-					var themeName = sap.ui.getCore().getConfiguration().getTheme(),
+					var themeName = Theming.getTheme(),
 						styleSheetEnding = "/themes/" + themeName + "/library.css",
 						hasHref = !styleSheet.href || !(styleSheet.href.indexOf(styleSheetEnding) !== -1),
 						hasRules = !!styleSheet.rules;

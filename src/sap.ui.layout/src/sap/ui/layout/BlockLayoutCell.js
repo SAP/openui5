@@ -2,8 +2,14 @@
  * ${copyright}
  */
 
-sap.ui.define(['sap/ui/core/Control', './library', "./BlockLayoutCellRenderer"],
-	function(Control, library, BlockLayoutCellRenderer) {
+sap.ui.define([
+	'sap/ui/core/Control',
+	'./library',
+	"./BlockLayoutCellRenderer",
+	"sap/base/Log",
+	"sap/ui/thirdparty/jquery"
+],
+	function(Control, library, BlockLayoutCellRenderer, Log, jQuery) {
 		"use strict";
 
 		/**
@@ -24,7 +30,6 @@ sap.ui.define(['sap/ui/core/Control', './library', "./BlockLayoutCellRenderer"],
 		 * @public
 		 * @since 1.34
 		 * @alias sap.ui.layout.BlockLayoutCell
-		 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 		 */
 		var BlockLayoutCell = Control.extend("sap.ui.layout.BlockLayoutCell", {
 			metadata: {
@@ -65,14 +70,12 @@ sap.ui.define(['sap/ui/core/Control', './library', "./BlockLayoutCellRenderer"],
 					width: {type: "int", group: "Appearance", defaultValue: 0},
 					/**
 					 * The Background color set from which the background color will be selected.
-					 * By using background colors from the predefined sets your colors could later be customized from the Theme Designer.
 					 * <b>Note:</b> backgroundColorSet should be used only in combination with backgroundColorShade.
 					 * @since 1.48
 					 */
 					backgroundColorSet: {type: "sap.ui.layout.BlockLayoutCellColorSet", group: "Appearance"},
 					/**
 					 * The index of the background color in the color set from which the color will be selected.
-					 * By using background colors from the predefined sets your colors could later be customized from the Theme Designer.
 					 * <b>Note:</b> backgroundColorShade should be used only in combination with backgroundColorSet.
 					 * @since 1.48
 					 */
@@ -92,7 +95,9 @@ sap.ui.define(['sap/ui/core/Control', './library', "./BlockLayoutCellRenderer"],
 					titleLink: {type: "sap.ui.core.Control", multiple : false}
 				},
 				designtime: "sap/ui/layout/designtime/BlockLayoutCell.designtime"
-			}
+			},
+
+			renderer: BlockLayoutCellRenderer
 		});
 
 		BlockLayoutCell.prototype.setLayoutData = function (oLayoutData) {
@@ -104,20 +109,37 @@ sap.ui.define(['sap/ui/core/Control', './library', "./BlockLayoutCellRenderer"],
 				oRow._handleEvent(oEvent);
 			}
 			//Check if current cell has defined width
-			if (this.getWidth() != 0) {
+			if (oLayoutData && this.getWidth() != 0) {
 				this.getLayoutData().setSize(this.getWidth());
 			}
 
 			return this;
 		};
 
-		BlockLayoutCell.prototype.setTitleLink = function(oObject) {
-				if (oObject && oObject.getMetadata().getName() !== "sap.m.Link") {
-					jQuery.sap.log.warning("sap.ui.layout.BlockLayoutCell " + this.getId() + ": Can't add value for titleLink aggregation different than sap.m.Link.");
-					return;
-				}
+		/**
+		 * Sets the Width.
+		 *
+		 * @public
+		 * @param {number} iWidth value.
+		 * @returns {this} this BlockLayoutCell reference for chaining.
+		 */
+		BlockLayoutCell.prototype.setWidth = function (iWidth) {
+			this.setProperty("width", iWidth);
 
-				this.setAggregation("titleLink", oObject);
+			if (this.getLayoutData() && (this.getLayoutData().isA("sap.ui.layout.BlockLayoutCellData"))) {
+				this.getLayoutData().setSize(iWidth);
+			}
+
+			return this;
+		};
+
+		BlockLayoutCell.prototype.setTitleLink = function(oObject) {
+			if (oObject && oObject.getMetadata().getName() !== "sap.m.Link") {
+				Log.warning("sap.ui.layout.BlockLayoutCell " + this.getId() + ": Can't add value for titleLink aggregation different than sap.m.Link.");
+				return this;
+			}
+
+			this.setAggregation("titleLink", oObject);
 
 			return this;
 		};

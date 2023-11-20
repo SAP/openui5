@@ -1,0 +1,239 @@
+{
+  "1.120.0": {
+    "date": "October 2023",
+    "notes": [
+      {
+        "id": "cbb7e26fc583fb458decc15f2dbe027ab337583c",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v2.ODataModel#_processSuccess: RFC9110 (205) violation",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370117404"
+          }
+        ]
+      },
+      {
+        "id": "8ec978bf445ff5ea29e2cc0e594929cb9b856d12",
+        "type": "FEATURE",
+        "text": " util/resolveReference: use probing-require before getting from global"
+      },
+      {
+        "id": "074c5ed765674e4e975a1f6c3c0c601f37db5fa9",
+        "type": "FEATURE",
+        "text": " sap.ui.core.IconPool: Update icon font v5.7 and v4.19"
+      },
+      {
+        "id": "14a8eb65a69a8754e48e7e28b54972337233e5a2",
+        "type": "FEATURE",
+        "text": " Deprecation of ManagedObject.create"
+      },
+      {
+        "id": "ae517d126c4689c195de71a65c93d20b90fc65e9",
+        "type": "FEATURE",
+        "text": " sap.ui.model.odata.ODataTreeBindingFlat: Support transitionMessagesOnly binding parameter"
+      },
+      {
+        "id": "e54fbd029fa033127d6bc7aa1fe85823a8d74114",
+        "type": "FIX",
+        "text": " routing.RouteInfo: make the value type complete",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370112658"
+          }
+        ]
+      },
+      {
+        "id": "98d2d075e54217e3864413b781b25c72aa34e56c",
+        "type": "FEATURE",
+        "text": " sap.ui.core: deprecate blanket-based code instrumentation"
+      },
+      {
+        "id": "8087bb8e0aee1b1bc24d02f4f320040f90fb171e",
+        "type": "FEATURE",
+        "text": " Deprecate sap.ui.core.Configuration and API 'getConfiguration' on sap.ui.core.Core"
+      },
+      {
+        "id": "ab8cff615dd4c15615c1f38af82f1d94e24645eb",
+        "type": "FEATURE",
+        "text": " Deprecation of JSONView"
+      },
+      {
+        "id": "b84164d2753626cd82365cf3098e7677415e6f26",
+        "type": "FIX",
+        "text": " core/RenderManager: method 'icon' should output 'aria-hidden'",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370100449"
+          }
+        ]
+      },
+      {
+        "id": "8beda768dec49e5d5d965cf46a5c026c81e75dc5",
+        "type": "FEATURE",
+        "text": " sap.ui.model.odata.v4.ODataModel: Support for withCredentials no longer experimental"
+      },
+      {
+        "id": "861405134cedee0ec9a23e33e0a901954b3fb243",
+        "type": "FEATURE",
+        "text": " sap.ui.model.odata.v2.ODataTreeBinding: Support transitionMessagesOnly binding parameter"
+      },
+      {
+        "id": "733554a59968f6d3c256d1032071072e956e57f0",
+        "type": "FEATURE",
+        "text": " Deprecation of sap.ui.core.Configuration.AnimationMode"
+      },
+      {
+        "id": "179678259b52e8b4bce1d4435ad0bd5361bb7ca0",
+        "type": "FEATURE",
+        "text": " Deprecate FormatSettings in sap.ui.core.Configuration"
+      },
+      {
+        "id": "6e6fbccff68703cb9ca26840c70e56c6ab36963c",
+        "type": "FEATURE",
+        "text": " Deprecate APIs 'getAccessibility', 'getAnimationMode', and 'setAnimationMode' on sap.ui.core.Configuration."
+      },
+      {
+        "id": "45408145ead86c1f49954b69d97ac3ba3c356d49",
+        "type": "FIX",
+        "text": " core/InvisibleText: manually remove DOM when rendered in static UIArea",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370078544"
+          }
+        ]
+      },
+      {
+        "id": "3789dcce2c1c6e6c16f48256d12879120d66b339",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v2.ODataTreeBinding#expandNodeToLevel: keep siblings"
+      },
+      {
+        "id": "1b3dde326e0b3530fa090d7e7b3581547b6149e3",
+        "type": "FEATURE",
+        "text": " core/Configuration: deprecate fiori2Adaptation setting"
+      },
+      {
+        "id": "0f4159b88e9467e11aaa6342c4c40a0261d51a8d",
+        "type": "FEATURE",
+        "text": " Deprecate static Object.isA and provide alternative"
+      },
+      {
+        "id": "55153ef81949f85a9e833a4f850eae3eef816a18",
+        "type": "FEATURE",
+        "text": " Introduce sap/base/i18n/Localization"
+      },
+      {
+        "id": "2a9386b09fd56e920117b93a525962078f1c28b6",
+        "type": "FEATURE",
+        "text": " Deprecate jQuery.sap.storage / jQuery.sap.util.UriParameters"
+      },
+      {
+        "id": "a479cb2cdc16c6bf99b491866b796960579fe086",
+        "type": "FIX",
+        "text": " ResourceBundle: Use Accept-Language: * for empty locale (\"\")",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370100866"
+          }
+        ]
+      },
+      {
+        "id": "4d396df7fcb93824d899dfbb8f3bf657fd664fb5",
+        "type": "FEATURE",
+        "text": " CLDR upgrade to version 43.0.0"
+      },
+      {
+        "id": "9cfe7f978f9f1205f9b2579a523fe33cafe1883d",
+        "type": "FIX",
+        "text": " sap.ui.base.Metadata: Fix JSDoc return type of `getParent`"
+      },
+      {
+        "id": "e5bafc5485106319bb48989e633bd403fde348f7",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v2.ODataModel#resetChanges: do not remove peristent messages",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370086388"
+          }
+        ]
+      },
+      {
+        "id": "c2c46953a920cf8e5586c516698589d99b8cfa90",
+        "type": "FEATURE",
+        "text": " Deprecate APIs 'getAppCacheBuster' and 'getAppCacheBusterMode' on sap.ui.core.Configuration."
+      },
+      {
+        "id": "5f74dee3e5f7e214856f9cfd3521d98e45989403",
+        "type": "FEATURE",
+        "text": " Deprecate APIs 'getOriginInfo', 'getDebug', 'getInspect' and 'getStatisticsEnabled' on sap.ui.core.Configuration."
+      },
+      {
+        "id": "c51bfa9b3906454cf8b2eb5ffbd08639fb5f69e7",
+        "type": "FEATURE",
+        "text": " sap.ui.core.Configuration: deprecate getFileShareSupport"
+      },
+      {
+        "id": "7d7dfa208d4b28eb7c99ee35e1237953d5a13be1",
+        "type": "FEATURE",
+        "text": " Deprecation of sap/ui/core/DeclarativeSupport"
+      },
+      {
+        "id": "886995704809aedbaf7c399f3e0e3a5c6f30043c",
+        "type": "FEATURE",
+        "text": " Deprecate Configuration.getManifestFirst"
+      },
+      {
+        "id": "cd7524243b75cc2b9e7dcd4d7c2500aaee948a4d",
+        "type": "FEATURE",
+        "text": " sap.ui.core.LocaleData#getLanguageName: derive language name if necessary"
+      },
+      {
+        "id": "c58231b007b6c1119245332eef111f438e8a5c2e",
+        "type": "FIX",
+        "text": " sap.ui.test.autowaiter._timeoutWaiter: Callback arguments corrected",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370100483"
+          }
+        ]
+      },
+      {
+        "id": "dbd7430219b051903847319296cd46af1889d66d",
+        "type": "FEATURE",
+        "text": " Move new security facade from sap/ui/core/Security.js to sap/ui/security/Security.js"
+      },
+      {
+        "id": "4c021aee0f606a168ce274d6e9c682147004f4e0",
+        "type": "FEATURE",
+        "text": " UIComponent: Deprecate usage of Routing classes via globals and establish alternative"
+      },
+      {
+        "id": "fd123fc79d9f9627efb6edfc29d0c6508f8216b6",
+        "type": "FEATURE",
+        "text": " sap.m.ObjectStatus: introduce new set of indication colors"
+      },
+      {
+        "id": "d73a742c9de5007efb19eff8f314a74fb8063d65",
+        "type": "FEATURE",
+        "text": " DataType, Library: Enable enum type registration without globals"
+      },
+      {
+        "id": "5c5da5e8352e9d097887430424bea49d063f9dec",
+        "type": "FIX",
+        "text": " sap/ui/qunit/utils/nextUIUpdate"
+      },
+      {
+        "id": "d0b62530a47decc982e60e27d6169404e1510d47",
+        "type": "FEATURE",
+        "text": " Introduce new sap/ui/core/Security facade and deprecate APIs 'setSecurityTokenHandlers', 'getSecurityTokenHandlers', 'getFrameOptions' and 'getAllowlistService' on sap.ui.core.Configuration."
+      }
+    ]
+  }
+}

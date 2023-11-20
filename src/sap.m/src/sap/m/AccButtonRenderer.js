@@ -2,18 +2,24 @@
  * ${copyright}
  */
 
-sap.ui.define(['./ButtonRenderer', 'sap/ui/core/Renderer'],
-	function(ButtonRenderer, Renderer) {
-		"use strict";
+sap.ui.define([
+	"./ButtonRenderer",
+	"sap/ui/core/Renderer"
+], function (ButtonRenderer, Renderer) {
+	"use strict";
 
 	var AccButtonRenderer = Renderer.extend(ButtonRenderer);
+	AccButtonRenderer.apiVersion = 2;
 
-	AccButtonRenderer.renderAccessibilityAttributes = function(oRm, oControl) {
+	AccButtonRenderer.renderAccessibilityAttributes = function (oRM, oControl) {
 		if (oControl.getTabIndex()) {
-			oRm.writeAttribute("tabindex", oControl.getTabIndex());
+			oRM.attr("tabindex", oControl.getTabIndex());
 		}
-		if (oControl.getAriaHidden()){
-			oRm.writeAttribute("aria-hidden", oControl.getAriaHidden());
+		if (oControl.getAriaHidden()) {
+			oRM.attr("aria-hidden", oControl.getAriaHidden());
+		}
+		if (oControl.getAriaHaspopup()) {
+			oRM.attr("aria-haspopup", oControl.getAriaHaspopup());
 		}
 	};
 

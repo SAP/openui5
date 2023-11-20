@@ -1,14 +1,14 @@
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/mvc/Controller', 'sap/ui/model/json/JSONModel', 'sap/ui/Device'],
-	function(jQuery, Controller, JSONModel, Device) {
+sap.ui.define(['sap/ui/core/mvc/Controller', 'sap/ui/model/json/JSONModel', 'sap/ui/Device'],
+	function(Controller, JSONModel, Device) {
 	"use strict";
 
-	var DynamicSideContent = Controller.extend("sap.ui.layout.sample.DynamicSideContentProduct.DynamicSideContent", {
+	return Controller.extend("sap.ui.layout.sample.DynamicSideContentProduct.DynamicSideContent", {
 		onInit : function () {
 			this._oDSC = this.byId("DynamicSideContent");
 			this._showSideContentButton = this.byId("showSideContentButton");
 
 			// set explored app's demo model on this sample
-			var oImgModel = new JSONModel(sap.ui.require.toUrl("sap/ui/demo/mock") + "/img.json");
+			var oImgModel = new JSONModel(sap.ui.require.toUrl("sap/ui/demo/mock/img.json"));
 			this.getView().setModel(oImgModel, "img");
 
 			// set media model
@@ -16,7 +16,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/mvc/Controller', 'sap/ui/model/
 			this.getView().setModel(oMediaModel, "media");
 
 			// set mock feed model
-			var sPath = sap.ui.require.toUrl("sap/ui/layout/sample/DynamicSideContentProduct") + "/feed.json";
+			var sPath = sap.ui.require.toUrl("sap/ui/layout/sample/DynamicSideContentProduct/feed.json");
 			var oModel = new JSONModel(sPath);
 			this.getView().setModel(oModel);
 		},
@@ -44,7 +44,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/mvc/Controller', 'sap/ui/model/
 			oToggleButton.setEnabled(sCurrentBreakpoint === "S");
 		},
 		updateShowSideContentButtonVisibility: function (sCurrentBreakpoint) {
-			var bShowButton = !(sCurrentBreakpoint === "S" || this._oDSC.getShowSideContent());
+			var bShowButton = !(sCurrentBreakpoint === "S" || this._oDSC.isSideContentVisible());
 			this._showSideContentButton.setVisible(bShowButton);
 		},
 		handleToggleClick: function (oEvent) {
@@ -59,7 +59,5 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/mvc/Controller', 'sap/ui/model/
 			this.updateShowSideContentButtonVisibility(this._oDSC.getCurrentBreakpoint());
 		}
 	});
-
-	return DynamicSideContent;
 
 });

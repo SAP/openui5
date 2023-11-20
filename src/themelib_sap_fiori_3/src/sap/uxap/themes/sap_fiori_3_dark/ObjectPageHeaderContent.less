@@ -1,0 +1,74 @@
+/* ================================================= */
+/* CSS for control sap.uxap/ObjectPageHeaderContent  */
+/* Quartz Dark theme                                 */
+/* ================================================= */
+
+@sapUiFiori3AnchorBarBottomShadow: inset 0 -0.0625rem @sapUiObjectHeaderBorderColor;
+@sapUiFiori3AnchorBarTopShadow: inset 0 0.0625rem @sapUiObjectHeaderBorderColor;
+
+.sapUxAPObjectPageHeaderContent .sapMObjStatus, .sapUxAPObjectPageContainer .sapMObjStatus {
+	font-size: @sapMFontMediumSize;
+}
+
+.sapUxAPObjectPageHeaderIdentifierTitleInContent,
+.sapUxAPObjectPageHeaderIdentifierSubTitleInContent {
+	color: @sapUiGroupTitleTextColor;
+}
+
+.sapUxAPObjectPageHeaderIdentifier .sapUxAPObjectPageHeaderObjectImageForce .sapUxAPObjectPageHeaderObjectImage,
+.sapUxAPObjectPageHeaderStickied .sapUxAPObjectPageHeaderIdentifier .sapUxAPObjectPageHeaderObjectImage {
+	padding: 0;
+}
+
+html .sapUxAPObjectPageLayout-Std-Desktop, html .sapUxAPObjectPageLayout-Std-Tablet {
+	.sapUxAPObjectPageHeaderContent .sapUxAPObjectPageHeaderObjectImage-Circle .sapUxAPObjectPageHeaderObjectImage {
+		margin-right: 2rem;
+		margin-bottom: 1rem;
+		width: 5rem;
+		height: 5rem;
+	}
+	.sapUxAPObjectPageHeaderIdentifier .sapUxAPObjectPageHeaderObjectImageForce .sapUxAPObjectPageHeaderObjectImage,
+	.sapUxAPObjectPageHeaderStickied .sapUxAPObjectPageHeaderIdentifier .sapUxAPObjectPageHeaderObjectImage {
+		margin: 0.25rem 1rem 0.25rem 0;
+	}
+}
+
+.sapUxAPObjectPageHeaderContentImageContainer.sapUxAPObjectPageHeaderObjectImage-Square .sapUxAPObjectPageHeaderObjectImage,
+.sapUxAPObjectPageHeaderObjectImageContainer.sapUxAPObjectPageHeaderObjectImage-Square .sapUxAPObjectPageHeaderObjectImage {
+	border-radius: 0.25rem;
+}
+
+.sapUxAPObjectPageLayout-Std-Tablet,
+.sapUxAPObjectPageLayout-Std-Desktop {
+	.sapUxAPObjectPageHeaderContentCellRight {
+		padding-right: 2rem;
+	}
+	.sapUxAPObjectPageHeaderContent:only-child {
+		padding: 1rem 2rem;
+	}
+}
+
+.sapUxAPObjectPageLayout-Std-Phone  {
+	.sapUxAPObjectPageHeaderContent:only-child {
+		padding: 1rem;
+	}
+}
+
+.sapUxAPObjectPageHeaderIdentifierSubTitleInContent {
+	font-size: @sapMFontMediumSize;
+}
+
+.sapUxAPObjectPageHeaderContent {
+	padding-top: 1rem;
+	padding-bottom: 1rem;
+
+	.sapUxAPObjectChildPage {
+		margin-top: -1rem;
+	}
+
+	> .sapUiSimpleForm {
+		.sapMText, .sapMLabel, .sapMLnk {
+			font-size: @sapMFontMediumSize;
+		}
+	}
+}

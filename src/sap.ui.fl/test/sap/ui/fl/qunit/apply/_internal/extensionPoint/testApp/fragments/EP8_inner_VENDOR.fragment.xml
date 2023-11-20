@@ -1,0 +1,7 @@
+<core:FragmentDefinition
+		id="customFragment"
+		xmlns="sap.m"
+		xmlns:core="sap.ui.core">
+		<Button id="EP8_inner_Button11" text="This Button11 is in an Extension Fragment nested in two extension points"></Button>
+		<Button id="EP8_inner_Button12" text="This Button12 is in an Extension Fragment nested in two extension points"></Button>
+</core:FragmentDefinition>

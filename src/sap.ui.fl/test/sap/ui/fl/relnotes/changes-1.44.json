@@ -40,14 +40,14 @@
       },
       {
         "id": "8500ca102726bd7b237170da7e0f04b51b3a1adc",
-        "type": "TEST",
-        "text": "sap.ui.fl tests use simpleForm controls",
+        "type": "FIX",
+        "text": "[TEST] sap.ui.fl tests use simpleForm controls",
         "references": []
       },
       {
         "id": "30c5e80bf162632432b27f3369e8d1114c17d008",
-        "type": "TEST",
-        "text": "sap.ui.fl tests use simpleForm controls",
+        "type": "FIX",
+        "text": "[TEST] sap.ui.fl tests use simpleForm controls",
         "references": []
       }
     ]

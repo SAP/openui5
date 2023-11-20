@@ -1,31 +1,37 @@
-/*global QUnit testRule*/
+/*global QUnit */
 
-sap.ui.define(["jquery.sap.global"], function (jQuery) {
+sap.ui.define([
+	"sap/m/Button",
+	"sap/m/Page",
+	"sap/m/Panel",
+	"sap/ui/core/IconPool",
+	"test-resources/sap/ui/support/TestHelper"
+], function (Button, Page, Panel, IconPool, testRule) {
 	"use strict";
 
 	QUnit.module("Button rule tests", {
-		setup: function () {
-			this.page = new sap.m.Page({
+		beforeEach: function () {
+			this.page = new Page({
 				content: [
-					new sap.m.Panel({
+					new Panel({
 						id: "buttonTestsContext",
 						content: [
-							new sap.m.Button(),
-							new sap.m.Button({
-								icon: sap.ui.core.IconPool.getIconURI("add"),
+							new Button(),
+							new Button({
+								icon: IconPool.getIconURI("add"),
 								text: "Add",
 								tooltip: "Add"
 							}),
-							new sap.m.Button({
-								icon: sap.ui.core.IconPool.getIconURI("add"),
+							new Button({
+								icon: IconPool.getIconURI("add"),
 								tooltip: "Add"
 							}),
-							new sap.m.Button({
-								icon: sap.ui.core.IconPool.getIconURI("add"),
+							new Button({
+								icon: IconPool.getIconURI("add"),
 								text: "Add"
 							}),
-							new sap.m.Button({
-								icon: sap.ui.core.IconPool.getIconURI("add")
+							new Button({
+								icon: IconPool.getIconURI("add")
 							})
 						]
 					})
@@ -33,7 +39,7 @@ sap.ui.define(["jquery.sap.global"], function (jQuery) {
 			});
 			this.page.placeAt("qunit-fixture");
 		},
-		teardown: function () {
+		afterEach: function () {
 			this.page.destroy();
 		}
 	});

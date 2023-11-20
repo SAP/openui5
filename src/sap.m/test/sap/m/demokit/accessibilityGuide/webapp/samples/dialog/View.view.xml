@@ -1,0 +1,9 @@
+<mvc:View
+		controllerName="sap.m.sample.dialog.Controller"
+		xmlns="sap.m"
+		xmlns:mvc="sap.ui.core.mvc">
+	<Button
+			text="Message Dialog"
+			width="300px"
+			press="onOpenMessageDialog" />
+</mvc:View>

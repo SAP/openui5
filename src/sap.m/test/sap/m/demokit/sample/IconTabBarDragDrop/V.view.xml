@@ -1,0 +1,29 @@
+<mvc:View
+	controllerName="sap.m.sample.IconTabBarDragDrop.C"
+	xmlns="sap.m"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:f="sap.ui.layout.form">
+	<f:SimpleForm
+		layout="ResponsiveGridLayout"
+		editable="true"
+		adjustLabelSpan="false"
+		labelSpanXL="2"
+		labelSpanL="2"
+		labelSpanM="3"
+		labelSpanS="5">
+		<Label text="Maximum Nesting Level" />
+		<StepInput
+			value="0"
+			min="0"
+			max="100"
+			step="1"
+			width="120px"
+			change=".onMaxNestingLevelChange" />
+	</f:SimpleForm>
+
+	<IconTabBar
+		id="idIconTabBar"
+		enableTabReordering="true"
+		class="sapUiResponsiveContentPadding">
+	</IconTabBar>
+</mvc:View>

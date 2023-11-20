@@ -1,0 +1,31 @@
+{
+	"sap.app": {
+		"id": "sap.ui.unified.sample.CurrencyInTable",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "sap.ui.unified.sample.CurrencyInTable.View",
+			"type": "XML",
+			"async": true
+		},
+		"dependencies": {
+			"libs": {
+				"sap.ui.unified": {},
+				"sap.ui.core": {},
+				"sap.m": {}
+			}
+		},
+		"config": {
+			"sample": {
+				"files": [
+					"View.view.xml",
+					"Controller.controller.js",
+					"manifest.json"
+				]
+			}
+		}
+	}
+}

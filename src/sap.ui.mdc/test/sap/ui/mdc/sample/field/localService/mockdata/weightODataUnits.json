@@ -1,0 +1,44 @@
+[
+	{
+		"MatrId": "1",
+		"id": "G",
+		"unit": "G",
+		"text": "gram"
+	},
+	{
+		"MatrId": "1",
+		"id": "KG",
+		"unit": "KG",
+		"text": "kilogram"
+	},
+	{
+		"MatrId": "1",
+		"id": "MG",
+		"unit": "MG",
+		"text": "milligram"
+	},
+	{
+		"MatrId": "1",
+		"id": "TO",
+		"unit": "TO",
+		"text": "ton"
+	},
+	{
+		"MatrId": "2",
+		"id": "G",
+		"unit": "G",
+		"text": "gram"
+	},
+	{
+		"MatrId": "2",
+		"id": "KG",
+		"unit": "KG",
+		"text": "kilogram"
+	},
+	{
+		"MatrId": "3",
+		"id": "TO",
+		"unit": "TO",
+		"text": "ton"
+	}
+]

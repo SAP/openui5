@@ -1,0 +1,22 @@
+{
+    "compilerOptions": {
+        "target": "ES5",
+        "module": "AMD",
+        "moduleResolution": "node",
+        "skipLibCheck": true,
+        "preserveConstEnums": true,
+        "allowJs": true,
+        "strict": true,
+        "strictNullChecks": true,
+        "strictPropertyInitialization": false,
+        "rootDir": "./src",
+        "outDir": "./webapp",
+        "baseUrl": "./"
+    },
+    "include": [
+        "./src/**/*"
+    ],
+    "exclude": [
+        "./test"
+    ]
+}

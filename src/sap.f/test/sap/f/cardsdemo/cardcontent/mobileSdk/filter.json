@@ -1,0 +1,131 @@
+{
+	"sap.app": {
+		"id": "cardsdemo.mobileSdk.filter",
+		"type": "card",
+		"title": "Sample of a Card with Filters"
+	},
+	"sap.card": {
+		"configuration": {
+			"filters": {
+				"shipper": {
+					"value": "{parameters>/selectedShipperID/value}",
+					"type": "Select",
+					"label": "Shipper",
+					"item": {
+						"path": "/value",
+						"template": {
+							"key": "{ShipperID}",
+							"title": "{CompanyName}"
+						}
+					},
+					"data": {
+						"request": {
+							"url": "{{destinations.Northwind_V4}}/Shippers"
+						}
+					}
+				},
+				"country": {
+					"type": "ComboBox",
+					"label": "Country",
+					"selectedKey": "FR",
+					"placeholder": "Enter a country",
+					"data": {
+						"json": [
+							{
+								"text": "Austria",
+								"key": "AT"
+							},
+							{
+								"text": "Germany",
+								"key": "DE"
+							},
+							{
+								"text": "France",
+								"key": "FR"
+							}
+						]
+					},
+					"item": {
+						"path": "/",
+						"template": {
+							"key": "{key}",
+							"title": "{text}",
+							"additionalText": "{key}"
+						}
+					}
+				},
+				"city": {
+					"type": "Search",
+					"label": "City",
+					"value": "Toulouse",
+					"placeholder": "Enter a city"
+				}
+			},
+			"destinations": {
+				"Northwind_V4": {
+					"name": "Northwind_V4",
+					"label": "Northwind V4 Service URL",
+					"defaultUrl": "https://services.odata.org/V4/Northwind/Northwind.svc"
+				}
+			},
+			"parameters": {
+				"maxOrdersShown": {
+					"value": 3,
+					"type": "integer",
+					"label": "Number of orders",
+					"description": "How many orders to show in the list."
+				},
+				"selectedShipperID": {
+					"value": 3,
+					"type": "integer",
+					"label": "The default selected shipper"
+				}
+			}
+		},
+		"data": {
+			"request": {
+				"url": "{{destinations.Northwind_V4}}/Orders",
+				"parameters": {
+					"$count": true,
+					"$skip": "{paginator>/skip}",
+					"$top": "{parameters>/maxOrdersShown/value}",
+					"$filter": "Shipper/ShipperID eq {filters>/shipper/value} and contains(ShipCountry, '{filters>/country/value}') and contains(ShipCity, '{filters>/city/value}')"
+				}
+			},
+			"path": "/value/"
+		},
+		"type": "List",
+		"header": {
+			"title": "Orders by shipper {filters>/shipper/selectedItem/title}",
+			"icon": {
+				"src": "sap-icon://product"
+			},
+			"status": {
+				"text": {
+					"format": {
+						"translationKey": "i18n>CARD.COUNT_X_OF_Y",
+						"parts": [
+							"parameters>/visibleItems",
+							"/@odata.count"
+						]
+					}
+				}
+			}
+		},
+		"content": {
+			"item": {
+				"title": "{OrderID} {ShipAddress}",
+				"description": "{context>/cardExplorer/stateChangedEvent/contextTest}",
+				"info": {
+					"value": "{ShipCountry} / {ShipCity}"
+				}
+			}
+		},
+		"footer": {
+			"paginator": {
+				"totalCount": "{/@odata.count}",
+				"pageSize": "{parameters>/maxOrdersShown/value}"
+			}
+		}
+	}
+}

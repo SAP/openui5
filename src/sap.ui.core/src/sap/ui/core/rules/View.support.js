@@ -4,14 +4,22 @@
 /**
  * Defines support rules related to the view.
  */
-sap.ui.define(["jquery.sap.global", "sap/ui/support/library"],
-	function(jQuery, SupportLib) {
+sap.ui.define(["sap/base/Log", "sap/ui/support/library", "sap/ui/core/Element", "sap/ui/thirdparty/jquery", "sap/base/util/isEmptyObject", "sap/ui/base/DataType"],
+	function(Log, SupportLib, Element, jQuery, isEmptyObject, DataType) {
 	"use strict";
 
 	// shortcuts
 	var Categories = SupportLib.Categories; // Accessibility, Performance, Memory, ...
 	var Severity = SupportLib.Severity; // Hint, Warning, Error
 	var Audiences = SupportLib.Audiences; // Control, Internal, Application
+
+	var isDefaultValue = function (oPropertyMetadata, vValue) {
+		if (oPropertyMetadata.defaultValue !== null) {
+			return oPropertyMetadata.defaultValue === vValue;
+		}
+
+		return vValue === DataType.getType(oPropertyMetadata.type).getDefaultValue();
+	};
 
 	//**********************************************************
 	// Rule Definitions
@@ -28,13 +36,16 @@ sap.ui.define(["jquery.sap.global", "sap/ui/support/library"],
 		minversion: "-",
 		title: "XML View is not configured with namespace 'sap.ui.core.mvc'",
 		description: "For consistency and proper resource loading, the root node of an XML view must be configured with the namespace 'mvc'",
-		resolution: "Define the XML view as '<core:View ...>' and configure the XML namepspace as 'xmlns:mvc=\"sap.ui.core.mvc\"'",
+		resolution: "Define the XML view as '<mvc:View ...>' and configure the XML namespace as 'xmlns:mvc=\"sap.ui.core.mvc\"'",
 		resolutionurls: [{
 			text: "Documentation: Namespaces in XML Views",
-			href: "https://sapui5.hana.ondemand.com/#docs/guide/2421a2c9fa574b2e937461b5313671f0.html"
+			href: "https://sdk.openui5.org/topic/2421a2c9fa574b2e937461b5313671f0"
 		}],
 		check: function(oIssueManager, oCoreFacade, oScope) {
-			var aXMLViews = oScope.getElements().filter(function (oControl) { return oControl.getMetadata().getName() === "sap.ui.core.mvc.XMLView"; });
+			var aXMLViews = oScope.getElements().filter(function (oControl) {
+				return oControl.isA("sap.ui.core.mvc.XMLView") && !oControl.isSubView();
+			});
+
 			aXMLViews.forEach(function (oXMLView) {
 				if (oXMLView._xContent.namespaceURI !== "sap.ui.core.mvc") {
 					var sViewName = oXMLView.getViewName().split("\.").pop();
@@ -64,10 +75,12 @@ sap.ui.define(["jquery.sap.global", "sap/ui/support/library"],
 		resolution: "Set the namespace of the control library that holds most of the controls you use as default namespace (e.g. xmlns=\"sap.m\")",
 		resolutionurls: [{
 			text: "Documentation: Namespaces in XML Views",
-			href: "https://sapui5.hana.ondemand.com/#docs/guide/2421a2c9fa574b2e937461b5313671f0.html"
+			href: "https://sdk.openui5.org/topic/2421a2c9fa574b2e937461b5313671f0"
 		}],
 		check: function(oIssueManager, oCoreFacade, oScope) {
-			var aXMLViews = oScope.getElements().filter(function (oControl) { return oControl.getMetadata().getName() === "sap.ui.core.mvc.XMLView"; });
+			var aXMLViews = oScope.getElements().filter(function (oControl) {
+				return oControl.isA("sap.ui.core.mvc.XMLView") && !oControl.isSubView();
+			});
 
 			aXMLViews.forEach(function (oXMLView) {
 				if (!oXMLView._xContent.attributes.getNamedItem("xmlns")) {
@@ -93,52 +106,20 @@ sap.ui.define(["jquery.sap.global", "sap/ui/support/library"],
 		title: "Control tag in XML view starts with lower case",
 		description: "Control tags with lower case cannot be loaded in Linux-based systems",
 		resolution: "Start the Control tag with upper case",
-		resolutionurls: [],
+		resolutionurls: [{
+			text: "Documentation: SAPUI5 Control Development Guidelines",
+			href: "https://sdk.openui5.org/topic/4549da61e2d949d6a3d20ad8a9d17a6f"
+		}],
 		check: function (oIssueManager, oCoreFacade, oScope) {
-
-			//get all aggregations of each element
-			var aAggregationsOfElements = oScope.getElements().map(
-					function (oElement) {
-						return Object.keys(oElement.getMetadata().getAllAggregations());
-					}
-			);
-			//flatten array of arrays and filter duplicates
-			var aAggregations = aAggregationsOfElements.reduce(
-				function(a, b) {
-					return a.concat(b);
-				}).filter(
-					function (x, i, a) {
-						return a.indexOf(x) === i;
-					});
-
-			var aXMLViews = oScope.getElements().filter(function (oControl) {
-				return oControl.getMetadata().getName() === "sap.ui.core.mvc.XMLView";
+			var aRelevantLogMessages = Log.getLogEntries().filter(function(oEntry) {
+				return oEntry.component === "sap.ui.core.XMLTemplateProcessor#lowerCase";
 			});
-
-			aXMLViews.forEach(function (oXMLView) {
-				var aLocalName = [];
-				var _getTags = function (oXcontent) {
-					aLocalName.push(oXcontent.localName);
-					for (var i = 0; i < oXcontent.children.length; i++) {
-						_getTags(oXcontent.children[i]);
-					}
-				};
-
-				_getTags(oXMLView._xContent);
-				aLocalName = jQuery.uniqueSort(aLocalName);
-
-				aLocalName.forEach(function (sTag) 	{
-					var sFirstLetter = sTag.charAt(0);
-					// check for lowercase, aggregations are excluded
-					if ((sFirstLetter.toLowerCase() === sFirstLetter) && !aAggregations.includes(sTag)) {
-						var sViewName = oXMLView.getViewName().split("\.").pop();
-						oIssueManager.addIssue({
-							severity: Severity.High,
-							details: "View '" + sViewName + "' (" + oXMLView.getId() + ") contains a Control tag that starts with lower case '" + sTag + "'",
-							context: {
-								id: oXMLView.getId()
-							}
-						});
+			aRelevantLogMessages.forEach(function(oMessage) {
+				oIssueManager.addIssue({
+					severity: Severity.High,
+					details: oMessage.message,
+					context: {
+						id: oMessage.details
 					}
 				});
 			});
@@ -159,10 +140,12 @@ sap.ui.define(["jquery.sap.global", "sap/ui/support/library"],
 		resolution: "Remove the unused namespaces from the view definition",
 		resolutionurls: [{
 			text: "Documentation: Namespaces in XML Views",
-			href: "https://sapui5.hana.ondemand.com/#docs/guide/2421a2c9fa574b2e937461b5313671f0.html"
+			href: "https://sdk.openui5.org/topic/2421a2c9fa574b2e937461b5313671f0"
 		}],
 		check: function(oIssueManager, oCoreFacade, oScope) {
-			var aXMLViews = oScope.getElements().filter(function (oControl) { return oControl.getMetadata().getName() === "sap.ui.core.mvc.XMLView"; });
+			var aXMLViews = oScope.getElements().filter(function (oControl) {
+				return oControl.isA("sap.ui.core.mvc.XMLView");
+			});
 
 			aXMLViews.forEach(function (oXMLView) {
 				for (var i = 0; i < oXMLView._xContent.attributes.length; i++) {
@@ -174,15 +157,13 @@ sap.ui.define(["jquery.sap.global", "sap/ui/support/library"],
 					// and the mvc, because the use of mvc is checked in other rule
 					if (sName.match("xmlns:")
 						&& sLocalName !== "xmlns:support"
-						&& sLocalName !== "mvc") {
-							var oContent = jQuery(oXMLView._xContent)[0];
+						&& sLocalName !== "mvc"
+						&& sFullName.indexOf("schemas.sap.com") < 0) {
 							// get the xml code of the view as a string
-							// The outerHTML doesn't work with IE, so we used
-							// the XMLSerializer instead
-							var sContent = new XMLSerializer().serializeToString(oContent);
+							var sContent = jQuery(oXMLView._xContent)[0].outerHTML;
 
 							// check if there is a reference of this namespace inside the view
-							if (!sContent.match("<" + sLocalName + ":")) {
+							if (!sContent.match("<" + sLocalName + ":") && !sContent.match(" " + sLocalName + ":")) {
 								var sViewName = oXMLView.getViewName().split("\.").pop();
 								oIssueManager.addIssue({
 									severity: Severity.Medium,
@@ -212,32 +193,66 @@ sap.ui.define(["jquery.sap.global", "sap/ui/support/library"],
 		resolution: "Refer to the API of the element which property should be used instead.",
 		resolutionurls: [{
 			text: "API Reference",
-			href: "https://sapui5.hana.ondemand.com/#/api/deprecated"
+			href: "https://sdk.openui5.org/api/deprecated"
 		}],
 		check: function(oIssueManager, oCoreFacade, oScope) {
-			oScope.getElementsByClassName(sap.ui.core.Element)
-				.forEach(function(oElement) {
+			oScope.getElementsByClassName(Element).forEach(function(oElement) {
 
-					var oMetadata = oElement.getMetadata(),
-						mProperties = oMetadata.getAllProperties();
+				var oMetadata = oElement.getMetadata(),
+					mProperties = oMetadata.getAllProperties();
 
-					for (var sProperty in mProperties) {
-						// if property is deprecated and it is set to a different from the default value
-						// Checks only the deprecated properties with defaultValue property is not null
-						if (mProperties[sProperty].deprecated
-							&& mProperties[sProperty].defaultValue != oElement.getProperty(sProperty)
-							&& mProperties[sProperty].defaultValue !== null) {
+				for (var sProperty in mProperties) {
+					// if property is deprecated and it is set to a different from the default value
+					// Checks only the deprecated properties with defaultValue property is not null
+					if (mProperties[sProperty].deprecated &&
+						!isDefaultValue(mProperties[sProperty], oElement.getProperty(sProperty))) {
 
-							oIssueManager.addIssue({
-								severity: Severity.Medium,
-								details: "Deprecated property '" + sProperty + "' is used for element '" + oElement.getId() + "'.",
-								context: {
-									id: oElement.getId()
-								}
-							});
-						}
+						oIssueManager.addIssue({
+							severity: Severity.Medium,
+							details: "Deprecated property '" + sProperty + "' is used for element '" + oElement.getId()
+								+ "'. Default value: '" + mProperties[sProperty].defaultValue + "' and current value: '"
+								+ oElement.getProperty(sProperty) + "'",
+							context: {
+								id: oElement.getId()
+							}
+						});
 					}
-				});
+				}
+			});
+		}
+	};
+
+	/**
+	 * Checks for deprecated controls
+	 */
+	var oDeprecatedElementRule = {
+		id: "deprecatedElement",
+		audiences: [Audiences.Application],
+		categories: [Categories.Functionality],
+		enabled: true,
+		minversion: "1.38",
+		title: "Usage of deprecated element",
+		description: "Using deprecated controls should be avoided, because they are not maintained anymore",
+		resolution: "Refer to the API of the element which element should be used instead.",
+		resolutionurls: [{
+			text: "API Reference",
+			href: "https://sdk.openui5.org/api/deprecated"
+		}],
+		check: function(oIssueManager, oCoreFacade, oScope) {
+			oScope.getElementsByClassName(Element).forEach(function(oElement) {
+
+				var oMetadata = oElement.getMetadata();
+
+				if (oMetadata.isDeprecated()) {
+					oIssueManager.addIssue({
+						severity: Severity.Medium,
+						details: "Deprecated element '" + oElement.getId() + "' is used.",
+						context: {
+							id: oElement.getId()
+						}
+					});
+				}
+			});
 		}
 	};
 
@@ -255,30 +270,29 @@ sap.ui.define(["jquery.sap.global", "sap/ui/support/library"],
 		resolution: "Refer to the API of the element which aggregation should be used instead.",
 		resolutionurls: [{
 			text: "API Reference",
-			href: "https://sapui5.hana.ondemand.com/#/api/deprecated"
+			href: "https://sdk.openui5.org/api/deprecated"
 		}],
 		check: function(oIssueManager, oCoreFacade, oScope) {
-			oScope.getElementsByClassName(sap.ui.core.Element)
-				.forEach(function(oElement) {
+			oScope.getElementsByClassName(Element).forEach(function(oElement) {
 
-					var oMetadata = oElement.getMetadata(),
-						mAggregations = oMetadata.getAllAggregations();
+				var oMetadata = oElement.getMetadata(),
+					mAggregations = oMetadata.getAllAggregations();
 
-					for (var sAggregation in mAggregations) {
-						// if aggregation is deprecated and contains elements
-						if (mAggregations[sAggregation].deprecated
-							&& !jQuery.isEmptyObject(oElement.getAggregation(sAggregation))) {
+				for (var sAggregation in mAggregations) {
+					// if aggregation is deprecated and contains elements
+					if (mAggregations[sAggregation].deprecated
+						&& !isEmptyObject(oElement.getAggregation(sAggregation))) {
 
-							oIssueManager.addIssue({
-								severity: Severity.Medium,
-								details: "Deprecated aggregation '" + sAggregation + "' is used for element '" + oElement.getId() + "'.",
-								context: {
-									id: oElement.getId()
-								}
-							});
-						}
+						oIssueManager.addIssue({
+							severity: Severity.Medium,
+							details: "Deprecated aggregation '" + sAggregation + "' is used for element '" + oElement.getId() + "'.",
+							context: {
+								id: oElement.getId()
+							}
+						});
 					}
-				});
+				}
+			});
 		}
 	};
 
@@ -296,30 +310,29 @@ sap.ui.define(["jquery.sap.global", "sap/ui/support/library"],
 		resolution: "Refer to the API of the element which association should be used instead.",
 		resolutionurls: [{
 			text: "API Reference",
-			href: "https://sapui5.hana.ondemand.com/#/api/deprecated"
+			href: "https://sdk.openui5.org/api/deprecated"
 		}],
 		check: function(oIssueManager, oCoreFacade, oScope) {
-			oScope.getElementsByClassName(sap.ui.core.Element)
-				.forEach(function(oElement) {
+			oScope.getElementsByClassName(Element).forEach(function(oElement) {
 
-					var oMetadata = oElement.getMetadata(),
-						mAssociations = oMetadata.getAllAssociations();
+				var oMetadata = oElement.getMetadata(),
+					mAssociations = oMetadata.getAllAssociations();
 
-					for (var sAssociation in mAssociations) {
-						// if association is deprecated and set by developer
-						if (mAssociations[sAssociation].deprecated
-							&& !jQuery.isEmptyObject(oElement.getAssociation(sAssociation))) {
+				for (var sAssociation in mAssociations) {
+					// if association is deprecated and set by developer
+					if (mAssociations[sAssociation].deprecated
+						&& !isEmptyObject(oElement.getAssociation(sAssociation))) {
 
-							oIssueManager.addIssue({
-								severity: Severity.Medium,
-								details: "Deprecated association '" + sAssociation + "' is used for element '" + oElement.getId() + "'.",
-								context: {
-									id: oElement.getId()
-								}
-							});
-						}
+						oIssueManager.addIssue({
+							severity: Severity.Medium,
+							details: "Deprecated association '" + sAssociation + "' is used for element '" + oElement.getId() + "'.",
+							context: {
+								id: oElement.getId()
+							}
+						});
 					}
-				});
+				}
+			});
 		}
 	};
 
@@ -337,30 +350,29 @@ sap.ui.define(["jquery.sap.global", "sap/ui/support/library"],
 		resolution: "Refer to the API of the element which event should be used instead.",
 		resolutionurls: [{
 			text: "API Reference",
-			href: "https://sapui5.hana.ondemand.com/#/api/deprecated"
+			href: "https://sdk.openui5.org/api/deprecated"
 		}],
 		check: function(oIssueManager, oCoreFacade, oScope) {
-			oScope.getElementsByClassName(sap.ui.core.Element)
-				.forEach(function(oElement) {
+			oScope.getElementsByClassName(Element).forEach(function(oElement) {
 
-					var oMetadata = oElement.getMetadata(),
-						mEvents = oMetadata.getAllEvents();
+				var oMetadata = oElement.getMetadata(),
+					mEvents = oMetadata.getAllEvents();
 
-					for (var sEvent in mEvents) {
-						// if event is deprecated and developer added event handler
-						if (mEvents[sEvent].deprecated
-							&& oElement.mEventRegistry[sEvent] && oElement.mEventRegistry[sEvent].length > 0) {
+				for (var sEvent in mEvents) {
+					// if event is deprecated and developer added event handler
+					if (mEvents[sEvent].deprecated
+						&& oElement.mEventRegistry[sEvent] && oElement.mEventRegistry[sEvent].length > 0) {
 
-							oIssueManager.addIssue({
-								severity: Severity.Medium,
-								details: "Deprecated event '" + sEvent + "' is used for element '" + oElement.getId() + "'.",
-								context: {
-									id: oElement.getId()
-								}
-							});
-						}
+						oIssueManager.addIssue({
+							severity: Severity.Medium,
+							details: "Deprecated event '" + sEvent + "' is used for element '" + oElement.getId() + "'.",
+							context: {
+								id: oElement.getId()
+							}
+						});
 					}
-				});
+				}
+			});
 		}
 	};
 
@@ -370,9 +382,9 @@ sap.ui.define(["jquery.sap.global", "sap/ui/support/library"],
 		oXMLViewLowerCaseControl,
 		oXMLViewUnusedNamespaces,
 		oDeprecatedPropertyRule,
+		oDeprecatedElementRule,
 		oDeprecatedAggregationRule,
 		oDeprecatedAssociationRule,
 		oDeprecatedEventRule
 	];
 }, true);
-

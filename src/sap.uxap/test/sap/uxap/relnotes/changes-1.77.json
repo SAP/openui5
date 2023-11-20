@@ -1,0 +1,59 @@
+{
+  "1.77.0": {
+    "date": "March 2020",
+    "notes": [
+      {
+        "id": "4b089230f80b1cc9618da73e972ac8a00d424bb1",
+        "type": "FEATURE",
+        "text": " sap.uxap.ObjectPageSubSection: Show/hide title implemented",
+        "references": []
+      },
+      {
+        "id": "9630b8266e6432ea14b4b33690f8bc0ad2252876",
+        "type": "FEATURE",
+        "text": " sap.uxap.ObjectPageLayout: Header facet pattern added",
+        "references": []
+      },
+      {
+        "id": "7fe9b8630fb198d7117f035fd1064ff13cbcbcb8",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Scrolled subSection is now identified",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070052964"
+          }
+        ]
+      },
+      {
+        "id": "7f8caa9061e99cb45df8f5afdc06a0466406da8e",
+        "type": "FEATURE",
+        "text": " sap.uxap.AnchorBar: Accessibility improvement",
+        "references": []
+      },
+      {
+        "id": "e434762d86d4c59db49b7bf6e7640a6351a5d4e0",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageComponentContainer: Performance optimization",
+        "references": []
+      },
+      {
+        "id": "428e89e36aefb34599881f18852cc6b815ce7b51",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Corrected event paramters",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070116486"
+          }
+        ]
+      },
+      {
+        "id": "1c410f85a66ff6d8857633c681b3dfbc3cea1ea3",
+        "type": "FEATURE",
+        "text": " sap.uxap.ObjectPageLayout: Event for SubSections visibility",
+        "references": []
+      }
+    ]
+  }
+}

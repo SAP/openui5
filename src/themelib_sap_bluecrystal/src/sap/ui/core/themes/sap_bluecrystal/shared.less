@@ -6,7 +6,6 @@
 	-webkit-tap-highlight-color: rgba(0, 0, 0, 0);
 	-webkit-touch-callout: none;
 	-webkit-text-size-adjust: none;
-	-ms-text-size-adjust: none;
 }
 
 .sapMContainerMargin {
@@ -25,16 +24,13 @@ html.sap-phone *, html.sap-tablet:not(.sap-desktop) * {   /* FIXME!!! (star rule
 	/* for phones and tablets (combi devices are excluded because they should have desktop behavior)*/
 	-webkit-user-select: none;
 	-moz-user-select: none;
-	-ms-user-select: none;
 	user-select: none;
-	-webkit-user-drag: none;
 }
 
-html.sap-phone input, html.sap-phone textarea, html.sap-phone [contenteditable=true], html.sap-phone [contenteditable=true] > div, html.sap-phone .sapUiSelectable,
-html.sap-tablet:not(.sap-desktop) input, html.sap-tablet:not(.sap-desktop) textarea, html.sap-tablet:not(.sap-desktop) [contenteditable=true], html.sap-tablet:not(.sap-desktop) [contenteditable=true] > div , html.sap-tablet:not(.sap-desktop) .sapUiSelectable {
+html.sap-phone input, html.sap-phone textarea, html.sap-phone [contenteditable=true], html.sap-phone [contenteditable=true] > *, html.sap-phone .sapUiSelectable,
+html.sap-tablet:not(.sap-desktop) input, html.sap-tablet:not(.sap-desktop) textarea, html.sap-tablet:not(.sap-desktop) [contenteditable=true], html.sap-tablet:not(.sap-desktop) [contenteditable=true] > *, html.sap-tablet:not(.sap-desktop) .sapUiSelectable {
 	-webkit-user-select: text;
 	-moz-user-select: text;
-	-ms-user-select: text;
 	user-select: text;
 }
 
@@ -407,7 +403,6 @@ html.sap-tablet:not(.sap-desktop) input, html.sap-tablet:not(.sap-desktop) texta
 
 html.sapUiSuppressBackgroundStyles {
 	background-color: transparent;
-	-ms-filter: "none";
 }
 
 html.sapUiSuppressBackgroundStyles .sapUiBody:before {

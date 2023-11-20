@@ -1,0 +1,16 @@
+<mvc:View
+	controllerName="sap.m.sample.PopoverNavCon.controller.PopoverNavCon"
+	xmlns:l="sap.ui.layout"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m">
+	<l:VerticalLayout
+		class="sapUiContentPadding"
+		width="100%">
+		<l:content>
+			<Button
+				text="Open Popover"
+				press="onOpenPopover"
+				ariaHasPopup="Dialog" />
+		</l:content>
+	</l:VerticalLayout>
+</mvc:View>

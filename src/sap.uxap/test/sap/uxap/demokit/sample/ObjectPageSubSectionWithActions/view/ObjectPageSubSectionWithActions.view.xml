@@ -1,0 +1,51 @@
+<mvc:View height="100%" xmlns:mvc="sap.ui.core.mvc" xmlns:m="sap.m" xmlns="sap.uxap"
+		   xmlns:blockcolor="sap.uxap.sample.SharedBlocks">
+
+	<ObjectPageLayout id="ObjectPageLayout" upperCaseAnchorBar="false">
+		<headerTitle>
+			<ObjectPageHeader objectTitle="Action buttons sample"/>
+		</headerTitle>
+
+		<sections>
+			<ObjectPageSection titleUppercase="false" title="examples">
+				<subSections>
+
+					<ObjectPageSubSection title="Subsection with action buttons" titleUppercase="false">
+						<blocks>
+							<blockcolor:BlockBlue id="b1"/>
+						</blocks>
+						<actions>
+							<m:Button icon="sap-icon://synchronize"/>
+							<m:Button icon="sap-icon://expand"/>
+						</actions>
+					</ObjectPageSubSection>
+
+					<ObjectPageSubSection title="Subsection without action buttons" titleUppercase="false">
+						<blocks>
+							<blockcolor:BlockBlue id="b2"/>
+						</blocks>
+
+					</ObjectPageSubSection>
+
+
+				</subSections>
+			</ObjectPageSection>
+
+			<ObjectPageSection titleUppercase="false" title="examples 2">
+				<subSections>
+
+					<ObjectPageSubSection title="Single subsection with action buttons" titleUppercase="false">
+						<blocks>
+							<blockcolor:BlockBlue id="b3"/>
+						</blocks>
+						<actions>
+							<m:Button icon="sap-icon://synchronize"/>
+							<m:Button icon="sap-icon://expand"/>
+						</actions>
+					</ObjectPageSubSection>
+
+				</subSections>
+			</ObjectPageSection>
+		</sections>
+	</ObjectPageLayout>
+</mvc:View>

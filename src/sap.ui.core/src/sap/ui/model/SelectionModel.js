@@ -1,10 +1,10 @@
 /*!
  * ${copyright}
  */
-
+/*eslint-disable max-len */
 // Provides class sap.ui.model.SelectionModel
-sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
-	function(jQuery, EventProvider) {
+sap.ui.define(['sap/ui/base/EventProvider', "sap/base/assert"],
+	function(EventProvider, assert) {
 	"use strict";
 
 
@@ -14,6 +14,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 	 * Constructs an instance of an sap.ui.model.SelectionModel.
 	 *
 	 * @class
+	 * This artefact is used by the table controls for handling selections. It is not associated with the model layer of UI5.
 	 * @extends sap.ui.base.EventProvider
 	 *
 	 * @author SAP SE
@@ -48,12 +49,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 	/**
 	 * SelectionMode: Single Selection
 	 * @public
+	 * @readonly
+	 * @type {int}
 	 */
 	SelectionModel.SINGLE_SELECTION = 0;
 
 	/**
 	 * SelectionMode: Multi Selection
 	 * @public
+	 * @readonly
+	 * @type {int}
 	 */
 	SelectionModel.MULTI_SELECTION = 1;
 
@@ -110,11 +115,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 	/**
 	 * Set the lead selection index.
 	 * @param {int} iLeadIndex sets the lead selected index
-	 * @return {sap.ui.model.SelectionModel} <code>this</code> to allow method chaining
+	 * @return {this} <code>this</code> to allow method chaining
 	 * @private
 	 */
 	SelectionModel.prototype.setLeadSelectedIndex = function(iLeadIndex) {
-		jQuery.sap.assert(typeof iLeadIndex === "number", "iLeadIndex must be an integer");
+		assert(typeof iLeadIndex === "number", "iLeadIndex must be an integer");
 		// TODO: do we want to have a specific behavior for the lead selection so
 		//       that it could be handled in another way? if yes we should consider
 		//       also to rework the dataset which is using this method
@@ -169,19 +174,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 	 * Changes the selection to be equal to the range <code>iFromIndex</code> and <code>iToIndex</code>
 	 * inclusive. If <code>iFromIndex</code> is smaller than <code>iToIndex</code>, both parameters are swapped.
 	 *
-	 * In <code>SINGLE_SELECTION</code> selection mode, only <code>iToIndex</iToIndex> is used.
+	 * In <code>SINGLE_SELECTION</code> selection mode, only <code>iToIndex</code> is used.
 	 *
 	 * If this call results in a change to the current selection, then a
 	 * <code>SelectionChanged</code> event is fired.
 	 *
 	 * @param {int} iFromIndex one end of the interval.
 	 * @param {int} iToIndex other end of the interval
-	 * @return {sap.ui.model.SelectionModel} <code>this</code> to allow method chaining
+	 * @return {this} <code>this</code> to allow method chaining
 	 * @public
 	 */
 	SelectionModel.prototype.setSelectionInterval = function(iFromIndex, iToIndex) {
-		jQuery.sap.assert(typeof iFromIndex === "number", "iFromIndex must be an integer");
-		jQuery.sap.assert(typeof iToIndex === "number", "iToIndex must be an integer");
+		assert(typeof iFromIndex === "number", "iFromIndex must be an integer");
+		assert(typeof iToIndex === "number", "iToIndex must be an integer");
 
 		if (this.iSelectionMode === SelectionModel.SINGLE_SELECTION) {
 			iFromIndex = iToIndex;
@@ -231,12 +236,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 	 *
 	 * @param {int} iFromIndex one end of the interval.
 	 * @param {int} iToIndex other end of the interval
-	 * @return {sap.ui.model.SelectionModel} <code>this</code> to allow method chaining
+	 * @return {this} <code>this</code> to allow method chaining
 	 * @public
 	 */
 	SelectionModel.prototype.addSelectionInterval = function(iFromIndex, iToIndex) {
-		jQuery.sap.assert(typeof iFromIndex === "number", "iFromIndex must be an integer");
-		jQuery.sap.assert(typeof iToIndex === "number", "iToIndex must be an integer");
+		assert(typeof iFromIndex === "number", "iFromIndex must be an integer");
+		assert(typeof iToIndex === "number", "iToIndex must be an integer");
 
 		if (this.iSelectionMode === SelectionModel.SINGLE_SELECTION) {
 			return this.setSelectionInterval(iFromIndex, iToIndex);
@@ -270,12 +275,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 	 *
 	 * @param {int} iStartIndex start at this position
 	 * @param {int} iMove
-	 * @return {sap.ui.model.SelectionModel} <code>this</code> to allow method chaining
+	 * @return {this} <code>this</code> to allow method chaining
 	 * @public
 	 */
 	SelectionModel.prototype.moveSelectionInterval = function(iStartIndex, iMove) {
-		jQuery.sap.assert(typeof iStartIndex === "number", "iFromIndex must be an integer");
-		jQuery.sap.assert(typeof iMove === "number", "iToIndex must be an integer");
+		assert(typeof iStartIndex === "number", "iFromIndex must be an integer");
+		assert(typeof iMove === "number", "iToIndex must be an integer");
 
 		var aChangedRowIndices = [];
 		var aSelectedIndices = this.aSelectedIndices;
@@ -308,12 +313,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 	 *
 	 * @param {int} iFromIndex one end of the interval.
 	 * @param {int} iToIndex other end of the interval
-	 * @return {sap.ui.model.SelectionModel} <code>this</code> to allow method chaining
+	 * @return {this} <code>this</code> to allow method chaining
 	 * @public
 	 */
 	SelectionModel.prototype.removeSelectionInterval = function(iFromIndex, iToIndex) {
-		jQuery.sap.assert(typeof iFromIndex === "number", "iFromIndex must be an integer");
-		jQuery.sap.assert(typeof iToIndex === "number", "iToIndex must be an integer");
+		assert(typeof iFromIndex === "number", "iFromIndex must be an integer");
+		assert(typeof iToIndex === "number", "iToIndex must be an integer");
 
 		if (this.iSelectionMode === SelectionModel.SINGLE_SELECTION) {
 			iFromIndex = iToIndex;
@@ -351,12 +356,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 	 *
 	 * @param {int} iFromIndex one end of the interval.
 	 * @param {int} iToIndex other end of the interval
-	 * @return {sap.ui.model.SelectionModel} <code>this</code> to allow method chaining
+	 * @return {this} <code>this</code> to allow method chaining
 	 * @public
 	 */
 	SelectionModel.prototype.sliceSelectionInterval = function(iFromIndex, iToIndex) {
-		jQuery.sap.assert(typeof iFromIndex === "number", "iFromIndex must be an integer");
-		jQuery.sap.assert(typeof iToIndex === "number", "iToIndex must be an integer");
+		assert(typeof iFromIndex === "number", "iFromIndex must be an integer");
+		assert(typeof iToIndex === "number", "iToIndex must be an integer");
 
 		var iFrom = Math.min(iFromIndex, iToIndex);
 		var iTo = Math.max(iFromIndex, iToIndex);
@@ -420,7 +425,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 	 * If this call results in a change to the current selection or lead selection, then a
 	 * <code>SelectionChanged</code> event is fired.
 	 *
-	 * @return {sap.ui.model.SelectionModel} <code>this</code> to allow method chaining
+	 * @return {this} <code>this</code> to allow method chaining
 	 * @public
 	 */
 	SelectionModel.prototype.clearSelection = function() {
@@ -432,17 +437,22 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 
 
 	/**
-	 * Attach event-handler <code>fnFunction</code> to the 'selectionChanged' event of this <code>sap.ui.model.SelectionModel</code>.<br/>
+	 * Attaches event handler <code>fnFunction</code> to the {@link #event:selectionChanged selectionChanged} event of this
+	 * <code>sap.ui.model.SelectionModel</code>.
+	 *
+	 * When called, the context of the event handler (its <code>this</code>) will be bound to <code>oListener</code>
+	 * if specified, otherwise it will be bound to this <code>sap.ui.model.SelectionModel</code> itself.
 	 *
 	 * @param {object}
-	 *            [oData] The object, that should be passed along with the event-object when firing the event.
+	 *            [oData] An application-specific payload object that will be passed to the event handler
+	 *            along with the event object when firing the event
 	 * @param {function}
-	 *            fnFunction The function to call, when the event occurs. This function will be called on the
-	 *            oListener-instance (if present) or in a 'static way'.
+	 *            fnFunction The function to be called, when the event occurs
 	 * @param {object}
-	 *            [oListener] Object on which to call the given function. If empty, this Model is used.
+	 *            [oListener] Context object to call the event handler with. Defaults to this
+	 *            <code>SelectionModel</code> itself
 	 *
-	 * @return {sap.ui.model.SelectionModel} <code>this</code> to allow method chaining
+	 * @return {this} <code>this</code> to allow method chaining
 	 * @public
 	 */
 	SelectionModel.prototype.attachSelectionChanged = function(oData, fnFunction, oListener) {
@@ -451,15 +461,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 	};
 
 	/**
-	 * Detach event-handler <code>fnFunction</code> from the 'selectionChanged' event of this <code>sap.ui.model.SelectionModel</code>.<br/>
+	 * Detaches event handler <code>fnFunction</code> from the {@link #event:selectionChanged selectionChanged} event of this
+	 * <code>sap.ui.model.SelectionModel</code>.
 	 *
-	 * The passed function and listener object must match the ones previously used for event registration.
+	 * The passed function and listener object must match the ones used for event registration.
 	 *
 	 * @param {function}
-	 *            fnFunction The function to call, when the event occurs.
+	 *            fnFunction The function to be called, when the event occurs
 	 * @param {object}
-	 *            oListener Object on which the given function had to be called.
-	 * @return {sap.ui.model.SelectionModel} <code>this</code> to allow method chaining
+	 *            [oListener] Context object on which the given function had to be called
+	 * @returns {this} Reference to <code>this</code> in order to allow method chaining
 	 * @public
 	 */
 	SelectionModel.prototype.detachSelectionChanged = function(fnFunction, oListener) {
@@ -468,7 +479,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 	};
 
 	/**
-	 * Fire event 'selectionChanged' to attached listeners.
+	 * Fires event {@link #event:selectionChanged selectionChanged} to attached listeners.
 	 *
 	 * Expects following event parameters:
 	 * <ul>
@@ -476,14 +487,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 	 * <li>'rowIndices' of type <code>int[]</code> Other selected indices (if available)</li>
 	 * </ul>
 	 *
-	 * @param {object} mArguments the arguments to pass along with the event.
-	 * @param {int} mArguments.leadIndex Lead selection index
-	 * @param {int[]} [mArguments.rowIndices] Other selected indices (if available)
-	 * @return {sap.ui.model.SelectionModel} <code>this</code> to allow method chaining
+	 * @param {object} oParameters Parameters to pass along with the event.
+	 * @param {int} oParameters.leadIndex Lead selection index
+	 * @param {int[]} [oParameters.rowIndices] Other selected indices (if available)
+	 * @returns {this} Reference to <code>this</code> in order to allow method chaining
 	 * @protected
 	 */
-	SelectionModel.prototype.fireSelectionChanged = function(mArguments) {
-		this.fireEvent("selectionChanged", mArguments);
+	SelectionModel.prototype.fireSelectionChanged = function(oParameters) {
+		this.fireEvent("selectionChanged", oParameters);
 		return this;
 	};
 
@@ -525,18 +536,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 	};
 
 	/**
-	 * Selects all rows up to the <code>iToIndex</iToIndex>.
+	 * Selects all rows up to the <code>iToIndex</code>.
 	 *
 	 * If this call results in a change to the current selection, then a
 	 * <code>SelectionChanged</code> event is fired.
 	 *
 	 * @param {int} iToIndex end of the interval
-	 * @return {sap.ui.model.SelectionModel} <code>this</code> to allow method chaining
+	 * @return {this} <code>this</code> to allow method chaining
 	 * @public
 	 */
 	SelectionModel.prototype.selectAll = function(iToIndex) {
 
-		jQuery.sap.assert(typeof iToIndex === "number", "iToIndex must be an integer");
+		assert(typeof iToIndex === "number", "iToIndex must be an integer");
 
 		// set new selection range, determine set of changed indices
 		var aOldSelectedRowIndices = this.aSelectedIndices.slice();

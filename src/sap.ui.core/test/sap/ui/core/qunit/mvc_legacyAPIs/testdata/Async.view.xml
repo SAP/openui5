@@ -1,0 +1,21 @@
+<mvc:View controllerName="testdata.mvc_legacyAPIs.Async"
+	xmlns="sap.m" xmlns:form="sap.ui.layout.form"
+	xmlns:mvc="sap.ui.core.mvc" xmlns:html="http://www.w3.org/1999/xhtml">
+
+	<Image width="150px" height="110px" src="./testdata/images/screw.jpg"></Image>
+
+	<form:SimpleForm id="Layout" width="250px" class="myMatrixLayout">
+		<Label text="Product:"></Label>
+		<Input id="Product" value="Deluxe Screw"></Input>
+		<Label text="Material:"></Label>
+		<Input id="Material" value="titanium"></Input>
+		<Label id="More1" text="Diameter:"></Label>
+		<Input id="TFMore1" value="1/4 inch"></Input>
+		<Label id="More2" text="Length:"></Label>
+		<Input id="TFMore2" value="2 inch"></Input>
+		<Label id="More3" text="Package Quantity:"></Label>
+		<Input id="TFMore3" value="500"></Input>
+		<Link id="showMore" text="show details..." press="showMore"></Link>
+		<Link id="hideMore" text="hide details..." press="hideMore"></Link>
+	</form:SimpleForm>
+</mvc:View>

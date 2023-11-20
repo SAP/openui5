@@ -1,0 +1,86 @@
+html, body {
+	position: relative;
+	width: 100%;
+	height: 100%;
+}
+
+#title {
+	background-color: #f2f2f2;
+	text-align: center;
+	border-top: 0.25rem solid #009de0;
+	width: 100%;
+}
+
+#title, #bar, th, td {
+	color: #666666;
+	height: 3rem;
+	font-size: 1rem;
+	font-weight: normal;
+	margin: 0;
+	line-height: 3rem;
+}
+
+#bar {
+	border-bottom: 1px solid #cccccc;
+	background-color: #ffffff;
+	padding-left: 0.5rem;
+	padding-right: 0.5rem;
+	height: 6rem;
+}
+
+#bar * {
+	margin-left: 0.25rem;
+	margin-right: 0.25rem;
+}
+
+#bar label {
+	margin-left: 1rem;
+}
+
+#bar .rightContentContainer {
+	style="float:right;"	
+}
+
+#content {
+	position: absolute;
+	top: 9.3125rem;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	overflow: auto;
+}
+
+#tests {
+	width: 100%;
+}
+
+#tests th {
+	background-color: #f2f2f2;
+}
+
+#tests td {
+	background-color: rgba(255, 255, 255, 0.8);
+}
+
+#tests th, td {
+	padding-left: 0.5rem;
+	padding-right: 0.5rem;
+	font-size: 0.875rem;
+	text-align: left;
+	color: #333333;
+	border-bottom: 1px solid #cccccc;
+}
+
+#message {
+	margin-top: 6rem;
+	text-align: center;
+	color: #666666;
+}
+
+#message.Error {
+	color: #e52929;
+}
+
+.hidden {
+	display: none;
+}

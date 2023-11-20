@@ -1,0 +1,87 @@
+{
+	"_version": "1.15.0",
+	"sap.app": {
+		"id": "sap.f.cardsdemo.cardWithPaginatioAndFilters",
+		"type": "card",
+		"title": "Cards with Server-Side Pagination and Filters",
+		"subTitle": "",
+		"applicationVersion": {
+			"version": "1.0.0"
+		},
+		"shortTitle": "A short title for this Card",
+		"info": "Additional information about this Card",
+		"description": "A long description for this Card",
+		"tags": {
+			"keywords": [
+				"Action",
+				"Host",
+				"Card",
+				"Sample"
+			]
+		}
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"icons": {
+			"icon": "sap-icon://action"
+		}
+	},
+	"sap.card": {
+		"type": "List",
+		"configuration": {
+			"parameters": {
+				"top": {
+					"value": 5,
+					"type": "integer"
+				}
+			},
+			"filters": {
+				"categoryId": {
+					"value": "1",
+					"type": "Select",
+					"label": "Category ID",
+					"item": {
+						"path": "/value",
+						"template": {
+							"key": "{CategoryID}",
+							"title": "{CategoryName}"
+						}
+					},
+					"data": {
+						"request": {
+							"url": "https://services.odata.org/V4/Northwind/Northwind.svc/Categories"
+						}
+					}
+				}
+			}
+		},
+		"header": {
+			"title": "Card with Filters and Server-Side Pagination"
+		},
+		"content": {
+			"data": {
+				"request": {
+					"url": "https://services.odata.org/V4/Northwind/Northwind.svc/Products",
+					"parameters": {
+						"$count": true,
+						"$skip": "{paginator>/skip}",
+						"$top": "{parameters>/top/value}",
+						"$filter": "CategoryID eq {filters>/categoryId/value}"
+					}
+				},
+				"path": "/value"
+			},
+			"item": {
+				"title": "{ProductName}",
+				"description": "{UnitsInStock} units in stock",
+				"highlight": "{= ${Discontinued} ? 'Error' : 'Success'}"
+			}
+		},
+		"footer": {
+			"paginator": {
+				"totalCount": "{/@odata.count}",
+				"pageSize": "{parameters>/top/value}"
+			}
+		}
+	}
+}

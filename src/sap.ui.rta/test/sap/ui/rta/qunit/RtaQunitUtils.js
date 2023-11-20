@@ -1,115 +1,285 @@
-/* globals QUnit */
 sap.ui.define([
-	"sap/ui/fl/FakeLrepConnectorLocalStorage",
-	"sap/ui/fl/FakeLrepLocalStorage",
-	"sap/ui/core/ComponentContainer"
+	"sap/ui/core/util/reflection/JsControlTreeModifier",
+	"sap/ui/core/ComponentContainer",
+	"sap/ui/core/Component",
+	"sap/ui/core/UIComponent",
+	"sap/ui/events/KeyCodes",
+	"sap/ui/fl/Layer",
+	"sap/ui/fl/Utils",
+	"sap/ui/fl/apply/_internal/flexObjects/FlexObjectFactory",
+	"sap/ui/fl/apply/_internal/flexState/FlexState",
+	"sap/ui/fl/write/api/ChangesWriteAPI",
+	"sap/ui/fl/write/api/PersistenceWriteAPI",
+	"sap/ui/fl/write/api/VersionsAPI",
+	"sap/ui/fl/write/_internal/connectors/SessionStorageConnector",
+	"sap/ui/model/json/JSONModel",
+	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/qunit/QUnitUtils",
+	"sap/ui/rta/RuntimeAuthoring",
+	"test-resources/sap/ui/fl/api/FlexTestAPI",
+	"test-resources/sap/ui/fl/qunit/FlQUnitUtils"
 ], function(
-	FakeLrepConnectorLocalStorage,
-	FakeLrepLocalStorage,
-	ComponentContainer
+	JsControlTreeModifier,
+	ComponentContainer,
+	Component,
+	UIComponent,
+	KeyCodes,
+	Layer,
+	flUtils,
+	FlexObjectFactory,
+	FlexState,
+	ChangesWriteAPI,
+	PersistenceWriteAPI,
+	VersionsAPI,
+	SessionStorageConnector,
+	JSONModel,
+	nextUIUpdate,
+	QUnitUtils,
+	RuntimeAuthoring,
+	FlexTestAPI,
+	FlQUnitUtils
 ) {
 	"use strict";
 
+	function disableRtaRestart() {
+		RuntimeAuthoring.disableRestart(Layer.CUSTOMER);
+		RuntimeAuthoring.disableRestart(Layer.USER);
+	}
+
 	var RtaQunitUtils = {};
 
-	RtaQunitUtils.renderTestModuleAt = function(sNamespace, sDomId){
-		var oComp = sap.ui.getCore().createComponent({
-			name : "sap.ui.rta.qunitrta",
-			id : "Comp1",
-			settings : {
-				componentData : {
-					"showAdaptButton" : true
+	RtaQunitUtils.clear = function(oElement, bRevert) {
+		var oComponent = (oElement && flUtils.getAppComponentForControl(oElement)) || Component.getComponentById("Comp1");
+		var aCustomerChanges;
+
+		return VersionsAPI.initialize({
+			control: oComponent,
+			layer: Layer.CUSTOMER
+		})
+		.then(() => {
+			return FlexState.initialize({
+				componentId: oComponent.getId()
+			});
+		})
+		.then(function() {
+			return PersistenceWriteAPI.save({selector: oComponent, layer: Layer.CUSTOMER, draft: true});
+		})
+		.then(function(aChanges) {
+			aCustomerChanges = aChanges;
+			return PersistenceWriteAPI.save({selector: oComponent, layer: Layer.USER});
+		})
+		.then(function(aUserChangesChanges) {
+			if (bRevert) {
+				return aCustomerChanges.concat(aUserChangesChanges).reverse()
+				.filter(function(oChange) {
+					// skip descriptor changes
+					return !oChange.isA("sap.ui.fl.apply._internal.flexObjects.AppDescriptorChange");
+				})
+				.reduce(function(oPreviousPromise, oChange) {
+					var oElementToBeReverted = JsControlTreeModifier.bySelector(oChange.getSelector(), oComponent);
+					return ChangesWriteAPI.revert({
+						element: oElementToBeReverted,
+						change: oChange
+					});
+				}, Promise.resolve());
+			}
+			return undefined;
+		})
+		.then(() => FlexTestAPI.clearStorage(SessionStorageConnector.storage));
+	};
+
+	RtaQunitUtils.getNumberOfChangesForTestApp = function() {
+		return FlexTestAPI.getNumberOfStoredChanges("SessionStorage", "sap.ui.rta.qunitrta.Component");
+	};
+
+	RtaQunitUtils.renderTestAppAtAsync = function(sDomId) {
+		disableRtaRestart();
+
+		return Component.create({
+			name: "sap.ui.rta.qunitrta",
+			id: "Comp1",
+			settings: {
+				componentData: {
+					showAdaptButton: true
 				}
+			}
+		})
+		.then(function(oComponent) {
+			return oComponent.oView
+			.then(function() {
+				return new ComponentContainer({
+					component: oComponent,
+					async: true
+				});
+			});
+		})
+		.then(async function(oComponentContainer) {
+			oComponentContainer.placeAt(sDomId);
+			await nextUIUpdate();
+
+			return oComponentContainer;
+		});
+	};
+
+	RtaQunitUtils.renderRuntimeAuthoringAppAt = function(sDomId) {
+		disableRtaRestart();
+		return Component.create({
+			name: "sap.ui.rta.test",
+			id: "Comp1",
+			settings: {
+				componentData: {
+					showAdaptButton: true,
+					useSessionStorage: true
+				}
+			}
+		})
+		.then(function(oComponent) {
+			return oComponent.oView
+			.then(function() {
+				return new ComponentContainer({
+					component: oComponent,
+					async: true
+				});
+			});
+		})
+		.then(async function(oComponentContainer) {
+			oComponentContainer.placeAt(sDomId);
+			await nextUIUpdate();
+			return oComponentContainer;
+		});
+	};
+
+	RtaQunitUtils.openContextMenuWithKeyboard = function(oTarget) {
+		return new Promise(function(resolve) {
+			this.oRta.getPlugins().contextMenu.attachEventOnce("openedContextMenu", resolve);
+			var oParams = {};
+			oParams.keyCode = KeyCodes.F10;
+			oParams.which = oParams.keyCode;
+			oParams.shiftKey = true;
+			oParams.altKey = false;
+			oParams.metaKey = false;
+			oParams.ctrlKey = false;
+			QUnitUtils.triggerEvent("keyup", oTarget.getDomRef(), oParams);
+		}.bind(this));
+	};
+
+	RtaQunitUtils.openContextMenuWithClick = function(oTarget, sinon) {
+		return new Promise(function(resolve) {
+			this.oRta.getPlugins().contextMenu.attachEventOnce("openedContextMenu", resolve);
+
+			var clock = sinon.useFakeTimers();
+			QUnitUtils.triggerMouseEvent(oTarget.getDomRef(), "contextmenu");
+			clock.tick(50);
+			clock.restore();
+		}.bind(this));
+	};
+
+	RtaQunitUtils.closeContextMenu = function(oTarget) {
+		return new Promise(function(resolve) {
+			this.oRta.getPlugins().contextMenu.attachEventOnce("closedContextMenu", resolve);
+			oTarget.close();
+		}.bind(this));
+	};
+
+	RtaQunitUtils.getContextMenuItemCount = function(oTarget) {
+		return new Promise(function(resolve) {
+			var iItemCount;
+			oTarget.focus();
+			oTarget.setSelected(true);
+			RtaQunitUtils.openContextMenuWithKeyboard.call(this, oTarget)
+			.then(function() {
+				var {oContextMenuControl} = this.oRta.getPlugins().contextMenu;
+				iItemCount = oContextMenuControl.getItems().length;
+				return oContextMenuControl;
+			}.bind(this))
+			.then(RtaQunitUtils.closeContextMenu.bind(this))
+			.then(function() {
+				resolve(iItemCount);
+			});
+		}.bind(this));
+	};
+
+	RtaQunitUtils.createAndStubAppComponent = function(sandbox, sId, oManifest, oContent) {
+		sId ||= "someName";
+		oManifest ||= {
+			"sap.app": {
+				id: sId,
+				type: "application"
+			}
+		};
+		var Component = UIComponent.extend("component", {
+			metadata: {
+				manifest: oManifest
+			},
+			createContent() {
+				return oContent;
 			}
 		});
 
-		var oCompCont = new ComponentContainer({
-			component: oComp
-		}).placeAt(sDomId);
-		sap.ui.getCore().applyChanges();
-
-		return oCompCont;
+		var oComponent = new Component(sId);
+		sandbox.stub(flUtils, "getAppComponentForControl").returns(oComponent);
+		oComponent._restoreGetAppComponentStub = flUtils.getAppComponentForControl.restore;
+		return oComponent;
 	};
 
-	RtaQunitUtils.renderTestAppAt = function(sDomId){
-		FakeLrepConnectorLocalStorage.enableFakeConnector();
+	RtaQunitUtils.createUIChange = function(oFileContent) {
+		return FlexObjectFactory.createFromFileContent(oFileContent);
+	};
 
-		var oComp = sap.ui.getCore().createComponent({
-			name : "sap.ui.rta.qunitrta",
-			id : "Comp1",
-			settings : {
-				componentData : {
-					"showAdaptButton" : true
-				}
+	RtaQunitUtils.stubSapUiRequire = function(...aArgs) {
+		return FlQUnitUtils.stubSapUiRequire.apply(undefined, aArgs);
+	};
+
+	RtaQunitUtils.showActionsMenu = function(oToolbar) {
+		return oToolbar.showActionsMenu({
+			getSource() {
+				return oToolbar.getControl("actionsMenu");
 			}
 		});
-
-		var oCompCont = new ComponentContainer({
-			component: oComp
-		}).placeAt(sDomId);
-		sap.ui.getCore().applyChanges();
-
-		return oCompCont;
 	};
 
-	RtaQunitUtils.waitForChangesToReachedLrepAtTheEnd = function(iNumberOfChanges, assert) {
-		var done = [];
-		for (var i = 0; i < iNumberOfChanges; i++) {
-			done.push(assert.async());
-		}
-		var iChangeCounter = 0;
-		var fnAssert = function() {
-			iChangeCounter++;
-			if (iChangeCounter === iNumberOfChanges) {
-				FakeLrepLocalStorage.detachModifyCallback(fnAssert);
-				assert.equal(iChangeCounter, iNumberOfChanges, "then the rta changes are written to LREP");
-			}
-			done[iChangeCounter - 1]();
-		};
-
-		FakeLrepLocalStorage.attachModifyCallback(fnAssert);
-	};
-
-	// At the end of the test, the returning fnDetachEvent function must be called for clean up
-	RtaQunitUtils.waitForExactNumberOfChangesInLrep = function(iNumberOfChanges, assert, sModifyType) {
-		var done = [];
-		for (var i = 0; i < iNumberOfChanges; i++) {
-			done.push(assert.async());
-		}
-		var iChangeCounter = 0;
-		var fnAssert = function(sPassedModifyType) {
-			// Only collect operations of the given type
-			if (sPassedModifyType !== sModifyType) {
-				throw new Error("Unexpected LREP modification: Expected: " + sModifyType + ", but got " + sPassedModifyType);
-			}
-			iChangeCounter++;
-			if (iChangeCounter === iNumberOfChanges) {
-				assert.equal(iChangeCounter, iNumberOfChanges,
-					"then " + iNumberOfChanges + " operations of type " + sModifyType + " happen in LREP");
-			}
-			if (iChangeCounter > iNumberOfChanges){
-				assert.notOk(true, "Error: there are more " + sModifyType + " operations done in LREP than expected");
-				return;
-			}
-			done[iChangeCounter - 1]();
-		};
-		var fnDetachEvent = function(){
-			FakeLrepLocalStorage.detachModifyCallback(fnAssert);
-		};
-
-		FakeLrepLocalStorage.attachModifyCallback(fnAssert);
-
-		return fnDetachEvent;
-	};
-
-	RtaQunitUtils.removeTestViewAfterTestsWhenCoverageIsRequested = function(){
-		QUnit.done(function(details) {
-			// If coverage is requested, remove the view to not overlap the coverage result
-			if (QUnit.config.coverage == true && details.failed === 0) {
-				jQuery("#test-view").hide();
+	RtaQunitUtils.createToolbarControlsModel = function() {
+		return new JSONModel({
+			modeSwitcher: "adaptation",
+			undo: {
+				enabled: false
+			},
+			redo: {
+				enabled: false
+			},
+			save: {
+				enabled: false
+			},
+			restore: {
+				enabled: false
+			},
+			appVariantMenu: {
+				overview: {
+					visible: false,
+					enabled: false
+				},
+				saveAs: {
+					visible: false,
+					enabled: false
+				},
+				manageApps: {
+					visible: false,
+					enabled: false
+				}
+			},
+			contextBasedAdaptation: {
+				visible: false,
+				enabled: false
+			},
+			actionsMenuButton: {
+				enabled: true
+			},
+			visualizationButton: {
+				visible: false,
+				enabled: false
 			}
 		});
 	};
 
 	return RtaQunitUtils;
-}, /* bExport= */true);
+});

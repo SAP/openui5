@@ -6,14 +6,9 @@
 	<edmx:Reference Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_COMMON',Version='0001',SAP__Origin='LOCAL')/$value">
 		<edmx:Include Namespace="com.sap.vocabularies.Common.v1" />
 	</edmx:Reference>
-<!--Note:
-This include is omitted because when running the app with realOData=true the reference URI
-for the data service is prefixed with /testsuite/proxy which causes the metadata validation to fail
-with "A schema cannot span more than one document: ..."
  	<edmx:Reference Uri="/sap/opu/odata4/sap/zui5_testv4/default/sap/zui5_epm_sample/0002/$metadata">
 		<edmx:Include Namespace="com.sap.gateway.default.zui5_epm_sample.v0002" />
 	</edmx:Reference>
--->
 	<edmx:DataServices>
 		<Schema Namespace="my.zui5_epm_sample.v0002"
 			Alias="SAP__self" xmlns="http://docs.oasis-open.org/odata/ns/edm">
@@ -51,6 +46,9 @@ with "A schema cannot span more than one document: ..."
 					<Annotation Term="com.sap.vocabularies.UI.v1.TextArrangement"
 						EnumMember="com.sap.vocabularies.UI.v1.TextArrangementType/TextLast"/>
 				</Annotation>
+			</Annotations>
+			<Annotations Target="com.sap.gateway.default.zui5_epm_sample.v0002.SalesOrder_Cancel/SalesOrder">
+				<Annotation Term="com.sap.vocabularies.Common.v1.Label" String="Label of SalesOrder parameter"/>
 			</Annotations>
 		</Schema>
 	</edmx:DataServices>

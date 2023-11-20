@@ -12,7 +12,7 @@
 		</headerContent>
 		<subHeader>
 			<Toolbar>
-				<Button type="Back" />
+				<Button type="Back" tooltip="Back"/>
 				<ToolbarSpacer/>
 				<Title text="Toolbar center" level="H3"/>
 				<ToolbarSpacer/>
@@ -56,7 +56,7 @@
 				</contentLeft>
 				<contentMiddle>
 					<Button text="Accept" type="Accept" />
-					<Label text="Bar is not very performant."/>
+					<Label text="This is a long non-shrinkable label."/>
 					<Button text="Reject" type="Reject" />
 					<Button text="Edit" />
 					<Button text="Big Big Big Big Big Big Big Big Button" />

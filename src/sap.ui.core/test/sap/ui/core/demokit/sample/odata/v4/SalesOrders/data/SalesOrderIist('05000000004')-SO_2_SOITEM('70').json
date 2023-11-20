@@ -1,0 +1,41 @@
+{
+	"@odata.metadataEtag" : "W/\"20190521151559\"",
+	"SalesOrderID" : "0500000004",
+	"ItemPosition" : "0000000070",
+	"Note" : "",
+	"GrossAmount" : "1137.64",
+	"DeliveryDate" : "2020-05-31T06:36:11Z",
+	"Quantity" : "1.000",
+	"QuantityUnit" : "EA",
+	"ProductID" : "HT-1000",
+	"SOITEM_2_PRODUCT" : {
+		"@odata.etag" : "W/\"20190528112225.1000280 \"",
+		"ProductID" : "HT-1000",
+		"TypeCode" : "PR",
+		"Category" : "Notebooks",
+		"Name" : "Notebook Basic 15",
+		"SupplierName" : "SAP",
+		"PRODUCT_2_BP" : {
+			"@odata.etag" : "W/\"20190321111935.0000000 \"",
+			"BusinessPartnerID" : "0100000046",
+			"CompanyName" : "SAP",
+			"PhoneNumber" : "0622734567",
+			"LegalForm" : "SE",
+			"BP_2_CONTACT" : [{
+					"ContactGUID" : "00000000-0000-0000-0000-000000000689",
+					"FirstName" : "Karl",
+					"LastName" : "Möller",
+					"PhoneNumber" : "0622734567",
+					"EmailAddress" : "supplier-do.not.reply@sap.com",
+					"DateOfBirth" : null
+				}, {
+					"ContactGUID" : "00000000-0000-0000-0000-000000000690",
+					"FirstName" : "Harald",
+					"LastName" : "Gahn",
+					"PhoneNumber" : "0622746358",
+					"EmailAddress" : "hjg@sap.com",
+					"DateOfBirth" : null
+			}]
+		}
+	}
+}

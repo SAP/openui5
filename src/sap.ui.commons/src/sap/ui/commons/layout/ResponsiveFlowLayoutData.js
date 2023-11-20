@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.ui.commons.layout.ResponsiveFlowLayoutData.
-sap.ui.define(['jquery.sap.global', 'sap/ui/commons/library', 'sap/ui/layout/ResponsiveFlowLayoutData'],
-	function(jQuery, library, ResponsiveFlowLayoutData1) {
+sap.ui.define(['sap/ui/commons/library', 'sap/ui/layout/ResponsiveFlowLayoutData'],
+	function(library, LayoutResponsiveFlowLayoutData) {
 	"use strict";
 
 
@@ -28,9 +28,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/library', 'sap/ui/layout/Res
 	 * @deprecated Since version 1.16.0.
 	 * moved to sap.ui.layout library. Please use this one.
 	 * @alias sap.ui.commons.layout.ResponsiveFlowLayoutData
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
-	var ResponsiveFlowLayoutData = ResponsiveFlowLayoutData1.extend("sap.ui.commons.layout.ResponsiveFlowLayoutData", /** @lends sap.ui.commons.layout.ResponsiveFlowLayoutData.prototype */ { metadata : {
+	var ResponsiveFlowLayoutData = LayoutResponsiveFlowLayoutData.extend("sap.ui.commons.layout.ResponsiveFlowLayoutData", /** @lends sap.ui.commons.layout.ResponsiveFlowLayoutData.prototype */ { metadata : {
 
 		deprecated : true,
 		library : "sap.ui.commons"
@@ -57,7 +56,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/library', 'sap/ui/layout/Res
 	* Default value is <code>true</code>
 	*
 	* @param {boolean} bMargin new value for property <code>margin</code>
-	* @return {sap.ui.layout.ResponsiveFlowLayoutData} <code>this</code> to allow method chaining
+	* @return {this} <code>this</code> to allow method chaining
 	* @public
 	* @since 1.11.0
 	* @name sap.ui.commons.layout.ResponsiveFlowLayoutData#setMargin
@@ -66,4 +65,4 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/library', 'sap/ui/layout/Res
 
 	return ResponsiveFlowLayoutData;
 
-}, /* bExport= */ true);
+});

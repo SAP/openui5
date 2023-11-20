@@ -1,0 +1,46 @@
+{
+  "1.65.0": {
+    "date": "March 2019",
+    "notes": [
+      {
+        "id": "475f0606325757ab8c0c0bcd40f6a269fe75b28f",
+        "type": "FIX",
+        "text": ": RTA Replace Remove Icon",
+        "references": []
+      },
+      {
+        "id": "595e4914f9a4af4aa0277b0c935bed86988f6345",
+        "type": "FIX",
+        "text": "Adding header for Overview of app variants dialog which is",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970176308"
+          }
+        ]
+      },
+      {
+        "id": "f7cfd8e282a06a1490b5d07c3897c7fe8434991b",
+        "type": "FIX",
+        "text": "createContainer - avoid exception on missing aggregation descriptions",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980101897"
+          }
+        ]
+      },
+      {
+        "id": "c28e6b2b898d0f63f38761f8ce68bfd512c2cde3",
+        "type": "FIX",
+        "text": "sap.ui.rta - do not stretch as long as any plugins are busy",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980060663"
+          }
+        ]
+      }
+    ]
+  }
+}

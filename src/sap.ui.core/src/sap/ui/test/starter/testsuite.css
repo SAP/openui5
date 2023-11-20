@@ -1,0 +1,43 @@
+#redirect-hint {
+	position:fixed;
+	top:0;
+	left:0;
+	width:100%;
+	height:100%;
+	background-color:#373737;
+	opacity:0.5;
+	color:#eaff05;
+	font-family:'Helvetica Neue', Calibri, Helvetica, Arial, sans-serif;
+	//font-weight:bold;
+}
+
+#redirect-hint > div {
+	position:relative;
+	top:40%;
+	height:40%;
+	text-align:center;
+	opacity:1;
+}
+
+#redirect-hint #remaining-time {
+	font-weight:bold;
+	font-size:10em;
+	color:#ef7b7b;
+	//color:red;
+}
+
+/**
+ * QUnit usually displays links in the header and limits its text color to the <a> tag.
+ * We want to use the same color for normal text in the header.
+ */ 
+.sapUiTstSuite #qunit-header {
+	color: #C2CCD1;
+}
+
+/**
+ * Our test suites use their own banner color to distinguish them from normal QUnit pages.
+ */ 
+.sapUiTstSuite #qunit-banner.testsuite {
+	background-color: #4646E7;
+}
+

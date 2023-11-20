@@ -1,7 +1,6 @@
 <!DOCTYPE HTML>
 <html>
 	<head>
-		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 
 		<link rel="stylesheet" type="text/css" href="style.css">
 
@@ -9,26 +8,14 @@
 				id="sap-ui-bootstrap"
 				data-sap-ui-libs="sap.m,sap.ui.fl,sap.ui.layout"
 				data-sap-ui-theme="sap_bluecrystal"
+				data-sap-ui-oninit="module:sap/ui/core/ComponentSupport"
+				data-sap-ui-flexibilityServices=""
 				data-sap-ui-xx-bindingSyntax="complex">
 		</script>
-		<!-- add sap.ui.table,sap.ui.ux3 and/or other libraries to 'data-sap-ui-libs' if required -->
 
-		<script type="text/javascript">
-			sap.ui.getCore().attachInit(function () {
-				new sap.m.Shell({
-					app : new sap.ui.core.ComponentContainer({
-						name : "sap.ui.fl.support.apps.contentbrowser",
-						settings : {
-							id : "contentbrowser"
-						}
-					}),
-					appWidthLimited : false
-				}).placeAt("content");
-			});
-		</script>
 		<title>LRep Content Browser</title>
 	</head>
-	<body class="sapUiBody" role="application">
-		<div id="content"></div>
+	<body class="sapUiBody">
+    <div data-sap-ui-component data-name="sap.ui.fl.support.apps.contentbrowser" data-id="container" data-settings='{"id" : "contentbrowser"}'></div>
 	</body>
 </html>

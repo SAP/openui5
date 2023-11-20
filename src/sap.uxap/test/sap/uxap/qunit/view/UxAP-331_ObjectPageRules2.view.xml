@@ -1,12 +1,12 @@
-<core:View xmlns:core="sap.ui.core"
-		   xmlns:m="sap.m"
-		   xmlns="sap.uxap"
-		   xmlns:layout="sap.ui.layout"
-		   xmlns:t="sap.uxap.testblocks.objectpageblock"
-		   height="100%"
+<mvc:View xmlns:mvc="sap.ui.core.mvc"
+		  xmlns:m="sap.m"
+		  xmlns="sap.uxap"
+		  xmlns:layout="sap.ui.layout"
+		  xmlns:t="sap.uxap.testblocks.objectpageblock"
+		  height="100%"
 		>
 
-	<ObjectPageLayout id="objectPage2" title="">
+	<ObjectPageLayout id="objectPage2">
 		<sections>
 			<ObjectPageSection id="ObjectPageSectionNoAnchorBar331" title="NoAnchorBar">
 				<ObjectPageSubSection id="ObjectPageSubSectionNoAnchorBar331" title="NoAnchorBar">
@@ -15,4 +15,4 @@
 			</ObjectPageSection>
 		</sections>
 	</ObjectPageLayout>
-</core:View>
+</mvc:View>

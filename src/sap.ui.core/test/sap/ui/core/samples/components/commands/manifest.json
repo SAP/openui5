@@ -1,0 +1,29 @@
+{
+	"sap.app": {
+		"version": "0.1.0",
+		"id": "samples.components.commands",
+		"type": "application"
+	},
+	"sap.ui5": {
+		"dependencies": {
+			"libs": {
+				"sap.m": {},
+				"sap.ui.core": {}
+			}
+		},
+		"commands": {
+			"Save": {
+				"shortcut": "Ctrl+S"
+			},
+			"Delete": {
+				"shortcut": "Ctrl+D"
+			}
+		},
+		"rootView": {
+			"viewName": "samples.components.commands.Commands",
+			"type": "XML",
+			"async": true,
+			"id": "commands"
+		}
+	}
+}

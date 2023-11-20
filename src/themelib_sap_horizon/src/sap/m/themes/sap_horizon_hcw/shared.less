@@ -1,0 +1,13 @@
+/* ============================================= */
+/* Shared CSS Horizon High Contrast White theme  */
+/* ============================================= */
+
+@_sap_m_Badge_AttentionBackgroundColor: @sapUiContentIconColor;
+
+.sapMBadge,
+.sapMBadge[class*=sapMBadgeAccentColor] {
+	.sapMBadgeIndicator:after {
+		background-color: @sapUiContentBadgeBackground ;
+		border-color: @sapUiGroupContentBorderColor;
+	}
+}

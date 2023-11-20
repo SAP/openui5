@@ -1,0 +1,18 @@
+{
+  "1.83.0": {
+    "date": "September 2020",
+    "notes": [
+      {
+        "id": "371df0da45d43a10ebbe835ffe3c1107cae0c5c3",
+        "type": "FIX",
+        "text": ": RTA Additional Elements Demo-App Ushell-Mock-Fix",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080366650"
+          }
+        ]
+      }
+    ]
+  }
+}

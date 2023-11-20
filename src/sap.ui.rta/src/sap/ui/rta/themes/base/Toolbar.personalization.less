@@ -1,24 +1,28 @@
-.sapUiRtaToolbar.type_personalization {
-	top: auto;
-	top: initial;
-	bottom: 0;
-	background-color: #2f3c48;
-	border-radius: 0.25rem;
-	padding: 0 1rem;
-	margin: 0.5rem;
-	opacity: 0.9;
+/******************************************************************
+	Style of the Personalization Toolbar - base Theme
+*******************************************************************/
+@_sap_ui_rta_Toolbar_Personalization_TextColor: @sapUiTextInverted; // #fff
+@_sap_ui_rta_Toolbar_Personalization_BaseColor: darken(desaturate(@sapUiChart1, 48%), 14%); //#435060
 
-	&.sapUiRtaHideToolbar {
-		visibility: hidden;
-	}
+.sapUiRtaToolbar.type_personalization {
+	position: absolute;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background-color: @_sap_ui_rta_Toolbar_Personalization_BaseColor;
+	padding: 0 1rem; //16px
+	opacity: 0.9;
+	height: 3rem; //48p
 
 	.sapMBtn {
+		padding: 0;
+		margin: 0 0.25rem; //4px
+
 		.sapMBtnTransparent.sapMBtnInner {
 			border: none;
 
 			.sapMBtnContent {
-				color: #ffffff;
-				text-shadow: 0 0 0.125rem #000000;
+				color: @_sap_ui_rta_Toolbar_Personalization_TextColor;
 			}
 		}
 	}

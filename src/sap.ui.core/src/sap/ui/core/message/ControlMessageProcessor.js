@@ -3,8 +3,8 @@
  */
 
 // Provides the implementation for the ControlControlMessageProcessor implementations
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/message/MessageProcessor'],
-	function(jQuery, MessageProcessor) {
+sap.ui.define(['sap/ui/core/Element', 'sap/ui/core/message/MessageProcessor'],
+	function(Element, MessageProcessor) {
 	"use strict";
 
 
@@ -49,13 +49,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/message/MessageProcessor'],
 
 	/**
 	 * Set Messages to check
-	 * @param {map}
-	 *         vMessages map of messages: {'target': [array of messages],...}
+	 * @param {Object<string,sap.ui.core.message.Message[]>}
+	 *         mMessages map of messages: {'target': [sap.ui.core.message.Message],...}
 	 * @protected
 	 */
-	ControlMessageProcessor.prototype.setMessages = function(vMessages) {
+	ControlMessageProcessor.prototype.setMessages = function(mMessages) {
 		this.mOldMessages = this.mMessages === null ? {} : this.mMessages;
-		this.mMessages = vMessages || {};
+		this.mMessages = mMessages || {};
 		this.checkMessages();
 		delete this.mOldMessages;
 	};
@@ -66,18 +66,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/message/MessageProcessor'],
 	 */
 	ControlMessageProcessor.prototype.checkMessages = function() {
 		var aMessages,
-			that = this,
-			mMessages = jQuery.extend(this.mMessages, {});
+			sTarget,
+			mMessages = Object.assign({}, this.mMessages);
 
 		//add targets to clear from mOldMessages to the mMessages to check
-		jQuery.each(this.mOldMessages, function(sTarget) {
+		for (sTarget in this.mOldMessages) {
 			if (!(sTarget in mMessages)) {
 				mMessages[sTarget] = [];
 			}
-		});
+		}
 
 		//check messages
-		jQuery.each(mMessages, function(sTarget) {
+		for (sTarget in mMessages) {
 			var oBinding,
 				oControl,
 				aParts = sTarget.split('/');
@@ -86,15 +86,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/message/MessageProcessor'],
 			if (!aParts[0]) {
 				aParts.shift();
 			}
-			oControl = sap.ui.getCore().byId(aParts[0]);
+			oControl = Element.getElementById(aParts[0]);
 
 			//if control does not exist: nothing to do
-			if  (!oControl) {
+			if  (!oControl || oControl._bIsBeingDestroyed) {
 				return;
 			}
 
 			oBinding = oControl.getBinding(aParts[1]);
-			aMessages = that.mMessages[sTarget] ? that.mMessages[sTarget] : [];
+			aMessages = mMessages[sTarget] ? mMessages[sTarget] : [];
 			if (oBinding) {
 				var oDataState = oBinding.getDataState();
 				oDataState.setControlMessages(aMessages);
@@ -103,7 +103,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/message/MessageProcessor'],
 				oControl.propagateMessages(aParts[1], aMessages);
 			}
 
-		});
+		}
 	};
 
 	return ControlMessageProcessor;

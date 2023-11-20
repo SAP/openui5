@@ -1,0 +1,99 @@
+/* ============================================== */
+/* CSS for control sap.m/WizardProgressNavigator  */
+/* Horizon High Contrast White theme              */
+/* ============================================== */
+
+@_sap_m_WizardProgressNavigator_StepUnderlineHeight: 0.313rem;
+@_sap_m_WizardProgressNavigator_BoxShadow: 0.0625rem;
+
+.sapMWizardProgressNav {
+	position: absolute;
+	z-index: 1;
+	box-shadow: @sapUiContentHeaderShadow;
+}
+
+.sapMWizardProgressNavStep:hover .sapMWizardProgressNavStepCircle {
+	background-color: @sapUiObjectHeaderBackground;
+	color: @sapUiBaseText;
+}
+
+.sapMWizardProgressNavStep[data-sap-ui-wpn-step-current="true"]:hover .sapMWizardProgressNavStepCircle {
+	background-color: @sapUiHighlight;
+	color: @sapUiContentContrastIconColor;
+}
+
+.sapMWizardProgressNavStep[data-sap-ui-wpn-step-current="true"] .sapMWizardProgressNavStepTitle {
+	color: @sapUiContentSelectedForegroundColor;
+}
+
+.sapMWizardProgressNavStep[data-sap-ui-wpn-step-current="true"] .sapMWizardProgressNavStepCircle::after {
+	height: @_sap_m_WizardProgressNavigator_StepUnderlineHeight;
+	background: @sapUiBaseText;
+	content: "";
+	display: block;
+	position: relative;
+	width: 100%;
+	border-top-left-radius: 0.125rem;
+	border-top-right-radius: 0.125rem;
+	bottom: -0.625rem;
+}
+
+.sapMWizardProgressNavStep[data-sap-ui-wpn-step-current="true"] .sapMWizardProgressNavStepContainer::after {
+	height: 0;
+}
+
+.sapMWizardProgressNavStep[data-sap-ui-wpn-step-current="true"] {
+	& .sapMWizardProgressNavStepCircle {
+		background: @sapUiSelected;
+		color: @sapUiBaseText;
+	}
+}
+
+.sapMWizardProgressNavStepCircle {
+	background: @sapUiObjectHeaderBackground;
+	border-color:  @sapUiObjectHeaderBorderColor;
+	color: @sapUiBaseText;
+}
+
+.sapMWizardProgressNavStepTitle {
+	color: @sapTextColor;
+}
+
+.sapMWizardProgressNavStep::after {
+	border-bottom-color: @sapUiContentSelectedForegroundColor;
+}
+
+.sapMWizard .sapMWizardStepContainer {
+	background: @sapUiGroupContentBackground;
+}
+
+.sapMWizardProgressNavStepTitleOptional,
+.sapMWizardProgressNavStepLabelOptional {
+	color: @sapUiFieldPlaceholderTextColor;
+}
+
+.sapMWizardProgressNavStep[data-sap-ui-wpn-step-active="true"] {
+	/* all steps after the active one have inactive style */
+	& ~ .sapMWizardProgressNavStep .sapMWizardProgressNavStepCircle {
+		border-color: @sapUiListBorderColor;
+		background: @sapUiObjectHeaderBackground;
+		color: @sapUiBaseText;
+	}
+
+	& ~ .sapMWizardProgressNavStep .sapMWizardProgressNavStepTitle {
+		color: @sapUiContentLabelColor;
+	}
+
+	/* all separators after (and including) the active step have inactive style */
+	&::after,
+	& ~ .sapMWizardProgressNavStep::after {
+		border-bottom-color: @sapUiListSelectionBorderColor;
+	}
+}
+
+.sapMWizardProgressNavStep[data-sap-ui-wpn-step-open-prev="true"][data-sap-ui-wpn-step-open="false"][data-sap-ui-wpn-step-current="true"] {
+	.sapMWizardProgressNavStepCircle {
+		background: @sapUiActive;
+		border-color: @sapUiObjectHeaderBorderColor;
+	}
+}

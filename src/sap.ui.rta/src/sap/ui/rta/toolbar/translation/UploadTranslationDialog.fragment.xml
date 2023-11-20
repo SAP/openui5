@@ -1,0 +1,43 @@
+<core:FragmentDefinition
+		xmlns="sap.m"
+		xmlns:core="sap.ui.core"
+		xmlns:u="sap.ui.unified">
+	<Dialog
+		title="{i18n>TIT_UPLOAD_CHANGED_TEXTS}"
+		type="Message">
+		<Label
+			labelFor="fileUploader"
+			wrappingType="Hyphenated"
+			wrapping="true"
+			width="auto"
+			text="{i18n>MSG_UPLOAD_CHANGED_TEXTS}"
+			class="sapUiTinyMarginBottom">
+		</Label>
+		<u:FileUploader
+			id="fileUploader"
+			sameFilenameAllowed="true"
+			fileType="xml"
+			width="100%"
+			value="{translation>/filePath}"
+			icon="sap-icon://upload"
+			change=".saveFiles">
+			<u:xhrSettings>
+				<u:FileUploaderXHRSettings withCredentials = "true"/>
+			</u:xhrSettings>
+		</u:FileUploader>
+		<beginButton>
+			<Button
+				id="uploadTranslation"
+				text="{i18n>BTN_UPLOAD_CHANGED_TEXTS}"
+				enabled="{= !!${translation>/filePath}}"
+				type="Emphasized"
+				press=".handleUploadPress" />
+		</beginButton>
+		<endButton>
+			<Button
+				id="cancelTranslationUpload"
+				text="{i18n>BUT_UPLOAD_CHANGED_TEXTS_CANCEL}"
+				press=".onCancelUploadDialog" />
+		</endButton>
+	</Dialog>
+</core:FragmentDefinition>

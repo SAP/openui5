@@ -1,7 +1,6 @@
 <!DOCTYPE HTML>
 <html>
 	<head>
-		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 		<title>SelectDialog - sap.m</title>
 		<script src="shared-config.js"></script>
 		<script src="../../../resources/sap-ui-core.js"
@@ -67,7 +66,7 @@
 			// cancel function to display a message
 			var fnCancelDialog = function (oEvent) {
 				sap.m.MessageBox.alert("Cancel Selected on " + (oEvent.oSource ? oEvent.oSource : oEvent.srcControl));
-			}
+			};
 
 			/* dummy list data */
 			var oListData = {
@@ -133,14 +132,14 @@
 				description: "{description}",
 				icon: "{icon}",
 				type: "Active"
-			})
+			});
 
 			var oItemTemplateSelection = new sap.m.StandardListItem({
 				title: "{title}",
 				description: "{description}",
 				icon: "{icon}",
 				selected: "{selected}"
-			})
+			});
 
 			/* dialog data */
 			var oDialogData = {
@@ -218,9 +217,10 @@
 				type: "Text",
 				placeholder: "Open SelectDialog with Dialog Binding & List Binding & width set to 30rem",
 				showValueHelp: true
-			})
+			});
 			var oButton2 = new sap.m.Button("Button2", {
 				text: "Open SelectDialog with Dialog Binding & List Binding & prefiltered by \"ad\"",
+				ariaHasPopup: sap.ui.core.aria.HasPopup.Dialog,
 				press: function (oEvent) {
 					// initiate model
 					oSelectDialog2.setModel(oModelList);
@@ -263,6 +263,7 @@
 
 			var oButton3 = new sap.m.Button("Button3", {
 				text: "Open SelectDialog with destroy call in close event & already initialized binding",
+				ariaHasPopup: sap.ui.core.aria.HasPopup.Dialog,
 				press: function (oEvent) {
 					// set model & bind Aggregation
 					oSelectDialog3.setModel(oModelList);
@@ -308,6 +309,7 @@
 
 			var oButton4 = new sap.m.Button("Button4", {
 				text: "Open SelectDialog with web service and binding before opening the dialog",
+				ariaHasPopup: sap.ui.core.aria.HasPopup.Dialog,
 				press: function (oEvent) {
 
 					// initiate model
@@ -386,6 +388,7 @@
 
 			var oButton4a = new sap.m.Button("Button4a", {
 				text: "Open SelectDialog with web service pre-filtered by \"id\" and binding before opening the dialog",
+				ariaHasPopup: sap.ui.core.aria.HasPopup.Dialog,
 				press: function (oEvent) {
 					// open dialog
 					oSelectDialog4a.open("id_1");
@@ -406,6 +409,7 @@
 			/* 5) reuse of dialog2 to show a forward footer button scenario */
 			var oButton5 = new sap.m.Button("Button5", {
 				text: "Forward to...",
+				ariaHasPopup: sap.ui.core.aria.HasPopup.Dialog,
 				press: function () {
 					// open dialog
 					oSelectDialog2.open("");
@@ -459,6 +463,7 @@
 
 			var oButton6 = new sap.m.Button("Button6", {
 				text: "Open SelectDialog with late binding in MultiSelect prefiltered by \"ad\" mode with 1000px width",
+				ariaHasPopup: sap.ui.core.aria.HasPopup.Dialog,
 				press: function () {
 					// open dialog
 					oSelectDialog6.open("");
@@ -484,7 +489,8 @@
 				multiSelect: true,
 				contentWidth: "400px",
 				search : fnDoProductSearch,
-				liveChange: fnDoProductSearch
+				liveChange: fnDoProductSearch,
+				showClearButton: true
 			});
 
 			// attach close listener
@@ -519,6 +525,7 @@
 
 			var oButton7 = new sap.m.Button("Button7", {
 				text: "Open SelectDialog in MultiSelect mode prefiltered by \"id_1\" with web service binding and 400px width",
+				ariaHasPopup: sap.ui.core.aria.HasPopup.Dialog,
 				press: function () {
 					// initiate model
 					var oModel = new sap.ui.model.odata.ODataModel(sServiceURI, true);
@@ -588,6 +595,7 @@
 
 			var oButton8 = new sap.m.Button("Button8", {
 				text: "Open SelectDialog in MultiSelect mode with JSON binding and selection model and rememberSelections=false",
+				ariaHasPopup: sap.ui.core.aria.HasPopup.Dialog,
 				press: function () {
 					// clear filter
 					oSelectDialog8.getBinding("items").filter([]);
@@ -650,6 +658,7 @@
 
 			var oButton9 = new sap.m.Button("Button9", {
 				text: "Open SelectDialog in MultiSelect mode prefiltered by \"Hulk\" with JSON binding and selection model and rememberSelections=true",
+				ariaHasPopup: sap.ui.core.aria.HasPopup.Dialog,
 				press: function () {
 					// prefilter dialog
 					var itemsBinding = oSelectDialog9.getBinding("items");
@@ -701,6 +710,7 @@
 
 			var oButton10 = new sap.m.Button("Button10", {
 				text: "Open SelectDialog with the view as parent and delayed binding (wrong usage, don't do this at home!)",
+				ariaHasPopup: sap.ui.core.aria.HasPopup.Dialog,
 				press: function () {
 					// bind aggregation with filters
 					oSelectDialog10.bindAggregation("items", {
@@ -738,11 +748,235 @@
 
 			var oButton11 = new sap.m.Button("Button11", {
 				text: "Open SelectDialog with growing=false",
+				ariaHasPopup: sap.ui.core.aria.HasPopup.Dialog,
 				press: function () {
 					// open dialog
 					oSelectDialog8.open();
 				}
 			});
+
+			/*SelectDialog 12 - test the sticky toolbar*/
+
+			var oSelectDialog12 = new sap.m.SelectDialog("SelectDialog12", {
+				title: "Choose several World Domination companions",
+				noDataText: "Sorry, no world domination companions available",
+				multiSelect: true,
+				contentWidth: "400px",
+				search : fnDoProductSearch,
+				liveChange: fnDoProductSearch
+			});
+
+			// attach cancel listener
+			oSelectDialog12.attachCancel(fnCancelDialog);
+
+			var oButton12 = new sap.m.Button("Button12", {
+				text: "Open SelectDialog to test the sticky toolbar",
+				ariaHasPopup: sap.ui.core.aria.HasPopup.Dialog,
+				press: function () {
+					// initiate model
+					var oModel = new sap.ui.model.odata.ODataModel(sServiceURI, true);
+					oSelectDialog12.setModel(oModel);
+
+					// bind aggregation with filters
+					oSelectDialog12.bindAggregation("items", {
+						path: "/Products",
+						filters: fnCreatePrefilter("id", true),
+						template: oProductItemTemplateSelection
+					});
+
+					// open dialog
+					oSelectDialog12.open("id");
+				}
+			});
+
+			/* SelectDialog with resizable true */
+
+			var oSelectDialog13 = new sap.m.SelectDialog("SelectDialog13", {
+				title: "Choose several World Domination companions",
+				noDataText: "Sorry, no world domination companions available",
+				contentWidth: "1000px",
+				resizable: true
+			});
+
+			// set model & bind Aggregation
+			oSelectDialog13.setModel(oModelList);
+			oSelectDialog13.bindAggregation("items", "/superheros", oItemTemplate);
+
+			var oButton13 = new sap.m.Button("Button13", {
+				text: "Open SelectDialog with resizable=true",
+				ariaHasPopup: sap.ui.core.aria.HasPopup.Dialog,
+				press: function () {
+					// open dialog
+					oSelectDialog13.open();
+				}
+			});
+
+			var oSingleListData = {
+				superheroes: [{
+					title: "Darth Vader",
+					description: "The force",
+					icon: "sap-icon://alert",
+					selected: false
+				}, {
+					title: "Agent Smith",
+					description: "Matrix virus",
+					icon: "sap-icon://attachment",
+					selected: false
+				}]
+			};
+			var oSingleModel = new sap.ui.model.json.JSONModel(oSingleListData);
+
+			var oSelectDialog14 = new sap.m.SelectDialog("SelectDialog14", {
+				title: "Single Select with Remember Selection",
+				noDataText: "Sorry, no world domination companions available",
+				multiSelect: false,
+				rememberSelections: true,
+				contentWidth: "400px",
+				search : fnDoSearch,
+				liveChange: fnDoSearch
+			});
+
+			// attach confirm listener
+			oSelectDialog14.attachConfirm(function (oEvent) {
+				sap.m.MessageToast.show("Selected item: " + oEvent.getParameter("selectedItem").getTitle());
+			});
+
+			// attach cancel listener
+			oSelectDialog14.attachCancel(fnCancelDialog);
+
+			var oButton14 = new sap.m.Button("Button14", {
+				text: "Single Select Dialog with Remember Selection",
+				ariaHasPopup: sap.ui.core.aria.HasPopup.Dialog,
+				press: function () {
+					// initiate model
+					oSelectDialog14.setModel(oSingleModel);
+
+					// bind aggregation with filters
+					oSelectDialog14.bindAggregation("items", {
+						path: "/superheroes",
+						filters: [],
+						template: oItemTemplateSelection
+					});
+
+					// open dialog
+					oSelectDialog14.open();
+				}
+			});
+
+			var oSelectDialog15 = new sap.m.SelectDialog("SelectDialog15", {
+				title: "Multi Select with Remember Selection",
+				noDataText: "Sorry, no world domination companions available",
+				multiSelect: true,
+				rememberSelections: true,
+				contentWidth: "400px",
+				search : fnDoSearch,
+				liveChange: fnDoSearch
+			});
+
+			// attach confirm listener
+			oSelectDialog15.attachConfirm(function (oEvent) {
+				sap.m.MessageToast.show("Selected items: " + oEvent.getParameter("selectedItems").reduce(function (acc, oItem) {
+					return acc += oItem.getTitle() + ", ";
+				}, ""));
+			});
+
+			// attach cancel listener
+			oSelectDialog15.attachCancel(fnCancelDialog);
+
+			var oButton15 = new sap.m.Button("Button15", {
+				text: "Multi Select Dialog with Remember Selection",
+				ariaHasPopup: sap.ui.core.aria.HasPopup.Dialog,
+				press: function () {
+					// initiate model
+					oSelectDialog15.setModel(oModelList);
+
+					// bind aggregation with filters
+					oSelectDialog15.bindAggregation("items", {
+						path: "/superheros",
+						filters: [],
+						template: oItemTemplateSelection
+					});
+
+					// open dialog
+					oSelectDialog15.open();
+				}
+			});
+
+			var oSelectDialog16 = new sap.m.SelectDialog("SelectDialog16", {
+				title: "Resize this window to observe the responsive paddings",
+				noDataText: "Sorry, no world domination companions available",
+				contentWidth: "100%",
+				draggable: true,
+				resizable: true
+			});
+
+			// set model & bind Aggregation
+			oSelectDialog16.setModel(oModelList);
+			oSelectDialog16.bindAggregation("items", "/superheros", oItemTemplate);
+			oSelectDialog16.addStyleClass("sapUiResponsivePadding--content sapUiResponsivePadding--header sapUiResponsivePadding--footer sapUiResponsivePadding--subHeader");
+
+			var oButton16 = new sap.m.Button("Button16", {
+				text: "SelectDialog with Responsive Paddings (SAP Quartz and Horizon Themes only)",
+				ariaHasPopup: sap.ui.core.aria.HasPopup.Dialog,
+				press: function () {
+					oSelectDialog16.setModel(oModelList);
+					oSelectDialog16.bindAggregation("items", {
+						path: "/superheros",
+						filters: [],
+						template: oItemTemplateSelection
+					});
+
+					oSelectDialog16.open();
+				}
+			});
+
+			var oSelectDialog17 = new sap.m.SelectDialog("SelectDialog17", {
+				title: "Choose several World Domination companions",
+				noDataText: "Sorry, no world domination companions available",
+				contentWidth: "1000px",
+				searchPlaceholder: "Placeholder text"
+			});
+
+			// set model & bind Aggregation
+			oSelectDialog17.setModel(oModelList);
+			oSelectDialog17.bindAggregation("items", "/superheros", oItemTemplate);
+
+			var oButton17 = new sap.m.Button("Button17", {
+				text: "Select Dialog with custom placeholder",
+				ariaHasPopup: sap.ui.core.aria.HasPopup.Dialog,
+				press: function () {
+					// open dialog
+					oSelectDialog17.open();
+				}
+			});
+
+			var oSelectDialog18 = new sap.m.SelectDialog("SelectDialog18", {
+					title: "SelectDialog with delayed binding",
+					multiSelect: true,
+					contentWidth: "777px",
+					contentHeight: "500px"
+				});
+
+			var oButton18 = new sap.m.Button("Button18", {
+					text: "Open SelectDialog with delayed binding",
+					ariaHasPopup: sap.ui.core.aria.HasPopup.Dialog,
+					press: function () {
+						// bind aggregation with filters
+						oSelectDialog18.bindAggregation("items", {
+							path: "/Products",
+							template: oProductItemTemplate
+						});
+
+						// open dialog
+						oSelectDialog18.open("id_1");
+
+						setTimeout(function () {
+							// initiate model
+							var oModel = new sap.ui.model.odata.ODataModel(sServiceURI, true);
+							oSelectDialog18.setModel(oModel);
+						}, 500);
+					}
+				});
 
 			var oPage = new sap.m.Page("page", {
 				title:"Mobile SelectDialog Control",
@@ -759,7 +993,14 @@
 							oButton8,
 							oButton9,
 							oButton10,
-							oButton11
+							oButton11,
+							oButton12,
+							oButton13,
+							oButton14,
+							oButton15,
+							oButton16,
+							oButton17,
+							oButton18
 						]
 					})
 				],

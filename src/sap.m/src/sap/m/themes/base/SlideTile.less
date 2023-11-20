@@ -8,7 +8,7 @@
 	position: relative;
 	display: inline-block;
 	font-size: 0;
-	border-radius: 0.125rem;
+	border-radius: 0.25rem;
 	outline: none;
 	box-shadow: @sapUiShadowLevel0;
 
@@ -17,6 +17,7 @@
 		position: relative;
 		height: 100%;
 		width: 100%;
+		border-radius: 0.23rem 0.23rem 0.25rem 0.25rem;
 	}
 
 	&.sapMSTScopeActions {
@@ -29,6 +30,14 @@
 			z-index: 1;
 			color: @sapUiButtonIconColor;
 			pointer-events: none;
+			background-color: transparent;
+			border: 0;
+			.sapMBtnIcon{
+				bottom: 0.6rem;
+				left: 0.9rem;
+				border: 0;
+				color: @sapButton_Lite_TextColor;
+			}
 			&:focus {
 				outline: none;
 			}
@@ -91,6 +100,47 @@
 	}
 }
 
+.sapMST{
+	.sapMGT.sapMGTStateLoading{
+		.sapMTileCnt.News{
+			background-color: transparent;
+		}
+	}
+}
+.sapMST.sapMSTGridContainerOneRemGap.TwoByOne {
+	width: 23rem;
+}
+
+.sapMST.sapMSTGridContainerOneRemGap.TwoByHalf {
+	width: 23rem;
+}
+
+.sapMTileSmallPhone.sapMST.sapMSTGridContainerOneRemGap.TwoByOne{
+	width: 19.5rem;
+}
+
+.sapMTileSmallPhone.sapMST.sapMSTGridContainerOneRemGap.TwoByHalf{
+	width: 19.5rem;
+}
+
+.sapMST.sapMTileSmallPhone {
+	.sapMGT.sapMGTStateLoading.TwoByOne {
+		.sapMTileCntContentShimmerPlaceholderItemTextFooter{
+			width: 5.875rem;
+		}
+	}
+}
+.sapUiSizeCompact{
+	.sapMST {
+		.sapMSTMoreIcon {
+			.sapMBtnIcon{
+				left: 0.3rem;
+				bottom: 0.4rem;
+			}
+		}
+	}
+}
+
 .sapMSTWrapper {
 	position: absolute;
 	left: 100%;
@@ -113,8 +163,19 @@ html.sap-tablet .sapMGTHvrOutln:active {
 	height: 11rem;
 }
 
-.sapMST .sapMGT {
-	border: 0.125rem;
+.sapMST.Stretch {
+	width: 11rem;
+	height: 11rem;
+}
+
+.sapMGTTileStretch {
+	height: 100%;
+	width: 100%;
+}
+
+.sapMGTTileStretch .sapMGT{
+	height: 100%;
+	width: 100%;
 }
 
 .sapMSTFocusDiv {
@@ -164,13 +225,13 @@ html.sap-tablet .sapMGTHvrOutln:active {
 	height: 2rem;
 	width: 2rem;
 	z-index: 1;
-	opacity: 0.3;
+	opacity: 0.6;
 	overflow: hidden;
 	border-radius: 50%;
 }
 
 html.sap-desktop .sapMST .sapMSTIconClickTapArea:hover ~.sapMSTIconDisplayArea {
-	opacity: 0.6;
+	opacity: 0.8;
 }
 
 
@@ -188,6 +249,7 @@ html.sap-desktop .sapMST.sapMSTIconPressed .sapMSTIconClickTapArea:hover ~.sapMS
 
 	.sapUiIcon {
 		width: 2rem;
+		line-height: inherit;
 	}
 }
 

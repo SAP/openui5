@@ -1,0 +1,6 @@
+{
+	"@odata.context": "$metadata#EdmTypesCollection/$entity",
+	"ID": "1",
+	"Date": "2022-12-31",
+	"EndDate": "2023-03-31"
+}

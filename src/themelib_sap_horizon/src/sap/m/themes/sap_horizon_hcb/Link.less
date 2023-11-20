@@ -1,0 +1,61 @@
+/* ================================== */
+/* CSS for control sap.m/Link         */
+/* Horizon High Contrast Black theme  */
+/* ================================== */
+
+.sapMLnkDsbl {
+	opacity: @sapUiContentDisabledOpacity;
+	outline: none;
+	cursor: default;
+}
+
+.sapMLnkEmphasized {
+	font-family: @sapUiFontBoldFamily;
+}
+
+.sapMLIBActive .sapMLnk {
+	color: @sapUiListActiveTextColor;
+	text-decoration: underline;
+}
+
+.sapMLnk.sapMLnkSubtle {
+	color: @sapUiLinkSubtleColor;
+	text-decoration: underline;
+
+	&:not(.sapMLnkDsbl) {
+		&:active {
+			color: @sapUiLinkSubtleColor;
+		}
+	}
+}
+
+html.sap-desktop .sapMLnk:not(.sapMLnkDsbl) {
+	&:focus {
+		outline: 0.125rem dotted @sapUiContentFocusColor;
+
+		&:hover:not(:active) {
+			text-decoration: none;
+		}
+	}
+
+	&.sapMLnkSubtle {
+		&:hover:not(:active):not(:focus) {
+			color: @sapUiLinkSubtleColor;
+			text-decoration: none;
+		}
+	}
+}
+
+.sapMLnk:not(.sapMLnkDsbl) {
+	text-shadow: @sapUiContentTextShadow;
+}
+
+/* align Link in Form with Label */
+.sapUiFormEdit .sapMLnk {
+	margin-top: 0.875rem; /* don't use padding as this would stretch the focus outline */
+	margin-bottom: 0.625rem; /* for some reason browser adds 4px, display: block would lead to stretched focus outline*/
+}
+
+.sapMListTblRow.sapMLIBSelected .sapMLnk:not(.sapMLnkDsbl) {
+	text-shadow: @sapUiContentTextShadow;
+}

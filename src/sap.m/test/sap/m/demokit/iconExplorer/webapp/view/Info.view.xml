@@ -1,0 +1,258 @@
+<mvc:View
+	controllerName="sap.ui.demo.iconexplorer.controller.Info"
+	xmlns:core="sap.ui.core"
+	xmlns="sap.m"
+	xmlns:card="sap.f.cards"
+	xmlns:l="sap.ui.layout"
+	xmlns:f="sap.f"
+	xmlns:mvc="sap.ui.core.mvc">
+	<f:DynamicPage
+		toggleHeaderOnTitleClick="false"
+		class="sapUiNoContentPadding"
+		id="page">
+			<f:title>
+				<f:DynamicPageTitle>
+					<f:heading>
+						<VBox>
+							<Breadcrumbs currentLocationText="{i18n>infoTitle}" separatorStyle="GreaterThan">
+								<Link press="onIconExplorerLinkPressed" text="{i18n>appTitle}"/>
+							</Breadcrumbs>
+							<Title text="{i18n>infoTitle}"/>
+						</VBox>
+					</f:heading>
+				</f:DynamicPageTitle>
+			</f:title>
+			<f:content>
+				<l:Grid class="sapUiSmallMarginTop">
+					<f:Card>
+						<f:layoutData>
+							<l:GridData span="XL3 L4 M6 S12" />
+						</f:layoutData>
+						<f:content>
+							<VBox>
+								<Image src='{info>/svgCard}' width="100%" />
+								<card:Header title="{i18n>infoIconsTileTitle}" />
+								<FormattedText class="sapUiSmallMargin"
+									htmlText='&lt;p&gt;{i18n>infoIconsTileFirstParagraph}&lt;/p&gt;
+									&lt;p&gt;{i18n>infoIconsTileSecondParagraph}&lt;/p&gt;
+									&lt;ul&gt;
+										&lt;li&gt;
+											{i18n>infoIconsTileFirstBullet}
+										&lt;/li&gt;
+										&lt;li&gt;
+											{i18n>infoIconsTileSecondBullet}
+										&lt;/li&gt;
+										&lt;li&gt;
+											{i18n>infoIconsTileThirdBullet}
+										&lt;/li&gt;
+									&lt;/ul&gt;' />
+								<Button class='sapUiSmallMargin'
+									text='{i18n>infoBTPIconography}'
+									width='calc(100% - 2rem)'
+									press="onInfoBTPIconographyPress"
+									visible="{= !${versionData>/isOpenUI5}}" />
+							</VBox>
+						</f:content>
+					</f:Card>
+					<f:Card>
+						<f:layoutData>
+							<l:GridData span="XL6 L5 M6 S12" />
+						</f:layoutData>
+						<f:header>
+							<card:Header title="{i18n>infoMoreTileTitle}" />
+						</f:header>
+						<f:content>
+							<VBox class='sapUiSmallMargin sapUiDocumentationInfoLinksHolder'>
+								<HBox visible="{= !${versionData>/isOpenUI5}}" alignItems='Center'>
+									<core:Icon
+										size='1.5rem'
+										width='3rem'
+										height='3rem'
+										src="sap-icon://wrench"
+										backgroundColor="#C2FCEE"
+										color="#256F3A" />
+									<Link text='{i18n>infoBTPExperience}'
+										wrapping="true"
+										emphasized="true"
+										class='sapUiSmallMarginBegin'
+										href='https://btpx.frontify.com/document/223120#/design-language/iconography-p7615' />
+								</HBox>
+								<HBox visible="{= !${versionData>/isOpenUI5}}" alignItems='Center' class='sapUiTinyMarginTop'>
+									<core:Icon
+										size='1.5rem'
+										width='3rem'
+										height='3rem'
+										src="sap-icon://palette"
+										backgroundColor="#FFD0E7"
+										color="#AA0808" />
+									<Link text='{i18n>infoBTPVD}'
+										wrapping="true"
+										emphasized="true"
+										class='sapUiSmallMarginBegin'
+										href='https://wiki.one.int.sap/wiki/display/CPDesign/Iconography' />
+								</HBox>
+								<HBox visible="{= !${versionData>/isOpenUI5}}" alignItems='Center' class='sapUiTinyMarginTop'>
+									<core:Icon
+										size='1.5rem'
+										width='3rem'
+										height='3rem'
+										src="sap-icon://e-care"
+										backgroundColor="#EBF5CB"
+										color="#256F3A" />
+									<Link text='{i18n>infoVisualCore}'
+										wrapping="true"
+										emphasized="true"
+										class='sapUiSmallMarginBegin'
+										href='https://wiki.one.int.sap/wiki/display/visualcore/SAP-icon+Updates' />
+								</HBox>
+								<HBox visible="{= !${versionData>/isOpenUI5}}" alignItems='Center' class='sapUiTinyMarginTop'>
+									<core:Icon
+										size='1.5rem'
+										width='3rem'
+										height='3rem'
+										src="sap-icon://e-care"
+										backgroundColor="#EAECEE"
+										color="#556B82" />
+									<Link text='{i18n>infoVisualCoreOld}'
+										wrapping="true"
+										emphasized="true"
+										class='sapUiSmallMarginBegin'
+										href='https://wiki.one.int.sap/wiki/pages/viewpage.action?pageId=2708692528/' />
+								</HBox>
+								<HBox visible="{= !${versionData>/isOpenUI5}}" alignItems='Center' class='sapUiTinyMarginTop'>
+									<core:Icon
+										size='1.5rem'
+										width='3rem'
+										height='3rem'
+										src="sap-icon://sap-logo-shape"
+										backgroundColor="#D1EFFF"
+										color="#0057D2" />
+									<Link text='{i18n>infoFioriWDHorizon}'
+										wrapping="true"
+										emphasized="true"
+										class='sapUiSmallMarginBegin'
+										href='https://experience.sap.com/internal/fiori-design-web/iconography-horizon/' />
+								</HBox>
+								<HBox alignItems='Center' class='sapUiTinyMarginTop'>
+									<core:Icon
+										size='1.5rem'
+										width='3rem'
+										height='3rem'
+										src="sap-icon://sap-logo-shape"
+										backgroundColor="#DED3FF"
+										color="#552CFF" />
+									<Link text='{i18n>infoFioriWDQuartz}'
+										wrapping="true"
+										emphasized="true"
+										class='sapUiSmallMarginBegin'
+										href='https://experience.sap.com/internal/fiori-design-web/icons/' />
+								</HBox>
+								<HBox visible="{= !${versionData>/isOpenUI5}}" alignItems='Center' class='sapUiTinyMarginTop'>
+									<core:Icon
+										size='1.5rem'
+										width='3rem'
+										height='3rem'
+										src="sap-icon://person-placeholder"
+										backgroundColor="#FFDBE7"
+										color="#BA066C" />
+									<Link text='{i18n>infoPSIconography}'
+										wrapping="true"
+										emphasized="true"
+										class='sapUiSmallMarginBegin'
+										href='https://wiki.one.int.sap/wiki/display/uxc/UXC-013' />
+								</HBox>
+								<HBox visible="{= !${versionData>/isOpenUI5}}" alignItems='Center' class='sapUiTinyMarginTop'>
+									<core:Icon
+										size='1.5rem'
+										width='3rem'
+										height='3rem'
+										src="sap-icon://person-placeholder"
+										backgroundColor="#FFDCF3"
+										color="#A100C2" />
+									<Link text='{i18n>infoPSSemantics}'
+										wrapping="true"
+										emphasized="true"
+										class='sapUiSmallMarginBegin'
+										href='https://wiki.one.int.sap/wiki/display/uxc/UXC-019' />
+								</HBox>
+								<HBox visible="{= !${versionData>/isOpenUI5}}" alignItems='Center' class='sapUiTinyMarginTop'>
+									<core:Icon
+										size='1.5rem'
+										width='3rem'
+										height='3rem'
+										src="sap-icon://sap-ui5"
+										backgroundColor="#FFF3B8"
+										color="#A45D00" />
+									<Link text='{i18n>infoIconAndIconPool}'
+										wrapping="true"
+										emphasized="true"
+										class='sapUiSmallMarginBegin'
+										href='https://sapui5untested.int.sap.eu2.hana.ondemand.com/#/topic/21ea0ea94614480d9a910b2e93431291' />
+								</HBox>
+								<HBox visible="{= ${versionData>/isOpenUI5}}" alignItems='Center' class='sapUiTinyMarginTop'>
+									<core:Icon
+										size='1.5rem'
+										width='3rem'
+										height='3rem'
+										src="sap-icon://sap-ui5"
+										backgroundColor="#FFF3B8"
+										color="#A45D00" />
+									<Link text='{i18n>infoIconAndIconPoolOpenUI}'
+										wrapping="true"
+										emphasized="true"
+										class='sapUiSmallMarginBegin'
+										href='https://openui5.hana.ondemand.com/topic/21ea0ea94614480d9a910b2e93431291' />
+								</HBox>
+							</VBox>
+						</f:content>
+					</f:Card>
+					<f:Card>
+						<f:layoutData>
+							<l:GridData linebreakM="{= !${versionData>/isOpenUI5}}" span="XL3 L3 M6 S12" />
+						</f:layoutData>
+						<f:header>
+							<card:Header title="{i18n>infoDownloadIconFonts}" />
+						</f:header>
+						<f:content>
+							<VBox class='sapUiSmallMargin' width="100%">
+								<HBox visible="{= !${versionData>/isOpenUI5}}" alignItems='Center' justifyContent="SpaceBetween">
+									<Text text='{i18n>infoSAPBusinessSuite}' />
+									<Button press="onDownloadBusinessSuiteIcons" type="Transparent" icon='sap-icon://download' />
+								</HBox>
+								<HBox alignItems='Center' justifyContent="SpaceBetween">
+									<Text text='{i18n>infoSAPIcons}' />
+									<Button press="onDownloadSAPIcons" type="Transparent" icon='sap-icon://download' />
+								</HBox>
+								<HBox alignItems='Center' justifyContent="SpaceBetween">
+									<Text text='{i18n>infoSAPIconsTNT}' />
+									<Button press="onDownloadTNTIcons" type="Transparent" icon='sap-icon://download' />
+								</HBox>
+							</VBox>
+						</f:content>
+					</f:Card>
+					<f:Card visible="{= !${versionData>/isOpenUI5}}">
+						<f:layoutData>
+							<l:GridData span="XL3 L3 M6 S12" />
+						</f:layoutData>
+						<f:header>
+							<card:Header title="{i18n>infoFigmaTitle}" />
+						</f:header>
+						<f:content>
+							<VBox class='sapUiSmallMargin' width="100%">
+								<FormattedText
+									htmlText='
+										&lt;span&gt;
+											{i18n>infoFigmaText}
+											&lt;strong&gt;{i18n>infoFigmaLink}&lt;/strong&gt;
+										&lt;/span&gt;' />
+								<Link text='{i18n>sapIconGuidelines}'
+									class='sapUiSmallMarginTop'
+									href="https://btpx.frontify.com/document/222572#/resources/how-to-use-the-figma-ui-kit:51648" />
+							</VBox>
+						</f:content>
+					</f:Card>
+				</l:Grid>
+			</f:content>
+	</f:DynamicPage>
+
+</mvc:View>

@@ -1,0 +1,40 @@
+<rss version="2.0">
+<channel>
+    <title>UI5 News</title>
+    <description>UI5 News</description>
+    <link>https://sdk.openui5.org/</link>
+
+    <item>
+        <title>Ut enim ad minima veniam, quis nostrum exercitationem ullam</title>
+        <description>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</description>
+        <link></link>
+        <pubDate>Tue, 16 Nov 2021 11:33:30 GMT</pubDate>
+        <guid isPermaLink="false">4</guid>
+    </item>
+
+    <item>
+        <title>Second</title>
+        <description>UI5 Web Components Release 1.0.0</description>
+        <link>https://blogs.sap.com/2021/11/10/lift-off-ui5-web-components-1.0.0-launched/</link>
+        <pubDate>Tue, 16 Nov 2021 11:33:30 GMT</pubDate>
+        <guid isPermaLink="false">3</guid>
+    </item>
+
+    <item>
+        <title>Third</title>
+        <description>Get it at https://openui5.org/releases/</description>
+        <link>http://www.feedforall.com/feedforall-partners.htm</link>
+        <pubDate>Tue, 16 Nov 2021 11:33:30 GMT</pubDate>
+        <guid isPermaLink="false">2</guid>
+    </item>
+
+    <item>
+        <title>Fourth</title>
+        <description>Get it at https://openui5.org/releases/</description>
+        <link>https://openui5.org/releases/</link>
+        <pubDate>Tue, 16 Nov 2021 11:33:30 GMT</pubDate>
+        <guid isPermaLink="false">1</guid>
+    </item>
+
+    </channel>
+</rss>

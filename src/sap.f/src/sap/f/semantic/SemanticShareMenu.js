@@ -8,6 +8,11 @@
 sap.ui.define([
 	"sap/ui/core/IconPool",
 	"sap/ui/base/EventProvider",
+	"sap/ui/base/ManagedObjectObserver",
+	"sap/ui/Device",
+	"sap/ui/core/Lib",
+	"sap/ui/core/ShortcutHintsMixin",
+	"sap/ui/core/library",
 	"sap/m/library",
 	"sap/m/OverflowToolbarButton",
 	"sap/m/OverflowToolbarLayoutData",
@@ -15,14 +20,23 @@ sap.ui.define([
 ], function(
 	IconPool,
 	EventProvider,
+	ManagedObjectObserver,
+	Device,
+	Library,
+	ShortcutHintsMixin,
+	coreLibrary,
 	mobileLibrary,
 	OverflowToolbarButton,
 	OverflowToolbarLayoutData,
-	SemanticContainer) {
+	SemanticContainer
+) {
 	"use strict";
 
 	// shortcut for sap.m.ButtonType
 	var ButtonType = mobileLibrary.ButtonType;
+
+	// shortcut for sap.ui.core.aria.HasPopup
+	var AriaHasPopup = coreLibrary.aria.HasPopup;
 
 	/**
 	* Constructor for a <code>sap.f.semantic.SemanticShareMenu</code>.
@@ -30,7 +44,6 @@ sap.ui.define([
 	* @private
 	* @since 1.46.0
 	* @alias sap.f.semantic.SemanticShareMenu
-	* @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	*/
 	var SemanticShareMenu = SemanticContainer.extend("sap.f.semantic.SemanticShareMenu", {
 		constructor : function(oContainer, oParent) {
@@ -38,6 +51,8 @@ sap.ui.define([
 
 			this._aShareMenuActions = [];
 			this._aCustomShareActions = [];
+			this._oObserver = new ManagedObjectObserver(SemanticShareMenu.prototype._onShareMenuButtonChanges.bind(this));
+			this._onShareButtonClickRef = this._onShareButtonClick.bind(this);
 
 			this._setMode(SemanticShareMenu._Mode.initial);
 		}
@@ -66,6 +81,9 @@ sap.ui.define([
 
 	SemanticShareMenu.prototype.addCustomAction = function(oCustomControl) {
 		this._onControlAdded(oCustomControl);
+		this._oObserver.observe(oCustomControl, {
+			properties: ["visible"]
+		});
 
 		this._callContainerAggregationMethod("insertButton", oCustomControl, this._getCustomActionInsertIndex());
 		this._aCustomShareActions.push(oCustomControl);
@@ -73,15 +91,21 @@ sap.ui.define([
 	};
 
 	SemanticShareMenu.prototype.insertCustomAction = function(oCustomControl, iIndex) {
-		this._onControlAdded(oCustomControl);
+		if (this._aCustomShareActions.indexOf(oCustomControl) < 0) {
+			this._onControlAdded(oCustomControl);
+			this._oObserver.observe(oCustomControl, {
+				properties: ["visible"]
+			});
+			this._aCustomShareActions.splice(iIndex, 0, oCustomControl);
+		}
 
 		this._callContainerAggregationMethod("insertButton", oCustomControl, this._getCustomActionInsertIndex(iIndex));
-		this._aCustomShareActions.splice(iIndex, 0, oCustomControl);
+
 		return this;
 	};
 
 	SemanticShareMenu.prototype.getCustomActions = function() {
-		return this._aCustomShareActions;
+		return this._aCustomShareActions.slice();
 	};
 
 	SemanticShareMenu.prototype.indexOfCustomAction = function(oCustomControl) {
@@ -90,6 +114,10 @@ sap.ui.define([
 
 	SemanticShareMenu.prototype.removeCustomAction = function(oCustomControl) {
 		var vResult = this._callContainerAggregationMethod("removeButton", oCustomControl);
+		this._oObserver.unobserve(oCustomControl, {
+			properties: ["visible"]
+		});
+
 		this._aCustomShareActions.splice(this._aCustomShareActions.indexOf(oCustomControl), 1);
 		this._onControlRemoved();
 		return vResult;
@@ -119,7 +147,6 @@ sap.ui.define([
 		return this;
 	};
 
-
 	/*
 	* SEMANTIC SHARE MENU ACTIONS
 	*/
@@ -128,13 +155,19 @@ sap.ui.define([
 	* Adds a <code>sap.f.semantic.SemanticControl</code> to the container.
 	*
 	* @param {sap.f.semantic.SemanticControl} oSemanticControl
-	* @returns {sap.f.semantic.SemanticShareMenu}
+	* @returns {this}
 	*/
 	SemanticShareMenu.prototype.addContent = function (oSemanticControl) {
 		var oControl = this._getControl(oSemanticControl);
 
-		this._onControlAdded(oControl);
-		this._aShareMenuActions.push(oSemanticControl);
+		if (this._aShareMenuActions.indexOf(oSemanticControl) < 0) {
+			this._onControlAdded(oControl);
+			this._oObserver.observe(oControl, {
+				properties: ["visible"]
+			});
+			this._aShareMenuActions.push(oSemanticControl);
+		}
+
 		this._preProcessOverflowToolbarButton(oControl);
 		this._callContainerAggregationMethod("insertButton", oControl, this._getSemanticActionInsertIndex(oSemanticControl));
 		return this;
@@ -148,6 +181,9 @@ sap.ui.define([
 	*/
 	SemanticShareMenu.prototype.removeContent = function (oSemanticControl) {
 		var oControl = this._getControl(oSemanticControl);
+		this._oObserver.unobserve(oControl, {
+			properties: ["visible"]
+		});
 
 		this._callContainerAggregationMethod("removeButton", oControl);
 		this._aShareMenuActions.splice(this._aShareMenuActions.indexOf(oSemanticControl), 1);
@@ -160,14 +196,22 @@ sap.ui.define([
 	 * Destroys all the actions - custom and semantic
 	 * and cleans all the references in use.
 	 *
-	 * @returns {sap.f.semantic.SemanticShareMenu}
+	 * @returns {this}
 	 */
 	SemanticShareMenu.prototype.destroy = function() {
+		if (this._oShareMenuBtn) {
+			this._oShareMenuBtn.destroy();
+		}
 		this._oShareMenuBtn = null;
 		this._aShareMenuActions = null;
 		this._aCustomShareActions = null;
 
 		return SemanticContainer.prototype.destroy.call(this);
+	};
+
+	SemanticShareMenu.prototype.exit = function () {
+		this._oObserver.disconnect();
+		this._oObserver = null;
 	};
 
 	/*
@@ -177,7 +221,7 @@ sap.ui.define([
 	/*
 	* Returns the current mode - <code>initial</code>, <code>button</code> or <code>actionSheet</code>.
 	*
-	* @returns {String}
+	* @returns {string}
 	*/
 	SemanticShareMenu.prototype._getMode = function() {
 		return this._mode;
@@ -187,8 +231,8 @@ sap.ui.define([
 	/*
 	 * Sets the <code>ShareMenu</code> mode - <code>initial</code>, <code>button</code> or <code>actionSheet</code>.
 	 *
-	 * @param {String} sMode
-	 * @returns {sap.f.semantic.SemanticShareMenu}
+	 * @param {string} sMode
+	 * @returns {this}
 	 */
 	SemanticShareMenu.prototype._setMode = function (sMode) {
 		if (this._getMode() === sMode) {
@@ -223,33 +267,65 @@ sap.ui.define([
 	};
 
 
+	SemanticShareMenu.prototype._onShareButtonClick = function () {
+		var oContainer = this._getContainer();
+
+		oContainer.openBy(this._oShareMenuBtn);
+	};
+
+	SemanticShareMenu.prototype._getVisibleActions = function () {
+		var aAllActions = this._aShareMenuActions.concat(this._aCustomShareActions),
+			aVisibleActions = aAllActions.map(function (oAction) {
+				return this._getControl(oAction);
+			}, this).filter(function (oButton) {
+				return oButton.getVisible();
+			});
+
+		return aVisibleActions;
+	};
+
+	SemanticShareMenu.prototype._onShareMenuButtonChanges = function () {
+		var aVisibleActions = this._getVisibleActions();
+
+		this._getShareMenuButton().setVisible(aVisibleActions.length > 1);
+
+		this.fireEvent("_visibleActionsChanged", { "visibleActionsCount": aVisibleActions.length });
+	};
+
+
 	/*
 	* Retrieves the <code>ShareMenu</code> button.
 	*
 	* @returns {sap.m.Button}
 	*/
 	SemanticShareMenu.prototype._getShareMenuButton = function() {
-		var oContainer = this._getContainer();
+		var oContainer, oResourceBundle, sShortcutKey;
 
 		if (!this._oShareMenuBtn) {
+			oContainer = this._getContainer();
+			oResourceBundle = Library.getResourceBundleFor("sap.f");
+			sShortcutKey = "SEMANTIC_CONTROL_ACTION_SHARE_SHORTCUT"; // Ctrl+Shift+S
+
+			if (Device.os.macintosh) {
+				sShortcutKey += "_MAC"; // Cmd+Shift+S
+			}
+
 			this._oShareMenuBtn = new OverflowToolbarButton(oContainer.getId() + "-shareButton", {
+				ariaHasPopup: AriaHasPopup.Menu,
 				icon: IconPool.getIconURI("action"),
-				tooltip: sap.ui.getCore().getLibraryResourceBundle("sap.f").getText("SEMANTIC_CONTROL_ACTION_SHARE"),
+				tooltip: oResourceBundle.getText("SEMANTIC_CONTROL_ACTION_SHARE"),
 				layoutData: new OverflowToolbarLayoutData({
 					closeOverflowOnInteraction: false
 				}),
-				text: sap.ui.getCore().getLibraryResourceBundle("sap.f").getText("SEMANTIC_CONTROL_ACTION_SHARE"),
+				text: oResourceBundle.getText("SEMANTIC_CONTROL_ACTION_SHARE"),
 				type: ButtonType.Transparent,
-				press: function () {
-					oContainer.openBy(this._oShareMenuBtn);
-				}.bind(this)
+				press: this._onShareButtonClickRef
 			});
 
-			this._oShareMenuBtn.addEventDelegate({
-				onAfterRendering: function() {
-					this._oShareMenuBtn.$().attr("aria-haspopup", true);
-				}.bind(this)
-			}, this);
+			ShortcutHintsMixin.addConfig(this._oShareMenuBtn, {
+				addAccessibilityLabel: true,
+				message: oResourceBundle.getText(sShortcutKey)
+			});
 		}
 
 		return this._oShareMenuBtn;
@@ -258,8 +334,8 @@ sap.ui.define([
 	/*
 	* Determines the insert index of the custom controls to be added.
 	*
-	* @param {Number} iIndex
-	* @returns {Number}
+	* @param {int} iIndex
+	* @returns {int}
 	*/
 	SemanticShareMenu.prototype._getCustomActionInsertIndex = function(iIndex) {
 		var iCustomActionsCount = this._aCustomShareActions.length;
@@ -277,7 +353,7 @@ sap.ui.define([
 	* Determines the insert index of the semantic controls to be added.
 	*
 	* @param {sap.f.semantic.SemanticControl} oSemanticControl
-	* @returns {Number}
+	* @returns {int}
 	*/
 	SemanticShareMenu.prototype._getSemanticActionInsertIndex = function(oSemanticControl) {
 		this._aShareMenuActions.sort(this._sortControlByOrder.bind(this));
@@ -294,7 +370,7 @@ sap.ui.define([
 	 * in order to update the <code>ShareMenu</code> mode.
 	 *
 	 * @param {sap.f.semantic.SemanticControl} oControl
-	 * @returns {Boolean}
+	 * @returns {boolean}
 	 */
 	SemanticShareMenu.prototype._onControlAdded = function(oControl) {
 		if (this._isInitialMode()) {
@@ -306,7 +382,7 @@ sap.ui.define([
 	 * The method is called after a control has been removed
 	 * in order to update the <code>ShareMenu</code> mode.
 	 *
-	 * @returns {Boolean}
+	 * @returns {boolean}
 	 */
 	SemanticShareMenu.prototype._onControlRemoved = function() {
 		var iActions = this._aShareMenuActions.length,

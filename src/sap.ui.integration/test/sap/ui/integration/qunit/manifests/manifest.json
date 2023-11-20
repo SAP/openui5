@@ -1,0 +1,41 @@
+{
+	"_version": "1.8.0",
+	"sap.app": {
+		"type": "card",
+		"id": "test.manifest.someCard"
+	},
+	"sap.card": {
+		"type": "List",
+		"header": {
+			"title": "List Card",
+			"subTitle": "With static list items",
+			"icon": {
+				"src": "sap-icon://business-objects-experience"
+			},
+			"status": {
+				"text": "5 of 17"
+			}
+		},
+		"content": {
+			"items": [
+				{
+					"title": "Laurent Dubois",
+					"description": "I am Laurent. I put great attention to detail.",
+					"infoState": "Error",
+					"info": "Manager",
+					"highlight": "Success",
+					"action": {
+						"url": "https://www.w3schools.com"
+					}
+				},
+				{
+					"title": "Alain Chevalier",
+					"description": "I am Alain. I put great attention to detail.",
+					"infoState": "Success",
+					"info": "Credit Analyst",
+					"highlight": "Error"
+				}
+			]
+		}
+	}
+}

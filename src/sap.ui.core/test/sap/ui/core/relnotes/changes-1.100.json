@@ -1,0 +1,218 @@
+{
+  "1.100.0": {
+    "date": "March 2022",
+    "notes": [
+      {
+        "id": "77e9201893374bf4f45ac5059c71a789ec253c03",
+        "type": "FEATURE",
+        "text": " sap.ui.model.odata.v2.ODataModel: Support instance annotations \"@$ui5.context.isInactive\" and \"@$ui5.context.isTransient\""
+      },
+      {
+        "id": "959221613e7c57bdcff9be32cecb44edfca692eb",
+        "type": "FIX",
+        "text": " sap.ui.core.demokit.tutorial.odatav4 fix mockserver $batch detection"
+      },
+      {
+        "id": "413817186d9fb40c096051837973dd959460d544",
+        "type": "FIX",
+        "text": " sap.ui.core.format.DateFormat: Allow case-insensitive inputs",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180419798"
+          }
+        ]
+      },
+      {
+        "id": "8a56b51c3988b963de37b41843e31bc9c0617aa2",
+        "type": "FIX",
+        "text": " sap.ui.core.format.DateFormat: Australian calendar change first day of week to Monday",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400009303182021"
+          }
+        ]
+      },
+      {
+        "id": "32baaaf61034c3d17318ed952b98d2db5efa4742",
+        "type": "FIX",
+        "text": " core/m: fix viewport meta for iOS platform",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280037152"
+          }
+        ]
+      },
+      {
+        "id": "f450f247191e6344e818741d328412209ea36115",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v2.ODataListBinding#refresh: must not reset pending refresh flag as long as binding is suspended",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280074593"
+          }
+        ]
+      },
+      {
+        "id": "a25f4ad7b4935ec46b15289f133ba869d2cb2325",
+        "type": "FIX",
+        "text": " DateFormat#format: date parameter check",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170331920"
+          }
+        ]
+      },
+      {
+        "id": "a1e67dba803414d3e2ca8047de1eae9465d1f3d9",
+        "type": "FIX",
+        "text": " sap.ui.core.date.UniversalDate: invalid date (endless loop)"
+      },
+      {
+        "id": "9d0322af482fe9587710722274897ce6f489f00c",
+        "type": "FIX",
+        "text": " sap.ui.core.format.NumberFormat: Fix invalid groupingSize configuration",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180410670"
+          }
+        ]
+      },
+      {
+        "id": "3bc74395d2984156159d90106a4fbbc2ce9e8f93",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v2.ODataListBinding#setContext: Do not fire change event if unresolved",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280055052"
+          }
+        ]
+      },
+      {
+        "id": "94390048bf14c461d3e7c1218e77f0e398372b81",
+        "type": "FIX",
+        "text": " sap.ui.core.format.DateFormat: parse symbol \"Y\" (weekYear) with 2 digits",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280031405"
+          }
+        ]
+      },
+      {
+        "id": "4223f5cd97847100f79f1d5deaf008d5b6f9f58a",
+        "type": "FIX",
+        "text": " sap.ui.core.format.NumberFormat: less strict checks for parsing grouping separators",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180381028"
+          }
+        ]
+      },
+      {
+        "id": "ca70fae089df930e22d33e12c74b94612c469bc9",
+        "type": "FEATURE",
+        "text": " sap.ui.core.IconPool: Update icon font v5.01 and v4.13"
+      },
+      {
+        "id": "fdc3ae8d31438c6ce364f07b5ef41f6a44f54be7",
+        "type": "FIX",
+        "text": " ExtensionPoint: Activate probing for Fragment class",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180353921"
+          }
+        ]
+      },
+      {
+        "id": "677e54f19cef72bd6b58249e0c7f19c0951115ee",
+        "type": "FIX",
+        "text": " sap.ui.core.format.NumberFormat: Stricter parsing for grouping separators",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180381028"
+          }
+        ]
+      },
+      {
+        "id": "196e4a3312bbf22d87211cedce025e8284258c64",
+        "type": "FIX",
+        "text": " sap.m.Carousel: In nested carousels the inner carousel's active page content stays visible",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400000276432022"
+          }
+        ]
+      },
+      {
+        "id": "60bf347349529229aa6e002010a98819df32419e",
+        "type": "FIX",
+        "text": " sap.m.Carousel: In nested carousels the inner carousel's active page content stays visible",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400000276432022"
+          }
+        ]
+      },
+      {
+        "id": "5da45c5640461cfe101b67f359dafcac7411dd50",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v4.ODataMetaModel#requestValueListInfo: ValueListWithFixedValues takes precedence over SearchSupported",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280012068"
+          }
+        ]
+      },
+      {
+        "id": "e3fb8f1347a3636beafb0fe8b130847db9b4904f",
+        "type": "FEATURE",
+        "text": " sap.ui.model.odata.type.DateTimeWithTimezone: introduced new type"
+      },
+      {
+        "id": "d6a2fd81910e8cad1c7a4771d319ee8be4099547",
+        "type": "FEATURE",
+        "text": " DateFormat: Show date with IANA timezone names"
+      },
+      {
+        "id": "22dc281ccadee2264dce3e65f925daf663ccd280",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v4.ODataListBinding#getCurrentContexts: do not fill up array with undefined in case of Infinity",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280015704"
+          }
+        ]
+      },
+      {
+        "id": "c18309c28bffd88ee8a407ab1f0395387b4dbedd",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v4.ODataListBinding: oHeaderContext.getObject() returns header data"
+      },
+      {
+        "id": "675c00558e741b5a74f0158a68d2def88599fd76",
+        "type": "FIX",
+        "text": " sap.ui.model.*: JSDoc for parameter bForceUpdate fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280005117"
+          }
+        ]
+      }
+    ]
+  }
+}

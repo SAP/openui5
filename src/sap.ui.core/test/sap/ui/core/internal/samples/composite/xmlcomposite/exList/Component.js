@@ -4,11 +4,10 @@ sap.ui.define([
 	"sap/ui/model/resource/ResourceModel"
 ], function (UIComponent, JSONModel, ResourceModel) {
 	"use strict";
-	return UIComponent.extend("sap.ui.core.internal.samples.composite.xmlcomposite.exList.Component",
-		{
+	return UIComponent.extend("sap.ui.core.internal.samples.composite.xmlcomposite.exList.Component", {
 			metadata:
 				{
-					rootView: "sap.ui.core.internal.samples.composite.xmlcomposite.exList.Test"
+					manifest: "json"
 				},
 			init: function () {
 
@@ -33,7 +32,7 @@ sap.ui.define([
 						{
 							product: "R32",
 							supplier: "VW"
-						},
+						}
 					]
 				};
 				var oModel = new JSONModel(oData);

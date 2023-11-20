@@ -1,0 +1,31 @@
+<template data-controller-name="example.mvc_legacyAPIs.test">
+
+	<div data-sap-ui-type="sap.m.Panel" id="myPanel">
+		<div data-sap-ui-type="sap.m.Label" id="Label1" data-label-for="Button1" data-text="Label"></div>
+		<div data-sap-ui-type="sap.m.Button" id="Button1" data-text="Hello" data-press="doIt"></div>
+		<div data-sap-ui-type="sap.m.Button" id="Button2" data-text="Hello again"></div>
+
+		<div data-sap-ui-type="sap.m.Panel" id="myPanel2">
+			<div data-sap-ui-type="sap.m.Label" id="Label2" data-label-for="Button1" data-text="Label"></div>
+			<div data-sap-ui-type="sap.m.Button" id="Button21" data-text="Hello" data-press="doIt"></div>
+			<div data-sap-ui-type="sap.m.Button" id="Button22" data-text="Hello again"></div>
+			<table id="htmlEmbeddedTable">
+				<tr><td>1</td></tr>
+				<tr><td>2</td></tr>
+				<tr><td><button>Click Me!</button></td></tr>
+				<tr><td>4</td></tr>
+				<tr><td>5</td></tr>
+				<tr><td><div data-sap-ui-type="sap.m.Button" id="htmlContentButton" data-text="Click me!"></div></td></tr>
+				<tr><td>
+
+				<div data-sap-ui-type="sap.m.Panel" id="htmlContentPanel">
+					<div data-sap-ui-aggregation="title" data-sap-ui-type="sap.ui.core.Title" data-text="SAPUI5 Content in HTML Table in SAPUI5 Panel"></div>
+					<a href="http://www.sap.com" target="_blank" rel="noopener noreferrer">www.sap.com</a>
+				</div>
+
+				</td></tr>
+			</table>
+		</div>
+	</div>
+
+</template>

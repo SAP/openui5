@@ -1,0 +1,18 @@
+{
+  "1.65.0": {
+    "date": "April 2019",
+    "notes": [
+      {
+        "id": "b2cd46cd6f0d14b4f0a0dd2a3ec77a91ef3d8c27",
+        "type": "FIX",
+        "text": "sap.ui.dt - rta performance test measurement fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980060826"
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>Empty Display Control Readings</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<script src="../../../scripts/boot.js"></script>
+</head>
+<body class="sapUiBody topicBody">
+	<div class="topic">
+		<div class="content">
+			<h1 id="overview">Improve screen reader announcements</h1>
+			<h2>sap.m.Text empty indicator</h3>
+				<p>
+					sap.m.Text allows developers to show to users when text is empty with a “–” character.
+					Depending on the language the symbol (“–”) may change.
+				</p>
+			</h2>
+
+<pre class="lang-js">
+new sap.m.Text({
+	text: "",
+	emptyIndicatorMode: sap.m.EmptyIndicatorMode.On
+})
+</pre>
+
+			<h2>sap.m.Table cell with empty indicator display</h3>
+				<p>
+					You have to set <code>visible</code> property to <code>false</code> for all <code>sap.m.Link</code> and <code>sap.m.Text</code> control’s instances
+					that are used inside a <code>sap.m.Table</code> cell and have empty <code>text</code> property.
+					Same should be done for <code>sap.m.ObjectIdentifier</code>’s instances that have empty <code>title</code> property.
+					This will improve the screen reader announcements of <code>sap.m.Table</code> rows or <code>sap.m.List</code> items as
+					all visually empty cells or items will be announced as "empty".
+				</p>
+			</h2>
+
+<pre class="lang-js">
+new sap.m.Table({
+	headerToolbar: new sap.m.OverflowToolbar({
+		content: [
+			new sap.m.Title({
+				text: "Products",
+				level: "H2"
+			})
+		]
+	}),
+	columns: [
+		new sap.m.Column({
+			header: new sap.m.Text({
+				text: "Product Name"
+			})
+		}),
+		new sap.m.Column({
+			header: new sap.m.Text({
+				text: "Supplier Name"
+			})
+		}),
+		new sap.m.Column({
+			header: new sap.m.Text({
+				text: "Description"
+			})
+		})
+	],
+	items: [
+		new sap.m.ColumnListItem({
+			cells: [
+				new sap.m.Link({
+					text: "",
+					href: "",
+					<mark>visible: false</mark>,
+					tooltip: "Audio/Video Cable Kit - 4m"
+				}),
+				new sap.m.ObjectIdentifier({
+					title: "Titanium",
+					titleActive: true
+				}),
+				new sap.m.Text({
+					text: "Quality cables for notebooks and projectors"
+				})
+			]
+		}),
+		new sap.m.ColumnListItem({
+			cells: [
+				new sap.m.Link({
+					text: "Blaster Extreme",
+					href: ""
+				}),
+				new sap.m.ObjectIdentifier({
+					title: "",
+					titleActive: true,
+					<mark>visible: false</mark>,
+					tooltip: "Speaker Experts"
+				}),
+				new sap.m.Text({
+					text: "PC multimedia speakers - 10 Watt (Total) - 2-way"
+				})
+			]
+		}),
+		new sap.m.ColumnListItem({
+			cells: [
+				new sap.m.Link({
+					text: "Copymaster",
+					href: ""
+				}),
+				new sap.m.ObjectIdentifier({
+					title: "Alpha Printers",
+					titleActive: true
+				}),
+				new sap.m.Text({
+					text: "",
+					<mark>visible: false</mark>,
+					tooltip: "Copymaster"
+				})
+			]
+		})
+	]
+})
+</pre>
+
+		</div>
+	</div>
+</body>
+</html>

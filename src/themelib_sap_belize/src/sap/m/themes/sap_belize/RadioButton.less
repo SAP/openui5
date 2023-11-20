@@ -9,12 +9,33 @@
 	border: 1px dotted @sapUiContentFocusColor;
 }
 
-.sapMLIBActive .sapMRbB .sapMRbBOut {
-	border: 2px solid @sapUiListActiveTextColor;
+.sapMRb:not(.sapMRbErr):not(.sapMRbWarn):not(.sapMRbInfo) .sapMRbHoverable:hover .sapMRbBOut {
+	stroke: @sapUiFieldHoverBorderColor;
+	fill: @sapUiFieldHoverBackground;
 }
+.sapMLIBActive {
+	.sapMRb.sapMRbSel{
+		.sapMRbB.sapMRbHoverable {
+			&:hover > .sapMRbSvg > .sapMRbBOut,
+			.sapMRbSvg > .sapMRbBOut {
+				stroke: @sapUiListActiveTextColor;
+				fill: @sapUiListActiveBackground;
+			}
+		}
+	}
 
-.sapMLIBActive .sapMRbSel .sapMRbBOut {
-	background-color: @sapUiListActiveBackground;
+	.sapMRb {
+		.sapMRbB.sapMRbHoverable {
+			.sapMRbSvg > .sapMRbBOut {
+				stroke: @sapUiListActiveTextColor;
+				fill: #ffffff;
+			}
+
+			&:hover > .sapMRbSvg > .sapMRbBOut {
+				stroke: @sapUiListActiveTextColor;
+			}
+		}
+	}
 }
 
 .sapMRbDis {
@@ -22,23 +43,55 @@
 }
 
 /* Value states */
+.sapMRbWarn {
+	&.sapMRbSel,
+	&.sapMRbSel.sapMRbRo {
+		.sapMRbBInn {
+			fill: @_sap_m_RadioButton_SelectedWarningColor;
+			stroke: none;
+		}
+	}
 
-.sapMRbErr.sapMRbSel .sapMRbBInn {
-	background-color: @sapUiFieldInvalidColor;
+	.sapMRbB {
+		.sapMRbBOut {
+			stroke: @sapUiFieldWarningColor;
+			fill: none;
+		}
+	}
 }
 
-.sapMRbErr .sapMRbBOut,
-.sapMRbErr.sapMRbBTouched .sapMRbBOut {
-	border-color: @sapUiFieldInvalidColor;
-	background-color: @sapUiFieldInvalidBackground;
+.sapMRbErr {
+	&.sapMRbSel,
+	&.sapMRbSel.sapMRbRo {
+		.sapMRbBInn {
+			fill: @sapUiFieldInvalidColor;
+			stroke: none;
+		}
+	}
+
+	.sapMRbB {
+		.sapMRbBOut {
+			stroke: @sapUiFieldInvalidColor;
+			fill: none;
+		}
+	}
 }
 
-.sapMRbWarn.sapMRbSel .sapMRbBInn {
-	background-color: @_sap_m_RadioButton_SelectedWarningColor;
-}
-
-.sapMRbWarn .sapMRbBOut,
-.sapMRbWarn.sapMRbBTouched .sapMRbBOut {
-	border-color: @sapUiFieldWarningColor;
-	background-color: @sapUiFieldWarningBackground;
+.sapMRbInfo {
+	&.sapMRbSel,
+	&.sapMRbSel.sapMRbRo {
+		.sapMRbBInn {
+			fill: @sapUiHighlight;
+			stroke: none;
+		}
+	}
+	&.sapMRbRo .sapMRbBOut {
+		fill: @sapUiFieldReadOnlyBackground;
+	}
+	.sapMRbB {
+		.sapMRbBOut {
+			stroke: @sapUiHighlight;
+			fill: none;
+		}
+	}
 }

@@ -104,7 +104,6 @@
 .sapMUCFileName.sapMLnk {
 	font-family:		@sapUiFontFamily;
 	font-weight:		normal;
-	white-space:		nowrap;
 	padding-top:		0.25rem; /* Padding top instead of padding bottom due to in-line placement with Objectmarker */
 	overflow:			hidden;
 	text-overflow:		ellipsis;
@@ -156,6 +155,7 @@
 	text-align: center;
 	background: @sapUiGroupContentBackground;
 	display: block;
+	min-height: 500px;
 
 	.sapUiIcon {
 		color: fade(@sapUiContentNonInteractiveIconColor, 50);
@@ -267,7 +267,6 @@
 .sapMUCListSingleItem > .sapMLIBContent,
 .sapMUCListItem > .sapMLIBContent {
 	display:		flex;
-	overflow:		hidden;				/*necessary for text truncation in FF */
 	padding:		0;
 }
 
@@ -285,11 +284,6 @@
 	width: 			100%; /* it is necessary for the file name truncation in IE10 */
 }
 
-@media(max-width: 30rem) {
-	.sapMUCTextButtonContainer {
-		-ms-flex-negative: 1;  /*strangely it is needed even for display:inline-block in IE10 for the proper truncation of the file name */
-	}
-}
 /*text container holding the file name, a container for attributes and a container for statuses */
 @media(min-width: 30rem) {
 	.sapMUCTextContainer {
@@ -332,6 +326,7 @@
 	line-height: normal;
 	white-space: pre-line;
 	margin-left: 0.1rem;
+	margin-right: 0.1rem;
 }
 
 @media(min-width: 30rem) {
@@ -350,7 +345,7 @@
 		white-space: nowrap; /* so that buttons are displayed in a row */
 		padding-left: 1rem;
 		padding-top: 0rem;
-		align-self: flex-end; /* for buttons alignment at the bottom */
+		align-self: center; /* for buttons alignment at the center */
 		flex: none;
 	}
 }
@@ -404,7 +399,7 @@
 }
 
 .sapMUCList .sapMLIB {
-	align-items: flex-start;
+	align-items: center;
 }
 
 .sapMUCItem.sapMCLI>.sapMLIBSelectM {
@@ -421,10 +416,12 @@
 
 .sapUiSizeCompact .sapMUCItem .sapMLIBSelectM {
 	padding-left: 0.3rem;
+	width: 2.75rem;
 }
 
 .sapUiSizeCozy .sapMUCItem .sapMLIBSelectM {
 	padding-left: 0;
+	width: 2.75rem;
 }
 
 /* Item Icon */

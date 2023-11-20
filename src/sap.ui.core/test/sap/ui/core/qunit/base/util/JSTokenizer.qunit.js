@@ -5,38 +5,37 @@
 sap.ui.define(['sap/base/util/JSTokenizer'], function(JSTokenizer) {
 	"use strict";
 
-	QUnit.module("sap.base.util.JSTokenizer");
+	QUnit.module("sap/base/util/JSTokenizer");
 
 	QUnit.test("valid expressions", function(assert) {
 		var list = [
-				"{}",
-				"{test:'123'}",
-				"{test:456.00}",
-				"{test:-456}",
-				"{test:-456e9}",
-				"{test:77E-4}",
-				"{test:\"123\"}",
-				"{23:'test'}",
-				"{'23':'test'}",
-				"{aa:'123', bb:'456'}",
-				"{a1:123, b2:'456', c3:false, c4:true, d5:null}",
-				"{a:{}, b:[], c:'test'}",
-				"{a:{a:{a:{a:{a:{}}}}}}",
-				"{$a:{$a:{$a:{$a:{$a:{}}}}}}",
-				"{arr:[1,2,3,4]}",
-				"{arr:[1,'2',3,false]}",
-				"{test:'{test}'}",
-				"{test:'\\'\"\\\\'}"
+				["{}", {}],
+				["{test:'123'}", { test: "123" }],
+				["{test:456.00}", { test: 456.00 }],
+				["{test:-456}", { test: -456 }],
+				["{test:-456e9}", { test: -456e9 }],
+				["{test:77E-4}", { test: 77E-4 }],
+				["{test:\"123\"}", { test: "123" }],
+				["{23:'test'}", { 23: "test" }],
+				["{'23':'test'}", { "23": "test" }],
+				["{aa:'123', bb:'456'}", { aa: "123", bb: "456" }],
+				["{a1:123, b2:'456', c3:false, c4:true, d5:null}", { a1: 123, b2: "456", c3: false, c4: true, d5: null }],
+				["{a:{}, b:[], c:'test'}", { a: {}, b: [], c: "test" }],
+				["{a:{a:{a:{a:{a:{}}}}}}", { a: { a: { a: { a: { a: {}}}}}}],
+				["{$a:{$a:{$a:{$a:{$a:{}}}}}}", { $a: { $a: { $a: { $a: { $a: {}}}}}}],
+				["{arr:[1,2,3,4]}", { arr: [1, 2, 3, 4] }],
+				["{arr:[1,'2',3,false]}", { arr: [1, "2", 3, false] }],
+				["{test:'{test}'}", { test: "{test}" }],
+				["{test:'\\'\"\\\\'}", { test: "'\"\\"}]
 			];
 		for (var i = 0; i < list.length; i++) {
-			var evalResult;
-			eval("evalResult=" + list[i]);
-			assert.deepEqual(JSTokenizer().parseJS(list[i]), evalResult, "Parse " + list[i]);
+			var aListEntries = list[i];
+			assert.deepEqual(JSTokenizer.parseJS(aListEntries[0]), aListEntries[1], "Parse " + aListEntries[0]);
 		}
 	});
 
 	QUnit.test("invalid expressions", function(assert) {
-		var list = [
+		[
 				"{[}",
 				"{test:'123\"}",
 				"{test:\"123}",
@@ -49,15 +48,14 @@ sap.ui.define(['sap/base/util/JSTokenizer'], function(JSTokenizer) {
 				"{arr:[1,'2,3,false]}",
 				"{test:'{test}',test}",
 				"{test:'\'\"\\'}"
-			];
-		for (var i = 0; i < list.length; i++) {
-			assert.throws(function() {JSTokenizer().parseJS(list[i]);}, "Invalid " + list[i]);
-		}
+		].forEach(function(input) {
+			assert.throws(function() { JSTokenizer.parseJS(input); }, "Invalid " + input);
+		});
 	});
 
 	QUnit.test("tokenizer with enhancements getCh, getIndex, init, setIndex", function (assert) {
-		var oTokenizer = JSTokenizer(),
-			oTokenizer2 = JSTokenizer();
+		var oTokenizer = new JSTokenizer(),
+			oTokenizer2 = new JSTokenizer();
 
 		oTokenizer.init("{='foo'}");
 		assert.strictEqual(oTokenizer.getIndex(), -1, "index after init without start index");

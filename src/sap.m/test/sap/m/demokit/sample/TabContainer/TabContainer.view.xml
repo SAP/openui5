@@ -4,14 +4,14 @@
 		xmlns="sap.m">
 	<TabContainer items="{ path: '/employees' }" id="myTabContainer"
 					showAddNewButton="true"
-					class="sapUiResponsiveContentPadding"
+					class="sapUiResponsiveContentPadding sapUiResponsivePadding--header"
 					addNewButtonPress="addNewButtonPressHandler" itemClose="itemCloseHandler">
 		<items >
 			<TabContainerItem name="{name}" modified="{modified}">
 				<content>
 					<Label text="First Name:"/>
 					<Input value="{empFirstName}"/>
-					<Label text="First Name:"/>
+					<Label text="Last Name:"/>
 					<Input value="{empLastName}"/>
 					<Label text="Salary:"/>
 					<Input value="{salary}" description="EUR"/>

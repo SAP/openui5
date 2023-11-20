@@ -1,0 +1,71 @@
+/******************************************************************
+	Style of the RTA Overlays - sap_belize_hcb Theme
+*******************************************************************/
+@_sap_ui_rta_Overlay_BorderColor: @sapUiDragAndDropActiveBorderColor; //#03b803
+@_sap_ui_rta_Overlay_BoxShadowColor: @sapUiNeutralBG; //#000
+@_sap_ui_rta_Overlay_ShellBG: @sapUiNeutralBG; //#000
+@_sap_ui_rta_Overlay_HoverBorder: @sapUiNeutralElement; //#fff
+@_sap_ui_rta_Overlay_PlaceholderBG: @sapUiContentDisabledTextColor; //#666
+
+
+.sapUiRta {
+	.sapUiDtOverlayTargetZone {
+		&:after {
+			transition: none;
+			box-shadow: none;
+		}
+	}
+
+	.sapUiDtOverlayDropZone {
+		> .sapUiDtOverlayChildren {
+			> .sapUiRtaOverlayPlaceholder {
+				opacity: 0.7;
+			}
+		}
+	}
+}
+
+.sapUiRta:not(.sapUiRtaVisualizationMode) {
+	.sapUiRtaOverlayHover {
+		&:after {
+			outline: 0.125rem dotted @_sap_ui_rta_Overlay_BorderColor; //2px
+			outline-offset: -0.125rem; //2px
+			border: none;
+			transition: none;
+			box-shadow: none;
+		}
+	}
+
+	.sapUiDtOverlay {
+		&:focus {
+			outline: none;
+			/* We create inner black shadow to make sure white border is in contrast with element */
+			box-shadow: 0 0 0 2px @_sap_ui_rta_Overlay_BoxShadowColor inset;
+
+			&:before {
+				border: none;
+				outline: 0.125rem dotted @_sap_ui_rta_Overlay_HoverBorder; //2px
+				outline-offset: -0.25rem; //4px
+			}
+		}
+	}
+
+	.sapUiDtOverlaySelected {
+		transition: none;
+		box-shadow: none;
+
+		&.sapUiDtOverlayFocusable {
+			&:focus {
+				/* Same trick as described above but doubled thickness */
+				box-shadow: 0 0 0 4px @_sap_ui_rta_Overlay_BoxShadowColor inset;
+			}
+		}
+
+		&.sapUiRtaOverlayHover {
+			&:after {
+				border: 0.125rem solid @_sap_ui_rta_Overlay_BorderColor !important; //2px
+				outline-offset: -0.25rem; //4px
+			}
+		}
+	}
+}

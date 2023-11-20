@@ -1,0 +1,140 @@
+{
+  "1.84.0": {
+    "date": "October 2020",
+    "notes": [
+      {
+        "id": "93a72f182c4492b239b3500453453a9449a9f0e8",
+        "type": "FIX",
+        "text": " sap.ui.unified.FileUploader: documentation is now improved",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500007112742020"
+          }
+        ]
+      },
+      {
+        "id": "0549fd553363a317f3481b5011f03ea3513330f9",
+        "type": "FEATURE",
+        "text": " sap.ui.unified.MenuItem: HasPopup enumeration consumed"
+      },
+      {
+        "id": "cb18374edf42cb40738a6ec852a0ec71d82b9011",
+        "type": "FEATURE",
+        "text": " sap.ui.unified.ColorPicker: aria-roledescription adopted"
+      },
+      {
+        "id": "064f1ae57cb2a0370635d9794307de27e15cf8e8",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: fix of failed QUnit tests"
+      },
+      {
+        "id": "589da4a09a6427b93cc6135e8be875a9db79100e",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: fix of failed QUnit tests"
+      },
+      {
+        "id": "9df0249d1993288d0cc66a1342db31bf088ee80e",
+        "type": "FIX",
+        "text": " sap.ui.unified.FileUploader: Internal label added",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070359902"
+          }
+        ]
+      },
+      {
+        "id": "2ece1a0b5d65d0ee8c31a36dd5d88ec8be4defec",
+        "type": "FIX",
+        "text": " sap.ui.unified.FileUploader: setters now work properly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070351084"
+          }
+        ]
+      },
+      {
+        "id": "d70ae4e6041009871fd53ca70abad05f73239a08",
+        "type": "FEATURE",
+        "text": " sap.ui.unified.calendar.YearRangePicker: aria-roledescription adopted"
+      },
+      {
+        "id": "1d68263d41258295c7994ba2713ccebe988fff07",
+        "type": "FEATURE",
+        "text": " sap.ui.unified.calendar.YearPicker: aria-roledescription adopted"
+      },
+      {
+        "id": "8501ffa8b5185a689b1d8e18f3bb25e04b6f05f4",
+        "type": "FEATURE",
+        "text": " sap.ui.unified.calendar.MonthPicker: aria-roledescription adopted"
+      },
+      {
+        "id": "59e2e8e193b930c10b882f9cdb91af4ec09ee6f9",
+        "type": "FIX",
+        "text": " FileUploader: Add a public method to check if the chosen file is readable",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070313680"
+          }
+        ]
+      },
+      {
+        "id": "3756bbc6d233e79d4029530b78260fae2403a994",
+        "type": "FEATURE",
+        "text": " Calendar Card: Experimental tag removed"
+      },
+      {
+        "id": "09cebc0160aad8bd0ef2f5a56450e09680fb9104",
+        "type": "FIX",
+        "text": " sap.ui.unified.FileUploader: setters now work properly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880070218"
+          }
+        ]
+      },
+      {
+        "id": "c35c9f0e07b9974305dfcad7880dcc9c4bdf4476",
+        "type": "FIX",
+        "text": " FileUploader: Logs an error when the file has been changed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070313680"
+          }
+        ]
+      },
+      {
+        "id": "99ecc1625078acda9e7563d6bb4e77d5fe0fc3a7",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: fix of failed QUnit tests"
+      },
+      {
+        "id": "8175a2ab1dbf68a2f92e952d0b84f6b0979309ee",
+        "type": "FIX",
+        "text": " sap.ui.unified.CalendarDate: setMonth date parameter now works with 0",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070273401"
+          }
+        ]
+      },
+      {
+        "id": "4260bb4beb8b03807b114183c3d73433560fd460",
+        "type": "FIX",
+        "text": " FileUploader: Log a warning when name is not set",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070263435"
+          }
+        ]
+      }
+    ]
+  }
+}

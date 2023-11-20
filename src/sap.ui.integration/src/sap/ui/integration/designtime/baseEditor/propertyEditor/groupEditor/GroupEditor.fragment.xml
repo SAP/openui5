@@ -1,0 +1,11 @@
+<core:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core"
+>
+	<Panel
+		headerText="{label}"
+		visible="{visible}"
+		expandable="{expandable}"
+		expanded="{expanded}"
+	/>
+</core:FragmentDefinition>

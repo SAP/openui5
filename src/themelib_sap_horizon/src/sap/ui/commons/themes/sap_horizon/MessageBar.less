@@ -1,0 +1,27 @@
+/* ========================================== */
+/* CSS for control sap.ui.commons/MessageBar  */
+/* Horizon theme                              */
+/* ========================================== */
+
+.sapUiMsgBar {
+	font-family: @sapUiDesktopFontFamily;
+	font-size: @sapUiDesktopFontSize;
+	background-color: @sapUiHighlight;
+}
+
+/* Styling the Icons-Counters container: */
+.sapUiMsgBarSums {
+	background-color: lighten(@sapUiContentForegroundColor, 10); // @sapUiWhiteBG = #ffffff
+	background-image: none;
+	border: 1px solid @sapUiContentForegroundBorderColor; // @sapUiDarkBorder = #bfbfbf
+}
+
+.sapUiMsgBarOpen .sapUiMsgBarSums {
+	background-color: lighten(@sapUiContentForegroundColor, 10); // @sapUiWhiteBG = #ffffff
+	background-image: none;
+}
+
+.sapUiMsgBarHome:hover {
+	background-color: @sapUiHighlight;
+	border: 1px solid lighten(@sapUiContentForegroundBorderColor, 25); // @sapUiLightestBorder = #ffffff
+}

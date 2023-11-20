@@ -1,0 +1,4 @@
+<mvc:XMLView height="100%" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m">
+	<mvc:XMLView viewName="testdata.view.XMLTemplateProcessorAsync_child_sync" async="false"></mvc:XMLView>
+	<Button></Button>
+</mvc:XMLView>

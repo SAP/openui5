@@ -18,6 +18,10 @@
 		<dependency>
 		  <libraryName>sap.ui.layout</libraryName>
 		</dependency>
+		<dependency>
+		  <libraryName>sap.f</libraryName>
+		  <lazy>true</lazy>
+		</dependency>
 	</dependencies>
 
 	<appData>

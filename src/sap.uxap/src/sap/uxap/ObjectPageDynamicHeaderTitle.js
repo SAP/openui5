@@ -4,27 +4,20 @@
 
 // Provides control sap.uxap.ObjectPageDynamicHeaderTitle.
 sap.ui.define([
-    'jquery.sap.global',
-    './library',
-    'sap/uxap/ObjectPageDynamicHeaderContent',
-    "./ObjectPageDynamicHeaderTitleRenderer"
+	'./library',
+	'sap/uxap/ObjectPageDynamicHeaderContent',
+	"./ObjectPageDynamicHeaderTitleRenderer",
+	"sap/base/Log",
+	"sap/f/DynamicPageTitle"
 ],
 	function(
-	    jQuery,
 		library,
 		ObjectPageDynamicHeaderContent,
-		ObjectPageDynamicHeaderTitleRenderer
+		ObjectPageDynamicHeaderTitleRenderer,
+		Log,
+		DynamicPageTitle
 	) {
 		"use strict";
-
-		try {
-			sap.ui.getCore().loadLibrary("sap.f");
-		} catch (e) {
-			jQuery.sap.log.error("The control 'sap.uxap.ObjectPageDynamicHeaderTitle' needs library 'sap.f'.");
-			throw (e);
-		}
-
-		var DynamicPageTitle = sap.ui.requireSync("sap/f/DynamicPageTitle");
 
 		/**
 		 * Constructor for a new <code>ObjectPageDynamicHeaderTitle</code>.
@@ -52,17 +45,20 @@ sap.ui.define([
 		 * @constructor
 		 * @public
 		 * @alias sap.uxap.ObjectPageDynamicHeaderTitle
-		 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 		 * @since 1.52
 		 * @see {@link topic:6e340c119ddd4c778b315f65a0432420 Object Page Dynamic Header}
 		 * @see {@link topic:d2ef0099542d44dc868719d908e576d0 Object Page Headers}
 		 * @see {@link topic:9c9d94fd28284539a9a5a57e9caf82a8 Object Page Headers Comparison}
 		 */
-		var ObjectPageDynamicHeaderTitle = DynamicPageTitle.extend("sap.uxap.ObjectPageDynamicHeaderTitle", /** @lends sap.uxap.ObjectPageDynamicHeaderTitle.prototype */ { metadata : {
+		var ObjectPageDynamicHeaderTitle = DynamicPageTitle.extend("sap.uxap.ObjectPageDynamicHeaderTitle", /** @lends sap.uxap.ObjectPageDynamicHeaderTitle.prototype */ {
+			metadata : {
 
-			interfaces : ["sap.uxap.IHeaderTitle"],
-			library : "sap.uxap"
-		}});
+				interfaces : ["sap.uxap.IHeaderTitle"],
+				library : "sap.uxap"
+			},
+
+			renderer: ObjectPageDynamicHeaderTitleRenderer
+		});
 
 		/**
 		 * Required by the {@link sap.uxap.IHeaderTitle} interface.
@@ -104,6 +100,14 @@ sap.ui.define([
 			return false;
 		};
 
+		/**
+		 * Required by the {@link sap.uxap.IHeaderTitle} interface.
+		 * @returns {boolean}
+		 */
+		ObjectPageDynamicHeaderTitle.prototype.supportsBackgroundDesign = function () {
+			return true;
+		};
+
 		ObjectPageDynamicHeaderTitle.KNOWN_HEADING_CONTROL_CLASS_NAMES = ["sap.m.Title", "sap.m.Text", "sap.m.FormattedText", "sap.m.Label"];
 
 		/**
@@ -122,6 +126,8 @@ sap.ui.define([
 
 		/**
 		 * Required by the {@link sap.uxap.IHeaderTitle} interface.
+		 *
+		 * @deprecated As of version 1.40.1
 		 */
 		ObjectPageDynamicHeaderTitle.prototype.getHeaderDesign = function () {
 			return library.ObjectPageHeaderDesign.Light;
@@ -132,6 +138,7 @@ sap.ui.define([
 		 */
 		ObjectPageDynamicHeaderTitle.prototype.snap = function (bUserInteraction) {
 			this._toggleState(false, bUserInteraction);
+			this._updateARIAState(false);
 		};
 
 		/**
@@ -139,15 +146,16 @@ sap.ui.define([
 		 */
 		ObjectPageDynamicHeaderTitle.prototype.unSnap = function (bUserInteraction) {
 			this._toggleState(true, bUserInteraction);
+			this._updateARIAState(true);
 		};
 
 		/**
 		 * Required by the {@link sap.uxap.IHeaderTitle} interface.
-		 * @param {object} jQuery reference to the header dom element
-		 * @param {object} change event of child-element that brought the need to adapt the headerTitle layout
+		 * @param {jQuery} $headerDomRef reference to the header dom element
+		 * @param {object} oEvent change event of child-element that brought the need to adapt the headerTitle layout
 		 * @private
 		 */
-		ObjectPageDynamicHeaderTitle.prototype._adaptLayoutForDomElement = function ($headerDomRef, oEvent) {
+		ObjectPageDynamicHeaderTitle.prototype._adaptObjectPageHeaderIndentifierLine = function ($headerDomRef, oEvent) {
 			// not supported
 		};
 

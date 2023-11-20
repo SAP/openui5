@@ -1,0 +1,22 @@
+{
+	"sap.app": {
+		"id": "test.sample"
+	},
+	"sap.card": {
+		"designtime": "designtime/MultiSubTabs",
+		"type": "List",
+		"configuration": {
+			"parameters": {
+				"stringParameter": {
+					"value": "stringParameter Value"
+				},
+				"stringParameter1": {
+					"value": "stringParameter1 Value"
+				},
+				"stringParameter2": {
+					"value": "stringParameter2 Value"
+				}
+			}
+		}
+	}
+}

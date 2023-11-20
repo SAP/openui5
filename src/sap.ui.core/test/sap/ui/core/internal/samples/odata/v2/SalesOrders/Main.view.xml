@@ -1,0 +1,549 @@
+<mvc:View
+	class="sapUiSizeCompact"
+	controllerName="sap.ui.core.internal.samples.odata.v2.SalesOrders.Main"
+	core:require="{formatter : 'sap/ui/core/internal/samples/odata/v2/SalesOrders/model/formatter'}"
+	height="100%"
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core"
+	xmlns:data="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"
+	xmlns:form="sap.ui.layout.form"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:plugins="sap.m.plugins"
+	xmlns:t="sap.ui.table"
+	xmlns:trm="sap.ui.table.rowmodes">
+<App>
+	<Page id="page" floatingFooter="true" showHeader="false">
+		<content>
+			<VBox class="sapUiSmallMargin" visible="{= !${ui>/useTable}}">
+				<Toolbar>
+					<Label design="Bold" labelFor="salesOrderID" text="Sales Order">
+						<layoutData>
+							<ToolbarLayoutData shrinkable="false" />
+						</layoutData>
+					</Label>
+					<Input id="salesOrderID" submit="onSelectSalesOrder" value="{ui>/salesOrderID}">
+						<layoutData>
+							<ToolbarLayoutData maxWidth="10em" shrinkable="true" />
+						</layoutData>
+					</Input>
+					<Button id="selectSalesOrder" press="onSelectSalesOrder"
+						text="Show Sales Order" tooltip="Show the sales order" type="Accept" />
+					<ToolbarSpacer/>
+					<Button id="showSalesOrderTable" press="onShowTable" text="Use Table"
+						tooltip="Show the sales order table" type="Emphasized" />
+					<Link href="test-resources/sap/ui/core/internal/samples/odata/v2/SalesOrders/MIT.SalesOrders(V2).Messages.html"
+						target="_blank" text="Test Messages" />
+					<Link href="test-resources/sap/ui/core/internal/samples/odata/v2/SalesOrders/MIT.SalesOrders(V2).ODLB.create.html"
+						target="_blank" text="Test ODataListBinding#create" />
+				</Toolbar>
+			</VBox>
+			<VBox class="sapUiSmallMargin" id="listPage" visible="{ui>/useTable}">
+				<Table growing="true" growingThreshold="4" id="SalesOrderSet"
+					items="{
+						events : {
+							change : '.onUpdateSalesOrdersCount',
+							createActivate : '.onTriggerCreateActivateSalesOrder'
+						},
+						path : 'SalesOrders>/SalesOrderSet',
+						filters : [{path : 'LifecycleStatus', operator : 'EQ', value1 : 'N'}],
+						parameters : {
+							select : 'CurrencyCode,CustomerName,GrossAmount,LifecycleStatus,Note,SalesOrderID',
+							transitionMessagesOnly : true
+						},
+						sorter : [{path : 'SalesOrderID', descending : true}]
+					}"
+					mode="SingleSelectMaster" selectionChange="onSelectSalesOrder">
+					<headerToolbar>
+						<Toolbar>
+							<Title id="salesOrdersTitle" level="H2"
+								text="{ui>/salesOrdersCount} Sales Orders">
+								<layoutData>
+									<ToolbarLayoutData shrinkable="false" />
+								</layoutData>
+							</Title>
+							<Button icon="sap-icon://add" id="createSalesOrder"
+								press="onCreateSalesOrder" tooltip="Create sales order"
+								visible="{= !${ui>/inlineCreationRows} }" />
+							<Button enabled="{ui>/salesOrderSelected}" icon="sap-icon://delete"
+								id="delete::SalesOrderList" press="onDeleteSalesOrder"
+								tooltip="Delete selected sales order"/>
+							<Button icon="sap-icon://synchronize"
+								id="refresh::SalesOrderSet" press="onRefreshSalesOrders"
+								tooltip="Refresh sales orders table" />
+							<Label labelFor="salesOrdersSort" text="Sort: ">
+								<layoutData>
+									<ToolbarLayoutData shrinkable="false" />
+								</layoutData>
+							</Label>
+							<Select change="onSortSalesOrdersTable" id="salesOrdersSort">
+								<core:Item key="desc" text="Descending" />
+								<core:Item key="asc" text="Ascending" />
+							</Select>
+							<Label labelFor="salesOrdersFilter" text="Filter:">
+								<layoutData>
+									<ToolbarLayoutData shrinkable="false" />
+								</layoutData>
+							</Label>
+							<Input id="salesOrdersFilter" submit="onFilterSalesOrdersTable"
+								value="{ui>/salesOrdersFilter}" width="12em" />
+							<Button id="salesOrdersFilterGo" press="onFilterSalesOrdersTable"
+								text="Go" type="Emphasized" />
+							<ToolbarSpacer />
+							<Button id="showSalesOrderInput" press="onShowTable" text="Use Input"
+								tooltip="Show sales order input field" />
+						</Toolbar>
+					</headerToolbar>
+					<columns>
+						<Column width="4em">
+							<Text text="Status" />
+						</Column>
+						<Column width="10em">
+							<Text text="Sales Order ID" />
+						</Column>
+						<Column width="16em">
+							<Text text="Customer Name" />
+						</Column>
+						<Column width="12em">
+							<Text text="Gross Amount" />
+						</Column>
+						<Column>
+							<Text text="Note" />
+						</Column>
+					</columns>
+					<items>
+						<ColumnListItem>
+							<cells>
+								<core:Icon decorative="false"
+									src="{
+										parts : [
+											'SalesOrders>@$ui5.context.isTransient',
+											'SalesOrders>@$ui5.context.isInactive',
+											{value : 'icon'}
+										],
+										formatter : 'formatter.formatContextStatus'
+									}"
+									tooltip="{
+										parts : [
+											'SalesOrders>@$ui5.context.isTransient',
+											'SalesOrders>@$ui5.context.isInactive',
+											{value : 'tooltip'}
+										],
+										formatter : 'formatter.formatContextStatus'
+									}" />
+								<Input editable="false" value="{SalesOrders>SalesOrderID}" />
+								<Input editable="false" value="{SalesOrders>CustomerName}" />
+								<Input editable="false" value="{
+										parts : [{
+											constraints : {precision : 16, scale : 3},
+											path : 'SalesOrders>GrossAmount',
+											type : 'sap.ui.model.odata.type.Decimal'
+										}, {
+											constraints : {maxLength : 5},
+											path : 'SalesOrders>CurrencyCode',
+											type : 'sap.ui.model.odata.type.String'
+										}, {
+											mode : 'OneTime',
+											path : '/##@@requestCurrencyCodes',
+											targetType : 'any'
+										}],
+										type : 'sap.ui.model.odata.type.Currency'
+									}" />
+								<Input value="{SalesOrders>Note}" />
+							</cells>
+						</ColumnListItem>
+					</items>
+				</Table>
+			</VBox>
+			<VBox class="sapUiSmallMargin" id="objectPage">
+				<form:SimpleForm ariaLabelledBy="objectPageTitle" backgroundDesign="Transparent"
+					editable="true" labelSpanM="2" layout="ResponsiveGridLayout">
+					<form:toolbar>
+						<Toolbar design="Transparent">
+							<Title id="objectPageTitle" level="H2" text="Sales Order Details" />
+						</Toolbar>
+					</form:toolbar>
+					<Toolbar design="Transparent">
+						<Title level="H2" text="Sales Order" />
+					</Toolbar>
+					<Label text="Sales Order ID" />
+					<Input id="salesOrderID::objectPage" editable="false" value="{SalesOrderID}"
+						width="8em" />
+					<Label text="Note" />
+					<Input id="note::objectPage" value="{Note}" />
+					<Label text="Gross Amount" />
+					<Input editable="false" id="grossAmount::objectPage" value="{
+							parts : [{
+								constraints : {precision : 16, scale : 3},
+								path : 'GrossAmount',
+								type : 'sap.ui.model.odata.type.Decimal'
+							}, {
+								constraints : {maxLength : 5},
+								path : 'CurrencyCode',
+								type : 'sap.ui.model.odata.type.String'
+							}, {
+								mode : 'OneTime',
+								path : '/##@@requestCurrencyCodes',
+								targetType : 'any'
+							}],
+							type : 'sap.ui.model.odata.type.Currency'
+						}" width="12em" />
+					<Label text="Changed At" />
+					<Input editable="false" id="changedAt::objectPage" value="{
+							path : 'ChangedAt',
+							type : 'sap.ui.model.odata.type.DateTime'
+						}" width="12em" />
+				</form:SimpleForm>
+				<t:Table id="ToLineItems" rowActionCount="1" rows="{
+						events : {
+							change : '.onUpdateSalesOrderItemsCount',
+							createActivate : '.onTriggerCreateActivateLineItem'
+						},
+						parameters : {transitionMessagesOnly : true, usePreliminaryContext : true},
+						path : 'ToLineItems'
+					}" rowSelectionChange="onSelectItem" selectionMode="Single" threshold="0">
+					<t:rowMode>
+						<trm:Fixed rowCount="4"/>
+					</t:rowMode>
+					<t:dependents>
+						<plugins:DataStateIndicator />
+					</t:dependents>
+					<t:extension>
+						<Toolbar design="Transparent">
+							<Title id="salesOrderItemsTitle" level="H2"
+								text="{ui>/salesOrderItemsCount} Sales Order Items">
+								<layoutData>
+									<ToolbarLayoutData shrinkable="false" />
+								</layoutData>
+							</Title>
+							<Button icon="sap-icon://add"
+								id="createItem::ToLineItems" press="onCreateItem"
+								tooltip="Create a sales order item"
+								visible="{= !${ui>/inlineCreationRows} }" />
+							<Button enabled="{ui>/itemSelected}" icon="sap-icon://delete"
+								id="deleteItem::ToLineItems" press="onDeleteItem"
+								tooltip="Delete the selected sales order item" />
+							<Button enabled="{= !!${SalesOrderID}}" icon="sap-icon://synchronize"
+								id="refresh::ToLineItems" press="onRefreshItems"
+								tooltip="Refresh sales order items table" />
+							<ToolbarSpacer/>
+							<Label labelFor="itemFilter" text="Filter">
+								<layoutData>
+									<ToolbarLayoutData shrinkable="false" />
+								</layoutData>
+							</Label>
+							<Select change="onFilterMessages" id="itemFilter"
+								items="{ui>/itemFilter}" selectedKey="Show all">
+								<core:ListItem icon="{ui>icon}" key="{ui>type}" text="{ui>text}" />
+								<layoutData>
+									<ToolbarLayoutData shrinkable="false" />
+								</layoutData>
+							</Select>
+							<ToolbarSpacer/>
+							<Button enabled="{= %{ui>/salesOrderItemsCount} > 0}"
+								id="fixAllQuantities::ToLineItems" press="onFixAllQuantities"
+								text="Fix Quantities" tooltip="Fix all faulty quantities" />
+							<Button enabled="{= %{ui>/salesOrderItemsCount} > 0}"
+								id="fixItems::ToLineItems" press="onFixItems" text="Fix Items"
+								tooltip="Fix all faulty items" />
+							<Button enabled="{ui>/itemSelected}" id="cloneItem::ToLineItems"
+								press="onCloneItem" text="Clone Item"
+								tooltip="Clone the selected line item" />
+							<ToggleButton id="transitionMessagesOnly"
+								press="onTransitionMessagesOnly" pressed="true"
+								text="Transition Messages Only"
+								tooltip="Message handling is done by the parent entity" />
+						</Toolbar>
+					</t:extension>
+					<t:rowSettingsTemplate>
+						<t:RowSettings id="rowsettings" />
+					</t:rowSettingsTemplate>
+					<t:rowActionTemplate>
+						<t:RowAction>
+							<t:RowActionItem id="showProductDetails::ToLineItems"
+								press="onShowProductDetails" type="Navigation" />
+						</t:RowAction>
+					</t:rowActionTemplate>
+					<t:columns>
+						<t:Column width="4em">
+							<Label text="Status" />
+							<t:template>
+								<core:Icon decorative="false"
+									src="{
+										parts : [
+											'@$ui5.context.isTransient',
+											'@$ui5.context.isInactive',
+											{value : 'icon'}
+										],
+										formatter : 'formatter.formatContextStatus'
+									}"
+									tooltip="{
+										parts : [
+											'@$ui5.context.isTransient',
+											'@$ui5.context.isInactive',
+											{value : 'tooltip'}
+										],
+										formatter : 'formatter.formatContextStatus'
+									}" />
+							</t:template>
+						</t:Column>
+						<t:Column width="8em">
+							<Label text="Sales Order ID" />
+							<t:template>
+								<Input editable="false" value="{SalesOrderID}" />
+							</t:template>
+						</t:Column>
+						<t:Column id="itemPositionColumn" sorted="true" sortOrder="Ascending"
+							sortProperty="ItemPosition" width="8em">
+							<Label text="Item Position" />
+							<t:template>
+								<Input editable="false" value="{ItemPosition}" />
+							</t:template>
+						</t:Column>
+						<t:Column width="8em">
+							<Label text="Product ID" />
+							<t:template>
+								<Input editable="{= !%{ItemPosition}}" value="{ProductID}" />
+							</t:template>
+						</t:Column>
+						<t:Column width="8em">
+							<Label text="Quantity" />
+							<t:template>
+								<Input textAlign="Right" value="{
+									formatOptions : {showMeasure : false},
+									mode : 'TwoWay',
+									parts : [{
+										constraints : {precision : 13, scale : 3},
+										path : 'Quantity',
+										type : 'sap.ui.model.odata.type.Decimal'
+									}, {
+										path : 'QuantityUnit',
+										type : 'sap.ui.model.odata.type.String'
+									},{
+										mode : 'OneTime',
+										path : '/##@@requestUnitsOfMeasure',
+										targetType : 'any'
+									}],
+									type : 'sap.ui.model.odata.type.Unit'
+								}" />
+							</t:template>
+						</t:Column>
+						<t:Column width="5em">
+							<Label text="Unit" />
+							<t:template>
+								<Input value="{
+									formatOptions : {showNumber : false},
+									mode : 'TwoWay',
+									parts : [{
+										constraints : {precision : 13, scale : 3},
+										path : 'Quantity',
+										type : 'sap.ui.model.odata.type.Decimal'
+									}, {
+										path : 'QuantityUnit',
+										type : 'sap.ui.model.odata.type.String'
+									},{
+										mode : 'OneTime',
+										path : '/##@@requestUnitsOfMeasure',
+										targetType : 'any'
+									}],
+									type : 'sap.ui.model.odata.type.Unit'
+								}" />
+							</t:template>
+						</t:Column>
+						<t:Column id="grossAmountColumn" filterProperty="GrossAmount" width="10em">
+							<Label text="Gross Amount" />
+							<t:template>
+								<Input textAlign="Right" value="{
+										formatOptions : {showMeasure : false, parseAsString : true},
+										mode : 'TwoWay',
+										parts : [{
+											constraints : {precision : 16, scale : 3},
+											path : 'GrossAmount',
+											type : 'sap.ui.model.odata.type.Decimal'
+										}, {
+											constraints : {maxLength : 5},
+											path : 'CurrencyCode',
+											type : 'sap.ui.model.odata.type.String'
+										}, {
+											mode : 'OneTime',
+											path : '/##@@requestCurrencyCodes',
+											targetType : 'any'
+										}],
+										type : 'sap.ui.model.odata.type.Currency'
+									}" />
+							</t:template>
+						</t:Column>
+						<t:Column width="6em">
+							<Label text="Currency" />
+							<t:template>
+								<Input value="{
+										formatOptions : {showNumber : false, parseAsString : true},
+										mode : 'TwoWay',
+										parts : [{
+											constraints : {precision : 16, scale : 3},
+											path : 'GrossAmount',
+											type : 'sap.ui.model.odata.type.Decimal'
+										}, {
+											constraints : {maxLength : 5},
+											path : 'CurrencyCode',
+											type : 'sap.ui.model.odata.type.String'
+										}, {
+											mode : 'OneTime',
+											path : '/##@@requestCurrencyCodes',
+											targetType : 'any'
+										}],
+										type : 'sap.ui.model.odata.type.Currency'
+									}" />
+							</t:template>
+						</t:Column>
+						<t:Column width="13em">
+							<Label text="Delivery Date" />
+							<t:template>
+								<Input editable="false" value="{
+									path : 'DeliveryDate',
+									type : 'sap.ui.model.odata.type.DateTime'
+								}" />
+							</t:template>
+						</t:Column>
+						<t:Column>
+							<Label text="Note" />
+							<t:template>
+								<Input value="{Note}" />
+							</t:template>
+						</t:Column>
+						<t:Column width="4em">
+							<Label text="Actions" />
+							<t:template>
+								<Button enabled="{= ${ProductID} === 'HT-1000'}"
+									id="fixQuantity::ToLineItems" press="onFixQuantity" text="Fix"
+									tooltip="Fix quantity issues"
+								/>
+							</t:template>
+						</t:Column>
+					</t:columns>
+				</t:Table>
+			</VBox>
+			<VBox>
+				<dependents>
+					<Dialog id="createSalesOrderItemDialog" title="Create a New Sales Order Item">
+						<buttons>
+							<Button id="saveCreatedItem::createSalesOrderItemDialog"
+								press="onSaveCreatedItem" text="Save"
+								tooltip="Save the new sales order item" type="Accept" />
+							<Button id="discardCreatedItem::createSalesOrderItemDialog"
+								press="onDiscardCreatedItem" text="Discard"
+								tooltip="Discard the new sales order item" type="Reject" />
+							<Button id="closeCreatedItem::createSalesOrderItemDialog"
+								press="onCloseCreatedItemDialog" text="Close"
+								tooltip="Close the sales order item creation dialog" />
+						</buttons>
+						<form:SimpleForm ariaLabelledBy="createSalesOrderItemDialog" editable="true"
+							layout="ResponsiveGridLayout">
+							<Label text="Sales Order ID" />
+							<Input editable="false" value="{SalesOrderID}" width="8em" />
+							<Label text="Product ID" />
+							<Input id="productID::createSalesOrderItemDialog" value="{ProductID}" />
+							<Label text="Quantity" />
+							<Input value="{
+									constraints : {precision : 13, scale : 3},
+									path : 'Quantity',
+									type : 'sap.ui.model.odata.type.Decimal'
+								}" />
+							<Label text="Unit" />
+							<Input value="{QuantityUnit}" width="4em" />
+							<Label text="Delivery Date" />
+							<DateTimePicker id="deliveryDate::createSalesOrderItemDialog" value="{
+									path : 'DeliveryDate',
+									type : 'sap.ui.model.odata.type.DateTime'
+								}" />
+							<Label text="Note" />
+							<Input id="note::createSalesOrderItemDialog" value="{Note}" />
+						</form:SimpleForm>
+					</Dialog>
+					<Dialog binding="{ToProduct}" id="productDetailsDialog" title="Product Details">
+						<buttons>
+							<Button press="onCloseProductDetails" text="Close"
+								tooltip="Close the product details dialog" type="Accept" />
+						</buttons>
+						<form:SimpleForm editable="true" layout="ResponsiveGridLayout">
+							<Label text="Product ID" />
+							<Input id="productID::productDetailsDialog" value="{ProductID}" />
+							<Label text="Name" />
+							<Input id="name::productDetailsDialog" value="{Name}" />
+						</form:SimpleForm>
+					</Dialog>
+					<Dialog contentWidth="50%" id="messageDetails" title="Message Details">
+						<buttons>
+							<Button press="onCloseMessageDetails" text="Close"
+								tooltip="Close the message details dialog" type="Emphasized" />
+						</buttons>
+						<form:SimpleForm editable="false" layout="ResponsiveGridLayout">
+							<Label text="Message ID" />
+							<Text text="{messages>id}" />
+							<Label text="Type" />
+							<Text text="{messages>type}" />
+							<Label text="Message" />
+							<Text text="{messages>message}" />
+							<Label text="Additional Text" />
+							<Text text="{messages>additionalText}" />
+							<Label text="Description" />
+							<Text text="{messages>description}" />
+							<Label text="Technical" />
+							<Text text="{messages>technical}" />
+							<Label text="Persistent" />
+							<Text text="{messages>persistent}" />
+							<Label text="Code" />
+							<Text text="{messages>code}" />
+							<Label text="Target" />
+							<Text id="target::messageDetails" text="{
+									formatter : 'formatter.formatMessageTargets',
+									path : 'messages>aTargets'
+								}" />
+							<Label text="Full Target" />
+							<Text id="fullTarget::messageDetails" text="{
+									formatter : 'formatter.formatMessageTargets',
+									path : 'messages>aFullTargets'
+								}" />
+						</form:SimpleForm>
+					</Dialog>
+				</dependents>
+			</VBox>
+		</content>
+		<footer>
+			<OverflowToolbar>
+				<Button icon="sap-icon://message-popup" id="messagePopoverButton"
+					press="onMessagePopoverPress" text="{ui>/messageCount}" tooltip="Show Messages"
+					type="Emphasized">
+					<dependents>
+						<MessagePopover activeTitlePress="onMessageSelected"
+							afterClose="onMessagePopoverClosed" id="messagePopover"
+							items="{
+								events : {
+									change : '.updateMessageCount'
+								},
+								path : 'messages>/'
+							}">
+							<MessageItem activeTitle="true"
+								description="{
+									formatter : 'formatter.formatMessageDescription',
+									path : 'messages>'
+								}"
+								subtitle="{
+									formatter : 'formatter.formatMessageSubtitle',
+									path : 'messages>'
+								}" title="{messages>message}"
+								type="{messages>type}">
+								<Link binding="{messages>}" data:message="{messages>}"
+									press="onShowMessageDetails" text="Technical Details" />
+							</MessageItem>
+						</MessagePopover>
+					</dependents>
+				</Button>
+				<ToolbarSpacer />
+				<Button id="saveSalesOrder" press="onSaveSalesOrder" text="Save"
+					tooltip="Save the sales order" type="Emphasized" />
+				<Button id="resetChanges" press="onResetChanges" text="Reset Changes" />
+			</OverflowToolbar>
+		</footer>
+	</Page>
+</App>
+</mvc:View>

@@ -1,0 +1,17 @@
+{
+	"overrides": [
+		/*
+		 * Productive code, sample and unit test code of sap.ui.documentation has been cleaned up.
+		 * No more references to the global jQuery allowed
+		 */
+		{
+			"files": [
+				"src/**/*.js",
+				"test/sap/ui/documentation/sdk/**/*.js"
+			],
+			"globals": {
+				"jQuery": "off"
+			}
+		}
+	]
+}

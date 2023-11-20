@@ -1,0 +1,12 @@
+<mvc:View
+	controllerName="sap.m.sample.CookieSettingsDialogPattern.controller.App"
+	xmlns:l="sap.ui.layout"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m">
+	<l:VerticalLayout class="sapUiContentPadding" width="100%">
+		<Button
+			text="Open Cookie Settings Dialog"
+			press=".onOCSDButtonPress"
+			class="sapUiSmallMarginBottom" />
+	</l:VerticalLayout>
+</mvc:View>

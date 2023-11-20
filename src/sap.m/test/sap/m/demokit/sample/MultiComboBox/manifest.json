@@ -1,0 +1,32 @@
+{
+	"sap.app": {
+		"id": "sap.m.sample.MultiComboBox",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "sap.m.sample.MultiComboBox.view.MultiComboBox",
+			"type": "XML",
+			"async": true
+		},
+		"dependencies": {
+			"libs": {
+				"sap.m": {},
+				"sap.ui.core": {},
+				"sap.ui.layout": {}
+			}
+		},
+		"config": {
+			"sample": {
+				"stretch": true,
+				"files": [
+					"view/MultiComboBox.view.xml",
+					"controller/MultiComboBox.controller.js",
+					"manifest.json"
+				]
+			}
+		}
+	}
+}

@@ -1,0 +1,21 @@
+<core:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core">
+	<Popover
+		id="myListPopover"
+		title="Products"
+		afterClose="handleAfterClose"
+		placement="Left">
+		<List
+			id="list"
+			items="{/ProductCollection}" >
+			<StandardListItem
+				title="{Name}"
+				description="{ProductId}"
+				type="Active"
+				icon="{ProductPicUrl}"
+				iconDensityAware="false"
+				iconInset="false" />
+		</List>
+	</Popover>
+</core:FragmentDefinition>

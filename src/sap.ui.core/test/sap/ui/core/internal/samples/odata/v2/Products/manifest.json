@@ -1,0 +1,66 @@
+{
+	"_version" : "1.25.0",
+	"sap.app" : {
+		"ach" : "CA-UI5-COR-MOD",
+		"applicationVersion" : {
+			"version" : "${version}"
+		},
+		"description" : "Example for OData V2 EPM Products (UI5 GWSAMPLE_BASIC)",
+		"dataSources" : {
+			"default" : {
+				"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC?customAll='custom%2Fall'",
+				"type" : "OData",
+				"settings" : {
+					"odataVersion" : "2.0"
+				}
+			}
+		},
+		"id" : "sap.ui.core.internal.samples.odata.v2.Products",
+		"title" : "V2 Products (UI5 GWSAMPLE_BASIC)",
+		"type" : "application"
+	},
+	"sap.ui" : {
+		"deviceTypes" : {
+			"desktop" : true,
+			"phone" : true,
+			"tablet" : true
+		},
+		"technology" : "UI5"
+	},
+	"sap.ui5" : {
+		"contentDensities" : {
+			"compact" : true,
+			"cozy" : true
+		},
+		"dependencies" : {
+			"minUI5Version" : "1.88",
+			"libs" : {
+				"sap.m" : {},
+				"sap.ui.core" : {},
+				"sap.ui.layout" : {}
+			}
+		},
+		"handleValidation" : true,
+		"models" : {
+			"" : {
+				"dataSource" : "default",
+				"preload" : false,
+				"settings" : {
+					"defaultBindingMode" : "TwoWay",
+					"defaultCountMode" : "Inline",
+					"earlyTokenRequest" : true,
+					"metadataUrlParams" : {"customMeta" : "'custom/meta'"},
+					"serviceUrlParams" : {"customService" : "'custom/service'"}
+				},
+				"type" : "sap.ui.core.internal.samples.odata.v2.Products.SandboxModel",
+				"uriSettingName" : "serviceUrl"
+			}
+		},
+		"rootView" : {
+			"async" : true,
+			"id" : "ProductsMain",
+			"type" : "XML",
+			"viewName" : "sap.ui.core.internal.samples.odata.v2.Products.Main"
+		}
+	}
+}

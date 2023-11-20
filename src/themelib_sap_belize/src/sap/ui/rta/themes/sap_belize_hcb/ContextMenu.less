@@ -1,0 +1,16 @@
+/***********************************************************************
+	Style of the RTA Contextmenu - sap_belize_hcb Theme
+************************************************************************/
+@_sap_ui_rta_ContextMenu_Border_LightColor: @sapUiInvertedElement; //#fff
+@_sap_ui_rta_ContextMenu_Border_DarkColor: @sapUiDarkShadowTint; // #000
+@_sap_ui_rta_ContextMenu_BoxShadow_DarkColor: fade(@sapUiInvertedElement, 60%); //rgba(255, 255, 255, 0.6)
+@_sap_ui_rta_ContextMenu_BoxShadow_LightColor: @sapUiInvertedElement; //#fff
+
+.sapUiRtaMode {
+	.sapUiDtContextMenu {
+		&.sapMMenu {
+			box-shadow: 0 0.625rem 2rem 0 @_sap_ui_rta_ContextMenu_BoxShadow_DarkColor,
+			0 0 0.625rem -0.125rem @_sap_ui_rta_ContextMenu_BoxShadow_LightColor; //10px 32px 10px 2px
+		}
+	}
+}

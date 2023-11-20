@@ -1,0 +1,23 @@
+<mvc:View
+		height="100%"
+		xmlns:mvc="sap.ui.core.mvc"
+		xmlns:core="sap.ui.core"
+		xmlns="sap.m">
+	<App id="app">
+		<Page
+				id="page"
+				showHeader="true">
+			<Title text="Timezones"></Title>
+			<MultiComboBox
+					id="multiComobo"
+					width="350px"
+					showSelectAll="true"
+					items="{
+                        path: '/locales'
+                    }">
+				<core:Item key="{key}" text="{name}"/>
+			</MultiComboBox>
+			<Table id="table" growing="true" growingThreshold="100" growingScrollToLoad="true"></Table>
+		</Page>
+	</App>
+</mvc:View>

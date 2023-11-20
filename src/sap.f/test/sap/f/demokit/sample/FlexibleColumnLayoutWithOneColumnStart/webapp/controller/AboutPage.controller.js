@@ -9,8 +9,11 @@ sap.ui.define([
 			this.oRouter = this.getOwnerComponent().getRouter();
 			this.oModel = this.getOwnerComponent().getModel();
 		},
+		handleClose: function () {
+			window.history.go(-1);
+		},
 		onBack: function () {
 			window.history.go(-1);
 		}
 	});
-}, true);
+});

@@ -1,17 +1,21 @@
-(function () {
+sap.ui.define([
+	"sap/ui/dt/enablement/elementDesigntimeTest",
+	"sap/ui/rta/enablement/elementActionTest",
+	"sap/ui/layout/form/FormContainer",
+	"sap/ui/layout/form/FormElement",
+	"sap/m/Input"
+], function (
+	elementDesigntimeTest,
+	elementActionTest,
+	FormContainer,
+	FormElement,
+	Input
+) {
 	"use strict";
 
-	sap.ui.require([
-		"sap/ui/dt/test/report/QUnit",
-		"sap/ui/rta/test/controlEnablingCheck",
-		"sap/ui/dt/test/ElementEnablementTest",
-		"sap/ui/layout/form/FormContainer",
-		"sap/ui/layout/form/FormElement",
-		"sap/m/Input"
-	], function (QUnitReport, rtaControlEnablingCheck, ElementEnablementTest, FormContainer, FormElement, Input) {
-
-
-		var oElementEnablementTest = new ElementEnablementTest({
+	return Promise.resolve()
+	.then(function () {
+		return elementDesigntimeTest({
 			type: "sap.ui.layout.form.FormContainer",
 			create: function () {
 				return new FormContainer({
@@ -30,12 +34,8 @@
 				});
 			}
 		});
-		oElementEnablementTest.run().then(function(oData) {
-			new QUnitReport({
-				data: oData
-			});
-		});
-
+	})
+	.then(function() {
 		// Move action
 		var fnConfirmElement1IsOn2rdPosition = function (oUiComponent, oViewAfterAction, assert) {
 			assert.strictEqual(oViewAfterAction.byId("element1").getId(),
@@ -48,7 +48,7 @@
 				"then the control has been moved to the previous position");
 		};
 
-		rtaControlEnablingCheck("Checking the move action for FormContainer control", {
+		elementActionTest("Checking the move action for FormContainer control", {
 			xmlView: '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:f="sap.ui.layout.form" xmlns:m="sap.m">' +
 			'<f:Form id="idForm">' +
 				'<f:layout>' +
@@ -116,7 +116,7 @@
 				"then the control has been renamed to the old value (Option 1)");
 		};
 
-		rtaControlEnablingCheck("Checking the rename action for a FormContainer, when the title is a control", {
+		elementActionTest("Checking the rename action for a FormContainer, when the title is a control", {
 			xmlView: '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:core="sap.ui.core" xmlns:f="sap.ui.layout.form" xmlns:m="sap.m">' +
 				'<f:Form id="idForm">' +
 					'<f:layout>' +
@@ -167,8 +167,8 @@
 				"then the control has been renamed to the old value (Option 1)");
 		};
 
-		rtaControlEnablingCheck("Checking the rename action for a FormContainer, when the title is a string", {
-			xmlView: '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:core="sap.ui.core" xmlns:f="sap.ui.layout.form" xmlns:m="sap.m">' +
+		elementActionTest("Checking the rename action for a FormContainer, when the title is a string", {
+			xmlView: '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:f="sap.ui.layout.form" xmlns:m="sap.m">' +
 				'<f:Form id="idForm">' +
 					'<f:layout>' +
 						'<f:ResponsiveGridLayout/>' +
@@ -211,7 +211,7 @@
 			assert.strictEqual(oViewAfterAction.byId("formContainer").getVisible(), true, "then the FormContainer element is visible");
 		};
 
-		rtaControlEnablingCheck("Checking the remove action for FormContainer", {
+		elementActionTest("Checking the remove action for FormContainer", {
 			xmlView: '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:f="sap.ui.layout.form" xmlns:m="sap.m">' +
 				'<f:Form id="idForm">' +
 					'<f:layout>' +
@@ -240,4 +240,4 @@
 			afterRedo: fnConfirmFormContainerIsInvisible
 		});
 	});
-})();
+});

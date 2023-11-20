@@ -1,0 +1,54 @@
+{
+	"_version": "1.14.0",
+	"sap.app": {
+		"id": "card.explorer.extension.namedDataSection",
+		"type": "card",
+		"title": "Sample of a List with Highlight",
+		"subTitle": "Sample of a Calendar with Highlight",
+		"applicationVersion": {
+			"version": "1.0.0"
+		},
+		"shortTitle": "A short title for this Card",
+		"info": "Additional information about this Card",
+		"description": "A long description for this Card",
+		"tags": {
+			"keywords": [
+				"Calendar",
+				"Highlight",
+				"Card",
+				"Sample",
+				"Extension"
+			]
+		}
+	},
+	"sap.card": {
+		"type": "List",
+		"extension": "./DataExtension",
+		"data": {
+			"name": "cities"
+		},
+		"header": {
+			"title": "List of Random Cities",
+			"status": {
+				"text": {
+					"format": {
+						"translationKey": "i18n>CARD.COUNT_X_OF_Y",
+						"parts": [
+							"parameters>/visibleItems",
+							"cities>/totalCount"
+						]
+					}
+				}
+			}
+		},
+		"content": {
+			"data": {
+				"path": "cities>/items"
+			},
+			"item": {
+				"title": "{cities>name}"
+			},
+			"maxItems": 4
+		}
+	}
+}

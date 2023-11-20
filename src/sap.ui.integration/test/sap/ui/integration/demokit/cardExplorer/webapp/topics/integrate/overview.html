@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<title>Integration Cards Overview</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<script src="../../scripts/boot.js"></script>
+</head>
+
+<body class="sapUiBody topicBody">
+	<div class="topic">
+		<div class="content">
+			<h1 id="overview">Overview</h1>
+
+			<p>
+				Cards are reusable entities which can be used in different places and products.
+				Therefore the integration of cards can be specific in each scenario.
+				Parameters, actions and data sources should be handled in the hosting environment.
+			</p>
+
+			<img src="../images/integrateOverviewDiagram.png" alt="Diagram" style="max-width: 100%; width: 1000px;">
+
+
+			<h2 id="hostEnvironment">Responsibilities of the host environment</h2>
+
+			<p>
+				Depending on the specifics of the cards, the hosting environment is responsible to provide additional
+				functionalities.
+			</p>
+			<table>
+				<tr>
+					<th>Responsibility</th>
+					<th>Description</th>
+				</tr>
+				<tr>
+					<td><a href="../../index.html#/integrate/usage" target="_parent">Consuming in UI5 or HTML</a></td>
+					<td>Based on the project structure and used technologies, the card can be consumed as a UI5 Control
+						or as an HTML custom element.</td>
+				</tr>
+				<tr>
+					<td><a href="../../index.html#/integrate/layouts" target="_parent">Layout and sizing</a></td>
+					<td>Cards don't have their own specific size and depend on the container which they are placed and
+						its responsiveness.</td>
+				</tr>
+				<tr>
+					<td><a href="../../index.html#/integrate/handleActions" target="_parent">Handling of card actions</a></td>
+					<td>Handling of actions and events, that occur on the cards content during user interactions.</td>
+				</tr>
+				<tr>
+					<td><a href="../../index.html#/integrate/hostActions" target="_parent">Host Actions</a></td>
+					<td>Optional application-level actions.</td>
+				</tr>
+				<tr>
+					<td><a href="../../index.html#/integrate/api/passingParameters" target="_parent">Passing global parameters</a></td>
+					<td>Passing parameters to the integrated cards.</td>
+				</tr>
+				<tr>
+					<td><a href="../../index.html#/integrate/destinations" target="_parent">Resolving destinations</a>
+					</td>
+					<td>Ensuring that the backend data required by the card is accessible.</td>
+				</tr>
+			</table>
+
+			<h2 id="integrationScenarios">Integration Scenarios</h2>
+			<p>
+				You can see existing solutions and details how cards are integrated in different products:
+			<ul>
+				<li>
+					<a href="https://help.sap.com/docs/build-work-zone-advanced-edition/sap-build-work-zone-advanced-edition/ui-integration-cards"
+						target="_blank"
+						rel="noopener noreferrer">SAP Work Zone</a>
+				</li>
+			</ul>
+			<p>Or if you are developing a solution yourself see <a href="../../index.html#/integrate/usage"
+					target="_parent">Use Cards in Apps</a>.
+			</p>
+
+		</div>
+	</div>
+</body>
+
+</html>

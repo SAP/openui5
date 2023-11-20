@@ -17,10 +17,10 @@ sap.ui.define([
 			// configure
 			MockServer.config({
 				autoRespond: true,
-				autoRespondAfter: 1000
+				autoRespondAfter: 500
 			});
 
-			sLocalServicePath = sap.ui.require.toUrl("sap/m/sample/TreeOData/") + "localService";
+			sLocalServicePath = sap.ui.require.toUrl("sap/m/sample/TreeOData/localService");
 
 			// simulate
 			oMockServer.simulate(sLocalServicePath + "/metadata.xml", {

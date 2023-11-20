@@ -1,0 +1,23 @@
+{
+  "1.117.0": {
+    "date": "July 2023",
+    "notes": [
+      {
+        "id": "7bf3def9ca363e16b7db0f9468cfd658096f87fa",
+        "type": "FEATURE",
+        "text": " sap.m.Avatar: New 'enabled' property"
+      },
+      {
+        "id": "53ab83c5753938aa72bfda20524842ba1559a050",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: Color high-contrast time markers",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370019053"
+          }
+        ]
+      }
+    ]
+  }
+}

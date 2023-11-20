@@ -1,0 +1,83 @@
+/* ================================= */
+/* CSS for control sap.m/Tokenizer   */
+/* Quartz High Contrast White theme  */
+/* ================================= */
+
+@_sap_m_Tokenizer_OutlineOffset: -0.1875rem;
+
+.sapMTokenizer {
+	padding-left: 0.3125rem;
+	position: relative;
+	display: inline-block;
+	white-space: nowrap;
+	overflow: hidden;
+	box-sizing: border-box;
+}
+
+.sapMTokenizer .sapMToken {
+	margin-right: 0.3125rem;
+	max-width: calc(~"100% - 0.3125rem");
+	margin-top: 0.1875rem;
+	margin-bottom: 0.1875rem;
+}
+
+html.sap-desktop .sapMTokenizer:focus {
+	outline: @sapUiContentFocusWidth @sapUiContentFocusStyle @sapUiContentFocusColor;
+	outline-offset: @_sap_m_Tokenizer_OutlineOffset;
+}
+
+/* editable tokens in read-only tokenizer */
+html.sap-desktop .sapMTokenizer.sapMTokenizerReadonly {
+	.sapMToken, .sapMToken:hover,
+	.sapMToken.sapMTokenSelected:hover {
+		color: @sapUiContentLabelColor;
+		background: @sapUiFieldReadOnlyBackground;
+		border: @sapUiButtonBorderWidth solid @sapUiFieldReadOnlyBorderColor;
+	}
+}
+
+.sapUiSizeCompact {
+	.sapMTokenizer {
+		padding-left: 0.25rem;
+		.sapMToken {
+			margin-right: 0.25rem;
+			margin-top: 0.0625rem;
+			margin-bottom: 0.0625rem;
+		}
+		.sapMTokenizerIndicator {
+			line-height: 1.375rem;
+		}
+	}
+}
+
+/* ------------------------------ */
+/* Disabled                       */
+/* ------------------------------ */
+
+.sapMTokenizer.sapMTokenizerDisabled .sapMToken  {
+  border-color: @sapUiHcReducedAltForeground;
+
+  &.sapMToken:hover,
+  &.sapMToken:focus,
+  &.sapMToken.sapMTokenSelected:hover,
+  &.sapMTokenSelected {
+    background: @sapUiButtonBackground;
+    cursor: default;
+    color: @sapUiBaseText;
+    outline: none;
+    border-color: @sapUiHcReducedAltForeground;
+  }
+
+  &.sapMTokenSelected .sapMTokenText {
+    color: @sapUiBaseText;
+  }
+
+  &.sapMTokenSelected .sapMTokenIcon {
+    color: @sapUiContentIconColor;
+    cursor: default;
+  }
+
+  & .sapMTokenIcon {
+    cursor: default;
+  }
+}

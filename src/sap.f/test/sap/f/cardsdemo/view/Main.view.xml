@@ -1,0 +1,58 @@
+<mvc:View
+	xmlns="sap.m"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:f="sap.f"
+	xmlns:grid="sap.ui.layout.cssgrid"
+	controllerName="sap.f.cardsdemo.controller.Main"
+	displayBlock="true">
+	<App id="app">
+		<Page title="{i18n>appTitle}">
+			<subHeader>
+				<Toolbar>
+					<ToolbarSpacer />
+					<Title text="{i18n>appDescription}" />
+					<ToolbarSpacer />
+				</Toolbar>
+			</subHeader>
+
+			<Panel>
+				<f:GridList
+					items="{
+						path: 'cardTypesExamples>/',
+						sorter: {
+							path: 'group',
+							descending: false,
+							comparator: '.compareGroups',
+							group: true
+						}
+					}">
+					<f:customLayout>
+						<grid:GridBasicLayout gridTemplateColumns="repeat(auto-fit, minmax(15rem, 1fr))" gridGap="0.5rem 0.5rem" />
+					</f:customLayout>
+
+					<CustomListItem type="Navigation" press=".onSelectExample">
+						<VBox height="100%">
+							<VBox justifyContent="SpaceBetween">
+								<layoutData>
+									<FlexItemData growFactor="1" shrinkFactor="0" /><!-- Don't shrink below minimum size. Fill space if available. -->
+								</layoutData>
+
+								<VBox class="sapUiSmallMargin">
+									<Title text="{cardTypesExamples>title}" wrapping="true" />
+									<Text text="{cardTypesExamples>description}" wrapping="true" />
+
+									<Title
+										visible="{= ${cardTypesExamples>usage} ? true : false }"
+										text="Use case"
+										wrapping="true"
+										class="sapUiSmallMarginTop" />
+									<Text text="{cardTypesExamples>usage}" wrapping="true" />
+								</VBox>
+							</VBox>
+						</VBox>
+					</CustomListItem>
+				</f:GridList>
+			</Panel>
+		</Page>
+	</App>
+</mvc:View>

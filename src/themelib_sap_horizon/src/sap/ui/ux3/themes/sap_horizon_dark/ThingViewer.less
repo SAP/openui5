@@ -1,0 +1,101 @@
+/* ======================================= */
+/* CSS for control sap.ui.ux3/ThingViewer  */
+/* Evening Horizon theme                   */
+/* ======================================= */
+
+.sapUiUx3TV {
+	font-family: @sapUiDesktopFontFamily;
+	font-size: @sapUiDesktopFontSize;
+}
+
+.sapUiUx3TVContent {
+	background-color: darken(@sapUiContentForegroundColor, 43); // @sapUiDarkBG = #777777
+	border: 0px;
+}
+
+.sapUiUx3TVContentScrollContainer {
+	background-color: @sapUiContentForegroundColor; // @sapUiLightBG = #e5e5e5
+}
+
+.sapUiUx3TVHeader {
+	background-color: lighten(@sapUiContentForegroundColor, 10); // @sapUiLightestBG = #ffffff
+}
+
+.sapUiUx3TVFacets {
+	border-left: 1px solid lighten(@sapUiContentForegroundBorderColor, 11.6); // @sapUiLightBorder = #dddddd
+	background-color: lighten(@sapUiContentForegroundColor, 10); // @sapUiLightestBG = #ffffff
+}
+.sapUiUx3TVFacetBar {
+	left: 0px;
+	right: 0px;
+}
+.sapUiUx3TVIcon {
+	border: 0px;
+	padding: 0px;
+}
+.sapUiUx3TVTitleSecond {
+	color: lighten(@sapUiTextTitle, 20); // @sapUiLightText = #666666
+}
+.sapUiUx3TVFacetBar .sapUiUx3NavBarDummyItem {
+	padding: 0 5px 0 0;
+}
+
+.sapUiUx3TVToolbar {
+	background-color: @sapUiToolbarBackground;
+	padding: 0px;
+	height: 40px;
+}
+
+.sapUiUx3TVActionBar {
+	bottom: 40px;
+}
+
+/*.sapUiUx3TVToolbar > .sapUiUx3ActionBar {
+	background-color: transparent;
+}*/
+
+.sapUiUx3TVHeaderContent {
+	background-color: lighten(@sapUiContentForegroundColor, 10); // @sapUiLightestBG = #ffffff
+}
+
+.sapUiUx3TVIdentifier {
+	color: lighten(@sapUiContentForegroundTextColor, 26.5); // @sapUiMediumText = #444444
+}
+
+.sapUiUx3TVTitle {
+	color: @sapUiBaseText;
+}
+
+.sapUiUx3TVHRGrey {
+	background-color: darken(@sapUiContentForegroundColor, 43); // @sapUiDarkBG = #777777
+}
+
+.sapUiUx3TVHRWhite {
+	background-color: lighten(@sapUiContentForegroundBorderColor, 11.6); // @sapUiLightBorder = #dddddd
+	height:1px;
+}
+
+.sapUiUx3TVHeaderGroupTitle {
+	color: darken(@sapUiGroupTitleTextColor, 6.5); // @sapUiExtraDarkText = #222222
+}
+
+.sapUiUx3TVFacetThingGroupContentTitle {
+	color: lighten(@sapUiGroupTitleTextColor, 6.5); // @sapUiMediumText = #444444
+	border-bottom: 1px solid @sapUiGroupTitleBorderColor; // @sapUiMediumBorder = #cccccc
+}
+
+.sapUiUx3TV.sapUiUx3TVNoFrame {
+	margin-top: 3px;
+}
+
+.sapUiUx3TV.sapUiUx3TVNoFrame > .sapUiUx3TVContent {
+	border-width: 0;
+}
+
+.sapUiUx3TV.sapUiUx3TVNoFrame > .sapUiUx3TVContent > .sapUiUx3TVToolbar {
+	border-color: lighten(@sapUiContentForegroundBorderColor, 25); // @sapUiLightestBorder = #ffffff
+}
+
+.sapUiUx3TV.sapUiUx3TVNoFrame > .sapUiUx3TVContent > .sapUiUx3TVFacets {
+	border-color: lighten(@sapUiContentForegroundBorderColor, 25); // @sapUiLightestBorder = #ffffff
+}

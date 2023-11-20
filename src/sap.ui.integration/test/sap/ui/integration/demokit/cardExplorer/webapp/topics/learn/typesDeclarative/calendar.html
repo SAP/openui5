@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<title>List Card</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<script src="../../../scripts/boot.js"></script>
+</head>
+
+<body class="sapUiBody topicBody">
+	<div class="topic">
+		<div class="content">
+			<h1 id="overview">
+				Calendar Card
+			</h1>
+			<p>
+				The Calendar Card is used to display a schedule of a single entity (such as person, resource) for the
+				selected time interval.
+			</p>
+			<h2 id="properties">Properties</h2>
+
+			<p>The Calendar Card has few defining properties.</p>
+
+			<div class="tableWrapper">
+				<table>
+					<tr>
+						<th>Property</th>
+						<th>Type</th>
+						<th>Default Value</th>
+						<th>Required</th>
+						<th>Description</th>
+						<th>Schema Version</th>
+						<th>Since</th>
+					</tr>
+					<tr>
+						<td>date</td>
+						<td>string</td>
+						<td></td>
+						<td>No</td>
+						<td>The date for which appointments are shown when card is initially loaded. The accepted date
+							format is ISO 8601.</td>
+						<td>1.18.0</td>
+						<td>1.74</td>
+					</tr>
+					<tr>
+						<td>maxItems</td>
+						<td>int</td>
+						<td></td>
+						<td>No</td>
+						<td>The maximum number of items shown for each day.</td>
+						<td>1.18.0</td>
+						<td>1.74</td>
+					</tr>
+					<tr>
+						<td>maxLegendItems</td>
+						<td>int</td>
+						<td></td>
+						<td>No</td>
+						<td>The maximum number of legend items shown in the card.</td>
+						<td>1.18.0</td>
+						<td>1.74</td>
+					</tr>
+					<tr>
+						<td>noItemsText</td>
+						<td>string</td>
+						<td></td>
+						<td>No</td>
+						<td>The text shown when there are no items for the selected day.</td>
+						<td>1.18.0</td>
+						<td>1.74</td>
+					</tr>
+					<tr>
+						<td>items</td>
+						<td>object</td>
+						<td></td>
+						<td>No</td>
+						<td>The appointments defined for each date.</td>
+						<td>1.18.0</td>
+						<td>1.74</td>
+					</tr>
+					<tr>
+						<td>legendItems</td>
+						<td>object</td>
+						<td></td>
+						<td>No</td>
+						<td>The items in the legend, which describe the semantic meaning of item colors or special date
+							colors for the application.</td>
+						<td>1.18.0</td>
+						<td>1.74</td>
+					</tr>
+					<tr>
+						<td>specialDates</td>
+						<td>object</td>
+						<td></td>
+						<td>No</td>
+						<td>The dates in the calendar part of the card marked as special.</td>
+						<td>1.18.0</td>
+						<td>1.74</td>
+					</tr>
+					<tr>
+						<td>moreItems</td>
+						<td><a href="#moreItemsProperties">MoreItems</a></td>
+						<td></td>
+						<td>No</td>
+						<td>This button is present only if there are more items existing than the allowed maxItem.</td>
+						<td>1.18.0</td>
+						<td>1.74</td>
+					</tr>
+					<tr>
+						<td>actions</td>
+						<td><a href="../../../index.html#/learn/actions" target="_parent">Actions[]</a></td>
+						<td></td>
+						<td>No</td>
+						<td>Defines actions that can be applied on the item.
+							<b>Note:</b> This property is experimental and may change!
+						</td>
+						<td>1.32.0</td>
+						<td>1.88</td>
+					</tr>
+				</table>
+			</div>
+
+			<p>The Calendar Card contains arrays of appointment items, legend items and special days.</p>
+
+			<div id="calendarItemProperties" class="boldBlock">Calendar item Properties</div>
+			<div class="tableWrapper">
+				<table>
+					<tr>
+						<th>Property</th>
+						<th>Type</th>
+						<th>Default Value</th>
+						<th>Required</th>
+						<th>Description</th>
+						<th>Schema Version</th>
+						<th>Since</th>
+					</tr>
+					<tr>
+						<td>path</td>
+						<td>string</td>
+						<td></td>
+						<td>No</td>
+						<td>Defines the path to the structure holding the data about the items.</td>
+						<td>1.18.0</td>
+						<td>1.74</td>
+					</tr>
+					<tr>
+						<td>template</td>
+						<td>object</td>
+						<td></td>
+						<td>Yes</td>
+						<td>The template describing the properties of each item.</td>
+						<td>1.18.0</td>
+						<td>1.74</td>
+					</tr>
+				</table>
+			</div>
+
+			<div id="calendarItemTemplateProperties" class="boldBlock">Calendar item template Properties</div>
+			<div class="tableWrapper">
+				<table>
+					<tr>
+						<th>Property</th>
+						<th>Type</th>
+						<th>Default Value</th>
+						<th>Required</th>
+						<th>Description</th>
+						<th>Schema Version</th>
+						<th>Since</th>
+					</tr>
+					<tr>
+						<td>startDate</td>
+						<td>string</td>
+						<td></td>
+						<td>Yes</td>
+						<td>The start date and time of the item. The accepted date format is ISO 8601.</td>
+						<td>1.18.0</td>
+						<td>1.74</td>
+					</tr>
+					<tr>
+						<td>endDate</td>
+						<td>string</td>
+						<td></td>
+						<td>Yes</td>
+						<td>The end date and time of the item. The accepted date format is ISO 8601.</td>
+						<td>1.18.0</td>
+						<td>1.74</td>
+					</tr>
+					<tr>
+						<td>title</td>
+						<td>string</td>
+						<td></td>
+						<td>No</td>
+						<td>The title of the item.</td>
+						<td>1.18.0</td>
+						<td>1.74</td>
+					</tr>
+					<tr>
+						<td>text</td>
+						<td>string</td>
+						<td></td>
+						<td>No</td>
+						<td>The additional information of the item.</td>
+						<td>1.18.0</td>
+						<td>1.74</td>
+					</tr>
+					<tr>
+						<td>type</td>
+						<td><a data-demokit-href="#/api/sap.ui.unified.CalendarDayType" target="_blank">sap.ui.unified.CalendarDayType</a>
+						</td>
+						<td>Type01</td>
+						<td>No</td>
+						<td>The type of the item - one of the types defined in the legend.</td>
+						<td>1.18.0</td>
+						<td>1.74</td>
+					</tr>
+					<tr>
+						<td>icon</td>
+						<td>icon</td>
+						<td></td>
+						<td>No</td>
+						<td>The icon of the item.</td>
+						<td>1.18.0</td>
+						<td>1.74</td>
+					</tr>
+				</table>
+			</div>
+
+			<div id="calendarLegendItemProperties" class="boldBlock">Calendar legendItem Properties</div>
+			<div class="tableWrapper">
+				<table>
+					<tr>
+						<th>Property</th>
+						<th>Type</th>
+						<th>Default Value</th>
+						<th>Required</th>
+						<th>Description</th>
+						<th>Schema Version</th>
+						<th>Since</th>
+					</tr>
+					<tr>
+						<td>path</td>
+						<td>string</td>
+						<td></td>
+						<td>No</td>
+						<td>Defines the path to the structure holding the data about the legendItems.</td>
+						<td>1.18.0</td>
+						<td>1.74</td>
+					</tr>
+					<tr>
+						<td>template</td>
+						<td>object</td>
+						<td></td>
+						<td>Yes</td>
+						<td>The template describing the properties of each legendItem.</td>
+						<td>1.18.0</td>
+						<td>1.74</td>
+					</tr>
+				</table>
+			</div>
+
+			<div id="calendarLegendItemTemplateProperties" class="boldBlock">Calendar legendItem template Properties</div>
+			<div class="tableWrapper">
+				<table>
+					<tr>
+						<th>Property</th>
+						<th>Type</th>
+						<th>Default Value</th>
+						<th>Required</th>
+						<th>Description</th>
+						<th>Schema Version</th>
+						<th>Since</th>
+					</tr>
+					<tr>
+						<td>category</td>
+						<td>string</td>
+						<td></td>
+						<td>Yes</td>
+						<td>Defines which card component describes the legend item. Available categories: "calendar"
+							(represented as square) or "appointment" (circle).</td>
+						<td>1.18.0</td>
+						<td>1.74</td>
+					</tr>
+					<tr>
+						<td>text</td>
+						<td>string</td>
+						<td></td>
+						<td>No</td>
+						<td>The describing information of the item.</td>
+						<td>1.18.0</td>
+						<td>1.74</td>
+					</tr>
+					<tr>
+						<td>type</td>
+						<td><a data-demokit-href="#/api/sap.ui.unified.CalendarDayType" target="_blank">sap.ui.unified.CalendarDayType</a>
+						</td>
+						<td>Type01</td>
+						<td>No</td>
+						<td>The type of the legend item corresponding with the described component.</td>
+						<td>1.18.0</td>
+						<td>1.74</td>
+					</tr>
+				</table>
+			</div>
+
+			<div id="calendarSpecialDateProperties" class="boldBlock">Calendar specialDate Properties</div>
+			<div class="tableWrapper">
+				<table>
+					<tr>
+						<th>Property</th>
+						<th>Type</th>
+						<th>Default Value</th>
+						<th>Required</th>
+						<th>Description</th>
+						<th>Schema Version</th>
+						<th>Since</th>
+					</tr>
+					<tr>
+						<td>path</td>
+						<td>string</td>
+						<td></td>
+						<td>No</td>
+						<td>Defines the path to the structure holding the data about the specialDates.</td>
+						<td>1.18.0</td>
+						<td>1.74</td>
+					</tr>
+					<tr>
+						<td>template</td>
+						<td>object</td>
+						<td></td>
+						<td>Yes</td>
+						<td>The template describing the properties of each specialDate.</td>
+						<td>1.18.0</td>
+						<td>1.74</td>
+					</tr>
+				</table>
+			</div>
+
+			<div id="calendarSpecialDateTemplateProperties" class="boldBlock">Calendar specialDate template Properties</div>
+			<div class="tableWrapper">
+				<table>
+					<tr>
+						<th>Property</th>
+						<th>Type</th>
+						<th>Default Value</th>
+						<th>Required</th>
+						<th>Description</th>
+						<th>Schema Version</th>
+						<th>Since</th>
+					</tr>
+					<tr>
+						<td>startDate</td>
+						<td>string</td>
+						<td></td>
+						<td>Yes</td>
+						<td>The start date and time of the special date. The accepted date format is ISO 8601.</td>
+						<td>1.18.0</td>
+						<td>1.74</td>
+					</tr>
+					<tr>
+						<td>endDate</td>
+						<td>string</td>
+						<td></td>
+						<td>Yes</td>
+						<td>The end date and time of the special date. The accepted date format is ISO 8601.</td>
+						<td>1.18.0</td>
+						<td>1.74</td>
+					</tr>
+					<tr>
+						<td>type</td>
+						<td><a data-demokit-href="#/api/sap.ui.unified.CalendarDayType" target="_blank">sap.ui.unified.CalendarDayType</a>
+						</td>
+						<td>Type01</td>
+						<td>No</td>
+						<td>The type of the special date - one of the types defined in the legend.</td>
+						<td>1.18.0</td>
+						<td>1.74</td>
+					</tr>
+				</table>
+			</div>
+
+			<div id="moreItemsProperties" class="boldBlock">MoreItems button Properties</div>
+			<div class="tableWrapper">
+				<table>
+					<tr>
+						<th>Property</th>
+						<th>Type</th>
+						<th>Default Value</th>
+						<th>Required</th>
+						<th>Description</th>
+						<th>Schema Version</th>
+						<th>Since</th>
+					</tr>
+					<tr>
+						<td>actions</td>
+						<td><a href="../../../index.html#/learn/actions" target="_parent">Actions[]</a></td>
+						<td></td>
+						<td>No</td>
+						<td>Actions that are triggered when the button is pressed.
+							<b>Note:</b> This property is experimental and may change!
+						</td>
+						<td>1.32.0</td>
+						<td>1.88</td>
+					</tr>
+				</table>
+			</div>
+
+			<h2 id="actions">Built-In Actions</h2>
+
+			<p>The Calendar Card has <code>DateChange</code> and <code>MonthChange</code> built-in actions.
+				They are fired once the calendar is ready and then upon user interaction.
+			</p>
+			<p>Using an extension, you can attach handlers to them. Thus, you can set data fetching to
+				be dependent to the selected date/month. See the sample about
+				<a data-demokit-href="../../../index.html#/explore/calendar/extension" target="_blank">Fetch Data with Extension</a>.
+			</p>
+
+			<div class="tableWrapper">
+				<table>
+					<tr>
+						<th>Action Type</th>
+						<th>Description</th>
+						<th>Schema Version</th>
+						<th>Since</th>
+					</tr>
+					<tr>
+						<td>DateChange</td>
+						<td>An action fired when a date in the calendar is selected.<br>
+							<b>Note:</b> This action is experimental and may change!</td>
+						<td>1.31.0</td>
+						<td>1.87</td>
+					</tr>
+					<tr>
+						<td>MonthChange</td>
+						<td>An action fired when the currently displayed month in the calendar is changed.<br>
+							<b>Note:</b> This action is experimental and may change!</td>
+						<td>1.31.0</td>
+						<td>1.87</td>
+					</tr>
+				</table>
+			</div>
+
+			<p>Parameters for the DateChange action</p>
+
+			<div class="tableWrapper">
+				<table>
+					<tr>
+						<th>Parameter</th>
+						<th>Type</th>
+						<th>Description</th>
+						<th>Schema Version</th>
+						<th>Since</th>
+					</tr>
+					<tr>
+						<td>selectedDate</td>
+						<td>JavaScript Date object</td>
+						<td>The date that is chosen.</td>
+						<td>1.31.0</td>
+						<td>1.87</td>
+					</tr>
+				</table>
+			</div>
+
+			<p>Parameters for the MonthChange action</p>
+
+			<div class="tableWrapper">
+				<table>
+					<tr>
+						<th>Parameter</th>
+						<th>Type</th>
+						<th>Description</th>
+						<th>Schema Version</th>
+						<th>Since</th>
+					</tr>
+					<tr>
+						<td>firstDate</td>
+						<td>JavaScript Date object</td>
+						<td>The first displayed date in the month view. This could be a date in the previous month.</td>
+						<td>1.31.0</td>
+						<td>1.87</td>
+					</tr>
+					<tr>
+						<td>lastDate</td>
+						<td>JavaScript Date object</td>
+						<td>The last displayed date in the month view. This could be a date in the next month.</td>
+						<td>1.31.0</td>
+						<td>1.87</td>
+					</tr>
+				</table>
+			</div>
+
+			<h2 id="example">Example</h2>
+			<p>Define the type and data for the card:
+			</p>
+			<pre class="lang-json">
+{
+	"sap.card": {
+	"type": "Calendar",
+	"data": {
+	  "json": {
+		"item": [
+		  {
+			"start": "2019-09-02T09:00",
+			"end": "2019-09-02T10:00",
+			"title": "Payment reminder",
+			"icon": "sap-icon://desktop-mobile",
+			"type": "Type06"
+		  },
+		  {
+			"start": "2019-09-02T17:00",
+			"end": "2019-09-02T17:30",
+			"title": "Private appointment",
+			"icon": "sap-icon://desktop-mobile",
+			"type": "Type07"
+		  },
+		  {
+			"start": "2019-09-02T12:00",
+			"end": "2019-09-02T13:00",
+			"title": "Lunch",
+			"text": "working",
+			"icon": "sap-icon://desktop-mobile",
+			"type": "Type03"
+		  },
+		  {
+			"start": "2019-09-01T08:30",
+			"end": "2019-09-03T17:30",
+			"title": "Workshop",
+			"text": "Out of office",
+			"icon": "sap-icon://sap-ui5",
+			"type": "Type07"
+		  },
+		  {
+			"start": "2019-09-02T14:00",
+			"end": "2019-09-02T16:30",
+			"title": "Discussion with clients",
+			"text": "working",
+			"icon": "sap-icon://desktop-mobile"
+		  },
+		  {
+			"start": "2019-09-02T11:00",
+			"end": "2019-09-02T12:00",
+			"title": "Team meeting",
+			"text": "online meeting",
+			"icon": "sap-icon://sap-ui5",
+			"type": "Type04"
+		  }
+		],
+		"specialDate": [
+		  {
+			"start": "2019-09-13",
+			"end": "2019-09-14",
+			"type": "Type08"
+		  },
+		  {
+			"start": "2019-09-24",
+			"end": "2019-09-24",
+			"type": "Type13"
+		  }
+		],
+		"legendItem": [
+		  {
+			"category": "calendar",
+			"text": "Team building",
+			"type": "Type08"
+		  },
+		  {
+			"category": "calendar",
+			"text": "Public holiday",
+			"type": "Type13"
+		  },
+		  {
+			"category": "appointment",
+			"text": "Reminder",
+			"type": "Type06"
+		  },
+		  {
+			"category": "appointment",
+			"text": "Private appointment",
+			"type": "Type07"
+		  },
+		  {
+			"category": "appointment",
+			"text": "Out of office",
+			"type": "Type03"
+		  },
+		  {
+			"category": "appointment",
+			"text": "Collaboration with other team members",
+			"type": "Type07"
+		  }
+		]
+	  }
+	},
+	"header": {},
+	"content": {}
+  }
+}</pre>
+			<p>
+				Define the header of the card:
+			</p>
+			<pre class="lang-json">
+"header": {
+  "title": "My calendar",
+  "subTitle": "Team Balkan",
+  "status": {
+	"text":  {
+	  "format": {
+		"translationKey": "i18n>CARD.COUNT_X_OF_Y",
+		"parts": [
+		  "parameters>/visibleItems",
+		  "parameters>/allItems"
+		]
+	  }
+	}
+  }
+}</pre>
+			<p>
+				Define the content of the card:
+			</p>
+			<pre class="lang-json">
+"content": {
+  "date": "2019-09-02",
+  "maxItems": 5,
+  "maxLegendItems": 3,
+  "noItemsText": "You have nothing planned for that day",
+  "item": {
+	"template": {
+	  "startDate": "{start}",
+	  "endDate": "{end}",
+	  "title": "{title}",
+	  "text": "{text}",
+	  "icon": "{icon}",
+	  "type": "{type}"
+	},
+	"path": "/item"
+  },
+  "specialDate": {
+	"template": {
+	  "startDate": "{start}",
+	  "endDate": "{end}",
+	  "type": "{type}"
+	},
+	"path": "/specialDate"
+  },
+  "legendItem": {
+	"template": {
+	  "category": "{category}",
+	  "text": "{text}",
+	  "type": "{type}"
+	},
+	"path": "/legendItem"
+  },
+  "moreItems": {
+	"actions": [
+	  {
+		"type": "Navigation",
+		"parameters": {
+			"enabled": true,
+			"url": "http://sap.com"
+		}
+	  }
+	]
+  }
+}</pre>
+			<p>Create the view to display the card:</p>
+			<pre class="lang-xml">
+&lt;mvc:View xmlns:w="sap.ui.integration.widgets"&gt;
+	&lt;w:Card manifest="./manifest.json" width="400px" height="auto"/&gt;
+&lt;/mvc:View&gt;</pre>
+			<a class="try-button" href="../../../index.html#/explore/calendar" target="_parent">Try it Out</a>
+		</div>
+	</div>
+</body>
+
+</html>

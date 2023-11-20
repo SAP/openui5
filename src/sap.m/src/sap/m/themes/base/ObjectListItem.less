@@ -6,10 +6,9 @@
 .sapMObjLItem {
 	box-sizing: border-box;
 	vertical-align: baseline;
-}
-
-.sapMObjLItem > .sapMLIBContent {
-	overflow: hidden;
+	/* set this otherwise if one of the parents has "nowrap" style this
+	affects the whole arrangement of the ObjectListItem */
+	white-space: normal;
 }
 
 .sapMLIB.sapMObjLItem {
@@ -59,13 +58,16 @@ html .sapUiContainer-Narrow .sapMText.sapMObjLTitle {
 	word-break: break-word;
 	-webkit-hyphens: auto;
 	-moz-hyphens: auto;
-	-ms-hyphens: auto;
 	hyphens: auto;
 }
 
 .sapMObjLNumberDiv {
 	float: right;
 	padding-left: 1rem;
+
+	.sapMObjectNumber {
+		line-height: initial;
+	}
 }
 
 .sapMObjLNumberDiv .sapMObjectNumber.sapMObjectNumberStatusNone {
@@ -75,7 +77,9 @@ html .sapUiContainer-Narrow .sapMText.sapMObjLTitle {
 .sapMObjLNumberDiv .sapMObjectNumber .sapMObjectNumberText {
 	font-family: @sapUiFontHeaderFamily;
 	font-size: 1.375rem;
+	line-height: 1.375rem;
 	font-weight: @sapUiFontHeaderWeight;
+	white-space: nowrap;
 }
 
 .sapMObjLNumberDiv .sapMObjectNumber .sapMObjectNumberUnit {
@@ -88,7 +92,6 @@ html .sapUiContainer-Narrow .sapMText.sapMObjLTitle {
 }
 
 .sapMObjLAttrRow {
-	font-size: .875rem;
 	padding-top: .313rem;
 }
 
@@ -109,8 +112,23 @@ html[dir=rtl] .sapMObjLAttrDiv {
 	white-space: nowrap;
 	overflow: hidden;
 	width: 100%;
-}
+	&.sapMObjectAttributeActive {
+		.sapMObjectAttributeTitle,
+		.sapMObjectAttributeText {
+			text-overflow: ellipsis;
+			white-space: nowrap;
+			overflow: hidden;
+			max-width: 50%;
+		}
+		&.sapMObjectAttributeTextOnly {
+			.sapMObjectAttributeTitle,
+			.sapMObjectAttributeText {
+				max-width: 100%;
+			}
+		}
 
+	}
+}
 
 /* First and second attributes get one line with ellipsis */
 .sapMObjLAttrRow:nth-child(1)>.sapMObjLAttrDiv .sapMObjectAttributeDiv,
@@ -131,17 +149,29 @@ html[dir=rtl] .sapMObjLAttrDiv {
 	width: 50%;
 	text-align: right;
 	vertical-align: top;
+	padding-left: 0.5rem;
 }
 
 html[dir=rtl] .sapMObjLStatusDiv {
 	text-align: left;
+	padding-left: 0;
+	padding-right: 0.5rem;
 }
 
 .sapMObjLAttrRow .sapMObjStatus {
-	overflow: hidden;
+	overflow: visible;
 	white-space: nowrap;
 	text-overflow: ellipsis;
 	width: 100%;
+	.sapMObjStatusText {
+		word-break: normal;
+	}
+}
+
+// invertedStatus in ObjectListItem
+.sapMObjLAttrRow .sapMObjStatusInverted {
+	height: 1rem;
+	line-height: 0.75rem;
 }
 
 .sapMObjLBottomRow .sapMObjStatusIcon {
@@ -160,12 +190,6 @@ html[dir=rtl] .sapMObjLStatusDiv {
 	-webkit-box-align: center;
 	flex-direction: row;
 	align-items: center;
-}
-
-/* TODO remove after 1.62 version */
-html[data-sap-ui-browser="ie11"] .sapMObjLItem > .sapMLIBContent
-{
-	width: 100%;
 }
 
 /* overwrite transform for the markers favorite and flag icon */
@@ -191,13 +215,6 @@ html[dir=rtl] .sapMObjStatusMarker > .sapUiIcon.sapUiIconMirrorInRTL {
 
 .sapMObjLItem .sapMObjStatusMarker .sapUiIcon:before {
 	vertical-align: top;
-}
-
-//outline-offset alternative for ObjectAttribute inside ObjectListItem. Otherwise the offset may be cut.
-html[data-sap-ui-browser ^= "ie"], html[data-sap-ui-browser^="ed"] {
-	.sapMObjLAttrDiv > .sapMObjectAttributeActive.sapMObjectAttributeDiv {
-		padding: 0.125rem;
-	}
 }
 
 .sapMObjLIcon {

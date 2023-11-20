@@ -1,0 +1,37 @@
+{
+  "1.61.0": {
+    "date": "November 2018",
+    "notes": [
+      {
+        "id": "b1152a2dd5bec6c9c9086944b0a1054732debe1e",
+        "type": "FEATURE",
+        "text": "sap.ui.mdc.odata.v4.microchart: Added templates for AreaMicroChart, ColumnMicroChart and LineMicroChart",
+        "references": []
+      },
+      {
+        "id": "167ed7a0f78ac39133f5b61bcc8ea9b209543ecd",
+        "type": "FEATURE",
+        "text": "MDCChart: Selection Details first draft",
+        "references": []
+      },
+      {
+        "id": "f98d89aab89b47b01bfca3af3bdaad4c522751ee",
+        "type": "FEATURE",
+        "text": "MDCChart: Chart type selection button",
+        "references": []
+      },
+      {
+        "id": "86d1e3d781927c8291fc200649c862ceabb4c5f2",
+        "type": "FIX",
+        "text": "MDCChart: Bug in visibility of dimensions and measures",
+        "references": []
+      },
+      {
+        "id": "057cf044c1c6f5d24227dfa0cd7fe6585a6cc1e8",
+        "type": "FIX",
+        "text": "MDCChart: ChartType button shall change Icon on personalization",
+        "references": []
+      }
+    ]
+  }
+}

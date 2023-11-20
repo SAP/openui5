@@ -1,0 +1,27 @@
+{
+	"sap.app": {
+		"id": "sap.ui.test.dependencyLoading.component4"
+	},
+	"sap.ui5": {
+		"dependencies": {
+			"libs": {
+				"sap.m": {},
+				"sap.ui.core": {},
+				"sap.ui.table": {}
+			}
+		},
+		"extends": {
+			"component": "sap.ui.test.dependencyLoading.component3"
+		},
+		"resources": {
+			"css": [{
+				"uri": "css/comp4extended.css"
+			}],
+			"js": [{
+				"uri": "scripts/component4_1_extendedScript.js"
+			}, {
+				"uri": "scripts/component4_2_extendedScript.js"
+			}]
+		}
+	}
+}

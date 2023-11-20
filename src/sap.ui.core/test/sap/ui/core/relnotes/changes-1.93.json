@@ -1,0 +1,141 @@
+{
+  "1.93.0": {
+    "date": "July 2021",
+    "notes": [
+      {
+        "id": "830d025698894aafa44a9b0ceeff7505fb558c96",
+        "type": "FIX",
+        "text": " base/shared.less: Fix pseudo invisible text",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180234044"
+          }
+        ]
+      },
+      {
+        "id": "571c2941ea4f72a6b8106644c10bd44c916d37fa",
+        "type": "FIX",
+        "text": " core.routing.HistoryIframeSync: exclude some tests from Firefox testsuite run",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180299639"
+          }
+        ]
+      },
+      {
+        "id": "399aac16c72bcc705bc2d816cb786044df42dba5",
+        "type": "FIX",
+        "text": " sap.ui.VersionInfo: copy 'hasOwnPreload' flag for components",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180290030"
+          }
+        ]
+      },
+      {
+        "id": "a411712804cb4f55283a4325d0c79ffa8eb01c08",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v4.ODataParentBinding#changeParameters: ignore unchanged $expand/$select strings"
+      },
+      {
+        "id": "6a730f3bff6bfd58006e6aeb61fafacd0ab00384",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v4.ODataContextBinding#execute: avoid If-Match:* if ETag is missing"
+      },
+      {
+        "id": "34d198f3d78d0d6111fbc4c6b48575aba0daea21",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v4.ODataModel#createUI5Message: ignore targets inside sap-messages header"
+      },
+      {
+        "id": "e49382236dcb4593cb87396d317cbbf671b80325",
+        "type": "FIX",
+        "text": " core.Popup: provide alternative for ResizeObserver",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400003037482021"
+          }
+        ]
+      },
+      {
+        "id": "e73bd3cf345ffc8e753ad46d2491706925a764d4",
+        "type": "FIX",
+        "text": " sap.ui.core.UIArea: validateFieldgroup on focusout",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180158578"
+          }
+        ]
+      },
+      {
+        "id": "33a15facb33ff73abada4e9a6b45957022c91961",
+        "type": "FIX",
+        "text": " JSDoc: fix pseudo-fields, declare type for real fields"
+      },
+      {
+        "id": "25d562ff255472717b13e8ee6a52e94d6f3de6f6",
+        "type": "FIX",
+        "text": " core.routing.History: use data-sap-ui-onInit in iFrame test",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180258155"
+          }
+        ]
+      },
+      {
+        "id": "60a37e4dff8750885cd033045dbcd1d45f94f0dd",
+        "type": "FIX",
+        "text": " sap.ui.core.InvisibleMessage: Span content is now cleared",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180195538"
+          }
+        ]
+      },
+      {
+        "id": "c660c9040f84cc21ae581fb716c18c5bcc51dcfb",
+        "type": "FEATURE",
+        "text": " sap.ui.model.odata.type.(Currency|Unit): new constraint 'skipDecimalsValidation' to skip validation of decimals allowed"
+      },
+      {
+        "id": "26c6e15651d136db12363aa8120a4dbb20612426",
+        "type": "FIX",
+        "text": " ManagedObjectModel: keep forceUpdate in async call",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180185493"
+          }
+        ]
+      },
+      {
+        "id": "e75f611366c37f437ef472ec235755f9fdb4642f",
+        "type": "FEATURE",
+        "text": " New managed functions to handle asynchronous destroy"
+      },
+      {
+        "id": "fdba8838d940c5af236cb23b2017248d3607da1e",
+        "type": "FIX",
+        "text": " core.routing.history: stablize the test by using timeout between actions",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180258155"
+          }
+        ]
+      },
+      {
+        "id": "0d52813a2b56296e4375ee771d3745b4acf4eb10",
+        "type": "FIX",
+        "text": " Customizing_async.qunit.js"
+      }
+    ]
+  }
+}

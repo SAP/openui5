@@ -9,10 +9,10 @@ sap.ui.define(["sap/base/assert"], function(assert) {
 	QUnit.module("sap.base.log.assert");
 
 	QUnit.test("assert", function(QUnitAssert) {
-		var assertSpy = sinon.spy(),
+		var assertSpy = this.spy(),
 			sMessage = "foo",
 			sRefMessage = sMessage,
-			messageSpy = sinon.spy(function() {
+			messageSpy = this.spy(function() {
 				return sMessage;
 			}),
 			consoleAssert;
@@ -30,26 +30,26 @@ sap.ui.define(["sap/base/assert"], function(assert) {
 		assert(true, sMessage);
 		QUnitAssert.notOk(assertSpy.called, "true, String");
 		sinon.assert.neverCalledWith(assertSpy, true, sRefMessage);
-		assertSpy.reset();
+		assertSpy.resetHistory();
 
 		assert(false, sMessage);
 		sinon.assert.calledOnce(assertSpy);
 		sinon.assert.calledWith(assertSpy, false, sRefMessage);
-		assertSpy.reset();
+		assertSpy.resetHistory();
 
 		assert(true, messageSpy);
 		QUnitAssert.notOk(messageSpy.called, "true, function");
 		QUnitAssert.notOk(assertSpy.called);
 		sinon.assert.neverCalledWith(assertSpy, true, sRefMessage);
-		assertSpy.reset();
-		messageSpy.reset();
+		assertSpy.resetHistory();
+		messageSpy.resetHistory();
 
 		assert(false, messageSpy);
 		sinon.assert.calledOnce(messageSpy);
 		sinon.assert.calledOnce(assertSpy);
 		sinon.assert.calledWith(assertSpy, false, sRefMessage);
-		assertSpy.reset();
-		messageSpy.reset();
+		assertSpy.resetHistory();
+		messageSpy.resetHistory();
 
 		if (console.assert) {
 			console.assert = consoleAssert;

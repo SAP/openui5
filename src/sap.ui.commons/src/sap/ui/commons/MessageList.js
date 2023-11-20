@@ -4,13 +4,14 @@
 
 // Provides control sap.ui.commons.MessageList.
 sap.ui.define([
-    'jquery.sap.global',
+    'sap/ui/thirdparty/jquery',
     './library',
     'sap/ui/core/Control',
     'sap/ui/core/Popup',
-    "./MessageListRenderer"
+    './MessageListRenderer',
+    'sap/ui/core/Configuration'
 ],
-	function(jQuery, library, Control, Popup, MessageListRenderer) {
+	function(jQuery, library, Control, Popup, MessageListRenderer, Configuration) {
 	"use strict";
 
 
@@ -31,7 +32,6 @@ sap.ui.define([
 	 * @deprecated Since version 1.4.0.
 	 * A new messaging concept will be created in future. Therefore this control might be removed in one of the next versions.
 	 * @alias sap.ui.commons.MessageList
-	 * @ui5-metamodel This control/element also will be described in the UI5 design-time metamodel
 	 */
 	var MessageList = Control.extend("sap.ui.commons.MessageList", /** @lends sap.ui.commons.MessageList.prototype */ { metadata : {
 
@@ -129,7 +129,7 @@ sap.ui.define([
 	 * @private
 	 */
 	MessageList.prototype.open = function() {
-		var rtl = sap.ui.getCore().getConfiguration().getRTL();
+		var rtl = Configuration.getRTL();
 
 		// Defining or fetching the Popup attributes:
 		var animationDuration = 200;
@@ -139,7 +139,7 @@ sap.ui.define([
 		var anchor = null;
 		var anchorId = this.getAnchorId();
 		if (anchorId) {
-			anchor = jQuery.sap.domById(anchorId);
+			anchor = document.getElementById(anchorId);
 		}
 		if (!anchor) {
 			anchor = document.body;
@@ -164,7 +164,6 @@ sap.ui.define([
 	 * @param {sap.ui.commons.Message[]} aMessages Message list.
 	 * @type void
 	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 design-time metamodel
 	 */
 	MessageList.prototype.setMessages = function(aMessages) {
 		// Storing the Messages:
@@ -192,7 +191,7 @@ sap.ui.define([
 	 * in order to invoke the open() and close() of the MessageList Popup.
 	 *
 	 * @param {boolean} bVisible New value for property <code>visible</code>
-	 * @return {sap.ui.commons.MessageList} <code>this</code> to allow method chaining
+	 * @return {this} <code>this</code> to allow method chaining
 	 * @public
 	 */
 	MessageList.prototype.setVisible = function(bVisible) {
@@ -212,4 +211,4 @@ sap.ui.define([
 
 	return MessageList;
 
-}, /* bExport= */ true);
+});

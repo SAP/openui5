@@ -1,0 +1,58 @@
+<mvc:View
+	controllerName="sap.f.cardsdemo.controller.MinHeight"
+	xmlns="sap.m"
+	xmlns:f="sap.f"
+	xmlns:cards="sap.f.cards"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:w="sap.ui.integration.widgets"
+	displayBlock="true">
+	<Page title="{i18n>appTitle}">
+		<subHeader>
+			<Toolbar>
+				<ToolbarSpacer />
+				<Title text="Min height of the card content" />
+				<ToolbarSpacer />
+			</Toolbar>
+		</subHeader>
+		<mvc:View viewName="sap.f.cardsdemo.view.common.CommonCardSettings" type="XML" async="true"></mvc:View>
+		<Panel>
+			<w:Card
+				id="donutChart"
+				manifest="{manifests>/minHeight/donut}"
+				baseUrl="{cardsPlayground>/playgroundBaseUrl}"
+				width="400px"
+				class="sapUiTinyMargin" />
+			<w:Card
+				id="largeList"
+				manifest="{manifests>/minHeight/largeList}"
+				baseUrl="{cardsPlayground>/playgroundBaseUrl}"
+				width="400px"
+				class="sapUiTinyMargin" />
+			<w:Card
+				id="staticData"
+				manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/objectcontent/staticData.json"
+				width="400px"
+				class="sapUiTinyMargin" />
+			<w:Card
+				id="noContent"
+				manifest="{manifests>/minHeight/noContent}"
+				baseUrl="{cardsPlayground>/playgroundBaseUrl}"
+				width="400px"
+				class="sapUiTinyMargin" />
+			<f:Card
+				id="sapFCardMinHeight"
+				width="400px"
+				class="sapUiTinyMargin">
+				<f:header>
+					<cards:Header title="sap.f.Card (no default min-height)"></cards:Header>
+				</f:header>
+			</f:Card>
+			<w:Card
+				id="webPageCard"
+				width="400px"
+				manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/webPageMinHeight/manifest.json"
+				class="sapUiTinyMargin">
+			</w:Card>
+		</Panel>
+	</Page>
+</mvc:View>

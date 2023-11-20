@@ -3,6 +3,8 @@
 /* Base theme                  */
 /* =========================== */
 
+@_sap_m_Text_TextShadowInTransparentToolbar: none;
+
 .sapMText {
 	display: inline-block;
 	box-sizing: border-box;
@@ -22,13 +24,19 @@ html[data-sap-ui-browser="sf10"] {
 	}
 }
 
+//BCP: 0020751295 0000279538 2020
+.sapMText.sapMTextMaxLineWrapper {
+	// needed for line clamp to work
+	overflow: hidden;
+}
+
 .sapMTextNoWrap,
 .sapMTextMaxLine {
 	overflow: hidden;
 }
 
 .sapMTextMaxLine {
-  display: block;
+	display: block;
 }
 
 .sapMTextNoWrap {
@@ -77,6 +85,10 @@ html[data-sap-ui-browser="sf10"] {
 	padding-bottom: 0.8125rem;
 }
 
+.sapUiForm:not(.sapUiFormEdit) .sapMText {
+	min-height: 1rem; /* for empty text */
+}
+
 .sapMLIBActive .sapMText,
 .sapMLIBActive .sapMListTblCell .sapMText,
 .sapMLIBActive .sapMListTblSubCntRow .sapMText {
@@ -89,30 +101,27 @@ html[data-sap-ui-browser="sf10"] {
 	font-weight: bold;
 }
 
-/* Info Toolbar Context */
-.sapMTB-Info-CTX .sapMText {
-	white-space: nowrap;
-	overflow: hidden;
-	text-overflow: ellipsis;
-	font-style: italic;
-	font-size: @sapMFontMediumSize;
-	font-family: @sapUiFontFamily;
-	color: contrast(@sapUiInfobarBackground, @sapUiListActiveTextColor, @sapUiListTextColor, @sapUiContentContrastTextThreshold);
+/* HorizontalLayout */
+.sapUiHLayoutChildWrapper > .sapMText {
+	vertical-align: text-bottom;
 }
 
 /* Transparent Toolbar Context*/
 .sapMTB-Transparent-CTX .sapMText {
 	font-weight: @sapUiFontHeaderWeight;
 	font-family: @sapUiFontHeaderFamily;
-	text-shadow: 0 1px 0 @sapUiContentContrastShadowColor;
+	text-shadow: @_sap_m_Text_TextShadowInTransparentToolbar;
 	color: @sapUiGroupTitleTextColor;
 }
 
 /* Compact size */
-.sapUiSizeCompact .sapUiFormEdit .sapMText {
+.sapUiSizeCompact .sapUiFormEdit .sapMText{
 	min-height: 2rem; /* for empty text */
 	padding-top: 0.3125rem;
 	padding-bottom: 0.3125rem;
+}
+html[data-sap-ui-browser^="cr"] .sapUiSizeCompact .sapUiFormEdit .sapMText {
+	line-height: 1.375rem;
 }
 
 /* Condensed size / Table Specifics */
@@ -120,14 +129,21 @@ html[data-sap-ui-browser="sf10"] {
 	vertical-align: middle;
 }
 
-.sapUiSizeCondensed .sapUiTableCell .sapMText {
+.sapUiSizeCondensed .sapUiTableDataCell .sapMText {
 	line-height: 1.5rem;
 }
 
-.sapUiAnalyticalTable .sapUiTableCell > .sapMText {
-	width: 100%;
+.sapUiTableHeaderDataCell .sapMText,
+.sapMColumnHeader .sapMText {
+	font-weight: @sapUiColumnHeaderFontWeight;
+	font-size: @sapUiColumnHeaderFontSize;
+	color: @sapUiListHeaderTextColor;
 }
 
-.sapUiAnalyticalTable .sapUiAnalyticalTableSum .sapUiTableCell .sapMText {
-	font-weight: bold;
+.sapMText .sapMEmptyIndicator.sapMEmptyIndicatorAuto {
+	display: none;
+}
+
+.sapMShowEmpty-CTX .sapMText .sapMEmptyIndicator.sapMEmptyIndicatorAuto {
+	display: inline-block;
 }

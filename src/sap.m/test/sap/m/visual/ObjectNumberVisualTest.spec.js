@@ -39,4 +39,9 @@ describe("sap.m.ObjectNumberVisualTest", function() {
 		expect(takeScreenshot()).toLookAs("number-state-warning");
 	});
 
+	it("Number change state to information",function(){
+		element(by.id("change_stateI")).click();
+		expect(takeScreenshot()).toLookAs("number-state-information");
+	});
+
 });

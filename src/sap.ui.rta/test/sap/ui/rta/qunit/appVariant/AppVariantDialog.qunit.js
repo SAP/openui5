@@ -1,31 +1,28 @@
-/* global QUnit  */
+/* global QUnit */
 
-QUnit.config.autostart = false;
-
-sap.ui.require([
+sap.ui.define([
 	"sap/ui/rta/appVariant/AppVariantDialog",
-	"sap/ui/thirdparty/sinon"
-],
-function(
+	"sap/ui/thirdparty/sinon-4",
+	"sap/ui/core/Element"
+], function(
 	AppVariantDialog,
-	sinon) {
+	sinon,
+	Element
+) {
 	"use strict";
 
-	QUnit.start();
-
 	var oAppVariantDialog;
-	var sandbox = sinon.sandbox.create();
+	var sandbox = sinon.createSandbox();
 
 	QUnit.module("Given that a AppVariantDialog is instantiated", {
-		beforeEach : function(assert) {
+		beforeEach() {
 			oAppVariantDialog = new AppVariantDialog();
 		},
-		afterEach : function(assert) {
+		afterEach() {
 			oAppVariantDialog.destroy();
 			sandbox.restore();
 		}
 	}, function() {
-
 		QUnit.test("When open is called,", function(assert) {
 			oAppVariantDialog.open();
 			assert.ok("then the app variant dialog is opened");
@@ -61,7 +58,7 @@ function(
 		QUnit.test("When liveChange event is triggered on a title Input field with empty value", function(assert) {
 			var done = assert.async();
 			oAppVariantDialog.open();
-			var oTitleInput = sap.ui.getCore().byId("titleInput");
+			var oTitleInput = Element.getElementById("titleInput");
 
 			oTitleInput.attachLiveChange(function() {
 				assert.equal(oAppVariantDialog.getButtons()[0].getEnabled(), false, "then the save button is not enabled");
@@ -74,7 +71,7 @@ function(
 		QUnit.test("When liveChange event is triggered on a title Input field with non empty value", function(assert) {
 			var done = assert.async();
 			oAppVariantDialog.open();
-			var oTitleInput = sap.ui.getCore().byId("titleInput");
+			var oTitleInput = Element.getElementById("titleInput");
 
 			oTitleInput.attachLiveChange(function() {
 				assert.equal(oAppVariantDialog.getButtons()[0].getEnabled(), true, "then the save button is not enabled");
@@ -89,10 +86,10 @@ function(
 		QUnit.test("When valueHelpRequest event is triggered on an Input field and then search event is triggered on SelectDialog", function(assert) {
 			var done = assert.async();
 			oAppVariantDialog.open();
-			var oSelectInput = sap.ui.getCore().byId("selectInput");
+			var oSelectInput = Element.getElementById("selectInput");
 
 			oSelectInput.attachValueHelpRequest(function() {
-				var oSelectDialog = sap.ui.getCore().byId("selectDialog");
+				var oSelectDialog = Element.getElementById("selectDialog");
 				assert.ok("then the select dialog gets opened");
 				assert.ok(oSelectDialog.getDomRef(), "then the control got rendered");
 				assert.strictEqual(oSelectDialog.getBindingPath("items"), "/icons", "then the select dialog gets bound with a correct model property");
@@ -112,7 +109,7 @@ function(
 
 		QUnit.test("When liveChange event is triggered on an Input field", function(assert) {
 			oAppVariantDialog.open();
-			var oSelectInput = sap.ui.getCore().byId("selectInput");
+			var oSelectInput = Element.getElementById("selectInput");
 
 			var bEventTriggered = false;
 
@@ -128,10 +125,10 @@ function(
 		QUnit.test("When confirm event is triggered on SelectDialog", function(assert) {
 			var done = assert.async();
 			oAppVariantDialog.open();
-			var oSelectInput = sap.ui.getCore().byId("selectInput");
+			var oSelectInput = Element.getElementById("selectInput");
 
 			oSelectInput.attachValueHelpRequest(function() {
-				var oSelectDialog = sap.ui.getCore().byId("selectDialog");
+				var oSelectDialog = Element.getElementById("selectDialog");
 				assert.ok("then the select dialog gets opened");
 				assert.ok(oSelectDialog.getDomRef(), "then the control got rendered");
 				assert.strictEqual(oSelectDialog.getBindingPath("items"), "/icons", "then the select dialog gets bound with a correct model property");
@@ -155,10 +152,10 @@ function(
 		QUnit.test("When cancel event is triggered on SelectDialog", function(assert) {
 			var done = assert.async();
 			oAppVariantDialog.open();
-			var oSelectInput = sap.ui.getCore().byId("selectInput");
+			var oSelectInput = Element.getElementById("selectInput");
 
 			oSelectInput.attachValueHelpRequest(function() {
-				var oSelectDialog = sap.ui.getCore().byId("selectDialog");
+				var oSelectDialog = Element.getElementById("selectDialog");
 				assert.ok("then the select dialog gets opened");
 				assert.ok(oSelectDialog.getDomRef(), "then the control got rendered");
 				assert.strictEqual(oSelectDialog.getBindingPath("items"), "/icons", "then the select dialog gets bound with a correct model property");
@@ -178,5 +175,9 @@ function(
 
 			oSelectInput.fireValueHelpRequest();
 		});
+	});
+
+	QUnit.done(function() {
+		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });

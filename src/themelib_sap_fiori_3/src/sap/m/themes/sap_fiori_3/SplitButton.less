@@ -1,0 +1,41 @@
+/* ================================== */
+/* CSS for control sap.m/SplitButton  */
+/* Fiori 3 theme                      */
+/* ================================== */
+
+.sapMIBar-CTX.sapMFooter-CTX .sapMSB.sapMSBEmphasized:focus .sapMSBInner::after,
+.sapMSB.sapMSBEmphasized:focus .sapMSBInner::after {
+	border-color: @sapUiContentContrastFocusColor;
+}
+
+.sapMSB .sapMSBArrow:not(.sapMBtnDisabled) .sapMBtnTransparent:not(.sapMToggleBtnPressed),
+.sapContrast.sapMIBar-CTX .sapMSB .sapMSBArrow:not(.sapMBtnDisabled) .sapMBtnTransparent:not(.sapMToggleBtnPressed),
+.sapContrast .sapMIBar-CTX .sapMSB .sapMSBArrow:not(.sapMBtnDisabled) .sapMBtnTransparent:not(.sapMToggleBtnPressed) {
+	border-left-color: @sapUiButtonBorderColor;
+}
+
+.sapMSB .sapMSBArrow:not(.sapMBtnDisabled) .sapMBtnActive.sapMBtnTransparent:not(.sapMToggleBtnPressed),
+.sapContrast.sapMIBar-CTX .sapMSB .sapMSBArrow:not(.sapMBtnDisabled) .sapMBtnActive.sapMBtnTransparent:not(.sapMToggleBtnPressed),
+.sapContrast .sapMIBar-CTX .sapMSB .sapMSBArrow:not(.sapMBtnDisabled) .sapMBtnActive.sapMBtnTransparent:not(.sapMToggleBtnPressed) {
+	border-left-color: @sapUiButtonLiteActiveBorderColor;
+}
+
+.sapMMenuBtn {
+	.sapMSBArrow.sapMBtn:hover > .sapMBtnHoverable.sapMBtnEmphasized,
+	.sapMSBArrow span.sapMBtnInner.sapMBtnEmphasized {
+		border-left-color: @sapUiButtonBackground;
+	}
+}
+
+.sapMSB .sapMSBArrow.sapMBtn:hover > .sapMBtnHoverable.sapMBtnEmphasized:not(.sapMBtnActive):not(.sapMToggleBtnPressed) {
+	border-left-color: @sapUiButtonBackground;
+}
+
+.sapMMenuBtn.sapMSBArrow.sapMMenuBtnSplit .sapMSBActive:not(.sapMBtnDisabled) > span.sapMBtnInner.sapMBtnEmphasized {
+	border-left-color: @sapUiButtonBackground;
+}
+
+//ie
+.sapMSBTextIE.sapMSBText {
+	padding-right: 2.25rem;
+}

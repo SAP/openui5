@@ -1,10 +1,16 @@
 {
-	"_version": "1.8.0",
+	"_version": "1.21.0",
 
 	"sap.app": {
 		"id": "sap.ui.rta.test",
 		"type": "application",
-		"i18n": "i18n/i18n.properties",
+		"i18n": {
+			"bundleUrl": "i18n/i18n.properties",
+			"supportedLocales": [
+				""
+			],
+			"fallbackLocale": ""
+		},
 		"title": "{{appTitle}}",
 		"description": "{{appDescription}}",
 		"applicationVersion": {
@@ -64,7 +70,11 @@
 			"i18n": {
 				"type": "sap.ui.model.resource.ResourceModel",
 				"settings": {
-					"bundleName": "sap.ui.rta.test.i18n.i18n"
+					"bundleName": "sap.ui.rta.test.i18n.i18n",
+					"supportedLocales": [
+						""
+					],
+					"fallbackLocale": ""
 				}
 			}
 		},

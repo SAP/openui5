@@ -1,0 +1,51 @@
+<mvc:View
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.ui.table"
+	xmlns:rm="sap.ui.table.rowmodes">
+
+	<AnalyticalTable rows="{
+		filters : [{
+			operator : 'EQ', path : 'DueItemCategory', value1 : 'N'
+		}, {
+			operator : 'EQ', path : 'IsCleared', value1 : ' '
+		}, {
+			operator : 'EQ', path : 'KeyDate', value1 : '2019-07-01T00:00:00Z'
+		}],
+		path : '/Items',
+		parameters : {
+			numberOfExpandedLevels : 1,
+			provideGrandTotals : false,
+			provideTotalResultSize : false,
+			reloadSingleUnitMeasures : false
+		}}" threshold="5" title="Auto-Expanded Analytical Table" >
+		<rowMode>
+			<rm:Fixed rowCount="5" />
+		</rowMode>
+		<columns>
+			<AnalyticalColumn leadingProperty="CustomerName">
+				<m:Label text="Customer Name"/>
+				<template>
+					<m:Text text="{CustomerName}" wrapping="false" />
+				</template>
+			</AnalyticalColumn>
+			<AnalyticalColumn grouped="true" leadingProperty="CompanyCode">
+				<m:Label text="Company Code"/>
+				<template>
+					<m:Text text="{CompanyCode}" wrapping="false" />
+				</template>
+			</AnalyticalColumn>
+			<AnalyticalColumn summed="true" leadingProperty="AmountInCompanyCodeCurrency">
+				<m:Label text="Amount In Company Code Currency"/>
+				<template>
+					<m:Text text="{AmountInCompanyCodeCurrency}" wrapping="false" />
+				</template>
+			</AnalyticalColumn>
+			<AnalyticalColumn leadingProperty="CompanyCodeCurrency">
+				<m:Label text="Company Code Currency"/>
+				<template>
+					<m:Text text="{CompanyCodeCurrency}" wrapping="false" />
+				</template>
+			</AnalyticalColumn>
+		</columns>
+	</AnalyticalTable>
+</mvc:View>

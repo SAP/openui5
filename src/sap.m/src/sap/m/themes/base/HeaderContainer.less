@@ -184,12 +184,9 @@ html.sap-tablet:not(.sap-desktop) .sapMHrdrBottomPadding .sapMHdrCntrCntr.Vertic
 .sapMHrdrCntrInner {
 	border: 1px solid transparent;
 	position: relative;
-	vertical-align: bottom;
+	vertical-align: top;
 	margin: 0.0625rem;
 	padding: 0rem 0.375rem 0rem 0.375rem;
-	-webkit-user-select: none;
-	-moz-user-select: -moz-none;
-	-ms-user-select: none;
 	overflow: visible;
 }
 
@@ -198,11 +195,11 @@ html.sap-tablet:not(.sap-desktop) .sapMHrdrBottomPadding .sapMHdrCntrCntr.Vertic
 	clear: left;
 }
 
-.sapMHdrCntrCntr.Horizontal .sapMHrdrCntrInner:not(:first-child) {
+.sapMHdrCntrCntr.Horizontal .sapMHrdrCntrInner:not(div:first-of-type) {
 	margin-left: 1rem;
 }
 
-.sapMHdrCntrCntr.Vertical .sapMHrdrCntrInner:not(:first-child) {
+.sapMHdrCntrCntr.Vertical .sapMHrdrCntrInner:not(div:first-of-type) {
 	margin-top: 1rem;
 }
 
@@ -265,4 +262,29 @@ html.sap-tablet:not(.sap-desktop) .sapMHrdrBottomPadding .sapMHdrCntrCntr.Vertic
 html.sap-desktop .sapMHrdrCntrInner:focus {
 	outline: none;
 	border: 1px dotted @sapUiContentFocusColor;
+}
+
+@media (min-width:320px) and (max-width:599px){
+    .sapMHdrCntrCntr.Horizontal .sapMHrdrCntrInner {
+		margin-left: 0rem !important;
+		padding: 0rem 0.5rem 0rem 0.5rem !important;
+	}
+	
+	.sapMHdrCntrCntr.Horizontal .sapMHrdrCntrInner:last-of-type {
+		padding-right: 1rem !important;
+	}
+
+	.sapMHrdrCntrDvdrs.Horizontal .sapMHrdrCntrInner::after {
+		left: 0.4rem;
+		border-left: 1px solid @sapUiListBorderColor;
+	}
+	
+	html[dir=rtl] .sapMHdrCntrCntr.Horizontal .sapMHrdrCntrInner {
+		margin-right: 0rem !important;
+		padding: 0rem 0.5rem 0rem 0.5rem !important;
+	}
+	
+	html[dir=rtl]  .sapMHdrCntrCntr.Horizontal .sapMHrdrCntrInner:last-of-type {
+		padding-left: 1rem !important;
+	}
 }

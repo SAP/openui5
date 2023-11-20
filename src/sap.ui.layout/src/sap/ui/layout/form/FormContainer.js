@@ -3,8 +3,14 @@
  */
 
 // Provides control sap.ui.layout.form.FormContainer.
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/core/theming/Parameters', 'sap/ui/layout/library'],
-	function(jQuery, Element, Parameters, library) {
+sap.ui.define([
+	'sap/ui/core/Element',
+	'sap/ui/base/ManagedObjectObserver',
+	"sap/ui/core/Lib",
+	'sap/ui/core/theming/Parameters',
+	'./FormHelper',
+	'sap/base/Log'
+], function(Element, ManagedObjectObserver, Library, Parameters, FormHelper, Log) {
 	"use strict";
 
 
@@ -27,7 +33,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/core/theming/
 	 * @public
 	 * @since 1.16.0
 	 * @alias sap.ui.layout.form.FormContainer
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var FormContainer = Element.extend("sap.ui.layout.form.FormContainer", /** @lends sap.ui.layout.form.FormContainer.prototype */ { metadata : {
 
@@ -51,7 +56,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/core/theming/
 			/**
 			 * If set to <code>false</code>, the <code>FormContainer</code> is not rendered.
 			 */
-			visible : {type : "boolean", group : "Misc", defaultValue : true}
+			visible : {type : "boolean", group : "Misc", defaultValue : true},
+
+			/**
+			 * Internal property for the <code>editable</code> state of the internal <code>FormContainer</code>.
+			 */
+			_editable: {
+				type: "boolean",
+				group: "Misc",
+				defaultValue: false,
+				visibility: "hidden"
+			}
 		},
 		defaultAggregation : "formElements",
 		aggregations : {
@@ -66,6 +81,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/core/theming/
 			 * If a <code>Title</code> element is used, the style of the title can be set.
 			 *
 			 * <b>Note:</b> If a <code>Toolbar</code> is used, the <code>Title</code> is ignored.
+			 *
+			 * <b>Note:</b> If the title is provided as a string, the title is rendered with a theme-dependent default level.
+			 * As the <code>Form</code> control cannot know the structure of the page, this might not fit the page structure.
+			 * In this case provide the title using a <code>Title</code> element and set its {@link sap.ui.core.Title#setLevel level} to the needed value.
 			 */
 			title : {type : "sap.ui.core.Title", altTypes : ["string"], multiple : false},
 
@@ -75,6 +94,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/core/theming/
 			 * <b>Note:</b> If a <code>Toolbar</code> is used, the <code>Title</code> is ignored.
 			 * If a title is needed inside the <code>Toolbar</code> it must be added at content to the <code>Toolbar</code>.
 			 * In this case add the <code>Title</code> to the <code>ariaLabelledBy</code> association.
+			 * Use the right title level to meet the visual requirements. This might be theme-dependent.
 			 * @since 1.36.0
 			 */
 			toolbar : {type : "sap.ui.core.Toolbar", multiple : false},
@@ -100,7 +120,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/core/theming/
 
 	FormContainer.prototype.init = function(){
 
-		this._rb = sap.ui.getCore().getLibraryResourceBundle("sap.ui.layout");
+		this._oInitPromise = FormHelper.init(); // check for used library and request needed controls
+
+
+		this._rb = Library.getResourceBundleFor("sap.ui.layout");
+
+		this._oObserver = new ManagedObjectObserver(this._observeChanges.bind(this));
+
+		this._oObserver.observe(this, {
+			properties: ["expanded", "expandable"],
+			aggregations: ["formElements"]
+		});
 
 	};
 
@@ -111,26 +141,30 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/core/theming/
 		}
 		this._rb = undefined;
 
+		this._oObserver.disconnect();
+		this._oObserver = undefined;
+
 	};
 
-	FormContainer.prototype.setExpandable = function(bExpandable){
-
-		this.setProperty("expandable", bExpandable);
+	function _expandableChanged(bExpandable){
 
 		if (bExpandable) {
 			if (!this._oExpandButton) {
-				if (!this._bExpandButtonRequired) {
-					this._bExpandButtonRequired = true;
-					library.form.FormHelper.createButton.call(this, this.getId() + "--Exp", _handleExpButtonPress, _expandButtonCreated);
+				if (this._oInitPromise) {
+					// module needs to be loaded -> create Button async
+					this._oInitPromise.then(function () {
+						delete this._oInitPromise; // not longer needed as resolved
+						_expandButtonCreated.call(this, FormHelper.createButton(this.getId() + "--Exp", _handleExpButtonPress, this));
+					}.bind(this));
+				} else {
+					_expandButtonCreated.call(this, FormHelper.createButton(this.getId() + "--Exp", _handleExpButtonPress, this));
 				}
 			} else {
 				_setExpanderIcon.call(this);
 			}
 		}
 
-		return this;
-
-	};
+	}
 
 	function _expandButtonCreated(oButton) {
 
@@ -142,9 +176,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/core/theming/
 
 	}
 
-	FormContainer.prototype.setExpanded = function(bExpanded){
-
-		this.setProperty("expanded", bExpanded, true); // no automatic rerendering
+	function _expandedChanged(bExpanded){
 
 		_setExpanderIcon.call(this);
 
@@ -153,16 +185,24 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/core/theming/
 			oForm.toggleContainerExpanded(this);
 		}
 
-		return this;
-
-	};
+	}
 
 	FormContainer.prototype.setToolbar = function(oToolbar) {
 
-		// for sap.m.Toolbar Auto-design must be set to transparent
-		oToolbar = library.form.FormHelper.setToolbar.call(this, oToolbar);
+		const oOldToolbar = this.getToolbar();
 
-		this.setAggregation("toolbar", oToolbar);
+		this.setAggregation("toolbar", oToolbar); // set Toolbar synchronously as later on only the design might be changed (set it first to check validity)
+
+		// for sap.m.Toolbar Auto-design must be set to transparent
+		if (this._oInitPromise) {
+			// module needs to be loaded -> create Button async
+			this._oInitPromise.then(function () {
+				delete this._oInitPromise; // not longer needed as resolved
+				oToolbar = FormHelper.setToolbar(oToolbar, oOldToolbar); // Toolbar is only changes, so no late set is needed.
+			}.bind(this));
+		} else {
+			oToolbar = FormHelper.setToolbar(oToolbar, oOldToolbar);
+		}
 
 		return this;
 
@@ -205,7 +245,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/core/theming/
 		var iReturn = 0;
 
 		if (this.getExpandable() && (!this.getTitle() || this.getToolbar())) {
-			jQuery.sap.log.warning("Expander only displayed if title is set", this.getId(), "FormContainer");
+			Log.warning("Expander only displayed if title is set", this.getId(), "FormContainer");
 			iReturn = 1;
 		}
 
@@ -217,7 +257,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/core/theming/
 	 * As Elements must not have a DOM reference it is not sure if one exists
 	 * If the FormContainer has a DOM representation this function returns it,
 	 * independent from the ID of this DOM element
-	 * @return {Element} The Element's DOM representation or null
+	 * @return {Element|null} The Element's DOM representation or null
 	 * @private
 	 */
 	FormContainer.prototype.getRenderedDomRef = function(){
@@ -227,7 +267,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/core/theming/
 
 		if (oForm && oForm.getContainerRenderedDomRef) {
 			return oForm.getContainerRenderedDomRef(that);
-		}else {
+		} else  {
 			return null;
 		}
 
@@ -238,7 +278,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/core/theming/
 	 * If the FormElement has a DOM representation this function returns it,
 	 * independent from the ID of this DOM element
 	 * @param {sap.ui.layout.form.FormElement} oElement FormElement
-	 * @return {Element} The Element's DOM representation or null
+	 * @return {Element|null} The Element's DOM representation or null
 	 * @private
 	 */
 	FormContainer.prototype.getElementRenderedDomRef = function(oElement){
@@ -247,7 +287,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/core/theming/
 
 		if (oForm && oForm.getElementRenderedDomRef) {
 			return oForm.getElementRenderedDomRef(oElement);
-		}else {
+		} else  {
 			return null;
 		}
 
@@ -275,16 +315,29 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/core/theming/
 	};
 
 	/**
-	 * Labels inside of a Form must be invalidated if "editable" changed on Form
-	 * @private
+	 * Sets the editable state of the <code>FormContainer</code>.
+	 *
+	 * This must only be called from the <code>Form</code>.
+	 *
+	 * Labels inside of a <code>Form</code> must be invalidated if <code>editable</code> changed on <code>Form</code>.
+	 *
+	 * @param {boolean} bEditable Editable state of the <code>Form</code>
+	 * @protected
+	 * @restricted sap.ui.layout.form.Form
+	 * @since 1.74.0
 	 */
-	FormContainer.prototype.invalidateLabels = function(){
+	FormContainer.prototype._setEditable = function(bEditable) {
 
-		var aFormElements = this.getFormElements();
+		var bOldEditable = this.getProperty("_editable");
+		this.setProperty("_editable", bEditable, true); // do not invalidate whole FormContainer
 
-		for (var i = 0; i < aFormElements.length; i++) {
-			var oFormElement = aFormElements[i];
-			oFormElement.invalidateLabel();
+		if (bEditable !== bOldEditable) {
+			var aFormElements = this.getFormElements();
+
+			for (var i = 0; i < aFormElements.length; i++) {
+				var oFormElement = aFormElements[i];
+				oFormElement._setEditable(bEditable);
+			}
 		}
 
 	};
@@ -330,13 +383,38 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/core/theming/
 			sText = "";
 		}
 
-		library.form.FormHelper.setButtonContent(this._oExpandButton, sText, sTooltip, sIcon, sIconHovered);
+		FormHelper.setButtonContent(this._oExpandButton, sText, sTooltip, sIcon, sIconHovered);
 
 	}
 
 	function _handleExpButtonPress(oEvent){
 
 		this.setExpanded(!this.getExpanded());
+
+	}
+
+	/*
+	 * handles change of FormContainer
+	 * @private
+	 */
+	FormContainer.prototype._observeChanges = function(oChanges){
+
+		if (oChanges.name == "formElements") {
+			_formElementChanged.call(this, oChanges.mutation, oChanges.child);
+		} else if (oChanges.name == "expanded") {
+			_expandedChanged.call(this, oChanges.current);
+		} else if (oChanges.name == "expandable") {
+			_expandableChanged.call(this, oChanges.current);
+		}
+
+	};
+
+	function _formElementChanged(sMutation, oFormElement) {
+
+		if (sMutation === "insert") {
+			var bEditable = this.getProperty("_editable");
+			oFormElement._setEditable(bEditable);
+		}
 
 	}
 

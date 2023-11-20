@@ -15,13 +15,13 @@
 	<GenericTile class="sapUiTinyMarginBegin sapUiTinyMarginTop tileLayout" header="Status Loading - no press event"
 		subheader="Subheader" state="Loading">
 		<TileContent unit="Unit" footer="Footer">
-			<NumericContent scale="M" value="2.1" valueColor="Good" indicator="Up" />
+			<NumericContent scale="M" value="2.1" valueColor="Good" indicator="Up" withMargin="false" />
 		</TileContent>
 	</GenericTile>
 	<GenericTile class="sapUiTinyMarginBegin sapUiTinyMarginTop tileLayout" header="Status Loading - with press event"
 		subheader="Subheader" state="Loading" press="press">
 		<TileContent unit="Unit" footer="Footer">
-			<NumericContent scale="M" value="1.96" valueColor="Error" indicator="Down" />
+			<NumericContent scale="M" value="1.96" valueColor="Error" indicator="Down" withMargin="false" />
 		</TileContent>
 	</GenericTile>
 	<GenericTile class="sapUiTinyMarginBegin sapUiTinyMarginTop tileLayout" header="Status Failed - no press event"
@@ -63,13 +63,13 @@
 	<GenericTile class="sapUiTinyMarginBegin sapUiTinyMarginTop tileLayout" header="Status Disabled - no press event"
 		subheader="Subheader" state="Disabled">
 		<TileContent footer="Footer" unit="Unit">
-			<NumericContent value="3" icon="sap-icon://travel-expense" />
+			<NumericContent value="3" icon="sap-icon://travel-expense" withMargin="false" />
 		</TileContent>
 	</GenericTile>
 	<GenericTile class="sapUiTinyMarginBegin sapUiTinyMarginTop tileLayout" header="Status Disabled - with press event"
 		subheader="Subheader" state="Disabled" press="press">
 		<TileContent footer="Footer" unit="Unit">
-			<NumericContent value="3" icon="sap-icon://travel-expense" />
+			<NumericContent value="3" icon="sap-icon://travel-expense" withMargin="false" />
 		</TileContent>
 	</GenericTile>
 </mvc:View>

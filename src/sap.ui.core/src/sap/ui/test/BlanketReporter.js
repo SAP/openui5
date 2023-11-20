@@ -3,13 +3,14 @@
  */
 
 sap.ui.define([
-	"jquery.sap.global",
+	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/core/mvc/XMLView",
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterType",
-	"sap/ui/model/json/JSONModel"
-], function (jQuery, Controller, XMLView, Filter, FilterType, JSONModel) {
+	"sap/ui/model/json/JSONModel",
+	"sap/base/security/encodeXML"
+], function (jQuery, Controller, XMLView, Filter, FilterType, JSONModel, encodeXML) {
 	"use strict";
 
 	// lower case package names, UpperCamelCase class name, optional lowerCamelCase method name
@@ -65,12 +66,18 @@ sap.ui.define([
 		.coverageSummary {\
 			background-color: #0D3349;\
 			border-radius: 0 0 5px 5px;\
-			color: #C6E746;\
-			font-size: 1.5em;\
 			font-family: Calibri, Helvetica, Arial, sans-serif;\
-			line-height: 1em;\
+			font-size: 1.5em;\
 			font-weight: 400;\
+			line-height: 1em;\
 			padding: 0.5em 0 0.5em 1em;\
+		}\
+		.coverageSummary a {\
+			color: #C6E746;\
+		}\
+		.coverageSummary a:hover,\
+		.coverageSummary a:focus {\
+			color: #FFFFFF;\
 		}\
 	';
 
@@ -123,7 +130,7 @@ sap.ui.define([
 					+ "</div>");
 				oHtml.setVisible(true);
 			} else {
-				oHtml.setContent("<div/>");
+				oHtml.setContent("<div></div>");
 			}
 		}
 	});
@@ -172,7 +179,7 @@ sap.ui.define([
 
 		// highlight given source code according to current level; updates iLastHighlightedLine
 		function highlight(iLine, sSourceCode) {
-			sSourceCode = jQuery.sap.encodeHTML(sSourceCode);
+			sSourceCode = encodeXML(sSourceCode);
 			if (sSourceCode && iHighlightLevel) {
 				iLastHighlightedLine = iLine;
 				sSourceCode = "<span class='highlight'>" + sSourceCode + "</span>";
@@ -209,12 +216,9 @@ sap.ui.define([
 			iLinesOfContext = Infinity;
 		}
 		return aSourceLines.reduce(function (sHtml, sSourceLine, iLine) {
-			var iNextHighlightedLine = aPositions.length && aPositions[0].line || Infinity,
-				iNextHitsLine = bShowHits
-					? aHits.findIndex(function (iHits, i) {
-						return iHits !== undefined && i >= iLine;
-					})
-					: aHits.indexOf(0, iLine);
+			var i,
+				iNextHighlightedLine = aPositions.length && aPositions[0].line || Infinity,
+				iNextHitsLine;
 
 			function show() {
 				sHtml += "<div";
@@ -234,10 +238,20 @@ sap.ui.define([
 					+ "</div>";
 			}
 
+			if (bShowHits) {
+				for (i = iLine; i < aHits.length; i += 1) {
+					if (aHits[i] !== undefined) {
+						iNextHitsLine = i;
+						break;
+					}
+				}
+			} else {
+				iNextHitsLine = aHits.indexOf(0, iLine);
+			}
+
 			if (iNextHitsLine >= 0 && iNextHitsLine < iNextHighlightedLine) {
 				iNextHighlightedLine = iNextHitsLine; // treat hit/missed lines as highlighted
 			}
-			iLine += 1; // 0-based JS array index --> 1-based Position class
 			// show iLinesOfContext before and after highlighting, do not skip a single line
 			if (iLine >= iNextHighlightedLine - iLinesOfContext
 				|| iLine <= iLastHighlightedLine + iLinesOfContext
@@ -249,22 +263,6 @@ sap.ui.define([
 			}
 			return sHtml;
 		}, "") + getSkippedHtml();
-	}
-
-	/**
-	 * Returns the element's attribute as an integer.
-	 *
-	 * @param {Element} oElement The element
-	 * @param {string} sAttributeName The attribute name
-	 * @param {number} iDefault The default value
-	 * @returns {number} The attribute value or the default value if the attribute value is not a
-	 *   positive number
-	 */
-	function getAttributeAsInteger(oElement, sAttributeName, iDefault) {
-		var iValue = parseInt(oElement.getAttribute(sAttributeName), 10);
-
-		// Note: if the value is not a number, the result is NaN which is not greater than 0
-		return iValue > 0 ? iValue : iDefault;
 	}
 
 	/**
@@ -420,13 +418,16 @@ sap.ui.define([
 	}
 
 	/**
-	 * Creates the view.
+	 * Creates the view and places it at the given DIV.
 	 *
 	 * @param {sap.ui.model.json.JSONModel} oModel The model
-	 * @returns {sap.ui.core.mvc.XMLView} The view
+	 * @param {object} oDiv Some <div>
 	 */
-	function createView(oModel) {
-		return sap.ui.xmlview({viewName: "sap.ui.test.BlanketReporterUI", models: oModel});
+	function createViewAndPlaceAt(oModel, oDiv) {
+		XMLView.create({viewName: "sap.ui.test.BlanketReporterUI", models: oModel})
+			.then(function (oView) {
+				oView.placeAt(oDiv);
+			});
 	}
 
 	function convertToFile(sModule) {
@@ -457,8 +458,9 @@ sap.ui.define([
 		return oDiv;
 	}
 
-	return function (oScript, fnGetTestedModules, oCoverageData) {
-		var oDiv, iLinesOfContext, oModel, aTestedModules, iThreshold;
+	return function (iLinesOfContext, iThreshold, fnGetTestedModules, oCoverageData) {
+		var oDiv, oModel, aTestedModules,
+			oUriParameters = new URLSearchParams(window.location.search);
 
 		/*
 		 * Tells whether the given module corresponds 1:1 to a single class.
@@ -474,35 +476,39 @@ sap.ui.define([
 
 		// Sometimes, when refreshing, this function is called twice. Ignore the 2nd call.
 		if (!document.getElementById("blanket-view")) {
-			iLinesOfContext = getAttributeAsInteger(oScript, "data-lines-of-context", 3);
-			iThreshold = Math.min(getAttributeAsInteger(oScript, "data-threshold", 0), 100);
 			aTestedModules = fnGetTestedModules();
 			oModel = createModel(oCoverageData, iLinesOfContext, iThreshold,
 				aTestedModules && aTestedModules.map(convertToFile));
 			oDiv = getDiv();
 
-			if (jQuery.sap.getUriParameters().get("testId")
+			if (oCoverageData.stats.failures
+				|| oUriParameters.get("filter") || oUriParameters.get("testId")
 				|| aTestedModules && !aTestedModules.every(isSingleClass)) {
 				// do not fail due to coverage
-				createView(oModel).placeAt(oDiv);
+				createViewAndPlaceAt(oModel, oDiv);
 				return;
 			}
 
 			// make QUnit fail (indirectly) and show UI
 			if (oModel.getProperty("/lines/coverage") < iThreshold) {
-				createView(oModel).placeAt(oDiv);
+				createViewAndPlaceAt(oModel, oDiv);
 				throw new Error("Line coverage too low! "
 					+ oModel.getProperty("/lines/coverage") + " < " + iThreshold);
 			}
 			if (oModel.getProperty("/branches/coverage") < iThreshold) {
-				createView(oModel).placeAt(oDiv);
+				createViewAndPlaceAt(oModel, oDiv);
 				throw new Error("Branch coverage too low! "
 					+ oModel.getProperty("/branches/coverage") + " < " + iThreshold);
 			}
 
 			oDiv.setAttribute("class", "coverageSummary");
-			oDiv.innerHTML = "Blanket Code Coverage: OK";
-			//TODO checkbox to show/hide details UI
+			oDiv.innerHTML = '<a href="" id="coverage">Blanket Code Coverage: OK</a>';
+			jQuery("#coverage").one("click", function (oMouseEvent) {
+				oMouseEvent.preventDefault();
+				jQuery(oDiv).fadeOut(function () {
+					createViewAndPlaceAt(oModel, getDiv());
+				});
+			});
 		}
 	};
-}, /* bExport= */ false);
+});

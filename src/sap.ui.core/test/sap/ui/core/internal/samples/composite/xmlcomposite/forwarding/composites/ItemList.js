@@ -1,6 +1,6 @@
 sap.ui.define([
-	'jquery.sap.global', 'sap/ui/core/Control'],
-	function (jQuery, Control, XML) {
+	'sap/ui/core/Control'],
+	function (Control) {
 		"use strict";
 		var ItemList = Control.extend("composites.ItemList", {
 			metadata: {
@@ -12,20 +12,21 @@ sap.ui.define([
 				},
 				defaultAggregation: "items"
 			},
-			renderer: function (oRm, oControl) {
-				oRm.write("<div");
-				oRm.writeControlData(oControl);
-				oRm.addClass("xxx");
-				oRm.writeClasses();
-				oRm.write(">");
-				var oItems = oControl.getItems();
-				oRm.writeEscaped("*");
-				oItems.forEach(function (oItem) {
-					oRm.writeEscaped(oItem.getText());
-					oRm.writeEscaped("*");
-				}, this);
-				oRm.write("</div>");
+			renderer: {
+				apiVersion: 2,
+				render: function (oRm, oControl) {
+					oRm.openStart("div", oControl);
+					oRm.class("xxx");
+					oRm.openEnd();
+					var oItems = oControl.getItems();
+					oRm.text("*");
+					oItems.forEach(function (oItem) {
+						oRm.text(oItem.getText());
+						oRm.text("*");
+					});
+					oRm.close("div");
+				}
 			}
 		});
 		return ItemList;
-	}, /* bExport= */true);
+	});

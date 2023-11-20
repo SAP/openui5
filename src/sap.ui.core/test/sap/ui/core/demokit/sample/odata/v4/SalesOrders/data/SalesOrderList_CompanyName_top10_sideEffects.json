@@ -1,0 +1,81 @@
+{
+	"@odata.metadataEtag" : "W/\"20200826092600\"",
+	"value" : [{
+		"@odata.etag" : "W/\"20160619220000.0000000\"",
+		"SalesOrderID" : "0500000000",
+		"SO_2_BP" : {
+			"@odata.etag" : "W/\"20160613143341.1548870\"",
+			"BusinessPartnerID" : "0100000000",
+			"CompanyName" : "SAP - modified by OPA"
+		}
+	}, {
+		"@odata.etag" : "W/\"20160619220000.0000000\"",
+		"SalesOrderID" : "0500000001",
+		"SO_2_BP" : {
+			"@odata.etag" : "W/\"20160613065313.0000000\"",
+			"BusinessPartnerID" : "0100000005",
+			"CompanyName" : "TECUM"
+		}
+	}, {
+		"@odata.etag" : "W/\"20160619220000.0000000\"",
+		"SalesOrderID" : "0500000002",
+		"SO_2_BP" : {
+			"@odata.etag" : "W/\"20160613065313.0000000\"",
+			"BusinessPartnerID" : "0100000003",
+			"CompanyName" : "Talpa"
+		}
+	}, {
+		"@odata.etag" : "W/\"20160619220000.0000000\"",
+		"SalesOrderID" : "0500000003",
+		"SO_2_BP" : null
+	}, {
+		"@odata.etag" : "W/\"20160619220000.0000000\"",
+		"SalesOrderID" : "0500000004",
+		"SO_2_BP" : {
+			"@odata.etag" : "W/\"20160613065313.0000000\"",
+			"BusinessPartnerID" : "0100000009",
+			"CompanyName" : "Telecomunicaciones Star"
+		}
+	},
+	{
+		"@odata.etag" : "W/\"20160619220000.0000000\"",
+		"SalesOrderID" : "0500000005",
+		"SO_2_BP" : {
+			"@odata.etag" : "W/\"20160613143341.1548870\"",
+			"BusinessPartnerID" : "0100000000",
+			"CompanyName" : "SAP - modified by OPA"
+		}
+	}, {
+		"@odata.etag" : "W/\"20160619220000.0000000\"",
+		"SalesOrderID" : "0500000006",
+		"SO_2_BP" : {
+			"@odata.etag" : "W/\"20160613065313.0000000\"",
+			"BusinessPartnerID" : "0100000005",
+			"CompanyName" : "TECUM"
+		}
+	}, {
+		"@odata.etag" : "W/\"20160619220000.0000000\"",
+		"SalesOrderID" : "0500000007",
+		"SO_2_BP" : {
+			"@odata.etag" : "W/\"20160613065313.0000000\"",
+			"BusinessPartnerID" : "0100000003",
+			"CompanyName" : "Talpa"
+		}
+	}, {
+		"@odata.etag" : "W/\"20160619220000.0000000\"",
+		"SalesOrderID" : "0500000008",
+		"SO_2_BP" : {
+			"@odata.etag" : "W/\"20160613065313.0000000\"",
+			"BusinessPartnerID" : "0100000004",
+			"CompanyName" : "Panorama Studios"
+		}
+	}, {
+		"@odata.etag" : "W/\"20160619220000.0000000\"",
+		"SalesOrderID" : "0500000009",
+		"SO_2_BP" : {
+			"@odata.etag" : "W/\"20160613065313.0000000\"",
+			"BusinessPartnerID" : "0100000009",
+			"CompanyName" : "Telecomunicaciones Star"
+		}
+	}]
+}

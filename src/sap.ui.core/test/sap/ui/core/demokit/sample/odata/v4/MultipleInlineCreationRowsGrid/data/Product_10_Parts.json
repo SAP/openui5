@@ -1,0 +1,8 @@
+{
+	"@odata.count" : "3",
+	"value" : [
+		{"ID" : 1, "description" : "Part 1", "quantity" : "2"},
+		{"ID" : 2, "description" : "Part 2", "quantity" : "10"},
+		{"ID" : 3, "description" : "Part 3", "quantity" : "1"}
+	]
+}

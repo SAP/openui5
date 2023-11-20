@@ -1,0 +1,246 @@
+{
+  "1.110.0": {
+    "date": "January 2023",
+    "notes": [
+      {
+        "id": "69f8804af52f1e293a077e04261029a64ae8d905",
+        "type": "FEATURE",
+        "text": " CLDR: Upgrade to version 41.0.0"
+      },
+      {
+        "id": "46b5c3ba18685a4a8c46e821de8ef4001d6e6299",
+        "type": "FIX",
+        "text": " FastNavigation: Improve test stability"
+      },
+      {
+        "id": "b51b47ad2aa849d588c65dd6ae3feaf8f99ecc0a",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v4.ODataListBinding#requestContexts: empty $select remains when all entries were converted to $expand",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280192214"
+          }
+        ]
+      },
+      {
+        "id": "c2c479a491119486c05929c1a0412e9169e70779",
+        "type": "FIX",
+        "text": " theming/Parameters: Fix parameter parsing",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500009129202022"
+          }
+        ]
+      },
+      {
+        "id": "64fe6f9dd8b2e0c62fcd936129178d64bd811cbc",
+        "type": "FIX",
+        "text": " core/BlockLayerUtils: return browser focus back to control before unblock",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270190904"
+          }
+        ]
+      },
+      {
+        "id": "f05615dbc72f3cfd57978ee51aebd8ec10ed71a1",
+        "type": "FIX",
+        "text": " core.routing: create default 'id' for component target",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270111427"
+          }
+        ]
+      },
+      {
+        "id": "e9b4420f08224b8b65f4e14f3b74155689b08b6f",
+        "type": "FIX",
+        "text": " sap.ui.test: Artificial focus events complemented",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270156201"
+          }
+        ]
+      },
+      {
+        "id": "46fd3a67601948a6c04ad78c535f76cd7948348b",
+        "type": "FIX",
+        "text": " OPA can now test functionality with Promise.any"
+      },
+      {
+        "id": "ec18047347271326dfbc6eb8885ef98e43843bcc",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v4.ODataListBinding#attachCreateCompleted: timing issue w/ Context#delete",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280183921"
+          }
+        ]
+      },
+      {
+        "id": "5f83694c9b93ee693c3794b6977703cabd2b8069",
+        "type": "FIX",
+        "text": " initTraces: Match URL correctly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270176966"
+          }
+        ]
+      },
+      {
+        "id": "9ad00e285b784428e5966787fddf2cf3a2d662eb",
+        "type": "FIX",
+        "text": " theming/ThemeManager: Fix preloadLibCss",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270189263"
+          },
+          {
+            "type": "BCP",
+            "reference": "002075129500008388142022"
+          }
+        ]
+      },
+      {
+        "id": "ffde6ee0d79526c997fa9605bef9e556d9e46863",
+        "type": "FEATURE",
+        "text": " core/Element: check whether an Element can get focus",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270134535"
+          },
+          {
+            "type": "BCP",
+            "reference": "2270144419"
+          },
+          {
+            "type": "BCP",
+            "reference": "2280004700"
+          }
+        ]
+      },
+      {
+        "id": "36bcb2d1c25b9895274a6a4b93a0a7cf962697ed",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v4.ODataContextBinding: message target for a failed PATCH of a nested entity below a return value context",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270142577"
+          }
+        ]
+      },
+      {
+        "id": "e84d351ad624751301313858f14a4b39e5368f9b",
+        "type": "FIX",
+        "text": " ManagedObjectObserver: performance optimization for destroy"
+      },
+      {
+        "id": "66bd740d93aaf187f698a7ee9ac0758694f8e1ea",
+        "type": "FIX",
+        "text": " sap.ui.test: Formatting corrected"
+      },
+      {
+        "id": "4a8a827db6a3fbf9446ba9936db04ca84222626e",
+        "type": "FEATURE",
+        "text": " sap.ui.core.format.DateFormat: Support pattern symbol \"B\""
+      },
+      {
+        "id": "172dffcce17048ac59fa8680647e19612be83348",
+        "type": "FEATURE",
+        "text": " sap.ui.core.format.NumberFormat#parse: Support case insensitive units"
+      },
+      {
+        "id": "a6970f7f3239172ebcbf077b62f2b3453d25555f",
+        "type": "FEATURE",
+        "text": " sap/base/Log: Log methods accept Error as details parameter",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270045087"
+          }
+        ]
+      },
+      {
+        "id": "4525e24710c3b206eebe44a590d7450f37ba5444",
+        "type": "FIX",
+        "text": " sap.ui.core: Fix Text Verticalization for libraries QUnit",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270174458"
+          }
+        ]
+      },
+      {
+        "id": "ea3e28b57118b2609cd9dce38cb1681484eb6893",
+        "type": "FIX",
+        "text": " sap.ui.core.date.Japanese: calendar week",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270172759"
+          }
+        ]
+      },
+      {
+        "id": "0e1123e34fb40d78708806a0b56ebd244837f130",
+        "type": "FIX",
+        "text": " core/Icon: increase color contrast ratio for high contrast themes",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270162604"
+          }
+        ]
+      },
+      {
+        "id": "2b17f629bc6142f7e5ddf804a0a8127b4d156105",
+        "type": "FIX",
+        "text": " sap/ui/util/Storage: improve JSDoc / type signatures",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270164451"
+          }
+        ]
+      },
+      {
+        "id": "e331f89de20157cf40d9a7c88df7bb453faa12d5",
+        "type": "FEATURE",
+        "text": " sap.ui.core.IconPool: Update icon font v5.03 and v4.15"
+      },
+      {
+        "id": "8bc4be0e6eac68c86a07be6a27d27ded665bc70f",
+        "type": "FIX",
+        "text": " core.BusyIndicator:Adjust css to align with theme sap_fiori_3",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280150532"
+          }
+        ]
+      },
+      {
+        "id": "52a7c25485ad54eeb2b01572dae5baf293cbe532",
+        "type": "FIX",
+        "text": " m.ColumnListItem: take the popin are into account for drop zones",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270158237"
+          }
+        ]
+      }
+    ]
+  }
+}

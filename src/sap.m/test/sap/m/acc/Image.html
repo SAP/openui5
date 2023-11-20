@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>Image - sap.m</title>
+		<!--  Do not use this test page as copy&paste template, as it is rather a web page than an App;
+		      better make use of either the App control or Mobile.init() to set up the viewport etc. meta tags. -->
+		<!-- Mobile viewport -->
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+		<!-- Enable fullscreen when possible -->
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<!-- Set the status bar style on Apple devices -->
+		<meta name="apple-mobile-web-app-status-bar-style" content="default">
+		<link href="Image.css" rel="stylesheet">
+		<script src="../shared-config.js"></script>
+		<script id="sap-ui-bootstrap"
+				src="../../../../resources/sap-ui-core.js"
+				data-sap-ui-async="true"
+				data-sap-ui-compatVersion="edge"
+				data-sap-ui-libs="sap.m"
+				data-sap-ui-onInit="module:local/Image"
+				data-sap-ui-resourceRoots='{
+					"local": "./",
+					"qunit.internal.acc": "../../../../test-resources/sap/ui/core/qunit/internal/acc"
+				}'>
+		</script>
+	</head>
+	<body id="body" class="sapUiBody">
+		<h1 class="sapMTitleStyleH3">
+			If this page runs in a high density device, you could see the difference between the two images.
+		</h1>
+		<div class="row">
+			<div id="uiArea1" class="uiArea"></div>
+			<div class="des">This image is density aware, it loads the high resolution version when it runs in a high density device.</div>
+		</div>
+		<div class="row">
+			<div id="uiArea2" class="uiArea"></div>
+			<div class="des">This image is NOT density aware, it always loads the default version no matter what device it runs in.</div>
+		</div>
+		<div class="row">
+			<div id="uiArea3" class="uiArea"></div>
+			<div class="des">There's only one version of this image available, so the high density device tries first to load the high resolution version and then falls back to this version.</div>
+		</div>
+		<div class="row">
+			<div id="uiArea4" class="uiArea"></div>
+			<div class="des">This image has a width value that is set from the css, and it will not resize in high density device</div>
+		</div>
+		<div class="row">
+			<div id="uiArea5" class="uiArea"></div>
+			<div id="det" class="des">This image has a active state, when you press this image the src will be changed to the activeSrc property</div>
+		</div>
+		<div class="row">
+			<div id="uiArea8" class="uiArea"></div>
+			<div class="des">The src property of this image is in data uri format, it won't load higher density version in high density device.</div>
+		</div>
+		<div class="row">
+			<div id="uiArea9" class="uiArea"></div>
+			<div class="des">The SAP Logo image is set as background of the dom element. The letter 'P' is extracted from the logo by using the backgroundPosition. In order to display the high density correctly, the backgroundSize property needs to be set with the dimension of normal density version.</div>
+		</div>
+	</body>
+</html>

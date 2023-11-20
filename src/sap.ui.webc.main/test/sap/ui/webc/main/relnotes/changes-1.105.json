@@ -1,0 +1,12 @@
+{
+  "1.105.0": {
+    "date": "July 2022",
+    "notes": [
+      {
+        "id": "7a0c8b8d01ccfc0ba3ee6c6a6204b2c896f86fd1",
+        "type": "FEATURE",
+        "text": " sap.ui.webc.main.DatePicker: enhance demokit sample"
+      }
+    ]
+  }
+}

@@ -1,0 +1,52 @@
+/* ====================================== */
+/* CSS for control sap.m/ObjectAttribute  */
+/* Evening Horizon theme                  */
+/* ====================================== */
+
+@_sap_m_ObjectAttribute_ListTextShadowColor: none;
+
+.sapMObjectAttributeActive .sapMObjectAttributeText:focus {
+	position: relative;
+}
+
+.sapMObjectAttributeActive .sapMObjectAttributeText:active,
+.sapMObjectAttributeActive .sapMObjectAttributeText:hover {
+	text-decoration: none;
+	color: @sapUiLinkHoverColor;
+}
+
+.sapMObjectAttributeActive .sapMObjectAttributeText:focus {
+	border-radius: 0.125rem;
+	background-color: @sapUiContentFocusColor;
+	color: @sapUiContentContrastTextColor;
+	text-shadow: none;
+}
+
+/*=========================================== */
+/* Custom design for Responsive Object Header */
+/*=========================================== */
+
+.sapMOHR .sapMObjectAttributeActive .sapMObjectAttributeText:active,
+.sapMOHR .sapMObjectAttributeActive .sapMObjectAttributeText:hover,
+.sapMOHR .sapMObjectAttributeActive .sapMObjectAttributeText:focus {
+	text-decoration: underline;
+}
+
+/*=========================================== */
+/* Custom design for Static Object Header     */
+/*=========================================== */
+
+.sapMOH .sapMObjectAttributeActive .sapMObjectAttributeText:active,
+.sapMOH .sapMObjectAttributeActive .sapMObjectAttributeText:hover,
+.sapMOH .sapMObjectAttributeActive .sapMObjectAttributeText:focus {
+	text-decoration: underline;
+}
+
+.sapMOH .sapMObjectAttributeActive .sapMObjectAttributeText:focus:hover {
+	text-decoration: none;
+}
+
+.sapMOHR .sapMObjectAttributeActive .sapMObjectAttributeText,
+.sapMOH .sapMObjectAttributeActive .sapMObjectAttributeText {
+	text-shadow: @_sap_m_ObjectAttribute_ListTextShadowColor;
+}

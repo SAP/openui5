@@ -1,0 +1,24 @@
+<mvc:View
+	controllerName="sap.m.sample.SinglePlanningCalendarWithCustomViews.Page"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:unified="sap.ui.unified"
+	xmlns="sap.m">
+	<VBox>
+		<SinglePlanningCalendar
+			id="SPC1"
+			title= "My Calendar"
+			startDate="{path: '/startDate'}"
+			appointments="{path: '/appointments'}">
+			<appointments>
+				<unified:CalendarAppointment
+					title= "{title}"
+					text= "{text}"
+					type= "{type}"
+					icon= "{icon}"
+					startDate= "{startDate}"
+					endDate= "{endDate}">
+				</unified:CalendarAppointment>
+			</appointments>
+		</SinglePlanningCalendar>
+	</VBox>
+</mvc:View>

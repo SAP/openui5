@@ -1,7 +1,6 @@
 <!DOCTYPE HTML>
 <html>
 <head>
-	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 
 	<title>Semantic Page</title>
 
@@ -14,7 +13,10 @@
 
 	<script src="shared-config.js"></script>
 	<script src="../../../resources/sap-ui-core.js"
-			id="sap-ui-bootstrap" data-sap-ui-libs="sap.m,sap.ui.layout">
+			id="sap-ui-bootstrap" data-sap-ui-libs="sap.m,sap.ui.layout"
+			data-sap-ui-resourceroots='{
+				"qunit.internal.acc": "../../../test-resources/sap/ui/core/qunit/internal/acc"
+			}'>
 
 	</script>
 
@@ -1143,7 +1145,8 @@
 		});
 
 		var oStatusBox = new sap.ui.layout.form.SimpleForm ({
-			maxContainerCols : 2,
+			maxContainerCols : 1,
+            layout: sap.ui.layout.form.SimpleFormLayout.ResponsiveGridLayout,
 			editable: true,
 			content: [
 				new sap.m.Text({text: "Last action: "}),

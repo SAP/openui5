@@ -1,0 +1,64 @@
+{
+	"sap.app": {
+		"id": "qunit.router.component.titlePropagation.scenario1.Child",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "qunit.router.component.titlePropagation.scenario1.Child.view.RootView",
+			"type": "XML",
+			"async": true
+		},
+		"routing": {
+			"config": {
+				"async": true,
+				"controlAggregation": "content",
+				"controlId": "nestedShell1",
+				"viewType" : "XML",
+				"type": "View"
+			},
+			"routes": [
+				{
+					"pattern": "",
+					"name": "nestedView1",
+					"target": {
+						"name": "nestedView1"
+					}
+				},
+				{
+					"pattern": "view2",
+					"name": "nestedView2",
+					"target": "nestedView2"
+				},
+				{
+					"pattern": "component",
+					"name": "nestedComponent",
+					"target": {
+						"name": "nestedComponent",
+						"prefix": "child"
+					}
+				}
+			],
+			"targets" : {
+				"nestedView1": {
+					"name": "View1",
+					"path": "qunit.router.component.titlePropagation.scenario1.Child.view",
+					"title": "TitleNestedView1"
+				},
+				"nestedView2": {
+					"name": "View2",
+					"path": "qunit.router.component.titlePropagation.scenario1.Child.view",
+					"title": "TitleNestedView2"
+				},
+				"nestedComponent": {
+					"name": "qunit.router.component.titlePropagation.scenario1.GrandChild",
+					"type": "Component",
+					"id": "componentNested",
+				   	"title": "TitleComponentNested"
+				}
+			}
+		}
+	}
+}

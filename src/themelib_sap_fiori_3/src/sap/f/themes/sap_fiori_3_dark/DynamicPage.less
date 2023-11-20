@@ -1,0 +1,153 @@
+/* ================================== */
+/* CSS for control sap.f/DynamicPage  */
+/* Quartz Dark theme                  */
+/* ================================== */
+
+.sapFDynamicPageContent,
+.sapFDynamicPageContentFitContainer {
+	padding: 1rem 2rem 0 2rem;
+}
+
+.sapFDynamicPage-Std-Desktop-XL {
+	.sapFDynamicPageContent,
+	.sapFDynamicPageContentFitContainer {
+		padding: 1rem 3rem 0 3rem;
+	}
+}
+
+.sapFDynamicPage.sapUiResponsiveContentPadding {
+	&.sapFDynamicPage-Std-Phone {
+		.sapFDynamicPageContent,
+		.sapFDynamicPageContentFitContainer {
+			padding-left: 1rem;
+			padding-right: 1rem;
+		}
+	}
+
+	&.sapFDynamicPage-Std-Tablet {
+		.sapFDynamicPageContent,
+		.sapFDynamicPageContentFitContainer {
+			padding-left: 2rem;
+			padding-right: 2rem;
+		}
+	}
+
+	&.sapFDynamicPage-Std-Desktop-XL {
+		.sapFDynamicPageContent,
+		.sapFDynamicPageContentFitContainer {
+			padding-left: 3rem;
+			padding-right: 3rem;
+		}
+	}
+}
+
+.sapFDynamicPage {
+	.sapFDynamicPageContentWrapperSolid>.sapFDynamicPageContent {
+		background: @sapUiShellBackground;
+	}
+
+	// DynamicPageTitle and Toggle Header Visual Indicator hover state
+	&.sapFDynamicPageTitleClickEnabled.sapFDynamicPageTitleForceHovered {
+		.sapFDynamicPageTitle,
+		.sapFDynamicPageTitleTranslucent,
+		.sapFDynamicPageTitleTransparent {
+			background-color: @sapUiObjectHeaderHoverBackground;
+		}
+	}
+}
+
+.sapFDynamicPageTitleMainNavigationAreaInner .sapMIBar.sapMTB .sapMBarChild:first-child {
+	margin-left: 0;
+}
+
+.sapFDynamicPageToggleHeaderIndicator,
+.sapFDynamicPageToggleHeaderIndicator.sapUiHidden ~ .sapFDynamicPageHeaderPinButton {
+	margin-left: -0.75rem;
+}
+
+.sapFDynamicPageHeaderPinnable .sapFDynamicPageToggleHeaderIndicator {
+	margin-left: -1.75rem;
+}
+
+.sapFDynamicPageToggleHeaderIndicator,
+.sapFDynamicPageHeaderPinButton {
+	width: 1.5rem;
+	height: 2rem;
+	bottom: -0.95rem; // needs refactoring in the base file
+
+	// Reflection: styles overwritten
+	.sapMBtnInner {
+		min-width: 1.5rem;
+		width: 1.5rem;
+		height: 1.5rem;
+		bottom: 0.25rem;
+
+		.sapMBtnIcon {
+			width: 100%;
+			padding: 0;
+			line-height: 1.5rem;
+		}
+	}
+
+	overflow: visible; // enforcement needed for IE11
+
+	&:before,
+	&:after {
+		content: "";
+		position: absolute;
+		width: 4rem;
+		top: 50%; // enforcement needed for IE11
+		height: 0.0625rem;
+	}
+
+	&:before {
+		background-image: linear-gradient(to left, @sapUiHighlight, fade(@sapUiHighlight, 0));
+		right: 100%;
+	}
+
+	&:after {
+		background-image: linear-gradient(to right, @sapUiHighlight, fade(@sapUiHighlight, 0));
+		left: 100%;
+	}
+}
+
+html[data-sap-ui-browser^="cr"] .sapFDynamicPageToggleHeaderIndicator,
+html[data-sap-ui-browser^="cr"] .sapFDynamicPageHeaderPinButton {
+	.sapMBtnInner .sapMBtnIcon {
+		line-height: 1.375rem; // in Chrome we need to subtract the border bottom and top (total 2px) from original line-height
+	}
+}
+
+/* Compact */
+.sapUiSizeCompact {
+	.sapFDynamicPageToggleHeaderIndicator,
+	.sapFDynamicPageHeaderPinButton {
+		bottom: -0.95rem; // needs refactoring in the base file
+
+		// Reflection: styles overwritten
+		.sapMBtnInner {
+			bottom: 0.25rem;
+		}
+	}
+}
+
+// Note:
+// The footer selector can`t be nested in the sapFDynamicPage less structure,
+// because the contrast container would not work, as the theme generates css like ".sapContrast.sapFDynamicPageFooter"
+// and will never match ".sapFDynamicPage .sapFDynamicPageFooter"
+.sapFDynamicPageFooter .sapFDynamicPageActualFooterControl {
+	background: @sapUiPageFooterBackground;
+	color: @sapUiPageFooterTextColor;
+	box-shadow: @sapUiShadowLevel1;
+	border: none;
+}
+
+/* Vertically align items in the table-like view with the items in the sap.m.Carousel control.
+To be used in Comparison pattern scenario. */
+.sapUiComparisonContainer .sapFDynamicPageTitleSnapped + .sapFDynamicPageContentWrapper .sapUiComparisonContent  {
+	margin-right: 0;
+}
+
+.title-hover(@backgroundColor) {
+	background-color: darken(@backgroundColor, 4);
+}

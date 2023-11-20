@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="utf-8" />
+	<title>Editor Test Page with designtime files</title>
+	<script src="../sharedTest.js" localstoragekey="card-designtime-"></script>
+	<script src="../../../../../../resources/sap-ui-integration.js"
+		id="sap-ui-bootstrap"
+		data-sap-ui-theme="sap_horizon"
+		data-sap-ui-oninit="init"
+		data-sap-ui-resourceroots='{"testjs":"../","sap.ui.integration.cardEditor.test":"../"}'>
+	</script>
+	<link rel="stylesheet" href="../sharedTest.css" />
+</head>
+
+<body class="sapUiBody sapUiSizeCompact">
+	<div id="global">
+		<h2>Settings</h2>
+		<label>Page Language:</label>
+		<select id="languageSelect" onchange="switchLanguage(this)">
+		</select>
+		<label>Theme:</label>
+		<select onchange="switchTheme(this)">
+			<option value="sap_horizon">Morning Horizon (Light)</option>
+			<option value="sap_horizon_dark">Evening Horizon (Dark)</option>
+			<option value="sap_horizon_hcb">Horizon High Contrast Black</option>
+			<option value="sap_horizon_hcw">Horizon High Contrast White</option>
+			<option value="sap_fiori_3">Quartz Light</option>
+			<option value="sap_fiori_3_dark">Quartz Dark</option>
+			<option value="sap_fiori_3_hcb">Quartz High Contrast Black</option>
+			<option value="sap_fiori_3_hcw">Quartz High Contrast White</option>
+			<option value="sap_belize">Belize</option>
+			<option value="sap_belize_plus">Belize Deep</option>
+			<option value="sap_belize_hcb">Belize High Contrast Black</option>
+			<option value="sap_belize_hcw">Belize High Contrast White</option>
+			<option value="sap_bluecrystal">SAP BlueCrystal</option>
+			<option value="sap_hcb">SAP HCB</option>
+		</select>
+	</div>
+	<div id="editor" style="width: 80%; height: 800px;">
+		<h3>Card Editor in Dialog</h3>
+		<div class="buttons">
+			<button onclick="showEditorInDialog(this)">
+				Show Card Editor
+			</button>
+		</div>
+		<h2>Admin Mode (only)</h2>
+		<ui-integration-card-editor id="cardEditorAdmin" height="600px" preview-position="right" mode="admin" allow-dynamic-values="true" allow-settings="true">
+		</ui-integration-card-editor>
+		<div class="buttons">
+			<button onclick="showCurrentValues('cardEditorAdmin')">
+				Show Current Values (Admin Mode)
+			</button>
+			<button onclick="saveCurrentValues('cardEditorAdmin')">
+				Save Current Values (Admin Mode)
+			</button>
+			<button onclick="loadCurrentValues('cardEditorAdmin')">
+				Load Values (Admin Mode)
+			</button>
+			<button onclick="deleteCurrentValues('cardEditorAdmin')">
+				Delete Values (Admin Mode)
+			</button>
+		</div>
+		<h3>Content Mode (with admin layer)</h3>
+		<div id="admincontent">
+
+		</div>
+		<div class="buttons">
+			<button onclick="showCurrentValues('cardEditorAdminContent')">
+				Show Current Values (with admin layer)
+			</button>
+			<button onclick="saveCurrentValues('cardEditorAdminContent')">
+				Save Current Values (with admin layer)
+			</button>
+			<button onclick="loadCurrentValues('cardEditorAdminContent')">
+				Load Values (with admin layer)
+			</button>
+			<button onclick="deleteCurrentValues('cardEditorAdminContent')">
+				Delete Values (with admin layer)
+			</button>
+		</div>
+	</div>
+</body>
+
+</html>

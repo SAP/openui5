@@ -2,9 +2,8 @@
  * ${copyright}
  */
 sap.ui.define([
-		'jquery.sap.global',
-		'sap/ui/model/odata/AnnotationHelper'
-	], function (jQuery, AnnotationHelper) {
+	"sap/ui/model/odata/AnnotationHelper"
+], function (AnnotationHelper) {
 	"use strict";
 
 	// @see sap.ui.core.ID.type: [A-Za-z_][-A-Za-z0-9_.:]*
@@ -38,7 +37,7 @@ sap.ui.define([
 		 */
 		function formatLabelValue(oInterface, vRawValue0) {
 			var sResult = AnnotationHelper.format(oInterface, vRawValue0);
-			return jQuery.sap.endsWith(oInterface.getPath(), "/Label")
+			return oInterface.getPath().endsWith("/Label")
 				? "[" + sResult + "]"
 				: sResult;
 		}

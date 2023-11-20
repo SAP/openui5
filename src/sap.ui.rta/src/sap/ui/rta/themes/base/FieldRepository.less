@@ -1,68 +1,48 @@
 /******************************************************************
-	Style of the RTA FieldRepository
+	Style of the RTA Add Fields Dialog  - base Theme
 *******************************************************************/
+@_sap_ui_rta_FieldRepository_Title: @sapUiTextTitle; //#000
+@_sap_ui_rta_FieldRepository_BtnFocusOtline: @sapUiButtonHoverBorderColor; //#000
+@_sap_ui_rta_FieldRepository_BC_Container_Border: @sapUiGroupContentBorderColor; //#000
 
-.sap-desktop.sapUiBLyBackOverride {
-	overflow: auto!important;
-}
+.sapUIRtaFieldRepositoryDialog {
 
-.sapUIRtaFieldRepositoryDialog .sapMDialogTitle {
-	font-size: 16px;
-	font-weight: normal;
-}
+	&.sapMDialog > header .sapMDialogTitleGroup .sapMTitle {
+		color: @_sap_ui_rta_FieldRepository_Title;
+	}
 
-.sapUIRtaFieldRepositoryDialog .sapUiTable > div.sapUiTableCnt {
-	border-left: 0px;
-	border-right: 0px;
-}
-.sapUIRtaFieldRepositoryDialog .sapUiDlgFooter {
-	height: 60px;
-}
+	.sapMBtn {
+		&:focus {
+			> .sapMBtnInner {
+				outline: 0.0625rem dotted @_sap_ui_rta_FieldRepository_BtnFocusOtline; //1px
+				border: 0.0625rem solid transparent;
+			}
+		}
+	}
 
-/* Sort Button */
-.sapUIRtaFieldRepositoryDialog .sapMBtn>.sapMBtnInner{
-	border: none;
-	background: transparent;
-}
+	.sapUIRtaListItem {
+		line-height: 1rem;
+	}
 
-/* Footer Button */
-.sapUIRtaFieldRepositoryDialog .sapUiDlgFooter .sapMBtnInner {
-	background-color: transparent;
-	background: none;
-	border: none;
-	text-shadow: none;
-}
+	.sapUIRtaBusinessContextContainer {
+		width: 100%;
+		margin-top: 0.25rem; //4px
+		padding-bottom: 0.5rem; //8px
+		border-bottom: 0.0625rem solid @_sap_ui_rta_FieldRepository_BC_Container_Border; //1px
 
-.sapUIRtaFieldRepositoryDialog .sapUiTableCol, .sapUIRtaFieldRepositoryDialog .sapUiTableTr > td {
-	border: none;
-}
+		> div:not(:first-child) {
+			padding-left: 2.125rem; //34px
+			padding-right: 0.625rem; //10px
+		}
 
-.sapUIRtaFieldRepositoryDialog .sapUiTableCol, .sapUIRtaFieldRepositoryDialog .sapUiTableTr > td {
-	border: none;
-}
+		> div:first-child {
+			font-weight: bold;
+			padding: 0.25rem 0 0.25rem 0.625rem;
+		}
 
-.sapUIRtaFieldRepositoryDialog .sapUiLbl {
-	margin-left: 12px;
-}
+	}
 
-.sapUIRtaFieldRepositoryDialog .sapMIBar > .sapMBarChild:last-child {
-	margin-right: 12px;
-}
-
-.sapUIRtaFieldRepositoryDialog .sapUiLblIco  {
-	font-size: 1.2rem;
-}
-
-.sapUIRtaFieldRepositoryDialog .sapUIRtaValueCell {
-	height: 18px;
-	width: 300px;
-}
-
-.sapUIRtaFieldRepositoryDialog .sapUIRtaCCDialogScrollContainer{
-	height: 400px !important;
-	width: 100% !important;
-}
-
-.sapUIRtaFieldRepositoryDialog .sapMList .sapMListUl .sapMCLI {
-	padding-left: 10px;
+	.sapUIRtaCCDialogScrollContainer {
+		height: 25rem !important;
+	}
 }

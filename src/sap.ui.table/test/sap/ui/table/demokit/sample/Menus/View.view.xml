@@ -14,21 +14,16 @@
 				id="table"
 				selectionMode="MultiToggle"
 				rows="{/ProductCollection}"
-				visibleRowCount="7"
 				showColumnVisibilityMenu="{ui>/showVisibilityMenuEntry}"
 				enableColumnFreeze="{ui>/showFreezeMenuEntry}"
 				enableCellFilter="{ui>/enableCellFilter}"
 				columnSelect="onColumnSelect"
 				cellContextmenu="onProductIdCellContextMenu"
 				ariaLabelledBy="title">
-				<toolbar>
-					<m:Toolbar>
-						<m:Title id="title" text="Products"></m:Title>
+				<extension>
+					<m:OverflowToolbar style="Clear">
+						<m:Title id="title" text="Products"/>
 						<m:ToolbarSpacer/>
-						<m:ToggleButton
-							icon="sap-icon://show"
-							tooltip="Enable / Disable Visibility Menu Entries"
-							pressed="{ui>/showVisibilityMenuEntry}"/>
 						<m:ToggleButton
 							icon="sap-icon://resize-horizontal"
 							tooltip="Enable / Disable Freezing Menu Entries"
@@ -41,8 +36,8 @@
 							icon="sap-icon://menu"
 							tooltip="Enable / Disable Custom Context Menu"
 							press="onToggleContextMenu"/>
-					</m:Toolbar>
-				</toolbar>
+					</m:OverflowToolbar>
+				</extension>
 				<columns>
 					<Column
 						id="name"
@@ -87,21 +82,6 @@
 								type: 'sap.ui.model.type.Integer'
 							}" />
 						</template>
-						<menu>
-							<u:Menu ariaLabelledBy="quantity">
-								<u:items>
-									<u:MenuItem
-										text="My custom menu entry"
-										select="onQuantityCustomItemSelect"
-										/>
-									<u:MenuItem
-										text="Sort"
-										select="onQuantitySort"
-										icon="sap-icon://sort"
-										/>
-								</u:items>
-							</u:Menu>
-						</menu>
 					</Column>
 					<Column width="9rem">
 						<m:Label text="Delivery Date" />
@@ -115,13 +95,7 @@
 					</Column>
 				</columns>
 				<footer>
-					<m:Toolbar>
-						<m:ToolbarSpacer/>
-						<m:Button
-							icon="sap-icon://hint"
-							tooltip="Show information"
-							press="showInfo"/>
-					</m:Toolbar>
+					<m:OverflowToolbar id="infobar"></m:OverflowToolbar>
 				</footer>
 			</Table>
 		</m:content>

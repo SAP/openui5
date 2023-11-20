@@ -1,26 +1,31 @@
-/*global QUnit*/
-
-QUnit.config.autostart = false;
-
-sap.ui.require([
+/*global QUnit */
+sap.ui.define([
 	"sap/m/changeHandler/MoveTableColumns",
-	"sap/ui/fl/Change",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/core/util/reflection/XmlTreeModifier",
 	"sap/ui/core/UIComponent",
 	"sap/ui/core/ComponentContainer",
-	"sap/ui/model/json/JSONModel"
+	"sap/ui/model/json/JSONModel",
+	"sap/ui/qunit/utils/createAndAppendDiv",
+	"sap/ui/core/Core",
+	"sap/ui/core/mvc/XMLView",
+	"sap/base/util/deepExtend",
+	"test-resources/sap/ui/fl/api/FlexTestAPI"
 ], function(
 	MoveTableColumnsChangeHandler,
-	Change,
 	JsControlTreeModifier,
 	XmlTreeModifier,
-    UIComponent,
-    ComponentContainer,
-    JSONModel
+	UIComponent,
+	ComponentContainer,
+	JSONModel,
+	createAndAppendDiv,
+	oCore,
+	XMLView,
+	deepExtend,
+	FlexTestAPI
 ) {
 	'use strict';
-	QUnit.start();
+	createAndAppendDiv("content");
 
 	var oXmlString = [
 		'<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m">',
@@ -44,225 +49,29 @@ sap.ui.require([
 	].join('');
 
 	function createChangeDefinition(mDefinition) {
-		return jQuery.extend(true, {}, {
-				"changeType" : "moveTableColumns",
-				"selector": {
-					"id": "key"
-				},
-				"content": {
-					"movedElements": [
-						{
-							"selector": {
-								"id": "column0",
-								"idIsLocal": true
-							},
-							"sourceIndex": 0,
-							"targetIndex": 1
-						}
-					]
-				},
-				"dependentSelector": {
-					"target": {
-						"id": "myTable",
-						"idIsLocal": true
-					},
-					"source": {
-						"id": "myTable",
-						"idIsLocal": true
-					}
+		return deepExtend({}, {
+			"changeType" : "moveTableColumns",
+			"selector": {
+				"id": "view--myTable",
+				"idIsLocal": true
+			},
+			"movedElements": [
+				{
+					"id": "comp---view--column0",
+					"sourceIndex": 0,
+					"targetIndex": 1
 				}
+			],
+			source: {
+				aggregation: "columns",
+				id: "comp---view--myTable"
+			},
+			target: {
+				aggregation: "columns",
+				id: "comp---view--myTable"
+			}
 		}, mDefinition);
 	}
-
-
-	QUnit.module("basic functionality with XmlTreeModifier", {
-		beforeEach: function() {
-			this.oChangeHandler = MoveTableColumnsChangeHandler;
-			this.oChange = new Change(createChangeDefinition());
-
-			var oDOMParser = new DOMParser();
-			var oXmlDocument = oDOMParser.parseFromString(oXmlString, "application/xml");
-			this.oXmlView = oXmlDocument.documentElement;
-
-			this.oTable = this.oXmlView.childNodes[0];
-			this.oColumn0 = this.oTable.childNodes[0].childNodes[0];
-			this.oColumn0InTemplate = this.oTable.childNodes[1].childNodes[0].childNodes[0].childNodes[0];
-		},
-		afterEach: function() {
-			this.oChange = null;
-		}
-	});
-
-	QUnit.test('applyChange on a xml control tree', function(assert) {
-		this.oChangeHandler.applyChange(this.oChange, this.oTable, {
-			modifier: XmlTreeModifier,
-			appComponent: {
-				createId: function (sControlId) {
-					return sControlId;
-				}
-			},
-			view: this.oXmlView
-		});
-
-		assert.deepEqual(
-			this.oColumn0,
-			this.oTable.childNodes[0].childNodes[1],
-			"column has been moved successfully"
-		);
-		assert.deepEqual(
-			this.oColumn0InTemplate,
-			this.oTable.childNodes[1].childNodes[0].childNodes[0].childNodes[1],
-			"template has been modified successfully"
-		);
-	});
-
-	QUnit.test('revertChange on a xml control tree', function(assert) {
-		this.oChangeHandler.applyChange(this.oChange, this.oTable, {
-			modifier: XmlTreeModifier,
-			appComponent: {
-				createId: function (sControlId) {
-					return sControlId;
-				}
-			},
-			view: this.oXmlView
-		});
-		assert.deepEqual(this.oColumn0, this.oTable.childNodes[0].childNodes[1], "column has been moved successfully");
-		assert.deepEqual(
-			this.oColumn0InTemplate,
-			this.oTable.childNodes[1].childNodes[0].childNodes[0].childNodes[1],
-			"template has been modified successfully"
-		);
-		this.oChangeHandler.revertChange(this.oChange, this.oTable, {
-			modifier: XmlTreeModifier,
-			appComponent: {
-				createId: function (sControlId) {
-					return sControlId;
-				}
-			},
-			view: this.oXmlView
-		});
-		assert.deepEqual(this.oColumn0, this.oTable.childNodes[0].childNodes[0], "column has been restored successfully");
-		assert.deepEqual(
-			this.oColumn0InTemplate,
-			this.oTable.childNodes[1].childNodes[0].childNodes[0].childNodes[0],
-			"template has been restored successfully"
-		);
-	});
-
-
-	QUnit.module("multiple moveElements at once with XmlTreeModifier", {
-		beforeEach: function() {
-			this.oChangeHandler = MoveTableColumnsChangeHandler;
-			this.oChange = new Change(createChangeDefinition({
-					"content": {
-						"movedElements": [
-							{
-								"selector": {
-									"id": "column0",
-									"idIsLocal": true
-								},
-								"sourceIndex": 0,
-								"targetIndex": 1
-							},
-							{
-								"selector": {
-									"id": "column2",
-									"idIsLocal": true
-								},
-								"sourceIndex": 2,
-								"targetIndex": 0
-							}
-						]
-					}
-			}));
-
-			var oDOMParser = new DOMParser();
-			var oXmlDocument = oDOMParser.parseFromString(oXmlString, "application/xml");
-			this.oXmlView = oXmlDocument.documentElement;
-
-			this.oTable = this.oXmlView.childNodes[0];
-			this.oColumn0 = this.oTable.childNodes[0].childNodes[0];
-			this.oColumn2 = this.oTable.childNodes[0].childNodes[2];
-			this.oColumn0InTemplate = this.oTable.childNodes[1].childNodes[0].childNodes[0].childNodes[0];
-			this.oColumn2InTemplate = this.oTable.childNodes[1].childNodes[0].childNodes[0].childNodes[2];
-		},
-		afterEach: function() {
-			this.oChange = null;
-		}
-	});
-
-	QUnit.test('applyChange on a xml control tree', function(assert) {
-		this.oChangeHandler.applyChange(this.oChange, this.oTable, {
-			modifier: XmlTreeModifier,
-			appComponent: {
-				createId: function (sControlId) {
-					return sControlId;
-				}
-			},
-			view: this.oXmlView
-		});
-
-		assert.deepEqual(
-			this.oColumn0,
-			this.oTable.childNodes[0].childNodes[2],
-			"column0 has been moved successfully"
-		);
-		assert.deepEqual(
-			this.oColumn0InTemplate,
-			this.oTable.childNodes[1].childNodes[0].childNodes[0].childNodes[2],
-			"template for column0 has been modified successfully"
-		);
-		assert.deepEqual(
-			this.oColumn2,
-			this.oTable.childNodes[0].childNodes[0],
-			"column2 has been moved successfully"
-		);
-		assert.deepEqual(
-			this.oColumn2InTemplate,
-			this.oTable.childNodes[1].childNodes[0].childNodes[0].childNodes[0],
-			"template for column2 has been modified successfully"
-		);
-	});
-
-	QUnit.test('revertChange on a xml control tree', function(assert) {
-		this.oChangeHandler.applyChange(this.oChange, this.oTable, {
-			modifier: XmlTreeModifier,
-			appComponent: {
-				createId: function (sControlId) {
-					return sControlId;
-				}
-			},
-			view: this.oXmlView
-		});
-		this.oChangeHandler.revertChange(this.oChange, this.oTable, {
-			modifier: XmlTreeModifier,
-			appComponent: {
-				createId: function (sControlId) {
-					return sControlId;
-				}
-			},
-			view: this.oXmlView
-		});
-		assert.deepEqual(this.oColumn0,
-			this.oTable.childNodes[0].childNodes[2],
-			"column0 has been restored successfully"
-		);
-		assert.deepEqual(
-			this.oColumn0InTemplate,
-			this.oTable.childNodes[1].childNodes[0].childNodes[0].childNodes[2],
-			"template for column0 has been restored successfully"
-		);
-		assert.deepEqual(this.oColumn2,
-			this.oTable.childNodes[0].childNodes[0],
-			"column2 has been restored successfully"
-		);
-		assert.deepEqual(
-			this.oColumn2InTemplate,
-			this.oTable.childNodes[1].childNodes[0].childNodes[0].childNodes[0],
-			"template for column2 has been restored successfully"
-		);
-	});
-
 
 	QUnit.module("basic functionality with JsControlTreeModifier", {
 		beforeEach: function() {
@@ -270,6 +79,9 @@ sap.ui.require([
 
 			var Comp = UIComponent.extend("test", {
 				metadata: {
+					interfaces: [
+						"sap.ui.core.IAsyncContentCreation"
+					],
 					manifest : {
 						"sap.app": {
 							"id": "",
@@ -279,54 +91,46 @@ sap.ui.require([
 				},
 				createContent : function() {
 					// store it in outer scope
-					var oView = sap.ui.xmlview({
+					return XMLView.create({
 						id: this.createId("view"),
-						viewContent: oXmlString
-					 });
-					 return oView;
+						definition: oXmlString
+					});
 				}
 
 			});
+
 			this.oUiComponent = new Comp("comp");
 
-			// Place component in container and display
-			this.oUiComponentContainer = new ComponentContainer({
-				component : this.oUiComponent
-			});
-			this.oUiComponentContainer.placeAt("content");
+			return this.oUiComponent.rootControlLoaded().then(function() {
+				// Place component in container and display
+				this.oUiComponentContainer = new ComponentContainer({
+					component : this.oUiComponent
+				});
+				this.oUiComponentContainer.placeAt("content");
 
-			this.oView = this.oUiComponent.getRootControl();
+				this.oView = this.oUiComponent.getRootControl();
 
-			sap.ui.getCore().applyChanges();
+				oCore.applyChanges();
 
-			this.oTable = this.oView.byId('myTable');
-			this.oColumn0 = this.oView.byId('column0');
-			this.oColumn0Template = this.oTable.getItems()[0].getCells()[0];
+				this.oTable = this.oView.byId('myTable');
+				this.oColumn0 = this.oView.byId('column0');
+				this.oColumn0Template = this.oTable.getItems()[0].getCells()[0];
 
-			this.oChange = new Change(createChangeDefinition({
-					"content": {
-						"movedElements": [
-							{
-								"selector": {
-									"id": "view--column0",
-									"idIsLocal": true
-								},
-								"sourceIndex": 0,
-								"targetIndex": 1
-							}
-						]
-					},
-					"dependentSelector": {
-						"target": {
-							"id": "view--myTable",
-							"idIsLocal": true
-						},
-						"source": {
-							"id": "view--myTable",
-							"idIsLocal": true
-						}
-					}
-			}));
+				var oDOMParser = new DOMParser();
+				var oXmlDocument = oDOMParser.parseFromString(oXmlString, "application/xml");
+				this.oXmlView = oXmlDocument.documentElement;
+
+				this.oXmlTable = this.oXmlView.childNodes[0];
+				this.oXmlColumn0 = this.oXmlTable.childNodes[0].childNodes[0];
+				this.oXmlColumn0InTemplate = this.oXmlTable.childNodes[1].childNodes[0].childNodes[0].childNodes[0];
+
+				return FlexTestAPI.createFlexObject({
+					changeSpecificData: createChangeDefinition(),
+					selector: this.oTable
+				}).then(function(oChange) {
+					this.oChange = oChange;
+				}.bind(this));
+			}.bind(this));
 		},
 		afterEach: function() {
 			this.oChange = null;
@@ -334,48 +138,111 @@ sap.ui.require([
 		}
 	});
 
+	QUnit.test('applyChange on a xml control tree', function(assert) {
+		return this.oChangeHandler.applyChange(this.oChange, this.oXmlTable, {
+			modifier: XmlTreeModifier,
+			appComponent: {
+				createId: function (sControlId) {
+					return sControlId.split("--")[1];
+				}
+			},
+			view: this.oXmlView
+		})
+		.then(function() {
+			assert.deepEqual(
+				this.oXmlColumn0,
+				this.oXmlTable.childNodes[0].childNodes[1],
+				"column has been moved successfully"
+			);
+			assert.deepEqual(
+				this.oXmlColumn0InTemplate,
+				this.oXmlTable.childNodes[1].childNodes[0].childNodes[0].childNodes[1],
+				"template has been modified successfully"
+			);
+		}.bind(this));
+	});
+
+	QUnit.test('revertChange on a xml control tree', function(assert) {
+		return this.oChangeHandler.applyChange(this.oChange, this.oXmlTable, {
+			modifier: XmlTreeModifier,
+			appComponent: {
+				createId: function (sControlId) {
+					return sControlId.split("--")[1];
+				}
+			},
+			view: this.oXmlView
+		})
+		.then(function() {
+			assert.deepEqual(this.oXmlColumn0, this.oXmlTable.childNodes[0].childNodes[1], "column has been moved successfully");
+			assert.deepEqual(
+				this.oXmlColumn0InTemplate,
+				this.oXmlTable.childNodes[1].childNodes[0].childNodes[0].childNodes[1],
+				"template has been modified successfully"
+			);
+			return this.oChangeHandler.revertChange(this.oChange, this.oXmlTable, {
+				modifier: XmlTreeModifier,
+				appComponent: {
+					createId: function (sControlId) {
+						return sControlId.split("--")[1];
+					}
+				},
+				view: this.oXmlView
+			});
+		}.bind(this))
+		.then(function() {
+			assert.deepEqual(this.oXmlColumn0, this.oXmlTable.childNodes[0].childNodes[0], "column has been restored successfully");
+			assert.deepEqual(
+				this.oXmlColumn0InTemplate,
+				this.oXmlTable.childNodes[1].childNodes[0].childNodes[0].childNodes[0],
+				"template has been restored successfully"
+			);
+		}.bind(this));
+	});
+
 	QUnit.test('applyChange on a js control tree', function(assert) {
-		this.oChangeHandler.applyChange(this.oChange, this.oTable, {
+		return this.oChangeHandler.applyChange(this.oChange, this.oTable, {
 			modifier: JsControlTreeModifier,
 			appComponent: this.oUiComponent,
 			view: this.oView
-		});
-
-		assert.deepEqual(
-			this.oColumn0.getId(),
-			this.oTable.getAggregation('columns')[1].getId(),
-			"column has been moved successfully"
-		);
-		assert.deepEqual(
-			this.oColumn0Template.getId(),
-			this.oTable.getItems()[0].getCells()[1].getId(),
-			"template has been moved successfully"
-		);
+		})
+		.then(function() {
+			assert.deepEqual(
+				this.oColumn0.getId(),
+				this.oTable.getAggregation('columns')[1].getId(),
+				"column has been moved successfully"
+			);
+			assert.deepEqual(
+				this.oColumn0Template.getId(),
+				this.oTable.getItems()[0].getCells()[1].getId(),
+				"template has been moved successfully"
+			);
+		}.bind(this));
 	});
 
 	QUnit.test('revertChange on a js control tree', function(assert) {
-		this.oChangeHandler.applyChange(this.oChange, this.oTable, {
+		return this.oChangeHandler.applyChange(this.oChange, this.oTable, {
 			modifier: JsControlTreeModifier,
 			appComponent: this.oUiComponent,
 			view: this.oView
-		});
-		this.oChangeHandler.revertChange(this.oChange, this.oTable, {
+		})
+		.then(this.oChangeHandler.revertChange.bind(this.oChangeHandler, this.oChange, this.oTable, {
 			modifier: JsControlTreeModifier,
 			appComponent: this.oUiComponent,
 			view: this.oView
-		});
-		assert.deepEqual(
-			this.oColumn0.getId(),
-			this.oTable.getAggregation('columns')[0].getId(),
-			"column has been restored successfully"
-		);
-		assert.deepEqual(
-			this.oColumn0Template.getId(),
-			this.oTable.getItems()[0].getCells()[0].getId(),
-			"template has been restored successfully"
-		);
+		}))
+		.then(function(){
+			assert.deepEqual(
+				this.oColumn0.getId(),
+				this.oTable.getAggregation('columns')[0].getId(),
+				"column has been restored successfully"
+			);
+			assert.deepEqual(
+				this.oColumn0Template.getId(),
+				this.oTable.getItems()[0].getCells()[0].getId(),
+				"template has been restored successfully"
+			);
+		}.bind(this));
 	});
-
 
 	QUnit.module("bindingAggregation functionality with JsControlTreeModifier", {
 		beforeEach: function() {
@@ -393,6 +260,9 @@ sap.ui.require([
 
 			var Comp = UIComponent.extend("test", {
 				metadata: {
+					interfaces: [
+						"sap.ui.core.IAsyncContentCreation"
+					],
 					manifest : {
 						"sap.app": {
 							"id": "test",
@@ -401,76 +271,66 @@ sap.ui.require([
 					}
 				},
 				createContent : function() {
-					// store it in outer scope
-					var oView = sap.ui.xmlview({
-						 id : this.createId("view"),
-						 viewContent : oXmlStringWithBinding
-					 });
-					 return oView;
+					return XMLView.create({
+						id : this.createId("view"),
+						definition : oXmlStringWithBinding
+					});
 				}
 
 			});
 			this.oUiComponent = new Comp("comp");
 
-			// Place component in container and display
-			this.oUiComponentContainer = new ComponentContainer({
-				component : this.oUiComponent
-			});
+			return this.oUiComponent.rootControlLoaded().then(function() {
+				// Place component in container and display
+				this.oUiComponentContainer = new ComponentContainer({
+					component : this.oUiComponent
+				});
 
 
-			this.oUiComponentContainer.placeAt("content");
+				this.oUiComponentContainer.placeAt("content");
 
-			this.oView = this.oUiComponent.getRootControl();
+				this.oView = this.oUiComponent.getRootControl();
 
-			this.oView.setModel(new JSONModel({
-				"records": [{
-					"column0": "test0_1",
-					"column1": "test1_1",
-					"column2": "test2_1"
-				},{
-					"column0": "test0_2",
-					"column1": "test1_2",
-					"column2": "test2_2"
-				},{
-					"column0": "test0_3",
-					"column1": "test1_3",
-					"column2": "test2_3"
-				}]
-			}));
+				this.oView.setModel(new JSONModel({
+					"records": [{
+						"column0": "test0_1",
+						"column1": "test1_1",
+						"column2": "test2_1"
+					},{
+						"column0": "test0_2",
+						"column1": "test1_2",
+						"column2": "test2_2"
+					},{
+						"column0": "test0_3",
+						"column1": "test1_3",
+						"column2": "test2_3"
+					}]
+				}));
 
-			sap.ui.getCore().applyChanges();
+				oCore.applyChanges();
 
-			this.oTable = this.oView.byId('myTable');
+				this.oTable = this.oView.byId('myTable');
 
 
-			this.oColumn0 = this.oView.byId('column0');
-			this.oColumn0Template = this.oTable.getBindingInfo('items').template.getCells()[0];
-			this.oColumn0Items = this.oTable.getItems()[0].getCells()[0];
+				this.oColumn0 = this.oView.byId('column0');
+				this.oColumn0Template = this.oTable.getBindingInfo('items').template.getCells()[0];
+				this.oColumn0Items = this.oTable.getItems()[0].getCells()[0];
 
-			this.oChange = new Change(createChangeDefinition({
-					"content": {
-						"movedElements": [
-							{
-								"selector": {
-									"id": "view--column0",
-									"idIsLocal": true
-								},
-								"sourceIndex": 0,
-								"targetIndex": 1
-							}
-						]
-					},
-					"dependentSelector": {
-						"target": {
-							"id": "view--myTable",
-							"idIsLocal": true
-						},
-						"source": {
-							"id": "view--myTable",
-							"idIsLocal": true
-						}
-					}
-			}));
+				var oDOMParser = new DOMParser();
+				var oXmlDocument = oDOMParser.parseFromString(oXmlString, "application/xml");
+				this.oXmlView = oXmlDocument.documentElement;
+
+				this.oXmlTable = this.oXmlView.childNodes[0];
+				this.oXmlColumn0 = this.oXmlTable.childNodes[0].childNodes[0];
+				this.oXmlColumn0InTemplate = this.oXmlTable.childNodes[1].childNodes[0].childNodes[0].childNodes[0];
+
+				return FlexTestAPI.createFlexObject({
+					changeSpecificData: createChangeDefinition(),
+					selector: this.oTable
+				}).then(function(oChange) {
+					this.oChange = oChange;
+				}.bind(this));
+			}.bind(this));
 		},
 		afterEach: function() {
 			this.oChange = null;
@@ -479,54 +339,57 @@ sap.ui.require([
 	});
 
 	QUnit.test('applyChange on a js control tree', function(assert) {
-		this.oChangeHandler.applyChange(this.oChange, this.oTable, {
+		return this.oChangeHandler.applyChange(this.oChange, this.oTable, {
 			modifier: JsControlTreeModifier,
 			appComponent: this.oUiComponent,
 			view: this.oView
-		});
-
-		assert.deepEqual(
-			this.oColumn0.getId(),
-			this.oTable.getAggregation('columns')[1].getId(),
-			"column has been moved successfully"
-		);
-		assert.deepEqual(
-			this.oColumn0Template.getId(),
-			this.oTable.getBindingInfo('items').template.getCells()[1].getId(),
-			"column in template has been moved successfully"
-		);
-		assert.deepEqual(
-			this.oColumn0Items.getId(),
-			this.oTable.getItems()[0].getCells()[1].getId(),
-			"column in items aggregation has been moved successfully"
-		);
+		})
+		.then(function() {
+			assert.deepEqual(
+				this.oColumn0.getId(),
+				this.oTable.getAggregation('columns')[1].getId(),
+				"column has been moved successfully"
+			);
+			assert.deepEqual(
+				this.oColumn0Template.getId(),
+				this.oTable.getBindingInfo('items').template.getCells()[1].getId(),
+				"column in template has been moved successfully"
+			);
+			assert.deepEqual(
+				this.oColumn0Items.getId(),
+				this.oTable.getItems()[0].getCells()[1].getId(),
+				"column in items aggregation has been moved successfully"
+			);
+		}.bind(this));
 	});
 
 	QUnit.test('revertChange on a js control tree', function(assert) {
-		this.oChangeHandler.applyChange(this.oChange, this.oTable, {
+		return this.oChangeHandler.applyChange(this.oChange, this.oTable, {
 			modifier: JsControlTreeModifier,
 			appComponent: this.oUiComponent,
 			view: this.oView
-		});
-		this.oChangeHandler.revertChange(this.oChange, this.oTable, {
+		})
+		.then(this.oChangeHandler.revertChange.bind(this.oChangeHandler, this.oChange, this.oTable, {
 			modifier: JsControlTreeModifier,
 			appComponent: this.oUiComponent,
 			view: this.oView
-		});
-		assert.deepEqual(
-			this.oColumn0.getId(),
-			this.oTable.getAggregation('columns')[0].getId(),
-			"column has been moved successfully"
-		);
-		assert.deepEqual(
-			this.oColumn0Template.getId(),
-			this.oTable.getBindingInfo('items').template.getCells()[0].getId(),
-			"column in template has been moved successfully"
-		);
-		assert.deepEqual(
-			this.oColumn0Items.getId(),
-			this.oTable.getItems()[0].getCells()[0].getId(),
-			"column in items aggregation has been moved successfully"
-		);
+		}))
+		.then(function() {
+			assert.deepEqual(
+				this.oColumn0.getId(),
+				this.oTable.getAggregation('columns')[0].getId(),
+				"column has been moved successfully"
+			);
+			assert.deepEqual(
+				this.oColumn0Template.getId(),
+				this.oTable.getBindingInfo('items').template.getCells()[0].getId(),
+				"column in template has been moved successfully"
+			);
+			assert.deepEqual(
+				this.oColumn0Items.getId(),
+				this.oTable.getItems()[0].getCells()[0].getId(),
+				"column in items aggregation has been moved successfully"
+			);
+		}.bind(this));
 	});
 });

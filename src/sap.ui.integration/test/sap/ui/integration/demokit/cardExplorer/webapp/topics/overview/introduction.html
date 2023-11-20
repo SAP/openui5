@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<title>Integration Cards Overview</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<script src="../../scripts/boot.js"></script>
+</head>
+
+<body class="sapUiBody topicBody">
+	<div class="topic">
+		<div class="content">
+
+			<h1 id="overview">Integration Cards Overview</h1>
+			<img src="../images/overviewPage_groupOfCards.png" alt="Diagram"
+				style="max-width: 100%; background: transparent;">
+			<p>
+				Integration cards present a new means to expose application content to the end user in a unified way. <br>
+				Depending on the use cases cards can be easily embedded in a host environment, such as application,
+				dashboard, or any HTML page.
+				A variety of card types can be configured by a simple JSON configuration (schema) without the need to write
+				code for UI rendering.
+				In this way, even users without programming skill are being enabled to create new cards according to their
+				special needs.
+			</p>
+			<p>
+				Before going further with Integration cards you can check this <a data-demokit-href="#/topic/5b46b03f024542ba802d99d67bc1a3f4" target="_blank">General UI5 Cards Overview</a> which contains more information about different card controls and concepts available in UI5.
+			</p>
+			<img src="../images/overviewDiagram.png" alt="Diagram" style="max-width: 100%; width: 1000px;">
+			<h2 id="cardConfiguration">Card Configuration</h2>
+			The Card Developer creates a declarative manifest file in JSON format.
+			This file holds a description of the card configuration settings like destinations, parameters, filters, and action handlers.
+			Read more about <a href="../../index.html#/learn/configuration" target="_parent">Card Configuration</a>.
+			Additionally, the Card Developer specifies which configuration elements will be available for further adaptation
+			by Administrators and Page/Content Administrators using the <a href="../../index.html#/designtime/overview" target="_parent">Configuration Editor</a>.
+
+			<h2 id="hostEnvironment">Host Environment</h2>
+			Host Environment is where the card is integrated.
+			There are two ways of integration: as a Custom Element or as a UI5 Control.
+			The Host Developer can define action event handler to react on user interactions within the card,
+			resolves destinations, provides parameters and takes care for the layout and sizing.
+			Read more about <a href="../../index.html#/integrate/overview" target="_parent">responsibilities of the host environment</a>.
+
+			<h1 id="concept">
+				UX Concept
+			</h1>
+
+			<ul>
+				<li>Cards are representations of an app or page and offer content to users in a specific context.</li>
+				<li>Cards contain a certain set of information from an app or page and can also offer functionality.
+				</li>
+				<li>Cards can be a mash-up of multiple apps (such as a list card with links).</li>
+				<li>An app or page can be represented by one card, or by multiple cards that each expose different
+					aspects.</li>
+				<li>Users get direct insights without leaving the current screen, while cards can still offer further
+					navigation options.</li>
+				<li>Cards are composite controls that follow a predefined structure.</li>
+			</ul>
+
+			<p>Cards consist of:</p>
+			<ul>
+				<li>
+					A card container - includes a background and a border that hold the header and the content.
+				</li>
+				<li>
+					A header - it can have a title, a subtitle, an icon, and a status.
+					If the header is of type Numeric, it may have different attributes describing numeric indicator,
+					such as KPI.
+				</li>
+				<li>
+					Content - depends on the card type.
+				</li>
+			</ul>
+
+			<h1 id="characteristics">
+				Characteristics
+			</h1>
+			<ul>
+				<li>Technology agnostic - Different technologies can easily parse the manifest.json file and render a
+					card based on it.</li>
+				<li>Self-contained - Everything needed to render the card and make it actionable is described in the
+					manifest.json (including data and functionality).</li>
+				<li>Reusable - The manifest.json can be easily parsed, processed, and saved in different layers of an
+					application. It is also easily shareable.</li>
+			</ul>
+
+			<h1 id="developingCards">
+				Developing Cards
+			</h1>
+			<p>
+				To develop a card you should create a manifest.json file that stores all configurations (card structure,
+				data, functionality, etc...).
+				The sap.card is the namespace responsible for the card configuration inside the manifest file.
+				Read more about <a href="../../index.html#/overview/cardTypes" target="_parent">Card Types</a>.
+			</p>
+			<p>
+				You can check the <a href="../../index.html#/overview/references" target="_parent">References</a> section for links to additional resources about cards, like the API Reference and the JSON schema.
+			</p>
+
+		</div>
+	</div>
+</body>
+
+</html>

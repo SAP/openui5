@@ -1,0 +1,95 @@
+<mvc:View
+	height="100%"
+	controllerName="sap.m.sample.MultiComboBoxSuggestionsAndValueState.controller.MultiComboBoxSuggestionsAndValueState"
+	xmlns:l="sap.ui.layout"
+	xmlns:core="sap.ui.core"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m">
+	<Page showHeader="false">
+		<l:VerticalLayout
+			class="sapUiContentPadding"
+			width="100%">
+			<Label text="MultiComboBox with suggestions and success value state with a a long message:"/>
+			<MultiComboBox class="sapUiSmallMarginBottom"
+				maxWidth="500px"
+				valueState="Success"
+				valueStateText="Success message. Extra long text used as a success message. Extra long text used as a success message - 2. Extra long text used as a success message."
+				items="{
+					path: '/ProductCollection',
+					sorter: { path: 'Name' }
+				}">
+				<core:Item key="{ProductId}" text="{Name}" />
+			</MultiComboBox>
+			<Label text="MultiComboBox with suggestions and information value state with a a long message:"/>
+			<MultiComboBox class="sapUiSmallMarginBottom"
+				maxWidth="500px"
+				valueState="Information"
+				valueStateText="Information message. Extra long text used as a information message. Extra long text used as a information message - 2. Extra long text used as a information message."
+				items="{
+					path: '/ProductCollection',
+					sorter: { path: 'Name' }
+				}">
+				<core:Item key="{ProductId}" text="{Name}" />
+			</MultiComboBox>
+			<Label text="MultiComboBox with suggestions and an information value state with multiple links:"/>
+			<MultiComboBox class="sapUiSmallMarginBottom"
+				maxWidth="500px"
+				valueState="Information"
+				items="{
+					path: '/ProductCollection',
+					sorter: { path: 'Name' }
+				}">
+				<core:Item key="{ProductId}" text="{Name}" />
+				<formattedValueStateText>
+					<FormattedText htmlText="Value state with FormattedText used as an information message containing %%0 %%1." >
+						<controls>
+							<Link text="multiple" href="" press=".handleValueStateLinkPress" />
+							<Link text="links" href="" press=".handleValueStateLinkPress" />
+
+						</controls>
+					</FormattedText>
+				</formattedValueStateText>
+			</MultiComboBox>
+			<Label text="MultiComboBox with suggestions and warning value state with a a long message:"/>
+			<MultiComboBox class="sapUiSmallMarginBottom"
+				maxWidth="500px"
+				valueState="Warning"
+				valueStateText="Warning message. Extra long text used as a warning message. Extra long text used as a information message - 2. Extra long text used as a warning message."
+				items="{
+					path: '/ProductCollection',
+					sorter: { path: 'Name' }
+				}">
+				<core:Item key="{ProductId}" text="{Name}" />
+			</MultiComboBox>
+			<Label text="MultiComboBox with suggestions and a warning value state with a link:"/>
+			<MultiComboBox class="sapUiSmallMarginBottom"
+				maxWidth="500px"
+				valueState="Warning"
+				valueStateText="Warning message. Extra long text used as a warning message."
+				items="{
+					path: '/ProductCollection',
+					sorter: { path: 'Name' }
+				}">
+				<core:Item key="{ProductId}" text="{Name}" />
+				<formattedValueStateText>
+					<FormattedText htmlText="Value state with FormattedText used as a warning message containing a %%0." >
+						<controls>
+							<Link text="link" href="" press=".handleValueStateLinkPress" />
+						</controls>
+					</FormattedText>
+				</formattedValueStateText>
+			</MultiComboBox>
+			<Label text="MultiComboBox with suggestions and an error value state with a a long message:"/>
+			<MultiComboBox class="sapUiSmallMarginBottom"
+				maxWidth="500px"
+				valueState="Error"
+				valueStateText="Error message. Extra long text used as a warning message. Extra long text used as an error message - 2. Extra long text used as an error message."
+				items="{
+					path: '/ProductCollection',
+					sorter: { path: 'Name' }
+				}">
+				<core:Item key="{ProductId}" text="{Name}" />
+			</MultiComboBox>
+		</l:VerticalLayout>
+	</Page>
+</mvc:View>

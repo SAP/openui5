@@ -1,0 +1,22 @@
+[
+	{
+		"id": "g",
+		"unit": "g",
+		"text": "gram"
+	},
+	{
+		"id": "kg",
+		"unit": "kg",
+		"text": "kilogram"
+	},
+	{
+		"id": "mg",
+		"unit": "mg",
+		"text": "milligram"
+	},
+	{
+		"id": "t",
+		"unit": "t",
+		"text": "ton"
+	}
+]

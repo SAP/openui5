@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
-// Provides default renderer for control sap.ui.commons.Togglebutton
+// Provides default renderer for control sap.m.Togglebutton
 sap.ui.define(['./ButtonRenderer', 'sap/ui/core/Renderer'],
 	function(ButtonRenderer, Renderer) {
 	"use strict";
@@ -14,6 +14,8 @@ sap.ui.define(['./ButtonRenderer', 'sap/ui/core/Renderer'],
 	 */
 
 	var ToggleButtonRenderer = Renderer.extend(ButtonRenderer);
+
+	ToggleButtonRenderer.apiVersion = 2;
 
 	/**
 	 * Callback for specific rendering of accessibility attributes.
@@ -42,7 +44,7 @@ sap.ui.define(['./ButtonRenderer', 'sap/ui/core/Renderer'],
 	 */
 	ToggleButtonRenderer.renderButtonAttributes = function(oRm, oToggleButton) {
 		if (oToggleButton.getPressed() && !oToggleButton._isUnstyled()) {
-			oRm.addClass("sapMToggleBtnPressed");
+			oRm.class("sapMToggleBtnPressed");
 		}
 	};
 

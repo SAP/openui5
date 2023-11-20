@@ -1,16 +1,16 @@
 
 <!DOCTYPE HTML>
 <html>
-	<head>
-		<meta http-equiv="X-UA-Compatible" content="IE=edge">
-		<title>TableSelectDialog - sap.m</title>
-		<script src="shared-config.js"></script>
-		<script src="../../../resources/sap-ui-core.js"
+<head>
+	<title>TableSelectDialog - sap.m</title>
+	<script src="shared-config.js"></script>
+	<script src="../../../resources/sap-ui-core.js"
 			id="sap-ui-bootstrap"
 			data-sap-ui-libs="sap.m"
 			data-sap-ui-compatVersion="1.16">
-		</script>
-		<script>
+	</script>
+	<script>
+
 		jQuery.sap.require("sap.ui.core.util.MockServer");
 		jQuery.sap.require("sap.ui.model.odata.ODataModel");
 
@@ -38,8 +38,8 @@
 		// filter function for the list search
 		var fnDoSearch = function (oEvent, bProductSearch) {
 			var aFilters = [],
-				sSearchValue = oEvent.getParameter("value"),
-				itemsBinding = oEvent.getParameter("itemsBinding");
+					sSearchValue = oEvent.getParameter("value"),
+					itemsBinding = oEvent.getParameter("itemsBinding");
 
 			// create the local filter to apply
 			if(sSearchValue !== undefined && sSearchValue.length > 0) {
@@ -86,7 +86,7 @@
 		var fnPrefilterDialog = function (sSearchValue){
 			// create an array to hold the filters we create
 			var aFilters = fnCreatePrefilter(sSearchValue),
-				itemsBinding = oTableSelectDialog1.getBinding("items");
+					itemsBinding = oTableSelectDialog1.getBinding("items");
 
 			itemsBinding.filter(aFilters, "Application");
 		};
@@ -102,7 +102,7 @@
 
 		// create the data to be shown in the table
 		var oProductData1 = {
-		items : [{
+			items : [{
 				name : "Headphone",
 				quantity : "10 EA",
 				limit : "15.00 Eur",
@@ -460,13 +460,14 @@
 				//Now update the input with the value
 				sap.m.MessageBox.alert("Item selected is : " + oCell.getText());
 			}
-			//Now destroy it
-			oTableSelectDialog3.destroy();
-			oTableSelectDialog3 = null;
 		});
 
 		var oButton3 = new sap.m.Button("Button3", {
+			layoutData: new sap.m.FlexItemData({
+				maxWidth: "100%"
+			}),
 			text: "Open TableSelectDialog with destroy call in close event & late binding",
+			ariaHasPopup: sap.ui.core.aria.HasPopup.Dialog,
 			press: function (evt) {
 				oTableSelectDialog3.open();
 
@@ -513,7 +514,11 @@
 		});
 
 		var oButton4 = new sap.m.Button("tsdWithMultiSelectButton", {
+			layoutData: new sap.m.FlexItemData({
+				maxWidth: "100%"
+			}),
 			text: "Open TableSelectDialog in MultiSelect mode",
+			ariaHasPopup: sap.ui.core.aria.HasPopup.Dialog,
 			press: function () {
 				// open dialog
 				oTableSelectDialog4.open();
@@ -523,7 +528,6 @@
 		var fnCreateColumsForDialog5 = function () {
 			return [
 				new sap.m.Column({
-					width : "150px",
 					hAlign : "Begin",
 					header : new sap.m.Label({
 						text : "Name"
@@ -609,7 +613,11 @@
 		});
 
 		var oButton5 = new sap.m.Button("tsdWithLargeDataAndMultiSelectButton", {
+			layoutData: new sap.m.FlexItemData({
+				maxWidth: "100%"
+			}),
 			text: "Open TableSelectDialog in MultiSelect mode with large data",
+			ariaHasPopup: sap.ui.core.aria.HasPopup.Dialog,
 			press: function () {
 				// open dialog
 				oTableSelectDialog5.open();
@@ -738,7 +746,11 @@
 		});
 
 		var oButton6 = new sap.m.Button("tsdWithVeryLargeDataButton", {
+			layoutData: new sap.m.FlexItemData({
+				maxWidth: "100%"
+			}),
 			text: "Open TableSelectDialog with very large data",
+			ariaHasPopup: sap.ui.core.aria.HasPopup.Dialog,
 			press: function () {
 				// open dialog
 				oTableSelectDialog6.setMultiSelect(false);
@@ -747,7 +759,11 @@
 		});
 
 		var oButton7 = new sap.m.Button("Button7", {
+			layoutData: new sap.m.FlexItemData({
+				maxWidth: "100%"
+			}),
 			text: "Open TableSelectDialog with multi Select and very large data",
+			ariaHasPopup: sap.ui.core.aria.HasPopup.Dialog,
 			press: function () {
 				// open dialog
 				oTableSelectDialog6.setMultiSelect(true);
@@ -839,7 +855,11 @@
 		});
 
 		var oButton8 = new sap.m.Button("Button8", {
+			layoutData: new sap.m.FlexItemData({
+				maxWidth: "100%"
+			}),
 			text: "Open TableSelectDialog in MultiSelect mode, Web service binding, prefiltered by \"id_1\" with web service binding and no fixed width",
+			ariaHasPopup: sap.ui.core.aria.HasPopup.Dialog,
 			press: function () {
 				// initiate model
 				var oModel = new sap.ui.model.odata.ODataModel(sServiceURI, true);
@@ -904,7 +924,11 @@
 		});
 
 		var oButton9 = new sap.m.Button("Button9", {
+			layoutData: new sap.m.FlexItemData({
+				maxWidth: "100%"
+			}),
 			text: "Open TableSelectDialog in MultiSelect mode, Web service binding, late binding, with web service binding and 400px width",
+			ariaHasPopup: sap.ui.core.aria.HasPopup.Dialog,
 			press: function () {
 				// open dialog
 				oTableSelectDialog9.open("");
@@ -924,14 +948,22 @@
 		});
 
 		var oButton10 = new sap.m.Button("Button10", {
+			layoutData: new sap.m.FlexItemData({
+				maxWidth: "100%"
+			}),
 			text: "Open TableSelectDialog with default property growing (true)",
+			ariaHasPopup: sap.ui.core.aria.HasPopup.Dialog,
 			press: function () {
 				oTableSelectDialog10.open();
 			}
 		});
 
 		var oButton11 = new sap.m.Button("Button11", {
+			layoutData: new sap.m.FlexItemData({
+				maxWidth: "100%"
+			}),
 			text: "Open TableSelectDialog with property growing false",
+			ariaHasPopup: sap.ui.core.aria.HasPopup.Dialog,
 			press: function () {
 				oTableSelectDialog11.open();
 			}
@@ -992,7 +1024,11 @@
 		}));
 
 		var oButton12 = new sap.m.Button("Button12", {
+			layoutData: new sap.m.FlexItemData({
+				maxWidth: "100%"
+			}),
 			text: "Open TableSelectDialog with Reset Button and long title",
+			ariaHasPopup: sap.ui.core.aria.HasPopup.Dialog,
 			press: function () {
 				oTableSelectDialog12.open();
 			}
@@ -1019,11 +1055,120 @@
 			selected : "{selected}"
 		}));
 
+		/* TableSelectDialog with resizable true */
+
+		var oTableSelectDialog13 = new sap.m.TableSelectDialog("TableSelectDialog13", {
+			title: "Table Select Dialog with resizable and draggable true",
+			noDataText: "Table Select Dialog with resizable and draggable true no data",
+			contentWidth: "1000px",
+			resizable: true,
+			draggable: true
+		});
+
+		// set model & bind Aggregation
+		oTableSelectDialog13.setModel(new sap.ui.model.json.JSONModel(aData));
+		oTableSelectDialog13.bindItems("/", new sap.m.ColumnListItem({
+			cells : [
+				new sap.m.Label({text : "{text}"})
+			],
+			selected : "{selected}"
+		}));
+		var oButton13 = new sap.m.Button("Button13", {
+			layoutData: new sap.m.FlexItemData({
+				maxWidth: "100%"
+			}),
+			text: "Open SelectDialog with resizable=true",
+			ariaHasPopup: sap.ui.core.aria.HasPopup.Dialog,
+			press: function () {
+				// open dialog
+				oTableSelectDialog13.open();
+			}
+		});
+
+		var oTableSelectDialog14 = new sap.m.TableSelectDialog("TableSelectDialog14", {
+			title: "Table Select Dialog with Responsive Paddings (SAP Quartz and Horizon themes only)",
+			noDataText: "No data",
+			contentWidth: "100%",
+			resizable: true,
+			draggable: true,
+			columns : [
+				fnCreateSimpleDialogColumns()
+			]
+		});
+
+		// set model & bind Aggregation
+		oTableSelectDialog14.setModel(oModel3);
+		oTableSelectDialog14.bindAggregation("items", "/items", oItemTemplate1);
+		oTableSelectDialog14.addStyleClass("sapUiResponsivePadding--header sapUiResponsivePadding--subHeader sapUiResponsivePadding--content sapUiResponsivePadding--footer");
+
+		var oButton14 = new sap.m.Button("Button14", {
+			layoutData: new sap.m.FlexItemData({
+				maxWidth: "100%"
+			}),
+			text: "Open SelectDialog with Responsive Padding",
+			ariaHasPopup: sap.ui.core.aria.HasPopup.Dialog,
+			press: function () {
+				// open dialog
+				oTableSelectDialog14.open();
+			}
+		});
+
+		var oTableSelectDialog15 = new sap.m.TableSelectDialog("TableSelectDialog15", {
+			title: "Choose several World Domination companions",
+			noDataText: "Sorry, no world domination companions available",
+			contentWidth: "1000px",
+			searchPlaceholder: "Placeholder text",
+			columns : [
+				fnCreateSimpleDialogColumns()
+			]
+		});
+
+		// set model & bind Aggregation
+		oTableSelectDialog14.setModel(oModel3);
+		oTableSelectDialog14.bindAggregation("items", "/items", oItemTemplate1);
+		oTableSelectDialog14.addStyleClass("sapUiResponsivePadding--header sapUiResponsivePadding--subHeader sapUiResponsivePadding--content sapUiResponsivePadding--footer");
+
+		var oButton15 = new sap.m.Button("Button15", {
+			text: "Select Dialog with custom placeholder",
+			ariaHasPopup: sap.ui.core.aria.HasPopup.Dialog,
+			press: function () {
+				// open dialog
+				oTableSelectDialog15.open();
+			}
+		});
+
+		var oTableSelectDialog16 = new sap.m.TableSelectDialog("TableSelectDialog16", {
+			title: "Delayed loading",
+			noDataText: "Data is loading",
+			contentWidth: "1000px",
+			searchPlaceholder: "Placeholder text",
+			columns: [
+				fnCreateSimpleDialogColumns()
+			]
+		});
+
+		var oButton16 = new sap.m.Button("Button16", {
+			text: "Select Dialog with delayed loading",
+			ariaHasPopup: sap.ui.core.aria.HasPopup.Dialog,
+			press: function () {
+				// open dialog
+				oTableSelectDialog16.open();
+
+				setTimeout(function () {
+					// initiate model & bind Aggregation
+					oTableSelectDialog16.setModel(oModel3);
+					oTableSelectDialog16.bindAggregation("items", "/items", oItemTemplate1);
+				}, 500);
+			}
+		});
+
 		// create the application page
 		var oPage = new sap.m.Page("page", {
 			title:"Mobile TableSelectDialog Control",
 			content:[
 				new sap.m.VBox({
+					renderType: "Bare",
+					alignItems: "Start",
 					items: [
 						oInput1,
 						oInput2,
@@ -1036,7 +1181,11 @@
 						oButton9,
 						oButton10,
 						oButton11,
-						oButton12
+						oButton12,
+						oButton13,
+						oButton14,
+						oButton15,
+						oButton16
 					]
 				})
 			]
@@ -1046,8 +1195,8 @@
 		oApp.addPage(oPage).placeAt("content");
 
 	</script>
-	</head>
-	<body id="body" class="sapUiBody">
-		<div id="content"></div>
-	</body>
+</head>
+<body id="body" class="sapUiBody">
+<div id="content"></div>
+</body>
 </html>

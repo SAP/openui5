@@ -3,17 +3,37 @@
  */
 
 sap.ui.define([
-	'jquery.sap.global',
-	'sap/ui/documentation/library'
-],function (jQuery, library) {
+	"sap/ui/core/Theming",
+	"sap/ui/documentation/library",
+	"sap/base/Log",
+	"sap/base/util/extend",
+	"sap/base/util/isPlainObject"
+],function(Theming, library, Log, extend, isPlainObject) {
 	"use strict";
+
+	var IGNORED_GATEGORIES = {
+		Template: "Template"
+	};
+
+	var id = 0;
 
 	// function to compute the app objects for a demo object
 	function createDemoAppData(oDemoAppMetadata, sLibUrl, sLibNamespace) {
+
+		//Define the default Demo Kit theme
+		var DEFAULT_THEME = Theming.getTheme();
+
 		// transform simple demo app link to a configuration object
-		var aLinks = [];
+		var aLinks = [],
+			sRef = oDemoAppMetadata.ref;
+		//Attach theme parameter to Demo app link
+		if (sRef.indexOf("#") > 0) {
+			sRef = sRef.slice(0, sRef.indexOf("#")) + "?sap-ui-theme=" + DEFAULT_THEME + sRef.slice(sRef.indexOf("#"));
+		} else {
+			sRef = sRef + "?sap-ui-theme=" + DEFAULT_THEME;
+		}
 		// transform link object to a bindable array of objects
-		if (jQuery.isPlainObject(oDemoAppMetadata.links)) {
+		if (isPlainObject(oDemoAppMetadata.links)) {
 			aLinks = Object.keys(oDemoAppMetadata.links).map(function (sKey) {
 				return {
 					name: sKey,
@@ -23,6 +43,7 @@ sap.ui.define([
 		}
 
 		var oApp = {
+			id: 'demoapp-' + oDemoAppMetadata.category + '-' + id++,
 			lib : oDemoAppMetadata.namespace || sLibNamespace,
 			name : oDemoAppMetadata.text,
 			icon : oDemoAppMetadata.icon,
@@ -30,7 +51,7 @@ sap.ui.define([
 			config : oDemoAppMetadata.config,
 			teaser : oDemoAppMetadata.teaser,
 			category : oDemoAppMetadata.category,
-			ref : (oDemoAppMetadata.resolve === "lib" ? sLibUrl : "") + oDemoAppMetadata.ref,
+			ref : (oDemoAppMetadata.resolve === "lib" ? sLibUrl : "") + sRef,
 			links : aLinks
 		};
 
@@ -53,7 +74,7 @@ sap.ui.define([
 	 * 	}
 	 *
 	 * Under path /demoApps the following properties can be found: lib, name, icon, desc, type, ref
-	 * Under path /demoApps by category the apps are structured by the entry "category" and grouped in batches
+	 * Under path /demoAppsByCategory the apps are structured by the entry "category" and grouped in batches
 	 * of 4 items so that they can be bound to the BlockLayoutRow control directly
 	 * @param {array} aLibs an array of the currently loaded UI5 libraries
 	 * @param {object} oDocIndicies an object of the currently loaded UI5 library docu metadata
@@ -87,11 +108,16 @@ sap.ui.define([
 			if (oDemo.links && oDemo.links.length > 0) {
 				for (var j = 0; j < oDemo.links.length; j++) {
 					var oDemoAppData = createDemoAppData(oDemo.links[j], oDocIndicies[aLibs[i]].libraryUrl, oDemo.text);
+
+					if (IGNORED_GATEGORIES[oDemoAppData.category]) {
+						continue;
+					}
+
 					oData.demoApps.push(oDemoAppData);
 
 					// push demo app into helper structure
 					if (aCategories.indexOf(oDemoAppData.category) < 0) {
-						jQuery.sap.log.warning("Demo app category \"" + oDemoAppData.category + "\" not found, correcting demo app \"" + oDemoAppData.name + "\" to \"Misc\"");
+						Log.warning("Demo app category \"" + oDemoAppData.category + "\" not found, correcting demo app \"" + oDemoAppData.name + "\" to \"Misc\"");
 						oDemoAppData.category = "Misc";
 					}
 					if (oDemo.links[j].category !== "Tool") { // Exclude Tools from showing, but preserve them in Download dialog
@@ -109,12 +135,10 @@ sap.ui.define([
 				return;
 			}
 
-			// push a row for the headline
-			oData.demoAppsByCategory.push([{
-				categoryId : sKey
-			}]);
-			// push n rows for the demo apps itself (start a new row every 4 cells)
-			var iCurrentLength = oData.demoAppsByCategory.push([]);
+			var aRows = [];
+
+			// collect n rows for the demo apps itself (start a new row every 4 cells)
+			var iCurrentLength = aRows.push([]);
 			var iCellCounter = 0;
 			for (var i = 0; i < oDemoAppsByCategory[sKey].length; i++) {
 				iCellCounter++;
@@ -122,11 +146,18 @@ sap.ui.define([
 					iCellCounter++;
 				}
 				if (iCellCounter > 4) {
-					iCurrentLength = oData.demoAppsByCategory.push([]);
+					iCurrentLength = aRows.push([]);
 					iCellCounter = 0;
 				}
-				oData.demoAppsByCategory[iCurrentLength - 1].push(oDemoAppsByCategory[sKey][i]);
+				aRows[iCurrentLength - 1].push(oDemoAppsByCategory[sKey][i]);
 			}
+
+			// push the category including its rows
+			oData.demoAppsByCategory.push({
+				categoryId: sKey,
+				rows: aRows
+			});
+
 		});
 
 		return oData;
@@ -140,20 +171,34 @@ sap.ui.define([
 		 * @public
 		 */
 		fillJSONModel: function (oModel) {
-			function fnHandleLibInfoLoaded  (aLibs, oDocIndicies) {
-				oModel.setProperty("/bFooterVisible", true);
-				if (!aLibs) {
-					return;
+			return new Promise(function (resolve) {
+				function fnHandleLibInfoLoaded  (aLibs, oDocIndicies) {
+					oModel.setProperty("/bFooterVisible", true);
+					if (!aLibs) {
+						return;
+					}
+
+					// set model
+					var oModelData = oModel.getData();
+					oModel.setData(extend(oModelData, createModelData(aLibs, oDocIndicies)));
+					resolve(oModel);
 				}
 
-				// set model
-				var oModelData = oModel.getData();
-				oModel.setData(jQuery.extend(oModelData, createModelData(aLibs, oDocIndicies)));
-			}
+				// load and process all lib info
+				oModel.setProperty("/bFooterVisible", false);
+				library._loadAllLibInfo("", "_getDocuIndex", fnHandleLibInfoLoaded);
+			});
+		},
+		getDemoAppsData: function () {
+			return new Promise(function (resolve) {
+				library._loadAllLibInfo("", "_getDocuIndex", function (aLibs, oDocIndicies) {
+					if (!aLibs) {
+						return;
+					}
 
-			// load and process all lib info
-			oModel.setProperty("/bFooterVisible", false);
-			library._loadAllLibInfo("", "_getDocuIndex", fnHandleLibInfoLoaded);
+					resolve(createModelData(aLibs, oDocIndicies));
+				});
+			});
 		}
 	};
 

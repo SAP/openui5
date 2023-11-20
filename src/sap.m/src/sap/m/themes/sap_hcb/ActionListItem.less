@@ -44,17 +44,6 @@
 	outline-offset: -0.125rem;
 	border: none;
 }
-/* focus in IE (outline-offset is ignored in IE) */
-html[data-sap-ui-browser^="ie"] .sapMList .sapMLIB.sapMALI:focus > .sapMLIBContent {
-	outline: none;
-	border-width: 0.125rem;
-	border-style: dotted;
-	border-radius: 0;
-}
-/* content has the focus outline not the item */
-.sapMLIBLegacyOutline.sapMALI:focus::before {
-	border: none;
-}
 
 /* ------------------------------ */
 /* Compact size                   */

@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="4.0" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+	<edmx:Reference Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_COMMON',Version='0001',SAP__Origin='LOCAL')/$value">
+		<edmx:Include Namespace="com.sap.vocabularies.Common.v1" Alias="SAP__common" />
+	</edmx:Reference>
+	<edmx:DataServices>
+		<Schema Namespace="com.sap.gateway.default.zui5_epm_sample_ext.v0001">
+			<Annotations Target="com.sap.gateway.default.zui5_epm_sample.v0002.Product/Category">
+				<Annotation Term="SAP__common.ValueList">
+					<Record>
+						<PropertyValue Property="Label" String="Category (Modified Mapping)" />
+						<PropertyValue Property="CollectionRoot" String="../../../../f4/sap/h_epm_pd_cats-sh/0001;ps='default-zui5_epm_sample-0002';va='com.sap.gateway.default.zui5_epm_sample.v0002.ET-PRODUCT.CATEGORY'/$metadata" />
+						<PropertyValue Property="CollectionPath" String="H_EPM_PD_CATS_SH_Set" />
+						<PropertyValue Property="Parameters">
+							<Collection>
+								<Record Type="SAP__common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="Label" String="Category" />
+									<PropertyValue Property="ValueListProperty" String="CATEGORY" />
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+				<Annotation Term="SAP__common.ValueList" Qualifier="additional">
+					<Record>
+						<PropertyValue Property="Label" String="Category (Additional Mapping)" />
+						<PropertyValue Property="CollectionRoot" String="../../../../f4/sap/h_epm_pd_cats-sh/0001;ps='default-zui5_epm_sample-0002';va='com.sap.gateway.default.zui5_epm_sample.v0002.ET-PRODUCT.CATEGORY'/$metadata" />
+						<PropertyValue Property="CollectionPath" String="H_EPM_PD_CATS_SH_Set" />
+						<PropertyValue Property="Parameters">
+							<Collection>
+								<Record Type="SAP__common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty" String="CATEGORY" />
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="com.sap.gateway.default.zui5_epm_sample.v0002.SOLineItem/ProductID">
+				<Annotation Term="SAP__common.ValueListRelevantQualifiers">
+					<!-- The empty qualifier is always relevant, "additional" only for SAP -->
+					<Collection>
+						<String/>
+						<If>
+							<Eq>
+								<Path>SOITEM_2_SO/SO_2_BP/BusinessPartnerID</Path>
+								<String>0100000000</String>
+							</Eq>
+							<String>additional</String>
+						</If>
+					</Collection>
+				</Annotation>
+			</Annotations>
+		</Schema>
+	</edmx:DataServices>
+</edmx:Edmx>

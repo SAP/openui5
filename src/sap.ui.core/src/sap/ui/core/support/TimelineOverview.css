@@ -1,13 +1,6 @@
 #sapUiInteractionTimelineOverview {
-	display: -webkit-box;
-	display: -webkit-flex;
-	display: -ms-flexbox;
 	display: flex;
 
-	-webkit-box-direction: normal;
-	-webkit-box-orient: vertical;
-	-webkit-flex-direction: column;
-	-ms-flex-direction: column;
 	flex-direction: column;
 
 	height: 50px;
@@ -18,25 +11,18 @@
 
 	-webkit-user-select: none;
 	-moz-user-select: none;
-	-ms-user-select: none;
 	user-select: none;
 
 	border-bottom: solid 1px #ddd;
 	border-bottom: solid 1px #ddd;
 	padding-left: 0px;
 	position: relative;
-	-webkit-box-flex: 1;
-	-webkit-flex-grow: 1;
-	-ms-flex: 1 1;
 	flex-grow: 1;
 }
 
 #sapUiInteractionTimelineOverview .InteractionTimeline {
 	background: #fafafa;
 	bottom: 0;
-	display: -webkit-box;
-	display: -webkit-flex;
-	display: -ms-flexbox;
 	display: flex;
 	left: 0;
 	position: absolute;
@@ -50,9 +36,6 @@
 
 #sapUiInteractionTimelineOverview .InteractionTimeline ol {
 	bottom: 0;
-	display: -webkit-box;
-	display: -webkit-flex;
-	display: -ms-flexbox;
 	display: flex;
 	left: 0px;
 	position: absolute;
@@ -61,9 +44,6 @@
 }
 
 #sapUiInteractionTimelineOverview .InteractionTimeline li {
-	display: -webkit-box;
-	display: -webkit-flex;
-	display: -ms-flexbox;
 	display: flex;
 	position: relative;
 	flex: 1;
@@ -72,9 +52,6 @@
 #sapUiInteractionTimelineOverview .InteractionTimeline li .duration {
 	display: flex;
 	flex-direction: column;
-	-webkit-box-pack: end;
-	-webkit-justify-content: flex-end;
-	-ms-flex-pack: end;
 	justify-content: flex-end;
 }
 
@@ -91,13 +68,7 @@
 	position: absolute;
 	right: 0;
 	top: 0;
-	-webkit-box-align: end;
-	-webkit-align-items: flex-end;
-	-ms-flex-align: end;
 	align-items: flex-end;
-	-webkit-box-pack: center;
-	-webkit-justify-content: center;
-	-ms-flex-pack: center;
 	justify-content: center;
 }
 
@@ -106,9 +77,6 @@
 }
 
 .sapUiInteractionTimelineStepRight {
-	-webkit-box-flex: 1;
-	-webkit-flex-grow: 1;
-	-ms-flex: 1 1;
 	flex-grow: 1;
 
 	box-sizing: border-box;
@@ -116,9 +84,6 @@
 }
 
 .sapUiInteractionTimelineStepRightBold {
-	-webkit-box-flex: 1;
-	-webkit-flex-grow: 1;
-	-ms-flex: 1 1;
 	flex-grow: 1;
 
 	box-sizing: border-box;

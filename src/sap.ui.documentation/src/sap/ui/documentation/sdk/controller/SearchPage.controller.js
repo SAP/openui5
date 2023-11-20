@@ -2,13 +2,14 @@
  * ${copyright}
  */
 
-/*global location */
 sap.ui.define([
-		"jquery.sap.global",
-		"sap/ui/documentation/sdk/controller/BaseController",
-		"sap/ui/model/json/JSONModel",
-		"sap/m/GroupHeaderListItem"
-	], function (jQuery, BaseController, JSONModel, GroupHeaderListItem) {
+	"sap/ui/documentation/sdk/controller/BaseController",
+	"sap/ui/documentation/sdk/controller/util/SearchUtil",
+	"sap/ui/documentation/sdk/controller/util/Highlighter",
+	"sap/ui/model/json/JSONModel",
+	"sap/m/GroupHeaderListItem",
+	"sap/base/Log"
+], function(BaseController, SearchUtil, Highlighter, JSONModel, GroupHeaderListItem, Log) {
 		"use strict";
 
 		return BaseController.extend("sap.ui.documentation.sdk.controller.SearchPage", {
@@ -18,14 +19,24 @@ sap.ui.define([
 			/* =========================================================== */
 
 			onInit: function () {
-				this.setModel(new JSONModel());
-				this.bindListResults();
+				this.setModel(new JSONModel(), "searchView");
 				this.getRouter().getRoute("search").attachPatternMatched(this._onTopicMatched, this);
 			},
 
-			bindListResults: function () {
-				this.dataObject = {data:[]};
-				this.getModel().setData(this.dataObject);
+			onAfterRendering: function () {
+				var oConfig = {
+					useExternalStyles: false,
+					shouldBeObserved: true,
+					isCaseSensitive: false
+				};
+
+				if (!this.highlighter) {
+					this.highlighter = new Highlighter(this.getView().getDomRef(), oConfig);
+				}
+			},
+
+			onExit: function () {
+				this.highlighter.destroy();
 			},
 
 			/* =========================================================== */
@@ -39,186 +50,79 @@ sap.ui.define([
 			 * @private
 			 */
 			_onTopicMatched: function (event) {
-				var that = this,
-					sQuery = event.getParameter("arguments").searchParam;
-				this.dataObject.searchTerm = sQuery;
-				this._modelRefresh();
+				var sQuery = decodeURIComponent(event.getParameter("arguments").searchParam),
+					oOptions = event.getParameter("arguments")["?options"],
+					sCategory = oOptions && oOptions.category,
+					oList = this.byId("allList"),
+					oSection = this._findSectionForCategory(sCategory),
+					sSectionId = oSection ? oSection.getId() : null,
+					sOldQuery = this.getModel("searchView").getProperty("/lastProcessedQuery"),
+					sPageTitle = '';
 
 				try {
 					this.hideMasterSide();
 				} catch (e) {
 					// try-catch due to a bug in UI5 SplitApp, CL 1898264 should fix it
-					jQuery.sap.log.error(e);
+					Log.error(e);
 				}
 
-				// Build the full query strings, escape special characters
-				var sQueryDoc = "(category:topics) AND (" + encodeURIComponent(sQuery) + ")";
-				var sQueryApi = "(category:apiref) AND (" + encodeURIComponent(sQuery) + ")";
-				var sQueryExplored = "(category:entity) AND (" + encodeURIComponent(sQuery) + ")";
+				if (sQuery === sOldQuery) {
+					this.getView().byId("searchPage").setSelectedSection(sSectionId);
+					this._modifyLinks();
+					return;
+				}
 
-				var PromiseDoc = new Promise(function (resolve) {
-					jQuery.ajax({
-						url: "search?q=" + sQueryDoc,
-						dataType : "json",
-						success : function(oData, sStatus, xhr) {
-							resolve(oData, sStatus, xhr);
-						},
-						error : function() {
-							resolve([]);
-						}
-					});
-				});
+				this.getModel("searchData").setProperty("/query", sQuery);
 
-				var PromiseApi = new Promise(function (resolve) {
-					jQuery.ajax({
-						url: "search?q=" + sQueryApi,
-						dataType : "json",
-						success : function(oData, sStatus, xhr) {
-							resolve(oData, sStatus, xhr);
-						},
-						error : function() {
-							resolve([]);
-						}
-					});
-				});
+				oList.setBusy(true);
+				SearchUtil.search(sQuery, {
+					includeDeprecated: this.getModel("searchData").getProperty("/includeDeprecated")
+				}).then(function(result) {
+					this.getModel("searchView").setProperty("/lastProcessedQuery", sQuery);
+					this.getModel("searchData").setProperty("/matches", result.matches);
+					this.getView().byId("searchPage").setSelectedSection(sSectionId);
+					oList.setBusy(false);
+				}.bind(this));
 
-				var PromiseExplored = new Promise(function (resolve) {
-					jQuery.ajax({
-						url: "search?q=" + sQueryExplored,
-						dataType : "json",
-						success : function(oData, sStatus, xhr) {
-							resolve(oData, sStatus, xhr);
-						},
-						error : function() {
-							resolve([]);
-						}
-					});
-				});
+				if (this.highlighter) {
+					this.highlighter.highlight(sQuery);
+				}
 
-				Promise.all([PromiseDoc, PromiseApi, PromiseExplored]).then(function(result) {
-					var oData = {},
-						oResultDoc = result[0][0] || {},
-						oResultApi = result[1][0] || {},
-						oResultExplored = result[2][0] || {};
-
-					oResultDoc.matches = oResultDoc.matches || [];
-					oResultApi.matches = oResultApi.matches || [];
-					oResultExplored.matches = oResultExplored.matches || [];
-
-					oData.success = oResultDoc.success || oResultApi.success || oResultExplored.success || false;
-					oData.totalHits = (oResultDoc.totalHits + oResultApi.totalHits + oResultExplored.totalHits) || 0;
-					oData.matches = oResultDoc.matches.concat(oResultApi.matches).concat(oResultExplored.matches);
-					that.processResult(oData);
-				 }).catch(function(reason) {
-					 // implement catch function to prevent uncaught errors message
-				 });
+				sPageTitle = this.getModel("i18n").getResourceBundle().getText("SEARCH_PAGE_TITLE", [sQuery]);
+				this.appendPageTitle(sPageTitle);
 			},
 
-			processResult : function (oData) {
-				this.dataObject.data = [];
-				this.dataObject.dataAPI = [];
-				this.dataObject.dataDoc = [];
-				this.dataObject.dataExplored = [];
-				this.dataObject.AllLength = 0;
-				this.dataObject.APILength = 0;
-				this.dataObject.DocLength = 0;
-				this.dataObject.ExploredLength = 0;
-				if ( oData && oData.success ) {
-					if ( oData.totalHits == 0 ) {
-						jQuery(".sapUiRrNoData").html("No matches found.");
-					} else {
-						for (var i = 0; i < oData.matches.length; i++) {
-							var oDoc = oData.matches[i];
-							//TODO: Find a nicer Date formatting procedure
-							oDoc.modifiedStr = oDoc.modified + "";
-							var sModified = oDoc.modifiedStr.substring(0,4) + "/" + oDoc.modifiedStr.substring(4,6) + "/" + oDoc.modifiedStr.substring(6,8) + ", " + oDoc.modifiedStr.substring(8,10) + ":" + oDoc.modifiedStr.substring(10),
-								sNavURL = oDoc.path,
-								bShouldAddToSearchResults = false,
-								sCategory;
-							if (sNavURL.indexOf("topic/") === 0) {
-								sNavURL = sNavURL.substring(0, sNavURL.lastIndexOf(".html"));
-								bShouldAddToSearchResults = true;
-								sCategory = "Documentation";
-								this.dataObject.dataDoc.push({
-									index: this.dataObject.DocLength,
-									title: oDoc.title ? oDoc.title : "Untitled",
-									path: sNavURL,
-									summary: oDoc.summary ? (oDoc.summary + "...") : "",
-									score: oDoc.score,
-									modified: sModified,
-									category: sCategory
-								});
-								this.dataObject.DocLength++;
-							} else if (sNavURL.indexOf("entity/") === 0 ) {
-								bShouldAddToSearchResults = true;
-								sCategory = "Samples";
-								this.dataObject.dataExplored.push({
-									index: this.dataObject.ExploredLength,
-									title: oDoc.title ? oDoc.title : "Untitled",
-									path: sNavURL,
-									summary: oDoc.summary ? (oDoc.summary + "...") : "",
-									score: oDoc.score,
-									modified: sModified,
-									category: sCategory
-								});
-								this.dataObject.ExploredLength++;
-							} else if (sNavURL.indexOf("docs/api/symbols/") === 0) {
-								sNavURL = sNavURL.substring("docs/api/symbols/".length, sNavURL.lastIndexOf(".html"));
-								sNavURL = "api/" + sNavURL;
-								bShouldAddToSearchResults = true;
-								sCategory = "API Reference";
-								this.dataObject.dataAPI.push({
-									index: this.dataObject.APILength,
-									title: oDoc.title ? oDoc.title : "Untitled",
-									path: sNavURL,
-									summary: oDoc.summary ? (oDoc.summary + "...") : "",
-									score: oDoc.score,
-									modified: sModified,
-									category: sCategory
-								});
-								this.dataObject.APILength++;
-							} else if (sNavURL.indexOf("docs/api/modules/") === 0) {
-								sNavURL = sNavURL.substring("docs/api/modules/".length, sNavURL.lastIndexOf(".html")).replace(/_/g, ".");
-								sNavURL = "api/" + sNavURL;
-								bShouldAddToSearchResults = true;
-								sCategory = "API Reference";
-								this.dataObject.dataAPI.push({
-									index: this.dataObject.APILength,
-									title: oDoc.title ? oDoc.title : "Untitled",
-									path: sNavURL,
-									summary: oDoc.summary ? (oDoc.summary + "...") : "",
-									score: oDoc.score,
-									modified: sModified,
-									category: sCategory
-								});
-								this.dataObject.APILength++;
-							}
+			formatTableTitle: function (sPattern, iVisibleItemsCount, iItemsCount) {
+				var sVisibleItemsString = iItemsCount > 0 ? "1 - " + iVisibleItemsCount : "0";
 
-							if (bShouldAddToSearchResults) {
-								this.dataObject.data.push({
-									index: i,
-									title: oDoc.title ? oDoc.title : "Untitled",
-									path: sNavURL,
-									summary: oDoc.summary ? (oDoc.summary + "...") : "",
-									score: oDoc.score,
-									modified: sModified,
-									category: sCategory
-								});
-								this.dataObject.AllLength++;
-							}
-						}
-					}
-				} else {
-					jQuery(".sapUiRrNoData").html("Search failed, please retry ...");
-				}
-				this._modelRefresh();
+				return this.formatMessage(sPattern, sVisibleItemsString, iItemsCount);
+			},
+
+			onDeprecatedFlagChange: function(oEvent) {
+				var bIncludeDeprecated = oEvent.getParameter("selected"),
+					sQuery = this.getModel("searchData").getProperty("/query");
+
+					SearchUtil.search(sQuery, {
+						includeDeprecated: bIncludeDeprecated
+					}).then(function(result) {
+						this.getModel("searchData").setProperty("/matches", result.matches);
+					}.bind(this));
+			},
+
+			_findSectionForCategory: function(sCategory) {
+				var aSection = this.getView().byId("searchPage").getSections().filter(function(oSecion) {
+					return (oSecion.data("category") == sCategory);
+				});
+				return aSection.length && aSection[0];
 			},
 
 			/**
 			 * Modify all search result links
+			 * The default modification is formatting of titles (hide/show trailing colons)
+			 * @param bModifyHref enable modifications of href and target (to alow open in new window)
 			 * @private
 			 */
-			_modifyLinks: function () {
+			_modifyLinks: function (bModifyHref) {
 				var oView = this.getView(),
 					// Collect all possible items from all lists
 					aItems = [].concat(
@@ -228,25 +132,42 @@ sap.ui.define([
 						oView.byId("samplesList").getItems()
 					),
 					iLen = aItems.length,
-					oItem;
+					oItem,
+					oLink,
+					sHref,
+					sTarget = "_self",
+					bExternal,
+					bFormatTitle = true;
 
 				while (iLen--) {
 					oItem = aItems[iLen];
 					// Access control lazy loading method if available
 					if (oItem._getLinkSender) {
 						// Set link href to allow open in new window functionality
-						oItem._getLinkSender().setHref("#/" + oItem.getCustomData()[0].getValue());
+						oLink = this.loadSearchResultLink(oItem, bFormatTitle);
+						if (bModifyHref) {
+							sHref = oItem.getCustomData()[0].getValue();
+							bExternal = oItem.getCustomData()[1].getValue();
+							if (bExternal) {
+								sHref = new URL(sHref, document.baseURI).href;
+								sTarget = "_blank";
+							}
+							oLink.setHref(sHref);
+							oLink.setTarget(sTarget);
+						}
 					}
 				}
 			},
 
-			/**
-			 * Refresh model and modify links
-			 * @private
-			 */
-			_modelRefresh: function () {
-				this.getModel().refresh();
-				this._modifyLinks();
+			loadSearchResultLink: function(oItem, bFormatTitle) {
+				var bShowColon;
+				if (!oItem._getLinkSender) {
+					return null;
+				}
+				if (bFormatTitle) {
+					bShowColon = !!oItem.getText();
+				}
+				return oItem._getLinkSender(bShowColon);
 			},
 
 			getGroupHeader : function (oGroup) {
@@ -269,23 +190,33 @@ sap.ui.define([
 			},
 
 			onAllLoadMore : function (oEvent) {
-				this.dataObject.visibleAllLength = oEvent.getParameter("actual");
-				this._modelRefresh();
+				this.getModel("searchView").setProperty("/visibleAllLength", oEvent.getParameter("actual"));
+				this._modifyLinks(true);
 			},
 
 			onAPILoadMore : function (oEvent) {
-				this.dataObject.visibleAPILength = oEvent.getParameter("actual");
-				this._modelRefresh();
+				this.getModel("searchView").setProperty("/visibleAPILength", oEvent.getParameter("actual"));
+				this._modifyLinks(true);
 			},
 
 			onDocLoadMore : function (oEvent) {
-				this.dataObject.visibleDocLength = oEvent.getParameter("actual");
-				this._modelRefresh();
+				this.getModel("searchView").setProperty("/visibleDocLength", oEvent.getParameter("actual"));
+				this._modifyLinks(true);
 			},
 
 			onExploredLoadMore : function (oEvent) {
-				this.dataObject.visibleExploredLength = oEvent.getParameter("actual");
-				this._modelRefresh();
+				this.getModel("searchView").setProperty("/visibleExploredLength", oEvent.getParameter("actual"));
+				this._modifyLinks(true);
+			},
+
+			onSwitchTab: function(oEvent) {
+				var sCategory = oEvent.getParameter("section").data("category"),
+					oRouterParams = {searchParam: this.getModel("searchView").getProperty("/lastProcessedQuery")};
+
+				if (sCategory) {
+					oRouterParams["?options"] = {category: sCategory};
+				}
+				this.getRouter().navTo("search", oRouterParams);
 			}
 
 		});

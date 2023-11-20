@@ -1,0 +1,38 @@
+<mvc:View
+	controllerName="sap.f.cardsdemo.controller.ComponentCard"
+	xmlns="sap.m"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:w="sap.ui.integration.widgets"
+	displayBlock="true">
+	<Page title="{i18n>appTitle}" id="page">
+		<subHeader>
+			<Toolbar>
+				<ToolbarSpacer />
+				<Title text="Component Card" />
+				<ToolbarSpacer />
+			</Toolbar>
+		</subHeader>
+		<mvc:View viewName="sap.f.cardsdemo.view.common.CommonCardSettings" type="XML" async="true"></mvc:View>
+		<Panel>
+			<w:Card
+				id="comp"
+				manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/componentCard/allInOne/manifest.json"
+				width="300px"
+				class="sapUiTinyMargin" />
+			<w:Card
+				id="ticket"
+				manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/componentCard/booking/manifest.json"
+				width="300px"
+				class="sapUiTinyMargin" />
+			<w:Card
+				manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/componentCard/componentWithList/manifest.json"
+				width="300px"
+				class="sapUiTinyMargin" />
+			<w:Card
+				manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/componentCard/componentWithNoData/manifest.json"
+				width="300px"
+				height="400px"
+				class="sapUiTinyMargin" />
+		</Panel>
+	</Page>
+</mvc:View>

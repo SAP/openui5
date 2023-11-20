@@ -2,10 +2,11 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', 'sap/m/Button', 'sap/m/DateTimeInput', 'sap/m/Input', 'sap/m/Label', 'sap/m/RadioButton', 'sap/m/Select', 'sap/ui/core/Item', 'sap/ui/core/Title', 'sap/ui/core/UIComponent', 'sap/ui/core/message/Message', 'sap/ui/layout/GridData', 'sap/ui/layout/form/Form', 'sap/ui/layout/form/FormContainer', 'sap/ui/layout/form/FormElement', 'sap/ui/layout/form/ResponsiveGridLayout', 'sap/ui/model/type/Date', 'sap/ui/model/type/Integer', 'sap/ui/model/type/String'],
-	function(jQuery, Button, DateTimeInput, Input, Label, RadioButton, Select, Item, Title, UIComponent, Message, GridData, Form, FormContainer, FormElement, ResponsiveGridLayout, TypeDate, Integer, TypeString) {
+sap.ui.define(['sap/m/Button', 'sap/m/DateTimeInput', 'sap/m/Input', 'sap/m/Label', 'sap/m/RadioButton', 'sap/m/Select', 'sap/ui/core/Item', 'sap/ui/core/Title', 'sap/ui/core/UIComponent', 'sap/ui/core/message/Message', 'sap/ui/layout/GridData', 'sap/ui/layout/form/Form', 'sap/ui/layout/form/FormContainer', 'sap/ui/layout/form/FormElement', 'sap/ui/layout/form/ResponsiveGridLayout', 'sap/ui/model/type/Date', 'sap/ui/model/type/Integer', 'sap/ui/model/type/String'],
+	function(Button, DateTimeInput, Input, Label, RadioButton, Select, Item, Title, UIComponent, Message, GridData, Form, FormContainer, FormElement, ResponsiveGridLayout, TypeDate, Integer, TypeString) {
 	"use strict";
 
+	/*global oModel */
 
 	// new Component
 	var Component = UIComponent.extend("message.enabled.Component", {
@@ -115,6 +116,7 @@ sap.ui.define(['jquery.sap.global', 'sap/m/Button', 'sap/m/DateTimeInput', 'sap/
 			]
 		});
 
+		/*
 		var oButton1 = new Button({
 			text: "add Warning",
 			press: function() {
@@ -125,7 +127,7 @@ sap.ui.define(['jquery.sap.global', 'sap/m/Button', 'sap/m/DateTimeInput', 'sap/
 						target: "/form/name",
 						processor: oModel
 					})
-				)
+				);
 			}
 		});
 		var oButton2 = new Button({
@@ -137,7 +139,7 @@ sap.ui.define(['jquery.sap.global', 'sap/m/Button', 'sap/m/DateTimeInput', 'sap/
 						type: sap.ui.core.MessageType.Information,
 						processor: oModel
 					})
-				)
+				);
 			}
 		});
 		var oButton3 = new Button({
@@ -150,7 +152,7 @@ sap.ui.define(['jquery.sap.global', 'sap/m/Button', 'sap/m/DateTimeInput', 'sap/
 						target: "/form/city",
 						processor: oModel
 					})
-				)
+				);
 			}
 		});
 		var oButton5 = new Button({
@@ -163,7 +165,7 @@ sap.ui.define(['jquery.sap.global', 'sap/m/Button', 'sap/m/DateTimeInput', 'sap/
 						target: "/form/zip",
 						processor: oModel
 					})
-				)
+				);
 			}
 		});
 
@@ -173,6 +175,8 @@ sap.ui.define(['jquery.sap.global', 'sap/m/Button', 'sap/m/DateTimeInput', 'sap/
 				sap.ui.getCore().getMessageManager().removeAllMessages();
 			}
 		});
+		*/
+
 		return oForm;
 	};
 

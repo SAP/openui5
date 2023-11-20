@@ -1,11 +1,32 @@
-/*
- * ! ${copyright}
+/*!
+ * ${copyright}
  */
 
 // Provides control sap.m.P13nSelectionPanel.
 sap.ui.define([
-	'jquery.sap.global', './ColumnListItem', './P13nPanel', './SearchField', './Table', './library', 'sap/ui/core/library','sap/ui/model/ChangeReason', 'sap/ui/model/json/JSONModel', 'sap/ui/model/BindingMode', 'sap/ui/core/ResizeHandler', 'sap/m/ScrollContainer', './P13nSelectionItem'
-], function(jQuery, ColumnListItem, P13nPanel, SearchField, Table, library, CoreLibrary, ChangeReason, JSONModel, BindingMode, ResizeHandler, ScrollContainer /*, kept for compatibility: P13nSelectionItem */) {
+	'./library',
+	'./ColumnListItem',
+	'./P13nPanel',
+	'./SearchField',
+	'./Text',
+	'./Table',
+	'./Column',
+	'./ScrollContainer',
+	'./P13nSelectionItem',
+	'./VBox',
+	'./Link',
+	'./OverflowToolbar',
+	'./OverflowToolbarLayoutData',
+	'./ToolbarSpacer',
+	"sap/ui/core/Element",
+	"sap/ui/core/Lib",
+	'sap/ui/core/library',
+	'sap/ui/model/ChangeReason',
+	'sap/ui/model/json/JSONModel',
+	'sap/ui/model/BindingMode',
+	'sap/ui/core/ResizeHandler',
+	"sap/ui/thirdparty/jquery"
+], function(library, ColumnListItem, P13nPanel, SearchField, Text, Table, Column, ScrollContainer, P13nSelectionItem /* kept for compatibility*/, VBox, Link, OverflowToolbar, OverflowToolbarLayoutData, ToolbarSpacer, Element, Library, CoreLibrary, ChangeReason, JSONModel, BindingMode, ResizeHandler, jQuery) {
 	"use strict";
 
 	// shortcut for sap.m.ToolbarDesign
@@ -20,6 +41,9 @@ sap.ui.define([
 	// shortcut for sap.m.P13nPanelType
 	var P13nPanelType = library.P13nPanelType;
 
+	// shortcut for sap.ui.core.VerticalAlign
+	var OverflowToolbarPriority = library.OverflowToolbarPriority;
+
 	/**
 	 * Constructor for a new P13nSelectionPanel.
 	 *
@@ -33,7 +57,6 @@ sap.ui.define([
 	 * @private
 	 * @since 1.46.0
 	 * @alias sap.m.P13nSelectionPanel
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var P13nSelectionPanel = P13nPanel.extend("sap.m.P13nSelectionPanel", /** @lends sap.m.P13nSelectionPanel.prototype */
 	{
@@ -80,20 +103,17 @@ sap.ui.define([
 				}
 			}
 		},
-		renderer: function(oRm, oControl) {
-			oRm.write("<div");
-			oRm.writeControlData(oControl);
-			oRm.addClass("sapMP13nColumnsPanel");
-			oRm.writeClasses();
-			oRm.write(">");
-
-			var aContent = oControl.getAggregation("content");
-			if (aContent) {
-				aContent.forEach(function(oContent) {
-					oRm.renderControl(oContent);
+		renderer: {
+			apiVersion: 2,
+			render: function(oRm, oControl){
+				oRm.openStart("div", oControl);
+				oRm.class("sapMP13nColumnsPanel");
+				oRm.openEnd();
+				oControl.getAggregation("content").forEach(function(oChildren){
+					oRm.renderControl(oChildren);
 				});
+				oRm.close("div");
 			}
-			oRm.write("</div>");
 		}
 	});
 
@@ -109,7 +129,6 @@ sap.ui.define([
 		this._bOnAfterRenderingFirstTimeExecuted = false;
 
 		var oModel = new JSONModel({
-			linkPressMap: {},
 			items: [],
 			countOfSelectedItems: 0,
 			countOfItems: 0
@@ -334,9 +353,9 @@ sap.ui.define([
 			rememberSelections: false,
 			selectionChange: jQuery.proxy(this._onSelectionChange, this),
 			columns: [
-				new sap.m.Column({
-                    vAlign: CoreLibrary.VerticalAlign.Middle,
-					header: new sap.m.Text({
+				new Column({
+					vAlign: CoreLibrary.VerticalAlign.Middle,
+					header: new Text({
 						text: {
 							parts: [
 								{
@@ -346,7 +365,7 @@ sap.ui.define([
 								}
 							],
 							formatter: function(iCountOfSelectedItems, iCountOfItems) {
-								return sap.ui.getCore().getLibraryResourceBundle("sap.m").getText('COLUMNSPANEL_SELECT_ALL_WITH_COUNTER', [
+								return Library.getResourceBundleFor("sap.m").getText('COLUMNSPANEL_SELECT_ALL_WITH_COUNTER', [
 									iCountOfSelectedItems, iCountOfItems
 								]);
 							}
@@ -358,12 +377,13 @@ sap.ui.define([
 				path: "/items",
 				templateShareable: false,
 				template: new ColumnListItem({
-					cells: new sap.m.VBox({
+					cells: new VBox({
 						items: [
-							new sap.m.Link({
+							new Link({
 								href: "{href}",
 								text: "{text}",
 								target: "{target}",
+								wrapping: true,
 								enabled: {
 									path: 'href',
 									formatter: function(oValue) {
@@ -374,12 +394,18 @@ sap.ui.define([
 									}
 								},
 								press: function(oEvent) {
-									var fOnLinkPress = that._getInternalModel().getProperty("/linkPressMap")[this.getText() + "---" + this.getHref()];
-									if (fOnLinkPress) {
-										fOnLinkPress(oEvent);
+									var sHref = oEvent.getSource().getHref();
+									var oItems = that.getItems().filter(function(oItem) {
+										return oItem.getHref() === sHref && !!oItem.getPress();
+									});
+									if (!oItems.length) {
+										return;
 									}
+									var fnPress = oItems[0].getPress();
+									fnPress(oEvent);
 								}
-							}), new sap.m.Text({
+							}), new Text({
+								wrapping: true,
 								visible: {
 									path: 'description',
 									formatter: function(sDescription) {
@@ -402,10 +428,10 @@ sap.ui.define([
 
 	P13nSelectionPanel.prototype._createToolbar = function() {
 		var that = this;
-		var oToolbar = new sap.m.OverflowToolbar(this.getId() + "-toolbar", {
+		var oToolbar = new OverflowToolbar(this.getId() + "-toolbar", {
 			design: ToolbarDesign.Auto,
 			content: [
-				new sap.m.ToolbarSpacer(), new SearchField(this.getId() + "-searchField", {
+				new ToolbarSpacer(), new SearchField(this.getId() + "-searchField", {
 					liveChange: function(oEvent) {
 						var sValue = oEvent.getSource().getValue(), iDelay = (sValue ? 300 : 0); // no delay if value is empty
 
@@ -421,13 +447,12 @@ sap.ui.define([
 					},
 					// execute the standard search
 					search: jQuery.proxy(this._onExecuteSearch, this),
-					layoutData: new sap.m.OverflowToolbarLayoutData({
+					layoutData: new OverflowToolbarLayoutData({
 						minWidth: "12.5rem",
 						maxWidth: "23.077rem",
 						shrinkable: true,
-						moveToOverflow: false,
-						stayInOverflow: false
-					// priority: sap.m.OverflowToolbarPriority.High
+						priority: OverflowToolbarPriority.NeverOverflow
+					// priority: OverflowToolbarPriority.High
 					})
 				})
 			]
@@ -482,10 +507,10 @@ sap.ui.define([
 	};
 
 	P13nSelectionPanel.prototype._getToolbar = function() {
-		return sap.ui.getCore().byId(this.getId() + "-toolbar") || null;
+		return Element.getElementById(this.getId() + "-toolbar") || null;
 	};
 	P13nSelectionPanel.prototype._getSearchField = function() {
-		return sap.ui.getCore().byId(this.getId() + "-searchField") || null;
+		return Element.getElementById(this.getId() + "-searchField") || null;
 	};
 	P13nSelectionPanel.prototype._getSearchText = function() {
 		var oSearchField = this._getSearchField();
@@ -502,7 +527,7 @@ sap.ui.define([
 		var bShowOnlySelectedItems = this._isFilteredByShowSelected();
 
 		// Switch off the "Select all (n/m)" checkbox if search
-		var oTableCB = sap.ui.getCore().byId(this._oTable.getId() + '-sa');
+		var oTableCB = Element.getElementById(this._oTable.getId() + '-sa');
 		if (oTableCB) {
 			oTableCB.setEnabled(!bIsSearchActive && !bShowOnlySelectedItems);
 		}

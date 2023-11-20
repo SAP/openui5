@@ -1,25 +1,75 @@
-/* ================================= */
-/* CSS for control sap.m/InputBase   */
-/* Belize High Contrast White theme  */
-/* ================================= */
+/* ================================ */
+/* CSS for control sap.m/InputBase  */
+/* High Contrast White theme        */
+/* ================================ */
+.sapMInputBaseContentWrapper {
+	&.sapMInputBaseContentWrapperState {
+		border-width: 1px;
+	}
+}
 
-.sapMInputBaseInner {
-	font-style: normal;
+.sapMInputBaseDisabled,
+.sapMInputBaseReadonly {
+	& .sapMInputBaseContentWrapper {
+		border: 1px solid @sapUiFieldReadOnlyBorderColor;
+	}
+}
+
+.sapMInputBaseIcon {
+	color: @sapUiContentIconColor;
+}
+
+.sapMInputBaseContentWrapper:not(.sapMInputBaseDisabledWrapper) .sapMInputBaseIcon {
+	box-sizing: border-box;
+
+	&:hover {
+		background: @sapUiButtonLiteHoverBackground;
+		border-left: 1px solid @sapUiFieldBorderColor;
+	}
+	&:active {
+		background-color: @sapUiToggleButtonPressedBackground;
+		color: @sapUiButtonActiveTextColor;
+		border-left: 1px solid @sapUiFieldBorderColor;
+	}
+}
+
+.sapMInputBaseIconPressed {
+	& .sapMInputBaseIcon {
+		border-left: 1px solid @sapUiFieldActiveBorderColor;
+	}
+}
+
+.sapMILI-CTX .sapMInputBaseContentWrapperError,
+.sapMInputBaseContentWrapperError {
+	& .sapMInputBaseInner {
+		font-weight: bold
+	}
+}
+.sapMInputBaseContentWrapperWarning,
+.sapMInputBaseContentWrapperError {
+	& .sapMInputBaseInner {
+		font-style: italic;
+	}
+}
+
+.sapMInputBaseReadonlyWrapper .sapMInputBaseInner {
+	border-color: @sapUiFieldReadOnlyBorderColor;
+	background: @sapUiFieldReadOnlyBackground;
 }
 
 .sapMInputBaseDisabled {
 	opacity: 1;
 }
 
-.sapMInputBaseDisabledInner .sapMInputBaseInner{
-	background: @sapUiHcReducedBackground;
-	border-color: @sapUiHcReducedForeground;
+.sapMInputBaseDisabled .sapMInputBaseContentWrapper {
+	background: @sapUiFieldReadOnlyBackground;
+	border-color: @sapUiFieldReadOnlyBorderColor;
 	color: @sapUiContentDisabledTextColor;
 	font-weight: normal;
 	-webkit-text-fill-color: @sapUiContentDisabledTextColor;
 }
 
-.sapMInputBaseReadonlyInner  .sapMInputBaseInner{
+.sapMInputBaseReadonlyWrapper .sapMInputBaseInner {
 	background: @sapUiFieldReadOnlyBackground;
 	border-color: @sapUiHcReducedForeground;
 }
@@ -35,103 +85,90 @@
 	opacity: 1;
 }
 
-.sapMInputBaseInner:-ms-input-placeholder {
-	font-style: normal;
-	font-weight: normal;
-}
-
 .sapMInputBasePlaceholder {
 	font-style: normal;
 	font-weight: normal;
 }
 
-.sapMInputBaseWarning > .sapMInputBasePlaceholder {
+.sapMInputBaseWarning>.sapMInputBasePlaceholder {
 	color: @sapUiFieldTextColor;
 	font-style: italic;
 	background: @sapUiFieldBackground;
 }
 
-.sapMInputBaseError > .sapMInputBasePlaceholder {
-	color: @sapUiFieldTextColor;
-	font-style: italic;
-	font-weight: bold;
-}
-
-.sapMInputBaseStateInner {
-	border-width: 1px;
-}
-
-.sapMInputBaseWarningInner {
-	border-style: dashed;
-	font-weight: normal;
-	font-style: italic;
-}
-
-.sapMInputBaseWarningInner::-webkit-input-placeholder {
+.sapMInputBaseContentWrapperWarning .sapMInputBaseInner::-webkit-input-placeholder {
 	color: @sapUiFieldTextColor;
 	font-style: italic;
 	font-weight: normal;
 }
 
-.sapMInputBaseWarningInner::-moz-placeholder {
-	color: @sapUiFieldTextColor;
-	font-style: italic;
-	font-weight: normal;
+.sapMInputBaseContentWrapperWarning .sapMInputBaseInner::-moz-placeholder {
 	opacity: 1;
 }
 
-.sapMInputBaseWarningInner:-ms-input-placeholder {
+.sapMInputBaseContentWrapperWarning .sapMInputBaseInner::-moz-placeholder {
 	color: @sapUiFieldTextColor;
 	font-style: italic;
 	font-weight: normal;
 }
 
-.sapMInputBaseErrorInner {
-	border-style: dashed;
-	font-style: italic;
-	font-weight: bold;
-}
-
-.sapMInputBaseErrorInner::-webkit-input-placeholder {
+.sapMInputBaseContentWrapperError .sapMInputBaseInner::-webkit-input-placeholder {
 	color: @sapUiFieldTextColor;
 	font-style: italic;
 	font-weight: bold;
 }
 
-.sapMInputBaseErrorInner::-moz-placeholder {
+.sapMInputBaseContentWrapperError .sapMInputBaseInner::-moz-placeholder {
 	color: @sapUiFieldTextColor;
 	font-style: italic;
 	font-weight: bold;
+}
+
+.sapMInputBaseError>.sapMInputBasePlaceholder {
+	color: @sapUiFieldTextColor;
+	font-style: italic;
+	font-weight: bold;
+}
+
+.sapMInputBaseContentWrapperError .sapMInputBaseInner::-moz-placeholder {
 	opacity: 1;
 }
 
-.sapMInputBaseErrorInner:-ms-input-placeholder {
-	color: @sapUiFieldTextColor;
-	font-style: italic;
-	font-weight: bold;
+.sapMInputBaseInner::-moz-selection {
+	background: @sapUiSelected;
+	color: @sapUiContentContrastTextColor;
 }
 
-.sapMFocus .sapMInputDivWrapper:not(.sapMInputBaseDisabledInner) {
-	 &::before {
-		 content: " ";
-		 position: absolute;
-		 top: 2px;
-		 left: 2px;
-		 right: 2px;
-		 bottom: 2px;
-		 border: 2px dotted @sapUiContentFocusColor;
-		 pointer-events: none;
-	 }
- }
+.sapMInputBaseInner::selection {
+	background: @sapUiSelected;
+	color: @sapUiContentContrastTextColor;
+}
 
-.sapMInputBaseState .sapMInputBaseInner.sapMInputBaseStateInner,
-.sapMInputBaseStateInner {
+.sapMInputBaseContentWrapperState .sapMInputBaseInner {
 	border-width: 1px;
 }
 
-html[data-sap-ui-browser^="ie"].sap-desktop,
-html[data-sap-ui-browser^="ed"].sap-desktop {
-	.sapMFocus .sapMInputDivWrapper:not(.sapMInputBaseDisabledInner)::before {
-		border: 2px dashed @sapUiContentFocusColor;
+/* List specific styles */
+.sapMILI-CTX .sapMInputBaseContentWrapper,
+.sapMILI-CTX .sapMInputBaseInner,
+.sapMILI-CTX .sapMInputBaseDisabled .sapMInputBaseInner,
+.sapMILI-CTX .sapMInputBaseReadonlyWrapper .sapMInputBaseInner {
+	text-align: right;
+	background: transparent;
+}
+
+.sapMLIBActive {
+	.sapMInputBaseInner,
+	.sapMInputBaseContentWrapper {
+		color: @sapUiListActiveTextColor;
+		background: transparent;
 	}
+
+	.sapMInputDescriptionText {
+		color: @sapUiListActiveTextColor;
+	}
+}
+
+.sapMLIBActive .sapMInputBaseInner::-webkit-input-placeholder {
+	color: @sapUiListActiveTextColor;
 }

@@ -16,7 +16,7 @@
 			filters: {path: 'Rank', operator: 'GT', value1: '0'},
 			sorter: {path: 'Rank', descending: true}
 		}"
-		noData="Please drag-and-drop products here.">
+		noDataText="Please drag-and-drop products here.">
 		<contextMenu>
 			<Menu>
 				<MenuItem text="Move to Available Products" press="moveToAvailableProductsTable" />
@@ -25,7 +25,7 @@
 			</Menu>
 		</contextMenu>
 		<headerToolbar>
-			<Toolbar>
+			<OverflowToolbar>
 				<Title text="Selected Products" />
 				<ToolbarSpacer/>
 				<Button
@@ -36,7 +36,7 @@
 					icon="sap-icon://navigation-down-arrow"
 					tooltip="Move down"
 					press="moveDown"/>
-			</Toolbar>
+			</OverflowToolbar>
 		</headerToolbar>
 		<columns>
 			<Column>
@@ -52,7 +52,7 @@
 			</Column>
 		</columns>
 		<dragDropConfig>
-			<dnd:DragInfo 
+			<dnd:DragInfo
 				groupName="selected2available"
 				sourceAggregation="items" />
 			<dnd:DropInfo

@@ -5,48 +5,50 @@
 /**
  * Initialization Code and shared classes of library sap.tnt.
  */
-sap.ui.define([
-		"jquery.sap.global",
-		"sap/ui/base/DataType",
-		"sap/ui/core/library",
-		"sap/m/library"
-	],
-	function (jQuery, DataType) {
+sap.ui.define(["sap/ui/core/library", "sap/m/library"],
+	function() {
 	"use strict";
 
 	/**
 	 * SAPUI5 library with controls specialized for administrative applications.
 	 *
 	 * @namespace
-	 * @name sap.tnt
+	 * @alias sap.tnt
 	 * @author SAP SE
 	 * @version ${version}
+	 * @since 1.36
 	 * @public
 	 */
-
-	// delegate further initialization of this library to the Core
-	sap.ui.getCore().initLibrary({
+	var thisLib = sap.ui.getCore().initLibrary({
 		name : "sap.tnt",
 		version: "${version}",
 		dependencies : ["sap.ui.core", "sap.m"],
+		designtime: "sap/tnt/designtime/library.designtime",
 		types: [
-			"sap.tnt.RenderMode",
-			"sap.tnt.BoxContainerLayoutConfiguration"
+			"sap.tnt.RenderMode"
 		],
-		interfaces: [],
+		interfaces: [
+			"sap.tnt.IToolHeader"
+		],
 		controls: [
 			"sap.tnt.NavigationList",
 			"sap.tnt.ToolHeaderUtilitySeparator",
 			"sap.tnt.ToolHeader",
 			"sap.tnt.SideNavigation",
 			"sap.tnt.ToolPage",
-			"sap.tnt.InfoLabel",
-			"sap.tnt.BoxContainer",
-			"sap.tnt.Box"
+			"sap.tnt.InfoLabel"
 		],
 		elements: [
-			"sap.tnt.NavigationListItem"
-		]
+			"sap.tnt.NavigationListItem",
+			"sap.tnt.NavigationListGroup"
+		],
+		extensions: {
+			flChangeHandlers: {
+				"sap.tnt.NavigationList": "sap/tnt/flexibility/NavigationList",
+				"sap.tnt.NavigationListItem": "sap/tnt/flexibility/NavigationListItem",
+				"sap.tnt.NavigationListGroup": "sap/tnt/flexibility/NavigationListGroup"
+			}
+		}
 	});
 
 	/**
@@ -54,9 +56,8 @@ sap.ui.define([
 	 *
 	 * @enum {string}
 	 * @public
-	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
-	sap.tnt.RenderMode = {
+	thisLib.RenderMode = {
 		/**
 		 * When type of the content of <code>InfoLabel</code> is numeric paddings are narrow
 		 * @public
@@ -70,14 +71,15 @@ sap.ui.define([
 		Loose: "Loose"
 	};
 
-	sap.tnt.BoxesPerRowConfig = DataType.createType("sap.tnt.BoxesPerRowConfig", {
-			isValid : function(vValue) {
-				return /^(([Xx][Ll](?:[1-9]|1[0-2]))? ?([Ll](?:[1-9]|1[0-2]))? ?([Mm](?:[1-9]|1[0-2]))? ?([Ss](?:[1-9]|1[0-2]))?)$/.test(vValue);
-			}
-		},
-		DataType.getType("string")
-	);
+	/**
+	 * Interface for controls suitable for the <code>header</code> aggregation of {@link sap.tnt.ToolPage}.
+	 *
+	 * @since 1.68
+	 * @name sap.tnt.IToolHeader
+	 * @public
+	 * @interface
+	 */
 
-	return sap.tnt;
+	return thisLib;
 
 });

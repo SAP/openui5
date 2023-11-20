@@ -1,0 +1,29 @@
+<mvc:View
+	controllerName="sap.f.cardsdemo.controller.Message"
+	xmlns="sap.m"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:core="sap.ui.core"
+	xmlns:w="sap.ui.integration.widgets"
+	displayBlock="true">
+	<Page title="{i18n>appTitle}" enableScrolling="false">
+		<subHeader>
+			<Toolbar>
+				<ToolbarSpacer />
+				<Title text="showMessage(). Resize the container to check the responsiveness of the message" />
+				<ToolbarSpacer />
+			</Toolbar>
+		</subHeader>
+		<Button text="Show short message" press=".onShowShortMessage"/>
+		<Button text="Show long message" press=".onShowLongMessage"/>
+
+		<VBox id="cardContainer" renderType="Bare" class="sapUiTinyMargin" width="300px" height="400px">
+			<w:Card
+				id="card"
+				manifest="{cardsPlayground>/playgroundBaseUrl}/bundles/listbundle/manifest.json"
+				baseUrl="{cardsPlayground>/playgroundBaseUrl}"
+				width="100%"
+				height="100%"
+				/>
+		</VBox>
+	</Page>
+</mvc:View>

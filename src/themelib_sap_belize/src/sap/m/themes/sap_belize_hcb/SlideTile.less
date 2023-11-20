@@ -23,7 +23,7 @@ html.sap-desktop .sapMST:focus:not([tabindex]) {
 /* Bulleted indicator of multiple tiles*/
 .sapMSTBulleted > span {
 	background-color: @sapUiTileBackground;
-	border-color: 1px solid @sapUiTileBorderColor;
+	border: 1px solid @sapUiTileBorderColor;
 }
 
 .sapMSTBulleted > span.sapMSTActive {
@@ -36,6 +36,10 @@ html.sap-desktop .sapMST:focus:not([tabindex]) {
 
 .sapMST .sapMSTIconClickTapArea:hover ~.sapMSTIconDisplayArea {
 	background-color: @sapUiHighlight;
+}
+
+.sapMST .sapMGT {
+	border: none;
 }
 
 .sapMST .sapMGT:active .sapMGTFocusDiv {

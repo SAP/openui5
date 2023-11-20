@@ -1,0 +1,18 @@
+{
+  "1.93.0": {
+    "date": "July 2021",
+    "notes": [
+      {
+        "id": "362d34cf4ef7d9ea676711218b123bfb344a5ce5",
+        "type": "FIX",
+        "text": " fl.VariantManagement: focus on field in error state",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180282760"
+          }
+        ]
+      }
+    ]
+  }
+}

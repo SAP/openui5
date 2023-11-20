@@ -1,0 +1,166 @@
+<mvc:View
+	controllerName="sap.ui.core.sample.TypeDateTime.C"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:form="sap.ui.layout.form"
+	xmlns="sap.m">
+
+	<form:SimpleForm
+		width="auto"
+		class="sapUiResponsiveMargin"
+		layout="ResponsiveGridLayout"
+		editable="true"
+		labelSpanL="3"
+		labelSpanM="3"
+		emptySpanL="4"
+		emptySpanM="4"
+		columnsL="1"
+		columnsM="1"
+		title="Date Input" >
+		<form:content>
+			<Label text="DateTime in DateTimePicker" />
+			<DateTimePicker value="{
+				path: '/dtValue',
+				type: 'sap.ui.model.type.DateTime'}" />
+			<Label text="DateTime in Input" />
+			<Input id="dtInput" placeholder="{/dtPattern}" value="{
+				path: '/dtValue',
+				type: 'sap.ui.model.type.DateTime'}" />
+		</form:content>
+	</form:SimpleForm>
+
+	<form:SimpleForm
+		width="auto"
+		class="sapUiResponsiveMargin"
+		layout="ResponsiveGridLayout"
+		labelSpanL="3"
+		labelSpanM="3"
+		emptySpanL="4"
+		emptySpanM="4"
+		columnsL="1"
+		columnsM="1"
+		title="Style" >
+		<form:content>
+
+			<Label text="Short" />
+			<Text text="{
+				path: '/dtValue',
+				type: 'sap.ui.model.type.DateTime',
+				formatOptions: {
+					style: 'short'
+					}
+			}" />
+
+			<Label text="Medium" />
+			<Text text="{
+				path: '/dtValue',
+				type: 'sap.ui.model.type.DateTime',
+				formatOptions: {
+					style: 'medium'
+				}
+			}" />
+
+			<Label text="Long" />
+			<Text text="{
+				path: '/dtValue',
+				type: 'sap.ui.model.type.DateTime',
+				formatOptions: {
+					style: 'long'
+				}
+			}" />
+
+		</form:content>
+	</form:SimpleForm>
+
+	<form:SimpleForm
+		width="auto"
+		class="sapUiResponsiveMargin"
+		layout="ResponsiveGridLayout"
+		labelSpanL="3"
+		labelSpanM="3"
+		emptySpanL="4"
+		emptySpanM="4"
+		columnsL="1"
+		columnsM="1"
+		title="Pattern" >
+		<form:content>
+
+			<Label text="yyyy-MM-dd'T'HH:mm:ss" />
+			<Text text="{
+				path: '/dtValue',
+				type: 'sap.ui.model.type.DateTime',
+				formatOptions: {
+					pattern: 'yyyy-MM-dd\'T\'HH:mm:ss'
+				}
+			}" />
+
+			<Label text="yyyyMMdd HHmmss" />
+			<Text text="{
+				path: '/dtValue',
+				type: 'sap.ui.model.type.DateTime',
+				formatOptions: {
+					pattern: 'yyyyMMdd HHmmss'
+				}
+			}" />
+
+			<Label text="HH:mm" />
+			<Text text="{
+				path: '/dtValue',
+				type: 'sap.ui.model.type.DateTime',
+				formatOptions: {
+					pattern: 'HH:mm'
+				}
+			}" />
+
+		</form:content>
+	</form:SimpleForm>
+
+	<form:SimpleForm
+		width="auto"
+		class="sapUiResponsiveMargin"
+		layout="ResponsiveGridLayout"
+		labelSpanL="3"
+		labelSpanM="3"
+		emptySpanL="4"
+		emptySpanM="4"
+		columnsL="1"
+		columnsM="1"
+		title="UTC formatted" >
+		<form:content>
+
+			<Label text="UTC" />
+			<Text text="{
+				path: '/dtValue',
+				type: 'sap.ui.model.type.DateTime',
+				formatOptions: {
+					pattern: 'yyyy-MM-dd\'T\'HH:mm:ss',
+					UTC: true
+				}
+			}" />
+		</form:content>
+	</form:SimpleForm>
+
+	<form:SimpleForm
+		width="auto"
+		class="sapUiResponsiveMargin"
+		layout="ResponsiveGridLayout"
+		labelSpanL="3"
+		labelSpanM="3"
+		emptySpanL="4"
+		emptySpanM="4"
+		columnsL="1"
+		columnsM="1"
+		title="Relative Time Format" >
+		<form:content>
+
+			<Label text="Relative Time" />
+			<Text text="{
+				path: '/dtValue',
+				type: 'sap.ui.model.type.DateTime',
+				formatOptions: {
+					relative: true,
+					relativeScale: 'auto'
+				}
+			}" />
+		</form:content>
+	</form:SimpleForm>
+</mvc:View>

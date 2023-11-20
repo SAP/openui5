@@ -1,0 +1,19 @@
+/* =============================================== */
+/* CSS for control sap.ui.commons/RatingIndicator  */
+/* Quartz High Contrast Black theme                */
+/* =============================================== */
+
+// Override image URLs defined in base to point to the theme specific images
+@_sap_ui_commons_RatingIndicator_SymbolSelected: url("img/rating/star_selected.png");
+@_sap_ui_commons_RatingIndicator_SymbolUnselected: url("img/rating/star_unselected.png");
+@_sap_ui_commons_RatingIndicator_SymbolHovered: url("img/rating/star_hover.png");
+
+.sapUiRating {
+	font-size: @sapUiDesktopFontSize;
+}
+
+.sapUiRating:focus {
+	outline-width: 3px;
+	outline-style: solid;
+	outline-color: @sapUiContentFocusColor;
+}

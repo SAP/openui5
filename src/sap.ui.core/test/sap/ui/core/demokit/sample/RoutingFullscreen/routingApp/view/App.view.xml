@@ -1,4 +1,4 @@
-<View xmlns="sap.m">
+<mvc:View xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc">
 	<App id="rootControl">
 	</App>
-</View>
+</mvc:View>

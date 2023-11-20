@@ -1,0 +1,34 @@
+{
+	"sap.app": {
+		"id": "sap.m.tutorial.walkthrough.26"
+	},
+	"sap.ui5": {
+		"config": {
+			"sample": {
+				"iframe": "webapp/test/mockServer.html",
+				"files": [
+					"webapp/test/mockServer.html",
+					"webapp/test/initMockServer.js",
+					"webapp/localService/mockserver.js",
+					"webapp/localService/metadata.xml",
+					"webapp/localService/mockdata/Invoices.json",
+					"webapp/model/formatter.js",
+					"webapp/controller/InvoiceList.controller.js",
+					"webapp/view/InvoiceList.view.xml",
+					"webapp/view/HelloDialog.fragment.xml",
+					"webapp/controller/HelloPanel.controller.js",
+					"webapp/view/HelloPanel.view.xml",
+					"webapp/css/style.css",
+					"webapp/Component.js",
+					"webapp/i18n/i18n.properties",
+					"webapp/controller/App.controller.js",
+					"webapp/view/App.view.xml",
+					"webapp/index.html",
+					"webapp/manifest.json",
+					"ui5.yaml",
+					"package.json"
+				]
+			}
+		}
+	}
+}

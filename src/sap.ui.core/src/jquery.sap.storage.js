@@ -7,9 +7,17 @@
  */
 sap.ui.define([
 	'jquery.sap.global',
-	'sap/base/storage'
-], function(jQuery, storage) {
+	'sap/base/assert',
+	'sap/ui/util/Storage'
+], function(jQuery, assert, Storage) {
 	"use strict";
+
+	/**
+	 * Map containing instances of different 'standard' storages.
+	 * The map is used to limit the number of created storage objects.
+	 * @private
+	 */
+	var mStorages = {};
 
 	/**
 	 * Returns a {@link jQuery.sap.storage.Storage Storage} object for a given HTML5 storage (type) and,
@@ -31,6 +39,7 @@ sap.ui.define([
 	 * @since 0.11.0
 	 * @namespace
 	 * @public
+	 * @deprecated as of version 1.120. Use {@link module:sap/ui/util/Storage sap/ui/util/Storage} instead.
 	 *
 	 * @borrows jQuery.sap.storage.Storage#get as get
 	 * @borrows jQuery.sap.storage.Storage#put as put
@@ -40,7 +49,28 @@ sap.ui.define([
 	 * @borrows jQuery.sap.storage.Storage#removeAll as removeAll
 	 * @borrows jQuery.sap.storage.Storage#isSupported as isSupported
 	 */
-	jQuery.sap.storage = storage(window).getInstance;
+	jQuery.sap.storage = function(oStorage, sIdPrefix) {
+		// if nothing or the default was passed in, simply return ourself
+		if (!oStorage) {
+			oStorage = Storage.Type.session;
+		}
+
+		if (typeof (oStorage) === "string" && Storage.Type[oStorage]) {
+			var sKey = oStorage;
+			if (sIdPrefix && sIdPrefix != "state.key_") {
+				sKey = oStorage + "_" + sIdPrefix;
+			}
+			if (!mStorages[sKey]) {
+				mStorages[sKey] = new Storage(oStorage, sIdPrefix);
+			}
+
+			return mStorages[sKey];
+		}
+
+		// OK, tough but probably good for issue identification. As something was passed in, let's at least ensure our used API is fulfilled.
+		assert(oStorage instanceof Object && oStorage.clear && oStorage.setItem && oStorage.getItem && oStorage.removeItem, "storage: duck typing the storage");
+		return new Storage(oStorage, sIdPrefix);
+	};
 
 	/**
 	 * @interface A Storage API for JavaScript.
@@ -70,7 +100,9 @@ sap.ui.define([
 	 * @since 0.11.0
 	 * @public
 	 * @name jQuery.sap.storage.Storage
+	 * @deprecated as of version 1.120. Use {@link module:sap/ui/util/Storage sap/ui/util/Storage} instead.
 	 */
+	jQuery.sap.storage.Storage = Storage;
 
 	/**
 	 * Returns whether the given storage is suppported.
@@ -85,7 +117,7 @@ sap.ui.define([
 	 * Stores the passed state string in the session, under the key
 	 * sStorageKeyPrefix + sId.
 	 *
-	 * sStorageKeyPrefix is the id prefix defined for the storage instance (@see jQuery.sap#storage)
+	 * sStorageKeyPrefix is the id prefix defined for the storage instance ({@link jQuery.sap#storage})
 	 *
 	 * @param {string} sId Id for the state to store
 	 * @param {string} sStateToStore content to store
@@ -99,10 +131,10 @@ sap.ui.define([
 	 * Retrieves the state string stored in the session under the key
 	 * sStorageKeyPrefix + sId.
 	 *
-	 * sStorageKeyPrefix is the id prefix defined for the storage instance (@see jQuery.sap#storage)
+	 * sStorageKeyPrefix is the id prefix defined for the storage instance ({@link jQuery.sap#storage})
 	 *
 	 * @param {string} sId Id for the state to retrieve
-	 * @return {string} the string from the storage, if the retrieval
+	 * @return {string|null} the string from the storage, if the retrieval
 	 * was successful, and null otherwise
 	 * @public
 	 * @name jQuery.sap.storage.Storage#get
@@ -113,7 +145,7 @@ sap.ui.define([
 	 * Deletes the state string stored in the session under the key
 	 * sStorageKeyPrefix + sId.s
 	 *
-	 * sStorageKeyPrefix is the id prefix defined for the storage instance (@see jQuery.sap#storage)
+	 * sStorageKeyPrefix is the id prefix defined for the storage instance ({@link jQuery.sap#storage})
 	 *
 	 * @param {string} sId Id for the state to delete
 	 * @return {boolean} true if the deletion
@@ -128,7 +160,7 @@ sap.ui.define([
 	 * Deletes all state strings stored in the session under the key prefix
 	 * sStorageKeyPrefix + sIdPrefix.
 	 *
-	 * sStorageKeyPrefix is the id prefix defined for the storage instance (@see jQuery.sap#storage)
+	 * sStorageKeyPrefix is the id prefix defined for the storage instance ({@link jQuery.sap#storage})
 	 *
 	 * @param {string} sIdPrefix Id prefix for the states to delete
 	 * @return {boolean} true if the deletion
@@ -171,8 +203,9 @@ sap.ui.define([
 	 * @public
 	 * @version ${version}
 	 * @since 0.11.0
+	 * @deprecated as of version 1.120. Use {@link module:sap/ui/util/Storage.Type sap/ui/util/Storage.Type} instead.
 	 */
-	jQuery.sap.storage.Type = storage.Type;
+	jQuery.sap.storage.Type = Storage.Type;
 
 	/**
 	 * Indicates usage of the browser's localStorage feature
@@ -188,13 +221,7 @@ sap.ui.define([
 	 * @name jQuery.sap.storage.Type.session
 	 */
 
-	/**
-	 * Indicates usage of the browser's globalStorage feature
-	 * @type {string}
-	 * @public
-	 * @name jQuery.sap.storage.Type.global
-	 */
-
+	Object.assign(jQuery.sap.storage, Storage);
 
 	return jQuery;
 

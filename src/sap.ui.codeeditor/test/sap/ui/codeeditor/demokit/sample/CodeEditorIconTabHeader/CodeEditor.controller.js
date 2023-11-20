@@ -1,12 +1,6 @@
 sap.ui.define([
-		'jquery.sap.global',
-		'sap/m/Button',
-		'sap/m/Dialog',
-		'sap/m/List',
-		'sap/m/StandardListItem',
-		'sap/ui/core/mvc/Controller',
-		'sap/ui/model/json/JSONModel'
-	], function(jQuery, Button, Dialog, List, StandardListItem, Controller, JSONModel) {
+	"sap/ui/core/mvc/Controller"
+], function (Controller) {
 	"use strict";
 
 	var oEditor;
@@ -14,13 +8,14 @@ sap.ui.define([
 	var example2 = "function myFunction(p1, p2) {\n\treturn 'foo';\n}";
 
 	return Controller.extend("sap.ui.codeeditor.sample.CodeEditorIconTabHeader.CodeEditor", {
+
 		onInit: function () {
 			oEditor = this.byId("aCodeEditor");
-			oEditor.setValue('// select tabs to see value of CodeEditor changing');
+			oEditor.setValue("// select tabs to see value of CodeEditor changing");
 		},
+
 		onSelectTab: function (oEvent) {
 			var sFilterId = oEvent.getParameter("selectedKey");
-
 			switch (sFilterId) {
 				case "A":
 					oEditor.setValue(example2);
@@ -28,7 +23,11 @@ sap.ui.define([
 				case "B":
 					oEditor.setValue(example1);
 					break;
+				default:
+					oEditor.setValue();
+					break;
 			}
 		}
+
 	});
 });

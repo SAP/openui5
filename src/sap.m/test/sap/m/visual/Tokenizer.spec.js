@@ -1,4 +1,4 @@
-/*global describe,it,element,by,takeScreenshot,expect*/
+/*global describe,it,element,by,takeScreenshot,expect,browser*/
 
 describe('sap.m.Tokenizer', function() {
 	"use strict";
@@ -7,54 +7,51 @@ describe('sap.m.Tokenizer', function() {
 		expect(takeScreenshot()).toLookAs('initial');
 	});
 
-	//Editable tokenizer not selected
-	it("should show  editable  Tokenzier", function () {
+	// Editable tokenizer
+	it("should shows editable Tokenzier", function () {
 		expect(takeScreenshot(element(by.id("editableTokenizer")))).toLookAs("tokenizer-editable-not-selected");
-
-	});
-
-	//Editable tokenizer selected
-	it("should show  editable  Tokenzier", function () {
-		element(by.id("editableTokenizer")).click();
+		element(by.id("tokenToSelect0")).click();
 		expect(takeScreenshot(element(by.id("editableTokenizer")))).toLookAs("tokenizer-editable-selected");
-
 	});
 
-	//Show not editable  tokenizer
-	it("should show not editable  Tokenzier", function () {
+	// Not editable tokenizer
+	it("should show not editable Tokenzier", function () {
 		expect(takeScreenshot(element(by.id("notEditableTokenizer")))).toLookAs("tokenizer-not-editable-not-selected");
-	});
-
-	//Not editable tokenizer selected
-	it("should select not editable  Tokenzier", function () {
-		element(by.id("notEditableTokenizer")).click();
+		element(by.id("tokenToSelect1")).click();
 		expect(takeScreenshot(element(by.id("notEditableTokenizer")))).toLookAs("tokenizer-not-editable-selected");
-
 	});
 
-	//Not editable and editable tokenizer not selected
-	it("should select not editable  Tokenzier", function () {
-		expect(takeScreenshot(element(by.id("editableAndNotEditable")))).toLookAs("tokenizer-editable-and-not-editalbe");
-
+	// Tokenizer with editable and not editable tokens
+	it("should select not editable Tokenzier", function () {
+		expect(takeScreenshot(element(by.id("editableAndNotEditable")))).toLookAs("editable-and-not-editable-tokens");
+		element(by.id("tokenToSelect2")).click();
+		expect(takeScreenshot(element(by.id("editableAndNotEditable")))).toLookAs("editable-and-not-editable-selected");
 	});
 
-	//Not editable and editable tokenizer selected
-	it("should select not editable  Tokenzier", function () {
-		element(by.id("editableAndNotEditable")).click();
-		expect(takeScreenshot(element(by.id("editableAndNotEditable")))).toLookAs("tokenizer-editable-and-not-editalbe-no");
-
-	});
-
-	//Set width tokenizer not selected
+	// Tokenizer with defined width
 	it("should show set width Tokenzier", function () {
 		expect(takeScreenshot(element(by.id("setWidth")))).toLookAs("tokenizer-set-width-not-selected");
-
+		element(by.id("tokenToSelect3")).click();
+		expect(takeScreenshot(element(by.id("setWidth")))).toLookAs("tokenizer-set-width-selected");
 	});
 
-	//Set width tokenizer selected
-	it("should select set width Tokenzier", function () {
-		element(by.id("setWidth")).click();
-		expect(takeScreenshot(element(by.id("setWidth")))).toLookAs("tokenizer-set-width-selected");
+	// Editable tokenizer with one long token
+	it("should show editable Tokenzier with single long token", function () {
+		element(by.id("longToken")).click();
+		expect(takeScreenshot(element(by.id("tokenizerLongToken")))).toLookAs("tokenizer-long-token");
+		element(by.id("longToken")).click();
+	});
 
+	// Not editable tokenizer with one long token
+	it("should show non-editable Tokenzier with single long token", function () {
+		element(by.id("longTokenNotEditable")).click();
+		expect(takeScreenshot(element(by.id("tokenizerReadOnlyLongToken")))).toLookAs("tokenizer-long-token-read-only");
+		element(by.id("longTokenNotEditable")).click();
+	});
+
+	// Not editable tokenizer n-more shown
+	it("should show not editable Tokenzier's n-more popover", function () {
+		browser.executeScript('document.getElementsByClassName("sapMTokenizerIndicator")[1].click()');
+		expect(takeScreenshot()).toLookAs("tokenizer-not-editable-n-more-shown");
 	});
 });

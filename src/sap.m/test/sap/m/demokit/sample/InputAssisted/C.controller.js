@@ -1,66 +1,60 @@
 sap.ui.define([
-		'jquery.sap.global',
-		'sap/ui/core/Fragment',
-		'sap/ui/core/mvc/Controller',
-		'sap/ui/model/Filter',
-		'sap/ui/model/json/JSONModel'
-	], function(jQuery, Fragment, Controller, Filter, JSONModel) {
+	"sap/ui/core/mvc/Controller",
+	"sap/ui/model/json/JSONModel",
+	"sap/ui/core/Fragment",
+	"sap/ui/model/Filter",
+	"sap/ui/model/FilterOperator"
+], function (Controller, JSONModel, Fragment, Filter, FilterOperator) {
 	"use strict";
 
-	var CController = Controller.extend("sap.m.sample.InputAssisted.C", {
-		inputId: '',
+	return Controller.extend("sap.m.sample.InputAssisted.C", {
 
 		onInit: function () {
-			// set explored app's demo model on this sample
-			var oModel = new JSONModel(sap.ui.require.toUrl("sap/ui/demo/mock") + "/products.json");
-			// the default limit of the model is set to 100. We want to show all the entries.
-			oModel.setSizeLimit(1000000);
+			var oModel = new JSONModel(sap.ui.require.toUrl("sap/ui/demo/mock/products.json"));
+			// The default limit of the model is set to 100. We want to show all the entries.
+			oModel.setSizeLimit(100000);
 			this.getView().setModel(oModel);
 		},
 
-		handleValueHelp : function (oEvent) {
-			var sInputValue = oEvent.getSource().getValue();
+		onValueHelpRequest: function (oEvent) {
+			var sInputValue = oEvent.getSource().getValue(),
+				oView = this.getView();
 
-			this.inputId = oEvent.getSource().getId();
-			// create value help dialog
-			if (!this._valueHelpDialog) {
-				this._valueHelpDialog = sap.ui.xmlfragment(
-					"sap.m.sample.InputAssisted.Dialog",
-					this
-				);
-				this.getView().addDependent(this._valueHelpDialog);
+			if (!this._pValueHelpDialog) {
+				this._pValueHelpDialog = Fragment.load({
+					id: oView.getId(),
+					name: "sap.m.sample.InputAssisted.ValueHelpDialog",
+					controller: this
+				}).then(function (oDialog) {
+					oView.addDependent(oDialog);
+					return oDialog;
+				});
 			}
-
-			// create a filter for the binding
-			this._valueHelpDialog.getBinding("items").filter([new Filter(
-				"Name",
-				sap.ui.model.FilterOperator.Contains, sInputValue
-			)]);
-
-			// open value help dialog filtered by the input value
-			this._valueHelpDialog.open(sInputValue);
+			this._pValueHelpDialog.then(function(oDialog) {
+				// Create a filter for the binding
+				oDialog.getBinding("items").filter([new Filter("Name", FilterOperator.Contains, sInputValue)]);
+				// Open ValueHelpDialog filtered by the input's value
+				oDialog.open(sInputValue);
+			});
 		},
 
-		_handleValueHelpSearch : function (evt) {
-			var sValue = evt.getParameter("value");
-			var oFilter = new Filter(
-				"Name",
-				sap.ui.model.FilterOperator.Contains, sValue
-			);
-			evt.getSource().getBinding("items").filter([oFilter]);
+		onValueHelpSearch: function (oEvent) {
+			var sValue = oEvent.getParameter("value");
+			var oFilter = new Filter("Name", FilterOperator.Contains, sValue);
+
+			oEvent.getSource().getBinding("items").filter([oFilter]);
 		},
 
-		_handleValueHelpClose : function (evt) {
-			var oSelectedItem = evt.getParameter("selectedItem");
-			if (oSelectedItem) {
-				var productInput = this.byId(this.inputId);
-				productInput.setValue(oSelectedItem.getTitle());
+		onValueHelpClose: function (oEvent) {
+			var oSelectedItem = oEvent.getParameter("selectedItem");
+			oEvent.getSource().getBinding("items").filter([]);
+
+			if (!oSelectedItem) {
+				return;
 			}
-			evt.getSource().getBinding("items").filter([]);
+
+			this.byId("productInput").setValue(oSelectedItem.getTitle());
 		}
+
 	});
-
-
-	return CController;
-
 });

@@ -2,7 +2,10 @@
 	height="100%"
 	controllerName="sap.m.sample.ToolbarEnabled.Toolbar"
 	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:core="sap.ui.core"
 	xmlns="sap.m">
+	<core:InvisibleText id="text1" text="Label text"/>
+
 	<CheckBox text="Enabled" selected="true" select="onCheckBoxSelect"/>
 
 	<OverflowToolbar id="toolbar">
@@ -10,7 +13,7 @@
 		<ToolbarSpacer/>
 		<CheckBox text="CheckBox"/>
 		<ToolbarSpacer/>
-		<Input width="100px" value="Input"/>
+		<Input ariaLabelledBy="text1" width="100px" value="Input"/>
 		<ToolbarSpacer/>
 		<RadioButton text="RadioButton"/>
 		<ToolbarSpacer/>

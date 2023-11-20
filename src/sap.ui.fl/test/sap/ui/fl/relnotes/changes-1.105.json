@@ -1,0 +1,23 @@
+{
+  "1.105.0": {
+    "date": "July 2022",
+    "notes": [
+      {
+        "id": "1f023f2c6ca52821de4fa3f42341ae93dde11a3b",
+        "type": "FIX",
+        "text": " sap.ui.rta - AppVariantUtils.getManifirstSupport response fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270098574"
+          }
+        ]
+      },
+      {
+        "id": "5ea09517aacb61f283c37bd9e9a912bd674b6b53",
+        "type": "FEATURE",
+        "text": " fl.VariantManagement: Adjustable Header Level"
+      }
+    ]
+  }
+}

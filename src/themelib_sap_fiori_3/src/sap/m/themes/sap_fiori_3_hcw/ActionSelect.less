@@ -1,0 +1,70 @@
+/* =================================== */
+/* CSS for control sap.m/ActionSelect  */
+/* Quartz High Contrast White theme    */
+/* =================================== */
+
+/* ----------------------------- */
+/* button                        */
+/* ----------------------------- */
+
+.sapMActionSelectPicker .sapMBtn {
+	.sapMBtnInner {
+		border-top: 1px solid @sapUiButtonActionSelectBorderColor;
+		border-bottom: 0;
+		border-left: 0;
+		border-right: 0;
+		height: 2.5rem;
+	}
+
+	.sapMBtnContent {
+		line-height: 2.4375rem;
+	}
+}
+
+.sapMActionSelectPicker .sapMBtn .sapMBtnInner {
+	border-radius: 0;
+}
+
+/* override standard buttons inside the action select */
+
+.sapMActionSelectPicker .sapMBtnDefault {
+	background: @sapUiButtonActionSelectBackground;
+	border-color: @sapUiButtonActionSelectBorderColor;
+
+	/* override the default text-shadow */
+	text-shadow: none;
+}
+
+.sapMActionSelectPicker .sapMBtn,
+.sapMActionSelectPicker .sapMBtn:hover > .sapMBtnHoverable:not(.sapMBtnActive) {
+	border-color: @sapUiButtonActionSelectBorderColor;
+}
+
+html.sap-desktop .sapMActionSelectPicker .sapMBtn:not(.sapMBtnDisabled) .sapMBtnDefault:not(.sapMBtnActive):hover {
+	background: @sapUiButtonLiteActionSelectHoverBackground;
+}
+
+/* ======================================================================== */
+/* CSS for control sap.m/ActionSelect Fiori 3 theme compact/condensed sizes */
+/* ======================================================================== */
+
+/* ----------------------------- */
+/* button                        */
+/* ----------------------------- */
+
+.sapUiSizeCompact.sapMActionSelectPicker .sapMBtn,
+.sapUiTableDataCell .sapUiSizeCondensed.sapMActionSelectPicker .sapMBtn {
+	height: 2rem;
+	padding: 0;
+}
+
+.sapUiSizeCompact.sapMActionSelectPicker .sapMBtnInner {
+	height: 2rem;
+	border-radius: 0;
+	border: 0;
+	border-top: 1px solid @sapUiButtonActionSelectBorderColor;
+
+	.sapMBtnContent {
+		line-height: 2rem;
+	}
+}

@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="utf-8" />
+	<title>Editor Test Page with parameters</title>
+	<script src="../sharedTest.js" localstoragekey="card-parameter-"></script>
+	<script src="../../../../../../resources/sap-ui-integration.js" id="sap-ui-bootstrap"
+		data-sap-ui-theme="sap_horizon" data-sap-ui-oninit="init" data-sap-ui-resourceroots='{"testjs":"../"}'></script>
+	<link rel="stylesheet" href="../sharedTest.css" />
+</head>
+
+<body class="sapUiBody sapUiSizeCompact">
+	<div id="global">
+		<h2>Settings</h2>
+		<label>Theme:</label>
+		<select onchange="switchTheme(this)">
+			<option value="sap_horizon">Morning Horizon</option>
+			<option value="sap_horizon_dark">Evening Horizon</option>
+			<option value="sap_horizon_hcb">High Contrast Black</option>
+			<option value="sap_horizon_hcw">High Contrast White</option>
+		</select>
+	</div>
+	<div id="editor">
+		<h2>Admin Mode (only)</h2>
+		<ui-integration-card-editor id="cardEditorAdmin" mode="admin" allow-dynamic-values="true" allow-settings="true">
+		</ui-integration-card-editor>
+		<div class="buttons">
+			<button onclick="showCurrentValues('cardEditorAdmin')">
+				Show Current Values (Admin Mode)
+			</button>
+			<button onclick="saveCurrentValues('cardEditorAdmin')">
+				Save Current Values (Admin Mode)
+			</button>
+			<button onclick="loadCurrentValues('cardEditorAdmin')">
+				Load Values (Admin Mode)
+			</button>
+			<button onclick="deleteCurrentValues('cardEditorAdmin')">
+				Delete Values (Admin Mode)
+			</button>
+		</div>
+		<h2>Content Mode (only)</h2>
+		<ui-integration-card-editor id="cardEditorContent" mode="content" allow-dynamic-values="true"
+			allow-settings="true">
+		</ui-integration-card-editor>
+		<div class="buttons">
+			<button onclick="showCurrentValues('cardEditorContent')">
+				Show Current Values (Content Mode)
+			</button>
+			<button onclick="saveCurrentValues('cardEditorContent')">
+				Save Current Values (Content Mode)
+			</button>
+			<button onclick="loadCurrentValues('cardEditorContent')">
+				Load Values (Content Mode)
+			</button>
+			<button onclick="deleteCurrentValues('cardEditorContent')">
+				Delete Values (Content Mode)
+			</button>
+		</div>
+		<h2>Translation Mode (only)</h2>
+		<ui-integration-card-editor id="cardEditorTranslation" card='{
+			}' mode="translation" language="ru" allow-dynamic-values="true" allow-settings="true">
+		</ui-integration-card-editor>
+		<div class="buttons">
+			<button onclick="showCurrentValues('cardEditorTranslation')">
+				Show Current Values (Translation Mode)
+			</button>
+			<button onclick="saveCurrentValues('cardEditorTranslation')">
+				Save Current Values (Translation Mode)
+			</button>
+			<button onclick="loadCurrentValues('cardEditorTranslation')">
+				Load Values (Translation Mode)
+			</button>
+			<button onclick="deleteCurrentValues('cardEditorTranslation')">
+				Delete Values (Translation Mode)
+			</button>
+		</div>
+		<h2>All Merged Layers </h2>
+		<div id="all">
+
+		</div>
+		<h2>Content Mode (with admin layer)</h2>
+		<div id="admincontent">
+
+		</div>
+		<h2>Translation Mode (with admin + content layer)</h2>
+		<div id="admincontenttranslation">
+
+		</div>
+	</div>
+
+
+</body>
+
+</html>

@@ -1,0 +1,1287 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="4.0" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+	<edmx:Reference Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_UI',Version='0001',SAP__Origin='LOCAL')/$value">
+		<edmx:Include Namespace="com.sap.vocabularies.UI.v1" Alias="UI" />
+	</edmx:Reference>
+	<edmx:Reference Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_COMMUNICATION',Version='0001',SAP__Origin='LOCAL')/$value">
+		<edmx:Include Namespace="com.sap.vocabularies.Communication.v1" Alias="Communication" />
+	</edmx:Reference>
+	<edmx:Reference Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_CAPABILITIES',Version='0001',SAP__Origin='LOCAL')/$value">
+		<edmx:Include Namespace="Org.OData.Capabilities.V1" Alias="Capabilities" />
+	</edmx:Reference>
+	<edmx:Reference Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_AGGREGATION',Version='0001',SAP__Origin='LOCAL')/$value">
+		<edmx:Include Namespace="Org.OData.Aggregation.V1" Alias="Aggregate" />
+	</edmx:Reference>
+	<edmx:Reference Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_COMMON',Version='0001',SAP__Origin='LOCAL')/$value">
+		<edmx:Include Namespace="com.sap.vocabularies.Common.v1" Alias="SAP__common" />
+	</edmx:Reference>
+	<edmx:Reference Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_MEASURES',Version='0001',SAP__Origin='LOCAL')/$value">
+		<edmx:Include Namespace="Org.OData.Measures.V1" Alias="Measures" />
+	</edmx:Reference>
+	<edmx:Reference Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_CORE',Version='0001',SAP__Origin='LOCAL')/$value">
+		<edmx:Include Namespace="Org.OData.Core.V1" Alias="SAP__core" />
+	</edmx:Reference>
+	<edmx:DataServices>
+		<Schema Namespace="com.sap.gateway.srvd.sadl_gw_appmusicdr_definition.v0001" Alias="SAP__self">
+			<EntityType Name="AssigendPersonsType">
+				<Key>
+					<PropertyRef Name="AssignmentUUID" />
+					<PropertyRef Name="IsActiveEntity" />
+				</Key>
+				<Property Name="AssignmentUUID" Type="Edm.Guid" Nullable="false" />
+				<Property Name="ArtistUUID" Type="Edm.Guid" />
+				<Property Name="PersonUUID" Type="Edm.Guid" />
+				<Property Name="FromYear" Type="Edm.String" MaxLength="4" />
+				<Property Name="ToYear" Type="Edm.String" MaxLength="4" />
+				<Property Name="HasDraftEntity" Type="Edm.Boolean" />
+				<Property Name="ActiveUUID" Type="Edm.Guid" />
+				<Property Name="DraftEntityCreationDateTime" Type="Edm.DateTimeOffset" Precision="7" />
+				<Property Name="DraftEntityLastChangeDateTime" Type="Edm.DateTimeOffset" Precision="7" />
+				<Property Name="HasActiveEntity" Type="Edm.Boolean" />
+				<Property Name="IsActiveEntity" Type="Edm.Boolean" Nullable="false" />
+				<NavigationProperty Name="DraftAdministrativeData" Type="com.sap.gateway.srvd.sadl_gw_appmusicdr_definition.v0001.DraftAdministrativeDataType" />
+				<NavigationProperty Name="SiblingEntity" Type="com.sap.gateway.srvd.sadl_gw_appmusicdr_definition.v0001.AssigendPersonsType" />
+				<NavigationProperty Name="_Artist" Type="com.sap.gateway.srvd.sadl_gw_appmusicdr_definition.v0001.ArtistsType" Nullable="false" />
+				<NavigationProperty Name="_Person" Type="com.sap.gateway.srvd.sadl_gw_appmusicdr_definition.v0001.PersionsType" />
+			</EntityType>
+			<EntityType Name="PersionsType">
+				<Key>
+					<PropertyRef Name="PersonUUID" />
+				</Key>
+				<Property Name="PersonUUID" Type="Edm.Guid" Nullable="false" />
+				<Property Name="LastName" Type="Edm.String" MaxLength="255" />
+				<Property Name="FirstName" Type="Edm.String" MaxLength="255" />
+				<Property Name="FormattedName" Type="Edm.String" MaxLength="255" />
+				<Property Name="DateOfBirth" Type="Edm.Date" />
+				<Property Name="DateOfDeath" Type="Edm.Date" />
+			</EntityType>
+			<EntityType Name="ArtistsType">
+				<Key>
+					<PropertyRef Name="ArtistUUID" />
+					<PropertyRef Name="IsActiveEntity" />
+				</Key>
+				<Property Name="ArtistUUID" Type="Edm.Guid" Nullable="false" />
+				<Property Name="Name" Type="Edm.String" MaxLength="255" />
+				<Property Name="CountryOfOrigin" Type="Edm.String" MaxLength="3" />
+				<Property Name="CountryOfOrigin_Text" Type="Edm.String" MaxLength="50" />
+				<Property Name="RegionOfOrigin" Type="Edm.String" MaxLength="3" />
+				<Property Name="RegionOfOrigin_Text" Type="Edm.String" MaxLength="20" />
+				<Property Name="FoundingYear" Type="Edm.String" MaxLength="4" />
+				<Property Name="BreakupYear" Type="Edm.String" MaxLength="4" />
+				<Property Name="CreatedAt" Type="Edm.DateTimeOffset" Precision="7" />
+				<Property Name="CreatedBy" Type="Edm.String" MaxLength="12" />
+				<Property Name="ChangedAt" Type="Edm.DateTimeOffset" Precision="7" />
+				<Property Name="ChangedBy" Type="Edm.String" MaxLength="12" />
+				<Property Name="HasDraftEntity" Type="Edm.Boolean" />
+				<Property Name="ActiveUUID" Type="Edm.Guid" />
+				<Property Name="DraftEntityCreationDateTime" Type="Edm.DateTimeOffset" Precision="7" />
+				<Property Name="DraftEntityLastChangeDateTime" Type="Edm.DateTimeOffset" Precision="7" />
+				<Property Name="HasActiveEntity" Type="Edm.Boolean" />
+				<Property Name="IsActiveEntity" Type="Edm.Boolean" Nullable="false" />
+				<NavigationProperty Name="DraftAdministrativeData" Type="com.sap.gateway.srvd.sadl_gw_appmusicdr_definition.v0001.DraftAdministrativeDataType" />
+				<NavigationProperty Name="SiblingEntity" Type="com.sap.gateway.srvd.sadl_gw_appmusicdr_definition.v0001.ArtistsType" />
+				<NavigationProperty Name="_PersAssign" Type="Collection(com.sap.gateway.srvd.sadl_gw_appmusicdr_definition.v0001.AssigendPersonsType)" />
+				<NavigationProperty Name="_Publication" Type="Collection(com.sap.gateway.srvd.sadl_gw_appmusicdr_definition.v0001.PublicationsType)" />
+			</EntityType>
+			<EntityType Name="TitlesType">
+				<Key>
+					<PropertyRef Name="TitleUUID" />
+					<PropertyRef Name="IsActiveEntity" />
+				</Key>
+				<Property Name="TitleUUID" Type="Edm.Guid" Nullable="false" />
+				<Property Name="PublicationUUID" Type="Edm.Guid" />
+				<Property Name="ArtistUUID" Type="Edm.Guid" />
+				<Property Name="Name" Type="Edm.String" MaxLength="255" />
+				<Property Name="Genre" Type="Edm.String" MaxLength="3" />
+				<Property Name="Length" Type="Edm.Decimal" Precision="13" Scale="2" />
+				<Property Name="LengthUnit" Type="Edm.String" MaxLength="3" />
+				<Property Name="Price" Type="Edm.Decimal" Precision="14" Scale="variable" />
+				<Property Name="CurrencyCode" Type="Edm.String" MaxLength="5" />
+				<Property Name="HasDraftEntity" Type="Edm.Boolean" />
+				<Property Name="ActiveUUID" Type="Edm.Guid" />
+				<Property Name="DraftEntityCreationDateTime" Type="Edm.DateTimeOffset" Precision="7" />
+				<Property Name="DraftEntityLastChangeDateTime" Type="Edm.DateTimeOffset" Precision="7" />
+				<Property Name="HasActiveEntity" Type="Edm.Boolean" />
+				<Property Name="IsActiveEntity" Type="Edm.Boolean" Nullable="false" />
+				<NavigationProperty Name="DraftAdministrativeData" Type="com.sap.gateway.srvd.sadl_gw_appmusicdr_definition.v0001.DraftAdministrativeDataType" />
+				<NavigationProperty Name="SiblingEntity" Type="com.sap.gateway.srvd.sadl_gw_appmusicdr_definition.v0001.TitlesType" />
+				<NavigationProperty Name="_Artist" Type="com.sap.gateway.srvd.sadl_gw_appmusicdr_definition.v0001.ArtistsType" Nullable="false" />
+				<NavigationProperty Name="_Contribution" Type="Collection(com.sap.gateway.srvd.sadl_gw_appmusicdr_definition.v0001.ArtistContributionsType)" />
+				<NavigationProperty Name="_Publication" Type="com.sap.gateway.srvd.sadl_gw_appmusicdr_definition.v0001.PublicationsType" Nullable="false" />
+			</EntityType>
+			<EntityType Name="DraftAdministrativeDataType">
+				<Key>
+					<PropertyRef Name="DraftUUID" />
+				</Key>
+				<Property Name="DraftUUID" Type="Edm.Guid" Nullable="false" />
+				<Property Name="DraftEntityType" Type="Edm.String" MaxLength="30" />
+				<Property Name="CreationDateTime" Type="Edm.DateTimeOffset" Precision="7" />
+				<Property Name="CreatedByUser" Type="Edm.String" MaxLength="12" />
+				<Property Name="LastChangeDateTime" Type="Edm.DateTimeOffset" Precision="7" />
+				<Property Name="LastChangedByUser" Type="Edm.String" MaxLength="12" />
+				<Property Name="DraftAccessType" Type="Edm.String" MaxLength="1" />
+				<Property Name="ProcessingStartDateTime" Type="Edm.DateTimeOffset" Precision="7" />
+				<Property Name="InProcessByUser" Type="Edm.String" MaxLength="12" />
+				<Property Name="DraftIsKeptByUser" Type="Edm.Boolean" />
+				<Property Name="EnqueueStartDateTime" Type="Edm.DateTimeOffset" Precision="7" />
+				<Property Name="DraftIsCreatedByMe" Type="Edm.Boolean" />
+				<Property Name="DraftIsLastChangedByMe" Type="Edm.Boolean" />
+				<Property Name="DraftIsProcessedByMe" Type="Edm.Boolean" />
+				<Property Name="CreatedByUserDescription" Type="Edm.String" MaxLength="80" />
+				<Property Name="LastChangedByUserDescription" Type="Edm.String" MaxLength="80" />
+				<Property Name="InProcessByUserDescription" Type="Edm.String" MaxLength="80" />
+			</EntityType>
+			<EntityType Name="ArtistContributionsType">
+				<Key>
+					<PropertyRef Name="ContributionUUID" />
+					<PropertyRef Name="IsActiveEntity" />
+				</Key>
+				<Property Name="ContributionUUID" Type="Edm.Guid" Nullable="false" />
+				<Property Name="TitleUUID" Type="Edm.Guid" />
+				<Property Name="ArtistUUID" Type="Edm.Guid" />
+				<Property Name="ContributorUUID" Type="Edm.Guid" />
+				<Property Name="HasDraftEntity" Type="Edm.Boolean" />
+				<Property Name="ActiveUUID" Type="Edm.Guid" />
+				<Property Name="DraftEntityCreationDateTime" Type="Edm.DateTimeOffset" Precision="7" />
+				<Property Name="DraftEntityLastChangeDateTime" Type="Edm.DateTimeOffset" Precision="7" />
+				<Property Name="HasActiveEntity" Type="Edm.Boolean" />
+				<Property Name="IsActiveEntity" Type="Edm.Boolean" Nullable="false" />
+				<NavigationProperty Name="DraftAdministrativeData" Type="com.sap.gateway.srvd.sadl_gw_appmusicdr_definition.v0001.DraftAdministrativeDataType" />
+				<NavigationProperty Name="SiblingEntity" Type="com.sap.gateway.srvd.sadl_gw_appmusicdr_definition.v0001.ArtistContributionsType" />
+				<NavigationProperty Name="_Artist" Type="com.sap.gateway.srvd.sadl_gw_appmusicdr_definition.v0001.ArtistsType" Nullable="false" />
+				<NavigationProperty Name="_Title" Type="com.sap.gateway.srvd.sadl_gw_appmusicdr_definition.v0001.TitlesType" Nullable="false" />
+			</EntityType>
+			<EntityType Name="PublicationsType">
+				<Key>
+					<PropertyRef Name="PublicationUUID" />
+					<PropertyRef Name="IsActiveEntity" />
+				</Key>
+				<Property Name="PublicationUUID" Type="Edm.Guid" Nullable="false" />
+				<Property Name="ArtistUUID" Type="Edm.Guid" />
+				<Property Name="Type" Type="Edm.String" MaxLength="3" />
+				<Property Name="Name" Type="Edm.String" MaxLength="255" />
+				<Property Name="ReleaseDate" Type="Edm.Date" />
+				<Property Name="Price" Type="Edm.Decimal" Precision="14" Scale="variable" />
+				<Property Name="CurrencyCode" Type="Edm.String" MaxLength="5" />
+				<Property Name="HasDraftEntity" Type="Edm.Boolean" />
+				<Property Name="ActiveUUID" Type="Edm.Guid" />
+				<Property Name="DraftEntityCreationDateTime" Type="Edm.DateTimeOffset" Precision="7" />
+				<Property Name="DraftEntityLastChangeDateTime" Type="Edm.DateTimeOffset" Precision="7" />
+				<Property Name="HasActiveEntity" Type="Edm.Boolean" />
+				<Property Name="IsActiveEntity" Type="Edm.Boolean" Nullable="false" />
+				<NavigationProperty Name="DraftAdministrativeData" Type="com.sap.gateway.srvd.sadl_gw_appmusicdr_definition.v0001.DraftAdministrativeDataType" />
+				<NavigationProperty Name="SiblingEntity" Type="com.sap.gateway.srvd.sadl_gw_appmusicdr_definition.v0001.PublicationsType" />
+				<NavigationProperty Name="_Artist" Type="com.sap.gateway.srvd.sadl_gw_appmusicdr_definition.v0001.ArtistsType" Nullable="false" />
+				<NavigationProperty Name="_Title" Type="Collection(com.sap.gateway.srvd.sadl_gw_appmusicdr_definition.v0001.TitlesType)" />
+			</EntityType>
+			<Action Name="PreparationAction" EntitySetPath="_it" IsBound="true">
+				<Parameter Name="_it" Type="com.sap.gateway.srvd.sadl_gw_appmusicdr_definition.v0001.TitlesType" Nullable="false" />
+				<Parameter Name="SideEffectsQualifier" Type="Edm.String" Nullable="false" />
+				<ReturnType Type="com.sap.gateway.srvd.sadl_gw_appmusicdr_definition.v0001.TitlesType" Nullable="false" />
+			</Action>
+			<Action Name="PreparationAction" EntitySetPath="_it" IsBound="true">
+				<Parameter Name="_it" Type="com.sap.gateway.srvd.sadl_gw_appmusicdr_definition.v0001.ArtistContributionsType" Nullable="false" />
+				<Parameter Name="SideEffectsQualifier" Type="Edm.String" Nullable="false" />
+				<ReturnType Type="com.sap.gateway.srvd.sadl_gw_appmusicdr_definition.v0001.ArtistContributionsType" Nullable="false" />
+			</Action>
+			<Action Name="REUNION" EntitySetPath="_it" IsBound="true">
+				<Parameter Name="_it" Type="com.sap.gateway.srvd.sadl_gw_appmusicdr_definition.v0001.ArtistsType" Nullable="false" />
+				<ReturnType Type="com.sap.gateway.srvd.sadl_gw_appmusicdr_definition.v0001.ArtistsType" Nullable="false" />
+			</Action>
+			<Action Name="PreparationAction" EntitySetPath="_it" IsBound="true">
+				<Parameter Name="_it" Type="com.sap.gateway.srvd.sadl_gw_appmusicdr_definition.v0001.AssigendPersonsType" Nullable="false" />
+				<Parameter Name="SideEffectsQualifier" Type="Edm.String" Nullable="false" />
+				<ReturnType Type="com.sap.gateway.srvd.sadl_gw_appmusicdr_definition.v0001.AssigendPersonsType" Nullable="false" />
+			</Action>
+			<Action Name="PreparationAction" EntitySetPath="_it" IsBound="true">
+				<Parameter Name="_it" Type="com.sap.gateway.srvd.sadl_gw_appmusicdr_definition.v0001.PublicationsType" Nullable="false" />
+				<Parameter Name="SideEffectsQualifier" Type="Edm.String" Nullable="false" />
+				<ReturnType Type="com.sap.gateway.srvd.sadl_gw_appmusicdr_definition.v0001.PublicationsType" Nullable="false" />
+			</Action>
+			<Action Name="BREAK_UP" EntitySetPath="_it" IsBound="true">
+				<Parameter Name="_it" Type="com.sap.gateway.srvd.sadl_gw_appmusicdr_definition.v0001.ArtistsType" Nullable="false" />
+				<ReturnType Type="com.sap.gateway.srvd.sadl_gw_appmusicdr_definition.v0001.ArtistsType" Nullable="false" />
+			</Action>
+			<Action Name="MOVE_COUNTRY" EntitySetPath="_it" IsBound="true">
+				<Parameter Name="_it" Type="com.sap.gateway.srvd.sadl_gw_appmusicdr_definition.v0001.ArtistsType" Nullable="false" />
+				<Parameter Name="Countryoforigin" Type="Edm.String" Nullable="false" MaxLength="3" />
+				<ReturnType Type="com.sap.gateway.srvd.sadl_gw_appmusicdr_definition.v0001.ArtistsType" Nullable="false" />
+			</Action>
+			<Action Name="PreparationAction" EntitySetPath="_it" IsBound="true">
+				<Parameter Name="_it" Type="com.sap.gateway.srvd.sadl_gw_appmusicdr_definition.v0001.ArtistsType" Nullable="false" />
+				<Parameter Name="SideEffectsQualifier" Type="Edm.String" Nullable="false" />
+				<ReturnType Type="com.sap.gateway.srvd.sadl_gw_appmusicdr_definition.v0001.ArtistsType" Nullable="false" />
+			</Action>
+			<Action Name="EditAction" EntitySetPath="_it" IsBound="true">
+				<Parameter Name="_it" Type="com.sap.gateway.srvd.sadl_gw_appmusicdr_definition.v0001.ArtistsType" Nullable="false" />
+				<Parameter Name="PreserveChanges" Type="Edm.Boolean" Nullable="false" />
+				<ReturnType Type="com.sap.gateway.srvd.sadl_gw_appmusicdr_definition.v0001.ArtistsType" Nullable="false" />
+			</Action>
+			<Action Name="ActivationAction" EntitySetPath="_it" IsBound="true">
+				<Parameter Name="_it" Type="com.sap.gateway.srvd.sadl_gw_appmusicdr_definition.v0001.ArtistsType" Nullable="false" />
+				<ReturnType Type="com.sap.gateway.srvd.sadl_gw_appmusicdr_definition.v0001.ArtistsType" Nullable="false" />
+			</Action>
+			<EntityContainer Name="Container">
+				<EntitySet Name="ArtistContributions" EntityType="com.sap.gateway.srvd.sadl_gw_appmusicdr_definition.v0001.ArtistContributionsType">
+					<NavigationPropertyBinding Path="DraftAdministrativeData" Target="DraftAdministrativeData" />
+					<NavigationPropertyBinding Path="SiblingEntity" Target="ArtistContributions" />
+					<NavigationPropertyBinding Path="_Artist" Target="Artists" />
+					<NavigationPropertyBinding Path="_Title" Target="Titles" />
+				</EntitySet>
+				<EntitySet Name="Artists" EntityType="com.sap.gateway.srvd.sadl_gw_appmusicdr_definition.v0001.ArtistsType">
+					<NavigationPropertyBinding Path="DraftAdministrativeData" Target="DraftAdministrativeData" />
+					<NavigationPropertyBinding Path="SiblingEntity" Target="Artists" />
+					<NavigationPropertyBinding Path="_PersAssign" Target="AssigendPersons" />
+					<NavigationPropertyBinding Path="_Publication" Target="Publications" />
+				</EntitySet>
+				<EntitySet Name="AssigendPersons" EntityType="com.sap.gateway.srvd.sadl_gw_appmusicdr_definition.v0001.AssigendPersonsType">
+					<NavigationPropertyBinding Path="DraftAdministrativeData" Target="DraftAdministrativeData" />
+					<NavigationPropertyBinding Path="SiblingEntity" Target="AssigendPersons" />
+					<NavigationPropertyBinding Path="_Artist" Target="Artists" />
+					<NavigationPropertyBinding Path="_Person" Target="Persions" />
+				</EntitySet>
+				<EntitySet Name="DraftAdministrativeData" EntityType="com.sap.gateway.srvd.sadl_gw_appmusicdr_definition.v0001.DraftAdministrativeDataType" />
+				<EntitySet Name="Persions" EntityType="com.sap.gateway.srvd.sadl_gw_appmusicdr_definition.v0001.PersionsType" />
+				<EntitySet Name="Publications" EntityType="com.sap.gateway.srvd.sadl_gw_appmusicdr_definition.v0001.PublicationsType">
+					<NavigationPropertyBinding Path="DraftAdministrativeData" Target="DraftAdministrativeData" />
+					<NavigationPropertyBinding Path="SiblingEntity" Target="Publications" />
+					<NavigationPropertyBinding Path="_Artist" Target="Artists" />
+					<NavigationPropertyBinding Path="_Title" Target="Titles" />
+				</EntitySet>
+				<EntitySet Name="Titles" EntityType="com.sap.gateway.srvd.sadl_gw_appmusicdr_definition.v0001.TitlesType">
+					<NavigationPropertyBinding Path="DraftAdministrativeData" Target="DraftAdministrativeData" />
+					<NavigationPropertyBinding Path="SiblingEntity" Target="Titles" />
+					<NavigationPropertyBinding Path="_Artist" Target="Artists" />
+					<NavigationPropertyBinding Path="_Contribution" Target="ArtistContributions" />
+					<NavigationPropertyBinding Path="_Publication" Target="Publications" />
+				</EntitySet>
+			</EntityContainer>
+			<Annotations Target="SAP__self.AssigendPersonsType/PersonUUID">
+				<Annotation Term="SAP__common.Label" String="Full Name" />
+				<Annotation Term="SAP__common.Text" Path="_Person/FormattedName" />
+				<Annotation Term="SAP__core.Computed" />
+				<Annotation Term="SAP__common.QuickInfo" String="UUID in X form (binary)" />
+			</Annotations>
+			<Annotations Target="SAP__self.AssigendPersonsType/FromYear">
+				<Annotation Term="SAP__common.Label" String="From Year" />
+				<Annotation Term="SAP__common.IsDigitSequence" />
+				<Annotation Term="SAP__common.Heading" String="Year" />
+				<Annotation Term="SAP__common.QuickInfo" String="AIS: Year" />
+			</Annotations>
+			<Annotations Target="SAP__self.AssigendPersonsType/ToYear">
+				<Annotation Term="SAP__common.Label" String="To Year" />
+				<Annotation Term="SAP__common.IsDigitSequence" />
+				<Annotation Term="SAP__common.Heading" String="Year" />
+				<Annotation Term="SAP__common.QuickInfo" String="AIS: Year" />
+			</Annotations>
+			<Annotations Target="SAP__self.Container/AssigendPersons">
+				<Annotation Term="SAP__common.DraftNode">
+					<Record>
+						<PropertyValue Property="ValidationFunction" String="com.sap.gateway.srvd.sadl_gw_appmusicdr_definition.v0001.ValidationFunction" />
+						<PropertyValue Property="PreparationAction" String="com.sap.gateway.srvd.sadl_gw_appmusicdr_definition.v0001.PreparationAction" />
+					</Record>
+				</Annotation>
+				<Annotation Term="SAP__common.DraftActivationVia">
+					<Collection>
+						<String>SAP__self.Container/Artists</String>
+					</Collection>
+				</Annotation>
+				<Annotation Term="Capabilities.SearchRestrictions">
+					<Record>
+						<PropertyValue Property="Searchable" Bool="false" />
+					</Record>
+				</Annotation>
+				<Annotation Term="Capabilities.FilterRestrictions">
+					<Record>
+						<PropertyValue Property="NonFilterableProperties">
+							<Collection>
+								<PropertyPath>ActiveUUID</PropertyPath>
+								<PropertyPath>DraftEntityCreationDateTime</PropertyPath>
+								<PropertyPath>DraftEntityLastChangeDateTime</PropertyPath>
+								<PropertyPath>HasActiveEntity</PropertyPath>
+								<PropertyPath>IsActiveEntity</PropertyPath>
+								<PropertyPath>Preparation_ac</PropertyPath>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+				<Annotation Term="Capabilities.SortRestrictions">
+					<Record>
+						<PropertyValue Property="NonSortableProperties">
+							<Collection>
+								<PropertyPath>ActiveUUID</PropertyPath>
+								<PropertyPath>DraftEntityCreationDateTime</PropertyPath>
+								<PropertyPath>DraftEntityLastChangeDateTime</PropertyPath>
+								<PropertyPath>HasActiveEntity</PropertyPath>
+								<PropertyPath>IsActiveEntity</PropertyPath>
+								<PropertyPath>Preparation_ac</PropertyPath>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+				<Annotation Term="Capabilities.InsertRestrictions">
+					<Record>
+						<PropertyValue Property="Insertable" Bool="false" />
+					</Record>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="SAP__self.AssigendPersonsType">
+				<Annotation Term="SAP__common.Label" String="Person Assignment" />
+				<Annotation Term="UI.HeaderInfo">
+					<Record>
+						<PropertyValue Property="TypeName" String="Person Assignment" />
+						<PropertyValue Property="TypeNamePlural" String="Person Assignments" />
+						<PropertyValue Property="Title">
+							<Record Type="UI.DataField">
+								<PropertyValue Property="Value" Path="_Person/FormattedName" />
+							</Record>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="SAP__self.PersionsType/PersonUUID">
+				<Annotation Term="SAP__common.Text" Path="FormattedName" />
+				<Annotation Term="SAP__common.Label" String="UUID" />
+				<Annotation Term="SAP__common.QuickInfo" String="UUID in X form (binary)" />
+			</Annotations>
+			<Annotations Target="SAP__self.PersionsType">
+				<Annotation Term="SAP__common.Label" String="UUID-Based Model: Person" />
+			</Annotations>
+			<Annotations Target="SAP__self.Container/Persions">
+				<Annotation Term="Capabilities.SearchRestrictions">
+					<Record>
+						<PropertyValue Property="Searchable" Bool="false" />
+					</Record>
+				</Annotation>
+				<Annotation Term="Capabilities.InsertRestrictions">
+					<Record>
+						<PropertyValue Property="Insertable" Bool="false" />
+					</Record>
+				</Annotation>
+				<Annotation Term="Capabilities.DeleteRestrictions">
+					<Record>
+						<PropertyValue Property="Deletable" Bool="false" />
+					</Record>
+				</Annotation>
+				<Annotation Term="Capabilities.UpdateRestrictions">
+					<Record>
+						<PropertyValue Property="Updatable" Bool="false" />
+					</Record>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="SAP__self.ArtistsType/ArtistUUID">
+				<Annotation Term="SAP__common.Label" String="Artist UUID" />
+				<Annotation Term="SAP__common.Text" Path="Name" />
+				<Annotation Term="UI.HiddenFilter" />
+				<Annotation Term="UI.Hidden" />
+				<Annotation Term="SAP__common.QuickInfo" String="UUID in X form (binary)" />
+			</Annotations>
+			<Annotations Target="SAP__self.ArtistsType/Name">
+				<Annotation Term="SAP__common.FieldControl" EnumMember="SAP__common.FieldControlType/Mandatory" />
+				<Annotation Term="UI.HiddenFilter" />
+				<Annotation Term="SAP__common.Label" String="Artist Name" />
+				<Annotation Term="SAP__common.QuickInfo" String="AIS: Artist Name" />
+			</Annotations>
+			<Annotations Target="SAP__self.ArtistsType/CountryOfOrigin">
+				<Annotation Term="SAP__common.Label" String="Country of Origin" />
+				<Annotation Term="SAP__common.Text" Path="CountryOfOrigin_Text">
+					<Annotation Term="UI.TextArrangement" EnumMember="UI.TextArrangementType/TextFirst" />
+				</Annotation>
+				<Annotation Term="SAP__common.ValueListReferences">
+					<Collection>
+						<String>../../../../srvd_f4/sap/i_aivs_countrycode/0001;ps='srvd-sadl_gw_appmusicdr_definition-0001';va='com.sap.gateway.srvd.sadl_gw_appmusicdr_definition.v0001.et-c_mdbu_v4_artisttp.countryoforigin'/$metadata</String>
+					</Collection>
+				</Annotation>
+				<Annotation Term="SAP__common.Heading" String="Country Code" />
+				<Annotation Term="SAP__common.QuickInfo" String="AIS: Country Code" />
+			</Annotations>
+			<Annotations Target="SAP__self.ArtistsType/CountryOfOrigin_Text">
+				<Annotation Term="SAP__core.Computed" />
+				<Annotation Term="SAP__common.Label" String="Long name" />
+				<Annotation Term="SAP__common.QuickInfo" String="Country Name (Max. 50 Characters)" />
+			</Annotations>
+			<Annotations Target="SAP__self.ArtistsType/RegionOfOrigin">
+				<Annotation Term="SAP__common.Text" Path="RegionOfOrigin_Text">
+					<Annotation Term="UI.TextArrangement" EnumMember="UI.TextArrangementType/TextFirst" />
+				</Annotation>
+				<Annotation Term="SAP__common.ValueListReferences">
+					<Collection>
+						<String>../../../../srvd_f4/sap/i_aivs_region/0001;ps='srvd-sadl_gw_appmusicdr_definition-0001';va='com.sap.gateway.srvd.sadl_gw_appmusicdr_definition.v0001.et-c_mdbu_v4_artisttp.regionoforigin'/$metadata</String>
+					</Collection>
+				</Annotation>
+				<Annotation Term="SAP__common.Label" String="Region Code" />
+				<Annotation Term="SAP__common.QuickInfo" String="AIS: Country Code" />
+			</Annotations>
+			<Annotations Target="SAP__self.ArtistsType/RegionOfOrigin_Text">
+				<Annotation Term="SAP__core.Computed" />
+				<Annotation Term="SAP__common.Label" String="Description" />
+			</Annotations>
+			<Annotations Target="SAP__self.ArtistsType/FoundingYear">
+				<Annotation Term="SAP__common.Label" String="Year of Founding" />
+				<Annotation Term="SAP__common.FieldControl" EnumMember="SAP__common.FieldControlType/Mandatory" />
+				<Annotation Term="SAP__common.IsDigitSequence" />
+				<Annotation Term="SAP__common.Heading" String="Year" />
+				<Annotation Term="SAP__common.QuickInfo" String="AIS: Year" />
+			</Annotations>
+			<Annotations Target="SAP__self.ArtistsType/BreakupYear">
+				<Annotation Term="SAP__common.Label" String="Year of Break-up" />
+				<Annotation Term="SAP__common.IsDigitSequence" />
+				<Annotation Term="SAP__common.Heading" String="Year" />
+				<Annotation Term="SAP__common.QuickInfo" String="AIS: Year" />
+			</Annotations>
+			<Annotations Target="SAP__self.ArtistsType/CreatedAt">
+				<Annotation Term="SAP__common.Label" String="Created At" />
+				<Annotation Term="SAP__core.Computed" />
+				<Annotation Term="SAP__common.Heading" String="Time Stamp" />
+				<Annotation Term="SAP__common.QuickInfo" String="UTC Time Stamp in Long Form (YYYYMMDDhhmmssmmmuuun)" />
+			</Annotations>
+			<Annotations Target="SAP__self.ArtistsType/CreatedBy">
+				<Annotation Term="SAP__common.Label" String="Created By" />
+				<Annotation Term="SAP__core.Computed" />
+				<Annotation Term="SAP__common.Heading" String="User Name" />
+				<Annotation Term="SAP__common.QuickInfo" String="User Name" />
+			</Annotations>
+			<Annotations Target="SAP__self.ArtistsType/ChangedAt">
+				<Annotation Term="SAP__common.Label" String="Changed At" />
+				<Annotation Term="SAP__core.Computed" />
+				<Annotation Term="SAP__common.Heading" String="Time Stamp" />
+				<Annotation Term="SAP__common.QuickInfo" String="UTC Time Stamp in Long Form (YYYYMMDDhhmmssmmmuuun)" />
+			</Annotations>
+			<Annotations Target="SAP__self.ArtistsType/ChangedBy">
+				<Annotation Term="SAP__common.Label" String="Changed By" />
+				<Annotation Term="SAP__core.Computed" />
+				<Annotation Term="SAP__common.Heading" String="User Name" />
+				<Annotation Term="SAP__common.QuickInfo" String="User Name" />
+			</Annotations>
+			<Annotations Target="SAP__self.Container/Artists">
+				<Annotation Term="SAP__common.DraftRoot">
+					<Record>
+						<PropertyValue Property="ValidationFunction" String="com.sap.gateway.srvd.sadl_gw_appmusicdr_definition.v0001.ValidationFunction" />
+						<PropertyValue Property="PreparationAction" String="com.sap.gateway.srvd.sadl_gw_appmusicdr_definition.v0001.PreparationAction" />
+						<PropertyValue Property="EditAction" String="com.sap.gateway.srvd.sadl_gw_appmusicdr_definition.v0001.EditAction" />
+						<PropertyValue Property="ActivationAction" String="com.sap.gateway.srvd.sadl_gw_appmusicdr_definition.v0001.ActivationAction" />
+					</Record>
+				</Annotation>
+				<Annotation Term="Capabilities.SearchRestrictions">
+					<Record>
+						<PropertyValue Property="Searchable" Bool="true" />
+						<PropertyValue Property="UnsupportedExpressions" EnumMember="Capabilities.SearchExpressions/AND Capabilities.SearchExpressions/OR Capabilities.SearchExpressions/NOT Capabilities.SearchExpressions/group Capabilities.SearchExpressions/phrase" />
+					</Record>
+				</Annotation>
+				<Annotation Term="Capabilities.FilterRestrictions">
+					<Record>
+						<PropertyValue Property="NonFilterableProperties">
+							<Collection>
+								<PropertyPath>ActiveUUID</PropertyPath>
+								<PropertyPath>DraftEntityCreationDateTime</PropertyPath>
+								<PropertyPath>DraftEntityLastChangeDateTime</PropertyPath>
+								<PropertyPath>HasActiveEntity</PropertyPath>
+								<PropertyPath>IsActiveEntity</PropertyPath>
+								<PropertyPath>Activation_ac</PropertyPath>
+								<PropertyPath>Break_up_ac</PropertyPath>
+								<PropertyPath>Edit_ac</PropertyPath>
+								<PropertyPath>Move_country_ac</PropertyPath>
+								<PropertyPath>Preparation_ac</PropertyPath>
+								<PropertyPath>Reunion_ac</PropertyPath>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+				<Annotation Term="Capabilities.SortRestrictions">
+					<Record>
+						<PropertyValue Property="NonSortableProperties">
+							<Collection>
+								<PropertyPath>ActiveUUID</PropertyPath>
+								<PropertyPath>DraftEntityCreationDateTime</PropertyPath>
+								<PropertyPath>DraftEntityLastChangeDateTime</PropertyPath>
+								<PropertyPath>HasActiveEntity</PropertyPath>
+								<PropertyPath>IsActiveEntity</PropertyPath>
+								<PropertyPath>Activation_ac</PropertyPath>
+								<PropertyPath>Break_up_ac</PropertyPath>
+								<PropertyPath>Edit_ac</PropertyPath>
+								<PropertyPath>Move_country_ac</PropertyPath>
+								<PropertyPath>Preparation_ac</PropertyPath>
+								<PropertyPath>Reunion_ac</PropertyPath>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="SAP__self.ArtistsType">
+				<Annotation Term="SAP__common.Label" String="Artist" />
+				<Annotation Term="SAP__common.SemanticKey">
+					<Collection>
+						<PropertyPath>Name</PropertyPath>
+					</Collection>
+				</Annotation>
+				<Annotation Term="UI.Facets">
+					<Collection>
+						<Record Type="UI.ReferenceFacet">
+							<PropertyValue Property="Label" String="General Information" />
+							<PropertyValue Property="Target" AnnotationPath="@UI.Identification" />
+						</Record>
+						<Record Type="UI.ReferenceFacet">
+							<PropertyValue Property="Label" String="Publications" />
+							<PropertyValue Property="Target" AnnotationPath="_Publication/@UI.LineItem" />
+						</Record>
+						<Record Type="UI.ReferenceFacet">
+							<PropertyValue Property="Label" String="Assigned Persons" />
+							<PropertyValue Property="Target" AnnotationPath="_PersAssign/@UI.LineItem" />
+						</Record>
+					</Collection>
+				</Annotation>
+				<Annotation Term="UI.HeaderInfo">
+					<Record>
+						<PropertyValue Property="TypeName" String="Artist" />
+						<PropertyValue Property="TypeNamePlural" String="Artists" />
+						<PropertyValue Property="Title">
+							<Record Type="UI.DataField">
+								<PropertyValue Property="Value" Path="Name" />
+							</Record>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+				<Annotation Term="UI.Identification">
+					<Collection>
+						<Record Type="UI.DataFieldForAction">
+							<PropertyValue Property="Label" String="Break Up" />
+							<PropertyValue Property="Action" String="com.sap.gateway.srvd.sadl_gw_appmusicdr_definition.v0001.BREAK_UP" />
+							<PropertyValue Property="InvocationGrouping" EnumMember="UI.OperationGroupingType/Isolated" />
+						</Record>
+						<Record Type="UI.DataField">
+							<PropertyValue Property="Value" Path="Name" />
+						</Record>
+						<Record Type="UI.DataField">
+							<PropertyValue Property="Value" Path="CountryOfOrigin" />
+						</Record>
+						<Record Type="UI.DataField">
+							<PropertyValue Property="Value" Path="RegionOfOrigin" />
+						</Record>
+						<Record Type="UI.DataField">
+							<PropertyValue Property="Value" Path="FoundingYear" />
+						</Record>
+						<Record Type="UI.DataField">
+							<PropertyValue Property="Value" Path="BreakupYear" />
+						</Record>
+					</Collection>
+				</Annotation>
+				<Annotation Term="UI.LineItem">
+					<Collection>
+						<Record Type="UI.DataField">
+							<PropertyValue Property="Value" Path="Name" />
+						</Record>
+						<Record Type="UI.DataFieldForAction">
+							<PropertyValue Property="Label" String="Break Up" />
+							<PropertyValue Property="Action" String="com.sap.gateway.srvd.sadl_gw_appmusicdr_definition.v0001.BREAK_UP" />
+							<PropertyValue Property="InvocationGrouping" EnumMember="UI.OperationGroupingType/Isolated" />
+						</Record>
+						<Record Type="UI.DataField">
+							<PropertyValue Property="Label" String="My Country" />
+							<PropertyValue Property="Value" Path="CountryOfOrigin" />
+						</Record>
+						<Record Type="UI.DataFieldForAction">
+							<PropertyValue Property="Label" String="Reunion" />
+							<PropertyValue Property="Action" String="com.sap.gateway.srvd.sadl_gw_appmusicdr_definition.v0001.REUNION" />
+							<PropertyValue Property="InvocationGrouping" EnumMember="UI.OperationGroupingType/Isolated" />
+						</Record>
+						<Record Type="UI.DataField">
+							<PropertyValue Property="Value" Path="RegionOfOrigin" />
+						</Record>
+						<Record Type="UI.DataField">
+							<PropertyValue Property="Value" Path="FoundingYear" />
+						</Record>
+						<Record Type="UI.DataFieldForAction">
+							<PropertyValue Property="Label" String="Change Country" />
+							<PropertyValue Property="Action" String="com.sap.gateway.srvd.sadl_gw_appmusicdr_definition.v0001.MOVE_COUNTRY" />
+							<PropertyValue Property="InvocationGrouping" EnumMember="UI.OperationGroupingType/Isolated" />
+						</Record>
+						<Record Type="UI.DataField">
+							<PropertyValue Property="Value" Path="BreakupYear" />
+						</Record>
+					</Collection>
+				</Annotation>
+				<Annotation Term="UI.PresentationVariant">
+					<Record>
+						<PropertyValue Property="SortOrder">
+							<Collection>
+								<Record Type="SAP__common.SortOrderType">
+									<PropertyValue Property="Property" PropertyPath="Name" />
+									<PropertyValue Property="Descending" Bool="false" />
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+				<Annotation Term="UI.SelectionFields">
+					<Collection>
+						<PropertyPath>Name</PropertyPath>
+						<PropertyPath>ArtistUUID</PropertyPath>
+						<PropertyPath>CountryOfOrigin</PropertyPath>
+						<PropertyPath>RegionOfOrigin</PropertyPath>
+						<PropertyPath>FoundingYear</PropertyPath>
+						<PropertyPath>BreakupYear</PropertyPath>
+						<PropertyPath>_Publication/Name</PropertyPath>
+					</Collection>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="SAP__self.TitlesType/TitleUUID">
+				<Annotation Term="SAP__common.Text" Path="Name" />
+				<Annotation Term="SAP__common.Label" String="UUID" />
+				<Annotation Term="SAP__common.QuickInfo" String="UUID in X form (binary)" />
+			</Annotations>
+			<Annotations Target="SAP__self.TitlesType/Name">
+				<Annotation Term="SAP__common.FieldControl" EnumMember="SAP__common.FieldControlType/Mandatory" />
+				<Annotation Term="SAP__common.Label" String="Title Name" />
+				<Annotation Term="SAP__common.QuickInfo" String="AIS: Title Name" />
+			</Annotations>
+			<Annotations Target="SAP__self.TitlesType/Genre">
+				<Annotation Term="SAP__common.FieldControl" EnumMember="SAP__common.FieldControlType/Mandatory" />
+				<Annotation Term="SAP__common.IsDigitSequence" />
+				<Annotation Term="SAP__common.Label" String="Genre Code" />
+				<Annotation Term="SAP__common.QuickInfo" String="AIS: Genre Code" />
+			</Annotations>
+			<Annotations Target="SAP__self.TitlesType/Length">
+				<Annotation Term="SAP__common.FieldControl" EnumMember="SAP__common.FieldControlType/Mandatory" />
+				<Annotation Term="SAP__common.Label" String="Title Length" />
+				<Annotation Term="SAP__common.QuickInfo" String="AIS: Title Length" />
+				<Annotation Term="Measures.Unit" Path="LengthUnit" />
+			</Annotations>
+			<Annotations Target="SAP__self.TitlesType/LengthUnit">
+				<Annotation Term="SAP__core.Computed" />
+				<Annotation Term="SAP__common.Label" String="Length Unit" />
+				<Annotation Term="SAP__common.Heading" String="Title Length Unit" />
+				<Annotation Term="SAP__common.QuickInfo" String="AIS: Title Length Unit" />
+			</Annotations>
+			<Annotations Target="SAP__self.TitlesType/CurrencyCode">
+				<Annotation Term="SAP__core.Computed" />
+				<Annotation Term="SAP__common.Label" String="Currency Code" />
+				<Annotation Term="SAP__common.QuickInfo" String="AIS: Currency Code" />
+			</Annotations>
+			<Annotations Target="SAP__self.Container/Titles">
+				<Annotation Term="SAP__common.DraftNode">
+					<Record>
+						<PropertyValue Property="PreparationAction" String="com.sap.gateway.srvd.sadl_gw_appmusicdr_definition.v0001.PreparationAction" />
+						<PropertyValue Property="ValidationFunction" String="com.sap.gateway.srvd.sadl_gw_appmusicdr_definition.v0001.ValidationFunction" />
+					</Record>
+				</Annotation>
+				<Annotation Term="SAP__common.DraftActivationVia">
+					<Collection>
+						<String>SAP__self.Container/Artists</String>
+					</Collection>
+				</Annotation>
+				<Annotation Term="Capabilities.SearchRestrictions">
+					<Record>
+						<PropertyValue Property="Searchable" Bool="false" />
+					</Record>
+				</Annotation>
+				<Annotation Term="Capabilities.FilterRestrictions">
+					<Record>
+						<PropertyValue Property="NonFilterableProperties">
+							<Collection>
+								<PropertyPath>ActiveUUID</PropertyPath>
+								<PropertyPath>DraftEntityCreationDateTime</PropertyPath>
+								<PropertyPath>DraftEntityLastChangeDateTime</PropertyPath>
+								<PropertyPath>HasActiveEntity</PropertyPath>
+								<PropertyPath>IsActiveEntity</PropertyPath>
+								<PropertyPath>Preparation_ac</PropertyPath>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+				<Annotation Term="Capabilities.SortRestrictions">
+					<Record>
+						<PropertyValue Property="NonSortableProperties">
+							<Collection>
+								<PropertyPath>ActiveUUID</PropertyPath>
+								<PropertyPath>DraftEntityCreationDateTime</PropertyPath>
+								<PropertyPath>DraftEntityLastChangeDateTime</PropertyPath>
+								<PropertyPath>HasActiveEntity</PropertyPath>
+								<PropertyPath>IsActiveEntity</PropertyPath>
+								<PropertyPath>Preparation_ac</PropertyPath>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="SAP__self.TitlesType">
+				<Annotation Term="SAP__common.Label" String="Title" />
+				<Annotation Term="SAP__common.SemanticKey">
+					<Collection>
+						<PropertyPath>Name</PropertyPath>
+					</Collection>
+				</Annotation>
+				<Annotation Term="UI.Facets">
+					<Collection>
+						<Record Type="UI.ReferenceFacet">
+							<PropertyValue Property="Label" String="General Information" />
+							<PropertyValue Property="Target" AnnotationPath="@UI.Identification" />
+						</Record>
+						<Record Type="UI.ReferenceFacet">
+							<PropertyValue Property="Label" String="Contributors" />
+							<PropertyValue Property="Target" AnnotationPath="_Contribution/@UI.LineItem" />
+						</Record>
+						<Record Type="UI.ReferenceFacet">
+							<PropertyValue Property="Label" String="Songtext" />
+							<PropertyValue Property="Target" String="UI.FACET$3$">
+								<Annotation Term="SAP__core.Messages">
+									<Collection>
+										<Record>
+											<PropertyValue Property="code" String="SY-530" />
+											<PropertyValue Property="message" String="Es ist eine Ausnahme aufgetreten" />
+											<PropertyValue Property="severity" String="error" />
+										</Record>
+									</Collection>
+								</Annotation>
+							</PropertyValue>
+						</Record>
+					</Collection>
+				</Annotation>
+				<Annotation Term="UI.HeaderInfo">
+					<Record>
+						<PropertyValue Property="TypeName" String="Title" />
+						<PropertyValue Property="TypeNamePlural" String="Title" />
+						<PropertyValue Property="Title">
+							<Record Type="UI.DataField">
+								<PropertyValue Property="Value" Path="Name" />
+							</Record>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+				<Annotation Term="UI.Identification">
+					<Collection>
+						<Record Type="UI.DataFieldForAction">
+							<PropertyValue Property="Label" String="Add contributor" />
+							<PropertyValue Property="Action" String="com.sap.gateway.srvd.sadl_gw_appmusicdr_definition.v0001." />
+							<PropertyValue Property="InvocationGrouping" EnumMember="UI.OperationGroupingType/Isolated" />
+						</Record>
+					</Collection>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="SAP__self.DraftAdministrativeDataType/CreatedByUser">
+				<Annotation Term="SAP__common.Text" Path="CreatedByUserDescription" />
+				<Annotation Term="SAP__common.Label" String="Draft Created By" />
+			</Annotations>
+			<Annotations Target="SAP__self.DraftAdministrativeDataType/LastChangedByUser">
+				<Annotation Term="SAP__common.Text" Path="LastChangedByUserDescription" />
+				<Annotation Term="SAP__common.Label" String="Draft Last Changed By" />
+			</Annotations>
+			<Annotations Target="SAP__self.DraftAdministrativeDataType/InProcessByUser">
+				<Annotation Term="SAP__common.Text" Path="InProcessByUserDescription" />
+				<Annotation Term="SAP__common.Label" String="Draft In Process By" />
+			</Annotations>
+			<Annotations Target="SAP__self.DraftAdministrativeDataType">
+				<Annotation Term="SAP__common.Label" String="Draft Administration Data" />
+			</Annotations>
+			<Annotations Target="SAP__self.Container/DraftAdministrativeData">
+				<Annotation Term="Capabilities.SearchRestrictions">
+					<Record>
+						<PropertyValue Property="Searchable" Bool="true" />
+						<PropertyValue Property="UnsupportedExpressions" EnumMember="Capabilities.SearchExpressions/AND Capabilities.SearchExpressions/OR Capabilities.SearchExpressions/NOT Capabilities.SearchExpressions/group Capabilities.SearchExpressions/phrase" />
+					</Record>
+				</Annotation>
+				<Annotation Term="Capabilities.InsertRestrictions">
+					<Record>
+						<PropertyValue Property="Insertable" Bool="false" />
+					</Record>
+				</Annotation>
+				<Annotation Term="Capabilities.DeleteRestrictions">
+					<Record>
+						<PropertyValue Property="Deletable" Bool="false" />
+					</Record>
+				</Annotation>
+				<Annotation Term="Capabilities.UpdateRestrictions">
+					<Record>
+						<PropertyValue Property="Updatable" Bool="false" />
+					</Record>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="SAP__self.ArtistContributionsType/ContributorUUID">
+				<Annotation Term="SAP__common.Label" String="Artist Name" />
+				<Annotation Term="SAP__common.FieldControl" EnumMember="SAP__common.FieldControlType/Mandatory" />
+				<Annotation Term="SAP__common.QuickInfo" String="UUID in X form (binary)" />
+			</Annotations>
+			<Annotations Target="SAP__self.Container/ArtistContributions">
+				<Annotation Term="SAP__common.DraftNode">
+					<Record>
+						<PropertyValue Property="PreparationAction" String="com.sap.gateway.srvd.sadl_gw_appmusicdr_definition.v0001.PreparationAction" />
+						<PropertyValue Property="ValidationFunction" String="com.sap.gateway.srvd.sadl_gw_appmusicdr_definition.v0001.ValidationFunction" />
+					</Record>
+				</Annotation>
+				<Annotation Term="SAP__common.DraftActivationVia">
+					<Collection>
+						<String>SAP__self.Container/Artists</String>
+					</Collection>
+				</Annotation>
+				<Annotation Term="Capabilities.SearchRestrictions">
+					<Record>
+						<PropertyValue Property="Searchable" Bool="false" />
+					</Record>
+				</Annotation>
+				<Annotation Term="Capabilities.FilterRestrictions">
+					<Record>
+						<PropertyValue Property="NonFilterableProperties">
+							<Collection>
+								<PropertyPath>ActiveUUID</PropertyPath>
+								<PropertyPath>DraftEntityCreationDateTime</PropertyPath>
+								<PropertyPath>DraftEntityLastChangeDateTime</PropertyPath>
+								<PropertyPath>HasActiveEntity</PropertyPath>
+								<PropertyPath>IsActiveEntity</PropertyPath>
+								<PropertyPath>Preparation_ac</PropertyPath>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+				<Annotation Term="Capabilities.SortRestrictions">
+					<Record>
+						<PropertyValue Property="NonSortableProperties">
+							<Collection>
+								<PropertyPath>ActiveUUID</PropertyPath>
+								<PropertyPath>DraftEntityCreationDateTime</PropertyPath>
+								<PropertyPath>DraftEntityLastChangeDateTime</PropertyPath>
+								<PropertyPath>HasActiveEntity</PropertyPath>
+								<PropertyPath>IsActiveEntity</PropertyPath>
+								<PropertyPath>Preparation_ac</PropertyPath>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+				<Annotation Term="Capabilities.InsertRestrictions">
+					<Record>
+						<PropertyValue Property="Insertable" Bool="false" />
+					</Record>
+				</Annotation>
+				<Annotation Term="Capabilities.UpdateRestrictions">
+					<Record>
+						<PropertyValue Property="Updatable" Bool="false" />
+					</Record>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="SAP__self.ArtistContributionsType">
+				<Annotation Term="SAP__common.Label" String="Contribution" />
+				<Annotation Term="UI.HeaderInfo">
+					<Record>
+						<PropertyValue Property="TypeName" String="Contribution" />
+						<PropertyValue Property="TypeNamePlural" String="Contributions" />
+						<PropertyValue Property="Title">
+							<Record Type="UI.DataField">
+								<PropertyValue Property="Value" String="">
+									<Annotation Term="SAP__core.Messages">
+										<Collection>
+											<Record>
+												<PropertyValue Property="code" String="SADL_GW_EXP_VOCAN-001" />
+												<PropertyValue Property="message" String="Eigenschaft '_Contributor' von Annotation 'UI.HEADERINFO.TITLE' in Proj./View 'C_MDBU_V4_ContributionTP' nicht gefunden" />
+												<PropertyValue Property="severity" String="error" />
+											</Record>
+										</Collection>
+									</Annotation>
+								</PropertyValue>
+							</Record>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="SAP__self.PublicationsType/PublicationUUID">
+				<Annotation Term="SAP__common.Text" Path="Name" />
+				<Annotation Term="SAP__common.Label" String="UUID" />
+				<Annotation Term="SAP__common.QuickInfo" String="UUID in X form (binary)" />
+			</Annotations>
+			<Annotations Target="SAP__self.PublicationsType/Type">
+				<Annotation Term="SAP__common.FieldControl" EnumMember="SAP__common.FieldControlType/Mandatory" />
+				<Annotation Term="SAP__common.IsDigitSequence" />
+				<Annotation Term="SAP__common.Label" String="Publication Type" />
+				<Annotation Term="SAP__common.QuickInfo" String="AIS: Publication Type" />
+			</Annotations>
+			<Annotations Target="SAP__self.PublicationsType/Name">
+				<Annotation Term="SAP__common.FieldControl" EnumMember="SAP__common.FieldControlType/Mandatory" />
+				<Annotation Term="SAP__common.Label" String="Publication" />
+				<Annotation Term="SAP__common.Heading" String="Publication Name" />
+				<Annotation Term="SAP__common.QuickInfo" String="AIS: Publication Name" />
+			</Annotations>
+			<Annotations Target="SAP__self.PublicationsType/Price">
+				<Annotation Term="SAP__common.FieldControl" EnumMember="SAP__common.FieldControlType/Mandatory" />
+				<Annotation Term="SAP__common.Label" String="Price" />
+				<Annotation Term="SAP__common.QuickInfo" String="AIS: Price" />
+				<Annotation Term="Measures.ISOCurrency" Path="CurrencyCode" />
+			</Annotations>
+			<Annotations Target="SAP__self.PublicationsType/CurrencyCode">
+				<Annotation Term="SAP__common.FieldControl" EnumMember="SAP__common.FieldControlType/Mandatory" />
+				<Annotation Term="SAP__common.Label" String="Currency Code" />
+				<Annotation Term="SAP__common.QuickInfo" String="AIS: Currency Code" />
+			</Annotations>
+			<Annotations Target="SAP__self.Container/Publications">
+				<Annotation Term="SAP__common.DraftNode">
+					<Record>
+						<PropertyValue Property="ValidationFunction" String="com.sap.gateway.srvd.sadl_gw_appmusicdr_definition.v0001.ValidationFunction" />
+						<PropertyValue Property="PreparationAction" String="com.sap.gateway.srvd.sadl_gw_appmusicdr_definition.v0001.PreparationAction" />
+					</Record>
+				</Annotation>
+				<Annotation Term="SAP__common.DraftActivationVia">
+					<Collection>
+						<String>SAP__self.Container/Artists</String>
+					</Collection>
+				</Annotation>
+				<Annotation Term="Capabilities.SearchRestrictions">
+					<Record>
+						<PropertyValue Property="Searchable" Bool="false" />
+					</Record>
+				</Annotation>
+				<Annotation Term="Capabilities.FilterRestrictions">
+					<Record>
+						<PropertyValue Property="NonFilterableProperties">
+							<Collection>
+								<PropertyPath>ActiveUUID</PropertyPath>
+								<PropertyPath>DraftEntityCreationDateTime</PropertyPath>
+								<PropertyPath>DraftEntityLastChangeDateTime</PropertyPath>
+								<PropertyPath>HasActiveEntity</PropertyPath>
+								<PropertyPath>IsActiveEntity</PropertyPath>
+								<PropertyPath>Preparation_ac</PropertyPath>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+				<Annotation Term="Capabilities.SortRestrictions">
+					<Record>
+						<PropertyValue Property="NonSortableProperties">
+							<Collection>
+								<PropertyPath>ActiveUUID</PropertyPath>
+								<PropertyPath>DraftEntityCreationDateTime</PropertyPath>
+								<PropertyPath>DraftEntityLastChangeDateTime</PropertyPath>
+								<PropertyPath>HasActiveEntity</PropertyPath>
+								<PropertyPath>IsActiveEntity</PropertyPath>
+								<PropertyPath>Preparation_ac</PropertyPath>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="SAP__self.PublicationsType">
+				<Annotation Term="SAP__common.Label" String="Publication" />
+				<Annotation Term="SAP__common.SemanticKey">
+					<Collection>
+						<PropertyPath>Name</PropertyPath>
+					</Collection>
+				</Annotation>
+				<Annotation Term="UI.Facets">
+					<Collection>
+						<Record Type="UI.ReferenceFacet">
+							<PropertyValue Property="Label" String="General Information" />
+							<PropertyValue Property="Target" AnnotationPath="@UI.Identification" />
+						</Record>
+						<Record Type="UI.ReferenceFacet">
+							<PropertyValue Property="Label" String="Titles" />
+							<PropertyValue Property="Target" AnnotationPath="_Title/@UI.LineItem" />
+						</Record>
+					</Collection>
+				</Annotation>
+				<Annotation Term="UI.HeaderInfo">
+					<Record>
+						<PropertyValue Property="TypeName" String="Publication" />
+						<PropertyValue Property="TypeNamePlural" String="Publications" />
+						<PropertyValue Property="Title">
+							<Record Type="UI.DataField">
+								<PropertyValue Property="Value" Path="Name" />
+							</Record>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+				<Annotation Term="UI.LineItem">
+					<Collection>
+						<Record Type="UI.DataField">
+							<PropertyValue Property="Label" String="sjflkjsdflkjsadfl" />
+							<PropertyValue Property="Value" Path="Type" />
+						</Record>
+					</Collection>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="SAP__self.Container">
+				<Annotation Term="Aggregation.ApplySupported">
+					<Record>
+						<PropertyValue Property="Transformations">
+							<Collection>
+								<String>aggregate</String>
+								<String>groupby</String>
+								<String>filter</String>
+							</Collection>
+						</PropertyValue>
+						<PropertyValue Property="Rollup" EnumMember="None" />
+					</Record>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="SAP__self.ArtistsType/HasDraftEntity">
+				<Annotation Term="UI.HiddenFilter" />
+				<Annotation Term="UI.Hidden" />
+				<Annotation Term="SAP__common.Label" String="Has active" />
+				<Annotation Term="SAP__common.QuickInfo" String="Draft - Indicator - Has active document" />
+			</Annotations>
+			<Annotations Target="SAP__self.ArtistsType/ActiveUUID">
+				<Annotation Term="UI.HiddenFilter" />
+				<Annotation Term="UI.Hidden" />
+				<Annotation Term="SAP__common.Label" String="Key" />
+				<Annotation Term="SAP__common.QuickInfo" String="UUID serving as key (parent key, root key)" />
+			</Annotations>
+			<Annotations Target="SAP__self.ArtistsType/HasActiveEntity">
+				<Annotation Term="UI.HiddenFilter" />
+				<Annotation Term="UI.Hidden" />
+				<Annotation Term="SAP__common.Label" String="Has active" />
+				<Annotation Term="SAP__common.QuickInfo" String="Draft - Indicator - Has active document" />
+			</Annotations>
+			<Annotations Target="SAP__self.ArtistsType/IsActiveEntity">
+				<Annotation Term="UI.HiddenFilter" />
+				<Annotation Term="UI.Hidden" />
+				<Annotation Term="SAP__common.Label" String="Is active" />
+				<Annotation Term="SAP__common.QuickInfo" String="Draft - Indicator - Is active document" />
+			</Annotations>
+			<Annotations Target="SAP__self.ArtistsType/DraftEntityCreationDateTime">
+				<Annotation Term="UI.Hidden" />
+				<Annotation Term="SAP__common.Label" String="Draft Created On" />
+			</Annotations>
+			<Annotations Target="SAP__self.ArtistsType/DraftEntityLastChangeDateTime">
+				<Annotation Term="UI.Hidden" />
+				<Annotation Term="SAP__common.Label" String="Draft Last Changed On" />
+			</Annotations>
+			<Annotations Target="SAP__self.ArtistContributionsType/HasDraftEntity">
+				<Annotation Term="UI.HiddenFilter" />
+				<Annotation Term="UI.Hidden" />
+				<Annotation Term="SAP__common.Label" String="Has active" />
+				<Annotation Term="SAP__common.QuickInfo" String="Draft - Indicator - Has active document" />
+			</Annotations>
+			<Annotations Target="SAP__self.ArtistContributionsType/ActiveUUID">
+				<Annotation Term="UI.HiddenFilter" />
+				<Annotation Term="UI.Hidden" />
+				<Annotation Term="SAP__common.Label" String="Key" />
+				<Annotation Term="SAP__common.QuickInfo" String="UUID serving as key (parent key, root key)" />
+			</Annotations>
+			<Annotations Target="SAP__self.ArtistContributionsType/HasActiveEntity">
+				<Annotation Term="UI.HiddenFilter" />
+				<Annotation Term="UI.Hidden" />
+				<Annotation Term="SAP__common.Label" String="Has active" />
+				<Annotation Term="SAP__common.QuickInfo" String="Draft - Indicator - Has active document" />
+			</Annotations>
+			<Annotations Target="SAP__self.ArtistContributionsType/IsActiveEntity">
+				<Annotation Term="UI.HiddenFilter" />
+				<Annotation Term="UI.Hidden" />
+				<Annotation Term="SAP__common.Label" String="Is active" />
+				<Annotation Term="SAP__common.QuickInfo" String="Draft - Indicator - Is active document" />
+			</Annotations>
+			<Annotations Target="SAP__self.ArtistContributionsType/DraftEntityCreationDateTime">
+				<Annotation Term="UI.Hidden" />
+				<Annotation Term="SAP__common.Label" String="Draft Created On" />
+			</Annotations>
+			<Annotations Target="SAP__self.ArtistContributionsType/DraftEntityLastChangeDateTime">
+				<Annotation Term="UI.Hidden" />
+				<Annotation Term="SAP__common.Label" String="Draft Last Changed On" />
+			</Annotations>
+			<Annotations Target="SAP__self.AssigendPersonsType/HasDraftEntity">
+				<Annotation Term="UI.HiddenFilter" />
+				<Annotation Term="UI.Hidden" />
+				<Annotation Term="SAP__common.Label" String="Has active" />
+				<Annotation Term="SAP__common.QuickInfo" String="Draft - Indicator - Has active document" />
+			</Annotations>
+			<Annotations Target="SAP__self.AssigendPersonsType/ActiveUUID">
+				<Annotation Term="UI.HiddenFilter" />
+				<Annotation Term="UI.Hidden" />
+				<Annotation Term="SAP__common.Label" String="Key" />
+				<Annotation Term="SAP__common.QuickInfo" String="UUID serving as key (parent key, root key)" />
+			</Annotations>
+			<Annotations Target="SAP__self.AssigendPersonsType/HasActiveEntity">
+				<Annotation Term="UI.HiddenFilter" />
+				<Annotation Term="UI.Hidden" />
+				<Annotation Term="SAP__common.Label" String="Has active" />
+				<Annotation Term="SAP__common.QuickInfo" String="Draft - Indicator - Has active document" />
+			</Annotations>
+			<Annotations Target="SAP__self.AssigendPersonsType/IsActiveEntity">
+				<Annotation Term="UI.HiddenFilter" />
+				<Annotation Term="UI.Hidden" />
+				<Annotation Term="SAP__common.Label" String="Is active" />
+				<Annotation Term="SAP__common.QuickInfo" String="Draft - Indicator - Is active document" />
+			</Annotations>
+			<Annotations Target="SAP__self.AssigendPersonsType/DraftEntityCreationDateTime">
+				<Annotation Term="UI.Hidden" />
+				<Annotation Term="SAP__common.Label" String="Draft Created On" />
+			</Annotations>
+			<Annotations Target="SAP__self.AssigendPersonsType/DraftEntityLastChangeDateTime">
+				<Annotation Term="UI.Hidden" />
+				<Annotation Term="SAP__common.Label" String="Draft Last Changed On" />
+			</Annotations>
+			<Annotations Target="SAP__self.PublicationsType/HasDraftEntity">
+				<Annotation Term="UI.HiddenFilter" />
+				<Annotation Term="UI.Hidden" />
+				<Annotation Term="SAP__common.Label" String="Has active" />
+				<Annotation Term="SAP__common.QuickInfo" String="Draft - Indicator - Has active document" />
+			</Annotations>
+			<Annotations Target="SAP__self.PublicationsType/ActiveUUID">
+				<Annotation Term="UI.HiddenFilter" />
+				<Annotation Term="UI.Hidden" />
+				<Annotation Term="SAP__common.Label" String="Key" />
+				<Annotation Term="SAP__common.QuickInfo" String="UUID serving as key (parent key, root key)" />
+			</Annotations>
+			<Annotations Target="SAP__self.PublicationsType/HasActiveEntity">
+				<Annotation Term="UI.HiddenFilter" />
+				<Annotation Term="UI.Hidden" />
+				<Annotation Term="SAP__common.Label" String="Has active" />
+				<Annotation Term="SAP__common.QuickInfo" String="Draft - Indicator - Has active document" />
+			</Annotations>
+			<Annotations Target="SAP__self.PublicationsType/IsActiveEntity">
+				<Annotation Term="UI.HiddenFilter" />
+				<Annotation Term="UI.Hidden" />
+				<Annotation Term="SAP__common.Label" String="Is active" />
+				<Annotation Term="SAP__common.QuickInfo" String="Draft - Indicator - Is active document" />
+			</Annotations>
+			<Annotations Target="SAP__self.PublicationsType/DraftEntityCreationDateTime">
+				<Annotation Term="UI.Hidden" />
+				<Annotation Term="SAP__common.Label" String="Draft Created On" />
+			</Annotations>
+			<Annotations Target="SAP__self.PublicationsType/DraftEntityLastChangeDateTime">
+				<Annotation Term="UI.Hidden" />
+				<Annotation Term="SAP__common.Label" String="Draft Last Changed On" />
+			</Annotations>
+			<Annotations Target="SAP__self.TitlesType/HasDraftEntity">
+				<Annotation Term="UI.HiddenFilter" />
+				<Annotation Term="UI.Hidden" />
+				<Annotation Term="SAP__common.Label" String="Has active" />
+				<Annotation Term="SAP__common.QuickInfo" String="Draft - Indicator - Has active document" />
+			</Annotations>
+			<Annotations Target="SAP__self.TitlesType/ActiveUUID">
+				<Annotation Term="UI.HiddenFilter" />
+				<Annotation Term="UI.Hidden" />
+				<Annotation Term="SAP__common.Label" String="Key" />
+				<Annotation Term="SAP__common.QuickInfo" String="UUID serving as key (parent key, root key)" />
+			</Annotations>
+			<Annotations Target="SAP__self.TitlesType/HasActiveEntity">
+				<Annotation Term="UI.HiddenFilter" />
+				<Annotation Term="UI.Hidden" />
+				<Annotation Term="SAP__common.Label" String="Has active" />
+				<Annotation Term="SAP__common.QuickInfo" String="Draft - Indicator - Has active document" />
+			</Annotations>
+			<Annotations Target="SAP__self.TitlesType/IsActiveEntity">
+				<Annotation Term="UI.HiddenFilter" />
+				<Annotation Term="UI.Hidden" />
+				<Annotation Term="SAP__common.Label" String="Is active" />
+				<Annotation Term="SAP__common.QuickInfo" String="Draft - Indicator - Is active document" />
+			</Annotations>
+			<Annotations Target="SAP__self.TitlesType/DraftEntityCreationDateTime">
+				<Annotation Term="UI.Hidden" />
+				<Annotation Term="SAP__common.Label" String="Draft Created On" />
+			</Annotations>
+			<Annotations Target="SAP__self.TitlesType/DraftEntityLastChangeDateTime">
+				<Annotation Term="UI.Hidden" />
+				<Annotation Term="SAP__common.Label" String="Draft Last Changed On" />
+			</Annotations>
+			<Annotations Target="SAP__self.DraftAdministrativeDataType/DraftUUID">
+				<Annotation Term="UI.Hidden" />
+				<Annotation Term="SAP__common.Label" String="Draft (Technical ID)" />
+			</Annotations>
+			<Annotations Target="SAP__self.DraftAdministrativeDataType/DraftEntityType">
+				<Annotation Term="UI.Hidden" />
+				<Annotation Term="SAP__common.Label" String="Draft Entity ID" />
+			</Annotations>
+			<Annotations Target="SAP__self.DraftAdministrativeDataType/DraftAccessType">
+				<Annotation Term="UI.Hidden" />
+				<Annotation Term="SAP__common.Label" String="Draft Access Type" />
+			</Annotations>
+			<Annotations Target="SAP__self.DraftAdministrativeDataType/ProcessingStartDateTime">
+				<Annotation Term="UI.Hidden" />
+				<Annotation Term="SAP__common.Label" String="Draft In Process Since" />
+			</Annotations>
+			<Annotations Target="SAP__self.DraftAdministrativeDataType/DraftIsKeptByUser">
+				<Annotation Term="UI.Hidden" />
+				<Annotation Term="SAP__common.Label" String="Draft Is Kept By User" />
+			</Annotations>
+			<Annotations Target="SAP__self.DraftAdministrativeDataType/EnqueueStartDateTime">
+				<Annotation Term="UI.Hidden" />
+				<Annotation Term="SAP__common.Label" String="Draft Locked Since" />
+			</Annotations>
+			<Annotations Target="SAP__self.DraftAdministrativeDataType/DraftIsCreatedByMe">
+				<Annotation Term="UI.Hidden" />
+				<Annotation Term="SAP__common.Label" String="Draft Created By Me" />
+			</Annotations>
+			<Annotations Target="SAP__self.DraftAdministrativeDataType/DraftIsLastChangedByMe">
+				<Annotation Term="UI.Hidden" />
+				<Annotation Term="SAP__common.Label" String="Draft Last Changed By Me" />
+			</Annotations>
+			<Annotations Target="SAP__self.DraftAdministrativeDataType/DraftIsProcessedByMe">
+				<Annotation Term="UI.Hidden" />
+				<Annotation Term="SAP__common.Label" String="Draft In Process By Me" />
+			</Annotations>
+			<Annotations Target="SAP__self.DraftAdministrativeDataType/CreatedByUserDescription">
+				<Annotation Term="UI.Hidden" />
+				<Annotation Term="SAP__common.Label" String="Draft Created By (Description)" />
+			</Annotations>
+			<Annotations Target="SAP__self.DraftAdministrativeDataType/LastChangedByUserDescription">
+				<Annotation Term="UI.Hidden" />
+				<Annotation Term="SAP__common.Label" String="Draft Last Changed By (Description)" />
+			</Annotations>
+			<Annotations Target="SAP__self.DraftAdministrativeDataType/InProcessByUserDescription">
+				<Annotation Term="UI.Hidden" />
+				<Annotation Term="SAP__common.Label" String="Draft In Process By (Description)" />
+			</Annotations>
+			<Annotations Target="SAP__self.AssigendPersonsType/AssignmentUUID">
+				<Annotation Term="SAP__common.Label" String="UUID" />
+				<Annotation Term="SAP__common.QuickInfo" String="UUID in X form (binary)" />
+			</Annotations>
+			<Annotations Target="SAP__self.AssigendPersonsType/ArtistUUID">
+				<Annotation Term="SAP__common.Label" String="UUID" />
+				<Annotation Term="SAP__common.QuickInfo" String="UUID in X form (binary)" />
+			</Annotations>
+			<Annotations Target="SAP__self.PersionsType/LastName">
+				<Annotation Term="SAP__common.Label" String="Last Name" />
+				<Annotation Term="SAP__common.QuickInfo" String="AIS: Last Name" />
+			</Annotations>
+			<Annotations Target="SAP__self.PersionsType/FirstName">
+				<Annotation Term="SAP__common.Label" String="First Name" />
+				<Annotation Term="SAP__common.QuickInfo" String="AIS: First Name" />
+			</Annotations>
+			<Annotations Target="SAP__self.PersionsType/FormattedName">
+				<Annotation Term="SAP__common.Label" String="Text" />
+				<Annotation Term="SAP__common.QuickInfo" String="Text, 255 Characters" />
+			</Annotations>
+			<Annotations Target="SAP__self.PersionsType/DateOfBirth">
+				<Annotation Term="SAP__common.Label" String="Date" />
+				<Annotation Term="SAP__common.QuickInfo" String="AIS: Date" />
+			</Annotations>
+			<Annotations Target="SAP__self.PersionsType/DateOfDeath">
+				<Annotation Term="SAP__common.Label" String="Date" />
+				<Annotation Term="SAP__common.QuickInfo" String="AIS: Date" />
+			</Annotations>
+			<Annotations Target="SAP__self.TitlesType/PublicationUUID">
+				<Annotation Term="SAP__common.Label" String="UUID" />
+				<Annotation Term="SAP__common.QuickInfo" String="UUID in X form (binary)" />
+			</Annotations>
+			<Annotations Target="SAP__self.TitlesType/ArtistUUID">
+				<Annotation Term="SAP__common.Label" String="UUID" />
+				<Annotation Term="SAP__common.QuickInfo" String="UUID in X form (binary)" />
+			</Annotations>
+			<Annotations Target="SAP__self.TitlesType/Price">
+				<Annotation Term="SAP__common.Label" String="Price" />
+				<Annotation Term="SAP__common.QuickInfo" String="AIS: Price" />
+				<Annotation Term="Measures.ISOCurrency" Path="CurrencyCode" />
+			</Annotations>
+			<Annotations Target="SAP__self.DraftAdministrativeDataType/CreationDateTime">
+				<Annotation Term="SAP__common.Label" String="Draft Created On" />
+			</Annotations>
+			<Annotations Target="SAP__self.DraftAdministrativeDataType/LastChangeDateTime">
+				<Annotation Term="SAP__common.Label" String="Draft Last Changed On" />
+			</Annotations>
+			<Annotations Target="SAP__self.ArtistContributionsType/ContributionUUID">
+				<Annotation Term="SAP__common.Label" String="UUID" />
+				<Annotation Term="SAP__common.QuickInfo" String="UUID in X form (binary)" />
+			</Annotations>
+			<Annotations Target="SAP__self.ArtistContributionsType/TitleUUID">
+				<Annotation Term="SAP__common.Label" String="UUID" />
+				<Annotation Term="SAP__common.QuickInfo" String="UUID in X form (binary)" />
+			</Annotations>
+			<Annotations Target="SAP__self.ArtistContributionsType/ArtistUUID">
+				<Annotation Term="SAP__common.Label" String="UUID" />
+				<Annotation Term="SAP__common.QuickInfo" String="UUID in X form (binary)" />
+			</Annotations>
+			<Annotations Target="SAP__self.PublicationsType/ArtistUUID">
+				<Annotation Term="SAP__common.Label" String="UUID" />
+				<Annotation Term="SAP__common.QuickInfo" String="UUID in X form (binary)" />
+			</Annotations>
+			<Annotations Target="SAP__self.PublicationsType/ReleaseDate">
+				<Annotation Term="SAP__common.Label" String="Date" />
+				<Annotation Term="SAP__common.QuickInfo" String="AIS: Date" />
+			</Annotations>
+		</Schema>
+	</edmx:DataServices>
+</edmx:Edmx>

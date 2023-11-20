@@ -1,0 +1,75 @@
+{
+	"sap.app": {
+		"id": "objectCard2",
+		"type": "card",
+		"i18n": "i18n/i18n.properties"
+	},
+	"sap.card": {
+		"type": "Object",
+		"data": {
+			"request": {
+				"url": "./widgets/cardmanifests/employee.json"
+			}
+		},
+		"header": {
+			"icon": {
+				"src": "{photo}"
+			},
+			"title": "{firstName} {lastName}",
+			"subTitle": "{position}"
+		},
+		"content": {
+			"groups": [{
+					"title": "Details",
+					"items": [{
+							"label": "Firstname",
+							"value": "{firstName}"
+						},
+						{
+							"label": "Lastname",
+							"value": "{lastName}"
+						},
+						{
+							"label": "Phone",
+							"value": "{phone}"
+						}
+					]
+				},
+				{
+					"title": "Organization",
+					"items": [{
+						"label": "Manager",
+						"value": "{manager/firstName} {manager/lastName}",
+						"icon": {
+							"src": "{manager/photo}"
+						}
+					}]
+				},
+				{
+					"title": "Company Details",
+					"items": [{
+							"label": "Company Name",
+							"value": "{company/name}"
+						},
+						{
+							"label": "Adress",
+							"value": "{company/address}"
+						},
+						{
+							"label": "Website",
+							"value": "{company/website}",
+							"actions": [
+								{
+									"type": "Navigation",
+									"parameters": {
+										"url": "{company/website}"
+									}
+								}
+							]
+						}
+					]
+				}
+			]
+		}
+	}
+}

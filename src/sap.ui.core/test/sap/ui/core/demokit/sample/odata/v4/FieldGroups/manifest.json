@@ -1,0 +1,61 @@
+{
+	"_version" : "1.21.0",
+	"sap.app" : {
+		"ach" : "CA-UI5-COR",
+		"applicationVersion" : {
+			"version" : "${version}"
+		},
+		"dataSources" : {
+			"default" : {
+				"uri" : "/sap/opu/odata4/sap/zui5_testv4/default/sap/zui5_epm_sample/0002/",
+				"type" : "OData",
+				"settings" : {
+					"odataVersion" : "4.0"
+				}
+			}
+		},
+		"description" : "Test Application for Field Groups with OData V4",
+		"id" : "sap.ui.core.sample.odata.v4.FieldGroups",
+		"title" : "OData V4 Field Groups",
+		"type" : "application"
+	},
+	"sap.ui" : {
+		"deviceTypes" : {
+			"desktop" : true,
+			"phone" : true,
+			"tablet" : true
+		},
+		"technology" : "UI5"
+	},
+	"sap.ui5" : {
+		"contentDensities" : {
+			"compact" : true,
+			"cozy" : true
+		},
+		"dependencies" : {
+			"libs" : {
+				"sap.m" : {}
+			},
+			"minUI5Version" : "1.55"
+		},
+		"handleValidation" : true,
+		"models" : {
+			"" : {
+				"dataSource" : "default",
+				"preload" : true,
+				"settings" : {
+					"autoExpandSelect" : true,
+					"earlyRequests" : true,
+					"operationMode" : "Server"
+				},
+				"type" : "sap.ui.core.sample.odata.v4.FieldGroups.SandboxModel",
+				"uriSettingName" : "serviceUrl"
+			}
+		},
+		"rootView" : {
+			"async" : true,
+			"type" : "XML",
+			"viewName" : "sap.ui.core.sample.odata.v4.FieldGroups.FieldGroups"
+		}
+	}
+}

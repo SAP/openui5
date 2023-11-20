@@ -1,13 +1,8 @@
 <!DOCTYPE HTML>
 <html>
 	<head>
-		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 		<meta charset="utf-8">
 		<title>Heap Consumption of Resource Bundles</title>
-		<script src="../../../../resources/sap/ui/thirdparty/baseuri.js"></script>
-		<script src="../../../../resources/sap/ui/thirdparty/es6-promise.js"></script>
-		<script src="../../../../resources/sap/ui/thirdparty/es6-string-methods.js"></script>
-		<script src="../../../../resources/sap/ui/thirdparty/es6-object-assign.js"></script>
 		<script src="../../../../resources/ui5loader.js"></script>
 		<script src="../../../../resources/ui5loader-autoconfig.js" id="sap-ui-bootstrap"></script>
 	</head>
@@ -39,7 +34,7 @@
 				loadi18n('sap.ui.commons');
 			}
 
-			jQuery('#readall').click(function() {
+			jQuery('#readall').on("click", function() {
 
 				// the following libs represents a typical set of libraries used in a Fiori environment
 

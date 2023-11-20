@@ -2,18 +2,23 @@
  * ${copyright}
  */
 
-sap.ui.define(function () {
+sap.ui.define(["sap/ui/core/ControlBehavior"], function (ControlBehavior) {
 	"use strict";
 
 	/**
-	 * @class Section renderer.
-	 * @static
+	 * Section renderer.
+	 * @namespace
 	 */
-	var ObjectPageSectionRenderer = {};
+	var ObjectPageSectionRenderer = {
+		apiVersion: 2
+	};
 
 	ObjectPageSectionRenderer.render = function (oRm, oControl) {
-		var sTitle, bTitleVisible,
-			bAccessibilityOn = sap.ui.getCore().getConfiguration().getAccessibility();
+		var sTitle, bTitleVisible, bTitleAriaHidden,
+			bAccessibilityOn = ControlBehavior.isAccessibilityEnabled(),
+			oLabelledBy = oControl.getAggregation("ariaLabelledBy"),
+			oHeading = oControl.getHeading(),
+			bWrapTitle = oControl.getWrapTitle();
 
 		if (!oControl.getVisible() || !oControl._getInternalVisible()) {
 			return;
@@ -21,66 +26,81 @@ sap.ui.define(function () {
 
 		sTitle = oControl._getTitle();
 		bTitleVisible = oControl._isTitleVisible();
+		bTitleAriaHidden = !oControl._isTitleAriaVisible();
 
-		oRm.write("<section ");
-		oRm.addClass("sapUxAPObjectPageSection");
+		oRm.openStart("section", oControl)
+			.class("sapUxAPObjectPageSection");
 
 		if (!bTitleVisible) {
-			oRm.addClass("sapUxAPObjectPageSectionNoTitle");
+			oRm.class("sapUxAPObjectPageSectionNoTitle");
 		}
 
-		oRm.writeClasses();
-		oRm.writeAttribute("role", "region");
-
-		if (bAccessibilityOn) {
-			if (sTitle) {
-				oRm.writeAttributeEscaped("aria-labelledby", oControl.getAggregation("ariaLabelledBy").getId());
-			} else {
-				oRm.writeAttribute("aria-label", sap.uxap.ObjectPageSection._getLibraryResourceBundle().getText("SECTION_CONTROL_NAME"));
-			}
+		if (bWrapTitle) {
+			oRm.class("sapUxAPObjectPageSectionWrapTitle");
 		}
 
-		oRm.writeControlData(oControl);
-		oRm.write(">");
+		oRm.attr("role", "region");
+
+		if (bAccessibilityOn && oLabelledBy) {
+			oRm.attr("aria-labelledby", oLabelledBy.getId());
+		}
+
+		oRm.attr("data-sap-ui-customfastnavgroup", true);
+
+		oRm.openEnd();
+
+		if (oHeading) {
+			oRm.openStart("div")
+				.class("sapUxAPObjectPageSectionHeading")
+				.openEnd();
+				oRm.renderControl(oHeading);
+			oRm.close("div");
+		}
+
+		oRm.openStart("div", oControl.getId() + "-header")
+			.attr("role", "heading")
+			.attr("aria-level", oControl._getARIALevel())
+			.class("sapUxAPObjectPageSectionHeader")
+			.class(bTitleVisible ? "" : "sapUxAPObjectPageSectionHeaderHidden");
+
+		if (bTitleAriaHidden) {
+			oRm.attr("aria-hidden", "true");
+		}
+
+		oRm.openEnd();
+
+		oRm.openStart("div", oControl.getId() + "-title")
+			.class("sapUxAPObjectPageSectionTitle");
+
+		if (oControl.getTitleUppercase()) {
+			oRm.class("sapUxAPObjectPageSectionTitleUppercase");
+		}
+
+		oRm.openEnd();
+		oRm.text(sTitle);
+		oRm.close("div");
 
 		if (bTitleVisible) {
-			oRm.write("<div");
-			oRm.writeAttribute("role", "heading");
-			oRm.writeAttribute("aria-level", oControl._getARIALevel());
-			oRm.writeAttributeEscaped("id", oControl.getId() + "-header");
-			oRm.addClass("sapUxAPObjectPageSectionHeader");
-			oRm.writeClasses();
-			oRm.write(">");
-
-			oRm.write("<div");
-			oRm.writeAttributeEscaped("id", oControl.getId() + "-title");
-			oRm.addClass("sapUxAPObjectPageSectionTitle");
-			if (oControl.getTitleUppercase()) {
-				oRm.addClass("sapUxAPObjectPageSectionTitleUppercase");
-			}
-			oRm.writeClasses();
-			oRm.write(">");
-			oRm.writeEscaped(sTitle);
-			oRm.write("</div>");
 			oRm.renderControl(oControl._getShowHideAllButton());
 			oRm.renderControl(oControl._getShowHideButton());
-			oRm.write("</div>");
 		}
+		oRm.close("div");
 
-		oRm.write("<div");
-		oRm.addClass("sapUxAPObjectPageSectionContainer");
-		oRm.writeClasses();
+
+		oRm.openStart("div")
+			.class("sapUxAPObjectPageSectionContainer");
+
 		if (oControl._isHidden){
-			oRm.addStyle("display", "none");
+			oRm.style("display", "none");
 		}
-		oRm.writeStyles();
-		oRm.write(">");
 
-		oControl.getSubSections().forEach(oRm.renderControl);
+		oRm.openEnd();
 
-		oRm.write("</div>");
+		oRm.renderControl(oControl._getGrid());
 
-		oRm.write("</section>");
+		oRm.close("div");
+
+		oRm.close("section");
 	};
 
 	return ObjectPageSectionRenderer;

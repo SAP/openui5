@@ -1,0 +1,47 @@
+<mvc:View
+		class="sapUiSizeCompact"
+		controllerName="sap.ui.core.sample.odata.v4.DeepCreate.ListReport"
+		xmlns="sap.m"
+		xmlns:mvc="sap.ui.core.mvc">
+	<Page showHeader="false">
+		<Table growing="true" growingThreshold="10" id="SalesOrderList"
+				items="{path : '/SalesOrderList',
+					parameters : {
+						$count : true,
+						$$getKeepAliveContext : true,
+						$$patchWithoutSideEffects : true
+					}}">
+			<headerToolbar>
+				<Toolbar>
+					<Title level="H1" text="Sales Order List">
+					</Title>
+					<Link text="Read Me" target="_blank"
+						href="test-resources/sap/ui/core/demokit/sample/odata/v4/DeepCreate/README.html"/>
+					<ToolbarSpacer/>
+					<Button icon="sap-icon://add" id="create" press="onCreateSalesOrder"
+						text="Create" tooltip="Create Sales Order"/>
+				</Toolbar>
+			</headerToolbar>
+			<columns>
+				<Column hAlign="Right" width="9em">
+					<Text text="Sales Order ID"/>
+				</Column>
+				<Column>
+					<Text text="Buyer Name"/>
+				</Column>
+				<Column hAlign="Right">
+					<Text text="Gross Amount"/>
+				</Column>
+				<Column>
+					<Text text="Currency"/>
+				</Column>
+			</columns>
+			<ColumnListItem type="Navigation" press=".onListItemPressed">
+				<Text id="salesOrderId" text="{SalesOrderID}"/>
+				<Text binding="{SO_2_BP}" text="{CompanyName}"/>
+				<Text id="grossAmount" text="{GrossAmount}"/>
+				<Text text="{CurrencyCode}"/>
+			</ColumnListItem>
+		</Table>
+	</Page>
+</mvc:View>

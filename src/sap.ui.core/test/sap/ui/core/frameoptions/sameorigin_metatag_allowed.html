@@ -1,12 +1,13 @@
 <!DOCTYPE HTML>
 <html>
 	<head>
+		<meta charset="utf-8">
+
 		<!--
 			For easier validation the service is set to "denied.json"
 			The service should not be called in case of same origin.
 		-->
-		<meta name="sap.whitelistService" content="denied.json">
-		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="sap.allowlistService" content="denied.json">
 
 		<title>Frame Options Testpage - sap.ui.core</title>
 
@@ -14,6 +15,8 @@
 		<script src="../shared-config.js"></script>
 		<script id="sap-ui-bootstrap"
 				src="../../../../../resources/sap-ui-core.js"
+				data-sap-ui-async="true"
+				data-sap-ui-compatVersion="edge"
 				data-sap-ui-libs="sap.m">
 		</script>
 		<script src="createcontent.js"></script>

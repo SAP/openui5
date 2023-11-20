@@ -1,0 +1,42 @@
+/* ============================================ */
+/* CSS for control sap.ui.commons/MessageToast  */
+/* Evening Horizon theme                        */
+/* ============================================ */
+
+.sapUiMsgToastMsg {
+	font-family: @sapUiDesktopFontFamily;
+	font-size: @sapUiDesktopFontSize;
+	background-color: lighten(@sapUiContentForegroundColor, 10); // @sapUiWhiteBG = #ffffff
+	border-color: @sapUiContentForegroundBorderColor; // @sapUiDarkBorder = #bfbfbf
+}
+
+/* Priorities affect the coloring of the Toast */
+.sapUiMsgTError .sapUiMsgToastMsg {
+	background-color: @sapUiFieldInvalidBackground;
+	border-color: @sapUiFieldInvalidColor;
+}
+.sapUiMsgTWarning .sapUiMsgToastMsg {
+	background-color: @sapUiFieldWarningBackground;
+	border-color: @sapUiFieldWarningColor;
+}
+.sapUiMsgTSuccess .sapUiMsgToastMsg {
+	background-color: @sapUiFieldSuccessBackground;
+	border-color: @sapUiFieldSuccessColor;
+}
+
+/* Styling of the down-arrow is Type/Priority dependent */
+.sapUiMsgToastArrow {
+	background-image: url("img/messagebar/toastarrow_multi.gif");
+}
+
+.sapUiMsgTError .sapUiMsgToastArrow {
+	background-image: url("img/messagebar/toastarrow_Error.gif");
+}
+
+.sapUiMsgTWarning .sapUiMsgToastArrow {
+	background-image: url("img/messagebar/toastarrow_Warning.gif");
+}
+
+.sapUiMsgTSuccess .sapUiMsgToastArrow {
+	background-image: url("img/messagebar/toastarrow_Success.gif");
+}

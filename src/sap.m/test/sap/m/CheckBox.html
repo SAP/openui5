@@ -1,12 +1,14 @@
 <!DOCTYPE HTML>
 <html>
 	<head>
-		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 		<title>sap.m.CheckBox</title>
 		<script src="shared-config.js"></script>
 		<script src="../../../resources/sap-ui-core.js"
 			id="sap-ui-bootstrap"
-			data-sap-ui-libs="sap.m, sap.ui.layout">
+			data-sap-ui-libs="sap.m, sap.ui.layout"
+			data-sap-ui-resourceroots='{
+				"qunit.internal.acc": "../../../test-resources/sap/ui/core/qunit/internal/acc"
+			}'>
 		</script>
 		<script>
 			jQuery.sap.initMobile();
@@ -34,25 +36,29 @@
 						id:"cb_selected_enabled",
 						visible: true,
 						selected:true,
-						enabled: true
+						enabled: true,
+						tooltip: "Sample Label"
 					}),
 					new sap.m.CheckBox({
 						id:"cb_selected_disabled",
 						visible: true,
 						selected: true,
-						enabled: false
+						enabled: false,
+						tooltip: "Sample Label"
 					}),
 					new sap.m.CheckBox({
 						id:"cb_deselected_enabled",
 						visible: true,
 						selected: false,
-						enabled: true
+						enabled: true,
+						tooltip: "Sample Label"
 					}),
 					new sap.m.CheckBox({
 						id:"cb_disabled_deselected",
 						visible: true,
 						selected: false,
-						enabled: false
+						enabled: false,
+						tooltip: "Sample Label"
 					}),
 					new sap.m.CheckBox({
 						id:"cb_with_label_size",
@@ -68,7 +74,8 @@
 						visible: true,
 						selected: true,
 						editable: false,
-						text: "Not editable"
+						text: "Not editable - no value state shown",
+						valueState: "Warning"
 					}),
 					new sap.m.CheckBox({
 						id:"cb_display_only_checked",
@@ -95,7 +102,7 @@
 						displayOnly: true,
 						editable: true,
 						selected: false,
-						text: "Disabled and Display Only"
+						text: "Disabled and Display Only (has no effect)"
 					}),
 					new sap.m.CheckBox({
 						id:"cb_enabled_editable_and_display_only",
@@ -132,6 +139,24 @@
 						valueState: "Warning"
 					}),
 					new sap.m.CheckBox({
+						id:"cb_success_deselected",
+						text: "Success",
+						valueState: "Success"
+					}),
+					new sap.m.CheckBox({
+						id:"cb_success_selected",
+						text: "Success checked",
+						selected: true,
+						valueState: "Success"
+					}),
+					new sap.m.CheckBox({
+						id:"cb_success_selected_disabled",
+						text: "Success disabled",
+						selected: true,
+						enabled: false,
+						valueState: "Success"
+					}),
+					new sap.m.CheckBox({
 						id:"cb_error_deselected",
 						text: "Error",
 						valueState: "Error"
@@ -144,10 +169,28 @@
 					}),
 					new sap.m.CheckBox({
 						id:"cb_error_selected_disabled",
-						text: "Error disabled",
+						text: "Error disabled - no value state shown",
 						selected: true,
 						enabled: false,
 						valueState: "Error"
+					}),
+					new sap.m.CheckBox({
+						id:"cb_information_deselected",
+						text: "Information",
+						valueState: "Information"
+					}),
+					new sap.m.CheckBox({
+						id:"cb_information_selected",
+						text: "Information checked",
+						selected: true,
+						valueState: "Information"
+					}),
+					new sap.m.CheckBox({
+						id:"cb_information_selected_disabled",
+						text: "Information disabled",
+						selected: true,
+						enabled: false,
+						valueState: "Information"
 					}),
 					new sap.m.CheckBox({
 						id:"cb_partially_selected",
@@ -167,11 +210,11 @@
 					}),
 					oToolbar,
 					new sap.ui.layout.form.SimpleForm({
-						title: "Form containing a CheckBox",
+						id: "sf_with_checkbox",
+						title: new sap.ui.core.Title({text: "Form containing a CheckBox", level: sap.ui.core.TitleLevel.H2}),
 						editable : true,
 						content : [
-							new sap.m.Label({text:"CheckBox in a Form"}),
-							new sap.m.CheckBox({selected:true})
+							new sap.m.CheckBox({id: "cb_in_a_form", selected:true, text:"CheckBox in a Form"})
 						]
 					}),
 					// RTL sapmple - set page in rtl mode to explore (sap-ui-rtl='true')
@@ -210,7 +253,9 @@
 
 			new sap.m.App({
 				pages : [
-					new sap.m.Page({
+					new sap.m.Page("checkbox-page", {
+						title: "sap.m.CheckBox",
+						titleLevel: "H1",
 						content : [
 							createContent()
 						]
@@ -219,7 +264,7 @@
 			}).placeAt('content');
 		</script>
 	</head>
-	<body id="body" class="sapUiBody" role="application">
+	<body id="body" class="sapUiBody">
 		<div id="content" class="holder"></div>
 	</body>
 </html>

@@ -1,0 +1,24 @@
+{	"Type": "sap.ui.core.JSONView",
+	"controllerName":"example.mvc_legacyAPIs.test",
+	"content": [{
+		"Type":"sap.m.Panel",
+		"id":"myPanel",
+		"content":[		{
+			"Type":"sap.m.Label",
+			"id":"Label1",
+			"text":"Label",
+			"labelFor":"Button1"
+		},
+		{
+			"Type":"sap.m.Button",
+			"id":"Button1",
+			"text":"Hallo",
+			"press": "doIt"
+		},
+		{
+			"Type":"sap.m.Button",
+			"id":"Button2",
+			"text":"Hallo auch"
+		}]
+	}]
+}

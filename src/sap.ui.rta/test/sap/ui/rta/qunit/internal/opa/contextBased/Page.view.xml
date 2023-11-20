@@ -1,0 +1,26 @@
+<mvc:View
+		id="ContextBasedAdaptationDialogView"
+		xmlns:mvc="sap.ui.core.mvc"
+		xmlns:unified="sap.ui.unified"
+		controllerName="sap.ui.rta.contextBased.Page"
+		xmlns="sap.m">
+		<VBox id="qunit-fixture"></VBox>
+	<VBox class="sapUiSmallMargin">
+		<Button id="openManageAdaptationsDialogButton" text="Open Manage Context-Based Adaptation Dialog" press="onManageAdaptations"/>
+	</VBox>
+	<VBox class="sapUiSmallMargin">
+		<Button id="openManageAdaptationsWithOnlyOneAdaptationDialogButton" text="Open Manage Context-Based Adaptation Dialog with only one adaptation" press="onManageAdaptationsWithOnlyOneAdaptation"/>
+	</VBox>
+	<VBox class="sapUiSmallMargin">
+		<Button id="openManageAdaptationsWithTwoAdaptationsDialogButton" text="Open Manage Context-Based Adaptation Dialog with two adaptation" press="onManageAdaptationsWithTwoAdaptations"/>
+	</VBox>
+	<VBox class="sapUiSmallMargin">
+		<Button id="openManageAdaptationsWithErrorDialogButton" text="Open Manage Context-Based Adaptation Dialog (with error)" press="onManageAdaptationsWithBackendError"/>
+	</VBox>
+	<VBox class="sapUiSmallMargin">
+		<Button id="openAddAdaptationDialogButton" text="Open Add Adaptation Dialog" press="onAddAdaptation"/>
+	</VBox>
+	<VBox class="sapUiSmallMargin">
+		<Button id="openAddAdaptationWithErrorDialogButton" text="Open Add Adaptation Dialog (with error)" press="onAddAdaptationWithBackendError"/>
+	</VBox>
+</mvc:View>

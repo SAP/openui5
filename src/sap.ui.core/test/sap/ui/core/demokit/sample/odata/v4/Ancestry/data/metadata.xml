@@ -1,0 +1,566 @@
+<edmx:Edmx xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx" xmlns="http://docs.oasis-open.org/odata/ns/edm" Version="4.0">
+<edmx:Reference Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_COMMUNICATION',Version='0001',SAP__Origin='LOCAL')/$value">
+<edmx:Include Namespace="com.sap.vocabularies.Communication.v1" Alias="Communication"/>
+</edmx:Reference>
+<edmx:Reference Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_PERSONALDATA',Version='0001',SAP__Origin='LOCAL')/$value">
+<edmx:Include Namespace="com.sap.vocabularies.PersonalData.v1" Alias="PersonalData"/>
+</edmx:Reference>
+<edmx:Reference Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_ANALYTICS',Version='0001',SAP__Origin='LOCAL')/$value">
+<edmx:Include Namespace="com.sap.vocabularies.Analytics.v1" Alias="Analytics"/>
+</edmx:Reference>
+<edmx:Reference Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_COMMON',Version='0001',SAP__Origin='LOCAL')/$value">
+<edmx:Include Namespace="com.sap.vocabularies.Common.v1" Alias="SAP__common"/>
+</edmx:Reference>
+<edmx:Reference Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_MEASURES',Version='0001',SAP__Origin='LOCAL')/$value">
+<edmx:Include Namespace="Org.OData.Measures.V1" Alias="SAP__measures"/>
+</edmx:Reference>
+<edmx:Reference Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_CORE',Version='0001',SAP__Origin='LOCAL')/$value">
+<edmx:Include Namespace="Org.OData.Core.V1" Alias="SAP__core"/>
+</edmx:Reference>
+<edmx:Reference Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_CAPABILITIES',Version='0001',SAP__Origin='LOCAL')/$value">
+<edmx:Include Namespace="Org.OData.Capabilities.V1" Alias="SAP__capabilities"/>
+</edmx:Reference>
+<edmx:Reference Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_AGGREGATION',Version='0001',SAP__Origin='LOCAL')/$value">
+<edmx:Include Namespace="Org.OData.Aggregation.V1" Alias="SAP__aggregation"/>
+</edmx:Reference>
+<edmx:Reference Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_VALIDATION',Version='0001',SAP__Origin='LOCAL')/$value">
+<edmx:Include Namespace="Org.OData.Validation.V1" Alias="SAP__validation"/>
+</edmx:Reference>
+<edmx:Reference Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_CODELIST',Version='0001',SAP__Origin='LOCAL')/$value">
+<edmx:Include Namespace="com.sap.vocabularies.CodeList.v1" Alias="SAP__CodeList"/>
+</edmx:Reference>
+<edmx:Reference Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_UI',Version='0001',SAP__Origin='LOCAL')/$value">
+<edmx:Include Namespace="com.sap.vocabularies.UI.v1" Alias="SAP__UI"/>
+</edmx:Reference>
+<edmx:Reference Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_HTML5',Version='0001',SAP__Origin='LOCAL')/$value">
+<edmx:Include Namespace="com.sap.vocabularies.HTML5.v1" Alias="SAP__HTML5"/>
+</edmx:Reference>
+<edmx:Reference Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_PDF',Version='0001',SAP__Origin='LOCAL')/$value">
+<edmx:Include Namespace="com.sap.vocabularies.PDF.v1" Alias="SAP__PDF"/>
+</edmx:Reference>
+<edmx:Reference Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_SESSION',Version='0001',SAP__Origin='LOCAL')/$value">
+<edmx:Include Namespace="com.sap.vocabularies.Session.v1" Alias="SAP__session"/>
+</edmx:Reference>
+<edmx:Reference Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_HIERARCHY',Version='0001',SAP__Origin='LOCAL')/$value">
+<edmx:Include Namespace="com.sap.vocabularies.Hierarchy.v1" Alias="SAP__hierarchy"/>
+</edmx:Reference>
+<edmx:DataServices>
+<Schema Namespace="com.sap.gateway.srvd.zmbr_sadl_hierarchy.v0001" Alias="SAP__self">
+<Annotation Term="SAP__core.SchemaVersion" String="1.0.0"/>
+<EntityType Name="I_SADL_HOME_RS_HIERARCHY_SRCType">
+<Key>
+<PropertyRef Name="Id"/>
+</Key>
+<Property Name="Id" Type="Edm.String" Nullable="false" MaxLength="20"/>
+<Property Name="ParentId" Type="Edm.String" Nullable="false" MaxLength="20"/>
+<Property Name="Description" Type="Edm.String" Nullable="false" MaxLength="40"/>
+<Property Name="Material" Type="Edm.String" Nullable="false" MaxLength="40"/>
+<Property Name="MaterialGroup" Type="Edm.String" Nullable="false" MaxLength="10"/>
+<Property Name="Location" Type="Edm.String" Nullable="false" MaxLength="20"/>
+<Property Name="Quantity" Type="Edm.Int32" Nullable="false"/>
+<Property Name="QuantityUnit" Type="Edm.String" Nullable="false" MaxLength="3"/>
+<Property Name="SADL__NodeId" Type="Edm.String" Nullable="false"/>
+<Property Name="SADL__DistanceFromOutputRoot" Type="Edm.Int64" Nullable="false"/>
+<Property Name="SADL__LimitedDescendantCount" Type="Edm.Int64" Nullable="false"/>
+<Property Name="SADL__DescendantCount" Type="Edm.Int64" Nullable="false"/>
+<Property Name="SADL__DrillState" Type="Edm.String" Nullable="false"/>
+<NavigationProperty Name="_Parent" Type="com.sap.gateway.srvd.zmbr_sadl_hierarchy.v0001.I_SADL_HOME_RS_HIERARCHY_SRCType"/>
+</EntityType>
+<EntityType Name="I_SADL_RS_HIERARCHY_SOURCEType">
+<Key>
+<PropertyRef Name="Id"/>
+</Key>
+<Property Name="Id" Type="Edm.String" Nullable="false" MaxLength="20"/>
+<Property Name="ParentId" Type="Edm.String" Nullable="false" MaxLength="20"/>
+<Property Name="Description" Type="Edm.String" Nullable="false" MaxLength="40"/>
+<Property Name="Material" Type="Edm.String" Nullable="false" MaxLength="40"/>
+<Property Name="MaterialGroup" Type="Edm.String" Nullable="false" MaxLength="10"/>
+<Property Name="Location" Type="Edm.String" Nullable="false" MaxLength="20"/>
+<Property Name="Quantity" Type="Edm.Int32" Nullable="false"/>
+<Property Name="QuantityUnit" Type="Edm.String" Nullable="false" MaxLength="3"/>
+<Property Name="SADL__NodeId" Type="Edm.String" Nullable="false"/>
+<Property Name="SADL__DistanceFromOutputRoot" Type="Edm.Int64" Nullable="false"/>
+<Property Name="SADL__LimitedDescendantCount" Type="Edm.Int64" Nullable="false"/>
+<Property Name="SADL__DescendantCount" Type="Edm.Int64" Nullable="false"/>
+<Property Name="SADL__DrillState" Type="Edm.String" Nullable="false"/>
+<NavigationProperty Name="_Parent" Type="com.sap.gateway.srvd.zmbr_sadl_hierarchy.v0001.I_SADL_RS_HIERARCHY_SOURCEType"/>
+</EntityType>
+<EntityType Name="SADL_V_RS_Ancestry_4_HierType">
+<Key>
+<PropertyRef Name="id"/>
+</Key>
+<Property Name="id" Type="Edm.String" Nullable="false" MaxLength="20"/>
+<Property Name="my_parent_id" Type="Edm.String" Nullable="false" MaxLength="20"/>
+<Property Name="first_name" Type="Edm.String" Nullable="false" MaxLength="40"/>
+<Property Name="last_name" Type="Edm.String" Nullable="false" MaxLength="40"/>
+<Property Name="date_of_birth" Type="Edm.Date"/>
+<Property Name="hobby" Type="Edm.String" Nullable="false" MaxLength="40"/>
+<Property Name="SADL__NodeId" Type="Edm.String" Nullable="false"/>
+<Property Name="SADL__DistanceFromOutputRoot" Type="Edm.Int64" Nullable="false"/>
+<Property Name="SADL__LimitedDescendantCount" Type="Edm.Int64" Nullable="false"/>
+<Property Name="SADL__DescendantCount" Type="Edm.Int64" Nullable="false"/>
+<Property Name="SADL__DrillState" Type="Edm.String" Nullable="false"/>
+<NavigationProperty Name="_children" Type="Collection(com.sap.gateway.srvd.zmbr_sadl_hierarchy.v0001.SADL_V_RS_Ancestry_4_HierType)"/>
+<NavigationProperty Name="_parent" Type="com.sap.gateway.srvd.zmbr_sadl_hierarchy.v0001.SADL_V_RS_Ancestry_4_HierType"/>
+<NavigationProperty Name="_siblings" Type="Collection(com.sap.gateway.srvd.zmbr_sadl_hierarchy.v0001.SADL_V_RS_Ancestry_4_HierType)"/>
+</EntityType>
+<EntityContainer Name="Container">
+<EntitySet Name="I_SADL_HOME_RS_HIERARCHY_SRC" EntityType="com.sap.gateway.srvd.zmbr_sadl_hierarchy.v0001.I_SADL_HOME_RS_HIERARCHY_SRCType">
+<NavigationPropertyBinding Path="_Parent" Target="I_SADL_HOME_RS_HIERARCHY_SRC"/>
+</EntitySet>
+<EntitySet Name="I_SADL_RS_HIERARCHY_SOURCE" EntityType="com.sap.gateway.srvd.zmbr_sadl_hierarchy.v0001.I_SADL_RS_HIERARCHY_SOURCEType">
+<NavigationPropertyBinding Path="_Parent" Target="I_SADL_RS_HIERARCHY_SOURCE"/>
+</EntitySet>
+<EntitySet Name="SADL_V_RS_Ancestry_4_Hier" EntityType="com.sap.gateway.srvd.zmbr_sadl_hierarchy.v0001.SADL_V_RS_Ancestry_4_HierType">
+<NavigationPropertyBinding Path="_children" Target="SADL_V_RS_Ancestry_4_Hier"/>
+<NavigationPropertyBinding Path="_parent" Target="SADL_V_RS_Ancestry_4_Hier"/>
+<NavigationPropertyBinding Path="_siblings" Target="SADL_V_RS_Ancestry_4_Hier"/>
+</EntitySet>
+</EntityContainer>
+<Annotations Target="SAP__self.I_SADL_HOME_RS_HIERARCHY_SRCType/QuantityUnit">
+<Annotation Term="SAP__common.IsUnit"/>
+</Annotations>
+<Annotations Target="SAP__self.Container/I_SADL_HOME_RS_HIERARCHY_SRC">
+<Annotation Term="SAP__capabilities.NavigationRestrictions">
+<Record>
+<PropertyValue Property="RestrictedProperties">
+<Collection>
+<Record>
+<PropertyValue Property="NavigationProperty" NavigationPropertyPath="_Parent"/>
+<PropertyValue Property="InsertRestrictions">
+<Record>
+<PropertyValue Property="Insertable" Bool="false"/>
+</Record>
+</PropertyValue>
+</Record>
+</Collection>
+</PropertyValue>
+</Record>
+</Annotation>
+<Annotation Term="SAP__capabilities.SearchRestrictions">
+<Record>
+<PropertyValue Property="Searchable" Bool="false"/>
+</Record>
+</Annotation>
+<Annotation Term="SAP__capabilities.FilterRestrictions">
+<Record>
+<PropertyValue Property="Filterable" Bool="true"/>
+<PropertyValue Property="FilterExpressionRestrictions">
+<Collection>
+<Record>
+<PropertyValue Property="Property" PropertyPath="SADL__NodeId"/>
+<PropertyValue Property="AllowedExpressions" String="SearchExpression"/>
+</Record>
+<Record>
+<PropertyValue Property="Property" PropertyPath="SADL__DrillState"/>
+<PropertyValue Property="AllowedExpressions" String="SearchExpression"/>
+</Record>
+</Collection>
+</PropertyValue>
+<PropertyValue Property="NonFilterableProperties">
+<Collection>
+<PropertyPath>SADL__DistanceFromOutputRoot</PropertyPath>
+<PropertyPath>SADL__LimitedDescendantCount</PropertyPath>
+<PropertyPath>SADL__DescendantCount</PropertyPath>
+<PropertyPath>SADL__DrillState</PropertyPath>
+</Collection>
+</PropertyValue>
+</Record>
+</Annotation>
+<Annotation Term="SAP__capabilities.SortRestrictions">
+<Record>
+<PropertyValue Property="NonSortableProperties">
+<Collection>
+<PropertyPath>SADL__DistanceFromOutputRoot</PropertyPath>
+<PropertyPath>SADL__LimitedDescendantCount</PropertyPath>
+<PropertyPath>SADL__DescendantCount</PropertyPath>
+<PropertyPath>SADL__DrillState</PropertyPath>
+</Collection>
+</PropertyValue>
+</Record>
+</Annotation>
+<Annotation Term="SAP__capabilities.InsertRestrictions">
+<Record>
+<PropertyValue Property="Insertable" Bool="false"/>
+</Record>
+</Annotation>
+<Annotation Term="SAP__capabilities.DeleteRestrictions">
+<Record>
+<PropertyValue Property="Deletable" Bool="false"/>
+</Record>
+</Annotation>
+<Annotation Term="SAP__capabilities.UpdateRestrictions">
+<Record>
+<PropertyValue Property="Updatable" Bool="false"/>
+<PropertyValue Property="QueryOptions">
+<Record>
+<PropertyValue Property="SelectSupported" Bool="true"/>
+</Record>
+</PropertyValue>
+</Record>
+</Annotation>
+<Annotation Term="SAP__core.OptimisticConcurrency">
+<Collection/>
+</Annotation>
+</Annotations>
+<Annotations Target="SAP__self.I_SADL_HOME_RS_HIERARCHY_SRCType">
+<Annotation Term="SAP__common.Label" String="Source for native CDS Hierarchy"/>
+</Annotations>
+<Annotations Target="SAP__self.Container">
+<Annotation Term="SAP__CodeList.UnitsOfMeasure">
+<Record>
+<PropertyValue Property="Url" String="../../../../default/iwbep/common/0001/$metadata"/>
+<PropertyValue Property="CollectionPath" String="UnitsOfMeasure"/>
+</Record>
+</Annotation>
+<Annotation Term="SAP__aggregation.ApplySupported">
+<Record>
+<PropertyValue Property="Transformations">
+<Collection>
+<String>aggregate</String>
+<String>groupby</String>
+<String>filter</String>
+</Collection>
+</PropertyValue>
+<PropertyValue Property="Rollup" EnumMember="SAP__aggregation.RollupType/None"/>
+</Record>
+</Annotation>
+<Annotation Term="SAP__common.ApplyMultiUnitBehaviorForSortingAndFiltering" Bool="true"/>
+<Annotation Term="SAP__capabilities.FilterFunctions">
+<Collection>
+<String>eq</String>
+<String>ne</String>
+<String>gt</String>
+<String>ge</String>
+<String>lt</String>
+<String>le</String>
+<String>and</String>
+<String>or</String>
+<String>contains</String>
+<String>startswith</String>
+<String>endswith</String>
+<String>any</String>
+<String>all</String>
+</Collection>
+</Annotation>
+<Annotation Term="SAP__capabilities.SupportedFormats">
+<Collection>
+<String>application/json</String>
+<String>application/pdf</String>
+</Collection>
+</Annotation>
+<Annotation Term="SAP__PDF.Features">
+<Record>
+<PropertyValue Property="DocumentDescriptionReference" String="../../../../default/iwbep/common/0001/$metadata"/>
+<PropertyValue Property="DocumentDescriptionCollection" String="MyDocumentDescriptions"/>
+<PropertyValue Property="ArchiveFormat" Bool="true"/>
+<PropertyValue Property="Border" Bool="true"/>
+<PropertyValue Property="CoverPage" Bool="true"/>
+<PropertyValue Property="FitToPage" Bool="true"/>
+<PropertyValue Property="FontName" Bool="true"/>
+<PropertyValue Property="FontSize" Bool="true"/>
+<PropertyValue Property="Margin" Bool="true"/>
+<PropertyValue Property="Signature" Bool="true"/>
+<PropertyValue Property="ResultSizeDefault" Int="20000"/>
+<PropertyValue Property="ResultSizeMaximum" Int="20000"/>
+</Record>
+</Annotation>
+<Annotation Term="SAP__capabilities.KeyAsSegmentSupported"/>
+<Annotation Term="SAP__capabilities.AsynchronousRequestsSupported"/>
+</Annotations>
+<Annotations Target="SAP__self.I_SADL_RS_HIERARCHY_SOURCEType/QuantityUnit">
+<Annotation Term="SAP__common.IsUnit"/>
+</Annotations>
+<Annotations Target="SAP__self.Container/I_SADL_RS_HIERARCHY_SOURCE">
+<Annotation Term="SAP__capabilities.NavigationRestrictions">
+<Record>
+<PropertyValue Property="RestrictedProperties">
+<Collection>
+<Record>
+<PropertyValue Property="NavigationProperty" NavigationPropertyPath="_Parent"/>
+<PropertyValue Property="InsertRestrictions">
+<Record>
+<PropertyValue Property="Insertable" Bool="false"/>
+</Record>
+</PropertyValue>
+</Record>
+</Collection>
+</PropertyValue>
+</Record>
+</Annotation>
+<Annotation Term="SAP__capabilities.SearchRestrictions">
+<Record>
+<PropertyValue Property="Searchable" Bool="false"/>
+</Record>
+</Annotation>
+<Annotation Term="SAP__capabilities.FilterRestrictions">
+<Record>
+<PropertyValue Property="Filterable" Bool="true"/>
+<PropertyValue Property="FilterExpressionRestrictions">
+<Collection>
+<Record>
+<PropertyValue Property="Property" PropertyPath="SADL__NodeId"/>
+<PropertyValue Property="AllowedExpressions" String="SearchExpression"/>
+</Record>
+<Record>
+<PropertyValue Property="Property" PropertyPath="SADL__DrillState"/>
+<PropertyValue Property="AllowedExpressions" String="SearchExpression"/>
+</Record>
+</Collection>
+</PropertyValue>
+<PropertyValue Property="NonFilterableProperties">
+<Collection>
+<PropertyPath>SADL__DistanceFromOutputRoot</PropertyPath>
+<PropertyPath>SADL__LimitedDescendantCount</PropertyPath>
+<PropertyPath>SADL__DescendantCount</PropertyPath>
+<PropertyPath>SADL__DrillState</PropertyPath>
+</Collection>
+</PropertyValue>
+</Record>
+</Annotation>
+<Annotation Term="SAP__capabilities.SortRestrictions">
+<Record>
+<PropertyValue Property="NonSortableProperties">
+<Collection>
+<PropertyPath>SADL__DistanceFromOutputRoot</PropertyPath>
+<PropertyPath>SADL__LimitedDescendantCount</PropertyPath>
+<PropertyPath>SADL__DescendantCount</PropertyPath>
+<PropertyPath>SADL__DrillState</PropertyPath>
+</Collection>
+</PropertyValue>
+</Record>
+</Annotation>
+<Annotation Term="SAP__capabilities.InsertRestrictions">
+<Record>
+<PropertyValue Property="Insertable" Bool="false"/>
+</Record>
+</Annotation>
+<Annotation Term="SAP__capabilities.DeleteRestrictions">
+<Record>
+<PropertyValue Property="Deletable" Bool="false"/>
+</Record>
+</Annotation>
+<Annotation Term="SAP__capabilities.UpdateRestrictions">
+<Record>
+<PropertyValue Property="Updatable" Bool="false"/>
+<PropertyValue Property="QueryOptions">
+<Record>
+<PropertyValue Property="SelectSupported" Bool="true"/>
+</Record>
+</PropertyValue>
+</Record>
+</Annotation>
+<Annotation Term="SAP__core.OptimisticConcurrency">
+<Collection/>
+</Annotation>
+</Annotations>
+<Annotations Target="SAP__self.I_SADL_RS_HIERARCHY_SOURCEType">
+<Annotation Term="SAP__common.Label" String="Source for native CDS Hierarchy"/>
+</Annotations>
+<Annotations Target="SAP__self.Container/SADL_V_RS_Ancestry_4_Hier">
+<Annotation Term="SAP__capabilities.NavigationRestrictions">
+<Record>
+<PropertyValue Property="RestrictedProperties">
+<Collection>
+<Record>
+<PropertyValue Property="NavigationProperty" NavigationPropertyPath="_children"/>
+<PropertyValue Property="InsertRestrictions">
+<Record>
+<PropertyValue Property="Insertable" Bool="false"/>
+</Record>
+</PropertyValue>
+</Record>
+<Record>
+<PropertyValue Property="NavigationProperty" NavigationPropertyPath="_parent"/>
+<PropertyValue Property="InsertRestrictions">
+<Record>
+<PropertyValue Property="Insertable" Bool="false"/>
+</Record>
+</PropertyValue>
+</Record>
+<Record>
+<PropertyValue Property="NavigationProperty" NavigationPropertyPath="_siblings"/>
+<PropertyValue Property="InsertRestrictions">
+<Record>
+<PropertyValue Property="Insertable" Bool="false"/>
+</Record>
+</PropertyValue>
+</Record>
+</Collection>
+</PropertyValue>
+</Record>
+</Annotation>
+<Annotation Term="SAP__capabilities.SearchRestrictions">
+<Record>
+<PropertyValue Property="Searchable" Bool="false"/>
+</Record>
+</Annotation>
+<Annotation Term="SAP__capabilities.FilterRestrictions">
+<Record>
+<PropertyValue Property="Filterable" Bool="true"/>
+<PropertyValue Property="FilterExpressionRestrictions">
+<Collection>
+<Record>
+<PropertyValue Property="Property" PropertyPath="SADL__NodeId"/>
+<PropertyValue Property="AllowedExpressions" String="SearchExpression"/>
+</Record>
+<Record>
+<PropertyValue Property="Property" PropertyPath="SADL__DrillState"/>
+<PropertyValue Property="AllowedExpressions" String="SearchExpression"/>
+</Record>
+</Collection>
+</PropertyValue>
+<PropertyValue Property="NonFilterableProperties">
+<Collection>
+<PropertyPath>SADL__DistanceFromOutputRoot</PropertyPath>
+<PropertyPath>SADL__LimitedDescendantCount</PropertyPath>
+<PropertyPath>SADL__DescendantCount</PropertyPath>
+<PropertyPath>SADL__DrillState</PropertyPath>
+</Collection>
+</PropertyValue>
+</Record>
+</Annotation>
+<Annotation Term="SAP__capabilities.SortRestrictions">
+<Record>
+<PropertyValue Property="NonSortableProperties">
+<Collection>
+<PropertyPath>SADL__DistanceFromOutputRoot</PropertyPath>
+<PropertyPath>SADL__LimitedDescendantCount</PropertyPath>
+<PropertyPath>SADL__DescendantCount</PropertyPath>
+<PropertyPath>SADL__DrillState</PropertyPath>
+</Collection>
+</PropertyValue>
+</Record>
+</Annotation>
+<Annotation Term="SAP__capabilities.InsertRestrictions">
+<Record>
+<PropertyValue Property="Insertable" Bool="false"/>
+</Record>
+</Annotation>
+<Annotation Term="SAP__capabilities.DeleteRestrictions">
+<Record>
+<PropertyValue Property="Deletable" Bool="false"/>
+</Record>
+</Annotation>
+<Annotation Term="SAP__capabilities.UpdateRestrictions">
+<Record>
+<PropertyValue Property="Updatable" Bool="false"/>
+<PropertyValue Property="QueryOptions">
+<Record>
+<PropertyValue Property="SelectSupported" Bool="true"/>
+</Record>
+</PropertyValue>
+</Record>
+</Annotation>
+<Annotation Term="SAP__core.OptimisticConcurrency">
+<Collection/>
+</Annotation>
+</Annotations>
+<Annotations Target="SAP__self.SADL_V_RS_Ancestry_4_HierType">
+<Annotation Term="SAP__common.Label" String="SADL Reference Scenario: Ancestry f Hier"/>
+</Annotations>
+<Annotations Target="SAP__self.I_SADL_HOME_RS_HIERARCHY_SRCType/SADL__DistanceFromOutputRoot">
+<Annotation Term="SAP__UI.HiddenFilter"/>
+<Annotation Term="SAP__UI.Hidden"/>
+</Annotations>
+<Annotations Target="SAP__self.I_SADL_HOME_RS_HIERARCHY_SRCType/SADL__LimitedDescendantCount">
+<Annotation Term="SAP__UI.HiddenFilter"/>
+<Annotation Term="SAP__UI.Hidden"/>
+</Annotations>
+<Annotations Target="SAP__self.I_SADL_HOME_RS_HIERARCHY_SRCType/SADL__DescendantCount">
+<Annotation Term="SAP__UI.HiddenFilter"/>
+<Annotation Term="SAP__UI.Hidden"/>
+</Annotations>
+<Annotations Target="SAP__self.I_SADL_HOME_RS_HIERARCHY_SRCType/SADL__DrillState">
+<Annotation Term="SAP__UI.HiddenFilter"/>
+<Annotation Term="SAP__UI.Hidden"/>
+</Annotations>
+<Annotations Target="SAP__self.I_SADL_HOME_RS_HIERARCHY_SRCType/SADL__NodeId">
+<Annotation Term="SAP__UI.Hidden"/>
+</Annotations>
+<Annotations Target="SAP__self.I_SADL_RS_HIERARCHY_SOURCEType/SADL__DistanceFromOutputRoot">
+<Annotation Term="SAP__UI.HiddenFilter"/>
+<Annotation Term="SAP__UI.Hidden"/>
+</Annotations>
+<Annotations Target="SAP__self.I_SADL_RS_HIERARCHY_SOURCEType/SADL__LimitedDescendantCount">
+<Annotation Term="SAP__UI.HiddenFilter"/>
+<Annotation Term="SAP__UI.Hidden"/>
+</Annotations>
+<Annotations Target="SAP__self.I_SADL_RS_HIERARCHY_SOURCEType/SADL__DescendantCount">
+<Annotation Term="SAP__UI.HiddenFilter"/>
+<Annotation Term="SAP__UI.Hidden"/>
+</Annotations>
+<Annotations Target="SAP__self.I_SADL_RS_HIERARCHY_SOURCEType/SADL__DrillState">
+<Annotation Term="SAP__UI.HiddenFilter"/>
+<Annotation Term="SAP__UI.Hidden"/>
+</Annotations>
+<Annotations Target="SAP__self.I_SADL_RS_HIERARCHY_SOURCEType/SADL__NodeId">
+<Annotation Term="SAP__UI.Hidden"/>
+</Annotations>
+<Annotations Target="SAP__self.SADL_V_RS_Ancestry_4_HierType/SADL__DistanceFromOutputRoot">
+<Annotation Term="SAP__UI.HiddenFilter"/>
+<Annotation Term="SAP__UI.Hidden"/>
+</Annotations>
+<Annotations Target="SAP__self.SADL_V_RS_Ancestry_4_HierType/SADL__LimitedDescendantCount">
+<Annotation Term="SAP__UI.HiddenFilter"/>
+<Annotation Term="SAP__UI.Hidden"/>
+</Annotations>
+<Annotations Target="SAP__self.SADL_V_RS_Ancestry_4_HierType/SADL__DescendantCount">
+<Annotation Term="SAP__UI.HiddenFilter"/>
+<Annotation Term="SAP__UI.Hidden"/>
+</Annotations>
+<Annotations Target="SAP__self.SADL_V_RS_Ancestry_4_HierType/SADL__DrillState">
+<Annotation Term="SAP__UI.HiddenFilter"/>
+<Annotation Term="SAP__UI.Hidden"/>
+</Annotations>
+<Annotations Target="SAP__self.SADL_V_RS_Ancestry_4_HierType/SADL__NodeId">
+<Annotation Term="SAP__UI.Hidden"/>
+</Annotations>
+<Annotations Target="SAP__self.I_SADL_HOME_RS_HIERARCHY_SRCType/Id">
+<Annotation Term="SAP__common.Label" String="Identifier"/>
+<Annotation Term="SAP__common.Heading" String="SADL Reference Scenario Identifier"/>
+<Annotation Term="SAP__common.QuickInfo" String="SADL Reference Scenario Identifier"/>
+</Annotations>
+<Annotations Target="SAP__self.I_SADL_HOME_RS_HIERARCHY_SRCType/ParentId">
+<Annotation Term="SAP__common.Label" String="Identifier"/>
+<Annotation Term="SAP__common.Heading" String="SADL Reference Scenario Identifier"/>
+<Annotation Term="SAP__common.QuickInfo" String="SADL Reference Scenario Identifier"/>
+</Annotations>
+<Annotations Target="SAP__self.I_SADL_HOME_RS_HIERARCHY_SRCType/Description">
+<Annotation Term="SAP__common.Label" String="Long Text"/>
+</Annotations>
+<Annotations Target="SAP__self.I_SADL_RS_HIERARCHY_SOURCEType/Id">
+<Annotation Term="SAP__common.Label" String="Identifier"/>
+<Annotation Term="SAP__common.Heading" String="SADL Reference Scenario Identifier"/>
+<Annotation Term="SAP__common.QuickInfo" String="SADL Reference Scenario Identifier"/>
+</Annotations>
+<Annotations Target="SAP__self.I_SADL_RS_HIERARCHY_SOURCEType/ParentId">
+<Annotation Term="SAP__common.Label" String="Identifier"/>
+<Annotation Term="SAP__common.Heading" String="SADL Reference Scenario Identifier"/>
+<Annotation Term="SAP__common.QuickInfo" String="SADL Reference Scenario Identifier"/>
+</Annotations>
+<Annotations Target="SAP__self.I_SADL_RS_HIERARCHY_SOURCEType/Description">
+<Annotation Term="SAP__common.Label" String="Long Text"/>
+</Annotations>
+<Annotations Target="SAP__self.SADL_V_RS_Ancestry_4_HierType/id">
+<Annotation Term="SAP__common.Label" String="Identifier"/>
+<Annotation Term="SAP__common.Heading" String="SADL Reference Scenario Identifier"/>
+<Annotation Term="SAP__common.QuickInfo" String="SADL Reference Scenario Identifier"/>
+</Annotations>
+<Annotations Target="SAP__self.SADL_V_RS_Ancestry_4_HierType/my_parent_id">
+<Annotation Term="SAP__common.Label" String="Identifier"/>
+<Annotation Term="SAP__common.Heading" String="SADL Reference Scenario Identifier"/>
+<Annotation Term="SAP__common.QuickInfo" String="SADL Reference Scenario Identifier"/>
+</Annotations>
+<Annotations Target="SAP__self.SADL_V_RS_Ancestry_4_HierType/first_name">
+<Annotation Term="SAP__common.Label" String="Long Text"/>
+</Annotations>
+<Annotations Target="SAP__self.SADL_V_RS_Ancestry_4_HierType/last_name">
+<Annotation Term="SAP__common.Label" String="Long Text"/>
+</Annotations>
+<Annotations Target="SAP__self.SADL_V_RS_Ancestry_4_HierType/hobby">
+<Annotation Term="SAP__common.Label" String="Long Text"/>
+</Annotations>
+</Schema>
+</edmx:DataServices>
+</edmx:Edmx>

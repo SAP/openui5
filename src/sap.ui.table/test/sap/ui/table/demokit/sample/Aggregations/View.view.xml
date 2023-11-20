@@ -15,18 +15,15 @@
 				id="table"
 				selectionMode="MultiToggle"
 				rows="{/ProductCollection}"
-				visibleRowCount="7"
 				ariaLabelledBy="title">
-				<title>
+				<extension>
 					<m:HBox>
 						<m:items>
 							<c:Icon src="sap-icon://cart" alt="Cart" size="1.25rem"/>
 							<m:Title text="Shopping Portal" titleStyle="H3" class="sapUiTinyMarginBeginEnd"/>
 						</m:items>
 					</m:HBox>
-				</title>
-				<toolbar>
-					<m:Toolbar>
+					<m:OverflowToolbar style="Clear">
 						<m:Title id="title" text="Products"/>
 						<m:ToolbarSpacer/>
 						<m:SearchField
@@ -34,9 +31,7 @@
 							value="{ui>/filterValue}"
 							search="handleTxtFilter"
 							width="15rem"/>
-					</m:Toolbar>
-				</toolbar>
-				<extension>
+					</m:OverflowToolbar>
 					<m:FacetFilter
 						id="facetFilter"
 						type="Simple"
@@ -48,7 +43,7 @@
 							<m:FacetFilterList
 								title="{type}"
 								key="{key}"
-								multiSelect="true"
+								mode="MultiSelect"
 								listClose="handleListClose"
 								items="{values}" >
 								<m:items>
@@ -102,13 +97,7 @@
 					</Column>
 				</columns>
 				<footer>
-					<m:Toolbar>
-						<m:ToolbarSpacer/>
-						<m:Button
-							icon="sap-icon://hint"
-							tooltip="Show information"
-							press="showInfo"/>
-					</m:Toolbar>
+					<m:OverflowToolbar id="infobar"></m:OverflowToolbar>
 				</footer>
 			</Table>
 		</m:content>

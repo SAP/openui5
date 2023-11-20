@@ -1,0 +1,35 @@
+/******************************************************************
+	Style of the RTA Add Fields Dialog  - sap_fiori_3 Theme
+*******************************************************************/
+@_sap_ui_rta_FieldRepository_BtnHoverBorder: @sapUiButtonEmphasizedBackground; //#0a6ed1
+@_sap_ui_rta_FieldRepository_BtnBorder: @sapUiButtonEmphasizedTextColor; //#ffffff
+@_sap_ui_rta_FieldRepository_BtnFocusBorder: @sapUiContentFocusColor; //#000000
+
+.sapUiRtaMode {
+
+	.sapUIRtaFieldRepositoryDialog {
+
+		.sapMBtn {
+			&:hover:not(focus) {
+				.sapMBtnInner {
+					border: 0.0625rem solid @_sap_ui_rta_FieldRepository_BtnHoverBorder; //1px
+				}
+			}
+
+			> .sapMBtnInner {
+				border: 0.0625rem solid @_sap_ui_rta_FieldRepository_BtnBorder; //1px
+			}
+
+			&:focus {
+				&:not(:hover) > .sapMFocusable {
+					border: 0.0625rem dotted @_sap_ui_rta_FieldRepository_BtnFocusBorder; //1px
+					outline: none;
+				}
+			}
+		}
+
+		.sapMLIB.sapMLIBSelected {
+			border-color: transparent;
+		}
+	}
+}

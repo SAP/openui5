@@ -1,0 +1,127 @@
+{
+  "1.112.0": {
+    "date": "March 2023",
+    "notes": [
+      {
+        "id": "9a3a4bba909176f4ab4a57dfcc0fa30b86fc06f0",
+        "type": "FEATURE",
+        "text": " core/Lib: ensure async loading of resource bundle during library loading"
+      },
+      {
+        "id": "4a18db2c15ffbe9319b63daa4dd3b714037073fd",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v2.ODataModel: Fix calculation of deep path for function imports",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380037458"
+          }
+        ]
+      },
+      {
+        "id": "12667e14f2dab973a1768f7123a6120c1ced5278",
+        "type": "FIX",
+        "text": " Core: don't miss themeChanged event when using waitForTheme",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370006426"
+          }
+        ]
+      },
+      {
+        "id": "059fc5fd665ded8f8ce3e5860520d55bf162f2c2",
+        "type": "FIX",
+        "text": " sap.ui.core.date.UniversalDateUtils: Remove usage of JS Date for Timezone support",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380044028"
+          }
+        ]
+      },
+      {
+        "id": "64dda775b4ef2be3159bdaa127c60201d9205916",
+        "type": "FIX",
+        "text": " sap.ui.core.format.NumberFormat: Fix parsing of numbers equal zero",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380012359"
+          }
+        ]
+      },
+      {
+        "id": "5bcd2e0bd6d4f2970be6192bf1a5307e9bdd88fa",
+        "type": "FIX",
+        "text": " jquery-mobile-custom: suppress wrongly dispatched 'mouseover' event",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270186247"
+          }
+        ]
+      },
+      {
+        "id": "5130748dd29216b7169f1a113b396f40c237e47c",
+        "type": "FIX",
+        "text": " sap.ui.model.analytics.AnalyticalBinding: fire data received event if request is aborted",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380036006"
+          }
+        ]
+      },
+      {
+        "id": "d2e8039f12d8f17d155233385704390a238951d6",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v2.ODataListBinding: Preliminary context in constructor",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280184236"
+          }
+        ]
+      },
+      {
+        "id": "dcec35e2fab873de1c1027f9a89eb469cfbc8563",
+        "type": "FIX",
+        "text": " sap.ui.core.date.UI5Date: UTC setters invalidate cached date parts",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380037594"
+          }
+        ]
+      },
+      {
+        "id": "c8a678a1d9de1e888d9347c8a965a6fd61a63b1a",
+        "type": "FEATURE",
+        "text": " sap.ui.core.IconPool: Update icon font v5.04 and v4.16"
+      },
+      {
+        "id": "89fab24f42f43e0ff4442fb8875631784ee8e66a",
+        "type": "FIX",
+        "text": " theming/ThemeManager: Consider AppCacheBuster",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380026114"
+          }
+        ]
+      },
+      {
+        "id": "4faa26efac20720fbab83c7964206f3f0883de74",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v4.lib._AggregationCache#readCount: properly escape spaces...",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380032202"
+          }
+        ]
+      }
+    ]
+  }
+}

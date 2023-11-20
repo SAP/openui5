@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<title>Cards Filters</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<script src="../../scripts/boot.js"></script>
+</head>
+
+<body class="sapUiBody topicBody">
+	<div class="topic">
+		<div class="content">
+			<h1 id="overview">Integration Card Filters</h1>
+			<p>
+				Filters allow end users to refine displayed data based on selected criteria.
+			</p>
+			<p>
+				Filters are defined in the "configuration" section of the manifest.
+				The card developer choses the type of each filter, its initial value and the available options for the end user.
+				In order to make the filter functional its value has to be bound to the data requests made by the card.
+				All filters provide access to their current value through the <code>filters</code> model.
+				When the end user selects different value the model is updated, refreshing all fields that are bound to it.
+			</p>
+
+			<h2 id="filterProperties">Filter Properties</h2>
+			<p>All filters have the following common properties:</p>
+			<div class="tableWrapper">
+				<table>
+					<tr>
+						<th>Property</th>
+						<th>Type</th>
+						<th>Default Value</th>
+						<th>Required</th>
+						<th>Description</th>
+						<th>Schema Version</th>
+						<th>Since</th>
+					</tr>
+					<tr>
+						<td>type</td>
+						<td>string</td>
+						<td>"Select"</td>
+						<td>No</td>
+						<td>
+							The type of the filter. Based on this value additional properties of the filter are available.
+							Possible values are:
+							<ul>
+								<li>"ComboBox" - see <a href="../../index.html#/learn/filters/comboBox" target="_parent">Combo Box Filter</a></li>
+								<li>"DateRange" - see <a href="../../index.html#/learn/filters/dateRange" target="_parent">DateRange Filter</a></li>
+								<li>"Search" - see <a href="../../index.html#/learn/filters/search" target="_parent">Search Filter</a></li>
+								<li>"Select" - see <a href="../../index.html#/learn/filters/select" target="_parent">Select Filter</a></li>
+							</ul>
+						</td>
+						<td>1.24.0</td>
+						<td>1.80</td>
+					</tr>
+					<tr>
+						<td>label</td>
+						<td>string</td>
+						<td></td>
+						<td>No</td>
+						<td>A label for the filter. This property is used by screen readers.</td>
+						<td>1.24.0</td>
+						<td>1.80</td>
+					</tr>
+					<tr>
+						<td>visible</td>
+						<td>boolean</td>
+						<td>true</td>
+						<td>No</td>
+						<td>Whether the filter should be visible on the screen.</td>
+						<td>1.50.0</td>
+						<td>1.110</td>
+					</tr>
+				</table>
+			</div>
+
+			<h2 id="filtersModel">Filters Model</h2>
+			<p>
+				The value of each filter is stored in the <code>filters</code> model.
+				It can be referenced throughout the manifest with the following syntax: <code>{filters>/keyOfTheFilter/value}</code>.
+				Depending on the filter type different values are available.
+			</p>
+		</div>
+	</div>
+</body>
+
+</html>

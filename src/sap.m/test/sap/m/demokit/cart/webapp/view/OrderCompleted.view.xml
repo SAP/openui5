@@ -5,6 +5,7 @@
 	<Page
 		id="orderCompletedPage"
 		title="{i18n>orderCompletedTitle}"
+		backgroundDesign="Solid"
 		class="sapUiContentPadding">
 		<landmarkInfo>
 			<PageAccessibleLandmarkInfo
@@ -15,10 +16,10 @@
 				headerRole="Region"
 				headerLabel="{i18n>OrderCompleted_headerLabel}"
 				footerRole="Region"
-				footerLabel="{i18n>OrderCompleted_footerLabel}" />
+				footerLabel="{i18n>OrderCompleted_footerLabel}"/>
 		</landmarkInfo>
 		<content>
-			<FormattedText htmlText="{i18n>orderCompletedText}" />
+			<FormattedText htmlText="{i18n>orderCompletedText}"/>
 		</content>
 		<footer>
 			<Bar>
@@ -27,7 +28,7 @@
 						id="returnToShopButton"
 						type="Emphasized"
 						text="{i18n>returnToShopButtonText}"
-						press="onReturnToShopButtonPress" />
+						press=".onReturnToShopButtonPress"/>
 				</contentRight>
 			</Bar>
 		</footer>

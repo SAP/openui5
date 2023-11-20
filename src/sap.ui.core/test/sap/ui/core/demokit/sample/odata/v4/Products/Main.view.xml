@@ -1,0 +1,102 @@
+<mvc:View
+	class="sapUiSizeCompact"
+	controllerName="sap.ui.core.sample.odata.v4.Products.Main"
+	template:require="{AnnotationHelper : 'sap/ui/model/odata/v4/AnnotationHelper'}"
+	xmlns="sap.m"
+	xmlns:ce="sap.ui.codeeditor"
+	xmlns:core="sap.ui.core"
+	xmlns:form="sap.ui.layout.form"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:template="http://schemas.sap.com/sapui5/extension/sap.ui.core.template/1">
+	<template:alias name="format" value="AnnotationHelper.format">
+	<template:alias name="label" value="AnnotationHelper.label">
+	<App>
+	<Page id="page" floatingFooter="true" showHeader="false">
+	<VBox>
+		<HBox>
+			<ToggleButton icon="sap-icon://syntax" press="onSourceCode"
+				text="Source Code after Templating"/>
+		</HBox>
+		<Panel expandable="false" visible="{ui>/bCodeVisible}"
+			headerText="Source Code after Templating" width="auto" class="sapUiResponsiveMargin">
+			<ce:CodeEditor editable="false" height="500px" type="xml" value="{ui>/sCode}"/>
+		</Panel>
+		<template:with path="meta>/ProductList/@com.sap.vocabularies.UI.v1.LineItem#short"
+			var="lineItem">
+			<Table id="ProductList" growing="true" growingThreshold="5" items="{
+					events : {
+						createCompleted : '.onCreateCompleted',
+						createSent : '.onCreateSent'
+					},
+					path : '/ProductList',
+					parameters : {$count : true, $select : ['Messages']}}"
+				mode="SingleSelectMaster">
+				<headerToolbar>
+					<Toolbar>
+						<Title level="H1" text="Products"/>
+						<ToolbarSpacer/>
+						<Button id="resetChanges" icon="sap-icon://sys-cancel-2"
+							press="onResetChanges" text="Reset Changes"
+							tooltip="Reset Products Changes"/>
+						<Link text="Unit Codes" target="unitCodes" href="{ui>/sUnitUrl}"/>
+						<Link text="Currency Codes" target="currencyCodes"
+							href="{ui>/sCurrencyUrl}"/>
+						<Button icon="sap-icon://message-popup" id="messagesButton"
+							press="onToggleMessagePopover" text="{ui>/iMessages}"
+							tooltip="Show messages"
+							type="{= ${ui>/iMessages} ? 'Emphasized' : 'Default' }"/>
+					</Toolbar>
+				</headerToolbar>
+				<columns>
+					<template:repeat list="{lineItem>}" var="field">
+						<Column>
+							<Label text="{field>@@label}"/>
+						</Column>
+					</template:repeat>
+				</columns>
+				<ColumnListItem>
+					<template:repeat list="{lineItem>}" var="field">
+						<template:if test="{= ${field>Value/$Path@com.sap.vocabularies.Common.v1.FieldControl/$EnumMember}
+							=== 'com.sap.vocabularies.Common.v1.FieldControlType/ReadOnly'}">
+							<template:then>
+								<Input id="{field>Value/$Path}"
+									editable="{= %{@$ui5.context.isTransient} === true}"
+									textAlign="{= ${field>Value/$Path@com.sap.vocabularies.UI.v1.Visualization/$EnumMember}
+										=== 'com.sap.vocabularies.UI.v1.VisualizationType/Number'
+										? 'Right' : 'Left'}"
+									value="{field>Value/@@format}"/>
+							</template:then>
+							<template:else>
+								<Input id="{field>Value/$Path}"
+									textAlign="{= ${field>Value/$Path@com.sap.vocabularies.UI.v1.Visualization/$EnumMember}
+										=== 'com.sap.vocabularies.UI.v1.VisualizationType/Number'
+										? 'Right' : 'Left'}"
+									value="{field>Value/@@format}"/>
+							</template:else>
+						</template:if>
+					</template:repeat>
+				</ColumnListItem>
+			</Table>
+			<form:SimpleForm ariaLabelledBy="newEntryTitle" editable="true" id="newEntry"
+					layout="ResponsiveGridLayout">
+				<form:toolbar>
+					<Toolbar>
+						<Title id="newEntryTitle" level="H1" text="New Entry"/>
+						<ToolbarSpacer/>
+						<Button id="addButton" press="onAdd" text="Add"/>
+						<Button id="clearRowButton" press="onClearRow" text="Clear Row"/>
+					</Toolbar>
+				</form:toolbar>
+				<template:repeat list="{lineItem>}" var="field">
+					<Label text="{field>@@label}"/>
+					<Input id="{field>Value/$Path}::newEntry" value="{field>Value/@@format}"
+						change="enableAddButton"/>
+				</template:repeat>
+			</form:SimpleForm>
+		</template:with>
+	</VBox>
+	</Page>
+	</App>
+	</template:alias>
+	</template:alias>
+</mvc:View>

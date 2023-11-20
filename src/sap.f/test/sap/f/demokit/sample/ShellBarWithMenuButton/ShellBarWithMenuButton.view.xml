@@ -1,0 +1,24 @@
+<mvc:View
+		controllerName="sap.f.sample.ShellBarWithMenuButton.ShellBarWithMenuButton"
+		xmlns:mvc="sap.ui.core.mvc"
+		xmlns="sap.f"
+		xmlns:m="sap.m"
+		xmlns:layout= "sap.ui.layout"
+		height="100%">
+		<ShellBar
+				id="sapFShellBarSample"
+				title="Application Title"
+				secondTitle="Short description"
+				homeIcon="./resources/sap/ui/documentation/sdk/images/logo_ui5.png"
+				showCopilot="true"
+				showSearch="true"
+				showMenuButton="true"
+				showNavButton="true"
+				showNotifications="true"
+				showProductSwitcher="true"
+				notificationsNumber="2">
+				<profile>
+					<m:Avatar initials="UI"/>
+				</profile>
+		</ShellBar>
+</mvc:View>

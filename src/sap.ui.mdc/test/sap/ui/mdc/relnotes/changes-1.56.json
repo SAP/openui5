@@ -1,0 +1,84 @@
+{
+  "1.56.0": {
+    "date": "February 2018",
+    "notes": [
+      {
+        "id": "981a0903e65b4326b1b7370f6844d50ef79f8e79",
+        "type": "FIX",
+        "text": "QUnit Designtime Library tests in Firefox",
+        "references": []
+      },
+      {
+        "id": "db35ab02f8619073389757f6a3c1d3f9b0bdea02",
+        "type": "FIX",
+        "text": "mdc:VHD Updating mdc Table for Hidden and Label annotations in VHD",
+        "references": []
+      },
+      {
+        "id": "381445d8c6b3a0249ce1c0116d847576b3514de4",
+        "type": "FEATURE",
+        "text": "MDC Field: Implemented the required and edit/display mode in MDC Field",
+        "references": []
+      },
+      {
+        "id": "1ed3ae283a2a724217bde69b8896646f84f27e99",
+        "type": "FEATURE",
+        "text": ":FETable Freestyle app",
+        "references": []
+      },
+      {
+        "id": "e576d15d73515e26ce41f5458816ab639498883b",
+        "type": "FEATURE",
+        "text": "Making P13n Dialog as default for FE tables",
+        "references": []
+      },
+      {
+        "id": "3d6212fc5fd92f0bb6692fbc32310e4a533cb134",
+        "type": "FIX",
+        "text": "mdc:VHD Error on creating DefineConditionPanel on Switching SearchTemplates",
+        "references": []
+      },
+      {
+        "id": "4045ca03a81481af298e9be0bc1697c52b34be53",
+        "type": "FEATURE",
+        "text": "[MDC][TABLE]: Implemented the rowhighlight feature for sap.ui.mdc.Table",
+        "references": []
+      },
+      {
+        "id": "280599c818c8459455e029ceee6b7f5e225bd9fb",
+        "type": "FIX",
+        "text": "A small fix to rectify sorting error in case of numeric data",
+        "references": []
+      },
+      {
+        "id": "fb83b915da3308b18a9a5c9bf6653da0d35b93e0",
+        "type": "FEATURE",
+        "text": "Object Page table and  P13n implementation",
+        "references": []
+      },
+      {
+        "id": "b8410138020b9f383a089c4f0864a8ff30f41c8f",
+        "type": "FIX",
+        "text": "mdc:VHD : Clear Search on Resetting Dialog",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870080290"
+          }
+        ]
+      },
+      {
+        "id": "d1802a9fd6714682c3b746a57c1ea2dfe42f7c26",
+        "type": "FIX",
+        "text": "mdc:Test: Extending preprocessor in ViewFactory",
+        "references": []
+      },
+      {
+        "id": "ee8c228bb7b6a9eb83ad8f6cbca8272491b8844f",
+        "type": "FIX",
+        "text": "mdc:VHD Adapting to navigation with collection in fieldpath",
+        "references": []
+      }
+    ]
+  }
+}

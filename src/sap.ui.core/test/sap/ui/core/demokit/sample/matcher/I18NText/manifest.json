@@ -1,0 +1,25 @@
+{
+	"sap.app": {
+		"id": "sap.ui.core.sample.matcher.I18NText"
+	},
+	"sap.ui5": {
+		"config": {
+			"sample": {
+				"iframe": "Opa.html?opaExecutionDelay=700",
+				"stretch": true,
+				"files": [
+					"Opa.html",
+					"Opa.js",
+					"webapp/i18n/i18n.properties",
+					"webapp/view/Main.view.xml",
+					"webapp/controller/Main.controller.js",
+					"webapp/index.html",
+					"webapp/Component.js",
+					"webapp/manifest.json",
+					"ui5.yaml",
+					"package.json"
+				]
+			}
+		}
+	}
+}

@@ -1,0 +1,69 @@
+<mvc:View xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.uxap"
+	xmlns:layout="sap.ui.layout"
+	xmlns:m="sap.m"
+	xmlns:goals="sap.uxap.sample.SharedBlocks.goals"
+	xmlns:personal="sap.uxap.sample.SharedBlocks.personal"
+	controllerName="sap.uxap.sample.KPIObjectPageHeader.controller.KPIObjectPageHeader"
+	height="100%">
+	<ObjectPageLayout id="ObjectPageLayout" upperCaseAnchorBar="false">
+		<headerTitle>
+			<ObjectPageHeader id="headerForTest"
+							  objectTitle="Generic T-Shirt Fa, SIZE AS, Colour blau"
+							  objectSubtitle="AAUFSA000100003002">
+
+				<actions>
+					<ObjectPageHeaderActionButton icon="sap-icon://action" text="Open in..." tooltip="action"/>
+					<ObjectPageHeaderActionButton icon="sap-icon://refresh" press="changeDesign" text="change design" tooltip="refresh"/>
+				</actions>
+			</ObjectPageHeader>
+		</headerTitle>
+		<headerContent>
+			<layout:VerticalLayout>
+				<m:Label text="PC, Unrestricted-Use Stock"/>
+				<m:ObjectNumber class="sapMObjectNumberLarge" number="219" unit="K"/>
+			</layout:VerticalLayout>
+			<layout:VerticalLayout>
+				<m:Label text="Article Category"/>
+				<m:ObjectAttribute text="Single Material"/>
+			</layout:VerticalLayout>
+			<layout:VerticalLayout>
+				<m:Label text="Article Type"/>
+				<m:ObjectAttribute text="Trading Goods"/>
+			</layout:VerticalLayout>
+		</headerContent>
+		<sections>
+			<ObjectPageSection titleUppercase="false" title="2014 Goals Plan">
+				<subSections>
+					<ObjectPageSubSection title=" " titleUppercase="false">
+						<blocks>
+							<goals:GoalsBlock id="goalsblock"/>
+						</blocks>
+					</ObjectPageSubSection>
+				</subSections>
+			</ObjectPageSection>
+
+			<ObjectPageSection titleUppercase="false" title="Personal">
+				<subSections>
+					<ObjectPageSubSection title="Connect" titleUppercase="false">
+						<blocks>
+							<personal:BlockPhoneNumber id="phone"/>
+							<personal:BlockSocial id="social"/>
+							<personal:BlockAdresses id="adresses"/>
+							<personal:BlockMailing id="mailing" columnLayout="1"/>
+						</blocks>
+					</ObjectPageSubSection>
+
+					<ObjectPageSubSection id="paymentSubSection" title="Payment information" titleUppercase="false">
+						<blocks>
+							<personal:PersonalBlockPart1 id="part1" columnLayout="1"/>
+						</blocks>
+						<moreBlocks>
+							<personal:PersonalBlockPart2 id="part2" columnLayout="1"/>
+						</moreBlocks>
+					</ObjectPageSubSection>
+				</subSections>
+			</ObjectPageSection>
+		</sections>
+	</ObjectPageLayout>
+</mvc:View>

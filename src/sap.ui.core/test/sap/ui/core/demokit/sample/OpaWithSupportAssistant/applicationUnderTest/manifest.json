@@ -1,0 +1,13 @@
+{
+	"sap.app": {
+		"id": "appUnderTest",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"rootView": "appUnderTest.view.Main",
+		"type": "XML",
+		"async": true
+	}
+}

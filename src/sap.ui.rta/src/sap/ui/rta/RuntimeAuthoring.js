@@ -2,101 +2,115 @@
  * ${copyright}
  */
 
-// Provides class sap.ui.rta.Main.
+// Provides class sap.ui.rta.RuntimeAuthoring.
 sap.ui.define([
-		"jquery.sap.global",
-		"sap/ui/base/ManagedObject",
-		"sap/ui/rta/toolbar/Fiori",
-		"sap/ui/rta/toolbar/Standalone",
-		"sap/ui/rta/toolbar/Personalization",
-		"sap/ui/dt/DesignTime",
-		"sap/ui/dt/Overlay",
-		"sap/ui/rta/command/Stack",
-		"sap/ui/rta/command/CommandFactory",
-		"sap/ui/rta/command/LREPSerializer",
-		"sap/ui/rta/plugin/Rename",
-		"sap/ui/rta/plugin/DragDrop",
-		"sap/ui/rta/plugin/RTAElementMover",
-		"sap/ui/rta/plugin/CutPaste",
-		"sap/ui/rta/plugin/Remove",
-		"sap/ui/rta/plugin/CreateContainer",
-		"sap/ui/rta/plugin/additionalElements/AdditionalElementsPlugin",
-		"sap/ui/rta/plugin/additionalElements/AddElementsDialog",
-		"sap/ui/rta/plugin/additionalElements/AdditionalElementsAnalyzer",
-		"sap/ui/rta/plugin/Combine",
-		"sap/ui/rta/plugin/Split",
-		"sap/ui/rta/plugin/Selection",
-		"sap/ui/rta/plugin/Settings",
-		"sap/ui/rta/plugin/ControlVariant",
-		"sap/ui/dt/plugin/ContextMenu",
-		"sap/ui/dt/plugin/TabHandling",
-		"sap/ui/fl/FlexControllerFactory",
-		"sap/ui/rta/Utils",
-		"sap/ui/dt/Util",
-		"sap/ui/fl/Utils",
-		"sap/ui/fl/registry/Settings",
-		"sap/m/MessageBox",
-		"sap/m/MessageToast",
-		"sap/ui/rta/util/PopupManager",
-		"sap/ui/core/BusyIndicator",
-		"sap/ui/dt/DOMUtil",
-		"sap/ui/rta/util/StylesLoader",
-		"sap/ui/rta/util/UrlParser",
-		"sap/ui/rta/appVariant/Feature",
-		"sap/ui/Device",
-		"sap/ui/rta/service/index",
-		"sap/ui/rta/util/ServiceEventBus"
-	],
-	function(
-		jQuery,
-		ManagedObject,
-		FioriToolbar,
-		StandaloneToolbar,
-		PersonalizationToolbar,
-		DesignTime,
-		Overlay,
-		CommandStack,
-		CommandFactory,
-		LREPSerializer,
-		RTARenamePlugin,
-		RTADragDropPlugin,
-		RTAElementMover,
-		CutPastePlugin,
-		RemovePlugin,
-		CreateContainerPlugin,
-		AdditionalElementsPlugin,
-		AdditionalElementsDialog,
-		AdditionalElementsAnalyzer,
-		CombinePlugin,
-		SplitPlugin,
-		SelectionPlugin,
-		SettingsPlugin,
-		ControlVariantPlugin,
-		ContextMenuPlugin,
-		TabHandlingPlugin,
-		FlexControllerFactory,
-		Utils,
-		DtUtil,
-		FlexUtils,
-		FlexSettings,
-		MessageBox,
-		MessageToast,
-		PopupManager,
-		BusyIndicator,
-		DOMUtil,
-		StylesLoader,
-		UrlParser,
-		RtaAppVariantFeature,
-		Device,
-		ServicesIndex,
-		ServiceEventBus
-	) {
+	"sap/base/strings/capitalize",
+	"sap/base/util/isPlainObject",
+	"sap/base/Log",
+	"sap/m/MessageBox",
+	"sap/m/MessageToast",
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/base/ManagedObject",
+	"sap/ui/core/BusyIndicator",
+	"sap/ui/core/Lib",
+	"sap/ui/dt/DesignTime",
+	"sap/ui/dt/DOMUtil",
+	"sap/ui/dt/ElementUtil",
+	"sap/ui/dt/Overlay",
+	"sap/ui/dt/OverlayRegistry",
+	"sap/ui/dt/Util",
+	"sap/ui/events/KeyCodes",
+	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
+	"sap/ui/fl/apply/api/FlexRuntimeInfoAPI",
+	"sap/ui/fl/initial/api/Version",
+	"sap/ui/fl/write/api/ContextBasedAdaptationsAPI",
+	"sap/ui/fl/write/api/ControlPersonalizationWriteAPI",
+	"sap/ui/fl/write/api/FeaturesAPI",
+	"sap/ui/fl/write/api/PersistenceWriteAPI",
+	"sap/ui/fl/write/api/ReloadInfoAPI",
+	"sap/ui/fl/write/api/VersionsAPI",
+	"sap/ui/fl/write/api/TranslationAPI",
+	"sap/ui/fl/Layer",
+	"sap/ui/fl/registry/Settings",
+	"sap/ui/fl/Utils",
+	"sap/ui/model/json/JSONModel",
+	"sap/ui/performance/Measurement",
+	"sap/ui/rta/appVariant/Feature",
+	"sap/ui/rta/command/BaseCommand",
+	"sap/ui/rta/command/LREPSerializer",
+	"sap/ui/rta/command/Stack",
+	"sap/ui/rta/service/index",
+	"sap/ui/rta/toolbar/Fiori",
+	"sap/ui/rta/toolbar/FioriLike",
+	"sap/ui/rta/toolbar/Personalization",
+	"sap/ui/rta/toolbar/Standalone",
+	"sap/ui/rta/util/changeVisualization/ChangeVisualization",
+	"sap/ui/rta/util/PluginManager",
+	"sap/ui/rta/util/PopupManager",
+	"sap/ui/rta/util/ReloadManager",
+	"sap/ui/rta/util/ServiceEventBus",
+	"sap/ui/rta/util/validateFlexEnabled",
+	"sap/ui/rta/Utils",
+	"sap/ui/Device"
+], function(
+	capitalize,
+	isPlainObject,
+	Log,
+	MessageBox,
+	MessageToast,
+	jQuery,
+	ManagedObject,
+	BusyIndicator,
+	Lib,
+	DesignTime,
+	DOMUtil,
+	ElementUtil,
+	Overlay,
+	OverlayRegistry,
+	DtUtil,
+	KeyCodes,
+	ManifestUtils,
+	FlexRuntimeInfoAPI,
+	Version,
+	ContextBasedAdaptationsAPI,
+	ControlPersonalizationWriteAPI,
+	FeaturesAPI,
+	PersistenceWriteAPI,
+	ReloadInfoAPI,
+	VersionsAPI,
+	TranslationAPI,
+	Layer,
+	Settings,
+	FlexUtils,
+	JSONModel,
+	Measurement,
+	RtaAppVariantFeature,
+	BaseCommand,
+	LREPSerializer,
+	CommandStack,
+	ServicesIndex,
+	FioriToolbar,
+	FioriLikeToolbar,
+	PersonalizationToolbar,
+	StandaloneToolbar,
+	ChangeVisualization,
+	PluginManager,
+	PopupManager,
+	ReloadManager,
+	ServiceEventBus,
+	validateFlexEnabled,
+	Utils,
+	Device
+) {
 	"use strict";
 
-	var FL_MAX_LAYER_PARAM = "sap-ui-fl-max-layer";
-	var SERVICE_STARTING = "starting";
-	var SERVICE_STARTED = "started";
-	var SERVICE_FAILED = "failed";
+	var STARTING = "STARTING";
+	var STARTED = "STARTED";
+	var STOPPED = "STOPPED";
+	var FAILED = "FAILED";
+	var SERVICE_STARTING = "SERVICE_STARTING";
+	var SERVICE_STARTED = "SERVICE_STARTED";
+	var SERVICE_FAILED = "SERVICE_FAILED";
 
 	/**
 	 * Constructor for a new sap.ui.rta.RuntimeAuthoring class.
@@ -109,70 +123,55 @@ sap.ui.define([
 	 * @private
 	 * @since 1.30
 	 * @alias sap.ui.rta.RuntimeAuthoring
-	 * @experimental This class is experimental and provides only limited functionality. Also the API might be changed in future.
 	 */
-	var RuntimeAuthoring = ManagedObject.extend("sap.ui.rta.RuntimeAuthoring", /** @lends sap.ui.rta.RuntimeAuthoring.prototype */
-	{
-		metadata : {
+	var RuntimeAuthoring = ManagedObject.extend("sap.ui.rta.RuntimeAuthoring", {
+		metadata: {
 			// ---- control specific ----
-			library : "sap.ui.rta",
-			associations : {
-				/** The root control which the runtime authoring should handle */
-				"rootControl" : {
-					type : "sap.ui.core.Control"
+			library: "sap.ui.rta",
+			associations: {
+				/** The root control which the runtime authoring should handle.
+				 * Can only be sap.ui.core.Control or sap.ui.core.UIComponent */
+				rootControl: {
+					type: "sap.ui.base.ManagedObject"
 				}
 			},
-			properties : {
-				/** The URL which is called when the custom field dialog is opened */
-				"customFieldUrl" : "string",
-
+			properties: {
 				/** Whether the create custom field button should be shown */
-				"showCreateCustomField" : "boolean",
-
-				/** Whether the create custom field button should be shown */
-				"showToolbars" : {
-					type : "boolean",
-					defaultValue : true
+				showToolbars: {
+					type: "boolean",
+					defaultValue: true
 				},
 
 				/** Whether rta is triggered from a dialog button */
-				"triggeredFromDialog" : {
-					type : "boolean",
-					defaultValue : false
+				triggeredFromDialog: {
+					type: "boolean",
+					defaultValue: false
 				},
 
 				/** Whether the window unload dialog should be shown */
-				"showWindowUnloadDialog" : {
-					type : "boolean",
-					defaultValue : true
+				showWindowUnloadDialog: {
+					type: "boolean",
+					defaultValue: true
 				},
 
 				/** sap.ui.rta.command.Stack */
-				"commandStack" : {
-					type : "any"
+				commandStack: {
+					type: "any"
 				},
-
-				/** Map indicating plugins in to be loaded or in use by RuntimeAuthoring and DesignTime */
-				"plugins" : {
-					type : "any",
-					defaultValue : {}
-				},
-
 
 				/**
 				 * Map with flex-related settings
-				 * @experimental
 				 */
-				"flexSettings": {
+				flexSettings: {
 					type: "object",
 					defaultValue: {
-						layer: "CUSTOMER",
+						layer: Layer.CUSTOMER,
 						developerMode: true
 					}
 				},
 
-				/** Defines view state of the RTA. Possible values: adaptation, navigation */
-				"mode" : {
+				/** Defines view state of key user adaptation. Possible values: adaptation, navigation, visualization */
+				mode: {
 					type: "string",
 					defaultValue: "adaptation"
 				},
@@ -180,14 +179,14 @@ sap.ui.define([
 				/**
 				 * Defines designtime metadata scope
 				 */
-				"metadataScope": {
+				metadataScope: {
 					type: "string",
 					defaultValue: "default"
 				}
 			},
-			events : {
+			events: {
 				/** Fired when the runtime authoring is started */
-				"start" : {
+				start: {
 					parameters: {
 						editablePluginsCount: {
 							type: "int"
@@ -196,56 +195,173 @@ sap.ui.define([
 				},
 
 				/** Fired when the runtime authoring is stopped */
-				"stop" : {},
+				stop: {},
 
 				/** Fired when the runtime authoring failed to start */
-				"failed" : {},
+				failed: {
+					parameters: {
+						error: {
+							type: "any"
+						}
+					}
+				},
 
 				/**
 				 * Event fired when a DesignTime selection is changed
 				 */
-				"selectionChange" : {
-					parameters : {
-						selection : { type : "sap.ui.dt.Overlay[]" }
+				selectionChange: {
+					parameters: {
+						selection: {
+							type: "sap.ui.dt.Overlay[]"
+						}
 					}
 				},
-				/**Event fired when the runtime authoring mode is changed */
-				"modeChanged" : {},
+				/** Event fired when the runtime authoring mode is changed */
+				modeChanged: {},
 
 				/**
 				 * Fired when the undo/redo stack has changed, undo/redo buttons can be updated
 				 */
-				"undoRedoStackModified" : {}
+				undoRedoStackModified: {}
 			}
 		},
-		_sAppTitle : null,
+		_sAppTitle: null,
 		_dependents: null,
-		constructor: function() {
+		_sStatus: STOPPED,
+		_bNavigationModeWarningShown: false,
+		// eslint-disable-next-line object-shorthand
+		constructor: function(...aArgs) {
 			// call parent constructor
-			ManagedObject.apply(this, arguments);
+			ManagedObject.apply(this, aArgs);
 
 			this._dependents = {};
 			this._mServices = {};
-			this._mCustomServicesDictinary = {};
-			this.iEditableOverlaysCount = 0;
+			this._mUShellServices = {};
+			this._pElementModified = Promise.resolve();
 
-			this.addDependent(new PopupManager(), 'popupManager');
+			this.addDependent(new PluginManager(), "pluginManager");
+			this.addDependent(new PopupManager(), "popupManager");
 
 			if (this.getShowToolbars()) {
-				this.getPopupManager().attachOpen(this.onPopupOpen, this);
-				this.getPopupManager().attachClose(this.onPopupClose, this);
+				this.getPopupManager().attachOpen(onPopupOpen, this);
+				this.getPopupManager().attachClose(onPopupClose, this);
+
+				// Change visualization can only be triggered from the toolbar
+				this.addDependent(new ChangeVisualization(), "changeVisualization");
 			}
 
 			if (window.parent !== window) {
-				this.startService('receiver');
+				this.startService("receiver");
 			}
-		},
-		_RESTART : {
-			NOT_NEEDED : "no restart",
-			VIA_HASH : "without max layer",
-			RELOAD_PAGE : "reload"
+			this.startService("supportTools");
+
+			this._loadUShellServicesPromise = FlexUtils.getUShellServices(["URLParsing", "AppLifeCycle", "CrossApplicationNavigation"])
+			.then(function(mUShellServices) {
+				this._mUShellServices = mUShellServices;
+				ReloadManager.setUShellServices(mUShellServices);
+			}.bind(this));
 		}
 	});
+
+	/**
+	 * The RTA FLP plugin checks whether RTA needs to be restarted and restarts it if needed.
+	 *
+	 * @public
+	 * @static
+	 * @param {sap.ui.fl.Layer} sLayer - Active layer
+	 * @returns {boolean} Returns true if restart is needed
+	 */
+	RuntimeAuthoring.needsRestart = function(sLayer) {
+		return ReloadManager.needsAutomaticStart(sLayer);
+	};
+
+	/**
+	 * Enable restart of RTA
+	 * the RTA FLP plugin handles the restart
+	 *
+	 * @public
+	 * @static
+	 * @param {sap.ui.fl.Layer} sLayer - Active layer
+	 * @param {sap.ui.core.Control} oRootControl - Root control for which RTA was started
+	 */
+	RuntimeAuthoring.enableRestart = function(sLayer, oRootControl) {
+		ReloadManager.enableAutomaticStart(sLayer, oRootControl);
+	};
+
+	/**
+	 * Disable restart of RTA
+	 *
+	 * @public
+	 * @static
+	 * @param {sap.ui.fl.Layer} sLayer - Active layer
+	 */
+	RuntimeAuthoring.disableRestart = function(sLayer) {
+		ReloadManager.disableAutomaticStart(sLayer);
+	};
+
+	/**
+	 * Check if RTA is about to start or starting after a reload
+	 * e.g. when reloading without personalization changes
+	 *
+	 * @public
+	 * @static
+	 * @param {sap.ui.fl.Layer} [sLayer] - Active layer, CUSTOMER by default
+	 * @returns {boolean} Returns true if RTA is about to start or starting
+	 */
+	RuntimeAuthoring.willRTAStartAfterReload = function(sLayer) {
+		return ReloadManager.needsAutomaticStart(sLayer || Layer.CUSTOMER);
+	};
+
+	RuntimeAuthoring.prototype.addDependent = function(oObject, sName, bCreateGetter) {
+		bCreateGetter = typeof bCreateGetter === "undefined" ? true : !!bCreateGetter;
+		if (!(sName in this._dependents)) {
+			if (sName && bCreateGetter) {
+				this[`get${capitalize(sName, 0)}`] = this.getDependent.bind(this, sName);
+			}
+			this._dependents[sName || oObject.getId()] = oObject;
+		} else {
+			throw DtUtil.createError(
+				"RuntimeAuthoring#addDependent",
+				`Can't add dependency with same key '${sName}'`,
+				"sap.ui.rta"
+			);
+		}
+	};
+
+	RuntimeAuthoring.prototype.getDependent = function(sName) {
+		return this._dependents[sName];
+	};
+
+	RuntimeAuthoring.prototype.getDependents = function() {
+		return this._dependents;
+	};
+
+	RuntimeAuthoring.prototype.removeDependent = function(sName) {
+		delete this._dependents[sName];
+	};
+
+	/**
+	 * Setter method for plugins. Plugins can't be set when runtime authoring is started.
+	 *
+	 * @param {object} mPlugins - Map of plugins
+	 */
+	RuntimeAuthoring.prototype.setPlugins = function(mPlugins) {
+		if (this._sStatus !== STOPPED) {
+			throw new Error("Cannot replace plugins: runtime authoring already started");
+		}
+		this.getPluginManager().setPlugins(mPlugins);
+	};
+
+	/**
+	 * Getter method for plugins.
+	 *
+	 * @returns {Object<string, sap.ui.rta.plugin.Plugin>} Map with plugins
+	 */
+	RuntimeAuthoring.prototype.getPlugins = function() {
+		return this.getPluginManager
+			&& this.getPluginManager()
+			&& this.getPluginManager().getPlugins();
+	};
 
 	/**
 	 * Returns (and creates) the default plugins of RuntimeAuthoring
@@ -257,205 +373,43 @@ sap.ui.define([
 	 * always the same instances get returned.
 	 *
 	 * @public
-	 * @return {map} Map with plugins
+	 * @returns {Object<string,sap.ui.rta.plugin.Plugin>} Map with plugins
 	 */
 	RuntimeAuthoring.prototype.getDefaultPlugins = function() {
-		if (!this._mDefaultPlugins) {
-			var oCommandFactory = new CommandFactory({
-				flexSettings: this.getFlexSettings()
-			});
-
-			// Initialize local cache
-			this._mDefaultPlugins = {};
-
-			// Selection
-			this._mDefaultPlugins["selection"] = new SelectionPlugin({
-				commandFactory: oCommandFactory,
-				multiSelectionRequiredPlugins: [
-					CombinePlugin.getMetadata().getName(),
-					RemovePlugin.getMetadata().getName()
-				],
-				elementEditableChange: this._onElementEditableChange.bind(this)
-			});
-
-			// Drag drop plugin
-			var oRTAElementMover = new RTAElementMover({
-				commandFactory: oCommandFactory
-			});
-
-			this._mDefaultPlugins["dragDrop"] = new RTADragDropPlugin({
-				elementMover: oRTAElementMover,
-				commandFactory: oCommandFactory,
-				dragStarted: this._handleStopCutPaste.bind(this)
-			});
-
-			// Rename
-			this._mDefaultPlugins["rename"] = new RTARenamePlugin({
-				commandFactory: oCommandFactory,
-				editable: this._handleStopCutPaste.bind(this)
-			});
-
-			// Additional elements
-			this._mDefaultPlugins["additionalElements"] = new AdditionalElementsPlugin({
-				commandFactory: oCommandFactory,
-				analyzer: AdditionalElementsAnalyzer,
-				dialog: new AdditionalElementsDialog()
-			});
-
-			// Create container
-			this._mDefaultPlugins["createContainer"] = new CreateContainerPlugin({
-				commandFactory: oCommandFactory
-			});
-
-			// Remove
-			this._mDefaultPlugins["remove"] = new RemovePlugin({
-				commandFactory: oCommandFactory
-			});
-
-			// Cut paste
-			this._mDefaultPlugins["cutPaste"] = new CutPastePlugin({
-				elementMover: oRTAElementMover,
-				commandFactory: oCommandFactory
-			});
-
-			// Settings
-			this._mDefaultPlugins["settings"] = new SettingsPlugin({
-				commandFactory: oCommandFactory
-			});
-
-			// Combine
-			this._mDefaultPlugins["combine"] = new CombinePlugin({
-				commandFactory: oCommandFactory
-			});
-
-			// Split
-			this._mDefaultPlugins["split"] = new SplitPlugin({
-				commandFactory: oCommandFactory
-			});
-
-			// Context Menu (context menu)
-			this._mDefaultPlugins["contextMenu"] = new ContextMenuPlugin({
-				styleClass: Utils.getRtaStyleClassName()
-			});
-
-			// Tab Handling
-			this._mDefaultPlugins["tabHandling"] = new TabHandlingPlugin();
-
-			//Control Variant
-			this._mDefaultPlugins["controlVariant"] = new ControlVariantPlugin({
-				commandFactory : oCommandFactory
-			});
-		}
-
-		return jQuery.extend({}, this._mDefaultPlugins);
-	};
-
-
-	RuntimeAuthoring.prototype.addDependent = function (oObject, sName, bCreateGetter) {
-		bCreateGetter = typeof bCreateGetter === 'undefined' ? true : !!bCreateGetter;
-		if (!(sName in this._dependents)) {
-			if (sName && bCreateGetter) {
-				this['get' + jQuery.sap.charToUpperCase(sName, 0)] = this.getDependent.bind(this, sName);
-			}
-			this._dependents[sName || oObject.getId()] = oObject;
-		} else {
-			throw DtUtil.createError(
-				"RuntimeAuthoring#addDependent",
-				DtUtil.printf("Can't add dependency with same key '{0}'", sName),
-				"sap.ui.rta"
-			);
-		}
-	};
-
-	RuntimeAuthoring.prototype.getDependent = function(sName) {
-		return this._dependents[sName];
-	};
-
-	RuntimeAuthoring.prototype.getDependents = function () {
-		return this._dependents;
-	};
-
-	RuntimeAuthoring.prototype.removeDependent = function (sName) {
-		delete this._dependents[sName];
-	};
-
-	/**
-	 * In order to clear the cache and to destroy the default plugins on exit use
-	 * _destroyDefaultPlugins()
-	 *
-	 * In order to destroy default plugins not used, because replaced or removed,
-	 * pass the list of active plugins: _destroyDefaultPlugins( mPluginsToKeep ).
-	 *
-	 * @param {map} mPluginsToKeep - list of active plugins to keep in _mDefaultPlugins
-	 * @private
-	 */
-	RuntimeAuthoring.prototype._destroyDefaultPlugins = function (mPluginsToKeep) {
-		// Destroy default plugins and clear cache
-		// ... but keep those in mPluginsToKeep
-		for (var sDefaultPluginName in this._mDefaultPlugins) {
-			var oDefaultPlugin = this._mDefaultPlugins[sDefaultPluginName];
-
-			if (oDefaultPlugin && !oDefaultPlugin.bIsDestroyed) {
-				if (!mPluginsToKeep || mPluginsToKeep[sDefaultPluginName] !== oDefaultPlugin) {
-					oDefaultPlugin.destroy();
-				}
-			}
-		}
-		if (!mPluginsToKeep) {
-			this._mDefaultPlugins = null;
-		}
-	};
-
-	RuntimeAuthoring.prototype.onPopupOpen = function(oEvent) {
-		if (
-			oEvent.getParameters() instanceof sap.m.Dialog
-			&& this.getToolbar() instanceof FioriToolbar
-		) {
-			this.getToolbar().setColor("contrast");
-		}
-		this.getToolbar().bringToFront();
-	};
-
-	RuntimeAuthoring.prototype.onPopupClose = function(oEvent) {
-		if (oEvent.getParameters() instanceof sap.m.Dialog) {
-			this.getToolbar().setColor();
-		}
-	};
-
-	RuntimeAuthoring.prototype.setPlugins = function(mPlugins) {
-		if (this._oDesignTime) {
-			throw new Error('Cannot replace plugins: runtime authoring already started');
-		}
-		this.setProperty("plugins", mPlugins);
+		return this.getPluginManager().getDefaultPlugins(this.getFlexSettings());
 	};
 
 	/**
 	 * Setter for flexSettings. Checks the Uri for parameters that override the layer.
 	 * builds the rootNamespace and namespace parameters from the other parameters
 	 *
-	 * @param {Object} [mFlexSettings] property bag
-	 * @param {String} [mFlexSettings.layer] The Layer in which RTA should be started. Default: "CUSTOMER"
-	 * @param {Boolean} [mFlexSettings.developerMode] Whether RTA is started in DeveloperMode Mode. Whether RTA is started in DeveloperMode Mode
-	 * @param {String} [mFlexSettings.baseId] base ID of the app
-	 * @param {String} [mFlexSettings.projectId] project ID
-	 * @param {String} [mFlexSettings.scenario] Key representing the current scenario
+	 * @param {object} [mFlexSettings] property bag
+	 * @param {string} [mFlexSettings.layer] The Layer in which RTA should be started. Default: "CUSTOMER"
+	 * @param {boolean} [mFlexSettings.developerMode] Whether RTA is started in DeveloperMode Mode. Whether RTA is started in DeveloperMode Mode
+	 * @param {string} [mFlexSettings.baseId] base ID of the app
+	 * @param {string} [mFlexSettings.projectId] project ID
+	 * @param {string} [mFlexSettings.scenario] Key representing the current scenario
 	 */
 	RuntimeAuthoring.prototype.setFlexSettings = function(mFlexSettings) {
 		// Check URI-parameters for sap-ui-layer
-		var oUriParams = jQuery.sap.getUriParameters();
-		var aUriLayer = oUriParams.mParams["sap-ui-layer"];
+		var oUriParams = new URLSearchParams(window.location.search);
+		var sUriLayer = oUriParams.get("sap-ui-layer");
 
-		mFlexSettings = jQuery.extend({}, this.getFlexSettings(), mFlexSettings);
-
-		if (aUriLayer && aUriLayer.length > 0) {
-			mFlexSettings.layer = aUriLayer[0];
+		mFlexSettings = Object.assign({}, this.getFlexSettings(), mFlexSettings);
+		if (sUriLayer) {
+			mFlexSettings.layer = sUriLayer.toUpperCase();
 		}
 
-		// TODO: this will lead to incorrect information if this function is first called with scenario or baseId and then called again without.
+		// TODO: this will lead to incorrect information if this function is first called
+		// with scenario or baseId and then called again without.
 		if (mFlexSettings.scenario || mFlexSettings.baseId) {
-			var sLRepRootNamespace = FlexUtils.buildLrepRootNamespace(mFlexSettings.baseId, mFlexSettings.scenario, mFlexSettings.projectId);
+			var sLRepRootNamespace = FlexUtils.buildLrepRootNamespace(
+				mFlexSettings.baseId,
+				mFlexSettings.scenario,
+				mFlexSettings.projectId
+			);
 			mFlexSettings.rootNamespace = sLRepRootNamespace;
-			mFlexSettings.namespace = sLRepRootNamespace + "changes/";
+			mFlexSettings.namespace = `${sLRepRootNamespace}changes/`;
 		}
 
 		Utils.setRtaStyleClassName(mFlexSettings.layer);
@@ -463,99 +417,105 @@ sap.ui.define([
 	};
 
 	/**
-	 * Checks the uri parameters for "sap-ui-layer" and returns either the current layer or the layer from the uri parameter, if there is one
+	 * Checks the uri parameters for "sap-ui-layer" and returns either the current layer
+	 * or the layer from the uri parameter, if there is one
 	 *
-	 * @param {String} sLayer the current layer
-	 * @returns {String} the layer after checking the uri parameters
+	 * @returns {string} The layer after checking the uri parameters
 	 * @private
 	 */
-	RuntimeAuthoring.prototype.getLayer = function(sLayer) {
+	RuntimeAuthoring.prototype.getLayer = function() {
 		return this.getFlexSettings().layer;
 	};
 
-	RuntimeAuthoring.prototype._getFlexController = function() {
-		var oRootControl = this._oRootControl || sap.ui.getCore().byId(this.getRootControl());
-		return FlexControllerFactory.createForControl(oRootControl);
+	RuntimeAuthoring.prototype.getRootControlInstance = function() {
+		this._oRootControl ||= ElementUtil.getElementInstance(this.getRootControl());
+		return this._oRootControl;
 	};
 
 	RuntimeAuthoring.prototype._getTextResources = function() {
-		return sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
+		return Lib.getResourceBundleFor("sap.ui.rta");
 	};
 
 	/**
 	 * Start UI adaptation at runtime (RTA).
-	 * @return {Promise} Returns a Promise with the initialization of RTA
+	 *
+	 * @returns {Promise} Returns a Promise with the initialization of RTA
 	 * @public
 	 */
 	RuntimeAuthoring.prototype.start = function() {
+		var bIsAutomaticRestart = RuntimeAuthoring.needsRestart(this.getLayer());
 		var oDesignTimePromise;
-
+		var vError;
 		// Create DesignTime
-		if (!this._oDesignTime) {
-			this._oRootControl = sap.ui.getCore().byId(this.getRootControl());
-			if (!this._oRootControl){
-				var vError = "Could not start Runtime Adaptation: Root control not found";
-				FlexUtils.log.error(vError);
+		if (this._sStatus === STOPPED) {
+			this._sStatus = STARTING;
+			var oRootControl = this.getRootControlInstance();
+			if (!oRootControl) {
+				vError = new Error("Root control not found");
+				Log.error(vError);
 				return Promise.reject(vError);
 			}
-			//Check if the application has personalized changes and reload without them
-			return this._handlePersonalizationChangesOnStart()
-			.then(function(bReloadTriggered){
+
+			return this._loadUShellServicesPromise
+			.then(initVersioning.bind(this))
+			.then(initContextBasedAdaptations.bind(this, bIsAutomaticRestart))
+			/*
+			 Check if the application has personalized changes and reload without them;
+			 Also Check if the application has an available draft and if yes, reload with those changes.
+			 */
+			.then(function() {
+				return ReloadManager.handleReloadOnStart({
+					layer: this.getLayer(),
+					selector: this.getRootControlInstance(),
+					versioningEnabled: this._oVersionsModel.getProperty("/versioningEnabled"),
+					developerMode: this.getFlexSettings().developerMode,
+					adaptationId: this._oContextBasedAdaptationsModel.getProperty("/displayedAdaptation/id")
+				});
+			}.bind(this))
+			.then(function(bReloadTriggered) {
 				if (bReloadTriggered) {
-					// FLP Plugin reacts on this error string and doesn't the error on the UI
+					// FLP Plugin reacts on this error string and doesn't pass the error on the UI
 					return Promise.reject("Reload triggered");
 				}
+				var oFlexInfoSession = PersistenceWriteAPI.getResetAndPublishInfoFromSession(this.getRootControlInstance());
+				this.bInitialResetEnabled = !!oFlexInfoSession.isResetEnabled;
 
-				// Take default plugins if no plugins handed over
-				if (!this.getPlugins() || !Object.keys(this.getPlugins()).length) {
-					this.setPlugins(this.getDefaultPlugins());
-				}
+				this._oSerializer = new LREPSerializer({commandStack: this.getCommandStack(), rootControl: this.getRootControl()});
 
-				// Destroy default plugins instantiated but not in use
-				this._destroyDefaultPlugins(this.getPlugins());
+				this.getPluginManager().preparePlugins(
+					this.getFlexSettings(),
+					handleElementModified.bind(this),
+					this.getCommandStack()
+				);
 
-				Object.keys(this.getPlugins()).forEach(function(sPluginName) {
-					if (this.getPlugins()[sPluginName].attachElementModified) {
-						this.getPlugins()[sPluginName].attachElementModified(this._handleElementModified, this);
-					}
-				}.bind(this));
+				var aPlugins = this.getPluginManager().getPluginList();
 
-				// Hand over currrent command stack to settings plugin
-				if (this.getPlugins()["settings"]) {
-					this.getPlugins()["settings"].setCommandStack(this.getCommandStack());
-				}
-
-				this._oSerializer = new LREPSerializer({commandStack : this.getCommandStack(), rootControl : this.getRootControl()});
-
-				// Create design time
-				var aKeys = Object.keys(this.getPlugins());
-				var aPlugins = aKeys.map(function(sKey) {
-					return this.getPlugins()[sKey];
-				}, this);
-
-				oDesignTimePromise = new Promise(function (fnResolve, fnReject) {
-					jQuery.sap.measure.start("rta.dt.startup","Measurement of RTA: DesignTime start up");
+				oDesignTimePromise = new Promise(function(fnResolve, fnReject) {
+					Measurement.start("rta.dt.startup", "Measurement of RTA: DesignTime start up");
 					this._oDesignTime = new DesignTime({
 						scope: this.getMetadataScope(),
 						plugins: aPlugins
 					});
-					//add root control is triggering overlay creation, so we need to wait for the scope to be set.
+
+					addOrRemoveStyleClass(this.getRootControlInstance(), true);
+
+					// add root control is triggering overlay creation, so we need to wait for the scope to be set.
 					this._oDesignTime.addRootElement(this._oRootControl);
 
-					jQuery(Overlay.getOverlayContainer()).addClass("sapUiRta");
-					if (this.getLayer() === "USER") {
-						jQuery(Overlay.getOverlayContainer()).addClass("sapUiRtaPersonalize");
+					Overlay.getOverlayContainer().get(0).classList.add("sapUiRta");
+					if (this.getLayer() === Layer.USER) {
+						Overlay.getOverlayContainer().get(0).classList.add("sapUiRtaPersonalize");
+					} else {
+						// RTA Visual Improvements
+						document.body.classList.add("sapUiRtaMode");
 					}
-
-					this._oRootControl.addStyleClass("sapUiRtaRoot");
-
-					this._oDesignTime.attachSelectionChange(function(oEvent) {
+					this._oDesignTime.getSelectionManager().attachChange(function(oEvent) {
 						this.fireSelectionChange({selection: oEvent.getParameter("selection")});
 					}, this);
 
 					this._oDesignTime.attachEventOnce("synced", function() {
 						fnResolve();
-						jQuery.sap.measure.end("rta.dt.startup","Measurement of RTA: DesignTime start up");
+						Measurement.end("rta.dt.startup", "Measurement of RTA: DesignTime start up");
 					}, this);
 
 					this._oDesignTime.attachEventOnce("syncFailed", function(oEvent) {
@@ -563,103 +523,182 @@ sap.ui.define([
 					});
 				}.bind(this));
 
-
 				// Register function for checking unsaved before leaving RTA
 				this._oldUnloadHandler = window.onbeforeunload;
 				window.onbeforeunload = this._onUnload.bind(this);
-			}.bind(this))
-			.then(function () {
-				if (this.getShowToolbars()) {
-					// Create ToolsMenu
-					return this._getPublishAndAppVariantSupportVisibility()
-						.then(function (aButtonsSupport) {
-							var bShowPublish = aButtonsSupport[0];
-							var bIsAppVariantSupported = aButtonsSupport[1];
-							this._createToolsMenu(bShowPublish, bIsAppVariantSupported);
-							return this.getToolbar().show();
-						}.bind(this));
-				}
-			}.bind(this))
-			.then(function () {
-				// this is needed to initially check if undo is available, e.g. when the stack gets initialized with changes
-				this._onStackModified();
-				this.fnKeyDown = this._onKeyDown.bind(this);
-				jQuery(document).on("keydown", this.fnKeyDown);
+				return undefined;
 			}.bind(this))
 			.then(function() {
-				this.getPopupManager().setRta(this);
-				var oRelevantPopups = this.getPopupManager().getRelevantPopups();
-				if (oRelevantPopups.aDialogs || oRelevantPopups.aPopovers) {
-					return this.getShowToolbars() && this.getToolbar().bringToFront();
+				if (this.getShowToolbars()) {
+					// Create ToolsMenu
+					return getToolbarButtonsVisibility(this.getRootControlInstance(), this.getLayer(), this._oSerializer)
+					.then(createToolsMenu.bind(this));
 				}
+				return undefined;
 			}.bind(this))
-			.then(function () {
-				// non-blocking style loading
-				StylesLoader
-					.loadStyles('InPageStyles')
-					.then(function (sData) {
-						var sStyles = sData.replace(/%scrollWidth%/g, DOMUtil.getScrollbarWidth() + 'px');
-						DOMUtil.insertStyles(sStyles);
-					});
-			})
-			.then(function () {
+			// this is needed to initially check if undo is available, e.g. when the stack gets initialized with changes
+			.then(onStackModified.bind(this))
+			.then(function() {
+				// Resolve the CSS variable set in themes/base/OverlayWithScrollbar.css
+				Overlay.getOverlayContainer().get(0).style.setProperty(
+					"--sap-ui-rta-scrollbar-scrollWidth",
+					`${DOMUtil.getScrollbarWidth()}px`
+				);
+				Overlay.getOverlayContainer().get(0).style.setProperty(
+					"--sap-ui-rta-scrollbar-scrollWidthPlusTwo",
+					`${DOMUtil.getScrollbarWidth() + 2}px`
+				);
 				return oDesignTimePromise;
 			})
-			.then(
-				function () {
-					this.fireStart({
-						editablePluginsCount: this.iEditableOverlaysCount
-					});
-				}.bind(this),
-				function (vError) {
-					if (vError !== "Reload triggered") {
-						this.fireFailed(vError);
-					}
-					if (vError) {
-						return Promise.reject(vError);
-					}
-				}.bind(this)
-			);
+			.then(function() {
+				// PopupManager sets the toolbar to already open popups' autoCloseAreas
+				// Since at this point the toolbar is not available, it waits for RTA to start,
+				// before adding it to the autoCloseAreas of the open popups
+				this.getPopupManager().setRta(this);
+				if (this.getShowToolbars()) {
+					// the show() method of the toolbar relies on this RTA instance being set on the PopupManager
+					return this.getToolbar().show();
+				}
+				return undefined;
+			}.bind(this))
+			.then(function() {
+				if (Device.browser.name === "ff") {
+					// in FF shift+f10 also opens a browser context menu.
+					// It seems that the only way to get rid of it is to completely turn off context menu in ff..
+					jQuery(document).on("contextmenu", ffContextMenuHandler);
+				}
+			})
+			.then(function() {
+				this.fnKeyDown = onKeyDown.bind(this);
+				jQuery(document).on("keydown", this.fnKeyDown);
+				this.fnOnPersonalizationChangeCreation = onPersonalizationChangeCreation.bind(this);
+				ControlPersonalizationWriteAPI.attachChangeCreation(
+					this.getRootControlInstance(),
+					this.fnOnPersonalizationChangeCreation
+				);
+			}.bind(this))
+			.then(shouldValidateFlexEnabled)
+			.then(function(bShouldValidateFlexEnabled) {
+				if (bShouldValidateFlexEnabled) {
+					validateFlexEnabled(this);
+				}
+				this._sStatus = STARTED;
+				RuntimeAuthoring.disableRestart(this.getLayer());
+				this.fireStart({
+					editablePluginsCount: this.getPluginManager().getEditableOverlaysCount()
+				});
+			}.bind(this))
+			.catch(function(vError) {
+				if (vError === "Reload triggered") {
+					// destroy rta when reload is triggered - otherwise the consumer needs to take care of this
+					this.destroy();
+				} else {
+					this._sStatus = FAILED;
+					this.fireFailed({error: vError});
+				}
+				return Promise.reject(vError);
+			}.bind(this));
 		}
+		return Promise.reject("RuntimeAuthoring is already started");
 	};
+
+	function showSaveConfirmation() {
+		var bVersionEnabled = this._oVersionsModel.getProperty("/versioningEnabled");
+		var sWarningMessageKey = bVersionEnabled ? "MSG_UNSAVED_DRAFT_CHANGES_ON_CLOSE" : "MSG_UNSAVED_CHANGES_ON_CLOSE";
+		var sSaveButtonTextKey = bVersionEnabled ? "BTN_UNSAVED_DRAFT_CHANGES_ON_CLOSE_SAVE" : "BTN_UNSAVED_CHANGES_ON_CLOSE_SAVE";
+		return Utils.showMessageBox("warning", sWarningMessageKey, {
+			titleKey: "TIT_UNSAVED_CHANGES_ON_CLOSE",
+			actionKeys: [
+				sSaveButtonTextKey,
+				"BTN_UNSAVED_CHANGES_ON_CLOSE_DONT_SAVE"
+			],
+			emphasizedActionKey: "BTN_UNSAVED_CHANGES_ON_CLOSE_SAVE",
+			showCancel: true
+		});
+	}
 
 	/**
-	 * Checks the Publish button and app variant support (i.e. Save As and Overview of App Variants) availability
-	 * @private
-	 * @returns {boolean[]} Returns an array of boolean values [bPublishAvailable, bAppVariantSupportAvailable]
-	 * @description The publish button shall not be available if the system is productive and if a merge error occurred during merging changes into the view on startup
-	 * The app variant support shall not be available if the system is productive and if the platform is not enabled (See Feature.js) to show the app variant tooling
-	 * isProductiveSystem should only return true if it is a test or development system with the provision of custom catalog extensions
+	 * Stops Runtime Authoring
+	 *
+	 * @public
+	 * @param {boolean} bSkipSave - Stop RTA with or w/o saving changes
+	 * @param {boolean} bSkipRestart - Stop RTA with or w/o checking if a reload is needed to apply e.g. personalization/app descriptor changes
+	 * @returns {Promise} Resolves with undefined
 	 */
-	RuntimeAuthoring.prototype._getPublishAndAppVariantSupportVisibility = function() {
-		return FlexSettings.getInstance().then(function(oSettings) {
-			var bIsAppVariantSupported = RtaAppVariantFeature.isPlatFormEnabled(this._oRootControl, this.getLayer(), this._oSerializer);
-			return [!oSettings.isProductiveSystem() && !oSettings.hasMergeErrorOccured(), !oSettings.isProductiveSystem() && bIsAppVariantSupported];
+	RuntimeAuthoring.prototype.stop = function(bSkipSave, bSkipRestart) {
+		var bUserCancelled;
+		var oReloadInfo;
+		checkToolbarAndExecuteFunction.call(this, "setBusy", true);
+		return waitForPendingActions.call(this)
+		.then(function() {
+			var sLayer = this.getLayer();
+			if (sLayer !== Layer.USER && !bSkipSave && this.canSave()) {
+				return showSaveConfirmation.call(this)
+				.then(function(sAction) {
+					if (sAction === MessageBox.Action.CANCEL) {
+						bUserCancelled = true;
+						return Promise.reject();
+					}
+					if (sAction === this._getTextResources().getText("BTN_UNSAVED_CHANGES_ON_CLOSE_DONT_SAVE")) {
+						return this._oSerializer.clearCommandStack(/* bRemoveChanges = */true);
+					}
+					return undefined;
+				}.bind(this));
+			}
+			return undefined;
 		}.bind(this))
-		.catch(function(oError) {
-			return false;
-		});
-	};
-
-	var fnShowTechnicalError = function(vError) {
-		BusyIndicator.hide();
-		var sErrorMessage = vError.stack || vError.message || vError.status || vError;
-		var oTextResources = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
-		jQuery.sap.log.error("Failed to transfer runtime adaptation changes to layered repository", sErrorMessage);
-		var sMsg = oTextResources.getText("MSG_LREP_TRANSFER_ERROR") + "\n"
-				+ oTextResources.getText("MSG_ERROR_REASON", sErrorMessage);
-		MessageBox.error(sMsg, {
-			styleClass: Utils.getRtaStyleClassName()
-		});
+		.then(function() {
+			if (bSkipRestart) {
+				return {};
+			}
+			// Reload check must happen before _serializeToLrep is called
+			return ReloadManager.checkReloadOnExit({
+				layer: this.getLayer(),
+				selector: this.getRootControlInstance(),
+				isDraftAvailable: this._oVersionsModel.getProperty("/draftAvailable"),
+				versioningEnabled: this._oVersionsModel.getProperty("/versioningEnabled"),
+				activeVersion: this._oVersionsModel.getProperty("/activeVersion"),
+				changesNeedReloadPromise: this._bSavedChangesNeedReload ? Promise.resolve(true) : this._oSerializer.needsReload()
+			});
+		}.bind(this))
+		.then(function(oReturn) {
+			oReloadInfo = oReturn;
+			if (!bSkipSave) {
+				// serializeToLrep has to be called on exit even when no changes were made -> to invalidate cache
+				return this._serializeToLrep(/* bCondenseAnyLayer= */false, /* bIsExit= */true);
+			}
+			return undefined;
+		}.bind(this))
+		.then(function() {
+			checkToolbarAndExecuteFunction.call(this, "hide", bSkipSave);
+			this.fireStop();
+			if (!bSkipRestart) {
+				ReloadManager.handleReloadOnExit(oReloadInfo);
+			}
+			VersionsAPI.clearInstances();
+		}.bind(this))
+		.catch(function(vError) {
+			if (!bUserCancelled) {
+				return showTechnicalError(vError);
+			}
+			return undefined;
+		})
+		.then(function() {
+			checkToolbarAndExecuteFunction.call(this, "setBusy", false);
+			if (!bUserCancelled) {
+				this._sStatus = STOPPED;
+				document.body.classList.remove("sapUiRtaMode");
+			}
+		}.bind(this));
 	};
 
 	/**
 	 * @override
 	 */
 	RuntimeAuthoring.prototype.setCommandStack = function(oCommandStack) {
-		var  oOldCommandStack = this.getProperty("commandStack");
+		var oOldCommandStack = this.getProperty("commandStack");
 		if (oOldCommandStack) {
-			oOldCommandStack.detachModified(this._onStackModified, this);
+			oOldCommandStack.detachModified(onStackModified, this);
 		}
 
 		if (this._oInternalCommandStack) {
@@ -670,18 +709,17 @@ sap.ui.define([
 		var oResult = this.setProperty("commandStack", oCommandStack);
 
 		if (oCommandStack) {
-			oCommandStack.attachModified(this._onStackModified, this);
+			oCommandStack.attachModified(onStackModified, this);
 		}
 
-		if (this.getPlugins() && this.getPlugins()["settings"]) {
-			this.getPlugins()["settings"].setCommandStack(oCommandStack);
+		if (this.getPluginManager && this.getPluginManager()) {
+			this.getPluginManager().provideCommandStack("settings", oCommandStack);
 		}
 
 		return oResult;
 	};
 
 	/**
-	 *
 	 * @override
 	 */
 	RuntimeAuthoring.prototype.getCommandStack = function() {
@@ -696,247 +734,64 @@ sap.ui.define([
 	};
 
 	/**
-	 * adapt the enablement of undo/redo/reset/transport button
-	 * @private
+	 * @override
 	 */
-	RuntimeAuthoring.prototype._onStackModified = function() {
-		var oCommandStack = this.getCommandStack();
-		var bCanUndo = oCommandStack.canUndo();
-		var bCanRedo = oCommandStack.canRedo();
-		var oUshellContainer = Utils.getUshellContainer();
+	RuntimeAuthoring.prototype.setMode = function(sNewMode) {
+		var sCurrentMode = this.getMode();
+		if (sCurrentMode !== sNewMode) {
+			var oTabHandlingPlugin = this.getPluginManager().getPlugin("tabHandling");
+			var oSelectionPlugin = this.getPluginManager().getPlugin("selection");
 
-		if (this.getShowToolbars()) {
-			this.getToolbar().setUndoRedoEnabled(bCanUndo, bCanRedo);
-			this.getToolbar().setPublishEnabled(this._bChangesExist || bCanUndo);
-			this.getToolbar().setRestoreEnabled(this._bChangesExist || bCanUndo);
-		}
-		this.fireUndoRedoStackModified();
-
-		if (oUshellContainer) {
-			if (bCanUndo) {
-				oUshellContainer.setDirtyFlag(true);
-			} else {
-				oUshellContainer.setDirtyFlag(false);
-			}
-		}
-	};
-
-	RuntimeAuthoring.prototype._closeToolbar = function() {
-		if (this.getShowToolbars() && this.getToolbar) {
-			return this.getToolbar().hide();
-		}
-	};
-
-	/**
-	 * Returns a selection from the DesignTime
-	 * @return {sap.ui.dt.Overlay[]} selected overlays
-	 * @public
-	 */
-	RuntimeAuthoring.prototype.getSelection = function() {
-		if (this._oDesignTime) {
-			return this._oDesignTime.getSelectionManager().get();
-		} else {
-			return [];
-		}
-	};
-
-	/**
-	 * stop Runtime Authoring
-	 *
-	 * @public
-	 * @param {boolean} bDontSaveChanges - stop RTA with or w/o saving changes
-	 * @param {boolean} bSkipRestart - stop RTA with or w/o checking if a reload is needed to apply e.g. personalization/app descriptor changes
-	 * @returns {Promise} promise with no parameters
-	 */
-	RuntimeAuthoring.prototype.stop = function(bDontSaveChanges, bSkipRestart) {
-		return ((bSkipRestart) ? Promise.resolve(this._RESTART.NOT_NEEDED) : this._handleReloadOnExit())
-			.then(function(sReload){
-				return ((bDontSaveChanges) ? Promise.resolve() : this._serializeToLrep(this))
-				.then(this._closeToolbar.bind(this))
-				.then(function(){
-					this.fireStop();
-					if (sReload !== this._RESTART.NOT_NEEDED){
-						this._removeMaxLayerParameter();
-						if (sReload === this._RESTART.RELOAD_PAGE){
-							this._reloadPage();
-						}
-					}
-				}.bind(this));
-			}.bind(this))['catch'](fnShowTechnicalError);
-	};
-
-	RuntimeAuthoring.prototype.restore = function() {
-		this._onRestore();
-	};
-
-	RuntimeAuthoring.prototype.transport = function() {
-		return this._onTransport();
-	};
-
-	// ---- backward compatibility API
-	RuntimeAuthoring.prototype.undo = function() {
-		return this._onUndo();
-	};
-
-	RuntimeAuthoring.prototype.redo = function() {
-		return this._onRedo();
-	};
-
-	RuntimeAuthoring.prototype.canUndo = function() {
-		return this.getCommandStack().canUndo();
-	};
-
-	RuntimeAuthoring.prototype.canRedo = function() {
-		return this.getCommandStack().canRedo();
-	};
-	// ---- backward compatibility API
-
-	RuntimeAuthoring.prototype._onKeyDown = function(oEvent) {
-		// if for example the addField Dialog/transport/reset Popup is open, we don't want the user to be able to undo/redo
-		var bMacintosh = Device.os.macintosh;
-		var bFocusInsideOverlayContainer = Overlay.getOverlayContainer().get(0).contains(document.activeElement);
-		var bFocusInsideRtaToolbar = this.getShowToolbars() && this.getToolbar().getDomRef().contains(document.activeElement);
-		var bFocusOnBody = document.body === document.activeElement;
-		var bFocusInsideRenameField = jQuery(document.activeElement).parents('.sapUiRtaEditableField').length > 0;
-
-		if ((bFocusInsideOverlayContainer || bFocusInsideRtaToolbar || bFocusOnBody) && !bFocusInsideRenameField) {
-			// OSX: replace CTRL with CMD
-			var bCtrlKey = bMacintosh ? oEvent.metaKey : oEvent.ctrlKey;
-			if (
-				oEvent.keyCode === jQuery.sap.KeyCodes.Z
-				&& oEvent.shiftKey === false
-				&& oEvent.altKey === false
-				&& bCtrlKey === true
-			) {
-				this._onUndo().then(oEvent.stopPropagation.bind(oEvent));
-			} else if (
-				(( // OSX: CMD+SHIFT+Z
-					bMacintosh
-					&& oEvent.keyCode === jQuery.sap.KeyCodes.Z
-					&& oEvent.shiftKey === true
-				) || ( // Others: CTRL+Y
-					!bMacintosh
-					&& oEvent.keyCode === jQuery.sap.KeyCodes.Y
-					&& oEvent.shiftKey === false
-				))
-				&& oEvent.altKey === false
-				&& bCtrlKey === true
-			) {
-				this._onRedo().then(oEvent.stopPropagation.bind(oEvent));
-			}
-		}
-	};
-
-	/**
-	 * Check for unsaved changes before leaving UI adaptation at runtime
-	 * @return {string} Returns the message to be displayed in the unsaved changes dialog
-	 *
-	 * @private
-	 */
-	RuntimeAuthoring.prototype._onUnload = function() {
-		var oCommandStack = this.getCommandStack();
-		var bUnsaved = oCommandStack.canUndo() || oCommandStack.canRedo();
-		if (bUnsaved && this.getShowWindowUnloadDialog()) {
-			var sMessage = this._getTextResources().getText("MSG_UNSAVED_CHANGES");
-			return sMessage;
-		} else {
-			window.onbeforeunload = this._oldUnloadHandler;
-		}
-	};
-
-	RuntimeAuthoring.prototype._serializeToLrep = function() {
-		return this._oSerializer.saveCommands();
-	};
-
-	RuntimeAuthoring.prototype._onUndo = function() {
-		this._handleStopCutPaste();
-		return this.getCommandStack().undo();
-	};
-
-	RuntimeAuthoring.prototype._onRedo = function() {
-		this._handleStopCutPaste();
-		return this.getCommandStack().redo();
-	};
-
-	RuntimeAuthoring.prototype._createToolsMenu = function(bPublishAvailable, bIsAppVariantSupported) {
-		if (!this.getDependent('toolbar')) {
-			var fnConstructor;
-
-			if (this.getLayer() === "USER") {
-				fnConstructor = PersonalizationToolbar;
-			} else if (Utils.getFiori2Renderer()) {
-				fnConstructor = FioriToolbar;
-			} else {
-				fnConstructor = StandaloneToolbar;
+			// Switch between another mode and navigation -> toggle overlay & App-TabIndex enablement
+			if (sCurrentMode === "navigation" || sNewMode === "navigation") {
+				this._oDesignTime.setEnabled(sNewMode !== "navigation");
+				oTabHandlingPlugin[(sNewMode === "navigation") ? "restoreTabIndex" : "removeTabIndex"]();
 			}
 
-			if (this.getLayer() === "USER") {
-				this.addDependent(new fnConstructor({
-					textResources: this._getTextResources(),
-					//events
-					exit: this.stop.bind(this, false, false),
-					restore: this._onRestore.bind(this)
-				}), 'toolbar');
-			} else {
-				this.addDependent(new fnConstructor({
-					modeSwitcher: this.getMode(),
-					publishVisible: bPublishAvailable,
-					textResources: this._getTextResources(),
-					//events
-					exit: this.stop.bind(this, false, false),
-					transport: this._onTransport.bind(this),
-					restore: this._onRestore.bind(this),
-					undo: this._onUndo.bind(this),
-					redo: this._onRedo.bind(this),
-					modeChange: this._onModeChange.bind(this),
-					manageApps: RtaAppVariantFeature.onGetOverview.bind(null, true),
-					appVariantOverview: this._onGetAppVariantOverview.bind(this),
-					saveAs: RtaAppVariantFeature.onSaveAsFromRtaToolbar.bind(null, true, true)
-				}), 'toolbar');
-			}
-
-			var bExtendedOverview;
-
-			if (bIsAppVariantSupported) {
-				// Sets the visibility of 'Save As' button in RTA toolbar
-				this.getToolbar().getControl('saveAs').setVisible(bIsAppVariantSupported);
-				// Flag which represents either the key user view or SAP developer view
-				bExtendedOverview = RtaAppVariantFeature.isOverviewExtended();
-
-				if (bExtendedOverview) {
-					// Sets the visibility of 'i' menu button (App Variant Overview: SAP developer view) in RTA toolbar
-					this.getToolbar().getControl('appVariantOverview').setVisible(bIsAppVariantSupported);
-				} else {
-					// Sets the visibility of 'i' button (App Variant Overview: Key user view) in RTA toolbar
-					this.getToolbar().getControl('manageApps').setVisible(bIsAppVariantSupported);
-				}
-
-				RtaAppVariantFeature.isManifestSupported().then(function(bResult) {
-					if (bExtendedOverview) {
-						this.getToolbar().getControl('appVariantOverview').setEnabled(bResult);
-					} else {
-						this.getToolbar().getControl('manageApps').setEnabled(bResult);
-					}
-					this.getToolbar().getControl('saveAs').setEnabled(bResult);
+			var oChangeVisualization = this.getChangeVisualization && this.getChangeVisualization();
+			if (sNewMode === "visualization" || sCurrentMode === "visualization") {
+				DtUtil.waitForSynced(this._oDesignTime)()
+				.then(function() {
+					return oChangeVisualization.triggerModeChange(this.getRootControl(), this.getToolbar());
 				}.bind(this));
 			}
 
-			this._checkChangesExist().then(function(bResult){
-				// FIXME: remove this condition when start() is refactored properly
-				if (!this.bIsDestroyed) {
-					this._bChangesExist = bResult;
-					this.getToolbar().setPublishEnabled(bResult);
-					this.getToolbar().setRestoreEnabled(bResult);
-				}
-			}.bind(this));
+			if (sCurrentMode === "adaptation") {
+				this.getPluginManager().handleStopCutPaste();
+			}
+
+			oTabHandlingPlugin[(sNewMode === "adaptation") ? "restoreOverlayTabIndex" : "removeOverlayTabIndex"]();
+			oSelectionPlugin.setIsActive(!(sNewMode === "visualization"));
+
+			Overlay.getOverlayContainer().toggleClass("sapUiRtaVisualizationMode", (sNewMode === "visualization"));
+			if (sNewMode === "visualization") {
+				document.querySelectorAll(".sapUiDtOverlayMovable").forEach(function(oNode) {
+					oNode.style.cursor = "default";
+				});
+			} else {
+				document.querySelectorAll(".sapUiDtOverlayMovable").forEach(function(oNode) {
+					oNode.style.cursor = "move";
+				});
+			}
+
+			this._oToolbarControlsModel.setProperty("/modeSwitcher", sNewMode);
+			this.setProperty("mode", sNewMode);
+			this.fireModeChanged({mode: sNewMode});
 		}
 	};
 
-	RuntimeAuthoring.prototype._onGetAppVariantOverview = function(oEvent) {
-		var oItem = oEvent.getParameter("item");
+	/**
+	 * @override
+	 */
+	RuntimeAuthoring.prototype.setMetadataScope = function(sScope) {
+		// We do not support scope change after creation of DesignTime instance
+		// as this requires re-initialization of all overlays
+		if (this._sStatus !== STOPPED) {
+			Log.error("sap.ui.rta: Failed to set metadata scope on RTA instance after RTA is started");
+			return;
+		}
 
-		var bTriggeredForKeyUser = oItem.getId() === 'keyUser';
-		return RtaAppVariantFeature.onGetOverview(bTriggeredForKeyUser);
+		this.setProperty("metadataScope", sScope);
 	};
 
 	/**
@@ -944,14 +799,15 @@ sap.ui.define([
 	 *
 	 * @protected
 	 */
-	RuntimeAuthoring.prototype.destroy = function() {
-		jQuery.map(this._dependents, function (oDependent, sName) {
-			this.removeDependent(sName);
+	RuntimeAuthoring.prototype.destroy = function(...aArgs) {
+		var aDependentKeys = Object.keys(this._dependents);
+		aDependentKeys.forEach(function(sDependentKey) {
 			// Destroy should be called with suppress invalidate = true here to prevent static UI Area invalidation
-			oDependent.destroy(true);
+			this._dependents[sDependentKey].destroy(true);
+			this.removeDependent(sDependentKey);
 		}.bind(this));
 
-		Object.keys(this._mServices).forEach(function (sServiceName) {
+		Object.keys(this._mServices).forEach(function(sServiceName) {
 			this.stopService(sServiceName);
 		}, this);
 
@@ -961,122 +817,46 @@ sap.ui.define([
 
 			// detach browser events
 			jQuery(document).off("keydown", this.fnKeyDown);
-			// Destroy default plugins
-			this._destroyDefaultPlugins();
-			// plugins have been destroyed as _oDesignTime.destroy()
-			// plugins are set to defaultValue if parameter is null
-			this.setPlugins(null);
+
+			if (this.fnOnPersonalizationChangeCreation) {
+				ControlPersonalizationWriteAPI.detachChangeCreation(
+					this.getRootControlInstance(),
+					this.fnOnPersonalizationChangeCreation
+				);
+			}
 		}
 
-		if (this._oRootControl) {
-			this._oRootControl.removeStyleClass("sapUiRtaRoot");
+		if (this.getRootControlInstance()) {
+			addOrRemoveStyleClass(this.getRootControlInstance(), false);
 		}
 
 		this.setCommandStack(null);
-
-		var oUshellContainer = Utils.getUshellContainer();
-		if (oUshellContainer) {
-			oUshellContainer.setDirtyFlag(false);
-		}
 
 		if (this._oServiceEventBus) {
 			this._oServiceEventBus.destroy();
 		}
 
+		if (Device.browser.name === "ff") {
+			jQuery(document).off("contextmenu", ffContextMenuHandler);
+		}
+
 		window.onbeforeunload = this._oldUnloadHandler;
 
-		ManagedObject.prototype.destroy.apply(this, arguments);
+		ManagedObject.prototype.destroy.apply(this, aArgs);
 	};
 
-	/**
-	 * Function to handle ABAP transport of the changes
-	 * @return {Promise} Returns a Promise processing the transport of changes
-	 *
-	 * @private
-	 */
-	RuntimeAuthoring.prototype._onTransport = function() {
-		this._handleStopCutPaste();
-
-		BusyIndicator.show(500);
-		return this._serializeToLrep().then(function () {
-			BusyIndicator.hide();
-			return this._getFlexController()._oChangePersistence.transportAllUIChanges(this._oRootControl, Utils.getRtaStyleClassName(), this.getLayer())
-				.then(function(sResponse) {
-					if (sResponse !== "Error" && sResponse !== "Cancel") {
-						this._showMessageToast("MSG_TRANSPORT_SUCCESS");
-					}
-				}.bind(this));
-		}.bind(this))['catch'](fnShowTechnicalError);
-	};
+	// ---- API ----
 
 	/**
-	 * Delete all changes for current layer and root control's component
-	 *
-	 * @private
-	 */
-	RuntimeAuthoring.prototype._deleteChanges = function() {
-		return this._getFlexController().resetChanges(this.getLayer(), "Change.createInitialFileContent", FlexUtils.getAppComponentForControl(this._oRootControl || sap.ui.getCore().byId(this.getRootControl())))
-			.then(function() {
-				this._reloadPage();
-			}.bind(this))["catch"](function(oError) {
-				return Utils._showMessageBox(MessageBox.Icon.ERROR, "HEADER_RESTORE_FAILED", "MSG_RESTORE_FAILED", oError);
-			});
-	};
-
-	/**
-	 * Reloads the page.
-	 * @private
-	 */
-	RuntimeAuthoring.prototype._reloadPage = function(){
-		window.location.reload();
-	};
-
-	/**
-	 * Shows a message toast.
-	 * @param  {string} sMessageKey The text key for the message
-	 * @private
-	 */
-	RuntimeAuthoring.prototype._showMessageToast = function(sMessageKey) {
-		var sMessage = this._getTextResources().getText(sMessageKey);
-
-		MessageToast.show(sMessage);
-	};
-
-	/**
-	 * The RTA FLP plugin checks whether RTA needs to be restarted and restarts it if needed.
-	 *
+	 * Returns the selected overlays from the DesignTime. Used by VisualEditor
+	 * @returns {sap.ui.dt.Overlay[]} Selected overlays
 	 * @public
-	 * @static
-	 * @param {string} sLayer The active layer
-	 * @returns {boolean} Returns true if restart is needed
 	 */
-	RuntimeAuthoring.needsRestart = function(sLayer) {
-
-		var bRestart = !!window.localStorage.getItem("sap.ui.rta.restart." + sLayer);
-		return bRestart;
-	};
-
-	/**
-	 * Enable restart of RTA
-	 * the RTA FLP plugin handles the restart
-	 *
-	 * @public
-	 * @static
-	 * @param {string} sLayer The active layer
-	 */
-	RuntimeAuthoring.enableRestart = function(sLayer) {
-		window.localStorage.setItem("sap.ui.rta.restart." + sLayer, true);
-	};
-
-	/**
-	 * Disable restart of RTA
-	 *
-	 * @public
-	 * @static
-	 * @param {string} sLayer The active layer
-	 */
-	RuntimeAuthoring.disableRestart = function(sLayer) {
-		window.localStorage.removeItem("sap.ui.rta.restart." + sLayer);
+	 RuntimeAuthoring.prototype.getSelection = function() {
+		if (this._oDesignTime) {
+			return this._oDesignTime.getSelectionManager().get();
+		}
+		return [];
 	};
 
 	/**
@@ -1084,500 +864,1101 @@ sap.ui.define([
 	 * opens a MessageBox where the user can confirm
 	 * the restoring to the default app state
 	 *
-	 * @private
+	 * @returns {Promise} Resolves when Message Box is closed.
 	 */
-	RuntimeAuthoring.prototype._onRestore = function() {
-		var sMessage = this.getLayer() === "USER"
-			? this._getTextResources().getText("FORM_PERS_RESET_MESSAGE_PERSONALIZATION")
-			: this._getTextResources().getText("FORM_PERS_RESET_MESSAGE");
-		var sTitle = this.getLayer() === "USER"
-			? this._getTextResources().getText("BTN_RESTORE")
-			: this._getTextResources().getText("FORM_PERS_RESET_TITLE");
+	RuntimeAuthoring.prototype.restore = function() {
+		var sLayer = this.getLayer();
+		var sMessageKey = sLayer === Layer.USER
+			? "FORM_PERS_RESET_MESSAGE_PERSONALIZATION"
+			: "FORM_PERS_RESET_MESSAGE";
+		var sTitleKey = sLayer === Layer.USER
+			? "BTN_RESTORE"
+			: "FORM_PERS_RESET_TITLE";
 
-		var fnConfirmDiscardAllChanges = function (sAction) {
-			if (sAction === "OK") {
-				RuntimeAuthoring.enableRestart(this.getLayer());
-				this._deleteChanges();
-				this.getCommandStack().removeAllCommands();
+		this.getPluginManager().handleStopCutPaste();
+
+		return Utils.showMessageBox("warning", sMessageKey, {
+			titleKey: sTitleKey,
+			actions: [MessageBox.Action.OK, MessageBox.Action.CANCEL],
+			emphasizedAction: MessageBox.Action.OK
+		}).then(function(sAction) {
+			if (sAction === MessageBox.Action.OK) {
+				RuntimeAuthoring.enableRestart(sLayer, this.getRootControlInstance());
+				return deleteChanges.call(this);
 			}
-		}.bind(this);
+			return undefined;
+		}.bind(this));
+	};
 
-		this._handleStopCutPaste();
+	RuntimeAuthoring.prototype.undo = function() {
+		this.getPluginManager().handleStopCutPaste();
+		return this.getCommandStack().undo();
+	};
 
-		MessageBox.confirm(sMessage, {
-			icon: MessageBox.Icon.WARNING,
-			title : sTitle,
-			onClose : fnConfirmDiscardAllChanges,
-			styleClass: Utils.getRtaStyleClassName()
-		});
+	RuntimeAuthoring.prototype.redo = function() {
+		this.getPluginManager().handleStopCutPaste();
+		return this.getCommandStack().redo();
+	};
+
+	RuntimeAuthoring.prototype.canUndo = function() {
+		return this.getCommandStack().canUndo();
+	};
+
+	RuntimeAuthoring.prototype.canSave = function() {
+		return this.getCommandStack().canSave();
+	};
+
+	RuntimeAuthoring.prototype.canRedo = function() {
+		return this.getCommandStack().canRedo();
+	};
+
+	RuntimeAuthoring.prototype.save = function() {
+		return waitForPendingActions.call(this)
+		.then(this._serializeToLrep.bind(this));
+	};
+
+	// ---- API ----
+
+	// this function is used to save in the Visual Editor
+	RuntimeAuthoring.prototype._serializeToLrep = function(bCondenseAnyLayer, bIsExit) {
+		// when saving a change that requires a reload, the information has to be cached
+		// to do the reload when exiting UI Adaptation as then the change will not be available anymore
+		if (!this._bSavedChangesNeedReload) {
+			return this._oSerializer.needsReload().then(function(bReloadNeeded) {
+				this._bSavedChangesNeedReload = bReloadNeeded;
+				return serializeAndSave.call(this, undefined, bCondenseAnyLayer, bIsExit);
+			}.bind(this));
+		}
+		return serializeAndSave.call(this, undefined, bCondenseAnyLayer, bIsExit);
 	};
 
 	/**
-	 * Function to automatically start the rename plugin on a container when it gets created
-	 * @param {object} vAction       The create action from designtime metadata
-	 * @param {string} sNewControlID The id of the newly created container
+	 * Condenses the given changes and saves the result.
+	 * For the function to do anything at least two changes have to be passed.
+	 *
+	 * @param {object[]} aChanges - Array of flex object instances
+	 * @returns {Promise} Resolves when the save and condense is done
+	 * @private
+	 * @ui5-restricted Visual Editor
 	 */
-	RuntimeAuthoring.prototype._setRenameOnCreatedContainer = function(vAction, sNewControlID) {
-		var fnStartEdit = function (oElementOverlay) {
-			oElementOverlay.setSelected(true);
-			this.getPlugins()["rename"].startEdit(oElementOverlay);
-		};
-		var fnGeometryChangedCallback = function(oEvent) {
-			var oElementOverlay = oEvent.getSource();
-			if (oElementOverlay.getGeometry() && oElementOverlay.getGeometry().visible) {
-				fnStartEdit.call(this, oElementOverlay);
-				oElementOverlay.detachEvent('geometryChanged', fnGeometryChangedCallback, this);
+	RuntimeAuthoring.prototype.condenseAndSaveChanges = function(...aArgs/* aChanges */) {
+		// for now there is no functionality to only consider passed changes during condensing,
+		// so the standard save functionality is triggered
+		return this._serializeToLrep(...aArgs);
+	};
+
+	/**
+	 * Check for unsaved changes before leaving UI adaptation at runtime
+	 *
+	 * @returns {string} Returns the message to be displayed in the unsaved changes dialog
+	 * @private
+	 */
+	RuntimeAuthoring.prototype._onUnload = function() {
+		// this function is still in the prototype scope for easier testing
+		if (this.canSave() && this.getShowWindowUnloadDialog()) {
+			return this._getTextResources().getText("MSG_UNSAVED_CHANGES");
+		}
+		window.onbeforeunload = this._oldUnloadHandler;
+		return undefined;
+	};
+
+	function shouldValidateFlexEnabled() {
+		var sUriParam = new URLSearchParams(window.location.search).get("sap-ui-rta-skip-flex-validation");
+		return Settings.getInstance()
+		.then(function(oSettings) {
+			return !oSettings.isCustomerSystem() && sUriParam !== "true";
+		});
+	}
+
+	function onPopupOpen(oEvent) {
+		var oOpenedPopup = oEvent.getParameters().getSource();
+		if (
+			oOpenedPopup.isA("sap.m.Dialog")
+			&& this.getToolbar().type === "fiori"
+		) {
+			this.getToolbar().setColor("contrast");
+		}
+		this.getToolbar().bringToFront();
+	}
+
+	function onPopupClose(oEvent) {
+		if (oEvent.getParameters().isA("sap.m.Dialog")) {
+			this.getToolbar().setColor();
+		}
+	}
+
+	function onPersonalizationChangeCreation() {
+		if (this.getMode() === "navigation" && !this._bNavigationModeWarningShown) {
+			showMessageToast.call(this, "MSG_NAVIGATION_MODE_CHANGES_WARNING", {
+				duration: 5000
+			});
+			this._bNavigationModeWarningShown = true;
+		}
+	}
+
+	function showMessageToast(sMessageKey, mOptions) {
+		var sMessage = this._getTextResources().getText(sMessageKey);
+
+		MessageToast.show(sMessage, mOptions || {});
+	}
+
+	function addOrRemoveStyleClass(oRootControl, bAdd) {
+		if (oRootControl.isA("sap.ui.core.UIComponent")) {
+			oRootControl = oRootControl.getRootControl();
+		}
+		if (oRootControl) {
+			oRootControl[bAdd ? "addStyleClass" : "removeStyleClass"]("sapUiRtaRoot");
+		}
+	}
+
+	function ffContextMenuHandler() {
+		return false;
+	}
+
+	/**
+	 * Checks the publish button, draft buttons(activate and delete) and app variant support (i.e.
+	 * Save As and Overview of App Variants) availability. The publish button shall not be available
+	 * if the system is productive and if a merge error occurred during merging changes into the view on startup
+	 * The app variant support shall not be available if the system is productive and if the platform is not enabled
+	 * (See Feature.js) to show the app variant tooling.
+	 * The app variant support shall also not be available if the current app is a home page
+	 * isProductiveSystem should only return true if it is a test or development system with the provision of custom catalog extensions
+	 *
+	 * @param {object} oRootControl - Root control instance
+	 * @param {sap.ui.fl.Layer} sLayer - Active layer
+	 * @param {sap.ui.rta.command.LREPSerializer} oSerializer - LREP Serializer
+	 * @returns {Promise<map>} with publishAvailable, publishAppVariantSupported and draftAvailable values
+	 */
+	function getToolbarButtonsVisibility(oRootControl, sLayer, oSerializer) {
+		return Promise.all([
+			FeaturesAPI.isPublishAvailable(),
+			RtaAppVariantFeature.isSaveAsAvailable(oRootControl, sLayer, oSerializer),
+			FeaturesAPI.isContextBasedAdaptationAvailable(sLayer),
+			FlexUtils.getUShellService("AppLifeCycle").then(function(oAppLifeCycle) {
+				if (oAppLifeCycle) {
+					var mRunningApp = oAppLifeCycle.getCurrentApplication();
+					return mRunningApp ? mRunningApp.homePage : false;
+				}
+				return false;
+			})
+		]).then(function(aRtaFeaturesAvailability) {
+			var bIsPublishAvailable = aRtaFeaturesAvailability[0];
+			var bIsSaveAsAvailable = aRtaFeaturesAvailability[1];
+			var bIsContextBasedAdaptationAvailable = aRtaFeaturesAvailability[2];
+			var bIsHomePage = aRtaFeaturesAvailability[3];
+			var oManifest = FlexUtils.getAppDescriptor(oRootControl);
+			// context based adaptation is not supported for overview pages
+			var bIsContextBasedAdaptationSupported = oManifest && !ManifestUtils.getOvpEntry(oManifest);
+			return {
+				publishAvailable: bIsPublishAvailable,
+				saveAsAvailable: !bIsHomePage && bIsPublishAvailable && bIsSaveAsAvailable,
+				contextBasedAdaptationAvailable: !bIsHomePage && bIsContextBasedAdaptationSupported && bIsContextBasedAdaptationAvailable
+			};
+		});
+	}
+
+	function showTechnicalError(vError) {
+		BusyIndicator.hide();
+		var sErrorMessage = vError.userMessage || vError.stack || vError.message || vError.status || vError;
+		var oTextResources = Lib.getResourceBundleFor("sap.ui.rta");
+		Log.error("Failed to transfer changes", sErrorMessage);
+		var sMsg = `${oTextResources.getText("MSG_LREP_TRANSFER_ERROR")}
+			${oTextResources.getText("MSG_ERROR_REASON", [sErrorMessage])}`;
+		MessageBox.error(sMsg, {
+			styleClass: Utils.getRtaStyleClassName()
+		});
+	}
+
+	/**
+	 * Adapt the enablement of undo/redo/reset button
+	 */
+	function onStackModified() {
+		var bOnlySwitchVersion = !this.getShowToolbars() || !this.getCommandStack().canUndo();
+		// warn the user: the existing draft would be discarded in case the user saves
+		Utils.checkDraftOverwrite(this._oVersionsModel, bOnlySwitchVersion)
+		.then(() => {
+			if (this.getShowToolbars()) {
+				var oCommandStack = this.getCommandStack();
+				var bCanUndo = oCommandStack.canUndo();
+				var bCanRedo = oCommandStack.canRedo();
+				var bCanSave = oCommandStack.canSave();
+				var bWasSaved = oCommandStack.getSaved();
+				var bTranslationRelevantDirtyChange = this._oToolbarControlsModel.getProperty("/translation/visible") &&
+					TranslationAPI.hasTranslationRelevantDirtyChanges({layer: Layer.CUSTOMER, selector: this.getRootControlInstance()});
+
+				// TODO: move to the setter to the ChangesState
+				this._oVersionsModel.setDirtyChanges(PersistenceWriteAPI.hasDirtyChanges({selector: this.getRootControlInstance()}));
+				this._oToolbarControlsModel.setProperty("/undo/enabled", bCanUndo);
+				this._oToolbarControlsModel.setProperty("/redo/enabled", bCanRedo);
+				this._oToolbarControlsModel.setProperty("/save/enabled", bCanSave);
+				this._oToolbarControlsModel.setProperty("/restore/enabled", this.bInitialResetEnabled || bCanSave || bWasSaved);
+				this._oToolbarControlsModel.setProperty(
+					"/translation/enabled",
+					this.bPersistedDataTranslatable || bTranslationRelevantDirtyChange
+				);
 			}
+			this.fireUndoRedoStackModified();
+		})
+		.catch(() => {
+			this.undo();
+		});
+	}
+
+	function checkToolbarAndExecuteFunction(sName, vValue) {
+		if (this.getShowToolbars() && this.getToolbar && this.getToolbar()) {
+			return this.getToolbar()[sName](vValue);
+		}
+		return undefined;
+	}
+
+	function waitForPendingActions() {
+		return Promise.resolve(this._oDesignTime && this._oDesignTime.waitForBusyPlugins())
+		.then(function() {
+			return this._pElementModified;
+		}.bind(this));
+	}
+
+	function onKeyDown(oEvent) {
+		// if for example the addField Dialog/reset Popup is open, we don't want the user to be able to undo/redo
+		var bMacintosh = Device.os.macintosh;
+		var bFocusInsideOverlayContainer = Overlay.getOverlayContainer().get(0).contains(document.activeElement);
+		var bFocusInsideRtaToolbar = this.getShowToolbars() && this.getToolbar().getDomRef().contains(document.activeElement);
+		var bFocusOnContextMenu = false;
+		// there might be two divs with that style-class (compact and expanded context menu)
+		document.querySelectorAll(".sapUiDtContextMenu").forEach(function(oNode) {
+			if (oNode.contains(document.activeElement)) {
+				bFocusOnContextMenu = true;
+			}
+		});
+		var bFocusOnBody = document.body === document.activeElement;
+		var bFocusInsideRenameField = DOMUtil.getParents(document.activeElement, ".sapUiRtaEditableField").length > 0;
+
+		if ((bFocusInsideOverlayContainer || bFocusInsideRtaToolbar || bFocusOnContextMenu || bFocusOnBody) && !bFocusInsideRenameField) {
+			// OSX: replace CTRL with CMD
+			var bCtrlKey = bMacintosh ? oEvent.metaKey : oEvent.ctrlKey;
+			if (
+				oEvent.keyCode === KeyCodes.Z
+				&& oEvent.shiftKey === false
+				&& oEvent.altKey === false
+				&& bCtrlKey === true
+			) {
+				this.undo().then(oEvent.stopPropagation.bind(oEvent));
+			} else if (
+				((// OSX: CMD+SHIFT+Z
+					bMacintosh
+					&& oEvent.keyCode === KeyCodes.Z
+					&& oEvent.shiftKey === true
+				) || (// Others: CTRL+Y
+					!bMacintosh
+					&& oEvent.keyCode === KeyCodes.Y
+					&& oEvent.shiftKey === false
+				))
+				&& oEvent.altKey === false
+				&& bCtrlKey === true
+			) {
+				this.redo().then(oEvent.stopPropagation.bind(oEvent));
+			}
+		}
+	}
+
+	function saveOnly(oEvent) {
+		var fnCallback = oEvent.getParameter("callback") || function() {};
+		var bVersionsEnabled = this._oVersionsModel.getProperty("/versioningEnabled");
+		return this.save()
+		.then(function() {
+			showMessageToast.call(
+				this,
+				bVersionsEnabled ? "MSG_SAVE_DRAFT_SUCCESS" : "MSG_SAVE_SUCCESS",
+				{ duration: 5000 }
+			);
+		}.bind(this))
+		.catch(function(vError) {
+			return showTechnicalError(vError);
+		})
+		.then(fnCallback);
+	}
+
+	function serializeAndSave(bActivateVersion, bCondenseAnyLayer, bIsExit) {
+		if (this.getShowToolbars()) {
+			this.bPersistedDataTranslatable = this._oToolbarControlsModel.getProperty("/translation/enabled");
+		}
+
+		var mPropertyBag = {
+			layer: this.getLayer(),
+			removeOtherLayerChanges: true,
+			condenseAnyLayer: bCondenseAnyLayer
 		};
 
-		var fnOverlayRenderedCallback = function(oEvent){
-			var oNewOverlay = oEvent.getSource();
-			// the control can be set to visible, but still have no size when we do the check
-			// that's why we also attach to 'geometryChanged' and check if the overlay has a size
-			if (!oNewOverlay.getGeometry() || !oNewOverlay.getGeometry().visible) {
-				oNewOverlay.attachEvent('geometryChanged', fnGeometryChangedCallback, this);
-			} else {
-				fnStartEdit.call(this, oNewOverlay);
-			}
-			oNewOverlay.detachEvent('afterRendering', fnOverlayRenderedCallback, this);
-		};
-		var sNewContainerID = this.getPlugins()["createContainer"].getCreatedContainerId(vAction, sNewControlID);
+		if (this._oVersionsModel.getProperty("/versioningEnabled")) {
+			var sVersion = bActivateVersion ? this._oVersionsModel.getProperty("/displayedVersion") : undefined;
 
-		this._oDesignTime.attachEvent("elementOverlayCreated", function(oEvent){
-			var oNewOverlay = oEvent.getParameter("elementOverlay");
-			if (oNewOverlay.getElement().getId() === sNewContainerID) {
-				// the overlay needs to be rendered before we can trigger the rename on it
-				oNewOverlay.attachEvent('afterRendering', fnOverlayRenderedCallback, this);
+			// If a draft is being processed, saving without exiting must retrieve the updated state of the draft version
+			sVersion ||= bIsExit ? undefined : Version.Number.Draft;
+			mPropertyBag.version = sVersion;
+
+			// Save changes on the current layer and discard dirty changes on other layers
+			mPropertyBag.saveAsDraft = this.getLayer() === Layer.CUSTOMER;
+		}
+		if (this._oContextBasedAdaptationsModel.getProperty("/contextBasedAdaptationsEnabled")) {
+			// If an adaptation is being processed, saving without exiting must retrieve the updated state of the adaptation
+			mPropertyBag.adaptationId = bIsExit ? undefined : this._oContextBasedAdaptationsModel.getProperty("/displayedAdaptation/id");
+		}
+
+		return this._oSerializer.saveCommands(mPropertyBag)
+		.then(function() {
+			if (!bIsExit) {
+				// clean CViz after Save
+				var oToolbar = this.getToolbar();
+				var oChangeVisualization = this.getChangeVisualization();
+				oChangeVisualization.updateAfterSave(oToolbar);
 			}
 		}.bind(this));
-	};
+	}
+
+	function onActivate(oEvent) {
+		var sVersionTitle = oEvent.getParameter("versionTitle");
+		if (isOldVersionDisplayed.call(this) && isDraftAvailable.call(this)) {
+			return Utils.showMessageBox("warning", "MSG_DRAFT_DISCARD_ON_REACTIVATE_DIALOG", {
+				titleKey: "TIT_DRAFT_DISCARD_ON_REACTIVATE_DIALOG",
+				actions: [MessageBox.Action.OK, MessageBox.Action.CANCEL],
+				emphasizedAction: MessageBox.Action.OK
+			})
+			.then(function(sAction) {
+				if (sAction === MessageBox.Action.OK) {
+					return activate.call(this, sVersionTitle);
+				}
+				return undefined;
+			}.bind(this));
+		}
+		return activate.call(this, sVersionTitle);
+	}
+
+	function activate(sVersionTitle) {
+		var sLayer = this.getLayer();
+		var oSelector = this.getRootControlInstance();
+		var sDisplayedVersion = this._oVersionsModel.getProperty("/displayedVersion");
+		return serializeAndSave.call(this, true)
+		.then(function() {
+			return VersionsAPI.activate({
+				layer: sLayer,
+				control: oSelector,
+				title: sVersionTitle,
+				displayedVersion: sDisplayedVersion
+			});
+		}).then(function() {
+			showMessageToast.call(this, "MSG_DRAFT_ACTIVATION_SUCCESS");
+			this.bInitialResetEnabled = true;
+			this._oToolbarControlsModel.setProperty("/restore/enabled", true);
+			this.getCommandStack().removeAllCommands();
+		}.bind(this))
+		.catch(function(oError) {
+			Utils.showMessageBox("error", "MSG_DRAFT_ACTIVATION_FAILED", {error: oError});
+		});
+	}
+
+	function onDiscardDraft() {
+		return Utils.showMessageBox("warning", "MSG_DRAFT_DISCARD_DIALOG", {
+			actions: [MessageBox.Action.OK, MessageBox.Action.CANCEL],
+			emphasizedAction: MessageBox.Action.OK
+		})
+		.then(function(sAction) {
+			if (sAction === MessageBox.Action.OK) {
+				return VersionsAPI.discardDraft({
+					layer: this.getLayer(),
+					control: this.getRootControlInstance(),
+					updateState: true
+				})
+				.then(handleDiscard.bind(this));
+			}
+			return undefined;
+		}.bind(this));
+	}
+
+	function handleDiscard() {
+		var sLayer = this.getLayer();
+		var oReloadInfo = {
+			layer: sLayer,
+			removeDraft: true,
+			selector: this.getRootControlInstance()
+		};
+		RuntimeAuthoring.enableRestart(sLayer, this.getRootControlInstance());
+		this.getCommandStack().removeAllCommands();
+		ReloadManager.triggerReload(oReloadInfo);
+		return this.stop(true, true);
+	}
+
+	function onDeleteAdaptation() {
+		if (this.canSave()) {
+			showDeleteAdaptationMessageBox.call(this, "DAC_DATA_LOSS_DIALOG_DESCRIPTION", "DAC_DIALOG_HEADER", true /* bDirtyChanges */);
+		} else {
+			showDeleteAdaptationMessageBox.call(this, "DAC_DIALOG_DESCRIPTION", "DAC_DIALOG_HEADER");
+		}
+	}
+
+	function showDeleteAdaptationMessageBox(sMessageKey, sTitleKey, bDirtyChanges) {
+		Utils.showMessageBox("confirm", sMessageKey, {
+			titleKey: sTitleKey
+		}).then(function(sAction) {
+			if (sAction === MessageBox.Action.OK) {
+				BusyIndicator.show();
+				if (bDirtyChanges) {
+					// a reload is triggered later and will destroy RTA & the command stack
+					this.getCommandStack().removeAllCommands(true);
+				}
+				deleteAdaptation.call(this);
+			}
+		}.bind(this));
+	}
+
+	function deleteAdaptation() {
+		Measurement.start("onCBADeleteAdaptation", "Measurement of deleting a context-based adaptation");
+		ContextBasedAdaptationsAPI.remove({
+			control: this.getRootControlInstance(),
+			layer: this.getLayer(),
+			adaptationId: this._oContextBasedAdaptationsModel.getProperty("/displayedAdaptation/id")
+		}).then(function() {
+			BusyIndicator.hide();
+			var sAdaptationId = this._oContextBasedAdaptationsModel.deleteAdaptation();
+			switchAdaptation.call(this, sAdaptationId);
+			Measurement.end("onCBADeleteAdaptation");
+			if (Measurement.getActive()) {
+				Log.info(`onCBADeleteAdaptation: ${Measurement.getMeasurement("onCBADeleteAdaptation").time} ms`);
+			}
+		}.bind(this)).catch(function(oError) {
+			BusyIndicator.hide();
+			Log.error(oError.stack);
+			var sMessage = "MSG_LREP_TRANSFER_ERROR";
+			var oOptions = { titleKey: "DAC_DIALOG_HEADER" };
+			oOptions.details = oError.userMessage;
+			Utils.showMessageBox("error", sMessage, oOptions);
+		});
+	}
+
+	function handleDataLoss(sMessageKey, sTitleKey, callbackFn) {
+		if (this.canSave()) {
+			Utils.showMessageBox("warning", sMessageKey, {
+				titleKey: sTitleKey,
+				actions: [MessageBox.Action.YES, MessageBox.Action.NO, MessageBox.Action.CANCEL],
+				emphasizedAction: MessageBox.Action.YES
+			}).then(function(sAction) {
+				if (sAction === MessageBox.Action.YES) {
+					return this._serializeToLrep()
+					.then(callbackFn);
+				} else if (sAction === MessageBox.Action.NO) {
+					// avoids the data loss popup; a reload is triggered later and will destroy RTA & the command stack
+					this.getCommandStack().removeAllCommands(true);
+					return callbackFn();
+				}
+				return Promise.resolve();
+			}.bind(this));
+			return Promise.resolve();
+		}
+		return callbackFn();
+	}
+
+	function onSwitchAdaptation(oEvent) {
+		Measurement.start("onCBASwitchAdaptation", "Measurement of switching a context-based adaptation");
+		var fnCallback = oEvent.getParameter("callback") || function() {};
+		if (oEvent.getParameter("trigger") === "SaveAs") {
+			// remove all changes from command stack when triggered from saveAs dialog as they are already saved in a new adaptation
+			this.getCommandStack().removeAllCommands(true);
+		}
+		var sAdaptationId = oEvent.getParameter("adaptationId");
+		this._sSwitchToAdaptationId = sAdaptationId;
+		return handleDataLoss.call(this, "MSG_SWITCH_VERSION_DIALOG", "BTN_SWITCH_ADAPTATIONS",
+			switchAdaptation.bind(this, this._sSwitchToAdaptationId))
+		.then(function() {
+			fnCallback();
+			Measurement.end("onCBASwitchAdaptation");
+			if (Measurement.getActive()) {
+				Log.info(`onCBASwitchAdaptation: ${Measurement.getMeasurement("onCBASwitchAdaptation").time} ms`);
+			}
+		})
+		.catch(function(oError) {
+			Utils.showMessageBox("error", "MSG_SWITCH_ADAPTATION_FAILED", {error: oError});
+			Log.error(`sap.ui.rta: ${oError.stack || oError.message || oError}`);
+		});
+	}
+
+	function switchAdaptation(sAdaptationId) {
+		var sVersion = this._oVersionsModel.getProperty("/displayedVersion");
+		return switchVersion.call(this, sVersion, sAdaptationId);
+	}
+
+	function onSwitchVersion(oEvent) {
+		var fnCallback = oEvent.getParameter("callback") || function() {};
+		var sVersion = oEvent.getParameter("version");
+		var sDisplayedVersion = this._oVersionsModel.getProperty("/displayedVersion");
+
+		if (sVersion === sDisplayedVersion) {
+			// already displayed version needs no switch
+			return;
+		}
+
+		this._sSwitchToVersion = sVersion;
+		handleDataLoss.call(this, "MSG_SWITCH_VERSION_DIALOG", "TIT_SWITCH_VERSION_DIALOG",
+			switchVersion.bind(this, this._sSwitchToVersion))
+		.then(fnCallback)
+		.catch(function(oError) {
+			Utils.showMessageBox("error", "MSG_SWITCH_VERSION_FAILED", {error: oError});
+			Log.error(`sap.ui.rta: ${oError.stack || oError.message || oError}`);
+		});
+	}
+
+	function switchVersion(sVersion, sAdaptationId) {
+		RuntimeAuthoring.enableRestart(this.getLayer(), this.getRootControlInstance());
+
+		return VersionsAPI.loadVersionForApplication({
+			control: this.getRootControlInstance(),
+			layer: this.getLayer(),
+			version: sVersion,
+			adaptationId: sAdaptationId
+		}).then(function() {
+			var oReloadInfo = {
+				versionSwitch: true,
+				version: sVersion,
+				selector: this.getRootControlInstance()
+			};
+			ReloadManager.triggerReload(oReloadInfo);
+		}.bind(this));
+	}
+
+	function onPublishVersion() {
+		this.getPluginManager().handleStopCutPaste();
+
+		return VersionsAPI.publish({
+			selector: this.getRootControlInstance(),
+			styleClass: Utils.getRtaStyleClassName(),
+			layer: this.getLayer(),
+			version: this._oVersionsModel.getProperty("/displayedVersion")
+		})
+		.then(function(sMessage) {
+			if (sMessage !== "Error" && sMessage !== "Cancel") {
+				MessageToast.show(sMessage);
+			}
+		});
+	}
+
+	function isOldVersionDisplayed() {
+		return VersionsAPI.isOldVersionDisplayed({
+			control: this.getRootControlInstance(),
+			layer: this.getLayer()
+		});
+	}
+
+	function isDraftAvailable() {
+		return VersionsAPI.isDraftAvailable({
+			control: this.getRootControlInstance(),
+			layer: this.getLayer()
+		});
+	}
+
+	/**
+	 * Inits version models. Clears old state if RTA is starting from end user mode (no switch)
+	 * @returns {Promise<void>} - Promise
+	 */
+	function initVersioning() {
+		return VersionsAPI.initialize({
+			control: this.getRootControlInstance(),
+			layer: this.getLayer()
+		}).then(function(oModel) {
+			this._oVersionsModel = oModel;
+		}.bind(this));
+	}
+
+	/**
+	 * Inits CBA models. Clears old state if RTA is starting from end user mode (no switch)
+	 * @param {boolean} bIsAutomaticRestart - If true this is not an RTA start but a reload due to version/adaptation switch
+	 * @returns {Promise<void>} - Promise
+	 */
+	function initContextBasedAdaptations(bIsAutomaticRestart) {
+		if (!bIsAutomaticRestart) {
+			ContextBasedAdaptationsAPI.clearInstances();
+		}
+		return ContextBasedAdaptationsAPI.initialize({
+			control: this.getRootControlInstance(),
+			layer: this.getLayer()
+		}).then(function(oModel) {
+			this._oContextBasedAdaptationsModel = oModel;
+		}.bind(this));
+	}
+
+	function createToolsMenu(mButtonsAvailability) {
+		if (!this.getDependent("toolbar")) {
+			var bUserLayer = this.getLayer() === Layer.USER;
+			var oProperties = {
+				rtaInformation: {
+					flexSettings: this.getFlexSettings(),
+					rootControl: this.getRootControlInstance(),
+					commandStack: this.getCommandStack()
+				},
+				textResources: this._getTextResources(),
+				restore: this.restore.bind(this),
+				exit: this.stop.bind(this, false, bUserLayer)
+			};
+
+			if (!bUserLayer) {
+				oProperties.publishVersion = onPublishVersion.bind(this);
+				oProperties.undo = this.undo.bind(this);
+				oProperties.redo = this.redo.bind(this);
+				oProperties.modeChange = onModeChange.bind(this);
+				oProperties.activate = onActivate.bind(this);
+				oProperties.discardDraft = onDiscardDraft.bind(this);
+				oProperties.switchVersion = onSwitchVersion.bind(this);
+				oProperties.switchAdaptation = onSwitchAdaptation.bind(this);
+				oProperties.deleteAdaptation = onDeleteAdaptation.bind(this);
+				oProperties.openChangeCategorySelectionPopover = this.getChangeVisualization
+					? this.getChangeVisualization().openChangeCategorySelectionPopover.bind(this.getChangeVisualization())
+					: function() {};
+				oProperties.save = saveOnly.bind(this);
+			}
+
+			var oToolbar;
+			if (bUserLayer) {
+				oToolbar = new PersonalizationToolbar(oProperties);
+			} else if (Utils.isOriginalFioriToolbarAccessible()) {
+				oToolbar = new FioriToolbar(oProperties);
+			} else if (Utils.getFiori2Renderer()) {
+				oToolbar = new FioriLikeToolbar(oProperties);
+			} else {
+				oToolbar = new StandaloneToolbar(oProperties);
+			}
+			this.addDependent(oToolbar, "toolbar");
+
+			return Promise.all([oToolbar.onFragmentLoaded(), FeaturesAPI.isKeyUserTranslationEnabled(this.getLayer())])
+			.then(function(aArguments) {
+				var bTranslationAvailable = aArguments[1];
+				var bAppVariantsAvailable = mButtonsAvailability.saveAsAvailable;
+				var bExtendedOverview = bAppVariantsAvailable && RtaAppVariantFeature.isOverviewExtended();
+				var oUriParameters = new URLSearchParams(window.location.search);
+				// the "Visualization" tab should not be visible if the "fiori-tools-rta-mode" URL-parameter is set to any value but "false"
+				var bVisualizationButtonVisible;
+				bVisualizationButtonVisible = !oUriParameters.has("fiori-tools-rta-mode")
+					|| oUriParameters.get("fiori-tools-rta-mode") === "false";
+				var bFeedbackButtonVisible = FlexRuntimeInfoAPI.getConfiguredFlexServices().some(function(oFlexibilityService) {
+					return oFlexibilityService.connector !== "LocalStorageConnector";
+				});
+				this.bPersistedDataTranslatable = false;
+
+				this._oToolbarControlsModel = new JSONModel({
+					modeSwitcher: this.getMode(),
+					undo: {
+						enabled: false
+					},
+					redo: {
+						enabled: false
+					},
+					save: {
+						enabled: false
+					},
+					translation: {
+						visible: bTranslationAvailable,
+						enabled: this.bPersistedDataTranslatable
+					},
+					appVariantMenu: {
+						visible: bAppVariantsAvailable,
+						enabled: bAppVariantsAvailable,
+						overview: {
+							visible: bAppVariantsAvailable && bExtendedOverview,
+							enabled: bAppVariantsAvailable && bExtendedOverview
+						},
+						manageApps: {
+							visible: bAppVariantsAvailable && !bExtendedOverview,
+							enabled: bAppVariantsAvailable && !bExtendedOverview
+						},
+						saveAs: {
+							visible: bAppVariantsAvailable,
+							enabled: bAppVariantsAvailable
+						}
+					},
+					restore: {
+						visible: !this._oVersionsModel.getProperty("/versioningEnabled"),
+						enabled: this.bInitialResetEnabled
+					},
+					contextBasedAdaptation: {
+						visible: mButtonsAvailability.contextBasedAdaptationAvailable,
+						enabled: mButtonsAvailability.contextBasedAdaptationAvailable
+					},
+					actionsMenuButton: {
+						enabled: true
+					},
+					visualizationButton: {
+						visible: bVisualizationButtonVisible,
+						enabled: bVisualizationButtonVisible
+					},
+					feedbackButton: {
+						visible: bFeedbackButtonVisible
+					}
+				});
+
+				this._oVersionsModel.setProperty("/publishVersionVisible", mButtonsAvailability.publishAvailable);
+
+				var oTranslationPromise = new Promise(function(resolve) {
+					if (!bTranslationAvailable) {
+						resolve();
+						return;
+					}
+
+					TranslationAPI.getSourceLanguages({selector: this.getRootControlInstance(), layer: this.getLayer()})
+					.then(function(aSourceLanguages) {
+						this.bPersistedDataTranslatable = aSourceLanguages.length > 0;
+						this._oToolbarControlsModel.setProperty("/translation/enabled", this.bPersistedDataTranslatable);
+					}.bind(this)).finally(resolve);
+				}.bind(this));
+
+				var oSaveAsPromise = new Promise(function(resolve) {
+					if (!bAppVariantsAvailable) {
+						resolve();
+						return;
+					}
+
+					RtaAppVariantFeature.isManifestSupported().then(function(bResult) {
+						if (FlexUtils.isVariantByStartupParameter(this.getRootControlInstance())) {
+							bResult = false;
+						}
+						this._oToolbarControlsModel.setProperty("/appVariantMenu/saveAs/enabled", bResult);
+						this._oToolbarControlsModel.setProperty("/appVariantMenu/overview/enabled", bResult);
+						this._oToolbarControlsModel.setProperty("/appVariantMenu/manageApps/enabled", bResult);
+					}.bind(this)).finally(resolve);
+				}.bind(this));
+
+				this.getToolbar().setModel(this._oVersionsModel, "versions");
+				this.getToolbar().setModel(this._oContextBasedAdaptationsModel, "contextBasedAdaptations");
+				this.getToolbar().setModel(this._oToolbarControlsModel, "controls");
+
+				return Promise.all([oTranslationPromise, oSaveAsPromise]);
+			}.bind(this));
+		}
+		return Promise.resolve();
+	}
+
+	/**
+	 * Delete all changes for current layer and root control's component.
+	 * In case of Base Applications (no App Variants) the App Descriptor Changes and UI Changes are saved
+	 * in different Flex Persistence instances, the changes for both places will be deleted. For App Variants
+	 * all the changes are saved in one place.
+	 *
+	 * @returns {Promise} Resolves when change persistence is reset
+	 */
+	function deleteChanges() {
+		var sLayer = this.getLayer();
+		var oSelector = FlexUtils.getAppComponentForControl(this.getRootControlInstance());
+		return PersistenceWriteAPI.reset({
+			selector: oSelector,
+			layer: sLayer
+		}).then(function() {
+			// avoids the data loss popup; a reload is triggered later and will destroy RTA & the command stack
+			this.getCommandStack().removeAllCommands(true);
+			ReloadInfoAPI.removeInfoSessionStorage(oSelector);
+			var oReloadInfo = {
+				layer: sLayer,
+				ignoreMaxLayerParameter: true,
+				triggerHardReload: true
+			};
+			return ReloadManager.triggerReload(oReloadInfo);
+		}.bind(this))
+		.catch(function(oError) {
+			if (oError !== "cancel") {
+				Utils.showMessageBox("error", "MSG_RESTORE_FAILED", {error: oError});
+			}
+		});
+	}
+
+	/**
+	 * Triggers a callback when a control gets created with its associated overlay.
+	 *
+	 * @param {string} sNewControlID - ID of the newly created control
+	 * @param {Function} fnCallback - Callback to execute when the conditions are met, the overlay is the only parameter
+	 */
+	function scheduleOnCreated(sNewControlID, fnCallback) {
+		function onElementOverlayCreated(oEvent) {
+			var oNewOverlay = oEvent.getParameter("elementOverlay");
+			if (oNewOverlay.getElement().getId() === sNewControlID) {
+				this._oDesignTime.detachEvent("elementOverlayCreated", onElementOverlayCreated, this);
+				fnCallback(oNewOverlay);
+			}
+		}
+
+		this._oDesignTime.attachEvent("elementOverlayCreated", onElementOverlayCreated, this);
+	}
+
+	/**
+	 * Triggers a callback when a control gets created and its associated overlay is visible.
+	 *
+	 * @param {string} sNewControlID - ID of the newly created control
+	 * @param {Function} fnCallback - Callback to execute when the conditions are met, the overlay is the only parameter
+	 */
+	function scheduleOnCreatedAndVisible(sNewControlID, fnCallback) {
+		function onGeometryChanged(oEvent) {
+			var oElementOverlay = oEvent.getSource();
+			if (oElementOverlay.getGeometry() && oElementOverlay.getGeometry().visible) {
+				oElementOverlay.detachEvent("geometryChanged", onGeometryChanged);
+				fnCallback(oElementOverlay);
+			}
+		}
+
+		function onGeometryCheck(oElementOverlay) {
+			// the control can be set to visible, but still have no size when we do the check
+			// that's why we also attach to 'geometryChanged' and check if the overlay has a size
+			if (!oElementOverlay.getGeometry() || !oElementOverlay.getGeometry().visible) {
+				oElementOverlay.attachEvent("geometryChanged", onGeometryChanged);
+			} else {
+				fnCallback(oElementOverlay);
+			}
+		}
+
+		scheduleOnCreated.call(this, sNewControlID, function(oNewOverlay) {
+			// the overlay needs to be rendered
+			if (oNewOverlay.isRendered()) {
+				onGeometryCheck(oNewOverlay);
+			} else {
+				oNewOverlay.attachEventOnce("afterRendering", function(oEvent) {
+					onGeometryCheck(oEvent.getSource());
+				});
+			}
+		});
+	}
+
+	/**
+	 * Function to automatically start the rename plugin on a container when it gets created
+	 *
+	 * @param {object} vAction - The create action from designtime metadata
+	 * @param {string} sNewControlID - The id of the newly created container
+	 * @param {string} sNewContainerName - The name of the newly created container
+	 */
+	function scheduleRenameOnCreatedContainer(vAction, sNewControlID, sNewContainerName) {
+		var fnStartEdit = function(oElementOverlay) {
+			oElementOverlay.setSelected(true);
+			this.getPluginManager().getPlugin("rename").startEdit(oElementOverlay);
+		}.bind(this);
+
+		scheduleOnCreatedAndVisible.call(this, sNewControlID, function(oElementOverlay) {
+			// get container of the new control for rename
+			var sNewContainerID = this.getPluginManager().getPlugin("createContainer").getCreatedContainerId(
+				vAction,
+				oElementOverlay.getElement().getId()
+			);
+			var oContainerElementOverlay = OverlayRegistry.getOverlay(sNewContainerID);
+			if (oContainerElementOverlay) {
+				if (sNewContainerName) {
+					this.getPluginManager().getPlugin("rename").createRenameCommand(oContainerElementOverlay, sNewContainerName)
+					.then(function() {
+						// The create container and rename must be a single command in the stack
+						this.getCommandStack().compositeLastTwoCommands();
+					}.bind(this));
+				} else {
+					fnStartEdit(oContainerElementOverlay);
+				}
+			} else {
+				scheduleOnCreatedAndVisible.call(this, sNewContainerID, fnStartEdit);
+			}
+		}.bind(this));
+	}
 
 	/**
 	 * Function to handle modification of an element
 	 *
 	 * @param {sap.ui.base.Event} oEvent Event object
-	 * @returns {Promise} Returns promise that resolves after command was executed sucessfully
-	 * @private
+	 * @returns {Promise} Returns promise that resolves after command was executed successfully
 	 */
-	RuntimeAuthoring.prototype._handleElementModified = function(oEvent) {
-		this._handleStopCutPaste();
-
-		var vAction = oEvent.getParameter("action");
-		var sNewControlID = oEvent.getParameter("newControlId");
-
+	function handleElementModified(oEvent) {
+		// events are synchronously reset after the handlers are called
 		var oCommand = oEvent.getParameter("command");
-		if (oCommand instanceof sap.ui.rta.command.BaseCommand) {
-			return this.getCommandStack().pushAndExecute(oCommand).then(function(){
-				if (vAction && sNewControlID){
-					this._setRenameOnCreatedContainer(vAction, sNewControlID);
-				}
-			}.bind(this))
+		var sNewControlID = oEvent.getParameter("newControlId");
+		var vAction = oEvent.getParameter("action");
+		var sContainerTitle = oEvent.getParameter("title");
 
-			// Error handling when a command fails is done in the Stack
-			.catch(function(oError) {
-				throw new Error(oError);
-			});
-		}
-		return Promise.resolve();
-	};
+		this._pElementModified = this._pElementModified.then(function() {
+			this.getPluginManager().handleStopCutPaste();
 
-	/**
-	 * Increases or decreases the current number of editable Overlays.
-	 * @param  {sap.ui.base.Event} oEvent Event triggered by the 'editable' property change
-	 * @private
-	 */
-	RuntimeAuthoring.prototype._onElementEditableChange = function(oEvent) {
-		var bEditable = oEvent.getParameter("editable");
-		if (bEditable) {
-			this.iEditableOverlaysCount += 1;
-		} else {
-			this.iEditableOverlaysCount -= 1;
-		}
-	};
-
-	/**
-	 * Handler function to stop cut and paste, because some other operation has started.
-	 *
-	 * @private
-	 */
-	RuntimeAuthoring.prototype._handleStopCutPaste = function() {
-		if (this.getPlugins()["cutPaste"]){
-			this.getPlugins()["cutPaste"].stopCutAndPaste();
-		}
-	};
-
-	/**
-	 * Check if Changes exist
-	 * @private
-	 * @returns {Promise} Resolving to false means that no change check is required
-	 */
-	RuntimeAuthoring.prototype._checkChangesExist = function() {
-		if (this._getFlexController().getComponentName().length > 0) {
-			return this._getFlexController().getComponentChanges({currentLayer: this.getLayer(), includeCtrlVariants: true}).then(function(aAllLocalChanges) {
-				return aAllLocalChanges.length > 0;
-			});
-		} else {
-			return Promise.resolve(false);
-		}
-	};
-
-	/**
-	 * Returns the URL parsed hash from UShell
-	 * @return {map} Parsed shell hash map
-	 */
-	RuntimeAuthoring.prototype._getURLParsedHash = function(){
-		var oURLParser = sap.ushell.Container.getService("URLParsing");
-		if (oURLParser.parseShellHash && oURLParser.getHash){
-			return oURLParser.parseShellHash(oURLParser.getHash(window.location.href));
-		}
-	};
-
-	/**
-	 * Build the navigation arguments object required to trigger the navigation
-	 * using the CrossApplicationNavigation ushell service.
-	 * @param  {Object} mParsedHash Parsed URL hash
-	 * @return {Object}             Returns argument map ("oArg" parameter of the "toExternal" function)
-	 */
-	RuntimeAuthoring.prototype._buildNavigationArguments = function(mParsedHash){
-		return {
-			target: {
-				semanticObject : mParsedHash.semanticObject,
-				action : mParsedHash.action,
-				context : mParsedHash.contextRaw
-			},
-			params: mParsedHash.params,
-			appSpecificRoute : mParsedHash.appSpecificRoute,
-			writeHistory : false
-		};
-	};
-
-	/**
-	 * Returns true if the ui layer parameter is set to customer (skips personalization changes)
-	 * @param  {map} mParsedHash The parsed URL hash
-	 * @return {boolean} True if the parameter is in the hash
-	 */
-	RuntimeAuthoring.prototype._hasCustomerLayerParameter = function(mParsedHash){
-		return mParsedHash.params &&
-			mParsedHash.params[FL_MAX_LAYER_PARAM] &&
-			mParsedHash.params[FL_MAX_LAYER_PARAM][0] === "CUSTOMER";
-	};
-
-	/**
-	 * Reload the app inside FLP adding the parameter to skip personalization changes
-	 * @param  {map} mParsedHash URL parsed hash
-	 * @param  {sap.ushell.services.CrossApplicationNavigation} oCrossAppNav ushell service
-	 * @return {Promise} resolving to true if reload was triggered
-	 */
-	RuntimeAuthoring.prototype._reloadWithoutPersonalizationChanges = function(mParsedHash, oCrossAppNav){
-		if (!this._hasCustomerLayerParameter(mParsedHash)){
-			if (!mParsedHash.params) {
-				mParsedHash.params = {};
-			}
-			mParsedHash.params[FL_MAX_LAYER_PARAM] = ["CUSTOMER"];
-			RuntimeAuthoring.enableRestart("CUSTOMER");
-			// triggers the navigation without leaving FLP
-			oCrossAppNav.toExternal(this._buildNavigationArguments(mParsedHash));
-			return Promise.resolve(true);
-		}
-	};
-
-	/**
-	 * Reload the app inside FLP removing the parameter to skip personalization changes
-	 * @return {boolean} resolving to true if reload was triggered
-	 */
-	RuntimeAuthoring.prototype._removeMaxLayerParameter = function(){
-		if (Utils.getUshellContainer() && this.getLayer() !== "USER") {
-			var oCrossAppNav = Utils.getUshellContainer().getService("CrossApplicationNavigation");
-			var mParsedHash = this._getURLParsedHash();
-			if (oCrossAppNav.toExternal && mParsedHash){
-				if (this._hasCustomerLayerParameter(mParsedHash)) {
-					delete mParsedHash.params[FL_MAX_LAYER_PARAM];
-					// triggers the navigation without leaving FLP
-					oCrossAppNav.toExternal(this._buildNavigationArguments(mParsedHash));
-				}
-			}
-		}
-	};
-
-	/**
-	 * Handler for the message box warning the user that personalization changes exist
-	 * and the app will be reloaded
-	 * @return {Promise} Resolving when the user clicks on OK
-	 */
-	RuntimeAuthoring.prototype._handlePersonalizationMessageBoxOnStart = function() {
-		return Utils._showMessageBox(
-			MessageBox.Icon.INFORMATION,
-			"HEADER_PERSONALIZATION_EXISTS",
-			"MSG_PERSONALIZATION_EXISTS");
-	};
-
-	/**
-	 * Handler for the message box warning the user that personalization changes exist
-	 * and the app will be reloaded
-	 * @return {Promise} Resolving when the user clicks on OK
-	 */
-	RuntimeAuthoring.prototype._handleReloadMessageBox = function(sReason) {
-		return Utils._showMessageBox(
-			MessageBox.Icon.INFORMATION,
-			"HEADER_RELOAD_NEEDED",
-			sReason,
-			undefined,
-			"BUTTON_RELOAD_NEEDED"
-		);
-	};
-
-	/**
-	 * Check if there are personalization changes and restart the application without them
-	 * Warn the user that the application will be restarted without personalization
-	 * This is only valid when a UShell is present
-	 * @return {Promise} Resolving to false means that reload is not necessary
-	 */
-	RuntimeAuthoring.prototype._handlePersonalizationChangesOnStart = function() {
-		var oUshellContainer = Utils.getUshellContainer();
-		if (oUshellContainer && this.getLayer() !== "USER") {
-			var mParsedHash = this._getURLParsedHash();
-			return this._getFlexController().isPersonalized({ignoreMaxLayerParameter : false})
-			.then(function(bIsPersonalized){
-				if (bIsPersonalized) {
-					return this._handlePersonalizationMessageBoxOnStart().then(function() {
-						var oCrossAppNav = sap.ushell.Container.getService("CrossApplicationNavigation");
-						if (oCrossAppNav.toExternal && mParsedHash){
-							return this._reloadWithoutPersonalizationChanges(mParsedHash, oCrossAppNav);
+			if (oCommand instanceof BaseCommand) {
+				if (sNewControlID) {
+					scheduleOnCreated.call(this, sNewControlID, function(oElementOverlay) {
+						var oDesignTimeMetadata = oElementOverlay.getDesignTimeMetadata();
+						var fnSelect = oDesignTimeMetadata.getData().select;
+						if (typeof fnSelect === "function") {
+							fnSelect(oElementOverlay.getElement());
 						}
-					}.bind(this));
-				}
-			}.bind(this));
-		} else {
-			return Promise.resolve(false);
-		}
-	};
-
-	/**
-	 * When exiting RTA and personalization changes exist, the user can choose to
-	 * reload the app with personalization or stay in the app without the personalization
-	 * @return {Promise} Resolving to RESTART enum indicating if reload is necessary
-	 */
-	RuntimeAuthoring.prototype._handleReloadOnExit = function() {
-		return Promise.all([
-			this._oSerializer.needsReload(),
-			// When working with RTA, the MaxLayer parameter will be present in the URL and must
-			// be ignored in the decision to bring up the pop-up (ignoreMaxLayerParameter = true)
-			this._getFlexController().isPersonalized({ignoreMaxLayerParameter : true})
-		]).then(function(aArgs){
-			var bChangesNeedRestart = aArgs[0],
-				bIsPersonalized = aArgs[1];
-			if (bChangesNeedRestart || bIsPersonalized){
-				var sRestart = this._RESTART.RELOAD_PAGE;
-				var sRestartReason;
-				if (bIsPersonalized) {
-					//Loading the app with personalization means the visualization might change,
-					//therefore this message takes precedence
-					sRestartReason = "MSG_RELOAD_WITH_PERSONALIZATION";
-
-					if (!bChangesNeedRestart){
-						//if changes need restart this method has precedence, but in this case
-						//the faster cross app navigation to the same app (restart via hash) is possible
-						sRestart = this._RESTART.VIA_HASH;
+					});
+					if (vAction) {
+						scheduleRenameOnCreatedContainer.call(this, vAction, sNewControlID, sContainerTitle);
 					}
-				} else if (bChangesNeedRestart){
-					sRestartReason = "MSG_RELOAD_NEEDED";
 				}
-				return this._handleReloadMessageBox(sRestartReason).then(function(){
-					return sRestart;
+				return this.getCommandStack().pushAndExecute(oCommand)
+				// Error handling when a command fails is done in the Stack
+				.catch(function(oError) {
+					if (oError?.message?.indexOf?.("The following Change cannot be applied because of a dependency") > -1) {
+						Utils.showMessageBox("error", "MSG_DEPENDENCY_ERROR", {error: oError});
+					}
+					Log.error("sap.ui.rta:", oError.message, oError.stack);
 				});
-			} else {
-				//no reload needed
-				return this._RESTART.NOT_NEEDED;
 			}
-
+			return undefined;
 		}.bind(this));
-	};
+		return this._pElementModified;
+	}
 
-	RuntimeAuthoring.prototype._onModeChange = function(oEvent) {
-		this.setMode(oEvent.getParameter('key'));
-	};
-
-	/**
-	 * Setter for property 'mode'.
-	 * @param {string} sNewMode The new value for the 'mode' property
-	 */
-	RuntimeAuthoring.prototype.setMode = function (sNewMode) {
-		if (this.getProperty('mode') !== sNewMode) {
-			var oModeSwitcher = this.getShowToolbars() && this.getToolbar().getControl('modeSwitcher');
-			var bOverlaysEnabled = sNewMode === 'adaptation';
-
-			if (oModeSwitcher) {
-				// no event loop because setSelectedButton() doesn't trigger 'select' event on SegmentedButton
-				oModeSwitcher.setSelectedButton(
-					oModeSwitcher
-						.getItems()
-						.filter(function (oControl) {
-							return oControl.getKey() === sNewMode;
-						})
-						.pop()
-						.getId()
-				);
-			}
-			this._oDesignTime.setEnabled(bOverlaysEnabled);
-			this.getPlugins()['tabHandling'][bOverlaysEnabled ? 'removeTabIndex' : 'restoreTabIndex']();
-			this.setProperty('mode', sNewMode);
-			this.fireModeChanged({mode: sNewMode});
-		}
-	};
-
-	/**
-	 * Setter for property 'metadataScope'.
-	 * @param {string} sScope The new value for the 'metadataScope' property
-	 */
-	RuntimeAuthoring.prototype.setMetadataScope = function (sScope) {
-		// We do not support scope change after creation of DesignTime instance
-		// as this requires reinitialization of all overlays
-		if (this._oDesignTime) {
-			jQuery.sap.log.error("sap.ui.rta: Failed to set metadata scope on RTA instance after RTA is started");
-			return;
-		}
-
-		this.setProperty('metadataScope', sScope);
-	};
+	function onModeChange(oEvent) {
+		this.setMode(oEvent.getParameter("item").getKey());
+	}
 
 	function resolveServiceLocation(sName) {
 		if (ServicesIndex.hasOwnProperty(sName)) {
-			return ServicesIndex[sName].replace(/\./g, '/');
+			return ServicesIndex[sName].replace(/\./g, "/");
 		}
+		return undefined;
 	}
 
 	/**
 	 * Starts a service
 	 * @param {string} sName - Registered service name
-	 * @return {Promise} - promise is resolved with service api or rejected in case of any error.
+	 * @returns {Promise} - Promise is resolved with service api or rejected in case of any error.
 	 */
-	RuntimeAuthoring.prototype.startService = function (sName) {
+	RuntimeAuthoring.prototype.startService = function(sName) {
+		if (this._sStatus !== STARTED) {
+			return new Promise(function(fnResolve, fnReject) {
+				this.attachEventOnce("start", fnResolve);
+				this.attachEventOnce("failed", fnReject);
+			}.bind(this))
+			.then(
+				function() {
+					return this.startService(sName);
+				}.bind(this),
+				function() {
+					return Promise.reject(
+						DtUtil.createError(
+							"RuntimeAuthoring#startService",
+							`Can't start the service '${sName}' because RTA startup failed`,
+							"sap.ui.rta"
+						)
+					);
+				}
+			);
+		}
+
 		var sServiceLocation = resolveServiceLocation(sName);
 		var mService;
 
 		if (!sServiceLocation) {
 			return Promise.reject(
 				DtUtil.createError(
-					"RuntimeAuthoring#stopService",
-					DtUtil.printf("Unknown service. Can't find any registered service by name '{0}'", sName),
+					"RuntimeAuthoring#startService",
+					`Unknown service. Can't find any registered service by name '${sName}'`,
 					"sap.ui.rta"
 				)
 			);
+		}
+
+		mService = this._mServices[sName];
+		if (mService) {
+			switch (mService.status) {
+				case SERVICE_STARTED: {
+					return Promise.resolve(mService.exports);
+				}
+				case SERVICE_STARTING: {
+					return mService.initPromise;
+				}
+				case SERVICE_FAILED: {
+					return mService.initPromise;
+				}
+				default: {
+					return Promise.reject(
+						DtUtil.createError(
+							"RuntimeAuthoring#startService",
+							`Unknown service status. Service name = '${sName}'`,
+							"sap.ui.rta"
+						)
+					);
+				}
+			}
 		} else {
-			mService = this._mServices[sName];
-			if (mService) {
-				switch (mService.status) {
-					case 'started': {
-						return Promise.resolve(mService.exports);
-					}
-					case 'starting': {
-						return mService.initPromise;
-					}
-					case 'failed': {
-						return mService.initPromise;
-					}
-					default: {
-						return Promise.reject(
-							DtUtil.createError(
-								"RuntimeAuthoring#getService",
-								DtUtil.printf("Unknown service status. Service name = '{0}'", sName),
+			this._mServices[sName] = mService = {};
+			mService.status = SERVICE_STARTING;
+			mService.location = sServiceLocation;
+			mService.initPromise = new Promise(function(fnResolve, fnReject) {
+				sap.ui.require(
+					[sServiceLocation],
+					function(fnServiceFactory) {
+						mService.factory = fnServiceFactory;
+
+						this._oServiceEventBus ||= new ServiceEventBus();
+
+						DtUtil.wrapIntoPromise(fnServiceFactory)(
+							this,
+							this._oServiceEventBus.publish.bind(this._oServiceEventBus, sName)
+						)
+						.then(function(oService) {
+							if (this.bIsDestroyed) {
+								throw DtUtil.createError(
+									"RuntimeAuthoring#startService",
+									`RuntimeAuthoring instance is destroyed while initializing the service '${sName}'`,
+									"sap.ui.rta"
+								);
+							}
+							if (!isPlainObject(oService)) {
+								throw DtUtil.createError(
+									"RuntimeAuthoring#startService",
+									`Invalid service format. Service should return simple javascript object after initialization. Service name = '${sName}'`,
+									"sap.ui.rta"
+								);
+							}
+
+							mService.service = oService;
+							mService.exports = {};
+
+							// Expose events API if there is at least one event
+							if (Array.isArray(oService.events) && oService.events.length > 0) {
+								Object.assign(mService.exports, {
+									attachEvent: this._oServiceEventBus.subscribe.bind(this._oServiceEventBus, sName),
+									detachEvent: this._oServiceEventBus.unsubscribe.bind(this._oServiceEventBus, sName),
+									attachEventOnce: this._oServiceEventBus.subscribeOnce.bind(this._oServiceEventBus, sName)
+								});
+							}
+
+							// Expose methods/properties from exports object if any
+							var mExports = oService.exports || {};
+							Object.assign(
+								mService.exports,
+								Object.keys(mExports).reduce(function(mResult, sKey) {
+									var vValue = mExports[sKey];
+									mResult[sKey] = typeof vValue === "function"
+										? DtUtil.waitForSynced(this._oDesignTime, vValue)
+										: vValue;
+									return mResult;
+								}.bind(this), {})
+							);
+
+							mService.status = SERVICE_STARTED;
+							fnResolve(Object.freeze(mService.exports));
+						}.bind(this))
+						.catch(fnReject);
+					}.bind(this),
+					function(vError) {
+						mService.status = SERVICE_FAILED;
+						fnReject(
+							DtUtil.propagateError(
+								vError,
+								"RuntimeAuthoring#startService",
+								`Can't load service '${sName}' by its name: ${sServiceLocation}`,
 								"sap.ui.rta"
 							)
 						);
 					}
-				}
-			} else {
-				mService = {
-					status: SERVICE_STARTING,
-					location: sServiceLocation,
-					initPromise: new Promise(function (fnResolve, fnReject) {
-						sap.ui.require(
-							[ sServiceLocation ],
-							function (fnServiceFactory) {
-								mService.factory = fnServiceFactory;
+				);
+			}.bind(this))
+			.catch(function(vError) {
+				mService.status = SERVICE_FAILED;
+				return Promise.reject(
+					DtUtil.propagateError(
+						vError,
+						"RuntimeAuthoring#startService",
+						`Error initializing service '${sName}'`,
+						"sap.ui.rta"
+					)
+				);
+			});
 
-								if (!this._oServiceEventBus) {
-									this._oServiceEventBus = new ServiceEventBus();
-								}
-
-								DtUtil.wrapIntoPromise(fnServiceFactory)(
-									this,
-									this._oServiceEventBus.publish.bind(this._oServiceEventBus, sName)
-								)
-									.then(function (oService) {
-											if (this.bIsDestroyed) {
-												throw DtUtil.createError(
-													"RuntimeAuthoring#getService",
-													DtUtil.printf("RuntimeAuthoring instance is destroyed while initialising the service '{0}'", sName),
-													"sap.ui.rta"
-												);
-											}
-											if (!jQuery.isPlainObject(oService)) {
-												throw DtUtil.createError(
-													"RuntimeAuthoring#getService",
-													DtUtil.printf("Invalid service format. Service should return simple javascript object after initialisation. Service name = '{0}'", sName),
-													"sap.ui.rta"
-												);
-											}
-
-											mService.service = oService;
-											mService.exports = {};
-
-											// Expose events API if there is at least one event
-											if (Array.isArray(oService.events) && oService.events.length > 0) {
-												jQuery.extend(mService.exports, {
-													attachEvent: this._oServiceEventBus.subscribe.bind(this._oServiceEventBus, sName),
-													detachEvent: this._oServiceEventBus.unsubscribe.bind(this._oServiceEventBus, sName),
-													attachEventOnce: this._oServiceEventBus.subscribeOnce.bind(this._oServiceEventBus, sName)
-												});
-											}
-
-											// Expose methods/properties from exports object if any
-											var mExports = oService.exports || {};
-											jQuery.extend(
-												mService.exports,
-												Object.keys(mExports).reduce(function (mResult, sKey) {
-													var vValue = mExports[sKey];
-													mResult[sKey] = typeof vValue === "function" ?  DtUtil.wrapIntoPromise(vValue) : vValue;
-													return mResult;
-												}, {})
-											);
-
-											mService.status = SERVICE_STARTED;
-											fnResolve(Object.freeze(mService.exports));
-									}.bind(this))
-									.catch(fnReject);
-							}.bind(this),
-							function (vError) {
-								mService.status = SERVICE_FAILED;
-								fnReject(
-									DtUtil.propagateError(
-										vError,
-										"RuntimeAuthoring#getService",
-										DtUtil.printf("Can't load service '{0}' by its name: {1}", sName, sServiceLocation),
-										"sap.ui.rta"
-									)
-								);
-							}
-						);
-					}.bind(this))
-						.catch(function (vError) {
-							mService.status = SERVICE_FAILED;
-							return Promise.reject(
-								DtUtil.propagateError(
-									vError,
-									"RuntimeAuthoring#getService",
-									DtUtil.printf("Error during service '{0}' initialisation.", sName),
-									"sap.ui.rta"
-								)
-							);
-						})
-				};
-
-				this._mServices[sName] = mService;
-
-				return mService.initPromise;
-			}
+			return mService.initPromise;
 		}
 	};
 
@@ -1585,12 +1966,12 @@ sap.ui.define([
 	 * Stops a service
 	 * @param {string} sName - Started service name
 	 */
-	RuntimeAuthoring.prototype.stopService = function (sName) {
+	RuntimeAuthoring.prototype.stopService = function(sName) {
 		var oService = this._mServices[sName];
 
 		if (oService) {
 			if (oService.status === SERVICE_STARTED) {
-				if (jQuery.isFunction(oService.service.destroy)) {
+				if (typeof oService.service.destroy === "function") {
 					oService.service.destroy();
 				}
 			}
@@ -1598,7 +1979,7 @@ sap.ui.define([
 		} else {
 			throw DtUtil.createError(
 				"RuntimeAuthoring#stopService",
-				DtUtil.printf("Can't destroy service: unable to find service with name '{0}'", sName),
+				`Can't destroy service: unable to find service with name '${sName}'`,
 				"sap.ui.rta"
 			);
 		}
@@ -1607,11 +1988,11 @@ sap.ui.define([
 	/**
 	 * Gets a service by name (and starts it if it's not running)
 	 * @param {string} sName - Registered service name
-	 * @return {Promise} - promise is resolved with service api or rejected in case of any error.
+	 * @returns {Promise} - Promise is resolved with service api or rejected in case of any error.
 	 */
-	RuntimeAuthoring.prototype.getService = function (sName) {
+	RuntimeAuthoring.prototype.getService = function(sName) {
 		return this.startService(sName);
 	};
 
 	return RuntimeAuthoring;
-}, /* bExport= */true);
+});

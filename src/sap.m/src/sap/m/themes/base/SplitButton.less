@@ -21,13 +21,29 @@
 
 .sapMSB .sapMSBArrow .sapMBtnIcon {
 	font-size: 0.75rem;
+	line-height: 2.25rem;
+}
+
+.sapUiSizeCompact .sapMSB .sapMSBArrow .sapMBtnIcon {
+	line-height: 1.625rem;
 }
 
 .sapMSB .sapMSBText .sapMBtnInner {
 	text-align: left;
 	border-top-right-radius: 0;
 	border-bottom-right-radius: 0;
-	border-right-width: 0;
+}
+
+.sapMSB.sapMBtnTransparent .sapMSBText:hover .sapMBtnInner {
+	border-right-width: 0.0625rem;
+	padding-right: 0.5rem;
+}
+
+.sapMTB-Transparent-CTX .sapMSB .sapMSBText:hover .sapMBtnDefault.sapMBtnInner {
+	border-right-width: 0.0625rem;
+	&.sapMBtnText {
+		padding-right: 0.5rem;
+	}
 }
 
 .sapMSB .sapMSBArrow .sapMBtnInner {
@@ -59,9 +75,17 @@
 	.sapMSBTextIE.sapMSBText {
 		padding-right: 2rem;
 	}
+
+	.sapMSB .sapMSBInner .sapMSBArrow .sapMBtnIconFirst {
+		padding-left: 0;
+		padding-right: 0;
+	}
+	.sapMTB-Transparent-CTX .sapMSB .sapMSBText:hover .sapMBtnDefault.sapMBtnInner {
+		padding-right: 0.375rem;
+	}
 }
 
-.sapMSB:focus .sapMSBInner::after {
+.sapMSB:focus .sapMSBInner:not(.sapMSBInnerDisabled)::after {
 	top: 0.3125rem;
 	bottom: 0.3125rem;
 	left: 0.0625rem;
@@ -70,14 +94,8 @@
 }
 
 .sapUiSizeCompact {
-	.sapMSB:focus .sapMSBInner::after {
+	.sapMSB:focus .sapMSBInner:not(.sapMSBInnerDisabled)::after {
 		top: 0.25rem;
 		bottom: 0.25rem;
-	}
-}
-
-html[data-sap-ui-browser ^= "ie"], html[data-sap-ui-browser^="ed"] {
-	.sapMSB:focus .sapMSBInner::after {
-		border-style: dashed;
 	}
 }

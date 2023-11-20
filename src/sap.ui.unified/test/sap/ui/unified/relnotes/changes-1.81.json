@@ -1,0 +1,92 @@
+{
+  "1.81.0": {
+    "date": "July 2020",
+    "notes": [
+      {
+        "id": "223391551d1b000cd176ff1566a58540425326cb",
+        "type": "FEATURE",
+        "text": " sap.ui.unified.FileUploader: HTTP PUT request method is now available",
+        "references": []
+      },
+      {
+        "id": "bc83113972776b4c61a6880ec91d0fc6444d3957",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: demokit sample improved",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080257128"
+          }
+        ]
+      },
+      {
+        "id": "8374ef77a6b6ab21a1f6c988bab8662d26e63daf",
+        "type": "FIX",
+        "text": " sap.ui.unified.FileUploader: upload input element is now created only once",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070211785"
+          }
+        ]
+      },
+      {
+        "id": "6580a0d54a5b94808fe0dfa1798b37b259c2a5e6",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: manages selectedAppointments association correctly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400003492272020"
+          }
+        ]
+      },
+      {
+        "id": "273a9866f362987b7ada5eee03e086c4fb101a1f",
+        "type": "FEATURE",
+        "text": " sap.m.PlanningCalendar: Appointment rounding width",
+        "references": []
+      },
+      {
+        "id": "fe94e64b6521720a1695a7eacfe36ad937bd256b",
+        "type": "FEATURE",
+        "text": " sap.m.PlanningCalendar: Appointment text on 3 lines",
+        "references": []
+      },
+      {
+        "id": "e17e780c74404e4ec641cc8cccdc7bc02ff5aa90",
+        "type": "FEATURE",
+        "text": "sap.ui.unified.DateTypeRange: Allows specialDates to be also non-working days",
+        "references": []
+      },
+      {
+        "id": "ff17d03526e468c40b5e3fc2835dfe7fa3e4aa9c",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: Interval headers start/end info added",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070133451"
+          }
+        ]
+      },
+      {
+        "id": "07c96adcae9be2e0df707e12f5d90c5144864603",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: now Appointment don\u0027t cut the text when resizing is half-size",
+        "references": []
+      },
+      {
+        "id": "fd5f4e92d7ae8ddd00812a70b8cf2238f64969f9",
+        "type": "FIX",
+        "text": " sap.ui.unified.FileUploader: input field is now only one",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970467587"
+          }
+        ]
+      }
+    ]
+  }
+}

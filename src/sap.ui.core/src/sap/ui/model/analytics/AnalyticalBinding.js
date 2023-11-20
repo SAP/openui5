@@ -2,30 +2,38 @@
  * ${copyright}
  */
 
-// Disable some ESLint rules. camelcase (some "_" in names to indicate indexed variables (like in math)), valid-jsdoc (not completed yet), no-warning-comments (some TODOs are left)
-// All other warnings, errors should be resolved
-/*eslint camelcase:0, valid-jsdoc:0, no-warning-comments:0 */
+// Disable some ESLint rules. camelcase (some "_" in names to indicate indexed variables (like in math)),
+// valid-jsdoc (not completed yet)
+/*eslint camelcase:0, valid-jsdoc:0, max-len:0 */
 
 // Provides class sap.ui.model.odata.ODataListBinding
 sap.ui.define([
-	'jquery.sap.global',
-	'sap/ui/model/TreeBinding',
-	'sap/ui/model/ChangeReason',
-	'sap/ui/model/Filter',
-	'sap/ui/model/FilterOperator',
-	'sap/ui/model/FilterType',
-	'sap/ui/model/Sorter',
-	'sap/ui/model/odata/CountMode',
-	'sap/ui/model/TreeAutoExpandMode',
-	'./odata4analytics',
-	'./BatchResponseCollector',
-	'./AnalyticalVersionInfo'
-], function(jQuery, TreeBinding, ChangeReason, Filter, FilterOperator, FilterType, Sorter,
-		CountMode, TreeAutoExpandMode, odata4analytics, BatchResponseCollector,
-		AnalyticalVersionInfo) {
+	"./BatchResponseCollector",
+	"./odata4analytics",
+	"sap/base/Log",
+	"sap/base/util/deepExtend",
+	"sap/base/util/each",
+	"sap/base/util/extend",
+	"sap/base/util/isEmptyObject",
+	"sap/base/util/uid",
+	"sap/ui/model/ChangeReason",
+	"sap/ui/model/Filter",
+	"sap/ui/model/FilterOperator",
+	"sap/ui/model/FilterProcessor",
+	"sap/ui/model/FilterType",
+	"sap/ui/model/Sorter",
+	"sap/ui/model/TreeAutoExpandMode",
+	"sap/ui/model/TreeBinding",
+	"sap/ui/model/odata/CountMode",
+	"sap/ui/model/odata/ODataUtils"
+], function(BatchResponseCollector, odata4analytics, Log, deepExtend, each, extend, isEmptyObject, uid,
+		ChangeReason, Filter, FilterOperator, FilterProcessor, FilterType, Sorter, TreeAutoExpandMode,
+		TreeBinding, CountMode, ODataUtils) {
 	"use strict";
 
-	var sClassName = "sap.ui.model.analytics.AnalyticalBinding";
+	var sClassName = "sap.ui.model.analytics.AnalyticalBinding",
+		iInstanceCount = 0,
+		oLogger = Log.getLogger(sClassName);
 
 	/**
 	 * Checks whether the select binding parameter fits to the current analytical info and returns
@@ -41,7 +49,9 @@ sap.ui.define([
 	 * <li>if an associated property (e.g. text property) of an additional measure is contained in
 	 * the select binding parameter
 	 * <li>if a dimension or a measure of the current analytical info is not contained in the select
-	 * binding parameter
+	 * binding parameter, unless the dimension or measure has been added automatically by the
+	 * binding, because a property associated to the dimension or measure has been added as a
+	 * "visible" or "inResult" column
 	 * </ul>
 	 *
 	 * @param {sap.ui.model.analytics.AnalyticalBinding} oBinding
@@ -50,16 +60,10 @@ sap.ui.define([
 	 *   array if there are no additional select properties needed
 	 */
 	function getAdditionalSelects(oBinding) {
-		var oAnalyticalQueryRequest
+		var oColumn, aComputedSelect, sComputedSelect, oDimension, i, j, oMeasure, n, sPropertyName,
+			oAnalyticalQueryRequest
 				= new odata4analytics.QueryResultRequest(oBinding.oAnalyticalQueryResult),
-			aComputedSelect,
-			sComputedSelect,
-			oDimension,
-			i,
-			j,
-			oMeasure,
-			n,
-			sPropertyName,
+
 			aSelect = oBinding.mParameters.select.split(","),
 			bError = trimAndCheckForDuplicates(aSelect, oBinding.sPath);
 
@@ -95,9 +99,13 @@ sap.ui.define([
 				sPropertyName = aComputedSelect[i];
 				j = aSelect.indexOf(sPropertyName);
 				if (j < 0) {
-					jQuery.sap.log.warning("Ignored the 'select' binding parameter, because"
+					oColumn = oBinding.mAnalyticalInfoByProperty[sPropertyName];
+					if (!oColumn || (!oColumn.visible && !oColumn.inResult)) {
+						continue; // ignore automatically added columns
+					}
+					oLogger.warning("Ignored the 'select' binding parameter, because"
 							+ " it does not contain the property '" + sPropertyName + "'",
-						oBinding.sPath, sClassName);
+						oBinding.sPath);
 					bError = true;
 				} else {
 					aSelect.splice(j, 1);
@@ -105,15 +113,23 @@ sap.ui.define([
 			}
 		}
 
+		const aAdditionalSelects = [];
 		// check additionally selected properties, no new dimensions and new measures or
 		// associated properties for new dimensions or measures are allowed
-		for (i = 0, n = aSelect.length; i < n; i++) {
+		for (i = 0; i < aSelect.length; i += 1) {
 			sPropertyName = aSelect[i];
 
 			oDimension = oBinding.oAnalyticalQueryResult.findDimensionByPropertyName(sPropertyName);
-			if (oDimension && oBinding.oDimensionDetailsSet[oDimension.getName()] === undefined) {
-				logUnsupportedPropertyInSelect(oBinding.sPath, sPropertyName, oDimension);
-				bError = true;
+			if (oDimension) {
+				const oDimensionDetails = oBinding.oDimensionDetailsSet[oDimension.getName()];
+				if (oDimensionDetails === undefined) {
+					logUnsupportedPropertyInSelect(oBinding.sPath, sPropertyName, oDimension);
+					bError = true;
+				} else {
+					// eslint-disable-next-line no-use-before-define
+					AnalyticalBinding._updateDimensionDetailsTextProperty(oDimension, sPropertyName, oDimensionDetails);
+					continue;
+				}
 			}
 
 			oMeasure = oBinding.oAnalyticalQueryResult.findMeasureByPropertyName(sPropertyName);
@@ -121,8 +137,9 @@ sap.ui.define([
 				logUnsupportedPropertyInSelect(oBinding.sPath, sPropertyName, oMeasure);
 				bError = true;
 			}
+			aAdditionalSelects.push(sPropertyName);
 		}
-		return bError ? [] : aSelect;
+		return bError ? [] : aAdditionalSelects;
 	}
 
 	/**
@@ -138,23 +155,23 @@ sap.ui.define([
 	 */
 	function logUnsupportedPropertyInSelect(sPath, sSelectedProperty, oDimensionOrMeasure) {
 		var sDimensionOrMeasure = oDimensionOrMeasure
-				instanceof sap.ui.model.analytics.odata4analytics.Dimension
+				instanceof odata4analytics.Dimension
 					? "dimension" : "measure";
 
 		if (oDimensionOrMeasure.getName() === sSelectedProperty) {
-			jQuery.sap.log.warning("Ignored the 'select' binding parameter, because it contains"
+			oLogger.warning("Ignored the 'select' binding parameter, because it contains"
 					+ " the " + sDimensionOrMeasure + " property '"
 					+ sSelectedProperty
 					+ "' which is not contained in the analytical info (see updateAnalyticalInfo)",
-				sPath, sClassName);
+				sPath);
 
 		} else {
-			jQuery.sap.log.warning("Ignored the 'select' binding parameter, because the property '"
+			oLogger.warning("Ignored the 'select' binding parameter, because the property '"
 					+ sSelectedProperty + "' is associated with the "
 					+ sDimensionOrMeasure + " property '"
 					+ oDimensionOrMeasure.getName() + "' which is not contained in the analytical"
 					+ " info (see updateAnalyticalInfo)",
-				sPath, sClassName);
+				sPath);
 		}
 	}
 
@@ -182,9 +199,9 @@ sap.ui.define([
 			sCurrentProperty = aSelect[i];
 			if (aSelect.indexOf(sCurrentProperty) !== i) {
 				// found duplicate
-				jQuery.sap.log.warning("Ignored the 'select' binding parameter, because it"
+				oLogger.warning("Ignored the 'select' binding parameter, because it"
 						+ " contains the property '" + sCurrentProperty + "' multiple times",
-					sPath, sClassName);
+					sPath);
 				aSelect.splice(i, 1);
 				bError = true;
 			}
@@ -196,59 +213,65 @@ sap.ui.define([
 	 * @class
 	 * Tree binding implementation for OData entity sets with aggregate semantics.
 	 *
-	 * Note on the handling of different count modes:
-	 * The AnalyticalBinding always uses the OData $inlinecount system query option to determine the total
-	 * count of matching entities. It ignores the default count mode set in the ODataModel instance and the
-	 * count mode specified in the binding parameters. If the default count mode is None, a warning is added
-	 * to the log to remind the application that OData requests generated by the AnalyticalBinding will include
-	 * a $inlinecount. If a count mode has been specified in the binding parameters, an error message will be
-	 * logged if it is None, because the binding will still add the $inlinecount to OData requests. If a
-	 * binding count mode is set to Request or Both, a warning will be logged to remind the application that
-	 * the OData requests generated by the AnalyticalBinding will include a $inlinecount.
+	 * Note on the handling of different count modes: The AnalyticalBinding always uses the OData
+	 * $inlinecount system query option to determine the total count of matching entities. It
+	 * ignores the default count mode set in the ODataModel instance and the count mode specified in
+	 * the binding parameters. If the default count mode is <code>None</code>, a warning is added to
+	 * the log to remind the application that OData requests generated by the AnalyticalBinding will
+	 * include a $inlinecount. If a count mode has been specified in the binding parameters, an
+	 * error message is logged if it is <code>None</code>, because the binding still adds the
+	 * $inlinecount to OData requests. If a binding count mode is set to <code>Request</code> or
+	 * <code>Both</code>, a warning is logged to remind the application that the OData requests
+	 * generated by the AnalyticalBinding include a $inlinecount.
 	 *
 	 * @param {sap.ui.model.Model} oModel
-	 * @param {string}
-	 *            sPath the path pointing to the tree / array that should be bound
-	 * @param {object}
-	 *            [oContext=null] the context object for this data binding
-	 * @param {array}
-	 *            [aSorter=null] predefined sorter/s contained in an array
-	 * @param {array}
-	 *            [aFilters=null] predefined filter/s contained in an array
-	 * @param {object} [mParameters=null] a map which contains additional control parameters.
+	 *   The OData model
+	 * @param {string} sPath
+	 *   The path pointing to the tree / array that should be bound
+	 * @param {object} [oContext=null]
+	 *   The context object for this data binding
+	 * @param {array} [aSorter=null]
+	 *   An array of predefined sorters
+	 * @param {array} [aFilters=null]
+	 *   An array of predefined filters
+	 * @param {object} [mParameters=null]
+	 *   A map containing additional binding parameters; for the <code>AnalyticalBinding</code> this
+	 *   parameter is mandatory
 	 * @param {sap.ui.model.TreeAutoExpandMode} [mParameters.autoExpandMode=sap.ui.model.TreeAutoExpandMode.Bundled]
-	 *            the auto expand mode; applying sorters to groups is only possible with auto expand
-	 *            mode {@link sap.ui.model.TreeAutoExpandMode.Sequential}
-	 * @param [mParameters.entitySet] if set, it explicitly specifies the entity set addressed by
-	 *            the last segment of the given binding path
-	 * @param [mParameters.useBatchRequests] if true, multiple OData requests will be wrapped into a
-	 *            single batch request, wherever possible
-	 * @param [mParameters.provideGrandTotals] if true, grand total values will be provided for all
-	 *            bound measure properties
-	 * @param [mParameters.provideTotalResultSize] if true, the total number of matching entries in
-	 *            the bound OData entity set will be provided
-	 * @param [mParameters.reloadSingleUnitMeasures] if true, the binding will check aggregated
-	 *            entries with multi-unit occurrences, if some measure properties have a unique unit
-	 *            and will trigger separate OData requests to fetch them
-	 * @param {string} [mParameters.select] a comma separated list of property names that need to be
-	 *            selected.<br/>
-	 *            If the <code>select</code> parameter is given, it has to contain all properties
-	 *            that are contained in the analytical information (see
-	 *            {@link sap.ui.model.analytics.AnalyticalBinding#updateAnalyticalInfo}) and their
-	 *            associated dimensions and measures. It must not contain additional dimensions or
-	 *            measures or associated properties for additional dimensions or measures. But it
-	 *            may contain additional properties like a text property of a dimension that is also
-	 *            selected.<br/>
-	 *            All properties of the <code>select</code> parameter are also considered in
-	 *            {@link sap.ui.model.analytics.AnalyticalBinding#getDownloadUrl}.<br/>
-	 *            The <code>select</code> parameter must not contain any duplicate entry.<br/>
-	 *            If the <code>select</code> parameter does not fit to the analytical information or
-	 *            if the <code>select</code> parameter contains duplicates, a warning is logged and
-	 *            the <code>select</code> parameter is ignored.
+	 *   The auto expand mode; applying sorters to groups is only possible in auto expand mode
+	 *   {@link sap.ui.model.TreeAutoExpandMode.Sequential}
+	 * @param [mParameters.entitySet]
+	 *   The entity set addressed by the last segment of the given binding path
+	 * @param [mParameters.useBatchRequests=false]
+	 *   Whether multiple OData requests are wrapped into a single $batch request wherever possible
+	 * @param [mParameters.provideGrandTotals=true]
+	 *   Whether grand total values are provided for all bound measure properties
+	 * @param [mParameters.provideTotalResultSize=true]
+	 *   Whether the total number of matching entries in the bound OData entity set is provided
+	 * @param [mParameters.reloadSingleUnitMeasures=true]
+	 *   Whether the binding checks aggregated entries with multi-unit occurrences, if some measure
+	 *   properties have a unique unit and will trigger separate OData requests to fetch them
+	 * @param {string} [mParameters.select]
+	 *   A comma-separated list of property names that need to be selected.<br/>
+	 *   If the <code>select</code> parameter is given, it has to contain all properties that are
+	 *   contained in the analytical information (see
+	 *   {@link sap.ui.model.analytics.AnalyticalBinding#updateAnalyticalInfo}). It must not contain
+	 *   additional dimensions or measures or associated properties for additional dimensions or
+	 *   measures. But it may contain additional properties like a text property of a dimension that
+	 *   is also selected.<br/>
+	 *   All properties of the <code>select</code> parameter are also considered in
+	 *   {@link sap.ui.model.analytics.AnalyticalBinding#getDownloadUrl}.<br/>
+	 *   The <code>select</code> parameter must not contain any duplicate entry.<br/>
+	 *   If the <code>select</code> parameter does not fit to the analytical information or if the
+	 *   <code>select</code> parameter contains duplicates, a warning is logged and the
+	 *   <code>select</code> parameter is ignored.
 	 *
-	 * @throws Will throw an error if no analytic query result object could be determined from the bound OData entity set, either from an explicitly
-	 *         given EntitySet (via optional mParameters.entitySet argument), or by default implicitly from
-	 *         the binding path (see mandatory sPath argument).
+	 * @throws {Error}
+	 *   If no analytic query result object could be determined from the bound OData entity set,
+	 *   either from an explicitly given EntitySet (via optional mParameters.entitySet argument), or
+	 *   by default implicitly from the binding path (see mandatory sPath argument), or if the
+	 *   {@link sap.ui.model.Filter.NONE} filter instance is contained in <code>aFilters</code> together with other
+	 *   filters
 	 *
 	 * @alias sap.ui.model.analytics.AnalyticalBinding
 	 * @extends sap.ui.model.TreeBinding
@@ -262,24 +285,30 @@ sap.ui.define([
 
 			this.aAdditionalSelects = [];
 			// attribute members for addressing the requested entity set
-			this.sEntitySetName = (mParameters && mParameters.entitySet) ? mParameters.entitySet : undefined;
+			this.sEntitySetName = mParameters.entitySet ? mParameters.entitySet : undefined;
 			// attribute members for maintaining aggregated OData requests
 			this.bArtificalRootContext = false;
+			// Note: aApplicationFilter is used by sap.ui.comp.smarttable.SmartTable
 			this.aApplicationFilter = this._convertDeprecatedFilterObjects(aFilters);
 			this.aControlFilter = undefined;
 			this.aSorter = aSorter ? aSorter : [];
+			if (!Array.isArray(this.aSorter)) {
+				this.aSorter = [this.aSorter];
+			}
 			this.aMaxAggregationLevel = [];
 			this.aAggregationLevel = [];
 			this.oPendingRequests = {};
 			this.oPendingRequestHandle = [];
 			this.oGroupedRequests = {};
-			this.bUseBatchRequests = (mParameters && mParameters.useBatchRequests === true) ? true : false;
-			this.bProvideTotalSize = (mParameters && mParameters.provideTotalResultSize === false) ? false : true;
-			this.bProvideGrandTotals = (mParameters && mParameters.provideGrandTotals === false) ? false : true;
-			this.bReloadSingleUnitMeasures = (mParameters && mParameters.reloadSingleUnitMeasures === false) ? false : true;
-			this.bUseAcceleratedAutoExpand = (mParameters && mParameters.useAcceleratedAutoExpand === false) ? false : true;
-			this.bNoPaging = (mParameters && mParameters.noPaging === true) ? true : false;
+			this.bUseBatchRequests = mParameters.useBatchRequests === true;
+			this.bProvideTotalSize = mParameters.provideTotalResultSize !== false;
+			this.bProvideGrandTotals = mParameters.provideGrandTotals !== false;
+			this.bReloadSingleUnitMeasures = mParameters.reloadSingleUnitMeasures !== false;
+			this.bUseAcceleratedAutoExpand = mParameters.useAcceleratedAutoExpand !== false;
+			this.bNoPaging = mParameters.noPaging === true;
 
+			iInstanceCount += 1;
+			this._iId = iInstanceCount;
 			// attribute members for maintaining loaded data; mapping from groupId to related information
 			this.iTotalSize = -1;
 				/* data loaded from OData service */
@@ -317,20 +346,21 @@ sap.ui.define([
 			this.aBatchRequestQueue = [];
 
 			// considering different count mode settings
-			if (mParameters && mParameters.countMode == CountMode.None) {
-				jQuery.sap.log.fatal("requested count mode is ignored; OData requests will include $inlinecout options");
-			} else if (mParameters
-					&& (mParameters.countMode == CountMode.Request
-						|| mParameters.countMode == CountMode.Both)) {
-				jQuery.sap.log.warning("default count mode is ignored; OData requests will include $inlinecout options");
+			if (mParameters.countMode == CountMode.None) {
+				oLogger.fatal("requested count mode is ignored; OData requests will include"
+					+ " $inlinecount options");
+			} else if (mParameters.countMode == CountMode.Request || mParameters.countMode == CountMode.Both) {
+				oLogger.warning("default count mode is ignored; OData requests will include"
+					+ " $inlinecount options");
 			} else if (this.oModel.sDefaultCountMode == CountMode.Request) {
-				jQuery.sap.log.warning("default count mode is ignored; OData requests will include $inlinecout options");
+				oLogger.warning("default count mode is ignored; OData requests will include"
+					+ " $inlinecount options");
 			}
 
 			// detect ODataModel version
-			this.iModelVersion = AnalyticalVersionInfo.getVersion(this.oModel);
+			this.iModelVersion = AnalyticalBinding._getModelVersion(this.oModel);
 			if (this.iModelVersion === null) {
-				jQuery.sap.log.error("The AnalyticalBinding does not support Models other than sap.ui.model.odata.ODataModel version 1 or 2.");
+				oLogger.error("The AnalyticalBinding does not support the given model");
 				return;
 			}
 
@@ -340,7 +370,7 @@ sap.ui.define([
 			//Some setup steps have to be deferred, until the metadata was loaded by the model:
 			// - updateAnalyticalInfo, the parameters given in the constructor are kept though
 			// - fetch the oAnalyticalQueryResult
-			this.aInitialAnalyticalInfo = (mParameters == undefined ? [] : mParameters.analyticalInfo);
+			this.aInitialAnalyticalInfo = mParameters.analyticalInfo;
 
 			//this flag indicates if the analytical binding was initialized via initialize(), called either via bindAggregation or the Model
 			this.bInitial = true;
@@ -353,7 +383,7 @@ sap.ui.define([
 	function createSupportInfo(oAnalyticalBinding, sErrorId) {
 		return function() {
 			if (!oAnalyticalBinding.__supportUID) {
-				oAnalyticalBinding.__supportUID = jQuery.sap.uid();
+				oAnalyticalBinding.__supportUID = uid();
 			}
 			return {
 				type: sClassName,
@@ -381,9 +411,11 @@ sap.ui.define([
 
 			this.oDataState = null;
 			this.bApplySortersToGroups = true;
+			this.iTotalSize = -1; // invalidate last row counter
+			this._abortAllPendingRequests();
 			// resolving the path makes sure that we can safely analyze the metadata,
 			// as we have a resourcepath for the QueryResult
-			sResolvedPath = this.oModel.resolve(this.sPath, this.oContext);
+			sResolvedPath = this.getResolvedPath();
 			if (sResolvedPath) {
 				this.resetData();
 				this._initialize(); // triggers metadata/annotation check
@@ -460,29 +492,56 @@ sap.ui.define([
 	 *
 	 * @function
 	 * @name sap.ui.model.analytics.AnalyticalBinding.prototype.getRootContexts
-	 * @param {map}
-	 *            mParameters specifying how the top-most aggregation level shall be fetched. Supported parameters are:
-	 * <ul>
-	 * <li>numberOfExpandedLevels: number of child levels that shall be fetched automatically</li>
-	 * <li>startIndex: index of first entry to return from parent group ID <code>"/"</code> (zero-based)</li>
-	 * <li>length: number of entries to return at and after the given start index</li>
-	 * <li>threshold: number of additional entries that shall be locally available in the binding for subsequent
-	 * accesses to contexts of parent group ID <code>"/"</code> or below, if auto-expanding is selected</li>
-	 * </ul>
-	 * @return {array}
-	 *            Array with a single object of class sap.ui.model.Context for the root context,
-	 *            or an empty array if an OData request is pending to fetch requested contexts that are not yet locally available.
+	 * @param {object|int} mParameters
+	 *   Parameter map specifying how the topmost aggregation level shall be fetched. If this
+	 *   parameter map is set, the optional function parameters are ignored. Optionally, instead
+	 *   of a parameter map an integer value can be set to define the parameter
+	 *   <code>startIndex</code> as described in this parameter list. In this case, the function
+	 *   parameters <code>iLength</code>, <code>iNumberOfExpandedLevels</code> and
+	 *   <code>iThreshold</code> become mandatory.
+	 * @param {int} mParameters.length
+	 *   Number of entries to return at and after the given start index; defaults to the model's
+	 *   size limit, see {@link sap.ui.model.Model#setSizeLimit}
+	 * @param {int} mParameters.numberOfExpandedLevels
+	 *   Number of child levels that shall be fetched automatically
+	 * @param {int} mParameters.startIndex
+	 *   Index of first entry to return from parent group ID <code>"/"</code> (zero-based)
+	 * @param {int} mParameters.threshold
+	 *   Number of additional entries that shall be locally available in the binding for subsequent
+	 *   accesses to contexts of parent group ID <code>"/"</code> or below, if auto-expanding is
+	 *   selected
+	 * @param {int} [iLength]
+	 *   See documentation of the <code>length</code> parameter in the parameter list of
+	 *   <code>mParameters</code>
+	 * @param {int} [iNumberOfExpandedLevels=0]
+	 *   See documentation of the <code>numberOfExpandedLevels</code> parameter in the parameter
+	 *   list of <code>mParameters</code>
+	 * @param {int} [iThreshold=0]
+	 *   See documentation of the <code>threshold</code> parameter in the parameter list of
+	 *   <code>mParameters</code>
+	 * @return {sap.ui.model.Context[]}
+	 *   Array with a single object of class sap.ui.model.Context for the root context, or an empty
+	 *   array if an OData request is pending to fetch requested contexts that are not yet locally
+	 *   available.
 	 *
 	 * @public
 	 */
-	AnalyticalBinding.prototype.getRootContexts = function(mParameters) {
+	AnalyticalBinding.prototype.getRootContexts = function(mParameters, iLength,
+			iNumberOfExpandedLevels, iThreshold) {
+		if (typeof mParameters !== "object") {
+			mParameters = {
+				length : iLength,
+				numberOfExpandedLevels : iNumberOfExpandedLevels,
+				startIndex : mParameters,
+				threshold : iThreshold
+			};
+		}
 
 		if (this.isInitial()) {
 			return [];
 		}
 
 		var iAutoExpandGroupsToLevel = (mParameters && mParameters.numberOfExpandedLevels ? mParameters.numberOfExpandedLevels + 1 : 1);
-// 		this._trace_enter("API", "getRootContexts", "", mParameters, ["numberOfExpandedLevels", "startIndex","length","threshold"]); // DISABLED FOR PRODUCTION
 		var aRootContext = null;
 
 		var sRootContextGroupMembersRequestId = this._getRequestId(AnalyticalBinding._requestType.groupMembersQuery, {groupId: null});
@@ -490,12 +549,10 @@ sap.ui.define([
 		// if the root context is artificial (i.e. no grand total requested), then delay its return until all other related requests have been completed
 		if (this.bArtificalRootContext
 				&& !this._cleanupGroupingForCompletedRequest(sRootContextGroupMembersRequestId)) {
-// 			this._trace_leave("API", "getRootContexts", "delay until related requests have been completed"); // DISABLED FOR PRODUCTION
 			return aRootContext;
 		}
 		aRootContext = this._getContextsForParentContext(null);
 		if (aRootContext.length == 1) {
-// 			this._trace_leave("API", "getRootContexts", "", aRootContext, ["length"]); // DISABLED FOR PRODUCTION
 			return aRootContext;
 		}
 
@@ -522,14 +579,10 @@ sap.ui.define([
 				level : 0,
 				numberOfExpandedLevels : mParameters.numberOfExpandedLevels
 			});
-/*			jQuery.sap.log.fatal("not yet implemented: number of initially expanded levels may be 0 or 1, but not "
-					+ mParameters.numberOfExpandedLevels);
-*/
 		}
 		if (aRootContext.length > 1) {
-			jQuery.sap.log.fatal("assertion failed: grand total represented by a single entry");
+			oLogger.fatal("assertion failed: grand total represented by a single entry");
 		}
-// 		this._trace_leave("API", "getRootContexts", "", aRootContext, ["length"]); // DISABLED FOR PRODUCTION
 		return aRootContext;
 	};
 
@@ -544,18 +597,31 @@ sap.ui.define([
 	 *
 	 * @function
 	 * @name sap.ui.model.analytics.AnalyticalBinding.prototype.getNodeContexts
-	 * @param {map}
-	 *            mParameters specifying the aggregation level for which contexts shall be fetched. Supported parameters are:
-	 * <ul>
-	 * <li>oContext: parent context identifying the requested group of child contexts</li>
-	 * <li>level: level number for oContext, because it might occur at multiple levels; context with group ID <code>"/"</code> has level 0</li>
-	 * <li>numberOfExpandedLevels: number of child levels that shall be fetched automatically</li>
-	 * <li>startIndex: index of first child entry to return from the parent context (zero-based)</li>
-	 * <li>length: number of entries to return; counting begins at the given start index</li>
-	 * <li>threshold: number of additional entries that shall be locally available in the binding for subsequent
-	 * accesses to child entries of the given parent context. </li>
-	 * </ul>
-	 * @return {array}
+	 * @param {sap.ui.model.Context} oContext
+	 *            Parent context identifying the requested group of child contexts
+	 * @param {object|int} mParameters
+	 *            Parameters, specifying the aggregation level for which contexts shall be fetched
+	 *            or (legacy signature variant) index of first child entry to return from the parent context (zero-based)
+	 * @param {int} mParameters.level
+	 *            Level number for oContext, because it might occur at multiple levels; context with group ID <code>"/"</code> has level 0
+	 * @param {int} [mParameters.numberOfExpandedLevels=0]
+	 *            Number of child levels that shall be fetched automatically
+	 * @param {int} [mParameters.startIndex=0]
+	 *            Index of first child entry to return from the parent context (zero-based)
+	 * @param {int} [mParameters.length=<model size limit>]
+	 *            Number of entries to return; counting begins at the given start index
+	 * @param {int} [mParameters.threshold=0]
+	 *            Number of additional entries that shall be locally available in the binding for subsequent
+	 *            accesses to child entries of the given parent context
+	 * @param {int} [iLength=<model size limit>]
+	 *            Same meaning as <code>mParameters.length</code>, legacy signature variant only
+	 * @param {int} [iThreshold=0]
+	 *            Same meaning as <code>mParameters.threshold</code>, legacy signature variant only
+	 * @param {int} [iLevel]
+	 *            Same meaning as <code>mParameters.level</code>, legacy signature variant only
+	 * @param {int} [iNumberOfExpandedLevels=0]
+	 *            Same meaning as <code>mParameters.numberOfExpandedLevels</code>, legacy signature variant only
+	 * @returns {sap.ui.model.Context[]}
 	 *            Array containing the requested contexts of class sap.ui.model.Context, limited by the number of entries contained
 	 *            in the entity set at that aggregation level.
 	 *            The array will contain less than the requested number of contexts, if some are not locally available and an OData request is
@@ -569,7 +635,6 @@ sap.ui.define([
 			return [];
 		}
 
-// 		this._trace_enter("API", "getNodeContexts", "groupId=" + this._getGroupIdFromContext(oContext, mParameters.level), mParameters,["startIndex","length","threshold"]); // DISABLED FOR PRODUCTION
 		var iStartIndex, iLength, iThreshold, iLevel, iNumberOfExpandedLevels, bSupressRequest;
 		if (typeof mParameters == "object") {
 			iStartIndex = mParameters.startIndex;
@@ -588,7 +653,6 @@ sap.ui.define([
 		}
 
 		var aContext = this._getContextsForParentContext(oContext, iStartIndex, iLength, iThreshold, iLevel, iNumberOfExpandedLevels, bSupressRequest);
-// 		this._trace_leave("API", "getNodeContexts", "", aContext, ["length"]); // DISABLED FOR PRODUCTION
 		return aContext;
 	};
 
@@ -651,24 +715,35 @@ sap.ui.define([
 	};
 
 	/**
-	 * Gets the total number of entities in the bound OData entity set.
+	 * Gets the total number of leaves or <code>undefined</code> if this is unknown.
 	 *
-	 * Counting takes place at the lowest aggregation level defined by the possible value combinations for the complete set of
-	 * dimension properties included in the bound entity set. This means that intermediate aggregate entities with
-	 * sub-totals at higher aggregation levels are not counted.
-	 *
-	 * @function
-	 * @name sap.ui.model.analytics.AnalyticalBinding.prototype.getTotalSize
-	 * @return {int}
-	 *            the total number of addressed entities in the OData entity set
+	 * @return {number|undefined}
+	 *   The total number of leaves, or <code>undefined</code> if the number is not yet known or if
+	 *   the <code>provideTotalResultSize</code> binding parameter is set to <code>false</code>
 	 *
 	 * @public
+	 * @see sap.ui.model.odata.v4.ODataListBinding#getCount
+	 * @since 1.92.0
+	 */
+	AnalyticalBinding.prototype.getCount = function () {
+		return this.iTotalSize >= 0 ? this.iTotalSize : undefined;
+	};
+
+	/**
+	 * Gets the total number of leaves or <code>-1</code> if this is unknown.
+	 *
+	 * @return {number}
+	 *   The total number of leaves, or <code>-1</code> if the number is not yet known or if the
+	 *   binding parameter <code>provideTotalResultSize</code> is set to <code>false</code>
+	 *
+	 * @public
+	 * @deprecated Since 1.92 use {@link #getCount} instead
 	 */
 	AnalyticalBinding.prototype.getTotalSize = function() {
 		if (!this.bProvideTotalSize) {
-			jQuery.sap.log.fatal("total size of result explicitly turned off, but getter invoked");
+			oLogger.fatal("total size of result explicitly turned off, but getter invoked");
 		}
-		return +this.iTotalSize;
+		return this.iTotalSize;
 	};
 
 	/**
@@ -678,15 +753,19 @@ sap.ui.define([
 	 *
 	 * @function
 	 * @name sap.ui.model.analytics.AnalyticalBinding.prototype.hasChildren
-	 * @param {sap.ui.model.Context}
-	 *            oContext the parent context identifying the requested group of child contexts.
-	 * @param {map}
-	 *            mParameters The only supported parameter is level as the level number of oContext (because the context might occur at multiple levels)
+	 * @param {sap.ui.model.Context} oContext
+	 *   The parent context identifying the requested group of child contexts
+	 * @param {object} [mParameters]
+	 *   The only supported parameter is <code>level</code> as the level number of oContext (because
+	 *   the context might occur at multiple levels)
+	 * @param {int} [mParameters.level=1]
+	 *   The aggregation level number
 	 * @return {boolean}
-	 *            true if and only if the contexts in the specified group have further children.
+	 *   <code>true</code> if any of the contexts in the specified group has further children
 	 * @public
 	 */
 	AnalyticalBinding.prototype.hasChildren = function(oContext, mParameters) {
+		mParameters = mParameters || {level : 1};
 
 		if (oContext === undefined) {
 			return false; // API robustness
@@ -703,7 +782,7 @@ sap.ui.define([
 			return false;
 		}
 		// children exist if it is not the rightmost grouped column or there is at least one further level with an ungrouped groupable column.
-		return jQuery.inArray(this.aAggregationLevel[iContextLevel - 1], this.aMaxAggregationLevel) < this.aMaxAggregationLevel.length - 1;
+		return this.aMaxAggregationLevel.indexOf(this.aAggregationLevel[iContextLevel - 1]) < this.aMaxAggregationLevel.length - 1;
 	};
 
 	/**
@@ -732,7 +811,7 @@ sap.ui.define([
 	 *
 	 * @function
 	 * @name sap.ui.model.analytics.AnalyticalBinding.prototype.getDimensionDetails
-	 * @return {map}
+	 * @return {object}
 	 *            details for every dimension property addressed by its name. The details object provides these properties: name of the dimension,
 	 * keyPropertyName for the name of the property holding the dimension key, textPropertyName for the name of the property holding the
 	 * text for the dimension, aAttributeName listing all properties holding dimension attributes, grouped as indicator whether or not this
@@ -750,7 +829,7 @@ sap.ui.define([
 	 *
 	 * @function
 	 * @name sap.ui.model.analytics.AnalyticalBinding.prototype.getMeasureDetails
-	 * @return {map}
+	 * @return {object}
 	 *            details for every measure property addressed by its name. The details object provides these properties: name of the measure,
 	 * rawValuePropertyName for the name of the property holding the raw value, unitPropertyName for the name of the property holding the related
 	 * value unit or currency, if any, and analyticalInfo, which contains the binding information for this measure passed from the
@@ -898,7 +977,7 @@ sap.ui.define([
 	 * @public
 	 */
 	AnalyticalBinding.prototype.isMeasure = function(sPropertyName) {
-		return jQuery.inArray(sPropertyName, this.aMeasureName) !== -1;
+		return this.aMeasureName && this.aMeasureName.indexOf(sPropertyName) !== -1;
 	};
 
 	/**
@@ -913,7 +992,7 @@ sap.ui.define([
 	 *            aFilter an Array of sap.ui.model.Filter objects or a single Filter instance.
 	 * @param {sap.ui.model.FilterType}
 	 *            [sFilterType=sap.ui.model.FilterType.Control] Type of the filter which should be adjusted.
-	 * @return {sap.ui.model.analytics.AnalyticalBinding}
+	 * @return {this}
 	 *            returns <code>this</code> to facilitate method chaining
 	 *
  	 * @public
@@ -952,6 +1031,29 @@ sap.ui.define([
 	};
 
 	/**
+	 * Returns the filter information as an abstract syntax tree.
+	 * Consumers must not rely on the origin information to be available, future filter
+	 * implementations will not provide this information.
+	 *
+	 * @param {boolean} [bIncludeOrigin=false] whether to include information about the filter
+	 *   objects from which the tree has been created
+	 * @returns {object} The AST of the filter tree or null if no filters are set
+	 * @private
+	 * @ui5-restricted sap.ui.table, sap.ui.export
+	 */
+	//@override
+	AnalyticalBinding.prototype.getFilterInfo = function(bIncludeOrigin) {
+		var oCombinedFilter = FilterProcessor.combineFilters(this.aControlFilter,
+				this.aApplicationFilter);
+
+		if (oCombinedFilter) {
+			return oCombinedFilter.getAST(bIncludeOrigin);
+		}
+
+		return null;
+	};
+
+	/**
 	 * Sets sorters for retrieving the entities in the bound OData entity set in a specific order.
 	 *
 	 * Invoking this function resets the state of the binding. Subsequent data requests such as calls to getNodeContexts() will
@@ -961,7 +1063,7 @@ sap.ui.define([
 	 * @name sap.ui.model.analytics.AnalyticalBinding.prototype.sort
 	 * @param {sap.ui.model.Sorter|array}
 	 *            aSorter a sorter object or an array of sorter objects which define the sort order.
-	 * @return {sap.ui.model.analytics.AnalyticalBinding}
+	 * @return {this}
 	 *            returns <code>this</code> to facilitate method chaining.
 	 *
 	 * @public
@@ -1015,34 +1117,32 @@ sap.ui.define([
 			fValueFormatter = this.mAnalyticalInfoByProperty[sGroupProperty]
 				&& this.mAnalyticalInfoByProperty[sGroupProperty].formatter,
 			sPropertyValue = oContext.getProperty(sGroupProperty),
-			oTextProperty, sFormattedPropertyValue, sGroupName;
+			sFormattedPropertyValue, sFormattedTextPropertyValue, sGroupName, sLabelText,
+			oTextProperty, sTextProperty, sTextPropertyValue, fTextValueFormatter;
 
 		if (oDimension && this.oDimensionDetailsSet[sGroupProperty].textPropertyName) {
 			oTextProperty = oDimension.getTextProperty();
 		}
 
-		var sTextProperty, sTextPropertyValue, fTextValueFormatter;
 		if (oTextProperty) {
-			sTextProperty = oDimension.getTextProperty().name;
+			sTextProperty = oTextProperty.name;
 			// it might happen that text property is not contained in the UI
 			fTextValueFormatter = this.mAnalyticalInfoByProperty[sTextProperty]
 				&& this.mAnalyticalInfoByProperty[sTextProperty].formatter;
 			sTextPropertyValue = oContext.getProperty(sTextProperty);
-		}
+			sFormattedPropertyValue = fValueFormatter
+				? fValueFormatter(sPropertyValue, sTextPropertyValue) : sPropertyValue;
 
-		if (!oTextProperty) {
-			sFormattedPropertyValue = fValueFormatter ? fValueFormatter(sPropertyValue) : sPropertyValue;
-			sGroupName = (oDimension.getLabelText ? oDimension.getLabelText() + ': ' : '')
-				+ sFormattedPropertyValue;
+			sFormattedTextPropertyValue = fTextValueFormatter
+				? fTextValueFormatter(sTextPropertyValue, sPropertyValue) : sTextPropertyValue;
 		} else {
-			sFormattedPropertyValue = fValueFormatter ? fValueFormatter(sPropertyValue, sTextPropertyValue) : sPropertyValue;
-			sGroupName = (oDimension.getLabelText ? oDimension.getLabelText() + ': ' : '')
-				+ sFormattedPropertyValue;
-
-			var sFormattedTextPropertyValue = fTextValueFormatter ? fTextValueFormatter(sTextPropertyValue, sPropertyValue) : sTextPropertyValue;
-			if (sFormattedTextPropertyValue) {
-				sGroupName += ' - ' + sFormattedTextPropertyValue;
-			}
+			sFormattedPropertyValue = fValueFormatter
+				? fValueFormatter(sPropertyValue) : sPropertyValue;
+		}
+		sLabelText = oDimension.getLabelText && oDimension.getLabelText();
+		sGroupName = (sLabelText ? sLabelText + ': ' : '') + sFormattedPropertyValue;
+		if (sFormattedTextPropertyValue) {
+			sGroupName += ' - ' + sFormattedTextPropertyValue;
 		}
 
 		return sGroupName;
@@ -1051,46 +1151,58 @@ sap.ui.define([
 	/**
 	 * Updates the binding's structure with new analytical information.
 	 *
-	 * Analytical information is the mapping of UI columns to properties in the bound OData entity set. Every column object contains
-	 * the name of the bound property and in addition:
+	 * Analytical information is the mapping of UI columns to properties in the bound OData entity
+	 * set. Every column object contains the <code>name</code> of the bound property and in
+	 * addition:
 	 * <ol>
 	 *   <li>A column bound to a dimension property has further boolean properties:
 	 *     <ul>
-	 *       <li>grouped: dimension will be used for building groups</li>
-	 *       <li>visible: if the column is visible, values for the related property will be fetched from the OData service</li>
-	 *       <li>inResult: if the column is not visible, but declared to be part of the result, values for the related property
-	 *       will also be fetched from the OData service</li>
+	 *       <li>grouped: dimension is used for building groups</li>
+	 *       <li>inResult: if the column is not visible, but declared to be part of the result,
+	 *         values for the related property are also fetched from the OData service</li>
+	 *       <li>visible: if the column is visible, values for the related property are fetched from
+	 *         the OData service</li>
 	 *     </ul>
 	 *   </li>
 	 *   <li>A column bound to a measure property has further boolean properties:
 	 *     <ul>
-	 *       <li>total: totals and sub-totals will be provided for the measure at all aggregation levels</li>
+	 *       <li>inResult: if the column is not visible, but declared to be part of the result,
+	 *         values for the related property are also fetched from the OData service</li>
+	 *       <li>total: totals and sub-totals are provided for the measure at all aggregation
+	 *         levels</li>
+	 *       <li>visible: if the column is visible, values for the related property are fetched from
+	 *         the OData service</li>
 	 *     </ul>
 	 *   </li>
 	 *   <li>A column bound to a hierarchy property has further properties:
 	 *     <ul>
-	 *       <li>grouped: boolean value; indicates whether the hierarchy will be used for building
+	 *       <li>grouped: boolean value; indicates whether the hierarchy is used for building
 	 *           groups</li>
 	 *       <li>level: integer value; the hierarchy level is mandatory for at least one of those
-	 *           columns that represent the same hierarchy.</li>
+	 *           columns that represent the same hierarchy</li>
 	 *     </ul>
 	 *   </li>
 	 * </ol>
 	 *
-	 * Invoking this function resets the state of the binding and subsequent data requests such as calls to getNodeContexts() will
-	 * need to trigger OData requests in order to fetch the data that are in line with this analytical information.
+	 * Invoking this function resets the state of the binding and subsequent data requests such as
+	 * calls to getNodeContexts() trigger OData requests in order to fetch the data that are in line
+	 * with this analytical information.
 	 *
-	 * Please be aware that a call of this function might lead to additional back-end requests, as well as a control re-rendering later on.
+	 * Be aware that a call of this function might lead to additional back-end requests, as well as
+	 * a control re-rendering later on.
 	 * Whenever possible use the API of the analytical control, instead of relying on the binding.
 	 *
 	 * @function
 	 * @name sap.ui.model.analytics.AnalyticalBinding.prototype.updateAnalyticalInfo
-	 * @param {array}
-	 *            aColumns an array with objects holding the analytical information for every column, from left to right.
+	 * @param {object[]} aColumns
+	 *   An array with objects holding the analytical information for every column
+	 * @param {boolean} bForceChange
+	 *   Whether to fire a change event asynchronously even if columns didn't change
 	 * @protected
 	 */
 	AnalyticalBinding.prototype.updateAnalyticalInfo = function(aColumns, bForceChange) {
-		var oDimensionDetails,
+		var iDiff,
+			oDimensionDetails,
 			oEntityType,
 			aHierarchyProperties,
 			that = this;
@@ -1180,21 +1292,25 @@ sap.ui.define([
 		}
 
 		// check if something has changed --> deep equal on the column info objects, only 1 level "deep"
-		if (jQuery.sap.equal(this._aLastChangedAnalyticalInfo, aColumns)) {
-			if (bForceChange) {
+		iDiff = odata4analytics.helper.deepEqual(this._aLastChangedAnalyticalInfo, aColumns,
+			function (oColumn) { // only formatter changed
+				that.mAnalyticalInfoByProperty[oColumn.name].formatter = oColumn.formatter;
+			});
+		if (iDiff) {
+			// make a deep copy of the column definition, so we can ignore duplicate calls the next time, see above
+			// copy is necessary because the original analytical info will be changed and used internally, through out the binding "coding"
+			this._aLastChangedAnalyticalInfo = [];
+			for (var j = 0; j < aColumns.length; j++) {
+				this._aLastChangedAnalyticalInfo[j] = extend({}, aColumns[j]);
+			}
+		}
+		if (iDiff < 2) {
+			if (bForceChange || iDiff) {
 				setTimeout(function () {
 					this._fireChange({reason: ChangeReason.Change});
 				}.bind(this), 0);
 			}
 			return;
-		}
-
-		oEntityType = this.oAnalyticalQueryResult.getEntityType();
-		// make a deep copy of the column definition, so we can ignore duplicate calls the next time, see above
-		// copy is necessary because the original analytical info will be changed and used internally, through out the binding "coding"
-		this._aLastChangedAnalyticalInfo = [];
-		for (var j = 0; j < aColumns.length; j++) {
-			this._aLastChangedAnalyticalInfo[j] = jQuery.extend({}, aColumns[j]);
 		}
 
 		// parameter is an array with elements whose structure is defined by sap.ui.analytics.model.AnalyticalTable.prototype._getColumnInformation()
@@ -1220,6 +1336,7 @@ sap.ui.define([
 		// nodeExternalKeyName, nodeIDName, nodeLevelName, nodeTextName}
 		this.mHierarchyDetailsByName = {}; //
 
+		oEntityType = this.oAnalyticalQueryResult.getEntityType();
 		// process column settings for dimensions and measures part of the result or visible
 		for (var i = 0; i < aColumns.length; i++) {
 			// determine requested aggregation level from columns representing dimension-related properties
@@ -1239,8 +1356,8 @@ sap.ui.define([
 					}
 				}
 				if (aColumns[i].grouped == true) {
-					if (jQuery.inArray(oDimension.getName(), this.getSortablePropertyNames()) == -1) {
-						jQuery.sap.log.fatal("property " + oDimension.getName() + " must be sortable in order to be used as grouped dimension");
+					if (!this.getSortablePropertyNames() || this.getSortablePropertyNames().indexOf(oDimension.getName()) == -1) {
+						oLogger.fatal("property " + oDimension.getName() + " must be sortable in order to be used as grouped dimension");
 					}
 					oDimensionDetails.grouped = true;
 				}
@@ -1248,10 +1365,7 @@ sap.ui.define([
 				if (oDimension.getName() == aColumns[i].name) {
 					oDimensionDetails.keyPropertyName = aColumns[i].name;
 				}
-				var oTextProperty = oDimension.getTextProperty();
-				if (oTextProperty && oTextProperty.name == aColumns[i].name) {
-					oDimensionDetails.textPropertyName = aColumns[i].name;
-				}
+				AnalyticalBinding._updateDimensionDetailsTextProperty(oDimension, aColumns[i].name, oDimensionDetails);
 				if (oDimension.findAttributeByName(aColumns[i].name)) {
 					oDimensionDetails.aAttributeName.push(aColumns[i].name);
 				}
@@ -1291,9 +1405,9 @@ sap.ui.define([
 			var oHierarchyDetails = that.mHierarchyDetailsByName[sNodeIDName];
 			if (!("level" in oHierarchyDetails)) {
 				delete that.mHierarchyDetailsByName[sNodeIDName];
-				if (jQuery.sap.log.isLoggable(jQuery.sap.log.Level.INFO, sClassName)) {
-					jQuery.sap.log.info("No level specified for hierarchy node '" + sNodeIDName
-						+ "'; ignoring hierarchy", "", sClassName);
+				if (oLogger.isLoggable(Log.Level.INFO)) {
+					oLogger.info("No level specified for hierarchy node '" + sNodeIDName
+						+ "'; ignoring hierarchy", "");
 				}
 			} else if (!that.oDimensionDetailsSet[sNodeIDName]) {
 				// also add it as regular dimension, which is a precondition to integrate
@@ -1370,7 +1484,7 @@ sap.ui.define([
 	 *
 	 * @function
 	 * @name sap.ui.model.analytics.AnalyticalBinding.prototype.loadGroups
-	 * @param {map}
+	 * @param {Object<string,array>}
 	 *            mGroupIdRanges specifies index ranges of child contexts to be loaded for multiple groups identified by their ID. A group index range is
 	 *            given by an object consisting of startIndex, length, threshold. For every group ID, the map holds an array of such range objects.
 	 *
@@ -1393,7 +1507,6 @@ sap.ui.define([
 						oGroupIdRange.threshold);
 			}
 
-			// TODO check current code works, but it would be more natural if this _considerRequestGrouping would be outside of this loop
 			var aRequestId = [];
 			for (var j = -1, sGroupId2; (sGroupId2 = aGroupId[++j]) !== undefined; ) {
 				aRequestId.push(this._getRequestId(AnalyticalBinding._requestType.groupMembersQuery, {groupId: sGroupId2}));
@@ -1456,6 +1569,25 @@ sap.ui.define([
 	};
 
 	/**
+	 * Returns the version of the given OData model if the model is supported.
+	 *
+	 * @param {sap.ui.model.Model} oModel The OData model
+	 * @returns {number|null}
+	 *   The version of the OData model, e.g. <code>2</code>, or <code>null</code> if the model is not supported
+	 * @private
+	 */
+	AnalyticalBinding._getModelVersion = function (oModel) {
+		const sModelName = oModel.getMetadata().getName();
+		let iVersion = sModelName === "sap.ui.model.odata.v2.ODataModel" ? 2 : null;
+
+		/** @deprecated As of version 1.48.0 */
+		if (sModelName === "sap.ui.model.odata.ODataModel") {
+			iVersion = 1;
+		}
+		return iVersion;
+	};
+
+	/**
 	 * @private
 	 */
 	AnalyticalBinding.prototype._getContextsForParentContext = function(oParentContext, iStartIndex, iLength,
@@ -1493,7 +1625,7 @@ sap.ui.define([
 		if (this.mFinalLength[sParentGroupId] && this.mLength[sParentGroupId] < iStartIndex + iLength) {
 			iLength = this.mLength[sParentGroupId] - iStartIndex;
 			if (iLength < 0) {
-				jQuery.sap.log.fatal("invalid start index greater than total group length passed");
+				oLogger.fatal("invalid start index greater than total group length passed");
 			}
 		}
 
@@ -1506,12 +1638,12 @@ sap.ui.define([
 		}
 		if (sParentGroupId == null) {
 			if (iNumberOfExpandedLevels > 0) {
-				jQuery.sap.log.fatal("invalid request to determine nodes of root context");
+				oLogger.fatal("invalid request to determine nodes of root context");
 				return null;
 			}
 		} else {
 			if (this._getGroupIdLevel(sParentGroupId) >= this.aAggregationLevel.length && iNumberOfExpandedLevels > 0) {
-				jQuery.sap.log.fatal("invalid request to determine nodes of context with group ID " + sParentGroupId);
+				oLogger.fatal("invalid request to determine nodes of context with group ID " + sParentGroupId);
 				return null;
 			}
 			if (this._getGroupIdLevel(sParentGroupId) + iNumberOfExpandedLevels > this.aAggregationLevel.length) {
@@ -1553,7 +1685,11 @@ sap.ui.define([
 			aContext = this._getLoadedContextsForGroup(sParentGroupId, iStartIndex, iLength, bSupressRequest);
 			bLoadContexts = false;
 			if (!bSupressRequest) {
-				oGroupSection = this._calculateRequiredGroupSection(sParentGroupId, iStartIndex, iLength, iThreshold, aContext);
+				if (this._oWatermark && sParentGroupId === this._oWatermark.groupID) {
+					// use a large value, but do not omit $top, else GW might use a small default
+					iThreshold = 10000;
+				}
+				oGroupSection = this._calculateRequiredGroupSection(sParentGroupId, iStartIndex, iLength, iThreshold);
 				var bPreloadContexts = oGroupSection.length > 0 && iLength < oGroupSection.length;
 				bLoadContexts = (aContext.length != iLength
 								 && !(this.mFinalLength[sParentGroupId] && aContext.length >= this.mLength[sParentGroupId] - iStartIndex))
@@ -1589,7 +1725,8 @@ sap.ui.define([
 							this.aBatchRequestQueue.push([ AnalyticalBinding._requestType.groupMembersAutoExpansionQuery, sParentGroupId, oGroupExpansionFirstMissingMember, missingMemberCount, iNumberOfExpandedLevels ]);
 						}
 					} else { // ! bGroupLevelAutoExpansionIsActive
-						bExecuteRequest = !this._isRequestPending(this._getRequestId(AnalyticalBinding._requestType.groupMembersQuery, {groupId: sParentGroupId}));
+						bExecuteRequest = oGroupSection.length
+							&& !this._isRequestPending(this._getRequestId(AnalyticalBinding._requestType.groupMembersQuery, {groupId: sParentGroupId}));
 						if (bExecuteRequest) {
 							this.aBatchRequestQueue.push([ AnalyticalBinding._requestType.groupMembersQuery, sParentGroupId, oGroupSection.startIndex, oGroupSection.length ]);
 							aMembersRequestId = [ this._getRequestId(AnalyticalBinding._requestType.groupMembersQuery, {groupId: sParentGroupId}) ];
@@ -1620,7 +1757,8 @@ sap.ui.define([
 							oMemberRequestDetails = this._prepareGroupMembersAutoExpansionQueryRequest(AnalyticalBinding._requestType.groupMembersAutoExpansionQuery, sParentGroupId, oGroupExpansionFirstMissingMember, missingMemberCount, iNumberOfExpandedLevels);
 						}
 					} else { // ! bGroupLevelAutoExpansionIsActive
-						bExecuteRequest = !this._isRequestPending(this._getRequestId(AnalyticalBinding._requestType.groupMembersQuery, {groupId: sParentGroupId}));
+						bExecuteRequest = oGroupSection.length
+							&& !this._isRequestPending(this._getRequestId(AnalyticalBinding._requestType.groupMembersQuery, {groupId: sParentGroupId}));
 						if (bExecuteRequest) {
 							oMemberRequestDetails = this._prepareGroupMembersQueryRequest(AnalyticalBinding._requestType.groupMembersQuery, sParentGroupId, oGroupSection.startIndex, oGroupSection.length);
 							aMembersRequestId = [ oMemberRequestDetails.sRequestId ];
@@ -1673,8 +1811,8 @@ sap.ui.define([
 
 		aHierarchyKeys = Object.keys(this.mHierarchyDetailsByName);
 		if (aHierarchyKeys.length > 0 && sGroupId !== "/") {
-			jQuery.sap.log.error("Hierarchy cannot be requested for members of a group",
-				sGroupId, sClassName);
+			oLogger.error("Hierarchy cannot be requested for members of a group",
+				sGroupId);
 			return aHierarchyLevelFilters;
 		}
 
@@ -1758,7 +1896,7 @@ sap.ui.define([
 				break;
 			}
 			default:
-				jQuery.sap.log.fatal("unhandled request type " + aRequestQueue[i][0]);
+				oLogger.fatal("unhandled request type " + aRequestQueue[i][0]);
 				continue;
 			}
 		}
@@ -1890,7 +2028,7 @@ sap.ui.define([
 
 			for ( var sMeasureName in this.oMeasureDetailsSet) {
 				oMeasureDetails = this.oMeasureDetailsSet[sMeasureName];
-				if (!bIsLeafGroupsRequest && this.mAnalyticalInfoByProperty[sMeasureName].total == false) {
+				if (!bIsLeafGroupsRequest && this._isSkippingTotalForMeasure(sMeasureName)) {
 					bIncludeRawValue = false;
 					bIncludeFormattedValue = false;
 					bIncludeUnitProperty = false;
@@ -1900,7 +2038,7 @@ sap.ui.define([
 					bIncludeUnitProperty = (oMeasureDetails.unitPropertyName != undefined);
 					if (bIncludeUnitProperty) {
 						// remember unit property together with using measure raw value property for response analysis in success handler
-						if (jQuery.inArray(oMeasureDetails.unitPropertyName, aSelectedUnitPropertyName) == -1) {
+						if (aSelectedUnitPropertyName.indexOf(oMeasureDetails.unitPropertyName) == -1) {
 							aSelectedUnitPropertyName.push(oMeasureDetails.unitPropertyName);
 						}
 					}
@@ -1911,18 +2049,21 @@ sap.ui.define([
 			// exclude those unit properties from the selected that are included in the current aggregation level
 			for (var n in aAggregationLevelNoHierarchy) {
 				var iMatchingIndex;
-				if ((iMatchingIndex = jQuery.inArray(aAggregationLevelNoHierarchy[n], aSelectedUnitPropertyName)) != -1) {
+				if ((iMatchingIndex = aSelectedUnitPropertyName.indexOf(aAggregationLevelNoHierarchy[n])) != -1) {
 					aSelectedUnitPropertyName.splice(iMatchingIndex, 1);
 				}
 			}
 		}
 
 		// (6) set sort order
-		this._addSorters(oAnalyticalQueryRequest.getSortExpression(), aGroupingSorters);
+		// Prevent sorter for grand total request
+		if (sGroupId) {
+			this._addSorters(oAnalyticalQueryRequest.getSortExpression(), aGroupingSorters);
+		}
 
 		// (7) set result page boundaries
 		if (iLength == 0) {
-			jQuery.sap.log.fatal("unhandled case: load 0 entities of sub group");
+			oLogger.fatal("unhandled case: load 0 entities of sub group");
 		}
 		var oKeyIndexMapping = this._getKeyIndexMapping(sGroupId, iStartIndex);
 		if (!this.bNoPaging) {
@@ -2022,13 +2163,13 @@ sap.ui.define([
 			var aFilterArray = [];
 
 			if (oGroupExpansionFirstMissingMember.groupId_Missing == null) {
-				jQuery.sap.log.fatal("missing group Id not present");
+				oLogger.fatal("missing group Id not present");
 				return aFilterArray;
 			}
 			var aGroupIdComponents_Missing = that._getGroupIdComponents(oGroupExpansionFirstMissingMember.groupId_Missing);
 			var iGroupIdLevel_Missing = aGroupIdComponents_Missing.length;
 			if (iGroupIdLevel_Missing > iAutoExpandGroupsToLevel) {
-				jQuery.sap.log.fatal("the given group ID is too deep for requested level for auto expansion");
+				oLogger.fatal("the given group ID is too deep for requested level for auto expansion");
 				return aFilterArray;
 			}
 
@@ -2068,7 +2209,7 @@ sap.ui.define([
 					for (var iLevelCondition = 0; iLevelCondition < iNumberOfLevelConditions; iLevelCondition++) {
 						// create filter condition from template
 						var oFilterCondition = new Filter("x", FilterOperator.EQ, "x");
-						oFilterCondition = jQuery.extend(true, oFilterCondition, aTemplateFilter[iLevelCondition]);
+						oFilterCondition = deepExtend(oFilterCondition, aTemplateFilter[iLevelCondition]);
 
 						if (iNumberOfLevelConditions > 1 && iLevelCondition < iNumberOfLevelConditions - 1) {
 							oFilterCondition.sOperator = FilterOperator.EQ;
@@ -2095,7 +2236,7 @@ sap.ui.define([
 							var aStartIndexFilterCondition = [];
 							for (var j = 0; j < aIntermediateLevelFilterCondition.length; j++) {
 								var oConditionCopy = new Filter("x", FilterOperator.EQ, "x");
-								oConditionCopy = jQuery.extend(true, oConditionCopy, aIntermediateLevelFilterCondition[j]);
+								oConditionCopy = deepExtend(oConditionCopy, aIntermediateLevelFilterCondition[j]);
 								aStartIndexFilterCondition.push(oConditionCopy);
 							}
 							aStartIndexFilterCondition[iGroupIdLevel_Missing - 1].sOperator = FilterOperator.EQ; // (R2.1)
@@ -2150,7 +2291,8 @@ sap.ui.define([
 			// determine index range for aggregation levels included in child level
 			// (rule: take all lower levels up to and including the first grouped level; G3 in above example
 			if (that.aMaxAggregationLevel.length > 0) {
-				while (that.oDimensionDetailsSet[that.aMaxAggregationLevel[iChildGroupToLevel]].grouped == false) {
+				while (that.aMaxAggregationLevel[iChildGroupToLevel]
+						&& that.oDimensionDetailsSet[that.aMaxAggregationLevel[iChildGroupToLevel]].grouped == false) {
 					if (++iChildGroupToLevel == that.aMaxAggregationLevel.length) {
 						break;
 					}
@@ -2168,6 +2310,7 @@ sap.ui.define([
 			var aAggregationLevel = that.aMaxAggregationLevel.slice(0, iChildGroupToLevel + 1);
 			oAnalyticalQueryRequest.setAggregationLevel(aAggregationLevel);
 
+			const aGroupingSorters = [];
 			for (var l = 0; l < aAggregationLevel.length; l++) {
 				var oDimensionDetails = that.oDimensionDetailsSet[aAggregationLevel[l]];
 				var bIncludeText = (oDimensionDetails.textPropertyName != undefined);
@@ -2176,7 +2319,7 @@ sap.ui.define([
 
 				// define a default sort order in case no sort criteria have been provided externally
 				if (oDimensionDetails.grouped) {
-					oAnalyticalQueryRequest.getSortExpression().addSorter(aAggregationLevel[l], odata4analytics.SortOrder.Ascending);
+					aGroupingSorters.push(new Sorter(aAggregationLevel[l]));
 				}
 			}
 
@@ -2207,7 +2350,7 @@ sap.ui.define([
 
 			for ( var sMeasureName in that.oMeasureDetailsSet) {
 				oMeasureDetails = that.oMeasureDetailsSet[sMeasureName];
-				if (!bIsLeafGroupsRequest && that.mAnalyticalInfoByProperty[sMeasureName].total == false) {
+				if (!bIsLeafGroupsRequest && that._isSkippingTotalForMeasure(sMeasureName)) {
 					bIncludeRawValue = false;
 					bIncludeFormattedValue = false;
 					bIncludeUnitProperty = false;
@@ -2217,7 +2360,7 @@ sap.ui.define([
 					bIncludeUnitProperty = (oMeasureDetails.unitPropertyName != undefined);
 					if (bIncludeUnitProperty) {
 						// remember unit property together with using measure raw value property for response analysis in success handler
-						if (jQuery.inArray(oMeasureDetails.unitPropertyName, aSelectedUnitPropertyName) == -1) {
+						if (aSelectedUnitPropertyName.indexOf(oMeasureDetails.unitPropertyName) == -1) {
 							aSelectedUnitPropertyName.push(oMeasureDetails.unitPropertyName);
 						}
 					}
@@ -2228,22 +2371,17 @@ sap.ui.define([
 			// exclude those unit properties from the selected that are included in the current aggregation level
 			for ( var j in aAggregationLevel) {
 				var iMatchingIndex;
-				if ((iMatchingIndex = jQuery.inArray(aAggregationLevel[j], aSelectedUnitPropertyName)) != -1) {
+				if ((iMatchingIndex = aSelectedUnitPropertyName.indexOf(aAggregationLevel[j])) != -1) {
 					aSelectedUnitPropertyName.splice(iMatchingIndex, 1);
 				}
 			}
 
 			// (6) set sort order
-			var oSorter = oAnalyticalQueryRequest.getSortExpression();
-			for (var k = 0; k < that.aSorter.length; k++) {
-				if (that.aSorter[k]) {
-					oSorter.addSorter(that.aSorter[k].sPath, that.aSorter[k].bDescending ? odata4analytics.SortOrder.Descending : odata4analytics.SortOrder.Ascending);
-				}
-			}
+			that._mergeAndAddSorters(aGroupingSorters, oAnalyticalQueryRequest.getSortExpression());
 
 			// (7) set result page boundaries
 			if (iLength == 0) {
-				jQuery.sap.log.fatal("unhandled case: load 0 entities of sub group");
+				oLogger.fatal("unhandled case: load 0 entities of sub group");
 			}
 			var iEffectiveStartIndex = iStartIndex;
 			if (!bUseStartIndexForSkip) {
@@ -2262,7 +2400,8 @@ sap.ui.define([
 			}
 
 			if (!that.bNoPaging) {
-				oAnalyticalQueryRequest.setResultPageBoundaries(iEffectiveStartIndex + 1, iLength);
+				oAnalyticalQueryRequest.setResultPageBoundaries(iEffectiveStartIndex + 1,
+					iEffectiveStartIndex + iLength);
 			}
 
 			return {
@@ -2284,7 +2423,7 @@ sap.ui.define([
 		var aGroupMembersAutoExpansionRequestDetails = [];
 		var aRequestId = [];
 		if (!oGroupExpansionFirstMissingMember) {
-			jQuery.sap.log.fatal("no first missing group member specified");
+			oLogger.fatal("no first missing group member specified");
 		}
 		var iAutoExpandGroupsToLevel = this._getGroupIdLevel(sGroupId) + iNumberOfExpandedLevels + 1;
 		var aGroupIdComponents_Missing = that._getGroupIdComponents(oGroupExpansionFirstMissingMember.groupId_Missing);
@@ -2309,11 +2448,11 @@ sap.ui.define([
 				}
 				var sGroupIdAtParentLevel = this._getGroupIdAncestors(oGroupExpansionFirstMissingMember.groupId_Missing, -(iGroupIdLevel_Missing - iLevel + 1))[0];
 				if (!sGroupIdAtParentLevel) {
-					jQuery.sap.log.fatal("failed to determine group id at parent level; group ID = " + sGroupId + ", level = " + iLevel);
+					oLogger.fatal("failed to determine group id at parent level; group ID = " + sGroupId + ", level = " + iLevel);
 				}
 				iStartIndex = this._findKeyIndex(sGroupIdAtParentLevel, this.mEntityKey[sGroupIdAtLevel]);
 				if (iStartIndex == -1) {
-					jQuery.sap.log.fatal("failed to determine position of value " + sGroupIdAtLevel + " in group " + sGroupIdAtParentLevel);
+					oLogger.fatal("failed to determine position of value " + sGroupIdAtLevel + " in group " + sGroupIdAtParentLevel);
 				}
 				sGroupIdAtLevel = sGroupIdAtParentLevel;
 				iStartIndex++; // point to first missing position
@@ -2331,8 +2470,8 @@ sap.ui.define([
 				aGroupMembersAutoExpansionRequestDetails.push(oLevelMembersRequestDetails);
 				aRequestId.push(oLevelMembersRequestDetails.sRequestId);
 			} else if (oLevelFilter && oLevelFilter.aFilters.length > 0) {
-				if (!oLevelFilter._bMultiFilter || oLevelFilter.bAnd) { // TODO remove this test once impl got mature to get rid of access to internal member; it is a consistency check if break-up will deliver expected results...
-					jQuery.sap.log.fatal("level filter in wrong shape; cannot break it up");
+				if (!oLevelFilter._bMultiFilter || oLevelFilter.bAnd) {
+					oLogger.fatal("level filter in wrong shape; cannot break it up");
 				}
 				for (var i = 0; i < oLevelFilter.aFilters.length; i++) { // break up level filter into its tuple filters combined with logical OR
 					var oTupleFilter = oLevelFilter.aFilters[i];
@@ -2408,10 +2547,10 @@ sap.ui.define([
 
 		for ( var sMeasureName in this.oMeasureDetailsSet) {
 			oMeasureDetails = this.oMeasureDetailsSet[sMeasureName];
-			if (jQuery.inArray(oMeasureDetails.name, oMultiUnitRepresentative.aReloadMeasurePropertyName) == -1) {
+			if (!oMultiUnitRepresentative.aReloadMeasurePropertyName || oMultiUnitRepresentative.aReloadMeasurePropertyName.indexOf(oMeasureDetails.name) == -1) {
 				continue;
 			}
-			if (!bIsLeafGroupsRequest && this.mAnalyticalInfoByProperty[sMeasureName].total == false) {
+			if (!bIsLeafGroupsRequest && this._isSkippingTotalForMeasure(sMeasureName)) {
 				bIncludeRawValue = false;
 				bIncludeFormattedValue = false;
 				bIncludeUnitProperty = false;
@@ -2421,7 +2560,7 @@ sap.ui.define([
 				bIncludeUnitProperty = (oMeasureDetails.unitPropertyName != undefined);
 				if (bIncludeUnitProperty) {
 					// remember unit property together with using measure raw value property for response analysis in success handler
-					if (jQuery.inArray(oMeasureDetails.unitPropertyName, aSelectedUnitPropertyName) == -1) {
+					if (aSelectedUnitPropertyName.indexOf(oMeasureDetails.unitPropertyName) == -1) {
 						aSelectedUnitPropertyName.push(oMeasureDetails.unitPropertyName);
 					}
 				}
@@ -2432,7 +2571,7 @@ sap.ui.define([
 		// exclude those unit properties from the selected that are included in the current aggregation level
 		for ( var j in aAggregationLevel) {
 			var iMatchingIndex;
-			if ((iMatchingIndex = jQuery.inArray(aAggregationLevel[j], aSelectedUnitPropertyName)) != -1) {
+			if ((iMatchingIndex = aSelectedUnitPropertyName.indexOf(aAggregationLevel[j])) != -1) {
 				aSelectedUnitPropertyName.splice(iMatchingIndex, 1);
 			}
 		}
@@ -2464,9 +2603,11 @@ sap.ui.define([
 	};
 
 	/**
+	 * @param {object} oAnalyticalQueryRequest
 	 * @param {boolean} bAddAdditionalSelects
 	 *   Whether additional selects, computed from select binding parameter, shall be added to the
 	 *   $select query option.
+	 * @param {object} mParameters
 	 * @private
 	 */
 	AnalyticalBinding.prototype._getQueryODataRequestOptions = function(oAnalyticalQueryRequest,
@@ -2478,7 +2619,7 @@ sap.ui.define([
 		try {
 			oAnalyticalQueryRequest.getFilterExpression().checkValidity(); // fails if false
 		} catch (e) {
-			jQuery.sap.log.fatal("filter expression is not valid", e.toString());
+			oLogger.fatal("filter expression is not valid", e.toString());
 			return undefined;
 		}
 
@@ -2492,6 +2633,15 @@ sap.ui.define([
 		if (bAddAdditionalSelects && this.aAdditionalSelects.length > 0) {
 			sSelect = (sSelect ? sSelect.split(",") : [])
 				.concat(this.aAdditionalSelects).join(",");
+			const oAdditionalProperties = {};
+			this.aAdditionalSelects.forEach((sAdditionalSelect) => {
+				oAdditionalProperties[sAdditionalSelect] = true;
+			});
+			const sAdditionalOrderBy = oAnalyticalQueryRequest.getSortExpression()
+				.getURIOrderByOptionValue(oAdditionalProperties);
+			if (sAdditionalOrderBy) {
+				sOrderBy = sOrderBy ? sOrderBy + "," + sAdditionalOrderBy : sAdditionalOrderBy;
+			}
 		}
 
 		if (this.mParameters && this.mParameters["filter"]) {
@@ -2618,10 +2768,12 @@ sap.ui.define([
 				   where the set of all operations included in the batch request becomes known and this condition can be checked. */
 				this._registerNewRequest(oRequestDetails.sRequestId);
 
-				if (this.iModelVersion === AnalyticalVersionInfo.V1) {
+				/** @deprecated As of version 1.48.0 */
+				if (this.iModelVersion === 1) {
 					//V1 - use createBatchOperation
 					aBatchQueryRequest.push(this.oModel.createBatchOperation(sPath.replace(/\ /g, "%20"), "GET"));
-				}else if (this.iModelVersion === AnalyticalVersionInfo.V2) {
+				}
+				if (this.iModelVersion === 2) {
 					var aUrlParameters = this._getQueryODataRequestOptions(oAnalyticalQueryRequest,
 							oRequestDetails.bIsLeafGroupsRequest,  {encode: true});
 					if (this.sCustomParams) {
@@ -2642,8 +2794,7 @@ sap.ui.define([
 
 		//var iRequestHandleId = this._getIdForNewRequestHandle();
 		if (aBatchQueryRequest.length > 0) {
-			jQuery.sap.log.debug("AnalyticalBinding: executing batch request with " + aExecutedRequestDetails.length + " operations");
-//			this._trace_message("ReqExec", "submitting batch with " + aExecutedRequestDetails.length + " operations");
+			oLogger.debug("AnalyticalBinding: executing batch request with " + aExecutedRequestDetails.length + " operations");
 
 			var oBatchRequestHandle;
 
@@ -2652,7 +2803,8 @@ sap.ui.define([
 			// fire events to indicate sending of a new request
 			this.fireDataRequested();
 
-			if (this.iModelVersion === AnalyticalVersionInfo.V1) {
+			/** @deprecated As of version 1.48.0 */
+			if (this.iModelVersion === 1) {
 				this.oModel.addBatchReadOperations(aBatchQueryRequest);
 				oBatchRequestHandle = this.oModel.submitBatch(fnSuccess, fnError, true, true);
 
@@ -2660,7 +2812,8 @@ sap.ui.define([
 					info: "",
 					infoObject : {}
 				});
-			} else {
+			}
+			if (this.iModelVersion === 2) {
 				// fake a uniform request handle, so the original code works with the v2 ODataModel
 				// the v2 model does not return an overall request handle for the batch request
 				oBatchRequestHandle = {
@@ -2688,7 +2841,7 @@ sap.ui.define([
 			that._deregisterHandleOfCompletedRequest(iRequestHandleId);
 
 			if (aExecutedRequestDetails.length != oData.__batchResponses.length) {
-				jQuery.sap.log.fatal("assertion failed: received " + oData.__batchResponses.length
+				oLogger.fatal("assertion failed: received " + oData.__batchResponses.length
 						+ " responses for " + aExecutedRequestDetails.length + " read operations in the batch request");
 			}
 
@@ -2726,7 +2879,7 @@ sap.ui.define([
 							that._processReloadMeasurePropertiesQueryResponse(aExecutedRequestDetails[k], oData.__batchResponses[k].data);
 							break;
 						default:
-							jQuery.sap.log.fatal("invalid request type " + aExecutedRequestDetails[k].iRequestType);
+							oLogger.fatal("invalid request type " + aExecutedRequestDetails[k].iRequestType);
 							continue;
 					}
 				}
@@ -2742,18 +2895,15 @@ sap.ui.define([
 				}
 			}
 
-			// determine the logical success status: true iff all operations succeeded
-			var bOverallSuccess = true;
-			var aBatchErrors;
-
 			// raise event here since there is no separate fnCompleted handler for batch requests
 			that.fireDataReceived({data: oData});
 
-			//check for possible V1 errors
-			var oV1Errors = {};
-			if (that.iModelVersion === AnalyticalVersionInfo.V1) {
+			/** @deprecated As of version 1.48.0 */
+			if (that.iModelVersion === 1) {
+				let bOverallSuccess = true; // determine the logical success status: true iff all operations succeeded
+				let oV1Errors = {}; // check for possible V1 errors
 				// retrieve the errors from the model and reset the success flag
-				aBatchErrors = that.oModel._getBatchErrors(oData);
+				const aBatchErrors = that.oModel._getBatchErrors(oData);
 				if (aBatchErrors.length > 0) {
 					bOverallSuccess = false;
 					oV1Errors = that.oModel._handleError(aBatchErrors[0]);
@@ -2785,13 +2935,15 @@ sap.ui.define([
 				}
 			}
 			if (iCurrentAnalyticalInfoVersion != that.iAnalyticalInfoVersionNumber) {
-				// discard responses for outdated analytical infos
+				// discard responses for outdated analytical infos but fire dataReceived event
+				// because it is expected that dataRequested and dataReceived events are sent as pairs
+				that.fireDataReceived();
 				return;
 			}
 
-			var oV1Error = oError;
-			if (that.iModelVersion === AnalyticalVersionInfo.V1) {
-				oV1Error = that.oModel._handleError(oError);
+			/** @deprecated As of version 1.48.0 */
+			if (that.iModelVersion === 1) {
+				oError = that.oModel._handleError(oError);
 			}
 
 			// fire event to indicate completion of request
@@ -2799,13 +2951,13 @@ sap.ui.define([
 				info: "",
 				infoObject : {},
 				success: false,
-				errorobject: oV1Error});
+				errorobject: oError});
 
-			// Legacy Code: Unsure if this is need for OData V1 Model...
-			if (that.iModelVersion === AnalyticalVersionInfo.V1) {
-				that.oModel.fireRequestFailed(oV1Error);
+			/** @deprecated As of version 1.48.0 */
+			if (that.iModelVersion === 1) {
+				// Legacy Code: Unsure if this is need for OData V1 Model...
+				that.oModel.fireRequestFailed(oError);
 			}
-
 			that.fireDataReceived();
 		}
 	};
@@ -2848,7 +3000,7 @@ sap.ui.define([
 			this.mServiceFinalLength[sGroupId] = true;
 			this._setServiceKey(this._getKeyIndexMapping(sGroupId, 0), AnalyticalBinding._artificialRootContextGroupId);
 			this.bNeedsUpdate = true;
-			// simulate the async behavior for the root context in case of having no sums (TODO: reconsider!)
+			// simulate the async behavior for the root context in case of having no sums
 			setTimeout(function() {
 				if (that._cleanupGroupingForCompletedRequest(oRequestDetails.sRequestId)) {
 					that.fireDataReceived({__simulateAsyncAnalyticalBinding: true});
@@ -2864,17 +3016,19 @@ sap.ui.define([
 		for (var j = 0; j < aParam.length; j++) {
 			aParam[j] = aParam[j].replace(/\ /g, "%20");
 		}
-		jQuery.sap.log.debug("AnalyticalBinding: executing query request");
+		oLogger.debug("AnalyticalBinding: executing query request");
 
 		var iRequestHandleId = this._getIdForNewRequestHandle();
-		if (this.iModelVersion === AnalyticalVersionInfo.V1) {
+		/** @deprecated As of version 1.48.0 */
+		if (this.iModelVersion === 1) {
 			//trigger data loading, the request handle is registered during the fnHandleUpdate callback, used by the V1 model
 			this.oModel._loadData(sPath, aParam, fnSuccess, fnError, false, fnUpdateHandle, fnCompleted);
-		} else {
+		}
+		if (this.iModelVersion === 2) {
 			if (this.sCustomParams) {
 				aParam.push(this.sCustomParams);
 			}
-			var oRequestHandle = this.oModel.read(sPath, {
+			var oRequestHandle = this.oModel.read(sPath.replace(/ /g, "%20"), {
 				success: fnSuccess,
 				error: fnError,
 				context: this.oContext,
@@ -2906,7 +3060,7 @@ sap.ui.define([
 					that._processReloadMeasurePropertiesQueryResponse(oRequestDetails, oData);
 					break;
 				default:
-					jQuery.sap.log.fatal("invalid request type " + oRequestDetails.iRequestType);
+					oLogger.fatal("invalid request type " + oRequestDetails.iRequestType);
 					break;
 			}
 			that._deregisterCompletedRequest(oRequestDetails.sRequestId);
@@ -2914,7 +3068,7 @@ sap.ui.define([
 			// with ODataModel V2, the completed function is not called by the model anymore
 			// the correct moment to clean up is after the success handler
 			// the error handler takes care of this itself
-			if (that.iModelVersion === AnalyticalVersionInfo.V2) {
+			if (that.iModelVersion === 2) {
 				fnCompleted(oData);
 			}
 		}
@@ -2982,8 +3136,6 @@ sap.ui.define([
 			bLastServiceKeyWasNew,
 			oReloadMeasuresRequestDetails, aReloadMeasuresRequestDetails = [];
 
-// 		this._trace_enter("ReqExec", "_processGroupMembersQueryResponse", "groupId=" + oRequestDetails.sGroupId, { startIndex: iStartIndex, serviceStartIndex: iServiceStartIndex, length: iLength, resultCount: oData.__count, resultLength: oData.results.length }, ["startIndex","serviceStartIndex","length","resultCount","resultLength"]); // DISABLED FOR PRODUCTION
-
 		// entry at start position may be a multi-unit entry w.r.t. entry at position before
 		// prepare merging with this preceding entry
 		var iODataResultsLength = oData.results.length;
@@ -3033,7 +3185,6 @@ sap.ui.define([
 						if (h == 0) { // adjust indexes such that the entry at position before is covered
 							iFirstMatchingEntryIndex = -aPreviousEntryServiceKey.length;
 							oKeyIndexMapping.iServiceKeyIndex -= aPreviousEntryServiceKey.length - 1; // must point to the second entry with the same dimension key
-// 							// this._trace_debug_if(aPreviousEntryServiceKey.length > 1,"one or more loaded entries will get merged with preceding multi-unit entry");
 						} else {
 							iFirstMatchingEntryIndex = h - 1;
 						}
@@ -3046,16 +3197,11 @@ sap.ui.define([
 						}
 					}
 					if (iDeviatingUnitPropertyNameIndex == -1) {
-// 						this._trace_debug_if(true, "assertion failed: no deviating units found for result entries " + (h - 1) + " and " + h);
-						jQuery.sap.log.fatal("assertion failed: no deviating units found for result entries " + (h - 1) + " and " + h, null, null, createSupportInfo(this, "NO_DEVIATING_UNITS"));
+						oLogger.fatal("assertion failed: no deviating units found for result entries " + (h - 1) + " and " + h, null, null, createSupportInfo(this, "NO_DEVIATING_UNITS"));
 					}
 				}
 				if ((sPreviousEntryDimensionKeyString != sDimensionKeyString || h == iODataResultsLength - 1)
 						&& iFirstMatchingEntryIndex !== undefined) { // after sequence of identical entries or if processing the last result entry (the set iFirstMatchingEntryIndex indicates the multi-unit case)
-/* multi-unit verification: remember if a multi-unit occurrence is found */
-/*start code block*
-					this.bFoundMU = true;
-*end code block*/
 					// collect all related result entries for this multi-unit entity and set the keys
 					var aMultiUnitEntry = [];
 					for (var l = iFirstMatchingEntryIndex; l < h; l++) {
@@ -3099,14 +3245,9 @@ sap.ui.define([
 						bLastServiceKeyWasNew = false;
 					}
 					if (iMultiUnitEntryDiscardedEntriesCount < 0) {
-// 						this._trace_debug_if(iDiscardedEntriesCount < 0, "assertion failed: iDiscardedEntriesCount must be non-negative");
-						jQuery.sap.log.fatal("assertion failed: iDiscardedEntriesCount must be non-negative");
+						oLogger.fatal("assertion failed: iDiscardedEntriesCount must be non-negative");
 					}
 					iDiscardedEntriesCount += iMultiUnitEntryDiscardedEntriesCount;
-/* multi-unit verification: remember multi-unit key */
-/*start code block*
-					this.bNewMUKey = oMultiUnitRepresentative.bIsNewEntry;
-*end code block*/
 					// adjust mEntityKey for detected and handled multi-unit situation
 					var sMultiUnitKey = this.oModel._getKey(oMultiUnitRepresentative.oEntry);
 					var oMultiUnitContext = this.oModel.getContext('/' + sMultiUnitKey);
@@ -3123,10 +3264,6 @@ sap.ui.define([
 				} else if (sPreviousEntryDimensionKeyString != sDimensionKeyString) {
 					bLastServiceKeyWasNew = this._setServiceKey(oKeyIndexMapping, this.oModel._getKey(oEntry));
 				}
-/* multi-unit verification: remember if differend dimensions are involved - needed for correct index calculation */
-/*start code block*
-				this.bDiffDims = (sPreviousEntryDimensionKeyString != sDimensionKeyString);
-*end code block*/
 				sPreviousEntryDimensionKeyString = sDimensionKeyString;
 			} else {
 				this._setServiceKey(oKeyIndexMapping, this.oModel._getKey(oEntry));
@@ -3137,76 +3274,9 @@ sap.ui.define([
 				var sLastEntryKey = this._getKey(sGroupId, oKeyIndexMapping.iIndex - 1);
 
 				sEntryGroupId = this._getGroupIdFromContext(this.oModel.getContext('/' + sLastEntryKey), iGroupMembersLevel);
-/* during development only
-				if (this.mEntityKey[sEntryGroupId]) {
-					if (this.mEntityKey[sEntryGroupId] != sLastEntryKey)
-						// Such errors will occur in case repeated calls for same groups with providers returned unstable entity keys
-						// E.g., HANA/XS does not provide stable keys. As s
-						// As soon as repetitive calls are avoided, such errors will vanish as well
-						jQuery.sap.log.debug("unstable keys detected: group ID " + sEntryGroupId + " does not have a unique entity key");
-				}
-*/
 				this.mEntityKey[sEntryGroupId] = sLastEntryKey;
 			}
-/* multi-unit verification: collect the cumulated number of discarded entries in a separate member array for analysis --- see below */
-/*start code block*
-			if (this.aDiscCount === undefined)	{
-				this.aDiscCount = [];
-				this.aCheckDiscCount = [];
-			}
-			if (h == 0) {
-				this.aDiscCount = [];
-				this.aCheckDiscCount = [];
-			}
-
-			if (this.bFoundMU) {
-				if (this.bDiffDims) {
-					this.aDiscCount[oKeyIndexMapping.iIndex - 2] = iDiscardedEntriesCount;
-					this.aDiscCount[oKeyIndexMapping.iIndex - 1] = iDiscardedEntriesCount;
-					this.aCheckDiscCount[oKeyIndexMapping.iIndex - 2] = this.bNewMUKey;
-				} else {
-					this.aDiscCount[oKeyIndexMapping.iIndex - 1] = iDiscardedEntriesCount;
-					this.aCheckDiscCount[oKeyIndexMapping.iIndex - 1] = this.bNewMUKey;
-				}
-				this.bFoundMU = false;
-				this.bDiffDims = false;
-				this.bNewMUKey = false;
-			} else {
-				this.aDiscCount[oKeyIndexMapping.iIndex - 1] = iDiscardedEntriesCount;
-			}
-*end code block*/
 		}
-/* multi-unit verification: perform check between created service indexes and count of discarded service entities */
-/*start code block*
-* eslint-disable no-debugger, no-unused-vars, no-empty *
-		for (var chkIndex = iStartIndex, iMaxIndex = oKeyIndexMapping.iIndex - 1; chkIndex <= iMaxIndex; chkIndex++) {
-			if (! this.aCheckDiscCount[chkIndex]) {
-				continue;
-			}
-			var iKeyIndex = this.mKeyIndex[sGroupId][chkIndex];
-			var iDiscCountAtChkIndex = this.aDiscCount[chkIndex];
-			var iDiscCountAtBefore = this.aDiscCount[chkIndex - 1] !== undefined ? this.aDiscCount[chkIndex - 1] : 0;
-			if (iKeyIndex >= 0) {
-// 				this._trace_debug_if(iDiscCountAtChkIndex - iDiscCountAtBefore != 0, "assertion failed: disc count == 0 at key index = " + (chkIndex));
-			} else {
-				if (iKeyIndex == "ZERO") {
-					iKeyIndex = 0;
-				}
-				var iNextKeyIndex = this.mKeyIndex[sGroupId][chkIndex + 1];
-				if (iNextKeyIndex !== undefined) {
-					var iDistanceToNextKeyIndex = Math.abs(iNextKeyIndex) - Math.abs(iKeyIndex);
-// 					this._trace_debug_if(iDistanceToNextKeyIndex - 1 != iDiscCountAtChkIndex - iDiscCountAtBefore, "assertion failed: disc count exp = " + (iDistanceToNextKeyIndex - 1) + ", but got " + (iDiscCountAtChkIndex - iDiscCountAtBefore) + " at key index = " + (chkIndex));
-				} else {
-					var cnt = 0, ii = Math.abs(iKeyIndex);
-					while (this.mServiceKey[sGroupId][ii++] !== undefined) {
-						cnt++;
-					}
-// 					this._trace_debug_if(cnt - 1 != iDiscCountAtChkIndex - iDiscCountAtBefore, "assertion failed: disc count exp = " + (cnt - 1) + ", but got " + (iDiscCountAtChkIndex - iDiscCountAtBefore) + " at key index = " + (chkIndex));
-				}
-			}
-		}
-* eslint-enable no-debugger *
-*end code block*/
 		// if any new requests have been created for reloading single-unit measures, execute and group them to get a single update event for them
 		var aReloadMeasureRequestId = [];
 		if (this.bReloadSingleUnitMeasures && aReloadMeasuresRequestDetails.length > 0) {
@@ -3239,24 +3309,23 @@ sap.ui.define([
 			iDiscardedEntriesCount += this._mergeLoadedKeyIndexWithSubsequentIndexes(oKeyIndexMapping, aAggregationLevel, aSelectedUnitPropertyName, oRequestDetails.bIsFlatListRequest);
 		}
 
-// 		this._trace_message("ReqExec", "", { servicelengthBefore: this.mServiceLength[sGroupId], lengthBefore: this.mLength[sGroupId], discardedEntriesCount: iDiscardedEntriesCount}, ["servicelengthBefore", "lengthBefore", "discardedEntriesCount"]);
 		// update group length
 		if (!oRequestDetails.bAvoidLengthUpdate) {
 			var bNewLengthSet = false;
 
 			if (oData.__count) {
-				this.mServiceLength[sGroupId] = parseInt(oData.__count, 10);
+				this.mServiceLength[sGroupId] = parseInt(oData.__count);
 				this.mLength[sGroupId] = this.mServiceLength[sGroupId] - iDiscardedEntriesCount;
 				this.mFinalLength[sGroupId] = true;
 
 				if (oRequestDetails.bIsFlatListRequest) {
-					this.iTotalSize = oData.__count;
+					this.iTotalSize = this.mServiceLength[sGroupId];
 				}
 				bNewLengthSet = true;
 			}
 
 			// if we got data and the results + startindex is larger than the length we just apply this value to the length
-			if (this.mServiceLength[sGroupId] < iServiceStartIndex + iODataResultsLength) {
+			if (!(sGroupId in this.mServiceLength) || this.mServiceLength[sGroupId] < iServiceStartIndex + iODataResultsLength) {
 				this.mServiceLength[sGroupId] = iServiceStartIndex + iODataResultsLength;
 				this.mLength[sGroupId] = iStartIndex + iODataResultsLength - iDiscardedEntriesCount;
 				this.mFinalLength[sGroupId] = false;
@@ -3281,7 +3350,6 @@ sap.ui.define([
 				this.mLength[sGroupId] -= iDiscardedEntriesCount;
 			}
 		}
-// 		this._trace_message("ReqExec", "", { servicelengthAfter: this.mServiceLength[sGroupId], lengthAfter: this.mLength[sGroupId]}, ["servicelengthAfter", "lengthAfter"]);
 
 		this.bNeedsUpdate = true;
 
@@ -3300,49 +3368,20 @@ sap.ui.define([
 			}
 		}
 		// #TH
-		jQuery.sap.log.info("MultiUnit Situation in Group (" + sGroupId + "), discarded: " + iDiscardedEntriesCount + ", load-factor is now: " + this.aMultiUnitLoadFactor[aAggregationLevel.length]);
-// 		this._trace_debug_if(this.iMultiUnitLoadFactor < 1, "load factor cannot be lower than 1!");
+		oLogger.info("MultiUnit Situation in Group (" + sGroupId + "), discarded: " + iDiscardedEntriesCount + ", load-factor is now: " + this.aMultiUnitLoadFactor[aAggregationLevel.length]);
 
-/* multi-unit verification: check length of loaded data with colected cumulated discarded counts */
-/*start code block*
-		this._checkLength(sGroupId, iStartIndex);
-*end code block*/
 
-// 		this._trace_leave("ReqExec", "_processGroupMembersQueryResponse", "", { lastLoadedIndex: oKeyIndexMapping.iIndex - 1, lastLoadedServiceIndex: oKeyIndexMapping.iServiceKeyIndex - 1, discardedEntriesCount: iDiscardedEntriesCount, multiUnitLoadFactor: this.aMultiUnitLoadFactor[aAggregationLevel.length] }, ["lastLoadedIndex","lastLoadedServiceIndex","discardedEntriesCount","multiUnitLoadFactor"]); // DISABLED FOR PRODUCTION
 	};
-
-/* multi-unit verification: check length of loaded data with colected cumulated discarded counts */
-/*start code block*
-* eslint-disable no-debugger *
-	AnalyticalBinding.prototype._checkLength = function(sGroupId, iStartIndex) {
-		var aKeyIndex = this.mKeyIndex[sGroupId];
-		var count = this.mServiceLength[sGroupId];
-		for (var i = iStartIndex, iMaxIndex = this.aDiscCount.length; i < iMaxIndex; i++) {
-			if (! this.aCheckDiscCount[i]) {
-				continue;
-			}
-			if (aKeyIndex[i] < 0 || aKeyIndex[i] == "ZERO") {
-				var aServiceKey = this._getServiceKeys(sGroupId, i);
-// 				this._trace_debug_if(!aServiceKey, "failed: no service keys found!?");
-				var iDiscCountAtChkIndex = this.aDiscCount[i];
-				var iDiscCountAtBefore = this.aDiscCount[i - 1] !== undefined ? this.aDiscCount[i - 1] : 0;
-// 				this._trace_debug_if(iDiscCountAtChkIndex - iDiscCountAtBefore != aServiceKey.length - 1, "mismatch: entry at pos " + (i) + " has " + (aServiceKey.length - 1) + " service keys, but discCount is " + (iDiscCountAtChkIndex - iDiscCountAtBefore));
-				count -= aServiceKey.length - 1; // useless..., because we do not check from 0, but from startIndex
-			}
-		}
-	};
-* eslint-enable no-debugger *
-*end code block*/
 
 	/**
 	 * @private
 	 */
 	AnalyticalBinding.prototype._processTotalSizeQueryResponse = function(oRequestDetails, oData) {
 		if (oData.__count == undefined) {
-			jQuery.sap.log.fatal("missing entity count in query result");
+			oLogger.fatal("missing entity count in query result");
 			return;
 		}
-		this.iTotalSize = oData.__count;
+		this.iTotalSize = parseInt(oData.__count);
 	};
 
 	/**
@@ -3377,14 +3416,16 @@ sap.ui.define([
 				// pendant to bIncompleteGroupMembersSet: set the finalLength of the previous group
 				var sParentGroupId = that._getParentGroupId(oGroupMembersRequestDetails.sGroupId);
 				var iPositionInParentGroup = that._findKeyIndex(sParentGroupId, that.mEntityKey[oGroupMembersRequestDetails.sGroupId]);
-				if (iPositionInParentGroup == -1) {
-					jQuery.sap.log.fatal("assertion failed: failed to determine position of " + oGroupMembersRequestDetails.sGroupId + " in group " + sParentGroupId);
-				}
-				if (iPositionInParentGroup > 0 && that._getKey(sParentGroupId, iPositionInParentGroup - 1) !== undefined) {
+				if (iPositionInParentGroup < 0) {
+					oLogger.fatal("assertion failed: failed to determine position of " + oGroupMembersRequestDetails.sGroupId + " in group " + sParentGroupId);
+				} else if (!iPositionInParentGroup) {
+					that.mFinalLength[oRequestDetails.sGroupId_Missing_AtLevel] = true;
+					// iStartIndex must be reset to 0, because a new group starts
+					oGroupMembersRequestDetails.iStartIndex = 0;
+				} else if (that._getKey(sParentGroupId, iPositionInParentGroup - 1) !== undefined) {
 					var sPreviousGroupMemberKey = that._getKey(sParentGroupId, iPositionInParentGroup - 1);
 					var sPreviousGroupId = that._getGroupIdFromContext(that.oModel.getContext('/' + sPreviousGroupMemberKey),
 							that._getGroupIdLevel(oGroupMembersRequestDetails.sGroupId));
-					// only for development - if (that.mFinalLength[sPreviousGroupId]) jQuery.sap.log.fatal("assertion failed that final length of previous group id is false");
 					// the final length of the previous must be set to true
 					that.mFinalLength[sPreviousGroupId] = true;
 					// and iStartIndex must be reset to 0, because a new group starts
@@ -3397,7 +3438,7 @@ sap.ui.define([
 				oGroupMembersRequestDetails.iLength = aParentGroupODataResult.length;
 			}
 			oGroupMembersRequestDetails.oKeyIndexMapping = that._getKeyIndexMapping(oGroupMembersRequestDetails.sGroupId, oGroupMembersRequestDetails.iStartIndex);
-			var oParentGroupOData = jQuery.extend(true, {}, oData);
+			var oParentGroupOData = deepExtend({}, oData);
 			oParentGroupOData.results = aParentGroupODataResult;
 			that._processGroupMembersQueryResponse(oGroupMembersRequestDetails, oParentGroupOData);
 		};
@@ -3405,6 +3446,7 @@ sap.ui.define([
 		// function implementation starts here
 
 		if (oData.results.length == 0) {
+			this.bNeedsUpdate = true;
 			return;
 		}
 		// Collecting contexts
@@ -3445,26 +3487,22 @@ sap.ui.define([
 	AnalyticalBinding.prototype._processReloadMeasurePropertiesQueryResponse = function(oRequestDetails, oData) {
 		var oMultiUnitRepresentative = oRequestDetails.oMultiUnitRepresentative;
 		var sMultiUnitEntryKey = this.oModel.getKey(oMultiUnitRepresentative.oEntry);
-// 		this._trace_enter("ReqExec", "_processReloadMeasurePropertiesQueryResponse", "multi-unit key=" + sMultiUnitEntryKey); // DISABLED FOR PRODUCTION
 
 		if (oData.results.length != 1) {
-// 			this._trace_debug_if(true, "assertion failed: more than one entity for reloaded measure properties of entity with key " + sMultiUnitEntryKey);
-			jQuery.sap.log.fatal("assertion failed: more than one entity for reloaded measure properties of entity with key " + sMultiUnitEntryKey);
+			oLogger.fatal("assertion failed: more than one entity for reloaded measure properties of entity with key " + sMultiUnitEntryKey);
 			return;
 		}
 
 		var oReloadedEntry = oData.results[0];
 		var oMultiUnitEntry = this.oModel.getObject("/" + sMultiUnitEntryKey);
 		if (!oMultiUnitEntry) {
-			jQuery.sap.log.fatal("assertion failed: no entity found with key " + sMultiUnitEntryKey);
+			oLogger.fatal("assertion failed: no entity found with key " + sMultiUnitEntryKey);
 			return;
 		}
 		var aMeasureName = oMultiUnitRepresentative.aReloadMeasurePropertyName;
 		for (var i = 0; i < aMeasureName.length; i++) {
-// 			this._trace_debug_if(oReloadedEntry[aMeasureName[i]] === undefined || oReloadedEntry[aMeasureName[i]] == "", "no value for reloaded measure property");
 			oMultiUnitEntry[aMeasureName[i]] = oReloadedEntry[aMeasureName[i]];
 		}
-// 		this._trace_leave("ReqExec", "_processReloadMeasurePropertiesQueryResponse", "measures=" + oMultiUnitRepresentative.aReloadMeasurePropertyName.join()); // DISABLED FOR PRODUCTION
 	};
 
 
@@ -3520,90 +3558,22 @@ sap.ui.define([
 	/**
 	 * @private
 	 */
-	AnalyticalBinding.prototype._calculateRequiredGroupSection = function(sGroupId, iStartIndex, iLength, iThreshold, aContext) {
-		// implementation copied from ODataListBinding; name changed here, because analytical binding comprises more calculations
-		var iSectionLength, iSectionStartIndex, iPreloadedSubsequentIndex, iPreloadedPreviousIndex, iRemainingEntries, oSection = {}, fKey = this._getKeys(sGroupId), sKey;
+	AnalyticalBinding.prototype._calculateRequiredGroupSection = function (sGroupId, iStartIndex,
+			iLength, iThreshold) {
+		var aElements = this.mKeyIndex[sGroupId] || [],
+			iLimit = this.mFinalLength[sGroupId] ? this.mLength[sGroupId] : undefined,
+			aIntervals = ODataUtils._getReadIntervals(aElements, iStartIndex, iLength, iThreshold,
+				iLimit),
+			oInterval = ODataUtils._mergeIntervals(aIntervals);
 
-		iSectionStartIndex = iStartIndex;
-		iSectionLength = 0;
-
-		// check which data exists before startindex; If all necessary data is loaded iPreloadedPreviousIndex stays undefined
-		if (!fKey) {
-			iPreloadedPreviousIndex = iStartIndex;
-			iPreloadedSubsequentIndex = iStartIndex + iLength;
-		} else {
-			for (var i = iStartIndex - 1; i >= Math.max(iStartIndex - iThreshold, 0); i--) {
-				sKey = fKey(i);
-				if (!sKey) {
-					iPreloadedPreviousIndex = i + 1;
-					break;
-				}
-			}
-			// check which data is already loaded after startindex; If all necessary data is loaded iPreloadedSubsequentIndex stays undefined
-			for (var j = iStartIndex + iLength; j < iStartIndex + iLength + iThreshold; j++) {
-				sKey = fKey(j);
-				if (!sKey) {
-					iPreloadedSubsequentIndex = j;
-					break;
-				}
-			}
-		}
-		// calculate previous remaining entries
-		iRemainingEntries = iStartIndex - iPreloadedPreviousIndex;
-		if (iPreloadedPreviousIndex && iStartIndex > iThreshold && iRemainingEntries < iThreshold) {
-			if (aContext.length !== iLength) {
-				iSectionStartIndex = iStartIndex - iThreshold;
-			} else {
-				iSectionStartIndex = iPreloadedPreviousIndex - iThreshold;
-			}
-
-			iSectionLength = iThreshold;
+		if (oInterval) {
+			return {
+				startIndex : oInterval.start,
+				length : oInterval.end - oInterval.start
+			};
 		}
 
-		// prevent startIndex from getting out of bounds
-		// FIX for BCP(1570041982)
-		// If the startIndex is negative, the $skip value will also be negative, and the length might also be bigger than necessary
-		iSectionStartIndex = Math.max(iSectionStartIndex, 0);
-
-		// No negative preload needed; move startindex if we already have some data
-		if (iSectionStartIndex === iStartIndex) {
-			iSectionStartIndex += aContext.length;
-		}
-
-		//read the rest of the requested data
-		if (aContext.length !== iLength) {
-			iSectionLength += iLength - aContext.length;
-		}
-
-		//calculate subsequent remaining entries
-		iRemainingEntries = iPreloadedSubsequentIndex - iStartIndex - iLength;
-
-		if (iRemainingEntries == 0) {
-			iSectionLength += iThreshold;
-		}
-
-		if (iPreloadedSubsequentIndex && iRemainingEntries < iThreshold && iRemainingEntries > 0) {
-			//check if we need to load previous entries; If not we can move the startindex
-			// changed the ">=" to ">", because a fix was not migrated, see commit #455622
-			// FIX for BCP(1570041982)
-			if (iSectionStartIndex > iStartIndex) {
-				iSectionStartIndex = iPreloadedSubsequentIndex;
-				iSectionLength += iThreshold;
-			}
-
-		}
-
-		//check final length and adapt sectionLength if needed.
-		if (this.mFinalLength[sGroupId] && this.mLength[sGroupId] < (iSectionLength + iSectionStartIndex)) {
-			iSectionLength = this.mLength[sGroupId] - iSectionStartIndex;
-		}
-
-		oSection.startIndex = iSectionStartIndex;
-		oSection.length = iSectionLength;
-
-		// this._trace(sGroupId, "calculateSection:\tstart = " + iSectionStartIndex + "\tlength = " + iSectionLength); // DISABLED FOR PRODUCTION
-
-		return oSection;
+		return {startIndex : 0, length : Math.min(0, iLength)};
 	};
 
 	/**
@@ -3704,12 +3674,10 @@ sap.ui.define([
 					// determine position of sGroupId in members of group w/ ID sParentGroupId
 					var sGroupKey = this.mEntityKey[sGroupId];
 					if (!sGroupKey) {
-						//jQuery.sap.log.fatal("assertion failed: entitykey for group w/ ID " + sGroupId + " not available");
 						return oNO_MISSING_MEMBER;
 					}
 					var iGroupIndex = this._findKeyIndex(sParentGroupId,sGroupKey);
 					if (iGroupIndex == -1) {
-						//jQuery.sap.log.fatal("assertion failed: group w/ ID " + sGroupId + " not found in members of parent w/ ID " + sParentGroupId);
 						return oNO_MISSING_MEMBER;
 					}
 					if (iGroupIndex == this._getKeyCount(sParentGroupId) - 1) {
@@ -3737,7 +3705,7 @@ sap.ui.define([
 	 * @private
 	 */
 	AnalyticalBinding.prototype._getResourcePath = function() {
-		return this.isRelative() ? this.oModel.resolve(this.sPath, this.getContext()) : this.sPath;
+		return this.isRelative() ? this.getResolvedPath() : this.sPath;
 	};
 
 	/**
@@ -3836,11 +3804,14 @@ sap.ui.define([
 		var sGroupId = "/";
 		var sDimensionMember = null;
 		if (iLevel > this.aAggregationLevel.length) {
-			jQuery.sap.log.fatal("assertion failed: aggregation level deeper than number of current aggregation levels");
+			oLogger.fatal("assertion failed: aggregation level deeper than number of current aggregation levels");
 		}
 		for (var i = 0; i < iLevel; i++) {
 			sDimensionMember = oContext.getProperty(this.aAggregationLevel[i]);
 			if (sDimensionMember != null) {
+				if (sDimensionMember.__edmType === "Edm.Time") {
+					sDimensionMember = sDimensionMember.ms;
+				}
 				sGroupId += encodeURIComponent(sDimensionMember) + "/"; // encode to escape slashes and at signs in the value
 			} else {
 				sGroupId += "@/";
@@ -3855,7 +3826,7 @@ sap.ui.define([
 	 */
 	AnalyticalBinding.prototype._getGroupIdLevel = function(sGroupId) {
 		if (sGroupId == null) {
-			jQuery.sap.log.fatal("assertion failed: no need to determine level of group ID = null");
+			oLogger.fatal("assertion failed: no need to determine level of group ID = null");
 			return -1;
 		}
 		return sGroupId.split("/").length - 2;
@@ -3881,6 +3852,7 @@ sap.ui.define([
 	};
 
 	/**
+	 * @param {string} sGroupId
 	 * @param {int} iNumLevels anchestors starting at the root if greater than 0, or starting at the parent of sGroupId if less than 0.
 	 * @private
 	 */
@@ -3889,14 +3861,14 @@ sap.ui.define([
 			return [];
 		}
 		if (sGroupId == null) {
-			jQuery.sap.log.fatal("group ID null does not have ancestors");
+			oLogger.fatal("group ID null does not have ancestors");
 			return [];
 		}
 		if (sGroupId == "/") {
 			if (Math.abs(iNumLevels) == 1) {
 				return [ null ];
 			} else {
-				jQuery.sap.log.fatal("invalid level count " + iNumLevels + " for ancestors of groupId " + sGroupId);
+				oLogger.fatal("invalid level count " + iNumLevels + " for ancestors of groupId " + sGroupId);
 				return [];
 			}
 		}
@@ -3905,12 +3877,12 @@ sap.ui.define([
 		var iFromLevel = 0, iToLevel = aGroupId.length - 3;
 		if (iNumLevels > 0) {
 			if (iNumLevels - 1 > iToLevel) {
-				jQuery.sap.log.fatal("invalid level count " + iNumLevels + " for ancestors of groupId " + sGroupId);
+				oLogger.fatal("invalid level count " + iNumLevels + " for ancestors of groupId " + sGroupId);
 			} else {
 				iToLevel = iNumLevels - 1;
 			}
 		} else if (-(iNumLevels + 1) > iToLevel) {
-			jQuery.sap.log.fatal("invalid level count " + iNumLevels + " for ancestors of groupId " + sGroupId);
+			oLogger.fatal("invalid level count " + iNumLevels + " for ancestors of groupId " + sGroupId);
 		} else {
 			iFromLevel = iToLevel + 1 + iNumLevels;
 			for (var i = 0; i < iFromLevel; i++) {
@@ -3974,7 +3946,7 @@ sap.ui.define([
 	 */
 	AnalyticalBinding.prototype._registerNewRequestHandle = function(iRequestHandleId, oRequestHandle) {
 		if (this.oPendingRequestHandle[iRequestHandleId] !== undefined) {
-			jQuery.sap.log.fatal("request handle ID already in use");
+			oLogger.fatal("request handle ID already in use");
 		}
 		this.oPendingRequestHandle[iRequestHandleId] = oRequestHandle;
 	};
@@ -3985,12 +3957,12 @@ sap.ui.define([
 	 * @private
 	 */
 	AnalyticalBinding.prototype._deregisterHandleOfCompletedRequest = function(iRequestHandleId) {
-		if (jQuery.isEmptyObject(this.oPendingRequestHandle)) {
-			jQuery.sap.log.warning("No request handles to be cleared. Previous abort/resetData?");
+		if (isEmptyObject(this.oPendingRequestHandle)) {
+			oLogger.warning("No request handles to be cleared. Previous abort/resetData?");
 			return;
 		}
 		if (this.oPendingRequestHandle[iRequestHandleId] === undefined) {
-			jQuery.sap.log.fatal("no handle found for this request ID");
+			oLogger.fatal("no handle found for this request ID");
 		}
 		this.oPendingRequestHandle[iRequestHandleId] = undefined;
 	};
@@ -4001,17 +3973,14 @@ sap.ui.define([
 	 * @private
 	 */
 	AnalyticalBinding.prototype._abortAllPendingRequestsByHandle = function() {
-// 		this._trace_enter("ReqHandle", "_abortAllPendingRequestsByHandle"); // DISABLED FOR PRODUCTION
 		for (var i = 0; i < this.oPendingRequestHandle.length; i++) {
 			if (this.oPendingRequestHandle[i]) {
-// 				this._trace_message("ReqHandle", "abort index " + i);
 				if (this.oPendingRequestHandle[i] !== undefined) {
 					this.oPendingRequestHandle[i].abort();
 				}
 			}
 		}
 		this.oPendingRequestHandle = [];
-// 		this._trace_leave("ReqHandle", "_abortAllPendingRequestsByHandle"); // DISABLED FOR PRODUCTION
 	};
 
 	/********************************
@@ -4027,15 +3996,15 @@ sap.ui.define([
 		switch (iRequestType) {
 		case AnalyticalBinding._requestType.groupMembersQuery:
 			if (mParameters.groupId === undefined) {
-				jQuery.sap.log.fatal("missing group ID");
+				oLogger.fatal("missing group ID");
 			}
 			return AnalyticalBinding._requestType.groupMembersQuery + (mParameters.groupId == null ? "" : mParameters.groupId);
 		case AnalyticalBinding._requestType.levelMembersQuery:
 			if (mParameters.level === undefined) {
-				jQuery.sap.log.fatal("missing level");
+				oLogger.fatal("missing level");
 			}
 			if (mParameters.groupId === undefined) {
-				jQuery.sap.log.fatal("missing groupId");
+				oLogger.fatal("missing groupId");
 			}
 			// for accelerated auto-expand, group Id does not provide context, i.e. filter condition, for the requested data, but is only a starting point
 			return "" + AnalyticalBinding._requestType.levelMembersQuery + mParameters.level + (mParameters.tupleIndex ? "-" + mParameters.tupleIndex : "");
@@ -4043,11 +4012,11 @@ sap.ui.define([
 			return AnalyticalBinding._requestType.totalSizeQuery;
 		case AnalyticalBinding._requestType.reloadMeasuresQuery:
 			if (!mParameters.multiUnitEntryKey) {
-				jQuery.sap.log.fatal("missing multi unit entry key");
+				oLogger.fatal("missing multi unit entry key");
 			}
 			return AnalyticalBinding._requestType.reloadMeasuresQuery + mParameters.multiUnitEntryKey;
 		default:
-			jQuery.sap.log.fatal("invalid request type " + iRequestType);
+			oLogger.fatal("invalid request type " + iRequestType);
 			return -1;
 		}
 	};
@@ -4059,7 +4028,7 @@ sap.ui.define([
 	 */
 	AnalyticalBinding.prototype._registerNewRequest = function(sRequestId) {
 		if (sRequestId == undefined || sRequestId == "") {
-			jQuery.sap.log.fatal("missing request ID");
+			oLogger.fatal("missing request ID");
 			return;
 		}
 		if (!this.oPendingRequests[sRequestId]) {
@@ -4104,13 +4073,13 @@ sap.ui.define([
 	AnalyticalBinding.prototype._deregisterCompletedRequest = function(sRequestId) {
 		// in case there are no pending request, log a warning. This might happen during a refresh call
 		// helps to keep track of timing issues / race conditions with already returned requests
-		if (jQuery.isEmptyObject(this.oPendingRequests)) {
-			jQuery.sap.log.warning("There are no pending requests which could be set to 'completed'.");
+		if (isEmptyObject(this.oPendingRequests)) {
+			oLogger.warning("There are no pending requests which could be set to 'completed'.");
 			return;
 		}
 
 		if (!this.oPendingRequests[sRequestId]) {
-			jQuery.sap.log.fatal("assertion failed: there is no pending request ID " + sRequestId);
+			oLogger.fatal("assertion failed: there is no pending request ID " + sRequestId);
 		}
 		if (this.oPendingRequests[sRequestId] == 1) {
 			delete this.oPendingRequests[sRequestId];
@@ -4157,13 +4126,46 @@ sap.ui.define([
 	//*** Service data consolidation (for multi-unit entities)
 	//********************************************************************************/
 
+	/**
+	 * Returns an object containing the given ID of the node as <code>sGroupId</code>, the given
+	 * index of the child in that node as <code>iIndex</code>, and the corresponding index for that
+	 * child in the list of service keys for that node as <code>iServiceKeyIndex</code>.
+	 * <code>iIndex</code> represents the index in the visible table/tree and
+	 * <code>iServiceKeyIndex</code> the index in internal data structure for the entity keys. For
+	 * aggregated data it may happen that there exist more entries in the service key list,
+	 * representing different values for units of the aggregated data (multi unit case), for a
+	 * single line in the table/tree.
+	 *
+	 * @param {string} sGroupId
+	 *   The group ID of the node
+	 * @param {number} iStartIndex
+	 *   The index of the child element within the given node
+	 * @returns {object}
+	 *   An object containing the given ID of the node as <code>sGroupId</code>, the given index of
+	 *   the child in that node as <code>iIndex</code>, and the corresponding index for that child
+	 *   in the list of service keys for that node as <code>iServiceKeyIndex</code>
+	 */
 	AnalyticalBinding.prototype._getKeyIndexMapping = function(sGroupId, iStartIndex) {
-		var aKeyIndex = this.mKeyIndex[sGroupId];
-		var aServiceKey = this.mServiceKey[sGroupId];
-		var iServiceKeyIndex = iStartIndex;
+		var iDistance, iLastOccupiedIndex, iLastOccupiedServiceKeyIndex,
+			aKeyIndex = this.mKeyIndex[sGroupId],
+			oKeyIndexMapping = {
+				sGroupId : sGroupId,
+				iIndex : iStartIndex,
+				iServiceKeyIndex : iStartIndex
+			},
+			aServiceKey = this.mServiceKey[sGroupId];
+
 		if (aKeyIndex !== undefined) { // find appropriate service key index for given start index
+			if (aKeyIndex[iStartIndex] !== undefined) { // index is already known
+				oKeyIndexMapping.iServiceKeyIndex = aKeyIndex[iStartIndex] === "ZERO"
+					? 0
+					: Math.abs(aKeyIndex[iStartIndex]);
+
+				return oKeyIndexMapping;
+			}
+
 			// search for the last occupied key index
-			var iLastOccupiedIndex = iStartIndex;
+			iLastOccupiedIndex = iStartIndex;
 			if (iLastOccupiedIndex > 0) {
 				while (--iLastOccupiedIndex > 0) {
 					if (aKeyIndex[iLastOccupiedIndex] !== undefined) {
@@ -4171,32 +4173,31 @@ sap.ui.define([
 					}
 				}
 			}
-			var iLastOccupiedServiceKeyIndex;
 			if (iLastOccupiedIndex == 0) {
 				iLastOccupiedServiceKeyIndex = 0;
 			} else {
 				if (aKeyIndex[iLastOccupiedIndex] >= 0) {
 					iLastOccupiedServiceKeyIndex = aKeyIndex[iLastOccupiedIndex];
-				} else if (aKeyIndex[iLastOccupiedIndex + 1] === undefined) { // iLastOccupiedIndex is the last key index before hole.
-					iLastOccupiedServiceKeyIndex = aKeyIndex[iLastOccupiedIndex] == "ZERO" ? 0 : -aKeyIndex[iLastOccupiedIndex];
+				} else if (aKeyIndex[iLastOccupiedIndex + 1] === undefined) {
+					// iLastOccupiedIndex is the last key index before hole
+					iLastOccupiedServiceKeyIndex = -aKeyIndex[iLastOccupiedIndex];
 					while (aServiceKey[iLastOccupiedServiceKeyIndex + 1] !== undefined) {
 						++iLastOccupiedServiceKeyIndex;
 					}
-				} else { // iLastOccupiedServiceKeyIndex is the service key index before start of service keys related to next key index.
+				} else {
+					// iLastOccupiedServiceKeyIndex is the service key index before start of service
+					// keys related to next key index.
 					iLastOccupiedServiceKeyIndex = Math.abs(aKeyIndex[iLastOccupiedIndex + 1]) - 1;
 				}
 				if (aServiceKey[iLastOccupiedServiceKeyIndex] === undefined) {
-					jQuery.sap.log.fatal("assertion failed: no service key at iLastOccupiedServiceKeyIndex = " + iLastOccupiedServiceKeyIndex);
+					oLogger.fatal(
+						"assertion failed: no service key at iLastOccupiedServiceKeyIndex = "
+						+ iLastOccupiedServiceKeyIndex);
 				}
 			}
-			var iDistance = iStartIndex - iLastOccupiedIndex;
-			iServiceKeyIndex = iLastOccupiedServiceKeyIndex + iDistance;
+			iDistance = iStartIndex - iLastOccupiedIndex;
+			oKeyIndexMapping.iServiceKeyIndex = iLastOccupiedServiceKeyIndex + iDistance;
 		}
-		var oKeyIndexMapping = {
-				sGroupId : sGroupId,
-				iIndex : iStartIndex,
-				iServiceKeyIndex : iServiceKeyIndex
-		};
 		return oKeyIndexMapping;
 	};
 
@@ -4215,14 +4216,12 @@ sap.ui.define([
 		}
 
 		if (this.mMultiUnitKey[sGroupId] === undefined) {
-			jQuery.sap.log.fatal("assertion failed: missing expected multi currency key for group with ID " + sGroupId);
-// 			this._trace_debug_if(true, "assertion failed: missing expected multi currency key for group with ID " + sGroupId);
+			oLogger.fatal("assertion failed: missing expected multi currency key for group with ID " + sGroupId);
 			return null;
 		}
 		var sKey = this.mMultiUnitKey[sGroupId][iIndex];
 		if (sKey === undefined) {
-			jQuery.sap.log.fatal("assertion failed: missing expected multi currency key for group with ID " + sGroupId + " at pos " + iIndex);
-// 			this._trace_debug_if(true, "assertion failed: missing expected multi currency key for group with ID " + sGroupId + " at pos " + iIndex);
+			oLogger.fatal("assertion failed: missing expected multi currency key for group with ID " + sGroupId + " at pos " + iIndex);
 			return null;
 		}
 		return sKey;
@@ -4280,14 +4279,12 @@ sap.ui.define([
 
 	// substitute for indexOf in the key array for some group
 	AnalyticalBinding.prototype._findKeyIndex = function(sGroupId, sKey) {
-		// TODO optimize by first looking into mMultiUnitKey; if not found, search in mServiceKey; if not found, return -1
-
 		// naive implementation follows
 		var aKeyIndex = this.mKeyIndex[sGroupId];
 		var aServiceKey = this.mServiceKey[sGroupId];
 		var aMultiUnitKey = this.mMultiUnitKey[sGroupId];
 		for (var i = 0; i < this.mLength[sGroupId]; i++) {
-			if (aKeyIndex[i] < 0) {
+			if (aKeyIndex[i] < 0 || aKeyIndex[i] === "ZERO") {
 				if (aMultiUnitKey[i] == sKey) {
 					return i;
 				}
@@ -4379,7 +4376,7 @@ sap.ui.define([
 			return iDiscardedEntriesCount;
 		}
 		if (sPreviousServiceKey === undefined) {
-			jQuery.sap.log.fatal("assertion failed: missing expected entry before given key index");
+			oLogger.fatal("assertion failed: missing expected entry before given key index");
 			return iDiscardedEntriesCount;
 		}
 		var oPreviousEntry = this.oModel.getObject("/" + sPreviousServiceKey);
@@ -4396,29 +4393,23 @@ sap.ui.define([
 		// calculate nPrime_e for next steps
 		var nPrime_e = n_e;
 		if (nPrime_e >= this.mLength[oKeyIndexMapping.sGroupId]) {
-			jQuery.sap.log.fatal("assertion failed: service key exists,but no corresponding key index found");
-// 			this._trace_debug_if(true, "assertion failed: service key exists,but no corresponding key index found");
+			oLogger.fatal("assertion failed: service key exists,but no corresponding key index found");
 			return iDiscardedEntriesCount;
 		}
 		while (aKI[nPrime_e] === undefined || Math.abs(aKI[nPrime_e]) < n_i) {
 			++nPrime_e;
 		}
 
-// 		this._trace_enter("SvcDatCons", "_mergeLoadedKeyIndexWithSubsequentIndexes", "groupId=" + oKeyIndexMapping.sGroupId, { n_e: n_e, nPrime_e: nPrime_e, n_i: n_i }, ["n_e","nPrime_e","n_i"]); // DISABLED FOR PRODUCTION
-
 		// step 2: combine loaded key index entries with subsequent key index entries
 		if (bNeedMultiUnitKeyMerge) { // case 1
 			if (Math.abs(aKI[nPrime_e]) == n_i && aKI[nPrime_e] < 0) { // case a) nPrime_e is a multi-unit entry and starts at n_i
-// 				this._trace_debug_if(aKI[nPrime_e] >= 0 || aMUK[nPrime_e] === undefined, "unexpected: no multi-unit entry found");
 				if (nPrime_e > n_e) { // relevance check for merging the loaded key index section with subsequent indexes
 					if (aKI[n_e - 1] < 0) { // case I: (nPrime_e - 1) is a multi-unit entry
-// 						this._trace_message("SvcDatCons", "case 1.a.I"); // DISABLED FOR PRODUCTION
 						aMUK[nPrime_e] = undefined; // delete its multi-unit entry
 						// delete aKI entries n_e ... nPrime_e - 1 and at nPrime_e (this will remove the redundant second multi-unit entry at nPrime_e)
 						aKI.splice(n_e, nPrime_e - n_e + 1);
 						aMUK.splice(n_e, nPrime_e - n_e + 1);
 					} else { // case II: (nPrime_e - 1) is NOT a multi-unit entry
-// 						this._trace_message("SvcDatCons", "case 1.a.II"); // DISABLED FOR PRODUCTION
 						aKI[n_e - 1] = -aKI[n_e - 1]; // make n_e - 1 a multi-unit entry
 						aMUK[n_e - 1] = aMUK[nPrime_e]; // reuse aMUK[nPrime_e] for aMUK[n_e - 1]
 						aMUK[nPrime_e] = undefined; // clear aMUK[nPrime_e]
@@ -4430,12 +4421,8 @@ sap.ui.define([
 				}
 			} else if (Math.abs(aKI[nPrime_e]) > n_i) { // case b) nPrimePrime_e = nPrime_e - 1 is a multi-unit entry pointing to service keys before n_i
 				var nPrimePrime_e = nPrime_e - 1;
-// 				this._trace_debug_if(n_e == 314, "stop");
-// 				this._trace_debug_if(!(Math.abs(aKI[nPrimePrime_e]) < n_i), "unexpected: this key index must point to a key before n_i");
 
 				if (aKI[nPrimePrime_e] > 0) { // case I: (nPrimePrime_e) is not a multi-unit entry
-// 					this._trace_message("SvcDatCons", "case 1.b.I"); // DISABLED FOR PRODUCTION
-// 					this._trace_debug_if(aKI[nPrimePrime_e] < n_i - 1, "unexpected: this key index must point to the last read service key or before"); // this case would be 1 b) II ii
 					// create a multi-unit entry for nPrimePrime_e
 					oMultiUnitRepresentative = this._createMultiUnitRepresentativeEntry(oKeyIndexMapping.sGroupId, oPreviousEntry, aSelectedUnitPropertyName, undefined, bIsFlatListRequest);
 					oMultiUnitEntryKey = this.oModel._getKey(oMultiUnitRepresentative.oEntry);
@@ -4447,13 +4434,10 @@ sap.ui.define([
 						aKI.splice(n_e, nPrimePrime_e - n_e);
 						aMUK.splice(n_e, nPrimePrime_e - n_e);
 					}
-// 					this._trace_debug_if(Math.abs(aKI[nPrime_e]) - Math.abs(aKI[nPrimePrime_e]) <= 1, "unexpected: marked as multi-unit key, but only a single service key!?");
 					if (oMultiUnitRepresentative.bIsNewEntry) {
-// 						this._trace_debug_if(Math.abs(aKI[nPrime_e]) - Math.abs(aKI[nPrimePrime_e]) > 2, "unexpected: more than one subsequent service key for this multi-unit entry, but no representative so far!?");
 						// two service keys contributing to this multi-unit entry, and one new multi-unit representative => 1 more service key to discard
 						iDiscardedEntriesCount = 1;
 					} else {
-// 						this._trace_debug_if(oMultiUnitRepresentative.iIndex != nPrimePrime_e, "the existing multi-unit representative does not have index nPrimePrime_e");
 						// more than two service keys contributing to this multi-unit entry, which were already detected as "multi-unit" and therefore discarded.
 						// since the existing multi-unit representative has index nPrimePrime_e, the service key pointed to by this index was also already covered
 						// => 0 more service key to discard
@@ -4463,16 +4447,12 @@ sap.ui.define([
 						// case II: (nPrimePrime_e) is a multi-unit entry
 						// case i: (n_e - 1) is a multi-unit entry
 						if (nPrime_e > n_e) { // relevance check for merging the loaded key index section with subsequent indexes
-// 							this._trace_message("SvcDatCons", "case 1.b.II.i"); // DISABLED FOR PRODUCTION
 							aMUK[nPrimePrime_e] = undefined; // delete its multi-unit entry
 							// delete aKI entries n_e ... nPrimePrime_e - 1 and at nPrimePrime_e (this will remove the redundant second multi-unit entry at nPrimePrime_e)
 							aKI.splice(n_e, nPrimePrime_e - n_e + 1);
 							aMUK.splice(n_e, nPrimePrime_e - n_e + 1);
 						}
 					} else { // case ii: (n_e - 1) is NOT a multi-unit entry
-// 						this._trace_message("SvcDatCons", "case 1.b.II.ii"); // DISABLED FOR PRODUCTION
-// 						this._trace_debug_if(aKI[n_e - 1] != Math.abs(aKI[nPrimePrime_e]), "unexpected: n_e - 1 does not point to same entry as nPrimePrime_e");
-// 						this._trace_debug_if(Math.abs(aKI[nPrimePrime_e]) != n_i - 1, "unexpected: nPrimePrime_e should point to n_i - 1");
 						aKI[n_e - 1] = -aKI[n_e - 1]; // make n_e - 1 a multi-unit entry
 						aMUK[n_e - 1] = aMUK[nPrimePrime_e]; // reuse aMUK[nPrimePrime_e] for aMUK[n_e - 1]
 						aMUK[nPrimePrime_e] = undefined; // clear aMUK[nPrimePrime_e]
@@ -4483,19 +4463,16 @@ sap.ui.define([
 			} else if (aKI[nPrime_e] == n_i) { // case c) nPrime_e is NOT a multi-unit entry
 				if (nPrime_e > n_e) { // relevance check for merging the loaded key index section with subsequent indexes
 					if (aKI[n_e - 1] < 0) { // case I: (nPrime_e - 1) is a multi-unit entry
-// 						this._trace_message("SvcDatCons", "case 1.c.I"); // DISABLED FOR PRODUCTION
 						// delete aKI entries n_e ... nPrime_e - 1 and at nPrime_e (this will remove the redundant second multi-unit entry at nPrimePrime_e)
 						aKI.splice(n_e, nPrime_e - n_e + 1);
 						aMUK.splice(n_e, nPrime_e - n_e + 1);
 						iDiscardedEntriesCount = 1;
 					} else { // case II: (nPrime_e - 1) is NOT a multi-unit entry
-// 						this._trace_message("SvcDatCons", "case 1.c.II"); // DISABLED FOR PRODUCTION
 						// create a multi-unit entry for n_e - 1
 						oMultiUnitRepresentative = this._createMultiUnitRepresentativeEntry(oKeyIndexMapping.sGroupId, oPreviousEntry, aSelectedUnitPropertyName, undefined, bIsFlatListRequest);
 						oMultiUnitEntryKey = this.oModel._getKey(oMultiUnitRepresentative.oEntry);
 						if (!oMultiUnitRepresentative.bIsNewEntry) {
-							jQuery.sap.log.fatal("assertion failed: multi-unit entry already existed before");
-// 							this._trace_debug_if(! oMultiUnitRepresentative.bIsNewEntry, "assertion failed: multi-unit entry already existed before");
+							oLogger.fatal("assertion failed: multi-unit entry already existed before");
 						}
 						// make n_e - 1 a multi-unit entry
 						aKI[n_e - 1] = -aKI[n_e - 1];
@@ -4507,28 +4484,22 @@ sap.ui.define([
 					}
 				}
 			} else {
-				jQuery.sap.log.fatal("assertion failed: uncovered case detected");
-				// this._trace_debug_if(true, "assertion failed: uncovered case detected");
+				oLogger.fatal("assertion failed: uncovered case detected");
 				return iDiscardedEntriesCount;
 			}
 		} else if (aKI[nPrime_e] > n_i) {
 				// case 2
 
 //				case a)
-// 				this._trace_message("SvcDatCons", "case 2.a"); // DISABLED FOR PRODUCTION
-				jQuery.sap.log.fatal("unstable query result for group ID " + oKeyIndexMapping.sGroupId + ": entries have been removed or added. Complete reload required");
-//				this._trace_debug_if(true, "unstable query result for group ID " + oKeyIndexMapping.sGroupId + ": entries have been removed or added. Complete reload required");
+				oLogger.fatal("unstable query result for group ID " + oKeyIndexMapping.sGroupId + ": entries have been removed or added. Complete reload required");
 			} else if (nPrime_e - n_e > 0) {
 				// case b)
 
-//				this._trace_message("SvcDatCons", "case 2.b"); // DISABLED FOR PRODUCTION
 //				delete aKI entries n_e ... nPrime_e - 1
 				aKI.splice(n_e, nPrime_e - n_e);
-//				this._trace_debug_if(aMUK === undefined, "unexpected: aMUK is undefined, so no multi-unit keys so far!?");
 				aMUK.splice(n_e, nPrime_e - n_e);
 			}
 
-// 		this._trace_leave("SvcDatCons", "_mergeLoadedKeyIndexWithSubsequentIndexes", "dicardedCount=" + iDiscardedEntriesCount); // DISABLED FOR PRODUCTION
 		return iDiscardedEntriesCount;
 	};
 
@@ -4537,11 +4508,11 @@ sap.ui.define([
 	// returns { oEntry, bIsNewEntry) the multi-unit representativ entry and a flag whether it already existed before this call
 	AnalyticalBinding.prototype._createMultiUnitRepresentativeEntry = function(sGroupId, oReferenceEntry, aSelectedUnitPropertyName, aDeviatingUnitPropertyName, bIsFlatListRequest) {
 		// set up properties for measures and units in this new entry
-		var oMultiUnitEntry = jQuery.extend(true, {}, oReferenceEntry);
+		var oMultiUnitEntry = deepExtend({}, oReferenceEntry);
 		var aReloadMeasurePropertyName = [];
 		for ( var sMeasureName in this.oMeasureDetailsSet) {
 			var oMeasureDetails = this.oMeasureDetailsSet[sMeasureName];
-			if (!bIsFlatListRequest && !this.mAnalyticalInfoByProperty[sMeasureName].total) {
+			if (!bIsFlatListRequest && this._isSkippingTotalForMeasure(sMeasureName)) {
 				if (oMeasureDetails.rawValuePropertyName != undefined) {
 					oMultiUnitEntry[oMeasureDetails.rawValuePropertyName] = undefined;
 				}
@@ -4558,13 +4529,14 @@ sap.ui.define([
 			}
 			// determine if this measure that can be reloaded, because their unit properties do not have deviating values
 			if (aDeviatingUnitPropertyName) {
-				if (!oMeasureDetails.unitPropertyName || jQuery.inArray(oMeasureDetails.unitPropertyName, aDeviatingUnitPropertyName) == -1) {
-					aReloadMeasurePropertyName.push(oMeasureDetails.rawValuePropertyName);
+				if (!oMeasureDetails.unitPropertyName || aDeviatingUnitPropertyName.indexOf(oMeasureDetails.unitPropertyName) == -1) {
+					aReloadMeasurePropertyName.push(oMeasureDetails.rawValuePropertyName
+						|| oMeasureDetails.name);
 				}
 			}
 		}
 		for (var k = 0; k < aSelectedUnitPropertyName.length; k++) {
-			if (jQuery.inArray(aSelectedUnitPropertyName[k], aDeviatingUnitPropertyName) != -1) {
+			if (aDeviatingUnitPropertyName.indexOf(aSelectedUnitPropertyName[k]) != -1) {
 				oMultiUnitEntry[aSelectedUnitPropertyName[k]] = "*";
 			}
 		}
@@ -4581,13 +4553,16 @@ sap.ui.define([
 			// if the value is an empty string, it should be treated as such in the generated key
 			var sSaveDimVal = sDimVal === "" ? '""' : sDimVal;
 			sSaveDimVal = sSaveDimVal === undefined ? "" : sSaveDimVal;
-			sMultiUnitEntryKey += (sSaveDimVal + ",");
+			sMultiUnitEntryKey += (encodeURIComponent(sSaveDimVal) + ",");
 		}
-		sMultiUnitEntryKey += "-multiple-units-not-dereferencable";
+		// If there are multiple analytical bindings for the same entity (maybe using different
+		// filters), ensure that the keys for the multi unit representatives are unique for this
+		// analytical binding, otherwise data could be overwritten by another binding.
+		sMultiUnitEntryKey += "-multiple-units-not-dereferencable|" + this._iId;
 
 		// check if an entry already exists; if so, dont proceed, but return it
 		var iMultiUnitEntryIndex;
-		if (this.mMultiUnitKey[sGroupId] && (iMultiUnitEntryIndex = jQuery.inArray(sMultiUnitEntryKey, this.mMultiUnitKey[sGroupId])) != -1) {
+		if (this.mMultiUnitKey[sGroupId] && (iMultiUnitEntryIndex = this.mMultiUnitKey[sGroupId].indexOf(sMultiUnitEntryKey)) != -1) {
 			return { oEntry: this.oModel.getObject("/" + sMultiUnitEntryKey), bIsNewEntry : false, iIndex: iMultiUnitEntryIndex, aReloadMeasurePropertyName: aReloadMeasurePropertyName }; // already created
 		}
 
@@ -4651,6 +4626,8 @@ sap.ui.define([
 			this.mMultiUnitKey = {};
 
 			this.mEntityKey = {};
+			// clear also the pending request queue because the contained requests are obsolete
+			this.aBatchRequestQueue = [];
 		}
 	};
 
@@ -4664,7 +4641,7 @@ sap.ui.define([
 	 * @public
 	 */
 	AnalyticalBinding.prototype.refresh = function(bForceUpdate) {
-		// apply is used here to be compatible to ODataModel v1, where the signature is like the private _refresh()
+		// use apply as refresh may be called with more parameters
 		AnalyticalBinding.prototype._refresh.apply(this, arguments);
 	};
 
@@ -4675,23 +4652,27 @@ sap.ui.define([
 		var bChangeDetected = false;
 		if (!bForceUpdate) {
 			if (mEntityTypes) {
-				var sResolvedPath = this.oModel.resolve(this.sPath, this.oContext);
+				var sResolvedPath = this.getResolvedPath();
 				var oEntityType = this.oModel.oMetadata._getEntityTypeByPath(sResolvedPath);
 				if (oEntityType && (oEntityType.entityType in mEntityTypes)) {
 					bChangeDetected = true;
 				}
 			}
 			if (mChangedEntities && !bChangeDetected) {
-				jQuery.each(this.mServiceKey, function(i, aNodeKeys) {
-					jQuery.each(aNodeKeys, function(i, sKey) {
+				each(this.mServiceKey, function(i, aNodeKeys) {
+					each(aNodeKeys, function(i, sKey) {
 						if (sKey in mChangedEntities) {
 							bChangeDetected = true;
 							return false;
 						}
+
+						return true;
 					});
 					if (bChangeDetected) {
 						return false;
 					}
+
+					return true;
 				});
 			}
 			if (!mChangedEntities && !mEntityTypes) { // default
@@ -4699,6 +4680,7 @@ sap.ui.define([
 			}
 		}
 		if (bForceUpdate || bChangeDetected) {
+			this.iTotalSize = -1; // invalidate last row counter
 			this._abortAllPendingRequests();
 			this.resetData();
 			this.bNeedsUpdate = false;
@@ -4709,8 +4691,7 @@ sap.ui.define([
 	/**
 	 * Check whether this Binding would provide new values and in case it changed, inform interested parties about this.
 	 *
-	 * @param {boolean}
-	 *            bForceUpdate
+	 * @param {boolean} [bForceUpdate]
 	 * @param {object} mChangedEntities
 	 * @private
 	 */
@@ -4720,16 +4701,20 @@ sap.ui.define([
 			if (this.bNeedsUpdate || !mChangedEntities) {
 				bChangeDetected = true;
 			} else {
-				jQuery.each(this.mServiceKey, function(i, aNodeKeys) {
-					jQuery.each(aNodeKeys, function(i, sKey) {
+				each(this.mServiceKey, function(i, aNodeKeys) {
+					each(aNodeKeys, function(i, sKey) {
 						if (sKey in mChangedEntities) {
 							bChangeDetected = true;
 							return false;
 						}
+
+						return true;
 					});
 					if (bChangeDetected) {
 						return false;
 					}
+
+					return true;
 				});
 			}
 		}
@@ -4788,7 +4773,7 @@ sap.ui.define([
 					bIncludeFormattedValue, bIncludeUnitProperty);
 		}
 
-		// add the sorters
+		// add the sorters, no need to merge with grouping sorters as no grouping is used
 		var oSortExpression = oAnalyticalQueryRequest.getSortExpression();
 		oSortExpression.clear();
 		for (var i = 0; i < this.aSorter.length; i++) {
@@ -4868,105 +4853,8 @@ sap.ui.define([
 			return this.oModel._createRequestUrl(sPath, null, aParam).replace(/ /g, "%20");
 		}
 
+		return undefined;
 	};
-
-	//********************************
-	//*** Tracing execution
-	//********************************/
-
-	/** DISABLED FOR PRODUCTION
-// 	 *    to enable, search using regex for "^// (.*\._trace_.*)", replace by "$1"
-// 	 *    to disable, search using regex for "^(.*\._trace_.*)", replace by "// $1"
-	 *
-// 	AnalyticalBinding.prototype._trace_enter = function(groupid, scope, input_msg, _arguments, arg_components) {
-		if (!this._traceMsgCtr) {
-			this._traceMsgCtr = { level: 0, msg: [] };
-		}
-		this._traceMsgCtr.msg.push( { group: groupid, level: ++this._traceMsgCtr.level, scope: scope, msg: input_msg, details: _arguments, arg_components: arg_components, enter: true } );
-	};
-
-// 	AnalyticalBinding.prototype._trace_leave = function (groupid, scope, output_msg, results, arg_components) {
-		if (!this._traceMsgCtr) {
-			throw "leave without enter";
-		}
-		this._traceMsgCtr.msg.push( { group: groupid, level: this._traceMsgCtr.level--, scope: scope, msg: output_msg, details: results, arg_components: arg_components, leave: true } );
-	};
-
-// 	AnalyticalBinding.prototype._trace_message = function (groupid, input_msg, _arguments, arg_components) {
-		if (!this._traceMsgCtr) {
-			throw "message without enter";
-		}
-		this._traceMsgCtr.msg.push( { group: groupid, level: this._traceMsgCtr.level, msg: input_msg, details: _arguments, arg_components: arg_components } );
-	};
-
-// 	AnalyticalBinding.prototype._trace_if_message = function (condition, groupid, message, details) {
-		if (condition) {
-// 			this._trace_message(groupid, message, details);
-		}
-	};
-
-// 	AnalyticalBinding.prototype._trace_debug_if = function (condition, message, details) {
-// 		if (this._trace_debug_switch === undefined) {
-// 			this._trace_debug_switch = true;
-		}
-// 		if (this._trace_debug_switch && condition) {
-			debugger;
-		}
-	};
-
-// 	AnalyticalBinding.prototype._trace_debug = function () {
-		debugger;
-	};
-
-// 	AnalyticalBinding.prototype._trace_debug_switch = function (onoroff) {
-// 		this._trace_debug_switch = onoroff;
-	};
-
-// 	AnalyticalBinding.prototype._trace_dump = function (aGroupId) {
-		var fRenderMessage = function (line) {
-			var s = "[" + line.group + "          ".slice(0,10 - line.group.length) + "]";
-			for (var i = 0; i < line.level; i++) {
-				s += "  ";
-			}
-			if (line.enter) {
-				s += "->" + line.scope + (line.msg || line.arg_components ? ":\t" : "");
-			}
-			else if (line.leave) {
-				s += "<-" + line.scope + (line.msg || line.arg_components ? ":\t" : "");
-			} else {
-				s += "  ";
-			}
-			if (line.msg) {
-				s += line.msg + ",";
-			}
-			if (line.details && line.arg_components) {
-				for (var j = 0; j < line.arg_components.length; j++) {
-					s += line.arg_components[j] + "=" + eval("line.details." + line.arg_components[j]) + (j < line.arg_components.length - 1 ? "," : "");
-				}
-			}
-			s += "\n";
-			return s;
-		};
-		var fRender = function (aMsg) {
-			var s = "";
-			for (var i = 0; i < aMsg.length; i++) {
-				if (!aGroupId || jQuery.inArray(aMsg[i].group, aGroupId) != -1) {
-					s += fRenderMessage(aMsg[i]);
-				}
-			}
-			return s;
-		};
-		if (!this._traceMsgCtr) {
-			return "";
-		}
-		return "\n" + fRender(this._traceMsgCtr.msg);
-	};
-
-// 	AnalyticalBinding.prototype._trace_reset = function () {
-		delete this._traceMsgCtr;
-	};
-
-	**/
 
 	//**********************************
 	//*** Grouping together with Sorting
@@ -4983,13 +4871,68 @@ sap.ui.define([
 	 * @private
 	 */
 	AnalyticalBinding.prototype._addSorters = function (oSortExpression, aGroupingSorters) {
-		var aSorters = this._canApplySortersToGroups()
-				? [].concat(this.aSorter).concat(aGroupingSorters)
-				: [].concat(aGroupingSorters).concat(this.aSorter);
+		if (this._canApplySortersToGroups()) {
+			this.aSorter.forEach((oApplicationSorter) => {
+				AnalyticalBinding._addSorter(oApplicationSorter, oSortExpression);
+			});
+			aGroupingSorters.forEach((oGroupingSorter) => {
+				AnalyticalBinding._addSorter(oGroupingSorter, oSortExpression, true);
+			});
+			return;
+		}
+		this._mergeAndAddSorters(aGroupingSorters, oSortExpression);
+	};
 
-		aSorters.forEach(function (oSorter) {
-			oSortExpression.addSorter(oSorter.sPath, oSorter.bDescending
-				? odata4analytics.SortOrder.Descending : odata4analytics.SortOrder.Ascending);
+	/**
+	 * Adds the given sorter to the given sort expression. If the parameter <code>bIgnoreIfAlreadySorted</code> is set
+	 * to <code>true</code> the sorter is not added to the sort expression if it is already contained in the sort
+	 * expression.
+	 *
+	 * @param {sap.ui.model.Sorter} oSorter
+	 *   The sorter to add
+	 * @param {sap.ui.model.analytics.odata4analytics.SortExpression} oSortExpression
+	 *   The sort expression to which the given sorter is added
+	 * @param {boolean} [bIgnoreIfAlreadySorted=false]
+	 *   If there is already a sorter for that property, ignore this call
+	 *
+	 * @private
+	 */
+	AnalyticalBinding._addSorter = function (oSorter, oSortExpression, bIgnoreIfAlreadySorted) {
+		oSortExpression.addSorter(oSorter.sPath,
+			oSorter.bDescending
+				? odata4analytics.SortOrder.Descending
+				: odata4analytics.SortOrder.Ascending,
+			bIgnoreIfAlreadySorted);
+	};
+
+	/**
+	 * Merges the given grouping sorters with this binding's application sorters and adds them to the given
+	 * sort expression.
+	 *
+	 * @param {sap.ui.model.Sorter[]} aGroupingSorters
+	 *   The grouping sorters to add to the given sort expression
+	 * @param {sap.ui.model.analytics.odata4analytics.SortExpression} oSortExpression
+	 *   The sort expression to which the given grouping sorters as well as this binding's application sorters are added
+	 *
+	 * @private
+	 */
+	AnalyticalBinding.prototype._mergeAndAddSorters = function (aGroupingSorters, oSortExpression) {
+		const aApplicationSorters = this.aSorter.slice();
+		aGroupingSorters.forEach((oGroupingSorter) => {
+			const sDimensionName = oGroupingSorter.sPath;
+			for (let i = 0; i < aApplicationSorters.length; i += 1) {
+				const oApplicationSorter = aApplicationSorters[i];
+				const sPath = oApplicationSorter.sPath;
+				if (sPath === sDimensionName || this.oDimensionDetailsSet[sDimensionName].textPropertyName === sPath) {
+					AnalyticalBinding._addSorter(oApplicationSorter, oSortExpression);
+					aApplicationSorters.splice(i, 1);
+					break;
+				}
+			}
+			AnalyticalBinding._addSorter(oGroupingSorter, oSortExpression, true);
+		});
+		aApplicationSorters.forEach((oApplicationSorter) => {
+			AnalyticalBinding._addSorter(oApplicationSorter, oSortExpression, true);
 		});
 	};
 
@@ -5010,9 +4953,9 @@ sap.ui.define([
 				// check whether to log a warning and update sLastAutoExpandMode
 				if (sCurrentAutoExpandMode !== this.sLastAutoExpandMode
 						&& sCurrentAutoExpandMode !== TreeAutoExpandMode.Sequential) {
-					jQuery.sap.log.warning("Applying sorters to groups is only possible with auto"
+					oLogger.warning("Applying sorters to groups is only possible with auto"
 						+ " expand mode 'Sequential'; current mode is: " + sCurrentAutoExpandMode,
-						this.sPath, sClassName);
+						this.sPath);
 				}
 				this.sLastAutoExpandMode = sCurrentAutoExpandMode;
 			}
@@ -5035,11 +4978,46 @@ sap.ui.define([
 			if (sDetails) {
 				sMessage += "; " + sDetails;
 			}
-			jQuery.sap.log.warning(sMessage, this.sPath, sClassName);
+			oLogger.warning(sMessage, this.sPath);
 		}
 		this.bApplySortersToGroups = false;
 	};
 
+	/**
+	 * Whether to skip requesting the total for the given measure. If there is no column for the
+	 * measure request the total.
+	 *
+	 * @param {string} sMeasureName The property name of the measure
+	 * @returns {boolean} Whether to skip requesting the total for the given measure.
+	 * @private
+	 */
+	AnalyticalBinding.prototype._isSkippingTotalForMeasure = function (sMeasureName) {
+		var oAnalyticalInfo = this.mAnalyticalInfoByProperty[sMeasureName];
+
+		// It may happen that there is no column for the measure, for example because only the text
+		// property for the measure and not the measure itself has been added as column. In that
+		// case request the total for the corresponding measure.
+		return !!oAnalyticalInfo && oAnalyticalInfo.total == false;
+	};
+
+	/**
+	 * Updates the dimension details text property with the given property name in case it is the given dimension's
+	 * text property.
+	 *
+	 * @param {object} oDimension The dimension
+	 * @param {string} sPropertyName The property name
+	 * @param {object} oDimensionDetails The dimension details
+	 *
+	 * @private
+	 */
+	AnalyticalBinding._updateDimensionDetailsTextProperty = function (oDimension, sPropertyName, oDimensionDetails) {
+		const oTextProperty = oDimension.getTextProperty();
+		if (oTextProperty && oTextProperty.name === sPropertyName) {
+			oDimensionDetails.textPropertyName = sPropertyName;
+		}
+	};
+
+	AnalyticalBinding.Logger = oLogger;
+
 	return AnalyticalBinding;
 });
-

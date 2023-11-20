@@ -1,11 +1,11 @@
 sap.ui.define([
-	"jquery.sap.global",
+	"sap/base/util/deepExtend",
 	"sap/ui/core/mvc/Controller",
 	"sap/m/MessageToast",
 	"sap/m/UploadCollectionParameter",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/core/format/FileSizeFormat"
-], function(jQuery, Controller, MessageToast, UploadCollectionParameter, JSONModel, FileSizeFormat) {
+], function(deepExtend, Controller, MessageToast, UploadCollectionParameter, JSONModel, FileSizeFormat) {
 	"use strict";
 
 	return Controller.extend("sap.m.sample.UploadCollectionVersioning.Page", {
@@ -13,7 +13,7 @@ sap.ui.define([
 			var sPath;
 
 			// set mock data
-			sPath = sap.ui.require.toUrl("sap/m/sample/UploadCollectionVersioning") + "/uploadCollection.json";
+			sPath = sap.ui.require.toUrl("sap/m/sample/UploadCollectionVersioning/uploadCollection.json");
 			this.getView().setModel(new JSONModel(sPath));
 
 			// Sets the text to the label
@@ -64,7 +64,7 @@ sap.ui.define([
 				this.updateFile(oEvent.getParameters());
 			} else {
 				var oData = this.byId("UploadCollection").getModel().getData();
-				var aItems = jQuery.extend(true, {}, oData).items;
+				var aItems = deepExtend({}, oData).items;
 				var oItem = {};
 				var sUploadedFile = oEvent.getParameter("files")[0].fileName;
 				// at the moment parameter fileName is not set in IE9
@@ -73,7 +73,7 @@ sap.ui.define([
 					sUploadedFile = aUploadedFile[0];
 				}
 				oItem = {
-					"documentId": jQuery.now().toString(), // generate Id,
+					"documentId": Date.now().toString(), // generate Id,
 					"fileName": sUploadedFile,
 					"mimeType": "",
 					"thumbnailUrl": "",
@@ -85,7 +85,7 @@ sap.ui.define([
 						},
 						{
 							"title": "Uploaded On",
-							"text": new Date(jQuery.now()).toLocaleDateString()
+							"text": new Date().toLocaleDateString()
 						},
 						{
 							"title": "File Size",
@@ -163,16 +163,16 @@ sap.ui.define([
 
 		updateFile: function() {
 			var oData = this.byId("UploadCollection").getModel().getData();
-			var aItems = jQuery.extend(true, {}, oData).items;
+			var aItems = deepExtend({}, oData).items;
 			// Adds the new metadata to the file which was updated.
 			for (var i = 0; i < aItems.length; i++) {
 				if (aItems[i].documentId === this.oItemToUpdate.getDocumentId()) {
 					// Uploaded by
 					aItems[i].attributes[0].text = "You";
 					// Uploaded on
-					aItems[i].attributes[1].text = new Date(jQuery.now()).toLocaleDateString();
+					aItems[i].attributes[1].text = new Date().toLocaleDateString();
 					// Version
-					var iVersion = parseInt(aItems[i].attributes[3].text, 10);
+					var iVersion = parseInt(aItems[i].attributes[3].text);
 					iVersion++;
 					aItems[i].attributes[3].text = iVersion;
 				}

@@ -1,0 +1,61 @@
+{
+	"sap.app": {
+		"id": "qunit.placeholder.component.NavContainer",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "qunit.placeholder.component.NavContainer.view.RootView",
+			"type": "XML",
+			"async": true
+		},
+		"routing": {
+			"config": {
+				"async": true,
+				"controlId": "navContainer",
+				"controlAggregation": "pages",
+				"routerClass": "sap.m.routing.Router",
+				"viewType": "XML",
+				"path": "qunit.placeholder.component.NavContainer.view"
+			},
+			"routes": [
+				{
+					"pattern": ":?query:",
+					"name": "home",
+					"target": {
+						"name": "home",
+						"placeholder": {
+							"autoClose": true,
+							"html": "my/placeholder.fragment.html"
+						}
+					}
+				},
+				{
+					"pattern": "route1",
+					"name": "route1",
+					"target": {
+						"name": "target1",
+						"placeholder": {
+							"autoClose": false,
+							"html": "my/placeholder.fragment.html"
+						}
+					}
+				}
+			],
+			"targets": {
+				"home": {
+					"name": "SampleView",
+					"type": "View",
+					"id": "sampleView"
+				},
+				"target1": {
+					"name": "SampleView2",
+					"type": "View",
+					"id": "sampleView2"
+				}
+			}
+		}
+	}
+}

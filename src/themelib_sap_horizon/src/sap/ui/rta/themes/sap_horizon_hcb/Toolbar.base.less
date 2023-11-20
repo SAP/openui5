@@ -1,0 +1,19 @@
+/******************************************************************************
+	Style of the RTA Toolbar (all types) - Horizon High Contrast Black theme
+*******************************************************************************/
+@_sap_ui_rta_Toolbar_Base_BaseColor: @sapUiNeutralBG; //#000000
+@_sap_ui_rta_Toolbar_Base_BaseBG: @sapUiNeutralBG; //#000000
+@_sap_ui_rta_Toolbar_Base_TextColor: @sapUiNeutralElement; //#ffffff
+@_sap_ui_rta_Toolbar_Base_OutlineColor: @sapUiButtonEmphasizedBorderColor; //#fff
+@_sap_ui_rta_Toolbar_Base_BoxShadow_DarkColor: fade(@sapUiNeutralElement, 80%); //rgba(255, 255, 255, 0.8)
+@_sap_ui_rta_Toolbar_Base_BoxShadow_LightColor: @sapUiNeutralElement; //#ffffff
+
+
+.sapUiRtaMode {
+	.sapUiRtaToolbar {
+		outline: 0.125rem dashed @_sap_ui_rta_Toolbar_Base_OutlineColor;
+		outline-offset: -0.125rem;
+		border: none;
+		border-image: none;
+	}
+}

@@ -1,0 +1,36 @@
+{
+	"d" : {
+		"__metadata" : {
+			"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SalesOrderSet('103')",
+			"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SalesOrderSet('103')",
+			"type" : "GWSAMPLE_BASIC.SalesOrder"
+		},
+		"SalesOrderID" : "103",
+		"Note" : "Test Case III",
+		"NoteLanguage" : "EN",
+		"CustomerID" : "0100000003",
+		"CustomerName" : "Talpa",
+		"CurrencyCode" : "EUR",
+		"GrossAmount" : "17664.36",
+		"NetAmount" : "12428.00",
+		"TaxAmount" : "2361.32",
+		"LifecycleStatus" : "P",
+		"LifecycleStatusDescription" : "In Progress",
+		"BillingStatus" : "",
+		"BillingStatusDescription" : "Initial",
+		"DeliveryStatus" : "",
+		"DeliveryStatusDescription" : "Initial",
+		"CreatedAt" : "\/Date(1567634400000)\/",
+		"ChangedAt" : "\/Date(1582022741780)\/",
+		"ToBusinessPartner" : {
+			"__deferred" : {
+				"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SalesOrderSet('103')/ToBusinessPartner"
+			}
+		},
+		"ToLineItems" : {
+			"__deferred" : {
+				"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SalesOrderSet('103')/ToLineItems"
+			}
+		}
+	}
+}

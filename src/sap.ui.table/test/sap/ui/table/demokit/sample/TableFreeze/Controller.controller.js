@@ -1,43 +1,46 @@
 sap.ui.define([
+	"sap/base/Log",
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/model/json/JSONModel",
 	"sap/m/MessageToast",
-	"sap/ui/core/format/DateFormat"
-], function(Controller, JSONModel, MessageToast, DateFormat) {
+	"sap/ui/core/format/DateFormat",
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/core/date/UI5Date"
+], function(Log, Controller, JSONModel, MessageToast, DateFormat, jQuery, UI5Date) {
 	"use strict";
 
 	return Controller.extend("sap.ui.table.sample.TableFreeze.Controller", {
 
-		onInit : function () {
+		onInit: function() {
 			// set explored app's demo model on this sample
 			var oJSONModel = this.initSampleDataModel();
 			this.getView().setModel(oJSONModel);
 		},
 
-		initSampleDataModel : function() {
+		initSampleDataModel: function() {
 			var oModel = new JSONModel();
 
 			var oDateFormat = DateFormat.getDateInstance({source: {pattern: "timestamp"}, pattern: "dd/MM/yyyy"});
 
-			jQuery.ajax(sap.ui.require.toUrl("sap/ui/demo/mock") + "/products.json", {
+			jQuery.ajax(sap.ui.require.toUrl("sap/ui/demo/mock/products.json"), {
 				dataType: "json",
-				success: function (oData) {
+				success: function(oData) {
 					var aTemp1 = [];
 					var aTemp2 = [];
 					var aSuppliersData = [];
 					var aCategoryData = [];
 					for (var i = 0; i < oData.ProductCollection.length; i++) {
 						var oProduct = oData.ProductCollection[i];
-						if (oProduct.SupplierName && jQuery.inArray(oProduct.SupplierName, aTemp1) < 0) {
+						if (oProduct.SupplierName && aTemp1.indexOf(oProduct.SupplierName) < 0) {
 							aTemp1.push(oProduct.SupplierName);
 							aSuppliersData.push({Name: oProduct.SupplierName});
 						}
-						if (oProduct.Category && jQuery.inArray(oProduct.Category, aTemp2) < 0) {
+						if (oProduct.Category && aTemp2.indexOf(oProduct.Category) < 0) {
 							aTemp2.push(oProduct.Category);
 							aCategoryData.push({Name: oProduct.Category});
 						}
-						oProduct.DeliveryDate = (new Date()).getTime() - (i % 10 * 4 * 24 * 60 * 60 * 1000);
-						oProduct.DeliveryDateStr = oDateFormat.format(new Date(oProduct.DeliveryDate));
+						oProduct.DeliveryDate = Date.now() - (i % 10 * 4 * 24 * 60 * 60 * 1000);
+						oProduct.DeliveryDateStr = oDateFormat.format(UI5Date.getInstance(oProduct.DeliveryDate));
 						oProduct.Heavy = oProduct.WeightMeasure > 1000 ? "true" : "false";
 						oProduct.Available = oProduct.Status == "Available" ? true : false;
 					}
@@ -47,35 +50,35 @@ sap.ui.define([
 
 					oModel.setData(oData);
 				},
-				error: function () {
-					jQuery.sap.log.error("failed to load json");
+				error: function() {
+					Log.error("failed to load json");
 				}
 			});
 
 			return oModel;
 		},
 
-		formatAvailableToObjectState : function (bAvailable) {
+		formatAvailableToObjectState: function(bAvailable) {
 			return bAvailable ? "Success" : "Error";
 		},
 
-		formatAvailableToIcon : function(bAvailable) {
+		formatAvailableToIcon: function(bAvailable) {
 			return bAvailable ? "sap-icon://accept" : "sap-icon://decline";
 		},
 
-		handleDetailsPress : function(oEvent) {
+		handleDetailsPress: function(oEvent) {
 			MessageToast.show("Details for product with id " + this.getView().getModel().getProperty("ProductId", oEvent.getSource().getBindingContext()));
 		},
 
-		buttonPress : function (oEvent) {
+		buttonPress: function(oEvent) {
 			var oView = this.getView(),
 				oTable = oView.byId("table1"),
 				sColumnCount = oView.byId("inputColumn").getValue() || 0,
 				sRowCount = oView.byId("inputRow").getValue() || 0,
-				sBottomRowCount = oView.byId("inputButtomRow").getValue() || 0,
-				iColumnCount = parseInt(sColumnCount,10),
-				iRowCount = parseInt(sRowCount,10),
-				iBottomRowCount = parseInt(sBottomRowCount,10),
+				sBottomRowCount = oView.byId("inputBottomRow").getValue() || 0,
+				iColumnCount = parseInt(sColumnCount),
+				iRowCount = parseInt(sRowCount),
+				iBottomRowCount = parseInt(sBottomRowCount),
 				iTotalColumnCount = oTable.getColumns().length,
 				iTotalRowCount = oTable.getRows().length;
 
@@ -106,13 +109,13 @@ sap.ui.define([
 
 				// update inputs
 				oView.byId("inputRow").setValue(iRowCount);
-				oView.byId("inputButtomRow").setValue(iBottomRowCount);
-				MessageToast.show("Sum of fixed row count and buttom row count exceeds the total row count. Input values got updated.");
+				oView.byId("inputBottomRow").setValue(iBottomRowCount);
+				MessageToast.show("Sum of fixed row count and bottom row count exceeds the total row count. Input values got updated.");
 			}
 
 			oTable.setFixedColumnCount(iColumnCount);
-			oTable.setFixedRowCount(iRowCount);
-			oTable.setFixedBottomRowCount(iBottomRowCount);
+			oTable.getRowMode().setFixedTopRowCount(iRowCount);
+			oTable.getRowMode().setFixedBottomRowCount(iBottomRowCount);
 		}
 
 	});

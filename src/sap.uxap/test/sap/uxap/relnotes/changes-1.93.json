@@ -1,0 +1,23 @@
+{
+  "1.93.0": {
+    "date": "July 2021",
+    "notes": [
+      {
+        "id": "a0e1b59fcea57eb2c8fd7f7b05fa9f888be85819",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Fix infinite loop error",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180239658"
+          }
+        ]
+      },
+      {
+        "id": "bde823d8441c0b2a5263a2401b6d44c050be6925",
+        "type": "FEATURE",
+        "text": " sap.uxap.ObjectPageLayout: New property and event introduced"
+      }
+    ]
+  }
+}

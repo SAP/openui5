@@ -1,0 +1,157 @@
+@_sap_m_SinglePlanningCalendarGrid_HoursBackground: @sapUiListBackground;
+@_sap_m_SinglePlanningCalendarStickyShadow: 0 0.2rem 0.3rem -0.1rem rgba(0, 0, 0, 0.15);
+
+.sapMSinglePCColumnHeader.sapUiCalRow {
+	background-color: @_sap_m_SinglePlanningCalendarGrid_HoursBackground;
+	box-shadow: @_sap_m_SinglePlanningCalendarStickyShadow;
+
+	// TODO: Consider refactoring of the CSS of PlanningCalendar DatesRow CSS and fix the styles in one place
+	.sapUiCalItem:focus {
+		outline: none;
+	}
+
+	.sapUiCalItemNow {
+		border-color: @sapUiCalendarColorToday;
+	}
+}
+
+.sapMSinglePCHiddenColHeaders .sapMPCHeadNavToolbar {
+	// Column headers will be hidden in Day view, so the shadow
+	// should be applied on the navigation toolbar in such case.
+	box-shadow: @_sap_m_SinglePlanningCalendarStickyShadow;
+}
+
+.sapMSinglePCRowHeaders {
+	background-color: @_sap_m_SinglePlanningCalendarGrid_HoursBackground;
+	color: @sapUiBaseText;
+}
+
+.sapMSinglePCRow,
+.sapMSinglePCBlockersColumn {
+	border-color: @sapUiListVerticalBorderColor;
+}
+
+.sapMSinglePCNowMarker {
+	color: @sapUiCalendarColorToday;
+}
+
+.sapMSinglePCColumnToday .sapMSinglePCRow::before {
+	border-color: @sapUiCalendarColorToday;
+}
+
+.sapMSinglePCNowMarker::after {
+	border-color: currentColor;
+}
+
+.sapMSinglePCAppointments .sapUiCalendarApp {
+	background-color: fade(@sapUiListBackground, 90%);
+}
+
+.sapMSinglePCAppointmentWrap.sapUiCalendarRowApps {
+	&:focus {
+		.sapUiCalendarAppSel > .sapUiCalendarAppCont:after {
+			border: 0.0625rem dotted @sapUiContentContrastFocusColor;
+		}
+	}
+}
+
+// TODO: Consider refactoring the coloring logic of Appointments
+/* colors for types */
+.calendarRowTypeColorMixIn(@class, @iclass, @iitemtypeclass, @color, @bcolor){
+	.sapMSinglePCAppointments, .sapMSinglePCBlockers {
+		.@{class}.sapMSinglePCAppointmentWrap {
+			border-left-color: @color;
+		}
+	}
+	.sapMSinglePCAppointments {
+
+		&.sapUiCalendarRowVisFilled > .@{class}.sapUiCalendarRowApps > .sapUiCalendarApp:not(.sapUiCalendarAppSel) > .sapUiCalendarAppCont{
+			background-color: @bcolor;
+		}
+
+		.@{class}.sapMSinglePCAppointmentWrap::before{
+			background: @color;
+		}
+
+		//.@{iclass}.sapUiCalendarRowAppsIntHead{
+		//	background-color: @bcolor;
+		//}
+		//
+		//.@{iclass}.sapUiCalendarRowAppsIntHeadFirst{
+		//	border-left-color: @color;
+		//}
+	}
+	.sapMSinglePCBlockers {
+
+		&.sapUiCalendarRowVisFilled > .@{class}.sapUiCalendarRowApps > .sapUiCalendarApp:not(.sapUiCalendarAppSel) > .sapUiCalendarAppCont{
+			background-color: @bcolor;
+		}
+	}
+
+	//Special Dates
+	.sapMSinglePCGrid .@{iitemtypeclass} {
+		//week views
+		&.sapUiCalItem .sapUiCalItemText {
+			box-shadow: none;
+		}
+		&.sapUiCalItem:not(.sapUiCalItemSel) {
+			box-shadow: inset 0 -0.25rem 0 @color;
+		}
+		//week views selected
+		&.sapUiCalItem.sapUiCalItemSel {
+			box-shadow: inset 0 -0.25rem 0 @color, inset 0 -0.33rem white;
+			.sapUiCalItemText {
+				box-shadow: none;
+			}
+		}
+		//day view
+		.sapMSinglePCBlockersColumn {
+		 	box-shadow: inset 0 0.25rem 0 @color;
+		}
+	  }
+}
+
+.sapMSinglePC .sapUiCalRow .sapUiCalItem.sapUiCalItemNow .sapUiCalSpecialDate {
+	position: absolute;
+	width: 100%;
+	height: 0.195rem;
+	left: 0;
+	bottom: 0.0625rem;
+}
+
+/* Calendar overstyling */
+
+html.sap-desktop .sapMSinglePC .sapUiCalItemWeekEnd:not(.sapUiCalItemSel):hover {
+	background-color: darken(@sapUiContentForegroundColor, 10);
+}
+
+html.sap-desktop .sapMSinglePC .sapUiCalItemOtherMonth:not(.sapUiCalItemSel):hover {
+	background-color: darken(@sapUiListBackground, 10);
+}
+
+html .sapMSinglePC .sapMSinglePCAppointmentWrap .sapUiCalendarApp.sapUiCalendarAppSel:hover:active,
+html .sapMSinglePC .sapMSinglePCAppointmentWrap .sapUiCalendarApp.sapUiCalendarAppSel:hover:not(:active) {
+	background-color: transparent;
+}
+
+.sapUiCalendarRowVisFilled .sapMSinglePCAppointmentWrap {
+	.sapUiCalendarApp,
+	.sapUiCalendarApp:hover:not(:active) {
+		background-color: transparent;
+	}
+}
+
+.sapMSinglePC .sapUiCalendarAppCont{
+	border-left: 0.0625rem solid darken(@sapUiListBorderColor, 15);
+	border-radius: 0 0.125rem 0.125rem 0.125rem;
+}
+
+.sapMSinglePCBlockersRow {
+	background-color: @_sap_m_SinglePlanningCalendarGrid_HoursBackground;
+}
+
+.sapMSinglePCColumnWeekend,
+.sapMSinglePCNonWorkingRow,
+.sapMSinglePCRowHeaders {
+	background-color: darken(@sapUiListBackground, 3);
+}

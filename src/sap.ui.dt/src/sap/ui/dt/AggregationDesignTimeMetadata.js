@@ -3,9 +3,9 @@
  */
 
 sap.ui.define([
-	'sap/ui/dt/DesignTimeMetadata'
+	"sap/ui/dt/DesignTimeMetadata"
 ],
-function (
+function(
 	DesignTimeMetadata
 ) {
 	"use strict";
@@ -27,9 +27,9 @@ function (
 	 * @private
 	 * @since 1.30
 	 * @alias sap.ui.dt.AggregationDesignTimeMetadata
-	 * @experimental Since 1.30. This class is experimental and provides only limited functionality. Also the API might be changed in future.
 	 */
-	var AggregationDesignTimeMetadata = DesignTimeMetadata.extend("sap.ui.dt.AggregationDesignTimeMetadata", /** @lends sap.ui.dt.AggregationDesignTimeMetadata.prototype */ {
+	var AggregationDesignTimeMetadata = DesignTimeMetadata
+	.extend("sap.ui.dt.AggregationDesignTimeMetadata", /** @lends sap.ui.dt.AggregationDesignTimeMetadata.prototype */ {
 		metadata: {
 			library: "sap.ui.dt"
 		}
@@ -43,9 +43,10 @@ function (
 	 * @return {string|undefined} Returns the label as string or undefined
 	 * @public
 	 */
-	AggregationDesignTimeMetadata.prototype.getLabel = function(oElement, sAggregationName) {
-		return DesignTimeMetadata.prototype.getLabel.apply(this, arguments) || sAggregationName;
+	AggregationDesignTimeMetadata.prototype.getLabel = function(...aArgs) {
+		const [, sAggregationName] = aArgs;
+		return DesignTimeMetadata.prototype.getLabel.apply(this, aArgs) || sAggregationName;
 	};
 
 	return AggregationDesignTimeMetadata;
-}, /* bExport= */ true);
+});

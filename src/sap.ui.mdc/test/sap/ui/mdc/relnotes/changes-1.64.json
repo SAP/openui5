@@ -1,0 +1,55 @@
+{
+  "1.64.0": {
+    "date": "February 2019",
+    "notes": [
+      {
+        "id": "ee0395594926b5b532e652d0c3911a262e840919",
+        "type": "FEATURE",
+        "text": "MDCChart: Time dimension support",
+        "references": []
+      },
+      {
+        "id": "6844a2d92bca672e9f0f18c525befb72b697bc97",
+        "type": "FEATURE",
+        "text": "MDCChart: Dimension Coloring",
+        "references": []
+      },
+      {
+        "id": "87b6845c3d22247feb60de26993b522822a40674",
+        "type": "FIX",
+        "text": "MDCChart: Do not force setting height & width on MDC chart",
+        "references": []
+      },
+      {
+        "id": "ce5cfa5de8bdb846a3a6f9115f7188a2f1a82348",
+        "type": "FIX",
+        "text": "MDCChart: Update sorters when item setup changes",
+        "references": []
+      },
+      {
+        "id": "804cc7c0e05750b33299e8a12d84e6a8e97879bf",
+        "type": "FIX",
+        "text": "MDCChartHelper: AggregatableProperties now on entity type",
+        "references": []
+      },
+      {
+        "id": "e1d10d1f81bedb42f50dcc6f562a385d594c12a4",
+        "type": "FEATURE",
+        "text": "MDCChart: Semantical Pattern",
+        "references": []
+      },
+      {
+        "id": "882a171a4ec2dcac20161fe421ced2914fa3f877",
+        "type": "FEATURE",
+        "text": "MDCChart: Static semantic coloring",
+        "references": []
+      },
+      {
+        "id": "24544ccb737fb4e1fb7cbe550cfacfdb2b4663cf",
+        "type": "FEATURE",
+        "text": "MDCChart: Criticality Calculation of measures",
+        "references": []
+      }
+    ]
+  }
+}

@@ -1,0 +1,35 @@
+{
+  "1.66.0": {
+    "date": "April 2019",
+    "notes": [
+      {
+        "id": "9b8b4abff0313075a6454de1e43b150b6ddf2840",
+        "type": "FIX",
+        "text": "sap.m.Select: Fixed picker height in IE11",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980165515"
+          }
+        ]
+      },
+      {
+        "id": "ac37916f742463215275ad3d4b4df869e7b6e4cd",
+        "type": "FIX",
+        "text": "ResponsiveGridLayout: use Layout as parent for panels and grids",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980175468"
+          }
+        ]
+      },
+      {
+        "id": "8f83ae6bff26f94d73b5168b0909a90651c4b5d8",
+        "type": "FEATURE",
+        "text": "sap.f.GridContainer: Implement allowDenseFill parameter for IE",
+        "references": []
+      }
+    ]
+  }
+}

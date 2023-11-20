@@ -7,7 +7,7 @@
 	xmlns="sap.m">
 	<Page showHeader="false">
 		<content>
-			<form:SimpleForm editable="true" width="320px">
+			<form:SimpleForm editable="true" width="320px" layout="ColumnLayout">
 				<Label text="Design"/>
 				<Select change="onSelectDesign" items="{/designTypes}">
 					<core:Item key="{key}" text="{key}"/>

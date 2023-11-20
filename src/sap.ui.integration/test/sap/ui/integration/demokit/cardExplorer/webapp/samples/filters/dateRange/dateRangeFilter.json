@@ -1,0 +1,56 @@
+{
+	"sap.app": {
+		"id": "card.explorer.filters.dateRange",
+		"type": "card"
+	},
+	"sap.card": {
+		"configuration": {
+			"destinations": {
+				"northwind": {
+					"name": "Northwind_V4",
+					"label": "Northwind V4 Service URL",
+					"defaultUrl": "https://services.odata.org/v4/Northwind/Northwind.svc"
+				}
+			},
+			"filters": {
+				"dateRange": {
+					"type": "DateRange",
+					"value": {
+						"option": "dateRange",
+						"values": [
+							"1996-08-06",
+							"1996-08-16"
+						]
+					},
+					"label": "Order date"
+				}
+			}
+		},
+		"data": {
+			"request": {
+				"url": "{{destinations.northwind}}/Orders",
+				"parameters": {
+					"$format": "json",
+					"$filter": "OrderDate gt {filters>/dateRange/rangeOData/start} and OrderDate lt {filters>/dateRange/rangeOData/end}"
+				}
+			},
+			"path": "/value"
+		},
+		"type": "List",
+		"header": {
+			"title": "Completed Orders",
+			"icon": {
+				"src": "sap-icon://filter"
+			}
+		},
+		"content": {
+			"data": {
+				"path": "/value"
+			},
+			"item": {
+				"title": "{ShipAddress}, {ShipCity}, {ShipCountry}",
+				"description": "{= format.dateTime(${OrderDate}, {format: 'yMMMd'}) }"
+			}
+		}
+	}
+}

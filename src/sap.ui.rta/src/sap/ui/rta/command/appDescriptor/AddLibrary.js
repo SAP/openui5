@@ -2,8 +2,10 @@
  * ${copyright}
  */
 sap.ui.define([
-	'sap/ui/rta/command/AppDescriptorCommand'
+	"sap/ui/core/Lib",
+	"sap/ui/rta/command/AppDescriptorCommand"
 ], function(
+	Lib,
 	AppDescriptorCommand
 ) {
 	"use strict";
@@ -21,13 +23,11 @@ sap.ui.define([
 	 * @private
 	 * @since 1.49
 	 * @alias sap.ui.rta.command.appDescriptor.AddLibrary
-	 * @experimental Since 1.49. This class is experimental and provides only limited functionality. Also the API might be
-	 *               changed in future.
 	 */
 	var AddLibrary = AppDescriptorCommand.extend("sap.ui.rta.command.appDescriptor.AddLibrary", {
-		metadata : {
-			library : "sap.ui.rta",
-			events : {}
+		metadata: {
+			library: "sap.ui.rta",
+			events: {}
 		}
 	});
 
@@ -39,13 +39,13 @@ sap.ui.define([
 	 * Execute the change (load the required libraries)
 	 * @return {Promise} resolved if libraries could be loaded; rejected if not
 	 */
-	AddLibrary.prototype.execute = function(){
+	AddLibrary.prototype.execute = function() {
 		var aPromises = [];
 
-		if (this.getParameters().libraries){
+		if (this.getParameters().libraries) {
 			var aLibraries = Object.keys(this.getParameters().libraries);
-			aLibraries.forEach(function(sLibrary){
-				aPromises.push(sap.ui.getCore().loadLibrary(sLibrary, true));
+			aLibraries.forEach(function(sLibrary) {
+				aPromises.push(Lib.load({name: sLibrary}));
 			});
 		}
 
@@ -53,5 +53,4 @@ sap.ui.define([
 	};
 
 	return AddLibrary;
-
 }, /* bExport= */true);

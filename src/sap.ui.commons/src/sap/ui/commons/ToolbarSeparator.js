@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.ui.commons.ToolbarSeparator.
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element'],
-	function(jQuery, library, Element) {
+sap.ui.define(['./library', 'sap/ui/core/Element'],
+	function(library, Element) {
 	"use strict";
 
 
@@ -27,7 +27,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element'],
 	 * @public
 	 * @deprecated Since version 1.38. Instead, use the <code>sap.m.Toolbar</code> control.
 	 * @alias sap.ui.commons.ToolbarSeparator
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var ToolbarSeparator = Element.extend("sap.ui.commons.ToolbarSeparator", /** @lends sap.ui.commons.ToolbarSeparator.prototype */ { metadata : {
 
@@ -35,6 +34,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element'],
 			"sap.ui.commons.ToolbarItem"
 		],
 		library : "sap.ui.commons",
+		deprecated: true,
 		properties : {
 
 			/**
@@ -55,4 +55,4 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element'],
 
 	return ToolbarSeparator;
 
-}, /* bExport= */ true);
+});

@@ -1,0 +1,29 @@
+{
+  "1.92.0": {
+    "date": "June 2021",
+    "notes": [
+      {
+        "id": "fae59acb5c43e714fe765e6ceeeadc4832207ac9",
+        "type": "FIX",
+        "text": " sap.ui.integration.cards.AdaptiveContent: Refresh CSS properly on theme changed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180176493"
+          }
+        ]
+      },
+      {
+        "id": "fee6a9d180a6ef880b3eeb6d9fdcad9fb739864e",
+        "type": "FIX",
+        "text": " SAC Card: Error is no longer thrown when the card is refreshed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180154423"
+          }
+        ]
+      }
+    ]
+  }
+}

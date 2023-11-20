@@ -1,5 +1,4 @@
 sap.ui.define([
-		'jquery.sap.global',
 		'sap/m/Label',
 		'sap/m/Link',
 		'sap/m/MessageToast',
@@ -8,7 +7,7 @@ sap.ui.define([
 		'sap/ui/core/Fragment',
 		'sap/ui/core/mvc/Controller',
 		'sap/ui/model/json/JSONModel'
-	], function(jQuery, Label, Link, MessageToast, Text, Formatter, Fragment, Controller, JSONModel) {
+	], function(Label, Link, MessageToast, Text, Formatter, Fragment, Controller, JSONModel) {
 	"use strict";
 
 	var PageController = Controller.extend("sap.m.sample.TableBreadcrumb.Page", {
@@ -29,21 +28,28 @@ sap.ui.define([
 		onInit: function (oEvent) {
 
 			// set demo model on this sample
-			var sPath = sap.ui.require.toUrl("sap/m/sample/TableBreadcrumb") + "/productHierarchy.json";
+			var sPath = sap.ui.require.toUrl("sap/m/sample/TableBreadcrumb/productHierarchy.json");
 			var oModel = new JSONModel(sPath);
 			this.getView().setModel(oModel);
 			this.getView().setModel(new JSONModel(this.mInitialOrderState), "Order");
 
-			if (!this.oTemplate) {
-				this.oTemplate = sap.ui.xmlfragment("sap.m.sample.TableBreadcrumb.Row");
+			if (!this._pTemplate) {
+				this._pTemplate = Fragment.load({
+					id: this.getView().getId(),
+					name: "sap.m.sample.TableBreadcrumb.Row"
+				});
 			}
 			this._oTable = this.byId("idProductsTable");
 
 			sPath = this._getInitialPath();
 			this._setAggregation(sPath);
-
+			var oBreadCrumb = this.byId("breadcrumb");
+			var oLink = new Link({
+				text: "Suppliers",
+				press:[sPath, this.onBreadcrumbPress, this]
+			});
+			oBreadCrumb.addLink(oLink);
 		},
-
 
 		// Initial path is the first crumb appended to the collection root
 		_getInitialPath: function () {
@@ -67,56 +73,6 @@ sap.ui.define([
 			return aParts.slice(0, aParts.length - 1).join("/");
 		},
 
-
-		// Build the crumb links for display in the toolbar
-		_maintainCrumbLinks: function (sPath) {
-			// Determine trail parts
-			var aPaths = [];
-			var aParts = sPath.split("/");
-			while (aParts.length > 1) {
-				aPaths.unshift(aParts.join("/"));
-				aParts = aParts.slice(0, aParts.length - 2);
-			}
-
-			// Re-build crumb toolbar based on trail parts
-			var oCrumbToolbar = this.byId("idCrumbToolbar");
-			oCrumbToolbar.destroyContent();
-
-			aPaths.forEach(jQuery.proxy(function (sPath, iPathIndex) {
-
-				var bIsFirst = iPathIndex === 0;
-				var bIsLast = iPathIndex === aPaths.length - 1;
-
-				// Special case for 1st crumb: fixed text
-				var sText = bIsFirst ? this.aCrumbs[0] : "{Name}";
-
-				// Context is one level up in path
-				var sContext = this._stripItemBinding(sPath);
-
-				var oCrumb = bIsLast
-					? new Text({
-						text: sText
-					}).addStyleClass("crumbLast")
-					: new Link({
-						text: sText,
-						target: sPath,
-						press: [this.handleLinkPress, this]
-					});
-				oCrumb.bindElement(sContext);
-
-				oCrumbToolbar.addContent(oCrumb);
-				if (!bIsLast) {
-					var oArrow = new Label({
-						textAlign: "Center",
-						text: ">"
-					}).addStyleClass("crumbArrow");
-					oCrumbToolbar.addContent(oArrow);
-				}
-
-			}, this));
-		},
-
-
 		// Navigate through the product hierarchy by rebinding the
 		// table's items aggregation. Navigation is either through
 		// branches (Suppliers, Categories) or leaves (Products)
@@ -134,9 +90,9 @@ sap.ui.define([
 			}
 
 			// Set the new aggregation
-			this._oTable.bindAggregation("items", sPath, this.oTemplate);
-
-			this._maintainCrumbLinks(sPath);
+			this._pTemplate.then(function(oTemplate){
+				this._oTable.bindAggregation("items", sPath, oTemplate);
+			}.bind(this));
 		},
 
 
@@ -152,13 +108,6 @@ sap.ui.define([
 		},
 
 
-		// Navigation means a new aggregation to work our
-		// way through the ProductHierarchy
-		handleLinkPress: function (oEvent) {
-			this._setAggregation(oEvent.getSource().getTarget());
-		},
-
-
 		// Show a message toast only if there are products selected
 		handleOrderPress: function (oEvent) {
 			var aProductsSelected = Formatter.listProductsSelected(this.getView());
@@ -169,14 +118,44 @@ sap.ui.define([
 			}
 		},
 
+		// Removes unwanted links added to breadcrumb and updates the breadcrumb
+		onBreadcrumbPress: function (oEvent, sPath) {
+			var oLink = oEvent.getSource();
+			var oBreadCrumb = this.byId("breadcrumb");
+			var iIndex = oBreadCrumb.indexOfLink(oLink);
+			var aCrumb = oBreadCrumb.getLinks().slice(iIndex + 1);
+			if (aCrumb.length) {
+				aCrumb.forEach(function(oLink) {
+					oLink.destroy();
+				});
+				this._setAggregation(sPath);
+			}
+		},
 
+		// Handles breadcrumb creation and binding
 		// Take care of the navigation through the hierarchy when the
 		// user selects a table row
 		handleSelectionChange: function (oEvent) {
-			// Determine where we are right now
-			var sPath = oEvent.getParameter("listItem").getBindingContext().getPath();
+			var sPath = oEvent.getParameter("listItem").getBindingContextPath();
 			var aPath = sPath.split("/");
+			var sPathEnd = sPath.split("/").reverse()[1];
 			var sCurrentCrumb = aPath[aPath.length - 2];
+
+			if (sPathEnd !== this.aCrumbs[this.aCrumbs.length - 1]) {
+				var oBreadCrumb = this.byId("breadcrumb");
+				var sPrevNode = aPath[aPath.length - 2];
+				var iCurNodeIndex = this.aCrumbs.indexOf(sPrevNode) + 1;
+
+				var oLink = new Link({
+					text: "{Name}",
+					press:[sPath + "/" + this.aCrumbs[iCurNodeIndex], this.onBreadcrumbPress, this]
+				});
+
+				oLink.bindElement({
+					path : sPath
+				});
+				oBreadCrumb.addLink(oLink);
+			}
 
 			// If we're on a leaf, remember the selections;
 			// otherwise navigate

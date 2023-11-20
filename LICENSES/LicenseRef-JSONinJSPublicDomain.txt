@@ -1,0 +1,12 @@
+//  json2.js
+//  2017-06-12
+//  Public Domain.
+//  NO WARRANTY EXPRESSED OR IMPLIED. USE AT YOUR OWN RISK.
+
+//  USE YOUR OWN COPY. IT IS EXTREMELY UNWISE TO LOAD CODE FROM SERVERS YOU DO
+//  NOT CONTROL.
+
+//  This is a reference implementation. You are free to copy, modify, or
+//  redistribute.
+
+See https://github.com/douglascrockford/JSON-js/blob/master/json2.js
