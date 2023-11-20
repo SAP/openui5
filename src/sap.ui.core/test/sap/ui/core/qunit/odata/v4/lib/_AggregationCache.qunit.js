@@ -4606,12 +4606,14 @@ make root = ${bMakeRoot}`;
 });
 
 	//*********************************************************************************************
-[2, 4, 5].forEach((iMinRank) => {
+[2, 3, 4, 5].forEach((iMinRank) => {
 	QUnit.test(`shiftRank: oFirstLevel, iMinRank = ${iMinRank}`, function (assert) {
 		const oCache = _AggregationCache.create(this.oRequestor, "Foo", "", {}, {
 			hierarchyQualifier : "X"
 		});
 		oCache.aElements = [{
+			"@$ui5._" : {parent : oCache.oFirstLevel, rank : 6}
+		}, {
 			"@$ui5._" : {parent : oCache.oFirstLevel, rank : 0}
 		}, {
 			"@$ui5._" : {parent : oCache.oFirstLevel, rank : 1}
@@ -4635,15 +4637,17 @@ make root = ${bMakeRoot}`;
 			let aExpectedRanks;
 			switch (iMinRank) {
 				case 2:
-					aExpectedRanks = [0, 1, iMinRank, 3 + 23, undefined, 0, 1, 4 + 23, 5 + 23];
+				case 3:
+					aExpectedRanks
+						= [6 + 23, 0, 1, iMinRank, 3 + 23, undefined, 0, 1, 4 + 23, 5 + 23];
 					break;
 
 				case 4:
-					aExpectedRanks = [0, 1, iMinRank, 3, undefined, 0, 1, 4 + 23, 5 + 23];
+					aExpectedRanks = [6 + 23, 0, 1, iMinRank, 3, undefined, 0, 1, 4 + 23, 5 + 23];
 					break;
 
 				case 5:
-					aExpectedRanks = [0, 1, iMinRank, 3, undefined, 0, 1, 4, 5 + 23];
+					aExpectedRanks = [6 + 23, 0, 1, iMinRank, 3, undefined, 0, 1, 4, 5 + 23];
 					break;
 				// no default
 			}
@@ -4653,12 +4657,12 @@ make root = ${bMakeRoot}`;
 		}
 
 		// code under test
-		oCache.shiftRank(2, 23);
+		oCache.shiftRank(3, 23);
 
 		check();
 
 		// code under test ("nothing is shifted")
-		oCache.shiftRank(4, -23);
+		oCache.shiftRank(5, -23);
 
 		check(); // unchanged
 	});
