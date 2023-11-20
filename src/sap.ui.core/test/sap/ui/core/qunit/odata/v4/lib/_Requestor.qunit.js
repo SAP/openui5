@@ -4079,6 +4079,9 @@ sap.ui.define([
 			assert.strictEqual(oBatchQueue0[0].iSerialNumber, 0);
 		}
 
+		const oModelInterfaceMock = this.mock(oModelInterface);
+		oModelInterfaceMock.expects("onCreateGroup").withExactArgs("group");
+
 		// code under test
 		aBatchQueue = oRequestor.getOrCreateBatchQueue("group");
 
@@ -4087,10 +4090,15 @@ sap.ui.define([
 		// code under test
 		assert.strictEqual(oRequestor.getOrCreateBatchQueue("group"), aBatchQueue);
 
-		this.mock(oModelInterface).expects("onCreateGroup").withExactArgs("group2");
+		oModelInterfaceMock.expects("onCreateGroup").withExactArgs("group2");
 
 		// code under test
 		checkBatchQueue(oRequestor.getOrCreateBatchQueue("group2"), "group2");
+
+		oModelInterfaceMock.expects("onCreateGroup").withExactArgs("group3").never();
+
+		// code under test: create queue without informing the model
+		checkBatchQueue(oRequestor.getOrCreateBatchQueue("group3", true), "group3");
 	});
 
 	//*****************************************************************************************
@@ -4110,7 +4118,7 @@ sap.ui.define([
 			aRequests = [aChangeSet0, oGetRequest];
 
 		aRequests.iChangeSet = 0;
-		this.mock(oRequestor).expects("getOrCreateBatchQueue").withExactArgs("group")
+		this.mock(oRequestor).expects("getOrCreateBatchQueue").withExactArgs("group", true)
 			.returns(aRequests);
 		this.mock(oRequestor).expects("getSerialNumber").withExactArgs().returns(42);
 
