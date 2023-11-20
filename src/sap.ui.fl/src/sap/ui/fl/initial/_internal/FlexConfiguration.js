@@ -36,7 +36,7 @@ sap.ui.define([
 			const vFlexibilityServices = oWritableConfig.get({
 				name: "sapUiFlexibilityServices",
 				type: (vValue) => {
-					if (typeof vValue === "string") {
+					if (vValue && typeof vValue === "string") {
 						if (vValue[0] === "/") {
 							aDefaultValue[0].url = vValue;
 							vValue = aDefaultValue;
