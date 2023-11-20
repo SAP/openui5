@@ -1,0 +1,8 @@
+<View xmlns="sap.ui.core.mvc" xmlns:m="sap.m">
+	<m:Text id="before" text="another control before the nested view" />
+	<m:VBox id="vbox">
+		<XMLView viewName="example.mvc.inner" id="indirect-inner" async="true" />
+	</m:VBox>
+	<XMLView viewName="example.mvc.inner" id="direct-inner" async="true" />
+	<m:Text id="after" text="another control before the nested view" />
+</View>
