@@ -1,4 +1,4 @@
-/* global QUnit */
+/* global QUnit, sinon */
 sap.ui.define([
 	"sap/ui/mdc/ActionToolbar", "sap/m/Button", "sap/m/Title", "sap/m/Text", "sap/ui/mdc/actiontoolbar/ActionToolbarAction", "sap/ui/mdc/enums/ActionToolbarActionAlignment", "sap/ui/core/Core"
 ], function(ActionToolbar, Button, Title, Text, ActionToolbarAction, ActionToolbarActionAlignment, oCore) {
@@ -293,7 +293,7 @@ sap.ui.define([
 		checkAggregation(assert, this.oToolbarAddAggregations, "content", [
 			this.oBeginSeparator, this.oSpacer, this.oEndActionsBeginSeparator, oButtonEnd1, this.oEndActionsEndSeparator, oAction1
 		], "After addAction 'end' alignment 'right'");
-		assert.deepEqual(this.oToolbarAddAggregations.getActions(), [ oAction1 ], "After addAction 'end' alignment 'end' - getActions correct");
+		assert.deepEqual(this.oToolbarAddAggregations.getActions(), [oAction1], "After addAction 'end' alignment 'end' - getActions correct");
 		checkAggregation(assert, this.oToolbarAddAggregations, "actions", [
 			oAction1
 		], "After addAction", oAction1);
@@ -302,7 +302,7 @@ sap.ui.define([
 		checkAggregation(assert, this.oToolbarAddAggregations, "content", [
 			this.oBeginSeparator, this.oSpacer, oAction2, this.oEndActionsBeginSeparator, oButtonEnd1, this.oEndActionsEndSeparator, oAction1
 		], "After addAction 'end' alignment 'left'");
-		assert.deepEqual(this.oToolbarAddAggregations.getActions(), [ oAction1, oAction2 ], "After addAction 'end' alignment 'begin' - getActions correct");
+		assert.deepEqual(this.oToolbarAddAggregations.getActions(), [oAction1, oAction2], "After addAction 'end' alignment 'begin' - getActions correct");
 		checkAggregation(assert, this.oToolbarAddAggregations, "actions", [
 			oAction1, oAction2
 		], "After After addAction", oAction2);
@@ -311,7 +311,7 @@ sap.ui.define([
 		checkAggregation(assert, this.oToolbarAddAggregations, "content", [
 			this.oBeginSeparator, this.oSpacer, oAction2, this.oEndActionsBeginSeparator, oButtonEnd1, this.oEndActionsEndSeparator, oAction1, oAction3
 		], "After addAction 'end' alignment 'right'");
-		assert.deepEqual(this.oToolbarAddAggregations.getActions(), [ oAction1, oAction2, oAction3 ], "After addAction 'end' alignment 'end' - getActions correct");
+		assert.deepEqual(this.oToolbarAddAggregations.getActions(), [oAction1, oAction2, oAction3], "After addAction 'end' alignment 'end' - getActions correct");
 		checkAggregation(assert, this.oToolbarAddAggregations, "actions", [
 			oAction1, oAction2, oAction3
 		], "After addAction", oAction2);
@@ -320,7 +320,7 @@ sap.ui.define([
 		checkAggregation(assert, this.oToolbarAddAggregations, "content", [
 			this.oBeginSeparator, this.oSpacer, oAction2, oAction4, this.oEndActionsBeginSeparator, oButtonEnd1, this.oEndActionsEndSeparator, oAction1, oAction3
 		], "After addAction 'end' alignment 'left'");
-		assert.deepEqual(this.oToolbarAddAggregations.getActions(), [ oAction1, oAction2, oAction3, oAction4 ], "After addAction 'end' alignment 'begin' - getActions correct");
+		assert.deepEqual(this.oToolbarAddAggregations.getActions(), [oAction1, oAction2, oAction3, oAction4], "After addAction 'end' alignment 'begin' - getActions correct");
 		checkAggregation(assert, this.oToolbarAddAggregations, "actions", [
 			oAction1, oAction2, oAction3, oAction4
 		], "After addAction", oAction2);
@@ -329,7 +329,7 @@ sap.ui.define([
 		checkAggregation(assert, this.oToolbarAddAggregations, "content", [
 			this.oBeginSeparator, this.oSpacer, oAction2, oAction4, this.oEndActionsBeginSeparator, oButtonEnd1, this.oEndActionsEndSeparator, oAction1, oAction3
 		], "After addAction of null");
-		assert.deepEqual(this.oToolbarAddAggregations.getActions(), [ oAction1, oAction2, oAction3, oAction4 ], "After addAction 'end' alignment 'begin' - getActions correct");
+		assert.deepEqual(this.oToolbarAddAggregations.getActions(), [oAction1, oAction2, oAction3, oAction4], "After addAction 'end' alignment 'begin' - getActions correct");
 		checkAggregation(assert, this.oToolbarAddAggregations, "actions", [
 			oAction1, oAction2, oAction3, oAction4
 		], "After addAction", oAction2);
@@ -459,7 +459,7 @@ sap.ui.define([
 		const oButtonBetween1 = new Button();
 		this.oToolbarInsertAggregation.insertBetween(oButtonBetween1, 0);
 		checkAggregation(assert, this.oToolbarInsertAggregation, "content", [
-			this.oBeginSeparator, oButtonBetween1 ,this.oSpacer, this.oEndActionsBeginSeparator, this.oEndActionsEndSeparator
+			this.oBeginSeparator, oButtonBetween1, this.oSpacer, this.oEndActionsBeginSeparator, this.oEndActionsEndSeparator
 		], "After insertBegin");
 		checkAggregation(assert, this.oToolbarInsertAggregation, "between", [
 			oButtonBetween1
@@ -557,12 +557,6 @@ sap.ui.define([
 
 	QUnit.module("sap.ui.mdc.ActionToolbar - removeAggregations", {
 		beforeEach: function() {
-			this.oToolbarRemoveAggregation = new ActionToolbar();
-			this.oBeginSeparator = this.oToolbarRemoveAggregation._oBeginSeparator;
-			this.oSpacer = this.oToolbarRemoveAggregation._oSpacer;
-			this.oEndActionsBeginSeparator = this.oToolbarRemoveAggregation._oEndActionsBeginSeparator;
-			this.oEndActionsEndSeparator = this.oToolbarRemoveAggregation._oEndActionsEndSeparator;
-
 			this.oButtonBegin1 = new Button();
 			this.oButtonBegin2 = new Button();
 			this.oButtonBetween1 = new Button();
@@ -576,14 +570,16 @@ sap.ui.define([
 			this.oButtonEnd1 = new Button();
 			this.oButtonEnd2 = new Button();
 
-			this.oToolbarRemoveAggregation.addBegin(this.oButtonBegin1);
-			this.oToolbarRemoveAggregation.addBegin(this.oButtonBegin2);
-			this.oToolbarRemoveAggregation.addBetween(this.oButtonBetween1);
-			this.oToolbarRemoveAggregation.addBetween(this.oButtonBetween2);
-			this.oToolbarRemoveAggregation.addEnd(this.oButtonEnd1);
-			this.oToolbarRemoveAggregation.addEnd(this.oButtonEnd2);
-			this.oToolbarRemoveAggregation.addAction(this.oAction1);
-			this.oToolbarRemoveAggregation.addAction(this.oAction2);
+			this.oToolbarRemoveAggregation = new ActionToolbar({
+				actions: [ this.oAction1, this.oAction2 ],
+				begin: [ this.oButtonBegin1, this.oButtonBegin2 ],
+				between: [ this.oButtonBetween1, this.oButtonBetween2 ],
+				end: [ this.oButtonEnd1, this.oButtonEnd2 ]
+			});
+			this.oBeginSeparator = this.oToolbarRemoveAggregation._oBeginSeparator;
+			this.oSpacer = this.oToolbarRemoveAggregation._oSpacer;
+			this.oEndActionsBeginSeparator = this.oToolbarRemoveAggregation._oEndActionsBeginSeparator;
+			this.oEndActionsEndSeparator = this.oToolbarRemoveAggregation._oEndActionsEndSeparator;
 		},
 		afterEach: function() {
 			if (this.oToolbarRemoveAggregation) {
@@ -650,12 +646,6 @@ sap.ui.define([
 
 	QUnit.module("sap.ui.mdc.ActionToolbar - removeAllAggregations", {
 		beforeEach: function() {
-			this.oToolbarRemoveAllAggregation = new ActionToolbar();
-			this.oBeginSeparator = this.oToolbarRemoveAllAggregation._oBeginSeparator;
-			this.oSpacer = this.oToolbarRemoveAllAggregation._oSpacer;
-			this.oEndActionsBeginSeparator = this.oToolbarRemoveAllAggregation._oEndActionsBeginSeparator;
-			this.oEndActionsEndSeparator = this.oToolbarRemoveAllAggregation._oEndActionsEndSeparator;
-
 			this.oButtonBegin1 = new Button();
 			this.oButtonBegin2 = new Button();
 			this.oButtonBetween1 = new Button();
@@ -669,14 +659,16 @@ sap.ui.define([
 			this.oButtonEnd1 = new Button();
 			this.oButtonEnd2 = new Button();
 
-			this.oToolbarRemoveAllAggregation.addBegin(this.oButtonBegin1);
-			this.oToolbarRemoveAllAggregation.addBegin(this.oButtonBegin2);
-			this.oToolbarRemoveAllAggregation.addBetween(this.oButtonBetween1);
-			this.oToolbarRemoveAllAggregation.addBetween(this.oButtonBetween2);
-			this.oToolbarRemoveAllAggregation.addEnd(this.oButtonEnd1);
-			this.oToolbarRemoveAllAggregation.addEnd(this.oButtonEnd2);
-			this.oToolbarRemoveAllAggregation.addAction(this.oAction1);
-			this.oToolbarRemoveAllAggregation.addAction(this.oAction2);
+			this.oToolbarRemoveAllAggregation = new ActionToolbar({
+				actions: [ this.oAction1, this.oAction2 ],
+				begin: [ this.oButtonBegin1, this.oButtonBegin2 ],
+				between: [ this.oButtonBetween1, this.oButtonBetween2 ],
+				end: [ this.oButtonEnd1, this.oButtonEnd2 ]
+			});
+			this.oBeginSeparator = this.oToolbarRemoveAllAggregation._oBeginSeparator;
+			this.oSpacer = this.oToolbarRemoveAllAggregation._oSpacer;
+			this.oEndActionsBeginSeparator = this.oToolbarRemoveAllAggregation._oEndActionsBeginSeparator;
+			this.oEndActionsEndSeparator = this.oToolbarRemoveAllAggregation._oEndActionsEndSeparator;
 		},
 		afterEach: function() {
 			if (this.oToolbarRemoveAllAggregation) {
@@ -735,12 +727,6 @@ sap.ui.define([
 
 	QUnit.module("sap.ui.mdc.ActionToolbar - destroyAggregation", {
 		beforeEach: function() {
-			this.oToolbarDestroyAggregation = new ActionToolbar();
-			this.oBeginSeparator = this.oToolbarDestroyAggregation._oBeginSeparator;
-			this.oSpacer = this.oToolbarDestroyAggregation._oSpacer;
-			this.oEndActionsBeginSeparator = this.oToolbarDestroyAggregation._oEndActionsBeginSeparator;
-			this.oEndActionsEndSeparator = this.oToolbarDestroyAggregation._oEndActionsEndSeparator;
-
 			this.oButtonBegin1 = new Button();
 			this.oButtonBegin2 = new Button();
 			this.oButtonBetween1 = new Button();
@@ -754,14 +740,16 @@ sap.ui.define([
 			this.oButtonEnd1 = new Button();
 			this.oButtonEnd2 = new Button();
 
-			this.oToolbarDestroyAggregation.addBegin(this.oButtonBegin1);
-			this.oToolbarDestroyAggregation.addBegin(this.oButtonBegin2);
-			this.oToolbarDestroyAggregation.addBetween(this.oButtonBetween1);
-			this.oToolbarDestroyAggregation.addBetween(this.oButtonBetween2);
-			this.oToolbarDestroyAggregation.addEnd(this.oButtonEnd1);
-			this.oToolbarDestroyAggregation.addEnd(this.oButtonEnd2);
-			this.oToolbarDestroyAggregation.addAction(this.oAction1);
-			this.oToolbarDestroyAggregation.addAction(this.oAction2);
+			this.oToolbarDestroyAggregation = new ActionToolbar({
+				actions: [ this.oAction1, this.oAction2 ],
+				begin: [ this.oButtonBegin1, this.oButtonBegin2 ],
+				between: [ this.oButtonBetween1, this.oButtonBetween2 ],
+				end: [ this.oButtonEnd1, this.oButtonEnd2 ]
+			});
+			this.oBeginSeparator = this.oToolbarDestroyAggregation._oBeginSeparator;
+			this.oSpacer = this.oToolbarDestroyAggregation._oSpacer;
+			this.oEndActionsBeginSeparator = this.oToolbarDestroyAggregation._oEndActionsBeginSeparator;
+			this.oEndActionsEndSeparator = this.oToolbarDestroyAggregation._oEndActionsEndSeparator;
 		},
 		afterEach: function() {
 			if (this.oToolbarDestroyAggregation) {
@@ -809,7 +797,7 @@ sap.ui.define([
 	QUnit.test("destroyEnd", function(assert) {
 		this.oToolbarDestroyAggregation.destroyEnd();
 		checkAggregation(assert, this.oToolbarDestroyAggregation, "content", [
-			this.oButtonBegin1, this.oButtonBegin2, this.oBeginSeparator, this.oButtonBetween1, this.oButtonBetween2, this.oSpacer,this.oAction1, this.oAction2, this.oEndActionsBeginSeparator, this.oEndActionsEndSeparator
+			this.oButtonBegin1, this.oButtonBegin2, this.oBeginSeparator, this.oButtonBetween1, this.oButtonBetween2, this.oSpacer, this.oAction1, this.oAction2, this.oEndActionsBeginSeparator, this.oEndActionsEndSeparator
 		], "After destroyEnd");
 		checkAggregation(assert, this.oToolbarDestroyAggregation, "end", [], "After destroyEnd");
 	});
@@ -820,10 +808,10 @@ sap.ui.define([
 		const sText = "ABCDEFGHI";
 		const aOrder = [...sText];
 
-		Array.from({length: 10}).forEach(() => {
+		Array.from({ length: 10 }).forEach(() => {
 			const aRandomOrder1 = aOrder.slice().sort(() => Math.random() - 0.5);
 			const oToolbar = new ActionToolbar({
-				end: aRandomOrder1.map((sLetter) => new Button(sLetter, {text: sLetter}))
+				end: aRandomOrder1.map((sLetter) => new Button(sLetter, { text: sLetter }))
 			});
 
 			oToolbar.setProperty("_endOrder", aOrder);
@@ -833,13 +821,13 @@ sap.ui.define([
 			oToolbar.destroyEnd();
 
 			const aRandomOrder2 = aOrder.slice().sort(() => Math.random() - 0.5);
-			aRandomOrder2.forEach((sLetter) => oToolbar.insertEnd(new Button(sLetter, {text: sLetter}), 0));
+			aRandomOrder2.forEach((sLetter) => oToolbar.insertEnd(new Button(sLetter, { text: sLetter }), 0));
 			oCore.applyChanges();
 			assert.equal(oToolbar.getDomRef().textContent, sText, `End aggregation filled by insertEnd: ${aRandomOrder2} => ${aOrder}`);
 			oToolbar.destroyEnd();
 
 			const aRandomOrder3 = aOrder.concat("X").sort(() => Math.random() - 0.5);
-			aRandomOrder3.forEach((sLetter) => oToolbar.addEnd(new Button(sLetter, {text: sLetter})));
+			aRandomOrder3.forEach((sLetter) => oToolbar.addEnd(new Button(sLetter, { text: sLetter })));
 			oCore.applyChanges();
 			assert.equal(oToolbar.getDomRef().textContent, sText + "X", `Unknown button X is at the end: ${aRandomOrder3} => ${aOrder},X`);
 			oToolbar.destroyEnd();
@@ -847,7 +835,7 @@ sap.ui.define([
 			const aRandomOrder4 = aOrder.slice().sort(() => Math.random() - 0.5);
 			const sRemovedLetter = aRandomOrder4.pop();
 			const sNewText = sText.replace(sRemovedLetter, "");
-			aRandomOrder4.forEach((sLetter) => oToolbar.addEnd(new Button(sLetter, {text: sLetter})));
+			aRandomOrder4.forEach((sLetter) => oToolbar.addEnd(new Button(sLetter, { text: sLetter })));
 			oCore.applyChanges();
 			assert.equal(oToolbar.getDomRef().textContent, sNewText, `Button ${sRemovedLetter} removed: ${aRandomOrder4} => ${sNewText}`);
 
@@ -858,6 +846,116 @@ sap.ui.define([
 			assert.equal(oToolbar.getDomRef().textContent, sRandomOrder5, `_endOrder changed without aggregation change: ${aRandomOrder5}`);
 			oToolbar.destroy();
 		});
+	});
+
+	QUnit.module("sap.ui.mdc.ActionToolbar - _updateSeparators", {
+		beforeEach: function() {
+			this.oButtonBegin1 = new Button();
+			this.oButtonBegin2 = new Button();
+			this.oButtonBetween1 = new Button();
+			this.oButtonBetween2 = new Button();
+			this.oAction1 = new ActionToolbarAction({
+				action: new Button()
+			});
+			this.oAction2 = new ActionToolbarAction({
+				action: new Button()
+			});
+			this.oButtonEnd1 = new Button();
+			this.oButtonEnd2 = new Button();
+
+			this.oToolbarUpdateSeparators = new ActionToolbar({
+				actions: [ this.oAction1, this.oAction2 ],
+				begin: [ this.oButtonBegin1, this.oButtonBegin2 ],
+				between: [ this.oButtonBetween1, this.oButtonBetween2 ],
+				end: [ this.oButtonEnd1, this.oButtonEnd2 ]
+			});
+			this.oBeginSeparator = this.oToolbarUpdateSeparators._oBeginSeparator;
+			this.oEndActionsBeginSeparator = this.oToolbarUpdateSeparators._oEndActionsBeginSeparator;
+		},
+		afterEach: function() {
+			if (this.oToolbarUpdateSeparators) {
+				this.oToolbarUpdateSeparators.destroy();
+			}
+			if (this.oBeginSeparator) {
+				this.oBeginSeparator = undefined;
+			}
+			if (this.oEndActionsBeginSeparator) {
+				this.oEndActionsBeginSeparator = undefined;
+			}
+		}
+	});
+
+	QUnit.test("called when 'visible' property of Begin aggregation changes", function(assert) {
+		const oToolbar = this.oToolbarUpdateSeparators;
+		const fnUpdateSeparatorsSpy = sinon.spy(oToolbar, "_updateSeparators");
+
+		assert.ok(fnUpdateSeparatorsSpy.notCalled, "_updateSeparators not called yet.");
+		assert.ok(this.oBeginSeparator.getVisible(), "Begin separator is visible.");
+
+		assert.ok(this.oButtonBegin1.getVisible(), "ButtonBegin1 is visible.");
+		assert.ok(this.oButtonBegin2.getVisible(), "ButtonBegin2 is visible.");
+
+		this.oButtonBegin1.setVisible(false);
+		assert.notOk(this.oButtonBegin1.getVisible(), "ButtonBegin1 is invisible.");
+		assert.ok(fnUpdateSeparatorsSpy.calledOnce, "_updateSeparators called after setting visibility of ButtonBegin1.");
+		assert.ok(this.oBeginSeparator.getVisible(), "Begin separator is still visible.");
+
+		this.oButtonBegin2.setVisible(false);
+		assert.notOk(this.oButtonBegin2.getVisible(), "ButtonBegin2 is invisible.");
+		assert.notOk(this.oBeginSeparator.getVisible(), "Begin separator is invisible.");
+		fnUpdateSeparatorsSpy.reset();
+	});
+
+	QUnit.test("called when 'visible' property of ActionToolbarAction changes", function(assert) {
+		const oToolbar = this.oToolbarUpdateSeparators;
+		const fnUpdateSeparatorsSpy = sinon.spy(oToolbar, "_updateSeparators");
+
+		assert.ok(fnUpdateSeparatorsSpy.notCalled, "_updateSeparators not called yet.");
+		assert.ok(this.oEndActionsBeginSeparator.getVisible(), "separator is visible.");
+
+		// Set visibility of action aggregation directly
+		assert.ok(this.oAction1.getVisible(), "Action1 is visible.");
+		this.oAction1.setVisible(false);
+		assert.notOk(this.oAction1.getVisible(), "Action 1 is invisible.");
+
+		assert.ok(fnUpdateSeparatorsSpy.calledOnce, "_updateSeparators called after setting visibility directly.");
+		assert.ok(this.oEndActionsBeginSeparator.getVisible(), "separator is visible.");
+
+		// Set visiblity of action aggregation indirectly
+		assert.ok(this.oAction2.getVisible(), "Action2 is visible.");
+		this.oAction2.getAction().setVisible(false);
+		assert.ok(this.oAction2.getVisible(), "Action 2 is visible.");
+		assert.notOk(this.oAction2.getAction().getVisible(), "Action 2 inner action is visible.");
+
+		assert.ok(fnUpdateSeparatorsSpy.calledTwice, "_updateSeparators called after setting visibility indirectly.");
+		assert.notOk(this.oEndActionsBeginSeparator.getVisible(), "separator is invisible.");
+		fnUpdateSeparatorsSpy.reset();
+	});
+
+	QUnit.test("called when 'action' aggregation of ActionToolbarAction changes", function(assert) {
+		const oToolbar = this.oToolbarUpdateSeparators;
+		const fnUpdateSeparatorsSpy = sinon.spy(oToolbar, "_updateSeparators");
+
+		assert.ok(fnUpdateSeparatorsSpy.notCalled, "_updateSeparators not called yet.");
+		assert.ok(this.oEndActionsBeginSeparator.getVisible(), "separator is visible.");
+
+		// Remove action aggregation
+		assert.ok(this.oAction1.getAction(), "Action1 has an 'action'.");
+		this.oAction1.setAction(undefined);
+		assert.notOk(this.oAction1.getAction(), "Action1 has no 'action'.");
+
+		assert.ok(fnUpdateSeparatorsSpy.calledOnce, "_updateSeparators called after removing aggregation.");
+		assert.ok(this.oEndActionsBeginSeparator.getVisible(), "separator is visible as there is another action.");
+
+		// Remove action aggregation
+		assert.ok(this.oAction2.getAction(), "Action2 has an 'action'.");
+		this.oAction2.setAction(undefined);
+		assert.notOk(this.oAction2.getAction(), "Action2 has no 'action'.");
+
+		assert.ok(fnUpdateSeparatorsSpy.calledTwice, "_updateSeparators called after removing aggregation.");
+		assert.notOk(this.oEndActionsBeginSeparator.getVisible(), "separator is invisible as there is no other action.");
+
+		fnUpdateSeparatorsSpy.reset();
 	});
 
 });

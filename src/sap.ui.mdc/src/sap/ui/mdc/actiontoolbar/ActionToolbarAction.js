@@ -4,8 +4,9 @@
 sap.ui.define([
 	"sap/ui/core/Control",
 	"sap/ui/mdc/actiontoolbar/ActionToolbarActionRenderer",
-	"sap/ui/mdc/enums/ActionToolbarActionAlignment"
-], function(Control, ActionToolbarActionRenderer, ActionToolbarActionAlignment) {
+	"sap/ui/mdc/enums/ActionToolbarActionAlignment",
+	"sap/ui/base/ManagedObjectObserver"
+], function(Control, ActionToolbarActionRenderer, ActionToolbarActionAlignment, ManagedObjectObserver) {
 	"use strict";
 
 	/**
@@ -60,6 +61,43 @@ sap.ui.define([
 		renderer: ActionToolbarActionRenderer
 	});
 
+	ActionToolbarAction.prototype.init = function() {
+		this._oObserver = new ManagedObjectObserver(this.observeChanges.bind(this));
+		this._oObserver.observe(this, {
+			aggregations: ["action"]
+		});
+	};
+
+	ActionToolbarAction.prototype.exit = function() {
+		this._oObserver.disconnect();
+		this._oObserver = undefined;
+	};
+
+	/**
+	 * Observes changes in <code>Action</code> aggregation.
+	 *
+	 * @param {object} oChanges Changes
+	 * @protected
+	 */
+	ActionToolbarAction.prototype.observeChanges = function(oChanges) {
+		if (oChanges.name === "action") {
+			const oAction = oChanges.child;
+			if (oChanges.mutation === "insert") {
+				this._oObserver.observe(oAction, {
+					properties: ["visible"]
+				});
+				_updateSeparators(this.getParent());
+			}
+			if (oChanges.mutation === "remove") {
+				this._oObserver.unobserve(oAction);
+				_updateSeparators(this.getParent());
+			}
+		}
+		if (oChanges.name === "visible") {
+			_updateSeparators(this.getParent());
+		}
+	};
+
 	ActionToolbarAction.prototype.getDomRef = function() {
 		// return the DomRef of the inner Action, otherwise the Overflow calculation does not work
 		return this.getAction() && this.getAction().getDomRef();
@@ -85,9 +123,7 @@ sap.ui.define([
 			if (fnOnBeforeEnterOverflow) {
 				fnOnBeforeEnterOverflow(oControl.getAction());
 			}
-			if (oControl.getParent() && oControl.getParent()._updateSeparators) {
-				oControl.getParent()._updateSeparators();
-			}
+			_updateSeparators(oControl.getParent());
 		};
 	};
 
@@ -97,9 +133,7 @@ sap.ui.define([
 			if (fnOnAfterExitOverflow) {
 				fnOnAfterExitOverflow(oControl.getAction());
 			}
-			if (oControl.getParent() && oControl.getParent()._updateSeparators) {
-				oControl.getParent()._updateSeparators();
-			}
+			_updateSeparators(oControl.getParent());
 		};
 	};
 
@@ -111,6 +145,12 @@ sap.ui.define([
 		const oAction = this.getAction();
 		return oAction && oAction.getText ? oAction.getText() : this.getId();
 	};
+
+	function _updateSeparators(oActionToolbar) {
+		if (oActionToolbar?._updateSeparators) {
+			oActionToolbar._updateSeparators();
+		}
+	}
 
 	return ActionToolbarAction;
 });
