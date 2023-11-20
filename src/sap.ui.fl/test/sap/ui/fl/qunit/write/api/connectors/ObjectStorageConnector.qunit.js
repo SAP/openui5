@@ -212,6 +212,7 @@ sap.ui.define([
 					assert.strictEqual(oFeatures.isKeyUser, true, "the key user is available");
 					assert.strictEqual(oFeatures.isVariantSharingEnabled, true, "the variant sharing is available");
 					assert.strictEqual(oFeatures.isContextSharingEnabled, false, "context sharing is not available");
+					assert.strictEqual(oFeatures.logonUser, "DEFAULT_USER", "logonUser is DEFAULT_USER");
 				});
 			});
 
