@@ -3,6 +3,72 @@
     "date": "November 2023",
     "notes": [
       {
+        "id": "6735c55c4f25cc2101c8f83c0bfa2f5fcce16c54",
+        "type": "FIX",
+        "text": " CheckBox in Form: misaligned in horizon theme",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370151404"
+          }
+        ]
+      },
+      {
+        "id": "d7c28bd254c3cf42c75f9a745ec16f433a5f149f",
+        "type": "FIX",
+        "text": " sap.tnt.ToolHeader: Padding when there is no menu button fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370142845"
+          }
+        ]
+      },
+      {
+        "id": "ea4ea841b6502bd2f2988b96c24de642c9c09fa3",
+        "type": "FIX",
+        "text": " sap.tnt.ToolHeader: Button enhanced for all Horizon themes",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370142800"
+          }
+        ]
+      },
+      {
+        "id": "2d8002e21a1b533c6bb45f2afb41c319254202e1",
+        "type": "FIX",
+        "text": " sap.m.ToggleButton: adjust text and icon color",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370146959"
+          }
+        ]
+      },
+      {
+        "id": "9d3cb4adf6249d2fdfd857c44f63418a68e6103b",
+        "type": "FIX",
+        "text": " sap.m.ToggleButton: fix horizon style issues on mobile",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370137200"
+          }
+        ]
+      },
+      {
+        "id": "21e6d1de151cf2b7388c675530eafc70de0ffb71",
+        "type": "FIX",
+        "text": " sap.m.ValueStateMessage: Warning icon name corrected",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370137226"
+          }
+        ]
+      },
+      {
         "id": "c35cacd8580739d703288ab0797b0ebe9933e3b3",
         "type": "FIX",
         "text": " sap.ui.unified.CalendarLegend: Colour Non-working days in legend",

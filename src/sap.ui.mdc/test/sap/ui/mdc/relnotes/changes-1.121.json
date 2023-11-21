@@ -3,6 +3,22 @@
     "date": "November 2023",
     "notes": [
       {
+        "id": "9c401676e6148edc8efe65df21bca3346b6475ec",
+        "type": "FIX",
+        "text": " mdc.Link: fix for runtimeType"
+      },
+      {
+        "id": "6be13d4769c0992f5bc18940f8fdd572cd1dadc2",
+        "type": "FIX",
+        "text": " mdc.Table: Change default values of RowActionItem with type Navigation",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370093621"
+          }
+        ]
+      },
+      {
         "id": "872e05a85a374a918cb8f821916f972b4714f477",
         "type": "FIX",
         "text": " Field: Currency/unit value do not overwrite initial parts with null",

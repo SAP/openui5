@@ -3,6 +3,28 @@
     "date": "November 2023",
     "notes": [
       {
+        "id": "d7c28bd254c3cf42c75f9a745ec16f433a5f149f",
+        "type": "FIX",
+        "text": " sap.tnt.ToolHeader: Padding when there is no menu button fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370142845"
+          }
+        ]
+      },
+      {
+        "id": "9c09625b7dc28b152bfda84094bd856cd101082f",
+        "type": "FIX",
+        "text": " sap.tnt.SideNavigation: selectedItem can now be passed as a string",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370147483"
+          }
+        ]
+      },
+      {
         "id": "93d06f5d90bbf2b948d26b0857dc5c0a0beb04b9",
         "type": "FIX",
         "text": " sap.tnt.NavigationList: Prevent error caused by early DOM ref access",

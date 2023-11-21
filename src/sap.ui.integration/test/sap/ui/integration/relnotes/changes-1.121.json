@@ -3,6 +3,16 @@
     "date": "November 2023",
     "notes": [
       {
+        "id": "cdd08841350bf9d515bb2568d0fbecf9234b8c53",
+        "type": "FEATURE",
+        "text": " Integration Cards: CSRF tokens are no longer experimental"
+      },
+      {
+        "id": "8608b86ebbf92fb35d45bcf0c11b346ec468996d",
+        "type": "FEATURE",
+        "text": " Integration Cards: Enable CSRF tokens usage through new binding syntax"
+      },
+      {
         "id": "58fc4a9ef32501eaa5d6ab467d9a9389d5386b84",
         "type": "FEATURE",
         "text": " Integration Cards: Search filter is no longer experimental"

@@ -3,6 +3,113 @@
     "date": "November 2023",
     "notes": [
       {
+        "id": "c011cd73472f62ae48c253629aba9ad2dcf2377a",
+        "type": "FIX",
+        "text": " sap.m.DateTimePicker: remove explicitly setting of EN locale",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380114936"
+          },
+          {
+            "type": "BCP",
+            "reference": "2370079317"
+          }
+        ]
+      },
+      {
+        "id": "6510acf2a0055d8479d202d525fb6190aab15127",
+        "type": "FIX",
+        "text": " Deprecate InputODataSuggestProvider in sap/m/library.js"
+      },
+      {
+        "id": "abd838410132baa38ba8e1ae81e95c84cde9d153",
+        "type": "FIX",
+        "text": " sap.m.MenuButton: open menu when space is pressed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380108623"
+          }
+        ]
+      },
+      {
+        "id": "b6f78ed9b95883af12f9cb688712d80b89249a67",
+        "type": "FIX",
+        "text": " sap.m.Input: Remove unnecessary usage of readonly"
+      },
+      {
+        "id": "862d93704bdd0e66d6a6662112238bf221b378ed",
+        "type": "FIX",
+        "text": " sap.m.ObjectNumber: adjust hover styles",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370106986"
+          }
+        ]
+      },
+      {
+        "id": "dbb7634a4d33d4bfd30a5f26bb9cfc78f825f395",
+        "type": "FIX",
+        "text": " sap.m.Input: Reopen Suggestion Popover when new data is bound",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370107738"
+          }
+        ]
+      },
+      {
+        "id": "c75fa8516ed1940f1c4d88bf5611dfef367ea034",
+        "type": "FIX",
+        "text": " sap.m.Input: ResourceBundle getText method properly used",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370139471"
+          }
+        ]
+      },
+      {
+        "id": "6b6913af7cf08f0e8176df564def7e3b95993707",
+        "type": "FEATURE",
+        "text": " sap.m.Carousel: scrollMode property is introduced"
+      },
+      {
+        "id": "4f428f87b848777bb3bbb3691cd4cb3231ffaa07",
+        "type": "FIX",
+        "text": " sap.m.DateTimePicker: add check if date is parsed correctly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370139419"
+          }
+        ]
+      },
+      {
+        "id": "19e7395278124852ccf272cef901a83d4c414b77",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: Re-add skipped tests",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370071110"
+          }
+        ]
+      },
+      {
+        "id": "888dadf39b558da9b875e782ba17b5bba82b9010",
+        "type": "FIX",
+        "text": " sap.m.WizardStep: Parameters object not needed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370131270"
+          }
+        ]
+      },
+      {
         "id": "83c9d999fd5c7fb361825f44571bf11dec477d61",
         "type": "FIX",
         "text": " sap.m.PlanningCalendar: Improve reverse selection precision.",
@@ -21,6 +128,17 @@
           {
             "type": "BCP",
             "reference": "2370138291"
+          }
+        ]
+      },
+      {
+        "id": "4c0450d7b1db2fa498ed3eba7bfbe7df9d35e6c6",
+        "type": "FIX",
+        "text": " sap.m.ObjectStatus: fix cut off Thai characters",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370130730"
           }
         ]
       },

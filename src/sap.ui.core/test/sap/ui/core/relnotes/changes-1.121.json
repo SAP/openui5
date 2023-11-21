@@ -3,6 +3,108 @@
     "date": "November 2023",
     "notes": [
       {
+        "id": "733bce9d9602e9dc253470ea2978f132faab6b9a",
+        "type": "FIX",
+        "text": " core/routing: find parent route from the router of the inheritance parent",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400009859762023"
+          }
+        ]
+      },
+      {
+        "id": "5dae972b406d9802232933946f169113ccd3c6c0",
+        "type": "FIX",
+        "text": " core/XMLTemplateProcessor: load class of nested view before instance creation",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      },
+      {
+        "id": "db8a48180bce1d4c8f795627fd0c084e6be6c8d1",
+        "type": "FIX",
+        "text": " Fix onInit implementation"
+      },
+      {
+        "id": "4731e8209ac0438e63687e1f542af49cab3abe0d",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.ODataMessageParser#_createTarget: normalize also the full target",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370146338"
+          }
+        ]
+      },
+      {
+        "id": "07be9ed2c8ea3be02aeb65a583a9f3a6cab97e80",
+        "type": "FIX",
+        "text": " sap.ui.core.message.Message fix references to MessageType"
+      },
+      {
+        "id": "b6fcdd955e21dff14f4a9cb2ca674397fd479b02",
+        "type": "FIX",
+        "text": " Deprecate sap.ui.core.Message/MessageType"
+      },
+      {
+        "id": "6b02c11f5b95779ea34874196434558a591eb59f",
+        "type": "FEATURE",
+        "text": " Deprecate public registry of Component, Element and UIArea"
+      },
+      {
+        "id": "7bcd26cd1f493d0a64810024c8666429d8a2b016",
+        "type": "FIX",
+        "text": " sap.ui.model.analytics.odata4analytics.FilterExpression#renderUI5FilterArray: fix sorting of filters",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500009851762023"
+          }
+        ]
+      },
+      {
+        "id": "fc308a63673a25b1e636513d787932b0174ce3d2",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.ODataUtils.(formatValue|parseValue): fractional seconds for Edm.DateTimeOffsets",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370146896"
+          }
+        ]
+      },
+      {
+        "id": "0120c23cb207f0e54d68bfd9eb60910d2375de0f",
+        "type": "FEATURE",
+        "text": " Views: Cloning a View is deprecated in favor of the specific factory functions"
+      },
+      {
+        "id": "295e24b99d2a30eb1a83049432f4ae57d088b5c8",
+        "type": "FIX",
+        "text": " Ensure correct 'resource-root' and 'theme-root' configuration",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002028376700065110512023"
+          }
+        ]
+      },
+      {
+        "id": "d306e92d770c09ad8139934af06a0fe858fd44de",
+        "type": "FIX",
+        "text": " sap.ui.core.(date|format).*: replace deprecated getFormatLocale in JSDoc",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370144269"
+          }
+        ]
+      },
+      {
         "id": "942178703f0b4af406b086f0d03699aedf6c86d2",
         "type": "FIX",
         "text": " sap.ui.test.action.EnterText: Revert restriction",

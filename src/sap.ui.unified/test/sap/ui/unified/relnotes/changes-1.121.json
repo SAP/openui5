@@ -3,6 +3,11 @@
     "date": "November 2023",
     "notes": [
       {
+        "id": "1d659dbec26c52d98afd29b1f0841336ea07b3a7",
+        "type": "FIX",
+        "text": " sap.ui.unified.DatesRow: render week numbers"
+      },
+      {
         "id": "c040f69367a909de78360dfd136d5b5ce04a1aff",
         "type": "FIX",
         "text": " sap.ui.unified.Calendar: adjust external label references"
