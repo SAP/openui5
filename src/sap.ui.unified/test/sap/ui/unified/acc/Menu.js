@@ -55,11 +55,6 @@ sap.ui.define([
 						icon: "sap-icon://create"
 					}),
 					new MenuItem({
-						text: "Item with ariaLabelledBy",
-						icon: "sap-icon://blank-tag",
-						ariaLabelledBy: "labelling-text"
-					}),
-					new MenuItem({
 						text: "Modify Settings",
 						startsSection: true,
 						icon: "sap-icon://edit",

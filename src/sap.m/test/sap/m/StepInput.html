@@ -26,12 +26,12 @@
 			xmlns="sap.m"
 			xmlns:f="sap.ui.layout.form">
 			<f:SimpleForm id="stepModeForm" editable="true" layout="ResponsiveGridLayout"
-				title="Predefined StepInput"
 			 	labelSpanXL="6"
 				labelSpanL="6"
 				labelSpanM="6"
 				labelSpanS="8">
 				<f:content>
+					<Title text="Predefined StepInput" level="H2"></Title>
 					<Label text="Step Mode: default, StepInput: default props"/>
 					<StepInput id="default" change="onChange"/>
 
@@ -44,12 +44,12 @@
 				</f:content>
 			</f:SimpleForm>
 			<f:SimpleForm id="stepModeCustomization" editable="true" layout="ResponsiveGridLayout"
-				title="Custom StepInput"
 				labelSpanXL="6"
 				labelSpanL="6"
 				labelSpanM="6"
 				labelSpanS="8">
 				<f:content>
+					<Title text="Custom StepInput" level="H2"></Title>
 					<Label text="Step Input"/>
 					<StepInput id="customStepInput" stepMode="Multiple"
 						step="12" largerStep="2" max="240" min="-120" change="onChange"/>
@@ -58,10 +58,10 @@
 						<core:Item key="{key}" text="{key}"/>
 					</Select>
 
-					<Label text="Min"/>
+					<Label text="Minimum"/>
 					<Input id="min" value="-120" change="onMinChanged"/>
 
-					<Label text="Max"/>
+					<Label text="Maximum"/>
 					<Input id="max" value="240" change="onMaxChanged"/>
 
 					<Label text="Step"/>

@@ -14,7 +14,8 @@ sap.ui.define([
 	"sap/m/Text",
 	"sap/m/App",
 	"sap/m/Page",
-	"sap/m/OverflowToolbar"
+	"sap/m/OverflowToolbar",
+	"sap/ui/core/library"
 ], function(
 	IconPool,
 	MessageBox,
@@ -31,12 +32,14 @@ sap.ui.define([
 	MText,
 	App,
 	Page,
-	OverflowToolbar
+	OverflowToolbar,
+	coreLibrary
 ) {
 	"use strict";
 
 	// shortcut for sap.m.MessageBox.Action
 	var Action = MessageBox.Action;
+	var TitleLevel = coreLibrary.TitleLevel;
 
 	var oProductModel = new JSONModel({
 		"ProductCollection": [
@@ -194,7 +197,7 @@ sap.ui.define([
 
 	var addButton = new Button({
 		type: "Emphasized",
-		text: "Add",
+		text: "Add tab",
 		press: function() {
 			tabContainer.addItem(
 					new TabContainerItem({
@@ -262,7 +265,7 @@ sap.ui.define([
 	});
 
 	var changeTabButton1 = new Button({
-		text: "0",
+		text: "Tab 0",
 		tooltip: "{/ProductCollection/0/Name}",
 		press: function() {
 			tabContainer.setSelectedItem(tabContainer.getItems()[0]);
@@ -270,7 +273,7 @@ sap.ui.define([
 	});
 
 	var changeTabButton2 = new Button({
-		text: "1",
+		text: "Tab 1",
 		tooltip: "{/ProductCollection/1/Name}",
 		press: function() {
 			tabContainer.setSelectedItem(tabContainer.getItems()[1]);
@@ -278,7 +281,7 @@ sap.ui.define([
 	});
 
 	var changeTabButton3 = new Button({
-		text: "2",
+		text: "Tab 2",
 		tooltip: "{/ProductCollection/2/Name}",
 		press: function() {
 			tabContainer.setSelectedItem(tabContainer.getItems()[2]);
@@ -325,6 +328,7 @@ sap.ui.define([
 	});
 	new App().addPage(new Page({
 		title: "sap.m.TabContainer test page",
+		titleLevel: TitleLevel.H1,
 		content: [tabContainer],
 		footer: new OverflowToolbar({
 			content: [

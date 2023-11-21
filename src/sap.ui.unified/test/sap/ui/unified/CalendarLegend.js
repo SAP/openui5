@@ -1,5 +1,4 @@
 sap.ui.define([
-	"sap/m/MessageToast",
 	"sap/ui/core/Element",
 	"sap/ui/core/format/DateFormat",
 	"sap/ui/layout/ResponsiveFlowLayout",
@@ -9,43 +8,68 @@ sap.ui.define([
 	"sap/ui/unified/CalendarLegendItem",
 	"sap/ui/unified/DateRange",
 	"sap/ui/unified/DateTypeRange",
-	"sap/ui/unified/library"
-], function(MessageToast, Element, DateFormat, ResponsiveFlowLayout, ResponsiveFlowLayoutData, Calendar, CalendarLegend, CalendarLegendItem, DateRange, DateTypeRange, unifiedLibrary) {
+	"sap/m/Label",
+	"sap/ui/layout/VerticalLayout",
+	"sap/m/App",
+	"sap/m/Page",
+	"sap/ui/unified/library",
+	"sap/ui/core/library"
+], function(
+	Element,
+	DateFormat,
+	ResponsiveFlowLayout,
+	ResponsiveFlowLayoutData,
+	Calendar,
+	CalendarLegend,
+	CalendarLegendItem,
+	DateRange,
+	DateTypeRange,
+	Label,
+	VerticalLayout,
+	App,
+	Page,
+	unifiedLibrary,
+	coreLibrary
+) {
 	"use strict";
 
 	var CalendarDayType = unifiedLibrary.CalendarDayType;
 	var StandardCalendarLegendItem = unifiedLibrary.StandardCalendarLegendItem;
+	var TitleLevel = coreLibrary.TitleLevel;
 
+	var oLabel1 = new Label("label1", {text: "Simple Legend example"});
+	var oLegend1 = new CalendarLegend("Leg1", {
+		ariaLabelledBy: ["label1"]
+	});
 
-	new CalendarLegend("Leg1", {}).placeAt("sample1");
-
-	new CalendarLegend("Leg2", {}).placeAt("sample2");
-
-	new CalendarLegend("Leg3", {columnWidth: 'auto'}).placeAt("sample3");
-
-
-	new CalendarLegend("Leg31", {
+	var oLabel31 = new Label("label31", {text: "Legend with 2 standard categories"});
+	var oLegend31 = new CalendarLegend("Leg31", {
+		ariaLabelledBy: ["label31"],
 		standardItems: [
 			StandardCalendarLegendItem.NonWorkingDay,
 			StandardCalendarLegendItem.WorkingDay]
-	}).placeAt("sample31");
+	});
 
-	new CalendarLegend("Leg32", {
+	var oLabel32 = new Label("label32", {text: "Legend with no standard categories and one custom category"});
+	var oLegend32 = new CalendarLegend("Leg32", {
+		ariaLabelledBy: ["label32"],
 		standardItems: [],
 		items: [new CalendarLegendItem({
 			text: "Holiday",
 			type: CalendarDayType.Type01,
 			tooltip: "Type 01"
 		})]
-	}).placeAt("sample32");
+	});
 
-	var oLeg4 = new CalendarLegend("Leg4", {});
+	var oLabel4 = new Label("label4", {text: "Legend with custom categories"});
+	var oLegend4 = new CalendarLegend("Leg4", {
+		ariaLabelledBy: ["label4"]
+	});
 	for (var i = 0; i < 10; i++) {
-		oLeg4.addItem(new CalendarLegendItem({
+		oLegend4.addItem(new CalendarLegendItem({
 			text: "Placeholder" + (i + 1)
 		}));
 	}
-	oLeg4.placeAt("sample4");
 
 	var oFormatYyyymmdd = DateFormat.getInstance({
 		pattern: "yyyyMMdd"
@@ -65,16 +89,13 @@ sap.ui.define([
 	];
 
 	var oCal = new Calendar("Cal", {
-		selectedDates: [new DateRange({startDate: oFormatYyyymmdd.parse("20140820")})],
-		select: function (oEvent) {
-			MessageToast.show("Select");
-		},
-		cancel: function (oEvent) {
-			MessageToast.show("Cancel");
-		}
+		selectedDates: [new DateRange({startDate: oFormatYyyymmdd.parse("20140820")})]
 	});
 
-	var oLeg5 = new CalendarLegend("Leg5", {});
+	var oLabel5 = new Label("label5", {text: "Legend with calendar"});
+	var oLegend5 = new CalendarLegend("Leg5", {
+		ariaLabelledBy: ["label5"]
+	});
 
 	//add specialDays
 	for (var i = 0; i < aSpecialDays.length; i++) {
@@ -92,7 +113,7 @@ sap.ui.define([
 			tooltip: aSpecialDay[2]
 		});
 		Element.getElementById("Cal").addSpecialDate(specialDate);
-		oLeg5.addItem(new CalendarLegendItem({
+		oLegend5.addItem(new CalendarLegendItem({
 			text: aSpecialDay[2]
 		}));
 	}
@@ -109,23 +130,19 @@ sap.ui.define([
 		weight: 1,
 		margin: false
 	});
-	oLeg5.setLayoutData(oLegLayout);
+	oLegend5.setLayoutData(oLegLayout);
 	oCal.setLayoutData(oCalLayout);
 	oLayout.addContent(oCal);
-	oLayout.addContent(oLeg5);
-	oLayout.placeAt("sample5");
+	oLayout.addContent(oLegend5);
 
 	var oCal2 = new Calendar("Cal2", {
-		selectedDates: [new DateRange({startDate: oFormatYyyymmdd.parse("20140820")})],
-		select: function (oEvent) {
-			MessageToast.show("Select");
-		},
-		cancel: function (oEvent) {
-			MessageToast.show("Cancel");
-		}
+		selectedDates: [new DateRange({startDate: oFormatYyyymmdd.parse("20140820")})]
 	});
 
-	var oLeg6 = new CalendarLegend("Leg6", {});
+	var oLabel6 = new Label("label6", {text: "Legend with calendar (compact mode)"});
+	var oLegend6 = new CalendarLegend("Leg6", {
+		ariaLabelledBy: ["label6"]
+	});
 
 	//add specialDays
 	for (var i = 0; i < aSpecialDays.length; i++) {
@@ -143,7 +160,7 @@ sap.ui.define([
 			tooltip: aSpecialDay[2]
 		});
 		Element.getElementById("Cal2").addSpecialDate(specialDate);
-		oLeg6.addItem(new CalendarLegendItem({
+		oLegend6.addItem(new CalendarLegendItem({
 			text: aSpecialDay[2]
 		}));
 	}
@@ -160,14 +177,15 @@ sap.ui.define([
 		weight: 1,
 		margin: false
 	});
-	oLeg6.setColumnWidth("115px");
-	oLeg6.setLayoutData(oLegLayout2);
+	oLegend6.setColumnWidth("115px");
+	oLegend6.setLayoutData(oLegLayout2);
 	oCal2.setLayoutData(oCalLayout2);
 	oLayout2.addContent(oCal2);
-	oLayout2.addContent(oLeg6);
-	oLayout2.placeAt("sample6");
+	oLayout2.addContent(oLegend6);
 
-	new CalendarLegend("Leg7", {
+	var oLabel7 = new Label("label7", {text: "Simple Legend example"});
+	var oLegend7 = new CalendarLegend("Leg7", {
+		ariaLabelledBy: ["label7"],
 		items: [new CalendarLegendItem({
 			text: "Type10",
 			type: CalendarDayType.Type10,
@@ -191,16 +209,20 @@ sap.ui.define([
 			}),
 			new CalendarLegendItem({text: "no type 2", tooltip: "no type 2"})
 		]
-	}).placeAt("sample7");
+	});
 
-	new CalendarLegend("Leg8", {
+	var oLabel8 = new Label("label8", {text: "Custom colors Legend example"});
+	var oLegend8 = new CalendarLegend("Leg8", {
+		ariaLabelledBy: ["label8"],
 		items: [new CalendarLegendItem({text: "Red", color: "red", tooltip: "Red"}),
 			new CalendarLegendItem({text: "Green", color: "green", tooltip: "Green"}),
 			new CalendarLegendItem({text: "Blue", color: "blue", tooltip: "Blue"})
 		]
-	}).placeAt("sample8");
+	});
 
-	new CalendarLegend("Leg9", {
+	var oLabel9 = new Label("label9", {text: "CalendarLegend with all types example"});
+	var oLegend9 = new CalendarLegend("Leg9", {
+		ariaLabelledBy: ["label9"],
 		items: [
 			new CalendarLegendItem({
 				text: "01",
@@ -303,5 +325,42 @@ sap.ui.define([
 				tooltip: "Type 20"
 			})
 		]
-	}).placeAt("sample9");
+	});
+
+	var oVerticalLayout = new VerticalLayout({
+		content: [
+			oLabel1,
+			oLegend1,
+			oLabel31,
+			oLegend31,
+			oLabel32,
+			oLegend32,
+			oLabel4,
+			oLegend4,
+			oLabel5,
+			oCal,
+			oLegend5,
+			oLabel6,
+			oCal2,
+			oLegend6,
+			oLabel7,
+			oLegend7,
+			oLabel8,
+			oLegend8,
+			oLabel9,
+			oLegend9
+		]
+	});
+
+	var app = new App("myApp");
+	var page = new Page("page", {
+		title: "Test Page for sap.ui.unified.CalendarLegend",
+		titleLevel: TitleLevel.H1,
+		content: [
+			oVerticalLayout
+		]
+	});
+
+	app.addPage(page);
+	app.placeAt("body");
 });

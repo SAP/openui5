@@ -18,6 +18,9 @@ sap.ui.define([
 	// shortcut for sap.ui.core.TextDirection
 	var TextDirection = coreLibrary.TextDirection;
 
+	// shortcut for sap.ui.core.TitleLevel
+	var TitleLevel = coreLibrary.TitleLevel;
+
 	var txt1 = new Label({text:"ObjectNumber (emphasized by default):"});
 
 	var on1 = new ObjectNumber("on1", {
@@ -42,10 +45,8 @@ sap.ui.define([
 		emptyIndicatorMode: "On"
 	});
 
-	//Object Number control to demonstrate state changes
 	var txt3 = new Label({
-		text:"ObjectNumber value state: ",
-		labelFor: "select"
+		text:"ObjectNumber state changes: "
 	});
 
 	var on3 = new ObjectNumber("on3", {
@@ -114,7 +115,7 @@ sap.ui.define([
 		textAlign: TextAlign.Right
 	});
 
-	var txt10 = new Label({text: "Active ObjectNumber"});
+	var txt10 = new Label({text: "Active ObjectNumber", labelFor: "on10"});
 
 	var on10 = new ObjectNumber("on10", {
 		number: "1.50",
@@ -134,7 +135,7 @@ sap.ui.define([
 		number: "1.50"
 	}).addStyleClass("sapMObjectNumberLarge");
 
-	var txt13 = new Label({text: "Inverted active ObjectNumber"});
+	var txt13 = new Label({text: "Inverted active ObjectNumber", labelFor: "on13"});
 
 	var on13 = new ObjectNumber("on13", {
 		number: "1.50",
@@ -142,7 +143,7 @@ sap.ui.define([
 		inverted: true
 	});
 
-	var txt14 = new Label({text: "Active large ObjectNumber"});
+	var txt14 = new Label({text: "Active large ObjectNumber", labelFor: "on14"});
 
 	var on14 = new ObjectNumber("on14", {
 		number: "1.50",
@@ -156,7 +157,7 @@ sap.ui.define([
 		inverted: true
 	}).addStyleClass("sapMObjectNumberLarge");
 
-	var txt16 = new Label({text: "Inverted active large ObjectNumber"});
+	var txt16 = new Label({text: "Inverted active large ObjectNumber", labelFor: "on16"});
 
 	var on16 = new ObjectNumber("on16", {
 		number: "1.50",
@@ -185,6 +186,12 @@ sap.ui.define([
 		text: "Success"
 	}),
 
+	//Object Number control to demonstrate state changes
+	oSelectLabel = new Label({
+		text:"ObjectNumber value state: ",
+		labelFor: "select"
+	}),
+
 	oStateSelect = new Select("select", {
 		name: "select-object-state",
 		tooltip: "Object Number state",
@@ -196,7 +203,8 @@ sap.ui.define([
 
 	var app = new App();
 	var page = new Page({
-		showHeader : false,
+		title: "Object Number",
+		titleLevel: TitleLevel.H1,
 		enableScrolling : true,
 		content: [
 			txt1,
@@ -206,6 +214,7 @@ sap.ui.define([
 			txt23,
 			on23,
 			txt3,
+			oSelectLabel,
 			oStateSelect,
 			on3,
 			txt4,

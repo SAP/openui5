@@ -69,6 +69,9 @@ sap.ui.define([
 	// shortcut for sap.ui.core.MessageType
 	var MessageType = coreLibrary.MessageType;
 
+	// shortcut for sap.ui.core.TitleLevel
+	var TitleLevel = coreLibrary.TitleLevel;
+
 	// shortcut for sap.m.PlacementType
 	var PlacementType = mobileLibrary.PlacementType;
 
@@ -978,6 +981,7 @@ sap.ui.define([
 
 	var oPage = new Page({
 		title: "SinglePlanningCalendar test page",
+		titleLevel: TitleLevel.H1,
 		content: oSPC,
 		footer: new Bar()
 	});

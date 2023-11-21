@@ -47,6 +47,9 @@ sap.ui.define([
 	// shortcut for sap.ui.core.ValueState
 	var ValueState = coreLibrary.ValueState;
 
+	// shortcut for sap.ui.core.TitleLevel
+	var TitleLevel = coreLibrary.TitleLevel;
+
 	oCore.ready(function() {
 		Localization.setLanguage("en-US");
 	});
@@ -155,6 +158,7 @@ sap.ui.define([
 
 	var page1 = new Page("page1", {
 		title:"Mobile DateTimePicker",
+		titleLevel: TitleLevel.H1,
 		content : [
 			new Label({text: "initial DateTimePicker", labelFor: "DTP1"}),
 			new DateTimePicker("DTP1", { fieldGroupIds: ["group1"], change: handleChange, validateFieldGroup: handleFieldGroupValidation }),

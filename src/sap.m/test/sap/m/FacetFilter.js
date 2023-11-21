@@ -7,6 +7,7 @@ sap.ui.define([
 	"sap/m/FacetFilterItem",
 	"sap/ui/model/type/Date",
 	"sap/m/library",
+	"sap/ui/core/library",
 	"sap/ui/model/type/Float",
 	"sap/m/FacetFilter",
 	"sap/m/Bar",
@@ -34,6 +35,7 @@ sap.ui.define([
 	FacetFilterItem,
 	TypeDate,
 	mobileLibrary,
+	coreLibrary,
 	Float,
 	FacetFilter,
 	Bar,
@@ -66,6 +68,9 @@ sap.ui.define([
 
 	// shortcut for sap.m.FacetFilterListDataType
 	var FacetFilterListDataType = mobileLibrary.FacetFilterListDataType;
+
+	// shortcut for sap.ui.core.TitleLevel
+	var TitleLevel = coreLibrary.TitleLevel;
 
 	document.getElementById("content").style.height = "1000px";
 
@@ -135,8 +140,8 @@ sap.ui.define([
 	});
 
 	var oTestPage = new Page("myPage1", {
-		title : "Mobile Facet Filter Control"
-
+		title : "Mobile Facet Filter Control",
+		titleLevel: TitleLevel.H1
 	});
 
 	oApp.addPage(oTestPage);

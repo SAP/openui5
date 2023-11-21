@@ -10,6 +10,9 @@ sap.ui.define([
 	// shortcut for sap.ui.core.ValueState
 	var ValueState = coreLibrary.ValueState;
 
+	// shortcut for sap.ui.core.TitleLevel
+	var TitleLevel = coreLibrary.TitleLevel;
+
 	var app = new App("myApp");
 
 	function handleChange(oEvent){
@@ -24,6 +27,7 @@ sap.ui.define([
 
 	var page1 = new Page("page1", {
 		title:"Mobile DatePicker",
+		titleLevel: TitleLevel.H1,
 		content : [
 			new Label({text: "initial DatePicker", labelFor: "DP1"}),
 			new DatePicker("DP1", { change: handleChange }),

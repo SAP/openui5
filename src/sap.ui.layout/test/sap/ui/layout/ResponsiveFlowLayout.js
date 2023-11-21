@@ -67,9 +67,10 @@ sap.ui.define([
 		content: [
 			new Label({
 				text : "First name",
-				width : "100%"
+				width : "100%",
+				labelFor: "input1"
 			}),
-			oInputFirst = new Input({
+			oInputFirst = new Input("input1", {
 				width : "100%",
 				layoutData: new ResponsiveFlowLayoutData({
 					weight : 1
@@ -90,9 +91,10 @@ sap.ui.define([
 		content: [
 			new Label({
 				text : "Last name",
-				width : "100%"
+				width : "100%",
+				labelFor: "input2"
 			}),
-			oInputLast = new Input({
+			oInputLast = new Input("input2", {
 				width : "100%",
 				layoutData: new ResponsiveFlowLayoutData({
 					weight : 2,
@@ -116,18 +118,23 @@ sap.ui.define([
 			new Label({
 				text : "Address",
 				width : "100%",
+				labelFor: "input3",
 				layoutData: new ResponsiveFlowLayoutData({
 					weight : 1,
 					minWidth : 80
 				})
 			}),
-			new Input({
+			new Input("input3", {
 				width : "100%",
 				layoutData: new ResponsiveFlowLayoutData({
 					weight : 5
 				})
 			}),
-			new Input({
+			new Label({
+				text: "Phone number",
+				labelFor: "input4"
+			}),
+			new Input("input4", {
 				width : "100%",
 				layoutData:  new ResponsiveFlowLayoutData({
 					weight : 2,
