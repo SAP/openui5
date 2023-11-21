@@ -1,11 +1,12 @@
-/* global QUnit*/
+/* global QUnit, sinon*/
 sap.ui.define([
 	"sap/ui/core/Control",
 	"sap/m/Table",
 	"sap/m/p13n/handler/xConfigHandler",
 	"sap/ui/fl/apply/_internal/flexObjects/FlexObjectFactory",
-	"sap/ui/core/util/reflection/JsControlTreeModifier"
-], function (MDCControl, Table, xConfigHandler, FlexObjectFactory, JsControlTreeModifier) {
+	"sap/ui/core/util/reflection/JsControlTreeModifier",
+	"sap/m/p13n/modules/xConfigAPI"
+], function (MDCControl, Table, xConfigHandler, FlexObjectFactory, JsControlTreeModifier, xConfigAPI) {
 	"use strict";
 
 	this.oControl = null;
@@ -13,16 +14,9 @@ sap.ui.define([
 	this.oUIChange = null;
 
 	QUnit.module("API Tests", {
-		beforeEach: function() {
-			this.oControl = new Table("test-table");
-
-			this.oPropertyBag = {
-				modifier: JsControlTreeModifier,
-				appComponent: this.oControl
-			};
-
+		createChangeObject: function(mChangeConfig) {
 			const oChangeProperties = {
-				"changeType": "removeItem",
+				...mChangeConfig,
 				"content": {
 					// "key": "P5",
 					// "value": false,
@@ -39,6 +33,18 @@ sap.ui.define([
 			};
 
 			this.oUIChange = FlexObjectFactory.createUIChange(oChangeProperties);
+		},
+		beforeEach: function() {
+			this.oControl = new Table("test-table");
+
+			this.oPropertyBag = {
+				modifier: JsControlTreeModifier,
+				appComponent: this.oControl
+			};
+
+			this.createChangeObject({
+				changeType: "removeItem"
+			});
 		},
 		afterEach: function() {
 			this.oControl.destroy();
@@ -122,14 +128,66 @@ sap.ui.define([
 			key: "string"
 		});
 
-		return Promise.resolve().then(() => {
-			return oHandler.changeHandler.revertChange(this.oUIChange, this.oControl, this.oPropertyBag);
-		})
+		return oHandler.changeHandler.revertChange(this.oUIChange, this.oControl, this.oPropertyBag)
 		.then((result) => {
 			assert.ok(typeof result === "undefined", "'revertChange' was called successfully");
 		}).catch((error) => {
 			assert.ok(typeof error === "undefined", "'revertChange' threw no errors");
 			throw error;
+		});
+	});
+
+	QUnit.test("Check that 'revertChange' reverts the change operation (add -> remove)", function (assert) {
+
+		const oHandler = xConfigHandler.createHandler({
+			aggregationBased: true,
+			property: "visible",
+			operation: "add"
+		});
+
+		this.createChangeObject({
+			changeType: "addItem"
+		});
+
+		this.oUIChange.setRevertData({
+			key: "string"
+		});
+
+		const xConfigSpy = sinon.spy(xConfigAPI, "enhanceConfig");
+
+		return oHandler.changeHandler.revertChange(this.oUIChange, this.oControl, this.oPropertyBag)
+		.then((result) => {
+			//args provides an array, the first array includes two parameters -> 0 is the control instance, 1 the config called for xConfigAPI
+			const revertOperation = xConfigSpy.args[0][1].operation;
+			assert.equal(revertOperation, "remove", "The 'add' reverted results in a remove");
+			xConfigAPI.enhanceConfig.restore();
+		});
+	});
+
+	QUnit.test("Check that 'revertChange' reverts the change operation (remove -> add)", function (assert) {
+
+		const oHandler = xConfigHandler.createHandler({
+			aggregationBased: true,
+			property: "visible",
+			operation: "remove"
+		});
+
+		this.createChangeObject({
+			changeType: "removeItem"
+		});
+
+		this.oUIChange.setRevertData({
+			key: "string"
+		});
+
+		const xConfigSpy = sinon.spy(xConfigAPI, "enhanceConfig");
+
+		return oHandler.changeHandler.revertChange(this.oUIChange, this.oControl, this.oPropertyBag)
+		.then((result) => {
+			//args provides an array, the first array includes two parameters -> 0 is the control instance, 1 the config called for xConfigAPI
+			const revertOperation = xConfigSpy.args[0][1].operation;
+			assert.equal(revertOperation, "add", "The 'remove' reverted results in a add");
+			xConfigAPI.enhanceConfig.restore();
 		});
 	});
 
