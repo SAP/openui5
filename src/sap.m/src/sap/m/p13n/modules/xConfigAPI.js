@@ -251,11 +251,13 @@ sap.ui.define([
 					var currentState = oModificationPayload.currentState;
 
 					//Adjust index after a remove happened for instance
-					currentState?.forEach((state, index) => {
-						if (oConfig.aggregations[sAggregationName].hasOwnProperty(state.key)) {
-							oConfig.aggregations[sAggregationName][state.key]["position"] = index;
-						}
-					});
+					if (currentState && currentState instanceof Array) {
+						currentState.forEach((state, index) => {
+							if (oConfig.aggregations[sAggregationName].hasOwnProperty(state.key)) {
+								oConfig.aggregations[sAggregationName][state.key]["position"] = index;
+							}
+						});
+					}
 
 					//Note: consider aligning xConfig value handling between sap.m and sap.ui.mdc
 					if (vValue.hasOwnProperty("value")) {

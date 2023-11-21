@@ -129,15 +129,13 @@ sap.ui.define([
                                 oRevertData.value = null;
                             }
 
-                            var aCurrentState;
-
 							var oController = Engine.getInstance().getController(oControl, oChange.getChangeType());
-							aCurrentState = oController?.getCurrentState();
-							var oStateItem = aCurrentState?.find(function(oItem, iIndex){
-								if (oItem.key === oChange.getContent().key) {
-									return oItem;
-								}
-							});
+							var aCurrentState = oController?.getCurrentState(), oStateItem;
+							if (aCurrentState && aCurrentState instanceof Array) {
+								oStateItem = aCurrentState.find(function(oItem, iIndex){
+									return oItem.key === oChange.getContent().key;
+								});
+							}
 
 							oRevertData.targetAggregation = oChange.getContent().targetAggregation;
 
