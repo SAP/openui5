@@ -75,7 +75,7 @@ sap.ui.define(['sap/ui/mdc/BaseDelegate', 'sap/ui/core/library'], function (Base
 	 * @param {sap.ui.core.Element} oItem The control instance that was removed
 	 * @param {Object} [mPropertyBag] Instance of property bag from SAPUI5 flexibility
 	 *
-	 * @returns {Promise<Boolean>} Promise resolving in a boolean, deciding whether the item should be destroyed (<code>true</code>) or kept (<code>false</code>) after removing it from the control aggregation.
+	 * @returns {Promise<boolean>} Promise resolving in a boolean, deciding whether the item should be destroyed (<code>true</code>) or kept (<code>false</code>) after removing it from the control aggregation.
 	 *
 	 * @public
 	 */
