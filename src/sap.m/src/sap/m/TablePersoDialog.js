@@ -226,7 +226,7 @@ sap.ui.define([
 				return;
 			}
 			// Initialisation of the enabled property
-			var aFields = this._oInnerTable.getModel("Personalization").getProperty("/aColumns");
+			var aItems = this._oInnerTable.getItems();
 			var bButtonUpEnabled,bButtonDownEnabled;
 
 			if (!this._oSelectedItem || this._oInnerTable.getItems().length == 0){
@@ -236,9 +236,9 @@ sap.ui.define([
 
 				this._oSelectedItem = null;
 			} else {
-				var iItemIndex = aFields.indexOf(this._oSelectedItem.getBindingContext("Personalization").getObject());
+				var iItemIndex = aItems.indexOf(this._oSelectedItem);
 				bButtonUpEnabled = iItemIndex > 0 ? true : false;
-				bButtonDownEnabled = iItemIndex < aFields.length - 1 ? true : false;
+				bButtonDownEnabled = iItemIndex < aItems.length - 1 ? true : false;
 			}
 			this._updateMarkedItem();
 			that._oButtonUp.setEnabled(bButtonUpEnabled);
@@ -537,27 +537,26 @@ sap.ui.define([
 		var aItems = this._oInnerTable.getItems();
 		var aFields = this._oInnerTable.getModel("Personalization").getProperty("/aColumns");
 
-		// index of the item in the model not the index in the aggregation
-		var iOldIndex = aFields.indexOf(oSelectedItem.getBindingContext("Personalization").getObject());
+		var iOldItemIndex = aItems.indexOf(oSelectedItem);
+		var iNewItemIndex = iOldItemIndex + iDirection;
 
-		// limit the minumum and maximum index
-		var iNewIndex = iOldIndex + iDirection;
-
-		// new index of the item in the model
-		iNewIndex = aFields.indexOf(aItems[iNewIndex].getBindingContext("Personalization").getObject());
-		if (iNewIndex == iOldIndex) {
+		iNewItemIndex = (iNewItemIndex <= 0) ? 0 : Math.min(iNewItemIndex, aItems.length - 1);
+		if (iOldItemIndex === iNewItemIndex) {
 			return;
 		}
 
+		var iOldFieldIndex = aFields.indexOf(aItems[iOldItemIndex].getBindingContext("Personalization").getObject());
+		var iNewFieldIndex = aFields.indexOf(aItems[iNewItemIndex].getBindingContext("Personalization").getObject());
+
 		// remove data from old position and insert it into new position
-		aFields.splice(iNewIndex, 0, aFields.splice(iOldIndex, 1)[0]);
+		aFields.splice(iNewFieldIndex, 0, aFields.splice(iOldFieldIndex, 1)[0]);
 		aFields.forEach(function(oItem, iIndex){
 			oItem.order = iIndex;
 		});
 		this._oInnerTable.getModel("Personalization").setProperty("/aColumns", aFields);
 
 		// store the moved item again due to binding
-		this._oSelectedItem = aItems[iNewIndex];
+		this._oSelectedItem = aItems[iNewItemIndex];
 		this._scrollToItem(this._oSelectedItem);
 
 		this._fnUpdateArrowButtons.call(this);
