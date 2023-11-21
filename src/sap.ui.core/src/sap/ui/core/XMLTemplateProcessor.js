@@ -792,25 +792,28 @@ function(
 			sClassName = sClassName || sNamespaceURI + "." + sLocalName;
 
 			/**
-			 * Ensure that control class is available. Control class is either already given as module content, or
-			 * is retrieved via globals.
-			 * @param {sap.ui.core.Control|undefined} oClassObject control class or undefined if not returned as module content for its sap.ui.define factory
+			 * Validates if a control class is available and provides error feedback otherwise.
+			 * @param {sap.ui.core.Control|undefined} fnClass control class or undefined if not returned as module content for its sap.ui.define factory
 			 * @return {sap.ui.core.Control|undefined} the resolved class.
-			 * @deprecated since 1.120
 			 */
-			function getObjectFallback(oClassObject) {
-				// some modules might not return a class definition, so we fallback to the global
-				// this is against the AMD definition, but is required for backward compatibility
-				if (!oClassObject) {
-					oClassObject = ObjectPath.get(sClassName);
-					if (oClassObject) {
-						Log.error(`The control class '${sClassName}' was retrieved via globals, because it did not return a class definition from sap.ui.define.`, "", "XMLTemplateProcessor");
-					}
+			function validateClass(fnClass) {
+				if (!fnClass) {
+					let sErrorLogMessage = `[FUTURE-FATAL] Control '${sClassName}' did not return a class definition from sap.ui.define.`;
+					/**
+					 * Some modules might not return a class definition, so we fallback to the global namespace.
+					 * This is against the AMD definition, but is required for backward compatibility.
+					 * @deprecated
+					 */
+					(() => {
+						fnClass = ObjectPath.get(sClassName);
+						if (fnClass) {
+							sErrorLogMessage += " The control class was instead retrieved via a deprecated access to the global namespace. This fallback behavior will be removed in the next major version (2.0).";
+						}
+					})();
+
+					Log.error(sErrorLogMessage, "", "XMLTemplateProcessor");
 				}
-				if (!oClassObject) {
-					Log.error(`Control '${sClassName}' did not return a class definition from sap.ui.define and did not export into the global namespace.`, "", "XMLTemplateProcessor");
-				}
-				return oClassObject;
+				return fnClass;
 			}
 
 			var sResourceName = sClassName.replace(/\./g, "/");
@@ -822,13 +825,12 @@ function(
 				 */
 				if (!bAsync) {
 					oClassObject = sap.ui.requireSync(sResourceName); // legacy-relevant: Sync path
-					oClassObject = getObjectFallback(oClassObject);
+					oClassObject = validateClass(oClassObject);
 					return oClassObject;
 				}
 				return new Promise(function(resolve, reject) {
 					sap.ui.require([sResourceName], function(oClassObject) {
-						/** @deprecated since 1.120 */
-						oClassObject = getObjectFallback(oClassObject);
+						oClassObject = validateClass(oClassObject);
 						resolve(oClassObject);
 					}, reject);
 				});
