@@ -30211,6 +30211,10 @@ sap.ui.define([
 	//
 	// Before deletion, the new node is maybe moved to make it a root (JIRA: CPOUI5ODATAV4-2400)
 	// Old vs. new format of RecursiveHierarchy annotation (JIRA: CPOUI5ODATAV4-2401)
+	//
+	// At first, create a new root node with a LimitedRank beyond all currently loaded nodes.
+	// Finally, it is also deleted.
+	// JIRA: CPOUI5ODATAV4-2412
 [false, true].forEach((bMakeRoot) => {
 	["OldChart", "OrgChart"].forEach((sHierarchyQualifier) => {
 		const sTitle = `Recursive Hierarchy: expand all and create for ${sHierarchyQualifier};
@@ -30255,8 +30259,9 @@ make root = ${bMakeRoot}`;
 		//   5 Zeta (loaded soon)
 		//     5.1 Eta (loaded soon)
 		//     5.2 Theta (loaded later)
-		//   6 Iota (loaded later)
+		//   6 Iota (loaded soon)
 		//   7 Kappa (loaded later)
+		// <-- insert new root on server: 8 Aleph
 		this.expectRequest(sReadUrl + "&$count=true&$skip=0&$top=2", {
 				"@odata.count" : "10",
 				value : [{
@@ -30300,11 +30305,61 @@ make root = ${bMakeRoot}`;
 		//   2 Gamma (loaded later)
 		//   3 Delta (loaded later)
 		//   4 Epsilon (loaded later)
+		//   5 Zeta (loaded soon)
+		//     5.1 Eta (loaded soon)
+		//     5.2 Theta (loaded later)
+		//   6 Iota (loaded soon)
+		//   7 Kappa (loaded later)
+		// 8 Aleph (created)
+		this.expectRequest({
+				method : "POST",
+				url : sFriend.slice(1),
+				payload : {
+					// not needed: "BestFriend@odata.bind" : null,
+					Name : "Aleph"
+				}
+			}, {
+				ArtistID : "8",
+				IsActiveEntity : false,
+				Name : "Aleph"
+			})
+			.expectRequest(sBaseUrl + "&$filter=ArtistID eq '8' and IsActiveEntity eq false"
+				+ "&$select=_/" + sLimitedRank, {
+				value : [{
+					_ : {
+						[sLimitedRank] : "10" // Edm.Int64
+					}
+				}]
+			});
+
+		// code under test
+		const oNewRoot = oListBinding.create({Name : "Aleph"}, /*bSkipRefresh*/true);
+
+		await Promise.all([
+			oNewRoot.created(),
+			this.waitForChanges(assert, "create new root Aleph")
+		]);
+
+		checkTable("after create new root Aleph", assert, oTable, [
+			sFriend + "(ArtistID='8',IsActiveEntity=false)",
+			sFriend + "(ArtistID='0',IsActiveEntity=false)",
+			sFriend + "(ArtistID='1',IsActiveEntity=false)"
+		], [
+			[undefined, 1, "8", "Aleph"],
+			[true, 1, "0", "Alpha"]
+		], 11);
+
+		// 0 Alpha
+		//   1 Beta
+		//   2 Gamma (loaded later)
+		//   3 Delta (loaded later)
+		//   4 Epsilon (loaded later)
 		//   5 Zeta
 		//     5.1 Eta
 		//     5.2 Theta (loaded later)
-		//   6 Iota (loaded later)
+		//   6 Iota (loaded soon)
 		//   7 Kappa (loaded later)
+		// 8 Aleph (created)
 		this.expectRequest(sReadUrl + "&$skip=5&$top=2", {
 				value : [{
 					ArtistID : "5",
@@ -30329,11 +30384,12 @@ make root = ${bMakeRoot}`;
 				}]
 			});
 
-		oTable.setFirstVisibleRow(5);
+		oTable.setFirstVisibleRow(6);
 
 		await this.waitForChanges(assert, "scroll to Zeta");
 
 		checkTable("after scroll to Zeta", assert, oTable, [
+			sFriend + "(ArtistID='8',IsActiveEntity=false)",
 			sFriend + "(ArtistID='0',IsActiveEntity=false)",
 			sFriend + "(ArtistID='1',IsActiveEntity=false)",
 			sFriend + "(ArtistID='5',IsActiveEntity=false)",
@@ -30341,7 +30397,7 @@ make root = ${bMakeRoot}`;
 		], [
 			[true, 2, "5", "Zeta"],
 			[undefined, 3, "5.1", "Eta"]
-		], 10);
+		], 11);
 		const oZeta = oListBinding.getCurrentContexts()[0];
 
 		// 0 Alpha
@@ -30354,6 +30410,7 @@ make root = ${bMakeRoot}`;
 		//     5.2 Theta (loaded later)
 		//   6 Iota
 		//   7 Kappa (loaded later)
+		// 8 Aleph (created)
 		this.expectRequest(sReadUrl + "&$skip=8&$top=1", {
 				value : [{
 					ArtistID : "6",
@@ -30373,6 +30430,7 @@ make root = ${bMakeRoot}`;
 		await this.waitForChanges(assert, "collapse Zeta");
 
 		checkTable("after collapse Zeta", assert, oTable, [
+			sFriend + "(ArtistID='8',IsActiveEntity=false)",
 			sFriend + "(ArtistID='0',IsActiveEntity=false)",
 			sFriend + "(ArtistID='1',IsActiveEntity=false)",
 			sFriend + "(ArtistID='5',IsActiveEntity=false)",
@@ -30380,9 +30438,9 @@ make root = ${bMakeRoot}`;
 		], [
 			[false, 2, "5", "Zeta"],
 			[undefined, 2, "6", "Iota"]
-		], 8);
+		], 9);
 
-		oTable.setFirstVisibleRow(0);
+		oTable.setFirstVisibleRow(1); // back to Alpha (Note: Aleph outside of view!)
 
 		// 0 Alpha
 		//   1 Beta
@@ -30393,8 +30451,9 @@ make root = ${bMakeRoot}`;
 		//   5 Zeta
 		//     5.1 Eta
 		//     5.2 Theta (loaded later)
-		//   6 Iota (loaded later)
+		//   6 Iota
 		//   7 Kappa (loaded later)
+		// 8 Aleph (created)
 		this.expectRequest({
 				method : "POST",
 				url : sFriend.slice(1),
@@ -30426,7 +30485,9 @@ make root = ${bMakeRoot}`;
 			oNewChild.created(),
 			this.waitForChanges(assert, "create New")
 		]);
+
 		checkTable("after create New", assert, oTable, [
+			sFriend + "(ArtistID='8',IsActiveEntity=false)",
 			sFriend + "(ArtistID='0',IsActiveEntity=false)",
 			sFriend + "(ArtistID='9',IsActiveEntity=false)",
 			sFriend + "(ArtistID='1',IsActiveEntity=false)",
@@ -30435,7 +30496,7 @@ make root = ${bMakeRoot}`;
 		], [
 			[true, 1, "0", "Alpha"],
 			[undefined, 2, "9", "New"]
-		], 9);
+		], 10);
 
 		// code under test
 		oZeta.expand();
@@ -30453,6 +30514,7 @@ make root = ${bMakeRoot}`;
 		//     5.2 Theta
 		//   6 Iota
 		//   7 Kappa
+		// 8 Aleph (created)
 		this.expectRequest(sReadUrl + "&$skip=2&$top=2", {
 				value : [{
 					ArtistID : "2",
@@ -30518,6 +30580,7 @@ make root = ${bMakeRoot}`;
 
 		await this.checkAllContexts("after loading all rows", assert, oListBinding,
 			["@$ui5.node.isExpanded", "@$ui5.node.level", "ArtistID", "Name"], [
+				[undefined, 1, "8", "Aleph"],
 				[true, 1, "0", "Alpha"],
 				[undefined, 2, "9", "New"],
 				[undefined, 2, "1", "Beta"],
@@ -30533,7 +30596,7 @@ make root = ${bMakeRoot}`;
 
 		if (bMakeRoot) {
 			this.expectRequest({
-					batchNo : 7,
+					batchNo : 9,
 					headers : {
 						Prefer : "return=minimal"
 					},
@@ -30544,7 +30607,7 @@ make root = ${bMakeRoot}`;
 					}
 				}) // 204 No Content
 				.expectRequest({
-					batchNo : 7,
+					batchNo : 9,
 					url : sBaseUrl + "&$filter=ArtistID eq '9' and IsActiveEntity eq false"
 						+ "&$select=_/" + sLimitedRank
 				}, {
@@ -30564,6 +30627,7 @@ make root = ${bMakeRoot}`;
 			await this.checkAllContexts("after make New a root node", assert, oListBinding,
 				["@$ui5.node.isExpanded", "@$ui5.node.level", "ArtistID", "Name"], [
 					[undefined, 1, "9", "New"],
+					[undefined, 1, "8", "Aleph"],
 					[true, 1, "0", "Alpha"],
 					[undefined, 2, "1", "Beta"],
 					[undefined, 2, "2", "Gamma"],
@@ -30577,15 +30641,18 @@ make root = ${bMakeRoot}`;
 				]);
 		}
 
-		this.expectRequest("DELETE Artists(ArtistID='9',IsActiveEntity=false)");
+		this.expectRequest("DELETE Artists(ArtistID='8',IsActiveEntity=false)")
+			.expectRequest("DELETE Artists(ArtistID='9',IsActiveEntity=false)");
 
 		await Promise.all([
+			// code under test
+			oNewRoot.delete(),
 			// code under test
 			oNewChild.delete(),
 			this.waitForChanges(assert, "delete New")
 		]);
 
-		await this.checkAllContexts("after loading all rows", assert, oListBinding,
+		await this.checkAllContexts("after deleting new nodes", assert, oListBinding,
 			["@$ui5.node.isExpanded", "@$ui5.node.level", "ArtistID", "Name"], [
 				[true, 1, "0", "Alpha"],
 				[undefined, 2, "1", "Beta"],

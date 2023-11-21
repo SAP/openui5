@@ -2291,70 +2291,120 @@ sap.ui.define([
 	QUnit.module("nested components", {
 		beforeEach: function() {
 			hasher.setHash("");
-			return Component.create({
-				name: "qunit.router.component.parentRoute.Parent",
-				id: "parent"
-			}).then(function(oComponent) {
-				var that = this;
-				this.oParentComponent = oComponent;
-				this.oParentComponent.getRouter().initialize();
 
-				var oRootView = oComponent.getRootControl();
-				var oComponentContainer = oRootView.byId("container");
+			this.createComponent = function(sComponentName) {
+				return Component.create({
+					name: sComponentName,
+					id: "parent"
+				}).then(function(oComponent) {
+					var that = this;
+					this.oParentComponent = oComponent;
+					this.oParentComponent.getRouter().initialize();
 
-				return new Promise(function(resolve, reject) {
-					oRootView.placeAt("qunit-fixture");
-					oComponentContainer.attachComponentCreated(function(oEvent) {
-						that.oChildComponent = oEvent.getParameter("component");
-						resolve();
+					this.oRootView = oComponent.getRootControl();
+					var oComponentContainer = that.oRootView.byId("container");
+
+					return new Promise(function(resolve, reject) {
+						that.oRootView.placeAt("qunit-fixture");
+						oComponentContainer.attachComponentCreated(function(oEvent) {
+							that.oChildComponent = oEvent.getParameter("component");
+							resolve();
+						});
 					});
-				});
-			}.bind(this));
+				}.bind(this));
+			};
 		},
 		afterEach: function () {
+			this.oRootView.destroy();
 			this.oParentComponent.destroy();
 			this.oChildComponent.destroy();
 		}
 	});
 
 	QUnit.test("fire events", function(assert) {
-		// Arrange
-		var oParentRouteMatchedEvent,
-			oParentRouteMatchedEventSpy = sinon.spy(function(oEvent) {
-				// save the oEvent because EventProvider will overwrite it otherwise
-				oParentRouteMatchedEvent = deepExtend({}, oEvent);
-			}),
-			oParentRoutePatternMatchedEventSpy = sinon.spy(),
-			oChildRouteMatchedEvent,
-			oChildRouteMatchedEventSpy = sinon.spy(function(oEvent) {
-				oChildRouteMatchedEvent = deepExtend({}, oEvent);
-			}),
-			oChildRoutePatternMatchedEventSpy = sinon.spy(),
-			oParentRoute = this.oParentComponent.getRouter().getRoute("category"),
-			oChildRoute = this.oChildComponent.getRouter().getRoute("product"),
-			oParentRouteMatchedSpy = sinon.spy(oParentRoute, "_routeMatched"),
-			oChildRouteMatchedSpy = sinon.spy(oChildRoute, "_routeMatched");
+		return this.createComponent("qunit.router.component.parentRoute.Parent")
+			.then(function() {
+				// Arrange
+				var oParentRouteMatchedEvent,
+					oParentRouteMatchedEventSpy = this.spy(function(oEvent) {
+						// save the oEvent because EventProvider will overwrite it otherwise
+						oParentRouteMatchedEvent = deepExtend({}, oEvent);
+					}),
+					oParentRoutePatternMatchedEventSpy = this.spy(),
+					oChildRouteMatchedEvent,
+					oChildRouteMatchedEventSpy = this.spy(function(oEvent) {
+						oChildRouteMatchedEvent = deepExtend({}, oEvent);
+					}),
+					oChildRoutePatternMatchedEventSpy = this.spy(),
+					oParentRoute = this.oParentComponent.getRouter().getRoute("category"),
+					oChildRoute = this.oChildComponent.getRouter().getRoute("product"),
+					oParentRouteMatchedSpy = this.spy(oParentRoute, "_routeMatched"),
+					oChildRouteMatchedSpy = this.spy(oChildRoute, "_routeMatched");
 
-		oParentRoute.attachMatched(oParentRouteMatchedEventSpy);
-		oParentRoute.attachPatternMatched(oParentRoutePatternMatchedEventSpy);
-		oChildRoute.attachMatched(oChildRouteMatchedEventSpy);
-		oChildRoute.attachPatternMatched(oChildRoutePatternMatchedEventSpy);
+				oParentRoute.attachMatched(oParentRouteMatchedEventSpy);
+				oParentRoute.attachPatternMatched(oParentRoutePatternMatchedEventSpy);
+				oChildRoute.attachMatched(oChildRouteMatchedEventSpy);
+				oChildRoute.attachPatternMatched(oChildRoutePatternMatchedEventSpy);
 
-		// Act
-		hasher.setHash("category/0/product/0");
+				// Act
+				hasher.setHash("category/0/product/0");
 
-		// Assert
-		assert.strictEqual(oParentRouteMatchedSpy.callCount, 1, "Parent should be matched");
-		assert.strictEqual(oChildRouteMatchedSpy.callCount, 1, "Child is matched");
+				// Assert
+				assert.strictEqual(oParentRouteMatchedSpy.callCount, 1, "Parent should be matched");
+				assert.strictEqual(oChildRouteMatchedSpy.callCount, 1, "Child is matched");
 
-		return Promise.all([oParentRouteMatchedSpy.returnValues[0], oChildRouteMatchedSpy.returnValues[0]]).then(function() {
-			assert.strictEqual(oParentRouteMatchedEventSpy.callCount, 1, "routeMatched fired for parent route");
-			assert.strictEqual(oParentRoutePatternMatchedEventSpy.callCount, 0, "routePatternMatched not fired for parent route");
-			assert.strictEqual(oParentRouteMatchedEvent.getParameter("nestedRoute"), oChildRoute, "childRoute is passed to event listeners");
-			assert.strictEqual(oChildRouteMatchedEventSpy.callCount, 1, "routeMatched fired for child route");
-			assert.strictEqual(oChildRoutePatternMatchedEventSpy.callCount, 1, "routePatternMatched fired for child route");
-			assert.strictEqual(oChildRouteMatchedEvent.getParameter("nestedRoute"), undefined, "no route is passed to event listeners");
-		});
+				return Promise.all([oParentRouteMatchedSpy.returnValues[0], oChildRouteMatchedSpy.returnValues[0]]).then(function() {
+					assert.strictEqual(oParentRouteMatchedEventSpy.callCount, 1, "routeMatched fired for parent route");
+					assert.strictEqual(oParentRoutePatternMatchedEventSpy.callCount, 0, "routePatternMatched not fired for parent route");
+					assert.strictEqual(oParentRouteMatchedEvent.getParameter("nestedRoute"), oChildRoute, "childRoute is passed to event listeners");
+					assert.strictEqual(oChildRouteMatchedEventSpy.callCount, 1, "routeMatched fired for child route");
+					assert.strictEqual(oChildRoutePatternMatchedEventSpy.callCount, 1, "routePatternMatched fired for child route");
+					assert.strictEqual(oChildRouteMatchedEvent.getParameter("nestedRoute"), undefined, "no route is passed to event listeners");
+				});
+			}.bind(this));
+	});
+
+	QUnit.test("fire events with extended parent component", function(assert) {
+		return this.createComponent("qunit.router.component.parentRoute.ParentExtended")
+			.then(function() {
+				// Arrange
+				var oParentRouteMatchedEvent,
+					oParentRouteMatchedEventSpy = this.spy(function(oEvent) {
+						// save the oEvent because EventProvider will overwrite it otherwise
+						oParentRouteMatchedEvent = deepExtend({}, oEvent);
+					}),
+					oParentRoutePatternMatchedEventSpy = this.spy(),
+					oChildRouteMatchedEvent,
+					oChildRouteMatchedEventSpy = this.spy(function(oEvent) {
+						oChildRouteMatchedEvent = deepExtend({}, oEvent);
+					}),
+					oChildRoutePatternMatchedEventSpy = this.spy(),
+					oParentRoute = this.oParentComponent.getRouter().getRoute("category"),
+					oChildRoute = this.oChildComponent.getRouter().getRoute("product"),
+					oParentRouteMatchedSpy = this.spy(oParentRoute, "_routeMatched"),
+					oChildRouteMatchedSpy = this.spy(oChildRoute, "_routeMatched");
+
+				oParentRoute.attachMatched(oParentRouteMatchedEventSpy);
+				oParentRoute.attachPatternMatched(oParentRoutePatternMatchedEventSpy);
+				oChildRoute.attachMatched(oChildRouteMatchedEventSpy);
+				oChildRoute.attachPatternMatched(oChildRoutePatternMatchedEventSpy);
+
+				// Act
+				hasher.setHash("category/0/product/0");
+
+				// Assert
+				assert.strictEqual(oParentRouteMatchedSpy.callCount, 1, "Parent should be matched");
+				assert.strictEqual(oChildRouteMatchedSpy.callCount, 1, "Child is matched");
+
+				return Promise.all([oParentRouteMatchedSpy.returnValues[0], oChildRouteMatchedSpy.returnValues[0]]).then(function() {
+					assert.strictEqual(oParentRouteMatchedEventSpy.callCount, 1, "routeMatched fired for parent route");
+					assert.strictEqual(oParentRoutePatternMatchedEventSpy.callCount, 0, "routePatternMatched not fired for parent route");
+					assert.strictEqual(oParentRouteMatchedEvent.getParameter("nestedRoute"), oChildRoute, "childRoute is passed to event listeners");
+					assert.strictEqual(oChildRouteMatchedEventSpy.callCount, 1, "routeMatched fired for child route");
+					assert.strictEqual(oChildRoutePatternMatchedEventSpy.callCount, 1, "routePatternMatched fired for child route");
+					assert.strictEqual(oChildRouteMatchedEvent.getParameter("nestedRoute"), undefined, "no route is passed to event listeners");
+				});
+			}.bind(this));
 	});
 
 	function resetBrowserHash() {

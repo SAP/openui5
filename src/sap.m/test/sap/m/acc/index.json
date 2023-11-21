@@ -102,7 +102,7 @@
 		},
 		{
 			"control": "sap.m.DateTimePicker",
-			"url": "../DateTimePicker.html",
+			"url": "DateTimePicker.html",
 			"appComponent": "CA-UI5-CTR-BAL"
 		},
 		{

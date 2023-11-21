@@ -164,7 +164,6 @@ sap.ui.define([
 			table: oTable,
 			keyPath: "key",
 			descriptionPath: "text",
-			filterFields: "*text,additionalText*",
 			conditions: aConditions, // don't need to test the binding of Container here
 			config: { // don't need to test the binding of Container here
 				maxConditions: iMaxConditions,
@@ -328,39 +327,6 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("Filtering without $search", function(assert) {
-
-		const oListBinding = oTable.getBinding("items");
-		_fakeV4Binding(oListBinding);
-
-		sinon.spy(oListBinding, "filter");
-		oMTable.onBeforeShow(); // filtering should happen only if open
-		oMTable._bContentBound = true;
-
-		const fnDone = assert.async();
-		setTimeout( function(){ // as waiting for onBeforeShow-Promise
-			oMTable.setFilterValue("3");
-			// compare arguments of filter as Filter object is changed during filtering
-			assert.equal(oListBinding.filter.args.length, 1, "ListBinding filter called once");
-			assert.equal(oListBinding.filter.args[0].length, 2, "ListBinding filter number of arguments");
-			assert.equal(oListBinding.filter.args[0][0].length, 1, "ListBinding filter is array with one filter");
-			assert.equal(oListBinding.filter.args[0][0][0].aFilters.length, 2, "ListBinding filter contains 2 Filters filter");
-			assert.equal(oListBinding.filter.args[0][0][0].aFilters[0].sPath, "text", "ListBinding 1. filter path");
-			assert.equal(oListBinding.filter.args[0][0][0].aFilters[0].sOperator, FilterOperator.Contains, "ListBinding 1. filter operator");
-			assert.equal(oListBinding.filter.args[0][0][0].aFilters[0].oValue1, "3", "ListBinding 1. filter value1");
-			assert.equal(oListBinding.filter.args[0][0][0].aFilters[1].sPath, "additionalText", "ListBinding 2. filter path");
-			assert.equal(oListBinding.filter.args[0][0][0].aFilters[1].sOperator, FilterOperator.Contains, "ListBinding 2. filter operator");
-			assert.equal(oListBinding.filter.args[0][0][0].aFilters[1].oValue1, "3", "ListBinding 2. filter value1");
-			assert.notOk(oListBinding.filter.args[0][0][0].bAnd, "ListBinding filters are OR combined");
-			assert.equal(oListBinding.filter.args[0][1], FilterType.Application, "ListBinding filter type");
-			const aItems = oTable.getItems();
-			assert.equal(aItems.length, 1, "number of items");
-			assert.equal(aItems[0].getCells()[0].getText(), "I3", "Key of item");
-			fnDone();
-		}, 0);
-
-	});
-
 	QUnit.test("Filtering for InParameters", function(assert) {
 
 		const oListBinding = oTable.getBinding("items");
@@ -393,6 +359,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Filtering using $search", function(assert) {
+
 		let iTypeaheadSuggested = 0;
 		let oCondition;
 		let sFilterValue;
@@ -442,6 +409,7 @@ sap.ui.define([
 			ValueHelpDelegateV4.updateBinding.restore();
 			fnDone();
 		}, 0);
+
 	});
 
 	// Delegate seems to already be loaded in this test?
@@ -475,30 +443,12 @@ sap.ui.define([
 
 	}); */
 
-	QUnit.test("isSearchSupported without $search", function(assert) {
-
-		const bSupported = oMTable.isSearchSupported();
-		assert.ok(bSupported, "supported for filtering");
-
-	});
-
-	QUnit.test("isSearchSupported using $search", function(assert) {
-		sinon.stub(oContainer, "getValueHelpDelegate").returns(ValueHelpDelegateV4);
-		sinon.spy(ValueHelpDelegateV4, "isSearchSupported"); // returns false for non V4-ListBinding
-		const oListBinding = oTable.getBinding("items");
-		oListBinding.changeParameters = function(oParameters) {}; // just fake V4 logic
-
-		const bSupported = oMTable.isSearchSupported();
-		assert.ok(bSupported, "supported for $search");
-		assert.ok(ValueHelpDelegateV4.isSearchSupported.calledOnce, "ValueHelpDelegateV4.isSearchSupported called");
-
-		oContainer.getValueHelpDelegate.restore();
-		ValueHelpDelegateV4.isSearchSupported.restore();
-	});
-
-	QUnit.test("isSearchSupported - no search", function(assert) {
-		const bSupported = oMTable.isSearchSupported();
-		assert.notOk(bSupported, "not supported if no FilterFields");
+	QUnit.test("isSearchSupported", function(assert) {
+		const isSearchSupportedStub = sinon.stub(ValueHelpDelegate, "isSearchSupported").returns(false);
+		assert.notOk(oMTable.isSearchSupported(), "not supported for filtering");
+		isSearchSupportedStub.returns(true);
+		assert.ok(oMTable.isSearchSupported(), "supported for filtering");
+		isSearchSupportedStub.restore();
 	});
 
 	QUnit.test("getItemForValue: check for key - match", function(assert) {
@@ -1750,5 +1700,4 @@ sap.ui.define([
 		assert.notOk(oMTable.isNavigationEnabled(-10), "Navigation is disabled for -10");
 
 	});
-
 });

@@ -112,6 +112,8 @@ sap.ui.define([
 
 			oView.setModel(oView.getModel(), "header");
 			oView.setBindingContext(oRowsBinding.getHeaderContext(), "header");
+
+			this.initMessagePopover("table");
 		},
 
 		onSort : function () {

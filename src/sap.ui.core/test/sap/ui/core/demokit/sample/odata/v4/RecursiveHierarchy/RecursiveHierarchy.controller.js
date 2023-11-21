@@ -40,22 +40,6 @@ sap.ui.define([
 			}
 		},
 
-		onCut : function (oEvent) {
-			try {
-				const oNode = oEvent.getSource().getBindingContext();
-				oNode.delete("noSubmit");
-				MessageBox.confirm("Restore again (undo cut)", {
-					actions : MessageBox.Action.OK,
-					emphasizedAction : MessageBox.Action.OK,
-					onClose : function () {
-						oNode.resetChanges();
-					}
-				});
-			} catch (oError) {
-				MessageBox.alert(oError.message, {icon : MessageBox.Icon.ERROR, title : "Error"});
-			}
-		},
-
 		onDelete : async function (oEvent) {
 			try {
 				await oEvent.getSource().getBindingContext().delete();

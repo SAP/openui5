@@ -76,11 +76,6 @@
 		</Column>
 		<Column width="4em">
 			<template>
-				<m:Button id="cut" icon="sap-icon://scissors" press=".onCut" tooltip="Cut"/>
-			</template>
-		</Column>
-		<Column width="4em">
-			<template>
 				<m:Button icon="sap-icon://move" id="move" press=".onMove" tooltip="Move"/>
 			</template>
 		</Column>
@@ -149,12 +144,6 @@
 			<template>
 				<m:Button enabled="{= %{@$ui5.node.isExpanded} !== false}" icon="sap-icon://create"
 					id="createInTreeTable" press=".onCreate" tooltip="Create New Child"/>
-			</template>
-		</Column>
-		<Column width="4em">
-			<template>
-				<m:Button id="cutInTreeTable" icon="sap-icon://scissors" press=".onCut"
-					tooltip="Cut"/>
 			</template>
 		</Column>
 		<Column width="4em">

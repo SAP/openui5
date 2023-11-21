@@ -1604,7 +1604,7 @@ sap.ui.define([
 	 * the given array index by the given offset, except for elements where it is
 	 * <code>undefined</code> or lower than the node's own rank. If the node at the given index
 	 * itself has an <code>undefined</code> rank, nothing is shifted. Note that inside
-	 * <code>this.oFirstLevel</code> not only siblings are affected.
+	 * <code>this.oFirstLevel</code> not only siblings are affected and it's not simply "after".
 	 *
 	 * @param {number} iIndex
 	 *   Index in <code>this.aElements</code> of a node
@@ -1621,8 +1621,14 @@ sap.ui.define([
 		}
 
 		const oCache = _Helper.getPrivateAnnotation(oNode, "parent");
+		if (oCache === this.oFirstLevel) {
+			iIndex = -1; // search from the start!
+		}
 		for (let i = iIndex + 1; i < this.aElements.length; i += 1) {
 			const oSibling = this.aElements[i];
+			if (oSibling === oNode) {
+				continue;
+			}
 			if (_Helper.getPrivateAnnotation(oSibling, "parent") === oCache) {
 				const iRank = _Helper.getPrivateAnnotation(oSibling, "rank");
 				if (iRank >= iMinRank) { // Note: undefined >= ... is false
