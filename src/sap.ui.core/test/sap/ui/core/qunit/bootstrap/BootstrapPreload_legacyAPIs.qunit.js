@@ -3,9 +3,8 @@ sap.ui.define([
 	"sap/ui/Device",
 	"sap/base/Log",
 	"sap/base/util/ObjectPath",
-	"sap/ui/thirdparty/jquery",
-	"sap/ui/core/Configuration"
-], function(Device, Log, ObjectPath, jQuery, Configuration) {
+	"sap/ui/thirdparty/jquery"
+], function(Device, Log, ObjectPath, jQuery) {
 	"use strict";
 
 	// wraps jQuery.ajax to count and collect *.js requests

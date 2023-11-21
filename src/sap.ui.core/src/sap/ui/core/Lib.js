@@ -913,7 +913,7 @@ sap.ui.define([
 		/**
 		 * Returns a resource bundle for the given locale.
 		 *
-		 * The locale's default value is read from {@link sap.ui.core.Configuration#getLanguage session locale}.
+		 * The locale's default value is read from {@link module:sap/base/i18n/Localization.getLanguage session locale}.
 		 *
 		 * This method returns the resource bundle directly. When the resource bundle for the given locale isn't loaded
 		 * yet, synchronous request will be used to load the resource bundle. If it should be loaded asynchronously, use
@@ -940,7 +940,7 @@ sap.ui.define([
 		/**
 		 * Retrieves a resource bundle for the given locale.
 		 *
-		 * The locale's default value is read from {@link sap.ui.core.Configuration#getLanguage session locale}.
+		 * The locale's default value is read from {@link module:sap/base/i18n/Localization.getLanguage session locale}.
 		 *
 		 * <h3>Configuration via App Descriptor</h3>
 		 * When the App Descriptor for the library is available without further request (manifest.json
@@ -1294,7 +1294,7 @@ sap.ui.define([
 	 *
 	 * <li>With the <code>noLibraryCSS</code> property, the library can be marked as 'theming-free'.  Otherwise, the
 	 * framework will add a &lt;link&gt; tag to the page's head, pointing to the library's theme-specific stylesheet.
-	 * The creation of such a &lt;link&gt; tag can be suppressed with the {@link sap.ui.core.Configuration global
+	 * The creation of such a &lt;link&gt; tag can be suppressed with the {@link topic:91f2d03b6f4d1014b6dd926db0e91070 global
 	 * configuration option} <code>preloadLibCss</code>.  It can contain a list of library names for which no stylesheet
 	 * should be included.  This is e.g. useful when an application merges the CSS for multiple libraries and already
 	 * loaded the resulting stylesheet.</li>
@@ -1690,7 +1690,7 @@ sap.ui.define([
 	 * yet, synchronous request will be used to load the resource bundle.
 	 *
 	 * If only one argument is given, it is assumed to be the library name. The locale
-	 * then falls back to the current {@link sap.ui.core.Configuration#getLanguage session locale}.
+	 * then falls back to the current {@link module:sap/base/i18n/Localization.getLanguage session locale}.
 	 *
 	 * <h3>Configuration via App Descriptor</h3>
 	 * When the App Descriptor for the library is available without further request (manifest.json

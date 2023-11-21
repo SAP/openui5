@@ -5,6 +5,7 @@ QUnit.config.autostart = false;
 
 sap.ui.require([
 	"sap/base/Log",
+	"sap/base/i18n/Localization",
 	"sap/ui/core/Core",
 	"sap/ui/core/library",
 	"sap/ui/core/date/UI5Date",
@@ -13,20 +14,20 @@ sap.ui.require([
 	"sap/ui/core/sample/ViewTemplate/types/pages/Main",
 	"sap/ui/test/opaQunit",
 	"sap/ui/test/TestUtils"
-], function (Log, Core, library, UI5Date, DateFormat, Any, Main, opaTest, TestUtils) {
+], function (Log, Localization, Core, library, UI5Date, DateFormat, Any, Main, opaTest, TestUtils) {
 	"use strict";
 
 	Core.ready().then(function () {
-		var sDefaultLanguage = sap.ui.getCore().getConfiguration().getLanguage(),
+		var sDefaultLanguage = Localization.getLanguage(),
 			MessageType = library.MessageType, // shortcut for sap.ui.core.MessageType
 			ValueState = library.ValueState; // shortcut for sap.ui.core.ValueState
 
 		QUnit.module("sap.ui.core.sample.ViewTemplate.types", {
 			before : function () {
-				sap.ui.getCore().getConfiguration().setLanguage("en-US");
+				Localization.setLanguage("en-US");
 			},
 			after : function () {
-				sap.ui.getCore().getConfiguration().setLanguage(sDefaultLanguage);
+				Localization.setLanguage(sDefaultLanguage);
 			}
 		});
 

@@ -54,10 +54,16 @@ sap.ui.define([
 
 	QUnit.module("Core Versions");
 
+	/**
+	 * @deprecated
+	 */
 	QUnit.test("Core Version", function(assert) {
 		assert.equal(config.getVersion().toString(), sap.ui.version, "Used UI5 Core version");
 	});
 
+	/**
+	 * @deprecated
+	 */
 	QUnit.test("Compatibility Version", function(assert) {
 		var oGlobalConfigStub = sinon.stub(GlobalConfigurationProvider, "get");
 		var mConfigStubValues;

@@ -1,6 +1,6 @@
 /*global QUnit, sinon */
 sap.ui.define([
-	"sap/ui/base/Object",
+	"sap/base/i18n/Localization",
 	"sap/ui/core/cache/CacheManager",
 	"sap/ui/core/Component",
 	"sap/ui/core/Element",
@@ -11,10 +11,9 @@ sap.ui.define([
 	"./AnyViewAsync_legacyAPIs.qunit",
 	"sap/base/Log",
 	"sap/base/strings/hash",
-	"sap/base/util/LoaderExtensions",
-	"sap/ui/core/Configuration"
+	"sap/base/util/LoaderExtensions"
 ], function(
-	BaseObject,
+	Localization,
 	Cache,
 	Component,
 	Element,
@@ -25,8 +24,7 @@ sap.ui.define([
 	asyncTestsuite,
 	Log,
 	hash,
-	LoaderExtensions,
-	Configuration
+	LoaderExtensions
 ) {
 	"use strict";
 
@@ -197,7 +195,7 @@ sap.ui.define([
 
 		var getKeyParts = function(aKeys, sManifest, aUsedTerminologies) {
 			var sUsedTerminologies = aUsedTerminologies ? aUsedTerminologies.join("_") + "_" : "";
-			var sLanguageTag = Configuration.getLanguageTag(),
+			var sLanguageTag = Localization.getLanguageTag(),
 				sHashCode = hash(sManifest || "");
 			return "_" + sLanguageTag + "_" + sUsedTerminologies + sBuildTimeStamp + "_" + aKeys.join("_") + "(" + sHashCode + ")";
 		};

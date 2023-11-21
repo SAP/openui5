@@ -1,12 +1,11 @@
 /*global QUnit, sinon */
 sap.ui.define([
+	"sap/base/i18n/Localization",
 	"sap/base/i18n/ResourceBundle",
-	"sap/ui/core/mvc/View",
 	"sap/ui/core/mvc/HTMLView",
 	"./AnyViewAsync_legacyAPIs.qunit",
-	"sap/base/Log",
-	"sap/ui/core/Configuration"
-], function (ResourceBundle, View, HTMLView, asyncTestsuite, Log, Configuration) {
+	"sap/base/Log"
+], function (Localization, ResourceBundle, HTMLView, asyncTestsuite, Log) {
 	"use strict";
 
 	// setup test config with generic factory
@@ -51,14 +50,14 @@ sap.ui.define([
 			});
 	});
 
-	var sDefaultLanguage = Configuration.getLanguage();
+	var sDefaultLanguage = Localization.getLanguage();
 
 	QUnit.module("Apply settings", {
 		beforeEach: function () {
-			Configuration.setLanguage("en-US");
+			Localization.setLanguage("en-US");
 		},
 		afterEach: function () {
-			Configuration.setLanguage(sDefaultLanguage);
+			Localization.setLanguage(sDefaultLanguage);
 		}
 	});
 
