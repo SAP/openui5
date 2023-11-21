@@ -365,9 +365,9 @@ sap.ui.define([
 			assert.equal(this._oVM.oVariantSaveAsBtn.getVisible(), true);
 
 			this.oVariantManagement.setCurrentVariantKey("4");
-			assert.equal(this._oVM.oVariantSaveBtn.getVisible(), true);
-			this.oVariantManagement.setModified(false);
 			assert.equal(this._oVM.oVariantSaveBtn.getVisible(), false);
+			this.oVariantManagement.setModified(true);
+			assert.equal(this._oVM.oVariantSaveBtn.getVisible(), true);
 
 			assert.equal(this._oVM.oVariantSaveAsBtn.getVisible(), true);
 
