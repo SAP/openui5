@@ -2740,7 +2740,7 @@ sap.ui.define([
 			// Arrange
 			var oLogSpy = sinon.spy(Log, "error"),
 				mErrorInfo = {
-					description: "Log this error in the console."
+					title: "Log this error in the console."
 				};
 
 			this.oCard.setManifest(oManifest_ListCard);
@@ -2752,7 +2752,7 @@ sap.ui.define([
 			Core.applyChanges();
 
 			// Assert
-			assert.ok(oLogSpy.calledWith(mErrorInfo.description), "Provided message should be logged to the console.");
+			assert.ok(oLogSpy.calledWith(mErrorInfo.title), "Provided message should be logged to the console.");
 
 			// Clean up
 			oLogSpy.restore();
@@ -2836,6 +2836,40 @@ sap.ui.define([
 			// Act
 			this.oCard.setManifest(oManifest_List_Simple);
 		});
+
+
+		QUnit.test("Card configuration error", function (assert) {
+			// Arrange
+			var done = assert.async();
+			var oLogSpy = this.spy(Log, "error");
+
+			this.oCard.attachEventOnce("_ready", function () {
+				Core.applyChanges();
+
+				assert.ok(
+					oLogSpy.calledWith(sinon.match(/LISTD/)),
+					"Error message should be logged"
+				);
+
+				// Clean up
+				oLogSpy.restore();
+				done();
+			});
+
+			this.oCard.setManifest({
+				"sap.app": {
+					"id": "test.card.bindingSyntax"
+				},
+				"sap.card": {
+					"type": "ListD",
+					"header": {},
+					"content": {
+						"item": { }
+					}
+				}
+			});
+		});
+
 
 		QUnit.module("No Data", {
 			beforeEach: function () {

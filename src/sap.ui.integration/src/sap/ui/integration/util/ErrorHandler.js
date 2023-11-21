@@ -130,7 +130,8 @@ sap.ui.define([
 
 	ErrorHandler.configureErrorInfo = function (mErrorInfo, oCard) {
 		var sDetails = oCard.getTranslatedText("CARD_MANIFEST") + "\n" + formatJson(oCard._oCardManifest.getJson()) + "\n\n" +
-				oCard.getTranslatedText("CARD_STACK_TRACE") + "\n" + new Error().stack;
+				oCard.getTranslatedText("CARD_STACK_TRACE") + "\n" +
+				(mErrorInfo.originalError ? mErrorInfo.originalError.stack : new Error().stack);
 
 		return {
 			type: CardBlockingMessageType.Error,
