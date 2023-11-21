@@ -300,10 +300,10 @@
 									target="_blank"
 									href="{newWindowLinks>/iconExplorerHomeLink}"
 									class="sapUiMediumMarginEnd"/>
-								<Link text="{i18n>TOOLS_CARD_7_LINK_1}"
+								<!-- <Link text="{i18n>TOOLS_CARD_7_LINK_1}"
 									target="_blank"
 									href="test-resources/sap/m/demokit/iconExplorer/webapp/test/integration/opaTests1.qunit.html"
-									class="sapUiMediumMarginEnd"/>
+									class="sapUiMediumMarginEnd"/> -->
 								<Link text="{i18n>TOOLS_CARD_7_LINK_2}"
 									target="_blank"
 									href="test-resources/sap/m/demokit/iconExplorer/webapp/test/unit/unitTests.qunit.html"/>
