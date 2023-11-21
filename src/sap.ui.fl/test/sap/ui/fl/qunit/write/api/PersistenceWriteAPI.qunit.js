@@ -271,7 +271,7 @@ sap.ui.define([
 				isEndUserAdaptation: true,
 				initialAllContexts: true
 			};
-			FlexInfoSession.set({
+			FlexInfoSession.setByReference({
 				isResetEnabled: false,
 				adaptationId: "adaptation1",
 				isEndUserAdaptation: true,
@@ -298,7 +298,7 @@ sap.ui.define([
 				assert.equal(oPersistenceWriteGetFlexInfoStub.callCount, 1, "the PersistenceWriteAPI getResetAndPublishInfo method was called");
 				assert.deepEqual(oPersistenceWriteGetFlexInfoStub.firstCall.args[0], mPropertyBag, "the PersistenceWriteAPI was called with the same arguments");
 				assert.deepEqual(oExpectedFlexInfo, FlexInfoSession.getByReference(), "session flex info is updated with isResetEnabled but adaptationId and isEndUserAdaptation and initialAllContexts are kept");
-				assert.equal(FlexInfoSession.get().saveChangeKeepSession, undefined, "saveChangeKeepSession is delete in flex info session");
+				assert.equal(FlexInfoSession.getByReference().saveChangeKeepSession, undefined, "saveChangeKeepSession is delete in flex info session");
 			});
 		});
 

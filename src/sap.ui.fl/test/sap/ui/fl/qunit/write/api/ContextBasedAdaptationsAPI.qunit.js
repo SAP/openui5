@@ -270,7 +270,7 @@ sap.ui.define([
 				{ version: "1" }
 			];
 			sandbox.stub(Storage.versions, "load").resolves(aReturnedVersions);
-			sandbox.stub(FlexInfoSession, "get").returns({adaptationId: "not_existing" });
+			sandbox.stub(FlexInfoSession, "getByReference").returns({adaptationId: "not_existing" });
 			var oLoadStub = sandbox.stub(Storage.contextBasedAdaptation, "load").resolves({adaptations: [
 				{ id: "id-1591275572834-1", type: "" },
 				{ id: "id-1591275572835-1", type: "" },
@@ -316,7 +316,7 @@ sap.ui.define([
 				{ version: "1" }
 			];
 			sandbox.stub(Storage.versions, "load").resolves(aReturnedVersions);
-			sandbox.stub(FlexInfoSession, "get").returns({adaptationId: "id-1591275572835-1" });
+			sandbox.stub(FlexInfoSession, "getByReference").returns({adaptationId: "id-1591275572835-1" });
 			var oLoadStub = sandbox.stub(Storage.contextBasedAdaptation, "load").resolves({adaptations: [
 				{ id: "id-1591275572834-1", type: "" },
 				{ id: "id-1591275572835-1", type: "" },
@@ -1027,7 +1027,7 @@ sap.ui.define([
 		}
 	}, function() {
 		QUnit.test("when the displayed adaptation is still available", function(assert) {
-			sandbox.stub(FlexInfoSession, "get").returns({adaptationId: "id-1591275572836-1" });
+			sandbox.stub(FlexInfoSession, "getByReference").returns({adaptationId: "id-1591275572836-1" });
 			this.oModel.switchDisplayedAdaptation("id-1591275572836-1");
 			return ContextBasedAdaptationsAPI.refreshAdaptationModel(this.mPropertyBag).then(function(sDisplayedAdaptationId) {
 				assert.strictEqual(sDisplayedAdaptationId, "id-1591275572836-1",
@@ -1036,7 +1036,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when the displayed adaptation is not available anymore", function(assert) {
-			sandbox.stub(FlexInfoSession, "get").returns({adaptationId: "not_existing" });
+			sandbox.stub(FlexInfoSession, "getByReference").returns({adaptationId: "not_existing" });
 			this.oModel.getProperty("/allAdaptations").splice(0, 1); // simulate first adaptation is not available anymore
 			return ContextBasedAdaptationsAPI.refreshAdaptationModel(this.mPropertyBag).then(function(sDisplayedAdaptationId) {
 				assert.strictEqual(sDisplayedAdaptationId, "id-1591275572835-1",
@@ -1044,7 +1044,7 @@ sap.ui.define([
 			});
 		});
 		QUnit.test("when the displayed adaptation is not available anymore and only default is left", function(assert) {
-			sandbox.stub(FlexInfoSession, "get").returns({adaptationId: "not_existing" });
+			sandbox.stub(FlexInfoSession, "getByReference").returns({adaptationId: "not_existing" });
 			this.oModel.getProperty("/allAdaptations").splice(0, 3); // simulate all are gone except default
 			return ContextBasedAdaptationsAPI.refreshAdaptationModel(this.mPropertyBag).then(function(sDisplayedAdaptationId) {
 				assert.strictEqual(sDisplayedAdaptationId, "DEFAULT",

@@ -101,12 +101,12 @@ sap.ui.define([
 		 * @returns {Promise<boolean>} Promise resolves with true
 		 * @deprecated
 		 */
-		 isContextSharingEnabled() {
+		isContextSharingEnabled() {
 			return Promise.resolve(true);
 		},
 
 		getFlexInfo(mPropertyBag) {
-			return FlexInfoSession.get(mPropertyBag.selector);
+			return FlexInfoSession.getByReference(mPropertyBag.reference);
 		}
 	});
 

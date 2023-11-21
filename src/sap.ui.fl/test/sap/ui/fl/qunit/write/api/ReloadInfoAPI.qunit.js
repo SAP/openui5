@@ -4,26 +4,26 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/fl/initial/_internal/FlexInfoSession",
 	"sap/ui/fl/initial/api/Version",
+	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/write/_internal/flexState/compVariants/CompVariantState",
 	"sap/ui/fl/write/api/FeaturesAPI",
 	"sap/ui/fl/write/api/PersistenceWriteAPI",
 	"sap/ui/fl/write/api/ReloadInfoAPI",
 	"sap/ui/fl/write/api/VersionsAPI",
 	"sap/ui/fl/Layer",
-	"sap/ui/fl/LayerUtils",
 	"sap/ui/fl/Utils",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	ManifestUtils,
 	FlexInfoSession,
 	Version,
+	Settings,
 	CompVariantState,
 	FeaturesAPI,
 	PersistenceWriteAPI,
 	ReloadInfoAPI,
 	VersionsAPI,
 	Layer,
-	LayerUtils,
 	FlexUtils,
 	sinon
 ) {
@@ -71,9 +71,9 @@ sap.ui.define([
 				assert.deepEqual(oReloadInfo.isDraftAvailable, true, "isDraftAvailable is set to true");
 				assert.deepEqual(oReloadInfo.hasHigherLayerChanges, false, "hasHigherLayerChanges is set to false");
 				assert.deepEqual(oReloadInfo.allContexts, false, "allContexts is set to false");
-				assert.deepEqual(FlexInfoSession.get().initialAllContexts, true, "initialAllContexts is set to true");
-				assert.deepEqual(FlexInfoSession.get().isResetEnabled, true, "isResetEnabled is set to true");
-				assert.deepEqual(FlexInfoSession.get().allContextsProvided, true, "allContextsProvided is set to true");
+				assert.deepEqual(FlexInfoSession.getByReference().initialAllContexts, true, "initialAllContexts is set to true");
+				assert.deepEqual(FlexInfoSession.getByReference().isResetEnabled, true, "isResetEnabled is set to true");
+				assert.deepEqual(FlexInfoSession.getByReference().allContextsProvided, true, "allContextsProvided is set to true");
 				window.sessionStorage.removeItem("sap.ui.fl.info.true");
 			});
 		});
@@ -106,9 +106,9 @@ sap.ui.define([
 				assert.deepEqual(oReloadInfo.isDraftAvailable, true, "isDraftAvailable is set to true");
 				assert.deepEqual(oReloadInfo.hasHigherLayerChanges, false, "hasHigherLayerChanges is set to false");
 				assert.deepEqual(oReloadInfo.allContexts, false, "allContexts is set to false");
-				assert.deepEqual(FlexInfoSession.get().initialAllContexts, true, "initialAllContexts is set to true");
-				assert.deepEqual(FlexInfoSession.get().isResetEnabled, undefined, "isResetEnabled is set to true");
-				assert.deepEqual(FlexInfoSession.get().allContextsProvided, true, "allContextsProvided is set to true");
+				assert.deepEqual(FlexInfoSession.getByReference().initialAllContexts, true, "initialAllContexts is set to true");
+				assert.deepEqual(FlexInfoSession.getByReference().isResetEnabled, undefined, "isResetEnabled is set to true");
+				assert.deepEqual(FlexInfoSession.getByReference().allContextsProvided, true, "allContextsProvided is set to true");
 				window.sessionStorage.removeItem("sap.ui.fl.info.true");
 			});
 		});
@@ -252,7 +252,7 @@ sap.ui.define([
 				selector: {}
 			};
 
-			FlexInfoSession.set({maxLayer: Layer.CUSTOMER});
+			FlexInfoSession.setByReference({maxLayer: Layer.CUSTOMER});
 			sandbox.stub(ReloadInfoAPI, "hasMaxLayerStorage").returns(true);
 			sandbox.stub(ReloadInfoAPI, "hasVersionStorage").returns(false);
 			sandbox.stub(FeaturesAPI, "isVersioningEnabled").resolves(true);
@@ -281,7 +281,7 @@ sap.ui.define([
 			sandbox.stub(ReloadInfoAPI, "hasMaxLayerStorage").returns(false);
 			sandbox.stub(PersistenceWriteAPI, "hasHigherLayerChanges").resolves(false);
 			sandbox.stub(FlexUtils, "getParameter").returns(false);
-			sandbox.stub(FlexInfoSession, "get").returns({initialAllContexts: true});
+			sandbox.stub(FlexInfoSession, "getByReference").returns({initialAllContexts: true});
 			this.oCheckSVMStub.reset();
 			this.oCheckSVMStub.returns(true);
 
@@ -302,7 +302,7 @@ sap.ui.define([
 			sandbox.stub(ReloadInfoAPI, "hasMaxLayerStorage").returns(false);
 			sandbox.stub(PersistenceWriteAPI, "hasHigherLayerChanges").resolves(false);
 			sandbox.stub(FlexUtils, "getParameter").returns(false);
-			sandbox.stub(FlexInfoSession, "get").returns({initialAllContexts: true});
+			sandbox.stub(FlexInfoSession, "getByReference").returns({initialAllContexts: true});
 			this.oCheckSVMStub.reset();
 			this.oCheckSVMStub.returns(true);
 
@@ -388,7 +388,7 @@ sap.ui.define([
 				activeVersion: "2"
 			};
 
-			FlexInfoSession.set({version: "1"});
+			FlexInfoSession.setByReference({version: "1"});
 			sandbox.stub(ReloadInfoAPI, "hasMaxLayerStorage").returns(false);
 			sandbox.stub(ReloadInfoAPI, "initialDraftGotActivated").returns(false);
 
@@ -423,7 +423,7 @@ sap.ui.define([
 				activeVersion: "2"
 			};
 
-			FlexInfoSession.set({version: "2", allContextsProvided: true});
+			FlexInfoSession.setByReference({version: "2", allContextsProvided: true});
 			sandbox.stub(ReloadInfoAPI, "hasMaxLayerStorage").returns(false);
 			sandbox.stub(ReloadInfoAPI, "initialDraftGotActivated").returns(false);
 
@@ -540,6 +540,9 @@ sap.ui.define([
 			};
 			var oFlexInfoResponse = {allContextsProvided: false};
 			window.sessionStorage.setItem("sap.ui.fl.info.true", JSON.stringify(oFlexInfoResponse));
+			sandbox.stub(Settings, "getInstanceOrUndef").returns({
+				isContextSharingEnabled: () => {return true;}
+			});
 			sandbox.stub(ReloadInfoAPI, "hasMaxLayerStorage").returns(false);
 			sandbox.stub(ReloadInfoAPI, "hasVersionStorage").returns(false);
 			sandbox.stub(ReloadInfoAPI, "initialDraftGotActivated").returns(false);
@@ -752,21 +755,21 @@ sap.ui.define([
 			QUnit.test("with no draft / higher layer Changes", function(assert) {
 				var bResult = ReloadInfoAPI.handleReloadInfoOnStart(this.oReloadInfo);
 				assert.strictEqual(bResult, false, "no parameter was changed");
-				assert.deepEqual(FlexInfoSession.get(), {}, "flex info session is correct");
+				assert.deepEqual(FlexInfoSession.getByReference(), {}, "flex info session is correct");
 			});
 
 			QUnit.test("with a draft / no higher layer Changes", function(assert) {
 				this.oReloadInfo.isDraftAvailable = true;
 				var bResult = ReloadInfoAPI.handleReloadInfoOnStart(this.oReloadInfo);
 				assert.strictEqual(bResult, true, "parameters were changed");
-				assert.deepEqual(FlexInfoSession.get(), {version: Version.Number.Draft}, "flex info session is correct");
+				assert.deepEqual(FlexInfoSession.getByReference(), {version: Version.Number.Draft}, "flex info session is correct");
 			});
 
 			QUnit.test("with no draft / higher layer Changes", function(assert) {
 				this.oReloadInfo.hasHigherLayerChanges = true;
 				var bResult = ReloadInfoAPI.handleReloadInfoOnStart(this.oReloadInfo);
 				assert.strictEqual(bResult, true, "parameters were changed");
-				assert.deepEqual(FlexInfoSession.get(), {maxLayer: Layer.CUSTOMER}, "flex info session is correct");
+				assert.deepEqual(FlexInfoSession.getByReference(), {maxLayer: Layer.CUSTOMER}, "flex info session is correct");
 			});
 
 			QUnit.test("with a draft / higher layer Changes", function(assert) {
@@ -774,7 +777,7 @@ sap.ui.define([
 				this.oReloadInfo.hasHigherLayerChanges = true;
 				var bResult = ReloadInfoAPI.handleReloadInfoOnStart(this.oReloadInfo);
 				assert.strictEqual(bResult, true, "parameters were changed");
-				assert.deepEqual(FlexInfoSession.get(), {maxLayer: Layer.CUSTOMER, version: Version.Number.Draft}, "flex info session is correct");
+				assert.deepEqual(FlexInfoSession.getByReference(), {maxLayer: Layer.CUSTOMER, version: Version.Number.Draft}, "flex info session is correct");
 			});
 		});
 
@@ -790,27 +793,27 @@ sap.ui.define([
 				}.bind(this));
 			},
 			afterEach() {
-				FlexInfoSession.remove();
+				FlexInfoSession.removeByReference();
 				sandbox.restore();
 			}
 		}, function() {
 			QUnit.test("with max layer param in the session and hasHigherLayerChanges", function(assert) {
 				this.oReloadInfo.hasHigherLayerChanges = true;
-				FlexInfoSession.set({maxLayer: Layer.CUSTOMER});
+				FlexInfoSession.setByReference({maxLayer: Layer.CUSTOMER});
 				var bResult = ReloadInfoAPI.handleReloadInfo(this.oReloadInfo);
 				assert.strictEqual(bResult, true, "parameters were changed");
-				assert.equal(FlexInfoSession.get().maxLayer, undefined, "max layer is set correct in session");
-				assert.deepEqual(FlexInfoSession.get(), {}, "flex info session is correct");
+				assert.equal(FlexInfoSession.getByReference().maxLayer, undefined, "max layer is set correct in session");
+				assert.deepEqual(FlexInfoSession.getByReference(), {}, "flex info session is correct");
 			});
 
 			QUnit.test("with max layer param in the session and hasHigherLayerChanges / ignoreMaxLayerParameter", function(assert) {
 				this.oReloadInfo.hasHigherLayerChanges = true;
 				this.oReloadInfo.ignoreMaxLayerParameter = true;
-				FlexInfoSession.set({maxLayer: Layer.CUSTOMER});
+				FlexInfoSession.setByReference({maxLayer: Layer.CUSTOMER});
 				var bResult = ReloadInfoAPI.handleReloadInfo(this.oReloadInfo);
 				assert.strictEqual(bResult, false, "no parameters were changed");
-				assert.deepEqual(FlexInfoSession.get(), {maxLayer: Layer.CUSTOMER}, "flex info session is correct");
-				assert.equal(FlexInfoSession.get().maxLayer, Layer.CUSTOMER, "max layer is set correct in session");
+				assert.deepEqual(FlexInfoSession.getByReference(), {maxLayer: Layer.CUSTOMER}, "flex info session is correct");
+				assert.equal(FlexInfoSession.getByReference().maxLayer, Layer.CUSTOMER, "max layer is set correct in session");
 			});
 
 			QUnit.test("without version in session and versionSwitch / version set", function(assert) {
@@ -818,77 +821,77 @@ sap.ui.define([
 				this.oReloadInfo.version = "1";
 				var bResult = ReloadInfoAPI.handleReloadInfo(this.oReloadInfo);
 				assert.strictEqual(bResult, true, "parameters were changed");
-				assert.deepEqual(FlexInfoSession.get(), {version: "1"}, "flex info session is correct");
-				assert.equal(FlexInfoSession.get().version, "1", "version is set correct in session");
+				assert.deepEqual(FlexInfoSession.getByReference(), {version: "1"}, "flex info session is correct");
+				assert.equal(FlexInfoSession.getByReference().version, "1", "version is set correct in session");
 			});
 
 			QUnit.test("with version in session and versionSwitch / version set", function(assert) {
 				this.oReloadInfo.versionSwitch = true;
 				this.oReloadInfo.version = "1";
-				FlexInfoSession.set({version: "1"});
+				FlexInfoSession.setByReference({version: "1"});
 				var bResult = ReloadInfoAPI.handleReloadInfo(this.oReloadInfo);
 				assert.strictEqual(bResult, false, "no parameters were changed");
-				assert.deepEqual(FlexInfoSession.get(), {version: "1"}, "flex info session is correct");
-				assert.equal(FlexInfoSession.get().version, "1", "version is set correct in session");
+				assert.deepEqual(FlexInfoSession.getByReference(), {version: "1"}, "flex info session is correct");
+				assert.equal(FlexInfoSession.getByReference().version, "1", "version is set correct in session");
 			});
 
 			QUnit.test("with different version in session and versionSwitch / version set", function(assert) {
 				this.oReloadInfo.versionSwitch = true;
 				this.oReloadInfo.version = "1";
-				FlexInfoSession.set({version: "2"});
+				FlexInfoSession.setByReference({version: "2"});
 				var bResult = ReloadInfoAPI.handleReloadInfo(this.oReloadInfo);
 				assert.strictEqual(bResult, true, "parameters were changed");
-				assert.deepEqual(FlexInfoSession.get(), {version: "1"}, "flex info session is correct");
-				assert.equal(FlexInfoSession.get().version, "1", "version is set correct in session");
+				assert.deepEqual(FlexInfoSession.getByReference(), {version: "1"}, "flex info session is correct");
+				assert.equal(FlexInfoSession.getByReference().version, "1", "version is set correct in session");
 			});
 
 			QUnit.test("with version in session and removeVersionParameter", function(assert) {
 				this.oReloadInfo.removeVersionParameter = true;
-				FlexInfoSession.set({version: "2"});
+				FlexInfoSession.setByReference({version: "2"});
 				var bResult = ReloadInfoAPI.handleReloadInfo(this.oReloadInfo);
 				assert.strictEqual(bResult, true, "parameters were changed");
-				assert.deepEqual(FlexInfoSession.get(), {}, "flex info session is correct");
-				assert.equal(FlexInfoSession.get().version, undefined, "version is set correct in session");
+				assert.deepEqual(FlexInfoSession.getByReference(), {}, "flex info session is correct");
+				assert.equal(FlexInfoSession.getByReference().version, undefined, "version is set correct in session");
 			});
 
 			QUnit.test("with draft version in session and removeVersionParameter", function(assert) {
 				this.oReloadInfo.removeVersionParameter = true;
-				FlexInfoSession.set({version: Version.Number.Draft});
+				FlexInfoSession.setByReference({version: Version.Number.Draft});
 				var bResult = ReloadInfoAPI.handleReloadInfo(this.oReloadInfo);
 				assert.strictEqual(bResult, true, "parameters were changed");
-				assert.deepEqual(FlexInfoSession.get(), {}, "flex info session is correct");
-				assert.equal(FlexInfoSession.get().version, undefined, "version is set correct in session");
+				assert.deepEqual(FlexInfoSession.getByReference(), {}, "flex info session is correct");
+				assert.equal(FlexInfoSession.getByReference().version, undefined, "version is set correct in session");
 			});
 
 			QUnit.test("without version in session and removeVersionParameter", function(assert) {
 				this.oReloadInfo.removeVersionParameter = true;
 				var bResult = ReloadInfoAPI.handleReloadInfo(this.oReloadInfo);
 				assert.strictEqual(bResult, false, "no parameters were changed");
-				assert.deepEqual(FlexInfoSession.get(), {}, "flex info session is correct");
-				assert.equal(FlexInfoSession.get().version, undefined, "version is set correct in session");
+				assert.deepEqual(FlexInfoSession.getByReference(), {}, "flex info session is correct");
+				assert.equal(FlexInfoSession.getByReference().version, undefined, "version is set correct in session");
 			});
 
 			QUnit.test("without version in session and removeDraft", function(assert) {
 				this.oReloadInfo.removeVersionParameter = true;
 				var bResult = ReloadInfoAPI.handleReloadInfo(this.oReloadInfo);
 				assert.strictEqual(bResult, false, "no parameters were changed");
-				assert.deepEqual(FlexInfoSession.get(), {}, "flex info session is correct");
-				assert.equal(FlexInfoSession.get().version, undefined, "version is set correct in session");
+				assert.deepEqual(FlexInfoSession.getByReference(), {}, "flex info session is correct");
+				assert.equal(FlexInfoSession.getByReference().version, undefined, "version is set correct in session");
 			});
 
 			QUnit.test("with draft version in session and removeDraft", function(assert) {
 				this.oReloadInfo.removeVersionParameter = true;
-				FlexInfoSession.set({version: Version.Number.Draft});
+				FlexInfoSession.setByReference({version: Version.Number.Draft});
 				var bResult = ReloadInfoAPI.handleReloadInfo(this.oReloadInfo);
 				assert.strictEqual(bResult, true, "parameters were changed");
-				assert.deepEqual(FlexInfoSession.get(), {}, "flex info session is correct");
-				assert.equal(FlexInfoSession.get().version, undefined, "version is set correct in session");
+				assert.deepEqual(FlexInfoSession.getByReference(), {}, "flex info session is correct");
+				assert.equal(FlexInfoSession.getByReference().version, undefined, "version is set correct in session");
 			});
 
 			QUnit.test("with flex session contains with a different selector", function(assert) {
 				FlexInfoSession.setByReference({maxLayer: Layer.CUSTOMER}, "foo");
 				ReloadInfoAPI.handleReloadInfo(this.oReloadInfo);
-				assert.deepEqual(FlexInfoSession.get(), {}, "session is empty");
+				assert.deepEqual(FlexInfoSession.getByReference(), {}, "session is empty");
 			});
 		});
 	});
@@ -909,8 +912,8 @@ sap.ui.define([
 		assert.deepEqual(oStubs.oGetResetAndPublishInfoAPIStub.callCount, 0, "getResetAndPublishInfo was not called");
 		assert.deepEqual(oReloadInfo.isDraftAvailable, true, "isDraftAvailable is set to true");
 		assert.deepEqual(oReloadInfo.hasHigherLayerChanges, false, "hasHigherLayerChanges is set to false");
-		assert.deepEqual(FlexInfoSession.get().initialAllContexts, true, "initialAllContexts is set to true");
-		assert.deepEqual(FlexInfoSession.get().isResetEnabled, undefined, "isResetEnabled is set to true");
+		assert.deepEqual(FlexInfoSession.getByReference().initialAllContexts, true, "initialAllContexts is set to true");
+		assert.deepEqual(FlexInfoSession.getByReference().isResetEnabled, undefined, "isResetEnabled is set to true");
 	}
 
 	function setFlexInfoInStorageAndPrepareMocks(oFlexInfoResponse) {
