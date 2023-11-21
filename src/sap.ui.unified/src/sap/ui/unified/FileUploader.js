@@ -758,6 +758,10 @@ sap.ui.define([
 
 	FileUploader.prototype.removeAriaLabelledBy = function(sID) {
 		var sLabelId = this.removeAssociation("ariaLabelledBy", sID);
+		if (!sLabelId) {
+			return;
+		}
+
 		this.oBrowse.removeAriaLabelledBy(sLabelId);
 
 		return sLabelId;
@@ -786,6 +790,10 @@ sap.ui.define([
 
 	FileUploader.prototype.removeAriaDescribedBy = function(sID) {
 		var sDescriptionId = this.removeAssociation("ariaDescribedBy", sID);
+		if (!sDescriptionId) {
+			return;
+		}
+
 		this.oBrowse.removeAriaDescribedBy(sDescriptionId);
 
 		return sDescriptionId;
