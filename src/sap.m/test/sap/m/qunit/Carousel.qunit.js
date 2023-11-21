@@ -421,16 +421,19 @@ sap.ui.define([
 
 		// Assert
 		assert.strictEqual(iActualResult, this.oCarousel.getPages().length,
-			"The maxmimum number of pages that Carousel can show it its actual number of pages");
+			"The maximum number of pages that Carousel can show it its actual number of pages");
 	});
 
 	QUnit.test("#setCustomLayout() with no DomRef available", function (assert) {
 		// Set up
 		var iPagesToShow = 4,
 			oMoveToPageSpy = this.spy(this.oCarousel, "_moveToPage"),
-			oRerenderSpy = this.spy(this.oCarousel, "rerender");
+			oInvalidateSpy = this.spy(this.oCarousel, "invalidate");
+
 
 		this.stub(this.oCarousel, "getDomRef").returns(null);
+
+		assert.ok(oInvalidateSpy.notCalled, "Invalidate is not called before custom layout is set");
 
 		// Act
 		this.oCarousel.setCustomLayout(new CarouselLayout({
@@ -439,7 +442,8 @@ sap.ui.define([
 
 		// Assert
 		assert.ok(oMoveToPageSpy.notCalled, "moveToPage is not called");
-		assert.ok(oRerenderSpy.notCalled, "Rerender is not called");
+
+		assert.ok(oInvalidateSpy.calledOnce, "Invalidate is called once");
 	});
 
 	QUnit.test("#onAfterRendering() _setWidthOfPages is not called when no customLayout aggregation is set", function (assert) {
