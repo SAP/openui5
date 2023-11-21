@@ -355,6 +355,7 @@ sap.ui.define([
 			aObjectsToSet = _uniqBy(aObjectsToSet, "key");
 
 			var aPromises = [];
+			var aResponse = [];
 			aPromises = aPromises.concat(handleCondenseDelete.call(this, oCondenseInformation.delete));
 
 			const mFeatures = await this.loadFeatures();
@@ -373,11 +374,13 @@ sap.ui.define([
 				if (sDraftVersionId) {
 					oFileContent.version = sDraftVersionId;
 				}
+				aResponse.push(oFileContent);
 				var vFlexObject = this.storage._itemsStoredAsObjects ? oFileContent : JSON.stringify(oFileContent);
 				aPromises.push(this.storage.setItem(oItemToSet.key, vFlexObject));
 			}.bind(this));
-
-			return Promise.all(aPromises);
+			return Promise.all(aPromises).then(function() {
+				return Promise.resolve({response: aResponse});
+			});
 		},
 
 		/**

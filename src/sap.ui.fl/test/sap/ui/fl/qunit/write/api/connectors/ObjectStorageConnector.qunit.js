@@ -270,17 +270,25 @@ sap.ui.define([
 
 				return oConnector.condense(mPropertyBag)
 
-				.then(function() {
-					return oConnector.loadFlexData({reference: "sap.ui.fl.test"});
-				})
-				.then(function(aResponses) {
-					var aFlexObjectsFileContent = aResponses[0].changes;
-					assert.strictEqual(aFlexObjectsFileContent.length, 1, "there is one more change in the storage");
+				.then(function(oResponse) {
+					var aFlexObjectsFileContent = oResponse.response;
+					assert.strictEqual(aFlexObjectsFileContent.length, 1, "there is one change in the response");
 
 					var aIds = aFlexObjectsFileContent.map(function(oFlexObjectFileContent) {
 						return oFlexObjectFileContent.fileName;
 					});
 					assert.ok(aIds.indexOf("oChange5") > -1, "the change was added");
+					return oConnector.loadFlexData({reference: "sap.ui.fl.test"});
+				})
+				.then(function(aResponses) {
+					var aFlexObjectsFileContent = aResponses[0].changes;
+					assert.strictEqual(aFlexObjectsFileContent.length, 1, "there is one change in the storage");
+
+					var aIds = aFlexObjectsFileContent.map(function(oFlexObjectFileContent) {
+						return oFlexObjectFileContent.fileName;
+					});
+					assert.ok(aIds.indexOf("oChange5") > -1, "the change was added");
+					return oConnector.loadFlexData({reference: "sap.ui.fl.test"});
 				});
 			});
 		});
@@ -551,7 +559,32 @@ sap.ui.define([
 
 				return oConnector.condense(mPropertyBag)
 
-				.then(function() {
+				.then(function(oResponse) {
+					var aFlexObjectsFileContent = oResponse.response;
+					assert.strictEqual(aFlexObjectsFileContent.length, 8, "there are 8 changes in the response");
+					var aIds = aFlexObjectsFileContent.map(function(oFlexObjectFileContent) {
+						return oFlexObjectFileContent.fileName;
+					});
+					assert.ok(aIds.indexOf("oChange5") > -1, "the first change was added");
+					assert.ok(aIds.indexOf("oChange6") > -1, "the second change was added");
+					assert.ok(aIds.indexOf("oVariantChange2") > -1, "the first variant change was added");
+					assert.ok(aIds.indexOf("oVariantChange3") > -1, "the second variant change was added");
+
+					assert.notOk(aIds.indexOf("oVariant1") > -1, "the variant was deleted");
+					assert.notOk(aIds.indexOf("oVariant2") > -1, "the variant was deleted");
+					assert.notOk(aIds.indexOf("oChange21") > -1, "the change was deleted");
+
+					assert.deepEqual(aFlexObjectsFileContent[aIds.indexOf("oChange1")].content, {
+						foo: "foobar",
+						bar: "foo"
+					}, "the change was updated");
+					assert.deepEqual(aFlexObjectsFileContent[aIds.indexOf("oVariantManagementChange")].content, {
+						bar: "foo"
+					}, "the ctrl_variant_management_change was updated");
+
+					assert.ok(aIds.indexOf("oVariantChange1") > -1, "the variant change was reordered");
+					assert.ok(aIds.indexOf("oChange4") > -1, "the change was reordered");
+
 					return oConnector.loadFlexData({reference: "sap.ui.fl.test"});
 				})
 				.then(function(aResponses) {
