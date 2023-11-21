@@ -42,6 +42,14 @@
 		}
 	}
 
+	&.sapUiIntLCITwoLines,
+	&.sapUiIntLCIMultipleLines {
+		.sapUiIntLCITitleWrapper {
+			margin-bottom: 0.25rem;
+		}
+	}
+
+
 	&.sapUiIntLCIWithActionsStrip {
 		padding-bottom: calc(0.5rem ~"-" @_sap_ui_integration_ListContentItem_BottomBorderHeight);
 	}
@@ -78,6 +86,10 @@
 				flex: 1;
 				display: flex;
 				align-items: center;
+			}
+
+			.sapMObjStatusNone .sapMObjStatusText {
+				color: @sapUiContentLabelColor;
 			}
 		}
 	}
