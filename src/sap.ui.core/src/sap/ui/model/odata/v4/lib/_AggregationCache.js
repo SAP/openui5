@@ -763,6 +763,45 @@ sap.ui.define([
 	};
 
 	/**
+	 * Returns a promise to be resolved with an OData object for the requested parent node.
+	 *
+	 * @param {number} iIndex
+	 *   The index of the child node
+	 * @param {sap.ui.model.odata.v4.lib._GroupLock} oGroupLock
+	 *   A lock for the group to associate the requests with
+	 * @returns {sap.ui.base.SyncPromise}
+	 *   A promise to be resolved with the requested data of the parent.
+	 *
+	 * @public
+	 */
+	_AggregationCache.prototype.fetchParent = function (iIndex, oGroupLock) {
+		const sFilter = _Helper.getKeyFilter(this.aElements[iIndex], this.oAggregation.$metaPath,
+			this.getTypes());
+		const mQueryOptions = Object.assign({}, this.mQueryOptions);
+
+		mQueryOptions.$apply = "ancestors($root" + this.oAggregation.$path
+			+ "," + this.oAggregation.hierarchyQualifier + "," + this.oAggregation.$NodeProperty
+			+ ",filter(" + sFilter + "),1)";
+
+		const sQueryString = this.sResourcePath
+			+ this.oRequestor.buildQueryString(/*sMetaPath*/null, mQueryOptions);
+
+		return SyncPromise.all([
+			this.oRequestor.request("GET", sQueryString, oGroupLock),
+			this.fetchTypes()
+		]).then((aResults) => {
+			const oParent = aResults[0].value[0];
+			this.visitResponse(oParent, aResults[1],
+				_Helper.getMetaPath(_Helper.buildPath(this.sMetaPath, "")));
+
+			this.aElements.$byPredicate[_Helper.getPrivateAnnotation(oParent, "predicate")]
+				= oParent;
+
+			return oParent;
+		});
+	};
+
+	/**
 	 * Returns a promise to be resolved with an OData object for the requested data.
 	 *
 	 * @param {sap.ui.model.odata.v4.lib._GroupLock} oGroupLock
