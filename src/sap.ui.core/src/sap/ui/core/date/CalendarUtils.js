@@ -33,9 +33,10 @@ sap.ui.define([
 		 * </ul>
 		 *
 		 * @param {sap.ui.core.date.CalendarWeekNumbering} [sCalendarWeekNumbering]
-		 *   The calendar week numbering; if omitted, the calendar week numbering of the Configuration
-		 *   is used; see {@link sap.ui.core.Configuration#getCalendarWeekNumbering}. If this value is
-		 *   <code>Default</code> the returned calendar week configuration is derived from the given
+		 *   The calendar week numbering; if omitted, the calendar week numbering of the configuration
+		 *   is used; see
+		 *   {@link module:sap/base/i18n/Formatting.getCalendarWeekNumbering Formatting.getCalendarWeekNumbering}.
+		 *   If this value is <code>Default</code> the returned calendar week configuration is derived from the given
 		 *   <code>oLocale</code>.
 		 * @param {sap.ui.core.Locale} [oLocale]
 		 *   The locale to use; if no locale is given, a locale for the currently configured language is used; see

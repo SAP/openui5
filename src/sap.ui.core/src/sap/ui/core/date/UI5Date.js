@@ -45,15 +45,16 @@ sap.ui.define([
 	 * @class A date implementation considering the configured time zone
 	 *
 	 *   A subclass of JavaScript <code>Date</code> that considers the configured time zone, see
-	 *   {@link sap.ui.core.Configuration#getTimezone}. All JavaScript <code>Date</code> functions
-	 *   that use the local browser time zone, like <code>getDate</code>,
+	 *   {@link module:sap/base/i18n/Localization.getTimezone Localization.getTimezone}. All JavaScript
+	 *   <code>Date</code> functions that use the local browser time zone, like <code>getDate</code>,
 	 *   <code>setDate</code>, and <code>toString</code>, are overwritten and use the
 	 *   configured time zone to compute the values.
 	 *
 	 *   Use {@link module:sap/ui/core/date/UI5Date.getInstance} to create new date instances.
 	 *
 	 *   <b>Note:</b> Adjusting the time zone in a running application can lead to unexpected data
-	 *   inconsistencies. For more information, see {@link sap.ui.core.Configuration#setTimezone}.
+	 *   inconsistencies. For more information, see
+	 *   {@link module:sap/base/i18n/Localization.setTimezone Localization.setTimezone}.
 	 *
 	 * @hideconstructor
 	 * @public
@@ -776,13 +777,15 @@ sap.ui.define([
 	 * object interpreted by default in the configured time zone, see
 	 * <code>Date.prototype.toLocaleDateString</code>.
 	 *
-	 * @param {string} [sLocale=sap.ui.core.Configuration.getLanguageTag()]
-	 *   The locale used for formatting; the configured locale by default
+	 * @param {string} [sLocale]
+	 *   The locale used for formatting; by default, the string representation of
+	 *  {@link module:sap/base/i18n/Localization.getLanguageTag Localization.getLanguageTag}
 	 * @param {object} [oOptions]
 	 *   The options object used for formatting, corresponding to the options parameter of the
 	 *   <code>Intl.DateTimeFormat</code> constructor
-	 * @param {string} [oOptions.timeZone=sap.ui.core.Configuration.getTimezone()]
-	 *   The IANA time zone ID; the configured time zone by default
+	 * @param {string} [oOptions.timeZone]
+	 *   The IANA time zone ID; by default
+	 *   {@link module:sap/base/i18n/Localization.getTimezone Localization.getTimezone}
 	 * @returns {string}
 	 *   The language-dependent representation of the date part of this date object
 	 *
@@ -795,13 +798,15 @@ sap.ui.define([
 	 * Returns a string with a language-dependent representation of this date object interpreted by
 	 * default in the configured time zone, see <code>Date.prototype.toLocaleString</code>.
 	 *
-	 * @param {string} [sLocale=sap.ui.core.Configuration.getLanguageTag()]
-	 *   The locale used for formatting; the configured locale by default
+	 * @param {string} [sLocale]
+	 *   The locale used for formatting; by default, the string representation of
+	 *   {@link module:sap/base/i18n/Localization.getLanguageTag Localization.getLanguageTag}
 	 * @param {object} [oOptions]
 	 *   The options object used for formatting, corresponding to the options parameter of the
 	 *   <code>Intl.DateTimeFormat</code> constructor
-	 * @param {string} [oOptions.timeZone=sap.ui.core.Configuration.getTimezone()]
-	 *   The IANA time zone ID; the configured time zone by default
+	 * @param {string} [oOptions.timeZone]
+	 *   The IANA time zone ID;  by default
+	 *   {@link module:sap/base/i18n/Localization.getTimezone Localization.getTimezone}
 	 * @returns {string}
 	 *   The language-dependent representation of this date object
 	 *
@@ -815,13 +820,15 @@ sap.ui.define([
 	 * object interpreted by default in the configured time zone, see
 	 * <code>Date.prototype.toLocaleTimeString</code>.
 	 *
-	 * @param {string} [sLocale=sap.ui.core.Configuration.getLanguageTag()]
-	 *   The locale used for formatting; the configured locale by default
+	 * @param {string} [sLocale]
+	 *   The locale used for formatting; by default, the string representation of
+	 *   {@link module:sap/base/i18n/Localization.getLanguageTag Localization.getLanguageTag}
 	 * @param {object} [oOptions]
 	 *   The options object used for formatting, corresponding to the options parameter of the
 	 *   <code>Intl.DateTimeFormat</code> constructor
-	 * @param {string} [oOptions.timeZone=sap.ui.core.Configuration.getTimezone()]
-	 *   The IANA time zone ID; the configured time zone by default
+	 * @param {string} [oOptions.timeZone]
+	 *   The IANA time zone ID;  by default
+	 *   {@link module:sap/base/i18n/Localization.getTimezone Localization.getTimezone}
 	 * @returns {string}
 	 *   The language-dependent representation of the time part of this date object
 	 *
@@ -948,7 +955,8 @@ sap.ui.define([
 	 * parameters are the same as the ones supported by the JavaScript Date constructor.
 	 *
 	 * <b>Note:</b> Adjusting the time zone in a running application can lead to unexpected data
-	 * inconsistencies. For more information, see {@link sap.ui.core.Configuration#setTimezone}.
+	 * inconsistencies. For more information, see
+	 * {@link module:sap/base/i18n/Localization.setTimezone Localization.setTimezone}.
 	 *
 	 * @param {int|string|Date|module:sap/ui/core/date/UI5Date|null} [vYearOrValue]
 	 *   Same meaning as in the JavaScript Date constructor
@@ -963,7 +971,7 @@ sap.ui.define([
 	 *   The date instance that considers the configured time zone in all local getters and setters.
 	 *
 	 * @public
-	 * @see sap.ui.core.Configuration#getTimezone
+	 * @see module:sap/base/i18n/Localization.getTimezone
 	 */
 	UI5Date.getInstance = function () {
 		var sTimezone = Localization.getTimezone();
