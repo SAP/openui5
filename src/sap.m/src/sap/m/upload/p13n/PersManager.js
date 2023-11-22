@@ -242,7 +242,9 @@ sap.ui.define(
 				}
 			});
 			const aSorters = Object.values(oSorters);
-			oControl.getBinding("items").sort(aSorters.length ? aSorters : null);
+			if (oControl.getBinding("items")) {
+				oControl.getBinding("items").sort(aSorters.length ? aSorters : null);
+			}
 		};
 		return PersManager;
 	}
