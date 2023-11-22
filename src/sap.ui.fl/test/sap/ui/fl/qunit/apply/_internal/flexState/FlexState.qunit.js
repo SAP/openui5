@@ -249,7 +249,7 @@ sap.ui.define([
 			this.sFlexReference = "flexReference";
 		},
 		afterEach() {
-			FlexInfoSession.remove();
+			FlexInfoSession.removeByReference();
 			FlexState.clearState();
 			FlexState.resetInitialNonFlCompVariantData(this.sFlexReference);
 			this.oAppComponent.destroy();

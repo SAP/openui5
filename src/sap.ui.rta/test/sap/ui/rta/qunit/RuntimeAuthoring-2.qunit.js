@@ -700,7 +700,7 @@ sap.ui.define([
 		QUnit.test("when RTA is started a 2nd time, context based adaptation feature is available and data has changed on the backend and another adaptation has been shown by end user", async function(assert) {
 			stubCBA.call(this);
 
-			this.oFlexInfoSessionStub = sandbox.stub(FlexInfoSession, "get").returns({adaptationId: "12345" });
+			this.oFlexInfoSessionStub = sandbox.stub(FlexInfoSession, "getByReference").returns({adaptationId: "12345" });
 			await ContextBasedAdaptationsAPI.initialize({control: oComp, layer: "CUSTOMER"});
 			this.oContextBasedAdaptationsAPILoadStub.resolves({adaptations: [{id: "12345"}, {id: "67890"}, DEFAULT_ADAPTATION]});
 			this.oFlexInfoSessionStub.returns({adaptationId: "67890" });
@@ -714,7 +714,7 @@ sap.ui.define([
 		QUnit.test("when RTA is doing a restart during switch, context based adaptation feature is available", async function(assert) {
 			stubCBA.call(this);
 
-			this.oFlexInfoSessionStub = sandbox.stub(FlexInfoSession, "get").returns({adaptationId: "12345" });
+			this.oFlexInfoSessionStub = sandbox.stub(FlexInfoSession, "getByReference").returns({adaptationId: "12345" });
 			await ContextBasedAdaptationsAPI.initialize({control: oComp, layer: "CUSTOMER"});
 			this.oContextBasedAdaptationsAPILoadStub.resolves({adaptations: [{id: "12345"}, {id: "67890"}, DEFAULT_ADAPTATION]});
 			this.oFlexInfoSessionStub.returns({adaptationId: "67890" });
