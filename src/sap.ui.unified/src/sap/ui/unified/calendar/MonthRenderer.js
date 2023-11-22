@@ -239,8 +239,7 @@ sap.ui.define([
 			}
 			oRm.accessibilityState(null, {
 				role: "columnheader",
-				label: aWeekDaysWide[(i + iStartDay) % 7],
-				hidden: true
+				label: aWeekDaysWide[(i + iStartDay) % 7]
 			});
 			oRm.openEnd(); // div element
 			oRm.text(aWeekDays[(i + iStartDay) % 7]);
@@ -411,12 +410,6 @@ sap.ui.define([
 		// Days before 0001.01.01 should be disabled.
 		if (bBeforeFirstYear) {
 			bEnabled = false;
-		}
-
-		if (!bDayName) {
-			mAccProps["describedby"] = iNumber < 0
-				? oHelper.sId + "-WH" + iWeekDay
-				: oHelper.sId + "-WH" + iNumber;
 		}
 
 		oRm.openStart("div", oHelper.sId + "-" + sYyyymmdd);
