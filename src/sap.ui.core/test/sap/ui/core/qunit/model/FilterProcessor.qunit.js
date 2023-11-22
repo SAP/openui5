@@ -422,14 +422,6 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("combineFilters: filter c'tor throws error", function (assert) {
-		// code under test
-		assert.throws(() => {
-			FilterProcessor.combineFilters([Filter.NONE], [Filter.NONE]);
-		}, new Error("Filter.NONE not allowed in multiple filter"));
-	});
-
-	//*********************************************************************************************
 	QUnit.test("combineFilters: groupFilter throws error", function (assert) {
 		const aApplicationFilters = "~ApplicationFilters";
 		const oError = new Error("~Filter.NONE error");
@@ -450,6 +442,28 @@ sap.ui.define([
 		assert.throws(() => {
 			FilterProcessor.combineFilters(aFilters, aApplicationFilters);
 		}, oError);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("combineFilters: no Error if control or application filter is Filter.NONE", function (assert) {
+		const oFilterProcessorMock = this.mock(FilterProcessor);
+		oFilterProcessorMock.expects("groupFilters").withExactArgs("~Filters").returns(Filter.NONE);
+		oFilterProcessorMock.expects("groupFilters").withExactArgs("~ApplicationFilters").returns("~someGroupedFilter");
+
+		// code under test
+		assert.strictEqual(FilterProcessor.combineFilters("~Filters", "~ApplicationFilters"), Filter.NONE);
+
+		oFilterProcessorMock.expects("groupFilters").withExactArgs("~Filters").returns("~someGroupedFilter");
+		oFilterProcessorMock.expects("groupFilters").withExactArgs("~ApplicationFilters").returns(Filter.NONE);
+
+		// code under test
+		assert.strictEqual(FilterProcessor.combineFilters("~Filters", "~ApplicationFilters"), Filter.NONE);
+
+		oFilterProcessorMock.expects("groupFilters").withExactArgs("~Filters").returns(Filter.NONE);
+		oFilterProcessorMock.expects("groupFilters").withExactArgs("~ApplicationFilters").returns(Filter.NONE);
+
+		// code under test
+		assert.strictEqual(FilterProcessor.combineFilters("~Filters", "~ApplicationFilters"), Filter.NONE);
 	});
 
 	//*********************************************************************************************
