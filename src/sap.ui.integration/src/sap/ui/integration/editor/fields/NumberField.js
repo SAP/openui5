@@ -3,9 +3,10 @@
  */
 sap.ui.define([
 	"sap/ui/integration/editor/fields/BaseField",
-	"sap/m/Input"
+	"sap/m/Input",
+	"sap/ui/model/type/Float"
 ], function (
-	BaseField, Input
+	BaseField, Input, FloatType
 ) {
 	"use strict";
 
@@ -35,8 +36,7 @@ sap.ui.define([
 				settings: {
 					value: {
 						path: 'currentSettings>value',
-						type: 'sap.ui.model.type.Float',
-						formatOptions: oFormatter
+						type: new FloatType(oFormatter)
 					},
 					editable: oConfig.editable,
 					type: "Number"

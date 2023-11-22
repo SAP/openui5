@@ -34,7 +34,9 @@ sap.ui.define([
 	"sap/ui/integration/util/Utils",
 	"sap/m/table/columnmenu/Menu",
 	"sap/m/ComboBox",
-	"sap/ui/core/ListItem"
+	"sap/ui/core/ListItem",
+	"sap/ui/model/type/Integer",
+	"sap/ui/model/type/Float"
 ], function (
 	BaseField,
 	Text,
@@ -67,7 +69,9 @@ sap.ui.define([
 	Utils,
 	Menu,
 	ComboBox,
-	ListItem
+	ListItem,
+	IntegerType,
+	FloatType
 ) {
 	"use strict";
 	var REGEXP_TRANSLATABLE = /\{\{(?!parameters.)(?!destinations.)([^\}\}]+)\}\}/g;
@@ -1123,8 +1127,7 @@ sap.ui.define([
 					oSettings = {
 						value: {
 							path: sPathPrefix + n,
-							type: "sap.ui.model.type.Integer",
-							formatOptions: oProperty.formatter
+							type: new IntegerType(oProperty.formatter)
 						},
 						visible: "{= ${/editMode} === 'Properties'}",
 						editable: oConfig.editable === false ? false : "{= ${" + sPathPrefix + "_dt/_editable} !== false}",
@@ -1138,8 +1141,7 @@ sap.ui.define([
 					oSettings = {
 						value: {
 							path: sPathPrefix + n,
-							type: "sap.ui.model.type.Float",
-							formatOptions: oProperty.formatter
+							type: new FloatType(oProperty.formatter)
 						},
 						visible: "{= ${/editMode} === 'Properties'}",
 						editable: oConfig.editable === false ? false : "{= ${" + sPathPrefix + "_dt/_editable} !== false}",
