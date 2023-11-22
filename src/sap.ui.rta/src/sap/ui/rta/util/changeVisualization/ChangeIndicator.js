@@ -372,7 +372,13 @@ sap.ui.define([
 	ChangeIndicator.prototype.setChanges = function(aChanges) {
 		const oRtaResourceBundle = Lib.getResourceBundleFor("sap.ui.rta");
 		this.setProperty("changes", aChanges);
-		this._oDetailModel.setData((aChanges || []).reverse().map(formatChangesModelItem.bind(this, this.getOverlayId())));
+		const aSortedChanges = aChanges
+			? aChanges.sort(
+				(a, b) => new Date(a.change.getCreation() || new Date()) - new Date(b.change.getCreation() || new Date())
+			).reverse()
+			: [];
+		const aFormattedChanges = (aSortedChanges).map(formatChangesModelItem.bind(this, this.getOverlayId()));
+		this._oDetailModel.setData(aFormattedChanges);
 		if (aChanges && aChanges.length === 1) {
 			this.setTooltip(oRtaResourceBundle.getText("TXT_CHANGEVISUALIZATION_INDICATOR_TOOLTIP_SING"));
 		} else if (aChanges) {
