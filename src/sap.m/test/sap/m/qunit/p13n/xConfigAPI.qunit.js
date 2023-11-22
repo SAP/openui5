@@ -161,4 +161,71 @@ sap.ui.define([
 
 	});
 
+	QUnit.test("Ensure the correct order after updating the position", function(assert){
+		var oModificationPayload = {
+			key: "test_property",
+			property: "position",
+			operation: "add",
+			controlMeta: {
+				aggregation: "items"
+			},
+			value: {
+				index: 0,
+				value: true,
+				targetAggregation: "items"
+			}
+		};
+
+		return xConfigAPI.enhanceConfig(this.oControl, oModificationPayload)
+		.then(() => {
+
+			var oCustomData = this.oControl.getCustomData()[0];
+
+			assert.equal(oCustomData.getKey(), "xConfig", "The xConfig instance has been created");
+
+			assert.deepEqual(JSON.parse(oCustomData.getValue().replace(/\\/g, '')), {
+				"aggregations": {
+					"items": {
+						"test_property": {
+							"position": 0
+						}
+					}
+				}
+			}, "The correct value has been created");
+
+			var oSecondMoveConfig = {
+				key: "test_property_2",
+				property: "position",
+				operation: "add",
+				controlMeta: {
+					aggregation: "items"
+				},
+				currentState: [{key: "test_property_2"}, {key: "test_property"}],
+				value: {
+					index: 0,
+					value: true,
+					targetAggregation: "items"
+				}
+			};
+
+			return xConfigAPI.enhanceConfig(this.oControl, oSecondMoveConfig);
+		})
+		.then(() => {
+			var oCustomData = this.oControl.getCustomData()[0];
+
+			assert.deepEqual(JSON.parse(oCustomData.getValue().replace(/\\/g, '')), {
+				"aggregations": {
+					"items": {
+						"test_property_2": {
+							"position": 0
+						},
+						"test_property": {
+							"position": 1
+						}
+					}
+				}
+			}, "The correct value has been created");
+		});
+	});
+
 });
