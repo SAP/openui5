@@ -3,6 +3,17 @@
     "date": "November 2023",
     "notes": [
       {
+        "id": "0d9bb3e48ea349f035e9130797b1bd1c5b01d627",
+        "type": "FIX",
+        "text": " Intergration Cards: Error messages enhanced when there is error in the manifest configuration",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370135614"
+          }
+        ]
+      },
+      {
         "id": "cdd08841350bf9d515bb2568d0fbecf9234b8c53",
         "type": "FEATURE",
         "text": " Integration Cards: CSRF tokens are no longer experimental"

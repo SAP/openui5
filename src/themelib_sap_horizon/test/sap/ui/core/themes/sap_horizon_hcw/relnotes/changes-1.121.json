@@ -3,6 +3,17 @@
     "date": "November 2023",
     "notes": [
       {
+        "id": "1b458025a8712767feaa3b330f10ccf2313e9e97",
+        "type": "FIX",
+        "text": " sap.m.MenuButton:  added transparent background",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370147705"
+          }
+        ]
+      },
+      {
         "id": "6735c55c4f25cc2101c8f83c0bfa2f5fcce16c54",
         "type": "FIX",
         "text": " CheckBox in Form: misaligned in horizon theme",

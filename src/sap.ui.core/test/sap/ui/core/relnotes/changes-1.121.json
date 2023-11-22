@@ -3,6 +3,17 @@
     "date": "November 2023",
     "notes": [
       {
+        "id": "1db696863f059445b9a20e99634e76fd18502690",
+        "type": "FIX",
+        "text": " sap.ui.model.FilterProcessor.combineFilters: combine Filter.NONE with other filters",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380132519"
+          }
+        ]
+      },
+      {
         "id": "733bce9d9602e9dc253470ea2978f132faab6b9a",
         "type": "FIX",
         "text": " core/routing: find parent route from the router of the inheritance parent",

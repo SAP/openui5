@@ -3,6 +3,22 @@
     "date": "November 2023",
     "notes": [
       {
+        "id": "978e339a177689cdb05249c5c7ff83a63d371f2b",
+        "type": "FIX",
+        "text": " sap.m.SinglePlanningCalendarMonthGrid: improve appointment sorting"
+      },
+      {
+        "id": "42db8206f7e68a82d0d13970f6446ad1372298bd",
+        "type": "FIX",
+        "text": " sap.m.ViewSettingsDialog: adjust dialog's heading level",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      },
+      {
         "id": "c011cd73472f62ae48c253629aba9ad2dcf2377a",
         "type": "FIX",
         "text": " sap.m.DateTimePicker: remove explicitly setting of EN locale",
