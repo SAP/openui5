@@ -779,23 +779,23 @@ sap.ui.define([
 
 	BasePanel.prototype._moveTableItem = function(oItem, iNewIndex) {
 		var aItems = this._oListControl.getItems();
-		var aFields = this._getP13nModel().getProperty("/items");
+		var aModelItems = this._getP13nModel().getProperty("/items");
 
 		// index of the item in the model not the index in the aggregation
-		var iOldIndex = aFields.indexOf(this._getModelEntry(oItem));
+		var iOldModelIndex = aModelItems.indexOf(this._getModelEntry(oItem));
 
 		// limit the minumum and maximum index
-		iNewIndex = (iNewIndex <= 0) ? 0 : Math.min(iNewIndex, aItems.length - 1);
+		var  iNewModelIndex = (iNewIndex <= 0) ? 0 : Math.min(iNewIndex, aItems.length - 1);
 
 		// new index of the item in the model
-		iNewIndex = aFields.indexOf(this._getModelEntry(aItems[iNewIndex]));
-		if (iNewIndex == iOldIndex) {
+		iNewModelIndex = aModelItems.indexOf(this._getModelEntry(aItems[iNewIndex]));
+		if (iNewModelIndex == iOldModelIndex) {
 			return;
 		}
 
 		// remove data from old position and insert it into new position
-		aFields.splice(iNewIndex, 0, aFields.splice(iOldIndex, 1)[0]);
-		this._getP13nModel().setProperty("/items", aFields);
+		aModelItems.splice(iNewModelIndex, 0, aModelItems.splice(iOldModelIndex, 1)[0]);
+		this._getP13nModel().setProperty("/items", aModelItems);
 
 		// store the moved item again due to binding
 		this._oSelectedItem = this._oListControl.getItems()[iNewIndex];

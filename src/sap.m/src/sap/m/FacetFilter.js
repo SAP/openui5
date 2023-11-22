@@ -38,6 +38,7 @@ sap.ui.define([
 	"sap/m/StandardListItem",
 	"sap/m/CheckBox",
 	"sap/m/Page",
+	"sap/ui/core/library",
 	'sap/ui/core/date/UI5Date',
 	// jQuery Plugin "scrollRightRTL"
 	"sap/ui/dom/jquery/scrollRightRTL",
@@ -81,6 +82,7 @@ sap.ui.define([
 		StandardListItem,
 		CheckBox,
 		Page,
+		coreLibrary,
 		UI5Date
 	) {
 	"use strict";
@@ -107,6 +109,9 @@ sap.ui.define([
 
 	// shortcut for sap.m.FacetFilterType
 	var FacetFilterType = library.FacetFilterType;
+
+	// shortcut for sap.ui.core.TitleLevel
+	var TitleLevel = coreLibrary.TitleLevel;
 
 	var SCROLL_DURATION = 500;
 
@@ -1519,6 +1524,7 @@ sap.ui.define([
 		var oPage = new Page({
 			enableScrolling : true,
 			title : this._bundle.getText("FACETFILTER_TITLE"),
+			titleLevel: TitleLevel.H1,
 			subHeader : new Bar({
 			contentMiddle : oFacetsSearchField
 			}),
@@ -1536,6 +1542,7 @@ sap.ui.define([
 	FacetFilter.prototype._createFilterItemsPage = function() {
 
 		var oPage = new Page({
+			titleLevel: TitleLevel.H1,
 			showNavButton : true,
 			enableScrolling : true,
 			navButtonPress : function(oEvent) {

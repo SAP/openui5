@@ -11,12 +11,16 @@ sap.ui.define([
 	"sap/ui/unified/ColorPicker",
 	"sap/ui/unified/ColorPickerPopover",
 	"sap/ui/unified/library",
-	"sap/ui/thirdparty/jquery"
-], function(App, Button, Label, MessageToast, Page, Select, ToggleButton, Item, VerticalLayout, ColorPicker, ColorPickerPopover, unifiedLibrary, jQuery) {
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/core/library"
+], function(App, Button, Label, MessageToast, Page, Select, ToggleButton, Item, VerticalLayout, ColorPicker, ColorPickerPopover, unifiedLibrary, jQuery, coreLibrary) {
 	"use strict";
 
 	var ColorPickerDisplayMode = unifiedLibrary.ColorPickerDisplayMode;
 	var ColorPickerMode = unifiedLibrary.ColorPickerMode;
+
+	// shortcut for sap.ui.core.TitleLevel
+	var TitleLevel = coreLibrary.TitleLevel;
 
 	var oCP,
 		oCPP = new ColorPickerPopover({
@@ -60,7 +64,8 @@ sap.ui.define([
 	new App({
 		pages: [
 			new Page("ColorPickerArea", {
-				showHeader:false,
+				title: "Color picker test page",
+				titleLevel: TitleLevel.H1,
 				content: [
 					new VerticalLayout({
 						width: "100%",

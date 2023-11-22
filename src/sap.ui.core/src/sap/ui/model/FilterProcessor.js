@@ -76,11 +76,10 @@ sap.ui.define(['./Filter', 'sap/base/Log'],
 	 *
 	 * @param {sap.ui.model.Filter[]} [aFilters] The control filters
 	 * @param {sap.ui.model.Filter[]} [aApplicationFilters] The application filters
-	 * @return {sap.ui.model.Filter|undefined} A single filter containing all filters of the array combined or
+	 * @return {sap.ui.model.Filter|undefined} A single filter containing all filters of the arrays combined or
 	 *   <code>undefined</code> if no filters are given
 	 * @throws {Error} If the {@link sap.ui.model.Filter.NONE} is contained in <code>aFilters</code> or
-	 *   <code>aApplicationFilters</code> together with other filters; if {@link sap.ui.model.Filter.NONE} is combined
-	 *   with another filter, see {@link sap.ui.model.Filter}
+	 *   <code>aApplicationFilters</code> together with other filters
 	 * @private
 	 * @since 1.58
 	 * @static
@@ -88,8 +87,12 @@ sap.ui.define(['./Filter', 'sap/base/Log'],
 	FilterProcessor.combineFilters = function(aFilters, aApplicationFilters) {
 		var oGroupedFilter, oGroupedApplicationFilter, oFilter, aCombinedFilters = [];
 
-		oGroupedFilter = this.groupFilters(aFilters);
-		oGroupedApplicationFilter = this.groupFilters(aApplicationFilters);
+		oGroupedFilter = FilterProcessor.groupFilters(aFilters);
+		oGroupedApplicationFilter = FilterProcessor.groupFilters(aApplicationFilters);
+
+		if (oGroupedFilter === Filter.NONE || oGroupedApplicationFilter === Filter.NONE) {
+			return Filter.NONE;
+		}
 
 		if (oGroupedFilter) {
 			aCombinedFilters.push(oGroupedFilter);

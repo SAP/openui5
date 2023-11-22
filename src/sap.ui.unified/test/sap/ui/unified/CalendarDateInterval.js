@@ -13,14 +13,12 @@ sap.ui.define([
 	"sap/ui/core/format/DateFormat",
 	"sap/ui/core/library",
 	"sap/ui/Device",
-	"sap/ui/unified/Calendar",
 	"sap/ui/unified/CalendarDateInterval",
-	"sap/ui/unified/CalendarLegend",
-	"sap/ui/unified/CalendarLegendItem",
 	"sap/ui/unified/DateRange",
 	"sap/ui/unified/DateTypeRange",
-	"sap/ui/unified/library",
-	"sap/ui/core/date/UI5Date"
+	"sap/ui/core/date/UI5Date",
+	"sap/m/App",
+	"sap/m/Page"
 ], function(
 		Button,
 		HBox,
@@ -36,19 +34,19 @@ sap.ui.define([
 		DateFormat,
 		coreLibrary,
 		Device,
-		Calendar,
 		CalendarDateInterval,
-		CalendarLegend,
-		CalendarLegendItem,
 		DateRange,
 		DateTypeRange,
-		unifiedLibrary,
-		UI5Date
+		UI5Date,
+		App,
+		Page
 		) {
 	"use strict";
 
-	var CalendarDayType = unifiedLibrary.CalendarDayType;
 	var ValueState = coreLibrary.ValueState;
+
+	// shortcut for sap.ui.core.TitleLevel
+	var TitleLevel = coreLibrary.TitleLevel;
 
 	var oFormatYyyymmdd = DateFormat.getInstance({pattern: "yyyyMMdd", calendarType: CalendarType.Gregorian});
 
@@ -195,7 +193,7 @@ sap.ui.define([
 		}
 	}).addStyleClass("leftMargin");
 
-	new HBox({
+	var oHbox1 = new HBox({
 		items: [
 			oCal,
 			new VBox({
@@ -315,18 +313,16 @@ sap.ui.define([
 				]
 			}).addStyleClass("leftMargin")
 		]
-	}).placeAt("sample1");
-
+	});
 
 	// single interval selection
 	var oStartDate = UI5Date.getInstance();
 	oStartDate.setDate(oStartDate.getDate() - 1);
-	oCal = new CalendarDateInterval("Cal2", {
+	var oCal2 = new CalendarDateInterval("Cal2", {
 		width: Device.system.phone ? "340px" : "464px",
 		startDate: oStartDate,
 		days: 14,
 		intervalSelection: true,
-		ariaLabelledBy: ["H-C2"],
 		select: function(oEvent){
 			var oTF1 = Element.getElementById("TF2-start");
 			var oTF2 = Element.getElementById("TF2-end");
@@ -352,32 +348,31 @@ sap.ui.define([
 		}
 	});
 
-	var oStart  = new Input("TF2-start", {
-			editable: false
-		}),
-		oEnd = new Input("TF2-end", {
-			editable: false
-		});
+	oStart  = new Input("TF2-start", {
+		editable: false
+	});
+	var oEnd = new Input("TF2-end", {
+		editable: false
+	});
 
-	new HBox({
+	var oHbox2 = new HBox({
 		items: [
-			oCal,
+			oCal2,
 			new Label({
 				text: "selected date from",
 				labelFor: oStart
 			}).addStyleClass("leftMargin"),
 			oStart,
 			new Label({
-				text: "to",
+				text: "To date",
 				labelFor: oEnd
 			}),
 			oEnd
 
 		]
-	}).placeAt("sample2");
+	});
 
-
-	oCal = new CalendarDateInterval("Cal3",{
+	var oCal3 = new CalendarDateInterval("Cal3",{
 		width: Device.system.phone ? "340px" : "1000px",
 		days: 40,
 		intervalSelection: false,
@@ -416,41 +411,48 @@ sap.ui.define([
 		}
 	});
 
-	var oList = new List("LB",{
-		width: "15rem"
-	}).addStyleClass("list");
-
-	new HBox({
+	var oHbox3 = new HBox({
 		items: [
-			oCal,
+			oCal3,
 			new VBox({
-				items: [new Label({ text: "selected dates" }), oList]
+				items: [
+					new Label({
+						text: "selected dates"
+					}), new List("LB",{
+						width: "15rem"
+					}).addStyleClass("list")]
 			}).addStyleClass("leftMargin")
 		]
-	}).placeAt("sample3");
+	});
 
-
-
-	new CalendarDateInterval("Cal4",{
+	var oCal4 = new CalendarDateInterval("Cal4",{
 		width: Device.system.phone ? "340px" : "1000px",
 		days: 14,
 		showDayNamesLine: false,
 		pickerPopup: true
-	}).placeAt("sample4");
+	});
 
-	// TODO this is not aggregated anywhere?
-	new CalendarLegend("Legend1", {
-		items: [
-			new CalendarLegendItem("T1", {type: CalendarDayType.Type01, text: "Typ 1"}),
-			new CalendarLegendItem("T2", {type: CalendarDayType.Type02, text: "Typ 2"}),
-			new CalendarLegendItem("T3", {type: CalendarDayType.Type03, text: "Typ 3"}),
-			new CalendarLegendItem("T4", {type: CalendarDayType.Type04, text: "Typ 4"}),
-			new CalendarLegendItem("T5", {type: CalendarDayType.Type05, text: "Typ 5"}),
-			new CalendarLegendItem("T6", {type: CalendarDayType.Type06, text: "Typ 6"}),
-			new CalendarLegendItem("T7", {type: CalendarDayType.Type07, text: "Typ 7"}),
-			new CalendarLegendItem("T8", {type: CalendarDayType.Type08, text: "Typ 8"}),
-			new CalendarLegendItem("T9", {type: CalendarDayType.Type09, text: "Typ 9"}),
-			new CalendarLegendItem("T10", {type: CalendarDayType.Type10, text: "Typ 10"})
+	var app = new App("myApp");
+	var page = new Page("page", {
+		title: "Test Page for sap.ui.unified.CalendarDateInterval",
+		titleLevel: TitleLevel.H1,
+		content: [
+			new Label({
+				text: "Single day Selection Calendar"
+			}),
+			oHbox1,
+			new Label({
+				text: ">Single interval Selection Calendar"
+			}),
+			oHbox2,
+			new Label({
+				text: "Multiple day Selection Calendar"
+			}),
+			oHbox3,
+			oCal4
 		]
 	});
+
+	app.addPage(page);
+	app.placeAt("body");
 });

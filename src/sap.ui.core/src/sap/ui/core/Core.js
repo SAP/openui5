@@ -370,12 +370,6 @@ sap.ui.define([
 				};
 
 				/**
-				 * The instance of the root component (defined in the configuration {@link sap.ui.core.Configuration#getRootComponent})
-				 * @private
-				 */
-				this.oRootComponent = null;
-
-				/**
 				 * Ready Promise
 				 * @private
 				 */
@@ -1391,7 +1385,7 @@ sap.ui.define([
 		 * <li>With the <code>noLibraryCSS</code> property, the library can be marked as 'theming-free'.
 		 * Otherwise, the framework will add a &lt;link&gt; tag to the page's head, pointing to the library's
 		 * theme-specific stylesheet. The creation of such a &lt;link&gt; tag can be suppressed with the
-		 * {@link sap.ui.core.Configuration global configuration option} <code>preloadLibCss</code>.
+		 * {@link topic:91f2d03b6f4d1014b6dd926db0e91070 global configuration option} <code>preloadLibCss</code>.
 		 * It can contain a list of library names for which no stylesheet should be included.
 		 * This is e.g. useful when an application merges the CSS for multiple libraries and already
 		 * loaded the resulting stylesheet.</li>
@@ -1497,7 +1491,7 @@ sap.ui.define([
 		 * Retrieves a resource bundle for the given library and locale.
 		 *
 		 * If only one argument is given, it is assumed to be the libraryName. The locale
-		 * then falls back to the current {@link sap.ui.core.Configuration#getLanguage session locale}.
+		 * then falls back to the current {@link module:sap/base/i18n/Localization.getLanguage session locale}.
 		 * If no argument is given, the library also falls back to a default: "sap.ui.core".
 		 *
 		 * <h3>Configuration via App Descriptor</h3>

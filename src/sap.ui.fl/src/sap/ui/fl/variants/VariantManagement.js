@@ -197,7 +197,7 @@ sap.ui.define([
 						},
 
 						/**
-						 * Variant key
+						 * Variant key. This property is set if <code>overwrite</code> is set to <code>true</code>.
 						 */
 						key: {
 							type: "string"
@@ -225,6 +225,14 @@ sap.ui.define([
 						},
 
 						/**
+						 * Array describing the contexts.
+						 * <b>Note:</b> It is only used internally by the SAPUI5 flexibility layer.
+						 */
+						contexts: {
+							type: "object[]"
+						},
+
+						/**
 						 * Indicates the checkbox state for Create Tile
 						 * <b>Note:</b> This event parameter is used only internally.
 						 */
@@ -246,11 +254,8 @@ sap.ui.define([
 				manage: {
 					parameters: {
 						/**
-						 * List of changed variants. Each entry contains the following data:
-						 * <ul>
-						 * <li>Key: the variant key</li>
-						 * <li>Name: the new title of the variant</li>
-						 * </ul>
+						 * List of changed variants.
+						 * Each entry contains a <code>key</code> (the variant key)  and a <code>name</code> (the new title of the variant).
 						 */
 						renamed: {
 							type: "object[]"
@@ -264,9 +269,18 @@ sap.ui.define([
 						},
 
 						/**
-						 * List of variant keys and the associated Execute on Selection indicator
+						 * List of variant keys and the associated Execute on Selection indicator.
+						 * Each entry contains a <code>key</code> (the variant key) and an <code>exe</code> flag describing the intention.
 						 */
 						exe: {
+							type: "object[]"
+						},
+
+						/**
+						 * List of variant keys and the associated favorite indicator.
+						 * Each entry contains a <code>key</code> (the variant key) and a <code>visible</code> flag describing the intention.
+						 */
+						fav: {
 							type: "object[]"
 						},
 
@@ -275,6 +289,15 @@ sap.ui.define([
 						 */
 						def: {
 							type: "string"
+						},
+
+						/**
+						 * List of variant keys and the associated contexts array.
+						 * Each entry contains a <code>key</code> (the variant key) and a <code>contexts</code> array describing the contexts.
+						 * <b>Note:</b> It is only used internally by the SAPUI5 flexibility layer.
+						 */
+						contexts: {
+							type: "object[]"
 						}
 					}
 				},
@@ -737,7 +760,7 @@ sap.ui.define([
 	 * @param {string} sKey Key of the variant that is selected
 	 */
 	VariantManagement.prototype.setCurrentVariantKey = function(sKey) {
-		this._oVM.setSelectedKey(sKey);
+		this._oVM.setCurrentVariantKey(sKey);
 	};
 
 	/**

@@ -19,6 +19,7 @@ sap.ui.define([
 	function getTitle(sText) {
 		return new Title({
 			text: sText,
+			wrapping: true,
 			titleStyle: "H3"
 		}).addStyleClass("sapUiMediumMarginTop");
 	}

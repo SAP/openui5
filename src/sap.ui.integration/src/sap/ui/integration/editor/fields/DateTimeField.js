@@ -4,9 +4,10 @@
 sap.ui.define([
 	"sap/ui/integration/editor/fields/BaseField",
 	"sap/m/DateTimePicker",
-	"sap/ui/core/date/UI5Date"
+	"sap/ui/core/date/UI5Date",
+	"sap/ui/model/type/DateTime"
 ], function (
-	BaseField, DateTimePicker, UI5Date
+	BaseField, DateTimePicker, UI5Date, DateTimeType
 ) {
 	"use strict";
 
@@ -40,8 +41,7 @@ sap.ui.define([
 				settings: {
 					value: {
 						path: "currentSettings>value",
-						type: 'sap.ui.model.type.DateTime',
-						formatOptions: oformatter
+						type: new DateTimeType(oformatter)
 					},
 					editable: oConfig.editable,
 					//width: "16rem",

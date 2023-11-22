@@ -566,8 +566,6 @@ sap.ui.define([
 	});
 
 	QUnit.test("Custom Units get/set/add", function(assert) {
-		var Formatting = Configuration.getFormatSettings();
-
 		var mUnits = {
 			"cats": {
 				"displayName": "kittens",

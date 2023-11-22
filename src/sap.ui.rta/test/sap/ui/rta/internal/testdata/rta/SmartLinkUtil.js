@@ -9,7 +9,7 @@ sap.ui.define([
 
 	var SmartLinkUtil = BaseObject.extend("sap.ui.rta.test.SmartlinkSmartLinkUtil", {});
 
-	SmartLinkUtil.getServiceReal = Factory.getService;
+	SmartLinkUtil.getServiceReal = Factory.getService.bind(Factory);
 
 	var mSetting = {
 		semanticObjectSupplierId: {
@@ -30,47 +30,6 @@ sap.ui.define([
 			]
 		}
 	};
-
-	function getCrossApplicationNavigationService() {
-		return {
-			hrefForExternal(oTarget) {
-				if (!oTarget || !oTarget.target || !oTarget.target.shellHash) {
-					return null;
-				}
-				return oTarget.target.shellHash;
-			},
-			getDistinctSemanticObjects() {
-				var aSemanticObjects = [];
-				for (var sSemanticObject in mSetting) {
-					aSemanticObjects.push(sSemanticObject);
-				}
-				return new Promise(function(resolve) {
-					setTimeout(function() {
-						resolve(aSemanticObjects);
-					}, 0);
-				});
-			},
-			getLinks(aParams) {
-				var aLinks = [];
-				if (!Array.isArray(aParams)) {
-					aLinks = mSetting[aParams.semanticObject] ? mSetting[aParams.semanticObject].links : [];
-				} else {
-					aParams.forEach(function(aParams_) {
-						mSetting[aParams_[0].semanticObject] ? aLinks.push([
-							mSetting[aParams_[0].semanticObject].links
-						]) : aLinks.push([
-							[]
-						]);
-					});
-				}
-				return new Promise(function(resolve) {
-					setTimeout(function() {
-						resolve(aLinks);
-					}, 0);
-				});
-			}
-		};
-	}
 
 	function getURLParsingService() {
 		return {
@@ -123,12 +82,12 @@ sap.ui.define([
 					}
 				} else {
 					aParams.forEach(function(aParams_) {
-						if (mSetting[aParams_[0].semanticObject]) {
-							aLinks.push([
-								mSetting[aParams_[0].semanticObject].links
-							]);
+						var oParam = Array.isArray(aParams_) ? aParams_[0] : aParams_;
+
+						if (mSetting[oParam.semanticObject]) {
+							aLinks.push(mSetting[oParam.semanticObject].links);
 						} else {
-							aLinks.push([[]]);
+							aLinks.push([]);
 						}
 					});
 				}
@@ -140,8 +99,6 @@ sap.ui.define([
 	SmartLinkUtil.mockUShellServices = function() {
 		Factory.getService = function(sServiceName, bAsync) {
 			switch (sServiceName) {
-				case "CrossApplicationNavigation":
-					return bAsync ? Promise.resolve(getCrossApplicationNavigationService()) : getCrossApplicationNavigationService();
 				case "URLParsing":
 					return bAsync ? Promise.resolve(getURLParsingService()) : getURLParsingService();
 				case "Navigation":

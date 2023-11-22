@@ -1,6 +1,6 @@
 sap.ui.require([
 	"sap/m/App",
-	"sap/m/Bar",
+	"sap/m/OverflowToolbar",
 	"sap/m/Button",
 	"sap/m/library",
 	"sap/m/Page",
@@ -10,11 +10,13 @@ sap.ui.require([
 	"sap/m/Text",
 	"sap/m/VBox",
 	"sap/ui/core/HTML",
-	"sap/ui/layout/DynamicSideContent"
-], function(App, Bar, Button, mobileLibrary, Page, ObjectHeader, Shell, SplitApp, Text, VBox, HTML, DynamicSideContent) {
+	"sap/ui/layout/DynamicSideContent",
+	"sap/ui/core/library"
+], function(App, OverflowToolbar, Button, mobileLibrary, Page, ObjectHeader, Shell, SplitApp, Text, VBox, HTML, DynamicSideContent, coreLibrary) {
 	"use strict";
 
 	var FlexAlignItems = mobileLibrary.FlexAlignItems;
+	var TitleLevel = coreLibrary.TitleLevel;
 
 	var oApp = new App();
 	var oShell = new Shell({
@@ -22,7 +24,7 @@ sap.ui.require([
 		appWidthLimited: false
 	});
 
-	var DynamicSideContent = new DynamicSideContent({
+	var oDynamicSideContent = new DynamicSideContent({
 		sideContent: [
 			new VBox({
 				height: "200px",
@@ -138,6 +140,7 @@ sap.ui.require([
 		mainContent: [
 				new ObjectHeader({
 					title: "App Header",
+					titleLevel: TitleLevel.H2,
 					number: "KPI 1234",
 					intro: "3 General Data"
 				}),
@@ -167,86 +170,83 @@ sap.ui.require([
 			cow swine kevin. Tongue ball tip beef ribs, kevin'
 				}),
 			new Button({press: function() {
-				DynamicSideContent.addMainContent(new Button({text: "Btn"}));
+				oDynamicSideContent.addMainContent(new Button({text: "Btn"}));
 			}, text: "Add main content"}),
 			new Button({press: function() {
-				DynamicSideContent.addSideContent(new Button({text: "Btn"}));
+				oDynamicSideContent.addSideContent(new Button({text: "Btn"}));
 			}, text: "Add side content"}),
 			new HTML({ content: "<hr>" })
 
 		]
 	});
 
-	var oFooterBar = new Bar();
+	var oFooterBar = new OverflowToolbar({
+		content: [
+			new Button({
+				text: "Limit ON",
+				press: function () {
+					if (oShell.getAppWidthLimited()) {
+						oShell.setAppWidthLimited(false);
+						this.setText("Limit ON");
+					} else {
+						oShell.setAppWidthLimited(true);
+						this.setText("Limit OFF");
+					}
+				}
+			}),
+			new Button({
+				text: "Show SC",
+				press: function () {
+					oDynamicSideContent.setShowSideContent(true);
+				}
+			}),
+			new Button({
+				text: "Hide SC",
+				press: function () {
+					oDynamicSideContent.setShowSideContent(false);
+				}
+			}),
+			new Button({
+				text: "Show MC",
+				press: function () {
+					oDynamicSideContent.setShowMainContent(true);
+				}
+			}),
+			new Button("btnHideMC", {
+				text: "Hide MC",
+				press: function () {
+					oDynamicSideContent.setShowMainContent(false);
+				}
+			}),
+			new Button({
+				text: "Toggle",
+				press: function () {
+					oDynamicSideContent.toggle();
+				}
+			}),
+			new Button({
+				text: "EqualSplit ON",
+				press: function () {
+					if (oDynamicSideContent.getEqualSplit()) {
+						oDynamicSideContent.setEqualSplit(false);
+						this.setText("EqualSplit ON");
+					} else {
+						oDynamicSideContent.setEqualSplit(true);
+						this.setText("EqualSplit OFF");
+					}
+				}
+			})
+		]
+	});
 
 	var oPage = new Page("mySecondPage", {
 		backgroundDesign: "Standard",
 		title : "Dynamic Side Content",
+		titleLevel: TitleLevel.H1,
 		enableScrolling : true,
 		footer: oFooterBar,
-		content: DynamicSideContent
+		content: oDynamicSideContent
 	});
-
-	oFooterBar.addContentMiddle(new Button({
-		text: "Limit ON",
-		press: function () {
-			if (oShell.getAppWidthLimited()) {
-				oShell.setAppWidthLimited(false);
-				this.setText("Limit ON");
-			} else {
-				oShell.setAppWidthLimited(true);
-				this.setText("Limit OFF");
-			}
-		}
-	}));
-
-	oFooterBar.addContentMiddle(new Button({
-		text: "Show SC",
-		press: function () {
-			DynamicSideContent.setShowSideContent(true);
-		}
-	}));
-
-	oFooterBar.addContentMiddle(new Button({
-		text: "Hide SC",
-		press: function () {
-			DynamicSideContent.setShowSideContent(false);
-		}
-	}));
-
-	oFooterBar.addContentMiddle(new Button({
-		text: "Show MC",
-		press: function () {
-			DynamicSideContent.setShowMainContent(true);
-		}
-	}));
-
-	oFooterBar.addContentMiddle(new Button("btnHideMC", {
-		text: "Hide MC",
-		press: function () {
-			DynamicSideContent.setShowMainContent(false);
-		}
-	}));
-
-	oFooterBar.addContentMiddle(new Button({
-		text: "Toggle",
-		press: function () {
-			DynamicSideContent.toggle();
-		}
-	}));
-
-	oFooterBar.addContentMiddle(new Button({
-		text: "EqualSplit ON",
-		press: function () {
-			if (DynamicSideContent.getEqualSplit()) {
-				DynamicSideContent.setEqualSplit(false);
-				this.setText("EqualSplit ON");
-			} else {
-				DynamicSideContent.setEqualSplit(true);
-				this.setText("EqualSplit OFF");
-			}
-		}
-	}));
 
 	oApp.addPage(oPage);
 	oShell.placeAt("content");

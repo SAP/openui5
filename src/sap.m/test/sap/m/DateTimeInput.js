@@ -45,6 +45,9 @@ sap.ui.define([
 ) {
 	"use strict";
 
+	// shortcut for sap.ui.core.TitleLevel
+	var TitleLevel = coreLibrary.TitleLevel;
+
 	var iNow = UI5Date.getInstance().getTime(),
 		oModel = new JSONModel(),
 		ValueState = coreLibrary.ValueState,
@@ -112,25 +115,9 @@ sap.ui.define([
 
 	var oPage = new Page({
 		title : "DateTimeInput Controls",
+		titleLevel: TitleLevel.H1,
 		enableScrolling : true,
 		content : [
-			new Label({
-				text: "Christmas:",
-				labelFor: "DTI1"
-			}).addStyleClass("sapUiSmallMarginTop"),
-			new undefined/*DateTimeInput*/("DTI1", {
-				placeholder : "Date Picker",
-				change : function(oEvent) {
-					var oDateTimeInput = oEvent.getSource(),
-						oDate = oEvent.getParameters().newDateValue;
-
-					if (oDate && oDate.getMonth() == 11 && oDate.getDate() == 25) {
-						oDateTimeInput.setValueState(ValueState.None);
-					} else {
-						oDateTimeInput.setValueState(ValueState.Error);
-					}
-				}
-			}),
 			new Label({
 				text: "Duration:",
 				labelFor: "DTI2"

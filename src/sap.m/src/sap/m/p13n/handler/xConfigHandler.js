@@ -63,6 +63,17 @@ sap.ui.define([
 
 	}
 
+    function getRevertOperationType(sChangeType) {
+        const mOppositeType = {
+            add: "remove",
+            remove: "add",
+            move: "move",
+            set: "set"
+        };
+		const sType = getOperationType(sChangeType);
+        return mOppositeType[sType];
+	}
+
     /**
      * Creates a changehandler specific to the provided aggregation and property name,
      * to enhance the xConfig object for a given mdc control instance.
@@ -118,15 +129,13 @@ sap.ui.define([
                                 oRevertData.value = null;
                             }
 
-                            var aCurrentState;
-
 							var oController = Engine.getInstance().getController(oControl, oChange.getChangeType());
-							aCurrentState = oController?.getCurrentState();
-							var oStateItem = aCurrentState?.find(function(oItem, iIndex){
-								if (oItem.key === oChange.getContent().key) {
-									return oItem;
-								}
-							});
+							var aCurrentState = oController?.getCurrentState(), oStateItem;
+							if (aCurrentState && aCurrentState instanceof Array) {
+								oStateItem = aCurrentState.find(function(oItem, iIndex){
+									return oItem.key === oChange.getContent().key;
+								});
+							}
 
 							oRevertData.targetAggregation = oChange.getContent().targetAggregation;
 
@@ -177,7 +186,7 @@ sap.ui.define([
 				},
 				revertChange: function (oChange, oControl, mPropertyBag) {
 
-					var sOperation = getOperationType(oChange.getChangeType());
+					var sOperation = getRevertOperationType(oChange.getChangeType());
 
 					sAffectedAggregation = oChange.getContent().targetAggregation;
 

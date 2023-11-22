@@ -891,7 +891,7 @@ sap.ui.define([
 							&& CalendarUtils._isBetween(oLastVisibleDay, oFirstVisibleDay, app.end,true)); // ...and ends after the view port
 					// Sort by start date
 				}).sort(function compare(a, b) {
-					return a.start.valueOf() - b.start.valueOf();
+					return a.data.getStartDate().getTime() - b.data.getStartDate().getTime();
 				}),
 				// Array of taken levels per visible day
 				aVisibleDaysLevels = [],

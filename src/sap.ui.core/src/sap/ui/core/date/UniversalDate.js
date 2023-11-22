@@ -101,8 +101,8 @@ sap.ui.define([
 	 *
 	 * @param {Date|module:sap/ui/core/date/UI5Date|sap.ui.core.date.UniversalDate} [oDate]
 	 *   The date object, defaults to <code>UI5Date.getInstance()</code>
-	 * @param {sap.ui.core.CalendarType} [sCalendarType]
-	 *   The calendar type, defaults to <code>sap.ui.getCore().getConfiguration().getCalendarType()</code>
+	 * @param {module:sap/base/i18n/date/CalendarType} [sCalendarType]
+	 *   The calendar type, defaults to <code>module:sap/base/i18n/Formatting.getCalendarType()</code>
 	 * @returns {sap.ui.core.date.UniversalDate}
 	 *   An instance of <code>UniversalDate</code>
 	 *
@@ -135,7 +135,7 @@ sap.ui.define([
 	 * Returns the constructor function of a subclass of <code>UniversalDate</code> for the given calendar type.
 	 * If no calendar type is given the globally configured calendar type is used.
 	 *
-	 * @param {sap.ui.core.CalendarType} sCalendarType the type of the used calendar
+	 * @param {module:sap/base/i18n/date/CalendarType} sCalendarType the type of the used calendar
 	 *
 	 * @returns {function}
 	 *   The class of the given <code>sCalenderType</code>. If <code>sCalenderType</code> is not
@@ -678,7 +678,7 @@ sap.ui.define([
 	/**
 	 * Returns the calendar type of the current instance of a UniversalDate.
 	 *
-	 * @returns {sap.ui.core.CalendarType} The calendar type of the date
+	 * @returns {module:sap/base/i18n/date/CalendarType} The calendar type of the date
 	 *
 	 * @private
 	 * @ui5-restricted SAPUI5 Distribution Layer Libraries

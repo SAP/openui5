@@ -33,6 +33,7 @@ sap.ui.define([
 	"sap/ui/base/Object",
 	"sap/ui/core/StaticArea",
 	"sap/base/Log",
+	"sap/ui/core/library",
 	"sap/ui/thirdparty/jquery",
 	// jQuery Plugin "firstFocusableDomRef"
 	"sap/ui/dom/jquery/Focusable"
@@ -67,6 +68,7 @@ function(
 	BaseObject,
 	StaticArea,
 	Log,
+	coreLibrary,
 	jQuery
 ) {
 	"use strict";
@@ -85,6 +87,9 @@ function(
 
 	// shortcut for sap.m.ButtonType
 	var ButtonType = library.ButtonType;
+
+	// shortcut for sap.ui.core.TitleLevel
+	var TitleLevel = coreLibrary.TitleLevel;
 
 	var LIST_ITEM_SUFFIX = "-list-item";
 
@@ -1814,7 +1819,8 @@ function(
 	ViewSettingsDialog.prototype._getTitleLabel = function() {
 		if (this._titleLabel === undefined) {
 			this._titleLabel = new Title(this._sTitleLabelId, {
-				text : this._rb.getText("VIEWSETTINGS_TITLE")
+				text : this._rb.getText("VIEWSETTINGS_TITLE"),
+				level: TitleLevel.H1
 			}).addStyleClass("sapMVSDTitle");
 		}
 		return this._titleLabel;

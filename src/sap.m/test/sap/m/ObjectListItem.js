@@ -10,7 +10,8 @@ sap.ui.define([
 	"sap/m/App",
 	"sap/m/Page",
 	"sap/m/CheckBox",
-	"sap/m/Button"
+	"sap/m/Button",
+	"sap/m/Label"
 ], function(
 	IconPool,
 	ObjectAttribute,
@@ -23,7 +24,8 @@ sap.ui.define([
 	App,
 	Page,
 	CheckBox,
-	Button
+	Button,
+	Label
 ) {
 	"use strict";
 
@@ -35,6 +37,9 @@ sap.ui.define([
 
 	// shortcut for sap.ui.core.ValueState
 	var ValueState = coreLibrary.ValueState;
+
+	// shortcut for sap.ui.core.TitleLevel
+	var TitleLevel = coreLibrary.TitleLevel;
 
 	var list = new List("test_list");
 
@@ -423,13 +428,21 @@ sap.ui.define([
 	list.addItem(markersAndStatuses);
 
 	var app = new App();
-	var page = new Page("testPage", {title: "Object List Item Test"});
+	var page = new Page("testPage", {
+		title: "Object List Item Test",
+		titleLevel: TitleLevel.H1
+	});
 	app.setInitialPage(page.getId());
 	page.setEnableScrolling(true);
 	app.addPage(page);
 	page.addContent(list);
 
-	page.addContent(new CheckBox({
+	page.addContent(new Label({
+		text: "Show Markers",
+		labelFor: "showMarkersCheckbox"
+	}));
+
+	page.addContent(new CheckBox("showMarkersCheckbox", {
 		text: "Show Markers",
 		selected: false,
 		select: function() {}

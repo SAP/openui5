@@ -260,6 +260,32 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 	});
 
+	QUnit.test("check setCurrentVariantKey", function(assert) {
+		this.oVM.addItem(new VariantItem({key: "1", title:"One"}));
+		this.oVM.addItem(new VariantItem({key: "2", title:"Two"}));
+		this.oVM.setSelectedKey("2");
+
+		var bSelectCalled = false;
+
+		this.oVM.attachSelect(function(oEvent) {
+			var mParameters = oEvent.getParameters();
+
+			assert.ok(mParameters);
+			assert.equal(mParameters.key, "1", "key expected");
+			assert.equal(this.oVM.getSelectedKey(), "1", "new selection expected");
+			bSelectCalled = true;
+		}.bind(this));
+
+		assert.ok(!bSelectCalled);
+		this.oVM.setCurrentVariantKey("1");
+		assert.ok(bSelectCalled);
+
+		bSelectCalled = false;
+		this.oVM.setCurrentVariantKey("XXX");
+		assert.ok(!bSelectCalled);
+
+	});
+
 	QUnit.test("check event 'select'", function(assert) {
 		this.oVM.addItem(new VariantItem({key: "1", title:"One"}));
 		this.oVM.addItem(new VariantItem({key: "2", title:"Two"}));

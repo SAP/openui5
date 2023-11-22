@@ -21068,6 +21068,8 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 	// BCP: 2370088390
 	// When the list is filtered only the transient entry is shown and no entries are requested.
 	// JIRA: CPOUI5MODELS-1421
+	// BCP: 2380132519; it has to be possible to have control filters even if application filters are set to
+	// Filter.NONE and vice versa.
 	QUnit.test("Filter table where only transient items have messages", function (assert) {
 		let oCreatedContext, oRowsBinding;
 		const oModel = createSalesOrdersModel({preliminaryContext : true});
@@ -21133,6 +21135,11 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 				.expectValue("note", "", 1);
 
 			oRowsBinding.filter(aResults[0], FilterType.Application);
+
+			return this.waitForChanges(assert);
+		}).then(() => {
+			// code under test - adding a control filter does not lead to an error and still no request is needed
+			oRowsBinding.filter(new Filter("itemPosition", FilterOperator.GE, "10"), FilterType.Control);
 
 			return this.waitForChanges(assert);
 		});

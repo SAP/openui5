@@ -29,7 +29,7 @@
 				try {
 					Theming.setTheme("SapSampleTheme2");
 					testresults.oLinksAfter = document.querySelectorAll('head > link[id^="sap-ui-theme-"]');
-					testresults.sThemeAfter = sap.ui.getCore().getConfiguration().getTheme();
+					testresults.sThemeAfter = Theming.getTheme();
 					testresults.bApplyThemeFails = false;
 				} catch (e) {
 					testresults.bApplyThemeFails = true;

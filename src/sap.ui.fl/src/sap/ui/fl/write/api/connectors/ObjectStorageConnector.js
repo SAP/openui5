@@ -355,6 +355,7 @@ sap.ui.define([
 			aObjectsToSet = _uniqBy(aObjectsToSet, "key");
 
 			var aPromises = [];
+			var aResponse = [];
 			aPromises = aPromises.concat(handleCondenseDelete.call(this, oCondenseInformation.delete));
 
 			const mFeatures = await this.loadFeatures();
@@ -362,7 +363,9 @@ sap.ui.define([
 			if (
 				mFeatures.isVersioningEnabled
 				&& mPropertyBag.layer === Layer.CUSTOMER
-				&& Object.keys(oCondenseInformation.create).length !== 0
+				&& ((oCondenseInformation.create && Object.keys(oCondenseInformation.create).length !== 0)
+				|| (oCondenseInformation.update && Object.keys(oCondenseInformation.update).length !== 0)
+				|| (oCondenseInformation.reorder && Object.keys(oCondenseInformation.reorder).length !== 0))
 			) {
 				// the reference for the versions have to be determined by a flex object
 				sDraftVersionId = await this.versions.getDraftId.call(this, mPropertyBag);
@@ -373,11 +376,13 @@ sap.ui.define([
 				if (sDraftVersionId) {
 					oFileContent.version = sDraftVersionId;
 				}
+				aResponse.push(oFileContent);
 				var vFlexObject = this.storage._itemsStoredAsObjects ? oFileContent : JSON.stringify(oFileContent);
 				aPromises.push(this.storage.setItem(oItemToSet.key, vFlexObject));
 			}.bind(this));
-
-			return Promise.all(aPromises);
+			return Promise.all(aPromises).then(function() {
+				return Promise.resolve({response: aResponse});
+			});
 		},
 
 		/**

@@ -1,5 +1,7 @@
-sap.ui.define(["sap/ui/core/HTML", "sap/m/Panel", "sap/m/TimePicker", "sap/m/Label", "sap/m/App", "sap/m/Page"], function(HTML, Panel, TimePicker, Label, App, Page) {
+sap.ui.define(["sap/ui/core/HTML", "sap/m/Panel", "sap/m/TimePicker", "sap/m/Label", "sap/m/App", "sap/m/Page", "sap/ui/core/library"], function(HTML, Panel, TimePicker, Label, App, Page, coreLibrary) {
 	"use strict";
+
+	var TitleLevel = coreLibrary.TitleLevel;
 
 	/*
 	TimePicker inherits two artifacts that hold useful information which can be used as a WAI-ARIA label or description - placeholder and tooltip.
@@ -38,7 +40,7 @@ sap.ui.define(["sap/ui/core/HTML", "sap/m/Panel", "sap/m/TimePicker", "sap/m/Lab
 	function generateScenarios() {
 		var aPageContent = [
 				new HTML({
-					content: "<h1>Test case description</h1><p>TimePicker inherits two artifacts that hold useful information which can be used as a WAI-ARIA label or description - placeholder and tooltip.\n" +
+					content: "<h2>Test case description</h2><p>TimePicker inherits two artifacts that hold useful information which can be used as a WAI-ARIA label or description - placeholder and tooltip.\n" +
 					"\t\t\tTo do this, we need to render a hidden span element with a value that is the same with the value of the corresponding artifact (if present) and associate it\n" +
 					"\t\t\tby adding its ID to one of its \"aria-labelledby\" or \"aria-describedby\" DOM attributes. We also have into consideration that its \"displayFormat\" pattern is\n" +
 					"\t\t\tassigned as a default placeholder if no placeholder value is set by the application developer.\n" +
@@ -47,7 +49,7 @@ sap.ui.define(["sap/ui/core/HTML", "sap/m/Panel", "sap/m/TimePicker", "sap/m/Lab
 					"\t\t\tby using its own \"ariaLabelledBy\" association. By design, it has an ARIA custom string role which is also rendered as a hidden child span element\n" +
 					"\t\t\twith particular ID and added to its \"aria-describedby\" DOM attribute.\n" +
 					"\n" +
-					"\t\t\tSo here are all possible reference combinations.</p><h1>Expectation table</h1>"
+					"\t\t\tSo here are all possible reference combinations.</p><h3>Expectation table</h3>"
 				}),
 				new HTML({
 					content: "<table><thead><tr><th>TP is labelled by other label(X)</th><th>Placeholder</th><th>Tooltip</th><th>ariaDescribedBy</th><th>ariaLabelledBy</th></tr></thead><tbody><tr><td>no</td><td>yes (default)</td><td>no</td><td>\"TimePicker\"</td><td>default placeholder</td></tr><tr><td>no</td><td>yes</td><td>no</td><td>\"TimePicker\"</td><td>custom placeholder</td></tr><tr><td>no</td><td>yes (default)</td><td>yes</td><td>\"TimePicker\" + tooltip</td><td>default placeholder</td></tr><tr><td>no</td><td>yes</td><td>yes</td><td>\"TimePicker\" + tooltip</td><td>custom placeholder</td></tr><tr><td>yes</td><td>yes</td><td>yes</td><td>\"TimePicker\" + tooltip</td><td>X + default placeholder</td></tr><tr><td>yes</td><td>yes</td><td>no</td><td>\"TimePicker\"</td><td>X + default placeholder</td></tr><tr><td>yes</td><td>yes (default)</td><td>yes</td><td>\"TimePicker\" + tooltip</td><td>X + custom placeholder</td></tr><tr><td>yes</td><td>yes (default)</td><td>no</td><td>\"TimePicker\"</td><td>X + custom placeholder</td></tr></tbody></table></br></br>"
@@ -96,6 +98,7 @@ sap.ui.define(["sap/ui/core/HTML", "sap/m/Panel", "sap/m/TimePicker", "sap/m/Lab
 			new Page({
 				enableScrolling: false,
 				title: "TimePicker accessibility example",
+				titleLevel: TitleLevel.H1,
 				content: generateScenarios()
 			})
 		]

@@ -44,7 +44,7 @@ sap.ui.define([
 	function getTitle(sText) {
 		return new Title({
 			text: sText,
-			titleStyle: TitleLevel.H3
+			titleStyle: TitleLevel.H2
 		}).addStyleClass("sapUiMediumMarginTop");
 	}
 
@@ -83,19 +83,19 @@ sap.ui.define([
 			getTitle("Icon only - Regular mode "),
 
 			getText("Default:"),
-			new MenuButton({ icon: "sap-icon://add", menu: generateMenu() }),
+			new MenuButton({ icon: "sap-icon://action", menu: generateMenu() }),
 
 			getText("Connected to a label:"),
 			new Label({ text: "Label", labelFor: "iconOnlyRegularModeWithLabel" }),
-			new MenuButton("iconOnlyRegularModeWithLabel", { icon: "sap-icon://add", menu: generateMenu() }),
+			new MenuButton("iconOnlyRegularModeWithLabel", { icon: "sap-icon://action", menu: generateMenu() }),
 
 			getText("Using ariaLabelledBy:"),
 			new MText("iconOnlyRegularLabelledBy", { text: "Label" }),
-			new MenuButton({ icon: "sap-icon://add", ariaLabelledBy: "iconOnlyRegularLabelledBy", menu: generateMenu() }),
+			new MenuButton({ icon: "sap-icon://action", ariaLabelledBy: "iconOnlyRegularLabelledBy", menu: generateMenu() }),
 
 			getText("Using ariaDescribedBy:"),
 			new MText("iconOnlyRegularDescribedBy", { text: "Description" }),
-			new MenuButton({ icon: "sap-icon://add", ariaLabelledBy: "iconOnlyRegularDescribedBy", menu: generateMenu() })
+			new MenuButton({ icon: "sap-icon://action", ariaLabelledBy: "iconOnlyRegularDescribedBy", menu: generateMenu() })
 		]
 	}).addStyleClass("sapUiLargeMarginBeginEnd");
 
@@ -125,19 +125,19 @@ sap.ui.define([
 			getTitle("Icon only - Split mode "),
 
 			getText("Default:"),
-			new MenuButton({ icon: "sap-icon://add", buttonMode: MenuButtonMode.Split, menu: generateMenuIcons() }),
+			new MenuButton({ icon: "sap-icon://action", buttonMode: MenuButtonMode.Split, menu: generateMenuIcons() }),
 
 			getText("Connected to a label:"),
 			new Label({ text: "Label", labelFor: "iconOnlySplitModeWithLabel" }),
-			new MenuButton("iconOnlySplitModeWithLabel", { icon: "sap-icon://add", buttonMode: MenuButtonMode.Split, menu: generateMenuIcons() }),
+			new MenuButton("iconOnlySplitModeWithLabel", { icon: "sap-icon://action", buttonMode: MenuButtonMode.Split, menu: generateMenuIcons() }),
 
 			getText("Using ariaLabelledBy:"),
 			new MText("iconOnlySplitLabelledBy", { text: "Label" }),
-			new MenuButton({ icon: "sap-icon://add", buttonMode: MenuButtonMode.Split, ariaLabelledBy: "iconOnlySplitLabelledBy", menu: generateMenuIcons() }),
+			new MenuButton({ icon: "sap-icon://action", buttonMode: MenuButtonMode.Split, ariaLabelledBy: "iconOnlySplitLabelledBy", menu: generateMenuIcons() }),
 
 			getText("Using ariaDescribedBy:"),
 			new MText("iconOnlySplitDescribedBy", { text: "Description" }),
-			new MenuButton({ icon: "sap-icon://add", buttonMode: MenuButtonMode.Split, ariaLabelledBy: "iconOnlySplitDescribedBy", menu: generateMenuIcons() })
+			new MenuButton({ icon: "sap-icon://action", buttonMode: MenuButtonMode.Split, ariaLabelledBy: "iconOnlySplitDescribedBy", menu: generateMenuIcons() })
 		]
 	}).addStyleClass("sapUiLargeMarginBeginEnd");
 
@@ -154,10 +154,10 @@ sap.ui.define([
 	var oIconOnlyRegularModeTypesLayoutTitle = getTitle("Types: Icon only - Regular mode ").addStyleClass("sapUiLargeMarginBeginEnd");
 	var oIconOnlyRegularModeTypesLayout = new OverflowToolbar({
 		content: [
-			new MenuButton({ icon: "sap-icon://add", type: ButtonType.Accept, menu: generateMenu() }).addStyleClass("sapUiSmallMarginEnd"),
-			new MenuButton({ icon: "sap-icon://add", type: ButtonType.Reject, menu: generateMenu() }).addStyleClass("sapUiSmallMarginEnd"),
-			new MenuButton({ icon: "sap-icon://add", type: ButtonType.Emphasized, menu: generateMenu() }),
-			new MenuButton({ icon: "sap-icon://add", type: ButtonType.Attention, menu: generateMenu() }).addStyleClass("sapUiSmallMarginEnd")
+			new MenuButton({ icon: "sap-icon://action", type: ButtonType.Accept, menu: generateMenu() }).addStyleClass("sapUiSmallMarginEnd"),
+			new MenuButton({ icon: "sap-icon://action", type: ButtonType.Reject, menu: generateMenu() }).addStyleClass("sapUiSmallMarginEnd"),
+			new MenuButton({ icon: "sap-icon://action", type: ButtonType.Emphasized, menu: generateMenu() }),
+			new MenuButton({ icon: "sap-icon://action", type: ButtonType.Attention, menu: generateMenu() }).addStyleClass("sapUiSmallMarginEnd")
 		]
 	}).addStyleClass("sapUiSmallMarginTop").addStyleClass("sapUiLargeMarginBeginEnd");
 
@@ -174,10 +174,10 @@ sap.ui.define([
 	var oIconOnlySplitModeTypesLayoutTitle = getTitle("Types: Icon only - Regular mode ").addStyleClass("sapUiLargeMarginBeginEnd");
 	var oIconOnlySplitModeTypesLayout = new OverflowToolbar({
 		content: [
-			new MenuButton({ icon: "sap-icon://add", type: ButtonType.Accept, buttonMode: MenuButtonMode.Split, menu: generateMenuIcons() }).addStyleClass("sapUiSmallMarginEnd"),
-			new MenuButton({ icon: "sap-icon://add", type: ButtonType.Reject, buttonMode: MenuButtonMode.Split, menu: generateMenuIcons() }).addStyleClass("sapUiSmallMarginEnd"),
-			new MenuButton({ icon: "sap-icon://add", type: ButtonType.Emphasized, buttonMode: MenuButtonMode.Split, menu: generateMenuIcons() }),
-			new MenuButton({ icon: "sap-icon://add", type: ButtonType.Attention, buttonMode: MenuButtonMode.Split, menu: generateMenuIcons() }).addStyleClass("sapUiSmallMarginEnd")
+			new MenuButton({ icon: "sap-icon://action", type: ButtonType.Accept, buttonMode: MenuButtonMode.Split, menu: generateMenuIcons() }).addStyleClass("sapUiSmallMarginEnd"),
+			new MenuButton({ icon: "sap-icon://action", type: ButtonType.Reject, buttonMode: MenuButtonMode.Split, menu: generateMenuIcons() }).addStyleClass("sapUiSmallMarginEnd"),
+			new MenuButton({ icon: "sap-icon://action", type: ButtonType.Emphasized, buttonMode: MenuButtonMode.Split, menu: generateMenuIcons() }),
+			new MenuButton({ icon: "sap-icon://action", type: ButtonType.Attention, buttonMode: MenuButtonMode.Split, menu: generateMenuIcons() }).addStyleClass("sapUiSmallMarginEnd")
 		]
 	}).addStyleClass("sapUiSmallMarginTop").addStyleClass("sapUiLargeMarginBeginEnd");
 
@@ -188,6 +188,7 @@ sap.ui.define([
 	var oApp = new App(),
 		oPage = new Page({
 			title: "MenuButton ACC Test Page",
+			titleLevel: TitleLevel.H1,
 			content: [
 				oStandardRegularModeLayout,
 				oIconOnlyRegularMenuButtonsLayout,

@@ -28,7 +28,6 @@ sap.ui.define([
 	'sap/ui/core/_UrlResolver',
 	'sap/ui/VersionInfo',
 	'sap/ui/core/mvc/ViewType',
-	'sap/ui/core/Configuration',
 	'sap/ui/core/util/_LocalizationHelper'
 ], function(
 	Manifest,
@@ -55,7 +54,6 @@ sap.ui.define([
 	_UrlResolver,
 	VersionInfo,
 	ViewType,
-	Configuration,
 	_LocalizationHelper
 ) {
 	"use strict";
@@ -1564,7 +1562,6 @@ sap.ui.define([
 		var bMergeParent = mOptions.mergeParent;
 		var mCacheTokens = mOptions.cacheTokens || {};
 		var sLogComponentName = oComponent ? oComponent.getMetadata().getComponentName() : oManifest.getComponentName();
-		var oConfig = Configuration;
 		var aActiveTerminologies = mOptions.activeTerminologies;
 
 		if (!mOptions.models) {
@@ -1782,7 +1779,7 @@ sap.ui.define([
 						mMetadataUrlParams = oModelConfig.settings && oModelConfig.settings.metadataUrlParams;
 						var bNeedsLanguage = (!mMetadataUrlParams || typeof mMetadataUrlParams['sap-language'] === 'undefined')
 							&& !oUri.hasQuery('sap-language')
-							&& oConfig.getSAPLogonLanguage();
+							&& Localization.getSAPLogonLanguage();
 
 						if (bNeedsLanguage || sCacheToken) {
 							// Lazy initialize settings and metadataUrlParams objects
@@ -1791,7 +1788,7 @@ sap.ui.define([
 
 							// Add sap-language only to $metadata URL params
 							if (bNeedsLanguage) {
-								mMetadataUrlParams['sap-language'] = oConfig.getSAPLogonLanguage();
+								mMetadataUrlParams['sap-language'] = Localization.getSAPLogonLanguage();
 							}
 						}
 

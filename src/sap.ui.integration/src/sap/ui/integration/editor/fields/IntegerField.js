@@ -3,9 +3,10 @@
  */
 sap.ui.define([
 	"sap/ui/integration/editor/fields/BaseField",
-	"sap/m/Input"
+	"sap/m/Input",
+	"sap/ui/model/type/Integer"
 ], function (
-	BaseField, Input
+	BaseField, Input, IntegerType
 ) {
 	"use strict";
 
@@ -36,8 +37,7 @@ sap.ui.define([
 				settings: {
 					value: {
 						path: 'currentSettings>value',
-						type: 'sap.ui.model.type.Integer',
-						formatOptions: oFormatter
+						type: new IntegerType(oFormatter)
 					},
 					editable: oConfig.editable,
 					type: "Number",

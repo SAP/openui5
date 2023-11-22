@@ -2060,7 +2060,8 @@ sap.ui.define([
 				illustrationType: IllustratedMessageType.ErrorScreen,
 				title: this.getTranslatedText("CARD_ERROR_CONFIGURATION_TITLE"),
 				description: this.getTranslatedText("CARD_ERROR_CONFIGURATION_DESCRIPTION"),
-				details: e.message
+				details: e.message,
+				originalError: e
 			});
 			return;
 		}
@@ -2172,13 +2173,13 @@ sap.ui.define([
 	 * @private
 	 */
 	Card.prototype._handleError = function (mErrorInfo) {
-		var sLogMessage = mErrorInfo.requestErrorParams ? mErrorInfo.requestErrorParams.message : mErrorInfo.description,
+		var sLogMessage = mErrorInfo.requestErrorParams ? mErrorInfo.requestErrorParams.message : mErrorInfo.title,
 			oContentSection = this._oCardManifest.get(MANIFEST_PATHS.CONTENT),
 			bIsComponentCard = this._oCardManifest.get(MANIFEST_PATHS.TYPE) === "Component",
 			oContent = this.getCardContent(),
 			mMessageSettings;
 
-		Log.error(sLogMessage, null, "sap.ui.integration.widgets.Card");
+		Log.error(sLogMessage, mErrorInfo.originalError, "sap.ui.integration.widgets.Card");
 		this.fireEvent("_error", { message: sLogMessage });
 
 		if (mErrorInfo.requestErrorParams) {

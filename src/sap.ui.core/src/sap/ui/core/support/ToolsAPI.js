@@ -113,13 +113,14 @@ sap.ui.define([
 					language: Localization.getLanguage(),
 					formatLocale: new Locale(Formatting.getLanguageTag()),
 					accessibility: ControlBehavior.isAccessibilityEnabled(),
+
 					animation: (ControlBehavior.getAnimationMode() !== AnimationMode.minimal &&
 								ControlBehavior.getAnimationMode() !== AnimationMode.none),
+
 					rtl: Localization.getRTL(),
 					debug: Supportability.isDebugModeEnabled(),
 					inspect: Supportability.isControlInspectorEnabled(),
-					originInfo: Supportability.collectOriginInfo(),
-					noDuplicateIds: Configuration.getNoDuplicateIds()
+					originInfo: Supportability.collectOriginInfo()
 				},
 				libraries: _getLibraries(),
 				loadedLibraries: _getLoadedLibraries(),

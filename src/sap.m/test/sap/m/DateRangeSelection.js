@@ -43,6 +43,9 @@ sap.ui.define([
 	// shortcut for sap.ui.core.ValueState
 	var ValueState = coreLibrary.ValueState;
 
+	// shortcut for sap.ui.core.TitleLevel
+	var TitleLevel = coreLibrary.TitleLevel;
+
 	function createFooter(){
 		return new Bar({
 			contentMiddle: [new Button({
@@ -127,6 +130,7 @@ sap.ui.define([
 
 	var page1 = new Page("page1", {
 		title:"Mobile DateRangeSelection",
+		titleLevel: TitleLevel.H1,
 		content : [
 			new Label({text: "DRS1 - Initial DateRangeSelection control:", labelFor: "DRS1"}),
 			new DateRangeSelection("DRS1", { displayFormat: "dd.MM.yyyy", change: handleChange}),
@@ -174,13 +178,16 @@ sap.ui.define([
 
 			new Label({text: "DRS6 - Warning DateRangeSelection:", labelFor: "DRS6"}),
 			new DateRangeSelection("DRS6", { displayFormat: "dd.MM.yyyy",  valueState: "Warning"}),
+
+			new Label({text: "DRS12", labelFor: "DRS12"}),
 			new DateRangeSelection("DRS12"),
+
 			new Button("btnEtcGMT-12", {
 				text: "Etc/GMT-12",
 				press: handleTimezoneButtonPress
 			}),
 			new Button("btnUTC", {
-				text: "UTC",
+				text: "UTC timezone",
 				press: handleTimezoneButtonPress
 			}),
 			new Button("btnEtcGMT12", {

@@ -790,11 +790,26 @@ sap.ui.define([
 
 			sClassName = sClassName || sNamespaceURI + "." + sLocalName;
 
+			/**
+			 * Validates if a control class is available and provides error feedback otherwise.
+			 * @param {sap.ui.core.Control|undefined} fnClass control class or undefined if not returned as module content for its sap.ui.define factory
+			 * @return {sap.ui.core.Control|undefined} the resolved class.
+			 */
+			function validateClass(fnClass) {
+				if (!fnClass) {
+					let sErrorLogMessage = `[FUTURE-FATAL] Control '${sClassName}' did not return a class definition from sap.ui.define.`;
+
+					Log.error(sErrorLogMessage, "", "XMLTemplateProcessor");
+				}
+				return fnClass;
+			}
+
 			var sResourceName = sClassName.replace(/\./g, "/");
 			var oClassObject = sap.ui.require(sResourceName);
 			if (!oClassObject) {
 				return new Promise(function(resolve, reject) {
 					sap.ui.require([sResourceName], function(oClassObject) {
+						oClassObject = validateClass(oClassObject);
 						resolve(oClassObject);
 					}, reject);
 				});

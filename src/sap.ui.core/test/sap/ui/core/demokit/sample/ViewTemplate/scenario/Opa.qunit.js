@@ -5,25 +5,25 @@
 QUnit.config.autostart = false;
 
 sap.ui.require([
+	"sap/base/i18n/Localization",
 	"sap/ui/core/Core",
 	"sap/ui/core/sample/common/pages/Any",
 	"sap/ui/test/Opa5",
 	"sap/ui/test/opaQunit",
 	"sap/ui/test/TestUtils",
-	"sap/ui/test/matchers/Properties",
-	"sap/ui/core/Configuration"
-], function(Core, Any, Opa5, opaTest, TestUtils, Properties, Configuration) {
+	"sap/ui/test/matchers/Properties"
+], function (Localization, Core, Any, Opa5, opaTest, TestUtils, Properties) {
 	"use strict";
 
 	Core.ready().then(function () {
-		var sDefaultLanguage = Configuration.getLanguage();
+		var sDefaultLanguage = Localization.getLanguage();
 
 		QUnit.module("sap.ui.core.sample.ViewTemplate.scenario", {
 			before : function () {
-				Configuration.setLanguage("en-US");
+				Localization.setLanguage("en-US");
 			},
 			after : function () {
-				Configuration.setLanguage(sDefaultLanguage);
+				Localization.setLanguage(sDefaultLanguage);
 			}
 		});
 
