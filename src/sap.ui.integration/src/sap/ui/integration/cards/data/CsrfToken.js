@@ -12,9 +12,6 @@ sap.ui.define([], () => {
 		#config;
 		#tokenHandler;
 		#key;
-		/**
-		 * @deprecated As of version 1.121.0
-		 */
 		value;
 
 		constructor(tokenName, tokenConfig, tokenHandler) {
@@ -54,9 +51,6 @@ sap.ui.define([], () => {
 			const value = await tokensPromises.get(this.#key);
 
 			this.#tokenHandler.onTokenFetched(this.#name, value);
-			/**
-			 * @deprecated As of version 1.121.0
-			 */
 			this.value = value;
 		}
 	}

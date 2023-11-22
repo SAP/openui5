@@ -132,9 +132,6 @@ sap.ui.define([
 			pRequestChain = this._oDestinations.process(oRequestConfig);
 		}
 
-		/**
-		 * @deprecated As of version 1.121.0
-		 */
 		if (this._oCsrfTokenHandler) {
 			pRequestChain = pRequestChain.then(this._oCsrfTokenHandler.replacePlaceholders.bind(this._oCsrfTokenHandler));
 		}
