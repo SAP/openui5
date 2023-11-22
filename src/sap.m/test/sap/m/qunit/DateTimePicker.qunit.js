@@ -20,6 +20,7 @@ sap.ui.define([
 	"sap/ui/events/KeyCodes",
 	"sap/ui/unified/DateRange",
 	"sap/ui/core/Core",
+	"sap/ui/core/UIArea",
 	"sap/ui/base/ManagedObjectObserver",
 	"sap/ui/core/date/UI5Date",
 	// load all required calendars in advance
@@ -45,19 +46,15 @@ sap.ui.define([
 	KeyCodes,
 	DateRange,
 	oCore,
+	UIArea,
 	ManagedObjectObserver,
 	UI5Date
 ) {
 	"use strict";
 
-	createAndAppendDiv("uiArea1");
-	createAndAppendDiv("uiArea2");
-	createAndAppendDiv("uiArea3");
-	createAndAppendDiv("uiArea4");
-	createAndAppendDiv("uiArea5").style.width = "200px";
-	createAndAppendDiv("uiArea6");
-	createAndAppendDiv("uiArea7");
-	createAndAppendDiv("uiArea8");
+	createAndAppendDiv("content");
+	// special UIArea for simulating a small screen
+	createAndAppendDiv("contentSmall").style.width = "200px";
 
 
 	var sValue = "";
@@ -73,7 +70,7 @@ sap.ui.define([
 
 	var oDTP1 = new DateTimePicker("DTP1", {
 		change: handleChange
-		}).placeAt("uiArea1");
+		}).placeAt("content");
 
 	var oDTP2 = new DateTimePicker("DTP2", {
 		width: "250px",
@@ -81,45 +78,50 @@ sap.ui.define([
 		valueFormat: "yyyy-MM-dd,HH-mm-ss",
 		displayFormat: "dd+MM+yyyy:HH+mm",
 		change: handleChange
-		}).placeAt("uiArea2");
+		}).placeAt("content");
 
 	var oDTP3 = new DateTimePicker("DTP3", {
 		dateValue: UI5Date.getInstance("2016", "01", "17", "10", "11", "12"),
 		displayFormat: "short",
 		change: handleChange
-		}).placeAt("uiArea3");
-
-	var oModel = new JSONModel();
-	oModel.setData({
-		dateValue: UI5Date.getInstance("2016", "01", "17", "10", "11", "12")
-	});
-	oCore.setModel(oModel);
-
-	oCore.attachParseError(
-			function(oEvent) {
-				sId = oEvent.getParameter("element").getId();
-				sValue = oEvent.getParameter('newValue');
-				bValid = false;
-			});
-
-	oCore.attachValidationSuccess(
-			function(oEvent) {
-				sId = oEvent.getParameter("element").getId();
-				sValue = oEvent.getParameter('newValue');
-				bValid = true;
-			});
+		}).placeAt("content");
 
 	var oDTP4 = new DateTimePicker("DTP4", {
 		width: "250px",
 		value: {
 			path: "/dateValue",
 			type: new DateTime({style: "medium", strictParsing: true})}
-		}).placeAt("uiArea4");
+		}).placeAt("content");
 
 	//BCP: 	1970509170
 	var oDTP6 = new DateTimePicker("oDTP6", {
 		dateValue: UI5Date.getInstance("2019", "9", "25", "11", "12", "13")
-	}).placeAt("uiArea6");
+	}).placeAt("content");
+
+	// attach the model and central parse and validation handlers to the UIArea
+	// Note: 2nd UIArea (contentSmall) does not require data binding or validation handlers
+	const oUIArea = UIArea.registry.get("content");
+
+	var oModel = new JSONModel();
+	oModel.setData({
+		dateValue: UI5Date.getInstance("2016", "01", "17", "10", "11", "12")
+	});
+	oUIArea.setModel(oModel);
+
+	oUIArea.attachParseError(
+			function(oEvent) {
+				sId = oEvent.getParameter("element").getId();
+				sValue = oEvent.getParameter('newValue');
+				bValid = false;
+			});
+
+	oUIArea.attachValidationSuccess(
+			function(oEvent) {
+				sId = oEvent.getParameter("element").getId();
+				sValue = oEvent.getParameter('newValue');
+				bValid = true;
+			});
+
 
 	QUnit.module("initialization");
 
@@ -138,7 +140,7 @@ sap.ui.define([
 
 	QUnit.test("Calendar instance is created poroperly", function(assert) {
 		//Prepare
-		var oDTP = new DateTimePicker().placeAt("uiArea1"),
+		var oDTP = new DateTimePicker().placeAt("content"),
 			oCalendar;
 
 		//Act
@@ -301,7 +303,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("_fillDateRange works with max date when the current date is after the max date", function(assert) {
-		var oDateTimePicker = new DateTimePicker("DTPMinMax").placeAt("uiArea1"),
+		var oDateTimePicker = new DateTimePicker("DTPMinMax").placeAt("content"),
 			oNewMinDate = UI5Date.getInstance(2014, 0, 1),
 			oNewMaxDate = UI5Date.getInstance(2014, 11, 31),
 			oNewMaxDateUTC = UI5Date.getInstance(Date.UTC(oNewMaxDate.getFullYear(), oNewMaxDate.getMonth(), oNewMaxDate.getDate())),
@@ -328,7 +330,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("_fillDateRange works with min date when the current date is before the min date", function(assert) {
-		var oDateTimePicker = new DateTimePicker("DTPMinMax").placeAt("uiArea1"),
+		var oDateTimePicker = new DateTimePicker("DTPMinMax").placeAt("content"),
 			oDate = UI5Date.getInstance(),
 			oDateTomorow = UI5Date.getInstance(oDate.getFullYear(), oDate.getMonth(), oDate.getDate() + 1),
 			oMinDateUTC = UI5Date.getInstance(Date.UTC(oDateTomorow.getFullYear(), oDateTomorow.getMonth(), oDateTomorow.getDate())),
@@ -358,7 +360,7 @@ sap.ui.define([
 			oAfterRenderingDelegate,
 			oCalendar;
 
-		oDTP7.placeAt("uiArea8");
+		oDTP7.placeAt("content");
 		oCore.applyChanges();
 		oDTP7.focus();
 
@@ -389,7 +391,7 @@ sap.ui.define([
 			oAfterRenderingDelegate,
 			oCalendar;
 
-		oDTP8.placeAt("uiArea8");
+		oDTP8.placeAt("content");
 		oCore.applyChanges();
 		oDTP8.focus();
 
@@ -627,7 +629,7 @@ sap.ui.define([
 	QUnit.module("Accessibility");
 
 	QUnit.test("aria-expanded correctly set", function(assert) {
-		var oDTP = new DateTimePicker("DP", {}).placeAt("uiArea8");
+		var oDTP = new DateTimePicker("DP", {}).placeAt("content");
 		oCore.applyChanges();
 
 		//before opening the popup
@@ -685,7 +687,7 @@ sap.ui.define([
 		//Prepare
 		var done = assert.async();
 
-		var oDTP = new DateTimePicker().placeAt("uiArea1");
+		var oDTP = new DateTimePicker().placeAt("content");
 		oCore.applyChanges();
 
 		oDTP._createPopup();
@@ -749,7 +751,7 @@ sap.ui.define([
 
 		var oDTP5 = new DateTimePicker("DTP5", {
 						dateValue: UI5Date.getInstance()
-					}).placeAt("uiArea5");
+					}).placeAt("contentSmall");
 		oCore.applyChanges();
 
 		var done = assert.async();
@@ -797,7 +799,7 @@ sap.ui.define([
 		jQuery("html").removeClass("sapUiMedia-Std-Desktop");
 		jQuery("html").addClass("sapUiMedia-Std-Phone");
 
-		oDTP5.placeAt("uiArea5");
+		oDTP5.placeAt("contentSmall");
 		oDTP5._createPopup();
 		oDTP5._createPopupContent();
 		oCalendar = oDTP5._getCalendar();

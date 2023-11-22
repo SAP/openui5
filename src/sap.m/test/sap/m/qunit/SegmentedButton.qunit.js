@@ -2408,7 +2408,7 @@ sap.ui.define([
 		var oModel = new JSONModel();
 		oModel.setData(mData);
 
-		oCore.setModel(oModel);
+		oSegmentedButton.setModel(oModel);
 
 		oSegmentedButton.placeAt("qunit-fixture");
 		oCore.applyChanges();
@@ -2469,7 +2469,7 @@ sap.ui.define([
 		var oModel = new JSONModel();
 		oModel.setData(mData);
 
-		oCore.setModel(oModel);
+		oSegmentedButton.setModel(oModel);
 
 		oSegmentedButton.placeAt("qunit-fixture");
 		oCore.applyChanges();
@@ -2555,7 +2555,7 @@ sap.ui.define([
 		oModel = new JSONModel();
 		oModel.setData(mDataInitial);
 
-		oCore.setModel(oModel);
+		oSegmentedButton.setModel(oModel);
 
 		oSegmentedButton.placeAt("qunit-fixture");
 		oCore.applyChanges();

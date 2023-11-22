@@ -33,6 +33,7 @@ sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/Core",
 	"sap/ui/core/Element",
+	"sap/ui/core/UIArea",
 	"sap/ui/core/date/UI5Date",
 	// load all required calendars in advance
 	"sap/ui/core/date/Buddhist",
@@ -74,6 +75,7 @@ sap.ui.define([
 	jQuery,
 	oCore,
 	Element,
+	UIArea,
 	UI5Date
 ) {
 	"use strict";
@@ -81,12 +83,7 @@ sap.ui.define([
 	// shortcut for sap.ui.unified.CalendarDayType
 	var CalendarDayType = unifiedLibrary.CalendarDayType;
 
-	createAndAppendDiv("uiArea1");
-	createAndAppendDiv("uiArea2");
-	createAndAppendDiv("uiArea3");
-	createAndAppendDiv("uiArea4");
-	createAndAppendDiv("uiArea5");
-	createAndAppendDiv("uiArea6");
+	createAndAppendDiv("content");
 	var sMyxml =
 		"<mvc:View xmlns:mvc=\"sap.ui.core.mvc\" xmlns=\"sap.m\">" +
 		"	<VBox binding=\"{/EdmTypesCollection(ID='1')}\">" +
@@ -157,7 +154,7 @@ sap.ui.define([
 
 	var oDP1 = new DatePicker("DP1", {
 		change: handleChange
-		}).placeAt("uiArea1");
+		}).placeAt("content");
 
 	var oDP2 = new DatePicker("DP2", {
 		width: "250px",
@@ -165,13 +162,13 @@ sap.ui.define([
 		valueFormat: "yyyy-MM-dd",
 		displayFormat: "dd+MM+yyyy",
 		change: handleChange
-		}).placeAt("uiArea2");
+		}).placeAt("content");
 
 	var oDP3 = new DatePicker("DP3", {
 		dateValue: UI5Date.getInstance("2014", "03", "01"),
 		displayFormat: "long",
 		change: handleChange
-		}).placeAt("uiArea3");
+		}).placeAt("content");
 
 	var oDP5 = new DatePicker("DP5", {
 		dateValue: UI5Date.getInstance("2015", "10", "23"),
@@ -179,17 +176,34 @@ sap.ui.define([
 		displayFormatType: "Islamic",
 		secondaryCalendarType: "Gregorian",
 		change: handleChange
-		}).placeAt("uiArea5");
+		}).placeAt("content");
+
+	var oDP6 = new DatePicker("DP6", {
+		width: "250px",
+		value: {
+			path: "/dateValue",
+			type: new TypeDate({style: "short", strictParsing: true})}
+		}).placeAt("content");
+
+	var oDP7 = new DatePicker("DP7", {
+		width: "250px",
+		value: {
+			path: "/dateValue1",
+			type: new TypeDate({style: "short", strictParsing: true, calendarType: "Islamic"})}
+		}).placeAt("content");
+
+	// attach the model and central parse and validation handlers to the UIArea
+	const oUIArea = UIArea.registry.get("content");
 
 	var oModel = new JSONModel();
 	oModel.setData({
 		dateValue: UI5Date.getInstance("2015", "10", "23"),
 		dateValue1: UI5Date.getInstance("2015", "10", "23")
 	});
-	oCore.setModel(oModel);
+	oUIArea.setModel(oModel);
 
 	var bParseError = false;
-	oCore.attachParseError(
+	oUIArea.attachParseError(
 			function(oEvent) {
 				sId = oEvent.getParameter("element").getId();
 				sValue = oEvent.getParameter('newValue');
@@ -198,27 +212,13 @@ sap.ui.define([
 			});
 
 	var bValidationSuccess = false;
-	oCore.attachValidationSuccess(
+	oUIArea.attachValidationSuccess(
 			function(oEvent) {
 				sId = oEvent.getParameter("element").getId();
 				sValue = oEvent.getParameter('newValue');
 				bValid = true;
 				bValidationSuccess = true;
 			});
-
-	var oDP6 = new DatePicker("DP6", {
-		width: "250px",
-		value: {
-			path: "/dateValue",
-			type: new TypeDate({style: "short", strictParsing: true})}
-		}).placeAt("uiArea6");
-
-	var oDP7 = new DatePicker("DP7", {
-		width: "250px",
-		value: {
-			path: "/dateValue1",
-			type: new TypeDate({style: "short", strictParsing: true, calendarType: "Islamic"})}
-		}).placeAt("uiArea6");
 
 
 	QUnit.module("initialization");
@@ -1028,7 +1028,7 @@ sap.ui.define([
 				valueFormat: "yyyyMMdd",
 				displayFormat: "yyyyMMdd",
 				showCurrentDateButton: true
-			}).placeAt("uiArea6");
+			}).placeAt("content");
 
 		oCore.applyChanges();
 		oDP.toggleOpen();
@@ -1914,7 +1914,7 @@ sap.ui.define([
 				change: function(oEvent) {
 					newValue = oEvent.getParameter("value");
 				}
-			}).placeAt("uiArea2");
+			}).placeAt("content");
 
 		oCore.applyChanges();
 
@@ -2111,7 +2111,7 @@ sap.ui.define([
 	QUnit.module("ARIA");
 
 	QUnit.test("aria-ownes and aria-expanded correctly set", function(assert) {
-		var oDP = new DatePicker("DP", {}).placeAt("uiArea4");
+		var oDP = new DatePicker("DP", {}).placeAt("content");
 		oCore.applyChanges();
 
 		//before opening the popup
@@ -2126,7 +2126,7 @@ sap.ui.define([
 		var oDP = new DatePicker(),
 			sRoledescription = Library.getResourceBundleFor("sap.m").getText("ACC_CTR_TYPE_DATEINPUT");
 
-		oDP.placeAt("uiArea4");
+		oDP.placeAt("content");
 		oCore.applyChanges();
 
 		assert.strictEqual(oDP._$input.attr("aria-roledescription"), sRoledescription, "Input's Date type is indicatd in aria-roledescription");
@@ -2137,7 +2137,7 @@ sap.ui.define([
 	QUnit.test("aria-haspopup", function(assert) {
 		var oDP = new DatePicker();
 
-		oDP.placeAt("uiArea4");
+		oDP.placeAt("content");
 		oCore.applyChanges();
 
 		assert.strictEqual(oDP._$input.attr("aria-haspopup"), "grid", "DatePicker indicates that it opens a grid");
@@ -2202,7 +2202,7 @@ sap.ui.define([
 
 	QUnit.module("Events", {
 		beforeEach: function () {
-			this.oDP = new DatePicker("EDP").placeAt("uiArea6");
+			this.oDP = new DatePicker("EDP").placeAt("content");
 			this.oSpy = this.spy();
 			this.fnHandleCalendarSelect = this.spy(this.oDP, "_handleCalendarSelect");
 			this.fnHandleOKButton = this.spy(this.oDP, "_handleOKButton");
@@ -2370,7 +2370,7 @@ sap.ui.define([
 			this.oDP = new DatePicker("SDP", {
 				dateValue: UI5Date.getInstance(2016, 0, 1),
 				navigate: this.fHandleNavigate.bind(this)
-			}).placeAt("uiArea6");
+			}).placeAt("content");
 			oCore.applyChanges();
 
 			// Open date picker
@@ -2893,7 +2893,7 @@ sap.ui.define([
 		beforeEach: function () {
 			this.oDP = new DatePicker("SDP", {
 				dateValue: UI5Date.getInstance(2016, 0, 1)
-			}).placeAt("uiArea6");
+			}).placeAt("content");
 			oCore.applyChanges();
 
 			// Open date picker

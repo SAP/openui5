@@ -135,8 +135,6 @@ sap.ui.define([
 	var oModel = new JSONModel();
 	oModel.setData(oData);
 
-	sap.ui.getCore().setModel(oModel);
-
 	var oButtonTemplate = new Button({
 		text : "{buttonText}",
 		type : "{buttonType}"
@@ -174,5 +172,6 @@ sap.ui.define([
 	});
 
 	var oApp = new App("myApp", { initialPage: "page" });
+	oApp.setModel(oModel);
 	oApp.addPage(page).placeAt("content");
 });

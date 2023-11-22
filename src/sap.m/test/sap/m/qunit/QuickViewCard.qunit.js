@@ -234,10 +234,9 @@ sap.ui.define([
 	// set the data for the model
 	oModel.setData(mData);
 
-	oCore.setModel(oModel);
-
 	// create and add app
 	var oApp = new App("myApp", {initialPage: "quickViewPage"});
+	oApp.setModel(oModel);
 	oApp.placeAt("qunit-fixture");
 
 	// create and add a page with icon tab bar

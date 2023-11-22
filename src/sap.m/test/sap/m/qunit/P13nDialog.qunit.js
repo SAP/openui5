@@ -487,9 +487,6 @@ sap.ui.define([
 	});
 	QUnit.test("test", function (assert) {
 		var oP13nPanelF, oP13nPanelS, oP13nPanelD;
-		oCore.setModel(new ResourceModel({
-			bundleName: "resourceroot.data.i18n.i18n"
-		}), "i18n");
 
 		this.oP13nDialog = new P13nDialog({
 			panels: [oP13nPanelD = new P13nDimMeasurePanel({
@@ -498,7 +495,12 @@ sap.ui.define([
 				title: "{i18n>FilterTab}"
 			}), oP13nPanelS = new P13nSortPanel({
 				title: "{i18n>SortTab}"
-			})]
+			})],
+			models: {
+				"i18n": new ResourceModel({
+					bundleName: "resourceroot.data.i18n.i18n"
+				})
+			}
 		});
 
 		// arrange

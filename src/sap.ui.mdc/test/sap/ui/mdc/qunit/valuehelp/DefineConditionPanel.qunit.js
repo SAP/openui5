@@ -120,11 +120,13 @@ sap.ui.define([
 		};
 
 		oModel = new ConditionModel();
-		oCore.setModel(oModel, "cm");
 
 		oDefineConditionPanel = new DefineConditionPanel("DCP1", {
 			conditions: '{cm>/conditions/Name}',
-			config: oConfig
+			config: oConfig,
+			models: {
+				"cm": oModel
+			}
 		}).placeAt("content");
 
 		if (!bNoRender) {

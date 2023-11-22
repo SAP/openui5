@@ -721,7 +721,7 @@ sap.ui.define([
 			]
 		});
 
-		Core.setModel(oModel);
+		oIconTabBar.setModel(oModel);
 
 		// System under Test
 		oIconTabBar.placeAt("qunit-fixture");
@@ -2002,7 +2002,7 @@ sap.ui.define([
 		var oJSONModel = new JSONModel();
 		oJSONModel.setData(oData);
 
-		Core.setModel(oJSONModel);
+		oIconTabBar.setModel(oJSONModel);
 
 		// System under Test
 		oIconTabBar.placeAt("qunit-fixture");
@@ -2060,7 +2060,7 @@ sap.ui.define([
 		var oJSONModel = new JSONModel();
 		oJSONModel.setData(oData);
 
-		Core.setModel(oJSONModel);
+		oIconTabBar.setModel(oJSONModel);
 
 		// System under Test
 		oIconTabBar.placeAt("qunit-fixture");

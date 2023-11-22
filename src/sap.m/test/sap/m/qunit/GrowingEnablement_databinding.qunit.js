@@ -54,7 +54,6 @@ sap.ui.define([
 
 	var model = new JSONModel();
 	model.setData(data);
-	oCore.setModel(model);
 
 	// the List
 	var gl = new List("gl", {
@@ -84,7 +83,8 @@ sap.ui.define([
 				title: "GrowingList",
 				content: gl
 			})
-		]
+		],
+		models: model
 	});
 
 	function $ul() {

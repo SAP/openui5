@@ -106,7 +106,6 @@ function(
 		status1: {text: "My Status 1", state: CoreLib.ValueState.Error},
 		status2: {text: "My Status 2", state: CoreLib.ValueState.Warning}
 	});
-	sap.ui.getCore().setModel(oModel);
 
 	// TODO: Fake iSematicFormContent on controls until it is official supported
 	var myTypeCheck = function(vTypeName) {
@@ -250,6 +249,7 @@ function(
 			})
 		]
 	});
+	oForm1.setModel(oModel);
 	oForm1.placeAt("content1");
 
 });

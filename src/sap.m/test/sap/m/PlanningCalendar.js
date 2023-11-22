@@ -199,7 +199,6 @@ sap.ui.define([
 			text: "headerContent aggregation with binding"
 		}]
 	});
-	sap.ui.getCore().setModel(oModel);
 
 	function createFooter() {
 		return new Bar({
@@ -1383,6 +1382,7 @@ sap.ui.define([
 		footer: createFooter()
 	});
 
+	app.setModel(oModel);
 	app.addPage(page1);
 
 	app.placeAt("body");

@@ -135,7 +135,6 @@ sap.ui.define([
 	};
 
 	oModel.setData(mData);
-	sap.ui.getCore().setModel(oModel);
 
 	var oItemTemplate = new Item({
 			key : "{key}",
@@ -339,5 +338,6 @@ sap.ui.define([
 		})
 	}));
 
+	oApp.setModel(oModel);
 	oApp.placeAt("body");
 });

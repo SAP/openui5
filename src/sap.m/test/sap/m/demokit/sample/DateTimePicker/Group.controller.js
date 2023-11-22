@@ -33,7 +33,7 @@ sap.ui.define([
 			this._iEvent = 0;
 
 			// for the data binding example do not use the change event for check but the data binding parsing events
-			Core.attachParseError(
+			this.getView().attachParseError(
 				function(oEvent) {
 					var oElement = oEvent.getParameter("element");
 
@@ -42,7 +42,7 @@ sap.ui.define([
 					}
 				});
 
-			Core.attachValidationSuccess(
+			this.getView().attachValidationSuccess(
 				function(oEvent) {
 					var oElement = oEvent.getParameter("element");
 

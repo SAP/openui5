@@ -1390,7 +1390,7 @@ sap.ui.define([
 		oModel.setData({
 			DayTitle: "Day View"
 		});
-		oCore.setModel(oModel);
+		oSPC.setModel(oModel);
 
 		// act
 		oSPC.addView(new SinglePlanningCalendarDayView({
@@ -1469,7 +1469,7 @@ sap.ui.define([
 		oModel.setData({
 			DayTitle: "Day View"
 		});
-		oCore.setModel(oModel);
+		oSPC.setModel(oModel);
 
 		// act
 		oSPC.insertView(new SinglePlanningCalendarDayView({
@@ -1516,7 +1516,7 @@ sap.ui.define([
 		oModel.setData({
 			DayTitle: "Day View"
 		});
-		oCore.setModel(oModel);
+		oSPC.setModel(oModel);
 
 		oSPC.addView(oView).placeAt('qunit-fixture');
 
@@ -1547,7 +1547,7 @@ sap.ui.define([
 			DayTitle: "Day View",
 			WeekTitle: "Week View"
 		});
-		oCore.setModel(oModel);
+		oSPC.setModel(oModel);
 
 		oSPC.addView(oDayView);
 		oSPC.addView(oWeekView).placeAt('qunit-fixture');
@@ -1601,7 +1601,7 @@ sap.ui.define([
 			DayTitle: "Day View",
 			WeekTitle: "Week View"
 		});
-		oCore.setModel(oModel);
+		oSPC.setModel(oModel);
 
 		oSPC.addView(oDayView);
 		oSPC.addView(oWeekView).placeAt('qunit-fixture');
@@ -1653,7 +1653,7 @@ sap.ui.define([
 			DayTitle: "Day View",
 			WeekTitle: "Week View"
 		});
-		oCore.setModel(oModel);
+		oSPC.setModel(oModel);
 
 		oSPC.addView(oDayView);
 		oSPC.addView(oWeekView).placeAt('qunit-fixture');

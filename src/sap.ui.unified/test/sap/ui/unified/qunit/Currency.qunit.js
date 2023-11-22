@@ -269,7 +269,6 @@ sap.ui.define([
 					useSymbol: true
 				}]
 			};
-			Core.setModel(new JSONModel(this.oData));
 			this.sut = new VBox({});
 			this.sut.bindAggregation("items", "/currencyCollection", new Currency({
 				value: "{value}",
@@ -277,6 +276,7 @@ sap.ui.define([
 				maxPrecision: "{maxPrecision}",
 				useSymbol: "{useSymbol}"
 			}));
+			this.sut.setModel(new JSONModel(this.oData));
 			this.sut.placeAt('content');
 			Core.applyChanges();
 		},
@@ -434,12 +434,12 @@ sap.ui.define([
 					currency: "*"
 				}]
 			};
-			Core.setModel(new JSONModel(this.oData));
 			this.oVBox = new VBox({});
 			this.oVBox.bindAggregation("items", "/currencyCollection", new Currency({
 				value: "{value}",
 				currency: "{currency}"
 			}));
+			this.oVBox.setModel(new JSONModel(this.oData));
 			this.oVBox.placeAt('content');
 			Core.applyChanges();
 
