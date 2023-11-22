@@ -1,8 +1,11 @@
 <mvc:View
 	class="sapUiSizeCompact"
 	controllerName="sap.ui.core.sample.odata.v4.FlexibleColumnLayout.Main"
-	xmlns="sap.m" xmlns:f="sap.f" xmlns:form="sap.ui.layout.form" xmlns:mvc="sap.ui.core.mvc"
-	xmlns:plugins="sap.m.plugins">
+	xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:f="sap.f" xmlns:form="sap.ui.layout.form"
+	xmlns:mvc="sap.ui.core.mvc" xmlns:plugins="sap.m.plugins"
+	core:require="{
+		formatRowHighlight : 'sap/ui/core/sample/odata/v4/FlexibleColumnLayout/formatRowHighlight'
+	}">
 	<App>
 	<Page floatingFooter="true" id="page" showHeader="false">
 	<Toolbar>
@@ -158,7 +161,7 @@
 									'messages>/',
 									{mode : 'OneTime', path : '', targetType : 'any'}
 								],
-								formatter : 'sap.ui.core.sample.odata.v4.FlexibleColumnLayout.Formatter.formatRowHighlight'
+								formatter : 'formatRowHighlight'
 							}" >
 						<Text text="{ProductID}"/>
 						<Text id="itemPosition" text="{ItemPosition}"/>
