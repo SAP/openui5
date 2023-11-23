@@ -1082,6 +1082,12 @@ sap.ui.define([
 
 			this.oInnerLayout.insertAggregation("content", oButton3, 2);
 		});
+
+		QUnit.test("when the DesignTime is destroyed", function(assert) {
+			const oRemoveOverlayContainerSpy = sandbox.spy(Overlay, "removeOverlayContainer");
+			this.oDesignTime.destroy();
+			assert.ok(oRemoveOverlayContainerSpy.calledOnce, "then the overlay container is destroyed as well");
+		});
 	});
 
 	QUnit.module("Given a layout and a button", {
