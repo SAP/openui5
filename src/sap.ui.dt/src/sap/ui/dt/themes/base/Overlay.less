@@ -148,12 +148,15 @@
 }
 
 /* fix for chrome */
-.sap-desktop[data-sap-ui-browser^="cr"] {
-	.sapUiDtDragGhostWrapper {
-		padding-left: -500px;
-		padding-bottom: 500px;
-		bottom: -1000px;
-	}
+.sap-desktop[data-sap-ui-browser^="cr"] .sapUiDtDragGhostWrapper {
+	padding-left: -500px;
+	padding-bottom: 500px;
+	bottom: -1000px;
+}
+
+// Fix for Safari, ghost must not be completly off screen
+.sap-desktop[data-sap-ui-browser^="sf"] .sapUiDtDragGhostWrapper {
+	top: 100vh;
 }
 
 .sapUiDtDragGhost {
