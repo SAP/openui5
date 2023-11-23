@@ -3,6 +3,7 @@
 sap.ui.define([
 	"sap/m/library",
 	"sap/ui/core/Core",
+	"sap/ui/core/Lib",
 	"sap/ui/integration/cards/BaseListContent",
 	"sap/ui/integration/cards/ListContent",
 	"sap/ui/integration/cards/actions/CardActions",
@@ -12,6 +13,7 @@ sap.ui.define([
 ], function (
 	mLibrary,
 	Core,
+	Library,
 	BaseListContent,
 	ListContent,
 	CardActions,
@@ -1774,7 +1776,7 @@ sap.ui.define([
 	QUnit.test("Loading of Microchart library when there is NO chart in the content", function (assert) {
 		// Arrange
 		var done = assert.async(),
-			loadLibraryStub = sinon.stub(Core, "loadLibrary");
+			loadLibraryStub = sinon.stub(Library, "load");
 
 		this.oCard.attachEvent("_ready", function () {
 			// Assert
@@ -1799,7 +1801,7 @@ sap.ui.define([
 	QUnit.test("Loading of Microchart library when there is chart in the content", function (assert) {
 		// Arrange
 		var done = assert.async(),
-			loadLibraryStub = sinon.stub(Core, "loadLibrary").resolves();
+			loadLibraryStub = sinon.stub(Library, "load").resolves();
 
 		this.oCard.attachEvent("_ready", function () {
 			// Assert
