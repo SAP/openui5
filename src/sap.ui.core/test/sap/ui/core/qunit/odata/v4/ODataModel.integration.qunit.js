@@ -17,6 +17,7 @@ sap.ui.define([
 	"sap/ui/core/Messaging",
 	"sap/ui/core/Rendering",
 	"sap/ui/core/Supportability",
+	"sap/ui/core/message/Message",
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/core/mvc/View",
 	"sap/ui/model/ChangeReason",
@@ -38,7 +39,7 @@ sap.ui.define([
 	// load Table resources upfront to avoid loading times > 1 second for the first test using Table
 	"sap/ui/table/Table"
 ], function (Log, Localization, uid, ColumnListItem, CustomListItem, FlexBox, _MessageStrip,
-		Text, Device, EventProvider, SyncPromise, Messaging, Rendering, Supportability,
+		Text, Device, EventProvider, SyncPromise, Messaging, Rendering, Supportability, Message,
 		Controller, View, ChangeReason, Filter, FilterOperator, FilterType, Sorter, OperationMode,
 		AnnotationHelper, ODataListBinding, ODataMetaModel, ODataModel, ODataPropertyBinding,
 		ValueListType, _Helper, Security, TestUtils, XMLHelper) {
@@ -24939,6 +24940,7 @@ sap.ui.define([
 	// Check that refresh is not supported (JIRA: CPOUI5ODATAV4-1851).
 	// Additionally, ODLB#getDownloadUrl is tested (JIRA: CPOUI5ODATAV4-1920, BCP: 2370011296).
 	// Retrieve "DistanceFromRoot" property path via ODLB#getAggregation (JIRA: CPOUI5ODATAV4-1961).
+	// See that Filter.NONE is not allowed (JIRA: CPOUI5ODATAV4-2321).
 	//
 	// NodeID is selected automatically, even w/o UI, but "parent node ID" is not.
 	// JIRA: CPOUI5ODATAV4-1849
@@ -25054,6 +25056,10 @@ sap.ui.define([
 				// code under test (JIRA: CPOUI5ODATAV4-2337)
 				oRoot.isAncestorOf(oHeaderContext);
 			}, new Error("Not currently part of a recursive hierarchy: /Artists"));
+			assert.throws(() => {
+				// code under test (JIRA: CPOUI5ODATAV4-2321)
+				oListBinding.filter(Filter.NONE);
+			}, new Error("Cannot combine Filter.NONE with $$aggregation"));
 			// code under test
 			assert.strictEqual(oRoot.isAncestorOf(oRoot), true, "JIRA: CPOUI5ODATAV4-2337");
 
@@ -47471,6 +47477,426 @@ make root = ${bMakeRoot}`;
 });
 
 	//*********************************************************************************************
+	// Scenario: Apply the filter for messages on a table with persisted and inactive rows, but only
+	// messages for inactive rows. See that the persisted rows disappear w/o a request, and see that
+	// selected APIs do not trigger requests afterwards.
+	// Run each test with a grid table, a responsive table, and a responsive table with growing
+	// enablement. Check that #setAggregation does not work with Filter.NONE, download URL is null,
+	// and #requestContexts (with Filter.NONE) returns transient rows only without a GET request.
+	// (1) Add two inline creation rows, keep one persisted context alive.
+	// (2) Change a property of the first creation row, the activation fails with a message
+	// (3) Call #requestFilterForMessages, see that it is Filter.NONE, apply it, and see that only
+	//     the transient and kept-alive contexts remain w/o a request
+	// (4) Call #requestSideEffects, see that all rows remain
+	// (5) Call the given API function and see that nothing happens (except refresh for the kept-
+	//     alive context)
+	// (6) Create another kept-alive context via getKeepAliveContext
+	// (7) Activate and persist the first row, create a new inactive row, fail to activate it, and
+	//     release the kept-alive contexts
+	// (8) Call #requestSideEffects, see that all rows remain, including the created persisted one
+	// (9) Call the given API function again and see that the created persisted row disappears
+	// (10) Remove the filter and see that data is requested from the server
+	// JIRA: CPOUI5ODATAV4-2321
+[
+	{desc : "grid table", table : "t:Table", parameters : "", rows : "rows", top : 110},
+	{desc : "responsive table", table : "Table", parameters : "", rows : "items", top : 100},
+	{desc : "growing table", table : "Table", parameters : 'growing="true"', rows : "items",
+		top : 20}
+].forEach((o) => {
+	[
+		"changeParameters", "filter", "refresh", "resume", "sort"
+	].forEach((sMethod) => {
+	QUnit.test(`Filter.NONE & ${sMethod}, ${o.desc}`, async function (assert) {
+		const oModel = this.createSalesOrdersModel({autoExpandSelect : true});
+		const sView = `
+<${o.table} id="table" ${o.parameters} ${o.rows}="{path : '/SalesOrderList',
+		parameters : {$count : true, $filter : 'SalesOrderID ne \\'0\\'', $$ownRequest : true}}">
+	<Text text="{SalesOrderID}"/>
+	<Input value="{Note}"/>
+</${o.table}>`;
+
+		const createActivateCallback = (oEvent) => {
+			const oCreatedContext = oEvent.getParameter("context");
+
+			if (oCreatedContext.getProperty("Note").length <= 3) {
+				this.expectMessages([{
+					message : "Note must be longer than 3 chars",
+					target : "/SalesOrderList($uid=...)/Note",
+					type : "Error"
+				}]);
+				Messaging.addMessages(new Message({
+					message : "Note must be longer than 3 chars",
+					processor : oModel,
+					target : oCreatedContext.getPath() + "/Note",
+					type : "Error"
+				}));
+				oEvent.preventDefault();
+			} else {
+				Messaging.removeAllMessages(); // there can only be one message at a time
+				this.expectMessages([]);
+			}
+		};
+
+		this.expectRequest("SalesOrderList?$count=true&$filter=SalesOrderID ne '0'"
+				+ "&$select=Note,SalesOrderID&$skip=0&$top=" + o.top, {
+				"@odata.count" : "2",
+				value : [
+					{Note : "Note 42", SalesOrderID : "42"},
+					{Note : "Note 43", SalesOrderID : "43"}
+				]
+			});
+
+		await this.createView(assert, sView, oModel);
+
+		const oTable = this.oView.byId("table");
+		const oBinding = oTable.getBinding("rows") ?? oTable.getBinding("items");
+
+		checkTable("after creating view", assert, oTable, [
+			"/SalesOrderList('42')",
+			"/SalesOrderList('43')"
+		], [
+			["42", "Note 42"],
+			["43", "Note 43"]
+		]);
+		assert.strictEqual(oBinding.getCount(), 2);
+
+		const oKeptAliveContext0 = oBinding.getCurrentContexts()[0];
+		oKeptAliveContext0.setKeepAlive(true);
+
+		oBinding.attachCreateActivate(createActivateCallback);
+
+		const oContext0 = oBinding.create(undefined, true, true, true);
+		const oContext1 = oBinding.create({Note : "bar"}, true, true, true);
+
+		await resolveLater(); // table update takes a moment
+
+		checkTable("create inline creation rows", assert, oTable, [
+			"/SalesOrderList($uid=...)",
+			"/SalesOrderList($uid=...)",
+			"/SalesOrderList('42')",
+			"/SalesOrderList('43')"
+		], [
+			["42", "Note 42"],
+			["43", "Note 43"],
+			["", ""],
+			["", "bar"]
+		]);
+		assert.strictEqual(oBinding.getCount(), 2);
+
+		oContext0.setProperty("Note", "foo");
+
+		await resolveLater(); // table update takes a moment
+
+		checkTable("set property, fail activation", assert, oTable, [
+			"/SalesOrderList($uid=...)",
+			"/SalesOrderList($uid=...)",
+			"/SalesOrderList('42')",
+			"/SalesOrderList('43')"
+		], [
+			["42", "Note 42"],
+			["43", "Note 43"],
+			["", "foo"],
+			["", "bar"]
+		]);
+		assert.strictEqual(oBinding.getCount(), 2);
+
+		// code under test
+		assert.strictEqual(await oBinding.requestFilterForMessages(), Filter.NONE);
+		oBinding.filter(Filter.NONE);
+
+		assert.strictEqual(oBinding.getCount(), undefined, "cache not ready");
+
+		await resolveLater(); // table update takes a moment
+
+		checkTable("Filter.NONE set", assert, oTable, [
+			"/SalesOrderList($uid=...)",
+			"/SalesOrderList($uid=...)",
+			"/SalesOrderList('42')" // kept-alive
+		], [
+			["", "foo"],
+			["", "bar"]
+		], 2);
+		assert.strictEqual(oBinding.getCount(), 0);
+
+		// code under test
+		const aContexts = await oBinding.requestContexts();
+		assert.deepEqual(aContexts.map(getNormalizedPath), [
+			"/SalesOrderList($uid=...)",
+			"/SalesOrderList($uid=...)"
+		], "requestContexts");
+
+		// code under test
+		assert.strictEqual(oBinding.getDownloadUrl(), null);
+		assert.strictEqual(await oBinding.requestDownloadUrl(), null);
+
+		assert.throws(() => {
+			// code under test
+			oBinding.setAggregation({hierarchyQualifier : "X"});
+		}, new Error("Cannot combine Filter.NONE with $$aggregation"));
+
+		this.expectRequest("SalesOrderList?$filter=SalesOrderID eq '42'"
+			+ "&$select=Note,SalesOrderID",
+			{value : [{Note : "Note 42", SalesOrderID : "42"}]});
+
+		// code under test
+		oBinding.getHeaderContext().requestSideEffects([""]);
+
+		await this.waitForChanges(assert, "requestSideEffects");
+
+		checkTable(sMethod, assert, oTable, [
+			"/SalesOrderList($uid=...)",
+			"/SalesOrderList($uid=...)",
+			"/SalesOrderList('42')"
+		], [
+			["", "foo"],
+			["", "bar"]
+		], 2);
+		assert.strictEqual(oBinding.getCount(), 0);
+
+		switch (sMethod) {
+			case "changeParameters":
+				// code under test
+				oBinding.changeParameters({$search : "covfefe"});
+				break;
+
+			case "filter":
+				// code under test
+				oBinding.filter(new Filter("Note", FilterOperator.NE, "4711"), FilterType.Control);
+				break;
+
+			case "resume":
+				// code under test
+				oBinding.suspend();
+				oBinding.sort(new Sorter("SalesOrderID"));
+				oBinding.filter(new Filter("Note", FilterOperator.NE, "4711"), FilterType.Control);
+				oBinding.changeParameters({$search : "covfefe"});
+				oBinding.resume();
+				break;
+
+			case "sort":
+				// code under test
+				oBinding.sort(new Sorter("SalesOrderID"));
+				break;
+
+			case "refresh":
+				this.expectRequest("SalesOrderList?$filter=SalesOrderID eq '42'"
+						+ "&$select=Note,SalesOrderID",
+						{value : [{Note : "Note 42", SalesOrderID : "42"}]});
+
+				// code under test
+				oBinding.refresh();
+				break;
+
+			// no default
+		}
+
+		await this.waitForChanges(assert, "test API " + sMethod);
+
+		// no change expected
+		checkTable(sMethod, assert, oTable, [
+			"/SalesOrderList($uid=...)",
+			"/SalesOrderList($uid=...)",
+			"/SalesOrderList('42')"
+		], [
+			["", "foo"],
+			["", "bar"]
+		], 2);
+		assert.strictEqual(oBinding.getCount(), 0);
+
+		this.expectRequest("SalesOrderList('43')?$select=SalesOrderID", {SalesOrderID : "43"});
+
+		// code under test
+		const oKeptAliveContext1 = oBinding.getKeepAliveContext("/SalesOrderList('43')");
+
+		await this.waitForChanges(assert, "getKeepAliveContext");
+
+		checkTable("getKeepAliveContext", assert, oTable, [
+			"/SalesOrderList($uid=...)",
+			"/SalesOrderList($uid=...)",
+			"/SalesOrderList('42')",
+			"/SalesOrderList('43')"
+		], [
+			["", "foo"],
+			["", "bar"]
+		], 2);
+		assert.strictEqual(oBinding.getCount(), 0);
+		assert.strictEqual(oKeptAliveContext1.getIndex(), undefined);
+
+		this.expectRequest({
+				method : "POST",
+				url : "SalesOrderList",
+				payload : {Note : "foobar"}
+			}, {
+				Note : "foobar*",
+				SalesOrderID : "44"
+			});
+
+		// code under test (activate first row)
+		oContext0.setProperty("Note", "foobar");
+		assert.strictEqual(oBinding.getCount(), 1);
+
+		const oContext2 = oBinding.create(undefined, true, true, true);
+		// activation fails
+		oContext2.setProperty("Note", "baz");
+
+		// code under test (release kept contexts)
+		oKeptAliveContext0.setKeepAlive(false);
+		oKeptAliveContext1.setKeepAlive(false);
+
+		await Promise.all([
+			oContext0.created(),
+			this.waitForChanges(assert, "activate first row and add a new inactive one")
+		]);
+
+		checkTable("third inline creation row added, first row persisted", assert, oTable, [
+			"/SalesOrderList($uid=...)",
+			"/SalesOrderList($uid=...)",
+			"/SalesOrderList('44')"
+		], [
+			["44", "foobar*"],
+			["", "bar"],
+			["", "baz"]
+		]);
+		assert.strictEqual(oBinding.getCount(), 1);
+
+		this.expectRequest("SalesOrderList?$filter=SalesOrderID eq '44'&$select=Note,SalesOrderID",
+				{value : [{Note : "foobar**", SalesOrderID : "44"}]});
+
+		await Promise.all([
+			// code under test
+			oBinding.getHeaderContext().requestSideEffects([""]),
+			this.waitForChanges(assert, "requestSideEffects")
+		]);
+
+		checkTable("after requestSideEffects", assert, oTable, [
+			"/SalesOrderList($uid=...)",
+			"/SalesOrderList($uid=...)",
+			"/SalesOrderList('44')"
+		], [
+			["44", "foobar**"],
+			["", "bar"],
+			["", "baz"]
+		]);
+		assert.strictEqual(oBinding.getCount(), 1);
+
+		let sFilter = "SalesOrderID ne '0'";
+		let sOptions = "";
+
+		switch (sMethod) {
+			case "changeParameters":
+				sOptions = "&$search=fefecov";
+				// code under test
+				oBinding.changeParameters({$search : "fefecov"});
+				break;
+
+			case "filter":
+				sFilter = `Note ne '1174' and (${sFilter})`;
+				// code under test
+				oBinding.filter(new Filter("Note", FilterOperator.NE, "1174"), FilterType.Control);
+				break;
+
+			case "resume":
+				sFilter = `Note ne '1174' and (${sFilter})`;
+				sOptions = "&$search=fefecov&$orderby=SalesOrderID desc";
+				// code under test
+				oBinding.suspend();
+				oBinding.sort(new Sorter("SalesOrderID", true));
+				oBinding.filter(new Filter("Note", FilterOperator.NE, "1174"), FilterType.Control);
+				oBinding.changeParameters({$search : "fefecov"});
+				oBinding.resume();
+				break;
+
+			case "sort":
+				sOptions = "&$orderby=SalesOrderID desc";
+				// code under test
+				oBinding.sort(new Sorter("SalesOrderID", true));
+				break;
+
+			case "refresh":
+				// code under test
+				oBinding.refresh();
+				break;
+
+			// no default
+		}
+
+		await resolveLater(); // table update takes a moment
+
+		checkTable("created persisted row gets removed", assert, oTable, [
+			"/SalesOrderList($uid=...)",
+			"/SalesOrderList($uid=...)"
+		], [
+			["", "bar"],
+			["", "baz"]
+		]);
+		assert.strictEqual(oBinding.getCount(), 0);
+
+		this.expectRequest("SalesOrderList?$count=true&$filter=" + sFilter
+				+ "&$select=Note,SalesOrderID" + sOptions + "&$skip=0&$top=" + o.top, {
+				"@odata.count" : "3",
+				value : [
+					{Note : "Note 42", SalesOrderID : "42"},
+					{Note : "Note 43", SalesOrderID : "43"},
+					{Note : "foobar*", SalesOrderID : "44"}
+				]
+			});
+
+		// code under test
+		oBinding.filter();
+
+		await this.waitForChanges(assert, "remove filter");
+
+		checkTable("remove filter", assert, oTable, [
+			"/SalesOrderList($uid=...)",
+			"/SalesOrderList($uid=...)",
+			"/SalesOrderList('42')",
+			"/SalesOrderList('43')",
+			"/SalesOrderList('44')"
+		], [
+			["42", "Note 42"],
+			["43", "Note 43"],
+			["44", "foobar*"],
+			["", "bar"],
+			["", "baz"]
+		]);
+		assert.strictEqual(oBinding.getCount(), 3);
+
+		assert.strictEqual(oContext1.isInactive(), true);
+		assert.strictEqual(oContext2.isInactive(), 1);
+	});
+	});
+});
+
+	//*********************************************************************************************
+	// Scenario: Nested list binding w/o own cache. Filter it with Filter.NONE so it creates an
+	// own cache. Persisted rows disappear.
+	QUnit.test("Filter.NONE w/o cache", async function (assert) {
+		const oModel = this.createTeaBusiModel({autoExpandSelect : true, updateGroupId : "update"});
+		const sView = `
+<FlexBox binding="{/TEAMS('1')}">
+	<Table id="table" items="{TEAM_2_EMPLOYEES}">
+		<Text id="id" text="{ID}"/>
+	</Table>
+</FlexBox>`;
+
+		this.expectRequest("TEAMS('1')?$select=Team_Id&$expand=TEAM_2_EMPLOYEES($select=ID)",
+				{Team_Id : "1", TEAM_2_EMPLOYEES : [{ID : "10"}, {ID : "20"}]})
+			.expectChange("id", ["10", "20"]);
+
+		await this.createView(assert, sView, oModel);
+		const oBinding = this.oView.byId("table").getBinding("items");
+
+		assert.strictEqual(oBinding.getLength(), 2);
+
+		// code under test
+		oBinding.filter(Filter.NONE);
+
+		assert.strictEqual(oBinding.getLength(), 0);
+
+		await this.waitForChanges(assert);
+	});
+
+	//*********************************************************************************************
 	// Scenario: relative ODLB w/o own cache; switch binding context via setContext with transient
 	// rows present. Switch back and expect that transient rows survived.
 	//
@@ -49698,7 +50124,7 @@ make root = ${bMakeRoot}`;
 
 		/*
 		 * Resolves the list report and expects the corresponding request and changes.
- 		 * @param {number} iBatchNo - The number of the $batch for the request
+		 * @param {number} iBatchNo - The number of the $batch for the request
 		 */
 		function initializeList(iBatchNo) {
 			that.expectRequest({
@@ -50174,7 +50600,7 @@ make root = ${bMakeRoot}`;
 			oTable,
 			sView = '\
 <Table id="list" items="{path : \'Artists\', parameters : {$$getKeepAliveContext : true,\
- 		$$ownRequest : true, foo : \'bar\', $count : true}}">\
+		$$ownRequest : true, foo : \'bar\', $count : true}}">\
 	<Text id="listName" text="{Name}"/>\
 	<Text id="defaultChannel" text="{defaultChannel}"/>\
 </Table>\
@@ -50408,7 +50834,7 @@ make root = ${bMakeRoot}`;
 		var oModel = this.createSpecialCasesModel({autoExpandSelect : true}),
 			sView = '\
 <Table id="list" growing="true" growingThreshold="1" items="{path : \'Artists\',\
- 		parameters : {$$getKeepAliveContext : true, $$ownRequest : true}}">\
+		parameters : {$$getKeepAliveContext : true, $$ownRequest : true}}">\
 	<Text id="id" text="{ArtistID}"/>\
 	<Text id="isActiveEntity" text="{IsActiveEntity}"/>\
 	<Text id="listName" text="{Name}"/>\
@@ -55621,7 +56047,7 @@ make root = ${bMakeRoot}`;
 			sView = '\
 <Text id="employeeCount" text="{$count}"/>\
 <' + sTable + ' id="employees" ' + sItems + '="{path : \'TEAM_2_EMPLOYEES\',\
- 			parameters : {$$ownRequest : true, $count : true}}">\
+			parameters : {$$ownRequest : true, $count : true}}">\
 	<Text id="employeeName" text="{Name}"/>\
 	<List items="{path : \'EMPLOYEE_2_EQUIPMENTS\', \
 			parameters : {$count : true' + sOwnRequest + '}, templateShareable : false}">\

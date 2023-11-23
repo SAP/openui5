@@ -2,6 +2,7 @@
 	xmlns:core="sap.ui.core"
 	xmlns:f="sap.f"
 	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:plugins="sap.m.plugins"
 	xmlns:t="sap.ui.table"
 	xmlns:trm="sap.ui.table.rowmodes"
 	xmlns="sap.m"
@@ -55,12 +56,15 @@
 						}" mode="SingleSelectMaster"
 							rememberSelections="false"
 							selectionChange="onSelectProduct">
+							<dependents>
+								<plugins:DataStateIndicator enableFiltering="true"/>
+							</dependents>
 							<headerToolbar>
 								<Toolbar>
 									<Title id="productsTitle" level="H2"
 										text="{headerContext0>$count} Products"/>
 									<Button id="resetProducts" icon="sap-icon://reset"
-											press="onResetChangesForProducts" tooltip="Reset Products"/>
+										press="onResetChangesForProducts" tooltip="Reset Products"/>
 								</Toolbar>
 							</headerToolbar>
 							<columns>
@@ -123,12 +127,15 @@
 								parameters : {$count : true, $$ownRequest : true}
 							}"
 							selectionMode="None">
+							<t:dependents>
+								<plugins:DataStateIndicator enableFiltering="true"/>
+							</t:dependents>
 							<t:extension>
 								<Toolbar design="Transparent" class="sapMTBHeader-CTX">
 									<Title id="partsTitle" level="H2"
 										text="Product: {ID}, {headerContext1>$count} Parts"/>
 									<Button id="resetParts" icon="sap-icon://reset"
-											press="onResetChangesForParts"	tooltip="Reset Parts"/>
+										press="onResetChangesForParts" tooltip="Reset Parts"/>
 								</Toolbar>
 							</t:extension>
 							<t:rowMode>
