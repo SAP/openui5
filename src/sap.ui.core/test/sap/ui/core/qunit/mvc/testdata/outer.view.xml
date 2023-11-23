@@ -1,0 +1,5 @@
+<View xmlns="sap.ui.core.mvc" xmlns:m="sap.m">
+	<m:Text id="before" text="another control before the nested view" />
+	<XMLView viewName="example.mvc.middle" async="true" id="middle" />
+	<m:Text id="after" text="another control after the nested view" />
+</View>
