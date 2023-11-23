@@ -23,7 +23,6 @@ sap.ui.define([
 	 * A draft indicator is {@link sap.m.Label}.
 	 *
 	 * @extends sap.ui.core.Control
-	 * @abstract
 	 *
 	 * @author SAP SE
 	 * @version ${version}
