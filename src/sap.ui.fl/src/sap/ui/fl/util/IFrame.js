@@ -160,7 +160,7 @@ sap.ui.define([
 			// Make sure that it was not encoded before
 			var sEncodedUrl = decodeURI(sUrl) === sUrl ? encodeURI(sUrl) : sUrl;
 
-			if (IFrame.isValidUrl(sEncodedUrl)) {
+			if (IFrame.isValidUrl(sEncodedUrl).result) {
 				if (this.getUseLegacyNavigation()) {
 					// Set by pushing to the history
 					this._setUrlLegacy(sEncodedUrl);
@@ -223,25 +223,57 @@ sap.ui.define([
 		return document.location;
 	};
 
+	IFrame.VALIDATION_ERROR = {
+		UNSAFE_PROTOCOL: "unsafeProtocol",
+		MIXED_CONTENT: "mixedContent",
+		FORBIDDEN_URL: "forbiddenUrl",
+		INVALID_URL: "invalidUrl"
+	};
+
 	IFrame.isValidUrl = function(sUrl) {
 		try {
 			const oDocumentLocation = IFrame._getDocumentLocation();
 			const oUrl = new URL(sUrl, oDocumentLocation.href);
-			return (
-				// Forbid dangerous javascript pseudo protocol
-				!/javascript/i.test(oUrl.protocol)
-				&& (
-					// Forbid unsafe http embedding within https to conform with mixed content security restrictions
-					!/http(?!s)/.test(oUrl.protocol)
-					// Exception: Host is using http, no protocol downgrade happening
-					// Required for local testing and onPrem systems
-					|| /http(?!s)/.test(oDocumentLocation.protocol)
-				)
-				// Take further customer restrictions into account
-				&& URLListValidator.validate(sUrl)
-			);
+
+			// Forbid dangerous javascript pseudo protocol
+			if (/javascript/i.test(oUrl.protocol)) {
+				return {
+					result: false,
+					error: IFrame.VALIDATION_ERROR.UNSAFE_PROTOCOL
+				};
+			}
+
+			if (
+				// Forbid unsafe http embedding within https to conform with mixed content security restrictions
+				/http(?!s)/.test(oUrl.protocol)
+				// Exception: Host is using http, no protocol downgrade happening
+				// Required for local testing and onPrem systems
+				&& !/http(?!s)/.test(oDocumentLocation.protocol)
+			) {
+				return {
+					result: false,
+					error: IFrame.VALIDATION_ERROR.MIXED_CONTENT
+				};
+			}
+
+			// Take further customer restrictions into account
+			// Since the validator doesn't return an error, use a generic error message
+			if (!URLListValidator.validate(sUrl)) {
+				return {
+					result: false,
+					error: IFrame.VALIDATION_ERROR.FORBIDDEN_URL
+				};
+			}
+
+			return {
+				result: true
+			};
 		} catch {
-			return false;
+			// URL parsing failed
+			return {
+				result: false,
+				error: IFrame.VALIDATION_ERROR.INVALID_URL
+			};
 		}
 	};
 

@@ -7,6 +7,7 @@ sap.ui.define([
 	"sap/m/Text",
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/core/Element",
+	"sap/ui/core/Lib",
 	"sap/ui/core/library",
 	"sap/ui/rta/util/validateText",
 	"sap/ui/rta/Utils",
@@ -20,6 +21,7 @@ sap.ui.define([
 	Text,
 	Controller,
 	Element,
+	Lib,
 	coreLibrary,
 	validateText,
 	Utils,
@@ -33,14 +35,23 @@ sap.ui.define([
 	// shortcut for sap.ui.core.ValueState
 	var {ValueState} = coreLibrary;
 
+	const _oTextResources = Lib.getResourceBundleFor("sap.ui.rta");
+
 	var _aTextInputFields = ["frameUrl", "title"];
 	var _aNumericInputFields = ["frameWidth", "frameHeight"];
 	var _aOtherInputFields = ["frameWidthUnit", "frameHeightUnit", "useLegacyNavigation"];
 
 	function isValidUrl(sUrl) {
-		return typeof sUrl === "string"
-			&& sUrl.trim() !== ""
-			&& IFrame.isValidUrl(encodeURI(sUrl));
+		if (
+			typeof sUrl !== "string"
+			|| sUrl.trim() === ""
+		) {
+			return {
+				result: false,
+				error: IFrame.VALIDATION_ERROR.INVALID_URL
+			};
+		}
+		return IFrame.isValidUrl(encodeURI(sUrl));
 	}
 
 	return Controller.extend("sap.ui.rta.plugin.iframe.AddIFrameDialogController", {
@@ -76,7 +87,7 @@ sap.ui.define([
 		 */
 		onSavePress() {
 			var sUrl = this._buildPreviewURL(this._buildReturnedURL());
-			if (isValidUrl(sUrl) && this._areAllTextFieldsValid() && this._areAllValueStateNones()) {
+			if (isValidUrl(sUrl).result && this._areAllTextFieldsValid() && this._areAllValueStateNones()) {
 				this._close(this._buildReturnedSettings());
 			} else {
 				this._setFocusOnInvalidInput();
@@ -90,7 +101,7 @@ sap.ui.define([
 		onShowPreview() {
 			const sReturnedURL = this._buildReturnedURL();
 			const sURL = this._buildPreviewURL(sReturnedURL);
-			if (!isValidUrl(sURL)) {
+			if (!isValidUrl(sURL).result) {
 				return;
 			}
 			const oIFrame = Element.getElementById("sapUiRtaAddIFrameDialog_PreviewFrame");
@@ -192,13 +203,18 @@ sap.ui.define([
 
 		onUrlChange() {
 			var sUrl = this._buildPreviewURL(this._buildReturnedURL());
-			var oUrlInput = Element.getElementById("sapUiRtaAddIFrameDialog_EditUrlTA");
-			if (isValidUrl(sUrl)) {
-				oUrlInput.setValueState("None");
-				this._oJSONModel.setProperty("/validFrameUrl/value", true);
+			const { result: bResult, error: sError } = isValidUrl(sUrl);
+			if (bResult) {
+				this._oJSONModel.setProperty("/frameUrlError/value", "");
 			} else {
-				oUrlInput.setValueState("Error");
-				this._oJSONModel.setProperty("/validFrameUrl/value", false);
+				const sErrorKey = {
+					[IFrame.VALIDATION_ERROR.UNSAFE_PROTOCOL]: "IFRAME_ADDIFRAME_ERROR_UNSAFE_PROTOCOL",
+					[IFrame.VALIDATION_ERROR.MIXED_CONTENT]: "IFRAME_ADDIFRAME_ERROR_MIXED_CONTENT",
+					[IFrame.VALIDATION_ERROR.FORBIDDEN_URL]: "IFRAME_ADDIFRAME_ERROR_FORBIDDEN_URL",
+					[IFrame.VALIDATION_ERROR.INVALID_URL]: "IFRAME_ADDIFRAME_ERROR_INVALID_URL"
+				}[sError];
+				const sErrorText = _oTextResources.getText(sErrorKey);
+				this._oJSONModel.setProperty("/frameUrlError/value", sErrorText);
 			}
 		},
 
