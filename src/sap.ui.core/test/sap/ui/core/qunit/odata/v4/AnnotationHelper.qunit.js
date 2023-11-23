@@ -9,7 +9,10 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/odata/v4/AnnotationHelper",
 	"sap/ui/model/odata/v4/ODataMetaModel",
-	"sap/ui/model/odata/v4/_AnnotationHelperExpression"
+	"sap/ui/model/odata/v4/_AnnotationHelperExpression",
+	// intentionally at the end
+	"sap/ui/model/odata/v4/ODataUtils", // only for expressions with "odata.(compare|uriEncode)"
+	"sap/ui/thirdparty/URITemplate" // only for expressions with "odata.fillUriTemplate
 ], function (Log, SyncPromise, InvisibleText, BaseContext, JSONModel, AnnotationHelper,
 		ODataMetaModel, Expression) {
 	"use strict";
