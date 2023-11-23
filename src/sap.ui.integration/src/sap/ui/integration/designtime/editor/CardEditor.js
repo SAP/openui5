@@ -11,8 +11,9 @@ sap.ui.define([
 	"sap/base/util/merge",
 	"sap/ui/model/resource/ResourceModel",
 	"sap/ui/integration/library",
-	"sap/ui/integration/designtime/editor/CardPreview"
-], function (
+	"sap/ui/integration/designtime/editor/CardPreview",
+	"sap/base/util/extend"
+], function(
 	Editor,
 	Core,
 	Card,
@@ -21,7 +22,8 @@ sap.ui.define([
 	merge,
 	ResourceModel,
 	library,
-	CardPreview
+	CardPreview,
+	extend
 ) {
 	"use strict";
 
@@ -156,9 +158,48 @@ sap.ui.define([
 			this._oEditorCard = new Card(vCardIdOrSettings);
 			this._oEditorCard.onBeforeRendering();
 			this._oEditorCard.attachEventOnce("_dataReady", function () {
+				// copy models from Card to editor
+				this.propagateModels(this._oEditorCard, this, ["i18n", "context", "contextflat"]);
 				this.setJson(vCardIdOrSettings, bSuppressRerendering);
 			}.bind(this));
 		}
+	};
+
+	/**
+	 * Copy the models from one managed object into another.
+	 *
+	 * @param {sap.ui.base.ManagedObject} oSource Copy from this managed object.
+	 * @param {sap.ui.base.ManagedObject} oTarget The object which will receive the models.
+	 * @param {array} aSkipModels The array includes the model names which will be skipped during the copy
+	 */
+	CardEditor.prototype.propagateModels = function (oSource, oTarget, aSkipModels) {
+		var oSourceModels = extend({}, oSource.oPropagatedProperties.oModels, oSource.oModels),
+			aModelsNames = Object.keys(oSourceModels),
+			oDefaultModel = oSource.getModel();
+
+		if (oDefaultModel) {
+			oTarget.setModel(oDefaultModel);
+		}
+
+		aSkipModels = aSkipModels || [];
+
+		aModelsNames.forEach(function (sModelName) {
+			if (sModelName === "undefined") {
+				// "undefined" is used for the propagated default model, we have already copied it
+				return;
+			}
+
+			if (aSkipModels.includes(sModelName)) {
+				// model should not be copied if its name included the array aSkipModels
+				return;
+			}
+
+			var oModel = oSource.getModel(sModelName);
+
+			if (oModel) {
+				oTarget.setModel(oModel, sModelName);
+			}
+		});
 	};
 
 	CardEditor.prototype.createManifest = function (vIdOrSettings, bSuppress) {
