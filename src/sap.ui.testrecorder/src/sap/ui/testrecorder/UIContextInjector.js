@@ -132,7 +132,7 @@ sap.ui.define([
 
 		setTimeout(function () {
 			var fnBeforeUnloadListener = function () {
-				window.communicationWindows.testRecorder.removeEventListener("beforeunload", fnBeforeUnloadListener);
+				window.communicationWindows.testRecorder.removeEventListener("pagehide", fnBeforeUnloadListener);
 				if (!this._dockStarted && !this._closeTriggered) {
 					this.close();
 				}
@@ -144,7 +144,7 @@ sap.ui.define([
 					this.close();
 				}
 			} else {
-				window.communicationWindows.testRecorder.addEventListener("beforeunload", fnBeforeUnloadListener);
+				window.communicationWindows.testRecorder.addEventListener("pagehide", fnBeforeUnloadListener);
 			}
 		}.bind(this), 1000);
 	};
