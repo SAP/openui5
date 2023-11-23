@@ -56794,6 +56794,44 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	// Scenario: When working with group $auto, first call ODLB#create and then immediately call
+	// ODM#submitBatch. Expect that the latter's promise does not resolve before the create request
+	// is completed.
+	// BCP: 2370151708
+	QUnit.test("BCP: 2370151708 - submitBatch includes create ($auto)", async function (assert) {
+		const oModel = this.createTeaBusiModel({autoExpandSelect : true});
+		await this.createView(assert, "", oModel);
+
+		let fnResolveCreate;
+		this.expectRequest({
+				method : "POST",
+				payload : {},
+				url : "EMPLOYEES"
+			}, new Promise(function (resolve) {
+				fnResolveCreate = resolve.bind(null, {/* response does not matter here */});
+			}));
+
+		const oBinding = oModel.bindList("/EMPLOYEES");
+		const oContext = oBinding.create({}, true);
+		let bSubmitBatchCompleted = false;
+
+		// code under test
+		const oSubmitPromise = oModel.submitBatch("$auto").then(() => {
+			bSubmitBatchCompleted = true;
+		});
+
+		await this.waitForChanges(assert, "create+submitBatch");
+
+		assert.strictEqual(bSubmitBatchCompleted, false);
+
+		fnResolveCreate();
+
+		await Promise.all([oContext.created(), oSubmitPromise]);
+
+		assert.strictEqual(bSubmitBatchCompleted, true);
+	});
+
+	//*********************************************************************************************
 	// Scenario: Dependent ContextBinding below a dependent ListBinding, below of an absolute
 	// ListBinding, all w/ own cache. Set a row context of the absolute ListBinding as parent
 	// context for the dependent ListBinding, and a row context of the dependent ListBinding as
