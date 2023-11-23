@@ -37,6 +37,7 @@ sap.ui.define([
 	"sap/m/Page",
 	"sap/m/Slider",
 	"sap/m/MessageStrip",
+	"sap/m/NavContainer",
 	"sap/m/HBox",
 	"sap/m/App",
 	"sap/ui/thirdparty/jquery"
@@ -79,6 +80,7 @@ sap.ui.define([
 	Page,
 	Slider,
 	MessageStrip,
+	NavContainer,
 	HBox,
 	App,
 	jQuery
@@ -1071,7 +1073,8 @@ sap.ui.define([
 		})
 	];
 
-	var oPage = new Page("toolbar-page", {
+	var oPage = new NavContainer("toolbar-page", {
+		pages: [new Page({
 		title : "Overflow Toolbar - the buttons that do not fit go to an action sheet",
 		titleLevel: "H1",
 		enableScrolling : true,
@@ -1111,21 +1114,21 @@ sap.ui.define([
 				items: [
 					new Button("size_btn", {
 						text : "Change page width to 480px",
-						press : function() { jQuery("#toolbar-page").width("480px"); }
+						press : function() { Element.getElementById("toolbar-page").setWidth("480px"); }
 					}).addStyleClass("sapUiSmallMargin"),
 					new Button("size_btn2", {
 						text : "Change page width to 700px",
-						press : function() { jQuery("#toolbar-page").width("700px"); }
+						press : function() { Element.getElementById("toolbar-page").setWidth("700px"); }
 					}).addStyleClass("sapUiSmallMargin"),
 					new Button("size_btn3", {
 						text : "Change page width to 100%",
-						press : function() { jQuery("#toolbar-page").width("100%"); }
+						press : function() { Element.getElementById("toolbar-page").setWidth("100%"); }
 					}).addStyleClass("sapUiSmallMargin")
 				]
 			})
 		],
 	footer: aAllToolbars[aAllToolbars.length - 1]
-	});
+	})]});
 
 
 	var oApp = new App();
