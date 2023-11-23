@@ -99,6 +99,12 @@ sap.ui.define([
 					only: ["sap/ui/fl/initial/_internal/Storage"]
 				}
 			},
+			"initial/_internal/FlexConfiguration": {
+				group: "Initial Internal",
+				coverage: {
+					only: ["sap/ui/fl/initial/_internal/FlexConfiguration"]
+				}
+			},
 			"initial/_internal/StorageUtils": {
 				group: "Initial Internal",
 				coverage: {
