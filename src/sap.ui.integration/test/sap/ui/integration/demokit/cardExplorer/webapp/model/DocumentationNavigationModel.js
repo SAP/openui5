@@ -177,6 +177,12 @@ sap.ui.define([
 				key: 'features',
 				items: [
 					{
+						title: 'Actions Strip',
+						target: 'learnDetail',
+						key: 'actionsStrip',
+						experimental: true
+					},
+					{
 						title: 'Data',
 						target: 'learnDetail',
 						key: 'data'

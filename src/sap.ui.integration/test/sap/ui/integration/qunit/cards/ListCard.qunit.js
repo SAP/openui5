@@ -672,66 +672,6 @@ sap.ui.define([
 		}
 	};
 
-	var oManifest_ListCard_ActionsStrip = {
-		"sap.app": {
-			"id": "oManifest_ListCard_Actions_Strip"
-		},
-		"sap.card": {
-			"type": "List",
-			"header": {
-				"title": "Notebooks"
-			},
-			"content": {
-				"data": {
-					"json": [
-						{
-							"Name": "Comfort Easy",
-							"Description": "32 GB Digital Assistant with high-resolution color screen",
-							"Highlight": "Error",
-							"IsFavorite": true
-						},
-						{
-							"Name": "ITelO Vault",
-							"Description": "Digital Organizer with State-of-the-Art Storage Encryption",
-							"Highlight": "Warning",
-							"IsFavorite": true
-						},
-						{
-							"Name": "Notebook Professional 15",
-							"Description": "Notebook Professional 15 with 2,80 GHz quad core, 15\" Multitouch LCD, 8 GB DDR3 RAM, 500 GB SSD - DVD-Writer (DVD-R/+R/-RW/-RAM),Windows 8 Pro",
-							"Highlight": "Success",
-							"IsFavorite": false
-						},
-						{
-							"Name": "Ergo Screen E-I",
-							"Description": "Optimum Hi-Resolution max. 1920 x 1080 @ 85Hz, Dot Pitch: 0.27mm",
-							"Highlight": "Information",
-							"IsFavorite": false
-						},
-						{
-							"Name": "Laser Professional Eco",
-							"Description": "Print 2400 dpi image quality color documents at speeds of up to 32 ppm (color) or 36 ppm (monochrome), letter/A4. Powerful 500 MHz processor, 512MB of memory",
-							"Highlight": "None",
-							"IsFavorite": true
-						}
-					]
-				},
-				"maxItems": 5,
-				"item": {
-					"title": "{Name}",
-					"description": "{Description}",
-					"highlight": "{Highlight}",
-					"actionsStrip": [
-						{
-							"text": "Add to Favorites {Name}",
-							"visible": "{= !${IsFavorite}}"
-						}
-					]
-				}
-			}
-		}
-	};
-
 	var oManifest_TitleAndDescriptionFromParams = {
 		"sap.app": {
 			"id": "oManifest_TitleAndDescriptionFromParams"
@@ -1126,6 +1066,38 @@ sap.ui.define([
 	QUnit.test("List Card - ActionsStrip", function (assert) {
 		// Arrange
 		var done = assert.async();
+		var oManifest = {
+			"sap.app": {
+				"id": "oManifest_ListCard_Actions_Strip"
+			},
+			"sap.card": {
+				"type": "List",
+				"header": {
+					"title": "Notebooks"
+				},
+				"content": {
+					"data": {
+						"json": [
+							{
+								"Name": "Comfort Easy"
+							},
+							{
+								"Name": "ITelO Vault"
+							}
+						]
+					},
+					"item": {
+						"title": "{Name}",
+						"actionsStrip": [
+							{
+								"text": "Add to Favorites {Name}",
+								"visible": "{= !${IsFavorite}}"
+							}
+						]
+					}
+				}
+			}
+		};
 
 		this.oCard.attachEvent("_ready", function () {
 			Core.applyChanges();
@@ -1135,19 +1107,74 @@ sap.ui.define([
 				oActionsStrip = oListContentItem.getActionsStrip(),
 				aItems = oActionsStrip._getToolbar().getContent();
 
-			aItems.forEach(function (oItem) {
-				if (oItem.getEnabled) {
-					assert.ok(oItem.getEnabled(), "Action is initially enabled");
-				}
-			});
+			assert.strictEqual(aItems[1].getText(), "Add to Favorites Comfort Easy", "Action text is correct");
+			assert.ok(aItems[1].getEnabled(), "Action is initially enabled");
 
-			// Assert
-			assert.ok(oCardContent.isA("sap.ui.integration.cards.ListContent"), "list content is displayed");
 			done();
 		}.bind(this));
 
 		// Act
-		this.oCard.setManifest(oManifest_ListCard_ActionsStrip);
+		this.oCard.setManifest(oManifest);
+	});
+
+	QUnit.test("List Card - ActionsStrip with template", function (assert) {
+		var done = assert.async();
+		var oManifest = {
+			"sap.app": {
+				"id": "oManifest_ListCard_Actions_Strip"
+			},
+			"sap.card": {
+				"type": "List",
+				"header": {
+					"title": "Notebooks"
+				},
+				"content": {
+					"data": {
+						"json": [
+							{
+								"Name": "Comfort Easy",
+								"Actions": [{
+									"text": "Action 1"
+								}, {
+									"text": "Action 2"
+								}]
+							},
+							{
+								"Name": "ITelO Vault"
+							}
+						]
+					},
+					"item": {
+						"title": "{Name}",
+						"actionsStrip": {
+							"item": {
+								"template": {
+									"text": "{text}"
+								},
+								"path": "Actions"
+							}
+						}
+					}
+				}
+			}
+		};
+
+		this.oCard.attachEvent("_ready", function () {
+			Core.applyChanges();
+			var oCardContent = this.oCard.getCardContent(),
+				oList = oCardContent.getAggregation("_content"),
+				oListContentItem = oList.getItems()[0],
+				oActionsStrip = oListContentItem.getActionsStrip(),
+				aItems = oActionsStrip._getToolbar().getContent();
+
+			assert.strictEqual(aItems[1].getText(), "Action 1", "Action text is correct");
+			assert.strictEqual(aItems[2].getText(), "Action 2", "Action text is correct");
+
+			done();
+		}.bind(this));
+
+		// Act
+		this.oCard.setManifest(oManifest);
 	});
 
 	QUnit.test("Using maxItems manifest property", function (assert) {

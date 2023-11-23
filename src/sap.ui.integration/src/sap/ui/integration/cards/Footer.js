@@ -104,6 +104,12 @@ sap.ui.define([
 		}
 	});
 
+	Footer.prototype.onDataChanged = function () {
+		if (this.getActionsStrip()) {
+			this.getActionsStrip().onDataChanged();
+		}
+	};
+
 	Footer.prototype._hasBinding = function () {
 		var oConfiguration = BindingHelper.createBindingInfos(this.getConfiguration(), this.getCardInstance().getBindingNamespaces());
 
@@ -162,7 +168,7 @@ sap.ui.define([
 		return new Footer({
 			configuration: BindingHelper.createBindingInfos(oConfiguration, oCard.getBindingNamespaces()),
 			card: oCard,
-			actionsStrip: ActionsStrip.create(oCard, oConfiguration.actionsStrip, true),
+			actionsStrip: ActionsStrip.create(oConfiguration.actionsStrip, oCard, true),
 			paginator: Paginator.create(oCard, oConfiguration.paginator),
 			visible: oConfiguration.visible
 		});
