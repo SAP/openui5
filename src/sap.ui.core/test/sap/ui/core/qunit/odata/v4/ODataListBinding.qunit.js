@@ -1200,6 +1200,20 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("reset with change reason, unresolved binding", function (assert) {
+		var oBinding = this.bindList("EMPLOYEES");
+
+		oBinding.sChangeReason = "~sChangeReason~";
+		this.mock(oBinding).expects("getUpdateGroupId").never();
+		this.mock(oBinding).expects("_fireRefresh").never();
+
+		// code under test
+		oBinding.reset("n/a");
+
+		assert.strictEqual(oBinding.sChangeReason, "~sChangeReason~");
+	});
+
+	//*********************************************************************************************
 	QUnit.test("reset not initial binding with change reason 'Change'", function (assert) {
 		var oBinding = this.bindList("/EMPLOYEES");
 

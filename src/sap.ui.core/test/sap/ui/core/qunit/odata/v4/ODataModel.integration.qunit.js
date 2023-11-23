@@ -3373,6 +3373,8 @@ sap.ui.define([
 	// Scenario: A relative ODataListBinding later gets its parent context; check that
 	// auto-$expand/$select sends the right events
 	// BCP: 2080228141
+	//
+	// Call some APIs before resolving the ODLB (JIRA: CPOUI5ODATAV4-2408)
 	QUnit.test("BCP: 2080228141 - autoExpandSelect & late ODLB#setContext", function (assert) {
 		var oModel = this.createSalesOrdersModel({autoExpandSelect : true}),
 			sView = '\
@@ -3390,6 +3392,10 @@ sap.ui.define([
 		}).then(function () {
 			var oBinding = that.oView.byId("table").getBinding("rows");
 
+			oBinding.filter(new Filter("SalesOrderID", FilterOperator.NE, "00"));
+			oBinding.sort(new Sorter("SalesOrderID"));
+			oBinding.changeParameters({$count : true, custom : "foo"});
+
 			that.expectEvents(assert, "sap.ui.model.odata.v4.ODataListBinding: /SalesOrderList|", [
 					[, "change", {detailedReason : "AddVirtualContext", reason : "context"}],
 					[, "dataRequested"],
@@ -3398,7 +3404,9 @@ sap.ui.define([
 					[, "change", {reason : "change"}],
 					[, "dataReceived", {data : {}}]
 				])
-				.expectRequest("SalesOrderList?$select=Note,SalesOrderID&$skip=0&$top=3", {
+				.expectRequest("SalesOrderList?$count=true&custom=foo&$orderby=SalesOrderID"
+					+ "&$filter=SalesOrderID ne '00'&$select=Note,SalesOrderID&$skip=0&$top=3", {
+					"@odata.count" : "3",
 					value : [
 						{SalesOrderID : "01", Note : "Note 1"},
 						{SalesOrderID : "02", Note : "Note 2"},
@@ -26165,6 +26173,7 @@ sap.ui.define([
 	//
 	// Use relative ODLB with an initially suspended parent (JIRA: CPOUI5ODATAV4-1985 etc.)
 	// Additionally, ODLB#getDownloadUrl is tested (JIRA: CPOUI5ODATAV4-1920. BCP: 2370011296).
+	// #setAggregation before resolving the ODLB (JIRA: CPOUI5ODATAV4-2408)
 	//
 	// Ensure that a Return Value Context is created and the structure of the path is same like the
 	// binding parameter
@@ -26179,12 +26188,7 @@ sap.ui.define([
 			oTable,
 			sView = '\
 <FlexBox id="form" binding="{path : \'/TEAMS(\\\'42\\\')\', suspended : true}" />\
-<t:Table id="table" rows="{path : \'TEAM_2_EMPLOYEES\',\
-		parameters : {\
-			$$aggregation : {\
-				hierarchyQualifier : \'OrgChart\'\
-			}\
-		}}" threshold="0" visibleRowCount="2">\
+<t:Table id="table" rows="{TEAM_2_EMPLOYEES}" threshold="0" visibleRowCount="2">\
 	<Text text="{= %{@$ui5.node.isExpanded} }"/>\
 	<Text text="{= %{@$ui5.node.level} }"/>\
 	<Text text="{ID}"/>\
@@ -26220,7 +26224,10 @@ sap.ui.define([
 					}]
 				});
 
-			oTable.getBinding("rows").setContext(oContextBinding.getBoundContext());
+			const oBinding = oTable.getBinding("rows");
+			// code under test (JIRA: CPOUI5ODATAV4-2408)
+			oBinding.setAggregation({hierarchyQualifier : "OrgChart"});
+			oBinding.setContext(oContextBinding.getBoundContext());
 
 			return Promise.all([
 				oContextBinding.resumeAsync(), // Note: resume*Async* makes a big difference
@@ -26920,6 +26927,8 @@ sap.ui.define([
 	//
 	// Note: This currently does not work with a t:Table!
 	// @see QUnit.skip("ODLB: resume/refresh/filter w/ submitBatch on a t:Table"
+	//
+	// #setAggregation before resolving the ODLB (JIRA: CPOUI5ODATAV4-2408)
 [false, true].forEach(function (bSuspended) {
 	var sTitle = "Recursive Hierarchy: getKeepAliveContext, suspended = " + bSuspended;
 
@@ -26930,14 +26939,8 @@ sap.ui.define([
 			oTable,
 			sView = '\
 <Table id="list" growing="true" growingThreshold="3" items="{\
-		parameters : {\
-			$$aggregation : {\
-				expandTo : 2,\
-				hierarchyQualifier : \'OrgChart\'\
-			},\
-			$$getKeepAliveContext : true,\
-			$$ownRequest : true\
-		}, path : \'' + (bSuspended ? "/" : "") + "EMPLOYEES',\
+		parameters : {$$getKeepAliveContext : true, $$ownRequest : true},\
+		path : \'' + (bSuspended ? "/" : "") + "EMPLOYEES',\
 		suspended : " + bSuspended + '}">\
 	<Text text="{= %{@$ui5.node.isExpanded} }"/>\
 	<Text text="{= %{@$ui5.node.level} }"/>\
@@ -27031,6 +27034,9 @@ sap.ui.define([
 						Name : "Lambda"
 					}]
 				});
+
+			// code under test (JIRA: CPOUI5ODATAV4-2408)
+			oListBinding.setAggregation({expandTo : 2, hierarchyQualifier : "OrgChart"});
 
 			if (bSuspended) {
 				// code under test
@@ -47734,12 +47740,13 @@ make root = ${bMakeRoot}`;
 	//*********************************************************************************************
 	// Scenario: create at end w/ $count, before read is finished
 	// BCP: 2070486792
+	//
+	// #changeParameters before resolving the ODLB (JIRA: CPOUI5ODATAV4-2408)
 	QUnit.test("ODLB: create at end w/ $count before read", function (assert) {
 		var oBinding,
 			oModel = this.createTeaBusiModel({autoExpandSelect : true}),
 			sView = '\
-<Table id="table" growing="true" growingThreshold="2"\
-		items="{path : \'EMPLOYEES\', parameters : {$count : true}}">\
+<Table id="table" growing="true" growingThreshold="2" items="{EMPLOYEES}">\
 	<Text id="name" text="{Name}"/>\
 </Table>',
 			that = this;
@@ -47771,6 +47778,8 @@ make root = ${bMakeRoot}`;
 				.expectChange("name", ["Frederic Fall", "John Doe"]);
 
 			oBinding = that.oView.byId("table").getBinding("items");
+			// code under test (JIRA: CPOUI5ODATAV4-2408)
+			oBinding.changeParameters({$count : true});
 			oBinding.setContext(that.oModel.createBindingContext("/"));
 
 			// code under test

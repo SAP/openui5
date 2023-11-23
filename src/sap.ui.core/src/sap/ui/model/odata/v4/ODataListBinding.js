@@ -4008,7 +4008,7 @@ sap.ui.define([
 	 * @param {sap.ui.model.ChangeReason} [sChangeReason]
 	 *   A change reason; if given, a refresh event with this reason is fired and the next
 	 *   getContexts() fires a change event with this reason. Change reason "change" is ignored
-	 *   as long as the binding is still empty.
+	 *   as long as the binding is still empty. Ignored for an unresolved binding.
 	 * @param {boolean} [bDrop]
 	 *   By default, all created persisted contexts are dropped while transient ones are not.
 	 *   (Deleted contexts are not affected here.) <code>true</code> also drops transient ones, and
@@ -4069,7 +4069,8 @@ sap.ui.define([
 		// Note: the binding's length can be greater than this.iMaxLength due to iCreatedContexts!
 		this.iMaxLength = Infinity;
 		this.bLengthFinal = false;
-		if (sChangeReason && !(bEmpty && sChangeReason === ChangeReason.Change)) {
+		if (sChangeReason && !(bEmpty && sChangeReason === ChangeReason.Change)
+				&& this.isResolved()) {
 			this.sChangeReason = sChangeReason;
 			this._fireRefresh({reason : sChangeReason});
 		}
