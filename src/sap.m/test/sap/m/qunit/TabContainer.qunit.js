@@ -45,7 +45,7 @@ sap.ui.define([
 
 
 
-	oCore.setModel(new JSONModel({
+	const oModel = new JSONModel({
 		"ProductCollection": [
 			{
 				"ProductId": "1239102",
@@ -93,7 +93,7 @@ sap.ui.define([
 				"CurrencyCode": "EUR"
 			}
 		]
-	}));
+	});
 
 	var oTemplate = new TabContainerItem({
 		name: "{Name}",
@@ -115,7 +115,7 @@ sap.ui.define([
 				},
 				showAddNewButton: true
 			});
-
+			this.oTabContainer.setModel(oModel);
 			this.oTabContainer.placeAt("qunit-fixture");
 			oCore.applyChanges();
 		},
@@ -146,7 +146,7 @@ sap.ui.define([
 
 		this.clock.tick(1000);
 
-			assert.equal(jQuery( "div." + TabStripItem.CSS_CLASS_LABEL + ":contains(" + sName + ")").length, 1, 'Element with name "' + sName + '" is still in the DOM.');
+		assert.equal(jQuery( "div." + TabStripItem.CSS_CLASS_LABEL + ":contains(" + sName + ")").length, 1, 'Element with name "' + sName + '" is still in the DOM.');
 
 		var oMessageBundle = Library.getResourceBundleFor("sap.m"),
 			oSelectDomRef = this.oTabContainer._getTabStrip().getAggregation('_select').getFocusDomRef();
@@ -208,6 +208,7 @@ sap.ui.define([
 				}
 			});
 
+			this.oTabContainer.setModel(oModel);
 			this.oTabContainer.placeAt("qunit-fixture");
 			oCore.applyChanges();
 		},
@@ -263,18 +264,18 @@ sap.ui.define([
 		assert.equal(this.oTabContainer.$().attr("data-sap-ui-fastnavgroup"), "true", 'TabContainer is a fast navigation group.');
 	});
 
-		QUnit.test("_initResponsivePaddingsEnablement is called on init", function (assert) {
-			// Arrange
-			var oSpy = this.spy(TabContainer.prototype, "_initResponsivePaddingsEnablement"),
-				oTestPage = new TabContainer({}).placeAt("qunit-fixture");
+	QUnit.test("_initResponsivePaddingsEnablement is called on init", function (assert) {
+		// Arrange
+		var oSpy = this.spy(TabContainer.prototype, "_initResponsivePaddingsEnablement"),
+			oTestPage = new TabContainer({}).placeAt("qunit-fixture");
 
-			// Assert
-			assert.strictEqual(oSpy.callCount, 1, "Method _initResponsivePaddingsEnablement called on init of control");
-			assert.ok(oSpy.calledOn(oTestPage), "The spy is called on the tested control instance");
+		// Assert
+		assert.strictEqual(oSpy.callCount, 1, "Method _initResponsivePaddingsEnablement called on init of control");
+		assert.ok(oSpy.calledOn(oTestPage), "The spy is called on the tested control instance");
 
-			//clean
-			oTestPage.destroy();
-		});
+		//clean
+		oTestPage.destroy();
+	});
 
 	QUnit.test("Add button rendering in nested TabContainer with binding", function (assert) {
 		//arrange
@@ -307,6 +308,7 @@ sap.ui.define([
 			}
 		});
 
+		oTabContainer2.setModel(oModel);
 		oTabContainer2.placeAt("qunit-fixture");
 		oCore.applyChanges();
 
@@ -342,6 +344,7 @@ sap.ui.define([
 				}
 			});
 
+			this.oTabContainer.setModel(oModel);
 			this.oTabContainer.placeAt("qunit-fixture");
 			this.oTabStrip = this.oTabContainer._getTabStrip();
 			this.items = this.oTabContainer.getItems();
@@ -365,6 +368,7 @@ sap.ui.define([
 			}
 		});
 
+		oTabContainer.setModel(oModel);
 		oTabContainer.placeAt("qunit-fixture");
 		oCore.applyChanges();
 
@@ -404,6 +408,7 @@ sap.ui.define([
 			this.oTabContainer = new TabContainer({
 			});
 
+			this.oTabContainer.setModel(oModel);
 			this.oTabContainer.placeAt("qunit-fixture");
 			this.oTabStrip = this.oTabContainer._getTabStrip();
 			this.items = this.oTabContainer.getItems();
@@ -547,6 +552,7 @@ sap.ui.define([
 				selectedItem: this.item
 			});
 
+			this.oTabContainer.setModel(oModel);
 			this.oTabContainer.placeAt("qunit-fixture");
 			this.oTabStrip = this.oTabContainer._getTabStrip();
 			this.items = this.oTabContainer.getItems();

@@ -2725,7 +2725,9 @@ sap.ui.define([
 
 		QUnit.module("Error handling", {
 			beforeEach: function () {
-				this.oCard = new Card();
+				this.oCard = new Card({
+					baseUrl: "test-resources/sap/ui/integration/qunit/testResources"
+				});
 				this.oRb = Library.getResourceBundleFor("sap.ui.integration");
 				this.oCard.placeAt(DOM_RENDER_LOCATION);
 			},
@@ -2846,9 +2848,8 @@ sap.ui.define([
 			this.oCard.attachEventOnce("_ready", function () {
 				Core.applyChanges();
 
-				assert.ok(
-					oLogSpy.calledWith(sinon.match(/LISTD/)),
-					"Error message should be logged"
+				var isMessageCorrect = oLogSpy.firstCall.args[1] ? oLogSpy.firstCall.args[1].message.includes("LISTD") : false;
+				assert.ok(isMessageCorrect, "Error message with correct details should be logged"
 				);
 
 				// Clean up

@@ -117,7 +117,7 @@ sap.ui.define([
 
 	QUnit.module("LayerUtils.isLayerFilteringRequired", {
 		afterEach() {
-			FlexInfoSession.remove();
+			FlexInfoSession.removeByReference();
 			sandbox.restore();
 		}
 	}, function() {

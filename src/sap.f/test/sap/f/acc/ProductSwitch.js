@@ -79,7 +79,6 @@ sap.ui.define([
 	};
 
 	oModel.setData(mData);
-	sap.ui.getCore().setModel(oModel);
 
 	var oItemTemplate = new ProductSwitchItem({
 		src: "{src}",
@@ -100,6 +99,9 @@ sap.ui.define([
 		content: [ productSwitch ]
 	}).addStyleClass("sapUiContentPadding");
 
-	var oApp = new App("myApp", { initialPage: "page" });
+	var oApp = new App("myApp", {
+		initialPage: "page",
+		models: oModel
+	});
 	oApp.addPage(oPage).placeAt("content");
 });

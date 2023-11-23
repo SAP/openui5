@@ -112,7 +112,6 @@ sap.ui.define([
 			checkbox_label : "lorem ipsum checkbox label"
 		}
 	});
-	oCore.setModel(model);
 
 	var oVsdConfig = {
 		// Factory for the 'content' aggregation for custom tabs - with or without items in it.
@@ -460,6 +459,7 @@ sap.ui.define([
 		beforeEach : function () {
 			this.oResourceBundle = Library.getResourceBundleFor("sap.m");
 			this.oVSD = new ViewSettingsDialog();
+			this.oVSD.setModel(model);
 			this.oVSD.placeAt("qunit-fixture");
 			oCore.applyChanges();
 		},
@@ -482,6 +482,7 @@ sap.ui.define([
 	QUnit.module("States", {
 		beforeEach : function () {
 			this.oVSD = new ViewSettingsDialog();
+			this.oVSD.setModel(model);
 			this.oVSD.placeAt("qunit-fixture");
 			oCore.applyChanges();
 		},
@@ -526,6 +527,7 @@ sap.ui.define([
 			this.oSelectedGroupItem = this.oVSD.getGroupItems()[1];
 			this.oSelectedPresetFilterItem = this.oVSD.getPresetFilterItems()[1];
 
+			this.oVSD.setModel(model);
 			this.oVSD.placeAt("qunit-fixture");
 			oCore.applyChanges();
 		},
@@ -747,6 +749,7 @@ sap.ui.define([
 			this.oSelectedGroupItem = this.oVSD.getGroupItems()[1];
 			this.oSelectedPresetFilterItem = this.oVSD.getPresetFilterItems()[1];
 
+			this.oVSD.setModel(model);
 			this.oVSD.placeAt("qunit-fixture");
 			oCore.applyChanges();
 		},
@@ -782,6 +785,7 @@ sap.ui.define([
 			oVsdConfig.addFilterItems(this.oVSD);
 			oVsdConfig.addPresetFilterItems(this.oVSD);
 
+			this.oVSD.setModel(model);
 			this.oVSD.placeAt("qunit-fixture");
 			oCore.applyChanges();
 		},
@@ -824,6 +828,7 @@ sap.ui.define([
 		beforeEach: function () {
 			this.oVSD = new ViewSettingsDialog();
 			oVsdConfig.addFilterItems(this.oVSD);
+			this.oVSD.setModel(model);
 			this.oVSD.placeAt("qunit-fixture");
 			oCore.applyChanges();
 		},
@@ -897,6 +902,7 @@ sap.ui.define([
 			this.oSelectedGroupItem = this.oVSD.getGroupItems()[1];
 			this.oSelectedPresetFilterItem = this.oVSD.getPresetFilterItems()[1];
 
+			this.oVSD.setModel(model);
 			this.oVSD.placeAt("qunit-fixture");
 			oCore.applyChanges();
 		},
@@ -1184,6 +1190,7 @@ sap.ui.define([
 			this.oSelectedGroupItem = this.oVSD.getGroupItems()[1];
 			this.oSelectedPresetFilterItem = this.oVSD.getPresetFilterItems()[1];
 
+			this.oVSD.setModel(model);
 			this.oVSD.placeAt("qunit-fixture");
 			oCore.applyChanges();
 		},
@@ -1394,6 +1401,7 @@ sap.ui.define([
 					})
 				]
 			});
+			this.oVSD.setModel(model);
 			this.oVSD.placeAt("qunit-fixture");
 			oCore.applyChanges();
 		},
@@ -1448,6 +1456,7 @@ sap.ui.define([
 						})
 					]
 				});
+			this.oVSD.setModel(model);
 				this.oVSD.placeAt("qunit-fixture");
 				oCore.applyChanges();
 			},
@@ -1497,6 +1506,7 @@ sap.ui.define([
 					})
 				]
 			});
+			this.oVSD.setModel(model);
 			this.oVSD.placeAt("qunit-fixture");
 			oCore.applyChanges();
 		},
@@ -1543,6 +1553,7 @@ sap.ui.define([
 
 			oVsdConfig.addFilterItems(this.oVSD);
 
+			this.oVSD.setModel(model);
 			this.oVSD.placeAt("qunit-fixture");
 			oCore.applyChanges();
 		},
@@ -2136,6 +2147,7 @@ sap.ui.define([
 				}
 			};
 
+			this.oVSD.setModel(model);
 			this.oVSD.placeAt("qunit-fixture");
 			oCore.applyChanges();
 		},
@@ -2344,6 +2356,7 @@ sap.ui.define([
 				text: "Other"
 			}));
 
+			this.oVSD.setModel(model);
 			this.oVSD.placeAt("qunit-fixture");
 			oCore.applyChanges();
 		}
@@ -2405,6 +2418,7 @@ sap.ui.define([
 		beforeEach : function () {
 			this.oVSD = new ViewSettingsDialog();
 
+			this.oVSD.setModel(model);
 			this.oVSD.placeAt("qunit-fixture");
 			oCore.applyChanges();
 		},
@@ -2849,50 +2863,50 @@ sap.ui.define([
 
 
 	QUnit.test("_oPreviousState.contentItem is properly cloned when it is bound to a model", function (assert) {
-	var that = this,
-		done = assert.async(),
-		modelData = this.getFirstModelData(),
-		oModel = new JSONModel();
+		var that = this,
+			done = assert.async(),
+			modelData = this.getFirstModelData(),
+			oModel = new JSONModel();
 
-	oModel.setData(modelData);
-	this.oVSD.setModel(oModel);
-	this.bindAggregations(this.oVSD);
+		oModel.setData(modelData);
+		this.oVSD.setModel(oModel);
+		this.bindAggregations(this.oVSD);
 
-	// Step 1
-	// Open ViewSettingsDialog
-	this.oVSD.open();
-	this.oVSD._dialog.attachAfterOpen(afterFirstOpen);
-
-	function afterFirstOpen() {
-		// Step 2
-		// Simulate navigation to filter details page of STATUS filter item
-		var vsdFilterItem = that.oVSD.getFilterItems()[0];
-		that.oVSD._switchToPage(3, vsdFilterItem);
-
-		// Assert items text
-		var aFilterItems = that.oVSD._filterDetailList.getItems();
-		assert.strictEqual(aFilterItems[0].getTitle(), "item2", "Text of the item is properly set");
-
-		// Simulate confirm button click
-		that.oVSD._onConfirm();
-		that.oVSD._dialog.detachAfterOpen(afterFirstOpen);
-
+		// Step 1
 		// Open ViewSettingsDialog
-		that.oVSD.open();
-		that.oVSD._dialog.attachAfterOpen(afterSecondOpen);
-	}
+		this.oVSD.open();
+		this.oVSD._dialog.attachAfterOpen(afterFirstOpen);
 
-	function afterSecondOpen() {
-		// Step 3
-		// Assert
-		var aFilterItems = that.oVSD._oPreviousState.contentItem.getItems();
-		assert.strictEqual(aFilterItems[0].getText(), "item2", "Text of the previous state content item is properly set");
+		function afterFirstOpen() {
+			// Step 2
+			// Simulate navigation to filter details page of STATUS filter item
+			var vsdFilterItem = that.oVSD.getFilterItems()[0];
+			that.oVSD._switchToPage(3, vsdFilterItem);
 
-		that.oVSD._dialog.detachAfterOpen(afterSecondOpen);
+			// Assert items text
+			var aFilterItems = that.oVSD._filterDetailList.getItems();
+			assert.strictEqual(aFilterItems[0].getTitle(), "item2", "Text of the item is properly set");
 
-		done();
-	}
-});
+			// Simulate confirm button click
+			that.oVSD._onConfirm();
+			that.oVSD._dialog.detachAfterOpen(afterFirstOpen);
+
+			// Open ViewSettingsDialog
+			that.oVSD.open();
+			that.oVSD._dialog.attachAfterOpen(afterSecondOpen);
+		}
+
+		function afterSecondOpen() {
+			// Step 3
+			// Assert
+			var aFilterItems = that.oVSD._oPreviousState.contentItem.getItems();
+			assert.strictEqual(aFilterItems[0].getText(), "item2", "Text of the previous state content item is properly set");
+
+			that.oVSD._dialog.detachAfterOpen(afterSecondOpen);
+
+			done();
+		}
+	});
 
 	QUnit.test("Reset Button is available on second open of the ViewSettinsDialog", function (assert) {
 		var modelData = this.getFirstModelData();

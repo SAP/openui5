@@ -885,7 +885,6 @@ sap.ui.define([
 			var oModel = new JSONModel({
 				values: createListValues(5)
 			});
-			sap.ui.getCore().setModel(oModel);
 			var oFFL = new FacetFilterList({
 				title: "ParentModelKeysListOpenBinding",
 				growingThreshold: 3,
@@ -901,6 +900,7 @@ sap.ui.define([
 				},
 				listClose: handleListClose
 			});
+			oFFL.setModel(oModel);
 
 			oFF.addList(oFFL);
 			oFFL.setSelectedKeys({"val1": "Val1", "val5": "Val5"});

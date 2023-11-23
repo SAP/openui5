@@ -8639,7 +8639,10 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("getParent: given node is a root node", function (assert) {
+[true, false].forEach(function (bAllowRequest) {
+	const sTitle = "fetchOrGetParent: given node is a root node, bAllowRequest = " + bAllowRequest;
+
+	QUnit.test(sTitle, function (assert) {
 		const oBinding = this.bindList("/EMPLOYEES");
 		const oNode = {iIndex : 23};
 		// Note: autoExpandSelect at model would be required for hierarchyQualifier, but that leads
@@ -8657,28 +8660,29 @@ sap.ui.define([
 			.returns(-1);
 
 		// code under test
-		assert.strictEqual(oBinding.getParent(oNode), null);
+		assert.strictEqual(oBinding.fetchOrGetParent(oNode, bAllowRequest), null);
 	});
+});
 
 	//*********************************************************************************************
-	QUnit.test("getParent: Missing recursive hierarchy", function (assert) {
+	QUnit.test("fetchOrGetParent: Missing recursive hierarchy", function (assert) {
 		const oBinding = this.bindList("/EMPLOYEES");
 
 		assert.throws(function () {
 			// code under test
-			oBinding.getParent();
+			oBinding.fetchOrGetParent();
 		}, new Error("Missing recursive hierarchy"));
 
 		oBinding.mParameters = {$$aggregation : {}};
 
 		assert.throws(function () {
 			// code under test
-			oBinding.getParent();
+			oBinding.fetchOrGetParent();
 		}, new Error("Missing recursive hierarchy"));
 	});
 
 	//*********************************************************************************************
-	QUnit.test("getParent: given node is not part of a recursive hierachy", function (assert) {
+	QUnit.test("fetchOrGetParent: not part of a recursive hierachy", function (assert) {
 		const oBinding = this.bindList("/EMPLOYEES");
 		const oNode = Context.create({/*oModel*/}, oBinding, "/EMPLOYEES('42')", 23);
 		// Note: autoExpandSelect at model would be required for hierarchyQualifier, but that leads
@@ -8692,18 +8696,18 @@ sap.ui.define([
 
 		assert.throws(function () {
 			// code under test
-			oBinding.getParent(oNode);
+			oBinding.fetchOrGetParent(oNode);
 		}, new Error("Not currently part of a recursive hierarchy: " + oNode));
 	});
 
 	//*********************************************************************************************
 [true, false].forEach(function (bParentFound) {
-	QUnit.test("getParent", function (assert) {
+	const sTitle = "fetchOrGetParent: request not allowed, bParentFound = " + bParentFound;
+
+	QUnit.test(sTitle, function (assert) {
 		const oBinding = this.bindList("/EMPLOYEES");
 		const oNode = {iIndex : 42};
-		const oParentContext = {};
-
-		oBinding.aContexts[23] = oParentContext;
+		oBinding.aContexts[23] = "~oParentContext~";
 		oBinding.aContexts[42] = oNode;
 		oBinding.oCache = {getParentIndex : mustBeMocked};
 
@@ -8720,94 +8724,17 @@ sap.ui.define([
 			.returns(bParentFound ? 23 : undefined);
 
 		// code under test
-		assert.strictEqual(oBinding.getParent(oNode), bParentFound ? oParentContext : undefined);
+		assert.strictEqual(
+			oBinding.fetchOrGetParent(oNode),
+			bParentFound ? "~oParentContext~" : undefined
+		);
 	});
 });
 
 	//*********************************************************************************************
-	QUnit.test("requestParent: Missing recursive hierarchy", function (assert) {
-		const oBinding = this.bindList("/EMPLOYEES");
-
-		assert.throws(function () {
-			// code under test
-			oBinding.requestParent();
-		}, new Error("Missing recursive hierarchy"));
-
-		oBinding.mParameters = {$$aggregation : {}};
-
-		assert.throws(function () {
-			// code under test
-			oBinding.requestParent();
-		}, new Error("Missing recursive hierarchy"));
-	});
-
-	//*********************************************************************************************
-	QUnit.test("requestParent: throws error if expandTo > 1", function (assert) {
-		const oBinding = this.bindList("/EMPLOYEES");
-		// Note: autoExpandSelect at model would be required for hierarchyQualifier, but that leads
-		// too far
-		oBinding.mParameters = {
-			$$aggregation : {
-				expandTo : 2,
-				hierarchyQualifier : "X"
-			}
-		};
-
-		assert.throws(function () {
-			// code under test
-			oBinding.requestParent();
-		}, new Error("Unsupported $$aggregation.expandTo: 2"));
-	});
-
-	//*********************************************************************************************
-	QUnit.test("requestParent: given node is not part of a recursive hierachy", function (assert) {
-		const oBinding = this.bindList("/EMPLOYEES");
-		const oNode = Context.create({/*oModel*/}, oBinding, "/EMPLOYEES('42')", 23);
-		// Note: autoExpandSelect at model would be required for hierarchyQualifier, but that leads
-		// too far
-		oBinding.mParameters = {
-			$$aggregation : {
-				expandTo : 1,
-				hierarchyQualifier : "X"
-			}
-		};
-
-		assert.throws(function () {
-			// code under test
-			oBinding.requestParent(oNode);
-		}, new Error("Not currently part of a recursive hierarchy: " + oNode));
-	});
-
-	//*********************************************************************************************
-	QUnit.test("requestParent: given node is a root node", async function (assert) {
-		const oBinding = this.bindList("/EMPLOYEES");
-		const oNode = {iIndex : 23};
-		// Note: autoExpandSelect at model would be required for hierarchyQualifier, but that leads
-		// too far
-		oBinding.mParameters = {
-			$$aggregation : {
-				expandTo : 1,
-				hierarchyQualifier : "X"
-			}
-		};
-		oBinding.aContexts[23] = oNode;
-		oBinding.oCache = {getParentIndex : mustBeMocked};
-
-		this.mock(oBinding.oCache).expects("getParentIndex").withExactArgs(23)
-			.returns(-1);
-
-		// code under test
-		const oPromise = oBinding.requestParent(oNode);
-		assert.ok(oPromise instanceof Promise);
-		assert.strictEqual(await oPromise, null);
-	});
-
-	//*********************************************************************************************
-	QUnit.test("requestParent", async function (assert) {
+	QUnit.test("fetchOrGetParent: index of parent is known", async function (assert) {
 		const oBinding = this.bindList("/EMPLOYEES");
 		const oNode = {iIndex : 42};
-		const oParentContext = {};
-
 		oBinding.aContexts[42] = oNode;
 		oBinding.oCache = {getParentIndex : mustBeMocked};
 
@@ -8823,19 +8750,58 @@ sap.ui.define([
 		this.mock(oBinding.oCache).expects("getParentIndex").withExactArgs(42)
 			.returns("~iParentIndex~");
 		this.mock(oBinding).expects("requestContexts").withExactArgs("~iParentIndex~", 1)
-			.resolves([oParentContext]);
+			.resolves(["~oParentContext~"]);
 
 		// code under test
-		const oPromise = oBinding.requestParent(oNode);
+		const oPromise = oBinding.fetchOrGetParent(oNode, true);
 		assert.ok(oPromise instanceof Promise);
-		assert.strictEqual(await oPromise, oParentContext);
+		assert.strictEqual(await oPromise, "~oParentContext~");
 	});
 
 	//*********************************************************************************************
-	QUnit.test("requestParent: requestContexts rejects", function (assert) {
+	QUnit.test("fetchOrGetParent: index of parent is not known", function (assert) {
 		const oBinding = this.bindList("/EMPLOYEES");
 		const oNode = {iIndex : 42};
+		oBinding.aContexts[42] = oNode;
+		oBinding.oCache = {
+			fetchParent : mustBeMocked,
+			getParentIndex : mustBeMocked
+		};
 
+		// Note: autoExpandSelect at model would be required for hierarchyQualifier, but that leads
+		// too far
+		oBinding.mParameters = {
+			$$aggregation : {
+				expandTo : 1,
+				hierarchyQualifier : "X"
+			}
+		};
+
+		this.mock(oBinding.oCache).expects("getParentIndex").withExactArgs(42)
+			.returns(undefined);
+		this.mock(oBinding).expects("lockGroup").withExactArgs().returns("~oGroupLock~");
+		this.mock(oBinding.oCache).expects("fetchParent").withExactArgs(42, "~oGroupLock~")
+			.returns(SyncPromise.resolve("~oResult~"));
+		this.mock(oBinding).expects("getResolvedPath").withExactArgs().returns("/resolved/path");
+		this.mock(_Helper).expects("getPrivateAnnotation")
+			.withExactArgs("~oResult~", "predicate")
+			.returns("('bar')");
+		this.mock(Context).expects("create")
+			.withExactArgs(this.oModel, oBinding, "/resolved/path('bar')")
+			.returns("~oParentContext~");
+
+		// code under test
+		return oBinding.fetchOrGetParent(oNode, true).then(function (oResult) {
+			assert.strictEqual(oResult, "~oParentContext~");
+			assert.strictEqual(oBinding.mPreviousContextsByPath["/resolved/path('bar')"],
+				"~oParentContext~");
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("fetchOrGetParent: requestContexts rejects", function (assert) {
+		const oBinding = this.bindList("/EMPLOYEES");
+		const oNode = {iIndex : 42};
 		oBinding.aContexts[42] = oNode;
 		oBinding.oCache = {getParentIndex : mustBeMocked};
 
@@ -8855,7 +8821,7 @@ sap.ui.define([
 			.rejects(oError);
 
 		// code under test
-		return oBinding.requestParent(oNode)
+		return oBinding.fetchOrGetParent(oNode, true)
 			.then(function () {
 				assert.ok(false);
 			}, function (oReturnedError) {

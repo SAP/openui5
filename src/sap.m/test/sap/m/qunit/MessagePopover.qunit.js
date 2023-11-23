@@ -129,7 +129,7 @@ sap.ui.define([
 		bindMessagePopover: function (oMessagePopover, oData) {
 			var oModel = new JSONModel();
 			oModel.setData(oData);
-			Core.setModel(oModel);
+			oMessagePopover.setModel(oModel);
 
 			oMessagePopover.bindAggregation("items", {
 				path: "/messages",
@@ -989,7 +989,7 @@ sap.ui.define([
 		bindMessagePopover: function(oMessagePopover, oData) {
 			var oModel = new JSONModel();
 			oModel.setData(oData);
-			Core.setModel(oModel);
+			oMessagePopover.setModel(oModel);
 
 			oMessagePopover.bindAggregation("items", {
 				path: "/messages",
@@ -1410,13 +1410,13 @@ sap.ui.define([
 			});
 
 			var aMessages = [oMessage];
-			var oMessageModel = Core.getModel("messageSummary");
+			var oMessageModel = oMessagePopover.getModel("messageSummary");
 			oMessageModel.setData(aMessages);
 
 			oMessagePopover.navigateBack();
 		};
 
-		Core.setModel(new JSONModel([]), "messageSummary");
+		oMessagePopover.setModel(new JSONModel([]), "messageSummary");
 		_setMessageModel("[ERROR] Veniam esse veniam nisi irure et labore eu consectetur dolor.", "Error");
 
 		oButton.addDependent(oMessagePopover);

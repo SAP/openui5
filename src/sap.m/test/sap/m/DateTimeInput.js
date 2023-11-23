@@ -1,7 +1,6 @@
 sap.ui.define([
 	"sap/ui/core/library",
 	"sap/m/library",
-	"sap/ui/core/Core",
 	"sap/ui/core/Element",
 	"sap/m/App",
 	"sap/m/Page",
@@ -23,7 +22,6 @@ sap.ui.define([
 ], function(
 	coreLibrary,
 	mLibrary,
-	Core,
 	Element,
 	App,
 	Page,
@@ -68,12 +66,10 @@ sap.ui.define([
 		dateVal5 : UI5Date.getInstance(iNow)
 	});
 
-	Core.setModel(oModel);
-
 	var iEvent = 0;
 	function handleChange(oEvent){
 		var oDTI = oEvent.getSource(),
-			oInput = Element.registry.get("I2"),
+			oInput = Element.getElementById("I2"),
 			sValue = oEvent.getParameter("value"),
 			bValid = oEvent.getParameter("valid");
 
@@ -87,31 +83,29 @@ sap.ui.define([
 		}
 	}
 
-	Core.attachParseError(
-			function(oEvent) {
-				var oElement = oEvent.getParameter("element"),
-					oValue = oEvent.getParameter('newValue'),
-					oInput = sap.ui.getCore().byId("I2");
+	function parseError(oEvent) {
+		var oElement = oEvent.getParameter("element"),
+			oValue = oEvent.getParameter('newValue'),
+			oInput = Element.getElementById("I2");
 
-				oInput.setValue( "ParseError: Entered value: " + oValue);
+		oInput.setValue( "ParseError: Entered value: " + oValue);
 
-				if (oElement.setValueState) {
-					oElement.setValueState(ValueState.Error);
-				}
-			});
+		if (oElement.setValueState) {
+			oElement.setValueState(ValueState.Error);
+		}
+	}
 
-	Core.attachValidationSuccess(
-		function(oEvent) {
-			var oElement = oEvent.getParameter("element"),
-				oValue = oEvent.getParameter('newValue'),
-				oInput = Element.registry.get("I2");
+	function validationSuccess(oEvent) {
+		var oElement = oEvent.getParameter("element"),
+			oValue = oEvent.getParameter('newValue'),
+			oInput = Element.getElementById("I2");
 
-			oInput.setValue( "ValidationSuccess: Entered value: " + oValue);
+		oInput.setValue( "ValidationSuccess: Entered value: " + oValue);
 
-			if (oElement.setValueState) {
-				oElement.setValueState(ValueState.None);
-			}
-		});
+		if (oElement.setValueState) {
+			oElement.setValueState(ValueState.None);
+		}
+	}
 
 	var oPage = new Page({
 		title : "DateTimeInput Controls",
@@ -326,5 +320,10 @@ sap.ui.define([
 		]
 	});
 
-	new App().addPage(oPage).placeAt("body");
+	new App({
+		pages: oPage,
+		models: oModel,
+		parseError,
+		validationSuccess
+	}).placeAt("body");
 });

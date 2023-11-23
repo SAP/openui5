@@ -868,7 +868,8 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns the parent node (in case of a recursive hierarchy; see {@link #setAggregation}) or
+	 * Returns the parent node (in case of a recursive hierarchy; see
+	 * {@link sap.ui.model.odata.v4.ODataListBinding#setAggregation}) or
 	 * <code>undefined</code> if the parent of this node hasn't been read yet; it can then be
 	 * requested via {@link #requestParent}.
 	 *
@@ -885,10 +886,10 @@ sap.ui.define([
 	 * @public
 	 */
 	Context.prototype.getParent = function () {
-		if (!this.oBinding.getParent) {
+		if (!this.oBinding.fetchOrGetParent) {
 			throw new Error("Not a list binding's context: " + this);
 		}
-		return this.oBinding.getParent(this);
+		return this.oBinding.fetchOrGetParent(this);
 	};
 
 	/**
@@ -1394,8 +1395,10 @@ sap.ui.define([
 	};
 
 	/**
-	 * Requests the parent node (in case of a recursive hierarchy, see {@link #setAggregation},
-	 * where <code>oAggregation.expandTo</code> must be equal to one).
+	 * Requests the parent node (in case of a recursive hierarchy; see
+	 * {@link sap.ui.model.odata.v4.ODataListBinding#setAggregation}).
+	 *
+	 * Note: <strong>DO NOT</strong> call {@link #setKeepAlive} on the resulting context!
 	 *
 	 * @returns {Promise<sap.ui.model.odata.v4.Context|null>} A promise which:
 	 *   <ul>
@@ -1406,8 +1409,7 @@ sap.ui.define([
 	 * @throws {Error} If
 	 *   <ul>
 	 *     <li> this context is not a list binding's context,
-	 *     <li> this context is not part of a recursive hierarchy,
-	 *     <li> <code>oAggregation.expandTo</code> is greater than one.
+	 *     <li> this context is not part of a recursive hierarchy.
 	 *    </ul>
 	 *
 	 * @experimental As of version 1.120.0
@@ -1415,10 +1417,10 @@ sap.ui.define([
 	 * @see #getParent
 	 */
 	Context.prototype.requestParent = function () {
-		if (!this.oBinding.requestParent) {
+		if (!this.oBinding.fetchOrGetParent) {
 			throw new Error("Not a list binding's context: " + this);
 		}
-		return this.oBinding.requestParent(this);
+		return Promise.resolve(this.oBinding.fetchOrGetParent(this, true));
 	};
 
 	/**

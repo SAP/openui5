@@ -4,7 +4,7 @@ sap.ui.define([
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	'sap/ui/Device',
 	"sap/m/InputBase",
-	"sap/m/library",
+	"sap/m/delegate/ValueStateMessage",
 	"sap/m/Select",
 	"sap/ui/core/Control",
 	"sap/ui/core/library",
@@ -13,7 +13,7 @@ sap.ui.define([
 	createAndAppendDiv,
 	Device,
 	InputBase,
-	mobileLibrary,
+	ValueStateMessage,
 	Select,
 	Control,
 	coreLibrary,
@@ -35,7 +35,7 @@ sap.ui.define([
 
 		// system under test
 		var oInput = new InputBase();
-		var oValueStateMessage = new mobileLibrary.delegate.ValueState();
+		var oValueStateMessage = new ValueStateMessage();
 
 		// assert
 		assert.strictEqual(oValueStateMessage.getId(), "");
@@ -48,7 +48,7 @@ sap.ui.define([
 
 		// system under test
 		var oSelect = new Select("ipsum");
-		var oValueStateMessage = new mobileLibrary.delegate.ValueState(oSelect);
+		var oValueStateMessage = new ValueStateMessage(oSelect);
 
 		// assert
 		assert.strictEqual(oValueStateMessage.getId(), "ipsum-message");
@@ -71,7 +71,7 @@ sap.ui.define([
 		var oCustomSelect = new CustomControl("ipsum");
 
 		// act
-		var oValueStateMessage = new mobileLibrary.delegate.ValueState(oCustomSelect);
+		var oValueStateMessage = new ValueStateMessage(oCustomSelect);
 
 		// assert
 		assert.strictEqual(oValueStateMessage.getId(), "ipsum-lorem");
@@ -97,7 +97,7 @@ sap.ui.define([
 		var oCustomControl = new CustomControl();
 
 		// system under test + act
-		var oValueStateMessage = new mobileLibrary.delegate.ValueState(oCustomControl);
+		var oValueStateMessage = new ValueStateMessage(oCustomControl);
 
 		// assert
 		assert.strictEqual(oValueStateMessage.getOpenDuration(), 5);
@@ -119,7 +119,7 @@ sap.ui.define([
 		var oCustomControl = new CustomControl();
 
 		// system under test + act
-		var oValueStateMessage = new mobileLibrary.delegate.ValueState(oCustomControl);
+		var oValueStateMessage = new ValueStateMessage(oCustomControl);
 
 		// assert
 		assert.strictEqual(oValueStateMessage.getOpenDuration(), 0);
@@ -134,7 +134,7 @@ sap.ui.define([
 	QUnit.test("it should return the open duration of the value state message popup", function (assert) {
 
 		// system under test + act
-		var oValueStateMessage = new mobileLibrary.delegate.ValueState(null);
+		var oValueStateMessage = new ValueStateMessage(null);
 
 		// assert
 		assert.strictEqual(oValueStateMessage.getOpenDuration(), 0);
@@ -149,7 +149,7 @@ sap.ui.define([
 
 		// system under test
 		var oInput = new InputBase();
-		var oValueStateMessage = new mobileLibrary.delegate.ValueState(oInput);
+		var oValueStateMessage = new ValueStateMessage(oInput);
 
 		// arrange
 		oInput.placeAt("content");
@@ -172,7 +172,7 @@ sap.ui.define([
 	QUnit.test("it should not throw exception when the parent is destroyed or without domRef", function (assert) {
 		// system under test
 		var oInput = new InputBase();
-		var oValueStateMessage = new mobileLibrary.delegate.ValueState(oInput);
+		var oValueStateMessage = new ValueStateMessage(oInput);
 
 		// arrange
 		oInput.placeAt("content");
@@ -208,7 +208,7 @@ sap.ui.define([
 		});
 
 		// system under test + act
-		var oValueStateMessage = new mobileLibrary.delegate.ValueState(oInputBase);
+		var oValueStateMessage = new ValueStateMessage(oInputBase);
 
 		// act
 		var oDomRef = oValueStateMessage.createDom();
@@ -232,7 +232,7 @@ sap.ui.define([
 		});
 
 		// system under test + act
-		var oValueStateMessage = new mobileLibrary.delegate.ValueState(oInputBase);
+		var oValueStateMessage = new ValueStateMessage(oInputBase);
 
 		// act
 		var oDomRef = oValueStateMessage.createDom();
@@ -272,7 +272,7 @@ sap.ui.define([
 	QUnit.test("it should not throw an exeption", function (assert) {
 
 		// system under test + act
-		var oValueStateMessage = new mobileLibrary.delegate.ValueState(null);
+		var oValueStateMessage = new ValueStateMessage(null);
 
 		// act
 		var oDomRef = oValueStateMessage.createDom();

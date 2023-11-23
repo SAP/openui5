@@ -2216,7 +2216,6 @@ sap.ui.define([
 			var oModel = new JSONModel();
 
 			oModel.setData(mTestModelData);
-			Core.setModel(oModel);
 
 			var oItemTemplate = new Item({
 				key: "{key}",
@@ -2228,7 +2227,7 @@ sap.ui.define([
 					path: "/items",
 					template: oItemTemplate
 				}
-			});
+			}).setModel(oModel);
 
 			// arrange
 			oSelect.placeAt("content");
@@ -2255,7 +2254,6 @@ sap.ui.define([
 			var oModel = new JSONModel();
 
 			oModel.setData(mTestModelData);
-			Core.setModel(oModel);
 
 			var oItemTemplate = new Item({
 				key: "{key}",
@@ -2271,7 +2269,7 @@ sap.ui.define([
 				change: function (oControlEvent) {
 					Log.info("Event fired: 'change' value property to " + oControlEvent.getParameter("selectedItem") + " on " + this);
 				}
-			});
+			}).setModel(oModel);
 
 			// arrange
 			oSelect.placeAt("content");
@@ -4026,7 +4024,7 @@ sap.ui.define([
 			};
 
 			oModel.setData(mData);
-			Core.setModel(oModel);
+			oSelect.setModel(oModel);
 			oSelect.placeAt("content");
 			Core.applyChanges();
 
@@ -4077,7 +4075,7 @@ sap.ui.define([
 			};
 
 			oModel.setData(mData);
-			Core.setModel(oModel);
+			oSelect.setModel(oModel);
 			oSelect.placeAt("content");
 			Core.applyChanges();
 
@@ -4508,7 +4506,7 @@ sap.ui.define([
 			};
 
 			oModel.setData(mData);
-			Core.setModel(oModel);
+			oSelect.setModel(oModel);
 			oSelect.placeAt("content");
 			var oSelectedItem = oSelect.getItemByKey("8");
 			Core.applyChanges();
@@ -4580,7 +4578,7 @@ sap.ui.define([
 			};
 
 			oModel.setData(mData);
-			Core.setModel(oModel);
+			oSelect.setModel(oModel);
 
 			oSelect.placeAt("content");
 			Core.applyChanges();

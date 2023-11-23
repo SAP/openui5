@@ -115,7 +115,6 @@ sap.ui.define([
 		Value : "Value",
 		Price : "Price"
 	});
-	sap.ui.getCore().setModel(oI18nModel, "i18n");
 
 	var oTableItemTemplate = new ColumnListItem({
 		type : "Active",
@@ -188,5 +187,6 @@ sap.ui.define([
 		]
 	});
 	app.addPage(page1);
+	app.setModel(oI18nModel, "i18n");
 	app.placeAt("body");
 });

@@ -138,22 +138,23 @@ sap.ui.define([
 	PersistenceWriteAPI.save = function(mPropertyBag) {
 		// when save or activate a version in rta no reload is triggered but flex/data request is send and will delete version and maxLayer without saveChangeKeepSession
 		// after the request saveChangeKeepSession needs to be delete again
-		var oFlexInfoSession = FlexInfoSession.get(mPropertyBag.selector);
+		var sReference = ManifestUtils.getFlexReferenceForControl(mPropertyBag.selector);
+		var oFlexInfoSession = FlexInfoSession.getByReference(sReference);
 		oFlexInfoSession.saveChangeKeepSession = true;
-		FlexInfoSession.set(oFlexInfoSession, mPropertyBag.selector);
+		FlexInfoSession.setByReference(oFlexInfoSession, sReference);
 		return FlexObjectState.saveFlexObjects(mPropertyBag).then(function(oFlexObject) {
 			if (oFlexObject && oFlexObject.length !== 0) {
 				return PersistenceWriteAPI.getResetAndPublishInfo(mPropertyBag).then(function(oResult) {
 					// other attributes like adaptationId, isEndUserAdaptation, init needs to be taken from flex info session if available
-					oFlexInfoSession = FlexInfoSession.get(mPropertyBag.selector);
+					oFlexInfoSession = FlexInfoSession.getByReference(sReference);
 					delete oFlexInfoSession.saveChangeKeepSession;
-					FlexInfoSession.set(Object.assign(oFlexInfoSession, oResult), mPropertyBag.selector);
+					FlexInfoSession.setByReference(Object.assign(oFlexInfoSession, oResult), sReference);
 					return oFlexObject;
 				});
 			}
-			oFlexInfoSession = FlexInfoSession.get(mPropertyBag.selector);
+			oFlexInfoSession = FlexInfoSession.getByReference(sReference);
 			delete oFlexInfoSession.saveChangeKeepSession;
-			FlexInfoSession.set(oFlexInfoSession, mPropertyBag.selector);
+			FlexInfoSession.setByReference(oFlexInfoSession, sReference);
 			return oFlexObject;
 		});
 	};

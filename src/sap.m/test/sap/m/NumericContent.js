@@ -98,7 +98,7 @@ sap.ui.define([
 	};
 	var oConfModel = new JSONModel();
 	oConfModel.setData(oConfData);
-	oCore.setModel(oConfModel);
+
 	var fnPress = function(oEvent) {
 		MessageToast.show("The numeric content is pressed.");
 	};
@@ -413,7 +413,8 @@ sap.ui.define([
 	});
 	//create a mobile App embedding the page and place the App into the HTML document
 	new App("myApp", {
-		pages : [oPage]
+		pages : [oPage],
+		models: oConfModel
 	}).placeAt("content");
 	setBackgroundColor(oControlForm);
 });

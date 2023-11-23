@@ -65,9 +65,6 @@ sap.ui.define([
 		// set the data for the model
 		oModel.setData(data);
 
-		// set the model to the core
-		oCore.setModel(oModel);
-
 		// define the template
 		var oItemTemplate = new ColumnListItem({
 			cells : [

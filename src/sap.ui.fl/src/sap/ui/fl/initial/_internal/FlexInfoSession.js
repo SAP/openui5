@@ -2,11 +2,7 @@
  * ! ${copyright}
  */
 
-sap.ui.define([
-	"sap/ui/fl/apply/_internal/flexState/ManifestUtils"
-], function(
-	ManifestUtils
-) {
+sap.ui.define([], () => {
 	"use strict";
 
 	var FlexInfoSession = {};
@@ -17,31 +13,14 @@ sap.ui.define([
 		return PARAMETER_PREFIX + (sReference || "true");
 	}
 
-	FlexInfoSession.get = function(oControl) {
-		var sReference = ManifestUtils.getFlexReferenceForControl(oControl);
-		return FlexInfoSession.getByReference(sReference);
-	};
-
 	FlexInfoSession.getByReference = function(sReference) {
 		return JSON.parse(window.sessionStorage.getItem(getSessionStorageKey(sReference))) || {};
-	};
-
-	FlexInfoSession.set = function(oInfo, oControl) {
-		if (oInfo) {
-			var sReference = ManifestUtils.getFlexReferenceForControl(oControl);
-			FlexInfoSession.setByReference(oInfo, sReference);
-		}
 	};
 
 	FlexInfoSession.setByReference = function(oInfo, sReference) {
 		if (oInfo) {
 			window.sessionStorage.setItem(getSessionStorageKey(sReference), JSON.stringify(oInfo));
 		}
-	};
-
-	FlexInfoSession.remove = function(oControl) {
-		var sReference = ManifestUtils.getFlexReferenceForControl(oControl);
-		window.sessionStorage.removeItem(getSessionStorageKey(sReference));
 	};
 
 	FlexInfoSession.removeByReference = function(sReference) {

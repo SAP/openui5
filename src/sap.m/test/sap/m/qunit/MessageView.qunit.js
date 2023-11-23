@@ -128,7 +128,7 @@ sap.ui.define([
 
 			this.oModel = new JSONModel();
 			this.oModel.setData(this.oMockupData);
-			Core.setModel(this.oModel);
+			this.oMessageView.setModel(this.oModel);
 
 			this.oMessageView.bindAggregation("items", {
 				path: "/messages",
@@ -204,7 +204,7 @@ sap.ui.define([
 
 		var oModel = new JSONModel();
 		oModel.setData(this.oMockupData);
-		Core.setModel(oModel);
+		this.oMessageView.setModel(oModel);
 
 		this.oMessageView.bindAggregation("items", {
 			path: "/messages",

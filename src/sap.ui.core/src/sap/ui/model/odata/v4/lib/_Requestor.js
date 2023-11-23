@@ -146,7 +146,8 @@ sap.ui.define([
 
 	/**
 	 * Adds a change set to the batch queue for the given group. All modifying requests created
-	 * until the next call to this method are added to this new change set.
+	 * until the next call to this method are added to this new change set. The model is not
+	 * informed about a created batch queue.
 	 *
 	 * @param {string} sGroupId The group ID
 	 *
@@ -154,7 +155,7 @@ sap.ui.define([
 	 */
 	_Requestor.prototype.addChangeSet = function (sGroupId) {
 		var aChangeSet = [],
-			aRequests = this.getOrCreateBatchQueue(sGroupId);
+			aRequests = this.getOrCreateBatchQueue(sGroupId, true);
 
 		aChangeSet.iSerialNumber = this.getSerialNumber();
 		aRequests.iChangeSet += 1;
@@ -939,11 +940,12 @@ sap.ui.define([
 	 * Get the batch queue for the given group or create it if it does not exist yet.
 	 *
 	 * @param {string} sGroupId The group ID
+	 * @param {string} [bSilent] Whether the model is not informed about a created batch queue
 	 * @returns {object[]} The batch queue for the group
 	 *
 	 * @private
 	 */
-	_Requestor.prototype.getOrCreateBatchQueue = function (sGroupId) {
+	_Requestor.prototype.getOrCreateBatchQueue = function (sGroupId, bSilent) {
 		var aChangeSet,
 			aRequests = this.mBatchQueue[sGroupId];
 
@@ -952,7 +954,9 @@ sap.ui.define([
 			aChangeSet.iSerialNumber = 0;
 			aRequests = this.mBatchQueue[sGroupId] = [aChangeSet];
 			aRequests.iChangeSet = 0; // the index of the current change set in this queue
-			this.oModelInterface.onCreateGroup(sGroupId);
+			if (!bSilent) {
+				this.oModelInterface.onCreateGroup(sGroupId);
+			}
 		}
 		return aRequests;
 	};

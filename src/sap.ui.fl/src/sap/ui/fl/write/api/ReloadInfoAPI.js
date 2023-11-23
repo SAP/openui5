@@ -29,8 +29,8 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	function isDraftAvailable(oReloadInfo) {
-		if (FlexInfoSession.get(oReloadInfo.selector).version) {
+	function isDraftAvailable(oReloadInfo, sReference) {
+		if (FlexInfoSession.getByReference(sReference).version) {
 			return Promise.resolve(false);
 		}
 
@@ -42,8 +42,8 @@ sap.ui.define([
 		});
 	}
 
-	function areHigherLayerChangesAvailable(oReloadInfo) {
-		var oFlexInfoSession = FlexInfoSession.get(oReloadInfo.selector);
+	function areHigherLayerChangesAvailable(oReloadInfo, sReference) {
+		var oFlexInfoSession = FlexInfoSession.getByReference(sReference);
 		var bUserLayer = oReloadInfo.layer === Layer.USER;
 		if (bUserLayer || (oFlexInfoSession.maxLayer && oFlexInfoSession.maxLayer === oReloadInfo.layer)) {
 			return Promise.resolve(false);
@@ -80,9 +80,9 @@ sap.ui.define([
 	 * @param {sap.ui.core.Control} oReloadInfo.selector - Root control instance
 	 * @return {boolean} true if allContextsProvided false and RTA wasn't started yet, otherwise false.
 	 */
-	function needContextSpecificReload(oReloadInfo) {
+	function needContextSpecificReload(oReloadInfo, sReference) {
 		// TODO: could be disabled when ContextBasedAdaptationAPI is enabled
-		var oFlexInfoSession = FlexInfoSession.get(oReloadInfo.selector);
+		var oFlexInfoSession = FlexInfoSession.getByReference(sReference);
 		if (oFlexInfoSession.initialAllContexts) {
 			return false; // if we are already in RTA mode, no reload needed again
 		}
@@ -96,25 +96,25 @@ sap.ui.define([
 				if (!oFlexInfoSession.initialAllContexts) {
 					oResult.initialAllContexts = true;
 				}
-				FlexInfoSession.set(oResult, oReloadInfo.selector);
+				FlexInfoSession.setByReference(oResult, sReference);
 				return !oResult.allContextsProvided;
 			});
 		}
 		oFlexInfoSession.initialAllContexts = true;
-		FlexInfoSession.set(oFlexInfoSession, oReloadInfo.selector);
+		FlexInfoSession.setByReference(oFlexInfoSession, sReference);
 		return !oFlexInfoSession.allContextsProvided;
 	}
 
-	function isAllContextsAvailable(oControl, sLayer) {
-		if (!Settings.getInstanceOrUndef().isContextSharingEnabled(sLayer)) {
+	function isAllContextsAvailable(sReference, sLayer) {
+		if (!Settings.getInstanceOrUndef()?.isContextSharingEnabled(sLayer)) {
 			return false;
 		}
 
-		return FlexInfoSession.get(oControl).allContextsProvided === false;
+		return FlexInfoSession.getByReference(sReference).allContextsProvided === false;
 	}
 
-	function needAdaptationReloadOnExit(oControl) {
-		return FlexInfoSession.get(oControl).isEndUserAdaptation === false;
+	function needAdaptationReloadOnExit(sReference) {
+		return FlexInfoSession.getByReference(sReference).isEndUserAdaptation === false;
 	}
 
 	/**
@@ -139,10 +139,11 @@ sap.ui.define([
 		 * @returns {Promise<object>} Promise resolving to an object with the reload reasons
 		 */
 		getReloadReasonsForStart(oReloadInfo) {
+			const sReference = ManifestUtils.getFlexReferenceForControl(oReloadInfo.selector);
 			return Promise.all([
-				areHigherLayerChangesAvailable.call(this, oReloadInfo),
-				isDraftAvailable(oReloadInfo),
-				needContextSpecificReload(oReloadInfo)
+				areHigherLayerChangesAvailable.call(this, oReloadInfo, sReference),
+				isDraftAvailable(oReloadInfo, sReference),
+				needContextSpecificReload(oReloadInfo, sReference)
 			]).then(function(aReasons) {
 				[oReloadInfo.hasHigherLayerChanges, oReloadInfo.isDraftAvailable, oReloadInfo.allContexts] = aReasons;
 				return oReloadInfo;
@@ -158,7 +159,8 @@ sap.ui.define([
 		 * @returns {boolean} True if the value is in the session
 		 */
 		hasVersionStorage(oParameter, oControl) {
-			var oFlexInfoSession = FlexInfoSession.get(oControl);
+			const sReference = ManifestUtils.getFlexReferenceForControl(oControl);
+			var oFlexInfoSession = FlexInfoSession.getByReference(sReference);
 			return !!(oFlexInfoSession.version && oFlexInfoSession.version === oParameter.value);
 		},
 
@@ -168,7 +170,8 @@ sap.ui.define([
 		 * @param {object} oControl - Root control instance
 		 */
 		removeInfoSessionStorage(oControl) {
-			FlexInfoSession.remove(oControl);
+			const sReference = ManifestUtils.getFlexReferenceForControl(oControl);
+			FlexInfoSession.removeByReference(sReference);
 		},
 
 		/**
@@ -181,7 +184,8 @@ sap.ui.define([
 		 * @returns {boolean} <code>true</code> if the value is in the session
 		 */
 		hasMaxLayerStorage(oParameter, oControl) {
-			var oFlexInfoSession = FlexInfoSession.get(oControl);
+			const sReference = ManifestUtils.getFlexReferenceForControl(oControl);
+			var oFlexInfoSession = FlexInfoSession.getByReference(sReference);
 			return !!(oFlexInfoSession.maxLayer && oFlexInfoSession.maxLayer === oParameter.value);
 		},
 
@@ -203,8 +207,9 @@ sap.ui.define([
 		 * @returns {boolean} Indicates if the parameters have changed
 		 */
 		handleReloadInfo(oReloadInfo) {
+			const sReference = ManifestUtils.getFlexReferenceForControl(oReloadInfo.selector);
 			var bFlexInfoSessionChanged = false;
-			var oFlexInfoSession = FlexInfoSession.get(oReloadInfo.selector);
+			var oFlexInfoSession = FlexInfoSession.getByReference(sReference);
 			if (!oReloadInfo.ignoreMaxLayerParameter && oReloadInfo.hasHigherLayerChanges) {
 				delete oFlexInfoSession.maxLayer;
 				bFlexInfoSessionChanged = true;
@@ -222,7 +227,7 @@ sap.ui.define([
 				delete oFlexInfoSession.version;
 				bFlexInfoSessionChanged = true;
 			}
-			FlexInfoSession.set(oFlexInfoSession, oReloadInfo.selector);
+			FlexInfoSession.setByReference(oFlexInfoSession, sReference);
 			return bFlexInfoSessionChanged;
 		},
 
@@ -239,8 +244,9 @@ sap.ui.define([
 		 * @returns {boolean} <code>true</code> to indicate that the session has been changed
 		 */
 		handleReloadInfoOnStart(oReloadInfo) {
+			const sReference = ManifestUtils.getFlexReferenceForControl(oReloadInfo.selector);
 			var bFlexInfoSessionChanged = false;
-			var oFlexInfoSession = FlexInfoSession.get(oReloadInfo.selector);
+			var oFlexInfoSession = FlexInfoSession.getByReference(sReference);
 			if (oReloadInfo.hasHigherLayerChanges) {
 				oFlexInfoSession.maxLayer = oReloadInfo.layer;
 				bFlexInfoSessionChanged = true;
@@ -250,7 +256,7 @@ sap.ui.define([
 				oFlexInfoSession.version = Version.Number.Draft;
 				bFlexInfoSessionChanged = true;
 			}
-			FlexInfoSession.set(oFlexInfoSession, oReloadInfo.selector);
+			FlexInfoSession.setByReference(oFlexInfoSession, sReference);
 			return bFlexInfoSessionChanged;
 		},
 
@@ -289,6 +295,7 @@ sap.ui.define([
 		 * @returns {boolean} <code>true</code> if a draft got activated and had a draft initially when entering UI adaptation
 		 */
 		getReloadMethod(oReloadInfo) {
+			const sReference = ManifestUtils.getFlexReferenceForControl(oReloadInfo.selector);
 			var oRELOAD = {
 				NOT_NEEDED: "NO_RELOAD",
 				RELOAD_PAGE: "HARD_RELOAD",
@@ -304,7 +311,7 @@ sap.ui.define([
 			);
 
 			oReloadInfo.isDraftAvailable ||= ReloadInfoAPI.hasVersionStorage({value: Version.Number.Draft}, oReloadInfo.selector);
-			oReloadInfo.hasVersionStorage = !!FlexInfoSession.get(oReloadInfo.selector).version;
+			oReloadInfo.hasVersionStorage = !!FlexInfoSession.getByReference(sReference).version;
 
 			if (
 				oReloadInfo.activeVersion
@@ -319,8 +326,8 @@ sap.ui.define([
 			if (oReloadInfo.initialDraftGotActivated) {
 				oReloadInfo.isDraftAvailable = false;
 			}
-			oReloadInfo.allContexts = isAllContextsAvailable(oReloadInfo.selector, oReloadInfo.layer);
-			oReloadInfo.switchEndUserAdaptation = needAdaptationReloadOnExit(oReloadInfo.selector);
+			oReloadInfo.allContexts = isAllContextsAvailable(sReference, oReloadInfo.layer);
+			oReloadInfo.switchEndUserAdaptation = needAdaptationReloadOnExit(sReference);
 			if (oReloadInfo.changesNeedReload
 				|| oReloadInfo.isDraftAvailable
 				|| oReloadInfo.hasHigherLayerChanges
@@ -335,7 +342,7 @@ sap.ui.define([
 					oReloadInfo.reloadMethod = oRELOAD.VIA_HASH;
 				}
 			}
-			FlexInfoSession.remove(oReloadInfo.selector);
+			FlexInfoSession.removeByReference(sReference);
 			return oReloadInfo;
 		}
 	};
