@@ -105,8 +105,8 @@ sap.ui.define([
 			previousFrameUrl: {
 				value: ""
 			},
-			validFrameUrl: {
-				value: true
+			frameUrlError: {
+				value: undefined
 			},
 			previewUrl: { value: "" },
 			documentationLink: {

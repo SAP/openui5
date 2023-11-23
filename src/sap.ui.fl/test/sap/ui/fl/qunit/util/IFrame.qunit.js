@@ -389,33 +389,43 @@ sap.ui.define([
 		}
 	}, () => {
 		QUnit.test("when providing a valid url", function(assert) {
-			assert.ok(IFrame.isValidUrl("https://example.com"));
-			assert.ok(IFrame.isValidUrl("someRelativeUrl.html"));
+			const { result, error } = IFrame.isValidUrl("https://example.com");
+			assert.strictEqual(result, true, "then the url is allowed");
+			assert.strictEqual(error, undefined, "then no error message is returned");
+			assert.strictEqual(IFrame.isValidUrl("someRelativeUrl.html").result, true);
 		});
 
 		QUnit.test("when providing an invalid url", function(assert) {
-			assert.notOk(IFrame.isValidUrl("https://example."));
+			const { result, error } = IFrame.isValidUrl("https://");
+			assert.strictEqual(result, false);
+			assert.strictEqual(error, IFrame.VALIDATION_ERROR.INVALID_URL);
 		});
 
 		QUnit.test("when embedding the javascript pseudo protocol", function(assert) {
 			// eslint-disable-next-line no-script-url
-			assert.notOk(IFrame.isValidUrl("javascript:someJs"));
+			const { result, error } = IFrame.isValidUrl("javascript:someJs");
+			assert.strictEqual(result, false);
+			assert.strictEqual(error, IFrame.VALIDATION_ERROR.UNSAFE_PROTOCOL);
 		});
 
 		QUnit.test("when embedding a protocol that is blocked by the URLListValidator", function(assert) {
-			assert.notOk(IFrame.isValidUrl("about:blank"));
+			const { result, error } = IFrame.isValidUrl("about:blank");
+			assert.strictEqual(result, false);
+			assert.strictEqual(error, IFrame.VALIDATION_ERROR.FORBIDDEN_URL);
 		});
 
-		QUnit.test("when allowing the javascript pseudo protocol", function(assert) {
+		QUnit.test("when allowing the javascript pseudo protocol in the URLListValidator", function(assert) {
 			URLListValidator.add("javascript");
 			// eslint-disable-next-line no-script-url
-			assert.notOk(IFrame.isValidUrl("javascript:someJs"));
+			const { result, error } = IFrame.isValidUrl("javascript:someJs");
+			assert.strictEqual(result, false, "then it is still forbidden for the iframe");
+			assert.strictEqual(error, IFrame.VALIDATION_ERROR.UNSAFE_PROTOCOL);
 			URLListValidator.clear();
 		});
 
 		QUnit.test("when allowing a non-critical protocol", function(assert) {
 			URLListValidator.add("about");
-			assert.ok(IFrame.isValidUrl("about:blank"));
+			assert.strictEqual(IFrame.isValidUrl("about:blank").result, true);
 			URLListValidator.clear();
 		});
 
@@ -424,7 +434,9 @@ sap.ui.define([
 				protocol: "https:",
 				href: "https://example.com"
 			});
-			assert.notOk(IFrame.isValidUrl("http://example.com"));
+			const { result, error } = IFrame.isValidUrl("http://example.com");
+			assert.strictEqual(result, false);
+			assert.strictEqual(error, IFrame.VALIDATION_ERROR.MIXED_CONTENT);
 		});
 
 		QUnit.test("when embedding https content from a https document", (assert) => {
@@ -432,7 +444,7 @@ sap.ui.define([
 				protocol: "https:",
 				href: "https://example.com"
 			});
-			assert.ok(IFrame.isValidUrl("https://example.com"));
+			assert.strictEqual(IFrame.isValidUrl("https://example.com").result, true);
 		});
 
 		QUnit.test("when embedding http content from a http document", (assert) => {
@@ -440,7 +452,7 @@ sap.ui.define([
 				protocol: "http:",
 				href: "http://example.com"
 			});
-			assert.ok(IFrame.isValidUrl("http://example.com"));
+			assert.strictEqual(IFrame.isValidUrl("http://example.com").result, true);
 		});
 
 		QUnit.test("when embedding https content from a http document", (assert) => {
@@ -448,7 +460,7 @@ sap.ui.define([
 				protocol: "http:",
 				href: "http://example.com"
 			});
-			assert.ok(IFrame.isValidUrl("https://example.com"));
+			assert.strictEqual(IFrame.isValidUrl("https://example.com").result, true);
 		});
 	});
 
