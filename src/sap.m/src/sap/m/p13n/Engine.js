@@ -314,7 +314,6 @@ sap.ui.define([
 
 		var oModificationSetting = this._determineModification(oControl);
 		return oModificationSetting.handler.reset(oResetConfig, oModificationSetting.payload).then(function () {
-			this.stateHandlerRegistry.fireChange(oControl);
 			//Re-Init housekeeping after update
 			return this.initAdaptation(oControl, aKeys).then(function (oPropertyHelper) {
 				aKeys.forEach(function (sKey) {
