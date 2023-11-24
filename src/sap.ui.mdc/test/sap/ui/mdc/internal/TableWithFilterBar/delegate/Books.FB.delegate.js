@@ -7,8 +7,8 @@
 // ---------------------------------------------------------------------------------------
 // ---------------------------------------------------------------------------------------
 sap.ui.define([
-	"delegates/odata/v4/FilterBarDelegate", 'sap/ui/fl/Utils', 'sap/ui/core/util/reflection/JsControlTreeModifier', 'sap/ui/mdc/enums/FieldDisplay', 'sap/ui/mdc/enums/OperatorName', 'delegates/util/DelegateCache'
-], function (FilterBarDelegate, FlUtils, JsControlTreeModifier, FieldDisplay, OperatorName, DelegateCache) {
+	"delegates/odata/v4/FilterBarDelegate", 'sap/ui/fl/Utils', 'sap/ui/core/util/reflection/JsControlTreeModifier', 'sap/ui/mdc/enums/FieldDisplay', 'sap/ui/mdc/enums/OperatorName', 'sap/ui/mdc/field/ConditionsType', 'delegates/util/DelegateCache'
+], function (FilterBarDelegate, FlUtils, JsControlTreeModifier, FieldDisplay, OperatorName, ConditionsType, DelegateCache) {
 	"use strict";
 
 	var FilterBarBooksSampleDelegate = Object.assign({}, FilterBarDelegate);
@@ -100,6 +100,7 @@ sap.ui.define([
 			if (sName === "stock") {
 
 				return oModifier.createControl("sap.ui.v4demo.controls.CustomRangeSlider", mPropertyBag.appComponent, mPropertyBag.view, "customSlider", {
+					value: {path: '$field>/conditions', type: new ConditionsType()},
 					max: 9999,
 					width: "100%"
 				}).then(function(oCustomRangeSlider) {
