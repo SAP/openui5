@@ -2,7 +2,7 @@ sap.ui.define([
 	"sap/ui/core/Control",
 	"sap/ui/core/Element",
 	"sap/ui/core/EnabledPropagator",
-	"sap/ui/core/IconPool", // to avoid sync loading within RenderManager#icon
+	"sap/ui/core/IconPool", // side effect: to avoid sync loading within RenderManager#icon
 	"sap/ui/core/InvisibleText",
 	"sap/ui/core/Renderer",
 	"sap/ui/core/RenderManager",

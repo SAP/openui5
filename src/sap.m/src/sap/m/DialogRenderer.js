@@ -5,7 +5,8 @@ sap.ui.define([
 	"sap/m/library",
 	"sap/ui/Device",
 	"sap/ui/core/library",
-	"sap/ui/core/Lib"
+	"sap/ui/core/Lib",
+	"sap/ui/core/IconPool" // side effect: required when calling RenderManager#icon
 ], function (library, Device, coreLibrary, Library) {
 	"use strict";
 

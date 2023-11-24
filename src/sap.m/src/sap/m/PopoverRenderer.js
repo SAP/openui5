@@ -6,9 +6,9 @@ sap.ui.define([
 	'sap/m/library',
 	"sap/ui/core/ControlBehavior",
 	"sap/ui/dom/getScrollbarSize",
-	"sap/ui/core/IconPool"
+	"sap/ui/core/IconPool" // side effect: required when calling RenderManager#icon
 ],
-	function(Device, library, ControlBehavior, getScrollbarSize, IconPool) {
+	function(Device, library, ControlBehavior, getScrollbarSize) {
 		"use strict";
 
 		// shortcut for sap.m.PlacementType
