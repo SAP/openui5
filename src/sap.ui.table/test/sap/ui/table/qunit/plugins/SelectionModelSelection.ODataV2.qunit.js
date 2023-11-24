@@ -64,7 +64,7 @@ sap.ui.define([
 		return oTable.qunit.whenRenderingFinished().then(function() {
 			oTable.setSelectionInterval(2, 6);
 			oTable.attachRowSelectionChange(oSelectionChangeSpy);
-			oTable.getBinding().sort(new Sorter({path: "something"}));
+			oTable.getBinding().sort(new Sorter({path: "Name"}));
 			assert.deepEqual(oTable.getSelectedIndices(), [2, 3, 4, 5, 6], "Selection before binding change");
 		}).then(oTable.qunit.whenBindingChange).then(function() {
 			assert.deepEqual(oTable.getSelectedIndices(), [], "Selection after binding change");
@@ -81,7 +81,7 @@ sap.ui.define([
 		return oTable.qunit.whenRenderingFinished().then(function() {
 			oTable.setSelectionInterval(2, 6);
 			oTable.attachRowSelectionChange(oSelectionChangeSpy);
-			oTable.getBinding().filter(new Filter({path: "something", operator: "EQ", value1: "something"}));
+			oTable.getBinding().filter(new Filter({path: "Name", operator: "EQ", value1: "Gladiator MX"}));
 			assert.deepEqual(oTable.getSelectedIndices(), [2, 3, 4, 5, 6], "Selection before binding change");
 		}).then(oTable.qunit.whenBindingChange).then(function() {
 			assert.deepEqual(oTable.getSelectedIndices(), [], "Selection after binding change");

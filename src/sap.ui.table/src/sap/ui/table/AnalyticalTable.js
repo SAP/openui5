@@ -296,19 +296,11 @@ sap.ui.define([
 		return oModel;
 	};
 
-	/**
-	 * handler for change events of the binding
-	 * @param {sap.ui.base.Event} oEvent change event
-	 * @private
-	 */
-	AnalyticalTable.prototype._onBindingChange = function(oEvent) {
-		Table.prototype._onBindingChange.apply(this, arguments);
-		// the column menus have to be invalidated when the amount
-		// of data changes in the Table; this happens on normal changes
-		// of the Table as well as when filtering
-		var sReason = typeof (oEvent) === "object" ? oEvent.getParameter("reason") : oEvent;
+	AnalyticalTable.prototype.updateRows = function(sReason) {
+		Table.prototype.updateRows.apply(this, arguments);
+
 		if (sReason !== "sort") {
-			this._invalidateColumnMenus();
+			this._invalidateColumnMenus(); // TODO: Is this needed?
 		}
 	};
 
