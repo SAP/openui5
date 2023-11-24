@@ -12,7 +12,12 @@ sap.ui.define([
 	"use strict";
 
 	/**
-	 * @class Class for manipulating and receiving changes of the browser hash with the hasher framework.
+	 * @class Class for manipulating and receiving changes of the browser hash with <code>hasher</code> framework.
+	 *
+	 * <b>IMPORTANT:</b>
+	 * To set or replace the current browser hash, use {@link #setHash} or {@link #replaceHash} and do NOT interact with
+	 * the <code>hasher</code> framework directly in order to have the navigation direction calculated as accurate as
+	 * possible.
 	 *
 	 * Fires a <code>hashChanged</code> event if the browser hash changes.
 	 * @extends sap.ui.core.routing.HashChangerBase
@@ -29,8 +34,8 @@ sap.ui.define([
 	});
 
 	/**
-	 * Will start listening to hashChanges with the parseHash function.
-	 * This will also fire a hashchanged event with the initial hash.
+	 * Will start listening to hash changes.
+	 * This will also fire a <code>hashChanged</code> event with the initial hash.
 	 *
 	 * @public
 	 * @return {boolean} false if it was initialized before, true if it was initialized the first time
@@ -56,7 +61,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Fires the hashchanged event, may be extended to modify the hash before fireing the event
+	 * Fires the <code>hashChanged</code> event, may be extended to modify the hash before firing the event
 	 * @param {string} sNewHash the new hash of the browser
 	 * @param {string} sOldHash - the previous hash
 	 * @protected
@@ -277,7 +282,14 @@ sap.ui.define([
 	/**
 	 * Replaces the hash with a certain value. When using the replace function, no browser history entry is written.
 	 * If you want to have an entry in the browser history, please use the {@link #setHash} function.
+	 *
+	 * The <code>sDirection</code> parameter can be used to provide direction information on the navigation which
+	 * leads to this hash replacement. This is typically used when synchronizing the hashes between multiple frames to
+	 * provide information to the frame where the hash is replaced with the navigation direction in the other frame
+	 * where the navigation occurs.
+	 *
 	 * @param {string} sHash New hash
+	 * @param {sap.ui.core.routing.HistoryDirection} sDirection The direction information for this hash replacement
 	 * @public
 	 */
 	HashChanger.prototype.replaceHash = function(sHash) {
