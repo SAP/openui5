@@ -7,6 +7,7 @@
 @_sap_m_Label_ColonOffsetWidth: 0.25rem;
 @_sap_m_Label_ColonOffsetWidth_lang_FR: 0.5rem;
 @_sap_m_Label_ColonOffsetWidth_lang_ZH: 0.875rem;
+@_sap_m_Label_InsideInactiveInfoToolbarColor: @sapUiListTextColor;
 
 .sapMLabel {
 	color: @sapUiContentLabelColor;
@@ -118,7 +119,7 @@ html[dir="ltr"] .sapMLabel[dir="rtl"].sapMLabelRequired .sapMLabelColonAndRequir
 }
 
 .sapMTB-Info-CTX.sapMTB.sapMTBInactive .sapMLabel {
-	color: @sapUiListTextColor;
+	color: @_sap_m_Label_InsideInactiveInfoToolbarColor;
 }
 
 /* Toolbar overflow context */

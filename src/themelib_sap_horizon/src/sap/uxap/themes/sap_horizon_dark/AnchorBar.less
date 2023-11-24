@@ -15,6 +15,62 @@ Common compact/cozy
 	height: @sapUiElementLineHeight;
 }
 
+.sapUxAPAnchorBar .sapMSlt,
+.sapUxAPAnchorBar .sapMSlt.sapMSltIconOnly.sapMSltHoverable:hover:not(.sapMSltState).sapMSltWithIcon,
+.sapUxAPAnchorBar .sapMSlt.sapMSltFocused:not(.sapMSltDisabled):not(.sapMSltState):not(.sapMSltExpanded),
+html.sap-desktop .sapUxAPAnchorBar .sapUxAPHierarchicalSelect.sapMSltWithIcon .sapMSltArrow:hover {
+	box-shadow: none;
+}
+
+.sapUxAPAnchorBar .anchorBarArrow .sapMBtn:not(.sapMBtnDisabled) .sapMBtnInner,
+html.sap-desktop .sapUxAPAnchorBar .sapUxAPHierarchicalSelect.sapMSltHoverable > .sapMSltIcon,
+html.sap-desktop .sapUxAPAnchorBar .sapUxAPHierarchicalSelect.sapMSltWithIcon .sapMSltArrow {
+	border: 0.0625rem solid transparent;
+}
+
+.sapUxAPAnchorBar .anchorBarArrow .sapMBtn:not(.sapMBtnDisabled):hover .sapMBtnInner,
+html.sap-desktop .sapUxAPAnchorBar .sapUxAPHierarchicalSelect.sapMSltHoverable:hover > .sapMSltIcon,
+html.sap-desktop .sapUxAPAnchorBar .sapUxAPHierarchicalSelect.sapMSltPressed.sapMSltIconOnly:not(.sapMSltState):hover .sapMSltIcon,
+html.sap-desktop .sapUxAPAnchorBar .sapUxAPHierarchicalSelect.sapMSltWithIcon .sapMSltArrow:hover  {
+	border: 0.0625rem solid @sapUiButtonHoverBorderColor;
+	border-radius: 0.25rem;
+}
+
+html.sap-desktop .sapUxAPAnchorBar .sapUxAPHierarchicalSelect.sapMSltWithIcon:not(.sapMSltPressed) .sapMSltArrow:hover {
+	background-color: @sapUiButtonHoverBackground !important;
+}
+
+.sapUxAPAnchorBar .anchorBarArrow .sapMBtn:not(.sapMBtnDisabled) .sapMBtnInner.sapMBtnActive,
+html.sap-desktop .sapUxAPAnchorBar .sapUxAPHierarchicalSelect.sapMSltHoverable.sapMsltPressed > .sapMSltIcon,
+html.sap-desktop .sapUxAPAnchorBar .sapUxAPHierarchicalSelect.sapMSltHoverable.sapMsltPressed.sapMSltFocused > .sapMSltIcon {
+	border-color: @sapUiContentSelectedForegroundColor;
+	color: @sapUiContentSelectedForegroundColor;
+}
+
+html.sap-desktop .sapUxAPAnchorBar .sapUxAPHierarchicalSelect.sapMSltPressed.sapMSltIconOnly:not(.sapMSltState):not(.sapMSltExpanded):hover .sapMSltIcon,
+html.sap-desktop .sapUxAPAnchorBar .sapUxAPHierarchicalSelect.sapMSltPressed:not(.sapMSltState):not(.sapMSltExpanded) .sapMSltArrow:hover {
+	background-color: @sapUiButtonLiteActiveBackground;
+	border-color: @sapUiContentSelectedForegroundColor;
+}
+
+.sapUxAPAnchorBar .sapMSlt.sapMSltFocused:not(.sapMSltExpanded) .sapMSltIcon:after,
+.sapUxAPAnchorBar .sapMSlt.sapMSltFocused.sapMSltWithIcon:not(.sapMSltExpanded) .sapMSltArrow:after {
+	content: "";
+	position: absolute;
+	box-sizing: border-box;
+	left: 0.0625rem;
+	top: 0.0625rem;
+	right: 0.0625rem;
+	bottom: 0.0625rem;
+	border: 0.125rem solid @sapUiContentFocusColor;
+	pointer-events: none;
+	border-radius: 0.375rem;
+}
+
+.sapUxAPAnchorBar .sapMSlt.sapMSltFocused:not(.sapMSltDisabled):not(.sapMSltState) {
+	background-color: transparent;
+}
+
 .sapUiSizeCompact .sapUxAPAnchorBar,
 .sapUxAPAnchorBar {
 	&:extend(.sapUxAPAnchorBarFiori3Height);

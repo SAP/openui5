@@ -349,7 +349,10 @@ sap.ui.define([
 
 		const $container = this.$().find(".sapTntNLIItemsContainer").first();
 		$container.stop(true, true).slideDown("fast", () => {
-			this.getDomRef()?.querySelector(".sapTntNLIItemsContainer").classList.toggle("sapTntNLIItemsContainerHidden");
+			const oContainerRef = this.getDomRef()?.querySelector(".sapTntNLIItemsContainer");
+			if (oContainerRef) {
+				oContainerRef.classList.toggle("sapTntNLIItemsContainerHidden");
+			}
 			this.getNavigationList()?._updateNavItems();
 		});
 
@@ -375,7 +378,10 @@ sap.ui.define([
 
 		const $container = this.$().find(".sapTntNLIItemsContainer").first();
 		$container.stop(true, true).slideUp("fast", () => {
-			this.getDomRef()?.querySelector(".sapTntNLIItemsContainer").classList.toggle("sapTntNLIItemsContainerHidden");
+			const oContainerRef = this.getDomRef()?.querySelector(".sapTntNLIItemsContainer");
+			if (oContainerRef) {
+				oContainerRef.classList.toggle("sapTntNLIItemsContainerHidden");
+			}
 			this.getNavigationList()?._updateNavItems();
 		});
 
