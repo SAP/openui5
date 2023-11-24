@@ -76,7 +76,7 @@ sap.ui.define([
 	 *
 	 * <h3>Usage</h3>
 	 * <h4>When to use:</h4>
-	 * The tokenizer can only be used as part of {@link sap.m.MultiComboBox MultiComboBox},{@link sap.m.MultiInput MultiInput} or {@link sap.ui.comp.valuehelpdialog.ValueHelpDialog ValueHelpDialog}
+	 * The tokenizer can only be used as part of {@link sap.m.MultiComboBox MultiComboBox}, {@link sap.m.MultiInput MultiInput} or sap.ui.comp.valuehelpdialog.ValueHelpDialog.
 	 *
 	 * @extends sap.ui.core.Control
 	 * @author SAP SE
