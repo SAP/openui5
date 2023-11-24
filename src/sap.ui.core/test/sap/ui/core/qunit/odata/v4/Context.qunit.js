@@ -1200,7 +1200,7 @@ sap.ui.define([
 			.withExactArgs("~mParameters~").returns(false);
 		this.mock(oBinding).expects("checkSuspended").withExactArgs();
 		this.mock(_Helper).expects("checkGroupId").exactly(oFixture.transient ? 0 : 1)
-			.withExactArgs("myGroup");
+			.withExactArgs("myGroup", false, true);
 		this.mock(oContext).expects("fetchCanonicalPath").exactly(oFixture.transient ? 0 : 1)
 			.withExactArgs().returns(SyncPromise.resolve("/Bar('23')"));
 		this.mock(oBinding).expects("lockGroup").exactly(oFixture.transient ? 0 : 1)
@@ -1256,7 +1256,7 @@ sap.ui.define([
 		this.mock(oContext).expects("isKeepAlive").exactly(sGroupId ? 0 : 1)
 			.withExactArgs().returns(true);
 		this.mock(_Helper).expects("checkGroupId").exactly(sGroupId ? 1 : 0)
-			.withExactArgs("myGroup");
+			.withExactArgs("myGroup", false, true);
 		this.mock(oContext).expects("fetchCanonicalPath").exactly(sGroupId ? 1 : 0).withExactArgs()
 			.returns(SyncPromise.resolve("/EMPLOYEES('42')"));
 		this.mock(oBinding).expects("lockGroup").exactly(sGroupId ? 1 : 0)
@@ -1293,7 +1293,7 @@ sap.ui.define([
 		this.mock(_Helper).expects("isDataAggregation")
 			.withExactArgs("~mParameters~").returns(false);
 		this.mock(oBinding).expects("checkSuspended").withExactArgs();
-		this.mock(_Helper).expects("checkGroupId").withExactArgs("myGroup");
+		this.mock(_Helper).expects("checkGroupId").withExactArgs("myGroup", false, true);
 		this.mock(oContext).expects("fetchCanonicalPath").withExactArgs()
 			.returns(SyncPromise.reject("~oError~"));
 		this.mock(oBinding).expects("lockGroup").withExactArgs("myGroup", true, true)
@@ -1393,7 +1393,8 @@ sap.ui.define([
 		this.mock(_Helper).expects("isDataAggregation")
 			.withExactArgs("~mParameters~").returns(false);
 		this.mock(oBinding).expects("checkSuspended").withExactArgs();
-		this.mock(_Helper).expects("checkGroupId").withExactArgs("$invalid").throws(oError);
+		this.mock(_Helper).expects("checkGroupId")
+			.withExactArgs("$invalid", false, true).throws(oError);
 
 		assert.throws(function () {
 			oContext.delete("$invalid");
