@@ -91,6 +91,7 @@
         });
         var oMenuButton = new sap.m.MenuButton({
             text: "Random Stuff",
+            buttonMode: sap.m.MenuButtonMode.Split,
             menu: oMenu,
             useDefaultActionOnly: true,
             defaultAction: function() {
@@ -98,6 +99,13 @@
             }
         });
 
+        var oLabelSplit = new sap.m.Label({
+            text: "Split button with icon"
+        });
+        var oMenuButtonSplit = new sap.m.MenuButton({
+            buttonMode: sap.m.MenuButtonMode.Split,
+            icon: "sap-icon://information"
+        });
 
 
         //second menu button
@@ -633,9 +641,11 @@ var oMenu22 = new sap.m.Menu({
         }
 
         var oVBox = new sap.m.VBox({
-//            items: getControls()
 
             items: [
+                oLabelSplit,
+                oMenuButtonSplit,
+
                 oLabel3,
                 oMenuButton3,
 				oMenuButton4,
@@ -833,7 +843,16 @@ var oMenu22 = new sap.m.Menu({
             }),
             content: [
                 oVBox,
-                oList, 
+                oList,
+                new sap.m.Button({
+                    text: "test",
+                    type: "Transparent"
+                }),
+                new sap.m.MenuButton({
+                    text: "Test",
+                    type: "Transparent",
+                    buttonMode: "Regular"
+                }),
             ],
             footer: new sap.m.Bar({
                 contentMiddle: [
