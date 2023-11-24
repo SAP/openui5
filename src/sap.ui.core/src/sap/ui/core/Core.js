@@ -602,10 +602,14 @@ sap.ui.define([
 				}
 			})();
 
+			/**
+			 * @deprecated
+			 */
 			if (Supportability.isDebugModeEnabled()) {
 				// add debug module if configured
 				this.aModules.unshift("sap.ui.debug.DebugEnv");
 			}
+
 			// enforce the core library as the first loaded module
 			var i = this.aLibs.indexOf("sap.ui.core");
 			if ( i != 0 ) {
