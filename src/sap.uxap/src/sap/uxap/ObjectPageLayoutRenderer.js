@@ -130,10 +130,12 @@ sap.ui.define(["sap/ui/core/Lib"],
 
 			oRm.openStart("div", oControl.getId() + "-opwrapper")
 				.class("sapUxAPObjectPageWrapper");
-			// set transform only if we don't have title arrow inside the header content, otherwise the z-index is not working
-			// always set transform if showTitleInHeaderConent is not supported
+			// the below restriction for setting the <code>sapUxAPObjectPageWrapperWillChangeScrollTop</code> class
+			// may no longer apply, but can be deleted only after thorough testing: Restriction:
+			// set the class only if we don't have title arrow inside the header content, otherwise the z-index is not working
+			// always set the class if showTitleInHeaderConent is not supported
 			if (oHeader && (!oHeader.supportsTitleInHeaderContent() || !(oControl.getShowTitleInHeaderContent() && oHeader.getShowTitleSelector()))) {
-				oRm.class("sapUxAPObjectPageWrapperTransform");
+				oRm.class("sapUxAPObjectPageWrapperWillChangeScrollTop");
 			}
 			oRm.openEnd();
 
