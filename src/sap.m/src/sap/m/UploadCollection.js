@@ -5,7 +5,6 @@
 sap.ui.define([
 	"./library",
 	"sap/base/i18n/Localization",
-	"sap/m/library",
 	"sap/m/MessageBox",
 	"sap/m/Dialog",
 	"sap/ui/core/Control",
@@ -44,7 +43,6 @@ sap.ui.define([
 ], function(
 	Library,
 	Localization,
-	MobileLibrary,
 	MessageBox,
 	Dialog,
 	Control,
@@ -3070,7 +3068,7 @@ sap.ui.define([
 		}
 		this.sFocusId = event.getParameter("id");
 	}
-	MobileLibrary.URLHelper.redirect(item.getProperty("url"),true);
+	Library.URLHelper.redirect(item.getProperty("url"),true);
 	};
 
 	// ================================================================================
@@ -3165,7 +3163,7 @@ sap.ui.define([
 			case "-ia_imageHL" :
 				//Edit mode
 				iLine = this.editModeItem.split("-").pop();
-				MobileLibrary.URLHelper.redirect(this.aItems[iLine].getProperty("url"), true);
+				Library.URLHelper.redirect(this.aItems[iLine].getProperty("url"), true);
 				break;
 			case "ia_iconHL" :
 			case "ia_imageHL" :
@@ -3175,7 +3173,7 @@ sap.ui.define([
 				oLink = Element.getElementById(sLinkId);
 				if (oLink.getEnabled()) {
 					iLine = event.target.id.split("-")[2];
-					MobileLibrary.URLHelper.redirect(this.aItems[iLine].getProperty("url"), true);
+					Library.URLHelper.redirect(this.aItems[iLine].getProperty("url"), true);
 				}
 				break;
 			default:

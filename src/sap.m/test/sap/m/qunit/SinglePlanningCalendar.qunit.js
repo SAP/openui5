@@ -15,7 +15,6 @@ sap.ui.define([
 	"sap/ui/unified/CalendarLegendItem",
 	"sap/ui/unified/DateTypeRange",
 	"sap/ui/unified/library",
-	"sap/ui/core/Core",
 	"sap/ui/core/InvisibleText",
 	'sap/ui/events/KeyCodes',
 	"sap/ui/model/json/JSONModel",
@@ -40,7 +39,6 @@ sap.ui.define([
 	CalendarLegendItem,
 	DateTypeRange,
 	unifiedLibrary,
-	Core,
 	InvisibleText,
 	KeyCodes,
 	JSONModel,
@@ -403,7 +401,7 @@ sap.ui.define([
 
 		// Prepare
 		oSPC.placeAt("qunit-fixture");
-		Core.applyChanges();
+		oCore.applyChanges();
 
 		sCurrentPickerId = oSPC._getHeader().getAssociation("currentPicker");
 		oPicker = Element.getElementById(sCurrentPickerId);
@@ -419,7 +417,7 @@ sap.ui.define([
 
 		// Act
 		oSPC.setSelectedView("WorkWeekView");
-		Core.applyChanges();
+		oCore.applyChanges();
 
 		sCurrentPickerId = oSPC._getHeader().getAssociation("currentPicker");
 		oPicker = Element.getElementById(sCurrentPickerId);
@@ -434,7 +432,7 @@ sap.ui.define([
 
 		// Act
 		oSPC.setSelectedView("MonthView");
-		Core.applyChanges();
+		oCore.applyChanges();
 
 		sCurrentPickerId = oSPC._getHeader().getAssociation("currentPicker");
 		oPicker = Element.getElementById(sCurrentPickerId);
@@ -446,7 +444,7 @@ sap.ui.define([
 
 		// Act
 		oSPC.setSelectedView("WeekView");
-		Core.applyChanges();
+		oCore.applyChanges();
 
 		sCurrentPickerId = oSPC._getHeader().getAssociation("currentPicker");
 		oPicker = Element.getElementById(sCurrentPickerId);
@@ -461,7 +459,7 @@ sap.ui.define([
 
 		// Act
 		oSPC.setFirstDayOfWeek(-1);
-		Core.applyChanges();
+		oCore.applyChanges();
 
 		aDays = oRow.getDomRef().querySelectorAll(".sapUiCalItem");
 		$Date = aDays[0];
@@ -509,7 +507,7 @@ sap.ui.define([
 		// Act
 		oSPC.setSelectedView(sViewKey);
 		oSPC.setCalendarWeekNumbering(sInitialWeekNumbering);
-		Core.applyChanges();
+		oCore.applyChanges();
 
 		var oRow = oSPC.getAggregation("_grid").getAggregation("_columnHeaders"),
 			aHeaderDays = oRow.getDomRef().querySelectorAll(".sapUiCalItem");
@@ -522,7 +520,7 @@ sap.ui.define([
 		// Act
 		sInitialWeekNumbering = "MiddleEastern";
 		oSPC.setCalendarWeekNumbering(sInitialWeekNumbering);
-		Core.applyChanges();
+		oCore.applyChanges();
 		aHeaderDays = oRow.getDomRef().querySelectorAll(".sapUiCalItem");
 
 		// Assert
@@ -533,7 +531,7 @@ sap.ui.define([
 		// Act
 		sInitialWeekNumbering = "WesternTraditional";
 		oSPC.setCalendarWeekNumbering(sInitialWeekNumbering);
-		Core.applyChanges();
+		oCore.applyChanges();
 		aHeaderDays = oRow.getDomRef().querySelectorAll(".sapUiCalItem");
 
 		// Assert
@@ -546,7 +544,7 @@ sap.ui.define([
 		sViewKey = "MonthView";
 		oSPC.setSelectedView(sViewKey);
 		oSPC.setCalendarWeekNumbering(sInitialWeekNumbering);
-		Core.applyChanges();
+		oCore.applyChanges();
 		aHeaderDays = oSPC.getDomRef().querySelectorAll(".sapUiCalWH");
 
 		// Assert
@@ -555,7 +553,7 @@ sap.ui.define([
 		// Act
 		sInitialWeekNumbering = "MiddleEastern";
 		oSPC.setCalendarWeekNumbering(sInitialWeekNumbering);
-		Core.applyChanges();
+		oCore.applyChanges();
 		aHeaderDays = oSPC.getDomRef().querySelectorAll(".sapUiCalWH");
 
 		// Assert
@@ -565,7 +563,7 @@ sap.ui.define([
 		// Act
 		sInitialWeekNumbering = "WesternTraditional";
 		oSPC.setCalendarWeekNumbering(sInitialWeekNumbering);
-		Core.applyChanges();
+		oCore.applyChanges();
 		aHeaderDays = oSPC.getDomRef().querySelectorAll(".sapUiCalWH");
 
 		// Assert
@@ -603,7 +601,7 @@ sap.ui.define([
 
 		// Act
 		oSPC.setSelectedView(sViewKey);
-		Core.applyChanges();
+		oCore.applyChanges();
 
 		//assert
 		assert.strictEqual(oSPC.getSelectedDates().length, 3, "the selected dates are correctly added");
@@ -612,7 +610,7 @@ sap.ui.define([
 		// Act
 		sViewKey = "MonthView";
 		oSPC.setSelectedView(sViewKey);
-		Core.applyChanges();
+		oCore.applyChanges();
 
 		//assert
 		assert.strictEqual(oSPC.getAggregation("_mvgrid").getSelectedDates().length, 3, "the selected dates are correctly added in the selected view");
@@ -627,14 +625,14 @@ sap.ui.define([
 		// Act
 		sViewKey = "WeekView";
 		oSPC.setSelectedView(sViewKey);
-		Core.applyChanges();
+		oCore.applyChanges();
 
 		//assert
 		assert.strictEqual(oSPC.getAggregation("_grid").getSelectedDates().length, 4, "the selected dates are correctly added in the selected view");
 
 		// Act
 		oSPC.removeAllSelectedDates();
-		Core.applyChanges();
+		oCore.applyChanges();
 
 		//assert
 		assert.strictEqual(oSPC.getSelectedDates().length, 0, "the selected dates are correctly removed");

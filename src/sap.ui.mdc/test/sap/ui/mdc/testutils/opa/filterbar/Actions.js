@@ -16,8 +16,7 @@ sap.ui.define([
 	"../p13n/Util",
 	"../p13n/waitForP13nButtonWithMatchers",
 	"../p13n/waitForP13nDialog",
-	"./waitForAdaptFiltersButton",
-	"../Utils"
+	"./waitForAdaptFiltersButton"
 ], function(
 	Opa5,
 	Matcher,
@@ -32,8 +31,7 @@ sap.ui.define([
 	p13nUtil,
 	waitForP13nButtonWithMatchers,
 	waitForP13nDialog,
-	waitForAdaptFiltersButton,
-	TestUtils
+	waitForAdaptFiltersButton
 ) {
 	"use strict";
 
@@ -343,7 +341,7 @@ sap.ui.define([
 				},
 				success:function(aAdaptFiltersPanel) {
 					Opa5.assert.equal(aAdaptFiltersPanel.length, 1, "Adapt Filters Panel found");
-					var sAdaptFiltersResourceBundleButtonText = TestUtils.getTextFromResourceBundle("sap.ui.mdc", "p13nDialog.OK");
+					var sAdaptFiltersResourceBundleButtonText = Utils.getTextFromResourceBundle("sap.ui.mdc", "p13nDialog.OK");
 					return this.waitFor({
 						controlType: "sap.m.Button",
 						properties: {
@@ -370,7 +368,7 @@ sap.ui.define([
 				},
 				success:function(aAdaptFiltersPanel) {
 					Opa5.assert.equal(aAdaptFiltersPanel.length, 1, "Adapt Filters Panel found");
-					var sAdaptFiltersResourceBundleButtonText = TestUtils.getTextFromResourceBundle("sap.ui.mdc", "p13nDialog.CANCEL");
+					var sAdaptFiltersResourceBundleButtonText = Utils.getTextFromResourceBundle("sap.ui.mdc", "p13nDialog.CANCEL");
 					return this.waitFor({
 						controlType: "sap.m.Button",
 						properties: {

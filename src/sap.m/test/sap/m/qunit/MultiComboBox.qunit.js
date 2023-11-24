@@ -3,7 +3,6 @@ sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/m/MultiComboBox",
-	"sap/ui/core/Core",
 	"sap/ui/core/Item",
 	"sap/ui/model/json/JSONModel",
 	"sap/m/ComboBoxBaseRenderer",
@@ -35,7 +34,6 @@ sap.ui.define([
 	qutils,
 	createAndAppendDiv,
 	MultiComboBox,
-	oCore,
 	Item,
 	JSONModel,
 	ComboBoxBaseRenderer,
@@ -111,7 +109,7 @@ sap.ui.define([
 
 		// arrange
 		//oMultiComboBox.placeAt("MultiComboBoxContent");
-		//oCore.applyChanges();
+		//Core.applyChanges();
 
 		// assertions
 		assert.strictEqual(oMultiComboBox.getName(), "", 'Default name is ""');
@@ -700,7 +698,7 @@ sap.ui.define([
 
 		// arrange
 		//oMultiComboBox.placeAt("MultiComboBoxContent");
-		//oCore.applyChanges();
+		//Core.applyChanges();
 
 		// assertions
 		assert.deepEqual(oMultiComboBox.getSelectedItems(), [oItem]);
@@ -786,7 +784,7 @@ sap.ui.define([
 
 		// arrange
 		//oMultiComboBox.placeAt("MultiComboBoxContent");
-		//oCore.applyChanges();
+		//Core.applyChanges();
 
 		// assertions
 		assert.deepEqual(oMultiComboBox.getSelectedKeys(), []);
@@ -1642,7 +1640,7 @@ sap.ui.define([
 		assert.deepEqual(oMultiComboBox.getSelectedItems(), [oItem]);
 		assert.strictEqual(fnFireChangeSpy.callCount, 0, "The change event was not fired");
 
-		//oCore.applyChanges();
+		//Core.applyChanges();
 		//assert.strictEqual(oMultiComboBox.getValue(), "item 1");
 
 		// cleanup
@@ -4233,7 +4231,7 @@ sap.ui.define([
 
 		  // arrange
 		  oMultiComboBox.placeAt("MultiComboBoxContent");
-		  oCore.applyChanges();
+		  Core.applyChanges();
 		  oMultiComboBox.focus();
 
 		  var fnOpenSpy = this.spy(oMultiComboBox.getPicker(), "open");
@@ -5681,14 +5679,14 @@ sap.ui.define([
 		var oMultiComboBox = new MultiComboBox();
 
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		oCore.applyChanges();
+		Core.applyChanges();
 
 		// assert
 		assert.notOk(oMultiComboBox.getFocusDomRef().getAttribute("aria-controls"), 'The "aria-controls" should not be set before picker creation');
 
 		//act
 		oMultiComboBox.open();
-		oCore.applyChanges();
+		Core.applyChanges();
 
 		// assert
 		assert.strictEqual(oMultiComboBox.getFocusDomRef().getAttribute("aria-controls"), oMultiComboBox.getPicker().getId(), 'The "aria-controls" should be');

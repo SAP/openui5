@@ -15,8 +15,7 @@ sap.ui.define([
 	"sap/m/Link",
 	"sap/m/Text",
 	"sap/ui/core/Core",
-	"sap/ui/core/library",
-	"sap/ui/events/KeyCodes"
+	"sap/ui/core/library"
 ], function(
 	Localization,
 	Library,
