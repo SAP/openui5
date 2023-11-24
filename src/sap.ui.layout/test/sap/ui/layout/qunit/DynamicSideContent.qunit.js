@@ -47,6 +47,7 @@ sap.ui.define([
 			};
 
 			this._oDSC = new DynamicSideContent();
+			this._oFixture = document.getElementById("qunit-fixture");
 			this._oDSC.placeAt("qunit-fixture");
 			oCore.applyChanges();
 		},
@@ -151,6 +152,133 @@ sap.ui.define([
 		this._oDSC.setEqualSplit(false);
 		assert.ok(!this._oDSC._setResizeData.calledOnce, "_setResizeData is not called when no breakpoint is set");
 		assert.ok(!this._oDSC._changeGridState.calledOnce, "_changeGridState is not called when no breakpoint is set");
+	});
+
+	QUnit.test("'sideContentWidthM' property sets correct side content width for M breakpoint",function(assert) {
+		// act
+		this._oDSC.setSideContentFallDown("BelowM");
+		this._oDSC.setContainerQuery(true);
+		this._oFixture.style.width = "900px"; // M breakpoint, mainContent and sideContent are side by side
+		this._oDSC._adjustToScreenSize();
+		this._oDSC.setSideContentWidthM("256px");
+		this._oDSC.setSideContentWidthL("356px");
+		this._oDSC.setSideContentWidthXL("456px");
+		oCore.applyChanges();
+
+		// assert
+		assert.notEqual(this._oDSC.getDomRef("SCGridCell").getAttribute("style").indexOf("width: 256px"), -1, "Side content width for M breakpoint is properly set");
+
+		// act
+		this._oDSC.setEqualSplit(true);
+		oCore.applyChanges();
+
+		// assert
+		assert.strictEqual(this._oDSC.getDomRef("SCGridCell").getAttribute("style").indexOf("width: 256px"), -1, "Side content width for M breakpoint is removed when equalSplit is set");
+
+		// act
+		this._oDSC.setEqualSplit(false);
+		oCore.applyChanges();
+
+		// assert
+		assert.notEqual(this._oDSC.getDomRef("SCGridCell").getAttribute("style").indexOf("width: 256px"), -1, "Side content width for M breakpoint is properly set when equalSplit is removed");
+
+		// act
+		this._oDSC.setShowMainContent(false);
+		oCore.applyChanges();
+
+		// assert
+		assert.strictEqual(this._oDSC.getDomRef("SCGridCell").getAttribute("style").indexOf("width: 256px"), -1, "Side content width for M breakpoint is removed when main content is hidden");
+
+		// act
+		this._oDSC.setShowMainContent(true);
+		oCore.applyChanges();
+
+		// assert
+		assert.notEqual(this._oDSC.getDomRef("SCGridCell").getAttribute("style").indexOf("width: 256px"), -1, "Side content width for M breakpoint is properly set when main content is visible again");
+	});
+
+	QUnit.test("'sideContentWidthL' property sets correct side content width for L breakpoint",function(assert) {
+		// act
+		this._oFixture.style.width = "1100px"; // L breakpoint, mainContent and sideContent are side by side
+		this._oDSC._adjustToScreenSize();
+		this._oDSC.setContainerQuery(true);
+		this._oDSC.setSideContentWidthM("256px");
+		this._oDSC.setSideContentWidthL("356px");
+		this._oDSC.setSideContentWidthXL("456px");
+		oCore.applyChanges();
+
+		// assert
+		assert.notEqual(this._oDSC.getDomRef("SCGridCell").getAttribute("style").indexOf("width: 356px"), -1, "Side content width for L breakpoint is properly set");
+
+		// act
+		this._oDSC.setEqualSplit(true);
+		oCore.applyChanges();
+
+		// assert
+		assert.strictEqual(this._oDSC.getDomRef("SCGridCell").getAttribute("style").indexOf("width: 356px"), -1, "Side content width for L breakpoint is removed when equalSplit is set");
+
+		// act
+		this._oDSC.setEqualSplit(false);
+		oCore.applyChanges();
+
+		// assert
+		assert.notEqual(this._oDSC.getDomRef("SCGridCell").getAttribute("style").indexOf("width: 356px"), -1, "Side content width for L breakpoint is properly set when equalSplit is removed");
+
+		// act
+		this._oDSC.setShowMainContent(false);
+		oCore.applyChanges();
+
+		// assert
+		assert.strictEqual(this._oDSC.getDomRef("SCGridCell").getAttribute("style").indexOf("width: 356px"), -1, "Side content width for L breakpoint is removed when main content is hidden");
+
+		// act
+		this._oDSC.setShowMainContent(true);
+		oCore.applyChanges();
+
+		// assert
+		assert.notEqual(this._oDSC.getDomRef("SCGridCell").getAttribute("style").indexOf("width: 356px"), -1, "Side content width for L breakpoint is properly set when main content is visible again");
+	});
+
+	QUnit.test("'sideContentWidthXL' property sets correct side content width for XL breakpoint",function(assert) {
+		// prepare
+		this._oFixture.style.width = "1500px"; // XL breakpoint, mainContent and sideContent are side by side
+		this._oDSC._adjustToScreenSize();
+		this._oDSC.setContainerQuery(true);
+		this._oDSC.setSideContentWidthM("256px");
+		this._oDSC.setSideContentWidthL("356px");
+		this._oDSC.setSideContentWidthXL("456px");
+		oCore.applyChanges();
+
+		// assert
+		assert.notEqual(this._oDSC.getDomRef("SCGridCell").getAttribute("style").indexOf("width: 456px"), -1, "Side content width for XL breakpoint is properly set");
+
+		// act
+		this._oDSC.setEqualSplit(true);
+		oCore.applyChanges();
+
+		// assert
+		assert.strictEqual(this._oDSC.getDomRef("SCGridCell").getAttribute("style").indexOf("width: 456px"), -1, "Side content width for XL breakpoint is removed when equalSplit is set");
+
+		// act
+		this._oDSC.setEqualSplit(false);
+		oCore.applyChanges();
+
+		// assert
+		assert.notEqual(this._oDSC.getDomRef("SCGridCell").getAttribute("style").indexOf("width: 456px"), -1, "Side content width for XL breakpoint is properly set when equalSplit is removed");
+
+		// act
+		this._oDSC.setShowMainContent(false);
+		oCore.applyChanges();
+
+		// assert
+		assert.strictEqual(this._oDSC.getDomRef("SCGridCell").getAttribute("style").indexOf("width: 456px"), -1, "Side content width for XL breakpoint is removed when main content is hidden");
+
+		// act
+		this._oDSC.setShowMainContent(true);
+		oCore.applyChanges();
+
+		// assert
+		assert.notEqual(this._oDSC.getDomRef("SCGridCell").getAttribute("style").indexOf("width: 456px"), -1, "Side content width for XL breakpoint is properly set when main content is visible again");
 	});
 
 	QUnit.test("'SideContent' aggregation is set correctly",function(assert) {
@@ -1057,7 +1185,7 @@ sap.ui.define([
 						assert.ok(oBreakpointChangedSpy.notCalled, "breakpoinChange event is not fired");
 						// clean
 						oContainer.style.width = "";
-						oDSC.removeDelegate(oBreakpointChangedSpy);
+						oDSC.removeDelegate(oAfterRenderingDelegate);
 						ResizeHandler.deregister(sResizeListenerId);
 						oDSC.destroy();
 						fnDone();
