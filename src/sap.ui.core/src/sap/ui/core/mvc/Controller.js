@@ -428,9 +428,8 @@ sap.ui.define([
 										name: sCustomControllerName
 									};
 								});
-							} else {
-								mixinControllerDefinition(oController, oCustomControllerDef);
 							}
+							mixinControllerDefinition(oController, oCustomControllerDef);
 							return oController;
 						}
 
