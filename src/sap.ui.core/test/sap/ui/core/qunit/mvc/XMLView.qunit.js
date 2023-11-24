@@ -539,28 +539,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("Directly Nested XMLViews", function(assert) {
-		sap.ui.require.preload({
-			"nested/views/outer.view.xml":
-				"<View xmlns=\"sap.ui.core.mvc\">" +
-					"<Text id=\"before\" text=\"another control before the nested view\" xmlns=\"sap.m\" />" +
-					"<XMLView viewName=\"nested.views.middle\" id=\"middle\" />" +
-					"<Text id=\"after\" text=\"another control after the nested view\" xmlns=\"sap.m\" />" +
-				"</View>",
-			"nested/views/middle.view.xml":
-				"<View xmlns=\"sap.ui.core.mvc\">" +
-					"<Text id=\"before\" text=\"another control before the nested view\" xmlns=\"sap.m\" />" +
-					"<VBox id=\"vbox\" xmlns=\"sap.m\">" +
-						"<XMLView viewName=\"nested.views.inner\" id=\"indirect-inner\" xmlns=\"sap.ui.core.mvc\" />" +
-					"</VBox>" +
-					"<XMLView viewName=\"nested.views.inner\" id=\"direct-inner\" xmlns=\"sap.ui.core.mvc\" />" +
-					"<Text id=\"after\" text=\"another control before the nested view\" xmlns=\"sap.m\" />" +
-				"</View>",
-			"nested/views/inner.view.xml":
-				"<View xmlns=\"sap.ui.core.mvc\">" +
-					"<Text id=\"inside\" text=\"another control inside the view\" xmlns=\"sap.m\" />" +
-				"</View>"
-		});
+	QUnit.test("Directly Nested XMLViews (async)", function(assert) {
 		var expectedControls = [
 			"outer",
 				"outer--before",
@@ -578,8 +557,12 @@ sap.ui.define([
 		// load and place view, force rendering
 		return XMLView.create({
 			id: "outer",
-			viewName: "nested.views.outer"
+			viewName: "example.mvc.outer"
 		}).then(async function(oView) {
+			const oMiddleView = await oView.byId("middle").loaded();
+			await oMiddleView.byId("indirect-inner").loaded();
+			await oMiddleView.byId("direct-inner").loaded();
+
 			oView.placeAt("content");
 			await nextUIUpdate();
 
@@ -624,8 +607,6 @@ sap.ui.define([
 				assert.notOk(document.getElementById(sId), "there should be no more DOM with id '" + sId + "'");
 			});
 		});
-
-
 	});
 
 	QUnit.module("Rendering", {

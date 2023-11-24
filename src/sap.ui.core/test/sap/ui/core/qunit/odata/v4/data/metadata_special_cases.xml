@@ -7,6 +7,7 @@
 					<PropertyRef Name="ArtistID"/>
 					<PropertyRef Name="IsActiveEntity"/>
 				</Key>
+				<Property Name="_" Type="special.cases.HierarchyProperties"/>
 				<Property Name="Address" Type="special.cases.Address"/>
 				<Property Name="ArtistID" Type="Edm.String" Nullable="false"/>
 				<Property Name="HasActiveEntity" Type="Edm.Boolean" />
@@ -97,6 +98,9 @@
 				<NavigationProperty Name="DtoB" Partner="BtoDs" Type="special.cases.B"/>
 				<NavigationProperty Name="DtoC" Partner="CtoD" Type="special.cases.C"/>
 			</EntityType>
+			<ComplexType Name="HierarchyProperties">
+				<Property Name="NodeID" Type="Edm.String" Nullable="false"/>
+			</ComplexType>
 			<ComplexType Name="Address">
 				<Property Name="City" Type="Edm.String"/>
 				<Property Name="ZIP" Type="Edm.String" MaxLength="5" />

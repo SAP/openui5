@@ -17,9 +17,6 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	/**
-	 * @deprecated As of version 1.121.0
-	 */
 	var rPattern = /\{\{csrfTokens.([^\}]+)\}\}/;
 	var TOKEN_DEFAULT_HEADER = "X-CSRF-Token";
 
@@ -105,9 +102,6 @@ sap.ui.define([
 		return sXCSRFHeader && sXCSRFHeader.toLowerCase() === "required" && oResponse.status === 403;
 	};
 
-	/**
-	 * @deprecated As of version 1.121.0
-	 */
 	CsrfTokenHandler.prototype.replacePlaceholders = function (vData) {
 		if (!vData) {
 			return vData;
@@ -242,9 +236,6 @@ sap.ui.define([
 		let aMatches = sString.match(rBinding);
 
 		if (!aMatches) {
-			/**
-			 * @deprecated As of version 1.121.0
-			 */
 			aMatches = sString.match(rPattern);
 
 			if (!aMatches) {

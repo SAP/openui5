@@ -1806,15 +1806,19 @@ sap.ui.define([
 		 *   The source object to inherit from
 		 * @param {object} oTarget
 		 *   The target object to inherit into
+		 * @param {boolean} [bTolerateNull]
+		 *   Whether a <code>null</code> value in the target is tolerated and treated as a missing
+		 *   object, which is then created along the way
 		 * @throws {Error}
-		 *   If a property along the way exists, but has an <code>undefined</code> or
-		 *   <code>null</code> value
+		 *   If a property along the way exists, but has an <code>undefined</code> value or an
+		 *   untolerated <code>null</code> value
 		 *
 		 * @public
 		 */
-		inheritPathValue : function (aSegments, oSource, oTarget) {
+		inheritPathValue : function (aSegments, oSource, oTarget, bTolerateNull) {
 			aSegments.forEach(function (sSegment, i) {
-				var bMissing = !(sSegment in oTarget); // Note: TypeError if !oTarget
+				var bMissing = !(sSegment in oTarget) // Note: TypeError if !oTarget
+					|| bTolerateNull && oTarget[sSegment] === null;
 
 				if (i + 1 < aSegments.length) { // intermediate step
 					if (bMissing) {

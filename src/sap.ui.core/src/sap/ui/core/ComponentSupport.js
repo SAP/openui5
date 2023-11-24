@@ -69,6 +69,19 @@ sap.ui.define([
 	 * Each data attribute will be interpreted as a setting and parsed considering
 	 * the data type of the matching property in the <code>ComponentContainer</code>.
 	 *
+	 * <b>NOTE:</b>
+	 * The following <code>data</code> attributes for registering event handlers have been deprecated since
+	 * UI5 version 1.120 and won't work in the next major version because of the removal of accessing the
+	 * global namespace:
+	 * <ul>
+	 * <li><code>data-component-created</code></li>
+	 * <li><code>data-component-failed</code></li>
+	 * </ul>
+	 *
+	 * Alternatively, you can provide your own module in the bootstrap via <code>oninit</code>, in which you
+	 * create an instance of the {@link sap.ui.core.ComponentContainer ComponentContainer} in the JavaScript
+	 * code.
+	 *
 	 * As HTML is case-insensitive, in order to define a property with upper-case characters, you have to "escape" them
 	 * with a dash character, similar to CSS attributes.
 	 * The following code gives an example:
@@ -173,12 +186,6 @@ sap.ui.define([
 							throw new Error("Property \"" + oProperty.name + "\" has no known type");
 						}
 						oValue = oType.parseValue(oValue);
-					} else if (oEvent) {
-						var fnCallback = ObjectPath.get(oValue);
-						if (typeof fnCallback !== "function") {
-							throw new Error("Callback handler for event \"" + oEvent.name + "\" not found");
-						}
-						oValue = fnCallback;
 					}
 				}
 				mSettings[sKey] = oValue;

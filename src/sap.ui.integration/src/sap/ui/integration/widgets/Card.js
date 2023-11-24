@@ -2440,12 +2440,16 @@ sap.ui.define([
 	 * @returns {Promise<any>} Resolves when the request is successful, rejects otherwise.
 	 */
 	Card.prototype.request = function (oConfiguration) {
-		return this.processDestinations(oConfiguration).then(function (oResult) {
-			return this._oDataProviderFactory
+		return this.processDestinations(oConfiguration).then((oResult) => {
+			return new Promise((resolve, reject) => {
+				this._oDataProviderFactory
 				.create({ request: oResult })
 				.setAllowCustomDataType(true)
-				.getData();
-		}.bind(this));
+				.attachDataChanged((e) => { resolve(e.getParameter("data")); })
+				.attachError((e) => { reject([e.getParameter("message"), e.getParameter("response"), e.getParameter("responseText"), e.getParameter("settings")]); })
+				.triggerDataUpdate();
+			});
+		});
 	};
 
 	/**

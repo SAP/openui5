@@ -1099,6 +1099,7 @@ sap.ui.define([
 		this._iterateRootElements(function(oRootElement) {
 			this._destroyOverlaysForElement(oRootElement);
 		}, this);
+		Overlay.removeOverlayContainer();
 	};
 
 	/**

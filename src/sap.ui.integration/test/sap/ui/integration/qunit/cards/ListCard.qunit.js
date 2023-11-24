@@ -10,10 +10,10 @@ sap.ui.define([
 	"sap/ui/integration/widgets/Card",
 	"sap/ui/qunit/utils/MemoryLeakCheck",
 	"sap/ui/qunit/QUnitUtils"
-], function(
+], function (
 	mLibrary,
 	Core,
-	Lib,
+	Library,
 	BaseListContent,
 	ListContent,
 	CardActions,
@@ -25,7 +25,7 @@ sap.ui.define([
 
 	const DOM_RENDER_LOCATION = "qunit-fixture";
 	const AvatarColor = mLibrary.AvatarColor;
-	const pIfMicrochartsAvailable = Lib.load("sap.suite.ui.microchart");
+	const pIfMicrochartsAvailable = Library.load("sap.suite.ui.microchart");
 
 	function testWithMicrochart(assert, oCard, oManifest, fnTest) {
 		const done = assert.async();
@@ -1776,7 +1776,7 @@ sap.ui.define([
 	QUnit.test("Loading of Microchart library when there is NO chart in the content", function (assert) {
 		// Arrange
 		var done = assert.async(),
-			loadLibraryStub = sinon.stub(Core, "loadLibrary");
+			loadLibraryStub = sinon.stub(Library, "load");
 
 		this.oCard.attachEvent("_ready", function () {
 			// Assert
@@ -1801,7 +1801,7 @@ sap.ui.define([
 	QUnit.test("Loading of Microchart library when there is chart in the content", function (assert) {
 		// Arrange
 		var done = assert.async(),
-			loadLibraryStub = sinon.stub(Core, "loadLibrary").resolves();
+			loadLibraryStub = sinon.stub(Library, "load").resolves();
 
 		this.oCard.attachEvent("_ready", function () {
 			// Assert

@@ -77,8 +77,19 @@ sap.ui.require([
 						message : "ID must not be empty",
 						type : MessageType.Warning
 					}]);
+					// toggle filter for messages
+					Then.onAnyTable.checkMessageStrip("parts", "Warning");
+					When.onTheObjectPage.toggleMessageFilter();
+					Then.onTheObjectPage.checkPartsLength(2);
+					Then.onTheObjectPage.checkPartsTableTitle("Product: 10, 0 Parts");
+					Then.onTheObjectPage.checkPart(0, "", "Inactive");
+					Then.onTheObjectPage.checkPart(1, "", "Inactive");
+					Then.onTheObjectPage.checkPartIDValueState("Warning", 1);
+					When.onTheObjectPage.toggleMessageFilter();
 					// reset edited inactive row
 					When.onTheObjectPage.pressResetOrDeletePartButton(1);
+					Then.onTheObjectPage.checkPartsLength(5);
+					Then.onAnyTable.checkMessageStrip("parts");
 					Then.onTheObjectPage.checkPart(1, "", "Inactive", "");
 					When.onTheObjectPage.enterPartDescription(1, "Part 99");
 					Then.onTheObjectPage.checkPartIDValueState("Warning", 1);
@@ -195,8 +206,20 @@ sap.ui.require([
 						message : "ID must not be empty",
 						type : MessageType.Warning
 					}]);
+					// toggle filter for messages
+					Then.onAnyTable.checkMessageStrip("parts", "Warning");
+					When.onTheObjectPage.toggleMessageFilter();
+					Then.onTheObjectPage.checkPartsLength(2);
+					Then.onTheObjectPage.checkPartsTableTitle("Product: 10, 0 Parts");
+					Then.onTheObjectPage.checkPart(0, "", "Inactive");
+					Then.onTheObjectPage.checkPart(1, "", "Inactive");
+					Then.onTheObjectPage.checkPartIDValueState("Warning", 0);
+					When.onTheObjectPage.toggleMessageFilter();
+
 					// reset edited inactive row
 					When.onTheObjectPage.pressResetOrDeletePartButton(3);
+					Then.onAnyTable.checkMessageStrip("parts");
+					Then.onTheObjectPage.checkPartsLength(5);
 					Then.onTheObjectPage.checkPart(3, "", "Inactive", "");
 					When.onTheObjectPage.enterPartDescription(3, "Part 99");
 					Then.onTheObjectPage.checkPartIDValueState("Warning", 3);

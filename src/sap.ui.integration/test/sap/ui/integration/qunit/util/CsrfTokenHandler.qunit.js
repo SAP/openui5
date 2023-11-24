@@ -87,9 +87,6 @@ sap.ui.define([
 		this.createDataProvider(oDataProviderConfig, { csrfTokensConfig: oCsrfTokensConfig }).triggerDataUpdate();
 	});
 
-	/**
-	 * @deprecated As of version 1.121.0
-	 */
 	QUnit.test("[Deprecated Syntax] Get token by HEAD request", function (assert) {
 		const done = assert.async(2);
 		const oCsrfTokensConfig = {
@@ -198,9 +195,6 @@ sap.ui.define([
 		this.createDataProvider(oDataProviderConfig, { csrfTokensConfig: oCsrfTokensConfig }).triggerDataUpdate();
 	});
 
-	/**
-	 * @deprecated As of version 1.121.0
-	 */
 	QUnit.test("[Deprecated Syntax] Get token by POST request", function (assert) {
 		const done = assert.async(2);
 		const oCsrfTokensConfig = {
@@ -314,9 +308,6 @@ sap.ui.define([
 		oDataProvider.triggerDataUpdate();
 	});
 
-	/**
-	 * @deprecated As of version 1.121.0
-	 */
 	QUnit.test("[Deprecated Syntax] Token is reused", function (assert) {
 		const done = assert.async(3);
 		const oCsrfTokensConfig = {
@@ -447,9 +438,6 @@ sap.ui.define([
 		oDataProvider.triggerDataUpdate();
 	});
 
-	/**
-	 * @deprecated As of version 1.121.0
-	 */
 	QUnit.test("[Deprecated Syntax] Expired token is retriggered", function (assert) {
 		const done = assert.async(5);
 		const oCsrfTokensConfig = {
@@ -627,9 +615,6 @@ sap.ui.define([
 		this.createDataProvider(oDataProviderConfig, { csrfTokensConfig: oCsrfTokensConfig }).triggerDataUpdate();
 	});
 
-	/**
-	 * @deprecated As of version 1.121.0
-	 */
 	QUnit.test("[Deprecated Syntax] Token as parameter", function (assert) {
 		const done = assert.async(2);
 		const oCsrfTokensConfig = {
@@ -768,9 +753,6 @@ sap.ui.define([
 		this.oCard.startManifestProcessing();
 	});
 
-	/**
-	 * @deprecated As of version 1.121.0
-	 */
 	QUnit.test("[Deprecated Syntax] Token in card with translations", function (assert) {
 		const done = assert.async();
 		const oManifest = {
@@ -904,9 +886,6 @@ sap.ui.define([
 		this.oCard.startManifestProcessing();
 	});
 
-	/**
-	 * @deprecated As of version 1.121.0
-	 */
 	QUnit.test("[Deprecated Syntax] Token works with destinations", function (assert) {
 		const done = assert.async();
 		const oManifest = {
@@ -961,6 +940,142 @@ sap.ui.define([
 			.setBaseUrl("test-resources/sap/ui/integration/qunit/cardbundle/bundle/");
 
 		assert.expect(1);
+
+		// respond to the actual data request
+		this.oServer.respondWith("POST", "/fakeService/Products", function (oXhr) {
+			assert.strictEqual(new Headers(oXhr.requestHeaders).get("X-CSRF-Token"), "TokenValue", "The data request header contains the provided token");
+
+			oXhr.respond(200, {
+				"Content-Type": "application/json"
+			}, JSON.stringify({"results": []}));
+
+			done();
+		});
+
+		this.oCard.startManifestProcessing();
+	});
+
+	QUnit.test("Token in Card.request() call", function (assert) {
+		const done = assert.async(2);
+		const oManifest = {
+			"sap.app": {
+				"id": "test.card.csrf.card5"
+			},
+			"sap.card": {
+				"type": "List",
+				"configuration": {
+					"csrfTokens": {
+						"token1": {
+							"data": {
+								"request": {
+									"url": "/fakeService/getToken",
+									"method": "HEAD",
+									"headers": {
+										"X-CSRF-Token": "Fetch"
+									}
+								}
+							}
+						}
+					}
+				},
+				"header": {
+					"title": "Some title"
+				},
+				"content": {
+					"item": {
+						"title": "{Name}"
+					}
+				}
+			}
+		};
+
+		this.oCard.setManifest(oManifest)
+			.setBaseUrl("test-resources/sap/ui/integration/qunit/cardbundle/bundle/");
+
+		assert.expect(2);
+
+		this.oCard.attachEvent("_ready", () => {
+			// act
+			this.oCard.request({
+				url: "/fakeService/Products",
+				method: "POST",
+				headers: {
+					"X-CSRF-Token": "{csrfTokens>/token1/value}"
+				}
+			}).then((oRes) => {
+				assert.deepEqual(oRes, {"results": []}, "getData resolves with correct value");
+
+				done();
+			});
+		});
+
+		// respond to the actual data request
+		this.oServer.respondWith("POST", "/fakeService/Products", function (oXhr) {
+			assert.strictEqual(new Headers(oXhr.requestHeaders).get("X-CSRF-Token"), "TokenValue", "The data request header contains the provided token");
+
+			oXhr.respond(200, {
+				"Content-Type": "application/json"
+			}, JSON.stringify({"results": []}));
+
+			done();
+		});
+
+		this.oCard.startManifestProcessing();
+	});
+
+	QUnit.test("[Deprecated Syntax] Token in Card.request() call", function (assert) {
+		const done = assert.async(2);
+		const oManifest = {
+			"sap.app": {
+				"id": "test.card.csrf.card5"
+			},
+			"sap.card": {
+				"type": "List",
+				"configuration": {
+					"csrfTokens": {
+						"token1": {
+							"data": {
+								"request": {
+									"url": "/fakeService/getToken",
+									"method": "HEAD",
+									"headers": {
+										"X-CSRF-Token": "Fetch"
+									}
+								}
+							}
+						}
+					}
+				},
+				"header": {
+					"title": "Some title"
+				},
+				"content": {
+					"item": {
+						"title": "{Name}"
+					}
+				}
+			}
+		};
+
+		this.oCard.setManifest(oManifest)
+			.setBaseUrl("test-resources/sap/ui/integration/qunit/cardbundle/bundle/");
+
+		assert.expect(2);
+
+		this.oCard.attachEvent("_ready", () => {
+			// act
+			this.oCard.request({
+				url: "/fakeService/Products",
+				method: "POST",
+				headers: {
+					"X-CSRF-Token": "{csrfTokens>/token1/value}"
+				}
+			}).then((oRes) => {
+				assert.deepEqual(oRes, {"results": []}, "getData resolves with correct value");
+
+				done();
+			});
+		});
 
 		// respond to the actual data request
 		this.oServer.respondWith("POST", "/fakeService/Products", function (oXhr) {

@@ -22,7 +22,6 @@ sap.ui.define([
 	"sap/ui/mdc/enums/ReasonMode",
 	"sap/ui/mdc/enums/FilterBarValidationStatus",
 	"sap/ui/mdc/enums/OperatorName",
-	"sap/ui/fl/apply/api/ControlVariantApplyAPI",
 	"sap/m/library",
 	"sap/m/Button",
 	"./FilterBarBaseRenderer"
@@ -48,13 +47,14 @@ sap.ui.define([
 		ReasonMode,
 		FilterBarValidationStatus,
 		OperatorName,
-		ControlVariantApplyAPI,
 		mLibrary,
 		Button,
 		FilterBarBaseRenderer
 	) {
 	"use strict";
 
+	// sap.ui.fl-related classes (loaded async after library load)
+	let FlexApplyAPI;
 	const ValueState = coreLibrary.ValueState;
 
 	/**
@@ -1800,19 +1800,40 @@ sap.ui.define([
 		return Promise.resolve();
 	};
 
-	FilterBarBase.prototype.setVariantBackreference = function(oVariant) {
-		if (!this._hasAssignedVariantManagement()) {
-			this.setAssociation("variantBackreference", oVariant);
+	FilterBarBase.prototype._loadFlex = function() {
 
-			ControlVariantApplyAPI.attachVariantApplied({
-				selector: this,
-				vmControlId: this.getVariantBackreference(),
-				callback: this._handleVariantSwitch.bind(this),
-				callAfterInitialVariant: true
+		return new Promise(function(fResolve) {
+			Library.load('sap.ui.fl').then(function() {
+				sap.ui.require([
+					"sap/ui/fl/apply/api/ControlVariantApplyAPI"
+				], function(ControlVariantApplyAPI) {
+					fResolve(ControlVariantApplyAPI);
+				});
+			}).catch(function(oEx) {
+				Log.error(oEx);
+				fResolve(null);
 			});
+		});
+
+	};
+
+	FilterBarBase.prototype.setVariantBackreference = function(oVariantManagement) {
+		if (!this._hasAssignedVariantManagement()) {
+			this.setAssociation("variantBackreference", oVariantManagement);
+			this._loadFlex().then(function(ControlVariantApplyAPI) {
+					FlexApplyAPI = ControlVariantApplyAPI;
+					FlexApplyAPI.attachVariantApplied({
+						selector: this,
+						vmControlId: this.getVariantBackreference(),
+						callback: this._handleVariantSwitch.bind(this),
+						callAfterInitialVariant: true
+					});
+			}.bind(this));
 		} else {
-			Log.error("the association 'variant' may only be assigned once and may not change afterwards.");
+			Log.error("the association 'variantBackreference' may only be assigned once and may not change afterwards.");
 		}
+
+		return this;
 	};
 
 	FilterBarBase.prototype._handleVariantSwitch = function(oVariant) {
@@ -1902,11 +1923,12 @@ sap.ui.define([
 
 	FilterBarBase.prototype.exit = function() {
 
-		if (this._hasAssignedVariantManagement()) {
-			ControlVariantApplyAPI.detachVariantApplied({
+		if (this._hasAssignedVariantManagement() && FlexApplyAPI) {
+			FlexApplyAPI.detachVariantApplied({
 				selector: this,
 				vmControlId: this.getVariantBackreference()
 			});
+			FlexApplyAPI = undefined;
 		}
 
 		if (this.isControlDelegateInitialized() && this.getControlDelegate().cleanup) {

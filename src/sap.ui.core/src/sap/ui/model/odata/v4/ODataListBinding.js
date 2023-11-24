@@ -115,9 +115,13 @@ sap.ui.define([
 		this.checkBindingParameters(mParameters, ["$$aggregation", "$$canonicalPath",
 			"$$getKeepAliveContext", "$$groupId", "$$operationMode", "$$ownRequest",
 			"$$patchWithoutSideEffects", "$$sharedRequest", "$$updateGroupId"]);
+		const aFilters = _Helper.toArray(vFilters);
+		if (mParameters.$$aggregation && aFilters[0] === Filter.NONE) {
+			throw new Error("Cannot combine Filter.NONE with $$aggregation");
+		}
 		// number of active (client-side) created contexts in aContexts
 		this.iActiveContexts = 0;
-		this.aApplicationFilters = _Helper.toArray(vFilters);
+		this.aApplicationFilters = aFilters;
 		this.sChangeReason = oModel.bAutoExpandSelect && !_Helper.isDataAggregation(mParameters)
 			? "AddVirtualContext"
 			: undefined;
@@ -746,7 +750,7 @@ sap.ui.define([
 	 * method then adds a transient entity to the parent's navigation property, which is sent with
 	 * the payload of the parent entity. Such a nested context cannot be inactive.
 	 *
-	 * <b>Note:</b> After a succesful creation of the main entity the context returned for a
+	 * <b>Note:</b> After a successful creation of the main entity the context returned for a
 	 * nested entity is no longer valid. Do not use the
 	 * {@link sap.ui.model.odata.v4.Context#created created} promise of such a context! New contexts
 	 * are created for the nested collection because it is not possible to reliably assign the
@@ -1646,13 +1650,14 @@ sap.ui.define([
 	/**
 	 * Returns a URL by which the complete content of the list can be downloaded in JSON format. The
 	 * request delivers all entities considering the binding's query options (such as filters or
-	 * sorters).
+	 * sorters). Returns <code>null</code> if the binding's filter is
+	 * {@link sap.ui.filter.Filter.NONE}.
 	 *
-	 * @returns {sap.ui.base.SyncPromise<string>}
-	 *   A promise that is resolved with the download URL.
+	 * @returns {sap.ui.base.SyncPromise<string|null>}
+	 *   A promise that is resolved with the download URL or <code>null</code>
 	 * @throws {Error}
 	 *   If the binding is unresolved or is {@link #isTransient transient} (part of a
-	 *   {@link sap.ui.model.odata.v4.ODataListBinding#create deep create}),
+	 *   {@link sap.ui.model.odata.v4.ODataListBinding#create deep create})
 	 *
 	 * @private
 	 */
@@ -1663,14 +1668,20 @@ sap.ui.define([
 		if (!this.isResolved()) {
 			throw new Error("Binding is unresolved");
 		}
+		if (this.hasFilterNone()) {
+			return SyncPromise.resolve(null);
+		}
+
 		return this.withCache(function (oCache, sPath) {
 			return oCache.getDownloadUrl(sPath, mUriParameters);
 		});
 	};
 
 	/**
-	 * Requests a $filter query option value for the this binding; the value is computed from the
-	 * given arrays of dynamic application and control filters and the given static filter.
+	 * Requests a $filter query option value for this binding; the value is computed from the
+	 * given arrays of dynamic application and control filters and the given static filter. If
+	 * {@link sap.ui.filter.Filter.NONE} is set as any of the dynamic filters, it will override
+	 * all static filters.
 	 *
 	 * @param {sap.ui.model.Context} oContext
 	 *   The context instance to be used; it is given as a parameter and this.oContext is unused
@@ -1679,7 +1690,7 @@ sap.ui.define([
 	 * @param {string} sStaticFilter
 	 *   The static filter value
 	 * @returns {sap.ui.base.SyncPromise} A promise which resolves with an array that consists of
-	 *   two filters, the first one ("$filter") has to be be applied after and the second one
+	 *   two filters, the first one ("$filter") has to be applied after and the second one
 	 *   ("$$filterBeforeAggregate") has to be applied before aggregating the data.
 	 *   Both can be <code>undefined</code>. It rejects with an error if a filter has an unknown
 	 *   operator or an invalid path.
@@ -1830,6 +1841,9 @@ sap.ui.define([
 		oCombinedFilter = FilterProcessor.combineFilters(this.aFilters, this.aApplicationFilters);
 		if (!oCombinedFilter) {
 			return SyncPromise.resolve([sStaticFilter]);
+		}
+		if (oCombinedFilter === Filter.NONE) {
+			return SyncPromise.resolve(["false"]);
 		}
 		aFilters = _AggregationHelper.splitFilter(oCombinedFilter, this.mParameters.$$aggregation);
 		oMetaModel = this.oModel.getMetaModel();
@@ -2012,7 +2026,10 @@ sap.ui.define([
 	 *     <li> the binding is {@link #isTransient transient} (part of a
 	 *       {@link sap.ui.model.odata.v4.ODataListBinding#create deep create}),
 	 *     <li> an unsupported operation mode is used (see
-	 *       {@link sap.ui.model.odata.v4.ODataModel#bindList}).
+	 *       {@link sap.ui.model.odata.v4.ODataModel#bindList}),
+	 *     <li> the {@link sap.ui.model.Filter.NONE} filter instance is contained in
+	 *       <code>vFilters</code> together with other filters,
+	 *     <li> {@link sap.ui.model.Filter.NONE} is applied to a binding with $$aggregation
 	 *   </ul>
 	 *   The following pending changes are ignored:
 	 *   <ul>
@@ -2033,6 +2050,10 @@ sap.ui.define([
 		var aFilters = _Helper.toArray(vFilters);
 
 		this.checkTransient();
+		Filter.checkFilterNone(aFilters);
+		if (aFilters[0] === Filter.NONE && this.mParameters.$$aggregation) {
+			throw new Error("Cannot combine Filter.NONE with $$aggregation");
+		}
 		if (this.sOperationMode !== OperationMode.Server) {
 			throw new Error("Operation mode has to be sap.ui.model.odata.OperationMode.Server");
 		}
@@ -2577,8 +2598,9 @@ sap.ui.define([
 	/**
 	 * Returns a URL by which the complete content of the list can be downloaded in JSON format. The
 	 * request delivers all entities considering the binding's query options (such as filters or
-	 * sorters).
-	 *
+	 * sorters). Returns <code>null</code> if the binding's filter is
+	 * {@link sap.ui.filter.Filter.NONE}.
+
 	 * The returned URL does not specify <code>$skip</code> and <code>$top</code> and leaves it up
 	 * to the server how many rows it delivers. Many servers tend to choose a small limit without
 	 * <code>$skip</code> and <code>$top</code>, so it might be wise to add an appropriate value for
@@ -2590,14 +2612,14 @@ sap.ui.define([
 	 * The URL cannot be determined synchronously in all cases; use {@link #requestDownloadUrl} to
 	 * allow for asynchronous determination then.
 	 *
-	 * @returns {string}
-	 *   The download URL
+	 * @returns {string|null}
+	 *   The download URL or <code>null</code>
 	 * @throws {Error}
 	 *   If the binding is unresolved or if the URL cannot be determined synchronously (either due
 	 *   to a pending metadata request or because the <code>autoExpandSelect</code> parameter at the
 	 *   {@link sap.ui.model.odata.v4.ODataModel#constructor model} is used and the binding has been
 	 *   newly created and is thus still automatically generating its $select and $expand system
-	 *   query options from the binding hierarchy)
+	 *   query options from the binding hierarchy).
 	 *
 	 * @function
 	 * @public
@@ -2920,6 +2942,17 @@ sap.ui.define([
 	 */
 	ODataListBinding.prototype.getQueryOptionsFromParameters = function () {
 		return this.mQueryOptions;
+	};
+
+	/**
+	 * Returns true if the binding has {@link sap.ui.model.Filter.NONE} in its filters.
+	 *
+	 * @returns {boolean} Whether there is a {@link sap.ui.model.Filter.NONE}
+	 *
+	 * @private
+	 */
+	ODataListBinding.prototype.hasFilterNone = function () {
+		return this.aFilters[0] === Filter.NONE || this.aApplicationFilters[0] === Filter.NONE;
 	};
 
 	/**
@@ -3780,9 +3813,10 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns a URL by which the complete content of the list can be downloaded in JSON format. The
-	 * request delivers all entities considering the binding's query options (such as filters or
-	 * sorters).
+	 * Resolves with a URL by which the complete content of the list can be downloaded in JSON
+	 * format. The request delivers all entities considering the binding's query options (such as
+	 * filters or sorters). Resolves with <code>null</code> if the binding's filter is
+	 * {@link sap.ui.filter.Filter.NONE}.
 	 *
 	 * The returned URL does not specify <code>$skip</code> and <code>$top</code> and leaves it up
 	 * to the server how many rows it delivers. Many servers tend to choose a small limit without
@@ -3792,8 +3826,8 @@ sap.ui.define([
 	 * Additionally, you must be aware of server-driven paging and be ready to send a follow-up
 	 * request if the response contains <code>@odata.nextlink</code>.
 	 *
-	 * @returns {Promise<string>}
-	 *   A promise that is resolved with the download URL
+	 * @returns {Promise<string|null>}
+	 *   A promise that is resolved with the download URL or <code>null</code>
 	 * @throws {Error}
 	 *   If the binding is unresolved
 	 *
@@ -3812,6 +3846,9 @@ sap.ui.define([
 	 * The resulting filter does not consider application or control filters specified for this list
 	 * binding in its constructor or in its {@link #filter} method; add filters which you want to
 	 * keep with the "and" conjunction to the resulting filter before calling {@link #filter}.
+	 *
+	 * If there are only messages for transient entries, the method returns
+	 * {@link sap.ui.model.Filter.NONE}. Take care not to combine this filter with other filters.
 	 *
 	 * @param {function(sap.ui.core.message.Message):boolean} [fnFilter]
 	 *   A callback function to filter only relevant messages. The callback returns whether the
@@ -3844,7 +3881,8 @@ sap.ui.define([
 		sMetaPath = _Helper.getMetaPath(sResolvedPath);
 		return oMetaModel.requestObject(sMetaPath + "/").then(function (oEntityType) {
 			var aFilters,
-				mPredicates = {};
+				mPredicates = {},
+				bTransientMatched = false;
 
 			that.oModel.getMessagesByPath(sResolvedPath, true).filter(function (oMessage) {
 				return !fnFilter || fnFilter(oMessage);
@@ -3852,8 +3890,12 @@ sap.ui.define([
 				oMessage.getTargets().forEach(function (sTarget) {
 					var sPredicate = sTarget.slice(sResolvedPath.length).split("/")[0];
 
-					if (sPredicate && !sPredicate.startsWith("($uid=")) {
-						mPredicates[sPredicate] = true;
+					if (sPredicate) {
+						if (sPredicate.startsWith("($uid=")) {
+							bTransientMatched = true;
+						} else {
+							mPredicates[sPredicate] = true;
+						}
 					}
 				});
 			});
@@ -3864,7 +3906,7 @@ sap.ui.define([
 			});
 
 			if (aFilters.length === 0) {
-				return null;
+				return bTransientMatched ? Filter.NONE : null;
 			}
 
 			return aFilters.length === 1 ? aFilters[0] : new Filter({filters : aFilters});
@@ -4238,6 +4280,7 @@ sap.ui.define([
 	 *       <code>autoExpandSelect</code> parameter,
 	 *     <li> the binding is {@link #isTransient transient} (part of a
 	 *       {@link sap.ui.model.odata.v4.ODataListBinding#create deep create}),
+	 *     <li> the binding has {@link sap.ui.model.Filter.NONE}
 	 *   </ul>
 	 *
 	 * @example <caption>First group level is product category including subtotals for the net
@@ -4280,6 +4323,9 @@ sap.ui.define([
 		}
 
 		this.checkTransient();
+		if (this.hasFilterNone()) {
+			throw new Error("Cannot combine Filter.NONE with $$aggregation");
+		}
 		if (this.hasPendingChanges()) {
 			throw new Error("Cannot set $$aggregation due to pending changes");
 		}

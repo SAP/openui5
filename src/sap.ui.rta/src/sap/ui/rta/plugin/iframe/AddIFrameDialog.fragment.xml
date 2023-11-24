@@ -165,9 +165,17 @@
 						<items>
 							<Label id="sapUiRtaAddIFrameDialog_EditUrlLabel" labelFor="sapUiRtaAddIFrameDialog_EditUrlTA"
 								   class="sapUiRtaAddIFrameDialogEditUrlLabel" text="{/text/editUrlLabel}" design="Bold" />
-							<TextArea id="sapUiRtaAddIFrameDialog_EditUrlTA" ariaLabelledBy="sapUiRtaAddIFrameDialog_EditUrlLabel"
-									  class="sapUiRtaAddIFrameDialog_EditUrlTA"
-									  valueLiveUpdate="true" value="{/frameUrl/value}" liveChange="onUrlChange" rows="11" width="100%" />
+							<TextArea
+								id="sapUiRtaAddIFrameDialog_EditUrlTA"
+								ariaLabelledBy="sapUiRtaAddIFrameDialog_EditUrlLabel"
+								class="sapUiRtaAddIFrameDialog_EditUrlTA"
+								valueLiveUpdate="true"
+								value="{/frameUrl/value}"
+								valueState="{= !!${/frameUrlError/value} ? 'Error' : 'None'}"
+								valueStateText="{/frameUrlError/value}"
+								liveChange="onUrlChange"
+								rows="11"
+								width="100%" />
 						</items>
 					</VBox>
 				</layout:Grid>
@@ -199,7 +207,7 @@
 								<ToolbarSpacer />
 								<Button
 									id="sapUiRtaAddIFrameDialog_PreviewButton"
-									enabled="{= ${/validFrameUrl/value} &amp;&amp; ${/previousFrameUrl/value} !== ${/frameUrl/value} || ${/previewUseLegacyNavigation/value} !== ${/useLegacyNavigation/value}}"
+									enabled="{= !${/frameUrlError/value} &amp;&amp; ${/previousFrameUrl/value} !== ${/frameUrl/value} || ${/previewUseLegacyNavigation/value} !== ${/useLegacyNavigation/value}}"
 									text="{=${/previewUrl/value} === '' ? ${/text/showPreviewButton} : ${/text/updatePreviewButton} }"
 									press="onShowPreview"
 									class="sapUiTinyMarginTop sapUiRtaAddIFrameDialogPreviewButton" />
@@ -293,7 +301,7 @@
 				type="Emphasized"
 				text="{/text/saveText}"
 				press="onSavePress"
-				enabled="{=!!${/frameUrl/value} &amp;&amp; ${/validFrameUrl/value}}"
+				enabled="{=!!${/frameUrl/value} &amp;&amp; !${/frameUrlError/value}}"
 			/>
 		</beginButton>
 		<endButton>

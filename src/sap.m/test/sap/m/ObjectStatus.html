@@ -7,7 +7,7 @@
 <script src="shared-config.js"></script>
 <script src="../../../resources/sap-ui-core.js"
 	id="sap-ui-bootstrap"
-	data-sap-ui-libs="sap.m, sap.uxap"
+	data-sap-ui-libs="sap.m, sap.uxap, sap.ui.table"
 	data-sap-ui-resourceroots='{
 		"qunit.internal.acc": "../../../test-resources/sap/ui/core/qunit/internal/acc"
 	}'>
@@ -448,6 +448,71 @@
 
 	oVBox.addItem(oNotificationTypeTable);
 
+	// sap.ui.table.Table
+	var oTable = new sap.ui.table.Table({
+				columns : [
+					new sap.ui.table.Column({
+						name : "ID1",
+						label : new sap.m.Label({
+							text : "Test"
+						}),
+						template : new sap.m.ObjectStatus({
+							text : "{value}",
+							inverted: "{inverted}",
+							icon: "sap-icon://alert",
+							state: "{state}"
+						})
+					}),
+					new sap.ui.table.Column({
+						name : "ID2",
+						label : new sap.m.Label({
+							text : "ObjectStatus"
+						}),
+						template : new sap.m.ObjectStatus({
+							text : "{value}",
+							inverted: "{inverted}"
+						})
+					}),
+					new sap.ui.table.Column({
+						name : "ID3",
+						label : new sap.m.Label({
+							text : "in"
+						}),
+						hAlign:"End",
+						template : new sap.m.ObjectStatus({
+							text : "{value}",
+							icon: "{icon}",
+							inverted: "{inverted}"
+						})
+					}),
+					new sap.ui.table.Column({
+						name : "ID4",
+						label : new sap.m.Label({
+							text : "sap.ui.table.Table"
+						}),
+						template : new sap.m.ObjectStatus({
+							icon: "sap-icon://error",
+							inverted: "{inverted}",
+							state: "{state}"
+						})
+					})
+				]
+			});//.placeAt("content");
+
+			var aData = [
+				{value : "Error status", inverted: true, state: "Error", icon: "sap-icon://alert"},
+				{value : "Very very very long status text Very very very long status text Very very very long status text", inverted: false, state: "None", icon: "sap-icon://information"},
+				{value : "Very very very long inverted status text vVery very very long inverted status textVery very very long inverted status text", inverted: true, state: "Warning"},
+				{value : "Some status", inverted: false, state: "Success"}
+			];
+
+			oTable.setModel(new sap.ui.model.json.JSONModel(aData));
+
+			oTable.bindAggregation("rows", {
+				path : "/"
+			});
+
+			oVBox.addItem(oTable);
 
 	var oPage = new sap.m.Page("testPage", {
 		showHeader : false,

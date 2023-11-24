@@ -229,6 +229,23 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("_Cache#setQueryOptions defaulting", function (assert) {
+		const oCache = new _Cache(this.oRequestor);
+
+		// code under test
+		oCache.setQueryOptions();
+
+		assert.deepEqual(oCache.mQueryOptions, {});
+
+		oCache.bSentRequest = true;
+
+		assert.throws(() => {
+			// code under test
+			oCache.setQueryOptions();
+		}, new Error("Cannot set query options: Cache has already sent a request"));
+	});
+
+	//*********************************************************************************************
 	QUnit.test("_Cache#setResourcePath", function (assert) {
 		var oCache = new _Cache(this.oRequestor, "TEAMS('42')/name.space.Operation");
 
@@ -2149,7 +2166,7 @@ sap.ui.define([
 			.withExactArgs("/Products/PostAddress")
 			.returns(SyncPromise.resolve({}));
 		this.mock(_Helper).expects("isSelected")
-			.withExactArgs("PostAddress", undefined)
+			.withExactArgs("PostAddress", {})
 			.returns(false);
 		this.mock(oCache).expects("fetchLateProperty")
 			.withExactArgs("~oGroupLock~", sinon.match.same(oData), "",
@@ -7622,6 +7639,48 @@ sap.ui.define([
 		});
 	});
 });
+
+	//*********************************************************************************************
+	QUnit.test("CollectionCache#requestElements: $filter=false", function (assert) {
+		var oCache = this.createCache("Employees", {$filter : "false"}),
+			oCacheMock = this.mock(oCache),
+			oCheckRangeExpectation,
+			iEnd = 10,
+			oFillExpectation,
+			iStart = 0,
+			oHandleResponseExpectation,
+			oPromise,
+			oResult = {"@odata.count" : "0", value : []};
+
+		oCache.bSentRequest = false;
+
+		oCacheMock.expects("getResourcePathWithQuery").never();
+		this.oRequestorMock.expects("request").never();
+		oCacheMock.expects("fetchTypes").withExactArgs().returns(SyncPromise.resolve("~mTypes~"));
+		oFillExpectation = oCacheMock.expects("fill")
+			.withExactArgs(sinon.match.instanceOf(SyncPromise), iStart, iEnd);
+		Promise.resolve().then(function () { // must be called asynchronously
+			oCheckRangeExpectation = oCacheMock.expects("checkRange")
+				.withExactArgs(sinon.match.same(oPromise), iStart, iEnd);
+			oHandleResponseExpectation = oCacheMock.expects("handleResponse")
+				.withExactArgs(oResult, iStart, "~mTypes~")
+				.returns("~iFiltered~");
+			oCacheMock.expects("handleCount")
+				.withExactArgs("~oGroupLock~", 0, iStart, iEnd, oResult, "~iFiltered~");
+		});
+
+		// code under test
+		oPromise = oCache.requestElements(iStart, iEnd, "~oGroupLock~", 0, "~fnDataRequested~");
+
+		assert.deepEqual(oCache.aReadRequests, [{iStart, iEnd, bObsolete : false}]);
+
+		assert.strictEqual(oCache.bSentRequest, true);
+		assert.strictEqual(oFillExpectation.args[0][0], oPromise);
+
+		return oPromise.then(function () {
+			assert.ok(oCheckRangeExpectation.calledBefore(oHandleResponseExpectation));
+		});
+	});
 
 	//*********************************************************************************************
 	QUnit.test("CollectionCache#checkRange", function (assert) {

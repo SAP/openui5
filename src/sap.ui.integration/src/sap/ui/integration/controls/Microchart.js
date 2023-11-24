@@ -5,17 +5,15 @@
 sap.ui.define([
 	"sap/m/library",
 	"sap/ui/core/Control",
-	"sap/ui/core/Core",
+	"sap/ui/core/Lib",
 	"sap/ui/base/DataType",
-	"sap/base/Log",
-	"sap/ui/core/Lib"
-], function(
+	"sap/base/Log"
+], function (
 	mLibrary,
 	Control,
-	Core,
+	Lib,
 	DataType,
-	Log,
-	Lib
+	Log
 ) {
 	"use strict";
 
@@ -121,7 +119,7 @@ sap.ui.define([
 
 	Microchart.loadDependencies = function () {
 		return new Promise(function (resolve, reject) {
-			Lib.load("sap.suite.ui.microchart")
+			Lib.load({ name: "sap.suite.ui.microchart" })
 				.then(function () {
 					sap.ui.require([
 						"sap/suite/ui/microchart/BulletMicroChart",
