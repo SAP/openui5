@@ -7,7 +7,9 @@ sap.ui.define(["./Main.controller", "./ReuseExtension"], function(Controller, Re
 			methods: {
 				"publicMethod": {"public":false},
 				"getView": {"public":false},
-				"byId": {"public":false}
+				"byId": {"public":false},
+				"getMetadata": {"public": false},
+				"isA": {"public": false}
 			}
 		}
 	});
