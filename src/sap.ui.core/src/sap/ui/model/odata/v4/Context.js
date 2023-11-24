@@ -1372,7 +1372,14 @@ sap.ui.define([
 	 * The header context of a list binding only delivers <code>$count</code> (wrapped in an object
 	 * if <code>sPath</code> is "").
 	 *
-	 * If you want {@link #requestObject} to read fresh data, call {@link #refresh} first.
+	 * In case of a {@link sap.ui.model.odata.v4.ODataContextBinding#getBoundContext context
+	 * binding's bound context} that hasn't requested its data yet, this method causes an initial
+	 * back-end request using the binding's $expand and $select. Once any binding has requested its
+	 * data, this method does <strong>not</strong> cause requests anymore. If you want to read fresh
+	 * data, call {@link #refresh} first. In contrast to {@link #requestProperty}, it is
+	 * <strong>not</strong> possible to cause additional property requests. Access is only to the
+	 * data the context points to (or any part thereof), as defined by the binding's $expand and
+	 * $select (unless this is a header context, see above).
 	 *
 	 * @param {string} [sPath=""]
 	 *   A path relative to this context
