@@ -10,13 +10,13 @@ sap.ui.define([
 	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/dt/OverlayUtil",
 	"sap/ui/fl/write/api/FieldExtensibility",
+	"sap/ui/rta/plugin/additionalElements/ActionExtractor",
 	"sap/ui/rta/plugin/additionalElements/AddElementsDialog",
 	"sap/ui/rta/plugin/additionalElements/AdditionalElementsAnalyzer",
-	"sap/ui/rta/plugin/Plugin",
-	"sap/ui/rta/Utils",
 	"sap/ui/rta/plugin/additionalElements/AdditionalElementsUtils",
 	"sap/ui/rta/plugin/additionalElements/CommandBuilder",
-	"sap/ui/rta/plugin/additionalElements/ActionExtractor"
+	"sap/ui/rta/plugin/Plugin",
+	"sap/ui/rta/Utils"
 ], function(
 	each,
 	Log,
@@ -25,13 +25,13 @@ sap.ui.define([
 	OverlayRegistry,
 	OverlayUtil,
 	FieldExtensibility,
+	ActionExtractor,
 	AddElementsDialog,
 	AdditionalElementsAnalyzer,
-	Plugin,
-	Utils,
 	AdditionalElementsUtils,
 	CommandBuilder,
-	ActionExtractor
+	Plugin,
+	Utils
 ) {
 	"use strict";
 
@@ -84,6 +84,7 @@ sap.ui.define([
 	var AdditionalElementsPlugin = Plugin.extend("sap.ui.rta.plugin.additionalElements.AdditionalElementsPlugin", {
 		// eslint-disable-next-line object-shorthand
 		constructor: function(...aArgs) {
+			this._getMenuItemsPromise = Promise.resolve();
 			const [oPropertyBag] = aArgs;
 			oPropertyBag.dialog = new AddElementsDialog();
 			Plugin.apply(this, aArgs);
@@ -278,7 +279,14 @@ sap.ui.define([
 
 				.then(function() {
 					var aSelectedElements = this.getDialog().getSelectedElements();
-					return CommandBuilder.createCommands(mParents, vSiblingElement, mActions, iIndex, aSelectedElements, sAggregationName, this);
+					return CommandBuilder.createCommands(mParents,
+						vSiblingElement,
+						mActions,
+						iIndex,
+						aSelectedElements,
+						sAggregationName,
+						this
+					);
 				}.bind(this))
 
 				.then(function() {
@@ -304,7 +312,13 @@ sap.ui.define([
 		},
 
 		_setDialogTitle(mActions, oParentElement, sControlName) {
-			var sDialogTitle = AdditionalElementsUtils.getText("HEADER_ADDITIONAL_ELEMENTS", mActions, oParentElement, PLURAL, sControlName);
+			var sDialogTitle = AdditionalElementsUtils.getText(
+				"HEADER_ADDITIONAL_ELEMENTS",
+				mActions,
+				oParentElement,
+				PLURAL,
+				sControlName
+			);
 			this.getDialog().setTitle(sDialogTitle);
 		},
 
@@ -322,7 +336,10 @@ sap.ui.define([
 		 * @protected
 		 */
 		_isEditable(oOverlay, mPropertyBag) {
-			return Promise.all([this._isEditableCheck(mPropertyBag.sourceElementOverlay, true), this._isEditableCheck(mPropertyBag.sourceElementOverlay, false)])
+			return Promise.all([
+				this._isEditableCheck(mPropertyBag.sourceElementOverlay, true),
+				this._isEditableCheck(mPropertyBag.sourceElementOverlay, false)
+			])
 			.then(function(aPromiseValues) {
 				return {
 					asSibling: aPromiseValues[0],
@@ -344,7 +361,9 @@ sap.ui.define([
 				}
 
 				return ActionExtractor.getActions(bOverlayIsSibling, oOverlay, this, true, this.getDesignTime())
-				.then(function(mActions) {
+				.then(async function(mActions) {
+					// Prevents clear cached elements during the getMenuItems promise is pending
+					await this._getMenuItemsPromise;
 					this.clearCachedElements();
 					return Utils.doIfAllControlsAreAvailable([oOverlay, mParents.parentOverlay], function() {
 						var bEditable = false;
@@ -406,8 +425,12 @@ sap.ui.define([
 					aPromises.push({
 						aggregation: sAggregationName,
 						elementPromises: [
-							mActions.reveal ? AdditionalElementsAnalyzer.enhanceInvisibleElements(mParents.parent, mActions) : Promise.resolve([]),
-							mActions.addViaDelegate ? AdditionalElementsAnalyzer.getUnrepresentedDelegateProperties(mParents.parent, mActions.addViaDelegate) : Promise.resolve([])
+							mActions.reveal
+								? AdditionalElementsAnalyzer.enhanceInvisibleElements(mParents.parent, mActions)
+								: Promise.resolve([]),
+							mActions.addViaDelegate
+								? AdditionalElementsAnalyzer.getUnrepresentedDelegateProperties(mParents.parent, mActions.addViaDelegate)
+								: Promise.resolve([])
 						]
 					});
 				});
@@ -444,8 +467,13 @@ sap.ui.define([
 			var aMenuItems = [];
 			var oMenuItem;
 			this.clearCachedElements();
+			// Prevents clearing of cached elements before menu items are build. This happens when evaluate editable is running in parallel
+			this._getMenuItemsPromise =
 			// getAllElements() is called to set cached elements for the overlay -> which will result in menu item being enabled
-			return Promise.all([this.getAllElements(false, aElementOverlays), this.getAllElements(true, aElementOverlays)])
+			Promise.all([
+				this.getAllElements(false, aElementOverlays),
+				this.getAllElements(true, aElementOverlays)
+			])
 			.then(function(aElementsWithAggregations) {
 				var bHasChildren = aElementsWithAggregations[0].length > 0;
 				var bHasMultipleAggregations = aElementsWithAggregations[0].length > 1;
@@ -454,22 +482,51 @@ sap.ui.define([
 				var bIsAvailableForSibling = this.isAvailable(aElementOverlays, true);
 				if (bIsAvailableForSibling && (!bIsAvailableForChildren || !bHasChildren)) {
 					// Case 1: Only siblings -> No submenu required
-					oMenuItem = this._buildMenuItem("CTX_ADD_ELEMENTS_AS_SIBLING", true, aElementOverlays, aElementsWithAggregations, false);
+					oMenuItem = this._buildMenuItem(
+						"CTX_ADD_ELEMENTS_AS_SIBLING",
+						true,
+						aElementOverlays,
+						aElementsWithAggregations,
+						false
+					);
 				} else if (!bIsAvailableForSibling && bIsAvailableForChildren && !bHasMultipleAggregations) {
 					// Case 2: Only children, one aggregation -> No submenu required
-					oMenuItem = this._buildMenuItem("CTX_ADD_ELEMENTS_AS_CHILD", false, aElementOverlays, aElementsWithAggregations, false);
+					oMenuItem = this._buildMenuItem(
+						"CTX_ADD_ELEMENTS_AS_CHILD",
+						false,
+						aElementOverlays,
+						aElementsWithAggregations,
+						false
+					);
 				} else if (!bIsAvailableForSibling && bIsAvailableForChildren && bHasMultipleAggregations) {
 					// Case 3: Only children, multiple aggregations -> Submenu required
-					oMenuItem = this._buildMenuItem("CTX_ADD_ELEMENTS_AS_CHILD", false, aElementOverlays, aElementsWithAggregations, true);
+					oMenuItem = this._buildMenuItem(
+						"CTX_ADD_ELEMENTS_AS_CHILD",
+						false,
+						aElementOverlays,
+						aElementsWithAggregations,
+						true
+					);
 				} else if (bIsAvailableForChildren && bIsAvailableForSibling && bHasChildren && bHasSiblings) {
 					// Case 4: Children and siblings -> Submenu required
-					oMenuItem = this._buildMenuItem("CTX_ADD_ELEMENTS_CHILD_AND_SIBLING", false, aElementOverlays, aElementsWithAggregations, true);
+					oMenuItem = this._buildMenuItem(
+						"CTX_ADD_ELEMENTS_CHILD_AND_SIBLING",
+						false,
+						aElementOverlays,
+						aElementsWithAggregations,
+						true
+					);
 				}
 				if (oMenuItem) {
-					aMenuItems.push(this.enhanceItemWithResponsibleElement(oMenuItem, aElementOverlays, ["addViaDelegate", "reveal", "custom"]));
+					aMenuItems.push(this.enhanceItemWithResponsibleElement(
+						oMenuItem,
+						aElementOverlays,
+						["addViaDelegate", "reveal", "custom"]
+					));
 				}
 				return aMenuItems;
 			}.bind(this));
+			return this._getMenuItemsPromise;
 		},
 
 		_buildMenuItem(sPluginId, bOverlayIsSibling, aElementOverlays, aElementsWithAggregations, bHasSubMenu) {
@@ -547,7 +604,14 @@ sap.ui.define([
 					}.bind(this),
 					handler: function(bOverlayIsSibling, aElementOverlays) {
 						// showAvailableElements has optional parameters
-						return this.showAvailableElements(bOverlayIsSibling, sAggregationName, aElementOverlays, undefined, undefined, sDisplayText);
+						return this.showAvailableElements(
+							bOverlayIsSibling,
+							sAggregationName,
+							aElementOverlays,
+							undefined,
+							undefined,
+							sDisplayText
+						);
 					}.bind(this, bOverlayIsSibling),
 					icon: bOverlayIsSibling ? "sap-icon://BusinessSuiteInAppSymbols/icon-add-outside" : "sap-icon://add"
 				};
