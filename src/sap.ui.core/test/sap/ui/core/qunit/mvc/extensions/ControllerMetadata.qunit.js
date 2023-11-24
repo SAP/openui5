@@ -17,6 +17,8 @@ sap.ui.define([
 		/*public by every Controller*/
 		"byId",
 		"getView",
+		"getMetadata",
+		"isA",
 		/*public by Controller impl*/
 		"myFinalMethod",
 		"onAfterRendering",
@@ -40,6 +42,8 @@ sap.ui.define([
 		/*public by every Controller*/
 		"byId",
 		"getView",
+		"getMetadata",
+		"isA",
 		/*public by Controller impl*/
 		"myFinalMethod",
 		"privateMethod1",
@@ -68,7 +72,7 @@ sap.ui.define([
 			var oControllerInterface = oView.getController().getInterface();
 			var aInterfaceKeys = Object.keys(oControllerInterface);
 			assert.ok(oControllerInterface, "Controller Interface created");
-			assert.equal(aInterfaceKeys.length, 6, "6 public methods are exposed");
+			assert.equal(aInterfaceKeys.length, 8, "8 public methods are exposed");
 			assert.deepEqual(aInterfaceKeys.sort(), aLegacyPublicControllerMethods.sort(), "All public methods exposed are correctly");
 			done();
 		});
@@ -94,7 +98,7 @@ sap.ui.define([
 			var oControllerInterface = oView.getController().getInterface();
 			var aInterfaceKeys = Object.keys(oControllerInterface);
 			assert.ok(oControllerInterface, "Controller Interface created");
-			assert.equal(aInterfaceKeys.length, 8, "8 public methods are exposed");
+			assert.equal(aInterfaceKeys.length, 10, "10 public methods are exposed");
 			assert.deepEqual(aInterfaceKeys.sort(), aPublicControllerMethods.sort(), "All public methods exposed are correctly");
 			done();
 		});
