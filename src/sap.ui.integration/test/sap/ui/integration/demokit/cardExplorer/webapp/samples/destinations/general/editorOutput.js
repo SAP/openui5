@@ -27,7 +27,7 @@
 		}
 
 		sap.ui.getCore().attachInit(function () {
-			var oComponent = sap.ui.getCore().getComponent("container-destinations");
+			var oComponent = null;
 
 			if (oComponent) {
 				var oView = oComponent.getRootControl(),

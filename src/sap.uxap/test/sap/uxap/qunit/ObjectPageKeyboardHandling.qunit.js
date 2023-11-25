@@ -12,10 +12,9 @@ sap.ui.define([
 	"sap/ui/core/mvc/XMLView",
 	"sap/uxap/AnchorBar",
 	"sap/uxap/ObjectPageSubSection",
-	"sap/ui/core/Core",
 	"sap/ui/dom/jquery/Focusable" /* jQuery Plugin "firstFocusableDomRef" */
 ],
-function(ControlBehavior, Element, jQuery, Core, Configuration, KeyCodes, QUtils, Device, F6Navigation, XMLView, AnchorBar, ObjectPageSubSection, oCore) {
+function(ControlBehavior, Element, jQuery, Core, Configuration, KeyCodes, QUtils, Device, F6Navigation, XMLView, AnchorBar, ObjectPageSubSection) {
 	"use strict";
 
 	var sAnchorSelector = ".sapUxAPAnchorBarScrollContainer .sapUxAPAnchorBarButton";
@@ -329,7 +328,7 @@ function(ControlBehavior, Element, jQuery, Core, Configuration, KeyCodes, QUtils
 			});
 		});
 
-		oCore.applyChanges();
+		Core.applyChanges();
 
 		// Section
 		aSections[0].$().trigger("focus");

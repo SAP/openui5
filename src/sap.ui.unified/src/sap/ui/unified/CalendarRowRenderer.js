@@ -13,7 +13,7 @@ sap.ui.define([
 	'sap/ui/core/InvisibleText',
 	"sap/ui/core/date/UI5Date",
 	'sap/base/Log',
-	// required by RenderManager#icon
+	// side effect: required by RenderManager#icon
 	'sap/ui/core/IconPool'
 ], function(
 	Element,

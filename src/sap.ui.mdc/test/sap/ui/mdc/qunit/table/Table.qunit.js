@@ -47,7 +47,6 @@ sap.ui.define([
 	"sap/ui/mdc/table/RowActionItem",
 	"sap/ui/mdc/table/RowSettings",
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/base/Event",
 	"sap/base/util/Deferred",
 	"sap/ui/base/ManagedObjectObserver",
 	// load used data types as in legacyFree UI5 they are not loaded automatically
@@ -108,7 +107,6 @@ sap.ui.define([
 	RowActionItem,
 	RowSettings,
 	jQuery,
-	Event,
 	Deferred,
 	ManagedObjectObserver,
 	StringType,
@@ -3073,7 +3071,7 @@ sap.ui.define([
 		const oTable = this.oTable;
 		const fnSetLabel = sinon.stub();
 		const fnSetType = sinon.stub();
-		const oFakeExportHandlerEvent = sinon.createStubInstance(Event);
+		const oFakeExportHandlerEvent = sinon.createStubInstance(UI5Event);
 		oFakeExportHandlerEvent.getParameter.withArgs("exportSettings").returns({});
 		oFakeExportHandlerEvent.getParameter.withArgs("userExportSettings").returns({
 			splitCells: false,

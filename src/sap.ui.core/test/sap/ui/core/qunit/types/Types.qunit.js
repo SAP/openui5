@@ -1,6 +1,7 @@
 /*global QUnit, sinon */
 sap.ui.define([
 	"sap/base/Log",
+	"sap/base/i18n/Formatting",
 	"sap/base/i18n/Localization",
 	"sap/ui/core/Configuration",
 	"sap/ui/core/Lib",
@@ -21,7 +22,7 @@ sap.ui.define([
 	"sap/ui/model/type/TimeInterval",
 	"sap/ui/model/type/Unit",
 	"sap/ui/test/TestUtils"
-], function(Log, Localization, Configuration, Library, UI5Date, NumberFormat, FormatException, ParseException, ValidateException, BooleanType, CurrencyType, DateTimeType, DateTimeIntervalType, FileSizeType, FloatType, IntegerType, StringType, TimeType, TimeIntervalType, UnitType, TestUtils) {
+], function(Log, Formatting, Localization, Configuration, Library, UI5Date, NumberFormat, FormatException, ParseException, ValidateException, BooleanType, CurrencyType, DateTimeType, DateTimeIntervalType, FileSizeType, FloatType, IntegerType, StringType, TimeType, TimeIntervalType, UnitType, TestUtils) {
 	"use strict";
 
 	function checkValidateException(oEx) {
@@ -1980,7 +1981,7 @@ sap.ui.define([
 				"decimals": 3
 			}
 		};
-		oFormatSettings.setCustomUnits(oConfigObject);
+		Formatting.setCustomUnits(oConfigObject);
 
 		var oType = new UnitType();
 
@@ -2004,7 +2005,7 @@ sap.ui.define([
 				"decimals": 3
 			}
 		};
-		oFormatSettings.setCustomUnits(oConfigObject);
+		Formatting.setCustomUnits(oConfigObject);
 
 		// local config  -->  hides global config
 		var oType = new UnitType({
@@ -2215,7 +2216,7 @@ sap.ui.define([
 				"decimals": 3
 			}
 		};
-		oFormatSettings.setCustomUnits(oConfigObject);
+		Formatting.setCustomUnits(oConfigObject);
 
 		// new Meter type
 		var MeterType = UnitType.extend("sap.ui.core.test.MeterType", {
@@ -2274,7 +2275,7 @@ sap.ui.define([
 				"precision": 4
 			}
 		};
-		oFormatSettings.setCustomUnits(oConfigObject);
+		Formatting.setCustomUnits(oConfigObject);
 
 		// new Meter type
 		var MeterType = UnitType.extend("sap.ui.core.test.MeterType", {

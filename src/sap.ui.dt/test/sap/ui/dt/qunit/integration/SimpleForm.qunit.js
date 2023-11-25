@@ -12,7 +12,6 @@ sap.ui.define([
 	"sap/ui/core/Element",
 	// preload simple form layouts to avoid async requests during test execution
 	"sap/ui/layout/form/SimpleForm",
-	"sap/ui/layout/form/ColumnLayout",
 	"sap/ui/layout/ResponsiveFlowLayoutData",
 	"sap/ui/layout/form/ResponsiveGridLayout",
 	"sap/ui/layout/form/ColumnLayout"

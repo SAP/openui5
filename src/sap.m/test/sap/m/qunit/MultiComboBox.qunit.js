@@ -1,9 +1,11 @@
 /*global QUnit */
 sap.ui.define([
+	"sap/ui/core/ControlBehavior",
+	"sap/ui/core/Element",
+	"sap/ui/core/Lib",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/m/MultiComboBox",
-	"sap/ui/core/Core",
 	"sap/ui/core/Item",
 	"sap/ui/model/json/JSONModel",
 	"sap/m/ComboBoxBaseRenderer",
@@ -32,10 +34,12 @@ sap.ui.define([
 	"sap/ui/core/InvisibleText",
 	"sap/m/library"
 ], function(
+	ControlBehavior,
+	Element,
+	Library,
 	qutils,
 	createAndAppendDiv,
 	MultiComboBox,
-	oCore,
 	Item,
 	JSONModel,
 	ComboBoxBaseRenderer,
@@ -87,7 +91,7 @@ sap.ui.define([
 	};
 
 
-	var oResourceBundle = Core.getLibraryResourceBundle("sap.m");
+	var oResourceBundle = Library.getResourceBundleFor("sap.m");
 
 	// =========================================================== //
 	// Check UX requirements on                                    //
@@ -111,7 +115,7 @@ sap.ui.define([
 
 		// arrange
 		//oMultiComboBox.placeAt("MultiComboBoxContent");
-		//oCore.applyChanges();
+		//Core.applyChanges();
 
 		// assertions
 		assert.strictEqual(oMultiComboBox.getName(), "", 'Default name is ""');
@@ -700,7 +704,7 @@ sap.ui.define([
 
 		// arrange
 		//oMultiComboBox.placeAt("MultiComboBoxContent");
-		//oCore.applyChanges();
+		//Core.applyChanges();
 
 		// assertions
 		assert.deepEqual(oMultiComboBox.getSelectedItems(), [oItem]);
@@ -786,7 +790,7 @@ sap.ui.define([
 
 		// arrange
 		//oMultiComboBox.placeAt("MultiComboBoxContent");
-		//oCore.applyChanges();
+		//Core.applyChanges();
 
 		// assertions
 		assert.deepEqual(oMultiComboBox.getSelectedKeys(), []);
@@ -1642,7 +1646,7 @@ sap.ui.define([
 		assert.deepEqual(oMultiComboBox.getSelectedItems(), [oItem]);
 		assert.strictEqual(fnFireChangeSpy.callCount, 0, "The change event was not fired");
 
-		//oCore.applyChanges();
+		//Core.applyChanges();
 		//assert.strictEqual(oMultiComboBox.getValue(), "item 1");
 
 		// cleanup
@@ -3560,7 +3564,7 @@ sap.ui.define([
 		qutils.triggerKeydown(oMultiComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN, false, true);
 		this.clock.tick(500);
 		var oDomListItem = ListHelpers.getListItem(oMultiComboBox.getFirstItem()).getDomRef();
-		var oListItem = Core.byId(oDomListItem.id);
+		var oListItem = Element.getElementById(oDomListItem.id);
 		qutils.triggerTouchEvent("tap", oDomListItem, {
 			srcControl : oListItem
 		});
@@ -3614,7 +3618,7 @@ sap.ui.define([
 		qutils.triggerKeydown(oMultiComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN, false, true);
 		this.clock.tick(500);
 		var oDomListItem = ListHelpers.getListItem(oMultiComboBox.getFirstItem()).getDomRef();
-		var oListItem = Core.byId(oDomListItem.id);
+		var oListItem = Element.getElementById(oDomListItem.id);
 		qutils.triggerTouchEvent("tap", oDomListItem, {
 			srcControl : oListItem
 		});
@@ -4202,7 +4206,7 @@ sap.ui.define([
 
 		// act
 		var oDomListItem = ListHelpers.getListItem(oMultiComboBox.getFirstItem()).getDomRef();
-		var oListItem = Core.byId(oDomListItem.id);
+		var oListItem = Element.getElementById(oDomListItem.id);
 		qutils.triggerEvent("tap", oDomListItem, {
 			srcControl : oListItem
 		});
@@ -4233,7 +4237,7 @@ sap.ui.define([
 
 		  // arrange
 		  oMultiComboBox.placeAt("MultiComboBoxContent");
-		  oCore.applyChanges();
+		  Core.applyChanges();
 		  oMultiComboBox.focus();
 
 		  var fnOpenSpy = this.spy(oMultiComboBox.getPicker(), "open");
@@ -4350,7 +4354,7 @@ sap.ui.define([
 
 		// act
 		var oDomListItem = ListHelpers.getListItem(oMultiComboBox.getFirstItem()).getDomRef();
-		var oListItem = Core.byId(oDomListItem.id);
+		var oListItem = Element.getElementById(oDomListItem.id);
 		oListItem.focus();
 		qutils.triggerTouchEvent("tap", oDomListItem, {
 			srcControl : oListItem
@@ -4473,7 +4477,7 @@ sap.ui.define([
 		qutils.triggerKeydown(oMultiComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN, false, true);
 		this.clock.tick(500);
 		var oDomListItem = ListHelpers.getListItem(oMultiComboBox.getFirstItem()).getDomRef();
-		var oListItem = Core.byId(oDomListItem.id);
+		var oListItem = Element.getElementById(oDomListItem.id);
 		qutils.triggerTouchEvent("tap", oDomListItem, {
 			srcControl : oListItem
 		});
@@ -5570,7 +5574,7 @@ sap.ui.define([
 	QUnit.module("Accessibility");
 
 	QUnit.test("getAccessibilityInfo", function(assert) {
-		var oResourceBundle = Core.getLibraryResourceBundle("sap.m");
+		var oResourceBundle = Library.getResourceBundleFor("sap.m");
 		var oMultiComboBox = new MultiComboBox({
 			value: "Value",
 			tooltip: "Tooltip",
@@ -5599,7 +5603,7 @@ sap.ui.define([
 		oMultiComboBox.setValue("");
 		oMultiComboBox.setEnabled(false);
 		oInfo = oMultiComboBox.getAccessibilityInfo();
-		assert.strictEqual(oInfo.description, Core.getLibraryResourceBundle("sap.m").getText("INPUTBASE_VALUE_EMPTY"), "Description - Empty as there are no tokens and no value");
+		assert.strictEqual(oInfo.description, Library.getResourceBundleFor("sap.m").getText("INPUTBASE_VALUE_EMPTY"), "Description - Empty as there are no tokens and no value");
 		assert.strictEqual(oInfo.focusable, false, "Focusable");
 		assert.strictEqual(oInfo.enabled, false, "Enabled");
 		assert.strictEqual(oInfo.editable, false, "Editable");
@@ -5681,14 +5685,14 @@ sap.ui.define([
 		var oMultiComboBox = new MultiComboBox();
 
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		oCore.applyChanges();
+		Core.applyChanges();
 
 		// assert
 		assert.notOk(oMultiComboBox.getFocusDomRef().getAttribute("aria-controls"), 'The "aria-controls" should not be set before picker creation');
 
 		//act
 		oMultiComboBox.open();
-		oCore.applyChanges();
+		Core.applyChanges();
 
 		// assert
 		assert.strictEqual(oMultiComboBox.getFocusDomRef().getAttribute("aria-controls"), oMultiComboBox.getPicker().getId(), 'The "aria-controls" should be');
@@ -5704,7 +5708,7 @@ sap.ui.define([
 				items: [oItem1, oItem2]
 			}),
 			sInvisibleTextId = oMultiComboBox.getAggregation("tokenizer").getTokensInfoId(),
-			oInvisibleText = Core.byId(sInvisibleTextId);
+			oInvisibleText = Element.getElementById(sInvisibleTextId);
 
 		oMultiComboBox.placeAt("MultiComboBoxContent");
 
@@ -5749,7 +5753,7 @@ sap.ui.define([
 
 	QUnit.test("MultiComboBox with accessibility=false", function(assert) {
 		var oMultiComboBox = new MultiComboBox();
-		this.stub(Core.getConfiguration(), "getAccessibility").returns(false);
+		this.stub(ControlBehavior, "isAccessibilityEnabled").returns(false);
 
 		oMultiComboBox.placeAt("MultiComboBoxContent");
 		Core.applyChanges();
@@ -6830,7 +6834,7 @@ sap.ui.define([
 		oMultiComboBox.placeAt("MultiComboBoxContent");
 		Core.applyChanges();
 
-		assert.equal(Core.byId(oMultiComboBox.getPickerInvisibleTextId()).getText(), oResourceBundleOptions, 'popup ariaLabelledBy is set');
+		assert.equal(Element.getElementById(oMultiComboBox.getPickerInvisibleTextId()).getText(), oResourceBundleOptions, 'popup ariaLabelledBy is set');
 		oMultiComboBox.destroy();
 	});
 

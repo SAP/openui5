@@ -2,6 +2,7 @@
 sap.ui.define([
 	"sap/base/i18n/Localization",
 	"sap/ui/core/Element",
+	"sap/ui/core/Lib",
 	"sap/ui/thirdparty/jquery",
 	"sap/m/GenericTile",
 	"sap/m/TileContent",
@@ -29,7 +30,6 @@ sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/core/dnd/DragInfo",
 	"sap/f/dnd/GridDropInfo",
-	"sap/ui/core/Core",
 	"sap/ui/core/Theming",
 	"sap/m/LinkTileContent",
 	"sap/ui/qunit/utils/nextUIUpdate",
@@ -37,9 +37,7 @@ sap.ui.define([
 	"sap/ui/dom/jquery/Selectors",
 	// used only indirectly
 	"sap/ui/events/jquery/EventExtension"
-], function(Localization, Element, jQuery, GenericTile, TileContent, NumericContent, ImageContent, Device, IntervalTrigger, ResizeHandler, GenericTileLineModeRenderer,
-	Button, Text, ScrollContainer, FlexBox, GenericTileRenderer, library, isEmptyObject, KeyCodes, oCore, GridContainerItemLayoutData, GridContainerSettings,
-	GridContainer, FormattedText, NewsContent, Parameters, qutils, DragInfo, GridDropInfo, Core, Theming, LinkTileContent, nextUIUpdate) {
+], function(Localization, Element, Library, jQuery, GenericTile, TileContent, NumericContent, ImageContent, Device, IntervalTrigger, ResizeHandler, GenericTileLineModeRenderer, Button, Text, ScrollContainer, FlexBox, GenericTileRenderer, library, isEmptyObject, KeyCodes, oCore, GridContainerItemLayoutData, GridContainerSettings, GridContainer, FormattedText, NewsContent, Parameters, qutils, DragInfo, GridDropInfo, Theming, LinkTileContent, nextUIUpdate) {
 	"use strict";
 
 	// shortcut for sap.m.Size
@@ -70,7 +68,7 @@ sap.ui.define([
 
 	QUnit.module("Control initialization core and theme checks", {
 		beforeEach: function() {
-			this.fnSpyReady = this.spy(Core, "ready");
+			this.fnSpyReady = this.spy(oCore, "ready");
 			this.fnSpyHandleCoreInitialized = this.spy(GenericTile.prototype, "_handleCoreInitialized");
 			this.fnStubAttachThemeApplied = this.stub(Theming, "attachApplied").callsFake(function(fn, context) {
 				fn.call(context); //simulate immediate theme change
@@ -3556,7 +3554,7 @@ sap.ui.define([
 
 	QUnit.test("Priority Changes for TileContent", function(assert) {
 		var oTileContent = this.oGenericTile.getTileContent()[0];
-		var sPriority = Core.getLibraryResourceBundle("sap.m").getText("TEXT_CONTENT_PRIORITY");
+		var sPriority = Library.getResourceBundleFor("sap.m").getText("TEXT_CONTENT_PRIORITY");
 
 		//Switch to None Priority
 		oTileContent.setPriority(Priority.None);

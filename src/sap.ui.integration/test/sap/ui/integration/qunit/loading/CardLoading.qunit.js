@@ -13,7 +13,6 @@ sap.ui.define([
 	"sap/ui/core/ComponentContainer",
 	"sap/ui/base/Event",
 	"sap/ui/core/UIComponent",
-	"sap/ui/integration/library",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/integration/library"
 ],
@@ -30,7 +29,6 @@ sap.ui.define([
 		ComponentContainer,
 		Event,
 		UIComponent,
-		integrationLibrary,
 		jQuery,
 		library
 	) {
@@ -63,7 +61,7 @@ sap.ui.define([
 			});
 		};
 
-		var CardArea = integrationLibrary.CardArea;
+		var CardArea = library.CardArea;
 
 		var DOM_RENDER_LOCATION = "qunit-fixture";
 

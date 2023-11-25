@@ -4,11 +4,11 @@
 
 sap.ui.define([
 	"sap/ui/core/InvisibleText",
-	"sap/ui/core/IconPool",
+	"sap/ui/core/IconPool", // side effect: required when calling RenderManager#icon
 	"sap/ui/core/Lib"
 ], function(
 	InvisibleText,
-	IconPool,
+	_IconPool,
 	Library
 ) {
 	"use strict";

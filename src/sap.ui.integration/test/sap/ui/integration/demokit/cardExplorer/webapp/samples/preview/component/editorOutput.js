@@ -25,7 +25,7 @@
 		}
 
 		sap.ui.getCore().attachInit(function () {
-			var oComponent = sap.ui.getCore().getComponent("container-component");
+			var oComponent = null;
 
 			if (oComponent) {
 				var oView = oComponent.getRootControl(),

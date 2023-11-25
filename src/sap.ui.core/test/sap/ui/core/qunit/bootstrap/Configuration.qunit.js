@@ -7,6 +7,7 @@ sap.ui.define([
 	"sap/ui/core/ControlBehavior",
 	'sap/ui/core/Core',
 	'sap/ui/core/Lib',
+	"sap/ui/core/Locale",
 	'sap/ui/core/date/CalendarWeekNumbering',
 	'sap/ui/core/format/TimezoneUtil',
 	'sap/ui/core/Theming',
@@ -18,7 +19,7 @@ sap.ui.define([
 	'sap/ui/base/config/URLConfigurationProvider',
 	// only used indirectly via Configuration.getCalendarType
 	'sap/ui/core/LocaleData'
-], function(Formatting, Localization, CalendarType, Configuration, ControlBehavior, Core, Library, CalendarWeekNumbering, TimezoneUtil, Theming, Security, BaseConfig, Log, GlobalConfigurationProvider, HistoryUtils, URLConfigurationProvider/*, LocaleData*/) {
+], function(Formatting, Localization, CalendarType, Configuration, ControlBehavior, Core, Library, Locale, CalendarWeekNumbering, TimezoneUtil, Theming, Security, BaseConfig, Log, GlobalConfigurationProvider, HistoryUtils, URLConfigurationProvider/*, LocaleData*/) {
 	"use strict";
 
 	var browserUrl = {
@@ -100,74 +101,74 @@ sap.ui.define([
 		}];
 
 		assert.ok(oFormatSettings, "FormatSettings object is created");
-		oFormatSettings.setLegacyDateCalendarCustomizing(aData);
-		assert.deepEqual(oFormatSettings.getLegacyDateCalendarCustomizing(), aData, "The customizing data set can be retrieved");
+		Formatting.setLegacyDateCalendarCustomizing(aData);
+		assert.deepEqual(Formatting.getLegacyDateCalendarCustomizing(), aData, "The customizing data set can be retrieved");
 	});
 
 	QUnit.test("getter and setter for option 'calendar'", function(assert) {
 		var oCfg = Configuration,
 			oFormatSettings = oCfg.getFormatSettings();
-			oFormatSettings.setLegacyDateFormat();
+			Formatting.setABAPDateFormat();
 
-		assert.equal(oCfg.getCalendarType(), CalendarType.Islamic, "The bootstrap parameter is respected");
+		assert.equal(Formatting.getCalendarType(), CalendarType.Islamic, "The bootstrap parameter is respected");
 
-		oCfg.setCalendarType(null);
-		assert.equal(oCfg.getCalendarType(), CalendarType.Gregorian, "The default calendar type is determined using the current locale");
+		Formatting.setCalendarType(null);
+		assert.equal(Formatting.getCalendarType(), CalendarType.Gregorian, "The default calendar type is determined using the current locale");
 
-		oCfg.setLanguage("ar_SA");
-		assert.equal(oCfg.getCalendarType(), CalendarType.Islamic, "The default calendar type for ar_SA is islamic");
+		Localization.setLanguage("ar_SA");
+		assert.equal(Formatting.getCalendarType(), CalendarType.Islamic, "The default calendar type for ar_SA is islamic");
 
-		oFormatSettings.setLegacyDateFormat("1");
-		assert.equal(oCfg.getCalendarType(), CalendarType.Gregorian, "The legacy date format '1' changes the calendar type to gregorian");
+		Formatting.setABAPDateFormat("1");
+		assert.equal(Formatting.getCalendarType(), CalendarType.Gregorian, "The legacy date format '1' changes the calendar type to gregorian");
 
-		oFormatSettings.setLegacyDateFormat("2");
-		assert.equal(oCfg.getCalendarType(), CalendarType.Gregorian, "The legacy date format '2' changes the calendar type to gregorian");
+		Formatting.setABAPDateFormat("2");
+		assert.equal(Formatting.getCalendarType(), CalendarType.Gregorian, "The legacy date format '2' changes the calendar type to gregorian");
 
-		oFormatSettings.setLegacyDateFormat("3");
-		assert.equal(oCfg.getCalendarType(), CalendarType.Gregorian, "The legacy date format '3' changes the calendar type to gregorian");
+		Formatting.setABAPDateFormat("3");
+		assert.equal(Formatting.getCalendarType(), CalendarType.Gregorian, "The legacy date format '3' changes the calendar type to gregorian");
 
-		oFormatSettings.setLegacyDateFormat("4");
-		assert.equal(oCfg.getCalendarType(), CalendarType.Gregorian, "The legacy date format '4' changes the calendar type to gregorian");
+		Formatting.setABAPDateFormat("4");
+		assert.equal(Formatting.getCalendarType(), CalendarType.Gregorian, "The legacy date format '4' changes the calendar type to gregorian");
 
-		oFormatSettings.setLegacyDateFormat("5");
-		assert.equal(oCfg.getCalendarType(), CalendarType.Gregorian, "The legacy date format '5' changes the calendar type to gregorian");
+		Formatting.setABAPDateFormat("5");
+		assert.equal(Formatting.getCalendarType(), CalendarType.Gregorian, "The legacy date format '5' changes the calendar type to gregorian");
 
-		oFormatSettings.setLegacyDateFormat("6");
-		assert.equal(oCfg.getCalendarType(), CalendarType.Gregorian, "The legacy date format '6' changes the calendar type to gregorian");
+		Formatting.setABAPDateFormat("6");
+		assert.equal(Formatting.getCalendarType(), CalendarType.Gregorian, "The legacy date format '6' changes the calendar type to gregorian");
 
-		oFormatSettings.setLegacyDateFormat(null);
-		assert.equal(oCfg.getCalendarType(), CalendarType.Islamic, "The default calendar type for ar_SA is islamic");
+		Formatting.setABAPDateFormat(null);
+		assert.equal(Formatting.getCalendarType(), CalendarType.Islamic, "The default calendar type for ar_SA is islamic");
 
-		oCfg.setLanguage("en_US");
-		assert.equal(oCfg.getCalendarType(), CalendarType.Gregorian, "The default calendar type for en_US is gregorian");
+		Localization.setLanguage("en_US");
+		assert.equal(Formatting.getCalendarType(), CalendarType.Gregorian, "The default calendar type for en_US is gregorian");
 
-		oFormatSettings.setLegacyDateFormat("A");
-		assert.equal(oCfg.getCalendarType(), CalendarType.Islamic, "The legacy date format 'A' changes the calendar type to islamic");
+		Formatting.setABAPDateFormat("A");
+		assert.equal(Formatting.getCalendarType(), CalendarType.Islamic, "The legacy date format 'A' changes the calendar type to islamic");
 
-		oCfg.setCalendarType(CalendarType.Gregorian);
-		assert.equal(oCfg.getCalendarType(), CalendarType.Gregorian, "The calendar type is modified back to gregorian via calling setCalendarType");
+		Formatting.setCalendarType(CalendarType.Gregorian);
+		assert.equal(Formatting.getCalendarType(), CalendarType.Gregorian, "The calendar type is modified back to gregorian via calling setCalendarType");
 
-		oCfg.setCalendarType(null);
-		oFormatSettings.setLegacyDateFormat("B");
-		assert.equal(oCfg.getCalendarType(), CalendarType.Islamic, "The legacy date format 'B' changes the calendar type to islamic");
+		Formatting.setCalendarType(null);
+		Formatting.setABAPDateFormat("B");
+		assert.equal(Formatting.getCalendarType(), CalendarType.Islamic, "The legacy date format 'B' changes the calendar type to islamic");
 
-		oFormatSettings.setLegacyDateFormat("7");
-		assert.equal(oCfg.getCalendarType(), CalendarType.Japanese, "The legacy date format '7' changes the calendar type to japanese");
+		Formatting.setABAPDateFormat("7");
+		assert.equal(Formatting.getCalendarType(), CalendarType.Japanese, "The legacy date format '7' changes the calendar type to japanese");
 
-		oFormatSettings.setLegacyDateFormat("A");
-		assert.equal(oCfg.getCalendarType(), CalendarType.Islamic, "The legacy date format 'A' changes the calendar type to islamic");
-		oFormatSettings.setLegacyDateFormat("8");
-		assert.equal(oCfg.getCalendarType(), CalendarType.Japanese, "The legacy date format '8' changes the calendar type to japanese");
+		Formatting.setABAPDateFormat("A");
+		assert.equal(Formatting.getCalendarType(), CalendarType.Islamic, "The legacy date format 'A' changes the calendar type to islamic");
+		Formatting.setABAPDateFormat("8");
+		assert.equal(Formatting.getCalendarType(), CalendarType.Japanese, "The legacy date format '8' changes the calendar type to japanese");
 
-		oFormatSettings.setLegacyDateFormat("A");
-		assert.equal(oCfg.getCalendarType(), CalendarType.Islamic, "The legacy date format 'A' changes the calendar type to islamic");
-		oFormatSettings.setLegacyDateFormat("9");
-		assert.equal(oCfg.getCalendarType(), CalendarType.Japanese, "The legacy date format '9' changes the calendar type to japanese");
+		Formatting.setABAPDateFormat("A");
+		assert.equal(Formatting.getCalendarType(), CalendarType.Islamic, "The legacy date format 'A' changes the calendar type to islamic");
+		Formatting.setABAPDateFormat("9");
+		assert.equal(Formatting.getCalendarType(), CalendarType.Japanese, "The legacy date format '9' changes the calendar type to japanese");
 
-		oFormatSettings.setLegacyDateFormat("C");
-		assert.equal(oCfg.getCalendarType(), CalendarType.Persian, "The legacy date format 'C' changes the calendar type to persian");
+		Formatting.setABAPDateFormat("C");
+		assert.equal(Formatting.getCalendarType(), CalendarType.Persian, "The legacy date format 'C' changes the calendar type to persian");
 		//reset language
-		oCfg.setLanguage("en");
+		Localization.setLanguage("en");
 	});
 
 	QUnit.test("getter and setter for option calendarWeekNumbering", function(assert) {
@@ -205,135 +206,134 @@ sap.ui.define([
 	});
 
 	QUnit.test("setCalendarWeekNumbering", function(assert) {
-		this.oConfig.setCalendarWeekNumbering(CalendarWeekNumbering.Default);
+		Formatting.setCalendarWeekNumbering(CalendarWeekNumbering.Default);
 		assert.equal(this.eventsReceived, 0, "no localizationChange event if value did not change");
-		this.oConfig.setCalendarWeekNumbering(CalendarWeekNumbering.ISO_8601);
+		Formatting.setCalendarWeekNumbering(CalendarWeekNumbering.ISO_8601);
 		assert.equal(this.eventsReceived, 1, "one localizationChange event if value changed");
 	});
 
 	QUnit.test("setLanguage(en) - noop", function(assert) {
-		this.oConfig.setLanguage("en");
-		assert.equal(this.oConfig.getLanguage(), "en", "language still should be 'en'");
-		assert.equal(this.oConfig.getSAPLogonLanguage(), "EN", "SAP Logon language should be 'EN'");
+		Localization.setLanguage("en");
+		assert.equal(Localization.getLanguage(), "en", "language still should be 'en'");
+		assert.equal(Localization.getSAPLogonLanguage(), "EN", "SAP Logon language should be 'EN'");
 		assert.equal(this.eventsReceived, 0, "one localizationChange event should have been fired");
 	});
 
 	QUnit.test("setLanguage(fr, FR) - simple", function(assert) {
-		this.oConfig.setLanguage("fr", "fr");
-		assert.equal(this.oConfig.getLanguage(), "fr", "language still should be 'fr'");
-		assert.equal(this.oConfig.getSAPLogonLanguage(), "FR", "SAP Logon language should be 'FR'");
+		Localization.setLanguage("fr", "fr");
+		assert.equal(Localization.getLanguage(), "fr", "language still should be 'fr'");
+		assert.equal(Localization.getSAPLogonLanguage(), "FR", "SAP Logon language should be 'FR'");
 		assert.equal(this.eventsReceived, 1, "one localizationChange event should have been fired");
 		assert.deepEqual(Object.keys(this.changes[0]), ['language'], "event should have reported 'language' as changed");
 	});
 
 	QUnit.test("setLanguage(de) - simple", function(assert) {
-		this.oConfig.setLanguage("de");
-		assert.equal(this.oConfig.getLanguage(), "de", "language should have changed to 'de'");
-		assert.equal(this.oConfig.getSAPLogonLanguage(), "DE", "SAP Logon language should be 'DE'");
+		Localization.setLanguage("de");
+		assert.equal(Localization.getLanguage(), "de", "language should have changed to 'de'");
+		assert.equal(Localization.getSAPLogonLanguage(), "DE", "SAP Logon language should be 'DE'");
 		assert.equal(this.eventsReceived, 1, "one localizationChange event should have been fired");
 		assert.deepEqual(Object.keys(this.changes[0]), ['language'], "event should have reported 'language' as changed");
 	});
 
 	QUnit.test("setLanguage(he) - multi", function(assert) {
-		this.oConfig.setLanguage("he");
-		assert.equal(this.oConfig.getLanguage(), "he", "language should have changed to 'he'");
-		assert.equal(this.oConfig.getSAPLogonLanguage(), "HE", "SAP Logon language should be 'HE'");
+		Localization.setLanguage("he");
+		assert.equal(Localization.getLanguage(), "he", "language should have changed to 'he'");
+		assert.equal(Localization.getSAPLogonLanguage(), "HE", "SAP Logon language should be 'HE'");
 		assert.equal(this.eventsReceived, 1, "one localizationChange event should have been fired");
 		assert.deepEqual(Object.keys(this.changes[0]).sort(), ['language', 'rtl'], "event should have reported 'language' and 'rtl' as changed");
 	});
 
 	QUnit.test("setLanguage(invalid)", function(assert) {
-		var that = this;
 		assert.throws(function() {
-			that.oConfig.setLanguage(new Date());
+			Localization.setLanguage(new Date());
 		}, "setting anything but a string should cause an error");
 		assert.throws(function() {
-			that.oConfig.setLanguage({ toString : function() { return "en-GB"; }});
+			Localization.setLanguage({ toString : function() { return "en-GB"; }});
 		}, "setting anything that only looks like a string should throw error");
 	});
 
 	QUnit.test("setTimezone to the local timezone - noop", function(assert) {
-		this.oConfig.setTimezone(sLocalTimezone);
-		assert.equal(this.oConfig.getTimezone(), sLocalTimezone, "timezone still should be '" + sLocalTimezone + "'");
+		Localization.setTimezone(sLocalTimezone);
+		assert.equal(Localization.getTimezone(), sLocalTimezone, "timezone still should be '" + sLocalTimezone + "'");
 		assert.equal(this.eventsReceived, 0, "no localizationChange event should have been fired");
 	});
 
 	QUnit.test("setTimezone('America/New_York') - simple", function(assert) {
 		var sDifferentTimezone = sLocalTimezone === "Europe/Berlin" ? "America/New_York" : "Europe/Berlin";
-		this.oConfig.setTimezone(sDifferentTimezone);
-		assert.equal(this.oConfig.getTimezone(), sDifferentTimezone, "timezone should be '" + sDifferentTimezone + "'");
+		Localization.setTimezone(sDifferentTimezone);
+		assert.equal(Localization.getTimezone(), sDifferentTimezone, "timezone should be '" + sDifferentTimezone + "'");
 		assert.equal(this.eventsReceived, 1, "one localizationChange event should have been fired");
 		assert.deepEqual(Object.keys(this.changes[0]), ['timezone'], "event should have reported 'timezone' as changed");
 		// reset to local timezone
-		this.oConfig.setTimezone(sLocalTimezone);
+		Localization.setTimezone(sLocalTimezone);
 	});
 
 	QUnit.test("setTimezone(null) - simple", function(assert) {
-		this.oConfig.setTimezone(null);
-		assert.equal(this.oConfig.getTimezone(), sLocalTimezone, "timezone still should be '" + sLocalTimezone + "'");
+		Localization.setTimezone(null);
+		assert.equal(Localization.getTimezone(), sLocalTimezone, "timezone still should be '" + sLocalTimezone + "'");
 		assert.equal(this.eventsReceived, 0, "no localizationChange event should have been fired");
 	});
 
 	QUnit.test("setRTL(null) - noop", function(assert) {
-		assert.equal(this.oConfig.getRTL(), false, "[precondition] RTL should be false for 'en'");
-		this.oConfig.setRTL(null);
-		assert.equal(this.oConfig.getRTL(), false, "RTL still should be false for 'en'");
+		assert.equal(Localization.getRTL(), false, "[precondition] RTL should be false for 'en'");
+		Localization.setRTL(null);
+		assert.equal(Localization.getRTL(), false, "RTL still should be false for 'en'");
 		assert.equal(this.eventsReceived, 0, "no localizationChange event should have been fired");
-		this.oConfig.setLanguage("he");
-		assert.equal(this.oConfig.getRTL(), true, "language 'he' should change the RTL flag when none (null) had been set");
+		Localization.setLanguage("he");
+		assert.equal(Localization.getRTL(), true, "language 'he' should change the RTL flag when none (null) had been set");
 	});
 
 	QUnit.test("setRTL(false) - noop", function(assert) {
-		assert.equal(this.oConfig.getRTL(), false, "[precondition] RTL should be false for 'en'");
-		this.oConfig.setRTL(false);
-		assert.equal(this.oConfig.getRTL(), false, "RTL still should be false for 'en'");
+		assert.equal(Localization.getRTL(), false, "[precondition] RTL should be false for 'en'");
+		Localization.setRTL(false);
+		assert.equal(Localization.getRTL(), false, "RTL still should be false for 'en'");
 		assert.equal(this.eventsReceived, 0, "no localizationChange event should have been fired");
-		this.oConfig.setLanguage("he");
-		assert.equal(this.oConfig.getRTL(), false, "language 'he' must not change the explicitly configured RTL flag");
+		Localization.setLanguage("he");
+		assert.equal(Localization.getRTL(), false, "language 'he' must not change the explicitly configured RTL flag");
 	});
 
 	QUnit.test("setRTL(true) - change", function(assert) {
-		assert.equal(this.oConfig.getRTL(), false, "[precondition] RTL should be false for 'en'");
-		this.oConfig.setRTL(true);
-		assert.equal(this.oConfig.getRTL(), true, "RTL still should be false for 'en'");
+		assert.equal(Localization.getRTL(), false, "[precondition] RTL should be false for 'en'");
+		Localization.setRTL(true);
+		assert.equal(Localization.getRTL(), true, "RTL still should be false for 'en'");
 		assert.equal(this.eventsReceived, 1, "one localizationChange event should have been fired");
 		assert.deepEqual(Object.keys(this.changes[0]).sort(), ['rtl'], "event should have reported 'rtl' as changed");
 	});
 
 	QUnit.test("setLegacyDateFormat", function(assert) {
-		this.oConfig.getFormatSettings().setLegacyDateFormat("1");
-		assert.equal(this.oConfig.getFormatSettings().getLegacyDateFormat(), "1", "legacy date format should have changed to '1'");
+		Formatting.setABAPDateFormat("1");
+		assert.equal(Formatting.getABAPDateFormat(), "1", "legacy date format should have changed to '1'");
 		assert.equal(this.eventsReceived, 1, "one localizationChange event should have been fired");
 		assert.deepEqual(Object.keys(this.changes[0]).sort(), ['dateFormats-medium', 'dateFormats-short', 'legacyDateFormat'], "event should have reported 'language' and 'rtl' as changed");
-		assert.ok(/-x-(.*-)?sapufmt/.test(this.oConfig.getFormatSettings().getFormatLocale().toString()), "format locale should contain private extension 'sapufmt'");
+		assert.ok(/-x-(.*-)?sapufmt/.test(new Locale(Formatting.getLanguageTag()).toString()), "format locale should contain private extension 'sapufmt'");
 
 		// unset again
-		this.oConfig.getFormatSettings().setLegacyDateFormat();
-		assert.notOk(this.oConfig.getFormatSettings().getLegacyDateFormat(), "legacy date format should have been unset");
-		assert.notOk(/-x-(.*-)?sapufmt/.test(this.oConfig.getFormatSettings().getFormatLocale().toString()), "format locale should no longer contain private extension 'sapufmt'");
+		Formatting.setABAPDateFormat();
+		assert.notOk(Formatting.getABAPDateFormat(), "legacy date format should have been unset");
+		assert.notOk(/-x-(.*-)?sapufmt/.test(new Locale(Formatting.getLanguageTag()).toString()), "format locale should no longer contain private extension 'sapufmt'");
 	});
 
 	QUnit.test("setLegacyTimeFormat", function(assert) {
-		this.oConfig.getFormatSettings().setLegacyTimeFormat("1");
-		assert.equal(this.oConfig.getFormatSettings().getLegacyTimeFormat(), "1", "legacy time format should have changed to '1'");
+		Formatting.setABAPTimeFormat("1");
+		assert.equal(Formatting.getABAPTimeFormat(), "1", "legacy time format should have changed to '1'");
 		assert.equal(this.eventsReceived, 1, "one localizationChange event should have been fired");
 		assert.deepEqual(Object.keys(this.changes[0]).sort(), ['dayPeriods-format-abbreviated', 'legacyTimeFormat', 'timeFormats-medium', 'timeFormats-short'], "event should have reported 'language' and 'rtl' as changed");
-		assert.ok(/-x-(.*-)?sapufmt/.test(this.oConfig.getFormatSettings().getFormatLocale().toString()), "format locale should contain private extension 'sapufmt'");
+		assert.ok(/-x-(.*-)?sapufmt/.test(new Locale(Formatting.getLanguageTag()).toString()), "format locale should contain private extension 'sapufmt'");
 
 		// unset again
-		this.oConfig.getFormatSettings().setLegacyTimeFormat();
-		assert.notOk(this.oConfig.getFormatSettings().getLegacyTimeFormat(), "legacy date format should have been unset");
-		assert.notOk(/-x-(.*-)?sapufmt/.test(this.oConfig.getFormatSettings().getFormatLocale().toString()), "format locale should no longer contain private extension 'sapufmt'");
+		Formatting.setABAPTimeFormat();
+		assert.notOk(Formatting.getABAPTimeFormat(), "legacy date format should have been unset");
+		assert.notOk(/-x-(.*-)?sapufmt/.test(new Locale(Formatting.getLanguageTag()).toString()), "format locale should no longer contain private extension 'sapufmt'");
 	});
 
 	QUnit.test("setTrailingCurrencyCode", function(assert) {
-		assert.equal(this.oConfig.getFormatSettings().getTrailingCurrencyCode(), true, "Default configuration is true");
+		assert.equal(Formatting.getTrailingCurrencyCode(), true, "Default configuration is true");
 
-		this.oConfig.getFormatSettings().setTrailingCurrencyCode(false);
-		assert.equal(this.oConfig.getFormatSettings().getTrailingCurrencyCode(), false, "Configuration set to false");
+		Formatting.setTrailingCurrencyCode(false);
+		assert.equal(Formatting.getTrailingCurrencyCode(), false, "Configuration set to false");
 
-		this.oConfig.getFormatSettings().setTrailingCurrencyCode(true);
-		assert.equal(this.oConfig.getFormatSettings().getTrailingCurrencyCode(), true, "Configuration set to true");
+		Formatting.setTrailingCurrencyCode(true);
+		assert.equal(Formatting.getTrailingCurrencyCode(), true, "Configuration set to true");
 	});
 
 	QUnit.test("applySettings", function(assert) {
@@ -346,12 +346,12 @@ sap.ui.define([
 			calendarType: 'Islamic',
 			calendarWeekNumbering: CalendarWeekNumbering.ISO_8601
 		});
-		assert.equal(this.oConfig.getCalendarWeekNumbering(), CalendarWeekNumbering.ISO_8601, "calendar week number changed to 'ISO_8601'");
-		assert.equal(this.oConfig.getLanguage(), "he", "language should have changed to 'he'");
-		assert.equal(this.oConfig.getRTL(), true, "RTL should have changed to true");
-		assert.equal(this.oConfig.getFormatSettings().getLegacyDateFormat(), "1", "legacy date format should have changed to '1'");
-		assert.equal(this.oConfig.getFormatSettings().getLegacyTimeFormat(), "1", "legacy time format should have changed to '1'");
-		assert.ok(/-x-(.*-)?sapufmt/.test(this.oConfig.getFormatSettings().getFormatLocale().toString()), "format locale should contain private extension 'sapufmt'");
+		assert.equal(Formatting.getCalendarWeekNumbering(), CalendarWeekNumbering.ISO_8601, "calendar week number changed to 'ISO_8601'");
+		assert.equal(Localization.getLanguage(), "he", "language should have changed to 'he'");
+		assert.equal(Localization.getRTL(), true, "RTL should have changed to true");
+		assert.equal(Formatting.getABAPDateFormat(), "1", "legacy date format should have changed to '1'");
+		assert.equal(Formatting.getABAPTimeFormat(), "1", "legacy time format should have changed to '1'");
+		assert.ok(/-x-(.*-)?sapufmt/.test(new Locale(Formatting.getLanguageTag()).toString()), "format locale should contain private extension 'sapufmt'");
 		assert.equal(this.eventsReceived, 1, "one localizationChange event should have been fired");
 		assert.deepEqual(Object.keys(this.changes[0]).sort(), [
 			'calendarType',
@@ -376,24 +376,24 @@ sap.ui.define([
 			calendarType: null,
 			calendarWeekNumbering: CalendarWeekNumbering.Default
 		});
-		assert.equal(this.oConfig.getCalendarWeekNumbering(), CalendarWeekNumbering.Default, "calendar week number changed to 'Default'");
-		assert.equal(this.oConfig.getLanguage(), "en", "language should have been reset to 'en'");
-		assert.equal(this.oConfig.getRTL(), false, "RTL should have changed to false");
-		assert.notOk(this.oConfig.getFormatSettings().getLegacyDateFormat(), "legacy date format should have been reset");
-		assert.notOk(this.oConfig.getFormatSettings().getLegacyTimeFormat(), "legacy time format should have been reset");
-		assert.equal(this.oConfig.getCalendarType(), CalendarType.Gregorian, "calendar type should be 'Gregorian' again");
-		assert.notOk(/-x-(.*-)?sapufmt/.test(this.oConfig.getFormatSettings().getFormatLocale().toString()), "format locale should no longer contain private extension 'sapufmt'");
+		assert.equal(Formatting.getCalendarWeekNumbering(), CalendarWeekNumbering.Default, "calendar week number changed to 'Default'");
+		assert.equal(Localization.getLanguage(), "en", "language should have been reset to 'en'");
+		assert.equal(Localization.getRTL(), false, "RTL should have changed to false");
+		assert.notOk(Formatting.getABAPDateFormat(), "legacy date format should have been reset");
+		assert.notOk(Formatting.getABAPTimeFormat(), "legacy time format should have been reset");
+		assert.equal(Formatting.getCalendarType(), CalendarType.Gregorian, "calendar type should be 'Gregorian' again");
+		assert.notOk(/-x-(.*-)?sapufmt/.test(new Locale(Formatting.getLanguageTag()).toString()), "format locale should no longer contain private extension 'sapufmt'");
 	});
 
 	QUnit.test("FormatSettings#getFormatLocale - return custom locale if calendar week numbering is set", function (assert) {
-		assert.equal(this.oConfig.getCalendarWeekNumbering(), CalendarWeekNumbering.Default);
-		assert.notOk(/-x-(.*-)?sapufmt/.test(this.oConfig.getFormatSettings().getFormatLocale().toString()),
+		assert.equal(Formatting.getCalendarWeekNumbering(), CalendarWeekNumbering.Default);
+		assert.notOk(/-x-(.*-)?sapufmt/.test(new Locale(Formatting.getLanguageTag()).toString()),
 			"format locale must not contain private extension 'sapufmt' if calendar week numbering is set to 'Default'");
 
-		this.oConfig.setCalendarWeekNumbering(CalendarWeekNumbering.ISO_8601);
+		Formatting.setCalendarWeekNumbering(CalendarWeekNumbering.ISO_8601);
 
 		//code under test
-		assert.ok(/-x-(.*-)?sapufmt/.test(this.oConfig.getFormatSettings().getFormatLocale().toString()),
+		assert.ok(/-x-(.*-)?sapufmt/.test(new Locale(Formatting.getLanguageTag()).toString()),
 			"format locale must contain private extension 'sapufmt' is something other than 'Default'");
 	});
 
@@ -402,81 +402,81 @@ sap.ui.define([
 	QUnit.test("derived from language - simple", function(assert) {
 		var oConfig = Core.getConfiguration();
 		// SAP language derived by UI5 - simple
-		oConfig.setLanguage("en-US");
-		assert.equal(oConfig.getSAPLogonLanguage(), "EN", "SAP Logon language should be 'EN'");
-		oConfig.setLanguage("de-CH");
-		assert.equal(oConfig.getSAPLogonLanguage(), "DE", "SAP Logon language should be 'DE'");
+		Localization.setLanguage("en-US");
+		assert.equal(Localization.getSAPLogonLanguage(), "EN", "SAP Logon language should be 'EN'");
+		Localization.setLanguage("de-CH");
+		assert.equal(Localization.getSAPLogonLanguage(), "DE", "SAP Logon language should be 'DE'");
 	});
 
 	QUnit.test("derived from language - special cases", function(assert) {
 		var oConfig = Core.getConfiguration();
 		//  SAP language derived by UI5 - special cases
-		oConfig.setLanguage("zh-CN");
-		assert.equal(oConfig.getSAPLogonLanguage(), "ZH", "SAP Logon language should be 'ZH'");
-		assert.equal(oConfig.getLanguageTag(), "zh-CN", "Language Tag should be 'zh-CN'");
-		oConfig.setLanguage("zh-Hans");
-		assert.equal(oConfig.getSAPLogonLanguage(), "ZH", "SAP Logon language should be 'ZH'");
-		assert.equal(oConfig.getLanguageTag(), "zh-Hans", "Language Tag should be 'zh-Hans'");
-		oConfig.setLanguage("zh-Hans-CN");
-		assert.equal(oConfig.getSAPLogonLanguage(), "ZH", "SAP Logon language should be 'ZH'");
-		assert.equal(oConfig.getLanguageTag(), "zh-Hans-CN", "Language Tag should be 'zh-Hans-CN'");
-		oConfig.setLanguage("zh-TW");
-		assert.equal(oConfig.getSAPLogonLanguage(), "ZF", "SAP Logon language should be 'ZF'");
-		assert.equal(oConfig.getLanguageTag(), "zh-TW", "Language Tag should be 'zh-TW'");
-		oConfig.setLanguage("zh-Hant");
-		assert.equal(oConfig.getSAPLogonLanguage(), "ZF", "SAP Logon language should be 'ZF'");
-		assert.equal(oConfig.getLanguageTag(), "zh-Hant", "Language Tag should be 'zh-Hant'");
-		oConfig.setLanguage("zh-Hant-TW");
-		assert.equal(oConfig.getSAPLogonLanguage(), "ZF", "SAP Logon language should be 'ZF'");
-		assert.equal(oConfig.getLanguageTag(), "zh-Hant-TW", "Language Tag should be 'zh-Hant-TW'");
-		oConfig.setLanguage("en-US-x-saptrc");
-		assert.equal(oConfig.getSAPLogonLanguage(), "1Q", "SAP Logon language should be '1Q'");
-		assert.equal(oConfig.getLanguageTag(), "en-US-x-saptrc", "Language Tag should be 'en-US-x-saptrc'");
-		oConfig.setLanguage("en-US-x-sappsd");
-		assert.equal(oConfig.getSAPLogonLanguage(), "2Q", "SAP Logon language should be '2Q'");
-		assert.equal(oConfig.getLanguageTag(), "en-US-x-sappsd", "Language Tag should be 'en-US-x-sappsd'");
-		oConfig.setLanguage("en-US-x-saprigi");
-		assert.equal(oConfig.getSAPLogonLanguage(), "3Q", "SAP Logon language should be '3Q'");
-		assert.equal(oConfig.getLanguageTag(), "en-US-x-saprigi", "Language Tag should be 'en-US-x-saprigi'");
-		oConfig.setLanguage("en-GB");
-		assert.equal(oConfig.getSAPLogonLanguage(), "6N", "SAP Logon language should be '6N'");
-		assert.equal(oConfig.getLanguageTag(), "en-GB", "Language Tag should be 'en-GB'");
-		oConfig.setLanguage("pt-PT");
-		assert.equal(oConfig.getSAPLogonLanguage(), "1P", "SAP Logon language should be '1P'");
-		assert.equal(oConfig.getLanguageTag(), "pt-PT", "Language Tag should be 'pt-PT'");
+		Localization.setLanguage("zh-CN");
+		assert.equal(Localization.getSAPLogonLanguage(), "ZH", "SAP Logon language should be 'ZH'");
+		assert.equal(Localization.getLanguageTag().toString(), "zh-CN", "Language Tag should be 'zh-CN'");
+		Localization.setLanguage("zh-Hans");
+		assert.equal(Localization.getSAPLogonLanguage(), "ZH", "SAP Logon language should be 'ZH'");
+		assert.equal(Localization.getLanguageTag().toString(), "zh-Hans", "Language Tag should be 'zh-Hans'");
+		Localization.setLanguage("zh-Hans-CN");
+		assert.equal(Localization.getSAPLogonLanguage(), "ZH", "SAP Logon language should be 'ZH'");
+		assert.equal(Localization.getLanguageTag().toString(), "zh-Hans-CN", "Language Tag should be 'zh-Hans-CN'");
+		Localization.setLanguage("zh-TW");
+		assert.equal(Localization.getSAPLogonLanguage(), "ZF", "SAP Logon language should be 'ZF'");
+		assert.equal(Localization.getLanguageTag().toString(), "zh-TW", "Language Tag should be 'zh-TW'");
+		Localization.setLanguage("zh-Hant");
+		assert.equal(Localization.getSAPLogonLanguage(), "ZF", "SAP Logon language should be 'ZF'");
+		assert.equal(Localization.getLanguageTag().toString(), "zh-Hant", "Language Tag should be 'zh-Hant'");
+		Localization.setLanguage("zh-Hant-TW");
+		assert.equal(Localization.getSAPLogonLanguage(), "ZF", "SAP Logon language should be 'ZF'");
+		assert.equal(Localization.getLanguageTag().toString(), "zh-Hant-TW", "Language Tag should be 'zh-Hant-TW'");
+		Localization.setLanguage("en-US-x-saptrc");
+		assert.equal(Localization.getSAPLogonLanguage(), "1Q", "SAP Logon language should be '1Q'");
+		assert.equal(Localization.getLanguageTag().toString(), "en-US-x-saptrc", "Language Tag should be 'en-US-x-saptrc'");
+		Localization.setLanguage("en-US-x-sappsd");
+		assert.equal(Localization.getSAPLogonLanguage(), "2Q", "SAP Logon language should be '2Q'");
+		assert.equal(Localization.getLanguageTag().toString(), "en-US-x-sappsd", "Language Tag should be 'en-US-x-sappsd'");
+		Localization.setLanguage("en-US-x-saprigi");
+		assert.equal(Localization.getSAPLogonLanguage(), "3Q", "SAP Logon language should be '3Q'");
+		assert.equal(Localization.getLanguageTag().toString(), "en-US-x-saprigi", "Language Tag should be 'en-US-x-saprigi'");
+		Localization.setLanguage("en-GB");
+		assert.equal(Localization.getSAPLogonLanguage(), "6N", "SAP Logon language should be '6N'");
+		assert.equal(Localization.getLanguageTag().toString(), "en-GB", "Language Tag should be 'en-GB'");
+		Localization.setLanguage("pt-PT");
+		assert.equal(Localization.getSAPLogonLanguage(), "1P", "SAP Logon language should be '1P'");
+		assert.equal(Localization.getLanguageTag().toString(), "pt-PT", "Language Tag should be 'pt-PT'");
 
-		oConfig.setLanguage("sr-Latn");
-		assert.equal(oConfig.getSAPLogonLanguage(), "SH", "SAP Logon language should be 'SH'");
-		assert.equal(oConfig.getLanguageTag(), "sh", "Language Tag should be 'sh'");
+		Localization.setLanguage("sr-Latn");
+		assert.equal(Localization.getSAPLogonLanguage(), "SH", "SAP Logon language should be 'SH'");
+		assert.equal(Localization.getLanguageTag().toString(), "sh", "Language Tag should be 'sh'");
 
-		oConfig.setLanguage("sh");
-		assert.equal(oConfig.getSAPLogonLanguage(), "SH", "SAP Logon language should be 'SH'");
-		assert.equal(oConfig.getLanguageTag(), "sh", "Language Tag should be 'sh'");
+		Localization.setLanguage("sh");
+		assert.equal(Localization.getSAPLogonLanguage(), "SH", "SAP Logon language should be 'SH'");
+		assert.equal(Localization.getLanguageTag().toString(), "sh", "Language Tag should be 'sh'");
 
-		oConfig.setLanguage("sr");
-		assert.equal(oConfig.getSAPLogonLanguage(), "SR", "SAP Logon language should be 'SR'");
-		assert.equal(oConfig.getLanguageTag(), "sr", "Language Tag should be 'sr'");
+		Localization.setLanguage("sr");
+		assert.equal(Localization.getSAPLogonLanguage(), "SR", "SAP Logon language should be 'SR'");
+		assert.equal(Localization.getLanguageTag().toString(), "sr", "Language Tag should be 'sr'");
 
-		oConfig.setLanguage("iw");
-		assert.equal(oConfig.getSAPLogonLanguage(), "HE", "SAP Logon language should be 'HE'");
-		assert.equal(oConfig.getLanguageTag(), "he", "Language Tag should be 'he'");
+		Localization.setLanguage("iw");
+		assert.equal(Localization.getSAPLogonLanguage(), "HE", "SAP Logon language should be 'HE'");
+		assert.equal(Localization.getLanguageTag().toString(), "he", "Language Tag should be 'he'");
 
-		oConfig.setLanguage("ji");
-		assert.equal(oConfig.getSAPLogonLanguage(), "YI", "SAP Logon language should be 'YI'");
-		assert.equal(oConfig.getLanguageTag(), "yi", "Language Tag should be 'yi'");
+		Localization.setLanguage("ji");
+		assert.equal(Localization.getSAPLogonLanguage(), "YI", "SAP Logon language should be 'YI'");
+		assert.equal(Localization.getLanguageTag().toString(), "yi", "Language Tag should be 'yi'");
 	});
 
 	QUnit.test("configured via API", function(assert) {
 		var oConfig = Core.getConfiguration();
 		//  SAP language provided by caller of setLanguage
-		oConfig.setLanguage("en-GB");
-		assert.equal(oConfig.getSAPLogonLanguage(), "6N", "setting only BCP47 language can only return 'EN'");
-		oConfig.setLanguage("en-GB", "1E"); // note: only SAPLanguage changes!
-		assert.equal(oConfig.getSAPLogonLanguage(), "1E", "setting both values must return the expected SAP Language '6N'");
-		oConfig.setLanguage("en-GB", "6N"); // note: only SAPLanguage changes!
-		assert.equal(oConfig.getSAPLogonLanguage(), "6N", "setting both values must return the expected SAP Language '6N'");
-		oConfig.setLanguage("en-GB");
-		assert.equal(oConfig.getSAPLogonLanguage(), "6N", "setting only BCP47 language again must reset the knowledge about SAP Language");
+		Localization.setLanguage("en-GB");
+		assert.equal(Localization.getSAPLogonLanguage(), "6N", "setting only BCP47 language can only return 'EN'");
+		Localization.setLanguage("en-GB", "1E"); // note: only SAPLanguage changes!
+		assert.equal(Localization.getSAPLogonLanguage(), "1E", "setting both values must return the expected SAP Language '6N'");
+		Localization.setLanguage("en-GB", "6N"); // note: only SAPLanguage changes!
+		assert.equal(Localization.getSAPLogonLanguage(), "6N", "setting both values must return the expected SAP Language '6N'");
+		Localization.setLanguage("en-GB");
+		assert.equal(Localization.getSAPLogonLanguage(), "6N", "setting only BCP47 language again must reset the knowledge about SAP Language");
 	});
 
 	QUnit.module("Format settings", {

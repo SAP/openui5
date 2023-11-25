@@ -474,7 +474,7 @@ sap.ui.define([
 			var config = oCore.getConfiguration();
 
 			//turn on rtl for this test
-			this.stub(config, "getRTL").callsFake(function() {
+			this.stub(Localization, "getRTL").callsFake(function() {
 				return false;
 			});
 
@@ -485,7 +485,7 @@ sap.ui.define([
 			var config = oCore.getConfiguration();
 
 			//turn on rtl for this test
-			this.stub(config, "getRTL").callsFake(function() {
+			this.stub(Localization, "getRTL").callsFake(function() {
 				return true;
 			});
 

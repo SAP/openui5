@@ -7,8 +7,8 @@ sap.ui.define([
 	'sap/ui/layout/library',
 	'sap/ui/layout/form/Form',
 	'./FormHelper',
-	'sap/ui/core/IconPool' // as RenderManager.icon needs it
-	], function(coreLibrary, library, Form, FormHelper, IconPool) {
+	'sap/ui/core/IconPool' // side effect: as RenderManager.icon needs it
+	], function(coreLibrary, library, Form, FormHelper, _IconPool) {
 	"use strict";
 
 	// shortcut for sap.ui.core.TitleLevel

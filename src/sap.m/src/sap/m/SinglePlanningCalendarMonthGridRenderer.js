@@ -10,6 +10,7 @@ sap.ui.define([
 	'sap/ui/unified/calendar/CalendarDate',
 	'sap/ui/unified/calendar/CalendarUtils',
 	'sap/ui/unified/calendar/Month',
+	// side effect: required when calling RenderManager#icon
 	'sap/ui/core/IconPool',
 	'./PlanningCalendarLegend',
 	'sap/ui/core/InvisibleText',
@@ -27,7 +28,7 @@ sap.ui.define([
 	CalendarDate,
 	CalendarUtils,
 	Month,
-	IconPool,
+	_IconPool,
 	PlanningCalendarLegend,
 	InvisibleText,
 	Core,

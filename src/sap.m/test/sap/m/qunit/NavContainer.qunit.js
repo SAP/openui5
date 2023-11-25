@@ -1,5 +1,6 @@
 /*global QUnit, sinon */
 sap.ui.define([
+	"sap/ui/core/ControlBehavior",
 	"sap/ui/core/Element",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/thirdparty/jquery",
@@ -18,6 +19,7 @@ sap.ui.define([
 	"sap/ui/util/Mobile",
 	"sap/ui/core/Core"
 ], function(
+	ControlBehavior,
 	Element,
 	createAndAppendDiv,
 	jQuery,
@@ -1974,7 +1976,7 @@ sap.ui.define([
 			}),
 			fnDone = assert.async(),
 			oCoreConfiguration = Core.getConfiguration(),
-			oStub = sinon.stub(oCoreConfiguration, "getAnimationMode").returns("none"),
+			oStub = sinon.stub(ControlBehavior, "getAnimationMode").returns("none"),
 			oSpy = sinon.spy(window, "setTimeout");
 
 		oNavContainer.placeAt("qunit-fixture");

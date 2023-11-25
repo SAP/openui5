@@ -1182,9 +1182,9 @@ function(
 		// arrange
 		var oSpy = this.spy(this.oFCL._oAnimationEndListener, "waitForColumnResizeEnd"),
 			oConfiguration = Core.getConfiguration(),
-			sOriginalAnimationMode = oConfiguration.getAnimationMode();
+			sOriginalAnimationMode = ControlBehavior.getAnimationMode();
 
-		oConfiguration.setAnimationMode("minimal");
+		ControlBehavior.setAnimationMode("minimal");
 		assert.expect(1);
 
 		// act
@@ -1194,7 +1194,7 @@ function(
 		assert.ok(oSpy.notCalled, "waitForColumnResize is not called when animationMode=minimal");
 
 		// clean-up
-		oConfiguration.setAnimationMode(sOriginalAnimationMode);
+		ControlBehavior.setAnimationMode(sOriginalAnimationMode);
 	});
 
 	QUnit.test("Contextual settings are updated after column resize without layout update", function (assert) {

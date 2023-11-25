@@ -7,7 +7,7 @@ sap.ui.define([
 	"sap/ui/core/theming/Parameters",
 	"sap/ui/model/odata/type/Boolean",
 	"sap/ui/model/odata/type/Byte",
-	"sap/ui/model/odata/type/DateTime",
+	"sap/ui/model/odata/type/Date",
 	"sap/ui/model/odata/type/DateTime",
 	"sap/ui/model/odata/type/DateTimeWithTimezone",
 	"sap/ui/model/odata/type/Decimal",

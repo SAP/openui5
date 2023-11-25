@@ -11,7 +11,6 @@ sap.ui.define([
 	"sap/ui/layout/form/SimpleForm",
 	"sap/ui/layout/VerticalLayout",
 	"sap/ui/layout/HorizontalLayout",
-	"sap/m/library",
 	"sap/m/Avatar",
 	"sap/m/Page",
 	"sap/m/Button",
@@ -40,7 +39,6 @@ sap.ui.define([
 	SimpleForm,
 	VerticalLayout,
 	HorizontalLayout,
-	mLibrary,
 	Avatar,
 	Page,
 	Button,
@@ -88,7 +86,7 @@ sap.ui.define([
 	var oRB = Library.getResourceBundleFor('sap.m');
 
 	// shortcut for sap.m.PageBackgroundDesign
-	var PageBackgroundDesign = mLibrary.PageBackgroundDesign;
+	var PageBackgroundDesign = library.PageBackgroundDesign;
 
 	/**
 	 * Constructor for a new QuickViewPage.

@@ -2,7 +2,10 @@
  * ${copyright}
  */
 
-sap.ui.define(["./MessageStripUtilities", "sap/ui/core/IconPool"], function (MSUtils, IconPool) {
+sap.ui.define([
+	"./MessageStripUtilities",
+	"sap/ui/core/IconPool" // side effect: required when calling RenderManager#icon
+], function (MSUtils) {
 "use strict";
 
 /**

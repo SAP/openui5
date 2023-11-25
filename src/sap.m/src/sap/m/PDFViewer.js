@@ -13,7 +13,6 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/base/assert",
 	"sap/ui/thirdparty/jquery",
-	"./PDFViewerRenderer",
 	"sap/ui/core/Lib"
 ],
 	function(
@@ -26,7 +25,6 @@ sap.ui.define([
 		Log,
 		assert,
 		jQuery,
-		PDFViewerRenderer1,
 		CoreLib
 	) {
 		"use strict";
@@ -168,7 +166,7 @@ sap.ui.define([
 					}
 				},
 
-				renderer: PDFViewerRenderer1
+				renderer: PDFViewerRenderer
 			});
 
 

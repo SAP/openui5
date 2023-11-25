@@ -1,5 +1,6 @@
 /*global QUnit, sinon*/
 sap.ui.define([
+	"sap/base/i18n/Localization",
 	"sap/ui/core/Element",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/thirdparty/jquery",
@@ -15,7 +16,6 @@ sap.ui.define([
 	"sap/ui/unified/CalendarLegendItem",
 	"sap/ui/unified/DateTypeRange",
 	"sap/ui/unified/library",
-	"sap/ui/core/Core",
 	"sap/ui/core/InvisibleText",
 	'sap/ui/events/KeyCodes',
 	"sap/ui/model/json/JSONModel",
@@ -25,6 +25,7 @@ sap.ui.define([
 	"sap/ui/core/date/UI5Date",
 	"sap/ui/unified/DateRange"
 ], function(
+	Localization,
 	Element,
 	qutils,
 	jQuery,
@@ -40,7 +41,6 @@ sap.ui.define([
 	CalendarLegendItem,
 	DateTypeRange,
 	unifiedLibrary,
-	Core,
 	InvisibleText,
 	KeyCodes,
 	JSONModel,
@@ -403,7 +403,7 @@ sap.ui.define([
 
 		// Prepare
 		oSPC.placeAt("qunit-fixture");
-		Core.applyChanges();
+		oCore.applyChanges();
 
 		sCurrentPickerId = oSPC._getHeader().getAssociation("currentPicker");
 		oPicker = Element.getElementById(sCurrentPickerId);
@@ -419,7 +419,7 @@ sap.ui.define([
 
 		// Act
 		oSPC.setSelectedView("WorkWeekView");
-		Core.applyChanges();
+		oCore.applyChanges();
 
 		sCurrentPickerId = oSPC._getHeader().getAssociation("currentPicker");
 		oPicker = Element.getElementById(sCurrentPickerId);
@@ -434,7 +434,7 @@ sap.ui.define([
 
 		// Act
 		oSPC.setSelectedView("MonthView");
-		Core.applyChanges();
+		oCore.applyChanges();
 
 		sCurrentPickerId = oSPC._getHeader().getAssociation("currentPicker");
 		oPicker = Element.getElementById(sCurrentPickerId);
@@ -446,7 +446,7 @@ sap.ui.define([
 
 		// Act
 		oSPC.setSelectedView("WeekView");
-		Core.applyChanges();
+		oCore.applyChanges();
 
 		sCurrentPickerId = oSPC._getHeader().getAssociation("currentPicker");
 		oPicker = Element.getElementById(sCurrentPickerId);
@@ -461,7 +461,7 @@ sap.ui.define([
 
 		// Act
 		oSPC.setFirstDayOfWeek(-1);
-		Core.applyChanges();
+		oCore.applyChanges();
 
 		aDays = oRow.getDomRef().querySelectorAll(".sapUiCalItem");
 		$Date = aDays[0];
@@ -509,7 +509,7 @@ sap.ui.define([
 		// Act
 		oSPC.setSelectedView(sViewKey);
 		oSPC.setCalendarWeekNumbering(sInitialWeekNumbering);
-		Core.applyChanges();
+		oCore.applyChanges();
 
 		var oRow = oSPC.getAggregation("_grid").getAggregation("_columnHeaders"),
 			aHeaderDays = oRow.getDomRef().querySelectorAll(".sapUiCalItem");
@@ -522,7 +522,7 @@ sap.ui.define([
 		// Act
 		sInitialWeekNumbering = "MiddleEastern";
 		oSPC.setCalendarWeekNumbering(sInitialWeekNumbering);
-		Core.applyChanges();
+		oCore.applyChanges();
 		aHeaderDays = oRow.getDomRef().querySelectorAll(".sapUiCalItem");
 
 		// Assert
@@ -533,7 +533,7 @@ sap.ui.define([
 		// Act
 		sInitialWeekNumbering = "WesternTraditional";
 		oSPC.setCalendarWeekNumbering(sInitialWeekNumbering);
-		Core.applyChanges();
+		oCore.applyChanges();
 		aHeaderDays = oRow.getDomRef().querySelectorAll(".sapUiCalItem");
 
 		// Assert
@@ -546,7 +546,7 @@ sap.ui.define([
 		sViewKey = "MonthView";
 		oSPC.setSelectedView(sViewKey);
 		oSPC.setCalendarWeekNumbering(sInitialWeekNumbering);
-		Core.applyChanges();
+		oCore.applyChanges();
 		aHeaderDays = oSPC.getDomRef().querySelectorAll(".sapUiCalWH");
 
 		// Assert
@@ -555,7 +555,7 @@ sap.ui.define([
 		// Act
 		sInitialWeekNumbering = "MiddleEastern";
 		oSPC.setCalendarWeekNumbering(sInitialWeekNumbering);
-		Core.applyChanges();
+		oCore.applyChanges();
 		aHeaderDays = oSPC.getDomRef().querySelectorAll(".sapUiCalWH");
 
 		// Assert
@@ -565,7 +565,7 @@ sap.ui.define([
 		// Act
 		sInitialWeekNumbering = "WesternTraditional";
 		oSPC.setCalendarWeekNumbering(sInitialWeekNumbering);
-		Core.applyChanges();
+		oCore.applyChanges();
 		aHeaderDays = oSPC.getDomRef().querySelectorAll(".sapUiCalWH");
 
 		// Assert
@@ -603,7 +603,7 @@ sap.ui.define([
 
 		// Act
 		oSPC.setSelectedView(sViewKey);
-		Core.applyChanges();
+		oCore.applyChanges();
 
 		//assert
 		assert.strictEqual(oSPC.getSelectedDates().length, 3, "the selected dates are correctly added");
@@ -612,7 +612,7 @@ sap.ui.define([
 		// Act
 		sViewKey = "MonthView";
 		oSPC.setSelectedView(sViewKey);
-		Core.applyChanges();
+		oCore.applyChanges();
 
 		//assert
 		assert.strictEqual(oSPC.getAggregation("_mvgrid").getSelectedDates().length, 3, "the selected dates are correctly added in the selected view");
@@ -627,14 +627,14 @@ sap.ui.define([
 		// Act
 		sViewKey = "WeekView";
 		oSPC.setSelectedView(sViewKey);
-		Core.applyChanges();
+		oCore.applyChanges();
 
 		//assert
 		assert.strictEqual(oSPC.getAggregation("_grid").getSelectedDates().length, 4, "the selected dates are correctly added in the selected view");
 
 		// Act
 		oSPC.removeAllSelectedDates();
-		Core.applyChanges();
+		oCore.applyChanges();
 
 		//assert
 		assert.strictEqual(oSPC.getSelectedDates().length, 0, "the selected dates are correctly removed");
@@ -874,7 +874,7 @@ sap.ui.define([
 	QUnit.test("startDateChange: on next button press", function (assert) {
 		var oSPC = new SinglePlanningCalendar(),
 			oSPCHeader = oSPC._getHeader(),
-			iScrollDays = oCore.byId(oSPC.getAssociation("selectedView")).getScrollEntityCount(),
+			iScrollDays = Element.getElementById(oSPC.getAssociation("selectedView")).getScrollEntityCount(),
 			oInitialStartDate = oSPC.getStartDate(),
 			fnFireStartDateChange = this.spy(oSPC, "fireStartDateChange");
 
@@ -895,7 +895,7 @@ sap.ui.define([
 	QUnit.test("startDateChange: on previous button press", function (assert) {
 		var oSPC = new SinglePlanningCalendar(),
 			oSPCHeader = oSPC._getHeader(),
-			iScrollDays = oCore.byId(oSPC.getAssociation("selectedView")).getScrollEntityCount(),
+			iScrollDays = Element.getElementById(oSPC.getAssociation("selectedView")).getScrollEntityCount(),
 			oInitialStartDate = oSPC.getStartDate(),
 			fnFireStartDateChange = this.spy(oSPC, "fireStartDateChange");
 
@@ -1863,8 +1863,8 @@ sap.ui.define([
 			oSPC = new SinglePlanningCalendar(),
 			oHeader = oSPC._getHeader(),
 			sNavigationToolbarId = oHeader.getAggregation("_navigationToolbar").getId(),
-			oPreviousButton = oCore.byId(sNavigationToolbarId + "-PrevBtn"),
-			oNextButton = oCore.byId(sNavigationToolbarId + "-NextBtn"),
+			oPreviousButton = Element.getElementById(sNavigationToolbarId + "-PrevBtn"),
+			oNextButton = Element.getElementById(sNavigationToolbarId + "-NextBtn"),
 			sTodayButtonLabelId = InvisibleText.getStaticId("sap.m", "PCH_NAVIGATE_TO_TODAY"),
 			sPickerButtonLabelId = InvisibleText.getStaticId("sap.m", "PCH_SELECT_RANGE");
 
@@ -2416,14 +2416,14 @@ sap.ui.define([
 	QUnit.test("Check the view start hour", function(assert) {
 		assert.strictEqual(this.oSPC.getAggregation("_grid")._getVisibleStartHour(), 0, "The daily view has a consistent start hour");
 
-		var sPrevTimezone = oCore.getConfiguration().getTimezone();
+		var sPrevTimezone = Localization.getTimezone();
 
-		oCore.getConfiguration().setTimezone("Asia/Tokyo");
+		Localization.setTimezone("Asia/Tokyo");
 		oCore.applyChanges();
 
 		assert.strictEqual(this.oSPC.getAggregation("_grid")._getVisibleStartHour(), 0, "The daily view has a consistent start hour");
 
-		oCore.getConfiguration().setTimezone(sPrevTimezone);
+		Localization.setTimezone(sPrevTimezone);
 	});
 
 	QUnit.test("Check the appointments start and end dates", function(assert) {

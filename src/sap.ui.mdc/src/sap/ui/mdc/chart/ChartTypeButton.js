@@ -7,11 +7,10 @@ sap.ui.define([
 	"sap/ui/base/ManagedObjectObserver",
 	"sap/m/library",
 	"sap/m/IllustratedMessage",
-	"sap/m/library",
 	"sap/ui/core/Element",
 	"sap/ui/model/Filter",
 	"sap/ui/model/json/JSONModel"
-], function(OverflowToolbarButton, ButtonRenderer, ManagedObjectObserver, mobileLibrary, IllustratedMessage, MLib, Element, Filter, JSONModel) {
+], function(OverflowToolbarButton, ButtonRenderer, ManagedObjectObserver, mobileLibrary, IllustratedMessage, Element, Filter, JSONModel) {
 	"use strict";
 
 	// shortcut for sap.m.PlacementType
@@ -203,7 +202,7 @@ sap.ui.define([
 
 		const oList = new List({
 			mode: "SingleSelectMaster",
-			noData: new IllustratedMessage({title: oRb.getText("chart.NO_CHART_TYPES_AVAILABLE"), description: oRb.getText("chart.NO_CHART_TYPES_AVAILABLE_ACTION"),  illustrationType: MLib.IllustratedMessageType.AddDimensions}),
+			noData: new IllustratedMessage({title: oRb.getText("chart.NO_CHART_TYPES_AVAILABLE"), description: oRb.getText("chart.NO_CHART_TYPES_AVAILABLE_ACTION"),  illustrationType: mobileLibrary.IllustratedMessageType.AddDimensions}),
 			items: {
 				path: "$chartTypes>/AvailableChartTypes",
 				template: oItemTemplate

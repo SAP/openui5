@@ -24,7 +24,6 @@ sap.ui.define([
 	"sap/m/upload/UploaderHttpRequestMethod",
 	"sap/ui/core/dnd/DragDropInfo",
 	"sap/ui/core/dnd/DropInfo",
-	"sap/m/library",
 	"sap/m/upload/UploadSetToolbarPlaceholder",
 	"sap/m/IllustratedMessage",
 	"sap/m/IllustratedMessageType",
@@ -35,13 +34,13 @@ sap.ui.define([
 	"sap/m/MenuItem",
 	"sap/m/MenuButton",
 	"sap/ui/core/Lib"
-], function(Control, Element, KeyCodes, Log, deepEqual, MobileLibrary, Button, Dialog, List, MessageBox, OverflowToolbar, StandardListItem, Text, ToolbarSpacer, FileUploader, UploadSetItem, Uploader, Renderer, UploaderHttpRequestMethod, DragDropInfo, DropInfo, Library, UploadSetToolbarPlaceholder, IllustratedMessage, IllustratedMessageType, IllustratedMessageSize, Core, InvisibleText, Menu, MenuItem, MenuButton, CoreLib) {
+], function(Control, Element, KeyCodes, Log, deepEqual, MobileLibrary, Button, Dialog, List, MessageBox, OverflowToolbar, StandardListItem, Text, ToolbarSpacer, FileUploader, UploadSetItem, Uploader, Renderer, UploaderHttpRequestMethod, DragDropInfo, DropInfo, UploadSetToolbarPlaceholder, IllustratedMessage, IllustratedMessageType, IllustratedMessageSize, Core, InvisibleText, Menu, MenuItem, MenuButton, CoreLib) {
 	"use strict";
 
 	// shortcut for sap.m.MenuButtonMode
 	var MenuButtonMode = MobileLibrary.MenuButtonMode;
 
-	var UploadType = Library.UploadType;
+	var UploadType = MobileLibrary.UploadType;
 
 	/**
 	 * Constructor for a new UploadSet.
@@ -156,7 +155,7 @@ sap.ui.define([
 				 * In addition, if instant upload is set to false the mode sap.m.ListMode.MultiSelect is not supported and will be automatically set to sap.m.ListMode.None.
 				 * @since 1.100.0
 				 */
-				mode: {type: "sap.m.ListMode", group: "Behavior", defaultValue: Library.ListMode.MultiSelect},
+				mode: {type: "sap.m.ListMode", group: "Behavior", defaultValue: MobileLibrary.ListMode.MultiSelect},
 				/**
 				  * Enables CloudFile picker feature to upload files from cloud.
 				  * @experimental Since 1.106.
@@ -968,11 +967,11 @@ sap.ui.define([
 	};
 
 	UploadSet.prototype.setMode = function(sMode) {
-		if (sMode === Library.ListMode.Delete) {
-			this.setProperty("mode", Library.ListMode.None);
+		if (sMode === MobileLibrary.ListMode.Delete) {
+			this.setProperty("mode", MobileLibrary.ListMode.None);
 			Log.info("sap.m.ListMode.Delete is not supported by UploadSet. Value has been resetted to 'None'");
-		} else if (sMode === Library.ListMode.MultiSelect && !this.getInstantUpload()) {
-			this.setProperty("mode", Library.ListMode.None);
+		} else if (sMode === MobileLibrary.ListMode.MultiSelect && !this.getInstantUpload()) {
+			this.setProperty("mode", MobileLibrary.ListMode.None);
 			Log.info("sap.m.ListMode.MultiSelect is not supported by UploadSet for Pending Upload. Value has been reset to 'None'");
 		} else {
 			this.setProperty("mode", sMode);
@@ -1870,7 +1869,7 @@ sap.ui.define([
 	 */
 	UploadSet.prototype._setSelectedForItems = function(uploadSetItemsToUpdate, selected) {
 	   //Reset all 'selected' values in UploadSetItems
-	   if (this.getMode() !== Library.ListMode.MultiSelect && selected) {
+	   if (this.getMode() !== MobileLibrary.ListMode.MultiSelect && selected) {
 		   var aUploadSetItems = this.getItems();
 		   for (var j = 0; j < aUploadSetItems.length; j++) {
 			   aUploadSetItems[j].setSelected(false);

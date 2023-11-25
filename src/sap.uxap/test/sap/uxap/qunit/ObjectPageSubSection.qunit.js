@@ -7,7 +7,6 @@ sap.ui.define([
 	"sap/ui/core/library",
 	"sap/ui/core/mvc/XMLView",
 	"sap/base/Log",
-	"sap/uxap/library",
 	"sap/uxap/ObjectPageDynamicHeaderTitle",
 	"sap/uxap/ObjectPageSection",
 	"sap/uxap/ObjectPageSectionBase",
@@ -22,7 +21,7 @@ sap.ui.define([
 	"sap/m/Text",
 	"sap/ui/core/HTML"
 ],
-function(Element, $, Core, Control, coreLibrary, XMLView, Log, Lib, ObjectPageDynamicHeaderTitle, ObjectPageSection, ObjectPageSectionBase, ObjectPageSubSectionClass, BlockBase, ObjectPageLayout, library, App, Button, Label, Panel, Text, HTML) {
+function(Element, $, Core, Control, coreLibrary, XMLView, Log, ObjectPageDynamicHeaderTitle, ObjectPageSection, ObjectPageSectionBase, ObjectPageSubSectionClass, BlockBase, ObjectPageLayout, library, App, Button, Label, Panel, Text, HTML) {
 	"use strict";
 
 	var TitleLevel = coreLibrary.TitleLevel;
@@ -1079,7 +1078,7 @@ function(Element, $, Core, Control, coreLibrary, XMLView, Log, Lib, ObjectPageDy
 
 	QUnit.test("SubSection Header is with title on the LEFT", function (assert) {
 		var oObjectPageLayout = new ObjectPageLayout({
-				subSectionLayout: Lib.ObjectPageSubSectionLayout.TitleOnLeft,
+				subSectionLayout: library.ObjectPageSubSectionLayout.TitleOnLeft,
 				sections: [
 					new ObjectPageSection({
 						title:"Personal",

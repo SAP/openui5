@@ -4,6 +4,7 @@
 
 
 sap.ui.define([
+	"sap/base/i18n/Localization",
 	"sap/ui/core/Element",
 	"sap/ui/core/EventBus",
 	"sap/ui/core/Theming",
@@ -25,6 +26,7 @@ sap.ui.define([
 	"sap/base/strings/capitalize",
 	"sap/ui/core/Configuration"
 ], function(
+	Localization,
 	Element,
 	EventBus,
 	Theming,
@@ -62,7 +64,6 @@ sap.ui.define([
 			/* =========================================================== */
 
 			onInit: function () {
-				var oConfiguration = Configuration;
 				SampleBaseController.prototype.onInit.call(this);
 
 				this.oRouter = this.getRouter();
@@ -73,8 +74,8 @@ sap.ui.define([
 					showNewTab: false,
 					rtaLoaded: false,
 					density: this.getOwnerComponent().getContentDensityClass(),
-					rtl: oConfiguration.getRTL(),
-					theme: oConfiguration.getTheme(),
+					rtl: Localization.getRTL(),
+					theme: Theming.getTheme(),
 					showWarning: false
 				});
 
