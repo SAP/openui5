@@ -999,10 +999,8 @@ sap.ui.define([
 
 	QUnit.test("check getCurrentState should return a copy", function (assert) {
 
-		const oContent = { "name": { condition:[{operator: OperatorName.Contains, values: ["value"], validated: ConditionValidated.NotValidated}]}};
+		const oContent = { "name": [{operator: OperatorName.Contains, values: ["value"], validated: ConditionValidated.NotValidated}]};
 
-		oFilterBar.setP13nMode(["Value"]);
-		sinon.stub(oFilterBar, "_getPropertyByName").returns(true);
 		oFilterBar.setFilterConditions(merge({}, oContent));
 		let oCurrentState = oFilterBar.getCurrentState();
 		assert.deepEqual(oCurrentState.filter, oContent, "current state should be set");
