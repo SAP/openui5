@@ -1763,12 +1763,12 @@ sap.ui.define([
 	/**
 	 * Sets the selection mode. The current selection is lost.
 	 *
+	 * <b>Note:</b> The built-in selection API has limited functionality, especially when it is combined with paging (e.g. OData). Therefore,
+	 * it is recommended to use a selection plugin instead.
+	 *
 	 * @param {sap.ui.table.SelectionMode} sSelectionMode the selection mode, see sap.ui.table.SelectionMode
 	 * @returns {this} Reference to <code>this</code> in order to allow method chaining
 	 * @public
-	 *
-	 * <b>Note:</b> The built-in selection API has limited functionality, especially when it is combined with paging (e.g. OData). Therefore,
-	 * it is recommended to use a selection plugin instead.
 	 */
 	Table.prototype.setSelectionMode = function(sSelectionMode) {
 		if (sSelectionMode === SelectionMode.Multi) {
@@ -3284,13 +3284,13 @@ sap.ui.define([
 	/**
 	 * Sets the selected index. The previous selection is removed.
 	 *
+	 * <b>Note:</b> The built-in selection API has limited functionality, especially when it is combined with paging (e.g. OData). Therefore,
+	 * it is recommended to use a selection plugin instead.
+	 *
 	 * @param {int} iIndex The index to select
 	 * @returns {this} Reference to <code>this</code> in order to allow method chaining
 	 * @throws {Error} If a selection plugin is applied
 	 * @public
-	 *
-	 * <b>Note:</b> The built-in selection API has limited functionality, especially when it is combined with paging (e.g. OData). Therefore,
-	 * it is recommended to use a selection plugin instead.
 	 */
 	Table.prototype.setSelectedIndex = function(iIndex) {
 		if (this._hasSelectionPlugin()) {
@@ -3304,12 +3304,12 @@ sap.ui.define([
 	/**
 	 * Removes complete selection.
 	 *
+	 * <b>Note:</b> The built-in selection API has limited functionality, especially when it is combined with paging (e.g. OData). Therefore,
+	 * it is recommended to use a selection plugin instead.
+	 *
 	 * @returns {this} Reference to <code>this</code> in order to allow method chaining
 	 * @throws {Error} If a selection plugin is applied
 	 * @public
-	 *
-	 * <b>Note:</b> The built-in selection API has limited functionality, especially when it is combined with paging (e.g. OData). Therefore,
-	 * it is recommended to use a selection plugin instead.
 	 */
 	Table.prototype.clearSelection = function() {
 		if (this._hasSelectionPlugin()) {
@@ -3326,12 +3326,12 @@ sap.ui.define([
 	 * be available at the client yet. Calling getContextByIndex might not return a result but trigger a roundtrip
 	 * to request this single entity.
 	 *
+	 * <b>Note:</b> The built-in selection API has limited functionality, especially when it is combined with paging (e.g. OData). Therefore,
+	 * it is recommended to use a selection plugin instead.
+	 *
 	 * @returns {this} Reference to <code>this</code> in order to allow method chaining
 	 * @throws {Error} If a selection plugin is applied
 	 * @public
-	 *
-	 * <b>Note:</b> The built-in selection API has limited functionality, especially when it is combined with paging (e.g. OData). Therefore,
-	 * it is recommended to use a selection plugin instead.
 	 */
 	Table.prototype.selectAll = function() {
 		if (this._hasSelectionPlugin()) {
@@ -3348,12 +3348,12 @@ sap.ui.define([
 	/**
 	 * Zero-based indices of selected items, wrapped in an array. An empty array means "no selection".
 	 *
+	 * <b>Note:</b> The built-in selection API has limited functionality, especially when it is combined with paging (e.g. OData). Therefore,
+	 * it is recommended to use a selection plugin instead.
+	 *
 	 * @returns {int[]} Selected indices
 	 * @throws {Error} If a selection plugin is applied
 	 * @public
-	 *
-	 * <b>Note:</b> The built-in selection API has limited functionality, especially when it is combined with paging (e.g. OData). Therefore,
-	 * it is recommended to use a selection plugin instead.
 	 */
 	Table.prototype.getSelectedIndices = function() {
 		if (this._hasSelectionPlugin()) {
@@ -3366,14 +3366,14 @@ sap.ui.define([
 	/**
 	 * Adds the given selection interval to the selection. In case of a single selection, only <code>iIndexTo</code> is added to the selection.
 	 *
+	 * <b>Note:</b> The built-in selection API has limited functionality, especially when it is combined with paging (e.g. OData). Therefore,
+	 * it is recommended to use a selection plugin instead.
+	 *
 	 * @param {int} iIndexFrom Index from which the selection starts
 	 * @param {int} iIndexTo Index up to which to select
 	 * @returns {this} Reference to <code>this</code> in order to allow method chaining
 	 * @throws {Error} If a selection plugin is applied
 	 * @public
-	 *
-	 * <b>Note:</b> The built-in selection API has limited functionality, especially when it is combined with paging (e.g. OData). Therefore,
-	 * it is recommended to use a selection plugin instead.
 	 */
 	Table.prototype.addSelectionInterval = function(iIndexFrom, iIndexTo) {
 		if (this._hasSelectionPlugin()) {
@@ -3387,14 +3387,14 @@ sap.ui.define([
 	/**
 	 * Sets the given selection interval as selection. In case of a single selection, only <code>iIndexTo</code> is selected.
 	 *
+	 * <b>Note:</b> The built-in selection API has limited functionality, especially when it is combined with paging (e.g. OData). Therefore,
+	 * it is recommended to use a selection plugin instead.
+	 *
 	 * @param {int} iIndexFrom Index from which the selection starts
 	 * @param {int} iIndexTo Index up to which to select
 	 * @returns {this} Reference to <code>this</code> in order to allow method chaining
 	 * @throws {Error} If a selection plugin is applied
 	 * @public
-	 *
-	 * <b>Note:</b> The built-in selection API has limited functionality, especially when it is combined with paging (e.g. OData). Therefore,
-	 * it is recommended to use a selection plugin instead.
 	 */
 	Table.prototype.setSelectionInterval = function(iIndexFrom, iIndexTo) {
 		if (this._hasSelectionPlugin()) {
@@ -3408,14 +3408,14 @@ sap.ui.define([
 	/**
 	 * Removes the given selection interval from the selection. In case of single selection, only <code>iIndexTo</code> is removed from the selection.
 	 *
+	 * <b>Note:</b> The built-in selection API has limited functionality, especially when it is combined with paging (e.g. OData). Therefore,
+	 * it is recommended to use a selection plugin instead.
+	 *
 	 * @param {int} iIndexFrom Index from which the deselection should start
 	 * @param {int} iIndexTo Index up to which to deselect
 	 * @returns {this} Reference to <code>this</code> in order to allow method chaining
 	 * @throws {Error} If a selection plugin is applied
 	 * @public
-	 *
-	 * <b>Note:</b> The built-in selection API has limited functionality, especially when it is combined with paging (e.g. OData). Therefore,
-	 * it is recommended to use a selection plugin instead.
 	 */
 	Table.prototype.removeSelectionInterval = function(iIndexFrom, iIndexTo) {
 		if (this._hasSelectionPlugin()) {
@@ -3429,13 +3429,13 @@ sap.ui.define([
 	/**
 	 * Checks whether an index is selected.
 	 *
+	 * <b>Note:</b> The built-in selection API has limited functionality, especially when it is combined with paging (e.g. OData). Therefore,
+	 * it is recommended to use a selection plugin instead.
+	 *
 	 * @param {int} iIndex Index to check for selection
 	 * @returns {boolean} Whether the index is selected
 	 * @throws {Error} If a selection plugin is applied
 	 * @public
-	 *
-	 * <b>Note:</b> The built-in selection API has limited functionality, especially when it is combined with paging (e.g. OData). Therefore,
-	 * it is recommended to use a selection plugin instead.
 	 */
 	Table.prototype.isIndexSelected = function(iIndex) {
 		if (this._hasSelectionPlugin()) {
