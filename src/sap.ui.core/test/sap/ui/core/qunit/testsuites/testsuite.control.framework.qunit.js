@@ -65,6 +65,10 @@ sap.ui.define(function() {
 				}
 			},
 
+			DuplicateIds: {
+				title: "sap.ui.core: Duplicate ID checks"
+			},
+
 			Element: {
 				title: "sap.ui.core.Element",
 				loader:{

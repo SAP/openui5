@@ -14,7 +14,7 @@ sap.ui.define([
 		assert.expect(1);
 		var done = assert.async();
 		// load config file as in FLP boot scenario with specific config before core is loaded
-		sap.ui.require(["testdata/core/testdata/customboot/common.configure.ui5"], function () {
+		sap.ui.require(["fixture/customboot/common.configure.ui5"], function () {
 			// load core and check that bindingparser is correctly derived from config after core was loaded
 			sap.ui.require(["sap/ui/core/Core"], function(Core) {
 				assert.equal(BindingInfo.parse, BindingParser.complexParser, "compatversion set by 'FLP' results in a complexParser");

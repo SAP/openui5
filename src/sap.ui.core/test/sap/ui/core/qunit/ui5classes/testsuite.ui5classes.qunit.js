@@ -2,11 +2,11 @@ sap.ui.define(function() {
 
 	"use strict";
 	return {
-		name: "TestSuite for Topic: Managed Object",
+		name: "TestSuite for BaseObject, ManagedObject and their Helpers",
 		defaults: {
 			loader:{
 				paths:{
-					"testdata/core": "test-resources/sap/ui/core/qunit/"
+					"fixture": "test-resources/sap/ui/core/qunit/ui5classes/fixture/"
 				}
 			},
 			qunit: {
@@ -15,11 +15,26 @@ sap.ui.define(function() {
 			sinon: {
 				version: 4
 			},
-			module: "testdata/core/{name}.qunit"
+			module: "./{name}.qunit"
 		},
 		tests: {
-			DuplicateIds: {
-				title: "sap.ui.core: Duplicate ID checks"
+			AlternativeTypes: {
+				title: "QUnit Page for AlternativeTypes",
+				loader: {
+					paths: {
+						"sap/ui/testlib": "test-resources/sap/ui/core/qunit/testdata/uilib/"
+					}
+				},
+				ui5: {
+					libs: "sap.ui.testlib"
+				}
+			},
+
+			DataType: {
+				coverage : {
+					only : "sap/ui/base/DataType"
+				},
+				title: "QUnit Page for sap/ui/base/DataType"
 			},
 
 			ManagedObject: {

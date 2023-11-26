@@ -70,8 +70,8 @@ sap.ui.define(function() {
 				page: "test-resources/sap/ui/core/qunit/testsuites/testsuite.foundation.enablement.qunit.html"
 			},
 
-			"Managed Object": {
-				page: "test-resources/sap/ui/core/qunit/testsuites/testsuite.managed.object.qunit.html"
+			"BaseObject, ManagedObject and their Helpers": {
+				page: "test-resources/sap/ui/core/qunit/ui5classes/testsuite.ui5classes.qunit.html"
 			},
 
 			"Modular Core": {
