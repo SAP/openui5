@@ -51,11 +51,22 @@
 	}
 }
 
-.sapUiSizeCompact .sapMPanel .sapMPanelHdr {
-	line-height: 2rem;
-	height: 2rem;
-}
+.sapUiSizeCompact {
+	.sapMPanel {
+		min-height: 2rem;
 
+		.sapMPanelHdr {
+			line-height: 2rem;
+			height: 2rem;
+		}
+
+		.sapMPanelWrappingDiv .sapUiIcon {
+			width: 2rem;
+			height: 1.5rem;
+			line-height: 1.5rem;
+		}
+	}
+}
 .sapMPanelStickyHeadingDiv {
 	position: sticky;
 	top: 0;
@@ -95,6 +106,9 @@
 }
 
 .sapMPanelWrappingDiv .sapUiIcon {
+	width: 2.25rem;
+	height: 2.25rem;
+	line-height: 2.25rem;
 	position: absolute;
 	top: 50%;
 	-webkit-transform: translateY(-50%);
