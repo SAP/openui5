@@ -242,8 +242,10 @@ sap.ui.define([
 				controller: {
 					onConfirmVersioningDialog: function() {
 						var sVersionTitle = this.getToolbar().getControl("activateVersionDialog--versionTitleInput").getValue();
-						this.getToolbar().fireEvent("activate", {versionTitle: sVersionTitle});
-						this._oActivateVersionDialog.close();
+						if (sVersionTitle.length > 0) {
+							this.getToolbar().fireEvent("activate", {versionTitle: sVersionTitle});
+							this._oActivateVersionDialog.close();
+						}
 					}.bind(this),
 					onCancelVersioningDialog: function() {
 						this._oActivateVersionDialog.close();
