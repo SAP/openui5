@@ -152,7 +152,8 @@ sap.ui.define([
 	};
 	/**
 	 * Serializes and saves all changes to LREP
-	 * In case of Base Applications (no App Variants) the App Descriptor Changes and UI Changes are saved in different Flex Persistence instances,
+	 * In case of Base Applications (no App Variants) the App Descriptor Changes
+	 * and UI Changes are saved in different Flex Persistence instances,
 	 * so we have to call save twice. For App Variants all the changes are saved in one place.
 	 * @param {object} mPropertyBag - Property bag
 	 * @param {boolean} mPropertyBag.saveAsDraft - save the changes as a draft

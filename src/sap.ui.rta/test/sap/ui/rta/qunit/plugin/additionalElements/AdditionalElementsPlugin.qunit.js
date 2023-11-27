@@ -256,7 +256,11 @@ sap.ui.define([
 				}.bind(this))
 				.then(function(oOverlay) {
 					var sExpectedText = this.oRTATexts.getText("CTX_ADD_ELEMENTS", ["I18N_KEY_USER_FRIENDLY_CONTROL_NAME"]);
-					assert.equal(this.oPlugin.getContextMenuText(test.sibling, oOverlay), sExpectedText, "then the translated context menu entry is properly set");
+					assert.equal(
+						this.oPlugin.getContextMenuText(test.sibling, oOverlay),
+						sExpectedText,
+						"then the translated context menu entry is properly set"
+					);
 					assert.ok(this.oPlugin.isAvailable([oOverlay], test.sibling), "then the action is available");
 					assert.notOk(this.oPlugin.isEnabled([oOverlay], test.sibling, sAggregationName), "then the action is disabled");
 					return this.oPlugin._isEditableCheck(oOverlay, test.sibling)
@@ -333,7 +337,11 @@ sap.ui.define([
 			.then(function(oOverlay) {
 				var sExpectedControlTypeText = this.oRTATexts.getText("MULTIPLE_CONTROL_NAME");
 				var sExpectedText = this.oRTATexts.getText("CTX_ADD_ELEMENTS", [sExpectedControlTypeText]);
-				assert.equal(this.oPlugin.getContextMenuText(true, oOverlay), sExpectedText, "then the translated context menu entry is properly set");
+				assert.equal(
+					this.oPlugin.getContextMenuText(true, oOverlay),
+					sExpectedText,
+					"then the translated context menu entry is properly set"
+				);
 				assert.ok(this.oPlugin.isAvailable([oOverlay], true), "then the action is available");
 				assert.notOk(this.oPlugin.isEnabled([oOverlay], true, "content"), "then the action is disabled");
 				return this.oPlugin._isEditableCheck(oOverlay, true)
@@ -511,7 +519,11 @@ sap.ui.define([
 			.then(function() {
 				var mActions = this.fnEnhanceInvisibleElementsStub.firstCall.args[1];
 				assert.equal(mActions.reveal.elements.length, 1, "only one of the invisible actions can be revealed");
-				assert.equal(mActions.reveal.elements[0].element.getId(), REVEALABLE_CTRL_ID, "only the control that can be revealed is found");
+				assert.equal(
+					mActions.reveal.elements[0].element.getId(),
+					REVEALABLE_CTRL_ID,
+					"only the control that can be revealed is found"
+				);
 			}.bind(this));
 		});
 	});
@@ -548,17 +560,57 @@ sap.ui.define([
 				function fnExecuteAssertions(oEvent) {
 					var oCompositeCommand = oEvent.getParameter("command");
 					if (test.sibling) {
-						assert.equal(oCompositeCommand.getCommands().length, 2, "then for the one selected to be revealed element two commands are created");
-						assert.equal(oCompositeCommand.getCommands()[0].getName(), "reveal", "then one reveal command is created");
-						assert.equal(oCompositeCommand.getCommands()[0].getChangeType(), "unstashControl", "then the reveal command has the right changeType");
-						assert.equal(oCompositeCommand.getCommands()[1].getName(), "move", "then one move command is created");
-						assert.equal(oCompositeCommand.getCommands()[1].getMovedElements()[0].targetIndex, 1, "then the move command goes to the right position");
+						assert.equal(
+							oCompositeCommand.getCommands().length,
+							2,
+							"then for the one selected to be revealed element two commands are created"
+						);
+						assert.equal(
+							oCompositeCommand.getCommands()[0].getName(),
+							"reveal",
+							"then one reveal command is created"
+						);
+						assert.equal(
+							oCompositeCommand.getCommands()[0].getChangeType(),
+							"unstashControl",
+							"then the reveal command has the right changeType"
+						);
+						assert.equal(
+							oCompositeCommand.getCommands()[1].getName(),
+							"move",
+							"then one move command is created"
+						);
+						assert.equal(
+							oCompositeCommand.getCommands()[1].getMovedElements()[0].targetIndex,
+							1,
+							"then the move command goes to the right position"
+						);
 					} else {
-						assert.equal(oCompositeCommand.getCommands().length, 2, "then for the one selected to be revealed element two commands are created");
-						assert.equal(oCompositeCommand.getCommands()[0].getName(), "reveal", "then one reveal command is created");
-						assert.equal(oCompositeCommand.getCommands()[0].getChangeType(), "unstashControl", "then the reveal command has the right changeType");
-						assert.equal(oCompositeCommand.getCommands()[1].getName(), "move", "then one move command is created");
-						assert.equal(oCompositeCommand.getCommands()[1].getMovedElements()[0].targetIndex, 0, "then the move command moves the element to the first position");
+						assert.equal(
+							oCompositeCommand.getCommands().length,
+							2,
+							"then for the one selected to be revealed element two commands are created"
+						);
+						assert.equal(
+							oCompositeCommand.getCommands()[0].getName(),
+							"reveal",
+							"then one reveal command is created"
+						);
+						assert.equal(
+							oCompositeCommand.getCommands()[0].getChangeType(),
+							"unstashControl",
+							"then the reveal command has the right changeType"
+						);
+						assert.equal(
+							oCompositeCommand.getCommands()[1].getName(),
+							"move",
+							"then one move command is created"
+						);
+						assert.equal(
+							oCompositeCommand.getCommands()[1].getMovedElements()[0].targetIndex,
+							0,
+							"then the move command moves the element to the first position"
+						);
 					}
 					done();
 				}
@@ -575,15 +627,30 @@ sap.ui.define([
 				.then(function(oOverlay) {
 					return this.oPlugin.showAvailableElements(test.sibling, "contentLeft", [oOverlay])
 					.then(function() {
-						assert.strictEqual(this.oPlugin.isEnabled([oOverlay], test.sibling, "contentLeft"), true, "then isEnabled() returns true");
+						assert.strictEqual(
+							this.oPlugin.isEnabled([oOverlay], test.sibling, "contentLeft"),
+							true,
+							"then isEnabled() returns true"
+						);
 					}.bind(this));
 				}.bind(this))
 
 				.then(function() {
-					assert.equal(this.fnEnhanceInvisibleElementsStub.callCount, 3, "then the analyzer is called to return the invisible elements for each aggregation");
-					assert.ok(this.fnGetUnrepresentedDelegateProperties.notCalled, "then the analyzer is NOT called to return the unbound odata properties");
+					assert.equal(
+						this.fnEnhanceInvisibleElementsStub.callCount,
+						3,
+						"then the analyzer is called to return the invisible elements for each aggregation"
+					);
+					assert.ok(
+						this.fnGetUnrepresentedDelegateProperties.notCalled,
+						"then the analyzer is NOT called to return the unbound odata properties"
+					);
 					assertDialogModelLength.call(this, assert, 2, "then both invisible elements are part of the dialog model");
-					assert.equal(this.oPlugin.getDialog().getElements()[0].label, "Invisible1", "then the first element is an invisible property");
+					assert.equal(
+						this.oPlugin.getDialog().getElements()[0].label,
+						"Invisible1",
+						"then the first element is an invisible property"
+					);
 				}.bind(this));
 			});
 
@@ -599,10 +666,22 @@ sap.ui.define([
 				}.bind(this))
 
 				.then(function() {
-					assert.ok(this.fnEnhanceInvisibleElementsStub.notCalled, "then the analyzer is NOT called to return the invisible elements");
-					assert.ok(this.fnGetUnrepresentedDelegateProperties.notCalled, "then the analyzer is NOT called to return the unbound odata properties");
-					assert.ok(this.fnGetCommandSpy.notCalled, "then no commands are created");
-					assert.ok(fnElementModifiedStub.notCalled, "then the element modified event is not thrown");
+					assert.ok(
+						this.fnEnhanceInvisibleElementsStub.notCalled,
+						"then the analyzer is NOT called to return the invisible elements"
+					);
+					assert.ok(
+						this.fnGetUnrepresentedDelegateProperties.notCalled,
+						"then the analyzer is NOT called to return the unbound odata properties"
+					);
+					assert.ok(
+						this.fnGetCommandSpy.notCalled,
+						"then no commands are created"
+					);
+					assert.ok(
+						fnElementModifiedStub.notCalled,
+						"then the element modified event is not thrown"
+					);
 					assertDialogModelLength.call(this, assert, 0, "then no elements are part of the dialog model");
 				}.bind(this));
 			});
@@ -665,13 +744,25 @@ sap.ui.define([
 					oElement = oCreatedOverlay.getElement();
 					return this.oPlugin.showAvailableElements(test.sibling, sAggregationName, [oCreatedOverlay])
 					.then(function() {
-						assert.strictEqual(this.oPlugin.isEnabled([oCreatedOverlay], test.sibling, sAggregationName), true, "then isEnabled() returns true");
+						assert.strictEqual(
+							this.oPlugin.isEnabled([oCreatedOverlay], test.sibling, sAggregationName),
+							true,
+							"then isEnabled() returns true"
+						);
 					}.bind(this));
 				}.bind(this))
 
 				.then(function() {
-					assert.equal(this.fnGetUnrepresentedDelegateProperties.callCount, 1, "then the analyzer was called once for addViaDelegate elements");
-					assert.equal(this.fnEnhanceInvisibleElementsStub.callCount, 0, "then the analyzer was not called for invisible elements");
+					assert.equal(
+						this.fnGetUnrepresentedDelegateProperties.callCount,
+						1,
+						"then the analyzer was called once for addViaDelegate elements"
+					);
+					assert.equal(
+						this.fnEnhanceInvisibleElementsStub.callCount,
+						0,
+						"then the analyzer was not called for invisible elements"
+					);
 					assertDialogModelLength.call(this, assert, 3, "then all three addViaDelegate elements are part of the dialog model");
 					var bValidDialogElements = this.oPlugin.getDialog().getElements().every(function(oElement, iIndex) {
 						return oElement.label === `delegate${iIndex}`;
@@ -721,7 +812,11 @@ sap.ui.define([
 					assert.strictEqual(aCommands.length, 1, "then one command is created");
 
 					var oAddDelegatePropertyCommand = aCommands[0];
-					assert.deepEqual(oAddDelegatePropertyCommand.mProperties, oExpectedCommandProperties, "then the addDelegateProperty command was created correctly");
+					assert.deepEqual(
+						oAddDelegatePropertyCommand.mProperties,
+						oExpectedCommandProperties,
+						"then the addDelegateProperty command was created correctly"
+					);
 
 					done();
 				});
@@ -739,13 +834,25 @@ sap.ui.define([
 					oElement = oCreatedOverlay.getElement();
 					return this.oPlugin.showAvailableElements(test.sibling, sAggregationName, [oCreatedOverlay])
 					.then(function() {
-						assert.strictEqual(this.oPlugin.isEnabled([oCreatedOverlay], test.sibling, sAggregationName), true, "then isEnabled() returns true");
+						assert.strictEqual(
+							this.oPlugin.isEnabled([oCreatedOverlay], test.sibling, sAggregationName),
+							true,
+							"then isEnabled() returns true"
+						);
 					}.bind(this));
 				}.bind(this))
 
 				.then(function() {
-					assert.equal(this.fnGetUnrepresentedDelegateProperties.callCount, 1, "then the analyzer was called once for addViaDelegate elements");
-					assert.equal(this.fnEnhanceInvisibleElementsStub.callCount, 0, "then the analyzer was not called for invisible elements");
+					assert.equal(
+						this.fnGetUnrepresentedDelegateProperties.callCount,
+						1,
+						"then the analyzer was called once for addViaDelegate elements"
+					);
+					assert.equal(
+						this.fnEnhanceInvisibleElementsStub.callCount,
+						0,
+						"then the analyzer was not called for invisible elements"
+					);
 					assertDialogModelLength.call(this, assert, 3, "then all three addViaDelegate elements are part of the dialog model");
 					var bValidDialogElements = this.oPlugin.getDialog().getElements().every(function(oElement, iIndex) {
 						return oElement.label === `delegate${iIndex}`;
@@ -778,8 +885,16 @@ sap.ui.define([
 				}.bind(this))
 
 				.then(function() {
-					assert.equal(this.fnGetUnrepresentedDelegateProperties.callCount, 1, "then the analyzer was called once for addViaDelegate elements");
-					assert.equal(this.fnEnhanceInvisibleElementsStub.callCount, 0, "then the analyzer was not called for invisible elements");
+					assert.equal(
+						this.fnGetUnrepresentedDelegateProperties.callCount,
+						1,
+						"then the analyzer was called once for addViaDelegate elements"
+					);
+					assert.equal(
+						this.fnEnhanceInvisibleElementsStub.callCount,
+						0,
+						"then the analyzer was not called for invisible elements"
+					);
 					assertDialogModelLength.call(this, assert, 3, "then all three addViaDelegate elements are part of the dialog model");
 					var bValidDialogElements = this.oPlugin.getDialog().getElements().every(function(oElement, iIndex) {
 						return oElement.label === `delegate${iIndex}`;
@@ -813,8 +928,16 @@ sap.ui.define([
 				}.bind(this))
 
 				.then(function() {
-					assert.equal(this.fnGetUnrepresentedDelegateProperties.callCount, 0, "then the analyzer was not called for addViaDelegate elements");
-					assert.equal(this.fnEnhanceInvisibleElementsStub.callCount, 0, "then the analyzer was not called for invisible elements");
+					assert.equal(
+						this.fnGetUnrepresentedDelegateProperties.callCount,
+						0,
+						"then the analyzer was not called for addViaDelegate elements"
+					);
+					assert.equal(
+						this.fnEnhanceInvisibleElementsStub.callCount,
+						0,
+						"then the analyzer was not called for invisible elements"
+					);
 					assertDialogModelLength.call(this, assert, 0, "then no elements are part of the dialog model");
 				}.bind(this));
 			});
@@ -825,11 +948,31 @@ sap.ui.define([
 			var sAggregationName = "contentLeft";
 			this.oPlugin.attachEventOnce("elementModified", function(oEvent) {
 				var oCompositeCommand = oEvent.getParameter("command");
-				assert.equal(oCompositeCommand.getCommands().length, 2, "then for the one selected to be revealed element reveal and move command is created as target position differs");
-				assert.equal(oCompositeCommand.getCommands()[0].getName(), "reveal", "then one reveal command is created");
-				assert.equal(oCompositeCommand.getCommands()[0].getChangeType(), "unhideControl", "then the reveal command has the right changeType");
-				assert.equal(oCompositeCommand.getCommands()[1].getName(), "move", "then one move command is created");
-				assert.equal(oCompositeCommand.getCommands()[1].getMovedElements()[0].targetIndex, 0, "then the move command goes to the right position");
+				assert.equal(
+					oCompositeCommand.getCommands().length,
+					2,
+					"then for the one selected to be revealed element reveal and move command is created as target position differs"
+				);
+				assert.equal(
+					oCompositeCommand.getCommands()[0].getName(),
+					"reveal",
+					"then one reveal command is created"
+				);
+				assert.equal(
+					oCompositeCommand.getCommands()[0].getChangeType(),
+					"unhideControl",
+					"then the reveal command has the right changeType"
+				);
+				assert.equal(
+					oCompositeCommand.getCommands()[1].getName(),
+					"move",
+					"then one move command is created"
+				);
+				assert.equal(
+					oCompositeCommand.getCommands()[1].getMovedElements()[0].targetIndex,
+					0,
+					"then the move command goes to the right position"
+				);
 				done();
 			});
 
@@ -846,10 +989,27 @@ sap.ui.define([
 			}.bind(this))
 
 			.then(function() {
-				assert.equal(this.fnEnhanceInvisibleElementsStub.callCount, 3, "then the analyzer is called to return the invisible elements for each aggregation");
-				assert.equal(this.fnGetUnrepresentedDelegateProperties.callCount, 0, "then the analyzer is NOT called to return the unbound odata properties");
-				assertDialogModelLength.call(this, assert, 2, "then all invisible elements and odata properties are part of the dialog model, excluding the duplicate properties");
-				assert.equal(this.oPlugin.getDialog().getElements()[0].label, "Invisible1", "then the first element is an invisible property");
+				assert.equal(
+					this.fnEnhanceInvisibleElementsStub.callCount,
+					3,
+					"then the analyzer is called to return the invisible elements for each aggregation"
+				);
+				assert.equal(
+					this.fnGetUnrepresentedDelegateProperties.callCount,
+					0,
+					"then the analyzer is NOT called to return the unbound odata properties"
+				);
+				assertDialogModelLength.call(
+					this,
+					assert,
+					2,
+					"then all invisible elements and odata properties are part of the dialog model, excluding the duplicate properties"
+				);
+				assert.equal(
+					this.oPlugin.getDialog().getElements()[0].label,
+					"Invisible1",
+					"then the first element is an invisible property"
+				);
 			}.bind(this));
 		});
 
@@ -876,7 +1036,11 @@ sap.ui.define([
 				return this.oPlugin.getMenuItems([oCreatedOverlay]);
 			}.bind(this)).then(function(aMenuItems) {
 				assert.equal(aMenuItems[0].id, "CTX_ADD_ELEMENTS_AS_SIBLING", "there is an entry for add elements as sibling");
-				assert.deepEqual(aMenuItems[0].responsible[0], this.oSiblingOverlay, "then the responsible element overlay is set as a menu item property");
+				assert.deepEqual(
+					aMenuItems[0].responsible[0],
+					this.oSiblingOverlay,
+					"then the responsible element overlay is set as a menu item property"
+				);
 			}.bind(this));
 		});
 
@@ -931,8 +1095,16 @@ sap.ui.define([
 			.then(function(oCreatedOverlay) {
 				return AdditionalElementsActionExtractor.getActions(true, oCreatedOverlay, this.oPlugin);
 			}.bind(this)).then(function(mActions) {
-				assert.equal(mActions.contentLeft.reveal.elements.length, 2, "then the reveal actions has two elements from the responsible element");
-				assert.equal(mActions.contentLeft.addViaDelegate.action.changeType, "addFields", "then the addViaDelegate action was retrieved from the responsible element");
+				assert.equal(
+					mActions.contentLeft.reveal.elements.length,
+					2,
+					"then the reveal actions has two elements from the responsible element"
+				);
+				assert.equal(
+					mActions.contentLeft.addViaDelegate.action.changeType,
+					"addFields",
+					"then the addViaDelegate action was retrieved from the responsible element"
+				);
 			});
 		});
 
@@ -1055,7 +1227,10 @@ sap.ui.define([
 			.then(function(oCreatedOverlay) {
 				return AdditionalElementsActionExtractor.getActions(true, oCreatedOverlay, this.oPlugin);
 			}.bind(this)).then(function(mActions) {
-				assert.ok(mActions.contentLeft.hasOwnProperty("addViaDelegate"), "then the add via delegate action for the instance-specific delegate is available");
+				assert.ok(
+					mActions.contentLeft.hasOwnProperty("addViaDelegate"),
+					"then the add via delegate action for the instance-specific delegate is available"
+				);
 			});
 		});
 
@@ -1176,8 +1351,9 @@ sap.ui.define([
 				}
 			}, ON_SIBLING)
 			.then(function(oOverlay) {
-				// E.g. FormContainer has no stable ID, but another FormContainer has stable ID and has a hidden FormElement that could be revealed,
-				// then the move to the FormContainer without stable ID would fail, so no reveal action should be available.
+				// E.g. FormContainer has no stable ID, but another FormContainer has stable ID and has a hidden FormElement
+				// that could be revealed, then the move to the FormContainer without stable ID would fail, so no reveal action
+				// should be available.
 				whenOverlayHasNoStableId.call(this, this.oParentOverlay);
 				return this.oPlugin._isEditableCheck(oOverlay, true);
 			}.bind(this))
@@ -1193,8 +1369,9 @@ sap.ui.define([
 				}
 			}, ON_SIBLING)
 			.then(function(oOverlay) {
-				// E.g. FormContainer has no stable ID, but another FormContainer has stable ID and has a hidden FormElement that could be revealed,
-				// then the move to the FormContainer without stable ID would fail, so no reveal action should be available.
+				// E.g. FormContainer has no stable ID, but another FormContainer has stable ID and has a hidden FormElement
+				// that could be revealed, then the move to the FormContainer without stable ID would fail, so no reveal action
+				// should be available.
 				whenOverlayHasNoStableId.call(this, oOverlay);
 				return this.oPlugin._isEditableCheck(oOverlay, true);
 			}.bind(this))
@@ -1303,7 +1480,11 @@ sap.ui.define([
 
 				var oAddLibrary = oCompositeCommand.getCommands()[0];
 				assert.equal(oAddLibrary.getName(), "addLibrary", "then the addLibrary command is created first");
-				assert.equal(oAddLibrary.getReference(), "applicationId", "then the addLibrary command is created with the proper reference");
+				assert.equal(
+					oAddLibrary.getReference(),
+					"applicationId",
+					"then the addLibrary command is created with the proper reference"
+				);
 				// Non-existing library
 				var sLib1 = Object.keys(DEFAULT_DELEGATE_REGISTRATION.requiredLibraries)[0];
 				// Existing library but with lazy: true
@@ -1368,7 +1549,11 @@ sap.ui.define([
 			var done = assert.async();
 			this.oPlugin.attachEventOnce("elementModified", function(oEvent) {
 				var oCompositeCommand = oEvent.getParameter("command");
-				assert.equal(oCompositeCommand.getCommands().length, 1, "then only the addDelegateProperty is created and no addLibrary command as the library dependency already exists");
+				assert.equal(
+					oCompositeCommand.getCommands().length,
+					1,
+					"then only the addDelegateProperty is created and no addLibrary command as the library dependency already exists"
+				);
 
 				var oAddCmd = oCompositeCommand.getCommands()[0];
 				assert.equal(oAddCmd.getName(), "addDelegateProperty",
@@ -1420,7 +1605,11 @@ sap.ui.define([
 
 				var oAddLibrary = oCompositeCommand.getCommands()[0];
 				assert.equal(oAddLibrary.getName(), "addLibrary", "then the addLibrary command is created first");
-				assert.equal(oAddLibrary.getReference(), "applicationId", "then the addLibrary command is created with the proper reference");
+				assert.equal(
+					oAddLibrary.getReference(),
+					"applicationId",
+					"then the addLibrary command is created with the proper reference"
+				);
 				// Existing library but with lazy: true
 				var sLib = Object.keys(DEFAULT_DELEGATE_REGISTRATION.requiredLibraries)[0];
 				assert.equal(
@@ -1551,7 +1740,10 @@ sap.ui.define([
 		async beforeEach(assert) {
 			registerControlsForChanges();
 			this.STUB_EXTENSIBILITY_BUSINESS_CTXT = {
-				extensionData: [{BusinessContext: "some context", description: "some description"}], // BusinessContext API returns this structure
+				extensionData: [{
+					BusinessContext: "some context",
+					description: "some description"
+				}], // BusinessContext API returns this structure
 				serviceName: "servive name",
 				serviceVersion: "some dummy ServiceVersion",
 				entityType: "Header"
@@ -1619,7 +1811,10 @@ sap.ui.define([
 
 			.then(function() {
 				assert.ok(this.fnDialogOpen.calledOnce, "then the dialog was opened");
-				assert.ok(fnServiceUpToDateStub.getCall(0).args[0], "addViaDelegate is dependent on up to date service, it should be called with a control");
+				assert.ok(
+					fnServiceUpToDateStub.getCall(0).args[0],
+					"addViaDelegate is dependent on up to date service, it should be called with a control"
+				);
 				var oCustomFieldButton = Element.getElementById(`${this.oDialog.getId()}--` + `rta_customFieldButton`);
 				assert.equal(oCustomFieldButton.getVisible(), false, "the Button to create custom Fields is not shown");
 			}.bind(this));
@@ -1715,7 +1910,10 @@ sap.ui.define([
 			}.bind(this))
 
 			.then(function() {
-				assert.ok(fnServiceUpToDateStub.getCall(0).args[0], "addViaDelegate is dependent on up to date service, it should be called with a control");
+				assert.ok(
+					fnServiceUpToDateStub.getCall(0).args[0],
+					"addViaDelegate is dependent on up to date service, it should be called with a control"
+				);
 				var oBCContainer = Element.getElementById(`${this.oDialog.getId()}--` + `rta_businessContextContainer`);
 				assert.equal(this.oDialog.getCustomFieldEnabled(), true, "then in the dialog custom field is enabled");
 				assert.equal(oBCContainer.getVisible(), true, "then in the Business Context Container in the Dialog is visible");
@@ -1753,10 +1951,22 @@ sap.ui.define([
 				return this.oPlugin.showAvailableElements(false, sAggregationName, [oOverlay])
 
 				.then(function() {
-					assert.equal(this.oDialog.getCustomFieldEnabled(), true, "then in the dialog custom field is enabled");
+					assert.equal(
+						this.oDialog.getCustomFieldEnabled(),
+						true,
+						"then in the dialog custom field is enabled"
+					);
 					var oBCContainer = Element.getElementById(`${this.oDialog.getId()}--` + `rta_businessContextContainer`);
-					assert.equal(oBCContainer.getVisible(), true, "then in the Business Context Container in the Dialog is visible");
-					assert.equal(oBCContainer.getContent().length > 1, true, "then in the Business Context Container shows Business Contexts");
+					assert.equal(
+						oBCContainer.getVisible(),
+						true,
+						"then in the Business Context Container in the Dialog is visible"
+					);
+					assert.equal(
+						oBCContainer.getContent().length > 1,
+						true,
+						"then in the Business Context Container shows Business Contexts"
+					);
 					return this.oPlugin.showAvailableElements(false, sAggregationName, [oOverlay]);
 				}.bind(this))
 				.then(function() {
@@ -1823,7 +2033,11 @@ sap.ui.define([
 				return this.oPlugin.getMenuItems([oOverlay]);
 			}.bind(this))
 			.then(function() {
-				assert.equal(ogetAllElementsSpy.callCount, 2, "then getAllElements Method for collecting Elements was called twice (for child & sibling)");
+				assert.equal(
+					ogetAllElementsSpy.callCount,
+					2,
+					"then getAllElements Method for collecting Elements was called twice (for child & sibling)"
+				);
 			});
 		});
 
@@ -1851,8 +2065,8 @@ sap.ui.define([
 		QUnit.test("when getMenuItems and showAvailableElements are called,", function(assert) {
 			// we stub "setCachedElements" which is only called when getAllElements is processed.
 			// "setCachedElements" is not called, when there are cached Elements available
-			var ogetAllElementsSpy = sandbox.spy(this.oPlugin, "setCachedElements");
-			var sAggregationName = "contentLeft";
+			const oSetCachedElements = sandbox.spy(this.oPlugin, "setCachedElements");
+			const sAggregationName = "contentLeft";
 			return createOverlayWithAggregationActions.call(this, {
 				reveal: {
 					changeType: "unhideControl"
@@ -1863,15 +2077,68 @@ sap.ui.define([
 					}
 				}
 			}, ON_CHILD)
-			.then(function(oOverlay) {
+			.then((oOverlay) => {
 				this._oOverlay = oOverlay;
+				return DtUtil.waitForSynced(this.oDesignTime)();
+			})
+			.then(() => {
 				return this.oPlugin.getMenuItems([this._oOverlay]);
-			}.bind(this))
+			})
 			.then(function() {
 				return this.oPlugin.showAvailableElements(false, sAggregationName, [this._oOverlay]);
 			}.bind(this))
 			.then(function() {
-				assert.equal(ogetAllElementsSpy.callCount, 2, "then getAllElements Method has been processed only twice");
+				assert.equal(oSetCachedElements.callCount, 2, "then getAllElements Method has been processed only twice");
+			});
+		});
+
+		function requestAnimationFramePromise() {
+			return new Promise((resolve) => {
+				window.requestAnimationFrame(() => {
+					resolve([]);
+				});
+			});
+		}
+
+		QUnit.test("when getMenuItems and _isEditableCheck is called in parallel,", function(assert) {
+			const fnDone = assert.async();
+			return createOverlayWithAggregationActions.call(this, {
+				reveal: {
+					changeType: "unhideControl"
+				},
+				add: {
+					delegate: {
+						changeType: "addFields"
+					}
+				}
+			}, ON_SIBLING)
+			.then((oOverlay) => {
+				return DtUtil.waitForSynced(this.oDesignTime, function() {
+					return oOverlay;
+				})();
+			})
+			.then((oOverlay) => {
+				sandbox.stub(this.oPlugin, "getAllElements")
+				.callThrough()
+				.withArgs(false, [oOverlay])
+				.callsFake(() => {
+					this.oPlugin._isEditableCheck(oOverlay, true);
+					return requestAnimationFramePromise();
+				})
+				.withArgs(true, [oOverlay])
+				.callsFake(() => {
+					this.oPlugin._oCachedElements = {
+						asSibling: [{}, {}, {}]
+					};
+					return [{}, {}, {}];
+				});
+
+				this.oPlugin.getMenuItems([oOverlay])
+				.then((oMenuItem) => {
+					assert.ok(oMenuItem[0].enabled([oOverlay]),
+						"then the MenuItem creation is not blocked by the _isEditableCheck");
+					fnDone();
+				});
 			});
 		});
 	});
@@ -2000,7 +2267,10 @@ sap.ui.define([
 		}
 
 		// TODO: getadditems remove type
-		this.fnGetUnrepresentedDelegateProperties = sandbox.stub(AdditionalElementsAnalyzer, "getUnrepresentedDelegateProperties").resolves(getAddItems("delegate"));
+		this.fnGetUnrepresentedDelegateProperties = sandbox.stub(
+			AdditionalElementsAnalyzer,
+			"getUnrepresentedDelegateProperties").resolves(getAddItems("delegate")
+		);
 	}
 
 	function givenThePluginWithCancelClosingDialog() {
