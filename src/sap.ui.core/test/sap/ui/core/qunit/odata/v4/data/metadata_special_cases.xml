@@ -87,6 +87,7 @@
 				<Property Name="CValue" Type="Edm.Int16"/>
 				<NavigationProperty Name="CtoA" Partner="AtoCs" Type="special.cases.A"/>
 				<NavigationProperty Name="CtoD" Partner="DtoC" Type="special.cases.D"/>
+				<NavigationProperty Name="CtoEs" Partner="EtoC" Type="Collection(special.cases.E)"/>
 			</EntityType>
 			<EntityType Name="D">
 				<Key>
@@ -96,6 +97,14 @@
 				<Property Name="DValue" Type="Edm.Int16"/>
 				<NavigationProperty Name="DtoB" Partner="BtoDs" Type="special.cases.B"/>
 				<NavigationProperty Name="DtoC" Partner="CtoD" Type="special.cases.C"/>
+			</EntityType>
+			<EntityType Name="E">
+				<Key>
+					<PropertyRef Name="EID"/>
+				</Key>
+				<Property Name="EID" Type="Edm.Int16" Nullable="false"/>
+				<Property Name="EValue" Type="Edm.Int16"/>
+				<NavigationProperty Name="EtoC" Partner="CtoEs" Type="special.cases.C"/>
 			</EntityType>
 			<ComplexType Name="Address">
 				<Property Name="City" Type="Edm.String"/>
@@ -299,6 +308,24 @@
 							</Eq>
 							<String>zero</String>
 							<String>one</String>
+						</If>
+					</Collection>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="special.cases.E/EValue">
+				<Annotation Term="com.sap.vocabularies.Common.v1.ValueList" Qualifier="same">
+					<Record>
+						<PropertyValue Property="Label" String="Same label ;-)" />
+					</Record>
+				</Annotation>
+				<Annotation Term="com.sap.vocabularies.Common.v1.ValueListRelevantQualifiers">
+					<Collection>
+						<If>
+							<Eq>
+								<Path>EtoC/CValue</Path>
+								<Path>EtoC/CtoA/AValue</Path>
+							</Eq>
+							<String>same</String>
 						</If>
 					</Collection>
 				</Annotation>
