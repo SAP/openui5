@@ -52,12 +52,14 @@ sap.ui.define([
 				stereotype: "controller",
 				methods: {
 					"byId": 				{"public": true, "final": true},
-					"getView" : 			{"public": true, "final": true},
 					"getInterface" : 		{"public": false, "final": true},
-					"onInit": 				{"public": false, "final": false, "overrideExecution": OverrideExecution.After},
+					"getMetadata" : 		{"public": true, "final": true},
+					"getView" : 			{"public": true, "final": true},
+					"isA" : 				{"public": true, "final": true},
 					"onExit":				{"public": false, "final": false, "overrideExecution": OverrideExecution.Before},
-					"onBeforeRendering":	{"public": false, "final": false, "overrideExecution": OverrideExecution.Before},
-					"onAfterRendering":		{"public": false, "final": false, "overrideExecution": OverrideExecution.After}
+					"onInit": 				{"public": false, "final": false, "overrideExecution": OverrideExecution.After},
+					"onAfterRendering":		{"public": false, "final": false, "overrideExecution": OverrideExecution.After},
+					"onBeforeRendering":	{"public": false, "final": false, "overrideExecution": OverrideExecution.Before}
 				}
 			},
 			constructor : function(sName) {
@@ -393,7 +395,7 @@ sap.ui.define([
 						oExtControllerDef = mRegistry[sControllerName] || oExtControllerDef;
 						if (oExtControllerDef !== undefined) {
 							if (oExtControllerDef.getMetadata && oExtControllerDef.getMetadata().isA("sap.ui.core.mvc.Controller")) {
-								Log.warning("Attempt to load Extension Controller " + sControllerName + " was not successful", "Controller extension should be a plain object.", null, function() {
+								Log.fatal("[FUTURE-FATAL] Attempt to load Extension Controller " + sControllerName + " was not successful", "Controller extension should be a plain object.", null, function() {
 									return {
 										type: "ControllerExtension",
 										name: sControllerName
