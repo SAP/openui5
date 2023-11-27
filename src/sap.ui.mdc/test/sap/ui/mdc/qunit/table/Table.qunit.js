@@ -4284,15 +4284,14 @@ sap.ui.define([
 
 	QUnit.test("_setSelectedContexts", function(assert) {
 		return this.oTable.initialized().then(() => {
-			this.oTable.setType(new ResponsiveTableType());
-			return this.oTable._fullyInitialized().then(() => {
-				const oDelegate = this.oTable.getControlDelegate();
-				sinon.spy(oDelegate, "setSelectedContexts");
-				const aContexts = [];
-				this.oTable._setSelectedContexts(aContexts);
-				assert.ok(oDelegate.setSelectedContexts.calledWith(this.oTable, aContexts), "Calls Delegate.setSelectedContexts with correct parameters");
-				oDelegate.setSelectedContexts.restore();
-			});
+			const oDelegate = this.oTable.getControlDelegate();
+			const aContexts = [];
+
+			sinon.stub(oDelegate, "setSelectedContexts");
+			this.oTable._setSelectedContexts(aContexts);
+			assert.ok(oDelegate.setSelectedContexts.calledOnceWithExactly(this.oTable, aContexts),
+				"Delegate.setSelectedContexts called once with the correct arguments");
+			oDelegate.setSelectedContexts.restore();
 		});
 	});
 

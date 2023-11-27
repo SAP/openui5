@@ -3021,20 +3021,6 @@ sap.ui.define([
 		}
 	};
 
-	// Used temporarily in sap.ui.mdc.valuehelp.content.MDCTable
-	Table.prototype._enableV4LegacySelection = function() {
-		this._bV4LegacySelectionEnabled = true;
-
-		if (this._oTable && this._isOfType("Table", true)) {
-			const oV4SelectionPlugin = PluginBase.getPlugin(this._oTable, "sap.ui.table.plugins.ODataV4Selection");
-
-			if (oV4SelectionPlugin) {
-				oV4SelectionPlugin.destroy();
-				return this.getControlDelegate().initializeSelection(this);
-			}
-		}
-	};
-
 	/**
 	 * Allows programmatic configuration of the table's selection state
 	 * @param {array<sap.ui.model.Context>} aContexts Contexts which should be selected

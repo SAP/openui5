@@ -8,26 +8,26 @@
 // ---------------------------------------------------------------------------------------
 sap.ui.define([
 	"./AggregationBaseDelegate",
-	"./util/loadModules",
-	"sap/m/plugins/PluginBase",
-	"sap/ui/core/Element",
-	"sap/ui/core/Lib",
-	"sap/ui/model/Sorter",
-	"sap/ui/core/library",
+	"sap/ui/mdc/mixin/delegate/FilterIntegrationDefault",
 	"sap/ui/mdc/enums/TableP13nMode",
 	"sap/ui/mdc/enums/TableType",
-	"sap/ui/mdc/mixin/delegate/FilterIntegrationDefault"
+	"sap/ui/mdc/enums/TableSelectionMode",
+	"sap/ui/mdc/util/loadModules",
+	"sap/m/plugins/PluginBase",
+	"sap/ui/model/Sorter",
+	"sap/ui/core/Lib",
+	"sap/ui/core/library"
 ], (
 	AggregationBaseDelegate,
-	loadModules,
-	PluginBase,
-	Element,
-	Library,
-	Sorter,
-	coreLibrary,
+	FilterIntegrationDefault,
 	TableP13nMode,
 	TableType,
-	FilterIntegrationDefault
+	SelectionMode,
+	loadModules,
+	PluginBase,
+	Sorter,
+	Lib,
+	coreLibrary
 ) => {
 	"use strict";
 
@@ -174,7 +174,7 @@ sap.ui.define([
 	TableDelegate.formatGroupHeader = function(oTable, oContext, sProperty) {
 		const oProperty = oTable.getPropertyHelper().getProperty(sProperty);
 		const oTextProperty = oProperty.textProperty;
-		const oResourceBundle = Library.getResourceBundleFor("sap.ui.mdc");
+		const oResourceBundle = Lib.getResourceBundleFor("sap.ui.mdc");
 		let sResourceKey = "table.ROW_GROUP_TITLE";
 		const aValues = [oProperty.label, oContext.getProperty(oProperty.path, true)];
 
@@ -188,7 +188,7 @@ sap.ui.define([
 
 	TableDelegate.validateState = function(oTable, oState, sKey) {
 		if (sKey == "Filter" && oTable._oMessageFilter) {
-			const oResourceBundle = Library.getResourceBundleFor("sap.ui.mdc");
+			const oResourceBundle = Lib.getResourceBundleFor("sap.ui.mdc");
 			return {
 				validation: coreLibrary.MessageType.Information,
 				message: oResourceBundle.getText("table.PERSONALIZATION_DIALOG_FILTER_MESSAGESTRIP")
@@ -401,6 +401,47 @@ sap.ui.define([
 		return Promise.resolve();
 	}
 
+	function setSelectedResponsiveTableConditions(oTable, aContexts) {
+		const aContextPaths = aContexts.map((oContext) => {
+			return oContext.getPath();
+		});
+
+		oTable.clearSelection();
+		oTable._oTable.setSelectedContextPaths(aContextPaths);
+		oTable._oTable.getItems().forEach((oItem) => {
+			const sPath = oItem.getBindingContextPath();
+			if (sPath && aContextPaths.indexOf(sPath) > -1) {
+				oItem.setSelected(true);
+			}
+		});
+	}
+
+	/**
+	 * Provides the possibility to set a selection state for the MDC table programmatically
+	 *
+	 * @param {sap.ui.mdc.Table} oTable Instance of the MDC table
+	 * @param {array<sap.ui.model.Context>} aContexts The set of contexts which should be flagged as selected
+	 * @private
+	 * @throws {Error} When the delegate cannot support the table/select configuration.
+	 */
+	TableDelegate.setSelectedContexts = function(oTable, aContexts) {
+		if (oTable._isOfType(TableType.ResponsiveTable)) {
+			const sSelectionMode = oTable.getSelectionMode();
+
+			if (sSelectionMode === SelectionMode.None
+				|| ((sSelectionMode === SelectionMode.Single
+					|| sSelectionMode === SelectionMode.SingleMaster)
+					&& aContexts.length > 1)
+			) {
+				throw Error("Unsupported operation: Cannot select the given number of contexts in the current selection mode");
+			}
+
+			setSelectedResponsiveTableConditions(oTable, aContexts);
+		} else {
+			throw Error("Unsupported operation: Not supported for the current table type");
+		}
+	};
+
 	/**
 	 * Gets the selected contexts.
 	 *
@@ -431,36 +472,6 @@ sap.ui.define([
 		}
 
 		return [];
-	};
-
-	function setSelectedResponsiveTableConditions(oTable, aContexts) {
-		const aContextPaths = aContexts.map((oContext) => {
-			return oContext.getPath();
-		});
-		oTable._oTable.removeSelections(true);
-		oTable._oTable.setSelectedContextPaths(aContextPaths);
-		oTable._oTable.getItems().forEach((oItem) => {
-			const sPath = oItem.getBindingContextPath();
-			if (sPath && aContextPaths.indexOf(sPath) > -1) {
-				oItem.setSelected(true);
-			}
-		});
-	}
-
-	/**
-	 * Provides the possibility to set a selection state for the MDC table programmatically
-	 *
-	 * @param {sap.ui.mdc.Table} oTable Instance of the MDC table
-	 * @param {array<sap.ui.model.Context>} aContexts The set of contexts which should be flagged as selected
-	 * @private
-	 * @throws {Error} When the delegate cannot support the table/select configuration.
-	 */
-	TableDelegate.setSelectedContexts = function(oTable, aContexts) {
-		if (oTable._isOfType(TableType.ResponsiveTable)) {
-			setSelectedResponsiveTableConditions(oTable, aContexts);
-		} else {
-			throw Error("Unsupported operation: TableDelegate does not support #setSelectedContexts for the given TableType");
-		}
 	};
 
 	/**

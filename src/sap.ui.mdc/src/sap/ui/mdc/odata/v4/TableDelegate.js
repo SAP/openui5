@@ -5,27 +5,29 @@
 sap.ui.define([
 	"../../TableDelegate",
 	"../../table/V4AnalyticsPropertyHelper",
-	"../../util/loadModules",
+	"sap/ui/mdc/enums/TableP13nMode",
+	"sap/ui/mdc/enums/TableType",
+	"sap/ui/mdc/enums/TableSelectionMode",
+	"sap/ui/mdc/odata/v4/TypeMap",
+	"sap/ui/mdc/util/loadModules",
 	"sap/m/plugins/PluginBase",
 	"sap/ui/core/Lib",
 	"sap/ui/core/library",
 	"sap/ui/core/format/ListFormat",
-	"sap/ui/base/ManagedObjectObserver",
-	'sap/ui/mdc/odata/v4/TypeMap',
-	'sap/ui/mdc/enums/TableP13nMode',
-	'sap/ui/mdc/enums/TableType'
+	"sap/ui/base/ManagedObjectObserver"
 ], (
 	TableDelegate,
 	V4AnalyticsPropertyHelper,
+	P13nMode,
+	TableType,
+	SelectionMode,
+	ODataV4TypeMap,
 	loadModules,
 	PluginBase,
-	Library,
+	Lib,
 	coreLibrary,
 	ListFormat,
-	ManagedObjectObserver,
-	ODataV4TypeMap,
-	TableP13nMode,
-	TableType
+	ManagedObjectObserver
 ) => {
 	"use strict";
 
@@ -83,10 +85,6 @@ sap.ui.define([
 	 * @inheritDoc
 	 */
 	Delegate.initializeSelection = function(oTable) {
-		if (oTable._bV4LegacySelectionEnabled) {
-			return TableDelegate.initializeSelection.apply(this, arguments);
-		}
-
 		if (oTable._isOfType(TableType.Table, true)) {
 			return initializeGridTableSelection(oTable);
 		} else {
@@ -101,12 +99,8 @@ sap.ui.define([
 			Multi: "MultiToggle"
 		};
 
-		return loadModules("sap/ui/table/plugins/ODataV4Selection").then(function(aModules) {
+		return loadModules("sap/ui/table/plugins/ODataV4Selection").then((aModules) => {
 			const ODataV4SelectionPlugin = aModules[0];
-
-			if (oTable._bV4LegacySelectionEnabled) {
-				return TableDelegate.initializeSelection.call(this, oTable);
-			}
 
 			oTable._oTable.addDependent(new ODataV4SelectionPlugin({
 				limit: "{$sap.ui.mdc.Table#type>/selectionLimit}",
@@ -134,23 +128,14 @@ sap.ui.define([
 	}
 
 	function setSelectedGridTableConditions(oTable, aContexts) {
-		const oODataV4SelectionPlugin = PluginBase.getPlugin(oTable._oTable, "sap.ui.table.plugins.ODataV4Selection");
+		oTable.clearSelection();
 
-		if (oODataV4SelectionPlugin) {
-			return oODataV4SelectionPlugin.setSelectedContexts(aContexts);
+		for (const oContext of aContexts) {
+			oContext.setSelected(true);
 		}
 
-		const oMultiSelectionPlugin = PluginBase.getPlugin(oTable._oTable, "sap.ui.table.plugins.MultiSelectionPlugin");
-
-		if (oMultiSelectionPlugin) {
-			oMultiSelectionPlugin.clearSelection();
-			return aContexts.map((oContext) => {
-				const iContextIndex = oContext.getIndex(); // TODO: Handle undefined index?
-				return oMultiSelectionPlugin.addSelectionInterval(iContextIndex, iContextIndex);
-			});
-		}
-
-		throw Error("Unsupported operation: TableDelegate does not support #setSelectedContexts for the given Table configuration");
+		// There's currently no way for the plugin to detect that selection of a context changed, so an update needs to be triggered manually.
+		oTable._oTable.invalidate();
 	}
 
 	/**
@@ -158,6 +143,16 @@ sap.ui.define([
 	 */
 	Delegate.setSelectedContexts = function(oTable, aContexts) {
 		if (oTable._isOfType(TableType.Table, true)) {
+			const sSelectionMode = oTable.getSelectionMode();
+
+			if (sSelectionMode === SelectionMode.None
+				|| ((sSelectionMode === SelectionMode.Single
+					|| sSelectionMode === SelectionMode.SingleMaster)
+					&& aContexts.length > 1)
+			) {
+				throw Error("Unsupported operation: Cannot select the given number of contexts in the current selection mode");
+			}
+
 			setSelectedGridTableConditions(oTable, aContexts);
 		} else {
 			TableDelegate.setSelectedContexts.apply(this, arguments);
@@ -170,10 +165,6 @@ sap.ui.define([
 	Delegate.getSelectedContexts = function(oTable) {
 		if (!oTable._oTable) {
 			return [];
-		}
-
-		if (oTable._bV4LegacySelectionEnabled) {
-			return TableDelegate.getSelectedContexts.apply(this, arguments);
 		}
 
 		if (oTable._isOfType(TableType.Table, true)) {
@@ -205,7 +196,7 @@ sap.ui.define([
 			// Corresponding sort conditions are not applied.
 			return {
 				validation: coreLibrary.MessageType.Information,
-				message: Library.getResourceBundleFor("sap.ui.mdc").getText("table.PERSONALIZATION_DIALOG_SORT_RESTRICTION")
+				message: Lib.getResourceBundleFor("sap.ui.mdc").getText("table.PERSONALIZATION_DIALOG_SORT_RESTRICTION")
 			};
 		}
 
@@ -213,7 +204,7 @@ sap.ui.define([
 	}
 
 	function validateGroupState(oTable, oState) {
-		const oResourceBundle = Library.getResourceBundleFor("sap.ui.mdc");
+		const oResourceBundle = Lib.getResourceBundleFor("sap.ui.mdc");
 
 		if (oState.aggregations) {
 			const aAggregateProperties = Object.keys(oState.aggregations);
@@ -252,7 +243,7 @@ sap.ui.define([
 	}
 
 	function validateColumnState(oTable, oState) {
-		const oResourceBundle = Library.getResourceBundleFor("sap.ui.mdc");
+		const oResourceBundle = Lib.getResourceBundleFor("sap.ui.mdc");
 		const aAggregateProperties = oState.aggregations && Object.keys(oState.aggregations);
 		let sMessage;
 
@@ -357,24 +348,6 @@ sap.ui.define([
 				oRootBinding.resume();
 			}
 		}
-
-		// When changes are made in the binding with multiple API calls, the binding fires a change event with the consolidated reason "change".
-		// The information that there is a sort or filter change is lost, hence the GridTable does not clear the selection. The changes could
-		// affect the indices and make the current selection invalid. Therefore, the delegate has to clear the selection here.
-		if (oTable._bV4LegacySelectionEnabled && oTable._isOfType(TableType.Table)) {
-			const oMultiSelectionPlugin = PluginBase.getPlugin(oTable._oTable, "sap.ui.table.plugins.MultiSelectionPlugin");
-			const oInnerPlugin = oMultiSelectionPlugin ? oMultiSelectionPlugin.oInnerSelectionPlugin : null;
-
-			if (oInnerPlugin) {
-				oInnerPlugin._bInternalTrigger = true;
-			}
-
-			oTable.clearSelection();
-
-			if (oInnerPlugin) {
-				delete oInnerPlugin._bInternalTrigger;
-			}
-		}
 	};
 
 	/**
@@ -392,11 +365,11 @@ sap.ui.define([
 		const aSupportedModes = TableDelegate.getSupportedP13nModes.apply(this, arguments);
 
 		if (oTable._isOfType(TableType.Table)) {
-			if (!aSupportedModes.includes(TableP13nMode.Group)) {
-				aSupportedModes.push(TableP13nMode.Group);
+			if (!aSupportedModes.includes(P13nMode.Group)) {
+				aSupportedModes.push(P13nMode.Group);
 			}
-			if (!aSupportedModes.includes(TableP13nMode.Aggregate)) {
-				aSupportedModes.push(TableP13nMode.Aggregate);
+			if (!aSupportedModes.includes(P13nMode.Aggregate)) {
+				aSupportedModes.push(P13nMode.Aggregate);
 			}
 		}
 
