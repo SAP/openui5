@@ -3,6 +3,17 @@
     "date": "November 2023",
     "notes": [
       {
+        "id": "02b7d56bb21ed9084e61762e333353c738cdba03",
+        "type": "FIX",
+        "text": " sap.m.Select: Parameter usage",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370138492"
+          }
+        ]
+      },
+      {
         "id": "6b72769559f91d109a64b9bfdf9904b8d5a52434",
         "type": "FIX",
         "text": " sap.ui.unified.Menu: fix focus outline in high contrast themes",

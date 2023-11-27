@@ -3,6 +3,11 @@
     "date": "November 2023",
     "notes": [
       {
+        "id": "c668bd43fe712296d8b9719dcd932efc41c1a3a9",
+        "type": "FIX",
+        "text": " Deprecate core usage of sap.ui.debug.DebugEnv"
+      },
+      {
         "id": "1db696863f059445b9a20e99634e76fd18502690",
         "type": "FIX",
         "text": " sap.ui.model.FilterProcessor.combineFilters: combine Filter.NONE with other filters",

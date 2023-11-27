@@ -3,6 +3,17 @@
     "date": "November 2023",
     "notes": [
       {
+        "id": "878bd4772c2d60354c82205f1dc26d754df4b929",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Layout issue corrected",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500009429332023"
+          }
+        ]
+      },
+      {
         "id": "ae51751bd29f974cadfc4d4997e291e763a4a779",
         "type": "FIX",
         "text": " sap.uxap.ObjectPageSubSection: Combine LESS rules",

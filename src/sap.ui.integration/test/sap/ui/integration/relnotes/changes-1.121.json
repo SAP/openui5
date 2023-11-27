@@ -3,6 +3,17 @@
     "date": "November 2023",
     "notes": [
       {
+        "id": "c4f508d520fb2b1ae50e98dd8c45d33c3b97a8a1",
+        "type": "FIX",
+        "text": " Integration Cards: request method now resolves CSRF tokens",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380134920"
+          }
+        ]
+      },
+      {
         "id": "0d9bb3e48ea349f035e9130797b1bd1c5b01d627",
         "type": "FIX",
         "text": " Intergration Cards: Error messages enhanced when there is error in the manifest configuration",

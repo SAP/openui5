@@ -3,6 +3,54 @@
     "date": "November 2023",
     "notes": [
       {
+        "id": "cbea4076b7f47495f49d6de789881f039cc4edde",
+        "type": "FIX",
+        "text": " sap.m.MenuButton - text is vertically aligned correctly now",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380068721"
+          }
+        ]
+      },
+      {
+        "id": "1ba5e5f03ff0226fab5145a39b596accc1c80d58",
+        "type": "FIX",
+        "text": " sap.m.Label: Corrected contrast ratio when used inside Toolbar in Belize",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370149049"
+          }
+        ]
+      },
+      {
+        "id": "37453c6c3cd896694d14bb0c0df5abdc2fe57cd1",
+        "type": "FIX",
+        "text": " sap.m.ObjectStatus: is now displayed correctly in sap.ui.table.Table",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380107192"
+          },
+          {
+            "type": "BCP",
+            "reference": "2370075972"
+          }
+        ]
+      },
+      {
+        "id": "1dda451fdb394c880d4d2eb01bea8ae2abe926e5",
+        "type": "FIX",
+        "text": " sap.m.FormattedText: preserve H1, H2, H3, H4, H5 and H6 tags default 'display' CSS property",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400010494822023"
+          }
+        ]
+      },
+      {
         "id": "978e339a177689cdb05249c5c7ff83a63d371f2b",
         "type": "FIX",
         "text": " sap.m.SinglePlanningCalendarMonthGrid: improve appointment sorting"
@@ -15,6 +63,17 @@
           {
             "type": "BCP",
             "reference": ""
+          }
+        ]
+      },
+      {
+        "id": "f27eb21639eb9bc55c03b966d0a3a68e81d6a88d",
+        "type": "FIX",
+        "text": " sap.m.Carousel: Restored arrow navigation",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370146290"
           }
         ]
       },
@@ -122,6 +181,17 @@
           {
             "type": "BCP",
             "reference": "2370131270"
+          }
+        ]
+      },
+      {
+        "id": "28018d3f2845ee172a4d1b67a7f9ce6180b86818",
+        "type": "FIX",
+        "text": " sap.m.DraftIndicator: JSDoc corrected",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370142834"
           }
         ]
       },

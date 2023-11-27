@@ -3,6 +3,28 @@
     "date": "November 2023",
     "notes": [
       {
+        "id": "cbea4076b7f47495f49d6de789881f039cc4edde",
+        "type": "FIX",
+        "text": " sap.m.MenuButton - text is vertically aligned correctly now",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380068721"
+          }
+        ]
+      },
+      {
+        "id": "ae97abe5b1ccb7220bf397dcb8d6f675f95bd527",
+        "type": "FIX",
+        "text": " sap.uxap.AnchorBar: Fix buttons in Horizon theme",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370110546"
+          }
+        ]
+      },
+      {
         "id": "1b458025a8712767feaa3b330f10ccf2313e9e97",
         "type": "FIX",
         "text": " sap.m.MenuButton:  added transparent background",
@@ -21,6 +43,17 @@
           {
             "type": "BCP",
             "reference": "2370151404"
+          }
+        ]
+      },
+      {
+        "id": "02b7d56bb21ed9084e61762e333353c738cdba03",
+        "type": "FIX",
+        "text": " sap.m.Select: Parameter usage",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370138492"
           }
         ]
       },
