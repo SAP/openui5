@@ -497,7 +497,7 @@ sap.ui.define([
 					assert(this._oRouter._oOwner, "No owner component for " + this._oRouter._oOwner.getId());
 					var oOwnerComponent = Component.getOwnerComponentFor(this._oRouter._oOwner);
 					while (oOwnerComponent) {
-						if (oOwnerComponent.getMetadata().getName() === aParts[0]) {
+						if (oOwnerComponent.isA(aParts[0])) {
 							var oRouter = oOwnerComponent.getRouter();
 							return oRouter.getRoute(aParts[1]);
 						}

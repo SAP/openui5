@@ -1,0 +1,8 @@
+{
+	"sap.app": {
+		"id": "qunit.router.component.parentRoute.ParentExtended",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	}
+}
