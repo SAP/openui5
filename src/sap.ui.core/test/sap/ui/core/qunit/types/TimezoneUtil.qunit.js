@@ -353,6 +353,12 @@ sap.ui.define([
 				{
 					targetDate: Date.UTC(2011, 11, 30, 0),
 					targetTimezone: "Pacific/Apia",
+					// even if time zone offset is +14:00, timezoneDiff has to be 10 otherwise we get a wrong date
+					timezoneDiff: 10
+				},
+				{
+					targetDate: Date.UTC(2011, 11, 31, 0),
+					targetTimezone: "Pacific/Apia",
 					timezoneDiff: -14
 				}
 			].forEach(function (oFixture) {
@@ -619,5 +625,111 @@ sap.ui.define([
 					year: "1970"
 				});
 		});
-	}
-);
+
+	//*********************************************************************************************
+[
+	{oDate: new Date(Date.UTC(2023, 8, 30, 15)), iExpectedOffset: -10},
+	{oDate: new Date(Date.UTC(2023, 9, 1, 3)), iExpectedOffset: -11},
+	{oDate: new Date(Date.UTC(2023, 9, 1, 2)), iExpectedOffset: -10},
+	{oDate: new Date(Date.UTC(2023, 8, 30, 16)), iExpectedOffset: -10},
+	{oDate: new Date(Date.UTC(2024, 3, 6, 15)), iExpectedOffset: -11},
+	{oDate: new Date(Date.UTC(2024, 3, 7, 14)), iExpectedOffset: -10},
+	{oDate: new Date(Date.UTC(2024, 3, 6, 17)), iExpectedOffset: -11}
+].forEach((oFixture, i) => {
+	QUnit.test("calculateOffset: Australia/Hobart, #" + i, function (assert) {
+		assert.strictEqual(TimezoneUtil.calculateOffset(oFixture.oDate, "Australia/Hobart"),
+			oFixture.iExpectedOffset * 3600);
+	});
+});
+
+	//*********************************************************************************************
+[
+	{oDate: new Date(Date.UTC(2023, 8, 2, 21)), iExpectedOffset: 6},
+	{oDate: new Date(Date.UTC(2023, 8, 2, 22)), iExpectedOffset: 6},
+	{oDate: new Date(Date.UTC(2023, 8, 2, 23)), iExpectedOffset: 5},
+	{oDate: new Date(Date.UTC(2023, 8, 3, 10)), iExpectedOffset: 5},
+	{oDate: new Date(Date.UTC(2024, 3, 6, 21)), iExpectedOffset: 5},
+	{oDate: new Date(Date.UTC(2024, 3, 7, 2)), iExpectedOffset: 6},
+	{oDate: new Date(Date.UTC(2024, 3, 8, 10)), iExpectedOffset: 6}
+].forEach((oFixture, i) => {
+	QUnit.test("calculateOffset: Pacific/Easter, #" + i, function (assert) {
+		assert.strictEqual(TimezoneUtil.calculateOffset(oFixture.oDate, "Pacific/Easter"),
+			oFixture.iExpectedOffset * 3600);
+	});
+});
+
+	//*********************************************************************************************
+	QUnit.test("calculateOffset: Daylight Saving Time (DST) switch far away", function (assert) {
+		const oDate = {getTime() {}};
+		const oDateInTimezone = {getTime() {}};
+		const sTimezone = "~sTimezone";
+		const oTimezoneUtilMock = this.mock(TimezoneUtil);
+		this.mock(oDate).expects("getTime").returns(42000);
+		this.mock(oDateInTimezone).expects("getTime").returns(13000);
+		oTimezoneUtilMock.expects("convertToTimezone").withExactArgs(sinon.match.same(oDate), sTimezone)
+			.returns(oDateInTimezone);
+		// -> iInitialOffset = 42000 - 13000 = 29000
+		const oFirstGuessInTimezone = {getTime() {}};
+		this.mock(oFirstGuessInTimezone).expects("getTime").returns(42000);
+		oTimezoneUtilMock.expects("convertToTimezone").withExactArgs(new Date(/*42000 + 29000*/71000), sTimezone)
+			.returns(oFirstGuessInTimezone);
+		// -> iSecondOffset = 71000 - 42000 = 29000
+
+		// code under test - both time zone offsets are equal
+		assert.strictEqual(TimezoneUtil.calculateOffset(oDate, sTimezone), 29);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("calculateOffset: DST switch, second guess matches", function (assert) {
+		const oDate = {getTime() {}};
+		const oDateInTimezone = {getTime() {}};
+		const sTimezone = "~sTimezone";
+		const oTimezoneUtilMock = this.mock(TimezoneUtil);
+		this.mock(oDate).expects("getTime").returns(42000);
+		this.mock(oDateInTimezone).expects("getTime").returns(13000);
+		oTimezoneUtilMock.expects("convertToTimezone").withExactArgs(sinon.match.same(oDate), sTimezone)
+			.returns(oDateInTimezone);
+		// -> iInitialOffset = 42000 - 13000 = 29000
+		const oFirstGuessInTimezone = {getTime() {}};
+		this.mock(oFirstGuessInTimezone).expects("getTime").returns(38000);
+		oTimezoneUtilMock.expects("convertToTimezone").withExactArgs(new Date(/*42000 + 29000*/71000), sTimezone)
+			.returns(oFirstGuessInTimezone);
+		// -> iSecondOffset = 71000 - 38000 = 33000
+		const oSecondGuessInTimezone = {getTime() {}};
+		this.mock(oSecondGuessInTimezone).expects("getTime").returns(42000);
+		oTimezoneUtilMock.expects("convertToTimezone").withExactArgs(new Date(/*42000 + 33000*/75000), sTimezone)
+			.returns(oSecondGuessInTimezone);
+
+		// code under test - both time zone offsets are equal
+		assert.strictEqual(TimezoneUtil.calculateOffset(oDate, sTimezone), 33);
+	});
+
+	//*********************************************************************************************
+[true, false].forEach((bUseFirstOffset) => {
+	const sTitle = "calculateOffset: DST switch, second guess doesn't match, use "
+		+ (bUseFirstOffset ? "first" : "second") + " offset";
+	QUnit.test(sTitle, function (assert) {
+		const oDate = {getTime() {}};
+		const oDateInTimezone = {getTime() {}};
+		const sTimezone = "~sTimezone";
+		const oTimezoneUtilMock = this.mock(TimezoneUtil);
+		this.mock(oDate).expects("getTime").returns(42000);
+		this.mock(oDateInTimezone).expects("getTime").returns(13000);
+		oTimezoneUtilMock.expects("convertToTimezone").withExactArgs(sinon.match.same(oDate), sTimezone)
+			.returns(oDateInTimezone);
+		// -> iInitialOffset = 42000 - 13000 = 29000
+		const oFirstGuessInTimezone = {getTime() {}};
+		this.mock(oFirstGuessInTimezone).expects("getTime").returns(38000);
+		oTimezoneUtilMock.expects("convertToTimezone").withExactArgs(new Date(/*42000 + 29000*/71000), sTimezone)
+			.returns(oFirstGuessInTimezone);
+		// -> iSecondOffset = 71000 - 38000 = 33000
+		const oSecondGuessInTimezone = {getTime() {}};
+		this.mock(oSecondGuessInTimezone).expects("getTime").returns(bUseFirstOffset ? 34000 : 44000);
+		oTimezoneUtilMock.expects("convertToTimezone").withExactArgs(new Date(/*42000 + 33000*/75000), sTimezone)
+			.returns(oSecondGuessInTimezone);
+
+		// code under test - both time zone offsets are equal
+		assert.strictEqual(TimezoneUtil.calculateOffset(oDate, sTimezone), bUseFirstOffset ? 29 : 33);
+	});
+});
+});
