@@ -37,6 +37,7 @@ sap.ui.define([
 		var oOptions = {
 			source: "{/source}",
 			title: "My Custom Title",
+			isTrustedSource: true,
 			loaded: function () {
 				assert.ok(false, "'loaded' should not be fired");
 			},
