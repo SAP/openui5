@@ -234,7 +234,7 @@ sap.ui.define([
 			}
 
 			oList.setRememberSelections(true);
-			assert.strictEqual(oList.getRememberSelections(), true, 'The property "rememberSelections" is "true" on ' + oList);
+			assert.strictEqual(oList.getRememberSelections(), true, 'The property "rezmemberSelections" is "true" on ' + oList);
 
 			// TODO: decide if check on internal variables is needed (Cahit)
 			assert.strictEqual(oList.getSelectedContextPaths().length, vSelectedItemsNumber, 'The internal selection array has length of ' + vSelectedItemsNumber + ' on ' + oList);
@@ -1625,7 +1625,7 @@ sap.ui.define([
 
 					oList._setFocus(iIndex, bFirstInteractiveElement).then(function() {
 						var oItem = oList.getVisibleItems()[iIndex];
-						var $Elem = (bFirstInteractiveElement && oItem.getTabbables().length) ? oItem.getTabbables()[0] : oItem.getDomRef();
+						var $Elem = (bFirstInteractiveElement && oItem.getTabbables(true).length) ? oItem.getTabbables(true)[0] : oItem.getDomRef();
 						assert.deepEqual(document.activeElement, $Elem, "The focus was set correctly");
 						resolve();
 					});
@@ -1633,10 +1633,12 @@ sap.ui.define([
 			}
 
 			function setItemFocusable(oItem) {
-				oItem.getTabbables().first().attr("tabindex", 0);
+				oItem.getTabbables(true).first().attr("tabindex", 0);
 			}
 
 			return new Promise(function(resolve) {
+				oList.setMode("MultiSelect");
+				Core.applyChanges();
 				resolve();
 			}).then(function() {
 				return testFocus(100, false);
@@ -1766,6 +1768,9 @@ sap.ui.define([
 
 			qutils.triggerKeydown(document.activeElement, "DELETE");
 			assert.strictEqual(fnDeleteSpy.callCount, 0, "Delete event is not called since List is not in Delete mode");
+
+			assert.equal(oListItem1.getTabbables()[0], oListItem1.getModeControl().getFocusDomRef(), "the first tabbable element is checkbox");
+			assert.equal(oListItem1.getTabbables(true)[0], oInput.getFocusDomRef(), "the first tabbable element in the content is input");
 
 			oList.setMode("Delete");
 			Core.applyChanges();

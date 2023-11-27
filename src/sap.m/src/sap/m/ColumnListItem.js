@@ -207,12 +207,14 @@ sap.ui.define([
 	 * Returns the tabbable DOM elements as a jQuery collection
 	 * When popin is available this separated dom should also be included
 	 *
+	 * @param [bContentOnly] Whether only tabbables of data cells
 	 * @returns {jQuery} jQuery object
 	 * @protected
 	 * @since 1.26
 	 */
-	ColumnListItem.prototype.getTabbables = function() {
-		return this.$().add(this.$Popin()).find(":sapTabbable");
+	ColumnListItem.prototype.getTabbables = function(bContentOnly) {
+		const $Content = bContentOnly ? this.$().find(".sapMListTblCell") : this.$();
+		return $Content.add(this.$Popin()).find(":sapTabbable");
 	};
 
 	/**

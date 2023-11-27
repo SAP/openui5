@@ -3151,6 +3151,15 @@ sap.ui.define([
 		}
 	});
 
+	QUnit.test("Tabbables", function(assert) {
+		this.vt.setMode("SingleSelectLeft");
+		Core.applyChanges();
+
+		const o1stItem = this.vt.getItems()[0];
+		assert.equal(o1stItem.getTabbables()[0], o1stItem.getModeControl().getFocusDomRef(), "the first tabbable element is checkbox");
+		assert.equal(o1stItem.getTabbables(true)[0], o1stItem.getCells()[0].getFocusDomRef(), "the first tabbable element in the content is input");
+	});
+
 	QUnit.test("Navigate with CTRL + ARROW_UP", function(assert) {
 		var sKey = "ARROW_UP";
 		for (var iColumn = 0; iColumn < this.vt.getItems()[0].getCells().length - 1; iColumn++) {
