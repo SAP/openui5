@@ -13,10 +13,9 @@ sap.ui.define([
 	'sap/ui/base/DataType',
 	'./ObjectStatusRenderer',
 	'sap/m/ImageHelper',
-	'sap/ui/core/LabelEnablement',
-	'sap/ui/core/InvisibleText'
+	'sap/ui/core/LabelEnablement'
 ],
-	function(library, Control, Library, ValueStateSupport, IndicationColorSupport, coreLibrary, DataType, ObjectStatusRenderer, ImageHelper, LabelEnablement, InvisibleText) {
+	function(library, Control, Library, ValueStateSupport, IndicationColorSupport, coreLibrary, DataType, ObjectStatusRenderer, ImageHelper, LabelEnablement) {
 	"use strict";
 
 
@@ -181,10 +180,6 @@ sap.ui.define([
 			this._oImageControl.destroy();
 			this._oImageControl = null;
 		}
-		if (this._oInvisibleStateText) {
-			this._oInvisibleStateText.destroy();
-			this._oInvisibleStateText = null;
-		}
 	};
 
 	/**
@@ -199,11 +194,11 @@ sap.ui.define([
 			mProperties = {
 				src : this.getIcon(),
 				densityAware : this.getIconDensityAware(),
-				useIconTooltip : false
+				useIconTooltip : false,
+				decorative: !this.getActive()
 			};
 
 		if (bIsIconOnly) {
-			mProperties.decorative = false;
 			mProperties.alt = Library.getResourceBundleFor("sap.m").getText("OBJECT_STATUS_ICON");
 		}
 
@@ -360,17 +355,6 @@ sap.ui.define([
 
 		//event should only be fired if the click is on the text, link or icon
 		return this._isActive() && (sSourceId === this.getId() + "-link" || sSourceId === this.getId() + "-text" || sSourceId === this.getId() + "-statusIcon" || sSourceId === this.getId() + "-icon");
-	};
-
-	ObjectStatus.prototype._fnInvisibleStateLabelFactory = function() {
-		if (!this._oInvisibleStateText) {
-			this._oInvisibleStateText = new InvisibleText({
-				id: this.getId() + "-state-text",
-				text: this._getStateText(this.getState())
-			}).toStatic();
-		}
-
-		return this._oInvisibleStateText;
 	};
 
 	return ObjectStatus;
