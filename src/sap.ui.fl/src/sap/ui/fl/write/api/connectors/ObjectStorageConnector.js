@@ -33,7 +33,8 @@ sap.ui.define([
 		isProductiveSystem: false,
 		isCondensingEnabled: true,
 		isContextSharingEnabled: false,
-		isVersioningEnabled: true
+		isVersioningEnabled: true,
+		logonUser: "DEFAULT_USER"
 	};
 
 	function loadDataFromStorage(mPropertyBag) {
@@ -468,6 +469,7 @@ sap.ui.define([
 			 * @inheritDoc
 			 */
 			async activate(mPropertyBag) {
+				const mFeatures = await this.loadFeatures();
 				const aVersions = await this.versions.load.call(this, mPropertyBag);
 				var oActivateVersion = aVersions.find((oVersion) => oVersion.version === mPropertyBag.version);
 				if (oActivateVersion) {
@@ -497,7 +499,7 @@ sap.ui.define([
 				const sKey = ObjectStorageUtils.createFlexKey(oActivateVersion.id);
 				oActivateVersion.title = mPropertyBag.title;
 				oActivateVersion.activatedAt = new Date(Date.now()).toISOString();
-				oActivateVersion.activatedBy = "You";
+				oActivateVersion.activatedBy = mFeatures.logonUser;
 				oActivateVersion.isDraft = false;
 				oActivateVersion.version = oActivateVersion.id;
 				const vFlexObject = this.storage._itemsStoredAsObjects ? oActivateVersion : JSON.stringify(oActivateVersion);
