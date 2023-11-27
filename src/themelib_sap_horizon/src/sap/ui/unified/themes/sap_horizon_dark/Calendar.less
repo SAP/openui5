@@ -19,6 +19,21 @@
 	height: 2.875rem;
 }
 
+.sapUiSizeCompact .sapUiCalSecType {
+	.sapUiCal:not(.sapUiCalInt),
+	&.sapUiCal:not(.sapUiCalInt) {
+		min-width: 19rem;
+	}
+}
+
+.sapUiSizeCompact .sapUiCalMonthSecType {
+	.sapUiCalItem,
+	.sapUiCalWeekNum {
+		min-width: 2.25rem;
+		height: 2.25rem;
+	}
+}
+
 .sapUiCalWeekNum:hover {
 	background-color: @sapUiListHoverBackground;
 	border-radius: 0.5rem;
@@ -74,6 +89,10 @@ html.sap-desktop .sapUiCalHead > .sapUiCalHeadB:focus:active {
 .sapUiCalCancel {
 	font-family: @sapFontBoldFamily;
 	color: @sapUiButtonLiteTextColor;
+}
+
+.sapUiCalSecType .sapUiCalHead > button .sapUiCalHeadBAddText {
+	font-family: @sapUiFontFamily;
 }
 
 html.sap-desktop .sapUiCalHead > button:hover,
@@ -446,18 +465,6 @@ html.sap-desktop .sapUiCalItemSel:not(.sapUiCalItemNow):not(.sapUiCalItemSelBetw
 }
 
 .sapUiSizeCozy {
-	.sapUiCalSecType {
-		.sapUiCalItem {
-			&.sapUiCalItemNow {
-				&:not(.sapUiCalItemSelBetween),
-				&.sapUiCalItemSelBetween {
-					&> .sapUiCalItemText {
-						line-height: 2rem;
-					}
-				}
-			}
-		}
-	}
 	.sapUiCalItem {
 		&:focus .sapUiCalSpecialDate,
 		&.sapUiCalItemSel .sapUiCalSpecialDate,
@@ -528,6 +535,17 @@ html.sap-desktop .sapUiCalItemSel:not(.sapUiCalItemNow):not(.sapUiCalItemSelBetw
 .sapUiCalItemOtherMonth {
 	background-color: @sapUiListBackground;
 	color: @_sap_ui_unified_Calendar_ItemOtherMonthColor;
+}
+
+.sapUiCalMonthSecType {
+    .sapUiCalItemOtherMonth.sapUiCalItem {
+        &:not(.sapUiCalItemSelBetween),
+        &:not(.sapUiCalItemSel) {
+            .sapUiCalItemSecText {
+                color: @_sap_ui_unified_Calendar_ItemOtherMonthColor;
+            }
+        }
+    }
 }
 
 .sapUiCalItemOtherMonth.sapUiCalItemDsbl {
@@ -641,59 +659,114 @@ html.sap-desktop .sapUiCalItemOtherMonth:not(.sapUiCalItemSel) :not(.sapUiCalWee
 
 .sapUiCalMonthSecType {
 	.sapUiCalItem {
+		border-radius: 0.375rem;
+
+		.sapUiCalItemSecText {
+			width: 60%;
+		}
+		.sapUiCalSpecialDate,
+		&.sapUiCalItemNow:not(:focus) .sapUiCalSpecialDate,
+		&.sapUiCalItemNow.sapUiCalItemSelBetween:focus .sapUiCalSpecialDate,
+		&.sapUiCalItemNow.sapUiCalItemSel:focus .sapUiCalSpecialDate,
+		&.sapUiCalItemSel .sapUiCalSpecialDate,
+		&.sapUiCalItemSelBetween:not(.sapUiCalItemSel) .sapUiCalSpecialDate,
+		&:focus:not(.sapUiCalItemSel):not(.sapUiCalItemSelBetween) .sapUiCalSpecialDate {
+			width: 0.375rem;
+			height: 0.375rem;
+			bottom: 0.375rem;
+			left: 0.375rem;
+			border-radius: 50%;
+		}
+
+		&.sapUiCalItemSel,
+		&.sapUiCalItemSelStart,
+		&.sapUiCalItemSelEnd,
+		&:not(.sapUiCalItemNow):not(.sapUiCalItemSel),
+		&.sapUiCalItemSelBetween.sapUiCalItemOtherMonth:not(.sapUiCalItemNow) {
+			.sapUiCalItemText:before {
+				border-radius: 0.375rem;
+			}
+		}
+
+		&.sapUiCalItemNow {
+			&:before,
+			.sapUiCalItemText {
+				border-radius: 0.375rem;
+			}
+			&.sapUiCalItemSel:not(.sapUiCalItemSelBetween),
+			&.sapUiCalItemSelStart:not(.sapUiCalItemSelBetween),
+			&.sapUiCalItemSelEnd:not(.sapUiCalItemSelBetween),
+			&.sapUiCalItemSelBetween.sapUiCalItemOtherMonth:not(.sapUiCalItemNow) {
+				.sapUiCalItemText:before {
+					border-radius: 0.1875rem;
+				}
+			}
+		}
 		&:focus {
-			&.sapUiCalItemSel:not(.sapUiCalItemNow),
-			&.sapUiCalItemSelStart:not(.sapUiCalItemNow),
-			&.sapUiCalItemSelEnd:not(.sapUiCalItemNow) {
-				.sapUiCalItemText:before {
-					border: none;
-				}
-			}
-			&.sapUiCalItemSel {
-				.sapUiCalItemText:after {
-					border: 0.125rem solid @sapUiContentFocusColor;
-					border-width: 0.1875rem;
-				}
-				.sapUiCalItemText:before {
-					border: none;
-				}
-			}
 			&:not(.sapUiCalItemNow):not(.sapUiCalItemSel) {
 				.sapUiCalItemText:after {
-					top: 0;
-					bottom: 0;
-					left: 0;
-					right: 0;
-					border-radius: 0.5rem;
+					top: 0.0625rem;
+					left: 0.0625rem;
+					right: 0.0625rem;
+					bottom: 0.0625rem;
+					border: 0.125rem solid @sapUiContentFocusColor;
+					border-radius: 0.25rem;
 				}
 			}
-			&.sapUiCalItemNow:not(.sapUiCalItemSelBetween),
-			&.sapUiCalItemNow{
-				.sapUiCalSpecialDate {
-					width: 75%;
-					left: 0.25rem;
-					right: 0.25rem;
-					bottom: 0.25rem;
+			&.sapUiCalItemSel,
+			&.sapUiCalItemSelStart,
+			&.sapUiCalItemSelEnd,
+			&.sapUiCalItemSelBetween:not(.sapUiCalItemSel) {
+				.sapUiCalItemText:after {
+					top: 0.125rem;
+					left: 0.125rem;
+					right: 0.125rem;
+					bottom: 0.125rem;
+					border: 0.125rem solid @sapUiContentFocusColor;
+					border-radius: 0.25rem;
 				}
 			}
-		}
-		&.sapUiCalItemNow {
-			&:not(.sapUiCalItemSelBetween),
-			&.sapUiCalItemSelBetween,
 			&.sapUiCalItemNow {
-				&> .sapUiCalItemText {
-					line-height: 2.125rem;
+				.sapUiCalItemText:after {
+					top: 0.1875rem;
+					left: 0.1875rem;
+					right: 0.1875rem;
+					bottom: 0.1875rem;
+					border: 0.125rem solid @sapUiContentFocusColor;
+					border-radius: 0.25rem;
+				}
+				.sapUiCalItemText:before {
+					border: none;
+				}
+
+				&.sapUiCalItemSel,
+				&.sapUiCalItemSelStart,
+				&.sapUiCalItemSelEnd,
+				&.sapUiCalItemSelBetween:not(.sapUiCalItemSel) {
+					.sapUiCalItemText:after {
+						top: 0.3125rem;
+						left: 0.3125rem;
+						right: 0.3125rem;
+						bottom: 0.3125rem;
+						border: 0.125rem solid @sapUiContentFocusColor;
+						border-radius: 0.25rem;
+					}
+					.sapUiCalItemText:before {
+						border: 0.063rem solid @sapUiListSelectionBorderColor;
+						border-radius: 0.1875rem;
+					}
+					.sapUiCalItemSecText {
+						padding-right: 1.25rem;
+    					padding-bottom: 1.15rem;
+						text-align: right;
+					}
+
+					.sapUiCalSpecialDate {
+						bottom: 0.5rem;
+						left: 0.438rem;
+					}
 				}
 			}
-		}
-	}
-
-	.sapUiCalItemSelStart:not(.sapUiCalItemNow),
-	.sapUiCalItemSelEnd:not(.sapUiCalItemNow),
-	.sapUiCalItemSelBetween:focus:not(.sapUiCalItemNow),
-	.sapUiCalItemSelBetween.sapUiCalItemOtherMonth:not(.sapUiCalItemNow) {
-		.sapUiCalItemText:after {
-			border-width: 0.125rem;
 		}
 	}
 }
@@ -704,6 +777,57 @@ html.sap-desktop .sapUiCalItemOtherMonth:not(.sapUiCalItemSel) :not(.sapUiCalWee
 	right: 0.1875rem;
 	bottom: 0.1875rem;
 	border-radius: 0.3125rem;
+}
+
+.sapUiSizeCozy {
+	.sapUiCalMonthSecType {
+		.sapUiCalItem {
+			&.sapUiCalItemSel,
+			&.sapUiCalItemNow:focus:not(.sapUiCalItemSelBetween),
+			&.sapUiCalItemSelBetween:not(.sapUiCalItemSel):not(.sapUiCalItemNow),
+			&.sapUiCalItemNow.sapUiCalItemSelBetween:not(.sapUiCalItemSel) {
+				.sapUiCalSpecialDate {
+					width: 0.375rem;
+					height: 0.375rem;
+					bottom: 0.375rem;
+					left: 0.375rem;
+					border-radius: 50%;
+				}
+			}
+
+			&.sapUiCalItemNow {
+				&:focus {
+					&.sapUiCalItemSel,
+					&.sapUiCalItemSelStart,
+					&.sapUiCalItemSelEnd,
+					&.sapUiCalItemSelBetween:not(.sapUiCalItemSel) {
+						.sapUiCalSpecialDate {
+							bottom: 0.5rem;
+							left: 0.438rem;
+						}
+					}
+				}
+				&.sapUiCalItemSelBetween {
+					.sapUiCalItemText {
+						line-height: normal;
+						width: 100%;
+					}
+					.sapUiCalItemText:before {
+						top: 0.0625rem;
+						left: 0.0625rem;
+						right: 0.0625rem;
+						bottom: 0.0625rem;
+						border: 0.0625rem solid @sapUiListSelectionBorderColor;
+						border-radius: 0.1875rem;
+					}
+					.sapUiCalItemText:after {
+						border: 0.125rem solid @sapUiContentFocusColor;
+						border-radius: 0.25rem;
+					}
+				}
+			}
+		}
+	}
 }
 
 .sapUiSizeCompact {
@@ -789,12 +913,44 @@ html.sap-desktop .sapUiCalItemSelBetween:focus:not(:hover){
 }
 
 /* 2 calendar types */
-.sapUiCalMonthSecType .sapUiCalItem.sapUiCalItemNow:not(.sapUiCalItemSelBetween)  > .sapUiCalItemText{
-	line-height: 1.875rem;
+.sapUiSizeCozy .sapUiCalMonthSecType .sapUiCalItem:not(.sapUiCalItemNow) .sapUiCalItemSecText {
+	line-height: 0.75rem;
 }
 
 .sapUiCalItemNow:not(.sapUiCalItemSelBetween) > .sapUiCalItemText {
 	line-height: 2.9rem;
+}
+
+.sapUiCalMonthSecType .sapUiCalItemNow:not(.sapUiCalItemSelBetween) > .sapUiCalItemText {
+	line-height: normal;
+}
+
+.sapUiCalMonthSecType {
+	.sapUiCalItem {
+		.sapUiCalItemText {
+			text-align: left;
+			line-height: normal;
+			padding-top: 0.1875rem;
+			padding-left: 0.375rem;
+		}
+		.sapUiCalItemSecText {
+			padding-right: 0.3125rem;
+			text-align: right;
+		}
+		&.sapUiCalItemNow {
+			&:focus.sapUiCalItemSel,
+			&:focus.sapUiCalItemSelBetween:not(.sapUiCalItemSel) {
+				.sapUiCalItemText {
+					line-height: normal;
+					padding-top: 0.3125rem;
+					padding-left: 0.4375rem;
+				}
+				.sapUiCalItemSecText {
+					padding-right: 0.4375rem;
+				}
+			}
+		}
+	}
 }
 
 .sapUiCalMonthSecType .sapUiCalItem.sapUiCalItemSel:not(.sapUiCalItemSelBetween) > .sapUiCalItemSecText {
@@ -828,41 +984,102 @@ html.sap-desktop .sapUiCalItemSelBetween:focus:not(:hover){
 	.sapUiCalItemSel.sapUiCalItemSelBetween:not(.sapUiCalItemNow) > .sapUiCalItemText {
 		line-height: 1.75rem;
 	}
-	.sapUiCalMonthSecType .sapUiCalItemSel.sapUiCalItemSelBetween .sapUiCalItemText,
-	.sapUiCalMonthSecType .sapUiCalItemSel.sapUiCalItemSelBetween:not(.sapUiCalItemNow) > .sapUiCalItemText {
-		line-height: 1rem;
+	.sapUiCalMonthSecType {
+		.sapUiCalItem {
+			.sapUiCalItemText {
+				text-align: left;
+				line-height: normal;
+				padding-top: 0.1875rem;
+				padding-left: 0.3125rem;
+			}
+
+			.sapUiCalItemSecText {
+				padding-right: 0.3125rem;
+				text-align: right;
+			}
+
+			&.sapUiCalItemSelBetween > .sapUiCalItemText{
+				line-height: normal;
+			}
+
+			&.sapUiCalItemNow {
+				&:focus {
+					&.sapUiCalItemSelBetween,
+					&.sapUiCalItemSelBetween.sapUiCalItemSel,
+					&.sapUiCalItemSelBetween:not(.sapUiCalItemSel) {
+						.sapUiCalItemText:after {
+							border: 0.125rem solid @sapUiContentFocusColor;
+							border-radius: 0.25rem;
+						}
+					}
+
+					&.sapUiCalItemSel {
+						.sapUiCalItemText {
+							font-size: 0.75rem;
+						}
+						.sapUiCalSpecialDate {
+							bottom: 0.5rem;
+							left: 0.438rem;
+						}
+						&.sapUiCalItemSelBetween {
+							.sapUiCalItemText {
+								padding-top: 0.125rem;
+								padding-left: 0.1875rem;
+							}
+						}
+					}
+
+					&.sapUiCalItemSelBetween:not(.sapUiCalItemSel) {
+						.sapUiCalItemText {
+							padding-top: 0.0625rem;
+							padding-left: 0.1875rem;
+							line-height: normal;
+							font-size: @sapMFontSmallSize;
+						}
+						.sapUiCalItemText:after {
+							top: 0.0625rem;
+							left: 0.0625rem;
+							right: 0.0625rem;
+							bottom: 0.0625rem;
+						}
+					}
+				}
+
+				.sapUiCalItemText {
+					line-height: normal;
+				}
+				&.sapUiCalItemSelBetween {
+					.sapUiCalItemText {
+						padding-top: 0.0625rem;
+						padding-left: 0.0625rem;
+						line-height: 0.75rem;
+						width: 1.75rem;
+						height: 1.75rem;
+						border-radius: 0.1875rem;
+					}
+				}
+
+				&.sapUiCalItemSel:not(.sapUiCalItemSelBetween){
+					.sapUiCalItemText {
+						line-height: normal;
+					}
+				}
+			}
+		}
 	}
-	.sapUiCalMonthSecType .sapUiCalItem.sapUiCalItemNow.sapUiCalItemSel > .sapUiCalItemText {
-		line-height: 1.25rem;
-	}
-	.sapUiCalMonthSecType .sapUiCalItem.sapUiCalItemNow  > .sapUiCalItemText{
-		line-height: 1.25rem;
-	}
+
 	.sapUiCalHead > button {
 		margin: 0.1875rem 0;
-		height: 1.625rem;
+		height: 2rem;
+		.sapUiIcon {
+			line-height: 2rem;
+		}
 	}
 	.sapUiCalItem.sapUiCalItemNow.sapUiCalItemSelBetween > .sapUiCalItemText {
 		width: 1.5rem;
 		height: 1.5rem;
 		top: 0.0625rem;
 		line-height: 1.4375rem;
-	}
-
-	.sapUiCalMonthSecType {
-		.sapUiCalItem.sapUiCalItemNow.sapUiCalItemSelBetween {
-			& > .sapUiCalItemText {
-				line-height: 0.75rem;
-			}
-			&:focus {
-				& > .sapUiCalItemText  {
-					&:before {
-						border: none;
-					}
-				border: none;
-				}
-			}
-		}
 	}
 }
 
