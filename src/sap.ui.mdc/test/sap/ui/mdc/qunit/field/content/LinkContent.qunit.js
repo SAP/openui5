@@ -1,6 +1,9 @@
 /*globals sinon*/
 sap.ui.define([
 	"sap/ui/thirdparty/qunit-2",
+	"sap/ui/mdc/enums/OperatorName",
+	"sap/ui/mdc/field/content/DefaultContent",
+	"sap/ui/mdc/field/content/DateContent",
 	"sap/ui/mdc/field/content/LinkContent",
 	"sap/ui/mdc/Field",
 	"sap/m/library",
@@ -9,10 +12,12 @@ sap.ui.define([
 	"sap/ui/mdc/field/FieldMultiInput",
 	"sap/m/TextArea",
 	"sap/m/Token"
-], function(QUnit, LinkContent, Field, mLibrary, Link, FieldInput, FieldMultiInput, TextArea, Token) {
+], function(QUnit, OperatorName, DefaultContent, DateContent, LinkContent, Field, mLibrary, Link, FieldInput, FieldMultiInput, TextArea, Token) {
 	"use strict";
 
 	const EmptyIndicatorMode = mLibrary.EmptyIndicatorMode;
+	const LinkDefaultContent = LinkContent.extendBaseContent(DefaultContent); // Use extended DefaultContent
+	const LinkDateContent = LinkContent.extendBaseContent(DateContent); // Use extended DateContent
 
 	const oControlMap = {
 		"Display": {
@@ -161,33 +166,38 @@ sap.ui.define([
 	aControlMapKeys.forEach(function(sControlMapKey) {
 		const oValue = oControlMap[sControlMapKey];
 		QUnit.test(oValue.getPathsFunction, function(assert) {
-			assert.deepEqual(LinkContent[oValue.getPathsFunction](), oValue.paths, "Correct control path returned for ContentMode '" + sControlMapKey + "'.");
+			assert.deepEqual(LinkDefaultContent[oValue.getPathsFunction](), oValue.paths, "Correct control path returned for ContentMode '" + sControlMapKey + "'.");
 		});
 	});
 
 	QUnit.test("getEditOperator", function(assert) {
-		assert.deepEqual(LinkContent.getEditOperator(), [null], "Correct editOperator value returned.");
+		assert.deepEqual(LinkDefaultContent.getEditOperator(), [null], "Correct editOperator value returned.");
+		assert.deepEqual(LinkDateContent.getEditOperator(), DateContent.getEditOperator(), "Correct editOperator value returned.");
 	});
 
 	QUnit.test("getUseDefaultEnterHandler", function(assert) {
-		assert.ok(LinkContent.getUseDefaultEnterHandler(), "Correct useDefaultEnterHandler value returned.");
+		assert.ok(LinkDefaultContent.getUseDefaultEnterHandler(), "Correct useDefaultEnterHandler value returned.");
 	});
 
 	QUnit.test("getUseDefaultValueHelp", function(assert) {
-		assert.notOk(LinkContent.getUseDefaultValueHelp(), "DefaultValueHelp is not used.");
+		assert.notOk(LinkDefaultContent.getUseDefaultValueHelp(), "DefaultValueHelp is not used.");
+		assert.notOk(LinkDateContent.getUseDefaultValueHelp(), "DefaultValueHelp is not used.");
 	});
 
 	QUnit.test("getControlNames", function(assert) {
 		/* no need to use oOperator here as there is no editOperator*/
-		assert.deepEqual(LinkContent.getControlNames(null), ["sap/ui/mdc/field/FieldInput"], "Correct default controls returned for ContentMode null");
-		assert.deepEqual(LinkContent.getControlNames(undefined), ["sap/ui/mdc/field/FieldInput"], "Correct default controls returned for ContentMode undefined");
-		assert.deepEqual(LinkContent.getControlNames("idghsoidpgdfhkfokghkl"), ["sap/ui/mdc/field/FieldInput"], "Correct default controls returned for not specified ContentMode");
+		assert.deepEqual(LinkDefaultContent.getControlNames(null), ["sap/ui/mdc/field/FieldInput"], "Correct default controls returned for ContentMode null");
+		assert.deepEqual(LinkDefaultContent.getControlNames(undefined), ["sap/ui/mdc/field/FieldInput"], "Correct default controls returned for ContentMode undefined");
+		assert.deepEqual(LinkDefaultContent.getControlNames("idghsoidpgdfhkfokghkl"), ["sap/ui/mdc/field/FieldInput"], "Correct default controls returned for not specified ContentMode");
 
-		assert.deepEqual(LinkContent.getControlNames("Edit"), ["sap/ui/mdc/field/FieldInput"], "Correct default controls returned for ContentMode 'Edit'");
-		assert.deepEqual(LinkContent.getControlNames("Display"), ["sap/m/Link"], "Correct default controls returned for ContentMode 'Display'");
-		assert.deepEqual(LinkContent.getControlNames("EditMultiValue"), ["sap/ui/mdc/field/FieldMultiInput", "sap/m/Token"], "Correct default controls returned for ContentMode 'EditMultiValue'");
-		assert.deepEqual(LinkContent.getControlNames("EditMultiLine"), ["sap/m/TextArea"], "Correct default controls returned for ContentMode 'EditMultiLine'");
-		assert.deepEqual(LinkContent.getControlNames("EditOperator"), [null], "Correct default controls returned for ContentMode 'EditOperator'");
+		assert.deepEqual(LinkDefaultContent.getControlNames("Edit"), ["sap/ui/mdc/field/FieldInput"], "Correct default controls returned for ContentMode 'Edit'");
+		assert.deepEqual(LinkDateContent.getControlNames("Edit"), DateContent.getControlNames("Edit"), "Correct default controls returned for ContentMode 'Edit'");
+		assert.deepEqual(LinkDefaultContent.getControlNames("Display"), ["sap/m/Link"], "Correct default controls returned for ContentMode 'Display'");
+		assert.deepEqual(LinkDateContent.getControlNames("Display"), ["sap/m/Link"], "Correct default controls returned for ContentMode 'Display'");
+		assert.deepEqual(LinkDefaultContent.getControlNames("EditMultiValue"), ["sap/ui/mdc/field/FieldMultiInput", "sap/m/Token"], "Correct default controls returned for ContentMode 'EditMultiValue'");
+		assert.deepEqual(LinkDefaultContent.getControlNames("EditMultiLine"), ["sap/m/TextArea"], "Correct default controls returned for ContentMode 'EditMultiLine'");
+		assert.deepEqual(LinkDefaultContent.getControlNames("EditOperator"), [null], "Correct default controls returned for ContentMode 'EditOperator'");
+		assert.deepEqual(LinkDateContent.getControlNames("EditOperator", OperatorName.EQ), ["sap/m/DatePicker"], "Correct default controls returned for ContentMode 'EditOperator'");
 	});
 
 	QUnit.module("Content creation", {
@@ -207,11 +217,11 @@ sap.ui.define([
 	});
 
 	const fnCreateControls = function(oContentFactory, sContentMode, sIdPostFix) {
-		return LinkContent.create(oContentFactory, sContentMode, null, oControlMap[sContentMode].instances, sContentMode + sIdPostFix);
+		return LinkDefaultContent.create(oContentFactory, sContentMode, null, oControlMap[sContentMode].instances, sContentMode + sIdPostFix);
 	};
 
 	const fnSpyOnCreateFunction = function(sContentMode) {
-		return oControlMap[sContentMode].createFunction ? sinon.spy(LinkContent, oControlMap[sContentMode].createFunction) : null;
+		return oControlMap[sContentMode].createFunction ? sinon.spy(LinkDefaultContent, oControlMap[sContentMode].createFunction) : null;
 	};
 
 	const fnSpyCalledOnce = function(fnSpyFunction, sContentMode, assert) {
@@ -239,7 +249,7 @@ sap.ui.define([
 			const aCreatedEditMultiValueControls = fnCreateControls(oContentFactory, "EditMultiValue", "-create");
 			const aCreatedEditMultiLineControls = fnCreateControls(oContentFactory, "EditMultiLine", "-create");
 
-			const aCreatedEditOperatorControls = LinkContent.create(oContentFactory, "EditOperator", null, [null], "EditOperator" + "-create");
+			const aCreatedEditOperatorControls = LinkDefaultContent.create(oContentFactory, "EditOperator", null, [null], "EditOperator" + "-create");
 
 			fnSpyCalledOnce(fnCreateDisplayFunction, "Display", assert);
 			fnSpyCalledOnce(fnCreateEditFunction, "Edit", assert);
@@ -264,7 +274,7 @@ sap.ui.define([
 				const oContentFactory = this.oField._oContentFactory;
 				this.oField.awaitControlDelegate().then(function() {
 					const oInstance = oValue.instances[0];
-					const aControls = LinkContent.create(oContentFactory, sControlMapKey, null, oValue.instances, sControlMapKey);
+					const aControls = LinkDefaultContent.create(oContentFactory, sControlMapKey, null, oValue.instances, sControlMapKey);
 
 					assert.ok(aControls[0] instanceof oInstance, "Correct control created in " + oValue.createFunction);
 

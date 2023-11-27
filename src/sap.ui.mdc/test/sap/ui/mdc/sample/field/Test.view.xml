@@ -1609,7 +1609,7 @@
 				</mdc:Field>
 
 				<m:Label text="CustomFieldInfo and ValueHelp"></m:Label>
-				<mdc:Field id="F3-5" value="{ProductId}" additionalValue="{Name}" display="DescriptionValue" editMode="Editable" change="handleChange" liveChange="handleLiveChange" submit="handleSubmit" press="handlePress" valueHelp="F2-4-H">
+				<mdc:Field id="F3-5" value="{ProductId}" additionalValue="{Name}" display="DescriptionValue" editMode="Editable" change="handleChange" liveChange="handleLiveChange" submit="handleSubmit" press="handlePress" valueHelp="F6-4-H">
 					<mdc:fieldInfo>
 						<mdcField:CustomFieldInfo id="F3-5-I" >
 							<form:SimpleForm layout="ColumnLayout" editable="false"
@@ -1627,6 +1627,38 @@
 					</mdc:fieldInfo>
 				</mdc:Field>
 				<m:ToggleButton id="B3-5" text="Display" pressed="false" press="toggleDisplay"></m:ToggleButton>
+
+				<m:Label text="CustomFieldInfo with Date type"/>
+				<mdc:Field id="F3-6" value="{path:'Date', type:'sap.ui.model.odata.type.DateTime', formatOptions: {style: 'long'}, constraints: {displayFormat: 'Date'}, targetType: 'string'}" delegate='\{"name": "sap/ui/mdc/sample/field/FieldBaseODataV2.delegate"\}' editMode="Display" change="handleChange" liveChange="handleLiveChange" submit="handleSubmit" press="handlePress">
+					<mdc:fieldInfo>
+						<mdcField:CustomFieldInfo id="F3-6-I" >
+							<form:SimpleForm layout="ColumnLayout" editable="false"
+								title="Product details">
+								<m:Label text="{/#Product/ProductId/@sap:label}"/>
+								<m:Text text="{ProductId}"/>
+								<m:Label text="{/#Product/Name/@sap:label}"/>
+								<m:Text text="{Name}"/>
+							</form:SimpleForm>
+						</mdcField:CustomFieldInfo>
+					</mdc:fieldInfo>
+				</mdc:Field>
+				<m:ToggleButton id="B3-6" text="Display" pressed="true" press="toggleDisplay"/>
+
+				<m:Label text="CustomFieldInfo with Currency type"/>
+				<mdc:Field id="F3-7" value="{parts: [{path: 'Price'}, {path: 'CurrencyCode'}], type: 'sap.ui.model.type.Currency'}" delegate='\{"name": "sap/ui/mdc/sample/field/FieldBaseODataV2.delegate"\}' editMode="Display" change="handleChange" liveChange="handleLiveChange" submit="handleSubmit" press="handlePress">
+					<mdc:fieldInfo>
+						<mdcField:CustomFieldInfo id="F3-7-I" >
+							<form:SimpleForm layout="ColumnLayout" editable="false"
+								title="Product details">
+								<m:Label text="{/#Product/ProductId/@sap:label}"/>
+								<m:Text text="{ProductId}"/>
+								<m:Label text="{/#Product/Name/@sap:label}"/>
+								<m:Text text="{Name}"/>
+							</form:SimpleForm>
+						</mdcField:CustomFieldInfo>
+					</mdc:fieldInfo>
+				</mdc:Field>
+				<m:ToggleButton id="B3-7" text="Display" pressed="true" press="toggleDisplay"/>
 
 			</form:SimpleForm>
 		</m:Page>
