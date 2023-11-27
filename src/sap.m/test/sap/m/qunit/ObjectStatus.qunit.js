@@ -630,20 +630,22 @@ sap.ui.define([
 			oObjectStatus = new ObjectStatus(sId, {
 				title: "Something",
 				tooltip: "Good"
-			}).placeAt("qunit-fixture");
+			}).placeAt("qunit-fixture"),
+			oTooltipElement;
 
 		oCore.applyChanges();
 
+		oTooltipElement = oObjectStatus.getDomRef("tooltip");
+
 		// Assert
-		assert.notOk(document.getElementById(sId + "-tooltip"), "Hidden tooltip text element has not been created");
+		assert.ok(oTooltipElement, "Hidden tooltip text element has been created");
 
 		// Act
 		oObjectStatus.addAriaDescribedBy("boo");
 		oCore.applyChanges();
 
 		// Assert
-		assert.ok(document.getElementById(sId + "-tooltip"), "Hidden tooltip text element has been created");
-		assert.strictEqual(document.getElementById(sId + "-tooltip").innerHTML, "Good",
+		assert.strictEqual(oTooltipElement.innerText, "Good",
 			"The value of the hidden tooltip text element is correct");
 
 		//Cleanup
@@ -692,7 +694,7 @@ sap.ui.define([
 		$oInternalIcon = oObjectStatus._oImageControl.$();
 
 		// Assert
-		assert.strictEqual($oInternalIcon.attr("role"), "img", "Icon isn't decorative in icon-only ObjectStatus");
+		assert.strictEqual($oInternalIcon.attr("role"), "presentation", "Icon is decorative in icon-only ObjectStatus");
 		assert.strictEqual($oInternalIcon.attr("aria-label"), oCore.getLibraryResourceBundle("sap.m").getText("OBJECT_STATUS_ICON"),
 			"Icon has alternative text in icon-only ObjectStatus");
 
