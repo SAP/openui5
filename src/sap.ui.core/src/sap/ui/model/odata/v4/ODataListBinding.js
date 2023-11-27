@@ -1369,7 +1369,8 @@ sap.ui.define([
 	 * @param {number} iMaximumPrefetchSize
 	 *   The maximum number of rows to read before and after the given range
 	 * @param {sap.ui.model.odata.v4.lib._GroupLock} [oGroupLock]
-	 *   A lock for the group ID to be used, defaults to the binding's group ID
+	 *   A lock for the group ID to be used; if not given, the read group lock or a lock to the
+	 *   binding's group ID are used
 	 * @param {boolean} [bAsync]
 	 *   Whether the function must be async even if the data is available synchronously
 	 * @param {function} [fnDataRequested]
@@ -1393,7 +1394,10 @@ sap.ui.define([
 			// estimated length.
 			iStart += this.iCreatedContexts;
 		}
-		oGroupLock = oGroupLock || this.lockGroup();
+		if (!oGroupLock) {
+			oGroupLock = this.oReadGroupLock || this.lockGroup();
+			this.oReadGroupLock = undefined;
+		}
 		oPromise = this.fetchData(iStart, iLength, iMaximumPrefetchSize, oGroupLock,
 			fnDataRequested);
 		if (bAsync) {
@@ -1990,7 +1994,6 @@ sap.ui.define([
 			aContexts,
 			bDataRequested = false,
 			bFireChange = false,
-			oGroupLock,
 			bPreventBubbling,
 			oPromise,
 			bRefreshEvent = !!this.sChangeReason, // ignored for "*VirtualContext"
@@ -2080,13 +2083,11 @@ sap.ui.define([
 			iMaximumPrefetchSize = 0;
 		}
 
-		oGroupLock = this.oReadGroupLock;
-		this.oReadGroupLock = undefined;
 		if (!this.oDiff) { // w/o E.C.D there won't be a diff
 			// before fetchContexts needing it and resolveRefreshPromise destroying it
 			bPreventBubbling = this.isRefreshWithoutBubbling();
 			// make sure "refresh" is followed by async "change"
-			oPromise = this.fetchContexts(iStart, iLength, iMaximumPrefetchSize, oGroupLock,
+			oPromise = this.fetchContexts(iStart, iLength, iMaximumPrefetchSize, undefined,
 				/*bAsync*/bRefreshEvent, function () {
 					bDataRequested = true;
 					that.fireDataRequested(bPreventBubbling);
@@ -3151,7 +3152,7 @@ sap.ui.define([
 		iStart = iStart || 0;
 		iLength = iLength || this.oModel.iSizeLimit;
 		return Promise.resolve(
-				this.fetchContexts(iStart, iLength, 0, this.lockGroup(sGroupId, true))
+				this.fetchContexts(iStart, iLength, 0, sGroupId && this.lockGroup(sGroupId, true))
 			).then(function (bChanged) {
 				if (bChanged) {
 					that._fireChange({reason : ChangeReason.Change});

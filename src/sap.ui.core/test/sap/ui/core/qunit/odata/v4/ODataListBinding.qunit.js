@@ -1324,39 +1324,45 @@ sap.ui.define([
 	//*********************************************************************************************
 [false, true].forEach(function (bAsync) {
 	[false, true].forEach(function (bGroupLock) {
-	QUnit.test("fetchContexts: async=" + bAsync + ", groupLock=" + bGroupLock, function (assert) {
+		[false, true].forEach(function (bReadGroupLock) {
+	var sTitle = "fetchContexts: async=" + bAsync + ", groupLock=" + bGroupLock
+		+ ", readGroupLock=" + bReadGroupLock;
+
+	QUnit.test(sTitle, function (assert) {
 		var oBinding = this.bindList("/EMPLOYEES"),
-			bChanged = {/*boolean*/},
-			fnDataRequested = {/*function*/},
-			oGroupLock = {},
 			bPending = true,
 			oPromise,
-			oResult = {value : {}};
+			oReadGroupLock = bReadGroupLock ? "~oReadGroupLock~" : undefined,
+			oResult = {value : []};
 
-		this.mock(oBinding).expects("lockGroup").exactly(bGroupLock ? 0 : 1)
-			.withExactArgs().returns(oGroupLock);
+		oBinding.oReadGroupLock = oReadGroupLock;
+		this.mock(oBinding).expects("lockGroup").exactly(bGroupLock || bReadGroupLock ? 0 : 1)
+			.withExactArgs().returns("~oGroupLock~");
 		this.mock(oBinding).expects("fetchData")
-			.withExactArgs(1, 2, 3, sinon.match.same(oGroupLock),
-				sinon.match.same(fnDataRequested))
+			.withExactArgs(1, 2, 3,
+				!bGroupLock && bReadGroupLock ? "~oReadGroupLock~" : "~oGroupLock~",
+				"~fnDataRequested~")
 			.returns(SyncPromise.resolve(oResult));
 		this.mock(oBinding).expects("createContexts")
 			.withExactArgs(1, sinon.match.same(oResult.value))
-			.returns(SyncPromise.resolve(bChanged));
+			.returns(SyncPromise.resolve("~bChanged~"));
 
 		// code under test
-		oPromise = oBinding.fetchContexts(1, 2, 3, bGroupLock ? oGroupLock : undefined, bAsync,
-				fnDataRequested)
+		oPromise = oBinding.fetchContexts(1, 2, 3, bGroupLock ? "~oGroupLock~" : undefined, bAsync,
+				"~fnDataRequested~")
 			.then(function (bResult) {
-				assert.strictEqual(bResult, bChanged);
+				assert.strictEqual(bResult, "~bChanged~");
 				bPending = false;
 			});
 		this.mock(oBinding).expects("checkSuspended").never();
 		oBinding.setContext({}); // must not change anything, the binding is absolute
 
 		assert.strictEqual(bPending, bAsync);
+		assert.strictEqual(oBinding.oReadGroupLock, bGroupLock ? oReadGroupLock : undefined);
 
 		return oPromise;
 	});
+		});
 	});
 });
 
@@ -1415,6 +1421,7 @@ sap.ui.define([
 			oError = new Error(),
 			oGroupLock = {unlock : function () {}};
 
+		oBinding.oReadGroupLock = undefined;
 		this.mock(oBinding).expects("lockGroup").exactly(bHasGroupLock ? 0 : 1)
 			.withExactArgs().returns(oGroupLock);
 		this.mock(oBinding).expects("fetchData")
@@ -1460,18 +1467,19 @@ sap.ui.define([
 
 	//*********************************************************************************************
 [false, true].forEach(function (bChanged) {
-	QUnit.test("requestContexts: changed=" + bChanged, function (assert) {
+	[undefined, "groupId"].forEach(function (sGroupId) {
+	QUnit.test("requestContexts: changed=" + bChanged + ", group=" + sGroupId, function (assert) {
 		var oBinding = this.bindList("n/a"),
 			aContexts = [],
-			oGroupLock = {},
+			oGroupLock = sGroupId && "~oGroupLock~",
 			oPromise;
 
 		this.mock(oBinding).expects("isResolved").withExactArgs().returns(true);
 		this.mock(oBinding).expects("checkSuspended").withExactArgs();
-		this.mock(_Helper).expects("checkGroupId").withExactArgs("groupId");
-		this.mock(oBinding).expects("lockGroup").withExactArgs("groupId", true).returns(oGroupLock);
-		this.mock(oBinding).expects("fetchContexts")
-			.withExactArgs(1, 2, 0, sinon.match.same(oGroupLock))
+		this.mock(_Helper).expects("checkGroupId").withExactArgs(sGroupId);
+		this.mock(oBinding).expects("lockGroup").exactly(sGroupId ? 1 : 0)
+			.withExactArgs(sGroupId, true).returns(oGroupLock);
+		this.mock(oBinding).expects("fetchContexts").withExactArgs(1, 2, 0, oGroupLock)
 			.returns(SyncPromise.resolve(Promise.resolve(bChanged)));
 		this.mock(oBinding).expects("_fireChange").exactly(bChanged ? 1 : 0)
 			.withExactArgs({reason : ChangeReason.Change});
@@ -1480,27 +1488,26 @@ sap.ui.define([
 			.returns(aContexts);
 
 		// code under test
-		oPromise = oBinding.requestContexts(1, 2, "groupId").then(function (aResults) {
+		oPromise = oBinding.requestContexts(1, 2, sGroupId).then(function (aResults) {
 			assert.strictEqual(aResults, aContexts);
 		});
 
 		assert.ok(oPromise instanceof Promise);
 		return oPromise;
 	});
+	});
 });
 
 	//*********************************************************************************************
 	QUnit.test("requestContexts: parameter defaults", function (assert) {
 		var oBinding = this.bindList("n/a"),
-			aContexts = [],
-			oGroupLock = {};
+			aContexts = [];
 
 		this.mock(oBinding).expects("isResolved").withExactArgs().returns(true);
 		this.mock(oBinding).expects("checkSuspended").withExactArgs();
 		this.mock(_Helper).expects("checkGroupId").withExactArgs(undefined);
-		this.mock(oBinding).expects("lockGroup").withExactArgs(undefined, true).returns(oGroupLock);
 		this.mock(oBinding).expects("fetchContexts")
-			.withExactArgs(0, this.oModel.iSizeLimit, 0, sinon.match.same(oGroupLock))
+			.withExactArgs(0, this.oModel.iSizeLimit, 0, undefined)
 			.returns(SyncPromise.resolve(Promise.resolve(false)));
 		this.mock(oBinding).expects("_fireChange").never();
 		this.mock(oBinding).expects("getContextsInViewOrder")
@@ -1516,15 +1523,13 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("requestContexts: error in fetchContexts", function (assert) {
 		var oBinding = this.bindList("/EMPLOYEES"),
-			oError = new Error(),
-			oGroupLock = {};
+			oError = new Error();
 
 		this.mock(oBinding).expects("isResolved").withExactArgs().returns(true);
 		this.mock(oBinding).expects("checkSuspended").withExactArgs();
 		this.mock(_Helper).expects("checkGroupId").withExactArgs(undefined);
-		this.mock(oBinding).expects("lockGroup").withExactArgs(undefined, true).returns(oGroupLock);
 		this.mock(oBinding).expects("fetchContexts")
-			.withExactArgs(1, 2, 0, sinon.match.same(oGroupLock))
+			.withExactArgs(1, 2, 0, undefined)
 			.returns(SyncPromise.resolve(Promise.reject(oError)));
 		this.mock(oBinding).expects("_fireChange").never();
 		this.mock(oBinding).expects("getContextsInViewOrder").never();
@@ -1597,7 +1602,7 @@ sap.ui.define([
 			iMaximumPrefetchSize = bKeepCurrent ? 0 : 100,
 			aResults;
 
-		oBinding.oReadGroupLock = undefined;
+		oBinding.oReadGroupLock = "~oReadGroupLock~";
 		oBinding.iCurrentBegin = 2;
 		oBinding.iCurrentEnd = 7;
 		this.oLogMock.expects("debug")
@@ -1622,6 +1627,7 @@ sap.ui.define([
 		// code under test
 		aResults = oBinding.getContexts(5, 10, iMaximumPrefetchSize, bKeepCurrent);
 
+		assert.strictEqual(oBinding.oReadGroupLock, "~oReadGroupLock~");
 		assert.strictEqual(aResults, aContexts);
 		assert.strictEqual(oBinding.iCurrentBegin, bKeepCurrent ? 2 : 5);
 		assert.strictEqual(oBinding.iCurrentEnd, bKeepCurrent ? 7 : 15);
@@ -1664,7 +1670,7 @@ sap.ui.define([
 			});
 
 		oFetchContextsCall = oBindingMock.expects("fetchContexts")
-			.withExactArgs(0, 10, 100, sinon.match.object, false, sinon.match.func)
+			.withExactArgs(0, 10, 100, undefined, false, sinon.match.func)
 			.returns(oFetchContextsPromise);
 		oBindingMock.expects("fireDataRequested").never(); // expect it later
 		oBindingMock.expects("fireDataReceived").never(); // expect it later
@@ -1714,7 +1720,7 @@ sap.ui.define([
 
 		oBinding.sChangeReason = sChangeReason;
 		this.mock(oBinding).expects("fetchContexts")
-			.withExactArgs(0, 10, 100, sinon.match.object, /*bAsync=*/true, sinon.match.func)
+			.withExactArgs(0, 10, 100, undefined, /*bAsync=*/true, sinon.match.func)
 			.returns(oFetchContextsPromise);
 		this.mock(oBinding).expects("_fireChange")
 			.withExactArgs({reason : sChangeReason});
@@ -1723,25 +1729,6 @@ sap.ui.define([
 		oBinding.getContexts(0, 10, 100);
 
 		assert.strictEqual(oBinding.sChangeReason, undefined);
-
-		return oFetchContextsPromise;
-	});
-
-	//*********************************************************************************************
-	QUnit.test("getContexts: read group lock", function (assert) {
-		var oBinding = this.bindList("/EMPLOYEES"),
-			oFetchContextsPromise = SyncPromise.resolve(Promise.resolve(false)),
-			oReadGroupLock = {/*GroupLock*/};
-
-		oBinding.oReadGroupLock = oReadGroupLock;
-		this.mock(oBinding).expects("fetchContexts")
-			.withExactArgs(0, 10, 100, sinon.match.same(oReadGroupLock), false, sinon.match.func)
-			.returns(oFetchContextsPromise);
-
-		// code under test
-		oBinding.getContexts(0, 10, 100);
-
-		assert.strictEqual(oBinding.oReadGroupLock, undefined);
 
 		return oFetchContextsPromise;
 	});
@@ -2040,7 +2027,6 @@ sap.ui.define([
 			aDiff : aDiff,
 			iLength : 10
 		};
-
 		this.mock(oBinding).expects("checkSuspended").withExactArgs();
 		this.mock(oBinding).expects("isResolved").withExactArgs().returns(true);
 		this.mock(oBinding).expects("getDiff").never();
