@@ -48888,6 +48888,58 @@ make root = ${bMakeRoot}`;
 });
 
 	//*********************************************************************************************
+	// Scenario: Evaluate "ValueListRelevantQualifiers" annotation with Partner NavigationProperty.
+	// BCP: 2380132332
+[0, 1].forEach(function (iValue) {
+	QUnit.test("BCP: 2380132332, value=" + iValue, async function (assert) {
+		const oModel = this.createSpecialCasesModel({autoExpandSelect : true});
+		const sView = `
+<FlexBox id="outer" binding="{/As(0)}">
+	<Text id="aid" text="{AID}"/>
+	<Text id="avalue" text="{AValue}"/>
+	<FlexBox id="inner" binding="{AtoCs(1)}">
+		<Text id="cid" text="{CID}"/>
+		<Text id="cvalue" text="{CValue}"/>
+	</FlexBox>
+</FlexBox>`;
+
+		//TODO why is all of AtoCs expanded here?
+		this.expectRequest("As(0)?$select=AID,AValue&$expand=AtoCs($select=CID,CValue)", {
+				AID : 0,
+				AValue : iValue,
+				AtoCs : [{
+					CID : 1,
+					CValue : 1
+				}]
+			})
+			.expectChange("aid", "0")
+			.expectChange("avalue", "" + iValue)
+			.expectChange("cid", "1")
+			.expectChange("cvalue", "1");
+
+		await this.createView(assert, sView, oModel);
+
+		const oContext = this.oView.byId("inner").getBindingContext();
+		assert.strictEqual(oContext.getPath(), "/As(0)/AtoCs(1)");
+
+		// code under test
+		const mQualifier2ValueListType = await oModel.getMetaModel()
+			.requestValueListInfo("/As/AtoCs/CtoEs/EValue", true, oContext);
+
+		if (iValue === 1) {
+			delete mQualifier2ValueListType["same"]?.$model;
+			assert.deepEqual(mQualifier2ValueListType, {
+				same : {
+					Label : "Same label ;-)"
+				}
+			});
+		} else {
+			assert.deepEqual(mQualifier2ValueListType, {}, "empty");
+		}
+	});
+});
+
+	//*********************************************************************************************
 	// Scenario: With the binding parameter <code>$$ignoreMessages</code> the application developer
 	// can control whether messages are displayed at the control. It works for
 	// <code>sap.ui.model.odata.v4.ODataPropertyBinding</code>s and composite bindings containing
