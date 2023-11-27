@@ -21,7 +21,7 @@
 	</script>
 
 	<script>
-	jQuery.fn.filterByText = function(textbox) {
+	jQuery.fn.filterByText = function($textbox) {
 		return this.each(function() {
 			var selectbox = this;
 			var options = [];
@@ -30,7 +30,10 @@
 			});
 			jQuery(selectbox).data("options", options);
 
-			jQuery(textbox).on("change keyup", function() {
+			// jQuery object or a selector
+			// (https://codeql.github.com/codeql-query-help/javascript/js-unsafe-jquery-plugin/)
+			$textbox = ($textbox instanceof jQuery) ? $textbox : jQuery(jQuery.find($textbox));
+			$textbox.on("change keyup", function() {
 				var options = jQuery(selectbox).empty().data("options");
 				var search = jQuery(this).val().trim();
 				var regex = new RegExp(search, "gi");
