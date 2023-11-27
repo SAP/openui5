@@ -742,5 +742,32 @@
         ]
       }
     ]
+  },
+  "1.96.25": {
+    "date": "November 2023",
+    "notes": [
+      {
+        "id": "2d2aff6f15b788a421debb33da080186712f655c",
+        "type": "FIX",
+        "text": " core/routing: find parent route from the router of the inheritance parent",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400009859762023"
+          }
+        ]
+      },
+      {
+        "id": "c59e5b9f8699921bb2a816752a0554662bdfadeb",
+        "type": "FIX",
+        "text": " Stabilize QUnit test for BeaconRequest",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370118287"
+          }
+        ]
+      }
+    ]
   }
 }

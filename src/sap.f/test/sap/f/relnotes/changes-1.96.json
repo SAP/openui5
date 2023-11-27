@@ -220,5 +220,36 @@
         ]
       }
     ]
+  },
+  "1.96.25": {
+    "date": "November 2023",
+    "notes": [
+      {
+        "id": "b0a17d175b9d07f846df9de508efac9ae3fb4c22",
+        "type": "FIX",
+        "text": " sap.f.DynamicPage: Wizard button on mobile correctly positioned",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280067783"
+          },
+          {
+            "type": "BCP",
+            "reference": "002075129500009429332023"
+          }
+        ]
+      },
+      {
+        "id": "9a23463ccb66828772b91b9e5903b37d3add154d",
+        "type": "FIX",
+        "text": " sap.f.DynamicPage: Fix RTA for content of DynamicPageTitle",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500008317072023"
+          }
+        ]
+      }
+    ]
   }
 }

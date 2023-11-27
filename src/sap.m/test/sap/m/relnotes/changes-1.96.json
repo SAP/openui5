@@ -1764,5 +1764,47 @@
         ]
       }
     ]
+  },
+  "1.96.25": {
+    "date": "November 2023",
+    "notes": [
+      {
+        "id": "7bedf5c5bb0e10bc30cd17d474f2e17fb1cc39ac",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: Value is validated on focus out on mobile",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          },
+          {
+            "type": "BCP",
+            "reference": "2370080708"
+          }
+        ]
+      },
+      {
+        "id": "49d46f17e0562b50c0d9540c48849fb1d683969e",
+        "type": "FIX",
+        "text": " sap.m.IconTabBar: Count in filter is now visible on mobile Safari",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500007028902023"
+          }
+        ]
+      },
+      {
+        "id": "d3b35f92cac2a1b79c8e8906692853e7c9c24270",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: OPA tests in demo app are now running",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370127346"
+          }
+        ]
+      }
+    ]
   }
 }
