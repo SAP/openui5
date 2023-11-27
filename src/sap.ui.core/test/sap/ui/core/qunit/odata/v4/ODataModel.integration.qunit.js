@@ -30984,6 +30984,10 @@ make root = ${bMakeRoot}`;
 			await resolveLater(undefined, /*iDelay*/1);
 		}
 
+		assert.strictEqual(oAlpha.created(), undefined, "persisted, not created");
+		assert.strictEqual(oAlpha.getProperty("@$ui5.context.isTransient"), undefined);
+		assert.strictEqual(oAlpha.isTransient(), undefined);
+
 		this.expectEvents(assert, "sap.ui.model.odata.v4.ODataListBinding: /EMPLOYEES", [
 				[, "change", {reason : "change"}]
 			])
@@ -31003,6 +31007,8 @@ make root = ${bMakeRoot}`;
 			oAlpha.move({parent : oOmega}),
 			this.waitForChanges(assert, "move 0 (Alpha) to 9 (Omega)")
 		]);
+
+		checkCreatedPersisted(assert, oAlpha);
 
 		if (bMoveCollapsed) {
 			this.expectEvents(assert, "sap.ui.model.odata.v4.ODataListBinding: /EMPLOYEES", [
@@ -31030,6 +31036,7 @@ make root = ${bMakeRoot}`;
 		const oBeta = oTable.getRows()[2].getBindingContext();
 		const oKappa = oTable.getRows()[3].getBindingContext();
 		assert.strictEqual(oAlpha.getIndex(), 1);
+		assert.strictEqual(oKappa.created(), undefined, "persisted, not created");
 
 		const iBatchNo = this.iBatchNo + 1; // don't care about exact no., but use twice below
 		this.expectEvents(assert, "sap.ui.model.odata.v4.ODataListBinding: /EMPLOYEES", [
@@ -31061,6 +31068,8 @@ make root = ${bMakeRoot}`;
 			oKappa.move({parent : oBeta}),
 			this.waitForChanges(assert, "move 2 (Kappa) to collapsed 1 (Beta)")
 		]);
+
+		checkCreatedPersisted(assert, oKappa);
 
 		checkTable("after move 2 (Kappa) to collapsed 1 (Beta)", assert, oTable, [
 			"/EMPLOYEES('9')",

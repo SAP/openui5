@@ -1193,7 +1193,8 @@ sap.ui.define([
 	 * must happen while this move is pending! Omitting a new parent turns this node into a root
 	 * node (since 1.121.0).
 	 *
-	 * This context's {@link #getIndex index} may change and it becomes "created persisted", with
+	 * This context's {@link #getIndex index} may change and, in case of
+	 * <code>oAggregation.expandTo : 1</code>, it becomes "created persisted", with
 	 * {@link #isTransient} returning <code>false</code> etc.
 	 *
 	 * @param {object} [oParameters] - A parameter object
