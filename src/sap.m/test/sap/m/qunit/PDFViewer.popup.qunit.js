@@ -31,6 +31,7 @@ sap.ui.define([
 
 		var oOptions = {
 			"source": "test-resources/sap/m/qunit/pdfviewer/sample-file.pdf",
+			"isTrustedSource": true,
 			"loaded": function () {
 				assert.ok(false, "'Load' event should not be fired");
 
@@ -53,6 +54,7 @@ sap.ui.define([
 
 		var oOptions = {
 			"source": "test-resources/sap/m/qunit/pdfviewer/sample-file.pdf",
+			"isTrustedSource": true,
 			"loaded": function () {
 				assert.ok(true, "'Load' event should be fired");
 				done();
@@ -73,6 +75,7 @@ sap.ui.define([
 
 		var oOptions = {
 			"source": 'test-resources/sap/m/qunit/pdfviewer/sample-file.pdf',
+			"isTrustedSource": true,
 			"loaded": function () {
 				assert.ok(true, "'Load' event should not be fired");
 			},
@@ -111,6 +114,8 @@ sap.ui.define([
 		var oOptions = {
 			"source": "test-resources/sap/m/qunit/pdfviewer/sample-file.pdf",
 			"popupHeaderTitle": "Custom header title",
+			"isTrustedSource": true,
+			"title": "Custom header title",
 			"loaded": function () {
 				assert.ok(true, "'Load' event fired.");
 
@@ -131,6 +136,7 @@ sap.ui.define([
 
 		var oOptions = {
 			"source": "test-resources/sap/m/qunit/pdfviewer/sample-file.pdf",
+			"isTrustedSource": true,
 			"loaded": function () {
 				assert.ok(true, "'Load' event fired.");
 
@@ -156,6 +162,7 @@ sap.ui.define([
 
 		var oOptions = {
 			"source": "test-resources/sap/m/qunit/pdfviewer/sample-file.pdf",
+			"isTrustedSource": true,
 			"popupHeaderTitle": "",
 			"loaded": function () {
 				assert.ok(true, "'Load' event fired.");
@@ -179,6 +186,7 @@ sap.ui.define([
 
 		var oOptions = {
 			"source": "test-resources/sap/m/qunit/pdfviewer/sample-file.pdf",
+			"isTrustedSource": true,
 			"loaded": function () {
 				assert.ok(true, "'Load' event fired but should not.");
 
@@ -201,6 +209,7 @@ sap.ui.define([
 
 		var oOptions = {
 			"source": "test-resources/sap/m/qunit/pdfviewer/sample-file.pdf",
+			"isTrustedSource": true,
 			"loaded": function () {
 				assert.ok(true, "'Load' event fired but should not.");
 
@@ -223,6 +232,7 @@ sap.ui.define([
 
 		var oOptions = {
 			"source": "test-resources/sap/m/qunit/pdfviewer/sample-file.pdf",
+			"isTrustedSource": true,
 			"showDownloadButton": false,
 			"loaded": function () {
 				assert.ok(true, "'Load' event fired but should not.");

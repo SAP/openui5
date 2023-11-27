@@ -241,6 +241,10 @@ sap.ui.define([
 			// it is important to reset the flag before each render
 			// otherwise it wrongly detects error state (the unload listener is called once even in valid use case)
 			this._bOnBeforeUnloadFired = false;
+                        if (!this.getIsTrustedSource() && !this._isDisplayTypeLink()) {
+                                this.sInitialDisplayType = this.getDisplayType();
+                                this.setProperty("displayType", PDFViewerDisplayType.Link, true);
+                        }
 		};
 
 		/**
@@ -249,6 +253,9 @@ sap.ui.define([
 		 * @private
 		 */
 		PDFViewer.prototype.onAfterRendering = function () {
+			if (this.sInitialDisplayType) {
+				this.setProperty("displayType", this.sInitialDisplayType, true);
+			}
 			var fnInitIframeElement = function () {
 				// cant use attachBrowserEvent because it attach event to component root node (this.$())
 				// load event does not bubble so it has to be bind directly to iframe element
@@ -514,6 +521,9 @@ sap.ui.define([
 		 * @public
 		 */
 		PDFViewer.prototype.open = function () {
+			if (!this.getIsTrustedSource() && !this._isDisplayTypeLink()) {
+				this.setProperty("displayType", PDFViewerDisplayType.Link, true);
+			}
 			if (!this._isSourceValidToDisplay()) {
 				assert(false, "The PDF file cannot be opened with the given source. Given source: " + this.getSource());
 				return;
