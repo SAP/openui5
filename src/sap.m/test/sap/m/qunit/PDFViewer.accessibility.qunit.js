@@ -26,6 +26,7 @@ sap.ui.define([
 			oOptions = {
 			"title": sExpectedTitleText,
 			"source": "test-resources/sap/m/qunit/pdfviewer/sample-file.pdf",
+			"isTrustedSource": true,
 			"loaded": function () {
 				assert.ok(true, "'Load' event fired");
 				checkToolbar();
@@ -56,6 +57,7 @@ sap.ui.define([
 
 		var oOptions = {
 			"source": "test-resources/sap/m/qunit/pdfviewer/sample-file.pdf",
+			"isTrustedSource": true,
 			"loaded": function () {
 				assert.ok(true, "'Load' event fired");
 				checkPopupContent();

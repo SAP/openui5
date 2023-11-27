@@ -28,6 +28,7 @@ sap.ui.define( [
 
 			var oOptions = {
 				"source": "test-resources/sap/m/qunit/pdfviewer/different-content.html",
+				"isTrustedSource": true,
 				"loaded": function () {
 					if (!Device.browser.firefox) {
 						assert.ok(false, "'Load' event should not be fired");
@@ -60,6 +61,7 @@ sap.ui.define( [
 
 		var oOptions = {
 			"source": "test-resources/sap/m/qunit/pdfviewer/not-existing",
+			"isTrustedSource": true,
 			"loaded": function () {
 				assert.ok(false, "'Load' event fired but should not.");
 			},
@@ -89,6 +91,7 @@ sap.ui.define( [
 			},
 			oErrorOptions = {
 				"source": "test-resources/sap/m/qunit/pdfviewer/not-existing",
+				"isTrustedSource": true,
 				"loaded": fnLoadedFailListener,
 				"error": fnErrorOkListener
 			},
@@ -146,6 +149,7 @@ sap.ui.define( [
 			},
 			oErrorOptions = {
 				"source": "test-resources/sap/m/qunit/pdfviewer/sample-file.pdf",
+				"isTrustedSource": true,
 				"loaded": fnLoadedListener,
 				"error": fnErrorListener
 			},
@@ -186,6 +190,7 @@ sap.ui.define( [
 
 		oPDFViewer = TestUtils.createPdfViewer({
 			source: "test-resources/sap/m/qunit/pdfviewer/sample file with spaces.pdf",
+			isTrustedSource: true,
 			loaded: function fnLoadedHandler() {
 				assert.ok(true, "The pdf was loaded");
 				done();
@@ -203,6 +208,7 @@ sap.ui.define( [
 		this.stub(Device, "system").value({desktop: false});
 
 		oPDFViewer = TestUtils.createPdfViewer({
+			isTrustedSource: true,
 			height: '250px',
 			source: "test-resources/sap/m/qunit/pdfviewer/sample file with spaces.pdf"
 		});
@@ -217,7 +223,8 @@ sap.ui.define( [
 		Device.browser.firefox = false;
 
 		oPDFViewer = TestUtils.createPdfViewer({
-			source: "test-resources/sap/m/qunit/pdfviewer/sample-file.pdf"
+			source: "test-resources/sap/m/qunit/pdfviewer/sample-file.pdf",
+			isTrustedSource: true
 		});
 		this.stub(oPDFViewer.getRenderer(), "_isPdfPluginEnabled").returns(false);
 
