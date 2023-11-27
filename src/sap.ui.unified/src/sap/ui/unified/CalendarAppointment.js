@@ -252,11 +252,15 @@ sap.ui.define([
 	 * @private
 	 */
 	CalendarAppointment.prototype._getCSSColorForBackground = function(sHex) {
+		if (sHex.length === 4) {
+			// normalize shortened hex values (#abc -> #aabbcc) in order to work properly with them
+			sHex = '#' + sHex.charAt(1) + sHex.charAt(1) + sHex.charAt(2) + sHex.charAt(2) + sHex.charAt(3) + sHex.charAt(3);
+		}
 		return "rgba(" + [
 				parseInt(sHex.substr(1, 2), 16), // Red
 				parseInt(sHex.substr(3, 2), 16), // Green
 				parseInt(sHex.substr(5, 2), 16) // Blue
-			].join(",") + ", 0.2)";
+			].join(", ") + ", 0.2)";
 	};
 
 	CalendarAppointment.prototype._setAppointmentPartSuffix = function (sSuffix) {
