@@ -122,13 +122,6 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 						"type": "string",
 						"label": "String with translated value in i18n format"
 					},
-					"parameterSyntaxInValue": {
-						"manifestpath": "/sap.card/configuration/parameters/parameterSyntaxInValue/value",
-						"type": "string",
-						"translatable": true,
-						"required": true,
-						"label": "Parameter syntax in value"
-					},
 					"separator6": {
 						"type": "separator"
 					},
