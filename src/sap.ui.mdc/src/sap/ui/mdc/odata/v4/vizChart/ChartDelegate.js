@@ -784,7 +784,7 @@ sap.ui.define([
                         aColorPromises.push(new Promise(function(resolve, reject){
                             oChart._getPropertyByNameAsync(sKey).then(function(oPropertyInfo){
                                 const aggregationMethod = oPropertyInfo.aggregationMethod;
-                                const propertyPath = oPropertyInfo.propertyPath;
+                                const propertyPath = oPropertyInfo.path;
                                 const sName = this.getInternalChartNameFromPropertyNameAndKind(sKey, "aggregatable", oChart);
 
                                 const oMeasureSettings = {
@@ -1446,7 +1446,7 @@ sap.ui.define([
      */
     ChartDelegate.innerMeasureFactory = function(oChart, oChartItem, oPropertyInfo) {
         const aggregationMethod = oPropertyInfo.aggregationMethod;
-        const propertyPath = oPropertyInfo.propertyPath;
+        const propertyPath = oPropertyInfo.path;
 
         const oMeasureSettings = {
             name: this._getAggregatedMeasureNameForMDCItem(oChartItem),//aggregationMethod + oItem.getPropertyKey() under normal circumstances

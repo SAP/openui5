@@ -30,7 +30,6 @@ sap.ui.define([
 	 * @version ${version}
 	 *
 	 * @private
-	 * @experimental
 	 * @since 1.83
 	 * @alias sap.ui.mdc.chart.PropertyHelper
 	 */
@@ -48,6 +47,7 @@ sap.ui.define([
 				aggregatable: {
 					type: "boolean"
 				},
+				// @deprecated since 1.121. use <code>path</code> instead.
 				propertyPath: {
 					type: "string"
 				},
@@ -66,9 +66,11 @@ sap.ui.define([
 				textProperty : {
 					type: "string"
 				},
+				// this is not a public property
 				availableRoles : {
 					type: "object"
 				},
+				// this is not a public property
 				kind: {
 					type: "string"
 				}
@@ -77,6 +79,10 @@ sap.ui.define([
 	});
 
 	PropertyHelper.prototype.prepareProperty = function(oProperty) {
+		if (!oProperty.path && oProperty.propertyPath) {
+			oProperty.path = oProperty.propertyPath;
+		}
+
 		if (oProperty.groupable) {
 			oProperty.availableRoles = this._getLayoutOptionsForType("groupable");
 			oProperty.kind = "Groupable";
