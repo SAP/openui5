@@ -144,9 +144,10 @@
                 <module>sap/m/p13n/SortPanel</module>
                 <module>sap/m/p13n/GroupController</module>
                 <module>sap/m/p13n/GroupPanel</module>
-                <module>sap/m/p13n/Egine</module>
+                <module>sap/m/p13n/Engine</module>
                 <module>sap/m/p13n/MetadataHelper</module>
                 <module>sap/m/p13n/Popup</module>
+                <module>sap/m/VariantManagement</module>
             </modules>
         </component>
         <component>
