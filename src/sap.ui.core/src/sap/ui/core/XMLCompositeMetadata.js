@@ -33,6 +33,7 @@ sap.ui.define([
 	 * @alias sap.ui.core.XMLCompositeMetadata
 	 * @extends sap.ui.core.ElementMetadata
 	 * @public
+	 * @deprecated As of version 1.88, use {@link topic:c1512f6ce1454ff1913e3857bad56392 Standard Composite Controls}
 	 * @experimental
 	 */
 	var XMLCompositeMetadata = function (sClassName, oClassInfo) {

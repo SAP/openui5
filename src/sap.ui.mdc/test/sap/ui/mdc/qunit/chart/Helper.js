@@ -22,14 +22,14 @@ sap.ui.define([
 			properties: [
 				{
 					name: "SalesNumber",
-					propertyPath: "SalesNumber",
+					path: "SalesNumber",
 					type: "Edm.Int32",
 					required: true,
 					label: "Sales Number",
 					kind: "Measure"
 				}, {
 					name: "agSalesAmount",
-					propertyPath: "SalesAmount",
+					path: "SalesAmount",
 					type: "string",
 					required: true,
 					label: "Sales Amount",
@@ -38,7 +38,7 @@ sap.ui.define([
 					supportedAggregations: ["sum", "min", "max", "average"]
 				}, {
 					name: "Name",
-					propertyPath: "Name",
+					path: "Name",
 					type: "string",
 					required: true,
 					label: "Name",

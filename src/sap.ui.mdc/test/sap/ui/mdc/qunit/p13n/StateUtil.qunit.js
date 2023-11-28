@@ -1148,14 +1148,14 @@ sap.ui.define([
             },
             {
                 name: "SalesNumber",
-                propertyPath: "SalesNumber",
+                path: "SalesNumber",
                 dataType: "Edm.Int32",
                 aggregatable: true,
                 label: "Sales Number",
                 kind: "Aggregatable"
             }, {
                 name: "agSalesAmount",
-                propertyPath: "SalesAmount",
+                path: "SalesAmount",
                 dataType: "String",
                 label: "Sales Amount",
                 kind: "Aggregatable",
@@ -1164,7 +1164,7 @@ sap.ui.define([
                 //supportedAggregations: ["sum", "min", "max", "average"]
             }, {
                 name: "Name",
-                propertyPath: "Name",
+                path: "Name",
                 dataType: "String",
                 label: "Name",
                 groupable: true,

@@ -91,7 +91,7 @@ sap.ui.define([
 				/**
 				 * The set of Generic Tiles to be shown in the control.
 				 */
-				tiles: {type: "sap.m.GenericTile", multiple: true, singularName: "tile", bindable: "bindable"},
+				tiles: {type: "sap.m.GenericTile", defaultClass: GenericTile, multiple: true, singularName: "tile", bindable: "bindable"},
 				/**
 				 * The pause/play icon that is being used to display the pause/play state of the control.
 				 */

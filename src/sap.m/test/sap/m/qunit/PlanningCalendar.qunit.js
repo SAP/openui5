@@ -4398,6 +4398,16 @@ sap.ui.define([
 		}, 200);
 	});
 
+	QUnit.test("CalendarAppointment handles shortened background hex color values properly", function(assert) {
+		var oAppointment = new CalendarAppointment();
+
+		// Assert
+		assert.strictEqual(oAppointment._getCSSColorForBackground("#ff00ff"), "rgba(255, 0, 255, 0.2)",
+			"Proper value returned from _getCSSColorForBackground when the hex value is not shortened");
+		assert.strictEqual(oAppointment._getCSSColorForBackground("#f0f"), "rgba(255, 0, 255, 0.2)",
+			"Proper value returned from _getCSSColorForBackground when the hex value is shortened");
+	});
+
 	function _getAppointmentsCount(oPC) {
 		var aRows = oPC.getRows(),
 			iAppointments = 0;

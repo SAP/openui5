@@ -230,10 +230,19 @@ sap.ui.define([
 		QUnit.test("when the activate dialog is confirmed for a Draft", function(assert) {
 			var done = assert.async();
 			this.oToolbar._openVersionTitleDialog(Version.Number.Draft).then(function() {
+				var oDialog = this.oToolbar.getControl("activateVersionDialog--dialog");
+				var oCloseSpy = sandbox.spy(oDialog, "close");
 				var oConfirmButton = this.oToolbar.getControl("activateVersionDialog--confirmVersionTitleButton");
 				var oVersionTitleInput = this.oToolbar.getControl("activateVersionDialog--versionTitleInput");
+				var oFireActivateSpy = sandbox.spy(this.oToolbar, "fireEvent");
 
+				// no version title is set
 				assert.strictEqual(oConfirmButton.getEnabled(), false, "initially the confirm button is disabled");
+				oConfirmButton.firePress();
+				assert.strictEqual(oCloseSpy.callCount, 0, "the dialog is not closed");
+				assert.strictEqual(oFireActivateSpy.callCount, 0, "no events were fired");
+
+				// set version title
 				oVersionTitleInput.setValue("myVersionName");
 				oVersionTitleInput.fireLiveChange({value: "myVersionName"});
 				assert.strictEqual(oConfirmButton.getEnabled(), true, "the confirm button is enabled");
@@ -243,6 +252,8 @@ sap.ui.define([
 					done();
 				});
 				oConfirmButton.firePress();
+				assert.strictEqual(oCloseSpy.callCount, 1, "the dialog is closed");
+				assert.strictEqual(oFireActivateSpy.callCount, 1, "the events were fired");
 			}.bind(this));
 		});
 

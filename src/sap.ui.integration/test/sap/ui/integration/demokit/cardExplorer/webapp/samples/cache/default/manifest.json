@@ -28,7 +28,9 @@
 	},
 	"sap.card": {
 		"type": "List",
-		"designtime": "dt/Configuration",
+		"configuration": {
+			"editor": "dt/Configuration"
+		},
 		"data": {
 			"request": {
 				"url": "./data.json"

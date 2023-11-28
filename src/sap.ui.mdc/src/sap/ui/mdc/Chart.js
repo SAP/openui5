@@ -456,29 +456,12 @@ sap.ui.define([
 		 * When specifying the <code>PropertyInfo</code> objects in the {@link sap.ui.mdc.Chart#getPropertyInfo propertyInfo} property, the following
 		 * attributes need to be specified:
 		 * <ul>
+		 *   <li><code>name</code></li>
 		 *   <li><code>label</code></li>
-		 *   <li><code>propertyPath</code></li>
 		 * </ul>
 		 *
-		 * @typedef {object} sap.ui.mdc.chart.PropertyInfo
-		 * @property {string} propertyPath
-		 *   The path to the property in the back end
-		 * @property {string} [name]
-		 *   The identifier of the property
-		 * @property {string} label
-		 *   The label of the identifier
-		 * @property {string} [tooltip]
-		 *   The tooltip of the identifier
-		 * @property {string} datatype
-		 *   The name of the data type of the property
-		 * @property {object} [constraints]
-		 *   Defines constraints for the data type of the property
-		 * @property {object} [formatOptions]
-		 *   Defines formatting options for the data type of the property
-		 * @property {boolean} [required = false]
-		 *   Defines if the filter is mandatory
-		 * @property {int} maxConditions
-		 *   Defines if the filter supports multiple values <code>-1</code> or single values <code>1</code>
+		 * @typedef {sap.ui.mdc.util.PropertyInfo} sap.ui.mdc.chart.PropertyInfo
+		 *
 		 * @property {boolean} groupable
 		 * 	Defines whether the property is groupable and is selectable as a dimension in the chart
 		 * @property {boolean} aggregatable
