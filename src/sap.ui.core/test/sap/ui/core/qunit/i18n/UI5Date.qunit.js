@@ -4,10 +4,10 @@
 sap.ui.define([
 	"sap/base/Log",
 	"sap/base/i18n/Localization",
+	"sap/base/i18n/date/TimezoneUtils",
 	"sap/base/util/deepClone",
-	"sap/ui/core/date/UI5Date",
-	"sap/ui/core/format/TimezoneUtil"
-], function (Log, Localization, deepClone, UI5Date, TimezoneUtil) {
+	"sap/ui/core/date/UI5Date"
+], function (Log, Localization, TimezoneUtils, deepClone, UI5Date) {
 	/*global QUnit, sinon*/
 	"use strict";
 
@@ -259,7 +259,7 @@ sap.ui.define([
 	QUnit.test("_getPart: return NaN for invalid dates", function (assert) {
 		var oUI5Date = {oDate: new Date("invalid")}; // no need to use UI5Date.getInstance
 
-		this.mock(TimezoneUtil).expects("_getParts").never();
+		this.mock(TimezoneUtils).expects("_getParts").never();
 
 		// code under test
 		assert.ok(isNaN(UI5Date.prototype._getPart.call(oUI5Date, "year")));
@@ -283,7 +283,7 @@ sap.ui.define([
 
 		assert.strictEqual(oUI5Date.oDateParts, undefined, "no date parts after creation");
 
-		this.mock(TimezoneUtil).expects("_getParts")
+		this.mock(TimezoneUtils).expects("_getParts")
 			.withExactArgs(sinon.match.same(oDate), "~timezone")
 			.returns(oDateParts);
 
@@ -412,11 +412,11 @@ sap.ui.define([
 			},
 			oNewDate = new Date(42); // no need to use UI5Date.getInstance
 
-		this.mock(TimezoneUtil).expects("_getDateFromParts")
+		this.mock(TimezoneUtils).expects("_getDateFromParts")
 			.withExactArgs(oFixture.oExpectedParts)
 			.returns(oNewDate);
 		this.mock(oNewDate).expects("getTime").withExactArgs().returns(42);
-		this.mock(TimezoneUtil).expects("calculateOffset")
+		this.mock(TimezoneUtils).expects("calculateOffset")
 			.withExactArgs(sinon.match.same(oNewDate),"~timezoneID")
 			.returns(3600);
 		this.mock(oUI5Date).expects("setTime").withExactArgs(3600042).returns("~timeInMs");
@@ -434,7 +434,7 @@ sap.ui.define([
 				setTime: function () {}
 			};
 
-		this.mock(TimezoneUtil).expects("_getDateFromParts").never();
+		this.mock(TimezoneUtils).expects("_getDateFromParts").never();
 
 		// code under test
 		assert.ok(isNaN(UI5Date.prototype._setParts.call(oUI5Date, ["year", "month"], ["2023", "foo"])));
@@ -514,11 +514,11 @@ sap.ui.define([
 			},
 			oNewDate = new Date(42); // no need to use UI5Date.getInstance
 
-		this.mock(TimezoneUtil).expects("_getDateFromParts")
+		this.mock(TimezoneUtils).expects("_getDateFromParts")
 			.withExactArgs(oFixture.oExpectedParts)
 			.returns(oNewDate);
 		this.mock(oNewDate).expects("getTime").withExactArgs().returns(42);
-		this.mock(TimezoneUtil).expects("calculateOffset")
+		this.mock(TimezoneUtils).expects("calculateOffset")
 			.withExactArgs(sinon.match.same(oNewDate),"~timezoneID")
 			.returns(3600);
 		this.mock(oUI5Date).expects("setTime").withExactArgs(3600042).returns("~timeInMs");
@@ -540,14 +540,14 @@ sap.ui.define([
 			},
 			oNewDate = new Date(42); // no need to use UI5Date.getInstance
 
-		this.mock(TimezoneUtil).expects("_getParts")
+		this.mock(TimezoneUtils).expects("_getParts")
 			.withExactArgs(sinon.match.same(oUI5Date.oDate), "~timezoneID")
 			.returns(oDateParts);
-		this.mock(TimezoneUtil).expects("_getDateFromParts")
+		this.mock(TimezoneUtils).expects("_getDateFromParts")
 			.withExactArgs(oFixture.oExpectedParts)
 			.returns(oNewDate);
 		this.mock(oNewDate).expects("getTime").withExactArgs().returns(42);
-		this.mock(TimezoneUtil).expects("calculateOffset")
+		this.mock(TimezoneUtils).expects("calculateOffset")
 			.withExactArgs(sinon.match.same(oNewDate),"~timezoneID")
 			.returns(3600);
 		this.mock(oUI5Date).expects("setTime").withExactArgs(3600042).returns("~timeInMs");
@@ -584,7 +584,7 @@ sap.ui.define([
 	QUnit.test("getTimezoneOffset()", function (assert) {
 		var oUI5Date = {oDate: "~oDate", sTimezoneID: "~timezoneID"};
 
-		this.mock(TimezoneUtil).expects("calculateOffset")
+		this.mock(TimezoneUtils).expects("calculateOffset")
 			.withExactArgs("~oDate", "~timezoneID")
 			.returns(12345 * 60);
 
@@ -811,7 +811,7 @@ sap.ui.define([
 		this.mock(Localization).expects("getTimezone")
 			.withExactArgs()
 			.returns("~Timezone");
-		this.mock(TimezoneUtil).expects("getLocalTimezone")
+		this.mock(TimezoneUtils).expects("getLocalTimezone")
 			.withExactArgs()
 			.returns("~Timezone");
 
@@ -833,7 +833,7 @@ sap.ui.define([
 			oMockedDate = {};
 
 		this.mock(Localization).expects("getTimezone").withExactArgs().returns("~configuredTimezone");
-		this.mock(TimezoneUtil).expects("getLocalTimezone").withExactArgs().returns("~localTimezone");
+		this.mock(TimezoneUtils).expects("getLocalTimezone").withExactArgs().returns("~localTimezone");
 		this.mock(UI5Date).expects("_createDateInstance")
 			.withExactArgs(sinon.match(function (oArguments) {
 				assert.deepEqual(Array.from(oArguments), []);
@@ -1066,7 +1066,7 @@ sap.ui.define([
 			.withExactArgs()
 			.atLeast(1)
 			.returns("Pacific/Fiji");
-		this.mock(TimezoneUtil).expects("getLocalTimezone")
+		this.mock(TimezoneUtils).expects("getLocalTimezone")
 			.withExactArgs()
 			.atLeast(1)
 			.returns("Europe/Berlin");
@@ -1207,13 +1207,13 @@ sap.ui.define([
 	QUnit.test("checkDate", function (assert) {
 		var oDate = new Date(), // no need to use UI5Date.getInstance
 			oLocalizationMock = this.mock(Localization),
-			oTimezoneUtilMock = this.mock(TimezoneUtil);
+			oTimezoneUtilsMock = this.mock(TimezoneUtils);
 
 		// code under test
 		UI5Date.checkDate(new UI5Date([], "Europe/Berlin"));
 
 		oLocalizationMock.expects("getTimezone").withExactArgs().returns("~configuredTimezone");
-		oTimezoneUtilMock.expects("getLocalTimezone").withExactArgs().returns("~localTimezone");
+		oTimezoneUtilsMock.expects("getLocalTimezone").withExactArgs().returns("~localTimezone");
 
 		// code under test
 		assert.throws(function () {
@@ -1222,7 +1222,7 @@ sap.ui.define([
 			+ "sap.ui.core.date.UI5Date"));
 
 		oLocalizationMock.expects("getTimezone").withExactArgs().returns("~localTimezone");
-		oTimezoneUtilMock.expects("getLocalTimezone").withExactArgs().returns("~localTimezone");
+		oTimezoneUtilsMock.expects("getLocalTimezone").withExactArgs().returns("~localTimezone");
 
 		// code under test
 		UI5Date.checkDate(oDate);
