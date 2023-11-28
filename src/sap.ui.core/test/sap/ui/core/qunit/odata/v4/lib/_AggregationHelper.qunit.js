@@ -1188,11 +1188,8 @@ sap.ui.define([
 			oAggregationMock = this.mock(oAggregation),
 			oExpectedAggregation = iExpandTo > 1 ? {
 				$DistanceFromRootProperty : "DistFromRoot",
-				$DrillStateProperty : "myDrillState",
 				$LimitedDescendantCountProperty : "LtdDescendant_Count"
-			} : {
-				$DrillStateProperty : "myDrillState"
-			},
+			} : {},
 			iExpectedLevels = iExpandTo || 1,
 			aExpectedSelect = iExpandTo > 1
 			? ["ID", "SomeNodeID", "DistFromRoot", "LtdDescendant_Count", "myDrillState"]
