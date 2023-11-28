@@ -34,9 +34,11 @@ sap.ui.define([
 			metadata: {
 				stereotype: "controllerextension",
 				methods: {
-					"byId" : 				{"public": true, "final": true},
+					"byId": 				{"public": true, "final": true},
+					"getInterface" : 		{"public": false, "final": true},
+					"getMetadata" : 		{"public": true, "final": true},
 					"getView" : 			{"public": true, "final": true},
-					"getInterface" : 		{"public": false, "final": true}
+					"isA" : 				{"public": true, "final": true}
 				}
 			},
 
