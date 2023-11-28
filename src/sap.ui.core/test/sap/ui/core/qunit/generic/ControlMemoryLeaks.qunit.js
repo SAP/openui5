@@ -7,8 +7,9 @@ sap.ui.define([
 	"sap/ui/test/generic/TestBase",
 	"sap/ui/test/generic/Utils",
 	"sap/ui/core/Element",
+	"sap/ui/core/ElementRegistry",
 	"sap/ui/qunit/utils/nextUIUpdate"
-], function(TestBase, Utils, Element, nextUIUpdate) {
+], function(TestBase, Utils, Element, ElementRegistry, nextUIUpdate) {
 	"use strict";
 
 	 // asserts that both given maps have the same entries
@@ -110,13 +111,13 @@ sap.ui.define([
 						await nextUIUpdate();
 
 						if (bFinalIteration) {
-							var mPostElements = Element.registry.all();
+							var mPostElements = ElementRegistry.all();
 
 							// controls left over by second instance are real leaks that will grow proportionally to instance count => ERROR
 							assert.equalElementsInControlList(mPostElements, mPreElements, "Memory leak check in " + sControlName);
 						} else {
 							// Render Control Instance 2 - any new controls leaked?
-							mPreElements = Element.registry.all();
+							mPreElements = ElementRegistry.all();
 						}
 					}.bind(this);
 

@@ -810,7 +810,7 @@ sap.ui.define([
 		var oElementB = new Element("B");
 
 		assert.ok(Object.keys(oCoreInternals.mElements).length, 2, "Return all registered Element instances");
-		assert.equal(oErrorLogSpy.getCall(0).args[0], "oCore.mElements was a private member and has been removed. Use one of the methods in sap.ui.core.Element.registry instead", "Logs error on private methode access");
+		assert.equal(oErrorLogSpy.getCall(0).args[0], "oCore.mElements was a private member and has been removed. Use one of the methods in sap.ui.core.ElementRegistry instead", "Logs error on private methode access");
 
 		oElementA.destroy();
 		oElementB.destroy();

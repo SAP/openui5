@@ -11,6 +11,7 @@ sap.ui.define([
 	"sap/ui/VersionInfo",
 	"sap/ui/base/DataType",
 	"sap/ui/core/Element",
+	"sap/ui/core/ElementRegistry",
 	"sap/ui/core/Control",
 	"sap/ui/core/Item",
 	"sap/ui/core/Lib",
@@ -19,7 +20,7 @@ sap.ui.define([
 	"sap/ui/dom/includeStylesheet",
 	"sap/ui/qunit/utils/nextUIUpdate",
 	"require"
-], function (Log, ObjectPath, VersionInfo, DataType, Element, Control, Item, Library, CommonsTextField, MobileText, includeStylesheet, nextUIUpdate, require) {
+], function (Log, ObjectPath, VersionInfo, DataType, Element, ElementRegistry, Control, Item, Library, CommonsTextField, MobileText, includeStylesheet, nextUIUpdate, require) {
 	"use strict";
 
 	var aKnownLibraries = [
@@ -440,7 +441,7 @@ sap.ui.define([
 
 	QUnit.module("Duplicate ID issues in Controls", {
 		afterEach: function() {
-			Element.registry.forEach(function(oElement, sId) {
+			ElementRegistry.forEach(function(oElement, sId) {
 				oElement.destroy();
 			});
 		}

@@ -3,6 +3,7 @@ sap.ui.define([
 	"sap/ui/qunit/utils/nextUIUpdate",
 	'sap/ui/core/Component',
 	'sap/ui/core/ComponentContainer',
+	'sap/ui/core/ComponentRegistry',
 	'sap/ui/core/Messaging',
 	'sap/ui/core/UIComponentMetadata',
 	'sap/ui/test/routing/Component',
@@ -12,13 +13,13 @@ sap.ui.define([
 	'sap/base/util/LoaderExtensions',
 	'sap/ui/core/Manifest',
 	'sap/base/i18n/ResourceBundle'
-], function (createAndAppendDiv, nextUIUpdate, Component, ComponentContainer, Messaging, UIComponentMetadata, SamplesRoutingComponent, SamplesRouterExtension, Log, deepExtend, LoaderExtensions, Manifest, ResourceBundle) {
+], function (createAndAppendDiv, nextUIUpdate, Component, ComponentContainer, ComponentRegistry, Messaging, UIComponentMetadata, SamplesRoutingComponent, SamplesRouterExtension, Log, deepExtend, LoaderExtensions, Manifest, ResourceBundle) {
 
 	"use strict";
 	/*global sinon, QUnit, foo*/
 
 	function cleanUpRegistry() {
-		Component.registry.forEach(function(oComponent) {
+		ComponentRegistry.forEach(function(oComponent) {
 			oComponent.destroy();
 		});
 	}
@@ -146,7 +147,7 @@ sap.ui.define([
 		var oCompCont1 = this.oCompCont1;
 		assert.ok(!!oComp.getComponentData(), "Component has component data");
 		assert.equal(oComp.getComponentData().foo, "bar", "Component data is correct");
-		var oComponent = Component.registry.get(oCompCont1.getComponent());
+		var oComponent = ComponentRegistry.get(oCompCont1.getComponent());
 		assert.ok(!!oComponent.getComponentData(), "Component has component data");
 		assert.equal(oComponent.getComponentData().foo, "bar", "Component data is correct");
 	});
@@ -1960,14 +1961,14 @@ sap.ui.define([
 		var aFilteredComponents = [];
 
 		assert.ok(Component.hasOwnProperty("registry"), "Component has static method to access registry");
-		assert.equal(Component.registry.size, 3, "Return number of registered component instances");
-		assert.deepEqual(Object.keys(Component.registry.all()).sort(), ["A", "B", "C"], "Return all registered component instances");
-		assert.ok(Component.registry.get("B") === oFooB, "Return reference of component B from registry by ID");
+		assert.equal(ComponentRegistry.size, 3, "Return number of registered component instances");
+		assert.deepEqual(Object.keys(ComponentRegistry.all()).sort(), ["A", "B", "C"], "Return all registered component instances");
+		assert.ok(ComponentRegistry.get("B") === oFooB, "Return reference of component B from registry by ID");
 
-		Component.registry.forEach(fnCallbackSpy);
+		ComponentRegistry.forEach(fnCallbackSpy);
 		assert.ok(fnCallbackSpy.calledThrice, "Callback was executed 3 times");
 
-		aFilteredComponents = Component.registry.filter(function(oComponent) {
+		aFilteredComponents = ComponentRegistry.filter(function(oComponent) {
 			return ["B", "C"].indexOf(oComponent.getId()) > -1;
 		});
 

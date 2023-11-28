@@ -6,11 +6,12 @@ sap.ui.define([
 	"sap/m/Image",
 	"sap/m/Label",
 	"sap/ui/core/UIArea",
+	"sap/ui/core/UIAreaRegistry",
 	"sap/ui/core/mvc/XMLView",
 	"sap/ui/core/util/serializer/ViewSerializer",
 	"sap/ui/qunit/utils/createAndAppendDiv"
 ],
-	function (Log, Button, Image, Label, UIArea, XMLView, ViewSerializer, createAndAppendDiv) {
+	function (Log, Button, Image, Label, UIArea, UIAreaRegistry, XMLView, ViewSerializer, createAndAppendDiv) {
 		"use strict";
 
 		createAndAppendDiv(["xmlViewArea", "xmlViewWithoutControllerArea"]);
@@ -68,7 +69,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("Serialize, Re-Instantiate and Check an XML View", function (assert) {
-			var oViewSerializer = new ViewSerializer(UIArea.registry.get("xmlViewArea"), null, "sap.m");
+			var oViewSerializer = new ViewSerializer(UIAreaRegistry.get("xmlViewArea"), null, "sap.m");
 
 			var mXMLViews = oViewSerializer.serializeToXML();
 			var sXMLResult = mXMLViews["serializer.view.TestXml"];
@@ -84,7 +85,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("Serialize, Check if a view that has no controller is still serializable", function (assert) {
-			var oViewSerializer = new ViewSerializer(UIArea.registry.get("xmlViewWithoutControllerArea"), null, "sap.m");
+			var oViewSerializer = new ViewSerializer(UIAreaRegistry.get("xmlViewWithoutControllerArea"), null, "sap.m");
 
 			var mXMLViews = oViewSerializer.serializeToXML();
 			var sResult = mXMLViews["serializer.view.TestViewWithoutController"];
