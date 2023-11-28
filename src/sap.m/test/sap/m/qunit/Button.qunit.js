@@ -1745,4 +1745,16 @@ sap.ui.define([
 		assert.equal(this.oButton._badgeMaxValue, 200, "Badge maximum value is not changed becasue is less than minimum badge constraint");
 
 	});
+
+	QUnit.test("Buttton.prototype._updateBadgeInvisibleText", function(assert) {
+		// Prepare
+		var oButton = new Button();
+		var oConsoleErrorSpy = this.spy(console, "error");
+
+		// Act
+		oButton._updateBadgeInvisibleText("text");
+
+		// Assert
+		assert.ok(oConsoleErrorSpy.notCalled, "There is no console error");
+	});
 });
