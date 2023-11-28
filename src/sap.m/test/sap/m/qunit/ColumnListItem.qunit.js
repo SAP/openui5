@@ -306,6 +306,11 @@ sap.ui.define([
 		oTable.placeAt("qunit-fixture");
 		Core.applyChanges();
 
+		try {
+			oCLI.$("sub").trigger("touchstart");
+		} catch (e) { /* ignore */}
+		assert.notEqual(document.activeElement, oCLI.getFocusDomRef(), "Focus is not changed on touchstart");
+
 		var fnPress = this.spy(oCLI, "firePress");
 		oCLI.focus();
 		var bHasSelection;
