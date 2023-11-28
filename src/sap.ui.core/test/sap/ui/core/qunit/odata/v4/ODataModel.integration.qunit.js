@@ -244,6 +244,24 @@ sap.ui.define([
 	}
 
 	/**
+	 * Checks that the given context looks "created persisted".
+	 *
+	 * @param {object} assert - The QUnit assert object
+	 * @param {sap.ui.model.odata.v4.Context} oContext - A context
+	 * @param {Promise} [oCreatedPromise]
+	 *   Expected {@link sap.ui.model.odata.v4.Context#created} promise
+	 */
+	function checkCreatedPersisted(assert, oContext, oCreatedPromise) {
+		assert.strictEqual(oContext.isTransient(), false, "created persisted");
+		assert.strictEqual(oContext.getProperty("@$ui5.context.isTransient"), false);
+		if (oCreatedPromise) {
+			assert.strictEqual(oContext.created(), oCreatedPromise);
+		} else {
+			assert.ok(oContext.created() instanceof Promise);
+		}
+	}
+
+	/**
 	 * Checks that the given table has the expected state w.r.t. contexts and content.
 	 *
 	 * @param {string} sTitle - A test title
@@ -805,37 +823,36 @@ sap.ui.define([
 		},
 
 		/**
-		 * Asynchronously checks that the given table, when all rows have been loaded, looks as
-		 * expected. Includes {@link #waitForChanges}.
+		 * Asynchronously checks that the given list binding's contexts, when they all have been
+		 * loaded, provide values for the given properties as expected. Includes
+		 * {@link #waitForChanges}.
 		 *
 		 * @param {string} sTitle - A test title
 		 * @param {object} assert - The QUnit assert object
-		 * @param {sap.m.Table|sap.ui.table.Table} oTable - A table
-		 * @param {string[]} aExpectedPaths - List of all expected (normalized) context paths
-		 * @param {string[]} aProperties - List of all properties to be checked in aExpectedContent
-		 * @param {any[][]} aExpectedContent - "Table" of expected cell contents
+		 * @param {sap.ui.model.odata.v4.ODataListBinding} oListBinding - A list binding
+		 * @param {string[]} aProperties - List of all properties to be checked in aExpectedValues
+		 * @param {any[][]} aExpectedValues - "Table" of expected property values
 		 * @returns {Promise} A promise that resolves after the check is done
 		 */
 		// eslint-disable-next-line valid-jsdoc -- [][] is unsupported
-		checkAllTable : async function (sTitle, assert, oTable, aExpectedPaths, aProperties,
-				aExpectedContent) {
+		checkAllContexts : async function (sTitle, assert, oListBinding, aProperties,
+				aExpectedValues) {
 			function strictEqual(vActual, vExpected, sMyTitle) {
 				if (vActual !== vExpected) {
 					assert.strictEqual(vActual, vExpected, sMyTitle);
 				} // else: do not spam the output ;-)
 			}
 
-			const oListBinding = oTable.getBinding("items") || oTable.getBinding("rows");
 			strictEqual(oListBinding.isLengthFinal(), true, "length is final");
-			strictEqual(oListBinding.getLength(), aExpectedPaths.length, "length as expected");
+			strictEqual(oListBinding.getLength(), aExpectedValues.length, "length as expected");
 
 			const aContexts = await oListBinding.requestContexts(0, oListBinding.getLength());
 
-			assert.deepEqual(aContexts.map(getNormalizedPath), aExpectedPaths);
-
 			aContexts.forEach((oContext, i) => {
+				strictEqual(oContext.getIndex(), i,
+						`index of ${oContext.getPath()}`);
 				aProperties.forEach((sProperty, j) => {
-					strictEqual(oContext.getProperty(sProperty), aExpectedContent[i][j],
+					strictEqual(oContext.getProperty(sProperty), aExpectedValues[i][j],
 						`${oContext.getPath()}/${sProperty}`);
 				});
 			});
@@ -844,21 +861,6 @@ sap.ui.define([
 
 			if (oListBinding.getAggregation()?.hierarchyQualifier) {
 				checkAggregationCache(sTitle, assert, oListBinding);
-
-				if (oListBinding.getAggregation().expandTo > 1) {
-					const aElements = oListBinding.oCache.oFirstLevel.aElements;
-					aElements.forEach((oElement, i) => {
-						const iLevel = oElement["@$ui5.node.level"];
-						let iDescendants = 0;
-						for (let j = i + 1;
-							j < aElements.length && iLevel < aElements[j]["@$ui5.node.level"];
-							j += 1) {
-							iDescendants += 1;
-						}
-						strictEqual(_Helper.getPrivateAnnotation(oElement, "descendants", 0),
-							iDescendants, _Helper.getPrivateAnnotation(oElement, "predicate"));
-					});
-				}
 			}
 		},
 
@@ -26036,6 +26038,8 @@ sap.ui.define([
 	// into placeholders. Then 0 (Alpha) is expanded again and we scroll down to check that
 	// placeholders still cause proper requests w.r.t. indices.
 	// JIRA: CPOUI5ODATAV4-2355
+	//
+	// Check that no #move is supported (JIRA: CPOUI5ODATAV4-2360)
 	QUnit.test("Recursive Hierarchy: expand to 2, collapse & expand root etc.", function (assert) {
 		var oCollapsed,
 			oListBinding,
@@ -26281,6 +26285,11 @@ sap.ui.define([
 
 			oCollapsed = oTable.getRows()[1].getBindingContext();
 
+			assert.throws(function () {
+				// code under test
+				oCollapsed.move({parent : oRoot});
+			}, new Error("Unsupported $$aggregation.expandTo: 2"));
+
 			that.expectRequest("EMPLOYEES"
 					+ "?$apply=descendants($root/EMPLOYEES,OrgChart,ID,filter(ID eq '1'),1)"
 					+ "/orderby(AGE desc)"
@@ -26433,7 +26442,7 @@ sap.ui.define([
 				[false, 1, "0", "", "Alpha", 160],
 				["", "", "", "", "", ""]
 			]);
-			assert.strictEqual(oNewRoot.isTransient(), false, "created persisted");
+			checkCreatedPersisted(assert, oNewRoot);
 
 			that.expectRequest("EMPLOYEES?$apply=orderby(AGE desc)"
 					+ "/com.sap.vocabularies.Hierarchy.v1.TopLevels(HierarchyNodes=$root/EMPLOYEES"
@@ -27039,7 +27048,7 @@ sap.ui.define([
 				["", "", "", "", "", ""],
 				["", "", "", "", "", ""]
 			]);
-			assert.strictEqual(oNewRoot.isTransient(), false, "created persisted");
+			checkCreatedPersisted(assert, oNewRoot);
 
 			that.expectRequest("EMPLOYEES?$select=AGE,ID"
 					+ "&$filter=ID eq 'B' or ID eq '0' or ID eq '9'&$top=3", {
@@ -27183,7 +27192,7 @@ sap.ui.define([
 				[false, 2, "1", "0", "Beta", 155],
 				[undefined, 2, "2", "0", "Kappa", 156]
 			], 11);
-			assert.strictEqual(oNewChild.isTransient(), false, "created persisted");
+			checkCreatedPersisted(assert, oNewChild);
 
 			// code under test
 			oAlpha.collapse();
@@ -27224,7 +27233,7 @@ sap.ui.define([
 			], 11);
 			assert.strictEqual(oNewChild.getBinding().getCurrentContexts()[2], oNewChild,
 				"still the same");
-			assert.strictEqual(oNewChild.isTransient(), false, "created persisted");
+			checkCreatedPersisted(assert, oNewChild);
 		});
 	});
 
@@ -29709,8 +29718,7 @@ sap.ui.define([
 				IsActiveEntity : false,
 				Name : "Beta: β"
 			});
-			assert.strictEqual(oBeta.isTransient(), false, "created persisted");
-			assert.strictEqual(oBeta.created(), oBetaCreated);
+			checkCreatedPersisted(assert, oBeta, oBetaCreated);
 
 			// code under test (JIRA: CPOUI5ODATAV4-2272)
 			const oLostChild = oListBinding.create({
@@ -29761,8 +29769,7 @@ sap.ui.define([
 				[false, undefined, 2, "etag2.0", "Gamma: γ"],
 				[false, undefined, 2, "etag1.0", "Beta: β"]
 			]);
-			assert.strictEqual(oGamma.isTransient(), false, "created persisted");
-			assert.strictEqual(oGamma.created(), oGammaCreated);
+			checkCreatedPersisted(assert, oGamma, oGammaCreated);
 
 			that.expectRequest({
 					headers : {
@@ -29805,8 +29812,7 @@ sap.ui.define([
 				IsActiveEntity : false,
 				Name : "Beta: β"
 			});
-			assert.strictEqual(oBeta.isTransient(), false, "created persisted");
-			assert.strictEqual(oBeta.created(), oBetaCreated);
+			checkCreatedPersisted(assert, oBeta, oBetaCreated);
 
 			assert.strictEqual(oGamma.getIndex(), 2);
 			assert.deepEqual(oGamma.getObject(), {
@@ -29817,13 +29823,12 @@ sap.ui.define([
 				IsActiveEntity : false,
 				Name : "Gamma: γ"
 			});
-			assert.strictEqual(oGamma.isTransient(), false, "created persisted");
-			assert.strictEqual(oGamma.created(), oGammaCreated, "unchanged");
+			checkCreatedPersisted(assert, oGamma, oGammaCreated);
 
-			//TODO assert.throws(function () {
-			// // code under test
-			// oRoot.move({parent : oGamma});
-			// }, new Error("Unsupported parent context: " + oGamma));
+			assert.throws(function () {
+				// code under test
+				oRoot.move({parent : oGamma});
+			}, new Error("Unsupported parent context: " + oGamma));
 
 			that.expectRequest({
 					headers : {
@@ -29865,8 +29870,7 @@ sap.ui.define([
 				IsActiveEntity : false,
 				Name : "Gamma: γ"
 			});
-			assert.strictEqual(oGamma.isTransient(), false, "created persisted");
-			assert.strictEqual(oGamma.created(), oGammaCreated, "unchanged");
+			checkCreatedPersisted(assert, oGamma, oGammaCreated);
 
 			assert.strictEqual(oBeta.getIndex(), 2);
 			assert.deepEqual(oBeta.getObject(), {
@@ -29877,8 +29881,7 @@ sap.ui.define([
 				IsActiveEntity : false,
 				Name : "Beta: β"
 			});
-			assert.strictEqual(oBeta.isTransient(), false, "created persisted");
-			assert.strictEqual(oBeta.created(), oBetaCreated);
+			checkCreatedPersisted(assert, oBeta, oBetaCreated);
 
 			// code under test
 			oRoot.collapse();
@@ -29962,8 +29965,7 @@ sap.ui.define([
 				Name : "Gamma #1",
 				_ : null // Note: NodeID still unknown
 			});
-			assert.strictEqual(oGamma.isTransient(), false, "created persisted");
-			assert.strictEqual(oGamma.created(), oGammaCreated, "unchanged");
+			checkCreatedPersisted(assert, oGamma, oGammaCreated);
 
 			assert.strictEqual(oBeta.getIndex(), 2);
 			assert.deepEqual(oBeta.getObject(), {
@@ -29975,8 +29977,7 @@ sap.ui.define([
 				Name : "Beta #1",
 				_ : null // Note: NodeID still unknown
 			});
-			assert.strictEqual(oBeta.isTransient(), false, "created persisted");
-			assert.strictEqual(oBeta.created(), oBetaCreated, "unchanged");
+			checkCreatedPersisted(assert, oBeta, oBetaCreated);
 
 			return Promise.all([
 				// code under test
@@ -30028,8 +30029,7 @@ sap.ui.define([
 				Name : "Gamma #1",
 				_ : null // Note: NodeID still unknown
 			});
-			assert.strictEqual(oGamma.isTransient(), false, "created persisted");
-			assert.strictEqual(oGamma.created(), oGammaCreated, "unchanged");
+			checkCreatedPersisted(assert, oGamma, oGammaCreated);
 
 			assert.strictEqual(oBeta.getIndex(), 2); // unchanged by #move
 			assert.deepEqual(oBeta.getObject(), {
@@ -30041,8 +30041,7 @@ sap.ui.define([
 				Name : "Beta #1",
 				_ : null // Note: NodeID still unknown
 			});
-			assert.strictEqual(oBeta.isTransient(), false, "created persisted");
-			assert.strictEqual(oBeta.created(), oBetaCreated, "unchanged");
+			checkCreatedPersisted(assert, oBeta, oBetaCreated);
 
 			return oBeta.created(); // to prove that it's not rejected
 		}).then(function () {
@@ -30087,7 +30086,7 @@ sap.ui.define([
 				[undefined, true, 1, "etag0.1", "Alpha #1"],
 				[false, true, 2, "etag2.3", "Gamma #1"]
 			]);
-			assert.strictEqual(oNewRoot.isTransient(), false, "created persisted");
+			checkCreatedPersisted(assert, oNewRoot);
 
 			that.expectRequest(sFriend.slice(1) + "?$select=ArtistID,IsActiveEntity,Name,_/NodeID"
 					+ "&$filter=ArtistID eq '9' and IsActiveEntity eq false"
@@ -30162,8 +30161,7 @@ sap.ui.define([
 				[false, undefined, 3, "etag1.5", "Beta #2"]
 			]);
 			assert.strictEqual(oBeta, oListBinding.getCurrentContexts()[2], "same instance");
-			assert.strictEqual(oBeta.isTransient(), false, "created persisted");
-			assert.strictEqual(oBeta.created(), oBetaCreated, "unchanged");
+			checkCreatedPersisted(assert, oBeta, oBetaCreated);
 		});
 	});
 
@@ -30396,6 +30394,17 @@ sap.ui.define([
 		oAlpha.collapse();
 		oAlpha.expand();
 
+		// 0 Alpha
+		//   1 Beta
+		//   2 Gamma
+		//   3 Delta
+		//   9 New (created)
+		//   4 Epsilon
+		//   5 Zeta
+		//     5.1 Eta
+		//     5.2 Theta
+		//   6 Iota
+		//   7 Kappa
 		this.expectRequest(sReadUrl + "&$skip=2&$top=2", {
 				value : [{
 					ArtistID : "2",
@@ -30459,42 +30468,20 @@ sap.ui.define([
 				}]
 			});
 
-		// 0 Alpha
-		//   1 Beta
-		//   2 Gamma
-		//   3 Delta
-		//   9 New (created)
-		//   4 Epsilon
-		//   5 Zeta
-		//     5.1 Eta
-		//     5.2 Theta
-		//   6 Iota
-		//   7 Kappa
-		await this.checkAllTable("after loading all rows", assert, oTable, [
-			sFriend + "(ArtistID='0',IsActiveEntity=false)",
-			sFriend + "(ArtistID='9',IsActiveEntity=false)",
-			sFriend + "(ArtistID='1',IsActiveEntity=false)",
-			sFriend + "(ArtistID='2',IsActiveEntity=false)",
-			sFriend + "(ArtistID='3',IsActiveEntity=false)",
-			sFriend + "(ArtistID='4',IsActiveEntity=false)",
-			sFriend + "(ArtistID='5',IsActiveEntity=false)",
-			sFriend + "(ArtistID='5.1',IsActiveEntity=false)",
-			sFriend + "(ArtistID='5.2',IsActiveEntity=false)",
-			sFriend + "(ArtistID='6',IsActiveEntity=false)",
-			sFriend + "(ArtistID='7',IsActiveEntity=false)"
-		], ["@$ui5.node.isExpanded", "@$ui5.node.level", "ArtistID", "Name"], [
-			[true, 1, "0", "Alpha"],
-			[undefined, 2, "9", "New"],
-			[undefined, 2, "1", "Beta"],
-			[undefined, 2, "2", "Gamma"],
-			[undefined, 2, "3", "Delta"],
-			[undefined, 2, "4", "Epsilon"],
-			[true, 2, "5", "Zeta"],
-			[undefined, 3, "5.1", "Eta"],
-			[undefined, 3, "5.2", "Theta"],
-			[undefined, 2, "6", "Iota"],
-			[undefined, 2, "7", "Kappa"]
-		]);
+		await this.checkAllContexts("after loading all rows", assert, oListBinding,
+			["@$ui5.node.isExpanded", "@$ui5.node.level", "ArtistID", "Name"], [
+				[true, 1, "0", "Alpha"],
+				[undefined, 2, "9", "New"],
+				[undefined, 2, "1", "Beta"],
+				[undefined, 2, "2", "Gamma"],
+				[undefined, 2, "3", "Delta"],
+				[undefined, 2, "4", "Epsilon"],
+				[true, 2, "5", "Zeta"],
+				[undefined, 3, "5.1", "Eta"],
+				[undefined, 3, "5.2", "Theta"],
+				[undefined, 2, "6", "Iota"],
+				[undefined, 2, "7", "Kappa"]
+			]);
 
 		this.expectRequest("DELETE Artists(ArtistID='9',IsActiveEntity=false)");
 
@@ -30504,39 +30491,19 @@ sap.ui.define([
 			this.waitForChanges(assert, "delete New")
 		]);
 
-		// 0 Alpha
-		//   1 Beta
-		//   2 Gamma
-		//   3 Delta
-		//   4 Epsilon
-		//   5 Zeta
-		//     5.1 Eta
-		//     5.2 Theta
-		//   6 Iota
-		//   7 Kappa
-		await this.checkAllTable("after loading all rows", assert, oTable, [
-			sFriend + "(ArtistID='0',IsActiveEntity=false)",
-			sFriend + "(ArtistID='1',IsActiveEntity=false)",
-			sFriend + "(ArtistID='2',IsActiveEntity=false)",
-			sFriend + "(ArtistID='3',IsActiveEntity=false)",
-			sFriend + "(ArtistID='4',IsActiveEntity=false)",
-			sFriend + "(ArtistID='5',IsActiveEntity=false)",
-			sFriend + "(ArtistID='5.1',IsActiveEntity=false)",
-			sFriend + "(ArtistID='5.2',IsActiveEntity=false)",
-			sFriend + "(ArtistID='6',IsActiveEntity=false)",
-			sFriend + "(ArtistID='7',IsActiveEntity=false)"
-		], ["@$ui5.node.isExpanded", "@$ui5.node.level", "ArtistID", "Name"], [
-			[true, 1, "0", "Alpha"],
-			[undefined, 2, "1", "Beta"],
-			[undefined, 2, "2", "Gamma"],
-			[undefined, 2, "3", "Delta"],
-			[undefined, 2, "4", "Epsilon"],
-			[true, 2, "5", "Zeta"],
-			[undefined, 3, "5.1", "Eta"],
-			[undefined, 3, "5.2", "Theta"],
-			[undefined, 2, "6", "Iota"],
-			[undefined, 2, "7", "Kappa"]
-		]);
+		await this.checkAllContexts("after loading all rows", assert, oListBinding,
+			["@$ui5.node.isExpanded", "@$ui5.node.level", "ArtistID", "Name"], [
+				[true, 1, "0", "Alpha"],
+				[undefined, 2, "1", "Beta"],
+				[undefined, 2, "2", "Gamma"],
+				[undefined, 2, "3", "Delta"],
+				[undefined, 2, "4", "Epsilon"],
+				[true, 2, "5", "Zeta"],
+				[undefined, 3, "5.1", "Eta"],
+				[undefined, 3, "5.2", "Theta"],
+				[undefined, 2, "6", "Iota"],
+				[undefined, 2, "7", "Kappa"]
+			]);
 	});
 
 	//*********************************************************************************************
@@ -30819,6 +30786,7 @@ sap.ui.define([
 		]);
 		const oBeta = oTable.getRows()[2].getBindingContext();
 		const oKappa = oTable.getRows()[3].getBindingContext();
+		assert.strictEqual(oAlpha.getIndex(), 1);
 
 		const iBatchNo = this.iBatchNo + 1; // don't care about exact no., but use twice below
 		this.expectEvents(assert, "sap.ui.model.odata.v4.ODataListBinding: /EMPLOYEES", [
@@ -30868,6 +30836,7 @@ sap.ui.define([
 			[undefined, 4, "1.2", "1", "Zeta", 42],
 			[undefined, 3, "3", "0", "Lambda", 57]
 		]);
+		assert.strictEqual(oKappa.getIndex(), 3);
 
 		// code under test
 		assert.strictEqual(oBeta.isAncestorOf(oKappa), true, "JIRA: CPOUI5ODATAV4-2337");
@@ -30882,6 +30851,648 @@ sap.ui.define([
 	});
 	});
 });
+
+	//*********************************************************************************************
+	// Scenario: Expand all levels of a recursive hierarchy and move a node with descendants (not
+	// yet fully loaded) to another parent. Although it is shown as the new parent's first child on
+	// UI, it is actually inserted between older siblings on the server. Still, paging works!
+	// Collapse the new parent and later its root to check that their "descendants" is correct.
+	// A new root (Beth) is created with a new child (Gimel) and moved to Aleph, but their
+	// LimitedRank does not change. Then Gimel is moved to Aleph, thus Beth becomes a leaf again.
+	// Gimel is moved to collapsed Alpha, thus expanding it again. Expand "the new parent" (Eta, see
+	// above) again. Delete all moved nodes again in a single $batch.
+	// JIRA: CPOUI5ODATAV4-2360
+	QUnit.test("Recursive Hierarchy: expand all and move", async function (assert) {
+		const oModel = this.createSpecialCasesModel({autoExpandSelect : true});
+		const sFriend = "/Artists(ArtistID='99',IsActiveEntity=false)/_Friend";
+		const sBaseUrl = sFriend.slice(1) + "?$apply=orderby(ArtistID)"
+			+ "/com.sap.vocabularies.Hierarchy.v1.TopLevels(HierarchyNodes=$root" + sFriend
+			+ ",HierarchyQualifier='OrgChart',NodeProperty='_/NodeID')";
+		const sReadUrl = sBaseUrl + "&$select=ArtistID,IsActiveEntity,Name"
+			+ ",_/DescendantCount,_/DistanceFromRoot,_/DrillState,_/NodeID";
+		const sView = `
+<t:Table id="table" rows="{path : '/Artists(ArtistID=\\'99\\',IsActiveEntity=false)/_Friend',
+		parameters : {
+			$$aggregation : {
+				expandTo : 1E16,
+				hierarchyQualifier : 'OrgChart'
+			},
+			$orderby : 'ArtistID'
+		}}" threshold="0" visibleRowCount="3">
+	<Text text="{= %{@$ui5.node.isExpanded} }"/>
+	<Text text="{= %{@$ui5.node.level} }"/>
+	<Text text="{ArtistID}"/>
+	<Text text="{Name}"/>
+</t:Table>`;
+
+		// 0 Alpha
+		//   1 Beta (moved...)
+		//     1.1 Gamma
+		//       1.1.1 Delta (loaded later)
+		//       1.1.2 Epsilon (loaded later)
+		//   2 Zeta (loaded later)
+		//   3 Eta (...to here)
+		//     3.1 Theta
+		//     3.2 Iota
+		//     3.3 Kappa (loaded later)
+		//   4 Lambda (loaded later)
+		// 9 Aleph (loaded later)
+		this.expectRequest(sReadUrl + "&$count=true&$skip=0&$top=3", {
+				"@odata.count" : "12",
+				value : [{
+					ArtistID : "0",
+					IsActiveEntity : false,
+					Name : "Alpha",
+					_ : {
+						DescendantCount : "10",
+						DistanceFromRoot : "0",
+						DrillState : "expanded",
+						NodeID : "0,false"
+					}
+				}, {
+					ArtistID : "1",
+					IsActiveEntity : false,
+					Name : "Beta",
+					_ : {
+						DescendantCount : "3",
+						DistanceFromRoot : "1",
+						DrillState : "expanded",
+						NodeID : "1,false"
+					}
+				}, {
+					ArtistID : "1.1",
+					IsActiveEntity : false,
+					Name : "Gamma",
+					_ : {
+						DescendantCount : "2",
+						DistanceFromRoot : "2",
+						DrillState : "expanded",
+						NodeID : "1.1,false"
+					}
+				}]
+			});
+
+		await this.createView(assert, sView, oModel);
+
+		const oTable = this.oView.byId("table");
+		checkTable("initial page", assert, oTable, [
+			sFriend + "(ArtistID='0',IsActiveEntity=false)",
+			sFriend + "(ArtistID='1',IsActiveEntity=false)",
+			sFriend + "(ArtistID='1.1',IsActiveEntity=false)"
+		], [
+			[true, 1, "0", "Alpha"],
+			[true, 2, "1", "Beta"],
+			[true, 3, "1.1", "Gamma"]
+		], 12);
+		const oAlpha = oTable.getRows()[0].getBindingContext();
+		let oBeta = oTable.getRows()[1].getBindingContext();
+		const oListBinding = oAlpha.getBinding();
+		assert.strictEqual(oBeta.getIndex(), 1);
+
+		this.expectRequest(sReadUrl + "&$skip=6&$top=3", {
+				value : [{
+					ArtistID : "3",
+					IsActiveEntity : false,
+					Name : "Eta",
+					_ : {
+						DescendantCount : "3",
+						DistanceFromRoot : "1",
+						DrillState : "expanded",
+						NodeID : "3,false"
+					}
+				}, {
+					ArtistID : "3.1",
+					IsActiveEntity : false,
+					Name : "Theta",
+					_ : {
+						DescendantCount : "0",
+						DistanceFromRoot : "2",
+						DrillState : "leaf",
+						NodeID : "3.1,false"
+					}
+				}, {
+					ArtistID : "3.2",
+					IsActiveEntity : false,
+					Name : "Iota",
+					_ : {
+						DescendantCount : "0",
+						DistanceFromRoot : "2",
+						DrillState : "leaf",
+						NodeID : "3.2,false"
+					}
+				}]
+			});
+
+		oTable.setFirstVisibleRow(6);
+
+		await this.waitForChanges(assert, "scroll down to Eta");
+
+		checkTable("after scroll down to Eta", assert, oTable, [
+			sFriend + "(ArtistID='0',IsActiveEntity=false)",
+			sFriend + "(ArtistID='1',IsActiveEntity=false)",
+			sFriend + "(ArtistID='1.1',IsActiveEntity=false)",
+			sFriend + "(ArtistID='3',IsActiveEntity=false)",
+			sFriend + "(ArtistID='3.1',IsActiveEntity=false)",
+			sFriend + "(ArtistID='3.2',IsActiveEntity=false)"
+		], [
+			[true, 2, "3", "Eta"],
+			[undefined, 3, "3.1", "Theta"],
+			[undefined, 3, "3.2", "Iota"]
+		], 12);
+		let oEta = oTable.getRows()[0].getBindingContext();
+
+		// 0 Alpha
+		//   2 Zeta (loaded later)
+		//   3 Eta (...to here)
+		//     3.1 Theta
+		//     3.2 Iota
+		//     1 Beta (moved...)
+		//       1.1 Gamma
+		//         1.1.1 Delta (loaded later)
+		//         1.1.2 Epsilon (loaded soon)
+		//     3.3 Kappa (loaded later)
+		//   4 Lambda (loaded later)
+		// 9 Aleph (loaded later)
+		this.expectRequest({
+				batchNo : 3,
+				headers : {
+					Prefer : "return=minimal"
+				},
+				method : "PATCH",
+				url : "Artists(ArtistID='1',IsActiveEntity=false)",
+				payload : {
+					"BestFriend@odata.bind" : "Artists(ArtistID='3',IsActiveEntity=false)"
+				}
+			}) // 204 No Content
+			.expectRequest({
+				batchNo : 3,
+				url : sBaseUrl + "&$filter=ArtistID eq '1' and IsActiveEntity eq false"
+					+ "&$select=_/LimitedRank"
+			}, {
+				_ : {
+					LimitedRank : "5" // Edm.Int64
+				}
+			})
+			.expectRequest({
+				batchNo : 4,
+				url : sReadUrl + "&$skip=8&$top=1"
+			}, {
+				value : [{
+					ArtistID : "1.1.2",
+					IsActiveEntity : false,
+					Name : "Epsilon",
+					_ : {
+						DescendantCount : "0",
+						DistanceFromRoot : "4",
+						DrillState : "leaf",
+						NodeID : "1.1.2,false"
+					}
+				}]
+			});
+
+		await Promise.all([
+			// code under test
+			oBeta.move({parent : oEta}),
+			resolveLater(undefined, 5), // table update takes a moment
+			this.waitForChanges(assert, "move")
+		]);
+
+		checkTable("after move", assert, oTable, [
+			sFriend + "(ArtistID='0',IsActiveEntity=false)",
+			sFriend + "(ArtistID='3',IsActiveEntity=false)",
+			sFriend + "(ArtistID='1',IsActiveEntity=false)",
+			sFriend + "(ArtistID='1.1',IsActiveEntity=false)",
+			sFriend + "(ArtistID='1.1.2',IsActiveEntity=false)",
+			sFriend + "(ArtistID='3.1',IsActiveEntity=false)",
+			sFriend + "(ArtistID='3.2',IsActiveEntity=false)"
+		], [
+			[undefined, 5, "1.1.2", "Epsilon"],
+			[undefined, 3, "3.1", "Theta"], // Note: on UI, Beta is shown as 1st child of Eta!
+			[undefined, 3, "3.2", "Iota"]
+		], 12);
+
+		assert.strictEqual(oBeta.isTransient(), undefined, "unchanged");
+		assert.strictEqual(oBeta.created(), undefined);
+		assert.deepEqual(oBeta.getObject(), {
+			// no "@$ui5.context.isTransient"!
+			"@$ui5.node.isExpanded" : true,
+			"@$ui5.node.level" : 3,
+			ArtistID : "1",
+			IsActiveEntity : false,
+			Name : "Beta",
+			_ : {
+				NodeID : "1,false"
+			}
+		});
+		// Note: #checkAllContexts below will check #getIndex for all nodes
+
+		this.expectRequest(sReadUrl + "&$skip=1&$top=1", {
+				value : [{
+					ArtistID : "2",
+					IsActiveEntity : false,
+					Name : "Zeta",
+					_ : {
+						DescendantCount : "0",
+						DistanceFromRoot : "1",
+						DrillState : "leaf",
+						NodeID : "2,false"
+					}
+				}]
+			})
+			.expectRequest(sReadUrl + "&$skip=7&$top=1", {
+				value : [{
+					ArtistID : "1.1.1",
+					IsActiveEntity : false,
+					Name : "Delta",
+					_ : {
+						DescendantCount : "0",
+						DistanceFromRoot : "4",
+						DrillState : "leaf",
+						NodeID : "1.1.1,false"
+					}
+				}]
+			})
+			.expectRequest(sReadUrl + "&$skip=9&$top=3", {
+				value : [{
+					ArtistID : "3.3",
+					IsActiveEntity : false,
+					Name : "Kappa",
+					_ : {
+						DescendantCount : "0",
+						DistanceFromRoot : "2",
+						DrillState : "leaf",
+						NodeID : "3.3,false"
+					}
+				}, {
+					ArtistID : "4",
+					IsActiveEntity : false,
+					Name : "Lambda",
+					_ : {
+						DescendantCount : "0",
+						DistanceFromRoot : "1",
+						DrillState : "leaf",
+						NodeID : "4,false"
+					}
+				}, {
+					ArtistID : "9",
+					IsActiveEntity : false,
+					Name : "Aleph",
+					_ : {
+						DescendantCount : "0",
+						DistanceFromRoot : "0",
+						DrillState : "leaf",
+						NodeID : "9,false"
+					}
+				}]
+			});
+
+		await this.checkAllContexts("after move", assert, oListBinding,
+			["@$ui5.node.isExpanded", "@$ui5.node.level", "ArtistID", "Name"], [
+				[true, 1, "0", "Alpha"],
+				[undefined, 2, "2", "Zeta"],
+				[true, 2, "3", "Eta"],
+				[true, 3, "1", "Beta"],
+				[true, 4, "1.1", "Gamma"],
+				[undefined, 5, "1.1.1", "Delta"],
+				[undefined, 5, "1.1.2", "Epsilon"],
+				[undefined, 3, "3.1", "Theta"], // Note: on UI, Beta is shown as 1st child of Eta!
+				[undefined, 3, "3.2", "Iota"],
+				[undefined, 3, "3.3", "Kappa"],
+				[undefined, 2, "4", "Lambda"],
+				[undefined, 1, "9", "Aleph"]
+			]);
+
+		// code under test
+		oEta.collapse(); // Note: this eventually destroys oBeta!
+		oBeta = null;
+
+		await this.checkAllContexts("after collapse Eta", assert, oListBinding,
+			["@$ui5.node.isExpanded", "@$ui5.node.level", "ArtistID", "Name"], [
+				[true, 1, "0", "Alpha"],
+				[undefined, 2, "2", "Zeta"],
+				[false, 2, "3", "Eta"],
+				[undefined, 2, "4", "Lambda"],
+				[undefined, 1, "9", "Aleph"]
+			]);
+
+		// code under test
+		oAlpha.collapse(); // Note: this eventually destroys oEta!
+		oEta = null;
+
+		await this.checkAllContexts("after collapse Alpha", assert, oListBinding,
+			["@$ui5.node.isExpanded", "@$ui5.node.level", "ArtistID", "Name"], [
+				[false, 1, "0", "Alpha"],
+				[undefined, 1, "9", "Aleph"]
+			]);
+
+		// 0 Alpha
+		//   2 Zeta
+		//   3 Eta
+		//     3.1 Theta
+		//     3.2 Iota
+		//     1 Beta
+		//       1.1 Gamma
+		//         1.1.1 Delta
+		//         1.1.2 Epsilon
+		//     3.3 Kappa
+		//   4 Lambda
+		// 9 Aleph
+		// 10 Beth (now created as root and later moved beneath Aleph)
+		//   10.1 Gimel (then created as child)
+		this.expectRequest({
+				method : "POST",
+				url : sFriend.slice(1),
+				payload : {
+					// not needed: "BestFriend@odata.bind" : null,
+					Name : "Beth"
+				}
+			}, {
+				ArtistID : "10",
+				IsActiveEntity : false,
+				Name : "Beth"
+			})
+			.expectRequest(sBaseUrl + "&$filter=ArtistID eq '10' and IsActiveEntity eq false"
+				+ "&$select=_/LimitedRank", {
+				_ : {
+					LimitedRank : "12" // Edm.Int64
+				}
+			});
+
+		// code under test
+		const oBeth = oAlpha.getBinding().create({Name : "Beth"}, /*bSkipRefresh*/true);
+		const oBethCreated = oBeth.created();
+
+		assert.strictEqual(oBeth.isTransient(), true);
+		assert.ok(oBeth.created() instanceof Promise);
+		assert.strictEqual(oBeth.getIndex(), 0);
+
+		await Promise.all([
+			oBethCreated,
+			this.waitForChanges(assert, "create new root Beth")
+		]);
+
+		await this.checkAllContexts("after create new root Beth", assert, oListBinding,
+			["@$ui5.node.isExpanded", "@$ui5.node.level", "ArtistID", "Name"], [
+				[undefined, 1, "10", "Beth"],
+				[false, 1, "0", "Alpha"],
+				[undefined, 1, "9", "Aleph"]
+			]);
+
+		const oAleph = oTable.getRows()[2].getBindingContext();
+		checkCreatedPersisted(assert, oBeth, oBethCreated);
+
+		this.expectRequest({
+				method : "POST",
+				url : sFriend.slice(1),
+				payload : {
+					"BestFriend@odata.bind" : "../Artists(ArtistID='10',IsActiveEntity=false)",
+					Name : "Gimel"
+				}
+			}, {
+				ArtistID : "10.1",
+				IsActiveEntity : false,
+				Name : "Gimel"
+			})
+			.expectRequest(sBaseUrl + "&$filter=ArtistID eq '10.1' and IsActiveEntity eq false"
+				+ "&$select=_/LimitedRank", {
+				_ : {
+					LimitedRank : "13" // Edm.Int64
+				}
+			});
+
+		// code under test
+		const oGimel = oBeth.getBinding().create({
+			"@$ui5.node.parent" : oBeth,
+			Name : "Gimel"
+		}, /*bSkipRefresh*/true);
+		const oGimelCreated = oGimel.created();
+
+		assert.strictEqual(oGimel.getIndex(), 1);
+		assert.strictEqual(oBeth.getProperty("@$ui5.node.isExpanded"), true, "not a leaf anymore");
+
+		await Promise.all([
+			oGimelCreated,
+			this.waitForChanges(assert, "create new child Gimel")
+		]);
+
+		await this.checkAllContexts("after create new child Gimel", assert, oListBinding,
+			["@$ui5.node.isExpanded", "@$ui5.node.level", "ArtistID", "Name"], [
+				[true, 1, "10", "Beth"],
+				[undefined, 2, "10.1", "Gimel"],
+				[false, 1, "0", "Alpha"],
+				[undefined, 1, "9", "Aleph"]
+			]);
+
+		checkCreatedPersisted(assert, oGimel, oGimelCreated);
+
+		// 0 Alpha
+		//   2 Zeta
+		//   3 Eta
+		//     3.1 Theta
+		//     3.2 Iota
+		//     1 Beta
+		//       1.1 Gamma
+		//         1.1.1 Delta
+		//         1.1.2 Epsilon
+		//     3.3 Kappa
+		//   4 Lambda
+		// 9 Aleph
+		//   10 Beth (now moved beneath Aleph)
+		//     10.1 Gimel
+		this.expectRequest({
+				batchNo : 10,
+				headers : {
+					Prefer : "return=minimal"
+				},
+				method : "PATCH",
+				url : "Artists(ArtistID='10',IsActiveEntity=false)",
+				payload : {
+					"BestFriend@odata.bind" : "Artists(ArtistID='9',IsActiveEntity=false)"
+				}
+			}) // 204 No Content
+			.expectRequest({
+				batchNo : 10,
+				url : sBaseUrl + "&$filter=ArtistID eq '10' and IsActiveEntity eq false"
+					+ "&$select=_/LimitedRank"
+			}, {
+				_ : { // Note: rank has not changed due to move
+					LimitedRank : "12" // Edm.Int64
+				}
+			});
+
+		await Promise.all([
+			// code under test
+			oBeth.move({parent : oAleph}),
+			this.waitForChanges(assert, "move Beth to Aleph")
+		]);
+
+		// Note: #checkAllContexts will check #getIndex for all nodes
+		await this.checkAllContexts("after move Beth to Aleph", assert, oListBinding,
+			["@$ui5.node.isExpanded", "@$ui5.node.level", "ArtistID", "Name"], [
+				[false, 1, "0", "Alpha"],
+				[true, 1, "9", "Aleph"],
+				[true, 2, "10", "Beth"],
+				[undefined, 3, "10.1", "Gimel"]
+			]);
+
+		checkCreatedPersisted(assert, oBeth, oBethCreated);
+		checkCreatedPersisted(assert, oGimel, oGimelCreated);
+
+		this.expectRequest({
+				batchNo : 11,
+				headers : {
+					Prefer : "return=minimal"
+				},
+				method : "PATCH",
+				url : "Artists(ArtistID='10.1',IsActiveEntity=false)",
+				payload : {
+					"BestFriend@odata.bind" : "Artists(ArtistID='9',IsActiveEntity=false)"
+				}
+			}) // 204 No Content
+			.expectRequest({
+				batchNo : 11,
+				url : sBaseUrl + "&$filter=ArtistID eq '10.1' and IsActiveEntity eq false"
+					+ "&$select=_/LimitedRank"
+			}, {
+				_ : { // Note: rank has not changed due to move
+					LimitedRank : "13" // Edm.Int64
+				}
+			});
+
+		await Promise.all([
+			// code under test
+			oGimel.move({parent : oAleph}),
+			this.waitForChanges(assert, "move Gimel to Aleph")
+		]);
+
+		// Note: #checkAllContexts will check #getIndex for all nodes
+		await this.checkAllContexts("after move Gimel to Aleph", assert, oListBinding,
+			["@$ui5.node.isExpanded", "@$ui5.node.level", "ArtistID", "Name"], [
+				[false, 1, "0", "Alpha"],
+				[true, 1, "9", "Aleph"],
+				[undefined, 2, "10.1", "Gimel"],
+				[undefined, 2, "10", "Beth"] // last child has gone
+			]);
+
+		checkCreatedPersisted(assert, oBeth, oBethCreated);
+		checkCreatedPersisted(assert, oGimel, oGimelCreated);
+
+		// 0 Alpha
+		//   10.1 Gimel (moved to here)
+		//   2 Zeta
+		//   3 Eta (still collapsed)
+		//     3.1 Theta
+		//     3.2 Iota
+		//     1 Beta
+		//       1.1 Gamma
+		//         1.1.1 Delta
+		//         1.1.2 Epsilon
+		//     3.3 Kappa
+		//   4 Lambda
+		// 9 Aleph
+		//   10 Beth
+		this.expectRequest({
+				batchNo : 12,
+				headers : {
+					Prefer : "return=minimal"
+				},
+				method : "PATCH",
+				url : "Artists(ArtistID='10.1',IsActiveEntity=false)",
+				payload : {
+					"BestFriend@odata.bind" : "Artists(ArtistID='0',IsActiveEntity=false)"
+				}
+			}) // 204 No Content
+			.expectRequest({
+				batchNo : 12,
+				url : sBaseUrl + "&$filter=ArtistID eq '10.1' and IsActiveEntity eq false"
+					+ "&$select=_/LimitedRank"
+			}, {
+				_ : { // Note: same rank on UI as on server
+					LimitedRank : "1" // Edm.Int64
+				}
+			});
+
+		await Promise.all([
+			// code under test
+			oGimel.move({parent : oAlpha}),
+			this.waitForChanges(assert, "move Gimel to collapsed Alpha")
+		]);
+
+		// Note: #checkAllContexts will check #getIndex for all nodes
+		await this.checkAllContexts("after move Gimel to collapsed Alpha", assert, oListBinding,
+			["@$ui5.node.isExpanded", "@$ui5.node.level", "ArtistID", "Name"], [
+				[true, 1, "0", "Alpha"], // auto-expanded
+				[undefined, 2, "10.1", "Gimel"],
+				[undefined, 2, "2", "Zeta"],
+				[false, 2, "3", "Eta"], // still collapsed
+				[undefined, 2, "4", "Lambda"],
+				[true, 1, "9", "Aleph"],
+				[undefined, 2, "10", "Beth"]
+			]);
+
+		oEta = oListBinding.getAllCurrentContexts()[3];
+
+		// code under test
+		oEta.expand();
+
+		await this.checkAllContexts("after expand all again", assert, oListBinding,
+			["@$ui5.node.isExpanded", "@$ui5.node.level", "ArtistID", "Name"], [
+				[true, 1, "0", "Alpha"],
+				[undefined, 2, "10.1", "Gimel"],
+				[undefined, 2, "2", "Zeta"],
+				[true, 2, "3", "Eta"],
+				[true, 3, "1", "Beta"],
+				[true, 4, "1.1", "Gamma"],
+				[undefined, 5, "1.1.1", "Delta"],
+				[undefined, 5, "1.1.2", "Epsilon"],
+				[undefined, 3, "3.1", "Theta"],
+				[undefined, 3, "3.2", "Iota"],
+				[undefined, 3, "3.3", "Kappa"],
+				[undefined, 2, "4", "Lambda"],
+				[true, 1, "9", "Aleph"],
+				[undefined, 2, "10", "Beth"]
+			]);
+
+		oBeta = oListBinding.getAllCurrentContexts()[4];
+
+		this.expectRequest({
+				batchNo : 13,
+				method : "DELETE",
+				url : "Artists(ArtistID='1',IsActiveEntity=false)"
+			})
+			.expectRequest({
+				batchNo : 13,
+				method : "DELETE",
+				url : "Artists(ArtistID='10',IsActiveEntity=false)"
+			})
+			.expectRequest({
+				batchNo : 13,
+				method : "DELETE",
+				url : "Artists(ArtistID='10.1',IsActiveEntity=false)"
+			});
+
+		await Promise.all([
+			// code under test
+			oBeta.delete(),
+			// code under test
+			oBeth.delete(),
+			// code under test
+			oGimel.delete(),
+			this.waitForChanges(assert, "delete all moved")
+		]);
+
+		await this.checkAllContexts("after delete all moved", assert, oListBinding,
+			["@$ui5.node.isExpanded", "@$ui5.node.level", "ArtistID", "Name"], [
+				[true, 1, "0", "Alpha"],
+				[undefined, 2, "2", "Zeta"],
+				[true, 2, "3", "Eta"],
+				[undefined, 3, "3.1", "Theta"],
+				[undefined, 3, "3.2", "Iota"],
+				[undefined, 3, "3.3", "Kappa"],
+				[undefined, 2, "4", "Lambda"],
+				[undefined, 1, "9", "Aleph"]
+			]);
+	});
 
 	//*********************************************************************************************
 	// Scenario: Show the first level of a recursive hierarchy ("Alpha", "Omega"), expand "Alpha".
@@ -31482,7 +32093,7 @@ sap.ui.define([
 			return that.waitForChanges(assert, "scroll to top");
 		}).then(function () {
 			const oCreatedPersisted = oTable.getRows()[1].getBindingContext();
-			assert.strictEqual(oCreatedPersisted.isTransient(), false);
+			checkCreatedPersisted(assert, oCreatedPersisted);
 
 			that.expectChange("id", [, "11", "1"])
 				.expectChange("name", [, "First new child", "Beta"])

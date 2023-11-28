@@ -10342,6 +10342,99 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("CollectionCache#move", function (assert) {
+		const oCache = this.createCache("n/a");
+
+		const aElements = oCache.aElements = ["a", "b", "c", "d", "e", "f", "g", "h"];
+
+		function deepEqual(aExpected) {
+			assert.strictEqual(oCache.aElements, aElements, "same ref");
+			assert.deepEqual(oCache.aElements, aExpected);
+		}
+
+		// code under test (nothing to do)
+		oCache.move(4, 4, 3);
+
+		deepEqual(["a", "b", "c", "d", "e", "f", "g", "h"]);
+
+		// code under test (nothing to do)
+		oCache.move(1, 4, 0);
+
+		deepEqual(["a", "b", "c", "d", "e", "f", "g", "h"]);
+
+		// code under test
+		oCache.move(1, 4, 3);
+
+		deepEqual(["a", "e", "f", "g", /**/"b", "c", "d"/**/, "h"]);
+
+		// code under test (undo)
+		oCache.move(4, 1, 3);
+
+		deepEqual(["a", "b", "c", "d", "e", "f", "g", "h"]);
+
+		// code under test
+		oCache.move(1, 5, 2);
+
+		deepEqual(["a", "d", "e", "f", "g", /**/"b", "c"/**/, "h"]);
+
+		// code under test (undo)
+		oCache.move(5, 1, 2);
+
+		deepEqual(["a", "b", "c", "d", "e", "f", "g", "h"]);
+
+		// code under test
+		oCache.move(1, 3, 4);
+
+		deepEqual(["a", "f", "g", /**/"b", "c", "d", "e"/**/, "h"]);
+
+		// code under test (undo)
+		oCache.move(3, 1, 4);
+
+		deepEqual(["a", "b", "c", "d", "e", "f", "g", "h"]);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("CollectionCache#move: no RangeError", function (assert) {
+		const oCache = this.createCache("n/a");
+
+		for (let i = 0; i < 1_000_000; i += 1) {
+			oCache.aElements[i] = i;
+		}
+
+		// code under test (no "RangeError: Maximum call stack size exceeded")
+		oCache.move(5_000, 10_000, 990_000);
+
+		for (let i = 0; i < 5_000; i += 1) {
+			if (oCache.aElements[i] !== i) {
+				assert.ok(false);
+				break;
+			}
+		}
+		for (let i = 0; i < 990_000; i += 1) {
+			if (oCache.aElements[10_000 + i] !== 5_000 + i) {
+				assert.ok(false);
+				break;
+			}
+		}
+		for (let i = 0; i < 5_000; i += 1) {
+			if (oCache.aElements[5_000 + i] !== 995_000 + i) {
+				assert.ok(false);
+				break;
+			}
+		}
+
+		// code under test (undo)
+		oCache.move(10_000, 5_000, 990_000);
+
+		for (let i = 0; i < 1_000_000; i += 1) {
+			if (oCache.aElements[i] !== i) {
+				assert.ok(false);
+				break;
+			}
+		}
+	});
+
+	//*********************************************************************************************
 [
 	{error : false, path : "EMPLOYEE_2_TEAM"},
 	{error : false, path : "EMPLOYEE_2_TEAM/TEAM_2_MANAGER"},
