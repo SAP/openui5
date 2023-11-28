@@ -34,9 +34,6 @@
 		"configuration": {
 			"editor": "dt",
 			"parameters": {
-				"parameterSyntaxInValue": {
-					"value": "New title: {{parameters.stringWithTranslatedValueIni18nFormat}}"
-				},
 				"checkItemWithTabNotEditable": {
 					"value": {
 						"text": "text01", "key": "key01", "url": "https://sap.com/06", "icon": "sap-icon://accept", "editable": true
@@ -353,8 +350,8 @@
 			}
 		},
 		"header": {
-			"title": "{{parameters.cardTitle}}",
-			"subTitle": "{{parameters.objectsWithPropertiesDefinedAndValueFromJsonList.0.text}}",
+			"title": "{parameters>/cardTitle/value}",
+			"subTitle": "{parameters>/objectsWithPropertiesDefinedAndValueFromJsonList/value/0/text}",
 			"icon": {
 				"src": "sap-icon://add-document",
 				"shape": "Circle",

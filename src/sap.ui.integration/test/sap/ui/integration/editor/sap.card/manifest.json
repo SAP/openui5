@@ -23,9 +23,6 @@
 		"configuration": {
 			"editor": "dt",
 			"parameters": {
-				"parameterSyntaxInValue": {
-					"value": "New title: {{parameters.stringWithTranslatedValueIni18nFormat}}"
-				},
 				"contextModelSyntax": {
 					"value": []
 				},
@@ -305,7 +302,7 @@
 			}
 		},
 		"header": {
-			"title": "{{parameters.cardTitle}}",
+			"title": "{parameters>/cardTitle/value}",
 			"subTitle": "Card Sub Title",
 			"icon": {
 				"src": "sap-icon://accept",
