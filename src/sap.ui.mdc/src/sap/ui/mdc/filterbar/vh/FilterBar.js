@@ -9,7 +9,7 @@ sap.ui.define(
 		"sap/ui/mdc/filterbar/aligned/FilterItemLayout",
 		"sap/ui/mdc/filterbar/vh/FilterContainer",
 		"sap/m/Button",
-		"sap/m/p13n/enum/PersistenceMode"
+		"sap/m/p13n/enums/PersistenceMode"
 	],
 	function(
 		mLibrary,

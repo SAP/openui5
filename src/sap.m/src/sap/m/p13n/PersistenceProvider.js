@@ -2,7 +2,7 @@
  * ${copyright}
  */
 sap.ui.define([
-	"sap/ui/core/Control", 	"sap/m/p13n/enum/PersistenceMode"
+	"sap/ui/core/Control", 	"sap/m/p13n/enums/PersistenceMode"
 ], function(CoreControl, mode) {
 	"use strict";
 
@@ -28,7 +28,7 @@ sap.ui.define([
 				 * Allowed options are {@link sap.ui.mdc.enum.PersistenceMode}
 				 */
 				mode: {
-					type: "sap.m.p13n.enum.PersistenceMode",
+					type: "sap.m.p13n.enums.PersistenceMode",
 					group: "Data",
 					defaultValue: mode.Auto
 				}

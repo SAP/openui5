@@ -14,7 +14,7 @@ sap.ui.define([
 	"sap/m/p13n/modules/UIManager",
 	"sap/m/p13n/modules/StateHandlerRegistry",
 	"sap/m/p13n/modules/xConfigAPI",
-	"sap/m/p13n/enum/ProcessingStrategy"
+	"sap/m/p13n/enums/ProcessingStrategy"
 ], function (AdaptationProvider, merge, Log, FlexModificationHandler, MessageStrip, coreLibrary, Element, DefaultProviderRegistry, UIManager, StateHandlerRegistry, xConfigAPI, ProcessingStrategy) {
 	"use strict";
 
