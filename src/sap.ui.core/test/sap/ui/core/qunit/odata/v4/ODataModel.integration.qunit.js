@@ -31855,9 +31855,10 @@ make root = ${bMakeRoot}`;
 	//*********************************************************************************************
 	// Scenario: Determine the parent of a node in a hierarchy where a preceding sibling is not
 	// yet loaded, but the parent is found. Determine the parent of a node where the parent is not
-	// yet loaded.
+	// yet loaded and request this parent.
 	// JIRA: CPOUI5ODATAV4-2378
-	QUnit.test("Recursive Hierarchy: #getParent with expandTo > 1", async function (assert) {
+	QUnit.test("Recursive Hierarchy: getParent/requestParent with expandTo > 1",
+			async function (assert) {
 		const oModel = this.createTeaBusiModel({autoExpandSelect : true});
 		const sView = `
 <t:Table id="table" rows="{path : '/EMPLOYEES',
@@ -31991,7 +31992,23 @@ make root = ${bMakeRoot}`;
 
 		// code under test
 		assert.strictEqual(oEta.getParent(), undefined);
-	});
+
+		this.expectRequest("EMPLOYEES?$apply=ancestors("
+					+ "$root/EMPLOYEES,OrgChart,ID,filter(ID eq '6'),1)"
+				+ "&$select=ID,Name", {
+			value : [{
+				ID : "5",
+				Name : "Zeta"
+			}]
+		});
+
+		// code under test
+		const oZeta = await oEta.requestParent();
+
+		assert.strictEqual(oZeta.getPath(), "/EMPLOYEES('5')");
+		assert.deepEqual(oZeta.getObject(), {ID : "5", Name : "Zeta"});
+		assert.strictEqual(oZeta.getIndex(), undefined);
+});
 
 	//*********************************************************************************************
 	// Scenario: Show the single root node of a recursive hierarchy and expand it. Not all children

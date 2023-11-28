@@ -1037,6 +1037,48 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("fetchParent", async function (assert) {
+		const oAggregation = {
+			$metaPath : "~metaPath~",
+			$NodeProperty : "NodeID",
+			$path : "/path",
+			aggregate : {},
+			group : {},
+			groupLevels : ["BillToParty"],
+			hierarchyQualifier : "X"
+		};
+		const oCache = _AggregationCache.create(this.oRequestor, "Foo", "", {}, oAggregation);
+		const sQueryOptions = JSON.stringify(oCache.mQueryOptions);
+
+		this.mock(oCache).expects("getTypes").returns("~Type~");
+		const oNode = {};
+		oCache.aElements[23] = oNode;
+		this.mock(_Helper).expects("getKeyFilter").withExactArgs(oNode, "~metaPath~", "~Type~")
+			.returns("~Key~");
+		this.mock(this.oRequestor).expects("buildQueryString")
+			.withExactArgs(null, {$apply : "ancestors($root/path,X,NodeID,filter(~Key~),1)"})
+			.returns("/~QueryString~");
+		this.mock(this.oRequestor).expects("request")
+			.withExactArgs("GET", "Foo/~QueryString~", "~GroupLock~")
+			.resolves({value : ["~Result~"]});
+		this.mock(oCache).expects("fetchTypes").withExactArgs().resolves("~Types~");
+
+		this.mock(_Helper).expects("buildPath").withExactArgs("/Foo", "").returns("~Path~");
+		this.mock(_Helper).expects("getMetaPath").withExactArgs("~Path~").returns("~MetaPath~");
+		this.mock(oCache).expects("visitResponse")
+			.withExactArgs("~Result~", "~Types~", "~MetaPath~");
+		this.mock(_Helper).expects("getPrivateAnnotation").withExactArgs("~Result~", "predicate")
+			.returns("~predicate~");
+
+		// code under test
+		const oParent = await oCache.fetchParent(23, "~GroupLock~");
+
+		assert.strictEqual(JSON.stringify(oCache.mQueryOptions), sQueryOptions, "unchanged");
+		assert.deepEqual(oCache.aElements.$byPredicate, {"~predicate~" : "~Result~"});
+		assert.strictEqual(oParent, "~Result~");
+	});
+
+	//*********************************************************************************************
 [false, true].forEach(function (bAsync) {
 	QUnit.test("fetchValue: not $count; async = " + bAsync, function (assert) {
 		var oAggregation = {
