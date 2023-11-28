@@ -5,9 +5,17 @@ sap.ui.define([
 	"sap/ui/core/Core",
 	"sap/ui/core/Lib",
 	"sap/ui/core/Theming",
+	"sap/ui/events/KeyCodes",
 	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/qunit/utils/createAndAppendDiv"
-], function(CodeEditor, Button, Core, Library, Theming, nextUIUpdate, createAndAppendDiv) {
+], function(CodeEditor,
+			Button,
+			Core,
+			Library,
+			Theming,
+			KeyCodes,
+			nextUIUpdate,
+			createAndAppendDiv) {
 	"use strict";
 
 	var DOM_RENDER_LOCATION = "content";
@@ -24,13 +32,11 @@ sap.ui.define([
 			this.oCodeEditor = new CodeEditor({
 				type: "html",
 				height: "300px",
-				maxLines: 70,
-				visible: false
+				maxLines: 70
 			});
 			this.oButton = new Button({
 				text: "click"
 			});
-
 			this.oCodeEditor.placeAt(DOM_RENDER_LOCATION);
 			this.oButton.placeAt(DOM_RENDER_LOCATION);
 			await nextUIUpdate();
@@ -42,22 +48,17 @@ sap.ui.define([
 	});
 
 	QUnit.test("Initial state", function (assert) {
-		assert.ok(this.oCodeEditor._oEditor.getSession().getUseWorker() === false, "should not use worker initially.");
+		assert.notOk(this.oCodeEditor._oEditor.getSession().getUseWorker(), "should not use worker initially.");
+		assert.ok(this.oCodeEditor._oEditor.getOption("enableKeyboardAccessibility"), "keyboard accessibility is set");
 	});
 
-	QUnit.test("On focus", async function (assert) {
-		this.oCodeEditor.setVisible(true);
-		await nextUIUpdate();
-
+	QUnit.test("On focus", function (assert) {
 		this.oCodeEditor.focus();
 
 		assert.ok(this.oCodeEditor._oEditor.getSession().getUseWorker() === true, "should use worker when focused.");
 	});
 
-	QUnit.test("On blur", async function (assert) {
-		this.oCodeEditor.setVisible(true);
-		await nextUIUpdate();
-
+	QUnit.test("On blur", function (assert) {
 		this.oCodeEditor.focus();
 		this.oButton.focus();
 
@@ -65,9 +66,6 @@ sap.ui.define([
 	});
 
 	QUnit.test("change value when on focus", async function (assert) {
-		this.oCodeEditor.setVisible(true);
-		await nextUIUpdate();
-
 		this.oCodeEditor.focus();
 		this.oCodeEditor.setValue("text");
 		await nextUIUpdate();
@@ -79,14 +77,14 @@ sap.ui.define([
 		var oBlurSpy = sinon.spy(document.activeElement, "blur");
 
 		this.oCodeEditor.setEditable(false);
-		this.oCodeEditor.setVisible(true);
+
 		await nextUIUpdate();
 
 		//ACT
 		this.oCodeEditor.focus();
 
 		// ASSERT
-		assert.strictEqual(document.activeElement.classList.contains("ace_text-input"), true, "When code editor is not editable the focus should remain on the code editor");
+		assert.strictEqual(document.activeElement, this.oCodeEditor.getFocusDomRef(), "When code editor is not editable the focus should remain on the code editor");
 		assert.strictEqual(oBlurSpy.notCalled, true, "document.activeElement.blur() should not have been called");
 
 		oBlurSpy.restore();
@@ -94,23 +92,16 @@ sap.ui.define([
 		this.oButton.focus();
 	});
 
-	QUnit.test("Focused elements in code editor editable:true", async function (assert) {
-
-		//Arrange
-		this.oCodeEditor.setVisible(true);
-		await nextUIUpdate();
-
+	QUnit.test("Focused elements in code editor editable:true", function (assert) {
 		//ACT
 		this.oCodeEditor.focus();
 
 		// ASSERT
-		assert.strictEqual(document.activeElement.classList.contains("ace_text-input"), true, "When code editor is editable focus should be on the code editor");
+		assert.strictEqual(document.activeElement, this.oCodeEditor.getFocusDomRef(), "When code editor is editable focus should be on the code editor");
 	});
 
 	QUnit.test("ACE Editor is read only when editable is false", async function (assert) {
 		//Arrange
-		this.oCodeEditor.setVisible(true);
-
 		this.oCodeEditor.setEditable(false);
 		await nextUIUpdate();
 
@@ -143,7 +134,7 @@ sap.ui.define([
 		// Arrange
 		var sText = "ui5 \n".repeat(100); // lots of text to show the scrollbar
 		this.oCodeEditor.setValue(sText);
-		this.oCodeEditor.setVisible(true);
+
 		this.oCodeEditor.setWidth("300px");
 		await nextAceEditorRendering(this.oCodeEditor);
 		var fInitialScrollbarPos = this.oCodeEditor._oEditor.getSession().getScrollTop();
@@ -217,6 +208,24 @@ sap.ui.define([
 		afterEach: function () {
 			this.oCodeEditor.destroy();
 		}
+	});
+
+	QUnit.test("tab indexes", function (assert) {
+		var aFocusableElements = this.oCodeEditor.getDomRef().querySelectorAll('.ace_keyboard-focus[tabindex="0"]');
+
+		// Assert
+		assert.strictEqual(aFocusableElements.length, 2, "There are 2 focusable elements");
+	});
+
+	QUnit.test("keyboard navigation", function (assert) {
+		this.oCodeEditor.focus();
+		assert.strictEqual(document.activeElement, this.oCodeEditor._oEditor.renderer.scroller, "focus is on the scroller");
+
+		document.activeElement.dispatchEvent(new KeyboardEvent("keyup", { keyCode: KeyCodes.ENTER }));
+		assert.ok(document.activeElement.classList.contains("ace_text-input"), "focus goes to the text area");
+
+		document.activeElement.dispatchEvent(new KeyboardEvent("keydown", { keyCode: KeyCodes.ESCAPE }));
+		assert.strictEqual(document.activeElement, this.oCodeEditor._oEditor.renderer.scroller, "focus is on the scroller");
 	});
 
 	QUnit.test("Aria role and roledescription", function(assert) {
@@ -344,5 +353,4 @@ sap.ui.define([
 		// Act
 		this.oCodeEditor.setValue("function () { some invalid JavaScript }");
 	});
-
 });
