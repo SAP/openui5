@@ -4,7 +4,8 @@
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns:tnt="sap.tnt"
 	height="100%">
-	<tnt:ToolHeader>
+	<Text text="Simple IconTabHeader" class="sapUiTinyMarginTop sapUiSmallMarginBegin"></Text>
+	<tnt:ToolHeader class="sapUiTinyMarginTop sapUiTinyMarginEnd sapUiTinyMarginBegin">
 		<Button icon="sap-icon://home" type="Transparent" press=".onHomePress">
 			<layoutData>
 				<OverflowToolbarLayoutData priority="NeverOverflow" />
@@ -13,7 +14,6 @@
 		<IconTabHeader
 			id="iconTabHeader"
 			selectedKey="invalidKey"
-			select=".onSelectTab"
 			backgroundDesign="Transparent"
 			mode="Inline">
 			<layoutData>
@@ -46,7 +46,126 @@
 			</Menu>
 		</MenuButton>
 	</tnt:ToolHeader>
-	<Panel>
-		<Label id="labelId" text="Home Screen" />
-	</Panel>
+	<Text text="IconTabHeader with one interaction for the tab - opening the sub-items list" class="sapUiLargeMarginTop sapUiSmallMarginBegin"></Text>
+	<tnt:ToolHeader class="sapUiTinyMargin sapUiTinyMarginTop">
+		<Button icon="sap-icon://home" type="Transparent" press=".onHomePress">
+			<layoutData>
+				<OverflowToolbarLayoutData priority="NeverOverflow" />
+			</layoutData>
+		</Button>
+		<IconTabHeader
+			id="iconTabHeaderOneClickArea"
+			selectedKey="invalidKey"
+			backgroundDesign="Transparent"
+			mode="Inline">
+			<layoutData>
+				<OverflowToolbarLayoutData priority="NeverOverflow" shrinkable="true" />
+			</layoutData>
+			<items>
+				<IconTabFilter text="Users" interactionMode="SelectLeavesOnly">
+					<items>
+						<IconTabFilter text="User 1" />
+						<IconTabFilter text="User 2" />
+						<IconTabFilter text="User 3" />
+					</items>
+				</IconTabFilter>
+				<IconTabFilter text="Identity" interactionMode="SelectLeavesOnly">
+					<items>
+						<IconTabFilter text="Identity 1" />
+						<IconTabFilter text="Identity 2" />
+						<IconTabFilter text="Identity 3" />
+						<IconTabFilter text="Identity 4" />
+						<IconTabFilter text="Identity 5" />
+					</items>
+				</IconTabFilter>
+				<IconTabFilter text="Monitoring" interactionMode="SelectLeavesOnly">
+					<items>
+						<IconTabFilter text="Monitoring 1" />
+						<IconTabFilter text="Monitoring 2" />
+						<IconTabFilter text="Monitoring 3" />
+					</items>
+				</IconTabFilter>
+			</items>
+		</IconTabHeader>
+		<Button icon="sap-icon://search" type="Transparent">
+			<layoutData>
+				<OverflowToolbarLayoutData priority="NeverOverflow" />
+			</layoutData>
+		</Button>
+		<Button icon="sap-icon://comment" type="Transparent">
+			<layoutData>
+				<OverflowToolbarLayoutData priority="NeverOverflow" />
+			</layoutData>
+		</Button>
+		<MenuButton icon="sap-icon://hint" type="Transparent">
+			<layoutData>
+				<OverflowToolbarLayoutData priority="NeverOverflow" />
+			</layoutData>
+			<Menu>
+				<MenuItem text="Edit" icon="sap-icon://edit" />
+				<MenuItem text="Save" icon="sap-icon://save" />
+			</Menu>
+		</MenuButton>
+	</tnt:ToolHeader>
+	<Text text="IconTabHeader with two interaction areas for the tab - selecting it or opening the sub-items list" class="sapUiLargeMarginTop sapUiSmallMarginBegin"></Text>
+	<tnt:ToolHeader class="sapUiTinyMargin sapUiTinyMarginTop">
+		<Button icon="sap-icon://home" type="Transparent" press=".onHomePress">
+			<layoutData>
+				<OverflowToolbarLayoutData priority="NeverOverflow" />
+			</layoutData>
+		</Button>
+		<IconTabHeader
+			id="iconTabHeaderTwoClickArea"
+			selectedKey="invalidKey"
+			backgroundDesign="Transparent"
+			mode="Inline">
+			<layoutData>
+				<OverflowToolbarLayoutData priority="NeverOverflow" shrinkable="true" />
+			</layoutData>
+			<items>
+				<IconTabFilter text="Users">
+					<items>
+						<IconTabFilter text="User 1" />
+						<IconTabFilter text="User 2" />
+						<IconTabFilter text="User 3" />
+					</items>
+				</IconTabFilter>
+				<IconTabFilter text="Identity">
+					<items>
+						<IconTabFilter text="Identity 1" />
+						<IconTabFilter text="Identity 2" />
+						<IconTabFilter text="Identity 3" />
+						<IconTabFilter text="Identity 4" />
+						<IconTabFilter text="Identity 5" />
+					</items>
+				</IconTabFilter>
+				<IconTabFilter text="Monitoring">
+					<items>
+						<IconTabFilter text="Monitoring 1" />
+						<IconTabFilter text="Monitoring 2" />
+						<IconTabFilter text="Monitoring 3" />
+					</items>
+				</IconTabFilter>
+			</items>
+		</IconTabHeader>
+		<Button icon="sap-icon://search" type="Transparent">
+			<layoutData>
+				<OverflowToolbarLayoutData priority="NeverOverflow" />
+			</layoutData>
+		</Button>
+		<Button icon="sap-icon://comment" type="Transparent">
+			<layoutData>
+				<OverflowToolbarLayoutData priority="NeverOverflow" />
+			</layoutData>
+		</Button>
+		<MenuButton icon="sap-icon://hint" type="Transparent">
+			<layoutData>
+				<OverflowToolbarLayoutData priority="NeverOverflow" />
+			</layoutData>
+			<Menu>
+				<MenuItem text="Edit" icon="sap-icon://edit" />
+				<MenuItem text="Save" icon="sap-icon://save" />
+			</Menu>
+		</MenuButton>
+	</tnt:ToolHeader>
 </mvc:View>

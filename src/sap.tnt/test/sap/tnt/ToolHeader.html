@@ -637,7 +637,23 @@
 									new sap.m.IconTabFilter({text: "Filter 2-3"})
 								]
 							}),
-							new sap.m.IconTabFilter({text: "Filter 3"})
+							new sap.m.IconTabFilter({
+								text: "Filter 3",
+								interactionMode: "SelectLeavesOnly",
+								items: [
+									new sap.m.IconTabFilter({text: "Filter 3-1"}),
+									new sap.m.IconTabFilter({text: "Filter 3-2"}),
+									new sap.m.IconTabFilter({text: "Filter 3-3"})
+								]
+							}),
+							new sap.m.IconTabFilter({
+								text: "Filter 4",
+								interactionMode: "SelectLeavesOnly"
+							}),
+							new sap.m.IconTabFilter({
+								text: "Filter 5",
+								interactionMode: "Select"
+							})
 						]
 					}),
 					new sap.m.IconTabHeader({

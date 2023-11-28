@@ -76,7 +76,8 @@
 						<IconTabFilter
 								items="{items}"
 								text="{title}"
-								key="{key}">
+								key="{key}"
+								interactionMode="SelectLeavesOnly">
 							<items>
 								<IconTabFilter
 										text="{title}"

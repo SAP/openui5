@@ -54,6 +54,11 @@
 				});
 				label1b.addStyleClass("label");
 
+				var label1b2 = new Label({
+					text: "Text only IconTabBar with filters for demonstrating 'interactionMode' property"
+				});
+				label1b2.addStyleClass("label");
+
 				var label1c = new Label({
 					text: "Text only IconTabBar with filters and icons"
 				});
@@ -1243,6 +1248,123 @@
 					]
 				});
 
+				var itb1b2 = new IconTabBar("itb1b2", {
+					upperCase: true,
+					selectedKey: "mid",
+					items: [
+						new IconTabFilter({
+							iconColor: sap.ui.core.IconColor.Default,
+							text: "No own content",
+							key: "first",
+							items: [
+								new IconTabFilter({
+									iconColor: sap.ui.core.IconColor.Default,
+									text: "1.1.Filter",
+									content: [
+										new RatingIndicator({
+											value: 1
+										})
+									]
+								}),
+								new IconTabFilter({
+									iconColor: sap.ui.core.IconColor.Default,
+									text: "1.2.Filter",
+									content: [
+										new RatingIndicator({
+											value: 2
+										})
+									]
+								}),
+							]
+						}),
+						new IconTabFilter({
+							iconColor: sap.ui.core.IconColor.Default,
+							text: "No own content, but property set to 'Select'",
+							key: "first",
+							interactionMode: "Select",
+							items: [
+								new IconTabFilter({
+									iconColor: sap.ui.core.IconColor.Default,
+									text: "1.1.Filter",
+									content: [
+										new RatingIndicator({
+											value: 1
+										})
+									]
+								}),
+								new IconTabFilter({
+									iconColor: sap.ui.core.IconColor.Default,
+									text: "1.2.Filter",
+									content: [
+										new RatingIndicator({
+											value: 2
+										})
+									]
+								}),
+							]
+						}),
+						new IconTabFilter({
+							iconColor: sap.ui.core.IconColor.Default,
+							text: "Has own content",
+							content: [
+								new RatingIndicator({
+									value: 2
+								})
+							],
+							items: [
+								new IconTabFilter({
+									iconColor: sap.ui.core.IconColor.Default,
+									text: "4.1.Filter",
+									content: [
+										new RatingIndicator({
+											value: 1
+										})
+									]
+								}),
+								new IconTabFilter({
+									iconColor: sap.ui.core.IconColor.Default,
+									text: "4.2.Filter",
+									content: [
+										new RatingIndicator({
+											value: 2
+										})
+									]
+								})
+							]
+						}),
+						new IconTabFilter({
+							iconColor: sap.ui.core.IconColor.Default,
+							text: "Has own content, but property set to 'SelectLeavesOnly'",
+							interactionMode: "SelectLeavesOnly",
+							content: [
+								new RatingIndicator({
+									value: 2
+								})
+							],
+							items: [
+								new IconTabFilter({
+									iconColor: sap.ui.core.IconColor.Default,
+									text: "4.1.Filter",
+									content: [
+										new RatingIndicator({
+											value: 1
+										})
+									]
+								}),
+								new IconTabFilter({
+									iconColor: sap.ui.core.IconColor.Default,
+									text: "4.2.Filter",
+									content: [
+										new RatingIndicator({
+											value: 2
+										})
+									]
+								})
+							]
+						})
+					]
+				});
+
 				var itb1c = new IconTabBar("itb1c", {
 					upperCase: true,
 					headerMode: "Inline",
@@ -2135,6 +2257,8 @@
 						itb1a,
 						label1b,
 						itb1b,
+						label1b2,
+						itb1b2,
 						label1c,
 						itb1c,
 						label2a,
