@@ -119,7 +119,7 @@ sap.ui.define([
 							filterable: oFilterRestrictionsInfo[sKey] ? oFilterRestrictionsInfo[sKey].filterable : true,
 							groupable: true,
 							aggregatable: false,
-							maxConditions: ODataMetaModelUtil.isMultiValueFilterExpression(oFilterRestrictionsInfo.propertyInfo[sKey]) ? -1 : 1,
+							maxConditions: ODataMetaModelUtil.isMultiValueFilterExpression(oFilterRestrictionsInfo[sKey]?.allowedExpressions) ? -1 : 1,
 							dataType: oObj.$Type,
 							//formatOptions: null,
 							//constraints: {},
@@ -155,7 +155,7 @@ sap.ui.define([
 					groupable: false,
 					aggregatable: oPropertyAnnotations["@Org.OData.Aggregation.V1.Aggregatable"],
 					aggregationMethod: sAggregationMethod,
-					maxConditions: ODataMetaModelUtil.isMultiValueFilterExpression(oFilterRestrictionsInfo.propertyInfo[sKey]) ? -1 : 1,
+					maxConditions: ODataMetaModelUtil.isMultiValueFilterExpression(oFilterRestrictionsInfo[sKey]?.allowedExpressions) ? -1 : 1,
 					dataType: oObj.$Type,
 					datapoint: null //To be implemented by FE
 				});
