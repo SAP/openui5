@@ -1642,12 +1642,13 @@ sap.ui.define([
 
 		oDateFormat = DateFormat.getInstance({pattern: "w", calendarType: this._getPrimaryCalendarType(), calendarWeekNumbering: this.getCalendarWeekNumbering()}, oLocale);
 
-		var bIsRegionUS = oLocaleData.firstDayStartsFirstWeek();
+		const bIsRegionUS = oLocaleData.firstDayStartsFirstWeek();
 
-		// Because the date we use to calculate the week number may be in one year and in the same time
-		// includes days in a new month into a new year, we explicitly changed the week number
-		// US calendar weeks overlap, Jan 1st is always week 1, while Dec 31st is always last week.
-		if (oEndDate.getMonth() === 0 && this._oDate.getMonth() === 0  && bIsRegionUS) {
+		const bStartsInFirstMonth = this._oDate.getMonth() === 0;
+		const bEndsInFirstMonth = oEndDate.getMonth() === 0;
+		const bEndsInSecondMonth = oEndDate.getMonth() === 1;
+
+		if (bStartsInFirstMonth && bIsRegionUS && (bEndsInFirstMonth || bEndsInSecondMonth)) {
 			iWeekNumber = oDateFormat.format(oEndDate.toLocalJSDate());
 		} else {
 			iWeekNumber = oDateFormat.format(oDate.toLocalJSDate());
