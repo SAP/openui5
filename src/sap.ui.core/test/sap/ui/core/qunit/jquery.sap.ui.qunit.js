@@ -3,9 +3,9 @@ sap.ui.define([
 	"jquery.sap.ui",
 	"sap/ui/core/Control",
 	"sap/ui/core/Element",
-	"sap/ui/core/UIArea",
+	"sap/ui/core/UIAreaRegistry",
 	"sap/ui/qunit/utils/nextUIUpdate"
-], function(jQuery, Control, Element, UIArea, nextUIUpdate) {
+], function(jQuery, Control, Element, UIAreaRegistry, nextUIUpdate) {
 	"use strict";
 
 	var TestControl = Control.extend("sap.jsunittest.Test", {
@@ -39,7 +39,7 @@ sap.ui.define([
 	QUnit.test("OneRootOk", function(assert) {
 		jQuery("#uiArea1").root();
 
-		var oUIArea = UIArea.registry.get("uiArea1");
+		var oUIArea = UIAreaRegistry.get("uiArea1");
 		assert.notStrictEqual(oUIArea, null, "UI Area should have been created.");
 		assert.notStrictEqual(oUIArea, undefined, "UI Area should have been created.");
 	});
@@ -47,28 +47,28 @@ sap.ui.define([
 	QUnit.test("MultipleRootOk", function(assert) {
 		jQuery(".test").root();
 
-		var oUIArea = UIArea.registry.get("uiArea2");
+		var oUIArea = UIAreaRegistry.get("uiArea2");
 		assert.notStrictEqual(oUIArea, null, "UI Area 2 should have been created.");
 		assert.notStrictEqual(oUIArea, undefined, "UI Area 2 should have been created.");
 
-		oUIArea = UIArea.registry.get("uiArea3");
+		oUIArea = UIAreaRegistry.get("uiArea3");
 		assert.notStrictEqual(oUIArea, null, "UI Area 3 should have been created.");
 		assert.notStrictEqual(oUIArea, undefined, "UI Area 3 should have been created.");
 	});
 
 	QUnit.test("MultipleRootAndSliceOk", function(assert) {
-		var iNo1 = UIArea.registry.size;
+		var iNo1 = UIAreaRegistry.size;
 
 		jQuery(".test1").root();
 
-		var iNo2 = UIArea.registry.size;
+		var iNo2 = UIAreaRegistry.size;
 		assert.strictEqual(iNo2, iNo1 + 3, "Exaclty three UIAreas should have been created.");
 
-		var oUIArea = UIArea.registry.get("uiArea4");
+		var oUIArea = UIAreaRegistry.get("uiArea4");
 		assert.notStrictEqual(oUIArea, null, "UI Area 4 should have been created.");
 		assert.notStrictEqual(oUIArea, undefined, "UI Area 4 should have been created.");
 
-		var iNo3 = UIArea.registry.size;
+		var iNo3 = UIAreaRegistry.size;
 		assert.strictEqual(iNo3, iNo2, "No additional UIArea should have been created.");
 	});
 
@@ -81,11 +81,11 @@ sap.ui.define([
 	});
 
 	QUnit.test("RootReturnsAllRelevantUIAreasOk", function(assert) {
-		var iNo1 = UIArea.registry.size;
+		var iNo1 = UIAreaRegistry.size;
 
 		jQuery(".test2").root();
 
-		var iNo2 = UIArea.registry.size;
+		var iNo2 = UIAreaRegistry.size;
 		assert.strictEqual(iNo2, iNo1 + 3, "Exactly three UIArea should have been created.");
 
 		assert.strictEqual(jQuery("[id*=uiArea]").root().length + jQuery("[id*=id-]").root().length, iNo2, "jQuery method should return all relevant roots (i.e. UIArea DOMNodes), selector [id*=uiArea]");
@@ -137,7 +137,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("GetUIAreasOk", function(assert) {
-		var iNo = UIArea.registry.size;
+		var iNo = UIAreaRegistry.size;
 
 		var aUIAreas = jQuery("div").uiarea();
 

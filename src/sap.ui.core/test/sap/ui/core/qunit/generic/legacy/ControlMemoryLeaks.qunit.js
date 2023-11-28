@@ -15,12 +15,12 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/base/util/ObjectPath",
 	"sap/ui/VersionInfo",
-	"sap/ui/core/Element",
+	"sap/ui/core/ElementRegistry",
 	"sap/ui/core/Lib",
 	"sap/ui/dom/includeStylesheet",
 	"sap/ui/qunit/utils/nextUIUpdate",
 	"require"
-], function (Log, ObjectPath, VersionInfo, Element, Library, includeStylesheet, nextUIUpdate, require) {
+], function (Log, ObjectPath, VersionInfo, ElementRegistry, Library, includeStylesheet, nextUIUpdate, require) {
 	"use strict";
 
 	/*global QUnit */
@@ -301,8 +301,7 @@ sap.ui.define([
 	async function checkControl(oControlClass, assert) {
 		var sControlName = oControlClass.getMetadata().getName();
 
-		var //mPrePreElements = Element.registry.all(),
-			oControl1 = new oControlClass(),
+		var oControl1 = new oControlClass(),
 			bCanRender = false;
 
 		// check whether this control can be rendered
@@ -334,7 +333,7 @@ sap.ui.define([
 
 		// Render Control Instance 2 - any new controls leaked?
 
-		var mPreElements = Element.registry.all(),
+		var mPreElements = ElementRegistry.all(),
 			oControl2 = new oControlClass();
 
 		fillControlProperties(oControl2);
@@ -357,7 +356,7 @@ sap.ui.define([
 
 		oControl2.destroy();
 		await nextUIUpdate();
-		var mPostElements = Element.registry.all();
+		var mPostElements = ElementRegistry.all();
 
 		// controls left over by second instance are real leaks that will grow proportionally to instance count => ERROR
 		assert.equalElementsInControlList(mPostElements, mPreElements, "Memory leak check in " + sControlName);
@@ -372,7 +371,7 @@ sap.ui.define([
 
 	QUnit.module("Memory.Controls", {
 		afterEach: function() {
-			Element.registry.forEach(function(oElement, sId) {
+			ElementRegistry.forEach(function(oElement, sId) {
 				oElement.destroy();
 			});
 		}

@@ -20,18 +20,18 @@ sap.ui.define(["sap/ui/base/ManagedObjectRegistry", "sap/ui/base/ManagedObject"]
 
 		QUnit.module("ManagedObjectRegistry (Happy Path)");
 
-		QUnit.test("Should mixin register/deregister", function (assert) {
+		QUnit.test("Should mixin object", function (assert) {
 			var Foo = ManagedObject.extend("Foo", {
 				constructor: function () {
 					ManagedObject.apply(this, arguments);
 				}
 			});
 
-			const registry = ManagedObjectRegistry.create();
-			registry.init(Foo);
+			ManagedObjectRegistry.apply(Foo);
 
 			assert.ok(Foo.prototype.register, "Has register prototype function");
 			assert.ok(Foo.prototype.deregister, "Has deregister prototype function");
+			assert.ok(Foo.hasOwnProperty("registry"), "Extended object has static property \"registry\"");
 		});
 
 		QUnit.test("Construction and destruction", function (assert) {
@@ -41,14 +41,12 @@ sap.ui.define(["sap/ui/base/ManagedObjectRegistry", "sap/ui/base/ManagedObject"]
 					ManagedObject.apply(this, arguments);
 				}
 			});
-
-			const registry = ManagedObjectRegistry.create();
-			registry.init(Foo);
+			ManagedObjectRegistry.apply(Foo);
 
 			var aInstance = createInstance(aInstanceId, Foo);
-			assert.equal(registry.size, 3, "3 instances added");
+			assert.equal(Foo.registry.size, 3, "3 instances added");
 			destroyInstance(aInstance);
-			assert.equal(registry.size, 0, "3 instances removed");
+			assert.equal(Foo.registry.size, 0, "3 instances removed");
 		});
 
 		QUnit.test("Should retrieve added instances as copy", function (assert) {
@@ -58,12 +56,11 @@ sap.ui.define(["sap/ui/base/ManagedObjectRegistry", "sap/ui/base/ManagedObject"]
 				}
 			});
 
-			const registry = ManagedObjectRegistry.create();
-			registry.init(Foo);
+			ManagedObjectRegistry.apply(Foo);
 
 			var oFoo = new Foo("A");
 
-			var mElementsInRegistry = registry.all();
+			var mElementsInRegistry = Foo.registry.all();
 			assert.equal(Object.keys(mElementsInRegistry).length, 1, "Contains 1 instance in map");
 			assert.equal(Object.getPrototypeOf(mElementsInRegistry), null, "Retrieved object contains no prototype functions");
 
@@ -77,13 +74,12 @@ sap.ui.define(["sap/ui/base/ManagedObjectRegistry", "sap/ui/base/ManagedObject"]
 				}
 			});
 
-			const registry = ManagedObjectRegistry.create();
-			registry.init(Foo);
+			ManagedObjectRegistry.apply(Foo);
 
 			var oFoo1 = new Foo("A");
 			var oFoo2 = new Foo("B");
 
-			assert.ok(registry.get("B"), "Retrieves instance with id B");
+			assert.ok(Foo.registry.get("B"), "Retrieves instance with id B");
 			destroyInstance([oFoo1, oFoo2]);
 		});
 
@@ -94,9 +90,7 @@ sap.ui.define(["sap/ui/base/ManagedObjectRegistry", "sap/ui/base/ManagedObject"]
 				}
 			});
 
-			const registry = ManagedObjectRegistry.create();
-			registry.init(Foo);
-
+			ManagedObjectRegistry.apply(Foo);
 			var aCallbackCallee = [];
 			var oFoo1 = new Foo("A");
 			var oFoo2 = new Foo("B");
@@ -107,7 +101,7 @@ sap.ui.define(["sap/ui/base/ManagedObjectRegistry", "sap/ui/base/ManagedObject"]
 			};
 			var fnCallbackSpy = sinon.spy(fnCallback);
 
-			registry.forEach(fnCallbackSpy);
+			Foo.registry.forEach(fnCallbackSpy);
 			assert.equal(fnCallbackSpy.callCount, 3, "Executed callback 3 times");
 			assert.ok(aCallbackCallee.indexOf(oFoo1) !== -1, "Executed callback for oFoo1");
 			assert.ok(aCallbackCallee.indexOf(oFoo2) !== -1, "Executed callback for oFoo2");
@@ -124,20 +118,17 @@ sap.ui.define(["sap/ui/base/ManagedObjectRegistry", "sap/ui/base/ManagedObject"]
 					ManagedObject.apply(this, arguments);
 				}
 			});
-
-			const registry = ManagedObjectRegistry.create();
-			registry.init(Foo);
+			ManagedObjectRegistry.apply(Foo);
 
 			assert.throws(function () {
-				registry.mutator = null;
+				Foo.registry.mutator = null;
 			}, "Throw on mutation");
 		});
 
 
 		QUnit.test("Should ensure that extended function is subclass of ManagedObject", function (assert) {
 			assert.throws(function () {
-				const registry = ManagedObjectRegistry.create();
-				registry.init(function Foo() { });
+				ManagedObjectRegistry.apply(function Foo() { });
 			}, new TypeError("ManagedObjectRegistry mixin can only be applied to subclasses of sap.ui.base.ManagedObject"),
 				"throws because function is not subclass of ManagedObject");
 		});
@@ -148,9 +139,7 @@ sap.ui.define(["sap/ui/base/ManagedObjectRegistry", "sap/ui/base/ManagedObject"]
 					ManagedObject.apply(this, arguments);
 				}
 			});
-
-			const registry = ManagedObjectRegistry.create();
-			registry.init(Foo);
+			ManagedObjectRegistry.apply(Foo);
 
 			assert.throws(function () {
 				new Foo("A");
