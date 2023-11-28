@@ -74,7 +74,7 @@ sap.ui.define([
 			this._oAggregation = {
 				expandTo : sExpandTo === "*"
 					? Number.MAX_SAFE_INTEGER
-					: parseInt(sExpandTo || "1"),
+					: parseFloat(sExpandTo || "1"), // Note: parseInt("1E16") === 1
 				hierarchyQualifier : "I_SADL_BHV_BIND_DIR_HIERVIEW"
 			};
 			oRowsBinding.setAggregation(this._oAggregation);
