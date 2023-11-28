@@ -1,0 +1,184 @@
+{
+	"_version": "1.14.0",
+	"sap.app": {
+		"id": "card.explorer.actionslabels.list.card",
+		"type": "card",
+		"title": "Sample of a List with Action Labels",
+		"subTitle": "Sample of a List with Action Labels",
+		"applicationVersion": {
+			"version": "1.0.0"
+		},
+		"shortTitle": "A short title for this Card",
+		"info": "Additional information about this Card",
+		"description": "A long description for this Card",
+		"tags": {
+			"keywords": [
+				"List",
+				"Label",
+				"Card",
+				"Sample"
+			]
+		}
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"icons": {
+			"icon": "sap-icon://list"
+		}
+	},
+	"sap.card": {
+		"type": "List",
+		"header": {
+			"title": "{parameters>/title/value}",
+			"subTitle": "{parameters>/subTitle/value}",
+			"icon": {
+				"src": "sap-icon://desktop-mobile"
+			},
+			"status": {
+				"text": "{parameters>/maxItems/value} of 20"
+			}
+		},
+		"configuration": {
+			"editor": "dt/Configuration",
+			"parameters": {
+				"title": {
+					"value": "List Card with Top 4 Products"
+				},
+				"subTitle": {
+					"value": "These are the top sellers this month"
+				},
+				"maxItems": {
+					"value": 4
+				}
+			}
+		},
+		"content": {
+			"data": {
+				"json": [{
+						"Name": "Comfort Easy",
+						"Description": "32 GB Digital Assistant with high-resolution color screen",
+						"Highlight": "Error"
+					},
+					{
+						"Name": "ITelO Vault",
+						"Description": "Digital Organizer with State-of-the-Art Storage Encryption",
+						"Highlight": "Warning"
+					},
+					{
+						"Name": "Notebook Professional 15",
+						"Description": "Notebook Professional 15 with 2,80 GHz quad core, 15\" Multitouch LCD, 8 GB DDR3 RAM, 500 GB SSD - DVD-Writer (DVD-R/+R/-RW/-RAM),Windows 8 Pro",
+						"Highlight": "Success"
+					},
+					{
+						"Name": "Ergo Screen E-I",
+						"Description": "Optimum Hi-Resolution max. 1920 x 1080 @ 85Hz, Dot Pitch: 0.27mm",
+						"Highlight": "Information"
+					},
+					{
+						"Name": "Laser Professional Eco",
+						"Description": "Print 2400 dpi image quality color documents at speeds of up to 32 ppm (color) or 36 ppm (monochrome), letter/A4. Powerful 500 MHz processor, 512MB of memory",
+						"Highlight": "None"
+					}
+				]
+			},
+			"maxItems": "{parameters>/maxItems/value}",
+			"item": {
+				"title": "{Name}",
+				"description": "{Description}",
+				"highlight": "{Highlight}",
+					"actionsStrip": [
+					{
+						"buttonType": "Transparent",
+						"text": "Add to Favorites",
+						"actions": [
+							{
+								"type": "Custom",
+								"parameters": {
+									"method": "addToFavorites",
+									"id": "{Id}"
+								}
+							}
+						]
+					},
+					{
+						"buttonType": "Transparent",
+						"text": "View Details",
+						"actions": [
+							{
+								"type": "Custom",
+								"parameters": {
+									"method": "view",
+									"id": "{Id}"
+								}
+							}
+						]
+					},
+					{
+						"type": "Label",
+						"text": "Change",
+						"overflowPriority": "AlwaysOverflow"
+					},
+					{
+						"text": "Change Title",
+						"overflowPriority": "AlwaysOverflow",
+						"actions": [
+							{
+								"type": "Custom",
+								"parameters": {
+									"method": "changeTitle",
+									"id": "{Id}"
+								}
+							}
+						]
+					},
+					{
+						"text": "Change Description",
+						"overflowPriority": "AlwaysOverflow",
+						"actions": [
+							{
+								"type": "Custom",
+								"parameters": {
+									"method": "changeDescription",
+									"id": "{Id}"
+								}
+							}
+						]
+					},
+					{
+						"type": "Label",
+						"text": "Remove",
+						"overflowPriority": "AlwaysOverflow"
+					},
+					{
+						"buttonType": "Transparent",
+						"text": "Remove Title",
+						"overflowPriority": "AlwaysOverflow",
+						"actions": [
+							{
+								"type": "Custom",
+								"parameters": {
+									"method": "remove title",
+									"id": "{Id}"
+								}
+							}
+						]
+					},
+					{
+						"buttonType": "Transparent",
+						"text": "Remove Description",
+						"overflowPriority": "AlwaysOverflow",
+						"actions": [
+							{
+								"type": "Custom",
+								"parameters": {
+									"method": "remove description",
+									"id": "{Id}"
+								}
+							}
+						]
+					}
+				]
+			}
+		}
+	}
+}

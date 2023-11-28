@@ -16,7 +16,8 @@ sap.ui.define([
 	"sap/m/OverflowToolbarButton",
 	"sap/m/OverflowToolbar",
 	"sap/m/OverflowToolbarLayoutData",
-	"sap/m/ToolbarSpacer"
+	"sap/m/ToolbarSpacer",
+	"sap/m/Label"
 ], function (
 	library,
 	mLibrary,
@@ -31,7 +32,8 @@ sap.ui.define([
 	OverflowToolbarButton,
 	OverflowToolbar,
 	OverflowToolbarLayoutData,
-	ToolbarSpacer
+	ToolbarSpacer,
+	Label
 ) {
 	"use strict";
 
@@ -186,6 +188,9 @@ sap.ui.define([
 		let oItem;
 
 		switch (oConfig.type) {
+			case "Label":
+				oItem = this._createLabel(oConfig);
+				break;
 			case "ToolbarSpacer":
 				return new ToolbarSpacer();
 			case "Link":
@@ -214,7 +219,9 @@ sap.ui.define([
 			oItem._bIsDisabled = true;
 		}
 
-		this.getCardActions().attach(oActionsConfig);
+		if (oConfig.type !== "Label") {
+			this.getCardActions().attach(oActionsConfig);
+		}
 
 		return oItem;
 	};
@@ -249,6 +256,15 @@ sap.ui.define([
 				delete oItem._bIsDisabled;
 			}
 		});
+	};
+
+	ActionsStrip.prototype._createLabel = function (mConfig) {
+		var oLabel = new Label({
+			text: mConfig.text,
+			visible: mConfig.visible
+		});
+
+		return oLabel;
 	};
 
 	ActionsStrip.prototype._createLink = function (mConfig) {

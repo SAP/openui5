@@ -129,6 +129,9 @@
 								<li>"Button" - creates a button</li>
 								<li>"ToolbarSpacer" - creates a toolbar spacer</li>
 								<li>"Link" - creates a link with optional icon. Available since 1.107</li>
+								<li>"Label" - creates a label for one item or for a group of items. Available since 1.121
+									<b>Note:</b> This property is experimental and may change!</td>
+								</li>
 							</ul>
 						</td>
 						<td>1.35.0</td>
@@ -139,7 +142,9 @@
 						<td><a href="../../index.html#/learn/actions" target="_parent">Actions[]</a></td>
 						<td></td>
 						<td>No</td>
-						<td>Actions that are triggered when the item is pressed.</td>
+						<td>Actions that are triggered when the item is pressed.
+							<b>Note:</b> This property is not available for "Label" and "ToolbarSpacer"!
+						</td>
 						<td>1.35.0</td>
 						<td>1.93</td>
 					</tr>
@@ -157,7 +162,9 @@
 						<td>string</td>
 						<td></td>
 						<td>No</td>
-						<td>The icon of the item.</td>
+						<td>The icon of the item.
+							<b>Note:</b> This property is not available for "Label" and "ToolbarSpacer"!
+						</td>
 						<td>1.35.0</td>
 						<td>1.93</td>
 					</tr>
@@ -175,7 +182,9 @@
 						<td>string</td>
 						<td></td>
 						<td>No</td>
-						<td>The tooltip of the item.</td>
+						<td>The tooltip of the item.
+							<b>Note:</b> This property is not available for "Label" and "ToolbarSpacer"!
+						</td>
 						<td>1.35.0</td>
 						<td>1.93</td>
 					</tr>
@@ -184,7 +193,9 @@
 						<td><a data-demokit-href="#/api/sap.m.ButtonType" target="_blank">sap.m.ButtonType</a></td>
 						<td></td>
 						<td>No</td>
-						<td>The type of the button. Only used when the type is "Button".</td>
+						<td>The type of the button. Only used when the type is "Button".
+							<b>Note:</b> This property is not available for "Label" and "ToolbarSpacer"!
+						</td>
 						<td>1.35.0</td>
 						<td>1.93</td>
 					</tr>
@@ -193,7 +204,9 @@
 						<td><a data-demokit-href="#/api/sap.ui.core.aria.HasPopup" target="_blank">sap.ui.core.aria.HasPopup</a></td>
 						<td></td>
 						<td>No</td>
-						<td>Use this property only when the item is related to a popover/popup.</td>
+						<td>Use this property only when the item is related to a popover/popup.
+							<b>Note:</b> This property is not available for "Label" and "ToolbarSpacer"!
+						</td>
 						<td>1.35.0</td>
 						<td>1.93</td>
 					</tr>
