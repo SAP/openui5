@@ -1,5 +1,5 @@
 /* This is needed for theme Horizon in order to achieve the target design
 which is when we have no menu button before the logo the padding before the logo should be 1.5rem */
-.noMenuBefore {
+.logo {
 	margin-left: 0.75rem!important;
 }
