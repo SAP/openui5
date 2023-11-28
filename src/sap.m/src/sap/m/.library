@@ -136,6 +136,20 @@
             </modules>
         </component>
         <component>
+            <name>CA-UI5-MDC</name>
+            <modules>
+                <module>sap/m/p13n/SelectionController</module>
+                <module>sap/m/p13n/SelectionPanel</module>
+                <module>sap/m/p13n/SortController</module>
+                <module>sap/m/p13n/SortPanel</module>
+                <module>sap/m/p13n/GroupController</module>
+                <module>sap/m/p13n/GroupPanel</module>
+                <module>sap/m/p13n/Egine</module>
+                <module>sap/m/p13n/MetadataHelper</module>
+                <module>sap/m/p13n/Popup</module>
+            </modules>
+        </component>
+        <component>
             <name>CA-UI5-TBL</name>
             <modules>
                 <module>sap/m/ListBase</module>
