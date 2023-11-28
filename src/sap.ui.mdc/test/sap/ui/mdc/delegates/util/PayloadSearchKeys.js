@@ -10,8 +10,8 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	const _getSearchKeys = (oValueHelp) => {
-		return oValueHelp?.getPayload()?.['searchKeys'];
+	const _getSearchKeys = (oControl) => {
+		return oControl?.getPayload()?.['searchKeys'];
 	};
 
 	const _parseSearchKeys = (vSearchPaths, sControlId) => {
@@ -25,9 +25,9 @@ sap.ui.define([
 		}, undefined);
 	};
 
-	const _extractSearchKeys = (oValueHelp, oContent) => {
-		const vSearchKeys = _getSearchKeys(oValueHelp);
-		return vSearchKeys && _parseSearchKeys(vSearchKeys, oContent?.getId());
+	const _extractSearchKeys = (oControl, oChild) => {
+		const vSearchKeys = _getSearchKeys(oControl);
+		return vSearchKeys && _parseSearchKeys(vSearchKeys, oChild?.getId());
 	};
 
 	const _combineFilters = function (aFilters, bAnd) {
@@ -57,21 +57,20 @@ sap.ui.define([
 	 * Falsy strings/Empty arrays can be used to disable the search similar to the filterFields mechanic: {searchKeys: ''}, {searchKeys: []}, {searchKeys: {contentIdA: '', contentIdB: [a,b,c]}
 	 */
 	const PayloadSearchKeys = {
-		getFilters: function (oValueHelp, oContent) {
-			const sSearch = oContent?.getSearch();
+		getFilters: function (oControl, sSearch, oChild) {
 			if (sSearch) {
-				const sSearchPaths = _extractSearchKeys(oValueHelp, oContent);
+				const sSearchPaths = _extractSearchKeys(oControl, oChild);
 				if (sSearchPaths) {
 					return _createSearchFilters(sSearchPaths, sSearch);
 				}
 			}
 			return [];
 		},
-		inUse: function (oValueHelp) {
-			return typeof _getSearchKeys(oValueHelp) !== 'undefined';
+		inUse: function (oControl) {
+			return typeof _getSearchKeys(oControl) !== 'undefined';
 		},
-		isEnabled: function (oValueHelp, oContent) {
-			return !!_extractSearchKeys(oValueHelp, oContent);
+		isEnabled: function (oControl, oChild) {
+			return !!_extractSearchKeys(oControl, oChild);
 		},
 		combineFilters: _combineFilters
 	};

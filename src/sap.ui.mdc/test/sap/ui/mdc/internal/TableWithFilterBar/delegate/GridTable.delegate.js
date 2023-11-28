@@ -7,13 +7,15 @@ sap.ui.define([
 	"sap/ui/core/Element",
 	"sap/ui/mdc/util/FilterUtil",
 	'sap/ui/core/date/UI5Date',
-	'sap/ui/model/FilterOperator'
+	'sap/ui/model/FilterOperator',
+	'delegates/util/PayloadSearchKeys'
 ], function(
 	TableDelegate,
 	Element,
 	FilterUtil,
 	UI5Date,
-	FilterOperator
+	FilterOperator,
+	PayloadSearchKeys
 ) {
 	"use strict";
 
@@ -47,7 +49,7 @@ sap.ui.define([
 
 		var oFilterBar = Element.getElementById(oTable.getFilter());
 
-		if (oFilterBar) {
+		if (!oFilterBar && !PayloadSearchKeys.inUse(oTable)) {
 			this._updateSearch(oBindingInfo, oFilterBar);
 		}
 
