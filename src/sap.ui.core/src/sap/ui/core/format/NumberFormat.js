@@ -529,7 +529,9 @@ sap.ui.define([
 	 *
 	 * As an alternative to using a fixed <code>symbol</code> for your custom currencies, you can also provide an ISO-Code.
 	 * The provided ISO-Code will be used to look up the currency symbol in the global configuration,
-	 * either defined in the CLDR or custom defined on the Format Settings (see {@link sap.ui.core.Configuration.FormatSettings#setCustomCurrencies}, {@link sap.ui.core.Configuration.FormatSettings#addCustomCurrencies}).
+	 * either defined in the CLDR or custom defined on the Format Settings (see
+	 * {@link module:sap/base/i18n/Formatting.setCustomCurrencies Formatting.setCustomCurrencies},
+	 * {@link module:sap/base/i18n/Formatting.addCustomCurrencies Formatting.addCustomCurrencies}).
 	 *
 	 * If no symbol is given at all, the custom currency key is used for formatting.
 	 *
@@ -566,7 +568,8 @@ sap.ui.define([
 	 *   If custom currencies are defined on the instance, no other currencies can be formatted and parsed by this instance.
 	 *   Globally available custom currencies can be added via the global configuration.
 	 *   See the above examples.
-	 *   See also {@link sap.ui.core.Configuration.FormatSettings#setCustomCurrencies} and {@link sap.ui.core.Configuration.FormatSettings#addCustomCurrencies}.
+	 *   See also {@link module:sap/base/i18n/Formatting.setCustomCurrencies Formatting.setCustomCurrencies} and
+	 *   {@link module:sap/base/i18n/Formatting.addCustomCurrencies Formatting.addCustomCurrencies}.
 	 * @param {int} [oFormatOptions.decimals] defines the number of decimal digits
 	 * @param {string} [oFormatOptions.decimalSeparator] defines the character used as decimal separator.
 	 *   Note: <code>decimalSeparator</code> must always be different from <code>groupingSeparator</code>.
@@ -630,8 +633,8 @@ sap.ui.define([
 	 *   'precision' option is set to 2. This can be changed by setting either min/maxFractionDigits,
 	 *   decimals, shortDecimals, or the 'precision' option itself.
 	 * @param {boolean} [oFormatOptions.trailingCurrencyCode] overrides the global configuration
-	 *   value {@link sap.ui.core.Configuration.FormatSettings#getTrailingCurrencyCode}, which has a
-	 *   default value of <code>true</>.
+	 *   value {@link module:sap/base/i18n/Formatting.getTrailingCurrencyCode Formatting.getTrailingCurrencyCode},
+	 *   which has a default value of <code>true</>.
 	 *   This is ignored if <code>oFormatOptions.currencyCode</code> is set to <code>false</code>,
 	 *   or if <code>oFormatOptions.pattern</code> is supplied.
 	 * @param {sap.ui.core.Locale} [oLocale]
