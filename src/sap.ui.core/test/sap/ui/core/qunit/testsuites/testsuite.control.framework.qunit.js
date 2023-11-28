@@ -51,6 +51,9 @@ sap.ui.define(function() {
 					libs: "sap.m"
 				}
 			},
+			/**
+			 * @deprecated since 1.120
+			 */
 			ControlRenderer: {
 				title: "sap.ui.core.Control (ControlRenderer)"
 			},
