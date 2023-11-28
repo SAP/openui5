@@ -292,7 +292,7 @@ sap.ui.define([], function() {
 				}
 			}
 			if (oSortRestrictions.AscendingOnlyProperties) {
-				for (i = 0; i < oSortRestrictions.AscendingOnlyProperties; i++) {
+				for (i = 0; i < oSortRestrictions.AscendingOnlyProperties.length; i++) {
 					sPropertyName = oSortRestrictions.AscendingOnlyProperties[i].$PropertyPath;
 					oSortRestrictionsInfo[sPropertyName] = {
 						sortable: true,
@@ -302,7 +302,7 @@ sap.ui.define([], function() {
 			}
 
 			if (oSortRestrictions.DescendingOnlyProperties) {
-				for (i = 0; i < oSortRestrictions.DescendingOnlyProperties; i++) {
+				for (i = 0; i < oSortRestrictions.DescendingOnlyProperties.length; i++) {
 					sPropertyName = oSortRestrictions.DescendingOnlyProperties[i].$PropertyPath;
 					oSortRestrictionsInfo[sPropertyName] = {
 						sortable: true,
@@ -349,7 +349,7 @@ sap.ui.define([], function() {
 			//Hierarchical Case
 			oFilterRestrictionsInfo.requiredProperties = [];
 			if (oFilterRestrictionsInfo.RequiredProperties) {
-				for (i = 0; i < oFilterRestrictions.NonFilterableProperties; i++) {
+				for (i = 0; i < oFilterRestrictions.NonFilterableProperties.length; i++) {
 					sPropertyName = oFilterRestrictions.NonFilterableProperties[i].$PropertyPath;
 					oFilterRestrictionsInfo.requiredProperties.push(sPropertyName);
 				}
@@ -366,7 +366,7 @@ sap.ui.define([], function() {
 
 			if (oFilterRestrictions.FilterExpressionRestrictions) {
 				//TBD
-				for (i = 0; i < oFilterRestrictions.FilterExpressionRestrictions; i++) {
+				for (i = 0; i < oFilterRestrictions.FilterExpressionRestrictions.length; i++) {
 					sPropertyName = oFilterRestrictions.FilterExpressionRestrictions[i].$PropertyPath;
 					oFilterRestrictionsInfo[sPropertyName] = {
 						filterable: true,
