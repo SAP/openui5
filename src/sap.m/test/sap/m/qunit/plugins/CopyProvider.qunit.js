@@ -1,4 +1,5 @@
 sap.ui.define([
+	"./ClipboardUtils",
 	"sap/m/Text",
 	"sap/m/Table",
 	"sap/m/Column",
@@ -16,7 +17,7 @@ sap.ui.define([
 	"sap/ui/core/Core",
 	"test-resources/sap/ui/mdc/qunit/QUnitUtils",
 	"test-resources/sap/ui/mdc/qunit/table/QUnitUtils"
-], function(Text, Table, Column, ColumnListItem, GridTable, GridColumn, MultiSelectionPlugin, MDCTable, MDCColumn, PluginBase, CopyProvider, CellSelector, JSONModel, CustomData, Core, MDCQUnitUtils, MDCTableQUnitUtils) {
+], function(ClipboardUtils, Text, Table, Column, ColumnListItem, GridTable, GridColumn, MultiSelectionPlugin, MDCTable, MDCColumn, PluginBase, CopyProvider, CellSelector, JSONModel, CustomData, Core, MDCQUnitUtils, MDCTableQUnitUtils) {
 
 	"use strict";
 	/*global sinon, QUnit */
@@ -31,12 +32,6 @@ sap.ui.define([
 	}
 
 	var oJSONModel = new JSONModel(aData);
-
-	function triggerCopy(oDomRef) {
-		oDomRef = oDomRef || document.querySelector(".sapMLIBFocusable") || document.querySelector(".sapUiTableCell");
-		oDomRef.focus();
-		oDomRef.dispatchEvent(new KeyboardEvent("keydown", { code: "KeyC", ctrlKey: true, bubbles: true, cancelable: true }));
-	}
 
 	function createResponsiveTable(mSettings) {
 		mSettings = Object.assign({
@@ -65,6 +60,7 @@ sap.ui.define([
 		var oTable = new Table(mSettings);
 		oTable.placeAt("qunit-fixture");
 		Core.applyChanges();
+		oTable.focus();
 		return oTable;
 	}
 
@@ -86,6 +82,7 @@ sap.ui.define([
 		var oTable = new GridTable(mSettings);
 		oTable.placeAt("qunit-fixture");
 		Core.applyChanges();
+		oTable.focus();
 		return oTable;
 	}
 
@@ -113,6 +110,7 @@ sap.ui.define([
 		var oTable = new MDCTable(mSettings);
 		oTable.placeAt("qunit-fixture");
 		Core.applyChanges();
+		oTable.focus();
 		return oTable;
 	}
 
@@ -135,8 +133,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("extractData is managed by the CopyProvider, this method must be empty", function(assert) {
-		const oClipboardStub = sinon.stub(window, "navigator").value({clipboard: {}});
-		const oSecureContextStub = sinon.stub(window, "isSecureContext").value(true);
+		ClipboardUtils.stub();
 		var oCopyProvider = new CopyProvider({
 			extractData: Function.prototype
 		});
@@ -146,15 +143,13 @@ sap.ui.define([
 			assert.throws(function() {
 				oTable.setCopyProvider(oCopyProvider);
 			}, "extractData property must be managed by the CopyProvider");
-			oClipboardStub.restore();
-			oSecureContextStub.restore();
+			ClipboardUtils.restore();
 			oTable.destroy();
 		});
 	});
 
 	QUnit.test("extractData is managed by the CopyProvider, getColumnClipboardSettings method must be implemented", function(assert) {
-		const oClipboardStub = sinon.stub(window, "navigator").value({clipboard: {}});
-		const oSecureContextStub = sinon.stub(window, "isSecureContext").value(true);
+		ClipboardUtils.stub();
 		var oCopyProvider = new CopyProvider();
 		var oTable = createMDCTable();
 
@@ -163,8 +158,7 @@ sap.ui.define([
 			assert.throws(function() {
 				oTable.setCopyProvider(oCopyProvider);
 			}, "getColumnClipboardSettings method must be implemented by the parent of CopyProvider");
-			oClipboardStub.restore();
-			oSecureContextStub.restore();
+			ClipboardUtils.restore();
 			oTable.destroy();
 		});
 	});
@@ -172,22 +166,7 @@ sap.ui.define([
 	var TableModule = function(fnTableFactory, mSettings) {
 		return {
 			before: function(assert) {
-				var sClipboardText;
-				this._oClipboardStub = sinon.stub(window, "navigator").value({
-					clipboard: {
-						writeText: function(sText) {
-							sClipboardText = sText;
-							return Promise.resolve();
-						}
-					}
-				});
-				this._oSecureContextStub = sinon.stub(window, "isSecureContext").value(true);
-				this.getClipboardText = function() {
-					return sClipboardText;
-				};
-				this.setClipboardText = function(sText) {
-					sClipboardText = sText || "";
-				};
+				ClipboardUtils.stub();
 				this.selectRow = function(iIndex) {
 					var oTable = this.oTable;
 					if (oTable.isA("sap.ui.mdc.Table")) {
@@ -226,82 +205,82 @@ sap.ui.define([
 				this.oCopyProviderInvalidateSpy.restore();
 			},
 			after: function() {
-				this._oClipboardStub.restore();
-				this._oSecureContextStub.restore();
+				ClipboardUtils.restore();
 			}
 		};
 	};
 
-	var apiTest = function (assert) {
+	var apiTest = async function (assert) {
 		this.selectRow(1);
 		this.selectRow(3);
 
-		this.setClipboardText("DummyClipboardText");
+		this.oTable.focus();
+		await navigator.clipboard.writeText("DummyClipboardText");
 		this.oCopyProvider.attachEventOnce("copy", function(e) {
 			e.preventDefault();
 		});
-		triggerCopy();
-		assert.equal(this.getClipboardText(), "DummyClipboardText", "Preventing default on copy event did not allow copy to clipboard");
+		ClipboardUtils.triggerCopy();
+		assert.equal(await navigator.clipboard.readText(), "DummyClipboardText", "Preventing default on copy event did not allow copy to clipboard");
 
 		this.oCopyProvider.attachEventOnce("copy", function(e) {
 			assert.deepEqual(e.getParameter("data"), e.getSource().getSelectionData(), "data parameter is same as the #getSelectionData API");
 			assert.deepEqual(e.getParameter("data"), [].concat([Object.values(aData[1])], [Object.values(aData[3])]), "data parameter is valid");
 		});
-		triggerCopy();
-		assert.equal(this.getClipboardText(), "1\tname1\tcolor1\n3\tname3\tcolor3", "Selection is copied via keyboard event to the clipboard");
+		ClipboardUtils.triggerCopy();
+		assert.equal(await navigator.clipboard.readText(), "1\tname1\tcolor1\n3\tname3\tcolor3", "Selection is copied via keyboard event to the clipboard");
 
-		this.setClipboardText("DummyClipboardText");
+		await navigator.clipboard.writeText("DummyClipboardText");
 		this.oCopyProvider.attachCopy(this.IwillNeverBeCalled);
 		this.oCopyProvider.copySelectionData();
 		this.oCopyProvider.detachCopy(this.IwillNeverBeCalled);
-		assert.equal(this.getClipboardText(), "1\tname1\tcolor1\n3\tname3\tcolor3", "Selection is copied via copySelectionData to the clipboard");
+		assert.equal(await navigator.clipboard.readText(), "1\tname1\tcolor1\n3\tname3\tcolor3", "Selection is copied via copySelectionData to the clipboard");
 
 		this.oCopyProvider.attachEventOnce("copy", function(e) {
 			e.getParameter("data")[1] = ["x", "name\tx", "color\nx"];
 		});
 		this.oCopyProvider.copySelectionData(true);
-		assert.equal(this.getClipboardText(), '1\tname1\tcolor1\nx\t"name\tx"\t"color\nx"', "Data parameter of the copy event is mutable");
+		assert.equal(await navigator.clipboard.readText(), '1\tname1\tcolor1\nx\t"name\tx"\t"color\nx"', "Data parameter of the copy event is mutable");
 
 		this.oCopyProvider.setCopySparse(true);
-		triggerCopy();
-		assert.equal(this.getClipboardText(), "1\tname1\tcolor1\n\t\t\n3\tname3\tcolor3", "copySparse=true includes empty rows between selected rows");
+		ClipboardUtils.triggerCopy();
+		assert.equal(await navigator.clipboard.readText(), "1\tname1\tcolor1\n\t\t\n3\tname3\tcolor3", "copySparse=true includes empty rows between selected rows");
 
 		this.oCopyProvider.setExcludeContext(function(oContext) {
 			return oContext.getProperty("id") == 1;
 		});
-		triggerCopy();
-		assert.equal(this.getClipboardText(), "3\tname3\tcolor3", "excludeContext callback disallows first context to be copied to the clipboard");
+		ClipboardUtils.triggerCopy();
+		assert.equal(await navigator.clipboard.readText(), "3\tname3\tcolor3", "excludeContext callback disallows first context to be copied to the clipboard");
 
 		this.oCopyProvider.setExtractData(function(oContext, oColumn) {
 			var sProperty = oColumn.data("property");
 			return sProperty == "name" ? null : oContext.getProperty(sProperty);
 		});
-		triggerCopy();
-		assert.equal(this.getClipboardText(), "3\tcolor3", "Returning 'null' from the extractData callback disallows column to be copied");
+		ClipboardUtils.triggerCopy();
+		assert.equal(await navigator.clipboard.readText(), "3\tcolor3", "Returning 'null' from the extractData callback disallows column to be copied");
 
 		this.oCopyProvider.setExtractData(function(oContext, oColumn) {
 			var sProperty = oColumn.data("property");
 			var vValue = oContext.getProperty(sProperty);
 			return sProperty == "name" ? [vValue, "surname" + oContext.getProperty("id")] : vValue;
 		});
-		triggerCopy();
-		assert.equal(this.getClipboardText(), "3\tname3\tsurname3\tcolor3", "Returning array from the extractData callback splits them into cells");
+		ClipboardUtils.triggerCopy();
+		assert.equal(await navigator.clipboard.readText(), "3\tname3\tsurname3\tcolor3", "Returning array from the extractData callback splits them into cells");
 
 		this.removeSelections();
 		this.oCopyProvider.attachCopy(this.IwillNeverBeCalled);
-		triggerCopy();
-		assert.equal(this.getClipboardText(), "3\tname3\tsurname3\tcolor3", "Clipboard is not changed since there is no selection to copy");
+		ClipboardUtils.triggerCopy();
+		assert.equal(await navigator.clipboard.readText(), "3\tname3\tsurname3\tcolor3", "Clipboard is not changed since there is no selection to copy");
 
 		this.selectRow(5);
 		var fnExtractData = this.oCopyProvider.getExtractData();
 		this.oCopyProvider.setExtractData();
-		triggerCopy();
-		assert.equal(this.getClipboardText(), "3\tname3\tsurname3\tcolor3", "Clipboard is not changed since there is no extractData property");
+		ClipboardUtils.triggerCopy();
+		assert.equal(await navigator.clipboard.readText(), "3\tname3\tsurname3\tcolor3", "Clipboard is not changed since there is no extractData property");
 
 		this.oCopyProvider.setExtractData(fnExtractData);
 		this.oTable.removeAllColumns();
-		triggerCopy();
-		assert.equal(this.getClipboardText(), "3\tname3\tsurname3\tcolor3", "Clipboard is not changed since there is no columns to copy");
+		ClipboardUtils.triggerCopy();
+		assert.equal(await navigator.clipboard.readText(), "3\tname3\tsurname3\tcolor3", "Clipboard is not changed since there is no columns to copy");
 		this.oCopyProvider.detachCopy(this.IwillNeverBeCalled);
 
 		assert.ok(this.oCopyProviderInvalidateSpy.notCalled, "CopyProvider was never invalidated");
@@ -336,13 +315,13 @@ sap.ui.define([
 
 	QUnit.test("API", apiTest);
 
-	QUnit.test("Select all", function(assert) {
+	QUnit.test("Select all", async function(assert) {
 		this.oTable.selectAll();
-		triggerCopy();
-		assert.equal(this.getClipboardText().split("\n").length, this.oTable.getGrowingThreshold(), "Not all contexts, only growing contexts are copied");
+		ClipboardUtils.triggerCopy();
+		assert.equal((await navigator.clipboard.readText()).split("\n").length, this.oTable.getGrowingThreshold(), "Not all contexts, only growing contexts are copied");
 	});
 
-	QUnit.test("No binding", function(assert) {
+	QUnit.test("No binding", async function(assert) {
 		var aClonedItems = this.oTable.getItems().map(function(oItem) {
 			return oItem.clone();
 		});
@@ -356,11 +335,11 @@ sap.ui.define([
 			var iColumnIndex = oColumn.getParent().indexOfColumn(oColumn);
 			return oRow.getCells()[iColumnIndex].getText();
 		});
-		triggerCopy(aClonedItems[3].getModeControl().getDomRef());
-		assert.equal(this.getClipboardText(), "1\tname1\tcolor1\n3\tname3\tcolor3", "Data is extracted from the row since there is no binding");
+		ClipboardUtils.triggerCopy(aClonedItems[3].getModeControl().getDomRef());
+		assert.equal(await navigator.clipboard.readText(), "1\tname1\tcolor1\n3\tname3\tcolor3", "Data is extracted from the row since there is no binding");
 	});
 
-	QUnit.test("Copy button visibility", function(assert) {
+	QUnit.test("Copy button visibility", async function(assert) {
 		const oCopyButton = this.oCopyProvider.getCopyButton();
 		assert.ok(oCopyButton.getVisible(), "The copy button is visible at the beginning");
 
@@ -368,9 +347,9 @@ sap.ui.define([
 		Core.applyChanges();
 		assert.notOk(oCopyButton.getVisible(), "The copy button is not invisible since selection is not possible");
 
-		this.setClipboardText("DummyClipboardText");
-		triggerCopy();
-		assert.equal(this.getClipboardText(), "DummyClipboardText", "Copy action is not taken into account since there is no selection");
+		await navigator.clipboard.writeText("DummyClipboardText");
+		ClipboardUtils.triggerCopy();
+		assert.equal(await navigator.clipboard.readText(), "DummyClipboardText", "Copy action is not taken into account since there is no selection");
 
 		this.oTable.setMode("SingleSelectMaster");
 		Core.applyChanges();
@@ -386,13 +365,13 @@ sap.ui.define([
 
 	QUnit.test("API", apiTest);
 
-	QUnit.test("Select all", function(assert) {
+	QUnit.test("Select all", async function(assert) {
 		this.oTable.selectAll();
-		triggerCopy();
-		assert.equal(this.getClipboardText().split("\n").length, aData.length, "All contexts are copied");
+		ClipboardUtils.triggerCopy();
+		assert.equal((await navigator.clipboard.readText()).split("\n").length, aData.length, "All contexts are copied");
 	});
 
-	QUnit.test("CellSelector", function(assert) {
+	QUnit.test("CellSelector", async function(assert) {
 		this.oCopyProvider.setCopyPreference("Full");
 		this.removeSelections();
 		var oCellSelector = new CellSelector({ rangeLimit: 15 });
@@ -400,32 +379,32 @@ sap.ui.define([
 
 		oCellSelector._bSelecting = true;
 		oCellSelector._selectCells({rowIndex: 2, colIndex: 0}, {rowIndex: 3, colIndex: 2});
-		triggerCopy();
-		assert.equal(this.getClipboardText(), "2\tname2\tcolor2\n3\tname3\tcolor3", "Cell selection is copied to clipboard");
+		ClipboardUtils.triggerCopy();
+		assert.equal(await navigator.clipboard.readText(), "2\tname2\tcolor2\n3\tname3\tcolor3", "Cell selection is copied to clipboard");
 
 		this.selectRow(5);
 		oCellSelector._bSelecting = true;
 		oCellSelector._selectCells({rowIndex: 2, colIndex: 0}, {rowIndex: 3, colIndex: 2});
-		triggerCopy();
-		assert.equal(this.getClipboardText(), "2\tname2\tcolor2\n3\tname3\tcolor3\n5\tname5\tcolor5", "Cell and row selection are copied to clipboard");
+		ClipboardUtils.triggerCopy();
+		assert.equal(await navigator.clipboard.readText(), "2\tname2\tcolor2\n3\tname3\tcolor3\n5\tname5\tcolor5", "Cell and row selection are copied to clipboard");
 
 		this.oCopyProvider.setCopySparse(true);
-		triggerCopy();
-		assert.equal(this.getClipboardText(), "2\tname2\tcolor2\n3\tname3\tcolor3\n\t\t\n5\tname5\tcolor5", "Cell and row selection are copied sparse");
+		ClipboardUtils.triggerCopy();
+		assert.equal(await navigator.clipboard.readText(), "2\tname2\tcolor2\n3\tname3\tcolor3\n\t\t\n5\tname5\tcolor5", "Cell and row selection are copied sparse");
 
 		oCellSelector._selectCells({rowIndex: 4, colIndex: 1}, {rowIndex: 6, colIndex: 1});
 		var fnExtractData = this.oCopyProvider.getExtractData();
 		var fnExtractDataSpy = sinon.spy(fnExtractData);
 		this.oCopyProvider.setExtractData(fnExtractDataSpy);
-		triggerCopy();
-		assert.equal(this.getClipboardText(), "\tname4\t\n5\tname5\tcolor5\n\tname6\t", "Cell and row selection are merged and copied");
+		ClipboardUtils.triggerCopy();
+		assert.equal(await navigator.clipboard.readText(), "\tname4\t\n5\tname5\tcolor5\n\tname6\t", "Cell and row selection are merged and copied");
 		assert.equal(fnExtractDataSpy.callCount, 5, "Extractor function is called 5 times, only once for every neccessary cell");
 		this.oCopyProvider.setExtractData(fnExtractData);
 
 		oCellSelector._selectCells({rowIndex: -Infinity, colIndex: -Infinity}, {rowIndex: Infinity, colIndex: Infinity});
-		triggerCopy();
-		assert.equal(this.getClipboardText().split("\n").length, oCellSelector.getRangeLimit(), "Copied only up to rangeLimit value");
-		assert.equal(this.getClipboardText().split("\n")[10].split("\t").length, this.oTable.getColumns().length, "All columns are in the clipboard");
+		ClipboardUtils.triggerCopy();
+		assert.equal((await navigator.clipboard.readText()).split("\n").length, oCellSelector.getRangeLimit(), "Copied only up to rangeLimit value");
+		assert.equal((await navigator.clipboard.readText()).split("\n")[10].split("\t").length, this.oTable.getColumns().length, "All columns are in the clipboard");
 
 		this.oCopyProvider.setCopyPreference("Cells");
 		this.removeSelections();
@@ -433,15 +412,15 @@ sap.ui.define([
 		this.selectRow(5);
 		oCellSelector._bSelecting = true;
 		oCellSelector._selectCells({rowIndex: 2, colIndex: 0}, {rowIndex: 3, colIndex: 2});
-		triggerCopy();
-		assert.equal(this.getClipboardText(), "2\tname2\tcolor2\n3\tname3\tcolor3", "Only cell selection is copied");
+		ClipboardUtils.triggerCopy();
+		assert.equal(await navigator.clipboard.readText(), "2\tname2\tcolor2\n3\tname3\tcolor3", "Only cell selection is copied");
 
 		oCellSelector.removeSelection();
-		triggerCopy();
-		assert.equal(this.getClipboardText(), "5\tname5\tcolor5", "Cell and row selection are copied to clipboard");
+		ClipboardUtils.triggerCopy();
+		assert.equal(await navigator.clipboard.readText(), "5\tname5\tcolor5", "Cell and row selection are copied to clipboard");
 	});
 
-	QUnit.test("Copy button visibility", function(assert) {
+	QUnit.test("Copy button visibility", async function(assert) {
 		const oCopyButton = this.oCopyProvider.getCopyButton();
 		assert.ok(oCopyButton.getVisible(), "The copy button is visible at the beginning");
 
@@ -449,9 +428,9 @@ sap.ui.define([
 		Core.applyChanges();
 		assert.notOk(oCopyButton.getVisible(), "The copy button is not invisible since selection is not possible");
 
-		this.setClipboardText("DummyClipboardText");
-		triggerCopy();
-		assert.equal(this.getClipboardText(), "DummyClipboardText", "Copy action is not taken into account since there is no selection");
+		await navigator.clipboard.writeText("DummyClipboardText");
+		ClipboardUtils.triggerCopy();
+		assert.equal(await navigator.clipboard.readText(), "DummyClipboardText", "Copy action is not taken into account since there is no selection");
 
 		this.oTable.setSelectionMode("Single");
 		Core.applyChanges();
@@ -468,9 +447,9 @@ sap.ui.define([
 		oCellSelector.setEnabled(false);
 		assert.notOk(oCopyButton.getVisible(), "The copy button is not visible since the cell selection is disabled");
 
-		this.setClipboardText("DummyClipboardText");
-		triggerCopy();
-		assert.equal(this.getClipboardText(), "DummyClipboardText", "Copy action is not taken into account since there is no cell selection");
+		await navigator.clipboard.writeText("DummyClipboardText");
+		ClipboardUtils.triggerCopy();
+		assert.equal(await navigator.clipboard.readText(), "DummyClipboardText", "Copy action is not taken into account since there is no cell selection");
 
 		oCellSelector.setEnabled(true);
 		assert.ok(oCopyButton.getVisible(), "The copy button is visible since cell selection is active again");
@@ -533,6 +512,7 @@ sap.ui.define([
 		return this.oTable._fullyInitialized().then(function() {
 			return MDCTableQUnitUtils.waitForBinding(that.oTable);
 		}).then(function() {
+			Core.applyChanges();
 			apiTest.call(that, assert);
 		});
 	});
@@ -563,6 +543,11 @@ sap.ui.define([
 					header: "ID-Name-Color",
 					propertyKey: "id-name-color",
 					template: new Text({ text: "{id} {name} {color}" })
+				}),
+				new MDCColumn({
+					header: "ID-In-Parentheses",
+					propertyKey: "id-in-parentheses",
+					template: new Text({ text: "({id})" })
 				})
 			],
 			models: oJSONModel
@@ -601,9 +586,18 @@ sap.ui.define([
 				name: "id-name-color",
 				label: "ID-Name-Color",
 				propertyInfos: ["id", "name", "color"]
+			}, {
+				name: "id-in-parentheses",
+				label: "ID-In-Parentheses",
+				path: "id",
+				dataType: "String",
+				clipboardSettings: {
+					template: "({0})"
+				}
 		}]);
 		oTable.placeAt("qunit-fixture");
 		Core.applyChanges();
+		oTable.focus();
 		return oTable;
 	}
 
@@ -612,7 +606,7 @@ sap.ui.define([
 	QUnit.test("API", function(assert) {
 		return this.oTable._fullyInitialized().then(function() {
 			return MDCTableQUnitUtils.waitForBinding(this.oTable);
-		}.bind(this)).then(function() {
+		}.bind(this)).then(async function() {
 			var oCopyButton = this.oCopyProvider.getCopyButton();
 			assert.ok(oCopyButton, "Copy button is created successfully");
 
@@ -623,7 +617,14 @@ sap.ui.define([
 			this.oCopyProvider.attachEventOnce("copy", fnCopyHandlerSpy);
 			oCopyButton.firePress();
 			assert.ok(fnCopyHandlerSpy.calledOnce, "Copy event is fired from the plugin when the copy button is pressed");
-			assert.equal(this.getClipboardText(), "name1 (1)\t1 name1 color1\nname3 (3)\t3 name3 color3", "Selection is copied via copy button");
+			assert.equal(await (await (await navigator.clipboard.read())[0].getType("text/plain")).text(),
+			"1\tname1\t1\tname1\tcolor1\t1\n3\tname3\t3\tname3\tcolor3\t3",
+			"Selection is copied via copy button");
+
+			assert.equal(await (await (await navigator.clipboard.read())[0].getType("text/html")).text(),
+			"<table><tr><td>name1&nbsp;&#x28;1&#x29;</td><td>1&nbsp;name1&nbsp;color1</td><td>1</td></tr>" +
+			"<tr><td>name3&nbsp;&#x28;3&#x29;</td><td>3&nbsp;name3&nbsp;color3</td><td>3</td></tr></table>",
+			"Selection is copied via copy button");
 
 			this.oCopyProvider.setEnabled(false);
 			assert.notOk(oCopyButton.getEnabled(), "Disabling the plugin disables the copy button");
@@ -642,18 +643,107 @@ sap.ui.define([
 			var oNewCopyButton = oNewCopyProvider.getCopyButton();
 			assert.notEqual(oNewCopyButton, oCopyButton, "New plugin creates a new copy button");
 
-			this.setClipboardText("DummyClipboardText");
+			await navigator.clipboard.writeText("DummyClipboardText");
 			oNewCopyButton.firePress();
-			assert.equal(this.getClipboardText(), "name1 (1)\t1 name1 color1\nname3 (3)\t3 name3 color3", "Selection is copied via new copy button");
+			assert.ok(await (await (await navigator.clipboard.read())[0].getType("text/plain")).text(), "Selection is copied via new copy button");
+			assert.ok(await (await (await navigator.clipboard.read())[0].getType("text/html")).text(), "Selection is copied via new copy button");
+
+			ClipboardUtils.restore();
+			ClipboardUtils.stub(true);
+
+			oNewCopyButton.firePress();
+			assert.equal(await navigator.clipboard.readText(), "1\tname1\t1\tname1\tcolor1\t1\n3\tname3\t3\tname3\tcolor3\t3", "Only text is in clipboard");
 
 			this.oTable.setSelectionMode("None");
 			Core.applyChanges();
 			assert.notOk(oNewCopyButton.getVisible(), "The copy button is invisible since there is no selection possible");
 
-			this._oSecureContextStub.restore();
 			oNewCopyProvider.destroy();
 			assert.ok(oNewCopyProvider.isDestroyed(), "Destroying the plugin destroys the copy button");
 		}.bind(this));
+	});
+
+	QUnit.module("MimeTypes", {
+		beforeEach: function() {
+			this.oCopyProvider = new CopyProvider({extractData: Function.prototype});
+			this.oTable = new Table({
+				mode: "SingleSelectMaster",
+				items: new ColumnListItem({
+					selected: true,
+					cells: new Text({ text: "DummyCell"})
+				}),
+				columns: new Column({
+					header: new Text({ text: "DummyHeader"})
+				}),
+				dependents: this.oCopyProvider
+			}).placeAt("qunit-fixture");
+			Core.applyChanges();
+		},
+		afterEach: function() {
+			this.oTable.destroy();
+			ClipboardUtils.restore();
+		}
+	});
+
+	QUnit.test("Html and Text Mime Types", async function(assert) {
+		const aTestData = [{
+				extractData() { return {text: "SAP", html: "SAP"}; },
+				expectedText: "SAP",
+				expectedHtml: "SAP",
+				expectedEventData: [["SAP"]]
+			}, {
+				extractData() { return {text: ["<", "SAP", ">"], html: "<SAP>"}; },
+				expectedText: "<\tSAP\t>",
+				expectedHtml: "&lt;SAP&gt;",
+				expectedEventData: [["<", "SAP", ">"]]
+			}, {
+				extractData() { return {text: "\t\r\n \"\n\r", html: "\t\r\n \"\n\r" }; },
+				expectedText: '"\t\r\n ""\n\r"',
+				expectedHtml: "&nbsp;&nbsp;&nbsp;&nbsp;<br>&nbsp;&quot;<br>&#xd;",
+				expectedEventData: [["\t\r\n \"\n\r"]]
+			}
+		];
+
+		ClipboardUtils.stub();
+		for (const [index, {extractData, expectedText, expectedHtml, expectedEventData}] of aTestData.entries()) {
+			this.oCopyProvider.setExtractData(extractData);
+			this.oCopyProvider.attachEventOnce("copy", (oEvent) => {
+				assert.deepEqual(oEvent.getParameter("data"), expectedEventData, `Test ${index} has expected event parameter.`);
+			});
+			this.oCopyProvider.copySelectionData(true);
+
+			assert.equal(
+				await (await (await navigator.clipboard.read())[0].getType("text/plain")).text(),
+				expectedText,
+				`Test ${index} has expected text/plain output.`
+			);
+			assert.equal(
+				await (await (await navigator.clipboard.read())[0].getType("text/html")).text(),
+				`<table><tr><td>${expectedHtml}</td></tr></table>`,
+				`Test ${index} has expected text/html output.`
+			);
+		}
+	});
+
+	QUnit.test("Text Mime Type Only", async function(assert) {
+		const aTestData = [{
+				extractData() { return "SAP"; },
+				expectedText: "SAP"
+			}, {
+				extractData() { return ["<", "SAP", ">"]; },
+				expectedText: "<\tSAP\t>"
+			}, {
+				extractData() { return "\t\r\n \"\n\r"; },
+				expectedText: '"\t\r\n ""\n\r"'
+			}
+		];
+
+		ClipboardUtils.stub(true /* Clipboard Text API only, No Html Mime Type support*/);
+		for (const [index, {extractData, expectedText}] of aTestData.entries()) {
+			this.oCopyProvider.setExtractData(extractData);
+			this.oCopyProvider.copySelectionData();
+			assert.equal(await navigator.clipboard.readText(), expectedText, `Test ${index} has expected text only output.`);
+		}
 	});
 
 });
