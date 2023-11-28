@@ -131,9 +131,9 @@ sap.ui.define([
 		 * @param {object} oElement - Any node or leaf element
 		 * @param {sap.ui.model.odata.v4.lib._CollectionCache} oCache
 		 *   The group level cache which the given element has been read from
-		 * @param {number|undefined} [iIndex]
-		 *   The $skip index of the given element within the cache's collectionn, or
-		 *   <code>undefined</code> for created elements (where it is always unknown)
+		 * @param {number|undefined} [iRank]
+		 *   The rank (aka. $skip index) of the given element within the cache's collectionn, or
+		 *   <code>undefined</code> for created elements (where it may be unknown)
 		 * @param {string} [sNodeProperty]
 		 *   Optional property path to the hierarchy node value
 		 * @throws {Error}
@@ -142,7 +142,7 @@ sap.ui.define([
 		 *
 		 * @private
 		 */
-		beforeOverwritePlaceholder : function (oPlaceholder, oElement, oCache, iIndex,
+		beforeOverwritePlaceholder : function (oPlaceholder, oElement, oCache, iRank,
 				sNodeProperty) {
 			var oParent = _Helper.getPrivateAnnotation(oPlaceholder, "parent");
 
@@ -150,7 +150,7 @@ sap.ui.define([
 				throw new Error("Unexpected element");
 			}
 			if (oParent !== oCache
-				|| _Helper.getPrivateAnnotation(oPlaceholder, "index") !== iIndex
+				|| _Helper.getPrivateAnnotation(oPlaceholder, "rank") !== iRank
 				|| oPlaceholder["@$ui5.node.level"] !== oElement["@$ui5.node.level"]
 				// Note: level 0 is used for initial placeholders of 1st level cache in case
 				// expandTo > 1
@@ -613,20 +613,20 @@ sap.ui.define([
 		 * Creates a placeholder.
 		 *
 		 * @param {number} iLevel - The level
-		 * @param {number|undefined} [iIndex]
-		 *   The $skip index within the parent cache's collection, or <code>undefined</code> for
-		 *   created elements (where it is always unknown)
+		 * @param {number|undefined} [iRank]
+		 *   The rank (aka. $skip index) within the parent cache's collection, or
+		 *   <code>undefined</code> for created elements (where it may be unknown)
 		 * @param {sap.ui.model.odata.v4.lib._CollectionCache} oParentCache - The parent cache
 		 * @returns {object} A placeholder object
 		 *
 		 * @public
 		 */
-		createPlaceholder : function (iLevel, iIndex, oParentCache) {
+		createPlaceholder : function (iLevel, iRank, oParentCache) {
 			var oPlaceholder = {"@$ui5.node.level" : iLevel};
 
-			_Helper.setPrivateAnnotation(oPlaceholder, "index", iIndex);
 			_Helper.setPrivateAnnotation(oPlaceholder, "parent", oParentCache);
 			_Helper.setPrivateAnnotation(oPlaceholder, "placeholder", true);
+			_Helper.setPrivateAnnotation(oPlaceholder, "rank", iRank);
 
 			return oPlaceholder;
 		},
