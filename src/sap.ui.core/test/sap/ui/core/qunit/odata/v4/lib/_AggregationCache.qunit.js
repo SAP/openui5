@@ -3327,7 +3327,9 @@ sap.ui.define([
 			"@$ui5.node.level" : 2
 		};
 
-		//code under test
+		this.mock(oCache).expects("isAncestorOf").never();
+
+		// code under test
 		assert.strictEqual(oCache.getParentIndex(0), -1);
 		assert.strictEqual(oCache.getParentIndex(1), -1);
 		assert.strictEqual(oCache.getParentIndex(2), 1);
@@ -3336,21 +3338,61 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("getParentIndex: error state", function (assert) {
+	QUnit.test("getParentIndex: with gaps", function (assert) {
 		const oCache = _AggregationCache.create(this.oRequestor, "~", "", {},
 			{hierarchyQualifier : "X"});
+		const oCacheMock = this.mock(oCache);
 
 		oCache.aElements[0] = {
-			"@$ui5.node.level" : 3
+			"@$ui5.node.level" : 1
 		};
 		oCache.aElements[1] = {
+			// parent of 3
 			"@$ui5.node.level" : 2
 		};
+		oCache.aElements[2] = {
+			"@$ui5.node.level" : 0
+		};
+		oCache.aElements[3] = {
+			"@$ui5.node.level" : 3
+		};
+		oCache.aElements[4] = {
+			"@$ui5.node.level" : 2
+		};
+		oCache.aElements[5] = {
+			// parent of 6 not yet loaded
+			"@$ui5.node.level" : 0
+		};
+		oCache.aElements[6] = {
+			"@$ui5.node.level" : 3
+		};
+		oCache.aElements[7] = {
+			// parent of 8 not yet loaded
+			"@$ui5.node.level" : 0
+		};
+		oCache.aElements[8] = {
+			"@$ui5.node.level" : 5
+		};
 
-		assert.throws(function () {
-			// code under test
-			oCache.getParentIndex(1);
-		}, new Error("Unexpected error"));
+		oCacheMock.expects("isAncestorOf").withExactArgs(1, 3).returns(true);
+
+		// code under test
+		assert.strictEqual(oCache.getParentIndex(3), 1);
+
+		oCacheMock.expects("isAncestorOf").withExactArgs(0, 4).returns(true);
+
+		// code under test
+		assert.strictEqual(oCache.getParentIndex(4), 0);
+
+		oCacheMock.expects("isAncestorOf").withExactArgs(4, 6).returns(false);
+
+		// code under test
+		assert.strictEqual(oCache.getParentIndex(6), undefined);
+
+		// no addt'l call of #isAncestorOf
+
+		// code under test
+		assert.strictEqual(oCache.getParentIndex(8), undefined);
 	});
 
 	//*********************************************************************************************
