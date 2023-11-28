@@ -6,8 +6,9 @@ sap.ui.define([
 	'sap/base/Log',
 	'sap/ui/mdc/condition/FilterOperatorUtil',
 	'sap/ui/mdc/flexibility/Util',
-	"sap/ui/fl/changeHandler/condenser/Classification"
-], function(merge, Log, FilterOperatorUtil, Util, Classification) {
+	"sap/ui/fl/changeHandler/condenser/Classification",
+	"sap/ui/fl/changeHandler/common/ChangeCategories"
+], function(merge, Log, FilterOperatorUtil, Util, ChangeClassification, ChangeCategories) {
 	"use strict";
 
 	/**
@@ -26,17 +27,6 @@ sap.ui.define([
 		oControl._pQueue.then(fCleanupPromiseQueue.bind(null, oControl._pQueue));
 
 		return oControl._pQueue;
-	};
-
-	const fnGetDelegate = function(sDelegatePath) {
-		return new Promise(function(fResolveLoad, fRejectLoad){
-			sap.ui.require([
-				sDelegatePath
-			], fResolveLoad, fRejectLoad);
-		})
-		.then(function(Delegate){
-			return Delegate;
-		});
 	};
 
 	const fAddCondition = function(oChange, oControl, mPropertyBag, sChangeReason) {
@@ -84,7 +74,7 @@ sap.ui.define([
 
 					return oModifier.getProperty(oControl, "delegate")
 					.then(function(oDelegate){
-						return fnGetDelegate(oDelegate.name);
+						return Util.getModule(oDelegate.name);
 					})
 					.then(function(Delegate){
 						const fnDelegateAddCondition = Delegate && (Delegate.getFilterDelegate ? Delegate.getFilterDelegate().addCondition : Delegate.addCondition);
@@ -150,7 +140,7 @@ sap.ui.define([
 
 						return oModifier.getProperty(oControl, "delegate")
 						.then(function(oDelegate){
-							return fnGetDelegate(oDelegate.name);
+							return Util.getModule(oDelegate.name);
 						})
 						.then(function(Delegate){
 							const fnDelegateRemoveCondition = Delegate && (Delegate.getFilterDelegate ? Delegate.getFilterDelegate().removeCondition : Delegate.removeCondition);
@@ -175,10 +165,72 @@ sap.ui.define([
 	const fGetCondenserInfoCondition = function(oChange, mPropertyBag) {
 		const oContent = oChange.getContent();
 		return {
-			classification: Classification.Reverse,
+			classification: ChangeClassification.Reverse,
 			affectedControl: oChange.getSelector(),
 			uniqueKey: oContent.name + '_' + JSON.stringify(oContent.condition)
 		};
+	};
+
+	const fGetChangeVisualizationInfo = function(oChange, oAppComponent) {
+		const oContent = oChange.getContent();
+		const oFilterBar = oAppComponent.byId(oChange.getSelector().id);
+		const mVersionInfo = { descriptionPayload: {}};
+		let sKey;
+		let aArgs = [oContent.name,  oContent.condition.operator];
+		let vValue;
+
+		if (oChange.getChangeType() === "addCondition") {
+			mVersionInfo.descriptionPayload.category = ChangeCategories.ADD;
+			sKey = "filterbar.COND_ADD_CHANGE";
+		} else {
+			mVersionInfo.descriptionPayload.category = ChangeCategories.REMOVE;
+			sKey = "filterbar.COND_DEL_CHANGE";
+		}
+
+		const oProperty = oFilterBar?.getPropertyHelper()?.getProperty(oContent.name);
+		if (oProperty) {
+			aArgs.splice(0, 1, oProperty.label);
+
+			const oOperator = FilterOperatorUtil.getOperator(oContent.condition.operator);
+			if (oOperator) {
+				const sOpText = oOperator.getLongText(oProperty.dataType);
+				if (sOpText) {
+					aArgs.splice(1, 1, sOpText);
+				}
+				const mCurrentState = oFilterBar.getCurrentState();
+				if ((oContent.condition.values.length > 0) && mCurrentState && mCurrentState.filter) {
+					const aConditions = mCurrentState.filter[oContent.name];
+					const mInternalCondition = aConditions?.find((oCondition) => oCondition.values[0] === oContent.condition.values[0]);
+					if (mInternalCondition) {
+						vValue = oOperator.format(mInternalCondition, oProperty.typeConfig.typeInstance, oProperty.display, true);
+						if (vValue) {
+							aArgs.push(vValue);
+						}
+					}
+				}
+			}
+		}
+
+		if (!vValue) {
+			if ((oContent.condition.values.length) === 2) {
+				sKey += "_2";
+				aArgs = aArgs.concat(oContent.condition.values);
+			} else if ((oContent.condition.values.length) > 2) {
+				sKey += "_3";
+				aArgs = aArgs.concat(oContent.condition.values);
+			} else if ((oContent.condition.values.length) === 0) {
+				sKey += "_0";
+			}
+		}
+
+		aArgs = aArgs.concat(vValue ? vValue : oContent.condition.values);
+
+		return Util.getMdcResourceText(sKey, aArgs).then(function(sText) {
+			mVersionInfo.descriptionPayload.description = sText;
+
+			mVersionInfo.updateRequired = true;
+			return mVersionInfo;
+		});
 	};
 
 	const ConditionFlex = {};
@@ -186,13 +238,15 @@ sap.ui.define([
 	ConditionFlex.addCondition = Util.createChangeHandler({
 		apply: fAddCondition,
 		revert: fRemoveCondition,
-		getCondenserInfo: fGetCondenserInfoCondition
+		getCondenserInfo: fGetCondenserInfoCondition,
+		getChangeVisualizationInfo: fGetChangeVisualizationInfo
 	});
 
 	ConditionFlex.removeCondition = Util.createChangeHandler({
 		apply: fRemoveCondition,
 		revert: fAddCondition,
-		getCondenserInfo: fGetCondenserInfoCondition
+		getCondenserInfo: fGetCondenserInfoCondition,
+		getChangeVisualizationInfo: fGetChangeVisualizationInfo
 	});
 
 	return ConditionFlex;

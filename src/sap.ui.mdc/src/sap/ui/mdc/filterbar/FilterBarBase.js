@@ -1195,10 +1195,11 @@ sap.ui.define([
 	 * Gets the corresponding library text.
 	 * @private
 	 * @param {string} sKey Key of the text
+	 * @param {array} args Arguments for the message creation
 	 * @returns {string} Relevant text from the message bundle
 	 */
-	FilterBarBase.prototype.getText = function(sKey) {
-		return this._oRb.getText(sKey);
+	FilterBarBase.prototype.getResourceFileText = function(sKey, args) {
+		return sKey ? this._oRb.getText(sKey, args) : "";
 	};
 
 	FilterBarBase.prototype._restartCheckAndNotify = function(bFireSearch) {

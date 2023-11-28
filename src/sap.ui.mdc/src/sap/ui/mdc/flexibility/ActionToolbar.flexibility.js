@@ -4,8 +4,9 @@
 
 sap.ui.define([
 	"./ItemBaseFlex",
-	"./Util"
-], function(ItemBaseFlex, Util) {
+	"./Util",
+	"sap/ui/fl/changeHandler/common/ChangeCategories"
+], function(ItemBaseFlex, Util, ChangeCategories) {
 	"use strict";
 
     const oActionFlex = Object.assign({}, ItemBaseFlex);
@@ -93,6 +94,36 @@ sap.ui.define([
 		}.bind(this));
 
 		return pMove;
+	};
+
+
+	oActionFlex.getChangeVisualizationInfo = function(oChange, oAppComponent) {
+		const oContent = oChange.getContent();
+		const oToolbar = oAppComponent.byId(oChange.getSelector().id);
+		let sKey;
+		const aArgs = [oContent.name];
+		const mVersionInfo = { descriptionPayload: {}};
+
+		if (oChange.getChangeType() === "moveAction") {
+			mVersionInfo.descriptionPayload.category = ChangeCategories.MOVE;
+			sKey = "actiontoolbar.ITEM_MOVE_CHANGE";
+			aArgs.push(oChange.getRevertData().index);
+			aArgs.push(oContent.index);
+		}
+
+		if (oToolbar) {
+			const oAction = oAppComponent.byId(oContent.name);
+			if (oAction) {
+				aArgs.splice(0, 1, oAction.getLabel());
+			}
+		}
+
+		return Util.getMdcResourceText(sKey, aArgs).then(function(sText) {
+			mVersionInfo.descriptionPayload.description = sText;
+
+			mVersionInfo.updateRequired = true;
+			return mVersionInfo;
+		});
 	};
 
 	return {

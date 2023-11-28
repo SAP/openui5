@@ -80,6 +80,36 @@ sap.ui.define([
 	}
 
 	/**
+	 * Loads the corresponding module.
+	 *
+	 * @param {string} sModulePath Path of the modul to be loaded
+	 * @returns {Promise<object>} Resolves with the runtime representation of the modul
+	 */
+	Util.getModule = function(sModulePath) {
+		return new Promise(function(fResolveLoad, fRejectLoad){
+			sap.ui.require([
+				sModulePath
+			], fResolveLoad, fRejectLoad);
+		})
+		.then(function(Module){
+			return Module;
+		});
+	};
+
+	/**
+	 * For a given text key the corresponding language dependent text is returned from the mdc-resour
+	 *
+	 * @param {string} sKey Text identifier
+	 * @param {array} aArgs array of arguments to enhance the resulting text
+	 * @returns {Promise<string>} Resolves with a translated text
+	 */
+	Util.getMdcResourceText = function(sKey, aArgs) {
+		return Util.getModule("sap/ui/core/Lib").then(function(Library) {
+			return Library.getResourceBundleFor("sap.ui.mdc").getText(sKey, aArgs);
+		});
+	};
+
+	/**
 	 * Creates a changehandler object for mdc controls.
 	 * The changehandler will also call the <code>onAfterXMLChangeProcessing</code> hook on the control's delegate
 	 * in case it's available.
@@ -139,7 +169,8 @@ sap.ui.define([
 						}
 					});
 				},
-				getCondenserInfo: mSettings.getCondenserInfo
+				getCondenserInfo: mSettings.getCondenserInfo,
+				getChangeVisualizationInfo: mSettings.getChangeVisualizationInfo
 			},
 			"layers": {
 				"USER": true
