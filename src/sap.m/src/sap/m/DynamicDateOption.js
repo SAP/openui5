@@ -305,10 +305,11 @@ sap.ui.define([
 		 * Calculates an absolute date range from the options relative value.
 		 *
 		 * @param {sap.m.DynamicDateRangeValue} oValue A <code>sap.m.DynamicDateRangeValue</code>
+	 	 * @param {string} sCalendarWeekNumbering The type of calendar week numbering
 		 * @returns {sap.ui.core.date.UniversalDate[]} A couple of dates marking the start and the end of the range
 		 * @public
 		 */
-		DynamicDateOption.prototype.toDates = function(oValue) {
+		DynamicDateOption.prototype.toDates = function(oValue, sCalendarWeekNumbering) {
 			throw new Error("Need implementation for method toDates. Option: " + this.getKey());
 		};
 
