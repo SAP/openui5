@@ -7,6 +7,7 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/base/i18n/Formatting",
 	"sap/base/i18n/Localization",
+	"sap/base/i18n/date/TimezoneUtils",
 	"sap/base/strings/formatMessage",
 	"sap/base/util/deepEqual",
 	"sap/base/util/extend",
@@ -18,9 +19,9 @@ sap.ui.define([
 	"sap/ui/core/date/CalendarUtils",
 	"sap/ui/core/date/CalendarWeekNumbering",
 	"sap/ui/core/date/UI5Date",
-	"sap/ui/core/date/UniversalDate",
-	"sap/ui/core/format/TimezoneUtil"
-], function(Log, Formatting, Localization, formatMessage, deepEqual, extend, CalendarType, Library, Locale, LocaleData, Supportability, CalendarUtils, CalendarWeekNumbering, UI5Date, UniversalDate, TimezoneUtil) {
+	"sap/ui/core/date/UniversalDate"
+], function(Log, Formatting, Localization, TimezoneUtils, formatMessage, deepEqual, extend, CalendarType, Library,
+		Locale, LocaleData, Supportability, CalendarUtils, CalendarWeekNumbering, UI5Date, UniversalDate) {
 	"use strict";
 
 	/**
@@ -2083,7 +2084,7 @@ sap.ui.define([
 				}
 
 				// valid for zzzz (fallback to OOOO)
-				var iTimezoneOffset = TimezoneUtil.calculateOffset(oDate, sTimezone);
+				var iTimezoneOffset = TimezoneUtils.calculateOffset(oDate, sTimezone);
 				var sTimeZone = "GMT";
 				var iTZOffset = Math.abs(iTimezoneOffset / 60);
 				var bPositiveOffset = iTimezoneOffset > 0;
@@ -2135,7 +2136,7 @@ sap.ui.define([
 		"Z": DateFormat._createPatternSymbol({
 			name: "timezoneRFC822",
 			format: function(oField, oDate, bUTC, oFormat, sTimezone) {
-				var iTimezoneOffset = TimezoneUtil.calculateOffset(oDate, sTimezone);
+				var iTimezoneOffset = TimezoneUtils.calculateOffset(oDate, sTimezone);
 				var iTZOffset = Math.abs(iTimezoneOffset / 60);
 				var bPositiveOffset = iTimezoneOffset > 0;
 				var iHourOffset = Math.floor(iTZOffset / 60);
@@ -2192,7 +2193,7 @@ sap.ui.define([
 				 */
 
 				// @see http://www.unicode.org/reports/tr35/tr35-dates.html#Time_Zone_Goals
-				var iTimezoneOffset = TimezoneUtil.calculateOffset(oDate, sTimezone);
+				var iTimezoneOffset = TimezoneUtils.calculateOffset(oDate, sTimezone);
 				var iTZOffset = Math.abs(iTimezoneOffset / 60);
 				var bPositiveOffset = iTimezoneOffset > 0;
 				var iHourOffset = Math.floor(iTZOffset / 60);
@@ -2273,7 +2274,7 @@ sap.ui.define([
 					// find the longest valid time zone ID at the beginning of sValue
 					for (var i = sValue.length; i > 0; i -= 1) {
 						sCurrentValue = sValue.slice(0, i);
-						if (TimezoneUtil.isValidTimezone(sCurrentValue)) {
+						if (TimezoneUtils.isValidTimezone(sCurrentValue)) {
 							oTimezoneParsed.timezone = sCurrentValue;
 							oTimezoneParsed.length = sCurrentValue.length;
 							break;
@@ -2350,7 +2351,7 @@ sap.ui.define([
 			bUTC = false;
 
 			checkTimezoneParameterType(sTimezone);
-			if (sTimezone && !TimezoneUtil.isValidTimezone(sTimezone)) {
+			if (sTimezone && !TimezoneUtils.isValidTimezone(sTimezone)) {
 				Log.error("The given timezone isn't valid.");
 				return "";
 			}
@@ -2714,7 +2715,7 @@ sap.ui.define([
 		// Convert to timezone if provided and a valid date is supplied
 		if (!bUTC && isValidDateObject(oJSDate)) {
 			// convert given date to a date in the target timezone
-			return TimezoneUtil.convertToTimezone(oJSDate, sTimezone);
+			return TimezoneUtils.convertToTimezone(oJSDate, sTimezone);
 		}
 		return oJSDate;
 	};
@@ -2770,7 +2771,7 @@ sap.ui.define([
 			}
 
 			if (sTimezone) {
-				oDateValue.tzDiff = TimezoneUtil.calculateOffset(oDate, sTimezone);
+				oDateValue.tzDiff = TimezoneUtils.calculateOffset(oDate, sTimezone);
 			}
 		}
 		if (oDateValue.tzDiff) {
@@ -2864,7 +2865,7 @@ sap.ui.define([
 			bUTC = false;
 
 			checkTimezoneParameterType(sTimezone);
-			if (sTimezone && !TimezoneUtil.isValidTimezone(sTimezone)) {
+			if (sTimezone && !TimezoneUtils.isValidTimezone(sTimezone)) {
 				Log.error("The given timezone isn't valid.");
 				return null;
 			}
