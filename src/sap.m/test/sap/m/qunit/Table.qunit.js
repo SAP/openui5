@@ -961,7 +961,7 @@ sap.ui.define([
 		assert.ok(sut._clearAllButton.hasStyleClass("sapMTableDisableClearAll"), "Clear selection icon is inactive by removing style class since no items selected");
 
 		var $trigger = sut.$("trigger").trigger("focus");
-		qutils.triggerKeydown($trigger, KeyCodes.SPACE);
+		qutils.triggerKeydown($trigger, KeyCodes.ENTER);
 		assert.notOk(sut._clearAllButton.hasStyleClass("sapMTableDisableClearAll"), "Clear selection icon is active by adding style class after growing");
 		sut.destroy();
 	});
@@ -1308,6 +1308,7 @@ sap.ui.define([
 
 		var $trigger = sut.$("trigger").trigger("focus");
 		qutils.triggerKeydown($trigger, KeyCodes.SPACE);
+		qutils.triggerKeyup($trigger, KeyCodes.SPACE);
 		assert.ok(iItemsLength < sut.getItems().length, "Growing triggered via onsapspace event");
 		assert.ok(fnCheckGrowingFromScratch.called, "checkGrowingFromScratch called in order to recalculate merging cells");
 
@@ -1917,7 +1918,7 @@ sap.ui.define([
 		// trigger F7 when focus is on second column header
 		qutils.triggerKeydown(document.activeElement, KeyCodes.F7);
 		assert.strictEqual(document.activeElement, $TblHeader[0], "focus is set on the table header row");
-		assert.strictEqual(oTable._iLastFocusPosOfColumnHeader, 1, "last focused column header position is remembered");
+		assert.strictEqual(oTable._iLastFocusPosOfItem, 1, "last focused column header position is remembered");
 
 		// trigger F7 again to check if focus is restored on the second column header
 		qutils.triggerKeydown(document.activeElement, KeyCodes.F7);

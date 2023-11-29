@@ -462,7 +462,7 @@ sap.ui.define([
 		// Act
 		var oRenderSpy = this.spy(oTable, "invalidate");
 		var $trigger = oTable.$("trigger").trigger("focus");
-		qutils.triggerKeydown($trigger, KeyCodes.SPACE);
+		qutils.triggerKeydown($trigger, KeyCodes.ENTER);
 
 		// Assert
 		assert.strictEqual(oTable.getItems().length, 4, "2 more ObjectMarkers were rendered");

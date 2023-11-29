@@ -461,6 +461,16 @@ sap.ui.define([
 		}, "Wrong aggregation object.");
 	});
 
+	QUnit.module("NoData");
+
+	QUnit.test("Nodata should have the role treeitem", function(assert){
+		var oTree = new Tree();
+		oTree.placeAt("content");
+		oCore.applyChanges();
+
+		assert.equal(oTree.getDomRef("nodata").getAttribute("role"), "treeitem");
+	});
+
 	QUnit.module("Binding", {
 		beforeEach: function() {
 			var oTemplate = new StandardTreeItem({

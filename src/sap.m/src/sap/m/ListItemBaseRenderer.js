@@ -283,8 +283,7 @@ sap.ui.define(["./library", "sap/ui/core/Core", "sap/ui/Device", "sap/ui/core/In
 			sAriaDescribedBy = this.getAriaDescribedBy(oLI),
 			sRole = this.getAriaRole(oLI),
 			mAccessibilityState = {
-				role: sRole,
-				roledescription: sRole === "listitem" ? oLI.getAccessibilityType(Core.getLibraryResourceBundle("sap.m")) : null
+				role: sRole
 			};
 
 		if (sAriaLabelledBy) {
@@ -309,6 +308,7 @@ sap.ui.define(["./library", "sap/ui/core/Core", "sap/ui/Device", "sap/ui/core/In
 			mAccessibilityState.selected = null;
 			if (oLI.isGroupHeader()) {
 				mAccessibilityState.role = "group";
+				mAccessibilityState.roledescription = oLI.getAccessibilityType(Core.getLibraryResourceBundle("sap.m"));
 				var aGroupedItems = oLI.getGroupedItems();
 				if (aGroupedItems && aGroupedItems.length) {
 					mAccessibilityState.owns = aGroupedItems.join(" ");
