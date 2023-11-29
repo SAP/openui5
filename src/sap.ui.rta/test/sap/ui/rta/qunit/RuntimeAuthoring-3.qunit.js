@@ -768,7 +768,6 @@ sap.ui.define([
 		});
 
 		QUnit.test("when RTA is created without rootControl and start is triggered", function(assert) {
-			var oLogStub = sandbox.stub(Log, "error");
 			var oRuntimeAuthoring = new RuntimeAuthoring({
 				rootControl: undefined
 			});
@@ -777,25 +776,30 @@ sap.ui.define([
 			.start()
 			.catch(function(vError) {
 				assert.ok(vError, "then the promise is rejected");
-				assert.equal(oLogStub.callCount, 1, "and an error is logged");
 				assert.strictEqual(vError.message, "Root control not found", "with the correct Error");
 			});
 		});
 
 		QUnit.test("when trying to start twice", function(assert) {
+			const oSetAdaptationLayerSpy = sandbox.spy(PersistenceWriteAPI, "setAdaptationLayer");
 			var oRuntimeAuthoring = new RuntimeAuthoring({
 				rootControl: oComp,
-				showToolbars: false
+				showToolbars: false,
+				layer: Layer.CUSTOMER
 			});
-			var oDesigntimeAddRootElementSpy = sandbox.spy(DesignTime.prototype, "addRootElement");
+			var oDesignTimeAddRootElementSpy = sandbox.spy(DesignTime.prototype, "addRootElement");
 			return oRuntimeAuthoring.start().then(function() {
-				assert.strictEqual(oDesigntimeAddRootElementSpy.callCount, 1, "the the designtime is going to start once");
+				assert.strictEqual(oDesignTimeAddRootElementSpy.callCount, 1, "the the DesignTime is going to start once");
+				assert.strictEqual(oSetAdaptationLayerSpy.callCount, 1, "the adaptation layer is set");
+				assert.strictEqual(oSetAdaptationLayerSpy.getCall(0).args[0], Layer.CUSTOMER, "the layer is passed");
+				assert.strictEqual(oSetAdaptationLayerSpy.getCall(0).args[1], oComp.getId(), "the root control is passed");
 
 				return oRuntimeAuthoring.start();
 			})
-			.catch(function(sError) {
-				assert.strictEqual(oDesigntimeAddRootElementSpy.callCount, 1, "the the designtime is not started again");
-				assert.strictEqual(sError, "RuntimeAuthoring is already started", "the start function rejects");
+			.catch(function(oError) {
+				assert.strictEqual(oSetAdaptationLayerSpy.callCount, 1, "the adaptation layer is not set again");
+				assert.strictEqual(oDesignTimeAddRootElementSpy.callCount, 1, "the the DesignTime is not started again");
+				assert.strictEqual(oError.message, "RuntimeAuthoring is already started", "the start function rejects");
 			});
 		});
 
