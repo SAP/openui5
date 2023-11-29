@@ -1,4 +1,4 @@
-/*global QUnit */
+/*global QUnit, sinon */
 sap.ui.define([
 	"sap/ui/events/KeyCodes",
 	"sap/m/upload/UploadSet",
@@ -714,4 +714,36 @@ sap.ui.define([
 			assertClasses(assert, getAttributesDomRefs.call(this, assert), data.expected);
 		});
 	});
-});
+
+	QUnit.module("UploadSetItem tests", {
+		beforeEach: function() {
+			this.oUploadSetItem = new UploadSetItem();
+			this.stub = sinon.stub(this.oUploadSetItem, "_getProgressBox").returns({
+				hasStyleClass: function(className) {
+					return className === "sapMUSProgressBox";
+				}
+			});
+		},
+		afterEach: function() {
+			this.oUploadSetItem.destroy();
+			this.stub.restore();
+		}
+	});
+
+	QUnit.test("Call _getListItem method", function(assert) {
+			// Test calling the _getListItem method
+			var listItem = this.oUploadSetItem._getListItem();
+
+			assert.strictEqual(this.oUploadSetItem._oListItem, listItem, "_oListItem should be set to the returned listItem");
+		});
+
+	QUnit.test("_getProgressBox is called with correct CSS", function(assert) {
+		// Arrange
+		var oProgressBox = this.oUploadSetItem._getProgressBox();
+
+		// Assert
+		assert.ok(this.stub.called, "_getProgressBox was called");
+		assert.ok(oProgressBox.hasStyleClass("sapMUSProgressBox"), "sapMUSProgressBox CSS class is set");
+	});
+
+ });
