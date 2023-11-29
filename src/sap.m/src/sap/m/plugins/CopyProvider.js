@@ -234,7 +234,12 @@ sap.ui.define(["./PluginBase", "sap/base/Log", "sap/base/strings/formatMessage",
 				visible: this._getEffectiveVisible(),
 				text: sText,
 				tooltip: sText,
-				press: this.copySelectionData.bind(this, true),
+				press: function() {
+					// TBD Button should be disabled when no selection is available. Until then only when the button is pressed a user message should be shown.
+					this._bActivatedByButton = true;
+					this.copySelectionData(true);
+					this._bActivatedByButton = false;
+				}.bind(this),
 				...mSettings
 			});
 		}
@@ -287,13 +292,23 @@ sap.ui.define(["./PluginBase", "sap/base/Log", "sap/base/strings/formatMessage",
 		const bCellSelectorRowContextsMustBeMerged = Boolean(aCellSelectorRowContexts.length);
 		const bSelectedRowContextsMustBeSparse = bCellSelectorRowContextsMustBeMerged || bCopySparse;
 
+		let iRows = 0;
+		let iCells = 0;
+
 		if (this.getCopyPreference() == CopyPreference.Full || !bCellSelectorRowContextsMustBeMerged) {
 			aSelectedRowContexts = this.getConfig("selectedContexts", oControl, bSelectedRowContextsMustBeSparse);
 			Object.assign(aAllSelectedRowContexts, aSelectedRowContexts);
+			iRows = aSelectedRowContexts.reduce((counter, obj) => {
+				if (obj) {
+					counter++;
+				}
+				return counter;
+			}, 0);
 		}
 
 		if (bCellSelectorRowContextsMustBeMerged) {
 			Object.assign(aAllSelectedRowContexts, Array(mCellSelectionRange.from.rowIndex).concat(aCellSelectorRowContexts));
+			iCells = aCellSelectorRowContexts.length * (Math.abs(mCellSelectionRange.to.colIndex - mCellSelectionRange.from.colIndex) + 1);
 		}
 
 		const aHtmlSelectionData = [];
@@ -351,10 +366,15 @@ sap.ui.define(["./PluginBase", "sap/base/Log", "sap/base/strings/formatMessage",
 			}
 		}
 
-		return (bHtmlMimeTypeProvided) ? {
+		const res = (bHtmlMimeTypeProvided) ? {
 			text: aTextSelectionData,
 			html: aHtmlSelectionData
 		} : aTextSelectionData;
+
+		res.__iRows = iRows;
+		res.__iCells = iCells;
+
+		return res;
 	};
 
 	/**
@@ -371,6 +391,12 @@ sap.ui.define(["./PluginBase", "sap/base/Log", "sap/base/strings/formatMessage",
 		const vSelectionData = this.getSelectionData(true);
 		const aTextSelectionData = vSelectionData.text || vSelectionData;
 		if (!aTextSelectionData.length || bFireCopyEvent && !this.fireCopy({data: aTextSelectionData}, true)) {
+
+			// TBD Button should be disabled when no selection is available. Until then only when the button is pressed a user message should be shown.
+			if (this._bActivatedByButton && !aTextSelectionData.length) {
+				this._notifyUser(0, 0);
+			}
+
 			return Promise.resolve();
 		}
 
@@ -383,8 +409,12 @@ sap.ui.define(["./PluginBase", "sap/base/Log", "sap/base/strings/formatMessage",
 			return aRows.map(stringifyForTextMimeType).join("\t");
 		}).join("\n");
 
+		let res = null;
+
 		if (!aHtmlSelectionData.length) {
-			return navigator.clipboard.writeText(sClipboardText);
+			res = navigator.clipboard.writeText(sClipboardText);
+			this._notifyUser(vSelectionData.__iRows, vSelectionData.__iCells);
+			return res;
 		}
 
 		const sHtmlMimeType = "text/html";
@@ -397,7 +427,9 @@ sap.ui.define(["./PluginBase", "sap/base/Log", "sap/base/strings/formatMessage",
 			[sHtmlMimeType]: new Blob([sClipboardHtml], {type: sHtmlMimeType})
 		});
 
-		return navigator.clipboard.write([oClipboardItem]);
+		res = navigator.clipboard.write([oClipboardItem]);
+		this._notifyUser(vSelectionData.__iRows, vSelectionData.__iCells);
+		return res;
 	};
 
 	/**
@@ -488,6 +520,69 @@ sap.ui.define(["./PluginBase", "sap/base/Log", "sap/base/strings/formatMessage",
 			text: aPropertyValues,
 			html: sExtractValue
 		};
+	};
+
+	/**
+	 * Shows a notification message to the user - either MessageToast or MessageBox.
+	 *
+	 * When a message text is given a MessageBox with the given state is shown.
+	 * When the message is <code>""</code> and the state is <code>Error</code> a default error message is displayed.
+	 * Otherwise an information message based on the number of selected rows and / or cells is shown.
+	 *
+	 * @param {int} iRows The count of selected rows
+	 * @param {int} iCells The count of selected cells
+	 * @param {string} [sMessageText] An optional message text
+	 * @param {string} [sState="Error"] The sverity of the optional message
+	 * @returns {Promise}
+	 * @private
+	 */
+	CopyProvider.prototype._notifyUser = function(iRows, iCells, sMessageText, sState = "Error") {
+		const bHasSelection = iRows > 0 || iCells > 0;
+		const oBundle = coreLib.getResourceBundleFor("sap.m");
+		return new Promise(function(resolve, reject) {
+			if (sMessageText === "" && sState === "Error") {
+				sMessageText = oBundle.getText("COPYPROVIDER_DEFAULT_ERROR_MSG");
+			}
+
+			if (!bHasSelection && !sMessageText) {
+				sMessageText = oBundle.getText("COPYPROVIDER_NOSELECTION_MSG");
+				sState = "Information";
+			}
+
+			if (sMessageText) {
+				sap.ui.require(["sap/m/MessageBox"], function(MessageBox) {
+					const sFuncName = sState.toLowerCase();
+					if (typeof MessageBox[sFuncName] === "function") {
+						MessageBox[sFuncName](sMessageText);
+						resolve();
+					}
+					reject();
+				});
+			} else if (bHasSelection) {
+				const bPreferCells = this.getCopyPreference() === "Cells";
+
+				sap.ui.require(["sap/m/MessageToast"], function(MessageToast) {
+					let sMsg;
+					if (iRows == 1 && iCells <= 0) {
+						sMsg = oBundle.getText("COPYPROVIDER_SELECT_ROW_SINGLE_MSG");
+					} else if (iRows > 1 && iCells <= 0) {
+						sMsg = oBundle.getText("COPYPROVIDER_SELECT_ROW_MULTI_MSG");
+					} else if (iCells == 1 && (iRows == 0 || bPreferCells)) {
+						sMsg = oBundle.getText("COPYPROVIDER_SELECT_CELL_SINGLE_MSG");
+					} else if (iCells > 1 && (iRows == 0 || bPreferCells)) {
+						sMsg = oBundle.getText("COPYPROVIDER_SELECT_CELL_MULTI_MSG");
+					} else if (iRows > 0 && iCells > 0) {
+						sMsg = oBundle.getText("COPYPROVIDER_SELECT_ROW_AND_CELL_MSG");
+					}
+					if (sMsg) {
+						MessageToast.show(sMsg);
+						resolve();
+					} else {
+						reject();
+					}
+				});
+			}
+		}.bind(this));
 	};
 
 	/**
