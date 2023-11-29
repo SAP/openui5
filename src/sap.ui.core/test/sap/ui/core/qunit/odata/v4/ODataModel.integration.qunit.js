@@ -1244,7 +1244,7 @@ sap.ui.define([
 		createModelForV2FlightService : function (mModelParameters) {
 			var oLogMock = this.oLogMock;
 
-			// The following warnings are logged when the RMTSAMPLEFLIGHT metamodel is loaded
+			// The following warnings are logged when the RMTSAMPLEFLIGHT meta model is loaded
 			[
 				"semantics", "creatable", "creatable", "semantics", "semantics", "value-list",
 				"value-list", "label", "label", "value-list", "value-list", "value-list",
@@ -1273,7 +1273,7 @@ sap.ui.define([
 		createModelForV2SalesOrderService : function (mModelParameters) {
 			var oLogMock = this.oLogMock;
 
-			// The following warnings are logged when the GWSAMPLE_BASIC metamodel is loaded
+			// The following warnings are logged when the GWSAMPLE_BASIC meta model is loaded
 			["filterable", "sortable"].forEach(function (sAnnotation) {
 				oLogMock.expects("warning")
 					.withExactArgs("Unsupported SAP annotation at a complex type in"
@@ -1915,14 +1915,14 @@ sap.ui.define([
 		 *                                       // sparse array in which index 1 is unset
 		 * this.expectChange("foo", "d", "/MyEntitySet/ID");
 		 *                                 // expect value "d" for control with ID "foo" in a
-		 *                                 // metamodel table on "/MyEntitySet/ID"
+		 *                                 // meta model table on "/MyEntitySet/ID"
 		 * this.expectChange("foo", "bar").expectChange("foo", "baz"); // expect 2 changes for "foo"
 		 * this.expectChange("foo", null); // initialization due to #setContext
 		 *
 		 * @param {string} sControlId The control ID
 		 * @param {string|string[]|number|number[]} [vValue] The expected value or a list of
 		 *   expected values
-		 * @param {string} [sRow] (Only for metamodel tests) The path of the binding's parent
+		 * @param {string} [sRow] (Only for meta model tests) The path of the binding's parent
 		 *   context, in case that a change is expected for a single row of a list; in this case
 		 *   <code>vValue</code> must be a string
 		 * @returns {object} The test instance for chaining
@@ -40199,7 +40199,7 @@ make root = ${bMakeRoot}`;
 	});
 
 	//*********************************************************************************************
-	// Scenario: property binding with "##"-path pointing to a metamodel property.
+	// Scenario: property binding with "##"-path pointing to a meta model property.
 	// CPOUI5UISERVICESV3-1676
 	testViewStart("Property binding with metapath", '\
 <FlexBox binding="{/Artists(\'42\')}">\

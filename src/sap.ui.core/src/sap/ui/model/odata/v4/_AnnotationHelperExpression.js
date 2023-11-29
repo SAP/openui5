@@ -85,11 +85,11 @@ sap.ui.define([
 		 *     <code>true</code>, bindings shall have type and constraints information
 		 *   <li> <code>ignoreAsPrefix</code>: {string} an optional prefix to be ignored in a path
 		 *     expression (for example, binding parameter name)
-		 *   <li> <code>model</code>: {sap.ui.model.odata.v4.ODataMetaModel} the metamodel
-		 *   <li> <code>path</code>: {string} the path in the metamodel that leads to the value
+		 *   <li> <code>model</code>: {sap.ui.model.odata.v4.ODataMetaModel} the meta model
+		 *   <li> <code>path</code>: {string} the path in the meta model that leads to the value
 		 *   <li> <code>prefix</code>: {string} used in a path expression as a prefix for the
 		 *     value; is either an empty string or a path ending with a "/"
-		 *   <li> <code>value</code>: {any} the value of the (sub) expression from the metamodel
+		 *   <li> <code>value</code>: {any} the value of the (sub) expression from the meta model
 		 * </ul>
 		 *
 		 * Unless specified otherwise all functions return a result object with the following
