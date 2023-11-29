@@ -5,7 +5,6 @@
 sap.ui.define([
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/fl/initial/api/Version",
-	"sap/ui/fl/initial/_internal/FlexInfoSession",
 	"sap/ui/fl/write/_internal/Versions",
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/write/api/FeaturesAPI",
@@ -14,7 +13,6 @@ sap.ui.define([
 ], function(
 	FlexState,
 	Version,
-	FlexInfoSession,
 	Versions,
 	Utils,
 	FeaturesAPI,
@@ -281,11 +279,6 @@ sap.ui.define([
 
 		var oAppComponent = Utils.getAppComponentForControl(mPropertyBag.control);
 		var sReference = getFlexReferenceForControl(oAppComponent);
-		// when discard the draft no reload is triggered but flex/data request is send and will delete version and maxLayer without saveChangeKeepSession
-		// after the request saveChangeKeepSession needs to be delete again
-		var oFlexInfoSession = FlexInfoSession.getByReference(sReference);
-		oFlexInfoSession.saveChangeKeepSession = true;
-		FlexInfoSession.setByReference(oFlexInfoSession, sReference);
 		return Versions.discardDraft({
 			nonNormalizedReference: sReference,
 			reference: sReference,
@@ -306,8 +299,6 @@ sap.ui.define([
 							reference: sReference,
 							adaptationId: sDisplayedAdaptationId
 						}).then(function() {
-							delete oFlexInfoSession.saveChangeKeepSession;
-							FlexInfoSession.setByReference(oFlexInfoSession, sReference);
 							return oDiscardInfo;
 						});
 					});
@@ -317,8 +308,6 @@ sap.ui.define([
 					componentId: oAppComponent.getId(),
 					reference: sReference
 				}).then(function() {
-					delete oFlexInfoSession.saveChangeKeepSession;
-					FlexInfoSession.setByReference(oFlexInfoSession, sReference);
 					return oDiscardInfo;
 				});
 			}
