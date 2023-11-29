@@ -15,9 +15,10 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/core/CustomData",
 	"sap/ui/core/Core",
+	"sap/ui/core/Lib",
 	"test-resources/sap/ui/mdc/qunit/QUnitUtils",
 	"test-resources/sap/ui/mdc/qunit/table/QUnitUtils"
-], function(ClipboardUtils, Text, Table, Column, ColumnListItem, GridTable, GridColumn, MultiSelectionPlugin, MDCTable, MDCColumn, PluginBase, CopyProvider, CellSelector, JSONModel, CustomData, Core, MDCQUnitUtils, MDCTableQUnitUtils) {
+], function(ClipboardUtils, Text, Table, Column, ColumnListItem, GridTable, GridColumn, MultiSelectionPlugin, MDCTable, MDCColumn, PluginBase, CopyProvider, CellSelector, JSONModel, CustomData, Core, Library, MDCQUnitUtils, MDCTableQUnitUtils) {
 
 	"use strict";
 	/*global sinon, QUnit */
@@ -339,9 +340,17 @@ sap.ui.define([
 		assert.equal(await navigator.clipboard.readText(), "1\tname1\tcolor1\n3\tname3\tcolor3", "Data is extracted from the row since there is no binding");
 	});
 
+	QUnit.test("Copy-Button", function(assert) {
+		const sText = Library.getResourceBundleFor("sap.m").getText("COPYPROVIDER_COPY");
+		const oCopyButton = this.oCopyProvider.getCopyButton();
+		assert.equal(oCopyButton.getTooltip(), sText, "Copy Button Tooltip");
+		assert.equal(oCopyButton.getText(), sText, "Copy Button Text");
+	});
+
 	QUnit.test("Copy button visibility", async function(assert) {
 		const oCopyButton = this.oCopyProvider.getCopyButton();
 		assert.ok(oCopyButton.getVisible(), "The copy button is visible at the beginning");
+		assert.ok(oCopyButton.getText() === oCopyButton.getTooltip(), "Copy Button text is the same like tooltip");
 
 		this.oTable.setMode("None");
 		Core.applyChanges();
