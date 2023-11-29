@@ -1,14 +1,16 @@
 sap.ui.define([
 	"sap/ui/table/qunit/TableQUnitUtils",
 	"sap/ui/table/plugins/PluginBase",
+	"sap/ui/table/plugins/SelectionPlugin",
 	"sap/ui/table/Table",
 	"sap/ui/table/rowmodes/Fixed",
 	"sap/ui/core/Control"
-], function(TableQUnitUtils, PluginBase, Table, FixedRowMode, Control) {
+], function(TableQUnitUtils, PluginBase, SelectionPlugin, Table, FixedRowMode, Control) {
 	"use strict";
 	/*global QUnit */
 
 	var TestPlugin = PluginBase.extend("sap.ui.table.plugins.test.Plugin");
+	var TestSelectionPlugin = SelectionPlugin.extend("sap.ui.table.plugins.test.SelectionPlugin");
 
 	QUnit.module("Activation & Deactivation", {
 		beforeEach: function() {
@@ -184,5 +186,54 @@ sap.ui.define([
 		this.stub(this.oTable, "_setRowCountConstraints");
 		this.oPlugin.setRowCountConstraints({fixedTop: true, fixedBottom: true});
 		assert.deepEqual(this.oTable.getRowMode().getRowCountConstraints(), {}, "RowMode#getRowCountConstraints");
+	});
+
+	/*The following tests should become obsolte when sap.ui.table.plugins.PluginBase inherits in future from sap.m.plugins.PluginBase.*/
+
+	QUnit.module("Static getPlugin", {
+		beforeEach: function(assert) {
+			this.oPlugin = new TestPlugin();
+			this.oSelectionPlugin = new TestSelectionPlugin();
+			this.oTable = TableQUnitUtils.createTable();
+		},
+		afterEach: function() {
+			this.oPlugin.destroy();
+			this.oSelectionPlugin.destroy();
+			this.oTable.destroy();
+		}
+	});
+
+	QUnit.test("Parameters", function(assert) {
+		assert.ok(PluginBase.getPlugin() === undefined, "no parameters");
+		assert.ok(PluginBase.getPlugin(null, "sap.ui.table.plugins.test.Test") === undefined, "no control");
+		assert.ok(PluginBase.getPlugin(this.oTable, {}) === undefined, "no correct plugin type");
+	});
+
+	QUnit.test("Find plugins in different aggregations", function(assert) {
+		this.oTable.destroyDependents();
+
+		this.oTable.addDependent(this.oPlugin);
+		assert.ok(PluginBase.getPlugin(this.oTable, "sap.ui.table.plugins.test.Plugin") === this.oPlugin, "Plugin of type sap.ui.table.plugins.test.Plugin found in dependents aggregation");
+		assert.ok(PluginBase.getPlugin(this.oTable, TestPlugin) === this.oPlugin, "Plugin of type sap.ui.table.plugins.test.Plugin Class found in dependents aggregation");
+		assert.ok(PluginBase.findOn(this.oTable) === this.oPlugin, "Plugin found with findOn");
+		this.oTable.removeAllDependents();
+
+		this.oTable.addDependent(this.oSelectionPlugin);
+		assert.ok(PluginBase.getPlugin(this.oTable, "sap.ui.table.plugins.test.SelectionPlugin") === this.oSelectionPlugin, "Plugin of type sap.ui.table.plugins.test.SelectionPlugin found in dependents aggregation");
+		assert.ok(PluginBase.getPlugin(this.oTable, TestSelectionPlugin) === this.oSelectionPlugin, "Plugin of type sap.ui.table.plugins.test.SelectionPlugin Class found in dependents aggregation");
+		assert.ok(PluginBase.findOn(this.oTable) === this.oSelectionPlugin, "Plugin found with findOn");
+		this.oTable.insertDependent(this.oPlugin, 0);
+		assert.ok(PluginBase.findOn(this.oTable) === this.oPlugin, "Plugin found with findOn");
+		this.oTable.removeAllDependents();
+
+		/**
+		 * @deprecated As of version 1.120
+		 */
+		if (this.oTable.addPlugin) {
+			this.oTable.addPlugin(this.oSelectionPlugin);
+			assert.ok(PluginBase.getPlugin(this.oTable, "sap.ui.table.plugins.test.SelectionPlugin") === this.oSelectionPlugin, "Plugin of type sap.ui.table.plugins.test.SelectionPlugin found in plugins aggregation");
+			assert.ok(PluginBase.getPlugin(this.oTable, TestSelectionPlugin) === this.oSelectionPlugin, "Plugin of type sap.ui.table.plugins.test.SelectionPlugin Class found in plugins aggregation");
+			this.oTable.removeAllPlugins();
+		}
 	});
 });
