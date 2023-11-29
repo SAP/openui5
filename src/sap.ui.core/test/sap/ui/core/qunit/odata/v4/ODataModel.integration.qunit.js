@@ -20288,7 +20288,7 @@ sap.ui.define([
 			oSalesOrder2,
 			sView = '\
 <Table id="orders" items="{/SalesOrderList}">\
-	<Text text="{SalesOrderID}"/>\
+	<Text id="id" text="{SalesOrderID}"/>\
 </Table>\
 <FlexBox id="objectPage" ' + sIntermediate + '>\
 	<Text id="note" text="{Note}"/>\
@@ -20307,6 +20307,7 @@ sap.ui.define([
 					{SalesOrderID : "2", Note : "Note 2"}
 				]
 			})
+			.expectChange("id", ["1", "2"])
 			.expectChange("note")
 			.expectChange("count")
 			.expectChange("pos", []);
@@ -20559,7 +20560,7 @@ sap.ui.define([
 			oOrdersBinding,
 			sView = '\
 <Table id="orders" items="{/SalesOrderList}">\
-	<Text text="{SalesOrderID}"/>\
+	<Text id="id" text="{SalesOrderID}"/>\
 </Table>\
 <FlexBox binding="{}" id="objectPage">\
 	<Text id="count" text="{header>$count}"/>\
@@ -20575,6 +20576,7 @@ sap.ui.define([
 					{SalesOrderID : "2"}
 				]
 			})
+			.expectChange("id", ["1", "2"])
 			.expectChange("count")
 			.expectChange("pos", []);
 
@@ -49478,6 +49480,7 @@ make root = ${bMakeRoot}`;
 					+ " $expand : {TEAM_2_EMPLOYEES : {$select : 'ID,Name'}}}",
 			sView = '\
 <FlexBox binding="{path : \'/TEAMS(\\\'1\\\')\'' + sParameters + '}">\
+	<Text id="id" text="{Team_Id}"/>\
 	<Table id="employees" items="{TEAM_2_EMPLOYEES}">\
 		<Text id="name" text="{Name}"/>\
 		<List items="{path : \'EMPLOYEE_2_EQUIPMENTS\', parameters : {$$ownRequest : true}, \
@@ -49494,6 +49497,7 @@ make root = ${bMakeRoot}`;
 				Team_Id : "1",
 				TEAM_2_EMPLOYEES : []
 			})
+			.expectChange("id", "1")
 			.expectChange("name", [])
 			.expectChange("category", []);
 
@@ -54390,7 +54394,8 @@ make root = ${bMakeRoot}`;
 	// Scenario: side effects request on a SingleCache that failed to load its data.
 	// BCP: 2280078004
 	QUnit.test("requestSideEffects: broken SingleCache", function (assert) {
-		var sView = '\
+		var oModel = this.createTeaBusiModel(),
+			sView = '\
 <FlexBox id="form" binding="{/TEAMS(\'TEAM_01\')}">\
 	<Text text="{Name}"/>\
 </FlexBox>',
@@ -54407,7 +54412,11 @@ make root = ${bMakeRoot}`;
 				type : "Error"
 			}]);
 
-		return this.createView(assert, sView).then(function () {
+		return Promise.all([
+			// avoid that the metadata request disturbs the timing
+			oModel.getMetaModel().requestObject("/"),
+			that.createView(assert, sView, oModel)
+		]).then(function () {
 			// expect no request
 
 			return Promise.all([
