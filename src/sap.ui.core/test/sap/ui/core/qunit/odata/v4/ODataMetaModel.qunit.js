@@ -7136,10 +7136,12 @@ forEach({
 	"/As(1)|AtoB/BtoA" : ["/As(1)"],
 	"/As(1)|AtoB/BtoA/AValue" : ["/As(1)/AValue"],
 	"/As(1)|AtoC/CtoA/AValue" : [], // potential backlink has no $Partner
-	"/As(1)|AtoDs(42)/DtoA/AValue" : ["/As(1)/AValue"],
+	"/As(1)|AtoDs(42)/DtoA/AValue" : ["/As(1)/AValue"], // using predicate
+	"/As(1)|AtoDs/42/DtoA/AValue" : ["/As(1)/AValue"], // using index
+	// no predicate, no index (does not matter where it leads, it's going back anyway)
+	"/As(1)|AtoDs/DtoA/AValue" : ["/As(1)/AValue"],
 	"/As(1)|AtoDs(42)/DtoA/AtoC/CValue" : ["/As(1)/AtoC/CValue"],
 	"/Ds(1)|DtoA/AtoDs(42)/DValue" : [], // backlink via collection
-	"/As(1)|AtoDs/42/DtoA/AValue" : ["/As(1)/AValue"], // using index
 	"/Ds(1)|DtoCs/42" : [], // no partner, ends with index
 	"/Ds(1)|DtoA/AtoDs/42/DValue" : [], // backlink via collection w/ index
 	"/As(1)|AtoDs(42)/DtoBs(7)/BtoD/DValue" : ["/As(1)/AtoDs(42)/DValue"], // following a collection
