@@ -97,7 +97,7 @@ sap.ui.define([
         .then(function(){
             if (sInternalPersistenceMode === mode.Global) {
                 return _requireFlexRuntimeAPI().then(function(FlexRuntimeInfoAPI){
-                    return FlexRuntimeInfoAPI.isPersonalized({selectors: [mPropertyBag.selector]});
+                    return FlexRuntimeInfoAPI.isPersonalized({...mPropertyBag,selectors: [mPropertyBag.selector]});
                 });
             } else {
                 return _requireWriteAPI().then(function(ControlPersonalizationWriteAPI){
