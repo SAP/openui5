@@ -12,6 +12,25 @@ sap.ui.define([
 	"use strict";
 
 	/**
+	 * Personalization <code>FilterState</code> object type. This object describes the state processed by this controller when accessing it through the {@link sap.m.p13n.Engine Engine}.
+	 *
+	 * @public
+	 * @typedef {object} sap.m.p13n.FilterState
+	 * @property {{string, sap.m.p13n.FilterStateItem[]}} filterState The filter state items for a provided key
+	 *
+	 */
+
+	/**
+	 * Personalization <code>FilterStateItem</code> object type. This object describes a single filter condition.
+	 *
+	 * @public
+	 * @typedef {object} sap.m.p13n.FilterStateItem
+	 * @property {string} operator The operator of the condition
+	 * @property {string[]} values The values of the condition
+	 *
+	 */
+
+	/**
 	 * Constructor for a new <code>FilterController</code>.
 	 *
 	 * @param {object} mSettings Initial settings for the new controller
@@ -24,7 +43,7 @@ sap.ui.define([
 	 * method can be used to return a focusable children control to provide the <code>labelFor</code> reference.
 	 *
 	 * @class
-	 * The <code>FilterController</code> entity serves as a base class to create personalization implementations that are specific to sorting.
+	 * The <code>FilterController</code> entity serves as a base class to create personalization implementations that are specific to filtering.
 	 *
 	 * @extends sap.m.p13n.SelectionController
 	 *
