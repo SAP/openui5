@@ -531,6 +531,35 @@ sap.ui.define([
 	};
 
 	/**
+	 * Takes an array of FlexObjects and filters out any hidden variant and changes on those hidden variants
+	 *
+	 * @param {sap.ui.fl.apply._internal.flexObjects.FlexObject[]} aFlexObjects - FlexObjects to be filtered
+	 * @param {string} sReference - Flex reference of the application
+	 * @returns {sap.ui.fl.apply._internal.flexObjects.FlexObject[]} Filtered list of FlexObjects
+	 */
+	VariantManagementState.filterHiddenFlexObjects = function(aFlexObjects, sReference) {
+		const oVariantManagementState = oVariantManagementMapDataSelector.get({ reference: sReference });
+		const aHiddenVariants = [];
+		Object.values(oVariantManagementState).forEach((oVariantManagement) => {
+			oVariantManagement.variants.forEach((oVariant) => {
+				if (oVariant.visible === false) {
+					aHiddenVariants.push(oVariant.key);
+				}
+			});
+		});
+		return aFlexObjects.filter((oFilteredFlexObject) => {
+			const sVariantReference = {
+				// eslint-disable-next-line camelcase
+				ctrl_variant: () => (oFilteredFlexObject.getVariantId()),
+				// eslint-disable-next-line camelcase
+				ctrl_variant_change: () => (oFilteredFlexObject.getSelector().id),
+				change: () => (oFilteredFlexObject.getVariantReference())
+			}[oFilteredFlexObject.getFileType()]?.();
+			return !aHiddenVariants.includes(sVariantReference);
+		});
+	};
+
+	/**
 	 * Sets the current variant for a variant management reference for the passed variants map.
 	 *
 	 * @param {object} mPropertyBag - Object with the necessary properties
