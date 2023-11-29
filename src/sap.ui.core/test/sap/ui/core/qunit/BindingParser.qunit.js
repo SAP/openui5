@@ -194,7 +194,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Single Binding with non-existing type", function (assert) {
-		this.oLogMock.expects("error").once().withExactArgs("Failed to resolve type 'does.not.exist'. Maybe not loaded or a typo?");
+		this.oLogMock.expects("error").once().calledWith(sinon.match(/Failed to resolve type 'does.not.exist'. Maybe not loaded or a typo\?/));
 		var o = parse("{path:'something', type: 'does.not.exist'}", oController);
 		assert.strictEqual(typeof o, "object", "parse should return an object");
 		assert.strictEqual(o.parts, undefined, "binding info should not be a composite binding info");
@@ -777,7 +777,7 @@ sap.ui.define([
 			oBindingInfo;
 
 		this.oLogMock.expects("error")
-			.withExactArgs("Cannot merge parts: Unsupported property: type", sBinding,
+			.calledWith(sinon.match(/Cannot merge parts: Unsupported property: type/), sBinding,
 				"sap.ui.base.BindingParser");
 
 		//TODO complex binding with type: does not work (but is left untouched by mergeParts())
@@ -883,8 +883,8 @@ sap.ui.define([
 			oBindingInfo;
 
 		// bTolerateFunctionsNotFound = false
-		this.oLogMock.expects("error").withExactArgs("formatter function foo not found!");
-		this.oLogMock.expects("error").withExactArgs("formatter function .bar not found!");
+		this.oLogMock.expects("error").calledWith(sinon.match(/formatter function foo not found!/));
+		this.oLogMock.expects("error").calledWith(sinon.match(/formatter function .bar not found!/));
 
 		parse(sBinding, null, true, /*bTolerateFunctionsNotFound*/false);
 

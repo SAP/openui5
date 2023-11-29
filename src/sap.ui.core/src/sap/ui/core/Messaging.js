@@ -164,7 +164,7 @@ sap.ui.define([
 		 */
 		registerObject: function(oObject, bHandleValidation) {
 			if (!(oObject && oObject.isA && (oObject.isA(["sap.ui.base.ManagedObject", "sap.ui.core.Core"])))) {
-				Log.error("Messaging: " + oObject.toString() + " is not an instance of sap.ui.base.ManagedObject");
+				Log.error("[FUTURE FATAL] Messaging: " + oObject.toString() + " is not an instance of sap.ui.base.ManagedObject");
 			} else {
 				oObject.attachValidationSuccess(bHandleValidation, _handleSuccess);
 				oObject.attachValidationError(bHandleValidation, _handleError);
@@ -181,7 +181,7 @@ sap.ui.define([
 		 */
 		unregisterObject: function(oObject) {
 			if (!(oObject && oObject.isA && oObject.isA("sap.ui.base.ManagedObject"))) {
-				Log.error("Messaging: " + oObject.toString() + " is not an instance of sap.ui.base.ManagedObject");
+				Log.error("[FUTURE FATAL] Messaging: " + oObject.toString() + " is not an instance of sap.ui.base.ManagedObject");
 			} else {
 				oObject.detachValidationSuccess(_handleSuccess);
 				oObject.detachValidationError(_handleError);

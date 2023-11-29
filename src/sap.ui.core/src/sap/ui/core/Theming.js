@@ -519,7 +519,7 @@ sap.ui.define([
 				sAllowedOrigin = bNoProtocol && !sAllowedOrigin.startsWith("//") ? "//" + sAllowedOrigin : sAllowedOrigin;
 				return sAllowedOrigin === "*" || sOrigin === new URL(sAllowedOrigin.trim(), globalThis.location.href).origin;
 			} catch (error) {
-				Log.error("sapAllowedThemeOrigin provides invalid theme origin: " + sAllowedOrigin);
+				Log.error("[FUTURE FATAL] sapAllowedThemeOrigin provides invalid theme origin: " + sAllowedOrigin);
 				return false;
 			}
 		});

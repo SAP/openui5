@@ -1246,7 +1246,7 @@ sap.ui.define([
 		var value = this.getValue();
 
 		function error(reason) {
-			Log.error("CustomData with key " + key + " should be written to HTML of " + oRelated + " but " + reason);
+			Log.error("[FUTURE FATAL] CustomData with key " + key + " should be written to HTML of " + oRelated + " but " + reason);
 			return null;
 		}
 
@@ -1470,7 +1470,7 @@ sap.ui.define([
 		var argLength = arguments.length;
 		if ( argLength === 1 && arguments[0] !== null && typeof arguments[0] == "object"
 			 || argLength > 1 && argLength < 4 && arguments[1] !== null ) {
-			Log.error("Cannot create custom data on an already destroyed element '" + this + "'");
+			Log.error("[FUTURE FATAL] Cannot create custom data on an already destroyed element '" + this + "'");
 			return this;
 		}
 		return Element.prototype.data.apply(this, arguments);
@@ -1878,7 +1878,7 @@ sap.ui.define([
 			oDomRef = vParam;
 		} else if (vParam.jquery) {
 			oDomRef = vParam[0];
-			Log.error("[FUTURE] Do not call Element.closestTo() with jQuery object as parameter. \
+			Log.error("[FUTURE FATAL] Do not call Element.closestTo() with jQuery object as parameter. \
 				The function should be called with either a DOM Element or a CSS selector. \
 				(future error, ignored for now)");
 		} else {

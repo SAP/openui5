@@ -228,7 +228,7 @@ sap.ui.define([
 
 		// check warning log
 		assert.ok(
-			this.logSpyWarning.calledWithExactly("Event handler name 'doSomething' could not be resolved to an event handler function"),
+			this.logSpyWarning.calledWith(sinon.match(/Event handler name 'doSomething' could not be resolved to an event handler function/)),
 			"Correct warning for missing event-handler was logged"
 		);
 
@@ -328,7 +328,7 @@ sap.ui.define([
 
 			// check warning log
 			assert.ok(
-				this.logSpyWarning.calledWithExactly("Event handler name 'doSomething' could not be resolved to an event handler function"),
+				this.logSpyWarning.calledWith(sinon.match(/Event handler name 'doSomething' could not be resolved to an event handler function/)),
 				"Correct warning for missing event-handler was logged"
 			);
 

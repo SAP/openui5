@@ -110,7 +110,7 @@ sap.ui.define([
 			"Cannot format date interval: " + oDate1 + " is expected as an Array but given the wrong format");
 		assert.strictEqual(oDateInterval.formatValue([oDate1], "string"), "", "format type with invalid parameter");
 		// logged by DataType.getType
-		this.oLogMock.expects("error").withExactArgs("data type 'untype' could not be found.");
+		this.oLogMock.expects("error").withExactArgs("[FUTURE FATAL] data type 'untype' could not be found.");
 		checkFormatException(assert, oDateInterval, [oDate1, oDate2], "untype",
 			"Don't know how to format Date to untype");
 
@@ -142,7 +142,7 @@ sap.ui.define([
 			[oDate1, oDate2], "Interval string can be parsed into an array of dates");
 		checkParseException(assert, oDateInterval, "Nov 6", "string", "DateInterval.Invalid");
 		// logged by DataType.getType
-		this.oLogMock.expects("error").withExactArgs("data type 'untype' could not be found.");
+		this.oLogMock.expects("error").withExactArgs("[FUTURE FATAL] data type 'untype' could not be found.");
 		checkParseException(assert, oDateInterval, "Nov 6 - Dec 6, 2003", "untype",
 			"Don't know how to parse a date interval from untype");
 

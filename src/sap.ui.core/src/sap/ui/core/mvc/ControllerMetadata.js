@@ -91,7 +91,7 @@ sap.ui.define([
 				if (!n.match(rPrivateCheck)) {
 					//final check
 					if (bExtendsController && this._oParent && this._oParent.isMethodFinal(n)) {
-						Log.error("Method: '" + n + "' of controller '" + this._oParent.getName() + "' is final and cannot be overridden by controller '" + this.getName() + "'");
+						Log.error("[FUTURE FATAL] Method: '" + n + "' of controller '" + this._oParent.getName() + "' is final and cannot be overridden by controller '" + this.getName() + "'");
 						delete this._oClass.prototype[n];
 					}
 					// default metadata for methods

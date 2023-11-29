@@ -1049,8 +1049,8 @@ sap.ui.define([
 					manifest: "json"
 				},
 				constructor: function() {
-					assert.ok(logWarningSpy.calledWith("Cannot load module 'sap/ui/model/odata/ODataModelNotExists'. This will most probably cause an error once the module is used later on."), "Model not found");
-					assert.ok(logWarningSpy.calledWith("Cannot load module 'someRouterNotExists'. This will most probably cause an error once the module is used later on."), "Router not found");
+					assert.ok(logWarningSpy.calledWith(sinon.match(/Cannot load module 'sap\/ui\/model\/odata\/ODataModelNotExists'. This will most probably cause an error once the module is used later on./)), "Model not found");
+					assert.ok(logWarningSpy.calledWith(sinon.match(/Cannot load module 'someRouterNotExists'. This will most probably cause an error once the module is used later on./)), "Router not found");
 					UIComponent.apply(this, arguments);
 				}
 			});
@@ -1366,7 +1366,7 @@ sap.ui.define([
 			manifest: true
 		}).then(function(oComponent){
 			assert.equal(oErrorLogSpy.callCount, 1, "error logged");
-			assert.equal(oErrorLogSpy.args[0][0], "Mandatory init() not called for UIComponent: 'manifestModules.scenario11'. This is likely caused by a missing super call in the component's init implementation.", "missing init super error logged");
+			assert.ok(oErrorLogSpy.calledWith(sinon.match(/Mandatory init\(\) not called for UIComponent: 'manifestModules.scenario11'. This is likely caused by a missing super call in the component's init implementation./)), "missing init super error logged");
 		}).catch(function() {
 			assert.ok(false, "Modules could not be loaded and an error occured.");
 		});

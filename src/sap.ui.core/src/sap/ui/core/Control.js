@@ -662,7 +662,7 @@ sap.ui.define([
 
 			if (oContainer instanceof Element) {
 				if (!isSuitableAsContainer(oContainer)) {
-					Log.warning("placeAt cannot be processed because container " + oContainer + " does not have an aggregation 'content'.");
+					Log.warning("[FUTURE FATAL] placeAt cannot be processed because container " + oContainer + " does not have an aggregation 'content'.");
 					return this;
 				}
 			} else {
@@ -691,7 +691,7 @@ sap.ui.define([
 						oContainer.addContent(this);
 						break;
 					default:
-						Log.warning("Position " + vPosition + " is not supported for function placeAt.");
+						Log.warning("[FUTURE FATAL] Position " + vPosition + " is not supported for function placeAt.");
 				}
 			}
 		}.bind(this));
