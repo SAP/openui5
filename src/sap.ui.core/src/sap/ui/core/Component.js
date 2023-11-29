@@ -3835,7 +3835,7 @@ sap.ui.define([
 	 * @namespace sap.ui.core.Component.registry
 	 * @public
 	 * @since 1.67
-	 * @deprecated As of version 1.120
+	 * @deprecated As of version 1.120. Use {@link module:sap/ui/core/ComponentRegistry} instead.
 	 * @borrows module:sap/ui/core/ComponentRegistry.size as size
 	 * @borrows module:sap/ui/core/ComponentRegistry.all as all
 	 * @borrows module:sap/ui/core/ComponentRegistry.get as get
