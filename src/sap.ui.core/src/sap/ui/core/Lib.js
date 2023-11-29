@@ -1227,6 +1227,8 @@ sap.ui.define([
 							// note: namespace already contains a trailing dot '.'
 							const sNamespacePrefix = mSubNamespaces.get(target);
 							DataType.registerEnum(`${sNamespacePrefix}${prop}`, value);
+
+							Log.debug(`[Library API-Version 2] If you intend to use API-Version 2 in your library, make sure to call 'sap/ui/base/DataType.registerEnum' for ${sNamespacePrefix}${prop}.`);
 						} else {
 							const firstChar = prop.charAt(0);
 							if (firstChar === firstChar.toLowerCase() && firstChar !== firstChar.toUpperCase()) {
