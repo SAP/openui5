@@ -535,7 +535,7 @@ sap.ui.define([
 			// Note: #calculateKeyPredicateRH doesn't know better :-(
 			oEntityData["@$ui5.node.level"] = iLevel;
 
-			if (this.oAggregation.expandTo >= Number.MAX_SAFE_INTEGER) { // "expand all"
+			if (this.oAggregation.expandTo >= 999) { // "expand all"
 				const iRank = await this.requestRank(oEntityData, oGroupLock.getUnlockedCopy());
 
 				this.oFirstLevel.removeElement(0, sTransientPredicate);

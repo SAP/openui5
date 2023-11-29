@@ -10816,7 +10816,7 @@ sap.ui.define([
 	[-1, +1, 0].forEach((iDirection) => { // child is before or after parent (or right in place)
 		[false, true].forEach((bIsExpanded) => {
 			[1, 4].forEach((iCount) => {
-				[undefined, 1, Number.MAX_SAFE_INTEGER, 1E16].forEach((iExpandTo) => {
+				[undefined, 1, 999, Number.MAX_SAFE_INTEGER, 1E16].forEach((iExpandTo) => {
 					[false, true].forEach((bMakeRoot) => {
 	const sTitle = `move: created=${bCreated}, direction=${iDirection}, expanded=${bIsExpanded},
 child nodes added=${iCount}, expandTo=${iExpandTo}, make root=${bMakeRoot}`;

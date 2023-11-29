@@ -1169,7 +1169,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-[undefined, 1, 2, 3, Number.MAX_SAFE_INTEGER, Infinity].forEach(function (iExpandTo) {
+[undefined, 1, 2, 3, 999, Number.MAX_SAFE_INTEGER, Infinity].forEach(function (iExpandTo) {
 	[false, true].forEach(function (bStored) {
 		[false, true].forEach(function (bAllLevels) {
 			[{
@@ -1191,7 +1191,7 @@ sap.ui.define([
 					+ ", all levels: " + bAllLevels
 					+ ", Rec.Hier. #" + i;
 
-				if (iExpandTo >= Number.MAX_SAFE_INTEGER && bAllLevels) {
+				if (iExpandTo >= 999 && bAllLevels) {
 					return;
 				}
 
@@ -1259,7 +1259,7 @@ sap.ui.define([
 			// code under test
 			_AggregationHelper.buildApply4Hierarchy(oAggregation, mQueryOptions, bAllLevels),
 			{
-				$apply : bAllLevels || iExpandTo >= Number.MAX_SAFE_INTEGER
+				$apply : bAllLevels || iExpandTo >= 999
 					? "com.sap.vocabularies.Hierarchy.v1.TopLevels(HierarchyNodes=$root/Foo"
 					+ ",HierarchyQualifier='X',NodeProperty='SomeNodeID')"
 					: "com.sap.vocabularies.Hierarchy.v1.TopLevels(HierarchyNodes=$root/Foo"
