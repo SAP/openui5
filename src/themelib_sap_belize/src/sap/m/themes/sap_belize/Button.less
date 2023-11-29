@@ -122,6 +122,32 @@ html.sap-desktop .sapMFooter-CTX .sapMBtnInner.sapMBtnReject {
 	}
 }
 
+.sapMIBar-CTX .sapMBtnInner,
+.sapMBar .sapMBtnInner,
+.sapMHeader-CTX .sapMBtnInner,
+.sapMFooter-CTX .sapMBtnInner {
+	background: @sapUiButtonLiteBackground;
+	border-color: @sapUiButtonLiteBorderColor;
+}
+
+.sapMIBar-CTX .sapMBtnInner.sapMBtnGhost,
+.sapMBar .sapMBtnInner.sapMBtnGhost,
+.sapMHeader-CTX .sapMBtnInner.sapMBtnGhost,
+.sapMFooter-CTX .sapMBtnInner.sapMBtnGhost {
+	background: @sapUiButtonLiteBackground;
+	border-color: fade(@sapUiButtonLiteTextColor, 50);
+}
+
+.sapMSubHeader-CTX .sapMBtnInner {
+	background: @sapUiButtonLiteBackground;
+}
+
+.sapMBar-CTX :not(.sapMBtnDisabled) > .sapMBtnInner.sapMBtnActive,
+.sapMBar-CTX :not(.sapMBtnDisabled) > .sapMBtnInner.sapMBtnTransparent.sapMBtnHoverable.sapMBtnActive,
+.sapMBar-CTX :not(.sapMBtnDisabled) > .sapMBtnInner.sapMBtnGhost.sapMBtnHoverable.sapMBtnActive {
+	background-color: @sapUiButtonActiveBackground;
+}
+
 .sapUiSizeCompact {
 	.sapMBtnInner.sapMBtnText,
 	.sapMBtnInner.sapMBtnIconFirst {
