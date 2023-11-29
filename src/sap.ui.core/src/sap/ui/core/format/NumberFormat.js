@@ -45,17 +45,19 @@ sap.ui.define([
 		}
 	});
 
-	var rAllWhiteSpaces = /\s/g,
-		rDigit = /\d/,
-		// Regex for checking if a number has leading zeros
-		rLeadingZeros = /^(-?)0+(\d)/,
-		// Not matching Sc (currency symbol) and Z (separator) characters
-		// https://www.unicode.org/reports/tr44/#General_Category_Values
-		rNotSAndNotZ = /[^\$\xA2-\xA5\u058F\u060B\u09F2\u09F3\u09FB\u0AF1\u0BF9\u0E3F\u17DB\u20A0-\u20BD\uA838\uFDFC\uFE69\uFF04\uFFE0\uFFE1\uFFE5\uFFE6\u0020\xA0\u1680\u2000-\u200A\u2028\u2029\u202F\u205F\u3000]/,
-		// Regex for matching the number placeholder in pattern
-		rNumPlaceHolder = /0+(\.0+)?/,
-		// Regex for checking that the given string only consists of '0' characters
-		rOnlyZeros = /^0+$/;
+	// https://www.unicode.org/reports/tr44/#Bidi_Class_Values (Explicit Formatting Types)
+	const rAllRTLCharacters = /[\u200e\u200f\u202a\u202b\u202c]/g;
+	const rAllWhiteSpaces = /\s/g;
+	const rDigit = /\d/;
+	// Regex for checking if a number has leading zeros
+	const rLeadingZeros = /^(-?)0+(\d)/;
+	// Not matching Sc (currency symbol) and Z (separator) characters
+	// https://www.unicode.org/reports/tr44/#General_Category_Values
+	const rNotSAndNotZ = /[^\$\xA2-\xA5\u058F\u060B\u09F2\u09F3\u09FB\u0AF1\u0BF9\u0E3F\u17DB\u20A0-\u20BD\uA838\uFDFC\uFE69\uFF04\uFFE0\uFFE1\uFFE5\uFFE6\u0020\xA0\u1680\u2000-\u200A\u2028\u2029\u202F\u205F\u3000]/;
+	// Regex for matching the number placeholder in pattern
+	const rNumPlaceHolder = /0+(\.0+)?/;
+	// Regex for checking that the given string only consists of '0' characters
+	const rOnlyZeros = /^0+$/;
 
 	/*
 	 * Is used to validate existing grouping separators.
@@ -1757,6 +1759,12 @@ sap.ui.define([
 			vResult = 0,
 			oShort, vEmptyParseValue;
 
+		if (typeof sValue !== "string" && !(sValue instanceof String)) {
+			return null;
+		}
+
+		sValue = sValue.replace(rAllRTLCharacters , "").trim();
+
 		if (sValue === "") {
 			if (!oOptions.showNumber) {
 				return null;
@@ -1772,10 +1780,6 @@ sap.ui.define([
 			} else {
 				return vEmptyParseValue;
 			}
-		}
-
-		if (typeof sValue !== "string" && !(sValue instanceof String)) {
-			return null;
 		}
 
 		if (oOptions.groupingSeparator === oOptions.decimalSeparator) {
@@ -1896,9 +1900,6 @@ sap.ui.define([
 				return [undefined, sMeasure];
 			}
 		}
-
-		// remove the RTL special characters before the string is matched with the regex
-		sValue = sValue.replace(/[\u202a\u200e\u202c\u202b\u200f]/g, "");
 
 		// remove all white spaces because when grouping separator is a non-breaking space (russian and french for example)
 		// user will not input it this way. Also white spaces or grouping separator can be ignored by determining the value
@@ -2805,7 +2806,7 @@ sap.ui.define([
 			if (!sCurSymbol) {
 				continue;
 			}
-			sCurSymbol = sCurSymbol.replace(rAllWhiteSpaces, "\u0020");
+			sCurSymbol = sCurSymbol.replace(rAllWhiteSpaces, "\u0020").replace(rAllRTLCharacters , "");
 			if (sValue.indexOf(sCurSymbol) >= 0 && sSymbol.length <= sCurSymbol.length) {
 				sCode = sCurCode;
 				bDuplicate = false;

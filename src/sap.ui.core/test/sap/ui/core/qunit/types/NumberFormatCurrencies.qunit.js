@@ -354,6 +354,7 @@ sap.ui.define([
 
 		assert.strictEqual(sFormatted, "", "Empty string formatted.");
 		assert.deepEqual(oFormat.parse(""), [NaN, undefined], "[NaN, undefined] is returned.");
+		assert.deepEqual(oFormat.parse(" \t\n\r\u00a0"), [NaN, undefined], "'space only' are trimmed");
 		assert.deepEqual(oFormat.parse("123.456,789 BTC"), null, "null is returned.");
 		// tolerated, despite wrong grouping, because of multiple grouping separators
 		assert.deepEqual(oFormat.parse("12,3,456 BTC"), [123456, "BTC"], "null is returned.");
@@ -1488,8 +1489,26 @@ sap.ui.define([
 		assert.deepEqual(oFormatter.parse("\u200f702.00\u200e"), ["702.00", undefined], "rtl character wrapped number can be parsed properly");
 	});
 
+[
+	{locale : "en", code : "EUR", result : "€42.00", context : "accounting"},
+	{locale : "en", code : "AED", result : "42.00\u00a0AED", context : "sap-accounting"},
+	{locale : "ar", code : "AED", result : "\u200f42.00\u00a0\u202aد.إ.\u200f\u202c", context : "sap-standard"},
+	{locale : "ar", code : "AED", result : "\u200f42.00\u00a0\u202bد.إ.\u200f\u200e\u202c", context : "standard"}
+].forEach((oFixture) => {// JIRA: CPOUI5MODELS-1502
+	const sTitle = `Format and parse (RTL): ${oFixture.locale}, ${oFixture.code}, ${oFixture.context}`;
+	QUnit.test(sTitle, function (assert) {
+		const oLocale = new Locale(oFixture.locale);
+		const oFormatter = NumberFormat.getCurrencyInstance({currencyCode: false,
+			currencyContext : oFixture.context}, oLocale);
 
+		// code under test: format -> code to symbol
+		const sValue = oFormatter.format(42, oFixture.code);
+		assert.strictEqual(sValue, oFixture.result);
 
+		// code under test: parse -> symbol to code
+		assert.deepEqual(oFormatter.parse(sValue), [42, oFixture.code]);
+	});
+});
 
 	QUnit.test("parse currency format", function (assert) {
 		var oFormat = getCurrencyInstance();
