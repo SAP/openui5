@@ -53,6 +53,24 @@ sap.ui.define([
 		assert.strictEqual(oFT.$().find("li").length, 3, "There are 3 li elements");
 		setText("<span><bdi>123 456</bdi></span>");
 		assert.strictEqual(oFT.$().find("bdi").length, 1, "There is 1 bdi element");
+		setText("<h1>" + sFT + "</h1>");
+		assert.ok(oFT.$().find("h1").hasClass("sapMTitle"), "The h1 element has sapMTitle class added");
+		assert.strictEqual(window.getComputedStyle(oFT.$().find("h1")[0])["display"], "block", "The h1 element has display: block");
+		setText("<h2>" + sFT + "</h2>");
+		assert.ok(oFT.$().find("h2").hasClass("sapMTitle"), "The h2 element has sapMTitle class added");
+		assert.strictEqual(window.getComputedStyle(oFT.$().find("h2")[0])["display"], "block", "The h2 element has display: block");
+		setText("<h3>" + sFT + "</h3>");
+		assert.ok(oFT.$().find("h3").hasClass("sapMTitle"), "The h3 element has sapMTitle class added");
+		assert.strictEqual(window.getComputedStyle(oFT.$().find("h3")[0])["display"], "block", "The h3 element has display: block");
+		setText("<h4>" + sFT + "</h4>");
+		assert.ok(oFT.$().find("h4").hasClass("sapMTitle"), "The h4 element has sapMTitle class added");
+		assert.strictEqual(window.getComputedStyle(oFT.$().find("h4")[0])["display"], "block", "The h4 element has display: block");
+		setText("<h5>" + sFT + "</h5>");
+		assert.ok(oFT.$().find("h5").hasClass("sapMTitle"), "The h5 element has sapMTitle class added");
+		assert.strictEqual(window.getComputedStyle(oFT.$().find("h5")[0])["display"], "block", "The h5 element has display: block");
+		setText("<h6>" + sFT + "</h6>");
+		assert.ok(oFT.$().find("h6").hasClass("sapMTitle"), "The h6 element has sapMTitle class added");
+		assert.strictEqual(window.getComputedStyle(oFT.$().find("h6")[0])["display"], "block", "The h6 element has display: block");
 	});
 
 	QUnit.test("attributes", function(assert) {
