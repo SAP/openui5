@@ -802,6 +802,9 @@ sap.ui.define([
 					useFakeTimers: true
 				}
 			},
+			/**
+			 * @deprecated Since version 1.120
+			 */
 			MultiEditField: {
 				title: "MultiEditField - sap.m - QUnit test",
 				sinon: {
