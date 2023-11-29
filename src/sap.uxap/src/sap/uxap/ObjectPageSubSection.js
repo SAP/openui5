@@ -266,6 +266,23 @@ sap.ui.define([
 		return oResult;
 	};
 
+	ObjectPageSubSection.prototype.setTitle = function (sValue, bSuppressInvalidate) {
+		ObjectPageSectionBase.prototype.setTitle.apply(this, arguments);
+
+		this.setTitleVisible();
+
+		return this;
+	};
+
+	/**
+	 * Determines if the <code>ObjectPageSubSection</code> title is visible.
+	 * @private
+	 * @returns {boolean}
+	 */
+	ObjectPageSubSection.prototype._isTitleVisible = function () {
+		return this._getInternalTitleVisible() && this.getTitle().trim() !== "" && this.getShowTitle();
+	};
+
 	/**
 	 * Getter for the private "_columnSpan" property
 	 * @returns {string}

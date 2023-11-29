@@ -309,14 +309,18 @@ sap.ui.define([
 			sMutation = oEvent.mutation;
 			if (sMutation === "add" || sMutation === "insert") {
 				this._oGridContentObserver.observe(oEvent.child, {
-					properties: ["visible"]
+					properties: ["visible", "importance"]
 				});
 			} else if (oEvent.mutation === "remove") {
 				this._oGridContentObserver.unobserve(oEvent.child);
 			}
 		}
-		if (oEvent.type === "property" && oEvent.name === "visible") {
-			this.invalidate();
+		if (oEvent.type === "property") {
+			if (oEvent.name === "visible") {
+				this.invalidate();
+			} else if (oEvent.name === "importance") {
+				this.setTitleVisible();
+			}
 		}
 	};
 
