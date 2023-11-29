@@ -355,7 +355,7 @@ sap.ui.define([
 		// Act
 		return this.oTargets.display("foo").then(function(aViewInfos) {
 			assert.strictEqual(aViewInfos[0].name, "foo", "Matching target info is returned");
-			assert.strictEqual(aViewInfos[0].error, "The target with the name \"foo\" does not exist!", "Matching error message is returned");
+			assert.ok(aViewInfos[0].error.includes("The target with the name \"foo\" does not exist!"), "Matching error message is returned");
 			// Assert
 			sinon.assert.calledWith(oErrorStub, sinon.match(/does not exist/), sinon.match(this.oTargets));
 		}.bind(this));
@@ -377,7 +377,7 @@ sap.ui.define([
 			assert.ok(Array.isArray(aViewInfos), "Did resolve with an array of the view infos");
 			assert.strictEqual(aViewInfos.length, 2, "Did resolve with two viewinfos");
 			assert.strictEqual(aViewInfos[1].name, "firstTarget", "Did resolve with first target");
-			assert.strictEqual(aViewInfos[0].error, "The target with the name \"foo\" does not exist!", "Did resolve with the error message of the erroneous target");
+			assert.ok(aViewInfos[0].error.includes("The target with the name \"foo\" does not exist!"), "Did resolve with the error message of the erroneous target");
 		}.bind(this));
 	});
 
@@ -1030,9 +1030,8 @@ sap.ui.define([
 		return oDisplayed.then(function() {
 			// Assert
 			assert.ok(fnEventSpy.notCalled, "the event isn't fired");
-			sinon.assert.calledWith(
-				oLogSpy,
-				"The target with the name \"foo\" where the titleChanged event should be fired does not exist!",
+			assert.ok(
+				oLogSpy.calledWith(sinon.match(/The target with the name \"foo\" where the titleChanged event should be fired does not exist!/)),
 				this.oTargets
 			);
 		}.bind(this));

@@ -275,7 +275,7 @@ sap.ui.define([
 		if (sType in MessageType) {
 			this.type = sType;
 		} else {
-			Log.error("MessageType must be of type sap/ui/core/message/MessageType");
+			Log.error("[FUTURE FATAL] MessageType must be of type sap/ui/core/message/MessageType");
 		}
 	};
 
@@ -353,7 +353,7 @@ sap.ui.define([
 		if (BaseObject.isObjectA(oMessageProcessor, "sap.ui.core.message.MessageProcessor")) {
 			this.processor = oMessageProcessor;
 		} else {
-			Log.error("oMessageProcessor must be an instance of 'sap.ui.core.message.MessageProcessor'");
+			Log.error("[FUTURE FATAL] oMessageProcessor must be an instance of 'sap.ui.core.message.MessageProcessor'");
 		}
 	};
 

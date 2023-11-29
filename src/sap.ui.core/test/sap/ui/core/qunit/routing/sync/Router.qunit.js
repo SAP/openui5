@@ -330,7 +330,7 @@ sap.ui.define([
 		router.parse("view1");
 
 		assert.strictEqual(oRoute._oConfig.name, "name", "Route has correct name");
-		assert.ok(oLogSpy.withArgs("The 'viewName' option shouldn't be used in Route. please use 'view' instead").calledOnce, "The error log is done and the log message is correct");
+		assert.ok(oLogSpy.calledWith(sinon.match(/The 'viewName' option shouldn't be used in Route. please use 'view' instead/)), "The error log is done and the log message is correct");
 
 		oViewCreateStub.restore();
 		oLogSpy.restore();
@@ -1976,7 +1976,7 @@ sap.ui.define([
 
 		this.oRouter.attachRouteMatched(function() {
 			// Assert
-			sinon.assert.calledWith(this.spy, "Routes with dynamic parts cannot be resolved as home route.");
+			assert.ok(this.spy.calledWith(sinon.match(/Routes with dynamic parts cannot be resolved as home route./)));
 			assert.strictEqual(oParameters.history.length, 0, "Home route shouldn't be added to history.");
 			assert.deepEqual(this.oRouter.getTitleHistory()[0], {
 				hash: "/product",

@@ -129,7 +129,7 @@ sap.ui.define([
 						try {
 							sParams = decodeURIComponent(sParams);
 						} catch (ex) {
-							Log.warning("Could not decode theme parameters URI from " + oUrl.styleSheetUrl);
+							Log.warning("[FUTURE FATAL] Could not decode theme parameters URI from " + oUrl.styleSheetUrl);
 						}
 					}
 					try {
@@ -137,7 +137,7 @@ sap.ui.define([
 						mergeParameters(oParams, oUrl.themeBaseUrl);
 						return true; // parameters successfully parsed
 					} catch (ex) {
-						Log.warning("Could not parse theme parameters from " + oUrl.styleSheetUrl + ". Loading library-parameters.json as fallback solution.");
+						Log.warning("[FUTURE FATAL] Could not parse theme parameters from " + oUrl.styleSheetUrl + ". Loading library-parameters.json as fallback solution.");
 					}
 				}
 			}
@@ -201,7 +201,7 @@ sap.ui.define([
 			var oLink = document.getElementById(sId);
 
 			if (!oLink) {
-				Log.warning("Could not find stylesheet element with ID", sId, "sap.ui.core.theming.Parameters");
+				Log.warning("[FUTURE FATAL] Could not find stylesheet element with ID", sId, "sap.ui.core.theming.Parameters");
 				return undefined;
 			}
 
@@ -236,7 +236,7 @@ sap.ui.define([
 
 			function fnErrorCallback(error) {
 				// ignore failure at least temporarily as long as there are libraries built using outdated tools which produce no json file
-				Log.error("Could not load theme parameters from: " + sUrl, error); // could be an error as well, but let's avoid more CSN messages...
+				Log.error("[FUTURE FATAL] Could not load theme parameters from: " + sUrl, error); // could be an error as well, but let's avoid more CSN messages...
 
 				if (aWithCredentials.length > 0) {
 					// In a CORS scenario, IF we have sent credentials on the first try AND the request failed,
@@ -643,7 +643,7 @@ sap.ui.define([
 			if (vName instanceof Object && !Array.isArray(vName)) {
 				// async variant of Parameters.get
 				if (!vName.name) {
-					Log.warning("sap.ui.core.theming.Parameters.get was called with an object argument without one or more parameter names.");
+					Log.warning("[FUTURE FATAL] sap.ui.core.theming.Parameters.get was called with an object argument without one or more parameter names.");
 					return undefined;
 				}
 				oElement = vName.scopeElement;
@@ -708,7 +708,7 @@ sap.ui.define([
 						});
 
 						if (!vParams || (typeof vParams === "object" && (Object.keys(vParams).length !== aNames.length))) {
-							Log.error("One or more parameters could not be found.", "sap.ui.core.theming.Parameters");
+							Log.error("[FUTURE FATAL] One or more parameters could not be found.", "sap.ui.core.theming.Parameters");
 						}
 
 						fnAsyncCallback(vParams);
@@ -726,7 +726,7 @@ sap.ui.define([
 					ThemeManager._attachThemeApplied(resolveWithParameter);
 					return undefined; // Don't return partial result in case we expect applied event.
 				} else {
-					Log.error("One or more parameters could not be found.", "sap.ui.core.theming.Parameters");
+					Log.error("[FUTURE FATAL] One or more parameters could not be found.", "sap.ui.core.theming.Parameters");
 				}
 			}
 

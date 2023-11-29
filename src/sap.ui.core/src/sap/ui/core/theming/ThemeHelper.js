@@ -116,7 +116,7 @@ sap.ui.define([
 			oMetadata = JSON.parse(sMetadataJSON);
 			mLibThemeMetadata[sLibName] = oMetadata;
 		} catch (ex) {
-			Log.error("Could not parse theme metadata for library " + sLibName + ".");
+			Log.error("[FUTURE FATAL] Could not parse theme metadata for library " + sLibName + ".");
 		}
 		return oMetadata;
 	};
@@ -158,7 +158,7 @@ sap.ui.define([
 
 			} catch (e) {
 				if (bLog) {
-					Log.error("ThemeHelper: " + sId + ": Error during check styles '" + sId + "'", e);
+					Log.error("[FUTURE FATAL] ThemeHelper: " + sId + ": Error during check styles '" + sId + "'", e);
 				}
 			}
 

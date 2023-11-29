@@ -757,9 +757,8 @@ sap.ui.define([
 
 		// Assert
 		assert.ok(fnEventSpy.notCalled, "the event isn't fired");
-		sinon.assert.calledWith(
-			oLogSpy,
-			"The target with the name \"foo\" where the titleChanged event should be fired does not exist!",
+		assert.ok(oLogSpy.calledWith(
+			sinon.match(/The target with the name \"foo\" where the titleChanged event should be fired does not exist!/)),
 			this.oTargets
 		);
 	});

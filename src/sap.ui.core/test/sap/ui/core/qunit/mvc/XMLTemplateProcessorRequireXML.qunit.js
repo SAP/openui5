@@ -364,7 +364,7 @@ sap.ui.define([
 		},
 		runAssertions: function (oView, mSpies, assert, bAsync) {
 			var oWarningSpy = mSpies.warning;
-			sinon.assert.calledWith(oWarningSpy, "Event handler name 'Toast.show('This is a toast')' could not be resolved to an event handler function");
+			assert.ok(oWarningSpy.calledWith(sinon.match(/Event handler name 'Toast.show\('This is a toast'\)' could not be resolved to an event handler function/)));
 		}
 	}, {
 		testDescription: "Parsing core:require in XMLView with fragment with missing definition in require context with preprocessors enabled",
@@ -385,7 +385,7 @@ sap.ui.define([
 		runAssertions: function (oView, mSpies, assert, bAsync) {
 			var oWarningSpy = mSpies.warning;
 			sinon.assert.neverCalledWith(oWarningSpy, "Variable: Toast isn't defined in the require context of the current XMLView/Fragment");
-			sinon.assert.neverCalledWith(oWarningSpy, "Event handler name 'Toast.show('This is a toast')' could not be resolved to an event handler function");
+			assert.ok(oWarningSpy.neverCalledWith(sinon.match(/Event handler name 'Toast.show\('This is a toast'\)' could not be resolved to an event handler function/)));
 		}
 	}, {
 		testDescription: "Parsing core:require in XMLView with fragment w/o require context",
@@ -400,7 +400,7 @@ sap.ui.define([
 		},
 		runAssertions: function (oView, mSpies, assert, bAsync) {
 			var oWarningSpy = mSpies.warning;
-			sinon.assert.calledWith(oWarningSpy, "Event handler name 'Toast.show('Problem occurred')' could not be resolved to an event handler function");
+			assert.ok(oWarningSpy.calledWith(sinon.match(/Event handler name 'Toast.show\('Problem occurred'\)' could not be resolved to an event handler function/)));
 		}
 	}, {
 		testDescription: "Parsing core:require in XMLView with nested view and the require context isn't forwarded to nested view",
@@ -420,7 +420,7 @@ sap.ui.define([
 			assert.ok(oCreateSpy.calledOnce, "generic create is called for the nested view");
 
 			return oCreateSpy.getCall(0).returnValue.loaded().then(function() {
-				return sinon.assert.calledWith(oWarningSpy, "Event handler name 'Box.show('MessageBox')' could not be resolved to an event handler function");
+				return assert.ok(oWarningSpy.calledWith(sinon.match(/Event handler name 'Box.show\('MessageBox'\)' could not be resolved to an event handler function/)));
 			});
 		}
 	}, {
@@ -460,7 +460,7 @@ sap.ui.define([
 			oMessageToastButton.fireEvent("press");
 			assert.equal(oToastShowSpy.callCount, 0, "Toast.show isn't called because the core:require is missing");
 
-			sinon.assert.calledWith(oWarningSpy, "Event handler name 'Toast.show('Do you really want to close?')' could not be resolved to an event handler function");
+			assert.ok(oWarningSpy.calledWith(sinon.match(/Event handler name 'Toast.show\('Do you really want to close\?'\)' could not be resolved to an event handler function/)));
 
 			return new Promise(function(resolve, reject) {
 				InstanceManager.closeAllDialogs();

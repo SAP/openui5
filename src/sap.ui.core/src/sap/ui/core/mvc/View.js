@@ -559,7 +559,7 @@ sap.ui.define([
 							// only 'visible' property can be customized
 							for (var sProperty in oCustomSetting) {
 								if (sProperty !== "visible") {
-									Log.warning("Customizing: custom value for property '" + sProperty + "' of control '" + sId + "' in View '" + that.sViewName + "' ignored: only the 'visible' property can be customized.");
+									Log.warning("[FUTURE FATAL] Customizing: custom value for property '" + sProperty + "' of control '" + sId + "' in View '" + that.sViewName + "' ignored: only the 'visible' property can be customized.");
 									delete oCustomSetting[sProperty];
 								}
 							}
@@ -773,7 +773,7 @@ sap.ui.define([
 	 * @deprecated As of version 1.120, please call the corresponding View factory instead, e.g. {@link sap.ui.core.mvc.XMLView.create}
 	 */
 	View.prototype.clone = function(sIdSuffix, aLocalIds) {
-		Log.error("Cloning a View and/or using a View as a binding template is deprecated. Please call the corresponding View factory instead, e.g. XMLView.create()");
+		Log.error("[FUTURE FATAL] Cloning a View and/or using a View as a binding template is deprecated. Please call the corresponding View factory instead, e.g. XMLView.create()");
 
 		var mSettings = {}, sKey, oClone;
 		//Clone properties (only those with non-default value)
@@ -954,7 +954,7 @@ sap.ui.define([
 		if (vPreprocessor) {
 			initGlobalPreprocessorsRegistry(sType, sViewType);
 			if (bOnDemand && onDemandPreprocessorExists(sViewType, sType)) {
-				Log.error("Registration for \"" + sType + "\" failed, only one on-demand-preprocessor allowed", this.getMetadata().getName());
+				Log.error("[FUTURE FATAL] Registration for \"" + sType + "\" failed, only one on-demand-preprocessor allowed", this.getMetadata().getName());
 				return;
 			}
 			View._mPreprocessors[sViewType][sType].push({
@@ -966,7 +966,7 @@ sap.ui.define([
 			Log.debug("Registered " + (bOnDemand ? "on-demand-" : "") + "preprocessor for \"" + sType + "\"" +
 			(bSyncSupport ? " with syncSupport" : ""), this.getMetadata().getName());
 		} else {
-			Log.error("Registration for \"" + sType + "\" failed, no preprocessor specified",  this.getMetadata().getName());
+			Log.error("[FUTURE FATAL] Registration for \"" + sType + "\" failed, no preprocessor specified",  this.getMetadata().getName());
 		}
 	};
 

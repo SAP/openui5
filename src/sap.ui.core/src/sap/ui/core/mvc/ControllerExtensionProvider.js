@@ -102,7 +102,7 @@ sap.ui.define(["sap/base/Log", "sap/ui/core/Component"], function(Log, Component
 						// add provider-extensions
 						mControllerExtensions.providerControllers = aExternalExtensions;
 					} else {
-						Log.error("Controller Extension Provider: Error in ExtensionProvider.getControllerExtensions: " + ControllerExtensionProvider._sExtensionProvider +
+						Log.error("[FUTURE FATAL] Controller Extension Provider: Error in ExtensionProvider.getControllerExtensions: " + ControllerExtensionProvider._sExtensionProvider +
 								" - no valid extensions returned. Return value must be an array of ControllerExtensions.");
 					}
 				}

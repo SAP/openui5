@@ -117,7 +117,7 @@ sap.ui.define(["sap/base/Log"], function(Log) {
 				}
 				return oTarget._display(vData, oSequencePromise, oTargetCreateInfo);
 			} else {
-				var sErrorMessage = "The target with the name \"" + sName + "\" does not exist!";
+				var sErrorMessage = "[FUTURE FATAL] The target with the name \"" + sName + "\" does not exist!";
 				Log.error(sErrorMessage, this);
 				return Promise.resolve({
 					name: sName,

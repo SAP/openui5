@@ -96,7 +96,7 @@ sap.ui.define([
 
 	QUnit.test("Error Logging of invalid type values", function (assert) {
 		assert.ok(this.oLogSpy.calledOnce, "Log.error was only called once");
-		assert.ok(this.oLogSpy.alwaysCalledWithExactly("Value 'somethingInvalid' is not valid for type 'sap.m.ButtonType'."), "Log.error spy was called");
+		assert.ok(this.oLogSpy.calledWith(sinon.match(/Value 'somethingInvalid' is not valid for type 'sap.m.ButtonType'./)), "Log.error spy was called");
 	});
 
 	/**
