@@ -236,7 +236,13 @@ sap.ui.define([
 				}
 			},
 			"controls/ActionsToolbar": {},
-			"controls/ActionsStrip": {},
+			"controls/ActionsStrip": {
+				coverage: {
+					only: [
+						"sap/ui/integration/controls/ActionsStrip"
+					]
+				}
+			},
 			"controls/BlockingMessage": {
 				coverage: {
 					only: [

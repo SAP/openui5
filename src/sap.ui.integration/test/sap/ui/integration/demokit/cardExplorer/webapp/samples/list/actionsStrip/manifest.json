@@ -1,10 +1,10 @@
 {
 	"sap.app": {
 		"type": "card",
-		"id": "card.explorer.quickActions"
+		"id": "card.explorer.actionsStrip"
 	},
 	"sap.card": {
-		"extension": "./QuickActionsExtension",
+		"extension": "./Extension",
 		"type": "List",
 		"data": {
 			"extension": {

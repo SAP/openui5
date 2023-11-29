@@ -235,6 +235,12 @@ sap.ui.define([
 		BaseListContent.prototype.onDataChanged.apply(this, arguments);
 
 		this._checkHiddenNavigationItems(this.getParsedConfiguration().item);
+
+		this._getList().getItems().forEach((oItem) => {
+			if (oItem.getActionsStrip && oItem.getActionsStrip()) {
+				oItem.getActionsStrip().onDataChanged();
+			}
+		});
 	};
 
 	/**
@@ -359,7 +365,7 @@ sap.ui.define([
 			}
 
 			if (mItem.actionsStrip) {
-				mSettings.actionsStrip = ActionsStrip.create(this.getCardInstance(), mItem.actionsStrip);
+				mSettings.actionsStrip = ActionsStrip.create(mItem.actionsStrip, this.getCardInstance());
 				oList.setShowSeparators(ListSeparators.All);
 			} else {
 				oList.setShowSeparators(ListSeparators.None);

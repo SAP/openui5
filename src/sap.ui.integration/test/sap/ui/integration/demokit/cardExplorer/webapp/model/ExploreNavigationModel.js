@@ -165,19 +165,36 @@ sap.ui.define([
 								]
 							},
 							{
-								title: 'Quick Actions',
-								key: 'quickActions',
+								title: 'Actions Strip',
+								key: 'actionsStrip',
 								experimental: true,
 								files: [
 									{
-										url: '/samples/list/quickActions/manifest.json',
+										url: '/samples/list/actionsStrip/manifest.json',
 										name: 'manifest.json',
 										key: 'manifest.json'
 									},
 									{
-										url: '/samples/list/quickActions/QuickActionsExtension.js',
-										name: 'QuickActionsExtension.js',
-										key: 'QuickActionsExtension.js'
+										url: '/samples/list/actionsStrip/Extension.js',
+										name: 'Extension.js',
+										key: 'Extension.js'
+									}
+								]
+							},
+							{
+								title: 'Dynamic Actions Strip',
+								key: 'dynamicActionsStrip',
+								experimental: true,
+								files: [
+									{
+										url: '/samples/list/dynamicActionsStrip/manifest.json',
+										name: 'manifest.json',
+										key: 'manifest.json'
+									},
+									{
+										url: '/samples/list/dynamicActionsStrip/data.json',
+										name: 'data.json',
+										key: 'data.json'
 									}
 								]
 							},

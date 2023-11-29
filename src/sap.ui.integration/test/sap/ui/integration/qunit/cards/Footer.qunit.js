@@ -49,4 +49,57 @@ sap.ui.define([
 		// Assert
 		assert.ok(this.oFooter._hasBinding(), "Check for bindings should be positive");
 	});
+
+	QUnit.module("Footer actions strip", {
+		beforeEach: function () {
+			this.oCard = new Card();
+		},
+		afterEach: function () {
+			this.oCard.destroy();
+		}
+	});
+
+	QUnit.test("Create actions strip with template", function (assert) {
+		const done = assert.async();
+		const oManifest = {
+			"sap.card": {
+				"type": "List",
+				"data": {
+					"json": {
+						"actions": [{
+							"text": "Action 1"
+						}, {
+							"text": "Action 2"
+						}]
+					}
+				},
+				"content": {
+					"item": {}
+				},
+				"footer": {
+					"actionsStrip": {
+						"item": {
+							"template": {
+								"text": "{text}"
+							},
+							"path": "actions"
+						}
+					}
+				}
+			}
+		};
+
+		this.oCard.attachEvent("_ready", function () {
+			const oActionsStrip = this.oCard.getCardFooter().getActionsStrip(),
+				aItems = oActionsStrip._getToolbar().getContent();
+
+			assert.strictEqual(aItems[1].getText(), "Action 1", "Action text is correct");
+			assert.strictEqual(aItems[2].getText(), "Action 2", "Action text is correct");
+
+			done();
+		}.bind(this));
+
+		this.oCard.setManifest(oManifest);
+		this.oCard.startManifestProcessing();
+	});
 });

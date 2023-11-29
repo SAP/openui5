@@ -58,7 +58,7 @@ sap.ui.define([
 		count: 7
 	};
 
-	return Extension.extend("card.explorer.quickActions.QuickActionsExtension", {
+	return Extension.extend("card.explorer.actionsStrip.Extension", {
 		init: function () {
 			Extension.prototype.init.apply(this, arguments);
 
