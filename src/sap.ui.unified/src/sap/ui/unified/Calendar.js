@@ -2528,13 +2528,19 @@ sap.ui.define([
 
 			var oDate = oYearPicker.getProperty("_middleDate") ? oYearPicker.getProperty("_middleDate") : oYearPicker._getDate(),
 				oFirstDate = new CalendarDate(oDate, sPrimaryCalendarType),
+				oMinYear = CalendarUtils._minDate(this.getPrimaryCalendarType()).getYear(),
+				oMaxYear = CalendarUtils._maxDate(this.getPrimaryCalendarType()).getYear(),
 				oSecondDate,
 				sFirstYear,
 				sSecondYear;
 
 				oFirstDate.setDate(1); // always use the first of the month to have stable year in Japanese calendar
 				oFirstDate.setYear(oFirstDate.getYear() - Math.floor(oYearPicker.getYears() / 2));
-				oFirstDate = oYearPicker._checkFirstDate(oFirstDate);
+				if (oFirstDate.getYear() < oMinYear) {
+					oFirstDate.setYear(oMinYear);
+				} else if (oFirstDate.getYear() + oYearPicker.getYears() > oMaxYear) {
+					oFirstDate.setYear(oMaxYear - oYearPicker.getYears() + 1);
+				}
 
 				oSecondDate = new CalendarDate(oFirstDate, sPrimaryCalendarType);
 				oSecondDate.setYear(oSecondDate.getYear() + oYearPicker.getYears() - 1);

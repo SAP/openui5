@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(['sap/ui/unified/calendar/CalendarDate', 'sap/ui/core/date/UniversalDate', 'sap/ui/core/InvisibleText'],
-	function(CalendarDate, UniversalDate, InvisibleText) {
+sap.ui.define(['sap/ui/unified/calendar/CalendarDate', 'sap/ui/unified/calendar/CalendarUtils', 'sap/ui/core/date/UniversalDate', 'sap/ui/core/InvisibleText'],
+	function(CalendarDate, CalendarUtils, UniversalDate, InvisibleText) {
 	"use strict";
 
 	/*
@@ -58,22 +58,24 @@ sap.ui.define(['sap/ui/unified/calendar/CalendarDate', 'sap/ui/core/date/Univers
 	YearPickerRenderer.renderCells = function(oRm, oYP) {
 
 		var oDate = oYP.getProperty("_middleDate") ? oYP.getProperty("_middleDate") : oYP._getDate(),
+			oMinYear = CalendarUtils._minDate(oYP.getProperty("primaryCalendarType")).getYear(),
+			oMaxYear = CalendarUtils._maxDate(oYP.getProperty("primaryCalendarType")).getYear(),
 			oCurrentDate = new CalendarDate(oDate, oYP.getPrimaryCalendarType()),
 			iYears = oYP.getYears(),
 			sId = oYP.getId(),
 			iColumns = oYP.getColumns(),
 			sWidth = "",
 			bEnabled = false,
-			oCurrentValidatedDate,
 			bApplySelection,
 			bApplySelectionBetween,
 			mAccProps, sYyyymmdd, i;
 
 		oCurrentDate.setYear(oCurrentDate.getYear() - Math.floor(iYears / 2));
-		oCurrentValidatedDate = oYP._checkFirstDate(oCurrentDate);
 
-		if (!oCurrentValidatedDate.isSame(oCurrentDate)) {
-			oCurrentDate = oCurrentValidatedDate;
+		if (oCurrentDate.getYear() < oMinYear) {
+			oCurrentDate.setYear(oMinYear);
+		} else if (oCurrentDate.getYear() + iYears > oMaxYear) {
+			oCurrentDate.setYear(oMaxYear - iYears + 1);
 		}
 
 		if (iColumns > 0) {

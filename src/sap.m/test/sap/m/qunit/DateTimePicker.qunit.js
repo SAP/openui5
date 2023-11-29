@@ -328,6 +328,34 @@ sap.ui.define([
 		oDTP8._handleWindowResize({name: "Tablet"});
 	});
 
+	QUnit.test("Year picker rendered with year 1", function(assert) {
+		//Prepare
+		var oCalendar,
+			clock = sinon.useFakeTimers(new Date("0001-01-01")),
+			oDTPy = new DateTimePicker({
+				maxDate: new Date()
+			}).placeAt("qunit-fixture");
+
+		sap.ui.getCore().applyChanges();
+
+		// act
+		oDTPy.toggleOpen();
+		sap.ui.getCore().applyChanges();
+		clock.tick(100);
+		oCalendar = oDTPy._getCalendar();
+		oCalendar._showYearPicker();
+		sap.ui.getCore().applyChanges();
+		clock.tick(100);
+
+		// assert
+		assert.ok(true, "There is no thrown error and year picker is opened");
+		assert.deepEqual(oCalendar.getAggregation("header").getTextButton2(), "0001 - 0020", "text is correct");
+
+		// cleanup
+		oDTPy.destroy();
+		clock.restore();
+	});
+
 	QUnit.module("initialFocusedDate property", {
 		beforeEach: function () {
 			this.oDTp = new DateTimePicker();
