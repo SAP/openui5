@@ -1,11 +1,12 @@
 /*global QUnit */
 sap.ui.define([
-	"sap/ui/core/Element"
-], function(Element) {
+	"sap/ui/core/Element",
+	"sap/ui/core/ElementRegistry"
+], function(Element, ElementRegistry) {
 	"use strict";
 
 	function cleanUpRegistry() {
-		Element.registry.forEach(function(oElement) {
+		ElementRegistry.forEach(function(oElement) {
 			oElement.destroy();
 		});
 	}
@@ -27,14 +28,14 @@ sap.ui.define([
 		var aFilteredElements = [];
 
 		assert.ok(Element.hasOwnProperty("registry"), "Element has static method to access registry");
-		assert.equal(Element.registry.size, 3, "Return number of registered element instances");
-		assert.deepEqual(Object.keys(Element.registry.all()).sort(), ["A", "B", "C"], "Return all registered element instances");
+		assert.equal(ElementRegistry.size, 3, "Return number of registered element instances");
+		assert.deepEqual(Object.keys(ElementRegistry.all()).sort(), ["A", "B", "C"], "Return all registered element instances");
 		assert.ok(Element.getElementById("B") === oFooB, "Return reference of element B from registry by ID");
 
-		Element.registry.forEach(fnCallbackSpy);
+		ElementRegistry.forEach(fnCallbackSpy);
 		assert.ok(fnCallbackSpy.calledThrice, "Callback was executed 3 times");
 
-		aFilteredElements = Element.registry.filter(function(oElement) {
+		aFilteredElements = ElementRegistry.filter(function(oElement) {
 			return ["B", "C"].indexOf(oElement.getId()) > -1;
 		});
 

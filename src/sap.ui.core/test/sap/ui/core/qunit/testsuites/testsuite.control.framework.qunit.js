@@ -48,10 +48,6 @@ sap.ui.define(function() {
 				}
 			},
 
-			ControlRenderer: {
-				title: "sap.ui.core.Control (ControlRenderer)"
-			},
-
 			CustomStyleClassSupport: {
 				title: "sap.ui.core.CustomStyleClassSupport",
 				loader: {
@@ -78,6 +74,7 @@ sap.ui.define(function() {
 				},
 				module: [
 					"testdata/core/Element_base.qunit",
+					"testdata/core/Element_base_legacyAPIs.qunit",
 					"testdata/core/Element_contextualSettings.qunit",
 					"testdata/core/Element_data.qunit",
 					"testdata/core/Element_delegates.qunit",

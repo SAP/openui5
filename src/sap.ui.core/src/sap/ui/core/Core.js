@@ -9,6 +9,7 @@ sap.ui.define([
 	"./Configuration",
 	"./ControlBehavior",
 	"./Element",
+	"./ElementRegistry",
 	"./ElementMetadata",
 	"./Lib",
 	"./Rendering",
@@ -59,6 +60,7 @@ sap.ui.define([
 		Configuration,
 		ControlBehavior,
 		Element,
+		ElementRegistry,
 		ElementMetadata,
 		Library,
 		Rendering,
@@ -349,8 +351,8 @@ sap.ui.define([
 
 				Object.defineProperty(this, "mElements", {
 					get: function() {
-						Log.error("oCore.mElements was a private member and has been removed. Use one of the methods in sap.ui.core.Element.registry instead");
-						return Element.registry.all(); // this is a very costly snapshot!
+						Log.error("oCore.mElements was a private member and has been removed. Use one of the methods in sap.ui.core.ElementRegistry instead");
+						return ElementRegistry.all(); // this is a very costly snapshot!
 					},
 					configurable: false
 				});

@@ -2774,7 +2774,7 @@ function(
 			}
 
 			if (bFirstInteractiveElement === true) {
-				var $InteractiveElements = oItem.getTabbables();
+				var $InteractiveElements = oItem.getTabbables(true /* bContentOnly */);
 				if ($InteractiveElements.length) {
 					$InteractiveElements[0].focus();
 					return resolve();

@@ -88,40 +88,33 @@ sap.ui.define([], function() {
 		 * @ui5-restricted SAPUI5 Distribution Layer Libraries
 		 */
 		Test: {
-			/**
-			 * Test ControlMemoryLeaks
-			 * @private
-			 * @ui5-restricted SAPUI5 Distribution Layer Libraries
-			 */
-			ControlMemoryLeaks: "ControlMemoryLeaks",
+		 /**
+		  * Test ControlMemoryLeaks
+		  * @private
+		  * @ui5-restricted SAPUI5 Distribution Layer Libraries
+		  */
+		 ControlMemoryLeaks: "ControlMemoryLeaks",
 
-			/**
-			 * Test ControlRenderer
-			 * @private
-			 * @ui5-restricted SAPUI5 Distribution Layer Libraries
-			 */
-			ControlRenderer: "ControlRenderer",
+		 /**
+		  * Test DuplicateIdCheck
+		  * @private
+		  * @ui5-restricted SAPUI5 Distribution Layer Libraries
+		  */
+		 DuplicateIdCheck: "DuplicateIdCheck",
 
-			/**
-			 * Test DuplicateIdCheck
-			 * @private
-			 * @ui5-restricted SAPUI5 Distribution Layer Libraries
-			 */
-			DuplicateIdCheck: "DuplicateIdCheck",
+		 /**
+		  * Test EnforceSemanticRendering
+		  * @private
+		  * @ui5-restricted SAPUI5 Distribution Layer Libraries
+		  */
+		 EnforceSemanticRendering: "EnforceSemanticRendering",
 
-			/**
-			 * Test EnforceSemanticRendering
-			 * @private
-			 * @ui5-restricted SAPUI5 Distribution Layer Libraries
-			 */
-			EnforceSemanticRendering: "EnforceSemanticRendering",
-
-			/**
-			 * Test SettersContextReturn
-			 * @private
-			 * @ui5-restricted SAPUI5 Distribution Layer Libraries
-			 */
-			SettersContextReturn: "SettersContextReturn"
+		 /**
+		  * Test SettersContextReturn
+		  * @private
+		  * @ui5-restricted SAPUI5 Distribution Layer Libraries
+		  */
+		 SettersContextReturn: "SettersContextReturn"
 		},
 
 		/**

@@ -6,14 +6,13 @@
 sap.ui.define([
 	'./Manifest',
 	'./ComponentMetadata',
-	'./Element',
+	'./ElementRegistry',
 	'sap/base/config',
 	'sap/base/i18n/Localization',
 	'sap/base/util/extend',
 	'sap/base/util/deepExtend',
 	'sap/base/util/merge',
 	'sap/ui/base/ManagedObject',
-	'sap/ui/base/ManagedObjectRegistry',
 	'sap/ui/core/Lib',
 	'sap/ui/core/ResizeHandler',
 	'sap/ui/thirdparty/URI',
@@ -28,18 +27,18 @@ sap.ui.define([
 	'sap/ui/core/_UrlResolver',
 	'sap/ui/VersionInfo',
 	'sap/ui/core/mvc/ViewType',
+	'sap/ui/core/ComponentRegistry',
 	'sap/ui/core/util/_LocalizationHelper'
 ], function(
 	Manifest,
 	ComponentMetadata,
-	Element,
+	ElementRegistry,
 	BaseConfig,
 	Localization,
 	extend,
 	deepExtend,
 	merge,
 	ManagedObject,
-	ManagedObjectRegistry,
 	Library,
 	ResizeHandler,
 	URI,
@@ -54,6 +53,7 @@ sap.ui.define([
 	_UrlResolver,
 	VersionInfo,
 	ViewType,
+	ComponentRegistry,
 	_LocalizationHelper
 ) {
 	"use strict";
@@ -378,17 +378,7 @@ sap.ui.define([
 
 	}, /* Metadata constructor */ ComponentMetadata);
 
-	// apply the registry plugin
-	ManagedObjectRegistry.apply(Component, {
-		onDeregister: function(sComponentId) {
-			forEachChildElement(function(oElement) {
-				if ( oElement._sapui_candidateForDestroy) {
-					Log.debug("destroying dangling template " + oElement + " when destroying the owner component");
-					oElement.destroy();
-				}
-			}, sComponentId);
-		}
-	});
+	ComponentRegistry.init(Component);
 
 	/**
 	 * Creates a new subclass of class <code>sap.ui.core.Component</code> with name
@@ -441,7 +431,7 @@ sap.ui.define([
 	 * @param {sap.ui.core.ID} sComponentId the component ID used for the owner check
 	 */
 	function forEachChildElement(fn, sComponentId) {
-		Element.registry.forEach(function(oElement, sId) {
+		ElementRegistry.forEach(function(oElement, sId) {
 			var sElementOwnerId = Component.getOwnerIdFor(oElement);
 			if (sElementOwnerId === sComponentId && !oElement.getParent()) {
 				fn(oElement, sId);
@@ -2679,7 +2669,7 @@ sap.ui.define([
 	 * @public
 	 */
 	Component.getComponentById = function(sId) {
-		return Component.registry.get(sId);
+		return ComponentRegistry.get(sId);
 	};
 
 	/**
@@ -3560,7 +3550,7 @@ sap.ui.define([
 		}, this.getId());
 
 		// deactivate all child components
-		Component.registry.forEach(function(oComponent) {
+		ComponentRegistry.forEach(function(oComponent) {
 			var sOwnerId = Component.getOwnerIdFor(oComponent);
 			if (sOwnerId === this.getId()) {
 				oComponent.deactivate();
@@ -3623,7 +3613,7 @@ sap.ui.define([
 		}, this.getId());
 
 		// activate all child components
-		Component.registry.forEach(function(oComponent) {
+		ComponentRegistry.forEach(function(oComponent) {
 			var sOwnerId = Component.getOwnerIdFor(oComponent);
 			if (sOwnerId === this.getId()) {
 				oComponent.activate();
@@ -3707,7 +3697,7 @@ sap.ui.define([
 	 * @protected
 	 */
 
-	_LocalizationHelper.registerForUpdate("Components", Component.registry.all);
+	_LocalizationHelper.registerForUpdate("Components", ComponentRegistry.all);
 
 	return Component;
 });

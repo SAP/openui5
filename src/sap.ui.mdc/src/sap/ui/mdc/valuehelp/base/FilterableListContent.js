@@ -10,7 +10,7 @@ sap.ui.define([
 	'sap/ui/mdc/enums/ConditionValidated',
 	"sap/ui/mdc/enums/OperatorName",
 	'sap/ui/mdc/util/Common',
-	'sap/m/p13n/enum/PersistenceMode',
+	'sap/m/p13n/enums/PersistenceMode',
 	'sap/m/p13n/Engine',
 	'sap/base/util/merge',
 	'sap/ui/mdc/p13n/StateUtil',

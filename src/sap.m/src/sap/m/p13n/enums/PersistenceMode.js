@@ -7,7 +7,7 @@ sap.ui.define(["sap/ui/base/DataType"], function (DataType) {
 	/**
 	 * Enumerations for p13n enum artifacts
 	 * @namespace
-	 * @name sap.m.p13n.enum
+	 * @name sap.m.p13n.enums
 	 * @private
 	 * @ui5-restricted sap.m.p13n
 	 */
@@ -17,7 +17,7 @@ sap.ui.define(["sap/ui/base/DataType"], function (DataType) {
      *
      * @enum {string}
      * @since 1.104
-     * @alias sap.m.p13n.enum.PersistenceMode
+     * @alias sap.m.p13n.enums.PersistenceMode
      * @private
      * @ui5-restricted sap.ui.mdc, sap.fe
      */
@@ -49,7 +49,7 @@ sap.ui.define(["sap/ui/base/DataType"], function (DataType) {
         Transient: "Transient"
     };
 
-    DataType.registerEnum("sap.m.p13n.enum.PersistenceMode", PersistenceMode);
+    DataType.registerEnum("sap.m.p13n.enums.PersistenceMode", PersistenceMode);
 
     return PersistenceMode;
 });

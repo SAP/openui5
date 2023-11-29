@@ -38,13 +38,10 @@ sap.ui.define([
 	var TitleLevel = coreLibrary.TitleLevel;
 
 	var oLabel1 = new Label("label1", {text: "Simple Legend example"});
-	var oLegend1 = new CalendarLegend("Leg1", {
-		ariaLabelledBy: ["label1"]
-	});
+	var oLegend1 = new CalendarLegend("Leg1");
 
 	var oLabel31 = new Label("label31", {text: "Legend with 2 standard categories"});
 	var oLegend31 = new CalendarLegend("Leg31", {
-		ariaLabelledBy: ["label31"],
 		standardItems: [
 			StandardCalendarLegendItem.NonWorkingDay,
 			StandardCalendarLegendItem.WorkingDay]
@@ -52,7 +49,6 @@ sap.ui.define([
 
 	var oLabel32 = new Label("label32", {text: "Legend with no standard categories and one custom category"});
 	var oLegend32 = new CalendarLegend("Leg32", {
-		ariaLabelledBy: ["label32"],
 		standardItems: [],
 		items: [new CalendarLegendItem({
 			text: "Holiday",
@@ -62,9 +58,7 @@ sap.ui.define([
 	});
 
 	var oLabel4 = new Label("label4", {text: "Legend with custom categories"});
-	var oLegend4 = new CalendarLegend("Leg4", {
-		ariaLabelledBy: ["label4"]
-	});
+	var oLegend4 = new CalendarLegend("Leg4");
 	for (var i = 0; i < 10; i++) {
 		oLegend4.addItem(new CalendarLegendItem({
 			text: "Placeholder" + (i + 1)
@@ -76,16 +70,16 @@ sap.ui.define([
 	});
 
 	var aSpecialDays = [
-		["20140801", undefined, "Placeholder01", 11],
-		["20140802", undefined, "Some very long Placeholder02, that will be not truncated but will go on couple of rows", 12],
-		["20140803", undefined, "Placeholder03 ", 13],
-		["20140804", undefined, "Placeholder04", 14],
-		["20140805", undefined, "Placeholder05", 15],
-		["20140806", undefined, "Placeholder06", 16],
-		["20140807", undefined, "Placeholder07", 17],
-		["20140808", undefined, "Placeholder08", 18],
-		["20140809", undefined, "Placeholder09", 19],
-		["20140810", undefined, "Placeholder10", 20]
+		["20140801", undefined, "Placeholder01", 1],
+		["20140802", undefined, "Some very long Placeholder02, that will be not truncated but will go on couple of rows", 2],
+		["20140803", undefined, "Placeholder03 ", 3],
+		["20140804", undefined, "Placeholder04", 4],
+		["20140805", undefined, "Placeholder05", 5],
+		["20140806", undefined, "Placeholder06", 6],
+		["20140807", undefined, "Placeholder07", 7],
+		["20140808", undefined, "Placeholder08", 8],
+		["20140809", undefined, "Placeholder09", 9],
+		["20140810", undefined, "Placeholder10", 10]
 	];
 
 	var oCal = new Calendar("Cal", {
@@ -93,9 +87,9 @@ sap.ui.define([
 	});
 
 	var oLabel5 = new Label("label5", {text: "Legend with calendar"});
-	var oLegend5 = new CalendarLegend("Leg5", {
-		ariaLabelledBy: ["label5"]
-	});
+	var oLegend5 = new CalendarLegend("Leg5");
+
+	oCal.setLegend(oLegend5);
 
 	//add specialDays
 	for (var i = 0; i < aSpecialDays.length; i++) {
@@ -140,9 +134,9 @@ sap.ui.define([
 	});
 
 	var oLabel6 = new Label("label6", {text: "Legend with calendar (compact mode)"});
-	var oLegend6 = new CalendarLegend("Leg6", {
-		ariaLabelledBy: ["label6"]
-	});
+	var oLegend6 = new CalendarLegend("Leg6");
+
+	oCal2.setLegend(oLegend6);
 
 	//add specialDays
 	for (var i = 0; i < aSpecialDays.length; i++) {
@@ -185,7 +179,6 @@ sap.ui.define([
 
 	var oLabel7 = new Label("label7", {text: "Simple Legend example"});
 	var oLegend7 = new CalendarLegend("Leg7", {
-		ariaLabelledBy: ["label7"],
 		items: [new CalendarLegendItem({
 			text: "Type10",
 			type: CalendarDayType.Type10,
@@ -213,7 +206,6 @@ sap.ui.define([
 
 	var oLabel8 = new Label("label8", {text: "Custom colors Legend example"});
 	var oLegend8 = new CalendarLegend("Leg8", {
-		ariaLabelledBy: ["label8"],
 		items: [new CalendarLegendItem({text: "Red", color: "red", tooltip: "Red"}),
 			new CalendarLegendItem({text: "Green", color: "green", tooltip: "Green"}),
 			new CalendarLegendItem({text: "Blue", color: "blue", tooltip: "Blue"})
@@ -222,7 +214,6 @@ sap.ui.define([
 
 	var oLabel9 = new Label("label9", {text: "CalendarLegend with all types example"});
 	var oLegend9 = new CalendarLegend("Leg9", {
-		ariaLabelledBy: ["label9"],
 		items: [
 			new CalendarLegendItem({
 				text: "01",

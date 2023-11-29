@@ -3567,12 +3567,10 @@ sap.ui.define([
 
 		var sCssURL = sap.ui.require.toUrl("sap.ui.integration.editor.css.Editor".replace(/\./g, "/") + ".css");
 		includeStylesheet(sCssURL);
-		LoaderExtensions.loadResource("sap/ui/integration/editor/languages.json", {
+		Editor._oLanguages = LoaderExtensions.loadResource("sap/ui/integration/editor/languages.json", {
 			dataType: "json",
 			failOnError: false,
-			async: true
-		}).then(function (o) {
-			Editor._oLanguages = o;
+			async: false
 		});
 	};
 

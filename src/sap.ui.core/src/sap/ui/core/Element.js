@@ -7,7 +7,6 @@ sap.ui.define([
 	'../base/DataType',
 	'../base/Object',
 	'../base/ManagedObject',
-	'../base/ManagedObjectRegistry',
 	'./ElementMetadata',
 	'../Device',
 	"sap/ui/performance/trace/Interaction",
@@ -18,6 +17,7 @@ sap.ui.define([
 	"./RenderManager",
 	"./Configuration",
 	"./EnabledPropagator",
+	"./ElementRegistry",
 	"./Theming",
 	"sap/ui/core/util/_LocalizationHelper"
 ],
@@ -25,7 +25,6 @@ sap.ui.define([
 		DataType,
 		BaseObject,
 		ManagedObject,
-		ManagedObjectRegistry,
 		ElementMetadata,
 		Device,
 		Interaction,
@@ -36,6 +35,7 @@ sap.ui.define([
 		RenderManager,
 		Configuration,
 		EnabledPropagator,
+		ElementRegistry,
 		Theming,
 		_LocalizationHelper
 	) {
@@ -210,19 +210,7 @@ sap.ui.define([
 
 		}, /* Metadata constructor */ ElementMetadata);
 
-		// apply the registry mixin
-		ManagedObjectRegistry.apply(Element, {
-			onDuplicate: function(sId, oldElement, newElement) {
-				if ( oldElement._sapui_candidateForDestroy ) {
-					Log.debug("destroying dangling template " + oldElement + " when creating new object with same ID");
-					oldElement.destroy();
-				} else {
-					var sMsg = "adding element with duplicate id '" + sId + "'";
-					Log.error(sMsg);
-					throw new Error("Error: " + sMsg);
-				}
-			}
-		});
+		ElementRegistry.init(Element);
 
 		/**
 		 * Elements don't have a facade and therefore return themselves as their interface.
@@ -1848,7 +1836,7 @@ sap.ui.define([
 		 * @function
 		 * @since 1.119
 		 */
-		Element.getElementById = Element.registry.get;
+		Element.getElementById = ElementRegistry.get;
 
 		/**
 		 * Returns the element currently in focus.
@@ -1872,12 +1860,12 @@ sap.ui.define([
 			// notify all elements/controls via a pseudo browser event
 			var oJQueryEvent = jQuery.Event("ThemeChanged");
 			oJQueryEvent.theme = oEvent.theme;
-			Element.registry.forEach(function(oElement) {
+			ElementRegistry.forEach(function(oElement) {
 				oElement._handleEvent(oJQueryEvent);
 			});
 		});
 
-		_LocalizationHelper.registerForUpdate("Elements", Element.registry.all);
+		_LocalizationHelper.registerForUpdate("Elements", ElementRegistry.all);
 
 		return Element;
 	});

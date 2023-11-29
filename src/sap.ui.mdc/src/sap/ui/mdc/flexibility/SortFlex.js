@@ -2,11 +2,12 @@
  * ${copyright}
  */
 sap.ui.define([
-	"sap/m/p13n/Engine",
+	'sap/base/util/merge',
 	"sap/ui/mdc/flexibility/Util",
 	"sap/ui/fl/changeHandler/Base",
-	"sap/ui/fl/changeHandler/condenser/Classification"
-], function(Engine, Util, FLChangeHandlerBase, CondenserClassification) {
+	"sap/ui/fl/changeHandler/condenser/Classification",
+	"sap/ui/fl/changeHandler/common/ChangeCategories"
+], function(merge, Util, FLChangeHandlerBase, CondenserClassification, ChangeCategories) {
 	"use strict";
 
 	const fFinalizeSortChange = function(oChange, oControl, oSortContent, bIsRevert) {
@@ -115,12 +116,51 @@ sap.ui.define([
 					oModifier.setProperty(oControl, "sortConditions", oSortConditions);
 
 					//finalize the 'moveSort' change (only persist name + index)
-					fFinalizeSortChange(oChange, oControl, oChangeContent, bIsRevert);
+					const oRevertContent = merge({}, oChangeContent);
+					oRevertContent.index = iOldIndex;
+					fFinalizeSortChange(oChange, oControl, oRevertContent, bIsRevert);
 					resolve();
 				})
 				.catch(function(oError){
 					reject(oError);
 				});
+		});
+	};
+	const fGetChangeVisualizationInfo = function(oChange, oAppComponent) {
+		const oChangeContent = oChange.getContent();
+		const oChart = oAppComponent.byId(oChange.getSelector().id);
+		const mVersionInfo = { descriptionPayload: {}};
+		let sKey;
+		const aArgs = [oChangeContent.key || oChangeContent.name];
+
+		if (oChange.getChangeType() === "addSort") {
+			mVersionInfo.descriptionPayload.category = ChangeCategories.ADD;
+			if (oChangeContent.descending) {
+				sKey = "chart.SORT_ADD_CHANGE_DESC";
+			} else {
+				sKey = "chart.SORT_ADD_CHANGE_ASC";
+			}
+			aArgs.push(oChangeContent.index);
+		} else if (oChange.getChangeType() === "removeSort") {
+			mVersionInfo.descriptionPayload.category = ChangeCategories.REMOVE;
+			sKey = "chart.SORT_DEL_CHANGE";
+		} else {
+			mVersionInfo.descriptionPayload.category = ChangeCategories.MOVE;
+			sKey = "chart.SORT_MOVE_CHANGE";
+			aArgs.push(oChange.getRevertData().index);
+			aArgs.push(oChangeContent.index);
+		}
+
+		const oProperty = oChart?.getPropertyHelper()?.getProperty(oChangeContent.name);
+		if (oProperty) {
+			aArgs.splice(0, 1, oProperty.label);
+		}
+
+		return Util.getMdcResourceText(sKey, aArgs).then(function(sText) {
+			mVersionInfo.descriptionPayload.description = sText;
+
+			mVersionInfo.updateRequired = true;
+			return mVersionInfo;
 		});
 	};
 
@@ -143,7 +183,8 @@ sap.ui.define([
 					return oChange.getContent().index;
 				}
 			};
-		}
+		},
+		getChangeVisualizationInfo: fGetChangeVisualizationInfo
 	});
 
 	Sort.removeSort = Util.createChangeHandler({
@@ -164,7 +205,8 @@ sap.ui.define([
 					oChange.setRevertData(oRevertData);
 				}
 			};
-		}
+		},
+		getChangeVisualizationInfo: fGetChangeVisualizationInfo
 	});
 
 	Sort.moveSort = Util.createChangeHandler({
@@ -194,7 +236,8 @@ sap.ui.define([
 					oChange.setRevertData(oRevertData);
 				}
 			};
-		}
+		},
+		getChangeVisualizationInfo: fGetChangeVisualizationInfo
 	});
 
 	return Sort;

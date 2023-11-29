@@ -9,7 +9,7 @@ sap.ui.define([
 	"sap/ui/core/Lib",
 	"sap/ui/test/generic/GenericTestCollection",
 	"require"
-], function(ObjectPath, DataType, Lib, GenericTestCollection, require) {
+ ], function(ObjectPath, DataType, Lib, GenericTestCollection, require) {
 	"use strict";
 
 	/**

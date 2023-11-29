@@ -2,8 +2,11 @@
  * ${copyright}
  */
 sap.ui.define([
-	"sap/m/p13n/Engine", "sap/base/Log", "sap/ui/mdc/flexibility/Util", "sap/ui/fl/changeHandler/Base", "sap/ui/fl/changeHandler/condenser/Classification"
-], function(Engine, Log, Util, FLChangeHandlerBase, CondenserClassification) {
+	"sap/ui/mdc/flexibility/Util",
+	"sap/ui/fl/changeHandler/Base",
+	"sap/ui/fl/changeHandler/condenser/Classification",
+	"sap/ui/fl/changeHandler/common/ChangeCategories"
+], function(Util, FLChangeHandlerBase, CondenserClassification, ChangeCategories) {
 	"use strict";
 
 	const ItemBaseFlex = {
@@ -15,7 +18,7 @@ sap.ui.define([
 		 * implement control delegate specific hooks <code>addItem</code>
 		 *
 		 * @param {object} Delegate The control specific delegate
-		 * @param {string} sPropertyKeyName The property name which should be added
+		 * @param {string} sPropertyKey The property name which should be added
 		 * @param {object} oControl The control defined as <code>selectorElement</code> in the change
 		 * @param {object} mPropertyBag Instance of property bag from Flex change API
 		 * @returns {Promise<sap.ui.core.Control>} Promise resolving with the created item to be added
@@ -99,6 +102,16 @@ sap.ui.define([
 					};
 				});
 		},
+		/**
+		 * This method should be used to define the change visualization for the ui adataptation scenario.
+		 *
+		 * @param {object} oChange To be visualized
+		 * @param {object} oAppComponent the app component
+		 * @returns {Promise|object} Promise resolving with the found item or the found item directly
+		 */
+		getChangeVisualizationInfo: function(oChange, oAppComponent) {
+			return {};
+		},
 
 
 		/******************************* ItemBaseFlex internal methods *************************************/
@@ -114,17 +127,6 @@ sap.ui.define([
 				}
 				return oExistingItem;
 			}.bind(this));
-		},
-
-		_getDelegate: function(sDelegatePath) {
-			return new Promise(function(fResolveLoad, fRejectLoad){
-				sap.ui.require([
-					sDelegatePath
-				], fResolveLoad, fRejectLoad);
-			})
-			.then(function(Delegate){
-				return Delegate;
-			});
 		},
 
 		// Get appropriate text for revert/apply operation
@@ -167,8 +169,8 @@ sap.ui.define([
 					// b) A new item instance needs to be requested
 					return oModifier.getProperty(oControl, "delegate")
 					.then(function(oDelegate){
-						return this._getDelegate(oDelegate.name);
-					}.bind(this))
+						return Util.getModule(oDelegate.name);
+					})
 					.then(function(Delegate){
 						return this.beforeAddItem(Delegate, sPropertyKeyName, oControl, mPropertyBag, oChangeContent);
 					}.bind(this))
@@ -260,8 +262,8 @@ sap.ui.define([
 				//gracefully skip the appliance in these cases.
 				return oModifier.getProperty(oControl, "delegate")
 				.then(function(oDelegate){
-					return this._getDelegate(oDelegate.name);
-				}.bind(this))
+					return Util.getModule(oDelegate.name);
+				})
 				.then(function(Delegate){
 					return this.afterRemoveItem(Delegate, oControlAggregationItem, oControl, mPropertyBag).then(function(bContinue) {
 						// Continue? --> destroy the item (but only if it exists, it may not exist if an earlier layer removed it already)
@@ -392,11 +394,12 @@ sap.ui.define([
 							}
 						};
 					});
-				}.bind(this)
+				}.bind(this),
+				getChangeVisualizationInfo: this.getChangeVisualizationInfo.bind(this)
 			});
 		},
 
-		createRemoveChangeHandler: function() {
+		createRemoveChangeHandler: function(mSettings) {
 			return Util.createChangeHandler({
 				apply: this._applyRemove.bind(this),
 				complete: this._removeIndexFromChange.bind(this),
@@ -418,11 +421,12 @@ sap.ui.define([
 							}
 						};
 					});
-				}.bind(this)
+				}.bind(this),
+				getChangeVisualizationInfo: this.getChangeVisualizationInfo.bind(this)
 			});
 		},
 
-		createMoveChangeHandler: function() {
+		createMoveChangeHandler: function(mSettings) {
 			return Util.createChangeHandler({
 				apply: this._applyMove.bind(this),
 				revert: this._applyMove.bind(this),
@@ -452,7 +456,8 @@ sap.ui.define([
 							}
 						};
 					});
-				}.bind(this)
+				}.bind(this),
+				getChangeVisualizationInfo: this.getChangeVisualizationInfo.bind(this)
 			});
 		}
 

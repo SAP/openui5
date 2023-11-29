@@ -4,7 +4,7 @@ sap.ui.define([
 	"sap/m/p13n/SelectionController",
 	"sap/m/p13n/MetadataHelper",
 	"sap/m/p13n/modules/xConfigAPI",
-	"sap/m/p13n/enum/ProcessingStrategy"
+	"sap/m/p13n/enums/ProcessingStrategy"
 ], function (Control, SelectionController, MetadataHelper, xConfigAPI, ProcessingStrategy) {
 	"use strict";
 

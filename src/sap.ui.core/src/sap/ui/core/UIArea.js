@@ -5,9 +5,9 @@
 // Provides class sap.ui.core.UIArea
 sap.ui.define([
 	'sap/ui/base/ManagedObject',
-	'sap/ui/base/ManagedObjectRegistry',
 	'./Element',
 	'./RenderManager',
+	'./UIAreaRegistry',
 	'./FocusHandler',
 	'sap/ui/performance/trace/Interaction',
 	"sap/ui/util/ActivityDetection",
@@ -27,9 +27,9 @@ sap.ui.define([
 ],
 	function(
 		ManagedObject,
-		ManagedObjectRegistry,
 		Element,
 		RenderManager,
+		UIAreaRegistry,
 		FocusHandler,
 		Interaction,
 		ActivityDetection,
@@ -1254,14 +1254,7 @@ sap.ui.define([
 			return null;
 		};
 
-		// apply the registry mixin
-		ManagedObjectRegistry.apply(UIArea, {
-			onDuplicate: function(sId, oldUIArea, newUIArea) {
-				var sMsg = "adding UIArea with duplicate id '" + sId + "'";
-				Log.error(sMsg);
-				throw new Error("Error: " + sMsg);
-			}
-		});
+		UIAreaRegistry.init(UIArea);
 
 		// field group static members
 
@@ -1327,7 +1320,7 @@ sap.ui.define([
 
 			// create a new or fetch an existing UIArea
 			var sId = oDomRef.id;
-			var oUIArea = UIArea.registry.get(sId);
+			var oUIArea = UIAreaRegistry.get(sId);
 			if (!oUIArea) {
 				oUIArea = new UIArea(oDomRef);
 				if (oCore && !isEmptyObject(oCore.oModels)) {
@@ -1368,7 +1361,7 @@ sap.ui.define([
 			}
 		};
 
-		_LocalizationHelper.registerForUpdate("UIAreas", UIArea.registry.all);
+		_LocalizationHelper.registerForUpdate("UIAreas", UIAreaRegistry.all);
 
 		return UIArea;
 	});

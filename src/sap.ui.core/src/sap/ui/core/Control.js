@@ -7,6 +7,7 @@ sap.ui.define([
 	'./CustomStyleClassSupport',
 	'./Core',
 	'./Element',
+	'./ElementRegistry',
 	'./UIArea',
 	'./StaticArea',
 	'./RenderManager',
@@ -20,6 +21,7 @@ sap.ui.define([
 		CustomStyleClassSupport,
 		Core,
 		Element,
+		ElementRegistry,
 		UIArea,
 		StaticArea,
 		RenderManager,
@@ -1148,7 +1150,7 @@ sap.ui.define([
 		 * @public
 		 */
 		Control.getControlsByFieldGroupId = function(vFieldGroupIds) {
-			return Element.registry.filter((oElement) => {
+			return ElementRegistry.filter((oElement) => {
 				return oElement.isA("sap.ui.core.Control") && oElement.checkFieldGroupIds(vFieldGroupIds);
 			});
 		};

@@ -2,7 +2,11 @@
  * ${copyright}
  */
 
-sap.ui.define(['./ItemBaseFlex'], function(ItemBaseFlex) {
+sap.ui.define([
+	'./ItemBaseFlex',
+	'./Util',
+	"sap/ui/fl/changeHandler/common/ChangeCategories"
+], function(ItemBaseFlex, Util, ChangeCategories) {
 	"use strict";
 
 	/**
@@ -16,31 +20,20 @@ sap.ui.define(['./ItemBaseFlex'], function(ItemBaseFlex) {
 	const oFilterItemFlex = Object.assign({}, ItemBaseFlex);
 
 	oFilterItemFlex.findItem = function(oModifier, aFilters, sName) {
-		return aFilters.find(function(oFilter) {
-
-			let sFieldPath;
-
-			if (oModifier.targets === "jsControlTree") {
-				sFieldPath = oFilter.getPropertyKey();
-			} else {
-
-				//TODO: needs to be reworked. Expected a name like property on FilterItem
-				sFieldPath = oFilter.getAttribute("conditions");
-				if (sFieldPath) {
-					let iEnd;
-					const iStart = sFieldPath.indexOf("/conditions/");
-					if (iStart >= 0) {
-						sFieldPath = sFieldPath.slice(iStart + 12);
-						iEnd = sFieldPath.indexOf("}");
-						if (iEnd >= 0) {
-							sFieldPath = sFieldPath.slice(0, iEnd);
-						}
+		return aFilters.reduce(function(oPreviousPromise, oFilter) {
+			return oPreviousPromise
+				.then(function(oFoundFilter) {
+					if (!oFoundFilter) {
+						return oModifier.getProperty(oFilter, "propertyKey")
+							.then(function(sPropertyName) {
+								if (sPropertyName === sName) {
+									return oFilter;
+								}
+							});
 					}
-				}
-			}
-
-			return sFieldPath === sName;
-		});
+					return oFoundFilter;
+				});
+		}, Promise.resolve());
 	};
 
 	oFilterItemFlex.beforeApply = function(oControl) {
@@ -49,9 +42,43 @@ sap.ui.define(['./ItemBaseFlex'], function(ItemBaseFlex) {
 		}
 	};
 
+	oFilterItemFlex.getChangeVisualizationInfo = function(oChange, oAppComponent) {
+		const oContent = oChange.getContent();
+		const oFilterBar = oAppComponent.byId(oChange.getSelector().id);
+		let sKey;
+		const aArgs = [oContent.name];
+		const mVersionInfo = { descriptionPayload: {}};
+
+		if (oChange.getChangeType() === "addFilter") {
+			mVersionInfo.descriptionPayload.category = ChangeCategories.ADD;
+			sKey = "filterbar.ITEM_ADD_CHANGE";
+			aArgs.push(oContent.index);
+		} else if (oChange.getChangeType() === "removeFilter") {
+			mVersionInfo.descriptionPayload.category = ChangeCategories.REMOVE;
+			sKey = "filterbar.ITEM_DEL_CHANGE";
+		} else if (oChange.getChangeType() === "moveFilter") {
+			mVersionInfo.descriptionPayload.category = ChangeCategories.MOVE;
+			sKey = "filterbar.ITEM_MOVE_CHANGE";
+			aArgs.push(oChange.getRevertData().index);
+			aArgs.push(oContent.index);
+		}
+
+		const oProperty = oFilterBar?.getPropertyHelper()?.getProperty(oContent.name);
+		if (oProperty) {
+			aArgs.splice(0, 1, oProperty.label);
+		}
+
+		return Util.getMdcResourceText(sKey, aArgs).then(function(sText) {
+			mVersionInfo.descriptionPayload.description = sText;
+
+			mVersionInfo.updateRequired = true;
+			return mVersionInfo;
+		});
+	};
 	oFilterItemFlex.addFilter = oFilterItemFlex.createAddChangeHandler();
 	oFilterItemFlex.removeFilter = oFilterItemFlex.createRemoveChangeHandler();
 	oFilterItemFlex.moveFilter = oFilterItemFlex.createMoveChangeHandler();
+
 
 	return oFilterItemFlex;
 });

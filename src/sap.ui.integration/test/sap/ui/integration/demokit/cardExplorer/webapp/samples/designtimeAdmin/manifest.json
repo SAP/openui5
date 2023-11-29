@@ -52,7 +52,7 @@
 			"title": "Card Title",
 			"subTitle": "Card Sub Title",
 			"icon": {
-				"src": "{{parameters.headericon}}"
+				"src": "{parameters>/headericon/value}"
 			},
 			"visible": true
 		},
@@ -116,7 +116,7 @@
 				"title": "{Name}",
 				"description": "{Description}"
 			},
-			"maxItems": "{{parameters.maxItems}}"
+			"maxItems": "{parameters>/maxItems/value}"
 		}
 	}
 }

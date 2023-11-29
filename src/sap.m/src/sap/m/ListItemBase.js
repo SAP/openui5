@@ -1191,12 +1191,13 @@ function(
 	/**
 	 * Returns the tabbable DOM elements as a jQuery collection
 	 *
+	 * @param [bContentOnly] Whether only tabbables of the content area
 	 * @returns {jQuery} jQuery object
 	 * @protected
 	 * @since 1.26
 	 */
-	ListItemBase.prototype.getTabbables = function() {
-		return this.$().find(":sapTabbable");
+	ListItemBase.prototype.getTabbables = function(bContentOnly) {
+		return this.$(bContentOnly ? "content" : "").find(":sapTabbable");
 	};
 
 	// handle propagated focus to make the item row focusable

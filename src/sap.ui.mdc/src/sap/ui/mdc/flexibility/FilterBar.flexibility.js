@@ -2,7 +2,10 @@
  * ${copyright}
  */
 
-sap.ui.define(['./FilterItemFlex', './ConditionFlex', './PropertyInfoFlex'], function(FilterItemFlex, ConditionFlex, PropertyInfoFlex) {
+sap.ui.define(['./FilterItemFlex',
+				'./ConditionFlex',
+				'./PropertyInfoFlex'
+	], function(FilterItemFlex, ConditionFlex, PropertyInfoFlex) {
 	"use strict";
 
 	/**

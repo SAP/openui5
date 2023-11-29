@@ -4,7 +4,7 @@
 
 /*global QUnit*/
 
-sap.ui.define([ 'sap/ui/core/Element', 'sap/ui/core/Control', "sap/ui/qunit/utils/nextUIUpdate", 'sap/ui/core/Core' /* provides sap.ui.getCore() */ ], function(Element, Control, nextUIUpdate) {
+sap.ui.define([ 'sap/ui/core/ElementRegistry', 'sap/ui/core/Control', "sap/ui/qunit/utils/nextUIUpdate"], function(ElementRegistry, Control, nextUIUpdate) {
 "use strict";
 
 if ( typeof QUnit === "undefined" ) {
@@ -35,7 +35,7 @@ var MemoryLeakCheck = {};
 
 // gets a snapshot of all currently registered controls (keyed by their ID)
 function getAllAliveControls() {
-return Element.registry.all();
+return ElementRegistry.all();
 }
 
 
@@ -205,7 +205,7 @@ QUnit.module("MemoryLeakCheck.checkControl: " + sControlName, {
 		mOriginalElements = getAllAliveControls();
 	},
 	afterEach: function(assert) {
-		Element.registry.forEach(function(oControl, sId) {
+		ElementRegistry.forEach(function(oControl, sId) {
 			if (!mOriginalElements[sId]) {
 				assert.ok(oControl.getMetadata().getName(), "Cleanup of id: " + sId + ", control: " + oControl.getMetadata().getName());
 				oControl.destroy();

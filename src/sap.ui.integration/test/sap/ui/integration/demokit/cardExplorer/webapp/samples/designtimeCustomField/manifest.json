@@ -24,8 +24,8 @@
 		},
 		"type": "List",
 		"header": {
-			"title": "{{parameters.cardTitle}}",
-			"subTitle": "Date range: {{parameters.dateRange}}"
+			"title": "{parameters>/cardTitle/value}",
+			"subTitle": "Date range: {parameters>/dateRange/value}"
 		},
 		"content": {
 			"data": {

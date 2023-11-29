@@ -20,6 +20,7 @@ sap.ui.define(["sap/ui/core/Lib", "./library", "sap/ui/core/Item"], function(Lib
 	 * @since 1.52.0
 	 * @alias sap.m.MultiEditField
 	 * @private
+	 * @deprecated Since version 1.121.
 	 * @ui5-restricted sap.m.MultiEditField
 	 */
 	var MultiEditField = undefined/*XMLComposite*/.extend("sap.m.MultiEditField", /** @lends sap.m.MultiEditField.prototype */ {

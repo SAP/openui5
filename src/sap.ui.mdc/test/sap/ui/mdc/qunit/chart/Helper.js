@@ -4,7 +4,7 @@
 
 sap.ui.define([
 	"sap/ui/base/SyncPromise",
-	"delegates/odata/v4/ChartDelegate"
+	"delegates/odata/v4/vizChart/ChartDelegate"
 ], function(
 	SyncPromise,
 	ChartDelegate
@@ -23,44 +23,40 @@ sap.ui.define([
 				{
 					name: "SalesNumber",
 					path: "SalesNumber",
-					type: "Edm.Int32",
-					required: true,
+					dataType: "Edm.Int32",
 					label: "Sales Number",
+					aggregatable: true,
 					kind: "Measure"
 				}, {
 					name: "agSalesAmount",
 					path: "SalesAmount",
-					type: "string",
-					required: true,
+					dataType: "Edm.String",
 					label: "Sales Amount",
-					kind: "Measure",
-					defaultAggregation: "sum",
-					supportedAggregations: ["sum", "min", "max", "average"]
+					groupable: true,
+					kind: "Measure"
 				}, {
 					name: "Name",
 					path: "Name",
-					type: "string",
-					required: true,
+					dataType: "Edm.String",
 					label: "Name",
+					groupable: true,
 					kind: "Dimension"
 				}, {
 					name: "Industry",
-					type: "string",
-					required: true,
+					dataType: "Edm.String",
 					label: "Industry",
 					kind: "Dimension"
 				}, {
 					name: "Country",
-					type: "string",
-					required: true,
+					dataType: "Edm.String",
 					label: "Country",
 					kind: "Dimension"
 				}, {
 					name: "SomePropertyName",
-					type: "string",
-					required: true,
+					dataType: "Edm.String",
 					label: "SomeProperty",
-					kind: "Dimension"
+					kind: "Dimension",
+					groupable: true
 				}
 			]
 		};
