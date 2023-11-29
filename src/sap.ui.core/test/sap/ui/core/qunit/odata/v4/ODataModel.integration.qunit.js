@@ -4986,6 +4986,8 @@ sap.ui.define([
 			var oListBindingWithoutUI = oModel.bindList("/SalesOrderList"),
 				oCreatedPromise = oListBindingWithoutUI.create({}, true).created();
 
+			// This error is unavoidable as #fetchValue runs right after creating the context, but
+			// fails as the context is deleted already.
 			that.oLogMock.expects("error")
 				.withArgs(sinon.match("Failed to drill-down into ($uid="),
 					sSalesOrderService + "SalesOrderList", "sap.ui.model.odata.v4.lib._Cache");
