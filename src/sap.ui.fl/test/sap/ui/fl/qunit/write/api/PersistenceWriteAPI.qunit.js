@@ -156,7 +156,8 @@ sap.ui.define([
 			},
 			expectedResult: false
 		}, {
-			testName: "when hasHigherLayerChanges is called and the ChangePersistence AND CompVariantState have changes present, but none in a higher layer",
+			testName: "when hasHigherLayerChanges is called and the ChangePersistence "
+				+ "AND CompVariantState have changes present, but none in a higher layer",
 			persistencyChanges: [{
 				getLayer() {
 					return Layer.CUSTOMER;
@@ -209,7 +210,8 @@ sap.ui.define([
 			},
 			expectedResult: true
 		}, {
-			testName: "when hasHigherLayerChanges is called and the ChangePersistence AND CompVariantState have changes present, one in higher layer",
+			testName: "when hasHigherLayerChanges is called and the ChangePersistence "
+				+ "AND CompVariantState have changes present, one in higher layer",
 			persistencyChanges: [{
 				getLayer() {
 					return Layer.CUSTOMER;
@@ -228,7 +230,8 @@ sap.ui.define([
 			},
 			expectedResult: true
 		}, {
-			testName: "when hasHigherLayerChanges is called and the ChangePersistence AND CompVariantState have changes present, all in higher layer",
+			testName: "when hasHigherLayerChanges is called and the ChangePersistence "
+				+ "AND CompVariantState have changes present, all in higher layer",
 			persistencyChanges: [{
 				getLayer() {
 					return Layer.USER;
@@ -281,7 +284,8 @@ sap.ui.define([
 			PersistenceWriteAPI.save(mPropertyBag);
 
 			assert.equal(oFlexObjectStateSaveStub.callCount, 1, "the FlexObjectState save method was called");
-			assert.deepEqual(oFlexObjectStateSaveStub.firstCall.args[0], mPropertyBag, "the FlexObjectState was called with the same arguments");
+			assert.deepEqual(oFlexObjectStateSaveStub.firstCall.args[0], mPropertyBag,
+				"the FlexObjectState was called with the same arguments");
 		});
 
 		QUnit.test("when save dirty change and update flex info session", function(assert) {
@@ -312,13 +316,42 @@ sap.ui.define([
 			});
 			var mPropertyBag = { foo: "bar" };
 			return PersistenceWriteAPI.save(mPropertyBag).then(function(oFlexObject) {
-				assert.equal(oFlexObjectStateSaveStub.callCount, 1, "the FlexObjectState save method was called");
-				assert.deepEqual(oFlexObject, {change: "test"}, "Flex objects returned from saveFlexObjects are returned");
-				assert.deepEqual(oFlexObjectStateSaveStub.firstCall.args[0], mPropertyBag, "the FlexObjectState was called with the same arguments");
-				assert.equal(oPersistenceWriteGetFlexInfoStub.callCount, 1, "the PersistenceWriteAPI getResetAndPublishInfo method was called");
-				assert.deepEqual(oPersistenceWriteGetFlexInfoStub.firstCall.args[0], mPropertyBag, "the PersistenceWriteAPI was called with the same arguments");
-				assert.deepEqual(oExpectedFlexInfo, FlexInfoSession.getByReference(), "session flex info is updated with isResetEnabled but adaptationId and isEndUserAdaptation and initialAllContexts are kept");
-				assert.equal(FlexInfoSession.getByReference().saveChangeKeepSession, undefined, "saveChangeKeepSession is delete in flex info session");
+				assert.equal(
+					oFlexObjectStateSaveStub.callCount,
+					1,
+					"the FlexObjectState save method was called"
+				);
+				assert.deepEqual(
+					oFlexObject,
+					{change: "test"},
+					"Flex objects returned from saveFlexObjects are returned"
+				);
+				assert.deepEqual(
+					oFlexObjectStateSaveStub.firstCall.args[0],
+					mPropertyBag,
+					"the FlexObjectState was called with the same arguments"
+				);
+				assert.equal(
+					oPersistenceWriteGetFlexInfoStub.callCount,
+					1,
+					"the PersistenceWriteAPI getResetAndPublishInfo method was called"
+				);
+				assert.deepEqual(
+					oPersistenceWriteGetFlexInfoStub.firstCall.args[0],
+					mPropertyBag,
+					"the PersistenceWriteAPI was called with the same arguments"
+				);
+				assert.deepEqual(
+					oExpectedFlexInfo,
+					FlexInfoSession.getByReference(),
+					"session flex info is updated with isResetEnabled but adaptationId "
+						+ "and isEndUserAdaptation and initialAllContexts are kept"
+				);
+				assert.equal(
+					FlexInfoSession.getByReference().saveChangeKeepSession,
+					undefined,
+					"saveChangeKeepSession is delete in flex info session"
+				);
 			});
 		});
 
@@ -373,7 +406,13 @@ sap.ui.define([
 			.withArgs(mPropertyBag.selector)
 			.returns(oAppComponent);
 
-			var aArguments = [mPropertyBag.layer, mPropertyBag.generator, oAppComponent, mPropertyBag.selectorIds, mPropertyBag.changeTypes];
+			var aArguments = [
+				mPropertyBag.layer,
+				mPropertyBag.generator,
+				oAppComponent,
+				mPropertyBag.selectorIds,
+				mPropertyBag.changeTypes
+			];
 			var fnPersistenceStub = getMethodStub(aArguments, Promise.resolve(sReturnValue));
 
 			mockFlexController(oAppComponent, { resetChanges: fnPersistenceStub });
@@ -962,7 +1001,8 @@ sap.ui.define([
 				layer: Layer.CUSTOMER
 			};
 
-			var oGetInfoStub = sandbox.stub(Storage, "getFlexInfo").resolves({isResetEnabled: true, isPublishEnabled: true, allContextsProvided: false});
+			var oGetInfoStub = sandbox.stub(Storage, "getFlexInfo")
+			.resolves({isResetEnabled: true, isPublishEnabled: true, allContextsProvided: false});
 			sandbox.stub(PersistenceWriteAPI, "_getUIChanges").withArgs(mPropertyBag).resolves([{}]);
 			sandbox.stub(FeaturesAPI, "isPublishAvailable").withArgs().resolves(true);
 
@@ -1077,7 +1117,8 @@ sap.ui.define([
 			return PersistenceWriteAPI.getChangesWarning(mPropertyBag)
 			.then(function(oMessage) {
 				assert.ok(oMessage.showWarning, "then the warning is shown");
-				assert.strictEqual(oMessage.warningType, "noChangesAndPSystemWarning", "then the no changes and p system warning type is returned");
+				assert.strictEqual(oMessage.warningType, "noChangesAndPSystemWarning",
+					"then the no changes and p system warning type is returned");
 			});
 		});
 
@@ -1118,6 +1159,17 @@ sap.ui.define([
 			var oStubFlexObjectStateHasDirtyObjects = sandbox.stub(FlexObjectState, "hasDirtyFlexObjects").returns(true);
 			assert.equal(PersistenceWriteAPI.hasDirtyChanges({selector: this.appComponent}), true, "hasDirtyChanges return true");
 			assert.equal(oStubFlexObjectStateHasDirtyObjects.calledOnce, true, "FlexObjectState.hasDirtyFlexObjects called one");
+		});
+
+		QUnit.test("When setAdaptationLayer is called", function(assert) {
+			sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns("appComponentId");
+			var oSpySetInfoSession = sandbox.spy(FlexInfoSession, "setByReference");
+			PersistenceWriteAPI.setAdaptationLayer("CUSTOMER", {id: "someControl"});
+			assert.deepEqual(
+				oSpySetInfoSession.args[0],
+				[{adaptationLayer: "CUSTOMER"}, "appComponentId"],
+				"then the flex info session set function is called correctly"
+			);
 		});
 	});
 });

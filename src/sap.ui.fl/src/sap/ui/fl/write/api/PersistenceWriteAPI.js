@@ -142,7 +142,8 @@ sap.ui.define([
 	 * @ui5-restricted
 	 */
 	PersistenceWriteAPI.save = function(mPropertyBag) {
-		// when save or activate a version in rta no reload is triggered but flex/data request is send and will delete version and maxLayer without saveChangeKeepSession
+		// when save or activate a version in rta no reload is triggered but flex/data request is send
+		// and will delete version and maxLayer without saveChangeKeepSession
 		// after the request saveChangeKeepSession needs to be delete again
 		var sReference = ManifestUtils.getFlexReferenceForControl(mPropertyBag.selector);
 		var oFlexInfoSession = FlexInfoSession.getByReference(sReference);
@@ -466,6 +467,21 @@ sap.ui.define([
 
 		// TODO: Check the mPropertyBag.selector parameter name - the methods called on FlexObjectState expect a control
 		return FlexObjectState.getFlexObjects(mPropertyBag);
+	};
+
+	/**
+	 * Adds additionally properties to the flex info session.
+	 *
+	 * @param {string} sLayer - layer of the adaptation
+	 * @param {object} oControl - Control
+	 * @private
+	 * @ui5-restricted sap.ui.rta
+	 */
+	PersistenceWriteAPI.setAdaptationLayer = function(sLayer, oControl) {
+		const sReference = ManifestUtils.getFlexReferenceForControl(oControl);
+		const oFlexInfoSession = FlexInfoSession.getByReference(sReference);
+		oFlexInfoSession.adaptationLayer = sLayer;
+		FlexInfoSession.setByReference(oFlexInfoSession, sReference);
 	};
 
 	return PersistenceWriteAPI;

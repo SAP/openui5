@@ -573,7 +573,11 @@ sap.ui.define([
 						break;
 					case "update":
 						aFiltered.splice(aFiltered.findIndex((oFlexObject) => oFlexObject.fileName === sFileName), 1, oUpdate.flexObject);
-						aUnfiltered.splice(aUnfiltered.findIndex((oFlexObject) => oFlexObject.fileName === sFileName), 1, oUpdate.flexObject);
+						aUnfiltered.splice(
+							aUnfiltered.findIndex((oFlexObject) => oFlexObject.fileName === sFileName),
+							1,
+							oUpdate.flexObject
+						);
 						break;
 					default:
 				}
@@ -669,18 +673,37 @@ sap.ui.define([
 		}
 	};
 
+	/**
+	 * Adds a dirty flex object to the flex state.
+	 *
+	 * @param {string} sReference - Flexibility reference of the app
+	 * @param {sap.ui.fl.apply._internal.flexObjects.FlexObject} oFlexObject - Flexibility object
+	 */
 	FlexState.addDirtyFlexObject = function(sReference, oFlexObject) {
+		const sAdaptationLayer = FlexInfoSession.getByReference(sReference)?.adaptationLayer;
+		const bFlexObjectsOverAdaptationLayer = !!sAdaptationLayer
+			&& LayerUtils.isOverLayer(oFlexObject.getLayer(), sAdaptationLayer);
 		// FIXME: Currently called from the ChangePersistence which might be
 		// independent of FlexState in some test cases
 		// Once the ChangePersistence is no longer used
 		// make sure to remove the safeguard
-		if (_mInstances[sReference]) {
+		if (!bFlexObjectsOverAdaptationLayer && _mInstances[sReference]) {
 			_mInstances[sReference].runtimePersistence.flexObjects.push(oFlexObject);
 			oFlexObjectsDataSelector.checkUpdate({ reference: sReference });
 		}
 	};
 
+	/**
+	 * Adds a list of dirty flex objects to the flex state.
+	 *
+	 * @param {string} sReference - Flexibility reference of the app
+	 * @param {array.<sap.ui.fl.apply._internal.flexObjects.FlexObject>} aFlexObjects - Flexibility objects
+	 */
 	FlexState.addDirtyFlexObjects = function(sReference, aFlexObjects) {
+		const sAdaptationLayer = FlexInfoSession.getByReference(sReference)?.adaptationLayer;
+		aFlexObjects = !sAdaptationLayer ? aFlexObjects : aFlexObjects
+		.filter((oFlexObject) => !LayerUtils.isOverLayer(oFlexObject.getLayer(), sAdaptationLayer));
+
 		if (aFlexObjects.length > 0 && _mInstances[sReference]) {
 			_mInstances[sReference].runtimePersistence.flexObjects =
 				_mInstances[sReference].runtimePersistence.flexObjects.concat(aFlexObjects);

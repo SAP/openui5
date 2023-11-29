@@ -436,6 +436,16 @@ sap.ui.define([
 		return Lib.getResourceBundleFor("sap.ui.rta");
 	};
 
+	function checkRootControl() {
+		const oRootControl = this.getRootControlInstance();
+		if (!oRootControl) {
+			const vError = new Error("Root control not found");
+			Log.error(vError);
+			return Promise.reject(vError);
+		}
+		return undefined;
+	}
+
 	/**
 	 * Start UI adaptation at runtime (RTA).
 	 *
@@ -445,18 +455,13 @@ sap.ui.define([
 	RuntimeAuthoring.prototype.start = function() {
 		var bIsAutomaticRestart = RuntimeAuthoring.needsRestart(this.getLayer());
 		var oDesignTimePromise;
-		var vError;
 		// Create DesignTime
 		if (this._sStatus === STOPPED) {
 			this._sStatus = STARTING;
-			var oRootControl = this.getRootControlInstance();
-			if (!oRootControl) {
-				vError = new Error("Root control not found");
-				Log.error(vError);
-				return Promise.reject(vError);
-			}
 
 			return this._loadUShellServicesPromise
+			.then(checkRootControl.bind(this))
+			.then(PersistenceWriteAPI.setAdaptationLayer.bind(this, this.getLayer(), this.getRootControl()))
 			.then(initVersioning.bind(this))
 			.then(initContextBasedAdaptations.bind(this, bIsAutomaticRestart))
 			/*
