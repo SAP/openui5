@@ -3228,7 +3228,7 @@ sap.ui.define([
 	 * @returns {sap.ui.base.SyncPromise<void>}
 	 *   A promise which is resolved without a defined result when the move is finished, or
 	 *   rejected in case of an error
-	 * @throws (Error)
+	 * @throws {Error}
 	 *   If <code>oAggregation.expandTo</code> is unsupported (neither one nor at least
 	 *   <code>Number.MAX_SAFE_INTEGER</code>).
 	 *
