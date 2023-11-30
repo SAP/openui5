@@ -15,7 +15,7 @@
 
 	<groupId>com.sap.openui5</groupId>
 	<artifactId>testsuite-utils</artifactId>
-	<version>1.106.1-SNAPSHOT</version><!--TargetVersion-->
+	<version>1.106.1-rc.1</version><!--TargetVersion-->
 
 
 	<!--**************************************************************************
