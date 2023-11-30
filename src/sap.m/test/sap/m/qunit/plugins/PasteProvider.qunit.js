@@ -1,14 +1,16 @@
 sap.ui.define([
 	"sap/m/Table",
 	"sap/m/Button",
+	"sap/m/OverflowToolbarButton",
 	"sap/ui/Device",
 	"sap/ui/core/Core",
+	"sap/ui/core/Lib",
 	"sap/m/plugins/PasteProvider",
 	"sap/ui/core/Element",
 	"sap/ui/core/HTML",
 	"sap/ui/core/Icon",
 	"sap/m/Popover"
-], function(Table, Button, Device, Core, PasteProvider, Element) {
+], function(Table, Button, OverflowToolbarButton, Device, Core, coreLib, PasteProvider, Element) {
 
 	"use strict";
 	/*global sinon, QUnit, ClipboardEvent, DataTransfer */
@@ -174,6 +176,18 @@ sap.ui.define([
 		assert.equal(this.oAssociationPasteSpy.callCount, 1);
 
 		oClipboardStub.restore();
+	});
+
+	QUnit.test("Paste-Button", function(assert) {
+		const sText = coreLib.getResourceBundleFor("sap.m").getText("PASTEPROVIDER_PASTE");
+		assert.equal(this.oButton.getTooltip(), sText, "Paste Button Tooltip");
+		assert.ok(!this.oButton.getText(), "Paste Button Text");
+		this.oOverflowButton = new OverflowToolbarButton({
+			dependents: this.oPlugin
+		});
+		assert.equal(this.oOverflowButton.getTooltip(), sText, "Paste Button Tooltip");
+		assert.equal(this.oOverflowButton.getText(), sText, "Paste Button Text");
+		this.oOverflowButton.destroy();
 	});
 
 });
