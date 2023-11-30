@@ -134,6 +134,10 @@ sap.ui.define(['./library', "sap/base/i18n/Localization", 'sap/ui/core/library',
 	TileContent.prototype.onAfterRendering = function() {
 		var oContent = this.getContent();
 		if (oContent) {
+			const oParent = this.getParent();
+            if (oParent && oParent.isA("sap.m.GenericTile") ) {
+			oParent._applyCssStyle(this);
+		}
 			var thisRef = this.$();
 			var aTooltipEments = thisRef.find("*");
 			// tooltip of the entire tile
