@@ -147,6 +147,7 @@ sap.ui.define([
 					afterClose: this.handleClosed.bind(this),
 					customHeader: oValueStateHeader
 				}).addStyleClass("sapMdcValueHelpPopover").addStyleClass("sapMComboBoxBasePicker").addStyleClass("sapMComboBoxBasePicker-CTX"); // to have a ComboBox popup
+				oPopover._getAnimationDuration = () => { return 0; }; // tho prevent delay as no animation happens in current version.
 
 				this._oInvisibleText = new InvisibleText({text: Library.getResourceBundleFor("sap.ui.mdc").getText("valuehelp.POPOVER_AVALIABLE_VALUES")}).toStatic();
 				oPopover.addAriaLabelledBy(this._oInvisibleText);

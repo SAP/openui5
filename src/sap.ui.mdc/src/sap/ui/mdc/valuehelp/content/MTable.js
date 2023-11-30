@@ -111,8 +111,9 @@ sap.ui.define([
 
 
 	function _updateSelection () {
-		if (this._oTable) {
-			const aItems = this._oTable.getItems();
+		const oTable = this._getTable();
+		if (oTable) {
+			const aItems = oTable.getItems();
 			const aConditions = this.getConditions();
 			const bHideSelection = this.isSingleSelect() && !FilterableListContent.prototype.isSingleSelect.apply(this); // if table is in single selection but Field allows multiple values, don't select items
 			const bUseFirstMatch = this.isTypeahead() && !!this.getFilterValue() && this._iNavigateIndex === -1 && !!this._oFirstItemResult.result && ((this.isSingleSelect() && aConditions.length === 0) || !this.isSingleSelect());
@@ -126,17 +127,22 @@ sap.ui.define([
 				} else {
 					oItem.setSelected(this._isContextSelected(oItemContext, aConditions));
 				}
-				if (this._oTable.indexOfItem(oItem) === this._iNavigateIndex || (bUseFirstMatch && oItemFromContext.key === oFirstItem.key)) {
+				if (oItem.getSelected() && this.isTypeahead() && this.isSingleSelect()) { // show selected item as focused if open in single-selection
+					oItem.addStyleClass("sapMLIBFocused");
+				} else if (oTable.indexOfItem(oItem) === this._iNavigateIndex || (bUseFirstMatch && oItemFromContext.key === oFirstItem.key)) { // show navigated item or first match as selected
 					oItem.addStyleClass("sapMLIBFocused")
-						.addStyleClass("sapMListFocus")
 						.addStyleClass("sapMLIBSelected");
-					this._oFirstItemResult.index = this._oTable.indexOfItem(oItem);
+					if ((bUseFirstMatch && oItemFromContext.key === oFirstItem.key)) {
+						this._oFirstItemResult.index = this._oTable.indexOfItem(oItem);
+					}
 				} else {
 					oItem.removeStyleClass("sapMLIBFocused")
-						.removeStyleClass("sapMListFocus")
 						.removeStyleClass("sapMLIBSelected");
 				}
 			}.bind(this));
+			if (this.isTypeahead() && this.isSingleSelect()) {
+				oTable.addStyleClass("sapMListFocus"); // to show focus outline on selected item
+			}
 		}
 	}
 

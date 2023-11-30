@@ -274,9 +274,9 @@ sap.ui.define([
 			for (let iIndex = 0; iIndex < aListItems.length; iIndex++) {
 				const oListItem = aListItems[iIndex];
 				if (iIndex === this._iNavigateIndex) {
-					oListItem.addStyleClass("sapMLIBFocused").addStyleClass("sapMListFocus");
+					oListItem.addStyleClass("sapMLIBFocused");
 				} else {
-					oListItem.removeStyleClass("sapMLIBFocused").removeStyleClass("sapMListFocus");
+					oListItem.removeStyleClass("sapMLIBFocused");
 				}
 
 				if (oListItem.isA("sap.m.DisplayListItem")) { // check if it's not a group header
@@ -284,8 +284,10 @@ sap.ui.define([
 					if (aConditions.length > 0 && _getKey.call(this, oOriginalItem) === vSelectedKey) {
 						// conditions given -> use them to show selected items
 						oListItem.setSelected(true);
+						oListItem.addStyleClass("sapMLIBFocused"); // show item as focused if open
 					} else if (aConditions.length === 0 && this._iNavigateIndex < 0 && !bFirstFilterItemSelected && oFirstMatchItem && oFirstMatchItem === oOriginalItem) {
 						oListItem.setSelected(true);
+						oListItem.addStyleClass("sapMLIBFocused"); // show item as focused if open
 						sFirstMatchItemId = oListItem.getId();
 						bFirstFilterItemSelected = true;
 					} else {
@@ -560,6 +562,7 @@ sap.ui.define([
 			const iSelectedIndex = oList.indexOfItem(oSelectedItem);
 			oList.scrollToIndex(iSelectedIndex);
 			sItemId = oSelectedItem.getId();
+			oList.addStyleClass("sapMListFocus"); // to show focus outline on selected item
 		}
 
 		return sItemId;

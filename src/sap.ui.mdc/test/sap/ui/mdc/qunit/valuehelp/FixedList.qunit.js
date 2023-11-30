@@ -106,6 +106,7 @@ sap.ui.define([
 				const sItemId = oFixedList.onShow(); // to update selection and scroll
 				assert.ok(oContent, "Content returned");
 				assert.ok(oContent.isA("sap.m.List"), "Content is sap.m.List");
+				assert.ok(oContent.hasStyleClass("sapMListFocus"), "List has style class sapMListFocus");
 				assert.equal(oFixedList.getDisplayContent(), oContent, "sap.m.List stored in displayContent");
 				assert.equal(oContent.getWidth(), "100%", "List width");
 				assert.notOk(oContent.getShowNoData(), "List showNoData");
@@ -131,6 +132,7 @@ sap.ui.define([
 				assert.equal(oItem.getValue(), whitespaceReplacer("Item   2"), "Item1 value");
 				assert.ok(oItem.getSelected(), "Item1 selected");
 				assert.ok(oItem.hasStyleClass("sapMComboBoxNonInteractiveItem"), "Item1 has style class sapMComboBoxNonInteractiveItem");
+				assert.ok(oItem.hasStyleClass("sapMLIBFocused"), "Item is focused");
 				assert.equal(sItemId, oItem.getId(), "OnShow returns selected itemId");
 				oItem = oContent.getItems()[2];
 				assert.ok(oItem.isA("sap.m.DisplayListItem"), "Item2 is DisplayListItem");
