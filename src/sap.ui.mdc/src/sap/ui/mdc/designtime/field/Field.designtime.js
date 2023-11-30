@@ -33,7 +33,7 @@ sap.ui.define([
 				oControl = oField;
 			}
 			const oAppComponent = Utils.getAppComponentForControl(oControl) || Utils.getAppComponentForControl(oField);
-			const sStableID = oFieldInfo._createPanelId(Utils, FlexRuntimeInfoAPI);
+			const sStableID = oFieldInfo.getControlDelegate().getPanelId(oFieldInfo);
 
 			return [{
 				id: sStableID,
@@ -62,13 +62,13 @@ sap.ui.define([
 								const fnGetChanges = function() {
 									return Engine.getInstance().getRTASettingsActionHandler(oPanel, mPropertyBag, "LinkItems").then((aChanges) => {
 										aChanges.forEach((oChange) => {
-											const oSelectorElement = oChange.selectorElement;
+											const vSelectorElement = oChange.selectorElement;
 											delete oChange.selectorElement;
 
 											const oAppComponent = Utils.getAppComponentForControl(oControl) || Utils.getAppComponentForControl(oField);
 											oChange.selectorControl = {
-												id: oSelectorElement.getId(),
-												controlType: oSelectorElement === oPanel ? "sap.ui.mdc.link.Panel" : "sap.ui.mdc.link.PanelItem",
+												id: typeof vSelectorElement === "string" ? vSelectorElement : vSelectorElement.getId(),
+												controlType: vSelectorElement === oPanel ? "sap.ui.mdc.link.Panel" : "sap.ui.mdc.link.PanelItem",
 												appComponent: oAppComponent
 											};
 										});

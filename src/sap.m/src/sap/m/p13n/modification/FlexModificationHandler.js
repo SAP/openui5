@@ -5,8 +5,9 @@ sap.ui.define([
 	"./ModificationHandler",
 	"sap/m/p13n/FlexUtil",
 	"sap/m/p13n/enums/PersistenceMode",
-	"sap/ui/core/Lib"
-], (ModificationHandler, FlexUtil, mode, Library) => {
+	"sap/ui/core/Lib",
+	"sap/ui/core/Element"
+], (ModificationHandler, FlexUtil, mode, Library, Element) => {
 	"use strict";
 
 	let oFlexModificationHandler, pInitialize, pRuntimeAPI, pWriteAPI;
@@ -48,7 +49,7 @@ sap.ui.define([
 	 */
 	const FlexModificationHandler = ModificationHandler.extend("sap.m.p13n.modification.FlexModificationHandler");
 
-	FlexModificationHandler.prototype.processChanges = function(aChanges, oModificationPayload) {
+	FlexModificationHandler.prototype.processChanges = async function(aChanges, oModificationPayload) {
 		const oControl = aChanges && aChanges[0] ? aChanges[0].selectorElement : undefined;
 
 		let sInternalPersistenceMode = oModificationPayload.mode;
@@ -66,14 +67,33 @@ sap.ui.define([
 
 		const bIsTransient = sInternalPersistenceMode === mode.Transient;
 
-		return this.initialize()
-			.then(() => {
+		const bHandleSequentialy = aChanges.some((oChange) => {
+			return typeof oChange.selectorElement === "string";
+		});
 
-				const oHandleChangesPromise = FlexUtil.handleChanges(aChanges, bIsGlobal, bIsTransient);
-				return bIsGlobal ? oHandleChangesPromise.then((aDirtyChanges) => {
-					return FlexUtil.saveChanges(oControl, aDirtyChanges);
-				}) : oHandleChangesPromise;
-			});
+		await this.initialize();
+
+		if (bHandleSequentialy) {
+			return this._processChangesSequentialy(aChanges, oControl, bIsGlobal, bIsTransient);
+		} else {
+			const oHandleChangesPromise = FlexUtil.handleChanges(aChanges, bIsGlobal, bIsTransient);
+			return bIsGlobal ? oHandleChangesPromise.then((aDirtyChanges) => {
+				return FlexUtil.saveChanges(oControl, aDirtyChanges);
+			}) : oHandleChangesPromise;
+		}
+	};
+
+	FlexModificationHandler.prototype._processChangesSequentialy = async function(aChanges, oControl, bIsGlobal, bIsTransient) {
+		await aChanges.reduce(async (oPrevious, oCurrent) => {
+			await oPrevious;
+			if (typeof oCurrent.selectorElement === "string") {
+				oCurrent.selectorElement = Element.getElementById(oCurrent.selectorElement);
+			}
+			const aDirtyChanges = await FlexUtil.handleChanges([oCurrent], bIsGlobal, bIsTransient);
+			if (bIsGlobal) {
+				await FlexUtil.saveChanges(oControl, aDirtyChanges);
+			}
+		}, Promise.resolve());
 	};
 
 	FlexModificationHandler.prototype.waitForChanges = function(mPropertyBag, oModificationPayload) {

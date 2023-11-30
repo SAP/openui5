@@ -7,7 +7,8 @@ sap.ui.define([
 	"test-resources/sap/ui/mdc/qunit/link/opa/test/Action",
 	"test-resources/sap/ui/mdc/qunit/link/opa/test/Assertion",
 	"test-resources/sap/ui/mdc/qunit/link/opa/pages/AppUnderTest",
-	"test-resources/sap/ui/rta/integration/pages/Adaptation"
+	"test-resources/sap/ui/rta/integration/pages/Adaptation",
+	"test-resources/sap/ui/mdc/testutils/opa/TestLibrary"
 ], function(Opa5, opaQunit, Arrangement, Action, Assertion) {
 	"use strict";
 
@@ -24,7 +25,7 @@ sap.ui.define([
 	});
 
 	const fnCheckLinks = function(Then, mItems) {
-		Object.entries(mItems).forEach(function (oEntry) {
+		Object.entries(mItems).forEach(function(oEntry) {
 			const sLinkText = oEntry[0];
 			const oValue = oEntry[1];
 			Then.iShouldSeeLinkItemOnPosition(sLinkText, oValue.position);
@@ -164,10 +165,14 @@ sap.ui.define([
 		Then.iShouldSeeColumnWithName("Product ID");
 		Then.iShouldSeeColumnWithName("Category");
 
-		Then.iTeardownMyAppFrame();
+		When.onTheMDCLink.iPressTheLink({ text: "Projector" });
+		Then.onTheMDCLink.iShouldSeeAPopover({ text: "Projector" });
+		Then.onTheMDCLink.iShouldSeeLinksOnPopover({ text: "Projector" }, []);
+		Then.onTheMDCLink.theResetButtonIsEnabled({ text: "Projector" }, false);
+		When.iPressOkButton();
+		Then.thePersonalizationDialogShouldBeClosed();
 	});
 
-	/* Deactivated due to instability based on missing RTA page object functions.
 	opaTest("When I start RTA, the Runtime Adaptation mode should open", function(Given, When, Then) {
 		When.onTheAppUnderTest.iPressOnStartRtaButton().and.iWaitUntilTheBusyIndicatorIsGone("applicationUnderTest---IDView--MyApp");
 		Then.onPageWithRTA.iShouldSeeTheToolbar().and.iShouldSeeTheOverlayForTheApp("applicationUnderTest---IDView--MyApp");
@@ -184,10 +189,6 @@ sap.ui.define([
 		fnCheckLinks(Then, this.mItems);
 	});
 
-	// ------------------------------------------------------
-	// Test: deselect one, select another item and restore
-	// ------------------------------------------------------
-
 	opaTest("When I select 'Category Link4', the selection should be changed", function(Given, When, Then) {
 		When.iSelectLink("Category Link4");
 
@@ -195,17 +196,16 @@ sap.ui.define([
 
 		fnCheckLinks(Then, this.mItems);
 	});
-	opaTest("When I press 'OK' and then 'Restore' button and confirm the warning dialog, the RTA mode should finish", function(Given, When, Then) {
+	opaTest("When I press 'OK' and then 'Undo' button and confirm the warning dialog, the RTA mode should finish", function(Given, When, Then) {
 		When.iPressOkButton();
 		Then.thePersonalizationDialogShouldBeClosed();
 
-		When.iPressOnRtaResetButton();
+		When.onPageWithRTA.iClickTheUndoButton();
 
-		this.mItems["Category Link2 (Superior)"].selected = true;
 		this.mItems["Category Link4"].selected = false;
 
 		Then.theApplicationIsLoaded("applicationUnderTest---IDView--MyApp");
-		When.onPageWithRTA.iExitRtaMode();
+		When.onPageWithRTA.iExitRtaMode(true, true);
 
 		Then.iTeardownMyAppFrame();
 	});
@@ -241,5 +241,5 @@ sap.ui.define([
 
 		Then.iTeardownMyAppFrame();
 	});
-	*/
+
 });

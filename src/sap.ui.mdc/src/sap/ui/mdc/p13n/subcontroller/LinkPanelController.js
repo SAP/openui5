@@ -83,15 +83,37 @@ sap.ui.define([
 		}
 	};
 
-	LinkPanelController.prototype._createAddRemoveChange = function(oControl, vOperations, oContent) {
-		const sLinkItemId = oContent.name;
+	LinkPanelController.prototype._createAddRemoveChanges = function(aItems, oControl, vOperation, aDeltaAttributes) {
+		const aChanges = [];
+		for (let i = 0; i < aItems.length; i++) {
+			if (Array.isArray(vOperation)) {
+				vOperation.forEach((sOperation) => {
+					aChanges.push(this._createAddRemoveChange(oControl, sOperation, this._getChangeContent(aItems[i], aDeltaAttributes)));
+				});
+			} else {
+				aChanges.push(this._createAddRemoveChange(oControl, vOperation, this._getChangeContent(aItems[i], aDeltaAttributes)));
+			}
+		}
+		return aChanges.filter((oChange) => {
+			return oChange !== undefined;
+		});
+	};
 
+	LinkPanelController.prototype._createAddRemoveChange = function(oControl, sOperation, oContent) {
+		const sLinkItemId = oContent.name;
 		const oLinkItem = Element.getElementById(sLinkItemId);
 
-		let oAddRemoveChange;
-
+		if (sOperation === "revealItem" || sOperation === "hideItem") {
+			return {
+				selectorElement: oLinkItem ? oLinkItem : sLinkItemId,
+				changeSpecificData: {
+					changeType: sOperation,
+					content: {}
+				}
+			};
+		}
 		if (!oLinkItem) {
-			oAddRemoveChange = {
+			return {
 				selectorElement: oControl,
 				changeSpecificData: {
 					changeType: "createItem",
@@ -100,17 +122,8 @@ sap.ui.define([
 					}
 				}
 			};
-		} else {
-			oAddRemoveChange = {
-				selectorElement: oLinkItem,
-				changeSpecificData: {
-					changeType: vOperations === "hideItem" ? "hideItem" : "revealItem",
-					content: {}
-				}
-			};
 		}
-
-		return oAddRemoveChange;
+		return undefined;
 	};
 
 	LinkPanelController.prototype.mixInfoAndState = function(oPropertyHelper) {
