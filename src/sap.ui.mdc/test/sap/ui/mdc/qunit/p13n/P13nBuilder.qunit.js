@@ -1,5 +1,6 @@
 /* global QUnit, sinon */
 sap.ui.define([
+	"sap/ui/core/ElementRegistry",
 	"sap/ui/core/Lib",
 	"sap/ui/mdc/p13n/P13nBuilder",
 	"sap/m/p13n/BasePanel",
@@ -8,7 +9,7 @@ sap.ui.define([
 	"sap/ui/core/Core",
 	"sap/ui/fl/write/api/FieldExtensibility",
 	"sap/ui/rta/Utils"
-], function(Library, P13nBuilder, BasePanel, JSONModel, Element, oCore, FieldExtensibility, Utils) {
+], function(ElementRegistry, Library, P13nBuilder, BasePanel, JSONModel, Element, oCore, FieldExtensibility, Utils) {
 	"use strict";
 
 	const aVisible = ["key1", "key2", "key3"];
@@ -224,7 +225,7 @@ sap.ui.define([
 			oResetBtn.firePress();
 
 			//2) --> Find MessageBox opened by Dialog
-			const oMessageBox = Element.registry.filter(function(oElement){return oElement.getMetadata().isA("sap.m.Dialog") && oElement.getTitle() === "Warning";})[0];
+			const oMessageBox = ElementRegistry.filter(function(oElement){return oElement.getMetadata().isA("sap.m.Dialog") && oElement.getTitle() === "Warning";})[0];
 
 			//3) confirm warning
 			oMessageBox.getButtons()[0].firePress();

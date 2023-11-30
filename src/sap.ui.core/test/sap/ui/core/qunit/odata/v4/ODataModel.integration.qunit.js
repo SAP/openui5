@@ -4986,6 +4986,8 @@ sap.ui.define([
 			var oListBindingWithoutUI = oModel.bindList("/SalesOrderList"),
 				oCreatedPromise = oListBindingWithoutUI.create({}, true).created();
 
+			// This error is unavoidable as #fetchValue runs right after creating the context, but
+			// fails as the context is deleted already.
 			that.oLogMock.expects("error")
 				.withArgs(sinon.match("Failed to drill-down into ($uid="),
 					sSalesOrderService + "SalesOrderList", "sap.ui.model.odata.v4.lib._Cache");
@@ -14428,6 +14430,28 @@ sap.ui.define([
 				]);
 			});
 		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: While the list binding has a size limit > 1024 and a read group lock (initially or
+	// due to some kind of refresh), requestContexts is called. Ensure that not both requests (from
+	// requestContexts and getContexts) are performed with a lock (requiring them to run in the same
+	// batch) because with a read length > 1024 the cache has to serialize the calls.
+	// In the test we skip the view and call getContexts directly to make timing easier.
+	// BCP: 2370147917
+	QUnit.test("BCP: 2370147917", async function (assert) {
+		await this.createView(assert);
+
+		this.oModel.setSizeLimit(1025);
+		const oBinding = this.oModel.bindList("/EMPLOYEES");
+
+		this.expectRequest("EMPLOYEES?$skip=0&$top=1025", {value : [/*doesn't matter*/]});
+
+		// code under test
+		oBinding.requestContexts();
+		oBinding.getContexts(0, 20);
+
+		await this.waitForChanges(assert);
 	});
 
 	//*********************************************************************************************

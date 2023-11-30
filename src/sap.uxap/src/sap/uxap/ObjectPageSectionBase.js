@@ -73,6 +73,17 @@ sap.ui.define([
 				visible: {type: "boolean", group: "Appearance", defaultValue: true},
 
 				/**
+				 * Defines the actual visibility of the title of <code>ObjectPageSectionBase</code>.
+				 *
+				 * <b>Note:</b> This property is read-only. The <code>ObjectPageSectionBase</code> updates it, according to internal rules, based on UX specifications.
+				 * You can only read the value of <code>titleVisible</code> property and use it in your binding to determine the aria-levels of the inner Controls.
+				 *
+				 * @since 1.121.0
+				 * @protected
+				 */
+				titleVisible: {type: "boolean", group: "Appearance", defaultValue: true},
+
+				/**
 				 * Determines whether the section will be hidden on low resolutions.
 				 * @since 1.32.0
 				 */
@@ -145,12 +156,28 @@ sap.ui.define([
 		}
 	};
 
-
 	ObjectPageSectionBase.prototype.exit = function () {
 		if (this._oInvisibleText) {
 			this._oInvisibleText.destroy();
 			this._oInvisibleText = null;
 		}
+	};
+
+	ObjectPageSectionBase.prototype.setShowTitle = function (bShow) {
+		this.setProperty("showTitle", bShow);
+
+		this.setTitleVisible();
+
+		return this;
+	};
+
+	/**
+	 * Sets title visibility
+	 * @param {boolean} bVisible
+	 * @protected
+	 */
+	ObjectPageSectionBase.prototype.setTitleVisible = function (bVisible) {
+		return this.setProperty("titleVisible", this._isTitleVisible(), true);
 	};
 
 	ObjectPageSectionBase.prototype._getGrid = function () {
@@ -455,6 +482,7 @@ sap.ui.define([
 	ObjectPageSectionBase.prototype._setInternalTitleVisible = function (bValue, bInvalidate) {
 		if (bValue != this._bInternalTitleVisible) {
 			this._bInternalTitleVisible = bValue;
+			this.setTitleVisible();
 			if (bInvalidate) {
 				this.invalidate();
 			}
@@ -639,6 +667,7 @@ sap.ui.define([
 	ObjectPageSectionBase.prototype._updateShowHideState = function (bHide) {
 		var oObjectPage = this._getObjectPageLayout();
 		this._isHidden = bHide;
+		this.setTitleVisible();
 		this.$().children(this._sContainerSelector).toggle(!bHide);
 		if (oObjectPage) {
 			oObjectPage._requestAdjustLayout();
@@ -676,11 +705,13 @@ sap.ui.define([
 	 */
 	ObjectPageSectionBase.prototype._applyImportanceRules = function (sCurrentLowestImportanceLevelToShow) {
 		this._sCurrentLowestImportanceLevelToShow = sCurrentLowestImportanceLevelToShow;
+		this.setTitleVisible();
 
 		if (this.getDomRef()) {
 			this._updateShowHideState(this._shouldBeHidden());
 		} else {
 			this._isHidden = this._shouldBeHidden();
+			this.setTitleVisible();
 		}
 	};
 

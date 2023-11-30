@@ -1,13 +1,14 @@
 /*global QUnit, sinon*/
 
 sap.ui.define([
+	"sap/ui/core/ComponentRegistry",
 	"sap/ui/core/Lib",
 	"sap/ui/core/Theming",
 	"sap/ui/support/supportRules/report/DataCollector",
 	"sap/ui/core/Component",
 	"sap/ui/core/UIComponent",
 	"sap/ui/core/theming/ThemeManager"
-], function (Lib, Theming, DataCollector, Component, UIComponent, ThemeManager) {
+], function(ComponentRegistry, Lib, Theming, DataCollector, Component, UIComponent, ThemeManager) {
 		"use strict";
 
 		QUnit.module("Data collector", {
@@ -47,7 +48,7 @@ sap.ui.define([
 
 		QUnit.test("Application Info 'sap.app'", function (assert) {
 			// Arrange
-			var ComponentRegistryInitial = Component.registry;
+			var ComponentRegistryInitial = ComponentRegistry;
 			var DataCollectorTestComponent = UIComponent.extend("DataCollectorTestComponent", {
 				metadata: {
 					manifest: {
@@ -60,7 +61,7 @@ sap.ui.define([
 			var oComponent1 = new DataCollectorTestComponent();
 			var oComponent2 = new DataCollectorTestComponent();
 
-			Component.registry = [
+			ComponentRegistry = [
 				oComponent1,
 				oComponent2
 			];
@@ -80,14 +81,14 @@ sap.ui.define([
 			);
 
 			// Clean up
-			Component.registry = ComponentRegistryInitial;
+			ComponentRegistry = ComponentRegistryInitial;
 			oComponent1.destroy();
 			oComponent2.destroy();
 		});
 
 		QUnit.test("Application Info 'sap.fiori'", function (assert) {
 			// Arrange
-			var ComponentRegistryInitial = Component.registry;
+			var ComponentRegistryInitial = ComponentRegistry;
 			var DataCollectorTestComponent1 = UIComponent.extend("DataCollectorTestComponentWithSapFiori", {
 				metadata: {
 					manifest: {
@@ -110,7 +111,7 @@ sap.ui.define([
 			var oComponent1 = new DataCollectorTestComponent1();
 			var oComponent2 = new DataCollectorTestComponent2();
 
-			Component.registry = [
+			ComponentRegistry = [
 				oComponent1,
 				oComponent2
 			];
@@ -131,7 +132,7 @@ sap.ui.define([
 			);
 
 			// Clean up
-			Component.registry = ComponentRegistryInitial;
+			ComponentRegistry = ComponentRegistryInitial;
 			oComponent1.destroy();
 			oComponent2.destroy();
 		});

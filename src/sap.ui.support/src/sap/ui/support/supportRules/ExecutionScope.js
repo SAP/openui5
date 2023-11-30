@@ -3,8 +3,8 @@
  */
 
 sap.ui.define(
-	["sap/base/Log", "sap/ui/core/Component", "sap/ui/core/Element", "sap/ui/core/UIArea"],
-	function (Log, Component, Element, UIArea) {
+	["sap/base/Log", "sap/ui/core/Component", "sap/ui/core/ComponentRegistry", "sap/ui/core/Element", "sap/ui/core/UIAreaRegistry", "sap/ui/core/ElementRegistry", "sap/ui/core/UIArea"],
+	function(Log, Component, ComponentRegistry, Element, UIAreaRegistry, ElementRegistry, UIArea) {
 		"use strict";
 
 		var _context = null,
@@ -12,13 +12,13 @@ sap.ui.define(
 
 		var globalContext = {
 			setScope: function () {
-				elements = Element.registry.filter(function() { return true;});
+				elements = ElementRegistry.filter(function() { return true;});
 			}
 		};
 
 		var subtreeContext = {
 			setScope: function () {
-				var parent = Element.registry.get(_context.parentId);
+				var parent = ElementRegistry.get(_context.parentId);
 				//TODO: Handle parent not found
 				elements = parent.findAggregatedObjects(true);
 			}
@@ -28,7 +28,7 @@ sap.ui.define(
 			setScope: function () {
 				var set = {};
 				_context.components.forEach(function (componentId) {
-					var component = Component.registry.get(componentId),
+					var component = ComponentRegistry.get(componentId),
 						aggregations = component.findAggregatedObjects(true);
 
 					aggregations.forEach(function (agg) {
@@ -157,182 +157,184 @@ sap.ui.define(
 
 			contextTypes[_context.type].setScope();
 
-			return /** @lends sap.ui.support.ExecutionScope.prototype */ {
-				/**
-				 * @param {object} oConfig Object with specific filtering options
-				 * @param {string} oConfig.type Type name to filter by type
-				 * @param {boolean} oConfig.public Option to exclude elements that are
-				 * not public aggregations
-				 * @param {boolean} oConfig.cloned Option to exclude elements that are
-				 * clones of list bindings
-				 * @public
-				 * @returns {Array} Array of matched elements
-				 */
-				getElements: function (oConfig) {
-					var that = this;
+			return (
+				/** @lends sap.ui.support.ExecutionScope.prototype */ {
+					/**
+					 * @param {object} oConfig Object with specific filtering options
+					 * @param {string} oConfig.type Type name to filter by type
+					 * @param {boolean} oConfig.public Option to exclude elements that are
+					 * not public aggregations
+					 * @param {boolean} oConfig.cloned Option to exclude elements that are
+					 * clones of list bindings
+					 * @public
+					 * @returns {Array} Array of matched elements
+					 */
+					getElements: function (oConfig) {
+						var that = this;
 
-					var configKeys = {
-						"type": null,
-						"public": false,
-						"cloned": true
-					};
+						var configKeys = {
+							"type": null,
+							"public": false,
+							"cloned": true
+						};
 
-					if (oConfig && Object.keys(oConfig).length) {
-						var filteredElements = elements;
-						var oRepresentativeClones = {};
+						if (oConfig && Object.keys(oConfig).length) {
+							var filteredElements = elements;
+							var oRepresentativeClones = {};
 
-						Object.keys(configKeys).forEach(function (predefinedKey) {
-							if (oConfig.hasOwnProperty(predefinedKey)) {
-								switch (predefinedKey) {
-									case "type":
-										var elementsByType = that.getElementsByClassName(
-											oConfig["type"]
-										);
-										filteredElements = intersect(
-											filteredElements,
-											elementsByType
-										);
-										break;
-									case "public":
-										if (oConfig["public"] === true) {
-											var publicElements = that.getPublicElements();
+							Object.keys(configKeys).forEach(function (predefinedKey) {
+								if (oConfig.hasOwnProperty(predefinedKey)) {
+									switch (predefinedKey) {
+										case "type":
+											var elementsByType = that.getElementsByClassName(
+												oConfig["type"]
+											);
 											filteredElements = intersect(
 												filteredElements,
-												publicElements
+												elementsByType
 											);
-										}
-										break;
-									case "cloned":
-										if (!oConfig["cloned"]) {
-											filteredElements = filteredElements.filter(function (element) {
-												var bIsClonedFromListBinding = isClonedElementFromListBinding(element);
+											break;
+										case "public":
+											if (oConfig["public"] === true) {
+												var publicElements = that.getPublicElements();
+												filteredElements = intersect(
+													filteredElements,
+													publicElements
+												);
+											}
+											break;
+										case "cloned":
+											if (!oConfig["cloned"]) {
+												filteredElements = filteredElements.filter(function (element) {
+													var bIsClonedFromListBinding = isClonedElementFromListBinding(element);
 
-												if (bIsClonedFromListBinding) {
-													var sListBindingId = getClonedElementFromListBindingId(element);
+													if (bIsClonedFromListBinding) {
+														var sListBindingId = getClonedElementFromListBindingId(element);
 
-													if (!oRepresentativeClones.hasOwnProperty(sListBindingId)) {
-														oRepresentativeClones[sListBindingId] = element;
+														if (!oRepresentativeClones.hasOwnProperty(sListBindingId)) {
+															oRepresentativeClones[sListBindingId] = element;
+														}
 													}
-												}
 
-												return (bIsClonedFromListBinding === false);
-											});
-										}
-										break;
+													return (bIsClonedFromListBinding === false);
+												});
+											}
+											break;
+									}
 								}
-							}
-						});
+							});
 
-						Object.keys(oRepresentativeClones).forEach(function (sRepresentativeCloneId) {
-							filteredElements.push(oRepresentativeClones[sRepresentativeCloneId]);
-						});
+							Object.keys(oRepresentativeClones).forEach(function (sRepresentativeCloneId) {
+								filteredElements.push(oRepresentativeClones[sRepresentativeCloneId]);
+							});
 
-						return filteredElements;
-					}
-
-					return elements;
-				},
-				/**
-				 * Returns all public elements, i.e. elements that are part of public API
-				 * aggregations
-				 * @public
-				 * @returns {Array} Array of matched elements
-				 */
-				getPublicElements: function () {
-					var aPublicElements = [];
-					var mUIAreas = UIArea.registry.all();
-
-					Component.registry.forEach(function(oComponent) {
-						aPublicElements = aPublicElements.concat(
-							getPublicElementsInside(oComponent)
-						);
-					});
-
-					for (var key in mUIAreas) {
-						aPublicElements = aPublicElements.concat(
-							getPublicElementsInside(mUIAreas[key])
-						);
-					}
-
-					return aPublicElements;
-				},
-				/**
-				 * Gets elements by their type
-				 * @public
-				 * @param {string|function} classNameSelector Either string or function
-				 * to be used when selecting a subset of elements
-				 * @returns {Array} Array of matched elements
-				 */
-				getElementsByClassName: function (classNameSelector) {
-					if (typeof classNameSelector === "string") {
-						return elements.filter(function (element) {
-							return element.getMetadata().getName() === classNameSelector;
-						});
-					}
-
-					if (typeof classNameSelector === "function") {
-						return elements.filter(function (element) {
-							return element instanceof classNameSelector;
-						});
-					}
-				},
-				/**
-				 * Gets the logged objects by object type
-				 * @public
-				 * @param {any} type Type of logged objects
-				 * @returns {Array} Array of logged objects
-				 */
-				getLoggedObjects: function (type) {
-					var log = Log.getLogEntries(),
-						loggedObjects = [], elemIds;
-
-					// Add logEntries that have support info object,
-					// and that have the same type as the type provided
-					log.forEach(function (logEntry) {
-						if (!logEntry.supportInfo) {
-							return;
+							return filteredElements;
 						}
 
-						if (!elemIds){
-							elemIds = elements.map(function (element) {
-								return element.getId();
+						return elements;
+					},
+					/**
+					 * Returns all public elements, i.e. elements that are part of public API
+					 * aggregations
+					 * @public
+					 * @returns {Array} Array of matched elements
+					 */
+					getPublicElements: function () {
+						var aPublicElements = [];
+						var mUIAreas = UIAreaRegistry.all();
+
+						ComponentRegistry.forEach(function(oComponent) {
+							aPublicElements = aPublicElements.concat(
+								getPublicElementsInside(oComponent)
+							);
+						});
+
+						for (var key in mUIAreas) {
+							aPublicElements = aPublicElements.concat(
+								getPublicElementsInside(mUIAreas[key])
+							);
+						}
+
+						return aPublicElements;
+					},
+					/**
+					 * Gets elements by their type
+					 * @public
+					 * @param {string|function} classNameSelector Either string or function
+					 * to be used when selecting a subset of elements
+					 * @returns {Array} Array of matched elements
+					 */
+					getElementsByClassName: function (classNameSelector) {
+						if (typeof classNameSelector === "string") {
+							return elements.filter(function (element) {
+								return element.getMetadata().getName() === classNameSelector;
 							});
 						}
 
-						var hasElemId = !!logEntry.supportInfo.elementId,
-							typeMatch =
-								logEntry.supportInfo.type === type || type === undefined,
-							scopeMatch =
-								!hasElemId ||
-								elemIds.indexOf(logEntry.supportInfo.elementId) > -1;
-
-						/**
-						 * Give the developer the ability to pass filtering function
-						 */
-						if (typeof type === "function" && type(logEntry) && scopeMatch) {
-							loggedObjects.push(logEntry);
-							return;
+						if (typeof classNameSelector === "function") {
+							return elements.filter(function (element) {
+								return element instanceof classNameSelector;
+							});
 						}
+					},
+					/**
+					 * Gets the logged objects by object type
+					 * @public
+					 * @param {any} type Type of logged objects
+					 * @returns {Array} Array of logged objects
+					 */
+					getLoggedObjects: function (type) {
+						var log = Log.getLogEntries(),
+							loggedObjects = [], elemIds;
 
-						if (typeMatch && scopeMatch) {
-							loggedObjects.push(logEntry);
-						}
-					});
+						// Add logEntries that have support info object,
+						// and that have the same type as the type provided
+						log.forEach(function (logEntry) {
+							if (!logEntry.supportInfo) {
+								return;
+							}
 
-					return loggedObjects;
-				},
-				/**
-				 * Gets the type of the execution scope
-				 * @public
-				 * @returns {string} The type of the execution scope. Possible values are <code>global</code>, <code>subtree</code> or <code>components</code>.
-				 */
-				getType: function () {
-					return _context.type;
-				},
-				_getContext: function () {
-					return _context;
+							if (!elemIds){
+								elemIds = elements.map(function (element) {
+									return element.getId();
+								});
+							}
+
+							var hasElemId = !!logEntry.supportInfo.elementId,
+								typeMatch =
+									logEntry.supportInfo.type === type || type === undefined,
+								scopeMatch =
+									!hasElemId ||
+									elemIds.indexOf(logEntry.supportInfo.elementId) > -1;
+
+							/**
+							 * Give the developer the ability to pass filtering function
+							 */
+							if (typeof type === "function" && type(logEntry) && scopeMatch) {
+								loggedObjects.push(logEntry);
+								return;
+							}
+
+							if (typeMatch && scopeMatch) {
+								loggedObjects.push(logEntry);
+							}
+						});
+
+						return loggedObjects;
+					},
+					/**
+					 * Gets the type of the execution scope
+					 * @public
+					 * @returns {string} The type of the execution scope. Possible values are <code>global</code>, <code>subtree</code> or <code>components</code>.
+					 */
+					getType: function () {
+						return _context.type;
+					},
+					_getContext: function () {
+						return _context;
+					}
 				}
-			};
+			);
 		}
 
 		ExecutionScope.possibleScopes = Object.getOwnPropertyNames(contextTypes);

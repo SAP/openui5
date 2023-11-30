@@ -8,6 +8,7 @@ sap.ui.define([
 	'./library',
 	'sap/ui/core/Control',
 	'sap/ui/core/Element',
+	"sap/ui/core/ElementRegistry",
 	'sap/ui/core/EnabledPropagator',
 	'sap/ui/core/AccessKeysEnablement',
 	'sap/ui/core/library',
@@ -22,6 +23,7 @@ sap.ui.define([
 		library,
 		Control,
 		Element,
+		ElementRegistry,
 		EnabledPropagator,
 		AccessKeysEnablement,
 		coreLibrary,
@@ -556,7 +558,7 @@ sap.ui.define([
 
 		if (aLabelIds.length > 0) {
 			aLabelIds.forEach(function (sLabelId) {
-				Element.registry.get(sLabelId).addEventDelegate({
+				ElementRegistry.get(sLabelId).addEventDelegate({
 					ontap: function () {
 						that._fnLabelTapHandler();
 					}

@@ -3,6 +3,7 @@ sap.ui.define([
 	"sap/base/i18n/Localization",
 	"sap/ui/core/Element",
 	"sap/ui/core/Lib",
+	"sap/ui/core/UIAreaRegistry",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/m/DateTimePicker",
@@ -29,6 +30,7 @@ sap.ui.define([
 	Localization,
 	Element,
 	Library,
+	UIAreaRegistry,
 	qutils,
 	createAndAppendDiv,
 	DateTimePicker,
@@ -100,7 +102,7 @@ sap.ui.define([
 
 	// attach the model and central parse and validation handlers to the UIArea
 	// Note: 2nd UIArea (contentSmall) does not require data binding or validation handlers
-	const oUIArea = UIArea.registry.get("content");
+	const oUIArea = UIAreaRegistry.get("content");
 
 	var oModel = new JSONModel();
 	oModel.setData({

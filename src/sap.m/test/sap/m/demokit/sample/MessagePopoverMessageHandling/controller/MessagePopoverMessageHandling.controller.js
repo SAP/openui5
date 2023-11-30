@@ -2,6 +2,7 @@ sap.ui.define([
 	'sap/m/MessagePopover',
 	'sap/m/MessageItem',
 	'sap/m/MessageToast',
+	"sap/ui/core/ElementRegistry",
 	"sap/ui/core/Messaging",
 	'sap/ui/core/message/Message',
 	'sap/ui/core/library',
@@ -9,7 +10,7 @@ sap.ui.define([
 	'sap/ui/core/mvc/Controller',
 	'sap/ui/model/json/JSONModel',
 	'sap/ui/core/Element'
-], function(MessagePopover, MessageItem, MessageToast, Messaging, Message, coreLibrary, isBehindOtherElement, Controller, JSONModel, Element) {
+], function(MessagePopover, MessageItem, MessageToast, ElementRegistry, Messaging, Message, coreLibrary, isBehindOtherElement, Controller, JSONModel, Element) {
 	"use strict";
 
 	// shortcut for sap.ui.core.MessageType
@@ -47,7 +48,7 @@ sap.ui.define([
 					var oItem = oEvent.getParameter("item"),
 						oPage = that.getView().byId("messageHandlingPage"),
 						oMessage = oItem.getBindingContext("message").getObject(),
-						oControl = Element.registry.get(oMessage.getControlId());
+						oControl = ElementRegistry.get(oMessage.getControlId());
 
 					if (oControl) {
 						oPage.scrollToElement(oControl.getDomRef(), 200, [0, -100]);
@@ -83,7 +84,7 @@ sap.ui.define([
 		getGroupName : function (sControlId) {
 			// the group name is generated based on the current layout
 			// and is specific for each use case
-			var oControl = Element.registry.get(sControlId);
+			var oControl = ElementRegistry.get(sControlId);
 
 			if (oControl) {
 				var sFormSubtitle = oControl.getParent().getParent().getTitle().getText(),

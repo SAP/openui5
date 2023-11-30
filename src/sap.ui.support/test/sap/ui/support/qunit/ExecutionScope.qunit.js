@@ -1,35 +1,23 @@
 /*global sinon, QUnit*/
 sap.ui.define([
-		'sap/ui/support/supportRules/ExecutionScope',
-		'sap/ui/model/json/JSONModel',
-		'sap/ui/core/CustomData',
-		'sap/ui/core/Element',
-		'sap/m/Page',
-		'sap/m/Panel',
-		'sap/m/Button',
-		'sap/m/MaskInput',
-		'sap/m/ComboBox',
-		'sap/m/Input',
-		'sap/m/InputBase',
-		'sap/m/List',
-		'sap/m/StandardListItem',
-		'sap/ui/core/Core',
-		'sap/base/Log'],
-	function(ExecutionScope,
-			 JSONModel,
-			 CustomData,
-			 Element,
-			 Page,
-			 Panel,
-			 Button,
-			 MaskInput,
-			 ComboBox,
-			 Input,
-			 InputBase,
-			 List,
-			 StandardListItem,
-			 oCore,
-			 Log) {
+	"sap/ui/core/ElementRegistry",
+	'sap/ui/support/supportRules/ExecutionScope',
+	'sap/ui/model/json/JSONModel',
+	'sap/ui/core/CustomData',
+	'sap/ui/core/Element',
+	'sap/m/Page',
+	'sap/m/Panel',
+	'sap/m/Button',
+	'sap/m/MaskInput',
+	'sap/m/ComboBox',
+	'sap/m/Input',
+	'sap/m/InputBase',
+	'sap/m/List',
+	'sap/m/StandardListItem',
+	'sap/ui/core/Core',
+	'sap/base/Log'
+],
+	function(ElementRegistry, ExecutionScope, JSONModel, CustomData, Element, Page, Panel, Button, MaskInput, ComboBox, Input, InputBase, List, StandardListItem, oCore, Log) {
 		'use strict';
 
 		// list setup code copied from list.qunit
@@ -205,7 +193,7 @@ sap.ui.define([
 			var elements = this.es.getElements();
 			assert.equal(
 				elements.length,
-				Element.registry.size,
+				ElementRegistry.size,
 				" should be equal to size of Element registry"
 			);
 		});

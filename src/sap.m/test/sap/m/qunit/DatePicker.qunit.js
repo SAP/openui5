@@ -3,6 +3,7 @@ sap.ui.define([
 	"sap/base/i18n/Formatting",
 	"sap/base/i18n/Localization",
 	"sap/ui/core/Lib",
+	"sap/ui/core/UIAreaRegistry",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/test/TestUtils",
@@ -46,6 +47,7 @@ sap.ui.define([
 	Formatting,
 	Localization,
 	Library,
+	UIAreaRegistry,
 	qutils,
 	createAndAppendDiv,
 	TestUtils,
@@ -195,7 +197,7 @@ sap.ui.define([
 		}).placeAt("content");
 
 	// attach the model and central parse and validation handlers to the UIArea
-	const oUIArea = UIArea.registry.get("content");
+	const oUIArea = UIAreaRegistry.get("content");
 
 	var oModel = new JSONModel();
 	oModel.setData({

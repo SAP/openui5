@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<title>Actions Strip</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<script src="../../../scripts/boot.js"></script>
+</head>
+
+<body class="sapUiBody topicBody">
+
+	<div class="topic">
+		<div class="content">
+			<h1 id="overview">Actions Strip</h1>
+			<p>
+				Actions strip contains buttons or links in an overflow toolbar. Visibility and order can be set according to their priority.
+				Currently available in List card and card footer.
+			</p>
+
+			<div class="messageStripWarning">
+				Experimental feature. The API may change.
+			</div>
+
+			<h2 id="usage">Usage</h2>
+			<p>
+				Actions strip items can be static or dynamic based on the data.
+			</p>
+			<div class="tableWrapper">
+				<table>
+					<tr>
+						<th>Property</th>
+						<th>Type</th>
+						<th>Default Value</th>
+						<th>Required</th>
+						<th>Description</th>
+						<th>Schema Version</th>
+						<th>Since</th>
+					</tr>
+					<tr>
+						<td>actionsStrip</td>
+						<td><a href="#properties">ActionsStrip</a>|<a href="#actionsStripItemProperties">ActionsStripItem[]</a></td>
+						<td></td>
+						<td>Yes</td>
+						<td>Binding info object or array of static items.</td>
+						<td>1.61.0</td>
+						<td>1.121</td>
+					</tr>
+				</table>
+			</div>
+
+			<h2 id="properties">Properties</h2>
+			<div class="tableWrapper">
+				<table>
+					<tr>
+						<th>Property</th>
+						<th>Type</th>
+						<th>Default Value</th>
+						<th>Required</th>
+						<th>Description</th>
+						<th>Schema Version</th>
+						<th>Since</th>
+					</tr>
+					<tr>
+						<td>item</td>
+						<td><a href="#actionsStripItemBindingInfoProperties">ActionsStripItemBindingInfo</a></td>
+						<td></td>
+						<td>Yes</td>
+						<td>Binding info object used to bind data to items.</td>
+						<td>1.61.0</td>
+						<td>1.121</td>
+					</tr>
+				</table>
+			</div>
+
+			<div id="actionsStripItemBindingInfoProperties" class="boldBlock">ActionsStripItemBindingInfo Properties</div>
+			<div class="tableWrapper">
+				<table>
+					<tr>
+						<th>Property</th>
+						<th>Type</th>
+						<th>Default Value</th>
+						<th>Required</th>
+						<th>Description</th>
+						<th>Schema Version</th>
+						<th>Since</th>
+					</tr>
+					<tr>
+						<td>template</td>
+						<td><a href="#actionsStripItemProperties">ActionsStripItem</a></td>
+						<td></td>
+						<td>Yes</td>
+						<td>Binding template for items.</td>
+						<td>1.61.0</td>
+						<td>1.121</td>
+					</tr>
+					<tr>
+						<td>path</td>
+						<td>string</td>
+						<td></td>
+						<td>Yes</td>
+						<td>The context path.</td>
+						<td>1.61.0</td>
+						<td>1.121</td>
+					</tr>
+				</table>
+			</div>
+
+			<div id="actionsStripItemProperties" class="boldBlock">ActionsStripItem Properties</div>
+			<div class="tableWrapper">
+				<table>
+					<tr>
+						<th>Property</th>
+						<th>Type</th>
+						<th>Default Value</th>
+						<th>Required</th>
+						<th>Description</th>
+						<th>Schema Version</th>
+						<th>Since</th>
+					</tr>
+					<tr>
+						<td>type</td>
+						<td>string</td>
+						<td>"Button"</td>
+						<td>No</td>
+						<td>
+							The type of the item. Possible values are:
+							<ul>
+								<li>"Button" - creates a button</li>
+								<li>"ToolbarSpacer" - creates a toolbar spacer</li>
+								<li>"Link" - creates a link with optional icon. Available since 1.107</li>
+							</ul>
+						</td>
+						<td>1.35.0</td>
+						<td>1.93</td>
+					</tr>
+					<tr>
+						<td>actions</td>
+						<td><a href="../../index.html#/learn/actions" target="_parent">Actions[]</a></td>
+						<td></td>
+						<td>No</td>
+						<td>Actions that are triggered when the item is pressed.</td>
+						<td>1.35.0</td>
+						<td>1.93</td>
+					</tr>
+					<tr>
+						<td>overflowPriority</td>
+						<td><a data-demokit-href="#/api/sap.m.OverflowToolbarPriority" target="_blank">sap.m.OverflowToolbarPriority</a></td>
+						<td></td>
+						<td>No</td>
+						<td>Defines items priority.</td>
+						<td>1.35.0</td>
+						<td>1.93</td>
+					</tr>
+					<tr>
+						<td>icon</td>
+						<td>string</td>
+						<td></td>
+						<td>No</td>
+						<td>The icon of the item.</td>
+						<td>1.35.0</td>
+						<td>1.93</td>
+					</tr>
+					<tr>
+						<td>text</td>
+						<td>string</td>
+						<td></td>
+						<td>No</td>
+						<td>The text of the item.</td>
+						<td>1.35.0</td>
+						<td>1.93</td>
+					</tr>
+					<tr>
+						<td>tooltip</td>
+						<td>string</td>
+						<td></td>
+						<td>No</td>
+						<td>The tooltip of the item.</td>
+						<td>1.35.0</td>
+						<td>1.93</td>
+					</tr>
+					<tr>
+						<td>buttonType</td>
+						<td><a data-demokit-href="#/api/sap.m.ButtonType" target="_blank">sap.m.ButtonType</a></td>
+						<td></td>
+						<td>No</td>
+						<td>The type of the button. Only used when the type is "Button".</td>
+						<td>1.35.0</td>
+						<td>1.93</td>
+					</tr>
+					<tr>
+						<td>ariaHasPopup</td>
+						<td><a data-demokit-href="#/api/sap.ui.core.aria.HasPopup" target="_blank">sap.ui.core.aria.HasPopup</a></td>
+						<td></td>
+						<td>No</td>
+						<td>Use this property only when the item is related to a popover/popup.</td>
+						<td>1.35.0</td>
+						<td>1.93</td>
+					</tr>
+					<tr>
+						<td>visible</td>
+						<td>boolean</td>
+						<td>true</td>
+						<td>No</td>
+						<td>Determines whether the item is visible.</td>
+						<td>1.35.0</td>
+						<td>1.93</td>
+					</tr>
+				</table>
+			</div>
+
+			<h2 id="parentModel">Parent Model</h2>
+			<p>
+				When actions strip items are created via item template, you can bind them to the parent context using the model called "parent", like:
+				<code>"{parent>/parentProperty}"</code>
+			</p>
+
+			<h2 id="examples">Examples</h2>
+			<p>Actions strip with static items:</p>
+			<pre class="lang-json">{
+	"sap.card": {
+		"type": "List",
+		"data": {
+			...
+		},
+		"header": {
+			"title": "Title"
+		},
+		"content": {
+			"item": {
+				"title": "{name}",
+				"description": "{description}",
+				<mark>"actionsStrip": [
+					{
+						"type": "Link",
+						"text": "Agenda",
+						"icon": "sap-icon://action",
+						"actions": [
+							{
+								"type": "Navigation",
+								"parameters": {
+									"url": "{agendaUrl}"
+								}
+							}
+						]
+					},
+					{
+						"type": "ToolbarSpacer"
+					},
+					{
+						"text": "Approve",
+						"overflowPriority": "High",
+						"actions": [
+							{
+								"type": "Custom",
+								"parameters": {
+									"method": "approve"
+								}
+							}
+						]
+					}
+				]</mark>
+			}
+		}
+	}
+}</pre>
+
+			<p>Actions strip with dynamic items:</p>
+			<pre class="lang-json">{
+	"sap.card": {
+		"type": "List",
+		"data": {
+			"json": {
+				"items": [
+					{
+						"title": "Item 1",
+						"actionItems": [
+							{
+								"text": "Accept"
+							},
+							{
+								"text": "Reject"
+							}
+						]
+					},
+					{
+						"title": "Item 1",
+						"actionItems": [
+							{
+								"text": "Accept"
+							},
+							{
+								"text": "Reject"
+							},
+							{
+								"text": "Remind Me Later"
+							}
+						]
+					}
+				]
+			}
+		},
+		"header": {
+			"title": "Title"
+		},
+		"content": {
+			"data": {
+				"path": "items"
+			},
+			"item": {
+				"title": "{name}",
+				"description": "{description}",
+				<mark>"actionsStrip": {
+					"item": {
+						"template": {
+							"text": "{text}",
+							"id": "{parent>/id}"
+						},
+						"path": "actionItems"
+					}
+				}</mark>
+			}
+		}
+	}
+}</pre>
+
+			<p>Try out:</p>
+			<ul>
+				<li><a href="../../../index.html#/explore/list/actionsStrip" target="_parent">Actions strip in list</a></li>
+				<li><a href="../../../index.html#/explore/list/dynamicActionsStrip" target="_parent">Actions strip in list with dynamic items</a></li>
+				<li><a href="../../../index.html#/explore/footer" target="_parent">Actions strip in footer</a></li>
+			</ul>
+		</div>
+	</div>
+</body>
+
+</html>

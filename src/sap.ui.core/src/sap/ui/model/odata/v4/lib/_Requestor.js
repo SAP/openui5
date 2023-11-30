@@ -1477,7 +1477,7 @@ sap.ui.define([
 					Promise.resolve(fnOptimisticBatchEnabler(sKey)).then(async (bEnabled) => {
 						if (!bEnabled) {
 							await CacheManager.del(sCachePrefix + sKey);
-							Log.info("optimistic batch: disabled, response deleted", sKey,
+							Log.info("optimistic batch: disabled, batch payload deleted", sKey,
 								sClassName);
 						}
 					}).catch(that.oModelInterface.getReporter());
@@ -1486,9 +1486,8 @@ sap.ui.define([
 				Log.info("optimistic batch: success, response consumed", sKey, sClassName);
 				return oOptimisticBatch.result;
 			}
-			CacheManager.del(sCachePrefix + sKey).then(() => {
-				Log.warning("optimistic batch: mismatch, response skipped", sKey, sClassName);
-			}, this.oModelInterface.getReporter());
+			Log.warning("optimistic batch: mismatch, response skipped", sKey, sClassName);
+			CacheManager.del(sCachePrefix + sKey).catch(this.oModelInterface.getReporter());
 		}
 
 		if (fnOptimisticBatchEnabler) { // 1st app start, or optimistic batch payload did not match

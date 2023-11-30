@@ -3,8 +3,8 @@
  */
 sap.ui.define([
 	"sap/base/i18n/Localization",
-	"sap/ui/core/format/TimezoneUtil"
-], function (Localization, TimezoneUtil) {
+	"sap/base/i18n/date/TimezoneUtils"
+], function (Localization, TimezoneUtils) {
 	"use strict";
 
 	var aAllParts = ["year", "month", "day", "hour", "minute", "second", "fractionalSecond"],
@@ -110,7 +110,7 @@ sap.ui.define([
 			return NaN;
 		}
 
-		this.oDateParts = this.oDateParts || TimezoneUtil._getParts(this.oDate, this.sTimezoneID);
+		this.oDateParts = this.oDateParts || TimezoneUtils._getParts(this.oDate, this.sTimezoneID);
 		if (sPart === "weekday") {
 			return mWeekdayToDay[this.oDateParts.weekday];
 		}
@@ -178,18 +178,18 @@ sap.ui.define([
 			oCurrentDateParts = {day: "1", fractionalSecond: "0", hour: "0", minute: "0",
 				month: "1", second: "0"};
 		} else {
-			oCurrentDateParts = TimezoneUtil._getParts(this.oDate, this.sTimezoneID);
+			oCurrentDateParts = TimezoneUtils._getParts(this.oDate, this.sTimezoneID);
 		}
 		oDateParts = Object.assign({}, oCurrentDateParts, oDateParts);
 
 		// NaN may happen if no year is given if current date is invalid
-		oNewDateAsUTCTimestamp = TimezoneUtil._getDateFromParts(oDateParts);
+		oNewDateAsUTCTimestamp = TimezoneUtils._getDateFromParts(oDateParts);
 		if (isNaN(oNewDateAsUTCTimestamp)) {
 			return this.setTime(NaN);
 		}
 
 		iNewTimestamp = oNewDateAsUTCTimestamp.getTime()
-			+ TimezoneUtil.calculateOffset(oNewDateAsUTCTimestamp, this.sTimezoneID) * 1000;
+			+ TimezoneUtils.calculateOffset(oNewDateAsUTCTimestamp, this.sTimezoneID) * 1000;
 		return this.setTime(iNewTimestamp);
 	};
 
@@ -324,7 +324,7 @@ sap.ui.define([
 	 * @public
 	 */
 	UI5Date.prototype.getTimezoneOffset = function () {
-		return TimezoneUtil.calculateOffset(this.oDate, this.sTimezoneID) / 60;
+		return TimezoneUtils.calculateOffset(this.oDate, this.sTimezoneID) / 60;
 	};
 
 	/**
@@ -976,7 +976,7 @@ sap.ui.define([
 	UI5Date.getInstance = function () {
 		var sTimezone = Localization.getTimezone();
 
-		if (sTimezone !== TimezoneUtil.getLocalTimezone()) {
+		if (sTimezone !== TimezoneUtils.getLocalTimezone()) {
 			return new UI5Date(arguments, sTimezone);
 		}
 		// time zones are equal -> use JavaScript Date as it is
@@ -998,7 +998,7 @@ sap.ui.define([
 		if (isNaN(oDate.getTime())) {
 			throw new Error("The given Date is not valid");
 		}
-		if (!(oDate instanceof UI5Date) && (Localization.getTimezone() !== TimezoneUtil.getLocalTimezone())) {
+		if (!(oDate instanceof UI5Date) && (Localization.getTimezone() !== TimezoneUtils.getLocalTimezone())) {
 			throw new Error("Configured time zone requires the parameter 'oDate' to be an instance of"
 				+ " sap.ui.core.date.UI5Date");
 		}

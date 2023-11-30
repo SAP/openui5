@@ -346,7 +346,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("mode: Auto (without VM) --> check dirty changes", function(assert){
+	QUnit.test("mode: Auto (without VM) --> check persisted changes", function(assert){
 
 		var done = assert.async();
 
@@ -364,6 +364,27 @@ sap.ui.define([
 			assert.ok(oHasDirtyChangesSpy.callCount === 0);
 			FlexRuntimeInfoAPI.isPersonalized.restore();
 			ControlPersonalizationWriteAPI.hasDirtyFlexObjects.restore();
+			done();
+		});
+	});
+
+	QUnit.test("mode: Auto (without VM) --> check changeTypes are forwarded", function(assert){
+
+		var done = assert.async();
+
+		var oIsPersonalizedSpy = sinon.spy(FlexRuntimeInfoAPI, "isPersonalized");
+
+		var oModificationPayload = {
+			mode: "Auto",
+			hasVM: false
+		};
+
+		this.mPropertyBag.changeTypes = ["test"];
+
+		//check for persisted changes in case of global persistence
+		this.oHandler.hasChanges(this.mPropertyBag, oModificationPayload).finally(function(){
+			assert.equal(oIsPersonalizedSpy.args[0][0].changeTypes[0], 'test', "change types forwarded");
+			FlexRuntimeInfoAPI.isPersonalized.restore();
 			done();
 		});
 	});

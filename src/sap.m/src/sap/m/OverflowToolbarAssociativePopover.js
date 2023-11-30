@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.m._overflowToolbarHelpers.OverflowToolbarAssociativePopover.
-sap.ui.define(['sap/ui/core/Element', './Popover', './OverflowToolbarAssociativePopoverControls', './OverflowToolbarAssociativePopoverRenderer', './OverflowToolbarLayoutData', 'sap/m/library'],
-	function(Element, Popover, OverflowToolbarAssociativePopoverControls, OverflowToolbarAssociativePopoverRenderer, OverflowToolbarLayoutData, library) {
+sap.ui.define(['sap/ui/core/Element', './Popover', './OverflowToolbarAssociativePopoverControls', './OverflowToolbarAssociativePopoverRenderer', './OverflowToolbarLayoutData', 'sap/m/library', "sap/ui/core/ElementRegistry"],
+	function(Element, Popover, OverflowToolbarAssociativePopoverControls, OverflowToolbarAssociativePopoverRenderer, OverflowToolbarLayoutData, library, ElementRegistry) {
 	"use strict";
 
 
@@ -73,7 +73,7 @@ sap.ui.define(['sap/ui/core/Element', './Popover', './OverflowToolbarAssociative
 			oControlObject;
 
 		if (sResult) {
-			oControlObject = Element.registry.get(sResult);
+			oControlObject = ElementRegistry.get(sResult);
 			if (oControlObject) {
 				this._postProcessControl(oControlObject);
 			}
@@ -196,7 +196,7 @@ sap.ui.define(['sap/ui/core/Element', './Popover', './OverflowToolbarAssociative
 	 */
 	OverflowToolbarAssociativePopover.prototype._getAllContent = function () {
 		var aAssociatedContent = this.getAssociatedContent().map(function(sId) {
-			return Element.registry.get(sId);
+			return ElementRegistry.get(sId);
 		});
 
 		if (this.getPlacement() === PlacementType.Top) {

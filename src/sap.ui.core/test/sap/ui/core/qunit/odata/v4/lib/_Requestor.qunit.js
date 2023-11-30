@@ -5513,7 +5513,7 @@ sap.ui.define([
 				this.mock(CacheManager).expects("del")
 					.withExactArgs("sap.ui.model.odata.v4.optimisticBatch:" + sKey).resolves();
 				this.oLogMock.expects("info")
-					.withExactArgs("optimistic batch: disabled, response deleted", sKey,
+					.withExactArgs("optimistic batch: disabled, batch payload deleted", sKey,
 						sClassName);
 				done();
 			}
@@ -5567,7 +5567,7 @@ sap.ui.define([
 		this.mock(oModelInterface).expects("getReporter").withExactArgs().returns(fnReporter);
 
 		this.oLogMock.expects("info")
-			.withExactArgs("optimistic batch: disabled, response deleted", sKey, sClassName)
+			.withExactArgs("optimistic batch: disabled, batch payload deleted", sKey, sClassName)
 			.never();
 		this.oLogMock.expects("info")
 			.withExactArgs("optimistic batch: success, response consumed", sKey, sClassName);
@@ -5610,6 +5610,8 @@ sap.ui.define([
 			.withExactArgs("~requests~", "~group~", "~optimisticRequests~", "~optimisticGroup~")
 			.returns(false);
 
+		this.oLogMock.expects("warning")
+			.withExactArgs("optimistic batch: mismatch, response skipped", sKey, sClassName);
 		if (bRejects) {
 			oCacheManagerMock.expects("del")
 				.withExactArgs("sap.ui.model.odata.v4.optimisticBatch:" + sKey)
@@ -5618,8 +5620,6 @@ sap.ui.define([
 			oCacheManagerMock.expects("del")
 				.withExactArgs("sap.ui.model.odata.v4.optimisticBatch:" + sKey)
 				.resolves();
-			this.oLogMock.expects("warning")
-				.withExactArgs("optimistic batch: mismatch, response skipped", sKey, sClassName);
 			done();
 		}
 		oModelInterfaceMock.expects("getReporter")

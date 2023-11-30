@@ -10,12 +10,13 @@ sap.ui.define([
 	"sap/base/util/LoaderExtensions",
 	"sap/base/security/encodeXML",
 	"sap/ui/core/Component",
+	"sap/ui/core/ComponentRegistry",
 	"sap/ui/core/Lib",
 	"sap/ui/core/Theming",
 	"sap/ui/core/theming/ThemeManager",
 	"sap/ui/core/support/ToolsAPI",
 	"sap/ui/thirdparty/URI"
-], function (VersionInfo, LoaderExtensions, encodeXML, Component, Lib, Theming, ThemeManager, ToolsAPI, URI) {
+], function(VersionInfo, LoaderExtensions, encodeXML, Component, ComponentRegistry, Lib, Theming, ThemeManager, ToolsAPI, URI) {
 "use strict";
 
 /**
@@ -72,7 +73,7 @@ DataCollector.prototype.getSupportAssistantInfo = function() {
  */
 DataCollector.prototype.getAppInfo = function() {
 	var aAppInfos = [];
-	Component.registry.forEach(function(oComponent) {
+	ComponentRegistry.forEach(function(oComponent) {
 		var oSapApp = oComponent.getManifestEntry("sap.app"),
 			oSapFiori = oComponent.getManifestEntry("sap.fiori");
 

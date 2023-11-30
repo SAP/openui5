@@ -458,7 +458,7 @@ sap.ui.define([
 
 		assert.equal(aChanges[1].changeSpecificData.changeType, "moveFilter", "Returned value is of correct type");
 		assert.equal(aChanges[1].changeSpecificData.content.key, "A", "Returned the expected name");
-		assert.equal(aChanges[1].changeSpecificData.content.index, 5, "Returned the expected index");
+		assert.equal(aChanges[1].changeSpecificData.content.index, 4, "Returned the expected index");
 		// move A:5
 		//[{"name":"B","key":"B"},{"name":"F","key":"F"}, {"name":"C","key":"C"},{"name":"D","key":"D"},{"name":"A","key":"A"},{"name":"E","key":"E"}]
 
@@ -489,7 +489,7 @@ sap.ui.define([
 
 		assert.equal(aChanges[1].changeSpecificData.changeType, "moveFilter", "Returned value is of correct type");
 		assert.equal(aChanges[1].changeSpecificData.content.key, "A", "Returned the expected name");
-		assert.equal(aChanges[1].changeSpecificData.content.index, 3, "Returned the expected index");
+		assert.equal(aChanges[1].changeSpecificData.content.index, 2, "Returned the expected index");
 
 		//-----------------------------------------------------------------------
 		// moving
@@ -509,7 +509,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("check 'getArrayDeltaChanges (moving)'", function(assert){
+	QUnit.test("check 'getArrayDeltaChanges (moving) part 2'", function(assert){
 
 		var aChanges;
 		var oAdaptationControl = this.oSelectionController.getAdaptationControl();
@@ -579,7 +579,7 @@ sap.ui.define([
 
 		assert.equal(aChanges[0].changeSpecificData.changeType, "moveFilter", "Returned value is of correct type");
 		assert.equal(aChanges[0].changeSpecificData.content.key, "B", "Returned the expected name");
-		assert.equal(aChanges[0].changeSpecificData.content.index, 6, "Returned the expected index");
+		assert.equal(aChanges[0].changeSpecificData.content.index, 5, "Returned the expected index");
 		// move B: last
 		//[{"name":"A","key":"A"},{"name":"C","key":"C"},{"name":"D","key":"D"},{"name":"E","key":"E"},{"name":"F","key":"F"},{"name":"B","key":"B"}];
 
@@ -587,7 +587,7 @@ sap.ui.define([
 		assert.equal(aChanges[1].changeSpecificData.content.key, "E", "Returned the expected name");
 		assert.equal(aChanges[1].changeSpecificData.content.index, 6, "Returned the expected index");
 		// move E: last
-		//[{"name":"A","key":"A"},{"name":"C","key":"C"},{"name":"D","key":"D"},{"name":"E","key":"E"},{"name":"F","key":"F"},{"name":"B","key":"B"},{"name":"E","key":"E"},];
+		//[{"name":"A","key":"A"},{"name":"C","key":"C"},{"name":"D","key":"D"},{"name":"F","key":"F"},{"name":"B","key":"B"},{"name":"E","key":"E"}];
 
 
 	});

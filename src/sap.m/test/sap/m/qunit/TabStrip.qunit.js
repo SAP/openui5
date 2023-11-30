@@ -1,5 +1,6 @@
 /*global QUnit, sinon */
 sap.ui.define([
+	"sap/ui/core/ElementRegistry",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/m/TabStrip",
@@ -13,6 +14,7 @@ sap.ui.define([
 	"sap/ui/events/KeyCodes",
 	"sap/ui/core/Core"
 ], function(
+	ElementRegistry,
 	qutils,
 	createAndAppendDiv,
 	TabStrip,
@@ -796,8 +798,8 @@ sap.ui.define([
 
 		// act
 		// assert
-		assert.equal(Element.registry.get("tabOne").id, this.oTS.getSelectedItem(), "Selected item is renndered");
-		assert.equal(Element.registry.get("tabTwo").id, undefined, "Second tab is not rendered");
+		assert.equal(ElementRegistry.get("tabOne").id, this.oTS.getSelectedItem(), "Selected item is renndered");
+		assert.equal(ElementRegistry.get("tabTwo").id, undefined, "Second tab is not rendered");
 
 		//clean
 		jQuery('body').removeClass('sap-phone');

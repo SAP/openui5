@@ -301,7 +301,7 @@ sap.ui.define([
 					// eslint-disable-next-line no-loop-func
 					aDeleted.forEach(function(oItem) {
 						var nDelIndex = this._indexOfByKeyName(aChangedItems, oItem.key || oItem.name);
-						if (nDelIndex <= aDiff[i].index) {
+						if (nDelIndex < aDiff[i].index) {
 							nIndex++;
 						}
 					}.bind(this));

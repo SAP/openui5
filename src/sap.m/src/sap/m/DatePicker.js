@@ -5,6 +5,7 @@
 // Provides control sap.m.DatePicker.
 sap.ui.define([
 	"sap/base/i18n/Localization",
+	"sap/ui/core/ElementRegistry",
 	"sap/ui/core/Lib",
 	'sap/ui/thirdparty/jquery',
 	'sap/ui/Device',
@@ -38,6 +39,7 @@ sap.ui.define([
 ],
 	function(
 		Localization,
+		ElementRegistry,
 		Library,
 		jQuery,
 		Device,
@@ -1244,7 +1246,7 @@ sap.ui.define([
 				sTitleText = LabelEnablement.getReferencingLabels(this)
 					.concat(this.getAriaLabelledBy())
 					.reduce(function(sAccumulator, sCurrent) {
-						var oCurrentControl = Element.registry.get(sCurrent);
+						var oCurrentControl = ElementRegistry.get(sCurrent);
 						return sAccumulator + " " + (oCurrentControl.getText ? oCurrentControl.getText() : "");
 					}, "")
 					.trim();

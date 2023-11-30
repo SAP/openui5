@@ -286,6 +286,11 @@ sap.ui.define([
 
 		assert.strictEqual(aLinks[1].getAttribute('href'), '#/child1', 'href attr is correct');
 		assert.strictEqual(aLinks[1].getAttribute('target'), '_self', 'target attr is correct');
+
+		var firstItemDomRef = this.navigationList.getItems()[0].getDomRef();
+		var computedStyle = getComputedStyle(firstItemDomRef.querySelector(".sapTntNLI"), ":before");
+
+		assert.strictEqual(computedStyle.pointerEvents, "none", "pointer events are disabled");
 	});
 
 	QUnit.test("list.setExpanded(false)", function (assert) {

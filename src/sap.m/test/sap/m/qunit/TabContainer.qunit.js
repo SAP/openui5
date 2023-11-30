@@ -1,5 +1,6 @@
 /*global QUnit */
 sap.ui.define([
+	"sap/ui/core/ElementRegistry",
 	"sap/ui/core/Lib",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
@@ -18,6 +19,7 @@ sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/Core"
 ], function(
+	ElementRegistry,
 	Library,
 	qutils,
 	createAndAppendDiv,
@@ -192,7 +194,7 @@ sap.ui.define([
 			oTabStrip = this.oTabContainer._getTabStrip();
 
 		// act
-		this.oTabContainer.removeItem(Element.registry.get(sSelectedItemId));
+		this.oTabContainer.removeItem(ElementRegistry.get(sSelectedItemId));
 
 		// assert
 		assert.equal(oTabStrip.getSelectedItem(), undefined, "Selected item id is removed");

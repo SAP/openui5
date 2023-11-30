@@ -141,6 +141,10 @@ sap.ui.define([
 			var oTable = this.byId("persoTable");
 			var oState = oEvt.getParameter("state");
 
+			if (!oState) {
+				return;
+			}
+
 			oTable.getColumns().forEach(function(oColumn){
 
 				var sKey = this._getKey(oColumn);

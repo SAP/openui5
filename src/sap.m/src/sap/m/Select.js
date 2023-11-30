@@ -9,6 +9,7 @@ sap.ui.define([
 	'./SelectList',
 	'./library',
 	'sap/ui/core/Control',
+	"sap/ui/core/ElementRegistry",
 	'sap/ui/core/EnabledPropagator',
 	'sap/ui/core/LabelEnablement',
 	'sap/ui/core/Icon',
@@ -39,6 +40,7 @@ function(
 	SelectList,
 	library,
 	Control,
+	ElementRegistry,
 	EnabledPropagator,
 	LabelEnablement,
 	Icon,
@@ -2013,7 +2015,7 @@ function(
 				return;
 			}
 
-			var oControl = Element.registry.get(oEvent.relatedControlId),
+			var oControl = ElementRegistry.get(oEvent.relatedControlId),
 				oFocusDomRef = oControl && oControl.getFocusDomRef();
 
 			if (Device.system.desktop && containsOrEquals(oPicker.getFocusDomRef(), oFocusDomRef)) {
@@ -2072,7 +2074,7 @@ function(
 			this.setProperty("selectedItemId", (vItem instanceof Item) ? vItem.getId() : vItem, true);
 
 			if (typeof vItem === "string") {
-				vItem = Element.registry.get(vItem);
+				vItem = ElementRegistry.get(vItem);
 			}
 
 			sKey = vItem ? vItem.getKey() : "";
@@ -2639,7 +2641,7 @@ function(
         Select.prototype._clearReferencingLabelsHandlers = function () {
 			var oLabel;
             this._referencingLabelsHandlers.forEach(function (oHandler) {
-				oLabel = Element.registry.get(oHandler.sLabelId);
+				oLabel = ElementRegistry.get(oHandler.sLabelId);
 				if (oLabel) {
 					oLabel.removeEventDelegate(oHandler.oDelegate);
 				}
@@ -2662,7 +2664,7 @@ function(
 				return aLabelIDs.indexOf(sId) === iIndex;
 			})
 			.map(function(sLabelID) {
-				return Element.registry.get(sLabelID);
+				return ElementRegistry.get(sLabelID);
 			})
 			.filter(Boolean);
 
@@ -2839,7 +2841,7 @@ function(
 
 			if (typeof vItem === "string") {
 				this.setAssociation("selectedItem", vItem, true);
-				vItem = Element.registry.get(vItem);
+				vItem = ElementRegistry.get(vItem);
 			}
 
 			if (!(vItem instanceof Item) && vItem !== null) {
@@ -3028,7 +3030,7 @@ function(
 		 */
 		Select.prototype.getSelectedItem = function() {
 			var vSelectedItem = this.getAssociation("selectedItem");
-			return (vSelectedItem === null) ? null : Element.registry.get(vSelectedItem) || null;
+			return (vSelectedItem === null) ? null : ElementRegistry.get(vSelectedItem) || null;
 		};
 
 		/**

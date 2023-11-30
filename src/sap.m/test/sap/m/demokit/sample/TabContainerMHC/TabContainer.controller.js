@@ -1,17 +1,18 @@
 sap.ui.define([
-		'sap/ui/core/mvc/Controller',
-		'sap/ui/core/Element',
-		'sap/ui/model/json/JSONModel',
-		'sap/ui/model/Filter',
-		'sap/ui/model/FilterOperator',
-		'sap/m/TabContainer',
-		'sap/m/TabContainerItem',
-		'sap/m/MessageBox',
-		'sap/ui/core/Fragment',
-		'sap/base/util/deepExtend',
-		'sap/base/util/extend'
-	],
-	function (Controller, Element, JSONModel, Filter, FilterOperator, TabContainer, TabContainerItem, MessageBox, Fragment, deepExtend, extend) {
+	"sap/ui/core/ElementRegistry",
+	'sap/ui/core/mvc/Controller',
+	'sap/ui/core/Element',
+	'sap/ui/model/json/JSONModel',
+	'sap/ui/model/Filter',
+	'sap/ui/model/FilterOperator',
+	'sap/m/TabContainer',
+	'sap/m/TabContainerItem',
+	'sap/m/MessageBox',
+	'sap/ui/core/Fragment',
+	'sap/base/util/deepExtend',
+	'sap/base/util/extend'
+],
+	function(ElementRegistry, Controller, Element, JSONModel, Filter, FilterOperator, TabContainer, TabContainerItem, MessageBox, Fragment, deepExtend, extend) {
 		"use strict";
 
 		function fnNavBackButton() {
@@ -333,7 +334,7 @@ sap.ui.define([
 
 		TCController.prototype._getTabContainerSelectedItem = function () {
 			var oTabContainer = this.oPageTabContainer.getContent()[0];
-			return Element.registry.get(oTabContainer.getSelectedItem());
+			return ElementRegistry.get(oTabContainer.getSelectedItem());
 		};
 
 		TCController.prototype._showConfirmation = function (sMessage, aActions, fnCallback) {

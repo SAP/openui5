@@ -1202,7 +1202,7 @@ sap.ui.define([
 	 * @returns {Promise<void>}
 	 *   A promise which is resolved without a defined result when the move is finished, or
 	 *   rejected in case of an error
-	 * @throws (Error)
+	 * @throws {Error}
 	 *   If the parent is (a descendant of) this node, or if <code>oAggregation.expandTo</code> is
 	 *   unsupported.
 	 *

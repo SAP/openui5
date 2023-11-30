@@ -1828,6 +1828,10 @@ sap.ui.define([
 				oCardContent.onCardDataChanged();
 			}
 
+			if (this.getCardFooter()) {
+				this.getCardFooter().onDataChanged();
+			}
+
 			this.fireEvent("_dataPassedToContent");
 			this.onDataRequestComplete();
 		};

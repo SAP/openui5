@@ -11,6 +11,7 @@ sap.ui.define([
 	'./Title',
 	"sap/base/i18n/Localization",
 	'sap/ui/core/Control',
+	"sap/ui/core/ElementRegistry",
 	'sap/ui/core/Popup',
 	'sap/ui/core/delegate/ScrollEnablement',
 	'sap/ui/core/theming/Parameters',
@@ -26,8 +27,10 @@ sap.ui.define([
 	"sap/ui/dom/getScrollbarSize",
 	"sap/ui/events/KeyCodes",
 	"sap/base/Log",
-	"sap/ui/dom/jquery/Focusable", // jQuery Plugin "firstFocusableDomRef", "lastFocusableDomRef"
-	"sap/ui/dom/jquery/rect" // jQuery Plugin "rect"
+	// jQuery Plugin "firstFocusableDomRef", "lastFocusableDomRef"
+	"sap/ui/dom/jquery/Focusable",
+	// jQuery Plugin "rect"
+	"sap/ui/dom/jquery/rect"
 ],
 	function(
 		Bar,
@@ -37,6 +40,7 @@ sap.ui.define([
 		Title,
 		Localization,
 		Control,
+		ElementRegistry,
 		Popup,
 		ScrollEnablement,
 		Parameters,
@@ -463,7 +467,7 @@ sap.ui.define([
 				},
 				onAfterRendering: function () {
 					if (this._sFocusControlId && !containsOrEquals(this.getDomRef(), document.activeElement)) {
-						Element.registry.get(this._sFocusControlId).focus();
+						ElementRegistry.get(this._sFocusControlId).focus();
 					}
 				}
 			};
@@ -1100,7 +1104,7 @@ sap.ui.define([
 
 			// Set focus to the first visible focusable element
 			var sFocusId = this._getInitialFocusId(),
-			oControl = Element.registry.get(sFocusId),
+			oControl = ElementRegistry.get(sFocusId),
 			oDomById = (sFocusId ? window.document.getElementById(sFocusId) : null);
 			if (oControl && oControl.getFocusDomRef()){
 				oControl.getFocusDomRef().focus();
@@ -2293,7 +2297,7 @@ sap.ui.define([
 			if (this.isOpen()) {
 				//restore the focus after rendering when popover is already open
 				var sFocusId = this._getInitialFocusId(),
-				oControl = Element.registry.get(sFocusId),
+				oControl = ElementRegistry.get(sFocusId),
 				oDomById = (sFocusId ? window.document.getElementById(sFocusId) : null);
 				if (oControl && oControl.getFocusDomRef()){
 					oControl.getFocusDomRef().focus();

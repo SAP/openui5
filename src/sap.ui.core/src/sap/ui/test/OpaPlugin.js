@@ -18,6 +18,7 @@
 sap.ui.define([
 	'sap/base/util/extend',
 	'sap/base/util/ObjectPath',
+	"sap/ui/core/ElementRegistry",
 	'sap/ui/thirdparty/jquery',
 	'sap/ui/Global',
 	'sap/ui/base/Object',
@@ -28,8 +29,7 @@ sap.ui.define([
 	'sap/ui/test/matchers/MatcherFactory',
 	'sap/ui/test/pipelines/MatcherPipeline',
 	'sap/ui/test/_OpaLogger'
-], function (extend, ObjectPath, $, Global, UI5Object, UI5Element, StaticArea, View, Ancestor, MatcherFactory,
-			MatcherPipeline, _OpaLogger) {
+], function(extend, ObjectPath, ElementRegistry, $, Global, UI5Object, UI5Element, StaticArea, View, Ancestor, MatcherFactory, MatcherPipeline, _OpaLogger) {
 
 		/**
 		 * @class A Plugin to search UI5 controls.
@@ -57,7 +57,7 @@ sap.ui.define([
 			 * @public
 			 */
 			getAllControls : function (fnConstructorType, sControlType) {
-				var aControls = UI5Element.registry.filter( makeTypeFilterFn(fnConstructorType) );
+				var aControls = ElementRegistry.filter( makeTypeFilterFn(fnConstructorType) );
 				this._oLogger.debug("Found " + aControls.length + " controls" +
 					(fnConstructorType ? " of type '" + (sControlType || fnConstructorType) + "'" : "") + " in page");
 				return aControls;
@@ -534,7 +534,7 @@ sap.ui.define([
 
 				if (bMatchById) {
 					//Performance critical
-					UI5Element.registry.forEach(function(oElement, sId) {
+					ElementRegistry.forEach(function(oElement, sId) {
 						if (oOptions.id.test(sId)) {
 							aMatchIds.push(sId);
 						}

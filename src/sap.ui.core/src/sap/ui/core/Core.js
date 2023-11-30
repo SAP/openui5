@@ -36,6 +36,7 @@ sap.ui.define([
 	"sap/ui/base/ManagedObject",
 	"sap/ui/base/Object",
 	"sap/ui/base/syncXHRFix",
+	"sap/ui/core/UIAreaRegistry",
 	"sap/ui/core/support/Hotkeys",
 	"sap/ui/core/util/_LocalizationHelper",
 	"sap/ui/dom/getComputedStyleFix",
@@ -87,6 +88,7 @@ sap.ui.define([
 		ManagedObject,
 		BaseObject,
 		syncXHRFix,
+		UIAreaRegistry,
 		Hotkeys,
 		_LocalizationHelper,
 		getComputedStyleFix,
@@ -1109,7 +1111,7 @@ sap.ui.define([
 		 */
 		Core.prototype.lock = function () {
 			this.bLocked = true;
-			UIArea.registry.forEach((oUiArea) => {
+			UIAreaRegistry.forEach((oUiArea) => {
 				oUiArea.lock();
 			});
 		};
@@ -1123,7 +1125,7 @@ sap.ui.define([
 		 */
 		Core.prototype.unlock = function () {
 			this.bLocked = false;
-			UIArea.registry.forEach((oUiArea) => {
+			UIAreaRegistry.forEach((oUiArea) => {
 				oUiArea.unlock();
 			});
 		};
@@ -2014,7 +2016,7 @@ sap.ui.define([
 				}
 				// propagate Models to all UI areas
 
-				UIArea.registry.forEach(function (oUIArea){
+				UIAreaRegistry.forEach(function (oUIArea){
 					if (oModel != oUIArea.getModel(sName)) {
 						oUIArea._propagateProperties(sName, oUIArea, oProperties, false, sName);
 					}
@@ -2022,7 +2024,7 @@ sap.ui.define([
 			} else if (oModel && oModel !== this.oModels[sName] ) {
 				this.oModels[sName] = oModel;
 				// propagate Models to all UI areas
-				UIArea.registry.forEach(function (oUIArea){
+				UIAreaRegistry.forEach(function (oUIArea){
 					if (oModel != oUIArea.getModel(sName)) {
 						var oProperties = {
 							oModels: Object.assign({}, this.oModels),
@@ -2059,7 +2061,7 @@ sap.ui.define([
 		 * @deprecated As of version 1.118, use {@link sap.ui.core.Control.getControlsByFieldGroupId Control.getControlsByFieldGroupId} instead.
 		 */
 		Core.prototype.byFieldGroupId = function(vFieldGroupIds) {
-			return Element.registry.filter(function(oElement) {
+			return ElementRegistry.filter(function(oElement) {
 				return oElement.isA("sap.ui.core.Control") && oElement.checkFieldGroupIds(vFieldGroupIds);
 			});
 		};

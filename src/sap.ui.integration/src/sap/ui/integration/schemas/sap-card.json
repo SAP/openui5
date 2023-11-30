@@ -197,10 +197,17 @@
       "properties": {
         "actionsStrip": {
           "description": "[Experimental] Describes actions strip",
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/actionsStripItem"
-          }
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/actionsStripItem"
+              }
+            },
+            {
+              "$ref": "#/definitions/actionsStrip"
+            }
+          ]
         },
         "paginator": {
           "description": "[Experimental] Describes the paginator",
@@ -846,10 +853,17 @@
         },
         "actionsStrip": {
           "description": "[Experimental] Describes actions strip",
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/actionsStripItem"
-          }
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/actionsStripItem"
+              }
+            },
+            {
+              "$ref": "#/definitions/actionsStrip"
+            }
+          ]
         }
       }
     },
@@ -3854,6 +3868,27 @@
           "$ref": "#/definitions/simpleBinding"
         }
       ]
+    },
+    "actionsStrip": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "item": {
+          "$ref": "#/definitions/actionsStripItemBindingInfo"
+        }
+      }
+    },
+    "actionsStripItemBindingInfo": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "template": {
+          "$ref": "#/definitions/actionsStripItem"
+        },
+        "path": {
+          "type": "string"
+        }
+      }
     },
     "actionsStripItem": {
       "description": "[Experimental] Attributes of actions strip item",

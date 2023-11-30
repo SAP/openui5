@@ -1,0 +1,49 @@
+{
+	"sap.app": {
+		"type": "card",
+		"id": "card.explorer.dynamicActionsStrip"
+	},
+	"sap.card": {
+		"type": "List",
+		"data": {
+			"request": {
+				"url": "./data.json"
+			}
+		},
+		"header": {
+			"title": "My Team",
+			"subTitle": "Nolan, Employee Manager",
+			"icon": {
+				"src": "sap-icon://org-chart"
+			}
+		},
+		"content": {
+			"data": {
+				"path": "/team"
+			},
+			"item": {
+				"title": "{name}",
+				"description": "{status}",
+				"actionsStrip": {
+					"item": {
+						"path": "actions",
+						"template": {
+							"text": "{text}",
+							"actions": [
+								{
+									"type": "Custom",
+									"parameters": {
+										"itemId": "{parent>/id}",
+										"actionKey": "{key}",
+										"text": "{text}"
+									}
+								}
+							]
+						}
+					}
+				}
+			},
+			"maxItems": 4
+		}
+	}
+}

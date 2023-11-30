@@ -9,10 +9,11 @@ sap.ui.define('sap/ui/debug/ControlTree', [
 	'sap/ui/core/Rendering',
 	'sap/ui/core/UIArea',
 	'./Highlighter',
+	"sap/ui/core/UIAreaRegistry",
 	"sap/ui/dom/getOwnerWindow",
 	"sap/base/Log"
 ],
-	function(EventProvider, Element, Rendering, UIArea, Highlighter, getOwnerWindow, Log) {
+	function(EventProvider, Element, Rendering, UIArea, Highlighter, UIAreaRegistry, getOwnerWindow, Log) {
 	"use strict";
 
 
@@ -100,7 +101,7 @@ sap.ui.define('sap/ui/debug/ControlTree', [
 	ControlTree.prototype.render = function() {
 		var oDomRef = this.oParentDomRef;
 		var oUIArea = null,
-			oUIAreas = UIArea.registry.all();
+			oUIAreas = UIAreaRegistry.all();
 		oDomRef.innerHTML = "";
 		for (var i in oUIAreas) {
 			var oUIArea = oUIAreas[i],
@@ -360,7 +361,7 @@ sap.ui.define('sap/ui/debug/ControlTree', [
 	ControlTree.prototype.getTargetDomRef = function(oTreeNodeDomRef) {
 		var sType = oTreeNodeDomRef.getAttribute("sap-type"),
 			sId = oTreeNodeDomRef.getAttribute("sap-id"),
-			oSomething = sType === "UIArea" ? UIArea.registry.get(sId) : Element.getElementById(sId);
+			oSomething = sType === "UIArea" ? UIAreaRegistry.get(sId) : Element.getElementById(sId);
 
 		while (oSomething instanceof Element) {
 			var oDomRef = oSomething.getDomRef();

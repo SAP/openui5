@@ -8,6 +8,7 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/m/p13n/modification/FlexModificationHandler",
 	"sap/m/MessageStrip",
+	"sap/ui/core/ElementRegistry",
 	"sap/ui/core/library",
 	"sap/ui/core/Element",
 	"sap/m/p13n/modules/DefaultProviderRegistry",
@@ -15,7 +16,7 @@ sap.ui.define([
 	"sap/m/p13n/modules/StateHandlerRegistry",
 	"sap/m/p13n/modules/xConfigAPI",
 	"sap/m/p13n/enums/ProcessingStrategy"
-], function (AdaptationProvider, merge, Log, FlexModificationHandler, MessageStrip, coreLibrary, Element, DefaultProviderRegistry, UIManager, StateHandlerRegistry, xConfigAPI, ProcessingStrategy) {
+], function(AdaptationProvider, merge, Log, FlexModificationHandler, MessageStrip, ElementRegistry, coreLibrary, Element, DefaultProviderRegistry, UIManager, StateHandlerRegistry, xConfigAPI, ProcessingStrategy) {
 	"use strict";
 
 	var ERROR_INSTANCING = "Engine: This class is a singleton. Please use the getInstance() method instead.";
@@ -314,7 +315,6 @@ sap.ui.define([
 
 		var oModificationSetting = this._determineModification(oControl);
 		return oModificationSetting.handler.reset(oResetConfig, oModificationSetting.payload).then(function () {
-			this.stateHandlerRegistry.fireChange(oControl);
 			//Re-Init housekeeping after update
 			return this.initAdaptation(oControl, aKeys).then(function (oPropertyHelper) {
 				aKeys.forEach(function (sKey) {
@@ -1155,7 +1155,7 @@ sap.ui.define([
 
 	Engine.prototype.hasForReference = function (vControl, sControlType) {
 		var sControlId = vControl && vControl.getId ? vControl.getId() : vControl;
-		var aResults = Element.registry.filter(function (oElement) {
+		var aResults = ElementRegistry.filter(function (oElement) {
 			if (!oElement.isA(sControlType)) {
 				return false;
 			}
@@ -1360,7 +1360,7 @@ sap.ui.define([
 	/**
 	 * This method is the central point of access to the Engine Singleton.
 	 *
-	 * @private
+	 * @public
 	 * @ui5-restricted sap.m, sap.ui.mdc
 	 *
 	 * @returns {sap.m.p13n.Engine} The Engine instance

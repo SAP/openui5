@@ -197,9 +197,15 @@ sap.ui.define([
 				if (sOpText) {
 					aArgs.splice(1, 1, sOpText);
 				}
-				const mCurrentState = oFilterBar.getCurrentState();
-				if ((oContent.condition.values.length > 0) && mCurrentState && mCurrentState.filter) {
-					const aConditions = mCurrentState.filter[oContent.name];
+				let mCurrentState = null;
+				if (oFilterBar.getInternalConditions) {
+					 mCurrentState = oFilterBar.getInternalConditions();
+				} else if (oFilterBar.getInbuiltFilter && oFilterBar.getInbuiltFilter() && oFilterBar.getInbuiltFilter().getInternalConditions ) {
+					mCurrentState = oFilterBar.getInbuiltFilter().getInternalConditions();
+				}
+
+				if ((oContent.condition.values.length > 0) && mCurrentState) {
+					const aConditions = mCurrentState[oContent.name];
 					const mInternalCondition = aConditions?.find((oCondition) => oCondition.values[0] === oContent.condition.values[0]);
 					if (mInternalCondition) {
 						vValue = oOperator.format(mInternalCondition, oProperty.typeConfig.typeInstance, oProperty.display, true);

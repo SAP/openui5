@@ -10,6 +10,7 @@ sap.ui.define([
 	'./library',
 	'sap/ui/core/Control',
 	'sap/ui/core/Element',
+	"sap/ui/core/ElementRegistry",
 	'sap/ui/core/EnabledPropagator',
 	"sap/ui/events/KeyCodes",
 	'./ToolbarRenderer',
@@ -23,6 +24,7 @@ function(
 	library,
 	Control,
 	Element,
+	ElementRegistry,
 	EnabledPropagator,
 	KeyCodes,
 	ToolbarRenderer,
@@ -226,7 +228,7 @@ function(
 	 * @return {string} width
 	 */
 	Toolbar.getOrigWidth = function(sId) {
-		var oControl = Element.registry.get(sId);
+		var oControl = ElementRegistry.get(sId);
 		if (!oControl || !oControl.getWidth) {
 			return "";
 		}

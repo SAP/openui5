@@ -54,6 +54,21 @@ sap.ui.define([
 		});
 	}
 
+	function createSetVisibleChange(sVariantReference) {
+		return FlexObjectFactory.createUIChange({
+			id: "setVisibleChange",
+			layer: Layer.CUSTOMER,
+			changeType: "setVisible",
+			fileType: "ctrl_variant_change",
+			selector: {
+				id: sVariantReference || "customVariant"
+			},
+			content: {
+				visible: false
+			}
+		});
+	}
+
 	function initializeFlexStateWithStandardVariant() {
 		return FlexState.initialize({
 			componentId: sComponentId,
@@ -873,18 +888,7 @@ sap.ui.define([
 					variantReference: sVariantManagementReference,
 					fileName: "customVariant"
 				}),
-				FlexObjectFactory.createUIChange({
-					id: "setVisibleChange",
-					layer: Layer.CUSTOMER,
-					changeType: "setVisible",
-					fileType: "ctrl_variant_change",
-					selector: {
-						id: "customVariant"
-					},
-					content: {
-						visible: false
-					}
-				})
+				createSetVisibleChange()
 			]);
 
 			assert.strictEqual(
@@ -996,18 +1000,7 @@ sap.ui.define([
 					}
 				}),
 				// Key user removes the key user default variant
-				FlexObjectFactory.createUIChange({
-					id: "setVisibleChange",
-					layer: Layer.CUSTOMER,
-					changeType: "setVisible",
-					fileType: "ctrl_variant_change",
-					selector: {
-						id: "EndUserDefaultVariant"
-					},
-					content: {
-						visible: false
-					}
-				})
+				createSetVisibleChange("EndUserDefaultVariant")
 			]);
 
 			assert.strictEqual(
@@ -1384,6 +1377,70 @@ sap.ui.define([
 		});
 	});
 
+	QUnit.module("filterHiddenFlexObjects", {
+		beforeEach() {
+		},
+		afterEach() {
+			sandbox.restore();
+		}
+	}, function() {
+		QUnit.test("without any hidden variants", function(assert) {
+			const aFlexObjects = [
+				createVariant({fileName: sVariantManagementReference}),
+				createVariant({variantReference: sVariantManagementReference, fileName: "variant2"}),
+				FlexObjectFactory.createUIChange({
+					id: "uiChange",
+					layer: Layer.CUSTOMER,
+					changeType: "foo",
+					variantReference: "variant2"
+				}),
+				FlexObjectFactory.createUIChange({
+					id: "setTitleChange",
+					layer: Layer.CUSTOMER,
+					changeType: "setTitle",
+					fileType: "ctrl_variant_change",
+					selector: {
+						id: "variant2"
+					},
+					texts: {
+						title: { value: "Renamed variant" }
+					}
+				})
+			];
+			stubFlexObjectsSelector(aFlexObjects);
+			const aFilteredFlexObjects = VariantManagementState.filterHiddenFlexObjects(aFlexObjects, sReference);
+			assert.strictEqual(aFilteredFlexObjects.length, 4, "all variants are returned");
+		});
+
+		QUnit.test("with hidden variants", function(assert) {
+			const aFlexObjects = [
+				createVariant({fileName: sVariantManagementReference}),
+				createVariant({variantReference: sVariantManagementReference, fileName: "variant2"}),
+				FlexObjectFactory.createUIChange({
+					id: "uiChange",
+					layer: Layer.CUSTOMER,
+					changeType: "foo",
+					variantReference: "variant2"
+				}),
+				createSetVisibleChange("variant2"),
+				FlexObjectFactory.createUIChange({
+					id: "setTitleChange",
+					layer: Layer.CUSTOMER,
+					changeType: "setTitle",
+					fileType: "ctrl_variant_change",
+					selector: {
+						id: "variant2"
+					},
+					texts: {
+						title: { value: "Renamed variant" }
+					}
+				})
+			];
+			stubFlexObjectsSelector(aFlexObjects);
+			const aFilteredFlexObjects = VariantManagementState.filterHiddenFlexObjects(aFlexObjects, sReference);
+			assert.strictEqual(aFilteredFlexObjects.length, 1, "only the visible variant is left");
+		});
+	});
 	QUnit.done(function() {
 		oComponent.destroy();
 		document.getElementById("qunit-fixture").style.display = "none";

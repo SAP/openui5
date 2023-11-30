@@ -1,0 +1,97 @@
+{
+	"team": [
+		{
+			"id": "1001",
+			"name": "Donna Moore",
+			"status": "New Hire",
+			"actions": [
+				{
+					"text": "Set Performance Goals",
+					"key": "setPerformanceGoals"
+				},
+				{
+					"text": "Edit Personal Data",
+					"key": "editPersonalData"
+				},
+				{
+					"text": "Change Business Title",
+					"key": "changeBusinessTitle"
+				},
+				{
+					"text": "Show Cost Center",
+					"key": "showCostCenter"
+				},
+				{
+					"text": "Onboarding & Education",
+					"key": "onboarding"
+				}
+			]
+		},
+		{
+			"id": "1002",
+			"name": "John Miller",
+			"status": "Permanent contract",
+			"actions": [
+				{
+					"text": "Edit Personal Data",
+					"key": "editPersonalData"
+				},
+				{
+					"text": "Change Business Title",
+					"key": "changeBusinessTitle"
+				},
+				{
+					"text": "Show Cost Center",
+					"key": "showCostCenter"
+				}
+			]
+		},
+		{
+			"id": "1003",
+			"name": "Alain Chevalier",
+			"status": "Internship",
+			"actions": [
+				{
+					"text": "Assess Performance",
+					"key": "assessPerformance"
+				},
+				{
+					"text": "Edit Personal Data",
+					"key": "editPersonalData"
+				},
+				{
+					"text": "Change Business Title",
+					"key": "changeBusinessTitle"
+				},
+				{
+					"text": "Show Cost Center",
+					"key": "showCostCenter"
+				},
+				{
+					"text": "Close Internship Contract",
+					"key": "closeInternshipContract"
+				}
+			]
+		},
+		{
+			"id": "1004",
+			"name": "Elena Petrova",
+			"status": "Maternity leave",
+			"actions": [
+				{
+					"text": "Edit Personal Data",
+					"key": "editPersonalData"
+				},
+				{
+					"text": "Change Business Title",
+					"key": "changeBusinessTitle"
+				},
+				{
+					"text": "Show Cost Center",
+					"key": "showCostCenter"
+				}
+			]
+		}
+	],
+	"count": 4
+}

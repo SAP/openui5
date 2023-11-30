@@ -3,6 +3,7 @@ sap.ui.define([
 	"sap/base/i18n/Formatting",
 	"sap/base/i18n/LanguageTag",
 	"sap/base/i18n/Localization",
+	"sap/ui/core/ElementRegistry",
 	"sap/ui/core/Lib",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
@@ -39,6 +40,7 @@ sap.ui.define([
 	Formatting,
 	LanguageTag,
 	Localization,
+	ElementRegistry,
 	Library,
 	qutils,
 	createAndAppendDiv,
@@ -4335,7 +4337,7 @@ sap.ui.define([
 
 	QUnit.test("Date Picker close button works on mobile", function(assert) {
 		var oHeader = this.oPC2._getHeader(),
-			oCalendarPicker = Element.registry.get(oHeader.getAssociation("currentPicker")),
+			oCalendarPicker = ElementRegistry.get(oHeader.getAssociation("currentPicker")),
 			oSpyCancel = this.spy(oHeader, "_closeCalendarPickerPopup");
 
 		oHeader._openCalendarPickerPopup(oCalendarPicker);
