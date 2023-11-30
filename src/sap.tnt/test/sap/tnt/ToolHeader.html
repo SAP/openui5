@@ -2,14 +2,6 @@
 <html>
 <head>
 	<title>ToolHeader - sap.tnt</title>
-
-	<style>
-		#SAPlogo,
-		#logo {
-			margin-left: 0.75rem;
-		}
-	</style>
-
 	<script src="shared-config.js"></script>
 	<script src="../../../resources/sap-ui-core.js" id="sap-ui-bootstrap"
 		data-sap-ui-libs="sap.m, sap.ui.layout,sap.tnt">
@@ -49,7 +41,6 @@
 						})
 					}),
 					new sap.m.Image({
-						id: "SAPlogo",
 						src: "./images/SAP_Logo.png",
 						tooltip: "SAP logo",
 						press: function () {},
@@ -158,7 +149,6 @@
 			var toolHeaderHorizonMand = new sap.tnt.ToolHeader("horizonToolHeaderOnlyMandatoryControls", {
 				content: [
 					new sap.m.Image({
-						id: "logo",
 						src: "./images/SAP_Logo.png",
 						tooltip: "SAP logo",
 						press: function () {},

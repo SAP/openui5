@@ -18,21 +18,13 @@
 				"sap.m": {}
 			}
 		},
-		"resources": {
-			"css": [
-				{
-					"uri": "style.css"
-				}
-			]
-		},
 		"config": {
 			"sample": {
 				"stretch": true,
 				"files": [
 					"V.view.xml",
 					"C.controller.js",
-					"manifest.json",
-					"style.css"
+					"manifest.json"
 				]
 			}
 		}
