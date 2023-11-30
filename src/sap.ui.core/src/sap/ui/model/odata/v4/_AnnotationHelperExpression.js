@@ -410,7 +410,7 @@ sap.ui.define([
 					"$Ge", "$Gt", "$Guid", "$If", "$Int", "$Le", "$Lt", "$Name", "$Ne", "$Not",
 					"$Null", "$Or", "$Path", "$PropertyPath", "$TimeOfDay", "$LabeledElement"
 				].forEach(function (sProperty) {
-					if (oRawValue.hasOwnProperty(sProperty)) {
+					if (sProperty in oRawValue) {
 						sType = sProperty.slice(1);
 						oSubPathValue = Basics.descend(oPathValue, sProperty);
 					}
