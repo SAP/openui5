@@ -4,6 +4,7 @@
 
 // Provides control sap.m.SinglePlanningCalendarMonthGrid.
 sap.ui.define([
+	'sap/ui/core/Element',
 	'sap/ui/core/Control',
 	'sap/ui/core/format/DateFormat',
 	'sap/ui/unified/calendar/CalendarDate',
@@ -32,6 +33,7 @@ sap.ui.define([
 	"sap/ui/unified/DateRange"
 	],
 	function (
+		Element,
 		Control,
 		DateFormat,
 		CalendarDate,
@@ -1303,10 +1305,10 @@ sap.ui.define([
 			});
 		};
 
-		SinglePlanningCalendarMonthGrid.prototype.applyFocusInfo = function() {
-			// directly focus appointment part, if there is any selected
-			this._sSelectedAppointment && this._sSelectedAppointment.focus();
-			return this;
+		SinglePlanningCalendarMonthGrid.prototype.getFocusDomRef = function() {
+			return this._sSelectedAppointment
+				? this._sSelectedAppointment.getDomRef()
+				: Element.prototype.getFocusDomRef.apply(this, arguments);
 		};
 
 		return SinglePlanningCalendarMonthGrid;
