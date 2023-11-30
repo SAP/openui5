@@ -33,8 +33,6 @@ sap.ui.define(["sap/base/i18n/Localization", "sap/ui/core/Lib", 'sap/ui/core/lib
 	 * @param {sap.m.ObjectStatus} oObjStatus An object representation of the control that should be rendered
 	 */
 	ObjectStatusRenderer.render = function(oRm, oObjStatus){
-		var sStatusTextId;
-
 		oRm.openStart("div", oObjStatus);
 
 		if (oObjStatus._isEmpty() && oObjStatus.getEmptyIndicatorMode() === EmptyIndicatorMode.Off) {
@@ -52,10 +50,6 @@ sap.ui.define(["sap/base/i18n/Localization", "sap/ui/core/Lib", 'sap/ui/core/lib
 
 			if (sTextDir === TextDirection.Inherit) {
 				sTextDir = bPageRTL ? TextDirection.RTL : TextDirection.LTR;
-			}
-
-			if (sTooltip) {
-				oRm.attr("title", sTooltip);
 			}
 
 			oRm.class("sapMObjStatus");
@@ -83,18 +77,6 @@ sap.ui.define(["sap/base/i18n/Localization", "sap/ui/core/Lib", 'sap/ui/core/lib
 					value: oObjStatus._generateSelfLabellingIds(),
 					append: true
 				};
-			}
-
-			if (sStateText) {
-				sStatusTextId = oObjStatus._fnInvisibleStateLabelFactory().getId();
-				if (oAccAttributes["describedby"]) {
-					oAccAttributes["describedby"].value += " " + sStatusTextId;
-				} else {
-					oAccAttributes["describedby"] = {
-						value: sStatusTextId,
-						append: true
-					};
-				}
 			}
 
 			if (oObjStatus._isActive()) {
@@ -166,6 +148,22 @@ sap.ui.define(["sap/base/i18n/Localization", "sap/ui/core/Lib", 'sap/ui/core/lib
 				oRm.class("sapUiPseudoInvisibleText");
 				oRm.openEnd();
 				oRm.text(Library.getResourceBundleFor("sap.m").getText("OBJECT_STATUS"));
+				oRm.close("span");
+			}
+
+			if (sTooltip) {
+				oRm.openStart("span", oObjStatus.getId() + "-tooltip");
+				oRm.class("sapUiPseudoInvisibleText");
+				oRm.openEnd();
+				oRm.text(sTooltip);
+				oRm.close("span");
+			}
+
+			if (sStateText) {
+				oRm.openStart("span", oObjStatus.getId() + "-state-text");
+				oRm.class("sapUiPseudoInvisibleText");
+				oRm.openEnd();
+				oRm.text(sStateText);
 				oRm.close("span");
 			}
 		}
