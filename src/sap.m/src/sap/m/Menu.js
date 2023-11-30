@@ -473,7 +473,7 @@ sap.ui.define([
 
 		Menu.prototype._createMenuListItemFromItem = function(oItem) {
 			var sMenuListItemId = this._generateListItemId(oItem.getId()),
-				oListItem = Element.registry.get(sMenuListItemId);
+				oListItem = Element.getElementById(sMenuListItemId);
 
 			if (oListItem) {
 				return oListItem;
@@ -500,7 +500,7 @@ sap.ui.define([
 
 		Menu.prototype._createVisualMenuItemFromItem = function(oItem) {
 			var sUfMenuItemId = this._generateUnifiedMenuItemId(oItem.getId()),
-				oUfMenuItem = Element.registry.get(sUfMenuItemId),
+				oUfMenuItem = Element.getElementById(sUfMenuItemId),
 				aCustomData = oItem.getCustomData(), i;
 
 			if (oUfMenuItem) {
@@ -827,7 +827,7 @@ sap.ui.define([
 				return;
 			}
 			sTargetItemId = fnGenerateTargetItemId(oEvent.getSource().getId());
-			oTargetItem = Element.registry.get(sTargetItemId);
+			oTargetItem = Element.getElementById(sTargetItemId);
 
 			if (oTargetItem) {
 				// Private aggregations are not going to get cloned if ManagedObject.prototype.clone method gets called.

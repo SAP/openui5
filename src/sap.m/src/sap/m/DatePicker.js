@@ -1244,7 +1244,7 @@ sap.ui.define([
 				sTitleText = LabelEnablement.getReferencingLabels(this)
 					.concat(this.getAriaLabelledBy())
 					.reduce(function(sAccumulator, sCurrent) {
-						var oCurrentControl = Element.registry.get(sCurrent);
+						var oCurrentControl = Element.getElementById(sCurrent);
 						return sAccumulator + " " + (oCurrentControl.getText ? oCurrentControl.getText() : "");
 					}, "")
 					.trim();

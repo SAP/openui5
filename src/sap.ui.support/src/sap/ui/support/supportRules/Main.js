@@ -7,7 +7,8 @@ sap.ui.define([
 	"sap/ui/base/ManagedObject",
 	"sap/ui/core/Core",
 	"sap/ui/core/Element",
-	"sap/ui/core/Component",
+	"sap/ui/core/ElementRegistry",
+	"sap/ui/core/ComponentRegistry",
 	"sap/ui/core/Lib",
 	"sap/ui/core/Supportability",
 	"sap/ui/support/supportRules/Analyzer",
@@ -28,7 +29,8 @@ sap.ui.define([
 	ManagedObject,
 	Core,
 	Element,
-	Component,
+	ElementRegistry,
+	ComponentRegistry,
 	Library,
 	Supportability,
 	Analyzer,
@@ -274,7 +276,7 @@ sap.ui.define([
 		}, this);
 
 		CommunicationBus.subscribe(channelNames.GET_AVAILABLE_COMPONENTS, function () {
-			CommunicationBus.publish(channelNames.POST_AVAILABLE_COMPONENTS, Object.keys(Component.registry.all()));
+			CommunicationBus.publish(channelNames.POST_AVAILABLE_COMPONENTS, Object.keys(ComponentRegistry.all()));
 		}, this);
 
 		CommunicationBus.subscribe(channelNames.ON_ANALYZE_REQUEST, function (data) {
@@ -576,7 +578,7 @@ sap.ui.define([
 	 * @param {object} oContextElements Contains all context elements from the element tree
 	 */
 	Main.prototype._setContextElementReferences = function (oContextElements) {
-		var coreElements = Element.registry.all();
+		var coreElements = ElementRegistry.all();
 
 		for (var elementId in oContextElements) {
 			var element = oContextElements[elementId],
@@ -634,7 +636,7 @@ sap.ui.define([
 		this._oExecutionScope.getElements().forEach(function (element) {
 			if (element instanceof sap.ui.core.ComponentContainer) {
 				var componentId = element.getComponent(),
-					component = Component.registry.get(componentId);
+					component = ComponentRegistry.get(componentId);
 				if (component) {
 					copyElementsFromCoreObject([component], "sap-ui-component");
 				}
@@ -650,13 +652,13 @@ sap.ui.define([
 
 			case "subtree":
 				var parentId = this._oExecutionScope._getContext().parentId;
-				copyElementsFromCoreObject([ Element.registry.get(parentId) ]);
+				copyElementsFromCoreObject([ ElementRegistry.get(parentId) ]);
 				break;
 
 			case "components":
 				var components = this._oExecutionScope._getContext().components;
 				components.forEach(function (componentId) {
-					copyElementsFromCoreObject([Component.registry.get(componentId)], "sap-ui-component");
+					copyElementsFromCoreObject([ComponentRegistry.get(componentId)], "sap-ui-component");
 				});
 				break;
 		}

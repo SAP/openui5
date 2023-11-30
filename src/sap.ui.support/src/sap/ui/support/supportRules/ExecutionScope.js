@@ -3,8 +3,8 @@
  */
 
 sap.ui.define(
-	["sap/base/Log", "sap/ui/core/Component", "sap/ui/core/Element", "sap/ui/core/UIArea"],
-	function (Log, Component, Element, UIArea) {
+	["sap/base/Log", "sap/ui/core/ComponentRegistry", "sap/ui/core/ElementRegistry", "sap/ui/core/UIAreaRegistry"],
+	function (Log, ComponentRegistry, ElementRegistry, UIAreaRegistry) {
 		"use strict";
 
 		var _context = null,
@@ -12,13 +12,13 @@ sap.ui.define(
 
 		var globalContext = {
 			setScope: function () {
-				elements = Element.registry.filter(function() { return true;});
+				elements = ElementRegistry.filter(function() { return true;});
 			}
 		};
 
 		var subtreeContext = {
 			setScope: function () {
-				var parent = Element.registry.get(_context.parentId);
+				var parent = ElementRegistry.get(_context.parentId);
 				//TODO: Handle parent not found
 				elements = parent.findAggregatedObjects(true);
 			}
@@ -28,7 +28,7 @@ sap.ui.define(
 			setScope: function () {
 				var set = {};
 				_context.components.forEach(function (componentId) {
-					var component = Component.registry.get(componentId),
+					var component = ComponentRegistry.get(componentId),
 						aggregations = component.findAggregatedObjects(true);
 
 					aggregations.forEach(function (agg) {
@@ -240,9 +240,9 @@ sap.ui.define(
 				 */
 				getPublicElements: function () {
 					var aPublicElements = [];
-					var mUIAreas = UIArea.registry.all();
+					var mUIAreas = UIAreaRegistry.all();
 
-					Component.registry.forEach(function(oComponent) {
+					ComponentRegistry.forEach(function(oComponent) {
 						aPublicElements = aPublicElements.concat(
 							getPublicElementsInside(oComponent)
 						);

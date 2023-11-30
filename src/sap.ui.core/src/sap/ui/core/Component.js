@@ -4017,7 +4017,7 @@ sap.ui.define([
 		var bIsKeepAliveSupported = this._oKeepAliveConfig && this._oKeepAliveConfig.supported;
 
 		if (bIsKeepAliveSupported) {
-			bIsKeepAliveSupported = Component.registry
+			bIsKeepAliveSupported = ComponentRegistry
 				.filter(function (oComponent) {
 					var sOwnerId = Component.getOwnerIdFor(oComponent);
 					return sOwnerId === this.getId();
