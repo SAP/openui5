@@ -11,7 +11,7 @@ sap.ui.define([
 	'sap/ui/mdc/FilterField',
 	"sap/ui/mdc/enums/OperatorName",
 	'sap/ui/model/odata/type/String',
-	"sap/ui/model/odata/type/DateTime",
+	"sap/ui/model/odata/type/DateTimeOffset",
 	"sap/ui/mdc/odata/TypeMap"
 ], function(createAppEnvironment,
 	Localization,
@@ -100,13 +100,21 @@ sap.ui.define([
 
 	function fetchProperties(oControl, mPropertyBag) {
 		const aProperties = [{
-				name: "Category"
+				name: "Category",
+				label: "",
+				dataType: "String"
 			}, {
-				name: "Name"
+				name: "Name",
+				label: "",
+				dataType: "String"
 			}, {
-				name: "ProductID"
+				name: "ProductID",
+				label: "",
+				dataType: "String"
 			}, {
-				name: "CurrencyCode"
+				name: "CurrencyCode",
+				label: "",
+				dataType: "String"
 			}];
 
 		if (mPropertyBag) {
@@ -164,7 +172,8 @@ sap.ui.define([
 	function addItem(oFilterBar, sPropertyName, mPropertyBag) {
 		return Promise.resolve(new FilterField("comp---view--myFilterBar--" + sPropertyName, {
 			conditions:"{$filters>/conditions/" + sPropertyName + "}",
-			propertyKey: sPropertyName
+			propertyKey: sPropertyName,
+			delegate: {name: "delegates/odata/v4/FieldBaseDelegate", payload: {}}
 		}));
 	}
 
@@ -180,7 +189,7 @@ sap.ui.define([
 			FilterBarDelegate.addItem = addItem;
 		},
 		beforeEach: function() {
-			const sFilterBarView = '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:mdc="sap.ui.mdc"><mdc:FilterBar id="myFilterBar" p13nMode="Value"><mdc:filterItems><mdc:FilterField id="myFilterBar--field1" conditions="{$filters>/conditions/Category}" propertyKey="Category" maxConditions="1" dataType="Edm.String"/><mdc:FilterField id="myFilterBar--field2" conditions="{$filters>/conditions/Name}" propertyKey="Name" maxConditions="1" dataType="Edm.String"/><mdc:FilterField id="myFilterBar--field3" conditions="{$filters>/conditions/ProductID}" propertyKey="ProductID" maxConditions="1" dataType="Edm.String"/></mdc:filterItems></mdc:FilterBar></mvc:View>';
+			const sFilterBarView = '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:mdc="sap.ui.mdc"><mdc:FilterBar id="myFilterBar" p13nMode="Value"><mdc:filterItems><mdc:FilterField id="myFilterBar--field1" conditions="{$filters>/conditions/Category}" propertyKey="Category" maxConditions="1" dataType="Edm.String" delegate=\'\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}\'/><mdc:FilterField id="myFilterBar--field2" conditions="{$filters>/conditions/Name}" propertyKey="Name" maxConditions="1" dataType="Edm.String" delegate=\'\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}\'/><mdc:FilterField id="myFilterBar--field3" conditions="{$filters>/conditions/ProductID}" propertyKey="ProductID" maxConditions="1" dataType="Edm.String" delegate=\'\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}\'/></mdc:filterItems></mdc:FilterBar></mvc:View>';
 			return createAppEnvironment(sFilterBarView, "FilterBar")
 			.then(function(mCreatedView){
 				this.oView = mCreatedView.view;
@@ -709,7 +718,7 @@ sap.ui.define([
 		},
 
 		beforeEach: function() {
-			const sFilterBarView = '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:mdc="sap.ui.mdc"><mdc:FilterBar id="myFilterBar"><mdc:filterItems><mdc:FilterField id="myFilterBar--field1" conditions="{$filters>/conditions/category}" propertyKey="category" maxConditions="1" dataType="Edm.String"/></mdc:filterItems></mdc:FilterBar></mvc:View>';
+			const sFilterBarView = '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:mdc="sap.ui.mdc"><mdc:FilterBar id="myFilterBar"><mdc:filterItems><mdc:FilterField id="myFilterBar--field1" conditions="{$filters>/conditions/category}" propertyKey="category" maxConditions="1" dataType="Edm.String" delegate=\'\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}\'/></mdc:filterItems></mdc:FilterBar></mvc:View>';
 			return createAppEnvironment(sFilterBarView, "FilterBar")
 			.then(function(mCreatedView){
 				this.oView = mCreatedView.view;
