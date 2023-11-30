@@ -51,7 +51,7 @@
 				<mdc:dependents>
 
 					<mdc:ValueHelp id="FH1"
-						delegate='\{"name": "sap/ui/v4demo/delegate/ValueHelp.delegate", "payload": \{"searchKeys": \{"FH1-Pop-Cont": "OrderNo"\}\}\}'>
+						delegate='\{"name": "sap/ui/v4demo/delegate/ValueHelp.delegate", "payload": \{"searchKeys": "OrderNo"\}\}'>
 						<mdc:typeahead>
 							<mdcv:Popover >
 								<mdcvc:MTable id="FH1-Pop-Cont" keyPath="OrderNo" >
@@ -96,7 +96,7 @@
 										width="100%"
 										selectionMode="Multi"
 										p13nMode="Sort"
-										delegate='\{"name": "sap/ui/v4demo/delegate/GridTable.delegate", "payload": \{"collectionName": "Orders"\}\}'
+										delegate='\{"name": "sap/ui/v4demo/delegate/GridTable.delegate", "payload": \{"collectionName": "Orders", "searchKeys": "OrderNo"\}\}'
 										threshold="50"
 										enableAutoColumnWidth="true">
 										<mdc:columns>
@@ -127,7 +127,7 @@
 										width="100%"
 										selectionMode="Multi"
 										p13nMode="Sort"
-										delegate='\{"name": "sap/ui/v4demo/delegate/GridTable.delegate", "payload": \{"collectionName": "Orders"\}\}'
+										delegate='\{"name": "sap/ui/v4demo/delegate/GridTable.delegate", "payload": \{"collectionName": "Orders", "searchKeys": "OrderNo"\}\}'
 										threshold="50"
 										enableAutoColumnWidth="true">
 										<mdc:columns>
