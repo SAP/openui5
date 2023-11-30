@@ -3,6 +3,7 @@
 sap.ui.define([
 	"sap/ui/table/qunit/TableQUnitUtils",
 	"sap/ui/table/plugins/MultiSelectionPlugin",
+	"sap/ui/table/plugins/SelectionPlugin",
 	"sap/ui/table/Table",
 	"sap/ui/table/rowmodes/Fixed",
 	"sap/ui/table/utils/TableUtils",
@@ -14,6 +15,7 @@ sap.ui.define([
 ], function(
 	TableQUnitUtils,
 	MultiSelectionPlugin,
+	SelectionPlugin,
 	Table,
 	FixedRowMode,
 	TableUtils,
@@ -272,6 +274,23 @@ sap.ui.define([
 		}).then(function() {
 			assert.deepEqual(oMultiSelectionPlugin.getSelectedIndices(), [], "Select a row that is not selectable");
 		});
+	});
+
+	QUnit.test("findOn", function(assert) {
+		var oMultiSelectionPlugin = new MultiSelectionPlugin();
+		this.oTable.addDependent(oMultiSelectionPlugin);
+
+		assert.ok(SelectionPlugin.findOn(this.oTable) === oMultiSelectionPlugin, "Plugin found on dependents aggregation via SelectionPlugin.findOn");
+		assert.ok(MultiSelectionPlugin.findOn(this.oTable) === oMultiSelectionPlugin, "Plugin found on dependents aggregation via MultiSelectionPlugin.findOn");
+
+		/**
+		 * @deprecated As of version 1.120
+		 */
+		if (this.oTable.addPlugin) {
+			this.oTable.addPlugin(oMultiSelectionPlugin);
+			assert.ok(SelectionPlugin.findOn(this.oTable) === oMultiSelectionPlugin, "Plugin found on plugin aggregation via SelectionPlugin.findOn");
+			assert.ok(MultiSelectionPlugin.findOn(this.oTable) === oMultiSelectionPlugin, "Plugin found on plugin aggregation via MultiSelectionPlugin.findOn");
+		}
 	});
 
 	QUnit.module("Deselect All button", {

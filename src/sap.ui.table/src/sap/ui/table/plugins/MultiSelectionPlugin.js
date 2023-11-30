@@ -3,6 +3,7 @@
  */
 sap.ui.define([
 	"./SelectionPlugin",
+	"./PluginBase",
 	"../library",
 	"../utils/TableUtils",
 	"sap/ui/core/Icon",
@@ -10,6 +11,7 @@ sap.ui.define([
 	"sap/base/Log"
 ], function(
 	SelectionPlugin,
+	PluginBase,
 	library,
 	TableUtils,
 	Icon,
@@ -45,6 +47,7 @@ sap.ui.define([
 	 * @since 1.64
 	 * @author SAP SE
 	 * @alias sap.ui.table.plugins.MultiSelectionPlugin
+	 * @borrows module:sap/ui/table/plugins/PluginBase.findOn as findOn
 	 */
 	var MultiSelectionPlugin = SelectionPlugin.extend("sap.ui.table.plugins.MultiSelectionPlugin", {metadata: {
 		library: "sap.ui.table",
@@ -106,6 +109,8 @@ sap.ui.define([
 			}
 		}
 	}});
+
+	MultiSelectionPlugin.findOn = PluginBase.findOn;
 
 	MultiSelectionPlugin.prototype.init = function() {
 		SelectionPlugin.prototype.init.apply(this, arguments);
