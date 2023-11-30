@@ -1581,8 +1581,7 @@ sap.ui.define([
 		 * Should be overwritten in children classes to apply control specific filtering over the items.
 		 *
 		 * @since 1.64
-		 * @experimental Since 1.64
-		 * @private
+		 * @protected
 		 * @ui5-restricted
 		 */
 		ComboBoxBase.prototype.applyShowItemsFilters = function () {};

@@ -224,10 +224,8 @@ sap.ui.define([
 
 					/**
 					 * Whether resize option is enabled.
-					 * *Note:* This property is effective only on Desktop
-					 * @experimental since 1.36.4 Do not use directly on Popover while in experimental mode!
+					 * NOTE: This property is effective only on Desktop
 					 * @since 1.36.4
-					 * @private
 					 */
 					resizable: {type: "boolean", group: "Dimension", defaultValue: false},
 

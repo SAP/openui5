@@ -187,7 +187,6 @@ function(
 				 * Defines the formatted text that appears in the value state message pop-up.
 				 * It can include links. If both <code>valueStateText</code> and <code>formattedValueStateText</code>
 				 * are set - the latter is shown.
-				 * @experimental Since 1.78. This aggregation is experimental and provides only limited functionality. Also the API might be changed in future.
 				 * @since 1.78
 				 */
 				formattedValueStateText: { type: "sap.m.FormattedText", multiple: false },
@@ -195,7 +194,6 @@ function(
 				/**
 				 * Clone of the <code>formattedValueStateText</code> aggregation created for the accessibility elements used
 				 * by screen readers.
-				 * @experimental Since 1.84. This aggregation is experimental and provides only limited functionality. Also the API might be changed in future.
 				 * @since 1.84
 				 */
 				_invisibleFormattedValueStateText: { type: "sap.m.FormattedText", multiple: false, visibility: "hidden" },

@@ -5045,8 +5045,8 @@ sap.ui.define([
 		 * Wizard rendering mode.
 		 *
 		 * @enum {string}
+		 * @since 1.83
 		 * @public
-		 * @experimental since 1.83
 		 */
 		thisLib.WizardRenderMode = {
 

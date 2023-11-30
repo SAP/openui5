@@ -2447,7 +2447,6 @@ sap.ui.define([
 	 *
 	 * @enum {string}
 	 * @public
-	 * @experimental Since 1.73.
 	 * @since 1.78
 	 */
 	thisLib.InvisibleMessageMode =  {
