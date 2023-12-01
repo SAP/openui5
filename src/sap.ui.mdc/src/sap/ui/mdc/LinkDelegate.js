@@ -70,7 +70,7 @@ sap.ui.define(['sap/ui/mdc/BaseDelegate', 'sap/ui/mdc/enums/LinkType'], (BaseDel
 	 * @public
 	 * @param {sap.ui.mdc.Link} oLink Instance of the <code>Link</code>
 	 * @param {sap.ui.model.Context|null|undefined} oBindingContext Binding context of the <code>Link</code> control
-	 * @param {sap.ui.mdc.link.LinkItem} aLinkItems The {@link sap.ui.mdc.link.LinkItem} instances of the link that can be modified
+	 * @param {sap.ui.mdc.link.LinkItem[]} aLinkItems Array of {@link sap.ui.mdc.link.LinkItem} instances of the link that can be modified
 	 * @returns {Promise<sap.ui.mdc.link.LinkItem[]>} Once resolved, an array of link items is returned
 	 */
 	LinkDelegate.modifyLinkItems = function(oLink, oBindingContext, aLinkItems) {
