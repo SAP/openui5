@@ -8,7 +8,9 @@ sap.ui.define([
 	var PageController = Controller.extend("sap.m.sample.PDFViewerPopup.Page", {
 
 		onInit: function () {
-			this._pdfViewer = new PDFViewer();
+			this._pdfViewer = new PDFViewer({
+				isTrustedSource : true
+			});
 			this.getView().addDependent(this._pdfViewer);
 
 			var oSample1Model = new JSONModel({

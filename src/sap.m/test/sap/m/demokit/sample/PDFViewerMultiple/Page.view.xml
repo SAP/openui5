@@ -14,7 +14,7 @@
 				<Button text="Loading Error" press="onIncorrectPathClick"/>
 			</FlexBox>
 			<FlexBox direction="Row" fitContainer="true" renderType="Div">
-				<PDFViewer class="sapUiSmallMarginEnd" source="{/Source}" title="{/Title1}" height="{/Height}" width="auto">
+				<PDFViewer class="sapUiSmallMarginEnd" source="{/Source}" title="{/Title1}" height="{/Height}" width="auto" isTrustedSource="true">
 					<layoutData>
 						<FlexItemData growFactor="1"/>
 					</layoutData>
