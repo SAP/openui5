@@ -12,6 +12,7 @@ sap.ui.define([
 	"sap/ui/layout/VerticalLayout",
 	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/qunit/QUnitUtils",
+	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	Button,
@@ -25,6 +26,7 @@ sap.ui.define([
 	VerticalLayout,
 	nextUIUpdate,
 	QUnitUtils,
+	jQuery,
 	sinon
 ) {
 	"use strict";
