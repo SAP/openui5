@@ -18,7 +18,7 @@ sap.ui.define(["sap/ui/thirdparty/jquery",
 
 		function getIndexJsonPromise() {
 
-			var sApiInfoRoot = window['sap-ui-documentation-config'] && window['sap-ui-documentation-config'].apiInfoRoot;
+			var sApiInfoRootURL = window['sap-ui-documentation-config'] && window['sap-ui-documentation-config'].apiInfoRootURL;
 
 			if (oLibraryDataCache["index"]) {
 				return Promise.resolve(oLibraryDataCache["index"]);
@@ -27,7 +27,7 @@ sap.ui.define(["sap/ui/thirdparty/jquery",
 			return new Promise(function (resolve, reject) {
 				jQuery.ajax({
 					async: true,
-					url : sApiInfoRoot || ResourcesUtil.getResourceOriginPath("/docs/api/api-index.json"),
+					url : sApiInfoRootURL || ResourcesUtil.getResourceOriginPath("/docs/api/api-index.json"),
 					dataType : 'json',
 					success : function(vResponse) {
 						var aResult = vResponse.symbols || [];
