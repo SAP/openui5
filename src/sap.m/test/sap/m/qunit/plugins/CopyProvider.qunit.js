@@ -383,7 +383,17 @@ sap.ui.define([
 	});
 
 	QUnit.test("CellSelector", async function(assert) {
-		var oNotifyUserStub = sinon.stub(this.oCopyProvider, "_notifyUser");
+		var oNotifyUserStub = sinon.stub(this.oCopyProvider, "_notifyUser").callsFake((sMessage) => {
+			this._iLastSelectedRows = this.oCopyProvider._iSelectedRows;
+			this._iLastSelectedCells = this.oCopyProvider._iSelectedCells;
+		});
+
+		var checkNotifyCalledWith = (iRows, iCells, sText) => {
+			assert.equal(this._iLastSelectedRows, iRows, sText + " - Rows");
+			assert.equal(this._iLastSelectedCells, iCells, sText + " - Cells");
+			this._iLastSelectedRows = -1;
+			this._iLastSelectedCells = -1;
+		};
 
 		this.oCopyProvider.setCopyPreference("Full");
 		this.removeSelections();
@@ -394,19 +404,19 @@ sap.ui.define([
 		oCellSelector._selectCells({rowIndex: 2, colIndex: 0}, {rowIndex: 3, colIndex: 2});
 		ClipboardUtils.triggerCopy();
 		assert.equal(await navigator.clipboard.readText(), "2\tname2\tcolor2\n3\tname3\tcolor3", "Cell selection is copied to clipboard");
-		assert.ok(oNotifyUserStub.calledWith(0, 6), "User notified about copy.");
+		checkNotifyCalledWith(0, 6, "User notified about copy.");
 
 		this.selectRow(5);
 		oCellSelector._bSelecting = true;
 		oCellSelector._selectCells({rowIndex: 2, colIndex: 0}, {rowIndex: 3, colIndex: 2});
 		ClipboardUtils.triggerCopy();
 		assert.equal(await navigator.clipboard.readText(), "2\tname2\tcolor2\n3\tname3\tcolor3\n5\tname5\tcolor5", "Cell and row selection are copied to clipboard");
-		assert.ok(oNotifyUserStub.calledWith(1, 6), "User notified about copy.");
+		checkNotifyCalledWith(1, 6, "User notified about copy.");
 
 		this.oCopyProvider.setCopySparse(true);
 		ClipboardUtils.triggerCopy();
 		assert.equal(await navigator.clipboard.readText(), "2\tname2\tcolor2\n3\tname3\tcolor3\n\t\t\n5\tname5\tcolor5", "Cell and row selection are copied sparse");
-		assert.ok(oNotifyUserStub.calledWith(1, 6), "User notified about copy.");
+		checkNotifyCalledWith(1, 6, "User notified about copy.");
 
 		oCellSelector._selectCells({rowIndex: 4, colIndex: 1}, {rowIndex: 6, colIndex: 1});
 		var fnExtractData = this.oCopyProvider.getExtractData();
@@ -414,7 +424,7 @@ sap.ui.define([
 		this.oCopyProvider.setExtractData(fnExtractDataSpy);
 		ClipboardUtils.triggerCopy();
 		assert.equal(await navigator.clipboard.readText(), "\tname4\t\n5\tname5\tcolor5\n\tname6\t", "Cell and row selection are merged and copied");
-		assert.ok(oNotifyUserStub.calledWith(1, 3), "User notified about copy.");
+		checkNotifyCalledWith(1, 3, "User notified about copy.");
 		assert.equal(fnExtractDataSpy.callCount, 5, "Extractor function is called 5 times, only once for every neccessary cell");
 		this.oCopyProvider.setExtractData(fnExtractData);
 
@@ -431,18 +441,16 @@ sap.ui.define([
 		oCellSelector._selectCells({rowIndex: 2, colIndex: 0}, {rowIndex: 3, colIndex: 2});
 		ClipboardUtils.triggerCopy();
 		assert.equal(await navigator.clipboard.readText(), "2\tname2\tcolor2\n3\tname3\tcolor3", "Only cell selection is copied");
-		assert.ok(oNotifyUserStub.calledWith(1, 6), "User notified about copy.");
+		checkNotifyCalledWith(0, 6, "User notified about copy.");
 
 		oCellSelector.removeSelection();
 		ClipboardUtils.triggerCopy();
 		assert.equal(await navigator.clipboard.readText(), "5\tname5\tcolor5", "Cell and row selection are copied to clipboard");
-		assert.ok(oNotifyUserStub.calledWith(1, 0), "User notified about copy.");
+		checkNotifyCalledWith(1, 0, "User notified about copy.");
 
 		this.removeSelections();
-		this.oCopyProvider._bActivatedByButton = true;
-		ClipboardUtils.triggerCopy();
-		assert.ok(oNotifyUserStub.calledWith(0, 0), "User notified to select data first.");
-		this.oCopyProvider._bActivatedByButton = false;
+		this.oCopyProvider.getCopyButton().firePress();
+		checkNotifyCalledWith(0, 0, "User notified to select data first.");
 		oNotifyUserStub.resetHistory();
 		ClipboardUtils.triggerCopy();
 		assert.ok(oNotifyUserStub.notCalled, "User not notified.");
@@ -718,6 +726,12 @@ sap.ui.define([
 			this._oCopyProvider = new CopyProvider({
 				extractData: function() {}
 			});
+
+			this._doNotify = (iRows, iCells, sMessageText, sState) => {
+				this._oCopyProvider._iSelectedRows = iRows;
+				this._oCopyProvider._iSelectedCells = iCells;
+				return this._oCopyProvider._notifyUser(sMessageText, sState);
+			};
 		},
 		afterEach: function() {
 			this._oMessageToastStub.restore();
@@ -731,37 +745,37 @@ sap.ui.define([
 	QUnit.test("_notifyUser", function(assert) {
 		const done = assert.async();
 
-		this._oCopyProvider._notifyUser(1, 0).then(() => {
+		this._doNotify(1, 0).then(() => {
 			assert.equal(this._sLastMessage, this._oBundle.getText("COPYPROVIDER_SELECT_ROW_SINGLE_MSG"), "Selection: Rows 1 - Cell 0");
-			return this._oCopyProvider._notifyUser(5, 0);
+			return this._doNotify(5, 0);
 		}).then(() => {
 			assert.equal(this._sLastMessage, this._oBundle.getText("COPYPROVIDER_SELECT_ROW_MULTI_MSG"), "Selection: Rows 5 - Cell 0");
-			return this._oCopyProvider._notifyUser(5, 1);
+			return this._doNotify(5, 1);
 		}).then(() => {
 			assert.equal(this._sLastMessage, this._oBundle.getText("COPYPROVIDER_SELECT_CELL_SINGLE_MSG"), "Selection: Rows 5 - Cell 1");
-			return this._oCopyProvider._notifyUser(5, 5);
+			return this._doNotify(5, 5);
 		}).then(() => {
 			assert.equal(this._sLastMessage, this._oBundle.getText("COPYPROVIDER_SELECT_CELL_MULTI_MSG"), "Selection: Rows 5 - Cell 5");
 			this._oCopyProvider.setCopyPreference("Full");
-			return this._oCopyProvider._notifyUser(5, 1);
+			return this._doNotify(5, 1);
 		}).then(() => {
 			assert.equal(this._sLastMessage, this._oBundle.getText("COPYPROVIDER_SELECT_ROW_AND_CELL_MSG"), "Selection: Rows 5 - Cell 1, CopyPreference=Full");
-			return this._oCopyProvider._notifyUser(5, 5);
+			return this._doNotify(5, 5);
 		}).then(() => {
 			assert.equal(this._sLastMessage, this._oBundle.getText("COPYPROVIDER_SELECT_ROW_AND_CELL_MSG"), "Selection: Rows 5 - Cell 5, CopyPreference=Full");
-			return this._oCopyProvider._notifyUser(0, 0);
+			return this._doNotify(0, 0);
 		}).then(() => {
 			assert.equal(this._sLastMessage, this._oBundle.getText("COPYPROVIDER_NOSELECTION_MSG"), "No Selection");
 			assert.equal(this._sLastState, "info", "Info MessageBox shown");
-			return this._oCopyProvider._notifyUser(5, 5, "Problem 1");
+			return this._doNotify(5, 5, "Problem 1");
 		}).then(() => {
 			assert.equal(this._sLastMessage, "Problem 1", "Message - Default State");
 			assert.equal(this._sLastState, "error", "Error MessageBox shown");
-			return this._oCopyProvider._notifyUser(5, 5, "Problem 2", "Alert");
+			return this._doNotify(5, 5, "Problem 2", "Alert");
 		}).then(() => {
 			assert.equal(this._sLastMessage, "Problem 2", "Message - Custom State");
 			assert.equal(this._sLastState, "alert", "Alert MessageBox shown");
-			return this._oCopyProvider._notifyUser(5, 5, "");
+			return this._doNotify(5, 5, "");
 		}).then(() => {
 			assert.equal(this._sLastMessage, this._oBundle.getText("COPYPROVIDER_DEFAULT_ERROR_MSG"), "Default Message");
 			assert.equal(this._sLastState, "error", "Error MessageBox shown");
