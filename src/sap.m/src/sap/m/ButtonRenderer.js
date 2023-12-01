@@ -74,10 +74,6 @@ sap.ui.define([
 		// button container style class
 		if (!oButton._isUnstyled()) {
 			oRm.class("sapMBtn");
-			// extend  minimum button size if icon is set without text for button types back and up
-			if ((sType === ButtonType.Back || sType === ButtonType.Up) && oButton._getAppliedIcon() && !sText) {
-				oRm.class("sapMBtnBack");
-			}
 		}
 
 		//ARIA attributes
