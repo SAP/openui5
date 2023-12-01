@@ -4,7 +4,7 @@
 
 sap.ui.define([
 	'sap/ui/core/Element'
-], function(Element) {
+], (Element) => {
 	"use strict";
 
 	/**
@@ -29,7 +29,7 @@ sap.ui.define([
 	 * @returns {sap.ui.core.Control} Control instance of the inner layout item
 	 * @public
 	 */
-	IFilterContainer.prototype.getInner = function(){
+	IFilterContainer.prototype.getInner = function() {
 		return this.oLayout;
 	};
 
@@ -68,7 +68,7 @@ sap.ui.define([
 	 */
 	IFilterContainer.prototype.exit = function() {
 		Element.prototype.exit.apply(this, arguments);
-		if (this.oLayout){
+		if (this.oLayout) {
 			this.oLayout.destroy();
 			this.oLayout = null;
 		}

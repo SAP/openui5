@@ -17,7 +17,7 @@ sap.ui.define([
 	'sap/ui/mdc/field/ConditionType',
 	'sap/ui/mdc/field/ConditionsType',
 	"sap/ui/base/SyncPromise"
-], function(BaseObject, FieldEditMode, ContentMode, loadModules, DefaultContent, SearchContent, DateContent, TimeContent, DateTimeContent, LinkContent, BooleanContent, UnitContent, ConditionType, ConditionsType, SyncPromise) {
+], (BaseObject, FieldEditMode, ContentMode, loadModules, DefaultContent, SearchContent, DateContent, TimeContent, DateTimeContent, LinkContent, BooleanContent, UnitContent, ConditionType, ConditionsType, SyncPromise) => {
 	"use strict";
 
 	/**
@@ -112,10 +112,9 @@ sap.ui.define([
 
 		this.setNoFormatting(oContentType.getNoFormatting(sContentMode));
 
-		if (aControlNames.every(function(sControlName) {
-			return !sControlName;
-		})
-		) {
+		if (aControlNames.every((sControlName) => {
+				return !sControlName;
+			})) {
 			return Promise.resolve([]);
 		}
 
@@ -130,24 +129,24 @@ sap.ui.define([
 
 		try {
 			oLoadModulesPromise = loadModules(aControlNames)
-				.catch(function(oError) {
+				.catch((oError) => {
 					throw new Error("loadModules promise rejected in sap.ui.mdc.field.content.ContentFactory:createContent function call - could not load data type " + JSON.stringify(aControlNames));
 				})
-				.then(function(aControls) {
+				.then((aControls) => {
 					if (this.getField() && !this.getField().isFieldDestroyed()) {
 						this.updateConditionType(); // to make sure to have current FormatOptions if Condition(s)Type already exist
 						return oContentType.create(this, sContentMode, this._sOperator, aControls, sId);
 					} else {
 						return [];
 					}
-				}.bind(this))
+				})
 				.unwrap();
 		} catch (oError) {
 			throw new Error("Error in sap.ui.mdc.field.content.ContentFactory:createContent function call ErrorMessage: '" + oError.message + "'");
 		}
 
 		if (oLoadModulesPromise.then) {
-			oLoadModulesPromise.catch(function(oError) {
+			oLoadModulesPromise.catch((oError) => {
 				throw new Error("Error in sap.ui.mdc.field.content.ContentFactory:createContent function call ErrorMessage: '" + oError.message + "'");
 			});
 			return oLoadModulesPromise;
@@ -273,8 +272,7 @@ sap.ui.define([
 		if (oContent.addAriaLabelledBy) {
 			const aAriaLabelledBy = this.getField().getAriaLabelledBy();
 
-			for (let i = 0; i < aAriaLabelledBy.length; i++) {
-				const sId = aAriaLabelledBy[i];
+			for (const sId of aAriaLabelledBy) {
 				oContent.addAriaLabelledBy(sId);
 			}
 		}
@@ -315,7 +313,7 @@ sap.ui.define([
 		this._oConditionType = oConditionType;
 	};
 
-	ContentFactory.prototype.getConditionsType = function (bSkipConditionsTypeGeneration, CustomConditionsType) {
+	ContentFactory.prototype.getConditionsType = function(bSkipConditionsTypeGeneration, CustomConditionsType) {
 		const UsedConditionType = CustomConditionsType || ConditionsType; // CustomConditionsType used for DynamicDateRange
 		return _getCondType.call(this, "_oConditionsType", UsedConditionType, this.getField().getFormatOptions.bind(this.getField()), bSkipConditionsTypeGeneration);
 	};
@@ -390,14 +388,14 @@ sap.ui.define([
 					sDataType = sDataType.replaceAll(".", "/");
 					try {
 						loadModules([sDataType])
-							.catch(function(oError) {
+							.catch((oError) => {
 								throw new Error("loadModules promise rejected in sap.ui.mdc.field.content.ContentFactory:_setUsedConditionType function call - could not load controls " + sDataType);
 							})
-							.then(function(aModules) {
+							.then((aModules) => {
 								if (this.getField() && !this.getField().isFieldDestroyed()) {
 									this.updateConditionType();
 								}
-							}.bind(this))
+							})
 							.unwrap();
 					} catch (oError) {
 						throw new Error("Error in sap.ui.mdc.field.content.ContentFactory:_setUsedConditionType function call ErrorMessage: '" + oError.message + "'");
@@ -426,13 +424,13 @@ sap.ui.define([
 		try {
 			// check data-type after we can be sure it's loaded to perform depending actions later
 			return loadModules([sDataType.replaceAll(".", "/")])
-				.catch(function(oError) {
+				.catch((oError) => {
 					throw new Error("loadModules promise rejected in sap.ui.mdc.field.content.ContentFactory:checkDataTypeChanged function call - could not load data type " + sDataType);
 				})
-				.then(function(aModules) {
+				.then((aModules) => {
 					// TODO: also compare FormatOptions and Constraints
 					return !this._oDataType || this._oDataType.getMetadata().getName() !== sDataType;
-				}.bind(this));
+				});
 		} catch (oError) {
 			throw new Error("Error in sap.ui.mdc.field.content.ContentFactory:checkDataTypeChanged function call ErrorMessage: '" + oError.message + "'");
 		}

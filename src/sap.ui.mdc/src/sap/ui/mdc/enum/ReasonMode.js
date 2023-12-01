@@ -3,7 +3,7 @@
  */
 
 // Provides enumeration sap.ui.mdc.enum.ReasonMode
-sap.ui.define(function() {
+sap.ui.define(() => {
 	"use strict";
 
 

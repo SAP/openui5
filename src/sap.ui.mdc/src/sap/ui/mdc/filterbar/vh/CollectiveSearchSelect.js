@@ -4,12 +4,11 @@
 
 // Provides control sap.ui.mdc.filterbar.vh.CollectiveSearchSelect.
 sap.ui.define([
-	"sap/m/VariantManagement",
-	"sap/ui/core/Lib"
-], function(
+	"sap/m/VariantManagement", "sap/ui/core/Lib"
+], (
 	VariantManagement,
 	Library
-) {
+) => {
 	"use strict";
 
 

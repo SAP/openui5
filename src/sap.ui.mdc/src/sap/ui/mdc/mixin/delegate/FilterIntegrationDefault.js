@@ -4,24 +4,22 @@
 
 // module:sap/ui/mdc/mixin/delegate/FilterIntegrationDefault
 sap.ui.define([
-	"sap/ui/mdc/util/FilterUtil",
-	"sap/ui/core/Core",
-	"sap/ui/model/Filter"
+	"sap/ui/mdc/util/FilterUtil", "sap/ui/core/Core", "sap/ui/model/Filter"
 ], (
 	FilterUtil,
 	Core,
 	Filter) => {
 	"use strict";
 
-	function _createFilterFromExternalConditions (oControl, oTypeMap) {
+	function _createFilterFromExternalConditions(oControl, oTypeMap) {
 		return FilterUtil.getFilterInfo(oTypeMap, oControl?.getConditions() || {}, oControl?.getPropertyHelper?.()?.getProperties() || [])?.filters;
 	}
 
-	function _createInnerFilter (oControl, oTypeMap) {
+	function _createInnerFilter(oControl, oTypeMap) {
 		return oControl.isFilteringEnabled() && _createFilterFromExternalConditions(oControl, oTypeMap);
 	}
 
-	function _createOuterFilter (oControl, oTypeMap) {
+	function _createOuterFilter(oControl, oTypeMap) {
 		const sFilter = oControl.getFilter();
 		const oFilter = sFilter && Core.byId(sFilter);
 		return _createFilterFromExternalConditions(oFilter, oTypeMap);

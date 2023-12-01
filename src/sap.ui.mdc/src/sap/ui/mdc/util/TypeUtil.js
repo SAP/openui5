@@ -3,13 +3,13 @@
  */
 
 sap.ui.define([
-		'sap/ui/mdc/enums/BaseType',
-		'sap/base/util/ObjectPath',
-		'sap/base/util/isEmptyObject',
-		'sap/base/util/merge',
-		'sap/ui/model/SimpleType',
-		'sap/ui/mdc/util/DateUtil'
-], function(BaseType, ObjectPath, isEmptyObject, merge, SimpleType, DateUtil) {
+	'sap/ui/mdc/enums/BaseType',
+	'sap/base/util/ObjectPath',
+	'sap/base/util/isEmptyObject',
+	'sap/base/util/merge',
+	'sap/ui/model/SimpleType',
+	'sap/ui/mdc/util/DateUtil'
+], (BaseType, ObjectPath, isEmptyObject, merge, SimpleType, DateUtil) => {
 	"use strict";
 
 	// var sDateTimePattern = "yyyy-MM-ddTHH:mm:ssZ"; // milliseconds missing
@@ -32,13 +32,13 @@ sap.ui.define([
 	const TypeUtil = {
 
 		/**
-		* Maps type names to real type names
-		*
-		* If a real type has already been defined, this type is returned.
-		*
-		* @param {string} sType Given model specific type
-		* @returns {string} Data type name
-		*/
+		 * Maps type names to real type names
+		 *
+		 * If a real type has already been defined, this type is returned.
+		 *
+		 * @param {string} sType Given model specific type
+		 * @returns {string} Data type name
+		 */
 		getDataTypeClassName: function(sType) {
 
 			const mTypes = {
@@ -129,9 +129,9 @@ sap.ui.define([
 		 */
 		getDataTypeClass: function(sDataType) {
 			const sTypeName = this.getDataTypeClassName(sDataType);
-			const TypeClass = sTypeName
-				? sap.ui.require(sTypeName.replace(/\./g, "/")) || ObjectPath.get(sTypeName)
-				: undefined;
+			const TypeClass = sTypeName ?
+				sap.ui.require(sTypeName.replace(/\./g, "/")) || ObjectPath.get(sTypeName) :
+				undefined;
 			if (!TypeClass) {
 				throw new Error("DataType '" + sDataType + "' cannot be determined");
 			}
@@ -143,8 +143,8 @@ sap.ui.define([
 		 * Returns a dataType instance based on given object path, formatoptions and constraints
 		 *
 		 * @param {string} sDataType Class path as string where each name is separated by '.'
-  		 * @param {object} [oFormatOptions] formatoptions for the dataType
- 		 * @param {object} [oConstraints] constraints for the dataType
+		 * @param {object} [oFormatOptions] formatoptions for the dataType
+		 * @param {object} [oConstraints] constraints for the dataType
 		 * @returns {sap.ui.model.SimpleType} creates returns an instance of the resolved dataType
 		 * @private
 		 * @ui5-restricted sap.ui.mdc
@@ -159,12 +159,12 @@ sap.ui.define([
 		 *
 		 * @param {string|sap.ui.model.SimpleType} vType Given dataType as string or type
 		 * @param {object} [oFormatOptions] formatoptions for the given dataType
- 		 * @param {object} [oConstraints] constraints for the given dataType
+		 * @param {object} [oConstraints] constraints for the given dataType
 		 * @returns {sap.ui.mdc.TypeConfig} output returns typeConfig object
 		 * @private
 		 * @ui5-restricted sap.ui.mdc
 		 */
-		getTypeConfig: function (vType, oFormatOptions, oConstraints) {
+		getTypeConfig: function(vType, oFormatOptions, oConstraints) {
 
 			const oType = this._normalizeType(vType, oFormatOptions, oConstraints);
 
@@ -185,13 +185,13 @@ sap.ui.define([
 		 * @param {string} sValue stringified value
 		 * @param {string|sap.ui.model.SimpleType} vType Data type considered for conversion
 		 * @param {object} [oFormatOptions] formatoptions for the dataType
- 		 * @param {object} [oConstraints] constraints for the dataType
+		 * @param {object} [oConstraints] constraints for the dataType
 		 * @returns {object} converted value
 		 * @private
 		 * @ui5-restricted sap.ui.mdc
 		 * @since 1.103.0
 		 */
-		internalizeValue: function (sValue, vType, oFormatOptions, oConstraints) {
+		internalizeValue: function(sValue, vType, oFormatOptions, oConstraints) {
 			const oTypeInstance = this._normalizeType(vType, oFormatOptions, oConstraints);
 			const sBaseType = this.getBaseTypeForType(oTypeInstance);
 			switch (sBaseType) {
@@ -229,13 +229,13 @@ sap.ui.define([
 		 * @param {object} vValue typed value
 		 * @param {string|sap.ui.model.SimpleType} vType Data type considered for conversion
 		 * @param {object} [oFormatOptions] formatoptions for the dataType
- 		 * @param {object} [oConstraints] constraints for the dataType
+		 * @param {object} [oConstraints] constraints for the dataType
 		 * @returns {string} converted value
 		 * @private
 		 * @ui5-restricted sap.ui.mdc
 		 * @since 1.103.0
 		 */
-		externalizeValue: function (vValue, vType, oFormatOptions, oConstraints) {
+		externalizeValue: function(vValue, vType, oFormatOptions, oConstraints) {
 			const oTypeInstance = this._normalizeType(vType, oFormatOptions, oConstraints);
 			const sBaseType = this.getBaseTypeForType(oTypeInstance);
 			switch (sBaseType) {
@@ -260,7 +260,7 @@ sap.ui.define([
 			}
 		},
 
-		_normalizeType: function (vType, oFormatOptions, oConstraints) {
+		_normalizeType: function(vType, oFormatOptions, oConstraints) {
 			if (vType instanceof SimpleType) { // simpletype
 				return vType;
 			}
@@ -273,13 +273,13 @@ sap.ui.define([
 		 * This type is used fur the number and unit part of a field if the field itself is using a unit or currency type.
 		 *
 		 * @param {sap.ui.model.CompositeType} oOriginalType Original data type used by field
-  		 * @param {boolean} [bShowNumber] number should be shown
- 		 * @param {boolean} [bShowMeasure] unit should be shown
+		 * @param {boolean} [bShowNumber] number should be shown
+		 * @param {boolean} [bShowMeasure] unit should be shown
 		 * @returns {sap.ui.model.CompositeType} creates returns an instance of the resolved dataType
 		 * @private
 		 * @ui5-restricted sap.ui.mdc
 		 */
-		 getUnitTypeInstance: function(oOriginalType, bShowNumber, bShowMeasure) {
+		getUnitTypeInstance: function(oOriginalType, bShowNumber, bShowMeasure) {
 			const TypeClass = oOriginalType.getMetadata().getClass();
 			const oFormatOptions = merge({}, oOriginalType.getFormatOptions()); // for Unit/Currency always set - do not manipulate original object
 			const oConstraints = isEmptyObject(oOriginalType.getConstraints()) ? undefined : merge({}, oOriginalType.getConstraints()); // do not manipulate original object
@@ -289,7 +289,7 @@ sap.ui.define([
 			return new TypeClass(oFormatOptions, oConstraints);
 		},
 
-		_adjustUnitFormatOptions: function (oFormatOptions, bShowNumber, bShowMeasure) {
+		_adjustUnitFormatOptions: function(oFormatOptions, bShowNumber, bShowMeasure) {
 			oFormatOptions.showNumber = bShowNumber;
 			oFormatOptions.showMeasure = bShowMeasure;
 			oFormatOptions.strictParsing = true; // do not allow to enter unit in number field

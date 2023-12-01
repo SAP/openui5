@@ -16,11 +16,11 @@ sap.ui.define([
 	"sap/ui/core/Title",
 	"sap/ui/layout/library",
 	"sap/ui/mdc/enums/LinkType"
-], function(Element, Library, FieldInfoBase, jQuery, BindingMode, JSONModel, Log, SapBaseLog, Panel, PanelItem, SimpleForm, CoreTitle, layoutLibrary, LinkType) {
+], (Element, Library, FieldInfoBase, jQuery, BindingMode, JSONModel, Log, SapBaseLog, Panel, PanelItem, SimpleForm, CoreTitle, layoutLibrary, LinkType) => {
 	"use strict";
 
 	// shortcut for sap.ui.layout.form.SimpleFormLayout.ResponsiveGridLayout
-	const ResponsiveGridLayout = layoutLibrary.form.SimpleFormLayout.ResponsiveGridLayout;
+	const { ResponsiveGridLayout } = layoutLibrary.form.SimpleFormLayout;
 
 	/**
 	 * Object holding the information regarding direct link navigation when there is no other link item.
@@ -76,7 +76,7 @@ sap.ui.define([
 	 * @since 1.74
 	 *
 	 * @public
-		   * @experimental As of version 1.74.0
+	 * @experimental As of version 1.74.0
 	 */
 	const Link = FieldInfoBase.extend("sap.ui.mdc.Link", /** @lends sap.ui.mdc.Link.prototype */ {
 		metadata: {
@@ -154,14 +154,14 @@ sap.ui.define([
 		this._oUseDelegateAdditionalContentPromise = undefined;
 
 		if (this._aLinkItems) {
-			this._aLinkItems.forEach(function(oLinkItem) {
+			this._aLinkItems.forEach((oLinkItem) => {
 				oLinkItem.destroy();
 			});
 			this._aLinkItems = undefined;
 		}
 
 		if (this._aAdditionalContent) {
-			this._aAdditionalContent.forEach(function(oLinkItem) {
+			this._aAdditionalContent.forEach((oLinkItem) => {
 				oLinkItem.destroy();
 			});
 			this._aAdditionalContent = undefined;
@@ -173,7 +173,7 @@ sap.ui.define([
 	// ----------------------- Implementation of 'FieldInfoBase' interface --------------------------------------------
 
 	Link.prototype.isTriggerable = function() {
-		return this.retrieveLinkType().then(function(oLinkTypeObject) {
+		return this.retrieveLinkType().then((oLinkTypeObject) => {
 			if (!oLinkTypeObject) {
 				return false;
 			}
@@ -181,27 +181,27 @@ sap.ui.define([
 			const oInitialLinkType = oLinkTypeObject.initialType ? oLinkTypeObject.initialType : oLinkTypeObject;
 
 			if (oRuntimeLinkTypePromise && oRuntimeLinkTypePromise instanceof Promise) {
-				oRuntimeLinkTypePromise.then(function(oRuntimeLinkType) {
+				oRuntimeLinkTypePromise.then((oRuntimeLinkType) => {
 					if (!this._oLinkType || oRuntimeLinkType.type !== this._oLinkType.type) {
 						this._oLinkType = oRuntimeLinkType;
 						this.fireDataUpdate();
 					}
-				}.bind(this));
+				});
 			}
 			return this._oLinkType ?
 				(this._oLinkType.type === LinkType.DirectLink || this._oLinkType.type === LinkType.Popover) :
 				(oInitialLinkType.type === LinkType.DirectLink || oInitialLinkType.type === LinkType.Popover);
-		}.bind(this));
+		});
 	};
 
 	Link.prototype.getTriggerHref = function() {
-		return this.getDirectLinkHrefAndTarget().then(function(oLinkItem) {
+		return this.getDirectLinkHrefAndTarget().then((oLinkItem) => {
 			return oLinkItem ? oLinkItem.href : null;
 		});
 	};
 
 	Link.prototype.getDirectLinkHrefAndTarget = function() {
-		return this._retrieveDirectLinkItem().then(function(oDirectLinkItem) {
+		return this._retrieveDirectLinkItem().then((oDirectLinkItem) => {
 			if (this.isDestroyed()) {
 				return null;
 			}
@@ -211,7 +211,7 @@ sap.ui.define([
 				target: oDirectLinkItem.getTarget(),
 				href: oDirectLinkItem.getHref()
 			} : null;
-		}.bind(this));
+		});
 	};
 
 	/**
@@ -219,7 +219,7 @@ sap.ui.define([
 	 * @private
 	 */
 	Link.prototype._retrieveDirectLinkItem = function() {
-		return this.retrieveLinkType().then(function(oLinkTypeObject) {
+		return this.retrieveLinkType().then((oLinkTypeObject) => {
 			if (!oLinkTypeObject) {
 				return null;
 			}
@@ -234,7 +234,7 @@ sap.ui.define([
 				return oLinkType.directLink;
 			}
 			return null;
-		}.bind(this));
+		});
 	};
 
 	/**
@@ -250,14 +250,13 @@ sap.ui.define([
 	Link.prototype.getContent = function(fnGetAutoClosedControl) {
 		const oLinkItemsPromise = this.retrieveLinkItems();
 		const oAdditionalContentPromise = this.retrieveAdditionalContent();
-		return Promise.all([oLinkItemsPromise, oAdditionalContentPromise]).then(function(values) {
+		return Promise.all([oLinkItemsPromise, oAdditionalContentPromise]).then((values) => {
 			const aLinkItems = values[0];
 			const aAdditionalContent = values[1];
-			return new Promise(function(resolve) {
+			return new Promise((resolve) => {
 				sap.ui.require([
-					'sap/ui/fl/Utils',
-					'sap/ui/fl/apply/api/FlexRuntimeInfoAPI'
-				], function(Utils, FlexRuntimeInfoAPI) {
+					'sap/ui/fl/Utils', 'sap/ui/fl/apply/api/FlexRuntimeInfoAPI'
+				], (Utils, FlexRuntimeInfoAPI) => {
 					this._setConvertedLinkItems(aLinkItems);
 					const aMLinkItems = this._getInternalModel().getProperty("/linkItems");
 					const aMBaselineLinkItems = this._getInternalModel().getProperty("/baselineLinkItems");
@@ -276,7 +275,7 @@ sap.ui.define([
 
 					const oPanel = new Panel(sPanelId, {
 						enablePersonalization: this.getEnablePersonalization(), // brake the binding chain
-						items: aMBaselineLinkItems.map(function(oMLinkItem) {
+						items: aMBaselineLinkItems.map((oMLinkItem) => {
 							return new PanelItem(oMLinkItem.key, {
 								text: oMLinkItem.text,
 								description: oMLinkItem.description,
@@ -309,15 +308,15 @@ sap.ui.define([
 					this._setAdditionalContent(undefined);
 
 					return resolve(oPanel);
-				}.bind(this));
-			}.bind(this));
-		}.bind(this));
+				});
+			});
+		});
 	};
 
 	Link.prototype.checkDirectNavigation = function() {
 		const oLinkItemsPromise = this.retrieveLinkItems();
 		const oAdditionalContentPromise = this.retrieveAdditionalContent();
-		return Promise.all([oLinkItemsPromise, oAdditionalContentPromise]).then(function(values) {
+		return Promise.all([oLinkItemsPromise, oAdditionalContentPromise]).then((values) => {
 			const aLinkItems = values[0];
 			const aAdditionalContent = values[1];
 
@@ -329,7 +328,7 @@ sap.ui.define([
 				return Promise.resolve(true);
 			}
 			return Promise.resolve(false);
-		}.bind(this));
+		});
 	};
 
 	/**
@@ -338,7 +337,7 @@ sap.ui.define([
 	 */
 	Link.prototype._setConvertedLinkItems = function(aLinkItems) {
 		const oModel = this._getInternalModel();
-		const aMLinkItems = aLinkItems.map(function(oLinkItem) {
+		const aMLinkItems = aLinkItems.map((oLinkItem) => {
 			if (!oLinkItem.getKey()) {
 				SapBaseLog.error("sap.ui.mdc.Link: undefined 'key' property of the LinkItem " + oLinkItem.getId() + ". The mandatory 'key' property should be defined due to personalization reasons.");
 			}
@@ -356,7 +355,7 @@ sap.ui.define([
 		});
 		oModel.setProperty("/linkItems/", aMLinkItems);
 
-		const aMBaselineLinkItems = aMLinkItems.filter(function(oMLinkItem) {
+		const aMBaselineLinkItems = aMLinkItems.filter((oMLinkItem) => {
 			return oMLinkItem.initiallyVisible;
 		});
 		oModel.setProperty("/baselineLinkItems/", aMBaselineLinkItems);
@@ -418,7 +417,7 @@ sap.ui.define([
 			return [];
 		}
 		const oModel = oPanel.getModel("$sapuimdcLink");
-		return oModel.getProperty("/metadata").map(function(oMLinkItem) {
+		return oModel.getProperty("/metadata").map((oMLinkItem) => {
 			return {
 				id: oMLinkItem.key,
 				text: oMLinkItem.text,
@@ -442,7 +441,7 @@ sap.ui.define([
 			return [];
 		}
 		const oModel = oPanel.getModel("$sapuimdcLink");
-		return oModel.getProperty("/baseline").map(function(oMLinkItem) {
+		return oModel.getProperty("/baseline").map((oMLinkItem) => {
 			return {
 				id: oMLinkItem.key,
 				visible: true
@@ -494,9 +493,9 @@ sap.ui.define([
 			return Promise.resolve(this._aAdditionalContent);
 		} else {
 			this._oUseDelegateAdditionalContentPromise = this._useDelegateAdditionalContent();
-			return this._oUseDelegateAdditionalContentPromise.then(function() {
+			return this._oUseDelegateAdditionalContentPromise.then(() => {
 				return Promise.resolve(this._aAdditionalContent);
-			}.bind(this));
+			});
 		}
 	};
 
@@ -507,14 +506,14 @@ sap.ui.define([
 	 */
 	Link.prototype._useDelegateAdditionalContent = function() {
 		if (this.awaitControlDelegate()) {
-			return this.awaitControlDelegate().then(function() {
-				return new Promise(function(resolve) {
-					this.getControlDelegate().fetchAdditionalContent(this, this).then(function(aAdditionalContent) {
+			return this.awaitControlDelegate().then(() => {
+				return new Promise((resolve) => {
+					this.getControlDelegate().fetchAdditionalContent(this, this).then((aAdditionalContent) => {
 						this._setAdditionalContent(aAdditionalContent === null ? [] : aAdditionalContent);
 						resolve();
-					}.bind(this));
-				}.bind(this));
-			}.bind(this));
+					});
+				});
+			});
 		}
 		SapBaseLog.error("mdc.Link retrieveAdditionalContent: control delegate is not set - could not load AdditionalContent from delegate.");
 		return Promise.resolve([]);
@@ -535,9 +534,9 @@ sap.ui.define([
 	 */
 	Link.prototype.retrieveLinkType = function() {
 		if (this.awaitControlDelegate()) {
-			return this.awaitControlDelegate().then(function() {
+			return this.awaitControlDelegate().then(() => {
 				return this._bIsBeingDestroyed ? Promise.resolve() : this.getControlDelegate().fetchLinkType(this);
-			}.bind(this));
+			});
 		}
 		SapBaseLog.error("mdc.Link retrieveLinkType: control delegate is not set - could not load LinkType from delegate.");
 		return Promise.resolve(null);
@@ -550,11 +549,11 @@ sap.ui.define([
 	 */
 	Link.prototype.retrieveLinkItems = function() {
 		const oBindingContext = this._getControlBindingContext();
-		return this._retrieveUnmodifiedLinkItems().then(function(aUnmodifiedLinkItems) {
-			return this.getControlDelegate().modifyLinkItems(this, oBindingContext, aUnmodifiedLinkItems).then(function(aLinkItems) {
+		return this._retrieveUnmodifiedLinkItems().then((aUnmodifiedLinkItems) => {
+			return this.getControlDelegate().modifyLinkItems(this, oBindingContext, aUnmodifiedLinkItems).then((aLinkItems) => {
 				return aLinkItems;
 			});
-		}.bind(this));
+		});
 	};
 
 	/**
@@ -566,9 +565,9 @@ sap.ui.define([
 			return Promise.resolve(this._aLinkItems);
 		} else {
 			this._oUseDelegateItemsPromise = this._useDelegateItems();
-			return this._oUseDelegateItemsPromise.then(function() {
+			return this._oUseDelegateItemsPromise.then(() => {
 				return Promise.resolve(this._aLinkItems);
-			}.bind(this));
+			});
 		}
 	};
 
@@ -579,18 +578,18 @@ sap.ui.define([
 	 */
 	Link.prototype._useDelegateItems = function() {
 		if (this.awaitControlDelegate()) {
-			return this.awaitControlDelegate().then(function() {
+			return this.awaitControlDelegate().then(() => {
 				// Assign new Object so payload.id won't get set for the whole Link class
 				const oBindingContext = this._getControlBindingContext();
 				const oInfoLog = this._getInfoLog();
-				return new Promise(function(resolve) {
-					this.getControlDelegate().fetchLinkItems(this, oBindingContext, oInfoLog).then(function(aLinkItems) {
+				return new Promise((resolve) => {
+					this.getControlDelegate().fetchLinkItems(this, oBindingContext, oInfoLog).then((aLinkItems) => {
 						this._setLinkItems(aLinkItems === null ? [] : aLinkItems);
 						this._bLinkItemsFetched = aLinkItems !== null;
 						resolve();
-					}.bind(this));
-				}.bind(this));
-			}.bind(this));
+					});
+				});
+			});
 		}
 		SapBaseLog.error("mdc.Link _useDelegateItems: control delegate is not set - could not load LinkItems from delegate.");
 		return Promise.resolve();
@@ -601,12 +600,12 @@ sap.ui.define([
 	 * @param {sap.ui.mdc.link.LinkItem[]} aLinkItems The given <code>LinkItem</code> objects
 	 */
 	Link.prototype._setLinkItems = function(aLinkItems) {
-		const aLinkItemsMissingParent = aLinkItems.filter(function(oLinkItem) {
+		const aLinkItemsMissingParent = aLinkItems.filter((oLinkItem) => {
 			return oLinkItem.getParent() === null;
 		});
-		aLinkItemsMissingParent.forEach(function(oLinkItem) {
+		aLinkItemsMissingParent.forEach((oLinkItem) => {
 			this.addDependent(oLinkItem);
-		}.bind(this));
+		});
 
 		this._aLinkItems = aLinkItems;
 	};

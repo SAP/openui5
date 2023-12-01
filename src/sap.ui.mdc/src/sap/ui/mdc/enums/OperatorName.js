@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
-sap.ui.define(function() {
+sap.ui.define(() => {
 	"use strict";
 
 	/**
@@ -15,17 +15,17 @@ sap.ui.define(function() {
 	 */
 	const OperatorName = {
 		/**
-		* "equal to" operator
-		*
-		* Depending on the used <code>DisplayFormat</code>, the key, the description, or both are used as output of formatting during parsing.
-		*
-		* The operator is available for all data types.
-		*
-		* If a {@link sap.m.DynamicDateRange DynamicDateRange} control is used for the output, the operator is mapped to the <code>DATE</code> option if a date type is used
-		* and to the <code>DATETIME</code> option if a date/time type is used.
-		* @since 1.73.0
-		* @public
-		*/
+		 * "equal to" operator
+		 *
+		 * Depending on the used <code>DisplayFormat</code>, the key, the description, or both are used as output of formatting during parsing.
+		 *
+		 * The operator is available for all data types.
+		 *
+		 * If a {@link sap.m.DynamicDateRange DynamicDateRange} control is used for the output, the operator is mapped to the <code>DATE</code> option if a date type is used
+		 * and to the <code>DATETIME</code> option if a date/time type is used.
+		 * @since 1.73.0
+		 * @public
+		 */
 		EQ: "EQ",
 
 		/**
@@ -88,7 +88,7 @@ sap.ui.define(function() {
 		 * The operator is available for string, numeric, date, time, and date/time types.
 		 * @since 1.73.0
 		 * @public
-		*/
+		 */
 		GT: "GT",
 
 		/**

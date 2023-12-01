@@ -6,7 +6,7 @@
 // Delegate class used to help create content in the filterbar and fill relevant metadata
 // ---------------------------------------------------------------------------------------
 // ---------------------------------------------------------------------------------------
-sap.ui.define(["sap/ui/mdc/AggregationBaseDelegate", "sap/ui/mdc/enums/FilterBarValidationStatus"], function(AggregationBaseDelegate, FilterBarValidationStatus) {
+sap.ui.define(["sap/ui/mdc/AggregationBaseDelegate", "sap/ui/mdc/enums/FilterBarValidationStatus"], (AggregationBaseDelegate, FilterBarValidationStatus) => {
 	"use strict";
 	/**
 	 * Base Delegate for {@link sap.ui.mdc.FilterBar FilterBar}. Extend this object in your project to use all functionalities of the {@link sap.ui.mdc.FilterBar FilterBar}.
@@ -74,7 +74,7 @@ sap.ui.define(["sap/ui/mdc/AggregationBaseDelegate", "sap/ui/mdc/enums/FilterBar
 	 */
 	FilterBarDelegate.addCondition = function(oFilterBar, sPropertyName, mPropertyBag) {
 		return Promise.resolve();
-    };
+	};
 
 	/** propertyInfo
 	 * This method is called during the appliance of the remove condition change.
@@ -88,7 +88,7 @@ sap.ui.define(["sap/ui/mdc/AggregationBaseDelegate", "sap/ui/mdc/enums/FilterBar
 	 */
 	FilterBarDelegate.removeCondition = function(oFilterBar, sPropertyName, mPropertyBag) {
 		return Promise.resolve();
-    };
+	};
 
 
 	/**
@@ -111,7 +111,7 @@ sap.ui.define(["sap/ui/mdc/AggregationBaseDelegate", "sap/ui/mdc/enums/FilterBar
 	 */
 	FilterBarDelegate.clearFilters = function(oFilterBar) {
 		return Promise.resolve();
-    };
+	};
 
 	/**
 	 * A validator to evaluate the <code>FilterBar</code> state.
@@ -122,8 +122,8 @@ sap.ui.define(["sap/ui/mdc/AggregationBaseDelegate", "sap/ui/mdc/enums/FilterBar
 	 * @param {string} [mValidation.status] Status of the validation {@link sap.ui.mdc.enums.FilterBarValidationStatus}
 	 * @returns {sap.ui.mdc.enums.FilterBarValidationStatus} The inner <code>FilterBar</code> state
 	 */
-    FilterBarDelegate.determineValidationState = function(oFilterBar) {
-		 return oFilterBar.checkFilters();
+	FilterBarDelegate.determineValidationState = function(oFilterBar) {
+		return oFilterBar.checkFilters();
 	};
 
 	/**
@@ -134,40 +134,40 @@ sap.ui.define(["sap/ui/mdc/AggregationBaseDelegate", "sap/ui/mdc/enums/FilterBar
 	 * @param {map} mValidation Describes the validation result. This object is only provided when called from the {@link sap.ui.mdc.FilterBar FilterBar}
 	 * @param {sap.ui.mdc.enums.FilterBarValidationStatus} mValidation.status Status of the validation as returned via {@link sap.ui.mdc.filterbar.FilterBarBase#checkValidationState checkValidationState}
 	 */
-    FilterBarDelegate.visualizeValidationState = function(oFilterBar, mValidation) {
-		 let sErrorMessage;
+	FilterBarDelegate.visualizeValidationState = function(oFilterBar, mValidation) {
+		let sErrorMessage;
 
-		 if (mValidation.status === FilterBarValidationStatus.NoError) {
-			 return;
-		 }
+		if (mValidation.status === FilterBarValidationStatus.NoError) {
+			return;
+		}
 
-		 if (mValidation.status === FilterBarValidationStatus.RequiredHasNoValue) {
-			 sErrorMessage = oFilterBar.getResourceFileText("filterbar.REQUIRED_CONDITION_MISSING");
-		 } else if (mValidation.status === FilterBarValidationStatus.FieldInErrorState ) {
-			 sErrorMessage = oFilterBar.getResourceFileText("filterbar.VALIDATION_ERROR");
-		 }
+		if (mValidation.status === FilterBarValidationStatus.RequiredHasNoValue) {
+			sErrorMessage = oFilterBar.getResourceFileText("filterbar.REQUIRED_CONDITION_MISSING");
+		} else if (mValidation.status === FilterBarValidationStatus.FieldInErrorState) {
+			sErrorMessage = oFilterBar.getResourceFileText("filterbar.VALIDATION_ERROR");
+		}
 
-		 if (oFilterBar.getShowMessages() && !oFilterBar._isLiveMode() && !oFilterBar._hasOpenMessageBox) {
+		if (oFilterBar.getShowMessages() && !oFilterBar._isLiveMode() && !oFilterBar._hasOpenMessageBox) {
 
-			 sap.ui.require(["sap/m/MessageBox", "sap/base/Log"], function (MessageBox, Log) {
-				 try {
+			sap.ui.require(["sap/m/MessageBox", "sap/base/Log"], function(MessageBox, Log) {
+				try {
 
-					 if (oFilterBar._bIsBeingDestroyed) {
-						 return;
-					 }
-					 oFilterBar._hasOpenMessageBox = true;
-					 MessageBox.error(sErrorMessage, {
-						 styleClass: (this.$() && this.$().closest(".sapUiSizeCompact").length) ? "sapUiSizeCompact" : "",
-						 onClose: function() {
-							 delete oFilterBar._hasOpenMessageBox;
-							 oFilterBar.setFocusOnFirstErroneousField();
-						 }
-					 });
-				 } catch (x) {
-					 Log.error(x.message);
-				 }
-			 });
-		 }
+					if (oFilterBar._bIsBeingDestroyed) {
+						return;
+					}
+					oFilterBar._hasOpenMessageBox = true;
+					MessageBox.error(sErrorMessage, {
+						styleClass: (this.$() && this.$().closest(".sapUiSizeCompact").length) ? "sapUiSizeCompact" : "",
+						onClose: function() {
+							delete oFilterBar._hasOpenMessageBox;
+							oFilterBar.setFocusOnFirstErroneousField();
+						}
+					});
+				} catch (x) {
+					Log.error(x.message);
+				}
+			});
+		}
 	};
 
 

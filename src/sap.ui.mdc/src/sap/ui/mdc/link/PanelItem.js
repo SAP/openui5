@@ -4,7 +4,7 @@
 
 sap.ui.define([
 	'sap/ui/core/Element'
-], function(Element) {
+], (Element) => {
 	"use strict";
 
 	/**
@@ -20,8 +20,7 @@ sap.ui.define([
 	 * @since 1.54.0
 	 * @alias sap.ui.mdc.link.PanelItem
 	 */
-	const PanelItem = Element.extend("sap.ui.mdc.link.PanelItem", /** @lends sap.ui.mdc.link.PanelItem.prototype */
-	{
+	const PanelItem = Element.extend("sap.ui.mdc.link.PanelItem", /** @lends sap.ui.mdc.link.PanelItem.prototype */ {
 		metadata: {
 			library: "sap.ui.mdc",
 			properties: {
@@ -47,7 +46,7 @@ sap.ui.define([
 				 * Destination link for a navigation operation in internal format provided by FLP.
 				 * @protected
 				 */
-				 internalHref: {
+				internalHref: {
 					type: "string",
 					defaultValue: null
 				},
@@ -93,14 +92,14 @@ sap.ui.define([
 				// visibleInitial: {
 				// 	type: "boolean"
 				// }
-			// },
-			// /**
-			//  * Defines press handler of a link.
-			//  */
-			// press: {
-			// 	type: "object",
-			// 	defaultValue: null
-			// }
+				// },
+				// /**
+				//  * Defines press handler of a link.
+				//  */
+				// press: {
+				// 	type: "object",
+				// 	defaultValue: null
+				// }
 			}
 		}
 	});

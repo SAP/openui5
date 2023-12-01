@@ -4,8 +4,8 @@
 
 // Provides control sap.ui.mdc.filterbar.FilterItemLayout.
 sap.ui.define([
-	'sap/ui/mdc/filterbar/IFilterContainer','sap/ui/mdc/p13n/panels/AdaptFiltersPanel'
-], function(IFilterContainer, AdaptFiltersPanel) {
+	'sap/ui/mdc/filterbar/IFilterContainer', 'sap/ui/mdc/p13n/panels/AdaptFiltersPanel'
+], (IFilterContainer, AdaptFiltersPanel) => {
 	"use strict";
 
 	/**
@@ -26,19 +26,18 @@ sap.ui.define([
 
 		IFilterContainer.prototype.init.apply(this, arguments);
 
-		this.mFilterItems = {
-		};
+		this.mFilterItems = {};
 
 		this.oLayout = new AdaptFiltersPanel();
 
-		this.oLayout.setItemFactory(function(oBindingContext){
+		this.oLayout.setItemFactory((oBindingContext) => {
 			const sKey = oBindingContext.getProperty(oBindingContext.sPath).name;
 			const oFilterItem = this.mFilterItems[sKey];
 			return oFilterItem;
-		}.bind(this));
+		});
 	};
 
-	GroupContainer.prototype.setMessageStrip = function (oStrip) {
+	GroupContainer.prototype.setMessageStrip = function(oStrip) {
 		this.oLayout.getCurrentViewContent().setMessageStrip(oStrip);
 	};
 
@@ -53,9 +52,9 @@ sap.ui.define([
 	GroupContainer.prototype.getFilterFields = function() {
 		const aFilterItems = [];
 
-		Object.keys(this.mFilterItems).forEach(function(sKey){
+		Object.keys(this.mFilterItems).forEach((sKey) => {
 			aFilterItems.push(this.mFilterItems[sKey]);
-		}.bind(this));
+		});
 
 		return aFilterItems;
 	};

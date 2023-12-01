@@ -4,9 +4,9 @@
 
 sap.ui.define([
 	"./PropertyHelper"
-], function(
+], (
 	TablePropertyHelper
-) {
+) => {
 	"use strict";
 
 	/**
@@ -52,7 +52,7 @@ sap.ui.define([
 				},
 				customAggregate: {
 					type: {
-						contextDefiningProperties: {type: "PropertyReference[]"}
+						contextDefiningProperties: { type: "PropertyReference[]" }
 					}
 				}
 			});
@@ -81,7 +81,7 @@ sap.ui.define([
 
 		Object.defineProperty(oProperty, "getAggregatableProperties", {
 			value: function() {
-				return oProperty.getSimpleProperties().filter(function(oProperty) {
+				return oProperty.getSimpleProperties().filter((oProperty) => {
 					return oProperty.aggregatable;
 				});
 			}
@@ -95,7 +95,7 @@ sap.ui.define([
 	 * @public
 	 */
 	PropertyHelper.prototype.getAggregatableProperties = function() {
-		return this.getProperties().filter(function(oProperty) {
+		return this.getProperties().filter((oProperty) => {
 			return oProperty.aggregatable;
 		});
 	};
@@ -107,7 +107,7 @@ sap.ui.define([
 	 * @private
 	 */
 	PropertyHelper.prototype.getPropertiesForPlugin = function() {
-		return this.getProperties().reduce(function(aProperties, oProperty) {
+		return this.getProperties().reduce((aProperties, oProperty) => {
 			if (oProperty.isComplex()) {
 				return aProperties;
 			}

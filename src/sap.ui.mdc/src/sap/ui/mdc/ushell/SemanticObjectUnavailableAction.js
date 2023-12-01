@@ -4,7 +4,7 @@
 
 sap.ui.define([
 	'sap/ui/core/Element'
-], function(Element) {
+], (Element) => {
 	"use strict";
 
 	/**
@@ -20,8 +20,7 @@ sap.ui.define([
 	 * @since 1.120
 	 * @alias sap.ui.mdc.ushell.SemanticObjectUnavailableAction
 	 */
-	const SemanticObjectUnavailableAction = Element.extend("sap.ui.mdc.ushell.SemanticObjectUnavailableAction", /** @lends sap.ui.mdc.ushell.SemanticObjectUnavailableAction.prototype */
-	{
+	const SemanticObjectUnavailableAction = Element.extend("sap.ui.mdc.ushell.SemanticObjectUnavailableAction", /** @lends sap.ui.mdc.ushell.SemanticObjectUnavailableAction.prototype */ {
 		metadata: {
 			library: "sap.ui.mdc",
 			properties: {

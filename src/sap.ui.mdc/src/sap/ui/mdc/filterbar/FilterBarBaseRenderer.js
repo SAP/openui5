@@ -3,7 +3,7 @@
  */
 
 sap.ui.define([],
-	function () {
+	() => {
 		"use strict";
 
 		/**
@@ -28,7 +28,7 @@ sap.ui.define([],
 		 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer
 		 * @param {sap.ui.mdc.filterbar.FilterBarBase} oControl An object representation of the control that should be rendered
 		 */
-		FilterBarBaseRenderer.render = function (oRm, oControl) {
+		FilterBarBaseRenderer.render = function(oRm, oControl) {
 			oRm.openStart("div", oControl);
 			oRm.class(FilterBarBaseRenderer.CSS_CLASS);
 			if (oControl.isA("sap.ui.mdc.filterbar.p13n.AdaptationFilterBar") && oControl.getProperty("_useFixedWidth")) {
@@ -41,4 +41,5 @@ sap.ui.define([],
 		};
 
 		return FilterBarBaseRenderer;
-	}, true);
+	},
+	true);

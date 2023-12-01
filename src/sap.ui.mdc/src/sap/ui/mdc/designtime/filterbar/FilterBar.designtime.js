@@ -3,17 +3,17 @@
  */
 sap.ui.define([
 	"sap/m/p13n/Engine"
-], function (Engine) {
+], (Engine) => {
 	"use strict";
 
 	return {
 		actions: {
-			settings: function () {
+			settings: function() {
 				return {
 					name: "filterbar.ADAPT_TITLE",
-					handler: function (oControl, mPropertyBag) {
+					handler: function(oControl, mPropertyBag) {
 						//CHECK: move metadata finalizing to Engine?
-						return oControl.initializedWithMetadata().then(function() {
+						return oControl.initializedWithMetadata().then(() => {
 							return Engine.getInstance().getRTASettingsActionHandler(oControl, mPropertyBag, "Item");
 						});
 					}

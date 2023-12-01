@@ -17,7 +17,7 @@ sap.ui.define([
 	'sap/ui/mdc/odata/v4/TypeMap',
 	'sap/ui/mdc/enums/TableP13nMode',
 	'sap/ui/mdc/enums/TableType'
-], function(
+], (
 	TableDelegate,
 	V4AnalyticsPropertyHelper,
 	loadModules,
@@ -32,7 +32,7 @@ sap.ui.define([
 	ODataV4TypeMap,
 	TableP13nMode,
 	TableType
-) {
+) => {
 	"use strict";
 
 	/*global Set */
@@ -52,7 +52,7 @@ sap.ui.define([
 	 */
 	const Delegate = Object.assign({}, TableDelegate);
 
-	Delegate.getTypeMap = function (oPayload) {
+	Delegate.getTypeMap = function(oPayload) {
 		return ODataV4TypeMap;
 	};
 
@@ -75,12 +75,12 @@ sap.ui.define([
 	 * @inheritDoc
 	 */
 	Delegate.initializeContent = function(oTable) {
-		return TableDelegate.initializeContent.apply(this, arguments).then(function() {
+		return TableDelegate.initializeContent.apply(this, arguments).then(() => {
 			if (!TableMap.has(oTable)) {
 				TableMap.set(oTable, {});
 			}
 			return configureInnerTable(oTable);
-		}).then(function() {
+		}).then(() => {
 			setAggregation(oTable);
 		});
 	};
@@ -139,7 +139,7 @@ sap.ui.define([
 		});
 	}
 
-	function setSelectedGridTableConditions (oTable, aContexts) {
+	function setSelectedGridTableConditions(oTable, aContexts) {
 		const oODataV4SelectionPlugin = PluginBase.getPlugin(oTable._oTable, "sap.ui.table.plugins.ODataV4Selection");
 
 		if (oODataV4SelectionPlugin) {
@@ -150,7 +150,7 @@ sap.ui.define([
 
 		if (oMultiSelectionPlugin) {
 			oMultiSelectionPlugin.clearSelection();
-			return aContexts.map(function (oContext) {
+			return aContexts.map((oContext) => {
 				const iContextIndex = oContext.getIndex(); // TODO: Handle undefined index?
 				return oMultiSelectionPlugin.addSelectionInterval(iContextIndex, iContextIndex);
 			});
@@ -162,7 +162,7 @@ sap.ui.define([
 	/**
 	 * @inheritDoc
 	 */
-	Delegate.setSelectedContexts = function (oTable, aContexts) {
+	Delegate.setSelectedContexts = function(oTable, aContexts) {
 		if (oTable._isOfType(TableType.Table, true)) {
 			setSelectedGridTableConditions(oTable, aContexts);
 		} else {
@@ -226,7 +226,7 @@ sap.ui.define([
 			const aAggregatedGroupableProperties = [];
 			const oListFormat = ListFormat.getInstance();
 
-			aAggregateProperties.forEach(function(sProperty) {
+			aAggregateProperties.forEach((sProperty) => {
 				const oProperty = oTable.getPropertyHelper().getProperty(sProperty);
 				if (oProperty && oProperty.groupable) {
 					aAggregatedGroupableProperties.push(sProperty);
@@ -409,7 +409,7 @@ sap.ui.define([
 		}
 
 		if (oTable.isAggregationEnabled()) {
-			const aPropertiesThatCanBeTotaled = oProperty.getAggregatableProperties().filter(function(oProperty) {
+			const aPropertiesThatCanBeTotaled = oProperty.getAggregatableProperties().filter((oProperty) => {
 				return oProperty.extension.customAggregate != null;
 			});
 
@@ -420,7 +420,7 @@ sap.ui.define([
 
 		const oPopover = oTable._oPopover;
 		if (oPopover) {
-			oPopover.getItems().forEach(function(oItem, iIndex, aItems) {
+			oPopover.getItems().forEach((oItem, iIndex, aItems) => {
 				const sLabel = oItem.getLabel();
 				const oResourceBundle = Library.getResourceBundleFor("sap.ui.mdc");
 
@@ -482,13 +482,9 @@ sap.ui.define([
 		// Sorting by a property that is not in the aggregation info (sorting by a property that is not requested) causes a backend error.
 		if (isAnalyticsEnabled(oTable)) {
 			const oPropertyHelper = oTable.getPropertyHelper();
-			const aVisiblePropertyPaths = getVisiblePropertyNames(oTable).map((sPropertyName) => {
-				return oPropertyHelper.getProperty(sPropertyName).path;
-			});
+			const aVisiblePropertyPaths = getVisiblePropertyNames(oTable).map((sPropertyName) => oPropertyHelper.getProperty(sPropertyName).path);
 
-			aSorters = aSorters.filter((oSorter) => {
-				return aVisiblePropertyPaths.includes(oSorter.sPath);
-			});
+			aSorters = aSorters.filter((oSorter) => aVisiblePropertyPaths.includes(oSorter.sPath));
 		}
 
 		return aSorters;
@@ -517,7 +513,7 @@ sap.ui.define([
 
 		const oRowBinding = oTable.getRowBinding();
 		if (oRowBinding) {
-			oRowBinding.setAggregation(Object.assign(oRowBinding.getAggregation(), {expandTo: Number.MAX_SAFE_INTEGER}));
+			oRowBinding.setAggregation(Object.assign(oRowBinding.getAggregation(), { expandTo: Number.MAX_SAFE_INTEGER }));
 		}
 	};
 
@@ -531,12 +527,12 @@ sap.ui.define([
 
 		const oRowBinding = oTable.getRowBinding();
 		if (oRowBinding) {
-			oRowBinding.setAggregation(Object.assign(oRowBinding.getAggregation(), {expandTo: 1}));
+			oRowBinding.setAggregation(Object.assign(oRowBinding.getAggregation(), { expandTo: 1 }));
 		}
 	};
 
 	function createGroupPopoverItem(aGroupProperties, oMDCColumn) {
-		const aGroupChildren = aGroupProperties.map(function(oGroupProperty) {
+		const aGroupChildren = aGroupProperties.map((oGroupProperty) => {
 			return new Item({
 				text: oGroupProperty.label,
 				key: oGroupProperty.name
@@ -550,14 +546,14 @@ sap.ui.define([
 				icon: "sap-icon://group-2",
 				action: [{
 					sName: "Group",
-					oMDCColumn: oMDCColumn
+					oMDCColumn
 				}, checkForPreviousAnalytics, this]
 			});
 		}
 	}
 
 	function createAggregatePopoverItem(aAggregateProperties, oMDCColumn) {
-		const aAggregateChildren = aAggregateProperties.map(function(oAggregateProperty) {
+		const aAggregateChildren = aAggregateProperties.map((oAggregateProperty) => {
 			return new Item({
 				text: oAggregateProperty.label,
 				key: oAggregateProperty.name
@@ -571,21 +567,21 @@ sap.ui.define([
 				icon: "sap-icon://sum",
 				action: [{
 					sName: "Aggregate",
-					oMDCColumn: oMDCColumn
+					oMDCColumn
 				}, checkForPreviousAnalytics, this]
 			});
 		}
 	}
 
 	function checkForPreviousAnalytics(oEvent, oData) {
-		const sName = oData.sName,
-			oTable = oData.oMDCColumn.getParent(),
+		const { sName } = oData,
+		oTable = oData.oMDCColumn.getParent(),
 			aGroupLevels = oTable.getCurrentState().groupLevels || [],
 			oAggregate = oTable.getCurrentState().aggregations || {},
 			aAggregate = Object.keys(oAggregate),
 			sPath = oEvent.getParameter("property"),
 			aAnalytics = sName === "Aggregate" ? aGroupLevels : aAggregate,
-			bForce = aAnalytics.filter(function(mItem) {
+			bForce = aAnalytics.filter((mItem) => {
 				return sName === "Aggregate" ? mItem.name === sPath : mItem === sPath;
 			}).length > 0;
 
@@ -659,7 +655,7 @@ sap.ui.define([
 			return;
 		}
 
-		const aGroupLevels = oTable._getGroupedProperties().map(function(mGroupLevel) {
+		const aGroupLevels = oTable._getGroupedProperties().map((mGroupLevel) => {
 			return mGroupLevel.name;
 		});
 		const aAggregates = Object.keys(oTable._getAggregatedProperties());
@@ -684,14 +680,14 @@ sap.ui.define([
 	function getVisiblePropertyNames(oTable) {
 		const oVisiblePropertiesSet = new Set();
 
-		oTable.getColumns().forEach(function(oColumn) {
+		oTable.getColumns().forEach((oColumn) => {
 			const oProperty = oTable.getPropertyHelper().getProperty(oColumn.getPropertyKey());
 
 			if (!oProperty) {
 				return;
 			}
 
-			oProperty.getSimpleProperties().forEach(function(oProperty) {
+			oProperty.getSimpleProperties().forEach((oProperty) => {
 				oVisiblePropertiesSet.add(oProperty.name);
 			});
 		});
@@ -702,7 +698,7 @@ sap.ui.define([
 	function getColumnState(oTable, aAggregatedPropertyNames) {
 		const mColumnState = {};
 
-		oTable.getColumns().forEach(function(oColumn) {
+		oTable.getColumns().forEach((oColumn) => {
 			let sInnerColumnId = oColumn.getId() + "-innerColumn";
 			const aAggregatedProperties = getAggregatedColumnProperties(oTable, oColumn, aAggregatedPropertyNames);
 			const bColumnIsAggregated = aAggregatedProperties.length > 0;
@@ -720,7 +716,7 @@ sap.ui.define([
 				grandTotal: bColumnIsAggregated
 			};
 
-			findUnitColumns(oTable, aAggregatedProperties).forEach(function(oUnitColumn) {
+			findUnitColumns(oTable, aAggregatedProperties).forEach((oUnitColumn) => {
 				sInnerColumnId = oUnitColumn.getId() + "-innerColumn";
 
 				if (sInnerColumnId in mColumnState) {
@@ -752,7 +748,7 @@ sap.ui.define([
 	}
 
 	function getAggregatedColumnProperties(oTable, oColumn, aAggregatedProperties) {
-		return getColumnProperties(oTable, oColumn).filter(function(oProperty) {
+		return getColumnProperties(oTable, oColumn).filter((oProperty) => {
 			return aAggregatedProperties.includes(oProperty.name);
 		});
 	}
@@ -760,14 +756,14 @@ sap.ui.define([
 	function findUnitColumns(oTable, aProperties) {
 		const aUnitProperties = [];
 
-		aProperties.forEach(function(oProperty) {
+		aProperties.forEach((oProperty) => {
 			if (oProperty.unitProperty) {
 				aUnitProperties.push(oProperty.unitProperty);
 			}
 		});
 
-		return oTable.getColumns().filter(function(oColumn) {
-			return getColumnProperties(oTable, oColumn).some(function(oProperty) {
+		return oTable.getColumns().filter((oColumn) => {
+			return getColumnProperties(oTable, oColumn).some((oProperty) => {
 				return aUnitProperties.includes(oProperty);
 			});
 		});
@@ -777,15 +773,15 @@ sap.ui.define([
 		const aPropertyNames = [];
 
 		if (aItems) {
-			aItems.forEach(function(oItem) {
-				oTable.getPropertyHelper().getProperty(oItem.name).getSimpleProperties().forEach(function(oProperty) {
+			aItems.forEach((oItem) => {
+				oTable.getPropertyHelper().getProperty(oItem.name).getSimpleProperties().forEach((oProperty) => {
 					aPropertyNames.push(oProperty.name);
 				});
 			});
 		}
 
-		const bOnlyVisibleColumns = aStates ? aStates.every(function(oState) {
-			return aPropertyNames.find(function(sPropertyName) {
+		const bOnlyVisibleColumns = aStates ? aStates.every((oState) => {
+			return aPropertyNames.find((sPropertyName) => {
 				return oState.name ? oState.name === sPropertyName : oState === sPropertyName;
 			});
 		}) : true;
@@ -802,7 +798,7 @@ sap.ui.define([
 	 * @private
 	 */
 	function mergeValidationResults(oBaseState, oValidationState) {
-		const oSeverity = {Error: 1, Warning: 2, Information: 3, None: 4};
+		const oSeverity = { Error: 1, Warning: 2, Information: 3, None: 4 };
 
 		if (!oValidationState || oSeverity[oValidationState.validation] - oSeverity[oBaseState.validation] > 0) {
 			return oBaseState;
@@ -830,7 +826,7 @@ sap.ui.define([
 	 */
 	function configureInnerTable(oTable) {
 		if (oTable._isOfType(TableType.Table)) {
-			return (isAnalyticsEnabled(oTable) ? enableGridTablePlugin(oTable) : disableGridTablePlugin(oTable)).then(function() {
+			return (isAnalyticsEnabled(oTable) ? enableGridTablePlugin(oTable) : disableGridTablePlugin(oTable)).then(() => {
 				return setUpTableObserver(oTable);
 			});
 		}
@@ -848,9 +844,8 @@ sap.ui.define([
 
 		// The property helper is initialized after the table "initialized" promise resolves. So we can only wait for the property helper.
 		return Promise.all([
-			oTable.awaitPropertyHelper(),
-			loadModules("sap/ui/table/plugins/V4Aggregation")
-		]).then(function(aResult) {
+			oTable.awaitPropertyHelper(), loadModules("sap/ui/table/plugins/V4Aggregation")
+		]).then((aResult) => {
 			const V4AggregationPlugin = aResult[1][0];
 			const oDelegate = oTable.getControlDelegate();
 
@@ -860,7 +855,7 @@ sap.ui.define([
 				}
 			});
 			oPlugin.setPropertyInfos(oTable.getPropertyHelper().getPropertiesForPlugin());
-			oTable.propertiesFinalized().then(function() {
+			oTable.propertiesFinalized().then(() => {
 				oPlugin.setPropertyInfos(oTable.getPropertyHelper().getPropertiesForPlugin());
 			});
 			oTable._oTable.addDependent(oPlugin);
@@ -882,7 +877,7 @@ sap.ui.define([
 		const mTableMap = TableMap.get(oTable);
 
 		if (!mTableMap.observer) {
-			mTableMap.observer = new ManagedObjectObserver(function(oChange) {
+			mTableMap.observer = new ManagedObjectObserver((oChange) => {
 				configureInnerTable(oTable);
 			});
 

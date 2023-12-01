@@ -4,7 +4,7 @@
 
 sap.ui.define([
 	'sap/ui/mdc/field/FieldInfoBase', 'sap/ui/core/Control', 'sap/ui/base/ManagedObjectObserver'
-], function(FieldInfoBase, Control, ManagedObjectObserver) {
+], (FieldInfoBase, Control, ManagedObjectObserver) => {
 	"use strict";
 
 	/**
@@ -22,12 +22,10 @@ sap.ui.define([
 	 * @since 1.54.0
 	 * @alias sap.ui.mdc.field.CustomFieldInfo
 	 */
-	const CustomFieldInfo = FieldInfoBase.extend("sap.ui.mdc.field.CustomFieldInfo", /** @lends sap.ui.mdc.field.CustomFieldInfo.prototype */
-	{
+	const CustomFieldInfo = FieldInfoBase.extend("sap.ui.mdc.field.CustomFieldInfo", /** @lends sap.ui.mdc.field.CustomFieldInfo.prototype */ {
 		metadata: {
 			library: "sap.ui.mdc",
-			properties: {
-				},
+			properties: {},
 			aggregations: {
 				/**
 				 * Content of the field information.
@@ -89,10 +87,9 @@ sap.ui.define([
 		if (!CustomFieldInfo._oBox) {
 			CustomFieldInfo._oBox = Control.extend("sap.ui.mdc.field.CustomFieldInfoBox", {
 
-				metadata : {
-				},
+				metadata: {},
 
-				renderer : {
+				renderer: {
 					apiVersion: 2,
 					render: function(oRm, oBox) {
 

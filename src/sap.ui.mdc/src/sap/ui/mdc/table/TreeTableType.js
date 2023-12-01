@@ -4,9 +4,9 @@
 
 sap.ui.define([
 	"./GridTableType"
-], function(
+], (
 	GridTableType
-) {
+) => {
 	"use strict";
 
 	let InnerTable;
@@ -38,14 +38,14 @@ sap.ui.define([
 			return Promise.resolve();
 		}
 
-		return GridTableType.prototype.loadModules.apply(this, arguments).then(function() {
-			return new Promise(function(resolve, reject) {
+		return GridTableType.prototype.loadModules.apply(this, arguments).then(() => {
+			return new Promise((resolve, reject) => {
 				sap.ui.require([
 					"sap/ui/table/TreeTable"
-				], function(TreeTable) {
+				], (TreeTable) => {
 					InnerTable = TreeTable;
 					resolve();
-				}, function() {
+				}, () => {
 					reject("Failed to load some modules");
 				});
 			});

@@ -4,9 +4,9 @@
 
 sap.ui.define([
 	"sap/ui/core/library"
-], function(
+], (
 	CoreLibrary
-) {
+) => {
 	"use strict";
 
 	/**
@@ -44,8 +44,8 @@ sap.ui.define([
 		}
 
 		oTable._bUserPersonalizationActive = true;
-		oMenu.attachEventOnce("afterClose", function() {
-			oTable.getEngine().waitForChanges(oTable).then(function() {
+		oMenu.attachEventOnce("afterClose", () => {
+			oTable.getEngine().waitForChanges(oTable).then(() => {
 				delete oTable._bUserPersonalizationActive;
 			});
 		});
@@ -74,7 +74,7 @@ sap.ui.define([
 	};
 
 	function openP13nDialog(oTable, aPanelKeys, fnOnClose) {
-		return oTable.finalizePropertyHelper().then(function() {
+		return oTable.finalizePropertyHelper().then(() => {
 			const oEngine = oTable.getEngine();
 
 			if (oTable.getInbuiltFilter()) {
@@ -86,11 +86,11 @@ sap.ui.define([
 					if (fnOnClose) {
 						fnOnClose();
 					}
-					oEngine.waitForChanges(oTable).then(function() {
+					oEngine.waitForChanges(oTable).then(() => {
 						delete oTable._bUserPersonalizationActive;
 					});
 				}
-			}).then(function(oP13nControl) {
+			}).then((oP13nControl) => {
 				if (oP13nControl) {
 					// The promise resolves with a control instance only if the dialog is opened.
 					oTable._bUserPersonalizationActive = true;
@@ -131,7 +131,7 @@ sap.ui.define([
 	 * @param {string} mSettings.property The name of the property to group, as specified in the <code>PropertyInfo</code>.
 	 */
 	PersonalizationUtils.createGroupChange = function(oTable, mSettings) {
-		const bIsGrouped = (oTable.getCurrentState().groupLevels || []).some(function(oProperty) {
+		const bIsGrouped = (oTable.getCurrentState().groupLevels || []).some((oProperty) => {
 			return oProperty.name == mSettings.property;
 		});
 

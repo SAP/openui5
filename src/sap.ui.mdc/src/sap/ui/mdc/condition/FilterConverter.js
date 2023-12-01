@@ -1,36 +1,36 @@
 /*!
  * ${copyright}
-*/
+ */
 sap.ui.define([
-	"sap/ui/mdc/condition/FilterOperatorUtil",
-	"sap/ui/model/Filter",
-	"sap/ui/model/FilterOperator",
-	"sap/base/Log"
-],
+		"sap/ui/mdc/condition/FilterOperatorUtil",
+		"sap/ui/model/Filter",
+		"sap/ui/model/FilterOperator",
+		"sap/base/Log"
+	],
 
-function(
-	FilterOperatorUtil,
-	Filter,
-	FilterOperator,
-	Log
-) {
-	"use strict";
+	(
+		FilterOperatorUtil,
+		Filter,
+		FilterOperator,
+		Log
+	) => {
+		"use strict";
 
-	/**
-	 *
-	 * Utility to convert {@link sap.ui.mdc.condition.ConditionObject conditions} of a {@link sap.ui.mdc.condition.ConditionModel ConditionModel} into {@link sap.ui.model.Filter Filter}
-	 *
-	 * @namespace
-	 * @author SAP SE
-	 * @version ${version}
-	 * @since 1.78.0
-	 * @alias sap.ui.mdc.condition.FilterConverter
-	 *
-	 * @private
-	 * @ui5-restricted sap.ui.mdc
-	 * @experimental As of version 1.78
-	 */
-	const FilterConverter = {
+		/**
+		 *
+		 * Utility to convert {@link sap.ui.mdc.condition.ConditionObject conditions} of a {@link sap.ui.mdc.condition.ConditionModel ConditionModel} into {@link sap.ui.model.Filter Filter}
+		 *
+		 * @namespace
+		 * @author SAP SE
+		 * @version ${version}
+		 * @since 1.78.0
+		 * @alias sap.ui.mdc.condition.FilterConverter
+		 *
+		 * @private
+		 * @ui5-restricted sap.ui.mdc
+		 * @experimental As of version 1.78
+		 */
+		const FilterConverter = {
 
 			/**
 			 * creates a map with the types of the conditions.
@@ -42,7 +42,7 @@ function(
 			 * @private
 			 * @ui5-restricted sap.ui.mdc
 			 */
-			createConditionTypesMapFromFilterBar: function (oConditions, oFilterBar) {
+			createConditionTypesMapFromFilterBar: function(oConditions, oFilterBar) {
 				const oResult = {};
 
 				for (const sFieldPath in oConditions) {
@@ -63,7 +63,7 @@ function(
 								}
 							}
 						}
-						oResult[sFieldPath] = {type : oDataType};
+						oResult[sFieldPath] = { type: oDataType };
 					}
 				}
 
@@ -82,8 +82,8 @@ function(
 			 * @private
 			 * @ui5-restricted sap.ui.mdc
 			 */
-			createFilters: function (oConditions, oConditionTypes, fConvert2FilterCallback, bCaseSensitive) {
-				let i, aLocalIncludeFilters, aLocalExcludeFilters, oOperator, oFilter, oNewFilter, oCondition,	oAnyOrAllFilterParam;
+			createFilters: function(oConditions, oConditionTypes, fConvert2FilterCallback, bCaseSensitive) {
+				let i, aLocalIncludeFilters, aLocalExcludeFilters, oOperator, oFilter, oNewFilter, oCondition, oAnyOrAllFilterParam;
 				const aOverallFilters = [];
 
 				const convertAnyAllFilter = function(oFilter, sOperator, sPattern) {
@@ -187,7 +187,7 @@ function(
 								// $search mapping
 								const aFieldPath = $searchfilters[1].split(',');
 								for (let j = 0; j < aFieldPath.length; j++) {
-									aLocalIncludeFilters.push(new Filter({path: aFieldPath[j], operator: oFilter.sOperator, value1: oFilter.oValue1, caseSensitive: bCaseSensitive}));
+									aLocalIncludeFilters.push(new Filter({ path: aFieldPath[j], operator: oFilter.sOperator, value1: oFilter.oValue1, caseSensitive: bCaseSensitive }));
 								}
 								continue;
 							}
@@ -254,15 +254,15 @@ function(
 				return oFilter;
 			},
 
-			prettyPrintFilters: function (oFilter) {
+			prettyPrintFilters: function(oFilter) {
 				let sRes;
 				if (!oFilter) {
 					return "no filters set";
 				}
 				if (oFilter._bMultiFilter) {
 					sRes = "";
-					const bAnd = oFilter.bAnd;
-					oFilter.aFilters.forEach(function (oFilter, index, aFilters) {
+					const { bAnd } = oFilter;
+					oFilter.aFilters.forEach((oFilter, index, aFilters) => {
 						sRes += FilterConverter.prettyPrintFilters(oFilter);
 						if (aFilters.length - 1 != index) {
 							sRes += bAnd ? " and " : " or ";
@@ -270,7 +270,7 @@ function(
 					}, this);
 					return "(" + sRes + ")";
 				} else {
-					if ( oFilter.sOperator === FilterOperator.Any || oFilter.sOperator === FilterOperator.All ) {
+					if (oFilter.sOperator === FilterOperator.Any || oFilter.sOperator === FilterOperator.All) {
 						sRes = oFilter.sPath + " " + oFilter.sOperator + " " + FilterConverter.prettyPrintFilters(oFilter.oCondition);
 					} else {
 						if (oFilter.bCaseSensitive === false) {
@@ -285,8 +285,9 @@ function(
 					return sRes;
 				}
 			}
-	};
+		};
 
-	return FilterConverter;
+		return FilterConverter;
 
-}, /* bExport= */ true);
+	}, /* bExport= */
+	true);

@@ -5,11 +5,11 @@
 /**
  * Initialization Code and shared classes of library sap.ui.mdc.
  */
- sap.ui.define([
+sap.ui.define([
 	"sap/ui/core/Core", // provides sap.ui.getCore()
 	"sap/ui/core/library", // library dependency
 	"sap/m/library" // library dependency
-], function () {
+], () => {
 	"use strict";
 
 	/**
@@ -25,7 +25,7 @@
 	 * @public
 	 * @experimental As of version 1.54
 	 */
-	 const thisLib = sap.ui.getCore().initLibrary({
+	const thisLib = sap.ui.getCore().initLibrary({
 		version: "${version}",
 		name: "sap.ui.mdc",
 		dependencies: ["sap.ui.core", "sap.m"],
@@ -39,7 +39,7 @@
 			"sap.ui.mdc.SelectionMode",
 			"sap.ui.mdc.FilterExpression",
 			"sap.ui.mdc.MultiSelectMode"
-			],
+		],
 		interfaces: [
 			"sap.ui.mdc.IFilterSource",
 			"sap.ui.mdc.IFilter",
@@ -63,7 +63,7 @@
 			"sap.ui.mdc.link.Panel",
 			"sap.ui.mdc.Chart",
 			"sap.ui.mdc.p13n.PersistenceProvider"
-			],
+		],
 		elements: [
 			"sap.ui.mdc.table.Column",
 			"sap.ui.mdc.table.CreationRow",
@@ -119,7 +119,7 @@
 		noLibraryCSS: false
 	});
 
-	 /**
+	/**
 	 *
 	 * Interface for valuehelp containers / contents supporting typeahead functionality
 	 *
@@ -137,7 +137,7 @@
 	 * @event
 	 * @param {sap.ui.base.Event} oControlEvent
 	 * @param {sap.ui.base.EventProvider} oControlEvent.getSource
-	*/
+	 */
 
 	/**
 	 *
@@ -145,7 +145,7 @@
 	 * @event
 	 * @param {sap.ui.base.Event} oControlEvent
 	 * @param {sap.ui.base.EventProvider} oControlEvent.getSource
-	*/
+	 */
 
 	/**
 	 *
@@ -153,7 +153,7 @@
 	 * @event
 	 * @param {sap.ui.base.Event} oControlEvent
 	 * @param {sap.ui.base.EventProvider} oControlEvent.getSource
-	*/
+	 */
 
 	/**
 	 *
@@ -161,7 +161,7 @@
 	 * @event
 	 * @param {sap.ui.base.Event} oControlEvent
 	 * @param {sap.ui.base.EventProvider} oControlEvent.getSource
-	*/
+	 */
 
 	/**
 	 * Returns a title for the given Content
@@ -187,7 +187,7 @@
 	 * Loads additional dependencies, creates and returns displayed content.
 	 * @name sap.ui.mdc.valuehelp.ITypeaheadContent.getContent
 	 * @method
- 	 * @returns {Promise<sap.ui.core.Control>}  Promise resolving in displayed content
+	 * @returns {Promise<sap.ui.core.Control>}  Promise resolving in displayed content
 	 * @private
 	 * @ui5-restricted sap.ui.mdc.valuehelp.ITypeaheadContainer
 	 */
@@ -267,7 +267,7 @@
 	 *
 	 * @name sap.ui.mdc.valuehelp.ITypeaheadContent#requestSwitchToDialog
 	 * @event
-	*/
+	 */
 
 	/**
 	 If the container is used for type-ahead it might be wanted that the same content should also be shown as valuehelp. If not, the field should not show a valuehelp icon.
@@ -337,7 +337,7 @@
 	 * @event
 	 * @param {sap.ui.base.Event} oControlEvent
 	 * @param {sap.ui.base.EventProvider} oControlEvent.getSource
-	*/
+	 */
 
 	/**
 	 *
@@ -345,7 +345,7 @@
 	 * @event
 	 * @param {sap.ui.base.Event} oControlEvent
 	 * @param {sap.ui.base.EventProvider} oControlEvent.getSource
-	*/
+	 */
 
 	/**
 	 *
@@ -353,7 +353,7 @@
 	 * @event
 	 * @param {sap.ui.base.Event} oControlEvent
 	 * @param {sap.ui.base.EventProvider} oControlEvent.getSource
-	*/
+	 */
 
 	/**
 	 *
@@ -361,7 +361,7 @@
 	 * @event
 	 * @param {sap.ui.base.Event} oControlEvent
 	 * @param {sap.ui.base.EventProvider} oControlEvent.getSource
-	*/
+	 */
 
 	/**
 	 *
@@ -369,7 +369,7 @@
 	 * @event
 	 * @param {sap.ui.base.Event} oControlEvent
 	 * @param {sap.ui.base.EventProvider} oControlEvent.getSource
-	*/
+	 */
 
 	/**
 	 *
@@ -377,7 +377,7 @@
 	 * @event
 	 * @param {sap.ui.base.Event} oControlEvent
 	 * @param {sap.ui.base.EventProvider} oControlEvent.getSource
-	*/
+	 */
 
 	/**
 	 * Opens the container
@@ -451,7 +451,7 @@
 	 * @param {boolean} oControlEvent.getParameters.bLeaveFocus Indicates that the source control should be focused again
 	 * @param {object} oControlEvent.getParameters.condition Provides the target condition of the navigation
 	 * @param {string} oControlEvent.getParameters.itemId Provides the navigated item's ID (used for ARIA attributes)
-	*/
+	 */
 
 	/**
 	 * This optional event is fired after a suggested item for type-ahead has been found.
@@ -471,7 +471,7 @@
 	 *
 	 * @name sap.ui.mdc.valuehelp.ITypeaheadContainer#requestSwitchToDialog
 	 * @event
-	*/
+	 */
 
 	/**
 	 If the container is used for type-ahead it might be wanted that the same content should also be shown as valuehelp. If not, the field should not show a valuehelp icon.
@@ -551,7 +551,7 @@
 	 * @event
 	 * @param {sap.ui.base.Event} oControlEvent
 	 * @param {sap.ui.base.EventProvider} oControlEvent.getSource
-	*/
+	 */
 
 	/**
 	 *
@@ -559,7 +559,7 @@
 	 * @event
 	 * @param {sap.ui.base.Event} oControlEvent
 	 * @param {sap.ui.base.EventProvider} oControlEvent.getSource
-	*/
+	 */
 
 	/**
 	 *
@@ -567,7 +567,7 @@
 	 * @event
 	 * @param {sap.ui.base.Event} oControlEvent
 	 * @param {sap.ui.base.EventProvider} oControlEvent.getSource
-	*/
+	 */
 
 	/**
 	 *
@@ -575,7 +575,7 @@
 	 * @event
 	 * @param {sap.ui.base.Event} oControlEvent
 	 * @param {sap.ui.base.EventProvider} oControlEvent.getSource
-	*/
+	 */
 
 	/**
 	 *
@@ -595,7 +595,7 @@
 	 * @method
 	 * @returns {string} Content title as string
 	 * @ui5-restricted sap.ui.mdc.valuehelp.IDialogContainer
-	*/
+	 */
 
 	/**
 	 * Returns info if the given content is in multi select mode
@@ -611,7 +611,7 @@
 	 * Loads additional dependencies, creates and returns displayed content.
 	 * @name sap.ui.mdc.valuehelp.IDialogContent.getContent
 	 * @method
- 	 * @returns {Promise<sap.ui.core.Control>}  Promise resolving in displayed content
+	 * @returns {Promise<sap.ui.core.Control>}  Promise resolving in displayed content
 	 * @private
 	 * @ui5-restricted sap.ui.mdc.valuehelp.IDialogContainer
 	 */
@@ -1006,7 +1006,7 @@
 		FullScreen: "FullScreen"
 	};
 
-	 /**
+	/**
 	 * Defines the personalization mode of the chart.
 	 *
 	 * @enum {string}
@@ -1039,7 +1039,7 @@
 		 *
 		 * @public
 		 */
-		 Filter: "Filter"
+		Filter: "Filter"
 	};
 
 	/**
@@ -1106,17 +1106,17 @@
 		 * Single interval value.
 		 * @public
 		 */
-		Interval : "Interval",
+		Interval: "Interval",
 		/**
 		 * Single value.
 		 * @public
 		 */
-		Single : "Single",
+		Single: "Single",
 		/**
 		 * Multiple value
 		 * @public
 		 */
-		Multi : "Multi"
+		Multi: "Multi"
 	};
 
 	/**
@@ -1370,7 +1370,7 @@
 	 * The keys for this object must be aligned with any {@link sap.ui.mdc.util.FilterTypeConfig} the <code>FilterConditionMap</code> is combined with during filter creation.<br/>
 	 *
 	 *
- 	 * <b>Structure:</b> Object.&lt;string, {@link sap.ui.mdc.condition.ConditionObject sap.ui.mdc.condition.ConditionObject[]}&gt;
+	 * <b>Structure:</b> Object.&lt;string, {@link sap.ui.mdc.condition.ConditionObject sap.ui.mdc.condition.ConditionObject[]}&gt;
 	 *
 	 * @typedef sap.ui.mdc.util.FilterConditionMap
 	 * @type {Object.<string, sap.ui.mdc.condition.ConditionObject[]>}
@@ -1386,7 +1386,7 @@
 	 * @property {boolean} [caseSensitive] Indicates if a created filter is case-sensitive
 	 * @property {sap.ui.mdc.enums.BaseType} [baseType] BaseType configuration for the given type useful for externalization/internalization of filter values
 	 * @public
-  	 * @since 1.121.0
+	 * @since 1.121.0
 	 */
 
 	/**

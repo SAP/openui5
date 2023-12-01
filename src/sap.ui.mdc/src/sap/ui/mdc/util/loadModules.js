@@ -2,12 +2,11 @@
  * ${copyright}
  */
 sap.ui.define([
-	"sap/ui/base/SyncPromise",
-	"sap/base/assert"
-], function(
+	"sap/ui/base/SyncPromise", "sap/base/assert"
+], (
 	SyncPromise,
 	assert
-) {
+) => {
 	"use strict";
 
 	/* global Map */
@@ -58,24 +57,24 @@ sap.ui.define([
 	 */
 	return function loadModules(vModulePaths) {
 		assert(typeof vModulePaths === "string" || Array.isArray(vModulePaths), "vModulePaths" +
-		" param either must be a single string or an array of strings. - sap.ui.mdc.util.loadModules");
+			" param either must be a single string or an array of strings. - sap.ui.mdc.util.loadModules");
 
 		let aModulesPaths;
 
 		if (typeof vModulePaths === "string") {
-			aModulesPaths = [ vModulePaths ];
+			aModulesPaths = [vModulePaths];
 		} else {
 			aModulesPaths = vModulePaths;
 		}
 
 		const oModulesMap = new Map();
 
-		aModulesPaths.forEach(function(sModulePath) {
+		aModulesPaths.forEach((sModulePath) => {
 			const vModule = sap.ui.require(sModulePath);
 			oModulesMap.set(sModulePath, vModule);
 		});
 
-		const aNotLoadedModulePaths = aModulesPaths.filter(function(sModulePath) {
+		const aNotLoadedModulePaths = aModulesPaths.filter((sModulePath) => {
 			return oModulesMap.get(sModulePath) === undefined;
 		});
 
@@ -85,12 +84,12 @@ sap.ui.define([
 			return SyncPromise.resolve(aModules);
 		}
 
-		return new SyncPromise(function(resolve, reject) {
+		return new SyncPromise((resolve, reject) => {
 
 			function onModulesLoadedSuccess() {
 				const aNewLoadedModules = Array.from(arguments);
 
-				aNotLoadedModulePaths.forEach(function(sModulePath, iIndex) {
+				aNotLoadedModulePaths.forEach((sModulePath, iIndex) => {
 					oModulesMap.set(sModulePath, aNewLoadedModules[iIndex]);
 				});
 

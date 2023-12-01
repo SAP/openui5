@@ -1,7 +1,7 @@
 /*!
  * ${copyright}
  */
-sap.ui.define([], function() {
+sap.ui.define([], () => {
 	"use strict";
 
 	/**
@@ -15,7 +15,7 @@ sap.ui.define([], function() {
 
 	util.fetchAllAnnotations = function(oMetaModel, sEntityPath) {
 		const oCtx = oMetaModel.getMetaContext(sEntityPath);
-		return oMetaModel.requestObject("@", oCtx).then( function (mAnnos) {
+		return oMetaModel.requestObject("@", oCtx).then((mAnnos) => {
 			return mAnnos;
 		});
 	};
@@ -26,7 +26,7 @@ sap.ui.define([], function() {
 	 * @param {object} mAnnos a list of annotations of the entity set
 	 * @returns {object} mCustomAggregates a map to the custom aggregates keyed by theri qualifiers
 	 */
-	util.getAllCustomAggregates = function (mAnnos) {
+	util.getAllCustomAggregates = function(mAnnos) {
 		const mCustomAggregates = {};
 		let sAnno;
 		for (const sAnnoKey in mAnnos) {
@@ -60,7 +60,7 @@ sap.ui.define([], function() {
 		return mCustomAggregates;
 	};
 
-	util.getAllAggregatableProperties = function (mAnnos) {
+	util.getAllAggregatableProperties = function(mAnnos) {
 		const mAggregatableProperties = {};
 		let aProperties, oProperty;
 		if (mAnnos["@com.sap.vocabularies.Analytics.v1.AggregatedProperties"]) {
@@ -172,9 +172,15 @@ sap.ui.define([], function() {
 	 */
 	util._buildThresholds = function(oThresholds, oCriticalityCalculation) {
 		const aKeys = [
-			"AcceptanceRangeLowValue", "AcceptanceRangeHighValue", "ToleranceRangeLowValue", "ToleranceRangeHighValue", "DeviationRangeLowValue", "DeviationRangeHighValue"
+			"AcceptanceRangeLowValue",
+			"AcceptanceRangeHighValue",
+			"ToleranceRangeLowValue",
+			"ToleranceRangeHighValue",
+			"DeviationRangeLowValue",
+			"DeviationRangeHighValue"
 		];
-		let bConstant = true, sKey;
+		let bConstant = true,
+			sKey;
 
 
 		oThresholds.ImprovementDirection = oCriticalityCalculation.ImprovementDirection.$EnumMember.replace("com.sap.vocabularies.UI.v1.ImprovementDirectionType/", "");
@@ -238,9 +244,7 @@ sap.ui.define([], function() {
 
 			// further check for ConstantThresholds
 			if (oCriticalityCalculation.ConstantThresholds && oCriticalityCalculation.ConstantThresholds.length > 0) {
-				for (let i = 0; i < oCriticalityCalculation.ConstantThresholds.length; i++) {
-					const oAggregationLevelInfo = oCriticalityCalculation.ConstantThresholds[i];
-
+				for (const oAggregationLevelInfo of oCriticalityCalculation.ConstantThresholds) {
 					const aVisibleDimensions = oAggregationLevelInfo.AggregationLevel ? [] : null;
 
 					if (oAggregationLevelInfo.AggregationLevel && oAggregationLevelInfo.AggregationLevel.length > 0) {
@@ -389,8 +393,11 @@ sap.ui.define([], function() {
 		switch (sFilterExpression) {
 			case "SearchExpression":
 			case "SingleRange":
-			case "SingleValue": bIsMultiValue = false; break;
-			default: break;
+			case "SingleValue":
+				bIsMultiValue = false;
+				break;
+			default:
+				break;
 		}
 
 		return bIsMultiValue;
@@ -425,7 +432,7 @@ sap.ui.define([], function() {
 			oMetaModel.requestObject(COMMON + "IsCalendarYearMonth", oCtx),
 			oMetaModel.requestObject(COMMON + "IsCalendarYearWeek", oCtx),
 			oMetaModel.requestObject(COMMON + "IsCalendarDate", oCtx)
-		]).then(function(aTag) {
+		]).then((aTag) => {
 			if (aTag[0]) {
 				return "year";
 			}
@@ -493,7 +500,7 @@ sap.ui.define([], function() {
 			oMetaModel.requestObject(COMMON + "IsFiscalYearWeek", oCtx),
 			oMetaModel.requestObject(COMMON + "IsDayOfFiscalYear", oCtx),
 			oMetaModel.requestObject(COMMON + "IsFiscalYearVariant", oCtx)
-		]).then(function(aTag) {
+		]).then((aTag) => {
 			if (aTag[0]) {
 				return "year";
 			}
@@ -539,7 +546,7 @@ sap.ui.define([], function() {
 
 	util.fetchCriticality = function(oMetaModel, oCtx) {
 		const UI = "@com.sap.vocabularies.UI.v1";
-		return oMetaModel.requestObject(UI + ".ValueCriticality", oCtx).then(function(aValueCriticality) {
+		return oMetaModel.requestObject(UI + ".ValueCriticality", oCtx).then((aValueCriticality) => {
 			let oCriticality, oValueCriticality;
 
 			if (aValueCriticality) {
@@ -564,16 +571,16 @@ sap.ui.define([], function() {
 					} else if (oValueCriticality.Criticality.$EnumMember.endsWith("VeryNegative")) {
 						oCriticality.VeryNegative.push(oValueCriticality.Value);
 					} else if (oValueCriticality.Criticality.$EnumMember.endsWith("Negative")) {
-							oCriticality.Negative.push(oValueCriticality.Value);
+						oCriticality.Negative.push(oValueCriticality.Value);
 					} else {
-							oCriticality.Neutral.push(oValueCriticality.Value);
+						oCriticality.Neutral.push(oValueCriticality.Value);
 					}
 
 				}
 
 				for (const sKey in oCriticality) {
 					if (oCriticality[sKey].length == 0) {
-						delete  oCriticality[sKey];
+						delete oCriticality[sKey];
 					}
 				}
 			}

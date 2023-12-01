@@ -17,7 +17,7 @@ sap.ui.define([
 	"sap/ui/mdc/enums/TableP13nMode",
 	"sap/ui/mdc/enums/TableType",
 	"sap/ui/mdc/mixin/delegate/FilterIntegrationDefault"
-], function(
+], (
 	AggregationBaseDelegate,
 	loadModules,
 	PluginBase,
@@ -28,7 +28,7 @@ sap.ui.define([
 	TableP13nMode,
 	TableType,
 	FilterIntegrationDefault
-) {
+) => {
 	"use strict";
 
 	/**
@@ -83,11 +83,11 @@ sap.ui.define([
 
 		const aSorters = this.getSorters(oTable);
 		oBindingInfo.sorter = oBindingInfo.sorter.concat(
-			oBindingInfo.sorter.length === 1
-				? aSorters.filter(function(oSorter) {
-					return oSorter.sPath !== oBindingInfo.sorter[0].sPath;
-				})
-				: aSorters
+			oBindingInfo.sorter.length === 1 ?
+			aSorters.filter((oSorter) => {
+				return oSorter.sPath !== oBindingInfo.sorter[0].sPath;
+			}) :
+			aSorters
 		);
 	};
 
@@ -105,7 +105,7 @@ sap.ui.define([
 			return undefined;
 		}
 
-		const oSortedProperty = oTable._getSortedProperties().find(function(oProperty) {
+		const oSortedProperty = oTable._getSortedProperties().find((oProperty) => {
 			return oProperty.name === oGroupedProperty.name;
 		});
 		const sPath = oTable.getPropertyHelper().getProperty(oGroupedProperty.name).path;
@@ -135,7 +135,7 @@ sap.ui.define([
 		const oPropertyHelper = oTable.getPropertyHelper();
 		const aSorters = [];
 
-		aSortedProperties.forEach(function(oSorter) {
+		aSortedProperties.forEach((oSorter) => {
 			if (oPropertyHelper.hasProperty(oSorter.name)) {
 				const sPath = oPropertyHelper.getProperty(oSorter.name).path;
 				aSorters.push(new Sorter(sPath, oSorter.descending));
@@ -274,7 +274,7 @@ sap.ui.define([
 	 * @protected
 	 */
 	TableDelegate.fetchExportCapabilities = function(oTable) {
-		return Promise.resolve({XLSX: {}});
+		return Promise.resolve({ XLSX: {} });
 	};
 
 	/**
@@ -334,7 +334,7 @@ sap.ui.define([
 			Multi: "MultiToggle"
 		};
 
-		return loadModules("sap/ui/table/plugins/MultiSelectionPlugin").then(function(aModules) {
+		return loadModules("sap/ui/table/plugins/MultiSelectionPlugin").then((aModules) => {
 			const MultiSelectionPlugin = aModules[0];
 
 			if (oTable.isDestroyed()) {
@@ -392,7 +392,7 @@ sap.ui.define([
 			}
 		});
 
-		oTable._oTable.attachSelectionChange(function(oEvent) {
+		oTable._oTable.attachSelectionChange((oEvent) => {
 			oTable._onSelectionChange({
 				selectAll: oEvent.getParameter("selectAll")
 			});
@@ -421,7 +421,7 @@ sap.ui.define([
 				return [];
 			}
 
-			return oMultiSelectionPlugin.getSelectedIndices().map(function(iIndex) {
+			return oMultiSelectionPlugin.getSelectedIndices().map((iIndex) => {
 				return oGridTable.getContextByIndex(iIndex);
 			}, this);
 		}
@@ -433,13 +433,13 @@ sap.ui.define([
 		return [];
 	};
 
-	function setSelectedResponsiveTableConditions (oTable, aContexts) {
-		const aContextPaths = aContexts.map(function (oContext) {
+	function setSelectedResponsiveTableConditions(oTable, aContexts) {
+		const aContextPaths = aContexts.map((oContext) => {
 			return oContext.getPath();
 		});
 		oTable._oTable.removeSelections(true);
 		oTable._oTable.setSelectedContextPaths(aContextPaths);
-		oTable._oTable.getItems().forEach(function (oItem) {
+		oTable._oTable.getItems().forEach((oItem) => {
 			const sPath = oItem.getBindingContextPath();
 			if (sPath && aContextPaths.indexOf(sPath) > -1) {
 				oItem.setSelected(true);
@@ -453,9 +453,9 @@ sap.ui.define([
 	 * @param {sap.ui.mdc.Table} oTable Instance of the MDC table
 	 * @param {array<sap.ui.model.Context>} aContexts The set of contexts which should be flagged as selected
 	 * @private
- 	 * @throws {Error} When the delegate cannot support the table/select configuration.
+	 * @throws {Error} When the delegate cannot support the table/select configuration.
 	 */
-	TableDelegate.setSelectedContexts = function (oTable, aContexts) {
+	TableDelegate.setSelectedContexts = function(oTable, aContexts) {
 		if (oTable._isOfType(TableType.ResponsiveTable)) {
 			setSelectedResponsiveTableConditions(oTable, aContexts);
 		} else {

@@ -3,9 +3,8 @@
  */
 
 sap.ui.define([
-		'sap/ui/mdc/util/TypeUtil',
-		'sap/ui/mdc/enums/BaseType'
-	], function(BaseTypeUtil, BaseType) {
+	'sap/ui/mdc/util/TypeUtil', 'sap/ui/mdc/enums/BaseType'
+], (BaseTypeUtil, BaseType) => {
 	"use strict";
 
 	/**
@@ -24,14 +23,14 @@ sap.ui.define([
 	const TypeUtil = Object.assign({}, BaseTypeUtil, {
 
 		/**
-		* Maps the Edm type names to primitive type names
-		*
-		* Falls back to 'object' if type cannot be found.
-		*
-		* @param {string} sDataType Given model specific type
-		* @returns {string} primitive type name
-		*/
-		getPrimitiveType: function (sDataType) {
+		 * Maps the Edm type names to primitive type names
+		 *
+		 * Falls back to 'object' if type cannot be found.
+		 *
+		 * @param {string} sDataType Given model specific type
+		 * @returns {string} primitive type name
+		 */
+		getPrimitiveType: function(sDataType) {
 			const mType = {
 				"Edm.Binary": "boolean",
 				"Edm.Boolean": "boolean",
@@ -121,7 +120,7 @@ sap.ui.define([
 			}
 		},
 
-		internalizeValue: function (vValue, vType, oFormatOptions, oConstraints) {
+		internalizeValue: function(vValue, vType, oFormatOptions, oConstraints) {
 			const oTypeInstance = this._normalizeType(vType, oFormatOptions, oConstraints);
 			if (this.getBaseTypeForType(oTypeInstance) === BaseType.Numeric) {
 				if (typeof vValue !== "string" && (oTypeInstance.getMetadata().getName() === "sap.ui.model.odata.type.Int64" || oTypeInstance.getMetadata().getName() === "sap.ui.model.odata.type.Decimal")) {
@@ -132,7 +131,7 @@ sap.ui.define([
 			return BaseTypeUtil.internalizeValue.call(this, vValue, vType, oFormatOptions, oConstraints);
 		},
 
-		externalizeValue: function (vValue, vType, oFormatOptions, oConstraints) {
+		externalizeValue: function(vValue, vType, oFormatOptions, oConstraints) {
 			const oTypeInstance = this._normalizeType(vType, oFormatOptions, oConstraints);
 			if (this.getBaseTypeForType(oTypeInstance) === BaseType.Numeric) {
 				if (typeof vValue !== "string" && (oTypeInstance.getMetadata().getName() === "sap.ui.model.odata.type.Int64" || oTypeInstance.getMetadata().getName() === "sap.ui.model.odata.type.Decimal")) {
@@ -144,25 +143,25 @@ sap.ui.define([
 		},
 
 		/*
-		* For sap.ui.model.odata.type.Currency and sap.ui.model.odata.type.Unit the
-		* CompositeBinding has 3 parts, Number, Currency/Unit and unit map.
-		* On the first call of formatValue the unit map is analyzed and stored inside the
-		* Type. Later, on parsing it is used. Without initializing the unit map parsing is
-		* not working.
-		*
-		* In the sap.ui.mdc.Field the Type is created via Binding. So when the value of the Field
-		* gets the unit map for the first time we need to initialize the type via formatValue.
-		* (As no condition is created if there is no number or unit formatValue might not be called before
-		* first user input.)
-		*
-		* We return the given unit map in the TypeInitialization object to allow to initialize the "cloned"
-		* Unit/Currency-Type (internally used by the two Input controls for number and unit) with the unit map.
-		*/
+		 * For sap.ui.model.odata.type.Currency and sap.ui.model.odata.type.Unit the
+		 * CompositeBinding has 3 parts, Number, Currency/Unit and unit map.
+		 * On the first call of formatValue the unit map is analyzed and stored inside the
+		 * Type. Later, on parsing it is used. Without initializing the unit map parsing is
+		 * not working.
+		 *
+		 * In the sap.ui.mdc.Field the Type is created via Binding. So when the value of the Field
+		 * gets the unit map for the first time we need to initialize the type via formatValue.
+		 * (As no condition is created if there is no number or unit formatValue might not be called before
+		 * first user input.)
+		 *
+		 * We return the given unit map in the TypeInitialization object to allow to initialize the "cloned"
+		 * Unit/Currency-Type (internally used by the two Input controls for number and unit) with the unit map.
+		 */
 		initializeTypeFromValue: function(oType, vValue) {
 
 			if (oType && this.getBaseType(oType.getMetadata().getName()) === BaseType.Unit && Array.isArray(vValue) && vValue.length > 2) {
 				if (vValue[2] !== undefined) {
-					const oTypeInitialization = {mCustomUnits: vValue[2]};
+					const oTypeInitialization = { mCustomUnits: vValue[2] };
 					this.initializeInternalType(oType, oTypeInitialization);
 					return oTypeInitialization;
 				}

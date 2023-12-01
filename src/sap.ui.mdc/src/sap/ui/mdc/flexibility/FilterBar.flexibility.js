@@ -2,10 +2,7 @@
  * ${copyright}
  */
 
-sap.ui.define(['./FilterItemFlex',
-				'./ConditionFlex',
-				'./PropertyInfoFlex'
-	], function(FilterItemFlex, ConditionFlex, PropertyInfoFlex) {
+sap.ui.define(['./FilterItemFlex', './ConditionFlex', './PropertyInfoFlex'], (FilterItemFlex, ConditionFlex, PropertyInfoFlex) => {
 	"use strict";
 
 	/**
@@ -24,4 +21,4 @@ sap.ui.define(['./FilterItemFlex',
 		"removeCondition": ConditionFlex.removeCondition,
 		"addPropertyInfo": PropertyInfoFlex.addPropertyInfo
 	};
-}, /* bExport= */true);
+}, /* bExport= */ true);

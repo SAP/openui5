@@ -14,7 +14,7 @@ sap.ui.define([
 	"sap/ui/core/Lib",
 	"sap/ui/mdc/enums/TableGrowingMode",
 	"sap/ui/mdc/enums/TableRowAction"
-], function(
+], (
 	TableTypeBase,
 	PersonalizationUtils,
 	Button,
@@ -26,7 +26,7 @@ sap.ui.define([
 	Library,
 	GrowingMode,
 	TableRowAction
-) {
+) => {
 	"use strict";
 
 	let InnerTable, InnerColumn, InnerRow;
@@ -137,15 +137,15 @@ sap.ui.define([
 
 	ResponsiveTableType.prototype.loadModules = function() {
 		if (!InnerTable) {
-			return new Promise(function(resolve, reject) {
+			return new Promise((resolve, reject) => {
 				sap.ui.require([
 					"sap/m/Table", "sap/m/Column", "sap/m/ColumnListItem"
-				], function(ResponsiveTable, ResponsiveColumn, ColumnListItem) {
+				], (ResponsiveTable, ResponsiveColumn, ColumnListItem) => {
 					InnerTable = ResponsiveTable;
 					InnerColumn = ResponsiveColumn;
 					InnerRow = ColumnListItem;
 					resolve();
-				}, function() {
+				}, () => {
 					reject("Failed to load some modules");
 				});
 			});
@@ -239,7 +239,7 @@ sap.ui.define([
 			}
 
 			// Check if rowActions are of type Navigation. ResponsiveTable currently only supports RowActionItem<Navigation>
-			const _oRowActionItem = oRowActionsInfo.items.find(function(oRowAction) {
+			const _oRowActionItem = oRowActionsInfo.items.find((oRowAction) => {
 				return oRowAction.getType() == "Navigation";
 			});
 			if (!_oRowActionItem && oRowActionsInfo.items.length > 0) {
@@ -386,8 +386,7 @@ sap.ui.define([
 								this._toggleShowDetails(false);
 							}, this
 						]
-					}),
-					new SegmentedButtonItem({
+					}), new SegmentedButtonItem({
 						id: sId + "-hideDetails",
 						icon: "sap-icon://detail-less",
 						key: "hideDetails",
@@ -547,9 +546,9 @@ sap.ui.define([
 		const oTable = this.getTable();
 		const oResponsiveTable = this.getInnerTable();
 
-		if (PersonalizationUtils.isUserPersonalizationActive(oTable)
-		&& oResponsiveTable.getHiddenInPopin().includes(oColumn.getInnerColumn().getImportance())
-		&& (oTable.getColumns().pop() === oColumn)) {
+		if (PersonalizationUtils.isUserPersonalizationActive(oTable) &&
+			oResponsiveTable.getHiddenInPopin().includes(oColumn.getInnerColumn().getImportance()) &&
+			(oTable.getColumns().pop() === oColumn)) {
 			this._toggleShowDetails(false);
 		}
 	};

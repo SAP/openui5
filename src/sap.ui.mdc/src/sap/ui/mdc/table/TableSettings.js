@@ -20,10 +20,10 @@ sap.ui.define([
 	"sap/ui/core/ShortcutHintsMixin",
 	"sap/ui/core/theming/Parameters",
 	"sap/ui/performance/trace/FESRHelper"
-], function(OverflowToolbarButton, MLibrary, OverflowToolbarMenuButton, Menu, MenuItem, Library, CoreLibrary, Device, ShortcutHintsMixin, ThemeParameters, FESRHelper) {
+], (OverflowToolbarButton, MLibrary, OverflowToolbarMenuButton, Menu, MenuItem, Library, CoreLibrary, Device, ShortcutHintsMixin, ThemeParameters, FESRHelper) => {
 	"use strict";
 
-	const HasPopup = CoreLibrary.aria.HasPopup;
+	const { HasPopup } = CoreLibrary.aria;
 
 	// TODO: this is just a draft version and is not final --> just for verifying flex/p13n concepts
 	let oRb;
@@ -56,18 +56,17 @@ sap.ui.define([
 			ShortcutHintsMixin.addConfig(oBtn, {
 					addAccessibilityLabel: true,
 					messageBundleKey: Device.os.macintosh ? "mdc.PERSONALIZATION_SHORTCUT_MAC" : "mdc.PERSONALIZATION_SHORTCUT" // Cmd+, or Ctrl+,
-				},
-				aEventInfo[1] // we need the table instance, otherwise the messageBundleKey does not find the resource bundle
+				}, aEventInfo[1] // we need the table instance, otherwise the messageBundleKey does not find the resource bundle
 			);
 
 			return oBtn;
 		},
-		createPasteButton: function (sIdPrefix) {
+		createPasteButton: function(sIdPrefix) {
 			const oPasteButton = this._createButton(sIdPrefix + "-paste");
 
 			FESRHelper.setSemanticStepname(oPasteButton, "press", "mdc:tbl:paste");
 
-			sap.ui.require(["sap/m/plugins/PasteProvider"], function(PasteProvider) {
+			sap.ui.require(["sap/m/plugins/PasteProvider"], (PasteProvider) => {
 				oPasteButton.addDependent(new PasteProvider({
 					pasteFor: sIdPrefix + "-innerTable"
 				}));
@@ -79,7 +78,7 @@ sap.ui.define([
 			if (!oRb) {
 				this._loadResourceBundle();
 			}
-			const sButtonType = ThemeParameters.get({name: "_sap_ui_mdc_Table_ExportButtonType"});
+			const sButtonType = ThemeParameters.get({ name: "_sap_ui_mdc_Table_ExportButtonType" });
 			const oMenuButton = new OverflowToolbarMenuButton(sIdPrefix + "-export", {
 				icon: "sap-icon://excel-attachment",
 				text: oRb.getText("table.QUICK_EXPORT"),
@@ -95,8 +94,7 @@ sap.ui.define([
 					new MenuItem({
 						text: oRb.getText("table.QUICK_EXPORT"),
 						press: mEventInfo.default
-					}),
-					new MenuItem({
+					}), new MenuItem({
 						text: oRb.getText("table.EXPORT_WITH_SETTINGS"),
 						press: mEventInfo.exportAs
 					})
@@ -111,13 +109,12 @@ sap.ui.define([
 			ShortcutHintsMixin.addConfig(oMenuButton._getButtonControl(), {
 					addAccessibilityLabel: true,
 					messageBundleKey: Device.os.macintosh ? "table.SHORTCUT_EXPORT_TO_EXCEL_MAC" : "table.SHORTCUT_EXPORT_TO_EXCEL" // Cmd+Shift+E or Ctrl+Shift+E
-				},
-				mEventInfo.exportAs[1]  // we need the table instance, otherwise the messageBundleKey does not find the resource bundle
+				}, mEventInfo.exportAs[1] // we need the table instance, otherwise the messageBundleKey does not find the resource bundle
 			);
 
 			return oMenuButton;
 		},
-		createExpandCollapseAllButton: function (sIdPrefix, aEventInfo, bIsExpand) {
+		createExpandCollapseAllButton: function(sIdPrefix, aEventInfo, bIsExpand) {
 			if (!oRb) {
 				this._loadResourceBundle();
 			}

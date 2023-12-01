@@ -14,10 +14,10 @@ sap.ui.define([
 	"sap/ui/mdc/filterbar/FilterBarBaseRenderer",
 	"sap/base/util/merge",
 	"sap/m/p13n/enums/PersistenceMode"
-], function(Element, coreLibrary, FilterController, AdaptFiltersController, GroupContainer, FilterColumnLayout, FilterGroupLayout, TableContainer, FilterBarBase, FilterBarBaseRenderer, merge, PersistenceMode) {
+], (Element, coreLibrary, FilterController, AdaptFiltersController, GroupContainer, FilterColumnLayout, FilterGroupLayout, TableContainer, FilterBarBase, FilterBarBaseRenderer, merge, PersistenceMode) => {
 	"use strict";
 
-	const ValueState = coreLibrary.ValueState;
+	const { ValueState } = coreLibrary;
 
 	/**
 	 * Modules for personalization controls
@@ -83,23 +83,23 @@ sap.ui.define([
 	AdaptationFilterBar.prototype.WIDTH = "30rem";
 
 	/**
-	* Interface function for <code>sap.m.p13n.Popup</code> to determine that the <code>AdaptationFilterBar</code> provides its own scrolling capabilites.
-	*
-	* @returns {boolean} The enablement of the vertical scrolling
-	*/
+	 * Interface function for <code>sap.m.p13n.Popup</code> to determine that the <code>AdaptationFilterBar</code> provides its own scrolling capabilites.
+	 *
+	 * @returns {boolean} The enablement of the vertical scrolling
+	 */
 	AdaptationFilterBar.prototype.getVerticalScrolling = function() {
 		return this._oFilterBarLayout.getInner().getVerticalScrolling instanceof Function ? this._oFilterBarLayout.getInner().getVerticalScrolling() : false;
 	};
 
 	AdaptationFilterBar.prototype.init = function() {
-		FilterBarBase.prototype.init.apply(this,arguments);
+		FilterBarBase.prototype.init.apply(this, arguments);
 		this.addStyleClass("sapUIAdaptationFilterBar");
 
 		this.getEngine().defaultProviderRegistry.attach(this, PersistenceMode.Transient);
 		this._fnResolveAdaptationControlPromise = null;
-		this._oAdaptationControlPromise = new Promise(function(resolve, reject) {
+		this._oAdaptationControlPromise = new Promise((resolve, reject) => {
 			this._fnResolveAdaptationControlPromise = resolve;
-		}.bind(this));
+		});
 	};
 
 	/**
@@ -119,7 +119,7 @@ sap.ui.define([
 		if (this._oFilterBarLayout.getInner().isA("sap.ui.mdc.p13n.panels.FilterPanel")) {
 			const oP13nData = this._oFilterBarLayout.getInner().getP13nData();
 			this._updateActiveStatus(oP13nData);
-			this._oFilterBarLayout.setP13nData({items: oP13nData});
+			this._oFilterBarLayout.setP13nData({ items: oP13nData });
 		}
 		this.fireChange();
 		return pModification;
@@ -142,9 +142,9 @@ sap.ui.define([
 
 	AdaptationFilterBar.prototype.applySettings = function() {
 		FilterBarBase.prototype._applySettings.apply(this, arguments);
-		this._waitForAdaptControlAndPropertyHelper().then(function() {
+		this._waitForAdaptControlAndPropertyHelper().then(() => {
 			this._initControlDelegate();
-		}.bind(this));
+		});
 	};
 
 	AdaptationFilterBar.prototype.setVisibleFields = function(aVisibleKeys) {
@@ -167,28 +167,28 @@ sap.ui.define([
 		let oProperty = FilterBarBase.prototype._getPropertyByName.apply(this, arguments);
 		const oPropertyHelper = this.getPropertyHelper();
 		if (!oProperty || (oProperty.filterable === false)) {
-			oProperty = oPropertyHelper.getProperties().find(function(oProp){
+			oProperty = oPropertyHelper.getProperties().find((oProp) => {
 				return oProp.path === sName && oProp.filterable;
 			});
 		}
 		return oProperty;
 	};
 
-	AdaptationFilterBar.prototype._waitForAdaptControlAndPropertyHelper = function(){
-		return this._oAdaptationControlPromise.then(function() {
-			return this._getAdaptationControlInstance().awaitPropertyHelper().then(function(oPropertyHelper) {
+	AdaptationFilterBar.prototype._waitForAdaptControlAndPropertyHelper = function() {
+		return this._oAdaptationControlPromise.then(() => {
+			return this._getAdaptationControlInstance().awaitPropertyHelper().then((oPropertyHelper) => {
 				this._oPropertyHelper = oPropertyHelper;
-			}.bind(this));
-		}.bind(this));
+			});
+		});
 	};
 
 	AdaptationFilterBar.prototype._initControlDelegate = function() {
-		return this.initControlDelegate().then(function() {
+		return this.initControlDelegate().then(() => {
 			//this.getTypeMap();
 			if (!this._bIsBeingDestroyed) {
 				this._applyInitialFilterConditions();
 			}
-		}.bind(this));
+		});
 	};
 
 	AdaptationFilterBar.prototype.getControlDelegate = function() {
@@ -196,27 +196,27 @@ sap.ui.define([
 	};
 
 	AdaptationFilterBar.prototype.initControlDelegate = function() {
-		return this._oAdaptationControlPromise.then(function() {
+		return this._oAdaptationControlPromise.then(() => {
 			return this._getAdaptationControlInstance().initControlDelegate();
-		}.bind(this));
+		});
 	};
 
 	AdaptationFilterBar.prototype.awaitControlDelegate = function() {
-		return this._oAdaptationControlPromise.then(function() {
+		return this._oAdaptationControlPromise.then(() => {
 			return this._getAdaptationControlInstance().awaitControlDelegate();
-		}.bind(this));
+		});
 	};
 
 	AdaptationFilterBar.prototype.initPropertyHelper = function() {
-		return this._oAdaptationControlPromise.then(function() {
+		return this._oAdaptationControlPromise.then(() => {
 			return this._getAdaptationControlInstance().initPropertyHelper();
-		}.bind(this));
+		});
 	};
 
 	AdaptationFilterBar.prototype.finalizePropertyHelper = function() {
-		return this._oAdaptationControlPromise.then(function() {
+		return this._oAdaptationControlPromise.then(() => {
 			return this._getAdaptationControlInstance().finalizePropertyHelper();
-		}.bind(this));
+		});
 	};
 
 	AdaptationFilterBar.prototype.getTypeUtil = function() {
@@ -239,25 +239,25 @@ sap.ui.define([
 		FilterBarBase.prototype.setLiveMode.apply(this, arguments);
 
 		//update adaptationModel while dialog is open
-		this._oConditionModel.attachPropertyChange(function(oEvt){
+		this._oConditionModel.attachPropertyChange((oEvt) => {
 			const sKey = oEvt.getParameter("path").substring(12);
-			if (this.oAdaptationData){
+			if (this.oAdaptationData) {
 				const aItems = this.oAdaptationData.items;
-				const oItem = aItems.find(function(o){
+				const oItem = aItems.find((o) => {
 					return o.name == sKey;
 				});
-				if (oItem && this._checkAdvancedParent(this._getAdaptationControlInstance()) ) {
+				if (oItem && this._checkAdvancedParent(this._getAdaptationControlInstance())) {
 					oItem.active = this._getConditionModel().getConditions(sKey).length > 0 ? true : false;
 				}
 			}
-		}.bind(this));
+		});
 
 		return this;
 	};
 
 	AdaptationFilterBar.prototype._retrieveMetadata = function() {
 
-		return this._oAdaptationControlPromise.then(function() {
+		return this._oAdaptationControlPromise.then(() => {
 			return this._getAdaptationControlInstance().awaitPropertyHelper().then(function(oPropertyHelper) {
 				if (!this._getAdaptationControlInstance().isPropertyHelperFinal()) {
 					return this.finalizePropertyHelper();
@@ -265,7 +265,7 @@ sap.ui.define([
 
 				return FilterBarBase.prototype._retrieveMetadata.apply(this, arguments);
 			}.bind(this));
-		}.bind(this));
+		});
 	};
 
 	AdaptationFilterBar.prototype.isControlDelegateInitialized = function() {
@@ -273,7 +273,7 @@ sap.ui.define([
 	};
 
 	AdaptationFilterBar.prototype.createConditionChanges = function() {
-		return Promise.all([this._oAdaptationControlPromise, this.awaitControlDelegate()]).then(function() {
+		return Promise.all([this._oAdaptationControlPromise, this.awaitControlDelegate()]).then(() => {
 			const mConditions = this._getModelConditions(this._getConditionModel(), false, true);
 
 			return this.getEngine().createChanges({
@@ -283,7 +283,7 @@ sap.ui.define([
 				state: mConditions,
 				suppressAppliance: true
 			});
-		}.bind(this));
+		});
 	};
 
 	/**
@@ -300,7 +300,7 @@ sap.ui.define([
 
 	AdaptationFilterBar.prototype._updateActiveStatus = function(oP13nData) {
 		const mConditions = this.getFilterConditions();
-		oP13nData.forEach(function(oP13nItem){
+		oP13nData.forEach((oP13nItem) => {
 			const oFilterField = this.mFilterFields && this.mFilterFields[oP13nItem.name];
 			if (oFilterField) {
 				const sKey = oFilterField.getPropertyKey();
@@ -308,12 +308,12 @@ sap.ui.define([
 					oP13nItem.active = true;
 				}
 			}
-		}.bind(this));
+		});
 	};
 
 	AdaptationFilterBar.prototype.getP13nData = function() {
 		if (this._aVisibleKeys && this._aVisibleKeys.length > 0) {
-			this.oAdaptationData.items.forEach(function(oItem){
+			this.oAdaptationData.items.forEach(function(oItem) {
 				if (this._aVisibleKeys.indexOf(oItem.name) > -1) {
 					oItem.active = true;
 				}
@@ -335,18 +335,18 @@ sap.ui.define([
 	 * Method which will initialize the <code>AdaptationFilterBar</code> and create the required FilterFields
 	 * @returns {Promise} A Promise which resolves once all FilterFields are ready and added to the <code>filterItems</code> aggregation
 	 */
-	AdaptationFilterBar.prototype.createFilterFields = function(){
-		return this.initializedWithMetadata().then(function(){
+	AdaptationFilterBar.prototype.createFilterFields = function() {
+		return this.initializedWithMetadata().then(() => {
 			const mConditions = this._getAdaptationControlInstance().getFilterConditions();
 
 			this.setFilterConditions(mConditions);
 			const pConditions = this._setXConditions(mConditions);
 
 			if (this._bFilterFieldsCreated) {
-				return pConditions.then(function(){
+				return pConditions.then(() => {
 					this._oFilterBarLayout.setP13nData(this.getP13nData());
 					return this;
-				}.bind(this));
+				});
 			}
 
 			const oAdaptationControl = this._getAdaptationControlInstance();
@@ -358,10 +358,10 @@ sap.ui.define([
 			this.mFilterFields = {};
 			const aFieldPromises = [];
 
-			this.getP13nData().items.forEach(function(oItem, iIndex){
+			this.getP13nData().items.forEach((oItem, iIndex) => {
 				const oFilterFieldPromise = this._checkExisting(oItem, oFilterDelegate);
 
-				oFilterFieldPromise.then(function(oFilterField){
+				oFilterFieldPromise.then((oFilterField) => {
 
 					let oFieldForDialog;
 
@@ -393,26 +393,26 @@ sap.ui.define([
 
 					this.mFilterFields[oItem.name] = oFieldForDialog;
 
-				}.bind(this));
+				});
 
 				aFieldPromises.push(oFilterFieldPromise);
 
-			}.bind(this));
+			});
 
-			return Promise.all(aFieldPromises).then(function(){
+			return Promise.all(aFieldPromises).then(() => {
 				const oP13nData = this.getP13nData();
-				oP13nData.items.forEach(function(oItem){
+				oP13nData.items.forEach((oItem) => {
 					this.addAggregation("filterItems", this.mFilterFields[oItem.name]);
-				}.bind(this));
+				});
 
 				this._updateActiveStatus(oP13nData.items);
 				this._oFilterBarLayout.setP13nData(oP13nData);
 				this._bFilterFieldsCreated = true;
 
 				return this;
-			}.bind(this));
+			});
 
-		}.bind(this));
+		});
 	};
 
 	/**
@@ -429,18 +429,18 @@ sap.ui.define([
 		const oAdaptationControl = this._getAdaptationControlInstance();
 		const aExistingItems = this._checkAdvancedParent(oAdaptationControl) ? oAdaptationControl.getFilterItems() : [];
 
-		const mExistingFilterItems = aExistingItems.reduce(function(mMap, oField){
+		const mExistingFilterItems = aExistingItems.reduce((mMap, oField) => {
 			mMap[oField.getPropertyKey()] = oField;
 			return mMap;
-		},{});
+		}, {});
 
-		if (mExistingFilterItems[oItem.name]){
+		if (mExistingFilterItems[oItem.name]) {
 			oFilterFieldPromise = Promise.resolve(mExistingFilterItems[oItem.name]);
-		} else  {
+		} else {
 
 			oFilterFieldPromise = oFilterDelegate.addItem(this._getAdaptationControlInstance(), oItem.name);
 
-			oFilterFieldPromise = oFilterFieldPromise.then(function(oFilterField){
+			oFilterFieldPromise = oFilterFieldPromise.then((oFilterField) => {
 
 				if (!oFilterField) {
 					throw new Error("No FilterField could be created for property: '" + oItem.name + "'.");
@@ -459,21 +459,21 @@ sap.ui.define([
 		const aExistingItems = this._oFilterBarLayout.getInner().getSelectedFields();
 		const aOriginalsToRemove = [];
 
-		Object.keys(this._mOriginalsForClone).forEach(function(sKey){
+		Object.keys(this._mOriginalsForClone).forEach((sKey) => {
 			const oDelegate = this._getAdaptationControlInstance().getControlDelegate();
 
-			if (aExistingItems.indexOf(sKey) < 0) {//Originals that have not been selected --> use continue similar to 'ItemBaseFlex'
-				const oRemovePromise = oDelegate.removeItem.call(oDelegate, this._getAdaptationControlInstance(), sKey).then(function(bContinue){
+			if (aExistingItems.indexOf(sKey) < 0) { //Originals that have not been selected --> use continue similar to 'ItemBaseFlex'
+				const oRemovePromise = oDelegate.removeItem.call(oDelegate, this._getAdaptationControlInstance(), sKey).then((bContinue) => {
 					if (bContinue && this._mOriginalsForClone[sKey]) {
 						// destroy the item
 						this._mOriginalsForClone[sKey].destroy();
 						delete this._mOriginalsForClone[sKey];
 					}
-				}.bind(this));
+				});
 				aOriginalsToRemove.push(oRemovePromise);
 			}
 
-		}.bind(this));
+		});
 
 		return Promise.all(aOriginalsToRemove);
 	};
@@ -508,7 +508,7 @@ sap.ui.define([
 		this.setAggregation("layout", this._oFilterBarLayout, true);
 
 		if (this._oFilterBarLayout.getInner().attachChange) {
-			this._oFilterBarLayout.getInner().attachChange(function(oEvt){
+			this._oFilterBarLayout.getInner().attachChange((oEvt) => {
 				if (oEvt.getParameter("reason") === "Remove") {
 					const oItem = oEvt.getParameter("item");
 					const mConditions = {};
@@ -522,7 +522,7 @@ sap.ui.define([
 					});
 				}
 				this.fireChange();
-			}.bind(this));
+			});
 		}
 		return this;
 	};
@@ -533,7 +533,7 @@ sap.ui.define([
 	 * @ui5-restricted sap.ui.mdc
 	 * @returns {sap.ui.mdc.Control} The adaptation control instance.
 	 */
-	AdaptationFilterBar.prototype._getAdaptationControlInstance = function () {
+	AdaptationFilterBar.prototype._getAdaptationControlInstance = function() {
 		const sAdaptationControlId = this.getAdaptationControl();
 		return sAdaptationControlId && Element.getElementById(sAdaptationControlId);
 	};

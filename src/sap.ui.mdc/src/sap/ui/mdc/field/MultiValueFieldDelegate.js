@@ -8,9 +8,9 @@
 
 sap.ui.define([
 	'sap/ui/mdc/field/FieldBaseDelegate'
-], function(
+], (
 	FieldBaseDelegate
-) {
+) => {
 	"use strict";
 
 	/**

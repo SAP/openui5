@@ -9,13 +9,13 @@ sap.ui.define([
 	'sap/base/util/deepEqual',
 	'sap/ui/mdc/odata/v4/TypeMap'
 
-], function(
+], (
 	ValueHelpDelegate,
 	Log,
 	FilterType,
 	deepEqual,
 	ODataV4TypeMap
-) {
+) => {
 	"use strict";
 
 	/**
@@ -34,7 +34,7 @@ sap.ui.define([
 	 */
 	const ODataV4ValueHelpDelegate = Object.assign({}, ValueHelpDelegate);
 
-	ODataV4ValueHelpDelegate.getTypeMap = function (oPayload) {
+	ODataV4ValueHelpDelegate.getTypeMap = function(oPayload) {
 		return ODataV4TypeMap;
 	};
 
@@ -64,7 +64,7 @@ sap.ui.define([
 			}
 		}
 
-		if (oContent.isSearchSupported()){
+		if (oContent.isSearchSupported()) {
 			const sSearch = this.adjustSearch ? this.adjustSearch(oValueHelp, oContent.isTypeahead(), oContent.getSearch()) : oContent.getSearch();
 			oBindingInfo.parameters.$search = sSearch || undefined;
 		}
@@ -85,7 +85,7 @@ sap.ui.define([
 
 	ODataV4ValueHelpDelegate.executeFilter = function(oValueHelp, oListBinding, iRequestedItems) {
 		oListBinding.getContexts(0, iRequestedItems);
-		return Promise.resolve(this.checkListBindingPending(oValueHelp, oListBinding, iRequestedItems)).then(function () {
+		return Promise.resolve(this.checkListBindingPending(oValueHelp, oListBinding, iRequestedItems)).then(() => {
 			return oListBinding;
 		});
 	};
@@ -94,7 +94,7 @@ sap.ui.define([
 		if (!oListBinding || oListBinding.isSuspended()) {
 			return false;
 		}
-		return oListBinding.requestContexts(0, iRequestedItems).then(function(aContexts) {
+		return oListBinding.requestContexts(0, iRequestedItems).then((aContexts) => {
 			return aContexts.length === 0;
 		});
 	};

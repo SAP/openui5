@@ -3,12 +3,11 @@
  */
 
 sap.ui.define([
-	'sap/m/Input',
-	'sap/ui/mdc/field/FieldInputRenderer'
-	], function(
-		Input,
-		FieldInputRenderer
-	) {
+	'sap/m/Input', 'sap/ui/mdc/field/FieldInputRenderer'
+], (
+	Input,
+	FieldInputRenderer
+) => {
 	"use strict";
 
 	/**
@@ -28,8 +27,7 @@ sap.ui.define([
 	 * @since 1.81.0
 	 * @alias sap.ui.mdc.field.FieldInput
 	 */
-	const FieldInput = Input.extend("sap.ui.mdc.field.FieldInput", /** @lends sap.ui.mdc.field.FieldInput.prototype */
-	{
+	const FieldInput = Input.extend("sap.ui.mdc.field.FieldInput", /** @lends sap.ui.mdc.field.FieldInput.prototype */ {
 		metadata: {
 			library: "sap.ui.mdc",
 			properties: {

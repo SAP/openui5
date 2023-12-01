@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
-sap.ui.define(['sap/ui/mdc/odata/TypeUtil', 'sap/ui/mdc/enums/BaseType',	'sap/base/util/merge'], function(ODataTypeUtil, BaseType, merge) {
+sap.ui.define(['sap/ui/mdc/odata/TypeUtil', 'sap/ui/mdc/enums/BaseType', 'sap/base/util/merge'], (ODataTypeUtil, BaseType, merge) => {
 	"use strict";
 
 	/**
@@ -73,7 +73,7 @@ sap.ui.define(['sap/ui/mdc/odata/TypeUtil', 'sap/ui/mdc/enums/BaseType',	'sap/ba
 		return new TypeClass(oFormatOptions, oConstraints);
 	};
 
-	ODataV4TypeUtil._adjustUnitFormatOptions = function (oFormatOptions, bShowNumber, bShowMeasure) {
+	ODataV4TypeUtil._adjustUnitFormatOptions = function(oFormatOptions, bShowNumber, bShowMeasure) {
 		ODataTypeUtil._adjustUnitFormatOptions.call(this, oFormatOptions, bShowNumber, bShowMeasure);
 
 		if (oFormatOptions.hasOwnProperty("unitOptional")) { // as per default set if both, showNumber and showMeasure set

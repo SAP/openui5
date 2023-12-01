@@ -6,7 +6,7 @@ sap.ui.define([
 	"sap/ui/mdc/actiontoolbar/ActionToolbarActionRenderer",
 	"sap/ui/mdc/enums/ActionToolbarActionAlignment",
 	"sap/ui/base/ManagedObjectObserver"
-], function(Control, ActionToolbarActionRenderer, ActionToolbarActionAlignment, ManagedObjectObserver) {
+], (Control, ActionToolbarActionRenderer, ActionToolbarActionAlignment, ManagedObjectObserver) => {
 	"use strict";
 
 	/**
@@ -31,7 +31,7 @@ sap.ui.define([
 		metadata: {
 			library: "sap.ui.mdc",
 			designtime: "sap/ui/mdc/designtime/actiontoolbar/ActionToolbarAction.designtime",
-			interfaces : [
+			interfaces: [
 				"sap.m.IOverflowToolbarContent"
 			],
 			properties: {

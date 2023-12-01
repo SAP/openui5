@@ -3,7 +3,7 @@
  */
 
 // sap.ui.mdc.AggregationBaseDelegate
-sap.ui.define(['sap/ui/mdc/BaseDelegate', 'sap/ui/core/library'], function (BaseDelegate, coreLibrary) {
+sap.ui.define(['sap/ui/mdc/BaseDelegate', 'sap/ui/core/library'], (BaseDelegate, coreLibrary) => {
 	"use strict";
 
 	/**
@@ -26,13 +26,13 @@ sap.ui.define(['sap/ui/mdc/BaseDelegate', 'sap/ui/core/library'], function (Base
 	 * @since 1.82.0
 	 * @alias module:sap/ui/mdc/AggregationBaseDelegate
 	 * @extends module:sap/ui/mdc/BaseDelegate
-         * @abstract
+	 * @abstract
 	 */
 	const AggregationBaseDelegate = Object.assign({}, BaseDelegate);
 
 	/**
 	 * Retrieves the relevant metadata for a given payload and returns the property info array.
-         * <br>By default, this method returns a <code>Promise</code> that resolves into <code>[]</code>.
+	 * <br>By default, this method returns a <code>Promise</code> that resolves into <code>[]</code>.
 	 *
 	 * @param {sap.ui.mdc.Control} oControl Instance of an <code>sap.ui.mdc.Control</code>
 	 * @returns {Promise<object[]>} Once resolved, an array of property info objects is returned
@@ -57,7 +57,7 @@ sap.ui.define(['sap/ui/mdc/BaseDelegate', 'sap/ui/core/library'], function (Base
 	 * @abstract
 	 * @public
 	 */
-	AggregationBaseDelegate.addItem = function (oControl, sPropertyName, mPropertyBag) {
+	AggregationBaseDelegate.addItem = function(oControl, sPropertyName, mPropertyBag) {
 		return Promise.resolve();
 	};
 
@@ -140,8 +140,7 @@ sap.ui.define(['sap/ui/mdc/BaseDelegate', 'sap/ui/core/library'], function (Base
 	 * @abstract
 	 * @private
 	 */
-	AggregationBaseDelegate.visualizeValidationState = function(oControl, mValidation) {
-	};
+	AggregationBaseDelegate.visualizeValidationState = function(oControl, mValidation) {};
 
 	return AggregationBaseDelegate;
 });

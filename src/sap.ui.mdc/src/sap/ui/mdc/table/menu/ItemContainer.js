@@ -2,22 +2,20 @@
  * ${copyright}
  */
 sap.ui.define([
-	"sap/m/table/columnmenu/ItemContainer",
-	"sap/ui/core/Element",
-	"sap/ui/mdc/table/menu/Item"
-], function(
+	"sap/m/table/columnmenu/ItemContainer", "sap/ui/core/Element", "sap/ui/mdc/table/menu/Item"
+], (
 	ItemContainerBase,
 	Element,
 	Item
-) {
+) => {
 	"use strict";
 
 	const ItemContainer = ItemContainerBase.extend("sap.ui.mdc.table.menu.ItemContainer", {
 		metadata: {
 			library: "sap.ui.mdc",
 			associations: {
-				table: {type: "sap.ui.mdc.Table"},
-				column: {type: "sap.ui.mdc.table.Column"}
+				table: { type: "sap.ui.mdc.Table" },
+				column: { type: "sap.ui.mdc.table.Column" }
 			}
 		}
 	});
@@ -31,22 +29,22 @@ sap.ui.define([
 		}
 
 		if (oTable.isSortingEnabled()) {
-			this.addItem(new Item({key: "Sort", icon: "sap-icon://sort"}));
+			this.addItem(new Item({ key: "Sort", icon: "sap-icon://sort" }));
 		}
 
 		if (oTable.isFilteringEnabled()) {
-			this.addItem(new Item({key: "Filter", icon: "sap-icon://filter"}));
+			this.addItem(new Item({ key: "Filter", icon: "sap-icon://filter" }));
 		}
 
 		if (oTable.isGroupingEnabled()) {
-			this.addItem(new Item({key: "Group", icon: "sap-icon://group-2"}));
+			this.addItem(new Item({ key: "Group", icon: "sap-icon://group-2" }));
 		}
 
 		if (oTable.getActiveP13nModes().includes("Column")) {
-			this.addItem(new Item({key: "Column", icon: "sap-icon://table-column"}));
+			this.addItem(new Item({ key: "Column", icon: "sap-icon://table-column" }));
 		}
 
-		return Promise.all(this.getItems().map(function(oItem) {
+		return Promise.all(this.getItems().map((oItem) => {
 			return oItem.initializeContent();
 		}));
 	};
