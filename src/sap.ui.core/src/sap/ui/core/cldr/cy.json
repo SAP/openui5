@@ -1276,7 +1276,10 @@
 					"Ion",
 					"Chwef",
 					"Maw",
-					"Ebr",
+					[
+						"Ebr",
+						"Ebrill"
+					],
 					"Mai",
 					"Meh",
 					"Gorff",
@@ -2325,7 +2328,10 @@
 					"Ion",
 					"Chwef",
 					"Maw",
-					"Ebr",
+					[
+						"Ebr",
+						"Ebrill"
+					],
 					"Mai",
 					"Meh",
 					"Gorff",
@@ -3375,7 +3381,10 @@
 					"Ion",
 					"Chwef",
 					"Maw",
-					"Ebr",
+					[
+						"Ebr",
+						"Ebrill"
+					],
 					"Mai",
 					"Meh",
 					"Gorff",

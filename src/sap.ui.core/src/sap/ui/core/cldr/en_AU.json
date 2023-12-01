@@ -1433,10 +1433,19 @@
 					"Mar",
 					"Apr",
 					"May",
-					"June",
-					"July",
+					[
+						"June",
+						"Jun"
+					],
+					[
+						"July",
+						"Jul"
+					],
 					"Aug",
-					"Sept",
+					[
+						"Sept",
+						"Sep"
+					],
 					"Oct",
 					"Nov",
 					"Dec"
@@ -2492,10 +2501,19 @@
 					"Mar",
 					"Apr",
 					"May",
-					"June",
-					"July",
+					[
+						"June",
+						"Jun"
+					],
+					[
+						"July",
+						"Jul"
+					],
 					"Aug",
-					"Sept",
+					[
+						"Sept",
+						"Sep"
+					],
 					"Oct",
 					"Nov",
 					"Dec"
@@ -3552,10 +3570,19 @@
 					"Mar",
 					"Apr",
 					"May",
-					"June",
-					"July",
+					[
+						"June",
+						"Jun"
+					],
+					[
+						"July",
+						"Jul"
+					],
 					"Aug",
-					"Sept",
+					[
+						"Sept",
+						"Sep"
+					],
 					"Oct",
 					"Nov",
 					"Dec"
