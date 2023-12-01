@@ -3,15 +3,36 @@
 /* Horizon theme                       */
 /* =================================== */
 
-@_sap_ui_rta_Overlay_BaseBG: @sapBackgroundColor; //#fafafa
-@_sap_ui_rta_Overlay_BaseColor: @sapPrimary1; //#3f5161
-@_sap_ui_rta_Overlay_Base_PlaceholderBG: lighten(saturate(@sapPrimary4, 15%), 2%); //#f1f5f6
+@_sap_ui_rta_Overlay_BaseBG: @sapUiShellBackground; //#f5f6f7
+@_sap_ui_rta_Overlay_BaseColor: @sapUiNotificationBarBG; //rgba(85,107,130,0.98)
+@_sap_ui_rta_Overlay_Base_PlaceholderBG: lighten(saturate(@sapUiShellBackground, 15%), 2%);
 
 .sapUiRta {
 	.sapUiDtOverlayDropZone {
 		> .sapUiDtOverlayChildren {
 			> .sapUiDtOverlayMovable {
 				background: inherit;
+			}
+		}
+	}
+	.sapUiDtOverlayFocusable:focus:before {
+		border-radius: @sapUiFieldBorderCornerRadius;
+		outline: 0.0625rem dotted @sapUiSelected;
+		border: none;
+		outline-offset: -0.125rem;
+	}
+	&:not(.sapUiRtaVisualizationMode) {
+		.sapUiRtaOverlayHover:after {
+			border-radius: @sapUiFieldBorderCornerRadius;
+			border: none;
+			background: fade(@sapUiSelected, 5%);
+		}
+		.sapUiDtOverlaySelected {
+			box-shadow: none;
+			&:after {
+				border-radius: @sapUiFieldBorderCornerRadius;
+				transition: box-shadow 0.25s;
+				box-shadow: 0px 6px 12px 0px rgba(85, 107, 130, 0.3);
 			}
 		}
 	}
