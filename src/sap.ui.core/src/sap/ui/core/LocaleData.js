@@ -35,6 +35,7 @@ sap.ui.define([
 		},
 		rNumberInScientificNotation = /^([+-]?)((\d+)(?:\.(\d+))?)[eE]([+-]?\d+)$/,
 		rTrailingZeroes = /0+$/;
+	const aSupportedWidths = ["narrow", "abbreviated", "wide"];
 
 	/**
 	 * Creates an instance of LocaleData for the given locale.
@@ -74,6 +75,39 @@ sap.ui.define([
 		 */
 		_getMerged: function() {
 			return this._get.apply(this, arguments);
+		},
+
+		/**
+		 * Get month names in width "narrow", "abbreviated" or "wide". Result may contain alternative month names.
+		 *
+		 * @param {"narrow"|"abbreviated"|"wide"} sWidth
+		 *   The required width for the month names
+		 * @param {sap.ui.core.CalendarType} [sCalendarType]
+		 *   The type of calendar; defaults to the calendar type either set in configuration or calculated from locale
+		 * @returns {array}
+		 *   The array of month names; if no alternative exists the entry for the month is its name as a string; if
+		 *   there are alternative month names the entry for the month is an array of strings with the alternative names
+		 * @private
+		 */
+		_getMonthsWithAlternatives: function(sWidth, sCalendarType) {
+			return this._get(getCLDRCalendarName(sCalendarType), "months", "format", sWidth);
+		},
+
+		/**
+		 * Get standalone month names in width "narrow", "abbreviated" or "wide". Result may contain alternative month
+		 * names.
+		 *
+		 * @param {"narrow"|"abbreviated"|"wide"} sWidth
+		 *   The required width for the month names
+		 * @param {sap.ui.core.CalendarType} [sCalendarType]
+		 *   The type of calendar; defaults to the calendar type either set in configuration or calculated from locale
+		 * @returns {array}
+		 *   The array of month names; if no alternative exists the entry for the month is its name as a string; if
+		 *   there are alternative month names the entry for the month is an array of strings with the alternative names
+		 * @private
+		 */
+		_getMonthsStandAloneWithAlternatives: function(sWidth, sCalendarType) {
+			return this._get(getCLDRCalendarName(sCalendarType), "months", "stand-alone", sWidth);
 		},
 
 		_getDeep: function(oObject, aPropertyNames) {
@@ -173,27 +207,37 @@ sap.ui.define([
 		/**
 		 * Get month names in width "narrow", "abbreviated" or "wide".
 		 *
-		 * @param {string} sWidth the required width for the month names
-		 * @param {sap.ui.core.CalendarType} [sCalendarType] the type of calendar. If it's not set, it falls back to the calendar type either set in configuration or calculated from locale.
-		 * @returns {array} array of month names (starting with January)
+		 * @param {"narrow"|"abbreviated"|"wide"} sWidth
+		 *   The required width for the month names
+		 * @param {sap.ui.core.CalendarType} [sCalendarType]
+		 *   The type of calendar; defaults to the calendar type either set in configuration or calculated from locale
+		 * @returns {string[]}
+		 *   The array of month names
 		 * @public
 		 */
 		getMonths: function(sWidth, sCalendarType) {
-			assert(sWidth == "narrow" || sWidth == "abbreviated" || sWidth == "wide", "sWidth must be narrow, abbreviated or wide");
-			return this._get(getCLDRCalendarName(sCalendarType), "months", "format", sWidth);
+			assert(aSupportedWidths.includes(sWidth), "sWidth must be narrow, abbreviated or wide");
+			return this._get(getCLDRCalendarName(sCalendarType), "months", "format", sWidth).map((vMonthName) => {
+				return Array.isArray(vMonthName) ? vMonthName[0] : vMonthName;
+			});
 		},
 
 		/**
 		 * Get standalone month names in width "narrow", "abbreviated" or "wide".
 		 *
-		 * @param {string} sWidth the required width for the month names
-		 * @param {sap.ui.core.CalendarType} [sCalendarType] the type of calendar. If it's not set, it falls back to the calendar type either set in configuration or calculated from locale.
-		 * @returns {array} array of month names (starting with January)
+		 * @param {"narrow"|"abbreviated"|"wide"} sWidth
+		 *   The required width for the month names
+		 * @param {sap.ui.core.CalendarType} [sCalendarType]
+		 *   The type of calendar; defaults to the calendar type either set in configuration or calculated from locale
+		 * @returns {string[]}
+		 *   The array of standalone month names
 		 * @public
 		 */
 		getMonthsStandAlone: function(sWidth, sCalendarType) {
-			assert(sWidth == "narrow" || sWidth == "abbreviated" || sWidth == "wide", "sWidth must be narrow, abbreviated or wide");
-			return this._get(getCLDRCalendarName(sCalendarType), "months", "stand-alone", sWidth);
+			assert(aSupportedWidths.includes(sWidth), "sWidth must be narrow, abbreviated or wide");
+			return this._get(getCLDRCalendarName(sCalendarType), "months", "stand-alone", sWidth).map((vMonthName) => {
+				return Array.isArray(vMonthName) ? vMonthName[0] : vMonthName;
+			});
 		},
 
 		/**

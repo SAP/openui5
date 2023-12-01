@@ -271,9 +271,9 @@
             <copyright>Google Inc.</copyright>
             <pattern>sap/ui/thirdparty/caja-html-sanitizer.js</pattern>
         </lib>
-        <lib name="cldr" displayName="Unicode Common Locale Data Repository" npmName="cldr-core" version="41" hash="42c6ef1e814f4b110339ad801d570123" homepage="http://cldr.unicode.org/" id="73555000106100020909">
+        <lib name="cldr" displayName="Unicode Common Locale Data Repository" npmName="cldr-core" version="41" hash="e5174ded6db7e1149e4196d4762fdc8d" homepage="http://cldr.unicode.org/" id="73555000106100020909">
             <license url="http://www.unicode.org/copyright.html" type="Unicode-DFS-2015" />
-            <copyright>1991-2014 Unicode, Inc.</copyright>
+            <copyright>1991-2022 Unicode, Inc.</copyright>
             <pattern>sap/ui/core/cldr/*</pattern>
         </lib>
         <lib name="mobiscroll" displayName="MobiScroll" npmName="n/a" version="2.9.0" hash="2a76d1439bbc5afaf10324b2108e4d9c" homepage="http://mobiscroll.com" id="73554900106100005562">
