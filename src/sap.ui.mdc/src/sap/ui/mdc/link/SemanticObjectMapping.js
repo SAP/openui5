@@ -4,7 +4,7 @@
 
 sap.ui.define([
 	'sap/ui/core/Element'
-], function(Element) {
+], (Element) => {
 	"use strict";
 
 	/**
@@ -21,8 +21,7 @@ sap.ui.define([
 	 * @alias sap.ui.mdc.link.SemanticObjectMapping
 	 * @deprecated since version 1.120 - please see {@link sap.ui.mdc.ushell.SemanticObjectMapping}
 	 */
-	const SemanticObjectMapping = Element.extend("sap.ui.mdc.link.SemanticObjectMapping", /** @lends sap.ui.mdc.link.SemanticObjectMapping.prototype */
-	{
+	const SemanticObjectMapping = Element.extend("sap.ui.mdc.link.SemanticObjectMapping", /** @lends sap.ui.mdc.link.SemanticObjectMapping.prototype */ {
 		metadata: {
 			library: "sap.ui.mdc",
 			properties: {

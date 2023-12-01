@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
-sap.ui.define(["sap/base/Log"], function(Log) {
+sap.ui.define(["sap/base/Log"], (Log) => {
 	"use strict";
 
 	/**

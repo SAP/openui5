@@ -26,7 +26,7 @@ sap.ui.define([
 	"sap/ui/mdc/link/PanelItem",
 	"sap/ui/core/CustomData",
 	"./Factory"
-], function(Control, PanelRenderer, Library, VerticalLayout, Log, HorizontalLayout, HBox, VBox, ImageContent, Link, Label, Text, Button, FlexItemData, JSONModel, BindingMode, ManagedObjectObserver, LinkPanelController, Engine, AdaptationMixin, PanelItem, CustomData, Factory) {
+], (Control, PanelRenderer, Library, VerticalLayout, Log, HorizontalLayout, HBox, VBox, ImageContent, Link, Label, Text, Button, FlexItemData, JSONModel, BindingMode, ManagedObjectObserver, LinkPanelController, Engine, AdaptationMixin, PanelItem, CustomData, Factory) => {
 	"use strict";
 
 	/**
@@ -117,7 +117,7 @@ sap.ui.define([
 
 		Engine.getInstance().register(this, {
 			controller: {
-				LinkItems: new LinkPanelController({control: this})
+				LinkItems: new LinkPanelController({ control: this })
 			}
 		});
 
@@ -127,9 +127,9 @@ sap.ui.define([
 
 		sap.ui.require([
 			this.getMetadataHelperPath() || "sap/ui/mdc/Link"
-		], function(MetadataHelper) {
+		], (MetadataHelper) => {
 			this._oMetadataHelper = MetadataHelper;
-		}.bind(this));
+		});
 
 		const oModel = new JSONModel({
 			// disjunct sets
@@ -153,8 +153,7 @@ sap.ui.define([
 				"enablePersonalization"
 			],
 			aggregations: [
-				"items",
-				"additionalContent"
+				"items", "additionalContent"
 			]
 		});
 	};
@@ -209,8 +208,7 @@ sap.ui.define([
 			fitContainer: false,
 			visible: {
 				parts: [
-					{ path: "$sapuimdclinkPanel>/countAdditionalContent" },
-					{ path: "$sapuimdcLink>/metadata" }
+					{ path: "$sapuimdclinkPanel>/countAdditionalContent" }, { path: "$sapuimdcLink>/metadata" }
 				],
 				formatter: function(iAdditionalContentCount, aMetadata) {
 					return iAdditionalContentCount > 0 && aMetadata.length > 0;
@@ -287,17 +285,17 @@ sap.ui.define([
 			wrapping: true
 		});
 		const oVBox = new VBox({
-			items: [ oLink, oLabel, oText ]
+			items: [oLink, oLabel, oText]
 		});
 		const oHBox = new HBox({
 			layoutData: new FlexItemData({
 				styleClass: oBindingContext.getProperty("description") ? "mdcbaseinfoPanelItemsGroup" : "mdcbaseinfoPanelItemsWithoutGroup"
 			}),
-			items: [ oImageContent, oVBox ]
+			items: [oImageContent, oVBox]
 		});
 		const oPanelListItem = new HorizontalLayout({
 			visible: "{$sapuimdclinkPanel>visible}",
-			content: [ oHBox ]
+			content: [oHBox]
 		});
 		oPanelListItem.addStyleClass("mdcbaseinfoPanelListItem");
 
@@ -318,7 +316,7 @@ sap.ui.define([
 				}
 			},
 			justifyContent: "End",
-			items: [ oResetButton ]
+			items: [oResetButton]
 		});
 		oFooterArea.addStyleClass("mdcbaseinfoPanelPersonalizationButton");
 
@@ -333,7 +331,7 @@ sap.ui.define([
 			const bUseInternalHref = oLink && oLink.getCustomData() && oLink.getCustomData()[0] && oLink.getCustomData()[0].getValue();
 			const sHref = bUseInternalHref ? oLink.getCustomData()[0].getValue() : oLink.getHref();
 			oEvent.preventDefault();
-			this.getBeforeNavigationCallback()(oEvent).then(function(bNavigate) {
+			this.getBeforeNavigationCallback()(oEvent).then((bNavigate) => {
 				if (bNavigate) {
 					Panel.navigate(sHref);
 				}
@@ -348,7 +346,7 @@ sap.ui.define([
 		if (sHref.indexOf("#") === 0 && oContainer) {
 			// if we are inside a FLP -> navigate with CrossApplicationNavigation
 			if (!Panel.oNavigationPromise) {
-				Panel.oNavigationPromise = Factory.getServiceAsync("Navigation").then(function (oNavigationService) {
+				Panel.oNavigationPromise = Factory.getServiceAsync("Navigation").then((oNavigationService) => {
 					oNavigationService.navigate({
 						target: { shellHash: sHref.substring(1) }
 					});
@@ -366,16 +364,16 @@ sap.ui.define([
 	};
 
 	Panel.prototype._openPersonalizationDialog = function() {
-		return new Promise(function(resolve, reject) {
-			sap.ui.require([this.getMetadataHelperPath() || "sap/ui/mdc/Link"], function(MetadataHelper) {
+		return new Promise((resolve, reject) => {
+			sap.ui.require([this.getMetadataHelperPath() || "sap/ui/mdc/Link"], (MetadataHelper) => {
 				const oModel = this._getInternalModel();
 				const aMBaselineItems = MetadataHelper.retrieveBaseline(this);
 				const aMBaselineItemsTotal = aMBaselineItems;
 				const fnUpdateResetButton = function(oSelectionPanel) {
-					let aSelectedItems = oSelectionPanel._oListControl.getItems().filter(function(oItem) {
+					let aSelectedItems = oSelectionPanel._oListControl.getItems().filter((oItem) => {
 						return oItem.getSelected();
 					});
-					aSelectedItems = aSelectedItems.map(function(oSelectedItem) {
+					aSelectedItems = aSelectedItems.map((oSelectedItem) => {
 						const oItem = oSelectionPanel._getP13nModel().getProperty(oSelectedItem.getBindingContext(oSelectionPanel.P13N_MODEL).sPath);
 						return {
 							id: oItem.name,
@@ -404,7 +402,7 @@ sap.ui.define([
 							oParent.setModal(false);
 						}
 					}
-				}).then(function(oDialog) {
+				}).then((oDialog) => {
 					const oResetButton = oDialog.getCustomHeader().getContentRight()[0];
 					const oSelectionPanel = oDialog.getContent()[0];
 					oResetButton.setModel(oModel, "$sapuimdclinkPanel");
@@ -412,21 +410,21 @@ sap.ui.define([
 						path: '$sapuimdclinkPanel>/showResetEnabled'
 					});
 					fnUpdateResetButton.call(this, oSelectionPanel);
-					oSelectionPanel.attachChange(function(oEvent) {
+					oSelectionPanel.attachChange((oEvent) => {
 						fnUpdateResetButton.call(this, oSelectionPanel);
-						oSelectionPanel.attachChange(function(oEvent) {
+						oSelectionPanel.attachChange((oEvent) => {
 							fnUpdateResetButton.call(this, oSelectionPanel);
-						}.bind(this));
-						oDialog.attachAfterClose(function() {
+						});
+						oDialog.attachAfterClose(() => {
 							if (oParent.isA("sap.m.Popover")) {
 								oParent.setModal(false);
 							}
 						});
-					}.bind(this));
+					});
 					resolve(oDialog);
-				}.bind(this));
-			}.bind(this));
-		}.bind(this));
+				});
+			});
+		});
 	};
 
 	Panel._showResetButtonEnabled = function(aMBaseLineItems, aSelectedItems) {
@@ -448,7 +446,7 @@ sap.ui.define([
 
 	Panel._allItemsIncludedInArray = function(aMItemsToBeIncluded, aMArrayToCheck) {
 		let bAllItemsIncluded = true;
-		aMItemsToBeIncluded.forEach(function(oItemToBeIncluded) {
+		aMItemsToBeIncluded.forEach((oItemToBeIncluded) => {
 			const aMItemsIncluded = Panel._getItemsById(oItemToBeIncluded.id, aMArrayToCheck);
 			if (aMItemsIncluded.length === 0) {
 				bAllItemsIncluded = false;
@@ -458,7 +456,7 @@ sap.ui.define([
 	};
 
 	Panel._getItemsById = function(sId, aMItems) {
-		return aMItems.filter(function(oItem) {
+		return aMItems.filter((oItem) => {
 			return oItem.id === sId;
 		});
 	};
@@ -468,7 +466,7 @@ sap.ui.define([
 	};
 
 	Panel._getVisibleItems = function(aMItems) {
-		return aMItems.filter(function(oItem) {
+		return aMItems.filter((oItem) => {
 			return oItem.id !== undefined && oItem.visible;
 		});
 	};
@@ -484,7 +482,7 @@ sap.ui.define([
 			return;
 		}
 		const oModel = this._getInternalModel();
-		oModel.getProperty("/runtimeItems").forEach(function(oMItem, iIndex) {
+		oModel.getProperty("/runtimeItems").forEach((oMItem, iIndex) => {
 			if (oMItem.icon) {
 				return;
 			}
@@ -501,8 +499,8 @@ sap.ui.define([
 		if (oChanges.object.isA("sap.ui.mdc.link.Panel")) {
 			switch (oChanges.name) {
 				case "additionalContent":
-					aAdditionalContent = oChanges.child ? [ oChanges.child ] : oChanges.children;
-					aAdditionalContent.forEach(function(oAdditionalContent) {
+					aAdditionalContent = oChanges.child ? [oChanges.child] : oChanges.children;
+					aAdditionalContent.forEach((oAdditionalContent) => {
 						switch (oChanges.mutation) {
 							case "insert":
 								// "forward" additional content to the additionalContentArea
@@ -514,7 +512,7 @@ sap.ui.define([
 							default:
 								Log.error("Mutation '" + oChanges.mutation + "' is not supported yet.");
 						}
-					}.bind(this));
+					});
 					oModel.setProperty("/countAdditionalContent", aAdditionalContent.length);
 					break;
 				case "items":
@@ -545,7 +543,7 @@ sap.ui.define([
 								oModel.setProperty("/countItemsWithIcon", oPanelItem.getIcon() ? oModel.getProperty("/countItemsWithIcon") - 1 : oModel.getProperty("/countItemsWithIcon"));
 								oModel.setProperty("/countItemsWithoutIcon", oPanelItem.getIcon() ? oModel.getProperty("/countItemsWithoutIcon") : oModel.getProperty("/countItemsWithoutIcon") - 1);
 
-								oRuntimeItem = aRuntimeItems.find(function(oItem) {
+								oRuntimeItem = aRuntimeItems.find((oItem) => {
 									return oItem.id === oPanelItem.getId();
 								});
 								aRuntimeItems.splice(aRuntimeItems.indexOf(oRuntimeItem), 1);
@@ -603,7 +601,7 @@ sap.ui.define([
 		const aItems = [];
 		let sId;
 
-		this.getItems().forEach(function(oItem, iIndex) {
+		this.getItems().forEach((oItem, iIndex) => {
 			sId = oItem && oItem.getId();
 			if (oItem.getVisible()) {
 				aItems.push({
@@ -619,33 +617,33 @@ sap.ui.define([
 
 	Panel.prototype.initPropertyHelper = function() {
 
-			const aAllLinkItems = this._oMetadataHelper.retrieveAllMetadata(this);
+		const aAllLinkItems = this._oMetadataHelper.retrieveAllMetadata(this);
 
-			return Promise.resolve({
-				getProperties: function() {
+		return Promise.resolve({
+			getProperties: function() {
 
-					const aItems = [];
-					aAllLinkItems.forEach(function(oItem){
-						aItems.push({
-							name: oItem.id,
-							getName: function() {
-								return oItem.id;
-							},
-							getLabel: function() {
-								return oItem.text;
-							},
-							text: oItem.text,
-							href: oItem.href,
-							internalHref: oItem.internalHref,
-							description: oItem.description,
-							target: oItem.target,
-							visible: oItem.visible
-						});
+				const aItems = [];
+				aAllLinkItems.forEach((oItem) => {
+					aItems.push({
+						name: oItem.id,
+						getName: function() {
+							return oItem.id;
+						},
+						getLabel: function() {
+							return oItem.text;
+						},
+						text: oItem.text,
+						href: oItem.href,
+						internalHref: oItem.internalHref,
+						description: oItem.description,
+						target: oItem.target,
+						visible: oItem.visible
 					});
+				});
 
-					return aItems;
-				}
-			});
+				return aItems;
+			}
+		});
 	};
 
 	Panel.prototype._updateContentTitle = function() {
@@ -678,11 +676,10 @@ sap.ui.define([
 	};
 
 	Panel.prototype._getLinkControls = function() {
-		return this._getLinkArea().getItems().map((HorizontalLayout /* see _fnLinkItemFactory */) => {
-			return HorizontalLayout.getContent()[0] // HBox
-				.getItems()[1] // VBox
-				.getItems()[0]; // Link
-		});
+		return this._getLinkArea().getItems().map((HorizontalLayout) /* see _fnLinkItemFactory */ => // Link
+			HorizontalLayout.getContent()[0] // HBox
+			.getItems()[1] // VBox
+			.getItems()[0]);
 	};
 
 	Panel.prototype._getFooterArea = function() {

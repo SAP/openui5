@@ -3,30 +3,30 @@
  */
 
 sap.ui.define([
-	"sap/ui/core/Core",
-	"sap/ui/core/Lib",
-	"sap/ui/mdc/Control",
-	"./ChartRenderer",
-	"sap/base/Log",
-	"./chart/ChartToolbar",
-	"./chart/PropertyHelper",
-	"sap/ui/mdc/mixin/FilterIntegrationMixin",
-	"sap/ui/model/base/ManagedObjectModel",
-	"sap/ui/mdc/p13n/subcontroller/ChartItemController",
-	"sap/ui/mdc/p13n/subcontroller/FilterController",
-	"sap/ui/mdc/p13n/subcontroller/SortController",
-	"sap/ui/mdc/p13n/subcontroller/ChartTypeController",
-	"sap/ui/base/ManagedObjectObserver",
-	"sap/ui/mdc/chart/DrillBreadcrumbs",
-	"sap/ui/mdc/actiontoolbar/ActionToolbarAction",
-	"sap/ui/core/library",
-	"sap/ui/events/KeyCodes",
-	"sap/ui/mdc/util/InfoBar",
-	"sap/ui/core/format/ListFormat",
-	"sap/ui/mdc/enums/ProcessingStrategy",
-	"sap/ui/mdc/enums/ChartP13nMode"
-],
-	function(
+		"sap/ui/core/Core",
+		"sap/ui/core/Lib",
+		"sap/ui/mdc/Control",
+		"./ChartRenderer",
+		"sap/base/Log",
+		"./chart/ChartToolbar",
+		"./chart/PropertyHelper",
+		"sap/ui/mdc/mixin/FilterIntegrationMixin",
+		"sap/ui/model/base/ManagedObjectModel",
+		"sap/ui/mdc/p13n/subcontroller/ChartItemController",
+		"sap/ui/mdc/p13n/subcontroller/FilterController",
+		"sap/ui/mdc/p13n/subcontroller/SortController",
+		"sap/ui/mdc/p13n/subcontroller/ChartTypeController",
+		"sap/ui/base/ManagedObjectObserver",
+		"sap/ui/mdc/chart/DrillBreadcrumbs",
+		"sap/ui/mdc/actiontoolbar/ActionToolbarAction",
+		"sap/ui/core/library",
+		"sap/ui/events/KeyCodes",
+		"sap/ui/mdc/util/InfoBar",
+		"sap/ui/core/format/ListFormat",
+		"sap/ui/mdc/enums/ProcessingStrategy",
+		"sap/ui/mdc/enums/ChartP13nMode"
+	],
+	(
 		Core,
 		Library,
 		Control,
@@ -49,11 +49,11 @@ sap.ui.define([
 		ListFormat,
 		ProcessingStrategy,
 		ChartP13nMode
-	) {
+	) => {
 		"use strict";
 
 		let DrillStackHandler;
-		const TitleLevel = coreLibrary.TitleLevel;
+		const { TitleLevel } = coreLibrary;
 
 		/**
 		 * Constructor for a new Chart.
@@ -79,8 +79,7 @@ sap.ui.define([
 				library: "sap.ui.mdc",
 				designtime: "sap/ui/mdc/designtime/chart/Chart.designtime",
 				interfaces: [
-					"sap.ui.mdc.IFilterSource",
-					"sap.ui.mdc.IxState"
+					"sap.ui.mdc.IFilterSource", "sap.ui.mdc.IxState"
 				],
 				defaultAggregation: "items",
 				properties: {
@@ -280,11 +279,11 @@ sap.ui.define([
 					},
 
 					/**
-					* Semantic level of the header.<br>
-					* For more information, see {@link sap.m.Title#setLevel}.
-					*
-					* @since 1.104
-					*/
+					 * Semantic level of the header.<br>
+					 * For more information, see {@link sap.m.Title#setLevel}.
+					 *
+					 * @since 1.104
+					 */
 					headerLevel: {
 						type: "sap.ui.core.TitleLevel",
 						group: "Appearance",
@@ -499,7 +498,7 @@ sap.ui.define([
 			let aSortedKeys = null;
 			if (aModes && aModes.length >= 1) {
 				aSortedKeys = [];
-				const mKeys = aModes.reduce(function(mMap, sKey, iIndex) {
+				const mKeys = aModes.reduce((mMap, sKey, iIndex) => {
 					mMap[sKey] = true;
 					return mMap;
 				}, {});
@@ -544,7 +543,7 @@ sap.ui.define([
 			};
 
 			if (aMode && aMode.length > 0) {
-				aMode.forEach(function(sMode) {
+				aMode.forEach((sMode) => {
 					const sKey = sMode;
 					const oController = mRegistryOptions[sMode];
 					if (oController) {
@@ -599,15 +598,15 @@ sap.ui.define([
 			this._setPropertyHelperClass(PropertyHelper);
 			Control.prototype.applySettings.apply(this, arguments);
 
-			this.initializedPromise = new Promise(function(resolve, reject) {
+			this.initializedPromise = new Promise((resolve, reject) => {
 				this._fnResolveInitialized = resolve;
 				this._fnRejectInitialized = reject;
-			}.bind(this));
+			});
 
-			this.innerChartBoundPromise = new Promise(function(resolve, reject) {
+			this.innerChartBoundPromise = new Promise((resolve, reject) => {
 				this._fnResolveInnerChartBound = resolve;
 				this._fnRejectInnerChartBound = reject;
-			}.bind(this));
+			});
 
 			const pLoadDelegate = this.initControlDelegate();
 
@@ -618,11 +617,11 @@ sap.ui.define([
 			}
 
 			//TODO: Refactor this so we use awaitPropertyHelper
-			Promise.all(aInitPromises).then(function() {
+			Promise.all(aInitPromises).then(() => {
 				if (!this.isDestroyed()) {
 					this._initInnerControls();
 				}
-			}.bind(this));
+			});
 
 		};
 
@@ -632,7 +631,7 @@ sap.ui.define([
 		 */
 		Chart.prototype._initInnerControls = function() {
 
-			this.getControlDelegate().initializeInnerChart(this).then(function(oInnerChart) {
+			this.getControlDelegate().initializeInnerChart(this).then((oInnerChart) => {
 
 				this.setBusyIndicatorDelay(0);
 
@@ -654,9 +653,9 @@ sap.ui.define([
 				this._fnResolveInitialized();
 				this.invalidate();
 
-			}.bind(this)).catch(function(error) {
+			}).catch((error) => {
 				this._fnRejectInitialized(error);
-			}.bind(this));
+			});
 
 			//independent from fetchProperties
 			this._getToolbar().createToolbarContent(this);
@@ -666,14 +665,14 @@ sap.ui.define([
 			this.setAggregation("_infoToolbar", new InfoBar(this.getId() + "--infoToolbar", {
 				infoText: this._getFilterInfoText(),
 				press: function() {
-					this.finalizePropertyHelper().then(function() {
+					this.finalizePropertyHelper().then(() => {
 						return this.getEngine().show(this, "Filter");
-					}.bind(this)).then(function(oP13nDialog) {
+					}).then((oP13nDialog) => {
 
-						oP13nDialog.attachEventOnce("afterClose", function() {
+						oP13nDialog.attachEventOnce("afterClose", () => {
 
 							const aConditions = this.getFilterConditions();
-							const bNoConditions = !Object.keys(aConditions).find(function(oKey) {
+							const bNoConditions = !Object.keys(aConditions).find((oKey) => {
 								return aConditions[oKey] && aConditions[oKey].length > 0;
 							});
 
@@ -681,8 +680,8 @@ sap.ui.define([
 								this.getAggregation("_toolbar").getSettingsButton().focus();
 							}
 
-						}.bind(this));
-					}.bind(this));
+						});
+					});
 				}.bind(this),
 				removeAllFilters: function(oEvent) {
 					//this will only reset to the last variant and not clear all filters. this.getEngine().reset(this, ["Filter"]);
@@ -740,9 +739,9 @@ sap.ui.define([
 		Chart.prototype._createContentfromPropertyInfos = function(oInnerChart) {
 
 			//Make sure all MDC Items have the necessary information to create a chart
-			this.getControlDelegate().checkAndUpdateMDCItems(this).then(function() {
+			this.getControlDelegate().checkAndUpdateMDCItems(this).then(() => {
 				//Create content on inner chart instance
-				this.getControlDelegate().createInnerChartContent(this, this._innerChartDataLoadComplete.bind(this)).then(function() {
+				this.getControlDelegate().createInnerChartContent(this, this._innerChartDataLoadComplete.bind(this)).then(() => {
 					this._createBreadcrumbs();
 					//From now on, listen to changes on Items Aggregation and sync them with inner chart
 					this._oObserver?.disconnect();
@@ -758,8 +757,8 @@ sap.ui.define([
 					this._propagatePropertiesToInnerChart();
 
 					this._fnResolveInnerChartBound();
-				}.bind(this));
-			}.bind(this));
+				});
+			});
 		};
 
 		Chart.prototype._createBreadcrumbs = function() {
@@ -776,7 +775,7 @@ sap.ui.define([
 		 */
 		Chart.prototype._loadDelegate = function() {
 
-			return new Promise(function(resolve) {
+			return new Promise((resolve) => {
 				const aNotLoadedModulePaths = [this.getDelegate().name];
 
 				function onModulesLoadedSuccess(oDelegate) {
@@ -784,7 +783,7 @@ sap.ui.define([
 				}
 
 				sap.ui.require(aNotLoadedModulePaths, onModulesLoadedSuccess);
-			}.bind(this));
+			});
 
 		};
 		/**
@@ -828,7 +827,7 @@ sap.ui.define([
 				case "insert":
 
 					if (oChange.child && oChange.child.getType()) {
-						iIndex = this.getItems().filter(function(oItem) { return oItem.getType() === oChange.child.getType(); }).indexOf(oChange.child);
+						iIndex = this.getItems().filter((oItem) => { return oItem.getType() === oChange.child.getType(); }).indexOf(oChange.child);
 					} else {
 						iIndex = this.getItems().indexOf(oChange.child);
 					}
@@ -865,9 +864,9 @@ sap.ui.define([
 				//this._initInnerControls();
 
 				//Wait with rebind until inner chart is ready
-				this.initialized().then(function() {
+				this.initialized().then(() => {
 					this._rebind(bForceRefresh);
-				}.bind(this));
+				});
 				return;
 			}
 
@@ -1077,30 +1076,30 @@ sap.ui.define([
 				if (DrillStackHandler) {
 
 					this.oDrillPopover = DrillStackHandler.createDrillDownPopover(this);
-					this.oDrillPopover.attachAfterClose(function() {
+					this.oDrillPopover.attachAfterClose(() => {
 						delete this.oDrillPopover;
-					}.bind(this));
+					});
 
 					return DrillStackHandler.showDrillDownPopover(this, oDrillBtn);
 				}
 
-				return new Promise(function(resolve, reject) {
+				return new Promise((resolve, reject) => {
 					sap.ui.require([
 						"sap/ui/mdc/chart/DrillStackHandler"
-					], function(DrillStackHandlerLoaded) {
+					], (DrillStackHandlerLoaded) => {
 						DrillStackHandler = DrillStackHandlerLoaded;
 
 						this.oDrillPopover = DrillStackHandler.createDrillDownPopover(this);
-						this.oDrillPopover.attachAfterClose(function() {
+						this.oDrillPopover.attachAfterClose(() => {
 							delete this.oDrillPopover;
-						}.bind(this));
+						});
 
 						DrillStackHandler.showDrillDownPopover(this, oDrillBtn)
-							.then(function(oDrillDownPopover) {
+							.then((oDrillDownPopover) => {
 								resolve(oDrillDownPopover);
 							});
-					}.bind(this));
-				}.bind(this));
+					});
+				});
 			} else if (this.oDrillPopover) {
 				this.oDrillPopover.close();
 			}
@@ -1202,7 +1201,8 @@ sap.ui.define([
 
 		Chart.prototype._checkStyleClassesForDimensions = function() {
 			const bHasDimension = this._oBreadcrumbs && this._oBreadcrumbs.getVisible() // breadcrump must be visible and dimension exist
-				&& this.getItems().some(function(oItem) { return oItem.getType() === "groupable"; });
+				&&
+				this.getItems().some((oItem) => { return oItem.getType() === "groupable"; });
 
 			if (!bHasDimension && this.hasStyleClass("sapUiMDCChartGrid")) {
 				this.removeStyleClass("sapUiMDCChartGrid");
@@ -1255,7 +1255,7 @@ sap.ui.define([
 		 */
 		Chart.prototype._getVisibleProperties = function() {
 			const aProperties = [];
-			this.getItems().forEach(function(oItem) {
+			this.getItems().forEach((oItem) => {
 				aProperties.push({
 					name: oItem.getPropertyKey(),
 					role: oItem.getRole()

@@ -10,7 +10,7 @@ sap.ui.define([
 	'sap/ui/mdc/condition/FilterOperatorUtil',
 	'sap/ui/core/library',
 	'sap/ui/model/Filter'
-], function(
+], (
 	DefaultContent,
 	BaseType,
 	OperatorValueType,
@@ -18,10 +18,10 @@ sap.ui.define([
 	DateUtil,
 	FilterOperatorUtil,
 	coreLibrary,
-	Filter) {
+	Filter) => {
 	"use strict";
 
-	const CalendarType = coreLibrary.CalendarType;
+	const { CalendarType } = coreLibrary;
 	let StandardDynamicDateRangeKeys;
 	let DynamicDateFormat;
 
@@ -42,7 +42,12 @@ sap.ui.define([
 			return [null];
 		},
 		getEdit: function() {
-			return ["sap/m/DynamicDateRange", "sap/ui/mdc/condition/OperatorDynamicDateOption", "sap/ui/mdc/field/DynamicDateRangeConditionsType", "sap/m/library", "sap/m/DynamicDateFormat"];
+			return ["sap/m/DynamicDateRange",
+				"sap/ui/mdc/condition/OperatorDynamicDateOption",
+				"sap/ui/mdc/field/DynamicDateRangeConditionsType",
+				"sap/m/library",
+				"sap/m/DynamicDateFormat"
+			];
 		},
 		getEditOperator: function() {
 			return {
@@ -195,17 +200,17 @@ sap.ui.define([
 			}
 
 			const oConditionsType = oContentFactory.getConditionsType(false, DynamicDateRangeConditionsType);
-			const fnGetDateRangeStandardOptions = function (aOperators) {
+			const fnGetDateRangeStandardOptions = function(aOperators) {
 				return this._getDateRangeStandardOptions(aOperators, oContentFactory);
 			}.bind(this);
 			const oCustomOperatorFilter = new Filter({
 				path: "/",
-				test: function (sOperator) {
+				test: function(sOperator) {
 					const sBaseType = oContentFactory.getField().getBaseType();
 					return !this._getDateRangeStandardOption(sOperator, sBaseType);
 				}.bind(this)
 			});
-			const fnCreateDateRangeCustomOptions = function (sAggegationId, oBindingContext) {
+			const fnCreateDateRangeCustomOptions = function(sAggegationId, oBindingContext) {
 				const sBaseType = oContentFactory.getField().getBaseType();
 				const sOperator = oBindingContext.getObject();
 				return this._createOperatorDynamicDateOption(sOperator, oContentFactory, OperatorDynamicDateOption, sBaseType, sId);
@@ -215,8 +220,8 @@ sap.ui.define([
 				value: { path: "$field>/conditions", type: oConditionsType },
 				formatter: this._getDateRangeFormatter(oContentFactory),
 				placeholder: "{$field>/placeholder}",
-//				textAlign: "{$field>/textAlign}",	// this is currently not supported by the DynamicDateRange
-//				textDirection: "{$field>/textDirection}", // this is currently not supported by the DynamicDateRange
+				//				textAlign: "{$field>/textAlign}",	// this is currently not supported by the DynamicDateRange
+				//				textDirection: "{$field>/textDirection}", // this is currently not supported by the DynamicDateRange
 				required: "{$field>/required}",
 				editable: { path: "$field>/editMode", formatter: oContentFactory.getMetadata()._oClass._getEditable },
 				enabled: { path: "$field>/editMode", formatter: oContentFactory.getMetadata()._oClass._getEnabled },
@@ -225,8 +230,8 @@ sap.ui.define([
 				width: "100%",
 				tooltip: "{$field>/tooltip}",
 				// enableGroupHeaders: false,	// disable the grouping of the options
-				standardOptions: {path: "$field>/_operators", formatter: fnGetDateRangeStandardOptions},
-				customOptions: {path: "$field>/_operators", filters: oCustomOperatorFilter, factory: fnCreateDateRangeCustomOptions},
+				standardOptions: { path: "$field>/_operators", formatter: fnGetDateRangeStandardOptions },
+				customOptions: { path: "$field>/_operators", filters: oCustomOperatorFilter, factory: fnCreateDateRangeCustomOptions },
 				// liveChange: oContentFactory.getHandleContentLiveChange(), this event does not exist for DynamicDateRange
 				change: oContentFactory.getHandleContentChange()
 			});
@@ -250,8 +255,7 @@ sap.ui.define([
 			const aOptions = [];
 			const sBaseType = oContentFactory.getField().getBaseType();
 
-			for (let i = 0; i < aOperators.length; i++) {
-				const sOperator = aOperators[i];
+			for (const sOperator of aOperators) {
 				const sOption = this._getDateRangeStandardOption(sOperator, sBaseType);
 				if (sOption) {
 					aOptions.push(sOption);
@@ -281,7 +285,7 @@ sap.ui.define([
 					}
 				}
 
-				oOption = new OperatorDynamicDateOption(sId + "--" + sOption, {key: sOption, operator: oOperator, type: oType, baseType: sBaseType, valueTypes: aValueTypes});
+				oOption = new OperatorDynamicDateOption(sId + "--" + sOption, { key: sOption, operator: oOperator, type: oType, baseType: sBaseType, valueTypes: aValueTypes });
 			}
 			return oOption;
 		},

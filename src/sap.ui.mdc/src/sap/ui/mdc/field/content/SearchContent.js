@@ -6,7 +6,7 @@ sap.ui.define([
 	"sap/ui/model/BindingMode",
 	'sap/ui/model/ParseException',
 	'sap/ui/model/ValidateException'
-], function(DefaultContent, BindingMode, ParseException, ValidateException) {
+], (DefaultContent, BindingMode, ParseException, ValidateException) => {
 	"use strict";
 
 	/**

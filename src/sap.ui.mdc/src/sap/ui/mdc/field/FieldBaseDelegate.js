@@ -14,7 +14,7 @@ sap.ui.define([
 	'sap/ui/mdc/enums/FieldDisplay',
 	'sap/ui/model/FormatException',
 	'sap/ui/core/Element'
-], function(
+], (
 	BaseDelegate,
 	DefaultTypeMap,
 	Condition,
@@ -22,7 +22,7 @@ sap.ui.define([
 	FieldDisplay,
 	FormatException,
 	Element
-) {
+) => {
 	"use strict";
 
 	/**
@@ -38,7 +38,7 @@ sap.ui.define([
 	 */
 	const FieldBaseDelegate = Object.assign({}, BaseDelegate);
 
-	FieldBaseDelegate.getTypeMap = function () {
+	FieldBaseDelegate.getTypeMap = function() {
 		return DefaultTypeMap;
 	};
 
@@ -53,7 +53,7 @@ sap.ui.define([
 	 * @public
 	 * @since 1.107.0
 	 */
-	FieldBaseDelegate.createConditionPayload = function (oField, oControl, aValues) {
+	FieldBaseDelegate.createConditionPayload = function(oField, oControl, aValues) {
 		return undefined;
 	};
 
@@ -68,11 +68,11 @@ sap.ui.define([
 	 * @param {sap.ui.core.Control} [oControl] Instance of the calling control
 	 * @param {any[]} aValues Key and description for the condition that is created
 	 * @param {undefined|sap.ui.mdc.condition.ConditionObject} oCurrentCondition Currently available condition before the property change
- 	 * @returns {undefined|sap.ui.mdc.condition.ConditionObject} Returns a condition object that is set on the control
+	 * @returns {undefined|sap.ui.mdc.condition.ConditionObject} Returns a condition object that is set on the control
 	 * @public
 	 * @since 1.107.0
 	 */
-	FieldBaseDelegate.createCondition = function (oField, oControl, aValues, oCurrentCondition) {
+	FieldBaseDelegate.createCondition = function(oField, oControl, aValues, oCurrentCondition) {
 		const oNextCondition = Condition.createItemCondition(aValues[0], aValues[1], undefined, undefined, this.createConditionPayload(oField, oControl, aValues));
 		oNextCondition.validated = ConditionValidated.Validated;
 		return oNextCondition;
@@ -181,7 +181,7 @@ sap.ui.define([
 			parsedValue: vKey,
 			parsedDescription: undefined,
 			dataType: oType,
-			context: {inParameters: oInParameters, outParameters: oOutParameters, payload: oConditionPayload},
+			context: { inParameters: oInParameters, outParameters: oOutParameters, payload: oConditionPayload },
 			bindingContext: oBindingContext,
 			checkKey: true,
 			checkDescription: false,

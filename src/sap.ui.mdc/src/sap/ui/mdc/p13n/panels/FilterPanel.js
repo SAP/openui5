@@ -1,7 +1,6 @@
-
 /*!
-* ${copyright}
-*/
+ * ${copyright}
+ */
 sap.ui.define([
 	"sap/m/p13n/QueryPanel",
 	"sap/m/VBox",
@@ -12,20 +11,20 @@ sap.ui.define([
 	"sap/ui/core/library",
 	"sap/m/library",
 	"sap/m/Label"
- ], function (QueryPanel, VBox, Text, Grid, GridData, ComboBox, coreLibrary, mLibrary, Label) {
+], (QueryPanel, VBox, Text, Grid, GridData, ComboBox, coreLibrary, mLibrary, Label) => {
 	"use strict";
 
 	//shortcut for sap.ui.core.ValueState
-	const ValueState = coreLibrary.ValueState;
+	const { ValueState } = coreLibrary;
 
 	// shortcut for sap.m.ListKeyboardMode
-	const ListKeyboardMode = mLibrary.ListKeyboardMode;
+	const { ListKeyboardMode } = mLibrary;
 
 	// shortcut for sap.m.FlexJustifyContent
-	const FlexJustifyContent = mLibrary.FlexJustifyContent;
+	const { FlexJustifyContent } = mLibrary;
 
 	// shortcut for sap.m.WrappingType
-	const WrappingType = mLibrary.WrappingType;
+	const { WrappingType } = mLibrary;
 
 	/**
 	 * Constructor for a new <code>FilterPanel</code>.
@@ -96,7 +95,7 @@ sap.ui.define([
 
 	FilterPanel.prototype.PRESENCE_ATTRIBUTE = "active";
 
-	FilterPanel.prototype._createInnerListControl = function () {
+	FilterPanel.prototype._createInnerListControl = function() {
 		const oList = QueryPanel.prototype._createInnerListControl.apply(this, arguments);
 		return oList;
 	};
@@ -118,19 +117,19 @@ sap.ui.define([
 		}).addStyleClass("sapUiTinyMargin");
 	};
 
-	FilterPanel.prototype._getPlaceholderText = function () {
+	FilterPanel.prototype._getPlaceholderText = function() {
 		return this._getResourceText("p13n.FILTER_PLACEHOLDER");
 	};
 
-	FilterPanel.prototype._getRemoveButtonTooltipText = function () {
+	FilterPanel.prototype._getRemoveButtonTooltipText = function() {
 		return this._getResourceText("p13n.FILTER_REMOVEICONTOOLTIP");
 	};
 
-	FilterPanel.prototype._getRemoveButtonAnnouncementText = function () {
+	FilterPanel.prototype._getRemoveButtonAnnouncementText = function() {
 		return this._getResourceText("p13n.FILTER_REMOVEICONANNOUNCE");
 	};
 
-	FilterPanel.prototype._createKeySelect = function (sKey) {
+	FilterPanel.prototype._createKeySelect = function(sKey) {
 
 		const oComboBox = new ComboBox({
 			width: "100%",
@@ -143,7 +142,7 @@ sap.ui.define([
 			change: function(oEvt) {
 				const oComboBox = oEvt.getSource();
 				const newValue = oEvt.getParameter("newValue");
-				oComboBox.setValueState( newValue && !oComboBox.getSelectedItem() ? ValueState.Error : ValueState.None);
+				oComboBox.setValueState(newValue && !oComboBox.getSelectedItem() ? ValueState.Error : ValueState.None);
 				this._selectKey();
 			}.bind(this)
 		});
@@ -155,9 +154,9 @@ sap.ui.define([
 		return oComboBox;
 	};
 
-	FilterPanel.prototype._createRemoveButton = function (bVisible) {
+	FilterPanel.prototype._createRemoveButton = function(bVisible) {
 		const oRemoveBtn = QueryPanel.prototype._createRemoveButton.apply(this, arguments);
-		oRemoveBtn.setJustifyContent(FlexJustifyContent.Start);//avoid remove button overlapping with input field
+		oRemoveBtn.setJustifyContent(FlexJustifyContent.Start); //avoid remove button overlapping with input field
 		oRemoveBtn.setLayoutData(new GridData({
 			span: "XL1 L1 M1 S1"
 		}));
@@ -166,9 +165,9 @@ sap.ui.define([
 
 	FilterPanel.prototype._createRowContainer = function(sText, sKey) {
 		// var sKey = oSelect._key;
-		const oLabel = new Label({text: sText, showColon: true, wrapping: true, wrappingType: WrappingType.Hyphenated});
+		const oLabel = new Label({ text: sText, showColon: true, wrapping: true, wrappingType: WrappingType.Hyphenated });
 		const oFieldBox = new VBox({
-			items:[oLabel.addStyleClass("sapUiTinyMarginBegin")]
+			items: [oLabel.addStyleClass("sapUiTinyMarginBegin")]
 		});
 		oFieldBox._key = sKey;
 		return oFieldBox;
@@ -198,9 +197,9 @@ sap.ui.define([
 				const sText = sKey ? oComboBox.getSelectedItem().getText() : "";
 
 				const oFieldBox = this._createRowContainer(sText, sKey); //Create a container with a VBox and a label with some padding inside and insert it in the grid
-				oQueryRowGrid.insertContent(oFieldBox,0);
+				oQueryRowGrid.insertContent(oFieldBox, 0);
 
-				const oFilterItem = this._createFactoryControl({name: sKey}); //Create the actual filterable control and insert it in the grid
+				const oFilterItem = this._createFactoryControl({ name: sKey }); //Create the actual filterable control and insert it in the grid
 				this._setLabelForOnBox(oFilterItem, oFieldBox);
 
 				oQueryRowGrid.insertContent(oFilterItem, 1);
@@ -208,11 +207,11 @@ sap.ui.define([
 			}
 
 			//FIXME: Check why this workaround is necessary
-			setTimeout(function(){
+			setTimeout(() => {
 				if (this._oListControl && !this._oListControl.bIsDestroyed) {
 					this._oListControl.setKeyboardMode(ListKeyboardMode.Edit);
 				}
-			}.bind(this), 20);
+			}, 20);
 
 			delete this._oComboBox;
 		}
@@ -225,7 +224,7 @@ sap.ui.define([
 	 * @returns {sap.ui.core.Control} The factory control of the provided row
 	 */
 	FilterPanel.prototype._getFactoryControlForRow = function(oRow) {
-	   return oRow.getContent()[0].getContent()[1];
+		return oRow.getContent()[0].getContent()[1];
 	};
 
 	FilterPanel.prototype._createFactoryControl = function(oItem) {

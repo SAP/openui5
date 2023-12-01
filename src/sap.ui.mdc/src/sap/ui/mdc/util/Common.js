@@ -2,12 +2,12 @@
  * ${copyright}
  */
 
-sap.ui.define([], function() {
+sap.ui.define([], () => {
 	"use strict";
 
 	const Common = {
-		cleanup: function (oTarget, aFields) {
-			aFields.forEach(function (sField) {
+		cleanup: function(oTarget, aFields) {
+			aFields.forEach((sField) => {
 				const oRemovable = oTarget[sField];
 				if (oRemovable) {
 					if (oRemovable.destroy && !oRemovable.bIsDestroyed) {

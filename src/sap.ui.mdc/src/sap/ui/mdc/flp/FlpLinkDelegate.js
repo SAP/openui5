@@ -13,7 +13,7 @@ sap.ui.define([
 	"sap/ui/mdc/link/SemanticObjectMappingItem",
 	"sap/ui/mdc/link/SemanticObjectUnavailableAction",
 	"sap/ui/mdc/enums/LinkType"
-], function(Element, LinkDelegate, LinkItem, Factory, Log, SapBaseLog, isPlainObject, SemanticObjectMapping, SemanticObjectMappingItem, SemanticObjectUnavailableAction, LinkType) {
+], (Element, LinkDelegate, LinkItem, Factory, Log, SapBaseLog, isPlainObject, SemanticObjectMapping, SemanticObjectMappingItem, SemanticObjectUnavailableAction, LinkType) => {
 	"use strict";
 	/**
 	 * Extension of the Delegate for {@link sap.ui.mdc.Link}. This extension provides all historical featurs of the FlpLinkHandler.
@@ -43,7 +43,7 @@ sap.ui.define([
 		const aItemsToReturn = [];
 		if (oInfoLog) {
 			oInfoLog.initialize(FlpLinkDelegate._getSemanticObjects(oPayload));
-			aItemsToReturn.forEach(function(oItem) {
+			aItemsToReturn.forEach((oItem) => {
 				oInfoLog.addIntent(Log.IntentType.API, {
 					text: oItem.getText(),
 					intent: oItem.getHref()
@@ -51,7 +51,7 @@ sap.ui.define([
 			});
 		}
 		const oSemanticAttributes = FlpLinkDelegate._calculateSemanticAttributes(oContextObject, oPayload, oInfoLog);
-		return FlpLinkDelegate._retrieveNavigationTargets("", oSemanticAttributes, oPayload, oInfoLog).then(function(aLinks, oOwnNavigationLink) {
+		return FlpLinkDelegate._retrieveNavigationTargets("", oSemanticAttributes, oPayload, oInfoLog).then((aLinks, oOwnNavigationLink) => {
 			return Promise.resolve(aLinks);
 		});
 	};
@@ -72,33 +72,33 @@ sap.ui.define([
 		const oPayload = oLink.getPayload();
 
 		const fnHaveBeenRetrievedAllSemanticObjects = function(aSemanticObjects) {
-			return aSemanticObjects.filter(function(sSemanticObject) {
+			return aSemanticObjects.filter((sSemanticObject) => {
 				return !mSemanticObjects[sSemanticObject];
 			}).length === 0;
 		};
 		const fnAtLeastOneExistsSemanticObject = function(aSemanticObjects) {
-			return aSemanticObjects.some(function(sSemanticObject) {
+			return aSemanticObjects.some((sSemanticObject) => {
 				return mSemanticObjects[sSemanticObject] && (mSemanticObjects[sSemanticObject].exists === true);
 			});
 		};
 		const fnRetrieveDistinctSemanticObjects = function() {
 			if (!oPromise) {
-				oPromise = new Promise(function(resolve) {
+				oPromise = new Promise((resolve) => {
 					const oCrossApplicationNavigation = Factory.getService("CrossApplicationNavigation");
 					if (!oCrossApplicationNavigation) {
 						SapBaseLog.error("FlpLinkDelegate: Service 'CrossApplicationNavigation' could not be obtained");
 						resolve({});
 						return;
 					}
-					oCrossApplicationNavigation.getDistinctSemanticObjects().then(function(aDistinctSemanticObjects) {
-						aDistinctSemanticObjects.forEach(function(sSemanticObject) {
+					oCrossApplicationNavigation.getDistinctSemanticObjects().then((aDistinctSemanticObjects) => {
+						aDistinctSemanticObjects.forEach((sSemanticObject) => {
 							mSemanticObjects[sSemanticObject] = {
 								exists: true
 							};
 						});
 						oPromise = null;
 						return resolve(mSemanticObjects);
-					}, function() {
+					}, () => {
 						SapBaseLog.error("FlpLinkDelegate: getDistinctSemanticObjects() of service 'CrossApplicationNavigation' failed");
 						return resolve({});
 					});
@@ -110,13 +110,13 @@ sap.ui.define([
 			if (fnHaveBeenRetrievedAllSemanticObjects(aSemanticObjects)) {
 				return Promise.resolve(fnAtLeastOneExistsSemanticObject(aSemanticObjects));
 			}
-			return fnRetrieveDistinctSemanticObjects().then(function() {
+			return fnRetrieveDistinctSemanticObjects().then(() => {
 				return fnAtLeastOneExistsSemanticObject(aSemanticObjects);
 			});
 		};
 
 		if (oPayload && oPayload.semanticObjects) {
-			return fnHasDistinctSemanticObject(oPayload.semanticObjects).then(function(bHasDisctinctSemanticObject) {
+			return fnHasDistinctSemanticObject(oPayload.semanticObjects).then((bHasDisctinctSemanticObject) => {
 				return Promise.resolve({
 					type: bHasDisctinctSemanticObject ? LinkType.Popover : LinkType.Text,
 					directLink: undefined
@@ -143,13 +143,14 @@ sap.ui.define([
 		}
 
 		const oResults = {};
-		aSemanticObjects.forEach(function(sSemanticObject) {
+		aSemanticObjects.forEach((sSemanticObject) => {
 			if (oInfoLog) {
 				oInfoLog.addContextObject(sSemanticObject, oContextObject);
 			}
 			oResults[sSemanticObject] = {};
 			for (const sAttributeName in oContextObject) {
-				let oAttribute = null, oTransformationAdditional = null;
+				let oAttribute = null,
+					oTransformationAdditional = null;
 				if (oInfoLog) {
 					oAttribute = oInfoLog.getSemanticObjectAttribute(sSemanticObject, sAttributeName);
 					if (!oAttribute) {
@@ -227,7 +228,7 @@ sap.ui.define([
 	 */
 	FlpLinkDelegate._retrieveNavigationTargets = function(sAppStateKey, oSemanticAttributes, oPayload, oInfoLog) {
 		if (!oPayload.semanticObjects) {
-			return new Promise(function(resolve) {
+			return new Promise((resolve) => {
 				resolve([]);
 			});
 		}
@@ -239,11 +240,11 @@ sap.ui.define([
 		};
 		return sap.ui.getCore().loadLibrary('sap.ui.fl', {
 			async: true
-		}).then(function() {
-			return new Promise(function(resolve) {
+		}).then(() => {
+			return new Promise((resolve) => {
 				sap.ui.require([
 					'sap/ui/fl/Utils'
-				], function(Utils) {
+				], (Utils) => {
 					const oCrossApplicationNavigation = Factory.getService("CrossApplicationNavigation");
 					const oURLParsing = Factory.getService("URLParsing");
 					if (!oCrossApplicationNavigation || !oURLParsing) {
@@ -252,21 +253,19 @@ sap.ui.define([
 					}
 					const oControl = Element.getElementById(sSourceControlId);
 					const oAppComponent = Utils.getAppComponentForControl(oControl);
-					const aParams = aSemanticObjects.map(function(sSemanticObject) {
-						return [
-							{
-								semanticObject: sSemanticObject,
-								params: oSemanticAttributes ? oSemanticAttributes[sSemanticObject] : undefined,
-								appStateKey: sAppStateKey,
-								ui5Component: oAppComponent,
-								sortResultsBy: "text"
-							}
-						];
+					const aParams = aSemanticObjects.map((sSemanticObject) => {
+						return [{
+							semanticObject: sSemanticObject,
+							params: oSemanticAttributes ? oSemanticAttributes[sSemanticObject] : undefined,
+							appStateKey: sAppStateKey,
+							ui5Component: oAppComponent,
+							sortResultsBy: "text"
+						}];
 					});
 
-					return new Promise(function() {
+					return new Promise(() => {
 						// We have to wrap getLinks method into Promise. The returned jQuery.Deferred.promise brakes the Promise chain.
-						oCrossApplicationNavigation.getLinks(aParams).then(function(aLinks) {
+						oCrossApplicationNavigation.getLinks(aParams).then((aLinks) => {
 							if (!aLinks || !aLinks.length) {
 								return resolve(oNavigationTargets.availableActions, oNavigationTargets.ownNavigation);
 							}
@@ -336,7 +335,7 @@ sap.ui.define([
 								aLinks[n][0].forEach(fnAddLink);
 							}
 							return resolve(oNavigationTargets.availableActions, oNavigationTargets.ownNavigation);
-						}, function() {
+						}, () => {
 							SapBaseLog.error("FlpLinkDelegate: '_retrieveNavigationTargets' failed executing getLinks method");
 							return resolve(oNavigationTargets.availableActions, oNavigationTargets.ownNavigation);
 						});
@@ -365,7 +364,7 @@ sap.ui.define([
 	FlpLinkDelegate._getSemanticObjectUnavailableActions = function(oPayload) {
 		const aSemanticObjectUnavailableActions = [];
 		if (oPayload.semanticObjectUnavailableActions) {
-			oPayload.semanticObjectUnavailableActions.forEach(function(oSemanticObjectUnavailableAction) {
+			oPayload.semanticObjectUnavailableActions.forEach((oSemanticObjectUnavailableAction) => {
 				aSemanticObjectUnavailableActions.push(new SemanticObjectUnavailableAction({
 					semanticObject: oSemanticObjectUnavailableAction.semanticObject,
 					actions: oSemanticObjectUnavailableAction.actions
@@ -385,10 +384,10 @@ sap.ui.define([
 		const aSemanticObjectMappings = [];
 		let aSemanticObjectMappingItems = [];
 		if (oPayload.semanticObjectMappings) {
-			oPayload.semanticObjectMappings.forEach(function(oSemanticObjectMapping) {
+			oPayload.semanticObjectMappings.forEach((oSemanticObjectMapping) => {
 				aSemanticObjectMappingItems = [];
 				if (oSemanticObjectMapping.items) {
-					oSemanticObjectMapping.items.forEach(function(oSemanticObjectMappingItem) {
+					oSemanticObjectMapping.items.forEach((oSemanticObjectMappingItem) => {
 						aSemanticObjectMappingItems.push(new SemanticObjectMappingItem({
 							key: oSemanticObjectMappingItem.key,
 							value: oSemanticObjectMappingItem.value
@@ -415,11 +414,11 @@ sap.ui.define([
 			return undefined;
 		}
 		const mSemanticObjectMappings = {};
-		aSemanticObjectMappings.forEach(function(oSemanticObjectMapping) {
+		aSemanticObjectMappings.forEach((oSemanticObjectMapping) => {
 			if (!oSemanticObjectMapping.getSemanticObject()) {
 				throw Error("FlpLinkDelegate: 'semanticObject' property with value '" + oSemanticObjectMapping.getSemanticObject() + "' is not valid");
 			}
-			mSemanticObjectMappings[oSemanticObjectMapping.getSemanticObject()] = oSemanticObjectMapping.getItems().reduce(function(oMap, oItem) {
+			mSemanticObjectMappings[oSemanticObjectMapping.getSemanticObject()] = oSemanticObjectMapping.getItems().reduce((oMap, oItem) => {
 				oMap[oItem.getKey()] = oItem.getValue();
 				return oMap;
 			}, {});
@@ -438,7 +437,7 @@ sap.ui.define([
 			return undefined;
 		}
 		const mSemanticObjectUnavailableActions = {};
-		aSemanticObjectUnavailableActions.forEach(function(oSemanticObjectUnavailableActions) {
+		aSemanticObjectUnavailableActions.forEach((oSemanticObjectUnavailableActions) => {
 			if (!oSemanticObjectUnavailableActions.getSemanticObject()) {
 				throw Error("FlpLinkDelegate: 'semanticObject' property with value '" + oSemanticObjectUnavailableActions.getSemanticObject() + "' is not valid");
 			}

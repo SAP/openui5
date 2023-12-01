@@ -3,8 +3,7 @@
  */
 
 // Provides control sap.ui.mdc.filterbar.p13n.FilterGroupLayout.
-sap.ui.define(['sap/ui/core/Control'
-], function (Control) {
+sap.ui.define(['sap/ui/core/Control'], (Control) => {
 	"use strict";
 
 	/**
@@ -31,31 +30,31 @@ sap.ui.define(['sap/ui/core/Control'
 		}
 	});
 
-	FilterGroupLayout.prototype._getFieldPath = function () {
+	FilterGroupLayout.prototype._getFieldPath = function() {
 		return this._oFilterField ? this._oFilterField.getPropertyKey() : null;
 	};
 
-	FilterGroupLayout.prototype.setFilterField = function (oFilterField) {
+	FilterGroupLayout.prototype.setFilterField = function(oFilterField) {
 		this._oFilterField = oFilterField;
 	};
 
-	FilterGroupLayout.prototype.getIdForLabel = function () {
+	FilterGroupLayout.prototype.getIdForLabel = function() {
 		return this._oFilterField && this._oFilterField.getIdForLabel();
 	};
 
-	FilterGroupLayout.prototype.getAccessibilityInfo = function () {
+	FilterGroupLayout.prototype.getAccessibilityInfo = function() {
 		return {
 			children: this.getItems()
 		};
 	};
 
-	FilterGroupLayout.prototype.getItems = function () {
+	FilterGroupLayout.prototype.getItems = function() {
 		const aContent = [];
 		aContent.push(this._oFilterField);
 		return aContent;
 	};
 
-	FilterGroupLayout.prototype.exit = function () {
+	FilterGroupLayout.prototype.exit = function() {
 		Control.prototype.exit.apply(this, arguments);
 		this._oFilterField = null;
 	};

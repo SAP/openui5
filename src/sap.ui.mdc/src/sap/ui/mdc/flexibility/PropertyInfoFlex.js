@@ -1,7 +1,7 @@
 /*!
  * ${copyright}
  */
-sap.ui.define([], function() {
+sap.ui.define([], () => {
 	"use strict";
 
 	//obsolete
@@ -9,12 +9,9 @@ sap.ui.define([], function() {
 
 	oPropertyInfoFlex.addPropertyInfo = {
 		"changeHandler": {
-			applyChange: function(oChange, oControl, mPropertyBag) {
-			},
-			completeChangeContent: function(oChange, mChangeSpecificInfo, mPropertyBag) {
-			},
-			revertChange: function(oChange, oControl, mPropertyBag) {
-			}
+			applyChange: function(oChange, oControl, mPropertyBag) {},
+			completeChangeContent: function(oChange, mChangeSpecificInfo, mPropertyBag) {},
+			revertChange: function(oChange, oControl, mPropertyBag) {}
 		},
 		"layers": {
 			"USER": true

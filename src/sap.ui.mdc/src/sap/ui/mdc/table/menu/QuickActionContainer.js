@@ -15,7 +15,7 @@ sap.ui.define([
 	"sap/m/Button",
 	"sap/ui/core/Element",
 	"sap/ui/core/library"
-], function(
+], (
 	ResponsiveTableType,
 	PersonalizationUtils,
 	QuickActionContainerBase,
@@ -29,15 +29,15 @@ sap.ui.define([
 	Button,
 	Element,
 	CoreLibrary
-) {
+) => {
 	"use strict";
 
 	const QuickActionContainer = QuickActionContainerBase.extend("sap.ui.mdc.table.menu.QuickActionContainer", {
 		metadata: {
 			library: "sap.ui.mdc",
 			associations: {
-				table: {type: "sap.ui.mdc.Table"},
-				column: {type: "sap.ui.mdc.table.Column"}
+				table: { type: "sap.ui.mdc.Table" },
+				column: { type: "sap.ui.mdc.table.Column" }
 			}
 		}
 	});
@@ -56,9 +56,9 @@ sap.ui.define([
 
 			if (aSortableProperties.length > 0) {
 				this.addQuickAction(new QuickSort({
-					items: aSortableProperties.map(function(oProperty) {
+					items: aSortableProperties.map((oProperty) => {
 						let sSortOrder = CoreLibrary.SortOrder.None;
-						const mSortCondition = aSortedProperties.find(function(oSortedProperty) {
+						const mSortCondition = aSortedProperties.find((oSortedProperty) => {
 							return oSortedProperty.name === oProperty.name;
 						});
 
@@ -88,8 +88,8 @@ sap.ui.define([
 
 			if (aGroupableProperties.length > 0) {
 				this.addQuickAction(new QuickGroup({
-					items: aGroupableProperties.map(function(oProperty) {
-						const bGrouped = aGroupedProperties.some(function(oGroupedProperty) {
+					items: aGroupableProperties.map((oProperty) => {
+						const bGrouped = aGroupedProperties.some((oGroupedProperty) => {
 							return oGroupedProperty.name === oProperty.name;
 						});
 
@@ -109,14 +109,14 @@ sap.ui.define([
 		}
 
 		if (oTable.isAggregationEnabled()) {
-			const aPropertiesThatCanBeTotaled = oPropertyHelper.getProperty(oColumn.getPropertyKey()).getAggregatableProperties().filter(function(oProperty) {
+			const aPropertiesThatCanBeTotaled = oPropertyHelper.getProperty(oColumn.getPropertyKey()).getAggregatableProperties().filter((oProperty) => {
 				return oProperty.extension && oProperty.extension.customAggregate;
 			});
 			const mAggregatedProperties = oTable._getAggregatedProperties();
 
 			if (aPropertiesThatCanBeTotaled.length > 0) {
 				this.addQuickAction(new QuickTotal({
-					items: aPropertiesThatCanBeTotaled.map(function(oProperty) {
+					items: aPropertiesThatCanBeTotaled.map((oProperty) => {
 						return new QuickTotalItem({
 							key: oProperty.name,
 							label: oProperty.label,
@@ -145,10 +145,10 @@ sap.ui.define([
 		const aGroupedProperties = oTable._getGroupedProperties();
 		const oAggregatedProperty = oTable._getAggregatedProperties();
 
-		this.getQuickActions().forEach(function(oQuickAction) {
+		this.getQuickActions().forEach((oQuickAction) => {
 			if ((!aKeys || aKeys.includes("Sort")) && oQuickAction.isA("sap.m.table.columnmenu.QuickSort")) {
-				oQuickAction.getItems().forEach(function(oItem) {
-					const mSortCondition = aSortedProperties.find(function(oSortedProperty) {
+				oQuickAction.getItems().forEach((oItem) => {
+					const mSortCondition = aSortedProperties.find((oSortedProperty) => {
 						return oSortedProperty.name === oItem.getProperty("key");
 					});
 					if (mSortCondition) {
@@ -158,14 +158,14 @@ sap.ui.define([
 					}
 				});
 			} else if ((!aKeys || aKeys.includes("Group")) && oQuickAction.isA("sap.m.table.columnmenu.QuickGroup")) {
-				oQuickAction.getItems().forEach(function(oItem) {
-					const bGrouped = aGroupedProperties.some(function (oGroupedProperty) {
+				oQuickAction.getItems().forEach((oItem) => {
+					const bGrouped = aGroupedProperties.some((oGroupedProperty) => {
 						return oGroupedProperty.name === oItem.getProperty("key");
 					});
 					oItem.setGrouped(bGrouped);
 				});
 			} else if ((!aKeys || aKeys.includes("Aggregate")) && oQuickAction.isA("sap.m.table.columnmenu.QuickTotal")) {
-				oQuickAction.getItems().forEach(function(oItem) {
+				oQuickAction.getItems().forEach((oItem) => {
 					const bTotaled = oAggregatedProperty.hasOwnProperty(oItem.getProperty("key"));
 					oItem.setTotaled(bTotaled);
 				});

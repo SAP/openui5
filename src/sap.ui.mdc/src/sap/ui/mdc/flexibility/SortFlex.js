@@ -7,7 +7,7 @@ sap.ui.define([
 	"sap/ui/fl/changeHandler/Base",
 	"sap/ui/fl/changeHandler/condenser/Classification",
 	"sap/ui/fl/changeHandler/common/ChangeCategories"
-], function(merge, Util, FLChangeHandlerBase, CondenserClassification, ChangeCategories) {
+], (merge, Util, FLChangeHandlerBase, CondenserClassification, ChangeCategories) => {
 	"use strict";
 
 	const fFinalizeSortChange = function(oChange, oControl, oSortContent, bIsRevert) {
@@ -21,13 +21,13 @@ sap.ui.define([
 	};
 
 	const fAddSort = function(oChange, oControl, mPropertyBag, sChangeReason) {
-		return new Promise(function(resolve, reject) {
+		return new Promise((resolve, reject) => {
 			const bIsRevert = (sChangeReason === Util.REVERT);
 			const oModifier = mPropertyBag.modifier;
 			const oChangeContent = bIsRevert ? oChange.getRevertData() : oChange.getContent();
 			Promise.resolve()
 				.then(oModifier.getProperty.bind(oModifier, oControl, "sortConditions"))
-				.then(function(oSortConditions) {
+				.then((oSortConditions) => {
 					const aValue = oSortConditions ? oSortConditions.sorters : [];
 
 					const oSortContent = {
@@ -45,20 +45,20 @@ sap.ui.define([
 					fFinalizeSortChange(oChange, oControl, oSortContent, bIsRevert);
 					resolve();
 				})
-				.catch(function(oError){
+				.catch((oError) => {
 					reject(oError);
 				});
 		});
 	};
 
 	const fRemoveSort = function(oChange, oControl, mPropertyBag, sChangeReason) {
-		return new Promise(function(resolve, reject) {
+		return new Promise((resolve, reject) => {
 			const oModifier = mPropertyBag.modifier;
 			const bIsRevert = (sChangeReason === Util.REVERT);
 			const oChangeContent = bIsRevert ? oChange.getRevertData() : oChange.getContent();
 			Promise.resolve()
 				.then(oModifier.getProperty.bind(oModifier, oControl, "sortConditions"))
-				.then(function(oSortConditions) {
+				.then((oSortConditions) => {
 					const aValue = oSortConditions ? oSortConditions.sorters : [];
 
 					if (!aValue) {
@@ -66,7 +66,7 @@ sap.ui.define([
 						reject();
 					}
 
-					const aFoundValue = aValue.filter(function(o) {
+					const aFoundValue = aValue.filter((o) => {
 						return o.name === oChangeContent.name;
 					});
 					const iIndex = aValue.indexOf(aFoundValue[0]);
@@ -86,23 +86,23 @@ sap.ui.define([
 					fFinalizeSortChange(oChange, oControl, oChangeContent, bIsRevert);
 					resolve();
 				})
-				.catch(function(oError){
+				.catch((oError) => {
 					reject(oError);
 				});
 		});
 	};
 
 	const fMoveSort = function(oChange, oControl, mPropertyBag, sChangeReason) {
-		return new Promise(function(resolve, reject) {
+		return new Promise((resolve, reject) => {
 			const bIsRevert = (sChangeReason === Util.REVERT);
 			const oModifier = mPropertyBag.modifier;
 			const oChangeContent = bIsRevert ? oChange.getRevertData() : oChange.getContent();
 			Promise.resolve()
 				.then(oModifier.getProperty.bind(oModifier, oControl, "sortConditions"))
-				.then(function(oSortConditions) {
+				.then((oSortConditions) => {
 					const aValue = oSortConditions ? oSortConditions.sorters : [];
 
-					const aFoundValue = aValue.filter(function(o) {
+					const aFoundValue = aValue.filter((o) => {
 						return o.name === oChangeContent.name;
 					});
 
@@ -121,7 +121,7 @@ sap.ui.define([
 					fFinalizeSortChange(oChange, oControl, oRevertContent, bIsRevert);
 					resolve();
 				})
-				.catch(function(oError){
+				.catch((oError) => {
 					reject(oError);
 				});
 		});
@@ -129,7 +129,7 @@ sap.ui.define([
 	const fGetChangeVisualizationInfo = function(oChange, oAppComponent) {
 		const oChangeContent = oChange.getContent();
 		const oChart = oAppComponent.byId(oChange.getSelector().id);
-		const mVersionInfo = { descriptionPayload: {}};
+		const mVersionInfo = { descriptionPayload: {} };
 		let sKey;
 		const aArgs = [oChangeContent.key || oChangeContent.name];
 
@@ -156,7 +156,7 @@ sap.ui.define([
 			aArgs.splice(0, 1, oProperty.label);
 		}
 
-		return Util.getMdcResourceText(sKey, aArgs).then(function(sText) {
+		return Util.getMdcResourceText(sKey, aArgs).then((sText) => {
 			mVersionInfo.descriptionPayload.description = sText;
 
 			mVersionInfo.updateRequired = true;
@@ -170,7 +170,7 @@ sap.ui.define([
 		revert: fRemoveSort,
 		getCondenserInfo: function(oChange, mPropertyBag) {
 			return {
-				affectedControl: {id: oChange.getContent().name},
+				affectedControl: { id: oChange.getContent().name },
 				affectedControlIdProperty: "name",
 				targetContainer: oChange.getSelector(),
 				targetAggregation: "sorters",
@@ -192,7 +192,7 @@ sap.ui.define([
 		revert: fAddSort,
 		getCondenserInfo: function(oChange, mPropertyBag) {
 			return {
-				affectedControl: {id: oChange.getContent().name},
+				affectedControl: { id: oChange.getContent().name },
 				affectedControlIdProperty: "name",
 				targetContainer: oChange.getSelector(),
 				targetAggregation: "sorters",
@@ -214,7 +214,7 @@ sap.ui.define([
 		revert: fMoveSort,
 		getCondenserInfo: function(oChange, mPropertyBag) {
 			return {
-				affectedControl: {id: oChange.getContent().name},
+				affectedControl: { id: oChange.getContent().name },
 				affectedControlIdProperty: "name",
 				targetContainer: oChange.getSelector(),
 				targetAggregation: "sorters",

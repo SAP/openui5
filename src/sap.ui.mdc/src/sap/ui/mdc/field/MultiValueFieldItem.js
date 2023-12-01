@@ -4,9 +4,9 @@
 
 sap.ui.define([
 	'sap/ui/core/Element'
-	], function(
-		Element
-	) {
+], (
+	Element
+) => {
 	"use strict";
 
 	/**
@@ -24,8 +24,7 @@ sap.ui.define([
 	 * @public
 	 * @alias sap.ui.mdc.field.MultiValueFieldItem
 	 */
-	const MultiValueFieldItem = Element.extend("sap.ui.mdc.field.MultiValueFieldItem", /** @lends sap.ui.mdc.field.MultiValueFieldItem.prototype */
-	{
+	const MultiValueFieldItem = Element.extend("sap.ui.mdc.field.MultiValueFieldItem", /** @lends sap.ui.mdc.field.MultiValueFieldItem.prototype */ {
 		metadata: {
 			library: "sap.ui.mdc",
 			properties: {

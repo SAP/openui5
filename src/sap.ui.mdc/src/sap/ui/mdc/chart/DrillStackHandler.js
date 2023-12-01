@@ -15,7 +15,7 @@ sap.ui.define([
 	"sap/ui/core/Lib",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/Filter"
-], function(
+], (
 	ResponsivePopover,
 	List,
 	Bar,
@@ -29,22 +29,22 @@ sap.ui.define([
 	Library,
 	JSONModel,
 	Filter
-) {
+) => {
 	"use strict";
 
 	// shortcut for sap.m.PlacementType
-	const PlacementType = MLibrary.PlacementType;
+	const { PlacementType } = MLibrary;
 
 	// shortcut for sap.m.ListMode
-	const ListMode = MLibrary.ListMode;
+	const { ListMode } = MLibrary;
 
 	function _getDrillStackDimensions(oChart) {
 		const aDrillStack = oChart.getControlDelegate().getDrillStack(oChart);
 		const aStackDimensions = [];
 
-		aDrillStack.forEach(function(oStackEntry) {
+		aDrillStack.forEach((oStackEntry) => {
 			// loop over nested dimension arrays
-			oStackEntry.dimension.forEach(function(sDimension) {
+			oStackEntry.dimension.forEach((sDimension) => {
 				if (sDimension != null && sDimension != "" && aStackDimensions.indexOf(sDimension) == -1) {
 					aStackDimensions.push(sDimension);
 				}
@@ -60,7 +60,7 @@ sap.ui.define([
 	 * @constructor
 	 */
 	const DrillStackHandler = function() {
-        //TODO: Refactor to DrillDownPopover (extending Popover; like Toolbar)
+		//TODO: Refactor to DrillDownPopover (extending Popover; like Toolbar)
 	};
 
 	/**
@@ -97,7 +97,7 @@ sap.ui.define([
 			contentWidth: "25rem",
 			contentHeight: "20rem",
 			placement: PlacementType.VerticalPreferredBottom,
-			afterClose: function(){
+			afterClose: function() {
 				oPopover.destroy();
 			}
 		});
@@ -116,7 +116,7 @@ sap.ui.define([
 		});
 
 		oList = new List({
-			noData: new IllustratedMessage({enableVerticalResponsiveness: true, title: oRb.getText("chart.NO_DRILLABLE_DIMENSION"), description: oRb.getText("chart.NO_DRILLABLE_DIMENSION_DESC"), illustrationType: MLibrary.IllustratedMessageType.NoDimensionsSet}),
+			noData: new IllustratedMessage({ enableVerticalResponsiveness: true, title: oRb.getText("chart.NO_DRILLABLE_DIMENSION"), description: oRb.getText("chart.NO_DRILLABLE_DIMENSION_DESC"), illustrationType: MLibrary.IllustratedMessageType.NoDimensionsSet }),
 			mode: ListMode.SingleSelectMaster,
 			items: {
 				path: "$ChartDrilldown>/items",
@@ -165,7 +165,7 @@ sap.ui.define([
 	/**
 	 * Shows the drill-down popover on the toolbar button of an mdc.Chart instance
 	 * @param {sap.ui.mdc.Chart} oChart chart instance
-     * @param {sap.m.Button} oDrillBtn button which opens the popover
+	 * @param {sap.m.Button} oDrillBtn button which opens the popover
 	 * @returns {Promise} promise
 	 *
 	 * @experimental
@@ -173,17 +173,17 @@ sap.ui.define([
 	 * @ui5-restricted sap.ui.mdc
 	 */
 	DrillStackHandler.showDrillDownPopover = function(oChart, oDrillBtn) {
-        //TODO: Rename "Measure" and "Dimensions"?
+		//TODO: Rename "Measure" and "Dimensions"?
 		const pSortedDimensionsPromise = oChart.getControlDelegate().getSortedDimensions(oChart);
-		return pSortedDimensionsPromise.then(function(aSortedDimensions) {
+		return pSortedDimensionsPromise.then((aSortedDimensions) => {
 			const oDrillDownPopover = oChart._oDrillDownPopover;
 
 			// Ignore currently applied dimensions from drill-stack for selection
 			const aIgnoreDimensions = _getDrillStackDimensions(oChart);
-			aSortedDimensions = aSortedDimensions.filter(function(oDimension){ return aIgnoreDimensions.indexOf(oDimension.name) < 0; });
+			aSortedDimensions = aSortedDimensions.filter((oDimension) => { return aIgnoreDimensions.indexOf(oDimension.name) < 0; });
 
-			const oData = { items : [] };
-			aSortedDimensions.forEach(function(oDimension) {
+			const oData = { items: [] };
+			aSortedDimensions.forEach((oDimension) => {
 				oData.items.push({ text: oDimension.label, id: oDimension.name });
 			});
 			oDrillDownPopover.setModel(new JSONModel(oData), "$ChartDrilldown");
@@ -193,8 +193,8 @@ sap.ui.define([
 				oSearchField.setVisible(false);
 			}
 
-			return new Promise(function(resolve, reject) {
-				oDrillDownPopover.attachEventOnce("afterOpen", function onAfterDrillDownPopoverOpen(oControlEvent) {
+			return new Promise((resolve, reject) => {
+				oDrillDownPopover.attachEventOnce("afterOpen", (oControlEvent) => {
 					resolve(oDrillDownPopover);
 				});
 

@@ -2,9 +2,8 @@
  * ${copyright}
  */
 sap.ui.define(
-	["sap/ui/mdc/util/PromiseCache"]
-,
-	function (PromiseCache) {
+	["sap/ui/mdc/util/PromiseCache"],
+	(PromiseCache) => {
 		"use strict";
 		/**
 		 * Enhances a given control prototype with a management mechanism for lifecycle related promises.
@@ -27,25 +26,25 @@ sap.ui.define(
 		 * @borrows sap.ui.mdc.util.PromiseCache.retrieveMany as retrievePromises
 		 */
 		const PromiseMixin = {};
-		PromiseMixin.addPromise = function (sName, fnCreate) {
+		PromiseMixin.addPromise = function(sName, fnCreate) {
 			return this.promiseCache.add(sName, fnCreate);
 		};
-		PromiseMixin.cancelPromise = function (sName, oReason) {
+		PromiseMixin.cancelPromise = function(sName, oReason) {
 			return this.promiseCache.cancel(sName, oReason);
 		};
-		PromiseMixin.retrievePromise = function (sName, fnCreate) {
+		PromiseMixin.retrievePromise = function(sName, fnCreate) {
 			return this.promiseCache.retrieve(sName, fnCreate);
 		};
-		PromiseMixin.retrievePromises = function () {
-			return this.promiseCache.retrieveMany.apply(this.promiseCache, arguments);
+		PromiseMixin.retrievePromises = function() {
+			return this.promiseCache.retrieveMany(...arguments);
 		};
-		PromiseMixin.removePromise = function (sName) {
+		PromiseMixin.removePromise = function(sName) {
 			return this.promiseCache.remove(sName);
 		};
-		PromiseMixin.resolvePromise = function (sName, oValue) {
+		PromiseMixin.resolvePromise = function(sName, oValue) {
 			return this.promiseCache.resolve(sName, oValue);
 		};
-		PromiseMixin.rejectPromise = function (sName, oValue) {
+		PromiseMixin.rejectPromise = function(sName, oValue) {
 			return this.promiseCache.reject(sName, oValue);
 		};
 		/**
@@ -55,8 +54,8 @@ sap.ui.define(
 		 * @param {function} fnExit Existing exit callback function
 		 * @returns {function} Returns a thunk applicable to a control prototype, wrapping an existing exit method
 		 */
-		PromiseMixin.exit = function (fnExit) {
-			return function () {
+		PromiseMixin.exit = function(fnExit) {
+			return function() {
 				if (this.promiseCache) {
 					this.promiseCache.destroy();
 					this.promiseCache = null;
@@ -66,9 +65,9 @@ sap.ui.define(
 				}
 			};
 		};
-		return function () {
-			const _noop = function (fnMethod) {
-				return function () {
+		return function() {
+			const _noop = function(fnMethod) {
+				return function() {
 					if (this.bIsDestroyed) {
 						return undefined;
 					}

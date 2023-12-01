@@ -2,12 +2,11 @@
  * ${copyright}
  */
 sap.ui.define([
-    "sap/m/p13n/SelectionPanel",
-    "sap/ui/model/Sorter"
-], function(SelectionPanel, Sorter) {
+	"sap/m/p13n/SelectionPanel", "sap/ui/model/Sorter"
+], (SelectionPanel, Sorter) => {
 	"use strict";
 
-    /**
+	/**
 	 * Constructor for a new ActionToolbarPanel
 	 *
 	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
@@ -23,40 +22,40 @@ sap.ui.define([
 	 */
 	const ActionToolbarPanel = SelectionPanel.extend("sap.ui.mdc.p13n.panels.ActionToolbarPanel", {
 		metadata: {
-            library: "sap.ui.mdc"
-        },
+			library: "sap.ui.mdc"
+		},
 		renderer: {
 			apiVersion: 2
 		}
-    });
+	});
 
-    ActionToolbarPanel.prototype._bindListItems = function(mBindingInfo) {
-        const oTemplate = this.getAggregation("_template");
+	ActionToolbarPanel.prototype._bindListItems = function(mBindingInfo) {
+		const oTemplate = this.getAggregation("_template");
 		if (oTemplate) {
-            const fnGetAlignment = function(oContext) {
-                return oContext.getProperty("alignment");
-            };
-            const oSorter = new Sorter({
-                path: "alignment",
-                descending: false,
-                group: fnGetAlignment
-            });
+			const fnGetAlignment = function(oContext) {
+				return oContext.getProperty("alignment");
+			};
+			const oSorter = new Sorter({
+				path: "alignment",
+				descending: false,
+				group: fnGetAlignment
+			});
 			this._oListControl.bindItems(Object.assign({
 				path: this.P13N_MODEL + ">/items",
-                sorter: oSorter,
+				sorter: oSorter,
 				key: "name",
 				templateShareable: false,
 				template: this.getAggregation("_template").clone()
 			}, mBindingInfo));
 		}
-    };
+	};
 
 	ActionToolbarPanel.prototype._removeFactoryControl = function() {
-		this._oListControl.getItems().filter(function(oItem) {
+		this._oListControl.getItems().filter((oItem) => {
 			return !oItem._bGroupHeader;
-		}).forEach(function(oItem){
+		}).forEach((oItem) => {
 			const oFirstCell = oItem.getCells()[0];
-			if (oFirstCell.getItems().length > 1){
+			if (oFirstCell.getItems().length > 1) {
 				oFirstCell.removeItem(oFirstCell.getItems()[1]);
 			}
 		});
@@ -124,7 +123,7 @@ sap.ui.define([
 			this._oSelectedItem = oTableItem;
 
 			const oContext = oTableItem.getBindingContext(this.P13N_MODEL);
-			if (this.getEnableReorder() && oContext && oContext.getProperty(this.PRESENCE_ATTRIBUTE)){
+			if (this.getEnableReorder() && oContext && oContext.getProperty(this.PRESENCE_ATTRIBUTE)) {
 				this._handleActivated(oTableItem);
 				this._updateEnableOfMoveButtons(oTableItem, true);
 			}
@@ -140,7 +139,7 @@ sap.ui.define([
 			for (let iIndex = 2; iIndex < aSelectedItemActions.length; iIndex++) {
 				if (aSelectedItemActions[iIndex] == oControl ||
 					aSelectedItemActions[iIndex] == oControl.getParent()) {
-						bIsControlPartOfMoveButtons = true;
+					bIsControlPartOfMoveButtons = true;
 				}
 			}
 		}
@@ -150,8 +149,9 @@ sap.ui.define([
 
 	ActionToolbarPanel.prototype._updateEnableOfMoveButtons = function(oTableItem, bFocus) {
 		const iTableItemPos = this._oListControl.getItems().indexOf(oTableItem);
-		const iLastItemPos =  this._oListControl.getItems().length - 1;
-		let bUpEnabled = true, bDownEnabled = true;
+		const iLastItemPos = this._oListControl.getItems().length - 1;
+		let bUpEnabled = true,
+			bDownEnabled = true;
 		if (iTableItemPos == 0) {
 			// disable move buttons upwards, if the item is at the top
 			bUpEnabled = false;
@@ -161,7 +161,7 @@ sap.ui.define([
 			bDownEnabled = false;
 		}
 		// Check if list is grouped
-		const bListIsGrouped = this._oListControl.getItems().some(function(oItem) {
+		const bListIsGrouped = this._oListControl.getItems().some((oItem) => {
 			return oItem._bGroupHeader;
 		});
 		if (bListIsGrouped) {
@@ -184,6 +184,6 @@ sap.ui.define([
 		}
 	};
 
-    return ActionToolbarPanel;
+	return ActionToolbarPanel;
 
 });

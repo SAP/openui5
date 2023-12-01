@@ -7,12 +7,11 @@
 // ---------------------------------------------------------------------------------------
 
 sap.ui.define([
-	"sap/ui/mdc/field/FieldBaseDelegate",
-	'sap/ui/mdc/odata/v4/TypeMap'
-], function(
+	"sap/ui/mdc/field/FieldBaseDelegate", 'sap/ui/mdc/odata/v4/TypeMap'
+], (
 	FieldBaseDelegate,
 	ODataV4TypeMap
-) {
+) => {
 	"use strict";
 
 	/**
@@ -32,7 +31,7 @@ sap.ui.define([
 	 */
 	const ODataFieldBaseDelegate = Object.assign({}, FieldBaseDelegate);
 
-	ODataFieldBaseDelegate.getTypeMap = function (oPayload) {
+	ODataFieldBaseDelegate.getTypeMap = function(oPayload) {
 		return ODataV4TypeMap;
 	};
 

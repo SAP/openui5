@@ -17,7 +17,7 @@ sap.ui.define([
 	'sap/ui/mdc/enums/ValueHelpSelectionType',
 	'sap/base/Log',
 	'sap/ui/core/Element'
-], function(
+], (
 	Library,
 	FilterableListContent,
 	FilterConverter,
@@ -32,11 +32,11 @@ sap.ui.define([
 	ValueHelpSelectionType,
 	Log,
 	Element
-) {
+) => {
 	"use strict";
 
-	const ListMode = library.ListMode;
-	const Sticky = library.Sticky;
+	const { ListMode } = library;
+	const { Sticky } = library;
 
 	/**
 	 * Constructor for a new <code>MTable</code> content.
@@ -51,13 +51,11 @@ sap.ui.define([
 	 * @since 1.95.0
 	 * @alias sap.ui.mdc.valuehelp.content.MTable
 	 */
-	const MTable = FilterableListContent.extend("sap.ui.mdc.valuehelp.content.MTable", /** @lends sap.ui.mdc.valuehelp.content.MTable.prototype */
-	{
+	const MTable = FilterableListContent.extend("sap.ui.mdc.valuehelp.content.MTable", /** @lends sap.ui.mdc.valuehelp.content.MTable.prototype */ {
 		metadata: {
 			library: "sap.ui.mdc",
 			interfaces: [
-				"sap.ui.mdc.valuehelp.ITypeaheadContent",
-				"sap.ui.mdc.valuehelp.IDialogContent"
+				"sap.ui.mdc.valuehelp.ITypeaheadContent", "sap.ui.mdc.valuehelp.IDialogContent"
 			],
 			properties: {
 
@@ -110,7 +108,7 @@ sap.ui.define([
 	};
 
 
-	function _updateSelection () {
+	function _updateSelection() {
 		const oTable = this._getTable();
 		if (oTable) {
 			const aItems = oTable.getItems();
@@ -119,7 +117,7 @@ sap.ui.define([
 			const bUseFirstMatch = this.isTypeahead() && !!this.getFilterValue() && this._iNavigateIndex === -1 && !!this._oFirstItemResult.result && ((this.isSingleSelect() && aConditions.length === 0) || !this.isSingleSelect());
 			const oFirstItem = this._oFirstItemResult.result;
 
-			aItems.forEach(function(oItem) {
+			aItems.forEach((oItem) => {
 				const oItemContext = this._getListItemBindingContext(oItem);
 				const oItemFromContext = this.isValueHelpDelegateInitialized() ? this.getItemFromContext(oItemContext) : { key: undefined };
 				if (bHideSelection) {
@@ -139,7 +137,7 @@ sap.ui.define([
 					oItem.removeStyleClass("sapMLIBFocused")
 						.removeStyleClass("sapMLIBSelected");
 				}
-			}.bind(this));
+			});
 			if (this.isTypeahead() && this.isSingleSelect()) {
 				oTable.addStyleClass("sapMListFocus"); // to show focus outline on selected item
 			}
@@ -148,7 +146,7 @@ sap.ui.define([
 
 	MTable.prototype.onBeforeShow = function(bInitial) {
 		if (bInitial) {
-			return Promise.resolve(FilterableListContent.prototype.onBeforeShow.apply(this,arguments)).then(function () {
+			return Promise.resolve(FilterableListContent.prototype.onBeforeShow.apply(this, arguments)).then(() => {
 				const oListBinding = this.getListBinding();
 				const oListBindingInfo = this.getListBindingInfo();
 				const bBindingSuspended = oListBinding && oListBinding.isSuspended();
@@ -158,7 +156,7 @@ sap.ui.define([
 					return undefined;
 				}
 				return this.applyFilters();
-			}.bind(this));
+			});
 		}
 		return undefined;
 	};
@@ -171,7 +169,7 @@ sap.ui.define([
 			this._iNavigateIndex = -1;
 		}
 
-		const applyAfterPromise = function () {
+		const applyAfterPromise = function() {
 			if (!this.isDestroyed()) {
 				return this.applyFilters();
 			}
@@ -195,7 +193,7 @@ sap.ui.define([
 
 
 
-		if ((!oListBinding || !bValueHelpDelegateInitialized)/* && (this.isContainerOpening() || this.isTypeahead())*/) {
+		if ((!oListBinding || !bValueHelpDelegateInitialized) /* && (this.isContainerOpening() || this.isTypeahead())*/ ) {
 			oFilterApplicationPromise = Promise.all([this.awaitListBinding(), this.awaitValueHelpDelegate()]).then(applyAfterPromise);
 		}
 
@@ -217,13 +215,13 @@ sap.ui.define([
 		this._addPromise("applyFilters", oFilterApplicationPromise); // cancels and replaces existing ones
 
 
-		return oFilterApplicationPromise.catch(function (oError) {
+		return oFilterApplicationPromise.catch((oError) => {
 			if (oError.canceled) {
 				Log.error("sap.ui.mdc.ValueHelp - Error during applyFilters:", oError.message);
 				return;
 			}
 			throw oError;
-		}).finally(function() {
+		}).finally(() => {
 			const oLatestApplyFiltersPromise = this._retrievePromise("applyFilters");
 			oLatestApplyFiltersPromise?.getInternalPromise().then((bApplyFilters) => {
 				const oBindingContext = this.getValueHelpDelegate().getFirstMatch(this.getValueHelpInstance(), this);
@@ -236,27 +234,27 @@ sap.ui.define([
 				_fireTypeaheadSuggested.call(this, oBindingContext, bCaseSensitive);
 			});
 			return oLatestApplyFiltersPromise && oLatestApplyFiltersPromise.getInternalPromise(); // re-fetching the applyFilters promise, in case filterValue was changed during the filtering and a parallel run was triggered
-		}.bind(this));
+		});
 	};
 
-	MTable.prototype._handleSelectionChange = function (oEvent) {
+	MTable.prototype._handleSelectionChange = function(oEvent) {
 		const bIsTypeahead = this.isTypeahead();
 		if (!bIsTypeahead || !this.isSingleSelect()) {
 			const oParams = oEvent.getParameters();
 			const aListItems = oParams.listItems || oParams.listItem && [oParams.listItem];
-			const aConditions = aListItems.map(function (oItem) {
+			const aConditions = aListItems.map((oItem) => {
 				const oItemContext = this._getListItemBindingContext(oItem);
 				const oValues = this.getItemFromContext(oItemContext);
 				return oValues && this.createCondition(oValues.key, oValues.description, oValues.payload);
-			}.bind(this));
-			this._fireSelect({type: oParams.selected ? ValueHelpSelectionType.Add : ValueHelpSelectionType.Remove, conditions: aConditions});
+			});
+			this._fireSelect({ type: oParams.selected ? ValueHelpSelectionType.Add : ValueHelpSelectionType.Remove, conditions: aConditions });
 			if (bIsTypeahead) {
 				this.fireConfirm();
 			}
 		}
 	};
 
-	MTable.prototype._handleItemPress = function (oEvent) {
+	MTable.prototype._handleItemPress = function(oEvent) {
 		const oItem = oEvent.getParameter("listItem");
 		const oItemContext = this._getListItemBindingContext(oItem);
 		const oValues = this.getItemFromContext(oItemContext);
@@ -267,13 +265,13 @@ sap.ui.define([
 		const sSelectType = bSelected ? ValueHelpSelectionType.Add : ValueHelpSelectionType.Remove;
 
 		const oCondition = this.createCondition(oValues.key, oValues.description, oValues.payload);
-		this._fireSelect({type: sSelectType, conditions: [oCondition]});
+		this._fireSelect({ type: sSelectType, conditions: [oCondition] });
 		if (this.isTypeahead()) {
-			this.fireConfirm({close: true});
+			this.fireConfirm({ close: true });
 		}
 	};
 
-	MTable.prototype._handleUpdateFinished = function () {
+	MTable.prototype._handleUpdateFinished = function() {
 		_updateSelection.apply(this);
 
 		if (this._bScrollToSelectedItem) {
@@ -288,11 +286,11 @@ sap.ui.define([
 		}
 	};
 
-	MTable.prototype._getTable = function () {
+	MTable.prototype._getTable = function() {
 		return this._oTable;
 	};
 
-	MTable.prototype.onShow = function (bInitial) {
+	MTable.prototype.onShow = function(bInitial) {
 		const oTable = this._getTable();
 		if (oTable) {
 			if (!oTable.hasStyleClass("sapMComboBoxList")) { // TODO: only in typeahead case?
@@ -331,7 +329,7 @@ sap.ui.define([
 		}
 	};
 
-	MTable.prototype.onHide = function () {
+	MTable.prototype.onHide = function() {
 		FilterableListContent.prototype.onHide.apply(this, arguments);
 		const oTable = this.getTable();
 		if (oTable) {
@@ -349,16 +347,16 @@ sap.ui.define([
 		_updateSelection.call(this);
 	};
 
-	MTable.prototype.getContent = function () {
+	MTable.prototype.getContent = function() {
 		if (!this.isTypeahead()) {
-			return this._retrievePromise("wrappedContent", function () {
+			return this._retrievePromise("wrappedContent", () => {
 				return loadModules([
 					"sap/ui/layout/FixFlex",
 					"sap/m/VBox",
 					"sap/m/Panel",
 					"sap/m/ScrollContainer",
 					"sap/ui/model/resource/ResourceModel"
-				]).then(function(aModules) {
+				]).then((aModules) => {
 
 					const FixFlex = aModules[0];
 					const VBox = aModules[1];
@@ -371,12 +369,12 @@ sap.ui.define([
 						this._oFilterBarVBox = new VBox(this.getId() + "-FilterBarBox");
 						this._oFilterBarVBox.addStyleClass("sapMdcValueHelpPanelFilterbar");
 						this._oFilterBarVBox._oWrapper = this;
-						this._oFilterBarVBox.getItems = function () {
+						this._oFilterBarVBox.getItems = function() {
 							return [this._oWrapper.getActiveFilterBar.call(this._oWrapper)];
 						};
 
 						this.setModel(new ResourceModel({ bundleName: "sap/ui/mdc/messagebundle", async: false }), "$i18n");
-						const _formatTableTitle = function (sText) {
+						const _formatTableTitle = function(sText) {
 							const iItems = 0; //TODO from where do we get the count
 							if (iItems === 0) {
 								sText = this.getModel("$i18n").getResourceBundle().getText("valuehelp.TABLETITLENONUMBER");
@@ -384,10 +382,10 @@ sap.ui.define([
 							return formatMessage(sText, iItems);
 						};
 
-						this._oTablePanel = new Panel(this.getId() + "-TablePanel", { expanded: true, height: "100%", headerText: {parts: ['$i18n>valuehelp.TABLETITLE'], formatter: _formatTableTitle}});
+						this._oTablePanel = new Panel(this.getId() + "-TablePanel", { expanded: true, height: "100%", headerText: { parts: ['$i18n>valuehelp.TABLETITLE'], formatter: _formatTableTitle } });
 						this._oTablePanel.addStyleClass("sapMdcTablePanel");
 
-						this._oContentLayout = new FixFlex(this.getId() + "-FF", {minFlexSize: 200, fixContent: this._oFilterBarVBox, flexContent: this._oTablePanel});
+						this._oContentLayout = new FixFlex(this.getId() + "-FF", { minFlexSize: 200, fixContent: this._oFilterBarVBox, flexContent: this._oTablePanel });
 
 						this._oScrollContainer = new ScrollContainer(this.getId() + "-SC", {
 							height: "100%",
@@ -412,18 +410,18 @@ sap.ui.define([
 
 					const oFilterBar = this.getActiveFilterBar();
 					if (!oFilterBar) {
-						return this._createDefaultFilterBar().then(function () {
+						return this._createDefaultFilterBar().then(() => {
 							return this._oContentLayout;
-						}.bind(this));
+						});
 					}
 					return this._oContentLayout;
-				}.bind(this));
-			}.bind(this));
+				});
+			});
 		}
 		return this._oTable;
 	};
 
-	MTable.prototype.getItemForValue = function (oConfig) {
+	MTable.prototype.getItemForValue = function(oConfig) {
 
 		if (!oConfig.checkKey && oConfig.parsedValue && !oConfig.checkDescription) {
 			return null;
@@ -448,7 +446,7 @@ sap.ui.define([
 		const oValueHelp = this.getValueHelpInstance();
 		const oPromise2 = oDelegate && oDelegate.getFilterConditions(oValueHelp, this, oConfig);
 
-		return Promise.all([oPromise1, oPromise2]).then(function(aResult) {
+		return Promise.all([oPromise1, oPromise2]).then((aResult) => {
 			const bPending = aResult[0];
 			const oConditions = aResult[1];
 			let oResult;
@@ -456,10 +454,10 @@ sap.ui.define([
 			if (!bPending) {
 				const oTable = this.getTable();
 				const oContainer = oTable.getParent()?.getParent();
-				if (oTable.getItems().length > 0
-					&& this.getUseFirstMatch()
-					&& oContainer?.isOpen()) {
-						oResult = this._oFirstItemResult.filterValue === oConfig.value ? this._oFirstItemResult.result : undefined;
+				if (oTable.getItems().length > 0 &&
+					this.getUseFirstMatch() &&
+					oContainer?.isOpen()) {
+					oResult = this._oFirstItemResult.filterValue === oConfig.value ? this._oFirstItemResult.result : undefined;
 				}
 				if (!oResult) {
 					oResult = _filterItems.call(this, oConfig, oTable.getItems(), oConditions);
@@ -471,7 +469,7 @@ sap.ui.define([
 			}
 
 			return oResult;
-		}.bind(this));
+		});
 
 	};
 
@@ -494,8 +492,8 @@ sap.ui.define([
 		const aFilteredItems = FilterProcessor.apply(aItems, oFilter, _getFilterValue);
 		if (aFilteredItems.length === 1) {
 			const oBindingContext = this._getListItemBindingContext(aFilteredItems[0]);
-			const oValue = this.getItemFromContext(oBindingContext, {inParameters: aInParameters, outParameters: aOutParameters});
-			return {key: oValue.key, description: oValue.description, payload: oValue.payload};
+			const oValue = this.getItemFromContext(oBindingContext, { inParameters: aInParameters, outParameters: aOutParameters });
+			return { key: oValue.key, description: oValue.description, payload: oValue.payload };
 		} else if (aFilteredItems.length > 1) {
 			if (!oConfig.caseSensitive) {
 				// try with case sensitive search
@@ -515,55 +513,55 @@ sap.ui.define([
 		const sDescriptionPath = this.getDescriptionPath();
 		const aFilters = [];
 		if (oConfig.checkKey && oConfig.hasOwnProperty("parsedValue")) { // empty string or false could be key too
-			aFilters.push(new Filter({ path: sKeyPath, operator: FilterOperator.EQ, value1: oConfig.parsedValue, caseSensitive: bCaseSensitive}));
+			aFilters.push(new Filter({ path: sKeyPath, operator: FilterOperator.EQ, value1: oConfig.parsedValue, caseSensitive: bCaseSensitive }));
 		}
 		if (oConfig.checkDescription) {
 			if (oConfig.hasOwnProperty("parsedDescription") && oConfig.parsedDescription !== undefined) {
-				aFilters.push(new Filter({path: sDescriptionPath, operator: FilterOperator.EQ, value1: oConfig.parsedDescription, caseSensitive: bCaseSensitive}));
+				aFilters.push(new Filter({ path: sDescriptionPath, operator: FilterOperator.EQ, value1: oConfig.parsedDescription, caseSensitive: bCaseSensitive }));
 			} else if (oConfig.value) { // TODO: do we need this fallback?
-				aFilters.push(new Filter({path: sDescriptionPath, operator: FilterOperator.EQ, value1: oConfig.value, caseSensitive: bCaseSensitive}));
+				aFilters.push(new Filter({ path: sDescriptionPath, operator: FilterOperator.EQ, value1: oConfig.value, caseSensitive: bCaseSensitive }));
 			}
 		}
 
-		let oFilter = aFilters.length > 1 ? new Filter({filters: aFilters, and: false}) : aFilters[0];
+		let oFilter = aFilters.length > 1 ? new Filter({ filters: aFilters, and: false }) : aFilters[0];
 
 		if (oConditions) {
 			const oConditionTypes = this._getTypesForConditions(oConditions);
 			const oConditionsFilter = FilterConverter.createFilters(oConditions, oConditionTypes, undefined, this.getCaseSensitive());
 			if (oConditionsFilter) {
-				oFilter = new Filter({filters: [oFilter, oConditionsFilter], and: true});
+				oFilter = new Filter({ filters: [oFilter, oConditionsFilter], and: true });
 			}
 		}
 
-		return 	oFilter;
+		return oFilter;
 
 	}
 
 	function _checkListBindingPending() {
-		return this.awaitListBinding().then(function (oListBinding) {
+		return this.awaitListBinding().then((oListBinding) => {
 			const oDelegate = this.getValueHelpDelegate();
 			const oValueHelp = this.getValueHelpInstance();
 			const oListBindingInfo = this.getListBindingInfo();
 			const iLength = oListBindingInfo && oListBindingInfo.length;
-			if (oListBinding && oDelegate){
+			if (oListBinding && oDelegate) {
 				return oDelegate.checkListBindingPending(oValueHelp, oListBinding, iLength);
 			} else {
 				return true;
 			}
-		}.bind(this));
+		});
 	}
 
-	MTable.prototype.getListBinding = function () {
+	MTable.prototype.getListBinding = function() {
 		const oTable = this._getTable();
 		return oTable && oTable.getBinding("items");
 	};
 
-	MTable.prototype.getListBindingInfo = function () {
+	MTable.prototype.getListBindingInfo = function() {
 		const oTable = this._getTable();
 		return oTable && oTable.getBindingInfo("items");
 	};
 
-	MTable.prototype._loadItemForValue = function (oConfig, oConditions) {
+	MTable.prototype._loadItemForValue = function(oConfig, oConditions) {
 
 		if (!oConfig.checkKey && oConfig.parsedValue && !oConfig.checkDescription) {
 			return null;
@@ -584,21 +582,27 @@ sap.ui.define([
 		const oDelegate = this.getValueHelpDelegate();
 		const oValueHelp = this.getValueHelpInstance();
 
-		const sPromiseKey = "loadItemForValue:" + JSON.stringify([sPath, sKeyPath, oConfig.parsedValue || oConfig.value, oConfig.context, oConfig.bindingContext && oConfig.bindingContext.getPath(), oConditions]);
+		const sPromiseKey = "loadItemForValue:" + JSON.stringify([sPath,
+			sKeyPath,
+			oConfig.parsedValue || oConfig.value,
+			oConfig.context,
+			oConfig.bindingContext && oConfig.bindingContext.getPath(),
+			oConditions
+		]);
 
-		return this._retrievePromise(sPromiseKey, function () {
+		return this._retrievePromise(sPromiseKey, () => {
 			const oFilter = _createItemFilters.call(this, oConfig, oConditions);
 			const oFilterListBinding = oListBinding.getModel().bindList(sPath, oListBinding.getContext(), undefined, oFilter);
 			oFilterListBinding.initialize();
-			return oDelegate.executeFilter(oValueHelp, oFilterListBinding, 2).then(function (oBinding) {
+			return oDelegate.executeFilter(oValueHelp, oFilterListBinding, 2).then((oBinding) => {
 				const aContexts = oBinding.getContexts();
 
-				setTimeout(function() { // as Binding might process other steps after event was fired - destroy it lazy
+				setTimeout(() => { // as Binding might process other steps after event was fired - destroy it lazy
 					oFilterListBinding.destroy();
 				}, 0);
 
 				if (aContexts.length && (aContexts.length < 2 || bUseFirstMatch)) {
-					return this.getItemFromContext(aContexts[0], {keyPath: sKeyPath, descriptionPath: sDescriptionPath, inParameters: undefined});
+					return this.getItemFromContext(aContexts[0], { keyPath: sKeyPath, descriptionPath: sDescriptionPath, inParameters: undefined });
 				} else if (oConfig.checkKey && oConfig.parsedValue === "" && aContexts.length === 0) {
 					// nothing found for empty key -> this is not an error
 					return null;
@@ -606,8 +610,8 @@ sap.ui.define([
 					const oException = _createException.call(this, oConfig.exception, aContexts.length > 1, oConfig.value);
 					throw oException;
 				}
-			}.bind(this));
-		}.bind(this));
+			});
+		});
 	};
 
 	function _createException(Exception, bNotUnique, vValue) {
@@ -628,7 +632,7 @@ sap.ui.define([
 		return true;
 	};
 
-	MTable.prototype.navigate = function (iStep) {
+	MTable.prototype.navigate = function(iStep) {
 
 		const bIsOpen = this.getParent().isOpen();
 
@@ -639,12 +643,12 @@ sap.ui.define([
 		const oListBinding = this.getListBinding();
 
 		if (!oListBinding || !oListBinding.getLength()) {
-			return _checkListBindingPending.call(this).then(function (bPending) {
+			return _checkListBindingPending.call(this).then((bPending) => {
 				if (!bPending && oListBinding.getLength() !== 0) { // if no items - no navigation is possible
 					return this.navigate(iStep);
 				}
 				return false;
-			}.bind(this));
+			});
 		}
 
 		const oTable = this._getTable();
@@ -658,7 +662,7 @@ sap.ui.define([
 		if (oSelectedItem) {
 			iSelectedIndex = aItems.indexOf(oSelectedItem);
 			iSelectedIndex = iSelectedIndex + iStep;
-		} else if (iStep >= 0){
+		} else if (iStep >= 0) {
 			iSelectedIndex = iStep - 1;
 		} else {
 			iSelectedIndex = iItems + iStep;
@@ -732,17 +736,17 @@ sap.ui.define([
 
 				if (oItem.isA("sap.m.GroupHeaderListItem")) {
 					this.setProperty("conditions", [], true); // no condition navigated
-					this.fireNavigated({condition: undefined, itemId: oItem.getId(), leaveFocus: false});
+					this.fireNavigated({ condition: undefined, itemId: oItem.getId(), leaveFocus: false });
 				} else {
 					const oItemContext = this._getListItemBindingContext(oItem);
 					const oValues = this.getItemFromContext(oItemContext);
 					oCondition = oValues && this.createCondition(oValues.key, oValues.description, oValues.payload);
 					this.setProperty("conditions", [oCondition], true);
-					this.fireNavigated({condition: oCondition, itemId: oItem.getId(), leaveFocus: false});
+					this.fireNavigated({ condition: oCondition, itemId: oItem.getId(), leaveFocus: false });
 				}
 
 			} else if (bLeaveFocus) {
-				this.fireNavigated({condition: undefined, itemId: undefined, leaveFocus: bLeaveFocus});
+				this.fireNavigated({ condition: undefined, itemId: undefined, leaveFocus: bLeaveFocus });
 			}
 		}
 	};
@@ -757,12 +761,12 @@ sap.ui.define([
 
 	};
 
-	MTable.prototype._handleScrolling = function (oItem) {
+	MTable.prototype._handleScrolling = function(oItem) {
 		const oScrollDelegate = this.getScrollDelegate();
 		if (oScrollDelegate) {
 			const oTable = this._getTable();
 			const iIndex = !isNaN(oItem) ? oItem : oTable.indexOfItem(oItem);
-			oTable.scrollToIndex(iIndex).catch(function (oError) {
+			oTable.scrollToIndex(iIndex).catch((oError) => {
 				// TODO: Handle scroll error?
 			});
 			return true;
@@ -772,7 +776,7 @@ sap.ui.define([
 
 	// Table needs to know the ScrollDelegate of the parent, so we provide it here.
 	MTable.prototype.getScrollDelegate = function() {
-		if (/* !this.isTypeahead()  && */ this._oScrollContainer) {
+		if ( /* !this.isTypeahead()  && */ this._oScrollContainer) {
 			return this._oScrollContainer.getScrollDelegate();
 		}
 		return FilterableListContent.prototype.getScrollDelegate.apply(this, arguments);
@@ -809,35 +813,35 @@ sap.ui.define([
 		};
 	};
 
-	function _getSAPMResourceBundle () {
+	function _getSAPMResourceBundle() {
 		if (!this._oResourceBundleM) {
 			this._oResourceBundleM = Library.getResourceBundleFor("sap.m"); // sap.m is always loaded
 		}
 		return this._oResourceBundleM;
 	}
 
-	MTable.prototype.getContainerConfig = function () {
+	MTable.prototype.getContainerConfig = function() {
 		return {
 			'sap.ui.mdc.valuehelp.Popover': {
-				getContentHeight: function () {
+				getContentHeight: function() {
 					const oTable = this._getTable();
 					const oDomRef = oTable && oTable.getDomRef();
 					return oDomRef && Math.round(oDomRef.getBoundingClientRect().height);
 				}.bind(this),
-				getFooter: function () {
-					return this._retrievePromise("footer", function () {
-						return this.awaitListBinding().then(function (oListBinding) {
+				getFooter: function() {
+					return this._retrievePromise("footer", () => {
+						return this.awaitListBinding().then((oListBinding) => {
 							const oBindingInfo = this.getListBindingInfo();
 							const bDialogExist = this.getParent().hasDialog();
 
 							if (bDialogExist && oBindingInfo && oBindingInfo.length) {
-								return loadModules(["sap/m/Button", "sap/m/Toolbar", "sap/m/ToolbarSpacer"]).then(function (aModules) {
+								return loadModules(["sap/m/Button", "sap/m/Toolbar", "sap/m/ToolbarSpacer"]).then((aModules) => {
 									const Button = aModules[0];
 									const Toolbar = aModules[1];
 									const ToolbarSpacer = aModules[2];
 									const oShowAllItemsButton = new Button(this.getId() + "-showAllItems", {
 										text: this._oMResourceBundle.getText("INPUT_SUGGESTIONS_SHOW_ALL"),
-										press: function () {
+										press: function() {
 											this.fireRequestSwitchToDialog();
 										}.bind(this)
 									});
@@ -846,16 +850,16 @@ sap.ui.define([
 										content: aToolbarContent
 									});
 									return oFooter;
-								}.bind(this));
+								});
 							}
-						}.bind(this));
-					}.bind(this));
+						});
+					});
 				}.bind(this)
 			}
 		};
 	};
 
-	function _adjustTable () {
+	function _adjustTable() {
 		if (this._oTable && this.getParent()) {
 
 			const aSticky = this._oTable.getSticky();
@@ -870,7 +874,7 @@ sap.ui.define([
 		_adjustTable.call(this);
 	};
 
-	MTable.prototype.observeChanges = function (oChanges) {
+	MTable.prototype.observeChanges = function(oChanges) {
 
 		if (oChanges.name === "config") {
 			_adjustTable.call(this);
@@ -908,7 +912,7 @@ sap.ui.define([
 				oTable.addDelegate(this._oTableDelegate, true, this);
 
 				if (!this.resolveListBinding()) {
-					this._oObserver.observe(oChanges.child, {bindings: ["items"]});
+					this._oObserver.observe(oChanges.child, { bindings: ["items"] });
 				}
 			}
 		}
@@ -916,7 +920,7 @@ sap.ui.define([
 		FilterableListContent.prototype.observeChanges.apply(this, arguments);
 	};
 
-	MTable.prototype._handleTableEvent = function (oEvent) {
+	MTable.prototype._handleTableEvent = function(oEvent) {
 
 		if (!this.isTypeahead()) {
 			return;
@@ -929,7 +933,7 @@ sap.ui.define([
 			case "sapprevious":
 				if (oItem.isA("sap.m.ListItemBase")) {
 					if (oTable.indexOfItem(oItem) === 0) {
-						this.fireNavigated({condition: undefined, itemId: undefined, leaveFocus: true});
+						this.fireNavigated({ condition: undefined, itemId: undefined, leaveFocus: true });
 						oEvent.preventDefault();
 						oEvent.stopPropagation();
 						oEvent.stopImmediatePropagation(true);
@@ -961,23 +965,32 @@ sap.ui.define([
 
 	};
 
-	MTable.prototype.onConnectionChange = function () {
+	MTable.prototype.onConnectionChange = function() {
 
 		this._iNavigateIndex = -1; // initially nothing is navigated
 		this._oFirstItemResult = {};
 
 	};
 
-	MTable.prototype.exit = function () {
+	MTable.prototype.exit = function() {
 
 		Common.cleanup(this, [
-			"_sTableWidth", "_oTable", "_oScrollContainer", "_oContentLayout", "_oTablePanel", "_oFilterBarVBox", "_oMResourceBundle", "_oResourceBundle", "_oTableDelegate", "_oFirstItemResult"
+			"_sTableWidth",
+			"_oTable",
+			"_oScrollContainer",
+			"_oContentLayout",
+			"_oTablePanel",
+			"_oFilterBarVBox",
+			"_oMResourceBundle",
+			"_oResourceBundle",
+			"_oTableDelegate",
+			"_oFirstItemResult"
 		]);
 
 		FilterableListContent.prototype.exit.apply(this, arguments);
 	};
 
-    MTable.prototype.getRelevantContexts = function(oConfig) {
+	MTable.prototype.getRelevantContexts = function(oConfig) {
 		const oListBinding = this.getListBinding();
 		const aListBindingContexts = oListBinding.getAllCurrentContexts ? oListBinding.getAllCurrentContexts() : oListBinding.getContexts();
 
@@ -985,7 +998,6 @@ sap.ui.define([
 	};
 
 	function _fireTypeaheadSuggested(oBindingContext, bCaseSensitive) {
-
 		if (!this.getUseFirstMatch() || !this._oFirstItemResult || !this._oFirstItemResult.result || !this._oFirstItemResult.filterValue) {
 			return;
 		}
@@ -994,16 +1006,14 @@ sap.ui.define([
 		const aItems = this._oTable.getItems();
 		let sItemId;
 
-		for (let i = 0; i < aItems.length; i++) {
-			const oItem = aItems[i];
+		for (const oItem of aItems) {
 			if (this._getListItemBindingContext(oItem) === oBindingContext) {
 				sItemId = oItem.getId();
 				break;
 			}
 		}
 
-		this.fireTypeaheadSuggested({condition: oCondition, filterValue: this._oFirstItemResult.filterValue, itemId: sItemId, caseSensitive: bCaseSensitive});
-
+		this.fireTypeaheadSuggested({ condition: oCondition, filterValue: this._oFirstItemResult.filterValue, itemId: sItemId, caseSensitive: bCaseSensitive });
 	}
 
 	return MTable;

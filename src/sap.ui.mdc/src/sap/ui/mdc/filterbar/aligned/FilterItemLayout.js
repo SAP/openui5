@@ -3,8 +3,7 @@
  */
 
 // Provides control sap.ui.mdc.filterbar.aligned.FilterItemLayout.
-sap.ui.define(['sap/ui/layout/VerticalLayout', 'sap/ui/layout/VerticalLayoutRenderer', 'sap/m/Label'
-], function( VerticalLayout, VerticalLayoutRenderer, Label) {
+sap.ui.define(['sap/ui/layout/VerticalLayout', 'sap/ui/layout/VerticalLayoutRenderer', 'sap/m/Label'], (VerticalLayout, VerticalLayoutRenderer, Label) => {
 	"use strict";
 
 	/**
@@ -27,7 +26,7 @@ sap.ui.define(['sap/ui/layout/VerticalLayout', 'sap/ui/layout/VerticalLayoutRend
 		}
 	});
 
-	FilterItemLayout.prototype._setLabel = function (oFilterField) {
+	FilterItemLayout.prototype._setLabel = function(oFilterField) {
 		this._oLabel = new Label(oFilterField.getId() + "-label");
 		this._oLabel.setParent(this);
 
@@ -40,20 +39,20 @@ sap.ui.define(['sap/ui/layout/VerticalLayout', 'sap/ui/layout/VerticalLayoutRend
 		}
 	};
 
-	FilterItemLayout.prototype._getFilterField = function () {
+	FilterItemLayout.prototype._getFilterField = function() {
 		return this._oFilterField;
 	};
 
-	FilterItemLayout.prototype._getFieldPath = function () {
+	FilterItemLayout.prototype._getFieldPath = function() {
 		return this._oFilterField ? this._oFilterField.getPropertyKey() : null;
 	};
 
-	FilterItemLayout.prototype.setFilterField = function (oFilterField) {
+	FilterItemLayout.prototype.setFilterField = function(oFilterField) {
 		this._oFilterField = oFilterField;
 		this._setLabel(oFilterField);
 	};
 
-	FilterItemLayout.prototype.getContent = function () {
+	FilterItemLayout.prototype.getContent = function() {
 		const aContent = [];
 		aContent.push(this._oLabel);
 		aContent.push(this._oFilterField);
@@ -61,7 +60,7 @@ sap.ui.define(['sap/ui/layout/VerticalLayout', 'sap/ui/layout/VerticalLayoutRend
 		return aContent;
 	};
 
-	FilterItemLayout.prototype.exit = function () {
+	FilterItemLayout.prototype.exit = function() {
 		this._oFilterField = null;
 
 		if (this._oLabel && !this._oLabel.bIsDestroyed) {

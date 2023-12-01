@@ -2,13 +2,11 @@
  * ${copyright}
  */
 sap.ui.define([
-	"sap/m/p13n/Engine",
-	"sap/ui/mdc/flexibility/Util",
-	"sap/ui/fl/changeHandler/condenser/Classification"
-], function(Engine, Util, CondenserClassification) {
+	"sap/m/p13n/Engine", "sap/ui/mdc/flexibility/Util", "sap/ui/fl/changeHandler/condenser/Classification"
+], (Engine, Util, CondenserClassification) => {
 	"use strict";
 
-	const fFinalizeAggregateChange = function (oChange, oControl, oAggregateContent, bIsRevert) {
+	const fFinalizeAggregateChange = function(oChange, oControl, oAggregateContent, bIsRevert) {
 		if (bIsRevert) {
 			// Clear the revert data on the change
 			oChange.resetRevertData();
@@ -18,14 +16,14 @@ sap.ui.define([
 		}
 	};
 
-	const fAddAggregate = function (oChange, oControl, mPropertyBag, sChangeReason) {
-		return new Promise(function (resolve, reject) {
+	const fAddAggregate = function(oChange, oControl, mPropertyBag, sChangeReason) {
+		return new Promise((resolve, reject) => {
 			const bIsRevert = (sChangeReason === Util.REVERT);
 			const oModifier = mPropertyBag.modifier;
 			const oChangeContent = bIsRevert ? oChange.getRevertData() : oChange.getContent();
 			Promise.resolve()
 				.then(oModifier.getProperty.bind(oModifier, oControl, "aggregateConditions"))
-				.then(function(oAggregateConditions) {
+				.then((oAggregateConditions) => {
 					const oAggregations = oAggregateConditions ? oAggregateConditions : {};
 					oAggregations[oChangeContent.name] = {};
 					const oAggregateContent = {
@@ -35,20 +33,20 @@ sap.ui.define([
 					fFinalizeAggregateChange(oChange, oControl, oAggregateContent, bIsRevert);
 					resolve();
 				})
-				.catch(function(oError) {
+				.catch((oError) => {
 					reject(oError);
 				});
 		});
 	};
 
-	const fRemoveAggregate = function (oChange, oControl, mPropertyBag, sChangeReason) {
-		return new Promise(function (resolve, reject) {
+	const fRemoveAggregate = function(oChange, oControl, mPropertyBag, sChangeReason) {
+		return new Promise((resolve, reject) => {
 			const bIsRevert = (sChangeReason === Util.REVERT);
 			const oModifier = mPropertyBag.modifier;
 			const oChangeContent = bIsRevert ? oChange.getRevertData() : oChange.getContent();
 			Promise.resolve()
 				.then(oModifier.getProperty.bind(oModifier, oControl, "aggregateConditions"))
-				.then(function(oAggregateConditions) {
+				.then((oAggregateConditions) => {
 					const aValue = oAggregateConditions ? oAggregateConditions : {};
 
 					if (!aValue) {
@@ -61,7 +59,7 @@ sap.ui.define([
 					fFinalizeAggregateChange(oChange, oControl, oChangeContent, bIsRevert);
 					resolve();
 				})
-				.catch(function(oError) {
+				.catch((oError) => {
 					reject(oError);
 				});
 		});

@@ -5,8 +5,8 @@
 // Provides control sap.ui.core.ListItem.
 sap.ui.define([
 	'sap/ui/core/ListItem'
-], function(
-		ListItem) {
+], (
+	ListItem) => {
 	"use strict";
 
 	/**
@@ -27,30 +27,32 @@ sap.ui.define([
 	 * @since 1.114.0
 	 * @alias sap.ui.mdc.valuehelp.content.FixedListItem
 	 */
-	const FixedListItem = ListItem.extend("sap.ui.mdc.valuehelp.content.FixedListItem", /** @lends sap.ui.mdc.valuehelp.content.FixedListItem.prototype */ { metadata : {
+	const FixedListItem = ListItem.extend("sap.ui.mdc.valuehelp.content.FixedListItem", /** @lends sap.ui.mdc.valuehelp.content.FixedListItem.prototype */ {
+		metadata: {
 
-		library: "sap.ui.mdc",
-		properties: {
+			library: "sap.ui.mdc",
+			properties: {
 
-			/**
-			 * Key of the group for what the items are grouped
-			 */
-			groupKey: {
-				type: "any",
-				group: "Appearance",
-				defaultValue : null
-			},
+				/**
+				 * Key of the group for what the items are grouped
+				 */
+				groupKey: {
+					type: "any",
+					group: "Appearance",
+					defaultValue: null
+				},
 
-			/**
-			 * Text of the group for what the items are grouped
-			 */
-			groupText: {
-				type: "string",
-				group: "Appearance",
-				defaultValue : null
+				/**
+				 * Text of the group for what the items are grouped
+				 */
+				groupText: {
+					type: "string",
+					group: "Appearance",
+					defaultValue: null
+				}
 			}
 		}
-	}});
+	});
 
 
 	return FixedListItem;

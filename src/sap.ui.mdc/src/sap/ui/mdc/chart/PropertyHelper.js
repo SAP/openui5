@@ -3,14 +3,12 @@
  */
 
 sap.ui.define([
-	"../util/PropertyHelper",
-	"sap/ui/core/Lib",
-	"sap/ui/mdc/enums/ChartItemRoleType"
-], function(
+	"../util/PropertyHelper", "sap/ui/core/Lib", "sap/ui/mdc/enums/ChartItemRoleType"
+], (
 	PropertyHelperBase,
 	Library,
 	ChartItemRoleType
-) {
+) => {
 	"use strict";
 
 	/**
@@ -33,7 +31,7 @@ sap.ui.define([
 	 * @since 1.83
 	 * @alias sap.ui.mdc.chart.PropertyHelper
 	 */
-    const PropertyHelper = PropertyHelperBase.extend("sap.ui.mdc.chart.PropertyHelper", {
+	const PropertyHelper = PropertyHelperBase.extend("sap.ui.mdc.chart.PropertyHelper", {
 		constructor: function(aProperties, oParent) {
 			PropertyHelperBase.call(this, aProperties, oParent, {
 				filterable: true,
@@ -51,23 +49,23 @@ sap.ui.define([
 				propertyPath: {
 					type: "string"
 				},
-				aggregationMethod : {
+				aggregationMethod: {
 					type: "string"
 				},
-				role : {
+				role: {
 					type: "string"
 				},
-				datapoint : {
+				datapoint: {
 					type: "object"
 				},
-				criticality : {
+				criticality: {
 					type: "object"
 				},
-				textProperty : {
+				textProperty: {
 					type: "string"
 				},
 				// this is not a public property
-				availableRoles : {
+				availableRoles: {
 					type: "object"
 				},
 				// this is not a public property
@@ -91,7 +89,7 @@ sap.ui.define([
 			oProperty.kind = "Aggregatable";
 		}
 
-		if (!oProperty.typeConfig && oProperty.dataType){
+		if (!oProperty.typeConfig && oProperty.dataType) {
 			const oFormatOptions = oProperty.formatOptions ? oProperty.formatOptions : null;
 			const oConstraints = oProperty.constraints ? oProperty.constraints : {};
 
@@ -113,49 +111,45 @@ sap.ui.define([
 	 * It is used by p13n to determine which layout options to show in the p13n panel
 	 * @param {string} sType the type for which the layout options are requested
 	 */
-	PropertyHelper.prototype._getLayoutOptionsForType = function(sType){
+	PropertyHelper.prototype._getLayoutOptionsForType = function(sType) {
 		const MDCRb = Library.getResourceBundleFor("sap.ui.mdc");
 		const oAvailableRoles = {
-			groupable: [
-				{
-					key: ChartItemRoleType.category,
-					text: MDCRb.getText('chart.PERSONALIZATION_DIALOG_CHARTROLE_CATEGORY')
-				}, {
-					key: ChartItemRoleType.category2,
-					text: MDCRb.getText('chart.PERSONALIZATION_DIALOG_CHARTROLE_CATEGORY2')
-				}, {
-					key: ChartItemRoleType.series,
-					text: MDCRb.getText('chart.PERSONALIZATION_DIALOG_CHARTROLE_SERIES')
-				}
-			],
-			aggregatable: [
-				{
-					key: ChartItemRoleType.axis1,
-					text: MDCRb.getText('chart.PERSONALIZATION_DIALOG_CHARTROLE_AXIS1')
-				}, {
-					key: ChartItemRoleType.axis2,
-					text: MDCRb.getText('chart.PERSONALIZATION_DIALOG_CHARTROLE_AXIS2')
-				}, {
-					key: ChartItemRoleType.axis3,
-					text: MDCRb.getText('chart.PERSONALIZATION_DIALOG_CHARTROLE_AXIS3')
-				}
-			]
+			groupable: [{
+				key: ChartItemRoleType.category,
+				text: MDCRb.getText('chart.PERSONALIZATION_DIALOG_CHARTROLE_CATEGORY')
+			}, {
+				key: ChartItemRoleType.category2,
+				text: MDCRb.getText('chart.PERSONALIZATION_DIALOG_CHARTROLE_CATEGORY2')
+			}, {
+				key: ChartItemRoleType.series,
+				text: MDCRb.getText('chart.PERSONALIZATION_DIALOG_CHARTROLE_SERIES')
+			}],
+			aggregatable: [{
+				key: ChartItemRoleType.axis1,
+				text: MDCRb.getText('chart.PERSONALIZATION_DIALOG_CHARTROLE_AXIS1')
+			}, {
+				key: ChartItemRoleType.axis2,
+				text: MDCRb.getText('chart.PERSONALIZATION_DIALOG_CHARTROLE_AXIS2')
+			}, {
+				key: ChartItemRoleType.axis3,
+				text: MDCRb.getText('chart.PERSONALIZATION_DIALOG_CHARTROLE_AXIS3')
+			}]
 		};
 		return oAvailableRoles[sType];
 	};
 
 	/**
-     * Gets all properties with aggregatable flag set to <code>true</code>.
-     *
-     * @returns {object[]} All properties with aggregatable flag set to <code>true</code>.
-     * @public
-     */
-    PropertyHelper.prototype.getAllAggregatableProperties = function() {
-        return this.getProperties().filter(function(oProperty) {
-            return oProperty.isAggregatable();
-        });
-    };
+	 * Gets all properties with aggregatable flag set to <code>true</code>.
+	 *
+	 * @returns {object[]} All properties with aggregatable flag set to <code>true</code>.
+	 * @public
+	 */
+	PropertyHelper.prototype.getAllAggregatableProperties = function() {
+		return this.getProperties().filter((oProperty) => {
+			return oProperty.isAggregatable();
+		});
+	};
 
-    return PropertyHelper;
+	return PropertyHelper;
 
 });

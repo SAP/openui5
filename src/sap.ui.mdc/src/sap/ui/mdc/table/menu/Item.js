@@ -2,21 +2,19 @@
  * ${copyright}
  */
 sap.ui.define([
-	"sap/ui/Device",
-	"sap/m/table/columnmenu/Item",
-	"sap/ui/core/Element"
-], function(
+	"sap/ui/Device", "sap/m/table/columnmenu/Item", "sap/ui/core/Element"
+], (
 	Device,
 	ItemBase,
 	Element
-) {
+) => {
 	"use strict";
 
 	const Item = ItemBase.extend("sap.ui.mdc.table.menu.Item", {
 		metadata: {
 			library: "sap.ui.mdc",
 			properties: {
-				key: {type: "string"}
+				key: { type: "string" }
 			}
 		}
 	});
@@ -30,13 +28,13 @@ sap.ui.define([
 
 		if (sKey === "Filter") {
 			const aFilterableProperties = oTable.getPropertyHelper().getProperty(oColumn.getPropertyKey()).getFilterableProperties();
-			const aPropertyNames = aFilterableProperties.map(function(oProperty) {
+			const aPropertyNames = aFilterableProperties.map((oProperty) => {
 				return oProperty.name;
 			});
 			oTable.getInbuiltFilter().setVisibleFields(aPropertyNames);
 		}
 
-		return oTable.getEngine().uimanager.create(oTable, [sKey]).then(function(aPanels) {
+		return oTable.getEngine().uimanager.create(oTable, [sKey]).then((aPanels) => {
 			if (!Device.system.phone) {
 				aPanels[0].setProperty("_useFixedWidth", true);
 			}
@@ -54,10 +52,10 @@ sap.ui.define([
 			oEngine.validateP13n(oTable, sKey, this.getContent());
 
 			oEngine.hasChanges(oTable, sKey)
-			.then((bDirty) => {
-				this.setResetButtonEnabled(bDirty);
-			});
-		}.bind(this));
+				.then((bDirty) => {
+					this.setResetButtonEnabled(bDirty);
+				});
+		});
 	};
 
 	Item.prototype.onPress = function() {
@@ -76,7 +74,7 @@ sap.ui.define([
 
 		this.setResetButtonEnabled(false);
 
-		oTable.getEngine().reset(oTable, [sKey]).then(function() {
+		oTable.getEngine().reset(oTable, [sKey]).then(() => {
 			oTable._oQuickActionContainer.updateQuickActions([sKey]);
 		});
 	};

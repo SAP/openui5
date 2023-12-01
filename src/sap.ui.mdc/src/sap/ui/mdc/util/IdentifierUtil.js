@@ -5,7 +5,7 @@
 // ------------------------------------------------------------------------------------------
 // Utility class used by smart controls for creating stable ids.
 // ------------------------------------------------------------------------------------------
-sap.ui.define(['sap/ui/base/DataType'], function(DataType) {
+sap.ui.define(['sap/ui/base/DataType'], (DataType) => {
 	"use strict";
 
 	/**
@@ -45,7 +45,7 @@ sap.ui.define(['sap/ui/base/DataType'], function(DataType) {
 		 * @returns {string} the calculated id
 		 * @protected
 		 */
-		getFilterFieldId : function(oFilterBar, sKey) {
+		getFilterFieldId: function(oFilterBar, sKey) {
 			return oFilterBar.getId() + "--filter--" + IdentifierUtil.replace(sKey);
 		},
 
@@ -56,11 +56,11 @@ sap.ui.define(['sap/ui/base/DataType'], function(DataType) {
 		 * @returns {string} the key of the property name
 		 * @protected
 		 */
-		getPropertyKey:  function(oProperty) {
+		getPropertyKey: function(oProperty) {
 			return oProperty.name;
 		},
 
-		getPropertyPath:  function(oProperty) {
+		getPropertyPath: function(oProperty) {
 			return oProperty.path;
 		},
 
@@ -71,7 +71,7 @@ sap.ui.define(['sap/ui/base/DataType'], function(DataType) {
 		 * @returns {sap.ui.core.mvc.View} the enclosing view
 		 * @protected
 		 */
-		getView :  function(oControl) {
+		getView: function(oControl) {
 			let oView = null;
 			if (oControl) {
 				let oObj = oControl.getParent();

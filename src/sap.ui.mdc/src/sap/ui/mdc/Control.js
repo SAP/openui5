@@ -2,8 +2,11 @@
  * ${copyright}
  */
 sap.ui.define([
-	"sap/ui/core/Control",  "sap/ui/mdc/mixin/DelegateMixin", "sap/ui/mdc/mixin/PropertyHelperMixin", "sap/ui/mdc/mixin/AdaptationMixin"
-], function(CoreControl, DelegateMixin, PropertyHelperMixin, AdaptationMixin) {
+	"sap/ui/core/Control",
+	"sap/ui/mdc/mixin/DelegateMixin",
+	"sap/ui/mdc/mixin/PropertyHelperMixin",
+	"sap/ui/mdc/mixin/AdaptationMixin"
+], (CoreControl, DelegateMixin, PropertyHelperMixin, AdaptationMixin) => {
 	"use strict";
 
 	/**
@@ -25,7 +28,7 @@ sap.ui.define([
 	 * @borrows sap.ui.mdc.mixin.DelegateMixin.getControlDelegate as #getControlDelegate
 	 * @borrows sap.ui.mdc.mixin.DelegateMixin.getPayload as #getPayload
 	 * @borrows sap.ui.mdc.mixin.DelegateMixin.getTypeUtil as #getTypeUtil
- 	 * @borrows sap.ui.mdc.mixin.DelegateMixin.getTypeMap as #getTypeMap
+	 * @borrows sap.ui.mdc.mixin.DelegateMixin.getTypeMap as #getTypeMap
 	 * @borrows sap.ui.mdc.mixin.DelegateMixin.initControlDelegate as #initControlDelegate
 	 *
 	 * @borrows sap.ui.mdc.mixin.PropertyHelperMixin.initPropertyHelper as #initPropertyHelper
@@ -36,11 +39,11 @@ sap.ui.define([
 	 *
 	 * @borrows sap.ui.mdc.mixin.AdaptationMixin.getEngine as #getInstance
 	 * @borrows sap.ui.mdc.mixin.AdaptationMixin.retrieveInbuiltFilter as #retrieveInbuiltFilter
- 	 * @borrows sap.ui.mdc.mixin.AdaptationMixin.getInbuiltFilter as #getInbuiltFilter
+	 * @borrows sap.ui.mdc.mixin.AdaptationMixin.getInbuiltFilter as #getInbuiltFilter
 	 *
 	 * @since 1.61
 	 * @public
- 	 * @experimental As of version 1.61
+	 * @experimental As of version 1.61
 	 */
 	const Control = CoreControl.extend("sap.ui.mdc.Control", /** @lends sap.ui.mdc.Control.prototype */ {
 		metadata: {

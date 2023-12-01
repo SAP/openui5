@@ -3,14 +3,12 @@
  */
 
 sap.ui.define([
-	"sap/ui/mdc/valuehelp/content/FixedList",
-	"sap/ui/mdc/util/loadModules",
-	"sap/ui/model/ParseException"
-], function(
+	"sap/ui/mdc/valuehelp/content/FixedList", "sap/ui/mdc/util/loadModules", "sap/ui/model/ParseException"
+], (
 	FixedList,
 	loadModules,
 	ParseException
-) {
+) => {
 	"use strict";
 
 	/**
@@ -28,8 +26,7 @@ sap.ui.define([
 	 * @experimental As of version 1.95
 	 * @alias sap.ui.mdc.valuehelp.content.Bool
 	 */
-	const Bool = FixedList.extend("sap.ui.mdc.valuehelp.content.Bool", /** @lends sap.ui.mdc.valuehelp.content.Bool.prototype */
-	{
+	const Bool = FixedList.extend("sap.ui.mdc.valuehelp.content.Bool", /** @lends sap.ui.mdc.valuehelp.content.Bool.prototype */ {
 		metadata: {
 			library: "sap.ui.mdc",
 			interfaces: [
@@ -63,46 +60,42 @@ sap.ui.define([
 		FixedList.prototype.exit.apply(this, arguments);
 	};
 
-	Bool.prototype.getContent = function () {
-		return this._retrievePromise("boolContent", function () {
+	Bool.prototype.getContent = function() {
+		return this._retrievePromise("boolContent", () => {
 			return loadModules([
-				"sap/ui/mdc/valuehelp/content/FixedListItem",
-				"sap/ui/model/json/JSONModel"
-			]).then(function (aModules) {
+				"sap/ui/mdc/valuehelp/content/FixedListItem", "sap/ui/model/json/JSONModel"
+			]).then(function(aModules) {
 				const FixedListItem = aModules[0];
 				const JSONModel = aModules[1];
 				this._oModel = new JSONModel({
 					"type": "",
-					"items": [
-						{
-							"key": true,
-							"text": "true"
-						},
-						{
-							"key": false,
-							"text": "false"
-						}
-					]
+					"items": [{
+						"key": true,
+						"text": "true"
+					}, {
+						"key": false,
+						"text": "false"
+					}]
 				});
 				_updateModel.call(this, this.getConfig());
 
 				const oItem = new FixedListItem(this.getId() + "-Item", {
-					key: {path: "$Bool>key"},
-					text: {path: "$Bool>text"}
+					key: { path: "$Bool>key" },
+					text: { path: "$Bool>text" }
 				});
 
-				this.bindAggregation("items", {path: "$Bool>/items", template: oItem});
+				this.bindAggregation("items", { path: "$Bool>/items", template: oItem });
 				this.setModel(this._oModel, "$Bool");
 
 				return FixedList.prototype.getContent.apply(this, arguments);
-				}.bind(this));
-		}.bind(this));
+			}.bind(this));
+		});
 
 	};
 
-	Bool.prototype.getItemForValue = function (oConfig) {
+	Bool.prototype.getItemForValue = function(oConfig) {
 
-		return Promise.resolve().then(function () {
+		return Promise.resolve().then(() => {
 			// don't need to create items for this, just use the type to check
 			const oGlobalConfig = this.getConfig();
 			const oType = oConfig.dataType || (oGlobalConfig && oGlobalConfig.dataType);
@@ -132,7 +125,7 @@ sap.ui.define([
 			} else {
 				throw new Error("Type missing");
 			}
-		}.bind(this));
+		});
 
 	};
 
@@ -165,10 +158,11 @@ sap.ui.define([
 			if (oType && oData["type"] !== oType.getMetadata().getName()) {
 				oData["type"] = oType.getMetadata().getName();
 				const aItems = oData["items"];
-				for (let i = 0; i < aItems.length; i++) {
-					const oItem = aItems[i];
+
+				for (const oItem of aItems) {
 					oItem["text"] = oType.formatValue(oItem["key"], "string");
 				}
+
 				this._oModel.checkUpdate(true);
 			}
 		}
@@ -308,5 +302,5 @@ sap.ui.define([
 	 * @function
 	 */
 
-	 return Bool;
+	return Bool;
 });

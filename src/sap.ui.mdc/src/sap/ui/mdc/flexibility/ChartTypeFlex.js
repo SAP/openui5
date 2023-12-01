@@ -2,9 +2,8 @@
  * ${copyright}
  */
 sap.ui.define([
-	"sap/ui/mdc/flexibility/Util",
-	"sap/ui/fl/changeHandler/condenser/Classification"
-], function(Util, Classification) {
+	"sap/ui/mdc/flexibility/Util", "sap/ui/fl/changeHandler/condenser/Classification"
+], (Util, Classification) => {
 	"use strict";
 
 	const ChartTypeFlex = {};
@@ -13,7 +12,7 @@ sap.ui.define([
 		const oModifier = mPropertyBag.modifier;
 		return Promise.resolve()
 			.then(oModifier.getProperty.bind(oModifier, oChart, "chartType"))
-			.then(function(vOldValue) {
+			.then((vOldValue) => {
 				// First store the old value for revert
 				oChange.setRevertData(vOldValue);
 				// Then set the new value

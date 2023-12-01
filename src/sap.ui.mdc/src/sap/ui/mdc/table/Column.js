@@ -13,7 +13,7 @@ sap.ui.define([
 	"sap/ui/model/base/ManagedObjectModel",
 	"sap/ui/core/Control",
 	"sap/ui/mdc/enums/TableType"
-], function(
+], (
 	GridTableType,
 	ResponsiveTableType,
 	Log,
@@ -24,7 +24,7 @@ sap.ui.define([
 	ManagedObjectModel,
 	Control,
 	TableType
-) {
+) => {
 	"use strict";
 
 	/**
@@ -212,9 +212,7 @@ sap.ui.define([
 
 		const oWidthBindingInfo = {
 			parts: [
-				{path: "$this>/width"},
-				{path: "$columnSettings>/calculatedWidth"},
-				{path: "$columnSettings>/p13nWidth"}
+				{ path: "$this>/width" }, { path: "$columnSettings>/calculatedWidth" }, { path: "$columnSettings>/p13nWidth" }
 			],
 			formatter: function(sWidth, sCalculatedWidth, sP13nWidth) {
 				return sP13nWidth || sCalculatedWidth || sWidth;
@@ -223,10 +221,10 @@ sap.ui.define([
 
 		const oTooltipBindingInfo = {
 			parts: [
-				{path: "$this>/tooltip"},
-				{path: "$this>/header"},
-				{path: "$this>/headerVisible"},
-				{path: "$sap.ui.mdc.Table>/useColumnLabelsAsTooltips"}
+				{ path: "$this>/tooltip" },
+				{ path: "$this>/header" },
+				{ path: "$this>/headerVisible" },
+				{ path: "$sap.ui.mdc.Table>/useColumnLabelsAsTooltips" }
 			],
 			formatter: function(sTooltip, sHeader, bHeaderVisible, bUseColumnLabelsAsTooltips) {
 				if (sTooltip || !bUseColumnLabelsAsTooltips) {
@@ -246,9 +244,7 @@ sap.ui.define([
 				header: this._getColumnHeaderLabel(oTooltipBindingInfo),
 				importance: {
 					parts: [
-						{path: "$this>/importance"},
-						{path: "$this>/extendedSettings/importance"},
-						{path: "$this>/extendedSettings/@className"}
+						{ path: "$this>/importance" }, { path: "$this>/extendedSettings/importance" }, { path: "$this>/extendedSettings/@className" }
 					],
 					formatter: function(sLegacyImportance, sImportance, sClassName) {
 						if (sImportance && sClassName === "sap.ui.mdc.table.ResponsiveColumnSettings") {
@@ -261,8 +257,7 @@ sap.ui.define([
 				popinDisplay: "{= ${$this>/headerVisible} ? 'Inline' : 'WithoutHeader' }",
 				mergeDuplicates: {
 					parts: [
-						{path: "$this>/extendedSettings/mergeFunction"},
-						{path: "$this>/extendedSettings/@className"}
+						{ path: "$this>/extendedSettings/mergeFunction" }, { path: "$this>/extendedSettings/@className" }
 					],
 					formatter: function(sMergeFunction, sClassName) {
 						return sMergeFunction && sClassName === "sap.ui.mdc.table.ResponsiveColumnSettings";
@@ -270,8 +265,7 @@ sap.ui.define([
 				},
 				mergeFunctionName: {
 					parts: [
-						{path: "$this>/extendedSettings/mergeFunction"},
-						{path: "$this>/extendedSettings/@className"}
+						{ path: "$this>/extendedSettings/mergeFunction" }, { path: "$this>/extendedSettings/@className" }
 					],
 					formatter: function(sMergeFunction, sClassName) {
 						if (sClassName === "sap.ui.mdc.table.ResponsiveColumnSettings") {
@@ -310,10 +304,10 @@ sap.ui.define([
 		metadata: {
 			"final": true,
 			aggregations: {
-				label: {type: "sap.m.Label", multiple: false}
+				label: { type: "sap.m.Label", multiple: false }
 			},
 			associations: {
-				column: {type: "sap.ui.mdc.table.Column"}
+				column: { type: "sap.ui.mdc.table.Column" }
 			}
 		},
 		renderer: {
@@ -356,8 +350,7 @@ sap.ui.define([
 					tooltip: oTooltipBindingInfo ? oTooltipBindingInfo : "",
 					wrapping: {
 						parts: [
-							{path: "$this>/headerVisible"},
-							{path: "$columnSettings>/resizable"}
+							{ path: "$this>/headerVisible" }, { path: "$columnSettings>/resizable" }
 						],
 						formatter: function(bHeaderVisible, bResizable) {
 							return oTable._isOfType(TableType.ResponsiveTable) && bHeaderVisible && !bResizable;
@@ -515,9 +508,9 @@ sap.ui.define([
 		const oPropertyHelper = oTable.getPropertyHelper();
 
 		if (oPropertyHelper) {
-			oPropertyHelper.calculateColumnWidth(this).then(function(sWidth) {
+			oPropertyHelper.calculateColumnWidth(this).then((sWidth) => {
 				this._oSettingsModel.setProperty("/calculatedWidth", sWidth);
-			}.bind(this));
+			});
 		} else {
 			oTable._fullyInitialized().then(this._calculateColumnWidth.bind(this));
 		}

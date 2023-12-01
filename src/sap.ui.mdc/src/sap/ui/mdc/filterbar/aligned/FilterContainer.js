@@ -3,8 +3,13 @@
  */
 
 sap.ui.define([
-	"sap/base/i18n/Localization", 'sap/ui/mdc/filterbar/IFilterContainer',	'sap/ui/layout/AlignedFlowLayout', "sap/ui/layout/VerticalLayout", "sap/ui/layout/HorizontalLayout", "sap/m/Text"
-], function(Localization, IFilterContainer, AlignedFlowLayout, VerticalLayout, HorizontalLayout, Text) {
+	"sap/base/i18n/Localization",
+	'sap/ui/mdc/filterbar/IFilterContainer',
+	'sap/ui/layout/AlignedFlowLayout',
+	"sap/ui/layout/VerticalLayout",
+	"sap/ui/layout/HorizontalLayout",
+	"sap/m/Text"
+], (Localization, IFilterContainer, AlignedFlowLayout, VerticalLayout, HorizontalLayout, Text) => {
 	"use strict";
 	/**
 	 * Constructor for a new filterBar/aligned/FilterContainer.
@@ -25,7 +30,7 @@ sap.ui.define([
 
 	FilterContainer.prototype.exit = function() {
 		IFilterContainer.prototype.exit.apply(this, arguments);
-		if (this._oButtonsLayout){
+		if (this._oButtonsLayout) {
 			this._oButtonsLayout = null;
 		}
 	};

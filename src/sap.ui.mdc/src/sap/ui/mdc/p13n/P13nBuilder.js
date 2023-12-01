@@ -13,13 +13,13 @@ sap.ui.define([
 	"sap/ui/core/Lib",
 	"sap/ui/core/Locale",
 	"sap/ui/core/library"
-], function(P13nPropertyHelper, Localization, Button, Bar, Title, merge, MessageBox, Device, Library, Locale, coreLibrary) {
+], (P13nPropertyHelper, Localization, Button, Bar, Title, merge, MessageBox, Device, Library, Locale, coreLibrary) => {
 	"use strict";
 
 	const oRB = Library.getResourceBundleFor("sap.ui.mdc");
 
 	//Shortcut to sap.ui.core.TitleLevel
-	const TitleLevel = coreLibrary.TitleLevel;
+	const { TitleLevel } = coreLibrary;
 
 	/**
 	 *  Internal Utility class to create personalization UI's
@@ -43,9 +43,9 @@ sap.ui.define([
 		 */
 		createP13nPopover: function(oP13nUI, mDialogSettings) {
 
-			return new Promise(function(resolve, reject){
+			return new Promise((resolve, reject) => {
 
-				sap.ui.require(["sap/m/ResponsivePopover"], function(ResponsivePopover){
+				sap.ui.require(["sap/m/ResponsivePopover"], (ResponsivePopover) => {
 					P13nBuilder["_checkSettings"](oP13nUI, mDialogSettings, reject);
 
 					const oPopover = new ResponsivePopover({
@@ -57,7 +57,7 @@ sap.ui.define([
 						contentHeight: mDialogSettings.contentHeight ? mDialogSettings.contentHeight : "35rem",
 						placement: mDialogSettings.placement ? mDialogSettings.placement : "Bottom",
 						content: oP13nUI,
-						afterClose: mDialogSettings.afterClose ? mDialogSettings.afterClose : function(){}
+						afterClose: mDialogSettings.afterClose ? mDialogSettings.afterClose : function() {}
 					});
 
 					if (mDialogSettings.reset) {
@@ -71,7 +71,7 @@ sap.ui.define([
 					}
 
 					resolve(oPopover);
-				},reject);
+				}, reject);
 			});
 
 		},
@@ -88,13 +88,13 @@ sap.ui.define([
 		 */
 		createP13nDialog: function(oP13nUI, mDialogSettings) {
 
-			return new Promise(function(resolve, reject){
+			return new Promise((resolve, reject) => {
 
 				P13nBuilder["_checkSettings"](oP13nUI, mDialogSettings, reject);
 
 				const sId = mDialogSettings.id;
 
-				sap.ui.require(["sap/m/Dialog", "sap/m/Button"], function(Dialog, Button){
+				sap.ui.require(["sap/m/Dialog", "sap/m/Button"], (Dialog, Button) => {
 					const oResourceBundle = Library.getResourceBundleFor("sap.ui.mdc");
 					const oContainer = new Dialog(sId, {
 						title: mDialogSettings.title,
@@ -106,10 +106,10 @@ sap.ui.define([
 						resizable: true,
 						stretch: Device.system.phone,
 						content: oP13nUI,
-						afterClose: mDialogSettings.afterClose ? mDialogSettings.afterClose : function(){},
+						afterClose: mDialogSettings.afterClose ? mDialogSettings.afterClose : function() {},
 						buttons: [
 							new Button(sId ? sId + "-confirmBtn" : undefined, {
-								text:  mDialogSettings.confirm && mDialogSettings.confirm.text ?  mDialogSettings.confirm.text : oResourceBundle.getText("p13nDialog.OK"),
+								text: mDialogSettings.confirm && mDialogSettings.confirm.text ? mDialogSettings.confirm.text : oResourceBundle.getText("p13nDialog.OK"),
 								type: "Emphasized",
 								press: function() {
 									if (mDialogSettings.confirm && mDialogSettings.confirm.handler) {
@@ -119,7 +119,7 @@ sap.ui.define([
 
 							}), new Button(sId ? sId + "-cancelBtn" : undefined, {
 								text: oResourceBundle.getText("p13nDialog.CANCEL"),
-								press: function () {
+								press: function() {
 									mDialogSettings.cancel.apply(oContainer, arguments);
 								}
 							})
@@ -138,7 +138,7 @@ sap.ui.define([
 
 					const aAdditionalButtons = mDialogSettings.additionalButtons;
 					if (aAdditionalButtons instanceof Array) {
-						aAdditionalButtons.forEach(function(oButton){
+						aAdditionalButtons.forEach((oButton) => {
 							if (!oButton.isA("sap.m.Button")) {
 								reject("Please only provide sap.m.Button instances as 'additionalButtons'");
 							}
@@ -173,18 +173,18 @@ sap.ui.define([
 
 			if (mSettings.reset) {
 				const sId = mSettings.idResetButton;
-				oBar.addContentRight(new Button( sId, {
+				oBar.addContentRight(new Button(sId, {
 					text: Library.getResourceBundleFor("sap.ui.mdc").getText("p13nDialog.RESET"),
 					press: function(oEvt) {
 
-						const oDialog =  oEvt.getSource().getParent().getParent();
+						const oDialog = oEvt.getSource().getParent().getParent();
 						const oControl = oDialog.getParent();
 
 						const sResetText = mSettings.warningText ? mSettings.warningText : Library.getResourceBundleFor("sap.ui.mdc").getText("filterbar.ADAPT_RESET_WARNING");
 						MessageBox.warning(sResetText, {
 							actions: [MessageBox.Action.OK, MessageBox.Action.CANCEL],
 							emphasizedAction: MessageBox.Action.OK,
-							onClose: function (sAction) {
+							onClose: function(sAction) {
 								if (sAction === MessageBox.Action.OK) {
 									// --> focus "OK" button after 'reset' has been triggered
 									oDialog.getButtons()[0].focus();
@@ -210,7 +210,7 @@ sap.ui.define([
 
 			const bEnhance = fnEnhace instanceof Function;
 
-			oPropertyHelper.getProperties().forEach(function(oProperty) {
+			oPropertyHelper.getProperties().forEach((oProperty) => {
 
 				const mItem = {};
 				mItem.name = oProperty.name;
@@ -249,7 +249,7 @@ sap.ui.define([
 		},
 
 		//TODO: generify
-		sortP13nData: function (oSorting, aItems) {
+		sortP13nData: function(oSorting, aItems) {
 
 			const mP13nTypeSorting = oSorting;
 
@@ -261,7 +261,7 @@ sap.ui.define([
 			const oCollator = window.Intl.Collator(sLocale, {});
 
 			// group selected / unselected --> sort alphabetically in each group
-			aItems.sort(function (mField1, mField2) {
+			aItems.sort((mField1, mField2) => {
 				if (mField1[sSelectedAttribute] && mField2[sSelectedAttribute]) {
 					return (mField1[sPositionAttribute] || 0) - (mField2[sPositionAttribute] || 0);
 				} else if (mField1[sSelectedAttribute]) {
@@ -277,22 +277,22 @@ sap.ui.define([
 
 		_buildGroupStructure: function(mItemsGrouped) {
 			const aGroupedItems = [];
-			Object.keys(mItemsGrouped).forEach(function(sGroupKey){
+			Object.keys(mItemsGrouped).forEach((sGroupKey) => {
 				this.sortP13nData("generic", mItemsGrouped[sGroupKey]);
 				aGroupedItems.push({
 					group: sGroupKey,
-					groupLabel: mItemsGrouped[sGroupKey][0].groupLabel || oRB.getText("p13nDialog.FILTER_DEFAULT_GROUP"),//Grouplabel might not be necessarily be propagated to every item
+					groupLabel: mItemsGrouped[sGroupKey][0].groupLabel || oRB.getText("p13nDialog.FILTER_DEFAULT_GROUP"), //Grouplabel might not be necessarily be propagated to every item
 					groupVisible: true,
 					items: mItemsGrouped[sGroupKey]
 				});
-			}.bind(this));
+			});
 			return aGroupedItems;
 
 		},
 
-		_isExcludeProperty: function(oProperty, aIgnoreAttributes){
+		_isExcludeProperty: function(oProperty, aIgnoreAttributes) {
 
-			return aIgnoreAttributes.some(function(oKeyValuePair){
+			return aIgnoreAttributes.some((oKeyValuePair) => {
 				const sIgnoreKey = oKeyValuePair.ignoreKey;
 				const vIgnoreValue = oKeyValuePair.ignoreValue;
 				return oProperty[sIgnoreKey] === vIgnoreValue;
@@ -311,7 +311,7 @@ sap.ui.define([
 		},
 
 		arrayToMap: function(aArray) {
-			return aArray.reduce(function(mMap, oProp, iIndex){
+			return aArray.reduce((mMap, oProp, iIndex) => {
 				mMap[oProp.name] = oProp;
 				mMap[oProp.name].position = iIndex;
 				return mMap;
@@ -325,7 +325,7 @@ sap.ui.define([
 		 *
 		 * @returns {Promise} Promise resolving in the Dialog instance
 		 */
-		addRTACustomFieldButton: function (oDialog, oParent) {
+		addRTACustomFieldButton: function(oDialog, oParent) {
 
 			let bExtensibilityEnabled = false,
 				oDialogParent = oDialog.getParent();
@@ -335,79 +335,77 @@ sap.ui.define([
 				oDialogParent = oParent;
 			}
 
-            return new Promise(function(resolve) {
-                sap.ui.require([
-                    "sap/ui/fl/write/api/FieldExtensibility",
-                    "sap/ui/core/EventBus"
-                ], function(FieldExtensibility, EventBus) {
+			return new Promise((resolve) => {
+				sap.ui.require([
+					"sap/ui/fl/write/api/FieldExtensibility", "sap/ui/core/EventBus"
+				], (FieldExtensibility, EventBus) => {
 
-                    const oControlModel = oDialogParent && oDialogParent.getModel();
-                    const sServiceUrl = oControlModel && oControlModel.sServiceUrl ? oControlModel.sServiceUrl : "";
-                    const oHandleExtensibility = Promise.all([
-                        FieldExtensibility.isServiceOutdated(sServiceUrl),
-                        FieldExtensibility.isExtensibilityEnabled(oDialogParent)
-                    ]);
+					const oControlModel = oDialogParent && oDialogParent.getModel();
+					const sServiceUrl = oControlModel && oControlModel.sServiceUrl ? oControlModel.sServiceUrl : "";
+					const oHandleExtensibility = Promise.all([
+						FieldExtensibility.isServiceOutdated(sServiceUrl), FieldExtensibility.isExtensibilityEnabled(oDialogParent)
+					]);
 
-                    return oHandleExtensibility.then(function (aResult) {
-                        if (aResult[0]) {
-                            FieldExtensibility.setServiceValid(sServiceUrl);
-                            // needs FLP to trigger UI restart popup
-                            EventBus.getInstance().publish("sap.ui.core.UnrecoverableClientStateCorruption", "RequestReload", {});
-                        }
-                        bExtensibilityEnabled = !!aResult[1];
-                        return bExtensibilityEnabled;
-                    })
-                        .then(function(bExtensibilityEnabled) {
-                            let oCustomHeader = oDialog.getCustomHeader();
-                            const 	sId = oDialogParent && oDialogParent.getId ? oDialogParent.getId() : undefined,
-                                    oResourceBundle = Library.getResourceBundleFor("sap.ui.mdc");
+					return oHandleExtensibility.then((aResult) => {
+							if (aResult[0]) {
+								FieldExtensibility.setServiceValid(sServiceUrl);
+								// needs FLP to trigger UI restart popup
+								EventBus.getInstance().publish("sap.ui.core.UnrecoverableClientStateCorruption", "RequestReload", {});
+							}
+							bExtensibilityEnabled = !!aResult[1];
+							return bExtensibilityEnabled;
+						})
+						.then((bExtensibilityEnabled) => {
+							let oCustomHeader = oDialog.getCustomHeader();
+							const sId = oDialogParent && oDialogParent.getId ? oDialogParent.getId() : undefined,
+								oResourceBundle = Library.getResourceBundleFor("sap.ui.mdc");
 
-                            if (!oCustomHeader) {
-                                const oBar = new Bar({
-                                    contentLeft: [
-                                        new Title({
-                                            text: oDialog.getTitle(),
-                                            level: TitleLevel.H1
-                                        })
-                                    ]
-                                });
-                                oDialog.setCustomHeader(oBar);
-                                oCustomHeader = oDialog.getCustomHeader();
-                            }
+							if (!oCustomHeader) {
+								const oBar = new Bar({
+									contentLeft: [
+										new Title({
+											text: oDialog.getTitle(),
+											level: TitleLevel.H1
+										})
+									]
+								});
+								oDialog.setCustomHeader(oBar);
+								oCustomHeader = oDialog.getCustomHeader();
+							}
 
-                            if (bExtensibilityEnabled) {
-                                oCustomHeader.addContentRight(new Button( sId + "-addCustomField", {
-                                    icon: "sap-icon://add",
-                                    enabled: bExtensibilityEnabled,
-                                    tooltip: oResourceBundle.getText("p13nDialog.rtaAddTooltip"),
-                                    press: function (oEvt) {
-                                        const sRtaStyleClassName = "sapUiRTABorder",
-                                            oAdaptDialog =  oEvt.getSource().getParent().getParent();
-                                        let oControl = oAdaptDialog.getParent();
+							if (bExtensibilityEnabled) {
+								oCustomHeader.addContentRight(new Button(sId + "-addCustomField", {
+									icon: "sap-icon://add",
+									enabled: bExtensibilityEnabled,
+									tooltip: oResourceBundle.getText("p13nDialog.rtaAddTooltip"),
+									press: function(oEvt) {
+										const sRtaStyleClassName = "sapUiRTABorder",
+											oAdaptDialog = oEvt.getSource().getParent().getParent();
+										let oControl = oAdaptDialog.getParent();
 
-                                        // cover SmartTable scenario
-                                        if (oParent && oParent.isA('sap.ui.comp.smarttable.SmartTable')) {
-                                            oControl = oParent;
-                                        }
+										// cover SmartTable scenario
+										if (oParent && oParent.isA('sap.ui.comp.smarttable.SmartTable')) {
+											oControl = oParent;
+										}
 
-                                        FieldExtensibility.onControlSelected(oControl).then(function (oRetVal) {
-                                            FieldExtensibility.getExtensionData().then(function (oExtensibilityInfo) {
-                                                FieldExtensibility.onTriggerCreateExtensionData(oExtensibilityInfo, sRtaStyleClassName);
-                                                oAdaptDialog.close(); // close as if there is newly created custom field, next time user tries to open it - it checks for service outdated and shows correct information
-                                            });
-                                        });
+										FieldExtensibility.onControlSelected(oControl).then((oRetVal) => {
+											FieldExtensibility.getExtensionData().then((oExtensibilityInfo) => {
+												FieldExtensibility.onTriggerCreateExtensionData(oExtensibilityInfo, sRtaStyleClassName);
+												oAdaptDialog.close(); // close as if there is newly created custom field, next time user tries to open it - it checks for service outdated and shows correct information
+											});
+										});
 
-                                    }
-                                }));
+									}
+								}));
 
-                                oDialog.setCustomHeader(oCustomHeader);
-                                resolve(oDialog);
-                            }
+								oDialog.setCustomHeader(oCustomHeader);
+								resolve(oDialog);
+							}
 
-                        });
+						});
 
-                });
-            });
+				});
+			});
 		}
 
 	};

@@ -3,14 +3,12 @@
  */
 
 sap.ui.define([
-	'sap/m/Token',
-	"sap/ui/core/Lib",
-	'sap/ui/mdc/field/TokenDisplayRenderer'
-], function(
+	'sap/m/Token', "sap/ui/core/Lib", 'sap/ui/mdc/field/TokenDisplayRenderer'
+], (
 	Token,
 	Library,
 	TokenDisplayRenderer
-) {
+) => {
 	"use strict";
 
 	/**
@@ -30,8 +28,7 @@ sap.ui.define([
 	 * @since 1.99.0
 	 * @alias sap.ui.mdc.field.TokenDisplay
 	 */
-	const TokenDisplay = Token.extend("sap.ui.mdc.field.TokenDisplay", /** @lends sap.ui.mdc.field.TokenDisplay.prototype */
-	{
+	const TokenDisplay = Token.extend("sap.ui.mdc.field.TokenDisplay", /** @lends sap.ui.mdc.field.TokenDisplay.prototype */ {
 		metadata: {
 			library: "sap.ui.mdc",
 			properties: {

@@ -3,14 +3,12 @@
  */
 
 sap.ui.define([
-	"./TableTypeBase",
-	"sap/m/table/Util",
-	"sap/ui/mdc/enums/TableRowCountMode"
-], function(
+	"./TableTypeBase", "sap/m/table/Util", "sap/ui/mdc/enums/TableRowCountMode"
+], (
 	TableTypeBase,
 	MTableUtil,
 	TableRowCountMode
-) {
+) => {
 	"use strict";
 
 	let InnerTable, InnerColumn, InnerRowAction, InnerRowActionItem, InnerFixedRowMode, InnerAutoRowMode, InnerRowSettings;
@@ -104,7 +102,7 @@ sap.ui.define([
 			let bHideEmptyRows = false;
 
 			if (oRowMode && (vValue === TableRowCountMode.Fixed && !oRowMode.isA("sap.ui.table.rowmodes.Fixed") ||
-							 vValue === TableRowCountMode.Auto && !oRowMode.isA("sap.ui.table.rowmodes.Auto"))) {
+					vValue === TableRowCountMode.Auto && !oRowMode.isA("sap.ui.table.rowmodes.Auto"))) {
 				bHideEmptyRows = oRowMode.getHideEmptyRows();
 				oRowMode.destroy();
 				oRowMode = null;
@@ -145,12 +143,17 @@ sap.ui.define([
 			return Promise.resolve();
 		}
 
-		return this.loadUiTableLibrary().then(function() {
-			return new Promise(function(resolve, reject) {
+		return this.loadUiTableLibrary().then(() => {
+			return new Promise((resolve, reject) => {
 				sap.ui.require([
-					"sap/ui/table/Table", "sap/ui/table/Column", "sap/ui/table/RowAction", "sap/ui/table/RowActionItem",
-					"sap/ui/table/rowmodes/Fixed", "sap/ui/table/rowmodes/Auto", "sap/ui/table/RowSettings"
-				], function(GridTable, GridColumn, RowAction, RowActionItem, FixedRowMode, AutoRowMode, RowSettings) {
+					"sap/ui/table/Table",
+					"sap/ui/table/Column",
+					"sap/ui/table/RowAction",
+					"sap/ui/table/RowActionItem",
+					"sap/ui/table/rowmodes/Fixed",
+					"sap/ui/table/rowmodes/Auto",
+					"sap/ui/table/RowSettings"
+				], (GridTable, GridColumn, RowAction, RowActionItem, FixedRowMode, AutoRowMode, RowSettings) => {
 					InnerTable = GridTable;
 					InnerColumn = GridColumn;
 					InnerRowAction = RowAction;
@@ -159,7 +162,7 @@ sap.ui.define([
 					InnerAutoRowMode = AutoRowMode;
 					InnerRowSettings = RowSettings;
 					resolve();
-				}, function() {
+				}, () => {
 					reject("Failed to load some modules");
 				});
 			});
@@ -225,7 +228,7 @@ sap.ui.define([
 			return;
 		}
 
-		oGridTable.getColumns().forEach(function(oColumn) {
+		oGridTable.getColumns().forEach((oColumn) => {
 			oColumn.setResizable(true);
 			oColumn.setAutoResizable(true);
 		});
@@ -241,7 +244,7 @@ sap.ui.define([
 			return;
 		}
 
-		oGridTable.getColumns().forEach(function(oColumn) {
+		oGridTable.getColumns().forEach((oColumn) => {
 			oColumn.setResizable(false);
 			oColumn.setAutoResizable(false);
 		});
@@ -394,13 +397,13 @@ sap.ui.define([
 			return Promise.reject();
 		}
 
-		return new Promise(function(resolve) {
+		return new Promise((resolve) => {
 			if (iIndex === -1) {
 				iIndex = MTableUtil.isEmpty(oTable.getRowBinding()) ? 0 : oTable.getRowBinding().getLength();
 			}
 
 			if (oGridTable._setFirstVisibleRowIndex(iIndex)) {
-				oGridTable.attachEventOnce("rowsUpdated", function() {
+				oGridTable.attachEventOnce("rowsUpdated", () => {
 					resolve();
 				});
 			} else {

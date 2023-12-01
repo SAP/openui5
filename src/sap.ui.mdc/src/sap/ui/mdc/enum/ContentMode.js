@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
-sap.ui.define(function() {
+sap.ui.define(() => {
 	"use strict";
 
 	/**
@@ -67,8 +67,8 @@ sap.ui.define(function() {
 		 * @private
 		 * @ui5-restricted sap.ui.mdc
 		 */
-		 EditForHelp: "EditForHelp"
-		};
+		EditForHelp: "EditForHelp"
+	};
 
 	return ContentMode;
 

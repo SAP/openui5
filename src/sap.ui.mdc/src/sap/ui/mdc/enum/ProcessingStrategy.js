@@ -3,10 +3,10 @@
  */
 
 // Provides enumeration sap.ui.mdc.enum.ProcessingStrategy
-sap.ui.define(function() {
+sap.ui.define(() => {
 	"use strict";
 
-   /**
+	/**
 	 * Defines the delta types of the <code>sap.ui.mdc.p13n.Engine</code>.
 	 *
 	 * @enum {string}

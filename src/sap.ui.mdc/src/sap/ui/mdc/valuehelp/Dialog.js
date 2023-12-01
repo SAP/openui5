@@ -16,7 +16,7 @@ sap.ui.define([
 	'sap/base/strings/formatMessage',
 	'sap/ui/core/library',
 	'sap/ui/core/InvisibleMessage'
-], function(
+], (
 	Library,
 	Container,
 	DialogTab,
@@ -30,7 +30,7 @@ sap.ui.define([
 	formatMessage,
 	coreLibrary,
 	InvisibleMessage
-) {
+) => {
 	"use strict";
 
 	/**
@@ -46,13 +46,13 @@ sap.ui.define([
 
 	// translation utils
 	let oMessageBundle = Library.getResourceBundleFor("sap.ui.mdc");
-	sap.ui.getCore().attachLocalizationChanged(function() {
+	sap.ui.getCore().attachLocalizationChanged(() => {
 		oMessageBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
 	});
 
 	let MDialog, MLibrary, Button, ManagedObjectModel, IconTabBar, IconTabFilter;
 	let Panel, HBox, MultiInput, Token, Filter;
-	const InvisibleMessageMode = coreLibrary.InvisibleMessageMode;
+	const { InvisibleMessageMode } = coreLibrary;
 
 	/**
 	 * Constructor for a new <code>Dialog</code> container.
@@ -67,13 +67,11 @@ sap.ui.define([
 	 * @since 1.95.0
 	 * @alias sap.ui.mdc.valuehelp.Dialog
 	 */
-	const Dialog = Container.extend("sap.ui.mdc.valuehelp.Dialog", /** @lends sap.ui.mdc.valuehelp.Dialog.prototype */
-	{
+	const Dialog = Container.extend("sap.ui.mdc.valuehelp.Dialog", /** @lends sap.ui.mdc.valuehelp.Dialog.prototype */ {
 		metadata: {
 			library: "sap.ui.mdc",
 			interfaces: [
-				"sap.ui.mdc.valuehelp.IDialogContainer",
-				"sap.ui.core.PopupInterface"
+				"sap.ui.mdc.valuehelp.IDialogContainer", "sap.ui.core.PopupInterface"
 			],
 			properties: {
 				_selectedContentKey: {
@@ -133,17 +131,17 @@ sap.ui.define([
 
 	function _isValidContentGroup(sName) {
 		const aContent = this.getContent();
-		return aContent.filter(function (oContent) {
+		return aContent.filter((oContent) => {
 			return !!oContent.getVisible() && oContent.getGroup && oContent.getGroup() === sName;
 		}).length > 1;
 	}
 
-	Dialog.prototype._handleContentSelectionChange = function (sNextId) {
-		this.fireRequestDelegateContent({container: this.getId(), contentId: sNextId});
-		return this.getRetrieveDelegateContentPromise().then(function () {
+	Dialog.prototype._handleContentSelectionChange = function(sNextId) {
+		this.fireRequestDelegateContent({ container: this.getId(), contentId: sNextId });
+		return this.getRetrieveDelegateContentPromise().then(() => {
 			const sCurrentContentKey = this.getProperty("_selectedContentKey");
 			const aContents = this.getContent();
-			const oCurrentContent = sCurrentContentKey && aContents && aContents.find(function (oContent) {
+			const oCurrentContent = sCurrentContentKey && aContents && aContents.find((oContent) => {
 				return oContent.getId() === sCurrentContentKey;
 			});
 			if (oCurrentContent) {
@@ -154,10 +152,10 @@ sap.ui.define([
 				this.unbindContentFromContainer(oCurrentContent);
 			}
 			return this._renderSelectedContent(sNextId);
-		}.bind(this));
+		});
 	};
 
-	Dialog.prototype._onTabBarSelect = function (oEvent) {
+	Dialog.prototype._onTabBarSelect = function(oEvent) {
 		const oNextKey = oEvent && oEvent.getParameter("key");
 		this._handleContentSelectionChange(oNextKey);
 	};
@@ -188,11 +186,11 @@ sap.ui.define([
 		return Container.prototype.getUIAreaForContent.apply(this, arguments);
 	};
 
-	Dialog.prototype.handleConfirmed = function (oEvent) {
-		this.fireConfirm({close: true});
+	Dialog.prototype.handleConfirmed = function(oEvent) {
+		this.fireConfirm({ close: true });
 	};
 
-	Dialog.prototype.handleClosed = function (oEvent) {
+	Dialog.prototype.handleClosed = function(oEvent) {
 
 		const oContent = this.getSelectedContent();
 
@@ -200,7 +198,7 @@ sap.ui.define([
 			oContent.onHide();
 		}
 
-		this.getContent().forEach(function (oContent) {
+		this.getContent().forEach((oContent) => {
 			oContent.onContainerClose();
 		});
 
@@ -210,7 +208,7 @@ sap.ui.define([
 		Container.prototype.handleClosed.apply(this, arguments);
 	};
 
-	Dialog.prototype.getContainerControl = function () {
+	Dialog.prototype.getContainerControl = function() {
 		if (!this.getModel("$i18n")) {
 			// if ResourceModel not provided from outside create own one
 			this.setModel(new ResourceModel({ bundleName: "sap/ui/mdc/messagebundle", async: false }), "$i18n");
@@ -219,20 +217,20 @@ sap.ui.define([
 		const oDialog = this.getAggregation("_container");
 
 		if (!oDialog) {
-			return this._retrievePromise("dialog", function (){
+			return this._retrievePromise("dialog", () => {
 				return loadModules([
 					"sap/m/Dialog",
 					"sap/m/Button",
 					"sap/ui/model/base/ManagedObjectModel",
 					"sap/m/library"
-				]).then(function (aModules) {
+				]).then((aModules) => {
 
 					MDialog = aModules[0];
 					Button = aModules[1];
 					ManagedObjectModel = aModules[2];
 					MLibrary = aModules[3];
 
-					const ButtonType = MLibrary.ButtonType;
+					const { ButtonType } = MLibrary;
 
 					if (!this._oResourceBundle) {
 						this._oResourceBundle = Library.getResourceBundleFor("sap.ui.mdc");
@@ -243,9 +241,12 @@ sap.ui.define([
 						enabled: "{$valueHelp>/_valid}",
 						type: ButtonType.Emphasized,
 						press: this.handleConfirmed.bind(this),
-						visible: { parts: ['$valueHelp>/_config/maxConditions', '$help>/_quickSelectEnabled'], formatter: function(iMaxConditions, bQuickSelectEnabled) {
-							return iMaxConditions !== 1 || !bQuickSelectEnabled;
-						}}
+						visible: {
+							parts: ['$valueHelp>/_config/maxConditions', '$help>/_quickSelectEnabled'],
+							formatter: function(iMaxConditions, bQuickSelectEnabled) {
+								return iMaxConditions !== 1 || !bQuickSelectEnabled;
+							}
+						}
 					});
 
 					this.oButtonCancel = new Button(this.getId() + "-cancel", {
@@ -260,8 +261,9 @@ sap.ui.define([
 						contentWidth: _getContentWidth(),
 						horizontalScrolling: false,
 						verticalScrolling: false,
-						title: {parts: ['$help>/title', '$help>/_selectableContents'], formatter:
-							function(sTitle, aContent) {
+						title: {
+							parts: ['$help>/title', '$help>/_selectableContents'],
+							formatter: function(sTitle, aContent) {
 								if (aContent && aContent.length == 1) {
 									const oContent = aContent[0];
 									const sDlgTitle = oContent.getFormattedShortTitle() ? oContent.getFormattedShortTitle() : oContent.getTitle();
@@ -284,26 +286,26 @@ sap.ui.define([
 					oDialog.setModel(this._oManagedObjectModel, "$help");
 					this.setAggregation("_container", oDialog, true);
 
-					oDialog.isPopupAdaptationAllowed = function () {
+					oDialog.isPopupAdaptationAllowed = function() {
 						return false;
 					};
 					oDialog.addStyleClass("sapMdcValueHelp");
 					oDialog.addStyleClass("sapMdcValueHelpTitle");
 
-					const oContentArea = new VBox(this.getId() + "-Content", { fitContainer: true});
+					const oContentArea = new VBox(this.getId() + "-Content", { fitContainer: true });
 					oContentArea.addStyleClass("sapMdcValueHelpPanel");
 					oDialog.addContent(oContentArea);
 
 					return oDialog;
 
-				}.bind(this));
-			}.bind(this));
+				});
+			});
 		}
 
 		return oDialog;
 	};
 
-	Dialog.prototype.placeContent = function (oDialog) {
+	Dialog.prototype.placeContent = function(oDialog) {
 
 		const oContentArea = oDialog.getContent()[0];
 		const aSelectableContents = this.getProperty("_selectableContents");
@@ -319,7 +321,7 @@ sap.ui.define([
 			aContentPromises.push(this._getIconTabBar(oDialog));
 		} else {
 			if (!this._oStandaloneTab) {
-				this._oStandaloneTab = new DialogTab(this.getId() + "-Standalone-DT", {content: {path: "/_selectableContents/0/displayContent", model: "$help"}, layoutData: new FlexItemData({growFactor: 1, minHeight: "0"})});
+				this._oStandaloneTab = new DialogTab(this.getId() + "-Standalone-DT", { content: { path: "/_selectableContents/0/displayContent", model: "$help" }, layoutData: new FlexItemData({ growFactor: 1, minHeight: "0" }) });
 			}
 			aContentPromises.push(this._oStandaloneTab);
 		}
@@ -328,9 +330,9 @@ sap.ui.define([
 			aContentPromises.push(this._getTokenizerPanel());
 		}
 
-		return Promise.all(aContentPromises).then(function (aControls) {
+		return Promise.all(aContentPromises).then((aControls) => {
 			oContentArea.removeAllItems();
-			aControls.forEach(function (oControl) {
+			aControls.forEach((oControl) => {
 				oContentArea.addItem(oControl);
 			});
 
@@ -344,7 +346,7 @@ sap.ui.define([
 		});
 	};
 
-	Dialog.prototype.handleSelect = function (oEvent) {
+	Dialog.prototype.handleSelect = function(oEvent) {
 		Container.prototype.handleSelect.apply(this, arguments);
 
 		if (this.getProperty("_quickSelectEnabled") && this.isSingleSelect()) {
@@ -352,15 +354,15 @@ sap.ui.define([
 			const bPositiveType = [ValueHelpSelectionType.Set, ValueHelpSelectionType.Add].indexOf(oEvent.getParameter("type")) !== -1;
 			const iLength = aEventConditions && aEventConditions.length;
 			if (bPositiveType && iLength) {
-				this.fireConfirm({close: true});
+				this.fireConfirm({ close: true });
 			}
 		}
 	};
 
-	Dialog.prototype.observeChanges = function (oChanges) {
+	Dialog.prototype.observeChanges = function(oChanges) {
 		if (oChanges.name === "content") {
 			const aContent = this.getContent();
-			this.setProperty("_quickSelectEnabled", aContent && aContent.every(function (oContent) {
+			this.setProperty("_quickSelectEnabled", aContent && aContent.every((oContent) => {
 				return oContent.isQuickSelectSupported();
 			}));
 
@@ -376,8 +378,8 @@ sap.ui.define([
 				// check if Tokenizer needs to be created lately
 				const oDialog = this.getAggregation("_container");
 				if (oDialog && oDialog.getContent()[0].getItems().length === 1) { // container already created but no tokenizer
-					Promise.all([this._getTokenizerPanel()]).then(function (aControls) {
-						aControls.forEach(function (oControl) {
+					Promise.all([this._getTokenizerPanel()]).then((aControls) => {
+						aControls.forEach((oControl) => {
 							oDialog.getContent()[0].addItem(oControl);
 						});
 					});
@@ -388,26 +390,26 @@ sap.ui.define([
 		Container.prototype.observeChanges.apply(this, arguments);
 	};
 
-	Dialog.prototype._updateInitialContentKey = function () {
-		const oFirstVisibleContent = this.getContent().find(function (oContent) {
+	Dialog.prototype._updateInitialContentKey = function() {
+		const oFirstVisibleContent = this.getContent().find((oContent) => {
 			return !!oContent.getVisible();
 		});
 		this._sInitialContentKey = oFirstVisibleContent && oFirstVisibleContent.getId();
 	};
 
-	Dialog.prototype.getSelectedContent = function () {
+	Dialog.prototype.getSelectedContent = function() {
 		const sSelectedKey = this.getProperty("_selectedContentKey");
-		return this.getContent().find(function (oContent) {
+		return this.getContent().find((oContent) => {
 			return oContent.getId() === sSelectedKey;
 		});
 	};
 
-	Dialog.prototype._getSelectableContents = function () {
+	Dialog.prototype._getSelectableContents = function() {
 		const oSelectedContent = this.getSelectedContent();
 		const oSelectedContentGroup = oSelectedContent && oSelectedContent.getGroup && oSelectedContent.getGroup();
 		const sSelectedGroup = oSelectedContent ? oSelectedContentGroup : "";
 		const aVisibleGroups = [sSelectedGroup];
-		return this.getContent().filter(function (oContent) {
+		return this.getContent().filter((oContent) => {
 			if (!oContent.getVisible()) {
 				return false;
 			}
@@ -422,29 +424,28 @@ sap.ui.define([
 				}
 			}
 			return true;
-		}.bind(this));
+		});
 	};
 
-	Dialog.prototype._updateGroupSelectModel = function () {
+	Dialog.prototype._updateGroupSelectModel = function() {
 		if (this._oGroupSelectModel) {
 			const oSelectedContent = this.getSelectedContent();
 			const oSelectedContentGroup = oSelectedContent && oSelectedContent.getGroup && oSelectedContent.getGroup();
-			const aRelevantContents = oSelectedContentGroup ? this.getContent().filter(function (oContent) {
+			const aRelevantContents = oSelectedContentGroup ? this.getContent().filter((oContent) => {
 				return !!oContent.getVisible() && oContent.getGroup && oContent.getGroup() === oSelectedContentGroup;
 			}) : [];
 			this._oGroupSelectModel.setData(aRelevantContents.reduce(
-				function (oResult, oControl) {
+				(oResult, oControl) => {
 					oResult.entries.push({
 						key: oControl.getId(),
 						text: oControl.getFormattedTitle()
 					});
 					return oResult;
-				},
-				{ entries: [] }
+				}, { entries: [] }
 			));
-			if (this._oGroupSelect) {	// Update selected key, if current one cannot be found in relevant contents
+			if (this._oGroupSelect) { // Update selected key, if current one cannot be found in relevant contents
 				const sSelectedItemKey = this._oGroupSelect.getSelectedItemKey();
-				const aRelevantKeys = aRelevantContents.map(function (oContent) {
+				const aRelevantKeys = aRelevantContents.map((oContent) => {
 					return oContent.getId();
 				});
 
@@ -457,14 +458,12 @@ sap.ui.define([
 		}
 	};
 
-	Dialog.prototype._retrieveGroupSelect = function () {
-		return this._retrievePromise("collectiveSearchSelect", function (){
+	Dialog.prototype._retrieveGroupSelect = function() {
+		return this._retrievePromise("collectiveSearchSelect", () => {
 			return loadModules([
-				"sap/ui/mdc/filterbar/vh/CollectiveSearchSelect",
-				"sap/m/VariantItem",
-				"sap/ui/model/json/JSONModel"
+				"sap/ui/mdc/filterbar/vh/CollectiveSearchSelect", "sap/m/VariantItem", "sap/ui/model/json/JSONModel"
 			]).then(
-				function (aModules) {
+				(aModules) => {
 					const CollectiveSearchSelect = aModules[0];
 					const Item = aModules[1];
 					const JSONModel = aModules[2];
@@ -474,75 +473,73 @@ sap.ui.define([
 					}
 					if (!this._oGroupSelect) {
 						const oItemTemplate = new Item(
-							this.getId() + "-collSearchItem",
-							{
+							this.getId() + "-collSearchItem", {
 								key: "{$select>key}",
 								text: "{$select>text}"
 							}
 						);
-						this._oGroupSelect = new CollectiveSearchSelect(this.getId() + "--Select",
-							{
-								title:"{$i18n>COL_SEARCH_SEL_TITLE}",
-								items: {
-									path: "$select>/entries",
-									template: oItemTemplate
-								},
-								select: function (oEvent) {
-									this._handleContentSelectionChange(oEvent.getParameter("key"));
-								}.bind(this),
-								selectedItemKey: this.getSelectedContent().getId(),
-								maxWidth: Device.system.phone ? "5em" : "25rem"
-							}
-						);
+						this._oGroupSelect = new CollectiveSearchSelect(this.getId() + "--Select", {
+							title: "{$i18n>COL_SEARCH_SEL_TITLE}",
+							items: {
+								path: "$select>/entries",
+								template: oItemTemplate
+							},
+							select: function(oEvent) {
+								this._handleContentSelectionChange(oEvent.getParameter("key"));
+							}.bind(this),
+							selectedItemKey: this.getSelectedContent().getId(),
+							maxWidth: Device.system.phone ? "5em" : "25rem"
+						});
 						this._oGroupSelect.setModel(this._oGroupSelectModel, "$select");
 					}
 					return this._oGroupSelect;
-				}.bind(this)
+				}
 			);
-		}.bind(this));
+		});
 	};
 
-	Dialog.prototype._getIconTabBar = function () {
+	Dialog.prototype._getIconTabBar = function() {
 		if (!this._oIconTabBar) {
-			return this._retrievePromise("IconTabBar", function (){
+			return this._retrievePromise("IconTabBar", () => {
 				return loadModules([
-					"sap/m/IconTabBar",
-					"sap/m/IconTabFilter"]).then(function(aModules){
-						IconTabBar = aModules[0];
-						IconTabFilter = aModules[1];
-						const IconTabHeaderMode = MLibrary.IconTabHeaderMode;
+					"sap/m/IconTabBar", "sap/m/IconTabFilter"
+				]).then((aModules) => {
+					IconTabBar = aModules[0];
+					IconTabFilter = aModules[1];
+					const { IconTabHeaderMode } = MLibrary;
 
-						this._oIconTabBar = new IconTabBar(this.getId() + "-ITB", {
-							expandable: false,
-							upperCase: false,
-							stretchContentHeight: true,
-							headerMode: IconTabHeaderMode.Inline,
-							select: this._onTabBarSelect.bind(this),
-							layoutData: new FlexItemData({growFactor: 1}),
-							selectedKey: "{path: '$help>/_selectedContentKey', mode: 'OneWay'}"
-						});
-						// this._oIconTabBar.setModel(this._oManagedObjectModel, "$help");
-						this._oIconTabBar.addStyleClass("sapUiNoContentPadding");
-						const oITF = new IconTabFilter(this.getId() + "-ITF", {
-							key: {path: "$help>id"},
-							content: new DialogTab(this.getId() + "-DT", {content: {path: "$help>displayContent"}}),
-							text: {parts: ['$help>', '$valueHelp>/conditions'], formatter:
-								function(oContent, aConditions) {
-									let sTitle = "none";
-									if (oContent) {
-										const sGroup = oContent.getGroup && oContent.getGroup();
-										const iCount = oContent.getCount(aConditions, sGroup);
-										sTitle = sGroup ? this._getFormattedContentGroupLabel(sGroup, iCount) : oContent.getFormattedTitle(iCount);
-									}
-									return sTitle;
-								}.bind(this)
-							}
-						});
+					this._oIconTabBar = new IconTabBar(this.getId() + "-ITB", {
+						expandable: false,
+						upperCase: false,
+						stretchContentHeight: true,
+						headerMode: IconTabHeaderMode.Inline,
+						select: this._onTabBarSelect.bind(this),
+						layoutData: new FlexItemData({ growFactor: 1 }),
+						selectedKey: "{path: '$help>/_selectedContentKey', mode: 'OneWay'}"
+					});
+					// this._oIconTabBar.setModel(this._oManagedObjectModel, "$help");
+					this._oIconTabBar.addStyleClass("sapUiNoContentPadding");
+					const oITF = new IconTabFilter(this.getId() + "-ITF", {
+						key: { path: "$help>id" },
+						content: new DialogTab(this.getId() + "-DT", { content: { path: "$help>displayContent" } }),
+						text: {
+							parts: ['$help>', '$valueHelp>/conditions'],
+							formatter: function(oContent, aConditions) {
+								let sTitle = "none";
+								if (oContent) {
+									const sGroup = oContent.getGroup && oContent.getGroup();
+									const iCount = oContent.getCount(aConditions, sGroup);
+									sTitle = sGroup ? this._getFormattedContentGroupLabel(sGroup, iCount) : oContent.getFormattedTitle(iCount);
+								}
+								return sTitle;
+							}.bind(this)
+						}
+					});
 
-						this._oIconTabBar.bindAggregation("items", {path: "/_selectableContents", model: "$help", templateShareable: false, template: oITF});
-						return this._oIconTabBar;
-				}.bind(this));
-			}.bind(this));
+					this._oIconTabBar.bindAggregation("items", { path: "/_selectableContents", model: "$help", templateShareable: false, template: oITF });
+					return this._oIconTabBar;
+				});
+			});
 		}
 		return this._oIconTabBar;
 	};
@@ -557,10 +554,10 @@ sap.ui.define([
 		return sTitle;
 	};
 
-	Dialog.prototype._getTokenizerPanel = function (oDialog) {
+	Dialog.prototype._getTokenizerPanel = function(oDialog) {
 
 		if (!this.oTokenizerPanel) {
-			return this._retrievePromise("TokenizerPanel", function (){
+			return this._retrievePromise("TokenizerPanel", () => {
 				return loadModules([
 					'sap/m/Panel',
 					'sap/m/HBox',
@@ -569,7 +566,7 @@ sap.ui.define([
 					'sap/m/Token',
 					'sap/ui/model/Filter',
 					'sap/ui/mdc/field/ConditionType'
-				]).then(function (aModules) {
+				]).then((aModules) => {
 
 					Panel = aModules[0];
 					HBox = aModules[1];
@@ -578,22 +575,24 @@ sap.ui.define([
 					Token = aModules[4];
 					Filter = aModules[5];
 					const ConditionType = aModules[6];
-					const BackgroundDesign = MLibrary.BackgroundDesign;
-					const ButtonType = MLibrary.ButtonType;
+					const { BackgroundDesign } = MLibrary;
+					const { ButtonType } = MLibrary;
 
 					this.oTokenizerPanel = new Panel(this.getId() + "-TokenPanel", {
 						backgroundDesign: BackgroundDesign.Transparent,
 						expanded: true,
-						visible: {parts: ['$valueHelp>/_config/maxConditions', '$help>/content'], formatter: _isTokenizerRequired},
-						headerText: {parts: ['$valueHelp>/conditions', '$help>/_selectableContents'], formatter:
-							function(aConditions, aContent) {
+						visible: { parts: ['$valueHelp>/_config/maxConditions', '$help>/content'], formatter: _isTokenizerRequired },
+						headerText: {
+							parts: ['$valueHelp>/conditions', '$help>/_selectableContents'],
+							formatter: function(aConditions, aContent) {
 								let iCount = 0;
-								for (let i = 0; i < aConditions.length; i++) {
-									const oCondition = aConditions[i];
+
+								for (const oCondition of aConditions) {
 									if (oCondition.isEmpty !== true) {
 										iCount++;
 									}
 								}
+
 								let sTitle;
 								if (aContent && aContent.length == 1) { // in case of single content the title will be provided by the content
 									sTitle = aContent[0].getFormattedTokenizerTitle(iCount);
@@ -612,7 +611,7 @@ sap.ui.define([
 					});
 					this.oTokenizerPanel.addStyleClass("sapMdcTokenizerPanel");
 
-					const oHBox = new HBox(this.getId() + "-TokenBox", {fitContainer: true, width: "100%"});
+					const oHBox = new HBox(this.getId() + "-TokenBox", { fitContainer: true, width: "100%" });
 
 					const oFormatOptions = _getConditionFormatOptions.call(this);
 					this._oConditionType = new ConditionType(oFormatOptions);
@@ -621,7 +620,7 @@ sap.ui.define([
 						width: "100%",
 						showValueHelp: false,
 						editable: true,
-						ariaAttributes: { role: "listbox", aria : { readonly: true, roledescription: this._oResourceBundle.getText("valuehelp.TOKENIZER_ARIA_ROLE_DESCRIPTION")}},
+						ariaAttributes: { role: "listbox", aria: { readonly: true, roledescription: this._oResourceBundle.getText("valuehelp.TOKENIZER_ARIA_ROLE_DESCRIPTION") } },
 						ariaLabelledBy: this.oTokenizerPanel,
 						tokenUpdate: function(oEvent) {
 							if (oEvent.getParameter("removedTokens")) {
@@ -629,23 +628,23 @@ sap.ui.define([
 								const aConditions = this.getModel("$valueHelp").getObject("/conditions");
 								const aRemovedConditions = [];
 
-								aRemovedTokens.forEach(function(oRemovedToken, i) {
-									const sPath = oRemovedToken.getBindingContext("$valueHelp").sPath;
+								aRemovedTokens.forEach((oRemovedToken, i) => {
+									const { sPath } = oRemovedToken.getBindingContext("$valueHelp");
 									const iIndex = parseInt(sPath.slice(sPath.lastIndexOf("/") + 1));
 									aRemovedConditions.push(aConditions[iIndex]);
 								});
 
-								this.fireSelect({type: ValueHelpSelectionType.Remove, conditions: aRemovedConditions});
+								this.fireSelect({ type: ValueHelpSelectionType.Remove, conditions: aRemovedConditions });
 							}
 
 						}.bind(this),
-						layoutData: new FlexItemData({growFactor: 1, maxWidth: "calc(100% - 2rem)"})
+						layoutData: new FlexItemData({ growFactor: 1, maxWidth: "calc(100% - 2rem)" })
 					});
 
 					// Overwrite the setValueVisible to make the input part not visible (transparent).
 					// Problem: you can still enter a value into the $input dom ref and this will be shown when you remove all tokens. this can be solved inside the afterRender handler.
 					// ACC issue: the screenreader is still reading this control as input field and that the user can enter a value - which is not correct.
-					this.oTokenMultiInput._setValueVisible = function (bVisible) {
+					this.oTokenMultiInput._setValueVisible = function(bVisible) {
 						this.$("inner").css("opacity", "0");
 					};
 
@@ -653,7 +652,7 @@ sap.ui.define([
 					this.oTokenMultiInput.onAfterRendering = function() {
 						org.apply(this.oTokenMultiInput, arguments);
 
-						this.oTokenMultiInput._setValueVisible();  // make the input always invisible
+						this.oTokenMultiInput._setValueVisible(); // make the input always invisible
 						this.oTokenMultiInput.setValue(""); // set the value to empty string
 					}.bind(this);
 
@@ -661,14 +660,14 @@ sap.ui.define([
 
 					this.oRemoveAllBtn = new Button(this.getId() + "-TokenRemoveAll", {
 						press: function(oEvent) {
-							this.fireSelect({type: ValueHelpSelectionType.Set, conditions: []});
+							this.fireSelect({ type: ValueHelpSelectionType.Set, conditions: [] });
 
 							this.oInvisibleMessage.announce(oMessageBundle.getText("valuehelp.REMOVEALLTOKEN_ANNOUNCE"), InvisibleMessageMode.Assertive);
 						}.bind(this),
 						type: ButtonType.Transparent,
 						icon: "sap-icon://decline",
 						tooltip: "{$i18n>valuehelp.REMOVEALLTOKEN}",
-						layoutData: new FlexItemData({growFactor: 0, baseSize: "2rem"})
+						layoutData: new FlexItemData({ growFactor: 0, baseSize: "2rem" })
 					});
 					this.oRemoveAllBtn.addStyleClass("sapUiTinyMarginBegin");
 
@@ -677,8 +676,8 @@ sap.ui.define([
 					this.oTokenizerPanel.addContent(oHBox);
 
 					return this.oTokenizerPanel;
-				}.bind(this));
-			}.bind(this));
+				});
+			});
 		} else { // update ConditionType with current formatOptions
 			const oFormatOptions = _getConditionFormatOptions.call(this);
 			this._oConditionType.setFormatOptions(oFormatOptions);
@@ -689,10 +688,10 @@ sap.ui.define([
 	function _isTokenizerRequired(iMaxConditions, aContent) {
 		let bVisible = iMaxConditions !== 1;
 
-		if (bVisible && aContent && aContent.every(function(oContent) {
-			// make the tokenizer visible when at least one content request the tokenizer
-			return !oContent.getRequiresTokenizer();
-		})) {
+		if (bVisible && aContent && aContent.every((oContent) => {
+				// make the tokenizer visible when at least one content request the tokenizer
+				return !oContent.getRequiresTokenizer();
+			})) {
 			bVisible = false;
 		}
 
@@ -727,10 +726,10 @@ sap.ui.define([
 			const oBindingInfo = this.oTokenMultiInput.getBindingInfo("tokens");
 			if (bBind) {
 				if (!oBindingInfo) { // not bound -> create binding
-					const oFilter = new Filter({path:'isEmpty', operator:'NE', value1:true});
+					const oFilter = new Filter({ path: 'isEmpty', operator: 'NE', value1: true });
 					this._oConditionType.setFormatOptions(_getConditionFormatOptions.call(this)); // as config might be changed
-					const oTokenTemplate = new Token(this.getId() + "-Token", {text: {path: '$valueHelp>', type: this._oConditionType}});
-					this.oTokenMultiInput.bindAggregation("tokens", {path: '/conditions', model: "$valueHelp", templateShareable: false, template: oTokenTemplate, filters: oFilter});
+					const oTokenTemplate = new Token(this.getId() + "-Token", { text: { path: '$valueHelp>', type: this._oConditionType } });
+					this.oTokenMultiInput.bindAggregation("tokens", { path: '/conditions', model: "$valueHelp", templateShareable: false, template: oTokenTemplate, filters: oFilter });
 				}
 			} else if (oBindingInfo) { // remove binding if dialog is closed to prevent updated on tokens if conditions are updated. (Suspend would not be enough, as every single binding on token would need to be suspended too.)
 				this.oTokenMultiInput.unbindAggregation("tokens");
@@ -739,19 +738,19 @@ sap.ui.define([
 
 	}
 
-	Dialog.prototype.openContainer = function (oDialog) {
+	Dialog.prototype.openContainer = function(oDialog) {
 
 		this._mAlreadyShownContents = {};
 
 		if (oDialog) {
 			this._updateInitialContentKey(); // Update initial key as visibilities might change during content retrieval
 
-			const fnRenderContent = function () {
-				this._renderSelectedContent(this._sInitialContentKey, function () {
+			const fnRenderContent = function() {
+				this._renderSelectedContent(this._sInitialContentKey, () => {
 
-					const oCurrentContent = this.getContent().find(function (oContent) {
+					const oCurrentContent = this.getContent().find((oContent) => {
 						return oContent.getId() === this.getProperty("_selectedContentKey");
-					}.bind(this));
+					});
 
 					const oInitialFocusedControl = oCurrentContent.getInitialFocusedControl();
 					if (oInitialFocusedControl) {
@@ -759,16 +758,16 @@ sap.ui.define([
 					}
 
 					oDialog.open();
-					this.getContent().forEach(function (oContent) {
+					this.getContent().forEach((oContent) => {
 						oContent.onContainerOpen();
 					});
-				}.bind(this));
+				});
 			}.bind(this);
 
 			if (_isTokenizerRequired(this.getMaxConditions(), this.getContent()) && oDialog.getContent()[0].getItems().length === 1) {
 				// Tokenizer needed but already no tokenizer
-				Promise.all([this._getTokenizerPanel()]).then(function (aControls) {
-					aControls.forEach(function (oControl) {
+				Promise.all([this._getTokenizerPanel()]).then((aControls) => {
+					aControls.forEach((oControl) => {
 						oDialog.getContent()[0].addItem(oControl);
 					});
 					fnRenderContent();
@@ -782,8 +781,8 @@ sap.ui.define([
 		}
 	};
 
-	Dialog.prototype._renderSelectedContent = function (sNextContentId, fnBeforeShow) {
-		const oNextContent = this.getContent().find(function (oContent) {
+	Dialog.prototype._renderSelectedContent = function(sNextContentId, fnBeforeShow) {
+		const oNextContent = this.getContent().find((oContent) => {
 			return oContent.getId() === sNextContentId;
 		});
 
@@ -800,15 +799,15 @@ sap.ui.define([
 		}
 		const bInitial = !this._mAlreadyShownContents[sNextContentId];
 
-		return Promise.all(aNecessaryPromises).then(function () {
+		return Promise.all(aNecessaryPromises).then(() => {
 			this.bindContentToContainer(oNextContent);
-		}.bind(this)).then(function () {
+		}).then(() => {
 			return Promise.resolve(oNextContent.onBeforeShow(bInitial));
-		}).then(function () {
+		}).then(() => {
 			this._mAlreadyShownContents[sNextContentId] = true;
 			this.setProperty("_selectedContentKey", sNextContentId);
 			this.setProperty("_selectableContents", this._getSelectableContents());
-			this._oManagedObjectModel.checkUpdate(true, false, function (oBinding) { // force update as bindings to $help>displayContent are not updated automatically in some cases
+			this._oManagedObjectModel.checkUpdate(true, false, (oBinding) => { // force update as bindings to $help>displayContent are not updated automatically in some cases
 				if (oBinding.getPath().indexOf("displayContent") >= 0) { // do not update other bindings as this might lead to rerendering of IconTabBar ot other unwanted updates.
 					return true;
 				}
@@ -825,14 +824,14 @@ sap.ui.define([
 				fnBeforeShow();
 			}
 
-			return this._retrievePromise("open").then(function () {
+			return this._retrievePromise("open").then(() => {
 				oNextContent.onShow(bInitial);
 				return oNextContent;
 			});
-		}.bind(this));
+		});
 	};
 
-	Dialog.prototype.closeContainer = function () {
+	Dialog.prototype.closeContainer = function() {
 		const oContainer = this.getAggregation("_container");
 		if (oContainer) {
 			oContainer.close();
@@ -849,9 +848,9 @@ sap.ui.define([
 
 	Dialog.prototype.getAriaAttributes = function(iMaxConditions) {
 
-//		var aContent = this.getContent();
-//		var oContentAttributes = oContent && oContent.getAriaAttributes(iMaxConditions);
-//
+		//		var aContent = this.getContent();
+		//		var oContentAttributes = oContent && oContent.getAriaAttributes(iMaxConditions);
+		//
 		return {
 			contentId: null, // as in Dialog case focus is not in field, it is not needed
 			ariaHasPopup: "dialog",
@@ -868,13 +867,13 @@ sap.ui.define([
 
 	};
 
-	Dialog.prototype.init = function () {
+	Dialog.prototype.init = function() {
 		Container.prototype.init.apply(this, arguments);
 
 		this.oInvisibleMessage = InvisibleMessage.getInstance();
 	};
 
-	Dialog.prototype.exit = function () {
+	Dialog.prototype.exit = function() {
 		Common.cleanup(this, [
 			"_oManagedObjectModel",
 			"_oResourceBundle",

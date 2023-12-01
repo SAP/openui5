@@ -3,10 +3,8 @@
  */
 
 sap.ui.define([
-	'./ItemBaseFlex',
-	'./Util',
-	"sap/ui/fl/changeHandler/common/ChangeCategories"
-], function(ItemBaseFlex, Util, ChangeCategories) {
+	'./ItemBaseFlex', './Util', "sap/ui/fl/changeHandler/common/ChangeCategories"
+], (ItemBaseFlex, Util, ChangeCategories) => {
 	"use strict";
 
 	/**
@@ -20,12 +18,12 @@ sap.ui.define([
 	const oFilterItemFlex = Object.assign({}, ItemBaseFlex);
 
 	oFilterItemFlex.findItem = function(oModifier, aFilters, sName) {
-		return aFilters.reduce(function(oPreviousPromise, oFilter) {
+		return aFilters.reduce((oPreviousPromise, oFilter) => {
 			return oPreviousPromise
-				.then(function(oFoundFilter) {
+				.then((oFoundFilter) => {
 					if (!oFoundFilter) {
 						return oModifier.getProperty(oFilter, "propertyKey")
-							.then(function(sPropertyName) {
+							.then((sPropertyName) => {
 								if (sPropertyName === sName) {
 									return oFilter;
 								}
@@ -47,7 +45,7 @@ sap.ui.define([
 		const oFilterBar = oAppComponent.byId(oChange.getSelector().id);
 		let sKey;
 		const aArgs = [oContent.name];
-		const mVersionInfo = { descriptionPayload: {}};
+		const mVersionInfo = { descriptionPayload: {} };
 
 		if (oChange.getChangeType() === "addFilter") {
 			mVersionInfo.descriptionPayload.category = ChangeCategories.ADD;
@@ -68,7 +66,7 @@ sap.ui.define([
 			aArgs.splice(0, 1, oProperty.label);
 		}
 
-		return Util.getMdcResourceText(sKey, aArgs).then(function(sText) {
+		return Util.getMdcResourceText(sKey, aArgs).then((sText) => {
 			mVersionInfo.descriptionPayload.description = sText;
 
 			mVersionInfo.updateRequired = true;
@@ -81,4 +79,4 @@ sap.ui.define([
 
 
 	return oFilterItemFlex;
-}, /* bExport= */true);
+}, /* bExport= */ true);

@@ -5,8 +5,8 @@
 // Provides control sap.ui.mdc.valuehelp.content.FixedListItem.
 sap.ui.define([
 	'sap/ui/mdc/valuehelp/content/FixedListItem'
-], function(
-		FixedListItem) {
+], (
+	FixedListItem) => {
 	"use strict";
 
 	/**
@@ -29,9 +29,11 @@ sap.ui.define([
 	 * @deprecated as of 1.114.0, replaced by {@link sap.ui.mdc.valuehelp.content.FixedListItem FixedListItem}
 	 * @alias sap.ui.mdc.field.ListFieldHelpItem
 	 */
-	const ListFieldHelpItem = FixedListItem.extend("sap.ui.mdc.field.ListFieldHelpItem", /** @lends sap.ui.mdc.field.ListFieldHelpItem.prototype */ { metadata : {
-		library: "sap.ui.mdc"
-	}});
+	const ListFieldHelpItem = FixedListItem.extend("sap.ui.mdc.field.ListFieldHelpItem", /** @lends sap.ui.mdc.field.ListFieldHelpItem.prototype */ {
+		metadata: {
+			library: "sap.ui.mdc"
+		}
+	});
 
 
 	return ListFieldHelpItem;

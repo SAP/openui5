@@ -7,12 +7,12 @@ sap.ui.define([
 	"sap/ui/core/dnd/DragDropInfo",
 	"sap/ui/model/base/ManagedObjectModel",
 	"sap/ui/mdc/enums/TableP13nMode"
-], function(
+], (
 	Element,
 	DragDropInfo,
 	ManagedObjectModel,
 	TableP13nMode
-) {
+) => {
 	"use strict";
 
 	/**
@@ -184,13 +184,12 @@ sap.ui.define([
 	 * @param {sap.ui.mdc.table.Column} oColumn - The mdc column instance
 	 * @private
 	 */
-	TableTypeBase.prototype._onColumnInsert = function(oColumn) {
-	};
+	TableTypeBase.prototype._onColumnInsert = function(oColumn) {};
 
-	TableTypeBase.prototype.loadModules = function() {return Promise.reject(this + " does not implement #loadModules");};
+	TableTypeBase.prototype.loadModules = function() { return Promise.reject(this + " does not implement #loadModules"); };
 	TableTypeBase.prototype.updateTableByProperty = function(sProperty, vValue) {};
 	TableTypeBase.prototype.removeToolbar = function() {};
-	TableTypeBase.prototype.scrollToIndex = function(iIndex) {return Promise.reject();};
+	TableTypeBase.prototype.scrollToIndex = function(iIndex) { return Promise.reject(); };
 	TableTypeBase.prototype.updateRowSettings = function() {};
 	TableTypeBase.prototype.prepareRowPress = function() {};
 	TableTypeBase.prototype.cleanupRowPress = function() {};
@@ -205,7 +204,7 @@ sap.ui.define([
 	TableTypeBase.prototype.createColumnResizeMenuItem = function() {};
 	TableTypeBase.prototype.updateRowActions = function() {};
 	TableTypeBase.prototype.updateSortIndicator = function(oColumn, sSortOrder) {};
-	TableTypeBase.prototype.getTableStyleClasses = function() {return [];};
+	TableTypeBase.prototype.getTableStyleClasses = function() { return []; };
 
 	return TableTypeBase;
 });

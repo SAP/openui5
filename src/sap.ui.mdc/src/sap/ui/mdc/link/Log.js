@@ -7,7 +7,7 @@ sap.ui.define([
 	'sap/ui/base/Object',
 	'sap/base/util/isEmptyObject',
 	"sap/ui/core/Locale"
-], function(Localization, BaseObject, isEmptyObject, Locale) {
+], (Localization, BaseObject, isEmptyObject, Locale) => {
 	"use strict";
 
 	/**
@@ -22,8 +22,7 @@ sap.ui.define([
 	 * @since 1.58.0
 	 * @alias sap.ui.mdc.link.Log
 	 */
-	const Log = BaseObject.extend("sap.ui.mdc.link.Log", /** @lends sap.ui.mdc.link.Log.prototype */
-	{
+	const Log = BaseObject.extend("sap.ui.mdc.link.Log", /** @lends sap.ui.mdc.link.Log.prototype */ {
 		// Structure of log object:
 		// {
 		//    semanticObjects: {
@@ -72,12 +71,12 @@ sap.ui.define([
 	};
 	Log.prototype.initialize = function(aSemanticObjects) {
 		this.reset();
-		aSemanticObjects.forEach(function(sSemanticObject) {
+		aSemanticObjects.forEach((sSemanticObject) => {
 			this.createSemanticObjectStructure(sSemanticObject);
-		}.bind(this));
+		});
 	};
 	Log.prototype.addContextObject = function(sSemanticObject, oContextObject) {
-		for ( const sAttributeName in oContextObject) {
+		for (const sAttributeName in oContextObject) {
 			const oAttribute = this.createAttributeStructure();
 			this.addSemanticObjectAttribute(sSemanticObject, sAttributeName, oAttribute);
 			oAttribute.transformations.push({
@@ -137,7 +136,7 @@ sap.ui.define([
 				value: "\u2022\u0020" + sAttributeName + " : ",
 				description: ""
 			};
-			aTransformations.forEach(function(oTransformation, iIndex) {
+			aTransformations.forEach((oTransformation, iIndex) => {
 				oResult.value = oResult.value + (iIndex > 0 ? "\u0020 \u279c \u0020" : "") + fnGetReadableValue(oTransformation["value"]);
 				oResult.description = oResult.description + "\u2026 \u0020 " + oTransformation["description"] + "\n";
 				if (oTransformation["reason"]) {
@@ -148,7 +147,7 @@ sap.ui.define([
 		};
 		const fnResolveIntents = function(aIntents) {
 			let sIntents = "";
-			aIntents.forEach(function(oIntent) {
+			aIntents.forEach((oIntent) => {
 				sIntents += "\u2022\u0020'" + oIntent.text + "' : " + oIntent.intent + "\n";
 			});
 			return sIntents;
@@ -160,11 +159,11 @@ sap.ui.define([
 					const oCollator = window.Intl.Collator(sLanguage, {
 						numeric: true
 					});
-					aArray.sort(function(a, b) {
+					aArray.sort((a, b) => {
 						return oCollator.compare(a, b);
 					});
 				} else {
-					aArray.sort(function(a, b) {
+					aArray.sort((a, b) => {
 						return a.localeCompare(b, sLanguage, {
 							numeric: true
 						});
@@ -177,7 +176,7 @@ sap.ui.define([
 
 		let sText = "";
 
-		for ( const sSemanticObject in this._oLog.semanticObjects) {
+		for (const sSemanticObject in this._oLog.semanticObjects) {
 			sText = sText + "\n\u2b24" + " " + sSemanticObject + "\n";
 			if (isEmptyObject(this._oLog.semanticObjects[sSemanticObject].attributes)) {
 				sText += "\u2026\u2026 \u0020\ud83d\udd34 No semantic attributes available for semantic object " + sSemanticObject + ". Please be aware " + "that without semantic attributes no URL parameters can be created.\n";
@@ -185,8 +184,7 @@ sap.ui.define([
 				const aSemanticAttributes = Object.keys(this._oLog.semanticObjects[sSemanticObject].attributes);
 				fnSortByText(aSemanticAttributes);
 
-				for (let i = 0; i < aSemanticAttributes.length; i++) {
-					const sAttributeName = aSemanticAttributes[i];
+				for (const sAttributeName of aSemanticAttributes) {
 					const oTexts = fnResolveTransformations(this._oLog.semanticObjects[sSemanticObject].attributes[sAttributeName].transformations, sAttributeName);
 					sText += oTexts.value + "\n";
 					sText += oTexts.description;

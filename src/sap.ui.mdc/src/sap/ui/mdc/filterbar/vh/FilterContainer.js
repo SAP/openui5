@@ -11,13 +11,13 @@ sap.ui.define(
 		"sap/m/ToolbarSpacer",
 		"sap/m/VBox"
 	],
-	function (
+	(
 		IFilterContainer,
 		AlignedFlowLayout,
 		Toolbar,
 		ToolbarSpacer,
 		VBox
-	) {
+	) => {
 		"use strict";
 		/**
 		 * Constructor for a new filterBar/vh/FilterContainer.
@@ -30,8 +30,7 @@ sap.ui.define(
 		 * @alias sap.ui.mdc.filterbar.vh.FilterContainer
 		 */
 		const FilterContainer = IFilterContainer.extend(
-			"sap.ui.mdc.filterbar.vh.FilterContainer",
-			{
+			"sap.ui.mdc.filterbar.vh.FilterContainer", {
 				metadata: {
 					aggregations: {
 
@@ -48,12 +47,12 @@ sap.ui.define(
 			}
 		);
 
-		FilterContainer.prototype.init = function () {
+		FilterContainer.prototype.init = function() {
 			this.aLayoutItems = [];
 
 			this.oToolbar = new Toolbar(this.getId() + "-tbr", { content: [new ToolbarSpacer()] });
 
-			this.oAlgnLayout = new AlignedFlowLayout(this.getId() + "-aflayout",{
+			this.oAlgnLayout = new AlignedFlowLayout(this.getId() + "-aflayout", {
 				visible: "{$sap.ui.filterbar.mdc.FilterBarBase>/expandFilterFields}"
 			}).addStyleClass("sapUiMdcFilterBarBaseAFLayout");
 
@@ -65,36 +64,36 @@ sap.ui.define(
 		};
 
 		FilterContainer.prototype.exit = function() {
-			this.aLayoutItems.forEach(function(oItem){
+			this.aLayoutItems.forEach((oItem) => {
 				oItem.destroy();
 			});
 			this.aLayoutItems = null;
 		};
 
-		FilterContainer.prototype.addControl = function (oControl) {
+		FilterContainer.prototype.addControl = function(oControl) {
 			this.oToolbar.addContent(oControl);
 		};
 
-		FilterContainer.prototype.insertControl = function (oControl, iIndex) {
+		FilterContainer.prototype.insertControl = function(oControl, iIndex) {
 			this.oToolbar.insertContent(oControl, iIndex);
 		};
 
-		FilterContainer.prototype.removeControl = function (oControl) {
+		FilterContainer.prototype.removeControl = function(oControl) {
 			this.oToolbar.removeContent(oControl);
 		};
 
-		FilterContainer.prototype.addEndContent = function (oControl) {
+		FilterContainer.prototype.addEndContent = function(oControl) {
 			this.oAlgnLayout.addEndContent(oControl);
 		};
 
-		FilterContainer.prototype.insertFilterField = function (oControl, iIndex) {
+		FilterContainer.prototype.insertFilterField = function(oControl, iIndex) {
 			this.aLayoutItems.splice(iIndex, 0, oControl);
 			this._updateFilterBarLayout();
 		};
 
-		FilterContainer.prototype.removeFilterField = function (oControl) {
+		FilterContainer.prototype.removeFilterField = function(oControl) {
 			let nIdx = -1;
-			this.aLayoutItems.some(function(oLayoutItem, i){
+			this.aLayoutItems.some((oLayoutItem, i) => {
 				if (oControl === oLayoutItem) {
 					nIdx = i;
 					return true;
@@ -109,7 +108,7 @@ sap.ui.define(
 
 		};
 
-		FilterContainer.prototype.getFilterFields = function () {
+		FilterContainer.prototype.getFilterFields = function() {
 			return this.oAlgnLayout.getContent();
 		};
 
@@ -121,25 +120,25 @@ sap.ui.define(
 
 			if (!bUpdate) {
 				const aItems = this.oAlgnLayout.getContent();
-				aItems.some(function(oItem, i){
+				aItems.some((oItem, i) => {
 					if (oItem != this.aLayoutItems[i]) {
 						bUpdate = true;
 						return true;
 					}
 					return false;
-				}.bind(this));
+				});
 			}
 
 			if (bUpdate) {
 				this.oAlgnLayout.removeAllContent();
 
-				this.aLayoutItems.some(function(oLayoutItem, nIdx) {
-					if (bShowAll || n <= iThreshold ||  nIdx + 1 < iThreshold) {
+				this.aLayoutItems.some((oLayoutItem, nIdx) => {
+					if (bShowAll || n <= iThreshold || nIdx + 1 < iThreshold) {
 						this.oAlgnLayout.insertContent(oLayoutItem, nIdx);
 						return false;
 					}
 					return true;
-				}.bind(this));
+				});
 			}
 
 			const oShowAllFiltersBtn = this.oAlgnLayout.getEndContent()[0];

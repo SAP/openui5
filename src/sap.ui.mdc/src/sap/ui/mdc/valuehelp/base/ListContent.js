@@ -3,12 +3,11 @@
  */
 
 sap.ui.define([
-	'sap/ui/mdc/valuehelp/base/Content',
-	'sap/ui/mdc/enums/ConditionValidated'
-], function(
+	'sap/ui/mdc/valuehelp/base/Content', 'sap/ui/mdc/enums/ConditionValidated'
+], (
 	Content,
 	ConditionValidated
-) {
+) => {
 	"use strict";
 
 	/**
@@ -27,8 +26,7 @@ sap.ui.define([
 	 * @since 1.95.0
 	 * @alias sap.ui.mdc.valuehelp.base.ListContent
 	 */
-	const ListContent = Content.extend("sap.ui.mdc.valuehelp.base.ListContent", /** @lends sap.ui.mdc.valuehelp.base.ListContent.prototype */
-	{
+	const ListContent = Content.extend("sap.ui.mdc.valuehelp.base.ListContent", /** @lends sap.ui.mdc.valuehelp.base.ListContent.prototype */ {
 		metadata: {
 			library: "sap.ui.mdc",
 			properties: {
@@ -52,7 +50,7 @@ sap.ui.define([
 				 *
 				 * The matching item is returned in the <code>typeaheadSuggested</code> event and used for the autocomplete feature in the connected field.
 				 */
-				 useFirstMatch: {
+				useFirstMatch: {
 					type: "boolean",
 					group: "Behavior",
 					defaultValue: true
@@ -60,16 +58,14 @@ sap.ui.define([
 				/**
 				 * If set, the list is opened whenever the value help icon is pressed.
 				 */
-				 useAsValueHelp: {
+				useAsValueHelp: {
 					type: "boolean",
 					group: "Behavior",
 					defaultValue: true // TODO - right default?
 				}
 			},
-			aggregations: {
-			},
-			events: {
-			}
+			aggregations: {},
+			events: {}
 		}
 	});
 
@@ -93,15 +89,15 @@ sap.ui.define([
 
 	};
 
-	ListContent.prototype.getCount = function (aConditions) {
+	ListContent.prototype.getCount = function(aConditions) {
 		let iCount = 0;
 
-		for (let i = 0; i < aConditions.length; i++) {
-			const oCondition = aConditions[i];
+		for (const oCondition of aConditions) {
 			if (oCondition.isEmpty !== true && oCondition.validated === ConditionValidated.Validated) {
 				iCount++;
 			}
 		}
+
 		return iCount;
 	};
 
@@ -110,7 +106,7 @@ sap.ui.define([
 	 * @returns {sap.ui.model.ListBinding} <code>ListBinding</code>
 	 * @protected
 	 */
-	ListContent.prototype.getListBinding = function () {
+	ListContent.prototype.getListBinding = function() {
 		throw new Error("ListContent: Every listcontent must implement this method.");
 	};
 

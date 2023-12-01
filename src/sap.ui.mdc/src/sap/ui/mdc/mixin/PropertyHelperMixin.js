@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
-sap.ui.define(["sap/base/util/Deferred", "sap/ui/mdc/util/loadModules", "sap/base/Log"], function (Deferred, loadModules, Log) {
+sap.ui.define(["sap/base/util/Deferred", "sap/ui/mdc/util/loadModules", "sap/base/Log"], (Deferred, loadModules, Log) => {
 	"use strict";
 
 	/**
@@ -11,7 +11,7 @@ sap.ui.define(["sap/base/util/Deferred", "sap/ui/mdc/util/loadModules", "sap/bas
 	 * The following methods are available:
 	 *
 	 * <ul>
- 	 * <li><code>initPropertyHelper</code> - Loads and initializes the property helper related to the enhanced control.</li>
+	 * <li><code>initPropertyHelper</code> - Loads and initializes the property helper related to the enhanced control.</li>
 	 * <li><code>awaitPropertyHelper</code> - Provides access to the property helper initialization <code>Promise</code>.</li>
 	 * <li><code>finalizePropertyHelper</code> - Finalizes the propertyHelper fetching all available propertyInfo via a given control delegate.</li>
 	 * <li><code>isPropertyHelperFinal</code> - Indicates if the propertyHelper for this control allready contains all available propertyInfo.</li>
@@ -34,11 +34,11 @@ sap.ui.define(["sap/base/util/Deferred", "sap/ui/mdc/util/loadModules", "sap/bas
 	 * @private
 	 * @experimental
 	 * @ui5-restricted sap.ui.mdc
-	*/
+	 */
 	const PropertyHelperMixin = {};
 
-	PropertyHelperMixin.init = function (fnInit) {
-		return function () {
+	PropertyHelperMixin.init = function(fnInit) {
+		return function() {
 
 			this._oPropertyHelper = null;
 			this._oPropertyHelperDeferred = new Deferred();
@@ -56,8 +56,8 @@ sap.ui.define(["sap/base/util/Deferred", "sap/ui/mdc/util/loadModules", "sap/bas
 		};
 	};
 
-	PropertyHelperMixin.applySettings = function (fnApplySettings) {
-		return function () {
+	PropertyHelperMixin.applySettings = function(fnApplySettings) {
+		return function() {
 			if (fnApplySettings) {
 				fnApplySettings.apply(this, arguments);
 			}
@@ -67,7 +67,7 @@ sap.ui.define(["sap/base/util/Deferred", "sap/ui/mdc/util/loadModules", "sap/bas
 				_createOrUpdatePropertyHelper.call(this, [], false);
 			}
 
-			this._oApplySettingsDeferred.resolve(this);	// We want to make sure all other initial properties are set before initializing propertyHelper (e.g. delegate)
+			this._oApplySettingsDeferred.resolve(this); // We want to make sure all other initial properties are set before initializing propertyHelper (e.g. delegate)
 			return this;
 		};
 	};
@@ -111,9 +111,9 @@ sap.ui.define(["sap/base/util/Deferred", "sap/ui/mdc/util/loadModules", "sap/bas
 	 * @returns {Promise<sap.ui.mdc.util.PropertyHelper>} Returns a <code>Promise</code> that resolves with the property helper
 	 */
 	PropertyHelperMixin.finalizePropertyHelper = function() {
-		this._pHelperFinalizationPromise = this._pHelperFinalizationPromise || _getDelegateProperties(this).then(function (aResult) {
+		this._pHelperFinalizationPromise = this._pHelperFinalizationPromise || _getDelegateProperties(this).then((aResult) => {
 			return _createOrUpdatePropertyHelper.call(this, aResult, true);
-		}.bind(this));
+		});
 		return this._pHelperFinalizationPromise;
 	};
 
@@ -133,7 +133,7 @@ sap.ui.define(["sap/base/util/Deferred", "sap/ui/mdc/util/loadModules", "sap/bas
 	 * @protected
 	 * @returns {boolean} Returns a <code>boolean</code> indicating the propertyHelper's final state
 	 */
-	 PropertyHelperMixin.isPropertyHelperFinal = function() {
+	PropertyHelperMixin.isPropertyHelperFinal = function() {
 		return this._bPropertyHelperFinal;
 	};
 
@@ -143,8 +143,8 @@ sap.ui.define(["sap/base/util/Deferred", "sap/ui/mdc/util/loadModules", "sap/bas
 	 * @protected
 	 * @returns {Promise<sap.ui.mdc.util.PropertyHelper>} Returns a <code>Promise</code> that resolves with the property helper
 	 */
-	 PropertyHelperMixin.awaitPropertyHelper = function() {
-		if (this._oPropertyHelperDeferred){
+	PropertyHelperMixin.awaitPropertyHelper = function() {
+		if (this._oPropertyHelperDeferred) {
 			return this._oPropertyHelperDeferred.promise;
 		} else {
 			return Promise.resolve();
@@ -161,8 +161,8 @@ sap.ui.define(["sap/base/util/Deferred", "sap/ui/mdc/util/loadModules", "sap/bas
 		return this._oPropertyHelper;
 	};
 
-	PropertyHelperMixin.exit = function (fnExit) {
-		return function () {
+	PropertyHelperMixin.exit = function(fnExit) {
+		return function() {
 			this._oPropertyHelper = null;
 			this._oPropertyHelperDeferred = null;
 			this._oApplySettingsDeferred = null;
@@ -197,9 +197,9 @@ sap.ui.define(["sap/base/util/Deferred", "sap/ui/mdc/util/loadModules", "sap/bas
 			throw new Error("PropertyHelperMixin: Property '" + sPropertyName + "' not found.");
 		}
 		const oJSONKeys = this.getMetadata().getJSONKeys()[sPropertyName];
-		this._oPropertyInfoStoreMutatorOverride = {key: oJSONKeys._sMutator, mutator: this[oJSONKeys._sMutator]};
+		this._oPropertyInfoStoreMutatorOverride = { key: oJSONKeys._sMutator, mutator: this[oJSONKeys._sMutator] };
 
-		this[oJSONKeys._sMutator] = function () {
+		this[oJSONKeys._sMutator] = function() {
 			this._oPropertyInfoStoreMutatorOverride.mutator.apply(this, arguments);
 			if (!this._bPropertyHelperFinal) {
 				_createOrUpdatePropertyHelper.call(this, this[oJSONKeys._sGetter](), false);
@@ -210,7 +210,7 @@ sap.ui.define(["sap/base/util/Deferred", "sap/ui/mdc/util/loadModules", "sap/bas
 	};
 
 	// Should ideally be called already during init for controls featuring a propertyInfo property (auto-initalization of PH after applySettings).
-	PropertyHelperMixin._setPropertyHelperClass = function (PropertyHelperClass) {
+	PropertyHelperMixin._setPropertyHelperClass = function(PropertyHelperClass) {
 		if (this._oPropertyHelper || this._bPropertyHelperInitializing) {
 			throw new Error("PropertyHelper already initializing/ed.");
 		}
@@ -229,9 +229,9 @@ sap.ui.define(["sap/base/util/Deferred", "sap/ui/mdc/util/loadModules", "sap/bas
 		const oProperty = this._getPropertyByName(sName);
 
 		if (!oProperty) {
-			return this.finalizePropertyHelper().then(function (oPropertyHelper) {
+			return this.finalizePropertyHelper().then((oPropertyHelper) => {
 				return this._getPropertyByName(sName);
-			}.bind(this));
+			});
 		}
 		return Promise.resolve(oProperty);
 	};
@@ -239,9 +239,9 @@ sap.ui.define(["sap/base/util/Deferred", "sap/ui/mdc/util/loadModules", "sap/bas
 	function _createOrUpdatePropertyHelper(aProperties, bFinal) {
 		if (!this.bIsDestroyed) {
 			if (this._bPropertyHelperInitializing && typeof aProperties !== "undefined") {
-				return this._oPropertyHelperDeferred.promise.then(function () {
+				return this._oPropertyHelperDeferred.promise.then(() => {
 					return _updatePropertyHelper.call(this, aProperties, bFinal);
-				}.bind(this));
+				});
 			}
 
 			if (this._oPropertyHelper && typeof aProperties !== "undefined") {
@@ -254,7 +254,7 @@ sap.ui.define(["sap/base/util/Deferred", "sap/ui/mdc/util/loadModules", "sap/bas
 		return this._oPropertyHelperDeferred && this._oPropertyHelperDeferred.promise;
 	}
 
-	function _createPropertyHelper (aProperties, bFinal) {
+	function _createPropertyHelper(aProperties, bFinal) {
 		this._bPropertyHelperInitializing = true;
 
 		if (bFinal || !aProperties) { // also fall back to delegate if no initial properties given
@@ -265,19 +265,19 @@ sap.ui.define(["sap/base/util/Deferred", "sap/ui/mdc/util/loadModules", "sap/bas
 		let oDelegate;
 
 		// we need to initialize the delegate for PropertyHelper overrides first
-		return this._oApplySettingsDeferred.promise.then(function () {
+		return this._oApplySettingsDeferred.promise.then(() => {
 			return this.initControlDelegate();
-		}.bind(this)).then(function (oControlDelegate) {
+		}).then((oControlDelegate) => {
 			oDelegate = oControlDelegate;
 			return bFinal ? _getDelegateProperties(this) : aProperties;
-		}.bind(this)).then(function(aProperties) {
+		}).then((aProperties) => {
 			if (this.bIsDestroyed) {
 				return [];
 			}
-			return fetchPropertyHelperClass(this, oDelegate).then(function(PropertyHelper) {
+			return fetchPropertyHelperClass(this, oDelegate).then((PropertyHelper) => {
 				return [aProperties, PropertyHelper];
 			});
-		}.bind(this)).then(function(aResult) {
+		}).then((aResult) => {
 			if (this.bIsDestroyed) {
 				return undefined;
 			}
@@ -291,9 +291,9 @@ sap.ui.define(["sap/base/util/Deferred", "sap/ui/mdc/util/loadModules", "sap/bas
 				this._oPropertiesFinalizedDeferred.resolve();
 			}
 			return this._oPropertyHelperDeferred.resolve(this._oPropertyHelper);
-		}.bind(this)).catch(function (oError) {
+		}).catch((oError) => {
 			return this._oPropertyHelperDeferred && this._oPropertyHelperDeferred.reject(oError);
-		}.bind(this));
+		});
 	}
 
 	function _updatePropertyHelper(aProperties, bFinal) {
@@ -311,12 +311,12 @@ sap.ui.define(["sap/base/util/Deferred", "sap/ui/mdc/util/loadModules", "sap/bas
 	}
 
 	// use delegate for final properties
-	function _getDelegateProperties (oControl) {
-		return oControl.initControlDelegate().then(function () {
+	function _getDelegateProperties(oControl) {
+		return oControl.initControlDelegate().then(() => {
 			// not using arg as some unit tests override "getControlDelegate"
 			const oDelegate = oControl.getControlDelegate(oControl);
 
-			return oDelegate.fetchProperties(oControl).then(function(aProperties) {
+			return oDelegate.fetchProperties(oControl).then((aProperties) => {
 				if (oControl.isDestroyed()) {
 					return [];
 				}
@@ -340,12 +340,12 @@ sap.ui.define(["sap/base/util/Deferred", "sap/ui/mdc/util/loadModules", "sap/bas
 			return Promise.resolve(oControl._oPropertyHelperClass);
 		}
 
-		return loadModules("sap/ui/mdc/util/PropertyHelper").then(function(aResult) {
+		return loadModules("sap/ui/mdc/util/PropertyHelper").then((aResult) => {
 			return aResult[0];
 		});
 	}
 
-	return function () {
+	return function() {
 		this.init = PropertyHelperMixin.init(this.init);
 		this.exit = PropertyHelperMixin.exit(this.exit);
 		this.applySettings = PropertyHelperMixin.applySettings(this.applySettings);
