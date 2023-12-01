@@ -67,6 +67,12 @@ sap.ui.define([
 					]
 				}
 			},
+			"initial/_internal/connectors/NeoLrepConnector": {
+				group: "Initial Internal",
+				coverage: {
+					only: ["sap/ui/fl/initial/_internal/connectors/NeoLrepConnector"]
+				}
+			},
 			"initial/_internal/connectors/PersonalizationConnector": {
 				group: "Initial Internal",
 				coverage: {
@@ -97,6 +103,12 @@ sap.ui.define([
 				},
 				coverage: {
 					only: ["sap/ui/fl/initial/_internal/Storage"]
+				}
+			},
+			"initial/_internal/StorageFeaturesMerger": {
+				group: "Initial Internal",
+				coverage: {
+					only: ["sap/ui/fl/initial/_internal/StorageFeaturesMerger"]
 				}
 			},
 			"initial/_internal/FlexConfiguration": {
@@ -326,9 +338,6 @@ sap.ui.define([
 						"sap/ui/fl/write/_internal/connectors/LocalStorageConnector",
 						"sap/ui/fl/write/_internal/connectors/SessionStorageConnector"
 					]
-				},
-				ui5: {
-					flexibilityServices: '[{"connector": "ObjectStorageConnector", "layers": []}]'
 				}
 			},
 			"apply/_internal/connectors/ObjectStorageUtils": {
@@ -699,9 +708,6 @@ sap.ui.define([
 					only: [
 						"sap/ui/fl/write/_internal/connectors/ObjectPathConnector"
 					]
-				},
-				ui5: {
-					flexibilityServices: '[{"connector": "ObjectStorageConnector", "layers": []}]'
 				}
 			},
 			"write/_internal/connectors/Utils": {
@@ -714,12 +720,6 @@ sap.ui.define([
 				group: "Write Internal",
 				coverage: {
 					only: ["sap/ui/fl/write/_internal/connectors/PersonalizationConnector"]
-				}
-			},
-			"write/_internal/StorageFeaturesMerger": {
-				group: "Write Internal",
-				coverage: {
-					only: ["sap/ui/fl/write/_internal/StorageFeaturesMerger"]
 				}
 			},
 			"write/_internal/connectors/JsObjectConnector": {
@@ -882,9 +882,6 @@ sap.ui.define([
 						"sap/ui/fl/write/_internal/connectors/LocalStorageConnector",
 						"sap/ui/fl/write/_internal/connectors/SessionStorageConnector"
 					]
-				},
-				ui5: {
-					flexibilityServices: '[{"connector": "ObjectStorageConnector", "layers": []}]'
 				}
 			},
 			"descriptorRelated/Utils": {

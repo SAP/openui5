@@ -6,13 +6,11 @@ sap.ui.define([
 	"sap/base/util/ObjectPath",
 	"sap/ui/fl/apply/_internal/flexObjects/States",
 	"sap/ui/fl/initial/_internal/StorageUtils",
-	"sap/ui/fl/write/_internal/StorageFeaturesMerger",
 	"sap/ui/VersionInfo"
 ], function(
 	ObjectPath,
 	States,
 	StorageUtils,
-	StorageFeaturesMerger,
 	VersionInfo
 ) {
 	"use strict";
@@ -56,24 +54,6 @@ sap.ui.define([
 				+ `Connector configurations were found to write into layer: ${sLayer}`);
 		}
 		return undefined;
-	}
-
-	function _sendLoadFeaturesToConnector(aConnectors) {
-		var aConnectorPromises = aConnectors.map(function(oConnectorConfig) {
-			return oConnectorConfig.writeConnectorModule.loadFeatures({url: oConnectorConfig.url})
-			.then(function(oFeatures) {
-				return {
-					features: oFeatures,
-					layers: oConnectorConfig.layers
-				};
-			})
-			.catch(StorageUtils.logAndResolveDefault.bind(null, {
-				features: {},
-				layers: oConnectorConfig.layers
-			}, oConnectorConfig, "loadFeatures"));
-		});
-
-		return Promise.all(aConnectorPromises);
 	}
 
 	/**
@@ -390,17 +370,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * Provides the information which features are provided based on the responses of the involved connectors.
-	 *
-	 * @returns {Promise<Object>} Map feature flags and additional provided information from the connectors
-	 */
-	Storage.loadFeatures = function() {
-		return _getWriteConnectors()
-		.then(_sendLoadFeaturesToConnector)
-		.then(StorageFeaturesMerger.mergeResults);
-	};
-
-	/**
 	 * Transports all the UI changes and app variant descriptor (if exists) to the target system.
 	 *
 	 * @param {object} mPropertyBag - Property bag
@@ -516,8 +485,8 @@ sap.ui.define([
 		 *
 		 * @param {object} mPropertyBag - Property bag
 		 * @param {sap.ui.fl.Layer} mPropertyBag.layer - Layer
-		 * @param {string} mPropertyBag.sourceLanguage - Source language for for which the request should be made
-		 * @param {string} mPropertyBag.targetLanguage - Target language for for which the request should be made
+		 * @param {string} mPropertyBag.sourceLanguage - Source language for which the request should be made
+		 * @param {string} mPropertyBag.targetLanguage - Target language for which the request should be made
 		 * @param {string} mPropertyBag.reference - Flexibility reference
 		 * @returns {Promise} Resolving after the languages are retrieved;
 		 * rejects if an error occurs

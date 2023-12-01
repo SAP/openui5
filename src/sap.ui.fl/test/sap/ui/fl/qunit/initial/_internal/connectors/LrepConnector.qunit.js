@@ -15,6 +15,12 @@ sap.ui.define([
 
 	var sandbox = sinon.createSandbox();
 
+	function fnReturnData(nStatus, oHeader, sBody) {
+		sandbox.server.respondWith(function(request) {
+			request.respond(nStatus, oHeader, sBody);
+		});
+	}
+
 	function mockResponse(sData, sEtag, sResponseType, sContentType) {
 		this.xhr.onCreate = function(oRequest) {
 			var oHeaders = { "Content-Type": sContentType || "application/json"};
@@ -29,6 +35,71 @@ sap.ui.define([
 			}.bind(this));
 		}.bind(this);
 	}
+	QUnit.module("Given LrepConnector with a fake server", {
+		beforeEach() {
+			sandbox.useFakeServer();
+			sandbox.server.autoRespond = true;
+		},
+		afterEach() {
+			sandbox.verifyAndRestore();
+		}
+	}, function() {
+		QUnit.test("given a mock server, when loadFeatures is triggered without a public layer available", function(assert) {
+			var oServerResponse = {
+				isKeyUser: true,
+				isVersioningEnabled: false,
+				isContextSharingEnabled: true,
+				isPublicLayerAvailable: false,
+				isLocalResetEnabled: true
+			};
+
+			var oExpectedResponse = Object.assign({isVariantAdaptationEnabled: false}, oServerResponse);
+
+			fnReturnData(200, { "Content-Type": "application/json" }, JSON.stringify(oServerResponse));
+			var mPropertyBag = {url: "/sap/bc/lrep"};
+			var sUrl = "/sap/bc/lrep/flex/settings";
+
+			return LrepConnector.loadFeatures(mPropertyBag).then(function(oResponse) {
+				assert.equal(sandbox.server.getRequest(0).method, "GET", "request method is GET");
+				assert.equal(sandbox.server.getRequest(0).url, sUrl, "Url is correct");
+				assert.deepEqual(oExpectedResponse, oResponse, "loadFeatures response flow is correct");
+			});
+		});
+
+		QUnit.test("given a mock server, when loadFeatures is triggered with a public layer available", function(assert) {
+			var oServerResponse = {
+				isKeyUser: true,
+				isVersioningEnabled: false,
+				isContextSharingEnabled: true,
+				isPublicLayerAvailable: true,
+				isLocalResetEnabled: true
+			};
+
+			var oExpectedResponse = Object.assign({isVariantAdaptationEnabled: true}, oServerResponse);
+
+			fnReturnData(200, { "Content-Type": "application/json" }, JSON.stringify(oServerResponse));
+			var mPropertyBag = {url: "/sap/bc/lrep"};
+			var sUrl = "/sap/bc/lrep/flex/settings";
+
+			return LrepConnector.loadFeatures(mPropertyBag).then(function(oResponse) {
+				assert.equal(sandbox.server.getRequest(0).method, "GET", "request method is GET");
+				assert.equal(sandbox.server.getRequest(0).url, sUrl, "Url is correct");
+				assert.deepEqual(oExpectedResponse, oResponse, "loadFeatures response flow is correct");
+			});
+		});
+
+		QUnit.test("given a mock server, when loadFeatures is triggered when settings already stored in apply connector", function(assert) {
+			var oExpectedResponse = {
+				isKeyUser: false
+			};
+			var mPropertyBag = {url: "/sap/bc/lrep"};
+			LrepConnector.settings = {isKeyUser: false};
+			return LrepConnector.loadFeatures(mPropertyBag).then(function(oResponse) {
+				assert.deepEqual(oResponse, oExpectedResponse, "the settings object is obtain from apply connector correctly");
+				assert.equal(sandbox.server.requestCount, 0, "no request is sent to back end");
+			});
+		});
+	});
 
 	QUnit.module("Given LrepConnector with a fake XHR", {
 		beforeEach() {

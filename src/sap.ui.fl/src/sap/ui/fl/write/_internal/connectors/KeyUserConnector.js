@@ -65,12 +65,6 @@ sap.ui.define([
 			CONTEXTS: `${PREFIX + InitialConnector.API_VERSION}/contexts/`
 		},
 		isLanguageInfoRequired: true,
-		loadFeatures(mPropertyBag) {
-			return BackendConnector.loadFeatures.call(KeyUserConnector, mPropertyBag).then(function(oFeatures) {
-				oFeatures.isContextSharingEnabled = true;
-				return oFeatures;
-			});
-		},
 
 		getContexts(mPropertyBag) {
 			var aParameters = ["type", "$skip", "$filter"];

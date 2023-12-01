@@ -13,7 +13,7 @@ sap.ui.define([
 	 * @namespace sap.ui.fl.write.connectors.BaseConnector
 	 * @since 1.67
 	 * @private
-	 * @ui5-restricted sap.ui.fl
+	 * @ui5-restricted sap.ui.fl, SAP Web IDE/BAS (Visual Editor)
 	 */
 	var BaseConnector = /** @lends sap.ui.fl.write.connectors.BaseConnector */{
 
@@ -167,15 +167,6 @@ sap.ui.define([
 		 */
 		isContextSharingEnabled() {
 			return Promise.resolve(false);
-		},
-
-		/**
-		 * Interface called to get the flex feature.
-		 *
-		 * @returns {Promise<object>} Resolves with an object containing the data for the flex features
-		 */
-		loadFeatures() {
-			return Promise.reject("loadFeatures is not implemented");
 		},
 
 		contextBasedAdaptation: {

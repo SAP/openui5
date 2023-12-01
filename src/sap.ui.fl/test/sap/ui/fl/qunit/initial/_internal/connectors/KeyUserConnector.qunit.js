@@ -15,7 +15,100 @@ sap.ui.define([
 
 	var sandbox = sinon.createSandbox();
 
-	QUnit.module("Connector", {
+	QUnit.module("KeyUserConnector loadFeatures", {
+		afterEach() {
+			KeyUserConnector.xsrfToken = undefined;
+			sandbox.restore();
+		}
+	}, function() {
+		QUnit.test("get Response", function(assert) {
+			var mPropertyBag = {
+				url: "/flexKeyuser"
+			};
+			sandbox.stub(Utils, "sendRequest").resolves({response: {someFeature: true}});
+			return KeyUserConnector.loadFeatures(mPropertyBag).then(function(oResponse) {
+				assert.deepEqual(oResponse, {isContextSharingEnabled: true, someFeature: true}, "the settings object is returned correctly");
+			});
+		});
+
+		QUnit.test("receives the flags 'isPublicLayerAvailable' false and 'isVariantAdaptationEnabled' false", function(assert) {
+			var mPropertyBag = {
+				url: "/flexKeyuser"
+			};
+			var oSettingsResponse = {
+				isPublicLayerAvailable: false,
+				isVariantAdaptationEnabled: false
+			};
+
+			sandbox.stub(Utils, "sendRequest").resolves({response: oSettingsResponse});
+			return KeyUserConnector.loadFeatures(mPropertyBag).then(function(oResponse) {
+				assert.equal(oResponse.isPublicLayerAvailable, false, "the isPublicLayerAvailable is correct");
+				assert.equal(oResponse.isVariantAdaptationEnabled, false, "the isVariantAdaptationEnabled is correct");
+			});
+		});
+
+		QUnit.test("receives the flags 'isPublicLayerAvailable' false and 'isVariantAdaptationEnabled' true", function(assert) {
+			var mPropertyBag = {
+				url: "/flexKeyuser"
+			};
+			var oSettingsResponse = {
+				isPublicLayerAvailable: false,
+				isVariantAdaptationEnabled: true
+			};
+
+			sandbox.stub(Utils, "sendRequest").resolves({response: oSettingsResponse});
+			return KeyUserConnector.loadFeatures(mPropertyBag).then(function(oResponse) {
+				assert.equal(oResponse.isPublicLayerAvailable, false, "the isPublicLayerAvailable is correct");
+				assert.equal(oResponse.isVariantAdaptationEnabled, true, "the isVariantAdaptationEnabled is correct");
+			});
+		});
+
+		QUnit.test("receives the flags 'isPublicLayerAvailable' true and 'isVariantAdaptationEnabled' false", function(assert) {
+			var mPropertyBag = {
+				url: "/flexKeyuser"
+			};
+			var oSettingsResponse = {
+				isPublicLayerAvailable: true,
+				isVariantAdaptationEnabled: false
+			};
+
+			sandbox.stub(Utils, "sendRequest").resolves({response: oSettingsResponse});
+			return KeyUserConnector.loadFeatures(mPropertyBag).then(function(oResponse) {
+				assert.equal(oResponse.isPublicLayerAvailable, true, "the isPublicLayerAvailable is correct");
+				assert.equal(oResponse.isVariantAdaptationEnabled, false, "the isVariantAdaptationEnabled is correct");
+			});
+		});
+
+		QUnit.test("receives the flags 'isPublicLayerAvailable' true and 'isVariantAdaptationEnabled' true", function(assert) {
+			var mPropertyBag = {
+				url: "/flexKeyuser"
+			};
+			var oSettingsResponse = {
+				isPublicLayerAvailable: true,
+				isVariantAdaptationEnabled: true
+			};
+
+			sandbox.stub(Utils, "sendRequest").resolves({response: oSettingsResponse});
+			return KeyUserConnector.loadFeatures(mPropertyBag).then(function(oResponse) {
+				assert.equal(oResponse.isPublicLayerAvailable, true, "the isPublicLayerAvailable is correct");
+				assert.equal(oResponse.isVariantAdaptationEnabled, true, "the isVariantAdaptationEnabled is correct");
+			});
+		});
+
+		QUnit.test("get Response does not send when the settings already stored in apply connector", function(assert) {
+			var mPropertyBag = {
+				url: "/flexKeyuser"
+			};
+			var oStubSendRequest = sandbox.stub(Utils, "sendRequest").resolves({response: "something"});
+			KeyUserConnector.settings = {isKeyUser: true};
+			return KeyUserConnector.loadFeatures(mPropertyBag).then(function(oResponse) {
+				assert.ok(oStubSendRequest.notCalled, "no request is sent to back end");
+				assert.deepEqual(oResponse.response, {isKeyUser: true}, "the settings object is obtain from apply connector correctly");
+			});
+		});
+	});
+
+	QUnit.module("KeyUserConnector loadData", {
 		afterEach() {
 			sandbox.restore();
 		}

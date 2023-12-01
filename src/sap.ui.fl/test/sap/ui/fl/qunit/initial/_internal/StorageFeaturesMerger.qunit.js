@@ -3,7 +3,7 @@
 sap.ui.define([
 	"sap/ui/thirdparty/sinon-4",
 	"sap/ui/fl/Layer",
-	"sap/ui/fl/write/_internal/StorageFeaturesMerger"
+	"sap/ui/fl/initial/_internal/StorageFeaturesMerger"
 ], function(
 	sinon,
 	Layer,

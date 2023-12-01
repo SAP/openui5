@@ -15,16 +15,6 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	QUnit.module("Loading of Connector", {}, function() {
-		QUnit.test("given a custom connector is configured", function(assert) {
-			return StorageUtils.getLoadConnectors().then(function(aConnectors) {
-				assert.equal(aConnectors.length, 2, "two connectors are loaded");
-				assert.equal(aConnectors[0].connector, "StaticFileConnector", "the StaticFileConnector is the first connector");
-				assert.equal(aConnectors[1].connector, "ObjectStorageConnector", "the ObjectStorageConnector is the second connector");
-			});
-		});
-	});
-
 	var oTestData = {
 		change1: {
 			fileName: "change1",

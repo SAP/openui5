@@ -43,7 +43,6 @@ sap.ui.define([
 		CHANGES: "/changes/",
 		CONDENSE: "/actions/condense/",
 		VARIANTS: "/variants/",
-		SETTINGS: "/flex/settings",
 		TOKEN: "/actions/getcsrftoken/",
 		APPVARIANTS: "/appdescr_variants/",
 		APPVARIANTS_OVERVIEW: "/app_variant_overview/",
@@ -373,30 +372,6 @@ sap.ui.define([
 		 */
 		 isContextSharingEnabled() {
 			return Promise.resolve(true);
-		},
-
-		/**
-		 * Called to get the flex features.
-		 *
-		 * @param {object} mPropertyBag Property bag
-		 * @param {string} mPropertyBag.url Configured url for the connector
-		 * @returns {Promise<object>} Promise resolves with an object containing the flex features
-		 */
-		loadFeatures(mPropertyBag) {
-			if (InitialConnector.settings) {
-				return Promise.resolve(InitialConnector.settings);
-			}
-			var mParameters = {};
-
-			InitialConnector._addClientInfo(mParameters);
-
-			var sFeaturesUrl = InitialUtils.getUrl(ROUTES.SETTINGS, mPropertyBag, mParameters);
-			return InitialUtils.sendRequest(sFeaturesUrl, "GET", {initialConnector: InitialConnector}).then(function(oResult) {
-				oResult.response.isVariantAdaptationEnabled = !!oResult.response.isPublicLayerAvailable;
-				oResult.response.isContextSharingEnabled = true;
-				oResult.response.isLocalResetEnabled = true;
-				return oResult.response;
-			});
 		},
 
 		/**
