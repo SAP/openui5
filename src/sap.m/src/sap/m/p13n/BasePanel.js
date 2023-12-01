@@ -249,6 +249,17 @@ sap.ui.define([
 	};
 
 	/**
+	 * Gets the corresponding <code>sap.m.p13n.Item</code> for the provided key.
+	 *
+	 * @public
+	 * @param {string} sName The unique identifier
+	 * @returns {sap.m.p13n.Item|null} The personalization model item
+	 */
+	BasePanel.prototype.getItemByKey = function (sName) {
+		return this.getP13nData().find((oP13nItem) => oP13nItem.name == sName);
+	};
+
+	/**
 	 * Displays a <code>sap.m.MessageStrip</code> instance in the content area of the <code>BasePanel</code>.
 	 *
 	 * @public

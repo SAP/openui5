@@ -1,7 +1,7 @@
 /* global QUnit */
 sap.ui.define([
     "sap/ui/core/Element",
-    "sap/ui/mdc/p13n/panels/FilterPanel",
+    "sap/m/p13n/FilterPanel",
     "sap/ui/core/Core",
     "sap/m/VBox",
     "sap/m/Input"
