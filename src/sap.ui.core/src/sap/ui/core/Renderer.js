@@ -51,8 +51,13 @@ sap.ui.define([
 		oChildRenderer.extend = createExtendedRenderer;
 		extend(oChildRenderer, oRendererInfo);
 
-		// expose the renderer globally
-		ObjectPath.set(sName, oChildRenderer);
+		/**
+		 * @deprecated
+		 */
+		(() => {
+			// expose the renderer globally
+			ObjectPath.set(sName, oChildRenderer);
+		})();
 
 		return oChildRenderer;
 	}

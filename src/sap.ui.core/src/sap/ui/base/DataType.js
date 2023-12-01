@@ -644,10 +644,15 @@ sap.ui.define([
 		aTypes.forEach(function(sType) {
 			oInterfaces.add(sType);
 
-			// Defining the interface on global namespace for compatibility reasons.
-			// This has never been a public feature and it is strongly discouraged it be relied upon.
-			// An interface must always be referenced by a string literal, not via the global namespace.
-			ObjectPath.set(sType, sType);
+			/**
+			 * @deprecated
+			 */
+			(() => {
+				// Defining the interface on global namespace for compatibility reasons.
+				// This has never been a public feature and it is strongly discouraged it be relied upon.
+				// An interface must always be referenced by a string literal, not via the global namespace.
+				ObjectPath.set(sType, sType);
+			})();
 		});
 	};
 
