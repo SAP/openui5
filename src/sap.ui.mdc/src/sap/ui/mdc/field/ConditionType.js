@@ -662,8 +662,9 @@ sap.ui.define([
 					oType.validateValue(vParsedValue);
 				}
 			} catch (oException) {
-				if (oException && !(bOtherCheck && (oException instanceof ParseException || oException instanceof ValidateException))) {
+				if (oException && !(bOtherCheck && (oException instanceof ParseException || oException instanceof ValidateException)) && vCheckValue !== "") {
 					// unknown error or no search for description -> just raise it
+					// if empty value cannot be parsed, no value can be found. But this is not an error, it just makes the field empty
 					throw oException;
 				}
 				vParsedValue = undefined;
@@ -678,6 +679,10 @@ sap.ui.define([
 		if (bCheckDescription) {
 			vCheckParsedDescription = fnCheckForType(oAdditionalType, _getAdditionalCompositeTypes.call(this), vDescription || vCheckValue, bCheckKey);
 			bCheckDescription = vCheckParsedDescription !== undefined; // no check if cannot be parsed
+		}
+
+		if (!bCheckKey && !bCheckDescription) {
+			return null; // nothing to find -> no check needed
 		}
 
 		return SyncPromise.resolve().then(function() {

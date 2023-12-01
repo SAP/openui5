@@ -13,8 +13,9 @@ sap.ui.define([
 	"sap/ui/unified/Currency",
 	"sap/ui/model/Filter",
 	"sap/base/Log",
-	'sap/ui/mdc/odata/v4/TypeMap'
-
+	'sap/ui/mdc/odata/v4/TypeMap',
+	'../../util/PayloadSearchKeys',
+	'sap/ui/core/Core'
 ], function(
 	TableDelegateUtils,
 	Element,
@@ -26,7 +27,9 @@ sap.ui.define([
 	Currency,
 	Filter,
 	Log,
-	ODataV4TypeMap
+	ODataV4TypeMap,
+	PayloadSearchKeys,
+	Core
 ) {
 	"use strict";
 
@@ -75,7 +78,18 @@ sap.ui.define([
 			}
 		}
 
+		if (PayloadSearchKeys.inUse(oTable)) {
+			oBindingInfo.parameters["$search"] = undefined;
+			return;
+		}
 		addSearchParameter(oTable, oBindingInfo);
+	};
+
+	TestTableDelegate.getFilters = function (oControl) {
+		return PayloadSearchKeys.combineFilters([
+			...TableDelegate.getFilters.apply(this, arguments),
+			...PayloadSearchKeys.getFilters(oControl, Element.getElementById(oControl.getFilter())?.getSearch())
+		], true);
 	};
 
 	function addSearchParameter(oTable, oBindingInfo) {

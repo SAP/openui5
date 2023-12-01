@@ -1304,4 +1304,66 @@ sap.ui.define([
 		// code under test
 		assert.strictEqual(LocaleData.prototype.getLanguageName.call(oLocaleData, "sr_Latn"), "~SH");
 	});
+
+	["narrow", "abbreviated", "wide"].forEach((sWidth) => {
+		QUnit.test("getMonths: returns first alternative, " + sWidth, function (assert) {
+			const oLocalData = {
+				_get() {}
+			};
+			this.mock(oLocalData).expects("_get")
+				.withExactArgs("ca-~scalendartype", "months", "format", sWidth)
+				.returns([["a", "b"], "c", "d", ["e", "f", "g"], "h"]);
+
+			// code under test
+			assert.deepEqual(LocaleData.prototype.getMonths.call(oLocalData, sWidth, "~sCalendarType"),
+				["a", "c", "d", "e", "h"]);
+		});
+	});
+	//*********************************************************************************************
+	["narrow", "abbreviated", "wide"].forEach((sWidth) => {
+		QUnit.test("_getMonthsWithAlternatives: " + sWidth, function (assert) {
+			const oLocalData = {
+				_get() {}
+			};
+			this.mock(oLocalData).expects("_get")
+				.withExactArgs("ca-~scalendartype", "months", "format", sWidth)
+				.returns("~result");
+
+			// code under test
+			assert.deepEqual(LocaleData.prototype._getMonthsWithAlternatives.call(oLocalData, sWidth, "~sCalendarType"),
+				"~result");
+		});
+	});
+
+	//*********************************************************************************************
+	["narrow", "abbreviated", "wide"].forEach((sWidth) => {
+		QUnit.test("getMonthsStandAlone: returns first alternative, " + sWidth, function (assert) {
+			const oLocalData = {
+				_get() {}
+			};
+			this.mock(oLocalData).expects("_get")
+				.withExactArgs("ca-~scalendartype", "months", "stand-alone", sWidth)
+				.returns([["a", "b"], "c", "d", ["e", "f", "g"], "h"]);
+
+			// code under test
+			assert.deepEqual(LocaleData.prototype.getMonthsStandAlone.call(oLocalData, sWidth, "~sCalendarType"),
+				["a", "c", "d", "e", "h"]);
+		});
+	});
+	//*********************************************************************************************
+	["narrow", "abbreviated", "wide"].forEach((sWidth) => {
+		QUnit.test("_getMonthsStandAloneWithAlternatives: " + sWidth, function (assert) {
+			const oLocalData = {
+				_get() {}
+			};
+			this.mock(oLocalData).expects("_get")
+				.withExactArgs("ca-~scalendartype", "months", "stand-alone", sWidth)
+				.returns("~result");
+
+			// code under test
+			assert.deepEqual(
+				LocaleData.prototype._getMonthsStandAloneWithAlternatives.call(oLocalData, sWidth, "~sCalendarType"),
+				"~result");
+		});
+	});
 });

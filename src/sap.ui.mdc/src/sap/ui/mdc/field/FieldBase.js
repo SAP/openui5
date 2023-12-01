@@ -3120,6 +3120,11 @@ sap.ui.define([
 			}
 		}
 
+		if (sItemId) {
+			// in Typeahead we don't have to wait for onOpened as we know that something is found
+			oContent.removeStyleClass("sapMFocus"); // to have focus outline on selected item in valueHelp only
+		}
+
 	}
 
 	function _handleValueHelpAfterClose(oEvent) {
@@ -3145,6 +3150,10 @@ sap.ui.define([
 		const aConditions = this.getConditions();
 		_setConditionsOnValueHelp.call(this, aConditions, oValueHelp);
 
+		if (_isFocused.call(this)) { // restore focus visualization
+			oContent.addStyleClass("sapMFocus");
+		}
+
 	}
 
 	function _handleValueHelpOpened(oEvent) {
@@ -3152,6 +3161,10 @@ sap.ui.define([
 		let sItemId;
 		if (this.getMaxConditionsForHelp() === 1 || this._sFilterValue) { // set aria-activedescendant only in singleValue or typeahead
 			sItemId = oEvent.getParameter("itemId");
+			if (sItemId) {
+				const oContent = this.getControlForSuggestion();
+				oContent.removeStyleClass("sapMFocus"); // to have focus outline on selected item in valueHelp only
+			}
 		}
 		_setAriaAttributes.call(this, true, sItemId);
 		_setShowValueStateMessage.call(this, false);

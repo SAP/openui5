@@ -5,8 +5,10 @@ sap.ui.define([
 	"sap/m/FeedContent",
 	"sap/m/Text",
 	"sap/m/library",
-	"sap/ui/core/Core"
-], function(TileContent, NewsContent, FeedContent, Text, library, oCore) {
+	"sap/ui/core/Core",
+	"sap/m/NumericContent",
+	"sap/m/GenericTile"
+], function(TileContent, NewsContent, FeedContent, Text, library, oCore, NumericContent, GenericTile ) {
 	"use strict";
 
 
@@ -42,6 +44,42 @@ sap.ui.define([
 
 	QUnit.test("Property 'frameType'", function(assert) {
 		assert.equal(this.oTileContent.getFrameType(), "Auto", "Property 'frameType' default value is correct.");
+	});
+
+	QUnit.module("TileContent Inside GenericTile",{
+		beforeEach : function(){
+			this.tileContent = new TileContent({
+				content: new NumericContent({
+					icon: "sap-icon://world",
+					truncateValueTo: 5,
+					value: "0",
+					width: "100%",
+					withMargin: false
+				})
+			});
+
+			this.tile = new GenericTile({
+			header: "Manage my Timesheet",
+			systemInfo: "S/4HANA Cloud",
+			sizeBehavior: "Responsive",
+			wrappingType: "Hyphenated",
+			additionalTooltip: "S/4HANA Cloud",
+			tileContent: this.tileContent
+			});
+			//window.setTimeout(function () {this.tileContent.setFooter("Hours Missing")}, 1000);
+			this.tile.placeAt("qunit-fixture");
+			this.tileContent.setFooter("Hours Missing");
+			oCore.applyChanges();
+
+		},
+
+		afterEach : function(){
+			this.tile.destroy();
+		}
+	});
+
+	QUnit.test("Footer property changes the GenericTile CSS class after explicitly being changed later", function(assert){
+		assert.equal(this.tile.getDomRef("content").classList[1], "appInfoWithFooter", "The CSS class is applied properly");
 	});
 
 	QUnit.module("Rendering of colored footer", {

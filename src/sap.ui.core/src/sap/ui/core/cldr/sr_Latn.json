@@ -1776,16 +1776,43 @@
 				"abbreviated": [
 					"Muh.",
 					"Saf.",
-					"Reb. 1",
-					"Reb. 2",
-					"Džum. 1",
-					"Džum. 2",
-					"Redž.",
-					"Ša.",
+					[
+						"Reb. 1",
+						"Rab. I"
+					],
+					[
+						"Reb. 2",
+						"Rab. II"
+					],
+					[
+						"Džum. 1",
+						"Jum. I"
+					],
+					[
+						"Džum. 2",
+						"Jum. II"
+					],
+					[
+						"Redž.",
+						"Raj."
+					],
+					[
+						"Ša.",
+						"Sha."
+					],
 					"Ram.",
-					"Še.",
-					"Zul-k.",
-					"Zul-h."
+					[
+						"Še.",
+						"Shaw."
+					],
+					[
+						"Zul-k.",
+						"Dhuʻl-Q."
+					],
+					[
+						"Zul-h.",
+						"Dhuʻl-H."
+					]
 				],
 				"narrow": [
 					"1",
@@ -1820,16 +1847,43 @@
 				"abbreviated": [
 					"Muh.",
 					"Saf.",
-					"Reb. 1",
-					"Reb. 2",
-					"Džum. 1",
-					"Džum. 2",
-					"Redž.",
-					"Ša.",
+					[
+						"Reb. 1",
+						"Rab. I"
+					],
+					[
+						"Reb. 2",
+						"Rab. II"
+					],
+					[
+						"Džum. 1",
+						"Jum. I"
+					],
+					[
+						"Džum. 2",
+						"Jum. II"
+					],
+					[
+						"Redž.",
+						"Raj."
+					],
+					[
+						"Ša.",
+						"Sha."
+					],
 					"Ram.",
-					"Še.",
-					"Zul-k.",
-					"Zul-h."
+					[
+						"Še.",
+						"Shaw."
+					],
+					[
+						"Zul-k.",
+						"Dhuʻl-Q."
+					],
+					[
+						"Zul-h.",
+						"Dhuʻl-H."
+					]
 				],
 				"narrow": [
 					"1",

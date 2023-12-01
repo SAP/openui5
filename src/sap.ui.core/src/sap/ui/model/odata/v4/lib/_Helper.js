@@ -1782,7 +1782,7 @@ sap.ui.define([
 			if (vOld && typeof vOld === "object") {
 				Object.keys(vOld).forEach(function (sProperty) {
 					// not covered in the new value
-					if (!vNew.hasOwnProperty(sProperty)) {
+					if (!Object.hasOwn(vNew, sProperty)) {
 						_Helper.informAll(mChangeListeners, _Helper.buildPath(sPath, sProperty),
 							vOld[sProperty], undefined, bAllowUndefined);
 					}

@@ -676,10 +676,10 @@ sap.ui.define([
 	DateFormat.prototype.init = function() {
 		var sCalendarType = this.oFormatOptions.calendarType;
 
-		this.aMonthsAbbrev = this.oLocaleData.getMonths("abbreviated", sCalendarType);
+		this.aMonthsAbbrev = this.oLocaleData._getMonthsWithAlternatives("abbreviated", sCalendarType);
 		this.aMonthsWide = this.oLocaleData.getMonths("wide", sCalendarType);
 		this.aMonthsNarrow = this.oLocaleData.getMonths("narrow", sCalendarType);
-		this.aMonthsAbbrevSt = this.oLocaleData.getMonthsStandAlone("abbreviated", sCalendarType);
+		this.aMonthsAbbrevSt = this.oLocaleData._getMonthsStandAloneWithAlternatives("abbreviated", sCalendarType);
 		this.aMonthsWideSt = this.oLocaleData.getMonthsStandAlone("wide", sCalendarType);
 		this.aMonthsNarrowSt = this.oLocaleData.getMonthsStandAlone("narrow", sCalendarType);
 		this.aDaysAbbrev = this.oLocaleData.getDays("abbreviated", sCalendarType);
@@ -857,23 +857,32 @@ sap.ui.define([
 		 * @example
 		 * findEntry("MÄRZ 2013", ["Januar", "Februar", "März", "April", ...], "de-DE");
 		 * // {length: 4, index: 2}
+		 * @example
+		 * findEntry("Sep 2013", [..., "Aug", ["Sept", "Sep"], "Oct", ...], "en-GB");
+		 * // {length: 3, index: 8}
 		 *
 		 * @param {string} sValue the input value, e.g. "MÄRZ 2013"
-		 * @param {string[]} aList the list of values to check, e.g. ["Januar", "Februar", "März", "April", ...]
+		 * @param {string[]|Array<string[]>} aList
+		 *   The list of values to check, e.g. ["Januar", "Februar", "März", "April", ...]; the list may contain also
+		 *   arrays of strings containing alternatives, e.g. [..., "Aug", ["Sept", "Sep"], "Oct", ...]
 		 * @param {string} sLocale the locale which is used for the string comparison, e.g. "de-DE"
 		 * @returns {{length: number, index: number}} the length of the match in sValue, the index in the list of values
 		 *   e.g. length: 4, index: 2 ("MÄRZ")
 		 * @private
 		 */
 		findEntry: function (sValue, aList, sLocale) {
-			var iFoundIndex = -1,
-				iMatchedLength = 0;
-			for (var j = 0; j < aList.length; j++) {
-				if (aList[j] && aList[j].length > iMatchedLength && this.startsWithIgnoreCase(sValue, aList[j], sLocale)) {
-					iFoundIndex = j;
-					iMatchedLength = aList[j].length;
-				}
-			}
+			let iFoundIndex = -1;
+			let iMatchedLength = 0;
+
+			aList.forEach((vEntry, j) => {
+				(Array.isArray(vEntry) ? vEntry : [vEntry]).forEach((sEntry) => {
+					if (sEntry.length > iMatchedLength && this.startsWithIgnoreCase(sValue, sEntry, sLocale)) {
+						iFoundIndex = j;
+						iMatchedLength = sEntry.length;
+					}
+				});
+			});
+
 			return {
 				index: iFoundIndex,
 				length: iMatchedLength
@@ -940,6 +949,7 @@ sap.ui.define([
 			return true;
 		}
 	};
+	DateFormat._oParseHelper = oParseHelper; // make parse helper a private static member for testing
 
 	/**
 	 * Creates a pattern symbol object containing all needed functions to be used for formatting and parsing.
@@ -1268,7 +1278,8 @@ sap.ui.define([
 			format: function(oField, oDate, bUTC, oFormat) {
 				var iMonth = oDate.getUTCMonth();
 				if (oField.digits === 3) {
-					return oFormat.aMonthsAbbrev[iMonth];
+					const vName = oFormat.aMonthsAbbrev[iMonth]; // vName may be an array if there are alternatives
+					return Array.isArray(vName) ? vName[0] : vName;
 				} else if (oField.digits === 4) {
 					return oFormat.aMonthsWide[iMonth];
 				} else if (oField.digits > 4) {
@@ -1322,7 +1333,8 @@ sap.ui.define([
 			format: function(oField, oDate, bUTC, oFormat) {
 				var iMonth = oDate.getUTCMonth();
 				if (oField.digits === 3) {
-					return oFormat.aMonthsAbbrevSt[iMonth];
+					const vName = oFormat.aMonthsAbbrevSt[iMonth]; // vName may be an array if there are alternatives
+					return Array.isArray(vName) ? vName[0] : vName;
 				} else if (oField.digits === 4) {
 					return oFormat.aMonthsWideSt[iMonth];
 				} else if (oField.digits > 4) {

@@ -5097,6 +5097,7 @@ sap.ui.define([
 		assert.equal($FocusDomRef.attr("aria-expanded"), "true", "Open: aria-expanded set to true");
 		assert.equal($FocusDomRef.attr("aria-controls"), "Test", "Open: aria-controls set");
 		assert.equal($FocusDomRef.attr("aria-activedescendant"), "myItem", "Open: aria-activedescendant set");
+		assert.notOk(oContent.hasStyleClass("sapMFocus"), "Focus outline removed");
 
 		oValueHelp.close();
 		oValueHelp.fireClosed();
@@ -5106,6 +5107,7 @@ sap.ui.define([
 		assert.notOk($FocusDomRef.attr("aria-controls"), "Closed: aria-controls not set");
 		assert.notOk($FocusDomRef.attr("aria-activedescendant"), "Closed: aria-activedescendant not set");
 		assert.notOk($FocusDomRef.attr("aria-describedby") && $FocusDomRef.attr("aria-describedby").search(sValueHelpEnabledID) >= 0, "ValueHelpEnabled text not set");
+		assert.ok(oContent.hasStyleClass("sapMFocus"), "Focus outline restored");
 
 		oValueHelp.fireNavigated({ condition: Condition.createItemCondition("I3", "Item 3"), itemId: "ItemId"});
 		oCore.applyChanges();

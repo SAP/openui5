@@ -1001,8 +1001,8 @@ sap.ui.define([
 				$select : this.mQueryOptions.$select,
 				$expand : this.mQueryOptions.$expand
 			};
-		// sRequestedPropertyPath is also a metapath because the binding does not accept a path with
-		// a collection-valued navigation property for a late property
+		// sRequestedPropertyPath is also a meta path because the binding does not accept a path
+		// with a collection-valued navigation property for a late property
 		mQueryOptions = _Helper.intersectQueryOptions(
 			_Helper.getQueryOptionsForPath(mQueryOptions, sResourcePath),
 			[sRequestedPropertyPath], this.oRequestor.getModelInterface().fetchMetadata,

@@ -1374,11 +1374,20 @@
 				"abbreviated": [
 					"jan.",
 					"feb.",
-					"mars",
+					[
+						"mars",
+						"mar."
+					],
 					"apr.",
 					"mai",
-					"juni",
-					"juli",
+					[
+						"juni",
+						"jun."
+					],
+					[
+						"juli",
+						"jul."
+					],
 					"aug.",
 					"sep.",
 					"okt.",
@@ -2441,11 +2450,20 @@
 				"abbreviated": [
 					"jan.",
 					"feb.",
-					"mars",
+					[
+						"mars",
+						"mar."
+					],
 					"apr.",
 					"mai",
-					"juni",
-					"juli",
+					[
+						"juni",
+						"jun."
+					],
+					[
+						"juli",
+						"jul."
+					],
 					"aug.",
 					"sep.",
 					"okt.",
@@ -3509,11 +3527,20 @@
 				"abbreviated": [
 					"jan.",
 					"feb.",
-					"mars",
+					[
+						"mars",
+						"mar."
+					],
 					"apr.",
 					"mai",
-					"juni",
-					"juli",
+					[
+						"juni",
+						"jun."
+					],
+					[
+						"juli",
+						"jul."
+					],
 					"aug.",
 					"sep.",
 					"okt.",

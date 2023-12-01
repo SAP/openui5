@@ -353,6 +353,9 @@ sap.ui.define([
 		return aVisibleContent.some(function(oControl) {
 			// visible="true" and does not have "0px" width
 			const bHasWidth = oControl.getWidth ? oControl.getWidth() !== "0px" : true;
+			if (oControl.isA("sap.ui.mdc.actiontoolbar.ActionToolbarAction")) {
+				return oControl.getVisible() && bHasWidth && oControl.getAction()?.getVisible();
+			}
 			return oControl.getVisible() && bHasWidth;
 		});
 	};
@@ -360,18 +363,25 @@ sap.ui.define([
 	ActionToolbar.prototype._updateSeparators = function() {
 		const bHasEnd = this._hasVisible(this.getEnd());
 
+		const fnChangeVisibility = (oSeparator, bNewValue) => {
+			if (oSeparator.getVisible() !== bNewValue) {
+				oSeparator.setVisible(bNewValue);
+				oSeparator.invalidate();
+			}
+		};
+
 		if (this._oBeginSeparator) {
 			const bHasBegin = this._hasVisible(this.getBegin());
 			const bHasBetween = this._hasVisible(this.getBetween());
-			this._oBeginSeparator.setVisible(bHasBegin && bHasBetween);
+			fnChangeVisibility(this._oBeginSeparator, bHasBegin && bHasBetween);
 		}
 		if (this._oEndActionsBeginSeparator) {
 			const bHasEndActionsBegin = this._hasVisible(this.getEndActionsBegin());
-			this._oEndActionsBeginSeparator.setVisible(bHasEnd && bHasEndActionsBegin);
+			fnChangeVisibility(this._oEndActionsBeginSeparator, bHasEnd && bHasEndActionsBegin);
 		}
 		if (this._oEndActionsEndSeparator) {
 			const bHasEndActionsEnd = this._hasVisible(this.getEndActionsEnd());
-			this._oEndActionsEndSeparator.setVisible(bHasEnd && bHasEndActionsEnd);
+			fnChangeVisibility(this._oEndActionsEndSeparator, bHasEnd && bHasEndActionsEnd);
 		}
 	};
 
