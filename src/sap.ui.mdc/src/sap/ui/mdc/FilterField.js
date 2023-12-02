@@ -8,14 +8,14 @@ sap.ui.define([
 	'sap/ui/mdc/enums/FieldDisplay',
 	'sap/base/util/merge',
 	'sap/base/util/deepEqual'
-], function(
+], (
 	Element,
 	FieldBase,
 	FieldBaseRenderer,
 	FieldDisplay,
 	merge,
 	deepEqual
-) {
+) => {
 	"use strict";
 
 	/**
@@ -59,7 +59,7 @@ sap.ui.define([
 	 * @since 1.48.0
 	 *
 	 * @public
-   	 * @experimental As of version 1.48.0
+	 * @experimental As of version 1.48.0
 	 */
 	const FilterField = FieldBase.extend("sap.ui.mdc.FilterField", /* @lends sap.ui.mdc.FilterField.prototype */ {
 		metadata: {
@@ -268,7 +268,7 @@ sap.ui.define([
 			aOperators = aOperators.split(",");
 		}
 
-		aOperators.forEach(function(oOperator) {
+		aOperators.forEach((oOperator) => {
 			if (typeof oOperator === "string") {
 				aOperatorNames.push(oOperator);
 			} else {
@@ -284,7 +284,7 @@ sap.ui.define([
 	/**
 	 * Adds an operator to the list of known operators.
 	 *
- 	 * <b>Note</b>: If no operator is set, the used <code>datatType</code> of the <code>FilterField</code> defines the set of default operators.
+	 * <b>Note</b>: If no operator is set, the used <code>datatType</code> of the <code>FilterField</code> defines the set of default operators.
 	 * The standard operators are mentioned in {@link sap.ui.mdc.enums.OperatorName OperatorName}.
 	 *
 	 * @param {sap.ui.mdc.condition.Operator|string} vOperator The operator instance or operator name
@@ -325,9 +325,9 @@ sap.ui.define([
 			aOperators = [aOperators];
 		}
 
-		aOperators.forEach(function(oOperator) {
+		aOperators.forEach((oOperator) => {
 			this.addOperator(oOperator);
-		}.bind(this));
+		});
 
 		return this;
 	};
@@ -364,15 +364,15 @@ sap.ui.define([
 	 *
 	 * @since: 1.88.0
 	 * @public
-	*/
+	 */
 	FilterField.prototype.removeOperators = function(aOperators) {
 		if (!Array.isArray(aOperators)) {
 			aOperators = [aOperators];
 		}
 
-		aOperators.forEach(function(oOperator) {
+		aOperators.forEach((oOperator) => {
 			this.removeOperator(oOperator);
-		}.bind(this));
+		});
 
 	};
 
@@ -381,7 +381,7 @@ sap.ui.define([
 	 *
 	 * @since: 1.88.0
 	 * @public
-	*/
+	 */
 	FilterField.prototype.removeAllOperators = function() {
 		this.setOperators([]);
 	};

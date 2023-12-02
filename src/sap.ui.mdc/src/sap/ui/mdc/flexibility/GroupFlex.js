@@ -6,10 +6,10 @@ sap.ui.define([
 	"sap/ui/fl/changeHandler/Base",
 	"sap/ui/fl/changeHandler/condenser/Classification",
 	"sap/ui/fl/changeHandler/common/ChangeCategories"
-], function(Util, FLChangeHandlerBase, CondenserClassification, ChangeCategories) {
+], (Util, FLChangeHandlerBase, CondenserClassification, ChangeCategories) => {
 	"use strict";
 
-	const fFinalizeGroupChange = function (oChange, oControl, oGroupContent, bIsRevert) {
+	const fFinalizeGroupChange = function(oChange, oControl, oGroupContent, bIsRevert) {
 		if (bIsRevert) {
 			// Clear the revert data on the change
 			oChange.resetRevertData();
@@ -19,14 +19,14 @@ sap.ui.define([
 		}
 	};
 
-	const fAddGroup = function (oChange, oControl, mPropertyBag, sChangeReason) {
-		return new Promise(function (resolve, reject) {
+	const fAddGroup = function(oChange, oControl, mPropertyBag, sChangeReason) {
+		return new Promise((resolve, reject) => {
 			const bIsRevert = (sChangeReason === Util.REVERT);
 			const oModifier = mPropertyBag.modifier;
 			const oChangeContent = bIsRevert ? oChange.getRevertData() : oChange.getContent();
 			Promise.resolve()
 				.then(oModifier.getProperty.bind(oModifier, oControl, "groupConditions"))
-				.then(function(oGroupConditions) {
+				.then((oGroupConditions) => {
 					const aValue = oGroupConditions ? oGroupConditions.groupLevels : [];
 
 					const oGroupContent = {
@@ -43,20 +43,20 @@ sap.ui.define([
 					fFinalizeGroupChange(oChange, oControl, oGroupContent, bIsRevert);
 					resolve();
 				})
-				.catch(function(oError) {
+				.catch((oError) => {
 					reject(oError);
 				});
 		});
 	};
 
-	const fRemoveGroup = function (oChange, oControl, mPropertyBag, sChangeReason) {
-		return new Promise(function (resolve, reject) {
+	const fRemoveGroup = function(oChange, oControl, mPropertyBag, sChangeReason) {
+		return new Promise((resolve, reject) => {
 			const bIsRevert = (sChangeReason === Util.REVERT);
 			const oModifier = mPropertyBag.modifier;
 			const oChangeContent = bIsRevert ? oChange.getRevertData() : oChange.getContent();
 			Promise.resolve()
 				.then(oModifier.getProperty.bind(oModifier, oControl, "groupConditions"))
-				.then(function(oGroupConditions) {
+				.then((oGroupConditions) => {
 					const aValue = oGroupConditions ? oGroupConditions.groupLevels : [];
 
 					if (!aValue) {
@@ -64,7 +64,7 @@ sap.ui.define([
 						reject();
 					}
 
-					const aFoundValue = aValue.filter(function (o) {
+					const aFoundValue = aValue.filter((o) => {
 						return o.name === oChangeContent.name;
 					});
 					const iIndex = aValue.indexOf(aFoundValue[0]);
@@ -84,23 +84,23 @@ sap.ui.define([
 					fFinalizeGroupChange(oChange, oControl, oChangeContent, bIsRevert);
 					resolve();
 				})
-				.catch(function(oError) {
+				.catch((oError) => {
 					reject(oError);
 				});
 		});
 	};
 
-	const fMoveGroup = function (oChange, oControl, mPropertyBag, sChangeReason) {
-		return new Promise(function (resolve, reject) {
+	const fMoveGroup = function(oChange, oControl, mPropertyBag, sChangeReason) {
+		return new Promise((resolve, reject) => {
 			const bIsRevert = (sChangeReason === Util.REVERT);
 			const oModifier = mPropertyBag.modifier;
 			const oChangeContent = bIsRevert ? oChange.getRevertData() : oChange.getContent();
 			Promise.resolve()
 				.then(oModifier.getProperty.bind(oModifier, oControl, "groupConditions"))
-				.then(function(oGroupConditions) {
+				.then((oGroupConditions) => {
 					const aValue = oGroupConditions ? oGroupConditions.groupLevels : [];
 
-					const aFoundValue = aValue.filter(function (o) {
+					const aFoundValue = aValue.filter((o) => {
 						return o.name === oChangeContent.name;
 					});
 
@@ -117,9 +117,9 @@ sap.ui.define([
 					fFinalizeGroupChange(oChange, oControl, oChangeContent, bIsRevert);
 					resolve();
 				})
-			.catch(function(oError) {
-				reject(oError);
-			});
+				.catch((oError) => {
+					reject(oError);
+				});
 		});
 	};
 
@@ -128,7 +128,7 @@ sap.ui.define([
 		const oTable = oAppComponent.byId(oChange.getSelector().id);
 		let sKey;
 		const aArgs = [oContent.name];
-		const mVersionInfo = { descriptionPayload: {}};
+		const mVersionInfo = { descriptionPayload: {} };
 
 		if (oChange.getChangeType() === "addGroup") {
 			mVersionInfo.descriptionPayload.category = ChangeCategories.ADD;
@@ -151,7 +151,7 @@ sap.ui.define([
 			}
 		}
 
-		return Util.getMdcResourceText(sKey, aArgs).then(function(sText) {
+		return Util.getMdcResourceText(sKey, aArgs).then((sText) => {
 			mVersionInfo.descriptionPayload.description = sText;
 
 			mVersionInfo.updateRequired = true;
@@ -165,7 +165,7 @@ sap.ui.define([
 		revert: fRemoveGroup,
 		getCondenserInfo: function(oChange, mPropertyBag) {
 			return {
-				affectedControl: {id: oChange.getContent().name},
+				affectedControl: { id: oChange.getContent().name },
 				affectedControlIdProperty: "name",
 				targetContainer: oChange.getSelector(),
 				targetAggregation: "groupLevels",
@@ -187,7 +187,7 @@ sap.ui.define([
 		revert: fAddGroup,
 		getCondenserInfo: function(oChange, mPropertyBag) {
 			return {
-				affectedControl: {id: oChange.getContent().name},
+				affectedControl: { id: oChange.getContent().name },
 				affectedControlIdProperty: "name",
 				targetContainer: oChange.getSelector(),
 				targetAggregation: "groupLevels",
@@ -209,7 +209,7 @@ sap.ui.define([
 		revert: fMoveGroup,
 		getCondenserInfo: function(oChange, mPropertyBag) {
 			return {
-				affectedControl: {id: oChange.getContent().name},
+				affectedControl: { id: oChange.getContent().name },
 				affectedControlIdProperty: "name",
 				targetContainer: oChange.getSelector(),
 				targetAggregation: "groupLevels",

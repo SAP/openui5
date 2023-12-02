@@ -3,10 +3,10 @@
  */
 sap.ui.define(
 	["sap/ui/base/Object"],
-	function (BaseObject) {
+	(BaseObject) => {
 		"use strict";
 
-		const _checkAndPrepareAdd = function (sName) {
+		const _checkAndPrepareAdd = function(sName) {
 			if (!sName) {
 				throw new Error("PromiseCache: Please provide an identifier!");
 			}
@@ -15,7 +15,7 @@ sap.ui.define(
 			}
 		};
 
-		const _findKeyForPromise = function (oPromise) {
+		const _findKeyForPromise = function(oPromise) {
 			if (typeof oPromise === "object" && this._oCache) {
 				for (const sKey in this._oCache) {
 					if (this._oCache[sKey].promise === oPromise) {
@@ -25,7 +25,7 @@ sap.ui.define(
 			}
 		};
 
-		const _findConfigByKeyOrPromise = function (vPromise, bThrow) {
+		const _findConfigByKeyOrPromise = function(vPromise, bThrow) {
 			const sKey = typeof vPromise === "string" ? vPromise : _findKeyForPromise.call(this, vPromise);
 			const oConfig = sKey && this._oCache && this._oCache[sKey];
 
@@ -54,7 +54,7 @@ sap.ui.define(
 			/**
 			 * Constructor.
 			 */
-			constructor: function () {
+			constructor: function() {
 				this._oCache = {};
 			},
 			/**
@@ -75,19 +75,19 @@ sap.ui.define(
 			 * @param {function(Promise,function,function,function)|Promise} [fnCreate] creation method or pre-created promise
 			 * @returns {Promise<*>} Returns the newly created <code>Promise</code>
 			 */
-			add: function (sName, fnCreate) {
+			add: function(sName, fnCreate) {
 				_checkAndPrepareAdd.call(this, sName);
 				const oPromiseConfig = {};
 				this._oCache[sName] = oPromiseConfig;
 
-				oPromiseConfig.promise = new Promise(function (resolve, reject) {
-					oPromiseConfig.resolve = function (oResult) {
+				oPromiseConfig.promise = new Promise((resolve, reject) => {
+					oPromiseConfig.resolve = function(oResult) {
 						if (!oPromiseConfig._isCanceled) {
 							oPromiseConfig._isSettled = true;
 							resolve(oResult);
 						}
 					};
-					oPromiseConfig.reject = function (oErr) {
+					oPromiseConfig.reject = function(oErr) {
 						if (!oPromiseConfig._isCanceled) {
 							oPromiseConfig._isSettled = true;
 							reject(oErr);
@@ -95,19 +95,19 @@ sap.ui.define(
 					};
 				});
 
-				oPromiseConfig.promise.isSettled = function () {
+				oPromiseConfig.promise.isSettled = function() {
 					return !!oPromiseConfig._isSettled;
 				};
 
-				oPromiseConfig.promise.isPending = function () {
+				oPromiseConfig.promise.isPending = function() {
 					return !oPromiseConfig._isSettled && !oPromiseConfig._isCanceled;
 				};
 
-				oPromiseConfig.promise.isCanceled = function () {
+				oPromiseConfig.promise.isCanceled = function() {
 					return !!oPromiseConfig._isCanceled;
 				};
 
-				oPromiseConfig.promise.getInternalPromise = function () {
+				oPromiseConfig.promise.getInternalPromise = function() {
 					return oPromiseConfig._promise;
 				};
 
@@ -122,26 +122,26 @@ sap.ui.define(
 					const oCreateResult = bIsCreateFunction ? fnCreate() : fnCreate;
 					const bIsCreateResultPromise = oCreateResult && typeof oCreateResult.then === "function";
 
-					if (bIsCreateResultPromise) {	// handle internal promise
+					if (bIsCreateResultPromise) { // handle internal promise
 						oPromiseConfig._promise = oCreateResult;
-						oPromiseConfig._promise.then(function (vResult) {
+						oPromiseConfig._promise.then((vResult) => {
 							if (!oPromiseConfig._isCanceled) {
 								oPromiseConfig._isSettled = true;
 								oPromiseConfig.resolve(vResult);
 							}
 							return vResult;
-						}, function (vErr) {
+						}, (vErr) => {
 							if (!oPromiseConfig._isCanceled) {
 								oPromiseConfig._isSettled = true;
 								oPromiseConfig.reject(vErr);
 							}
 						});
-					} else {	// handle non-promise results
+					} else { // handle non-promise results
 						oPromiseConfig.resolve(oCreateResult);
 					}
 				}
 
-				return  this._oCache[sName].promise;
+				return this._oCache[sName].promise;
 			},
 			/**
 			 * Cancels an unsettled promise from the promise cache.
@@ -151,7 +151,7 @@ sap.ui.define(
 			 * @param {string|Promise} vPromise Promise or identifier
 			 * @returns {Promise<*>} Returns the canceled <code>Promise</code>
 			 */
-			cancel: function (vPromise) {
+			cancel: function(vPromise) {
 				const oPromiseConfig = _findConfigByKeyOrPromise.call(this, vPromise, true);
 				if (!oPromiseConfig._isSettled) {
 					oPromiseConfig._isCanceled = true;
@@ -175,10 +175,10 @@ sap.ui.define(
 			 * @param {function(Promise,function,function,function)|Promise<*>} [fnCreate] creation method or pre-created promise
 			 * @returns {Promise} Returns the newly created <code>Promise</code>
 			 */
-			retrieve: function (sName, fnCreate) {
+			retrieve: function(sName, fnCreate) {
 				const oPromiseConfig = this._oCache && this._oCache[sName];
 				if (!oPromiseConfig && fnCreate) {
-					return this.add.apply(this, [sName, fnCreate]);
+					return this.add(...[sName, fnCreate]);
 				}
 				return oPromiseConfig && oPromiseConfig.promise;
 			},
@@ -191,11 +191,11 @@ sap.ui.define(
 			 * @param {...string} sName Promise identifier(s)
 			 * @returns {Array} Returns the retrieved promises
 			 */
-			retrieveMany: function () {
+			retrieveMany: function() {
 				const aResults = [];
-				const aKeys = arguments.length
-					? [].slice.call(arguments)
-					: Object.keys(this._oCache);
+				const aKeys = arguments.length ?
+					[].slice.call(arguments) :
+					Object.keys(this._oCache);
 				for (let i = 0; i < aKeys.length; i++) {
 					aResults.push(this.retrieve(aKeys[i].toString()));
 				}
@@ -207,7 +207,7 @@ sap.ui.define(
 			 * @protected
 			 * @param {string|Promise<*>} vPromise Promise or identifier
 			 */
-			remove: function (vPromise) {
+			remove: function(vPromise) {
 				const sKey = typeof vPromise === "string" ? vPromise : _findKeyForPromise.call(this, vPromise);
 				const oConfig = sKey && this._oCache && this._oCache[sKey];
 				if (oConfig) {
@@ -223,7 +223,7 @@ sap.ui.define(
 			 * @param {string} [oValue] Promise result
 			 * @returns {Promise<*>} Returns the resolved <code>Promise</code>
 			 */
-			resolve: function (vPromise, oValue) {
+			resolve: function(vPromise, oValue) {
 				const oConfig = _findConfigByKeyOrPromise.call(this, vPromise, true);
 				oConfig.resolve(oValue);
 				return oConfig.promise;
@@ -236,7 +236,7 @@ sap.ui.define(
 			 * @param {string} [oValue] Promise error
 			 * @returns {Promise<*>} Returns the rejected <code>Promise</code>
 			 */
-			reject: function (vPromise, oValue) {
+			reject: function(vPromise, oValue) {
 				const oConfig = _findConfigByKeyOrPromise.call(this, vPromise, true);
 				oConfig.reject(oValue);
 				return oConfig.promise;
@@ -246,11 +246,11 @@ sap.ui.define(
 			 *
 			 * @protected
 			 */
-			clear: function () {
+			clear: function() {
 				Object.keys(this._oCache).forEach(
-					function (sKey) {
+					(sKey) => {
 						this.remove(sKey);
-					}.bind(this)
+					}
 				);
 			},
 			/**
@@ -258,7 +258,7 @@ sap.ui.define(
 			 *
 			 * @protected
 			 */
-			destroy: function () {
+			destroy: function() {
 				this.clear();
 				this._oCache = null;
 			}

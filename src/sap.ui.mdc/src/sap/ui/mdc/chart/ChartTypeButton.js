@@ -10,11 +10,11 @@ sap.ui.define([
 	"sap/ui/core/Element",
 	"sap/ui/model/Filter",
 	"sap/ui/model/json/JSONModel"
-], function(OverflowToolbarButton, ButtonRenderer, ManagedObjectObserver, mobileLibrary, IllustratedMessage, Element, Filter, JSONModel) {
+], (OverflowToolbarButton, ButtonRenderer, ManagedObjectObserver, mobileLibrary, IllustratedMessage, Element, Filter, JSONModel) => {
 	"use strict";
 
 	// shortcut for sap.m.PlacementType
-	const PlacementType = mobileLibrary.PlacementType;
+	const { PlacementType } = mobileLibrary;
 
 	let ResponsivePopover, List, SearchField, StandardListItem, InvisibleText, Device, oRb;
 
@@ -45,13 +45,13 @@ sap.ui.define([
 		this.attachPress(this.displayChartTypes.bind(this));
 	};
 
-	ChartTypeButton.prototype._updateChart = function (oChart) {
+	ChartTypeButton.prototype._updateChart = function(oChart) {
 		if (oChart) {
 			const oModel = new JSONModel();
 			oModel.setProperty("/ChartTypeInfo", oChart.getChartTypeInfo());
 			this.setModel(oModel, "$chart");
 
-			this._oObserver = new ManagedObjectObserver(function(oChange) {
+			this._oObserver = new ManagedObjectObserver((oChange) => {
 				if (oChange.name === "chartType") {
 					oModel.setProperty("/ChartTypeInfo", oChart.getChartTypeInfo());
 				}
@@ -140,13 +140,18 @@ sap.ui.define([
 		}
 
 		if (!this.oReadyPromise) {
-			this.oReadyPromise = new Promise(function(resolve) {
+			this.oReadyPromise = new Promise((resolve) => {
 				if (ResponsivePopover) {
 					resolve(true);
 				} else {
 					sap.ui.require([
-						"sap/m/ResponsivePopover", "sap/m/List", "sap/m/SearchField", "sap/m/StandardListItem", "sap/ui/core/InvisibleText", "sap/ui/Device"
-					], function(ResponsivePopoverLoaded, ListLoaded, SearchFieldLoaded, StandardListItemLoaded, InvisibleTextLoaded, DeviceLoaded) {
+						"sap/m/ResponsivePopover",
+						"sap/m/List",
+						"sap/m/SearchField",
+						"sap/m/StandardListItem",
+						"sap/ui/core/InvisibleText",
+						"sap/ui/Device"
+					], (ResponsivePopoverLoaded, ListLoaded, SearchFieldLoaded, StandardListItemLoaded, InvisibleTextLoaded, DeviceLoaded) => {
 						ResponsivePopover = ResponsivePopoverLoaded;
 						List = ListLoaded;
 						SearchField = SearchFieldLoaded;
@@ -154,7 +159,7 @@ sap.ui.define([
 						InvisibleText = InvisibleTextLoaded;
 						Device = DeviceLoaded;
 						if (!oRb) {
-							sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc", true).then(function(oRbLoaded) {
+							sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc", true).then((oRbLoaded) => {
 								oRb = oRbLoaded;
 								resolve(true);
 							});
@@ -167,21 +172,21 @@ sap.ui.define([
 			});
 		}
 
-		this.oReadyPromise.then(function() {
-			if (!this.oPopover){
+		this.oReadyPromise.then(() => {
+			if (!this.oPopover) {
 				this.oPopover = this._createPopover(oChart);
 
-				this.oPopover.attachAfterClose(function(){
+				this.oPopover.attachAfterClose(() => {
 					this.oPopover.destroy();
 					delete this.oPopover;
-				}.bind(this));
+				});
 
 				return this.oPopover.openBy(oButton);
 
 			} else if (this.oPopover) {
 				this.oPopover.close();
 			}
-		}.bind(this));
+		});
 	};
 
 	/**
@@ -202,7 +207,7 @@ sap.ui.define([
 
 		const oList = new List({
 			mode: "SingleSelectMaster",
-			noData: new IllustratedMessage({title: oRb.getText("chart.NO_CHART_TYPES_AVAILABLE"), description: oRb.getText("chart.NO_CHART_TYPES_AVAILABLE_ACTION"),  illustrationType: mobileLibrary.IllustratedMessageType.AddDimensions}),
+			noData: new IllustratedMessage({ title: oRb.getText("chart.NO_CHART_TYPES_AVAILABLE"), description: oRb.getText("chart.NO_CHART_TYPES_AVAILABLE_ACTION"), illustrationType: mobileLibrary.IllustratedMessageType.AddDimensions }),
 			items: {
 				path: "$chartTypes>/AvailableChartTypes",
 				template: oItemTemplate
@@ -218,7 +223,7 @@ sap.ui.define([
 							if (oObj && oObj.key) {
 								sap.ui.require([
 									"sap/ui/mdc/flexibility/Chart.flexibility"
-								], function(ChartFlex) {
+								], (ChartFlex) => {
 
 									oChart.getEngine().createChanges({
 										control: oChart,
@@ -228,7 +233,7 @@ sap.ui.define([
 												chartType: oObj.key
 											}
 										}
-									}).then(function(vResult) {
+									}).then((vResult) => {
 										oChart.getControlDelegate().requestToolbarUpdate(oChart);
 									});
 
@@ -245,7 +250,7 @@ sap.ui.define([
 		const oSearchField = new SearchField({
 			placeholder: oRb.getText("chart.CHART_TYPE_SEARCH"),
 			liveChange: function(oEvent) {
-				if (oChart){
+				if (oChart) {
 					this._triggerSearchInPopover(oEvent, oList);
 				}
 			}.bind(this)

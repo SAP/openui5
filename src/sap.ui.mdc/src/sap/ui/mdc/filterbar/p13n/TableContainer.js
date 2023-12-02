@@ -11,12 +11,12 @@ sap.ui.define([
 	'sap/m/Text',
 	'sap/m/VBox',
 	'sap/ui/mdc/p13n/panels/FilterPanel'
-], function(Library, IFilterContainer, Table, Column, Text, VBox, FilterPanel) {
+], (Library, IFilterContainer, Table, Column, Text, VBox, FilterPanel) => {
 	"use strict";
 
 	/**
 	 * Constructor for a new filterBar/p13n/TableContainer.
-     *
+	 *
 	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
 	 * @class
 	 * The TableContainer is a IFilterContainer implementation for <code>sap.m.Table</code>.
@@ -40,8 +40,7 @@ sap.ui.define([
 					header: new Text({
 						text: oRB.getText("filter.AdaptationFilterBar_FIELD_COLUMN")
 					})
-				}),
-				new Column({
+				}), new Column({
 					header: new Text({
 						text: oRB.getText("filter.AdaptationFilterBar_FIELD_VALUE_COLUMN")
 					})
@@ -51,7 +50,7 @@ sap.ui.define([
 
 		this.oLayout = new FilterPanel({
 			enableReorder: false,
-			itemFactory: function(oItem){
+			itemFactory: function(oItem) {
 				const sKey = oItem.name;
 				const oFilterItem = this.mFilterItems[sKey];
 				return oFilterItem;

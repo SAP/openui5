@@ -3,8 +3,13 @@
  */
 
 sap.ui.define([
-	'./SortFlex', './ColumnFlex', './ConditionFlex', './GroupFlex', './AggregateFlex', './xConfigFlex'
-], function(SortFlex, ColumnFlex, ConditionFlex, GroupFlex, AggregateFlex, xConfigFlex) {
+	'./SortFlex',
+	'./ColumnFlex',
+	'./ConditionFlex',
+	'./GroupFlex',
+	'./AggregateFlex',
+	'./xConfigFlex'
+], (SortFlex, ColumnFlex, ConditionFlex, GroupFlex, AggregateFlex, xConfigFlex) => {
 	"use strict";
 
 	return {

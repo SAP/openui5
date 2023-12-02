@@ -1144,9 +1144,29 @@ sap.ui.define([
 				}
 			},
 
+			"p13n.FilterController": {
+				title: "Test Page for sap.m.p13n.FilterController",
+				module: "test-resources/sap/m/qunit/p13n/FilterController.qunit",
+				loader: {
+					paths: {
+						resourceroot: "test-resources/sap/m/qunit/p13n"
+					}
+				}
+			},
+
 			"p13n.SelectionPanel": {
 				title: "Test Page for sap.m.p13n.SelectionPanel",
 				module: "test-resources/sap/m/qunit/p13n/SelectionPanel.qunit",
+				loader: {
+					paths: {
+						resourceroot: "test-resources/sap/m/qunit/p13n"
+					}
+				}
+			},
+
+			"p13n.FilterPanel": {
+				title: "Test Page for sap.m.p13n.FilterPanel",
+				module: "test-resources/sap/m/qunit/p13n/FilterPanel.qunit",
 				loader: {
 					paths: {
 						resourceroot: "test-resources/sap/m/qunit/p13n"

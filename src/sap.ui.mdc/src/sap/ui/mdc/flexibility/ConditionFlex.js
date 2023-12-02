@@ -8,7 +8,7 @@ sap.ui.define([
 	'sap/ui/mdc/flexibility/Util',
 	"sap/ui/fl/changeHandler/condenser/Classification",
 	"sap/ui/fl/changeHandler/common/ChangeCategories"
-], function(merge, Log, FilterOperatorUtil, Util, ChangeClassification, ChangeCategories) {
+], (merge, Log, FilterOperatorUtil, Util, ChangeClassification, ChangeCategories) => {
 	"use strict";
 
 	/**
@@ -18,7 +18,7 @@ sap.ui.define([
 	 */
 	const fnQueueChange = function(oControl, fTask) {
 		const fCleanupPromiseQueue = function(pOriginalPromise) {
-			if (oControl._pQueue === pOriginalPromise){
+			if (oControl._pQueue === pOriginalPromise) {
 				delete oControl._pQueue;
 			}
 		};
@@ -37,61 +37,61 @@ sap.ui.define([
 		let mConditionsData, aConditions = null;
 		const oModifier = mPropertyBag.modifier;
 
-		return fnQueueChange(oControl, function(){
+		return fnQueueChange(oControl, () => {
 			return oModifier.getProperty(oControl, "filterConditions")
-			.then(function(mFilterConditions) {
-				// 'filterConditions' property needs to be updated for change selector
-				mConditionsData = merge({}, mFilterConditions);
-				if (mConditionsData) {
-					for (const sFieldPath in mConditionsData) {
-						if (sFieldPath === oChangeContent.name) {
-							aConditions = mConditionsData[sFieldPath];
-							break;
+				.then((mFilterConditions) => {
+					// 'filterConditions' property needs to be updated for change selector
+					mConditionsData = merge({}, mFilterConditions);
+					if (mConditionsData) {
+						for (const sFieldPath in mConditionsData) {
+							if (sFieldPath === oChangeContent.name) {
+								aConditions = mConditionsData[sFieldPath];
+								break;
+							}
 						}
 					}
-				}
 
-				if (!aConditions) {
-					mConditionsData[oChangeContent.name] = [];
-					aConditions = mConditionsData[oChangeContent.name];
-				}
+					if (!aConditions) {
+						mConditionsData[oChangeContent.name] = [];
+						aConditions = mConditionsData[oChangeContent.name];
+					}
 
-				if (!bIsRevert) {
-					// Set revert data on the change
-					oChange.setRevertData({
-						name: oChangeContent.name,
-						condition: oChangeContent.condition
-					});
-				}
+					if (!bIsRevert) {
+						// Set revert data on the change
+						oChange.setRevertData({
+							name: oChangeContent.name,
+							condition: oChangeContent.condition
+						});
+					}
 
-				const nConditionIdx = FilterOperatorUtil.indexOfCondition(oChangeContent.condition, aConditions);
-				if (nConditionIdx < 0) {
-					aConditions.push(oChangeContent.condition);
+					const nConditionIdx = FilterOperatorUtil.indexOfCondition(oChangeContent.condition, aConditions);
+					if (nConditionIdx < 0) {
+						aConditions.push(oChangeContent.condition);
 
-					// 'filterConditions' property needs to be updated for change selector
-					oModifier.setProperty(oControl, "filterConditions", mConditionsData);
+						// 'filterConditions' property needs to be updated for change selector
+						oModifier.setProperty(oControl, "filterConditions", mConditionsData);
 
 
-					return oModifier.getProperty(oControl, "delegate")
-					.then(function(oDelegate){
-						return Util.getModule(oDelegate.name);
-					})
-					.then(function(Delegate){
-						const fnDelegateAddCondition = Delegate && (Delegate.getFilterDelegate ? Delegate.getFilterDelegate().addCondition : Delegate.addCondition);
-						if (fnDelegateAddCondition) {
-							return fnDelegateAddCondition(oControl, oChangeContent.name, mPropertyBag)
-							.catch(function(oEx) {
-								Log.error("Error during Delegate.addCondition call: " + oEx);
+						return oModifier.getProperty(oControl, "delegate")
+							.then((oDelegate) => {
+								return Util.getModule(oDelegate.name);
+							})
+							.then((Delegate) => {
+								const fnDelegateAddCondition = Delegate && (Delegate.getFilterDelegate ? Delegate.getFilterDelegate().addCondition : Delegate.addCondition);
+								if (fnDelegateAddCondition) {
+									return fnDelegateAddCondition(oControl, oChangeContent.name, mPropertyBag)
+										.catch((oEx) => {
+											Log.error("Error during Delegate.addCondition call: " + oEx);
+										});
+								}
+							})
+							.finally(() => {
+								if (bIsRevert) {
+									oChange.resetRevertData();
+								}
 							});
-						}
-					})
-					.finally(function() {
-						if (bIsRevert) {
-							oChange.resetRevertData();
-						}
-					});
-				}
-			});
+					}
+				});
 		});
 
 	};
@@ -104,61 +104,61 @@ sap.ui.define([
 		let mConditionsData, aConditions, nDelIndex = -1;
 		const oModifier = mPropertyBag.modifier;
 
-		return fnQueueChange(oControl, function(){
+		return fnQueueChange(oControl, () => {
 			return oModifier.getProperty(oControl, "filterConditions")
-			.then(function(mFilterConditions) {
-				// 'filterConditions' property needs to be updated for change selector
-				mConditionsData = merge({}, mFilterConditions);
+				.then((mFilterConditions) => {
+					// 'filterConditions' property needs to be updated for change selector
+					mConditionsData = merge({}, mFilterConditions);
 
-				if (mConditionsData) {
-					for (const sFieldPath in mConditionsData) {
-						if (sFieldPath === oChangeContent.name) {
-							aConditions = mConditionsData[sFieldPath];
-							break;
+					if (mConditionsData) {
+						for (const sFieldPath in mConditionsData) {
+							if (sFieldPath === oChangeContent.name) {
+								aConditions = mConditionsData[sFieldPath];
+								break;
+							}
 						}
 					}
-				}
 
-				if (!bIsRevert) {
-					// Set revert data on the change
-					oChange.setRevertData({
-						name: oChangeContent.name,
-						condition: oChangeContent.condition
-					});
-				}
-
-				if (aConditions && (aConditions.length > 0)) {
-
-					nDelIndex = FilterOperatorUtil.indexOfCondition(oChangeContent.condition, aConditions);
-					if (nDelIndex >= 0) {
-						aConditions.splice(nDelIndex, 1);
-						//					if (aConditions.length === 0) {
-						//						delete mConditionsData[oChangeContent.name];
-						//					}
-						// 'filterConditions' property needs to be updated for change selector
-						oModifier.setProperty(oControl, "filterConditions", mConditionsData);
-
-						return oModifier.getProperty(oControl, "delegate")
-						.then(function(oDelegate){
-							return Util.getModule(oDelegate.name);
-						})
-						.then(function(Delegate){
-							const fnDelegateRemoveCondition = Delegate && (Delegate.getFilterDelegate ? Delegate.getFilterDelegate().removeCondition : Delegate.removeCondition);
-							if (fnDelegateRemoveCondition) {
-								return fnDelegateRemoveCondition(oControl, oChangeContent.name, mPropertyBag)
-								.catch(function(oEx) {
-									Log.error("Error during Delegate.removeCondition call: " + oEx);
-								});
-							}
-						})
-						.finally(function() {
-							if (bIsRevert) {
-								oChange.resetRevertData();
-							}
+					if (!bIsRevert) {
+						// Set revert data on the change
+						oChange.setRevertData({
+							name: oChangeContent.name,
+							condition: oChangeContent.condition
 						});
 					}
-				}
-			});
+
+					if (aConditions && (aConditions.length > 0)) {
+
+						nDelIndex = FilterOperatorUtil.indexOfCondition(oChangeContent.condition, aConditions);
+						if (nDelIndex >= 0) {
+							aConditions.splice(nDelIndex, 1);
+							//					if (aConditions.length === 0) {
+							//						delete mConditionsData[oChangeContent.name];
+							//					}
+							// 'filterConditions' property needs to be updated for change selector
+							oModifier.setProperty(oControl, "filterConditions", mConditionsData);
+
+							return oModifier.getProperty(oControl, "delegate")
+								.then((oDelegate) => {
+									return Util.getModule(oDelegate.name);
+								})
+								.then((Delegate) => {
+									const fnDelegateRemoveCondition = Delegate && (Delegate.getFilterDelegate ? Delegate.getFilterDelegate().removeCondition : Delegate.removeCondition);
+									if (fnDelegateRemoveCondition) {
+										return fnDelegateRemoveCondition(oControl, oChangeContent.name, mPropertyBag)
+											.catch((oEx) => {
+												Log.error("Error during Delegate.removeCondition call: " + oEx);
+											});
+									}
+								})
+								.finally(() => {
+									if (bIsRevert) {
+										oChange.resetRevertData();
+									}
+								});
+						}
+					}
+				});
 		});
 	};
 
@@ -174,9 +174,9 @@ sap.ui.define([
 	const fGetChangeVisualizationInfo = function(oChange, oAppComponent) {
 		const oContent = oChange.getContent();
 		const oFilterBar = oAppComponent.byId(oChange.getSelector().id);
-		const mVersionInfo = { descriptionPayload: {}};
+		const mVersionInfo = { descriptionPayload: {} };
 		let sKey;
-		let aArgs = [oContent.name,  oContent.condition.operator];
+		let aArgs = [oContent.name, oContent.condition.operator];
 		let vValue;
 
 		if (oChange.getChangeType() === "addCondition") {
@@ -199,8 +199,8 @@ sap.ui.define([
 				}
 				let mCurrentState = null;
 				if (oFilterBar.getInternalConditions) {
-					 mCurrentState = oFilterBar.getInternalConditions();
-				} else if (oFilterBar.getInbuiltFilter && oFilterBar.getInbuiltFilter() && oFilterBar.getInbuiltFilter().getInternalConditions ) {
+					mCurrentState = oFilterBar.getInternalConditions();
+				} else if (oFilterBar.getInbuiltFilter && oFilterBar.getInbuiltFilter() && oFilterBar.getInbuiltFilter().getInternalConditions) {
 					mCurrentState = oFilterBar.getInbuiltFilter().getInternalConditions();
 				}
 
@@ -231,7 +231,7 @@ sap.ui.define([
 
 		aArgs = aArgs.concat(vValue ? vValue : oContent.condition.values);
 
-		return Util.getMdcResourceText(sKey, aArgs).then(function(sText) {
+		return Util.getMdcResourceText(sKey, aArgs).then((sText) => {
 			mVersionInfo.descriptionPayload.description = sText;
 
 			mVersionInfo.updateRequired = true;

@@ -3,7 +3,7 @@
  */
 
 // Provides enumeration sap.ui.mdc.enums.BaseType
-sap.ui.define(["sap/ui/base/DataType"], function(DataType) {
+sap.ui.define(["sap/ui/base/DataType"], (DataType) => {
 	"use strict";
 
 

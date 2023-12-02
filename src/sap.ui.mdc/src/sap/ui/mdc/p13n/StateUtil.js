@@ -3,7 +3,7 @@
  */
 sap.ui.define([
 	"sap/m/p13n/Engine"
-], function(Engine) {
+], (Engine) => {
 	"use strict";
 
 	/**
@@ -22,85 +22,85 @@ sap.ui.define([
 
 
 		/**
-		*	Creates and applies the necessary changes for a given control and state.
-		*   <b>Note:</b>The changes are created in the same order as the objects are passed into
-		*   the state object attributes. For example, by adding two objects
-		*   into the <code>items</code> attribute of the <code>oState</code> object, the first entry is created,
-		*   and the second entry is created on top of the first change.
-		*   The item state is applied for each provided object in the given order in the array and uses
-		*	the provided position. If no index or only an invalid index has been provided,
-		*   the item is added to the array after the last item in the affected control's </code>item</code> aggregation.
-		*	In addition the following attributes can be used to remove a state:
-		*
-		*	<ul>
-		* 	<li><code>filtered</code> - Set to <code>false</code> in the <code>filter</code> scope on condition level to remove one specific condition for the given key.</li>
-		*	<li><code>sorted</code> - Set to <code>false</code>  in the <code>sorters</code> scope to remove a sorter/code>.</li>
-		*	<li><code>grouped</code> - Set to <code>false</code>  in the <code>groupLevels</code> scope to remove a grouping.</li>
-		*	<li><code>visible</code> - Set to <code>false</code>  to remove an aggregation item.</li>
-		*	<li><code>aggregated</code> - Set to <code>false</code>  to remove an aggregation.</li>
-		*	</ul>
-		*
-		*	<b>Note:</b>To improve the performance, you should avoid additional calls of the control’s delegate.
-		*	To do this, the <code>propertyInfo</code> property of the relevant control can be enriched with the properties used in the provided state.
-		*
-		*
-		* @public
-		*
-		* @param {sap.ui.mdc.Control} oControl The control that is used to create changes and to which changes are made
-		* @param {object} oState The state in which the control is represented
-		*
-		* @example
-		* oState = {
-		* 		filter: {
-		* 			"Category": [
-		* 				{
-		* 					"operator": EQ,
-		* 					"values": [
-		* 						"Books"
-		* 					]
-		* 				},
-		*				{
-		* 					"operator": EQ,
-		* 					"values": [
-		* 						"Hardware"
-		* 					],
-		*					"filtered": false
-		* 				}
-		* 			]
-		* 		},
-		* 		items: [
-		*			{name: "Category", position: 3},
-		*			{name: "Country", visible: false}
-		*       ],
-		*       sorters: [
-		*			{name: "Category", "descending": false},
-		*			{name: "NoCategory", "descending": false, "sorted": false}
-		*       ],
-		*		groupLevels: [
-		*			{name: "Category"},
-		*			{name: "Country", grouped: false}
-		*       ],
-		*		aggregations: {
-		*			Region: {},
-		*			Country: {
-		*				aggregated: false
-		*			}
-		*		},
-		*		//The supplementaryConfig can be used to modify control specific attributes, for example the column width in the Table
-		*		supplementaryConfig: {
-		*			aggregations: {
-		*				columns: {
-		*					Category: {
-		*						width: "150px"
-		*					}
-		*				}
-		*			}
-		*		}
-		* }
-		*
-		* @returns {Promise} <code>Promise</code> that resolves after all changes have been applied
-		*/
-		applyExternalState: function(oControl, oState){
+		 *	Creates and applies the necessary changes for a given control and state.
+		 *   <b>Note:</b>The changes are created in the same order as the objects are passed into
+		 *   the state object attributes. For example, by adding two objects
+		 *   into the <code>items</code> attribute of the <code>oState</code> object, the first entry is created,
+		 *   and the second entry is created on top of the first change.
+		 *   The item state is applied for each provided object in the given order in the array and uses
+		 *	the provided position. If no index or only an invalid index has been provided,
+		 *   the item is added to the array after the last item in the affected control's </code>item</code> aggregation.
+		 *	In addition the following attributes can be used to remove a state:
+		 *
+		 *	<ul>
+		 * 	<li><code>filtered</code> - Set to <code>false</code> in the <code>filter</code> scope on condition level to remove one specific condition for the given key.</li>
+		 *	<li><code>sorted</code> - Set to <code>false</code>  in the <code>sorters</code> scope to remove a sorter/code>.</li>
+		 *	<li><code>grouped</code> - Set to <code>false</code>  in the <code>groupLevels</code> scope to remove a grouping.</li>
+		 *	<li><code>visible</code> - Set to <code>false</code>  to remove an aggregation item.</li>
+		 *	<li><code>aggregated</code> - Set to <code>false</code>  to remove an aggregation.</li>
+		 *	</ul>
+		 *
+		 *	<b>Note:</b>To improve the performance, you should avoid additional calls of the control’s delegate.
+		 *	To do this, the <code>propertyInfo</code> property of the relevant control can be enriched with the properties used in the provided state.
+		 *
+		 *
+		 * @public
+		 *
+		 * @param {sap.ui.mdc.Control} oControl The control that is used to create changes and to which changes are made
+		 * @param {object} oState The state in which the control is represented
+		 *
+		 * @example
+		 * oState = {
+		 * 		filter: {
+		 * 			"Category": [
+		 * 				{
+		 * 					"operator": EQ,
+		 * 					"values": [
+		 * 						"Books"
+		 * 					]
+		 * 				},
+		 *				{
+		 * 					"operator": EQ,
+		 * 					"values": [
+		 * 						"Hardware"
+		 * 					],
+		 *					"filtered": false
+		 * 				}
+		 * 			]
+		 * 		},
+		 * 		items: [
+		 *			{name: "Category", position: 3},
+		 *			{name: "Country", visible: false}
+		 *       ],
+		 *       sorters: [
+		 *			{name: "Category", "descending": false},
+		 *			{name: "NoCategory", "descending": false, "sorted": false}
+		 *       ],
+		 *		groupLevels: [
+		 *			{name: "Category"},
+		 *			{name: "Country", grouped: false}
+		 *       ],
+		 *		aggregations: {
+		 *			Region: {},
+		 *			Country: {
+		 *				aggregated: false
+		 *			}
+		 *		},
+		 *		//The supplementaryConfig can be used to modify control specific attributes, for example the column width in the Table
+		 *		supplementaryConfig: {
+		 *			aggregations: {
+		 *				columns: {
+		 *					Category: {
+		 *						width: "150px"
+		 *					}
+		 *				}
+		 *			}
+		 *		}
+		 * }
+		 *
+		 * @returns {Promise} <code>Promise</code> that resolves after all changes have been applied
+		 */
+		applyExternalState: function(oControl, oState) {
 			const oInternalState = Engine.getInstance().internalizeKeys(oControl, oState);
 			return Engine.getInstance().applyState(oControl, oInternalState, false);
 		},
@@ -118,7 +118,7 @@ sap.ui.define([
 		 * @returns {Promise} <code>Promise</code> that resolves after the current state has been retrieved
 		 */
 		retrieveExternalState: function(oControl) {
-			return Engine.getInstance().retrieveState(oControl).then(function(oEngineState){
+			return Engine.getInstance().retrieveState(oControl).then((oEngineState) => {
 				return Engine.getInstance().externalizeKeys(oControl, oEngineState);
 			});
 		},
@@ -150,9 +150,9 @@ sap.ui.define([
 		 */
 		diffState: function(oControl, oOldState, oNewState) {
 			return Engine.getInstance().diffState(oControl, Engine.getInstance().internalizeKeys(oControl, oOldState), Engine.getInstance().internalizeKeys(oControl, oNewState))
-			.then(function(oEngineStateDiff){
-				return Engine.getInstance().externalizeKeys(oControl, oEngineStateDiff);
-			});
+				.then((oEngineStateDiff) => {
+					return Engine.getInstance().externalizeKeys(oControl, oEngineStateDiff);
+				});
 		},
 
 		/**

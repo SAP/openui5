@@ -1,21 +1,19 @@
 /*!
  * ${copyright}
-*/
+ */
 sap.ui.define([
-	'sap/ui/mdc/condition/Operator',
-	'sap/ui/mdc/util/DateUtil',
-	'sap/ui/model/Filter',
-	'sap/ui/model/FilterOperator',
-	'sap/base/Log'
-],
-
-function(
+		'sap/ui/mdc/condition/Operator',
+		'sap/ui/mdc/util/DateUtil',
+		'sap/ui/model/Filter',
+		'sap/ui/model/FilterOperator',
+		'sap/base/Log'
+	], (
 	Operator,
 	DateUtil,
 	Filter,
 	FilterOperator,
 	Log
-) {
+) => {
 	"use strict";
 
 	/**
@@ -56,12 +54,12 @@ function(
 						this.valueDefaults = oConfiguration.defaultValues();
 					}
 				} else {
-					this.paramTypes.forEach(function(oType) {
+					this.paramTypes.forEach((oType) => {
 						if (!this.valueDefaults) {
 							this.valueDefaults = [];
 						}
-						this.valueDefaults.push( 1); // add a default value 1 for a RangeOperator value
-					}.bind(this));
+						this.valueDefaults.push(1); // add a default value 1 for a RangeOperator value
+					});
 				}
 			}
 
@@ -113,7 +111,7 @@ function(
 	/**
 	 * Creates the static text of the operator
 	 *
-	  * @param {sap.ui.model.Type} oType data type of the used {@link sap.ui.mdc.FilterField FilterField}
+	 * @param {sap.ui.model.Type} oType data type of the used {@link sap.ui.mdc.FilterField FilterField}
 	 * @return {string} static text
 	 *
 	 * @private
@@ -126,4 +124,4 @@ function(
 
 	return RangeOperator;
 
-}, /* bExport= */ true);
+});

@@ -9,14 +9,14 @@ sap.ui.define([
 	'sap/ui/mdc/enums/ValueHelpSelectionType',
 	'sap/ui/mdc/enums/ConditionValidated',
 	'sap/ui/mdc/util/Common'
-], function(
+], (
 	Library,
 	Content,
 	loadModules,
 	ValueHelpSelectionType,
 	ConditionValidated,
 	Common
-) {
+) => {
 	"use strict";
 	/**
 	 * Constructor for a new <code>Conditions</code> content.
@@ -31,25 +31,23 @@ sap.ui.define([
 	 * @since 1.95.0
 	 * @alias sap.ui.mdc.valuehelp.content.Conditions
 	 */
-	 const Conditions = Content.extend(
-		"sap.ui.mdc.valuehelp.content.Conditions", /** @lends sap.ui.mdc.valuehelp.content.Conditions.prototype */
-		{
+	const Conditions = Content.extend(
+		"sap.ui.mdc.valuehelp.content.Conditions", /** @lends sap.ui.mdc.valuehelp.content.Conditions.prototype */ {
 			metadata: {
 				library: "sap.ui.mdc",
 				interfaces: [
-					"sap.ui.mdc.valuehelp.ITypeaheadContent",
-					"sap.ui.mdc.valuehelp.IDialogContent"
+					"sap.ui.mdc.valuehelp.ITypeaheadContent", "sap.ui.mdc.valuehelp.IDialogContent"
 				],
 				properties: {
-//					/**
-//					 * Internal property to bind the OK button to enable or disable it.
-//					 */
-//					_enableOK: {
-//						type: "boolean",
-//						group: "Appearance",
-//						defaultValue: true,
-//						visibility: "hidden"
-//					}
+					//					/**
+					//					 * Internal property to bind the OK button to enable or disable it.
+					//					 */
+					//					_enableOK: {
+					//						type: "boolean",
+					//						group: "Appearance",
+					//						defaultValue: true,
+					//						visibility: "hidden"
+					//					}
 					/**
 					 * Label shown on condition panel.
 					 */
@@ -57,8 +55,7 @@ sap.ui.define([
 						type: "string"
 					}
 				},
-				aggregations: {
-				},
+				aggregations: {},
 				associations: {
 					/**
 					 * Optional <code>ValueHelp</code>.
@@ -71,23 +68,23 @@ sap.ui.define([
 					 * <b>Note:</b> For <code>Boolean</code>, <code>Date</code>, or <code>Time</code> types, no <code>ValueHelp</code> should be added, but a default <code>ValueHelp</code> used instead.
 					 */
 					valueHelp: {
-					   type: "sap.ui.mdc.ValueHelp",
-					   multiple: false
-				   }
+						type: "sap.ui.mdc.ValueHelp",
+						multiple: false
+					}
 				},
 				events: {}
 			}
 		}
 	);
 
-//	var FilterOperatorUtil;
+	//	var FilterOperatorUtil;
 
-	Conditions.prototype.init = function () {
+	Conditions.prototype.init = function() {
 		Content.prototype.init.apply(this, arguments);
 		this._oResourceBundle = Library.getResourceBundleFor("sap.ui.mdc");
 	};
 
-	Conditions.prototype.exit = function () {
+	Conditions.prototype.exit = function() {
 
 		Common.cleanup(this, [
 			"_oScrollContainer", "_oDefineConditionPanel"
@@ -96,62 +93,60 @@ sap.ui.define([
 		Content.prototype.exit.apply(this, arguments);
 	};
 
-	Conditions.prototype.getContent = function () {
-		return this._retrievePromise("content", function () {
+	Conditions.prototype.getContent = function() {
+		return this._retrievePromise("content", () => {
 			const aModules = [
-				"sap/ui/mdc/valuehelp/base/DefineConditionPanel",
-				"sap/ui/model/base/ManagedObjectModel" // TODO use on ValueHelp level? But then how to bind local properties?
-//				"sap/ui/mdc/condition/FilterOperatorUtil"
+				"sap/ui/mdc/valuehelp/base/DefineConditionPanel", "sap/ui/model/base/ManagedObjectModel" // TODO use on ValueHelp level? But then how to bind local properties?
+				//				"sap/ui/mdc/condition/FilterOperatorUtil"
 			];
 			if (this.provideScrolling()) {
 				aModules.push("sap/m/ScrollContainer");
 			}
-			return loadModules(aModules).then(function (aModules) {
-					const DefineConditionPanel = aModules[0];
-					const ManagedObjectModel = aModules[1];
-//					FilterOperatorUtil = aModules[2];
-					const ScrollContainer = aModules.length > 2 && aModules[2];
+			return loadModules(aModules).then((aModules) => {
+				const DefineConditionPanel = aModules[0];
+				const ManagedObjectModel = aModules[1];
+				//					FilterOperatorUtil = aModules[2];
+				const ScrollContainer = aModules.length > 2 && aModules[2];
 
-					this._oManagedObjectModel = new ManagedObjectModel(this);
-					this._oDefineConditionPanel = new DefineConditionPanel(
-						this.getId() + "-DCP",
-						{
-							label: "{$help>/label}",
-							conditions: "{$help>/conditions}",
-							inputOK: "{$valueHelp>/_valid}",
-							config: {path: "$help>/config"}, // TODO: change DefineConditionPanel to use Config
-							conditionProcessed: _handleConditionProcessed.bind(this),
-							valueHelp: this.getValueHelp() || (undefined) //TODO ValueHelp can only be set once and not modified?
-						}
-					).setModel(this._oManagedObjectModel, "$help");
-
-					if (ScrollContainer) {
-						this._oScrollContainer = new ScrollContainer(this.getId() + "-SC", {
-							height: "100%",
-							width: "100%",
-							vertical: true,
-							content: [this._oDefineConditionPanel]
-						});
-
-						this.setAggregation("displayContent", this._oScrollContainer);
-						return this._oScrollContainer;
-					} else {
-						this.setAggregation("displayContent", this._oDefineConditionPanel);
-						return this._oDefineConditionPanel;
+				this._oManagedObjectModel = new ManagedObjectModel(this);
+				this._oDefineConditionPanel = new DefineConditionPanel(
+					this.getId() + "-DCP", {
+						label: "{$help>/label}",
+						conditions: "{$help>/conditions}",
+						inputOK: "{$valueHelp>/_valid}",
+						config: { path: "$help>/config" }, // TODO: change DefineConditionPanel to use Config
+						conditionProcessed: _handleConditionProcessed.bind(this),
+						valueHelp: this.getValueHelp() || (undefined) //TODO ValueHelp can only be set once and not modified?
 					}
-			}.bind(this));
-		}.bind(this));
+				).setModel(this._oManagedObjectModel, "$help");
+
+				if (ScrollContainer) {
+					this._oScrollContainer = new ScrollContainer(this.getId() + "-SC", {
+						height: "100%",
+						width: "100%",
+						vertical: true,
+						content: [this._oDefineConditionPanel]
+					});
+
+					this.setAggregation("displayContent", this._oScrollContainer);
+					return this._oScrollContainer;
+				} else {
+					this.setAggregation("displayContent", this._oDefineConditionPanel);
+					return this._oDefineConditionPanel;
+				}
+			});
+		});
 	};
 
-	Conditions.prototype.getCount = function (aConditions) {
+	Conditions.prototype.getCount = function(aConditions) {
 		let iCount = 0;
 
-		for (let i = 0; i < aConditions.length; i++) {
-			const oCondition = aConditions[i];
+		for (const oCondition of aConditions) {
 			if (oCondition.isEmpty !== true && oCondition.validated === ConditionValidated.NotValidated) {
 				iCount++;
 			}
 		}
+
 		return iCount;
 	};
 
@@ -216,17 +211,17 @@ sap.ui.define([
 
 	};
 
-	Conditions.prototype.getContainerConfig = function () {
+	Conditions.prototype.getContainerConfig = function() {
 		return {
 			'sap.ui.mdc.valuehelp.Popover': {
 				showArrow: true,
 				showHeader: true,
-				getContentWidth: function () { return "500px"; },
-				getFooter: function () {
-					return this._retrievePromise("footer", function () {
-						return loadModules(["sap/m/library", "sap/m/Button"]).then(function (aModules) {
+				getContentWidth: function() { return "500px"; },
+				getFooter: function() {
+					return this._retrievePromise("footer", () => {
+						return loadModules(["sap/m/library", "sap/m/Button"]).then((aModules) => {
 							const oMLibrary = aModules[0];
-							const ButtonType = oMLibrary.ButtonType;
+							const { ButtonType } = oMLibrary;
 							const Button = aModules[1];
 							const oButtonOK = new Button(this.getId() + "-ok", {
 								text: this._oResourceBundle.getText("valuehelp.OK"),
@@ -239,8 +234,8 @@ sap.ui.define([
 								press: this.fireCancel.bind(this)
 							});
 							return [oButtonOK, oButtonCancel];
-						}.bind(this));
-					}.bind(this));
+						});
+					});
 				}.bind(this)
 			}
 		};
@@ -255,32 +250,32 @@ sap.ui.define([
 	};
 
 	function _handleOK(oEvent) {
-//		var aConditions = this.getConditions();
-//
-//		// remove empty conditions
-//		aConditions = Condition._removeEmptyConditions(aConditions);
-//		aConditions = Condition._removeInitialFlags(aConditions);
-//		FilterOperatorUtil.updateConditionsValues(aConditions); // to remove static text from static conditions
-//
-//		this.fireSetConditions({conditions: aConditions});
-		this.fireConfirm({close: true});
+		//		var aConditions = this.getConditions();
+		//
+		//		// remove empty conditions
+		//		aConditions = Condition._removeEmptyConditions(aConditions);
+		//		aConditions = Condition._removeInitialFlags(aConditions);
+		//		FilterOperatorUtil.updateConditionsValues(aConditions); // to remove static text from static conditions
+		//
+		//		this.fireSetConditions({conditions: aConditions});
+		this.fireConfirm({ close: true });
 	}
 
 	function _handleConditionProcessed(oEvent) {
 		let aNextConditions = this.getConditions();
 
-		if (this.getMaxConditions() === 1) {	// TODO: Better treatment of conditions? DefineConditionPanel currently hijacks conditions
-			aNextConditions = aNextConditions.filter(function(oCondition){
+		if (this.getMaxConditions() === 1) { // TODO: Better treatment of conditions? DefineConditionPanel currently hijacks conditions
+			aNextConditions = aNextConditions.filter((oCondition) => {
 				return oCondition.validated === "NotValidated";
 			});
 		}
 
 		// remove empty conditions
-//		aConditions = Condition._removeEmptyConditions(aConditions);
-//		aConditions = Condition._removeInitialFlags(aConditions);
-//		FilterOperatorUtil.updateConditionsValues(aConditions); // to remove static text from static conditions
+		//		aConditions = Condition._removeEmptyConditions(aConditions);
+		//		aConditions = Condition._removeInitialFlags(aConditions);
+		//		FilterOperatorUtil.updateConditionsValues(aConditions); // to remove static text from static conditions
 
-		this.fireSelect({type: ValueHelpSelectionType.Set, conditions: aNextConditions});
+		this.fireSelect({ type: ValueHelpSelectionType.Set, conditions: aNextConditions });
 
 	}
 

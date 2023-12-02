@@ -1,6 +1,6 @@
 /*!
  * ${copyright}
-*/
+ */
 sap.ui.define([
 	'sap/ui/base/Object',
 	"sap/ui/core/Lib",
@@ -15,7 +15,7 @@ sap.ui.define([
 	'sap/base/strings/escapeRegExp',
 	'sap/ui/mdc/enums/OperatorOverwrite',
 	'sap/ui/mdc/enums/OperatorValueType'
-], function(
+], (
 	BaseObject,
 	Library,
 	Filter,
@@ -29,12 +29,12 @@ sap.ui.define([
 	escapeRegExp,
 	OperatorOverwrite,
 	OperatorValueType
-) {
+) => {
 	"use strict";
 
 	// translation utils
 	let oMessageBundle = Library.getResourceBundleFor("sap.ui.mdc");
-	sap.ui.getCore().attachLocalizationChanged(function() {
+	sap.ui.getCore().attachLocalizationChanged(() => {
 		oMessageBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
 	});
 
@@ -191,13 +191,13 @@ sap.ui.define([
 			if (oConfiguration.group) {
 				this.group = oConfiguration.group;
 			} else {
-				this.group = {id: !this.exclude ? "1" : "2"};
+				this.group = { id: !this.exclude ? "1" : "2" };
 				if (!this.group.text) {
 					this.group.text = oMessageBundle.getText("VALUEHELP.OPERATOR.GROUP" + this.group.id);
 				}
 			}
 		},
-		destroy: function () {
+		destroy: function() {
 			this._oMethodOverwrites = null;
 			BaseObject.protoype.destroy.apply(this, arguments);
 		}
@@ -273,14 +273,14 @@ sap.ui.define([
 		if (Array.isArray(vValue) && aFieldPaths.length > 1) {
 			vValue = vValue[0];
 			sFieldPath = aFieldPaths[0];
-			oFilterUnit = new Filter({path: aFieldPaths[1], operator: FilterOperator.EQ, value1: oCondition.values[0][1]});
+			oFilterUnit = new Filter({ path: aFieldPaths[1], operator: FilterOperator.EQ, value1: oCondition.values[0][1] });
 		}
 		if (oFilterUnit && vValue === undefined) {
 			// filter only for unit
 			oFilter = oFilterUnit;
 			oFilterUnit = undefined;
 		} else if (!this.valueTypes[1]) { // in EQ case ignore description
-			if (!bCaseSensitive && oCondition.validated === ConditionValidated.Validated)  {
+			if (!bCaseSensitive && oCondition.validated === ConditionValidated.Validated) {
 				// for validated Item conditions we always set caseSensitive to true;
 				bCaseSensitive = true;
 			}
@@ -301,9 +301,9 @@ sap.ui.define([
 		// add filter for in-parameters
 		if (oCondition.inParameters) {
 			const aFilters = [oFilter];
-			for ( const sInPath in oCondition.inParameters) {
+			for (const sInPath in oCondition.inParameters) {
 				if (sInPath.startsWith("conditions/")) { // only use InParameters that are in the same ConditionModel (Parameters from outside might not be valid filters)
-					aFilters.push(new Filter({path: sInPath.slice(11), operator: FilterOperator.EQ, value1: oCondition.inParameters[sInPath]}));
+					aFilters.push(new Filter({ path: sInPath.slice(11), operator: FilterOperator.EQ, value1: oCondition.inParameters[sInPath] }));
 				}
 			}
 			if (aFilters.length > 1) {
@@ -618,7 +618,6 @@ sap.ui.define([
 	 * @ui5-restricted sap.ui.mdc.valuehelp.base.DefineConditionPanel
 	 */
 	Operator.prototype._createLocalType = function(vType, oType) {
-
 		if (!this._aTypes) {
 			this._aTypes = []; // array as for SelfNoParse type depends on FilterField
 		}
@@ -641,8 +640,7 @@ sap.ui.define([
 			oConstraints = vType.constraints;
 		}
 
-		for (let i = 0; i < this._aTypes.length; i++) {
-			const oMyType = this._aTypes[i];
+		for (const oMyType of this._aTypes) {
 			if (oMyType.name === sType && deepEqual(oMyType.formatOptions, oFormatOptions) && deepEqual(oMyType.constraints, oConstraints)) {
 				oUsedType = oMyType.type;
 				break;
@@ -669,10 +667,9 @@ sap.ui.define([
 					return vValue;
 				};
 			}
-			this._aTypes.push({name: sType, formatOptions: oFormatOptions, constraints: oConstraints, type: oUsedType});
+			this._aTypes.push({ name: sType, formatOptions: oFormatOptions, constraints: oConstraints, type: oUsedType });
 		}
 		return oUsedType;
-
 	};
 
 	/**
@@ -748,9 +745,9 @@ sap.ui.define([
 
 		if (this.test(sText) || (bDefaultOperator && sText && this.hasRequiredValues())) {
 			const aValues = this.parse(sText, oType, sDisplayFormat, bDefaultOperator, aCompositeTypes, oAdditionalType, aAdditionalCompositeTypes);
-			if (aValues.length == this.valueTypes.length || this.valueTypes[0] === OperatorValueType.Static
-					|| (aValues.length === 1 && this.valueTypes.length === 2 && !this.valueTypes[1])) { // EQ also valid without description
-				const oCondition =  Condition.createCondition( this.name, aValues );
+			if (aValues.length == this.valueTypes.length || this.valueTypes[0] === OperatorValueType.Static ||
+				(aValues.length === 1 && this.valueTypes.length === 2 && !this.valueTypes[1])) { // EQ also valid without description
+				const oCondition = Condition.createCondition(this.name, aValues);
 				this.checkValidated(oCondition);
 				return oCondition;
 			} else {
@@ -795,7 +792,7 @@ sap.ui.define([
 		if (this.valueTypes[0] && this.valueTypes[0] === OperatorValueType.Static) {
 			return {}; // don't check value for static operators (might contain static text)
 		} else {
-			return {values: oCondition.values};
+			return { values: oCondition.values };
 		}
 
 	};
@@ -809,13 +806,13 @@ sap.ui.define([
 	 */
 	Operator.prototype.hasRequiredValues = function() {
 
-	   if (this.valueTypes[0] && this.valueTypes[0] !== OperatorValueType.Static) {
-		   return true;
-	   } else {
-		   return false;
-	   }
+		if (this.valueTypes[0] && this.valueTypes[0] !== OperatorValueType.Static) {
+			return true;
+		} else {
+			return false;
+		}
 
-   };
+	};
 
 	/**
 	 * Compares two conditions
@@ -865,7 +862,7 @@ sap.ui.define([
 			}
 
 			if (deepEqual(oCheckValue1, oCheckValue2)) { // deepEqual seems to be much faster as JSON-string comparison
-					bEqual = true;
+				bEqual = true;
 			}
 		}
 
@@ -889,18 +886,28 @@ sap.ui.define([
 
 	};
 
-	Operator.prototype._enableOverwrites = function (oConfiguration) {
+	Operator.prototype._enableOverwrites = function(oConfiguration) {
 		this._oMethodOverwrites = {};
-		["format", "parse", "validate", "getModelFilter", "isEmpty", "createControl", "getCheckValue", "getValues", "checkValidated", "getLongText"].forEach(function (sMethodName) {
+		["format",
+			"parse",
+			"validate",
+			"getModelFilter",
+			"isEmpty",
+			"createControl",
+			"getCheckValue",
+			"getValues",
+			"checkValidated",
+			"getLongText"
+		].forEach((sMethodName) => {
 			Object.defineProperty(this, sMethodName, {
-				get: function( ) {
+				get: function() {
 					return (this._oMethodOverwrites && this._oMethodOverwrites[sMethodName]) || Object.getPrototypeOf(this)[sMethodName];
 				}
 			});
 			if (oConfiguration && oConfiguration[sMethodName]) {
 				this._oMethodOverwrites[sMethodName] = oConfiguration[sMethodName];
 			}
-		}.bind(this));
+		});
 	};
 
 	const aAllowedOverwrites = Object.values(OperatorOverwrite);
@@ -913,7 +920,7 @@ sap.ui.define([
 	 * @public
 	 * @since: 1.113.0
 	 */
-	Operator.prototype.overwrite = function (sMethodName, fnOverwrite) {
+	Operator.prototype.overwrite = function(sMethodName, fnOverwrite) {
 		if (aAllowedOverwrites.indexOf(sMethodName) >= 0) {
 			const fnPrevious = this[sMethodName];
 			this._oMethodOverwrites[sMethodName] = fnOverwrite;

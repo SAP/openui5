@@ -12,7 +12,7 @@ sap.ui.define([
 		'sap/ui/mdc/condition/FilterConverter',
 		'sap/ui/core/date/UI5Date'
 	],
-	function (
+	(
 		ConditionModelPropertyBinding,
 		JSONModel,
 		ChangeReason,
@@ -22,7 +22,7 @@ sap.ui.define([
 		Condition,
 		FilterConverter,
 		UI5Date
-	) {
+	) => {
 		"use strict";
 
 		/**
@@ -40,7 +40,7 @@ sap.ui.define([
 		 * @experimental As of version 1.48
 		 */
 		const ConditionModel = JSONModel.extend("sap.ui.mdc.condition.ConditionModel", {
-			constructor: function () {
+			constructor: function() {
 				JSONModel.apply(this, arguments);
 				this.setSizeLimit(1000);
 
@@ -53,7 +53,7 @@ sap.ui.define([
 			}
 		});
 
-		ConditionModel.prototype.bindProperty = function (sPath, oContext, mParameters) {
+		ConditionModel.prototype.bindProperty = function(sPath, oContext, mParameters) {
 
 			let sEscapedPath = sPath;
 
@@ -70,7 +70,7 @@ sap.ui.define([
 
 		};
 
-		ConditionModel.prototype.getContext = function (sPath) {
+		ConditionModel.prototype.getContext = function(sPath) {
 
 			if (sPath.startsWith("/conditions/")) {
 				let sFieldPath = sPath.slice(12);
@@ -82,13 +82,13 @@ sap.ui.define([
 
 		};
 
-		ConditionModel.prototype.bindList = function (sPath, oContext, aSorters, aFilters, mParameters) {
+		ConditionModel.prototype.bindList = function(sPath, oContext, aSorters, aFilters, mParameters) {
 			const oBinding = JSONModel.prototype.bindList.apply(this, arguments);
 			oBinding.enableExtendedChangeDetection(true); // to force deep compare of data
 			return oBinding;
 		};
 
-		ConditionModel.prototype.destroy = function () {
+		ConditionModel.prototype.destroy = function() {
 
 			JSONModel.prototype.destroy.apply(this, arguments);
 		};
@@ -101,7 +101,7 @@ sap.ui.define([
 		 * @private
 		 * @ui5-restricted sap.ui.mdc
 		 */
-		ConditionModel.prototype.clone = function (sFieldPath) {
+		ConditionModel.prototype.clone = function(sFieldPath) {
 			const oCM = new ConditionModel();
 
 			oCM._sName = this._sName + "_clone";
@@ -109,8 +109,8 @@ sap.ui.define([
 			let oClonedConditions = {};
 			if (typeof sFieldPath === "string") {
 				const aConditions = this.getConditions(sFieldPath);
-				for (let i = 0; i < aConditions.length; i++) {
-					const oCondition = aConditions[i];
+
+				for (const oCondition of aConditions) {
 					const sMyFieldPath = _escapeFieldPath.call(this, sFieldPath);
 					if (!oClonedConditions[sMyFieldPath]) {
 						oClonedConditions[sMyFieldPath] = [];
@@ -133,14 +133,14 @@ sap.ui.define([
 		 * @private
 		 * @ui5-restricted sap.ui.mdc
 		 */
-		ConditionModel.prototype.merge = function (sFieldPath, oSourceConditionModel, sSourceFieldPath) {
+		ConditionModel.prototype.merge = function(sFieldPath, oSourceConditionModel, sSourceFieldPath) {
 			this.removeAllConditions(sFieldPath);
 			const oSourceConditions = merge({}, oSourceConditionModel.getAllConditions());
 			for (const sMyFieldPath in oSourceConditions) {
 				if (!(typeof sSourceFieldPath === "string") || sMyFieldPath === sSourceFieldPath) {
 					const aCleanedConditions = Condition._removeEmptyConditions(oSourceConditions[sMyFieldPath]);
-					for (let i = 0; i < aCleanedConditions.length; i++) {
-						const oCondition = aCleanedConditions[i];
+
+					for (const oCondition of aCleanedConditions) {
 						this.addCondition(sMyFieldPath, oCondition);
 					}
 				}
@@ -159,7 +159,7 @@ sap.ui.define([
 		 * @private
 		 * @ui5-restricted sap.ui.mdc
 		 */
-		ConditionModel.prototype.getConditions = function (sFieldPath) {
+		ConditionModel.prototype.getConditions = function(sFieldPath) {
 			//TODO: only works for simple flat condition model content
 			return _getConditions.call(this, sFieldPath);
 		};
@@ -190,7 +190,7 @@ sap.ui.define([
 		 * @private
 		 * @ui5-restricted sap.ui.mdc
 		 */
-		ConditionModel.prototype.getAllConditions = function (vFieldPath) {
+		ConditionModel.prototype.getAllConditions = function(vFieldPath) {
 
 			const oConditions = this.getProperty("/conditions");
 			const oResult = {};
@@ -221,7 +221,7 @@ sap.ui.define([
 		 * @private
 		 * @ui5-restricted sap.ui.mdc
 		 */
-		ConditionModel.prototype.indexOf = function (sFieldPath, oCondition, fnNormalizeCondition) {
+		ConditionModel.prototype.indexOf = function(sFieldPath, oCondition, fnNormalizeCondition) {
 
 			if (typeof sFieldPath !== "string") {
 				throw new Error("sFieldPath must be a string " + this);
@@ -229,12 +229,12 @@ sap.ui.define([
 
 			const aConditions = this.getConditions(sFieldPath);
 			const aArgs = fnNormalizeCondition ? [fnNormalizeCondition(oCondition), aConditions.map(fnNormalizeCondition)] : [oCondition, aConditions];
-			const iIndex = FilterOperatorUtil.indexOfCondition.apply(FilterOperatorUtil, aArgs);
+			const iIndex = FilterOperatorUtil.indexOfCondition(...aArgs);
 			return iIndex;
 
 		};
 
-		ConditionModel.prototype.exist = function (oCondition, sFieldPath) {
+		ConditionModel.prototype.exist = function(oCondition, sFieldPath) {
 			if (typeof sFieldPath === "string") {
 				return this.indexOf(sFieldPath, oCondition) >= 0;
 			} else {
@@ -250,7 +250,7 @@ sap.ui.define([
 		 * @private
 		 * @ui5-restricted sap.ui.mdc
 		 */
-		ConditionModel.prototype.setConditions = function (oConditions) {
+		ConditionModel.prototype.setConditions = function(oConditions) {
 
 			let i = 0;
 			let oCondition;
@@ -310,7 +310,7 @@ sap.ui.define([
 		 * @private
 		 * @ui5-restricted sap.ui.mdc
 		 */
-		ConditionModel.prototype.addCondition = function (sFieldPath, oCondition, bForce) {
+		ConditionModel.prototype.addCondition = function(sFieldPath, oCondition, bForce) {
 
 			if (typeof sFieldPath !== "string") {
 				throw new Error("sFieldPath must be a string " + this);
@@ -330,7 +330,7 @@ sap.ui.define([
 		 * @private
 		 * @ui5-restricted sap.ui.mdc
 		 */
-		ConditionModel.prototype.insertCondition = function (sFieldPath, iIndex, oCondition, bForce) {
+		ConditionModel.prototype.insertCondition = function(sFieldPath, iIndex, oCondition, bForce) {
 
 			if (typeof sFieldPath !== "string") {
 				throw new Error("sFieldPath must be a string " + this);
@@ -376,7 +376,7 @@ sap.ui.define([
 		 * @private
 		 * @ui5-restricted sap.ui.mdc
 		 */
-		ConditionModel.prototype.removeCondition = function (sFieldPath, vCondition) {
+		ConditionModel.prototype.removeCondition = function(sFieldPath, vCondition) {
 
 			if (typeof sFieldPath !== "string") {
 				throw new Error("sFieldPath must be a string " + this);
@@ -412,7 +412,7 @@ sap.ui.define([
 		 * @private
 		 * @ui5-restricted sap.ui.mdc
 		 */
-		ConditionModel.prototype.removeAllConditions = function (sFieldPath) {
+		ConditionModel.prototype.removeAllConditions = function(sFieldPath) {
 
 			const oConditions = this.getProperty("/conditions");
 
@@ -445,7 +445,7 @@ sap.ui.define([
 
 		};
 
-		ConditionModel.prototype._getFieldPathProperty = function (sFieldPath) {
+		ConditionModel.prototype._getFieldPathProperty = function(sFieldPath) {
 			const sEscapedFieldPath = _escapeFieldPath.call(this, sFieldPath);
 			const oFieldPath = this.getProperty("/fieldPath");
 			if (!oFieldPath[sEscapedFieldPath]) {
@@ -463,17 +463,17 @@ sap.ui.define([
 			return oFieldPath[sEscapedFieldPath];
 		};
 
-		ConditionModel.prototype.getFilters = function (sFieldPath) {
+		ConditionModel.prototype.getFilters = function(sFieldPath) {
 			Log.error("ConditionModel", "usage or deprecated getFilters() function! Please use the FilterConverter.createFilters() function instead.");
-			return FilterConverter.createFilters( this.getAllConditions(), {});
+			return FilterConverter.createFilters(this.getAllConditions(), {});
 		};
 
-		ConditionModel.prototype.serialize = function () {
+		ConditionModel.prototype.serialize = function() {
 			const oConditions = merge({}, this.getAllConditions());
 
 			for (const sMyFieldPath in oConditions) {
 				const aConditions = oConditions[sMyFieldPath];
-				aConditions.forEach(function (oCondition) {
+				aConditions.forEach((oCondition) => {
 					delete oCondition.isEmpty;
 				}, this);
 
@@ -485,8 +485,8 @@ sap.ui.define([
 			return '{"conditions":' + JSON.stringify(oConditions) + "}";
 		};
 
-		ConditionModel.prototype.parse = function (sObjects) {
-			const dateTimeReviver = function (key, value) {
+		ConditionModel.prototype.parse = function(sObjects) {
+			const dateTimeReviver = function(key, value) {
 				let a;
 				if (!isNaN(parseInt(key)) && (typeof value === 'string')) {
 					a = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2}).(\d{3})Z$/.exec(value);
@@ -508,8 +508,7 @@ sap.ui.define([
 				if (aParts.length > 1) {
 					sFieldPath = "";
 
-					for (let i = 0; i < aParts.length; i++) {
-						const sPart = aParts[i];
+					aParts.forEach((sPart, i) => {
 						if (i > 0) {
 							if (!isNaN(sPart) || !isNaN(aParts[i - 1])) {
 								sFieldPath = sFieldPath + "/";
@@ -518,7 +517,7 @@ sap.ui.define([
 							}
 						}
 						sFieldPath = sFieldPath + sPart;
-					}
+					});
 				}
 
 			}

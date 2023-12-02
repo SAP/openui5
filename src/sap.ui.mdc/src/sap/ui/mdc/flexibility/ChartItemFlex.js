@@ -3,10 +3,8 @@
  */
 
 sap.ui.define([
-	'./ItemBaseFlex',
-	'./Util',
-	"sap/ui/fl/changeHandler/common/ChangeCategories"
-], function(ItemBaseFlex, Util, ChangeCategories) {
+	'./ItemBaseFlex', './Util', "sap/ui/fl/changeHandler/common/ChangeCategories"
+], (ItemBaseFlex, Util, ChangeCategories) => {
 	"use strict";
 
 	const oChartItemFlex = Object.assign({}, ItemBaseFlex);
@@ -16,19 +14,18 @@ sap.ui.define([
 	};
 
 	oChartItemFlex.findItem = function(oModifier, aItems, sName) {
-		return aItems.reduce(function(oPreviousPromise, oItem) {
+		return aItems.reduce((oPreviousPromise, oItem) => {
 			return oPreviousPromise
-				.then(function(oFoundItem) {
+				.then((oFoundItem) => {
 					if (!oFoundItem) {
 						return Promise.all([
-							oModifier.getProperty(oItem, "propertyKey"),
-							oModifier.getProperty(oItem, "key")
-						])
-						.then(function(aProperties) {
-							if (aProperties[0] === sName || aProperties[1] === sName) {
-								return oItem;
-							}
-						});
+								oModifier.getProperty(oItem, "propertyKey"), oModifier.getProperty(oItem, "key")
+							])
+							.then((aProperties) => {
+								if (aProperties[0] === sName || aProperties[1] === sName) {
+									return oItem;
+								}
+							});
 					}
 					return oFoundItem;
 				});
@@ -40,7 +37,7 @@ sap.ui.define([
 		const oChart = oAppComponent.byId(oChange.getSelector().id);
 		let sKey;
 		const aArgs = [oContent.name];
-		const mVersionInfo = { descriptionPayload: {}};
+		const mVersionInfo = { descriptionPayload: {} };
 
 		if (oChange.getChangeType() === "addItem") {
 			mVersionInfo.descriptionPayload.category = ChangeCategories.ADD;
@@ -74,16 +71,16 @@ sap.ui.define([
 			}
 
 			if ((oChange.getChangeType() === "addItem") && oChartPropertyHelper._getLayoutOptionsForType && sType) {
-				const oText = oChartPropertyHelper._getLayoutOptionsForType(sType).find(function(oEntry){
-								return oEntry.key === oContent.role;
-							  });
+				const oText = oChartPropertyHelper._getLayoutOptionsForType(sType).find((oEntry) => {
+					return oEntry.key === oContent.role;
+				});
 				if (oText) {
 					aArgs.splice(2, 1, oText.text);
 				}
 			}
 		}
 
-		return Util.getMdcResourceText(sKey, aArgs).then(function(sText) {
+		return Util.getMdcResourceText(sKey, aArgs).then((sText) => {
 			mVersionInfo.descriptionPayload.description = sText;
 
 			mVersionInfo.updateRequired = true;

@@ -1,11 +1,9 @@
-
-
 /*!
  * ${copyright}
  */
 
 // module:sap/ui/mdc/BaseDelegate
-sap.ui.define(['sap/ui/mdc/enums/BaseType', 'sap/ui/mdc/DefaultTypeMap', "sap/base/Log"], function (BaseType, DefaultTypeMap, Log) {
+sap.ui.define(['sap/ui/mdc/enums/BaseType', 'sap/ui/mdc/DefaultTypeMap', "sap/base/Log"], (BaseType, DefaultTypeMap, Log) => {
  "use strict";
 
  /**
@@ -34,7 +32,7 @@ sap.ui.define(['sap/ui/mdc/enums/BaseType', 'sap/ui/mdc/DefaultTypeMap', "sap/ba
   * @since 1.114.0
   * @public
   */
- BaseDelegate.getTypeMap = function (oControl) {
+ BaseDelegate.getTypeMap = function(oControl) {
   return DefaultTypeMap;
  };
 

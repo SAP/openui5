@@ -13,14 +13,14 @@ sap.ui.define([
 	"sap/ui/mdc/enums/OperatorName",
 	'sap/ui/mdc/condition/Condition',
 	'sap/ui/mdc/condition/FilterConverter'
-], function(
+], (
 	BaseDelegate,
 	FilterType,
 	ConditionValidated,
 	OperatorName,
 	Condition,
 	FilterConverter
-) {
+) => {
 	"use strict";
 
 	/**
@@ -52,7 +52,7 @@ sap.ui.define([
 	 * @returns {Promise} <code>Promise</code> that is resolved if all content is available
 	 * @public
 	 */
-	ValueHelpDelegate.retrieveContent = function (oValueHelp, oContainer, sContentId) {
+	ValueHelpDelegate.retrieveContent = function(oValueHelp, oContainer, sContentId) {
 		return Promise.resolve();
 	};
 
@@ -73,12 +73,12 @@ sap.ui.define([
 	 * Controls if a type-ahead is opened or closed.<br/>By default, this method returns <code>false</code> if a given content is a {@link sap.ui.mdc.valuehelp.base.FilterableListContent FilterableListContent} but no (truthy) <code>filterValue</code> is applied. Otherwise, if the given content is either a {@link sap.ui.mdc.valuehelp.base.ListContent ListContent} with available contexts or any other type of {@link sap.ui.mdc.valuehelp.base.Content Content}, <code>true</code> is returned.
 	 *
 	 * @param {sap.ui.mdc.ValueHelp} oValueHelp The <code>ValueHelp</code> control instance
- 	 * @param {sap.ui.mdc.valuehelp.base.Content} oContent <code>ValueHelp</code> Content requesting conditions configuration
- 	 * @returns {Promise|boolean} Boolean or <code>Promise</code> that resolves into a <code>boolean</code> indicating the desired behavior
+	 * @param {sap.ui.mdc.valuehelp.base.Content} oContent <code>ValueHelp</code> Content requesting conditions configuration
+	 * @returns {Promise|boolean} Boolean or <code>Promise</code> that resolves into a <code>boolean</code> indicating the desired behavior
 	 * @since 1.110.0
 	 * @public
 	 */
-	ValueHelpDelegate.showTypeahead = function (oValueHelp, oContent) {
+	ValueHelpDelegate.showTypeahead = function(oValueHelp, oContent) {
 		if (!oContent || (oContent.isA("sap.ui.mdc.valuehelp.base.FilterableListContent") && !oContent.getFilterValue())) { // Do not show non-existing content or suggestions without filterValue
 			return false;
 		} else if (oContent.isA("sap.ui.mdc.valuehelp.base.ListContent")) { // All List-like contents should have some data to show
@@ -94,7 +94,7 @@ sap.ui.define([
 	 *
 	 *
 	 * @param {sap.ui.mdc.ValueHelp} oValueHelp The <code>ValueHelp</code> control instance
- 	 * @param {sap.ui.mdc.valuehelp.base.FilterableListContent} oContent <code>ValueHelp</code> content requesting conditions configuration
+	 * @param {sap.ui.mdc.valuehelp.base.FilterableListContent} oContent <code>ValueHelp</code> content requesting conditions configuration
 	 * @param {sap.ui.base.ManagedObject.AggregationBindingInfo} oBindingInfo The binding info object to that is used to bind the list to the model
 	 * @since 1.110.0
 	 * @public
@@ -117,7 +117,7 @@ sap.ui.define([
 		const oFilterBar = oContent.getActiveFilterBar();
 		const oConditions = oFilterBar ? oFilterBar.getConditions() : oContent._oInitialFilterConditions || {};
 		const oConditionTypes = oConditions && this.getTypesForConditions(oValueHelp, oContent, oConditions);
-		const oFilter = oConditions && FilterConverter.createFilters( oConditions, oConditionTypes, undefined, oContent.getCaseSensitive());
+		const oFilter = oConditions && FilterConverter.createFilters(oConditions, oConditionTypes, undefined, oContent.getCaseSensitive());
 		return oFilter ? [oFilter] : [];
 	};
 
@@ -127,7 +127,7 @@ sap.ui.define([
 	 * @param {sap.ui.mdc.ValueHelp} oValueHelp The <code>ValueHelp</code> control instance
 	 * @param {sap.ui.model.ListBinding} oListBinding List binding
 	 * @param {sap.ui.base.ManagedObject.AggregationBindingInfo} oBindingInfo The binding info object that is be used to bind the list to the model
-  	 * @param {sap.ui.mdc.valuehelp.base.FilterableListContent} oContent <code>ValueHelp</code> content requesting the binding update
+	 * @param {sap.ui.mdc.valuehelp.base.FilterableListContent} oContent <code>ValueHelp</code> content requesting the binding update
 	 * @since 1.110.0
 	 * @public
 	 */
@@ -165,7 +165,7 @@ sap.ui.define([
 		if (!oListBinding || oListBinding.isSuspended()) {
 			return false;
 		}
-		return Promise.resolve(oListBinding.getContexts(0, iRequestedItems)).then(function(aContexts) {
+		return Promise.resolve(oListBinding.getContexts(0, iRequestedItems)).then((aContexts) => {
 			return aContexts.length === 0;
 		});
 	};
@@ -178,11 +178,11 @@ sap.ui.define([
 	 *
 	 * @param {sap.ui.mdc.ValueHelp} oValueHelp The <code>ValueHelp</code> control instance
 	 * @param {sap.ui.mdc.enums.ValueHelpPropagationReason} sReason Reason why the method was invoked
- 	 * @param {object} oConfig Current configuration provided by the calling control
+	 * @param {object} oConfig Current configuration provided by the calling control
 	 * @public
 	 * @since 1.101.0
 	 */
-	ValueHelpDelegate.onConditionPropagation = function (oValueHelp, sReason, oConfig) {
+	ValueHelpDelegate.onConditionPropagation = function(oValueHelp, sReason, oConfig) {
 
 	};
 
@@ -192,7 +192,7 @@ sap.ui.define([
 	 * <b>Note:</b> This method replaces the former <code>isFilterableListItemSelected</code>.
 	 *
 	 * @param {sap.ui.mdc.ValueHelp} oValueHelp The <code>ValueHelp</code> control instance
- 	 * @param {sap.ui.mdc.valuehelp.base.FilterableListContent} oContent <code>ValueHelp</code> content instance
+	 * @param {sap.ui.mdc.valuehelp.base.FilterableListContent} oContent <code>ValueHelp</code> content instance
 	 * @param {sap.ui.model.Context} oContext Entry of a given list
 	 * @param {sap.ui.mdc.condition.ConditionObject[]} aConditions current conditions
 	 * @returns {sap.ui.mdc.condition.ConditionObject[]} Conditions represented by the given context
@@ -200,9 +200,9 @@ sap.ui.define([
 	 * @public
 	 * @since 1.118.0
 	 */
-	ValueHelpDelegate.findConditionsForContext = function (oValueHelp, oContent, oContext, aConditions) {
+	ValueHelpDelegate.findConditionsForContext = function(oValueHelp, oContent, oContext, aConditions) {
 		const vKey = oContext.getObject(oContent.getKeyPath());
-		return aConditions.filter(function (oCondition) {
+		return aConditions.filter((oCondition) => {
 			return oCondition.validated === ConditionValidated.Validated && vKey === oCondition.values[0];
 		});
 	};
@@ -212,7 +212,7 @@ sap.ui.define([
 	 * This enables an application to reuse conditions in collective search scenarios, instead of always creating new ones.<br/>By default, this method returns given changes without modification.
 	 *
 	 * @param {sap.ui.mdc.ValueHelp} oValueHelp The <code>ValueHelp</code> control instance
- 	 * @param {sap.ui.mdc.valuehelp.base.FilterableListContent} oContent <code>ValueHelp</code> content instance
+	 * @param {sap.ui.mdc.valuehelp.base.FilterableListContent} oContent <code>ValueHelp</code> content instance
 	 * @param {object} oChange Selection event configuration
 	 * @param {sap.ui.mdc.enums.ValueHelpSelectionType} oChange.type Type of the selection change (add, remove)
 	 * @param {object[]} oChange.conditions Array of changed conditions with structure {@link sap.ui.mdc.condition.ConditionObject ConditionObject}
@@ -222,7 +222,7 @@ sap.ui.define([
 	 * @public
 	 * @since 1.101.0
 	 */
-	ValueHelpDelegate.modifySelectionBehaviour = function (oValueHelp, oContent, oChange) {
+	ValueHelpDelegate.modifySelectionBehaviour = function(oValueHelp, oContent, oChange) {
 		return oChange;
 	};
 
@@ -238,7 +238,7 @@ sap.ui.define([
 	 * @public
 	 * @since 1.101.0
 	 */
-	ValueHelpDelegate.createConditionPayload = function (oValueHelp, oContent, aValues, oContext) {
+	ValueHelpDelegate.createConditionPayload = function(oValueHelp, oContent, aValues, oContext) {
 		return undefined;
 	};
 
@@ -252,15 +252,15 @@ sap.ui.define([
 	 * @public
 	 * @since 1.101.0
 	 */
-	ValueHelpDelegate.getTypesForConditions = function (oValueHelp, oContent, oConditions) {	// TODO: MDC.Table add UI.Table support
+	ValueHelpDelegate.getTypesForConditions = function(oValueHelp, oContent, oConditions) { // TODO: MDC.Table add UI.Table support
 		const oConditionTypes = {};
 		const oListBindingInfo = oContent && oContent.getListBindingInfo();
 
 		if (oListBindingInfo && oListBindingInfo.template) {
-			oListBindingInfo.template.mAggregations.cells.forEach(function (oCell) {
-				Object.values(oCell.mBindingInfos).forEach(function (oBindingInfo) {
-					oBindingInfo.parts.forEach(function (oPartInfo) {
-						oConditionTypes[oPartInfo.path] = {type: oPartInfo.type || null};
+			oListBindingInfo.template.mAggregations.cells.forEach((oCell) => {
+				Object.values(oCell.mBindingInfos).forEach((oBindingInfo) => {
+					oBindingInfo.parts.forEach((oPartInfo) => {
+						oConditionTypes[oPartInfo.path] = { type: oPartInfo.type || null };
 					});
 				});
 			}, {});
@@ -277,7 +277,7 @@ sap.ui.define([
 	 *
 	 * @param {sap.ui.mdc.ValueHelp} oValueHelp The <code>ValueHelp</code> control instance
 	 * @param {sap.ui.mdc.valuehelp.base.FilterableListContent} oContent <code>ValueHelp</code> content instance
- 	 * @param {object} [oConfig] Configuration
+	 * @param {object} [oConfig] Configuration
 	 * @param {any} oConfig.value Value as entered by user
 	 * @param {any} [oConfig.parsedValue] Value parsed by type to fit the data type of the key
 	 * @param {object} [oConfig.context] Contextual information provided by condition payload or <code>inParameters</code>/<code>outParameters</code>. This is only filled if the description needs to be determined for an existing condition.
@@ -292,7 +292,7 @@ sap.ui.define([
 	 * @public
 	 * @since 1.106.0
 	 */
-	ValueHelpDelegate.getFilterConditions = function (oValueHelp, oContent, oConfig) {
+	ValueHelpDelegate.getFilterConditions = function(oValueHelp, oContent, oConfig) {
 		if (this.getInitialFilterConditions) {
 			return this.getInitialFilterConditions(oValueHelp, oContent, (oConfig && oConfig.control) || (oContent && oContent.getControl()));
 		}

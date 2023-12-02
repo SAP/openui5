@@ -11,7 +11,7 @@ sap.ui.define([
 	'sap/ui/mdc/enums/ConditionValidated',
 	'sap/ui/mdc/enums/OperatorValueType',
 	'sap/base/strings/formatMessage'
-], function(
+], (
 	Element,
 	PromiseMixin,
 	ManagedObjectObserver,
@@ -20,7 +20,7 @@ sap.ui.define([
 	ConditionValidated,
 	OperatorValueType,
 	formatMessage
-) {
+) => {
 	"use strict";
 
 	/**
@@ -39,8 +39,7 @@ sap.ui.define([
 	 * @since 1.95.0
 	 * @alias sap.ui.mdc.valuehelp.base.Content
 	 */
-	const Content = Element.extend("sap.ui.mdc.valuehelp.base.Content", /** @lends sap.ui.mdc.valuehelp.base.Content.prototype */
-	{
+	const Content = Element.extend("sap.ui.mdc.valuehelp.base.Content", /** @lends sap.ui.mdc.valuehelp.base.Content.prototype */ {
 		metadata: {
 			library: "sap.ui.mdc",
 			properties: {
@@ -91,7 +90,7 @@ sap.ui.define([
 				 */
 				filterValue: { // TODO: how to hide? Or how to access from ValueHelp?
 					type: "string",
-					defaultValue: ""//,
+					defaultValue: "" //,
 					//visibility: "hidden"
 				},
 				/**
@@ -104,15 +103,15 @@ sap.ui.define([
 				 */
 				config: {
 					type: "object",
-					defaultValue: {}//,
-//					visibility: "hidden"
+					defaultValue: {} //,
+					//					visibility: "hidden"
 				},
-				 /**
+				/**
 				 * Hide content temporary.
 				 */
 				visible: {
 					type: "boolean",
-					group : "Appearance",
+					group: "Appearance",
 					defaultValue: true
 				}
 
@@ -128,7 +127,7 @@ sap.ui.define([
 				 */
 				displayContent: {
 					type: "sap.ui.core.Control",
-					multiple: false//,
+					multiple: false //,
 					//visibility: "hidden" // as ManagedObjectModel can only observe hidden aggregations on root-control
 				}
 			},
@@ -263,7 +262,7 @@ sap.ui.define([
 	 * @private
 	 * @ui5-restricted sap.ui.mdc.valuehelp.base.Container
 	 */
-	Content.prototype.getContent = function () {
+	Content.prototype.getContent = function() {
 
 	};
 
@@ -284,7 +283,7 @@ sap.ui.define([
 	 * @private
 	 * @ui5-restricted sap.ui.mdc.valuehelp.base.Container
 	 */
-	Content.prototype.getContainerConfig = function () {
+	Content.prototype.getContainerConfig = function() {
 
 	};
 
@@ -294,7 +293,7 @@ sap.ui.define([
 	 * @private
 	 * @ui5-restricted sap.ui.mdc.valuehelp.base.Container
 	 */
-	Content.prototype.onBeforeShow = function (bInitial) {
+	Content.prototype.onBeforeShow = function(bInitial) {
 
 	};
 
@@ -306,7 +305,7 @@ sap.ui.define([
 	 * @private
 	 * @ui5-restricted sap.ui.mdc.valuehelp.base.Container
 	 */
-	Content.prototype.onShow = function (bInitial) {
+	Content.prototype.onShow = function(bInitial) {
 		this._bVisible = true;
 		this.handleConditionsUpdate();
 		//this.handleFilterValueUpdate();
@@ -330,7 +329,7 @@ sap.ui.define([
 	 * @private
 	 * @ui5-restricted sap.ui.mdc.valuehelp.base.Container
 	 */
-	Content.prototype.onHide = function () {
+	Content.prototype.onHide = function() {
 		this._bVisible = false;
 	};
 
@@ -348,7 +347,7 @@ sap.ui.define([
 	 * @private
 	 * @ui5-restricted sap.ui.mdc.valuehelp.base.Container
 	 */
-	Content.prototype.getItemForValue = function (oConfig) {
+	Content.prototype.getItemForValue = function(oConfig) {
 		return undefined;
 	};
 
@@ -405,11 +404,11 @@ sap.ui.define([
 
 			// Everytime the filterValue changes, we consult the delegate again to decide if the typeahead should still be shown or hidden via a cancel event
 			// Please also see the default implementation of sap.ui.mdc.ValueHelpDelegate.showTypeahead
-			Promise.resolve(!!oDelegate && oDelegate.showTypeahead(oValueHelp, this)).then(function (bShowTypeahead) {
+			Promise.resolve(!!oDelegate && oDelegate.showTypeahead(oValueHelp, this)).then((bShowTypeahead) => {
 				if (!bShowTypeahead) {
 					this.fireCancel();
 				}
-			}.bind(this));
+			});
 		}
 	};
 
@@ -490,7 +489,7 @@ sap.ui.define([
 	 * @returns {boolean} <code>true</code> if used as <code>typeahead</code>
 	 * @protected
 	 */
-	Content.prototype.isTypeahead = function () {
+	Content.prototype.isTypeahead = function() {
 		const oContainer = this.getParent();
 		return oContainer && oContainer.isTypeahead();
 	};
@@ -505,7 +504,7 @@ sap.ui.define([
 	 * @private
 	 * @ui5-restricted sap.ui.mdc.valueHelp.base.Container
 	 */
-	Content.prototype.isSearchSupported = function () {
+	Content.prototype.isSearchSupported = function() {
 		return false;
 	};
 
@@ -518,7 +517,7 @@ sap.ui.define([
 	 * @returns {boolean} <code>true</code> if a scrolling mechanism is needed
 	 * @protected
 	 */
-	Content.prototype.provideScrolling = function () {
+	Content.prototype.provideScrolling = function() {
 		const oContainer = this.getParent();
 		return !oContainer || !oContainer.providesScrolling();
 	};
@@ -528,7 +527,7 @@ sap.ui.define([
 	 * @returns {boolean} <code>true</code> if open
 	 * @protected
 	 */
-	Content.prototype.isContainerOpen = function () {
+	Content.prototype.isContainerOpen = function() {
 		const oContainer = this.getParent();
 		return oContainer && oContainer.isOpen();
 	};
@@ -538,7 +537,7 @@ sap.ui.define([
 	 * @returns {boolean} <code>true</code> if opening
 	 * @protected
 	 */
-	Content.prototype.isContainerOpening = function () {
+	Content.prototype.isContainerOpening = function() {
 		const oContainer = this.getParent();
 		return oContainer && oContainer.isOpening();
 	};
@@ -549,7 +548,7 @@ sap.ui.define([
 	 * @throws Throws an error if the delegate module is not available
 	 * @protected
 	 */
-	Content.prototype.getValueHelpDelegate = function () {
+	Content.prototype.getValueHelpDelegate = function() {
 		const oContainer = this.getParent();
 		return oContainer && oContainer.getValueHelpDelegate();
 	};
@@ -559,7 +558,7 @@ sap.ui.define([
 	 * @returns {sap.ui.mdc.ValueHelp} The <code>ValueHelp</code> instance
 	 * @protected
 	 */
-	Content.prototype.getValueHelpInstance = function () {
+	Content.prototype.getValueHelpInstance = function() {
 		const oContainer = this.getParent();
 		return oContainer && oContainer.getValueHelp && oContainer.getValueHelp();
 	};
@@ -570,7 +569,7 @@ sap.ui.define([
 	 * @throws Throws an error if the delegate module is not available
 	 * @protected
 	 */
-	Content.prototype.awaitValueHelpDelegate = function () {
+	Content.prototype.awaitValueHelpDelegate = function() {
 		const oContainer = this.getParent();
 		return oContainer && oContainer.awaitValueHelpDelegate();
 	};
@@ -580,7 +579,7 @@ sap.ui.define([
 	 * @returns {boolean} <code>true</code> if delegate has been initialized
 	 * @protected
 	 */
-	Content.prototype.isValueHelpDelegateInitialized = function () {
+	Content.prototype.isValueHelpDelegateInitialized = function() {
 		const oContainer = this.getParent();
 		return !!oContainer && oContainer.isValueHelpDelegateInitialized();
 	};
@@ -590,7 +589,7 @@ sap.ui.define([
 	 * @returns {sap.ui.core.Control} Connected control
 	 * @protected
 	 */
-	Content.prototype.getControl = function () {
+	Content.prototype.getControl = function() {
 		const oContainer = this.getParent();
 		return oContainer && oContainer.getControl();
 	};
@@ -600,7 +599,7 @@ sap.ui.define([
 	 * @param {sap.ui.mdc.condition.ConditionObject[]} aConditions Array of conditions
 	 * @returns {int} count
 	 */
-	Content.prototype.getCount = function (aConditions) {
+	Content.prototype.getCount = function(aConditions) {
 		return 0;
 	};
 
@@ -615,8 +614,7 @@ sap.ui.define([
 	 * @private
 	 * @ui5-restricted sap.ui.mdc.valuehelp.base.Container
 	 */
-	Content.prototype.getValueHelpIcon = function() {
-	};
+	Content.prototype.getValueHelpIcon = function() {};
 
 	//TODO: define aria attribute object
 	/**
@@ -648,7 +646,7 @@ sap.ui.define([
 	 * @returns {boolean} <code>true</code> if single selection
 	 * @protected
 	 */
-	Content.prototype.isSingleSelect = function () {
+	Content.prototype.isSingleSelect = function() {
 		return this.getMaxConditions() === 1;
 	};
 
@@ -741,7 +739,7 @@ sap.ui.define([
 	 * @private
 	 * @ui5-restricted sap.ui.mdc.valuehelp.base.Container
 	 */
-	 Content.prototype.getRequiresTokenizer = function() {
+	Content.prototype.getRequiresTokenizer = function() {
 		return true;
 	};
 
@@ -848,8 +846,7 @@ sap.ui.define([
 	 * Called if <code>ValueHelp</code> connection to a control changed.
 	 * @protected
 	 */
-	Content.prototype.onConnectionChange = function () {
-	};
+	Content.prototype.onConnectionChange = function() {};
 
 	PromiseMixin.call(Content.prototype);
 

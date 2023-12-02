@@ -7,9 +7,8 @@
 // ---------------------------------------------------------------------------------------
 // ---------------------------------------------------------------------------------------
 sap.ui.define([
-	"sap/ui/core/Lib",
-	"sap/ui/mdc/FilterBarDelegate"
-], function(Library, FilterBarDelegate) {
+	"sap/ui/core/Lib", "sap/ui/mdc/FilterBarDelegate"
+], (Library, FilterBarDelegate) => {
 	"use strict";
 
 	const mdcMessageBundle = Library.getResourceBundleFor("sap.ui.mdc");

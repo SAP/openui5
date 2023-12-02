@@ -3,12 +3,11 @@
  */
 
 sap.ui.define([
-	'sap/ui/core/Renderer',
-	'sap/ui/mdc/enums/FieldEditMode'
-], function(
+	'sap/ui/core/Renderer', 'sap/ui/mdc/enums/FieldEditMode'
+], (
 	Renderer,
 	FieldEditMode
-) {
+) => {
 	"use strict";
 
 	/**
@@ -42,8 +41,7 @@ sap.ui.define([
 		oRm.style("width", sWidth);
 		oRm.openEnd();
 
-		for (let i = 0; i < aContent.length; i++) {
-			const oContent = aContent[i];
+		for (const oContent of aContent) {
 			oRm.renderControl(oContent);
 		}
 

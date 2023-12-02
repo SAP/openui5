@@ -11,7 +11,7 @@ sap.ui.define([
 	"sap/ui/mdc/enums/ValueHelpSelectionType",
 	"sap/ui/model/ParseException",
 	"sap/base/util/deepEqual"
-], function(
+], (
 	Library,
 	ListContent,
 	loadModules,
@@ -20,7 +20,7 @@ sap.ui.define([
 	ValueHelpSelectionType,
 	ParseException,
 	deepEqual
-) {
+) => {
 	"use strict";
 
 	/**
@@ -36,22 +36,20 @@ sap.ui.define([
 	 * @since 1.95.0
 	 * @alias sap.ui.mdc.valuehelp.content.FixedList
 	 */
-	const FixedList = ListContent.extend("sap.ui.mdc.valuehelp.content.FixedList", /** @lends sap.ui.mdc.valuehelp.content.FixedList.prototype */
-	{
+	const FixedList = ListContent.extend("sap.ui.mdc.valuehelp.content.FixedList", /** @lends sap.ui.mdc.valuehelp.content.FixedList.prototype */ {
 		metadata: {
 			library: "sap.ui.mdc",
 			interfaces: [
-				"sap.ui.mdc.valuehelp.ITypeaheadContent",
-				"sap.ui.mdc.valuehelp.IDialogContent"
+				"sap.ui.mdc.valuehelp.ITypeaheadContent", "sap.ui.mdc.valuehelp.IDialogContent"
 			],
 			properties: {
 				/**
 				 * If set, the items of the list can be grouped
 				 */
-				 groupable: {
+				groupable: {
 					type: "boolean",
 					group: "Appearance",
-					defaultValue : false
+					defaultValue: false
 				},
 				/**
 				 * If set, the items of the list are filtered based on <code>filterValue</code>.
@@ -82,7 +80,7 @@ sap.ui.define([
 				items: {
 					type: "sap.ui.mdc.valuehelp.content.FixedListItem",
 					multiple: true,
-					singularName : "item"
+					singularName: "item"
 				}
 			},
 			defaultAggregation: "items",
@@ -112,8 +110,8 @@ sap.ui.define([
 		ListContent.prototype.exit.apply(this, arguments);
 	};
 
-	FixedList.prototype.getContent = function () {
-		return this._retrievePromise("content", function () {
+	FixedList.prototype.getContent = function() {
+		return this._retrievePromise("content", () => {
 			return loadModules([
 				"sap/m/List",
 				"sap/m/DisplayListItem",
@@ -122,50 +120,50 @@ sap.ui.define([
 				"sap/ui/model/Sorter",
 				"sap/ui/model/base/ManagedObjectModel",
 				"sap/base/strings/whitespaceReplacer"
-			]).then(function (aModules) {
-					const List = aModules[0];
-					const DisplayListItem = aModules[1];
-					const mLibrary = aModules[2];
-					const Filter = aModules[3];
-					const Sorter = aModules[4];
-					const ManagedObjectModel = aModules[5];
-					const whitespaceReplacer = aModules[6];
+			]).then((aModules) => {
+				const List = aModules[0];
+				const DisplayListItem = aModules[1];
+				const mLibrary = aModules[2];
+				const Filter = aModules[3];
+				const Sorter = aModules[4];
+				const ManagedObjectModel = aModules[5];
+				const whitespaceReplacer = aModules[6];
 
-					this._oManagedObjectModel = new ManagedObjectModel(this);
+				this._oManagedObjectModel = new ManagedObjectModel(this);
 
-					const oItemTemplate = new DisplayListItem(this.getId() + "-item", {
-						type: mLibrary.ListType.Active,
-						label: {path: "$help>text", formatter: whitespaceReplacer},
-						value: {path: "$help>additionalText", formatter: whitespaceReplacer},
-						valueTextDirection: "{$help>textDirection}"
-					}).addStyleClass("sapMComboBoxNonInteractiveItem"); // to add focus outline to selected items
+				const oItemTemplate = new DisplayListItem(this.getId() + "-item", {
+					type: mLibrary.ListType.Active,
+					label: { path: "$help>text", formatter: whitespaceReplacer },
+					value: { path: "$help>additionalText", formatter: whitespaceReplacer },
+					valueTextDirection: "{$help>textDirection}"
+				}).addStyleClass("sapMComboBoxNonInteractiveItem"); // to add focus outline to selected items
 
-					const oFilter = new Filter({path: "text", test: _suggestFilter.bind(this), caseSensitive: true}); // caseSensitive at it is checked in filter-function
+				const oFilter = new Filter({ path: "text", test: _suggestFilter.bind(this), caseSensitive: true }); // caseSensitive at it is checked in filter-function
 
-					// add sorter only if supported
-					let oSorter;
-					if (this.getGroupable()) {
-						oSorter = new Sorter("groupKey", false, _suggestGrouping.bind(this));
-					}
+				// add sorter only if supported
+				let oSorter;
+				if (this.getGroupable()) {
+					oSorter = new Sorter("groupKey", false, _suggestGrouping.bind(this));
+				}
 
-					const oList = new List(this.getId() + "-List", {
-						width: "100%",
-						showNoData: false,
-						mode: mLibrary.ListMode.SingleSelectMaster,
-						rememberSelections: false,
-						items: {path: "$help>/items", template: oItemTemplate, filters: oFilter, sorter: oSorter, templateShareable: false},
-						itemPress: _handleItemPress.bind(this) // as selected item can be pressed
-					}).addStyleClass("sapMComboBoxBaseList").addStyleClass("sapMComboBoxList");
+				const oList = new List(this.getId() + "-List", {
+					width: "100%",
+					showNoData: false,
+					mode: mLibrary.ListMode.SingleSelectMaster,
+					rememberSelections: false,
+					items: { path: "$help>/items", template: oItemTemplate, filters: oFilter, sorter: oSorter, templateShareable: false },
+					itemPress: _handleItemPress.bind(this) // as selected item can be pressed
+				}).addStyleClass("sapMComboBoxBaseList").addStyleClass("sapMComboBoxList");
 
-					oList.applyAriaRole("listbox"); // needed if List of ComboBox or similar
-					oList.setModel(this._oManagedObjectModel, "$help");
-//					oList.bindElement({ path: "/", model: "$help" });
-					this.setAggregation("displayContent", oList, true); // to have in control tree
-					_updateSelection.call(this, true);
+				oList.applyAriaRole("listbox"); // needed if List of ComboBox or similar
+				oList.setModel(this._oManagedObjectModel, "$help");
+				//					oList.bindElement({ path: "/", model: "$help" });
+				this.setAggregation("displayContent", oList, true); // to have in control tree
+				_updateSelection.call(this, true);
 
-					return oList;
-				}.bind(this));
-		}.bind(this));
+				return oList;
+			});
+		});
 	};
 
 	function _getList() {
@@ -183,10 +181,10 @@ sap.ui.define([
 			const oOriginalItem = _getOriginalItem.call(this, oItem);
 			const vKey = _getKey.call(this, oOriginalItem);
 			const vDescription = _getText.call(this, oOriginalItem);
-//			this.fireRemoveConditions({conditions: this.getConditions()});
+			//			this.fireRemoveConditions({conditions: this.getConditions()});
 			_setConditions.call(this, vKey, vDescription);
-//			this.fireAddConditions({conditions: this.getConditions()});
-			this.fireSelect({type: ValueHelpSelectionType.Set, conditions: this.getConditions()});
+			//			this.fireAddConditions({conditions: this.getConditions()});
+			this.fireSelect({ type: ValueHelpSelectionType.Set, conditions: this.getConditions() });
 			this.fireConfirm();
 		}
 
@@ -237,7 +235,7 @@ sap.ui.define([
 
 		const vKey = oContext.getProperty('groupKey');
 		const sText = oContext.getProperty('groupText');
-		return {key: vKey, text: sText};
+		return { key: vKey, text: sText };
 
 	}
 
@@ -252,9 +250,9 @@ sap.ui.define([
 			let bFirstFilterItemSelected = false;
 			let sFirstMatchItemId;
 			let bCaseSensitive;
-//			var oOperator = this._getOperator();
+			//			var oOperator = this._getOperator();
 
-			if (aConditions.length > 0 && (aConditions[0].validated === ConditionValidated.Validated || aConditions[0].operator === OperatorName.EQ/*oOperator.name*/)) {
+			if (aConditions.length > 0 && (aConditions[0].validated === ConditionValidated.Validated || aConditions[0].operator === OperatorName.EQ /*oOperator.name*/ )) {
 				vSelectedKey = aConditions[0].values[0];
 			}
 
@@ -271,8 +269,7 @@ sap.ui.define([
 
 			const aListItems = oList.getItems();
 
-			for (let iIndex = 0; iIndex < aListItems.length; iIndex++) {
-				const oListItem = aListItems[iIndex];
+			aListItems.forEach((oListItem, iIndex) => {
 				if (iIndex === this._iNavigateIndex) {
 					oListItem.addStyleClass("sapMLIBFocused");
 				} else {
@@ -294,7 +291,7 @@ sap.ui.define([
 						oListItem.setSelected(false);
 					}
 				}
-			}
+			});
 
 			if (bFireTypeaheadSuggested && bFirstFilterItemSelected) {
 				_fireTypeaheadSuggested.call(this, oFirstMatchItem, sFirstMatchItemId, bCaseSensitive);
@@ -311,7 +308,7 @@ sap.ui.define([
 			const vKey = _getKey.call(this, oItem);
 			const vDescription = _getText.call(this, oItem);
 			const oCondition = this.createCondition(vKey, vDescription);
-			this.fireTypeaheadSuggested({condition: oCondition, filterValue: sFilterValue, itemId: sItemId, caseSensitive: bCaseSensitive});
+			this.fireTypeaheadSuggested({ condition: oCondition, filterValue: sFilterValue, itemId: sItemId, caseSensitive: bCaseSensitive });
 		}
 
 	}
@@ -353,9 +350,9 @@ sap.ui.define([
 
 	}
 
-	FixedList.prototype.getItemForValue = function (oConfig) {
+	FixedList.prototype.getItemForValue = function(oConfig) {
 
-		return this.getContent().then(function() {
+		return this.getContent().then(() => {
 			if (oConfig.value === null || oConfig.value === undefined) {
 				return null;
 			} else if (!oConfig.value && oConfig.checkDescription) {
@@ -373,7 +370,7 @@ sap.ui.define([
 				vKey = _getKey.call(this, oItem);
 				vText = _getText.call(this, oItem);
 				if ((oConfig.checkKey && deepEqual(vKey, oConfig.parsedValue)) || (oConfig.checkDescription && (deepEqual(vText, oConfig.parsedDescription) || oItem.getText() === oConfig.value))) {
-					return {key: vKey, description: vText};
+					return { key: vKey, description: vText };
 				}
 			}
 
@@ -388,7 +385,7 @@ sap.ui.define([
 					const oOriginalItem = _getItemFromContext.call(this, oContext);
 					vKey = _getKey.call(this, oOriginalItem);
 					vText = _getText.call(this, oOriginalItem);
-					return {key: vKey, description: vText};
+					return { key: vKey, description: vText };
 				}
 			}
 
@@ -396,7 +393,7 @@ sap.ui.define([
 			const Exception = oConfig.exception || ParseException;
 			throw new Exception(sError);
 
-		}.bind(this));
+		});
 
 	};
 
@@ -404,7 +401,7 @@ sap.ui.define([
 		return true;
 	};
 
-	FixedList.prototype.isSearchSupported = function () {
+	FixedList.prototype.isSearchSupported = function() {
 		return true;
 	};
 
@@ -466,7 +463,7 @@ sap.ui.define([
 		} else if (oSelectedItem) {
 			iSelectedIndex = oList.indexOfItem(oSelectedItem);
 			iSelectedIndex = iSelectedIndex + iStep;
-		} else if (iStep >= 0){
+		} else if (iStep >= 0) {
 			iSelectedIndex = iStep - 1;
 		} else {
 			iSelectedIndex = iItems + iStep;
@@ -530,22 +527,22 @@ sap.ui.define([
 
 				if (oItem.isA("sap.m.GroupHeaderListItem")) {
 					this.setProperty("conditions", [], true); // no condition navigated
-					this.fireNavigated({condition: undefined, itemId: oItem.getId(), leaveFocus: false});
+					this.fireNavigated({ condition: undefined, itemId: oItem.getId(), leaveFocus: false });
 				} else {
 					oOriginalItem = _getOriginalItem.call(this, oItem);
 					vKey = _getKey.call(this, oOriginalItem);
 					vDescription = _getText.call(this, oOriginalItem);
 					const oCondition = _setConditions.call(this, vKey, vDescription);
-					this.fireNavigated({condition: oCondition, itemId: oItem.getId(), leaveFocus: false});
+					this.fireNavigated({ condition: oCondition, itemId: oItem.getId(), leaveFocus: false });
 				}
 			} else if (bLeaveFocus) {
-				this.fireNavigated({condition: undefined, itemId: undefined, leaveFocus: bLeaveFocus});
+				this.fireNavigated({ condition: undefined, itemId: undefined, leaveFocus: bLeaveFocus });
 			}
 		}
 
 	};
 
-	FixedList.prototype.onShow = function () { // TODO: name
+	FixedList.prototype.onShow = function() { // TODO: name
 
 		ListContent.prototype.onShow.apply(this, arguments);
 
@@ -569,7 +566,7 @@ sap.ui.define([
 
 	};
 
-	FixedList.prototype.onHide = function () {
+	FixedList.prototype.onHide = function() {
 
 		this.removeFocus();
 
@@ -611,7 +608,7 @@ sap.ui.define([
 
 	};
 
-	FixedList.prototype.isSingleSelect = function (oEvent) {
+	FixedList.prototype.isSingleSelect = function(oEvent) {
 
 		return true;
 
@@ -629,13 +626,13 @@ sap.ui.define([
 
 	};
 
-	FixedList.prototype.onConnectionChange = function () {
+	FixedList.prototype.onConnectionChange = function() {
 
 		this._iNavigateIndex = -1; // initially nothing is navigated
 
 	};
 
-	FixedList.prototype.getListBinding = function () {
+	FixedList.prototype.getListBinding = function() {
 		const oList = _getList.call(this);
 		return oList && oList.getBinding("items");
 	};

@@ -3,12 +3,12 @@
  */
 
 sap.ui.define([
-	'sap/ui/core/Control'//,
+	'sap/ui/core/Control' //,
 	//'sap/ui/base/ManagedObjectObserver'
-], function(
-	Control//,
+], (
+	Control //,
 	//ManagedObjectObserver
-) {
+) => {
 	"use strict";
 
 	/**
@@ -26,8 +26,7 @@ sap.ui.define([
 	 * @experimental As of version 1.95
 	 * @alias sap.ui.mdc.valuehelp.base.DialogTab
 	 */
-	const DialogTab = Control.extend("sap.ui.mdc.valuehelp.base.DialogTab", /** @lends sap.ui.mdc.valuehelp.base.DialogTab.prototype */
-	{
+	const DialogTab = Control.extend("sap.ui.mdc.valuehelp.base.DialogTab", /** @lends sap.ui.mdc.valuehelp.base.DialogTab.prototype */ {
 		metadata: {
 			library: "sap.ui.mdc",
 			properties: {
@@ -44,7 +43,7 @@ sap.ui.define([
 				/**
 				 * Fired if the selected condition changed.
 				 */
-				 select: {
+				select: {
 					parameters: {
 						/**
 						 * Type of the selection change (add, remove)
@@ -61,7 +60,7 @@ sap.ui.define([
 				/**
 				 * Fired if a change on the content is confirmed
 				 */
-				 confirm: {
+				confirm: {
 					parameters: {
 						/**
 						 * True if the value help need to be closed
@@ -94,42 +93,42 @@ sap.ui.define([
 
 		Control.prototype.init.apply(this, arguments);
 
-//		this._oObserver = new ManagedObjectObserver(_observeChanges.bind(this));
-//
-//		this._oObserver.observe(this, {
-//			properties: ["content"]
-//		});
+		//		this._oObserver = new ManagedObjectObserver(_observeChanges.bind(this));
+		//
+		//		this._oObserver.observe(this, {
+		//			properties: ["content"]
+		//		});
 
 	};
 
-	DialogTab.prototype.exit = function () {
+	DialogTab.prototype.exit = function() {
 		if (this._displayContent) {
 			this._displayContent = null;
 		}
 
-//		this._oObserver.disconnect();
-//		this._oObserver = undefined;
+		//		this._oObserver.disconnect();
+		//		this._oObserver = undefined;
 
 		return Control.prototype.exit.apply(this, arguments);
 	};
 
-//	function _observeChanges(oChanges) {
-//
-//		if (oChanges.name === "content") {
-//			if (oChanges.current) {
-//				Promise.resolve(oChanges.current.getContent()).then(function (oResolvedContent) {
-//					if (this._displayContent !== oResolvedContent) {
-//						this._displayContent = oResolvedContent;
-//						//this.invalidate(this);
-//					}
-//				}.bind(this));
-//			} else {
-//				this._displayContent = undefined;
-//				this.invalidate(this);
-//			}
-//		}
-//
-//	}
+	//	function _observeChanges(oChanges) {
+	//
+	//		if (oChanges.name === "content") {
+	//			if (oChanges.current) {
+	//				Promise.resolve(oChanges.current.getContent()).then(function (oResolvedContent) {
+	//					if (this._displayContent !== oResolvedContent) {
+	//						this._displayContent = oResolvedContent;
+	//						//this.invalidate(this);
+	//					}
+	//				}.bind(this));
+	//			} else {
+	//				this._displayContent = undefined;
+	//				this.invalidate(this);
+	//			}
+	//		}
+	//
+	//	}
 
 	return DialogTab;
 

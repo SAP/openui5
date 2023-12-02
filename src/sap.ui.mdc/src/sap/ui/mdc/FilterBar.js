@@ -2,16 +2,27 @@
  * ${copyright}
  */
 sap.ui.define([
-	'sap/ui/mdc/p13n/subcontroller/FilterController', 'sap/ui/mdc/p13n/subcontroller/AdaptFiltersController', "sap/ui/mdc/filterbar/aligned/FilterContainer", "sap/ui/mdc/filterbar/aligned/FilterItemLayout", "sap/ui/mdc/filterbar/FilterBarBase", "sap/ui/mdc/filterbar/FilterBarBaseRenderer", 'sap/m/library', 'sap/m/Button', "sap/base/util/merge", 'sap/base/Log', "sap/ui/core/library", "sap/ui/mdc/enums/FilterBarP13nMode"
-], function(FilterController, AdaptFiltersController, FilterContainer, FilterItemLayout, FilterBarBase, FilterBarBaseRenderer, mLibrary, Button, merge, Log, CoreLibrary, FilterBarP13nMode) {
+	'sap/ui/mdc/p13n/subcontroller/FilterController',
+	'sap/ui/mdc/p13n/subcontroller/AdaptFiltersController',
+	"sap/ui/mdc/filterbar/aligned/FilterContainer",
+	"sap/ui/mdc/filterbar/aligned/FilterItemLayout",
+	"sap/ui/mdc/filterbar/FilterBarBase",
+	"sap/ui/mdc/filterbar/FilterBarBaseRenderer",
+	'sap/m/library',
+	'sap/m/Button',
+	"sap/base/util/merge",
+	'sap/base/Log',
+	"sap/ui/core/library",
+	"sap/ui/mdc/enums/FilterBarP13nMode"
+], (FilterController, AdaptFiltersController, FilterContainer, FilterItemLayout, FilterBarBase, FilterBarBaseRenderer, mLibrary, Button, merge, Log, CoreLibrary, FilterBarP13nMode) => {
 	"use strict";
 
-	const HasPopup = CoreLibrary.aria.HasPopup;
+	const { HasPopup } = CoreLibrary.aria;
 
 	/**
 	 *
 	 * @typedef {sap.ui.mdc.util.PropertyInfo} sap.ui.mdc.filterbar.PropertyInfo
-     *
+	 *
 	 * @property {boolean} [hiddenFilter = false]
 	 *   If set to <code>false</code>, the filter is visible in the <code>FilterBar</code>
 	 * @property {boolean} [required = false]
@@ -37,7 +48,7 @@ sap.ui.define([
 	 * @public
 	 * @since 1.61.0
 	 * @alias sap.ui.mdc.FilterBar
-   	 * @experimental As of version 1.61.0
+	 * @experimental As of version 1.61.0
 	 */
 	const FilterBar = FilterBarBase.extend("sap.ui.mdc.FilterBar", {
 		metadata: {
@@ -83,7 +94,7 @@ sap.ui.define([
 		renderer: FilterBarBaseRenderer
 	});
 
-	const ButtonType = mLibrary.ButtonType;
+	const { ButtonType } = mLibrary;
 
 	FilterBar.prototype._createInnerLayout = function() {
 		this._cLayoutItem = FilterItemLayout;
@@ -103,16 +114,16 @@ sap.ui.define([
 		};
 
 		let bItemAssigned = false;
-		aMode && aMode.forEach(function(sMode) {
+		aMode && aMode.forEach((sMode) => {
 			if (sMode == "Item") {
 				bItemAssigned = true;
-				oRegisterConfig.controller["Item"] = new AdaptFiltersController({control: this});
+				oRegisterConfig.controller["Item"] = new AdaptFiltersController({ control: this });
 			}
-		}.bind(this));
+		});
 
 		this._setP13nModeItem(bItemAssigned);
 
-		oRegisterConfig.controller["Filter"] = new FilterController({control: this});
+		oRegisterConfig.controller["Filter"] = new FilterController({ control: this });
 		this.getEngine().register(this, oRegisterConfig);
 
 		return this;
@@ -120,8 +131,8 @@ sap.ui.define([
 
 	FilterBar.prototype.setFilterConditions = function(mValue, bSuppressInvalidate) {
 		FilterController.checkConditionOperatorSanity(mValue);
-		if (this._oP13nFB){
-			this._oP13nFB.setFilterConditions(merge({},mValue));
+		if (this._oP13nFB) {
+			this._oP13nFB.setFilterConditions(merge({}, mValue));
 		}
 		this.setProperty("filterConditions", mValue, bSuppressInvalidate);
 		return this;
@@ -150,15 +161,13 @@ sap.ui.define([
 			this._btnAdapt.setModel(this._oModel, FilterBarBase.INNER_MODEL_NAME);
 
 			this._btnAdapt.bindProperty("visible", {
-				parts: [
-					{
-						path: '/showAdaptFiltersButton',
-						model: FilterBarBase.INNER_MODEL_NAME
-					}, {
-						path: "/_p13nModeItem",
-						model: FilterBarBase.INNER_MODEL_NAME
-					}
-				],
+				parts: [{
+					path: '/showAdaptFiltersButton',
+					model: FilterBarBase.INNER_MODEL_NAME
+				}, {
+					path: "/_p13nModeItem",
+					model: FilterBarBase.INNER_MODEL_NAME
+				}],
 				formatter: function(bValue1, bValue2) {
 					return bValue1 && bValue2;
 				}
@@ -167,15 +176,13 @@ sap.ui.define([
 			this._btnSearch = this._getSearchButton();
 			this._btnSearch.setModel(this._oModel, FilterBarBase.INNER_MODEL_NAME);
 			this._btnSearch.bindProperty("visible", {
-				parts: [
-					{
-						path: '/showGoButton',
-						model: FilterBarBase.INNER_MODEL_NAME
-					}, {
-						path: "/liveMode",
-						model: FilterBarBase.INNER_MODEL_NAME
-					}
-				],
+				parts: [{
+					path: '/showGoButton',
+					model: FilterBarBase.INNER_MODEL_NAME
+				}, {
+					path: "/liveMode",
+					model: FilterBarBase.INNER_MODEL_NAME
+				}],
 				formatter: function(bValue1, bValue2) {
 					return bValue1 && ((this._isPhone()) ? true : !bValue2);
 				}.bind(this)
@@ -201,38 +208,38 @@ sap.ui.define([
 
 	FilterBar.prototype.onClear = function() {
 		this._btnClear.setEnabled(false);
-		this.awaitControlDelegate().then(function(oDelegate) {
+		this.awaitControlDelegate().then((oDelegate) => {
 			oDelegate.clearFilters(this)
-			.catch(function(oEx) {
-				Log.error(oEx);
-			})
-			.finally(function() {
-				this._btnClear.setEnabled(true);
-			}.bind(this));
+				.catch((oEx) => {
+					Log.error(oEx);
+				})
+				.finally(() => {
+					this._btnClear.setEnabled(true);
+				});
 
-		}.bind(this));
+		});
 	};
 
 	FilterBar.prototype.retrieveInbuiltFilter = function() {
 		const oInbuiltFilterPromise = FilterBarBase.prototype.retrieveInbuiltFilter.apply(this, arguments);
-		return oInbuiltFilterPromise.then(function(oInnerFB){
+		return oInbuiltFilterPromise.then((oInnerFB) => {
 			return oInnerFB;
 		});
 	};
 
 	FilterBar.prototype.onAdaptFilters = function(oEvent) {
 
-		return this._retrieveMetadata().then(function() {
+		return this._retrieveMetadata().then(() => {
 			return this.getEngine().show(this, "Item", {
-				reset: function(){
-					this.getEngine().reset(this);
-					this._getConditionModel().checkUpdate(true);
-			}.bind(this)
-		})
-		.then(function(oPopup){
-			return oPopup;
+					reset: function() {
+						this.getEngine().reset(this);
+						this._getConditionModel().checkUpdate(true);
+					}.bind(this)
+				})
+				.then((oPopup) => {
+					return oPopup;
+				});
 		});
-		}.bind(this));
 
 	};
 

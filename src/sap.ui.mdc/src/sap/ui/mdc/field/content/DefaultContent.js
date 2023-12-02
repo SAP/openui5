@@ -2,16 +2,15 @@
  * ${copyright}
  */
 sap.ui.define([
-	"sap/m/library",
-	"sap/ui/mdc/enums/ContentMode"
-], function(
+	"sap/m/library", "sap/ui/mdc/enums/ContentMode"
+], (
 	mLibrary,
 	ContentMode
-) {
+) => {
 	"use strict";
 
-	const EmptyIndicatorMode = mLibrary.EmptyIndicatorMode;
-	const TokenizerRenderMode = mLibrary.TokenizerRenderMode;
+	const { EmptyIndicatorMode } = mLibrary;
+	const { TokenizerRenderMode } = mLibrary;
 
 	/**
 	 * Object-based definition of the default content type that is used in the {@link sap.ui.mdc.field.content.ContentFactory}.

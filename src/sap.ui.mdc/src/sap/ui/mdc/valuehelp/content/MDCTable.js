@@ -13,7 +13,7 @@ sap.ui.define([
 	'sap/ui/mdc/enums/ValueHelpSelectionType',
 	'sap/ui/mdc/enums/TableRowCountMode',
 	'sap/base/util/restricted/_throttle'
-], function(
+], (
 	FilterableListContent,
 	loadModules,
 	Common,
@@ -24,7 +24,7 @@ sap.ui.define([
 	ValueHelpSelectionType,
 	TableRowCountMode,
 	_throttle
-) {
+) => {
 	"use strict";
 
 	/**
@@ -40,8 +40,7 @@ sap.ui.define([
 	 * @since 1.95.0
 	 * @alias sap.ui.mdc.valuehelp.content.MDCTable
 	 */
-	const MDCTable = FilterableListContent.extend("sap.ui.mdc.valuehelp.content.MDCTable", /** @lends sap.ui.mdc.valuehelp.content.MDCTable.prototype */
-	{
+	const MDCTable = FilterableListContent.extend("sap.ui.mdc.valuehelp.content.MDCTable", /** @lends sap.ui.mdc.valuehelp.content.MDCTable.prototype */ {
 		metadata: {
 			library: "sap.ui.mdc",
 			interfaces: [
@@ -77,7 +76,7 @@ sap.ui.define([
 		}
 	});
 
-	MDCTable.prototype.init = function () {
+	MDCTable.prototype.init = function() {
 		FilterableListContent.prototype.init.apply(this, arguments);
 		this._oObserver.observe(this, {
 			aggregations: ["table"]
@@ -86,13 +85,13 @@ sap.ui.define([
 	};
 
 
-	MDCTable.prototype._setTableSelectionState = function () {
+	MDCTable.prototype._setTableSelectionState = function() {
 		this._bSelectionIsUpdating = true;
 		const aAllCurrentContexts = this._getAllCurrentContexts();
 		if (aAllCurrentContexts) {
-			this._oTable._setSelectedContexts(aAllCurrentContexts.filter(function (oContext) {
+			this._oTable._setSelectedContexts(aAllCurrentContexts.filter((oContext) => {
 				return this._isContextSelected(oContext, this.getConditions());
-			}.bind(this)));
+			}));
 		}
 		this._bSelectionIsUpdating = false;
 	};
@@ -107,7 +106,7 @@ sap.ui.define([
 		}
 	};
 
-	MDCTable.prototype._handleUpdateFinished = function (oEvent) {
+	MDCTable.prototype._handleUpdateFinished = function(oEvent) {
 		if (this._oTable) {
 			this.resolveListBinding();
 			if (!this._bQueryingContexts) {
@@ -117,9 +116,9 @@ sap.ui.define([
 		}
 	};
 
-	MDCTable.prototype._handleUpdateFinishedThrottled = _throttle(MDCTable.prototype._handleUpdateFinished, 100, {leading: false});
+	MDCTable.prototype._handleUpdateFinishedThrottled = _throttle(MDCTable.prototype._handleUpdateFinished, 100, { leading: false });
 
-	MDCTable.prototype.observeChanges = function (oChanges) {
+	MDCTable.prototype.observeChanges = function(oChanges) {
 		if (oChanges.name === "table") { // outer table
 			const oTable = oChanges.child;
 			if (oChanges.mutation === "remove") {
@@ -136,17 +135,19 @@ sap.ui.define([
 					this._bRebindTable = true;
 				}
 
-				oTable.addDelegate({ onmouseover: function (oEvent) {   // Fix m.Table itemPress
-					const oItem = Element.closestTo(oEvent.target);
-					if (oItem && oItem.isA("sap.m.ColumnListItem")) {
-						oItem.setType("Active");
+				oTable.addDelegate({
+					onmouseover: function(oEvent) { // Fix m.Table itemPress
+						const oItem = Element.closestTo(oEvent.target);
+						if (oItem && oItem.isA("sap.m.ColumnListItem")) {
+							oItem.setType("Active");
+						}
 					}
-				}});
+				});
 
-				this._oTable.initialized().then(function () {
+				this._oTable.initialized().then(() => {
 					this._oTable.attachEvent('_bindingChange', this._handleUpdateFinishedThrottled, this);
 					this._oTable.attachEvent('selectionChange', this._handleSelectionChange, this);
-				}.bind(this));
+				});
 			}
 			return;
 		}
@@ -154,7 +155,7 @@ sap.ui.define([
 		FilterableListContent.prototype.observeChanges.apply(this, arguments);
 	};
 
-	MDCTable.prototype._getAllCurrentContexts = function () {
+	MDCTable.prototype._getAllCurrentContexts = function() {
 		const oRowBinding = this._oTable && this._oTable.getRowBinding();
 		if (oRowBinding) {
 			return oRowBinding.getAllCurrentContexts ? oRowBinding.getAllCurrentContexts() : oRowBinding.getContexts();
@@ -162,7 +163,7 @@ sap.ui.define([
 		return undefined;
 	};
 
-	MDCTable.prototype._handleSelectionChange = function (oEvent) {
+	MDCTable.prototype._handleSelectionChange = function(oEvent) {
 		if (!this._bSelectionIsUpdating) { // TODO: New handling for internally triggered events on MDC Table's events?
 			this._bQueryingContexts = true; // In ODataV4 getAllCurrentContexts may lead to a binding change event
 			const aAllCurrentContexts = this._getAllCurrentContexts();
@@ -174,7 +175,7 @@ sap.ui.define([
 				let aModifiedConditions = aCurrentConditions;
 				let bFireSelect = false;
 
-				aAllCurrentContexts.forEach(function (oContext) {
+				aAllCurrentContexts.forEach((oContext) => {
 					const aConditionsForContext = this._findConditionsForContext(oContext, aCurrentConditions);
 					const bIsInSelectedConditions = !!aConditionsForContext.length;
 					const bSelectedInTable = aSelectedTableContexts.indexOf(oContext) >= 0;
@@ -184,12 +185,12 @@ sap.ui.define([
 						aModifiedConditions = this.isSingleSelect() ? [oCondition] : aModifiedConditions.concat(oCondition);
 						bFireSelect = true;
 					} else if (bIsInSelectedConditions && !bSelectedInTable) {
-						aModifiedConditions = aModifiedConditions.filter(function (oCondition) {
+						aModifiedConditions = aModifiedConditions.filter((oCondition) => {
 							return aConditionsForContext.indexOf(oCondition) === -1;
 						});
 						bFireSelect = true;
 					}
-				}.bind(this));
+				});
 
 				if (bFireSelect) {
 					this._prepareSelect(aModifiedConditions, ValueHelpSelectionType.Set);
@@ -199,24 +200,22 @@ sap.ui.define([
 	};
 
 
-	MDCTable.prototype._prepareSelect = function (aConditions, vSelected) {
+	MDCTable.prototype._prepareSelect = function(aConditions, vSelected) {
 		let sMultiSelectType = typeof vSelected === 'string' && vSelected;
 		sMultiSelectType = sMultiSelectType || (vSelected ? ValueHelpSelectionType.Add : ValueHelpSelectionType.Remove);
 		this._bIgnoreNextConditionChange = true;
-		this._fireSelect({type: sMultiSelectType, conditions: aConditions});
+		this._fireSelect({ type: sMultiSelectType, conditions: aConditions });
 	};
 
-	MDCTable.prototype._getTable = function () {
+	MDCTable.prototype._getTable = function() {
 		return this._oTable;
 	};
 
-	MDCTable.prototype.getContent = function () {
-		return this._retrievePromise("wrappedContent", function () {
+	MDCTable.prototype.getContent = function() {
+		return this._retrievePromise("wrappedContent", () => {
 			return loadModules([
-				"sap/ui/layout/FixFlex",
-				"sap/m/VBox",
-				"sap/m/ScrollContainer"
-			]).then(function(aModules) {
+				"sap/ui/layout/FixFlex", "sap/m/VBox", "sap/m/ScrollContainer"
+			]).then((aModules) => {
 
 				const FixFlex = aModules[0];
 				const VBox = aModules[1];
@@ -224,25 +223,25 @@ sap.ui.define([
 
 				if (!this._oContentLayout) {
 
-					this._oFilterBarVBox = new VBox(this.getId() + "-FilterBarBox", {visible: "{$this>/_filterBarVisible}"});
+					this._oFilterBarVBox = new VBox(this.getId() + "-FilterBarBox", { visible: "{$this>/_filterBarVisible}" });
 					this._oFilterBarVBox.addStyleClass("sapMdcValueHelpPanelFilterbar");
 					this._oFilterBarVBox._oWrapper = this;
-					this._oFilterBarVBox.getItems = function () {
+					this._oFilterBarVBox.getItems = function() {
 						const oFilterBar = this._oWrapper.getActiveFilterBar.call(this._oWrapper);
 						const aItems = oFilterBar ? [oFilterBar] : [];
 						return aItems;
 					};
 
-					this._oTableBox = new VBox(this.getId() + "-TB", {height: "100%"});
+					this._oTableBox = new VBox(this.getId() + "-TB", { height: "100%" });
 					this._oTableBox.addStyleClass("sapMdcValueHelpPanelTableBox");
 					this._oTableBox._oWrapper = this;
-					this._oTableBox.getItems = function () {
+					this._oTableBox.getItems = function() {
 						const oTable = this._oWrapper._oTable._isOfType(TableType.ResponsiveTable) ? this._oWrapper._oScrollContainer : this._oWrapper._oTable;
 						const aItems = oTable ? [oTable] : [];
 						return aItems;
 					};
 
-					this._oContentLayout = new FixFlex(this.getId() + "-FF", {minFlexSize: 200, fixContent: this._oFilterBarVBox, flexContent: this._oTableBox});
+					this._oContentLayout = new FixFlex(this.getId() + "-FF", { minFlexSize: 200, fixContent: this._oFilterBarVBox, flexContent: this._oTableBox });
 
 					this._oScrollContainer = new ScrollContainer(this.getId() + "-SC", {
 						height: "calc(100% - 0.5rem)",
@@ -264,14 +263,14 @@ sap.ui.define([
 				this.setAggregation("displayContent", this._oContentLayout);
 
 				if (!this.getActiveFilterBar()) {
-					return this._createDefaultFilterBar().then(function () {
+					return this._createDefaultFilterBar().then(() => {
 						this._oFilterBarVBox.invalidate(); // to rerender if FilterBar added
 						return this._oContentLayout;
-					}.bind(this));
+					});
 				}
 				return this._oContentLayout;
-			}.bind(this));
-		}.bind(this));
+			});
+		});
 	};
 
 	MDCTable.prototype.getListBinding = function() {
@@ -279,7 +278,7 @@ sap.ui.define([
 		return oTable && oTable.getRowBinding();
 	};
 
-	MDCTable.prototype._configureTable = function () {
+	MDCTable.prototype._configureTable = function() {
 		if (this._oTable) {
 			const bSingleSelect = FilterableListContent.prototype.isSingleSelect.apply(this);
 			const oTableType = this._oTable._getType();
@@ -292,7 +291,7 @@ sap.ui.define([
 
 			// Adjust header
 			if (!this._oTable.getHeader()) {
-				this._oTable.setHeader( this._oResourceBundle.getText("valuehelp.TABLETITLENONUMBER"));
+				this._oTable.setHeader(this._oResourceBundle.getText("valuehelp.TABLETITLENONUMBER"));
 			}
 
 			// Adjust selection
@@ -316,13 +315,13 @@ sap.ui.define([
 		}
 	};
 
-	MDCTable.prototype.onShow = function () {
+	MDCTable.prototype.onShow = function() {
 		FilterableListContent.prototype.onShow.apply(this, arguments);
 	};
 
-	MDCTable.prototype.onBeforeShow = function (bInitial) {
+	MDCTable.prototype.onBeforeShow = function(bInitial) {
 		this._configureTable();
-		return Promise.resolve(FilterableListContent.prototype.onBeforeShow.apply(this, arguments)).then(function () {
+		return Promise.resolve(FilterableListContent.prototype.onBeforeShow.apply(this, arguments)).then(() => {
 			const oTable = this.getTable();
 			if (oTable) {
 				const bTableBound = oTable.isTableBound();
@@ -338,7 +337,7 @@ sap.ui.define([
 					}
 				}
 			}
-		}.bind(this));
+		});
 	};
 
 	MDCTable.prototype.getScrollDelegate = function() {
@@ -394,4 +393,3 @@ sap.ui.define([
 
 	return MDCTable;
 });
-

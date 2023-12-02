@@ -3,10 +3,8 @@
  */
 
 sap.ui.define([
-	"sap/base/Log",
-	"sap/ui/core/Element",
-	"sap/ui/mdc/enums/ReasonMode"
-], function (Log, Element, ReasonMode) {
+	"sap/base/Log", "sap/ui/core/Element", "sap/ui/mdc/enums/ReasonMode"
+], (Log, Element, ReasonMode) => {
 	"use strict";
 
 	/**
@@ -50,10 +48,10 @@ sap.ui.define([
 	 * @private
 	 * @experimental
 	 * @ui5-restricted sap.ui.mdc
-	*/
-    const FilterIntegrationMixin = {};
+	 */
+	const FilterIntegrationMixin = {};
 
-    const IFILTER = "sap.ui.mdc.IFilter";
+	const IFILTER = "sap.ui.mdc.IFilter";
 
 	/**
 	 * Set an external IFilter source to connect it with the given control instance.
@@ -61,7 +59,7 @@ sap.ui.define([
 	 * @param {sap.ui.mdc.IFilter|string} vFilter IFilter implementing instance or its id.
 	 * @returns {sap.ui.mdc.Control} The MDC Control instance.
 	 */
-	FilterIntegrationMixin.setFilter = function (vFilter) {
+	FilterIntegrationMixin.setFilter = function(vFilter) {
 
 		const sNewFilter = typeof vFilter === "object" ? vFilter.getId() : vFilter;
 		const sOldFilter = this.getFilter();
@@ -115,7 +113,7 @@ sap.ui.define([
 	 * @param {sap.ui.mdc.Control} oControl Control instance.
 	 * @param {sap.ui.mdc.IFilter} oFilter IFilter implementing instance.
 	 */
-    function registerFilter(oControl, oFilter) {
+	function registerFilter(oControl, oFilter) {
 		oFilter.attachSearch(onSearch, oControl);
 
 		if (oFilter.attachFiltersChanged instanceof Function) {
@@ -133,7 +131,7 @@ sap.ui.define([
 	 * @param {sap.ui.mdc.Control} oControl Control instance.
 	 * @param {sap.ui.mdc.IFilter} oFilter IFilter implementing instance.
 	 */
-    function deregisterFilter(oControl, oFilter) {
+	function deregisterFilter(oControl, oFilter) {
 		oFilter.detachSearch(onSearch, oControl);
 
 		if (oFilter.detachFiltersChanged instanceof Function) {
@@ -176,8 +174,8 @@ sap.ui.define([
 
 		const oFilter = typeof vFilter === "object" ? vFilter : Element.getElementById(vFilter);
 		if (oFilter && !oFilter.isA(IFILTER)) {
-			throw new Error("\"" + vFilter + "\" is not valid for association \"filter\"."
-							+ " Please use an object that implements the \"" + IFILTER + "\" interface");
+			throw new Error("\"" + vFilter + "\" is not valid for association \"filter\"." +
+				" Please use an object that implements the \"" + IFILTER + "\" interface");
 		}
 	};
 
@@ -196,7 +194,8 @@ sap.ui.define([
 		//check for internal and external filtering before triggering a rebind
 		let pOuterFilterSearch;
 		let pInnerFilterSearch;
-		const oFilter = Element.getElementById(this.getFilter()), bInbuiltEnabled = this.isFilteringEnabled();
+		const oFilter = Element.getElementById(this.getFilter()),
+			bInbuiltEnabled = this.isFilteringEnabled();
 
 		//check if there is any external/internal filter source
 		if (bInbuiltEnabled || oFilter) {
@@ -206,17 +205,16 @@ sap.ui.define([
 			}
 
 			if (bInbuiltEnabled) {
-				pInnerFilterSearch = this.retrieveInbuiltFilter().then(function(oInnerFilter){
+				pInnerFilterSearch = this.retrieveInbuiltFilter().then((oInnerFilter) => {
 					return oInnerFilter.validate(true);
 				});
 			}
 
 			Promise.all([
-				pOuterFilterSearch,
-				pInnerFilterSearch
-			]).then(function() {
+				pOuterFilterSearch, pInnerFilterSearch
+			]).then(() => {
 				this._rebind();
-			}.bind(this), function(){
+			}, () => {
 
 				//TODO:
 				//Do some stuff in case something gets rejected
@@ -235,7 +233,7 @@ sap.ui.define([
 
 		if (this.getFilterConditions) {
 			const aFilterConditions = this.getFilterConditions();
-			Object.keys(aFilterConditions).forEach(function(oConditionKey){
+			Object.keys(aFilterConditions).forEach((oConditionKey) => {
 
 				if (!aFilterConditions[oConditionKey] || aFilterConditions[oConditionKey].length < 1) {
 					return;
@@ -249,17 +247,17 @@ sap.ui.define([
 				if (!sLabel || sLabel === oConditionKey) {
 					Log.error("No valid property found for filter with key " + oConditionKey + ". Check your metadata.");
 				}
-			}.bind(this));
+			});
 		}
 
 		return aLabels;
 	};
 
-	return function () {
+	return function() {
 
-        this.setFilter = FilterIntegrationMixin.setFilter;
+		this.setFilter = FilterIntegrationMixin.setFilter;
 		this._validateFilter = FilterIntegrationMixin._validateFilter;
-        this.rebind = FilterIntegrationMixin.rebind;
+		this.rebind = FilterIntegrationMixin.rebind;
 		this._getLabelsFromFilterConditions = FilterIntegrationMixin._getLabelsFromFilterConditions;
 	};
 

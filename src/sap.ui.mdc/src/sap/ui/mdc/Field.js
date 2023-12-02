@@ -12,7 +12,7 @@ sap.ui.define([
 	'sap/base/util/merge',
 	'sap/ui/model/BindingMode',
 	'sap/ui/model/Context'
-], function(
+], (
 	FieldBase,
 	FieldBaseRenderer,
 	FieldDisplay,
@@ -23,7 +23,7 @@ sap.ui.define([
 	merge,
 	BindingMode,
 	Context
-) {
+) => {
 	"use strict";
 
 	/**
@@ -60,7 +60,7 @@ sap.ui.define([
 	 * @since 1.54.0
 	 *
 	 * @public
-  	 * @experimental As of version 1.54.0
+	 * @experimental As of version 1.54.0
 	 */
 	const Field = FieldBase.extend("sap.ui.mdc.Field", /* @lends sap.ui.mdc.Field.prototype */ {
 		metadata: {
@@ -171,10 +171,10 @@ sap.ui.define([
 			oBindingInfo.targetType = "raw"; // provide internal value to inner control
 			oDataType = this.getContentFactory().getDataType();
 			if (oBindingInfo.type && (!oDataType ||
-				oDataType.getMetadata().getName() !== oBindingInfo.type.getMetadata().getName() ||
-				!deepEqual(oDataType.getFormatOptions(), oBindingInfo.type.getFormatOptions()) ||
-				!deepEqual(oDataType.getConstraints(), oBindingInfo.type.getConstraints()) ||
-				oDataType._bCreatedByOperator !== oBindingInfo.type._bCreatedByOperator)) {
+					oDataType.getMetadata().getName() !== oBindingInfo.type.getMetadata().getName() ||
+					!deepEqual(oDataType.getFormatOptions(), oBindingInfo.type.getFormatOptions()) ||
+					!deepEqual(oDataType.getConstraints(), oBindingInfo.type.getConstraints()) ||
+					oDataType._bCreatedByOperator !== oBindingInfo.type._bCreatedByOperator)) {
 				this.getContentFactory().setDataType(oBindingInfo.type);
 				this.getContentFactory().setDateOriginalType(undefined);
 				this.getContentFactory().setUnitOriginalType(undefined);
@@ -193,10 +193,10 @@ sap.ui.define([
 			oBindingInfo.targetType = "raw"; // provide internal value to inner control
 			oDataType = this.getContentFactory().getAdditionalDataType();
 			if (oBindingInfo.type && (!oDataType ||
-				oDataType.getMetadata().getName() !== oBindingInfo.type.getMetadata().getName() ||
-				!deepEqual(oDataType.getFormatOptions(), oBindingInfo.type.getFormatOptions()) ||
-				!deepEqual(oDataType.getConstraints(), oBindingInfo.type.getConstraints()) ||
-				oDataType._bCreatedByOperator !== oBindingInfo.type._bCreatedByOperator)) {
+					oDataType.getMetadata().getName() !== oBindingInfo.type.getMetadata().getName() ||
+					!deepEqual(oDataType.getFormatOptions(), oBindingInfo.type.getFormatOptions()) ||
+					!deepEqual(oDataType.getConstraints(), oBindingInfo.type.getConstraints()) ||
+					oDataType._bCreatedByOperator !== oBindingInfo.type._bCreatedByOperator)) {
 				this.getContentFactory().setAdditionalDataType(oBindingInfo.type);
 				if (oBindingInfo.type.isA("sap.ui.model.CompositeType") && oBindingInfo.parts) {
 					aTypes = [];
@@ -345,11 +345,11 @@ sap.ui.define([
 
 		if (!this.bDelegateInitialized) {
 			// wait until delegate is loaded
-			this.awaitControlDelegate().then(function() {
+			this.awaitControlDelegate().then(() => {
 				if (!this.isFieldDestroyed()) {
 					_triggerConditionUpdate.call(this);
 				}
-			}.bind(this));
+			});
 			this._bPendingConditionUpdate = true;
 			return;
 		}
@@ -359,10 +359,10 @@ sap.ui.define([
 			_updateCondition.call(this, _getValue.call(this), _getAdditionalValue.call(this));
 		} else if (!this._iConditionUpdateTimer) {
 			// call async. to update condition once if value and additionalValue set at same time
-			this._iConditionUpdateTimer = setTimeout(function() {
+			this._iConditionUpdateTimer = setTimeout(() => {
 				_updateCondition.call(this, _getValue.call(this), _getAdditionalValue.call(this));
 				this._iConditionUpdateTimer = undefined;
-			}.bind(this), 0);
+			}, 0);
 			this._bPendingConditionUpdate = true;
 		}
 
@@ -398,8 +398,8 @@ sap.ui.define([
 
 		const sDataType = this.getContentFactory().getDataType() ? this.getContentFactory().getDataType().getMetadata().getName() : this.getDataType(); // as type must not exist now
 
-		if (vValue && vOldValue && (sDataType === "sap.ui.model.odata.type.Unit" || sDataType === "sap.ui.model.odata.type.Currency")
-			&& !vValue[2] && vOldValue[2] !== undefined) {
+		if (vValue && vOldValue && (sDataType === "sap.ui.model.odata.type.Unit" || sDataType === "sap.ui.model.odata.type.Currency") &&
+			!vValue[2] && vOldValue[2] !== undefined) {
 			// if no unit table was provided use the old one.
 			// As we cannot be sure that inner control is already rendered and dataType.formatValue was called with unit table.
 			vValue = merge([], vValue); // do not change original array.
@@ -440,8 +440,8 @@ sap.ui.define([
 			const vUnit2 = vValue2[1];
 			const vCustomUnit2 = vValue2.length >= 3 ? vValue2[2] : null; // if no custom units are given handle it like null
 			// null and undefined are handled different in Unit type, so don't handle it as equal
-			if (vNumber1 === vNumber2 && vUnit1 === vUnit2
-				&& (((this._bUnitSet || bUpdateCheck) && (!vCustomUnit1 || !vCustomUnit2)) || deepEqual(vCustomUnit1, vCustomUnit2))) {
+			if (vNumber1 === vNumber2 && vUnit1 === vUnit2 &&
+				(((this._bUnitSet || bUpdateCheck) && (!vCustomUnit1 || !vCustomUnit2)) || deepEqual(vCustomUnit1, vCustomUnit2))) {
 				bEqual = true;
 			}
 			if ((vCustomUnit1 || vCustomUnit2) && !bUpdateCheck) {
@@ -474,11 +474,11 @@ sap.ui.define([
 		if (!this._oTypeInitialization) {
 			if (!this.bDelegateInitialized) {
 				// wait until delegate is loaded
-				this.awaitControlDelegate().then(function() {
+				this.awaitControlDelegate().then(() => {
 					if (!this.isFieldDestroyed()) {
 						_initializeType.call(this, vValue);
 					}
-				}.bind(this));
+				});
 				return;
 			}
 
@@ -514,10 +514,10 @@ sap.ui.define([
 				_updateValue.call(this, this.getConditions());
 			} else if (oPromise) {
 				// update value after Promise resolved
-				oPromise = oPromise.then(function(vResult) {
+				oPromise = oPromise.then((vResult) => {
 					_updateValue.call(this, this.getConditions());
 					return vResult;
-				}.bind(this));
+				});
 			}
 		}
 
@@ -543,11 +543,11 @@ sap.ui.define([
 
 		if (!this.bDelegateInitialized) {
 			// wait until delegate is loaded
-			this.awaitControlDelegate().then(function() {
+			this.awaitControlDelegate().then(() => {
 				if (!this.isFieldDestroyed()) {
 					_updateValue.call(this, aConditions);
 				}
-			}.bind(this));
+			});
 			return;
 		}
 

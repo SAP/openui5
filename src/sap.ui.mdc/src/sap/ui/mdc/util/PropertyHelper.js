@@ -9,14 +9,14 @@ sap.ui.define([
 	"sap/base/util/isPlainObject",
 	"sap/base/Log",
 	"sap/ui/core/Lib"
-], function(
+], (
 	BaseObject,
 	DataType,
 	merge,
 	isPlainObject,
 	Log,
 	Lib
-) {
+) => {
 	"use strict";
 
 	/*global Set, WeakMap */
@@ -230,7 +230,7 @@ sap.ui.define([
 		 * @returns {sap.ui.mdc.util.PropertyInfo[]} The sortable properties
 		 */
 		getSortableProperties: function() {
-			return this.getSimpleProperties().filter(function(oProperty) {
+			return this.getSimpleProperties().filter((oProperty) => {
 				return oProperty.sortable;
 			});
 		},
@@ -241,7 +241,7 @@ sap.ui.define([
 		 * @returns {sap.ui.mdc.util.PropertyInfo[]} The filterable properties
 		 */
 		getFilterableProperties: function() {
-			return this.getSimpleProperties().filter(function(oProperty) {
+			return this.getSimpleProperties().filter((oProperty) => {
 				return oProperty.filterable;
 			});
 		},
@@ -252,18 +252,29 @@ sap.ui.define([
 		 * @returns {sap.ui.mdc.util.PropertyInfo[]} The visible properties
 		 */
 		getVisibleProperties: function() {
-			return this.getSimpleProperties().filter(function(oProperty) {
+			return this.getSimpleProperties().filter((oProperty) => {
 				return oProperty.visible;
 			});
 		}
 	};
 
-	const aCommonAttributes = ["name", "label", "tooltip", "visible", "path", "dataType", "formatOptions", "constraints",
-							 "maxConditions", "group", "groupLabel", "caseSensitive"];
+	const aCommonAttributes = ["name",
+		"label",
+		"tooltip",
+		"visible",
+		"path",
+		"dataType",
+		"formatOptions",
+		"constraints",
+		"maxConditions",
+		"group",
+		"groupLabel",
+		"caseSensitive"
+	];
 	const _private = new WeakMap();
 
 	function stringifyPlainObject(oObject) {
-		return JSON.stringify(oObject, function(sKey, oValue) {
+		return JSON.stringify(oObject, (sKey, oValue) => {
 			return oValue === undefined ? null : oValue;
 		}) || "";
 	}
@@ -277,15 +288,14 @@ sap.ui.define([
 		// 3. the explicit enablement via url param is activated --> overrules the first to conditions
 		if (
 			(
-				!(window['sap-ui-mdc-config'] && window['sap-ui-mdc-config'].disableStrictPropertyInfoValidation
-					|| new URLSearchParams(window.location.search).get("sap-ui-xx-disableStrictPropertyValidation") == "true")
-				&& !("sap.fe.core" in mLoadedLibraries
-					|| "sap.fe.macros" in mLoadedLibraries
-					|| "sap.sac.df" in mLoadedLibraries)
-			)
-				||
-				(new URLSearchParams(window.location.search).get("sap-ui-xx-enableStrictPropertyValidation") == "true")
-			) {
+				!(window['sap-ui-mdc-config'] && window['sap-ui-mdc-config'].disableStrictPropertyInfoValidation ||
+					new URLSearchParams(window.location.search).get("sap-ui-xx-disableStrictPropertyValidation") == "true") &&
+				!("sap.fe.core" in mLoadedLibraries ||
+					"sap.fe.macros" in mLoadedLibraries ||
+					"sap.sac.df" in mLoadedLibraries)
+			) ||
+			(new URLSearchParams(window.location.search).get("sap-ui-xx-enableStrictPropertyValidation") == "true")
+		) {
 			throwInvalidPropertyError(sMessage, oAdditionalInfo);
 		}
 
@@ -305,8 +315,8 @@ sap.ui.define([
 	}
 
 	function enrichProperties(oPropertyHelper, aProperties) {
-		aProperties.map(function(oProperty) {
-			Object.keys(mPropertyMethods).forEach(function(sMethod) {
+		aProperties.map((oProperty) => {
+			Object.keys(mPropertyMethods).forEach((sMethod) => {
 				Object.defineProperty(oProperty, sMethod, {
 					value: function() {
 						return mPropertyMethods[sMethod].call(this);
@@ -340,7 +350,7 @@ sap.ui.define([
 			return oObject;
 		}
 
-		return sPath.split(".").reduce(function(oCurrent, sSection) {
+		return sPath.split(".").reduce((oCurrent, sSection) => {
 			return oCurrent && oCurrent[sSection] ? oCurrent[sSection] : null;
 		}, oObject);
 	}
@@ -368,7 +378,7 @@ sap.ui.define([
 	}
 
 	function prepareProperties(oPropertyHelper, aProperties) {
-		aProperties.forEach(function(oProperty) {
+		aProperties.forEach((oProperty) => {
 			oPropertyHelper.prepareProperty(oProperty);
 		});
 
@@ -401,8 +411,8 @@ sap.ui.define([
 				continue;
 			}
 
-			if (vValue != null && typeof mAttribute.type === "string" && mAttribute.type.startsWith("PropertyReference")
-				|| sAttributePath === "propertyInfos") {
+			if (vValue != null && typeof mAttribute.type === "string" && mAttribute.type.startsWith("PropertyReference") ||
+				sAttributePath === "propertyInfos") {
 
 				if (bIsComplex || sAttributePath !== "propertyInfos") {
 					preparePropertyReferences(oPropertySection, sAttribute, mProperties);
@@ -431,7 +441,7 @@ sap.ui.define([
 		let sPropertyName = sAttribute;
 
 		if (Array.isArray(vPropertyReference)) {
-			vProperties = vPropertyReference.map(function(sName) {
+			vProperties = vPropertyReference.map((sName) => {
 				return mProperties[sName];
 			});
 			sPropertyName += "Properties";
@@ -476,7 +486,7 @@ sap.ui.define([
 	}
 
 	function createPropertyMap(aProperties) {
-		return Object.freeze(aProperties.reduce(function(mMap, oProperty) {
+		return Object.freeze(aProperties.reduce((mMap, oProperty) => {
 			mMap[oProperty.name] = oProperty;
 			return mMap;
 		}, {}));
@@ -563,7 +573,7 @@ sap.ui.define([
 				throw new Error("The type of the parent is invalid.");
 			}
 
-			Object.keys(mAdditionalAttributes || {}).forEach(function(sAdditionalAttribute) {
+			Object.keys(mAdditionalAttributes || {}).forEach((sAdditionalAttribute) => {
 				if (sAdditionalAttribute in mAttributeMetadata && mAdditionalAttributes[sAdditionalAttribute] !== true) {
 					throw new Error("The attribute '" + sAdditionalAttribute + "' is reserved and cannot be overridden by additional attributes.");
 				}
@@ -572,13 +582,13 @@ sap.ui.define([
 			const mPrivate = {};
 			const aAdditionalAttributes = Object.keys(mAdditionalAttributes || {});
 
-			mPrivate.mAttributeMetadata = aCommonAttributes.concat(aAdditionalAttributes).reduce(function(mMetadata, sAttribute) {
+			mPrivate.mAttributeMetadata = aCommonAttributes.concat(aAdditionalAttributes).reduce((mMetadata, sAttribute) => {
 				mMetadata[sAttribute] = sAttribute in mAttributeMetadata ? mAttributeMetadata[sAttribute] : mAdditionalAttributes[sAttribute];
 				return mMetadata;
 			}, {});
 			finalizeAttributeMetadata(mPrivate.mAttributeMetadata);
 
-			mPrivate.aMandatoryAttributes = Object.keys(mPrivate.mAttributeMetadata).filter(function(sAttribute) {
+			mPrivate.aMandatoryAttributes = Object.keys(mPrivate.mAttributeMetadata).filter((sAttribute) => {
 				return mPrivate.mAttributeMetadata[sAttribute].mandatory;
 			});
 
@@ -642,7 +652,7 @@ sap.ui.define([
 
 		const mPrivate = _private.get(this);
 
-		mPrivate.aMandatoryAttributes.forEach(function(sMandatoryAttribute) {
+		mPrivate.aMandatoryAttributes.forEach((sMandatoryAttribute) => {
 			const bAllowedForComplexProperty = mPrivate.mAttributeMetadata[sMandatoryAttribute].forComplexProperty.allowed;
 
 			if (oProperty[sMandatoryAttribute] == null && PropertyHelper.isPropertyComplex(oProperty) && !bAllowedForComplexProperty) {
@@ -726,7 +736,7 @@ sap.ui.define([
 		const mProperties = this.getPropertyMap();
 		const aDependenciesForDefaults = preparePropertyDeep(this, oProperty, mProperties);
 
-		aDependenciesForDefaults.forEach(function(mDependency) {
+		aDependenciesForDefaults.forEach((mDependency) => {
 			const oPropertySection = deepFind(oProperty, mDependency.targetPath);
 
 			if (oPropertySection) {
@@ -829,7 +839,7 @@ sap.ui.define([
 	 * @public
 	 */
 	PropertyHelper.prototype.getSortableProperties = function() {
-		return this.getProperties().filter(function(oProperty) {
+		return this.getProperties().filter((oProperty) => {
 			return oProperty.sortable;
 		});
 	};
@@ -841,7 +851,7 @@ sap.ui.define([
 	 * @public
 	 */
 	PropertyHelper.prototype.getFilterableProperties = function() {
-		return this.getProperties().filter(function(oProperty) {
+		return this.getProperties().filter((oProperty) => {
 			return oProperty.filterable;
 		});
 	};
@@ -853,7 +863,7 @@ sap.ui.define([
 	 * @public
 	 */
 	PropertyHelper.prototype.getVisibleProperties = function() {
-		return this.getProperties().filter(function(oProperty) {
+		return this.getProperties().filter((oProperty) => {
 			return oProperty.visible;
 		});
 	};

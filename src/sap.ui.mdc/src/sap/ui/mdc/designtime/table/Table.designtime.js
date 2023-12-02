@@ -2,10 +2,8 @@
  * ${copyright}
  */
 sap.ui.define([
-	"sap/m/p13n/Engine",
-	"sap/ui/mdc/Table",
-	"../Util"
-], function (Engine, Table, Util) {
+	"sap/m/p13n/Engine", "sap/ui/mdc/Table", "../Util"
+], (Engine, Table, Util) => {
 	"use strict";
 
 	// initial structure of designTime object
@@ -13,11 +11,11 @@ sap.ui.define([
 		name: "{name}",
 		description: "{description}",
 		actions: {
-			settings: function () {
+			settings: function() {
 				//RTA expects the settings to be returned as function
 				return {
-					handler: function (oControl, mPropertyBag) {
-						return oControl.finalizePropertyHelper().then(function(){
+					handler: function(oControl, mPropertyBag) {
+						return oControl.finalizePropertyHelper().then(() => {
 							return Engine.getInstance().getRTASettingsActionHandler(oControl, mPropertyBag, oControl.getActiveP13nModes());
 						});
 					}
@@ -42,7 +40,7 @@ sap.ui.define([
 						oElement.isA("sap.ui.mdc.Field") ||
 						(oElement.getParent() &&
 							(oElement.getParent().isA("sap.ui.mdc.actiontoolbar.ActionToolbarAction") ||
-							oElement.getParent().isA("sap.ui.mdc.Field")))) {
+								oElement.getParent().isA("sap.ui.mdc.Field")))) {
 						return null;
 					}
 
@@ -54,10 +52,18 @@ sap.ui.define([
 		}
 	};
 	// array containing all allowed control properties. Update the aAllowedProperties to enable a property for DTA
-	const aAllowedProperties = ["width", "headerLevel",
-			"header", "headerVisible", "showRowCount", "threshold",
-			"enableExport", "busyIndicatorDelay","enableColumnResize",
-			"showPasteButton", "multiSelectMode"],
+	const aAllowedProperties = ["width",
+			"headerLevel",
+			"header",
+			"headerVisible",
+			"showRowCount",
+			"threshold",
+			"enableExport",
+			"busyIndicatorDelay",
+			"enableColumnResize",
+			"showPasteButton",
+			"multiSelectMode"
+		],
 		// array containing all allowed control aggregations. Update the aAllowedAggregations to enable an aggregation for DTA
 		aAllowedAggregations = [
 			"_content"

@@ -1,16 +1,14 @@
-
 /*!
  * ${copyright}
  */
 
 // Provides control sap.ui.mdc.filterbar.p13n.FilterColumnLayout.
-sap.ui.define(['sap/m/ColumnListItem', 'sap/m/ColumnListItemRenderer', 'sap/m/Label'
-], function(ColumnListItem, ColumnListItemRenderer, Label) {
+sap.ui.define(['sap/m/ColumnListItem', 'sap/m/ColumnListItemRenderer', 'sap/m/Label'], (ColumnListItem, ColumnListItemRenderer, Label) => {
 	"use strict";
 
 	/**
 	 * Constructor for a new filterBar/p13n/FilterColumnLayout.
-     * Displays FilterFields with labels as cells
+	 * Displays FilterFields with labels as cells
 	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
 	 * @param {object} [mSettings] Initial settings for the new control
 	 * @class Represents a filter item on the UI.
@@ -27,11 +25,11 @@ sap.ui.define(['sap/m/ColumnListItem', 'sap/m/ColumnListItemRenderer', 'sap/m/La
 		renderer: ColumnListItemRenderer
 	});
 
-	FilterColumnLayout.prototype._getFieldPath = function () {
+	FilterColumnLayout.prototype._getFieldPath = function() {
 		return this._oFilterField ? this._oFilterField.getPropertyKey() : null;
 	};
 
-	FilterColumnLayout.prototype.setFilterField = function (oFilterField) {
+	FilterColumnLayout.prototype.setFilterField = function(oFilterField) {
 		this._oFilterField = oFilterField;
 		this._sLabel = oFilterField.getLabel();
 	};
@@ -52,7 +50,7 @@ sap.ui.define(['sap/m/ColumnListItem', 'sap/m/ColumnListItemRenderer', 'sap/m/La
 		return aContent;
 	};
 
-	FilterColumnLayout.prototype.exit = function () {
+	FilterColumnLayout.prototype.exit = function() {
 		ColumnListItem.prototype.exit.apply(this, arguments);
 		this._oFilterField = null;
 	};

@@ -3,7 +3,7 @@
  */
 sap.ui.define([
 	"sap/ui/core/Element"
-], function (Element) {
+], (Element) => {
 	"use strict";
 
 	/**
@@ -26,8 +26,8 @@ sap.ui.define([
 			library: "sap.ui.mdc",
 			aggregations: {
 				/**
-                 * Action <code>item</code> shown in the Items area of the details popover.
-                 */
+				 * Action <code>item</code> shown in the Items area of the details popover.
+				 */
 				detailsItemActions: {
 					type: "sap.ui.core.Item",
 					multiple: true

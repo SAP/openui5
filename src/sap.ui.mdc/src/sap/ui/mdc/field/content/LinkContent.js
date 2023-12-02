@@ -2,12 +2,11 @@
  * ${copyright}
  */
 sap.ui.define([
-	"sap/ui/mdc/field/content/DefaultContent",
-	"sap/m/library"
-], function(DefaultContent, mLibrary) {
+	"sap/ui/mdc/field/content/DefaultContent", "sap/m/library"
+], (DefaultContent, mLibrary) => {
 	"use strict";
 
-	const EmptyIndicatorMode = mLibrary.EmptyIndicatorMode;
+	const { EmptyIndicatorMode } = mLibrary;
 
 	/**
 	 * Object-based definition of the link content type that is used in the {@link sap.ui.mdc.field.content.ContentFactory}.
@@ -49,7 +48,7 @@ sap.ui.define([
 			});
 			const oFieldInfo = oContentFactory.getField().getFieldInfo();
 			if (oFieldInfo) {
-				oFieldInfo.getDirectLinkHrefAndTarget().then(function(oLinkItem) {
+				oFieldInfo.getDirectLinkHrefAndTarget().then((oLinkItem) => {
 					oContentFactory.getMetadata()._oClass._updateLink(oLink, oLinkItem);
 				});
 			}

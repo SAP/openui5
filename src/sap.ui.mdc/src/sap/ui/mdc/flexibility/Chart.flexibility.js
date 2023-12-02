@@ -2,8 +2,11 @@
  * ${copyright}
  */
 sap.ui.define([
-	'./SortFlex', './ChartItemFlex', './ConditionFlex', './ChartTypeFlex'
-], function(SortFlex, ChartItemFlex, ConditionFlex, ChartTypeFlex) {
+	'./SortFlex',
+	'./ChartItemFlex',
+	'./ConditionFlex',
+	'./ChartTypeFlex'
+], (SortFlex, ChartItemFlex, ConditionFlex, ChartTypeFlex) => {
 	"use strict";
 	/**
 	 * Chart-control-specific change handler that enables the storing of changes in the layered repository of the flexibility services.

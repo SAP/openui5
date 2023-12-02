@@ -3,24 +3,21 @@
  */
 
 sap.ui.define([
-	'./ItemBaseFlex',
-	'./Util',
-	"sap/ui/fl/changeHandler/common/ChangeCategories"
-], function(ItemBaseFlex, Util, ChangeCategories) {
+	'./ItemBaseFlex', './Util', "sap/ui/fl/changeHandler/common/ChangeCategories"
+], (ItemBaseFlex, Util, ChangeCategories) => {
 	"use strict";
 
 	const ColumnFlex = Object.assign({}, ItemBaseFlex);
 
 	ColumnFlex.findItem = function(oModifier, aColumns, sName) {
-		return aColumns.reduce(function(oPreviousPromise, oColumn) {
+		return aColumns.reduce((oPreviousPromise, oColumn) => {
 			return oPreviousPromise
-				.then(function(oFoundColumn) {
+				.then((oFoundColumn) => {
 					if (!oFoundColumn) {
 						return Promise.all([
-								oModifier.getProperty(oColumn, "propertyKey"),
-								oModifier.getProperty(oColumn, "dataProperty")
+								oModifier.getProperty(oColumn, "propertyKey"), oModifier.getProperty(oColumn, "dataProperty")
 							])
-							.then(function(aProperties) {
+							.then((aProperties) => {
 								if (aProperties[0] === sName || aProperties[1] === sName) {
 									return oColumn;
 								}
@@ -36,7 +33,7 @@ sap.ui.define([
 		const oTable = oAppComponent.byId(oChange.getSelector().id);
 		let sKey;
 		const aArgs = [oContent.name];
-		const mVersionInfo = { descriptionPayload: {}};
+		const mVersionInfo = { descriptionPayload: {} };
 
 		if (oChange.getChangeType() === "addColumn") {
 			mVersionInfo.descriptionPayload.category = ChangeCategories.ADD;
@@ -59,7 +56,7 @@ sap.ui.define([
 			}
 		}
 
-		return Util.getMdcResourceText(sKey, aArgs).then(function(sText) {
+		return Util.getMdcResourceText(sKey, aArgs).then((sText) => {
 			mVersionInfo.descriptionPayload.description = sText;
 
 			mVersionInfo.updateRequired = true;

@@ -2,18 +2,18 @@
  * ${copyright}
  */
 sap.ui.define([
-	'sap/ui/mdc/condition/Condition',
-	'sap/ui/mdc/enums/ConditionValidated',
-	'sap/ui/mdc/enums/OperatorValueType',
-	'sap/ui/mdc/condition/FilterOperatorUtil',
-	'sap/base/util/merge'
-], function(
+		'sap/ui/mdc/condition/Condition',
+		'sap/ui/mdc/enums/ConditionValidated',
+		'sap/ui/mdc/enums/OperatorValueType',
+		'sap/ui/mdc/condition/FilterOperatorUtil',
+		'sap/base/util/merge'
+	], (
 	Condition,
 	ConditionValidated,
 	OperatorValueType,
 	FilterOperatorUtil,
 	merge
-) {
+) => {
 	"use strict";
 
 	/**
@@ -123,7 +123,7 @@ sap.ui.define([
 		}
 	};
 
-	function _getLocalType (oTypeInstance, oOperator) {
+	function _getLocalType(oTypeInstance, oOperator) {
 		if (oOperator && oOperator.valueTypes[0] && (oOperator.valueTypes[0] !== OperatorValueType.Self && oOperator.valueTypes[0] !== OperatorValueType.Static)) {
 			// we have to create the type instance for the values
 			return oOperator._createLocalType(oOperator.valueTypes[0], oTypeInstance); //TODO: type for all values must be the same
@@ -131,7 +131,7 @@ sap.ui.define([
 		return oTypeInstance;
 	}
 
-	function _externalizeValues (aValues, oTypeInstance, oOperator, oTypeUtil) {
+	function _externalizeValues(aValues, oTypeInstance, oOperator, oTypeUtil) {
 
 		const aResult = [];
 
@@ -147,17 +147,14 @@ sap.ui.define([
 
 	}
 
-	function _internalizeValues (aValues, oTypeInstance, oTypeUtil) {
-
+	function _internalizeValues(aValues, oTypeInstance, oTypeUtil) {
 		const aResult = [];
 
-		for (let i = 0; i < aValues.length; i++) {
-			const sValue = aValues[i];
+		for (const sValue of aValues) {
 			aResult.push(oTypeUtil.internalizeValue(sValue, oTypeInstance));
 		}
 
 		return aResult;
-
 	}
 
 	return ConditionConverter;

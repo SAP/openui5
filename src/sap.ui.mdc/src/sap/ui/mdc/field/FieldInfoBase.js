@@ -7,16 +7,16 @@ sap.ui.define([
 	'sap/ui/mdc/Element',
 	'sap/m/library',
 	'sap/m/ResponsivePopover'
-], function(
-		Device,
-		Element,
-		mobileLibrary,
-		ResponsivePopover
-	) {
+], (
+	Device,
+	Element,
+	mobileLibrary,
+	ResponsivePopover
+) => {
 	"use strict";
 
 	// shortcut for sap.m.PlacementType
-	const PlacementType = mobileLibrary.PlacementType;
+	const { PlacementType } = mobileLibrary;
 
 	/**
 	 * Constructor for a new <code>FieldInfoBase</code>.
@@ -33,8 +33,7 @@ sap.ui.define([
 	 * @public
 	 * @alias sap.ui.mdc.field.FieldInfoBase
 	 */
-	const FieldInfoBase = Element.extend("sap.ui.mdc.field.FieldInfoBase", /** @lends sap.ui.mdc.field.FieldInfoBase.prototype */
-	{
+	const FieldInfoBase = Element.extend("sap.ui.mdc.field.FieldInfoBase", /** @lends sap.ui.mdc.field.FieldInfoBase.prototype */ {
 		metadata: {
 			library: "sap.ui.mdc",
 			events: {
@@ -94,23 +93,23 @@ sap.ui.define([
 			throw new Error("sap.ui.mdc.field.FieldInfoBase: popover can not be open because the control is undefined");
 		}
 		// Avoid creation of a new popover instance if the same triggerable control is triggered again.
-		const oPopover = this.getDependents().find(function(oDependent) {
+		const oPopover = this.getDependents().find((oDependent) => {
 			return oDependent.isA("sap.m.ResponsivePopover");
 		});
 		if (oPopover && oPopover.isOpen()) {
 			return Promise.resolve();
 		}
-		return this.checkDirectNavigation().then(function(bNavigated) {
-			return bNavigated ? Promise.resolve() : this.createPopover().then(function(oPopover) {
+		return this.checkDirectNavigation().then((bNavigated) => {
+			return bNavigated ? Promise.resolve() : this.createPopover().then((oPopover) => {
 				if (oPopover) {
 					oPopover.openBy(oControl);
 
-					oPopover.attachAfterOpen(function() {
+					oPopover.attachAfterOpen(() => {
 						this.firePopoverAfterOpen();
-					}.bind(this));
+					});
 				}
-			}.bind(this));
-		}.bind(this));
+			});
+		});
 	};
 
 	// ----------------------- Abstract methods --------------------------------------------
@@ -155,9 +154,9 @@ sap.ui.define([
 	FieldInfoBase.prototype.createPopover = function() {
 		let oPopover;
 
-		return this.getContent(function () {
+		return this.getContent(() => {
 			return oPopover;
-		}).then(function(oPanel) {
+		}).then((oPanel) => {
 			oPopover = new ResponsivePopover(this.getId() + "-popover", {
 				contentWidth: "380px",
 				horizontalScrolling: false,
@@ -175,12 +174,12 @@ sap.ui.define([
 
 			this.addDependent(oPopover);
 
-			return new Promise(function(resolve, reject) {
+			return new Promise((resolve, reject) => {
 				sap.ui.require([
 					'sap/ui/fl/apply/api/FlexRuntimeInfoAPI'
-				], function(FlexRuntimeInfoAPI) {
-					if (FlexRuntimeInfoAPI.isFlexSupported({element: oPanel})) {
-						FlexRuntimeInfoAPI.waitForChanges({element: oPanel}).then(function () {
+				], (FlexRuntimeInfoAPI) => {
+					if (FlexRuntimeInfoAPI.isFlexSupported({ element: oPanel })) {
+						FlexRuntimeInfoAPI.waitForChanges({ element: oPanel }).then(() => {
 							oPopover.addAriaLabelledBy(oPanel.getContentTitle ? oPanel.getContentTitle() : "");
 							resolve(oPopover);
 						});
@@ -190,7 +189,7 @@ sap.ui.define([
 					}
 				});
 			});
-		}.bind(this));
+		});
 	};
 
 	return FieldInfoBase;

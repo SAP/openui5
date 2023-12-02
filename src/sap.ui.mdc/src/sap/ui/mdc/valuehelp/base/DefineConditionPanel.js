@@ -43,7 +43,7 @@ sap.ui.define([
 	'sap/ui/core/IconPool',
 	'sap/ui/core/InvisibleMessage',
 	'sap/ui/thirdparty/jquery'
-], function(
+], (
 	Control,
 	ManagedObjectObserver,
 	merge,
@@ -85,24 +85,24 @@ sap.ui.define([
 	IconPool,
 	InvisibleMessage,
 	jQuery
-) {
+) => {
 	"use strict";
 
 	// translation utils
 	let oMessageBundle = Library.getResourceBundleFor("sap.ui.mdc");
 	let oMessageBundleM = Library.getResourceBundleFor("sap.m");
-	sap.ui.getCore().attachLocalizationChanged(function() {
+	sap.ui.getCore().attachLocalizationChanged(() => {
 		oMessageBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
 		oMessageBundleM = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 	});
 
-	const ButtonType = mLibrary.ButtonType;
-	const ValueState = coreLibrary.ValueState;
-	const InvisibleMessageMode = coreLibrary.InvisibleMessageMode;
-	const TextAlign = coreLibrary.TextAlign;
-	const BackgroundDesign = mLibrary.BackgroundDesign;
-	const ToolbarDesign = mLibrary.ToolbarDesign;
-	const OverflowToolbarPriority = mLibrary.OverflowToolbarPriority;
+	const { ButtonType } = mLibrary;
+	const { ValueState } = coreLibrary;
+	const { InvisibleMessageMode } = coreLibrary;
+	const { TextAlign } = coreLibrary;
+	const { BackgroundDesign } = mLibrary;
+	const { ToolbarDesign } = mLibrary;
+	const { OverflowToolbarPriority } = mLibrary;
 
 	/**
 	 * Constructor for a new <code>DefineConditionPanel</code>.
@@ -225,9 +225,9 @@ sap.ui.define([
 		},
 		_oManagedObjectModel: null,
 
-		renderer:{
+		renderer: {
 			apiVersion: 2,
-			render: function(oRm, oControl){
+			render: function(oRm, oControl) {
 				oRm.openStart("section", oControl);
 				oRm.class("sapUiMdcDefineConditionPanel");
 				oRm.openEnd();
@@ -303,7 +303,7 @@ sap.ui.define([
 		},
 
 		removeCondition: function(oEvent) {
-			const oSource = oEvent.oSource;
+			const { oSource } = oEvent;
 			const oBindingContext = oSource.getBindingContext("$this");
 			let aConditions = this.getConditions();
 			const sPath = oBindingContext.getPath();
@@ -323,8 +323,8 @@ sap.ui.define([
 			const oGrid = this.byId("conditions");
 			const aGridContent = oGrid.getContent();
 			let iRow = -1;
-			for (let i = 0; i < aGridContent.length; i++) {
-				const oField = aGridContent[i];
+
+			for (const oField of aGridContent) {
 				if (oField instanceof Field && oField.getValueHelp() === this._sOperatorHelpId) {
 					// Operator field starts new row
 					iRow++;
@@ -364,8 +364,8 @@ sap.ui.define([
 			const aGridContent = oGrid.getContent();
 			let iRows = 0;
 			let iIndex = -1;
-			for (let i = 0; i < aGridContent.length; i++) {
-				const oField = aGridContent[i];
+
+			for (const oField of aGridContent) {
 				if (oField instanceof Field && oField.getValueHelp() === this._sOperatorHelpId) {
 					// Operator field starts new row
 					iRows++;
@@ -445,7 +445,7 @@ sap.ui.define([
 
 				if (oEvent) {
 					// remove isInitial when the user modified the value and the condition is not Empty
-					aConditions.forEach(function(oCondition) {
+					aConditions.forEach((oCondition) => {
 						if (!oCondition.isEmpty) {
 							delete oCondition.isInitial;
 						}
@@ -456,20 +456,20 @@ sap.ui.define([
 			}.bind(this);
 
 			if (oPromise) {
-				oPromise.then(function(vResult) {
+				oPromise.then((vResult) => {
 					this._bPendingChange = false;
-					fnHandleChange({mParameters: {value: vResult}}); // TODO: use a real event?
+					fnHandleChange({ mParameters: { value: vResult } }); // TODO: use a real event?
 					if (this._bPendingValidateCondition) {
 						_validateCondition.call(this, oSourceControl);
 						delete this._bPendingValidateCondition;
 					}
-				}.bind(this)).catch(function(oError) { // cleanup pending stuff
+				}).catch((oError) => { // cleanup pending stuff
 					this._bPendingChange = false;
 					if (this._bPendingValidateCondition) {
 						_validateCondition.call(this, oSourceControl);
 						delete this._bPendingValidateCondition;
 					}
-				}.bind(this));
+				});
 
 				this._bPendingChange = true; // TODO: handle multiple changes
 				return;
@@ -483,7 +483,7 @@ sap.ui.define([
 			const oField = oEvent.getSource();
 			const oPromise = oEvent.getParameter("promise"); // as with FixedList direct user input is parsed async wait for the promise
 
-			oPromise.then(function (sKey) {
+			oPromise.then((sKey) => {
 				const sOldKey = oField._sOldKey;
 				const oOperator = FilterOperatorUtil.getOperator(sKey); // operator must exist as List is created from valid operators
 				const oOperatorOld = sOldKey && FilterOperatorUtil.getOperator(sOldKey);
@@ -499,14 +499,14 @@ sap.ui.define([
 				if (oOperator && oOperatorOld) {
 					let bUpdate = false;
 
-					if (!deepEqual(oOperator.valueTypes[0], oOperatorOld.valueTypes[0]) && oOperator.valueTypes[0] !== OperatorValueType.Static ) {
+					if (!deepEqual(oOperator.valueTypes[0], oOperatorOld.valueTypes[0]) && oOperator.valueTypes[0] !== OperatorValueType.Static) {
 						// type changed -> remove entered value (only if changed by user in Select)
 						// As Static text updated on condition change, don't delete it here.
 						if (iIndex >= 0) {
-							oCondition.values.forEach(function(value, index) {
+							oCondition.values.forEach((value, index) => {
 								if (value !== null) {
 									if ((oOperator.valueTypes[index] === OperatorValueType.Self && oOperatorOld.valueTypes[index] === OperatorValueType.SelfNoParse) ||
-											(oOperator.valueTypes[index] === OperatorValueType.SelfNoParse && oOperatorOld.valueTypes[index] === OperatorValueType.Self)) {
+										(oOperator.valueTypes[index] === OperatorValueType.SelfNoParse && oOperatorOld.valueTypes[index] === OperatorValueType.Self)) {
 										// as for Decimal values the type might change we need to format and parse again
 										const oType = _getFieldType.call(this, oOperator.name, index);
 										const oTypeOld = _getFieldType.call(this, oOperatorOld.name, index);
@@ -521,14 +521,14 @@ sap.ui.define([
 										bUpdate = true;
 									}
 								}
-							}.bind(this));
+							});
 						}
 					}
 
 					if (iIndex >= 0 && oOperator.valueDefaults) {
 						// sets the default values for the operator back to default, if the condition is inital or the value is null
-						oCondition.values.forEach(function(value, index) {
-							if ((oCondition.isInitial && value !== oOperator.valueDefaults[index]) ||  (value === null)) {
+						oCondition.values.forEach((value, index) => {
+							if ((oCondition.isInitial && value !== oOperator.valueDefaults[index]) || (value === null)) {
 								// set the default value and mark the condition as initial
 								oCondition.values[index] = oOperator.valueDefaults[index];
 								oCondition.isInitial = true;
@@ -559,7 +559,7 @@ sap.ui.define([
 				}
 
 				delete oField._sOldKey;
-			}.bind(this)).catch(function (oException) { // if Operator in error state -> don't update values
+			}).catch((oException) => { // if Operator in error state -> don't update values
 				const oBindingContext = oField.getBindingContext("$this");
 				let oCondition = oBindingContext.getObject();
 				const sConditionPath = oBindingContext.getPath(); // Path to condition of the active control
@@ -572,7 +572,7 @@ sap.ui.define([
 				this.setProperty("conditions", aConditions, true); // do not invalidate whole DefineConditionPanel
 				oField._sOldKey = oField.getValue();
 				_checkInvalidInput.call(this, true); // set imediately, not only if row left
-			}.bind(this));
+			});
 
 		},
 
@@ -588,7 +588,7 @@ sap.ui.define([
 				const aConditions = this.getConditions();
 				const oFormatOptions = merge({}, this.getConfig());
 				oFormatOptions.display = FieldDisplay.Value;
-				oFormatOptions.getConditions = function() {return aConditions;}; // as condition where inserted will be removed
+				oFormatOptions.getConditions = function() { return aConditions; }; // as condition where inserted will be removed
 				oFormatOptions.defaultOperatorName = aConditions[iIndex].operator; // use current operator as default
 				oFormatOptions.valueType = oFormatOptions.dataType;
 				delete oFormatOptions.dataType;
@@ -628,14 +628,15 @@ sap.ui.define([
 			// of Dialog is closed all error messages and invalid input should be removed to be clean on reopening
 			const oGrid = this.byId("conditions");
 			const aGridContent = oGrid.getContent();
-			for (let i = 0; i < aGridContent.length; i++) {
-				const oField = aGridContent[i];
+
+			for (const oField of aGridContent) {
 				if (oField instanceof Field && oField.hasOwnProperty("_iValueIndex")) {
 					if (oField.isInvalidInput()) { // TODO: better was to find out parsing error
 						oField.setValue(); // to remove invalid value from parsing
 					}
 				}
 			}
+
 			this.setProperty("inputOK", true, true); // do not invalidate whole DefineConditionPanel
 			if (this._iStartIndex > 0 || this._iShownAdditionalConditions > 0) {
 				this._iStartIndex = 0;
@@ -716,7 +717,7 @@ sap.ui.define([
 				clearTimeout(this._sConditionsTimer);
 				this._sConditionsTimer = null;
 			}
-			this._sConditionsTimer = setTimeout(function () {
+			this._sConditionsTimer = setTimeout(() => {
 				// on multiple changes (dummy row, static text...) perform only one update
 				this._sConditionsTimer = null;
 				this._bConditionUpdateRunning = true;
@@ -724,7 +725,7 @@ sap.ui.define([
 				_renderConditions.call(this);
 				this._bUpdateType = false; // might be set from pending type update
 				this._bConditionUpdateRunning = false;
-			}.bind(this), 0);
+			}, 0);
 		}
 
 	}
@@ -736,7 +737,6 @@ sap.ui.define([
 	}
 
 	function _operatorChanged(oField, sKey, sOldKey) {
-
 		oField._sOldKey = sOldKey; // to know in change event
 
 		let iIndex = 0;
@@ -818,17 +818,17 @@ sap.ui.define([
 		// as additinalValue is not updated automatically if operator is set from outside just take it from OperatorModel
 		const aOperatorsData = this.oOperatorModel.getData();
 		let sDescription;
-		for (let i = 0; i < aOperatorsData.length; i++) {
-			const oOperatorData = aOperatorsData[i];
+
+		for (const oOperatorData of aOperatorsData) {
 			if (oOperatorData.key === sKey) {
 				sDescription = oOperatorData.text;
 				break;
 			}
 		}
+
 		oField.setAdditionalValue(sDescription);
 
 		this.onChange();
-
 	}
 
 	function _createControl(oCondition, iIndex, sId, oBindingContext) {
@@ -850,7 +850,7 @@ sap.ui.define([
 			oControl = new Field(sId, {
 				delegate: _getDelegate.call(this),
 				value: { path: "$this>", type: oNullableType, mode: 'TwoWay', targetType: 'raw' },
-				editMode: {parts: [{path: "$condition>operator"}, {path: "$condition>invalid"}], formatter: _getEditModeFromOperator},
+				editMode: { parts: [{ path: "$condition>operator" }, { path: "$condition>invalid" }], formatter: _getEditModeFromOperator },
 				multipleLines: false,
 				width: "100%",
 				valueHelp: _operatorSupportsValueHelp(oCondition.operator) ? this._getValueHelp() : null
@@ -860,9 +860,9 @@ sap.ui.define([
 
 		if (oControl.getMetadata().hasProperty("placeholder")) {
 			if (iIndex === 0) {
-				oControl.bindProperty("placeholder", {path: "$condition>operator", formatter: _getPlaceholder1ForOperator});
+				oControl.bindProperty("placeholder", { path: "$condition>operator", formatter: _getPlaceholder1ForOperator });
 			} else { // from Field cannot switch placeholder
-				oControl.bindProperty("placeholder", {path: "$condition>operator", formatter: _getPlaceholder2ForOperator});
+				oControl.bindProperty("placeholder", { path: "$condition>operator", formatter: _getPlaceholder2ForOperator });
 			}
 		}
 
@@ -871,7 +871,7 @@ sap.ui.define([
 			oControl.attachChange(this.onChange.bind(this));
 		}
 		oControl.addDelegate(this._oContentEventDelegate, true, this);
-		oControl.setLayoutData(new GridData({span: {parts: [{path: "$condition>"}, {path: "$this>/config"}], formatter: _getSpanForValue.bind(this)}}));
+		oControl.setLayoutData(new GridData({ span: { parts: [{ path: "$condition>" }, { path: "$this>/config" }], formatter: _getSpanForValue.bind(this) } }));
 		oControl.setBindingContext(oValueBindingContext, "$this");
 		oControl.setBindingContext(oBindingContext, "$condition");
 		// add fieldGroup to validate Condition only after both Fields are entered.
@@ -917,7 +917,7 @@ sap.ui.define([
 				oNullableType = oDataType;
 
 				break;
-			//TODO: how to handle unit fields?
+				//TODO: how to handle unit fields?
 			default:
 				if (oDataType.getConstraints() && oDataType.getConstraints().hasOwnProperty("nullable") && oDataType.getConstraints().nullable === false) {
 					// "clone" type and make nullable
@@ -998,8 +998,8 @@ sap.ui.define([
 	function _hasMultipleOperatorGroups() {
 		let firstGroupId;
 		const aOperators = _getOperators.call(this);
-		for (let i = 0; i < aOperators.length; i++) {
-			const sOperator = aOperators[i];
+
+		for (const sOperator of aOperators) {
 			const oOperator = FilterOperatorUtil.getOperator(sOperator);
 
 			if (!firstGroupId) {
@@ -1008,11 +1008,11 @@ sap.ui.define([
 				return true;
 			}
 		}
+
 		return false;
 	}
 
 	function _updateOperatorModel() {
-
 		if (!this.oOperatorModel) {
 			return;
 		}
@@ -1029,15 +1029,14 @@ sap.ui.define([
 
 		let oTemplate;
 		if (bHasMultipleGroups) {
-			oTemplate = new FixedListItem({key: "{om>key}", text: "{om>text}", additionalText: "{om>additionalText}", groupKey: "{om>groupId}", groupText: "{om>groupText}"});
+			oTemplate = new FixedListItem({ key: "{om>key}", text: "{om>text}", additionalText: "{om>additionalText}", groupKey: "{om>groupId}", groupText: "{om>groupText}" });
 		} else {
-			oTemplate = new FixedListItem({key: "{om>key}", text: "{om>text}", additionalText: "{om>additionalText}"});
+			oTemplate = new FixedListItem({ key: "{om>key}", text: "{om>text}", additionalText: "{om>additionalText}" });
 		}
-		oFixedList.bindAggregation("items", { path: 'om>/', templateShareable: false, template: oTemplate});
+		oFixedList.bindAggregation("items", { path: 'om>/', templateShareable: false, template: oTemplate });
 		oFixedList.setGroupable(bHasMultipleGroups);
 
-		for (let i = 0; i < aOperators.length; i++) {
-			const sOperator = aOperators[i];
+		for (const sOperator of aOperators) {
 			const oOperator = FilterOperatorUtil.getOperator(sOperator);
 			if (!oOperator || (oOperator.showInSuggest !== undefined && oOperator.showInSuggest == false)) {
 				continue;
@@ -1048,9 +1047,9 @@ sap.ui.define([
 
 			//Update the additionalInfo text for the operator
 			let sAdditionalText = oOperator.additionalInfo;
-			if (sAdditionalText === undefined)  {
-				if (sAdditionalText !== "" && oOperator.formatRange)  {
-					sAdditionalText = oOperator.formatRange( oOperator._getRange(undefined, oType), oType);
+			if (sAdditionalText === undefined) {
+				if (sAdditionalText !== "" && oOperator.formatRange) {
+					sAdditionalText = oOperator.formatRange(oOperator._getRange(undefined, oType), oType);
 				} else if (!bHasMultipleGroups) {
 					sAdditionalText = oOperator.group.text;
 				}
@@ -1066,7 +1065,6 @@ sap.ui.define([
 		}
 
 		this.oOperatorModel.setData(aOperatorsData);
-
 	}
 
 	function _getType() {
@@ -1113,7 +1111,7 @@ sap.ui.define([
 		const sName = oConfig.delegateName || "sap/ui/mdc/field/FieldBaseDelegate";
 		const oPayload = oConfig.payload;
 
-		return {name: sName, payload: oPayload};
+		return { name: sName, payload: oPayload };
 
 	}
 
@@ -1147,12 +1145,12 @@ sap.ui.define([
 	}
 
 	function _createInnerControls() {
-		const oInvisibleOperatorText = new InvisibleText(this.getId() + "--ivtOperator", {text: "{$i18n>valuehelp.DEFINECONDITIONS_OPERATORLABEL}"});
-		const oTitle = new Title(this.getId() + "-title", {text: {path: "$this>/label"}});
+		const oInvisibleOperatorText = new InvisibleText(this.getId() + "--ivtOperator", { text: "{$i18n>valuehelp.DEFINECONDITIONS_OPERATORLABEL}" });
+		const oTitle = new Title(this.getId() + "-title", { text: { path: "$this>/label" } });
 		const oButtonPrev = new Button(this.getId() + "--prev", {
 			icon: IconPool.getIconURI("navigation-left-arrow"),
 			tooltip: oMessageBundleM.getText("PAGINGBUTTON_PREVIOUS"),
-			visible: {path: "$this>/_pagination"},
+			visible: { path: "$this>/_pagination" },
 			layoutData: new OverflowToolbarLayoutData({
 				priority: OverflowToolbarPriority.NeverOverflow
 			}),
@@ -1161,7 +1159,7 @@ sap.ui.define([
 		const oButtonNext = new Button(this.getId() + "--next", {
 			icon: IconPool.getIconURI("navigation-right-arrow"),
 			tooltip: oMessageBundleM.getText("PAGINGBUTTON_NEXT"),
-			visible: {path: "$this>/_pagination"},
+			visible: { path: "$this>/_pagination" },
 			layoutData: new OverflowToolbarLayoutData({
 				priority: OverflowToolbarPriority.NeverOverflow
 			}),
@@ -1169,7 +1167,7 @@ sap.ui.define([
 		});
 		const oButtonRemoveAll = new Button(this.getId() + "--removeAll", {
 			text: oMessageBundleM.getText("CONDITIONPANEL_REMOVE_ALL"),
-			visible: {path: "$this>/_pagination"},
+			visible: { path: "$this>/_pagination" },
 			layoutData: new OverflowToolbarLayoutData({
 				priority: OverflowToolbarPriority.Low
 			}),
@@ -1177,7 +1175,7 @@ sap.ui.define([
 		});
 		const oButtonInsert = new Button(this.getId() + "--insert", {
 			icon: IconPool.getIconURI("add"),
-			visible: {path: "$this>/_pagination"},
+			visible: { path: "$this>/_pagination" },
 			layoutData: new OverflowToolbarLayoutData({
 				priority: OverflowToolbarPriority.Low
 			}),
@@ -1187,7 +1185,7 @@ sap.ui.define([
 			text: _getPageText.call(this),
 			wrapping: false,
 			textAlign: TextAlign.Center,
-			visible: {path: "$this>/_pagination"},
+			visible: { path: "$this>/_pagination" },
 			layoutData: new OverflowToolbarLayoutData({
 				priority: OverflowToolbarPriority.NeverOverflow
 			})
@@ -1195,24 +1193,31 @@ sap.ui.define([
 		const oToolbar = new OverflowToolbar(this.getId() + "--toolbar", {
 			width: "100%",
 			design: ToolbarDesign.Transparent,
-			content: [oTitle, new ToolbarSpacer(), oButtonPrev, oPageCount, oButtonNext, oButtonRemoveAll, oButtonInsert]
+			content: [oTitle,
+				new ToolbarSpacer(),
+				oButtonPrev,
+				oPageCount,
+				oButtonNext,
+				oButtonRemoveAll,
+				oButtonInsert
+			]
 		});
 
 		const oPanel = new Panel(this.getId() + "--panel", {
 			headerToolbar: oToolbar,
 			expanded: true,
 			height: "100%",
-			backgroundDesign: BackgroundDesign.Transparent}
-		).addStyleClass("sapMdcDefineconditionPanel");
+			backgroundDesign: BackgroundDesign.Transparent
+		}).addStyleClass("sapMdcDefineconditionPanel");
 
 		oPanel.addDependent(
 			new ValueHelp(this._sOperatorHelpId, {
 				typeahead: new Popover(this._sOperatorHelpId + "-pop", {
-									content: [new FixedList(this._sOperatorHelpId + "-pop-fl", {
-													filterList: false,
-													useFirstMatch: true
-												})]
-								})
+					content: [new FixedList(this._sOperatorHelpId + "-pop-fl", {
+						filterList: false,
+						useFirstMatch: true
+					})]
+				})
 			})
 		);
 
@@ -1220,8 +1225,8 @@ sap.ui.define([
 			width: "100%",
 			hSpacing: 0,
 			vSpacing: 0,
-			containerQuery: true}
-		).addStyleClass("sapUiMdcDefineConditionGrid");
+			containerQuery: true
+		}).addStyleClass("sapUiMdcDefineConditionGrid");
 
 		_createRow.call(this, undefined, oGrid, 0, null, 0); // create dummy row
 
@@ -1241,10 +1246,11 @@ sap.ui.define([
 				span: "XL2 L3 M3 S3",
 				indent: "XL9 L8 M8 S7",
 				linebreak: true,
-				visibleS: {parts: [{path: "$this>/conditions"}, {path: "$this>/config"}], formatter: _getAddButtonVisible.bind(this)},
-				visibleM: {parts: [{path: "$this>/conditions"}, {path: "$this>/config"}], formatter: _getAddButtonVisible.bind(this)},
-				visibleL: {parts: [{path: "$this>/conditions"}, {path: "$this>/config"}], formatter: _getAddButtonVisible.bind(this)},
-				visibleXL: {parts: [{path: "$this>/conditions"}, {path: "$this>/config"}], formatter: _getAddButtonVisible.bind(this)}}),
+				visibleS: { parts: [{ path: "$this>/conditions" }, { path: "$this>/config" }], formatter: _getAddButtonVisible.bind(this) },
+				visibleM: { parts: [{ path: "$this>/conditions" }, { path: "$this>/config" }], formatter: _getAddButtonVisible.bind(this) },
+				visibleL: { parts: [{ path: "$this>/conditions" }, { path: "$this>/config" }], formatter: _getAddButtonVisible.bind(this) },
+				visibleXL: { parts: [{ path: "$this>/conditions" }, { path: "$this>/config" }], formatter: _getAddButtonVisible.bind(this) }
+			}),
 			ariaDescribedBy: this._oInvisibleAddOperatorButtonText
 		});
 
@@ -1328,7 +1334,7 @@ sap.ui.define([
 			// focus last condition operator field after it is rendered
 			iIndex = _getGridIndexOfLastRow.call(this, "-operator");
 			// setting the focus on a field only work with a Timeout
-			setTimeout(function() { aGridContent[iIndex].focus(); }, 0);
+			setTimeout(() => { aGridContent[iIndex].focus(); }, 0);
 			this._bFocusLastCondition = false;
 		}
 		if (this._bFocusLastRemoveBtn) {
@@ -1396,21 +1402,21 @@ sap.ui.define([
 		const sIdPrefix = this.getId() + "--" + iRow;
 
 		if (!this._oOperatorFieldType) {
-			this._oOperatorFieldType = new StringType({}, {minLength: 1});
+			this._oOperatorFieldType = new StringType({}, { minLength: 1 });
 		}
 
 		const oOperatorField = new Field(sIdPrefix + "-operator", {
-			value: {path: "$this>operator", type: this._oOperatorFieldType},
-			width: "100%",
-			display: FieldDisplay.Description,
-			editMode: FieldEditMode.Editable,
-			multipleLines: false,
-			valueHelp: this._sOperatorHelpId,
-			change: this.onSelectChange.bind(this),
-			ariaLabelledBy: this.getId() + "--ivtOperator"
-		})
-		.setLayoutData(new GridData({span: {parts: [{path: "$this>/conditions"}, {path: "$this>/config"}], formatter: _getSpanForOperator.bind(this)}, linebreak: true}))
-		.setBindingContext(oBindingContext, "$this");
+				value: { path: "$this>operator", type: this._oOperatorFieldType },
+				width: "100%",
+				display: FieldDisplay.Description,
+				editMode: FieldEditMode.Editable,
+				multipleLines: false,
+				valueHelp: this._sOperatorHelpId,
+				change: this.onSelectChange.bind(this),
+				ariaLabelledBy: this.getId() + "--ivtOperator"
+			})
+			.setLayoutData(new GridData({ span: { parts: [{ path: "$this>/conditions" }, { path: "$this>/config" }], formatter: _getSpanForOperator.bind(this) }, linebreak: true }))
+			.setBindingContext(oBindingContext, "$this");
 		if (oBindingContext) {
 			// validate only complete condition
 			oOperatorField.setFieldGroupIds([oBindingContext.getPath()]); // use path to have a ID for every condition
@@ -1425,19 +1431,20 @@ sap.ui.define([
 		iIndex++;
 
 		const oRemoveButton = new Button(sIdPrefix + "--removeBtnSmall", {
-			press: this.removeCondition.bind(this),
-			type: ButtonType.Transparent,
-			icon: "sap-icon://decline",
-			tooltip: "{$i18n>valuehelp.DEFINECONDITIONS_REMOVECONDITION}"
-		})
-		.setLayoutData(new GridData({span: "XL1 L1 M1 S2",
-			indent: {path: "$this>operator", formatter: _getIndentForOperator},
-			visibleS: {parts: [{path: "$this>/conditions"}, {path: "$this>/config"}], formatter: _getRemoveButtonVisible.bind(this)},
-			visibleM: false,
-			visibleL: false,
-			visibleXL: false
-		}))
-		.setBindingContext(oBindingContext, "$this"); // to find condition on remove
+				press: this.removeCondition.bind(this),
+				type: ButtonType.Transparent,
+				icon: "sap-icon://decline",
+				tooltip: "{$i18n>valuehelp.DEFINECONDITIONS_REMOVECONDITION}"
+			})
+			.setLayoutData(new GridData({
+				span: "XL1 L1 M1 S2",
+				indent: { path: "$this>operator", formatter: _getIndentForOperator },
+				visibleS: { parts: [{ path: "$this>/conditions" }, { path: "$this>/config" }], formatter: _getRemoveButtonVisible.bind(this) },
+				visibleM: false,
+				visibleL: false,
+				visibleXL: false
+			}))
+			.setBindingContext(oBindingContext, "$this"); // to find condition on remove
 		if (oBindingContext) {
 			// as Button is between Operatot and Value don't trigger validation on tabbing between
 			oRemoveButton.setFieldGroupIds([oBindingContext.getPath()]); // use path to have a ID for every condition
@@ -1457,19 +1464,20 @@ sap.ui.define([
 		}
 
 		const oRemoveButton2 = new Button(sIdPrefix + "--removeBtnLarge", {
-			press: this.removeCondition.bind(this),
-			type: ButtonType.Transparent,
-			icon: "sap-icon://decline",
-			tooltip: "{$i18n>valuehelp.DEFINECONDITIONS_REMOVECONDITION}"
-		})
-		.setLayoutData(new GridData({span: "XL1 L1 M1 S1",
-			indent: {path: "$this>operator", formatter: _getIndentForOperator},
-			visibleS: false,
-			visibleM: {parts: [{path: "$this>/conditions"}, {path: "$this>/config"}], formatter: _getRemoveButtonVisible.bind(this)},
-			visibleL: {parts: [{path: "$this>/conditions"}, {path: "$this>/config"}], formatter: _getRemoveButtonVisible.bind(this)},
-			visibleXL: {parts: [{path: "$this>/conditions"}, {path: "$this>/config"}], formatter: _getRemoveButtonVisible.bind(this)}
-		}))
-		.setBindingContext(oBindingContext, "$this"); // to find condition on remove
+				press: this.removeCondition.bind(this),
+				type: ButtonType.Transparent,
+				icon: "sap-icon://decline",
+				tooltip: "{$i18n>valuehelp.DEFINECONDITIONS_REMOVECONDITION}"
+			})
+			.setLayoutData(new GridData({
+				span: "XL1 L1 M1 S1",
+				indent: { path: "$this>operator", formatter: _getIndentForOperator },
+				visibleS: false,
+				visibleM: { parts: [{ path: "$this>/conditions" }, { path: "$this>/config" }], formatter: _getRemoveButtonVisible.bind(this) },
+				visibleL: { parts: [{ path: "$this>/conditions" }, { path: "$this>/config" }], formatter: _getRemoveButtonVisible.bind(this) },
+				visibleXL: { parts: [{ path: "$this>/conditions" }, { path: "$this>/config" }], formatter: _getRemoveButtonVisible.bind(this) }
+			}))
+			.setBindingContext(oBindingContext, "$this"); // to find condition on remove
 
 		oGrid.insertContent(oRemoveButton2, iIndex);
 		iIndex++;
@@ -1602,7 +1610,7 @@ sap.ui.define([
 				if (oValue0Field.getMetadata().hasProperty("value") && (this._bUpdateType || !oValue0Field.getBindingInfo("value"))) {
 					oNullableType = _getFieldType.call(this, oCondition.operator, 0);
 					// change type for binding
-					oValue0Field.bindProperty("value", {path: "$this>", type: oNullableType});
+					oValue0Field.bindProperty("value", { path: "$this>", type: oNullableType });
 				}
 				iIndex++;
 
@@ -1615,7 +1623,7 @@ sap.ui.define([
 						if (oValue1Field.getMetadata().hasProperty("value") && (this._bUpdateType || !oValue1Field.getBindingInfo("value"))) {
 							oNullableType = _getFieldType.call(this, oCondition.operator, 1);
 							// change type for binding
-							oValue1Field.bindProperty("value", {path: "$this>", type: oNullableType});
+							oValue1Field.bindProperty("value", { path: "$this>", type: oNullableType });
 						}
 						iIndex++;
 					} else {
@@ -1685,7 +1693,7 @@ sap.ui.define([
 			oBindingContext = oField.getBindingContext("$this");
 			iIndex = iIndex + 2; // as remove button is between operator an value field
 			oField = oGrid.getContent()[iIndex];
-		} else 		if (oField.getId().endsWith("-removeBtnSmall")) {
+		} else if (oField.getId().endsWith("-removeBtnSmall")) {
 			// operator field - use first value field fo validate
 			oBindingContext = oField.getBindingContext("$this");
 			iIndex = iIndex + 1; // as remove button is between operator an value field
@@ -1775,7 +1783,7 @@ sap.ui.define([
 
 	function _getDefineConditions() {
 
-		return this.getConditions().filter(function(oCondition) {
+		return this.getConditions().filter((oCondition) => {
 			const oOperator = FilterOperatorUtil.getOperator(oCondition.operator);
 			return oCondition.validated !== ConditionValidated.Validated || oOperator.exclude;
 		});
@@ -1803,7 +1811,7 @@ sap.ui.define([
 
 	function _handleRemoveAll(oEvent) {
 
-		const aConditions = this.getConditions().filter(function(oCondition) {
+		const aConditions = this.getConditions().filter((oCondition) => {
 			const oOperator = FilterOperatorUtil.getOperator(oCondition.operator);
 			return oCondition.validated === ConditionValidated.Validated && !oOperator.exclude;
 		});
@@ -1818,7 +1826,6 @@ sap.ui.define([
 	}
 
 	function _handleInsert(oEvent) {
-
 		const aConditions = this.getConditions();
 		const oFormatOptions = this.getFormatOptions();
 		const iMaxConditions = oFormatOptions.maxConditions;
@@ -1828,8 +1835,8 @@ sap.ui.define([
 		const aGridContent = oGrid.getContent();
 		let iRows = 0;
 		let iIndex = -1;
-		for (let i = 0; i < aGridContent.length; i++) {
-			const oField = aGridContent[i];
+
+		for (const oField of aGridContent) {
 			if (oField instanceof Field && oField.getValueHelp() === this._sOperatorHelpId) {
 				// Operator field starts new row
 				iRows++;
@@ -1855,7 +1862,6 @@ sap.ui.define([
 		}
 
 		this.oInvisibleMessage.announce(oMessageBundle.getText("valuehelp.DEFINECONDITIONS_ADDCONDITION_ANNOUNCE"), InvisibleMessageMode.Assertive);
-
 	}
 
 	function _getPageText() {

@@ -8,13 +8,13 @@ sap.ui.define([
 	"sap/base/util/isEmptyObject",
 	"sap/base/util/merge",
 	"sap/ui/mdc/enums/FieldEditMode"
-], function(DefaultContent, coreLibrary, Filter, isEmptyObject, merge, FieldEditMode) {
+], (DefaultContent, coreLibrary, Filter, isEmptyObject, merge, FieldEditMode) => {
 	"use strict";
 
-	const ValueState = coreLibrary.ValueState;
+	const { ValueState } = coreLibrary;
 
-	const _getUnitTypeInstance = function (oTypeUtil, oType, oFormatOptions, oConstraints, bShowNumber, bShowMeasure) {
-		return oTypeUtil.getUnitTypeInstance ? oTypeUtil.getUnitTypeInstance(oType, bShowNumber, bShowMeasure) : oTypeUtil.getDataTypeInstance(oType.getMetadata().getName(), oFormatOptions, oConstraints, {showNumber: bShowNumber, showMeasure: bShowMeasure});
+	const _getUnitTypeInstance = function(oTypeUtil, oType, oFormatOptions, oConstraints, bShowNumber, bShowMeasure) {
+		return oTypeUtil.getUnitTypeInstance ? oTypeUtil.getUnitTypeInstance(oType, bShowNumber, bShowMeasure) : oTypeUtil.getDataTypeInstance(oType.getMetadata().getName(), oFormatOptions, oConstraints, { showNumber: bShowNumber, showMeasure: bShowMeasure });
 	};
 
 	/**
@@ -34,7 +34,11 @@ sap.ui.define([
 			return ["sap/ui/mdc/field/FieldInput", "sap/ui/core/InvisibleText"];
 		},
 		getEditMultiValue: function() {
-			return ["sap/ui/mdc/field/FieldMultiInput", "sap/ui/mdc/field/FieldInput", "sap/m/Token", "sap/ui/core/InvisibleText"];
+			return ["sap/ui/mdc/field/FieldMultiInput",
+				"sap/ui/mdc/field/FieldInput",
+				"sap/m/Token",
+				"sap/ui/core/InvisibleText"
+			];
 		},
 		getEditMultiLine: function() {
 			return [null];
@@ -199,7 +203,7 @@ sap.ui.define([
 
 			// if measure and number needs to be shown -> create new type
 			if (bShowMeasure && bShowNumber) {
-				const oClonedFormatOptions = merge({},oFormatOptions);
+				const oClonedFormatOptions = merge({}, oFormatOptions);
 				const oClonedConstraints = isEmptyObject(oConstraints) ? undefined : merge({}, oConstraints);
 
 				// Type for number

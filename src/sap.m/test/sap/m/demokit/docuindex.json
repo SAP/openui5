@@ -1301,6 +1301,7 @@
 				"sap.m.sample.p13n.Engine",
 				"sap.m.sample.p13n.EngineGridTable",
 				"sap.m.sample.p13n.EngineGridList",
+				"sap.m.sample.p13n.EngineCustomFilters",
 				"sap.m.sample.p13n.EngineMultipleController"
 			]
 		},
@@ -2726,6 +2727,11 @@
 			"id": "sap.m.sample.p13n.Engine",
 			"name": "Personalization for responsive table",
 			"description": "Responsive Table using the personalization Engine"
+		},
+		{
+			"id": "sap.m.sample.p13n.EngineCustomFilters",
+			"name": "Personalization implementing custom filter controls",
+			"description": "Filtering using the personalization Engine"
 		},
 		{
 			"id": "sap.m.sample.p13n.EngineGridTable",

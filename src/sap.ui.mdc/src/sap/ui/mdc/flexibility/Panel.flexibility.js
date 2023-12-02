@@ -3,14 +3,12 @@
  */
 
 sap.ui.define([
-	"sap/ui/core/Element",
-	'sap/ui/fl/changeHandler/Base',
-	'./ItemBaseFlex'
-], function(Element, Base, ItemBaseFlex) {
+	"sap/ui/core/Element", 'sap/ui/fl/changeHandler/Base', './ItemBaseFlex'
+], (Element, Base, ItemBaseFlex) => {
 	"use strict";
 
 	const oLinkHandler = Object.assign({}, ItemBaseFlex);
-    oLinkHandler.findItem = function(oModifier, aActions, sName) {
+	oLinkHandler.findItem = function(oModifier, aActions, sName) {
 		return Promise.resolve(Element.getElementById(sName));
 	};
 
@@ -26,18 +24,18 @@ sap.ui.define([
 	return {
 		createChanges: function(oPanel, aDeltaMItems) {
 			// Create a 'create' change only for items which does not exist
-			const aNotExistingItems = aDeltaMItems.filter(function(oDeltaMItem) {
+			const aNotExistingItems = aDeltaMItems.filter((oDeltaMItem) => {
 				return !Element.getElementById(oDeltaMItem.id);
 			});
 			// Create a 'create' change only once for an item
 			const oNotExistingItemIds = {};
-			return aNotExistingItems.reduce(function(aResult, oDeltaMItem) {
+			return aNotExistingItems.reduce((aResult, oDeltaMItem) => {
 				if (!oNotExistingItemIds[oDeltaMItem.id]) {
 					oNotExistingItemIds[oDeltaMItem.id] = true;
 					aResult.push(oDeltaMItem);
 				}
 				return aResult;
-			}, []).map(function(oDeltaMItem) {
+			}, []).map((oDeltaMItem) => {
 				return {
 					selectorElement: oPanel,
 					changeSpecificData: {
@@ -58,23 +56,23 @@ sap.ui.define([
 					const oSelector = oChange.getContent().selector;
 
 					return Promise.resolve()
-						.then(function () {
+						.then(() => {
 							// Let's break in XML use-case which is caught by flex. This leads that the change will be triggered again via JS.
 							oPanel.getModel();
 							return mPropertyBag.modifier.getProperty(oPanel, "metadataHelperPath");
 						})
-						.then(function (sMediaHelperPath) {
-							return new Promise(function(resolve, reject) {
+						.then((sMediaHelperPath) => {
+							return new Promise((resolve, reject) => {
 								sap.ui.require([
 									'sap/ui/mdc/link/PanelItem', sMediaHelperPath
-								], function(PanelItem, MetadataHelper) {
+								], (PanelItem, MetadataHelper) => {
 									resolve(MetadataHelper);
-								}, function (vError) {
+								}, (vError) => {
 									reject(vError);
 								});
 							});
 						})
-						.then(function (MetadataHelper) {
+						.then((MetadataHelper) => {
 							const oModifier = mPropertyBag.modifier;
 							if (oModifier.bySelector(oSelector, mPropertyBag.appComponent, mPropertyBag.view)) {
 								return undefined;
@@ -86,7 +84,7 @@ sap.ui.define([
 
 							const fnIndexOfItemId = function(sId, aItems) {
 								let iFoundIndex = -1;
-								aItems.some(function(oItem, iIndex) {
+								aItems.some((oItem, iIndex) => {
 									if (oItem.getId() === sId) {
 										iFoundIndex = iIndex;
 										return true;
@@ -98,10 +96,10 @@ sap.ui.define([
 
 							return Promise.resolve()
 								.then(oModifier.getAggregation.bind(oModifier, oPanel, "items"))
-								.then(function(aItems) {
+								.then((aItems) => {
 									iItemsIndex = -1;
 									let oMetadataOfNewItem = null;
-									aMetadataItems.some(function(oMetadataItem) {
+									aMetadataItems.some((oMetadataItem) => {
 										const iItemsIndex_ = fnIndexOfItemId(oMetadataItem.id, aItems);
 										if (iItemsIndex_ > -1) {
 											iItemsIndex = iItemsIndex_;
@@ -126,7 +124,7 @@ sap.ui.define([
 										visible: true
 									});
 								})
-								.then(function(oItem){
+								.then((oItem) => {
 									return oModifier.insertAggregation(oPanel, "items", oItem, iItemsIndex + 1);
 								});
 						});

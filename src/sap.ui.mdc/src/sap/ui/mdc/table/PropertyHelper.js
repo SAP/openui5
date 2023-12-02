@@ -3,14 +3,12 @@
  */
 
 sap.ui.define([
-	"../util/PropertyHelper",
-	"sap/m/table/Util",
-	"sap/ui/base/Object"
-], function(
+	"../util/PropertyHelper", "sap/m/table/Util", "sap/ui/base/Object"
+], (
 	PropertyHelperBase,
 	TableUtil,
 	BaseObject
-) {
+) => {
 	"use strict";
 
 	/**
@@ -191,7 +189,7 @@ sap.ui.define([
 
 		Object.defineProperty(oProperty, "getGroupableProperties", {
 			value: function() {
-				return oProperty.getSimpleProperties().filter(function(oProperty) {
+				return oProperty.getSimpleProperties().filter((oProperty) => {
 					return oProperty.groupable;
 				});
 			}
@@ -205,7 +203,7 @@ sap.ui.define([
 	 * @public
 	 */
 	PropertyHelper.prototype.getGroupableProperties = function() {
-		return this.getProperties().filter(function(oProperty) {
+		return this.getProperties().filter((oProperty) => {
 			return oProperty.groupable;
 		});
 	};
@@ -223,13 +221,13 @@ sap.ui.define([
 			return null;
 		}
 
-		const aProperties = oProperty.getSimpleProperties().map(function(oSimpleProperty) {
+		const aProperties = oProperty.getSimpleProperties().map((oSimpleProperty) => {
 			return oSimpleProperty.path;
 		});
-		const aTypes = oProperty.getSimpleProperties().map(function(oSimpleProperty) {
+		const aTypes = oProperty.getSimpleProperties().map((oSimpleProperty) => {
 			return oSimpleProperty.typeConfig && oSimpleProperty.typeConfig.typeInstance;
 		});
-		const sTemplate = oProperty.clipboardSettings.template || Array.from(Array(aProperties.length).keys(), function(iIndex) {
+		const sTemplate = oProperty.clipboardSettings.template || Array.from(Array(aProperties.length).keys(), (iIndex) => {
 			return "{" + iIndex + "}";
 		}).join(" ");
 
@@ -281,14 +279,14 @@ sap.ui.define([
 		const aPropertiesFromComplexProperty = oProperty.getSimpleProperties();
 		if (Object.keys(oExportSettings).length) {
 			oColumnExportSettings = getColumnExportSettingsObject(oColumn, oProperty, oExportSettings);
-			aPropertiesFromComplexProperty.forEach(function(oProperty) {
+			aPropertiesFromComplexProperty.forEach((oProperty) => {
 				aPaths.push(oProperty.path);
 			});
 			oColumnExportSettings.property = aPaths;
 			aColumnExportSettings.push(oColumnExportSettings);
 		} else {
 			// when there are no exportSettings given for a ComplexProperty
-			aPropertiesFromComplexProperty.forEach(function(oProperty, iIndex) {
+			aPropertiesFromComplexProperty.forEach((oProperty, iIndex) => {
 				if (!oProperty.exportSettings) {
 					return;
 				}
@@ -350,9 +348,9 @@ sap.ui.define([
 		const sPropertyName = oMDCColumn.getPropertyKey();
 		const oTable = oMDCColumn.getTable();
 
-		return oTable._getPropertyByNameAsync(sPropertyName).then(function(oProperty) {
+		return oTable._getPropertyByNameAsync(sPropertyName).then((oProperty) => {
 			if (!oProperty) {
-			  return null;
+				return null;
 			}
 
 			const mPropertyInfoVisualSettings = oProperty.visualSettings;
@@ -361,7 +359,7 @@ sap.ui.define([
 			}
 
 			return this._calcColumnWidth(oProperty, oMDCColumn);
-		}.bind(this));
+		});
 	};
 
 	/**
@@ -373,7 +371,7 @@ sap.ui.define([
 	 * @since 1.95
 	 * @private
 	 */
-	 PropertyHelper.prototype._calcColumnWidth = function (oProperty, oMDCColumn) {
+	PropertyHelper.prototype._calcColumnWidth = function(oProperty, oMDCColumn) {
 		const mWidthCalculation = Object.assign({
 			gap: 0,
 			includeLabel: true,
@@ -390,7 +388,7 @@ sap.ui.define([
 		let aTypes = [];
 		if (oProperty.isComplex()) {
 			// for complex properties generate [<TypeInstance>, <TypeSettings>][] structure
-			aTypes = oProperty.getSimpleProperties().flatMap(function(oProp) {
+			aTypes = oProperty.getSimpleProperties().flatMap((oProp) => {
 				const mPropWidthCalculation = oProp.visualSettings ? oProp.visualSettings.widthCalculation : undefined;
 				return mPropWidthCalculation === null || mWidthCalculation.excludeProperties.includes(oProp.name) ? [] : [
 					[oProp.typeConfig.typeInstance, mPropWidthCalculation]

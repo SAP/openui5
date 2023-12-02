@@ -11,7 +11,7 @@ sap.ui.define(
 		"sap/m/Button",
 		"sap/m/p13n/enums/PersistenceMode"
 	],
-	function(
+	(
 		mLibrary,
 		FilterBarBase,
 		FilterBarBaseRenderer,
@@ -19,7 +19,7 @@ sap.ui.define(
 		FilterContainer,
 		Button,
 		PersistenceMode
-	) {
+	) => {
 		"use strict";
 		/**
 		 * Modules for value help dialog {@link sap.ui.mdc.filterbar.vh.FilterBar FilterBar}
@@ -48,8 +48,7 @@ sap.ui.define(
 		 * @alias sap.ui.mdc.filterbar.vh.FilterBar
 		 */
 		const FilterBar = FilterBarBase.extend(
-			"sap.ui.mdc.filterbar.vh.FilterBar",
-			{
+			"sap.ui.mdc.filterbar.vh.FilterBar", {
 				metadata: {
 					library: "sap.ui.mdc",
 					properties: {
@@ -94,15 +93,14 @@ sap.ui.define(
 							defaultValue: 8
 						}
 					},
-					aggregations: {
-					}
+					aggregations: {}
 				},
 
 				renderer: FilterBarBaseRenderer
 			}
 		);
 
-		const ButtonType = mLibrary.ButtonType;
+		const { ButtonType } = mLibrary;
 
 		FilterBar.prototype._createInnerLayout = function() {
 			this._cLayoutItem = FilterItemLayout;
@@ -132,15 +130,13 @@ sap.ui.define(
 
 			this._oFilterBarLayout.addControl(
 				this._getSearchButton().bindProperty("visible", {
-					parts: [
-						{
-							path: '/showGoButton',
-							model: FilterBarBase.INNER_MODEL_NAME
-						}, {
-							path: "/liveMode",
-							model: FilterBarBase.INNER_MODEL_NAME
-						}
-					],
+					parts: [{
+						path: '/showGoButton',
+						model: FilterBarBase.INNER_MODEL_NAME
+					}, {
+						path: "/liveMode",
+						model: FilterBarBase.INNER_MODEL_NAME
+					}],
 					formatter: function(bShowGoButton, bLiveMode) {
 						return bShowGoButton && ((this._isPhone()) ? true : !bLiveMode);
 					}.bind(this)

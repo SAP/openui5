@@ -18,18 +18,18 @@ sap.ui.define([
 	"sap/m/library",
 	"sap/base/util/merge",
 	"sap/m/Title"
-], function(BasePanel, Label, deepEqual, CustomListItem, List, Panel, Toolbar, Text, Element, Icon, Library, coreLibrary, HBox, mLibrary, merge, Title) {
+], (BasePanel, Label, deepEqual, CustomListItem, List, Panel, Toolbar, Text, Element, Icon, Library, coreLibrary, HBox, mLibrary, merge, Title) => {
 	"use strict";
 
 
 	// shortcut for sap.ui.core.IconColor
-	const IconColor = coreLibrary.IconColor;
+	const { IconColor } = coreLibrary;
 
 	// shortcut for sap.m.FlexJustifyContent
-	const FlexJustifyContent = mLibrary.FlexJustifyContent;
+	const { FlexJustifyContent } = mLibrary;
 
 	// shortcut for sap.m.ListKeyboardMode
-	const ListKeyboardMode = mLibrary.ListKeyboardMode;
+	const { ListKeyboardMode } = mLibrary;
 
 	/**
 	 * Constructor for a new GroupView
@@ -49,12 +49,12 @@ sap.ui.define([
 			library: "sap.ui.mdc",
 			properties: {
 				/**
-				* This factory function must return a single control instance of an input based control to provide custom filter capabilities.
-				* This control is then going to be added in the <code>GroupView</code> layout.
-				*
+				 * This factory function must return a single control instance of an input based control to provide custom filter capabilities.
+				 * This control is then going to be added in the <code>GroupView</code> layout.
+				 *
 				 * <b>Note:</b>: The <code>getIdForLabel</code> method can be imlplemented on the returned control instance
 				 * to return a focusable children control to provide the <code>labelFor</code> reference for the associated text.
-				*/
+				 */
 				itemFactory: {
 					type: "function"
 				}
@@ -102,21 +102,21 @@ sap.ui.define([
 	GroupView.prototype.getPanels = function() {
 		const aPanels = [];
 
-		this._oListControl.getItems().forEach(function(oItem){
+		this._oListControl.getItems().forEach((oItem) => {
 			aPanels.push(oItem.getContent()[0]);
 		});
 
 		return aPanels;
 	};
 
-    GroupView.prototype._createGroupPanelTemplate = function() {
-		const P13N_MODEL = this.P13N_MODEL;
+	GroupView.prototype._createGroupPanelTemplate = function() {
+		const { P13N_MODEL } = this;
 		return new Panel({
 			expandable: true,
 			expanded: {
 				path: this.P13N_MODEL + ">group",
-				formatter: function(){
-					if (this.getBindingContext(P13N_MODEL)){
+				formatter: function() {
+					if (this.getBindingContext(P13N_MODEL)) {
 						const bExpanded = this.getBindingContext(P13N_MODEL).sPath.split("/")[2] === "0";
 						return bExpanded;
 					} else {
@@ -125,19 +125,19 @@ sap.ui.define([
 				}
 			},
 
-			expand: function(oEvt){
+			expand: function(oEvt) {
 
 				const oSource = oEvt.getSource();
 				const oInnerList = oSource.getContent()[0];
 				this._addInitializedList(oInnerList);
-				if (this._getShowFactory()){
+				if (this._getShowFactory()) {
 					this._addFactoryControl(oInnerList);
-					this.filterContent(this._aCurrentFilters);// --> check if there is already an existing Filter
+					this.filterContent(this._aCurrentFilters); // --> check if there is already an existing Filter
 				}
 
 			}.bind(this),
 
-			width:"100%",
+			width: "100%",
 			headerToolbar: [
 				new Toolbar({
 					content: [
@@ -158,7 +158,7 @@ sap.ui.define([
 		const oList = new List({
 			keyboardMode: ListKeyboardMode.Edit,
 			selectionChange: function(oEvent) {
-				const sPath = oEvent.getParameter("listItem").getBindingContext(this.P13N_MODEL).sPath;
+				const { sPath } = oEvent.getParameter("listItem").getBindingContext(this.P13N_MODEL);
 				const oItem = this._getP13nModel().getProperty(sPath);
 				const oP13nModel = this.getModel(this.P13N_MODEL);
 				//TODO: remove 'selected' condition enhance
@@ -184,7 +184,7 @@ sap.ui.define([
 	GroupView.prototype._addFactoryControl = function(oList) {
 
 		if (oList.getItems().length == 0 || oList.getItems()[0].getContent().length < 2) {
-			oList.getItems().forEach(function(oItem){
+			oList.getItems().forEach((oItem) => {
 				const oContext = oItem.getBindingContext(this.P13N_MODEL);
 				const oField = this.getItemFactory().call(this, oContext);
 
@@ -199,15 +199,15 @@ sap.ui.define([
 				if (oItem.getContent()[0].getItems().length > 1) {
 					oItem.getContent()[0].removeItem(1);
 				}
-			}.bind(this));
+			});
 		}
 
 		this.addStyleClass("sapUiMDCAFLabelMarking");
 
 	};
 
-    GroupView.prototype._createInnerListControl = function() {
-		const oList =  new List(this.getId() + "-innerGroupViewList", Object.assign(this._getListControlConfig(), {
+	GroupView.prototype._createInnerListControl = function() {
+		const oList = new List(this.getId() + "-innerGroupViewList", Object.assign(this._getListControlConfig(), {
 			keyboardMode: ListKeyboardMode.Edit,
 			mode: "None",
 			infoToolbar: new Toolbar(),
@@ -219,7 +219,7 @@ sap.ui.define([
 		return oList;
 	};
 
-    GroupView.prototype._getItemsBinding = function() {
+	GroupView.prototype._getItemsBinding = function() {
 
 		const fnCreatePlain = function() {
 
@@ -265,7 +265,7 @@ sap.ui.define([
 					visible: {
 						path: this.P13N_MODEL + ">active",
 						formatter: function(bIsFiltered) {
-							if (bIsFiltered){
+							if (bIsFiltered) {
 								return true;
 							} else {
 								return false;
@@ -278,39 +278,39 @@ sap.ui.define([
 	};
 
 	GroupView.prototype._loopGroupList = function(fnCallback) {
-		this._oListControl.getItems().forEach(function(oOuterItem){
+		this._oListControl.getItems().forEach((oOuterItem) => {
 			const oPanel = oOuterItem.getContent()[0];
 			const oInnerList = oPanel.getContent()[0];
-			this._loopItems(oInnerList, function(oItem, sKey){
+			this._loopItems(oInnerList, (oItem, sKey) => {
 				fnCallback(oItem, sKey);
 			});
-		}.bind(this));
+		});
 	};
 
 	GroupView.prototype._loopItems = function(oList, fnItemCallback) {
-		oList.getItems().forEach(function(oItem){
+		oList.getItems().forEach((oItem) => {
 
 			const sPath = oItem.getBindingContextPath();
 			const sKey = this._getP13nModel().getProperty(sPath).name;
 
 			fnItemCallback.call(this, oItem, sKey);
-		}.bind(this));
+		});
 	};
 
 	GroupView.prototype._removeFactoryControl = function() {
-        this._loopGroupList(function(oItem, sKey){
-            if (oItem.getContent()[1]){
+		this._loopGroupList((oItem, sKey) => {
+			if (oItem.getContent()[1]) {
 
 				//Remove Factory Control
-                oItem.removeContent(oItem.getContent()[1]);
-                const oList = oItem.getParent();
+				oItem.removeContent(oItem.getContent()[1]);
+				const oList = oItem.getParent();
 				this._addInitializedList(oList);
 
 				//Add Icon
 				const oIcon = this._getIconTemplate();
 				oItem.getContent()[0].addItem(oIcon);
-            }
-		}.bind(this));
+			}
+		});
 
 		this.removeStyleClass("sapUiMDCAFLabelMarking");
 
@@ -319,16 +319,16 @@ sap.ui.define([
 
 	GroupView.prototype._addInitializedList = function(oList) {
 		const sListId = oList.getId();
-		if (this._aInitializedLists.indexOf(sListId) < 0){
+		if (this._aInitializedLists.indexOf(sListId) < 0) {
 			this._aInitializedLists.push(sListId);
 		}
 	};
 
-	GroupView.prototype._getInitializedLists = function(){
+	GroupView.prototype._getInitializedLists = function() {
 		const aLists = [];
-		this._aInitializedLists.forEach(function(sListId){
+		this._aInitializedLists.forEach((sListId) => {
 			const oList = Element.getElementById(sListId);
-			if (oList){
+			if (oList) {
 				aLists.push(oList);
 			}
 		});
@@ -337,15 +337,15 @@ sap.ui.define([
 
 	GroupView.prototype.getSelectedFields = function() {
 		const aSelectedItems = [];
-		this._oListControl.getItems().forEach(function(oOuterItem){
+		this._oListControl.getItems().forEach((oOuterItem) => {
 			const oPanel = oOuterItem.getContent()[0];
 			const oInnerList = oPanel.getContent()[0];
-			this._loopItems(oInnerList, function(oItem, sKey){
-				if (oItem.getSelected()){
+			this._loopItems(oInnerList, (oItem, sKey) => {
+				if (oItem.getSelected()) {
 					aSelectedItems.push(sKey);
 				}
 			});
-		}.bind(this));
+		});
 
 		return aSelectedItems;
 	};
@@ -357,11 +357,11 @@ sap.ui.define([
 
 		const aInitializedGroups = this._removeFactoryControl();
 
-		this._oListControl.getItems().forEach(function(oOuterItem){
+		this._oListControl.getItems().forEach((oOuterItem) => {
 			const oPanel = oOuterItem.getContent()[0];
 			const oInnerList = oPanel.getContent()[0];
 
-			if (oInnerList.getBinding("items")){
+			if (oInnerList.getBinding("items")) {
 				oInnerList.getBinding("items").filter(aFilter, true);
 				this._togglePanelVisibility(oPanel);
 			}
@@ -369,7 +369,7 @@ sap.ui.define([
 			if (this._getShowFactory() && aInitializedGroups.indexOf(oInnerList.getId()) > -1) {
 				this._addFactoryControl(oInnerList);
 			}
-		}.bind(this));
+		});
 
 		this._aCurrentFilters = aFilter;
 	};
@@ -379,25 +379,25 @@ sap.ui.define([
 		this._bShowFactory = bShow;
 		this.displayColumns();
 
-        if (bShow){
-			this._getInitializedLists().forEach(function(oInitializedList){
+		if (bShow) {
+			this._getInitializedLists().forEach((oInitializedList) => {
 				this._addFactoryControl(oInitializedList);
-			}.bind(this));
-        } else {
+			});
+		} else {
 			this._removeFactoryControl();
 		}
 
-    };
-
-	GroupView.prototype._checkAllPanels = function () {
-		this._oListControl.getItems().forEach(function(oOuterItem){
-			const oPanel = oOuterItem.getContent()[0];
-			this._togglePanelVisibility(oPanel);
-		}.bind(this));
 	};
 
-	GroupView.prototype.setGroupExpanded = function(sGroup, bExpand){
-		this._oListControl.getItems().forEach(function(oOuterItem){
+	GroupView.prototype._checkAllPanels = function() {
+		this._oListControl.getItems().forEach((oOuterItem) => {
+			const oPanel = oOuterItem.getContent()[0];
+			this._togglePanelVisibility(oPanel);
+		});
+	};
+
+	GroupView.prototype.setGroupExpanded = function(sGroup, bExpand) {
+		this._oListControl.getItems().forEach(function(oOuterItem) {
 			const oPanel = oOuterItem.getContent()[0];
 			const sBindingPath = oPanel.getBindingContext(this.P13N_MODEL).sPath;
 			const oItem = this._getP13nModel().getProperty(sBindingPath);
@@ -411,7 +411,7 @@ sap.ui.define([
 		const oInnerList = oPanel.getContent()[0];
 		const oContext = oPanel.getBindingContext(this.P13N_MODEL);
 
-		if (oContext){
+		if (oContext) {
 			const sPanelBindingContextPath = oContext.sPath;
 
 			const oItem = this._getP13nModel().getProperty(sPanelBindingContextPath);
@@ -433,19 +433,19 @@ sap.ui.define([
 			!this._bInitialized &&
 			this._oListControl &&
 			this._oListControl.getItems().length > 0
-			){
-				this._bInitialized = true;
-				const oFirstList = this._oListControl.getItems()[0].getContent()[0].getContent()[0];
-				this._addFactoryControl(oFirstList);
-				this._addInitializedList(oFirstList);
-			}
+		) {
+			this._bInitialized = true;
+			const oFirstList = this._oListControl.getItems()[0].getContent()[0].getContent()[0];
+			this._addFactoryControl(oFirstList);
+			this._addInitializedList(oFirstList);
+		}
 	};
 
 	GroupView.prototype.displayColumns = function() {
 
 		const aPrior = this._oListControl.getInfoToolbar().removeAllContent();
 
-		aPrior.forEach(function(oControl){
+		aPrior.forEach((oControl) => {
 			oControl.destroy();
 		});
 
@@ -462,7 +462,7 @@ sap.ui.define([
 			}).addStyleClass("firstColumnPadding"));
 		}
 
-    };
+	};
 
 	GroupView.prototype.setP13nData = function(aP13nData) {
 		this._getP13nModel().setProperty("/itemsGrouped", aP13nData);
@@ -473,18 +473,18 @@ sap.ui.define([
 		this._checkAllPanels();
 	};
 
-	GroupView.prototype.getP13nData = function (bOnlyActive) {
+	GroupView.prototype.getP13nData = function(bOnlyActive) {
 		let aItems = this._getP13nModel().getProperty("/itemsGrouped");
 		if (bOnlyActive) {
-			aItems = aItems.filter(function(oItem){
+			aItems = aItems.filter((oItem) => {
 				return oItem[this.PRESENCE_ATTRIBUTE];
-			}.bind(this));
+			});
 		}
 		return aItems;
 	};
 
-    GroupView.prototype._bindListItems = function () {
-        this._oListControl.bindItems(Object.assign({
+	GroupView.prototype._bindListItems = function() {
+		this._oListControl.bindItems(Object.assign({
 			path: this.P13N_MODEL + ">/itemsGrouped",
 			templateShareable: false,
 			key: "group",
@@ -493,7 +493,7 @@ sap.ui.define([
 	};
 
 	GroupView.prototype.exit = function() {
-        BasePanel.prototype.exit.apply(this, arguments);
+		BasePanel.prototype.exit.apply(this, arguments);
 		this._aInitializedLists = null;
 		this._bShowFactory = false;
 		this._bInitialized = false;

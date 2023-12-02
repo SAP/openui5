@@ -324,7 +324,7 @@ sap.ui.define([
 			return oEntry.key === oModificationPayload.key;
 		});
 
-		if (oItem) {
+		if (oItem && sOperation !== "add") {
 			oConfig.properties[sAffectedProperty].splice(oConfig.properties[sAffectedProperty].indexOf(oItem), 1);
 		}
 

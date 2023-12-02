@@ -2,9 +2,8 @@
  * ${copyright}
  */
 sap.ui.define([
-	"sap/ui/mdc/util/loadModules",
-	"sap/m/p13n/Engine"
-], function(loadModules, Engine) {
+	"sap/ui/mdc/util/loadModules", "sap/m/p13n/Engine"
+], (loadModules, Engine) => {
 	"use strict";
 
 	/**
@@ -67,7 +66,7 @@ sap.ui.define([
 			});
 
 			if (!oControl._pPendingModification && oControl._onModifications instanceof Function) {
-				oControl._pPendingModification = Engine.getInstance().waitForChanges(oControl).then(function() {
+				oControl._pPendingModification = Engine.getInstance().waitForChanges(oControl).then(() => {
 					const aAffectedControllerKeys = Engine.getInstance().getTrace(oControl);
 					Engine.getInstance().clearTrace(oControl);
 					delete oControl._pPendingModification;
@@ -86,14 +85,14 @@ sap.ui.define([
 	 * @returns {Promise<object>} Resolves with the runtime representation of the modul
 	 */
 	Util.getModule = function(sModulePath) {
-		return new Promise(function(fResolveLoad, fRejectLoad){
-			sap.ui.require([
-				sModulePath
-			], fResolveLoad, fRejectLoad);
-		})
-		.then(function(Module){
-			return Module;
-		});
+		return new Promise((fResolveLoad, fRejectLoad) => {
+				sap.ui.require([
+					sModulePath
+				], fResolveLoad, fRejectLoad);
+			})
+			.then((Module) => {
+				return Module;
+			});
 	};
 
 	/**
@@ -104,7 +103,7 @@ sap.ui.define([
 	 * @returns {Promise<string>} Resolves with a translated text
 	 */
 	Util.getMdcResourceText = function(sKey, aArgs) {
-		return Util.getModule("sap/ui/core/Lib").then(function(Library) {
+		return Util.getModule("sap/ui/core/Lib").then((Library) => {
 			return Library.getResourceBundleFor("sap.ui.mdc").getText(sKey, aArgs);
 		});
 	};
@@ -137,9 +136,9 @@ sap.ui.define([
 				applyChange: function(oChange, oControl, mPropertyBag) {
 					suppressInvalidation(oControl);
 					return fApply(oChange, oControl, mPropertyBag, Util.APPLY)
-					.then(function(){
-						fConfigModified(oControl, oChange);
-					});
+						.then(() => {
+							fConfigModified(oControl, oChange);
+						});
 				},
 				completeChangeContent: function(oChange, mChangeSpecificInfo, mPropertyBag) {
 					if (fComplete) {
@@ -149,25 +148,25 @@ sap.ui.define([
 				revertChange: function(oChange, oControl, mPropertyBag) {
 					suppressInvalidation(oControl);
 					return fRevert(oChange, oControl, mPropertyBag, Util.REVERT)
-					.then(function(){
-						fConfigModified(oControl, oChange);
-					});
+						.then(() => {
+							fConfigModified(oControl, oChange);
+						});
 				},
 				onAfterXMLChangeProcessing: function(oControl, mPropertyBag) {
 					return mPropertyBag.modifier.getProperty(oControl, "delegate")
-					.then(function(oDelegate){
-						if (oDelegate) {
-							return loadModules(oDelegate.name)
-							.then(function(aModules){
-								const oDelegate = aModules[0];
+						.then((oDelegate) => {
+							if (oDelegate) {
+								return loadModules(oDelegate.name)
+									.then((aModules) => {
+										const oDelegate = aModules[0];
 
-								if (oDelegate.onAfterXMLChangeProcessing instanceof Function) {
-									oDelegate.onAfterXMLChangeProcessing(oControl, mPropertyBag);
-								}
+										if (oDelegate.onAfterXMLChangeProcessing instanceof Function) {
+											oDelegate.onAfterXMLChangeProcessing(oControl, mPropertyBag);
+										}
 
-							});
-						}
-					});
+									});
+							}
+						});
 				},
 				getCondenserInfo: mSettings.getCondenserInfo,
 				getChangeVisualizationInfo: mSettings.getChangeVisualizationInfo

@@ -22,7 +22,6 @@ sap.ui.define([
 	'sap/ui/model/CompositeBinding',
 	'sap/base/util/each',
 	'sap/base/util/isEmptyObject',
-	'sap/base/util/ObjectPath',
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/events/KeyCodes",
 	// jQuery Plugin "selectText"
@@ -48,7 +47,6 @@ sap.ui.define([
 	CompositeBinding,
 	each,
 	isEmptyObject,
-	ObjectPath,
 	$,
 	KeyCodes
 ) {
@@ -1406,7 +1404,10 @@ sap.ui.define([
 					var mAssoc = mElement.association[i];
 
 					if (!mAllElements[mAssoc.id]) {
-						var oType = ObjectPath.get(mAssoc.type || "");
+						var oType;
+						if (mAssoc.type) {
+							oType = sap.ui.require(mAssoc.type.replace(/\./g, "/"));
+						}
 
 						if (!(typeof oType === "function")) {
 							continue;

@@ -2,12 +2,15 @@
  * ${copyright}
  */
 sap.ui.define([
-	"sap/ui/core/Element", "sap/ui/mdc/mixin/DelegateMixin", "sap/ui/mdc/mixin/PropertyHelperMixin", "sap/ui/mdc/mixin/AdaptationMixin"
-], function(CoreElement, DelegateMixin, PropertyHelperMixin, AdaptationMixin) {
+	"sap/ui/core/Element",
+	"sap/ui/mdc/mixin/DelegateMixin",
+	"sap/ui/mdc/mixin/PropertyHelperMixin",
+	"sap/ui/mdc/mixin/AdaptationMixin"
+], (CoreElement, DelegateMixin, PropertyHelperMixin, AdaptationMixin) => {
 	"use strict";
 
 	/**
- 	 * Creates and initializes a new element with the given <code>sId</code> and settings.
+	 * Creates and initializes a new element with the given <code>sId</code> and settings.
 	 *
 	 * @param {string} [sId] Optional ID for the new element; generated automatically if no non-empty ID is given
 	 *      <b>Note:</b> This can be omitted, no matter whether <code>mSettings</code> is given.
@@ -25,7 +28,7 @@ sap.ui.define([
 	 * @borrows sap.ui.mdc.mixin.DelegateMixin.getControlDelegate as #getControlDelegate
 	 * @borrows sap.ui.mdc.mixin.DelegateMixin.getPayload as #getPayload
 	 * @borrows sap.ui.mdc.mixin.DelegateMixin.getTypeUtil as #getTypeUtil
- 	 * @borrows sap.ui.mdc.mixin.DelegateMixin.getTypeMap as #getTypeMap
+	 * @borrows sap.ui.mdc.mixin.DelegateMixin.getTypeMap as #getTypeMap
 	 * @borrows sap.ui.mdc.mixin.DelegateMixin.initControlDelegate as #initControlDelegate
 	 *
 	 * @borrows sap.ui.mdc.mixin.PropertyHelperMixin.initPropertyHelper as #initPropertyHelper
@@ -36,11 +39,11 @@ sap.ui.define([
 	 *
 	 * @borrows sap.ui.mdc.mixin.AdaptationMixin.getEngine as #getInstance
 	 * @borrows sap.ui.mdc.mixin.AdaptationMixin.retrieveInbuiltFilter as #retrieveInbuiltFilter
- 	 * @borrows sap.ui.mdc.mixin.AdaptationMixin.getInbuiltFilter as #getInbuiltFilter
+	 * @borrows sap.ui.mdc.mixin.AdaptationMixin.getInbuiltFilter as #getInbuiltFilter
 	 *
 	 * @since 1.74
 	 * @public
-  	 * @experimental As of version 1.74
+	 * @experimental As of version 1.74
 	 */
 	const Element = CoreElement.extend("sap.ui.mdc.Element", /** @lends sap.ui.mdc.Element.prototype */ {
 		metadata: {

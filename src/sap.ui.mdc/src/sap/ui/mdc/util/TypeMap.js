@@ -8,9 +8,9 @@ sap.ui.define([
 	'sap/base/util/ObjectPath',
 	'sap/ui/mdc/util/DateUtil',
 	'sap/base/util/merge'
-], function(
+], (
 	BaseType, SimpleType, ObjectPath, DateUtil, merge
-) {
+) => {
 	"use strict";
 
 	const sDatePattern = "yyyy-MM-dd";
@@ -34,9 +34,9 @@ sap.ui.define([
 	const TypeMap = {};
 
 	/*
-	* Gets values of the internal map, treating string values as references to other keys (aliases)
-	*/
-	TypeMap._get = function (sType) {
+	 * Gets values of the internal map, treating string values as references to other keys (aliases)
+	 */
+	TypeMap._get = function(sType) {
 		const vEntry = this._getMap().get(sType);
 		if (typeof vEntry === "string") {
 			return this._get(vEntry);
@@ -46,9 +46,9 @@ sap.ui.define([
 	};
 
 	/*
-	* Updates the internal map's values, if not suppressed by TypeMap.freeze()
-	*/
-	TypeMap._set = function (sKey, vValue) {
+	 * Updates the internal map's values, if not suppressed by TypeMap.freeze()
+	 */
+	TypeMap._set = function(sKey, vValue) {
 		const oMap = this._getMap();
 		if (oMap._bFrozen) {
 			throw "TypeMap: You must not modify a frozen TypeMap";
@@ -57,10 +57,10 @@ sap.ui.define([
 	};
 
 	/*
-	* As derived typemaps want to act as singletons with separate data-sets, we provide a context based cache for each map's internal data.
-	* Please also see <code>module:sap/ui/mdc/util/TypeMap.import</code>
-	*/
-	TypeMap._getMap = function () {
+	 * As derived typemaps want to act as singletons with separate data-sets, we provide a context based cache for each map's internal data.
+	 * Please also see <code>module:sap/ui/mdc/util/TypeMap.import</code>
+	 */
+	TypeMap._getMap = function() {
 		let oMap = _cache.get(this);
 		if (!oMap) {
 			oMap = new Map();
@@ -80,7 +80,7 @@ sap.ui.define([
 	 * @param {function} [fnOptions] Optional customizing method for format options and constraints. See {@link sap.ui.mdc.DefaultTypeMap} for examples.
 	 * @public
 	 */
-	TypeMap.set = function (sType, vBaseType, fnOptions) {
+	TypeMap.set = function(sType, vBaseType, fnOptions) {
 		this._set(sType, [vBaseType, fnOptions]);
 	};
 
@@ -92,7 +92,7 @@ sap.ui.define([
 	 * @param {string} sAlias Alternative identifier for the <code>sType</code> parameter
 	 * @public
 	 */
-	TypeMap.setAlias = function (sType, sAlias) {
+	TypeMap.setAlias = function(sType, sAlias) {
 		this._set(sType, sAlias);
 	};
 
@@ -103,7 +103,7 @@ sap.ui.define([
 	 * @returns {sap.ui.mdc.enums.BaseType|function} BaseType configured for the {@link sap.ui.model.SimpleType} or function to resolve BaseType based on configuration
 	 * @private
 	 */
-	TypeMap._getBaseType = function (sType) {
+	TypeMap._getBaseType = function(sType) {
 		const aResult = this._get(sType);
 		return aResult && aResult[1][0];
 	};
@@ -115,7 +115,7 @@ sap.ui.define([
 	 * @returns {function} Method for model-specific type configuration. See <code>sap.ui.mdc.DefaultTypeMap</code> for examples.
 	 * @private
 	 */
-	TypeMap._getOptions = function (sType) {
+	TypeMap._getOptions = function(sType) {
 		const aResult = this._get(sType);
 		return aResult && aResult[1][1];
 	};
@@ -127,19 +127,19 @@ sap.ui.define([
 	 * @returns {string} Objectpath string for {@link sap.ui.model.SimpleType}
 	 * @private
 	 */
-	TypeMap._getClass = function (sAlias) {
+	TypeMap._getClass = function(sAlias) {
 		const aResult = this._get(sAlias);
 		return aResult && aResult[0];
 	};
 
-	 /**
+	/**
 	 * Exports the <code>TypeMap</code>'s current data.
 	 *
 	 * @final
 	 * @returns {Array} <code>Array</code> created from this <code>TypeMap</code>'s internal <code>Map</code>
 	 * @public
 	 */
-	TypeMap.export = function () {
+	TypeMap.export = function() {
 		return Array.from(this._getMap());
 	};
 
@@ -150,10 +150,10 @@ sap.ui.define([
 	 * @param {module:sap/ui/mdc/util/TypeMap} oTypeMap <code>TypeMap</code> to import
 	 * @public
 	 */
-	TypeMap.import = function (oTypeMap) {
-		oTypeMap.export().forEach(function (aEntry) {
+	TypeMap.import = function(oTypeMap) {
+		oTypeMap.export().forEach((aEntry) => {
 			this._getMap().set(aEntry[0], aEntry[1]);
-		}.bind(this));
+		});
 	};
 
 	/**
@@ -162,7 +162,7 @@ sap.ui.define([
 	 * @final
 	 * @public
 	 */
-	TypeMap.freeze = function () {
+	TypeMap.freeze = function() {
 		this._getMap()._bFrozen = true;
 	};
 
@@ -221,9 +221,9 @@ sap.ui.define([
 	 */
 	TypeMap.getDataTypeClass = function(sDataType) {
 		const sTypeName = this.getDataTypeClassName(sDataType);
-		const TypeClass = sTypeName
-			? sap.ui.require(sTypeName.replace(/\./g, "/")) || ObjectPath.get(sTypeName)
-			: undefined;
+		const TypeClass = sTypeName ?
+			sap.ui.require(sTypeName.replace(/\./g, "/")) || ObjectPath.get(sTypeName) :
+			undefined;
 		if (!TypeClass) {
 			throw new Error("DataType '" + sDataType + "' cannot be determined");
 		}
@@ -358,7 +358,7 @@ sap.ui.define([
 		}
 	};
 
-	TypeMap._normalizeType = function (vType, oFormatOptions, oConstraints) {
+	TypeMap._normalizeType = function(vType, oFormatOptions, oConstraints) {
 		if (vType instanceof SimpleType) { // simpletype
 			return vType;
 		}

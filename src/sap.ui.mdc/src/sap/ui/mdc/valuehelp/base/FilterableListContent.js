@@ -16,7 +16,7 @@ sap.ui.define([
 	'sap/ui/mdc/p13n/StateUtil',
 	'sap/ui/mdc/condition/FilterOperatorUtil',
 	'sap/base/Log'
-], function(
+], (
 	Library,
 	loadModules,
 	ListContent,
@@ -30,7 +30,7 @@ sap.ui.define([
 	StateUtil,
 	FilterOperatorUtil,
 	Log
-) {
+) => {
 	"use strict";
 
 	/**
@@ -49,11 +49,10 @@ sap.ui.define([
 	 * @since 1.95.0
 	 * @alias sap.ui.mdc.valuehelp.base.FilterableListContent
 	 */
-	const FilterableListContent = ListContent.extend("sap.ui.mdc.valuehelp.base.FilterableListContent", /** @lends sap.ui.mdc.valuehelp.base.FilterableListContent.prototype */
-	{
+	const FilterableListContent = ListContent.extend("sap.ui.mdc.valuehelp.base.FilterableListContent", /** @lends sap.ui.mdc.valuehelp.base.FilterableListContent.prototype */ {
 		metadata: {
 			library: "sap.ui.mdc",
-			properties:	{
+			properties: {
 				/**
 				 * The path of the key field in the content binding.
 				 * If a table is used as content, this is the binding path of the key of the items.
@@ -99,10 +98,8 @@ sap.ui.define([
 					visibility: "hidden"
 				}
 			},
-			associations: {
-			},
-			events: {
-			}
+			associations: {},
+			events: {}
 		}
 	});
 
@@ -117,15 +114,15 @@ sap.ui.define([
 		this.resetListBinding();
 	};
 
-	FilterableListContent.prototype.resetListBinding = function () {
+	FilterableListContent.prototype.resetListBinding = function() {
 		return this._addPromise("listBinding");
 	};
 
-	FilterableListContent.prototype.awaitListBinding = function () {
+	FilterableListContent.prototype.awaitListBinding = function() {
 		return this._retrievePromise("listBinding");
 	};
 
-	FilterableListContent.prototype.resolveListBinding = function () {
+	FilterableListContent.prototype.resolveListBinding = function() {
 		const oListBinding = this.getListBinding();
 		if (oListBinding) {
 			this._resolvePromise("listBinding", oListBinding);
@@ -134,9 +131,9 @@ sap.ui.define([
 		}
 	};
 
-	FilterableListContent.prototype.handleFilterValueUpdate = function (oChanges) {
+	FilterableListContent.prototype.handleFilterValueUpdate = function(oChanges) {
 		if ((this.isContainerOpening() || this.isContainerOpen()) && this._bContentBound) {
-			Promise.resolve(this.applyFilters()).finally(function () {
+			Promise.resolve(this.applyFilters()).finally(function() {
 				ListContent.prototype.handleFilterValueUpdate.apply(this, arguments);
 			}.bind(this));
 		}
@@ -146,12 +143,12 @@ sap.ui.define([
 	 * Applies the filter to the content control.
 	 * @protected
 	 */
-	FilterableListContent.prototype.applyFilters = function () {
+	FilterableListContent.prototype.applyFilters = function() {
 
 	};
 
 
-	FilterableListContent.prototype._prettyPrintFilters = function (oFilter) {
+	FilterableListContent.prototype._prettyPrintFilters = function(oFilter) {
 
 		let sRes;
 		if (!oFilter) {
@@ -168,7 +165,7 @@ sap.ui.define([
 			return "(" + sRes + ")";
 		} else if (oFilter._bMultiFilter) {
 			sRes = "";
-			const bAnd = oFilter.bAnd;
+			const { bAnd } = oFilter;
 			oFilter.aFilters.forEach(function(oFilter, iIndex, aFilters) {
 				sRes += this._prettyPrintFilters(oFilter);
 				if (aFilters.length - 1 != iIndex) {
@@ -192,7 +189,7 @@ sap.ui.define([
 	 * @returns {object} Item object containing <code>key</code>, <code>description</code>, and <code>payload</code>
 	 * @protected
 	 */
-	FilterableListContent.prototype.getItemFromContext = function (oBindingContext, oOptions) {
+	FilterableListContent.prototype.getItemFromContext = function(oBindingContext, oOptions) {
 
 		const sKeyPath = (oOptions && oOptions.keyPath) || this.getKeyPath();
 		const sDescriptionPath = (oOptions && oOptions.descriptionPath) || this.getDescriptionPath();
@@ -216,7 +213,7 @@ sap.ui.define([
 		const oPayload = this.createConditionPayload([vKey, sDescription], oBindingContext);
 
 
-		return {key: vKey, description: sDescription, payload: oPayload};
+		return { key: vKey, description: sDescription, payload: oPayload };
 	};
 
 	/**
@@ -238,26 +235,28 @@ sap.ui.define([
 		return oConditionPayload;
 	};
 
-	FilterableListContent.prototype._isContextSelected = function (oContext, aConditions) {
+	FilterableListContent.prototype._isContextSelected = function(oContext, aConditions) {
 		return !!oContext && !!this._findConditionsForContext(oContext, aConditions).length;
 	};
 
-	FilterableListContent.prototype._findConditionsForContext = function (oContext, aConditions) {
+	FilterableListContent.prototype._findConditionsForContext = function(oContext, aConditions) {
 		const oDelegate = this.isValueHelpDelegateInitialized() && this.getValueHelpDelegate();
 		if (oContext && oDelegate) {
 			// <!-- Support for deprecated delegate method isFilterableListItemSelected
 			if (oDelegate.isFilterableListItemSelected) {
 				Log.warning("MDC.ValueHelp", "Delegate method 'isFilterableListItemSelected' is deprecated, please implement 'findConditionsForContext' instead.");
 
-				const bRepresentsConditions = oDelegate.isFilterableListItemSelected(this.getValueHelpInstance(), this, { getBindingContext: function () {
-					return oContext; // Dirty way to simulate listitem.getBindingContext()
-				} }, aConditions);
+				const bRepresentsConditions = oDelegate.isFilterableListItemSelected(this.getValueHelpInstance(), this, {
+					getBindingContext: function() {
+						return oContext; // Dirty way to simulate listitem.getBindingContext()
+					}
+				}, aConditions);
 
 				if (bRepresentsConditions) {
 					const oValues = this.getItemFromContext(oContext);
 					const oContextCondition = oValues && this.createCondition(oValues.key, oValues.description, oValues.payload);
 
-					return aConditions.filter(function (oCondition) {
+					return aConditions.filter((oCondition) => {
 						return FilterOperatorUtil.compareConditions(oCondition, oContextCondition);
 					});
 				}
@@ -276,7 +275,7 @@ sap.ui.define([
 	FilterableListContent.prototype._createDefaultFilterBar = function() {
 		return loadModules([
 			"sap/ui/mdc/filterbar/vh/FilterBar"
-		]).then(function(aModules) {
+		]).then((aModules) => {
 			if (this.isDestroyStarted()) {
 				return null;
 			}
@@ -287,17 +286,17 @@ sap.ui.define([
 			});
 			this.setAggregation("_defaultFilterBar", oFilterBar, true);
 			return oFilterBar;
-		}.bind(this));
+		});
 	};
 
-	FilterableListContent.prototype._handleSearch = function (oEvent) {
+	FilterableListContent.prototype._handleSearch = function(oEvent) {
 		const oFilterBar = oEvent.getSource();
 		this._setLocalFilterValue(oFilterBar.getSearch());
 		this.applyFilters();
 
 	};
 
-	FilterableListContent.prototype._updateBasicSearchField = function () {
+	FilterableListContent.prototype._updateBasicSearchField = function() {
 		const oFilterBar = this.getActiveFilterBar();
 		if (oFilterBar) {
 			const oExistingBasicSearchField = oFilterBar.getBasicSearchField();
@@ -309,21 +308,21 @@ sap.ui.define([
 				if (!this._oSearchField) {
 					return loadModules([
 						"sap/ui/mdc/FilterField"
-					]).then(function (aModules){
+					]).then((aModules) => {
 						if (!oFilterBar.isDestroyed()) {
 							const FilterField = aModules[0];
 							this._oSearchField = new FilterField(this.getId() + "-search", {
 								conditions: "{$filters>/conditions/" + sSearchPath + "}",
 								propertyKey: sSearchPath,
-								placeholder:"{$i18n>filterbar.SEARCH}",
-								label:"{$i18n>filterbar.SEARCH}", // TODO: do we want a label?
+								placeholder: "{$i18n>filterbar.SEARCH}",
+								label: "{$i18n>filterbar.SEARCH}", // TODO: do we want a label?
 								maxConditions: 1,
 								width: "50%"
 							});
 							this._oSearchField._bCreatedByValueHelp = true;
 							this._updateBasicSearchField();
 						}
-					}.bind(this));
+					});
 				}
 				oFilterBar.setBasicSearchField(this._oSearchField);
 				oExistingBasicSearchField.setConditions([]);
@@ -337,7 +336,7 @@ sap.ui.define([
 		}
 	};
 
-	FilterableListContent.prototype.onContainerClose = function () {
+	FilterableListContent.prototype.onContainerClose = function() {
 		this._setLocalFilterValue(undefined);
 	};
 
@@ -348,11 +347,11 @@ sap.ui.define([
 	 * @since: 1.121.0
 	 * @protected
 	 */
-	FilterableListContent.prototype.getActiveFilterBar = function () {
+	FilterableListContent.prototype.getActiveFilterBar = function() {
 		return this.getFilterBar() || this.getAggregation("_defaultFilterBar");
 	};
 
-	FilterableListContent.prototype.observeChanges = function (oChanges) {
+	FilterableListContent.prototype.observeChanges = function(oChanges) {
 		if (oChanges.object == this) {
 			let oFilterBar;
 
@@ -394,7 +393,7 @@ sap.ui.define([
 		ListContent.prototype.observeChanges.apply(this, arguments);
 	};
 
-	FilterableListContent.prototype.getCollectiveSearchKey = function () {
+	FilterableListContent.prototype.getCollectiveSearchKey = function() {
 		return this._oCollectiveSearchSelect && this._oCollectiveSearchSelect.getSelectedItemKey();
 	};
 
@@ -403,7 +402,7 @@ sap.ui.define([
 	 * @returns {sap.ui.base.ManagedObject.AggregationBindingInfo} <code>ListBindingInfo</code>
 	 * @protected
 	 */
-	FilterableListContent.prototype.getListBindingInfo = function () {
+	FilterableListContent.prototype.getListBindingInfo = function() {
 		throw new Error("FilterableListContent: Every filterable listcontent must implement this method.");
 	};
 
@@ -412,7 +411,7 @@ sap.ui.define([
 	 * @param {sap.ui.core.Element} oItem item
 	 * @returns {sap.ui.model.Context} <code>BindingContext</code>
 	 */
-	FilterableListContent.prototype._getListItemBindingContext = function (oItem) {
+	FilterableListContent.prototype._getListItemBindingContext = function(oItem) {
 		const sModelName = this.getListBindingInfo().model;
 		return oItem && oItem.getBindingContext(sModelName);
 	};
@@ -430,7 +429,7 @@ sap.ui.define([
 	 * @param {object} oConditions set of conditions to create filters for
 	 * @returns {object} Returns a type map for property paths
 	 */
-	FilterableListContent.prototype._getTypesForConditions = function (oConditions) {
+	FilterableListContent.prototype._getTypesForConditions = function(oConditions) {
 		const oDelegate = this.getValueHelpDelegate();
 		const oValueHelp = this.getValueHelpInstance();
 		return oDelegate ? oDelegate.getTypesForConditions(oValueHelp, this, oConditions) : {};
@@ -480,7 +479,7 @@ sap.ui.define([
 		return sTokenizerTitle;
 	};
 
-	FilterableListContent.prototype.isSearchSupported = function () {
+	FilterableListContent.prototype.isSearchSupported = function() {
 		return !!this.isValueHelpDelegateInitialized() && !!this.getValueHelpDelegate()?.isSearchSupported(this.getValueHelpInstance(), this, this.getListBinding());
 	};
 
@@ -492,12 +491,12 @@ sap.ui.define([
 	 * @private
 	 * @ui5-restricted sap.ui.mdc.valuehelp.Dialog
 	 */
-	FilterableListContent.prototype.setCollectiveSearchSelect = function (oCollectiveSearchSelect) {
+	FilterableListContent.prototype.setCollectiveSearchSelect = function(oCollectiveSearchSelect) {
 		this._oCollectiveSearchSelect = oCollectiveSearchSelect;
 		this._assignCollectiveSearchSelect();
 	};
 
-	FilterableListContent.prototype._assignCollectiveSearchSelect = function () {
+	FilterableListContent.prototype._assignCollectiveSearchSelect = function() {
 		const oFilterBar = this.getActiveFilterBar();
 		if (oFilterBar.setCollectiveSearch) {
 			oFilterBar.setCollectiveSearch(this._oCollectiveSearchSelect); // remove it if empty
@@ -515,7 +514,7 @@ sap.ui.define([
 		if (bInitial) {
 			this._updateBasicSearchField();
 			const oDelegate = this.getValueHelpDelegate();
-			return Promise.resolve(oDelegate && oDelegate.getFilterConditions(this.getValueHelpInstance(), this)).then(function (oConditions) {
+			return Promise.resolve(oDelegate && oDelegate.getFilterConditions(this.getValueHelpInstance(), this)).then((oConditions) => {
 				this._oInitialFilterConditions = oConditions;
 
 				const oFilterBar = this.getActiveFilterBar();
@@ -524,16 +523,16 @@ sap.ui.define([
 					let sSearchPath = "$search";
 
 					const oNewConditions = merge({}, this._oInitialFilterConditions);
-					return Promise.resolve(!oNewConditions[sSearchPath] && StateUtil.retrieveExternalState(oFilterBar).then(function (oState) {
+					return Promise.resolve(!oNewConditions[sSearchPath] && StateUtil.retrieveExternalState(oFilterBar).then((oState) => {
 						if (bInitial) {
 							_addSearchConditionToConditionMap(oNewConditions, sSearchPath, this.getSearch());
-							return StateUtil.diffState(oFilterBar, oState, {filter: oNewConditions});
+							return StateUtil.diffState(oFilterBar, oState, { filter: oNewConditions });
 						}
-					}.bind(this))).then(function (oStateDiff) {
+					})).then((oStateDiff) => {
 						return StateUtil.applyExternalState(oFilterBar, oStateDiff);
 					});
 				}
-			}.bind(this));
+			});
 		}
 		return undefined;
 	};
@@ -542,7 +541,7 @@ sap.ui.define([
 	 * Fires the {@link #event:select select} event.
 	 * @param {object} oChange change object
 	 */
-	FilterableListContent.prototype._fireSelect = function (oChange) {
+	FilterableListContent.prototype._fireSelect = function(oChange) {
 		const oDelegate = this.getValueHelpDelegate();
 		const oValueHelp = this.getValueHelpInstance();
 		const oModifiedSelectionChange = oDelegate && oDelegate.modifySelectionBehaviour ? oDelegate.modifySelectionBehaviour(oValueHelp, this, oChange) : oChange;
@@ -551,7 +550,7 @@ sap.ui.define([
 		}
 	};
 
-	FilterableListContent.prototype.exit = function () {
+	FilterableListContent.prototype.exit = function() {
 
 		Engine.getInstance().defaultProviderRegistry.detach(this);
 
@@ -568,7 +567,7 @@ sap.ui.define([
 		ListContent.prototype.exit.apply(this, arguments);
 	};
 
-	FilterableListContent.prototype.getCount = function (aConditions, sGroup) {
+	FilterableListContent.prototype.getCount = function(aConditions, sGroup) {
 		const oDelegate = this.isValueHelpDelegateInitialized() && this.getValueHelpDelegate();
 		const oDelegatePayload = oDelegate && this.getValueHelpInstance();
 		return oDelegate && oDelegate.getCount ? oDelegate.getCount(oDelegatePayload, this, aConditions, sGroup) : ListContent.prototype.getCount.apply(this, arguments);
@@ -609,7 +608,7 @@ sap.ui.define([
 	 * @protected
 	 */
 	FilterableListContent.prototype.getSelectableConditions = function() {
-		return this.getConditions().filter(function(oCondition) {
+		return this.getConditions().filter((oCondition) => {
 			return oCondition.validated === ConditionValidated.Validated;
 		});
 	};
@@ -622,4 +621,3 @@ sap.ui.define([
 	return FilterableListContent;
 
 });
-

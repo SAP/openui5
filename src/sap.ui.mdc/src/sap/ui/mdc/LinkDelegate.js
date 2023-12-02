@@ -1,7 +1,7 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(['sap/ui/mdc/BaseDelegate', 'sap/ui/mdc/enums/LinkType'], function(BaseDelegate, LinkType) {
+sap.ui.define(['sap/ui/mdc/BaseDelegate', 'sap/ui/mdc/enums/LinkType'], (BaseDelegate, LinkType) => {
 	"use strict";
 	/**
 	 * Base delegate for {@link sap.ui.mdc.Link}. Extend this object in your project to use all functionalities of the {@link sap.ui.mdc.Link}.
@@ -70,10 +70,10 @@ sap.ui.define(['sap/ui/mdc/BaseDelegate', 'sap/ui/mdc/enums/LinkType'], function
 	 * @public
 	 * @param {sap.ui.mdc.Link} oLink Instance of the <code>Link</code>
 	 * @param {sap.ui.model.Context|null|undefined} oBindingContext Binding context of the <code>Link</code> control
-	 * @param {sap.ui.mdc.link.LinkItem} aLinkItems The {@link sap.ui.mdc.link.LinkItem} instances of the link that can be modified
+	 * @param {sap.ui.mdc.link.LinkItem[]} aLinkItems Array of {@link sap.ui.mdc.link.LinkItem} instances of the link that can be modified
 	 * @returns {Promise<sap.ui.mdc.link.LinkItem[]>} Once resolved, an array of link items is returned
 	 */
-	 LinkDelegate.modifyLinkItems = function(oLink, oBindingContext, aLinkItems) {
+	LinkDelegate.modifyLinkItems = function(oLink, oBindingContext, aLinkItems) {
 		return Promise.resolve(aLinkItems);
 	};
 
@@ -85,7 +85,7 @@ sap.ui.define(['sap/ui/mdc/BaseDelegate', 'sap/ui/mdc/enums/LinkType'], function
 	 * @param {sap.ui.base.Event} oEvent The <code>pressLink</code> event that is fired by the <code>Link</code> control
 	 * @returns {Promise<boolean>} Once resolved, this method returns a <code>boolean<code> value that determines whether the navigation takes place
 	 */
-	 LinkDelegate.beforeNavigationCallback = function(oLink, oEvent) {
+	LinkDelegate.beforeNavigationCallback = function(oLink, oEvent) {
 		return Promise.resolve(true);
 	};
 

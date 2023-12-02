@@ -3,13 +3,13 @@
  */
 
 // Provides enumeration sap.ui.mdc.enums.OperatorOverwrite
-sap.ui.define(function() {
+sap.ui.define(() => {
 	"use strict";
 
 	/**
 	 * Enumeration of the <code>OperatorOverwrite</code> in <code>Operator</code>.
 	 * @enum {string}
-  	 * @alias sap.ui.mdc.enums.OperatorOverwrite
+	 * @alias sap.ui.mdc.enums.OperatorOverwrite
 	 * @public
 	 * @since 1.115
 	 */

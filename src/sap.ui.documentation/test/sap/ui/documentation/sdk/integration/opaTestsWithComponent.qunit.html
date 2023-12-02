@@ -33,8 +33,9 @@
 			QUnit.config.autostart = false;
 			// Demo Kit in static navigation mode
 			window['sap-ui-documentation-static'] = true;
+			//We preset the path to api-index.json file to be the local mock folder
 			window['sap-ui-documentation-config'] = {
-				apiInfoRoot: '/test-resources/sap/ui/documentation/sdk/integration/mock/docs/api/api-index.json'
+				apiInfoRootURL: '/test-resources/sap/ui/documentation/sdk/integration/mock/docs/api/api-index.json'
 			};
 
 			sap.ui.getCore().attachInit(function () {

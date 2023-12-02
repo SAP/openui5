@@ -55,7 +55,7 @@ sap.ui.define([
 	"sap/ui/mdc/enums/TableGrowingMode",
 	// load for availability
 	"sap/ui/mdc/enums/TableRowCountMode"
-], function(
+], (
 	Control,
 	ActionToolbar,
 	TableSettings,
@@ -104,14 +104,14 @@ sap.ui.define([
 	TableSelectionMode,
 	TableP13nMode,
 	TableType
-) {
+) => {
 	"use strict";
 
-	const ToolbarDesign = MLibrary.ToolbarDesign;
-	const ToolbarStyle = MLibrary.ToolbarStyle;
-	const IllustratedMessageType = MLibrary.IllustratedMessageType;
-	const TitleLevel = coreLibrary.TitleLevel;
-	const SortOrder = coreLibrary.SortOrder;
+	const { ToolbarDesign } = MLibrary;
+	const { ToolbarStyle } = MLibrary;
+	const { IllustratedMessageType } = MLibrary;
+	const { TitleLevel } = coreLibrary;
+	const { SortOrder } = coreLibrary;
 	const internalMap = new window.WeakMap();
 	const internal = function(oTable) {
 		if (!internalMap.has(oTable)) {
@@ -203,7 +203,7 @@ sap.ui.define([
 	 * @public
 	 */
 
-    /**
+	/**
 	 * @typedef {sap.ui.mdc.table.PropertyInfo} sap.ui.mdc.odata.v4.TablePropertyInfo
 	 *
 	 * An object literal describing a data property in the context of a {@link sap.ui.mdc.Table} with {@link module:sap/ui/mdc/odata/v4/TableDelegate}.
@@ -273,15 +273,14 @@ sap.ui.define([
 	 * @since 1.58
 	 * @alias sap.ui.mdc.Table
 	 * @public
-   	 * @experimental As of version 1.58.0
+	 * @experimental As of version 1.58.0
 	 */
 	const Table = Control.extend("sap.ui.mdc.Table", {
 		metadata: {
 			library: "sap.ui.mdc",
 			designtime: "sap/ui/mdc/designtime/table/Table.designtime",
 			interfaces: [
-				"sap.ui.mdc.IFilterSource",
-				"sap.ui.mdc.IxState"
+				"sap.ui.mdc.IFilterSource", "sap.ui.mdc.IxState"
 			],
 			defaultAggregation: "columns",
 			properties: {
@@ -501,7 +500,7 @@ sap.ui.define([
 				/**
 				 * The delay in milliseconds after which the busy indicator is shown.
 				 */
-				busyIndicatorDelay : {
+				busyIndicatorDelay: {
 					type: "int",
 					defaultValue: 100
 				},
@@ -550,7 +549,7 @@ sap.ui.define([
 				 *
 				 * @since 1.93
 				 */
-				multiSelectMode : {
+				multiSelectMode: {
 					type: "sap.ui.mdc.enums.TableMultiSelectMode",
 					group: "Behavior",
 					defaultValue: TableMultiSelectMode.Default
@@ -681,7 +680,7 @@ sap.ui.define([
 				 * <b>Note:</b> Each time the properties of the settings are changed, they have to be applied again via <code>setRowSettings</code>
 				 * for the changes to take effect.
 				 */
-				rowSettings: {type: "sap.ui.mdc.table.RowSettings", multiple: false},
+				rowSettings: { type: "sap.ui.mdc.table.RowSettings", multiple: false },
 
 				/**
 				 * <code>DataStateIndicator</code> plugin that can be used to show binding-related messages.
@@ -726,7 +725,7 @@ sap.ui.define([
 				 *
 				 * @since 1.118
 				 */
-				contextMenu : {type : "sap.ui.core.IContextMenu", multiple : false},
+				contextMenu: { type: "sap.ui.core.IContextMenu", multiple: false },
 
 				/**
 				 * Defines an aggregation for the <code>CellSelector</code> plugin that provides cell selection capabilities to the table.
@@ -844,8 +843,8 @@ sap.ui.define([
 						/**
 						 * The column used for the context menu
 						 * <b>Note:</b> The column parameter can be empty when opened in a popin area for responsiveTable type.
-						*/
-						column: {type: "sap.ui.mdc.table.Column"}
+						 */
+						column: { type: "sap.ui.mdc.table.Column" }
 					}
 				}
 			}
@@ -884,7 +883,7 @@ sap.ui.define([
 	 * Create setter and getter for aggregation that are passed to ToolBar aggregation named "Between"
 	 * Several different Table aggregations are passed to the same ToolBar aggregation (Between)
 	 */
-	aToolBarBetweenAggregations.forEach(function(sAggregationName) {
+	aToolBarBetweenAggregations.forEach((sAggregationName) => {
 		const sCapAggregationName = capitalize(sAggregationName),
 			sPropertyName = "_o" + sCapAggregationName,
 			sGetter = "get" + sCapAggregationName,
@@ -947,7 +946,7 @@ sap.ui.define([
 		// (incorrect) default type instance can be avoided.
 		// The delegate must be part of the early settings, because it can only be applied once (see sap.ui.mdc.mixin.DelegateMixin).
 		if (mSettings && "type" in mSettings) {
-			const mEarlySettings = {type: mSettings.type};
+			const mEarlySettings = { type: mSettings.type };
 
 			if ("delegate" in mSettings) {
 				mEarlySettings.delegate = mSettings.delegate;
@@ -963,7 +962,7 @@ sap.ui.define([
 	};
 
 	Table.prototype._setToolbarBetween = function(oToolBar) {
-		[this._oVariant, this._oQuickFilter].forEach(function(oControl) {
+		[this._oVariant, this._oQuickFilter].forEach((oControl) => {
 			if (oControl) {
 				oToolBar.addBetween(oControl);
 			}
@@ -1074,7 +1073,7 @@ sap.ui.define([
 
 	/**
 	 * Determine the table's type
- 	 * @param {sap.ui.mdc.enums.TableType} sType The table type to be checked
+	 * @param {sap.ui.mdc.enums.TableType} sType The table type to be checked
 	 * @param {boolean} bIncludeSubTypes enable subtype check
 	 * @returns {boolean} Indicates if the table is of the given type
 	 * @private
@@ -1162,9 +1161,9 @@ sap.ui.define([
 	 * @public
 	 */
 	Table.prototype.focusRow = function(iIndex, bFirstInteractiveElement) {
-		return this.scrollToIndex(iIndex).then(function() {
+		return this.scrollToIndex(iIndex).then(() => {
 			return this._oTable._setFocus(iIndex, bFirstInteractiveElement);
-		}.bind(this));
+		});
 	};
 
 	Table.prototype.setType = function(vType) {
@@ -1340,12 +1339,12 @@ sap.ui.define([
 
 		if (!this.isPropertyHelperFinal()) {
 			this._bFinalzingPropertiesOnModification = true;
-			this.finalizePropertyHelper().then(function() {
+			this.finalizePropertyHelper().then(() => {
 				delete this._bFinalzingPropertiesOnModification;
-			}.bind(this));
+			});
 		}
 
-		this.getColumns().forEach(function(oColumn) {
+		this.getColumns().forEach((oColumn) => {
 			oColumn._onModifications();
 		});
 	};
@@ -1354,8 +1353,8 @@ sap.ui.define([
 		const aOldP13nMode = this.getP13nMode();
 
 		let aSortedKeys = [];
-		if (aMode && aMode.length > 1){
-			const mKeys = aMode.reduce(function(mMap, sKey, iIndex){
+		if (aMode && aMode.length > 1) {
+			const mKeys = aMode.reduce((mMap, sKey, iIndex) => {
 				mMap[sKey] = true;
 				return mMap;
 			}, {});
@@ -1402,15 +1401,15 @@ sap.ui.define([
 		}
 
 		const mRegistryOptions = {
-			Column: new ColumnController({control: this, stableKeys: aStableKeys}),
-			Sort: new SortController({control: this}),
-			Group: new GroupController({control: this}),
-			Filter: new FilterController({control: this}),
-			Aggregate: new AggregateController({control: this}),
-			ColumnWidth: new ColumnWidthController({control: this, exposeXConfig: true})
+			Column: new ColumnController({ control: this, stableKeys: aStableKeys }),
+			Sort: new SortController({ control: this }),
+			Group: new GroupController({ control: this }),
+			Filter: new FilterController({ control: this }),
+			Aggregate: new AggregateController({ control: this }),
+			ColumnWidth: new ColumnWidthController({ control: this, exposeXConfig: true })
 		};
 
-		this.getActiveP13nModes().forEach(function(sMode){
+		this.getActiveP13nModes().forEach((sMode) => {
 			oRegisterConfig.controller[sMode] = mRegistryOptions[sMode];
 		});
 
@@ -1473,9 +1472,9 @@ sap.ui.define([
 			return;
 		}
 
-		oTable._fullyInitialized().then(function() {
+		oTable._fullyInitialized().then(() => {
 			const oPropertyHelper = oTable.getPropertyHelper();
-			const aPropertyLabels = aFilteredProperties.map(function(sPropertyName) {
+			const aPropertyLabels = aFilteredProperties.map((sPropertyName) => {
 				return oPropertyHelper.hasProperty(sPropertyName) ? oPropertyHelper.getProperty(sPropertyName).label : "";
 			});
 			const oResourceBundle = Library.getResourceBundleFor("sap.ui.mdc");
@@ -1537,13 +1536,11 @@ sap.ui.define([
 				new Text({
 					id: sToolbarId + "-text",
 					wrapping: false
-				}),
-				new ToolbarSpacer(),
-				new Button({
+				}), new ToolbarSpacer(), new Button({
 					type: MLibrary.ButtonType.Transparent,
 					tooltip: oRb.getText("infobar.REMOVEALLFILTERS"),
 					icon: "sap-icon://decline",
-					press: function () {
+					press: function() {
 						// Clear all filters. Makes current variant dirty.
 						PersonalizationUtils.createFilterChange(oTable, {
 							conditions: [],
@@ -1554,7 +1551,7 @@ sap.ui.define([
 				})
 			],
 			press: function() {
-				PersonalizationUtils.openFilterDialog(oTable, function() {
+				PersonalizationUtils.openFilterDialog(oTable, () => {
 					// Because the filter info bar was pressed, it must have had the focus when opening the dialog. When removing all filters in
 					// the dialog and confirming, the filter info bar will be hidden, and the dialog tries to restore the focus on the hidden filter
 					// info bar. To avoid a focus loss, the table gets the focus.
@@ -1572,7 +1569,7 @@ sap.ui.define([
 	}
 
 	function getFilterInfoBar(oTable) {
-		const oFilterInfoBar = internal(oTable).oFilterInfoBar;
+		const { oFilterInfoBar } = internal(oTable);
 
 		if (oFilterInfoBar?.isDestroyStarted()) {
 			return null;
@@ -1633,9 +1630,9 @@ sap.ui.define([
 
 			let oNoColumnsMessage = this._oTable.getAggregation("_noColumnsMessage");
 			if (!oNoColumnsMessage) {
-				oNoColumnsMessage = MTableUtil.getNoColumnsIllustratedMessage(function() {
+				oNoColumnsMessage = MTableUtil.getNoColumnsIllustratedMessage(() => {
 					PersonalizationUtils.openSettingsDialog(this);
-				}.bind(this));
+				});
 				oNoColumnsMessage.setEnableVerticalResponsiveness(!this._isOfType(TableType.ResponsiveTable));
 				this._oTable.setAggregation("_noColumnsMessage", oNoColumnsMessage);
 			}
@@ -1653,7 +1650,7 @@ sap.ui.define([
 	Table.prototype.destroyNoData = function() {
 		if (this._oTable) {
 			this._oTable.destroyNoData(true);
-		} else  if (this._vNoData) {
+		} else if (this._vNoData) {
 			this._vNoData.destroy?.();
 		}
 
@@ -1726,8 +1723,7 @@ sap.ui.define([
 	Table.prototype._initializeContent = function() {
 		const oType = this._getType();
 		const aInitPromises = [
-			this.awaitControlDelegate(),
-			oType.loadModules()
+			this.awaitControlDelegate(), oType.loadModules()
 		];
 
 		if (this.isFilteringEnabled()) {
@@ -1807,8 +1803,7 @@ sap.ui.define([
 			this._onAfterInitialization();
 
 			return Promise.all([
-				this.getPropertyInfo().length === 0 ? this.finalizePropertyHelper() : this.awaitPropertyHelper(),
-				this.initialized() // Required for the CreationRow binding context handling.
+				this.getPropertyInfo().length === 0 ? this.finalizePropertyHelper() : this.awaitPropertyHelper(), this.initialized() // Required for the CreationRow binding context handling.
 			]);
 		}).then(() => {
 			if (this.isDestroyed()) {
@@ -1910,7 +1905,7 @@ sap.ui.define([
 		this._updateP13nButton();
 	};
 
-	Table.prototype._isP13nButtonHidden = function () {
+	Table.prototype._isP13nButtonHidden = function() {
 		return this._bHideP13nButton;
 	};
 
@@ -1934,14 +1929,18 @@ sap.ui.define([
 					this._oTitle
 				],
 				end: [
-					this._getCopyButton(),
-					this._getPasteButton(),
-					this._getP13nButton()
+					this._getCopyButton(), this._getPasteButton(), this._getP13nButton()
 				]
 			});
 			// Enfore the action order according to the UI Guideline
 			this._oToolbar.setProperty("_endOrder", [
-				"copy", "paste", "showHideDetails", "collapseAll", "expandAll", "settings", "export"
+				"copy",
+				"paste",
+				"showHideDetails",
+				"collapseAll",
+				"expandAll",
+				"settings",
+				"export"
 			].map((sSuffix) => this.getId() + "-" + sSuffix));
 		}
 
@@ -1954,7 +1953,7 @@ sap.ui.define([
 		const aProperties = [];
 		let sPropertyKey;
 
-		this.getColumns().forEach(function(oMDCColumn, iIndex) {
+		this.getColumns().forEach((oMDCColumn, iIndex) => {
 			sPropertyKey = oMDCColumn && oMDCColumn.getPropertyKey();
 			if (sPropertyKey) {
 				aProperties.push({
@@ -1981,15 +1980,15 @@ sap.ui.define([
 		return this.getSortConditions() ? this.getSortConditions().sorters : [];
 	};
 
-	Table.prototype._getGroupedProperties = function () {
+	Table.prototype._getGroupedProperties = function() {
 		return this.getGroupConditions() ? this.getGroupConditions().groupLevels : [];
 	};
 
-	Table.prototype._getAggregatedProperties = function () {
+	Table.prototype._getAggregatedProperties = function() {
 		return this.getAggregateConditions() ? this.getAggregateConditions() : {};
 	};
 
-	Table.prototype._getXConfig = function () {
+	Table.prototype._getXConfig = function() {
 		return this.getEngine().readXConfig(this);
 	};
 
@@ -2023,13 +2022,13 @@ sap.ui.define([
 	 */
 	function isFiltered(oTable) {
 		const oFilter = Element.getElementById(oTable.getFilter());
-		return getInternallyFilteredProperties(oTable).length > 0
-			   || getExternallyFilteredProperties(oTable).length > 0
-			   || oFilter && oFilter.getSearch() !== "";
+		return getInternallyFilteredProperties(oTable).length > 0 ||
+			getExternallyFilteredProperties(oTable).length > 0 ||
+			oFilter && oFilter.getSearch() !== "";
 	}
 
 	function getFilteredProperties(mConditions) {
-		return Object.keys(mConditions || {}).filter(function(sProperty) {
+		return Object.keys(mConditions || {}).filter((sProperty) => {
 			return mConditions[sProperty].length > 0;
 		});
 	}
@@ -2098,7 +2097,7 @@ sap.ui.define([
 	 * @private
 	 * @returns {boolean} Whether group personalization is enabled
 	 */
-	Table.prototype.isGroupingEnabled = function () {
+	Table.prototype.isGroupingEnabled = function() {
 		return this.getActiveP13nModes().includes(TableP13nMode.Group);
 	};
 
@@ -2108,7 +2107,7 @@ sap.ui.define([
 	 * @private
 	 * @returns {boolean} Whether aggregation personalization is enabled
 	 */
-	Table.prototype.isAggregationEnabled = function () {
+	Table.prototype.isAggregationEnabled = function() {
 		return this.getActiveP13nModes().includes(TableP13nMode.Aggregate);
 	};
 
@@ -2127,7 +2126,7 @@ sap.ui.define([
 	};
 
 	function getIntersection(aArr1, aArr2) {
-		return aArr1.filter(function(sValue) {
+		return aArr1.filter((sValue) => {
 			return aArr2.includes(sValue);
 		});
 	}
@@ -2154,7 +2153,7 @@ sap.ui.define([
 
 	Table.prototype._getCopyButton = function() {
 		if (window.isSecureContext) {
-			return this.getCopyProvider()?.getCopyButton({id: this.getId() + "-copy"});
+			return this.getCopyProvider()?.getCopyButton({ id: this.getId() + "-copy" });
 		}
 	};
 
@@ -2168,9 +2167,9 @@ sap.ui.define([
 	};
 
 	Table.prototype._isExportEnabled = function() {
-		return this.getEnableExport()
-			&& this.isControlDelegateInitialized()
-			&& this.getControlDelegate().getSupportedFeatures(this).export;
+		return this.getEnableExport() &&
+			this.isControlDelegateInitialized() &&
+			this.getControlDelegate().getSupportedFeatures(this).export;
 	};
 
 	Table.prototype._updateExportButton = function() {
@@ -2223,18 +2222,18 @@ sap.ui.define([
 	Table.prototype._createExportColumnConfiguration = function() {
 		const aColumns = this.getColumns();
 
-		return this._fullyInitialized().then(function() {
+		return this._fullyInitialized().then(() => {
 			return this.finalizePropertyHelper();
-		}.bind(this)).then(function() {
+		}).then(() => {
 			const oPropertyHelper = this.getPropertyHelper();
 			let aSheetColumns = [];
 
-			aColumns.forEach(function(oColumn) {
+			aColumns.forEach((oColumn) => {
 				const aColumnExportSettings = oPropertyHelper.getColumnExportSettings(oColumn);
 				aSheetColumns = aSheetColumns.concat(aColumnExportSettings);
 			}, this);
 			return aSheetColumns;
-		}.bind(this));
+		});
 	};
 
 	Table.prototype._isCollapseAllEnabled = function() {
@@ -2324,7 +2323,7 @@ sap.ui.define([
 	 */
 	Table.prototype._onExport = function(bExportAs) {
 		const that = this;
-		return this._createExportColumnConfiguration().then(function(aSheetColumns) {
+		return this._createExportColumnConfiguration().then((aSheetColumns) => {
 
 			// If no columns exist, show message and return without exporting
 			if (!aSheetColumns || !aSheetColumns.length) {
@@ -2350,7 +2349,7 @@ sap.ui.define([
 				fileName: that.getHeader()
 			};
 
-			that._getExportHandler().then(function(oHandler) {
+			that._getExportHandler().then((oHandler) => {
 				oHandler[sExportFunctionName](mExportSettings, fnGetColumnLabel);
 			});
 		});
@@ -2371,19 +2370,18 @@ sap.ui.define([
 			return Promise.resolve(this._oExportHandler);
 		}
 
-		return new Promise(function(fnResolve, fnReject) {
+		return new Promise((fnResolve, fnReject) => {
 			Promise.all([
-				that._loadExportLibrary(),
-				that.getControlDelegate().fetchExportCapabilities(that)
-			]).then(function(aResult) {
+				that._loadExportLibrary(), that.getControlDelegate().fetchExportCapabilities(that)
+			]).then((aResult) => {
 				const oExportCapabilities = aResult[1];
 
-				sap.ui.require(["sap/ui/export/ExportHandler"], function(ExportHandler) {
+				sap.ui.require(["sap/ui/export/ExportHandler"], (ExportHandler) => {
 					that._oExportHandler = new ExportHandler(oExportCapabilities);
 					that._oExportHandler.attachBeforeExport(that._onBeforeExport, that);
 					fnResolve(that._oExportHandler);
 				});
-			}).catch(function(vError) {
+			}).catch((vError) => {
 				// If sap.ui.export is not loaded, show an error message and return without exporting
 				if (!Library.all().hasOwnProperty("sap.ui.export")) {
 					MessageBox.error(Library.getResourceBundleFor("sap.ui.mdc").getText("ERROR_MISSING_EXPORT_LIBRARY"));
@@ -2407,8 +2405,8 @@ sap.ui.define([
 		const aFilters = oEvent.getParameter("filterSettings");
 		const oHelper = this.getPropertyHelper();
 
-		aFilters.forEach(function(oFilter) {
-			const oProperty = oHelper.getProperties().find(function(oPropertyInfo) {
+		aFilters.forEach((oFilter) => {
+			const oProperty = oHelper.getProperties().find((oPropertyInfo) => {
 				return oPropertyInfo.path === oFilter.getProperty();
 			});
 
@@ -2493,8 +2491,8 @@ sap.ui.define([
 		}
 
 		if (!this._oColumnHeaderMenu) {
-			this._oQuickActionContainer = new QuickActionContainer({table: this});
-			this._oItemContainer = new ItemContainer({table: this});
+			this._oQuickActionContainer = new QuickActionContainer({ table: this });
+			this._oItemContainer = new ItemContainer({ table: this });
 			this._oColumnHeaderMenu = new ColumnMenu({
 				id: this.getId() + "-columnHeaderMenu",
 				_quickActions: [this._oQuickActionContainer],
@@ -2517,19 +2515,18 @@ sap.ui.define([
 		this._oQuickActionContainer.setColumn(oColumn);
 		this._oItemContainer.setColumn(oColumn);
 
-		this._fullyInitialized().then(function() {
+		this._fullyInitialized().then(() => {
 			return this.finalizePropertyHelper();
-		}.bind(this)).then(function() {
+		}).then(() => {
 			Promise.all([
-				this._oQuickActionContainer.initializeQuickActions(),
-				this._oItemContainer.initializeItems()
-			]).then(function() {
+				this._oQuickActionContainer.initializeQuickActions(), this._oItemContainer.initializeItems()
+			]).then(() => {
 				if (this._oQuickActionContainer.hasQuickActions() || this._oItemContainer.hasItems()) {
 					this._oColumnHeaderMenu.openBy(oInnerColumn, true);
 					PersonalizationUtils.detectUserPersonalizationCompletion(this, this._oColumnHeaderMenu);
 				}
-			}.bind(this));
-		}.bind(this));
+			});
+		});
 	};
 
 	/**
@@ -2557,7 +2554,7 @@ sap.ui.define([
 	Table.prototype._onCustomSort = function(oEvent, sSortOrder) {
 		const sSortProperty = oEvent.getParameter("property");
 
-		this.getCurrentState().sorters.forEach(function(oProp) {
+		this.getCurrentState().sorters.forEach((oProp) => {
 			if (oProp.name === sSortProperty) {
 				if (oProp.descending && sSortOrder === SortOrder.Descending || !oProp.descending && sSortOrder === SortOrder.Ascending) {
 					sSortOrder = SortOrder.None;
@@ -2600,7 +2597,7 @@ sap.ui.define([
 		});
 	};
 
-	Table.prototype._onCustomAggregate = function (sProperty) {
+	Table.prototype._onCustomAggregate = function(sProperty) {
 		PersonalizationUtils.createAggregateChange(this, {
 			property: sProperty
 		});
@@ -2675,7 +2672,7 @@ sap.ui.define([
 
 		if (iIndex >= 0) {
 			this._oRowTemplate.insertCell(oCellTemplate, iIndex);
-			this._oTable.getItems().forEach(function(oItem) {
+			this._oTable.getItems().forEach((oItem) => {
 				// ignore group headers since it does not have "cells" aggregation
 				if (oItem.isA("sap.m.GroupHeaderListItem")) {
 					return;
@@ -2707,7 +2704,7 @@ sap.ui.define([
 
 		// Remove cells from actual rendered items, as this is not done automatically
 		if (iCellIndex > -1) {
-			this._oTable.getItems().forEach(function(oItem) {
+			this._oTable.getItems().forEach((oItem) => {
 				// Grouping row (when enabled) will not have cells
 				if (oItem.removeCell) {
 					removeMobileItemCell(oItem, iCellIndex, iIndex);
@@ -2781,9 +2778,9 @@ sap.ui.define([
 		}
 
 		if (this._bFinalzingPropertiesOnModification) {
-			this.propertiesFinalized().then(function() {
+			this.propertiesFinalized().then(() => {
 				this.bindRows();
-			}.bind(this));
+			});
 			return;
 		}
 
@@ -2893,10 +2890,10 @@ sap.ui.define([
 
 		aColumns.forEach(function(oColumn) {
 			const oProperty = oPropertyHelper.getProperty(oColumn.getPropertyKey());
-			const aSortableProperties = oProperty ? oProperty.getSortableProperties().map(function(oProperty) {
+			const aSortableProperties = oProperty ? oProperty.getSortableProperties().map((oProperty) => {
 				return oProperty.name;
 			}) : [];
-			const oSortCondition = this._getSortedProperties().find(function(oSortCondition) {
+			const oSortCondition = this._getSortedProperties().find((oSortCondition) => {
 				return aSortableProperties.includes(oSortCondition.name);
 			});
 			let sSortOrder = SortOrder.None;
@@ -3023,9 +3020,9 @@ sap.ui.define([
 	/**
 	 * Handler for theme changes
 	 */
-	Table.prototype.onThemeChanged = function () {
+	Table.prototype.onThemeChanged = function() {
 		if (this._oExportButton) {
-			const sButtonType = MLibrary.ButtonType[ThemeParameters.get({name: "_sap_ui_mdc_Table_ExportButtonType"})];
+			const sButtonType = MLibrary.ButtonType[ThemeParameters.get({ name: "_sap_ui_mdc_Table_ExportButtonType" })];
 			this._oExportButton.setType(sButtonType);
 		}
 	};
@@ -3049,8 +3046,8 @@ sap.ui.define([
 	 * @param {array<sap.ui.model.Context>} aContexts Contexts which should be selected
 	 * @ui5-restricted sap.ui.mdc
 	 * @private
-	*/
-	Table.prototype._setSelectedContexts = function (aContexts) {
+	 */
+	Table.prototype._setSelectedContexts = function(aContexts) {
 		this.getControlDelegate().setSelectedContexts(this, aContexts);
 	};
 

@@ -4,7 +4,7 @@
 
 sap.ui.define([
 	"sap/ui/core/Element", "sap/ui/mdc/enums/TableType"
-], function(Element, TableType) {
+], (Element, TableType) => {
 	"use strict";
 
 	/**
@@ -167,25 +167,25 @@ sap.ui.define([
 			pCreateInnerCreationRow = this._createResponsiveTableCreationRow();
 		}
 
-		return pCreateInnerCreationRow.then(function(oInnerCreationRow) {
+		return pCreateInnerCreationRow.then((oInnerCreationRow) => {
 			insertCreationRow(oTable, oInnerCreationRow);
 		});
 	};
 
 	function getModule(sModulePath) {
-		return new Promise(function(resolve, reject) {
+		return new Promise((resolve, reject) => {
 			sap.ui.require([
 				sModulePath
-			], function(oModule) {
+			], (oModule) => {
 				resolve(oModule);
-			}, function(oError) {
+			}, (oError) => {
 				reject(oError);
 			});
 		});
 	}
 
 	CreationRow.prototype._createGridTableCreationRow = function() {
-		return getModule("sap/ui/table/CreationRow").then(function(CreationRow) {
+		return getModule("sap/ui/table/CreationRow").then((CreationRow) => {
 			cleanupCreationRow(this);
 			this._oInnerCreationRow = new CreationRow(this.getId() + "-inner", {
 				visible: this.getVisible(),
@@ -203,7 +203,7 @@ sap.ui.define([
 			}
 
 			return this._oInnerCreationRow;
-		}.bind(this));
+		});
 	};
 
 	CreationRow.prototype._createResponsiveTableCreationRow = function() {

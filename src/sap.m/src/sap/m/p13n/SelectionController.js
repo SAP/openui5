@@ -434,7 +434,9 @@ sap.ui.define([
 			oChangeContent.value = (sOperation == this.getChangeOperations()["add"]);
 		}
 
-		oChangeContent.targetAggregation = this.getTargetAggregation();
+		if (this.getTargetAggregation()) {
+			oChangeContent.targetAggregation = this.getTargetAggregation();
+		}
 
 		if (this._sPersistenceIdentifier){
 			oChangeContent.persistenceIdentifier = this._sPersistenceIdentifier;

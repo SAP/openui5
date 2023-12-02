@@ -5,7 +5,7 @@
 // Provides control sap.ui.mdc.table.RowSettings
 sap.ui.define([
 	'sap/ui/core/Element'
-], function(Element) {
+], (Element) => {
 	"use strict";
 	/**
 	 * Constructor for new <code>RowSettings</code>.
@@ -44,19 +44,19 @@ sap.ui.define([
 				 * In all other cases the <code>highlightText</code> property must be set.
 				 *
 				 */
-				highlight : {type : "string", group : "Appearance", defaultValue : "None"},
+				highlight: { type: "string", group: "Appearance", defaultValue: "None" },
 
 				/**
 				 * Defines the semantics of the {@link sap.ui.mdc.table.RowSettings#setHighlight highlight} property for accessibility purposes.
 				 */
-				highlightText : {type : "string", group : "Misc", defaultValue : ""},
+				highlightText: { type: "string", group: "Misc", defaultValue: "" },
 
 				/**
 				 * The navigated state of a row.
 				 *
 				 * If set to <code>true</code>, a navigation indicator is displayed at the end of the row.
 				 */
-				navigated : {type : "boolean", group : "Appearance", defaultValue : false}
+				navigated: { type: "boolean", group: "Appearance", defaultValue: false }
 			},
 			aggregations: {
 				/**
@@ -64,14 +64,14 @@ sap.ui.define([
 				 *
 				 * rowActions cannot be bound with a factory. Additionally, {@link sap.m.Table} only works with row actions of type navigation.
 				 */
-				rowActions: {type: "sap.ui.mdc.table.RowActionItem", multiple: true}
+				rowActions: { type: "sap.ui.mdc.table.RowActionItem", multiple: true }
 			}
 		}
 	});
 
 	RowSettings.prototype.getAllSettings = function() {
 		const mSettings = {},
-			thisCloned = this.clone();	// To make sure the binding info instances are not shared between different tables
+			thisCloned = this.clone(); // To make sure the binding info instances are not shared between different tables
 
 		if (this.isBound("navigated")) {
 			mSettings.navigated = thisCloned.getBindingInfo("navigated");
@@ -94,7 +94,7 @@ sap.ui.define([
 		return mSettings;
 	};
 
-	RowSettings.prototype.getAllActions = function () {
+	RowSettings.prototype.getAllActions = function() {
 		const mSettings = {},
 			thisCloned = this.clone();
 
@@ -115,7 +115,7 @@ sap.ui.define([
 		return mSettings;
 	};
 
-	RowSettings.prototype.getRowActionCount = function () {
+	RowSettings.prototype.getRowActionCount = function() {
 		let iCount = 0;
 		if (this.isBound("rowActions")) {
 			iCount = 1;

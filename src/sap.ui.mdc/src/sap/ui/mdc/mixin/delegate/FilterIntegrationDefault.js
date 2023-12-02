@@ -16,15 +16,15 @@ sap.ui.define([
 ) => {
 	"use strict";
 
-	function _createFilterFromExternalConditions (oControl, oTypeMap) {
+	function _createFilterFromExternalConditions(oControl, oTypeMap) {
 		return FilterUtil.getFilterInfo(oTypeMap, oControl?.getConditions() || {}, oControl?.getPropertyHelper?.()?.getProperties() || [])?.filters;
 	}
 
-	function _createInnerFilter (oControl, oTypeMap) {
+	function _createInnerFilter(oControl, oTypeMap) {
 		return oControl.isFilteringEnabled() && _createFilterFromExternalConditions(oControl, oTypeMap);
 	}
 
-	function _createOuterFilter (oControl, oTypeMap) {
+	function _createOuterFilter(oControl, oTypeMap) {
 		const sFilter = oControl.getFilter();
 		const oFilter = sFilter && Element.getElementById(sFilter);
 		return _createFilterFromExternalConditions(oFilter, oTypeMap);

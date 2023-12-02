@@ -11,7 +11,7 @@ sap.ui.define([
 	'sap/ui/model/base/ManagedObjectModel',
 	'sap/ui/base/ManagedObjectObserver',
 	'sap/ui/mdc/enums/ValueHelpPropagationReason'
-], function(
+], (
 	Element,
 	PromiseMixin,
 	Condition,
@@ -20,7 +20,7 @@ sap.ui.define([
 	ManagedObjectModel,
 	ManagedObjectObserver,
 	ValueHelpPropagationReason
-) {
+) => {
 	"use strict";
 
 	/**
@@ -69,8 +69,7 @@ sap.ui.define([
 	 * @alias sap.ui.mdc.ValueHelp
 	 * @experimental As of version 1.95.0
 	 */
-	const ValueHelp = Element.extend("sap.ui.mdc.ValueHelp", /** @lends sap.ui.mdc.ValueHelp.prototype */
-	{
+	const ValueHelp = Element.extend("sap.ui.mdc.ValueHelp", /** @lends sap.ui.mdc.ValueHelp.prototype */ {
 		metadata: {
 			library: "sap.ui.mdc",
 			properties: {
@@ -197,7 +196,7 @@ sap.ui.define([
 						/**
 						 * Indicator if the value help is closed while selection
 						 */
-						close: {type: "boolean"}
+						close: { type: "boolean" }
 					}
 				},
 
@@ -207,8 +206,7 @@ sap.ui.define([
 				 * <b>Note:</b> This event must only be handled by the control the <code>ValueHelp</code> element
 				 * belongs to, not by the application.
 				 */
-				disconnect: {
-				},
+				disconnect: {},
 
 				/**
 				 * This event is fired after the value help has been closed.
@@ -223,7 +221,7 @@ sap.ui.define([
 						/**
 						 * The container which will be opened
 						 */
-						container: {type: "sap.ui.mdc.valuehelp.base.Container"}
+						container: { type: "sap.ui.mdc.valuehelp.base.Container" }
 					}
 				},
 
@@ -235,7 +233,7 @@ sap.ui.define([
 						/**
 						 * The container which was opened
 						 */
-						container: {type: "sap.ui.mdc.valuehelp.base.Container"},
+						container: { type: "sap.ui.mdc.valuehelp.base.Container" },
 						/**
 						 * ID of the initially selected item
 						 */
@@ -308,7 +306,7 @@ sap.ui.define([
 		this._oObserver = new ManagedObjectObserver(_observeChanges.bind(this));
 
 		this._oObserver.observe(this, {
-//			properties: ["filterValue", "conditions"],
+			//			properties: ["filterValue", "conditions"],
 			aggregations: ["typeahead", "dialog"]
 		});
 
@@ -449,8 +447,8 @@ sap.ui.define([
 			sContentId = oDialogAttributes.contentId;
 		}
 
-		const sHasPopup = (oTypeahead && oTypeaheadAttributes.ariaHasPopup) || (oDialog && oDialogAttributes.ariaHasPopup);// use from Typeahead. If no Typeahead use from Dialog
-		const sRole = (oTypeahead && oTypeaheadAttributes.role) || (oDialog && oDialogAttributes.role);// TODO: check Input for only typeahead case
+		const sHasPopup = (oTypeahead && oTypeaheadAttributes.ariaHasPopup) || (oDialog && oDialogAttributes.ariaHasPopup); // use from Typeahead. If no Typeahead use from Dialog
+		const sRole = (oTypeahead && oTypeaheadAttributes.role) || (oDialog && oDialogAttributes.role); // TODO: check Input for only typeahead case
 		const sRoleDescription = (oTypeahead && oTypeaheadAttributes.roleDescription) || (oDialog && oDialogAttributes.roleDescription);
 		const bValueHelpEnabled = !!oDialog && oDialogAttributes.valueHelpEnabled; // a pure typeahead is not a value help
 		const sAutocomplete = (oTypeahead && oTypeaheadAttributes.autocomplete) || (oDialog && oDialogAttributes.autocomplete);
@@ -470,7 +468,7 @@ sap.ui.define([
 	ValueHelp.prototype._retrieveDelegateContent = function(oContainer, sContentId) {
 		let oPromise;
 		if (!sContentId) {
-			const oSelectedContent = oContainer.getSelectedContent();	// use currently active content id if no other is given
+			const oSelectedContent = oContainer.getSelectedContent(); // use currently active content id if no other is given
 			sContentId = oSelectedContent && oSelectedContent.getId();
 		}
 
@@ -479,10 +477,10 @@ sap.ui.define([
 
 
 		if (!oPromise || (oPromise && bIsOpen) || (oPromise && oPromise.aggregation !== oContainer.sParentAggregationName)) { // Create promises or stack running promises if VH is open or if the previous promise was meant for another container
-			const fnFetchContent = function () {
-				return this._getControlDelegatePromise().then(function (oDelegateModule) {
+			const fnFetchContent = function() {
+				return this._getControlDelegatePromise().then((oDelegateModule) => {
 					return oDelegateModule.retrieveContent(this, oContainer, sContentId);
-				}.bind(this));
+				});
 			}.bind(this);
 
 			const bChainPromises = oPromise && oPromise.isPending(); // ignore existing promise in case of non-happy result, maybe use .finally instead?
@@ -514,12 +512,12 @@ sap.ui.define([
 
 		const oOtherContainer = bTypeahead ? this.getDialog() : this.getTypeahead();
 		if (oOtherContainer && oContainer !== oOtherContainer && (oOtherContainer.isOpen() || oOtherContainer.isOpening())) {
-			oOtherContainer.close(); 	// TODO: Check container to be fully closed via promise
+			oOtherContainer.close(); // TODO: Check container to be fully closed via promise
 		}
 
 		if (oContainer && !oContainer.isOpen() && !oContainer.isOpening()) {
 			oContainer.open(this._retrieveDelegateContent(oContainer), bTypeahead);
-			this.fireOpen({container: oContainer});
+			this.fireOpen({ container: oContainer });
 		}
 	};
 
@@ -656,7 +654,7 @@ sap.ui.define([
 
 		const oTypeahead = this.getTypeahead();
 		if (oTypeahead) {
-			return this._retrieveDelegateContent(oTypeahead).then(function () {
+			return this._retrieveDelegateContent(oTypeahead).then(() => {
 				return !!oTypeahead && oTypeahead.isTypeaheadSupported(); // as might depend on binding in content
 			});
 		} else {
@@ -678,7 +676,7 @@ sap.ui.define([
 	 * @private
 	 * @ui5-restricted sap.ui.mdc.field.FieldBase
 	 */
-	ValueHelp.prototype.shouldOpenOnFocus = function () {
+	ValueHelp.prototype.shouldOpenOnFocus = function() {
 		const oContainer = _getValueHelpContainer.call(this, true);
 		return oContainer && oContainer.shouldOpenOnFocus();
 	};
@@ -696,7 +694,7 @@ sap.ui.define([
 	 * @private
 	 * @ui5-restricted sap.ui.mdc.field.FieldBase
 	 */
-	ValueHelp.prototype.shouldOpenOnClick = function () {
+	ValueHelp.prototype.shouldOpenOnClick = function() {
 		const oContainer = _getValueHelpContainer.call(this, true);
 		return oContainer && oContainer.shouldOpenOnClick();
 	};
@@ -744,9 +742,9 @@ sap.ui.define([
 	ValueHelp.prototype.navigate = function(iStep) { // pass through to container
 		const oTypeahead = this.getTypeahead();
 		if (oTypeahead) {
-			const _fnOnNavigatable = function () {
+			const _fnOnNavigatable = function() {
 				if (oTypeahead.shouldOpenOnNavigate() && !oTypeahead.isOpening() && !oTypeahead.isOpen()) {
-					return oTypeahead.open(true).then(function() {
+					return oTypeahead.open(true).then(() => {
 						oTypeahead.navigate(iStep);
 					});
 				}
@@ -826,7 +824,7 @@ sap.ui.define([
 		// TODO: Discuss how we handle binding / typeahead changes ??
 		const oTypeahead = this.getTypeahead();
 		if (oTypeahead) {
-			return this._retrieveDelegateContent(oTypeahead).then(function() {
+			return this._retrieveDelegateContent(oTypeahead).then(() => {
 				oConfig.caseSensitive = oConfig.hasOwnProperty("caseSensitive") ? oConfig.caseSensitive : false; // If supported, search case insensitive
 				const pGetItemPromise = oTypeahead.getItemForValue(oConfig);
 				return pGetItemPromise;
@@ -891,7 +889,7 @@ sap.ui.define([
 
 		if (oDialog) {
 			return oDialog.getValueHelpIcon();
-		} else if (oTypeahead){
+		} else if (oTypeahead) {
 			return oTypeahead.getValueHelpIcon();
 		}
 
@@ -920,7 +918,7 @@ sap.ui.define([
 	function _handleNavigated(oEvent) {
 
 		const oCondition = oEvent.getParameter("condition");
-		this.fireNavigated({condition: oCondition, itemId: oEvent.getParameter("itemId"), leaveFocus: oEvent.getParameter("leaveFocus")});
+		this.fireNavigated({ condition: oCondition, itemId: oEvent.getParameter("itemId"), leaveFocus: oEvent.getParameter("leaveFocus") });
 	}
 
 	function _handleTypeaheadSuggested(oEvent) {
@@ -929,7 +927,7 @@ sap.ui.define([
 		const sFilterValue = oEvent.getParameter("filterValue");
 		const sItemId = oEvent.getParameter("itemId");
 		const bCaseSensitive = oEvent.getParameter("caseSensitive");
-		this.fireTypeaheadSuggested({condition: oCondition, filterValue: sFilterValue, itemId: sItemId, caseSensitive: bCaseSensitive});
+		this.fireTypeaheadSuggested({ condition: oCondition, filterValue: sFilterValue, itemId: sItemId, caseSensitive: bCaseSensitive });
 	}
 
 	function _handleSelect(oEvent) {
@@ -942,17 +940,17 @@ sap.ui.define([
 		const bSingleSelect = this.getMaxConditions() === 1;
 
 		if (bSingleSelect) {
-			aNextConditions = sType === ValueHelpSelectionType.Remove ? [] : aEventConditions.slice(0,1);
+			aNextConditions = sType === ValueHelpSelectionType.Remove ? [] : aEventConditions.slice(0, 1);
 		}
 
 
 		if (sType === ValueHelpSelectionType.Set) {
-			aNextConditions = [].concat(bSingleSelect ? aEventConditions.slice(0,1) : aEventConditions);
+			aNextConditions = [].concat(bSingleSelect ? aEventConditions.slice(0, 1) : aEventConditions);
 		}
 
 		if (sType === ValueHelpSelectionType.Add) {
 			if (bSingleSelect) {
-				aNextConditions = aEventConditions.slice(0,1);
+				aNextConditions = aEventConditions.slice(0, 1);
 			} else {
 				aNextConditions = this.getConditions();
 				for (let i = 0; i < aEventConditions.length; i++) {
@@ -976,7 +974,7 @@ sap.ui.define([
 		}
 
 		if (aNextConditions) {
-			this.setProperty("conditions", aNextConditions, true);	// TODO: update async to only update remove and add once
+			this.setProperty("conditions", aNextConditions, true); // TODO: update async to only update remove and add once
 		}
 	}
 
@@ -994,7 +992,7 @@ sap.ui.define([
 			aConditions = Condition._removeInitialFlags(aConditions);
 			FilterOperatorUtil.updateConditionsValues(aConditions); // to remove static text from static conditions
 
-			this.fireSelect({conditions: aConditions, add: bAdd, close: bCloseAfterConfirm});
+			this.fireSelect({ conditions: aConditions, add: bAdd, close: bCloseAfterConfirm });
 			_onConditionPropagation.call(this, ValueHelpPropagationReason.Select);
 		}
 	}
@@ -1007,7 +1005,7 @@ sap.ui.define([
 	}
 
 	function _handleOpened(oEvent) {
-		this.fireOpened({container: oEvent.getSource(), itemId: oEvent.getParameter("itemId")});
+		this.fireOpened({ container: oEvent.getSource(), itemId: oEvent.getParameter("itemId") });
 	}
 
 	function _handleClosed(oEvent) {

@@ -4,7 +4,7 @@
 
 sap.ui.define([
 	"sap/ui/core/Element"
-], function (Element) {
+], (Element) => {
 	"use strict";
 
 	/**

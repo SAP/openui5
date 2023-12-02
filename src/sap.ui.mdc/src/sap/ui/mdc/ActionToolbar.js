@@ -13,11 +13,11 @@ sap.ui.define([
 	"sap/ui/mdc/enums/ActionToolbarActionAlignment",
 	"sap/ui/mdc/p13n/subcontroller/ActionToolbarController",
 	"sap/m/p13n/Engine"
-], function(Core, OverflowToolbar, OverflowToolbarRenderer, ToolbarSpacer, ToolbarSeparator, mobileLibrary, Element, ActionToolbarActionAlignment, ActionToolbarController, Engine) {
+], (Core, OverflowToolbar, OverflowToolbarRenderer, ToolbarSpacer, ToolbarSeparator, mobileLibrary, Element, ActionToolbarActionAlignment, ActionToolbarController, Engine) => {
 	"use strict";
 
 	// shortcut for sap.m.OverflowToolbarPriority
-	const OverflowToolbarPriority = mobileLibrary.OverflowToolbarPriority;
+	const { OverflowToolbarPriority } = mobileLibrary;
 
 	/**
 	 * Constructor for a new ActionToolbar.
@@ -143,7 +143,7 @@ sap.ui.define([
 
 		Engine.getInstance().register(this, {
 			controller: {
-				actionsKey: new ActionToolbarController({control: this})
+				actionsKey: new ActionToolbarController({ control: this })
 			}
 		});
 	};
@@ -298,7 +298,7 @@ sap.ui.define([
 	};
 
 	ActionToolbar.prototype.getActionsWithLayoutInformation = function(oLayoutInformation) {
-		return this.getActions().filter(function(oActionToolbarAction) {
+		return this.getActions().filter((oActionToolbarAction) => {
 			const oActionLayoutInformation = oActionToolbarAction.getLayoutInformation();
 			return oActionLayoutInformation.aggregationName === oLayoutInformation.aggregationName && oActionLayoutInformation.alignment === oLayoutInformation.alignment;
 		});
@@ -347,10 +347,10 @@ sap.ui.define([
 	ActionToolbar.prototype._hasVisible = function(aArray) {
 		const aPopoverContent = this.getAggregation("_popover") ? this.getAggregation("_popover")._getAllContent() : [];
 
-		const aVisibleContent = aArray.filter(function (oControl) {
+		const aVisibleContent = aArray.filter((oControl) => {
 			return aPopoverContent.indexOf(oControl) === -1;
 		});
-		return aVisibleContent.some(function(oControl) {
+		return aVisibleContent.some((oControl) => {
 			// visible="true" and does not have "0px" width
 			const bHasWidth = oControl.getWidth ? oControl.getWidth() !== "0px" : true;
 			if (oControl.isA("sap.ui.mdc.actiontoolbar.ActionToolbarAction")) {
@@ -366,7 +366,7 @@ sap.ui.define([
 		const fnChangeVisibility = (oSeparator, bNewValue) => {
 			if (oSeparator.getVisible() !== bNewValue) {
 				oSeparator.setVisible(bNewValue);
-				oSeparator.invalidate();
+				oSeparator.rerender();
 			}
 		};
 
@@ -386,8 +386,8 @@ sap.ui.define([
 	};
 
 	/*
-	* Overwrite generated functions to use internal array to look for aggregation
-	*/
+	 * Overwrite generated functions to use internal array to look for aggregation
+	 */
 	ActionToolbar.prototype.indexOfContent = function(oObject) {
 		return this.getContent().indexOf(oObject);
 	};
@@ -411,9 +411,9 @@ sap.ui.define([
 		const aActions = [];
 		let sId;
 
-		this.getActions().forEach(function(oAction, iIndex) {
+		this.getActions().forEach((oAction, iIndex) => {
 			sId = oAction && oAction.getId();
-			if (oAction.getVisible()){
+			if (oAction.getVisible()) {
 				aActions.push({
 					name: sId,
 					alignment: oAction.getLayoutInformation().alignment
@@ -431,7 +431,7 @@ sap.ui.define([
 			getProperties: function() {
 
 				const aItems = [];
-				this.getActions().forEach(function(oAction){
+				this.getActions().forEach((oAction) => {
 					aItems.push({
 						name: oAction.getId(),
 						alignment: oAction.getLayoutInformation().alignment,

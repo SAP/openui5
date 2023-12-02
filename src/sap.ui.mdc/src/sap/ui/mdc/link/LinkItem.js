@@ -4,7 +4,7 @@
 
 sap.ui.define([
 	'sap/ui/core/Element'
-], function(Element) {
+], (Element) => {
 	"use strict";
 
 	/**
@@ -20,8 +20,7 @@ sap.ui.define([
 	 * @since 1.58.0
 	 * @alias sap.ui.mdc.link.LinkItem
 	 */
-	const LinkItem = Element.extend("sap.ui.mdc.link.LinkItem", /** @lends sap.ui.mdc.link.LinkItem.prototype */
-	{
+	const LinkItem = Element.extend("sap.ui.mdc.link.LinkItem", /** @lends sap.ui.mdc.link.LinkItem.prototype */ {
 		metadata: {
 			library: "sap.ui.mdc",
 			properties: {
@@ -78,16 +77,16 @@ sap.ui.define([
 					type: "boolean",
 					defaultValue: false
 				}
-			// ER: LinkItem should not have the visible property.
-			// The visibility should be modified either via default logic defined by UX like
-			// * show only less 10 links
-			// * show always initiallyVisible links and other do not show
-			// or wia personalization. So the application should not be able to manipulate the
-			// visibility in breakout.
-			// visible: {
-			// 	type: "boolean",
-			// 	defaultValue: true
-			// }
+				// ER: LinkItem should not have the visible property.
+				// The visibility should be modified either via default logic defined by UX like
+				// * show only less 10 links
+				// * show always initiallyVisible links and other do not show
+				// or wia personalization. So the application should not be able to manipulate the
+				// visibility in breakout.
+				// visible: {
+				// 	type: "boolean",
+				// 	defaultValue: true
+				// }
 			}
 		}
 	});

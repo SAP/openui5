@@ -8,14 +8,14 @@ sap.ui.define([
 	'sap/ui/mdc/condition/Condition',
 	'sap/ui/mdc/enums/ConditionValidated',
 	'sap/ui/mdc/enums/OperatorName'
-], function(
+], (
 	library,
 	FieldBase,
 	FieldBaseRenderer,
 	Condition,
 	ConditionValidated,
 	OperatorName
-) {
+) => {
 	"use strict";
 
 	/**
@@ -46,7 +46,7 @@ sap.ui.define([
 	 * @since 1.93.0
 	 *
 	 * @public
-		   * @experimental As of version 1.93.0
+	 * @experimental As of version 1.93.0
 	 */
 	const Field = FieldBase.extend("sap.ui.mdc.MultiValueField", /* @lends sap.ui.mdc.MultiValueField.prototype */ {
 		metadata: {
@@ -275,11 +275,11 @@ sap.ui.define([
 
 		if (!this.bDelegateInitialized) {
 			// wait until delegate is loaded
-			this.awaitControlDelegate().then(function() {
+			this.awaitControlDelegate().then(() => {
 				if (!this.bIsDestroyed) {
 					_updateItems.call(this.getConditions());
 				}
-			}.bind(this));
+			});
 			return;
 		}
 
@@ -291,40 +291,38 @@ sap.ui.define([
 
 		if (!this.bDelegateInitialized) {
 			// wait until delegate is loaded
-			this.awaitControlDelegate().then(function() {
+			this.awaitControlDelegate().then(() => {
 				if (!this.bIsDestroyed) {
 					_triggerConditionUpdate.call(this);
 				}
-			}.bind(this));
+			});
 			return;
 		}
 
 		if (!this._iConditionUpdateTimer) {
 			// call async. to update all items at the same time
-			this._iConditionUpdateTimer = setTimeout(function() {
+			this._iConditionUpdateTimer = setTimeout(() => {
 				_updateCondition.call(this);
 				this._iConditionUpdateTimer = undefined;
-			}.bind(this), 0);
+			}, 0);
 		}
 
 	}
 
 	function _updateCondition() {
-
 		const aItems = this.getItems();
 		const aConditions = [];
 
-		for (let i = 0; i < aItems.length; i++) {
-			const oItem = aItems[i];
+		for (const oItem of aItems) {
 			const oCondition = Condition.createItemCondition(_getInternalValue(oItem, "key"), _getInternalValue(oItem, "description"));
 			oCondition.validated = ConditionValidated.Validated; // see every value set from outside as validated (to determine description, if needed)
 			aConditions.push(oCondition);
 		}
+
 		// TODO: update conditions only if really changed
 		this._bConditionsUpdateFromItems = true;
 		this.setConditions(aConditions);
 		this._bConditionsUpdateFromItems = false;
-
 	}
 
 	function _getInternalValue(oItem, sProperty) {

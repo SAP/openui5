@@ -2,16 +2,16 @@
  * ${copyright}
  */
 
-sap.ui.define(["sap/ui/mdc/util/loadModules", "sap/base/Log", "sap/ui/mdc/BaseDelegate"], function (loadModules, Log, BaseDelegate) {
+sap.ui.define(["sap/ui/mdc/util/loadModules", "sap/base/Log", "sap/ui/mdc/BaseDelegate"], (loadModules, Log, BaseDelegate) => {
 	"use strict";
 
-	const _validateDelegateConfig = function (oConfig) {
+	const _validateDelegateConfig = function(oConfig) {
 		if (!oConfig || !oConfig.name) {
-			throw new Error("Delegate configuration '" + (oConfig && JSON.stringify(oConfig)) +  "' invalid");
+			throw new Error("Delegate configuration '" + (oConfig && JSON.stringify(oConfig)) + "' invalid");
 		}
 	};
 
-	const _fnInitDelegate = function (oResult) {
+	const _fnInitDelegate = function(oResult) {
 		if (!this.bIsDestroyed) {
 			if (oResult instanceof Error) {
 				this.fnRejectDelegate(oResult);
@@ -67,19 +67,19 @@ sap.ui.define(["sap/ui/mdc/util/loadModules", "sap/base/Log", "sap/ui/mdc/BaseDe
 	 * @private
 	 * @experimental
 	 * @ui5-restricted sap.ui.mdc
-	*/
+	 */
 	const DelegateMixin = {};
 
-	DelegateMixin.init = function (fnInit) {
-		return function () {
+	DelegateMixin.init = function(fnInit) {
+		return function() {
 
 			this.bDelegateInitialized = false; // Indicator for the availability of delegates
 			this.bDelegateLoading = false; //  Indicates whether the initialization of delegate modules is triggered but not yet completed (loading necessary)
 
-			this._oDelegateInitialized = new Promise(function (resolve, reject) { // Promise resolving delegate module after initControlDelegate was executed.
+			this._oDelegateInitialized = new Promise((resolve, reject) => { // Promise resolving delegate module after initControlDelegate was executed.
 				this.fnResolveDelegate = resolve;
 				this.fnRejectDelegate = reject;
-			}.bind(this));
+			});
 
 			if (fnInit) {
 				fnInit.apply(this, arguments);
@@ -87,15 +87,15 @@ sap.ui.define(["sap/ui/mdc/util/loadModules", "sap/base/Log", "sap/ui/mdc/BaseDe
 		};
 	};
 
-	DelegateMixin.applySettings = function (fnApplySettings) {
-		return function (mSettings) {
+	DelegateMixin.applySettings = function(fnApplySettings) {
+		return function(mSettings) {
 			fnApplySettings.apply(this, arguments);
 			this._bDelegateLocked = true;
 			return this;
 		};
 	};
 
-	DelegateMixin.setDelegate = function (fnSetDelegate) {
+	DelegateMixin.setDelegate = function(fnSetDelegate) {
 		return function(oConf) {
 			if (this._bDelegateLocked) {
 				throw new Error("Runtime delegate configuration is not permitted.");
@@ -114,7 +114,7 @@ sap.ui.define(["sap/ui/mdc/util/loadModules", "sap/base/Log", "sap/ui/mdc/BaseDe
 	 * @param {module:sap/ui/mdc/BaseDelegate} [oPreloadedModule] Preloaded delegate module
 	 * @returns {Promise<module:sap/ui/mdc/BaseDelegate>} Returns a <code>Promise</code> that resolves the delegate module, if available
 	 */
-	DelegateMixin.initControlDelegate = function (oPreloadedModule) {
+	DelegateMixin.initControlDelegate = function(oPreloadedModule) {
 
 		if (this.bIsDestroyed) {
 			Log.warning("Delegate module initialization omitted as control is being destroyed.");
@@ -148,7 +148,7 @@ sap.ui.define(["sap/ui/mdc/util/loadModules", "sap/base/Log", "sap/ui/mdc/BaseDe
 	 * @returns {object} Payload set for delegate property
 	 * @public
 	 */
-	DelegateMixin.getPayload = function () {
+	DelegateMixin.getPayload = function() {
 		if (!this._oPayload) {
 			const oDelegateConfig = this.getDelegate();
 			this._oPayload = oDelegateConfig && oDelegateConfig.payload;
@@ -164,7 +164,7 @@ sap.ui.define(["sap/ui/mdc/util/loadModules", "sap/base/Log", "sap/ui/mdc/BaseDe
 	 * @throws Throws an error if the delegate module is not available
 	 * @public
 	 */
-	DelegateMixin.getTypeMap = function () {
+	DelegateMixin.getTypeMap = function() {
 		if (!this._oTypeMap) {
 			if (!this._oDelegate) {
 				throw new Error("A delegate instance providing a TypeMap is not (yet) available.");
@@ -182,7 +182,7 @@ sap.ui.define(["sap/ui/mdc/util/loadModules", "sap/base/Log", "sap/ui/mdc/BaseDe
 	 * @throws Throws an error if the delegate module is not available
 	 * @public
 	 */
-	DelegateMixin.getControlDelegate = function () {
+	DelegateMixin.getControlDelegate = function() {
 		if (!this._oDelegate) {
 			if (this.isDestroyed()) {
 				throw new Error("A delegate instance is not available. The object instance is destroyed.");
@@ -201,12 +201,12 @@ sap.ui.define(["sap/ui/mdc/util/loadModules", "sap/base/Log", "sap/ui/mdc/BaseDe
 	 * @returns {Promise<module:sap/ui/mdc/BaseDelegate>} Returns a <code>Promise</code> reflecting the delegate initialization
 	 * @throws Throws an error if the delegate module is not available
 	 */
-	DelegateMixin.awaitControlDelegate = function () {
+	DelegateMixin.awaitControlDelegate = function() {
 		return this._oDelegateInitialized;
 	};
 
-	DelegateMixin.exit = function (fnExit) {
-		return function () {
+	DelegateMixin.exit = function(fnExit) {
+		return function() {
 			this.fnResolveDelegate = null;
 			this.fnRejectDelegate = null;
 
@@ -224,7 +224,7 @@ sap.ui.define(["sap/ui/mdc/util/loadModules", "sap/base/Log", "sap/ui/mdc/BaseDe
 		};
 	};
 
-	return function () {
+	return function() {
 		// wrappers
 		this.applySettings = DelegateMixin.applySettings(this.applySettings);
 		this.exit = DelegateMixin.exit(this.exit);

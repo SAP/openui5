@@ -4,9 +4,9 @@
 
 sap.ui.define([
 	"../util/PropertyHelper"
-], function(
+], (
 	PropertyHelperBase
-) {
+) => {
 	"use strict";
 
 	/**

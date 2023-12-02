@@ -4,7 +4,7 @@
 
 sap.ui.define([
 	'sap/ui/mdc/enums/BaseType'
-], function(BaseType) {
+], BaseType => {
 	"use strict";
 
 	return TypeUtil;

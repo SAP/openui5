@@ -3,13 +3,12 @@
  */
 
 sap.ui.define([
-	"sap/ui/core/Control",
-	"./ChartImplementationContainerRenderer",
-	"sap/ui/core/Element",
-	"sap/ui/thirdparty/jquery"
-],
-	function (Control, Renderer, Element, jQuery
-	) {
+		"sap/ui/core/Control",
+		"./ChartImplementationContainerRenderer",
+		"sap/ui/core/Element",
+		"sap/ui/thirdparty/jquery"
+	],
+	(Control, Renderer, Element, jQuery) => {
 		"use strict";
 
 		/**
@@ -30,8 +29,7 @@ sap.ui.define([
 		const ChartImplementationContainer = Control.extend("sap.ui.mdc.chart.ChartImplementationContainer", /** @lends sap.ui.mdc.chart.ChartImplementationContainer.prototype */ {
 			metadata: {
 				library: "sap.ui.mdc",
-				interfaces: [
-				],
+				interfaces: [],
 				properties: {
 					/**
 					 * Toggles the visibility of the noDataContent & content
@@ -75,8 +73,7 @@ sap.ui.define([
 						multiple: false
 					}
 				},
-				events: {
-				}
+				events: {}
 			},
 
 			renderer: Renderer
@@ -88,7 +85,7 @@ sap.ui.define([
 		 * @private
 		 * @ui5-restricted sap.ui.mdc
 		 */
-		ChartImplementationContainer.prototype.init = function () {
+		ChartImplementationContainer.prototype.init = function() {
 			this._updateVisibilities();
 		};
 
@@ -100,8 +97,8 @@ sap.ui.define([
 		 *
 		 * @private
 		 * @ui5-restricted sap.ui.mdc
-		*/
-		ChartImplementationContainer.prototype.setShowNoDataStruct = function (bValue) {
+		 */
+		ChartImplementationContainer.prototype.setShowNoDataStruct = function(bValue) {
 			this.setProperty("showNoDataStruct", bValue);
 
 			this._updateVisibilities();
@@ -117,7 +114,7 @@ sap.ui.define([
 		 * @private
 		 * @ui5-restricted sap.fe, sap.ui.mdc
 		 */
-		ChartImplementationContainer.prototype.setContent = function (oContent) {
+		ChartImplementationContainer.prototype.setContent = function(oContent) {
 			this.setAggregation("content", oContent);
 			this._updateVisibilities();
 			return this;
@@ -131,7 +128,7 @@ sap.ui.define([
 		 * @private
 		 * @ui5-restricted sap.fe, sap.ui.mdc
 		 */
-		ChartImplementationContainer.prototype.setNoDataContent = function (oContent) {
+		ChartImplementationContainer.prototype.setNoDataContent = function(oContent) {
 			this.setAggregation("noDataContent", oContent);
 			this._updateVisibilities();
 			return this;
@@ -147,7 +144,7 @@ sap.ui.define([
 		 * @private
 		 * @ui5-restricted sap.fe, sap.ui.mdc
 		 */
-		ChartImplementationContainer.prototype.setChartNoDataContent = function (oContent) {
+		ChartImplementationContainer.prototype.setChartNoDataContent = function(oContent) {
 			this.setAssociation("chartNoDataContent", oContent);
 			this._updateVisibilities();
 			return this;
@@ -160,7 +157,7 @@ sap.ui.define([
 		 * @private
 		 * @ui5-restricted sap.fe, sap.ui.mdc
 		 */
-		ChartImplementationContainer.prototype.showOverlay = function (bShow) {
+		ChartImplementationContainer.prototype.showOverlay = function(bShow) {
 			const $this = this.$();
 			let $overlay = $this.find(".sapUiMdcChartOverlay");
 			if (bShow && $overlay.length === 0) {
@@ -171,11 +168,11 @@ sap.ui.define([
 			}
 		};
 
-		ChartImplementationContainer.prototype._getChartNoDataForRenderer = function () {
+		ChartImplementationContainer.prototype._getChartNoDataForRenderer = function() {
 			return Element.getElementById(this.getChartNoDataContent());
 		};
 
-		ChartImplementationContainer.prototype._updateVisibilities = function () {
+		ChartImplementationContainer.prototype._updateVisibilities = function() {
 			const bVisible = this.getShowNoDataStruct();
 
 			if (this.getContent()) {

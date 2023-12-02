@@ -3,7 +3,7 @@
  */
 sap.ui.define([
 	"sap/ui/mdc/field/content/DefaultContent"
-], function(DefaultContent) {
+], (DefaultContent) => {
 	"use strict";
 
 	/**
