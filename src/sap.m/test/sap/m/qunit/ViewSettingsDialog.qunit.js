@@ -3647,6 +3647,7 @@ sap.ui.define([
 		oViewSettingsDialog._presetFilterList = oViewSettingsDialog._filterList = {
 			destroy: function () {},
 			destroyItems: function () {},
+			addItemGroup: function (oGroup, oItem) { aResult.push(oItem); },
 			addItem: function (oItem) { aResult.push(oItem); }
 		};
 
@@ -3676,6 +3677,7 @@ sap.ui.define([
 			getId: function () {},
 			destroy: function () {},
 			destroyItems: function () {},
+			addItemGroup: function (oGroup, oItem) { aResult.push(oItem); },
 			addItem: function (oItem) { aResult.push(oItem); }
 		};
 
@@ -3704,6 +3706,7 @@ sap.ui.define([
 			getId: function () {},
 			destroy: function () {},
 			destroyItems: function () {},
+			addItemGroup: function (oGroup, oItem) { aResult.push(oItem); },
 			addItem: function (oItem) { aResult.push(oItem); }
 		};
 

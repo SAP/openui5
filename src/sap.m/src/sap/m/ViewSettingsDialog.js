@@ -577,7 +577,7 @@ function(
 			oList = new List(sListId, this.mToList[sType].listOptions),
 			oGHI = this._createGroupHeaderItem(sType);
 
-		oList.addItem(oGHI);
+		oList.addItemGroup(undefined, oGHI);
 		this[this.mToList[sType].listName] = oList;
 
 		return oList;
@@ -784,7 +784,7 @@ function(
 			if (!oList) {
 				oList = this._createList(sType);
 			} else if (!oList.getItems().length) {
-				oList.addItem(this._createGroupHeaderItem(sType));
+				oList.addItemGroup(undefined, this._createGroupHeaderItem(sType));
 			}
 
 			oList.addItem(oListItem);
@@ -820,7 +820,7 @@ function(
 				oList = this._createList(sType);
 				oList.insertItem(oListItem, iIndex);
 			} else if (!oList.getItems().length) {
-				oList.addItem(this._createGroupHeaderItem(sType));
+				oList.addItemGroup(undefined, this._createGroupHeaderItem(sType));
 				oList.insertItem(oListItem, iIndex + 1);
 			} else {
 				oList.insertItem(oListItem, iIndex);
@@ -2299,7 +2299,7 @@ function(
 			ariaLabelledBy: this._ariaSortOrderInvisibleText
 		});
 
-		this._sortOrderList.addItem(new GroupHeaderListItem({title: this._rb.getText("VIEWSETTINGS_SORT_BY")}));
+		this._sortOrderList.addItemGroup(undefined, new GroupHeaderListItem({title: this._rb.getText("VIEWSETTINGS_SORT_BY")}));
 
 		this._sortOrderList.addItem(new StandardListItem({
 			title : this._rb.getText("VIEWSETTINGS_ASCENDING_ITEM")
@@ -2330,7 +2330,7 @@ function(
 
 		this._groupList.destroyItems();
 		if (aGroupItems.length) {
-			this._groupList.addItem(new GroupHeaderListItem({title: sTitleGroupObject}));
+			this._groupList.addItemGroup(undefined, new GroupHeaderListItem({title: sTitleGroupObject}));
 			aGroupItems.forEach(function (oItem) {
 				oListItem = new StandardListItem({
 					id: oItem.getId() + LIST_ITEM_SUFFIX,
@@ -2398,7 +2398,7 @@ function(
 			ariaLabelledBy: this._ariaGroupOrderInvisibleText
 		});
 
-		this._groupOrderList.addItem(new GroupHeaderListItem({title: this._rb.getText("VIEWSETTINGS_GROUP_BY")}));
+		this._groupOrderList.addItemGroup(undefined, new GroupHeaderListItem({title: this._rb.getText("VIEWSETTINGS_GROUP_BY")}));
 		this._groupOrderList.addItem(new StandardListItem({
 			title : this._rb.getText("VIEWSETTINGS_ASCENDING_ITEM")
 		}).data("item", false).setSelected(true));
@@ -2466,7 +2466,7 @@ function(
 		this._filterList.destroyItems();
 		aFilterItems = this.getFilterItems();
 
-		this._filterList.addItem(new GroupHeaderListItem({title: sTitleFilterBy}));
+		this._filterList.addItemGroup(undefined, new GroupHeaderListItem({title: sTitleFilterBy}));
 
 		if (aFilterItems.length) {
 			aFilterItems.forEach(function(oItem) {
