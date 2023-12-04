@@ -535,15 +535,15 @@ sap.ui.define([
 			// Note: #calculateKeyPredicateRH doesn't know better :-(
 			oEntityData["@$ui5.node.level"] = iLevel;
 
-			if (this.oAggregation.expandTo >= Number.MAX_SAFE_INTEGER) { // "expand all"
+			if (oCache === this.oFirstLevel && this.oAggregation.expandTo > 1) {
 				const [iRank] = await Promise.all([
 					this.requestRank(oEntityData, oGroupLock),
 					this.requestNodeProperty(oEntityData, oGroupLock)
 				]);
 
-				this.oFirstLevel.removeElement(0, sTransientPredicate);
+				oCache.removeElement(0, sTransientPredicate);
 				_Helper.deletePrivateAnnotation(oEntityData, "transientPredicate");
-				this.oFirstLevel.restoreElement(iRank, oEntityData);
+				oCache.restoreElement(iRank, oEntityData);
 
 				delete this.aElements.$byPredicate[sTransientPredicate];
 				_Helper.setPrivateAnnotation(oEntityData, "rank", iRank);
