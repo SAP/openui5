@@ -241,13 +241,13 @@ sap.ui.define([
 
 	FilterController.prototype.getDelta = function(mPropertyBag) {
 		const existingState = mPropertyBag.existingState;
-		const changedState = mPropertyBag.changedState;
+		let changedState = mPropertyBag.changedState;
 
 		if (deepEqual(existingState, changedState)) {
 			return [];
 		}
 
-		changedState.reduce((mConditions, oState) => {
+		changedState = changedState.reduce((mConditions, oState) => {
 			const sKey = oState.key;
 			mConditions[sKey] = mConditions[sKey] || [];
 			oState.conditions.forEach(function(oConditionForKey){
