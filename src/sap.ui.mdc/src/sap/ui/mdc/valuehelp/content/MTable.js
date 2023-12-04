@@ -438,7 +438,7 @@ sap.ui.define([
 		var oFilter = _createItemFilters.call(this, oConfig, oConditions);
 
 		var aFilteredItems = FilterProcessor.apply(aItems, oFilter, _getFilterValue);
-		if (aFilteredItems.length === 1) {
+		if (aFilteredItems.length === 1 || ( aFilteredItems.length > 1 && this.getUseFirstMatch())) {
 			var oBindingContext = this._getListItemBindingContext(aFilteredItems[0]);
 			var oValue = this._getItemFromContext(oBindingContext, {inParameters: aInParameters, outParameters: aOutParameters});
 			return {key: oValue.key, description: oValue.description, payload: oValue.payload};

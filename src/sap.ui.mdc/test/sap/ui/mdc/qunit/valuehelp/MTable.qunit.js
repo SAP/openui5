@@ -619,6 +619,50 @@ sap.ui.define([
 
 	});
 
+	QUnit.test("getItemForValue: check for key - no unique match with setUseFirstMatch=true", function(assert) {
+
+		oMTable.setUseFirstMatch(true);
+		oModel.setData({
+			items: [
+				{ text: "Item 1", key: "I1", additionalText: "Text 1a", inValue: "a" },
+				{ text: "Item 3", key: "I3", additionalText: "Text 3", inValue: "3a" },
+				{ text: "X-Item 3", key: "I3", additionalText: "Text 3", inValue: "3b" }
+			]
+		});
+
+		var oConfig = {
+			parsedValue: "I3",
+			parsedDescription: undefined,
+			value: "I3",
+			inParameters: undefined,
+			outParameters: undefined,
+			bindingContext: undefined,
+			checkKey: true,
+			checkDescription: false,
+			caseSensitive: true,
+			exception: ParseException,
+			control: "MyControl"
+		};
+
+		_fakeV4Binding();
+
+		var oPromise = oMTable.getItemForValue(oConfig);
+		assert.ok(oPromise instanceof Promise, "getItemForValue returns promise");
+
+		if (oPromise) {
+			var fnDone = assert.async();
+			oPromise.then(function(oItem) {
+				assert.ok(true, "Promise Then must be called");
+				assert.deepEqual(oItem, {key: "I3", description: "Item 3", payload: undefined}, "Item returned");
+				fnDone();
+			}).catch(function(oError) {
+				assert.notOk(true, "Promise Catch called: " + oError.message || oError);
+				fnDone();
+			});
+		}
+
+	});
+
 	QUnit.test("getItemForValue: check for key - match from request", function(assert) {
 
 		var oConfig = {
@@ -778,6 +822,7 @@ sap.ui.define([
 
 	QUnit.test("getItemForValue: check for description - match with case sensitive check", function(assert) {
 
+		oMTable.setUseFirstMatch(false);
 		oModel.setData({
 			items: [
 				{ text: "Item 1", key: "I1", additionalText: "Text 1a", inValue: "a" },
