@@ -1634,7 +1634,9 @@ sap.ui.define([
 				}
 			};
 
-			var oSaveDirtyChangesStub = sandbox.stub(this.oModel.oChangePersistence, "saveDirtyChanges").resolves();
+			var oSaveDirtyChangesStub = sandbox.stub(this.oModel.oChangePersistence, "saveDirtyChanges").resolves({
+				response: [{fileName: "change1"}, {fileName: "change2"}, {fileName: "change3"}]
+			});
 			var oCopyVariantSpy = sandbox.spy(this.oModel, "copyVariant");
 			var oSetVariantPropertiesSpy = sandbox.spy(this.oModel, "setVariantProperties");
 
