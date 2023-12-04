@@ -1113,6 +1113,8 @@ sap.ui.define([
 		}
 	}
 
+	function mustBeMocked() { throw new Error("Must be mocked"); }
+
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.odata.v4.ODataMetaModel", {
 		// remember copy to ensure test isolation
@@ -7282,28 +7284,52 @@ forEach({
 	});
 
 	//*********************************************************************************************
-	QUnit.test("requestValue4Annotation: no edm:Path", function (assert) {
+// 0: no addt'l Nav.Prop. // 1: no $Partner // 2: addt'l Nav.Prop. w/ $Partner
+[0, 1, 2].forEach((i) => {
+	let oOverload;
+
+	function setup(oTestContext, oContext) {
+		oTestContext.mock(oContext).expects("getPath").withExactArgs().returns("~path~");
+		oTestContext.mock(_Helper).expects("getMetaPath").withExactArgs("~path~")
+			.returns(i > 0 ? "/meta" : "/meta/path");
+		oTestContext.oMetaModelMock.expects("getObject").exactly(i > 0 ? 1 : 0)
+			.withExactArgs("/meta/path/$Partner").returns(i > 1 ? "~Partner~" : undefined);
+		if (i > 1) {
+			oOverload = {
+				$IsBound : true,
+				$Parameter : [{$Name : "~Partner~"}]
+			};
+		}
+	}
+
+	//* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+	QUnit.test("requestValue4Annotation: no edm:Path #" + i, function (assert) {
 		var oContext = {
-				getModel : function () { return null; }
+				getModel : function () { return null; },
+				getPath : mustBeMocked
 			},
 			oMetaContext = {},
 			vRawValue = {};
 
-		this.oMetaModelMock.expects("createBindingContext").withExactArgs("/meta/path")
+		setup(this, oContext);
+		this.oMetaModelMock.expects("createBindingContext").withExactArgs("/meta/path/value")
 			.returns(oMetaContext);
 		this.mock(AnnotationHelper).expects("value")
-			.withExactArgs(sinon.match.same(vRawValue), {context : sinon.match.same(oMetaContext)})
+			.withExactArgs(sinon.match.same(vRawValue), {
+				context : sinon.match.same(oMetaContext),
+				overload : oOverload
+			})
 			.returns("foo");
 
 		// code under test
-		return this.oMetaModel.requestValue4Annotation(vRawValue, "/meta/path", oContext)
+		return this.oMetaModel.requestValue4Annotation(vRawValue, "/meta/path/value", oContext)
 			.then(function (sValue) {
 				assert.strictEqual(sValue, "foo");
 			});
 	});
 
-	//*********************************************************************************************
-	QUnit.test("requestValue4Annotation: composite binding", function (assert) {
+	//* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+	QUnit.test("requestValue4Annotation: composite binding #" + i, function (assert) {
 		var oModel = new Model(),
 			oContext = Context.create(oModel, null, "/Entity(1)"),
 			oBarBinding = new PropertyBinding(oModel, "bar", oContext),
@@ -7318,10 +7344,14 @@ forEach({
 		oFooBinding.requestValue = function () {};
 		oModel.bindProperty = function () {};
 
-		this.oMetaModelMock.expects("createBindingContext").withExactArgs("/meta/path")
+		setup(this, oContext);
+		this.oMetaModelMock.expects("createBindingContext").withExactArgs("/meta/path/value")
 			.returns(oMetaContext);
 		this.mock(AnnotationHelper).expects("value")
-			.withExactArgs(sinon.match.same(vRawValue), {context : sinon.match.same(oMetaContext)})
+			.withExactArgs(sinon.match.same(vRawValue), {
+				context : sinon.match.same(oMetaContext),
+				overload : oOverload
+			})
 			.returns("{foo} {bar}"); // sync behavior only with a sap.ui.model.CompositeBinding
 		oModelMock.expects("bindProperty")
 			.withExactArgs("foo", sinon.match.same(oContext), undefined)
@@ -7336,14 +7366,14 @@ forEach({
 		this.mock(oBarBinding).expects("requestValue").withExactArgs().resolves();
 
 		// code under test
-		return this.oMetaModel.requestValue4Annotation(vRawValue, "/meta/path", oContext)
+		return this.oMetaModel.requestValue4Annotation(vRawValue, "/meta/path/value", oContext)
 			.then(function (sValue) {
 				assert.strictEqual(sValue, "foo-value bar-value");
 			});
 	});
 
-	//*********************************************************************************************
-	QUnit.test("requestValue4Annotation: async", function (assert) {
+	//* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+	QUnit.test("requestValue4Annotation: async #" + i, function (assert) {
 		var oModel = new Model(),
 			oContext = Context.create(oModel, null, "/Entity(1)"),
 			oFooBinding = new PropertyBinding(oModel, "foo", oContext),
@@ -7356,10 +7386,14 @@ forEach({
 		oFooBinding.requestValue = function () {};
 		oModel.bindProperty = function () {};
 
-		this.oMetaModelMock.expects("createBindingContext").withExactArgs("/meta/path")
+		setup(this, oContext);
+		this.oMetaModelMock.expects("createBindingContext").withExactArgs("/meta/path/value")
 			.returns(oMetaContext);
 		this.mock(AnnotationHelper).expects("value")
-			.withExactArgs(sinon.match.same(vRawValue), {context : sinon.match.same(oMetaContext)})
+			.withExactArgs(sinon.match.same(vRawValue), {
+				context : sinon.match.same(oMetaContext),
+				overload : oOverload
+			})
 			.returns("{foo}");
 		oModelMock.expects("bindProperty")
 			.withExactArgs("foo", sinon.match.same(oContext), undefined)
@@ -7372,11 +7406,12 @@ forEach({
 			});
 
 		// code under test
-		return this.oMetaModel.requestValue4Annotation(vRawValue, "/meta/path", oContext)
+		return this.oMetaModel.requestValue4Annotation(vRawValue, "/meta/path/value", oContext)
 			.then(function (sValue) {
 				assert.strictEqual(sValue, "foo-value");
 			});
 	});
+}); // end of forEach
 
 	//*********************************************************************************************
 	QUnit.test("filterValueListRelevantQualifiers", function (assert) {
