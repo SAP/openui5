@@ -15,11 +15,26 @@ sap.ui.define([
 	"sap/m/Text",
 	"sap/ui/core/dnd/DragDropInfo",
 	"sap/ui/core/dnd/DropInfo",
-	"sap/m/Dialog"
-], function (Core, qutils, KeyCodes, CellSelector, GridTable, ODataModel, MockServer, GridColumn, GridFixedRowMode, Text, DragDropInfo, DropInfo, Dialog) {
+	"sap/m/Dialog",
+	"sap/ui/model/json/JSONModel",
+	"sap/ui/core/CustomData",
+	"sap/ui/mdc/Table",
+	"sap/ui/mdc/table/Column"
+], function (Core, qutils, KeyCodes, CellSelector, GridTable, ODataModel, MockServer, GridColumn, GridFixedRowMode, Text, DragDropInfo, DropInfo, Dialog, JSONModel, CustomData, MDCTable, MDCColumn) {
 	"use strict";
 
 	const sServiceURI = "/service/";
+
+	var aData = [];
+	for (var i = 0; i < 25; i++) {
+		aData.push({
+			id: i,
+			name: "name" + i,
+			color: "color" + (i % 10)
+		});
+	}
+
+	var oJSONModel = new JSONModel(aData);
 
 	function createTable() {
 		return new GridTable({
@@ -35,6 +50,33 @@ sap.ui.define([
 			rows: "{/Products}",
 			models: new ODataModel(sServiceURI, true)
 		});
+	}
+
+	function createMDCTable(mSettings) {
+		mSettings = Object.assign({
+			type: "Table",
+			delegate: {
+				name: "test-resources/sap/ui/mdc/delegates/TableDelegate",
+				payload: {
+					collectionPath: "/"
+				}
+			},
+			selectionMode: "Multi",
+			columns: Object.keys(aData[0]).map(function(sKey) {
+				return new MDCColumn({
+					header: sKey,
+					propertyKey: sKey,
+					template: new Text({ text: "{" + sKey + "}" }),
+					customData: new CustomData({ key: "property", value: sKey })
+				});
+			}),
+			models: oJSONModel
+		}, mSettings);
+
+		var oTable = new MDCTable(mSettings);
+		oTable.placeAt("qunit-fixture");
+		Core.applyChanges();
+		return oTable;
 	}
 
 	function getCell(oTable, iRow, iCol) {
@@ -155,7 +197,132 @@ sap.ui.define([
 			this.oCellSelector.exit();
 			this.oCellSelector.removeSelection();
 			assert.deepEqual(this.oCellSelector._oSession, { cellRefs: [] }, "Session has been cleared");
+
 			done();
+		});
+	});
+
+	QUnit.test("getSelection", function (assert) {
+		this.oTable.addDependent(this.oCellSelector);
+		var done = assert.async();
+
+		this.oTable.attachEventOnce("rowsUpdated", () => {
+			var oBinding = this.oTable.getBinding("rows");
+
+			var oSelection = this.oCellSelector.getSelection();
+			assert.equal(oSelection.columns.length, 0, "Selection contains 0 column");
+			assert.equal(oSelection.rows.length, 0, "Selection contains 0 rows");
+
+			var oCell = getCell(this.oTable, 1, 0); // first cell of first row
+			qutils.triggerKeydown(oCell, KeyCodes.SPACE); // select first cell of first row
+			qutils.triggerKeyup(oCell, KeyCodes.SPACE); // select first cell of first row
+			assert.deepEqual(this.oCellSelector.getSelectionRange(), {from: {rowIndex: 1, colIndex: 0}, to: {rowIndex: 1, colIndex: 0}});
+
+			oSelection = this.oCellSelector.getSelection();
+			assert.equal(oSelection.columns.length, 1, "Selection contains one column");
+			assert.equal(oSelection.columns[0], this.oTable.getColumns()[0], "Selection contains correct column");
+			assert.equal(oSelection.rows.length, 1, "Selection contains 1 row");
+			assert.equal(oSelection.rows[0], oBinding.getContextByIndex(1), "Selection contains correct context");
+
+			qutils.triggerKeydown(oCell, KeyCodes.ARROW_RIGHT, true, false, false);
+			qutils.triggerKeyup(oCell, KeyCodes.ARROW_RIGHT, true, false, false);
+
+			oCell = getCell(this.oTable, 1, 1);
+			qutils.triggerKeydown(oCell, KeyCodes.ARROW_DOWN, true, false, false);
+			qutils.triggerKeyup(oCell, KeyCodes.ARROW_DOWN, true, false, false);
+
+			oCell = getCell(this.oTable, 2, 1);
+			qutils.triggerKeydown(oCell, KeyCodes.ARROW_DOWN, true, false, false);
+			qutils.triggerKeyup(oCell, KeyCodes.ARROW_DOWN, true, false, false);
+
+			oSelection = this.oCellSelector.getSelection();
+			assert.equal(oSelection.columns.length, 2, "Selection contains 2 columns");
+			assert.equal(oSelection.columns[0], this.oTable.getColumns()[0], "Selection contains correct column");
+			assert.equal(oSelection.columns[1], this.oTable.getColumns()[1], "Selection contains correct column");
+			assert.equal(oSelection.rows.length, 3, "Selection contains 3 rows");
+			assert.equal(oSelection.rows[0], oBinding.getContextByIndex(1), "Selection contains context of second row");
+			assert.equal(oSelection.rows[1], oBinding.getContextByIndex(2), "Selection contains context of third row");
+			assert.equal(oSelection.rows[2], oBinding.getContextByIndex(3), "Selection contains context of fourth row");
+
+			oSelection = this.oCellSelector.getSelection(true);
+			assert.equal(oSelection.columns.length, 2, "Selection contains 2 columns");
+			assert.equal(oSelection.columns[0], this.oTable.getColumns()[0], "Selection contains correct column");
+			assert.equal(oSelection.columns[1], this.oTable.getColumns()[1], "Selection contains correct column");
+			assert.equal(oSelection.rows.length, 3, "Selection contains 3 rows");
+			assert.equal(oSelection.rows[0], oBinding.getContextByIndex(1), "Selection contains context of second row");
+			assert.equal(oSelection.rows[1], oBinding.getContextByIndex(2), "Selection contains context of third row");
+			assert.equal(oSelection.rows[2], oBinding.getContextByIndex(3), "Selection contains context of fourth row");
+
+			// Grouping with V4 (Context with property)
+
+			const oBindingContextStub = sinon.stub(oBinding.getContextByIndex(1), "getProperty");
+			oBindingContextStub.withArgs("@ui5.node.isExpanded").returns(true);
+			oSelection = this.oCellSelector.getSelection(true);
+
+			assert.equal(oSelection.columns.length, 2, "Selection contains 2 columns");
+			assert.equal(oSelection.columns[0], this.oTable.getColumns()[0], "Selection contains correct column");
+			assert.equal(oSelection.columns[1], this.oTable.getColumns()[1], "Selection contains correct column");
+			assert.equal(oSelection.rows.length, 2, "Selection contains only 2 rows (Group Header with V4)");
+			assert.equal(oSelection.rows[0], oBinding.getContextByIndex(2), "Selection contains context of third row");
+			assert.equal(oSelection.rows[1], oBinding.getContextByIndex(3), "Selection contains context of fourth row");
+
+			oBindingContextStub.restore();
+
+			// Grouping with V2 (Node)
+
+			// very hacky way to simulate grouping
+			oBinding.getNodeByIndex = function(iIndex) {
+				return iIndex == 1 ? "ignore" : "content";
+			};
+			oBinding.nodeHasChildren = function(oContext) {
+				return oContext == "ignore";
+			};
+
+			oSelection = this.oCellSelector.getSelection(true);
+
+			assert.equal(oSelection.columns.length, 2, "Selection contains 2 columns");
+			assert.equal(oSelection.columns[0], this.oTable.getColumns()[0], "Selection contains correct column");
+			assert.equal(oSelection.columns[1], this.oTable.getColumns()[1], "Selection contains correct column");
+			assert.equal(oSelection.rows.length, 2, "Selection contains only 2 rows (Group Header with V2)");
+			assert.equal(oSelection.rows[0], oBinding.getContextByIndex(2), "Selection contains context of third row");
+			assert.equal(oSelection.rows[1], oBinding.getContextByIndex(3), "Selection contains context of fourth row");
+
+			done();
+		});
+	});
+
+	QUnit.test("MDCTable - getSelection", function(assert) {
+		const done = assert.async();
+		this.oTable.removeDependent(this.oCellSelector);
+		this.oTable.destroy();
+		this.oTable = createMDCTable();
+		this.oTable.addDependent(this.oCellSelector);
+
+		this.oTable.initialized().then(() => {
+			this.oTable._oTable.attachEventOnce("rowsUpdated", () => {
+				assert.equal(this.oTable.getCellSelectorPluginOwner(), this.oTable._oTable, "The inner table is set as plugin owner for the CellSelector");
+				assert.ok(this.oCellSelector.getEnabled(), "CellSelector Plugin is enabled");
+				assert.ok(this.oCellSelector.isActive(), "CellSelector is active");
+
+				const oCell = this.oTable._oTable.getRows()[0].getCells()[0].$().parents("td")[0];
+
+				let oSelection = this.oCellSelector.getSelection();
+				assert.equal(oSelection.rows.length, 0, "No cells selected (rows)");
+				assert.equal(oSelection.columns.length, 0, "No cells selected (columns)");
+
+				qutils.triggerKeydown(oCell, KeyCodes.SPACE);
+
+				oSelection = this.oCellSelector.getSelection();
+				assert.equal(oSelection.rows.length, 1, "1 cell selected (rows)");
+				assert.equal(oSelection.columns.length, 1, "1 cell selected (columns)");
+
+				const oBinding = this.oTable._oTable.getBinding("rows");
+				assert.equal(oSelection.rows[0], oBinding.getContexts(0, 1)[0], "Returned row context is correct");
+				assert.equal(oSelection.columns[0], this.oTable.getColumns()[0], "Retruned column is correct");
+				assert.ok(oSelection.columns[0].isA("sap.ui.mdc.table.Column"), "Column is a MDCColumn");
+
+				done();
+			});
 		});
 	});
 
