@@ -54,6 +54,7 @@ sap.ui.define([
 		if (oComponentData?.startupParameters && sParameterName && Array.isArray(oComponentData.startupParameters[sParameterName])) {
 			return oComponentData.startupParameters[sParameterName][0];
 		}
+		return undefined;
 	}
 
 	let _isUshellContainerInitialized = false;
@@ -125,8 +126,8 @@ sap.ui.define([
 		},
 
 		/**
-		 * Returns the Component that belongs to given control. If the control has no component, it walks up the control tree in order to find a
-		 * control having one.
+		 * Returns the Component that belongs to given control. If the control has no component,
+		 * it walks up the control tree in order to find a control having one.
 		 *
 		 * @param {sap.ui.core.Control} oControl - SAPUI5 control
 		 * @returns {sap.ui.core.Component} found component
@@ -154,6 +155,7 @@ sap.ui.define([
 					return Component.getComponentById(sComponentId);
 				}
 			}
+			return undefined;
 		},
 
 		/**
@@ -209,8 +211,8 @@ sap.ui.define([
 		},
 
 		/**
-		 * Returns the parent view of the control. If there are nested views, only the one closest to the control will be returned. If no view can be
-		 * found, undefiend will be returned.
+		 * Returns the parent view of the control. If there are nested views, only the one closest to the control will be returned.
+		 * If no view can be found, undefiend will be returned.
 		 *
 		 * @param {sap.ui.core.Control} oControl - SAPUI5 control
 		 * @returns {sap.ui.core.mvc.View} The view
@@ -228,6 +230,7 @@ sap.ui.define([
 				oControl = oControl.getParent();
 				return Utils.getViewForControl(oControl);
 			}
+			return undefined;
 		},
 
 		/**
@@ -287,7 +290,11 @@ sap.ui.define([
 		},
 
 		/**
-		 * See {@link sap.ui.core.BaseTreeModifier#checkControlId} method
+		 * Checks if the control ID is generated or maintained by the application.
+		 *
+		 * @param {sap.ui.core.Control|string} vControl - Control instance or ID
+		 * @param {sap.ui.core.Component} oAppComponent - <code>oAppComponent</code> application component, needed only if vControl is a string (ID)
+		 * @returns {boolean} <code>true</code> if the ID is maintained by the application
 		 */
 		checkControlId(vControl, oAppComponent) {
 			if (!oAppComponent) {
@@ -574,6 +581,7 @@ sap.ui.define([
 				this.vValue instanceof Utils.FakePromise) {
 				return this.vValue;
 			}
+			return undefined;
 		},
 
 		/**

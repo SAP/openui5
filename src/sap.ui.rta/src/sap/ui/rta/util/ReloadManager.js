@@ -193,7 +193,11 @@ sap.ui.define([
 	 * @param {string} oReloadInfo.removeDraft - Indicates if draft parameter should be removed
 	 */
 	ReloadManager.triggerReload = function(oReloadInfo) {
-		oReloadInfo.onStart ? ReloadInfoAPI.handleReloadInfoOnStart(oReloadInfo) : ReloadInfoAPI.handleReloadInfo(oReloadInfo);
+		if (oReloadInfo.onStart) {
+			ReloadInfoAPI.handleReloadInfoOnStart(oReloadInfo);
+		} else {
+			ReloadInfoAPI.handleReloadInfo(oReloadInfo);
+		}
 		if (FlUtils.getUshellContainer()) {
 			mUShellServices.AppLifeCycle.reloadCurrentApp();
 		}
@@ -240,7 +244,12 @@ sap.ui.define([
 			URLParsingService: mUShellServices.URLParsing
 		});
 		return ReloadInfoAPI.getReloadReasonsForStart(mProperties).then(function(oReloadInfo) {
-			if (oReloadInfo.hasHigherLayerChanges || oReloadInfo.isDraftAvailable || oReloadInfo.allContexts || oReloadInfo.switchAdaptation) {
+			if (
+				oReloadInfo.hasHigherLayerChanges
+				|| oReloadInfo.isDraftAvailable
+				|| oReloadInfo.allContexts
+				|| oReloadInfo.switchAdaptation
+			) {
 				return triggerReloadOnStart(oReloadInfo, mProperties.versioningEnabled, mProperties.developerMode);
 			}
 			return undefined;
