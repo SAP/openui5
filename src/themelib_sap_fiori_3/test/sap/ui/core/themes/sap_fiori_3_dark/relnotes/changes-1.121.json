@@ -1,7 +1,18 @@
 {
   "1.121.0": {
-    "date": "November 2023",
+    "date": "December 2023",
     "notes": [
+      {
+        "id": "b7b29430e71e2685c2bba5dabab823ecabf575d2",
+        "type": "FIX",
+        "text": " sap.m.Switch: adjust element height",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380061586"
+          }
+        ]
+      },
       {
         "id": "02b7d56bb21ed9084e61762e333353c738cdba03",
         "type": "FIX",

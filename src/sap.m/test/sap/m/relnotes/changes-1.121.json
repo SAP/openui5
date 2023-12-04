@@ -1,7 +1,88 @@
 {
   "1.121.0": {
-    "date": "November 2023",
+    "date": "December 2023",
     "notes": [
+      {
+        "id": "b1b6f655a7fcac824c48221136f9d763d57173c9",
+        "type": "FIX",
+        "text": " sap.m.SinglePlanningCalendarMonthGrid: fixed focus on selected date or appointment",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370091991"
+          }
+        ]
+      },
+      {
+        "id": "7f29257b8704c2beaa41134b8f8140048e2a056f",
+        "type": "FIX",
+        "text": " sap.m.ObjectStatus: adjust screen reader announcement",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370112153"
+          },
+          {
+            "type": "BCP",
+            "reference": "2370145352"
+          }
+        ]
+      },
+      {
+        "id": "60f5a64e2caad1ff5d40a95d56111b79a31bf6d0",
+        "type": "FIX",
+        "text": " P13nFilterPanel: JS doc is now correct",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380141570"
+          }
+        ]
+      },
+      {
+        "id": "00f80c36a2cae7c4839658590588ef700a634d77",
+        "type": "FIX",
+        "text": " m.SelectionController: fix for index of the move determination",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370150660"
+          }
+        ]
+      },
+      {
+        "id": "7355b235029a31b2d6c58fe962afcfca929fc59d",
+        "type": "FIX",
+        "text": " sap.m.Button: adjust resourse bundle API calls",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370127868"
+          }
+        ]
+      },
+      {
+        "id": "32dde4fd7a47517dfa8849e54779c66200d57322",
+        "type": "FIX",
+        "text": " sap.m.ObjectStatus: is correctly displayed in ObjectListItem",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380138788"
+          }
+        ]
+      },
+      {
+        "id": "c58a5faa680eeab781d273df2d393c4cd24ff89d",
+        "type": "FIX",
+        "text": " sap.ui.unified.CalendarAppointment: fixed background colors calculation",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380111056"
+          }
+        ]
+      },
       {
         "id": "cbea4076b7f47495f49d6de789881f039cc4edde",
         "type": "FIX",
@@ -10,6 +91,17 @@
           {
             "type": "BCP",
             "reference": "2380068721"
+          }
+        ]
+      },
+      {
+        "id": "47655e10f2526876e7ac9890073b14057bf4142c",
+        "type": "FIX",
+        "text": " sap.m.Popover: apply additional padding on FF",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370125867"
           }
         ]
       },
@@ -47,6 +139,17 @@
           {
             "type": "BCP",
             "reference": "002075129400010494822023"
+          }
+        ]
+      },
+      {
+        "id": "69364fac5bb84cb7ed643b0aeecd6de9b6a3c587",
+        "type": "FIX",
+        "text": " sap.m.Button: Back and Up buttons are correctly shown in HCB and HCW themes",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370093700"
           }
         ]
       },

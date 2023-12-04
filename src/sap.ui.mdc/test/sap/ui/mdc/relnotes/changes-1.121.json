@@ -1,7 +1,33 @@
 {
   "1.121.0": {
-    "date": "November 2023",
+    "date": "December 2023",
     "notes": [
+      {
+        "id": "8ac9f1b6a2f20dc323e98e7e6ddf334fe0ca0462",
+        "type": "FIX",
+        "text": " ActionToolbar: separator visibility",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370144556"
+          }
+        ]
+      },
+      {
+        "id": "7b93a02214b0438456809662e14901be546865e3",
+        "type": "FIX",
+        "text": " Field: show focus on item in typeahead",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370122851"
+          },
+          {
+            "type": "BCP",
+            "reference": "2370122825"
+          }
+        ]
+      },
       {
         "id": "9c401676e6148edc8efe65df21bca3346b6475ec",
         "type": "FIX",

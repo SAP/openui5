@@ -1,7 +1,12 @@
 {
   "1.121.0": {
-    "date": "November 2023",
+    "date": "December 2023",
     "notes": [
+      {
+        "id": "77eb03403d6fba886e78bde1bfc2127ca2ec8651",
+        "type": "FEATURE",
+        "text": " Integration Cards: Add experimental support for creating actions strip items with template"
+      },
       {
         "id": "c4f508d520fb2b1ae50e98dd8c45d33c3b97a8a1",
         "type": "FIX",

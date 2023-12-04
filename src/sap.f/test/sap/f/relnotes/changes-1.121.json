@@ -1,7 +1,12 @@
 {
   "1.121.0": {
-    "date": "November 2023",
+    "date": "December 2023",
     "notes": [
+      {
+        "id": "9851362ee3422651da1bf5f2d1ccbc6f3f8752eb",
+        "type": "FIX",
+        "text": " sap.f.FlexibleColumnLayout: samples updated"
+      },
       {
         "id": "8608b86ebbf92fb35d45bcf0c11b346ec468996d",
         "type": "FEATURE",

@@ -1,7 +1,34 @@
 {
   "1.121.0": {
-    "date": "November 2023",
+    "date": "December 2023",
     "notes": [
+      {
+        "id": "ad17dd7ad0b762fb68b23f3e2a60a9e2488d0e9b",
+        "type": "FIX",
+        "text": " sap.ui.core.InvisibleMessage: Ensure core is ready before making DOM operations",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380135231"
+          }
+        ]
+      },
+      {
+        "id": "95445e2883b71ee2bee5e233700f65cb2918aa12",
+        "type": "FEATURE",
+        "text": " Introduce sap/ui/core/ElementRegistry/ComponentRegistry/UIAreaRegistry"
+      },
+      {
+        "id": "bcbc41f4d07f1fb8d1f01c48114c292ff952031c",
+        "type": "FIX",
+        "text": " CLDR: allow user input based on historical variants for month abbreviations",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380137559"
+          }
+        ]
+      },
       {
         "id": "c668bd43fe712296d8b9719dcd932efc41c1a3a9",
         "type": "FIX",
