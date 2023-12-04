@@ -6,7 +6,7 @@ sap.ui.define([
 	"sap/ui/core/Element",
 	"sap/ui/core/Fragment",
 	"sap/ui/core/Lib",
-	"sap/ui/core/ValueState",
+	"sap/ui/core/library",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/fl/initial/api/Version",
 	"sap/ui/fl/write/api/ContextBasedAdaptationsAPI",
@@ -22,7 +22,7 @@ sap.ui.define([
 	Element,
 	Fragment,
 	Lib,
-	ValueState,
+	coreLibrary,
 	ManifestUtils,
 	Version,
 	ContextBasedAdaptationsAPI,
@@ -34,6 +34,9 @@ sap.ui.define([
 	sinon
 ) {
 	"use strict";
+
+	// shortcut for sap.ui.core.ValueState
+	const { ValueState } = coreLibrary;
 
 	var sandbox = sinon.createSandbox();
 
