@@ -4,23 +4,52 @@ sap.ui.define([
 	'sap/m/p13n/Engine',
 	'sap/m/p13n/SelectionController',
 	'sap/m/p13n/MetadataHelper'
-], function(Controller, JSONModel, Engine, SelectionController,MetadataHelper) {
+], function(Controller, JSONModel, Engine, SelectionController, MetadataHelper) {
 	"use strict";
 
 	return Controller.extend("sap.m.sample.p13n.EngineGridList.Page", {
 
 		onInit: function() {
-			var oData = {
-				items: [
-					{key: "person1", firstName: "Peter", lastName: "Mueller", size: "1.75", city: "Walldorf"},
-					{key: "person2", firstName: "Petra", lastName: "Maier", size: "1.85", city: "Walldorf"},
-					{key: "person3", firstName: "Thomas", lastName: "Smith", size: "1.95", city: "Walldorf"},
-					{key: "person4", firstName: "John", lastName: "Williams", size: "1.65", city: "Walldorf"},
-					{key: "person5", firstName: "Maria", lastName: "Jones", size: "1.55", city: "Walldorf"}
+			const oData = {
+				items: [{
+						key: "person1",
+						firstName: "Peter",
+						lastName: "Mueller",
+						size: "1.75",
+						city: "Walldorf"
+					},
+					{
+						key: "person2",
+						firstName: "Petra",
+						lastName: "Maier",
+						size: "1.85",
+						city: "Walldorf"
+					},
+					{
+						key: "person3",
+						firstName: "Thomas",
+						lastName: "Smith",
+						size: "1.95",
+						city: "Walldorf"
+					},
+					{
+						key: "person4",
+						firstName: "John",
+						lastName: "Williams",
+						size: "1.65",
+						city: "Walldorf"
+					},
+					{
+						key: "person5",
+						firstName: "Maria",
+						lastName: "Jones",
+						size: "1.55",
+						city: "Walldorf"
+					}
 				]
 			};
 
-			var oModel = new JSONModel(oData);
+			const oModel = new JSONModel(oData);
 
 			this.getView().setModel(oModel);
 
@@ -28,14 +57,28 @@ sap.ui.define([
 		},
 
 		_registerForP13n: function() {
-			var oTable = this.byId("persoList");
+			const oTable = this.byId("persoList");
 
-			this.oMetadataHelper = new MetadataHelper([
-				{key: "person1", label: "Peter Mueller"},
-				{key: "person2", label: "Petra Maier"},
-				{key: "person3", label: "Thomas Smith"},
-				{key: "person4", label: "Maria Jones"},
-				{key: "person5", label: "John Williams"}
+			this.oMetadataHelper = new MetadataHelper([{
+					key: "person1",
+					label: "Peter Mueller"
+				},
+				{
+					key: "person2",
+					label: "Petra Maier"
+				},
+				{
+					key: "person3",
+					label: "Thomas Smith"
+				},
+				{
+					key: "person4",
+					label: "Maria Jones"
+				},
+				{
+					key: "person5",
+					label: "John Williams"
+				}
 			]);
 
 			Engine.getInstance().register(oTable, {
@@ -55,7 +98,7 @@ sap.ui.define([
 		},
 
 		openPersoDialog: function(oEvt) {
-			var oTable = this.byId("persoList");
+			const oTable = this.byId("persoList");
 
 			Engine.getInstance().show(oTable, ["Columns"], {
 				contentHeight: "35rem",
@@ -65,20 +108,20 @@ sap.ui.define([
 		},
 
 		handleStateChange: function(oEvt) {
-			var oTable = this.byId("persoList");
-			var oState = oEvt.getParameter("state");
+			const oTable = this.byId("persoList");
+			const oState = oEvt.getParameter("state");
 
-			var aPersonData = this.getView().getModel().getProperty("/items");
+			const aPersonData = this.getView().getModel().getProperty("/items");
 
-			oTable.getItems().forEach(function(oListItem){
-				var oStateItem = oState.Columns.find(function(oColState){
+			oTable.getItems().forEach(function(oListItem) {
+				const oStateItem = oState.Columns.find(function(oColState) {
 					return oColState.key === oListItem.getBindingContext().getProperty("key");
 				});
 				oListItem.setVisible(!!oStateItem);
 			});
 
-			oState.Columns.forEach(function(oStateItem, iIndex){
-				var oModelItem = aPersonData.find(function(oModelItem){
+			oState.Columns.forEach(function(oStateItem, iIndex) {
+				const oModelItem = aPersonData.find(function(oModelItem) {
 					return oModelItem.key === oStateItem.key;
 				});
 

@@ -15,22 +15,60 @@ sap.ui.define([
 		},
 
 		_registerForP13n: function() {
-			var oTable = this.byId("persoTable");
+			const oTable = this.byId("persoTable");
 
-			this.oMetadataHelper = new MetadataHelper([
-				{key: "id_col", label: "ID", path: "id"},
-				{key: "firstName_col", label: "First Name", path: "firstName"},
-				{key: "lastName_col", label: "Last Name", path: "lastName"},
-				{key: "city_col", label: "City", path: "city"},
-				{key: "size_col", label: "Size", path: "size"}
+			this.oMetadataHelper = new MetadataHelper([{
+					key: "id_col",
+					label: "ID",
+					path: "id"
+				},
+				{
+					key: "firstName_col",
+					label: "First Name",
+					path: "firstName"
+				},
+				{
+					key: "lastName_col",
+					label: "Last Name",
+					path: "lastName"
+				},
+				{
+					key: "city_col",
+					label: "City",
+					path: "city"
+				},
+				{
+					key: "size_col",
+					label: "Size",
+					path: "size"
+				}
 			]);
 
-			var _oMetadataHelperRows = new MetadataHelper([
-				{key: "P1", label: "Peter Müller", path: "id"},
-				{key: "P2", label: "Petra Maier", path: "id"},
-				{key: "P3", label: "Thomas Smith", path: "id"},
-				{key: "P4", label: "John Williams", path: "id"},
-				{key: "P5", label: "Maria Jones", path: "id"}
+			const _oMetadataHelperRows = new MetadataHelper([{
+					key: "P1",
+					label: "Peter Müller",
+					path: "id"
+				},
+				{
+					key: "P2",
+					label: "Petra Maier",
+					path: "id"
+				},
+				{
+					key: "P3",
+					label: "Thomas Smith",
+					path: "id"
+				},
+				{
+					key: "P4",
+					label: "John Williams",
+					path: "id"
+				},
+				{
+					key: "P5",
+					label: "Maria Jones",
+					path: "id"
+				}
 			]);
 
 			Engine.getInstance().register(oTable, {
@@ -45,7 +83,7 @@ sap.ui.define([
 						targetAggregation: "items",
 						helper: _oMetadataHelperRows,
 						control: oTable,
-						persistenceIdentifier:"selection-items",
+						persistenceIdentifier: "selection-items",
 						enableReorder: false,
 						getKeyForItem: function(oListItem) {
 							return oListItem.getCells()[0].getText();
@@ -58,7 +96,7 @@ sap.ui.define([
 		},
 
 		openPersoDialog: function(oEvt) {
-			var oTable = this.byId("persoTable");
+			const oTable = this.byId("persoTable");
 
 			Engine.getInstance().show(oTable, ["Columns"], {
 				contentHeight: "35rem",
@@ -68,7 +106,7 @@ sap.ui.define([
 		},
 
 		openPersoDialogPeople: function(oEvt) {
-			var oTable = this.byId("persoTable");
+			const oTable = this.byId("persoTable");
 
 			Engine.getInstance().show(oTable, ["Rows"], {
 				contentHeight: "35rem",
@@ -82,39 +120,37 @@ sap.ui.define([
 		},
 
 		handleStateChange: function(oEvt) {
-			var oTable = this.byId("persoTable");
-			var oState = oEvt.getParameter("state");
+			const oTable = this.byId("persoTable");
+			const oState = oEvt.getParameter("state");
 
 			if (!oState) {
 				return;
 			}
 
-			oTable.getColumns().forEach(function(oColumn, iIndex){
+			oTable.getColumns().forEach(function(oColumn, iIndex) {
 				oColumn.setVisible(false);
 				oColumn.setSortIndicator(coreLibrary.SortOrder.None);
 				oColumn.data("grouped", false);
 			});
 
-			oState.Columns.forEach(function(oProp, iIndex){
-				var oCol = this.byId(oProp.key);
+			oState.Columns.forEach(function(oProp, iIndex) {
+				const oCol = this.byId(oProp.key);
 				oCol.setVisible(true);
 
 				oTable.removeColumn(oCol);
 				oTable.insertColumn(oCol, iIndex);
 			}.bind(this));
 
-			oTable.getItems().forEach(function(oItem, iIndex){
+			oTable.getItems().forEach(function(oItem, iIndex) {
 				oItem.setVisible(false);
 			});
 
-			oState.Rows.forEach(function(oProp, iIndex){
-				var aItems = this.byId("persoTable").getItems();
+			oState.Rows.forEach(function(oProp, iIndex) {
+				const aItems = this.byId("persoTable").getItems();
 				// var oRelevantCol = aItems[0].getCells().find((cell) => true);
 
 				// find index of cell with "id", that can be used later
-				var oFoundItem = aItems.find((oItem) => {
-					return oItem.getCells()[0].getText() == oProp.key;
-				});
+				const oFoundItem = aItems.find((oItem) => oItem.getCells()[0].getText() == oProp.key);
 
 				oFoundItem.setVisible(true);
 
@@ -124,28 +160,32 @@ sap.ui.define([
 		},
 
 		onColumnMove: function(oEvt) {
-			var oDraggedColumn = oEvt.getParameter("draggedControl");
-			var oDroppedColumn = oEvt.getParameter("droppedControl");
+			const oDraggedColumn = oEvt.getParameter("draggedControl");
+			const oDroppedColumn = oEvt.getParameter("droppedControl");
 
 			if (oDraggedColumn === oDroppedColumn) {
 				return;
 			}
 
-			var oTable = this.byId("persoTable");
-			var sDropPosition = oEvt.getParameter("dropPosition");
-			var iDraggedIndex = oTable.indexOfColumn(oDraggedColumn);
-			var iDroppedIndex = oTable.indexOfColumn(oDroppedColumn);
-			var iNewPos = iDroppedIndex + (sDropPosition == "Before" ? 0 : 1) + (iDraggedIndex < iDroppedIndex ? -1 : 0);
-			var sKey = this._getKey(oDraggedColumn);
+			const oTable = this.byId("persoTable");
+			const sDropPosition = oEvt.getParameter("dropPosition");
+			const iDraggedIndex = oTable.indexOfColumn(oDraggedColumn);
+			const iDroppedIndex = oTable.indexOfColumn(oDroppedColumn);
+			const iNewPos = iDroppedIndex + (sDropPosition == "Before" ? 0 : 1) + (iDraggedIndex < iDroppedIndex ? -1 : 0);
+			const sKey = this._getKey(oDraggedColumn);
 
-			Engine.getInstance().retrieveState(oTable).then(function(oState){
+			Engine.getInstance().retrieveState(oTable).then(function(oState) {
 
-				var oCol = oState.Columns.find(function(oColumn) {
+				const oCol = oState.Columns.find(function(oColumn) {
 					return oColumn.key === sKey;
-				}) || {key: sKey};
+				}) || {
+					key: sKey
+				};
 				oCol.position = iNewPos;
 
-				Engine.getInstance().applyState(oTable, {Columns: [oCol]});
+				Engine.getInstance().applyState(oTable, {
+					Columns: [oCol]
+				});
 			});
 		}
 	});
