@@ -6,10 +6,10 @@
  * An interface to the core to be used by rules
  */
 sap.ui.define([
-	'sap/ui/core/Component',
-	'sap/ui/core/UIArea'
+	'sap/ui/core/ComponentRegistry',
+	'sap/ui/core/UIAreaRegistry'
 ],
-	function (Component, UIArea) {
+	function (ComponentRegistry, UIAreaRegistry) {
 		"use strict";
 
 		var coreInstance = null;
@@ -42,14 +42,14 @@ sap.ui.define([
 				 * @public
 				 */
 				getUIAreas: function () {
-					return UIArea.registry.all();
+					return UIAreaRegistry.all();
 				},
 				/**
 				 * Gets the Components from the Core object.
 				 * @public
 				 */
 				getComponents: function () {
-					return Component.registry.all();
+					return ComponentRegistry.all();
 				},
 				/**
 				 * Gets the Models from the Core object.

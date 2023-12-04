@@ -421,7 +421,7 @@ sap.ui.define([
 			$LastFocusableChildControl = this.$().lastFocusableDomRef();
 
 		if (this.sFocusedChildControlId) {
-			oFocusedChildControl = Element.registry.get(this.sFocusedChildControlId);
+			oFocusedChildControl = Element.getElementById(this.sFocusedChildControlId);
 		}
 
 		if (oFocusedChildControl && oFocusedChildControl.getDomRef()){

@@ -925,7 +925,7 @@ function(
 	Input.prototype.setSelectedItem = function(oItem) {
 
 		if (typeof oItem === "string") {
-			oItem = Element.registry.get(oItem);
+			oItem = Element.getElementById(oItem);
 		}
 
 		if (oItem !== null && !(oItem instanceof Item)) {
@@ -1101,7 +1101,7 @@ function(
 	Input.prototype.setSelectedRow = function(oListItem) {
 
 		if (typeof oListItem === "string") {
-			oListItem = Element.registry.get(oListItem);
+			oListItem = Element.getElementById(oListItem);
 		}
 
 		if (oListItem !== null && !(oListItem instanceof ColumnListItem)) {
@@ -1488,7 +1488,7 @@ function(
 		var oSuggPopover = this._getSuggestionsPopover(),
 			oPopup = oSuggPopover && oSuggPopover.getPopover(),
 			bIsPopover = oPopup && oPopup.isA("sap.m.Popover"),
-			oFocusedControl = oEvent.relatedControlId && Element.registry.get(oEvent.relatedControlId),
+			oFocusedControl = oEvent.relatedControlId && Element.getElementById(oEvent.relatedControlId),
 			oFocusDomRef = oFocusedControl && oFocusedControl.getFocusDomRef(),
 			bFocusInPopup = oPopup
 				&& oFocusDomRef

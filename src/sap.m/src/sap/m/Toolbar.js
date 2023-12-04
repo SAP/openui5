@@ -226,7 +226,7 @@ function(
 	 * @return {string} width
 	 */
 	Toolbar.getOrigWidth = function(sId) {
-		var oControl = Element.registry.get(sId);
+		var oControl = Element.getElementById(sId);
 		if (!oControl || !oControl.getWidth) {
 			return "";
 		}

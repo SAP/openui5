@@ -556,7 +556,7 @@ sap.ui.define([
 
 		if (aLabelIds.length > 0) {
 			aLabelIds.forEach(function (sLabelId) {
-				Element.registry.get(sLabelId).addEventDelegate({
+				Element.getElementById(sLabelId).addEventDelegate({
 					ontap: function () {
 						that._fnLabelTapHandler();
 					}

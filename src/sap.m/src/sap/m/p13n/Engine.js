@@ -10,12 +10,13 @@ sap.ui.define([
 	"sap/m/MessageStrip",
 	"sap/ui/core/library",
 	"sap/ui/core/Element",
+	"sap/ui/core/ElementRegistry",
 	"sap/m/p13n/modules/DefaultProviderRegistry",
 	"sap/m/p13n/modules/UIManager",
 	"sap/m/p13n/modules/StateHandlerRegistry",
 	"sap/m/p13n/modules/xConfigAPI",
 	"sap/m/p13n/enums/ProcessingStrategy"
-], function (AdaptationProvider, merge, Log, FlexModificationHandler, MessageStrip, coreLibrary, Element, DefaultProviderRegistry, UIManager, StateHandlerRegistry, xConfigAPI, ProcessingStrategy) {
+], function (AdaptationProvider, merge, Log, FlexModificationHandler, MessageStrip, coreLibrary, Element, ElementRegistry, DefaultProviderRegistry, UIManager, StateHandlerRegistry, xConfigAPI, ProcessingStrategy) {
 	"use strict";
 
 	var ERROR_INSTANCING = "Engine: This class is a singleton. Please use the getInstance() method instead.";
@@ -1154,7 +1155,7 @@ sap.ui.define([
 
 	Engine.prototype.hasForReference = function (vControl, sControlType) {
 		var sControlId = vControl && vControl.getId ? vControl.getId() : vControl;
-		var aResults = Element.registry.filter(function (oElement) {
+		var aResults = ElementRegistry.filter(function (oElement) {
 			if (!oElement.isA(sControlType)) {
 				return false;
 			}

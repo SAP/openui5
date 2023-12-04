@@ -576,7 +576,7 @@ sap.ui.define([
 			this.setProperty("selectedItemId", (vItem instanceof Item) ? vItem.getId() : vItem);
 
 			if (typeof vItem === "string") {
-				vItem = Element.registry.get(vItem);
+				vItem = Element.getElementById(vItem);
 			}
 
 			this.setProperty("selectedKey", vItem ? vItem.getKey() : "", true);
@@ -925,7 +925,7 @@ sap.ui.define([
 
 			if (typeof vItem === "string") {
 				this.setAssociation("selectedItem", vItem, true);
-				vItem = Element.registry.get(vItem);
+				vItem = Element.getElementById(vItem);
 			}
 
 			if (!(vItem instanceof Item) && vItem !== null) {
@@ -990,7 +990,7 @@ sap.ui.define([
 		 */
 		SelectList.prototype.getSelectedItem = function() {
 			var vSelectedItem = this.getAssociation("selectedItem");
-			return (vSelectedItem === null) ? null : Element.registry.get(vSelectedItem) || null;
+			return (vSelectedItem === null) ? null : Element.getElementById(vSelectedItem) || null;
 		};
 
 		/**

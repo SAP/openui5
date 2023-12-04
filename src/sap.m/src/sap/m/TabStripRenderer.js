@@ -75,7 +75,7 @@ sap.ui.define([
 
 		// On mobile device we render only the selected tab if there is one
 		if (Device.system.phone) {
-			oSelectedItem = Element.registry.get(sSelectedItemId);
+			oSelectedItem = Element.getElementById(sSelectedItemId);
 			oSelectedItem && this.renderItem(oRm, oControl, oSelectedItem, true);
 		} else {
 			aItems.forEach(function (oItem) {

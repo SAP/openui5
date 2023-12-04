@@ -4,14 +4,14 @@
 
 sap.ui.define([
 	"sap/base/Log",
-	"sap/ui/core/Component",
+	"sap/ui/core/ComponentRegistry",
 	"sap/ui/fl/ChangePersistenceFactory",
 	"sap/ui/fl/apply/_internal/changes/FlexCustomData",
 	"sap/ui/fl/support/_internal/extractChangeDependencies",
 	"sap/ui/fl/Utils"
 ], function(
 	Log,
-	Component,
+	ComponentRegistry,
 	ChangePersistenceFactory,
 	FlexCustomData,
 	extractChangeDependencies,
@@ -81,7 +81,7 @@ sap.ui.define([
 			}
 
 			// standalone case
-			var aApplications = Component.registry.filter(function(oComponent) {
+			var aApplications = ComponentRegistry.filter(function(oComponent) {
 				return oComponent.getManifestObject().getRawJson()["sap.app"].type === "application";
 			});
 
