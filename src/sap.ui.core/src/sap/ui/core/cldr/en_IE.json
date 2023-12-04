@@ -1446,7 +1446,10 @@
 					"Jun",
 					"Jul",
 					"Aug",
-					"Sept",
+					[
+						"Sept",
+						"Sep"
+					],
 					"Oct",
 					"Nov",
 					"Dec"
@@ -1490,7 +1493,10 @@
 					"Jun",
 					"Jul",
 					"Aug",
-					"Sept",
+					[
+						"Sept",
+						"Sep"
+					],
 					"Oct",
 					"Nov",
 					"Dec"
@@ -2501,7 +2507,10 @@
 					"Jun",
 					"Jul",
 					"Aug",
-					"Sept",
+					[
+						"Sept",
+						"Sep"
+					],
 					"Oct",
 					"Nov",
 					"Dec"
@@ -2545,7 +2554,10 @@
 					"Jun",
 					"Jul",
 					"Aug",
-					"Sept",
+					[
+						"Sept",
+						"Sep"
+					],
 					"Oct",
 					"Nov",
 					"Dec"
@@ -3557,7 +3569,10 @@
 					"Jun",
 					"Jul",
 					"Aug",
-					"Sept",
+					[
+						"Sept",
+						"Sep"
+					],
 					"Oct",
 					"Nov",
 					"Dec"
@@ -3601,7 +3616,10 @@
 					"Jun",
 					"Jul",
 					"Aug",
-					"Sept",
+					[
+						"Sept",
+						"Sep"
+					],
 					"Oct",
 					"Nov",
 					"Dec"

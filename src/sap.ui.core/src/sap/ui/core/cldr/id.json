@@ -1862,16 +1862,37 @@
 				"abbreviated": [
 					"Muh.",
 					"Saf.",
-					"Rab. Awal",
-					"Rab. Akhir",
-					"Jum. Awal",
-					"Jum. Akhir",
+					[
+						"Rab. Awal",
+						"Rab. I"
+					],
+					[
+						"Rab. Akhir",
+						"Rab. II"
+					],
+					[
+						"Jum. Awal",
+						"Jum. I"
+					],
+					[
+						"Jum. Akhir",
+						"Jum. II"
+					],
 					"Raj.",
-					"Sya.",
+					[
+						"Sya.",
+						"Sha."
+					],
 					"Ram.",
 					"Syaw.",
-					"Zulka.",
-					"Zulhi."
+					[
+						"Zulka.",
+						"Dhuʻl-Q."
+					],
+					[
+						"Zulhi.",
+						"Dhuʻl-H."
+					]
 				],
 				"narrow": [
 					"1",
@@ -1906,16 +1927,37 @@
 				"abbreviated": [
 					"Muh.",
 					"Saf.",
-					"Rab. Awal",
-					"Rab. Akhir",
-					"Jum. Awal",
-					"Jum. Akhir",
+					[
+						"Rab. Awal",
+						"Rab. I"
+					],
+					[
+						"Rab. Akhir",
+						"Rab. II"
+					],
+					[
+						"Jum. Awal",
+						"Jum. I"
+					],
+					[
+						"Jum. Akhir",
+						"Jum. II"
+					],
 					"Raj.",
-					"Sya.",
+					[
+						"Sya.",
+						"Sha."
+					],
 					"Ram.",
 					"Syaw.",
-					"Zulka.",
-					"Zulhi."
+					[
+						"Zulka.",
+						"Dhuʻl-Q."
+					],
+					[
+						"Zulhi.",
+						"Dhuʻl-H."
+					]
 				],
 				"narrow": [
 					"1",

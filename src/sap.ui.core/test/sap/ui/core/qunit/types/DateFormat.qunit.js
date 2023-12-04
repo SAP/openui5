@@ -5225,4 +5225,194 @@ sap.ui.define([
 		// code under test
 		assert.strictEqual(DateFormat.prototype.parse.call(oFormat, "~value"), "~dateObject");
 	});
+
+	//*****************************************************************************************************************
+	// BCP: 2380137559
+	QUnit.test("DateFormat: alternative month abbreviations (integrative test)", function (assert) {
+		Configuration.setLanguage("en_GB");
+		const oDateFormat = DateFormat.getDateInstance();
+		const oDate = UI5Date.getInstance(2023, 8, 15);
+
+		// code under test - format based on current CLDR version
+		assert.strictEqual(oDateFormat.format(oDate), "15 Sept 2023");
+
+		// code under test - parse abreviated month based on current CLDR version (43.0)
+		assert.strictEqual(oDateFormat.parse("15 Sept 2023").getTime(), oDate.getTime());
+
+		// code under test - parsing abreviated month based on older CLDR version (41.0) still possible
+		assert.strictEqual(oDateFormat.parse("15 Sep 2023").getTime(), oDate.getTime());
+	});
+
+	//*****************************************************************************************************************
+	QUnit.test("DateFormat#init", function (assert) {
+		const oLocalData = {
+			_getMonthsWithAlternatives() {},
+			_getMonthsStandAloneWithAlternatives() {},
+			getDayPeriods() {},
+			getDays() {},
+			getDaysStandAlone() {},
+			getEras() {},
+			getFlexibleDayPeriods() {},
+			getFlexibleDayPeriodsStandAlone() {},
+			getMonths() {},
+			getMonthsStandAlone() {},
+			getQuarters() {},
+			getQuartersStandAlone() {}
+		};
+		const oDateFormat = {
+			oFormatOptions: {calendarType: "~calendarType", pattern: "~pattern"},
+			oLocaleData: oLocalData,
+			getAllowedCharacters() {},
+			parseCldrDatePattern() {}
+		};
+		const oLocalDataMock = this.mock(oLocalData);
+		oLocalDataMock.expects("_getMonthsWithAlternatives").withExactArgs("abbreviated", "~calendarType")
+			.returns("~aMonthsAbbrev");
+		oLocalDataMock.expects("getMonths").withExactArgs("wide", "~calendarType").returns("~aMonthsWide");
+		oLocalDataMock.expects("getMonths").withExactArgs("narrow", "~calendarType").returns("~aMonthsNarrow");
+		oLocalDataMock.expects("_getMonthsStandAloneWithAlternatives").withExactArgs("abbreviated", "~calendarType")
+			.returns("~aMonthsAbbrevSt");
+		oLocalDataMock.expects("getMonthsStandAlone").withExactArgs("wide", "~calendarType").returns("~aMonthsWideSt");
+		oLocalDataMock.expects("getMonthsStandAlone").withExactArgs("narrow", "~calendarType")
+			.returns("~aMonthsNarrowSt");
+		oLocalDataMock.expects("getDays").withExactArgs("abbreviated", "~calendarType").returns("~aDaysAbbrev");
+		oLocalDataMock.expects("getDays").withExactArgs("wide", "~calendarType").returns("~aDaysWide");
+		oLocalDataMock.expects("getDays").withExactArgs("narrow", "~calendarType").returns("~aDaysNarrow");
+		oLocalDataMock.expects("getDays").withExactArgs("short", "~calendarType").returns("~aDaysShort");
+		oLocalDataMock.expects("getDaysStandAlone").withExactArgs("abbreviated", "~calendarType")
+			.returns("~aDaysAbbrevSt");
+		oLocalDataMock.expects("getDaysStandAlone").withExactArgs("wide", "~calendarType").returns("~aDaysWideSt");
+		oLocalDataMock.expects("getDaysStandAlone").withExactArgs("narrow", "~calendarType").returns("~aDaysNarrowSt");
+		oLocalDataMock.expects("getDaysStandAlone").withExactArgs("short", "~calendarType").returns("~aDaysShortSt");
+		oLocalDataMock.expects("getQuarters").withExactArgs("abbreviated", "~calendarType").returns("~aQuartersAbbrev");
+		oLocalDataMock.expects("getQuarters").withExactArgs("wide", "~calendarType").returns("~aQuartersWide");
+		oLocalDataMock.expects("getQuarters").withExactArgs("narrow", "~calendarType").returns("~aQuartersNarrow");
+		oLocalDataMock.expects("getQuartersStandAlone").withExactArgs("abbreviated", "~calendarType")
+			.returns("~aQuartersAbbrevSt");
+		oLocalDataMock.expects("getQuartersStandAlone").withExactArgs("wide", "~calendarType")
+			.returns("~aQuartersWideSt");
+		oLocalDataMock.expects("getQuartersStandAlone").withExactArgs("narrow", "~calendarType")
+			.returns("~aQuartersNarrowSt");
+		oLocalDataMock.expects("getEras").withExactArgs("abbreviated", "~calendarType").returns("~aErasAbbrev");
+		oLocalDataMock.expects("getEras").withExactArgs("wide", "~calendarType").returns("~aErasWide");
+		oLocalDataMock.expects("getEras").withExactArgs("narrow", "~calendarType").returns("~aErasNarrow");
+		oLocalDataMock.expects("getDayPeriods").withExactArgs("abbreviated", "~calendarType")
+			.returns("~aDayPeriodsAbbrev");
+		oLocalDataMock.expects("getDayPeriods").withExactArgs("wide", "~calendarType").returns("~aDayPeriodsWide");
+		oLocalDataMock.expects("getDayPeriods").withExactArgs("narrow", "~calendarType").returns("~aDayPeriodsNarrow");
+		oLocalDataMock.expects("getFlexibleDayPeriods").withExactArgs("abbreviated", "~calendarType")
+			.returns("~oFlexibleDayPeriodsAbbrev");
+		oLocalDataMock.expects("getFlexibleDayPeriods").withExactArgs("wide", "~calendarType")
+			.returns("~oFlexibleDayPeriodsWide");
+		oLocalDataMock.expects("getFlexibleDayPeriods").withExactArgs("narrow", "~calendarType")
+			.returns("~oFlexibleDayPeriodsNarrow");
+		oLocalDataMock.expects("getFlexibleDayPeriodsStandAlone").withExactArgs("abbreviated", "~calendarType")
+			.returns("~oFlexibleDayPeriodsAbbrevSt");
+		oLocalDataMock.expects("getFlexibleDayPeriodsStandAlone").withExactArgs("wide", "~calendarType")
+			.returns("~oFlexibleDayPeriodsWideSt");
+		oLocalDataMock.expects("getFlexibleDayPeriodsStandAlone").withExactArgs("narrow", "~calendarType")
+			.returns("~oFlexibleDayPeriodsNarrowSt");
+		this.mock(oDateFormat).expects("parseCldrDatePattern").withExactArgs("~pattern").returns("~aFormatArray");
+		this.mock(oDateFormat).expects("getAllowedCharacters").withExactArgs("~aFormatArray")
+			.returns("~sAllowedCharacters");
+
+		// code under test
+		DateFormat.prototype.init.call(oDateFormat);
+
+		assert.strictEqual(oDateFormat.aMonthsAbbrev, "~aMonthsAbbrev");
+		assert.strictEqual(oDateFormat.aMonthsWide, "~aMonthsWide");
+		assert.strictEqual(oDateFormat.aMonthsNarrow, "~aMonthsNarrow");
+		assert.strictEqual(oDateFormat.aMonthsAbbrevSt, "~aMonthsAbbrevSt");
+		assert.strictEqual(oDateFormat.aMonthsWideSt, "~aMonthsWideSt");
+		assert.strictEqual(oDateFormat.aMonthsNarrowSt, "~aMonthsNarrowSt");
+		assert.strictEqual(oDateFormat.aDaysAbbrev, "~aDaysAbbrev");
+		assert.strictEqual(oDateFormat.aDaysWide, "~aDaysWide");
+		assert.strictEqual(oDateFormat.aDaysNarrow, "~aDaysNarrow");
+		assert.strictEqual(oDateFormat.aDaysShort, "~aDaysShort");
+		assert.strictEqual(oDateFormat.aDaysAbbrevSt, "~aDaysAbbrevSt");
+		assert.strictEqual(oDateFormat.aDaysWideSt, "~aDaysWideSt");
+		assert.strictEqual(oDateFormat.aDaysNarrowSt, "~aDaysNarrowSt");
+		assert.strictEqual(oDateFormat.aDaysShortSt, "~aDaysShortSt");
+		assert.strictEqual(oDateFormat.aQuartersAbbrev, "~aQuartersAbbrev");
+		assert.strictEqual(oDateFormat.aQuartersWide, "~aQuartersWide");
+		assert.strictEqual(oDateFormat.aQuartersNarrow, "~aQuartersNarrow");
+		assert.strictEqual(oDateFormat.aQuartersAbbrevSt, "~aQuartersAbbrevSt");
+		assert.strictEqual(oDateFormat.aQuartersWideSt, "~aQuartersWideSt");
+		assert.strictEqual(oDateFormat.aQuartersNarrowSt, "~aQuartersNarrowSt");
+		assert.strictEqual(oDateFormat.aErasNarrow, "~aErasNarrow");
+		assert.strictEqual(oDateFormat.aErasAbbrev, "~aErasAbbrev");
+		assert.strictEqual(oDateFormat.aErasWide, "~aErasWide");
+		assert.strictEqual(oDateFormat.aDayPeriodsAbbrev, "~aDayPeriodsAbbrev");
+		assert.strictEqual(oDateFormat.aDayPeriodsNarrow, "~aDayPeriodsNarrow");
+		assert.strictEqual(oDateFormat.aDayPeriodsWide, "~aDayPeriodsWide");
+		assert.strictEqual(oDateFormat.oFlexibleDayPeriodsAbbrev, "~oFlexibleDayPeriodsAbbrev");
+		assert.strictEqual(oDateFormat.oFlexibleDayPeriodsNarrow, "~oFlexibleDayPeriodsNarrow");
+		assert.strictEqual(oDateFormat.oFlexibleDayPeriodsWide, "~oFlexibleDayPeriodsWide");
+		assert.strictEqual(oDateFormat.oFlexibleDayPeriodsAbbrevSt, "~oFlexibleDayPeriodsAbbrevSt");
+		assert.strictEqual(oDateFormat.oFlexibleDayPeriodsNarrowSt, "~oFlexibleDayPeriodsNarrowSt");
+		assert.strictEqual(oDateFormat.oFlexibleDayPeriodsWideSt, "~oFlexibleDayPeriodsWideSt");
+		assert.strictEqual(oDateFormat.aFormatArray, "~aFormatArray");
+		assert.strictEqual(oDateFormat.sAllowedCharacters, "~sAllowedCharacters");
+	});
+
+	//*****************************************************************************************************************
+	QUnit.test("DateFormat#findEntry", function (assert) {
+		const oParseHelperMock = this.mock(DateFormat._oParseHelper);
+		oParseHelperMock.expects("startsWithIgnoreCase").never();
+
+		// code under test
+		assert.deepEqual(DateFormat._oParseHelper.findEntry("foo", [], "~sLocale"), {index: -1, length: 0});
+
+		oParseHelperMock.expects("startsWithIgnoreCase").withExactArgs("~value", "f", "~sLocale").returns(true);
+		oParseHelperMock.expects("startsWithIgnoreCase").withExactArgs("~value", "foo", "~sLocale").returns(true);
+		oParseHelperMock.expects("startsWithIgnoreCase").withExactArgs("~value", "FooBar", "~sLocale").returns(false);
+
+		// code under test
+		assert.deepEqual(
+			DateFormat._oParseHelper.findEntry("~value", ["f", "foo", "fo", "FooBar", "baz"], "~sLocale"),
+			{index: 1, length: 3});
+
+		oParseHelperMock.expects("startsWithIgnoreCase").withExactArgs("~value", "a", "~sLocale").returns(false);
+		oParseHelperMock.expects("startsWithIgnoreCase").withExactArgs("~value", "f", "~sLocale").returns(true);
+		oParseHelperMock.expects("startsWithIgnoreCase").withExactArgs("~value", "alt1", "~sLocale").returns(false);
+		oParseHelperMock.expects("startsWithIgnoreCase").withExactArgs("~value", "alt2", "~sLocale").returns(true);
+		oParseHelperMock.expects("startsWithIgnoreCase").withExactArgs("~value", "alt99", "~sLocale").returns(true);
+		oParseHelperMock.expects("startsWithIgnoreCase").withExactArgs("~value", "FooBar", "~sLocale").returns(false);
+
+		// code under test
+		assert.deepEqual(
+			DateFormat._oParseHelper.findEntry("~value", ["a", "f", "x", ["alt1", "alt2", "alt3", "alt99"], "FooBar"],
+				"~sLocale"),
+			{index: 3, length: 5});
+	});
+
+	//*****************************************************************************************************************
+	QUnit.test("oSymbols.M#format: abbreviations contains array", function (assert) {
+		const oField = {digits: 3};
+		const oFormat = {aMonthsAbbrev: ["foo", "bar", ["baz", "qux"]]};
+		// code under test
+		assert.strictEqual(
+			DateFormat.prototype.oSymbols.M.format(oField, new Date(Date.UTC(2023, 1, 1)), undefined, oFormat),
+			"bar");
+
+		// code under test
+		assert.strictEqual(
+			DateFormat.prototype.oSymbols.M.format(oField, new Date(Date.UTC(2023, 2, 1)), undefined, oFormat),
+			"baz");
+	});
+
+	//*****************************************************************************************************************
+	QUnit.test("oSymbols.L#format: abbreviations contains array", function (assert) {
+		const oField = {digits: 3};
+		const oFormat = {aMonthsAbbrevSt: ["foo", "bar", ["baz", "qux"]]};
+		// code under test
+		assert.strictEqual(
+			DateFormat.prototype.oSymbols.L.format(oField, new Date(Date.UTC(2023, 1, 1)), undefined, oFormat),
+			"bar");
+
+		// code under test
+		assert.strictEqual(
+			DateFormat.prototype.oSymbols.L.format(oField, new Date(Date.UTC(2023, 2, 1)), undefined, oFormat),
+			"baz");
+	});
 });
