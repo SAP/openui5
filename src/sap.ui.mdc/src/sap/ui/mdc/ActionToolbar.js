@@ -365,7 +365,7 @@ sap.ui.define([
 		const fnChangeVisibility = (oSeparator, bNewValue) => {
 			if (oSeparator.getVisible() !== bNewValue) {
 				oSeparator.setVisible(bNewValue);
-				oSeparator.rerender();
+				oSeparator.invalidate();
 			}
 		};
 
