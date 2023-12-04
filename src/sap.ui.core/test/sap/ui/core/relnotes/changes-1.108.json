@@ -508,5 +508,32 @@
         ]
       }
     ]
+  },
+  "1.108.23": {
+    "date": "December 2023",
+    "notes": [
+      {
+        "id": "04ebe90caecd5e7d765e78146232c6044834c5e2",
+        "type": "FIX",
+        "text": " core/routing: find parent route from the router of the inheritance parent",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400009859762023"
+          }
+        ]
+      },
+      {
+        "id": "d066962af9b1fdc48c5a70372836e824c9f4ba23",
+        "type": "FIX",
+        "text": " sap.ui.test.autowaiter._timeoutWaiter: Callback arguments corrected",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370100483"
+          }
+        ]
+      }
+    ]
   }
 }

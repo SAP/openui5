@@ -79,5 +79,21 @@
         ]
       }
     ]
+  },
+  "1.108.23": {
+    "date": "December 2023",
+    "notes": [
+      {
+        "id": "19d9b634d6642360b65bd10972f963057fd01946",
+        "type": "FIX",
+        "text": " sap.tnt.ToolHeader: Padding when there is no menu button fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370142845"
+          }
+        ]
+      }
+    ]
   }
 }

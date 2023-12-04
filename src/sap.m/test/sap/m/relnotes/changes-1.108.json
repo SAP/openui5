@@ -1453,5 +1453,59 @@
         ]
       }
     ]
+  },
+  "1.108.23": {
+    "date": "December 2023",
+    "notes": [
+      {
+        "id": "b2ea6c78a254bb701a8bd143f19280781d4006ef",
+        "type": "FIX",
+        "text": " sap.m.Input: Item selection and highlighting with dynamic suggestions now fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400010475512023"
+          }
+        ]
+      },
+      {
+        "id": "bbc6ace09285cfa339eab2a8e71e00cfe74b1705",
+        "type": "FIX",
+        "text": " sap.m.List/Table: Accessibility improvements",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270141475"
+          },
+          {
+            "type": "BCP",
+            "reference": "2270141480"
+          },
+          {
+            "type": "BCP",
+            "reference": "2270141473"
+          },
+          {
+            "type": "BCP",
+            "reference": "2270155411"
+          },
+          {
+            "type": "BCP",
+            "reference": "2270161640"
+          }
+        ]
+      },
+      {
+        "id": "88101d18b63d0fd1124862ec468a2a23c770a19c",
+        "type": "FIX",
+        "text": " sap.m.FormattedText: preserve H1, H2, H3, H4, H5 and H6 tags default 'display' CSS property",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400010494822023"
+          }
+        ]
+      }
+    ]
   }
 }

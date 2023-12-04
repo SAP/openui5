@@ -426,5 +426,32 @@
         ]
       }
     ]
+  },
+  "1.108.23": {
+    "date": "December 2023",
+    "notes": [
+      {
+        "id": "78b35a214b7200e8c7f0d75534f3672f5df91406",
+        "type": "FIX",
+        "text": " sap.tnt.ToolHeader: Button enhanced for all Horizon themes",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370142800"
+          }
+        ]
+      },
+      {
+        "id": "19d9b634d6642360b65bd10972f963057fd01946",
+        "type": "FIX",
+        "text": " sap.tnt.ToolHeader: Padding when there is no menu button fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370142845"
+          }
+        ]
+      }
+    ]
   }
 }
