@@ -633,5 +633,32 @@
         ]
       }
     ]
+  },
+  "1.114.14": {
+    "date": "December 2023",
+    "notes": [
+      {
+        "id": "abfda6d3858c1dc5c8ae4cb336db8ee6432c20ff",
+        "type": "FIX",
+        "text": " sap.m.Input: Item selection and highlighting with dynamic suggestions now fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400010475512023"
+          }
+        ]
+      },
+      {
+        "id": "7d87b38dd33860eeb04d9f8136a1f916784095c6",
+        "type": "FIX",
+        "text": " sap.m.FormattedText: preserve H1, H2, H3, H4, H5 and H6 tags default 'display' CSS property",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400010494822023"
+          }
+        ]
+      }
+    ]
   }
 }

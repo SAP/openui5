@@ -272,5 +272,32 @@
         ]
       }
     ]
+  },
+  "1.114.14": {
+    "date": "December 2023",
+    "notes": [
+      {
+        "id": "ddde4317778dd0a70ee468be720d2ee9c1834fa7",
+        "type": "FIX",
+        "text": " CLDR: allow user input based on historical variants for month abbreviations",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380137559"
+          }
+        ]
+      },
+      {
+        "id": "578d1a0db61c347f14b4867c51e9ca12f5d816a4",
+        "type": "FIX",
+        "text": " core/routing: find parent route from the router of the inheritance parent",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400009859762023"
+          }
+        ]
+      }
+    ]
   }
 }
