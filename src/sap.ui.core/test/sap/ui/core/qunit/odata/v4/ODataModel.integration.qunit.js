@@ -47,8 +47,11 @@ sap.ui.define([
 		"ignorePattern": "/sap/opu/odata4/|\" :$|\" : \\{$|\\{meta>"}], */
 	"use strict";
 
-	var sContext = "sap.ui.model.odata.v4.Context",
+		// system query options for collection responses, but not inside $expand
+	var rCollection = /[?&]\$(?:count|filter|orderby|search)/,
+		sContext = "sap.ui.model.odata.v4.Context",
 		rCountTrue = /[?&]\$count=true/, // $count=true, but not inside $expand
+		rCountUrl = /\/\$count(?:\?|$)/, // URL for ".../$count?..."
 		sDefaultLanguage = Localization.getLanguage(),
 		fnFireEvent = EventProvider.prototype.fireEvent,
 		sODCB = "sap.ui.model.odata.v4.ODataContextBinding",
@@ -2135,30 +2138,40 @@ sap.ui.define([
 					// methods it must be possible to insert the ETag from the header
 					|| (vRequest.method === "GET" ? null : {});
 			vRequest.url = vRequest.url.replace(/ /g, "%20");
-			if (rCountTrue.test(vRequest.url) && vResponse
-					&& !(vResponse instanceof Error || vResponse instanceof Promise
-						|| typeof vResponse === "function")) {
-				if (!("@odata.count" in vResponse)) {
-					throw new Error('Missing "@odata.count" in response for ' + vRequest.method
-						+ " " + vRequest.url);
-				}
-				if (typeof vResponse["@odata.count"] !== "string") {
-					throw new Error('Unexpected "@odata.count" : ' + vResponse["@odata.count"]
-						+ " in response for " + vRequest.method + " " + vRequest.url);
-				}
-				if (!("@odata.nextLink" in vResponse)) {
-					aMatches = rTop.exec(vRequest.url);
-					if (aMatches) {
-						iCount = parseInt(vResponse["@odata.count"]);
-						iLength = vResponse.value.length;
-						iTop = parseInt(aMatches[1]);
-						aMatches = rSkip.exec(vRequest.url);
+			if (vResponse && !(vResponse instanceof Error || vResponse instanceof Promise
+					|| typeof vResponse === "function")) { // vResponse may be inspected
+				if (rCountTrue.test(vRequest.url)) { // $count=true
+					if (!("@odata.count" in vResponse)) {
+						throw new Error('Missing "@odata.count" in response for ' + vRequest.method
+							+ " " + vRequest.url);
+					}
+					if (typeof vResponse["@odata.count"] !== "string") {
+						throw new Error('Unexpected "@odata.count" : ' + vResponse["@odata.count"]
+							+ " in response for " + vRequest.method + " " + vRequest.url);
+					}
+					if (!("@odata.nextLink" in vResponse)) {
+						aMatches = rTop.exec(vRequest.url);
 						if (aMatches) {
-							iSkip = parseInt(aMatches[1]);
+							iCount = parseInt(vResponse["@odata.count"]);
+							iLength = vResponse.value.length;
+							iTop = parseInt(aMatches[1]);
+							aMatches = rSkip.exec(vRequest.url);
+							if (aMatches) {
+								iSkip = parseInt(aMatches[1]);
+							}
+							if (iLength !== iTop && iSkip + iLength !== iCount) {
+								throw new Error("Unexpected short read?");
+							}
 						}
-						if (iLength !== iTop && iSkip + iLength !== iCount) {
-							throw new Error("Unexpected short read?");
-						}
+					}
+				}
+				if (!rCountUrl.test(vRequest.url) && rCollection.test(vRequest.url)) {
+					// collection response expected (Note: d.results is V2)
+					const aObjects = vResponse.d?.results || vResponse.value;
+					if (!Array.isArray(aObjects)
+						|| !aObjects.every((o) => typeof o === "object")) {
+						throw new Error('Missing "value" array of objects in response for '
+							+ vRequest.method + " " + vRequest.url);
 					}
 				}
 			}
@@ -25892,8 +25905,7 @@ sap.ui.define([
 			checkTable("root is collapsed", assert, oTable, [
 				"/TEAMS('42')/TEAM_2_EMPLOYEES('0')"
 			], [
-				[false, 1, "0", "", "1,234", "EUR", "TEAM_0"],
-				["", "", "", "", "", "", ""]
+				[false, 1, "0", "", "1,234", "EUR", "TEAM_0"]
 			]);
 
 			// code under test
@@ -26076,6 +26088,7 @@ sap.ui.define([
 	// JIRA: CPOUI5ODATAV4-2355
 	//
 	// Check that no #move is supported (JIRA: CPOUI5ODATAV4-2360)
+	// Use LimitedRank after #create (JIRA: CPOUI5ODATAV4-2430)
 	QUnit.test("Recursive Hierarchy: expand to 2, collapse & expand root etc.", function (assert) {
 		var oCollapsed,
 			oListBinding,
@@ -26083,6 +26096,11 @@ sap.ui.define([
 			oNewRoot,
 			oRoot,
 			oTable,
+			sTopLevelsUrl = "EMPLOYEES?$apply=orderby(AGE desc)"
+				+ "/com.sap.vocabularies.Hierarchy.v1.TopLevels(HierarchyNodes=$root/EMPLOYEES"
+					+ ",HierarchyQualifier='OrgChart',NodeProperty='ID',Levels=2)",
+			sTopLevelsSelectUrl = sTopLevelsUrl
+				+ "&$select=AGE,DescendantCount,DistanceFromRoot,DrillState,ID,MANAGER_ID,Name",
 			sView = '\
 <Text id="count" text="{$count}"/>\
 <t:Table firstVisibleRow="1" id="table" rows="{path : \'/EMPLOYEES\',\
@@ -26104,7 +26122,6 @@ sap.ui.define([
 </t:Table>',
 			that = this;
 
-		// 9 Aleph (created later)
 		// 0 Alpha
 		//   1 Beta (initially collapsed)
 		//     1.1 Gamma
@@ -26113,18 +26130,14 @@ sap.ui.define([
 		//   3 Lambda
 		//   4 Mu
 		//   5 Xi
-		// ...
+		// 9 Aleph (created later)
 		this.expectRequest({
 				batchNo : 1,
 				url : "EMPLOYEES/$count"
 			}, 24)
 			.expectRequest({
 				batchNo : 1,
-				url : "EMPLOYEES?$apply=orderby(AGE desc)"
-				+ "/com.sap.vocabularies.Hierarchy.v1.TopLevels(HierarchyNodes=$root/EMPLOYEES"
-					+ ",HierarchyQualifier='OrgChart',NodeProperty='ID',Levels=2)"
-				+ "&$select=AGE,DescendantCount,DistanceFromRoot,DrillState,ID,MANAGER_ID,Name"
-				+ "&$count=true&$skip=1&$top=3"
+				url : sTopLevelsSelectUrl + "&$count=true&$skip=1&$top=3"
 			}, {
 				"@odata.count" : "6",
 				value : [{
@@ -26201,11 +26214,7 @@ sap.ui.define([
 
 			return that.waitForChanges(assert, "$count");
 		}).then(function () {
-			that.expectRequest("EMPLOYEES?$apply=orderby(AGE desc)"
-					+ "/com.sap.vocabularies.Hierarchy.v1.TopLevels(HierarchyNodes=$root/EMPLOYEES"
-						+ ",HierarchyQualifier='OrgChart',NodeProperty='ID',Levels=2)"
-					+ "&$select=AGE,DescendantCount,DistanceFromRoot,DrillState,ID,MANAGER_ID,Name"
-					+ "&$skip=0&$top=1", {
+			that.expectRequest(sTopLevelsSelectUrl + "&$skip=0&$top=1", {
 					value : [{
 						AGE : 60,
 						DescendantCount : "5",
@@ -26295,9 +26304,7 @@ sap.ui.define([
 			checkTable("root collapsed", assert, oTable, [
 				"/EMPLOYEES('0')"
 			], [
-				[false, 1, "0", "", "Alpha", 60],
-				["", "", "", "", "", ""],
-				["", "", "", "", "", ""]
+				[false, 1, "0", "", "Alpha", 60]
 			]);
 
 			// code under test
@@ -26377,11 +26384,7 @@ sap.ui.define([
 					Name : "Beta"
 				}, "technical properties have been removed");
 
-			that.expectRequest("EMPLOYEES?$apply=orderby(AGE desc)"
-					+ "/com.sap.vocabularies.Hierarchy.v1.TopLevels(HierarchyNodes=$root/EMPLOYEES"
-						+ ",HierarchyQualifier='OrgChart',NodeProperty='ID',Levels=2)"
-					+ "&$select=AGE,DescendantCount,DistanceFromRoot,DrillState,ID,MANAGER_ID,Name"
-					+ "&$skip=4&$top=2", {
+			that.expectRequest(sTopLevelsSelectUrl + "&$skip=4&$top=2", {
 					value : [{
 						AGE : 58,
 						DescendantCount : "0", // Note: this is LimitedDescendantCountProperty!
@@ -26432,9 +26435,7 @@ sap.ui.define([
 			checkTable("root collapsed", assert, oTable, [
 				"/EMPLOYEES('0')"
 			], [
-				[false, 1, "0", "", "Alpha", 60],
-				["", "", "", "", "", ""],
-				["", "", "", "", "", ""]
+				[false, 1, "0", "", "Alpha", 60]
 			]);
 
 			that.expectRequest({
@@ -26460,6 +26461,15 @@ sap.ui.define([
 						AGE : 160,
 						ID : "0"
 					}]
+				})
+				.expectRequest({
+					batchNo : 7,
+					url : sTopLevelsUrl + "&$filter=ID eq '9'&$select=LimitedRank"
+				}, {
+					value : [{
+						ID : "9",
+						LimitedRank : "6" // Edm.Int64
+					}]
 				});
 
 			// code under test (JIRA: CPOUI5ODATAV4-2355)
@@ -26479,16 +26489,11 @@ sap.ui.define([
 				"/EMPLOYEES('0')"
 			], [
 				[undefined, 1, "9", "", "Aleph: ℵ", 199],
-				[false, 1, "0", "", "Alpha", 160],
-				["", "", "", "", "", ""]
+				[false, 1, "0", "", "Alpha", 160]
 			]);
 			checkCreatedPersisted(assert, oNewRoot);
 
-			that.expectRequest("EMPLOYEES?$apply=orderby(AGE desc)"
-					+ "/com.sap.vocabularies.Hierarchy.v1.TopLevels(HierarchyNodes=$root/EMPLOYEES"
-						+ ",HierarchyQualifier='OrgChart',NodeProperty='ID',Levels=2)"
-					+ "&$select=AGE,DescendantCount,DistanceFromRoot,DrillState,ID,MANAGER_ID,Name"
-					+ "&$filter=not (ID eq '9')&$skip=1&$top=1", {
+			that.expectRequest(sTopLevelsSelectUrl + "&$skip=1&$top=1", {
 					value : [{
 						AGE : 155,
 						DescendantCount : "0", // Edm.Int64
@@ -26533,11 +26538,7 @@ sap.ui.define([
 						Name : "Zeta"
 					}]
 				})
-				.expectRequest("EMPLOYEES?$apply=orderby(AGE desc)"
-					+ "/com.sap.vocabularies.Hierarchy.v1.TopLevels(HierarchyNodes=$root/EMPLOYEES"
-						+ ",HierarchyQualifier='OrgChart',NodeProperty='ID',Levels=2)"
-					+ "&$select=AGE,DescendantCount,DistanceFromRoot,DrillState,ID,MANAGER_ID,Name"
-					+ "&$filter=not (ID eq '9')&$skip=2&$top=1", {
+				.expectRequest(sTopLevelsSelectUrl + "&$skip=2&$top=1", {
 					value : [{
 						AGE : 166,
 						DescendantCount : "0",
@@ -26856,6 +26857,8 @@ sap.ui.define([
 	// that the internal "limited descendant count" has been updated correctly. Finally, 0 (Alpha)
 	// is expanded again to check that internal "rank" handling is correct.
 	// JIRA: CPOUI5ODATAV4-2359
+	//
+	// Use LimitedRank after #create (JIRA: CPOUI5ODATAV4-2430)
 	QUnit.test("Recursive Hierarchy: collapse nested initially expanded nodes", function (assert) {
 		var oAlpha,
 			oBeta,
@@ -26863,6 +26866,11 @@ sap.ui.define([
 			oNewChild,
 			oNewRoot,
 			oTable,
+			sTopLevelsUrl = "EMPLOYEES?$apply=com.sap.vocabularies.Hierarchy.v1.TopLevels("
+				+ "HierarchyNodes=$root/EMPLOYEES,HierarchyQualifier='OrgChart'"
+				+ ",NodeProperty='ID',Levels=3)",
+			sTopLevelsSelectUrl = sTopLevelsUrl
+				+ "&$select=AGE,DescendantCount,DistanceFromRoot,DrillState,ID,MANAGER_ID,Name",
 			sView = '\
 <t:Table id="table" rows="{path : \'/EMPLOYEES\',\
 		parameters : {\
@@ -26882,10 +26890,10 @@ sap.ui.define([
 
 		// B Beth (created later)
 		// 0 Alpha
-		//   C Gimel (created later)
 		//   1 Beta
 		//     1.1 Gamma
 		//     1.2 Zeta
+		//   C Gimel (created later)
 		//   2 Kappa
 		//   3 Lambda
 		//   4 Mu
@@ -26893,11 +26901,7 @@ sap.ui.define([
 		//   5 Xi
 		//     5.1 Omicron
 		// 9 Aleph
-		this.expectRequest("EMPLOYEES?$apply=com.sap.vocabularies.Hierarchy.v1.TopLevels("
-					+ "HierarchyNodes=$root/EMPLOYEES,HierarchyQualifier='OrgChart'"
-					+ ",NodeProperty='ID',Levels=3)"
-				+ "&$select=AGE,DescendantCount,DistanceFromRoot,DrillState,ID,MANAGER_ID,Name"
-				+ "&$count=true&$skip=0&$top=5", {
+		this.expectRequest(sTopLevelsSelectUrl + "&$count=true&$skip=0&$top=5", {
 				"@odata.count" : "11",
 				value : [{
 					AGE : 60,
@@ -26970,11 +26974,7 @@ sap.ui.define([
 			}, /*bSkipRefresh*/true);
 			const oDeletePromise = oLostChild.delete();
 
-			that.expectRequest("EMPLOYEES?$apply=com.sap.vocabularies.Hierarchy.v1.TopLevels("
-						+ "HierarchyNodes=$root/EMPLOYEES,HierarchyQualifier='OrgChart'"
-						+ ",NodeProperty='ID',Levels=3)"
-					+ "&$select=AGE,DescendantCount,DistanceFromRoot,DrillState,ID,MANAGER_ID,Name"
-					+ "&$skip=5&$top=2", {
+			that.expectRequest(sTopLevelsSelectUrl + "&$skip=5&$top=2", {
 					value : [{
 						AGE : 57,
 						DescendantCount : "0",
@@ -27016,11 +27016,7 @@ sap.ui.define([
 				[true, 2, "4", "0", "Mu", 58]
 			], 9);
 
-			that.expectRequest("EMPLOYEES?$apply=com.sap.vocabularies.Hierarchy.v1.TopLevels("
-						+ "HierarchyNodes=$root/EMPLOYEES,HierarchyQualifier='OrgChart'"
-						+ ",NodeProperty='ID',Levels=3)"
-					+ "&$select=AGE,DescendantCount,DistanceFromRoot,DrillState,ID,MANAGER_ID,Name"
-					+ "&$skip=10&$top=1", {
+			that.expectRequest(sTopLevelsSelectUrl + "&$skip=10&$top=1", {
 					value : [{
 						AGE : 69,
 						DescendantCount : "0",
@@ -27041,10 +27037,7 @@ sap.ui.define([
 				"/EMPLOYEES('9')"
 			], [
 				[false, 1, "0", "", "Alpha", 60],
-				[undefined, 1, "9", "", "Aleph", 69],
-				["", "", "", "", "", ""],
-				["", "", "", "", "", ""],
-				["", "", "", "", "", ""]
+				[undefined, 1, "9", "", "Aleph", 69]
 			], 2);
 			const oAleph = oTable.getRows()[1].getBindingContext();
 
@@ -27053,6 +27046,7 @@ sap.ui.define([
 			assert.strictEqual(oAleph.isAncestorOf(oAlpha), false, "JIRA: CPOUI5ODATAV4-2337");
 
 			that.expectRequest({
+					batchNo : 4,
 					method : "POST",
 					url : "EMPLOYEES",
 					payload : {
@@ -27064,6 +27058,15 @@ sap.ui.define([
 					ID : "B",
 					MANAGER_ID : null,
 					Name : "Beth, not Beta" // side effect
+				})
+				.expectRequest({
+					batchNo : 5,
+					url : sTopLevelsUrl + "&$filter=ID eq 'B'&$select=LimitedRank"
+				}, {
+					value : [{
+						ID : "B",
+						LimitedRank : "0" // Edm.Int64
+					}]
 				});
 
 			// code under test (JIRA: CPOUI5ODATAV4-2355)
@@ -27083,9 +27086,7 @@ sap.ui.define([
 			], [
 				[undefined, 1, "B", "", "Beth, not Beta", 70],
 				[false, 1, "0", "", "Alpha", 60],
-				[undefined, 1, "9", "", "Aleph", 69],
-				["", "", "", "", "", ""],
-				["", "", "", "", "", ""]
+				[undefined, 1, "9", "", "Aleph", 69]
 			]);
 			checkCreatedPersisted(assert, oNewRoot);
 
@@ -27116,17 +27117,11 @@ sap.ui.define([
 			], [
 				[undefined, 1, "B", "", "Beth, not Beta", 170],
 				[false, 1, "0", "", "Alpha", 160],
-				[undefined, 1, "9", "", "Aleph", 169],
-				["", "", "", "", "", ""],
-				["", "", "", "", "", ""]
+				[undefined, 1, "9", "", "Aleph", 169]
 			]);
 
-			that.expectRequest({batchNo : 6,
-					url : "EMPLOYEES?$apply=com.sap.vocabularies.Hierarchy.v1.TopLevels("
-						+ "HierarchyNodes=$root/EMPLOYEES,HierarchyQualifier='OrgChart'"
-						+ ",NodeProperty='ID',Levels=3)"
-					+ "&$select=AGE,DescendantCount,DistanceFromRoot,DrillState,ID,MANAGER_ID,Name"
-					+ "&$filter=not (ID eq 'B')&$skip=1&$top=1"}, {
+			that.expectRequest({batchNo : 7,
+					url : sTopLevelsSelectUrl + "&$skip=2&$top=1"}, {
 					value : [{
 						AGE : 155,
 						DescendantCount : "2",
@@ -27137,12 +27132,8 @@ sap.ui.define([
 						Name : "Beta"
 					}]
 				})
-				.expectRequest({batchNo : 6,
-					url : "EMPLOYEES?$apply=com.sap.vocabularies.Hierarchy.v1.TopLevels("
-						+ "HierarchyNodes=$root/EMPLOYEES,HierarchyQualifier='OrgChart'"
-						+ ",NodeProperty='ID',Levels=3)"
-					+ "&$select=AGE,DescendantCount,DistanceFromRoot,DrillState,ID,MANAGER_ID,Name"
-					+ "&$filter=not (ID eq 'B')&$skip=4&$top=2"}, {
+				.expectRequest({batchNo : 7,
+					url : sTopLevelsSelectUrl + "&$skip=5&$top=2"}, {
 					value : [{
 						AGE : 156,
 						DescendantCount : "0",
@@ -27183,6 +27174,7 @@ sap.ui.define([
 			], 10);
 
 			that.expectRequest({
+					batchNo : 8,
 					method : "POST",
 					url : "EMPLOYEES",
 					payload : {
@@ -27194,6 +27186,15 @@ sap.ui.define([
 					ID : "C",
 					MANAGER_ID : "0", // side effect
 					Name : "Gimel" // side effect
+				})
+				.expectRequest({
+					batchNo : 9,
+					url : sTopLevelsUrl + "&$filter=ID eq 'C'&$select=LimitedRank"
+				}, {
+					value : [{
+						ID : "C",
+						LimitedRank : "5" // Edm.Int64
+					}]
 				});
 
 			// code under test (JIRA: CPOUI5ODATAV4-2359)
@@ -27245,9 +27246,7 @@ sap.ui.define([
 			], [
 				[undefined, 1, "B", "", "Beth, not Beta", 170],
 				[false, 1, "0", "", "Alpha", 160],
-				[undefined, 1, "9", "", "Aleph", 169],
-				["", "", "", "", "", ""],
-				["", "", "", "", "", ""]
+				[undefined, 1, "9", "", "Aleph", 169]
 			]);
 
 			// code under test
@@ -27953,10 +27952,8 @@ sap.ui.define([
 				"/EMPLOYEES('0')"
 				// Note: collapse kills ;-)
 			], [
-				[false, 1, "0", "", "Alpha"],
-				["", "", "", "", ""],
-				["", "", "", "", ""],
-				["", "", "", "", ""]
+				[false, 1, "0", "", "Alpha"]
+
 			], 1);
 
 			that.expectRequest("EMPLOYEES?$select=ID,Name&$filter=ID eq '0'", {
@@ -27975,10 +27972,7 @@ sap.ui.define([
 			checkTable("after request side effects", assert, oTable, [
 				"/EMPLOYEES('0')"
 			], [
-				[false, 1, "0", "", "Alpha #1"],
-				["", "", "", "", ""],
-				["", "", "", "", ""],
-				["", "", "", "", ""]
+				[false, 1, "0", "", "Alpha #1"]
 			], 1);
 
 			that.expectRequest("EMPLOYEES?$apply=com.sap.vocabularies.Hierarchy.v1.TopLevels("
@@ -29680,9 +29674,7 @@ sap.ui.define([
 			checkTable("root is leaf", assert, oTable, [
 				sFriend + "(ArtistID='0',IsActiveEntity=false)"
 			], [
-				[undefined, undefined, 1, "etag0.0", "Alpha", "0,false"],
-				["", "", "", "", "", ""],
-				["", "", "", "", "", ""]
+				[undefined, undefined, 1, "etag0.0", "Alpha", "0,false"]
 			]);
 			assert.strictEqual(oRoot.getIndex(), 0);
 			assert.deepEqual(oRoot.getObject("_"), {NodeID : "0,false"});
@@ -29730,8 +29722,7 @@ sap.ui.define([
 				sFriend + "($uid=...)"
 			], [
 				[undefined, true, 1, "etag0.0", "Alpha", "0,false"],
-				[true, undefined, 2, "", "Beta", ""],
-				["", "", "", "", "", ""]
+				[true, undefined, 2, "", "Beta", ""]
 			]);
 			assert.strictEqual(oBeta.getIndex(), 1);
 
@@ -29760,8 +29751,7 @@ sap.ui.define([
 				sFriend + "(ArtistID='1',IsActiveEntity=false)"
 			], [
 				[undefined, true, 1, "etag0.0", "Alpha", "0,false"],
-				[false, undefined, 2, "etag1.0", "Beta: β", "1,false"],
-				["", "", "", "", "", ""]
+				[false, undefined, 2, "etag1.0", "Beta: β", "1,false"]
 			]);
 			assert.strictEqual(oBeta.getIndex(), 1);
 			assert.deepEqual(oBeta.getObject(), {
@@ -29971,9 +29961,7 @@ sap.ui.define([
 			checkTable("after collapse", assert, oTable, [
 				sFriend + "(ArtistID='0',IsActiveEntity=false)"
 			], [
-				[undefined, false, 1, "etag0.0", "Alpha", "0,false"],
-				["", "", "", "", "", ""],
-				["", "", "", "", "", ""]
+				[undefined, false, 1, "etag0.0", "Alpha", "0,false"]
 			]);
 			assert.strictEqual(oBeta.getModel(), oModel, "not destroyed by collapse");
 			assert.strictEqual(oGamma.getModel(), oModel, "not destroyed by collapse");
@@ -32256,9 +32244,7 @@ make root = ${bMakeRoot}`;
 			checkTable("root is leaf", assert, oTable, [
 				"/Artists(ArtistID='0',IsActiveEntity=false)"
 			], [
-				[false, 1, "0", "Alpha"],
-				["", "", "", ""],
-				["", "", "", ""]
+				[false, 1, "0", "Alpha"]
 			]);
 
 			that.expectRequest("Artists?$apply=descendants($root/Artists,OrgChart,_/NodeID"
