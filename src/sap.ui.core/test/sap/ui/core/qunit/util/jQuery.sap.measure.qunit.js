@@ -10,6 +10,27 @@ sap.ui.define([
 ], function(jQuery, Device, UIComponent, Button, createAndAppendDiv, Interaction) {
 	"use strict";
 
+	// window.performance is hijacked by sinon's fakeTimers (https://github.com/sinonjs/fake-timers/issues/374)
+	// and might be out of sync with the latest specs and APIs. Therefore, mock them further,
+	// so they won't affect tests.
+	//
+	// *Note:* Call this method after sinon.useFakeTimers(); as for example performance.timeOrigin is read only
+	// in its nature and cannot be modified otherwise.
+	function mockPerformanceObject () {
+		const timeOrigin = performance.timeOrigin;
+		const clock = sinon.useFakeTimers();
+		performance.getEntriesByType = function() {
+			return [];
+		};
+		performance.timeOrigin = timeOrigin;
+		return clock;
+	}
+
+	function cleanPerformanceObject() {
+		delete performance.getEntriesByType;
+		delete performance.timeOrigin;
+	}
+
 	createAndAppendDiv("target1");
 
 	// In order to offer protection against timing attacks and fingerprinting, the precision of performance.now() might get rounded depending on browser settings.
@@ -414,9 +435,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("endInteraction", function(assert) {
-		this.clock = sinon.useFakeTimers();
-		window.performance.getEntriesByType = function() { return []; };
-
+		this.clock = mockPerformanceObject();
 		jQuery.sap.measure.startInteraction("click", this.oButton);
 		addFakeProcessingTime.apply(this);
 		jQuery.sap.measure.endInteraction(true);
@@ -424,14 +443,12 @@ sap.ui.define([
 		assert.ok(oMeasurement, "Measurement has been created");
 
 		this.clock.runAll();
-		delete window.performance.getEntriesByType;
+		cleanPerformanceObject();
 		this.clock.restore();
 	});
 
 	QUnit.test("getAllInteractionMeasurements", function(assert) {
-		this.clock = sinon.useFakeTimers();
-		window.performance.getEntriesByType = function() { return []; };
-
+		this.clock = mockPerformanceObject();
 		jQuery.sap.measure.startInteraction("click", this.oButton);
 		var aMeasurements = jQuery.sap.measure.getAllInteractionMeasurements();
 		assert.ok(Array.isArray(aMeasurements), "An array was returned");
@@ -451,12 +468,12 @@ sap.ui.define([
 		assert.strictEqual(aMeasurements.length, 3, "Measurements count is correct - pending interaction has been added");
 
 		this.clock.runAll();
-		delete window.performance.getEntriesByType;
+		cleanPerformanceObject();
 		this.clock.restore();
 	});
 
 	QUnit.test("filterInteractionMeasurements", function(assert) {
-		this.clock = sinon.useFakeTimers();
+		this.clock = mockPerformanceObject();
 		window.performance.getEntriesByType = function() { return []; };
 
 		jQuery.sap.measure.startInteraction("click", this.oButton);
@@ -481,7 +498,7 @@ sap.ui.define([
 		assert.equal(aFilteredMeasurements.length, 1, "Filter applied correctly");
 
 		this.clock.runAll();
-		delete window.performance.getEntriesByType;
+		cleanPerformanceObject();
 		this.clock.restore();
 	});
 
@@ -493,9 +510,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Interaction properties", function(assert) {
-		this.clock = sinon.useFakeTimers();
-		window.performance.getEntriesByType = function() { return []; };
-
+		this.clock = mockPerformanceObject();
 		jQuery.sap.measure.startInteraction("click", this.oButton);
 		addFakeProcessingTime.apply(this);
 		jQuery.sap.measure.endInteraction(true);
@@ -519,7 +534,7 @@ sap.ui.define([
 		assert.ok(oMeasurement.bytesReceived === 0, "No processing");
 
 		this.clock.runAll();
-		delete window.performance.getEntriesByType;
+		cleanPerformanceObject();
 		this.clock.restore();
 	});
 
