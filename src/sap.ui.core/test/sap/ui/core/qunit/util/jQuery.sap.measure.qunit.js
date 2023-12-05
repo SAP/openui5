@@ -1,4 +1,4 @@
-/* global QUnit */
+/* global QUnit sinon */
 
 sap.ui.define([
 	"jquery.sap.global",
@@ -8,6 +8,27 @@ sap.ui.define([
 	"sap/ui/qunit/utils/createAndAppendDiv"
 ], function(jQuery, Device, UIComponent, CommonsButton, createAndAppendDiv) {
 	"use strict";
+
+	// window.performance is hijacked by sinon's fakeTimers (https://github.com/sinonjs/fake-timers/issues/374)
+	// and might be out of sync with the latest specs and APIs. Therefore, mock them further,
+	// so they won't affect tests.
+	//
+	// *Note:* Call this method after sinon.useFakeTimers(); as for example performance.timeOrigin is read only
+	// in its nature and cannot be modified otherwise.
+	function mockPerformanceObject () {
+		var timeOrigin = performance.timeOrigin;
+		var clock = sinon.useFakeTimers();
+		performance.getEntriesByType = function() {
+			return [];
+		};
+		performance.timeOrigin = timeOrigin;
+		return clock;
+	}
+
+	function cleanPerformanceObject() {
+		delete performance.getEntriesByType;
+		delete performance.timeOrigin;
+	}
 
 	createAndAppendDiv("target1");
 
@@ -385,13 +406,19 @@ sap.ui.define([
 	});
 
 	QUnit.test("endInteraction", function(assert) {
+		this.clock = mockPerformanceObject();
 		jQuery.sap.measure.startInteraction("click", this.oButton);
 		jQuery.sap.measure.endInteraction(true);
 		var oMeasurement = jQuery.sap.measure.getAllInteractionMeasurements().pop();
 		assert.ok(oMeasurement, "Measurement has been created");
+
+		this.clock.runAll();
+		cleanPerformanceObject();
+		this.clock.restore();
 	});
 
 	QUnit.test("getAllInteractionMeasurements", function(assert) {
+		this.clock = mockPerformanceObject();
 		jQuery.sap.measure.startInteraction("click", this.oButton);
 		var aMeasurements = jQuery.sap.measure.getAllInteractionMeasurements();
 		assert.ok(Array.isArray(aMeasurements), "An array was returned");
@@ -406,9 +433,15 @@ sap.ui.define([
 		jQuery.sap.measure.startInteraction("click", this.oButton);
 		aMeasurements = jQuery.sap.measure.getAllInteractionMeasurements(/*bFinalize =*/true);
 		assert.strictEqual(aMeasurements.length, 3, "Measurements count is correct - pending interaction has been added");
+
+		this.clock.runAll();
+		cleanPerformanceObject();
+		this.clock.restore();
 	});
 
 	QUnit.test("filterInteractionMeasurements", function(assert) {
+		this.clock = mockPerformanceObject();
+		window.performance.getEntriesByType = function() { return []; };
 		jQuery.sap.measure.startInteraction("click", this.oButton);
 		jQuery.sap.measure.endInteraction(true);
 		jQuery.sap.measure.startInteraction("flick", this.oButton);
@@ -426,6 +459,10 @@ sap.ui.define([
 			return oMeasurement.event === "flick";
 		});
 		assert.equal(aFilteredMeasurements.length, 1, "Filter applied correctly");
+
+		this.clock.runAll();
+		cleanPerformanceObject();
+		this.clock.restore();
 	});
 
 	QUnit.test("getPendingInteractionMeasurement", function(assert) {
@@ -436,6 +473,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Interaction properties", function(assert) {
+		this.clock = mockPerformanceObject();
 		jQuery.sap.measure.startInteraction("click", this.oButton);
 		jQuery.sap.measure.endInteraction(true);
 		var oMeasurement = jQuery.sap.measure.getAllInteractionMeasurements().pop();
@@ -456,6 +494,10 @@ sap.ui.define([
 		assert.ok(oMeasurement.networkTime === 0, "No processing");
 		assert.ok(oMeasurement.bytesSent === 0, "No round trip");
 		assert.ok(oMeasurement.bytesReceived === 0, "No processing");
+
+		this.clock.runAll();
+		cleanPerformanceObject();
+		this.clock.restore();
 	});
 
 	// do not test safari as it does not seem to work in testing environments
