@@ -8,10 +8,17 @@
 
 What is it?
 -----------
-OpenUI5 lets you build enterprise-ready web applications, responsive to all devices, running on almost
-any browser of your choice. It's based on JavaScript and follows web standards.
-It eases your development with a client-side HTML5 rendering library including a rich set of controls
-and supports data binding to different data models (JSON, XML and OData).
+OpenUI5 empowers you to craft robust web applications tailored for enterprise needs. 
+Whether accessed on desktops, tablets, or smartphones, your applications will seamlessly adapt, 
+ensuring a responsive experience across various devices and browsers. 
+Leveraging the power of JavaScript and adhering to web standards, 
+OpenUI5 provides a client-side HTML5 rendering library replete with a diverse array of controls.
+
+Simplify your development process with OpenUI5's extensive toolkit, 
+which facilitates the creation of visually appealing and functional interfaces. 
+The framework supports seamless data binding to diverse data models, 
+including JSON, XML, and OData. With OpenUI5, you can elevate your web application development, 
+enjoying the flexibility to run your applications on nearly any browser while delivering an enterprise-grade user experience.
 
 And... it's free and open source: OpenUI5 is licensed under the Apache License, Version 2.0 - see [LICENSE.txt](LICENSE.txt).
 It also contains third-party open source modules. See the list and respective licenses in [THIRDPARTY.txt](THIRDPARTY.txt).
