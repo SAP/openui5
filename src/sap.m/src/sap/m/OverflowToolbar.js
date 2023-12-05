@@ -4,7 +4,6 @@
 
 // Provides control sap.m.OverflowToolbar.
 sap.ui.define([
-	"sap/ui/core/ElementRegistry",
 	"sap/ui/core/Theming",
 	"sap/ui/core/library",
 	"./library",
@@ -22,10 +21,8 @@ sap.ui.define([
 	"./OverflowToolbarRenderer",
 	"sap/base/Log",
 	"sap/ui/core/Lib",
-	// jQuery Plugin "lastFocusableDomRef"
-	"sap/ui/dom/jquery/Focusable"
+	"sap/ui/dom/jquery/Focusable" // jQuery Plugin "lastFocusableDomRef"
 ], function(
-	ElementRegistry,
 	Theming,
 	coreLibrary,
 	library,
@@ -424,7 +421,7 @@ sap.ui.define([
 			$LastFocusableChildControl = this.$().lastFocusableDomRef();
 
 		if (this.sFocusedChildControlId) {
-			oFocusedChildControl = ElementRegistry.get(this.sFocusedChildControlId);
+			oFocusedChildControl = Element.getElementById(this.sFocusedChildControlId);
 		}
 
 		if (oFocusedChildControl && oFocusedChildControl.getDomRef()){

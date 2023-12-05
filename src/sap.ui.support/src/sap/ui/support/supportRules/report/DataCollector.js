@@ -9,14 +9,13 @@ sap.ui.define([
 	"sap/ui/VersionInfo",
 	"sap/base/util/LoaderExtensions",
 	"sap/base/security/encodeXML",
-	"sap/ui/core/Component",
 	"sap/ui/core/ComponentRegistry",
 	"sap/ui/core/Lib",
 	"sap/ui/core/Theming",
 	"sap/ui/core/theming/ThemeManager",
 	"sap/ui/core/support/ToolsAPI",
 	"sap/ui/thirdparty/URI"
-], function(VersionInfo, LoaderExtensions, encodeXML, Component, ComponentRegistry, Lib, Theming, ThemeManager, ToolsAPI, URI) {
+], function (VersionInfo, LoaderExtensions, encodeXML, ComponentRegistry, Lib, Theming, ThemeManager, ToolsAPI, URI) {
 "use strict";
 
 /**

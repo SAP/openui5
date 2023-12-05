@@ -5,7 +5,6 @@
 // Provides control sap.m.DynamicDateRange.
 sap.ui.define([
 	'sap/base/Log',
-	"sap/ui/core/ElementRegistry",
 	'sap/ui/core/InvisibleText',
 	'sap/ui/core/Element',
 	'sap/ui/core/Control',
@@ -46,7 +45,6 @@ sap.ui.define([
 	"sap/ui/dom/jquery/Focusable"
 ], function(
 	Log,
-	ElementRegistry,
 	InvisibleText,
 	Element,
 	Control,
@@ -1658,7 +1656,7 @@ sap.ui.define([
 			return LabelEnablement.getReferencingLabels(this)
 				.concat(this.getAriaLabelledBy())
 				.reduce(function(sAccumulator, sCurrent) {
-					var oCurrentControl = ElementRegistry.get(sCurrent);
+					var oCurrentControl = Element.getElementById(sCurrent);
 					return sAccumulator + " " + (oCurrentControl.getText ? oCurrentControl.getText() : "");
 				}, "")
 				.trim();

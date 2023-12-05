@@ -8,15 +8,15 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/m/p13n/modification/FlexModificationHandler",
 	"sap/m/MessageStrip",
-	"sap/ui/core/ElementRegistry",
 	"sap/ui/core/library",
 	"sap/ui/core/Element",
+	"sap/ui/core/ElementRegistry",
 	"sap/m/p13n/modules/DefaultProviderRegistry",
 	"sap/m/p13n/modules/UIManager",
 	"sap/m/p13n/modules/StateHandlerRegistry",
 	"sap/m/p13n/modules/xConfigAPI",
 	"sap/m/p13n/enums/ProcessingStrategy"
-], function(AdaptationProvider, merge, Log, FlexModificationHandler, MessageStrip, ElementRegistry, coreLibrary, Element, DefaultProviderRegistry, UIManager, StateHandlerRegistry, xConfigAPI, ProcessingStrategy) {
+], function (AdaptationProvider, merge, Log, FlexModificationHandler, MessageStrip, coreLibrary, Element, ElementRegistry, DefaultProviderRegistry, UIManager, StateHandlerRegistry, xConfigAPI, ProcessingStrategy) {
 	"use strict";
 
 	var ERROR_INSTANCING = "Engine: This class is a singleton. Please use the getInstance() method instead.";

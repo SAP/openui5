@@ -97,75 +97,185 @@ sap.ui.define([
 			})
 			.then(function() {
 				assert.ok(FlexState.getFlexObjectsDataSelector(), "then the data selector is created");
-				assert.strictEqual(this.oCheckUpdateSelectorStub.callCount, 1, "then the selector is updated during the state initialization");
-			}.bind(this));
-		});
-
-		QUnit.test("When a FlexObject is added and removed", function(assert) {
-			return FlexState.initialize({
-				reference: sReference,
-				componentId: sComponentId
-			})
-			.then(function() {
-				var oDummyFlexObject = { test: "test" };
-				FlexState.addDirtyFlexObject(sReference, oDummyFlexObject);
-				assert.deepEqual(
-					FlexState.getFlexObjectsDataSelector().get({reference: sReference})[0],
-					oDummyFlexObject,
-					"then the flexObject is added to the selector"
-				);
 				assert.strictEqual(
 					this.oCheckUpdateSelectorStub.callCount,
-					2,
-					"then the selector is updated after adding a flexObject"
-				);
-				FlexState.removeDirtyFlexObject(sReference, oDummyFlexObject);
-				assert.notOk(
-					FlexState.getFlexObjectsDataSelector().get({reference: sReference})[0],
-					"then the flexObject is removed from the selector"
-				);
-				assert.strictEqual(
-					this.oCheckUpdateSelectorStub.callCount,
-					3,
-					"then the selector is updated after removing a flexObject"
-				);
-				assert.deepEqual(
-					FlexState.getFlexObjectsDataSelector().get({reference: "wrongReference"}),
-					[],
-					"then an empty array is returned for invalid references"
+					1,
+					"then the selector is updated during the state initialization"
 				);
 			}.bind(this));
 		});
 
-		QUnit.test("When multiple FlexObjects are added and removed together", function(assert) {
-			return FlexState.initialize({
+		QUnit.test("When a FlexObject is added and removed", async function(assert) {
+			await FlexState.initialize({
 				reference: sReference,
 				componentId: sComponentId
-			})
-			.then(function() {
-				var aDummyFlexObjects = [{ test: "test" }, { test2: "test2" }];
-				FlexState.addDirtyFlexObjects(sReference, aDummyFlexObjects);
-				assert.deepEqual(
-					FlexState.getFlexObjectsDataSelector().get({reference: sReference}),
-					aDummyFlexObjects,
-					"then the flexObjects are added to the selector"
-				);
-				assert.strictEqual(
-					this.oCheckUpdateSelectorStub.callCount,
-					2,
-					"then the selector is updated only once after initialize"
-				);
-				FlexState.removeDirtyFlexObjects(sReference, aDummyFlexObjects);
-				assert.notOk(
-					FlexState.getFlexObjectsDataSelector().get({reference: sReference})[0],
-					"then the flexObjects are removed from the selector"
-				);
-				assert.strictEqual(
-					this.oCheckUpdateSelectorStub.callCount,
-					3,
-					"then the selector is called only once more during the removal"
-				);
-			}.bind(this));
+			});
+			var oDummyFlexObject = { test: "test" };
+			this.oCheckUpdateSelectorStub.reset();
+			FlexState.addDirtyFlexObject(sReference, oDummyFlexObject);
+			assert.deepEqual(
+				FlexState.getFlexObjectsDataSelector().get({reference: sReference})[0],
+				oDummyFlexObject,
+				"then the flexObject is added to the selector"
+			);
+			assert.strictEqual(
+				this.oCheckUpdateSelectorStub.callCount,
+				1,
+				"then the selector is updated after adding a flexObject"
+			);
+			FlexState.removeDirtyFlexObject(sReference, oDummyFlexObject);
+			assert.strictEqual(
+				FlexState.getFlexObjectsDataSelector().get({reference: sReference}).length,
+				0,
+				"then the flexObject is removed from the selector"
+			);
+			assert.strictEqual(
+				this.oCheckUpdateSelectorStub.callCount,
+				2,
+				"then the selector is updated after removing a flexObject"
+			);
+			assert.deepEqual(
+				FlexState.getFlexObjectsDataSelector().get({reference: "wrongReference"}),
+				[],
+				"then an empty array is returned for invalid references"
+			);
+		});
+
+		QUnit.test("When a FlexObject over max layer is added and removed", async function(assert) {
+			await FlexState.initialize({
+				reference: sReference,
+				componentId: sComponentId
+			});
+			var oDummyFlexObject = { test: "test" };
+			this.oCheckUpdateSelectorStub.reset();
+			FlexState.addDirtyFlexObject(sReference, oDummyFlexObject);
+			assert.deepEqual(
+				FlexState.getFlexObjectsDataSelector().get({reference: sReference})[0],
+				oDummyFlexObject,
+				"then the flexObject is added to the selector"
+			);
+			assert.strictEqual(
+				this.oCheckUpdateSelectorStub.callCount,
+				1,
+				"then the selector is updated after adding a flexObject"
+			);
+			FlexState.removeDirtyFlexObject(sReference, oDummyFlexObject);
+			assert.strictEqual(
+				FlexState.getFlexObjectsDataSelector().get({reference: sReference}).length,
+				0,
+				"then the flexObject is removed from the selector"
+			);
+			assert.strictEqual(
+				this.oCheckUpdateSelectorStub.callCount,
+				2,
+				"then the selector is updated after removing a flexObject"
+			);
+			assert.deepEqual(
+				FlexState.getFlexObjectsDataSelector().get({reference: "wrongReference"}),
+				[],
+				"then an empty array is returned for invalid references"
+			);
+		});
+
+		QUnit.test("When multiple FlexObjects are added and removed together", async function(assert) {
+			await FlexState.initialize({
+				reference: sReference,
+				componentId: sComponentId
+			});
+			var aDummyFlexObjects = [{ test: "test" }, { test2: "test2" }];
+			this.oCheckUpdateSelectorStub.reset();
+			FlexState.addDirtyFlexObjects(sReference, aDummyFlexObjects);
+			assert.deepEqual(
+				FlexState.getFlexObjectsDataSelector().get({reference: sReference}),
+				aDummyFlexObjects,
+				"then the flexObjects are added to the selector"
+			);
+			assert.strictEqual(
+				this.oCheckUpdateSelectorStub.callCount,
+				1,
+				"then the selector is updated only once after initialize"
+			);
+			FlexState.removeDirtyFlexObjects(sReference, aDummyFlexObjects);
+			assert.strictEqual(
+				FlexState.getFlexObjectsDataSelector().get({reference: sReference}).length,
+				0,
+				"then the flexObjects are removed from the selector"
+			);
+			assert.strictEqual(
+				this.oCheckUpdateSelectorStub.callCount,
+				2,
+				"then the selector is called only once more during the removal"
+			);
+		});
+
+		QUnit.test("When multiple FlexObjects over max layer are added and removed together", async function(assert) {
+			sandbox.stub(FlexInfoSession, "getByReference").returns({adaptationLayer: Layer.CUSTOMER});
+			await FlexState.initialize({
+				reference: sReference,
+				componentId: sComponentId
+			});
+			var aDummyFlexObjects = [
+				{ test: "test", getLayer: () => "USER" },
+				{ test2: "test2", getLayer: () => "USER" }
+			];			this.oCheckUpdateSelectorStub.reset();
+			this.oCheckUpdateSelectorStub.reset();
+			FlexState.addDirtyFlexObjects(sReference, aDummyFlexObjects);
+			assert.deepEqual(
+				FlexState.getFlexObjectsDataSelector().get({reference: sReference}),
+				[],
+				"then the flexObjects are NOT added to the selector"
+			);
+			assert.strictEqual(
+				this.oCheckUpdateSelectorStub.callCount,
+				0,
+				"then the selector is NOT updated after initialize"
+			);
+			FlexState.removeDirtyFlexObjects(sReference, aDummyFlexObjects);
+			assert.strictEqual(
+				FlexState.getFlexObjectsDataSelector().get({reference: sReference}).length,
+				0,
+				"then the flexObjects are removed from the selector"
+			);
+			assert.strictEqual(
+				this.oCheckUpdateSelectorStub.callCount,
+				1,
+				"then the selector is called only once more during the removal"
+			);
+		});
+
+		QUnit.test("When multiple FlexObjects with just one with over adaptation layer are added and removed together", async function(assert) {
+			sandbox.stub(FlexInfoSession, "getByReference").returns({adaptationLayer: Layer.VENDOR});
+			await FlexState.initialize({
+				reference: sReference,
+				componentId: sComponentId
+			});
+			var aDummyFlexObjects = [
+				{ test: "test", getLayer: () => "CUSTOMER" },
+				{ test2: "test2", getLayer: () => "VENDOR" }
+			];
+			this.oCheckUpdateSelectorStub.reset();
+			FlexState.addDirtyFlexObjects(sReference, aDummyFlexObjects);
+			assert.deepEqual(
+				FlexState.getFlexObjectsDataSelector().get({reference: sReference}),
+				[aDummyFlexObjects[1]],
+				"then just one flexObject with valid layer is added to the selector"
+			);
+			assert.strictEqual(
+				this.oCheckUpdateSelectorStub.callCount,
+				1,
+				"then the selector is updated once after initialize"
+			);
+			FlexState.removeDirtyFlexObjects(sReference, aDummyFlexObjects);
+			assert.strictEqual(
+				FlexState.getFlexObjectsDataSelector().get({reference: sReference}).length,
+				0,
+				"then the flexObjects are removed from the selector"
+			);
+			assert.strictEqual(
+				this.oCheckUpdateSelectorStub.callCount,
+				2,
+				"then the selector is called only once more during the removal"
+			);
 		});
 
 		QUnit.test("When data from the storage response is loaded", function(assert) {
@@ -373,7 +483,8 @@ sap.ui.define([
 				assert.strictEqual(this.oGetFlexInfoSessionStub.callCount, 1, "get flex info session during initialization");
 
 				assert.strictEqual(FlexState.getAppDescriptorChanges(sReference), "appDescriptorChanges", "the correct map is returned");
-				assert.strictEqual(this.oCallPrepareFunctionStub.callCount, 1, "the prepare function was called once for the AppDescriptors");
+				assert.strictEqual(this.oCallPrepareFunctionStub.callCount,
+					1, "the prepare function was called once for the AppDescriptors");
 				assert.strictEqual(this.oIsLayerFilteringRequiredStub.callCount, 1, "the filtering was not triggered again");
 				assert.strictEqual(this.oGetFlexInfoSessionStub.callCount, 1, "get flex info session was not triggered again");
 				assert.strictEqual(FlexState.getAppDescriptorChanges(sReference), "appDescriptorChanges", "the correct map is returned");
@@ -492,7 +603,8 @@ sap.ui.define([
 			assert.deepEqual(oStoredData, {persistencyKey: oStoredData2}, "store the data will overwrite existing stored data");
 			FlexState.setInitialNonFlCompVariantData(this.sFlexReference, "persistencyKey2", oStandardVariant1, aVariants1, "controlId1");
 			oStoredData = FlexState.getInitialNonFlCompVariantData(this.sFlexReference);
-			assert.deepEqual(oStoredData, {persistencyKey: oStoredData2, persistencyKey2: oStoredData1}, "storing data for a new persistencyKey does not overwrite existing data");
+			assert.deepEqual(oStoredData, {persistencyKey: oStoredData2, persistencyKey2: oStoredData1},
+				"storing data for a new persistencyKey does not overwrite existing data");
 		});
 	});
 
@@ -517,7 +629,9 @@ sap.ui.define([
 	QUnit.module("FlexState with loadFlexData and callPrepareFunction stubbed, filtering active", {
 		beforeEach() {
 			this.oLoadFlexDataStub = sandbox.stub(Loader, "loadFlexData").resolves(mEmptyResponse);
-			this.ogetUShellServiceStub = sandbox.stub(Utils, "getUShellService").withArgs("URLParsing").returns(Promise.resolve("DummyURLParsingService"));
+			this.ogetUShellServiceStub = sandbox.stub(Utils, "getUShellService")
+			.withArgs("URLParsing")
+			.returns(Promise.resolve("DummyURLParsingService"));
 			this.oCallPrepareFunctionStub = sandbox.stub(FlexState, "callPrepareFunction").callsFake(mockPrepareFunctions);
 			this.oAppComponent = new UIComponent(sComponentId);
 			this.oIsLayerFilteringRequiredStub = sandbox.stub(LayerUtils, "isLayerFilteringRequired").returns(true);
@@ -1138,18 +1252,42 @@ sap.ui.define([
 			});
 			// initial data
 			FlexState.updateStorageResponse(sReference, [
-				{type: "add", flexObject: FlexObjectFactory.createUIChange({id: "initialUIChange1"}).convertToFileContent()},
-				{type: "add", flexObject: FlexObjectFactory.createUIChange({id: "initialUIChange2", variantReference: "flVariant12"}).convertToFileContent()},
-				{type: "add", flexObject: FlexObjectFactory.createUIChange({id: "initialUIChange3", fileType: "ctrl_variant_change"}).convertToFileContent()},
-				{type: "add", flexObject: FlexObjectFactory.createUIChange({id: "initialUIChange4", fileType: "ctrl_variant_management_change"}).convertToFileContent()},
-				{type: "add", flexObject: FlexObjectFactory.createFlVariant({id: "initialFlVariant1"}).convertToFileContent()},
-				{type: "add", flexObject: FlexObjectFactory.createCompVariant({id: "initialCompVariant1"}).convertToFileContent()},
-				{type: "add", flexObject: FlexObjectFactory.createUIChange({
-					id: "initialUIChange5",
-					selector: {
-						persistencyKey: "foo"
-					}
-				}).convertToFileContent()}
+				{
+					type: "add",
+					flexObject: FlexObjectFactory.createUIChange({id: "initialUIChange1"}).convertToFileContent()
+				},
+				{
+					type: "add",
+					flexObject: FlexObjectFactory.createUIChange({id: "initialUIChange2", variantReference: "flVariant12"})
+					.convertToFileContent()
+				},
+				{
+					type: "add",
+					flexObject: FlexObjectFactory.createUIChange({id: "initialUIChange3", fileType: "ctrl_variant_change"})
+					.convertToFileContent()
+				},
+				{
+					type: "add",
+					flexObject: FlexObjectFactory.createUIChange({id: "initialUIChange4", fileType: "ctrl_variant_management_change"})
+					.convertToFileContent()
+				},
+				{
+					type: "add",
+					flexObject: FlexObjectFactory.createFlVariant({id: "initialFlVariant1"}).convertToFileContent()
+				},
+				{
+					type: "add",
+					flexObject: FlexObjectFactory.createCompVariant({id: "initialCompVariant1"}).convertToFileContent()
+				},
+				{
+					type: "add",
+					flexObject: FlexObjectFactory.createUIChange({
+						id: "initialUIChange5",
+						selector: {
+							persistencyKey: "foo"
+						}
+					}).convertToFileContent()
+				}
 			]);
 			FlexState.rebuildFilteredResponse(sReference);
 			this.oUIChange = FlexObjectFactory.createUIChange({

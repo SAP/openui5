@@ -7,13 +7,12 @@ sap.ui.define('sap/ui/debug/ControlTree', [
 	'sap/ui/base/EventProvider',
 	'sap/ui/core/Element',
 	'sap/ui/core/Rendering',
-	'sap/ui/core/UIArea',
+	'sap/ui/core/UIAreaRegistry',
 	'./Highlighter',
-	"sap/ui/core/UIAreaRegistry",
 	"sap/ui/dom/getOwnerWindow",
 	"sap/base/Log"
 ],
-	function(EventProvider, Element, Rendering, UIArea, Highlighter, UIAreaRegistry, getOwnerWindow, Log) {
+	function(EventProvider, Element, Rendering, UIAreaRegistry, Highlighter, getOwnerWindow, Log) {
 	"use strict";
 
 
@@ -371,7 +370,7 @@ sap.ui.define('sap/ui/debug/ControlTree', [
 			oSomething = oSomething.getParent();
 		}
 
-		if ( oSomething instanceof UIArea ) {
+		if ( oSomething.isA && oSomething.isA("sap.ui.core.UIArea") ) {
 			return oSomething.getRootNode();
 		}
 	};

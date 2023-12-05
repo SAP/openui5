@@ -592,6 +592,13 @@ sap.ui.define([
 		return this._oSearchField;
 	};
 
+	BasePanel.prototype.setTitle = function(sTitle) {
+		this.setProperty("title", sTitle);
+		this._oInvText?.setText(sTitle);
+
+		return this;
+	};
+
 	BasePanel.prototype._setTemplate = function(oTemplate) {
 		oTemplate.setType("Active");
 		var oCurrentTemplate = this.getAggregation("_template");

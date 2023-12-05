@@ -14,8 +14,7 @@ sap.ui.define([
 	 * This controller can be registered using the <code>sap.m.p13n.Engine</code> to persist table column width changes
 	 * and can be used in combination with <code>sap.m.Table</code> and <code>sap.ui.table.Table</code> controls.
 	 *
-	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
-	 * @param {object} [mSettings] Initial settings for the new control
+	 * @param {object} mSettings Initial settings for the new control
 	 * @param {sap.ui.core.Control} mSettings.control The table instance that is personalized by this controller
 	 *
 	 * @class

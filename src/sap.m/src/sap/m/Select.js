@@ -9,7 +9,6 @@ sap.ui.define([
 	'./SelectList',
 	'./library',
 	'sap/ui/core/Control',
-	"sap/ui/core/ElementRegistry",
 	'sap/ui/core/EnabledPropagator',
 	'sap/ui/core/LabelEnablement',
 	'sap/ui/core/Icon',
@@ -40,7 +39,6 @@ function(
 	SelectList,
 	library,
 	Control,
-	ElementRegistry,
 	EnabledPropagator,
 	LabelEnablement,
 	Icon,
@@ -2015,7 +2013,7 @@ function(
 				return;
 			}
 
-			var oControl = ElementRegistry.get(oEvent.relatedControlId),
+			var oControl = Element.getElementById(oEvent.relatedControlId),
 				oFocusDomRef = oControl && oControl.getFocusDomRef();
 
 			if (Device.system.desktop && containsOrEquals(oPicker.getFocusDomRef(), oFocusDomRef)) {
@@ -2074,7 +2072,7 @@ function(
 			this.setProperty("selectedItemId", (vItem instanceof Item) ? vItem.getId() : vItem, true);
 
 			if (typeof vItem === "string") {
-				vItem = ElementRegistry.get(vItem);
+				vItem = Element.getElementById(vItem);
 			}
 
 			sKey = vItem ? vItem.getKey() : "";
@@ -2641,7 +2639,7 @@ function(
         Select.prototype._clearReferencingLabelsHandlers = function () {
 			var oLabel;
             this._referencingLabelsHandlers.forEach(function (oHandler) {
-				oLabel = ElementRegistry.get(oHandler.sLabelId);
+				oLabel = Element.getElementById(oHandler.sLabelId);
 				if (oLabel) {
 					oLabel.removeEventDelegate(oHandler.oDelegate);
 				}
@@ -2664,7 +2662,7 @@ function(
 				return aLabelIDs.indexOf(sId) === iIndex;
 			})
 			.map(function(sLabelID) {
-				return ElementRegistry.get(sLabelID);
+				return Element.getElementById(sLabelID);
 			})
 			.filter(Boolean);
 
@@ -2841,7 +2839,7 @@ function(
 
 			if (typeof vItem === "string") {
 				this.setAssociation("selectedItem", vItem, true);
-				vItem = ElementRegistry.get(vItem);
+				vItem = Element.getElementById(vItem);
 			}
 
 			if (!(vItem instanceof Item) && vItem !== null) {
@@ -3030,7 +3028,7 @@ function(
 		 */
 		Select.prototype.getSelectedItem = function() {
 			var vSelectedItem = this.getAssociation("selectedItem");
-			return (vSelectedItem === null) ? null : ElementRegistry.get(vSelectedItem) || null;
+			return (vSelectedItem === null) ? null : Element.getElementById(vSelectedItem) || null;
 		};
 
 		/**

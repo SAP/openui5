@@ -16,7 +16,6 @@ sap.ui.define([
 	'./Title',
 	'./ToolbarSpacer',
 	'./SegmentedButton',
-	"sap/ui/core/ElementRegistry",
 	"sap/ui/core/Lib",
 	'sap/ui/unified/Calendar',
 	'sap/ui/unified/calendar/CustomMonthPicker',
@@ -43,7 +42,6 @@ function(
 	Title,
 	ToolbarSpacer,
 	SegmentedButton,
-	ElementRegistry,
 	Library,
 	Calendar,
 	CustomMonthPicker,
@@ -371,7 +369,7 @@ function(
 				if (this.fireEvent("_pickerButtonPress", {}, true)) {
 					var oDate = this.getStartDate() || UI5Date.getInstance(),
 						sCurrentPickerId = this.getAssociation("currentPicker");
-					oPicker = ElementRegistry.get(sCurrentPickerId);
+					oPicker = Element.getElementById(sCurrentPickerId);
 					if (oPicker.displayDate) {
 						oPicker.displayDate(oDate);
 					}
@@ -611,7 +609,7 @@ function(
 	 */
 	PlanningCalendarHeader.prototype._handlePickerDateSelect = function () {
 		var sCurrentPickerId = this.getAssociation("currentPicker"),
-			oPicker = ElementRegistry.get(sCurrentPickerId),
+			oPicker = Element.getElementById(sCurrentPickerId),
 			oSelectedDate = oPicker.getSelectedDates()[0].getStartDate();
 
 		this.setStartDate(oSelectedDate);

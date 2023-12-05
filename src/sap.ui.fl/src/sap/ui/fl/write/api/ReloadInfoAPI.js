@@ -78,6 +78,7 @@ sap.ui.define([
 	 *
 	 * @param {object} oReloadInfo - Information needed for the reload
 	 * @param {sap.ui.core.Control} oReloadInfo.selector - Root control instance
+	 * @param {string} sReference - Flex reference of the app
 	 * @return {boolean} true if allContextsProvided false and RTA wasn't started yet, otherwise false.
 	 */
 	function needContextSpecificReload(oReloadInfo, sReference) {
@@ -212,6 +213,7 @@ sap.ui.define([
 			var oFlexInfoSession = FlexInfoSession.getByReference(sReference);
 			if (!oReloadInfo.ignoreMaxLayerParameter && oReloadInfo.hasHigherLayerChanges) {
 				delete oFlexInfoSession.maxLayer;
+				delete oFlexInfoSession.adaptationLayer;
 				bFlexInfoSessionChanged = true;
 			}
 
@@ -281,7 +283,8 @@ sap.ui.define([
 		},
 
 		/**
-		 * Determines if a reload on exit is needed and if yes - it returns what kind of reload should happen (CrossAppNavigation or hard reload).
+		 * Determines if a reload on exit is needed and if yes - it returns what kind of reload should happen
+		 * (CrossAppNavigation or hard reload).
 		 *
 		 * @param {object} oReloadInfo - Contains the information needed to check if a reload on exit should happen
 		 * @param {sap.ui.fl.Layer} oReloadInfo.layer - Current layer
@@ -318,7 +321,10 @@ sap.ui.define([
 				&& oReloadInfo.activeVersion !== Version.Number.Original
 				&& oReloadInfo.hasVersionStorage
 			) {
-				oReloadInfo.activeVersionNotSelected = !ReloadInfoAPI.hasVersionStorage({value: oReloadInfo.activeVersion}, oReloadInfo.selector);
+				oReloadInfo.activeVersionNotSelected = !ReloadInfoAPI.hasVersionStorage(
+					{value: oReloadInfo.activeVersion},
+					oReloadInfo.selector
+				);
 			}
 
 			oReloadInfo.hasHigherLayerChanges = ReloadInfoAPI.hasMaxLayerStorage({value: oReloadInfo.layer}, oReloadInfo.selector);
@@ -337,7 +343,8 @@ sap.ui.define([
 				|| oReloadInfo.switchEndUserAdaptation
 			) {
 				oReloadInfo.reloadMethod = oRELOAD.RELOAD_PAGE;
-				// always try cross app navigation (via hash); we only need a hard reload because of appdescr changes (changesNeedReload = true)
+				// always try cross app navigation (via hash); we only need a hard reload because of appdescr changes
+				// (changesNeedReload = true)
 				if (!oReloadInfo.changesNeedReload && Utils.getUshellContainer()) {
 					oReloadInfo.reloadMethod = oRELOAD.VIA_HASH;
 				}

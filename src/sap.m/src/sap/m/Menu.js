@@ -12,7 +12,6 @@ sap.ui.define([
 	'./List',
 	'./Page',
 	'./MenuListItem',
-	"sap/ui/core/ElementRegistry",
 	"sap/ui/core/Lib",
 	'sap/ui/unified/Menu',
 	'sap/ui/unified/MenuItem',
@@ -31,7 +30,6 @@ sap.ui.define([
 		List,
 		Page,
 		MenuListItem,
-		ElementRegistry,
 		Library,
 		UfdMenu,
 		UfdMenuItem,
@@ -475,7 +473,7 @@ sap.ui.define([
 
 		Menu.prototype._createMenuListItemFromItem = function(oItem) {
 			var sMenuListItemId = this._generateListItemId(oItem.getId()),
-				oListItem = ElementRegistry.get(sMenuListItemId);
+				oListItem = Element.getElementById(sMenuListItemId);
 
 			if (oListItem) {
 				return oListItem;
@@ -502,7 +500,7 @@ sap.ui.define([
 
 		Menu.prototype._createVisualMenuItemFromItem = function(oItem) {
 			var sUfMenuItemId = this._generateUnifiedMenuItemId(oItem.getId()),
-				oUfMenuItem = ElementRegistry.get(sUfMenuItemId),
+				oUfMenuItem = Element.getElementById(sUfMenuItemId),
 				aCustomData = oItem.getCustomData(), i;
 
 			if (oUfMenuItem) {
@@ -829,7 +827,7 @@ sap.ui.define([
 				return;
 			}
 			sTargetItemId = fnGenerateTargetItemId(oEvent.getSource().getId());
-			oTargetItem = ElementRegistry.get(sTargetItemId);
+			oTargetItem = Element.getElementById(sTargetItemId);
 
 			if (oTargetItem) {
 				// Private aggregations are not going to get cloned if ManagedObject.prototype.clone method gets called.

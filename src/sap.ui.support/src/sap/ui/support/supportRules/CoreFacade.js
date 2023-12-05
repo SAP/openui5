@@ -6,11 +6,9 @@
  * An interface to the core to be used by rules
  */
 sap.ui.define([
-	'sap/ui/core/Component',
-	"sap/ui/core/ComponentRegistry",
-	'sap/ui/core/UIArea',
-	"sap/ui/core/UIAreaRegistry"
-], function(Component, ComponentRegistry, UIArea, UIAreaRegistry) {
+	'sap/ui/core/ComponentRegistry',
+	'sap/ui/core/UIAreaRegistry'
+], function (ComponentRegistry, UIAreaRegistry) {
 	"use strict";
 
 	var coreInstance = null;
@@ -30,38 +28,36 @@ sap.ui.define([
 	function CoreFacade(oCore) {
 		coreInstance = oCore;
 
-		return (
-			/** @lends sap.ui.support.CoreFacade.prototype */ {
-				/**
-				 * Gets the Metadata from the Core object.
-				 * @public
-				 */
-				getMetadata: function () {
-					return coreInstance.getMetadata();
-				},
-				/**
-				 * Gets the UI areas from the Core object.
-				 * @public
-				 */
-				getUIAreas: function () {
-					return UIAreaRegistry.all();
-				},
-				/**
-				 * Gets the Components from the Core object.
-				 * @public
-				 */
-				getComponents: function () {
-					return ComponentRegistry.all();
-				},
-				/**
-				 * Gets the Models from the Core object.
-				 * @public
-				 */
-				getModels: function () {
-					return coreInstance.oModels;
-				}
+		return /** @lends sap.ui.support.CoreFacade.prototype */ {
+			/**
+			 * Gets the Metadata from the Core object.
+			 * @public
+			 */
+			getMetadata: function () {
+				return coreInstance.getMetadata();
+			},
+			/**
+			 * Gets the UI areas from the Core object.
+			 * @public
+			 */
+			getUIAreas: function () {
+				return UIAreaRegistry.all();
+			},
+			/**
+			 * Gets the Components from the Core object.
+			 * @public
+			 */
+			getComponents: function () {
+				return ComponentRegistry.all();
+			},
+			/**
+			 * Gets the Models from the Core object.
+			 * @public
+			 */
+			getModels: function () {
+				return coreInstance.oModels;
 			}
-		);
+		};
 	}
 
 	return CoreFacade;

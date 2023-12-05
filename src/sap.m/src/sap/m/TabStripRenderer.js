@@ -5,10 +5,9 @@
 sap.ui.define([
 	'./TabStripItem',
 	'sap/ui/Device',
-	"sap/ui/core/ElementRegistry",
 	'sap/ui/core/InvisibleText',
 	"sap/ui/core/Element"
-], function(TabStripItem, Device, ElementRegistry, InvisibleText, Element) {
+], function(TabStripItem,  Device, InvisibleText, Element) {
 	"use strict";
 
 	/**
@@ -76,7 +75,7 @@ sap.ui.define([
 
 		// On mobile device we render only the selected tab if there is one
 		if (Device.system.phone) {
-			oSelectedItem = ElementRegistry.get(sSelectedItemId);
+			oSelectedItem = Element.getElementById(sSelectedItemId);
 			oSelectedItem && this.renderItem(oRm, oControl, oSelectedItem, true);
 		} else {
 			aItems.forEach(function (oItem) {

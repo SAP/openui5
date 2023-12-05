@@ -6,7 +6,6 @@
 sap.ui.define([
 	'./InputBase',
 	'sap/ui/core/Element',
-	"sap/ui/core/ElementRegistry",
 	'sap/ui/core/Item',
 	'sap/ui/core/LabelEnablement',
 	'sap/ui/core/AccessKeysEnablement',
@@ -44,7 +43,6 @@ sap.ui.define([
 function(
 	InputBase,
 	Element,
-	ElementRegistry,
 	Item,
 	LabelEnablement,
 	AccessKeysEnablement,
@@ -913,7 +911,7 @@ function(
 	Input.prototype.setSelectedItem = function(oItem) {
 
 		if (typeof oItem === "string") {
-			oItem = ElementRegistry.get(oItem);
+			oItem = Element.getElementById(oItem);
 		}
 
 		if (oItem !== null && !(oItem instanceof Item)) {
@@ -1089,7 +1087,7 @@ function(
 	Input.prototype.setSelectedRow = function(oListItem) {
 
 		if (typeof oListItem === "string") {
-			oListItem = ElementRegistry.get(oListItem);
+			oListItem = Element.getElementById(oListItem);
 		}
 
 		if (oListItem !== null && !(oListItem instanceof ColumnListItem)) {
@@ -1442,7 +1440,7 @@ function(
 		var oSuggPopover = this._getSuggestionsPopover(),
 			oPopup = oSuggPopover && oSuggPopover.getPopover(),
 			bIsPopover = oPopup && oPopup.isA("sap.m.Popover"),
-			oFocusedControl = oEvent.relatedControlId && ElementRegistry.get(oEvent.relatedControlId),
+			oFocusedControl = oEvent.relatedControlId && Element.getElementById(oEvent.relatedControlId),
 			oFocusDomRef = oFocusedControl && oFocusedControl.getFocusDomRef(),
 			bFocusInPopup = oPopup
 				&& oFocusDomRef

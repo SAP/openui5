@@ -78,6 +78,17 @@ sap.ui.define([
 	});
 
 	/**
+	 * A selection object representing the selected cells.
+	 *
+	 * The selection object contains the selected cells separated into rows and columns.
+	 * Rows are represented by their context, while columns are the column instance, which may vary depending on the table type.
+	 * @public
+	 * @typedef {object} sap.m.plugins.CellSelector.Selection
+	 * @property {sap.ui.model.Context[]} rows The row contexts of the selected cells.
+	 * @property {sap.ui.core.Element[]} columns The column instances of the selected cells; the content is based on the owner control.
+	 */
+
+	/**
 	 * Event Delegate that containts events, that need to be executed after control events.
 	 */
 	const EventDelegate = {
@@ -106,6 +117,9 @@ sap.ui.define([
 				// remove resizer, as due to rerendering table element may be gone
 				this._oResizer.remove();
 				this._oResizer = null;
+			}
+			if (this._bSelecting) {
+				this.removeSelection();
 			}
 		},
 		onAfterRendering: function() {
@@ -288,14 +302,15 @@ sap.ui.define([
 
 	/**
 	 * Returns the cell selection range.
-	 * The value <code>Infinity</code> in <code>rowIndex</code> meant for until the limit is reached.
+	 * The value <code>Infinity</code> in <code>rowIndex</code> indicates that the limit is reached.
 	 *
-	 * Note: This method is subject to change.
+	 * <b>Note</b>: This method is subject to change.
+	 * @param {boolean} bIgnore Ignore group header rows within selection range
 	 * @returns {{from: {rowIndex: int, colIndex: int}, to: {rowIndex: int, colIndex: int}}  The range of the selection
-	 * @private
 	 * @ui5-restricted sap.m.plugins.CopyProvider
+	 * @private
 	 */
-	CellSelector.prototype.getSelectionRange = function () {
+	CellSelector.prototype.getSelectionRange = function (bIgnore) {
 		if (!this._bSelecting) {
 			return null;
 		}
@@ -309,6 +324,18 @@ sap.ui.define([
 		mSelectionRange.from.colIndex = Math.max(mSelectionRange.from.colIndex, 0);
 		mSelectionRange.to.colIndex = Math.min(mSelectionRange.to.colIndex, iMaxColumnIndex);
 		mSelectionRange.from.rowIndex = Math.max(mSelectionRange.from.rowIndex, 0);
+
+		if (bIgnore) {
+			mSelectionRange.ignoredRows = [];
+			const aContexts = this.getSelectedRowContexts();
+			aContexts.forEach((oContext, iIndex) => {
+				const iRowIndex = mSelectionRange.from.rowIndex + iIndex;
+				if (isGroupRow(this._getBinding(), oContext, iRowIndex)) {
+					mSelectionRange.ignoredRows.push(iRowIndex);
+				}
+			});
+		}
+
 		return mSelectionRange;
 	};
 
@@ -326,7 +353,50 @@ sap.ui.define([
 			return [];
 		}
 
-		return this.getConfig("rowContexts", this.getControl(), mSelectionRange.from.rowIndex, mSelectionRange.to.rowIndex, this.getRangeLimit());
+		return this.getConfig("getSelectedRowContexts", this.getControl(), mSelectionRange.from.rowIndex, mSelectionRange.to.rowIndex, this.getRangeLimit());
+	};
+
+	/**
+	 * Returns the selected cells separated into the selected rows and columns.
+	 *
+	 * Example:
+	 * If the cells from (0, 0) to (2, 4) are selected, this method will return the following object:
+	 * <pre>
+	 * 	{
+	 * 		rows: [Row0_Context, Row1_Context, Row2_Context],
+	 * 		columns: [Column0, Column1, Column2, Column3, Column4]
+	 * 	}
+	 * </pre>
+	 *
+	 * <b>Note:</b> The content of the <code>rows</code> and <code>columns</code> depends on the owner control.
+	 * The type of the column that is returned depends on the table type for which the plugin is used (for example, <code>sap.ui.table.Column</code> for <code>sap.ui.table.Table</code>).
+	 *
+	 * @param {boolean} bIgnore Ignores group headers from selection
+	 * @returns {sap.m.plugins.CellSelector.Selection} An object containing the selected cells separated into rows and columns
+	 * @private
+	 */
+	CellSelector.prototype.getSelection = function(bIgnore) {
+		var mSelectionRange = this.getSelectionRange();
+		if (!mSelectionRange) {
+			return {rows: [], columns: []};
+		}
+
+		var aSelection = this.getConfig("getSelectedRowContexts", this.getControl(), mSelectionRange.from.rowIndex, mSelectionRange.to.rowIndex, this.getRangeLimit());
+		if (bIgnore) {
+			aSelection = aSelection.filter((oContext, iIndex) => !isGroupRow(this._getBinding(), oContext, iIndex + mSelectionRange.from.rowIndex));
+		}
+
+		var aSelectedColumns = this.getConfig("getVisibleColumns", this.getControl()).slice(mSelectionRange.from.colIndex, mSelectionRange.to.colIndex + 1);
+		if (this.getControl().getParent().isA("sap.ui.mdc.Table")) {
+			aSelectedColumns = aSelectedColumns.map(function(oSelectedColumn) {
+				return Element.getElementById(oSelectedColumn.getId().replace(/\-innerColumn$/, ""));
+			});
+		}
+
+		return {
+			rows: aSelection,
+			columns: aSelectedColumns
+		};
 	};
 
 	CellSelector.prototype._onsaparrowmodifiers = function(oEvent, sDirectionType, iRowDiff, iColDiff) {
@@ -794,8 +864,20 @@ sap.ui.define([
 		return !oEvent.isMarked?.() && this.getConfig("isSupported", this.getControl());
 	};
 
+	CellSelector.prototype._getBinding = function() {
+		return this.getConfig("getBinding", this.getControl());
+	};
+
 	function isCell(oTarget, sCell) {
 		return oTarget.classList.contains(sCell);
+	}
+
+	function isGroupRow(oBinding, oContext, iIndex) {
+		const oRowContext = oBinding?.getNodeByIndex?.(iIndex) ?? oContext;
+		if (oBinding?.nodeHasChildren) {
+			return oBinding.nodeHasChildren(oRowContext);
+		}
+		return !(oRowContext.getProperty("@ui5.node.isExpanded") === undefined);
 	}
 
 	/**
@@ -868,7 +950,7 @@ sap.ui.define([
 				});
 				if (oRow) {
 					var oColumn = this.getVisibleColumns(oTable)[mPosition.colIndex];
-					var oCell = oColumn && oRow.getCells()[mPosition.colIndex];
+					var oCell = oColumn && oRow.getCells()[oColumn.getIndex()];
 					if (oCell) {
 						return oCell.$().closest(`.${this.selectableCells}`)[0];
 					}
@@ -925,7 +1007,7 @@ sap.ui.define([
 			 * @param {int} iLimit The range limit
 			 * @returns {sap.ui.model.Context[]} A portion of the row binding contexts
 			 */
-			rowContexts: function(oTable, iFromIndex, iToIndex, iLimit) {
+			getSelectedRowContexts: function(oTable, iFromIndex, iToIndex, iLimit) {
 				if (iToIndex == Infinity) {
 					var iMaxIndex = oTable.getBinding("rows").getAllCurrentContexts().length - 1;
 					iToIndex = Math.min(iToIndex, iFromIndex + iLimit - 1, iMaxIndex);
@@ -1022,6 +1104,9 @@ sap.ui.define([
 			},
 			_getSelectionOwner: function(oTable) {
 				return PluginBase.getPlugin(oTable, "sap.ui.table.plugins.SelectionPlugin") || oTable;
+			},
+			getBinding: function(oTable) {
+				return oTable.getBinding("rows");
 			}
 		}
 	}, CellSelector);

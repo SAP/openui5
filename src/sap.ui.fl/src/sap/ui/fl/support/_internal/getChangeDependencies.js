@@ -4,7 +4,6 @@
 
 sap.ui.define([
 	"sap/base/Log",
-	"sap/ui/core/Component",
 	"sap/ui/core/ComponentRegistry",
 	"sap/ui/fl/ChangePersistenceFactory",
 	"sap/ui/fl/apply/_internal/changes/FlexCustomData",
@@ -12,7 +11,6 @@ sap.ui.define([
 	"sap/ui/fl/Utils"
 ], function(
 	Log,
-	Component,
 	ComponentRegistry,
 	ChangePersistenceFactory,
 	FlexCustomData,

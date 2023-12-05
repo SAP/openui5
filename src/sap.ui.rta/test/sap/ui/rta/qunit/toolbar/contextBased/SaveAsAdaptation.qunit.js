@@ -6,6 +6,7 @@ sap.ui.define([
 	"sap/ui/core/Element",
 	"sap/ui/core/Fragment",
 	"sap/ui/core/Lib",
+	"sap/ui/core/library",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/fl/initial/api/Version",
 	"sap/ui/fl/write/api/ContextBasedAdaptationsAPI",
@@ -14,14 +15,14 @@ sap.ui.define([
 	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/rta/toolbar/Adaptation",
 	"sap/ui/rta/toolbar/contextBased/SaveAsAdaptation",
-	"sap/ui/thirdparty/sinon-4",
-	"sap/ui/core/library"
+	"sap/ui/thirdparty/sinon-4"
 ], function(
 	RtaQunitUtils,
 	Control,
 	Element,
 	Fragment,
 	Lib,
+	coreLibrary,
 	ManifestUtils,
 	Version,
 	ContextBasedAdaptationsAPI,
@@ -30,13 +31,12 @@ sap.ui.define([
 	nextUIUpdate,
 	Adaptation,
 	SaveAsAdaptation,
-	sinon,
-	library
+	sinon
 ) {
 	"use strict";
 
 	// shortcut for sap.ui.core.ValueState
-	var ValueState = library.ValueState;
+	const { ValueState } = coreLibrary;
 
 	var sandbox = sinon.createSandbox();
 
