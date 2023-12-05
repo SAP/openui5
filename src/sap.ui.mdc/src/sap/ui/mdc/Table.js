@@ -2183,7 +2183,7 @@ sap.ui.define([
 			this._oToolbar.addEnd(this._oExportButton);
 		}
 
-		this._oExportButton.setEnabled(!MTableUtil.isEmpty(this.getRowBinding()));
+		this._oExportButton.setEnabled(MTableUtil.isExportable(this.getRowBinding()));
 		this._oExportButton.setVisible(this._isExportEnabled());
 	};
 
