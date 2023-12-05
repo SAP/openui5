@@ -221,13 +221,9 @@ sap.ui.define([
 				return fHeaderWidth + fRequired;
 			}
 
-			fContentWidth = Math.max(fContentWidth, iMinWidth);
-			if (fContentWidth > iHeaderLength) {
-				return fContentWidth;
-			}
-
 			var fOrigHeaderWidth = Util.measureText(sHeader, fnGetHeaderFont());
 			fOrigHeaderWidth = Math.min(fOrigHeaderWidth, iMaxWidth * 0.7);
+			fContentWidth = Math.max(fContentWidth, iMinWidth);
 
 			var fContentHeaderRatio = Math.max(1, 1 - (Math.log(Math.max(fContentWidth - 1.7, 0.2)) / Math.log(iMaxWidth * 0.5)) + 1);
 			var fMaxHeaderWidth = fContentHeaderRatio * fContentWidth;
