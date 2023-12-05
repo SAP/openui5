@@ -1,11 +1,11 @@
 /*global QUnit*/
 sap.ui.define([
 	'sap/ui/core/Control',
-	'sap/ui/core/RenderManager'
-], function(Control, RenderManager) {
+	'sap/ui/core/RenderManager',
+	'sap/ui/qunit/utils/nextUIUpdate'
+], function(Control, RenderManager, nextUIUpdate) {
 
 	"use strict";
-	/*global QUnit, sinon */
 
 	var TestControl = Control.extend("test.TestControl", {
 		metadata: {
@@ -34,7 +34,6 @@ sap.ui.define([
 
 	QUnit.module("DOM", {
 		beforeEach: function() {
-			this.clock = sinon.useFakeTimers();
 			this.oControl = new TestControl({
 				text: "TestControl"
 			});
@@ -44,16 +43,14 @@ sap.ui.define([
 			});
 
 			this.oParent.placeAt("content");
-			this.clock.tick(0);
+			return nextUIUpdate();
 		},
 		afterEach: function() {
 			this.oParent.destroy();
-			this.clock.runAll();
-			this.clock.restore();
 		}
 	});
 
-	QUnit.test("Default destroy", function(assert) {
+	QUnit.test("Default destroy", async function(assert) {
 		var oRootDomRef = this.oControl.getDomRef();
 		var oTextDomRef = this.oControl.getDomRef("text");
 
@@ -66,7 +63,7 @@ sap.ui.define([
 		assert.equal(oRootDomRef.id.indexOf("sap-ui-destroyed-"), 0, "destroy prefix is added to the control DOM id");
 		assert.equal(oTextDomRef.id.indexOf("sap-ui-destroyed-"), 0, "destroy prefix is added to the sub elements as well");
 
-		this.clock.tick(0);
+		await nextUIUpdate();
 		assert.ok(!document.body.contains(oRootDomRef), "DOM is removed asynchronously");
 	});
 
@@ -107,12 +104,12 @@ sap.ui.define([
 		assert.strictEqual(this.oControl.getDomRef(), oRootDomRef, "Control DOM is not touched after destroy");
 	});
 
-	QUnit.test("Destroy a control while it is in the preserved area", function(assert) {
+	QUnit.test("Destroy a control while it is in the preserved area", async function(assert) {
 		var oRootDomRef = this.oControl.getDomRef();
 		oRootDomRef.setAttribute("data-sap-ui-preserve", oRootDomRef.id);
 		RenderManager.preserveContent(oRootDomRef, true);
 		this.oControl.invalidate();
-		this.clock.tick(0);
+		await nextUIUpdate();
 
 		assert.ok(RenderManager.findPreservedContent(this.oControl.getId())[0] === this.oControl.getDomRef(), "Control DOM is in the preserved area");
 
