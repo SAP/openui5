@@ -531,6 +531,29 @@ sap.ui.define([
 				"Local timezone should be in list: " + sLocalTimezone);
 		});
 
+		QUnit.test("convert CLDR to ABAP", function (assert) {
+			const oDateTimeFormatMock = this.mock(Intl.DateTimeFormat.prototype);
+
+			for (const [sCLDR_ID, sABAP_ID] of Object.entries(TimezoneUtil.mCLDR2ABAPTimezones)) {
+				TimezoneUtil._clearLocalTimezoneCache();
+				oDateTimeFormatMock.expects("resolvedOptions").returns({timeZone: sCLDR_ID});
+
+				// code under test
+				assert.strictEqual(TimezoneUtil.getLocalTimezone(), sABAP_ID, sCLDR_ID + " -> " + sABAP_ID);
+			}
+		});
+
+		QUnit.test("only retrieve timezone if cache is empty (string)", function (assert) {
+			TimezoneUtil._clearLocalTimezoneCache();
+			// the browser's Intl.DateTimeFormat implementation may return undefined in case of OS default timezone
+			this.mock(Intl.DateTimeFormat.prototype).expects("resolvedOptions").returns({timeZone: undefined});
+
+			// code under test
+			assert.strictEqual(TimezoneUtil.getLocalTimezone(), undefined);
+			assert.strictEqual(TimezoneUtil.getLocalTimezone(), undefined,
+				"second call uses cache, does not call Intl.DateTimeFormat API again");
+		});
+
 		QUnit.module("Fixed date with end of January", {
 			beforeEach: function () {
 				this.clock = sinon.useFakeTimers(UI5Date.getInstance("2022-01-31T15:22:33Z").getTime());
