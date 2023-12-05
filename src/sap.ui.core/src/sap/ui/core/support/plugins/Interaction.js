@@ -202,7 +202,7 @@ sap.ui.define([
 			if (bActive || jsonData) {
 				aMeasurements = jsonData || TraceInteraction.getAll(/*bFinalize=*/true);
 
-				var fetchStart = window.performance.timing.fetchStart;
+				var fetchStart = window.performance.getEntriesByType("navigation")?.[0]?.fetchStart;
 
 				for (var i = 0; i < aMeasurements.length; i++) {
 					var measurement = aMeasurements[i];
