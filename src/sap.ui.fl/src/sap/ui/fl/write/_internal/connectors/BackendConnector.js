@@ -177,21 +177,6 @@ sap.ui.define([
 				"json"
 			);
 			return WriteUtils.sendRequest(sDeleteUrl, "DELETE", oRequestOption);
-		},
-
-		/**
-		 * Called to get the flex features.
-		 * @param {object} mPropertyBag - Property bag
-		 * @returns {Promise<object>} Promise resolves with an object containing the flex features
-		 */
-		loadFeatures(mPropertyBag) {
-			if (this.initialConnector.settings) {
-				return Promise.resolve({response: this.initialConnector.settings});
-			}
-			var sFeaturesUrl = InitialUtils.getUrl(this.ROUTES.SETTINGS, mPropertyBag);
-			return InitialUtils.sendRequest(sFeaturesUrl, "GET", {initialConnector: InitialConnector}).then(function(oResult) {
-				return oResult.response;
-			});
 		}
 	});
 

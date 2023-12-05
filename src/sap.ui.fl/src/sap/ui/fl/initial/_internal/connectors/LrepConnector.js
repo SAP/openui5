@@ -17,7 +17,8 @@ sap.ui.define([
 
 	var ROUTES = {
 		DATA: "/flex/data/",
-		MODULES: "/flex/modules/"
+		MODULES: "/flex/modules/",
+		SETTINGS: "/flex/settings"
 	};
 
 	/**
@@ -66,6 +67,30 @@ sap.ui.define([
 			if (sClient) {
 				mParameters["sap-client"] = sClient;
 			}
+		},
+
+		/**
+		 * Called to get the flex features.
+		 *
+		 * @param {object} mPropertyBag Property bag
+		 * @param {string} mPropertyBag.url Configured url for the connector
+		 * @returns {Promise<object>} Promise resolves with an object containing the flex features
+		 */
+		loadFeatures(mPropertyBag) {
+			if (this.settings) {
+				return Promise.resolve(this.settings);
+			}
+			var mParameters = {};
+
+			this._addClientInfo(mParameters);
+
+			var sFeaturesUrl = Utils.getUrl(ROUTES.SETTINGS, mPropertyBag, mParameters);
+			return Utils.sendRequest(sFeaturesUrl, "GET", {initialConnector: this}).then(function(oResult) {
+				oResult.response.isVariantAdaptationEnabled = !!oResult.response.isPublicLayerAvailable;
+				oResult.response.isContextSharingEnabled = true;
+				oResult.response.isLocalResetEnabled = true;
+				return oResult.response;
+			});
 		},
 
 		/**

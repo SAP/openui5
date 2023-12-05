@@ -3,7 +3,7 @@
  */
 
 sap.ui.define([
-	"sap/ui/fl/write/_internal/Storage",
+	"sap/ui/fl/initial/_internal/Storage",
 	"sap/ui/fl/Utils",
 	"sap/base/Log"
 ], function(

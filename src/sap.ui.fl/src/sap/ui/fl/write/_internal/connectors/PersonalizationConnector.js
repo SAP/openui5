@@ -16,11 +16,6 @@ sap.ui.define([
 	var PREFIX = "/flex/personalization";
 	var API_VERSION = "/v1";
 
-	var FEATURES = {
-		isProductiveSystem: true,
-		hasPersoConnector: true
-	};
-
 	/**
 	 * Connector for communication with SAPUI5 Flexibility Personalization Service
 	 *
@@ -36,15 +31,6 @@ sap.ui.define([
 		ROUTES: {
 			CHANGES: `${PREFIX + API_VERSION}/changes/`,
 			TOKEN: `${PREFIX + API_VERSION}/actions/getcsrftoken`
-		},
-
-		/**
-		 * Called to get the flex features.
-		 *
-		 * @returns {Promise<object>} Promise resolves with an object containing the flex features
-		 */
-		loadFeatures() {
-			return Promise.resolve(FEATURES);
 		}
 	});
 

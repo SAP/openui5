@@ -58,6 +58,146 @@ sap.ui.define([
 		});
 	});
 
+	QUnit.module("Given Storage when loadFeatures is called", {
+		beforeEach() {
+			this.url = "/some/url";
+			LrepConnector.xsrfToken = "123";
+			PersonalizationConnector.xsrfToken = "123";
+		},
+		afterEach() {
+			LrepConnector.xsrfToken = undefined;
+			PersonalizationConnector.xsrfToken = undefined;
+			sandbox.restore();
+		}
+	}, function() {
+		QUnit.test("with a failing connector", function(assert) {
+			var oLrepConnectorLoadFeaturesStub = sandbox.stub(LrepConnector, "loadFeatures").resolves({isKeyUser: true});
+			var oPersonalizationConnectorLoadFeaturesStub = sandbox.stub(PersonalizationConnector, "loadFeatures").resolves({isVariantSharingEnabled: false});
+			var oJsObjectConnectorLoadFeaturesStub = sandbox.stub(JsObjectConnector, "loadFeatures").rejects({});
+
+			sandbox.stub(FlexConfiguration, "getFlexibilityServices").returns([
+				{
+					connector: "LrepConnector",
+					url: this.url,
+					layers: []
+				}, {
+					connector: "JsObjectConnector",
+					layers: [Layer.CUSTOMER]
+				}, {
+					connector: "PersonalizationConnector",
+					url: this.url,
+					layers: [Layer.USER]
+				}
+			]);
+
+			var oExpectedResponse = {
+				isKeyUser: true,
+				isKeyUserTranslationEnabled: false,
+				isVariantSharingEnabled: false,
+				isContextSharingEnabled: true,
+				isPublicFlVariantEnabled: false,
+				isVariantPersonalizationEnabled: true,
+				isLocalResetEnabled: false,
+				isAtoAvailable: false,
+				isAtoEnabled: false,
+				versioning: {
+					CUSTOMER: false,
+					USER: false
+				},
+				isProductiveSystem: true,
+				isPublicLayerAvailable: false,
+				isZeroDowntimeUpgradeRunning: false,
+				system: "",
+				client: ""
+			};
+			var oLogResolveSpy = sandbox.spy(StorageUtils, "logAndResolveDefault");
+
+			return Storage.loadFeatures().then(function(oResponse) {
+				assert.strictEqual(oLrepConnectorLoadFeaturesStub.callCount, 1, "the loadFeatures was triggered once");
+				assert.strictEqual(oJsObjectConnectorLoadFeaturesStub.callCount, 1, "the loadFeatures was triggered once");
+				assert.strictEqual(oPersonalizationConnectorLoadFeaturesStub.callCount, 1, "the loadFeatures was triggered once");
+				assert.strictEqual(oLogResolveSpy.callCount, 1, "the logAndResolveDefault called once");
+				assert.deepEqual(oResponse, oExpectedResponse, "response was merged even with one connector failing");
+			});
+		});
+
+		QUnit.test("then it calls loadFeatures of the configured connectors", function(assert) {
+			var oLrepConnectorLoadFeaturesStub = sandbox.stub(LrepConnector, "loadFeatures").resolves({});
+			var oJsObjectConnectorLoadFeaturesStub = sandbox.stub(JsObjectConnector, "loadFeatures").resolves({});
+			var sUrl = "/some/url";
+
+			sandbox.stub(FlexConfiguration, "getFlexibilityServices").returns([
+				{connector: "LrepConnector", url: sUrl},
+				{connector: "JsObjectConnector"}
+			]);
+
+			return Storage.loadFeatures().then(function() {
+				assert.strictEqual(oLrepConnectorLoadFeaturesStub.callCount, 1, "the loadFeatures was triggered once");
+				var oLrepConnectorCallArgs = oLrepConnectorLoadFeaturesStub.getCall(0).args[0];
+				assert.deepEqual(oLrepConnectorCallArgs, {url: sUrl}, "the url was passed");
+				assert.strictEqual(oJsObjectConnectorLoadFeaturesStub.callCount, 1, "the loadFeatures was triggered once");
+				var oJsObjectConnectorCallArgs = oJsObjectConnectorLoadFeaturesStub.getCall(0).args[0];
+				assert.deepEqual(oJsObjectConnectorCallArgs, {url: undefined}, "no url was passed");
+			});
+		});
+
+		QUnit.test("then merges the response of the connectors", function(assert) {
+			sandbox.stub(FlexConfiguration, "getFlexibilityServices").returns([
+				{connector: "LrepConnector", url: this.url},
+				{connector: "JsObjectConnector"}
+			]);
+
+			sandbox.stub(LrepConnector, "loadFeatures").resolves({
+				isKeyUser: true
+			});
+			sandbox.stub(JsObjectConnector, "loadFeatures").resolves({
+				system: "foo"
+			});
+
+			return Storage.loadFeatures().then(function(mFeatures) {
+				assert.strictEqual(mFeatures.isKeyUser, true, "the property of the LrepConnector was added");
+				assert.strictEqual(mFeatures.system, "foo", "the property of the JsObjectConnector was added");
+			});
+		});
+
+		QUnit.test("then higher layer overrule the lower layer", function(assert) {
+			sandbox.stub(FlexConfiguration, "getFlexibilityServices").returns([
+				{connector: "LrepConnector", url: this.url},
+				{connector: "JsObjectConnector"}
+			]);
+
+			sandbox.stub(LrepConnector, "loadFeatures").resolves({
+				isProductiveSystem: false
+			});
+			sandbox.stub(JsObjectConnector, "loadFeatures").resolves({
+				isProductiveSystem: true
+			});
+
+			var DEFAULT_FEATURES = {
+				isKeyUser: false,
+				isKeyUserTranslationEnabled: false,
+				isVariantSharingEnabled: false,
+				isContextSharingEnabled: false,
+				isPublicFlVariantEnabled: false,
+				isVariantPersonalizationEnabled: true,
+				isAtoAvailable: false,
+				isAtoEnabled: false,
+				draft: {},
+				isProductiveSystem: true,
+				isPublicLayerAvailable: false,
+				isLocalResetEnabled: false,
+				isZeroDowntimeUpgradeRunning: false,
+				system: "",
+				client: ""
+			};
+
+			return Storage.loadFeatures().then(function(mFeatures) {
+				assert.strictEqual(Object.keys(mFeatures).length, Object.keys(DEFAULT_FEATURES).length, "only 12 feature was provided");
+				assert.strictEqual(mFeatures.isProductiveSystem, true, "the property was overruled by the second connector");
+			});
+		});
+	});
+
 	QUnit.module("Storage merges results from different connectors", {
 		afterEach() {
 			sandbox.restore();

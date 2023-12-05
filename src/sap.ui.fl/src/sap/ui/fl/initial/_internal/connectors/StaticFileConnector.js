@@ -73,6 +73,10 @@ sap.ui.define([
 			}
 
 			return Promise.resolve();
+		},
+
+		loadFeatures() {
+			return Promise.resolve({});
 		}
 	};
 });

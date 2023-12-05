@@ -5,18 +5,13 @@
 sap.ui.define([
 	"sap/base/util/merge",
 	"sap/ui/fl/write/_internal/connectors/LrepConnector",
-	"sap/ui/fl/initial/_internal/connectors/NeoLrepConnector",
-	"sap/ui/fl/initial/_internal/connectors/Utils"
+	"sap/ui/fl/initial/_internal/connectors/NeoLrepConnector"
 ], function(
 	merge,
 	LrepConnector,
-	InitialConnector,
-	InitialUtils
+	InitialConnector
 ) {
 	"use strict";
-	var ROUTES = {
-		SETTINGS: "/flex/settings"
-	};
 
 	/**
 	 * Connector for requesting data from a Neo LRep-based back end.
@@ -66,18 +61,6 @@ sap.ui.define([
 			load() {
 				return Promise.reject("contextBasedAdaptation.load is not implemented");
 			}
-		},
-		loadFeatures(mPropertyBag) {
-			if (InitialConnector.settings) {
-				return Promise.resolve(InitialConnector.settings);
-			}
-			var mParameters = {};
-
-			var sFeaturesUrl = InitialUtils.getUrl(ROUTES.SETTINGS, mPropertyBag, mParameters);
-			return InitialUtils.sendRequest(sFeaturesUrl, "GET", {initialConnector: InitialConnector}).then(function(oResult) {
-				oResult.response.isContextSharingEnabled = false;
-				return oResult.response;
-			});
 		}
 	});
 });

@@ -13,7 +13,6 @@ sap.ui.define([
 	"sap/ui/fl/initial/_internal/StorageUtils",
 	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/write/_internal/flexState/compVariants/CompVariantState",
-	"sap/ui/fl/write/_internal/Storage",
 	"sap/ui/fl/write/api/ContextBasedAdaptationsAPI",
 	"sap/ui/fl/write/api/SmartVariantManagementWriteAPI",
 	"sap/ui/fl/Layer",
@@ -33,7 +32,6 @@ sap.ui.define([
 	StorageUtils,
 	Settings,
 	CompVariantState,
-	WriteStorage,
 	ContextBasedAdaptationsAPI,
 	SmartVariantManagementWriteAPI,
 	Layer,
@@ -1148,7 +1146,7 @@ sap.ui.define([
 				isVariantSharingEnabled: true
 			};
 
-			sandbox.stub(WriteStorage, "loadFeatures").resolves(oSetting);
+			sandbox.stub(InitialStorage, "loadFeatures").resolves(oSetting);
 
 			var isVariantSharingEnabledSpy = sandbox.spy(SmartVariantManagementWriteAPI, "isVariantSharingEnabled");
 			return SmartVariantManagementWriteAPI.isVariantSharingEnabled().then(function(bFlag) {
@@ -1164,7 +1162,7 @@ sap.ui.define([
 				isVariantSharingEnabled: false
 			};
 
-			sandbox.stub(WriteStorage, "loadFeatures").resolves(oSetting);
+			sandbox.stub(InitialStorage, "loadFeatures").resolves(oSetting);
 
 			var isVariantSharingEnabledSpy = sandbox.spy(SmartVariantManagementWriteAPI, "isVariantSharingEnabled");
 			return SmartVariantManagementWriteAPI.isVariantSharingEnabled().then(function(bFlag) {
@@ -1178,7 +1176,7 @@ sap.ui.define([
 				isVariantPersonalizationEnabled: true
 			};
 
-			sandbox.stub(WriteStorage, "loadFeatures").resolves(oSetting);
+			sandbox.stub(InitialStorage, "loadFeatures").resolves(oSetting);
 
 			var isVariantPersonalizationEnabledSpy = sandbox.spy(SmartVariantManagementWriteAPI, "isVariantPersonalizationEnabled");
 			return SmartVariantManagementWriteAPI.isVariantPersonalizationEnabled().then(function(bFlag) {
@@ -1192,7 +1190,7 @@ sap.ui.define([
 				isVariantPersonalizationEnabled: false
 			};
 
-			sandbox.stub(WriteStorage, "loadFeatures").resolves(oSetting);
+			sandbox.stub(InitialStorage, "loadFeatures").resolves(oSetting);
 
 			var isVariantPersonalizationEnabledSpy = sandbox.spy(SmartVariantManagementWriteAPI, "isVariantPersonalizationEnabled");
 			return SmartVariantManagementWriteAPI.isVariantPersonalizationEnabled().then(function(bFlag) {

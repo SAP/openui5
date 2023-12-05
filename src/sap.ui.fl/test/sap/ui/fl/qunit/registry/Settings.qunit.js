@@ -2,7 +2,7 @@
 
 sap.ui.define([
 	"sap/ui/fl/registry/Settings",
-	"sap/ui/fl/write/_internal/Storage",
+	"sap/ui/fl/initial/_internal/Storage",
 	"sap/ui/fl/Layer",
 	"sap/ui/thirdparty/sinon-4"
 ], function(

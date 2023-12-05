@@ -144,17 +144,6 @@ sap.ui.define([
 				assert.equal(oStubSendRequest.getCall(0).args[1], sExpectedMethod, "with correct method");
 			});
 		});
-
-		QUnit.test("given load features is called", function(assert) {
-			var mExpectedFeatures = {
-				isProductiveSystem: true,
-				hasPersoConnector: true
-			};
-
-			return WritePersonalizationConnector.loadFeatures().then(function(oResponse) {
-				assert.deepEqual(oResponse, mExpectedFeatures, "the settings object is returned correctly");
-			});
-		});
 	});
 
 	QUnit.module("PersonalizationConnector handing xsrf token in combination of the apply connector", {
