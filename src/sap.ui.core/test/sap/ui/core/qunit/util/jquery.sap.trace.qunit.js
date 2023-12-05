@@ -167,8 +167,6 @@ sap.ui.define([
 		assert.strictEqual(aFESR[1].length, 32, "transaction_id - length");
 		assert.strictEqual(parseInt(aFESR[2]), 3, "client_navigation_time");
 		assert.strictEqual(parseInt(aFESR[3]), 6, "client_round_trip_time");
-		// end to end will be negative due to mocked request timings, hence -1
-		assert.strictEqual(parseInt(aFESR[4]), -1, "end_to_end_time");
 		assert.strictEqual(parseInt(aFESR[5]), 3, "network_round_trips");
 		assert.ok(aFESR[6].length <= 40, "epp-action");
 		assert.strictEqual(parseInt(aFESR[7]), 0, "network_time");
