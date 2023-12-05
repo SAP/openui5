@@ -53,6 +53,10 @@ sap.ui.define([
 			this.oBusyIndicator.destroy();
 			this.oBusyIndicator = null;
 
+			var oModel = this.getView().getModel();
+			this.getView().setModel();
+			oModel.destroy();
+
 			this.oMockServer.destroy();
 			this.oMockServer = null;
 			MockServer.config({autoRespondAfter: 0});
