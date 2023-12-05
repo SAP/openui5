@@ -88,6 +88,10 @@ sap.ui.define([], function() {
 				page: "test-resources/sap/ui/documentation/sdk/qunit/testsuite.generic.qunit.html"
 			},
 
+			"Demokit Testsuite": {
+				page: "test-resources/sap/ui/documentation/sdk/qunit/testsuite.demokit.qunit.html"
+			},
+
 			"URLUtil": {
 				coverage: {
 					only : ["sap/ui/documentation/sdk/util/URLUtil"]
