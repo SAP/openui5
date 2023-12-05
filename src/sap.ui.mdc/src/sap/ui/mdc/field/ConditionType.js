@@ -657,7 +657,7 @@ sap.ui.define([
 				try {
 					if (_isUnit(oType)) {
 						// for unit use part of composite type (as also useFirstMatch needs to be supported with incomplete keys)
-						const oUsedType = aCompositeTypes && aCompositeTypes.length > 1 ? aCompositeTypes[1] : _getDefaultType.call(this);
+						const oUsedType = aCompositeTypes && aCompositeTypes.length > 1 && aCompositeTypes[1] ? aCompositeTypes[1] : _getDefaultType.call(this);
 						vParsedValue = oUsedType.parseValue(vCheckValue, "string");
 						oUsedType.validateValue(vParsedValue);
 					} else {
