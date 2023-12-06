@@ -9,6 +9,7 @@ sap.ui.define([
 	"sap/ui/fl/write/_internal/connectors/JsObjectConnector",
 	"sap/ui/fl/write/_internal/connectors/ObjectStorageConnector",
 	"sap/ui/fl/write/_internal/connectors/SessionStorageConnector",
+	"sap/ui/fl/initial/api/Version",
 	"sap/ui/fl/Layer",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
@@ -20,6 +21,7 @@ sap.ui.define([
 	JsObjectConnector,
 	ObjectStorageConnector,
 	SessionStorageWriteConnector,
+	Version,
 	Layer,
 	sinon
 ) {
@@ -122,7 +124,8 @@ sap.ui.define([
 
 	function saveListWithConnector(oConnector, aList) {
 		return oConnector.write({
-			flexObjects: aList
+			flexObjects: aList,
+			layer: Layer.CUSTOMER
 		});
 	}
 
@@ -161,6 +164,17 @@ sap.ui.define([
 		});
 	}
 
+	function loadVersionFromStorage(mPropertyBag) {
+		var aFlexObjects = [];
+		return ObjectStorageUtils.forEachObjectInStorage(mPropertyBag, function(mFlexObject) {
+			if (mFlexObject.key.includes("version")) {
+				aFlexObjects.push(mFlexObject);
+			}
+		}).then(function() {
+			return aFlexObjects;
+		});
+	}
+
 	function parameterizedTest(oConnector, sStorage, bPublicLayer) {
 		QUnit.module(`loadFlexData: Given a ${sStorage}`, {
 			afterEach() {
@@ -174,11 +188,20 @@ sap.ui.define([
 					return Promise.all([assertFileWritten(assert, oConnector.storage, oTestData, " was written")]);
 				})
 				.then(function() {
-					return oConnector.loadFlexData({reference: "sap.ui.fl.test"});
+					return oConnector.loadFlexData({reference: "sap.ui.fl.test", version: Version.Number.Draft});
 				})
 				.then(function(aFlexData) {
 					assert.strictEqual(aFlexData[0].changes.length, 3, "three changes are returned");
 					assert.ok(aFlexData[0].cacheKey, "the cacheKey got calculated");
+					return loadVersionFromStorage({reference: "sap.ui.fl.test", storage: oConnector.storage});
+				})
+				.then(function(aVersion) {
+					assert.equal(aVersion.length, 1, "there is one version in stoarage");
+					assert.equal(aVersion[0].changeDefinition.filenames.length, 9, "there are 9 filename in the draft version");
+					const aExpectedDraftFilenames = ["oChange1", "oChange2", "oChange21", "oChange3", "oChange4", "oVariant1", "oVariant2", "oVariantChange1", "oVariantManagementChange"];
+					aExpectedDraftFilenames.forEach((sExpectedName) => {
+						assert.ok(aVersion[0].changeDefinition.filenames.includes(sExpectedName), `the ${sExpectedName} exists as draft`);
+					});
 				});
 			});
 
@@ -331,7 +354,7 @@ sap.ui.define([
 				return oConnector.condense(mPropertyBag)
 
 				.then(function() {
-					return oConnector.loadFlexData({reference: "sap.ui.fl.test", version: "0"});
+					return oConnector.loadFlexData({reference: "sap.ui.fl.test", version: Version.Number.Draft});
 				})
 				.then(function(aResponses) {
 					var aFlexObjectsFileContent = aResponses[0].changes;
@@ -341,6 +364,12 @@ sap.ui.define([
 						return oFlexObjectFileContent.fileName;
 					});
 					assert.ok(aIds.indexOf("oChange5") > -1, "the change was added");
+					ObjectStorageUtils.forEachObjectInStorage({reference: "sap.ui.fl.test", storage: oConnector.storage}, function(mFlexObject) {
+						if (mFlexObject.key.includes("version")) {
+							assert.equal(mFlexObject.changeDefinition.filienames.length, 1, "there is one filename in the draft version");
+							assert.equal(mFlexObject.changeDefinition.fileName[0], "oChange5", "the draft filename is correct");
+						}
+					});
 				});
 			});
 		});
@@ -554,6 +583,7 @@ sap.ui.define([
 					return FlexObjectFactory.createFromFileContent(oChangeJson);
 				});
 				var mPropertyBag = {
+					layer: Layer.CUSTOMER,
 					allChanges: aFlexObjects,
 					condensedChanges: aFlexObjects.slice(2),
 					flexObjects: {
@@ -609,8 +639,16 @@ sap.ui.define([
 					}
 				};
 
-				return oConnector.condense(mPropertyBag)
-
+				return loadVersionFromStorage({reference: "sap.ui.fl.test", storage: oConnector.storage})
+				.then(function(aVersion) {
+					assert.equal(aVersion.length, 1, "there is one version in the storage");
+					assert.equal(aVersion[0].changeDefinition.filenames.length, 9, "there is one filename in the draft version");
+					const aExpectedDraftFilenames = ["oChange1", "oChange2", "oChange21", "oChange3", "oChange4", "oVariant1", "oVariant2", "oVariantChange1", "oVariantManagementChange"];
+					aExpectedDraftFilenames.forEach((sExpectedName) => {
+						assert.ok(aVersion[0].changeDefinition.filenames.includes(sExpectedName), `the ${sExpectedName} exists as draft`);
+					});
+					return oConnector.condense(mPropertyBag);
+				})
 				.then(function(oResponse) {
 					var aFlexObjectsFileContent = oResponse.response;
 					assert.strictEqual(aFlexObjectsFileContent.length, 8, "there are 8 changes in the response");
@@ -637,7 +675,7 @@ sap.ui.define([
 					assert.ok(aIds.indexOf("oVariantChange1") > -1, "the variant change was reordered");
 					assert.ok(aIds.indexOf("oChange4") > -1, "the change was reordered");
 
-					return oConnector.loadFlexData({reference: "sap.ui.fl.test"});
+					return oConnector.loadFlexData({reference: "sap.ui.fl.test", version: Version.Number.Draft});
 				})
 				.then(function(aResponses) {
 					var aFlexObjectsFileContent = aResponses[0].changes.concat(aResponses[0].variantChanges, aResponses[0].variantManagementChanges, aResponses[0].variants);
@@ -670,6 +708,16 @@ sap.ui.define([
 					assert.ok(aIds.indexOf("oChange2") < aIds.indexOf("oChange4"), "the changes were reordered");
 					assert.ok(aIds.indexOf("oChange4") < aIds.indexOf("oChange6"), "the changes were reordered");
 					assert.ok(aIds.indexOf("oChange6") < aIds.indexOf("oChange5"), "the changes were reordered");
+
+					return loadVersionFromStorage({reference: "sap.ui.fl.test", storage: oConnector.storage});
+				})
+				.then(function(aVersion) {
+					assert.equal(aVersion.length, 1, "there is one version in the storage");
+					assert.equal(aVersion[0].changeDefinition.filenames.length, 9, "there is one filename in the draft version");
+					const aExpectedDraftFilenames = ["oChange1", "oChange2", "oChange4", "oChange5", "oChange6", "oVariantChange2", "oVariantChange3", "oVariantChange1", "oVariantManagementChange"];
+					aExpectedDraftFilenames.forEach((sExpectedName) => {
+						assert.ok(aVersion[0].changeDefinition.filenames.includes(sExpectedName), `the ${sExpectedName} exists as draft`);
+					});
 				});
 			});
 		});

@@ -391,33 +391,44 @@ sap.ui.define([
 		 */
 		versions: {
 			async getDraftId(mPropertyBag) {
+				let aDraftFilenames = [];
+				if (mPropertyBag.condensedChanges) {
+					aDraftFilenames = mPropertyBag.condensedChanges.map((change) => {return change.sId;});
+				} else {
+					aDraftFilenames = mPropertyBag.flexObjects.map((flexObject) => {return flexObject.fileName;});
+				}
+
 				const aVersions = await this.versions.load.call(this, mPropertyBag);
-				const sDraftVersionId = aVersions.find((oVersion) => oVersion.isDraft)?.id;
-				if (sDraftVersionId) {
-					return sDraftVersionId;
+				let oDraftVersion = aVersions.find((oVersion) => oVersion.isDraft);
+				if (oDraftVersion) {
+					if (mPropertyBag.condensedChanges) {
+						oDraftVersion.filenames = [];
+					}
+					oDraftVersion.filenames = aDraftFilenames.concat(oDraftVersion.filenames);
+				} else {
+					// create new a draft version
+					oDraftVersion = {
+						version: Version.Number.Draft,
+						id: Utils.createDefaultFileName("version"),
+						isDraft: true,
+						activatedAt: "",
+						activatedBy: "",
+						fileType: "version",
+						layer: Layer.CUSTOMER,
+						title: "",
+						reference: mPropertyBag.reference,
+						filenames: aDraftFilenames
+					};
+					if (mPropertyBag.parentVersion !== Version.Number.Original) {
+						oDraftVersion.parentVersion = mPropertyBag.parentVersion;
+					}
 				}
 
-				const oNewDraftVersion = {
-					version: Version.Number.Draft,
-					id: Utils.createDefaultFileName("version"),
-					isDraft: true,
-					activatedAt: "",
-					activatedBy: "",
-					fileType: "version",
-					layer: Layer.CUSTOMER,
-					title: "",
-					reference: mPropertyBag.reference
-				};
-
-				if (mPropertyBag.parentVersion !== Version.Number.Original) {
-					oNewDraftVersion.parentVersion = mPropertyBag.parentVersion;
-				}
-
-				const sKey = ObjectStorageUtils.createFlexKey(`${oNewDraftVersion.id}`);
-				const vVersion = this.storage._itemsStoredAsObjects ? oNewDraftVersion : JSON.stringify(oNewDraftVersion);
+				const sKey = ObjectStorageUtils.createFlexKey(`${oDraftVersion.id}`);
+				const vVersion = this.storage._itemsStoredAsObjects ? oDraftVersion : JSON.stringify(oDraftVersion);
 				await this.storage.setItem(sKey, vVersion);
 
-				return oNewDraftVersion.id;
+				return oDraftVersion.id;
 			},
 
 			/**
@@ -502,6 +513,7 @@ sap.ui.define([
 				oActivateVersion.activatedBy = mFeatures.logonUser;
 				oActivateVersion.isDraft = false;
 				oActivateVersion.version = oActivateVersion.id;
+				delete oActivateVersion.filenames;
 				const vFlexObject = this.storage._itemsStoredAsObjects ? oActivateVersion : JSON.stringify(oActivateVersion);
 				this.storage.setItem(sKey, vFlexObject);
 				return oActivateVersion;
