@@ -101,6 +101,13 @@ sap.ui.define([
 
 	function _sendLoadFeaturesToConnector(aConnectors) {
 		var aConnectorPromises = aConnectors.map(function(oConnectorConfig) {
+			// Tolerance for connectors that do not have loadFeature implemented
+			if (!oConnectorConfig?.loadConnectorModule?.loadFeatures) {
+				return Promise.resolve(StorageUtils.logAndResolveDefault({
+					features: {},
+					layers: oConnectorConfig.layers
+				}, oConnectorConfig, "loadFeatures"));
+			}
 			return oConnectorConfig.loadConnectorModule.loadFeatures({url: oConnectorConfig.url})
 			.then(function(oFeatures) {
 				return {
