@@ -20,6 +20,7 @@ sap.ui.define([
 	"sap/uxap/testblocks/GenericDiv",
 	"sap/base/Log",
 	"sap/ui/Device",
+	"sap/ui/dom/getScrollbarSize",
 	"sap/ui/core/mvc/XMLView",
 	"sap/ui/base/ManagedObject",
 	"sap/m/OverflowToolbar",
@@ -47,6 +48,7 @@ function(
 	GenericDiv,
 	Log,
 	Device,
+	getScrollbarSize,
 	XMLView,
 	ManagedObject,
 	OverflowToolbar,
@@ -2617,6 +2619,24 @@ function(
 		}.bind(this));
 		helpers.renderObject(this.oObjectPageLayout);
 	});
+
+	QUnit.test("_calculateShiftOffset on FireFox", function (assert) {
+		var done = assert.async(),
+			oStubBrowser = this.stub(Device, "browser").value({
+				firefox: true
+			}),
+			oStubScrollbar = this.stub(this.oObjectPageLayout, "_hasVerticalScrollBar").returns(true);
+
+		this.oObjectPageLayout.attachEventOnce("onAfterRenderingDOMReady", function() {
+			// Assert
+			assert.strictEqual(this.oObjectPageLayout._calculateShiftOffset().iMarginalsOffset, ObjectPageLayout.SCROLLBAR_SIZE_FF, "Header and footer offset on FireFox is set correctly");
+			oStubBrowser.restore();
+			oStubScrollbar.restore();
+			done();
+		}.bind(this));
+		helpers.renderObject(this.oObjectPageLayout);
+	});
+
 
 	QUnit.module("ObjectPage with ObjectPageDynamicHeaderTitle without header content", {
 		beforeEach: function () {

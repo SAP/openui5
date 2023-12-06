@@ -38,7 +38,6 @@ sap.ui.define([
 	 * @private
 	 */
 	function createExtendedRenderer(sName, oRendererInfo) {
-
 		assert(this != null, 'BaseRenderer must be a non-null object');
 		assert(typeof sName === 'string' && sName, 'Renderer.extend must be called with a non-empty name for the new renderer');
 		assert(oRendererInfo == null ||
@@ -50,9 +49,6 @@ sap.ui.define([
 		// subclasses should expose the modern signature variant only
 		oChildRenderer.extend = createExtendedRenderer;
 		extend(oChildRenderer, oRendererInfo);
-
-		// expose the renderer globally
-		ObjectPath.set(sName, oChildRenderer);
 
 		return oChildRenderer;
 	}

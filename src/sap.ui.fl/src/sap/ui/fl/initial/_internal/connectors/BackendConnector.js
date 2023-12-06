@@ -53,6 +53,22 @@ sap.ui.define([
 				return oResponse;
 			}.bind(this));
 		},
+
+		/**
+		 * Called to get the flex features.
+		 * @param {object} mPropertyBag - Property bag
+		 * @returns {Promise<object>} Promise resolves with an object containing the flex features
+		 */
+		loadFeatures(mPropertyBag) {
+			if (this.settings) {
+				return Promise.resolve({response: this.settings});
+			}
+			var sFeaturesUrl = InitialUtils.getUrl(this.ROUTES.SETTINGS, mPropertyBag);
+			return InitialUtils.sendRequest(sFeaturesUrl, "GET", {initialConnector: this}).then(function(oResult) {
+				return oResult.response;
+			});
+		},
+
 		/**
 		 * Loads flexibility data from a back end.
 		 *

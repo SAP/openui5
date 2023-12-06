@@ -5,12 +5,14 @@
 sap.ui.define([
 	"sap/ui/fl/initial/_internal/FlexInfoSession",
 	"sap/ui/fl/initial/_internal/storageResultDisassemble",
+	"sap/ui/fl/initial/_internal/StorageFeaturesMerger",
 	"sap/ui/fl/initial/_internal/StorageResultMerger",
 	"sap/ui/fl/initial/_internal/StorageUtils",
 	"sap/ui/fl/Layer"
 ], function(
 	FlexInfoSession,
 	storageResultDisassemble,
+	StorageFeaturesMerger,
 	StorageResultMerger,
 	StorageUtils,
 	Layer
@@ -97,7 +99,36 @@ sap.ui.define([
 		return StorageUtils.getStaticFileConnector().then(_loadFlexDataFromConnectors.bind(this, mPropertyBag));
 	}
 
+	function _sendLoadFeaturesToConnector(aConnectors) {
+		var aConnectorPromises = aConnectors.map(function(oConnectorConfig) {
+			return oConnectorConfig.loadConnectorModule.loadFeatures({url: oConnectorConfig.url})
+			.then(function(oFeatures) {
+				return {
+					features: oFeatures,
+					layers: oConnectorConfig.layers
+				};
+			})
+			.catch(StorageUtils.logAndResolveDefault.bind(null, {
+				features: {},
+				layers: oConnectorConfig.layers
+			}, oConnectorConfig, "loadFeatures"));
+		});
+
+		return Promise.all(aConnectorPromises);
+	}
+
 	var Storage = {};
+
+	/**
+	 * Provides the information which features are provided based on the responses of the involved connectors.
+	 *
+	 * @returns {Promise<Object>} Map feature flags and additional provided information from the connectors
+	 */
+	Storage.loadFeatures = function() {
+		return StorageUtils.getLoadConnectors()
+		.then(_sendLoadFeaturesToConnector)
+		.then(StorageFeaturesMerger.mergeResults);
+	};
 
 	/**
 	 * Provides the flex bundle data for a given application based on the application reference and its version.

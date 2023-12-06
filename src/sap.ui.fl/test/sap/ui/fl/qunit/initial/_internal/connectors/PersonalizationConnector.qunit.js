@@ -97,6 +97,17 @@ sap.ui.define([
 				assert.equal(oFlexData.cacheKey, "abc123", "the cacheKey value is returned");
 			});
 		});
+
+		QUnit.test("given load features is called", function(assert) {
+			var mExpectedFeatures = {
+				isProductiveSystem: true,
+				hasPersoConnector: true
+			};
+
+			return PersonalizationConnector.loadFeatures().then(function(oResponse) {
+				assert.deepEqual(oResponse, mExpectedFeatures, "the settings object is returned correctly");
+			});
+		});
 	});
 
 	QUnit.done(function() {

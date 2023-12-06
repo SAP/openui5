@@ -625,62 +625,6 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("given a mock server, when loadFeatures is triggered without a public layer available", function(assert) {
-			var oServerResponse = {
-				isKeyUser: true,
-				isVersioningEnabled: false,
-				isContextSharingEnabled: true,
-				isPublicLayerAvailable: false,
-				isLocalResetEnabled: true
-			};
-
-			var oExpectedResponse = Object.assign({isVariantAdaptationEnabled: false}, oServerResponse);
-
-			fnReturnData(200, { "Content-Type": "application/json" }, JSON.stringify(oServerResponse));
-			var mPropertyBag = {url: "/sap/bc/lrep"};
-			var sUrl = "/sap/bc/lrep/flex/settings";
-
-			return WriteLrepConnector.loadFeatures(mPropertyBag).then(function(oResponse) {
-				assert.equal(sandbox.server.getRequest(0).method, "GET", "request method is GET");
-				assert.equal(sandbox.server.getRequest(0).url, sUrl, "Url is correct");
-				assert.deepEqual(oExpectedResponse, oResponse, "loadFeatures response flow is correct");
-			});
-		});
-
-		QUnit.test("given a mock server, when loadFeatures is triggered with a public layer available", function(assert) {
-			var oServerResponse = {
-				isKeyUser: true,
-				isVersioningEnabled: false,
-				isContextSharingEnabled: true,
-				isPublicLayerAvailable: true,
-				isLocalResetEnabled: true
-			};
-
-			var oExpectedResponse = Object.assign({isVariantAdaptationEnabled: true}, oServerResponse);
-
-			fnReturnData(200, { "Content-Type": "application/json" }, JSON.stringify(oServerResponse));
-			var mPropertyBag = {url: "/sap/bc/lrep"};
-			var sUrl = "/sap/bc/lrep/flex/settings";
-
-			return WriteLrepConnector.loadFeatures(mPropertyBag).then(function(oResponse) {
-				assert.equal(sandbox.server.getRequest(0).method, "GET", "request method is GET");
-				assert.equal(sandbox.server.getRequest(0).url, sUrl, "Url is correct");
-				assert.deepEqual(oExpectedResponse, oResponse, "loadFeatures response flow is correct");
-			});
-		});
-
-		QUnit.test("given a mock server, when loadFeatures is triggered when settings already stored in apply connector", function(assert) {
-			var oExpectedResponse = {
-				isKeyUser: false
-			};
-			var mPropertyBag = {url: "/sap/bc/lrep"};
-			InitialLrepConnector.settings = {isKeyUser: false};
-			return WriteLrepConnector.loadFeatures(mPropertyBag).then(function(oResponse) {
-				assert.deepEqual(oResponse, oExpectedResponse, "the settings object is obtain from apply connector correctly");
-				assert.equal(sandbox.server.requestCount, 0, "no request is sent to back end");
-			});
-		});
-
 		QUnit.test("given a mock server, when write a draft is triggered", function(assert) {
 			var mPropertyBag = {
 				flexObjects: [],

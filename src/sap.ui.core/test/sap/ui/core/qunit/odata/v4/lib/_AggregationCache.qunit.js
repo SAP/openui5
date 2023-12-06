@@ -4302,15 +4302,17 @@ make root = ${bMakeRoot}`;
 
 	//*********************************************************************************************
 [false, true].forEach(function (bHasGroupLevelCache) {
-	[false, true].forEach(function (bInFirstLevel) {
-		[false, true].forEach(function (bExpandAll) {
-			[undefined, true].forEach(function (bParentExpanded) {
+	// Note: undefined is important to test defaulting!
+	[undefined, 1, 2, 25].forEach(function (iExpandTo) {
+		[undefined, true].forEach(function (bParentExpanded) {
+			[false, true].forEach(function (bCreateRoot) {
 				var sTitle = "create: already has group level cache: " + bHasGroupLevelCache
-						+ ", create inside oFirstLevel: " + bInFirstLevel
-						+ ", expand all: " + bExpandAll
-						+ ", parent's @$ui5.node.isExpanded: " + bParentExpanded;
+						+ ", expandTo: " + iExpandTo
+						+ ", parent's @$ui5.node.isExpanded: " + bParentExpanded
+						+ ", create root node: " + bCreateRoot;
 
-				if (bHasGroupLevelCache && bInFirstLevel || bExpandAll && !bInFirstLevel) {
+				const bInFirstLevel = bCreateRoot || iExpandTo > 24;
+				if (bHasGroupLevelCache && bInFirstLevel || bParentExpanded && bCreateRoot) {
 					return;
 				}
 
@@ -4318,10 +4320,6 @@ make root = ${bMakeRoot}`;
 		var fnCancelCallback,
 			that = this;
 
-		let iExpandTo; // Note: undefined is important to test defaulting!
-		if (bInFirstLevel) {
-			iExpandTo = bExpandAll ? Number.MAX_SAFE_INTEGER : 25;
-		}
 		const oCache = _AggregationCache.create(this.oRequestor, "Foo", "", {}, {
 				$ParentNavigationProperty : "myParent",
 				expandTo : iExpandTo,
@@ -4331,7 +4329,7 @@ make root = ${bMakeRoot}`;
 				create : mustBeMocked,
 				setEmpty : mustBeMocked
 			};
-		const oParentNode = {
+		const oParentNode = bCreateRoot ? "2" : {
 				"@$ui5._" : {cache : bHasGroupLevelCache ? oGroupLevelCache : undefined},
 				"@$ui5.node.level" : 23
 			};
@@ -4349,11 +4347,11 @@ make root = ${bMakeRoot}`;
 			.exactly(bHasGroupLevelCache || bInFirstLevel ? 0 : 1)
 			.withExactArgs();
 		this.mock(_Helper).expects("updateAll")
-			.exactly(bParentExpanded ? 0 : 1)
+			.exactly(bParentExpanded || bCreateRoot ? 0 : 1)
 			.withExactArgs(sinon.match.same(oCache.mChangeListeners), "('42')",
 				sinon.match.same(oParentNode), {"@$ui5.node.isExpanded" : true});
 		const oEntityData = {
-				"@$ui5.node.parent" : "Foo('42')",
+				"@$ui5.node.parent" : (bCreateRoot ? undefined : "Foo('42')"),
 				bar : "~bar~",
 				foo : "~foo~"
 			};
@@ -4366,8 +4364,10 @@ make root = ${bMakeRoot}`;
 				"~fnSubmitCallback~", sinon.match.func)
 			.callsFake(function () {
 				fnCancelCallback = arguments[8];
-				assert.strictEqual(_Helper.getPrivateAnnotation(oParentNode, "cache"),
-					bInFirstLevel ? undefined : oGroupLevelCache);
+				if (!bCreateRoot) {
+					assert.strictEqual(_Helper.getPrivateAnnotation(oParentNode, "cache"),
+						bInFirstLevel ? undefined : oGroupLevelCache);
+				}
 				_Helper.setPrivateAnnotation(oEntityData, "postBody", oPostBody);
 				return new SyncPromise(function (resolve) {
 					setTimeout(function () {
@@ -4378,17 +4378,16 @@ make root = ${bMakeRoot}`;
 							// Note: #calculateKeyPredicateRH doesn't know better :-(
 							oEntityData["@$ui5.node.level"] = 1;
 						}
+						const iCallCount = bInFirstLevel && iExpandTo > 1 ? 1 : 0;
 						const oRankExpectation = that.mock(oCache).expects("requestRank")
-							.exactly(bExpandAll ? 1 : 0)
+							.exactly(iCallCount)
 							.withExactArgs(sinon.match.same(oEntityData), "~oGroupLock~")
 							.callsFake(function () {
-								if (bExpandAll) {
-									Promise.resolve().then(function () {
-										assert.ok(oRankExpectation.called, "both called in sync");
-										assert.ok(oRankExpectation
-											.calledImmediatelyBefore(oNodeExpectation));
-									});
-								}
+								Promise.resolve().then(function () {
+									assert.ok(oRankExpectation.called, "both called in sync");
+									assert.ok(oRankExpectation
+										.calledImmediatelyBefore(oNodeExpectation));
+								});
 								return Promise.resolve("~iRank~");
 							});
 						oNodeExpectation = that.mock(oCache).expects("requestNodeProperty")
@@ -4400,27 +4399,25 @@ make root = ${bMakeRoot}`;
 								});
 							}));
 						that.mock(oCache.oFirstLevel).expects("removeElement")
-							.exactly(bExpandAll ? 1 : 0).withExactArgs(0, "~sTransientPredicate~");
-						if (bExpandAll) {
+							.exactly(iCallCount).withExactArgs(0, "~sTransientPredicate~");
+						if (iCallCount) {
 							// always done by #addElements, but needs to be undone in this case only
 							oCache.aElements.$byPredicate["~sTransientPredicate~"] = "n/a";
 						}
 						const oDeleteTransientPredicateExpectation
 							= that.mock(_Helper).expects("deletePrivateAnnotation")
-							.exactly(bExpandAll ? 1 : 0)
+							.exactly(iCallCount)
 							.withExactArgs(sinon.match.same(oEntityData), "transientPredicate");
 						const oSetIndexExpectation
-							= that.mock(_Helper).expects("setPrivateAnnotation")
-							.exactly(bExpandAll ? 1 : 0)
+							= that.mock(_Helper).expects("setPrivateAnnotation").exactly(iCallCount)
 							.withExactArgs(sinon.match.same(oEntityData), "rank", "~iRank~");
-						that.mock(oCache.oFirstLevel).expects("restoreElement")
-							.exactly(bExpandAll ? 1 : 0)
+						that.mock(oCache.oFirstLevel).expects("restoreElement").exactly(iCallCount)
 							.withExactArgs("~iRank~", sinon.match.same(oEntityData))
 							.callsFake(function () {
 								assert.ok(oDeleteTransientPredicateExpectation.called);
 							});
-						that.mock(oCache).expects("shiftRank").exactly(bExpandAll ? 1 : 0)
-							.withExactArgs(3, +1)
+						that.mock(oCache).expects("shiftRank").exactly(iCallCount)
+							.withExactArgs(bCreateRoot ? 0 : 3, +1)
 							.callsFake(function () {
 								assert.ok(oSetIndexExpectation.called);
 							});
@@ -4428,15 +4425,19 @@ make root = ${bMakeRoot}`;
 					});
 				});
 			});
-		this.mock(_Helper).expects("makeRelativeUrl").withExactArgs("/Foo('42')", "/Foo")
-			.returns("~relativeUrl~");
+		this.mock(_Helper).expects("makeRelativeUrl").exactly(bCreateRoot ? 0 : 1)
+			.withExactArgs("/Foo('42')", "/Foo").returns("~relativeUrl~");
 		oCacheMock.expects("addElements")
-			.withExactArgs(sinon.match.same(oEntityData), 3, sinon.match.same(oCollectionCache))
+			.withExactArgs(sinon.match.same(oEntityData), bCreateRoot ? 0 : 3,
+				sinon.match.same(oCollectionCache))
 			.callsFake(function () {
-				assert.deepEqual(oCache.aElements, ["0", "1", oParentNode, null, "3", "4"]);
+				assert.deepEqual(oCache.aElements, bCreateRoot
+					? [null, "0", "1", "2", "3", "4"]
+					: ["0", "1", oParentNode, null, "3", "4"]);
 			});
 		const oAdjustDescendantCountExpectation = oCacheMock.expects("adjustDescendantCount")
-			.exactly(bInFirstLevel ? 1 : 0).withExactArgs(sinon.match.same(oEntityData), 3, +1);
+			.exactly(bInFirstLevel ? 1 : 0)
+			.withExactArgs(sinon.match.same(oEntityData), bCreateRoot ? 0 : 3, +1);
 
 		// code under test
 		const oResult = oCache.create("~oGroupLock~", "~oPostPathPromise~", "~sPath~",
@@ -4444,10 +4445,10 @@ make root = ${bMakeRoot}`;
 			"~fnSubmitCallback~");
 
 		assert.strictEqual(oAdjustDescendantCountExpectation.callCount, bInFirstLevel ? 1 : 0);
-		assert.deepEqual(oPostBody, {"myParent@odata.bind" : "~relativeUrl~"});
+		assert.deepEqual(oPostBody, bCreateRoot ? {} : {"myParent@odata.bind" : "~relativeUrl~"});
 		assert.deepEqual(oEntityData, {
 			"@$ui5._" : {postBody : oPostBody},
-			"@$ui5.node.level" : 24,
+			"@$ui5.node.level" : bCreateRoot ? 1 : 24,
 			bar : "~bar~",
 			foo : "~foo~"
 		});
@@ -4458,7 +4459,7 @@ make root = ${bMakeRoot}`;
 			assert.strictEqual(oEntityData0, oEntityData);
 			assert.deepEqual(oEntityData, {
 				"@$ui5._" : {postBody : oPostBody, predicate : "('ABC')"},
-				"@$ui5.node.level" : 24,
+				"@$ui5.node.level" : bCreateRoot ? 1 : 24,
 				bar : "~bar~",
 				foo : "~foo~"
 			});
@@ -4467,14 +4468,12 @@ make root = ${bMakeRoot}`;
 				"('ABC')" : oEntityData
 			});
 			assert.strictEqual(oCache.aElements.$count, 6);
-			if (!bExpandAll) {
-				assert.ok(bNodePropertyCompleted, "await #requestNodeProperty");
-			}
+			assert.ok(bNodePropertyCompleted, "await #requestNodeProperty");
 
-			oCache.aElements[3] = oEntityData;
+			oCache.aElements[bCreateRoot ? 0 : 3] = oEntityData;
 			oCache.aElements.$byPredicate["~sTransientPredicate~"] = "n/a";
 			oCacheMock.expects("adjustDescendantCount").exactly(bInFirstLevel ? 1 : 0)
-				.withExactArgs(sinon.match.same(oEntityData), 3, -1);
+				.withExactArgs(sinon.match.same(oEntityData), bCreateRoot ? 0 : 3, -1);
 
 			// code under test
 			fnCancelCallback();
@@ -4491,91 +4490,6 @@ make root = ${bMakeRoot}`;
 		});
 	});
 });
-
-	//*********************************************************************************************
-	QUnit.test("create: root node", function (assert) {
-		var fnCancelCallback;
-
-		const oCache = _AggregationCache.create(this.oRequestor, "Foo", "", {}, {
-				$ParentNavigationProperty : "myParent",
-				expandTo : 42,
-				hierarchyQualifier : "X"
-			});
-		oCache.aElements = ["0", "1", "2"];
-		oCache.aElements.$byPredicate = {};
-		oCache.aElements.$count = 3;
-		const oCacheMock = this.mock(oCache);
-		oCacheMock.expects("createGroupLevelCache").never();
-		const oEntityData = {
-				bar : "~bar~",
-				foo : "~foo~"
-			};
-		const oPostBody = {};
-		let bNodePropertyCompleted = false;
-		this.mock(oCache.oFirstLevel).expects("create")
-			.withExactArgs("~oGroupLock~", "~oPostPathPromise~", "~sPath~", "~sTransientPredicate~",
-				{bar : "~bar~", foo : "~foo~"},
-				false, "~fnErrorCallback~", "~fnSubmitCallback~", sinon.match.func)
-			.callsFake(function () {
-				fnCancelCallback = arguments[8];
-				_Helper.setPrivateAnnotation(oEntityData, "postBody", oPostBody);
-				return new SyncPromise(function (resolve) {
-					setTimeout(function () {
-						_Helper.setPrivateAnnotation(oEntityData, "predicate", "('ABC')");
-						oCacheMock.expects("requestNodeProperty")
-							.withExactArgs(sinon.match.same(oEntityData), "~oGroupLock~")
-							.returns(new Promise(function (resolve) {
-								setTimeout(function () {
-									bNodePropertyCompleted = true;
-									resolve();
-								});
-							}));
-						resolve();
-					});
-				});
-			});
-		this.mock(_Helper).expects("makeRelativeUrl").never();
-		oCacheMock.expects("addElements")
-			.withExactArgs(sinon.match.same(oEntityData), 0, sinon.match.same(oCache.oFirstLevel))
-			.callsFake(function () {
-				assert.deepEqual(oCache.aElements, [null, "0", "1", "2"]);
-			});
-
-		// code under test
-		const oResult = oCache.create("~oGroupLock~", "~oPostPathPromise~", "~sPath~",
-			"~sTransientPredicate~", oEntityData, /*bAtEndOfCreated*/false, "~fnErrorCallback~",
-			"~fnSubmitCallback~");
-
-		assert.deepEqual(oPostBody, {});
-		assert.deepEqual(oEntityData, {
-			"@$ui5._" : {postBody : oPostBody},
-			"@$ui5.node.level" : 1,
-			bar : "~bar~",
-			foo : "~foo~"
-		});
-		assert.strictEqual(oCache.aElements.$count, 4);
-		assert.strictEqual(oResult.isPending(), true);
-
-		return oResult.then((oEntityData0) => {
-			assert.strictEqual(oEntityData0, oEntityData);
-			assert.deepEqual(oCache.aElements.$byPredicate, {
-				"('ABC')" : oEntityData
-			});
-			assert.strictEqual(oCache.aElements.$count, 4);
-			assert.ok(bNodePropertyCompleted, "await #requestNodeProperty");
-
-			oCache.aElements[0] = oEntityData;
-
-			// code under test
-			fnCancelCallback();
-
-			assert.strictEqual(oCache.aElements.$count, 3);
-			assert.deepEqual(oCache.aElements.$byPredicate, {
-				"('ABC')" : oEntityData
-			});
-			assert.deepEqual(oCache.aElements, ["0", "1", "2"]);
-		});
-	});
 
 	//*********************************************************************************************
 	QUnit.test("create: bAtEndOfCreated, collapsed parent", function (assert) {

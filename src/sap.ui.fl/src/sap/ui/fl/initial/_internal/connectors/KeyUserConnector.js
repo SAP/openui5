@@ -31,9 +31,16 @@ sap.ui.define([
 		],
 		API_VERSION,
 		ROUTES: {
-			DATA: `${PREFIX + API_VERSION}/data/`
+			DATA: `${PREFIX + API_VERSION}/data/`,
+			SETTINGS: `${PREFIX + API_VERSION}/settings`
 		},
 		isLanguageInfoRequired: true,
+		loadFeatures(mPropertyBag) {
+			return BackendConnector.loadFeatures.call(KeyUserConnector, mPropertyBag).then(function(oFeatures) {
+				oFeatures.isContextSharingEnabled = true;
+				return oFeatures;
+			});
+		},
 		loadFlexData(mPropertyBag) {
 			return BackendConnector.sendRequest.call(KeyUserConnector, mPropertyBag).then(function(oResult) {
 				oResult.contents.map(function(oContent, iIndex, oResult) {

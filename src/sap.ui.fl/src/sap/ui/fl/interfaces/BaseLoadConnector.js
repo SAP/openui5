@@ -31,6 +31,15 @@ sap.ui.define([], function() {
 		 */
 		loadFlexData(/* mPropertyBag */) {
 			return Promise.reject("loadFlexData is not implemented");
+		},
+
+		/**
+		 * Interface called to get the flex feature.
+		 *
+		 * @returns {Promise<object>} Resolves with an object containing the data for the flex features
+		 */
+		loadFeatures() {
+			return Promise.reject("loadFeatures is not implemented");
 		}
 	};
 

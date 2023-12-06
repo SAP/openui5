@@ -544,6 +544,7 @@ sap.ui.define([
 	ObjectPageLayout.MAX_SNAP_POSITION_OFFSET = 20;		// px
 	ObjectPageLayout.HEADER_MAX_ALLOWED_NON_SROLLABLE_PERCENTAGE = 0.6; // pct.
 	ObjectPageLayout.TITLE_LEVEL_AS_ARRAY = Object.keys(TitleLevel);
+	ObjectPageLayout.SCROLLBAR_SIZE_FF = 12;			// px
 
 	ObjectPageLayout.EVENTS = {
 		TITLE_PRESS: "_titlePress",
@@ -1338,7 +1339,7 @@ sap.ui.define([
 			iScrollbarWidth;
 
 		if (Device.system.desktop) {
-			iScrollbarWidth = getScrollbarSize().width;
+			iScrollbarWidth = Device.browser.firefox ? ObjectPageLayout.SCROLLBAR_SIZE_FF : getScrollbarSize().width;
 			iHeaderOffset = iScrollbarWidth;
 			if (!bHasVerticalScroll) {
 				iHeaderOffset = 0;

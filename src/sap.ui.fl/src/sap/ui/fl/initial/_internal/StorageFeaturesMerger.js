@@ -10,13 +10,13 @@ sap.ui.define([
 	"use strict";
 
 	/**
-	 * ConnectorFeaturesMerger class for Connector implementations (write).
+	 * ConnectorFeaturesMerger class for Connector implementations (initial).
 	 *
-	 * @namespace sap.ui.fl.write._internal.StorageFeaturesMerger
+	 * @namespace sap.ui.fl.intial._internal.StorageFeaturesMerger
 	 * @since 1.70
 	 * @version ${version}
 	 * @private
-	 * @ui5-restricted sap.ui.fl.write._internal.Storage
+	 * @ui5-restricted sap.ui.fl.initial._internal.Storage
 	 */
 
 	var DEFAULT_FEATURES = {
@@ -41,9 +41,11 @@ sap.ui.define([
 		var oVersioning = {};
 		var bVersioningEnabled = !!oResponse.features.isVersioningEnabled;
 
-		oResponse.layers.forEach(function(sLayer) {
-			oVersioning[sLayer] = bVersioningEnabled;
-		});
+		if (oResponse.layers) {
+			oResponse.layers.forEach(function(sLayer) {
+				oVersioning[sLayer] = bVersioningEnabled;
+			});
+		}
 
 		return oVersioning;
 	}

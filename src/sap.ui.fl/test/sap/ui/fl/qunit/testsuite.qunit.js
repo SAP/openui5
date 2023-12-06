@@ -71,6 +71,13 @@ sap.ui.define([
 				}
 			},
 
+			"initial/_internal/connectors/NeoLrepConnector": {
+				group: "Initial Internal",
+				coverage: {
+					only: ["sap/ui/fl/initial/_internal/connectors/NeoLrepConnector"]
+				}
+			},
+
 			"initial/_internal/connectors/PersonalizationConnector": {
 				group: "Initial Internal",
 				coverage: {
@@ -104,6 +111,13 @@ sap.ui.define([
 				},
 				coverage: {
 					only: ["sap/ui/fl/initial/_internal/Storage"]
+				}
+			},
+
+			"initial/_internal/StorageFeaturesMerger": {
+				group: "Initial Internal",
+				coverage: {
+					only: ["sap/ui/fl/initial/_internal/StorageFeaturesMerger"]
 				}
 			},
 
@@ -753,9 +767,6 @@ sap.ui.define([
 					only: [
 						"sap/ui/fl/write/_internal/connectors/ObjectPathConnector"
 					]
-				},
-				ui5: {
-					flexibilityServices: '[{"connector": "ObjectStorageConnector", "layers": []}]'
 				}
 			},
 
@@ -770,13 +781,6 @@ sap.ui.define([
 				group: "Write Internal",
 				coverage: {
 					only: ["sap/ui/fl/write/_internal/connectors/PersonalizationConnector"]
-				}
-			},
-
-			"write/_internal/StorageFeaturesMerger": {
-				group: "Write Internal",
-				coverage: {
-					only: ["sap/ui/fl/write/_internal/StorageFeaturesMerger"]
 				}
 			},
 
