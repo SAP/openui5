@@ -68,7 +68,7 @@ sap.ui.define([
 		}
 	}, new Page("mockPage"));
 
-	QUnit.module("startService()", {
+	QUnit.module("getService()", {
 		beforeEach() {
 			this.oRta = new RuntimeAuthoring({
 				showToolbars: false,
@@ -103,11 +103,11 @@ sap.ui.define([
 				this.oRta.start();
 			}.bind(this));
 
-			return this.oRta.startService(sServiceName);
+			return this.oRta.getService(sServiceName);
 		});
 	});
 
-	QUnit.module("startService() - RTA is pre-started", {
+	QUnit.module("getService() - RTA is pre-started", {
 		beforeEach() {
 			this.oRta = new RuntimeAuthoring({
 				showToolbars: false,
@@ -121,7 +121,7 @@ sap.ui.define([
 		}
 	}, function() {
 		QUnit.test("starting a service", function(assert) {
-			var oServiceLoader = this.oRta.startService(Object.keys(mServicesDictionary).shift());
+			var oServiceLoader = this.oRta.getService(Object.keys(mServicesDictionary).shift());
 
 			assert.ok(oServiceLoader instanceof Promise, "promise is returned");
 
@@ -136,9 +136,9 @@ sap.ui.define([
 
 		QUnit.test("starting a service too frequently", function(assert) {
 			var sServiceName = Object.keys(mServicesDictionary).shift();
-			var oServiceLoader1 = this.oRta.startService(sServiceName);
-			var oServiceLoader2 = this.oRta.startService(sServiceName);
-			var oServiceLoader3 = this.oRta.startService(sServiceName);
+			var oServiceLoader1 = this.oRta.getService(sServiceName);
+			var oServiceLoader2 = this.oRta.getService(sServiceName);
+			var oServiceLoader3 = this.oRta.getService(sServiceName);
 
 			assert.strictEqual(oServiceLoader1, oServiceLoader2);
 			assert.strictEqual(oServiceLoader1, oServiceLoader3);
@@ -159,10 +159,10 @@ sap.ui.define([
 			}]);
 
 			return this.oRta
-			.startService(sServiceName)
+			.getService(sServiceName)
 			.then(function() {
 				assert.ok(oServiceSpy.calledOnce);
-				this.oRta.startService(sServiceName);
+				this.oRta.getService(sServiceName);
 			}.bind(this))
 			.then(function() {
 				assert.ok(oServiceSpy.calledOnce);
@@ -180,13 +180,13 @@ sap.ui.define([
 			}]);
 
 			return this.oRta
-			.startService(sServiceName)
+			.getService(sServiceName)
 			.then(function() {
 				assert.ok(false, "this should never be called");
 			})
 			.catch(function() {
 				assert.ok(true, "service successfully failed");
-				return this.oRta.startService(sServiceName);
+				return this.oRta.getService(sServiceName);
 			}.bind(this))
 			.then(function() {
 				assert.ok(false, "this should never be called");
@@ -206,11 +206,11 @@ sap.ui.define([
 				}
 			}]);
 			return this.oRta
-			.startService(sServiceName)
+			.getService(sServiceName)
 			.then(function() {
 				assert.ok(true, "service successfully failed");
-				this.oRta._mServices[sServiceName].status = "unknownStatus";
-				return this.oRta.startService(sServiceName);
+				this.oRta.getServiceManager().getServices()[sServiceName].status = "unknownStatus";
+				return this.oRta.getService(sServiceName);
 			}.bind(this))
 			.then(function() {
 				assert.ok(false, "this should never be called");
@@ -223,7 +223,7 @@ sap.ui.define([
 
 		QUnit.test("attempt to mutate returned object from the service", function(assert) {
 			return this.oRta
-			.startService(Object.keys(mServicesDictionary).shift())
+			.getService(Object.keys(mServicesDictionary).shift())
 			.then(function(oService) {
 				assert.throws(function() {
 					oService.customMethod = function() {};
@@ -249,7 +249,7 @@ sap.ui.define([
 			}]);
 
 			return this.oRta
-			.startService(sServiceName)
+			.getService(sServiceName)
 			.then(function(oService) {
 				var oMethod1 = oService.method1();
 				var oMethod2 = oService.method2();
@@ -302,7 +302,7 @@ sap.ui.define([
 
 			// at this moment DT has syncing status since designTime for mockButton is still an unresolved promise
 			return this.oRta
-			.startService(sServiceName)
+			.getService(sServiceName)
 			.then(function(oService) {
 				var oReturn = oService.method1().then(fnServiceMethod1Stub);
 				this.oRta._oDesignTime.attachEventOnce("synced", fnSyncedEventStub);
@@ -316,7 +316,7 @@ sap.ui.define([
 
 		QUnit.test("starting unknown service", function(assert) {
 			return this.oRta
-			.startService("unknownServiceName")
+			.getService("unknownServiceName")
 			.then(function() {
 				assert.ok(false, "this should never be called");
 			})
@@ -337,7 +337,7 @@ sap.ui.define([
 			}]);
 
 			return this.oRta
-			.startService(sServiceName)
+			.getService(sServiceName)
 			.then(function() {
 				assert.ok(false, "this should never be called");
 			})
@@ -360,7 +360,7 @@ sap.ui.define([
 			}]);
 
 			return this.oRta
-			.startService(sServiceName)
+			.getService(sServiceName)
 			.then(function() {
 				assert.ok(oServiceSpy.withArgs(this.oRta).calledOnce);
 			}.bind(this));
@@ -377,7 +377,7 @@ sap.ui.define([
 			}]);
 
 			return this.oRta
-			.startService(sServiceName)
+			.getService(sServiceName)
 			.then(function() {
 				assert.ok(false, "this should never be called");
 			})
@@ -400,7 +400,7 @@ sap.ui.define([
 			}]);
 
 			return this.oRta
-			.startService(sServiceName)
+			.getService(sServiceName)
 			.then(function() {
 				assert.ok(false, "this should never be called");
 			})
@@ -430,7 +430,7 @@ sap.ui.define([
 			}]);
 
 			return this.oRta
-			.startService(sServiceName)
+			.getService(sServiceName)
 			.then(function(oService) {
 				assert.ok(isPlainObject(oService));
 				assert.ok(typeof oService.serviceMethod === "function");
@@ -448,12 +448,9 @@ sap.ui.define([
 		QUnit.test("RTA instance is destroyed during initialization", function(assert) {
 			var sServiceName = Object.keys(mServicesDictionary).shift();
 			var sServiceLocation = mServicesDictionary[sServiceName].replace(/\./g, "/");
-			var fnMockService = function() {
-				return new Promise(function(fnResolve) {
-					this.oRta.destroy();
-					fnResolve({});
-				}.bind(this));
-			}.bind(this);
+			var fnMockService = () => {
+				this.oRta.destroy();
+			};
 
 			RtaQunitUtils.stubSapUiRequire(sandbox, [{
 				name: [sServiceLocation],
@@ -461,7 +458,7 @@ sap.ui.define([
 			}]);
 
 			return this.oRta
-			.startService(sServiceName)
+			.getService(sServiceName)
 			.then(function() {
 				assert.ok(false, "this should never be called");
 			})
@@ -486,7 +483,7 @@ sap.ui.define([
 			}]);
 
 			return this.oRta
-			.startService(sServiceName)
+			.getService(sServiceName)
 			.then(function(oService) {
 				assert.ok(typeof oService.attachEvent === "function");
 				assert.ok(typeof oService.detachEvent === "function");
@@ -498,77 +495,6 @@ sap.ui.define([
 					assert.deepEqual(vData, mData);
 				});
 				fnServicePublish("eventName", mData);
-			});
-		});
-	});
-
-	QUnit.module("stopService()", {
-		beforeEach() {
-			this.oRta = new RuntimeAuthoring({
-				showToolbars: false,
-				rootControl: oComp
-			});
-
-			return this.oRta.start();
-		},
-		afterEach() {
-			this.oRta.destroy();
-			sandbox.restore();
-		}
-	}, function() {
-		QUnit.test("stopping running service", function(assert) {
-			var sServiceName = Object.keys(mServicesDictionary).shift();
-			var sServiceLocation = mServicesDictionary[sServiceName].replace(/\./g, "/");
-			var oDestroySpy = sandbox.spy();
-			var fnMockService = function() {
-				return {
-					destroy: oDestroySpy
-				};
-			};
-
-			RtaQunitUtils.stubSapUiRequire(sandbox, [{
-				name: [sServiceLocation],
-				stub: fnMockService
-			}]);
-
-			return this.oRta
-			.startService(sServiceName)
-			.then(function() {
-				this.oRta.stopService(sServiceName);
-				assert.ok(oDestroySpy.calledOnce);
-			}.bind(this));
-		});
-		QUnit.test("stopping unknown service", function(assert) {
-			assert.throws(function() {
-				this.oRta.stopService("unknownService");
-			}.bind(this));
-		});
-	});
-
-	QUnit.module("getService()", {
-		beforeEach() {
-			this.oRta = new RuntimeAuthoring({
-				showToolbars: false,
-				rootControl: oComp
-			});
-
-			return this.oRta.start();
-		},
-		afterEach() {
-			this.oRta.destroy();
-			sandbox.restore();
-		}
-	}, function() {
-		QUnit.test("check alias to startService()", function(assert) {
-			var oStartServiceStub = sandbox.stub(this.oRta, "startService").callsFake(function(...aArgs) {
-				return Promise.resolve({
-					arguments: aArgs
-				});
-			});
-
-			return this.oRta.getService("foo").then(function(oService) {
-				assert.ok(oStartServiceStub.calledOnce);
-				assert.strictEqual(oService.arguments[0], "foo");
 			});
 		});
 	});

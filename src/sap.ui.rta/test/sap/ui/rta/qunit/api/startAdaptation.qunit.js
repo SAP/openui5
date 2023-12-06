@@ -18,8 +18,8 @@ sap.ui.define([
 	RtaQunitUtils
 ) {
 	"use strict";
-	var sandbox = sinon.createSandbox();
-	var oAppComponent = RtaQunitUtils.createAndStubAppComponent(sinon);
+	const sandbox = sinon.createSandbox();
+	const oAppComponent = RtaQunitUtils.createAndStubAppComponent(sinon);
 
 	QUnit.module("Given startAdaptation()", {
 		beforeEach() {
@@ -31,10 +31,11 @@ sap.ui.define([
 		}
 	}, function() {
 		QUnit.test("when called with valid parameters", function(assert) {
-			var oLoadPluginsStub = sandbox.stub().resolves();
-			var oOnStartStub = sandbox.stub();
-			var oOnFailedStub = sandbox.stub();
-			var oOnStopStub = sandbox.stub();
+			const oLoadPluginsStub = sandbox.stub().resolves();
+			const oOnStartStub = sandbox.stub();
+			const oOnFailedStub = sandbox.stub();
+			const oOnStopStub = sandbox.stub();
+			const oAttachEventSpy = sandbox.spy(RuntimeAuthoring.prototype, "attachEvent");
 
 			return startAdaptation(
 				{
@@ -51,19 +52,29 @@ sap.ui.define([
 			).then(function(oRta) {
 				assert.ok(oLoadPluginsStub.calledOnce, "then the passed plugin modifier function is called");
 				assert.deepEqual(oRta.getFlexSettings(), {layer: Layer.USER, developerMode: false}, "the flexSettings are correct");
-				assert.strictEqual(oRta.mEventRegistry.start.pop().fFunction, oOnStartStub, "then the passed on start handler is registered as event handler");
-				assert.strictEqual(oRta.mEventRegistry.failed.pop().fFunction, oOnFailedStub, "then the passed on failed handler is registered as event handler");
-				assert.strictEqual(oRta.mEventRegistry.stop.pop().fFunction, oOnStopStub, "then the passed on stop handler is registered as event handler");
+				assert.ok(
+					oAttachEventSpy.calledWith("start", oOnStartStub),
+					"then the passed on start handler is registered as event handler"
+				);
+				assert.ok(
+					oAttachEventSpy.calledWith("failed", oOnFailedStub),
+					"then the passed on failed handler is registered as event handler"
+				);
+				assert.ok(
+					oAttachEventSpy.calledWith("stop", oOnStopStub),
+					"then the passed on stop handler is registered as event handler"
+				);
 				assert.strictEqual(oRta.getRootControl(), oAppComponent.getId(), "then correct root control was set");
 			});
 		});
 
 		QUnit.test("when called without flexSettings", function(assert) {
-			var oLoadPluginsStub = sandbox.stub().resolves();
-			var oOnStartStub = sandbox.stub();
-			var oOnFailedStub = sandbox.stub();
-			var oOnStopStub = sandbox.stub();
+			const oLoadPluginsStub = sandbox.stub().resolves();
+			const oOnStartStub = sandbox.stub();
+			const oOnFailedStub = sandbox.stub();
+			const oOnStopStub = sandbox.stub();
 			sandbox.stub(FeaturesAPI, "isKeyUser").resolves(true);
+			const oAttachEventSpy = sandbox.spy(RuntimeAuthoring.prototype, "attachEvent");
 
 			return startAdaptation(
 				{
@@ -75,10 +86,23 @@ sap.ui.define([
 				oOnStopStub
 			).then(function(oRta) {
 				assert.ok(oLoadPluginsStub.calledOnce, "then the passed plugin modifier function is called");
-				assert.deepEqual(oRta.getFlexSettings(), {layer: Layer.CUSTOMER, developerMode: false}, "the default flexSettings are passed");
-				assert.strictEqual(oRta.mEventRegistry.start.pop().fFunction, oOnStartStub, "then the passed on start handler is registered as event handler");
-				assert.strictEqual(oRta.mEventRegistry.failed.pop().fFunction, oOnFailedStub, "then the passed on failed handler is registered as event handler");
-				assert.strictEqual(oRta.mEventRegistry.stop.pop().fFunction, oOnStopStub, "then the passed on stop handler is registered as event handler");
+				assert.deepEqual(
+					oRta.getFlexSettings(),
+					{layer: Layer.CUSTOMER, developerMode: false},
+					"the default flexSettings are passed"
+				);
+				assert.ok(
+					oAttachEventSpy.calledWith("start", oOnStartStub),
+					"then the passed on start handler is registered as event handler"
+				);
+				assert.ok(
+					oAttachEventSpy.calledWith("failed", oOnFailedStub),
+					"then the passed on failed handler is registered as event handler"
+				);
+				assert.ok(
+					oAttachEventSpy.calledWith("stop", oOnStopStub),
+					"then the passed on stop handler is registered as event handler"
+				);
 				assert.strictEqual(oRta.getRootControl(), oAppComponent.getId(), "then correct root control was set");
 			});
 		});
