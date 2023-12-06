@@ -709,6 +709,19 @@ sap.ui.define([
 						},
 						errorMessage: "Did not find the Dialog"
 					});
+				},
+				iShouldNotSeeARestartFlag() {
+					return this.waitFor({
+						autoWait: true,
+						success() {
+							const oOpa5Window = Opa5.getWindow();
+							Opa5.assert.notOk(
+								!!oOpa5Window.sessionStorage.getItem("sap.ui.rta.restart.CUSTOMER"),
+								"The session storage was cleared by RTA"
+							);
+						},
+						errorMessage: "The RTA restart parameter is not cleaned up"
+					});
 				}
 			}
 		}
