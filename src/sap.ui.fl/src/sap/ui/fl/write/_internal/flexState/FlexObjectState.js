@@ -167,6 +167,17 @@ sap.ui.define([
 			mPropertyBag.condenseAnyLayer
 		);
 	}
+	/**
+	 * Takes an array of FlexObjects and filters out any hidden variant and changes on those hidden variants
+	 *
+	 * @param {sap.ui.fl.apply._internal.flexObjects.FlexObject[]} aFlexObjects - FlexObjects to be filtered
+	 * @param {string} sReference - Flex reference of the application
+	 * @returns {sap.ui.fl.apply._internal.flexObjects.FlexObject[]} Filtered list of FlexObjects
+	 */
+	FlexObjectState.filterHiddenFlexObjects = function(aFlexObjects, sReference) {
+		const aFilteredFlexObjects = VariantManagementState.filterHiddenFlexObjects(aFlexObjects, sReference);
+		return CompVariantState.filterHiddenFlexObjects(aFilteredFlexObjects, sReference);
+	};
 
 	/**
 	 * Collects changes from the different states within the <code>sap.ui.fl</code> library.

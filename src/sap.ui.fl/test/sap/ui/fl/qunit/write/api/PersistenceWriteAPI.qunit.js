@@ -7,7 +7,6 @@ sap.ui.define([
 	"sap/ui/core/UIComponent",
 	"sap/ui/fl/apply/_internal/appVariant/DescriptorChangeTypes",
 	"sap/ui/fl/apply/_internal/changes/FlexCustomData",
-	"sap/ui/fl/apply/_internal/flexState/controlVariants/VariantManagementState",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/fl/apply/_internal/flexObjects/FlexObjectFactory",
@@ -33,7 +32,6 @@ sap.ui.define([
 	UIComponent,
 	DescriptorChangeTypes,
 	FlexCustomData,
-	VariantManagementState,
 	FlexState,
 	ManifestUtils,
 	FlexObjectFactory,
@@ -262,7 +260,7 @@ sap.ui.define([
 				mockChangePersistence(testSetup.persistencyChanges);
 				sandbox.stub(FlexState, "getCompVariantsMap").returns(testSetup.compEntities);
 				sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns(this.oAppComponent.getId());
-				const oVMSFilterStub = sandbox.stub(VariantManagementState, "filterHiddenFlexObjects").callsFake((aFlexObjects) => {
+				const oVMSFilterStub = sandbox.stub(FlexObjectState, "filterHiddenFlexObjects").callsFake((aFlexObjects) => {
 					return testSetup.filterVariants ? [] : aFlexObjects;
 				});
 

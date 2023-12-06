@@ -961,5 +961,32 @@ sap.ui.define([
 		});
 	};
 
+	/**
+	 * Takes an array of FlexObjects and filters out any changes of a deleted variant
+	 *
+	 * @param {sap.ui.fl.apply._internal.flexObjects.FlexObject[]} aFlexObjects - FlexObjects to be filtered
+	 * @param {string} sReference - Flex reference of the application
+	 * @returns {sap.ui.fl.apply._internal.flexObjects.FlexObject[]} Filtered list of FlexObjects
+	 */
+	CompVariantState.filterHiddenFlexObjects = function(aFlexObjects, sReference) {
+		const mCompEntities = _omit(FlexState.getCompVariantsMap(sReference), "_getOrCreate", "_initialize");
+		const aVariants = [];
+		for (const sPersistencyKey in mCompEntities) {
+			mCompEntities[sPersistencyKey].variants.forEach((oVariant) => aVariants.push(oVariant.getId()));
+		}
+		return aFlexObjects.filter((oFlexObject) => {
+			if (oFlexObject.getFileType() === "change") {
+				if (oFlexObject.getChangeType() === "updateVariant") {
+					return aVariants.includes(oFlexObject.getSelector().variantId);
+				}
+				if (oFlexObject.getChangeType() === "defaultVariant") {
+					// Set default of Standard (empty variant name) or existing variant is valid
+					return !oFlexObject.getContent().defaultVariantName || aVariants.includes(oFlexObject.getContent().defaultVariantName);
+				}
+			}
+			return true;
+		});
+	};
+
 	return CompVariantState;
 });

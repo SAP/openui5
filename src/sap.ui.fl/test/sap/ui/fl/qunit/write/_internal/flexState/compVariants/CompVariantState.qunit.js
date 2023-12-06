@@ -2266,6 +2266,80 @@ sap.ui.define([
 		});
 	});
 
+	QUnit.module("filterHiddenFlexObjects", {
+		beforeEach() {
+		},
+		afterEach() {
+			sandbox.restore();
+		}
+	}, function() {
+		QUnit.test("with hidden variants", function(assert) {
+			sandbox.stub(FlexState, "getCompVariantsMap").returns({
+				persistencyKey1: {
+					variants: [
+						{
+							getId: () => "variant1"
+						}, {
+							getId: () => "variant2"
+						}
+					]
+				},
+				_getOrCreate: {},
+				_initialize: {}
+			});
+
+			const aFlexObjects = [
+				FlexObjectFactory.createCompVariant({
+					fileName: "variant1",
+					variantId: "variant1",
+					persisted: true,
+					selector: {
+						persistencyKey: "persistencyKey1"
+					}
+				}),
+				FlexObjectFactory.createUIChange({
+					id: "uichange1",
+					layer: Layer.USER,
+					changeType: "notUpdateVariant"
+				}),
+				FlexObjectFactory.createUIChange({
+					id: "uichange2",
+					layer: Layer.USER,
+					changeType: "updateVariant",
+					selector: {
+						variantId: "variant1"
+					}
+				}),
+				FlexObjectFactory.createUIChange({
+					id: "uichange3",
+					layer: Layer.USER,
+					changeType: "updateVariant",
+					selector: {
+						variantId: "deletedVariant"
+					}
+				}),
+				FlexObjectFactory.createUIChange({
+					id: "uichange4",
+					layer: Layer.USER,
+					changeType: "defaultVariant",
+					content: {
+						defaultVariantName: "deletedVariant"
+					}
+				}),
+				FlexObjectFactory.createUIChange({
+					id: "uichange5",
+					layer: Layer.USER,
+					changeType: "defaultVariant",
+					content: {
+						defaultVariantName: ""
+					}
+				})
+			];
+			const aFilteredFlexObjects = CompVariantState.filterHiddenFlexObjects(aFlexObjects, "something");
+			assert.strictEqual(aFilteredFlexObjects.length, 4, "updateVariant change of deleted variant is filter out");
+		});
+	});
+
 	QUnit.done(function() {
 		oComponent.destroy();
 		document.getElementById("qunit-fixture").style.display = "none";
