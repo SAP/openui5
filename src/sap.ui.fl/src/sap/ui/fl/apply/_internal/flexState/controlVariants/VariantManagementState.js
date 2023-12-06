@@ -297,7 +297,15 @@ sap.ui.define([
 	var oVariantManagementMapDataSelector = new DataSelector({
 		id: "variantManagementMap",
 		parentDataSelector: FlexState.getFlexObjectsDataSelector(),
-		executeFunction: createVariantsMap
+		executeFunction: createVariantsMap,
+		checkInvalidation(mParameters, oUpdateInfo) {
+			const aRelevantFlexObjectTypes = ["addFlexObject", "updateFlexObject", "removeFlexObject"];
+			const bRelevantType = aRelevantFlexObjectTypes.includes(oUpdateInfo.type);
+			const aRelevantVariantFileTypes = ["change", "ctrl_variant", "ctrl_variant_change", "ctrl_variant_management_change"];
+			const bRelevantVariantType = aRelevantVariantFileTypes.includes(oUpdateInfo.updatedObject?.getFileType?.());
+			const bHasVariantReference = oUpdateInfo.updatedObject?.getVariantReference?.();
+			return bRelevantType && (bRelevantVariantType || bHasVariantReference);
+		}
 	});
 
 	var oVariantManagementsDataSelector = new DataSelector({
@@ -314,7 +322,7 @@ sap.ui.define([
 		parameterKey: "variantReference",
 		parentDataSelector: oVariantManagementsDataSelector,
 		executeFunction(oVariantManagement, sVariantReference) {
-			return oVariantManagement.variants.find(function(oVariant) {
+			return oVariantManagement.variants.find((oVariant) => {
 				return oVariant.instance.getId() === sVariantReference;
 			});
 		}

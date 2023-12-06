@@ -61,8 +61,16 @@ sap.ui.define([
 			var oDataToRestore = FlexState.getInitialNonFlCompVariantData(mPropertyBag.reference);
 			if (oDataToRestore) {
 				Object.keys(oDataToRestore).forEach(function(sPersistencyKey) {
-					mCompEntities._initialize(sPersistencyKey, oDataToRestore[sPersistencyKey].variants, oDataToRestore[sPersistencyKey].controlId);
-					CompVariantMerger.merge(sPersistencyKey, mCompEntities[sPersistencyKey], oDataToRestore[sPersistencyKey].standardVariant);
+					mCompEntities._initialize(
+						sPersistencyKey,
+						oDataToRestore[sPersistencyKey].variants,
+						oDataToRestore[sPersistencyKey].controlId
+					);
+					CompVariantMerger.merge(
+						sPersistencyKey,
+						mCompEntities[sPersistencyKey],
+						oDataToRestore[sPersistencyKey].standardVariant
+					);
 				});
 			}
 		}
