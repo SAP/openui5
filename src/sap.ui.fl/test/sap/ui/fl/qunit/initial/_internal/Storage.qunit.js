@@ -72,7 +72,7 @@ sap.ui.define([
 	}, function() {
 		QUnit.test("with a failing connector", function(assert) {
 			var oLrepConnectorLoadFeaturesStub = sandbox.stub(LrepConnector, "loadFeatures").resolves({isKeyUser: true});
-			var oPersonalizationConnectorLoadFeaturesStub = sandbox.stub(PersonalizationConnector, "loadFeatures").resolves({isVariantSharingEnabled: false});
+			delete PersonalizationConnector.loadFeatures;
 			var oJsObjectConnectorLoadFeaturesStub = sandbox.stub(JsObjectConnector, "loadFeatures").rejects({});
 
 			sandbox.stub(FlexConfiguration, "getFlexibilityServices").returns([
@@ -115,8 +115,7 @@ sap.ui.define([
 			return Storage.loadFeatures().then(function(oResponse) {
 				assert.strictEqual(oLrepConnectorLoadFeaturesStub.callCount, 1, "the loadFeatures was triggered once");
 				assert.strictEqual(oJsObjectConnectorLoadFeaturesStub.callCount, 1, "the loadFeatures was triggered once");
-				assert.strictEqual(oPersonalizationConnectorLoadFeaturesStub.callCount, 1, "the loadFeatures was triggered once");
-				assert.strictEqual(oLogResolveSpy.callCount, 1, "the logAndResolveDefault called once");
+				assert.strictEqual(oLogResolveSpy.callCount, 2, "the logAndResolveDefault called once");
 				assert.deepEqual(oResponse, oExpectedResponse, "response was merged even with one connector failing");
 			});
 		});
