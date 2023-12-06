@@ -11,14 +11,12 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	function checkChange(oEntityPropertyChange, aSupportedProperties, aSupportedOperations) {
-		if (Array.isArray(oEntityPropertyChange)) {
-			oEntityPropertyChange.forEach(function(change) {
-				formatEntityCheck(change, aSupportedProperties, aSupportedOperations);
-			});
-		} else {
-			formatEntityCheck(oEntityPropertyChange, aSupportedProperties, aSupportedOperations);
-		}
+	function checkChange(oEntityPropertyChange, aSupportedProperties, aSupportedOperations, oSupportedPropertyPattern) {
+		const aEntityPropertyChanges = Array.isArray(oEntityPropertyChange) ? oEntityPropertyChange : [oEntityPropertyChange];
+		aEntityPropertyChanges.forEach(function(oChange) {
+			formatEntityCheck(oChange, aSupportedProperties, aSupportedOperations);
+			checkPropertyValuePattern(oChange, oSupportedPropertyPattern);
+		});
 	}
 
 	/**
@@ -85,21 +83,22 @@ sap.ui.define([
 	 * @param {sap.ui.fl.apply._internal.flexObjects.FlexObject} oChange - Changes to be merged
 	 * @param {Array} aSupportedProperties - Array of supported properties by change merger
 	 * @param {Array} aSupportedOperations - Array of supported operations by change merger
+	 * @param {Object} oSupportedPropertyPattern - Object with supported pattern as regex
 	 * @private
 	 * @ui5-restricted sap.ui.fl, sap.suite.ui.generic.template
 	 */
-	function checkEntityPropertyChange(oChange, aSupportedProperties, aSupportedOperations) {
-		var id = Object.keys(oChange).filter(function(key) {
-			return key.endsWith("Id");
+	function checkEntityPropertyChange(oChange, aSupportedProperties, aSupportedOperations, oSupportedPropertyPattern) {
+		var sId = Object.keys(oChange).filter(function(sKey) {
+			return sKey.endsWith("Id");
 		}).shift();
-		if (!oChange[id]) {
-			throw new Error(`Mandatory "${id}" parameter is not provided.`);
+		if (!oChange[sId]) {
+			throw new Error(`Mandatory "${sId}" parameter is not provided.`);
 		}
 		if (!oChange.entityPropertyChange) {
-			throw new Error(`Changes for "${oChange[id]}" are not provided.`);
+			throw new Error(`Changes for "${oChange[sId]}" are not provided.`);
 		}
 
-		checkChange(oChange.entityPropertyChange, aSupportedProperties, aSupportedOperations);
+		checkChange(oChange.entityPropertyChange, aSupportedProperties, aSupportedOperations, oSupportedPropertyPattern);
 	}
 
 	var layer_prefixes = {};
@@ -146,6 +145,24 @@ sap.ui.define([
 			throw new Error(`Layer ${sLayer} not supported.`);
 		}
 		return sPrefix;
+	}
+
+	/**
+	 * Checks the format consistency for change mergers (ChangeDataSource and ChangeInbound)
+	 * and other mergers with the prefix "change". The format of a change is valid if it includes the ID as well as <code>entityPropertyChange</code>.
+	 *
+	 * @param {sap.ui.fl.apply._internal.flexObjects.FlexObject} oChange - Changes to be merged
+	 * @param {object} oSupportedPattern - Object with pattern for limited property values
+	 * @private
+	 * @ui5-restricted sap.ui.fl, sap.suite.ui.generic.template
+	 */
+	function checkPropertyValuePattern(oChange, oSupportedPattern) {
+		// if no pattern is provided, everything is allowed
+		if (!includes(Object.keys(oSupportedPattern), oChange.propertyPath)) { return; }
+		if (!oChange.propertyValue.match(oSupportedPattern[oChange.propertyPath])) {
+			throw new Error(`Not supported format for propertyPath ${oChange.propertyPath}. ` +
+							`The supported pattern is ${oSupportedPattern[oChange.propertyPath]}`);
+		}
 	}
 
 	return {

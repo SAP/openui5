@@ -15,6 +15,10 @@ sap.ui.define([
 	var SUPPORTED_OPERATIONS = ["UPDATE", "UPSERT"];
 	var SUPPORTED_PROPERTIES = ["uri", "settings/maxAge"];
 
+	// Only list properties with limitation
+	var PROPERTIES_PATTERNS = {
+	};
+
 	/**
 	 * Descriptor change merger for change type <code>appdescr_app_changeDataSource</code>.
 	 * Changes a property of a specific <code>sap.app/dataSource</code> node in the manifest.
@@ -49,7 +53,7 @@ sap.ui.define([
 		applyChange(oManifest, oChange) {
 			var oDataSources = oManifest["sap.app"].dataSources;
 			var oChangeContent = oChange.getContent();
-			DescriptorChangeCheck.checkEntityPropertyChange(oChangeContent, SUPPORTED_PROPERTIES, SUPPORTED_OPERATIONS);
+			DescriptorChangeCheck.checkEntityPropertyChange(oChangeContent, SUPPORTED_PROPERTIES, SUPPORTED_OPERATIONS, PROPERTIES_PATTERNS);
 			if (oDataSources) {
 				var oDataSource = oDataSources[oChangeContent.dataSourceId];
 				if (oDataSource) {

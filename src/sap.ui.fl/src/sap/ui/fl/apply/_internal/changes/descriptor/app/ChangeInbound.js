@@ -13,7 +13,13 @@ sap.ui.define([
 	"use strict";
 
 	var SUPPORTED_OPERATIONS = ["UPDATE", "UPSERT"];
-	var SUPPORTED_PROPERTIES = ["title", "subTitle", "icon", "signature/parameters/*"];
+	var SUPPORTED_PROPERTIES = ["semanticObject", "action", "title", "subTitle", "icon", "signature/parameters/*"];
+
+	// Only list properties with limitation
+	var PROPERTIES_PATTERNS = {
+		semanticObject: "^[\\w\\*]{0,30}$",
+		action: "^[\\w\\*]{0,60}$"
+	};
 
 	/**
 	* Descriptor change merger for change type <code>appdescr_app_changeInbound</code>.
@@ -48,7 +54,7 @@ sap.ui.define([
 		applyChange(oManifest, oChange) {
 			var oCrossNavigation = oManifest["sap.app"].crossNavigation;
 			var oChangeContent = oChange.getContent();
-			DescriptorChangeCheck.checkEntityPropertyChange(oChangeContent, SUPPORTED_PROPERTIES, SUPPORTED_OPERATIONS);
+			DescriptorChangeCheck.checkEntityPropertyChange(oChangeContent, SUPPORTED_PROPERTIES, SUPPORTED_OPERATIONS, PROPERTIES_PATTERNS);
 			if (oCrossNavigation && oCrossNavigation.inbounds) {
 				var oInbound = oCrossNavigation.inbounds[oChangeContent.inboundId];
 				if (oInbound) {
