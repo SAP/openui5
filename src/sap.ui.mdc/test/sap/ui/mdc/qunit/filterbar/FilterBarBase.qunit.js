@@ -6,9 +6,10 @@ sap.ui.define([
 	"sap/ui/mdc/DefaultTypeMap",
 	"sap/ui/mdc/enums/ConditionValidated",
 	"sap/ui/mdc/enums/OperatorName",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	'sap/base/Log'
 ], function (
-	FilterBarBase, FilterField, DefaultTypeMap, ConditionValidated, OperatorName, Log
+	FilterBarBase, FilterField, DefaultTypeMap, ConditionValidated, OperatorName, nextUIUpdate, Log
 ) {
 	"use strict";
 
@@ -797,7 +798,7 @@ sap.ui.define([
 
     });
 
-    QUnit.test("check reason information", function(assert){
+    QUnit.test("check reason information", async function(assert){
 
         const done = assert.async(3);
 
@@ -834,19 +835,19 @@ sap.ui.define([
         const oFilterField = new FilterField();
         this.oFilterBarBase.setBasicSearchField(oFilterField);
         oFilterField.fireSubmit({promise: Promise.resolve()});
-		sap.ui.getCore().applyChanges();
+		await nextUIUpdate();
 
         //GO
-		oSubmittedPromise.then(function() {
+		oSubmittedPromise.then(async function() {
 	        this.oFilterBarBase.onSearch();
-			sap.ui.getCore().applyChanges();
+			await nextUIUpdate();
 		}.bind(this));
 
 
         //VARIANT
 		oGoPromise.then(function() {
-        sinon.stub(this.oFilterBarBase, "_getExecuteOnSelectionOnVariant").returns( true );
-        this.oFilterBarBase._handleVariantSwitch({});
+			sinon.stub(this.oFilterBarBase, "_getExecuteOnSelectionOnVariant").returns( true );
+			this.oFilterBarBase._handleVariantSwitch({});
 		}.bind(this));
 
     });
