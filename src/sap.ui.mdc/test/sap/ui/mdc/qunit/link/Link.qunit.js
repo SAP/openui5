@@ -71,7 +71,7 @@ sap.ui.define([
 
 	const fnHasVisibleMoreLinksButton = function(assert, oPanel, bVisible) {
 		assert.equal(oPanel.getAggregation("_content").$().find("button:visible").length, bVisible ? 1 : 0);
-		// fnHasVisibleText(assert, oPanel, sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc", undefined, false).getText("info.POPOVER_DEFINE_LINKS"), bVisible);
+		// fnHasVisibleText(assert, oPanel, Library.getResourceBundleFor("sap.ui.mdc").getText("info.POPOVER_DEFINE_LINKS"), bVisible);
 	};
 
 	const fnCheckAdditionalLinks = function(assert, oPanel) {

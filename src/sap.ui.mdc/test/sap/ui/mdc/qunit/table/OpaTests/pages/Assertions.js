@@ -3,7 +3,7 @@
  */
 
 sap.ui.define([
-	"sap/ui/core/Core",
+	"sap/ui/core/Lib",
 	"sap/ui/core/library",
 	"sap/ui/test/Opa5",
 	"test-resources/sap/ui/mdc/testutils/opa/table/waitForTable",
@@ -14,7 +14,7 @@ sap.ui.define([
 	"sap/ui/test/matchers/Visible",
 	"sap/ui/mdc/enums/TableType"
 ], function(
-	/** @type sap.ui.core.Core */ Core,
+	/** @type sap.ui.core.Core */ Library,
 	/** @type sap.ui.core.library */ CoreLibrary,
 	/** @type sap.ui.test.Opa5 */ Opa5,
 	/** @type sap.ui.test.Opa5 */ waitForTable,
@@ -466,7 +466,7 @@ sap.ui.define([
 				controlType: "sap.m.Dialog",
 				success: function(aDialogs) {
 					const oDialog = aDialogs[0];
-					const oResourceBundle = Core.getLibraryResourceBundle("sap.ui.export");
+					const oResourceBundle = Library.getResourceBundleFor("sap.ui.export");
 					return this.waitFor({
 						autoWait: false,
 						controlType: "sap.m.Title",

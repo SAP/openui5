@@ -11,16 +11,15 @@
  * @since 1.30.0
  */
 sap.ui.define([
-	'sap/ui/base/Object', 'sap/ui/test/Opa5', 'sap/m/library'
-], function(BaseObject, Opa5, MLibrary) {
+	'sap/ui/base/Object', 'sap/m/library', 'sap/ui/core/Lib'
+], function(BaseObject, MLibrary, Library) {
 	"use strict";
 
 	const Util = BaseObject.extend("sap.ui.mdc.qunit.link.opa.test.Util", /** @lends sap.ui.mdc.qunit.link.opa.test.Util.prototype */
 	{});
 
 	Util.getTextFromResourceBundle = function(sLibraryName, sTextKey) {
-		const oCore = Opa5.getWindow().sap.ui.getCore();
-		return oCore.getLibraryResourceBundle(sLibraryName).getText(sTextKey);
+		return Library.getResourceBundleFor(sLibraryName).getText(sTextKey);
 	};
 
 	return Util;

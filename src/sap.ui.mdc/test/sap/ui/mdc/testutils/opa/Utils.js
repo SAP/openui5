@@ -4,18 +4,19 @@
 
 sap.ui.define([
 	"sap/ui/test/Opa5",
-	"sap/ui/base/Object"
+	"sap/ui/base/Object",
+	"sap/ui/core/Lib"
 ], function(
 	Opa5,
-	BaseObject
+	BaseObject,
+	Library
 ) {
 	"use strict";
 
 	var Utils = BaseObject.extend("sap.ui.mdc.qunit.opa.test.Util", {});
 
 	Utils.getTextFromResourceBundle = function(sLibraryName, sTextKey) {
-		var oCore = Opa5.getWindow().sap.ui.getCore();
-		return oCore.getLibraryResourceBundle(sLibraryName).getText(sTextKey);
+		return Library.getResourceBundleFor(sLibraryName).getText(sTextKey);
 	};
 
 	Utils.enhanceWaitFor = function (vIdent, oConfig) {

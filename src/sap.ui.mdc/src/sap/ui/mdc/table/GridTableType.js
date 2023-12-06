@@ -3,11 +3,12 @@
  */
 
 sap.ui.define([
-	"./TableTypeBase", "sap/m/table/Util", "sap/ui/mdc/enums/TableRowCountMode"
+	"./TableTypeBase", "sap/m/table/Util", "sap/ui/mdc/enums/TableRowCountMode", "sap/ui/core/Lib"
 ], (
 	TableTypeBase,
 	MTableUtil,
-	TableRowCountMode
+	TableRowCountMode,
+	Library
 ) => {
 	"use strict";
 
@@ -133,7 +134,7 @@ sap.ui.define([
 
 	GridTableType.prototype.loadUiTableLibrary = function() {
 		if (!this._oGridTableLibLoaded) {
-			this._oGridTableLibLoaded = sap.ui.getCore().loadLibrary("sap.ui.table", true);
+			this._oGridTableLibLoaded = Library.load({name: "sap.ui.table"});
 		}
 		return this._oGridTableLibLoaded;
 	};

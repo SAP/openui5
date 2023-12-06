@@ -4,9 +4,6 @@ sap.ui.define([
 ], function (App, UIComponent, ComponentContainer, View, oCore) {
 	"use strict";
 
-	//Load FL lib (as this might be required for fl related tests)
-	oCore.loadLibrary("sap.ui.fl");
-
 	const fnCreateEnvironment = function(sView, sModule) {
 
 		let oCreatedView;

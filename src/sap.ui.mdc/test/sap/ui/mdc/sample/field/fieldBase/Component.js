@@ -27,8 +27,7 @@ sap.ui.define([
 	'sap/ui/model/odata/type/Unit', // to have it loaded
 	'sap/ui/model/odata/v2/ODataModel',
 	'sap/ui/core/util/MockServer',
-	'sap/ui/mdc/field/ConditionsType', // as used in XML view
-	'sap/ui/core/Core'
+	'sap/ui/mdc/field/ConditionsType' // as used in XML view
 ], function(
 	View,
 	ViewType,
@@ -49,8 +48,7 @@ sap.ui.define([
 	ODataUnitType,
 	ODataModel,
 	MockServer,
-	ConditionsType,
-	oCore
+	ConditionsType
 ) {
 	"use strict";
 
@@ -63,8 +61,6 @@ sap.ui.define([
 
 		init: function() {
 			// initialization has to be done here because parent.init() calls createContent()
-			oCore.loadLibrary("sap.ui.mdc");
-
 			var sMockServerUrl = "/odata/";
 
 			var oMockServer = new MockServer({

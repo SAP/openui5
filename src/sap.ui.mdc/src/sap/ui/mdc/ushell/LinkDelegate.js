@@ -3,6 +3,7 @@
  */
 sap.ui.define([
 	"sap/ui/core/Element",
+	"sap/ui/core/Lib",
 	"sap/ui/mdc/LinkDelegate",
 	"sap/ui/mdc/link/LinkItem",
 	"sap/ui/mdc/link/Factory",
@@ -13,7 +14,7 @@ sap.ui.define([
 	"sap/ui/mdc/ushell/SemanticObjectMappingItem",
 	"sap/ui/mdc/ushell/SemanticObjectUnavailableAction",
 	"sap/ui/mdc/enums/LinkType"
-], (Element, MDCLinkDelegate, LinkItem, Factory, Log, SapBaseLog, isPlainObject, SemanticObjectMapping, SemanticObjectMappingItem, SemanticObjectUnavailableAction, LinkType) => {
+], (Element, Library, MDCLinkDelegate, LinkItem, Factory, Log, SapBaseLog, isPlainObject, SemanticObjectMapping, SemanticObjectMappingItem, SemanticObjectUnavailableAction, LinkType) => {
 	"use strict";
 	/**
 	 * Extension of the Delegate for {@link sap.ui.mdc.Link}. This extension provides all historical featurs of the FlpLinkHandler.
@@ -234,9 +235,7 @@ sap.ui.define([
 			ownNavigation: undefined,
 			availableActions: []
 		};
-		return sap.ui.getCore().loadLibrary('sap.ui.fl', {
-			async: true
-		}).then(() => {
+		return Library.load({name: 'sap.ui.fl'}).then(() => {
 
 			const Utils = sap.ui.require('sap/ui/fl/Utils');
 			if (!Utils) {
@@ -254,7 +253,7 @@ sap.ui.define([
 					SapBaseLog.error("LinkDelegate: Service 'Navigation' or 'URLParsing' could not be obtained");
 					return Promise.resolve(oNavigationTargets.availableActions, oNavigationTargets.ownNavigation);
 				}
-				const oControl = sap.ui.getCore().byId(sSourceControlId);
+				const oControl = Element.getElementById(sSourceControlId);
 				const oAppComponent = Utils.getAppComponentForControl(oControl);
 				const aParams = aSemanticObjects.map((sSemanticObject) => {
 					return {

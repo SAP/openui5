@@ -48,6 +48,11 @@ sap.ui.define(['../util/EnvHelper', "sap/base/util/merge"], function(EnvHelper, 
                 module: "./ChartFlex.qunit",
                 sinon: {
                     qunitBridge: true
+                },
+                ui5: {
+                    libs: [
+                        "sap.ui.fl", "sap.ui.mdc"
+                    ]
                 }
             },
             "Breadcrumbs": {

@@ -13,7 +13,6 @@ sap.ui.define([
 	'sap/ui/core/UIComponent',
 	'sap/ui/model/odata/v2/ODataModel',
 	'sap/ui/core/util/MockServer',
-	'sap/ui/core/Core',
 	'sap/ui/model/type/String', // to have it loaded
 	'sap/ui/model/type/Unit', // to have it loaded
 	'sap/ui/model/odata/type/DateTime', // to have it loaded
@@ -24,7 +23,6 @@ sap.ui.define([
 	UIComponent,
 	ODataModel,
 	MockServer,
-	oCore,
 	StringType,
 	UnitType,
 	ODataDateTimeType,
@@ -40,9 +38,6 @@ sap.ui.define([
 		},
 
 		init: function() {
-			// initialization has to be done here because parent.init() calls createContent()
-			oCore.loadLibrary("sap.ui.mdc");
-
 			var sMockServerUrl = "/odata/";
 
 			var oMockServer = new MockServer({

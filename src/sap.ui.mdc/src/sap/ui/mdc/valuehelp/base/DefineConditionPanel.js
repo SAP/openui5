@@ -4,6 +4,7 @@
 sap.ui.define([
 	'sap/ui/core/Control',
 	'sap/ui/base/ManagedObjectObserver',
+	'sap/base/i18n/Localization',
 	'sap/base/util/merge',
 	'sap/base/util/deepEqual',
 	"sap/ui/core/Element",
@@ -46,6 +47,7 @@ sap.ui.define([
 ], (
 	Control,
 	ManagedObjectObserver,
+	Localization,
 	merge,
 	deepEqual,
 	Element,
@@ -91,9 +93,9 @@ sap.ui.define([
 	// translation utils
 	let oMessageBundle = Library.getResourceBundleFor("sap.ui.mdc");
 	let oMessageBundleM = Library.getResourceBundleFor("sap.m");
-	sap.ui.getCore().attachLocalizationChanged(() => {
-		oMessageBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
-		oMessageBundleM = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+	Localization.attachChange(() => {
+		oMessageBundle = Library.getResourceBundleFor("sap.ui.mdc");
+		oMessageBundleM = Library.getResourceBundleFor("sap.m");
 	});
 
 	const { ButtonType } = mLibrary;

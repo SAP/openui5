@@ -20,7 +20,8 @@ sap.ui.define([
 		'sap/ui/core/format/DateFormat',
 		'sap/ui/core/StaticArea',
 		'sap/ui/model/json/JSONModel',
-		'sap/ui/model/type/Integer'
+		'sap/ui/model/type/Integer',
+		'sap/base/i18n/Localization'
 	],
 
 	(
@@ -43,14 +44,15 @@ sap.ui.define([
 		StaticArea,
 		JSONModel,
 		// the Integer type must be  available for some of the RangeOperators
-		Integer
+		Integer,
+		Localization
 	) => {
 		"use strict";
 
 		// translation utils
 		let oMessageBundle = Library.getResourceBundleFor("sap.ui.mdc");
-		sap.ui.getCore().attachLocalizationChanged(() => {
-			oMessageBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
+		Localization.attachChange(() => {
+			oMessageBundle = Library.getResourceBundleFor("sap.ui.mdc");
 		});
 
 		/**
