@@ -343,7 +343,7 @@ sap.ui.define([
 				|| oReloadInfo.switchEndUserAdaptation
 			) {
 				oReloadInfo.reloadMethod = oRELOAD.RELOAD_PAGE;
-				// always try cross app navigation (via hash); we only need a hard reload because of appdescr changes
+				// always try cross-app navigation (via hash); we only need a hard reload because of appdescr changes
 				// (changesNeedReload = true)
 				if (!oReloadInfo.changesNeedReload && Utils.getUshellContainer()) {
 					oReloadInfo.reloadMethod = oRELOAD.VIA_HASH;
