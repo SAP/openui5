@@ -137,6 +137,28 @@ sap.ui.define([
 			oMonth.destroy();
 		});
 
+		QUnit.test("Corner case for 1st week of February year 0008", function (assert) {
+			// Act
+			var oMonth = new Month({
+			}).placeAt("qunit-fixture");
+
+			var sOldLanguage = Localization.getLanguage();
+			Localization.setLanguage("en-US");
+
+			oCore.applyChanges();
+
+			var oDate = createCalendarDate(8, 1, 2);
+			oDate.setYear(8);
+
+			var iWeekNumber = oMonth._calculateWeekNumber(oDate);
+			// Assert
+			assert.strictEqual(iWeekNumber, "6", "Week number is calculated correctly");
+
+			// Clean
+			oMonth.destroy();
+			Localization.setLanguage(sOldLanguage);
+		});
+
 		QUnit.module("_getVisibleDays", {
 			beforeEach: function () {
 				this.oM = new Month();
