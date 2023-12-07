@@ -467,6 +467,29 @@ sap.ui.define([
 		return oType;
 	}
 
+	const oLoggedErrors = new Set();
+
+	/**
+	 * Logs an error only once per class name and property name combination.
+	 *
+	 * If the class name and property name are not given, the message is logged.
+	 *
+	 * @param {string} sClassName - The name of the class where the error occurred.
+	 * @param {string} sPropertyName - The name of the property causing the error.
+	 * @param {string} sMessage - Additional message to log.
+	 */
+	function logErrorOnce(sClassName, sPropertyName, sMessage) {
+		if (sClassName && sPropertyName) {
+			const sKey = `${sClassName}::${sPropertyName}`;
+			if (!oLoggedErrors.has(sKey)) {
+				oLoggedErrors.add(sKey);
+				Log.error(`Property "${sPropertyName}" of "${sClassName}": ${sMessage}`);
+			}
+		} else {
+			Log.error(sMessage);
+		}
+	}
+
 	/**
 	 * Looks up the type with the given name and returns it.
 	 *
@@ -506,11 +529,12 @@ sap.ui.define([
 	 * needed by the specific control or class definition.
 	 *
 	 * @param {string} sTypeName Qualified name of the type to retrieve
+	 * @param {sap.ui.base.ManagedObject.MetaOptions.Property} [oProperty] Metadata of the property
 	 * @returns {sap.ui.base.DataType|undefined} Type object or <code>undefined</code> when
 	 *     no such type has been defined yet
 	 * @public
 	 */
-	DataType.getType = function(sTypeName) {
+	DataType.getType = function(sTypeName, oProperty) {
 		assert( sTypeName && typeof sTypeName === 'string', "sTypeName must be a non-empty string");
 
 		var oType = mTypes[sTypeName];
@@ -535,7 +559,11 @@ sap.ui.define([
 				if (oType == null) {
 					oType = ObjectPath.get(sTypeName);
 					if (oType != null) {
-						Log.error(`The type '${sTypeName}' was accessed via globals. Defining enums via globals is deprecated. Please require the module 'sap/ui/base/DataType' and call the static 'DataType.registerEnum' API.`);
+						logErrorOnce(oProperty?._oParent.getName(), oProperty?.name,
+						`[DEPRECATED] The type '${sTypeName}' was accessed via globals. Defining types via globals is deprecated. ` +
+						`In case the referenced type is an enum: require the module 'sap/ui/base/DataType' and call the static 'DataType.registerEnum' API. ` +
+						`In case the referenced type is non-primitive, please note that only primitive types (and those derived from them) are supported for ManagedObject properties. ` +
+						`If the given type is an interface or a subclass of ManagedObject, you can define a "0..1" aggregation instead of a property`);
 					}
 				}
 
