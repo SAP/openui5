@@ -662,8 +662,9 @@ sap.ui.define([
 	Column.prototype.setSorted = function(bSorted) {
 		this.setProperty("sorted", bSorted, true);
 
-		if (bSorted && this.getSortOrder() === SortOrder.None) {
+		if (bSorted && this.getSortOrder() === SortOrder.None && !this.isBound("sortOrder")) {
 			this.setSortOrder(SortOrder.Ascending); // "Ascending" was the default value of "sortOrder" before "sorted" was deprecated.
+			return this;
 		}
 
 		this._updateIcons();
@@ -761,14 +762,8 @@ sap.ui.define([
 	Column.prototype._sort = function(sSortOrder, bAdd) {
 		var oTable = this._getTable();
 
-		if (!oTable) {
+		if (!oTable || this.getSortProperty() === "") {
 			return;
-		}
-
-		if (sSortOrder === SortOrder.None) {
-			oTable._removeSortedColumn(this);
-		} else {
-			oTable.pushSortedColumn(this, bAdd);
 		}
 
 		var bExecuteDefault = oTable.fireSort({
@@ -779,6 +774,12 @@ sap.ui.define([
 
 		if (!bExecuteDefault) {
 			return;
+		}
+
+		if (sSortOrder === SortOrder.None) {
+			oTable._removeSortedColumn(this);
+		} else {
+			oTable.pushSortedColumn(this, bAdd);
 		}
 
 		/** @deprecated As of version 1.120 */
