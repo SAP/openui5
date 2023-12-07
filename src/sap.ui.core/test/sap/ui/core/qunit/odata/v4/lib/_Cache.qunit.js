@@ -56,6 +56,8 @@ sap.ui.define([
 		return "API";
 	}
 
+	function mustBeMocked() { throw new Error("Must be mocked"); }
+
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.odata.v4.lib._Cache", {
 		beforeEach : function () {
@@ -9764,6 +9766,111 @@ sap.ui.define([
 			assert.strictEqual(oCache.aElements[1], oValue1);
 		});
 	});
+
+	//*********************************************************************************************
+	QUnit.test("CollectionCache#read waits for prefetch 'after'", function (assert) {
+		var oCache = this.createCache("Employees"),
+			oGetUnlockedCopyExpectation,
+			oGroupLock = {
+				getUnlockedCopy : mustBeMocked,
+				unlock : mustBeMocked
+			},
+			oSyncPromise,
+			oUnlockExpectation;
+
+		this.mock(_Helper).expects("getPrivateAnnotation").never();
+		oCache.aElements.push.apply(oCache.aElements, aTestData.slice(0, 5));
+		this.mock(ODataUtils).expects("_getReadIntervals")
+			.withExactArgs(sinon.match.same(oCache.aElements), 0, 5, 10, Infinity)
+			.returns([{
+				end : 15,
+				start : 5 // [0..5[ already available, see above
+			}]);
+		oGetUnlockedCopyExpectation = this.mock(oGroupLock).expects("getUnlockedCopy")
+			.withExactArgs().returns("~unlockedCopy~");
+		this.mock(oCache).expects("requestElements")
+			.withExactArgs(5, 15, "~unlockedCopy~", "~fnDataRequested~")
+			.callsFake(function () {
+				// just at the edge, there is a promise we need to wait for
+				oCache.aElements[14] = Promise.resolve();
+				// just beyond, there is a promise which never resolves and MUST be ignored
+				oCache.aElements[15] = new Promise(function () {});
+			});
+		oUnlockExpectation = this.mock(oGroupLock).expects("unlock").withExactArgs();
+
+		// code under test
+		oSyncPromise = oCache.read(0, 5, 10, oGroupLock, "~fnDataRequested~");
+
+		assert.ok(oSyncPromise.isPending());
+		assert.ok(oUnlockExpectation.calledAfter(oGetUnlockedCopyExpectation));
+
+		return oSyncPromise; // no need to check result, it's defined by aElements way above
+	});
+
+	//*********************************************************************************************
+[10, 30].forEach(function (iPrefetchLength) {
+	var sTitle = "CollectionCache#read waits for prefetch 'before', " + iPrefetchLength;
+
+	QUnit.test(sTitle, function (assert) {
+		var oCache = this.createCache("Employees"),
+			oGetUnlockedCopyExpectation,
+			oGroupLock = {
+				getUnlockedCopy : mustBeMocked,
+				unlock : mustBeMocked
+			},
+			iStart,
+			oSyncPromise,
+			oUnlockExpectation;
+
+		this.mock(_Helper).expects("getPrivateAnnotation").never();
+		oCache.aElements[20] = aTestData[20];
+		oCache.aElements[21] = aTestData[21];
+		oCache.aElements[22] = aTestData[22];
+		oCache.aElements[23] = aTestData[23];
+		oCache.aElements[24] = aTestData[24];
+		oCache.iLimit = 25; // simulate a known $count
+		iStart = iPrefetchLength === 10 ? 10 : 0; // Math.max(0, 20 - iPrefetchLength)
+		this.mock(ODataUtils).expects("_getReadIntervals")
+			.withExactArgs(sinon.match.same(oCache.aElements), 20, 5, iPrefetchLength, 25)
+			.returns([{
+				end : 20,
+				start : iStart // [20..25[ already available, see above
+			}]);
+		oGetUnlockedCopyExpectation = this.mock(oGroupLock).expects("getUnlockedCopy")
+			.withExactArgs().returns("~unlockedCopy~");
+		this.mock(oCache).expects("requestElements")
+			.withExactArgs(iStart, 20, "~unlockedCopy~", "~fnDataRequested~")
+			.callsFake(function () {
+				switch (iPrefetchLength) {
+					case 10:
+						// just at the edge, there is a promise we need to wait for
+						oCache.aElements[10] = Promise.resolve();
+						// just beyond, there is a promise which never resolves and MUST be ignored
+						oCache.aElements[9] = new Promise(function () {});
+						break;
+
+					case 30:
+						// just at the edge, there is a promise we need to wait for
+						oCache.aElements[0] = Promise.resolve();
+						// just beyond, there is a promise which never resolves and MUST be ignored
+						oCache.aElements[55] = new Promise(function () {});
+						break;
+
+					default:
+						throw iPrefetchLength;
+				}
+			});
+		oUnlockExpectation = this.mock(oGroupLock).expects("unlock").withExactArgs();
+
+		// code under test
+		oSyncPromise = oCache.read(20, 5, iPrefetchLength, oGroupLock, "~fnDataRequested~");
+
+		assert.ok(oSyncPromise.isPending());
+		assert.ok(oUnlockExpectation.calledAfter(oGetUnlockedCopyExpectation));
+
+		return oSyncPromise; // no need to check result, it's defined by aElements way above
+	});
+});
 
 	//*********************************************************************************************
 	QUnit.test("CollectionCache#addKeptElement", function (assert) {

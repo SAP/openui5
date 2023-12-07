@@ -2410,8 +2410,8 @@ sap.ui.define([
 		oGroupLock.unlock();
 
 		iEnd = iIndex + iLength + iPrefetchLength;
-		aElementsRange = this.aElements.slice(iIndex, iEnd);
-		if (this.aElements.$tail && iEnd > this.aElements.length) {
+		aElementsRange = this.aElements.slice(Math.max(0, iIndex - iPrefetchLength), iEnd);
+		if (this.aElements.$tail) {
 			aElementsRange.push(this.aElements.$tail);
 		}
 		return SyncPromise.all(aElementsRange).then(function () {
