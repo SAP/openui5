@@ -193,6 +193,7 @@ sap.ui.define([
 					"then '_serializeToLrep' was called without 'bCondenseAnyLayer' parameter"
 				);
 				fnDone();
+				return Promise.resolve();
 			}.bind(this));
 
 			this.oRta.getToolbar().fireSwitchAdaptation({
@@ -212,6 +213,7 @@ sap.ui.define([
 				assert.equal(mPropertyBag.adaptationId, this.sAdaptationId, "the adaptationId parameter was passed correctly");
 				assert.equal(this.oSerializeStub.callCount, 0, "the changes were not saved");
 				fnDone();
+				return Promise.resolve();
 			}.bind(this));
 
 			this.oRta.getToolbar().fireSwitchAdaptation({
@@ -300,6 +302,7 @@ sap.ui.define([
 				];
 				assert.deepEqual(this.oRta._oContextBasedAdaptationsModel.getProperty("/adaptations"), oExptectedAdaptations, "only 1 adaptation left");
 				fnDone();
+				return Promise.resolve();
 			}.bind(this));
 
 			assert.equal(this.oRta._oContextBasedAdaptationsModel.getProperty("/allAdaptations"), this.aAdaptations, "no adaptation was deleted yet");
@@ -343,6 +346,7 @@ sap.ui.define([
 				];
 				assert.deepEqual(this.oRta._oContextBasedAdaptationsModel.getProperty("/adaptations"), oExptectedAdaptations, "only 1 adaptation left");
 				fnDone();
+				return Promise.resolve();
 			}.bind(this));
 
 			assert.equal(this.oRta._oContextBasedAdaptationsModel.getProperty("/allAdaptations"), this.aAdaptations, "no adaptation was deleted yet");
