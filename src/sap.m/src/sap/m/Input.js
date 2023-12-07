@@ -2580,21 +2580,34 @@ function(
 	/**
 	 * Updates the inner input field.
 	 *
+	 * @param {string} sNewValue Dom value which will be set.
 	 * @protected
 	 */
 	Input.prototype.updateInputField = function(sNewValue) {
-		if (this._isSuggestionsPopoverOpen() && this.isMobileDevice()) {
-			this._getSuggestionsPopover().getInput()
-				.setValue(sNewValue)
-				._doSelect();
+		if (this.isMobileDevice() && this._isSuggestionsPopoverOpen()) {
+			this.updateInputFieldOnMobile(sNewValue);
 		} else {
-			// call _getInputValue to apply the maxLength to the typed value
-			sNewValue = this._getInputValue(sNewValue);
-			this.setDOMValue(sNewValue);
-			this.onChange(null, null, sNewValue);
+			this.updateInputFieldOnDesktop(sNewValue);
 		}
 	};
 
+	Input.prototype.updateInputFieldOnMobile = function(sNewValue) {
+		this._getSuggestionsPopover().getInput()
+			.setValue(sNewValue)
+			._doSelect();
+	};
+
+	Input.prototype.updateInputFieldOnDesktop = function(sNewValue) {
+		// call _getInputValue to apply the maxLength to the typed value
+		sNewValue = this._getInputValue(sNewValue);
+
+		if (sNewValue !== this.getValue() && sNewValue === this.getLastValue()) {
+			this.setProperty("value", sNewValue);
+		}
+
+		this.setDOMValue(sNewValue);
+		this.onChange(null, null, sNewValue);
+	};
 	/**
 	 * Gets accessibility information for the input.
 	 *

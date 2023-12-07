@@ -1406,17 +1406,33 @@ function(
 	/**
 	 * Updates the inner input field.
 	 *
+	 * @param {string} sNewValue Dom value which will be set.
 	 * @protected
 	 */
 	MultiInput.prototype.updateInputField = function(sNewValue) {
 		Input.prototype.updateInputField.call(this, sNewValue);
-		var oSuggestionsPopover = this._getSuggestionsPopover();
 
-		this.setDOMValue('');
+		if (this.isMobileDevice()) {
+			this.updateInputFieldOnMobile();
+		} else {
+			this.updateInputFieldOnDesktop(sNewValue);
+		}
+	};
+
+	MultiInput.prototype.updateInputFieldOnMobile = function() {
+		var oSuggestionsPopover = this._getSuggestionsPopover();
 
 		if (oSuggestionsPopover.getInput()) {
 			oSuggestionsPopover.getInput().setDOMValue('');
 		}
+	};
+
+	MultiInput.prototype.updateInputFieldOnDesktop = function(sNewValue) {
+		// call _getInputValue to apply the maxLength to the typed value
+		sNewValue = this._getInputValue(sNewValue);
+
+		this.setDOMValue('');
+		this.onChange(null, null, sNewValue);
 	};
 
 	/**

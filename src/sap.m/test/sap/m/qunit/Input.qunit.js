@@ -3963,6 +3963,48 @@ sap.ui.define([
 		oInput.destroy();
 	});
 
+	QUnit.test("Item selection updates the model when previously deleted value matches the item text", function(assert) {
+		oInput = new Input({
+			value: '{/value}',
+			showSuggestion: true,
+			suggestionItems: {
+				path: '/suggestionItems',
+				template: new Item({
+					text: '{text}'
+				})
+			}
+		});
+
+		var oModelData = {
+			value: "",
+			suggestionItems: [
+				{text: "111"},
+				{text: "112"},
+				{text: "113"}
+			]
+		};
+
+		oInput.setModel(new JSONModel(oModelData));
+		oInput.placeAt("content");
+		oCore.applyChanges();
+
+		oInput.setValue("111");
+		oCore.applyChanges();
+
+		oInput.setValue("");
+		oInput.setLastValue("111");
+		oCore.applyChanges();
+
+		assert.equal(oInput.getModel().getData().value, "", "The model value is cleared");
+
+		oInput.setSelectedItem(oInput.getSuggestionItems()[0]);
+		oCore.applyChanges();
+
+		assert.equal(oInput.getModel().getData().value, "111", "The model value is updated");
+
+		oInput.destroy();
+	});
+
 	QUnit.test("Set selection should stop if input is destroyed after firing change event", function (assert) {
 		// Arrange
 		var oInput = createInputWithSuggestions(),
