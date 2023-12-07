@@ -1121,6 +1121,7 @@ sap.ui.define([
 
 		Utils.visitChildren(oEntityContainer.entitySet, mChildAnnotations, "EntitySet", aSchemas,
 			/*fnCallback*/null, iFirstNewEntitySet);
+		Utils.addUnitAnnotations(aSchemas, this);
 	};
 
 

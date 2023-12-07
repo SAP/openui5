@@ -24,6 +24,11 @@
 				<Property Name="MCOD3" Type="Edm.String" Nullable="false" MaxLength="25" sap:display-format="UpperCase" sap:label="City"/>
 				<Property Name="MCOD1" Type="Edm.String" Nullable="false" MaxLength="25" sap:display-format="UpperCase" sap:label="Customer Name"/>
 				<Property Name="KUNNR" Type="Edm.String" Nullable="false" MaxLength="10" sap:display-format="UpperCase" sap:text="MCOD1" sap:label="Customer"/>
+				<!-- fictitious properties for testing conversion of V2 to V4 annotations for separately loaded value lists, incident DINC0007105-->
+				<Property Name="Price" Type="Edm.Decimal" Precision="16" Scale="3" sap:unit="CurrencyCode" sap:variable-scale="true" sap:label="Price"/>
+				<Property Name="CurrencyCode" Type="Edm.String" MaxLength="5" sap:label="Currency Code" sap:semantics="currency-code"/>
+				<Property Name="Weight" Type="Edm.Decimal" Precision="16" Scale="3" sap:unit="WeightUnit" sap:variable-scale="true" sap:label="Weight"/>
+				<Property Name="WeightUnit" Type="Edm.String" MaxLength="5" sap:label="Unit" sap:semantics="unit-of-measure"/>
 			</EntityType>
 			<EntityType Name="VL_SH_DEBID" sap:value-list="true" sap:content-version="1">
 				<Key>
