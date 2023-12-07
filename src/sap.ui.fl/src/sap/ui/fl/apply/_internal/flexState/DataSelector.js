@@ -22,6 +22,7 @@ sap.ui.define([
 	 * @private
 	 * @ui5-restricted
 	 */
+	// eslint-disable-next-line max-len
 	var DataSelector = ManagedObject.extend("sap.ui.fl.apply._internal.flexState.DataSelector", /* @lends sap.ui.fl.apply._internal.flexState.DataSelector.prototype */ {
 		metadata: {
 			properties: {
@@ -37,8 +38,8 @@ sap.ui.define([
 					type: "object"
 				},
 				/**
-				 * Temporary cache to store calculated values or key value pairs
-				 * in case of parameterized selectors
+				 * Temporary cache to store calculated values or, in case of parameterized selectors,
+				 * key value pairs like <code>parentSelectorParameterValue: { parameterValue: { someKey: someValue } }</code>
 				 */
 				cachedResult: {
 					type: "any"
@@ -101,14 +102,34 @@ sap.ui.define([
 
 	const sNoParameter = "DataSelector_no_parameter";
 
-	function getAllParameterValues(oDataSelector, mParameters) {
-		const aReturn = [];
-		let oCurrentDataSelector = oDataSelector;
+	// Returns a list of parameter values for all selectors in the chain
+	// This list can be used to access nested caches in child selectors
+	function getParameterChain(oLowestDataSelector, mParameters) {
+		const aParameterList = [];
+
+		function getParameterValue(oCurrentDataSelector) {
+			const sParameterKey = oCurrentDataSelector.getParameterKey();
+			if (!sParameterKey) {
+				return sNoParameter;
+			}
+			return mParameters?.[sParameterKey];
+		}
+
+		let oCurrentDataSelector = oLowestDataSelector;
 		do {
-			aReturn.unshift(oCurrentDataSelector.getParameterKey() ? mParameters[oCurrentDataSelector.getParameterKey()] : sNoParameter);
+			const sParameterValue = getParameterValue(oCurrentDataSelector);
+			// If no parameter value is provided for the last child selector in the chain
+			// skip it, start with its parent and thus return the whole cache entry
+			if (sParameterValue || oCurrentDataSelector !== oLowestDataSelector) {
+				if (sParameterValue === undefined) {
+					throw new Error(`Parameter '${oCurrentDataSelector.getParameterKey()}' is missing`);
+				}
+				aParameterList.unshift(sParameterValue);
+			}
+
 			oCurrentDataSelector = oCurrentDataSelector.getParentDataSelector();
 		} while (oCurrentDataSelector);
-		return aReturn;
+		return aParameterList;
 	}
 
 	/**
@@ -141,14 +162,21 @@ sap.ui.define([
 	};
 
 	DataSelector.prototype._getParameterizedCachedResult = function(mParameters) {
-		const aParameterValues = getAllParameterValues(this, mParameters);
+		const aParameterValues = getParameterChain(this, mParameters);
+		if (aParameterValues.length === 0) {
+			return this.getCachedResult();
+		}
 		return ObjectPath.get(aParameterValues, this.getCachedResult());
 	};
 
 	DataSelector.prototype._setParameterizedCachedResult = function(mParameters, vValue) {
-		const aParameterValues = getAllParameterValues(this, mParameters);
+		const aParameterValues = getParameterChain(this, mParameters);
 		const mNewData = {};
-		ObjectPath.set(aParameterValues, vValue, mNewData);
+		if (aParameterValues.length === 0) {
+			Object.assign(mNewData, vValue);
+		} else {
+			ObjectPath.set(aParameterValues, vValue, mNewData);
+		}
 		return this.setCachedResult(merge(
 			{},
 			this.getCachedResult(),
@@ -156,14 +184,43 @@ sap.ui.define([
 		));
 	};
 
-	DataSelector.prototype._clearCache = function(mParameters) {
-		if (mParameters) {
-			this._setParameterizedCachedResult(mParameters, null);
+	// Clears the affected cache section and updates
+	// dependent selectors accordingly
+	// It might be required to fully clear all dependent selectors
+	// as well in the future
+	DataSelector.prototype._clearCache = function(mParameters, aUpdateInfo) {
+		const aUpdatedParameterMaps = [];
+
+		const sParameterKey = this.getParameterKey();
+		if (!sParameterKey) {
+			// Cache is not parameterized, clear it completly
+			this.setCachedResult(null);
+			aUpdatedParameterMaps.push(mParameters);
+		} else if (Object.keys(mParameters || {}).includes(sParameterKey)) {
+			// Clear cache for a specific parameter
+			if (this._getParameterizedCachedResult(mParameters) !== undefined) {
+				this._setParameterizedCachedResult(mParameters, null);
+				aUpdatedParameterMaps.push(mParameters);
+			}
 		} else {
-			// Clear full cache
-			var bIsParameterized = !!this.getParameterKey();
-			this.setCachedResult(bIsParameterized ? {} : null);
+			// Fully clear all parameters
+			// Since its own parameter is missing, cached result is the map of all
+			// parameter keys and their cache values
+			const mCurrentCache = this._getParameterizedCachedResult(mParameters);
+			Object.keys(mCurrentCache || {}).forEach((sCacheKey) => {
+				aUpdatedParameterMaps.push({
+					...mParameters,
+					[sParameterKey]: sCacheKey
+				});
+			});
+			this.setCachedResult({});
 		}
+
+		this.getUpdateListeners().forEach(function(fnUpdateFunction) {
+			aUpdatedParameterMaps.forEach((mUpdatedParameters) => {
+				fnUpdateFunction(mUpdatedParameters, aUpdateInfo);
+			});
+		});
 	};
 
 	/**
@@ -174,12 +231,6 @@ sap.ui.define([
 	 */
 	DataSelector.prototype.clearCachedResult = function(mParameters) {
 		this._clearCache(mParameters);
-		// TODO: For now recalculate the dependent selectors,
-		// it might be required to fully clear all dependent selectors
-		// as well in the future
-		this.getUpdateListeners().forEach(function(fnUpdateFunction) {
-			fnUpdateFunction();
-		});
 	};
 
 	/**
@@ -222,16 +273,59 @@ sap.ui.define([
 		return vNewResult;
 	};
 
+	function checkInvalidation(fnCheckInvalidation, mParameters, aUpdateInfo) {
+		if (aUpdateInfo) {
+			return aUpdateInfo.some((oUpdateInfo) => fnCheckInvalidation(mParameters, oUpdateInfo));
+		}
+		return true;
+	}
+
 	/**
-	 * Invokes the cache invalidation check and resets the cache if necessary
-	 * @param {object} mParameters - Map of selector specific parameters
+	 * Update Info Object containing information for the checkInvalidation function.
+	 * @typedef {object} sap.ui.fl.apply._internal.flexState.dataSelector.UpdateInfo
+	 * @property {string} [aUpdateInfo.type] - Type of the update done before
+	 * @property {sap.ui.fl.apply._internal.flexObjects.FlexObject} [aUpdateInfo.updatedObject] - Update relevant object
 	 */
-	DataSelector.prototype.checkUpdate = function(mParameters) {
-		if (this.getCheckInvalidation()(mParameters) === true) {
-			this._clearCache(mParameters);
-			this.getUpdateListeners().forEach(function(fnUpdateFunction) {
-				fnUpdateFunction();
+
+	/**
+	 * Invokes the cache invalidation check and resets the cache if necessary.
+	 * For chained selectors, this function must always be called as low in the chain as possible,
+	 * i.e. on the first selector where the updated data might show side effects.
+	 *
+	 * @param {object} [mParameters] - Map of selector specific parameters
+	 * @param {sap.ui.fl.apply._internal.flexState.dataSelector.UpdateInfo[]} [aUpdateInfo] - List with update info objects
+	 */
+	DataSelector.prototype.checkUpdate = function(mParameters, aUpdateInfo) {
+		const sParameterKey = this.getParameterKey();
+
+		if (
+			// If data selector is parameterized
+			sParameterKey !== undefined
+			// and no valid value for the parameter of the data selector was provided
+			&& !Object.keys(mParameters || {}).includes(sParameterKey)
+		) {
+			const vCachedResult = this._getParameterizedCachedResult(mParameters);
+			const aCacheKeys = Object.keys(vCachedResult && typeof vCachedResult === "object" ? vCachedResult : {});
+			// Check invalidation of children for each possible parameter value
+			aCacheKeys.forEach((sCacheKey) => {
+				// Append the possible cache key part to pass down the selector chain
+				const mInvalidationCheckParameters = {
+					...mParameters,
+					[sParameterKey]: sCacheKey
+				};
+				const bRequiresInvalidation = checkInvalidation(this.getCheckInvalidation(), mInvalidationCheckParameters, aUpdateInfo);
+				if (bRequiresInvalidation) {
+					// Clear the affected cache entry and continue checks in the child selectors
+					this._clearCache(mInvalidationCheckParameters, aUpdateInfo);
+				}
+				return !bRequiresInvalidation;
 			});
+		} else {
+			// Data selector is not parameterized or specific cache entry was selected
+			const bRequiresInvalidation = checkInvalidation(this.getCheckInvalidation(), mParameters, aUpdateInfo);
+			if (bRequiresInvalidation) {
+				this._clearCache(mParameters, aUpdateInfo);
+			}
 		}
 	};
 

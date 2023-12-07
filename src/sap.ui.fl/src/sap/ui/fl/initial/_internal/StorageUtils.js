@@ -162,12 +162,12 @@ sap.ui.define([
 		},
 
 		/**
-		 * Creates a Error messages in case of a failed Connector call while getting responses from multiple endpoints
+		 * Creates an Error messages in case of a failed Connector call while getting responses from multiple endpoints
 		 *
 		 * @param {object} oResponse Response from the sent request
 		 * @param {object} oConnectorConfig Configured Connector
 		 * @param {string} sFunctionName Name of the called function
-		 * @param {string} sErrorMessage Error messages retrieved from the endpoint
+		 * @param {string} [sErrorMessage] Error messages retrieved from the endpoint
 		 * @returns {object} oResponse Response from the endpoint
 		 */
 		logAndResolveDefault(oResponse, oConnectorConfig, sFunctionName, sErrorMessage) {

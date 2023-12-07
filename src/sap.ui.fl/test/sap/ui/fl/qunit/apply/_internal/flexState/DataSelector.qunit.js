@@ -94,10 +94,12 @@ sap.ui.define([
 		QUnit.test("when an update listener is added twice", function(assert) {
 			var oUpdateStub = sandbox.stub();
 			var oDataSelector = new DataSelector({
-				executeFunction() {},
-				updateListeners: [oUpdateStub]
+				executeFunction() { return "someValue"; },
+				updateListeners: [oUpdateStub],
+				parameterKey: "sampleKey"
 			});
 			oDataSelector.addUpdateListener(oUpdateStub);
+			oDataSelector.get({ sampleKey: "foo" });
 			oDataSelector.checkUpdate();
 			assert.ok(
 				oUpdateStub.calledOnce,
@@ -108,10 +110,12 @@ sap.ui.define([
 		QUnit.test("when an update listener is cleaned up", function(assert) {
 			var oUpdateStub = sandbox.stub();
 			var oDataSelector = new DataSelector({
-				executeFunction() {},
-				updateListeners: [oUpdateStub]
+				executeFunction() { return "someValue"; },
+				updateListeners: [oUpdateStub],
+				parameterKey: "sampleKey"
 			});
 			oDataSelector.removeUpdateListener(oUpdateStub);
+			oDataSelector.get({ sampleKey: "foo" });
 			oDataSelector.checkUpdate();
 			assert.ok(
 				oUpdateStub.notCalled,
@@ -340,7 +344,7 @@ sap.ui.define([
 					"then the selector is result is based on the parent result"
 				);
 				assert.ok(
-					this.oParentExecuteStub.calledTwice,
+					this.oGrandParentExecuteStub.calledTwice,
 					"then the parent selector calls its execute function if no cached data is available"
 				);
 			}
@@ -349,6 +353,10 @@ sap.ui.define([
 		QUnit.test("when the underlying selector is updated", function(assert) {
 			var oUpdateStub = sinon.stub();
 			this.oDataSelector.addUpdateListener(oUpdateStub);
+			this.oDataSelector.get({
+				grandParentSampleKey: "foo",
+				sampleKey: "bar"
+			});
 			this.oGrandParentDataSelector.checkUpdate({
 				grandParentSampleKey: "foo"
 			});
@@ -376,9 +384,10 @@ sap.ui.define([
 			var oUpdateSpy = sandbox.spy(DataSelector.prototype, "checkUpdate");
 			var oChildSelector = new DataSelector({
 				parentDataSelector: this.oGrandParentDataSelector,
-				executeFunction() {},
+				executeFunction() { return "someValue"; },
 				parameterKey: "someOtherKey"
 			});
+			oChildSelector.get({ grandParentSampleKey: "foo", someOtherKey: "someParameterValue" });
 
 			this.oGrandParentDataSelector.checkUpdate({ grandParentSampleKey: "foo" });
 			oChildSelector.destroy();
@@ -388,6 +397,181 @@ sap.ui.define([
 				3, // 2 for parent, only one for child
 				"then the update listener is deregistered after destruction"
 			);
+		});
+
+		QUnit.test("when data selector is cleared without grand parent parameter", function(assert) {
+			assert.throws(
+				function() {
+					this.oDataSelector.clearCachedResult();
+				}.bind(this),
+				"then an error is thrown"
+			);
+		});
+	});
+
+	QUnit.module("Dependent selectors with invalidation functions", {
+		beforeEach() {
+			this.oExpectedResult = {
+				foo: {
+					bar: "bar",
+					qux: {
+						thud: "thud"
+					},
+					fred: "fred"
+				},
+				baz: "baz"
+			};
+
+			this.oGrandParentExecuteStub = sandbox.stub().callsFake(function(oData, sParameter) {
+				return this.oExpectedResult[sParameter];
+			}.bind(this));
+			this.oGrandParentInvalidationStub = sandbox.stub().returns(true);
+			this.oGrandParentDataSelector = new DataSelector({
+				executeFunction: this.oGrandParentExecuteStub,
+				checkInvalidation: this.oGrandParentInvalidationStub,
+				parameterKey: "grandParentSampleKey"
+			});
+			this.oGrandParentClearCacheSpy = sandbox.spy(this.oGrandParentDataSelector, "_clearCache");
+
+			this.oParentExecuteStub = sandbox.stub().callsFake(function(oData, sParameter) {
+				return oData[sParameter];
+			});
+			this.oParentInvalidationStub = sandbox.stub().returns(true);
+			this.oParentDataSelector = new DataSelector({
+				parentDataSelector: this.oGrandParentDataSelector,
+				executeFunction: this.oParentExecuteStub,
+				checkInvalidation: this.oParentInvalidationStub,
+				parameterKey: "parentSampleKey"
+			});
+			this.oParentClearCacheSpy = sandbox.spy(this.oParentDataSelector, "_clearCache");
+
+			this.oExecuteStub = sandbox.stub().callsFake(function(oData, sParameter) {
+				return oData[sParameter];
+			});
+			this.oInvalidationStub = sandbox.stub().returns(true);
+			this.oDataSelector = new DataSelector({
+				parentDataSelector: this.oParentDataSelector,
+				executeFunction: this.oExecuteStub,
+				checkInvalidation: this.oInvalidationStub,
+				parameterKey: "sampleKey"
+			});
+			this.oClearCacheSpy = sandbox.spy(this.oDataSelector, "_clearCache");
+
+			// execute selectors
+			this.oParentDataSelector.get({ grandParentSampleKey: "foo", parentSampleKey: "bar" });
+			this.oDataSelector.get({ grandParentSampleKey: "foo", parentSampleKey: "qux", sampleKey: "thud"});
+			this.oParentDataSelector.get({ grandParentSampleKey: "foo", parentSampleKey: "fred" });
+			this.oGrandParentDataSelector.get({ grandParentSampleKey: "baz" });
+		},
+		afterEach() {
+			this.oParentDataSelector.destroy();
+			this.oGrandParentDataSelector.destroy();
+			sandbox.restore();
+		}
+	}, function() {
+		function checkInvalidationStubs(assert, grandParentCallCount, parentCallCount, callCount) {
+			assert.strictEqual(
+				this.oGrandParentInvalidationStub.callCount,
+				grandParentCallCount,
+				`then the invalidation function for the grand parent data selector was called ${grandParentCallCount} times`
+			);
+			assert.strictEqual(
+				this.oParentInvalidationStub.callCount,
+				parentCallCount,
+				`then the invalidation function for the parent data selectors was called ${parentCallCount} times`
+			);
+			assert.strictEqual(
+				this.oInvalidationStub.callCount,
+				callCount,
+				`then the invalidation function for the dependent data selector was called ${callCount} times`
+			);
+		}
+		function checkClearCacheSpys(assert, grandParentCallCount, parentCallCount, callCount) {
+			assert.strictEqual(
+				this.oGrandParentClearCacheSpy.callCount,
+				grandParentCallCount,
+				`then the clearCache function for the grand parent data selector was called ${grandParentCallCount} times`
+			);
+			assert.strictEqual(
+				this.oParentClearCacheSpy.callCount,
+				parentCallCount,
+				`then the clearCache function for the parent data selectors was called ${parentCallCount} times`
+			);
+			assert.strictEqual(
+				this.oClearCacheSpy.callCount,
+				callCount,
+				`then the clearCache function for the dependent data selector was called ${callCount} times`
+			);
+		}
+
+		QUnit.test("when check update is called for parent parameter key only", function(assert) {
+			const mTestParameters = { grandParentSampleKey: "foo" };
+			this.oGrandParentDataSelector.checkUpdate(mTestParameters, [{}]);
+			checkInvalidationStubs.call(this, assert, 1, 3, 1);
+			checkClearCacheSpys.call(this, assert, 1, 3, 1);
+		});
+
+		QUnit.test("when check update is called for parent and one dependent parameter key", function(assert) {
+			const mTestParameters = { grandParentSampleKey: "foo", parentSampleKey: "bar" };
+			this.oParentDataSelector.checkUpdate(mTestParameters, [{}]);
+			checkInvalidationStubs.call(this, assert, 0, 1, 0);
+			checkClearCacheSpys.call(this, assert, 0, 1, 0);
+		});
+
+		QUnit.test("when check update is called with all parameters provided", function(assert) {
+			const mTestParameters = { grandParentSampleKey: "foo", parentSampleKey: "bar", sampleKey: "qux" };
+			this.oGrandParentDataSelector.checkUpdate(mTestParameters, [{}]);
+			checkInvalidationStubs.call(this, assert, 1, 1, 1);
+			checkClearCacheSpys.call(this, assert, 1, 1, 1);
+		});
+
+		QUnit.test("when check update is called with a missing parent parameter", function(assert) {
+			const mTestParameters = { parentSampleKey: "bar" };
+			this.oGrandParentDataSelector.checkUpdate(mTestParameters, [{}]);
+			checkInvalidationStubs.call(this, assert, 2, 2, 0);
+			checkClearCacheSpys.call(this, assert, 2, 2, 0);
+			const oNewCacheState = this.oParentDataSelector.getCachedResult();
+			assert.strictEqual(
+				oNewCacheState.foo.bar,
+				null,
+				"then the affected cache entry was still cleared"
+			);
+			// Make sure that baz cache is not overridden with { bar: null } as well during clearCache
+			assert.strictEqual(
+				oNewCacheState.baz,
+				undefined,
+				"then no entries without the foo key are added"
+			);
+		});
+
+		QUnit.test("when check update is called with an invalid parameter value", function(assert) {
+			// Parent is only cleared for for "nonExisitingValue", thus no further propagation
+			const mTestParameters = { grandParentSampleKey: "foo", parentSampleKey: "nonExistingValue" };
+			this.oGrandParentDataSelector.checkUpdate(mTestParameters, [{}]);
+			checkInvalidationStubs.call(this, assert, 1, 1, 0);
+			checkClearCacheSpys.call(this, assert, 1, 1, 0);
+		});
+
+		QUnit.test("when check update is called for unknown parameter key", function(assert) {
+			// Parameter is ignored, thus full cache clear
+			const mTestParameters = { someOtherKey: "foobar" };
+			this.oGrandParentDataSelector.checkUpdate(mTestParameters, [{}]);
+			checkInvalidationStubs.call(this, assert, 2, 3, 1);
+			checkClearCacheSpys.call(this, assert, 2, 3, 1);
+		});
+
+		QUnit.test("when check update is called whith falsy checkInvalidation result", function(assert) {
+			const mTestParameters = { grandParentSampleKey: "foo" };
+			const oFalsyInvalidationStub = sandbox.stub().returns(false);
+			this.oParentDataSelector.setCheckInvalidation(oFalsyInvalidationStub);
+			this.oGrandParentDataSelector.checkUpdate(mTestParameters, [{}]);
+			checkInvalidationStubs.call(this, assert, 1, 0, 0);
+			assert.strictEqual(
+				oFalsyInvalidationStub.callCount,
+				3,
+				"then the falsy invalidation function for parent data selectors is called for each parent selector entry"
+			);
+			checkClearCacheSpys.call(this, assert, 1, 0, 0);
 		});
 	});
 
