@@ -535,7 +535,10 @@ sap.ui.define([
 				if (oType == null) {
 					oType = ObjectPath.get(sTypeName);
 					if (oType != null) {
-						Log.error(`The type '${sTypeName}' was accessed via globals. Defining enums via globals is deprecated. Please require the module 'sap/ui/base/DataType' and call the static 'DataType.registerEnum' API.`);
+						Log.error(`[DEPRECATED] The type '${sTypeName}' was accessed via globals. Defining types via globals is deprecated. ` +
+						`In case the referenced type is an enum: require the module 'sap/ui/base/DataType' and call the static 'DataType.registerEnum' API. ` +
+						`In case the referenced type is non-primitive, please note that only primitive types (and those derived from them) are supported for ManagedObject properties. ` +
+						`If the given type is an interface or a subclass of ManagedObject, you can define a "0..1" aggregation instead of a property`);
 					}
 				}
 
